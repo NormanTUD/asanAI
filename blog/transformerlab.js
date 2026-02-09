@@ -338,100 +338,106 @@ function run_transformer_demo() {
 }
 
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
-	const container = document.getElementById('transformer-output-projection');
+    const container = document.getElementById('transformer-output-projection');
+    if (!container) return;
 
-	// Debugging Checks
-	if (!container) {
-		console.error("Div 'transformer-output-projection' not found in HTML.");
-		return;
-	}
-	if (!h_final || h_final.length === 0) {
-		container.innerHTML = "<p>No hidden states available.</p>";
-		return;
-	}
+    const lastIdx = h_final.length - 1;
+    const h_last = h_final[lastIdx];
 
-	// 1. Get the final vector of the sequence
-	const lastIdx = h_final.length - 1;
-	const h_last = h_final[lastIdx];
+    // 1. Weights & Logits
+    const W_vocab = vocabulary.map(word => {
+        const hash = word.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+        return Array.from({ length: d_model }, (_, i) => {
+            const seed = Math.abs(hash * (i + 13));
+            return ((seed % 2000) / 1000) - 1;
+        });
+    });
 
-	// 2. Generate Deterministic Weights (Mocking a trained model)
-	const W_vocab = vocabulary.map(word => {
-		const hash = word.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-		return Array.from({ length: d_model }, (_, i) => {
-			const seed = Math.abs(hash * (i + 13)); 
-			return ((seed % 2000) / 1000) - 1;
-		});
-	});
+    const logits = vocabulary.map((word, i) => {
+        const w_row = W_vocab[i];
+        const val = h_last.reduce((sum, h_val, dim) => sum + h_val * w_row[dim], 0);
+        return { word, val, w_row };
+    });
 
-	// 3. Calculate Logits
-	const logits = vocabulary.map((word, i) => {
-		const w_row = W_vocab[i];
-		const val = h_last.reduce((sum, h_val, dim) => sum + h_val * w_row[dim], 0);
-		return { word, val, w_row };
-	});
+    // 2. Softmax Math
+    const scaledLogits = logits.map(item => item.val / temperature);
+    const maxLogit = Math.max(...scaledLogits); 
+    const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
+    const sumExps = exps.reduce((a, b) => a + b, 0);
+    const probs = exps.map(e => e / sumExps);
 
-	// 4. Softmax with Temperature
-	const scaledLogits = logits.map(item => item.val / temperature);
-	const maxLogit = Math.max(...scaledLogits); 
-	const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
-	const sumExps = exps.reduce((a, b) => a + b, 0);
-	const probs = exps.map(e => e / sumExps);
+    const predictions = logits.map((item, i) => ({
+        word: item.word,
+        logit: item.val,
+        prob: probs[i],
+        w_row: item.w_row,
+        expVal: exps[i]
+    })).sort((a, b) => b.prob - a.prob);
 
-	const predictions = logits.map((item, i) => ({
-		word: item.word,
-		logit: item.val,
-		prob: probs[i],
-		w_row: item.w_row
-	})).sort((a, b) => b.prob - a.prob);
+    // LaTeX Helpers
+    const texSafe = (s) => s.replace(/#/g, '\\#');
+    const vecToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' & ')} \\end{pmatrix}`;
+    const colToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
 
-	// 5. Render
-	const topCand = predictions[0];
+    let html = `<h3>Step 1: The Dot Product (Projection)</h3>
+                <p>We calculate the alignment between the hidden state and every word vector.</p>`;
 
-	// LaTeX Helpers
-	const vecToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' & ')} \\end{pmatrix}`;
-	const colToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
+    // Show top 3 exhaustive derivations
+    predictions.forEach((cand, idx) => {
+        const derivation = h_last.map((h_val, i) => 
+            `(${h_val.toFixed(2)} \\cdot ${cand.w_row[i].toFixed(2)})`
+        ).join(' + ');
 
-	let html = `
-	<div style="margin-bottom: 25px;">
-	    <p>1. Logit Calculation</p>
-	    <div style="overflow-x: auto; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem;">
-		$$ \\text{Logit}("${topCand.word}") = h_{\\text{final}} \\cdot W_{\\text{vocab}}^T["${topCand.word}"] $$
-		$$ \\underbrace{${topCand.logit.toFixed(2)}}_{\\text{Score}} = \\underbrace{${vecToTex(h_last)}}_{h_{\\text{final}}} \\cdot \\underbrace{${colToTex(topCand.w_row)}}_{W^T_{\\text{vocab}}} $$
-	    </div>
-	</div>
+        html += `
+        <div style="margin-bottom: 25px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+            <p style="font-weight:bold; color:#1e293b; margin-top:0;">Option ${idx + 1}: "${cand.word}"</p>
+            
+            $$ \\underbrace{${cand.logit.toFixed(2)}}_{\\text{Logit}("${texSafe(cand.word)}")} = 
+               \\underbrace{${vecToTex(h_last)}}_{h_{\\text{final}}} \\cdot 
+               \\underbrace{${colToTex(cand.w_row)}}_{W^T_{\\text{vocab}}["${texSafe(cand.word)}"]} $$
 
-	<div style="margin-bottom: 25px;">
-	    <p>2. Softmax ($T=${temperature}$)</p>
-	    <div style="overflow-x: auto; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem;">
-		$$ P("${topCand.word}") = \\frac{e^{${topCand.logit.toFixed(2)} / ${temperature}}}{\\sum e^{z_j / ${temperature}}} = \\mathbf{${(topCand.prob * 100).toFixed(1)}\\%} $$
-	    </div>
-	</div>
+            <div style="margin: 15px 0; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
+                $$ \\text{Expansion: } \\underbrace{${derivation}}_{\\sum (h_i \\cdot w_i)} = ${cand.logit.toFixed(2)} $$
+            </div>
 
-	<p>Next Token Probabilities:</p>
-	<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+            $$ \\underbrace{${(cand.prob * 100).toFixed(1)}\\%}_{P("${texSafe(cand.word)}")} = 
+               \\frac{\\underbrace{e^{${cand.logit.toFixed(2)} / ${temperature}}}_{${cand.expVal.toFixed(3)}}}
+               {\\underbrace{${sumExps.toFixed(3)}}_{\\sum_{j=1}^{V} e^{z_j/T}}} $$
+        </div>`;
+    });
+
+    html += `
+        <div style="background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px solid #3b82f6; margin-bottom: 25px;">
+            <p style="font-weight:bold; margin-top:0;">Step 2: The Softmax Denominator</p>
+            <p style="font-size:0.85rem;">To get percentages, we sum the exponents of <i>all</i> ${vocabulary.length} vocabulary words:</p>
+            $$ \\sum e^{z/T} = ${predictions.slice(0, 3).map(p => p.expVal.toFixed(2)).join(' + ')} + \\dots = \\mathbf{${sumExps.toFixed(3)}} $$
+        </div>
     `;
 
-	predictions.slice(0, 8).forEach(p => {
-		const isTop = p === predictions[0];
-		html += `
-	    <button onclick="appendToken('${p.word}')" 
-		style="flex: 1 1 140px; border: 1px solid ${isTop ? '#3b82f6' : '#cbd5e1'}; 
-		background: ${isTop ? '#eff6ff' : '#fff'}; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
-		<div style="display: flex; justify-content: space-between; font-weight: bold; color: #1e293b;">
-		    <span>"${p.word}"</span>
-		    <span>${(p.prob * 100).toFixed(0)}%</span>
-		</div>
-		<div style="width: 100%; background: #e2e8f0; height: 4px; border-radius: 2px; margin-top:5px;">
-		    <div style="width: ${p.prob * 100}%; background: #3b82f6; height: 100%;"></div>
-		</div>
-	    </button>
-	`;
-	});
+    html += `<h3>Next Token Probabilities:</h3>
+             <div style="display: flex; flex-wrap: wrap; gap: 10px;">`;
 
-	html += `</div>`;
-	container.innerHTML = html;
+    predictions.slice(0, 8).forEach(p => {
+        const isTop = p === predictions[0];
+        html += `
+            <button onclick="appendToken('${p.word}')" 
+                style="flex: 1 1 140px; border: 1px solid ${isTop ? '#3b82f6' : '#cbd5e1'}; 
+                background: ${isTop ? '#eff6ff' : '#fff'}; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+                <div style="display: flex; justify-content: space-between; font-weight: bold; color: #1e293b;">
+                    <span>"${p.word}"</span>
+                    <span>${(p.prob * 100).toFixed(0)}%</span>
+                </div>
+                <div style="width: 100%; background: #e2e8f0; height: 4px; border-radius: 2px; margin-top:5px;">
+                    <div style="width: ${p.prob * 100}%; background: #3b82f6; height: 100%;"></div>
+                </div>
+            </button>
+        `;
+    });
 
-	if (typeof render_temml === "function") render_temml();
+    html += `</div>`;
+    container.innerHTML = html;
+
+    if (typeof render_temml === "function") render_temml();
 }
 
 // Make sure this is globally available
