@@ -227,7 +227,7 @@ function transformer_tokenize() {
 	const engine = new AttentionEngine({
 		d_model: parseInt(document.getElementById('transformer-dimension-model').value),
 		n_heads: parseInt(document.getElementById('transformer-heads').value),
-		containerId: "transformer-causal-mask-display" // Or any specific div
+		containerId: "mha-calculation-details"
 	});
 
 	// 2. Prepare h0 (Tokens x Dimensions)
