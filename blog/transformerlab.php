@@ -68,7 +68,13 @@ $$PE_{(\text{pos}, 2i)} = \sin(\text{pos} / 10000^{2i/d_\text{model}})$$
 $$PE_{(\text{pos}, 2i+1)} = \cos(\text{pos} / 10000^{2i/d_\text{model}})$$
 
 This positional signal allows the model to infer relative positions if it learns to, while the Feed-Forward Network (FFN) utilizes these unique 'geometric fingerprints' to apply position-specific logic.
+</div>
 
+<div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+
+<div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
+
+<div class="md">
 ### Does Positional Encoding "Break" the Word's Meaning?
 When you add "random" values to a vector, you change its location in the multidimensional embedding space. However, this doesn't "break" the word for two specific reasons:
 

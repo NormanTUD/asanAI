@@ -1,6 +1,84 @@
 /**
- * Main entry point: Updated to handle embedding rendering
- * Based on the Transformer architecture principles (Vaswani et al., 2017)
+ * Part A: Logic to calculate and render the injection tables
+ */
+function calculate_positional_injection(tokens, d_model) {
+    const resultsContainer = document.getElementById('transformer-pe-integration-results');
+    if (!resultsContainer) return;
+
+    let html = `<h3>Vector Injection (Inference Sequence)</h3>`;
+    
+    tokens.forEach((token, pos) => {
+        const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+        const semanticVec = Array.from({length: d_model}, (_, i) => 
+            parseFloat(((Math.abs(hash * (i + 1)) % 1000) / 500 - 1).toFixed(3))
+        );
+
+        const peVec = [];
+        for (let i = 0; i < d_model; i += 2) {
+            let div_term = Math.pow(10000, (2 * i) / d_model);
+            peVec[i] = Math.sin(pos / div_term);
+            if (i + 1 < d_model) peVec[i + 1] = Math.cos(pos / div_term);
+        }
+
+        const combined = semanticVec.map((val, i) => (val + peVec[i]).toFixed(3));
+        
+        html += `
+            <div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff;">
+                <strong>Pos ${pos}: ${token}</strong>
+                <table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px;">
+                    <tr><td>PE (Sin/Cos)</td>${peVec.map(v => `<td>${v.toFixed(3)}</td>`).join('')}</tr>
+                    <tr style="font-weight:bold;"><td>Combined</td>${combined.map(v => `<td>${v}</td>`).join('')}</tr>
+                </table>
+            </div>`;
+    });
+    resultsContainer.innerHTML = html;
+}
+
+/**
+ * Part B: Logic to render the Wave Plot (Sinusoidal Patterns)
+ */
+function render_positional_waves(d_model, tokens) {
+    const traces = [];
+    const resolution = 0.1;
+    const maxPos = Math.max(10, tokens.length);
+
+    for (let i = 0; i < d_model; i++) {
+        let x = [], y = [];
+        for (let p = 0; p <= maxPos; p += resolution) {
+            let div_term = Math.pow(10000, (2 * (Math.floor(i/2))) / d_model);
+            let val = (i % 2 === 0) ? Math.sin(p / div_term) : Math.cos(p / div_term);
+            x.push(p);
+            y.push(val);
+        }
+        traces.push({
+            x: x, y: y, mode: 'lines', 
+            name: `Dim ${i} ${i%2===0?'Sin':'Cos'}`,
+            line: { shape: 'spline', width: 2 }
+        });
+    }
+
+    // Add markers for actual token positions
+    tokens.forEach((token, pos) => {
+        traces.push({
+            x: [pos], y: [0], mode: 'markers+text',
+            text: [token], textposition: 'top center',
+            marker: { size: 12, color: '#3b82f6' },
+            name: `Pos ${pos}: ${token}`, showlegend: false
+        });
+    });
+
+    const layout = {
+        title: 'Sinusoidal Positional Waves',
+        margin: { t: 40, b: 40, l: 40, r: 20 },
+        xaxis: { title: 'Token Position (pos)' },
+        yaxis: { title: 'PE Value', range: [-1.1, 1.1] }
+    };
+
+    Plotly.newPlot('transformer-pe-wave-plot', traces, layout);
+}
+
+/**
+ * Controller: Updated transformer_tokenize
  */
 function transformer_tokenize() {
     const masterInput = document.getElementById('transformer-master-token-input');
@@ -9,20 +87,20 @@ function transformer_tokenize() {
     
     if (!masterInput || !trainingInput || !dimSlider) return;
 
-    const text = trainingInput.value;
+    const text = masterInput.value; // The Prediction/Inference text
     const trainingText = trainingInput.value;
-    const dimensions = parseInt(dimSlider.value);
+    const d_model = parseInt(dimSlider.value);
 
-    // 1. Build vocabulary from training data
+    // 1. Process Tokens
     const trainingTokens = transformer_tokenize_render(trainingText, "transformer-viz-bpe", true);
     const vocabulary = new Set(trainingTokens);
-
-    // 2. Tokenize input and filter by vocabulary
     const inputTokens = transformer_tokenize_render(text, "transformer-viz-bpe-inference", false);
     const knownTokens = inputTokens.filter(token => vocabulary.has(token));
-    
-    // 3. Render Plotly Visualization (only known tokens)
-    render_embedding_plot(knownTokens, dimensions);
+
+    // 2. Call Modular Components
+    calculate_positional_injection(knownTokens, d_model);
+    render_positional_waves(d_model, knownTokens);
+    render_embedding_plot(knownTokens, d_model);
 }
 
 function render_embedding_plot(tokens, dimensions) {
