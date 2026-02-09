@@ -48,13 +48,6 @@ https://nlp.seas.harvard.edu/2018/04/03/attention.html
               oninput="run_transformer_demo()">the king is wise and the queen is brave</textarea>
 </div>
 
-<div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
-    <label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
-    <input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" 
-           value="The king"
-           oninput="run_transformer_demo()">
-</div>
-
 <div class="md">
 ## The Illusion of Locality: Beyond the Grandmother Neuron
 Meaning in a Transformer is **holistic and distributed**. In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers to a singular neuron triggering for a complex concept. In the Transformer, no such neuron exists. Meaning is an emergent property of the entire vector space; it is held in the collective ratios of the hidden states. They don't inherently *mean* anything; they simply function to produce the desired output. This also holds true for all single parts of the Transformer, which we'll cover now.
@@ -289,6 +282,16 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 
 <div class="md">
     ## 10. The Output Projector: From Abstract to Concrete
+</div>
+
+<div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
+    <label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
+    <input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" 
+           value="The king"
+           oninput="run_transformer_demo()">
+</div>
+
+<div class="md">
     We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_U$ or $W_{vocab}$). This effectively asks: "How similar is our current thought vector to every known word vector?"
 </div>
 

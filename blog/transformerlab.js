@@ -339,12 +339,14 @@ function run_transformer_demo() {
 
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
     const container = document.getElementById('transformer-output-projection');
+    const masterInput = document.getElementById('transformer-master-token-input');
+    
     if (!container) return;
 
     const lastIdx = h_final.length - 1;
     const h_last = h_final[lastIdx];
 
-    // 1. Weights & Logits
+    // 1. Weights & Logits Calculation
     const W_vocab = vocabulary.map(word => {
         const hash = word.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
         return Array.from({ length: d_model }, (_, i) => {
@@ -359,7 +361,7 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
         return { word, val, w_row };
     });
 
-    // 2. Softmax Math
+    // 2. Softmax Logic
     const scaledLogits = logits.map(item => item.val / temperature);
     const maxLogit = Math.max(...scaledLogits); 
     const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
@@ -379,50 +381,52 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
     const vecToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' & ')} \\end{pmatrix}`;
     const colToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
 
-    let html = `<h3>Step 1: The Dot Product (Projection)</h3>
-                <p>We calculate the alignment between the hidden state and every word vector.</p>`;
+    let html = `<h3>1. Projection Derivations</h3>
+                <p>Aligning the hidden state with each vocabulary vector:</p>`;
 
-    // Show top 3 exhaustive derivations
-    predictions.forEach((cand, idx) => {
+    // Show derivation for top 5 to keep UI manageable
+    predictions.slice(0, 5).forEach((cand, idx) => {
         const derivation = h_last.map((h_val, i) => 
             `(${h_val.toFixed(2)} \\cdot ${cand.w_row[i].toFixed(2)})`
         ).join(' + ');
 
         html += `
         <div style="margin-bottom: 25px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
-            <p style="font-weight:bold; color:#1e293b; margin-top:0;">Option ${idx + 1}: "${cand.word}"</p>
+            <p style="font-weight:bold; color:#3b82f6; margin-top:0;">Option ${idx + 1}: "${cand.word}"</p>
             
-            $$ \\underbrace{${cand.logit.toFixed(2)}}_{\\text{Logit}("${texSafe(cand.word)}")} = 
-               \\underbrace{${vecToTex(h_last)}}_{h_{\\text{final}}} \\cdot 
-               \\underbrace{${colToTex(cand.w_row)}}_{W^T_{\\text{vocab}}["${texSafe(cand.word)}"]} $$
-
-            <div style="margin: 15px 0; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
-                $$ \\text{Expansion: } \\underbrace{${derivation}}_{\\sum (h_i \\cdot w_i)} = ${cand.logit.toFixed(2)} $$
+            <div style="margin-bottom:10px;">
+                $$ \\underbrace{${cand.logit.toFixed(2)}}_{\\text{Logit}} = 
+                   \\underbrace{${vecToTex(h_last)}}_{h_{\\text{final}}} \\cdot 
+                   \\underbrace{${colToTex(cand.w_row)}}_{W^T_{\\text{vocab}}["${texSafe(cand.word)}"]} $$
             </div>
 
-            $$ \\underbrace{${(cand.prob * 100).toFixed(1)}\\%}_{P("${texSafe(cand.word)}")} = 
-               \\frac{\\underbrace{e^{${cand.logit.toFixed(2)} / ${temperature}}}_{${cand.expVal.toFixed(3)}}}
-               {\\underbrace{${sumExps.toFixed(3)}}_{\\sum_{j=1}^{V} e^{z_j/T}}} $$
+            <div style="font-size:0.8rem; color:#64748b; margin-bottom:10px;">
+                $$ \\text{Sum: } \\underbrace{${derivation}}_{\\sum (h_i \\cdot w_i)} = ${cand.logit.toFixed(2)} $$
+            </div>
+
+            <div style="background: #ffffff; padding: 10px; border-radius: 4px; border: 1px dashed #cbd5e1;">
+                $$ \\underbrace{${(cand.prob * 100).toFixed(1)}\\%}_{P("${texSafe(cand.word)}")} = 
+                   \\frac{\\overbrace{e^{${cand.logit.toFixed(2)} / ${temperature}}}^{${cand.expVal.toFixed(3)}}}
+                   {\\underbrace{${sumExps.toFixed(3)}}_{\\sum e^{z_j/T}}} $$
+            </div>
         </div>`;
     });
 
-    html += `
-        <div style="background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px solid #3b82f6; margin-bottom: 25px;">
-            <p style="font-weight:bold; margin-top:0;">Step 2: The Softmax Denominator</p>
-            <p style="font-size:0.85rem;">To get percentages, we sum the exponents of <i>all</i> ${vocabulary.length} vocabulary words:</p>
-            $$ \\sum e^{z/T} = ${predictions.slice(0, 3).map(p => p.expVal.toFixed(2)).join(' + ')} + \\dots = \\mathbf{${sumExps.toFixed(3)}} $$
-        </div>
-    `;
+    // The Interactive Button List
+    html += `<h3>2. Final Probabilities (Click to Generate)</h3>
+             <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">`;
 
-    html += `<h3>Next Token Probabilities:</h3>
-             <div style="display: flex; flex-wrap: wrap; gap: 10px;">`;
-
-    predictions.slice(0, 8).forEach(p => {
+    predictions.slice(0, 10).forEach(p => {
         const isTop = p === predictions[0];
+        // Special onclick logic to update the master input and restart simulation
         html += `
-            <button onclick="appendToken('${p.word}')" 
-                style="flex: 1 1 140px; border: 1px solid ${isTop ? '#3b82f6' : '#cbd5e1'}; 
-                background: ${isTop ? '#eff6ff' : '#fff'}; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;">
+            <button onclick="
+                const input = document.getElementById('transformer-master-token-input');
+                input.value += (input.value ? ' ' : '') + '${p.word}';
+                run_transformer_demo();
+            " 
+            style="flex: 1 1 150px; border: 1px solid ${isTop ? '#3b82f6' : '#cbd5e1'}; 
+            background: ${isTop ? '#eff6ff' : '#fff'}; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left; transition: transform 0.1s;">
                 <div style="display: flex; justify-content: space-between; font-weight: bold; color: #1e293b;">
                     <span>"${p.word}"</span>
                     <span>${(p.prob * 100).toFixed(0)}%</span>
@@ -435,6 +439,15 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
     });
 
     html += `</div>`;
+    
+    // Add a summary of the "Total Pool" for hand-calculators
+    html += `
+        <div style="margin-top: 20px; font-size: 0.85rem; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+            Note: Sum of all $e^{z/T}$ (Denominator) = <b>${sumExps.toFixed(3)}</b>. 
+            All probabilities above are derived by dividing the individual token's exponent by this total pool.
+        </div>
+    `;
+
     container.innerHTML = html;
 
     if (typeof render_temml === "function") render_temml();
