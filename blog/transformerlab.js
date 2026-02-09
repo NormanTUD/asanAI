@@ -104,39 +104,52 @@ class AttentionEngine {
 	}
 
 	generateMathTable(head, tokens) {
-		const { weights, Qi, Ki } = head;
+		const { weights, Qi, Ki, Vi } = head;
 		const K_T = this.transpose(Ki);
 
-		// Helper to turn [1, 2, 3] into a vertical pmatrix LaTeX string
+		// Helfer für vertikale Vektoren
 		const toPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
 
-		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.8rem;">`;
+		// Helfer für horizontale Vektoren
+		const toRowPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
 
-		// Header: Token Keys (Columns)
+		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.65rem;">`;
+
+		// Header
 		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
-		tokens.forEach((t, i) => {
-			const k_vec_column = K_T.map(row => row[i]); // Extract column i from K_T
+		tokens.forEach((t, j) => {
+			const k_vec_column = K_T.map(row => row[j]);
 			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
-		${t}<br><small>$\\underbrace{${toPmatrix(k_vec_column)}}_{K^T}$</small>
+		${t}<br><small>$\\underbrace{${toPmatrix(k_vec_column)}}_{\\substack{K^T_{${j}} \\\\ \\text{Emb. } \\text{"${t}"}}}$</small>
 	    </th>`;
 		});
 		html += `</tr>`;
 
-		// Rows: Token Queries
+		// Zeilen
 		weights.forEach((row, i) => {
 			html += `<tr>`;
 			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc; font-weight: bold;">
-		${tokens[i]}<br><small>$\\underbrace{${toPmatrix(Qi[i])}}_{Q}$</small>
+		${tokens[i]}<br><small>$\\underbrace{${toPmatrix(Qi[i])}}_{\\substack{Q_{${i}} \\\\ \\text{Emb. } \\text{"${tokens[i]}"}}}$</small>
 	    </td>`;
 
 			row.forEach((weight, j) => {
-				// Color scaling: White (1) to Blue (0.5)
 				const intensity = Math.floor(255 - (weight * 150));
 				const bgColor = `rgb(${intensity}, ${intensity}, 255)`;
 
-				// Full Equation Construction for the dot product
-				const dotParts = Qi[i].map((q_val, idx) => `(${q_val.toFixed(2)} \\cdot ${K_T[idx][j].toFixed(2)})`);
-				const cellEq = `\\sigma \\left( \\frac{${dotParts.join(' + ')}}{\\sqrt{${this.d_k}}} \\right) = ${weight.toFixed(3)}`;
+				const kj_vec = K_T.map(r => r[j]);
+				const dk_int = Math.round(this.d_k);
+
+				// Berechnung des Endergebnisses: Gewicht * V_j
+				const resultVec = Vi[j].map(v => v * weight);
+
+				const cellEq = `\\underbrace{ 
+		    \\text{SoftMax} \\left( \\frac{ 
+			\\underbrace{${toRowPmatrix(Qi[i])}}_{\\substack{Q_{${i}} \\\\ \\text{Emb. } \\text{"${tokens[i]}"}}} \\cdot 
+			\\underbrace{${toPmatrix(kj_vec)}}_{\\substack{K^T_{${j}} \\\\ \\text{Emb. } \\text{"${tokens[j]}"}}} 
+		    }{\\sqrt{${dk_int}}} \\right) 
+		}_{\\text{Gewicht } ${weight.toFixed(3)}} 
+		\\cdot \\underbrace{${toPmatrix(Vi[j])}}_{\\substack{V_{${j}} \\\\ \\text{Emb. } \\text{"${tokens[j]}"}}} 
+		= \\underbrace{${toPmatrix(resultVec)}}_{\\text{Result}}`;
 
 				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">
 		    $${cellEq}$
