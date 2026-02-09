@@ -9,6 +9,12 @@ https://nlp.seas.harvard.edu/2018/04/03/attention.html
 </div>
 
 <div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
+	<span id="dim-display" style="font-weight: bold; font-size: 1.2rem; color: #3b82f6; margin-left: 10px;">3</span>
+    <label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
+    <input type="range" id="transformer-dimension-model" min="1" max="3" value="3"
+           style="width: 200px; vertical-align: middle;"
+           oninput="document.getElementById('dim-val').innerText = this.value; transformer_tokenize();">
+
     <label style="font-weight: bold; display: block; margin-bottom: 8px;">Input:</label>
     <input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" 
            value="The"
@@ -33,7 +39,16 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 
 * **Embedding Space (Static):** This is the initial lookup table where each token is assigned a fixed vector. At this stage, the vector for "bank" is always the same, regardless of context. This is where the **Hidden State** $h_0$ starts at the beginning of the process.
 * **Feature Space (Dynamic):** As vectors pass through the layers, they enter the Feature Space. Here, the representation of a word is no longer fixed; it "migrates" based on the surrounding tokens. The hidden states $h_0, h_1, \dots, h_n$ represent the coordinates of the word as it is refined by the model's internal logic. The **Feature Space** is highly abstract, and not humanly interpretable anymore.
- 
+</div>
+
+<div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
+	<div id="transformer-plotly-space" style="width: 100%; height: 500px; background: white; border-radius: 8px;"></div>
+    
+    <div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;">
+        </div>
+</div>
+
+<div class="md">
 ## 3. Positional Encoding
 To fix the lack of sequence order, we add a "position signal" to each token's embedding. This results in our initial hidden state, $h_{0}$:
 
