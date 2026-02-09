@@ -107,24 +107,26 @@ class AttentionEngine {
 		const { weights, Qi, Ki } = head;
 		const K_T = this.transpose(Ki);
 
+		// Helper to turn [1, 2, 3] into a vertical pmatrix LaTeX string
+		const toPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
+
 		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.8rem;">`;
 
 		// Header: Token Keys (Columns)
 		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
 		tokens.forEach((t, i) => {
-			const k_vec = K_T.map(row => row[i].toFixed(2)).join(', ');
+			const k_vec_column = K_T.map(row => row[i]); // Extract column i from K_T
 			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
-		${t}<br><small>$\\underbrace{[${k_vec}]}_{K^T}$</small>
+		${t}<br><small>$\\underbrace{${toPmatrix(k_vec_column)}}_{K^T}$</small>
 	    </th>`;
 		});
 		html += `</tr>`;
 
 		// Rows: Token Queries
 		weights.forEach((row, i) => {
-			const q_vec = Qi[i].map(v => v.toFixed(2)).join(', ');
 			html += `<tr>`;
 			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc; font-weight: bold;">
-		${tokens[i]}<br><small>$\\underbrace{[${q_vec}]}_{Q}$</small>
+		${tokens[i]}<br><small>$\\underbrace{${toPmatrix(Qi[i])}}_{Q}$</small>
 	    </td>`;
 
 			row.forEach((weight, j) => {
@@ -132,7 +134,7 @@ class AttentionEngine {
 				const intensity = Math.floor(255 - (weight * 150));
 				const bgColor = `rgb(${intensity}, ${intensity}, 255)`;
 
-				// Full Equation Construction
+				// Full Equation Construction for the dot product
 				const dotParts = Qi[i].map((q_val, idx) => `(${q_val.toFixed(2)} \\cdot ${K_T[idx][j].toFixed(2)})`);
 				const cellEq = `\\sigma \\left( \\frac{${dotParts.join(' + ')}}{\\sqrt{${this.d_k}}} \\right) = **${weight.toFixed(3)}**`;
 
@@ -145,14 +147,6 @@ class AttentionEngine {
 
 		html += `</table>`;
 		return html;
-	}
-
-	generateLatexTable(matrix, rows, cols, title) {
-		let tex = `<h4>${title}</h4> $$ \\begin{matrix} & ` + cols.map(c => `\\text{${c}}`).join(" & ") + " \\\\ ";
-		matrix.forEach((row, i) => {
-			tex += `\\text{${rows[i]}} & ` + row.map(v => v.toFixed(2)).join(" & ") + " \\\\ ";
-		});
-		return tex + "\\end{matrix} $$";
 	}
 }
 
