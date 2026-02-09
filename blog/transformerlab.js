@@ -596,30 +596,30 @@ function render_h1_logic(h0, multiHeadOutput) {
  * Returns: Array (Matrix of Tokens x d_model)
  */
 function updateConcatenationDisplay(headData, tokens) {
-    const container = document.getElementById('transformer-concat-viz');
-    if (!container || !headData.length) return [];
+	const container = document.getElementById('transformer-concat-viz');
+	if (!container || !headData.length) return [];
 
-    const matrixToPmatrix = (matrix) => {
-        return `\\begin{pmatrix} ` + 
-            matrix.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ') + 
-            ` \\end{pmatrix}`;
-    };
+	const matrixToPmatrix = (matrix) => {
+		return `\\begin{pmatrix} ` + 
+			matrix.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ') + 
+			` \\end{pmatrix}`;
+	};
 
-    const headMatricesLaTeX = headData.map((h, i) => {
-        return `\\underbrace{${matrixToPmatrix(h.context)}}_{\\text{Head } ${i + 1}}`;
-    }).join(', ');
+	const headMatricesLaTeX = headData.map((h, i) => {
+		return `\\underbrace{${matrixToPmatrix(h.context)}}_{\\text{Head } ${i + 1}}`;
+	}).join(', ');
 
-    // Perform the actual numerical concatenation
-    const fullMatrixData = tokens.map((_, tIdx) => {
-        return [].concat(...headData.map(h => h.context[tIdx]));
-    });
+	// Perform the actual numerical concatenation
+	const fullMatrixData = tokens.map((_, tIdx) => {
+		return [].concat(...headData.map(h => h.context[tIdx]));
+	});
 
-    const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrix(fullMatrixData)}}_{\\text{Total } d_{\\text{model}}}`;
-    container.innerHTML = `$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$`;
-    
-    if (typeof render_temml === "function") render_temml();
+	const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrix(fullMatrixData)}}_{\\text{Total } d_{\\text{model}}}`;
+	container.innerHTML = `$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$`;
 
-    return fullMatrixData; // Now returns the calculated value
+	if (typeof render_temml === "function") render_temml();
+
+	return fullMatrixData; // Now returns the calculated value
 }
 
 /**
@@ -672,24 +672,24 @@ function concatenateHeads(headData) {
  * Hilfsfunktion zur Initialisierung von Zufallsgewichten (Glorot)
  */
 function initFFNWeights(rows, cols) {
-    const limit = Math.sqrt(6 / (rows + cols));
-    return Array.from({ length: rows }, () => 
-        Array.from({ length: cols }, () => (Math.random() * 2 * limit) - limit)
-    );
+	const limit = Math.sqrt(6 / (rows + cols));
+	return Array.from({ length: rows }, () => 
+		Array.from({ length: cols }, () => (Math.random() * 2 * limit) - limit)
+	);
 }
 
 /**
  * Validiert die Form der übergebenen Matrizen/Vektoren
  */
 function validateShape(name, data, expectedRows, expectedCols) {
-    if (!data) return false;
-    const actualRows = data.length;
-    const actualCols = Array.isArray(data[0]) ? data[0].length : 1;
-    
-    if (actualRows !== expectedRows || actualCols !== expectedCols) {
-        throw new Error(`Shape Mismatch for ${name}: Expected [${expectedRows}, ${expectedCols}], got [${actualRows}, ${actualCols}]`);
-    }
-    return true;
+	if (!data) return false;
+	const actualRows = data.length;
+	const actualCols = Array.isArray(data[0]) ? data[0].length : 1;
+
+	if (actualRows !== expectedRows || actualCols !== expectedCols) {
+		throw new Error(`Shape Mismatch for ${name}: Expected [${expectedRows}, ${expectedCols}], got [${actualRows}, ${actualCols}]`);
+	}
+	return true;
 }
 
 /**
@@ -698,82 +698,82 @@ function validateShape(name, data, expectedRows, expectedCols) {
  * @param {Object} params - {W1, b1, W2, b2} (optional)
  */
 function run_ffn_block(h1, params = {}) {
-    const d_model = h1[0].length;
-    const d_ff = d_model * 4;
+	const d_model = h1[0].length;
+	const d_ff = d_model * 4;
 
-    // 1. Gewichte & Biases setzen oder zufällig initialisieren
-    let W1 = params.W1, b1 = params.b1, W2 = params.W2, b2 = params.b2;
+	// 1. Gewichte & Biases setzen oder zufällig initialisieren
+	let W1 = params.W1, b1 = params.b1, W2 = params.W2, b2 = params.b2;
 
-    // Validierung oder Fallback
-    if (W1) validateShape('W1', W1, d_model, d_ff); else W1 = initFFNWeights(d_model, d_ff);
-    if (b1) validateShape('b1', b1, d_ff, 1); else b1 = new Array(d_ff).fill(0).map(() => Math.random() * 0.01);
-    if (W2) validateShape('W2', W2, d_ff, d_model); else W2 = initFFNWeights(d_ff, d_model);
-    if (b2) validateShape('b2', b2, d_model, 1); else b2 = new Array(d_model).fill(0).map(() => Math.random() * 0.01);
+	// Validierung oder Fallback
+	if (W1) validateShape('W1', W1, d_model, d_ff); else W1 = initFFNWeights(d_model, d_ff);
+	if (b1) validateShape('b1', b1, d_ff, 1); else b1 = new Array(d_ff).fill(0).map(() => Math.random() * 0.01);
+	if (W2) validateShape('W2', W2, d_ff, d_model); else W2 = initFFNWeights(d_ff, d_model);
+	if (b2) validateShape('b2', b2, d_model, 1); else b2 = new Array(d_model).fill(0).map(() => Math.random() * 0.01);
 
-    // 2. Schritt: Expansion & ReLU -> out_L1 = ReLU(h1 * W1 + b1)
-    const out_L1 = h1.map(row => {
-        return b1.map((bias, j) => {
-            let sum = bias;
-            for (let i = 0; i < d_model; i++) sum += row[i] * W1[i][j];
-            return Math.max(0, sum);
-        });
-    });
+	// 2. Schritt: Expansion & ReLU -> out_L1 = ReLU(h1 * W1 + b1)
+	const out_L1 = h1.map(row => {
+		return b1.map((bias, j) => {
+			let sum = bias;
+			for (let i = 0; i < d_model; i++) sum += row[i] * W1[i][j];
+			return Math.max(0, sum);
+		});
+	});
 
-    // 3. Schritt: Projektion -> out_FFN = out_L1 * W2 + b2
-    const out_FFN = out_L1.map(row => {
-        return b2.map((bias, j) => {
-            let sum = bias;
-            for (let i = 0; i < d_ff; i++) sum += row[i] * W2[i][j];
-            return sum;
-        });
-    });
+	// 3. Schritt: Projektion -> out_FFN = out_L1 * W2 + b2
+	const out_FFN = out_L1.map(row => {
+		return b2.map((bias, j) => {
+			let sum = bias;
+			for (let i = 0; i < d_ff; i++) sum += row[i] * W2[i][j];
+			return sum;
+		});
+	});
 
-    // 4. Schritt: LayerNorm & Residual -> h2 = h1 + LN(out_FFN)
-    const ffn_normed = calculateLayerNorm(out_FFN);
-    const h2 = h1.map((row, i) => row.map((val, j) => val + ffn_normed[i][j]));
+	// 4. Schritt: LayerNorm & Residual -> h2 = h1 + LN(out_FFN)
+	const ffn_normed = calculateLayerNorm(out_FFN);
+	const h2 = h1.map((row, i) => row.map((val, j) => val + ffn_normed[i][j]));
 
-    // Visualisierung triggern
-    render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2);
+	// Visualisierung triggern
+	render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2);
 
-    return h2;
+	return h2;
 }
 
 /**
  * Erzeugt LaTeX-Output für Matrizen ohne Limitierungen.
  */
 function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2) {
-    // Helper: Rendert absolut JEDE Zahl in der Matrix
-    const rawMP = (m) => {
-        const rows = m.map(r => r.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ');
-        return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
-    };
+	// Helper: Rendert absolut JEDE Zahl in der Matrix
+	const rawMP = (m) => {
+		const rows = m.map(r => r.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ');
+		return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
+	};
 
-    // Helper: Rendert JEDE Zahl im Vektor
-    const rawVP = (v) => {
-        const content = v.map(val => val.toFixed(2)).join(' & ');
-        return `\\begin{pmatrix} ${content} \\end{pmatrix}`;
-    };
+	// Helper: Rendert JEDE Zahl im Vektor
+	const rawVP = (v) => {
+		const content = v.map(val => val.toFixed(2)).join(' & ');
+		return `\\begin{pmatrix} ${content} \\end{pmatrix}`;
+	};
 
-    // Anzeige Schritt 1
-    document.getElementById('ffn-step-1').innerHTML = `
-        $$ \\text{out}_{L1} = \\text{ReLU}(h_1 W_1 + b_1) $$
-        $$ \\text{out}_{L1} = \\text{ReLU} ( \\underbrace{${rawMP(h1)}}_{h_1} \\cdot \\underbrace{${rawMP(W1)}}_{W_1} + \\underbrace{${rawVP(b1)}}_{b_1} ) = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} $$
+	// Anzeige Schritt 1
+	document.getElementById('ffn-step-1').innerHTML = `
+	$$ \\text{out}_{L1} = \\text{ReLU}(h_1 W_1 + b_1) $$
+	$$ \\text{out}_{L1} = \\text{ReLU} ( \\underbrace{${rawMP(h1)}}_{h_1} \\cdot \\underbrace{${rawMP(W1)}}_{W_1} + \\underbrace{${rawVP(b1)}}_{b_1} ) = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} $$
     `;
 
-    // Anzeige Schritt 2
-    document.getElementById('ffn-step-2').innerHTML = `
-        $$ \\text{out}_{\\text{FFN}} = \\text{out}_{L1} W_2 + b_2 $$
-        $$ \\text{out}_{\\text{FFN}} = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} \\cdot \\underbrace{${rawMP(W2)}}_{W_2} + \\underbrace{${rawVP(b2)}}_{b_2} = \\underbrace{${rawMP(out_FFN)}}_{\\text{out}_{\\text{FFN}}} $$
+	// Anzeige Schritt 2
+	document.getElementById('ffn-step-2').innerHTML = `
+	$$ \\text{out}_{\\text{FFN}} = \\text{out}_{L1} W_2 + b_2 $$
+	$$ \\text{out}_{\\text{FFN}} = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} \\cdot \\underbrace{${rawMP(W2)}}_{W_2} + \\underbrace{${rawVP(b2)}}_{b_2} = \\underbrace{${rawMP(out_FFN)}}_{\\text{out}_{\\text{FFN}}} $$
     `;
 
-    // Anzeige Schritt 3 (Finale h2 Gleichung)
-    document.getElementById('ffn-step-3').innerHTML = `
-        $$ h_2 = h_1 + \\text{LayerNorm}(\\text{out}_{\\text{FFN}}) $$
-        $$ h_2 = \\underbrace{${rawMP(h1)}}_{h_1} + \\underbrace{\\text{LayerNorm}(${rawMP(out_FFN)})}_{\\text{Stabilisierter Output}} = \\underbrace{${rawMP(h2)}}_{h_2} $$
+	// Anzeige Schritt 3 (Finale h2 Gleichung)
+	document.getElementById('ffn-step-3').innerHTML = `
+	$$ h_2 = h_1 + \\text{LayerNorm}(\\text{out}_{\\text{FFN}}) $$
+	$$ h_2 = \\underbrace{${rawMP(h1)}}_{h_1} + \\underbrace{\\text{LayerNorm}(${rawMP(out_FFN)})}_{\\text{Stabilisierter Output}} = \\underbrace{${rawMP(h2)}}_{h_2} $$
     `;
 
-    // Temml Render-Trigger
-    if (typeof render_temml === "function") render_temml();
+	// Temml Render-Trigger
+	if (typeof render_temml === "function") render_temml();
 }
 
 async function loadTransformerModule () {
