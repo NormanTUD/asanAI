@@ -245,11 +245,14 @@ The final state of this block, **$h_2$**, is formed by another residual connecti
 $$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
 </div>
 
-<div id="transformer-ffn-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #f59e0b; border-radius: 12px; background: #fffbeb; overflow-x: auto;">
-</div>
+<div id="transformer-ffn-step1" style="margin-top: 20px; padding: 20px; border: 1px solid #f59e0b; border-radius: 12px; background: #fffbeb; overflow-x: auto;">
+    </div>
+
+<div id="transformer-ffn-step2" style="margin-top: 20px; padding: 20px; border: 1px solid #d97706; border-radius: 12px; background: #fff7ed; overflow-x: auto;">
+    </div>
 
 <div id="transformer-h2-final-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #ef4444; border-radius: 12px; background: #fef2f2; overflow-x: auto;">
-</div>
+    </div>
 
 <div class="md">
 ## 9. Generalizing the Flow: The $N$-Layer Recurrence
