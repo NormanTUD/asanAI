@@ -254,6 +254,12 @@ $$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
 
 This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
 
+## 10. SoftMax
+</div>
+
+<div id="transformer-temperature-config" style="margin-top: 20px;"></div>
+
+<div class="md">
 ## Key Intuitions about LLMs
 
 At no point does the model manipulate symbols or rules, like non-connectionist AI systems tried to do. Everything is:

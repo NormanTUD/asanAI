@@ -99,13 +99,16 @@ function transformer_tokenize() {
 	render_embedding_plot(knownTokens, d_model);
 	render_causal_mask(knownTokens);
 
-	// Updated stats helper
 	render_architecture_stats(d_model, n_heads, n_layers, temperature);
 }
 
 function render_architecture_stats(d, h, n, t) {
-	const statsContainer = document.getElementById('transformer-pe-integration-results');
-	if (!statsContainer) return;
+	const statsContainerName = 'transformer-temperature-config';
+	const statsContainer = document.getElementById(statsContainerName);
+	if (!statsContainer) {
+		console.error(`render_architecture_stats: ${statsContainerName} not found`);
+		return;
+	}
 
 	const dv = (d / h).toFixed(2);
 	const infoHtml = `
