@@ -9,7 +9,7 @@ function transformer_tokenize() {
     
     if (!masterInput || !trainingInput || !dimSlider) return;
 
-    const text = masterInput.value;
+    const text = trainingInput.value;
     const trainingText = trainingInput.value;
     const dimensions = parseInt(dimSlider.value);
 

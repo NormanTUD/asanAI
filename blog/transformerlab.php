@@ -8,6 +8,14 @@ https://nlp.seas.harvard.edu/2018/04/03/attention.html
 	The hidden harmony is better than the obvious one
 </div>
 
+<div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
+    <span id="dim-val" style="font-weight: bold; font-size: 1.2rem; color: #3b82f6; margin-left: 10px;">3</span>
+    <label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
+    <input type="range" id="transformer-dimension-model" min="1" max="3" value="3"
+           style="width: 200px; vertical-align: middle;"
+           oninput="document.getElementById('dim-val').innerText = this.value; transformer_tokenize();">
+</div>
+
 <div style="background: #fff; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px dashed #94a3b8;">
     <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
     <textarea id="transformer-training-data" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" 
@@ -15,12 +23,6 @@ https://nlp.seas.harvard.edu/2018/04/03/attention.html
 </div>
 
 <div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
-    <span id="dim-val" style="font-weight: bold; font-size: 1.2rem; color: #3b82f6; margin-left: 10px;">3</span>
-    <label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
-    <input type="range" id="transformer-dimension-model" min="1" max="3" value="3"
-           style="width: 200px; vertical-align: middle;"
-           oninput="document.getElementById('dim-val').innerText = this.value; transformer_tokenize();">
-
     <label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
     <input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" 
            value="The king"
