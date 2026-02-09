@@ -847,11 +847,17 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
 	container.appendChild(wrapper);
 
 	const traces = [];
+	let allX = [], allY = [], allZ = [];
 
 	tokens.forEach((token, i) => {
 		const color = `hsl(${(i * 137) % 360}, 70%, 50%)`;
 		const start = start_h[i];
 		const end = end_h[i];
+
+		// Collect points for range calculation
+		allX.push(start[0], end[0]);
+		allY.push(start[1] || 0, end[1] || 0);
+		allZ.push(start[2] || 0, end[2] || 0);
 
 		// The Stem (Line)
 		traces.push({
@@ -884,14 +890,22 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
 		});
 	});
 
+	// Calculate dynamic range with 10% padding
+	const getRange = (pts) => {
+		const min = Math.min(...pts);
+		const max = Math.max(...pts);
+		const pad = (max - min) * 0.1 || 0.5; // fallback if points are same
+		return [min - pad, max + pad];
+	};
+
 	const layout = {
 		autosize: true,
 		margin: { l: 0, r: 0, b: 0, t: 0 },
 		scene: {
 			aspectmode: "cube",
-			xaxis: { title: '', range: [-2, 2] },
-			yaxis: { title: '', range: [-2, 2] },
-			zaxis: { title: '', range: [-2, 2] }
+			xaxis: { title: 'Dim 1', range: getRange(allX) },
+			yaxis: { title: 'Dim 2', range: getRange(allY) },
+			zaxis: { title: 'Dim 3', range: getRange(allZ) }
 		},
 		showlegend: false
 	};
