@@ -87,7 +87,7 @@ function transformer_tokenize() {
 
 	if (!masterInput || !trainingInput || !dimSlider) return;
 
-	const text = masterInput.value; // The Prediction/Inference text
+	const text = trainingInput.value; // The Prediction/Inference text
 	const trainingText = trainingInput.value;
 	const d_model = parseInt(dimSlider.value);
 
