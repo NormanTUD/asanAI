@@ -35,7 +35,7 @@ https://nlp.seas.harvard.edu/2018/04/03/attention.html
 
     <div>
         <label style="font-weight: bold;">Network Depth ($N$): </label>
-        <span id="depth-val" style="font-weight: bold; color: #3b82f6;">1</span>
+        <span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
         <input type="range" id="transformer-depth" min="1" max="12" value="2"
                style="width: 200px; vertical-align: middle;"
                oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
