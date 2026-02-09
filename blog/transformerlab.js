@@ -322,7 +322,7 @@ function render_architecture_stats(d, h, n, t) {
 	    <em>Note: $T > 1.0$ increases randomness (flattens SoftMax), $T < 1.0$ makes predictions more confident.</em>
 	</div>
     `;
-	statsContainer.insertAdjacentHTML('afterbegin', infoHtml);
+	statsContainer.innerHTML = infoHtml;
 }
 
 function render_positional_shift_plot(tokens, d_model) {
@@ -669,34 +669,57 @@ function concatenateHeads(headData) {
 }
 
 /**
- * Berechnet den FFN Block und gibt h2 zurück.
- * Formel: h2 = h1 + LayerNorm(FFN(h1))
- * Ursprung: Vaswani et al. (2017)
+ * Hilfsfunktion zur Initialisierung von Zufallsgewichten (Glorot)
  */
+function initFFNWeights(rows, cols) {
+    const limit = Math.sqrt(6 / (rows + cols));
+    return Array.from({ length: rows }, () => 
+        Array.from({ length: cols }, () => (Math.random() * 2 * limit) - limit)
+    );
+}
+
 /**
- * Berechnet h2 = h1 + LayerNorm(FFN(h1))
- * Diese Version garantiert die Anzeige JEDER Tabellenzeile und JEDER Spalte.
+ * Validiert die Form der übergebenen Matrizen/Vektoren
  */
-function run_ffn_block(h1) {
+function validateShape(name, data, expectedRows, expectedCols) {
+    if (!data) return false;
+    const actualRows = data.length;
+    const actualCols = Array.isArray(data[0]) ? data[0].length : 1;
+    
+    if (actualRows !== expectedRows || actualCols !== expectedCols) {
+        throw new Error(`Shape Mismatch for ${name}: Expected [${expectedRows}, ${expectedCols}], got [${actualRows}, ${actualCols}]`);
+    }
+    return true;
+}
+
+/**
+ * FFN Block mit optionalen Gewichten und Biases
+ * @param {Array} h1 - Input Hidden State
+ * @param {Object} params - {W1, b1, W2, b2} (optional)
+ */
+function run_ffn_block(h1, params = {}) {
     const d_model = h1[0].length;
-    const d_ff = d_model * 4; // Standard-Faktor 4
+    const d_ff = d_model * 4;
 
-    // Initialisierung der Gewichte und Biases
-    const W1 = Array.from({ length: d_model }, () => Array.from({ length: d_ff }, () => 0.5));
-    const b1 = new Array(d_ff).fill(0.1);
-    const W2 = Array.from({ length: d_ff }, () => Array.from({ length: d_model }, () => 0.3));
-    const b2 = new Array(d_model).fill(0.05);
+    // 1. Gewichte & Biases setzen oder zufällig initialisieren
+    let W1 = params.W1, b1 = params.b1, W2 = params.W2, b2 = params.b2;
 
-    // 1. Schritt: Expansion & ReLU
+    // Validierung oder Fallback
+    if (W1) validateShape('W1', W1, d_model, d_ff); else W1 = initFFNWeights(d_model, d_ff);
+    if (b1) validateShape('b1', b1, d_ff, 1); else b1 = new Array(d_ff).fill(0).map(() => Math.random() * 0.01);
+    if (W2) validateShape('W2', W2, d_ff, d_model); else W2 = initFFNWeights(d_ff, d_model);
+    if (b2) validateShape('b2', b2, d_model, 1); else b2 = new Array(d_model).fill(0).map(() => Math.random() * 0.01);
+
+    // 2. Schritt: Expansion & ReLU -> out_L1 = ReLU(h1 * W1 + b1)
     const out_L1 = h1.map(row => {
         return b1.map((bias, j) => {
             let sum = bias;
             for (let i = 0; i < d_model; i++) sum += row[i] * W1[i][j];
-            return Math.max(0, sum); // ReLU Aktivierung
+            return Math.max(0, sum);
         });
     });
 
-    // 2. Schritt: Projektion (FFN Output)
+    // 3. Schritt: Projektion -> out_FFN = out_L1 * W2 + b2
     const out_FFN = out_L1.map(row => {
         return b2.map((bias, j) => {
             let sum = bias;
@@ -705,11 +728,11 @@ function run_ffn_block(h1) {
         });
     });
 
-    // 3. Schritt: LayerNorm & Residual
+    // 4. Schritt: LayerNorm & Residual -> h2 = h1 + LN(out_FFN)
     const ffn_normed = calculateLayerNorm(out_FFN);
     const h2 = h1.map((row, i) => row.map((val, j) => val + ffn_normed[i][j]));
 
-    // Visualisierung ohne jegliche Abkürzungen
+    // Visualisierung triggern
     render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2);
 
     return h2;
