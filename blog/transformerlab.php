@@ -280,10 +280,6 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 
 <div id="transformer-migration-plots-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;"></div>
 
-<div class="md">
-    ## 10. The Output Projector: From Abstract to Concrete
-</div>
-
 <div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
     <label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
     <input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" 

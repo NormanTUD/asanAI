@@ -774,7 +774,7 @@ function render_h1_logic(h0, multiHeadOutput) {
 	const h1 = h0.map((row, i) => row.map((val, j) => val + normMH[i][j]));
 
 	// Render LayerNorm Step
-	normContainer.innerHTML = `$$ \\text{LayerNorm}(\\text{MultiHead}(h_0)) = ${matrixToPmatrix(normMH)} $$`;
+	normContainer.innerHTML = `$$ \\text{LayerNorm}\\left(\\text{MultiHead}(h_0)\\right) = ${matrixToPmatrix(normMH)} $$`;
 
 	// Render Final h1 Step
 	finalContainer.innerHTML = `$$ h_1 = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{LayerNorm}} = \\underbrace{${matrixToPmatrix(h1)}}_{h_1} $$`;
@@ -963,8 +963,8 @@ function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2) {
 
 	// Anzeige Schritt 1
 	document.getElementById('ffn-step-1').innerHTML = `
-	$$ \\text{out}_{L1} = \\text{ReLU}(h_1 W_1 + b_1) $$
-	$$ \\text{out}_{L1} = \\text{ReLU} ( \\underbrace{${rawMP(h1)}}_{h_1} \\cdot \\underbrace{${rawMP(W1)}}_{W_1} + \\underbrace{${rawVP(b1)}}_{b_1} ) = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} $$
+	$$ \\text{out}_{L1} = \\text{ReLU}\\left(h_1 W_1 + b_1\\right) $$
+	$$ \\text{out}_{L1} = \\text{ReLU}\\left( \\underbrace{${rawMP(h1)}}_{h_1} \\cdot \\underbrace{${rawMP(W1)}}_{W_1} + \\underbrace{${rawVP(b1)}}_{b_1} \\right) = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} $$
     `;
 
 	// Anzeige Schritt 2
@@ -975,8 +975,8 @@ function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2) {
 
 	// Anzeige Schritt 3 (Finale h2 Gleichung)
 	document.getElementById('ffn-step-3').innerHTML = `
-	$$ h_2 = h_1 + \\text{LayerNorm}(\\text{out}_{\\text{FFN}}) $$
-	$$ h_2 = \\underbrace{${rawMP(h1)}}_{h_1} + \\underbrace{\\text{LayerNorm}(${rawMP(out_FFN)})}_{\\text{Stabilized Output}} = \\underbrace{${rawMP(h2)}}_{h_2} $$
+	$$ h_2 = h_1 + \\text{LayerNorm}\\left(\\text{out}_{\\text{FFN}}\\right) $$
+	$$ h_2 = \\underbrace{${rawMP(h1)}}_{h_1} + \\underbrace{\\text{LayerNorm}\\left(${rawMP(out_FFN)}\\right)}_{\\text{Stabilized Output}} = \\underbrace{${rawMP(h2)}}_{h_2} $$
     `;
 
 	// Temml Render-Trigger
