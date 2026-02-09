@@ -18,6 +18,14 @@ https://nlp.seas.harvard.edu/2018/04/03/attention.html
     </div>
 
     <div>
+        <label style="font-weight: bold;">Temperature ($T$): </label>
+        <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span>
+        <input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0"
+               style="width: 200px; vertical-align: middle;"
+               oninput="document.getElementById('temp-val').innerText = this.value; transformer_tokenize();">
+    </div>
+
+    <div>
         <label style="font-weight: bold;">Attention Heads ($h$): </label>
         <span id="heads-val" style="font-weight: bold; color: #3b82f6;">1</span>
         <input type="range" id="transformer-heads" min="1" max="8" value="1"
