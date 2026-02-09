@@ -672,71 +672,67 @@ function concatenateHeads(headData) {
  * Goal: Step-by-Step FFN Calculation
  * Logic: Stage 1 (Expansion + ReLU) -> Stage 2 (Projection) -> Residual
  */
+/**
+ * Berechnung: h2 = h1 + LayerNorm(FFN(h1))
+ */
+/**
+ * FFN Logik mit expliziter Darstellung der Parameter
+ * Formel: h2 = h1 + LayerNorm(ReLU(h1 * W1 + b1) * W2 + b2)
+ */
 function run_ffn_block(h1) {
     const d_model = h1[0].length;
     const d_ff = d_model * 4;
 
-    // 1. Fixed weights/biases for demonstration
-    const W1 = Array.from({ length: d_model }, () => Array.from({ length: d_ff }, () => 0.5)); 
+    // Festgelegte Gewichte für die Visualisierung
+    const W1 = Array.from({ length: d_model }, () => Array.from({ length: d_ff }, () => 0.5));
     const b1 = new Array(d_ff).fill(0.1);
     const W2 = Array.from({ length: d_ff }, () => Array.from({ length: d_model }, () => 0.3));
     const b2 = new Array(d_model).fill(0.05);
 
-    // 2. Step 1: L1 = ReLU(h1 * W1 + b1)
+    // 1. Expansion: L1 = ReLU(h1 * W1 + b1)
     const L1 = h1.map(row => {
-        let out = new Array(d_ff).fill(0);
-        for (let j = 0; j < d_ff; j++) {
-            let sum = b1[j]; 
-            for (let i = 0; i < d_model; i++) {
-                sum += row[i] * W1[i][j];
-            }
-            out[j] = Math.max(0, sum); 
-        }
-        return out;
+        return b1.map((bias, j) => {
+            let sum = bias;
+            for (let i = 0; i < d_model; i++) sum += row[i] * W1[i][j];
+            return Math.max(0, sum);
+        });
     });
 
-    // 3. Step 2: FFN_out = L1 * W2 + b2
-    const ffn_output = L1.map(row => {
-        let out = new Array(d_model).fill(0);
-        for (let j = 0; j < d_model; j++) {
-            let sum = b2[j];
-            for (let i = 0; i < d_ff; i++) {
-                sum += row[i] * W2[i][j];
-            }
-            out[j] = sum;
-        }
-        return out;
+    // 2. Projektion: FFN_raw = L1 * W2 + b2
+    const ffn_raw = L1.map(row => {
+        return b2.map((bias, j) => {
+            let sum = bias;
+            for (let i = 0; i < d_ff; i++) sum += row[i] * W2[i][j];
+            return sum;
+        });
     });
 
-    // 4. Final: h2 = LayerNorm(h1 + FFN_out)
-    const normFFN = calculateLayerNorm(ffn_output);
-    const h2 = h1.map((row, i) => row.map((val, j) => val + normFFN[i][j]));
+    // 3. LayerNorm & Residual
+    const ffn_normed = calculateLayerNorm(ffn_raw);
+    const h2 = h1.map((row, i) => row.map((val, j) => val + ffn_normed[i][j]));
 
-    render_ffn_steps_ui(h1, W1, b1, L1, W2, b2, ffn_output, h2);
+    render_ffn_steps(h1, W1, b1, L1, W2, b2, ffn_raw, ffn_normed, h2);
     return h2;
 }
 
-function render_ffn_steps_ui(h1, W1, b1, L1, W2, b2, ffn_out, h2) {
-    const s1Cont = document.getElementById('transformer-ffn-step1');
-    const s2Cont = document.getElementById('transformer-ffn-step2');
-    const h2Cont = document.getElementById('transformer-h2-final-viz');
+function render_ffn_steps(h1, W1, b1, L1, W2, b2, ffn_raw, ffn_normed, h2) {
+    const mP = (m) => `\\begin{pmatrix} ${m.slice(0,2).map(r => r.slice(0,3).map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+    const vP = (v) => `\\begin{pmatrix} ${v.slice(0,3).map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
 
-    const mToP = (m) => `\\begin{pmatrix} ${m.map(r => r.slice(0,3).map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
-    const vToP = (v) => `\\begin{pmatrix} ${v.slice(0,4).map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
-
-    s1Cont.innerHTML = `
-        <p>Step 1: Expansion & Activation</p>
-        $$ L_1 = \\text{ReLU} ( \\underbrace{${mToP(h1)}}_{h_1} \\cdot \\underbrace{${mToP(W1)}}_{W_1} + \\underbrace{${vToP(b1)}}_{b_1} ) = \\underbrace{${mToP(L1)}}_{L_1} $$
+    // Schritt 1 Anzeige
+    document.getElementById('ffn-step-1').innerHTML = `
+        $$ L_1 = \\text{ReLU} ( \\underbrace{${mP(h1)}}_{h_1} \\cdot \\underbrace{${mP(W1)}}_{W_1} + \\underbrace{${vP(b1)}}_{b_1} ) = \\underbrace{${mP(L1)}}_{L_1} $$
     `;
 
-    s2Cont.innerHTML = `
-        <p>Step 2: Projection back to $d_\\text{model}$</p>
-        $$ \\text{FFN}_{out} = \\underbrace{${mToP(L1)}}_{L_1} \\cdot \\underbrace{${mToP(W2)}}_{W_2} + \\underbrace{${vToP(b2)}}_{b_2} = \\underbrace{${mToP(ffn_out)}}_{\\text{FFN}_{out}} $$
+    // Schritt 2 Anzeige
+    document.getElementById('ffn-step-2').innerHTML = `
+        $$ \\text{FFN}_{out} = \\underbrace{${mP(L1)}}_{L_1} \\cdot \\underbrace{${mP(W2)}}_{W_2} + \\underbrace{${vP(b2)}}_{b_2} = \\underbrace{${mP(ffn_raw)}}_{\\text{FFN Result}} $$
     `;
 
-    h2Cont.innerHTML = `
-        <p>Final Addition & Norm ($h_2$)</p>
-        $$ h_2 = \\text{LayerNorm}( \\underbrace{${mToP(h1)}}_{h_1} + \\underbrace{${mToP(ffn_out)}}_{\\text{FFN}_\\text{out}} ) = \\underbrace{${mToP(h2)}}_{h_2} $$
+    // Schritt 3 Anzeige (Die Gleichung als Headline)
+    document.getElementById('ffn-step-3').innerHTML = `
+        $$ h_2 = h_1 + \\text{LayerNorm}(\\text{FFN}(h_1)) $$
+        $$ h_2 = \\underbrace{${mP(h1)}}_{h_1} + \\underbrace{\\text{LayerNorm}(${mP(ffn_raw)})}_{\\text{Stabilisierter Output}} = \\underbrace{${mP(h2)}}_{h_2} $$
     `;
 
     if (typeof render_temml === "function") render_temml();
