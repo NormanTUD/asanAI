@@ -709,3 +709,11 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	flex-direction: column;
 	gap: 15px;
 }
+
+#transformer_corpus {
+	background: #fff;
+	padding: 20px;
+	border-radius: 12px;
+	margin: 20px 0;
+	border: 2px dashed #94a3b8;
+}

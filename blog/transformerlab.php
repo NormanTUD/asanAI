@@ -40,10 +40,9 @@ https://nlp.seas.harvard.edu/2018/04/03/attention.html
 	</div>
 </div>
 
-<div style="background: #fff; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px dashed #94a3b8;">
-    <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
-    <textarea id="transformer-training-data" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" 
-              oninput="run_transformer_demo()">the king is wise and the queen is brave</textarea>
+<div class="transformer_corpus">
+	<label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
+	<textarea id="transformer-training-data" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;"  oninput="run_transformer_demo()">the king is wise and the queen is brave</textarea>
 </div>
 
 <div class="md">
