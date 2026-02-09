@@ -8,6 +8,13 @@ https://nlp.seas.harvard.edu/2018/04/03/attention.html
 	The hidden harmony is better than the obvious one
 </div>
 
+<div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
+    <label style="font-weight: bold; display: block; margin-bottom: 8px;">Input:</label>
+    <input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" 
+           value="The"
+           oninput="transformer_tokenize()">
+</div>
+
 <div class="md">
 ## The Illusion of Locality: Beyond the Grandmother Neuron
 Meaning in a Transformer is **holistic and distributed**. In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers to a singular neuron triggering for a complex concept. In the Transformer, no such neuron exists. Meaning is an emergent property of the entire vector space; it is held in the collective ratios of the hidden states. They don't inherently *mean* anything; they simply function to produce the desired output. This also holds true for all single parts of the Transformer, which we'll cover now.
@@ -15,7 +22,11 @@ Meaning in a Transformer is **holistic and distributed**. In classical neuroscie
 
 ## 1. Tokenization
 The journey of a sentence begins with **Byte-Pair Encoding** (**BPE**), which decomposes raw text into subword units. This approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language.
+</div>
 
+<div id="transformer-viz-bpe" class="viz-container"></div>
+
+<div class="md">
 ## 2. Embedding & The Feature Space
 
 Once tokenized, these units are converted into vectors. It is crucial to distinguish between the **Embedding Space** and the **Feature Space**:
