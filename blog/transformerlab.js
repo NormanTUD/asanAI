@@ -4,120 +4,173 @@
  * Methods: Multi-Head Projection, Scaled Dot-Product, LaTeX Logging
  */
 class AttentionEngine {
-    constructor(config) {
-        this.d_model = config.d_model;
-        this.n_heads = config.n_heads;
-        this.d_k = config.d_model / config.n_heads;
-        this.container = document.getElementById(config.containerId);
-        
-        // Trainable Parameters (Stored for easy export/update)
-        this.weights = {
-            query: this.initWeights(this.d_model, this.d_model),
-            key: this.initWeights(this.d_model, this.d_model),
-            value: this.initWeights(this.d_model, this.d_model),
-            output: this.initWeights(this.d_model, this.d_model)
-        };
-    }
+	constructor(config) {
+		this.d_model = config.d_model;
+		this.n_heads = config.n_heads;
+		this.d_k = config.d_model / config.n_heads;
+		this.container = document.getElementById(config.containerId);
 
-    initWeights(r, c) {
-        // Glorot Initialization for training readiness
-        const limit = Math.sqrt(6 / (r + c));
-        return Array.from({ length: r }, () => 
-            Array.from({ length: c }, () => (Math.random() * 2 * limit) - limit)
-        );
-    }
+		this.weights = {
+			query: this.initWeights(this.d_model, this.d_model),
+			key: this.initWeights(this.d_model, this.d_model),
+			value: this.initWeights(this.d_model, this.d_model),
+			output: this.initWeights(this.d_model, this.d_model)
+		};
+	}
 
-    // Matrix Multiplication Helper
-    dot(A, B) {
-        return A.map(row => 
-            B[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * B[j][i], 0))
-        );
-    }
+	initWeights(r, c) {
+		// Glorot Initialization for training readiness
+		const limit = Math.sqrt(6 / (r + c));
+		return Array.from({ length: r }, () => 
+			Array.from({ length: c }, () => (Math.random() * 2 * limit) - limit)
+		);
+	}
 
-    softmax(arr) {
-        return arr.map(row => {
-            const max = Math.max(...row);
-            const exps = row.map(v => Math.exp(v - max));
-            const sum = exps.reduce((a, b) => a + b);
-            return exps.map(v => v / sum);
-        });
-    }
+	// Matrix Multiplication Helper
+	dot(A, B) {
+		return A.map(row => 
+			B[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * B[j][i], 0))
+		);
+	}
 
-    forward(h0, tokens) {
-        const Q_full = this.dot(h0, this.weights.query);
-        const K_full = this.dot(h0, this.weights.key);
-        const V_full = this.dot(h0, this.weights.value);
+	softmax(arr) {
+		return arr.map(row => {
+			const max = Math.max(...row);
+			const exps = row.map(v => Math.exp(v - max));
+			const sum = exps.reduce((a, b) => a + b);
+			return exps.map(v => v / sum);
+		});
+	}
 
-        let headData = [];
+	forward(h0, tokens) {
+		const Q_full = this.dot(h0, this.weights.query);
+		const K_full = this.dot(h0, this.weights.key);
+		const V_full = this.dot(h0, this.weights.value);
 
-        for (let i = 0; i < this.n_heads; i++) {
-            const start = i * this.d_k;
-            const end = start + this.d_k;
+		let headData = [];
+		for (let i = 0; i < this.n_heads; i++) {
+			const start = i * this.d_k;
+			const end = start + this.d_k;
 
-            // Split into heads
-            const Qi = Q_full.map(r => r.slice(start, end));
-            const Ki = K_full.map(r => r.slice(start, end));
-            const Vi = V_full.map(r => r.slice(start, end));
+			const Qi = Q_full.map(r => r.slice(start, end));
+			const Ki = K_full.map(r => r.slice(start, end));
+			const Vi = V_full.map(r => r.slice(start, end));
 
-            // Attention Score: (Q*K^T) / sqrt(d_k)
-            const scores = this.dot(Qi, this.transpose(Ki)).map(row => 
-                row.map(v => v / Math.sqrt(this.d_k))
-            );
-            const weights = this.softmax(scores);
-            const context = this.dot(weights, Vi);
+			const scores = this.dot(Qi, this.transpose(Ki)).map(row => 
+				row.map(v => v / Math.sqrt(this.d_k))
+			);
+			const weights = this.softmax(scores);
+			const context = this.dot(weights, Vi);
 
-            headData.push({ headIdx: i, Qi, Ki, Vi, weights, context });
-        }
+			headData.push({ headIdx: i, Qi, Ki, Vi, weights, context });
+		}
 
-        this.renderUI(headData, tokens);
-        return headData;
-    }
+		this.renderUI(headData, tokens);
+		return headData;
+	}
 
-    transpose(M) { return M[0].map((_, i) => M.map(row => row[i])); }
+	transpose(M) { return M[0].map((_, i) => M.map(row => row[i])); }
 
-    renderUI(headData, tokens) {
-        if (!this.container) return;
+	renderUI(headData, tokens) {
+		if (!this.container) return;
 
-        let html = `<div class="attention-tabs" style="border:1px solid #3b82f6; border-radius:8px; overflow:hidden;">`;
-        
-        // Tab Headers
-        html += `<div style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6;">`;
-        headData.forEach((h, i) => {
-            html += `<button onclick="showHead(${i})" style="padding:10px 20px; border:none; cursor:pointer; background:${i===0?'#fff':'transparent'}">Head ${i+1}</button>`;
-        });
-        html += `</div>`;
+		let html = `<div class="attention-tabs" style="border:1px solid #3b82f6; border-radius:8px; overflow:hidden;">`;
 
-        // Tab Content
-        headData.forEach((h, i) => {
-            const escapedTokens = tokens.map(t => t.replace(/#/g, '\\#'));
-            html += `<div id="head-content-${i}" class="head-tab" style="padding:20px; display:${i===0?'block':'none'}">
-                <div style="margin-bottom:20px;">
-                    $$ \\text{Head}_{${i}} = \\underbrace{\\text{Softmax} \\left( \\frac{Q_i K_i^T}{\\sqrt{d_k}} \\right)}_{\\text{Attention Weights}} \\cdot \\underbrace{V_i}_{\\text{Values}} $$
-                </div>
-                <div style="overflow-x:auto;">
-                    ${this.generateLatexTable(h.weights, escapedTokens, escapedTokens, "Attention Weights (Softmax)")}
-                </div>
-            </div>`;
-        });
+		// Tab Headers with dynamic active coloring
+		html += `<div class="tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6;">`;
+		headData.forEach((h, i) => {
+			html += `<button class="mha-tab-btn" id="tab-btn-${i}" onclick="showHead(${i})" 
+		style="padding:10px 20px; border:none; border-right:1px solid #3b82f6; cursor:pointer; 
+		background:${i===0?'#fff':'#e2e8f0'}; font-weight:${i===0?'bold':'normal'}">Head ${i+1}</button>`;
+		});
+		html += `</div>`;
 
-        html += `</div>`;
-        this.container.innerHTML = html;
-        if (typeof render_temml === "function") render_temml();
-    }
+		// Tab Content
+		headData.forEach((h, i) => {
+			const escapedTokens = tokens.map(t => t.replace(/#/g, '\\#'));
+			html += `<div id="head-content-${i}" class="head-tab" style="padding:20px; display:${i===0?'block':'none'}">
+		<div style="margin-bottom:20px;">
+		    $$ \\text{Head}_{${i}} = \\text{Softmax} \\left( \\frac{Q_i K_i^T}{\\sqrt{d_k}} \\right) \\cdot V_i $$
+		</div>
+		<div style="overflow-x:auto;">
+		    ${this.generateMathTable(h, escapedTokens)}
+		</div>
+	    </div>`;
+		});
 
-    generateLatexTable(matrix, rows, cols, title) {
-        let tex = `<h4>${title}</h4> $$ \\begin{matrix} & ` + cols.map(c => `\\text{${c}}`).join(" & ") + " \\\\ ";
-        matrix.forEach((row, i) => {
-            tex += `\\text{${rows[i]}} & ` + row.map(v => v.toFixed(2)).join(" & ") + " \\\\ ";
-        });
-        return tex + "\\end{matrix} $$";
-    }
+		html += `</div>`;
+		this.container.innerHTML = html;
+		if (typeof render_temml === "function") render_temml();
+	}
+
+	generateMathTable(head, tokens) {
+		const { weights, Qi, Ki } = head;
+		const K_T = this.transpose(Ki);
+
+		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.8rem;">`;
+
+		// Header: Token Keys (Columns)
+		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
+		tokens.forEach((t, i) => {
+			const k_vec = K_T.map(row => row[i].toFixed(2)).join(', ');
+			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
+		${t}<br><small>$\\underbrace{[${k_vec}]}_{K^T}$</small>
+	    </th>`;
+		});
+		html += `</tr>`;
+
+		// Rows: Token Queries
+		weights.forEach((row, i) => {
+			const q_vec = Qi[i].map(v => v.toFixed(2)).join(', ');
+			html += `<tr>`;
+			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc; font-weight: bold;">
+		${tokens[i]}<br><small>$\\underbrace{[${q_vec}]}_{Q}$</small>
+	    </td>`;
+
+			row.forEach((weight, j) => {
+				// Color scaling: White (1) to Blue (0.5)
+				const intensity = Math.floor(255 - (weight * 150));
+				const bgColor = `rgb(${intensity}, ${intensity}, 255)`;
+
+				// Full Equation Construction
+				const dotParts = Qi[i].map((q_val, idx) => `(${q_val.toFixed(2)} \\cdot ${K_T[idx][j].toFixed(2)})`);
+				const cellEq = `\\sigma \\left( \\frac{${dotParts.join(' + ')}}{\\sqrt{${this.d_k}}} \\right) = **${weight.toFixed(3)}**`;
+
+				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">
+		    $${cellEq}$
+		</td>`;
+			});
+			html += `</tr>`;
+		});
+
+		html += `</table>`;
+		return html;
+	}
+
+	generateLatexTable(matrix, rows, cols, title) {
+		let tex = `<h4>${title}</h4> $$ \\begin{matrix} & ` + cols.map(c => `\\text{${c}}`).join(" & ") + " \\\\ ";
+		matrix.forEach((row, i) => {
+			tex += `\\text{${rows[i]}} & ` + row.map(v => v.toFixed(2)).join(" & ") + " \\\\ ";
+		});
+		return tex + "\\end{matrix} $$";
+	}
 }
 
-// Global toggle for the tabs
 window.showHead = (idx) => {
-    document.querySelectorAll('.head-tab').forEach(el => el.style.display = 'none');
-    document.getElementById(`head-content-${idx}`).style.display = 'block';
+	// Toggle Content
+	document.querySelectorAll('.head-tab').forEach(el => el.style.display = 'none');
+	document.getElementById(`head-content-${idx}`).style.display = 'block';
+
+	// Toggle Buttons
+	document.querySelectorAll('.mha-tab-btn').forEach(btn => {
+		btn.style.background = '#e2e8f0';
+		btn.style.fontWeight = 'normal';
+	});
+	const activeBtn = document.getElementById(`tab-btn-${idx}`);
+	activeBtn.style.background = '#fff';
+	activeBtn.style.fontWeight = 'bold';
+
+	if (typeof render_temml === "function") render_temml();
 };
 
 function calculate_positional_injection(tokens, d_model) {
