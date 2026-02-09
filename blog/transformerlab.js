@@ -252,7 +252,7 @@ function render_positional_waves(d_model, tokens) {
 	Plotly.newPlot('transformer-pe-wave-plot', traces, layout);
 }
 
-function transformer_tokenize() {
+function run_transformer_demo() {
 	const masterInput = document.getElementById('transformer-master-token-input');
 	const trainingInput = document.getElementById('transformer-training-data');
 	const dimSlider = document.getElementById('transformer-dimension-model');
@@ -668,6 +668,6 @@ function concatenateHeads(headData) {
 
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
-	transformer_tokenize()
+	run_transformer_demo()
 	return Promise.resolve();
 }
