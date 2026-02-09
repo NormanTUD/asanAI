@@ -298,7 +298,11 @@ function transformer_tokenize() {
 	// 3. Execute the forward pass and UI render
 	const headData = engine.forward(mockH0, knownTokens);
 
-	updateConcatenationDisplay(headData, knownTokens);
+	const multiHeadOutput = updateConcatenationDisplay(headData, knownTokens);
+
+	// Calculate h1
+	const h1 = get_h1(mockH0, multiHeadOutput);
+	const h1_after_residual_ = render_h1_logic(mockH0, multiHeadOutput);
 }
 
 function render_architecture_stats(d, h, n, t) {
@@ -556,38 +560,93 @@ function render_mask_logic(tokens) {
 	render_temml();
 }
 
+function render_h1_logic(h0, multiHeadOutput) {
+	const normContainer = document.getElementById('transformer-h1-layernorm-viz');
+	const finalContainer = document.getElementById('transformer-h1-final-viz');
+	if (!normContainer || !finalContainer) return;
+
+	const matrixToPmatrix = (matrix) =>
+		`\\begin{pmatrix} ` + matrix.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ') + ` \\end{pmatrix}`;
+
+	// 1. LayerNorm Calculation
+	const eps = 1e-5;
+	const normMH = multiHeadOutput.map(row => {
+		const mean = row.reduce((a, b) => a + b, 0) / row.length;
+		const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
+		return row.map(val => (val - mean) / Math.sqrt(variance + eps));
+	});
+
+	// 2. h1 = h0 + normMH
+	const h1 = h0.map((row, i) => row.map((val, j) => val + normMH[i][j]));
+
+	// Render LayerNorm Step
+	normContainer.innerHTML = `$$ \\text{LayerNorm}(\\text{MultiHead}(h_0)) = ${matrixToPmatrix(normMH)} $$`;
+
+	// Render Final h1 Step
+	finalContainer.innerHTML = `$$ h_1 = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{LayerNorm}} = \\underbrace{${matrixToPmatrix(h1)}}_{h_1} $$`;
+
+	if (typeof render_temml === "function") render_temml();
+	return h1;
+}
+
 /**
  * Algorithm: Block Matrix Concatenation
- * Method: Horizontal stacking of Head matrices (Tokens x d_v)
- * Origin: Vaswani et al. (2017)
+ * Returns: Array (Matrix of Tokens x d_model)
  */
 function updateConcatenationDisplay(headData, tokens) {
     const container = document.getElementById('transformer-concat-viz');
-    if (!container || !headData.length) return;
+    if (!container || !headData.length) return [];
 
-    // Helper: Converts a 2D array (Matrix) to a LaTeX pmatrix
     const matrixToPmatrix = (matrix) => {
         return `\\begin{pmatrix} ` + 
             matrix.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ') + 
             ` \\end{pmatrix}`;
     };
 
-    // 1. Prepare individual head matrices
     const headMatricesLaTeX = headData.map((h, i) => {
         return `\\underbrace{${matrixToPmatrix(h.context)}}_{\\text{Head } ${i + 1}}`;
     }).join(', ');
 
-    // 2. Prepare the final concatenated matrix
+    // Perform the actual numerical concatenation
     const fullMatrixData = tokens.map((_, tIdx) => {
         return [].concat(...headData.map(h => h.context[tIdx]));
     });
 
     const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrix(fullMatrixData)}}_{\\text{Total } d_{\\text{model}}}`;
-
-    // 3. Render the single large equation with "Concat" prefix
     container.innerHTML = `$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$`;
     
     if (typeof render_temml === "function") render_temml();
+
+    return fullMatrixData; // Now returns the calculated value
+}
+
+/**
+ * Method: Layer Normalization (Ba et al., 2016)
+ * Note: Uses epsilon 1e-5 for numerical stability.
+ */
+function calculateLayerNorm(matrix) {
+	const eps = 1e-5;
+	return matrix.map(row => {
+		const mean = row.reduce((a, b) => a + b, 0) / row.length;
+		const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
+		return row.map(val => (val - mean) / Math.sqrt(variance + eps));
+	});
+}
+
+/**
+ * Goal: Calculate h1 = h0 + LayerNorm(MultiHead(h0))
+ * Note: This implements the "Post-LN" architecture.
+ */
+function get_h1(h0, multiHeadOutput) {
+	// 1. Apply LayerNorm to the Multi-Head output
+	const normMH = calculateLayerNorm(multiHeadOutput);
+
+	// 2. Element-wise addition (Residual Connection)
+	const h1 = h0.map((row, i) =>
+		row.map((val, j) => val + normMH[i][j])
+	);
+
+	return h1;
 }
 
 function concatenateHeads(headData) {
