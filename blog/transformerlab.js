@@ -779,72 +779,72 @@ function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2) {
 }
 
 function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads) {
-    let h_current = h_initial;
-    let statusHtml = "";
-    
-    for (let n = 0; n < total_depth; n++) {
-        // Save the "earlier" state
-        const h_before = JSON.parse(JSON.stringify(h_current));
+	let h_current = h_initial;
+	let statusHtml = "";
 
-        // 1. Process Layer (MHA + FFN)
-        // Enable detailed UI logging ONLY for the first layer (n=0)
-        const engine = new AttentionEngine({ 
-            d_model, 
-            n_heads, 
-            containerId: (n === 0) ? "mha-calculation-details" : null 
-        });
+	for (let n = 0; n < total_depth; n++) {
+		// Save the "earlier" state
+		const h_before = JSON.parse(JSON.stringify(h_current));
 
-        const headData = engine.forward(h_current, tokens);
-        const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
-        
-        // Sublayer 1 & 2 transitions
-        const zn = get_h1(h_current, concatOutput);
-        const h_after = run_ffn_block(zn); // Note: run_ffn_block updates UI internally
+		// 1. Process Layer (MHA + FFN)
+		// Enable detailed UI logging ONLY for the first layer (n=0)
+		const engine = new AttentionEngine({ 
+			d_model, 
+			n_heads, 
+			containerId: (n === 0) ? "mha-calculation-details" : null 
+		});
 
-        // 2. Automate Migration Plot
-        create_migration_plot(`migration-layer-${n+1}`, tokens, h_before, h_after, n + 1, d_model);
+		const headData = engine.forward(h_current, tokens);
+		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
 
-        // Update current state for the next layer in the stack
-        h_current = h_after;
+		// Sublayer 1 & 2 transitions
+		const zn = get_h1(h_current, concatOutput);
+		const h_after = run_ffn_block(zn); // Note: run_ffn_block updates UI internally
 
-        statusHtml += `<div style="padding:5px; border-left:3px solid #3b82f6; margin-bottom:5px; background:#f8fafc;">
-            Layer ${n+1} processed.</div>`;
-    }
+		// 2. Automate Migration Plot
+		create_migration_plot(`migration-layer-${n+1}`, tokens, h_before, h_after, n + 1, d_model);
 
-    const statusContainer = document.getElementById('transformer-multi-layer-status');
-    if (statusContainer) statusContainer.innerHTML = statusHtml;
+		// Update current state for the next layer in the stack
+		h_current = h_after;
+
+		statusHtml += `<div style="padding:5px; border-left:3px solid #3b82f6; margin-bottom:5px; background:#f8fafc;">
+	    Layer ${n+1} processed.</div>`;
+	}
+
+	const statusContainer = document.getElementById('transformer-multi-layer-status');
+	if (statusContainer) statusContainer.innerHTML = statusHtml;
 }
 
 /**
  * Clean Migration Plot (No Labels)
  */
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
-    const container = document.getElementById('transformer-migration-plots-container');
-    const plotDiv = document.createElement('div');
-    plotDiv.id = id;
-    plotDiv.style.cssText = "height: 250px; border: 1px solid #e2e8f0; border-radius: 8px;";
-    container.appendChild(plotDiv);
+	const container = document.getElementById('transformer-migration-plots-container');
+	const plotDiv = document.createElement('div');
+	plotDiv.id = id;
+	plotDiv.style.cssText = "height: 250px; border: 1px solid #e2e8f0; border-radius: 8px;";
+	container.appendChild(plotDiv);
 
-    const traces = tokens.map((_, i) => ({
-        x: [start_h[i][0], end_h[i][0]],
-        y: [start_h[i][1] || 0, end_h[i][1] || 0],
-        z: [start_h[i][2] || 0, end_h[i][2] || 0],
-        type: 'scatter3d',
-        mode: 'lines+markers',
-        line: { width: 4, color: `hsl(${(i * 137) % 360}, 70%, 50%)` },
-        marker: { size: [2, 5], color: `hsl(${(i * 137) % 360}, 70%, 50%)` },
-        hoverinfo: 'none'
-    }));
+	const traces = tokens.map((_, i) => ({
+		x: [start_h[i][0], end_h[i][0]],
+		y: [start_h[i][1] || 0, end_h[i][1] || 0],
+		z: [start_h[i][2] || 0, end_h[i][2] || 0],
+		type: 'scatter3d',
+		mode: 'lines+markers',
+		line: { width: 4, color: `hsl(${(i * 137) % 360}, 70%, 50%)` },
+		marker: { size: [2, 5], color: `hsl(${(i * 137) % 360}, 70%, 50%)` },
+		hoverinfo: 'none'
+	}));
 
-    Plotly.newPlot(id, traces, {
-        margin: { l:0, r:0, b:0, t:0 },
-        scene: { 
-            xaxis: { title: '', showlabels: false }, 
-            yaxis: { title: '', showlabels: false }, 
-            zaxis: { title: '', showlabels: false } 
-        },
-        showlegend: false
-    });
+	Plotly.newPlot(id, traces, {
+		margin: { l:0, r:0, b:0, t:0 },
+		scene: { 
+			xaxis: { title: '', showlabels: false }, 
+			yaxis: { title: '', showlabels: false }, 
+			zaxis: { title: '', showlabels: false } 
+		},
+		showlegend: false
+	});
 }
 
 async function loadTransformerModule () {
