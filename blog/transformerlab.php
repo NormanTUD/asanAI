@@ -291,13 +291,9 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
     We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_U$ or $W_{vocab}$). This effectively asks: "How similar is our current thought vector to every known word vector?"
 </div>
 
-<div id="transformer-output-projection" style="background: #fff; padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
-
-<div class="md">
-## 11. SoftMax
-</div>
-
 <div id="transformer-temperature-config" style="margin-top: 20px;"></div>
+
+<div id="transformer-output-projection" style="background: #fff; padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
 
 <div class="md">
 ## Key Intuitions about LLMs
