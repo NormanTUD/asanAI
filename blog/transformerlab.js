@@ -149,7 +149,7 @@ class AttentionEngine {
 		    }{\\sqrt{${dk_int}}} \\right) 
 		}_{\\text{Gewicht } ${weight.toFixed(3)}} 
 		\\cdot \\underbrace{${toPmatrix(Vi[j])}}_{\\substack{V_{${j}} \\\\ \\text{Emb. } \\text{"${tokens[j]}"}}} 
-		= \\underbrace{${toPmatrix(resultVec)}}_{\\text{Result}}`;
+		= \\underbrace{${toPmatrix(resultVec)}}_{\\text{Value}}`;
 
 				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">
 		    $${cellEq}$
