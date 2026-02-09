@@ -263,7 +263,15 @@ h_{n+1} &= z_n + \text{LayerNorm}(\text{FeedForward}(z_n))
 $$
 
 As $h$ progresses from $h_0$ to $h_{96}$, the vector for "apple" might move from being near "fruit" to being near "tech company" based on the contextual "nudges" received in the Feature Space during each Attention and FFN cycle.
+</div>
 
+<div class="md">
+## Feature Space Migration
+The following plots visualize how each layer "nudges" the token vectors. Each arrow represents the transition from $h_n$ (start) to $h_{n+1}$ (head).
+</div>
+<div id="transformer-migration-plots-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;"></div>
+
+<div class="md">
 ## 10. From Hidden States to Probabilities
 After passing through $N$ layers, we reach the final hidden state, **$h_{\text{final}}$**. To turn this into a word, we project it against the entire vocabulary:
 
@@ -276,7 +284,7 @@ $$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
 
 This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
 
-## 10. SoftMax
+## 11. SoftMax
 </div>
 
 <div id="transformer-temperature-config" style="margin-top: 20px;"></div>
