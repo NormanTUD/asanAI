@@ -778,73 +778,91 @@ function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2) {
 	if (typeof render_temml === "function") render_temml();
 }
 
+/**
+ * Goal: Unified N-Layer Trajectory Plotting
+ * Logic: Every iteration i maps to Layer i+1 Plot
+ */
 function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads) {
-	let h_current = h_initial;
-	let statusHtml = "";
+    let h_current = h_initial;
+    const plotContainer = document.getElementById('transformer-migration-plots-container');
+    const statusContainer = document.getElementById('transformer-multi-layer-status');
+    
+    if (plotContainer) plotContainer.innerHTML = "";
+    let statusHtml = "";
 
-	for (let n = 0; n < total_depth; n++) {
-		// Save the "earlier" state
-		const h_before = JSON.parse(JSON.stringify(h_current));
+    for (let n = 0; n < total_depth; n++) {
+        // Capture the start point for this layer's arrow
+        const h_before = JSON.parse(JSON.stringify(h_current));
 
-		// 1. Process Layer (MHA + FFN)
-		// Enable detailed UI logging ONLY for the first layer (n=0)
-		const engine = new AttentionEngine({ 
-			d_model, 
-			n_heads, 
-			containerId: (n === 0) ? "mha-calculation-details" : null 
-		});
+        // 1. Calculate the Layer (MHA + FFN)
+        const engine = new AttentionEngine({ 
+            d_model, 
+            n_heads, 
+            containerId: (n === 0) ? "mha-calculation-details" : null 
+        });
 
-		const headData = engine.forward(h_current, tokens);
-		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
+        const headData = engine.forward(h_current, tokens);
+        const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
+        const zn = get_h1(h_current, concatOutput);
+        const h_after = run_ffn_block(zn); // Note: this is our h_{n+1}
 
-		// Sublayer 1 & 2 transitions
-		const zn = get_h1(h_current, concatOutput);
-		const h_after = run_ffn_block(zn); // Note: run_ffn_block updates UI internally
+        // 2. Render Full-Width Migration Plot
+        create_migration_plot(`migration-layer-${n+1}`, tokens, h_before, h_after, n + 1, d_model);
 
-		// 2. Automate Migration Plot
-		create_migration_plot(`migration-layer-${n+1}`, tokens, h_before, h_after, n + 1, d_model);
+        // Update for next iteration
+        h_current = h_after;
 
-		// Update current state for the next layer in the stack
-		h_current = h_after;
+        statusHtml += `
+            <div style="padding: 10px; border-left: 4px solid #10b981; background: #f0fdf4; margin-bottom: 8px;">
+                <strong>Layer ${n + 1} Status:</strong> Vector migration complete.
+            </div>`;
+    }
 
-		statusHtml += `<div style="padding:5px; border-left:3px solid #3b82f6; margin-bottom:5px; background:#f8fafc;">
-	    Layer ${n+1} processed.</div>`;
-	}
-
-	const statusContainer = document.getElementById('transformer-multi-layer-status');
-	if (statusContainer) statusContainer.innerHTML = statusHtml;
+    if (statusContainer) statusContainer.innerHTML = statusHtml;
 }
 
 /**
- * Clean Migration Plot (No Labels)
+ * Renders a full-screen width trajectory plot
  */
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
-	const container = document.getElementById('transformer-migration-plots-container');
-	const plotDiv = document.createElement('div');
-	plotDiv.id = id;
-	plotDiv.style.cssText = "height: 250px; border: 1px solid #e2e8f0; border-radius: 8px;";
-	container.appendChild(plotDiv);
+    const container = document.getElementById('transformer-migration-plots-container');
+    
+    // Create Wrapper for Headline + Plot
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = "width: 100%; margin-bottom: 40px; border-top: 2px solid #e2e8f0; padding-top: 20px;";
+    wrapper.innerHTML = `<h3 style="text-align: center; color: #1e293b;">Layer ${layerNum}: Feature Space Migration</h3>`;
+    
+    const plotDiv = document.createElement('div');
+    plotDiv.id = id;
+    plotDiv.style.cssText = "height: 500px; width: 100%;"; // Increased height for "Full Screen" feel
+    
+    wrapper.appendChild(plotDiv);
+    container.appendChild(wrapper);
 
-	const traces = tokens.map((_, i) => ({
-		x: [start_h[i][0], end_h[i][0]],
-		y: [start_h[i][1] || 0, end_h[i][1] || 0],
-		z: [start_h[i][2] || 0, end_h[i][2] || 0],
-		type: 'scatter3d',
-		mode: 'lines+markers',
-		line: { width: 4, color: `hsl(${(i * 137) % 360}, 70%, 50%)` },
-		marker: { size: [2, 5], color: `hsl(${(i * 137) % 360}, 70%, 50%)` },
-		hoverinfo: 'none'
-	}));
+    const traces = tokens.map((_, i) => ({
+        x: [start_h[i][0], end_h[i][0]],
+        y: [start_h[i][1] || 0, end_h[i][1] || 0],
+        z: [start_h[i][2] || 0, end_h[i][2] || 0],
+        type: 'scatter3d',
+        mode: 'lines+markers',
+        line: { width: 6, color: `hsl(${(i * 137) % 360}, 70%, 50%)` },
+        marker: { size: [3, 8], color: `hsl(${(i * 137) % 360}, 70%, 50%)` },
+        hoverinfo: 'none'
+    }));
 
-	Plotly.newPlot(id, traces, {
-		margin: { l:0, r:0, b:0, t:0 },
-		scene: { 
-			xaxis: { title: '', showlabels: false }, 
-			yaxis: { title: '', showlabels: false }, 
-			zaxis: { title: '', showlabels: false } 
-		},
-		showlegend: false
-	});
+    const layout = {
+        autosize: true,
+        margin: { l:0, r:0, b:0, t:0 },
+        scene: {
+            aspectmode: "cube",
+            xaxis: { title: '', range: [-2, 2], showgrid: true, zeroline: false },
+            yaxis: { title: '', range: [-2, 2], showgrid: true, zeroline: false },
+            zaxis: { title: '', range: [-2, 2], showgrid: true, zeroline: false }
+        },
+        showlegend: false
+    };
+
+    Plotly.newPlot(id, traces, layout);
 }
 
 async function loadTransformerModule () {
