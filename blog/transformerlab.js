@@ -136,7 +136,7 @@ class AttentionEngine {
 
 				// Full Equation Construction for the dot product
 				const dotParts = Qi[i].map((q_val, idx) => `(${q_val.toFixed(2)} \\cdot ${K_T[idx][j].toFixed(2)})`);
-				const cellEq = `\\sigma \\left( \\frac{${dotParts.join(' + ')}}{\\sqrt{${this.d_k}}} \\right) = **${weight.toFixed(3)}**`;
+				const cellEq = `\\sigma \\left( \\frac{${dotParts.join(' + ')}}{\\sqrt{${this.d_k}}} \\right) = ${weight.toFixed(3)}`;
 
 				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">
 		    $${cellEq}$
