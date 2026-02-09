@@ -1,6 +1,3 @@
-/**
- * Part A: Logic to calculate and render the injection tables
- */
 function calculate_positional_injection(tokens, d_model) {
 	const resultsContainer = document.getElementById('transformer-pe-integration-results');
 	if (!resultsContainer) return;
@@ -34,9 +31,6 @@ function calculate_positional_injection(tokens, d_model) {
 	resultsContainer.innerHTML = html;
 }
 
-/**
- * Part B: Logic to render the Wave Plot (Sinusoidal Patterns)
- */
 function render_positional_waves(d_model, tokens) {
 	const traces = [];
 	const resolution = 0.1;
@@ -172,46 +166,42 @@ function render_embedding_plot(tokens, dimensions) {
 
 		const getCoord = (seed) => (((Math.abs(hash) * seed) % 200) - 100) / 100;
 
-	const x = [getCoord(1)];
-	const y = dimensions >= 2 ? [getCoord(2)] : [0];
-	const z = dimensions >= 3 ? [getCoord(3)] : [0];
+		const x = [getCoord(1)];
+		const y = dimensions >= 2 ? [getCoord(2)] : [0];
+		const z = dimensions >= 3 ? [getCoord(3)] : [0];
 
-	plotData.push({
-	    x: x, y: y, z: z,
-		mode: 'markers+text',
-		type: dimensions === 3 ? 'scatter3d' : 'scatter',
-		name: token,
-		text: [token],
-		textposition: 'top center',
-		marker: {
-			size: 8,
+		plotData.push({
+			x: x, y: y, z: z,
+			mode: 'markers+text',
+			type: dimensions === 3 ? 'scatter3d' : 'scatter',
+			name: token,
+			text: [token],
+			textposition: 'top center',
+			marker: {
+				size: 8,
 				color: `hsl(${Math.abs(hash) % 360}, 70%, 50%)`,
 				opacity: 0.8
-		}
-	});
+			}
+		});
 	});
 
-const layout = {
-	margin: { l: 0, r: 0, b: 0, t: 0 },
-	showlegend: false,
-	paper_bgcolor: 'rgba(0,0,0,0)',
-	plot_bgcolor: 'rgba(0,0,0,0)',
-	scene: { // For 3D
-		xaxis: { range: [-1, 1], title: 'Dim 1' },
-		yaxis: { range: [-1, 1], title: 'Dim 2' },
-		zaxis: { range: [-1, 1], title: 'Dim 3' }
-	},
-	xaxis: { range: [-1.2, 1.2], title: 'Dim 1' }, // For 1D/2D
-	yaxis: { range: [-1.2, 1.2], title: 'Dim 2' }
-};
+	const layout = {
+		margin: { l: 0, r: 0, b: 0, t: 0 },
+		showlegend: false,
+		paper_bgcolor: 'rgba(0,0,0,0)',
+		plot_bgcolor: 'rgba(0,0,0,0)',
+		scene: { // For 3D
+			xaxis: { range: [-1, 1], title: 'Dim 1' },
+			yaxis: { range: [-1, 1], title: 'Dim 2' },
+			zaxis: { range: [-1, 1], title: 'Dim 3' }
+		},
+		xaxis: { range: [-1.2, 1.2], title: 'Dim 1' }, // For 1D/2D
+		yaxis: { range: [-1.2, 1.2], title: 'Dim 2' }
+	};
 
-Plotly.newPlot('transformer-plotly-space', plotData, layout, { responsive: true });
+	Plotly.newPlot('transformer-plotly-space', plotData, layout, { responsive: true });
 }
 
-/**
- * Renders the vectors in the Feature Space
- * Origin: Vector Space Models in NLP
- */
 function render_embedding_space(tokens, dimensions) {
 	const container = document.getElementById('transformer-viz-embeddings');
 	if (!container) return;
@@ -246,7 +236,6 @@ function render_embedding_space(tokens, dimensions) {
 	}).join('');
 }
 
-// Modify existing transformer_tokenize_render to return the tokens array
 function transformer_tokenize_render(text) {
 	const container = document.getElementById(`transformer-viz-bpe`);
 	if (!container) return [];
@@ -282,10 +271,6 @@ function transformer_tokenize_render(text) {
 	return tokens; // Return for the embedding function
 }
 
-/**
- * Renders a dynamic Causal Mask matrix based on token count
- * Origin: Vaswani et al. (2017) - "Attention Is All You Need"
- */
 function render_causal_mask(tokens) {
 	const container = document.getElementById('transformer-causal-mask-display');
 	if (!container || !tokens.length) return;
@@ -313,45 +298,44 @@ function render_causal_mask(tokens) {
 }
 
 function render_mask_logic(tokens) {
-    const countEl = document.getElementById('mask-token-count');
-    const sentenceEl = document.getElementById('mask-sentence-string');
-    const rowsContainer = document.getElementById('mask-rows-container');
+	const countEl = document.getElementById('mask-token-count');
+	const sentenceEl = document.getElementById('mask-sentence-string');
+	const rowsContainer = document.getElementById('mask-rows-container');
 	const trainingInput = document.getElementById('transformer-training-data');
 
-    if (!countEl || !sentenceEl || !rowsContainer) return;
+	if (!countEl || !sentenceEl || !rowsContainer) return;
 
-    // 1. Update the descriptive sentence text
-    countEl.innerText = tokens.length;
-    sentenceEl.innerText = trainingInput.value;
+	// 1. Update the descriptive sentence text
+	countEl.innerText = tokens.length;
+	sentenceEl.innerText = trainingInput.value;
 
-    if (tokens.length === 0) {
-        rowsContainer.innerHTML = "<p>No tokens detected.</p>";
-        return;
-    }
+	if (tokens.length === 0) {
+		rowsContainer.innerHTML = "<p>No tokens detected.</p>";
+		return;
+	}
 
-    // 2. Generate Row-by-Row Logic in Pure HTML
-    // We escape '#' to '\#' for LaTeX compatibility
-    const htmlRows = tokens.map((token, i) => {
-        const visibleTokens = tokens.slice(0, i + 1);
-        const visibleList = visibleTokens.map(t => `<code>"${t}"</code>`).join(', ');
-        const escapedToken = token.replace(/#/g, '\\#'); 
-        
-        return `
-            <li style="margin-bottom: 10px; list-style-type: none;">
-                <strong>Row ${i + 1}:</strong> $Q_{\\text{${escapedToken}}}$ is compared against ${visibleList}.
-            </li>
-        `;
-    }).join('');
+	// 2. Generate Row-by-Row Logic in Pure HTML
+	// We escape '#' to '\#' for LaTeX compatibility
+	const htmlRows = tokens.map((token, i) => {
+		const visibleTokens = tokens.slice(0, i + 1);
+		const visibleList = visibleTokens.map(t => `<code>"${t}"</code>`).join(', ');
+		const escapedToken = token.replace(/#/g, '\\#'); 
 
-    // Wrap in a list for clean structure
-    rowsContainer.innerHTML = `<ul style="padding-left: 0;">${htmlRows}</ul>`;
+		return `
+	    <li style="margin-bottom: 10px; list-style-type: none;">
+		<strong>Row ${i + 1}:</strong> $Q_{\\text{${escapedToken}}}$ is compared against ${visibleList}.
+	    </li>
+	`;
+	}).join('');
 
-        render_temml();
+	// Wrap in a list for clean structure
+	rowsContainer.innerHTML = `<ul style="padding-left: 0;">${htmlRows}</ul>`;
+
+	render_temml();
 }
 
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
-	//TransformerLab.init();
 	transformer_tokenize()
 	return Promise.resolve();
 }
