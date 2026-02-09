@@ -669,37 +669,35 @@ function concatenateHeads(headData) {
 }
 
 /**
- * Goal: Step-by-Step FFN Calculation
- * Logic: Stage 1 (Expansion + ReLU) -> Stage 2 (Projection) -> Residual
+ * Berechnet den FFN Block und gibt h2 zurück.
+ * Formel: h2 = h1 + LayerNorm(FFN(h1))
+ * Ursprung: Vaswani et al. (2017)
  */
 /**
- * Berechnung: h2 = h1 + LayerNorm(FFN(h1))
- */
-/**
- * FFN Logik mit expliziter Darstellung der Parameter
- * Formel: h2 = h1 + LayerNorm(ReLU(h1 * W1 + b1) * W2 + b2)
+ * Berechnet h2 = h1 + LayerNorm(FFN(h1))
+ * Diese Version garantiert die Anzeige JEDER Tabellenzeile und JEDER Spalte.
  */
 function run_ffn_block(h1) {
     const d_model = h1[0].length;
-    const d_ff = d_model * 4;
+    const d_ff = d_model * 4; // Standard-Faktor 4
 
-    // Festgelegte Gewichte für die Visualisierung
+    // Initialisierung der Gewichte und Biases
     const W1 = Array.from({ length: d_model }, () => Array.from({ length: d_ff }, () => 0.5));
     const b1 = new Array(d_ff).fill(0.1);
     const W2 = Array.from({ length: d_ff }, () => Array.from({ length: d_model }, () => 0.3));
     const b2 = new Array(d_model).fill(0.05);
 
-    // 1. Expansion: L1 = ReLU(h1 * W1 + b1)
-    const L1 = h1.map(row => {
+    // 1. Schritt: Expansion & ReLU
+    const out_L1 = h1.map(row => {
         return b1.map((bias, j) => {
             let sum = bias;
             for (let i = 0; i < d_model; i++) sum += row[i] * W1[i][j];
-            return Math.max(0, sum);
+            return Math.max(0, sum); // ReLU Aktivierung
         });
     });
 
-    // 2. Projektion: FFN_raw = L1 * W2 + b2
-    const ffn_raw = L1.map(row => {
+    // 2. Schritt: Projektion (FFN Output)
+    const out_FFN = out_L1.map(row => {
         return b2.map((bias, j) => {
             let sum = bias;
             for (let i = 0; i < d_ff; i++) sum += row[i] * W2[i][j];
@@ -707,34 +705,51 @@ function run_ffn_block(h1) {
         });
     });
 
-    // 3. LayerNorm & Residual
-    const ffn_normed = calculateLayerNorm(ffn_raw);
+    // 3. Schritt: LayerNorm & Residual
+    const ffn_normed = calculateLayerNorm(out_FFN);
     const h2 = h1.map((row, i) => row.map((val, j) => val + ffn_normed[i][j]));
 
-    render_ffn_steps(h1, W1, b1, L1, W2, b2, ffn_raw, ffn_normed, h2);
+    // Visualisierung ohne jegliche Abkürzungen
+    render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2);
+
     return h2;
 }
 
-function render_ffn_steps(h1, W1, b1, L1, W2, b2, ffn_raw, ffn_normed, h2) {
-    const mP = (m) => `\\begin{pmatrix} ${m.slice(0,2).map(r => r.slice(0,3).map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
-    const vP = (v) => `\\begin{pmatrix} ${v.slice(0,3).map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
+/**
+ * Erzeugt LaTeX-Output für Matrizen ohne Limitierungen.
+ */
+function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2) {
+    // Helper: Rendert absolut JEDE Zahl in der Matrix
+    const rawMP = (m) => {
+        const rows = m.map(r => r.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ');
+        return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
+    };
 
-    // Schritt 1 Anzeige
+    // Helper: Rendert JEDE Zahl im Vektor
+    const rawVP = (v) => {
+        const content = v.map(val => val.toFixed(2)).join(' & ');
+        return `\\begin{pmatrix} ${content} \\end{pmatrix}`;
+    };
+
+    // Anzeige Schritt 1
     document.getElementById('ffn-step-1').innerHTML = `
-        $$ L_1 = \\text{ReLU} ( \\underbrace{${mP(h1)}}_{h_1} \\cdot \\underbrace{${mP(W1)}}_{W_1} + \\underbrace{${vP(b1)}}_{b_1} ) = \\underbrace{${mP(L1)}}_{L_1} $$
+        $$ \\text{out}_{L1} = \\text{ReLU}(h_1 W_1 + b_1) $$
+        $$ \\text{out}_{L1} = \\text{ReLU} ( \\underbrace{${rawMP(h1)}}_{h_1} \\cdot \\underbrace{${rawMP(W1)}}_{W_1} + \\underbrace{${rawVP(b1)}}_{b_1} ) = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} $$
     `;
 
-    // Schritt 2 Anzeige
+    // Anzeige Schritt 2
     document.getElementById('ffn-step-2').innerHTML = `
-        $$ \\text{FFN}_{out} = \\underbrace{${mP(L1)}}_{L_1} \\cdot \\underbrace{${mP(W2)}}_{W_2} + \\underbrace{${vP(b2)}}_{b_2} = \\underbrace{${mP(ffn_raw)}}_{\\text{FFN Result}} $$
+        $$ \\text{out}_{\\text{FFN}} = \\text{out}_{L1} W_2 + b_2 $$
+        $$ \\text{out}_{\\text{FFN}} = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} \\cdot \\underbrace{${rawMP(W2)}}_{W_2} + \\underbrace{${rawVP(b2)}}_{b_2} = \\underbrace{${rawMP(out_FFN)}}_{\\text{out}_{\\text{FFN}}} $$
     `;
 
-    // Schritt 3 Anzeige (Die Gleichung als Headline)
+    // Anzeige Schritt 3 (Finale h2 Gleichung)
     document.getElementById('ffn-step-3').innerHTML = `
-        $$ h_2 = h_1 + \\text{LayerNorm}(\\text{FFN}(h_1)) $$
-        $$ h_2 = \\underbrace{${mP(h1)}}_{h_1} + \\underbrace{\\text{LayerNorm}(${mP(ffn_raw)})}_{\\text{Stabilisierter Output}} = \\underbrace{${mP(h2)}}_{h_2} $$
+        $$ h_2 = h_1 + \\text{LayerNorm}(\\text{out}_{\\text{FFN}}) $$
+        $$ h_2 = \\underbrace{${rawMP(h1)}}_{h_1} + \\underbrace{\\text{LayerNorm}(${rawMP(out_FFN)})}_{\\text{Stabilisierter Output}} = \\underbrace{${rawMP(h2)}}_{h_2} $$
     `;
 
+    // Temml Render-Trigger
     if (typeof render_temml === "function") render_temml();
 }
 
