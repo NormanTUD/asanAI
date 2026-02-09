@@ -8,12 +8,30 @@ https://nlp.seas.harvard.edu/2018/04/03/attention.html
 	The hidden harmony is better than the obvious one
 </div>
 
-<div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
-    <span id="dim-val" style="font-weight: bold; font-size: 1.2rem; color: #3b82f6; margin-left: 10px;">3</span>
-    <label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
-    <input type="range" id="transformer-dimension-model" min="1" max="3" value="3"
-           style="width: 200px; vertical-align: middle;"
-           oninput="document.getElementById('dim-val').innerText = this.value; transformer_tokenize();">
+<div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6; display: flex; flex-direction: column; gap: 15px;">
+    <div>
+        <label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
+        <span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
+        <input type="range" id="transformer-dimension-model" min="1" max="3" value="3"
+               style="width: 200px; vertical-align: middle;"
+               oninput="document.getElementById('dim-val').innerText = this.value; transformer_tokenize();">
+    </div>
+
+    <div>
+        <label style="font-weight: bold;">Attention Heads ($h$): </label>
+        <span id="heads-val" style="font-weight: bold; color: #3b82f6;">1</span>
+        <input type="range" id="transformer-heads" min="1" max="8" value="1"
+               style="width: 200px; vertical-align: middle;"
+               oninput="document.getElementById('heads-val').innerText = this.value; transformer_tokenize();">
+    </div>
+
+    <div>
+        <label style="font-weight: bold;">Network Depth ($N$): </label>
+        <span id="depth-val" style="font-weight: bold; color: #3b82f6;">1</span>
+        <input type="range" id="transformer-depth" min="1" max="12" value="1"
+               style="width: 200px; vertical-align: middle;"
+               oninput="document.getElementById('depth-val').innerText = this.value; transformer_tokenize();">
+    </div>
 </div>
 
 <div style="background: #fff; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px dashed #94a3b8;">
