@@ -147,8 +147,8 @@ class AttentionEngine {
 			\\underbrace{${toPmatrix(kj_vec)}}_{\\substack{K^T_{${j}} \\\\ \\text{Emb. } \\text{"${tokens[j]}"}}} 
 		    }{\\sqrt{${dk_int}}} \\right) 
 		}_{\\text{Weight} ${weight.toFixed(3)}} 
-		\\cdot \\underbrace{${toPmatrix(Vi[j])}}_{\\substack{V_{${j}} \\\\ \\text{Emb. } \\text{"${tokens[j]}"}}} 
-		= \\underbrace{${toPmatrix(resultVec)}}_{\\text{Value}}`;
+		\\cdot \\underbrace{${toPmatrix(Vi[j])}}_{\\text{Emb. } \\text{"${tokens[j]}"}} 
+		= \\underbrace{${toPmatrix(resultVec)}}_{\\substack{V_{${i}, ${j}} \\\\ \\text{Value}}}`;
 
 				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">
 		    $${cellEq}$
