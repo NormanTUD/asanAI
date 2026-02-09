@@ -306,7 +306,7 @@ function run_transformer_demo() {
 
 	const h2 = run_ffn_block(h1_after_residual);
 
-	run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads);
+	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads);
 }
 
 function render_architecture_stats(d, h, n, t) {
@@ -808,42 +808,44 @@ function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2) {
  * Logic: Every iteration i maps to Layer i+1 Plot
  */
 function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads) {
-    let h_current = h_initial;
-    const plotContainer = document.getElementById('transformer-migration-plots-container');
-    const statusContainer = document.getElementById('transformer-multi-layer-status');
-    
-    if (plotContainer) plotContainer.innerHTML = "";
-    let statusHtml = "";
+	let h_current = h_initial;
+	const plotContainer = document.getElementById('transformer-migration-plots-container');
+	const statusContainer = document.getElementById('transformer-multi-layer-status');
 
-    for (let n = 0; n < total_depth; n++) {
-        // Capture the start point for this layer's arrow
-        const h_before = JSON.parse(JSON.stringify(h_current));
+	if (plotContainer) plotContainer.innerHTML = "";
+	let statusHtml = "";
 
-        // 1. Calculate the Layer (MHA + FFN)
-        const engine = new AttentionEngine({ 
-            d_model, 
-            n_heads, 
-            containerId: (n === 0) ? "mha-calculation-details" : null 
-        });
+	for (let n = 0; n < total_depth; n++) {
+		// Capture the start point for this layer's arrow
+		const h_before = JSON.parse(JSON.stringify(h_current));
 
-        const headData = engine.forward(h_current, tokens);
-        const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
-        const zn = get_h1(h_current, concatOutput);
-        const h_after = run_ffn_block(zn); // Note: this is our h_{n+1}
+		// 1. Calculate the Layer (MHA + FFN)
+		const engine = new AttentionEngine({ 
+			d_model, 
+			n_heads, 
+			containerId: (n === 0) ? "mha-calculation-details" : null 
+		});
 
-        // 2. Render Full-Width Migration Plot
-        create_migration_plot(`migration-layer-${n+1}`, tokens, h_before, h_after, n + 1, d_model);
+		const headData = engine.forward(h_current, tokens);
+		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
+		const zn = get_h1(h_current, concatOutput);
+		const h_after = run_ffn_block(zn); // Note: this is our h_{n+1}
 
-        // Update for next iteration
-        h_current = h_after;
+		// 2. Render Full-Width Migration Plot
+		create_migration_plot(`migration-layer-${n+1}`, tokens, h_before, h_after, n + 1, d_model);
 
-        statusHtml += `
-            <div style="padding: 10px; border-left: 4px solid #10b981; background: #f0fdf4; margin-bottom: 8px;">
-                <strong>Layer ${n + 1} Status:</strong> Vector migration complete.
-            </div>`;
-    }
+		// Update for next iteration
+		h_current = h_after;
 
-    if (statusContainer) statusContainer.innerHTML = statusHtml;
+		statusHtml += `
+	    <div style="padding: 10px; border-left: 4px solid #10b981; background: #f0fdf4; margin-bottom: 8px;">
+		<strong>Layer ${n + 1} Status:</strong> Vector migration complete.
+	    </div>`;
+	}
+
+	if (statusContainer) statusContainer.innerHTML = statusHtml;
+
+	return h_current;
 }
 
 /**
