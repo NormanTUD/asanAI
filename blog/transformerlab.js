@@ -139,7 +139,6 @@ class AttentionEngine {
 				const kj_vec = K_T.map(r => r[j]);
 				const dk_int = Math.round(this.d_k);
 
-				// Berechnung des Endergebnisses: Gewicht * V_j
 				const resultVec = Vi[j].map(v => v * weight);
 
 				const cellEq = `\\underbrace{ 
@@ -147,7 +146,7 @@ class AttentionEngine {
 			\\underbrace{${toRowPmatrix(Qi[i])}}_{\\substack{Q_{${i}} \\\\ \\text{Emb. } \\text{"${tokens[i]}"}}} \\cdot 
 			\\underbrace{${toPmatrix(kj_vec)}}_{\\substack{K^T_{${j}} \\\\ \\text{Emb. } \\text{"${tokens[j]}"}}} 
 		    }{\\sqrt{${dk_int}}} \\right) 
-		}_{\\text{Gewicht } ${weight.toFixed(3)}} 
+		}_{\\text{Weight} ${weight.toFixed(3)}} 
 		\\cdot \\underbrace{${toPmatrix(Vi[j])}}_{\\substack{V_{${j}} \\\\ \\text{Emb. } \\text{"${tokens[j]}"}}} 
 		= \\underbrace{${toPmatrix(resultVec)}}_{\\text{Value}}`;
 
