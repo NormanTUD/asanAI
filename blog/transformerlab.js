@@ -75,26 +75,46 @@ function transformer_tokenize() {
 	const masterInput = document.getElementById('transformer-master-token-input');
 	const trainingInput = document.getElementById('transformer-training-data');
 	const dimSlider = document.getElementById('transformer-dimension-model');
+	const headSlider = document.getElementById('transformer-heads');
+	const depthSlider = document.getElementById('transformer-depth');
+	const tempSlider = document.getElementById('transformer-temperature'); // New
 
-	if (!masterInput || !trainingInput || !dimSlider) return;
+	if (!masterInput || !trainingInput || !dimSlider || !headSlider || !depthSlider || !tempSlider) return;
 
-	const text = trainingInput.value; // The Prediction/Inference text
-	const trainingText = trainingInput.value;
+	const text = trainingInput.value;
 	const d_model = parseInt(dimSlider.value);
+	const n_heads = parseInt(headSlider.value);
+	const n_layers = parseInt(depthSlider.value);
+	const temperature = parseFloat(tempSlider.value); // New
 
-	// 1. Process Tokens
-	const trainingTokens = transformer_tokenize_render(trainingText, "transformer-viz-bpe", true);
+	// Process and Render
+	const trainingTokens = transformer_tokenize_render(text, "transformer-viz-bpe", true);
 	const vocabulary = new Set(trainingTokens);
 	const inputTokens = transformer_tokenize_render(text, "transformer-viz-bpe-inference", false);
 	const knownTokens = inputTokens.filter(token => vocabulary.has(token));
 
-	// 2. Call Modular Components
 	calculate_positional_injection(knownTokens, d_model);
 	render_positional_waves(d_model, knownTokens);
-	render_positional_shift_plot(knownTokens, d_model); // Ensure tokens is first!
+	render_positional_shift_plot(knownTokens, d_model);
 	render_embedding_plot(knownTokens, d_model);
 	render_causal_mask(knownTokens);
-	render_mask_logic(knownTokens);
+
+	// Updated stats helper
+	render_architecture_stats(d_model, n_heads, n_layers, temperature);
+}
+
+function render_architecture_stats(d, h, n, t) {
+	const statsContainer = document.getElementById('transformer-pe-integration-results');
+	if (!statsContainer) return;
+
+	const dv = (d / h).toFixed(2);
+	const infoHtml = `
+	<div style="background: #e0f2fe; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.9rem;">
+	    <strong>Configuration:</strong> $d_{v} = ${dv}$, $N = ${n}$, $T = ${t}$ <br>
+	    <em>Note: $T > 1.0$ increases randomness (flattens SoftMax), $T < 1.0$ makes predictions more confident.</em>
+	</div>
+    `;
+	statsContainer.insertAdjacentHTML('afterbegin', infoHtml);
 }
 
 function render_positional_shift_plot(tokens, d_model) {
