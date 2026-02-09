@@ -102,6 +102,7 @@ function transformer_tokenize() {
 	render_positional_waves(d_model, knownTokens);
 	render_positional_shift_plot(knownTokens, d_model); // Ensure tokens is first!
 	render_embedding_plot(knownTokens, d_model);
+	render_causal_mask(knownTokens);
 }
 
 function render_positional_shift_plot(tokens, d_model) {
@@ -281,6 +282,40 @@ function transformer_tokenize_render(text) {
 	}).join('');
 
 	return tokens; // Return for the embedding function
+}
+
+/**
+ * Renders a dynamic Causal Mask matrix based on token count
+ * Origin: Vaswani et al. (2017) - "Attention Is All You Need"
+ */
+function render_causal_mask(tokens) {
+	const container = document.getElementById('transformer-causal-mask-display');
+	if (!container || !tokens.length) return;
+
+	const N = tokens.length;
+	let matrixLaTeX = "M = \\begin{pmatrix}\n";
+
+	for (let i = 0; i < N; i++) {
+		let row = [];
+		for (let j = 0; j < N; j++) {
+			// Lower triangular logic: 0 if j <= i, else -∞
+			if (j <= i) {
+				row.push("0");
+			} else {
+				row.push("-\\infty");
+			}
+		}
+		matrixLaTeX += "  " + row.join(" & ") + (i === N - 1 ? "" : " \\\\") + "\n";
+	}
+	matrixLaTeX += "\\end{pmatrix}";
+
+	// Update the container and trigger MathJax/KaTeX if present
+	container.innerHTML = `$$${matrixLaTeX}$$`;
+
+	// If using a library like MathJax to re-render:
+	if (window.MathJax) {
+		MathJax.typesetPromise([container]);
+	}
 }
 
 async function loadTransformerModule () {

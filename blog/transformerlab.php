@@ -110,7 +110,9 @@ Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Soft
 #### The Causal Mask Matrix
 
 For the 4-token sequence "the king is wise", the look-ahead mask $M$ is defined as a lower-triangular matrix. The values of $0$ allow the signal to pass through, while $-\infty$ effectively blocks it.
+</div>
 
+<div id="transformer-causal-mask-display">
 $$
 M = \begin{pmatrix}
 0 & -\infty & -\infty & -\infty \\
@@ -119,6 +121,10 @@ M = \begin{pmatrix}
 0 & 0 & 0 & 0
 \end{pmatrix}
 $$
+
+</div>
+
+<div class="md">
 
 ##### Why -∞?
 
