@@ -104,7 +104,13 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}
 ## 6. Multi-Head Attention: Lateral Parallelism
 Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different "heads." Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different linguistic aspects (e.g., syntax vs. logic) simultaneously.
 
-$$\text{head}_i = \text{Attention}(h_0 W_i^Q, h_0 W_i^K, h_0 W_i^V)$$
+* $B = \text{Batch Size}$ (The number of independent sequences processed in a single forward pass)
+* $T = \text{Sequence Length}$ (The number of tokens/words in each sequence)
+* $d_v = \text{Head Dimension}$ (The dimensionality of the projected keys, queries, and values; usually $d_\text{model} / h$)
+
+$$
+\underbrace{\text{head}_i}_{(B, T, d_v)} = \text{Attention}(\underbrace{\underbrace{h_0}_{(B, T, d)} \cdot \underbrace{W_i^Q}_{(d, d_v)}}_{Q: (B, T, d_v)}, \underbrace{\underbrace{h_0}_{(B, T, d)} \cdot \underbrace{W_i^K}_{(d, d_v)}}_{K: (B, T, d_v)}, \underbrace{\underbrace{h_0}_{(B, T, d)} \cdot \underbrace{W_i^V}_{(d, d_v)}}_{V: (B, T, d_v)})
+$$
 
 ## 7. Mathematical Assembly: Concatenation and $h_1$
 
