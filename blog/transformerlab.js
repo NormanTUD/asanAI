@@ -716,11 +716,26 @@ function run_ffn_block(h1, params = {}) {
 	// 1. Gewichte & Biases setzen oder zufällig initialisieren
 	let W1 = params.W1, b1 = params.b1, W2 = params.W2, b2 = params.b2;
 
+	// Hilfsfunktion für Xavier/Glorot Initialisierung
+	function initWeights(rows, cols) {
+		const limit = Math.sqrt(6 / (rows + cols));
+		return Array.from({ length: rows }, () => 
+			Array.from({ length: cols }, () => (Math.random() * 2 - 1) * limit)
+		);
+	}
+
 	// Validierung oder Fallback
-	if (W1) validateShape('W1', W1, d_model, d_ff); else W1 = initFFNWeights(d_model, d_ff);
-	if (b1) validateShape('b1', b1, d_ff, 1); else b1 = new Array(d_ff).fill(0).map(() => Math.random() * 0.01);
-	if (W2) validateShape('W2', W2, d_ff, d_model); else W2 = initFFNWeights(d_ff, d_model);
-	if (b2) validateShape('b2', b2, d_model, 1); else b2 = new Array(d_model).fill(0).map(() => Math.random() * 0.01);
+	if (W1) validateShape('W1', W1, d_model, d_ff); 
+	else W1 = initWeights(d_model, d_ff);
+
+	if (b1) validateShape('b1', b1, d_ff, 1); 
+	else b1 = new Array(d_ff).fill(0); // Standard: Initialisierung mit 0
+
+	if (W2) validateShape('W2', W2, d_ff, d_model); 
+	else W2 = initWeights(d_ff, d_model);
+
+	if (b2) validateShape('b2', b2, d_model, 1); 
+	else b2 = new Array(d_model).fill(0);
 
 	// 2. Schritt: Expansion & ReLU -> out_L1 = ReLU(h1 * W1 + b1)
 	const out_L1 = h1.map(row => {
