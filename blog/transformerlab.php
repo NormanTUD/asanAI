@@ -283,7 +283,18 @@ $$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
 3. **Temperature ($T$)**: Modifies the SoftMax: $\sigma(z)_i = \frac{e^{z_i/T}}{\sum e^{z_j/T}}$.
 
 This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
+</div>
 
+<div id="transformer-migration-plots-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;"></div>
+
+<div class="md">
+    ## 10. The Output Projector: From Abstract to Concrete
+    We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_U$ or $W_{vocab}$). This effectively asks: "How similar is our current thought vector to every known word vector?"
+</div>
+
+<div id="transformer-output-projection" style="background: #fff; padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
+
+<div class="md">
 ## 11. SoftMax
 </div>
 

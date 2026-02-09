@@ -307,7 +307,161 @@ function run_transformer_demo() {
 	const h2 = run_ffn_block(h1_after_residual);
 
 	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads);
+
+	render_final_projection(h_final, vocabulary, d_model, temperature);
 }
+
+/**
+ * Renders the final conversion of the hidden state to token probabilities.
+ * Shows: Logits = h_final * W_vocab^T, then Softmax(Logits/T).
+ */
+function render_final_projection(h_final, vocabulary, d_model, temperature) {
+	const container = document.getElementById('transformer-output-projection');
+	if (!container || !h_final.length || !vocabulary.length) return;
+
+	// 1. Get the final vector of the sequence (the one used for prediction)
+	const lastIdx = h_final.length - 1;
+	const h_last = h_final[lastIdx];
+
+	// 2. Generate Deterministic "Unembedding" Weights (W_vocab)
+	// We create a fake W_vocab where each word has a fixed random vector based on its string hash.
+	// This ensures that if you run it twice, the numbers are the same (runnable by hand).
+	const W_vocab = vocabulary.map(word => {
+		const hash = word.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+		return Array.from({ length: d_model }, (_, i) => {
+			// Generate value between -1 and 1
+			const seed = Math.abs(hash * (i + 13));
+			return ((seed % 2000) / 1000) - 1;
+		});
+	});
+
+	// 3. Calculate Logits: dot(h_last, row) for each word
+	const logits = vocabulary.map((word, i) => {
+		const w_row = W_vocab[i];
+		// Dot product
+		const val = h_last.reduce((sum, h_val, dim) => sum + h_val * w_row[dim], 0);
+		return { word, val, w_row }; // Store w_row for display
+	});
+
+	// 4. Apply Temperature
+	// z_i = z_i / T
+	const scaledLogits = logits.map(item => item.val / temperature);
+	const maxLogit = Math.max(...scaledLogits); // for numerical stability
+
+	// 5. Calculate Softmax
+	const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
+	const sumExps = exps.reduce((a, b) => a + b, 0);
+	const probs = exps.map(e => e / sumExps);
+
+	// Merge back into objects and sort
+	const predictions = logits.map((item, i) => ({
+		word: item.word,
+		logit: item.val,
+		scaled: scaledLogits[i],
+		prob: probs[i],
+		w_row: item.w_row
+	})).sort((a, b) => b.prob - a.prob);
+
+	// --- RENDERING LaTeX & HTML ---
+
+	// Helpers
+	const vecToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' & ')} \\end{pmatrix}`;
+	const colToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
+
+	// We pick the top predicted word for the detailed equation example
+	const topCand = predictions[0];
+	const topIdx = vocabulary.indexOf(topCand.word);
+
+	let html = `
+	<div style="margin-bottom: 25px;">
+	    <h4 style="margin-top:0;">Step 1: The Logit Calculation</h4>
+	    <p>We take the final hidden state of the last token ($h_{\\text{final}}$) and project it onto the vocabulary.</p>
+
+	    <div style="overflow-x: auto; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+		$$ \\text{Logit}("${topCand.word}") = h_{\\text{final}} \\cdot W_{\\text{vocab}}^T["${topCand.word}"] $$
+
+		$$
+		\\underbrace{${topCand.logit.toFixed(2)}}_{\\text{Score}} =
+		\\underbrace{${vecToTex(h_last)}}_{h_{\\text{final}} \\in \\mathbb{R}^{1 \\times ${d_model}}}
+		\\cdot
+		\\underbrace{${colToTex(topCand.w_row)}}_{\\substack{W^T_{\\text{vocab}} \\\\ \\text{Column for} \\\\ "${topCand.word}"}}
+		$$
+	    </div>
+	</div>
+
+	<div style="margin-bottom: 25px;">
+	    <h4 style="margin-top:0;">Step 2: Softmax with Temperature ($T=${temperature}$)</h4>
+	    <p>Scores are scaled by temperature and normalized to sum to 1.0 (100%).</p>
+
+	    <div style="overflow-x: auto; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+		$$ P("${topCand.word}") = \\frac{e^{\\text{Logit} / T}}{\\sum_{j} e^{\\text{Logit}_j / T}} $$
+
+		$$
+		\\underbrace{${(topCand.prob * 100).toFixed(1)}\\%}_{P("${topCand.word}")} =
+		\\frac{
+		    e^{ \\overbrace{${topCand.logit.toFixed(2)}}^{\\text{Logit}} / \\underbrace{${temperature}}_{T} }
+		}{
+		    \\underbrace{${sumExps.toFixed(2)}}_{\\sum e^{z_j/T}}
+		}
+		$$
+	    </div>
+	</div>
+
+	<h4>Predictions (Click to Append)</h4>
+	<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+    `;
+
+	predictions.slice(0, 10).forEach(p => {
+		const barWidth = Math.max(p.prob * 100, 5); // min width for visibility
+		const isTop = p === predictions[0];
+
+		html += `
+	    <button onclick="appendToken('${p.word}')"
+		style="
+		    flex: 1 1 200px;
+		    display: flex; flex-direction: column;
+		    border: 1px solid ${isTop ? '#3b82f6' : '#cbd5e1'};
+		    background: ${isTop ? '#eff6ff' : '#fff'};
+		    border-radius: 8px; padding: 10px; cursor: pointer; text-align: left;
+		    transition: all 0.2s;
+		"
+		onmouseover="this.style.borderColor='#3b82f6'"
+		onmouseout="this.style.borderColor='${isTop ? '#3b82f6' : '#cbd5e1'}'"
+	    >
+		<div style="display: flex; justify-content: space-between; width: 100%; font-weight: bold; color: #1e293b;">
+		    <span>"${p.word}"</span>
+		    <span>${(p.prob * 100).toFixed(1)}%</span>
+		</div>
+		<div style="font-size: 0.75rem; color: #64748b; margin-bottom: 4px;">
+		    Logit: ${p.logit.toFixed(2)}
+		</div>
+		<div style="width: 100%; background: #e2e8f0; height: 6px; border-radius: 3px; overflow: hidden;">
+		    <div style="width: ${p.prob * 100}%; background: #3b82f6; height: 100%;"></div>
+		</div>
+	    </button>
+	`;
+	});
+
+	html += `</div>`;
+	container.innerHTML = html;
+
+	if (typeof render_temml === "function") render_temml();
+}
+
+// Helper to handle the click interaction
+window.appendToken = (token) => {
+	const input = document.getElementById('transformer-master-token-input');
+	// Simple logic to handle spaces (rudimentary)
+	if (input.value && !token.startsWith('##')) {
+		input.value += " " + token;
+	} else if (token.startsWith('##')) {
+		input.value += token.replace('##', '');
+	} else {
+		input.value += token;
+	}
+	// Trigger update
+	run_transformer_demo();
+};
 
 function render_architecture_stats(d, h, n, t) {
 	const statsContainerName = 'transformer-temperature-config';
