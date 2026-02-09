@@ -145,7 +145,7 @@ class AttentionEngine {
 		    \\text{SoftMax} \\left( \\frac{ 
 			\\underbrace{${toRowPmatrix(Qi[i])}}_{\\substack{Q_{${i}} \\\\ \\text{Emb. } \\text{"${tokens[i]}"}}} \\cdot 
 			\\underbrace{${toPmatrix(kj_vec)}}_{\\substack{K^T_{${j}} \\\\ \\text{Emb. } \\text{"${tokens[j]}"}}} 
-		    }{\\sqrt{${dk_int}}} \\right) 
+		    }{\\sqrt{\\underbrace{${dk_int}}_{d_\\text{model}}}} \\right) 
 		}_{\\text{Weight} ${weight.toFixed(3)}} 
 		\\cdot \\underbrace{${toPmatrix(Vi[j])}}_{\\text{Emb. } \\text{"${tokens[j]}"}} 
 		= \\underbrace{${toPmatrix(resultVec)}}_{\\substack{V_{${i}, ${j}} \\\\ \\text{Value}}}`;
