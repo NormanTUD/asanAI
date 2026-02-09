@@ -296,7 +296,9 @@ function transformer_tokenize() {
 	);
 
 	// 3. Execute the forward pass and UI render
-	engine.forward(mockH0, knownTokens);
+	const headData = engine.forward(mockH0, knownTokens);
+
+	updateConcatenationDisplay(headData, knownTokens);
 }
 
 function render_architecture_stats(d, h, n, t) {
@@ -552,6 +554,57 @@ function render_mask_logic(tokens) {
 	rowsContainer.innerHTML = `<ul style="padding-left: 0;">${htmlRows}</ul>`;
 
 	render_temml();
+}
+
+/**
+ * Algorithm: Block Matrix Concatenation
+ * Method: Horizontal stacking of Head matrices (Tokens x d_v)
+ * Origin: Vaswani et al. (2017)
+ */
+function updateConcatenationDisplay(headData, tokens) {
+    const container = document.getElementById('transformer-concat-viz');
+    if (!container || !headData.length) return;
+
+    // Helper: Converts a 2D array (Matrix) to a LaTeX pmatrix
+    const matrixToPmatrix = (matrix) => {
+        return `\\begin{pmatrix} ` + 
+            matrix.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ') + 
+            ` \\end{pmatrix}`;
+    };
+
+    // 1. Prepare individual head matrices
+    const headMatricesLaTeX = headData.map((h, i) => {
+        return `\\underbrace{${matrixToPmatrix(h.context)}}_{\\text{Head } ${i + 1}}`;
+    }).join(', ');
+
+    // 2. Prepare the final concatenated matrix
+    const fullMatrixData = tokens.map((_, tIdx) => {
+        return [].concat(...headData.map(h => h.context[tIdx]));
+    });
+
+    const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrix(fullMatrixData)}}_{\\text{Total } d_{\\text{model}}}`;
+
+    // 3. Render the single large equation with "Concat" prefix
+    container.innerHTML = `$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$`;
+    
+    if (typeof render_temml === "function") render_temml();
+}
+
+function concatenateHeads(headData) {
+	const numHeads = headData.length;
+	const numTokens = headData[0].context.length;
+	const d_v = headData[0].context[0].length;
+
+	// Initialize h_concat matrix (Tokens x d_model)
+	let concatenatedResult = Array.from({ length: numTokens }, () => []);
+
+	for (let t = 0; t < numTokens; t++) {
+		for (let h = 0; h < numHeads; h++) {
+			// Append the d_v vector of Head H for Token T
+			concatenatedResult[t] = concatenatedResult[t].concat(headData[h].context[t]);
+		}
+	}
+	return concatenatedResult;
 }
 
 async function loadTransformerModule () {
