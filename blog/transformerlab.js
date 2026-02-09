@@ -4,18 +4,25 @@
  */
 function transformer_tokenize() {
     const masterInput = document.getElementById('transformer-master-token-input');
+    const trainingInput = document.getElementById('transformer-training-data');
     const dimSlider = document.getElementById('transformer-dimension-model');
     
-    if (!masterInput || !dimSlider) return;
+    if (!masterInput || !trainingInput || !dimSlider) return;
 
     const text = masterInput.value;
+    const trainingText = trainingInput.value;
     const dimensions = parseInt(dimSlider.value);
 
-    // 1. Get tokens from BPE logic
-    const tokens = transformer_tokenize_render(text);
+    // 1. Build vocabulary from training data
+    const trainingTokens = transformer_tokenize_render(trainingText, "transformer-viz-bpe", true);
+    const vocabulary = new Set(trainingTokens);
+
+    // 2. Tokenize input and filter by vocabulary
+    const inputTokens = transformer_tokenize_render(text, "transformer-viz-bpe-inference", false);
+    const knownTokens = inputTokens.filter(token => vocabulary.has(token));
     
-    // 2. Render Plotly Visualization
-    render_embedding_plot(tokens, dimensions);
+    // 3. Render Plotly Visualization (only known tokens)
+    render_embedding_plot(knownTokens, dimensions);
 }
 
 function render_embedding_plot(tokens, dimensions) {
