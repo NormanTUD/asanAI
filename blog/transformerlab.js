@@ -1,3 +1,125 @@
+/**
+ * AttentionEngine: Modular Transformer Component
+ * Origin: Vaswani et al. (2017)
+ * Methods: Multi-Head Projection, Scaled Dot-Product, LaTeX Logging
+ */
+class AttentionEngine {
+    constructor(config) {
+        this.d_model = config.d_model;
+        this.n_heads = config.n_heads;
+        this.d_k = config.d_model / config.n_heads;
+        this.container = document.getElementById(config.containerId);
+        
+        // Trainable Parameters (Stored for easy export/update)
+        this.weights = {
+            query: this.initWeights(this.d_model, this.d_model),
+            key: this.initWeights(this.d_model, this.d_model),
+            value: this.initWeights(this.d_model, this.d_model),
+            output: this.initWeights(this.d_model, this.d_model)
+        };
+    }
+
+    initWeights(r, c) {
+        // Glorot Initialization for training readiness
+        const limit = Math.sqrt(6 / (r + c));
+        return Array.from({ length: r }, () => 
+            Array.from({ length: c }, () => (Math.random() * 2 * limit) - limit)
+        );
+    }
+
+    // Matrix Multiplication Helper
+    dot(A, B) {
+        return A.map(row => 
+            B[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * B[j][i], 0))
+        );
+    }
+
+    softmax(arr) {
+        return arr.map(row => {
+            const max = Math.max(...row);
+            const exps = row.map(v => Math.exp(v - max));
+            const sum = exps.reduce((a, b) => a + b);
+            return exps.map(v => v / sum);
+        });
+    }
+
+    forward(h0, tokens) {
+        const Q_full = this.dot(h0, this.weights.query);
+        const K_full = this.dot(h0, this.weights.key);
+        const V_full = this.dot(h0, this.weights.value);
+
+        let headData = [];
+
+        for (let i = 0; i < this.n_heads; i++) {
+            const start = i * this.d_k;
+            const end = start + this.d_k;
+
+            // Split into heads
+            const Qi = Q_full.map(r => r.slice(start, end));
+            const Ki = K_full.map(r => r.slice(start, end));
+            const Vi = V_full.map(r => r.slice(start, end));
+
+            // Attention Score: (Q*K^T) / sqrt(d_k)
+            const scores = this.dot(Qi, this.transpose(Ki)).map(row => 
+                row.map(v => v / Math.sqrt(this.d_k))
+            );
+            const weights = this.softmax(scores);
+            const context = this.dot(weights, Vi);
+
+            headData.push({ headIdx: i, Qi, Ki, Vi, weights, context });
+        }
+
+        this.renderUI(headData, tokens);
+        return headData;
+    }
+
+    transpose(M) { return M[0].map((_, i) => M.map(row => row[i])); }
+
+    renderUI(headData, tokens) {
+        if (!this.container) return;
+
+        let html = `<div class="attention-tabs" style="border:1px solid #3b82f6; border-radius:8px; overflow:hidden;">`;
+        
+        // Tab Headers
+        html += `<div style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6;">`;
+        headData.forEach((h, i) => {
+            html += `<button onclick="showHead(${i})" style="padding:10px 20px; border:none; cursor:pointer; background:${i===0?'#fff':'transparent'}">Head ${i+1}</button>`;
+        });
+        html += `</div>`;
+
+        // Tab Content
+        headData.forEach((h, i) => {
+            const escapedTokens = tokens.map(t => t.replace(/#/g, '\\#'));
+            html += `<div id="head-content-${i}" class="head-tab" style="padding:20px; display:${i===0?'block':'none'}">
+                <div style="margin-bottom:20px;">
+                    $$ \\text{Head}_{${i}} = \\underbrace{\\text{Softmax} \\left( \\frac{Q_i K_i^T}{\\sqrt{d_k}} \\right)}_{\\text{Attention Weights}} \\cdot \\underbrace{V_i}_{\\text{Values}} $$
+                </div>
+                <div style="overflow-x:auto;">
+                    ${this.generateLatexTable(h.weights, escapedTokens, escapedTokens, "Attention Weights (Softmax)")}
+                </div>
+            </div>`;
+        });
+
+        html += `</div>`;
+        this.container.innerHTML = html;
+        if (typeof render_temml === "function") render_temml();
+    }
+
+    generateLatexTable(matrix, rows, cols, title) {
+        let tex = `<h4>${title}</h4> $$ \\begin{matrix} & ` + cols.map(c => `\\text{${c}}`).join(" & ") + " \\\\ ";
+        matrix.forEach((row, i) => {
+            tex += `\\text{${rows[i]}} & ` + row.map(v => v.toFixed(2)).join(" & ") + " \\\\ ";
+        });
+        return tex + "\\end{matrix} $$";
+    }
+}
+
+// Global toggle for the tabs
+window.showHead = (idx) => {
+    document.querySelectorAll('.head-tab').forEach(el => el.style.display = 'none');
+    document.getElementById(`head-content-${idx}`).style.display = 'block';
+};
+
 function calculate_positional_injection(tokens, d_model) {
 	const resultsContainer = document.getElementById('transformer-pe-integration-results');
 	if (!resultsContainer) return;
@@ -100,6 +222,22 @@ function transformer_tokenize() {
 	render_causal_mask(knownTokens);
 
 	render_architecture_stats(d_model, n_heads, n_layers, temperature);
+
+	// 1. Initialize inside your main function
+	const engine = new AttentionEngine({
+		d_model: parseInt(document.getElementById('transformer-dimension-model').value),
+		n_heads: parseInt(document.getElementById('transformer-heads').value),
+		containerId: "transformer-causal-mask-display" // Or any specific div
+	});
+
+	// 2. Prepare h0 (Tokens x Dimensions)
+	// Use your existing knownTokens array from transformerlab.js
+	const mockH0 = knownTokens.map(() => 
+		Array.from({length: engine.d_model}, () => Math.random() - 0.5)
+	);
+
+	// 3. Execute the forward pass and UI render
+	engine.forward(mockH0, knownTokens);
 }
 
 function render_architecture_stats(d, h, n, t) {
