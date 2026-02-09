@@ -326,65 +326,74 @@ function render_architecture_stats(d, h, n, t) {
     `;
 	statsContainer.innerHTML = infoHtml;
 }
-
 function render_positional_shift_plot(tokens, d_model) {
-	const container = document.getElementById('transformer-pe-shift-plot');
-	if (!container || !Array.isArray(tokens)) return;
+    const container = document.getElementById('transformer-pe-shift-plot');
+    if (!container || !Array.isArray(tokens)) return;
+    
+    const traces = [];
 
-	const traces = [];
+    tokens.forEach((token, pos) => {
+        const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+        const getCoord = (seed) => (((Math.abs(hash) * seed) % 200) - 100) / 100;
 
-	tokens.forEach((token, pos) => {
-		// 1. Semantic Base (Static) - IDENTICAL to render_embedding_plot
-		const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-		const getCoord = (seed) => (((Math.abs(hash) * seed) % 200) - 100) / 100;
+        const base = [getCoord(1), d_model >= 2 ? getCoord(2) : 0, d_model >= 3 ? getCoord(3) : 0];
+        const pe = [];
+        for (let i = 0; i < d_model; i++) {
+            let div_term = Math.pow(10000, (2 * Math.floor(i/2)) / d_model);
+            pe[i] = (i % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
+        }
+        const h0 = base.map((val, i) => val + (pe[i] || 0));
+        const color = `hsl(${Math.abs(hash) % 360}, 70%, 50%)`;
 
-		const base = [
-			getCoord(1), 
-			d_model >= 2 ? getCoord(2) : 0, 
-			d_model >= 3 ? getCoord(3) : 0
-		];
+        // The Migration Line
+        traces.push({
+            x: [base[0], h0[0]],
+            y: [base[1], h0[1]],
+            z: [base[2], h0[2]],
+            type: d_model === 3 ? 'scatter3d' : 'scatter',
+            mode: 'lines',
+            line: { width: 3, color: color, dash: 'solid' },
+            name: `${token} (pos ${pos})`,
+            hoverinfo: 'skip'
+        });
 
-		// 2. Calculate PE Nudge
-		const pe = [];
-		for (let i = 0; i < d_model; i++) {
-			let div_term = Math.pow(10000, (2 * Math.floor(i/2)) / d_model);
-			pe[i] = (i % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
-		}
+        // The Arrowhead
+        if (d_model === 3) {
+            traces.push({
+                type: 'cone',
+                x: [h0[0]], y: [h0[1]], z: [h0[2]],
+                u: [h0[0] - base[0]], v: [h0[1] - base[1]], w: [h0[2] - base[2]],
+                sizemode: 'absolute', sizeref: 0.1, anchor: 'tip',
+                colorscale: [[0, color], [1, color]], showscale: false
+            });
+        } else {
+            // 2D Rotation Logic
+            const angle = Math.atan2(h0[1] - base[1], h0[0] - base[0]) * (180 / Math.PI) - 90;
+            traces.push({
+                x: [h0[0]], y: [h0[1]],
+                type: 'scatter',
+                mode: 'markers',
+                marker: {
+                    symbol: 'triangle-up',
+                    size: 10,
+                    color: color,
+                    angle: angle
+                },
+                name: token
+            });
+        }
+    });
 
-		// 3. Target Coordinate (h0 = Embedding + PE)
-		const h0 = base.map((val, i) => val + (pe[i] || 0));
+    const layout = {
+        title: 'Positional Migration: $Embedding \\to h_0$',
+        margin: { l: 0, r: 0, b: 0, t: 40 },
+        scene: { 
+            xaxis: { range: [-2, 2] }, yaxis: { range: [-2, 2] }, zaxis: { range: [-2, 2] } 
+        },
+        xaxis: { range: [-2, 2] }, yaxis: { range: [-2, 2] }
+    };
 
-		// Trace for the migration line
-		traces.push({
-			x: [base[0], h0[0]],
-			y: [base[1], h0[1]],
-			z: [base[2], h0[2]],
-			type: d_model === 3 ? 'scatter3d' : 'scatter',
-			mode: 'lines+markers',
-			name: `${token} (pos ${pos})`,
-			line: { width: 3, color: `hsl(${Math.abs(hash) % 360}, 70%, 50%)` },
-			marker: { 
-				size: [4, 8], // Small start, larger end
-				color: `hsl(${Math.abs(hash) % 360}, 70%, 50%)`,
-				symbol: 'circle'
-			}
-		});
-	});
-
-	const layout = {
-		title: 'Positional Migration: $Embedding \\to h_0$',
-		showlegend: true,
-		margin: { l: 0, r: 0, b: 0, t: 40 },
-		scene: { // For 3D
-			xaxis: { title: 'Dim 1', range: [-2, 2] },
-			yaxis: { title: 'Dim 2', range: [-2, 2] },
-			zaxis: { title: 'Dim 3', range: [-2, 2] }
-		},
-		xaxis: { title: 'Dim 1', range: [-2, 2] }, // For 1D/2D
-		yaxis: { title: 'Dim 2', range: [-2, 2] }
-	};
-
-	Plotly.newPlot('transformer-pe-shift-plot', traces, layout);
+    Plotly.newPlot('transformer-pe-shift-plot', traces, layout);
 }
 
 function render_embedding_plot(tokens, dimensions) {
@@ -826,38 +835,62 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads) {
  */
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
     const container = document.getElementById('transformer-migration-plots-container');
-    
-    // Create Wrapper for Headline + Plot
     const wrapper = document.createElement('div');
     wrapper.style.cssText = "width: 100%; margin-bottom: 40px; border-top: 2px solid #e2e8f0; padding-top: 20px;";
     wrapper.innerHTML = `<h3 style="text-align: center; color: #1e293b;">Layer ${layerNum}: Feature Space Migration</h3>`;
     
     const plotDiv = document.createElement('div');
     plotDiv.id = id;
-    plotDiv.style.cssText = "height: 500px; width: 100%;"; // Increased height for "Full Screen" feel
-    
+    plotDiv.style.cssText = "height: 500px; width: 100%;";
     wrapper.appendChild(plotDiv);
     container.appendChild(wrapper);
 
-    const traces = tokens.map((_, i) => ({
-        x: [start_h[i][0], end_h[i][0]],
-        y: [start_h[i][1] || 0, end_h[i][1] || 0],
-        z: [start_h[i][2] || 0, end_h[i][2] || 0],
-        type: 'scatter3d',
-        mode: 'lines+markers',
-        line: { width: 6, color: `hsl(${(i * 137) % 360}, 70%, 50%)` },
-        marker: { size: [3, 8], color: `hsl(${(i * 137) % 360}, 70%, 50%)` },
-        hoverinfo: 'none'
-    }));
+    const traces = [];
+
+    tokens.forEach((token, i) => {
+        const color = `hsl(${(i * 137) % 360}, 70%, 50%)`;
+        const start = start_h[i];
+        const end = end_h[i];
+
+        // The Stem (Line)
+        traces.push({
+            x: [start[0], end[0]],
+            y: [start[1] || 0, end[1] || 0],
+            z: [start[2] || 0, end[2] || 0],
+            type: 'scatter3d',
+            mode: 'lines',
+            line: { width: 6, color: color },
+            hoverinfo: 'none',
+            showlegend: false
+        });
+
+        // The Arrowhead (3D Cone)
+        traces.push({
+            type: 'cone',
+            x: [end[0]],
+            y: [end[1] || 0],
+            z: [end[2] || 0],
+            u: [end[0] - start[0]],
+            v: [(end[1] || 0) - (start[1] || 0)],
+            w: [(end[2] || 0) - (start[2] || 0)],
+            sizemode: 'absolute',
+            sizeref: 0.15, 
+            anchor: 'tip',
+            colorscale: [[0, color], [1, color]],
+            showscale: false,
+            text: `Token: ${token}`,
+            hoverinfo: 'text'
+        });
+    });
 
     const layout = {
         autosize: true,
-        margin: { l:0, r:0, b:0, t:0 },
+        margin: { l: 0, r: 0, b: 0, t: 0 },
         scene: {
             aspectmode: "cube",
-            xaxis: { title: '', range: [-2, 2], showgrid: true, zeroline: false },
-            yaxis: { title: '', range: [-2, 2], showgrid: true, zeroline: false },
-            zaxis: { title: '', range: [-2, 2], showgrid: true, zeroline: false }
+            xaxis: { title: '', range: [-2, 2] },
+            yaxis: { title: '', range: [-2, 2] },
+            zaxis: { title: '', range: [-2, 2] }
         },
         showlegend: false
     };
