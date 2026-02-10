@@ -560,35 +560,43 @@ function render_positional_shift_plot(tokens, d_model) {
         Plotly.newPlot(container, traces, layout);
 
     } else {
-        // --- PARALLEL COORDINATES LOGIC (> 3D) ---
-        const dimensions = [];
-        const colors = tokens.map((t, i) => i);
+	    const dimensions = [];
+	    // Erzeuge diskrete Farb-Indizes für jedes Wort
+	    const colors = tokens.map((_, i) => i);
 
-        for (let i = 0; i < d_model; i++) {
-            const baseValues = [];
-            const injectedValues = [];
+	    for (let i = 0; i < d_model; i++) {
+		    const baseValues = [];
+		    const injectedValues = [];
 
-            tokens.forEach((token, pos) => {
-                const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-                const baseVal = (((Math.abs(hash) * (i + 1)) % 200) - 100) / 100;
-                
-                let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-                const pe_val = (i % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
-                
-                baseValues.push(baseVal);
-                injectedValues.push(baseVal + pe_val);
-            });
+		    tokens.forEach((token, pos) => {
+			    const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+			    const baseVal = (((Math.abs(hash) * (i + 1)) % 200) - 100) / 100;
+			    let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+			    const pe_val = (i % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
+			    baseValues.push(baseVal);
+			    injectedValues.push(baseVal + pe_val);
+		    });
 
-            dimensions.push({ label: `D${i} Base`, values: baseValues });
-            dimensions.push({ label: `D${i} +PE`, values: injectedValues });
-        }
+		    dimensions.push({ label: `D${i} Base`, values: baseValues });
+		    dimensions.push({ label: `D${i} +PE`, values: injectedValues });
+	    }
 
-        const trace = {
-            type: 'parcoords',
-            line: { color: colors, colorscale: 'Viridis' },
-            dimensions: dimensions
-        };
-        Plotly.newPlot(container, [trace], { title: `Positional Migration (Parallel View, d=${d_model})` });
+	    const trace = {
+		    type: 'parcoords',
+		    line: {
+			    color: colors,
+			    colorscale: 'Viridis',
+			    showscale: true,
+			    colorbar: {
+				    title: 'Tokens',
+				    tickvals: tokens.map((_, i) => i),
+				    ticktext: tokens,
+				    thickness: 15
+			    }
+		    },
+		    dimensions: dimensions
+	    };
+	    Plotly.newPlot(container, [trace], { title: `Positional Migration (d=${d_model})` });
     }
 }
 
@@ -619,24 +627,30 @@ function render_embedding_plot(tokens, dimensions) {
         };
         Plotly.newPlot(container, plotData, layout);
     } else {
-        // --- NEW: Parallel Coordinates for High-Dim ---
-        const colors = tokens.map(t => t.split('').reduce((a, b) => ((a << 5) - a) + b.charCodeAt(0), 0) % 360);
-        
-        const dims_data = Array.from({ length: dimensions }, (_, dIdx) => ({
-            label: `Dim ${dIdx}`,
-            values: tokens.map(token => {
-                const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-                return (((Math.abs(hash) * (dIdx + 1)) % 200) - 100) / 100;
-            })
-        }));
+	    const tokenIndices = tokens.map((_, i) => i);
+	    const dims_data = Array.from({ length: dimensions }, (_, dIdx) => ({
+		    label: `Dim ${dIdx}`,
+		    values: tokens.map(token => {
+			    const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+			    return (((Math.abs(hash) * (dIdx + 1)) % 200) - 100) / 100;
+		    })
+	    }));
 
-        const trace = {
-            type: 'parcoords',
-            line: { color: colors, colorscale: 'Jet' },
-            dimensions: dims_data
-        };
-
-        Plotly.newPlot(container, [trace], { title: `High-Dim Embedding Space (d=${dimensions})` });
+	    const trace = {
+		    type: 'parcoords',
+		    line: { 
+			    color: tokenIndices, 
+			    colorscale: 'Jet',
+			    showscale: true,
+			    colorbar: {
+				    tickvals: tokenIndices,
+				    ticktext: tokens,
+				    title: 'Vocabulary'
+			    }
+		    },
+		    dimensions: dims_data
+	    };
+	    Plotly.newPlot(container, [trace], { title: `High-Dim Embedding Space (d=${dimensions})` });
     }
 }
 
