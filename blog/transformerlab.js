@@ -552,7 +552,7 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
         }));
         myChart.setOption({
             title: { text: `Layer ${layerNum} Migration`, left: 'center' },
-            tooltip: { trigger: 'item', formatter: p => `Wort: <b>${p.name}</b>` },
+            tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
             parallelAxis: axes,
             series: [{
                 type: 'parallel', data: data,
@@ -594,7 +594,7 @@ function render_embedding_plot(tokens, dimensions) {
         });
 
         myChart.setOption({
-            tooltip: { trigger: 'item', formatter: p => `Wort: <b>${p.name}</b>` },
+            tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
             parallelAxis: parallelAxis,
             parallel: { left: 40, right: 40, bottom: 20, top: 50 },
             series: [{ 
@@ -1067,7 +1067,7 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
         }));
         myChart.setOption({
             title: { text: `Layer ${layerNum} Migration`, left: 'center' },
-            tooltip: { trigger: 'item', formatter: p => `Wort: <b>${p.name}</b>` },
+            tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
             parallelAxis: axes,
             series: [{
                 type: 'parallel', data: data,
