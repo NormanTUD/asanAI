@@ -127,7 +127,42 @@ function load_base_js () {
 	<link href="https://cdn.jsdelivr.net/npm/temml@0.13.1/dist/Temml-Local.min.css" rel="stylesheet">
 
 	<script>
-		const subUnits = ["tion", "ing", "haus", "er", "ly", "is", "ment", "ness", "ation"];
+		const subUnits = [
+			// --- Deutsch (Häufige Endungen & Wortbestandteile) ---
+			"ung", "heit", "keit", "schaft", "chen", "lein", "isch", "erl", "end", "est",
+			"erei", "ler", "ner", "rich", "aus", "bau", "hof", "berg", "dorf", "stadt",
+			"land", "fluss", "weg", "platz", "mann", "frau", "kind", "zeit", "tag", "jahr",
+			"lich", "haft", "sam", "bar", "los", "voll", "reich", "arm", "wert", "würdig",
+			"ieren", "elte", "erte", "igt", "icht", "ern", "eln", "st", "t", "en",
+
+			// --- Englisch (Common Suffixes & Word Ends) ---
+			"tion", "ing", "ly", "ment", "ness", "able", "ible", "al", "ial", "er",
+			"or", "ist", "ism", "ship", "ance", "ence", "ity", "ty", "ive", "ous",
+			"ful", "less", "ish", "ic", "ical", "ify", "ize", "ise", "en", "ed",
+			"ward", "wise", "ways", "hood", "dom", "some", "th", "fold", "teen", "ty",
+			"age", "ery", "ory", "ury", "ure", "ate", "ute", "ite", "ade", "ide",
+
+			// --- Französisch (Suffixes et Terminaisons) ---
+			"tion", "sion", "ment", "age", "ence", "ance", "esse", "eur", "euse", "iste",
+			"isme", "té", "itée", "ière", "ier", "aire", "oire", "ure", "ude", "ade",
+			"able", "ible", "uble", "ique", "iste", "esque", "âtre", "ard", "asse", "et",
+			"ette", "ot", "otte", "on", "onne", "ais", "ait", "aient", "iez", "ons",
+			"erie", "ie", "ail", "aille", "ille", "illeur", "ance", "ence", "onne", "ième",
+
+			// --- Übergreifende / Lateinische & Griechische Wurzeln ---
+			"logie", "graph", "gramm", "phon", "scope", "meter", "sphere", "path", "phil", "phob",
+			"cracy", "arch", "onym", "the", "bio", "geo", "astro", "auto", "poly", "mono",
+			"multi", "inter", "intra", "trans", "sub", "super", "pre", "post", "anti", "pro",
+			"ex", "in", "re", "de", "dis", "un", "mis", "over", "under", "non",
+
+			// --- Top 200 Ergänzungen (Häufige Wortausgänge) ---
+			"land", "water", "world", "light", "night", "power", "work", "life", "form", "part",
+			"point", "line", "side", "head", "back", "hand", "field", "room", "house", "book",
+			"word", "name", "sound", "place", "thing", "case", "system", "group", "area", "state",
+			"story", "study", "fact", "idea", "home", "way", "week", "month", "night", "day",
+			"man", "woman", "child", "people", "school", "king", "queen", "law", "war", "peace"
+		];
+
 		const labelMap = <?php echo json_encode(get_ai_course_labels()); ?>;
 		const isIndexPage = window.location.pathname.endsWith('index.php') || window.location.pathname === '/';
 
