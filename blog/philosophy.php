@@ -7,17 +7,14 @@
 How can the semantic interpretation of a formal symbol system be made intrinsic to the system, rather than just parasitic on the meanings in our heads?
 </div>
 
-At the heart of modern AI lies a profound philosophical and technical gap. While Large Language Models (LLMs) can discuss the smell of rain or the sting of betrayal with poetic eloquence, they lack a fundamental connection to the world they describe. This is known as the **[Grounding Problem](https://en.wikipedia.org/wiki/Symbol_grounding_problem)**.
-
-### What is the Vector Grounding Problem?
+At the heart of modern AI lies a profound philosophical and technical gap. While Large Language Models (LLMs) can discuss the smell of rain or the sting of betrayal with poetic eloquence, they lack a fundamental connection to the world they describe. This is known as the **Grounding Problem**.
 
 The "Grounding Problem" asks how digital symbols (words, numbers) acquire meaning. For LLMs, meaning is defined through **distributional semantics**: a word's meaning is simply its relationship to other words.
 
 In an embedding space, the word "apple" is not a crisp, sweet fruit; it is a point in a high-dimensional vector space, perhaps closer to "pear" and "fruit" and further from "carburetor."
 
+### The "Dictionary" Paradox
 
-
-#### The "Dictionary" Paradox
 Imagine trying to learn a foreign language using only a dictionary written in that same language. You can follow the definitions in a circle forever, but you will never know what the words actually *refer* to in the physical world. LLMs are, essentially, the world's most sophisticated circular dictionaries.
 
 ### Human Experience: Embodied Cognition
@@ -27,8 +24,6 @@ Human "grounding" is **embodied**. Our understanding of the world is filtered th
 * **Sensorimotor Feedback:** We know what "heavy" means because our muscles strain.
 * **Affective Weight:** We know what "danger" means because our heart rate spikes and adrenaline flows.
 * **Shared Reality:** Our language evolved to coordinate physical actions in a shared environment (e.g., "Look at that tree").
-
-
 
 For a human, the concept of "hot" is grounded in the memory of a burnt finger. For an LLM, "hot" is just a token frequently found near "stove," "sun," or "spicy."
 
