@@ -47,6 +47,35 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 	<textarea id="transformer-training-data" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;"  oninput="run_transformer_demo()">the king is wise and the queen is brave</textarea>
 </div>
 
+<div style="background: #f0fdf4; padding: 15px; border: 1px solid #10b981; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;">
+    <h3 style="margin-top: 0; color: #047857; font-size: 1rem;">Training Configuration</h3>
+
+    <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+        <div>
+            <label style="font-weight: bold; font-size: 0.9rem;">Epochs:</label>
+            <input type="number" id="train-epochs" value="50" style="width: 60px; padding: 4px;">
+        </div>
+        <div>
+            <label style="font-weight: bold; font-size: 0.9rem;">Learning Rate:</label>
+            <input type="number" id="train-lr" value="0.05" step="0.01" style="width: 70px; padding: 4px;">
+        </div>
+        <div>
+            <label style="font-weight: bold; font-size: 0.9rem;">Optimizer:</label>
+            <select id="train-optimizer" style="padding: 4px;">
+                <option value="adam">Adam</option>
+                <option value="sgd">SGD</option>
+                <option value="rmsprop">RMSProp</option>
+            </select>
+        </div>
+        <button onclick="train_transformer()" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+            Train Model
+        </button>
+    </div>
+
+    <div id="training-status" style="margin-top: 10px; font-size: 0.85rem; color: #047857; min-height: 20px;"></div>
+    <div id="training-loss-plot" style="width: 100%; height: 150px; margin-top: 10px; display: none;"></div>
+</div>
+
 <div class="md">
 ## The Illusion of Locality: Beyond the Grandmother Neuron
 Meaning in a Transformer is **holistic and distributed**. In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers to a singular neuron triggering for a complex concept. In the Transformer, no such neuron exists. Meaning is an emergent property of the entire vector space; it is held in the collective ratios of the hidden states. They don't inherently *mean* anything; they simply function to produce the desired output. This also holds true for all single parts of the Transformer, which we'll cover now.
