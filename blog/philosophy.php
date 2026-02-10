@@ -1,6 +1,18 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
+## Mary's Room: The Qualitative Gap
+
+The "Knowledge Argument" or \citealternativetitle{jackson1982epiphenomenal} posits a super intelligent scientist who, from birth on, was in a room where everything is kept in gray colors in dim light, so she never saw any color. But being a super smart scientist, she knows every physical fact about color, wavelengths, retinal response, and so on, but has never actually *seen* color. When she leaves her black-and-white room and sees a red rose, does she learn something new?
+
+If so, the world cannot be physical alone. There must be something else, that is, *subjective experience*. Philosophers call this *Qualia*, which means the subjective experience of things from the subjective perspective. This qualia may or may not be result from the physical world, but it isn't simply the same, therefore, there must be more than the purely physical world, the thought-experiment suggests.
+
+In the context of AI, this suggests that an LLM could be the world's greatest "Mary." It can define "red" using every linguistic and physical parameter available in its training data:
+* **LLM Knowledge:** "Red is the perception of light with a wavelength of approximately $700\text{ nm}$", an apple is red, red is 'rot' in German, the stem of the Cyrtostachys-Renda-Palm is red, and so on and so forth, but:
+* **The Missing Piece:** The subjective *experience* (Qualia).
+
+No matter how high the dimensionality of the embedding space, the model remains in the "black-and-white room" of pure data, lacking the experiential "newness" of a sensory encounter. And it can never access that, since it has no subjective experience, no qualia, no "what is it like to be it"-ness, just as there's no "what it is like to be" for a stone.
+
 ## The Vector Grounding Problem: Symbols, Spaces, and Senses
 
 <div class="smart-quote" data-cite="harnad1990symbol">
@@ -145,20 +157,6 @@ Modern models exhibit **Emergent Properties**, abilities like coding or logical 
 We see a "mind" in the AI because language is the primary way humans communicate their inner lives. When an AI masters language, it builds a mirror. When we look into it, we see our own intelligence reflected back at us and mistake it for the machine's own *Geist*.
 
 As noted in the philosophy of grounding, the AI has the **Map** of our language, but the **Territory** of experience, the actual *Geist*, remains uniquely biological and embodied.
-
-## Mary's Room: The Qualitative Gap
-
-<div class="smart-quote" data-cite="jackson1982epiphenomenal">
-It seems just obvious that she will learn something about the world and our visual experience of it. But then it is inescapable that her previous knowledge was incomplete. But she had all the physical information. Ergo there is more to have than that.
-</div>
-
-The "Knowledge Argument" or **Mary's Room** posits a scientist who knows every physical fact about color, wavelengths, retinal response, and the $v_{\text{red}}$ vectors of the brain, but has never actually *seen* color. When she leaves her black-and-white room and sees a red rose, does she learn something new?
-
-In the context of AI, this suggests that an LLM could be the world's greatest "Mary." It can define "red" using every linguistic and physical parameter available in its training data:
-* **LLM Knowledge:** "Red is the perception of light with a wavelength of approximately $700\text{ nm}$."
-* **The Missing Piece:** The subjective *experience* (Qualia).
-
-No matter how high the dimensionality of the embedding space, the model remains in the "black-and-white room" of pure data, lacking the experiential "newness" of a sensory encounter.
 
 ## The Frame Problem: The Infinite Checklist
 

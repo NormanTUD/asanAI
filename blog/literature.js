@@ -952,6 +952,7 @@ window.bibData = {
 		year: "1982",
 		title: "Epiphenomenal Qualia",
 		url: "https://www.sfu.ca/~jillmc/JacksonfromJStore.pdf",
+		alternativetitle: "Mary's Room"
 	},
 	"sutton2019bitter": {
 		author: "Rich Sutton",
