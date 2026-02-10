@@ -285,10 +285,10 @@ function run_transformer_demo() {
 	// or you can add a div with id "inference-viz" in your HTML if you want to see it.
 	const inputTokens = transformer_tokenize_render(masterInput.value, null);
 
-	run_network(inputTokens, trainingTokens);
+	run_and_visualize_network(inputTokens, trainingTokens);
 }
 
-function run_network(inputTokens, trainingTokens) {
+function run_and_visualize_network(inputTokens, trainingTokens) {
 	const dimSlider = document.getElementById('transformer-dimension-model');
 	const d_model = parseInt(dimSlider.value);
 
