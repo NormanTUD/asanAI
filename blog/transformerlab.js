@@ -911,9 +911,6 @@ function assert_or_init(name, value, expected_rows, expected_cols) {
  * @param {Object} params - {W1, b1, W2, b2} (optional)
  */
 function run_ffn_block(h1, params = {}) {
-	console.log("==========");
-	console.log(params);
-
 	const d_model = h1[0].length;
 	const d_ff = d_model * 4;
 
