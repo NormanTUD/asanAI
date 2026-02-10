@@ -364,7 +364,7 @@ TODO
 While the philosophical grounding of AI remains hollow, its impact on the sociopolitical landscape is tangible and often destabilizing. The primary concern is not just the creation of "fake news," but the erosion of the concept of objective truth itself.
 
 ### The Liar’s Dividend
-\\citeauthor{chesney2019deepfakes} coined the term **"Liar’s Dividend"** to describe a secondary effect of generative AI: as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake.
+\\citeauthorlastnameand{chesney2019deepfakes} coined the term **"Liar’s Dividend"** to describe a secondary effect of generative AI: as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake.
 
 * **Political Application:** Donald Trump has frequently leveraged this skepticism. For instance, he has suggested that unfavorable videos or recordings, such as his own past statements, might be "AI-generated" or manipulated to discredit him.
 
