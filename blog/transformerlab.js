@@ -302,11 +302,15 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 	console.log("Input:", inputTokens);
 	console.log("Known Tokens:", knownTokens);
 
+
+	var embeddingSpace = generateEmbeddingSpace(trainingTokens, d_model);
+
 	// Visualizations
 	calculate_positional_injection(knownTokens, d_model);
 	render_positional_waves(d_model, knownTokens);
 	render_positional_shift_plot(knownTokens, d_model);
-	render_embedding_plot(knownTokens, d_model);
+	render_embedding_plot(embeddingSpace, d_model);
+
 	render_causal_mask(knownTokens);
 	if (typeof render_mask_logic === "function") render_mask_logic(knownTokens);
 	render_architecture_stats(d_model, n_heads, n_layers, temperature);
@@ -566,35 +570,60 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
 	}
 }
 
-function render_embedding_plot(tokens, dimensions) {
+function generateEmbeddingSpace(tokens, d_model) {
+	const embeddingSpace = {};
+
+	// Helper for Normal Distribution (Realistic spread)
+	const gaussianRandom = () => {
+		let u = 0, v = 0;
+		while(u === 0) u = Math.random();
+		while(v === 0) v = Math.random();
+		return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+	};
+
+	tokens.forEach(token => {
+		// We seed the randomness with the token hash to ensure consistency
+		// across re-renders while maintaining a "spread"
+		embeddingSpace[token] = Array.from({ length: d_model }, () =>
+			parseFloat(gaussianRandom().toFixed(4))
+		);
+	});
+
+	return embeddingSpace;
+}
+
+function render_embedding_plot(embeddingSpace, dimensions) {
 	const container = document.getElementById('transformer-plotly-space');
 	if (!container) return;
 
+	const tokens = Object.keys(embeddingSpace);
+
 	if (dimensions <= 3) {
 		const traces = tokens.map(token => {
-			const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-			const getV = (offset) => (((Math.abs(hash) * offset) % 200) - 100) / 100;
+			const vec = embeddingSpace[token];
 			return {
 				type: dimensions === 3 ? 'scatter3d' : 'scatter',
-				x: [getV(1)], y: [dimensions >= 2 ? getV(2) : 0], z: [dimensions === 3 ? getV(3) : 0],
-				mode: 'markers+text', text: [token], name: token, marker: { size: 10 }
+				x: [vec[0]], 
+				y: [dimensions >= 2 ? vec[1] : 0], 
+				z: [dimensions === 3 ? vec[2] : 0],
+				mode: 'markers+text', 
+				text: [token], 
+				name: token, 
+				marker: { size: 10 }
 			};
 		});
-		Plotly.newPlot(container, traces, { title: "Embedding Space" });
+		Plotly.newPlot(container, traces, { title: "Embedding Space (Gaussian Spread)" });
 	} else {
 		if (typeof echarts === 'undefined') return;
 		Plotly.purge(container);
 
-		// Fix: Sicherstellen, dass das Element existiert und übergeben wird
 		const myChart = echarts.init(container);
 		const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({ dim: i, name: `D${i}` }));
-		const data = tokens.map(token => {
-			const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-			return { 
-				name: token, 
-				value: Array.from({ length: dimensions }, (_, i) => parseFloat((((Math.abs(hash) * (i+1)) % 200) - 100) / 100).toFixed(3)) 
-			};
-		});
+
+		const data = tokens.map(token => ({
+			name: token,
+			value: embeddingSpace[token]
+		}));
 
 		myChart.setOption({
 			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
