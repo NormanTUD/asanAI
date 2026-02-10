@@ -215,13 +215,25 @@ function calculate_positional_injection(tokens, d_model) {
 function render_positional_waves(d_model, tokens) {
 	const traces = [];
 	const resolution = 0.1;
-	const maxPos = Math.max(10, tokens.length);
+	const seqLen = tokens.length;
+	// Ensure a minimum scale for visibility, but fit to tokens.length
+	const maxPos = Math.max(1, seqLen); 
 
 	for (let i = 0; i < d_model; i++) {
 		let x = [], y = [];
 		for (let p = 0; p <= maxPos; p += resolution) {
+			// Frequency scaling logic
 			let div_term = Math.pow(10000, (2 * (Math.floor(i/2))) / d_model);
-			let val = (i % 2 === 0) ? Math.sin(p / div_term) : Math.cos(p / div_term);
+
+			// NEW: Normalize the position 'p' relative to sequence length 
+			// This 'stretches' the wave to fit the actual input tokens.
+			const normalizedP = seqLen > 1 ? p / (seqLen - 1) : p;
+
+			// We multiply by Math.PI to ensure at least half a wave cycle fits the length
+			let val = (i % 2 === 0) 
+				? Math.sin((normalizedP * Math.PI) / div_term) 
+				: Math.cos((normalizedP * Math.PI) / div_term);
+
 			x.push(p);
 			y.push(val);
 		}
@@ -243,9 +255,9 @@ function render_positional_waves(d_model, tokens) {
 	});
 
 	const layout = {
-		title: 'Sinusoidal Positional Waves',
+		title: 'Adaptive Sinusoidal Positional Waves',
 		margin: { t: 40, b: 40, l: 40, r: 20 },
-		xaxis: { title: 'Token Position (pos)' },
+		xaxis: { title: 'Normalized Token Position' },
 		yaxis: { title: 'PE Value', range: [-1.1, 1.1] }
 	};
 
