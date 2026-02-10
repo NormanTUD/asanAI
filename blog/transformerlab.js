@@ -878,7 +878,11 @@ function run_ffn_block(h1, params = {}) {
 	const d_ff = d_model * 4;
 
 	// 1. Gewichte & Biases setzen oder zufällig initialisieren
-	let W1 = params.W1, b1 = params.b1, W2 = params.W2, b2 = params.b2;
+	let 
+		W1 = params.W1,
+		b1 = params.b1,
+		W2 = params.W2,
+		b2 = params.b2;
 
 	// Hilfsfunktion für Xavier/Glorot Initialisierung
 	function initWeights(rows, cols) {
