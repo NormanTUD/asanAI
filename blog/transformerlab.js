@@ -656,9 +656,6 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
 	// If container doesn't exist, we just return tokens without rendering (silent mode)
 
 	let tokens = [];
-	// Simple logic to split suffixes for demo purposes
-	const subUnits = ["tion", "ing", "haus", "er", "ly", "is", "ment", "ness", "ation"];
-	// Remove punctuation for cleaner tokens in this demo
 	const cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,""); // `
     const words = cleanText.split(/\s+/);
 

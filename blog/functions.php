@@ -127,6 +127,7 @@ function load_base_js () {
 	<link href="https://cdn.jsdelivr.net/npm/temml@0.13.1/dist/Temml-Local.min.css" rel="stylesheet">
 
 	<script>
+		const subUnits = ["tion", "ing", "haus", "er", "ly", "is", "ment", "ness", "ation"];
 		const labelMap = <?php echo json_encode(get_ai_course_labels()); ?>;
 		const isIndexPage = window.location.pathname.endsWith('index.php') || window.location.pathname === '/';
 

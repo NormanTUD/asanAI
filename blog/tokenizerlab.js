@@ -37,7 +37,6 @@ function renderTokens(type, text) {
 		}
 	} 
 	else if (type === 'bpe') {
-		const subUnits = ["tion", "ing", "haus", "er", "ly", "is", "ment", "ness", "ation"];
 		const words = text.split(/\s+/);
 		words.forEach(word => {
 			let found = false;
