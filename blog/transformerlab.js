@@ -336,17 +336,26 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 		Array.from({length: engine.d_model}, () => Math.random() - 0.5)
 	);
 
+	// Initialisierung
+	var weights = {};
+	weights["layer_weights"] = []; 
+
+	for (let n = 0; n < n_layers; n++) {
+		// Ein neues Objekt für diesen Layer erstellen
+		let currentLayer = {
+			"gamma": new Array(d_model).fill(1.0),
+			"beta": new Array(d_model).fill(0.0)
+		};
+		// Das Objekt in das Array schieben
+		weights["layer_weights"].push(currentLayer);
+	}
+
 	const headData = engine.forward(mockH0, knownTokens);
 	const multiHeadOutput = updateConcatenationDisplay(headData, knownTokens);
 
-	const h1 = get_h1(mockH0, multiHeadOutput);
+	console.log(weights);
+	const h1 = get_h1(mockH0, multiHeadOutput, weights["layer_weights"][0]["gamma"], weights["layer_weights"][0]["beta"]);
 	if (typeof render_h1_logic === "function") render_h1_logic(mockH0, multiHeadOutput);
-
-	var weights = {};
-	weights["layer_weights"] = [];
-	for (let n = 0; n < n_layers; n++) {
-		weights["layer_weights"].push({});
-	}
 
 	const h2 = run_ffn_block(h1, weights["layer_weights"][0]);
 	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads, weights["layer_weights"]);
@@ -800,16 +809,16 @@ function updateConcatenationDisplay(headData, tokens) {
 	return fullMatrixData; // Now returns the calculated value
 }
 
-/**
- * Method: Layer Normalization (Ba et al., 2016)
- * Note: Uses epsilon 1e-5 for numerical stability.
- */
-function calculateLayerNorm(matrix) {
+function calculateLayerNorm(matrix, gamma, beta) {
 	const eps = 1e-5;
 	return matrix.map(row => {
 		const mean = row.reduce((a, b) => a + b, 0) / row.length;
 		const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
-		return row.map(val => (val - mean) / Math.sqrt(variance + eps));
+
+		return row.map((val, i) => {
+			const standardized = (val - mean) / Math.sqrt(variance + eps);
+			return standardized * gamma[i] + beta[i];
+		});
 	});
 }
 
@@ -817,9 +826,9 @@ function calculateLayerNorm(matrix) {
  * Goal: Calculate h1 = h0 + LayerNorm(MultiHead(h0))
  * Note: This implements the "Post-LN" architecture.
  */
-function get_h1(h0, multiHeadOutput) {
+function get_h1(h0, multiHeadOutput, gamma, beta) {
 	// 1. Apply LayerNorm to the Multi-Head output
-	const normMH = calculateLayerNorm(multiHeadOutput);
+	const normMH = calculateLayerNorm(multiHeadOutput, gamma, beta);
 
 	// 2. Element-wise addition (Residual Connection)
 	const h1 = h0.map((row, i) =>
@@ -876,6 +885,9 @@ function validateShape(name, data, expectedRows, expectedCols) {
  * @param {Object} params - {W1, b1, W2, b2} (optional)
  */
 function run_ffn_block(h1, params = {}) {
+	console.log("==========");
+	console.log(params);
+
 	const d_model = h1[0].length;
 	const d_ff = d_model * 4;
 
@@ -926,7 +938,7 @@ function run_ffn_block(h1, params = {}) {
 	});
 
 	// 4. Schritt: LayerNorm & Residual -> h2 = h1 + LN(out_FFN)
-	const ffn_normed = calculateLayerNorm(out_FFN);
+	const ffn_normed = calculateLayerNorm(out_FFN, params["gamma"], params["beta"]);
 	const h2 = h1.map((row, i) => row.map((val, j) => val + ffn_normed[i][j]));
 
 	// Visualisierung triggern
@@ -998,8 +1010,8 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, weigh
 
 		const headData = engine.forward(h_current, tokens);
 		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
-		const zn = get_h1(h_current, concatOutput);
-		const h_after = run_ffn_block(zn, weights[n+1]); // Note: this is our h_{n+1}
+		const zn = get_h1(h_current, concatOutput, weights[n]["gamma"], weights[n]["beta"]);
+		const h_after = run_ffn_block(zn, weights[n]);
 
 		// 2. Render Full-Width Migration Plot
 		create_migration_plot(`migration-layer-${n+1}`, tokens, h_before, h_after, n + 1, d_model);
