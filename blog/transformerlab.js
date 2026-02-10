@@ -501,156 +501,109 @@ function render_architecture_stats(d, h, n, t) {
 	statsContainer.innerHTML = infoHtml;
 }
 
-function render_positional_shift_plot(tokens, d_model) {
-    const container = document.getElementById('transformer-pe-shift-plot');
-    if (!container || !Array.isArray(tokens)) return;
+function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
+    const container = document.getElementById('transformer-migration-plots-container');
+    let plotDiv = document.getElementById(id);
+    if (!plotDiv) {
+        plotDiv = document.createElement('div');
+        plotDiv.id = id;
+        plotDiv.style.cssText = "height: 500px; width: 100%; margin-top: 30px;";
+        container.appendChild(plotDiv);
+    }
 
     if (d_model <= 3) {
-        // --- 1D, 2D, 3D SCATTER LOGIC ---
         const traces = [];
-        tokens.forEach((token, pos) => {
-            const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-            const getCoord = (seed) => (((Math.abs(hash) * seed) % 200) - 100) / 100;
-
-            const base = [getCoord(1), d_model >= 2 ? getCoord(2) : 0, d_model >= 3 ? getCoord(3) : 0];
-            const pe = [];
-            for (let i = 0; i < d_model; i++) {
-                let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-                pe[i] = (i % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
-            }
-            const h0 = base.map((val, i) => val + (pe[i] || 0));
-            const color = `hsl(${Math.abs(hash) % 360}, 70%, 50%)`;
-
-            traces.push({
-                x: [base[0], h0[0]],
-                y: [base[1] || 0, h0[1] || 0],
-                z: [base[2] || 0, h0[2] || 0],
-                type: d_model === 3 ? 'scatter3d' : 'scatter',
-                mode: 'lines',
-                line: { width: 3, color: color },
-                name: `${token} (pos ${pos})`,
-                hoverinfo: 'skip'
-            });
+        tokens.forEach((token, i) => {
+            const x = [start_h[i][0], end_h[i][0]];
+            const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
+            const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
 
             if (d_model === 3) {
                 traces.push({
-                    type: 'cone',
-                    x: [h0[0]], y: [h0[1]], z: [h0[2]],
-                    u: [h0[0] - base[0]], v: [h0[1] - base[1]], w: [h0[2] - base[2]],
-                    sizemode: 'absolute', sizeref: 0.1, anchor: 'tip',
-                    colorscale: [[0, color], [1, color]], showscale: false
+                    type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
+                    line: { width: 4 }, name: token, showlegend: false
+                });
+                traces.push({
+                    type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
+                    u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
+                    sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+                    colorscale: [[0, '#10b981'], [1, '#10b981']], showscale: false
                 });
             } else {
-                const angle = Math.atan2(h0[1] - base[1], h0[0] - base[0]) * (180 / Math.PI) - 90;
                 traces.push({
-                    x: [h0[0]], y: [h0[1]],
-                    type: 'scatter', mode: 'markers',
-                    marker: { symbol: 'triangle-up', size: 10, color: color, angle: angle },
-                    name: token
+                    type: 'scatter', x: x, y: y, mode: 'lines+markers',
+                    name: token, line: { width: 2 },
+                    marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous' }
                 });
             }
         });
-
-        const layout = {
-            title: 'Positional Migration: $Embedding \\to h_0$',
-            margin: { l: 0, r: 0, b: 0, t: 40 },
-            scene: { xaxis: { range: [-2, 2] }, yaxis: { range: [-2, 2] }, zaxis: { range: [-2, 2] } },
-            xaxis: { range: [-2, 2] }, yaxis: { range: [-2, 2] }
-        };
-        Plotly.newPlot(container, traces, layout);
-
+        Plotly.newPlot(id, traces, { title: `Layer ${layerNum}: Feature Migration` });
     } else {
-	    const dimensions = [];
-	    // Erzeuge diskrete Farb-Indizes für jedes Wort
-	    const colors = tokens.map((_, i) => i);
-
-	    for (let i = 0; i < d_model; i++) {
-		    const baseValues = [];
-		    const injectedValues = [];
-
-		    tokens.forEach((token, pos) => {
-			    const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-			    const baseVal = (((Math.abs(hash) * (i + 1)) % 200) - 100) / 100;
-			    let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-			    const pe_val = (i % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
-			    baseValues.push(baseVal);
-			    injectedValues.push(baseVal + pe_val);
-		    });
-
-		    dimensions.push({ label: `D${i} Base`, values: baseValues });
-		    dimensions.push({ label: `D${i} +PE`, values: injectedValues });
-	    }
-
-	    const trace = {
-		    type: 'parcoords',
-		    line: {
-			    color: colors,
-			    colorscale: 'Viridis',
-			    showscale: true,
-			    colorbar: {
-				    title: 'Tokens',
-				    tickvals: tokens.map((_, i) => i),
-				    ticktext: tokens,
-				    thickness: 15
-			    }
-		    },
-		    dimensions: dimensions
-	    };
-	    Plotly.newPlot(container, [trace], { title: `Positional Migration (d=${d_model})` });
+        if (typeof echarts === 'undefined') return;
+        Plotly.purge(plotDiv);
+        const myChart = echarts.init(plotDiv);
+        const axes = [];
+        for (let i = 0; i < d_model; i++) {
+            axes.push({ dim: i * 2, name: `D${i} Pre` }, { dim: i * 2 + 1, name: `D${i} Post` });
+        }
+        const data = tokens.map((token, tIdx) => ({
+            value: start_h[tIdx].flatMap((val, i) => [val, end_h[tIdx][i]]),
+            name: token
+        }));
+        myChart.setOption({
+            title: { text: `Layer ${layerNum} Migration`, left: 'center' },
+            tooltip: { trigger: 'item', formatter: p => `Wort: <b>${p.name}</b>` },
+            parallelAxis: axes,
+            series: [{
+                type: 'parallel', data: data,
+                lineStyle: { width: 1.5, opacity: 0.3, color: '#10b981' },
+                emphasis: { lineStyle: { width: 5, color: '#ef4444' } }
+            }]
+        });
     }
 }
 
 function render_embedding_plot(tokens, dimensions) {
-    const container = 'transformer-plotly-space';
-    if (!document.getElementById(container)) return;
+    const container = document.getElementById('transformer-plotly-space');
+    if (!container) return;
 
     if (dimensions <= 3) {
-        // --- Keep Original 1D/2D/3D Logic ---
-        const plotData = tokens.map((token) => {
+        const traces = tokens.map(token => {
             const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-            const getCoord = (seed) => (((Math.abs(hash) * seed) % 200) - 100) / 100;
+            const getV = (offset) => (((Math.abs(hash) * offset) % 200) - 100) / 100;
             return {
-                x: [getCoord(1)],
-                y: dimensions >= 2 ? [getCoord(2)] : [0],
-                z: dimensions >= 3 ? [getCoord(3)] : [0],
-                mode: 'markers+text',
                 type: dimensions === 3 ? 'scatter3d' : 'scatter',
-                name: token,
-                text: [token],
-                marker: { size: 8, color: `hsl(${Math.abs(hash) % 360}, 70%, 50%)` }
+                x: [getV(1)], y: [dimensions >= 2 ? getV(2) : 0], z: [dimensions === 3 ? getV(3) : 0],
+                mode: 'markers+text', text: [token], name: token, marker: { size: 10 }
+            };
+        });
+        Plotly.newPlot(container, traces, { title: "Embedding Space" });
+    } else {
+        if (typeof echarts === 'undefined') return;
+        Plotly.purge(container);
+        
+        // Fix: Sicherstellen, dass das Element existiert und übergeben wird
+        const myChart = echarts.init(container);
+        const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({ dim: i, name: `D${i}` }));
+        const data = tokens.map(token => {
+            const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+            return { 
+                name: token, 
+                value: Array.from({ length: dimensions }, (_, i) => parseFloat((((Math.abs(hash) * (i+1)) % 200) - 100) / 100).toFixed(3)) 
             };
         });
 
-        const layout = {
-            margin: { l: 0, r: 0, b: 0, t: 0 },
-            scene: { xaxis: { range: [-1, 1] }, yaxis: { range: [-1, 1] }, zaxis: { range: [-1, 1] } }
-        };
-        Plotly.newPlot(container, plotData, layout);
-    } else {
-	    const tokenIndices = tokens.map((_, i) => i);
-	    const dims_data = Array.from({ length: dimensions }, (_, dIdx) => ({
-		    label: `Dim ${dIdx}`,
-		    values: tokens.map(token => {
-			    const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-			    return (((Math.abs(hash) * (dIdx + 1)) % 200) - 100) / 100;
-		    })
-	    }));
-
-	    const trace = {
-		    type: 'parcoords',
-		    line: { 
-			    color: tokenIndices, 
-			    colorscale: 'Jet',
-			    showscale: true,
-			    colorbar: {
-				    tickvals: tokenIndices,
-				    ticktext: tokens,
-				    title: 'Vocabulary'
-			    }
-		    },
-		    dimensions: dims_data
-	    };
-	    Plotly.newPlot(container, [trace], { title: `High-Dim Embedding Space (d=${dimensions})` });
+        myChart.setOption({
+            tooltip: { trigger: 'item', formatter: p => `Wort: <b>${p.name}</b>` },
+            parallelAxis: parallelAxis,
+            parallel: { left: 40, right: 40, bottom: 20, top: 50 },
+            series: [{ 
+                type: 'parallel', 
+                data: data, 
+                lineStyle: { width: 2, opacity: 0.5, color: '#6366f1' },
+                emphasis: { lineStyle: { width: 6, color: '#f59e0b' } } 
+            }]
+        });
     }
 }
 
@@ -1063,104 +1016,178 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads) {
 	return h_current;
 }
 
+function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
+    const container = document.getElementById('transformer-migration-plots-container');
+    let plotDiv = document.getElementById(id);
+    if (!plotDiv) {
+        plotDiv = document.createElement('div');
+        plotDiv.id = id;
+        plotDiv.style.cssText = "height: 500px; width: 100%; margin-top: 30px;";
+        container.appendChild(plotDiv);
+    }
+
+    if (d_model <= 3) {
+        const traces = [];
+        tokens.forEach((token, i) => {
+            const x = [start_h[i][0], end_h[i][0]];
+            const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
+            const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
+
+            if (d_model === 3) {
+                traces.push({
+                    type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
+                    line: { width: 4 }, name: token, showlegend: false
+                });
+                traces.push({
+                    type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
+                    u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
+                    sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+                    colorscale: [[0, '#10b981'], [1, '#10b981']], showscale: false
+                });
+            } else {
+                traces.push({
+                    type: 'scatter', x: x, y: y, mode: 'lines+markers',
+                    name: token, line: { width: 2 },
+                    marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous' }
+                });
+            }
+        });
+        Plotly.newPlot(id, traces, { title: `Layer ${layerNum}: Feature Migration` });
+    } else {
+        if (typeof echarts === 'undefined') return;
+        Plotly.purge(plotDiv);
+        const myChart = echarts.init(plotDiv);
+        const axes = [];
+        for (let i = 0; i < d_model; i++) {
+            axes.push({ dim: i * 2, name: `D${i} Pre` }, { dim: i * 2 + 1, name: `D${i} Post` });
+        }
+        const data = tokens.map((token, tIdx) => ({
+            value: start_h[tIdx].flatMap((val, i) => [val, end_h[tIdx][i]]),
+            name: token
+        }));
+        myChart.setOption({
+            title: { text: `Layer ${layerNum} Migration`, left: 'center' },
+            tooltip: { trigger: 'item', formatter: p => `Wort: <b>${p.name}</b>` },
+            parallelAxis: axes,
+            series: [{
+                type: 'parallel', data: data,
+                lineStyle: { width: 1.5, opacity: 0.3, color: '#10b981' },
+                emphasis: { lineStyle: { width: 5, color: '#ef4444' } }
+            }]
+        });
+    }
+}
+
 /**
  * Renders a full-screen width trajectory plot
  */
-function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
-    const container = document.getElementById('transformer-migration-plots-container');
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = "width: 100%; margin-bottom: 40px; border-top: 2px solid #e2e8f0; padding-top: 20px;";
-    wrapper.innerHTML = `<h3 style="text-align: center; color: #1e293b;">Layer ${layerNum}: Feature Space Migration</h3>`;
-
-    const plotDiv = document.createElement('div');
-    plotDiv.id = id;
-    plotDiv.style.cssText = "height: 500px; width: 100%;";
-    wrapper.appendChild(plotDiv);
-    container.appendChild(wrapper);
+function render_positional_shift_plot(tokens, d_model) {
+    const container = document.getElementById('transformer-pe-shift-plot');
+    if (!container || !Array.isArray(tokens)) return;
 
     if (d_model <= 3) {
-        // --- 3D CONE/LINE LOGIC ---
         const traces = [];
-        let allX = [], allY = [], allZ = [];
+        tokens.forEach((token, pos) => {
+            const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+            const baseVal = (((Math.abs(hash)) % 200) - 100) / 100;
+            let div_term = Math.pow(10000, (2 * Math.floor(0 / 2)) / d_model);
+            const pe_val = (0 % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
 
-        tokens.forEach((token, i) => {
-            const color = `hsl(${(i * 137) % 360}, 70%, 50%)`;
-            const start = start_h[i];
-            const end = end_h[i];
+            const x = [baseVal, baseVal + pe_val];
+            const y = d_model >= 2 ? [baseVal * 0.5, (baseVal * 0.5) + pe_val] : [0, 0];
+            const z = d_model === 3 ? [baseVal * 0.2, (baseVal * 0.2) + pe_val] : [0, 0];
 
-            allX.push(start[0], end[0]);
-            allY.push(start[1] || 0, end[1] || 0);
-            allZ.push(start[2] || 0, end[2] || 0);
+            // Berechne Distanz, um zu prüfen, ob der Vektor statisch ist
+            const dist = Math.sqrt(Math.pow(x[1]-x[0], 2) + Math.pow(y[1]-y[0], 2) + Math.pow(z[1]-z[0], 2));
 
-            traces.push({
-                x: [start[0], end[0]],
-                y: [start[1] || 0, end[1] || 0],
-                z: [start[2] || 0, end[2] || 0],
-                type: 'scatter3d', mode: 'lines',
-                line: { width: 6, color: color },
-                showlegend: false
-            });
-
-            traces.push({
-                type: 'cone',
-                x: [end[0]], y: [end[1] || 0], z: [end[2] || 0],
-                u: [end[0] - start[0]], v: [(end[1] || 0) - (start[1] || 0)], w: [(end[2] || 0) - (start[2] || 0)],
-                sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-                colorscale: [[0, color], [1, color]], showscale: false,
-                text: `Token: ${token}`, hoverinfo: 'text'
-            });
+            if (d_model === 3) {
+                if (dist < 0.001) {
+                    // Statischer Vektor: Nur ein Punkt
+                    traces.push({
+                        type: 'scatter3d',
+                        x: [x[0]], y: [y[0]], z: [z[0]],
+                        mode: 'markers+text',
+                        marker: { size: 8, color: '#3b82f6' },
+                        text: [token], textposition: 'top center',
+                        name: token
+                    });
+                } else {
+                    // Bewegter Vektor: Linie + Kegel
+                    traces.push({
+                        type: 'scatter3d',
+                        x: x, y: y, z: z,
+                        mode: 'lines',
+                        line: { width: 8, color: '#3b82f6' },
+                        name: token, legendgroup: token, showlegend: false
+                    });
+                    traces.push({
+                        type: 'cone',
+                        x: [x[1]], y: [y[1]], z: [z[1]],
+                        u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
+                        sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+                        colorscale: [[0, '#3b82f6'], [1, '#3b82f6']],
+                        showscale: false, name: token, legendgroup: token,
+                        text: token, hoverinfo: 'text'
+                    });
+                }
+            } else {
+                // 1D/2D Logik
+                traces.push({
+                    type: 'scatter',
+                    x: x, y: y,
+                    mode: dist < 0.001 ? 'markers+text' : 'lines+markers+text',
+                    name: token,
+                    text: dist < 0.001 ? [token] : ['', token],
+                    textposition: 'top center',
+                    line: { width: 4 },
+                    marker: { 
+                        size: dist < 0.001 ? 10 : [0, 15], 
+                        symbol: dist < 0.001 ? 'circle' : 'arrow', 
+                        angleref: 'previous' 
+                    }
+                });
+            }
         });
 
-        const getRange = (pts) => {
-            const min = Math.min(...pts);
-            const max = Math.max(...pts);
-            const pad = (max - min) * 0.1 || 0.5;
-            return [min - pad, max + pad];
-        };
-
         const layout = {
-            autosize: true, margin: { l: 0, r: 0, b: 0, t: 0 },
+            title: "Positional Shift (Points: Static | Cones: Shifted)",
             scene: {
-                aspectmode: "cube",
-                xaxis: { title: 'Dim 1', range: getRange(allX) },
-                yaxis: { title: 'Dim 2', range: getRange(allY) },
-                zaxis: { title: 'Dim 3', range: getRange(allZ) }
-            }
+                xaxis: { title: 'D1' }, yaxis: { title: 'D2' }, zaxis: { title: 'D3' },
+                camera: { eye: { x: 1.2, y: 1.2, z: 1.2 } }
+            },
+            margin: { l: 0, r: 0, b: 0, t: 40 }
         };
-        Plotly.newPlot(id, traces, layout);
+        Plotly.newPlot(container, traces, layout);
 
     } else {
-        // --- PARALLEL COORDINATES LOGIC (> 3D) ---
-        const dimensions = [];
-        for (let i = 0; i < d_model; i++) {
-            dimensions.push({
-                label: `D${i} Pre`,
-                values: start_h.map(row => row[i]),
-                range: [Math.min(...start_h.map(r => r[i]), ...end_h.map(r => r[i])), 
-                        Math.max(...start_h.map(r => r[i]), ...end_h.map(r => r[i]))]
-            });
-            dimensions.push({
-                label: `D${i} Post`,
-                values: end_h.map(row => row[i])
-            });
-        }
+        // --- ECharts Logik (> 3D) ---
+        if (typeof echarts === 'undefined') return;
+        Plotly.purge(container);
+        const myChart = echarts.init(container);
+        const axes = Array.from({ length: d_model }, (_, i) => ({ dim: i, name: `D${i}` }));
+        const data = tokens.map((token, pos) => {
+            const row = [];
+            for (let i = 0; i < d_model; i++) {
+                const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+                const baseVal = (((Math.abs(hash) * (i + 1)) % 200) - 100) / 100;
+                let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+                const pe_val = (i % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
+                row.push(parseFloat((baseVal + pe_val).toFixed(3)));
+            }
+            return { value: row, name: token };
+        });
 
-        const trace = {
-            type: 'parcoords',
-            line: { 
-                color: tokens.map((_, i) => i), 
-                colorscale: 'Electric',
-                showscale: false 
-            },
-            dimensions: dimensions
-        };
-
-        const layout = {
-            title: `Layer ${layerNum} Migration (d=${d_model})`,
-            margin: { t: 60, b: 40, l: 50, r: 50 }
-        };
-
-        Plotly.newPlot(id, [trace], layout);
+        myChart.setOption({
+            tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+            parallelAxis: axes,
+            parallel: { left: 40, right: 40, bottom: 20, top: 50 },
+            series: [{
+                type: 'parallel',
+                lineStyle: { width: 2, opacity: 0.4, color: '#3b82f6' },
+                emphasis: { lineStyle: { width: 6, opacity: 1, color: '#ef4444' } },
+                data: data
+            }]
+        });
     }
 }
 
