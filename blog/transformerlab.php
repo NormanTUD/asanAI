@@ -14,7 +14,7 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 	<div>
 		<label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
 		<span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
-		<input type="range" id="transformer-dimension-model" min="1" max="3" value="3" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('dim-val').innerText = this.value; run_transformer_demo();">
+		<input type="range" id="transformer-dimension-model" min="1" max="10" value="3" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('dim-val').innerText = this.value; run_transformer_demo();">
 	</div>
 
 	<div>
