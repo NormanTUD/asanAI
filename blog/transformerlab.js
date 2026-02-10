@@ -275,14 +275,7 @@ function run_transformer_demo() {
 		return;
 	}
 
-	const text = trainingInput.value;
-
-	// 1. Tokenize Training Data
-	const trainingTokens = transformer_tokenize_render(text, "transformer-viz-bpe");
-
-	// 2. Tokenize Input (Inference) Data
-	// We pass null as container because we don't need a separate viz for this yet, 
-	// or you can add a div with id "inference-viz" in your HTML if you want to see it.
+	const trainingTokens = transformer_tokenize_render(trainingInput.value, "transformer-viz-bpe");
 	const inputTokens = transformer_tokenize_render(masterInput.value, null);
 
 	run_and_visualize_network(inputTokens, trainingTokens);
