@@ -355,119 +355,119 @@ function run_transformer_demo() {
 }
 
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
-    const container = document.getElementById('transformer-output-projection');
-    const masterInput = document.getElementById('transformer-master-token-input');
-    
-    if (!container) return;
+	const container = document.getElementById('transformer-output-projection');
+	const masterInput = document.getElementById('transformer-master-token-input');
 
-    const lastIdx = h_final.length - 1;
-    const h_last = h_final[lastIdx];
+	if (!container) return;
 
-    // 1. Weights & Logits Calculation
-    const W_vocab = vocabulary.map(word => {
-        const hash = word.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-        return Array.from({ length: d_model }, (_, i) => {
-            const seed = Math.abs(hash * (i + 13));
-            return ((seed % 2000) / 1000) - 1;
-        });
-    });
+	const lastIdx = h_final.length - 1;
+	const h_last = h_final[lastIdx];
 
-    const logits = vocabulary.map((word, i) => {
-        const w_row = W_vocab[i];
-        const val = h_last.reduce((sum, h_val, dim) => sum + h_val * w_row[dim], 0);
-        return { word, val, w_row };
-    });
+	// 1. Weights & Logits Calculation
+	const W_vocab = vocabulary.map(word => {
+		const hash = word.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+		return Array.from({ length: d_model }, (_, i) => {
+			const seed = Math.abs(hash * (i + 13));
+			return ((seed % 2000) / 1000) - 1;
+		});
+	});
 
-    // 2. Softmax Logic
-    const scaledLogits = logits.map(item => item.val / temperature);
-    const maxLogit = Math.max(...scaledLogits); 
-    const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
-    const sumExps = exps.reduce((a, b) => a + b, 0);
-    const probs = exps.map(e => e / sumExps);
+	const logits = vocabulary.map((word, i) => {
+		const w_row = W_vocab[i];
+		const val = h_last.reduce((sum, h_val, dim) => sum + h_val * w_row[dim], 0);
+		return { word, val, w_row };
+	});
 
-    const predictions = logits.map((item, i) => ({
-        word: item.word,
-        logit: item.val,
-        prob: probs[i],
-        w_row: item.w_row,
-        expVal: exps[i]
-    })).sort((a, b) => b.prob - a.prob);
+	// 2. Softmax Logic
+	const scaledLogits = logits.map(item => item.val / temperature);
+	const maxLogit = Math.max(...scaledLogits); 
+	const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
+	const sumExps = exps.reduce((a, b) => a + b, 0);
+	const probs = exps.map(e => e / sumExps);
 
-    // LaTeX Helpers
-    const texSafe = (s) => s.replace(/#/g, '\\#');
-    const vecToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' & ')} \\end{pmatrix}`;
-    const colToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
+	const predictions = logits.map((item, i) => ({
+		word: item.word,
+		logit: item.val,
+		prob: probs[i],
+		w_row: item.w_row,
+		expVal: exps[i]
+	})).sort((a, b) => b.prob - a.prob);
 
-    let html = `<h3>1. Projection Derivations</h3>
-                <p>Aligning the hidden state with each vocabulary vector:</p>`;
+	// LaTeX Helpers
+	const texSafe = (s) => s.replace(/#/g, '\\#');
+	const vecToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' & ')} \\end{pmatrix}`;
+	const colToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
 
-    // Show derivation for top 5 to keep UI manageable
-    predictions.slice(0, 5).forEach((cand, idx) => {
-        const derivation = h_last.map((h_val, i) => 
-            `(${h_val.toFixed(2)} \\cdot ${cand.w_row[i].toFixed(2)})`
-        ).join(' + ');
+	let html = `<h3>1. Projection Derivations</h3>
+		<p>Aligning the hidden state with each vocabulary vector:</p>`;
 
-        html += `
-        <div style="margin-bottom: 25px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
-            <p style="font-weight:bold; color:#3b82f6; margin-top:0;">Option ${idx + 1}: "${cand.word}"</p>
-            
-            <div style="margin-bottom:10px;">
-                $$ \\underbrace{${cand.logit.toFixed(2)}}_{\\text{Logit}} = 
-                   \\underbrace{${vecToTex(h_last)}}_{h_{\\text{final}}} \\cdot 
-                   \\underbrace{${colToTex(cand.w_row)}}_{W^T_{\\text{vocab}}["${texSafe(cand.word)}"]} $$
-            </div>
+	// Show derivation for top 5 to keep UI manageable
+	predictions.slice(0, 5).forEach((cand, idx) => {
+		const derivation = h_last.map((h_val, i) => 
+			`(${h_val.toFixed(2)} \\cdot ${cand.w_row[i].toFixed(2)})`
+		).join(' + ');
 
-            <div style="font-size:0.8rem; color:#64748b; margin-bottom:10px;">
-                $$ \\text{Sum: } \\underbrace{${derivation}}_{\\sum (h_i \\cdot w_i)} = ${cand.logit.toFixed(2)} $$
-            </div>
+		html += `
+	<div style="margin-bottom: 25px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+	    <p style="font-weight:bold; color:#3b82f6; margin-top:0;">Option ${idx + 1}: "${cand.word}"</p>
 
-            <div style="background: #ffffff; padding: 10px; border-radius: 4px; border: 1px dashed #cbd5e1;">
-                $$ \\underbrace{${(cand.prob * 100).toFixed(1)}\\%}_{P("${texSafe(cand.word)}")} = 
-                   \\frac{\\overbrace{e^{${cand.logit.toFixed(2)} / ${temperature}}}^{${cand.expVal.toFixed(3)}}}
-                   {\\underbrace{${sumExps.toFixed(3)}}_{\\sum e^{z_j/T}}} $$
-            </div>
-        </div>`;
-    });
+	    <div style="margin-bottom:10px;">
+		$$ \\underbrace{${cand.logit.toFixed(2)}}_{\\text{Logit}} = 
+		   \\underbrace{${vecToTex(h_last)}}_{h_{\\text{final}}} \\cdot 
+		   \\underbrace{${colToTex(cand.w_row)}}_{W^T_{\\text{vocab}}["${texSafe(cand.word)}"]} $$
+	    </div>
 
-    // The Interactive Button List
-    html += `<h3>2. Final Probabilities (Click to Generate)</h3>
-             <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">`;
+	    <div style="font-size:0.8rem; color:#64748b; margin-bottom:10px;">
+		$$ \\text{Sum: } \\underbrace{${derivation}}_{\\sum (h_i \\cdot w_i)} = ${cand.logit.toFixed(2)} $$
+	    </div>
 
-    predictions.slice(0, 10).forEach(p => {
-        const isTop = p === predictions[0];
-        // Special onclick logic to update the master input and restart simulation
-        html += `
-            <button onclick="
-                const input = document.getElementById('transformer-master-token-input');
-                input.value += (input.value ? ' ' : '') + '${p.word}';
-                run_transformer_demo();
-            " 
-            style="flex: 1 1 150px; border: 1px solid ${isTop ? '#3b82f6' : '#cbd5e1'}; 
-            background: ${isTop ? '#eff6ff' : '#fff'}; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left; transition: transform 0.1s;">
-                <div style="display: flex; justify-content: space-between; font-weight: bold; color: #1e293b;">
-                    <span>"${p.word}"</span>
-                    <span>${(p.prob * 100).toFixed(0)}%</span>
-                </div>
-                <div style="width: 100%; background: #e2e8f0; height: 4px; border-radius: 2px; margin-top:5px;">
-                    <div style="width: ${p.prob * 100}%; background: #3b82f6; height: 100%;"></div>
-                </div>
-            </button>
-        `;
-    });
+	    <div style="background: #ffffff; padding: 10px; border-radius: 4px; border: 1px dashed #cbd5e1;">
+		$$ \\underbrace{${(cand.prob * 100).toFixed(1)}\\%}_{P("${texSafe(cand.word)}")} = 
+		   \\frac{\\overbrace{e^{${cand.logit.toFixed(2)} / ${temperature}}}^{${cand.expVal.toFixed(3)}}}
+		   {\\underbrace{${sumExps.toFixed(3)}}_{\\sum e^{z_j/T}}} $$
+	    </div>
+	</div>`;
+	});
 
-    html += `</div>`;
-    
-    // Add a summary of the "Total Pool" for hand-calculators
-    html += `
-        <div style="margin-top: 20px; font-size: 0.85rem; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px;">
-            Note: Sum of all $e^{z/T}$ (Denominator) = <b>${sumExps.toFixed(3)}</b>. 
-            All probabilities above are derived by dividing the individual token's exponent by this total pool.
-        </div>
+	// The Interactive Button List
+	html += `<h3>2. Final Probabilities (Click to Generate)</h3>
+	     <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">`;
+
+	predictions.slice(0, 10).forEach(p => {
+		const isTop = p === predictions[0];
+		// Special onclick logic to update the master input and restart simulation
+		html += `
+	    <button onclick="
+		const input = document.getElementById('transformer-master-token-input');
+		input.value += (input.value ? ' ' : '') + '${p.word}';
+		run_transformer_demo();
+	    " 
+	    style="flex: 1 1 150px; border: 1px solid ${isTop ? '#3b82f6' : '#cbd5e1'}; 
+	    background: ${isTop ? '#eff6ff' : '#fff'}; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left; transition: transform 0.1s;">
+		<div style="display: flex; justify-content: space-between; font-weight: bold; color: #1e293b;">
+		    <span>"${p.word}"</span>
+		    <span>${(p.prob * 100).toFixed(0)}%</span>
+		</div>
+		<div style="width: 100%; background: #e2e8f0; height: 4px; border-radius: 2px; margin-top:5px;">
+		    <div style="width: ${p.prob * 100}%; background: #3b82f6; height: 100%;"></div>
+		</div>
+	    </button>
+	`;
+	});
+
+	html += `</div>`;
+
+	// Add a summary of the "Total Pool" for hand-calculators
+	html += `
+	<div style="margin-top: 20px; font-size: 0.85rem; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+	    Note: Sum of all $e^{z/T}$ (Denominator) = <b>${sumExps.toFixed(3)}</b>. 
+	    All probabilities above are derived by dividing the individual token's exponent by this total pool.
+	</div>
     `;
 
-    container.innerHTML = html;
+	container.innerHTML = html;
 
-    if (typeof render_temml === "function") render_temml();
+	if (typeof render_temml === "function") render_temml();
 }
 
 window.appendToken = (token) => {
@@ -503,109 +503,109 @@ function render_architecture_stats(d, h, n, t) {
 }
 
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
-    const container = document.getElementById('transformer-migration-plots-container');
-    let plotDiv = document.getElementById(id);
-    if (!plotDiv) {
-        plotDiv = document.createElement('div');
-        plotDiv.id = id;
-        plotDiv.style.cssText = "height: 500px; width: 100%; margin-top: 30px;";
-        container.appendChild(plotDiv);
-    }
+	const container = document.getElementById('transformer-migration-plots-container');
+	let plotDiv = document.getElementById(id);
+	if (!plotDiv) {
+		plotDiv = document.createElement('div');
+		plotDiv.id = id;
+		plotDiv.style.cssText = "height: 500px; width: 100%; margin-top: 30px;";
+		container.appendChild(plotDiv);
+	}
 
-    if (d_model <= 3) {
-        const traces = [];
-        tokens.forEach((token, i) => {
-            const x = [start_h[i][0], end_h[i][0]];
-            const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
-            const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
+	if (d_model <= 3) {
+		const traces = [];
+		tokens.forEach((token, i) => {
+			const x = [start_h[i][0], end_h[i][0]];
+			const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
+			const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
 
-            if (d_model === 3) {
-                traces.push({
-                    type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
-                    line: { width: 4 }, name: token, showlegend: false
-                });
-                traces.push({
-                    type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
-                    u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
-                    sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-                    colorscale: [[0, '#10b981'], [1, '#10b981']], showscale: false
-                });
-            } else {
-                traces.push({
-                    type: 'scatter', x: x, y: y, mode: 'lines+markers',
-                    name: token, line: { width: 2 },
-                    marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous' }
-                });
-            }
-        });
-        Plotly.newPlot(id, traces, { title: `Layer ${layerNum}: Feature Migration` });
-    } else {
-        if (typeof echarts === 'undefined') return;
-        Plotly.purge(plotDiv);
-        const myChart = echarts.init(plotDiv);
-        const axes = [];
-        for (let i = 0; i < d_model; i++) {
-            axes.push({ dim: i * 2, name: `D${i} Pre` }, { dim: i * 2 + 1, name: `D${i} Post` });
-        }
-        const data = tokens.map((token, tIdx) => ({
-            value: start_h[tIdx].flatMap((val, i) => [val, end_h[tIdx][i]]),
-            name: token
-        }));
-        myChart.setOption({
-            title: { text: `Layer ${layerNum} Migration`, left: 'center' },
-            tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
-            parallelAxis: axes,
-            series: [{
-                type: 'parallel', data: data,
-                lineStyle: { width: 1.5, opacity: 0.3, color: '#10b981' },
-                emphasis: { lineStyle: { width: 5, color: '#ef4444' } }
-            }]
-        });
-    }
+			if (d_model === 3) {
+				traces.push({
+					type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
+					line: { width: 4 }, name: token, showlegend: false
+				});
+				traces.push({
+					type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
+					u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
+					sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+					colorscale: [[0, '#10b981'], [1, '#10b981']], showscale: false
+				});
+			} else {
+				traces.push({
+					type: 'scatter', x: x, y: y, mode: 'lines+markers',
+					name: token, line: { width: 2 },
+					marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous' }
+				});
+			}
+		});
+		Plotly.newPlot(id, traces, { title: `Layer ${layerNum}: Feature Migration` });
+	} else {
+		if (typeof echarts === 'undefined') return;
+		Plotly.purge(plotDiv);
+		const myChart = echarts.init(plotDiv);
+		const axes = [];
+		for (let i = 0; i < d_model; i++) {
+			axes.push({ dim: i * 2, name: `D${i} Pre` }, { dim: i * 2 + 1, name: `D${i} Post` });
+		}
+		const data = tokens.map((token, tIdx) => ({
+			value: start_h[tIdx].flatMap((val, i) => [val, end_h[tIdx][i]]),
+			name: token
+		}));
+		myChart.setOption({
+			title: { text: `Layer ${layerNum} Migration`, left: 'center' },
+			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+			parallelAxis: axes,
+			series: [{
+				type: 'parallel', data: data,
+				lineStyle: { width: 1.5, opacity: 0.3, color: '#10b981' },
+				emphasis: { lineStyle: { width: 5, color: '#ef4444' } }
+			}]
+		});
+	}
 }
 
 function render_embedding_plot(tokens, dimensions) {
-    const container = document.getElementById('transformer-plotly-space');
-    if (!container) return;
+	const container = document.getElementById('transformer-plotly-space');
+	if (!container) return;
 
-    if (dimensions <= 3) {
-        const traces = tokens.map(token => {
-            const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-            const getV = (offset) => (((Math.abs(hash) * offset) % 200) - 100) / 100;
-            return {
-                type: dimensions === 3 ? 'scatter3d' : 'scatter',
-                x: [getV(1)], y: [dimensions >= 2 ? getV(2) : 0], z: [dimensions === 3 ? getV(3) : 0],
-                mode: 'markers+text', text: [token], name: token, marker: { size: 10 }
-            };
-        });
-        Plotly.newPlot(container, traces, { title: "Embedding Space" });
-    } else {
-        if (typeof echarts === 'undefined') return;
-        Plotly.purge(container);
-        
-        // Fix: Sicherstellen, dass das Element existiert und übergeben wird
-        const myChart = echarts.init(container);
-        const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({ dim: i, name: `D${i}` }));
-        const data = tokens.map(token => {
-            const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-            return { 
-                name: token, 
-                value: Array.from({ length: dimensions }, (_, i) => parseFloat((((Math.abs(hash) * (i+1)) % 200) - 100) / 100).toFixed(3)) 
-            };
-        });
+	if (dimensions <= 3) {
+		const traces = tokens.map(token => {
+			const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+			const getV = (offset) => (((Math.abs(hash) * offset) % 200) - 100) / 100;
+			return {
+				type: dimensions === 3 ? 'scatter3d' : 'scatter',
+				x: [getV(1)], y: [dimensions >= 2 ? getV(2) : 0], z: [dimensions === 3 ? getV(3) : 0],
+				mode: 'markers+text', text: [token], name: token, marker: { size: 10 }
+			};
+		});
+		Plotly.newPlot(container, traces, { title: "Embedding Space" });
+	} else {
+		if (typeof echarts === 'undefined') return;
+		Plotly.purge(container);
 
-        myChart.setOption({
-            tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
-            parallelAxis: parallelAxis,
-            parallel: { left: 40, right: 40, bottom: 20, top: 50 },
-            series: [{ 
-                type: 'parallel', 
-                data: data, 
-                lineStyle: { width: 2, opacity: 0.5, color: '#6366f1' },
-                emphasis: { lineStyle: { width: 6, color: '#f59e0b' } } 
-            }]
-        });
-    }
+		// Fix: Sicherstellen, dass das Element existiert und übergeben wird
+		const myChart = echarts.init(container);
+		const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({ dim: i, name: `D${i}` }));
+		const data = tokens.map(token => {
+			const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+			return { 
+				name: token, 
+				value: Array.from({ length: dimensions }, (_, i) => parseFloat((((Math.abs(hash) * (i+1)) % 200) - 100) / 100).toFixed(3)) 
+			};
+		});
+
+		myChart.setOption({
+			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+			parallelAxis: parallelAxis,
+			parallel: { left: 40, right: 40, bottom: 20, top: 50 },
+			series: [{ 
+				type: 'parallel', 
+				data: data, 
+				lineStyle: { width: 2, opacity: 0.5, color: '#6366f1' },
+				emphasis: { lineStyle: { width: 6, color: '#f59e0b' } } 
+			}]
+		});
+	}
 }
 
 function render_embedding_space(tokens, dimensions) {
@@ -649,35 +649,35 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
 
 	let tokens = [];
 	const cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,""); // `
-    const words = cleanText.split(/\s+/);
+		const words = cleanText.split(/\s+/);
 
-    words.forEach(word => {
-	let found = false;
-	for (let unit of subUnits) {
-	    if (word.toLowerCase().endsWith(unit) && word.length > unit.length) {
-		tokens.push(word.substring(0, word.length - unit.length));
-		tokens.push("##" + unit);
-		found = true;
-		break;
-	    }
-	}
-	if (!found && word.length > 0) tokens.push(word);
-    });
+		words.forEach(word => {
+			let found = false;
+			for (let unit of subUnits) {
+				if (word.toLowerCase().endsWith(unit) && word.length > unit.length) {
+					tokens.push(word.substring(0, word.length - unit.length));
+					tokens.push("##" + unit);
+					found = true;
+					break;
+				}
+			}
+			if (!found && word.length > 0) tokens.push(word);
+		});
 
-    if (container) {
-	container.innerHTML = tokens.map(t => {
-	    const hash = t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-	    const hue = Math.abs(hash) % 360;
-	    return `
+	if (container) {
+		container.innerHTML = tokens.map(t => {
+			const hash = t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+			const hue = Math.abs(hash) % 360;
+			return `
 		<div style="background: hsl(${hue}, 65%, 40%); color: white; padding: 5px 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center;">
 		${t}
 		<span style="font-size: 0.6rem; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; text-align: center;">ID: ${Math.abs(hash) % 1000}</span>
 		</div>
 		`;
-	}).join('');
-    }
+		}).join('');
+	}
 
-    return tokens;
+	return tokens;
 }
 
 function render_causal_mask(tokens) {
@@ -884,7 +884,7 @@ function run_ffn_block(h1, params = {}) {
 
 	// 1. Gewichte & Biases setzen oder zufällig initialisieren
 	let 
-		W1 = params.W1,
+	W1 = params.W1,
 		b1 = params.b1,
 		W2 = params.W2,
 		b2 = params.b2;
@@ -1022,178 +1022,178 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, weigh
 }
 
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
-    const container = document.getElementById('transformer-migration-plots-container');
-    let plotDiv = document.getElementById(id);
-    if (!plotDiv) {
-        plotDiv = document.createElement('div');
-        plotDiv.id = id;
-        plotDiv.style.cssText = "height: 500px; width: 100%; margin-top: 30px;";
-        container.appendChild(plotDiv);
-    }
+	const container = document.getElementById('transformer-migration-plots-container');
+	let plotDiv = document.getElementById(id);
+	if (!plotDiv) {
+		plotDiv = document.createElement('div');
+		plotDiv.id = id;
+		plotDiv.style.cssText = "height: 500px; width: 100%; margin-top: 30px;";
+		container.appendChild(plotDiv);
+	}
 
-    if (d_model <= 3) {
-        const traces = [];
-        tokens.forEach((token, i) => {
-            const x = [start_h[i][0], end_h[i][0]];
-            const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
-            const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
+	if (d_model <= 3) {
+		const traces = [];
+		tokens.forEach((token, i) => {
+			const x = [start_h[i][0], end_h[i][0]];
+			const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
+			const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
 
-            if (d_model === 3) {
-                traces.push({
-                    type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
-                    line: { width: 4 }, name: token, showlegend: false
-                });
-                traces.push({
-                    type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
-                    u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
-                    sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-                    colorscale: [[0, '#10b981'], [1, '#10b981']], showscale: false
-                });
-            } else {
-                traces.push({
-                    type: 'scatter', x: x, y: y, mode: 'lines+markers',
-                    name: token, line: { width: 2 },
-                    marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous' }
-                });
-            }
-        });
-        Plotly.newPlot(id, traces, { title: `Layer ${layerNum}: Feature Migration` });
-    } else {
-        if (typeof echarts === 'undefined') return;
-        Plotly.purge(plotDiv);
-        const myChart = echarts.init(plotDiv);
-        const axes = [];
-        for (let i = 0; i < d_model; i++) {
-            axes.push({ dim: i * 2, name: `D${i} Pre` }, { dim: i * 2 + 1, name: `D${i} Post` });
-        }
-        const data = tokens.map((token, tIdx) => ({
-            value: start_h[tIdx].flatMap((val, i) => [val, end_h[tIdx][i]]),
-            name: token
-        }));
-        myChart.setOption({
-            title: { text: `Layer ${layerNum} Migration`, left: 'center' },
-            tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
-            parallelAxis: axes,
-            series: [{
-                type: 'parallel', data: data,
-                lineStyle: { width: 1.5, opacity: 0.3, color: '#10b981' },
-                emphasis: { lineStyle: { width: 5, color: '#ef4444' } }
-            }]
-        });
-    }
+			if (d_model === 3) {
+				traces.push({
+					type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
+					line: { width: 4 }, name: token, showlegend: false
+				});
+				traces.push({
+					type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
+					u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
+					sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+					colorscale: [[0, '#10b981'], [1, '#10b981']], showscale: false
+				});
+			} else {
+				traces.push({
+					type: 'scatter', x: x, y: y, mode: 'lines+markers',
+					name: token, line: { width: 2 },
+					marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous' }
+				});
+			}
+		});
+		Plotly.newPlot(id, traces, { title: `Layer ${layerNum}: Feature Migration` });
+	} else {
+		if (typeof echarts === 'undefined') return;
+		Plotly.purge(plotDiv);
+		const myChart = echarts.init(plotDiv);
+		const axes = [];
+		for (let i = 0; i < d_model; i++) {
+			axes.push({ dim: i * 2, name: `D${i} Pre` }, { dim: i * 2 + 1, name: `D${i} Post` });
+		}
+		const data = tokens.map((token, tIdx) => ({
+			value: start_h[tIdx].flatMap((val, i) => [val, end_h[tIdx][i]]),
+			name: token
+		}));
+		myChart.setOption({
+			title: { text: `Layer ${layerNum} Migration`, left: 'center' },
+			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+			parallelAxis: axes,
+			series: [{
+				type: 'parallel', data: data,
+				lineStyle: { width: 1.5, opacity: 0.3, color: '#10b981' },
+				emphasis: { lineStyle: { width: 5, color: '#ef4444' } }
+			}]
+		});
+	}
 }
 
 /**
  * Renders a full-screen width trajectory plot
  */
 function render_positional_shift_plot(tokens, d_model) {
-    const container = document.getElementById('transformer-pe-shift-plot');
-    if (!container || !Array.isArray(tokens)) return;
+	const container = document.getElementById('transformer-pe-shift-plot');
+	if (!container || !Array.isArray(tokens)) return;
 
-    if (d_model <= 3) {
-        const traces = [];
-        tokens.forEach((token, pos) => {
-            const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-            const baseVal = (((Math.abs(hash)) % 200) - 100) / 100;
-            let div_term = Math.pow(10000, (2 * Math.floor(0 / 2)) / d_model);
-            const pe_val = (0 % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
+	if (d_model <= 3) {
+		const traces = [];
+		tokens.forEach((token, pos) => {
+			const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+			const baseVal = (((Math.abs(hash)) % 200) - 100) / 100;
+			let div_term = Math.pow(10000, (2 * Math.floor(0 / 2)) / d_model);
+			const pe_val = (0 % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
 
-            const x = [baseVal, baseVal + pe_val];
-            const y = d_model >= 2 ? [baseVal * 0.5, (baseVal * 0.5) + pe_val] : [0, 0];
-            const z = d_model === 3 ? [baseVal * 0.2, (baseVal * 0.2) + pe_val] : [0, 0];
+			const x = [baseVal, baseVal + pe_val];
+			const y = d_model >= 2 ? [baseVal * 0.5, (baseVal * 0.5) + pe_val] : [0, 0];
+			const z = d_model === 3 ? [baseVal * 0.2, (baseVal * 0.2) + pe_val] : [0, 0];
 
-            // Berechne Distanz, um zu prüfen, ob der Vektor statisch ist
-            const dist = Math.sqrt(Math.pow(x[1]-x[0], 2) + Math.pow(y[1]-y[0], 2) + Math.pow(z[1]-z[0], 2));
+			// Berechne Distanz, um zu prüfen, ob der Vektor statisch ist
+			const dist = Math.sqrt(Math.pow(x[1]-x[0], 2) + Math.pow(y[1]-y[0], 2) + Math.pow(z[1]-z[0], 2));
 
-            if (d_model === 3) {
-                if (dist < 0.001) {
-                    // Statischer Vektor: Nur ein Punkt
-                    traces.push({
-                        type: 'scatter3d',
-                        x: [x[0]], y: [y[0]], z: [z[0]],
-                        mode: 'markers+text',
-                        marker: { size: 8, color: '#3b82f6' },
-                        text: [token], textposition: 'top center',
-                        name: token
-                    });
-                } else {
-                    // Bewegter Vektor: Linie + Kegel
-                    traces.push({
-                        type: 'scatter3d',
-                        x: x, y: y, z: z,
-                        mode: 'lines',
-                        line: { width: 8, color: '#3b82f6' },
-                        name: token, legendgroup: token, showlegend: false
-                    });
-                    traces.push({
-                        type: 'cone',
-                        x: [x[1]], y: [y[1]], z: [z[1]],
-                        u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
-                        sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-                        colorscale: [[0, '#3b82f6'], [1, '#3b82f6']],
-                        showscale: false, name: token, legendgroup: token,
-                        text: token, hoverinfo: 'text'
-                    });
-                }
-            } else {
-                // 1D/2D Logik
-                traces.push({
-                    type: 'scatter',
-                    x: x, y: y,
-                    mode: dist < 0.001 ? 'markers+text' : 'lines+markers+text',
-                    name: token,
-                    text: dist < 0.001 ? [token] : ['', token],
-                    textposition: 'top center',
-                    line: { width: 4 },
-                    marker: { 
-                        size: dist < 0.001 ? 10 : [0, 15], 
-                        symbol: dist < 0.001 ? 'circle' : 'arrow', 
-                        angleref: 'previous' 
-                    }
-                });
-            }
-        });
+			if (d_model === 3) {
+				if (dist < 0.001) {
+					// Statischer Vektor: Nur ein Punkt
+					traces.push({
+						type: 'scatter3d',
+						x: [x[0]], y: [y[0]], z: [z[0]],
+						mode: 'markers+text',
+						marker: { size: 8, color: '#3b82f6' },
+						text: [token], textposition: 'top center',
+						name: token
+					});
+				} else {
+					// Bewegter Vektor: Linie + Kegel
+					traces.push({
+						type: 'scatter3d',
+						x: x, y: y, z: z,
+						mode: 'lines',
+						line: { width: 8, color: '#3b82f6' },
+						name: token, legendgroup: token, showlegend: false
+					});
+					traces.push({
+						type: 'cone',
+						x: [x[1]], y: [y[1]], z: [z[1]],
+						u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
+						sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+						colorscale: [[0, '#3b82f6'], [1, '#3b82f6']],
+						showscale: false, name: token, legendgroup: token,
+						text: token, hoverinfo: 'text'
+					});
+				}
+			} else {
+				// 1D/2D Logik
+				traces.push({
+					type: 'scatter',
+					x: x, y: y,
+					mode: dist < 0.001 ? 'markers+text' : 'lines+markers+text',
+					name: token,
+					text: dist < 0.001 ? [token] : ['', token],
+					textposition: 'top center',
+					line: { width: 4 },
+					marker: { 
+						size: dist < 0.001 ? 10 : [0, 15], 
+						symbol: dist < 0.001 ? 'circle' : 'arrow', 
+						angleref: 'previous' 
+					}
+				});
+			}
+		});
 
-        const layout = {
-            title: "Positional Shift (Points: Static | Cones: Shifted)",
-            scene: {
-                xaxis: { title: 'D1' }, yaxis: { title: 'D2' }, zaxis: { title: 'D3' },
-                camera: { eye: { x: 1.2, y: 1.2, z: 1.2 } }
-            },
-            margin: { l: 0, r: 0, b: 0, t: 40 }
-        };
-        Plotly.newPlot(container, traces, layout);
+		const layout = {
+			title: "Positional Shift (Points: Static | Cones: Shifted)",
+			scene: {
+				xaxis: { title: 'D1' }, yaxis: { title: 'D2' }, zaxis: { title: 'D3' },
+				camera: { eye: { x: 1.2, y: 1.2, z: 1.2 } }
+			},
+			margin: { l: 0, r: 0, b: 0, t: 40 }
+		};
+		Plotly.newPlot(container, traces, layout);
 
-    } else {
-        // --- ECharts Logik (> 3D) ---
-        if (typeof echarts === 'undefined') return;
-        Plotly.purge(container);
-        const myChart = echarts.init(container);
-        const axes = Array.from({ length: d_model }, (_, i) => ({ dim: i, name: `D${i}` }));
-        const data = tokens.map((token, pos) => {
-            const row = [];
-            for (let i = 0; i < d_model; i++) {
-                const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-                const baseVal = (((Math.abs(hash) * (i + 1)) % 200) - 100) / 100;
-                let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-                const pe_val = (i % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
-                row.push(parseFloat((baseVal + pe_val).toFixed(3)));
-            }
-            return { value: row, name: token };
-        });
+	} else {
+		// --- ECharts Logik (> 3D) ---
+		if (typeof echarts === 'undefined') return;
+		Plotly.purge(container);
+		const myChart = echarts.init(container);
+		const axes = Array.from({ length: d_model }, (_, i) => ({ dim: i, name: `D${i}` }));
+		const data = tokens.map((token, pos) => {
+			const row = [];
+			for (let i = 0; i < d_model; i++) {
+				const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+				const baseVal = (((Math.abs(hash) * (i + 1)) % 200) - 100) / 100;
+				let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+				const pe_val = (i % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
+				row.push(parseFloat((baseVal + pe_val).toFixed(3)));
+			}
+			return { value: row, name: token };
+		});
 
-        myChart.setOption({
-            tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
-            parallelAxis: axes,
-            parallel: { left: 40, right: 40, bottom: 20, top: 50 },
-            series: [{
-                type: 'parallel',
-                lineStyle: { width: 2, opacity: 0.4, color: '#3b82f6' },
-                emphasis: { lineStyle: { width: 6, opacity: 1, color: '#ef4444' } },
-                data: data
-            }]
-        });
-    }
+		myChart.setOption({
+			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+			parallelAxis: axes,
+			parallel: { left: 40, right: 40, bottom: 20, top: 50 },
+			series: [{
+				type: 'parallel',
+				lineStyle: { width: 2, opacity: 0.4, color: '#3b82f6' },
+				emphasis: { lineStyle: { width: 6, opacity: 1, color: '#ef4444' } },
+				data: data
+			}]
+		});
+	}
 }
 
 async function loadTransformerModule () {
