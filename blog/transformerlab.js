@@ -269,10 +269,6 @@ function run_transformer_demo() {
 
 	const masterInput = document.getElementById('transformer-training-data');
 	const trainingInput = document.getElementById('transformer-training-data');
-	const dimSlider = document.getElementById('transformer-dimension-model');
-	const headSlider = document.getElementById('transformer-heads');
-	const depthSlider = document.getElementById('transformer-depth');
-	const tempSlider = document.getElementById('transformer-temperature');
 
 	if (!masterInput || !trainingInput) {
 		console.error("Missing input elements");
@@ -280,21 +276,33 @@ function run_transformer_demo() {
 	}
 
 	const text = trainingInput.value;
-	const d_model = parseInt(dimSlider.value);
-	const n_heads = parseInt(headSlider.value);
-	const n_layers = parseInt(depthSlider.value);
-	const temperature = parseFloat(tempSlider.value);
 
 	// 1. Tokenize Training Data
 	const trainingTokens = transformer_tokenize_render(text, "transformer-viz-bpe");
-	const vocabulary = [...new Set(trainingTokens)]; // Unique words
 
 	// 2. Tokenize Input (Inference) Data
 	// We pass null as container because we don't need a separate viz for this yet, 
 	// or you can add a div with id "inference-viz" in your HTML if you want to see it.
 	const inputTokens = transformer_tokenize_render(masterInput.value, null);
 
+	run_network(inputTokens, trainingTokens);
+}
+
+function run_network(inputTokens, trainingTokens) {
+	const dimSlider = document.getElementById('transformer-dimension-model');
+	const d_model = parseInt(dimSlider.value);
+
+	const headSlider = document.getElementById('transformer-heads');
+	const n_heads = parseInt(headSlider.value);
+
+	const tempSlider = document.getElementById('transformer-temperature');
+	const temperature = parseFloat(tempSlider.value);
+
+	const depthSlider = document.getElementById('transformer-depth');
+	const n_layers = parseInt(depthSlider.value);
+
 	// 3. Filter for Known Tokens (The model can't process words it hasn't learned)
+	const vocabulary = [...new Set(trainingTokens)]; // Unique words
 	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
 
 	console.log("Vocab:", vocabulary);
