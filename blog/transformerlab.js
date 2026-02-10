@@ -267,7 +267,7 @@ function render_positional_waves(d_model, tokens) {
 function run_transformer_demo() {
 	console.log("Starting Transformer Demo...");
 
-	const masterInput = document.getElementById('transformer-master-token-input');
+	const masterInput = document.getElementById('transformer-training-data');
 	const trainingInput = document.getElementById('transformer-training-data');
 	const dimSlider = document.getElementById('transformer-dimension-model');
 	const headSlider = document.getElementById('transformer-heads');
@@ -465,7 +465,6 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
     if (typeof render_temml === "function") render_temml();
 }
 
-// Make sure this is globally available
 window.appendToken = (token) => {
 	const input = document.getElementById('transformer-master-token-input');
 	if (!input) return;
@@ -475,21 +474,6 @@ window.appendToken = (token) => {
 		input.value += token.replace('##', '');
 	} else {
 		input.value += (input.value ? " " : "") + token;
-	}
-	// Trigger update
-	run_transformer_demo();
-};
-
-// Helper to handle the click interaction
-window.appendToken = (token) => {
-	const input = document.getElementById('transformer-master-token-input');
-	// Simple logic to handle spaces (rudimentary)
-	if (input.value && !token.startsWith('##')) {
-		input.value += " " + token;
-	} else if (token.startsWith('##')) {
-		input.value += token.replace('##', '');
-	} else {
-		input.value += token;
 	}
 	// Trigger update
 	run_transformer_demo();
