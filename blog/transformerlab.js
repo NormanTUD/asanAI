@@ -321,19 +321,13 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 	const depthSlider = document.getElementById('transformer-depth');
 	const n_layers = parseInt(depthSlider.value);
 
-	// 3. Filter for Known Tokens (The model can't process words it hasn't learned)
-	const vocabulary = [...new Set(trainingTokens)]; // Unique words
+	const vocabulary = [...new Set(trainingTokens)];
 	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
-
-	console.log("Vocab:", vocabulary);
-	console.log("Input:", inputTokens);
-	console.log("Known Tokens:", knownTokens);
 
 	var weights = get_init_weights(n_layers, d_model);
 
 	var embeddingSpace = generateEmbeddingSpace(trainingTokens, d_model);
 
-	// Visualizations
 	calculate_positional_injection(knownTokens, d_model);
 	render_positional_waves(d_model, knownTokens);
 	render_positional_shift_plot(knownTokens, d_model);
@@ -343,7 +337,6 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 	if (typeof render_mask_logic === "function") render_mask_logic(knownTokens);
 	render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
-	// If no known tokens, stop here to prevent errors in math functions
 	if (knownTokens.length === 0) {
 		document.getElementById('transformer-output-projection').innerHTML = 
 			`<div style="padding:20px; color: #64748b; text-align:center;">
@@ -353,7 +346,6 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 		return;
 	}
 
-	// --- Forward Pass Simulation ---
 	const engine = new AttentionEngine({
 		d_model: d_model,
 		n_heads: n_heads,
@@ -375,8 +367,6 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 	const h2 = run_ffn_block(h1, weights[0]);
 	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads, weights);
 
-	// --- Output Projection ---
-	// Ensure this function exists before calling
 	if (typeof render_final_projection === "function") {
 		render_final_projection(h_final, vocabulary, d_model, temperature);
 	} else {
