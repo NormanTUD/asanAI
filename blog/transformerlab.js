@@ -337,13 +337,14 @@ function run_transformer_demo() {
 	const h1 = get_h1(mockH0, multiHeadOutput);
 	if (typeof render_h1_logic === "function") render_h1_logic(mockH0, multiHeadOutput);
 
-	var weights = [];
+	var weights = {};
+	weights["layer_weights"] = [];
 	for (let n = 0; n < n_layers; n++) {
-		weights.push({});
+		weights["layer_weights"].push({});
 	}
 
-	const h2 = run_ffn_block(h1, weights[0]);
-	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads, weights);
+	const h2 = run_ffn_block(h1, weights["layer_weights"][0]);
+	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads, weights["layer_weights"]);
 
 	// --- Output Projection ---
 	// Ensure this function exists before calling
