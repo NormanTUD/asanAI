@@ -48,7 +48,7 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 </div>
 
 <div style="background: #f0fdf4; padding: 15px; border: 1px solid #10b981; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;">
-    <h3 style="margin-top: 0; color: #047857; font-size: 1rem;">Training Configuration</h3>
+    <p>Training Configuration</p>
 
     <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
         <div>
