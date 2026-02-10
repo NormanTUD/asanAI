@@ -26,7 +26,6 @@ class AttentionEngine {
 		};
 	}
 
-	// Matrix Multiplication Helper
 	dot(A, B) {
 		return A.map(row => 
 			B[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * B[j][i], 0))
