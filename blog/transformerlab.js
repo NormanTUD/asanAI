@@ -10,7 +10,7 @@ class AttentionEngine {
 		this.d_k = config.d_model / config.n_heads;
 		this.container = document.getElementById(config.containerId);
 
-		this.weights = {
+		this.this_weights = {
 			query: this.initWeights(this.d_model, this.d_model),
 			key: this.initWeights(this.d_model, this.d_model),
 			value: this.initWeights(this.d_model, this.d_model),
@@ -43,9 +43,9 @@ class AttentionEngine {
 	}
 
 	forward(h0, tokens) {
-		const Q_full = this.dot(h0, this.weights.query);
-		const K_full = this.dot(h0, this.weights.key);
-		const V_full = this.dot(h0, this.weights.value);
+		const Q_full = this.dot(h0, this.this_weights.query);
+		const K_full = this.dot(h0, this.this_weights.key);
+		const V_full = this.dot(h0, this.this_weights.value);
 
 		let headData = [];
 		for (let i = 0; i < this.n_heads; i++) {
@@ -59,10 +59,10 @@ class AttentionEngine {
 			const scores = this.dot(Qi, this.transpose(Ki)).map(row => 
 				row.map(v => v / Math.sqrt(this.d_k))
 			);
-			const weights = this.softmax(scores);
-			const context = this.dot(weights, Vi);
+			const this_weights = this.softmax(scores);
+			const context = this.dot(this_weights, Vi);
 
-			headData.push({ headIdx: i, Qi, Ki, Vi, weights, context });
+			headData.push({ headIdx: i, Qi, Ki, Vi, this_weights, context });
 		}
 
 		this.renderUI(headData, tokens);
@@ -104,7 +104,7 @@ class AttentionEngine {
 	}
 
 	generateMathTable(head, tokens) {
-		const { weights, Qi, Ki, Vi } = head;
+		const { this_weights, Qi, Ki, Vi } = head;
 		const K_T = this.transpose(Ki);
 
 		// Helfer für vertikale Vektoren
@@ -126,7 +126,7 @@ class AttentionEngine {
 		html += `</tr>`;
 
 		// Zeilen
-		weights.forEach((row, i) => {
+		this_weights.forEach((row, i) => {
 			html += `<tr>`;
 			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc; font-weight: bold;">
 		${tokens[i]}<br><small>$\\underbrace{${toPmatrix(Qi[i])}}_{\\substack{Q_{${i}} \\\\ \\text{Emb. } \\text{"${tokens[i]}"}}}$</small>
@@ -989,7 +989,7 @@ function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2) {
  * Goal: Unified N-Layer Trajectory Plotting
  * Logic: Every iteration i maps to Layer i+1 Plot
  */
-function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, weights) {
+function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights) {
 	let h_current = h_initial;
 	const plotContainer = document.getElementById('transformer-migration-plots-container');
 	const statusContainer = document.getElementById('transformer-multi-layer-status');
@@ -1010,8 +1010,8 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, weigh
 
 		const headData = engine.forward(h_current, tokens);
 		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
-		const zn = get_h1(h_current, concatOutput, weights[n]["gamma"], weights[n]["beta"]);
-		const h_after = run_ffn_block(zn, weights[n]);
+		const zn = get_h1(h_current, concatOutput, this_weights[n]["gamma"], this_weights[n]["beta"]);
+		const h_after = run_ffn_block(zn, this_weights[n]);
 
 		// 2. Render Full-Width Migration Plot
 		create_migration_plot(`migration-layer-${n+1}`, tokens, h_before, h_after, n + 1, d_model);
