@@ -337,8 +337,13 @@ function run_transformer_demo() {
 	const h1 = get_h1(mockH0, multiHeadOutput);
 	if (typeof render_h1_logic === "function") render_h1_logic(mockH0, multiHeadOutput);
 
-	const h2 = run_ffn_block(h1);
-	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads);
+	var weights = [];
+	for (let n = 0; n < n_layers; n++) {
+		weights.push({});
+	}
+
+	const h2 = run_ffn_block(h1, weights[0]);
+	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads, weights);
 
 	// --- Output Projection ---
 	// Ensure this function exists before calling
@@ -975,7 +980,7 @@ function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2) {
  * Goal: Unified N-Layer Trajectory Plotting
  * Logic: Every iteration i maps to Layer i+1 Plot
  */
-function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads) {
+function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, weights) {
 	let h_current = h_initial;
 	const plotContainer = document.getElementById('transformer-migration-plots-container');
 	const statusContainer = document.getElementById('transformer-multi-layer-status');
@@ -997,7 +1002,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads) {
 		const headData = engine.forward(h_current, tokens);
 		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
 		const zn = get_h1(h_current, concatOutput);
-		const h_after = run_ffn_block(zn); // Note: this is our h_{n+1}
+		const h_after = run_ffn_block(zn, weights[n+1]); // Note: this is our h_{n+1}
 
 		// 2. Render Full-Width Migration Plot
 		create_migration_plot(`migration-layer-${n+1}`, tokens, h_before, h_after, n + 1, d_model);
