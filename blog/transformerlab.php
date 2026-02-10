@@ -287,7 +287,7 @@ As $h$ progresses from $h_0$ to $h_{96}$, the vector for "apple" might move from
 </div>
 
 <div class="md">
-## Feature Space Migration
+### Feature Space Migration
 The following plots visualize how each layer "nudges" the token vectors. Each arrow represents the transition from $h_n$ (start) to $h_{n+1}$ (head).
 </div>
 <div id="transformer-migration-plots-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;"></div>
