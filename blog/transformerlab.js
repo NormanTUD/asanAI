@@ -281,24 +281,27 @@ function run_transformer_demo() {
 }
 
 function get_init_weights(n_layers, d_model) {
-	// Initialisierung
-	var weights = []; 
+	var weights = [];
+	var d_ff = d_model * 4;
 
 	for (let n = 0; n < n_layers; n++) {
-		// Ein neues Objekt für diesen Layer erstellen
 		let currentLayer = {
-			"gamma": new Array(d_model).fill(1.0),
-			"beta": new Array(d_model).fill(0.0),
-			"attention": {
+			gamma: new Array(d_model).fill(1.0),
+			beta: new Array(d_model).fill(0.0),
+
+			attention: {
 				query: initWeights(d_model, d_model),
 				key: initWeights(d_model, d_model),
 				value: initWeights(d_model, d_model)
-			}
+			},
+
+			W1: initWeights(d_model, d_ff),
+			b1: new Array(d_ff).fill(0),
+
+			W2: initWeights(d_ff, d_model),
+			b2: new Array(d_model).fill(0)
 		};
 
-
-
-		// Das Objekt in das Array schieben
 		weights.push(currentLayer);
 	}
 
@@ -891,6 +894,17 @@ function validateShape(name, data, expectedRows, expectedCols) {
 	return true;
 }
 
+function assert_or_init(name, value, expected_rows, expected_cols) {
+        try {
+                validateShape(name, value, expected_rows, expected_cols);
+                return value;
+        } catch (err) {
+                throw new Error(
+                        `${name} has invalid shape. Expected ${expected_rows}x${expected_cols}.`
+                );
+        }
+}
+
 /**
  * FFN Block mit optionalen Gewichten und Biases
  * @param {Array} h1 - Input Hidden State
@@ -903,25 +917,10 @@ function run_ffn_block(h1, params = {}) {
 	const d_model = h1[0].length;
 	const d_ff = d_model * 4;
 
-	// 1. Gewichte & Biases setzen oder zufällig initialisieren
-	let 
-	W1 = params.W1,
-		b1 = params.b1,
-		W2 = params.W2,
-		b2 = params.b2;
-
-	// Validierung oder Fallback
-	if (W1) validateShape('W1', W1, d_model, d_ff); 
-	else W1 = initWeights(d_model, d_ff);
-
-	if (b1) validateShape('b1', b1, d_ff, 1); 
-	else b1 = new Array(d_ff).fill(0); // Standard: Initialisierung mit 0
-
-	if (W2) validateShape('W2', W2, d_ff, d_model); 
-	else W2 = initWeights(d_ff, d_model);
-
-	if (b2) validateShape('b2', b2, d_model, 1); 
-	else b2 = new Array(d_model).fill(0);
+	let W1 = assert_or_init('W1', params.W1, d_model, d_ff);
+	let b1 = assert_or_init('b1', params.b1, d_ff, 1);
+	let W2 = assert_or_init('W2', params.W2, d_ff, d_model);
+	let b2 = assert_or_init('b2', params.b2, d_model, 1);
 
 	// 2. Schritt: Expansion & ReLU -> out_L1 = ReLU(h1 * W1 + b1)
 	const out_L1 = h1.map(row => {
