@@ -1656,9 +1656,14 @@ async function predict_webcam () {
 
 		var wait = null;
 
-		var predict_data = tidy(() => {
-			return _get_resized_webcam(webcam_image);
-		});
+		try {
+			var predict_data = tidy(() => {
+				return _get_resized_webcam(webcam_image);
+			});
+		} catch (e) {
+			console.error(e);
+			return;
+		}
 
 		await dispose(webcam_image);
 
