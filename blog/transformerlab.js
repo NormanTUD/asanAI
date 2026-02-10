@@ -3,6 +3,14 @@
  * Origin: Vaswani et al. (2017)
  * Methods: Multi-Head Projection, Scaled Dot-Product, LaTeX Logging
  */
+
+function initWeights(r, c) {
+	const limit = Math.sqrt(6 / (r + c));
+	return Array.from({ length: r }, () => 
+		Array.from({ length: c }, () => (Math.random() * 2 * limit) - limit)
+	);
+}
+
 class AttentionEngine {
 	constructor(config) {
 		this.d_model = config.d_model;
@@ -11,19 +19,11 @@ class AttentionEngine {
 		this.container = document.getElementById(config.containerId);
 
 		this.this_weights = {
-			query: this.initWeights(this.d_model, this.d_model),
-			key: this.initWeights(this.d_model, this.d_model),
-			value: this.initWeights(this.d_model, this.d_model),
-			output: this.initWeights(this.d_model, this.d_model)
+			query: initWeights(this.d_model, this.d_model),
+			key: initWeights(this.d_model, this.d_model),
+			value: initWeights(this.d_model, this.d_model),
+			output: initWeights(this.d_model, this.d_model)
 		};
-	}
-
-	initWeights(r, c) {
-		// Glorot Initialization for training readiness
-		const limit = Math.sqrt(6 / (r + c));
-		return Array.from({ length: r }, () => 
-			Array.from({ length: c }, () => (Math.random() * 2 * limit) - limit)
-		);
 	}
 
 	// Matrix Multiplication Helper
@@ -281,6 +281,31 @@ function run_transformer_demo() {
 	run_and_visualize_network(inputTokens, trainingTokens);
 }
 
+function get_init_weights(n_layers, d_model) {
+	// Initialisierung
+	var weights = []; 
+
+	for (let n = 0; n < n_layers; n++) {
+		// Ein neues Objekt für diesen Layer erstellen
+		let currentLayer = {
+			"gamma": new Array(d_model).fill(1.0),
+			"beta": new Array(d_model).fill(0.0),
+			"attention": {
+				query: initWeights(d_model, d_model),
+				key: initWeights(d_model, d_model),
+				value: initWeights(d_model, d_model)
+			}
+		};
+
+
+
+		// Das Objekt in das Array schieben
+		weights.push(currentLayer);
+	}
+
+	return weights;
+}
+
 function run_and_visualize_network(inputTokens, trainingTokens) {
 	const dimSlider = document.getElementById('transformer-dimension-model');
 	const d_model = parseInt(dimSlider.value);
@@ -302,6 +327,7 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 	console.log("Input:", inputTokens);
 	console.log("Known Tokens:", knownTokens);
 
+	var weights = get_init_weights(n_layers, d_model);
 
 	var embeddingSpace = generateEmbeddingSpace(trainingTokens, d_model);
 
@@ -329,36 +355,23 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 	const engine = new AttentionEngine({
 		d_model: d_model,
 		n_heads: n_heads,
-		containerId: "mha-calculation-details"
+		containerId: "mha-calculation-details",
+		weights: weights[0]["attention"]
 	});
 
 	const mockH0 = knownTokens.map(() => 
 		Array.from({length: engine.d_model}, () => Math.random() - 0.5)
 	);
 
-	// Initialisierung
-	var weights = {};
-	weights["layer_weights"] = []; 
-
-	for (let n = 0; n < n_layers; n++) {
-		// Ein neues Objekt für diesen Layer erstellen
-		let currentLayer = {
-			"gamma": new Array(d_model).fill(1.0),
-			"beta": new Array(d_model).fill(0.0)
-		};
-		// Das Objekt in das Array schieben
-		weights["layer_weights"].push(currentLayer);
-	}
-
 	const headData = engine.forward(mockH0, knownTokens);
 	const multiHeadOutput = updateConcatenationDisplay(headData, knownTokens);
 
 	console.log(weights);
-	const h1 = get_h1(mockH0, multiHeadOutput, weights["layer_weights"][0]["gamma"], weights["layer_weights"][0]["beta"]);
+	const h1 = get_h1(mockH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"]);
 	if (typeof render_h1_logic === "function") render_h1_logic(mockH0, multiHeadOutput);
 
-	const h2 = run_ffn_block(h1, weights["layer_weights"][0]);
-	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads, weights["layer_weights"]);
+	const h2 = run_ffn_block(h1, weights[0]);
+	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads, weights);
 
 	// --- Output Projection ---
 	// Ensure this function exists before calling
@@ -898,14 +911,6 @@ function run_ffn_block(h1, params = {}) {
 		W2 = params.W2,
 		b2 = params.b2;
 
-	// Hilfsfunktion für Xavier/Glorot Initialisierung
-	function initWeights(rows, cols) {
-		const limit = Math.sqrt(6 / (rows + cols));
-		return Array.from({ length: rows }, () => 
-			Array.from({ length: cols }, () => (Math.random() * 2 - 1) * limit)
-		);
-	}
-
 	// Validierung oder Fallback
 	if (W1) validateShape('W1', W1, d_model, d_ff); 
 	else W1 = initWeights(d_model, d_ff);
@@ -1001,11 +1006,14 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 		// Capture the start point for this layer's arrow
 		const h_before = JSON.parse(JSON.stringify(h_current));
 
+		console.log(this_weights);
+
 		// 1. Calculate the Layer (MHA + FFN)
 		const engine = new AttentionEngine({ 
 			d_model, 
 			n_heads, 
-			containerId: (n === 0) ? "mha-calculation-details" : null 
+			containerId: (n === 0) ? "mha-calculation-details" : null,
+			weights: this_weights["attention"]
 		});
 
 		const headData = engine.forward(h_current, tokens);
