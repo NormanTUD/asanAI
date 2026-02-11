@@ -746,26 +746,6 @@ function mutate_vector(vec, scale) {
 	}
 }
 
-function updateWeights(weights, lr) {
-	// Update Transformer Layers (Existing logic)
-	weights.forEach(layer => {
-		['query', 'key', 'value'].forEach(part => {
-			layer.attention[part] = layer.attention[part].map(row =>
-				row.map(v => v + (Math.random() - 0.5) * lr)
-			);
-		});
-	});
-
-	// NEW: Update Embedding Space
-	if (window.persistentEmbeddingSpace) {
-		Object.keys(window.persistentEmbeddingSpace).forEach(token => {
-			window.persistentEmbeddingSpace[token] = window.persistentEmbeddingSpace[token].map(v => 
-				v + (Math.random() - 0.5) * lr
-			);
-		});
-	}
-}
-
 function renderLossGraph() {
 	const trace = {
 		x: Array.from({length: window.lossHistory.length}, (_, i) => i),
