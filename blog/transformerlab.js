@@ -322,33 +322,30 @@ async function train_transformer() {
 	const status = document.getElementById('training-status');
 	const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
 	const epochs = parseInt(document.getElementById('train-epochs').value) || 50;
-	const d_model = parseInt(document.getElementById('transformer-dimension-model').value);
-	const n_layers = parseInt(document.getElementById('transformer-depth').value);
 
-	// Initialize weights only if they don't exist (allows continuing training)
 	if (!window.currentWeights) {
 		window.currentWeights = get_init_weights(n_layers, d_model);
 	}
 
-	document.getElementById('training-loss-plot').style.display = 'block';
-
 	for (let e = 0; e < epochs; e++) {
-		// Simulated Loss (Based on weight variance/magnitude for demo purposes)
 		let epochLoss = 0.5 + (Math.random() * 0.1) / (window.lossHistory.length + 1);
 		window.lossHistory.push(epochLoss);
-
-		// Update Weights (Simplified Gradient Descent Nudge)
 		updateWeights(window.currentWeights, lr);
 
-		// Update UI every 5 epochs to maintain performance
 		if (e % 5 === 0) {
-			status.innerText = `Epoch ${window.lossHistory.length} - Loss: ${epochLoss.toFixed(4)}`;
-			renderLossGraph();
-			run_transformer_demo(); // Updates all LaTeX tables and Plotly charts
-			await new Promise(r => setTimeout(r, 10)); // Yield to UI thread
+			// Use requestAnimationFrame to prevent blocking the training logic
+			requestAnimationFrame(() => {
+				status.innerText = `Epoch ${window.lossHistory.length} - Loss: ${epochLoss.toFixed(4)}`;
+				renderLossGraph();
+
+				// Only run heavy visualization every 20 epochs or via a manual toggle
+				if (e % 20 === 0) {
+					run_transformer_demo(); 
+				}
+			});
+			await new Promise(r => setTimeout(r, 0)); // Yield more effectively
 		}
 	}
-	status.innerText = "Training Paused. Click again to continue.";
 }
 
 function updateWeights(weights, lr) {
