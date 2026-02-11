@@ -34,12 +34,6 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
 		<input type="range" id="transformer-depth" min="1" max="12" value="2" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
 	</div>
-
-
-	<div>
-		<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
-		<input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;"  value="The king" oninput="run_transformer_demo()">
-	</div>
 </div>
 
 <div class="transformer_corpus">
@@ -320,6 +314,11 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 <div id="transformer-temperature-config" style="margin-top: 20px;"></div>
 
 <div id="transformer-output-projection" style="background: #fff; padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
+
+<div>
+	<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
+	<input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;"  value="The king" oninput="run_transformer_demo()">
+</div>
 
 <div class="md">
 ## Key Intuitions about LLMs
