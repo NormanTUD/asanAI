@@ -124,10 +124,9 @@ class AttentionEngine {
 		// Header (Keys)
 		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
 		tokens.forEach((t, j) => {
-			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
-	    ${t}<br><small>      
-	    $\\underbrace{${toMatrix(WK)}}_{W_K} \\cdot \\underbrace{${toColPmatrix(h0[j])}}_{h_{${j}}} = \\underbrace{${toColPmatrix(Ki[j])}}_{K_{${j}}}$
-	    </small></th>`;      
+			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Key:
+	    ${t}
+	    </th>`;      
 		});              
 		html += `</tr>`;  
 
@@ -138,7 +137,7 @@ class AttentionEngine {
 			const label = `\\text{Embed}_{\\text{${tokens[i]}}}`;
 
 			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
-    <strong>${tokens[i]}</strong><br>
+    <strong>Query: ${tokens[i]}</strong><br>
 </td>`;
 
 			row.forEach((weight, j) => {
