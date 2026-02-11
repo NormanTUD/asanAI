@@ -12,7 +12,7 @@ window.currentWeights = null;
 window.lossHistory = [];
 window.last_d_model = null;
 
-const contextSize = 8;
+const contextSize = 128;
 const attentionRenderRegistry = new Map();
 
 /**
