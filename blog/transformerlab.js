@@ -442,7 +442,7 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 
 	calculate_positional_injection(knownTokens, d_model);
 	render_positional_waves(d_model, knownTokens);
-	render_positional_shift_plot(knownTokens, d_model);
+	const h0 = render_positional_shift_plot(knownTokens, d_model, embeddingSpace);
 	render_embedding_plot(embeddingSpace, d_model);
 
 	render_causal_mask(knownTokens);
@@ -465,19 +465,15 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 		weights: weights[0]["attention"]
 	});
 
-	const mockH0 = knownTokens.map(() => 
-		Array.from({length: engine.d_model}, () => Math.random() - 0.5)
-	);
-
-	const headData = engine.forward(mockH0, knownTokens);
+	const headData = engine.forward(h0, knownTokens);
 	const multiHeadOutput = updateConcatenationDisplay(headData, knownTokens);
 
 	console.log(weights);
-	const h1 = get_h1(mockH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"]);
+	const h1 = get_h1(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"]);
 
 	// FIX: Pass gamma and beta to the renderer
 	if (typeof render_h1_logic === "function") {
-		render_h1_logic(mockH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
+		render_h1_logic(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
 	}
 
 	const h2 = run_ffn_block(h1, weights[0]);
@@ -1277,114 +1273,77 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model) {
 	}
 }
 
-/**
- * Renders a full-screen width trajectory plot
- */
-function render_positional_shift_plot(tokens, d_model) {
+function render_positional_shift_plot(tokens, d_model, embeddingSpace) {
 	const container = document.getElementById('transformer-pe-shift-plot');
-	if (!container || !Array.isArray(tokens)) return;
+	if (!Array.isArray(tokens)) return [];
 
-	if (d_model <= 3) {
-		const traces = [];
-		tokens.forEach((token, pos) => {
-			// 1. Semantic Base (Stable hash-based starting point)
-			const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-			const getBase = (offset) => (((Math.abs(hash * offset)) % 200) - 100) / 100;
+	// This will store the actual numerical results to return
+	const injectedEmbeddings = [];
 
-			const startPos = [getBase(1), getBase(2), getBase(3)];
+	const traces = [];
+	tokens.forEach((token, pos) => {
+		// 1. Retrieve Semantic Base from the persistent space
+		const semanticBase = embeddingSpace[token] || new Array(d_model).fill(0);
 
-			// 2. Positional Shift (PE Vector)
-			// Assigning unique i values to x, y, z to ensure different sine/cosine phases
-			const getPE = (i) => {
-				let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-				return (i % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
-			};
+		// 2. Calculate Positional Encoding (PE) Vector
+		const peVec = new Array(d_model).fill(0);
+		for (let i = 0; i < d_model; i++) {
+			let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+			peVec[i] = (i % 2 === 0) 
+				? Math.sin(pos / div_term) 
+				: Math.cos(pos / div_term);
+		}
 
-			const pe_vec = [
-				getPE(0),                          // X shift
-				d_model >= 2 ? getPE(1) : 0,       // Y shift
-				d_model === 3 ? getPE(2) : 0        // Z shift
-			];
+		// 3. Perform the "Shift" (Addition)
+		const combined = semanticBase.map((val, i) => val + peVec[i]);
+		injectedEmbeddings.push(combined);
 
-			const x = [startPos[0], startPos[0] + pe_vec[0]];
-			const y = [startPos[1], startPos[1] + pe_vec[1]];
-			const z = [startPos[2], startPos[2] + pe_vec[2]];
+		// 4. Visualization Logic (3D/2D)
+		if (container && d_model <= 3) {
+			const x = [semanticBase[0], combined[0]];
+			const y = d_model >= 2 ? [semanticBase[1], combined[1]] : [0, 0];
+			const z = d_model === 3 ? [semanticBase[2], combined[2]] : [0, 0];
 
 			if (d_model === 3) {
-				// Line Trace
 				traces.push({
-					type: 'scatter3d',
-					x: x, y: y, z: z,
-					mode: 'lines',
-					line: { width: 6, color: '#3b82f6' },
-					name: token, legendgroup: token, showlegend: false
+					type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
+					line: { width: 6, color: '#3b82f6' }, name: token, showlegend: false
 				});
-				// Directional Cone (The Shift)
 				traces.push({
-					type: 'cone',
-					x: [x[1]], y: [y[1]], z: [z[1]],
-					u: [pe_vec[0]], v: [pe_vec[1]], w: [pe_vec[2]],
+					type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
+					u: [peVec[0]], v: [peVec[1]], w: [peVec[2]],
 					sizemode: 'absolute', sizeref: 0.2, anchor: 'tip',
-					colorscale: [[0, '#3b82f6'], [1, '#60a5fa']],
-					showscale: false, name: token, legendgroup: token,
-					text: `Pos ${pos}: ${token}`, hoverinfo: 'text'
+					colorscale: [[0, '#3b82f6'], [1, '#60a5fa']], showscale: false
 				});
 			} else {
-				// 2D fallback
 				traces.push({
-					type: 'scatter',
-					x: x, y: y,
-					mode: 'lines+markers+text',
-					name: token,
-					text: ['', token],
-					textposition: 'top center',
-					line: { width: 4, color: '#3b82f6' },
+					type: 'scatter', x: x, y: y, mode: 'lines+markers',
+					name: token, line: { width: 4, color: '#3b82f6' },
 					marker: { size: [0, 15], symbol: 'arrow', angleref: 'previous' }
 				});
 			}
-		});
+		}
+	});
 
-		const layout = {
-			title: "Positional Injection: Semantic Base → PE Shift",
-			scene: {
-				xaxis: { title: 'D0 (Sin)' },
-				yaxis: { title: 'D1 (Cos)' },
-				zaxis: { title: 'D2 (Sin)' },
-				camera: { eye: { x: 1.5, y: 1.5, z: 1.5 } }
-			},
-			margin: { l: 0, r: 0, b: 0, t: 40 }
-		};
-		Plotly.newPlot(container, traces, layout);
-	} else {
-		// --- ECharts Logik (> 3D) ---
-		if (typeof echarts === 'undefined') return;
+	// High-Dimensional Plotting (ECharts)
+	if (container && d_model > 3 && typeof echarts !== 'undefined') {
 		Plotly.purge(container);
 		const myChart = echarts.init(container);
 		const axes = Array.from({ length: d_model }, (_, i) => ({ dim: i, name: `D${i}` }));
-		const data = tokens.map((token, pos) => {
-			const row = [];
-			for (let i = 0; i < d_model; i++) {
-				const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-				const baseVal = (((Math.abs(hash) * (i + 1)) % 200) - 100) / 100;
-				let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-				const pe_val = (i % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
-				row.push(parseFloat((baseVal + pe_val).toFixed(nr_fixed)));
-			}
-			return { value: row, name: token };
-		});
+		const data = tokens.map((token, idx) => ({ value: injectedEmbeddings[idx], name: token }));
 
 		myChart.setOption({
-			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+			tooltip: { trigger: 'item' },
 			parallelAxis: axes,
 			parallel: { left: 40, right: 40, bottom: 20, top: 50 },
-			series: [{
-				type: 'parallel',
-				lineStyle: { width: 2, opacity: 0.4, color: '#3b82f6' },
-				emphasis: { lineStyle: { width: 6, opacity: 1, color: '#ef4444' } },
-				data: data
-			}]
+			series: [{ type: 'parallel', data: data, lineStyle: { width: 2, opacity: 0.4, color: '#3b82f6' } }]
 		});
+	} else if (container && traces.length > 0) {
+		const layout = { title: "Positional Injection: Semantic → Combined", margin: { l: 0, r: 0, b: 0, t: 40 } };
+		Plotly.newPlot(container, traces, layout);
 	}
+
+	return injectedEmbeddings; // Return the shifted data for the next stage
 }
 
 async function loadTransformerModule () {
