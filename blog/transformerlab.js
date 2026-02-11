@@ -760,6 +760,7 @@ function render_mask_logic(tokens) {
 
 	render_temml();
 }
+
 function render_h1_logic(h0, multiHeadOutput, gamma, beta) {
     const normContainer = document.getElementById('transformer-h1-layernorm-viz');
     const finalContainer = document.getElementById('transformer-h1-final-viz');
@@ -768,45 +769,55 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta) {
     const matrixToPmatrix = (matrix) =>
         `\\begin{pmatrix} ` + matrix.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ') + ` \\end{pmatrix}`;
 
-    const vecToPmatrix = (vec) => 
+    const vecToPmatrix = (vec) =>
         `\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
 
     const eps = 1e-5;
-    
-    // Step-by-step tracking
+
     const means = [];
     const variances = [];
+    const meanCalcs = []; // To store string representation of (sum / n)
+    const varCalcs = [];  // To store string representation of (sum_sq / n)
 
     const standardized = multiHeadOutput.map(row => {
-        const mean = row.reduce((a, b) => a + b, 0) / row.length;
-        const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
-        
+        const n = row.length;
+        const sum = row.reduce((a, b) => a + b, 0);
+        const mean = sum / n;
+
+        const sumSqDiff = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0);
+        const variance = sumSqDiff / n;
+
         means.push(mean);
         variances.push(variance);
-        
+        meanCalcs.push(`\\frac{${sum.toFixed(2)}}{${n}}`);
+        varCalcs.push(`\\frac{${sumSqDiff.toFixed(2)}}{${n}}`);
+
         return row.map(val => (val - mean) / Math.sqrt(variance + eps));
     });
 
-    const normMH = standardized.map(row => 
+    const normMH = standardized.map(row =>
         row.map((val, j) => val * gamma[j] + beta[j])
     );
 
     const h1 = h0.map((row, i) => row.map((val, j) => val + normMH[i][j]));
 
-    // Step-by-step breakdown added to the output
     normContainer.innerHTML = `
     <div style="margin-bottom:10px;">
-        1. Calculate Statistics and Standardize:
-        $$ \\mu = ${vecToPmatrix(means)}^T, \\quad \\sigma^2 = ${vecToPmatrix(variances)}^T $$
-        $$ \\hat{x} = \\frac{x - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} = ${matrixToPmatrix(standardized)} $$
+        1. Calculate Row-wise Mean ($\\mu$) and Variance ($\\sigma^2$):
+        $$ \\vec{\\mu} = \\begin{pmatrix} ${meanCalcs.join(' \\\\ ')} \\end{pmatrix} = ${vecToPmatrix(means)}^T $$
+        $$ \\vec{\\sigma}^2 = \\begin{pmatrix} ${varCalcs.join(' \\\\ ')} \\end{pmatrix} = ${vecToPmatrix(variances)}^T $$
     </div>
     <div style="margin-bottom:10px;">
-        2. Apply Learnable Parameters:
+        2. Standardize ($\\hat{x} = \\frac{x - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}}$):
+        $$ \\hat{x} = ${matrixToPmatrix(standardized)} $$
+    </div>
+    <div style="margin-bottom:10px;">
+        3. Scale and Shift:
         $$ \\text{LayerNorm}(\\text{MHA}) = \\gamma \\odot \\hat{x} + \\beta $$
     </div>
-    $$ \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{Result}} = 
-       \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma} \\odot 
-       \\underbrace{${matrixToPmatrix(standardized)}}_{\\hat{x} \\text{ (Std)}} + 
+    $$ \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{Result}} =
+       \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma} \\odot
+       \\underbrace{${matrixToPmatrix(standardized)}}_{\\hat{x}} +
        \\underbrace{${vecToPmatrix(beta)}}_{\\beta} $$
     `;
 
@@ -818,6 +829,7 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta) {
     if (typeof render_temml === "function") render_temml();
     return h1;
 }
+
 /**
  * Algorithm: Block Matrix Concatenation
  * Returns: Array (Matrix of Tokens x d_model)
