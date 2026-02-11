@@ -9,6 +9,25 @@ const nr_fixed = 4;
 // Add to the top of the file with other persistent states
 window.persistentEmbeddingSpace = null;
 window.last_d_model = null;
+const attentionRenderRegistry = new Map();
+
+/**
+ * Intersection Observer for Attention UI
+ */
+const attentionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const containerId = entry.target.id;
+            const data = attentionRenderRegistry.get(containerId);
+            if (data && !data.rendered) {
+                // Execute the heavy HTML/LaTeX generation only now
+                const engineInstance = data.instance;
+                engineInstance.executeActualRender(data.headData, data.tokens);
+                data.rendered = true;
+            }
+        }
+    });
+}, { threshold: 0.1 });
 
 function get_or_init_embeddings(tokens, d_model) {
 	// Reset if dimensions changed
@@ -47,6 +66,7 @@ class AttentionEngine {
 		this.d_model = config.d_model;
 		this.n_heads = config.n_heads;
 		this.d_k = config.d_model / config.n_heads;
+		this.containerId = config.containerId; // Store ID specifically
 		this.container = document.getElementById(config.containerId);
 
 		this.this_weights = config.weights || {
@@ -55,6 +75,11 @@ class AttentionEngine {
 			value: initWeights(this.d_model, this.d_model),
 			output: initWeights(this.d_model, this.d_model)
 		};
+
+		// Start observing if container exists
+		if (this.container) {
+			attentionObserver.observe(this.container);
+		}
 	}
 
 	dot(A, B) {
@@ -111,30 +136,52 @@ class AttentionEngine {
 	transpose(M) { return M[0].map((_, i) => M.map(row => row[i])); }
 
 	renderUI(headData, tokens) {
+		if (!this.containerId) return;
+
+		// Update the registry with the latest calculation data
+		attentionRenderRegistry.set(this.containerId, {
+			headData: headData,
+			tokens: tokens,
+			instance: this,
+			rendered: false
+		});
+
+		// If it's already in view, the observer won't "re-fire" unless we nudge it,
+		// so we check visibility manually once or wait for the next scroll.
+		// For responsiveness, we clear the innerHTML with a loader.
+		if (!this.container.innerHTML) {
+			this.container.innerHTML = `<div style="padding:20px; color:#64748b;">Scroll to view Attention Matrix...</div>`;
+		}
+	}
+
+    /**
+     * The heavy lifting moved here
+     */
+	executeActualRender(headData, tokens) {
 		if (!this.container) return;
 
 		let html = `<div class="attention-tabs" style="border:1px solid #3b82f6; border-radius:8px; overflow:hidden;">`;
 
-		// Tab Headers with dynamic active coloring
+		// Tab Headers
 		html += `<div class="tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6;">`;
 		headData.forEach((h, i) => {
 			html += `<button class="mha-tab-btn" id="tab-btn-${i}" onclick="showHead(${i})" 
-		style="padding:10px 20px; border:none; border-right:1px solid #3b82f6; cursor:pointer; 
-		background:${i===0?'#fff':'#e2e8f0'}; font-weight:${i===0?'bold':'normal'}">Head ${i+1}</button>`;
+	    style="padding:10px 20px; border:none; border-right:1px solid #3b82f6; cursor:pointer; 
+	    background:${i === 0 ? '#fff' : '#e2e8f0'}; font-weight:${i === 0 ? 'bold' : 'normal'}">Head ${i + 1}</button>`;
 		});
 		html += `</div>`;
 
 		// Tab Content
 		headData.forEach((h, i) => {
 			const escapedTokens = tokens.map(t => t.replace(/#/g, '\\#'));
-			html += `<div id="head-content-${i}" class="head-tab" style="padding:20px; display:${i===0?'block':'none'}">
-		<div style="margin-bottom:20px;">
-		    $$ \\text{Head}_{${i}} = \\text{Softmax} \\left( \\frac{Q_i K_i^T}{\\sqrt{d_k}} \\right) \\cdot V_i $$
-		</div>
-		<div style="overflow-x:auto;">
-		    ${this.generateMathTable(h, escapedTokens)}
-		</div>
-	    </div>`;
+			html += `<div id="head-content-${i}" class="head-tab" style="padding:20px; display:${i === 0 ? 'block' : 'none'}">
+	    <div style="margin-bottom:20px;">
+		$$ \\text{Head}_{${i}} = \\text{Softmax} \\left( \\frac{Q_i K_i^T}{\\sqrt{d_k}} \\right) \\cdot V_i $$
+	    </div>
+	    <div style="overflow-x:auto;">
+		${this.generateMathTable(h, escapedTokens)}
+	    </div>
+	</div>`;
 		});
 
 		html += `</div>`;
