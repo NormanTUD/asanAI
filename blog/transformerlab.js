@@ -760,57 +760,64 @@ function render_mask_logic(tokens) {
 
 	render_temml();
 }
-
-/**
- * Goal: Visualize LayerNorm with concrete Gamma and Beta values
- */
-/**
- * Goal: Show concrete Gamma/Beta values in the residual addition step
- * Origin: Ba et al. (2016)
- */
 function render_h1_logic(h0, multiHeadOutput, gamma, beta) {
-	const normContainer = document.getElementById('transformer-h1-layernorm-viz');
-	const finalContainer = document.getElementById('transformer-h1-final-viz');
-	if (!normContainer || !finalContainer || !gamma || !beta) return;
+    const normContainer = document.getElementById('transformer-h1-layernorm-viz');
+    const finalContainer = document.getElementById('transformer-h1-final-viz');
+    if (!normContainer || !finalContainer || !gamma || !beta) return;
 
-	const matrixToPmatrix = (matrix) =>
-		`\\begin{pmatrix} ` + matrix.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ') + ` \\end{pmatrix}`;
+    const matrixToPmatrix = (matrix) =>
+        `\\begin{pmatrix} ` + matrix.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ') + ` \\end{pmatrix}`;
 
-	const vecToPmatrix = (vec) => 
-		`\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
+    const vecToPmatrix = (vec) => 
+        `\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
 
-	const eps = 1e-5;
-	const standardized = multiHeadOutput.map(row => {
-		const mean = row.reduce((a, b) => a + b, 0) / row.length;
-		const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
-		return row.map(val => (val - mean) / Math.sqrt(variance + eps));
-	});
+    const eps = 1e-5;
+    
+    // Step-by-step tracking
+    const means = [];
+    const variances = [];
 
-	const normMH = standardized.map(row => 
-		row.map((val, j) => val * gamma[j] + beta[j])
-	);
+    const standardized = multiHeadOutput.map(row => {
+        const mean = row.reduce((a, b) => a + b, 0) / row.length;
+        const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
+        
+        means.push(mean);
+        variances.push(variance);
+        
+        return row.map(val => (val - mean) / Math.sqrt(variance + eps));
+    });
 
-	const h1 = h0.map((row, i) => row.map((val, j) => val + normMH[i][j]));
+    const normMH = standardized.map(row => 
+        row.map((val, j) => val * gamma[j] + beta[j])
+    );
 
-	normContainer.innerHTML = `
-	<div style="margin-bottom:10px;">
-	    $$ \\text{LayerNorm}(\\text{MHA}) = \\gamma \\odot \\hat{x} + \\beta $$
-	</div>
-	$$ \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{Result}} = 
-	   \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma} \\odot 
-	   \\underbrace{${matrixToPmatrix(standardized)}}_{\\hat{x} \\text{ (Std)}} + 
-	   \\underbrace{${vecToPmatrix(beta)}}_{\\beta} $$
+    const h1 = h0.map((row, i) => row.map((val, j) => val + normMH[i][j]));
+
+    // Step-by-step breakdown added to the output
+    normContainer.innerHTML = `
+    <div style="margin-bottom:10px;">
+        1. Calculate Statistics and Standardize:
+        $$ \\mu = ${vecToPmatrix(means)}^T, \\quad \\sigma^2 = ${vecToPmatrix(variances)}^T $$
+        $$ \\hat{x} = \\frac{x - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} = ${matrixToPmatrix(standardized)} $$
+    </div>
+    <div style="margin-bottom:10px;">
+        2. Apply Learnable Parameters:
+        $$ \\text{LayerNorm}(\\text{MHA}) = \\gamma \\odot \\hat{x} + \\beta $$
+    </div>
+    $$ \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{Result}} = 
+       \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma} \\odot 
+       \\underbrace{${matrixToPmatrix(standardized)}}_{\\hat{x} \\text{ (Std)}} + 
+       \\underbrace{${vecToPmatrix(beta)}}_{\\beta} $$
     `;
 
-	finalContainer.innerHTML = `
-	<div style="margin-bottom:10px;">$$ h_1 = h_0 + \\text{LayerNorm}(\\text{MHA}) $$</div>
-	$$ ${matrixToPmatrix(h1)} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{LN Output}} $$
+    finalContainer.innerHTML = `
+    <div style="margin-bottom:10px;">$$ h_1 = h_0 + \\text{LayerNorm}(\\text{MHA}) $$</div>
+    $$ ${matrixToPmatrix(h1)} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{LN Output}} $$
     `;
 
-	if (typeof render_temml === "function") render_temml();
-	return h1;
+    if (typeof render_temml === "function") render_temml();
+    return h1;
 }
-
 /**
  * Algorithm: Block Matrix Concatenation
  * Returns: Array (Matrix of Tokens x d_model)
