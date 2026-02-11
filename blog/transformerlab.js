@@ -150,7 +150,7 @@ class AttentionEngine {
 	    \\text{SoftMax} \\left( \\frac{ 
 		\\overbrace{ \\left( \\underbrace{${toMatrix(WQ)}}_{W_Q} \\underbrace{${toColPmatrix(h0[i])}}_{h_i} \\right)^T }^{Q_i^T} \\cdot 
 		\\overbrace{ \\left( \\underbrace{${toMatrix(WK)}}_{W_K} \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }^{K_j} 
-	    }{ \\underbrace{\\sqrt{${dk_int}}}_{\\sqrt{} \\text{ of the number of Embedding Space Dimensions}} } \\right) \\cdot V_j \\\\
+	    }{ \\underbrace{\\sqrt{${dk_int}}}_{\\sqrt{d_\\text{model}}} } \\right) \\cdot V_j \\\\
 	    = \\underbrace{${weight.toFixed(nr_fixed)}}_{\\text{Weight}} \\cdot 
 	      \\underbrace{ \\left( \\underbrace{${toMatrix(WV)}}_{W_V} \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }_{V_j} \\\\
 	    = ${toColPmatrix(resultVec)}
