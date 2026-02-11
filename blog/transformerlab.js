@@ -510,37 +510,50 @@ function convert_weights_to_tensors(weights) {
  * Performs a forward pass and calculates cross-entropy loss
  */
 function calculate_tf_loss(tokens, vars, d_model, n_layers) {
-    const losses = [];
+	const losses = [];
 
-    // Iterate through sequence transitions [cite: 11]
-    for (let startIdx = 0; startIdx < tokens.length - contextSize; startIdx++) {
-        const inputIds = tokens.slice(startIdx, startIdx + contextSize).map(t => vars.vocab_map.indexOf(t));
-        const targetId = vars.vocab_map.indexOf(tokens[startIdx + contextSize]);
+	// 1. Create the Causal Mask once per loss calculation
+	// The mask has 0 on the diagonal/lower triangle and -1e9 on the upper triangle
+	const mask = tf.tidy(() => {
+		const maskScale = tf.scalar(-1e9);
+		const ones = tf.ones([contextSize, contextSize]);
+		const upperTriangle = tf.linalg.bandPart(ones, 0, -1); 
+		const diagonal = tf.linalg.bandPart(ones, 0, 0);
+		const causalMask = tf.sub(upperTriangle, diagonal).mul(maskScale);
+		return causalMask;
+	});
 
-        let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
+	for (let startIdx = 0; startIdx < tokens.length - contextSize; startIdx++) {
+		const inputIds = tokens.slice(startIdx, startIdx + contextSize).map(t => vars.vocab_map.indexOf(t));
+		const targetId = vars.vocab_map.indexOf(tokens[startIdx + contextSize]);
 
-        for (let i = 0; i < n_layers; i++) {
-            const layer = vars.layers[i];
-            const q = tf.matMul(x, layer.wq);
-            const k = tf.matMul(x, layer.wk);
-            const v = tf.matMul(x, layer.wv);
+		let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
 
-            const scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
-            const weights = tf.softmax(scores);
-            const attention = tf.matMul(weights, v);
+		for (let i = 0; i < n_layers; i++) {
+			const layer = vars.layers[i];
+			const q = tf.matMul(x, layer.wq);
+			const k = tf.matMul(x, layer.wk);
+			const v = tf.matMul(x, layer.wv);
 
-            x = tf.add(x, tf.matMul(attention, layer.wo)); 
-        }
+			// 2. Add the mask to scores before Softmax
+			let scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
+			scores = tf.add(scores, mask); 
 
-        const lastTokenVector = x.slice([contextSize - 1, 0], [1, d_model]);
-        const logits = tf.matMul(lastTokenVector, vars.embeddings.transpose());
-        const label = tf.oneHot(tf.tensor1d([targetId], 'int32'), vars.vocab_map.length);
-        
-        // Softmax Cross Entropy loss [cite: 23, 24]
-        losses.push(tf.losses.softmaxCrossEntropy(label, logits));
-    }
+			const weights = tf.softmax(scores);
+			const attention = tf.matMul(weights, v);
 
-    return tf.addN(losses).div(tf.scalar(losses.length));
+			x = tf.add(x, tf.matMul(attention, layer.wo)); 
+		}
+
+		const lastTokenVector = x.slice([contextSize - 1, 0], [1, d_model]);
+		const logits = tf.matMul(lastTokenVector, vars.embeddings.transpose());
+		const label = tf.oneHot(tf.tensor1d([targetId], 'int32'), vars.vocab_map.length);
+
+		losses.push(tf.losses.softmaxCrossEntropy(label, logits));
+	}
+
+	mask.dispose(); // Clean up mask tensor memory
+	return tf.addN(losses).div(tf.scalar(losses.length));
 }
 
 async function convert_tensors_to_weights(vars) {
