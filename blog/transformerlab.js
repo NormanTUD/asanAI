@@ -94,6 +94,16 @@ class AttentionEngine {
 	}
 
 	dot(A, B) {
+		if (!Array.isArray(A) || !Array.isArray(B) || A.length === 0 || B.length === 0) {
+			throw new Error(`Matrix multiplication error: Invalid input dimensions. A: ${A?.length}, B: ${B?.length}`);
+		}
+		if (!Array.isArray(B[0])) {
+			throw new Error("Matrix multiplication error: B must be a 2D array (B[0] is undefined).");
+		}
+		if (A[0].length !== B.length) {
+			throw new Error(`Dimension mismatch: A columns (${A[0].length}) must match B rows (${B.length})`);
+		}
+
 		return A.map(row => 
 			B[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * B[j][i], 0))
 		);
@@ -144,7 +154,12 @@ class AttentionEngine {
 		return headData;
 	}
 
-	transpose(M) { return M[0].map((_, i) => M.map(row => row[i])); }
+	transpose(M) {
+		if (!M || M.length === 0 || !M[0]) {
+			throw new Error("Transpose error: Cannot transpose an empty or 1D array.");
+		}
+		return M[0].map((_, i) => M.map(row => row[i]));
+	}
 
 	renderUI(headData, tokens) {
 		if (!this.containerId) return;
@@ -741,12 +756,19 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 	const vocabulary = [...new Set(trainingTokens)];
 	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
 
-	// FIX: Re-initialize weights if the depth (n_layers) or dimension (d_model) has changed
-	if (!window.currentWeights ||
-		window.currentWeights.length !== n_layers ||
-		window.last_d_model !== d_model ||
-		window.last_n_heads !== n_heads) {
+	// 1. Validierung der Architektur-Logik
+	if (d_model % n_heads !== 0) {
+		console.warn(`Inkompatible Dimensionen: d_model (${d_model}) muss durch n_heads (${n_heads}) teilbar sein.`);
+	}
 
+	// 2. Erweitere die Check-Logik für Neuinitialisierung
+	const needsReinit = !window.currentWeights || 
+		window.currentWeights.length !== n_layers || 
+		window.last_d_model !== d_model || 
+		window.last_n_heads !== n_heads;
+
+	if (needsReinit) {
+		console.log("Re-initializing weights due to architecture change...");
 		window.currentWeights = get_init_weights(n_layers, d_model);
 		window.last_d_model = d_model;
 		window.last_n_heads = n_heads;
