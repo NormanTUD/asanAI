@@ -111,70 +111,55 @@ class AttentionEngine {
 		if (typeof render_temml === "function") render_temml();
 	}
 
-	generateMathTable(head, tokens) {
+	generateMathTable(head, tokens) {  
 		const { this_weights, Qi, Ki, Vi, h0, WQ, WK, WV } = head;
-		const K_T = this.transpose(Ki);
 
-		const toPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
+		// Helper to render a vertical column vector
+		const toColPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
+		// Helper for matrices
 		const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
-		const toRowPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
 
 		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.55rem;">`;
 
-		// Header (Keys)
+		// Header (Keys)  
 		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
 		tokens.forEach((t, j) => {
-			const k_vec_column = K_T.map(row => row[j]);
 			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
-	    ${t}<br><small>
-	    $\\underbrace{${toRowPmatrix(h0[j])}}_{h_{${j}}} \\cdot \\underbrace{${toMatrix(WK)}}_{W_K} = \\underbrace{${toPmatrix(k_vec_column)}}_{K^T_{${j}}}$
-	    </small></th>`;
-		});
-		html += `</tr>`;
+	    ${t}<br><small>      
+	    $\\underbrace{${toMatrix(WK)}}_{W_K} \\cdot \\underbrace{${toColPmatrix(h0[j])}}_{h_{${j}}} = \\underbrace{${toColPmatrix(Ki[j])}}_{K_{${j}}}$
+	    </small></th>`;      
+		});              
+		html += `</tr>`;  
 
 		// Rows (Queries)
 		this_weights.forEach((row, i) => {
 			html += `<tr>`;
 			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
 	    <strong>${tokens[i]}</strong><br><small>
-	    $\\underbrace{${toRowPmatrix(h0[i])}}_{h_{${i}}} \\cdot \\underbrace{${toMatrix(WQ)}}_{W_Q} = \\underbrace{${toRowPmatrix(Qi[i])}}_{Q_{${i}}}$
-	    </small></td>`;
+	    $\\underbrace{${toMatrix(WQ)}}_{W_Q} \\cdot \\underbrace{${toColPmatrix(h0[i])}}_{h_{${i}}} = \\underbrace{${toColPmatrix(Qi[i])}}_{Q_{${i}}}$
+	    </small></td>`;      
 
 			row.forEach((weight, j) => {
 				const intensity = Math.floor(255 - (weight * 150));
 				const bgColor = `rgb(${intensity}, ${intensity}, 255)`;
-
 				const dk_int = Math.round(this.d_k);
-				const resultVec = Vi[j].map(v => v * weight);
+				const resultVec = Vi[j].map(v => v * weight);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 
-				// Full expanded equation showing Weights, Sqrt, and Softmax
 				const cellEq = `
-\\underbrace{
-  \\text{SoftMax} \\left( 
-    \\frac{
-      \\overbrace{(${toRowPmatrix(h0[i])} \\cdot ${toMatrix(WQ)})}^{Q_i} \\cdot 
-      \\overbrace{(${toMatrix(this.transpose(WK))} \\cdot ${toPmatrix(h0[j])})}^{K^T_j}
-    }{
-      \\sqrt{${dk_int}}
-    } 
-  \\right)
-}_{\\text{Weight: } ${weight.toFixed(3)}} 
-\\cdot 
-\\underbrace{
-  (${toRowPmatrix(h0[j])} \\cdot ${toMatrix(WV)})
-}_{V_j} 
-= ${toPmatrix(resultVec)}
-`;
+	    \\text{SoftMax} \\left( \\frac{ Q_{${i}}^T \\cdot K_{${j}} }{ \\sqrt{${dk_int}} } \\right) \\cdot V_{${j}} \\\\
+	    = \\underbrace{${weight.toFixed(3)}}_{\\text{Attn}} \\cdot \\underbrace{ \\left( ${toMatrix(WV)} \\cdot ${toColPmatrix(h0[j])} \\right) }_{V_{${j}}} \\\\
+	    = ${toColPmatrix(resultVec)}
+	    `;                               
 
 				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">
-    $${cellEq}$
-</td>`;
-			});
+		$${cellEq}$                  
+	    </td>`;                          
+			});      
 			html += `</tr>`;
-		});
+		});              
 
 		html += `</table>`;
-		return html;
+		return html;     
 	}
 }
 
