@@ -34,6 +34,14 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
 		<input type="range" id="transformer-depth" min="1" max="100" value="2" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
 	</div>
+
+	<div>
+	    <label style="font-weight: bold;">Tokenizer: </label>
+	    <select id="transformer-tokenizer-type" style="padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1;" onchange="run_transformer_demo()">
+		<option value="regex" selected>Words (Non-Alphanumeric Split)</option>
+		<option value="bpe">Byte-Pair Encoding (BPE)</option>
+	    </select>
+	</div>
 </div>
 
 <div class="transformer_corpus">
