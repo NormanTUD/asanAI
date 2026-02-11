@@ -810,14 +810,14 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta, WO) {
     <div style="margin-bottom:20px; padding:15px; border:1px solid #3b82f6; border-radius:8px; background:#f0f9ff;">
 	<strong>0. Output Projection ($W^O$):</strong>
 	<p style="font-size:0.85rem; color:#1e40af;">Transformation to mix information across attention heads:</p>
-	$$ \\text{MHA}_{proj} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
+	$$ \\text{MHA}_\\text{proj} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
 	<div style="overflow-x:auto;">
 	    $$ ${matrixToPmatrix(projectedMHA)} = ${matrixToPmatrix(multiHeadOutput)} \\cdot ${matrixToPmatrix(WO)} $$
 	</div>
     </div>
 
     <div style="margin-bottom:10px;">
-	1. Calculate Row-wise Mean ($\\mu$) and Variance ($\\sigma^2$) on $\\text{MHA}_{proj}$:
+	1. Calculate Row-wise Mean ($\\mu$) and Variance ($\\sigma^2$) on $\\text{MHA}_\\text{proj}$:
 	$$ \\vec{\\mu} = ${vecToPmatrix(means)}^T, \\quad \\vec{\\sigma}^2 = ${vecToPmatrix(variances)}^T $$
     </div>
     <div style="margin-bottom:10px;">
@@ -826,7 +826,7 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta, WO) {
     </div>
     <div style="margin-bottom:10px;">
 	3. Scale and Shift:
-	$$ \\text{LayerNorm}(\\text{MHA}_{proj}) = \\gamma \\odot \\hat{x} + \\beta $$
+	$$ \\text{LayerNorm}(\\text{MHA}_\\text{proj}) = \\gamma \\odot \\hat{x} + \\beta $$
     </div>
     $$ \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{Result}} =
        \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma} \\odot
@@ -835,7 +835,7 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta, WO) {
     `;
 
 	finalContainer.innerHTML = `
-    <div style="margin-bottom:10px;">$$ h_1 = h_0 + \\text{LayerNorm}(\\text{MHA}_{proj}) $$</div>
+    <div style="margin-bottom:10px;">$$ h_1 = h_0 + \\text{LayerNorm}(\\text{MHA}_\\text{proj}) $$</div>
     <div style="overflow-x:auto;">
 	$$ ${matrixToPmatrix(h1)} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{LayerNorm}} $$
     </div>
