@@ -294,7 +294,7 @@ window.showHead = (idx) => {
 
 function calculate_positional_injection(tokens, d_model) {
 	const resultsContainer = document.getElementById('transformer-pe-integration-results');
-	if (!resultsContainer) return;
+	const injectedEncodings = []; // Array to store the vectors
 
 	let html = `<h3>Vector Injection (Inference Sequence)</h3>`;
 
@@ -311,18 +311,28 @@ function calculate_positional_injection(tokens, d_model) {
 			if (i + 1 < d_model) peVec[i + 1] = Math.cos(pos / div_term);
 		}
 
-		const combined = semanticVec.map((val, i) => (val + peVec[i]).toFixed(nr_fixed));
+		// Calculate the numeric combined vector
+		const combined = semanticVec.map((val, i) => val + peVec[i]);
+		injectedEncodings.push(combined); // Save the raw numbers for your use
 
-		html += `
-	    <div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff;">
-		<strong>Pos ${pos}: ${token}</strong>
-		<table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px;">
-		    <tr><td>PE (Sin/Cos)</td>${peVec.map(v => `<td>${v.toFixed(nr_fixed)}</td>`).join('')}</tr>
-		    <tr style="font-weight:bold;"><td>Combined</td>${combined.map(v => `<td>${v}</td>`).join('')}</tr>
-		</table>
-	    </div>`;
+		// Keep the UI rendering logic
+		if (resultsContainer) {
+			const displayCombined = combined.map(v => v.toFixed(nr_fixed));
+			html += `
+			<div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff;">
+				<strong>Pos ${pos}: ${token}</strong>
+				<table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px;">
+					<tr><td>PE (Sin/Cos)</td>${peVec.map(v => `<td>${v.toFixed(nr_fixed)}</td>`).join('')}</tr>
+					<tr style="font-weight:bold;"><td>Combined</td>${displayCombined.map(v => `<td>${v}</td>`).join('')}</tr>
+				</table>
+			</div>`;
+		}
 	});
-	resultsContainer.innerHTML = html;
+
+	if (resultsContainer) resultsContainer.innerHTML = html;
+
+	// Return the encodings so you can save them
+	return injectedEncodings;
 }
 
 function render_positional_waves(d_model, tokens) {
@@ -749,109 +759,109 @@ function renderLossGraph() {
 }
 
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
-    const dimSlider = document.getElementById('transformer-dimension-model');
-    const d_model = parseInt(dimSlider.value);
-    const headSlider = document.getElementById('transformer-heads');
-    const n_heads = parseInt(headSlider.value);
-    const tempSlider = document.getElementById('transformer-temperature');
-    const temperature = parseFloat(tempSlider.value);
-    const depthSlider = document.getElementById('transformer-depth');
-    const n_layers = parseInt(depthSlider.value);
+	const dimSlider = document.getElementById('transformer-dimension-model');
+	const d_model = parseInt(dimSlider.value);
+	const headSlider = document.getElementById('transformer-heads');
+	const n_heads = parseInt(headSlider.value);
+	const tempSlider = document.getElementById('transformer-temperature');
+	const temperature = parseFloat(tempSlider.value);
+	const depthSlider = document.getElementById('transformer-depth');
+	const n_layers = parseInt(depthSlider.value);
 
-    const vocabulary = [...new Set(trainingTokens)];
-    const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
+	const vocabulary = [...new Set(trainingTokens)];
+	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
 
-    // Architektur-Validierung & Gewichte (identisch zum Original)
-    if (d_model % n_heads !== 0) {
-        console.warn(`Incompatible Dimensions: d_model (${d_model}) must be divisible by n_heads (${n_heads}).`);
-    }
+	// Architektur-Validierung & Gewichte (identisch zum Original)
+	if (d_model % n_heads !== 0) {
+		console.warn(`Incompatible Dimensions: d_model (${d_model}) must be divisible by n_heads (${n_heads}).`);
+	}
 
-    const needsReinit = !window.currentWeights ||
-        window.currentWeights.length !== n_layers ||
-        window.last_d_model !== d_model ||
-        window.last_n_heads !== n_heads;
+	const needsReinit = !window.currentWeights ||
+		window.currentWeights.length !== n_layers ||
+		window.last_d_model !== d_model ||
+		window.last_n_heads !== n_heads;
 
-    if (needsReinit) {
-        window.currentWeights = get_init_weights(n_layers, d_model);
-        window.last_d_model = d_model;
-        window.last_n_heads = n_heads;
-    }
-    const weights = window.currentWeights;
+	if (needsReinit) {
+		window.currentWeights = get_init_weights(n_layers, d_model);
+		window.last_d_model = d_model;
+		window.last_n_heads = n_heads;
+	}
+	const weights = window.currentWeights;
 
-    // 1. Embedding Space (Immer vom Training)
-    const embeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
-    render_embedding_plot(embeddingSpace, d_model);
+	// 1. Embedding Space (Immer vom Training)
+	const embeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
+	render_embedding_plot(embeddingSpace, d_model);
 
-    // 2. Visualisierungen (Basierend auf inputTokens/knownTokens)
-    calculate_positional_injection(knownTokens, d_model);
-    render_positional_waves(d_model, knownTokens);
-    
-    // h0 berechnen und Plot für Positional Shift rendern
-    const h0 = render_positional_shift_plot(knownTokens, d_model, embeddingSpace);
+	// 2. Visualisierungen (Basierend auf inputTokens/knownTokens)
+	tokensWithPositional = calculate_positional_injection(knownTokens, d_model);
+	render_positional_waves(d_model, tokensWithPositional);
 
-    render_architecture_stats(d_model, n_heads, n_layers, temperature);
+	// h0 berechnen und Plot für Positional Shift rendern
+	const h0 = render_positional_shift_plot(tokensWithPositional, d_model, embeddingSpace);
 
-    if (knownTokens.length === 0) {
-        document.getElementById('transformer-output-projection').innerHTML =
-            `<div style="padding:20px; color: #64748b; text-align:center;">
-                Input words not found in Training Data.
-             </div>`;
-    } else {
-        // Erster Layer mit UI-Details (MHA Engine)
-        const engine = new AttentionEngine({
-            d_model: d_model,
-            n_heads: n_heads,
-            containerId: "mha-calculation-details",
-            weights: weights[0]["attention"]
-        });
+	render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
-        const headData = engine.forward(h0, knownTokens);
-        const multiHeadOutput = updateConcatenationDisplay(headData, knownTokens);
-        
-        const h1 = get_h1(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"]);
+	if (tokensWithPositional.length === 0) {
+		document.getElementById('transformer-output-projection').innerHTML =
+			`<div style="padding:20px; color: #64748b; text-align:center;">
+		Input words not found in Training Data.
+	     </div>`;
+	} else {
+		// Erster Layer mit UI-Details (MHA Engine)
+		const engine = new AttentionEngine({
+			d_model: d_model,
+			n_heads: n_heads,
+			containerId: "mha-calculation-details",
+			weights: weights[0]["attention"]
+		});
 
-        if (typeof render_h1_logic === "function") {
-            render_h1_logic(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
-        }
+		const headData = engine.forward(h0, tokensWithPositional);
+		const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
 
-        const h2 = run_ffn_block(h1, weights[0]);
-        // Alle weiteren Layer durchlaufen
-        run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads, weights);
-    }
+		const h1 = get_h1(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"]);
 
-    // 3. FINALE WAHRSCHEINLICHKEITEN (Immer basierend auf master-token-input)
-    const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
-    
-    if (knownMasterTokens.length > 0) {
-        // Wir erzeugen h0 für den Master-Input manuell (Embeddings + PE)
-        let h_master = knownMasterTokens.map((t, pos) => {
-            const emb = embeddingSpace[t] || new Array(d_model).fill(0);
-            const pe = new Array(d_model).fill(0);
-            for (let i = 0; i < d_model; i++) {
-                let div = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-                pe[i] = (i % 2 === 0) ? Math.sin(pos / div) : Math.cos(pos / div);
-            }
-            return emb.map((v, i) => v + pe[i]);
-        });
+		if (typeof render_h1_logic === "function") {
+			render_h1_logic(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
+		}
 
-        // "Stiller" Forward-Pass durch alle Layer für die Prediction
-        let h_current = h_master;
-        for (let l = 0; l < n_layers; l++) {
-            const layerWeights = weights[l];
-            const attnEngine = new AttentionEngine({ d_model, n_heads, containerId: null, weights: layerWeights["attention"] });
-            const headData = attnEngine.forward(h_current, knownMasterTokens);
-            
-            // Konkatenation
-            const concat = knownMasterTokens.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
-            const h_attn = get_h1(h_current, concat, layerWeights["gamma"], layerWeights["beta"]);
-            h_current = run_ffn_block(h_attn, layerWeights);
-        }
+		const h2 = run_ffn_block(h1, weights[0]);
+		// Alle weiteren Layer durchlaufen
+		run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights);
+	}
 
-        // Output Projection rendern (Das Feld mit den klickbaren Wörtern)
-        if (typeof render_final_projection === "function") {
-            render_final_projection(h_current, vocabulary, d_model, temperature);
-        }
-    }
+	// 3. FINALE WAHRSCHEINLICHKEITEN (Immer basierend auf master-token-input)
+	const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
+
+	if (knownMasterTokens.length > 0) {
+		// Wir erzeugen h0 für den Master-Input manuell (Embeddings + PE)
+		let h_master = knownMasterTokens.map((t, pos) => {
+			const emb = embeddingSpace[t] || new Array(d_model).fill(0);
+			const pe = new Array(d_model).fill(0);
+			for (let i = 0; i < d_model; i++) {
+				let div = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+				pe[i] = (i % 2 === 0) ? Math.sin(pos / div) : Math.cos(pos / div);
+			}
+			return emb.map((v, i) => v + pe[i]);
+		});
+
+		// "Stiller" Forward-Pass durch alle Layer für die Prediction
+		let h_current = h_master;
+		for (let l = 0; l < n_layers; l++) {
+			const layerWeights = weights[l];
+			const attnEngine = new AttentionEngine({ d_model, n_heads, containerId: null, weights: layerWeights["attention"] });
+			const headData = attnEngine.forward(h_current, knownMasterTokens);
+
+			// Konkatenation
+			const concat = knownMasterTokens.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
+			const h_attn = get_h1(h_current, concat, layerWeights["gamma"], layerWeights["beta"]);
+			h_current = run_ffn_block(h_attn, layerWeights);
+		}
+
+		// Output Projection rendern (Das Feld mit den klickbaren Wörtern)
+		if (typeof render_final_projection === "function") {
+			render_final_projection(h_current, vocabulary, d_model, temperature);
+		}
+	}
 }
 
 window.select_suggested_word = (word) => {
