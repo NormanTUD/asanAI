@@ -8,7 +8,10 @@ const nr_fixed = 4;
 
 // Add to the top of the file with other persistent states
 window.persistentEmbeddingSpace = null;
+window.currentWeights = null;
+window.lossHistory = [];
 window.last_d_model = null;
+
 const attentionRenderRegistry = new Map();
 
 /**
@@ -389,10 +392,6 @@ function get_init_weights(n_layers, d_model) {
 	}
 	return weights;
 }
-
-// Persistent state for continued training
-window.currentWeights = null;
-window.lossHistory = [];
 
 /**
  * Modern Training Loop using TensorFlow.js
