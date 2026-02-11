@@ -406,61 +406,53 @@ function get_init_weights(n_layers, d_model) {
  * Replaces random mutation with Backpropagation
  */
 async function train_transformer() {
-	const status = document.getElementById('training-status');
-	const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
-	const epochs = parseInt(document.getElementById('train-epochs').value) || 500;
-	const optType = document.getElementById('train-optimizer').value;
+    const status = document.getElementById('training-status');
+    const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
+    const epochs = parseInt(document.getElementById('train-epochs').value) || 500;
+    const optType = document.getElementById('train-optimizer').value;
 
-	const d_model = parseInt(document.getElementById('transformer-dimension-model').value);
-	const n_layers = parseInt(document.getElementById('transformer-depth').value);
+    const d_model = parseInt(document.getElementById('transformer-dimension-model').value);
+    const n_layers = parseInt(document.getElementById('transformer-depth').value);
 
-	let optimizer = optType === 'adam' ? tf.train.adam(lr) : 
-		optType === 'rmsprop' ? tf.train.rmsprop(lr) : tf.train.sgd(lr);
+    let optimizer = optType === 'adam' ? tf.train.adam(lr) : 
+        optType === 'rmsprop' ? tf.train.rmsprop(lr) : tf.train.sgd(lr);
 
-	const trainingData = document.getElementById('transformer-training-data').value;
-	const tokens = transformer_tokenize_render(trainingData, null);
+    const trainingData = document.getElementById('transformer-training-data').value;
+    const tokens = transformer_tokenize_render(trainingData, null);
 
-	if (!window.currentWeights) window.currentWeights = get_init_weights(n_layers, d_model);
-	get_or_init_embeddings(tokens, d_model);
+    // Initialize if needed
+    if (!window.currentWeights) window.currentWeights = get_init_weights(n_layers, d_model);
+    get_or_init_embeddings(tokens, d_model);
 
-	// Convert to TF Variables
-	const weightVars = convert_weights_to_tensors(window.currentWeights);
+    // Convert existing JS weights to TF Variables for Backpropagation
+    const weightVars = convert_weights_to_tensors(window.currentWeights);
 
-	for (let i = 0; i < epochs; i++) {
-		const cost = optimizer.minimize(() => {
-			return tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers));
-		}, true);
+    for (let i = 0; i < epochs; i++) {
+        const cost = optimizer.minimize(() => {
+            return tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers));
+        }, true);
 
-		const lossValue = await cost.data();
-		window.lossHistory.push(lossValue[0]);
+        const lossValue = await cost.data();
+        window.lossHistory.push(lossValue[0]);
 
-		// --- THE UPDATE SYNC ---
-		// Every 10 epochs, sync Tensors back to JS so the UI updates
-		if (i % 10 === 0 || i === epochs - 1) {
-			// Update the global JS objects with the new trained values
-			window.currentWeights = await convert_tensors_to_weights(weightVars);
+        // THE UPDATE SYNC: Bridges the gap between TF and the Visualization UI
+        if (i % 10 === 0 || i === epochs - 1) {
+            // Update global JS objects with trained values
+            window.currentWeights = await convert_tensors_to_weights(weightVars);
+            status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(4)}`;
 
-			status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(4)}`;
-
-			// Re-run the visual components
-			renderLossGraph();
-			run_transformer_demo(); // This updates the "Predicted" text
-			if (typeof render_all_matrices === 'function') {
-				render_all_matrices(); // Updates the heatmaps
-			}
-
-			await tf.nextFrame(); // Let the UI breathe
-		}
-		cost.dispose();
-	}
-
-	status.innerText = "Training Complete & Synced!";
-
-	// Cleanup variables to free GPU memory
-	Object.values(weightVars.layers).forEach(l => {
-		l.wq.dispose(); l.wk.dispose(); l.wv.dispose(); l.wo.dispose();
-	});
-	weightVars.embeddings.dispose();
+            // Refresh UI components to reflect new training
+            renderLossGraph();
+            run_transformer_demo(); // This forces the "Predicted" text to update
+            
+            if (typeof render_all_matrices === 'function') {
+                render_all_matrices();
+            }
+            await tf.nextFrame();
+        }
+        cost.dispose();
+    }
+    status.innerText = "Training Complete & Synced!";
 }
 
 function convert_weights_to_tensors(weights) {
@@ -486,75 +478,63 @@ function convert_weights_to_tensors(weights) {
  * Performs a forward pass and calculates cross-entropy loss
  */
 function calculate_tf_loss(tokens, vars, d_model, n_layers) {
-	const contextSize = 4;
-	const startIdx = Math.floor(Math.random() * (tokens.length - contextSize - 1));
+    const contextSize = 4;
+    const startIdx = Math.floor(Math.random() * (tokens.length - contextSize - 1));
 
-	// Get IDs for input tokens
-	const inputIds = tokens.slice(startIdx, startIdx + contextSize).map(t => vars.vocab_map.indexOf(t));
-	const targetId = vars.vocab_map.indexOf(tokens[startIdx + contextSize]);
+    const inputIds = tokens.slice(startIdx, startIdx + contextSize).map(t => vars.vocab_map.indexOf(t));
+    const targetId = vars.vocab_map.indexOf(tokens[startIdx + contextSize]);
 
-	// Simple embedding lookup
-	let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
+    let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
 
-	// Process through layers
-	for (let i = 0; i < n_layers; i++) {
-		const layer = vars.layers[i];
+    for (let i = 0; i < n_layers; i++) {
+        const layer = vars.layers[i];
+        const q = tf.matMul(x, layer.wq);
+        const k = tf.matMul(x, layer.wk);
+        const v = tf.matMul(x, layer.wv);
 
-		// Simplified Attention: (Q @ K.T) @ V
-		const q = tf.matMul(x, layer.wq);
-		const k = tf.matMul(x, layer.wk);
-		const v = tf.matMul(x, layer.wv);
+        const scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
+        const weights = tf.softmax(scores);
+        const attention = tf.matMul(weights, v);
 
-		const scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
-		const weights = tf.softmax(scores);
-		const attention = tf.matMul(weights, v);
+        x = tf.add(x, tf.matMul(attention, layer.wo)); // Residual link
+    }
 
-		x = tf.add(x, tf.matMul(attention, layer.wo)); // Residual connection
-	}
+    // Prediction Head
+    const lastTokenVector = x.slice([contextSize - 1, 0], [1, d_model]);
+    const logits = tf.matMul(lastTokenVector, vars.embeddings.transpose());
 
-	// Output head: project back to vocab size
-	const lastTokenVector = x.slice([contextSize - 1, 0], [1, d_model]);
-	const logits = tf.matMul(lastTokenVector, vars.embeddings.transpose());
-
-	const label = tf.oneHot(tf.tensor1d([targetId], 'int32'), vars.vocab_map.length);
-	return tf.losses.softmaxCrossEntropy(label, logits);
+    const label = tf.oneHot(tf.tensor1d([targetId], 'int32'), vars.vocab_map.length);
+    return tf.losses.softmaxCrossEntropy(label, logits);
 }
 
 async function convert_tensors_to_weights(vars) {
-	// 1. Change: Initialize as an Array, not an object { layers: [] }
-	const newWeights = []; 
+    const newWeights = []; 
 
-	for (const layer of vars.layers) {
-		// 2. Change: Push directly to the array
-		newWeights.push({
-			gamma: (layer.gamma ? await layer.gamma.array() : []), // Add safety check if you added norms to tensors later
-			beta: (layer.beta ? await layer.beta.array() : []),
-			attention: {
-				query: (await layer.wq.array()),
-				key: (await layer.wk.array()),
-				value: (await layer.wv.array()),
-				output: (await layer.wo.array())
-			},
-			// Note: If you train FFN layers (W1, W2), you need to export them here too. 
-			// Based on your current training loop, you might only be training attention.
-			// If the original weights had W1/b1, we should preserve them or read them if they were tensors.
-			// For now, we assume we are just updating attention to fix the crash.
-			W1: window.currentWeights[newWeights.length]?.W1 || [], 
-			b1: window.currentWeights[newWeights.length]?.b1 || [],
-			W2: window.currentWeights[newWeights.length]?.W2 || [],
-			b2: window.currentWeights[newWeights.length]?.b2 || [],
-			gamma: window.currentWeights[newWeights.length]?.gamma || [], // Preserve existing if not in tensors
-			beta: window.currentWeights[newWeights.length]?.beta || []
-		});
-	}
+    for (const layer of vars.layers) {
+        newWeights.push({
+            attention: {
+                query: (await layer.wq.array()),
+                key: (await layer.wk.array()),
+                value: (await layer.wv.array()),
+                output: (await layer.wo.array())
+            },
+            // Preserve non-trained parts (FFN/Norms)
+            W1: window.currentWeights[newWeights.length]?.W1 || [], 
+            b1: window.currentWeights[newWeights.length]?.b1 || [],
+            W2: window.currentWeights[newWeights.length]?.W2 || [],
+            b2: window.currentWeights[newWeights.length]?.b2 || [],
+            gamma: window.currentWeights[newWeights.length]?.gamma || [],
+            beta: window.currentWeights[newWeights.length]?.beta || []
+        });
+    }
 
-	// Update the embedding space
-	const embArray = await vars.embeddings.array();
-	vars.vocab_map.forEach((word, i) => {
-		window.persistentEmbeddingSpace[word] = embArray[i];
-	});
+    // CRITICAL: Update the embedding space used for text suggestion
+    const embArray = await vars.embeddings.array();
+    vars.vocab_map.forEach((word, i) => {
+        window.persistentEmbeddingSpace[word] = embArray[i];
+    });
 
-	return newWeights;
+    return newWeights;
 }
 
 
