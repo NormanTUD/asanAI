@@ -44,7 +44,7 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 
 <div class="transformer_corpus">
 	<label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
-	<textarea id="transformer-training-data" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;"  oninput="run_transformer_demo()">the king is wise and the queen is brave</textarea>
+	<textarea id="transformer-training-data" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;"  oninput="run_transformer_demo()">the king is wise and the queen is brave and the queen is also wise and brave and the king is brave and wise</textarea>
 </div>
 
 <div style="background: #f0fdf4; padding: 15px; border: 1px solid #10b981; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;">
