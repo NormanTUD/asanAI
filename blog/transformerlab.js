@@ -1143,15 +1143,71 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 	return h_current;
 }
 
+/**
+ * Global Registry for Deferred Rendering
+ * Stores the latest data for each plot ID to ensure that when it 
+ * becomes visible, it renders with the most recent calculation.
+ */
+const transformerLabVisMigrationDataRegistry = new Map();
+
+/**
+ * Intersection Observer for Lazy Rendering
+ */
+const migrationObserver = new IntersectionObserver((entries) => {
+	entries.forEach(entry => {
+		if (entry.isIntersecting) {
+			const id = entry.target.id;
+			const data = transformerLabVisMigrationDataRegistry.get(id);
+			if (data && !data.rendered) {
+				// Execute the actual heavy rendering
+				render_migration_logic(id, data.tokens, data.start_h, data.end_h, data.layerNum, data.d_model);
+				data.rendered = true; // Mark to avoid redundant draws until data changes
+			}
+		}
+	});
+}, { threshold: 0.1 });
+
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
 	const container = document.getElementById('transformer-migration-plots-container');
+	if (!container) return;
+
 	let plotDiv = document.getElementById(id);
 	if (!plotDiv) {
 		plotDiv = document.createElement('div');
 		plotDiv.id = id;
 		plotDiv.style.cssText = "height: 500px; width: 100%; margin-top: 30px;";
 		container.appendChild(plotDiv);
+		// Start watching this new element
+		migrationObserver.observe(plotDiv);
 	}
+
+	// Update the registry with the latest data from the simulation
+	transformerLabVisMigrationDataRegistry.set(id, {
+		tokens: JSON.parse(JSON.stringify(tokens)), // Deep copy to prevent reference issues
+		start_h: JSON.parse(JSON.stringify(start_h)),
+		end_h: JSON.parse(JSON.stringify(end_h)),
+		layerNum,
+		d_model,
+		rendered: false // Reset rendered flag so observer knows to update it
+	});
+
+	// If already visible, trigger immediate update (debounced by the 'rendered' flag)
+	const entry = transformerLabVisMigrationDataRegistry.get(id);
+	const rect = plotDiv.getBoundingClientRect();
+	const isVisible = (rect.top < window.innerHeight && rect.bottom >= 0);
+
+	if (isVisible) {
+		render_migration_logic(id, entry.tokens, entry.start_h, entry.end_h, entry.layerNum, entry.d_model);
+		entry.rendered = true;
+	}
+}
+
+/**
+ * Extracted rendering logic (The original create_migration_plot body)
+ */
+function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model) {
+	const plotDiv = document.getElementById(id);
+	if (!plotDiv) return;
 
 	if (d_model <= 3) {
 		const traces = [];
