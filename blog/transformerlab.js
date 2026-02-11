@@ -450,11 +450,10 @@ async function train_transformer() {
     const trainingData = document.getElementById('transformer-training-data').value;
     const tokens = transformer_tokenize_render(trainingData, null);
 
-    // Initialize if needed
     if (!window.currentWeights) window.currentWeights = get_init_weights(n_layers, d_model);
     get_or_init_embeddings(tokens, d_model);
 
-    // Convert existing JS weights to TF Variables for Backpropagation
+    // CRITICAL: Ensure vocab order is fixed for tensor indices
     const weightVars = convert_weights_to_tensors(window.currentWeights);
 
     for (let i = 0; i < epochs; i++) {
@@ -465,19 +464,11 @@ async function train_transformer() {
         const lossValue = await cost.data();
         window.lossHistory.push(lossValue[0]);
 
-        // THE UPDATE SYNC: Bridges the gap between TF and the Visualization UI
-        if (i % 10 === 0 || i === epochs - 1) {
-            // Update global JS objects with trained values
+        if (i % 25 === 0 || i === epochs - 1) {
             window.currentWeights = await convert_tensors_to_weights(weightVars);
-            status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(4)}`;
-
-            // Refresh UI components to reflect new training
+            status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(6)}`;
             renderLossGraph();
-            run_transformer_demo(); // This forces the "Predicted" text to update
-            
-            if (typeof render_all_matrices === 'function') {
-                render_all_matrices();
-            }
+            run_transformer_demo(); 
             await tf.nextFrame();
         }
         cost.dispose();
@@ -508,38 +499,42 @@ function convert_weights_to_tensors(weights) {
  * Performs a forward pass and calculates cross-entropy loss
  */
 function calculate_tf_loss(tokens, vars, d_model, n_layers) {
+    const losses = [];
     const contextSize = 4;
-    const startIdx = Math.floor(Math.random() * (tokens.length - contextSize - 1));
 
-    const inputIds = tokens.slice(startIdx, startIdx + contextSize).map(t => vars.vocab_map.indexOf(t));
-    const targetId = vars.vocab_map.indexOf(tokens[startIdx + contextSize]);
+    // Iterate through sequence transitions [cite: 11]
+    for (let startIdx = 0; startIdx < tokens.length - contextSize; startIdx++) {
+        const inputIds = tokens.slice(startIdx, startIdx + contextSize).map(t => vars.vocab_map.indexOf(t));
+        const targetId = vars.vocab_map.indexOf(tokens[startIdx + contextSize]);
 
-    let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
+        let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
 
-    for (let i = 0; i < n_layers; i++) {
-        const layer = vars.layers[i];
-        const q = tf.matMul(x, layer.wq);
-        const k = tf.matMul(x, layer.wk);
-        const v = tf.matMul(x, layer.wv);
+        for (let i = 0; i < n_layers; i++) {
+            const layer = vars.layers[i];
+            const q = tf.matMul(x, layer.wq);
+            const k = tf.matMul(x, layer.wk);
+            const v = tf.matMul(x, layer.wv);
 
-        const scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
-        const weights = tf.softmax(scores);
-        const attention = tf.matMul(weights, v);
+            const scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
+            const weights = tf.softmax(scores);
+            const attention = tf.matMul(weights, v);
 
-        x = tf.add(x, tf.matMul(attention, layer.wo)); // Residual link
+            x = tf.add(x, tf.matMul(attention, layer.wo)); 
+        }
+
+        const lastTokenVector = x.slice([contextSize - 1, 0], [1, d_model]);
+        const logits = tf.matMul(lastTokenVector, vars.embeddings.transpose());
+        const label = tf.oneHot(tf.tensor1d([targetId], 'int32'), vars.vocab_map.length);
+        
+        // Softmax Cross Entropy loss [cite: 23, 24]
+        losses.push(tf.losses.softmaxCrossEntropy(label, logits));
     }
 
-    // Prediction Head
-    const lastTokenVector = x.slice([contextSize - 1, 0], [1, d_model]);
-    const logits = tf.matMul(lastTokenVector, vars.embeddings.transpose());
-
-    const label = tf.oneHot(tf.tensor1d([targetId], 'int32'), vars.vocab_map.length);
-    return tf.losses.softmaxCrossEntropy(label, logits);
+    return tf.addN(losses).div(tf.scalar(losses.length));
 }
 
 async function convert_tensors_to_weights(vars) {
     const newWeights = []; 
-
     for (const layer of vars.layers) {
         newWeights.push({
             attention: {
@@ -548,7 +543,6 @@ async function convert_tensors_to_weights(vars) {
                 value: (await layer.wv.array()),
                 output: (await layer.wo.array())
             },
-            // Preserve non-trained parts (FFN/Norms)
             W1: window.currentWeights[newWeights.length]?.W1 || [], 
             b1: window.currentWeights[newWeights.length]?.b1 || [],
             W2: window.currentWeights[newWeights.length]?.W2 || [],
@@ -558,7 +552,7 @@ async function convert_tensors_to_weights(vars) {
         });
     }
 
-    // CRITICAL: Update the embedding space used for text suggestion
+    // Sync embeddings back to the global state for the UI [cite: 24]
     const embArray = await vars.embeddings.array();
     vars.vocab_map.forEach((word, i) => {
         window.persistentEmbeddingSpace[word] = embArray[i];
@@ -870,119 +864,44 @@ window.select_suggested_word = (word) => {
 };
 
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
-	const container = document.getElementById('transformer-output-projection');
-	const masterInput = document.getElementById('transformer-master-token-input');
+    const container = document.getElementById('transformer-output-projection');
+    if (!container) return;
 
-	if (!container) return;
+    const lastIdx = h_final.length - 1;
+    const h_last = h_final[lastIdx];
 
-	const lastIdx = h_final.length - 1;
-	const h_last = h_final[lastIdx];
+    // Use learned embeddings for projection [cite: 24]
+    const W_vocab = vocabulary.map(word => window.persistentEmbeddingSpace[word] || new Array(d_model).fill(0));
 
-	// 1. Weights & Logits Calculation
-	const W_vocab = vocabulary.map(word => {
-		const hash = word.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-		return Array.from({ length: d_model }, (_, i) => {
-			const seed = Math.abs(hash * (i + 13));
-			return ((seed % 2000) / 1000) - 1;
-		});
-	});
+    const logits = vocabulary.map((word, i) => {
+        const w_row = W_vocab[i];
+        const val = h_last.reduce((sum, h_val, dim) => sum + h_val * w_row[dim], 0);
+        return { word, val, w_row };
+    });
 
-	const logits = vocabulary.map((word, i) => {
-		const w_row = W_vocab[i];
-		const val = h_last.reduce((sum, h_val, dim) => sum + h_val * w_row[dim], 0);
-		return { word, val, w_row };
-	});
+    const scaledLogits = logits.map(item => item.val / temperature);
+    const maxLogit = Math.max(...scaledLogits);
+    const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
+    const sumExps = exps.reduce((a, b) => a + b, 0);
+    const predictions = logits.map((item, i) => ({
+        word: item.word,
+        prob: exps[i] / sumExps,
+        logit: item.val
+    })).sort((a, b) => b.prob - a.prob);
 
-	// 2. Softmax Logic
-	const scaledLogits = logits.map(item => item.val / temperature);
-	const maxLogit = Math.max(...scaledLogits); 
-	const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
-	const sumExps = exps.reduce((a, b) => a + b, 0);
-	const probs = exps.map(e => e / sumExps);
+    // Build the restored chip-based results interface [cite: 25]
+    let html = `<h3>2. Final Probabilities (Click to Generate)</h3>`;
+    html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px;">`;
+    predictions.forEach(p => {
+        const intensity = Math.min(1, p.prob * 5); 
+        html += `<button class="predict-chip" onclick="select_suggested_word('${p.word}')" 
+                style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
+                <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
+                </button>`;
+    });
+    html += `</div>`;
 
-	const predictions = logits.map((item, i) => ({
-		word: item.word,
-		logit: item.val,
-		prob: probs[i],
-		w_row: item.w_row,
-		expVal: exps[i]
-	})).sort((a, b) => b.prob - a.prob);
-
-	// LaTeX Helpers
-	const texSafe = (s) => s.replace(/#/g, '\\#');
-	const vecToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(nr_fixed)).join(' & ')} \\end{pmatrix}`;
-	const colToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
-
-	let html = `<h3>1. Projection Derivations</h3>
-		<p>Aligning the hidden state with each vocabulary vector:</p>`;
-
-	// Show derivation for top 5 to keep UI manageable
-	predictions.slice(0, 5).forEach((cand, idx) => {
-		const derivation = h_last.map((h_val, i) => 
-			`(${h_val.toFixed(nr_fixed)} \\cdot ${cand.w_row[i].toFixed(nr_fixed)})`
-		).join(' + ');
-
-		html += `
-	<div style="margin-bottom: 25px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
-	    <p style="font-weight:bold; color:#3b82f6; margin-top:0;">Option ${idx + 1}: "${cand.word}"</p>
-
-	    <div style="margin-bottom:10px;">
-		$$ \\underbrace{${cand.logit.toFixed(nr_fixed)}}_{\\text{Logit}} = 
-		   \\underbrace{${vecToTex(h_last)}}_{h_{\\text{final}}} \\cdot 
-		   \\underbrace{${colToTex(cand.w_row)}}_{W^T_{\\text{vocab}}["${texSafe(cand.word)}"]} $$
-	    </div>
-
-	    <div style="font-size:0.8rem; color:#64748b; margin-bottom:10px;">
-		$$ \\text{Sum: } \\underbrace{${derivation}}_{\\sum (h_i \\cdot w_i)} = ${cand.logit.toFixed(nr_fixed)} $$
-	    </div>
-
-	    <div style="background: #ffffff; padding: 10px; border-radius: 4px; border: 1px dashed #cbd5e1;">
-		$$ \\underbrace{${(cand.prob * 100).toFixed(1)}\\%}_{P("${texSafe(cand.word)}")} = 
-		   \\frac{\\overbrace{e^{${cand.logit.toFixed(nr_fixed)} / ${temperature}}}^{${cand.expVal.toFixed(nr_fixed)}}}
-		   {\\underbrace{${sumExps.toFixed(nr_fixed)}}_{\\sum e^{z_j/T}}} $$
-	    </div>
-	</div>`;
-	});
-
-	// The Interactive Button List
-	html += `<h3>2. Final Probabilities (Click to Generate)</h3>
-	     <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">`;
-
-	predictions.slice(0, 10).forEach(p => {
-		const isTop = p === predictions[0];
-		// Special onclick logic to update the master input and restart simulation
-		html += `
-	    <button onclick="
-		const input = document.getElementById('transformer-master-token-input');
-		input.value += (input.value ? ' ' : '') + '${p.word}';
-		run_transformer_demo();
-	    " 
-	    style="flex: 1 1 150px; border: 1px solid ${isTop ? '#3b82f6' : '#cbd5e1'}; 
-	    background: ${isTop ? '#eff6ff' : '#fff'}; border-radius: 8px; padding: 10px; cursor: pointer; text-align: left; transition: transform 0.1s;">
-		<div style="display: flex; justify-content: space-between; font-weight: bold; color: #1e293b;">
-		    <span>"${p.word}"</span>
-		    <span>${(p.prob * 100).toFixed(nr_fixed)}%</span>
-		</div>
-		<div style="width: 100%; background: #e2e8f0; height: 4px; border-radius: 2px; margin-top:5px;">
-		    <div style="width: ${p.prob * 100}%; background: #3b82f6; height: 100%;"></div>
-		</div>
-	    </button>
-	`;
-	});
-
-	html += `</div>`;
-
-	// Add a summary of the "Total Pool" for hand-calculators
-	html += `
-	<div style="margin-top: 20px; font-size: 0.85rem; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 10px;">
-	    Note: Sum of all $e^{z/T}$ (Denominator) = <b>${sumExps.toFixed(nr_fixed)}</b>. 
-	    All probabilities above are derived by dividing the individual token's exponent by this total pool.
-	</div>
-    `;
-
-	container.innerHTML = html;
-
-	if (typeof render_temml === "function") render_temml();
+    container.innerHTML = html;
 }
 
 window.appendToken = (token) => {
