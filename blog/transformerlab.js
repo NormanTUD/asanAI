@@ -742,7 +742,15 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
 
 	// FIX: Re-initialize weights if the depth (n_layers) or dimension (d_model) has changed
-	if (!window.currentWeights || window.currentWeights.length !== n_layers || window.last_d_model !== d_model) {
+	if (!window.currentWeights ||
+		window.currentWeights.length !== n_layers ||
+		window.last_d_model !== d_model ||
+		window.last_n_heads !== n_heads) {
+
+		window.currentWeights = get_init_weights(n_layers, d_model);
+		window.last_d_model = d_model;
+		window.last_n_heads = n_heads;
+	}
 		window.currentWeights = get_init_weights(n_layers, d_model);
 		window.last_d_model = d_model; // Ensure we track dimension changes too
 	}
