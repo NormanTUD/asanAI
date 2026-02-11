@@ -368,7 +368,7 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 
 	// FIX: Pass gamma and beta to the renderer
 	if (typeof render_h1_logic === "function") {
-		render_h1_logic(mockH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"]);
+		render_h1_logic(mockH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
 	}
 
 	const h2 = run_ffn_block(h1, weights[0]);
@@ -761,10 +761,10 @@ function render_mask_logic(tokens) {
 	render_temml();
 }
 
-function render_h1_logic(h0, multiHeadOutput, gamma, beta) {
+function render_h1_logic(h0, multiHeadOutput, gamma, beta, WO) {
     const normContainer = document.getElementById('transformer-h1-layernorm-viz');
     const finalContainer = document.getElementById('transformer-h1-final-viz');
-    if (!normContainer || !finalContainer || !gamma || !beta) return;
+    if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
 
     const matrixToPmatrix = (matrix) =>
         `\\begin{pmatrix} ` + matrix.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ') + ` \\end{pmatrix}`;
@@ -772,14 +772,19 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta) {
     const vecToPmatrix = (vec) =>
         `\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
 
-    const eps = 1e-5;
+    // 0. Project the Multi-Head Output using WO (Linear Transformation)
+    const projectedMHA = multiHeadOutput.map(row => 
+        WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
+    );
 
+    const eps = 1e-5;
     const means = [];
     const variances = [];
-    const meanCalcs = []; // To store string representation of (sum / n)
-    const varCalcs = [];  // To store string representation of (sum_sq / n)
+    const meanCalcs = []; 
+    const varCalcs = [];  
 
-    const standardized = multiHeadOutput.map(row => {
+    // Apply LayerNorm to the PROJECTED output
+    const standardized = projectedMHA.map(row => {
         const n = row.length;
         const sum = row.reduce((a, b) => a + b, 0);
         const mean = sum / n;
@@ -802,10 +807,18 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta) {
     const h1 = h0.map((row, i) => row.map((val, j) => val + normMH[i][j]));
 
     normContainer.innerHTML = `
+    <div style="margin-bottom:20px; padding:15px; border:1px solid #3b82f6; border-radius:8px; background:#f0f9ff;">
+        <strong>0. Output Projection ($W^O$):</strong>
+        <p style="font-size:0.85rem; color:#1e40af;">Transformation to mix information across attention heads:</p>
+        $$ \\text{MHA}_{proj} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
+        <div style="overflow-x:auto;">
+            $$ ${matrixToPmatrix(projectedMHA)} = ${matrixToPmatrix(multiHeadOutput)} \\cdot ${matrixToPmatrix(WO)} $$
+        </div>
+    </div>
+
     <div style="margin-bottom:10px;">
-        1. Calculate Row-wise Mean ($\\mu$) and Variance ($\\sigma^2$):
-        $$ \\vec{\\mu} = \\begin{pmatrix} ${meanCalcs.join(' \\\\ ')} \\end{pmatrix} = ${vecToPmatrix(means)}^T $$
-        $$ \\vec{\\sigma}^2 = \\begin{pmatrix} ${varCalcs.join(' \\\\ ')} \\end{pmatrix} = ${vecToPmatrix(variances)}^T $$
+        1. Calculate Row-wise Mean ($\\mu$) and Variance ($\\sigma^2$) on $\\text{MHA}_{proj}$:
+        $$ \\vec{\\mu} = ${vecToPmatrix(means)}^T, \\quad \\vec{\\sigma}^2 = ${vecToPmatrix(variances)}^T $$
     </div>
     <div style="margin-bottom:10px;">
         2. Standardize ($\\hat{x} = \\frac{x - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}}$):
@@ -813,7 +826,7 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta) {
     </div>
     <div style="margin-bottom:10px;">
         3. Scale and Shift:
-        $$ \\text{LayerNorm}(\\text{MHA}) = \\gamma \\odot \\hat{x} + \\beta $$
+        $$ \\text{LayerNorm}(\\text{MHA}_{proj}) = \\gamma \\odot \\hat{x} + \\beta $$
     </div>
     $$ \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{Result}} =
        \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma} \\odot
@@ -822,8 +835,10 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta) {
     `;
 
     finalContainer.innerHTML = `
-    <div style="margin-bottom:10px;">$$ h_1 = h_0 + \\text{LayerNorm}(\\text{MHA}) $$</div>
-    $$ ${matrixToPmatrix(h1)} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{LayerNorm}\\left(\\text{MHA}\\right)} $$
+    <div style="margin-bottom:10px;">$$ h_1 = h_0 + \\text{LayerNorm}(\\text{MHA}_{proj}) $$</div>
+    <div style="overflow-x:auto;">
+        $$ ${matrixToPmatrix(h1)} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{LayerNorm}} $$
+    </div>
     `;
 
     if (typeof render_temml === "function") render_temml();
