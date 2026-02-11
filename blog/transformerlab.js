@@ -114,8 +114,8 @@ class AttentionEngine {
 generateMathTable(head, tokens) {  
     const { this_weights, Qi, Ki, Vi, h0, WQ, WK, WV } = head;
     
-    const toColPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
-    const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+    const toColPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(4)).join(' \\\\ ')} \\end{pmatrix}`;
+    const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(4)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
                                   
     let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.52rem;">`;
                                   
@@ -422,8 +422,8 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 
 	// LaTeX Helpers
 	const texSafe = (s) => s.replace(/#/g, '\\#');
-	const vecToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' & ')} \\end{pmatrix}`;
-	const colToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
+	const vecToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(4)).join(' & ')} \\end{pmatrix}`;
+	const colToTex = (v) => `\\begin{pmatrix} ${v.map(n => n.toFixed(4)).join(' \\\\ ')} \\end{pmatrix}`;
 
 	let html = `<h3>1. Projection Derivations</h3>
 		<p>Aligning the hidden state with each vocabulary vector:</p>`;
@@ -431,7 +431,7 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 	// Show derivation for top 5 to keep UI manageable
 	predictions.slice(0, 5).forEach((cand, idx) => {
 		const derivation = h_last.map((h_val, i) => 
-			`(${h_val.toFixed(2)} \\cdot ${cand.w_row[i].toFixed(2)})`
+			`(${h_val.toFixed(4)} \\cdot ${cand.w_row[i].toFixed(4)})`
 		).join(' + ');
 
 		html += `
@@ -439,18 +439,18 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 	    <p style="font-weight:bold; color:#3b82f6; margin-top:0;">Option ${idx + 1}: "${cand.word}"</p>
 
 	    <div style="margin-bottom:10px;">
-		$$ \\underbrace{${cand.logit.toFixed(2)}}_{\\text{Logit}} = 
+		$$ \\underbrace{${cand.logit.toFixed(4)}}_{\\text{Logit}} = 
 		   \\underbrace{${vecToTex(h_last)}}_{h_{\\text{final}}} \\cdot 
 		   \\underbrace{${colToTex(cand.w_row)}}_{W^T_{\\text{vocab}}["${texSafe(cand.word)}"]} $$
 	    </div>
 
 	    <div style="font-size:0.8rem; color:#64748b; margin-bottom:10px;">
-		$$ \\text{Sum: } \\underbrace{${derivation}}_{\\sum (h_i \\cdot w_i)} = ${cand.logit.toFixed(2)} $$
+		$$ \\text{Sum: } \\underbrace{${derivation}}_{\\sum (h_i \\cdot w_i)} = ${cand.logit.toFixed(4)} $$
 	    </div>
 
 	    <div style="background: #ffffff; padding: 10px; border-radius: 4px; border: 1px dashed #cbd5e1;">
 		$$ \\underbrace{${(cand.prob * 100).toFixed(1)}\\%}_{P("${texSafe(cand.word)}")} = 
-		   \\frac{\\overbrace{e^{${cand.logit.toFixed(2)} / ${temperature}}}^{${cand.expVal.toFixed(3)}}}
+		   \\frac{\\overbrace{e^{${cand.logit.toFixed(4)} / ${temperature}}}^{${cand.expVal.toFixed(3)}}}
 		   {\\underbrace{${sumExps.toFixed(3)}}_{\\sum e^{z_j/T}}} $$
 	    </div>
 	</div>`;
@@ -519,7 +519,7 @@ function render_architecture_stats(d, h, n, t) {
 		return;
 	}
 
-	const dv = (d / h).toFixed(2);
+	const dv = (d / h).toFixed(4);
 	const infoHtml = `
 	<div style="background: #e0f2fe; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.9rem;">
 	    <strong>Configuration:</strong> $d_{v} = ${dv}$, $N = ${n}$, $T = ${t}$ <br>
@@ -767,10 +767,10 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta, WO) {
 	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
 
 	const matrixToPmatrix = (matrix) =>
-		`\\begin{pmatrix} ` + matrix.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ') + ` \\end{pmatrix}`;
+		`\\begin{pmatrix} ` + matrix.map(row => row.map(v => v.toFixed(4)).join(' & ')).join(' \\\\ ') + ` \\end{pmatrix}`;
 
 	const vecToPmatrix = (vec) =>
-		`\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
+		`\\begin{pmatrix} ${vec.map(v => v.toFixed(4)).join(' & ')} \\end{pmatrix}`;
 
 	// 0. Project the Multi-Head Output using WO (Linear Transformation)
 	const projectedMHA = multiHeadOutput.map(row => 
@@ -794,8 +794,8 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta, WO) {
 
 		means.push(mean);
 		variances.push(variance);
-		meanCalcs.push(`\\frac{${sum.toFixed(2)}}{${n}}`);
-		varCalcs.push(`\\frac{${sumSqDiff.toFixed(2)}}{${n}}`);
+		meanCalcs.push(`\\frac{${sum.toFixed(4)}}{${n}}`);
+		varCalcs.push(`\\frac{${sumSqDiff.toFixed(4)}}{${n}}`);
 
 		return row.map(val => (val - mean) / Math.sqrt(variance + eps));
 	});
@@ -855,7 +855,7 @@ function updateConcatenationDisplay(headData, tokens) {
 
 	const matrixToPmatrix = (matrix) => {
 		return `\\begin{pmatrix} ` + 
-			matrix.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ') + 
+			matrix.map(row => row.map(v => v.toFixed(4)).join(' & ')).join(' \\\\ ') + 
 			` \\end{pmatrix}`;
 	};
 
@@ -1014,8 +1014,8 @@ function run_ffn_block(h1, params = {}) {
  * Origin: Vaswani et al. (2017)
  */
 function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta) {
-	const rawMP = (m) => `\\begin{pmatrix} ${m.map(r => r.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
-	const rawVP = (v) => `\\begin{pmatrix} ${v.map(val => val.toFixed(2)).join(' & ')} \\end{pmatrix}`;
+	const rawMP = (m) => `\\begin{pmatrix} ${m.map(r => r.map(v => v.toFixed(4)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+	const rawVP = (v) => `\\begin{pmatrix} ${v.map(val => val.toFixed(4)).join(' & ')} \\end{pmatrix}`;
 
 	const eps = 1e-5;
 	const stdFFN = out_FFN.map(row => {
