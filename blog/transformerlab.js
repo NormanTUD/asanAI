@@ -20,7 +20,7 @@ class AttentionEngine {
 		this.d_k = config.d_model / config.n_heads;
 		this.container = document.getElementById(config.containerId);
 
-		this.this_weights = {
+		this.this_weights = config.weights || {
 			query: initWeights(this.d_model, this.d_model),
 			key: initWeights(this.d_model, this.d_model),
 			value: initWeights(this.d_model, this.d_model),
