@@ -208,8 +208,11 @@ class AttentionEngine {
 		});
 
 		html += `</div>`;
+		console.log("Setting container");
 		this.container.innerHTML = html;
-		if (typeof render_temml === "function") render_temml();
+		console.log("Temml");
+		render_temml();
+		console.log("Temml done");
 	}
 
 	generateMathTable(head, tokens) {  
