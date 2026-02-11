@@ -23,14 +23,14 @@ const attentionObserver = new IntersectionObserver((entries) => {
 			const containerId = entry.target.id;
 			const data = attentionRenderRegistry.get(containerId);
 			if (data && !data.rendered) {
-				// Execute the heavy HTML/LaTeX generation only now
+				console.log("Starting actual rendering");
 				const engineInstance = data.instance;
 				engineInstance.executeActualRender(data.headData, data.tokens);
 				data.rendered = true;
 			}
 		}
 	});
-}, { threshold: 0.1 });
+}, { threshold: 0 });
 
 function get_or_init_embeddings(tokens, d_model) {
 	// 1. Ensure the global space exists before any logic
@@ -180,9 +180,6 @@ class AttentionEngine {
 		}
 	}
 
-    /**
-     * The heavy lifting moved here
-     */
 	executeActualRender(headData, tokens) {
 		if (!this.container) return;
 
