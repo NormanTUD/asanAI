@@ -1167,6 +1167,10 @@ const migrationObserver = new IntersectionObserver((entries) => {
 	});
 }, { threshold: 0.1 });
 
+/**
+ * Optimized migration plot creation.
+ * Removed manual layout triggers (getBoundingClientRect) and slow deep-cloning.
+ */
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
 	const container = document.getElementById('transformer-migration-plots-container');
 	if (!container) return;
@@ -1177,30 +1181,28 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
 		plotDiv.id = id;
 		plotDiv.style.cssText = "height: 500px; width: 100%; margin-top: 30px;";
 		container.appendChild(plotDiv);
-		// Start watching this new element
+
+		// The observer handles the initial visibility check automatically 
+		// as soon as it starts observing, firing the callback if visible.
 		migrationObserver.observe(plotDiv);
 	}
 
-	// Update the registry with the latest data from the simulation
+	// Optimization: Use .slice() or Float32Array.from() if start_h/end_h are numeric arrays.
+	// JSON stringify/parse is a major CPU sink for high-dimensional vectors.
 	transformerLabVisMigrationDataRegistry.set(id, {
-		tokens: JSON.parse(JSON.stringify(tokens)), // Deep copy to prevent reference issues
-		start_h: JSON.parse(JSON.stringify(start_h)),
-		end_h: JSON.parse(JSON.stringify(end_h)),
+		tokens: [...tokens], 
+		start_h: Array.isArray(start_h) ? start_h.slice() : start_h,
+		end_h: Array.isArray(end_h) ? end_h.slice() : end_h,
 		layerNum,
 		d_model,
-		rendered: false // Reset rendered flag so observer knows to update it
+		rendered: false 
 	});
 
-	// If already visible, trigger immediate update (debounced by the 'rendered' flag)
-	const entry = transformerLabVisMigrationDataRegistry.get(id);
-	const rect = plotDiv.getBoundingClientRect();
-	const isVisible = (rect.top < window.innerHeight && rect.bottom >= 0);
-
-	if (isVisible) {
-		render_migration_logic(id, entry.tokens, entry.start_h, entry.end_h, entry.layerNum, entry.d_model);
-		entry.rendered = true;
-	}
+	// NOTE: Removed getBoundingClientRect(). 
+	// If the element is visible, the IntersectionObserver attached above 
+	// will trigger its callback in the next microtask.
 }
+
 
 /**
  * Extracted rendering logic (The original create_migration_plot body)
