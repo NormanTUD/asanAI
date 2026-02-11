@@ -823,7 +823,7 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta) {
 
     finalContainer.innerHTML = `
     <div style="margin-bottom:10px;">$$ h_1 = h_0 + \\text{LayerNorm}(\\text{MHA}) $$</div>
-    $$ ${matrixToPmatrix(h1)} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{LN Output}} $$
+    $$ ${matrixToPmatrix(h1)} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{LayerNorm}\\left(\\text{MHA}\\right)} $$
     `;
 
     if (typeof render_temml === "function") render_temml();
