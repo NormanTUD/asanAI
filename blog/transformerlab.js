@@ -796,8 +796,6 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
     // h0 berechnen und Plot für Positional Shift rendern
     const h0 = render_positional_shift_plot(knownTokens, d_model, embeddingSpace);
 
-    render_causal_mask(knownTokens);
-    if (typeof render_mask_logic === "function") render_mask_logic(knownTokens);
     render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
     if (knownTokens.length === 0) {
@@ -1137,102 +1135,39 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
 
 	let tokens = [];
 	const cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,""); // `
-		const words = cleanText.split(/\s+/);
+	const words = cleanText.split(/\s+/);
 
-		if (type === 'bpe') {
-			// Character-level / Subword Split: 
-			// We split by words first, then break long words into chunks to simulate BPE behavior
-			const words = text.match(/\S+|\s+/g) || [];
-			tokens = words.flatMap(word => {
-				if (word.length > 4) {
-					// Split long words into chunks of 3 for demonstration
-					return word.match(/.{1,3}/g);
-				}
-				return word;
-			});
-		} else {
-			// Standard Regex Word Split: 
-			// Matches sequences of alphanumeric characters or single non-alphanumeric characters
-			tokens = text.match(/[\w]+|[^\w\s]/g) || [];
-		}
-
-		if (container) {
-			container.innerHTML = tokens.map(t => {
-				const hash = t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-				const hue = Math.abs(hash) % 360;
-				return `
-		<div style="background: hsl(${hue}, 65%, 40%); color: white; padding: 5px 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center;">
-		${t}
-		<span style="font-size: 0.6rem; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; text-align: center;">ID: ${Math.abs(hash) % 1000}</span>
-		</div>
-		`;
-			}).join('');
-		}
-
-		return tokens;
-	}
-
-function render_causal_mask(tokens) {
-	const container = document.getElementById('transformer-causal-mask-display');
-	if (!container || !tokens.length) return;
-
-	const N = tokens.length;
-	let matrixLaTeX = "M = \\begin{pmatrix}\n";
-
-	for (let i = 0; i < N; i++) {
-		let row = [];
-		for (let j = 0; j < N; j++) {
-			// Lower triangular logic: 0 if j <= i, else -∞
-			if (j <= i) {
-				row.push("0");
-			} else {
-				row.push("-\\infty");
+	if (type === 'bpe') {
+		// Character-level / Subword Split: 
+		// We split by words first, then break long words into chunks to simulate BPE behavior
+		const words = text.match(/\S+|\s+/g) || [];
+		tokens = words.flatMap(word => {
+			if (word.length > 4) {
+				// Split long words into chunks of 3 for demonstration
+				return word.match(/.{1,3}/g);
 			}
-		}
-		matrixLaTeX += "  " + row.join(" & ") + (i === N - 1 ? "" : " \\\\") + "\n";
-	}
-	matrixLaTeX += "\\end{pmatrix}";
-
-	container.innerHTML = `$$${matrixLaTeX}$$`;
-
-	render_temml();
-}
-
-function render_mask_logic(tokens) {
-	const countEl = document.getElementById('mask-token-count');
-	const sentenceEl = document.getElementById('mask-sentence-string');
-	const rowsContainer = document.getElementById('mask-rows-container');
-	const trainingInput = document.getElementById('transformer-training-data');
-
-	if (!countEl || !sentenceEl || !rowsContainer) return;
-
-	// 1. Update the descriptive sentence text
-	countEl.innerText = tokens.length;
-	sentenceEl.innerText = trainingInput.value;
-
-	if (tokens.length === 0) {
-		rowsContainer.innerHTML = "<p>No tokens detected.</p>";
-		return;
+			return word;
+		});
+	} else {
+		// Standard Regex Word Split: 
+		// Matches sequences of alphanumeric characters or single non-alphanumeric characters
+		tokens = text.match(/[\w]+|[^\w\s]/g) || [];
 	}
 
-	// 2. Generate Row-by-Row Logic in Pure HTML
-	// We escape '#' to '\#' for LaTeX compatibility
-	const htmlRows = tokens.map((token, i) => {
-		const visibleTokens = tokens.slice(0, i + 1);
-		const visibleList = visibleTokens.map(t => `<code>"${t}"</code>`).join(', ');
-		const escapedToken = token.replace(/#/g, '\\#'); 
-
-		return `
-	    <li style="margin-bottom: 10px; list-style-type: none;">
-		<strong>Row ${i + 1}:</strong> $Q_{\\text{${escapedToken}}}$ is compared against ${visibleList}.
-	    </li>
+	if (container) {
+		container.innerHTML = tokens.map(t => {
+			const hash = t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+			const hue = Math.abs(hash) % 360;
+			return `
+	<div style="background: hsl(${hue}, 65%, 40%); color: white; padding: 5px 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center;">
+	${t}
+	<span style="font-size: 0.6rem; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; text-align: center;">ID: ${Math.abs(hash) % 1000}</span>
+	</div>
 	`;
-	}).join('');
+		}).join('');
+	}
 
-	// Wrap in a list for clean structure
-	rowsContainer.innerHTML = `<ul style="padding-left: 0;">${htmlRows}</ul>`;
-
-	render_temml();
+	return tokens;
 }
 
 function render_h1_logic(h0, multiHeadOutput, gamma, beta, WO) {

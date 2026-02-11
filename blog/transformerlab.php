@@ -163,15 +163,27 @@ Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Soft
 </div>
 
 <div class="md">
-    <p>
-        For the <span id="mask-token-count" style="font-weight:bold;">0</span>-token sequence 
-        "<span id="mask-sentence-string" style="font-style:italic; color:#3b82f6;">...</span>", 
-        the look-ahead mask $M$ is defined as a lower-triangular matrix. 
-        The values of $0$ allow the signal to pass through, while $-\infty$ effectively blocks it.
-    </p>
-</div>
+For a sequence of length $n$, the look-ahead mask $M$ is defined as a 
+lower-triangular matrix where the entry $M_{i,j}$ determines if the 
+token at position $i$ can attend to the token at position $j$.
 
-<div id="transformer-causal-mask-display"></div>
+Mathematically, the mask is defined as:
+$$M_{i,j} = \begin{cases} 0 & \text{if } i \geq j \\ -\infty & \text{if } i < j \end{cases}$$
+
+In an LLM, this <b>Causal Mask</b> ensures that the self-attention mechanism 
+maintains the autoregressive property. Since the model is trained to predict 
+the next token, it must not "see" into the future. By setting future 
+positions to $-\infty$, the $exp(M_{i,j})$ term in the Softmax function 
+becomes $0$, effectively neutralizing the connection.
+
+For a 4-token sequence, the causal mask $M$ is represented as:
+$$M = \begin{pmatrix} 
+	0 & -\infty & -\infty & -\infty \\ 
+	0 & 0 & -\infty & -\infty \\ 
+	0 & 0 & 0 & -\infty \\ 
+	0 & 0 & 0 & 0 
+\end{pmatrix}$$
+</div>
 
 <div class="md" id="transformer-mask-logic-breakdown">
     <div id="mask-rows-container"></div>
