@@ -372,57 +372,27 @@ function render_positional_waves(d_model, tokens) {
 	Plotly.newPlot('transformer-pe-wave-plot', traces, layout);
 }
 
-/**
- * Unified rendering function to ensure both tokenizers look identical in the UI
- * Based on the existing BPE visualization style
- */
-function render_tokens_to_ui(tokens, containerId) {
-	const container = document.getElementById(containerId);
-	if (!container) return;
-
-	// Use the specific style used in the original project for consistency
-	container.innerHTML = tokens.map(t => 
-		`<span class="token-box" style="display:inline-block; padding:2px 6px; margin:2px; background:#e2e8f0; border-radius:4px; font-family:monospace; border: 1px solid #cbd5e1;">${t}</span>`
-	).join('');
-}
-
-/**
- * Enhanced run_transformer_demo with tokenizer selection
- */
 function run_transformer_demo(activeId = null) {
-	if (activeId) {
-		window.lastActiveInputId = activeId;
-	}
+    if (activeId) {
+        window.lastActiveInputId = activeId;
+    }
 
-	const trainingInput = document.getElementById('transformer-training-data');
-	const masterInput = document.getElementById('transformer-master-token-input');
-	const tokenizerType = document.getElementById('transformer-tokenizer-select')?.value || 'regex';
+    const trainingInput = document.getElementById('transformer-training-data');
+    const masterInput = document.getElementById('transformer-master-token-input');
+    
+    if (!trainingInput || !masterInput) return;
 
-	if (!trainingInput || !masterInput) return;
+    // 1. Tokenisierung für die Logik (ohne UI-Render)
+    const trainingTokens = transformer_tokenize_render(trainingInput.value, null);
+    const masterTokens = transformer_tokenize_render(masterInput.value, null);
 
-	const tokenize = (text, containerId) => {
-		let tokens;
-		if (tokenizerType === 'regex') {
-			// Default: Split by anything that is not a word character \w
-			tokens = text.split(/[^\w]+/).filter(Boolean);
-			if (containerId) render_tokens_to_ui(tokens, containerId);
-		} else {
-			// Existing BPE logic
-			tokens = transformer_tokenize_render(text, containerId);
-		}
-		return tokens;
-	};
+    // 2. Tokenisierung für die VISUELLE ANZEIGE (BPE-Box oben)
+    // Wir rendern die Tokens des Feldes, das gerade bearbeitet wird
+    const vizSourceValue = document.getElementById(window.lastActiveInputId).value;
+    const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe");
 
-	// 1. Tokenize inputs for the logic
-	const trainingTokens = tokenize(trainingInput.value, null);
-	const masterTokens = tokenize(masterInput.value, null);
-
-	// 2. Tokenize for the main visual BPE/Token box
-	const vizSourceValue = document.getElementById(window.lastActiveInputId).value;
-	const vizTokens = tokenize(vizSourceValue, "transformer-viz-bpe");
-
-	// 3. Execute the transformer network
-	run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
+    // 3. Netzwerk ausführen
+    run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
 }
 
 /**
@@ -1161,20 +1131,20 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
 
 	let tokens = [];
 	const cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,""); // `
-		const words = cleanText.split(/\s+/);
+	const words = cleanText.split(/\s+/);
 
-		words.forEach(word => {
-			let found = false;
-			for (let unit of subUnits) {
-				if (word.toLowerCase().endsWith(unit) && word.length > unit.length) {
-					tokens.push(word.substring(0, word.length - unit.length));
-					tokens.push("##" + unit);
-					found = true;
-					break;
-				}
+	words.forEach(word => {
+		let found = false;
+		for (let unit of subUnits) {
+			if (word.toLowerCase().endsWith(unit) && word.length > unit.length) {
+				tokens.push(word.substring(0, word.length - unit.length));
+				tokens.push("##" + unit);
+				found = true;
+				break;
 			}
-			if (!found && word.length > 0) tokens.push(word);
-		});
+		}
+		if (!found && word.length > 0) tokens.push(word);
+	});
 
 	if (container) {
 		container.innerHTML = tokens.map(t => {
