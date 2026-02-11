@@ -604,7 +604,7 @@ function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
 	// Optimization: Don't calculate loss on the *entire* text every epoch (too slow).
 	// Pick a random window of context size 3-5.
 	// Pick a random start index ensuring we have a 'next' token
-	const startIdx = Math.floor(Math.random() * (tokens.length - 1));
+	const startIdx = 0;
 	const endIdx = Math.min(startIdx + contextSize, tokens.length - 1);
 
 	const contextTokens = tokens.slice(startIdx, endIdx);
