@@ -797,9 +797,9 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta) {
 	    $$ \\text{LayerNorm}(\\text{MHA}) = \\gamma \\odot \\hat{x} + \\beta $$
 	</div>
 	$$ \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{Result}} = 
-	   \\underbrace{${vecToPmatrix(gamma)}}_{\\text{Concrete } \\gamma} \\odot 
+	   \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma} \\odot 
 	   \\underbrace{${matrixToPmatrix(standardized)}}_{\\hat{x} \\text{ (Std)}} + 
-	   \\underbrace{${vecToPmatrix(beta)}}_{\\text{Concrete } \\beta} $$
+	   \\underbrace{${vecToPmatrix(beta)}}_{\\beta} $$
     `;
 
 	finalContainer.innerHTML = `
