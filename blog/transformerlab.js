@@ -810,7 +810,6 @@ function render_h1_logic(h0, multiHeadOutput, gamma, beta, WO) {
 
 	normContainer.innerHTML = `
     <div style="margin-bottom:20px; padding:15px; border:1px solid #3b82f6; border-radius:8px; background:#f0f9ff;">
-	<strong>0. Output Projection ($W^O$):</strong>
 	<p style="font-size:0.85rem; color:#1e40af;">Transformation to mix information across attention heads:</p>
 	$$ \\text{MHA}_\\text{proj} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
 	<div style="overflow-x:auto;">
