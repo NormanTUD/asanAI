@@ -347,32 +347,232 @@ function get_init_weights(n_layers, d_model) {
 window.currentWeights = null;
 window.lossHistory = [];
 
+/**
+ * REPLACED: train_transformer
+ * Logic: Implements Stochastic Hill Climbing (Evolution Strategy)
+ * It actually minimizes Cross-Entropy Loss on the training data.
+ */
 async function train_transformer() {
 	const status = document.getElementById('training-status');
-	const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
+	// Using learning rate as "mutation scale"
+	const mutationScale = parseFloat(document.getElementById('train-lr').value) || 0.05; 
 	const epochs = parseInt(document.getElementById('train-epochs').value) || 50;
+
+	const trainingInput = document.getElementById('transformer-training-data');
+	if (!trainingInput) return;
+
+	// 1. Prepare Data
+	// We treat the text in "Training Data" as the ground truth sequence.
+	const tokens = transformer_tokenize_render(trainingInput.value, null); // Get raw tokens
+	if (tokens.length < 2) {
+		status.innerText = "Error: Need at least 2 tokens to train.";
+		return;
+	}
+
+	// Initialize weights if needed
+	const dimSlider = document.getElementById('transformer-dimension-model');
+	const d_model = parseInt(dimSlider.value);
+	const depthSlider = document.getElementById('transformer-depth');
+	const n_layers = parseInt(depthSlider.value);
+
+	// Ensure embeddings exist
+	get_or_init_embeddings(tokens, d_model);
 
 	if (!window.currentWeights) {
 		window.currentWeights = get_init_weights(n_layers, d_model);
 	}
 
+	// 2. Training Loop
 	for (let e = 0; e < epochs; e++) {
-		let epochLoss = 0.5 + (Math.random() * 0.1) / (window.lossHistory.length + 1);
-		window.lossHistory.push(epochLoss);
-		updateWeights(window.currentWeights, lr);
+		// A. Calculate Baseline Loss
+		const currentLoss = calculate_corpus_loss(tokens, window.currentWeights, d_model, n_layers);
 
-		if (e % 5 === 0) {
-			// Use requestAnimationFrame to prevent blocking the training logic
+		// B. Create Candidate Weights (Mutation)
+		// Deep copy current weights to create a candidate
+		const candidateWeights = JSON.parse(JSON.stringify(window.currentWeights));
+		const candidateEmbeddings = JSON.parse(JSON.stringify(window.persistentEmbeddingSpace));
+
+		// Apply random mutations to candidate
+		mutate_weights_structure(candidateWeights, candidateEmbeddings, mutationScale);
+
+		// C. Calculate Candidate Loss
+		// We temporarily swap global embeddings to test the candidate
+		const oldEmbeddings = window.persistentEmbeddingSpace;
+		window.persistentEmbeddingSpace = candidateEmbeddings;
+
+		const candidateLoss = calculate_corpus_loss(tokens, candidateWeights, d_model, n_layers);
+
+		// D. Selection Step (The "Training" part)
+		if (candidateLoss < currentLoss) {
+			// Improvement! Keep the candidate.
+			window.currentWeights = candidateWeights;
+			// window.persistentEmbeddingSpace is already set to candidateEmbeddings
+			window.lossHistory.push(candidateLoss);
+		} else {
+			// No improvement. Revert.
+			window.persistentEmbeddingSpace = oldEmbeddings; // Restore old embeddings
+			// window.currentWeights remains the old ones
+			window.lossHistory.push(currentLoss);
+		}
+
+		// E. UI Updates
+		if (e % 2 === 0) { // Update UI every few steps
 			requestAnimationFrame(() => {
-				status.innerText = `Epoch ${window.lossHistory.length} - Loss: ${epochLoss.toFixed(4)}`;
+				const current = window.lossHistory[window.lossHistory.length-1];
+				status.innerText = `Epoch ${window.lossHistory.length} - Loss: ${current.toFixed(4)}`;
 				renderLossGraph();
 
-				// Only run heavy visualization every 20 epochs or via a manual toggle
-				if (e % 20 === 0) {
-					run_transformer_demo(); 
-				}
+				// Visualize occasionally
+				if (e % 10 === 0) run_transformer_demo();
 			});
-			await new Promise(r => setTimeout(r, 0)); // Yield more effectively
+			await new Promise(r => setTimeout(r, 0)); // Yield to UI
+		}
+	}
+}
+
+/**
+ * NEW Helper: Calculate Cross-Entropy Loss over the corpus
+ * Strategy: Predict next token for a random window in the text
+ */
+function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
+	// Optimization: Don't calculate loss on the *entire* text every epoch (too slow).
+	// Pick a random window of context size 3-5.
+	const contextSize = 4;
+	// Pick a random start index ensuring we have a 'next' token
+	const startIdx = Math.floor(Math.random() * (tokens.length - 1));
+	const endIdx = Math.min(startIdx + contextSize, tokens.length - 1);
+
+	const contextTokens = tokens.slice(startIdx, endIdx);
+	const targetToken = tokens[endIdx]; // The token coming AFTER the context
+
+	// 1. Run Forward Pass
+	// We use a simplified forward pass that returns just the final hidden state
+	// Note: We use the existing logic but stripped down for speed
+
+	// a. Embeddings + PE
+	const space = window.persistentEmbeddingSpace;
+	let h = contextTokens.map((t, pos) => {
+		const emb = space[t] || Array(d_model).fill(0);
+		// Add simple PE (re-calculating PE here is fast enough)
+		const pe = new Array(d_model).fill(0);
+		for (let i = 0; i < d_model; i++) {
+			let div = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+			pe[i] = (i % 2 === 0) ? Math.sin(pos / div) : Math.cos(pos / div);
+		}
+		return emb.map((v, i) => v + pe[i]);
+	});
+
+	// b. Layers
+	const n_heads = weights[0].attention.query.length > 0 ? 
+		weights[0].attention.query.length / (d_model/weights[0].attention.query.length) : 2; // heuristic
+
+	// Use the existing run_deep_layers logic but with provided weights
+	// We need to adapt run_deep_layers to accept custom weights easily or reimplement the loop here.
+	// For speed/stability in this "fake" trainer, we reimplement the core loop:
+
+	for(let l=0; l<n_layers; l++) {
+		const w = weights[l];
+		// Simplified Attention (assuming 1 head for loss calc speed or implementing full logic?)
+		// To reuse code, we instantiate the engine. This is slower but correct.
+		const engine = new AttentionEngine({ d_model: d_model, n_heads: 2, containerId: null, weights: w.attention });
+		const headData = engine.forward(h, contextTokens);
+
+		// Concatenate
+		const concat = contextTokens.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
+
+		// Post-LN
+		const h1 = get_h1(h, concat, w.gamma, w.beta);
+
+		// FFN
+		h = run_ffn_block(h1, w);
+	}
+
+	const h_final = h[h.length - 1]; // Last token's hidden state
+
+	// 2. Project to Vocabulary (Logits)
+	// We only care about the target token's probability vs the others.
+	// In a real generic transformer, we project to ALL tokens.
+	const vocab = [...new Set(tokens)];
+
+	// To save time, we calculate logits for the Target and a few random Negatives
+	// (Sampled Softmax) - but for small demos, full softmax is fine.
+
+	let maxLogit = -Infinity;
+	const logits = vocab.map(word => {
+		// Re-generate fixed vocab weight on the fly (same seed logic as render_final_projection)
+		const hash = word.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+		const w_row = Array.from({ length: d_model }, (_, i) => {
+			const seed = Math.abs(hash * (i + 13));
+			return ((seed % 2000) / 1000) - 1;
+		});
+
+		const val = h_final.reduce((sum, v, i) => sum + v * w_row[i], 0);
+		if(val > maxLogit) maxLogit = val;
+		return { word, val };
+	});
+
+	// 3. Softmax & Loss
+	// P(target) = exp(target_logit) / sum(exp(logits))
+	// Loss = -log(P(target)) = -target_logit + log(sum(exp(logits)))
+
+	const targetLogitObj = logits.find(x => x.word === targetToken);
+	if (!targetLogitObj) return 10; // High loss if something broke
+
+	let sumExp = 0;
+	logits.forEach(l => {
+		sumExp += Math.exp(l.val - maxLogit); // stability shift
+	});
+
+	const logSumExp = maxLogit + Math.log(sumExp);
+	const loss = -targetLogitObj.val + logSumExp;
+
+	return Math.max(0, loss); // ensure non-negative
+}
+
+/**
+ * NEW Helper: Mutate Weights
+ * Applies random gaussian noise to all learnable parameters
+ */
+function mutate_weights_structure(weights, embeddingSpace, scale) {
+	// 1. Mutate Embeddings
+	Object.keys(embeddingSpace).forEach(k => {
+		embeddingSpace[k] = embeddingSpace[k].map(v => 
+			// 50% chance to mutate a specific value
+			Math.random() > 0.5 ? v + (Math.random() - 0.5) * scale : v
+		);
+	});
+
+	// 2. Mutate Layers
+	weights.forEach(layer => {
+		// Attention
+		['query', 'key', 'value', 'output'].forEach(key => {
+			mutate_matrix(layer.attention[key], scale);
+		});
+		// FFN
+		mutate_matrix(layer.W1, scale);
+		mutate_matrix(layer.W2, scale);
+		mutate_vector(layer.b1, scale);
+		mutate_vector(layer.b2, scale);
+		// Norms
+		mutate_vector(layer.gamma, scale * 0.1); // Mutate norms less
+		mutate_vector(layer.beta, scale * 0.1);
+	});
+}
+
+function mutate_matrix(mat, scale) {
+	for(let i=0; i<mat.length; i++) {
+		for(let j=0; j<mat[i].length; j++) {
+			if(Math.random() > 0.8) { // Sparsity: only mutate 20% of weights per step for stability
+				mat[i][j] += (Math.random() - 0.5) * scale;
+			}
+		}
+	}
+}
+
+function mutate_vector(vec, scale) {
+	for(let i=0; i<vec.length; i++) {
+		if(Math.random() > 0.8) {
+			vec[i] += (Math.random() - 0.5) * scale;
 		}
 	}
 }
