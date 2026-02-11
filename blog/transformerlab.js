@@ -15,18 +15,18 @@ const attentionRenderRegistry = new Map();
  * Intersection Observer for Attention UI
  */
 const attentionObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const containerId = entry.target.id;
-            const data = attentionRenderRegistry.get(containerId);
-            if (data && !data.rendered) {
-                // Execute the heavy HTML/LaTeX generation only now
-                const engineInstance = data.instance;
-                engineInstance.executeActualRender(data.headData, data.tokens);
-                data.rendered = true;
-            }
-        }
-    });
+	entries.forEach(entry => {
+		if (entry.isIntersecting) {
+			const containerId = entry.target.id;
+			const data = attentionRenderRegistry.get(containerId);
+			if (data && !data.rendered) {
+				// Execute the heavy HTML/LaTeX generation only now
+				const engineInstance = data.instance;
+				engineInstance.executeActualRender(data.headData, data.tokens);
+				data.rendered = true;
+			}
+		}
+	});
 }, { threshold: 0.1 });
 
 function get_or_init_embeddings(tokens, d_model) {
