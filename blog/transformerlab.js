@@ -1215,77 +1215,74 @@ function render_positional_shift_plot(tokens, d_model) {
 	if (d_model <= 3) {
 		const traces = [];
 		tokens.forEach((token, pos) => {
+			// 1. Semantic Base (Stable hash-based starting point)
 			const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-			const baseVal = (((Math.abs(hash)) % 200) - 100) / 100;
-			let div_term = Math.pow(10000, (2 * Math.floor(0 / 2)) / d_model);
-			const pe_val = (0 % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
+			const getBase = (offset) => (((Math.abs(hash * offset)) % 200) - 100) / 100;
 
-			const x = [baseVal, baseVal + pe_val];
-			const y = d_model >= 2 ? [baseVal * 0.5, (baseVal * 0.5) + pe_val] : [0, 0];
-			const z = d_model === 3 ? [baseVal * 0.2, (baseVal * 0.2) + pe_val] : [0, 0];
+			const startPos = [getBase(1), getBase(2), getBase(3)];
 
-			// Berechne Distanz, um zu prüfen, ob der Vektor statisch ist
-			const dist = Math.sqrt(Math.pow(x[1]-x[0], 2) + Math.pow(y[1]-y[0], 2) + Math.pow(z[1]-z[0], 2));
+			// 2. Positional Shift (PE Vector)
+			// Assigning unique i values to x, y, z to ensure different sine/cosine phases
+			const getPE = (i) => {
+				let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+				return (i % 2 === 0) ? Math.sin(pos / div_term) : Math.cos(pos / div_term);
+			};
+
+			const pe_vec = [
+				getPE(0),                          // X shift
+				d_model >= 2 ? getPE(1) : 0,       // Y shift
+				d_model === 3 ? getPE(2) : 0        // Z shift
+			];
+
+			const x = [startPos[0], startPos[0] + pe_vec[0]];
+			const y = [startPos[1], startPos[1] + pe_vec[1]];
+			const z = [startPos[2], startPos[2] + pe_vec[2]];
 
 			if (d_model === 3) {
-				if (dist < 0.001) {
-					// Statischer Vektor: Nur ein Punkt
-					traces.push({
-						type: 'scatter3d',
-						x: [x[0]], y: [y[0]], z: [z[0]],
-						mode: 'markers+text',
-						marker: { size: 8, color: '#3b82f6' },
-						text: [token], textposition: 'top center',
-						name: token
-					});
-				} else {
-					// Bewegter Vektor: Linie + Kegel
-					traces.push({
-						type: 'scatter3d',
-						x: x, y: y, z: z,
-						mode: 'lines',
-						line: { width: 8, color: '#3b82f6' },
-						name: token, legendgroup: token, showlegend: false
-					});
-					traces.push({
-						type: 'cone',
-						x: [x[1]], y: [y[1]], z: [z[1]],
-						u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
-						sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-						colorscale: [[0, '#3b82f6'], [1, '#3b82f6']],
-						showscale: false, name: token, legendgroup: token,
-						text: token, hoverinfo: 'text'
-					});
-				}
+				// Line Trace
+				traces.push({
+					type: 'scatter3d',
+					x: x, y: y, z: z,
+					mode: 'lines',
+					line: { width: 6, color: '#3b82f6' },
+					name: token, legendgroup: token, showlegend: false
+				});
+				// Directional Cone (The Shift)
+				traces.push({
+					type: 'cone',
+					x: [x[1]], y: [y[1]], z: [z[1]],
+					u: [pe_vec[0]], v: [pe_vec[1]], w: [pe_vec[2]],
+					sizemode: 'absolute', sizeref: 0.2, anchor: 'tip',
+					colorscale: [[0, '#3b82f6'], [1, '#60a5fa']],
+					showscale: false, name: token, legendgroup: token,
+					text: `Pos ${pos}: ${token}`, hoverinfo: 'text'
+				});
 			} else {
-				// 1D/2D Logik
+				// 2D fallback
 				traces.push({
 					type: 'scatter',
 					x: x, y: y,
-					mode: dist < 0.001 ? 'markers+text' : 'lines+markers+text',
+					mode: 'lines+markers+text',
 					name: token,
-					text: dist < 0.001 ? [token] : ['', token],
+					text: ['', token],
 					textposition: 'top center',
-					line: { width: 4 },
-					marker: { 
-						size: dist < 0.001 ? 10 : [0, 15], 
-						symbol: dist < 0.001 ? 'circle' : 'arrow', 
-						angleref: 'previous' 
-					}
+					line: { width: 4, color: '#3b82f6' },
+					marker: { size: [0, 15], symbol: 'arrow', angleref: 'previous' }
 				});
 			}
 		});
 
 		const layout = {
-			title: "Positional Shift (Points: Static | Cones: Shifted)",
+			title: "Positional Injection: Semantic Base → PE Shift",
 			scene: {
-				xaxis: { title: 'D1' }, yaxis: { title: 'D2' }, zaxis: { title: 'D3' },
-				camera: { eye: { x: 1.2, y: 1.2, z: 1.2 } }
+				xaxis: { title: 'D0 (Sin)' },
+				yaxis: { title: 'D1 (Cos)' },
+				zaxis: { title: 'D2 (Sin)' },
+				camera: { eye: { x: 1.5, y: 1.5, z: 1.5 } }
 			},
 			margin: { l: 0, r: 0, b: 0, t: 40 }
 		};
 		Plotly.newPlot(container, traces, layout);
-
 	} else {
 		// --- ECharts Logik (> 3D) ---
 		if (typeof echarts === 'undefined') return;
