@@ -706,7 +706,7 @@ function render_embedding_plot(embeddingSpace, dimensions) {
 				marker: { size: 10 }
 			};
 		});
-		Plotly.newPlot(container, traces, { title: "Embedding Space (Gaussian Spread)" });
+		Plotly.newPlot(container, traces, { title: "Embedding Space" });
 	} else {
 		if (typeof echarts === 'undefined') return;
 		Plotly.purge(container);
