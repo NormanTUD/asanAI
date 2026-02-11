@@ -12,6 +12,7 @@ window.currentWeights = null;
 window.lossHistory = [];
 window.last_d_model = null;
 
+const contextSize = 128;
 const attentionRenderRegistry = new Map();
 
 /**
@@ -500,7 +501,6 @@ function convert_weights_to_tensors(weights) {
  */
 function calculate_tf_loss(tokens, vars, d_model, n_layers) {
     const losses = [];
-    const contextSize = 4;
 
     // Iterate through sequence transitions [cite: 11]
     for (let startIdx = 0; startIdx < tokens.length - contextSize; startIdx++) {
@@ -569,7 +569,6 @@ async function convert_tensors_to_weights(vars) {
 function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
 	// Optimization: Don't calculate loss on the *entire* text every epoch (too slow).
 	// Pick a random window of context size 3-5.
-	const contextSize = 4;
 	// Pick a random start index ensuring we have a 'next' token
 	const startIdx = Math.floor(Math.random() * (tokens.length - 1));
 	const endIdx = Math.min(startIdx + contextSize, tokens.length - 1);
