@@ -1399,9 +1399,10 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 	let h_current = h_initial;
 
 	for (let n = 0; n < total_depth; n++) {
-		const h_before = JSON.parse(JSON.stringify(h_current));
-		const layerWeights = this_weights[n]; // Access the specific layer
+		const h_before_layer = JSON.parse(JSON.stringify(h_current));
+		const layerWeights = this_weights[n];
 
+		// 1. Sublayer 1: Multi-Head Attention
 		const engine = new AttentionEngine({ 
 			d_model, 
 			n_heads, 
@@ -1412,11 +1413,18 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 		const headData = engine.forward(h_current, tokens);
 		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
 
-		// Use layer-specific parameters
-		const zn = get_h1(h_current, concatOutput, layerWeights["gamma"], layerWeights["beta"]);
-		const h_after = run_ffn_block(zn, layerWeights);
+		// 2. Add & Norm (Attention)
+		// h_attn = LayerNorm(MHA(h_current)) + h_current
+		const h_attn = get_h1(h_current, concatOutput, layerWeights["gamma"], layerWeights["beta"]);
 
-		create_migration_plot(`migration-layer-${n+1}`, tokens, h_before, h_after, n + 1, d_model);
+		// 3. Sublayer 2: Feed Forward & Add & Norm
+		// h_after = LayerNorm(FFN(h_attn)) + h_attn
+		const h_after = run_ffn_block(h_attn, layerWeights);
+
+		// Visualization: Show the migration from start of layer to end of layer
+		create_migration_plot(`migration-layer-${n+1}`, tokens, h_before_layer, h_after, n + 1, d_model);
+		
+		// Update for next layer
 		h_current = h_after;
 	}
 	return h_current;
