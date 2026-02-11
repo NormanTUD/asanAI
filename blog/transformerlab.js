@@ -1263,16 +1263,6 @@ function concatenateHeads(headData) {
 }
 
 /**
- * Hilfsfunktion zur Initialisierung von Zufallsgewichten (Glorot)
- */
-function initFFNWeights(rows, cols) {
-	const limit = Math.sqrt(6 / (rows + cols));
-	return Array.from({ length: rows }, () => 
-		Array.from({ length: cols }, () => (Math.random() * 2 * limit) - limit)
-	);
-}
-
-/**
  * Validiert die Form der übergebenen Matrizen/Vektoren
  */
 function validateShape(name, data, expectedRows, expectedCols) {
