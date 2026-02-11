@@ -284,31 +284,30 @@ function run_transformer_demo() {
 	run_and_visualize_network(inputTokens, trainingTokens);
 }
 
+/**
+ * Origin: Ba et al. (2016) Layer Normalization
+ * Goal: Initialize learnable parameters for stabilization
+ */
 function get_init_weights(n_layers, d_model) {
-	var weights = [];
-	var d_ff = d_model * 4;
+	const weights = [];
+	const d_ff = d_model * 4;
 
 	for (let n = 0; n < n_layers; n++) {
-		let currentLayer = {
-			gamma: new Array(d_model).fill(1.0),
-			beta: new Array(d_model).fill(0.0),
-
+		weights.push({
+			gamma: new Array(d_model).fill(1.0), // Scale parameter
+			beta: new Array(d_model).fill(0.0),  // Shift parameter
 			attention: {
 				query: initWeights(d_model, d_model),
 				key: initWeights(d_model, d_model),
-				value: initWeights(d_model, d_model)
+				value: initWeights(d_model, d_model),
+				output: initWeights(d_model, d_model)
 			},
-
 			W1: initWeights(d_model, d_ff),
 			b1: new Array(d_ff).fill(0),
-
 			W2: initWeights(d_ff, d_model),
 			b2: new Array(d_model).fill(0)
-		};
-
-		weights.push(currentLayer);
+		});
 	}
-
 	return weights;
 }
 
@@ -366,7 +365,11 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 
 	console.log(weights);
 	const h1 = get_h1(mockH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"]);
-	if (typeof render_h1_logic === "function") render_h1_logic(mockH0, multiHeadOutput);
+
+	// FIX: Pass gamma and beta to the renderer
+	if (typeof render_h1_logic === "function") {
+		render_h1_logic(mockH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"]);
+	}
 
 	const h2 = run_ffn_block(h1, weights[0]);
 	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads, weights);
@@ -758,30 +761,51 @@ function render_mask_logic(tokens) {
 	render_temml();
 }
 
-function render_h1_logic(h0, multiHeadOutput) {
+/**
+ * Goal: Visualize LayerNorm with concrete Gamma and Beta values
+ */
+/**
+ * Goal: Show concrete Gamma/Beta values in the residual addition step
+ * Origin: Ba et al. (2016)
+ */
+function render_h1_logic(h0, multiHeadOutput, gamma, beta) {
 	const normContainer = document.getElementById('transformer-h1-layernorm-viz');
 	const finalContainer = document.getElementById('transformer-h1-final-viz');
-	if (!normContainer || !finalContainer) return;
+	if (!normContainer || !finalContainer || !gamma || !beta) return;
 
 	const matrixToPmatrix = (matrix) =>
 		`\\begin{pmatrix} ` + matrix.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ') + ` \\end{pmatrix}`;
 
-	// 1. LayerNorm Calculation
+	const vecToPmatrix = (vec) => 
+		`\\begin{pmatrix} ${vec.map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
+
 	const eps = 1e-5;
-	const normMH = multiHeadOutput.map(row => {
+	const standardized = multiHeadOutput.map(row => {
 		const mean = row.reduce((a, b) => a + b, 0) / row.length;
 		const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
 		return row.map(val => (val - mean) / Math.sqrt(variance + eps));
 	});
 
-	// 2. h1 = h0 + normMH
+	const normMH = standardized.map(row => 
+		row.map((val, j) => val * gamma[j] + beta[j])
+	);
+
 	const h1 = h0.map((row, i) => row.map((val, j) => val + normMH[i][j]));
 
-	// Render LayerNorm Step
-	normContainer.innerHTML = `$$ \\text{LayerNorm}\\left(\\text{MultiHead}(h_0)\\right) = ${matrixToPmatrix(normMH)} $$`;
+	normContainer.innerHTML = `
+	<div style="margin-bottom:10px;">
+	    $$ \\text{LayerNorm}(\\text{MHA}) = \\gamma \\odot \\hat{x} + \\beta $$
+	</div>
+	$$ \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{Result}} = 
+	   \\underbrace{${vecToPmatrix(gamma)}}_{\\text{Concrete } \\gamma} \\odot 
+	   \\underbrace{${matrixToPmatrix(standardized)}}_{\\hat{x} \\text{ (Std)}} + 
+	   \\underbrace{${vecToPmatrix(beta)}}_{\\text{Concrete } \\beta} $$
+    `;
 
-	// Render Final h1 Step
-	finalContainer.innerHTML = `$$ h_1 = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{LayerNorm}} = \\underbrace{${matrixToPmatrix(h1)}}_{h_1} $$`;
+	finalContainer.innerHTML = `
+	<div style="margin-bottom:10px;">$$ h_1 = h_0 + \\text{LayerNorm}(\\text{MHA}) $$</div>
+	$$ ${matrixToPmatrix(h1)} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{LN Output}} $$
+    `;
 
 	if (typeof render_temml === "function") render_temml();
 	return h1;
@@ -904,16 +928,22 @@ function assert_or_init(name, value, expected_rows, expected_cols) {
  * @param {Array} h1 - Input Hidden State
  * @param {Object} params - {W1, b1, W2, b2} (optional)
  */
+/**
+ * Goal: Execute FFN with concrete Gamma/Beta for visualization
+ * Origin: Vaswani et al. (2017)
+ */
 function run_ffn_block(h1, params = {}) {
 	const d_model = h1[0].length;
 	const d_ff = d_model * 4;
 
+	// Ensure parameters exist
 	let W1 = assert_or_init('W1', params.W1, d_model, d_ff);
 	let b1 = assert_or_init('b1', params.b1, d_ff, 1);
 	let W2 = assert_or_init('W2', params.W2, d_ff, d_model);
 	let b2 = assert_or_init('b2', params.b2, d_model, 1);
+	let gamma = params.gamma || new Array(d_model).fill(1.0);
+	let beta = params.beta || new Array(d_model).fill(0.0);
 
-	// 2. Schritt: Expansion & ReLU -> out_L1 = ReLU(h1 * W1 + b1)
 	const out_L1 = h1.map(row => {
 		return b1.map((bias, j) => {
 			let sum = bias;
@@ -922,7 +952,6 @@ function run_ffn_block(h1, params = {}) {
 		});
 	});
 
-	// 3. Schritt: Projektion -> out_FFN = out_L1 * W2 + b2
 	const out_FFN = out_L1.map(row => {
 		return b2.map((bias, j) => {
 			let sum = bias;
@@ -931,12 +960,11 @@ function run_ffn_block(h1, params = {}) {
 		});
 	});
 
-	// 4. Schritt: LayerNorm & Residual -> h2 = h1 + LN(out_FFN)
-	const ffn_normed = calculateLayerNorm(out_FFN, params["gamma"], params["beta"]);
+	const ffn_normed = calculateLayerNorm(out_FFN, gamma, beta);
 	const h2 = h1.map((row, i) => row.map((val, j) => val + ffn_normed[i][j]));
 
-	// Visualisierung triggern
-	render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2);
+	// Updated call with concrete values
+	render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta);
 
 	return h2;
 }
@@ -944,38 +972,37 @@ function run_ffn_block(h1, params = {}) {
 /**
  * Erzeugt LaTeX-Output für Matrizen ohne Limitierungen.
  */
-function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2) {
-	// Helper: Rendert absolut JEDE Zahl in der Matrix
-	const rawMP = (m) => {
-		const rows = m.map(r => r.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ');
-		return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
-	};
+/**
+ * Goal: Show FFN LayerNorm parameters
+ */
+/**
+ * Goal: Full FFN derivation with concrete LayerNorm weights
+ * Origin: Vaswani et al. (2017)
+ */
+function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta) {
+	const rawMP = (m) => `\\begin{pmatrix} ${m.map(r => r.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+	const rawVP = (v) => `\\begin{pmatrix} ${v.map(val => val.toFixed(2)).join(' & ')} \\end{pmatrix}`;
 
-	// Helper: Rendert JEDE Zahl im Vektor
-	const rawVP = (v) => {
-		const content = v.map(val => val.toFixed(2)).join(' & ');
-		return `\\begin{pmatrix} ${content} \\end{pmatrix}`;
-	};
+	const eps = 1e-5;
+	const stdFFN = out_FFN.map(row => {
+		const mean = row.reduce((a, b) => a + b, 0) / row.length;
+		const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
+		return row.map(val => (val - mean) / Math.sqrt(variance + eps));
+	});
 
-	// Anzeige Schritt 1
 	document.getElementById('ffn-step-1').innerHTML = `
-	$$ \\text{out}_{L1} = \\text{ReLU}\\left(h_1 W_1 + b_1\\right) $$
-	$$ \\text{out}_{L1} = \\text{ReLU}\\left( \\underbrace{${rawMP(h1)}}_{h_1} \\cdot \\underbrace{${rawMP(W1)}}_{W_1} + \\underbrace{${rawVP(b1)}}_{b_1} \\right) = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} $$
+	$$ \\text{out}_{L1} = \\text{ReLU}(h_1 W_1 + b_1) = ${rawMP(out_L1)} $$
     `;
 
-	// Anzeige Schritt 2
 	document.getElementById('ffn-step-2').innerHTML = `
-	$$ \\text{out}_{\\text{L}2} = \\text{out}_{L1} W_2 + b_2 $$
-	$$ \\text{out}_{\\text{L}2} = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} \\cdot \\underbrace{${rawMP(W2)}}_{W_2} + \\underbrace{${rawVP(b2)}}_{b_2} = \\underbrace{${rawMP(out_FFN)}}_{\\text{out}_{\\text{L}2}} $$
+	$$ \\text{out}_{L2} = \\text{out}_{L1} W_2 + b_2 = ${rawMP(out_FFN)} $$
     `;
 
-	// Anzeige Schritt 3 (Finale h2 Gleichung)
 	document.getElementById('ffn-step-3').innerHTML = `
-	$$ h_2 = h_1 + \\text{LayerNorm}\\left(\\text{out}_{\\text{FFN}}\\right) $$
-	$$ h_2 = \\underbrace{${rawMP(h1)}}_{h_1} + \\underbrace{\\text{LayerNorm}\\left(${rawMP(out_FFN)}\\right)}_{\\text{Stabilized Output}} = \\underbrace{${rawMP(h2)}}_{h_2} $$
+	<div style="margin-bottom:10px;">$$ h_2 = h_1 + (\\gamma_{ffn} \\odot \\text{std}(\\text{out}_{L2}) + \\beta_{ffn}) $$</div>
+	$$ ${rawMP(h2)} = ${rawMP(h1)} + \\left( \\underbrace{${rawVP(gamma)}}_{\\gamma} \\odot ${rawMP(stdFFN)} + \\underbrace{${rawVP(beta)}}_{\\beta} \\right) $$
     `;
 
-	// Temml Render-Trigger
 	if (typeof render_temml === "function") render_temml();
 }
 
@@ -985,45 +1012,28 @@ function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2) {
  */
 function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights) {
 	let h_current = h_initial;
-	const plotContainer = document.getElementById('transformer-migration-plots-container');
-	const statusContainer = document.getElementById('transformer-multi-layer-status');
-
-	if (plotContainer) plotContainer.innerHTML = "";
-	let statusHtml = "";
 
 	for (let n = 0; n < total_depth; n++) {
-		// Capture the start point for this layer's arrow
 		const h_before = JSON.parse(JSON.stringify(h_current));
+		const layerWeights = this_weights[n]; // Access the specific layer
 
-		console.log(this_weights);
-
-		// 1. Calculate the Layer (MHA + FFN)
 		const engine = new AttentionEngine({ 
 			d_model, 
 			n_heads, 
 			containerId: (n === 0) ? "mha-calculation-details" : null,
-			weights: this_weights["attention"]
+			weights: layerWeights["attention"]
 		});
 
 		const headData = engine.forward(h_current, tokens);
 		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
-		const zn = get_h1(h_current, concatOutput, this_weights[n]["gamma"], this_weights[n]["beta"]);
-		const h_after = run_ffn_block(zn, this_weights[n]);
 
-		// 2. Render Full-Width Migration Plot
+		// Use layer-specific parameters
+		const zn = get_h1(h_current, concatOutput, layerWeights["gamma"], layerWeights["beta"]);
+		const h_after = run_ffn_block(zn, layerWeights);
+
 		create_migration_plot(`migration-layer-${n+1}`, tokens, h_before, h_after, n + 1, d_model);
-
-		// Update for next iteration
 		h_current = h_after;
-
-		statusHtml += `
-	    <div style="padding: 10px; border-left: 4px solid #10b981; background: #f0fdf4; margin-bottom: 8px;">
-		<strong>Layer ${n + 1} Status:</strong> Vector migration complete.
-	    </div>`;
 	}
-
-	if (statusContainer) statusContainer.innerHTML = statusHtml;
-
 	return h_current;
 }
 
