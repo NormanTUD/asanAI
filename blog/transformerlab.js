@@ -442,10 +442,6 @@ function get_init_weights(n_layers, d_model) {
 	return weights;
 }
 
-/**
- * Modern Training Loop using TensorFlow.js
- * Replaces random mutation with Backpropagation
- */
 async function train_transformer() {
 	const status = document.getElementById('training-status');
 	const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
