@@ -6,7 +6,7 @@
 
 const nr_fixed = 4;
 
-// Add to the top of the file with other persistent states
+window.lastActiveInputId = 'transformer-training-data';
 window.persistentEmbeddingSpace = null;
 window.currentWeights = null;
 window.lossHistory = [];
@@ -372,22 +372,33 @@ function render_positional_waves(d_model, tokens) {
 	Plotly.newPlot('transformer-pe-wave-plot', traces, layout);
 }
 
-function run_transformer_demo() {
-	console.log("Starting Transformer Demo...");
+function run_transformer_demo(activeId = null) {
+    if (activeId) {
+        window.lastActiveInputId = activeId;
+    }
 
-	const masterInput = document.getElementById('transformer-training-data');
-	const trainingInput = document.getElementById('transformer-training-data');
+    const trainingInput = document.getElementById('transformer-training-data');
+    const masterInput = document.getElementById('transformer-master-token-input');
+    
+    if (!trainingInput || !masterInput) return;
 
-	if (!masterInput || !trainingInput) {
-		console.error("Missing input elements");
-		return;
-	}
+    // 1. Tokenisierung für die Logik (ohne UI-Render)
+    const trainingTokens = transformer_tokenize_render(trainingInput.value, null);
+    const masterTokens = transformer_tokenize_render(masterInput.value, null);
 
-	const trainingTokens = transformer_tokenize_render(trainingInput.value, "transformer-viz-bpe");
-	const inputTokens = transformer_tokenize_render(masterInput.value, null);
+    // 2. Tokenisierung für die VISUELLE ANZEIGE (BPE-Box oben)
+    // Wir rendern die Tokens des Feldes, das gerade bearbeitet wird
+    const vizSourceValue = document.getElementById(window.lastActiveInputId).value;
+    const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe");
 
-	run_and_visualize_network(inputTokens, trainingTokens);
+    // 3. Netzwerk ausführen
+    run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
 }
+
+/**
+ * FULL implementation of run_and_visualize_network
+ */
+
 
 /**
  * Origin: Ba et al. (2016) Layer Normalization
@@ -740,89 +751,121 @@ function renderLossGraph() {
 	Plotly.newPlot('training-loss-plot', [trace], layout);
 }
 
-function run_and_visualize_network(inputTokens, trainingTokens) {
-	const dimSlider = document.getElementById('transformer-dimension-model');
-	const d_model = parseInt(dimSlider.value);
+function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
+    const dimSlider = document.getElementById('transformer-dimension-model');
+    const d_model = parseInt(dimSlider.value);
+    const headSlider = document.getElementById('transformer-heads');
+    const n_heads = parseInt(headSlider.value);
+    const tempSlider = document.getElementById('transformer-temperature');
+    const temperature = parseFloat(tempSlider.value);
+    const depthSlider = document.getElementById('transformer-depth');
+    const n_layers = parseInt(depthSlider.value);
 
-	const headSlider = document.getElementById('transformer-heads');
-	const n_heads = parseInt(headSlider.value);
+    const vocabulary = [...new Set(trainingTokens)];
+    const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
 
-	const tempSlider = document.getElementById('transformer-temperature');
-	const temperature = parseFloat(tempSlider.value);
+    // Architektur-Validierung & Gewichte (identisch zum Original)
+    if (d_model % n_heads !== 0) {
+        console.warn(`Incompatible Dimensions: d_model (${d_model}) must be divisible by n_heads (${n_heads}).`);
+    }
 
-	const depthSlider = document.getElementById('transformer-depth');
-	const n_layers = parseInt(depthSlider.value);
+    const needsReinit = !window.currentWeights ||
+        window.currentWeights.length !== n_layers ||
+        window.last_d_model !== d_model ||
+        window.last_n_heads !== n_heads;
 
-	const vocabulary = [...new Set(trainingTokens)];
-	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
+    if (needsReinit) {
+        window.currentWeights = get_init_weights(n_layers, d_model);
+        window.last_d_model = d_model;
+        window.last_n_heads = n_heads;
+    }
+    const weights = window.currentWeights;
 
-	// 1. Validierung der Architektur-Logik
-	if (d_model % n_heads !== 0) {
-		console.warn(`Inkompatible Dimensionen: d_model (${d_model}) muss durch n_heads (${n_heads}) teilbar sein.`);
-	}
+    // 1. Embedding Space (Immer vom Training)
+    const embeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
+    render_embedding_plot(embeddingSpace, d_model);
 
-	// 2. Erweitere die Check-Logik für Neuinitialisierung
-	const needsReinit = !window.currentWeights || 
-		window.currentWeights.length !== n_layers || 
-		window.last_d_model !== d_model || 
-		window.last_n_heads !== n_heads;
+    // 2. Visualisierungen (Basierend auf inputTokens/knownTokens)
+    calculate_positional_injection(knownTokens, d_model);
+    render_positional_waves(d_model, knownTokens);
+    
+    // h0 berechnen und Plot für Positional Shift rendern
+    const h0 = render_positional_shift_plot(knownTokens, d_model, embeddingSpace);
 
-	if (needsReinit) {
-		console.log("Re-initializing weights due to architecture change...");
-		window.currentWeights = get_init_weights(n_layers, d_model);
-		window.last_d_model = d_model;
-		window.last_n_heads = n_heads;
-	}
+    render_causal_mask(knownTokens);
+    if (typeof render_mask_logic === "function") render_mask_logic(knownTokens);
+    render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
-	var weights = window.currentWeights;
+    if (knownTokens.length === 0) {
+        document.getElementById('transformer-output-projection').innerHTML =
+            `<div style="padding:20px; color: #64748b; text-align:center;">
+                Input words not found in Training Data.
+             </div>`;
+    } else {
+        // Erster Layer mit UI-Details (MHA Engine)
+        const engine = new AttentionEngine({
+            d_model: d_model,
+            n_heads: n_heads,
+            containerId: "mha-calculation-details",
+            weights: weights[0]["attention"]
+        });
 
-	var embeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
+        const headData = engine.forward(h0, knownTokens);
+        const multiHeadOutput = updateConcatenationDisplay(headData, knownTokens);
+        
+        const h1 = get_h1(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"]);
 
-	calculate_positional_injection(knownTokens, d_model);
-	render_positional_waves(d_model, knownTokens);
-	const h0 = render_positional_shift_plot(knownTokens, d_model, embeddingSpace);
-	render_embedding_plot(embeddingSpace, d_model);
+        if (typeof render_h1_logic === "function") {
+            render_h1_logic(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
+        }
 
-	render_causal_mask(knownTokens);
-	if (typeof render_mask_logic === "function") render_mask_logic(knownTokens);
-	render_architecture_stats(d_model, n_heads, n_layers, temperature);
+        const h2 = run_ffn_block(h1, weights[0]);
+        // Alle weiteren Layer durchlaufen
+        run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads, weights);
+    }
 
-	if (knownTokens.length === 0) {
-		document.getElementById('transformer-output-projection').innerHTML = 
-			`<div style="padding:20px; color: #64748b; text-align:center;">
-		Input words not found in Training Data.<br>
-		Type words from the corpus above (e.g. "king", "queen", "wise").
-	     </div>`;
-		return;
-	}
+    // 3. FINALE WAHRSCHEINLICHKEITEN (Immer basierend auf master-token-input)
+    const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
+    
+    if (knownMasterTokens.length > 0) {
+        // Wir erzeugen h0 für den Master-Input manuell (Embeddings + PE)
+        let h_master = knownMasterTokens.map((t, pos) => {
+            const emb = embeddingSpace[t] || new Array(d_model).fill(0);
+            const pe = new Array(d_model).fill(0);
+            for (let i = 0; i < d_model; i++) {
+                let div = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+                pe[i] = (i % 2 === 0) ? Math.sin(pos / div) : Math.cos(pos / div);
+            }
+            return emb.map((v, i) => v + pe[i]);
+        });
 
-	const engine = new AttentionEngine({
-		d_model: d_model,
-		n_heads: n_heads,
-		containerId: "mha-calculation-details",
-		weights: weights[0]["attention"]
-	});
+        // "Stiller" Forward-Pass durch alle Layer für die Prediction
+        let h_current = h_master;
+        for (let l = 0; l < n_layers; l++) {
+            const layerWeights = weights[l];
+            const attnEngine = new AttentionEngine({ d_model, n_heads, containerId: null, weights: layerWeights["attention"] });
+            const headData = attnEngine.forward(h_current, knownMasterTokens);
+            
+            // Konkatenation
+            const concat = knownMasterTokens.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
+            const h_attn = get_h1(h_current, concat, layerWeights["gamma"], layerWeights["beta"]);
+            h_current = run_ffn_block(h_attn, layerWeights);
+        }
 
-	const headData = engine.forward(h0, knownTokens);
-	const multiHeadOutput = updateConcatenationDisplay(headData, knownTokens);
-
-	console.log(weights);
-	const h1 = get_h1(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"]);
-
-	// FIX: Pass gamma and beta to the renderer
-	if (typeof render_h1_logic === "function") {
-		render_h1_logic(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
-	}
-
-	const h2 = run_ffn_block(h1, weights[0]);
-	const h_final = run_deep_layers(h2, knownTokens, n_layers, d_model, n_heads, weights);
-
-	if (typeof render_final_projection === "function") {
-		render_final_projection(h_final, vocabulary, d_model, temperature);
-	} else {
-		console.error("render_final_projection function is missing!");
-	}
+        // Output Projection rendern (Das Feld mit den klickbaren Wörtern)
+        if (typeof render_final_projection === "function") {
+            render_final_projection(h_current, vocabulary, d_model, temperature);
+        }
+    }
 }
+
+window.select_suggested_word = (word) => {
+	const masterInput = document.getElementById('transformer-master-token-input');
+	masterInput.value += " " + word;
+
+	// Set master as active and re-run
+	run_transformer_demo('transformer-master-token-input');
+};
 
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
 	const container = document.getElementById('transformer-output-projection');

@@ -32,13 +32,13 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 	<div>
 		<label style="font-weight: bold;">Network Depth ($N$): </label>
 		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
-		<input type="range" id="transformer-depth" min="1" max="12" value="2" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
+		<input type="range" id="transformer-depth" min="1" max="100" value="2" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
 	</div>
 </div>
 
 <div class="transformer_corpus">
 	<label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
-	<textarea id="transformer-training-data" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;"  oninput="run_transformer_demo()">the king is wise and the queen is brave and the queen is also wise and brave and the king is brave and wise</textarea>
+	<textarea id="transformer-training-data" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;"  oninput="run_transformer_demo('transformer-training-data')">the king is wise and the queen is brave and the queen is also wise and brave and the king is brave and wise</textarea>
 </div>
 
 <div style="background: #f0fdf4; padding: 15px; border: 1px solid #10b981; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;">
@@ -317,7 +317,7 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 
 <div>
 	<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
-	<input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;"  value="The king" oninput="run_transformer_demo()">
+	<input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;"  value="The king" oninput="run_transformer_demo('transformer-master-token-input')">
 </div>
 
 <div class="md">
