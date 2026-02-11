@@ -488,21 +488,28 @@ async function train_transformer() {
 }
 
 function convert_weights_to_tensors(weights) {
-	// weights is an array of objects [ {attention: {...}, W1: ...}, ... ]
+	const vocab = Object.keys(window.persistentEmbeddingSpace);
+	const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
+
 	const vars = {
 		layers: weights.map(layer => ({
+			// Attention Weights
 			wq: tf.variable(tf.tensor2d(layer.attention.query)),
 			wk: tf.variable(tf.tensor2d(layer.attention.key)),
 			wv: tf.variable(tf.tensor2d(layer.attention.value)),
-			wo: tf.variable(tf.tensor2d(layer.attention.output))
-		}))
+			wo: tf.variable(tf.tensor2d(layer.attention.output)),
+			// Layer Norm Parameters
+			gamma: tf.variable(tf.tensor1d(layer.gamma)),
+			beta: tf.variable(tf.tensor1d(layer.beta)),
+			// FFN Weights
+			w1: tf.variable(tf.tensor2d(layer.W1)),
+			b1: tf.variable(tf.tensor1d(layer.b1)),
+			w2: tf.variable(tf.tensor2d(layer.W2)),
+			b2: tf.variable(tf.tensor1d(layer.b2))
+		})),
+		embeddings: tf.variable(tf.tensor2d(embMatrix)),
+		vocab_map: vocab
 	};
-
-	const vocab = Object.keys(window.persistentEmbeddingSpace);
-	const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
-	vars.embeddings = tf.variable(tf.tensor2d(embMatrix));
-	vars.vocab_map = vocab;
-
 	return vars;
 }
 
@@ -511,40 +518,46 @@ function convert_weights_to_tensors(weights) {
  */
 function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 	const losses = [];
-
 	const thiscontextSize = Math.min(contextSize, tokens.length - 1);
 
-	// 1. Create the Causal Mask once per loss calculation
-	// The mask has 0 on the diagonal/lower triangle and -1e9 on the upper triangle
 	const mask = tf.tidy(() => {
-		const maskScale = tf.scalar(-1e9);
 		const ones = tf.ones([thiscontextSize, thiscontextSize]);
 		const upperTriangle = tf.linalg.bandPart(ones, 0, -1); 
 		const diagonal = tf.linalg.bandPart(ones, 0, 0);
-		const causalMask = tf.sub(upperTriangle, diagonal).mul(maskScale);
-		return causalMask;
+		return tf.sub(upperTriangle, diagonal).mul(tf.scalar(-1e9));
 	});
 
 	for (let startIdx = 0; startIdx < tokens.length - thiscontextSize; startIdx++) {
-		const inputIds = tokens.slice(startIdx, startIdx + thiscontextSize).map(t => vars.vocab_map.indexOf(t));
+		const inputIds = tokens.slice(startIdx, startIdx + thiscontextSize)
+			.map(t => vars.vocab_map.indexOf(t));
 		const targetId = vars.vocab_map.indexOf(tokens[startIdx + thiscontextSize]);
 
 		let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
 
 		for (let i = 0; i < n_layers; i++) {
-			const layer = vars.layers[i];
-			const q = tf.matMul(x, layer.wq);
-			const k = tf.matMul(x, layer.wk);
-			const v = tf.matMul(x, layer.wv);
+			const l = vars.layers[i];
 
-			// 2. Add the mask to scores before Softmax
+			// --- 1. Sub-Layer: Attention ---
+			let normX = tf_layer_norm(x, l.gamma, l.beta);
+			const q = tf.matMul(normX, l.wq);
+			const k = tf.matMul(normX, l.wk);
+			const v = tf.matMul(normX, l.wv);
+
 			let scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
-			scores = tf.add(scores, mask); 
-
+			scores = tf.add(scores, mask);
 			const weights = tf.softmax(scores);
 			const attention = tf.matMul(weights, v);
 
-			x = tf.add(x, tf.matMul(attention, layer.wo)); 
+			// Residual Connection
+			x = tf.add(x, tf.matMul(attention, l.wo));
+
+			// --- 2. Sub-Layer: Feed-Forward (FFN) ---
+			let normX2 = tf_layer_norm(x, l.gamma, l.beta);
+			let ffn = tf.relu(tf.add(tf.matMul(normX2, l.w1), l.b1));
+			ffn = tf.add(tf.matMul(ffn, l.w2), l.b2);
+
+			// Residual Connection
+			x = tf.add(x, ffn);
 		}
 
 		const lastTokenVector = x.slice([thiscontextSize - 1, 0], [1, d_model]);
@@ -554,7 +567,7 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 		losses.push(tf.losses.softmaxCrossEntropy(label, logits));
 	}
 
-	mask.dispose(); // Clean up mask tensor memory
+	mask.dispose();
 	return tf.addN(losses).div(tf.scalar(losses.length));
 }
 
@@ -1635,4 +1648,13 @@ function calculate_batched_loss(tokens, weights, d_model, n_layers, batchSize = 
 		totalLoss += calculate_corpus_loss(tokens, weights, d_model, n_layers);
 	}
 	return totalLoss / batchSize;
+}
+
+function tf_layer_norm(x, gamma, beta) {
+	return tf.tidy(() => {
+		const { mean, variance } = tf.moments(x, -1, true);
+		const epsilon = tf.scalar(1e-6);
+		const normalized = x.sub(mean).div(tf.sqrt(variance.add(epsilon)));
+		return normalized.mul(gamma).add(beta);
+	});
 }
