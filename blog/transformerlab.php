@@ -59,7 +59,7 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Learning Rate:</label>
-            <input type="number" id="train-lr" value="0.05" step="0.01" style="width: 70px; padding: 4px;">
+            <input type="number" id="train-lr" value="0.0001" step="0.01" style="width: 70px; padding: 4px;">
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Optimizer:</label>
