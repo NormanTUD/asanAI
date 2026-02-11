@@ -751,9 +751,7 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 		window.last_d_model = d_model;
 		window.last_n_heads = n_heads;
 	}
-		window.currentWeights = get_init_weights(n_layers, d_model);
-		window.last_d_model = d_model; // Ensure we track dimension changes too
-	}
+
 	var weights = window.currentWeights;
 
 	var embeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
