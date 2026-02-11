@@ -33,13 +33,20 @@ const attentionObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 
 function get_or_init_embeddings(tokens, d_model) {
-	// Reset if dimensions changed
+	// 1. Ensure the global space exists before any logic
+	if (window.persistentEmbeddingSpace === null) {
+		window.persistentEmbeddingSpace = {};
+	}
+
+	// 2. Reset if dimensions changed
 	if (window.last_d_model !== d_model) {
 		window.persistentEmbeddingSpace = {};
 		window.last_d_model = d_model;
 	}
 
+	// 3. Capture the reference AFTER potential resets
 	const space = window.persistentEmbeddingSpace;
+	
 	const gaussianRandom = () => {
 		let u = 0, v = 0;
 		while(u === 0) u = Math.random();
@@ -48,6 +55,7 @@ function get_or_init_embeddings(tokens, d_model) {
 	};
 
 	tokens.forEach(token => {
+		// space is now guaranteed to be an object {}
 		if (!space[token]) {
 			space[token] = Array.from({ length: d_model }, () =>
 				parseFloat(gaussianRandom().toFixed(nr_fixed))
@@ -753,8 +761,10 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 	const vocabulary = [...new Set(trainingTokens)];
 	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
 
-	if (!window.currentWeights) {
+	// FIX: Re-initialize weights if the depth (n_layers) or dimension (d_model) has changed
+	if (!window.currentWeights || window.currentWeights.length !== n_layers || window.last_d_model !== d_model) {
 		window.currentWeights = get_init_weights(n_layers, d_model);
+		window.last_d_model = d_model; // Ensure we track dimension changes too
 	}
 	var weights = window.currentWeights;
 
