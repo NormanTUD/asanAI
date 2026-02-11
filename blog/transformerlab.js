@@ -1034,7 +1034,7 @@ function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma
     `;
 
 	document.getElementById('ffn-step-3').innerHTML = `
-	<div style="margin-bottom:10px;">$$ h_2 = h_1 + (\\gamma_{ffn} \\odot \\text{std}(\\text{out}_{L2}) + \\beta_{ffn}) $$</div>
+	<div style="margin-bottom:10px;">$$ h_2 = h_1 + (\\gamma_\\text{ffn} \\odot \\text{std}(\\text{out}_{L2}) + \\beta_\\text{ffn}) $$</div>
 	$$ ${rawMP(h2)} = ${rawMP(h1)} + \\left( \\underbrace{${rawVP(gamma)}}_{\\gamma} \\odot ${rawMP(stdFFN)} + \\underbrace{${rawVP(beta)}}_{\\beta} \\right) $$
     `;
 
