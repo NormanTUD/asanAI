@@ -395,87 +395,139 @@ window.currentWeights = null;
 window.lossHistory = [];
 
 /**
- * REPLACED: train_transformer
- * Logic: Implements Stochastic Hill Climbing (Evolution Strategy)
- * It actually minimizes Cross-Entropy Loss on the training data.
+ * Modern Training Loop using TensorFlow.js
+ * Replaces random mutation with Backpropagation
  */
 async function train_transformer() {
 	const status = document.getElementById('training-status');
-	// Using learning rate as "mutation scale"
-	const mutationScale = parseFloat(document.getElementById('train-lr').value) || 0.05; 
-	const epochs = parseInt(document.getElementById('train-epochs').value) || 50;
+	const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
+	const epochs = parseInt(document.getElementById('train-epochs').value) || 500;
+	const optType = document.getElementById('train-optimizer').value;
 
-	const trainingInput = document.getElementById('transformer-training-data');
-	if (!trainingInput) return;
+	const d_model = parseInt(document.getElementById('transformer-dimension-model').value);
+	const n_layers = parseInt(document.getElementById('transformer-depth').value);
 
-	// 1. Prepare Data
-	// We treat the text in "Training Data" as the ground truth sequence.
-	const tokens = transformer_tokenize_render(trainingInput.value, null); // Get raw tokens
-	if (tokens.length < 2) {
-		status.innerText = "Error: Need at least 2 tokens to train.";
-		return;
-	}
+	// 1. Setup Optimizer
+	let optimizer;
+	if (optType === 'adam') optimizer = tf.train.adam(lr);
+	else if (optType === 'rmsprop') optimizer = tf.train.rmsprop(lr);
+	else optimizer = tf.train.sgd(lr);
 
-	// Initialize weights if needed
-	const dimSlider = document.getElementById('transformer-dimension-model');
-	const d_model = parseInt(dimSlider.value);
-	const depthSlider = document.getElementById('transformer-depth');
-	const n_layers = parseInt(depthSlider.value);
+	const trainingData = document.getElementById('transformer-training-data').value;
+	const tokens = transformer_tokenize_render(trainingData, null);
 
-	// Ensure embeddings exist
-	get_or_init_embeddings(tokens, d_model);
-
+	// 2. Fix: Ensure weights exist before conversion
 	if (!window.currentWeights) {
 		window.currentWeights = get_init_weights(n_layers, d_model);
 	}
 
-	// 2. Training Loop
-	for (let e = 0; e < epochs; e++) {
-		// A. Calculate Baseline Loss
-		const currentLoss = calculate_corpus_loss(tokens, window.currentWeights, d_model, n_layers);
+	// Ensure embedding space is initialized for the vocab
+	get_or_init_embeddings(tokens, d_model);
 
-		// B. Create Candidate Weights (Mutation)
-		// Deep copy current weights to create a candidate
-		const candidateWeights = JSON.parse(JSON.stringify(window.currentWeights));
-		const candidateEmbeddings = JSON.parse(JSON.stringify(window.persistentEmbeddingSpace));
+	const weightVars = convert_weights_to_tensors(window.currentWeights);
 
-		// Apply random mutations to candidate
-		mutate_weights_structure(candidateWeights, candidateEmbeddings, mutationScale);
-
-		// C. Calculate Candidate Loss
-		// We temporarily swap global embeddings to test the candidate
-		const oldEmbeddings = window.persistentEmbeddingSpace;
-		window.persistentEmbeddingSpace = candidateEmbeddings;
-
-		const candidateLoss = calculate_corpus_loss(tokens, candidateWeights, d_model, n_layers);
-
-		// D. Selection Step (The "Training" part)
-		if (candidateLoss < currentLoss) {
-			// Improvement! Keep the candidate.
-			window.currentWeights = candidateWeights;
-			// window.persistentEmbeddingSpace is already set to candidateEmbeddings
-			window.lossHistory.push(candidateLoss);
-		} else {
-			// No improvement. Revert.
-			window.persistentEmbeddingSpace = oldEmbeddings; // Restore old embeddings
-			// window.currentWeights remains the old ones
-			window.lossHistory.push(currentLoss);
-		}
-
-		// E. UI Updates
-		if (e % 2 === 0) { // Update UI every few steps
-			requestAnimationFrame(() => {
-				const current = window.lossHistory[window.lossHistory.length-1];
-				status.innerText = `Epoch ${window.lossHistory.length} - Loss: ${current.toFixed(4)}`;
-				renderLossGraph();
-
-				// Visualize occasionally
-				if (e % 10 === 0) run_transformer_demo();
+	for (let i = 0; i < epochs; i++) {
+		const cost = optimizer.minimize(() => {
+			return tf.tidy(() => {
+				return calculate_tf_loss(tokens, weightVars, d_model, n_layers);
 			});
-			await new Promise(r => setTimeout(r, 0)); // Yield to UI
+		}, true);
+
+		const lossValue = await cost.data();
+		window.lossHistory.push(lossValue[0]);
+
+		if (i % 5 === 0) {
+			status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(4)}`;
+			renderLossGraph();
+			await tf.nextFrame();
 		}
+		cost.dispose();
 	}
+
+	status.innerText = "Training Complete!";
+	window.currentWeights = await convert_tensors_to_weights(weightVars);
 }
+
+function convert_weights_to_tensors(weights) {
+	// weights is an array of objects [ {attention: {...}, W1: ...}, ... ]
+	const vars = {
+		layers: weights.map(layer => ({
+			wq: tf.variable(tf.tensor2d(layer.attention.query)),
+			wk: tf.variable(tf.tensor2d(layer.attention.key)),
+			wv: tf.variable(tf.tensor2d(layer.attention.value)),
+			wo: tf.variable(tf.tensor2d(layer.attention.output))
+		}))
+	};
+
+	const vocab = Object.keys(window.persistentEmbeddingSpace);
+	const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
+	vars.embeddings = tf.variable(tf.tensor2d(embMatrix));
+	vars.vocab_map = vocab;
+
+	return vars;
+}
+
+/**
+ * Performs a forward pass and calculates cross-entropy loss
+ */
+function calculate_tf_loss(tokens, vars, d_model, n_layers) {
+	const contextSize = 4;
+	const startIdx = Math.floor(Math.random() * (tokens.length - contextSize - 1));
+
+	// Get IDs for input tokens
+	const inputIds = tokens.slice(startIdx, startIdx + contextSize).map(t => vars.vocab_map.indexOf(t));
+	const targetId = vars.vocab_map.indexOf(tokens[startIdx + contextSize]);
+
+	// Simple embedding lookup
+	let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
+
+	// Process through layers
+	for (let i = 0; i < n_layers; i++) {
+		const layer = vars.layers[i];
+
+		// Simplified Attention: (Q @ K.T) @ V
+		const q = tf.matMul(x, layer.wq);
+		const k = tf.matMul(x, layer.wk);
+		const v = tf.matMul(x, layer.wv);
+
+		const scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
+		const weights = tf.softmax(scores);
+		const attention = tf.matMul(weights, v);
+
+		x = tf.add(x, tf.matMul(attention, layer.wo)); // Residual connection
+	}
+
+	// Output head: project back to vocab size
+	const lastTokenVector = x.slice([contextSize - 1, 0], [1, d_model]);
+	const logits = tf.matMul(lastTokenVector, vars.embeddings.transpose());
+
+	const label = tf.oneHot(tf.tensor1d([targetId], 'int32'), vars.vocab_map.length);
+	return tf.losses.softmaxCrossEntropy(label, logits);
+}
+
+/**
+ * Converts Tensors back to JS Arrays for visualization
+ */
+async function convert_tensors_to_weights(vars) {
+	const newWeights = { layers: [] };
+	for (const layer of vars.layers) {
+		newWeights.layers.push({
+			wq: (await layer.wq.array()),
+			wk: (await layer.wk.array()),
+			wv: (await layer.wv.array()),
+			wo: (await layer.wo.array())
+		});
+	}
+
+	// Update the embedding space
+	const embArray = await vars.embeddings.array();
+	vars.vocab_map.forEach((word, i) => {
+		window.persistentEmbeddingSpace[word] = embArray[i];
+	});
+
+	return newWeights;
+}
+
 
 /**
  * NEW Helper: Calculate Cross-Entropy Loss over the corpus
@@ -1597,4 +1649,12 @@ async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
 	run_transformer_demo()
 	return Promise.resolve();
+}
+
+function calculate_batched_loss(tokens, weights, d_model, n_layers, batchSize = 5) {
+	let totalLoss = 0;
+	for(let i = 0; i < batchSize; i++) {
+		totalLoss += calculate_corpus_loss(tokens, weights, d_model, n_layers);
+	}
+	return totalLoss / batchSize;
 }
