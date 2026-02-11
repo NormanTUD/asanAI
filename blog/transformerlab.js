@@ -1616,12 +1616,6 @@ function render_positional_shift_plot(tokens, d_model, embeddingSpace) {
 	return injectedEmbeddings; // Return the shifted data for the next stage
 }
 
-async function loadTransformerModule () {
-	updateLoadingStatus("Loading section about transformers...");
-	run_transformer_demo()
-	return Promise.resolve();
-}
-
 function calculate_batched_loss(tokens, weights, d_model, n_layers, batchSize = 5) {
 	let totalLoss = 0;
 	for(let i = 0; i < batchSize; i++) {
@@ -1637,4 +1631,10 @@ function tf_layer_norm(x, gamma, beta) {
 		const normalized = x.sub(mean).div(tf.sqrt(variance.add(epsilon)));
 		return normalized.mul(gamma).add(beta);
 	});
+}
+
+async function loadTransformerModule () {
+	updateLoadingStatus("Loading section about transformers...");
+	run_transformer_demo()
+	return Promise.resolve();
 }
