@@ -217,11 +217,17 @@ class AttentionEngine {
 
 	generateMathTable(head, tokens) {  
 		const { this_weights, Qi, Ki, Vi, h0, WQ, WK, WV } = head;
-
-		const toColPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
 		const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
 
-		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.52rem;">`;
+		const wq_wk_wv_matrix_html = `
+			$$ W_Q = ${toMatrix(WQ)} $$
+			$$ W_K = ${toMatrix(WK)} $$
+			$$ W_V = ${toMatrix(WV)} $$
+		`;
+
+		const toColPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
+
+		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.52rem;">${wq_wk_wv_matrix_html}`;
 
 		// Header (Keys)
 		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
@@ -250,11 +256,11 @@ class AttentionEngine {
 
 				const cellEq = `
 	    \\text{SoftMax} \\left( \\frac{ 
-		\\overbrace{ \\left( \\underbrace{${toMatrix(WQ)}}_{W_Q} \\underbrace{${toColPmatrix(h0[i])}}_{h_i} \\right)^T }^{Q_i^T} \\cdot 
-		\\overbrace{ \\left( \\underbrace{${toMatrix(WK)}}_{W_K} \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }^{K_j} 
+		\\overbrace{ \\left( W_Q \\underbrace{${toColPmatrix(h0[i])}}_{h_i} \\right)^T }^{Q_i^T} \\cdot 
+		\\overbrace{ \\left( W_K \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }^{K_j} 
 	    }{ \\underbrace{\\sqrt{${dk_int}}}_{\\sqrt{d_\\text{model}}} } \\right) \\cdot V_j \\\\
 	    = \\underbrace{${weight.toFixed(nr_fixed)}}_{\\text{Weight}} \\cdot 
-	      \\underbrace{ \\left( \\underbrace{${toMatrix(WV)}}_{W_V} \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }_{V_j} \\\\
+	      \\underbrace{ \\left( W_V \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }_{V_j} \\\\
 	    = ${toColPmatrix(resultVec)}
 	    `;                               
 
