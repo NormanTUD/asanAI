@@ -6,6 +6,35 @@
 
 const nr_fixed = 4;
 
+// Add to the top of the file with other persistent states
+window.persistentEmbeddingSpace = null;
+window.last_d_model = null;
+
+function get_or_init_embeddings(tokens, d_model) {
+	// Reset if dimensions changed
+	if (window.last_d_model !== d_model) {
+		window.persistentEmbeddingSpace = {};
+		window.last_d_model = d_model;
+	}
+
+	const space = window.persistentEmbeddingSpace;
+	const gaussianRandom = () => {
+		let u = 0, v = 0;
+		while(u === 0) u = Math.random();
+		while(v === 0) v = Math.random();
+		return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+	};
+
+	tokens.forEach(token => {
+		if (!space[token]) {
+			space[token] = Array.from({ length: d_model }, () =>
+				parseFloat(gaussianRandom().toFixed(nr_fixed))
+			);
+		}
+	});
+	return space;
+}
+
 function initWeights(r, c) {
 	const limit = Math.sqrt(6 / (r + c));
 	return Array.from({ length: r }, () => 
@@ -349,6 +378,7 @@ async function train_transformer() {
 }
 
 function updateWeights(weights, lr) {
+	// Update Transformer Layers (Existing logic)
 	weights.forEach(layer => {
 		['query', 'key', 'value'].forEach(part => {
 			layer.attention[part] = layer.attention[part].map(row =>
@@ -356,6 +386,15 @@ function updateWeights(weights, lr) {
 			);
 		});
 	});
+
+	// NEW: Update Embedding Space
+	if (window.persistentEmbeddingSpace) {
+		Object.keys(window.persistentEmbeddingSpace).forEach(token => {
+			window.persistentEmbeddingSpace[token] = window.persistentEmbeddingSpace[token].map(v => 
+				v + (Math.random() - 0.5) * lr
+			);
+		});
+	}
 }
 
 function renderLossGraph() {
@@ -399,7 +438,7 @@ function run_and_visualize_network(inputTokens, trainingTokens) {
 	}
 	var weights = window.currentWeights;
 
-	var embeddingSpace = generateEmbeddingSpace(trainingTokens, d_model);
+	var embeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
 
 	calculate_positional_injection(knownTokens, d_model);
 	render_positional_waves(d_model, knownTokens);
@@ -659,28 +698,6 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
 			}]
 		});
 	}
-}
-
-function generateEmbeddingSpace(tokens, d_model) {
-	const embeddingSpace = {};
-
-	// Helper for Normal Distribution (Realistic spread)
-	const gaussianRandom = () => {
-		let u = 0, v = 0;
-		while(u === 0) u = Math.random();
-		while(v === 0) v = Math.random();
-		return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-	};
-
-	tokens.forEach(token => {
-		// We seed the randomness with the token hash to ensure consistency
-		// across re-renders while maintaining a "spread"
-		embeddingSpace[token] = Array.from({ length: d_model }, () =>
-			parseFloat(gaussianRandom().toFixed(nr_fixed))
-		);
-	});
-
-	return embeddingSpace;
 }
 
 function render_embedding_plot(embeddingSpace, dimensions) {
