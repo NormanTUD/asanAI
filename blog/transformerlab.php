@@ -26,13 +26,13 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 	<div>
 		<label style="font-weight: bold;">Attention Heads ($h$): </label>
 		<span id="heads-val" style="font-weight: bold; color: #3b82f6;">1</span>
-		<input type="range" id="transformer-heads" min="1" max="8" value="1" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('heads-val').innerText = this.value; run_transformer_demo();">
+		<input type="range" id="transformer-heads" min="1" max="8" value="4" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('heads-val').innerText = this.value; run_transformer_demo();">
 	</div>
 
 	<div>
 		<label style="font-weight: bold;">Network Depth ($N$): </label>
 		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
-		<input type="range" id="transformer-depth" min="1" max="12" value="2" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
+		<input type="range" id="transformer-depth" min="1" max="12" value="4" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
 	</div>
 
 
