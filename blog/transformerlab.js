@@ -447,44 +447,44 @@ function get_init_weights(n_layers, d_model) {
  * Replaces random mutation with Backpropagation
  */
 async function train_transformer() {
-    const status = document.getElementById('training-status');
-    const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
-    const epochs = parseInt(document.getElementById('train-epochs').value) || 500;
-    const optType = document.getElementById('train-optimizer').value;
+	const status = document.getElementById('training-status');
+	const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
+	const epochs = parseInt(document.getElementById('train-epochs').value) || 500;
+	const optType = document.getElementById('train-optimizer').value;
 
-    const d_model = parseInt(document.getElementById('transformer-dimension-model').value);
-    const n_layers = parseInt(document.getElementById('transformer-depth').value);
+	const d_model = parseInt(document.getElementById('transformer-dimension-model').value);
+	const n_layers = parseInt(document.getElementById('transformer-depth').value);
 
-    let optimizer = optType === 'adam' ? tf.train.adam(lr) : 
-        optType === 'rmsprop' ? tf.train.rmsprop(lr) : tf.train.sgd(lr);
+	let optimizer = optType === 'adam' ? tf.train.adam(lr) : 
+		optType === 'rmsprop' ? tf.train.rmsprop(lr) : tf.train.sgd(lr);
 
-    const trainingData = document.getElementById('transformer-training-data').value;
-    const tokens = transformer_tokenize_render(trainingData, null);
+	const trainingData = document.getElementById('transformer-training-data').value;
+	const tokens = transformer_tokenize_render(trainingData, null);
 
-    if (!window.currentWeights) window.currentWeights = get_init_weights(n_layers, d_model);
-    get_or_init_embeddings(tokens, d_model);
+	if (!window.currentWeights) window.currentWeights = get_init_weights(n_layers, d_model);
+	get_or_init_embeddings(tokens, d_model);
 
-    // CRITICAL: Ensure vocab order is fixed for tensor indices
-    const weightVars = convert_weights_to_tensors(window.currentWeights);
+	// CRITICAL: Ensure vocab order is fixed for tensor indices
+	const weightVars = convert_weights_to_tensors(window.currentWeights);
 
-    for (let i = 0; i < epochs; i++) {
-        const cost = optimizer.minimize(() => {
-            return tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers));
-        }, true);
+	for (let i = 0; i < epochs; i++) {
+		const cost = optimizer.minimize(() => {
+			return tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers));
+		}, true);
 
-        const lossValue = await cost.data();
-        window.lossHistory.push(lossValue[0]);
+		const lossValue = await cost.data();
+		window.lossHistory.push(lossValue[0]);
 
-        if (i % 25 === 0 || i === epochs - 1) {
-            window.currentWeights = await convert_tensors_to_weights(weightVars);
-            status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(6)}`;
-            renderLossGraph();
-            run_transformer_demo(); 
-            await tf.nextFrame();
-        }
-        cost.dispose();
-    }
-    status.innerText = "Training Complete & Synced!";
+		if (i % 25 === 0 || i === epochs - 1) {
+			window.currentWeights = await convert_tensors_to_weights(weightVars);
+			status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(6)}`;
+			renderLossGraph();
+			run_transformer_demo(); 
+			await tf.nextFrame();
+		}
+		cost.dispose();
+	}
+	status.innerText = "Training Complete & Synced!";
 }
 
 function convert_weights_to_tensors(weights) {
