@@ -1127,40 +1127,46 @@ function render_embedding_plot(embeddingSpace, dimensions) {
 // Updated Tokenizer to allow different containers
 function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") {
 	const container = document.getElementById(containerId);
-	// If container doesn't exist, we just return tokens without rendering (silent mode)
+
+	const typeElement = document.getElementById('transformer-tokenizer-type');
+	const type = typeElement ? typeElement.value : 'regex';
 
 	let tokens = [];
 	const cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,""); // `
-	const words = cleanText.split(/\s+/);
+		const words = cleanText.split(/\s+/);
 
-	words.forEach(word => {
-		let found = false;
-		for (let unit of subUnits) {
-			if (word.toLowerCase().endsWith(unit) && word.length > unit.length) {
-				tokens.push(word.substring(0, word.length - unit.length));
-				tokens.push("##" + unit);
-				found = true;
-				break;
-			}
+		if (type === 'bpe') {
+			// Character-level / Subword Split: 
+			// We split by words first, then break long words into chunks to simulate BPE behavior
+			const words = text.match(/\S+|\s+/g) || [];
+			tokens = words.flatMap(word => {
+				if (word.length > 4) {
+					// Split long words into chunks of 3 for demonstration
+					return word.match(/.{1,3}/g);
+				}
+				return word;
+			});
+		} else {
+			// Standard Regex Word Split: 
+			// Matches sequences of alphanumeric characters or single non-alphanumeric characters
+			tokens = text.match(/[\w]+|[^\w\s]/g) || [];
 		}
-		if (!found && word.length > 0) tokens.push(word);
-	});
 
-	if (container) {
-		container.innerHTML = tokens.map(t => {
-			const hash = t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-			const hue = Math.abs(hash) % 360;
-			return `
+		if (container) {
+			container.innerHTML = tokens.map(t => {
+				const hash = t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+				const hue = Math.abs(hash) % 360;
+				return `
 		<div style="background: hsl(${hue}, 65%, 40%); color: white; padding: 5px 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center;">
 		${t}
 		<span style="font-size: 0.6rem; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; text-align: center;">ID: ${Math.abs(hash) % 1000}</span>
 		</div>
 		`;
-		}).join('');
-	}
+			}).join('');
+		}
 
-	return tokens;
-}
+		return tokens;
+	}
 
 function render_causal_mask(tokens) {
 	const container = document.getElementById('transformer-causal-mask-display');
