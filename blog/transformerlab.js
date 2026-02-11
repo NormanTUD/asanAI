@@ -135,9 +135,9 @@ generateMathTable(head, tokens) {
     this_weights.forEach((row, i) => {
         html += `<tr>`;
         html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
-            <strong>${tokens[i]}</strong><br><small>
-            $\\underbrace{${toMatrix(WQ)}}_{W_Q} \\cdot \\underbrace{${toColPmatrix(h0[i])}}_{h_{${i}}} = \\underbrace{${toColPmatrix(Qi[i])}}_{Q_{${i}}}$
-            </small></td>`;      
+		    <strong>${tokens[i]}</strong><br>
+		    $\\underbrace{${toMatrix(WQ)}}_{W_Q} \\cdot \\underbrace{${toColPmatrix(h0[i])}}_{h_{${i}}} = \\underbrace{${toColPmatrix(Qi[i])}}_{Q_{${i}}}$
+            </td>`;      
                                   
         row.forEach((weight, j) => {
             const intensity = Math.floor(255 - (weight * 150));

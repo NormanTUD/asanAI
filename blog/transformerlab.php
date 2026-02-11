@@ -207,6 +207,8 @@ Instead of one massive attention operation, we use **Multi-Head Attention**. We 
 $$
 \underbrace{\text{head}_i}_{(B, T, d_v)} = \text{Attention}(\underbrace{\underbrace{h_0}_{(B, T, d)} \cdot \underbrace{W_i^Q}_{(d, d_v)}}_{Q: (B, T, d_v)}, \underbrace{\underbrace{h_0}_{(B, T, d)} \cdot \underbrace{W_i^K}_{(d, d_v)}}_{K: (B, T, d_v)}, \underbrace{\underbrace{h_0}_{(B, T, d)} \cdot \underbrace{W_i^V}_{(d, d_v)}}_{V: (B, T, d_v)})
 $$
+
+The association between *Query* and *Key* and concrete tokens is only true in the first layer, where it is taken from the concrete embeddings. In further layers, it works on the abstract feature space instead.
 </div>
 
 <div id="mha-calculation-details" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #3b82f6; margin-top: 20px;">
