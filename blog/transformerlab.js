@@ -694,54 +694,6 @@ function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
 	return Math.max(0, loss); // ensure non-negative
 }
 
-/**
- * NEW Helper: Mutate Weights
- * Applies random gaussian noise to all learnable parameters
- */
-function mutate_weights_structure(weights, embeddingSpace, scale) {
-	// 1. Mutate Embeddings
-	Object.keys(embeddingSpace).forEach(k => {
-		embeddingSpace[k] = embeddingSpace[k].map(v => 
-			// 50% chance to mutate a specific value
-			Math.random() > 0.5 ? v + (Math.random() - 0.5) * scale : v
-		);
-	});
-
-	// 2. Mutate Layers
-	weights.forEach(layer => {
-		// Attention
-		['query', 'key', 'value', 'output'].forEach(key => {
-			mutate_matrix(layer.attention[key], scale);
-		});
-		// FFN
-		mutate_matrix(layer.W1, scale);
-		mutate_matrix(layer.W2, scale);
-		mutate_vector(layer.b1, scale);
-		mutate_vector(layer.b2, scale);
-		// Norms
-		mutate_vector(layer.gamma, scale * 0.1); // Mutate norms less
-		mutate_vector(layer.beta, scale * 0.1);
-	});
-}
-
-function mutate_matrix(mat, scale) {
-	for(let i=0; i<mat.length; i++) {
-		for(let j=0; j<mat[i].length; j++) {
-			if(Math.random() > 0.8) { // Sparsity: only mutate 20% of weights per step for stability
-				mat[i][j] += (Math.random() - 0.5) * scale;
-			}
-		}
-	}
-}
-
-function mutate_vector(vec, scale) {
-	for(let i=0; i<vec.length; i++) {
-		if(Math.random() > 0.8) {
-			vec[i] += (Math.random() - 0.5) * scale;
-		}
-	}
-}
-
 function renderLossGraph() {
 	const trace = {
 		x: Array.from({length: window.lossHistory.length}, (_, i) => i),
