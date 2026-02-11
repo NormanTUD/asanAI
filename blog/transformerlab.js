@@ -256,11 +256,11 @@ class AttentionEngine {
 
 				const cellEq = `
 	    \\text{SoftMax} \\left( \\frac{ 
-		\\overbrace{ \\left( W_Q \\underbrace{${toColPmatrix(h0[i])}}_{h_i} \\right)^T }^{Q_i^T} \\cdot 
-		\\overbrace{ \\left( W_K \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }^{K_j} 
+		\\overbrace{ \\left( W_Q \\cdot \\underbrace{${toColPmatrix(h0[i])}}_{h_i} \\right)^T }^{Q_i^T} \\cdot 
+		\\overbrace{ \\left( W_K \\cdot \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }^{K_j} 
 	    }{ \\underbrace{\\sqrt{${dk_int}}}_{\\sqrt{d_\\text{model}}} } \\right) \\cdot V_j \\\\
 	    = \\underbrace{${weight.toFixed(nr_fixed)}}_{\\text{Weight}} \\cdot 
-	      \\underbrace{ \\left( W_V \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }_{V_j} \\\\
+	      \\underbrace{ \\left( W_V \\cdot \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }_{V_j} \\\\
 	    = ${toColPmatrix(resultVec)}
 	    `;                               
 
