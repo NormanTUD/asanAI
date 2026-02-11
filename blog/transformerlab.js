@@ -215,7 +215,7 @@ class AttentionEngine {
 		console.log("Temml done");
 	}
 
-	generateMathTable(head, tokens) {  
+	generateMathTable(head, tokens) {
 		const { this_weights, Qi, Ki, Vi, h0, WQ, WK, WV } = head;
 		const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
 
@@ -232,47 +232,45 @@ class AttentionEngine {
 		// Header (Keys)
 		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
 		tokens.forEach((t, j) => {
-			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Key:
-	    ${t}
-	    </th>`;      
-		});              
-		html += `</tr>`;  
+			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Key: ${t}</th>`;
+		});
+		html += `</tr>`;
 
 		// Rows (Queries)
 		this_weights.forEach((row, i) => {
 			html += `<tr>`;
-			// Simplified and fixed LaTeX labeling
-			const label = `\\text{Embed}_{\\text{${tokens[i]}}}`;
-
-			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
-    <strong>Query: ${tokens[i]}</strong><br>
-</td>`;
+			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;"><strong>Query: ${tokens[i]}</strong></td>`;
 
 			row.forEach((weight, j) => {
 				const intensity = Math.floor(255 - (weight * 150));
 				const bgColor = `rgb(${intensity}, ${intensity}, 255)`;
 				const dk_int = Math.round(this.d_k);
-				const resultVec = Vi[j].map(v => v * weight);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+				const resultVec = Vi[j].map(v => v * weight);
 
-				const cellEq = `
-	    \\text{SoftMax} \\left( \\frac{ 
-		\\overbrace{ \\left( W_Q \\cdot \\underbrace{${toColPmatrix(h0[i])}}_{h_i} \\right)^T }^{Q_i^T} \\cdot 
-		\\overbrace{ \\left( W_K \\cdot \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }^{K_j} 
-	    }{\\sqrt{${dk_int}}} \\right) \\cdot V_j \\\\
-	    = \\underbrace{${weight.toFixed(nr_fixed)}}_{\\text{Weight}} \\cdot 
-	      \\underbrace{ \\left( W_V \\cdot \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }_{V_j} \\\\
-	    = ${toColPmatrix(resultVec)}
-	    `;                               
+				let cellEq;
+				// First entry (0,0) gets the full derivation
+				if (i === 0 && j === 0) {
+					cellEq = `
+						\\text{SoftMax} \\left( \\frac{
+							\\overbrace{ \\left( W_Q \\cdot \\underbrace{${toColPmatrix(h0[i])}}_{h_i} \\right)^T }^{Q_i^T} \\cdot
+							\\overbrace{ \\left( W_K \\cdot \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }^{K_j}
+						}{\\sqrt{${dk_int}}} \\right) \\cdot V_j
+						= \\underbrace{${weight.toFixed(nr_fixed)}}_{\\text{Weight}} \\cdot
+						  \\underbrace{ \\left( W_V \\cdot \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }_{V_j}
+						= ${toColPmatrix(resultVec)}
+					`.replace(/\s+/g, ' '); // Clean up whitespace for the parser
+				} else {
+					// Concatenation of results only
+					cellEq = `\\underbrace{${toColPmatrix(h0[i])}}_{h_i}, \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\rightarrow ${toColPmatrix(resultVec)}`;
+				}
 
-				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">
-		$${cellEq}$                  
-	    </td>`;                          
-			});      
+				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">$${cellEq}$</td>`;
+			});
 			html += `</tr>`;
-		});              
+		});
 
 		html += `</table>`;
-		return html;     
+		return html;
 	}
 }
 
