@@ -407,45 +407,53 @@ async function train_transformer() {
 	const d_model = parseInt(document.getElementById('transformer-dimension-model').value);
 	const n_layers = parseInt(document.getElementById('transformer-depth').value);
 
-	// 1. Setup Optimizer
-	let optimizer;
-	if (optType === 'adam') optimizer = tf.train.adam(lr);
-	else if (optType === 'rmsprop') optimizer = tf.train.rmsprop(lr);
-	else optimizer = tf.train.sgd(lr);
+	let optimizer = optType === 'adam' ? tf.train.adam(lr) : 
+		optType === 'rmsprop' ? tf.train.rmsprop(lr) : tf.train.sgd(lr);
 
 	const trainingData = document.getElementById('transformer-training-data').value;
 	const tokens = transformer_tokenize_render(trainingData, null);
 
-	// 2. Fix: Ensure weights exist before conversion
-	if (!window.currentWeights) {
-		window.currentWeights = get_init_weights(n_layers, d_model);
-	}
-
-	// Ensure embedding space is initialized for the vocab
+	if (!window.currentWeights) window.currentWeights = get_init_weights(n_layers, d_model);
 	get_or_init_embeddings(tokens, d_model);
 
+	// Convert to TF Variables
 	const weightVars = convert_weights_to_tensors(window.currentWeights);
 
 	for (let i = 0; i < epochs; i++) {
 		const cost = optimizer.minimize(() => {
-			return tf.tidy(() => {
-				return calculate_tf_loss(tokens, weightVars, d_model, n_layers);
-			});
+			return tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers));
 		}, true);
 
 		const lossValue = await cost.data();
 		window.lossHistory.push(lossValue[0]);
 
-		if (i % 5 === 0) {
+		// --- THE UPDATE SYNC ---
+		// Every 10 epochs, sync Tensors back to JS so the UI updates
+		if (i % 10 === 0 || i === epochs - 1) {
+			// Update the global JS objects with the new trained values
+			window.currentWeights = await convert_tensors_to_weights(weightVars);
+
 			status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(4)}`;
+
+			// Re-run the visual components
 			renderLossGraph();
-			await tf.nextFrame();
+			run_transformer_demo(); // This updates the "Predicted" text
+			if (typeof render_all_matrices === 'function') {
+				render_all_matrices(); // Updates the heatmaps
+			}
+
+			await tf.nextFrame(); // Let the UI breathe
 		}
 		cost.dispose();
 	}
 
-	status.innerText = "Training Complete!";
-	window.currentWeights = await convert_tensors_to_weights(weightVars);
+	status.innerText = "Training Complete & Synced!";
+
+	// Cleanup variables to free GPU memory
+	Object.values(weightVars.layers).forEach(l => {
+		l.wq.dispose(); l.wk.dispose(); l.wv.dispose(); l.wo.dispose();
+	});
+	weightVars.embeddings.dispose();
 }
 
 function convert_weights_to_tensors(weights) {
@@ -505,17 +513,31 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 	return tf.losses.softmaxCrossEntropy(label, logits);
 }
 
-/**
- * Converts Tensors back to JS Arrays for visualization
- */
 async function convert_tensors_to_weights(vars) {
-	const newWeights = { layers: [] };
+	// 1. Change: Initialize as an Array, not an object { layers: [] }
+	const newWeights = []; 
+
 	for (const layer of vars.layers) {
-		newWeights.layers.push({
-			wq: (await layer.wq.array()),
-			wk: (await layer.wk.array()),
-			wv: (await layer.wv.array()),
-			wo: (await layer.wo.array())
+		// 2. Change: Push directly to the array
+		newWeights.push({
+			gamma: (layer.gamma ? await layer.gamma.array() : []), // Add safety check if you added norms to tensors later
+			beta: (layer.beta ? await layer.beta.array() : []),
+			attention: {
+				query: (await layer.wq.array()),
+				key: (await layer.wk.array()),
+				value: (await layer.wv.array()),
+				output: (await layer.wo.array())
+			},
+			// Note: If you train FFN layers (W1, W2), you need to export them here too. 
+			// Based on your current training loop, you might only be training attention.
+			// If the original weights had W1/b1, we should preserve them or read them if they were tensors.
+			// For now, we assume we are just updating attention to fix the crash.
+			W1: window.currentWeights[newWeights.length]?.W1 || [], 
+			b1: window.currentWeights[newWeights.length]?.b1 || [],
+			W2: window.currentWeights[newWeights.length]?.W2 || [],
+			b2: window.currentWeights[newWeights.length]?.b2 || [],
+			gamma: window.currentWeights[newWeights.length]?.gamma || [], // Preserve existing if not in tensors
+			beta: window.currentWeights[newWeights.length]?.beta || []
 		});
 	}
 
