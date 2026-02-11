@@ -173,7 +173,7 @@ $$M_{i,j} = \begin{cases} 0 & \text{if } i \geq j \\ -\infty & \text{if } i < j 
 In an LLM, this <b>Causal Mask</b> ensures that the self-attention mechanism 
 maintains the autoregressive property. Since the model is trained to predict 
 the next token, it must not "see" into the future. By setting future 
-positions to $-\infty$, the $exp(M_{i,j})$ term in the Softmax function 
+positions to $-\infty$, the $\text{exp}(M_{i,j})$ term in the Softmax function 
 becomes $0$, effectively neutralizing the connection.
 
 For a 4-token sequence, the causal mask $M$ is represented as:
