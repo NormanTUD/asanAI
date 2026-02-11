@@ -61,7 +61,16 @@ class AttentionEngine {
 			const this_weights = this.softmax(scores);
 			const context = this.dot(this_weights, Vi);
 
-			headData.push({ headIdx: i, Qi, Ki, Vi, this_weights, context });
+			headData.push({
+				headIdx: i,
+				Qi, Ki, Vi,
+				this_weights,
+				context,
+				h0: h0, // Original embeddings
+				WQ: this.this_weights.query.map(r => r.slice(start, end)), // Head-specific weight slice
+				WK: this.this_weights.key.map(r => r.slice(start, end)),
+				WV: this.this_weights.value.map(r => r.slice(start, end))
+			});
 		}
 
 		this.renderUI(headData, tokens);
@@ -103,55 +112,63 @@ class AttentionEngine {
 	}
 
 	generateMathTable(head, tokens) {
-		const { this_weights, Qi, Ki, Vi } = head;
+		const { this_weights, Qi, Ki, Vi, h0, WQ, WK, WV } = head;
 		const K_T = this.transpose(Ki);
 
-		// Helfer für vertikale Vektoren
 		const toPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(2)).join(' \\\\ ')} \\end{pmatrix}`;
-
-		// Helfer für horizontale Vektoren
+		const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(2)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
 		const toRowPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(2)).join(' & ')} \\end{pmatrix}`;
 
-		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.65rem;">`;
+		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.55rem;">`;
 
-		// Header
+		// Header (Keys)
 		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
 		tokens.forEach((t, j) => {
 			const k_vec_column = K_T.map(row => row[j]);
 			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
-		${t}<br><small>$\\underbrace{${toPmatrix(k_vec_column)}}_{\\substack{K^T_{${j}} \\\\ \\text{Emb. } \\text{"${t}"}}}$</small>
-	    </th>`;
+	    ${t}<br><small>
+	    $\\underbrace{${toRowPmatrix(h0[j])}}_{h_{${j}}} \\cdot \\underbrace{${toMatrix(WK)}}_{W_K} = \\underbrace{${toPmatrix(k_vec_column)}}_{K^T_{${j}}}$
+	    </small></th>`;
 		});
 		html += `</tr>`;
 
-		// Zeilen
+		// Rows (Queries)
 		this_weights.forEach((row, i) => {
 			html += `<tr>`;
-			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc; font-weight: bold;">
-		${tokens[i]}<br><small>$\\underbrace{${toPmatrix(Qi[i])}}_{\\substack{Q_{${i}} \\\\ \\text{Emb. } \\text{"${tokens[i]}"}}}$</small>
-	    </td>`;
+			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
+	    <strong>${tokens[i]}</strong><br><small>
+	    $\\underbrace{${toRowPmatrix(h0[i])}}_{h_{${i}}} \\cdot \\underbrace{${toMatrix(WQ)}}_{W_Q} = \\underbrace{${toRowPmatrix(Qi[i])}}_{Q_{${i}}}$
+	    </small></td>`;
 
 			row.forEach((weight, j) => {
 				const intensity = Math.floor(255 - (weight * 150));
 				const bgColor = `rgb(${intensity}, ${intensity}, 255)`;
 
-				const kj_vec = K_T.map(r => r[j]);
 				const dk_int = Math.round(this.d_k);
-
 				const resultVec = Vi[j].map(v => v * weight);
 
-				const cellEq = `\\underbrace{ 
-		    \\text{SoftMax} \\left( \\frac{ 
-			\\underbrace{${toRowPmatrix(Qi[i])}}_{\\substack{Q_{${i}} \\\\ \\text{Emb. } \\text{"${tokens[i]}"}}} \\cdot 
-			\\underbrace{${toPmatrix(kj_vec)}}_{\\substack{K^T_{${j}} \\\\ \\text{Emb. } \\text{"${tokens[j]}"}}} 
-		    }{\\sqrt{\\underbrace{${dk_int}}_{d_\\text{model}}}} \\right) 
-		}_{\\text{Weight } ${weight.toFixed(3)}} 
-		\\cdot \\underbrace{${toPmatrix(Vi[j])}}_{\\text{Emb. } \\text{"${tokens[j]}"}} 
-		= \\underbrace{${toPmatrix(resultVec)}}_{\\substack{V_{${i}, ${j}} \\\\ \\text{Value}}}`;
+				// Full expanded equation showing Weights, Sqrt, and Softmax
+				const cellEq = `
+\\underbrace{
+  \\text{SoftMax} \\left( 
+    \\frac{
+      \\overbrace{(${toRowPmatrix(h0[i])} \\cdot ${toMatrix(WQ)})}^{Q_i} \\cdot 
+      \\overbrace{(${toMatrix(this.transpose(WK))} \\cdot ${toPmatrix(h0[j])})}^{K^T_j}
+    }{
+      \\sqrt{${dk_int}}
+    } 
+  \\right)
+}_{\\text{Weight: } ${weight.toFixed(3)}} 
+\\cdot 
+\\underbrace{
+  (${toRowPmatrix(h0[j])} \\cdot ${toMatrix(WV)})
+}_{V_j} 
+= ${toPmatrix(resultVec)}
+`;
 
 				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">
-		    $${cellEq}$
-		</td>`;
+    $${cellEq}$
+</td>`;
 			});
 			html += `</tr>`;
 		});
