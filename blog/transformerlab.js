@@ -113,58 +113,60 @@ class AttentionEngine {
 		if (typeof render_temml === "function") render_temml();
 	}
 
-generateMathTable(head, tokens) {  
-    const { this_weights, Qi, Ki, Vi, h0, WQ, WK, WV } = head;
-    
-    const toColPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
-    const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
-                                  
-    let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.52rem;">`;
-                                  
-    // Header (Keys)
-    html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
-    tokens.forEach((t, j) => {
-        html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
-            ${t}<br><small>      
-            $\\underbrace{${toMatrix(WK)}}_{W_K} \\cdot \\underbrace{${toColPmatrix(h0[j])}}_{h_{${j}}} = \\underbrace{${toColPmatrix(Ki[j])}}_{K_{${j}}}$
-            </small></th>`;      
-    });              
-    html += `</tr>`;  
-                                  
-    // Rows (Queries)
-    this_weights.forEach((row, i) => {
-        html += `<tr>`;
-        html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
-		    <strong>${tokens[i]}</strong><br>
-		    $\\underbrace{${toMatrix(WQ)}}_{W_Q} \\cdot \\underbrace{${toColPmatrix(h0[i])}}_{h_{${i}}} = \\underbrace{${toColPmatrix(Qi[i])}}_{Q_{${i}}}$
-            </td>`;      
-                                  
-        row.forEach((weight, j) => {
-            const intensity = Math.floor(255 - (weight * 150));
-            const bgColor = `rgb(${intensity}, ${intensity}, 255)`;
-            const dk_int = Math.round(this.d_k);
-            const resultVec = Vi[j].map(v => v * weight);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-                                  
-            const cellEq = `
-            \\text{SoftMax} \\left( \\frac{ 
-                \\overbrace{ \\left( \\underbrace{${toMatrix(WQ)}}_{W_Q} \\underbrace{${toColPmatrix(h0[i])}}_{h_i} \\right)^T }^{Q_i^T} \\cdot 
-                \\overbrace{ \\left( \\underbrace{${toMatrix(WK)}}_{W_K} \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }^{K_j} 
-            }{ \\underbrace{\\sqrt{${dk_int}}}_{\\sqrt{} \\text{ of the number of Embedding Space Dimensions}} } \\right) \\cdot V_j \\\\
-            = \\underbrace{${weight.toFixed(nr_fixed)}}_{\\text{Weight}} \\cdot 
-              \\underbrace{ \\left( \\underbrace{${toMatrix(WV)}}_{W_V} \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }_{V_j} \\\\
-            = ${toColPmatrix(resultVec)}
-            `;                               
+	generateMathTable(head, tokens) {  
+		const { this_weights, Qi, Ki, Vi, h0, WQ, WK, WV } = head;
 
-            html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">
-                $${cellEq}$                  
-            </td>`;                          
-        });      
-        html += `</tr>`;
-    });              
-                                  
-    html += `</table>`;
-    return html;     
-}
+		const toColPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
+		const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+
+		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.52rem;">`;
+
+		// Header (Keys)
+		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
+		tokens.forEach((t, j) => {
+			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
+	    ${t}<br><small>      
+	    $\\underbrace{${toMatrix(WK)}}_{W_K} \\cdot \\underbrace{${toColPmatrix(h0[j])}}_{h_{${j}}} = \\underbrace{${toColPmatrix(Ki[j])}}_{K_{${j}}}$
+	    </small></th>`;      
+		});              
+		html += `</tr>`;  
+
+		// Rows (Queries)
+		this_weights.forEach((row, i) => {
+			html += `<tr>`;
+			// Simplified and fixed LaTeX labeling
+			const label = `\\text{Embed}_{\\text{${tokens[i]}}}`;
+
+			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">
+    <strong>${tokens[i]}</strong><br>
+</td>`;
+
+			row.forEach((weight, j) => {
+				const intensity = Math.floor(255 - (weight * 150));
+				const bgColor = `rgb(${intensity}, ${intensity}, 255)`;
+				const dk_int = Math.round(this.d_k);
+				const resultVec = Vi[j].map(v => v * weight);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+
+				const cellEq = `
+	    \\text{SoftMax} \\left( \\frac{ 
+		\\overbrace{ \\left( \\underbrace{${toMatrix(WQ)}}_{W_Q} \\underbrace{${toColPmatrix(h0[i])}}_{h_i} \\right)^T }^{Q_i^T} \\cdot 
+		\\overbrace{ \\left( \\underbrace{${toMatrix(WK)}}_{W_K} \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }^{K_j} 
+	    }{ \\underbrace{\\sqrt{${dk_int}}}_{\\sqrt{} \\text{ of the number of Embedding Space Dimensions}} } \\right) \\cdot V_j \\\\
+	    = \\underbrace{${weight.toFixed(nr_fixed)}}_{\\text{Weight}} \\cdot 
+	      \\underbrace{ \\left( \\underbrace{${toMatrix(WV)}}_{W_V} \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }_{V_j} \\\\
+	    = ${toColPmatrix(resultVec)}
+	    `;                               
+
+				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">
+		$${cellEq}$                  
+	    </td>`;                          
+			});      
+			html += `</tr>`;
+		});              
+
+		html += `</table>`;
+		return html;     
+	}
 }
 
 window.showHead = (idx) => {
