@@ -1021,11 +1021,11 @@ h_{n-1}
 The "Migration Map" prints the entire flattened matrix because it wants to show the path of every word. However, the \`render_final_projection\` function is only interested in the <b>prediction</b>:
 
 $$h_{\\text{last}} = H[n-1]$$
+
+Remember that the $n$ is the number of tokens in the <b>Inference</b>-sequence, not in the training sequence, even though the $h_\\text{after}$ may be from the training data.
 </span>
 
 This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. When the model is, for example, $d_{\\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage, their influence is already baked into that last vector.
-
-(If these numbers don't match the last weight, it could be still in training mode. Try adding a space into the 'Input (Inference)' field to force to re-do that.)
 	</span>
 
 	<p>Current $h_\\text{last} = [${h_last.map(v => v.toFixed(3)).join(', ')}]$</p>`;
