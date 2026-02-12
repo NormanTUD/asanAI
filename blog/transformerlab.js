@@ -183,6 +183,7 @@ class AttentionEngine {
 
 	executeActualRender(headData, tokens) {
 		if (!this.container) return;
+		if (!tokens.length) return;
 
 		let html = `<div class="attention-tabs" style="border:1px solid #3b82f6; border-radius:8px; overflow:hidden;">`;
 
