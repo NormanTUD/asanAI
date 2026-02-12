@@ -10,6 +10,13 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 	The hidden harmony is better than the obvious one
 </div>
 
+<div class="md">
+## The Illusion of Locality: Beyond the Grandmother Neuron
+One important note, before we start: meaning in a Transformer is **holistic and distributed**.
+
+In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers to a singular neuron triggering for a complex concept, but this isn't true. Knowledge is very distributed, and not localized into single neurons. In the Transformer, no such neuron exists as well. Meaning is an emergent property of the entire vector space; it is held in the collective ratios of the hidden states. They don't inherently *mean* anything; they simply function to produce the desired output. This also holds true for all single parts of the Transformer, which we'll cover now.
+</div>
+
 <div id="transformer_config">
 	<div style="margin-bottom: 15px;">
 		<label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
@@ -91,10 +98,6 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 </div>
 
 <div class="md">
-## The Illusion of Locality: Beyond the Grandmother Neuron
-Meaning in a Transformer is **holistic and distributed**. In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers to a singular neuron triggering for a complex concept, but this isn't true. Knowledge is very distributed, and not localized into single neurons. In the Transformer, no such neuron exists as well. Meaning is an emergent property of the entire vector space; it is held in the collective ratios of the hidden states. They don't inherently *mean* anything; they simply function to produce the desired output. This also holds true for all single parts of the Transformer, which we'll cover now.
-
-
 ## 1. Tokenization
 The journey of a sentence begins with **Byte-Pair Encoding** (**BPE**), which decomposes raw text into subword units. This approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language.
 
