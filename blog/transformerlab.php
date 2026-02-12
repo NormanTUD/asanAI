@@ -368,38 +368,4 @@ At no point does the model manipulate symbols or rules, like non-connectionist A
 - non-linear transformation
 
 Meaning emerges not from words themselves, but from how vectors **move, align, and combine** in space.
-
-## From LM to LLM: Scaling Intelligence
-
-A **Language Model (LM)** is a mathematical function that predicts the next "token" in a sequence based on probability. It treats language like a giant puzzle where it calculates the likelihood of the next piece based on the pieces already on the board.
-
-### The Core Difference: Scale and Capability
-
-The "Large" in **Large Language Model (LLM)** refers to a massive increase in two specific areas: **Parameters** and **Training Data**.
-
-* **Standard LM:** Often trained on specific datasets (like medical journals or a small library) to perform narrow tasks like translation or basic autocomplete.
-* **LLM:** Trained on the "digital commons", snapshots of the entire public internet (Wikipedia, GitHub, books, and forums). This scale allows the model to capture complex nuances like sarcasm, professional tone, and logic.
-
-It is also called *large* language model because it doesn't only have a few hundreds or thousands of parameters, but billions of them. The Feed-Forward-Matrix of a transformer, for example, is at least as large as the number of dimensions. And LLMs have hundreds or thousands of those in parallel.
-
-## Understanding "Context"
-In the architecture of Large Language Models, **Context** refers to the specific window of information the model can "see" and process at any given moment. Technically, it is a finite sequence of **tokens** (words, characters, or chunks) held in the model's short-term working memory during a single inference pass. Because LLMs are **stateless**, meaning they do not "remember" previous interactions once a session ends, every new prompt must feed the entire relevant conversation history back into the model. Anything outside this "Context Window" effectively ceases to exist for the model's mathematical calculations.
-
-### In-Context Learning (ICL)
-In-Context Learning is the ability of a model to "learn" new tasks or formats during a conversation without any updates to its underlying neural weights (no gradient descent). 
-
-#### The Mathematics of Contextual Learning
-Mathematically, ICL can be viewed as a form of **implicit Bayesian inference**. When you provide examples $(x_1, y_1, x_2, y_2)$, the model calculates the conditional probability $P(y_\text{test} \mid x_\text{test}, C)$, where $C$ is the provided context. Recent research suggests that during the forward pass, the **Attention layers** simulate a mini-optimization process. The examples in the context act as Keys ($K$) and Values ($V$), while your query acts as the Query ($Q$).
-
-In this equation, the model isn't just retrieving data; it is using the relationships defined in the context to "map" the new input to an output, effectively performing a temporary linear regression or gradient descent within the activation space of the transformer.
-
-### The Autoregressive Loop (Generation)
-A generative model doesn't produce a full sentence at once. It works in a loop:
-
-1.  **Input:** The user prompt (e.g., "The king is").
-2.  **Forward Pass:** The model processes the sequence and produces a probability distribution for the *very next* token.
-3.  **Sampling:** The model picks a token (e.g., "wise") based on that distribution.
-4.  **Feedback:** The word "wise" is appended to the input, and the new sequence ("The king is wise") is fed back into the model to predict the next token (e.g., a period).
-
-This continues until the model generates a special `|endoftext|` token, which signifies that the text generation has reached it's end.
 </div>
