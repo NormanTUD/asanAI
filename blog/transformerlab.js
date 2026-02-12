@@ -450,12 +450,27 @@ function get_init_weights(n_layers, d_model) {
 	return weights;
 }
 
+// Global state flag
+window.isTraining = false;
+
 async function train_transformer() {
+	const btn = event.target; // Get the clicked button
 	const status = document.getElementById('training-status');
+
+	// Toggle logic
+	if (window.isTraining) {
+		window.isTraining = false;
+		return; // Stop logic handled by the loop check
+	}
+
+	// Start Training State
+	window.isTraining = true;
+	btn.classList.add('active');
+	btn.innerText = 'Stop Training';
+
 	const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
 	const epochs = parseInt(document.getElementById('train-epochs').value) || 500;
 	const optType = document.getElementById('train-optimizer').value;
-
 	const d_model = parseInt(document.getElementById('transformer-dimension-model').value);
 	const n_layers = parseInt(document.getElementById('transformer-depth').value);
 
@@ -466,17 +481,21 @@ async function train_transformer() {
 	const tokens = transformer_tokenize_render(trainingData, null);
 
 	if(tokens.length == 0) {
-		console.error("No tokens defined, cannot train");
+		window.isTraining = false;
+		btn.classList.remove('active');
+		btn.innerText = 'Train Model';
 		return;
 	}
 
 	if (!window.currentWeights) window.currentWeights = get_init_weights(n_layers, d_model);
 	get_or_init_embeddings(tokens, d_model);
 
-	// CRITICAL: Ensure vocab order is fixed for tensor indices
 	const weightVars = convert_weights_to_tensors(window.currentWeights);
 
 	for (let i = 0; i < epochs; i++) {
+		// BREAK if user toggled the button
+		if (!window.isTraining) break;
+
 		const cost = optimizer.minimize(() => {
 			return tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers));
 		}, true);
@@ -493,7 +512,12 @@ async function train_transformer() {
 		}
 		cost.dispose();
 	}
-	status.innerText = "Training Complete & Synced!";
+
+	// Reset UI State after finish or stop
+	window.isTraining = false;
+	btn.classList.remove('active');
+	btn.innerText = 'Train Model';
+	status.innerText += window.isTraining ? " Training Complete!" : " Training Stopped.";
 }
 
 function convert_weights_to_tensors(weights) {
