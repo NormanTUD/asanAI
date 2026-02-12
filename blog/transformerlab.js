@@ -1563,7 +1563,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 		const h_after = run_ffn_block(h_attn, layerWeights);
 
 		// Visualization
-		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, h_after, n + 1, d_model);
+		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, h_after, n + 1, d_model, h_after);
 
 		h_current = h_after;
 	}
@@ -1586,8 +1586,7 @@ const migrationObserver = new IntersectionObserver((entries) => {
 			const id = entry.target.id;
 			const data = transformerLabVisMigrationDataRegistry.get(id);
 			if (data && !data.rendered) {
-				// Execute the actual heavy rendering
-				render_migration_logic(id, data.tokens, data.start_h, data.end_h, data.layerNum, data.d_model);
+				render_migration_logic(id, data.tokens, data.start_h, data.end_h, data.layerNum, data.d_model, data.h_after);
 				data.rendered = true; // Mark to avoid redundant draws until data changes
 			}
 		}
@@ -1598,7 +1597,7 @@ const migrationObserver = new IntersectionObserver((entries) => {
  * Optimized migration plot creation.
  * Removed manual layout triggers (getBoundingClientRect) and slow deep-cloning.
  */
-function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
+function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after) {
 	const container = document.getElementById('transformer-migration-plots-container');
 	if (!container) return;
 
@@ -1620,13 +1619,14 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
 		tokens: [...tokens], 
 		start_h: Array.isArray(start_h) ? start_h.slice() : start_h,
 		end_h: Array.isArray(end_h) ? end_h.slice() : end_h,
-		layerNum,
-		d_model,
+		layerNum: layerNum,
+		d_model: d_model,
+		h_after: h_after,
 		rendered: false 
 	});
 }
 
-function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model) {
+function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after) {
 	const plotDiv = document.getElementById(id);
 	if (!plotDiv) return;
 
