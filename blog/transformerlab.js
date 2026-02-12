@@ -1023,7 +1023,7 @@ The "Migration Map" prints the entire flattened matrix because it wants to show 
 $$h_{\\text{last}} = H[n-1]$$
 </span>
 
-This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Because your $d_{\\text{model}}=3$, it is always exactly 3 numbers. These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage—their influence is already baked into that last vector.
+This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. When the model is, for example, $d_{\\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage—their influence is already baked into that last vector.
 	</span>
 
 	<p>Current $h_\\text{last} = [${h_last.map(v => v.toFixed(3)).join(', ')}]$</p>`;
