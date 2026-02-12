@@ -573,19 +573,15 @@ function convert_weights_to_tensors(weights) {
 	return vars;
 }
 
-/**
- * Performs a forward pass and calculates cross-entropy loss
- */
 function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 	const losses = [];
 	const thiscontextSize = Math.min(contextSize, tokens.length - 1);
 
-	// Create Causal Mask (Look-ahead mask)
 	const mask = tf.tidy(() => {
 		const ones = tf.ones([thiscontextSize, thiscontextSize]);
 		const upperTriangle = tf.linalg.bandPart(ones, 0, -1); 
 		const diagonal = tf.linalg.bandPart(ones, 0, 0);
-		return tf.sub(upperTriangle, diagonal).mul(tf.scalar(-1e9));
+		return tf.sub(upperTriangle, diagonal).mul(tf.scalar(1e9)); // Large negative mask
 	});
 
 	for (let startIdx = 0; startIdx < tokens.length - thiscontextSize; startIdx++) {
@@ -593,68 +589,44 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 			.map(t => vars.vocab_map.indexOf(t));
 		const targetId = vars.vocab_map.indexOf(tokens[startIdx + thiscontextSize]);
 
-		// 1. Embedding Lookup
 		let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
 
-		// 2. POSITIONAL ENCODING INJECTION (CRITICAL FIX)
-		// We generate the PE matrix on the fly inside the TF graph
-		const seqLen = inputIds.length;
+		// PE Injection matching UI logic
 		const peTensor = tf.tidy(() => {
-			const pos = tf.range(0, seqLen, 1).reshape([seqLen, 1]); // [0, 1, 2...]
-			const i = tf.range(0, d_model, 1).reshape([1, d_model]); // [0, 1, ... d-1]
-
-			// div_term = 10000^(2*(i//2)/d_model)
-			const exponents = i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model));
-			const divTerm = tf.pow(tf.scalar(10000), exponents);
-
-			const arguments = pos.div(divTerm); // pos / div_term
-
-			// Select Sin for even, Cos for odd
-			const isEven = i.mod(tf.scalar(2)).equal(tf.scalar(0));
-			const sinPart = tf.sin(arguments);
-			const cosPart = tf.cos(arguments);
-
-			// Combine: where(condition, true_val, false_val)
-			return tf.where(isEven, sinPart, cosPart).mul(tf.scalar(0.1)); // Scale by 0.1
+			const pos = tf.range(0, inputIds.length, 1).reshape([inputIds.length, 1]);
+			const i = tf.range(0, d_model, 1).reshape([1, d_model]);
+			const divTerm = tf.pow(tf.scalar(10000), i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model)));
+			const args = pos.div(divTerm);
+			return tf.where(i.mod(tf.scalar(2)).equal(tf.scalar(0)), tf.sin(args), tf.cos(args)).mul(tf.scalar(0.1));
 		});
-
-		x = tf.add(x, peTensor); // Add PE to Embeddings
+		x = tf.add(x, peTensor);
 
 		for (let i = 0; i < n_layers; i++) {
 			const l = vars.layers[i];
-
-			// --- 1. Sub-Layer: Attention ---
+			// Attention Block
 			let normX = tf_layer_norm(x, l.gamma, l.beta);
 			const q = tf.matMul(normX, l.wq);
 			const k = tf.matMul(normX, l.wk);
 			const v = tf.matMul(normX, l.wv);
-
 			let scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
-			scores = tf.add(scores, mask); // Apply Causal Mask
+			scores = tf.sub(scores, mask); 
 			const weights = tf.softmax(scores);
-			const attention = tf.matMul(weights, v);
+			x = tf.add(x, tf.matMul(tf.matMul(weights, v), l.wo));
 
-			// Residual Connection 1
-			x = tf.add(x, tf.matMul(attention, l.wo));
-
-			// --- 2. Sub-Layer: Feed-Forward (FFN) ---
-			// FIX: Use gamma2/beta2 and actually use the learned FFN weights
+			// FFN Block
 			let normX2 = tf_layer_norm(x, l.gamma2, l.beta2);
 			let ffn = tf.relu(tf.add(tf.matMul(normX2, l.w1), l.b1));
 			ffn = tf.add(tf.matMul(ffn, l.w2), l.b2);
-
-			// Residual Connection 2
 			x = tf.add(x, ffn);
 		}
 
+		// Project last token hidden state to Vocabulary
 		const lastTokenVector = x.slice([thiscontextSize - 1, 0], [1, d_model]);
 		const logits = tf.matMul(lastTokenVector, vars.embeddings.transpose());
 		const label = tf.oneHot(tf.tensor1d([targetId], 'int32'), vars.vocab_map.length);
 
 		losses.push(tf.losses.softmaxCrossEntropy(label, logits));
 	}
-
-	mask.dispose();
 	return tf.addN(losses).div(tf.scalar(losses.length));
 }
 
@@ -668,13 +640,11 @@ async function convert_tensors_to_weights(vars) {
 				value: (await layer.wv.array()),
 				output: (await layer.wo.array())
 			},
-			// FIX: Actually await the .array() from the trained tensors
+			// CRITICAL FIX: Explicitly await FFN and Norm 2 parameters
 			W1: await layer.w1.array(), 
 			b1: await layer.b1.array(),
 			W2: await layer.w2.array(),
 			b2: await layer.b2.array(),
-
-			// FIX: Save both sets of norms
 			gamma: await layer.gamma.array(),
 			beta: await layer.beta.array(),
 			gamma2: await layer.gamma2.array(),
@@ -682,7 +652,7 @@ async function convert_tensors_to_weights(vars) {
 		});
 	}
 
-	// Sync embeddings back to the global state
+	// Sync embeddings back to the global persistent space
 	const embArray = await vars.embeddings.array();
 	vars.vocab_map.forEach((word, i) => {
 		window.persistentEmbeddingSpace[word] = embArray[i];
@@ -690,7 +660,6 @@ async function convert_tensors_to_weights(vars) {
 
 	return newWeights;
 }
-
 
 /**
  * NEW Helper: Calculate Cross-Entropy Loss over the corpus
