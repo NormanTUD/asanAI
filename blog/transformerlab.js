@@ -939,7 +939,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		const h2 = run_ffn_block(h1, weights[0]);
 
 		// ── FIX: Create migration plot for layer 0 here ──
-		create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model);
+		create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h_after);
 
 		// ── FIX: Start deep layers from 1, not 0, to avoid double-processing ──
 		run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1);
