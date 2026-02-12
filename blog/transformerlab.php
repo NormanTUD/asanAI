@@ -58,7 +58,7 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 
 <div class="transformer_corpus">
 	<label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
-	<textarea id="transformer-training-data" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;"  oninput="run_transformer_demo('transformer-training-data')">the king is wise and brave and the king is brave and wise</textarea>
+	<textarea id="transformer-training-data" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;"  oninput="run_transformer_demo('transformer-training-data')">the king is wise and brave and the king is brave and wise and the queen is wise and brave and the queen is brave and wise</textarea>
 </div>
 
 <div style="background: #f0fdf4; padding: 15px; border: 1px solid #10b981; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;">
@@ -71,7 +71,7 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Learning Rate:</label>
-            <input type="number" id="train-lr" value="0.0001" step="0.01" style="width: 70px; padding: 4px;">
+            <input type="number" id="train-lr" value="0.01" step="0.01" style="width: 70px; padding: 4px;">
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Optimizer:</label>
