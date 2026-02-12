@@ -1006,6 +1006,26 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 	let calculationHtml = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
 	<h3>1. Step-by-Step Logit Calculation (Manual Verification)</h3>
 	<p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_\\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\\text{FFN} matrices. They are just ignored in the last step, yet calculated because that is required by the structure</p>
+	
+	<span class="md">
+To get from the long matrix to the single vector, the model performs a **Terminal Selection**. 
+
+If we represent the output of the last transformer block as a matrix $H$:
+$$H = \\begin{bmatrix} 
+h_0 \\\\
+h_1 \\\\
+\\vdots \\\\
+h_{n-1} 
+\\end{bmatrix} \\in \\mathbb{R}^{n \\times d_{\\text{model}}}$$
+
+The "Migration Map" prints the entire flattened matrix because it wants to show the path of every word. However, the \`render_final_projection\` function is only interested in the **prediction**:
+
+$$h_{\\text{last}} = H[n-1]$$
+</span>
+
+This single row $h_{\text{last}}$ is a vector in $d_{\\text{model}}$ space. Because your $d_{\\text{model}}=3$, it is always exactly 3 numbers. These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage—their influence is already baked into that last vector.
+	</span>
+
 	<p>Current $h_\\text{last} = [${h_last.map(v => v.toFixed(3)).join(', ')}]$</p>`;
 
 	const logits = vocabulary.map((word, i) => {
