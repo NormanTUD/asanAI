@@ -198,6 +198,7 @@ class AttentionEngine {
 
 		// Tab Content
 		headData.forEach((h, i) => {
+			log(tokens);
 			const escapedTokens = tokens.map(t => t.replace(/#/g, '\\#'));
 			html += `<div id="head-content-${i}" class="head-tab" style="padding:20px; display:${i === 0 ? 'block' : 'none'}">
 	    <div style="margin-bottom:20px;">
@@ -320,7 +321,7 @@ function calculate_positional_injection(tokens, d_model) {
 		if (resultsContainer) {
 			const displayCombined = combined.map(v => v.toFixed(nr_fixed));
 			html += `
-			<div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff;">
+			<div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff; overflow: auto;">
 				<strong>Pos ${pos}: ${token}</strong>
 				<table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px;">
 					<tr><td>PE (Sin/Cos)</td>${peVec.map(v => `<td>${v.toFixed(nr_fixed)}</td>`).join('')}</tr>
