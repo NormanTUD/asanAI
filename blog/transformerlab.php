@@ -35,9 +35,9 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 
 	<div style="margin-bottom: 15px;">
 		<label style="font-weight: bold;">Network Depth ($N$ layers): </label>
-		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
+		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">24</span>
 		<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
-		<input type="range" id="transformer-depth" min="1" max="12" value="2" 
+		<input type="range" id="transformer-depth" min="1" max="96" value="24" 
 			style="width: 100%;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
 	</div>
 
@@ -71,7 +71,7 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Learning Rate:</label>
-            <input type="number" id="train-lr" value="0.01" step="0.01" style="width: 70px; padding: 4px;">
+            <input type="number" id="train-lr" value="0.001" step="0.01" style="width: 70px; padding: 4px;">
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Optimizer:</label>
