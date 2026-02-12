@@ -1001,38 +1001,72 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 	const lastIdx = h_final.length - 1;
 	const h_last = h_final[lastIdx];
 
-	// Use learned embeddings for projection [cite: 24]
+	// 1. Prepare W_vocab
 	const W_vocab = vocabulary.map(word => window.persistentEmbeddingSpace[word] || new Array(d_model).fill(0));
+
+	// 2. Calculate Logits and explain step-by-step
+	let calculationHtml = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+	<h3>1. Step-by-Step Logit Calculation (Manual Verification)</h3>
+	<p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_{row}$ from the Unembedding Matrix $W_U$.</p>
+	<p>Current $h_\\text{last} = [${h_last.map(v => v.toFixed(3)).join(', ')}]$</p>`;
 
 	const logits = vocabulary.map((word, i) => {
 		const w_row = W_vocab[i];
-		const val = h_last.reduce((sum, h_val, dim) => sum + h_val * w_row[dim], 0);
-		return { word, val, w_row };
+
+		// Manual calculation string for LaTeX
+		let dotProductFormula = `\\text{logit}_{\\text{${word}}} = `;
+		let sum = 0;
+		let terms = [];
+
+		h_last.forEach((h_val, dim) => {
+			const product = h_val * w_row[dim];
+			sum += product;
+			terms.push(`(${h_val.toFixed(3)} \\cdot ${w_row[dim].toFixed(3)})`);
+		});
+
+		dotProductFormula += terms.join(' + ') + ` = ${sum.toFixed(4)}`;
+
+		calculationHtml += `<div style="margin-bottom: 10px; font-size: 0.9rem;">
+	    <strong>Word: "${word}"</strong><br>
+	    $$${dotProductFormula}$$
+	</div>`;
+
+		return { word, val: sum, w_row };
 	});
 
+	calculationHtml += `</div>`;
+
+	// 3. Probabilities (Softmax)
 	const scaledLogits = logits.map(item => item.val / temperature);
 	const maxLogit = Math.max(...scaledLogits);
 	const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
 	const sumExps = exps.reduce((a, b) => a + b, 0);
+
 	const predictions = logits.map((item, i) => ({
 		word: item.word,
 		prob: exps[i] / sumExps,
 		logit: item.val
 	})).sort((a, b) => b.prob - a.prob);
 
-	// Build the restored chip-based results interface [cite: 25]
+	// 4. Build Interface
 	let html = `<h3>2. Final Probabilities (Click to Generate)</h3>`;
-	html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px;">`;
+	html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 20px;">`;
 	predictions.forEach(p => {
-		const intensity = Math.min(1, p.prob * 5); 
+		const intensity = Math.min(1, p.prob * 5);
 		html += `<button class="predict-chip" onclick="select_suggested_word('${p.word}')" 
-		style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
-		<strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
-		</button>`;
+	    style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
+	    <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
+	</button>`;
 	});
 	html += `</div>`;
 
-	container.innerHTML = html;
+	// Combine both parts
+	container.innerHTML = calculationHtml + html;
+
+	// Trigger TeMML rendering for the math formulas
+	if (typeof render_temml === "function") {
+		render_temml();
+	}
 }
 
 window.appendToken = (token) => {
