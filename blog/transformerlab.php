@@ -267,7 +267,7 @@ $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cd
 $$h_{1} = h_{0} + \text{LayerNorm}(\text{MultiHead}(h_{0}))$$
 </div>
 
-<div id="transformer-concat-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8;">
+<div id="transformer-concat-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;">
 </div>
 
 <div id="transformer-h1-layernorm-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;">
