@@ -67,7 +67,7 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
     <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Epochs:</label>
-            <input type="number" id="train-epochs" value="500" style="width: 60px; padding: 4px;">
+            <input type="number" id="train-epochs" value="1000" style="width: 60px; padding: 4px;">
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Learning Rate:</label>
