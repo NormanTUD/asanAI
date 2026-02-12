@@ -1577,6 +1577,43 @@ function tf_layer_norm(x, gamma, beta) {
 	});
 }
 
+function syncTransformerSettings(trigger) {
+	const dimSlider = document.getElementById('transformer-dimension-model');
+	const headSlider = document.getElementById('transformer-heads');
+
+	let d_model = parseInt(dimSlider.value);
+	let h = parseInt(headSlider.value);
+
+	if (trigger === 'heads') {
+		// If user moves heads, ensure d_model is a multiple of heads
+		if (d_model % h !== 0) {
+			d_model = Math.ceil(d_model / h) * h;
+			dimSlider.value = d_model;
+		}
+	} else if (trigger === 'dim') {
+		// If user moves d_model, find the closest head count that divides it
+		// Or simpler: just ensure d_model doesn't drop below head count
+		if (d_model < h) {
+			h = d_model;
+			headSlider.value = h;
+		}
+		// If d_model is not divisible by current heads, adjust heads down
+		while (d_model % h !== 0 && h > 1) {
+			h--;
+		}
+		headSlider.value = h;
+	}
+
+	// Update UI text labels
+	document.getElementById('dim-val').innerText = dimSlider.value;
+	document.getElementById('heads-val').innerText = headSlider.value;
+
+	// Trigger the actual model re-run
+	if (typeof run_transformer_demo === 'function') {
+		run_transformer_demo();
+	}
+}
+
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
 	run_transformer_demo()

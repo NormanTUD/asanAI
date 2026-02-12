@@ -11,28 +11,34 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 </div>
 
 <div id="transformer_config">
-	<div>
+	<div style="margin-bottom: 15px;">
 		<label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
-		<span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
-		<input type="range" id="transformer-dimension-model" min="1" max="10" value="3" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('dim-val').innerText = this.value; run_transformer_demo();">
+		<span id="dim-val" style="font-weight: bold; color: #3b82f6;">4</span>
+		<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">The size of the word vectors. <b>Must be divisible by Attention Heads</b> so each head gets an equal slice of the "brain."</p>
+		<input type="range" id="transformer-dimension-model" min="2" max="16" step="2" value="4" 
+			style="width: 100%;" oninput="syncTransformerSettings('dim')">
+	</div>
+
+	<div style="margin-bottom: 15px;">
+		<label style="font-weight: bold;">Attention Heads ($h$): </label>
+		<span id="heads-val" style="font-weight: bold; color: #3b82f6;">2</span>
+		<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">Parallel "focus" points. If this is 2, the model splits $d_{\text{model}}$ into two smaller subspaces.</p>
+		<input type="range" id="transformer-heads" min="1" max="8" value="2" 
+			style="width: 100%;" oninput="syncTransformerSettings('heads')">
+	</div>
+
+	<div style="margin-bottom: 15px;">
+		<label style="font-weight: bold;">Network Depth ($N$ layers): </label>
+		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
+		<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
+		<input type="range" id="transformer-depth" min="1" max="12" value="2" 
+			style="width: 100%;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
 	</div>
 
 	<div>
 		<label style="font-weight: bold;">Temperature ($T$): </label>
 		<span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span>
 		<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; run_transformer_demo();">
-	</div>
-
-	<div>
-		<label style="font-weight: bold;">Attention Heads ($h$): </label>
-		<span id="heads-val" style="font-weight: bold; color: #3b82f6;">1</span>
-		<input type="range" id="transformer-heads" min="1" max="8" value="1" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('heads-val').innerText = this.value; run_transformer_demo();">
-	</div>
-
-	<div>
-		<label style="font-weight: bold;">Network Depth ($N$): </label>
-		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
-		<input type="range" id="transformer-depth" min="1" max="100" value="5" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
 	</div>
 
 	<div>
