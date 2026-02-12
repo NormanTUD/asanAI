@@ -321,7 +321,6 @@ As $h$ progresses from $h_0$ to $h_{96}$, the vector for "apple" might move from
 ### Feature Space Migration
 The following plots visualize how each layer "nudges" the token vectors. Each arrow represents the transition from $h_n$ (start) to $h_{n+1}$ (head).
 </div>
-<div id="transformer-migration-plots-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;"></div>
 
 <div class="md">
 ## 10. From Hidden States to Probabilities
@@ -337,7 +336,7 @@ $$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
 This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
 </div>
 
-<div id="transformer-migration-plots-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;"></div>
+<div id="transformer-migration-plots-container"></div>
 
 <div class="md">
     We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_U$ or $W_\text{vocab}$). This effectively asks: "How similar is our current thought vector to every known word vector?"
