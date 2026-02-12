@@ -1584,31 +1584,37 @@ function syncTransformerSettings(trigger) {
 	let d_model = parseInt(dimSlider.value);
 	let h = parseInt(headSlider.value);
 
+	// 1. Enforce Mathematical Dependency: d_model % h == 0
 	if (trigger === 'heads') {
-		// If user moves heads, ensure d_model is a multiple of heads
 		if (d_model % h !== 0) {
+			// Snap dimension UP to nearest multiple of heads
 			d_model = Math.ceil(d_model / h) * h;
 			dimSlider.value = d_model;
 		}
 	} else if (trigger === 'dim') {
-		// If user moves d_model, find the closest head count that divides it
-		// Or simpler: just ensure d_model doesn't drop below head count
 		if (d_model < h) {
 			h = d_model;
 			headSlider.value = h;
 		}
-		// If d_model is not divisible by current heads, adjust heads down
+		// Snap heads DOWN to the nearest divisor of the new dimension
 		while (d_model % h !== 0 && h > 1) {
 			h--;
 		}
 		headSlider.value = h;
 	}
 
-	// Update UI text labels
+	// 2. CRITICAL: Clear "Ghost" Memory
+	// This prevents the "4 must match 6" error by forcing the model to 
+	// recreate matrices that match the new slider values.
+	window.currentWeights = null; 
+	window.persistentEmbeddingSpace = null;
+	window.last_d_model = d_model;
+
+	// 3. Update UI Labels
 	document.getElementById('dim-val').innerText = dimSlider.value;
 	document.getElementById('heads-val').innerText = headSlider.value;
 
-	// Trigger the actual model re-run
+	// 4. Restart Engine
 	if (typeof run_transformer_demo === 'function') {
 		run_transformer_demo();
 	}
