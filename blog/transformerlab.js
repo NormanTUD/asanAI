@@ -445,14 +445,23 @@ function get_init_weights(n_layers, d_model) {
 
 	for (let n = 0; n < n_layers; n++) {
 		weights.push({
-			gamma: new Array(d_model).fill(1.0), // Scale parameter
-			beta: new Array(d_model).fill(0.0),  // Shift parameter
+			// Norm 1 (Pre-Attention)
+			gamma: new Array(d_model).fill(1.0), 
+			beta: new Array(d_model).fill(0.0),
+
+			// Attention
 			attention: {
 				query: initWeights(d_model, d_model),
 				key: initWeights(d_model, d_model),
 				value: initWeights(d_model, d_model),
 				output: initWeights(d_model, d_model)
 			},
+
+			// Norm 2 (Pre-FFN) -- NEW: Separate norm for the second block
+			gamma2: new Array(d_model).fill(1.0), 
+			beta2: new Array(d_model).fill(0.0),
+
+			// Feed-Forward Network
 			W1: initWeights(d_model, d_ff),
 			b1: new Array(d_ff).fill(0),
 			W2: initWeights(d_ff, d_model),
@@ -543,9 +552,15 @@ function convert_weights_to_tensors(weights) {
 			wk: tf.variable(tf.tensor2d(layer.attention.key)),
 			wv: tf.variable(tf.tensor2d(layer.attention.value)),
 			wo: tf.variable(tf.tensor2d(layer.attention.output)),
-			// Layer Norm Parameters
+
+			// Layer Norm 1 Parameters
 			gamma: tf.variable(tf.tensor1d(layer.gamma)),
 			beta: tf.variable(tf.tensor1d(layer.beta)),
+
+			// Layer Norm 2 Parameters (NEW)
+			gamma2: tf.variable(tf.tensor1d(layer.gamma2 || new Array(layer.gamma.length).fill(1.0))),
+			beta2: tf.variable(tf.tensor1d(layer.beta2 || new Array(layer.beta.length).fill(0.0))),
+
 			// FFN Weights
 			w1: tf.variable(tf.tensor2d(layer.W1)),
 			b1: tf.variable(tf.tensor1d(layer.b1)),
@@ -565,6 +580,7 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 	const losses = [];
 	const thiscontextSize = Math.min(contextSize, tokens.length - 1);
 
+	// Create Causal Mask (Look-ahead mask)
 	const mask = tf.tidy(() => {
 		const ones = tf.ones([thiscontextSize, thiscontextSize]);
 		const upperTriangle = tf.linalg.bandPart(ones, 0, -1); 
@@ -577,7 +593,32 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 			.map(t => vars.vocab_map.indexOf(t));
 		const targetId = vars.vocab_map.indexOf(tokens[startIdx + thiscontextSize]);
 
+		// 1. Embedding Lookup
 		let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
+
+		// 2. POSITIONAL ENCODING INJECTION (CRITICAL FIX)
+		// We generate the PE matrix on the fly inside the TF graph
+		const seqLen = inputIds.length;
+		const peTensor = tf.tidy(() => {
+			const pos = tf.range(0, seqLen, 1).reshape([seqLen, 1]); // [0, 1, 2...]
+			const i = tf.range(0, d_model, 1).reshape([1, d_model]); // [0, 1, ... d-1]
+
+			// div_term = 10000^(2*(i//2)/d_model)
+			const exponents = i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model));
+			const divTerm = tf.pow(tf.scalar(10000), exponents);
+
+			const arguments = pos.div(divTerm); // pos / div_term
+
+			// Select Sin for even, Cos for odd
+			const isEven = i.mod(tf.scalar(2)).equal(tf.scalar(0));
+			const sinPart = tf.sin(arguments);
+			const cosPart = tf.cos(arguments);
+
+			// Combine: where(condition, true_val, false_val)
+			return tf.where(isEven, sinPart, cosPart).mul(tf.scalar(0.1)); // Scale by 0.1
+		});
+
+		x = tf.add(x, peTensor); // Add PE to Embeddings
 
 		for (let i = 0; i < n_layers; i++) {
 			const l = vars.layers[i];
@@ -589,19 +630,20 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 			const v = tf.matMul(normX, l.wv);
 
 			let scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
-			scores = tf.add(scores, mask);
+			scores = tf.add(scores, mask); // Apply Causal Mask
 			const weights = tf.softmax(scores);
 			const attention = tf.matMul(weights, v);
 
-			// Residual Connection
+			// Residual Connection 1
 			x = tf.add(x, tf.matMul(attention, l.wo));
 
 			// --- 2. Sub-Layer: Feed-Forward (FFN) ---
-			let normX2 = tf_layer_norm(x, l.gamma, l.beta);
+			// FIX: Use gamma2/beta2 and actually use the learned FFN weights
+			let normX2 = tf_layer_norm(x, l.gamma2, l.beta2);
 			let ffn = tf.relu(tf.add(tf.matMul(normX2, l.w1), l.b1));
 			ffn = tf.add(tf.matMul(ffn, l.w2), l.b2);
 
-			// Residual Connection
+			// Residual Connection 2
 			x = tf.add(x, ffn);
 		}
 
@@ -617,31 +659,36 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 }
 
 async function convert_tensors_to_weights(vars) {
-    const newWeights = []; 
-    for (const layer of vars.layers) {
-        newWeights.push({
-            attention: {
-                query: (await layer.wq.array()),
-                key: (await layer.wk.array()),
-                value: (await layer.wv.array()),
-                output: (await layer.wo.array())
-            },
-            W1: window.currentWeights[newWeights.length]?.W1 || [], 
-            b1: window.currentWeights[newWeights.length]?.b1 || [],
-            W2: window.currentWeights[newWeights.length]?.W2 || [],
-            b2: window.currentWeights[newWeights.length]?.b2 || [],
-            gamma: window.currentWeights[newWeights.length]?.gamma || [],
-            beta: window.currentWeights[newWeights.length]?.beta || []
-        });
-    }
+	const newWeights = []; 
+	for (const layer of vars.layers) {
+		newWeights.push({
+			attention: {
+				query: (await layer.wq.array()),
+				key: (await layer.wk.array()),
+				value: (await layer.wv.array()),
+				output: (await layer.wo.array())
+			},
+			// FIX: Actually await the .array() from the trained tensors
+			W1: await layer.w1.array(), 
+			b1: await layer.b1.array(),
+			W2: await layer.w2.array(),
+			b2: await layer.b2.array(),
 
-    // Sync embeddings back to the global state for the UI [cite: 24]
-    const embArray = await vars.embeddings.array();
-    vars.vocab_map.forEach((word, i) => {
-        window.persistentEmbeddingSpace[word] = embArray[i];
-    });
+			// FIX: Save both sets of norms
+			gamma: await layer.gamma.array(),
+			beta: await layer.beta.array(),
+			gamma2: await layer.gamma2.array(),
+			beta2: await layer.beta2.array()
+		});
+	}
 
-    return newWeights;
+	// Sync embeddings back to the global state
+	const embArray = await vars.embeddings.array();
+	vars.vocab_map.forEach((word, i) => {
+		window.persistentEmbeddingSpace[word] = embArray[i];
+	});
+
+	return newWeights;
 }
 
 
