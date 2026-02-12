@@ -875,44 +875,44 @@ window.select_suggested_word = (word) => {
 };
 
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
-    const container = document.getElementById('transformer-output-projection');
-    if (!container) return;
+	const container = document.getElementById('transformer-output-projection');
+	if (!container) return;
 
-    const lastIdx = h_final.length - 1;
-    const h_last = h_final[lastIdx];
+	const lastIdx = h_final.length - 1;
+	const h_last = h_final[lastIdx];
 
-    // Use learned embeddings for projection [cite: 24]
-    const W_vocab = vocabulary.map(word => window.persistentEmbeddingSpace[word] || new Array(d_model).fill(0));
+	// Use learned embeddings for projection [cite: 24]
+	const W_vocab = vocabulary.map(word => window.persistentEmbeddingSpace[word] || new Array(d_model).fill(0));
 
-    const logits = vocabulary.map((word, i) => {
-        const w_row = W_vocab[i];
-        const val = h_last.reduce((sum, h_val, dim) => sum + h_val * w_row[dim], 0);
-        return { word, val, w_row };
-    });
+	const logits = vocabulary.map((word, i) => {
+		const w_row = W_vocab[i];
+		const val = h_last.reduce((sum, h_val, dim) => sum + h_val * w_row[dim], 0);
+		return { word, val, w_row };
+	});
 
-    const scaledLogits = logits.map(item => item.val / temperature);
-    const maxLogit = Math.max(...scaledLogits);
-    const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
-    const sumExps = exps.reduce((a, b) => a + b, 0);
-    const predictions = logits.map((item, i) => ({
-        word: item.word,
-        prob: exps[i] / sumExps,
-        logit: item.val
-    })).sort((a, b) => b.prob - a.prob);
+	const scaledLogits = logits.map(item => item.val / temperature);
+	const maxLogit = Math.max(...scaledLogits);
+	const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
+	const sumExps = exps.reduce((a, b) => a + b, 0);
+	const predictions = logits.map((item, i) => ({
+		word: item.word,
+		prob: exps[i] / sumExps,
+		logit: item.val
+	})).sort((a, b) => b.prob - a.prob);
 
-    // Build the restored chip-based results interface [cite: 25]
-    let html = `<h3>2. Final Probabilities (Click to Generate)</h3>`;
-    html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px;">`;
-    predictions.forEach(p => {
-        const intensity = Math.min(1, p.prob * 5); 
-        html += `<button class="predict-chip" onclick="select_suggested_word('${p.word}')" 
-                style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
-                <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
-                </button>`;
-    });
-    html += `</div>`;
+	// Build the restored chip-based results interface [cite: 25]
+	let html = `<h3>2. Final Probabilities (Click to Generate)</h3>`;
+	html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px;">`;
+	predictions.forEach(p => {
+		const intensity = Math.min(1, p.prob * 5); 
+		html += `<button class="predict-chip" onclick="select_suggested_word('${p.word}')" 
+		style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
+		<strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
+		</button>`;
+	});
+	html += `</div>`;
 
-    container.innerHTML = html;
+	container.innerHTML = html;
 }
 
 window.appendToken = (token) => {
