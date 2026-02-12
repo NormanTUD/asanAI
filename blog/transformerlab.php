@@ -97,6 +97,8 @@ Meaning in a Transformer is **holistic and distributed**. In classical neuroscie
 
 ## 1. Tokenization
 The journey of a sentence begins with **Byte-Pair Encoding** (**BPE**), which decomposes raw text into subword units. This approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language.
+
+In our example, though, by default, we will use word-wise tokenization, because the tiny Embedding Space is too small for BPE to be really useful.
 </div>
 
 <div id="transformer-viz-bpe" class="viz-container"></div>
