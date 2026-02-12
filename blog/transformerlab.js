@@ -197,31 +197,29 @@ class AttentionEngine {
 		html += `<div class="tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6;">`;
 		headData.forEach((h, i) => {
 			html += `<button class="mha-tab-btn" id="tab-btn-${i}" onclick="showHead(${i})" 
-	    style="padding:10px 20px; border:none; border-right:1px solid #3b82f6; cursor:pointer; 
-	    background:${i === 0 ? '#fff' : '#e2e8f0'}; font-weight:${i === 0 ? 'bold' : 'normal'}">Head ${i + 1}</button>`;
+	style="padding:10px 20px; border:none; border-right:1px solid #3b82f6; cursor:pointer; 
+	background:${i === 0 ? '#fff' : '#e2e8f0'}; font-weight:${i === 0 ? 'bold' : 'normal'}">Head ${i + 1}</button>`;
 		});
 		html += `</div>`;
 
 		// Tab Content
 		headData.forEach((h, i) => {
-			console.log(tokens);
-			const escapedTokens = tokens.map(t => t.replace(/#/g, '\\#'));
+			// FIX: Ensure 't' is treated as a string before calling .replace
+			const escapedTokens = tokens.map(t => String(t).replace(/#/g, '\\#'));
+
 			html += `<div id="head-content-${i}" class="head-tab" style="padding:20px; display:${i === 0 ? 'block' : 'none'}">
-	    <div style="margin-bottom:20px;">
-		$$ \\text{Head}_{${i}} = \\text{Softmax} \\left( \\frac{Q_i K_i^T}{\\sqrt{d_k}} \\right) \\cdot V_i $$
-	    </div>
-	    <div style="overflow-x:auto;">
-		${this.generateMathTable(h, escapedTokens)}
-	    </div>
-	</div>`;
+	<div style="margin-bottom:20px;">
+	$$ \\text{Head}_{${i}} = \\text{Softmax} \\left( \\frac{Q_i K_i^T}{\\sqrt{d_k}} \\right) \\cdot V_i $$
+	</div>
+	<div style="overflow-x:auto;">
+	${this.generateMathTable(h, escapedTokens)}
+	</div>
+    </div>`;
 		});
 
 		html += `</div>`;
-		console.log("Setting container");
 		this.container.innerHTML = html;
-		console.log("Temml");
-		render_temml();
-		console.log("Temml done");
+		if (typeof render_temml === "function") render_temml();
 	}
 
 	generateMathTable(head, tokens) {
