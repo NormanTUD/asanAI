@@ -33,6 +33,11 @@ const attentionObserver = new IntersectionObserver((entries) => {
 	});
 }, { threshold: 0 });
 
+function reset_graph() {
+	document.getElementById('training-loss-plot').style.display = 'none';
+	document.getElementById('training-loss-plot').innerHTML = '';
+}
+
 function get_or_init_embeddings(tokens, d_model) {
 	// 1. Ensure the global space exists before any logic
 	if (window.persistentEmbeddingSpace === null) {
@@ -43,6 +48,7 @@ function get_or_init_embeddings(tokens, d_model) {
 	if (window.last_d_model !== d_model) {
 		window.persistentEmbeddingSpace = {};
 		window.last_d_model = d_model;
+		reset_graph();
 	}
 
 	// 3. Capture the reference AFTER potential resets
@@ -750,6 +756,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		window.currentWeights = get_init_weights(n_layers, d_model);
 		window.last_d_model = d_model;
 		window.last_n_heads = n_heads;
+		reset_graph();
 	}
 	const weights = window.currentWeights;
 
