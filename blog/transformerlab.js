@@ -1530,44 +1530,44 @@ function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
  *      already handled by the explicit visualization block.
  */
 function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights, startLayer = 0) {
-    let h_current = h_initial;
+	let h_current = h_initial;
 
-    for (let n = startLayer; n < total_depth; n++) {
-        const h_before_layer = JSON.parse(JSON.stringify(h_current));
-        const layerWeights = this_weights[n];
+	for (let n = startLayer; n < total_depth; n++) {
+		const h_before_layer = JSON.parse(JSON.stringify(h_current));
+		const layerWeights = this_weights[n];
 
-        // Pre-LN: normalize BEFORE attention
-        const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
+		// Pre-LN: normalize BEFORE attention
+		const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
 
-        // 1. Sublayer 1: Attention (on normalized input)
-        const engine = new AttentionEngine({
-            d_model,
-            n_heads,
-            containerId: null,
-            weights: layerWeights["attention"]
-        });
+		// 1. Sublayer 1: Attention (on normalized input)
+		const engine = new AttentionEngine({
+			d_model,
+			n_heads,
+			containerId: null,
+			weights: layerWeights["attention"]
+		});
 
-        const headData = engine.forward(normH, tokens);
-        const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
+		const headData = engine.forward(normH, tokens);
+		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
 
-        // Apply Wo (output projection)
-        const Wo = layerWeights["attention"]["output"];
-        const projected = concatOutput.map(row =>
-            Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
-        );
+		// Apply Wo (output projection)
+		const Wo = layerWeights["attention"]["output"];
+		const projected = concatOutput.map(row =>
+			Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
+		);
 
-        // 2. Residual connection
-        const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
+		// 2. Residual connection
+		const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
 
-        // 3. Sublayer 2: Feed Forward & Add
-        const h_after = run_ffn_block(h_attn, layerWeights);
+		// 3. Sublayer 2: Feed Forward & Add
+		const h_after = run_ffn_block(h_attn, layerWeights);
 
-        // Visualization
-        create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, h_after, n + 1, d_model);
+		// Visualization
+		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, h_after, n + 1, d_model);
 
-        h_current = h_after;
-    }
-    return h_current;
+		h_current = h_after;
+	}
+	return h_current;
 }
 
 /**
@@ -1626,10 +1626,6 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
 	});
 }
 
-
-/**
- * Extracted rendering logic (The original create_migration_plot body)
- */
 function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model) {
 	const plotDiv = document.getElementById(id);
 	if (!plotDiv) return;
