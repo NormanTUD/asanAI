@@ -1028,7 +1028,7 @@ Remember that the $n$ is the number of tokens in the <b>Inference</b>-sequence, 
 This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. When the model is, for example, $d_{\\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage, their influence is already baked into that last vector.
 	</span>
 
-	<p>Current $h_\\text{last} = [${h_last.map(v => v.toFixed(3)).join(', ')}]$</p>`;
+	<p>Current $h_\\text{last} = [${h_last.map(v => v.toFixed(nr_fixed)).join(', ')}]$</p>`;
 
 	const logits = vocabulary.map((word, i) => {
 		const w_row = W_vocab[i];
@@ -1041,10 +1041,10 @@ This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Whe
 		h_last.forEach((h_val, dim) => {
 			const product = h_val * w_row[dim];
 			sum += product;
-			terms.push(`(${h_val.toFixed(3)} \\cdot ${w_row[dim].toFixed(3)})`);
+			terms.push(`(${h_val.toFixed(nr_fixed)} \\cdot ${w_row[dim].toFixed(nr_fixed)})`);
 		});
 
-		dotProductFormula += terms.join(' + ') + ` = ${sum.toFixed(4)}`;
+		dotProductFormula += terms.join(' + ') + ` = ${sum.toFixed(nr_fixed)}`;
 
 		calculationHtml += `<div style="margin-bottom: 10px; font-size: 0.9rem;">
 	    <strong>Word: "${word}"</strong><br>
