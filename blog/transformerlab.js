@@ -136,32 +136,32 @@ class AttentionEngine {
 		const K_full = this.dot(h0, this.this_weights.key);
 		const V_full = this.dot(h0, this.this_weights.value);
 
-		let headData = [];
-		for (let i = 0; i < this.n_heads; i++) {
-			const start = i * this.d_k;
-			const end = start + this.d_k;
+		// Fix #2: Single-head attention (no head splitting), matching training
+		// Fix #3: Scale by √d_model (not √d_k)
+		let scores = this.dot(Q_full, this.transpose(K_full)).map(row =>
+			row.map(v => v / Math.sqrt(this.d_model))
+		);
 
-			const Qi = Q_full.map(r => r.slice(start, end));
-			const Ki = K_full.map(r => r.slice(start, end));
-			const Vi = V_full.map(r => r.slice(start, end));
-
-			const scores = this.dot(Qi, this.transpose(Ki)).map(row => 
-				row.map(v => v / Math.sqrt(this.d_k))
-			);
-			const this_weights = this.softmax(scores);
-			const context = this.dot(this_weights, Vi);
-
-			headData.push({
-				headIdx: i,
-				Qi, Ki, Vi,
-				this_weights,
-				context,
-				h0: h0, // Original embeddings
-				WQ: this.this_weights.query.map(r => r.slice(start, end)), // Head-specific weight slice
-				WK: this.this_weights.key.map(r => r.slice(start, end)),
-				WV: this.this_weights.value.map(r => r.slice(start, end))
-			});
+		// Fix #4: Apply causal mask (matching training's upper-triangle × 1e9)
+		for (let r = 0; r < scores.length; r++) {
+			for (let c = r + 1; c < scores[r].length; c++) {
+				scores[r][c] -= 1e9;
+			}
 		}
+
+		const attn_weights = this.softmax(scores);
+		const context = this.dot(attn_weights, V_full);
+
+		let headData = [{
+			headIdx: 0,
+			Qi: Q_full, Ki: K_full, Vi: V_full,
+			this_weights: attn_weights,
+			context: context,
+			h0: h0,
+			WQ: this.this_weights.query,
+			WK: this.this_weights.key,
+			WV: this.this_weights.value
+		}];
 
 		this.renderUI(headData, tokens);
 		return headData;
@@ -794,7 +794,6 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	const vocabulary = [...new Set(trainingTokens)];
 	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
 
-	// Architektur-Validierung & Gewichte (identisch zum Original)
 	if (d_model % n_heads !== 0) {
 		console.warn(`Incompatible Dimensions: d_model (${d_model}) must be divisible by n_heads (${n_heads}).`);
 	}
@@ -812,15 +811,14 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	}
 	const weights = window.currentWeights;
 
-	// 1. Embedding Space (Immer vom Training)
+	// 1. Embedding Space
 	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
 	render_embedding_plot(d_model);
 
-	// 2. Visualisierungen (Basierend auf inputTokens/knownTokens)
+	// 2. Visualizations
 	tokensWithPositional = calculate_positional_injection(knownTokens, d_model);
 	render_positional_waves(d_model, knownTokens);
 
-	// h0 berechnen und Plot für Positional Shift rendern
 	const h0 = render_positional_shift_plot(knownTokens, d_model);
 
 	render_architecture_stats(d_model, n_heads, n_layers, temperature);
@@ -831,7 +829,9 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		Input words not found in Training Data.
 	     </div>`;
 	} else {
-		// Erster Layer mit UI-Details (MHA Engine)
+		// Fix #6: Pre-LN — normalize h0 BEFORE attention (matching training)
+		const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
+
 		const engine = new AttentionEngine({
 			d_model: d_model,
 			n_heads: n_heads,
@@ -839,25 +839,30 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 			weights: weights[0]["attention"]
 		});
 
-		const headData = engine.forward(h0, tokensWithPositional);
+		const headData = engine.forward(normH0, tokensWithPositional);
 		const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
 
-		const h1 = get_h1(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"]);
+		// Fix #5: Apply Wo (output projection), matching training's tf.matMul(..., l.wo)
+		const Wo_layer0 = weights[0]["attention"]["output"];
+		const projected = multiHeadOutput.map(row =>
+			Wo_layer0[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo_layer0[k][j], 0))
+		);
+
+		// Residual connection: h1 = h0 + projected (Pre-LN already applied before attention)
+		const h1 = h0.map((row, i) => row.map((val, j) => val + projected[i][j]));
 
 		if (typeof render_h1_logic === "function") {
 			render_h1_logic(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
 		}
 
 		const h2 = run_ffn_block(h1, weights[0]);
-		// Alle weiteren Layer durchlaufen
 		run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights);
 	}
 
-	// 3. FINALE WAHRSCHEINLICHKEITEN (Immer basierend auf master-token-input)
+	// 3. FINAL PROBABILITIES (based on master-token-input)
 	const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
 
 	if (knownMasterTokens.length > 0) {
-		// Wir erzeugen h0 für den Master-Input manuell (Embeddings + PE)
 		let h_master = knownMasterTokens.map((t, pos) => {
 			const emb = window.persistentEmbeddingSpace[t] || new Array(d_model).fill(0);
 			const pe = new Array(d_model).fill(0);
@@ -868,20 +873,30 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 			return emb.map((v, i) => v + pe[i]);
 		});
 
-		// "Stiller" Forward-Pass durch alle Layer für die Prediction
 		let h_current = h_master;
 		for (let l = 0; l < n_layers; l++) {
 			const layerWeights = weights[l];
-			const attnEngine = new AttentionEngine({ d_model, n_heads, containerId: null, weights: layerWeights["attention"] });
-			const headData = attnEngine.forward(h_current, knownMasterTokens);
 
-			// Konkatenation
+			// Fix #6: Pre-LN — normalize BEFORE attention (matching training)
+			const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
+
+			const attnEngine = new AttentionEngine({ d_model, n_heads, containerId: null, weights: layerWeights["attention"] });
+			const headData = attnEngine.forward(normH, knownMasterTokens);
+
 			const concat = knownMasterTokens.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
-			const h_attn = get_h1(h_current, concat, layerWeights["gamma"], layerWeights["beta"]);
+
+			// Fix #5: Apply Wo (output projection)
+			const Wo = layerWeights["attention"]["output"];
+			const projected = concat.map(row =>
+				Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
+			);
+
+			// Residual connection (Pre-LN: no additional norm here)
+			const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
+
 			h_current = run_ffn_block(h_attn, layerWeights);
 		}
 
-		// Output Projection rendern (Das Feld mit den klickbaren Wörtern)
 		if (typeof render_final_projection === "function") {
 			render_final_projection(h_current, vocabulary, d_model, temperature);
 		}
@@ -1320,15 +1335,18 @@ function run_ffn_block(h1, params = {}) {
 	const d_model = h1[0].length;
 	const d_ff = d_model * 4;
 
-	// Ensure parameters exist
 	let W1 = assert_or_init('W1', params.W1, d_model, d_ff);
 	let b1 = assert_or_init('b1', params.b1, d_ff, 1);
 	let W2 = assert_or_init('W2', params.W2, d_ff, d_model);
 	let b2 = assert_or_init('b2', params.b2, d_model, 1);
-	let gamma = params.gamma || new Array(d_model).fill(1.0);
-	let beta = params.beta || new Array(d_model).fill(0.0);
+	// Fix #7: Use gamma2/beta2 (the FFN's own LayerNorm params, not attention's)
+	let gamma2 = params.gamma2 || new Array(d_model).fill(1.0);
+	let beta2 = params.beta2 || new Array(d_model).fill(0.0);
 
-	const out_L1 = h1.map(row => {
+	// Fix #7: Pre-LN — normalize h1 BEFORE FFN (matching training's tf_layer_norm(x, l.gamma2, l.beta2))
+	const normed_h1 = calculateLayerNorm(h1, gamma2, beta2);
+
+	const out_L1 = normed_h1.map(row => {
 		return b1.map((bias, j) => {
 			let sum = bias;
 			for (let i = 0; i < d_model; i++) sum += row[i] * W1[i][j];
@@ -1344,14 +1362,16 @@ function run_ffn_block(h1, params = {}) {
 		});
 	});
 
-	const ffn_normed = calculateLayerNorm(out_FFN, gamma, beta);
-	const h2 = h1.map((row, i) => row.map((val, j) => val + ffn_normed[i][j]));
+	// Fix #7: Residual — h2 = h1 + FFN(normed_h1), NO post-norm on output
+	// (matching training's: x = tf.add(x, ffn))
+	const h2 = h1.map((row, i) => row.map((val, j) => val + out_FFN[i][j]));
 
-	// Updated call with concrete values
-	render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta);
+	// Visualization (now passing correct gamma2/beta2 for display)
+	render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2);
 
 	return h2;
 }
+
 
 /**
  * Erzeugt LaTeX-Output für Matrizen ohne Limitierungen.
@@ -1401,7 +1421,10 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 		const h_before_layer = JSON.parse(JSON.stringify(h_current));
 		const layerWeights = this_weights[n];
 
-		// 1. Sublayer 1: Multi-Head Attention
+		// Fix #6: Pre-LN — normalize BEFORE attention (matching training)
+		const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
+
+		// 1. Sublayer 1: Attention (on normalized input)
 		const engine = new AttentionEngine({ 
 			d_model, 
 			n_heads, 
@@ -1409,25 +1432,29 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 			weights: layerWeights["attention"]
 		});
 
-		const headData = engine.forward(h_current, tokens);
+		const headData = engine.forward(normH, tokens);
 		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
 
-		// 2. Add & Norm (Attention)
-		// h_attn = LayerNorm(MHA(h_current)) + h_current
-		const h_attn = get_h1(h_current, concatOutput, layerWeights["gamma"], layerWeights["beta"]);
+		// Fix #5: Apply Wo (output projection), matching training's tf.matMul(..., l.wo)
+		const Wo = layerWeights["attention"]["output"];
+		const projected = concatOutput.map(row =>
+			Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
+		);
+
+		// 2. Residual connection (Pre-LN: no additional norm here)
+		const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
 
 		// 3. Sublayer 2: Feed Forward & Add & Norm
-		// h_after = LayerNorm(FFN(h_attn)) + h_attn
 		const h_after = run_ffn_block(h_attn, layerWeights);
 
-		// Visualization: Show the migration from start of layer to end of layer
+		// Visualization
 		create_migration_plot(`migration-layer-${n+1}`, tokens, h_before_layer, h_after, n + 1, d_model);
 		
-		// Update for next layer
 		h_current = h_after;
 	}
 	return h_current;
 }
+
 
 /**
  * Global Registry for Deferred Rendering
