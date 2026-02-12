@@ -236,7 +236,7 @@ $$
 
 The association between *Query* and *Key* and concrete tokens is only true in the first layer, where it is taken from the concrete embeddings. In further layers, it works on the abstract feature space instead.
 
-Here, it is already abstracted away from the concrete Embedding Space, and thus, the numbers don't inherently 'mean' anything anymore.
+Here, it is already abstracted away from the concrete Embedding Space (for example, by positional encoding), and thus, the numbers don't inherently 'mean' anything anymore.
 </div>
 
 <div id="mha-calculation-details" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #3b82f6; margin-top: 20px;">
