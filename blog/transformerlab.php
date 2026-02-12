@@ -131,6 +131,10 @@ $$PE_{(\text{pos}, 2i+1)} = \cos(\text{pos} / 10000^{2i/d_\text{model}})$$
 This positional signal allows the model to infer relative positions if it learns to, while the Feed-Forward Network (FFN) utilizes these unique 'geometric fingerprints' to apply position-specific logic.
 </div>
 
+<div class="md" id="ifscalfactornotone" style="display: none">
+In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">0.1</span> because of the low dimensionality of our space.
+</div>
+
 <div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
 
 <div id="transformer-pe-shift-plot" style="width: 100%; height: 300px; margin-top: 20px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>

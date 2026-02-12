@@ -5,6 +5,12 @@
  */
 
 const nr_fixed = 4;
+const posEmbedScalar = 0.1;
+
+window.addEventListener('DOMContentLoaded', (event) => {
+	document.getElementById("ifscalfactornotone").style.display =  posEmbedScalar == 1 ? 'none' : 'block'
+	document.getElementById("posEmbedScaleFactor").innerHTML = posEmbedScalar;
+});
 
 window.lastActiveInputId = 'transformer-training-data';
 window.persistentEmbeddingSpace = null;
@@ -367,9 +373,9 @@ function render_positional_waves(d_model, tokens) {
 			const normalizedP = seqLen > 1 ? p / (seqLen - 1) : p;
 
 			// We multiply by Math.PI to ensure at least half a wave cycle fits the length
-			let val = (i % 2 === 0) 
-				? Math.sin((normalizedP * Math.PI) / div_term) 
-				: Math.cos((normalizedP * Math.PI) / div_term);
+			let val = ((i % 2 === 0)                            
+				? Math.sin((normalizedP * Math.PI) / div_term)                            
+				: Math.cos((normalizedP * Math.PI) / div_term)) * posEmbedScalar; // <--- Nudge reduziert
 
 			x.push(p);
 			y.push(val);
@@ -1542,10 +1548,10 @@ function render_positional_shift_plot(tokenStrings, d_model) {
         if (!semanticBase) return;
 
         const peVec = new Array(d_model).fill(0);
-        for (let i = 0; i < d_model; i += 2) {
-            let div_term = Math.pow(10000, i / d_model);
-            peVec[i] = Math.sin(pos / div_term);
-            if (i + 1 < d_model) peVec[i + 1] = Math.cos(pos / div_term);
+	    for (let i = 0; i < d_model; i += 2) {
+		    let div_term = Math.pow(10000, i / d_model);
+		    peVec[i] = Math.sin(pos / div_term) * posEmbedScalar; 
+		    if (i + 1 < d_model) peVec[i + 1] = Math.cos(pos / div_term) * posEmbedScalar;
         }
 
         const combined = semanticBase.map((val, i) => val + peVec[i]);
