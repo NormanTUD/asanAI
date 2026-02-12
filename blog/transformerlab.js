@@ -574,61 +574,70 @@ function convert_weights_to_tensors(weights) {
 }
 
 function calculate_tf_loss(tokens, vars, d_model, n_layers) {
-	const losses = [];
-	const thiscontextSize = Math.min(contextSize, tokens.length - 1);
+    const losses = [];
 
-	const mask = tf.tidy(() => {
-		const ones = tf.ones([thiscontextSize, thiscontextSize]);
-		const upperTriangle = tf.linalg.bandPart(ones, 0, -1); 
-		const diagonal = tf.linalg.bandPart(ones, 0, 0);
-		return tf.sub(upperTriangle, diagonal).mul(tf.scalar(1e9)); // Large negative mask
-	});
+    // ── FIX: Adaptive context window ──────────────────────────────────
+    // Previously: Math.min(contextSize, tokens.length - 1)
+    // With 24 tokens and contextSize=128 that gave 23, leaving only 1 sample.
+    // Now we cap at ≈ half the corpus so the loop produces many samples.
+    const thiscontextSize = Math.min(
+        contextSize,
+        Math.max(1, Math.floor((tokens.length - 1) / 2))
+    );
 
-	for (let startIdx = 0; startIdx < tokens.length - thiscontextSize; startIdx++) {
-		const inputIds = tokens.slice(startIdx, startIdx + thiscontextSize)
-			.map(t => vars.vocab_map.indexOf(t));
-		const targetId = vars.vocab_map.indexOf(tokens[startIdx + thiscontextSize]);
+    const mask = tf.tidy(() => {
+        const ones = tf.ones([thiscontextSize, thiscontextSize]);
+        const upperTriangle = tf.linalg.bandPart(ones, 0, -1);
+        const diagonal = tf.linalg.bandPart(ones, 0, 0);
+        return tf.sub(upperTriangle, diagonal).mul(tf.scalar(1e9));
+    });
 
-		let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
+    for (let startIdx = 0; startIdx < tokens.length - thiscontextSize; startIdx++) {
+        const inputIds = tokens.slice(startIdx, startIdx + thiscontextSize)
+            .map(t => vars.vocab_map.indexOf(t));
+        const targetId = vars.vocab_map.indexOf(tokens[startIdx + thiscontextSize]);
 
-		// PE Injection matching UI logic
-		const peTensor = tf.tidy(() => {
-			const pos = tf.range(0, inputIds.length, 1).reshape([inputIds.length, 1]);
-			const i = tf.range(0, d_model, 1).reshape([1, d_model]);
-			const divTerm = tf.pow(tf.scalar(10000), i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model)));
-			const args = pos.div(divTerm);
-			return tf.where(i.mod(tf.scalar(2)).equal(tf.scalar(0)), tf.sin(args), tf.cos(args)).mul(tf.scalar(posEmbedScalar));
-		});
-		x = tf.add(x, peTensor);
+        let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
 
-		for (let i = 0; i < n_layers; i++) {
-			const l = vars.layers[i];
-			// Attention Block
-			let normX = tf_layer_norm(x, l.gamma, l.beta);
-			const q = tf.matMul(normX, l.wq);
-			const k = tf.matMul(normX, l.wk);
-			const v = tf.matMul(normX, l.wv);
-			let scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
-			scores = tf.sub(scores, mask); 
-			const weights = tf.softmax(scores);
-			x = tf.add(x, tf.matMul(tf.matMul(weights, v), l.wo));
+        const peTensor = tf.tidy(() => {
+            const pos = tf.range(0, inputIds.length, 1).reshape([inputIds.length, 1]);
+            const i = tf.range(0, d_model, 1).reshape([1, d_model]);
+            const divTerm = tf.pow(tf.scalar(10000), i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model)));
+            const args = pos.div(divTerm);
+            return tf.where(i.mod(tf.scalar(2)).equal(tf.scalar(0)), tf.sin(args), tf.cos(args)).mul(tf.scalar(posEmbedScalar));
+        });
+        x = tf.add(x, peTensor);
 
-			// FFN Block
-			let normX2 = tf_layer_norm(x, l.gamma2, l.beta2);
-			let ffn = tf.relu(tf.add(tf.matMul(normX2, l.w1), l.b1));
-			ffn = tf.add(tf.matMul(ffn, l.w2), l.b2);
-			x = tf.add(x, ffn);
-		}
+        for (let i = 0; i < n_layers; i++) {
+            const l = vars.layers[i];
+            let normX = tf_layer_norm(x, l.gamma, l.beta);
+            const q = tf.matMul(normX, l.wq);
+            const k = tf.matMul(normX, l.wk);
+            const v = tf.matMul(normX, l.wv);
+            let scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
+            scores = tf.sub(scores, mask);
+            const weights = tf.softmax(scores);
+            x = tf.add(x, tf.matMul(tf.matMul(weights, v), l.wo));
 
-		// Project last token hidden state to Vocabulary
-		const lastTokenVector = x.slice([thiscontextSize - 1, 0], [1, d_model]);
-		const logits = tf.matMul(lastTokenVector, vars.embeddings.transpose());
-		const label = tf.oneHot(tf.tensor1d([targetId], 'int32'), vars.vocab_map.length);
+            let normX2 = tf_layer_norm(x, l.gamma2, l.beta2);
+            let ffn = tf.relu(tf.add(tf.matMul(normX2, l.w1), l.b1));
+            ffn = tf.add(tf.matMul(ffn, l.w2), l.b2);
+            x = tf.add(x, ffn);
+        }
 
-		losses.push(tf.losses.softmaxCrossEntropy(label, logits));
-	}
-	return tf.addN(losses).div(tf.scalar(losses.length));
+        const lastTokenVector = x.slice([thiscontextSize - 1, 0], [1, d_model]);
+        const logits = tf.matMul(lastTokenVector, vars.embeddings.transpose());
+        const label = tf.oneHot(tf.tensor1d([targetId], 'int32'), vars.vocab_map.length);
+
+        losses.push(tf.losses.softmaxCrossEntropy(label, logits));
+    }
+
+    // ── FIX: Guard against empty losses (e.g. single-token corpus) ───
+    if (losses.length === 0) return tf.scalar(10);
+
+    return tf.addN(losses).div(tf.scalar(losses.length));
 }
+
 
 async function convert_tensors_to_weights(vars) {
 	const newWeights = []; 
@@ -782,125 +791,133 @@ function renderLossGraph() {
 }
 
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
-	const dimSlider = document.getElementById('transformer-dimension-model');
-	const d_model = parseInt(dimSlider.value);
-	const headSlider = document.getElementById('transformer-heads');
-	const n_heads = parseInt(headSlider.value);
-	const tempSlider = document.getElementById('transformer-temperature');
-	const temperature = parseFloat(tempSlider.value);
-	const depthSlider = document.getElementById('transformer-depth');
-	const n_layers = parseInt(depthSlider.value);
+    const dimSlider = document.getElementById('transformer-dimension-model');
+    const d_model = parseInt(dimSlider.value);
+    const headSlider = document.getElementById('transformer-heads');
+    const n_heads = parseInt(headSlider.value);
+    const tempSlider = document.getElementById('transformer-temperature');
+    const temperature = parseFloat(tempSlider.value);
+    const depthSlider = document.getElementById('transformer-depth');
+    const n_layers = parseInt(depthSlider.value);
 
-	const vocabulary = [...new Set(trainingTokens)];
-	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
+    const vocabulary = [...new Set(trainingTokens)];
+    const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
 
-	if (d_model % n_heads !== 0) {
-		console.warn(`Incompatible Dimensions: d_model (${d_model}) must be divisible by n_heads (${n_heads}).`);
-	}
+    if (d_model % n_heads !== 0) {
+        console.warn(`Incompatible Dimensions: d_model (${d_model}) must be divisible by n_heads (${n_heads}).`);
+    }
 
-	const needsReinit = !window.currentWeights ||
-		window.currentWeights.length !== n_layers ||
-		window.last_d_model !== d_model ||
-		window.last_n_heads !== n_heads;
+    const needsReinit = !window.currentWeights ||
+        window.currentWeights.length !== n_layers ||
+        window.last_d_model !== d_model ||
+        window.last_n_heads !== n_heads;
 
-	if (needsReinit) {
-		window.currentWeights = get_init_weights(n_layers, d_model);
-		window.last_d_model = d_model;
-		window.last_n_heads = n_heads;
-		reset_graph();
-	}
-	const weights = window.currentWeights;
+    if (needsReinit) {
+        window.currentWeights = get_init_weights(n_layers, d_model);
+        window.last_d_model = d_model;
+        window.last_n_heads = n_heads;
+        reset_graph();
+    }
+    const weights = window.currentWeights;
 
-	// 1. Embedding Space
-	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
-	render_embedding_plot(d_model);
+    // 1. Embedding Space
+    window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
+    render_embedding_plot(d_model);
 
-	// 2. Visualizations
-	tokensWithPositional = calculate_positional_injection(knownTokens, d_model);
-	render_positional_waves(d_model, knownTokens);
+    // 2. Visualizations
+    tokensWithPositional = calculate_positional_injection(knownTokens, d_model);
+    render_positional_waves(d_model, knownTokens);
 
-	const h0 = render_positional_shift_plot(knownTokens, d_model);
+    const h0 = render_positional_shift_plot(knownTokens, d_model);
 
-	render_architecture_stats(d_model, n_heads, n_layers, temperature);
+    render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
-	if (tokensWithPositional.length === 0) {
-		document.getElementById('transformer-output-projection').innerHTML =
-			`<div style="padding:20px; color: #64748b; text-align:center;">
-		Input words not found in Training Data.
-	     </div>`;
-	} else {
-		// Fix #6: Pre-LN — normalize h0 BEFORE attention (matching training)
-		const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
+    // ── FIX: Clear stale migration plots & registry from previous runs ──
+    const migrationContainer = document.getElementById('transformer-migration-plots-container');
+    if (migrationContainer) {
+        migrationContainer.innerHTML = '';
+        transformerLabVisMigrationDataRegistry.clear();
+    }
 
-		const engine = new AttentionEngine({
-			d_model: d_model,
-			n_heads: n_heads,
-			containerId: "mha-calculation-details",
-			weights: weights[0]["attention"]
-		});
+    if (tokensWithPositional.length === 0) {
+        document.getElementById('transformer-output-projection').innerHTML =
+            `<div style="padding:20px; color: #64748b; text-align:center;">
+                Input words not found in Training Data.
+             </div>`;
+    } else {
+        // ── Layer 0: Explicit processing for detailed visualizations ──
+        const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
 
-		const headData = engine.forward(normH0, tokensWithPositional);
-		const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
+        const engine = new AttentionEngine({
+            d_model: d_model,
+            n_heads: n_heads,
+            containerId: "mha-calculation-details",
+            weights: weights[0]["attention"]
+        });
 
-		// Fix #5: Apply Wo (output projection), matching training's tf.matMul(..., l.wo)
-		const Wo_layer0 = weights[0]["attention"]["output"];
-		const projected = multiHeadOutput.map(row =>
-			Wo_layer0[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo_layer0[k][j], 0))
-		);
+        const headData = engine.forward(normH0, tokensWithPositional);
+        const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
 
-		// Residual connection: h1 = h0 + projected (Pre-LN already applied before attention)
-		const h1 = h0.map((row, i) => row.map((val, j) => val + projected[i][j]));
+        const Wo_layer0 = weights[0]["attention"]["output"];
+        const projected = multiHeadOutput.map(row =>
+            Wo_layer0[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo_layer0[k][j], 0))
+        );
 
-		if (typeof render_h1_logic === "function") {
-			render_h1_logic(h0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
-		}
+        const h1 = h0.map((row, i) => row.map((val, j) => val + projected[i][j]));
 
-		const h2 = run_ffn_block(h1, weights[0]);
-		run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights);
-	}
+        if (typeof render_h1_logic === "function") {
+            // ── FIX: Pass normH0 for correct Pre-LN formula display ──
+            render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
+        }
 
-	// 3. FINAL PROBABILITIES (based on master-token-input)
-	const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
+        const h2 = run_ffn_block(h1, weights[0]);
 
-	if (knownMasterTokens.length > 0) {
-		let h_master = knownMasterTokens.map((t, pos) => {
-			const emb = window.persistentEmbeddingSpace[t] || new Array(d_model).fill(0);
-			const pe = new Array(d_model).fill(0);
-			for (let i = 0; i < d_model; i++) {
-				let div = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-				pe[i] = (i % 2 === 0) ? Math.sin(pos / div) : Math.cos(pos / div);
-			}
-			return emb.map((v, i) => v + pe[i]);
-		});
+        // ── FIX: Create migration plot for layer 0 here ──
+        create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model);
 
-		let h_current = h_master;
-		for (let l = 0; l < n_layers; l++) {
-			const layerWeights = weights[l];
+        // ── FIX: Start deep layers from 1, not 0, to avoid double-processing ──
+        run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1);
+    }
 
-			// Fix #6: Pre-LN — normalize BEFORE attention (matching training)
-			const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
+    // 3. FINAL PROBABILITIES (based on master-token-input)
+    const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
 
-			const attnEngine = new AttentionEngine({ d_model, n_heads, containerId: null, weights: layerWeights["attention"] });
-			const headData = attnEngine.forward(normH, knownMasterTokens);
+    if (knownMasterTokens.length > 0) {
+        let h_master = knownMasterTokens.map((t, pos) => {
+            const emb = window.persistentEmbeddingSpace[t] || new Array(d_model).fill(0);
+            const pe = new Array(d_model).fill(0);
+            for (let i = 0; i < d_model; i++) {
+                let div = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+                pe[i] = (i % 2 === 0) ? Math.sin(pos / div) : Math.cos(pos / div);
+            }
+            return emb.map((v, i) => v + pe[i]);
+        });
 
-			const concat = knownMasterTokens.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
+        let h_current = h_master;
+        for (let l = 0; l < n_layers; l++) {
+            const layerWeights = weights[l];
 
-			// Fix #5: Apply Wo (output projection)
-			const Wo = layerWeights["attention"]["output"];
-			const projected = concat.map(row =>
-				Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
-			);
+            const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
 
-			// Residual connection (Pre-LN: no additional norm here)
-			const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
+            const attnEngine = new AttentionEngine({ d_model, n_heads, containerId: null, weights: layerWeights["attention"] });
+            const headData = attnEngine.forward(normH, knownMasterTokens);
 
-			h_current = run_ffn_block(h_attn, layerWeights);
-		}
+            const concat = knownMasterTokens.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
 
-		if (typeof render_final_projection === "function") {
-			render_final_projection(h_current, vocabulary, d_model, temperature);
-		}
-	}
+            const Wo = layerWeights["attention"]["output"];
+            const projected = concat.map(row =>
+                Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
+            );
+
+            const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
+
+            h_current = run_ffn_block(h_attn, layerWeights);
+        }
+
+        if (typeof render_final_projection === "function") {
+            render_final_projection(h_current, vocabulary, d_model, temperature);
+        }
+    }
 }
 
 window.select_suggested_word = (word) => {
@@ -1137,87 +1154,67 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
 	return tokens;
 }
 
-function render_h1_logic(h0, multiHeadOutput, gamma, beta, WO) {
-	const normContainer = document.getElementById('transformer-h1-layernorm-viz');
-	const finalContainer = document.getElementById('transformer-h1-final-viz');
-	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
+/**
+ * FIX: Updated to display Pre-LN architecture (matching actual computation).
+ * Old version showed Post-LN: h1 = h0 + LayerNorm(MHA_proj)
+ * New version shows Pre-LN:   normH0 = LayerNorm(h0), then h1 = h0 + Attention(normH0) × Wo
+ *
+ * NEW SIGNATURE: Added normH0 as second parameter.
+ */
+function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
+    const normContainer = document.getElementById('transformer-h1-layernorm-viz');
+    const finalContainer = document.getElementById('transformer-h1-final-viz');
+    if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
 
-	const matrixToPmatrix = (matrix) =>
-		`\\begin{pmatrix} ` + matrix.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ') + ` \\end{pmatrix}`;
+    const matrixToPmatrix = (matrix) =>
+        `\\begin{pmatrix} ` + matrix.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ') + ` \\end{pmatrix}`;
 
-	const vecToPmatrix = (vec) =>
-		`\\begin{pmatrix} ${vec.map(v => v.toFixed(nr_fixed)).join(' & ')} \\end{pmatrix}`;
+    const vecToPmatrix = (vec) =>
+        `\\begin{pmatrix} ${vec.map(v => v.toFixed(nr_fixed)).join(' & ')} \\end{pmatrix}`;
 
-	// 0. Project the Multi-Head Output using WO (Linear Transformation)
-	const projectedMHA = multiHeadOutput.map(row => 
-		WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
-	);
+    // Project the Multi-Head Output using WO
+    const projectedMHA = multiHeadOutput.map(row =>
+        WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
+    );
 
-	const eps = 1e-5;
-	const means = [];
-	const variances = [];
-	const meanCalcs = []; 
-	const varCalcs = [];  
+    // h1 = h0 + projected (Pre-LN: no normalization on the sublayer output)
+    const h1 = h0.map((row, i) => row.map((val, j) => val + projectedMHA[i][j]));
 
-	// Apply LayerNorm to the PROJECTED output
-	const standardized = projectedMHA.map(row => {
-		const n = row.length;
-		const sum = row.reduce((a, b) => a + b, 0);
-		const mean = sum / n;
+    // ── FIX: Display Pre-LN steps instead of Post-LN ──
+    normContainer.innerHTML = `
+    <div style="margin-bottom:20px; padding:15px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
+        <p style="font-size:0.9rem; font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
 
-		const sumSqDiff = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0);
-		const variance = sumSqDiff / n;
+        <div style="margin-bottom:15px;">
+            <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
+            $$ \\text{Norm}(h_0) = \\gamma \\odot \\frac{h_0 - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta $$
+            <div style="overflow-x:auto;">
+                $$ ${matrixToPmatrix(normH0)} = \\text{LayerNorm}\\!\\left(${matrixToPmatrix(h0)},\\; ${vecToPmatrix(gamma)},\\; ${vecToPmatrix(beta)}\\right) $$
+            </div>
+        </div>
 
-		means.push(mean);
-		variances.push(variance);
-		meanCalcs.push(`\\frac{${sum.toFixed(nr_fixed)}}{${n}}`);
-		varCalcs.push(`\\frac{${sumSqDiff.toFixed(nr_fixed)}}{${n}}`);
-
-		return row.map(val => (val - mean) / Math.sqrt(variance + eps));
-	});
-
-	const normMH = standardized.map(row =>
-		row.map((val, j) => val * gamma[j] + beta[j])
-	);
-
-	const h1 = h0.map((row, i) => row.map((val, j) => val + normMH[i][j]));
-
-	normContainer.innerHTML = `
-    <div style="margin-bottom:20px; padding:15px; border:1px solid #3b82f6; border-radius:8px; background:#f0f9ff;">
-	<p style="font-size:0.85rem; color:#1e40af;">Transformation to mix information across attention heads:</p>
-	$$ \\text{MHA}_\\text{proj} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
-	<div style="overflow-x:auto;">
-	    $$ ${matrixToPmatrix(projectedMHA)} = ${matrixToPmatrix(multiHeadOutput)} \\cdot ${matrixToPmatrix(WO)} $$
-	</div>
+        <div style="margin-bottom:15px;">
+            <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
+            $$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
+            <div style="overflow-x:auto;">
+                $$ ${matrixToPmatrix(projectedMHA)} = ${matrixToPmatrix(multiHeadOutput)} \\cdot ${matrixToPmatrix(WO)} $$
+            </div>
+        </div>
     </div>
-
-    <div style="margin-bottom:10px;">
-	1. Calculate Row-wise Mean ($\\mu$) and Variance ($\\sigma^2$) on $\\text{MHA}_\\text{proj}$:
-	$$ \\vec{\\mu} = ${vecToPmatrix(means)}^T, \\quad \\vec{\\sigma}^2 = ${vecToPmatrix(variances)}^T $$
-    </div>
-    <div style="margin-bottom:10px;">
-	2. Standardize ($\\hat{x} = \\frac{x - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}}$):
-	$$ \\hat{x} = ${matrixToPmatrix(standardized)} $$
-    </div>
-    <div style="margin-bottom:10px;">
-	3. Scale and Shift:
-	$$ \\text{LayerNorm}(\\text{MHA}_\\text{proj}) = \\gamma \\odot \\hat{x} + \\beta $$
-    </div>
-    $$ \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{Result}} =
-       \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma} \\odot
-       \\underbrace{${matrixToPmatrix(standardized)}}_{\\hat{x}} +
-       \\underbrace{${vecToPmatrix(beta)}}_{\\beta} $$
     `;
 
-	finalContainer.innerHTML = `
-    <div style="margin-bottom:10px;">$$ h_1 = h_0 + \\text{LayerNorm}(\\text{MHA}_\\text{proj}) $$</div>
+    finalContainer.innerHTML = `
+    <div style="margin-bottom:10px;">
+        <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
+        $$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
+    </div>
     <div style="overflow-x:auto;">
-	$$ ${matrixToPmatrix(h1)} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(normMH)}}_{\\text{LayerNorm}} $$
+        $$ ${matrixToPmatrix(h1)} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_{\\text{proj}}} $$
     </div>
     `;
 
-	if (typeof render_temml === "function") render_temml();
-	return h1;
+    if (typeof render_temml === "function") render_temml();
+    return h1;
 }
 
 /**
@@ -1332,45 +1329,44 @@ function assert_or_init(name, value, expected_rows, expected_cols) {
  * Origin: Vaswani et al. (2017)
  */
 function run_ffn_block(h1, params = {}) {
-	const d_model = h1[0].length;
-	const d_ff = d_model * 4;
+    const d_model = h1[0].length;
+    const d_ff = d_model * 4;
 
-	let W1 = assert_or_init('W1', params.W1, d_model, d_ff);
-	let b1 = assert_or_init('b1', params.b1, d_ff, 1);
-	let W2 = assert_or_init('W2', params.W2, d_ff, d_model);
-	let b2 = assert_or_init('b2', params.b2, d_model, 1);
-	// Fix #7: Use gamma2/beta2 (the FFN's own LayerNorm params, not attention's)
-	let gamma2 = params.gamma2 || new Array(d_model).fill(1.0);
-	let beta2 = params.beta2 || new Array(d_model).fill(0.0);
+    let W1 = assert_or_init('W1', params.W1, d_model, d_ff);
+    let b1 = assert_or_init('b1', params.b1, d_ff, 1);
+    let W2 = assert_or_init('W2', params.W2, d_ff, d_model);
+    let b2 = assert_or_init('b2', params.b2, d_model, 1);
+    let gamma2 = params.gamma2 || new Array(d_model).fill(1.0);
+    let beta2 = params.beta2 || new Array(d_model).fill(0.0);
 
-	// Fix #7: Pre-LN — normalize h1 BEFORE FFN (matching training's tf_layer_norm(x, l.gamma2, l.beta2))
-	const normed_h1 = calculateLayerNorm(h1, gamma2, beta2);
+    // Pre-LN: normalize h1 BEFORE FFN
+    const normed_h1 = calculateLayerNorm(h1, gamma2, beta2);
 
-	const out_L1 = normed_h1.map(row => {
-		return b1.map((bias, j) => {
-			let sum = bias;
-			for (let i = 0; i < d_model; i++) sum += row[i] * W1[i][j];
-			return Math.max(0, sum);
-		});
-	});
+    const out_L1 = normed_h1.map(row => {
+        return b1.map((bias, j) => {
+            let sum = bias;
+            for (let i = 0; i < d_model; i++) sum += row[i] * W1[i][j];
+            return Math.max(0, sum);
+        });
+    });
 
-	const out_FFN = out_L1.map(row => {
-		return b2.map((bias, j) => {
-			let sum = bias;
-			for (let i = 0; i < d_ff; i++) sum += row[i] * W2[i][j];
-			return sum;
-		});
-	});
+    const out_FFN = out_L1.map(row => {
+        return b2.map((bias, j) => {
+            let sum = bias;
+            for (let i = 0; i < d_ff; i++) sum += row[i] * W2[i][j];
+            return sum;
+        });
+    });
 
-	// Fix #7: Residual — h2 = h1 + FFN(normed_h1), NO post-norm on output
-	// (matching training's: x = tf.add(x, ffn))
-	const h2 = h1.map((row, i) => row.map((val, j) => val + out_FFN[i][j]));
+    // Residual: h2 = h1 + FFN(normed_h1), no post-norm
+    const h2 = h1.map((row, i) => row.map((val, j) => val + out_FFN[i][j]));
 
-	// Visualization (now passing correct gamma2/beta2 for display)
-	render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2);
+    // ── FIX: Pass normed_h1 so the render function can display Pre-LN correctly ──
+    render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2);
 
-	return h2;
+    return h2;
 }
+
 
 
 /**
@@ -1383,28 +1379,42 @@ function run_ffn_block(h1, params = {}) {
  * Goal: Full FFN derivation with concrete LayerNorm weights
  * Origin: Vaswani et al. (2017)
  */
-function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta) {
+/**
+ * FIX: Updated to display Pre-LN architecture (matching actual computation).
+ * Old version showed Post-LN: h2 = h1 + (γ ⊙ standardize(FFN_output) + β)
+ * New version shows Pre-LN:   normed = LN(h1), FFN(normed), h2 = h1 + FFN_output
+ *
+ * NEW SIGNATURE: Added normed_h1 as second parameter.
+ */
+function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta) {
 	const rawMP = (m) => `\\begin{pmatrix} ${m.map(r => r.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
 	const rawVP = (v) => `\\begin{pmatrix} ${v.map(val => val.toFixed(nr_fixed)).join(' & ')} \\end{pmatrix}`;
 
-	const eps = 1e-5;
-	const stdFFN = out_FFN.map(row => {
-		const mean = row.reduce((a, b) => a + b, 0) / row.length;
-		const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
-		return row.map(val => (val - mean) / Math.sqrt(variance + eps));
-	});
-
+	// ── FIX: Step 1 now shows the Pre-LN normalization + first linear layer ──
 	document.getElementById('ffn-step-1').innerHTML = `
-	$$ \\text{out}_{L1} = \\text{ReLU}(h_1 W_1 + b_1) = ${rawMP(out_L1)} $$
+    <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
+	<p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1$ before FFN</p>
+	$$ \\text{Norm}(h_1) = \\gamma_{\\text{ffn}} \\odot \\frac{h_1 - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta_{\\text{ffn}} $$
+	<div style="overflow-x:auto;">
+	    $$ ${rawMP(normed_h1)} = \\text{LayerNorm}\\!\\left(${rawMP(h1)},\\; ${rawVP(gamma)},\\; ${rawVP(beta)}\\right) $$
+	</div>
+    </div>
+    $$ \\text{out}_{L1} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1) \\cdot W_1 + b_1\\right) = ${rawMP(out_L1)} $$
     `;
 
 	document.getElementById('ffn-step-2').innerHTML = `
-	$$ \\text{out}_{L2} = \\text{out}_{L1} W_2 + b_2 = ${rawMP(out_FFN)} $$
+    $$ \\text{out}_{L2} = \\text{out}_{L1} \\cdot W_2 + b_2 = ${rawMP(out_FFN)} $$
     `;
 
+	// ── FIX: Step 3 now shows simple residual (no post-norm on FFN output) ──
 	document.getElementById('ffn-step-3').innerHTML = `
-	<div style="margin-bottom:10px;">$$ h_2 = h_1 + (\\gamma_\\text{ffn} \\odot \\text{std}(\\text{out}_{L2}) + \\beta_\\text{ffn}) $$</div>
-	$$ ${rawMP(h2)} = ${rawMP(h1)} + \\left( \\underbrace{${rawVP(gamma)}}_{\\gamma} \\odot ${rawMP(stdFFN)} + \\underbrace{${rawVP(beta)}}_{\\beta} \\right) $$
+    <div style="margin-bottom:10px;">
+	<p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
+	$$ h_2 = h_1 + \\text{out}_{L2} $$
+    </div>
+    <div style="overflow-x:auto;">
+	$$ ${rawMP(h2)} = \\underbrace{${rawMP(h1)}}_{h_1} + \\underbrace{${rawMP(out_FFN)}}_{\\text{FFN output}} $$
+    </div>
     `;
 
 	if (typeof render_temml === "function") render_temml();
@@ -1414,47 +1424,51 @@ function render_ffn_absolute_full(h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma
  * Goal: Unified N-Layer Trajectory Plotting
  * Logic: Every iteration i maps to Layer i+1 Plot
  */
-function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights) {
-	let h_current = h_initial;
+/**
+ * Goal: Unified N-Layer Trajectory Plotting
+ * FIX: Added startLayer parameter to avoid re-processing layers
+ *      already handled by the explicit visualization block.
+ */
+function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights, startLayer = 0) {
+    let h_current = h_initial;
 
-	for (let n = 0; n < total_depth; n++) {
-		const h_before_layer = JSON.parse(JSON.stringify(h_current));
-		const layerWeights = this_weights[n];
+    for (let n = startLayer; n < total_depth; n++) {
+        const h_before_layer = JSON.parse(JSON.stringify(h_current));
+        const layerWeights = this_weights[n];
 
-		// Fix #6: Pre-LN — normalize BEFORE attention (matching training)
-		const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
+        // Pre-LN: normalize BEFORE attention
+        const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
 
-		// 1. Sublayer 1: Attention (on normalized input)
-		const engine = new AttentionEngine({ 
-			d_model, 
-			n_heads, 
-			containerId: (n === 0) ? "mha-calculation-details" : null,
-			weights: layerWeights["attention"]
-		});
+        // 1. Sublayer 1: Attention (on normalized input)
+        const engine = new AttentionEngine({
+            d_model,
+            n_heads,
+            containerId: null,
+            weights: layerWeights["attention"]
+        });
 
-		const headData = engine.forward(normH, tokens);
-		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
+        const headData = engine.forward(normH, tokens);
+        const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
 
-		// Fix #5: Apply Wo (output projection), matching training's tf.matMul(..., l.wo)
-		const Wo = layerWeights["attention"]["output"];
-		const projected = concatOutput.map(row =>
-			Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
-		);
+        // Apply Wo (output projection)
+        const Wo = layerWeights["attention"]["output"];
+        const projected = concatOutput.map(row =>
+            Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
+        );
 
-		// 2. Residual connection (Pre-LN: no additional norm here)
-		const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
+        // 2. Residual connection
+        const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
 
-		// 3. Sublayer 2: Feed Forward & Add & Norm
-		const h_after = run_ffn_block(h_attn, layerWeights);
+        // 3. Sublayer 2: Feed Forward & Add
+        const h_after = run_ffn_block(h_attn, layerWeights);
 
-		// Visualization
-		create_migration_plot(`migration-layer-${n+1}`, tokens, h_before_layer, h_after, n + 1, d_model);
-		
-		h_current = h_after;
-	}
-	return h_current;
+        // Visualization
+        create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, h_after, n + 1, d_model);
+
+        h_current = h_after;
+    }
+    return h_current;
 }
-
 
 /**
  * Global Registry for Deferred Rendering
