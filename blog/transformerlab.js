@@ -224,29 +224,39 @@ class AttentionEngine {
 
 	generateMathTable(head, tokens) {
 		const { this_weights, Qi, Ki, Vi, h0, WQ, WK, WV } = head;
+
+		// Helper for Matrix display
 		const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
 
-		const wq_wk_wv_matrix_html = `
-			$$ W_Q = ${toMatrix(WQ)} $$
-			$$ W_K = ${toMatrix(WK)} $$
-			$$ W_V = ${toMatrix(WV)} $$
-		`;
+		// Helper for Column Vector display
+		const toColPmatrix = (arr) => {
+			if (!Array.isArray(arr)) return arr; // Fallback for raw strings
+			return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' \\\\ ')} \\end{pmatrix}`;
+		};
 
-		const toColPmatrix = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
+		const wq_wk_wv_matrix_html = `
+	$$ W_Q = ${toMatrix(WQ)} $$
+	$$ W_K = ${toMatrix(WK)} $$
+	$$ W_V = ${toMatrix(WV)} $$
+    `;
 
 		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.52rem;">${wq_wk_wv_matrix_html}`;
 
 		// Header (Keys)
 		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
 		tokens.forEach((t, j) => {
-			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Key: ${t}</th>`;
+			// Render Key as a vertical vector if it's an embedding array
+			const keyVector = Array.isArray(h0[j]) ? `$${toColPmatrix(h0[j])}$` : t;
+			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Key: ${keyVector}</th>`;
 		});
 		html += `</tr>`;
 
 		// Rows (Queries)
 		this_weights.forEach((row, i) => {
 			html += `<tr>`;
-			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;"><strong>Query: ${tokens[i]}</strong></td>`;
+			// Render Query as a vertical vector
+			const queryVector = Array.isArray(h0[i]) ? `$${toColPmatrix(h0[i])}$` : tokens[i];
+			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;"><strong>Query: ${queryVector}</strong></td>`;
 
 			row.forEach((weight, j) => {
 				const intensity = Math.floor(255 - (weight * 150));
@@ -255,20 +265,18 @@ class AttentionEngine {
 				const resultVec = Vi[j].map(v => v * weight);
 
 				let cellEq;
-				// First entry (0,0) gets the full derivation
 				if (i === 0 && j === 0) {
 					cellEq = `
-						\\text{SoftMax} \\left( \\frac{
-							\\overbrace{ \\left( W_Q \\cdot \\underbrace{${toColPmatrix(h0[i])}}_{h_i} \\right)^T }^{Q_i^T} \\cdot
-							\\overbrace{ \\left( W_K \\cdot \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }^{K_j}
-						}{\\sqrt{${dk_int}}} \\right) \\cdot V_j
-						= \\underbrace{${weight.toFixed(nr_fixed)}}_{\\text{Weight}} \\cdot
-						  \\underbrace{ \\left( W_V \\cdot \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\right) }_{V_j}
-						= ${toColPmatrix(resultVec)}
-					`.replace(/\s+/g, ' '); // Clean up whitespace for the parser
+		    \\text{SoftMax} \\left( \\frac{
+			\\overbrace{ \\left( W_Q \\cdot ${toColPmatrix(h0[i])} \\right)^T }^{Q_i^T} \\cdot
+			\\overbrace{ \\left( W_K \\cdot ${toColPmatrix(h0[j])} \\right) }^{K_j}
+		    }{\\sqrt{${dk_int}}} \\right) \\cdot V_j
+		    = ${weight.toFixed(nr_fixed)} \\cdot
+		      ${toColPmatrix(Vi[j])}
+		    = ${toColPmatrix(resultVec)}
+		`.replace(/\s+/g, ' ');
 				} else {
-					// Concatenation of results only
-					cellEq = `\\underbrace{${toColPmatrix(h0[i])}}_{h_i}, \\underbrace{${toColPmatrix(h0[j])}}_{h_j} \\rightarrow ${toColPmatrix(resultVec)}`;
+					cellEq = `${weight.toFixed(nr_fixed)} \\cdot ${toColPmatrix(Vi[j])} = ${toColPmatrix(resultVec)}`;
 				}
 
 				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">$${cellEq}$</td>`;
