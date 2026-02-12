@@ -857,133 +857,133 @@ function renderLossGraph() {
 }
 
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
-    const dimSlider = document.getElementById('transformer-dimension-model');
-    const d_model = parseInt(dimSlider.value);
-    const headSlider = document.getElementById('transformer-heads');
-    const n_heads = parseInt(headSlider.value);
-    const tempSlider = document.getElementById('transformer-temperature');
-    const temperature = parseFloat(tempSlider.value);
-    const depthSlider = document.getElementById('transformer-depth');
-    const n_layers = parseInt(depthSlider.value);
+	const dimSlider = document.getElementById('transformer-dimension-model');
+	const d_model = parseInt(dimSlider.value);
+	const headSlider = document.getElementById('transformer-heads');
+	const n_heads = parseInt(headSlider.value);
+	const tempSlider = document.getElementById('transformer-temperature');
+	const temperature = parseFloat(tempSlider.value);
+	const depthSlider = document.getElementById('transformer-depth');
+	const n_layers = parseInt(depthSlider.value);
 
-    const vocabulary = [...new Set(trainingTokens)];
-    const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
+	const vocabulary = [...new Set(trainingTokens)];
+	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
 
-    if (d_model % n_heads !== 0) {
-        console.warn(`Incompatible Dimensions: d_model (${d_model}) must be divisible by n_heads (${n_heads}).`);
-    }
+	if (d_model % n_heads !== 0) {
+		console.warn(`Incompatible Dimensions: d_model (${d_model}) must be divisible by n_heads (${n_heads}).`);
+	}
 
-    const needsReinit = !window.currentWeights ||
-        window.currentWeights.length !== n_layers ||
-        window.last_d_model !== d_model ||
-        window.last_n_heads !== n_heads;
+	const needsReinit = !window.currentWeights ||
+		window.currentWeights.length !== n_layers ||
+		window.last_d_model !== d_model ||
+		window.last_n_heads !== n_heads;
 
-    if (needsReinit) {
-        window.currentWeights = get_init_weights(n_layers, d_model);
-        window.last_d_model = d_model;
-        window.last_n_heads = n_heads;
-        reset_graph();
-    }
-    const weights = window.currentWeights;
+	if (needsReinit) {
+		window.currentWeights = get_init_weights(n_layers, d_model);
+		window.last_d_model = d_model;
+		window.last_n_heads = n_heads;
+		reset_graph();
+	}
+	const weights = window.currentWeights;
 
-    // 1. Embedding Space
-    window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
-    render_embedding_plot(d_model);
+	// 1. Embedding Space
+	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
+	render_embedding_plot(d_model);
 
-    // 2. Visualizations
-    tokensWithPositional = calculate_positional_injection(knownTokens, d_model);
-    render_positional_waves(d_model, knownTokens);
+	// 2. Visualizations
+	tokensWithPositional = calculate_positional_injection(knownTokens, d_model);
+	render_positional_waves(d_model, knownTokens);
 
-    const h0 = render_positional_shift_plot(knownTokens, d_model);
+	const h0 = render_positional_shift_plot(knownTokens, d_model);
 
-    render_architecture_stats(d_model, n_heads, n_layers, temperature);
+	render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
-    // ── FIX: Clear stale migration plots & registry from previous runs ──
-    const migrationContainer = document.getElementById('transformer-migration-plots-container');
-    if (migrationContainer) {
-        migrationContainer.innerHTML = '';
-        transformerLabVisMigrationDataRegistry.clear();
-    }
+	// ── FIX: Clear stale migration plots & registry from previous runs ──
+	const migrationContainer = document.getElementById('transformer-migration-plots-container');
+	if (migrationContainer) {
+		migrationContainer.innerHTML = '';
+		transformerLabVisMigrationDataRegistry.clear();
+	}
 
-    if (tokensWithPositional.length === 0) {
-        document.getElementById('transformer-output-projection').innerHTML =
-            `<div style="padding:20px; color: #64748b; text-align:center;">
-                Input words not found in Training Data.
-             </div>`;
-    } else {
-        // ── Layer 0: Explicit processing for detailed visualizations ──
-        const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
+	if (tokensWithPositional.length === 0) {
+		document.getElementById('transformer-output-projection').innerHTML =
+			`<div style="padding:20px; color: #64748b; text-align:center;">
+		Input words not found in Training Data.
+	     </div>`;
+	} else {
+		// ── Layer 0: Explicit processing for detailed visualizations ──
+		const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
 
-        const engine = new AttentionEngine({
-            d_model: d_model,
-            n_heads: n_heads,
-            containerId: "mha-calculation-details",
-            weights: weights[0]["attention"]
-        });
+		const engine = new AttentionEngine({
+			d_model: d_model,
+			n_heads: n_heads,
+			containerId: "mha-calculation-details",
+			weights: weights[0]["attention"]
+		});
 
-        const headData = engine.forward(normH0, tokensWithPositional);
-        const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
+		const headData = engine.forward(normH0, tokensWithPositional);
+		const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
 
-        const Wo_layer0 = weights[0]["attention"]["output"];
-        const projected = multiHeadOutput.map(row =>
-            Wo_layer0[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo_layer0[k][j], 0))
-        );
+		const Wo_layer0 = weights[0]["attention"]["output"];
+		const projected = multiHeadOutput.map(row =>
+			Wo_layer0[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo_layer0[k][j], 0))
+		);
 
-        const h1 = h0.map((row, i) => row.map((val, j) => val + projected[i][j]));
+		const h1 = h0.map((row, i) => row.map((val, j) => val + projected[i][j]));
 
-        if (typeof render_h1_logic === "function") {
-            // ── FIX: Pass normH0 for correct Pre-LN formula display ──
-            render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
-        }
+		if (typeof render_h1_logic === "function") {
+			// ── FIX: Pass normH0 for correct Pre-LN formula display ──
+			render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
+		}
 
-        const h2 = run_ffn_block(h1, weights[0]);
+		const h2 = run_ffn_block(h1, weights[0]);
 
-        // ── FIX: Create migration plot for layer 0 here ──
-        create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model);
+		// ── FIX: Create migration plot for layer 0 here ──
+		create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model);
 
-        // ── FIX: Start deep layers from 1, not 0, to avoid double-processing ──
-        run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1);
-    }
+		// ── FIX: Start deep layers from 1, not 0, to avoid double-processing ──
+		run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1);
+	}
 
-    // 3. FINAL PROBABILITIES (based on master-token-input)
-    const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
+	// 3. FINAL PROBABILITIES (based on master-token-input)
+	const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
 
-    if (knownMasterTokens.length > 0) {
-        let h_master = knownMasterTokens.map((t, pos) => {
-            const emb = window.persistentEmbeddingSpace[t] || new Array(d_model).fill(0);
-            const pe = new Array(d_model).fill(0);
-            for (let i = 0; i < d_model; i++) {
-                let div = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-                pe[i] = (i % 2 === 0) ? Math.sin(pos / div) : Math.cos(pos / div);
-            }
-            return emb.map((v, i) => v + pe[i]);
-        });
+	if (knownMasterTokens.length > 0) {
+		let h_master = knownMasterTokens.map((t, pos) => {
+			const emb = window.persistentEmbeddingSpace[t] || new Array(d_model).fill(0);
+			const pe = new Array(d_model).fill(0);
+			for (let i = 0; i < d_model; i++) {
+				let div = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+				pe[i] = (i % 2 === 0) ? Math.sin(pos / div) : Math.cos(pos / div);
+			}
+			return emb.map((v, i) => v + pe[i]);
+		});
 
-        let h_current = h_master;
-        for (let l = 0; l < n_layers; l++) {
-            const layerWeights = weights[l];
+		let h_current = h_master;
+		for (let l = 0; l < n_layers; l++) {
+			const layerWeights = weights[l];
 
-            const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
+			const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
 
-            const attnEngine = new AttentionEngine({ d_model, n_heads, containerId: null, weights: layerWeights["attention"] });
-            const headData = attnEngine.forward(normH, knownMasterTokens);
+			const attnEngine = new AttentionEngine({ d_model, n_heads, containerId: null, weights: layerWeights["attention"] });
+			const headData = attnEngine.forward(normH, knownMasterTokens);
 
-            const concat = knownMasterTokens.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
+			const concat = knownMasterTokens.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
 
-            const Wo = layerWeights["attention"]["output"];
-            const projected = concat.map(row =>
-                Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
-            );
+			const Wo = layerWeights["attention"]["output"];
+			const projected = concat.map(row =>
+				Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
+			);
 
-            const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
+			const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
 
-            h_current = run_ffn_block(h_attn, layerWeights);
-        }
+			h_current = run_ffn_block(h_attn, layerWeights);
+		}
 
-        if (typeof render_final_projection === "function") {
-            render_final_projection(h_current, vocabulary, d_model, temperature);
-        }
-    }
+		if (typeof render_final_projection === "function") {
+			render_final_projection(h_current, vocabulary, d_model, temperature);
+		}
+	}
 }
 
 window.select_suggested_word = (word) => {
