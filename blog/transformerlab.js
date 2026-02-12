@@ -475,19 +475,20 @@ function get_init_weights(n_layers, d_model) {
 window.isTraining = false;
 
 async function train_transformer() {
-	const btn = event.target; // Get the clicked button
+	const btn = event.target;
 	const status = document.getElementById('training-status');
 
 	// Toggle logic
 	if (window.isTraining) {
 		window.isTraining = false;
-		return; // Stop logic handled by the loop check
+		return;
 	}
 
 	// Start Training State
 	window.isTraining = true;
 	btn.classList.add('active');
 	btn.innerText = 'Stop Training';
+	status.style.display = 'block'; // FIX: actually show the status element
 
 	const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
 	const epochs = parseInt(document.getElementById('train-epochs').value) || 500;
@@ -495,13 +496,13 @@ async function train_transformer() {
 	const d_model = parseInt(document.getElementById('transformer-dimension-model').value);
 	const n_layers = parseInt(document.getElementById('transformer-depth').value);
 
-	let optimizer = optType === 'adam' ? tf.train.adam(lr) : 
+	let optimizer = optType === 'adam' ? tf.train.adam(lr) :
 		optType === 'rmsprop' ? tf.train.rmsprop(lr) : tf.train.sgd(lr);
 
 	const trainingData = document.getElementById('transformer-training-data').value;
 	const tokens = transformer_tokenize_render(trainingData, null);
 
-	if(tokens.length == 0) {
+	if (tokens.length === 0) {
 		window.isTraining = false;
 		btn.classList.remove('active');
 		btn.innerText = 'Train Model';
@@ -512,14 +513,34 @@ async function train_transformer() {
 	get_or_init_embeddings(tokens, d_model);
 
 	const weightVars = convert_weights_to_tensors(window.currentWeights);
+	const allVars = collectTrainableVars(weightVars);
+	const clipValue = 1.0;
+	let completedAll = true;
 
 	for (let i = 0; i < epochs; i++) {
-		// BREAK if user toggled the button
-		if (!window.isTraining) break;
+		if (!window.isTraining) {
+			completedAll = false;
+			break;
+		}
 
-		const cost = optimizer.minimize(() => {
-			return tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers));
-		}, true);
+		// ── FIX: Manual gradient computation → clip → apply ──
+		const { value: cost, grads } = tf.variableGrads(
+			() => tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers)),
+			allVars
+		);
+
+		// Gradient clipping by element-wise value
+		const clippedGrads = {};
+		for (const name in grads) {
+			clippedGrads[name] = tf.clipByValue(grads[name], -clipValue, clipValue);
+		}
+		optimizer.applyGradients(clippedGrads);
+
+		// Dispose original and clipped gradient tensors
+		for (const name in grads) {
+			grads[name].dispose();
+			clippedGrads[name].dispose();
+		}
 
 		const lossValue = await cost.data();
 		window.lossHistory.push(lossValue[0]);
@@ -528,17 +549,18 @@ async function train_transformer() {
 			window.currentWeights = await convert_tensors_to_weights(weightVars);
 			status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(6)}`;
 			renderLossGraph();
-			run_transformer_demo(); 
+			run_transformer_demo();
 			await tf.nextFrame();
 		}
 		cost.dispose();
 	}
 
-	// Reset UI State after finish or stop
+	// Reset UI State
 	window.isTraining = false;
 	btn.classList.remove('active');
 	btn.innerText = 'Train Model';
-	status.innerText += window.isTraining ? " Training Complete!" : " Training Stopped.";
+	// FIX: original always showed "Stopped" because isTraining was already false
+	status.innerText += completedAll ? " Training Complete!" : " Training Stopped.";
 }
 
 function convert_weights_to_tensors(weights) {
@@ -574,68 +596,90 @@ function convert_weights_to_tensors(weights) {
 }
 
 function calculate_tf_loss(tokens, vars, d_model, n_layers) {
-    const losses = [];
+	const losses = [];
 
-    // ── FIX: Adaptive context window ──────────────────────────────────
-    // Previously: Math.min(contextSize, tokens.length - 1)
-    // With 24 tokens and contextSize=128 that gave 23, leaving only 1 sample.
-    // Now we cap at ≈ half the corpus so the loop produces many samples.
-    const thiscontextSize = Math.min(
-        contextSize,
-        Math.max(1, Math.floor((tokens.length - 1) / 2))
-    );
+	// Full context window — multi-position loss provides dense gradient signal
+	// at every position, so the old "halve the context" trick is no longer needed.
+	const thiscontextSize = Math.min(contextSize, tokens.length - 1);
 
-    const mask = tf.tidy(() => {
-        const ones = tf.ones([thiscontextSize, thiscontextSize]);
-        const upperTriangle = tf.linalg.bandPart(ones, 0, -1);
-        const diagonal = tf.linalg.bandPart(ones, 0, 0);
-        return tf.sub(upperTriangle, diagonal).mul(tf.scalar(1e9));
-    });
+	if (thiscontextSize < 1) return tf.scalar(10);
 
-    for (let startIdx = 0; startIdx < tokens.length - thiscontextSize; startIdx++) {
-        const inputIds = tokens.slice(startIdx, startIdx + thiscontextSize)
-            .map(t => vars.vocab_map.indexOf(t));
-        const targetId = vars.vocab_map.indexOf(tokens[startIdx + thiscontextSize]);
+	// Causal mask (upper triangle → future positions get -1e9 after subtraction)
+	const mask = tf.tidy(() => {
+		const ones = tf.ones([thiscontextSize, thiscontextSize]);
+		const upperTriangle = tf.linalg.bandPart(ones, 0, -1);
+		const diagonal = tf.linalg.bandPart(ones, 0, 0);
+		return tf.sub(upperTriangle, diagonal).mul(tf.scalar(1e9));
+	});
 
-        let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
+	for (let startIdx = 0; startIdx < tokens.length - thiscontextSize; startIdx++) {
+		const inputIds = tokens.slice(startIdx, startIdx + thiscontextSize)
+			.map(t => vars.vocab_map.indexOf(t));
 
-        const peTensor = tf.tidy(() => {
-            const pos = tf.range(0, inputIds.length, 1).reshape([inputIds.length, 1]);
-            const i = tf.range(0, d_model, 1).reshape([1, d_model]);
-            const divTerm = tf.pow(tf.scalar(10000), i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model)));
-            const args = pos.div(divTerm);
-            return tf.where(i.mod(tf.scalar(2)).equal(tf.scalar(0)), tf.sin(args), tf.cos(args)).mul(tf.scalar(posEmbedScalar));
-        });
-        x = tf.add(x, peTensor);
+		// ── KEY FIX: targets for EVERY position in the window ──
+		// Position 0 predicts token at startIdx+1,
+		// Position 1 predicts token at startIdx+2, … etc.
+		const targetIds = tokens.slice(startIdx + 1, startIdx + thiscontextSize + 1)
+			.map(t => vars.vocab_map.indexOf(t));
 
-        for (let i = 0; i < n_layers; i++) {
-            const l = vars.layers[i];
-            let normX = tf_layer_norm(x, l.gamma, l.beta);
-            const q = tf.matMul(normX, l.wq);
-            const k = tf.matMul(normX, l.wk);
-            const v = tf.matMul(normX, l.wv);
-            let scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
-            scores = tf.sub(scores, mask);
-            const weights = tf.softmax(scores);
-            x = tf.add(x, tf.matMul(tf.matMul(weights, v), l.wo));
+		let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
 
-            let normX2 = tf_layer_norm(x, l.gamma2, l.beta2);
-            let ffn = tf.relu(tf.add(tf.matMul(normX2, l.w1), l.b1));
-            ffn = tf.add(tf.matMul(ffn, l.w2), l.b2);
-            x = tf.add(x, ffn);
-        }
+		// Positional encoding
+		const peTensor = tf.tidy(() => {
+			const pos = tf.range(0, inputIds.length, 1).reshape([inputIds.length, 1]);
+			const i = tf.range(0, d_model, 1).reshape([1, d_model]);
+			const divTerm = tf.pow(
+				tf.scalar(10000),
+				i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model))
+			);
+			const args = pos.div(divTerm);
+			return tf.where(
+				i.mod(tf.scalar(2)).equal(tf.scalar(0)),
+				tf.sin(args),
+				tf.cos(args)
+			).mul(tf.scalar(posEmbedScalar));
+		});
+		x = tf.add(x, peTensor);
 
-        const lastTokenVector = x.slice([thiscontextSize - 1, 0], [1, d_model]);
-        const logits = tf.matMul(lastTokenVector, vars.embeddings.transpose());
-        const label = tf.oneHot(tf.tensor1d([targetId], 'int32'), vars.vocab_map.length);
+		// Transformer layers (Pre-LN)
+		for (let i = 0; i < n_layers; i++) {
+			const l = vars.layers[i];
+			let normX = tf_layer_norm(x, l.gamma, l.beta);
+			const q = tf.matMul(normX, l.wq);
+			const k = tf.matMul(normX, l.wk);
+			const v = tf.matMul(normX, l.wv);
+			let scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
+			scores = tf.sub(scores, mask);
+			const weights = tf.softmax(scores);
+			x = tf.add(x, tf.matMul(tf.matMul(weights, v), l.wo));
 
-        losses.push(tf.losses.softmaxCrossEntropy(label, logits));
-    }
+			let normX2 = tf_layer_norm(x, l.gamma2, l.beta2);
+			let ffn = tf.relu(tf.add(tf.matMul(normX2, l.w1), l.b1));
+			ffn = tf.add(tf.matMul(ffn, l.w2), l.b2);
+			x = tf.add(x, ffn);
+		}
 
-    // ── FIX: Guard against empty losses (e.g. single-token corpus) ───
-    if (losses.length === 0) return tf.scalar(10);
+		// ── KEY FIX: loss at ALL positions, not just the last ──
+		const logits = tf.matMul(x, vars.embeddings.transpose()); // [seqLen, vocabSize]
+		const labels = tf.oneHot(tf.tensor1d(targetIds, 'int32'), vars.vocab_map.length);
+		losses.push(tf.losses.softmaxCrossEntropy(labels, logits));
+	}
 
-    return tf.addN(losses).div(tf.scalar(losses.length));
+	if (losses.length === 0) return tf.scalar(10);
+	return tf.addN(losses).div(tf.scalar(losses.length));
+}
+
+function collectTrainableVars(weightVars) {
+	const vars = [];
+	weightVars.layers.forEach(l => {
+		vars.push(
+			l.wq, l.wk, l.wv, l.wo,
+			l.gamma, l.beta, l.gamma2, l.beta2,
+			l.w1, l.b1, l.w2, l.b2
+		);
+	});
+	vars.push(weightVars.embeddings);
+	return vars;
 }
 
 
@@ -1249,7 +1293,7 @@ function updateConcatenationDisplay(headData, tokens) {
 }
 
 function calculateLayerNorm(matrix, gamma, beta) {
-	const eps = 1e-5;
+	const eps = 1e-6; // FIX: was 1e-5, now matches tf_layer_norm used during training
 	return matrix.map(row => {
 		const mean = row.reduce((a, b) => a + b, 0) / row.length;
 		const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;

@@ -35,9 +35,9 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 
 	<div style="margin-bottom: 15px;">
 		<label style="font-weight: bold;">Network Depth ($N$ layers): </label>
-		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">24</span>
+		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">2</span>
 		<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
-		<input type="range" id="transformer-depth" min="1" max="96" value="24" 
+		<input type="range" id="transformer-depth" min="1" max="96" value="2" 
 			style="width: 100%;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
 	</div>
 
@@ -351,7 +351,10 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 
 <div>
 	<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
-	<input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;"  value="The king" oninput="run_transformer_demo('transformer-master-token-input')">
+	<input type="text" id="transformer-master-token-input" class="bw-cell"
+	    style="width: 90%; font-size: 1.1rem;"
+	    value="the"
+	    oninput="run_transformer_demo('transformer-master-token-input')">
 </div>
 
 <div class="md">
