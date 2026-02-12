@@ -64,7 +64,7 @@ function get_or_init_embeddings(tokens, d_model) {
 		let u = 0, v = 0;
 		while(u === 0) u = Math.random();
 		while(v === 0) v = Math.random();
-		return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+		return 1.5 * (Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v));
 	};
 
 	tokens.forEach(token => {
@@ -597,7 +597,7 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 			const i = tf.range(0, d_model, 1).reshape([1, d_model]);
 			const divTerm = tf.pow(tf.scalar(10000), i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model)));
 			const args = pos.div(divTerm);
-			return tf.where(i.mod(tf.scalar(2)).equal(tf.scalar(0)), tf.sin(args), tf.cos(args)).mul(tf.scalar(0.1));
+			return tf.where(i.mod(tf.scalar(2)).equal(tf.scalar(0)), tf.sin(args), tf.cos(args)).mul(tf.scalar(posEmbedScalar));
 		});
 		x = tf.add(x, peTensor);
 
