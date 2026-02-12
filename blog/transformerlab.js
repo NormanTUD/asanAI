@@ -620,7 +620,7 @@ function convert_weights_to_tensors(weights) {
 function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 	const losses = [];
 
-	// Full context window — multi-position loss provides dense gradient signal
+	// Full context window,  multi-position loss provides dense gradient signal
 	// at every position, so the old "halve the context" trick is no longer needed.
 	const thiscontextSize = Math.min(contextSize, tokens.length - 1);
 
@@ -1023,7 +1023,7 @@ The "Migration Map" prints the entire flattened matrix because it wants to show 
 $$h_{\\text{last}} = H[n-1]$$
 </span>
 
-This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. When the model is, for example, $d_{\\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage—their influence is already baked into that last vector.
+This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. When the model is, for example, $d_{\\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage, their influence is already baked into that last vector.
 	</span>
 
 	<p>Current $h_\\text{last} = [${h_last.map(v => v.toFixed(3)).join(', ')}]$</p>`;
