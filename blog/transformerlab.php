@@ -327,25 +327,7 @@ The following plots visualize how each layer "nudges" the token vectors. Each ar
 
 <div class="md">
 ## 10. From Hidden States to Probabilities
-After passing through $N$ layers, we reach the final hidden state, **$h_{\text{final}}$**. 
-
-The transition from the high-dimensional sequence matrix to a single token prediction is a process of **geometric focusing**. Throughout the layers, the variable `h_current` exists as a matrix $H \in \mathbb{R}^{n \times d_{\text{model}}}$, where each row represents a token's refined state after multi-head attention and feed-forward processing. To predict the next word, we perform a **causal slice**:
-
-$$h_{\text{last}} = H_{n-1} = [v_1, v_2, \dots, v_{d_{\text{model}}}]$$
-
-Where $v$ is each of the single numbers in the output tensor.
-
-This $h_{\text{last}}$ vector is the "distilled thought" of the entire sequence concentrated into the final position. We then project this vector back into the vocabulary space using the **Unembedding Matrix** ($W_U$). The raw scores (logits) for every word in your vocabulary are calculated via a dot product:
-
-$$\text{logits} = h_{\text{last}} \cdot W_U^T$$
-
-Finally, we apply the **Softmax** function with a temperature $T$ to transform these scores into a probability distribution:
-
-$$P(w) = \frac{\exp(\text{logit}_w / T)}{\sum \exp(\text{logit}_i / T)}$$
-
-While `h_after` in your migration map shows the journey of **all** $n$ tokens (the long matrix), the actual prediction logic ignores the historical rows and only projects the very last one to decide what word comes next.
-
-To turn this into a word, we project it against the entire vocabulary:
+After passing through $N$ layers, we reach the final hidden state, **$h_{\text{final}}$**. To turn this into a word, we project it against the entire vocabulary:
 
 $$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
 
@@ -360,7 +342,7 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 <div id="transformer-migration-plots-container"></div>
 
 <div class="md">
-    We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_U$ or $W_\text{vocab}$). This effectively asks: "How similar is our current thought vector to every known word vector?"
+    We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_\text{vocab}$). This effectively asks: "How similar is our current thought vector to every known word vector?"
 </div>
 
 <div id="transformer-temperature-config" style="margin-top: 20px;"></div>
