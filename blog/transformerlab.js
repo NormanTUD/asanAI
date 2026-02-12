@@ -193,42 +193,6 @@ class AttentionEngine {
 		}
 	}
 
-	renderHeatmap(i, weights) {
-		const containerId = `attn-heatmap-${this.containerId}-${i}`;
-		const container = document.getElementById(containerId);
-		if (!container) return;
-
-		// Numerical labels for rows and columns
-		const labels = weights.map((_, idx) => idx);
-
-		const data = [{
-			z: weights,
-			x: labels,
-			y: labels,
-			type: 'heatmap',
-			colorscale: [
-				[0, 'rgb(255,255,255)'], // White
-				[1, 'rgb(59,130,246)']   // Blue
-			],
-			showscale: false,
-			reversescale: false
-		}];
-
-		const layout = {
-			title: { text: `Head ${i + 1} Attention Matrix`, font: { size: 12 } },
-			margin: { t: 30, b: 30, l: 30, r: 10 },
-			xaxis: { fixedrange: true, tickfont: { size: 10 } },
-			yaxis: { autorange: 'reversed', fixedrange: true, tickfont: { size: 10 } },
-			height: 300,
-			autosize: true
-		};
-
-		const config = { displayModeBar: false, responsive: true };
-
-		// Efficiently update the existing plot
-		Plotly.react(containerId, data, layout, config);
-	}
-
 	executeActualRender(headData, tokens) {
 		if (!this.container || !tokens.length) return;
 
@@ -261,12 +225,7 @@ class AttentionEngine {
 		html += `</div>`;
 		this.container.innerHTML = html;
 
-		// Trigger Plotly renders for each head
-		headData.forEach((h, i) => {
-			this.renderHeatmap(i, h.this_weights, tokens);
-		});
-
-		if (typeof render_temml === "function") render_temml();
+		render_temml();
 	}
 
 	generateMathTable(head, tokens) {
@@ -355,7 +314,7 @@ window.showHead = (idx) => {
 		Plotly.Plots.resize(heatmapDiv);
 	}
 
-	if (typeof render_temml === "function") render_temml();
+	render_temml();
 };
 
 function calculate_positional_injection(tokens, d_model) {
@@ -1320,7 +1279,7 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
     </div>
     `;
 
-    if (typeof render_temml === "function") render_temml();
+    render_temml();
     return h1;
 }
 
@@ -1350,7 +1309,7 @@ function updateConcatenationDisplay(headData, tokens) {
 	const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrix(fullMatrixData)}}_{\\text{Total } d_{\\text{model}}}`;
 	container.innerHTML = `$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$`;
 
-	if (typeof render_temml === "function") render_temml();
+	render_temml();
 
 	return fullMatrixData; // Now returns the calculated value
 }
@@ -1524,7 +1483,7 @@ function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     </div>
     `;
 
-	if (typeof render_temml === "function") render_temml();
+	render_temml();
 }
 
 /**
