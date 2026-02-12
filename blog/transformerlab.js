@@ -1005,7 +1005,7 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 	// 2. Calculate Logits and explain step-by-step
 	let calculationHtml = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
 	<h3>1. Step-by-Step Logit Calculation (Manual Verification)</h3>
-	<p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_U$.</p>
+	<p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_\\text{vocab}$.</p>
 	<p>Current $h_\\text{last} = [${h_last.map(v => v.toFixed(3)).join(', ')}]$</p>`;
 
 	const logits = vocabulary.map((word, i) => {
