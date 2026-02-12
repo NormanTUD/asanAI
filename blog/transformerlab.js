@@ -791,15 +791,15 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	const weights = window.currentWeights;
 
 	// 1. Embedding Space (Immer vom Training)
-	const embeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
-	render_embedding_plot(embeddingSpace, d_model);
+	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
+	render_embedding_plot(d_model);
 
 	// 2. Visualisierungen (Basierend auf inputTokens/knownTokens)
 	tokensWithPositional = calculate_positional_injection(knownTokens, d_model);
 	render_positional_waves(d_model, knownTokens);
 
 	// h0 berechnen und Plot für Positional Shift rendern
-	const h0 = render_positional_shift_plot(knownTokens, d_model, window.persistentEmbeddingSpace);
+	const h0 = render_positional_shift_plot(knownTokens, d_model);
 
 	render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
@@ -837,7 +837,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	if (knownMasterTokens.length > 0) {
 		// Wir erzeugen h0 für den Master-Input manuell (Embeddings + PE)
 		let h_master = knownMasterTokens.map((t, pos) => {
-			const emb = embeddingSpace[t] || new Array(d_model).fill(0);
+			const emb = window.persistentEmbeddingSpace[t] || new Array(d_model).fill(0);
 			const pe = new Array(d_model).fill(0);
 			for (let i = 0; i < d_model; i++) {
 				let div = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
@@ -1009,15 +1009,15 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
 	}
 }
 
-function render_embedding_plot(embeddingSpace, dimensions) {
+function render_embedding_plot(dimensions) {
 	const container = document.getElementById('transformer-plotly-space');
 	if (!container) return;
 
-	const tokens = Object.keys(embeddingSpace);
+	const tokens = Object.keys(window.persistentEmbeddingSpace);
 
 	if (dimensions <= 3) {
 		const traces = tokens.map(token => {
-			const vec = embeddingSpace[token];
+			const vec = window.persistentEmbeddingSpace[token];
 			return {
 				type: dimensions === 3 ? 'scatter3d' : 'scatter',
 				x: [vec[0]], 
@@ -1039,7 +1039,7 @@ function render_embedding_plot(embeddingSpace, dimensions) {
 
 		const data = tokens.map(token => ({
 			name: token,
-			value: embeddingSpace[token]
+			value: window.persistentEmbeddingSpace[token]
 		}));
 
 		myChart.setOption({
@@ -1532,10 +1532,10 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model) {
  * Origin: Vaswani et al. (2017) - Positional Encoding Addition
  */
 /**
- * Fix: Ensure tokens are strings for embeddingSpace lookup.
+ * Fix: Ensure tokens are strings for window.persistentEmbeddingSpace lookup.
  * Origin: Vaswani et al. (2017)
  */
-function render_positional_shift_plot(tokenStrings, d_model, embeddingSpace) {
+function render_positional_shift_plot(tokenStrings, d_model) {
     const container = document.getElementById('transformer-pe-shift-plot');
     if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
         console.error("Plotting requires an array of string tokens.");
@@ -1546,7 +1546,7 @@ function render_positional_shift_plot(tokenStrings, d_model, embeddingSpace) {
     const traces = [];
 
     tokenStrings.forEach((token, pos) => {
-        const semanticBase = embeddingSpace[token];
+        const semanticBase = window.persistentEmbeddingSpace[token];
         if (!semanticBase) return;
 
         const peVec = new Array(d_model).fill(0);
