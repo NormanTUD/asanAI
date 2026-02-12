@@ -458,6 +458,11 @@ async function train_transformer() {
 	const trainingData = document.getElementById('transformer-training-data').value;
 	const tokens = transformer_tokenize_render(trainingData, null);
 
+	if(tokens.length == 0) {
+		console.error("No tokens defined, cannot train");
+		return;
+	}
+
 	if (!window.currentWeights) window.currentWeights = get_init_weights(n_layers, d_model);
 	get_or_init_embeddings(tokens, d_model);
 
