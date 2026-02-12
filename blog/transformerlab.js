@@ -1005,7 +1005,7 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 	// 2. Calculate Logits and explain step-by-step
 	let calculationHtml = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
 	<h3>1. Step-by-Step Logit Calculation (Manual Verification)</h3>
-	<p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_\\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\\text{FFN} matrices. They are just ignored in the last step, yet calculated because that is required by the structure</p>
+	<p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_\\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure</p>
 	
 	<span class="md">
 To get from the long matrix to the single vector, the model performs a **Terminal Selection**. 
@@ -1119,68 +1119,6 @@ function render_architecture_stats(d, h, n, t) {
 	</div>
     `;
 	statsContainer.innerHTML = infoHtml;
-}
-
-function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
-	const container = document.getElementById('transformer-migration-plots-container');
-	let plotDiv = document.getElementById(id);
-	if (!plotDiv) {
-		plotDiv = document.createElement('div');
-		plotDiv.id = id;
-		plotDiv.style.cssText = "height: 500px; width: 100%; margin-top: 30px;";
-		container.appendChild(plotDiv);
-	}
-
-	if (d_model <= 3) {
-		const traces = [];
-		tokens.forEach((token, i) => {
-			const x = [start_h[i][0], end_h[i][0]];
-			const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
-			const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
-
-			if (d_model === 3) {
-				traces.push({
-					type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
-					line: { width: 4 }, name: token, showlegend: false
-				});
-				traces.push({
-					type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
-					u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
-					sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-					colorscale: [[0, '#10b981'], [1, '#10b981']], showscale: false
-				});
-			} else {
-				traces.push({
-					type: 'scatter', x: x, y: y, mode: 'lines+markers',
-					name: token, line: { width: 2 },
-					marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous' }
-				});
-			}
-		});
-		Plotly.newPlot(id, traces, { title: `Layer ${layerNum}: Feature Migration` });
-	} else {
-		if (typeof echarts === 'undefined') return;
-		Plotly.purge(plotDiv);
-		const myChart = echarts.init(plotDiv);
-		const axes = [];
-		for (let i = 0; i < d_model; i++) {
-			axes.push({ dim: i * 2, name: `D${i} Pre` }, { dim: i * 2 + 1, name: `D${i} Post` });
-		}
-		const data = tokens.map((token, tIdx) => ({
-			value: start_h[tIdx].flatMap((val, i) => [val, end_h[tIdx][i]]),
-			name: token
-		}));
-		myChart.setOption({
-			title: { text: `Layer ${layerNum} Migration`, left: 'center' },
-			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
-			parallelAxis: axes,
-			series: [{
-				type: 'parallel', data: data,
-				lineStyle: { width: 1.5, opacity: 0.3, color: '#10b981' },
-				emphasis: { lineStyle: { width: 5, color: '#ef4444' } }
-			}]
-		});
-	}
 }
 
 function render_embedding_plot(dimensions) {
