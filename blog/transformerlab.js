@@ -478,17 +478,15 @@ async function train_transformer() {
 	const btn = event.target;
 	const status = document.getElementById('training-status');
 
-	// Toggle logic
 	if (window.isTraining) {
 		window.isTraining = false;
 		return;
 	}
 
-	// Start Training State
 	window.isTraining = true;
 	btn.classList.add('active');
 	btn.innerText = 'Stop Training';
-	status.style.display = 'block'; // FIX: actually show the status element
+	status.style.display = 'block';
 
 	const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
 	const epochs = parseInt(document.getElementById('train-epochs').value) || 500;
@@ -517,26 +515,38 @@ async function train_transformer() {
 	const clipValue = 1.0;
 	let completedAll = true;
 
+	// --- ETA Logic: Start ---
+	const startTime = performance.now();
+	const formatETA = (ms) => {
+		if (isNaN(ms) || ms < 0) return "Calculating...";
+		let seconds = Math.floor(ms / 1000);
+		let hours = Math.floor(seconds / 3600);
+		seconds %= 3600;
+		let minutes = Math.floor(seconds / 60);
+		seconds %= 60;
+		return [hours, minutes, seconds]
+			.map(v => v < 10 ? "0" + v : v)
+			.join(":");
+	};
+	// --- ETA Logic: End ---
+
 	for (let i = 0; i < epochs; i++) {
 		if (!window.isTraining) {
 			completedAll = false;
 			break;
 		}
 
-		// ── FIX: Manual gradient computation → clip → apply ──
 		const { value: cost, grads } = tf.variableGrads(
 			() => tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers)),
 			allVars
 		);
 
-		// Gradient clipping by element-wise value
 		const clippedGrads = {};
 		for (const name in grads) {
 			clippedGrads[name] = tf.clipByValue(grads[name], -clipValue, clipValue);
 		}
 		optimizer.applyGradients(clippedGrads);
 
-		// Dispose original and clipped gradient tensors
 		for (const name in grads) {
 			grads[name].dispose();
 			clippedGrads[name].dispose();
@@ -546,8 +556,17 @@ async function train_transformer() {
 		window.lossHistory.push(lossValue[0]);
 
 		if (i % 25 === 0 || i === epochs - 1) {
+			// --- ETA Calculation ---
+			const currentTime = performance.now();
+			const elapsed = currentTime - startTime;
+			const avgTimePerEpoch = elapsed / (i + 1);
+			const remainingEpochs = epochs - (i + 1);
+			const etaMs = remainingEpochs * avgTimePerEpoch;
+			const etaString = formatETA(etaMs);
+			// -----------------------
+
 			window.currentWeights = await convert_tensors_to_weights(weightVars);
-			status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(6)}`;
+			status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(6)} | ETA: ${etaString}`;
 			renderLossGraph();
 			run_transformer_demo();
 			await tf.nextFrame();
@@ -555,11 +574,9 @@ async function train_transformer() {
 		cost.dispose();
 	}
 
-	// Reset UI State
 	window.isTraining = false;
 	btn.classList.remove('active');
 	btn.innerText = 'Train Model';
-	// FIX: original always showed "Stopped" because isTraining was already false
 	status.innerText += completedAll ? " Training Complete!" : " Training Stopped.";
 }
 
