@@ -1527,14 +1527,6 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model) {
 	}
 }
 
-/**
- * Visualizes the shift from Semantic Embedding to Positional-Injected Embedding.
- * Origin: Vaswani et al. (2017) - Positional Encoding Addition
- */
-/**
- * Fix: Ensure tokens are strings for window.persistentEmbeddingSpace lookup.
- * Origin: Vaswani et al. (2017)
- */
 function render_positional_shift_plot(tokenStrings, d_model) {
     const container = document.getElementById('transformer-pe-shift-plot');
     if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
