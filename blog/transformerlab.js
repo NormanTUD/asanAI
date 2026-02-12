@@ -1018,7 +1018,7 @@ h_1 \\\\
 h_{n-1} 
 \\end{bmatrix} \\in \\mathbb{R}^{n \\times d_{\\text{model}}}$$
 
-The "Migration Map" prints the entire flattened matrix because it wants to show the path of every word. However, the \`render_final_projection\` function is only interested in the **prediction**:
+The "Migration Map" prints the entire flattened matrix because it wants to show the path of every word. However, the \`render_final_projection\` function is only interested in the <b>prediction</b>:
 
 $$h_{\\text{last}} = H[n-1]$$
 </span>
