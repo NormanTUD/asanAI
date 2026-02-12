@@ -1624,10 +1624,6 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model) {
 		d_model,
 		rendered: false 
 	});
-
-	// NOTE: Removed getBoundingClientRect(). 
-	// If the element is visible, the IntersectionObserver attached above 
-	// will trigger its callback in the next microtask.
 }
 
 
