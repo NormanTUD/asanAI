@@ -393,19 +393,6 @@ Mathematically, ICL can be viewed as a form of **implicit Bayesian inference**. 
 
 In this equation, the model isn't just retrieving data; it is using the relationships defined in the context to "map" the new input to an output, effectively performing a temporary linear regression or gradient descent within the activation space of the transformer.
 
-## The Needle In A Haystack
-This is the industry-standard benchmark for testing a model's long-context retrieval capabilities.
-* **The Test:** A tiny, unrelated fact (the needle) is buried deep inside a massive corpus of text (the haystack), such as a series of legal documents or a long novel. The model is then asked a question that can only be answered using that specific fact.
-* **Key Finding:** Many models suffer from "Lost in the Middle" syndrome. While they excel at recalling information from the very beginning or very end of their context window, their accuracy often dips significantly for information buried in the middle, revealing limitations in how Transformer architectures distribute attention over long sequences.
-
-### Logical Breakdown by Row:
-* **Row 1:** $Q_{\text{the}}$ is compared against $K_{\text{the}}$, $K_{\text{king}}$, $K_{\text{is}}$, and $K_{\text{wise}}$. The mask keeps only the first connection.
-* **Row 2:** $Q_{\text{king}}$ can "see" the keys for "the" and "king".
-* **Row 3:** $Q_{\text{is}}$ can "see" "the", "king", and "is".
-* **Row 4:** $Q_{\text{wise}}$ (the current word being generated) can "see" the entire context.
-
-This triangular structure is what allows ChatGPT to generate text one word at a time without "cheating" by looking at the words it hasn't written yet.
-
 ### The Autoregressive Loop (Generation)
 A generative model doesn't produce a full sentence at once. It works in a loop:
 
