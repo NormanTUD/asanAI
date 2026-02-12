@@ -302,7 +302,7 @@ window.showHead = (idx) => {
 
 function calculate_positional_injection(tokens, d_model) {
 	const resultsContainer = document.getElementById('transformer-pe-integration-results');
-	const injectedEncodings = []; // Array to store the vectors
+	const injectedEncodings = [];
 
 	let html = `<h3>Vector Injection (Inference Sequence)</h3>`;
 
@@ -312,18 +312,20 @@ function calculate_positional_injection(tokens, d_model) {
 			parseFloat(((Math.abs(hash * (i + 1)) % 1000) / 500 - 1).toFixed(nr_fixed))
 		);
 
-		const peVec = [];
+		const peVec = new Array(d_model);
 		for (let i = 0; i < d_model; i += 2) {
-			let div_term = Math.pow(10000, (2 * i) / d_model);
+			// FIXED: Correct exponentiation for the div_term
+			const div_term = Math.pow(10000, i / d_model);
+			
 			peVec[i] = Math.sin(pos / div_term);
-			if (i + 1 < d_model) peVec[i + 1] = Math.cos(pos / div_term);
+			if (i + 1 < d_model) {
+				peVec[i + 1] = Math.cos(pos / div_term);
+			}
 		}
 
-		// Calculate the numeric combined vector
 		const combined = semanticVec.map((val, i) => val + peVec[i]);
-		injectedEncodings.push(combined); // Save the raw numbers for your use
+		injectedEncodings.push(combined);
 
-		// Keep the UI rendering logic
 		if (resultsContainer) {
 			const displayCombined = combined.map(v => v.toFixed(nr_fixed));
 			html += `
@@ -338,8 +340,6 @@ function calculate_positional_injection(tokens, d_model) {
 	});
 
 	if (resultsContainer) resultsContainer.innerHTML = html;
-
-	// Return the encodings so you can save them
 	return injectedEncodings;
 }
 
@@ -793,7 +793,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	render_positional_waves(d_model, tokensWithPositional);
 
 	// h0 berechnen und Plot für Positional Shift rendern
-	const h0 = render_positional_shift_plot(tokensWithPositional, d_model, embeddingSpace);
+	const h0 = render_positional_shift_plot(knownTokens, d_model, window.persistentEmbeddingSpace);
 
 	render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
@@ -1521,77 +1521,78 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model) {
 	}
 }
 
-function render_positional_shift_plot(tokens, d_model, embeddingSpace) {
-	const container = document.getElementById('transformer-pe-shift-plot');
-	if (!Array.isArray(tokens)) return [];
+/**
+ * Visualizes the shift from Semantic Embedding to Positional-Injected Embedding.
+ * Origin: Vaswani et al. (2017) - Positional Encoding Addition
+ */
+/**
+ * Fix: Ensure tokens are strings for embeddingSpace lookup.
+ * Origin: Vaswani et al. (2017)
+ */
+function render_positional_shift_plot(tokenStrings, d_model, embeddingSpace) {
+    const container = document.getElementById('transformer-pe-shift-plot');
+    // Guard: Ensure we have strings to look up
+    if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
+        console.error("Plotting requires an array of string tokens.");
+        return [];
+    }
 
-	// This will store the actual numerical results to return
-	const injectedEmbeddings = [];
+    const injectedEmbeddings = [];
+    const traces = [];
 
-	const traces = [];
-	tokens.forEach((token, pos) => {
-		// 1. Retrieve Semantic Base from the persistent space
-		const semanticBase = embeddingSpace[token] || new Array(d_model).fill(0);
+    tokenStrings.forEach((token, pos) => {
+        // 1. Get the Semantic Base (The 'Start' of the arrow)
+        const semanticBase = embeddingSpace[token];
+        if (!semanticBase) return; // Skip if token isn't in space
 
-		// 2. Calculate Positional Encoding (PE) Vector
-		const peVec = new Array(d_model).fill(0);
-		for (let i = 0; i < d_model; i++) {
-			let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-			peVec[i] = (i % 2 === 0) 
-				? Math.sin(pos / div_term) 
-				: Math.cos(pos / div_term);
-		}
+        // 2. Calculate Positional Encoding (The 'Shift' amount)
+        const peVec = new Array(d_model).fill(0);
+        for (let i = 0; i < d_model; i += 2) {
+            let div_term = Math.pow(10000, i / d_model);
+            peVec[i] = Math.sin(pos / div_term);
+            if (i + 1 < d_model) peVec[i + 1] = Math.cos(pos / div_term);
+        }
 
-		// 3. Perform the "Shift" (Addition)
-		const combined = semanticBase.map((val, i) => val + peVec[i]);
-		injectedEmbeddings.push(combined);
+        // 3. Resultant Vector (The 'Tip' of the arrow)
+        const combined = semanticBase.map((val, i) => val + peVec[i]);
+        injectedEmbeddings.push(combined);
 
-		// 4. Visualization Logic (3D/2D)
-		if (container && d_model <= 3) {
-			const x = [semanticBase[0], combined[0]];
-			const y = d_model >= 2 ? [semanticBase[1], combined[1]] : [0, 0];
-			const z = d_model === 3 ? [semanticBase[2], combined[2]] : [0, 0];
+        // 4. Visualization
+        if (container && d_model <= 3) {
+            const x = [semanticBase[0], combined[0]];
+            const y = d_model >= 2 ? [semanticBase[1], combined[1]] : [0, 0];
+            const z = d_model === 3 ? [semanticBase[2], combined[2]] : [0, 0];
 
-			if (d_model === 3) {
-				traces.push({
-					type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
-					line: { width: 6, color: '#3b82f6' }, name: token, showlegend: false
-				});
-				traces.push({
-					type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
-					u: [peVec[0]], v: [peVec[1]], w: [peVec[2]],
-					sizemode: 'absolute', sizeref: 0.2, anchor: 'tip',
-					colorscale: [[0, '#3b82f6'], [1, '#60a5fa']], showscale: false
-				});
-			} else {
-				traces.push({
-					type: 'scatter', x: x, y: y, mode: 'lines+markers',
-					name: token, line: { width: 4, color: '#3b82f6' },
-					marker: { size: [0, 15], symbol: 'arrow', angleref: 'previous' }
-				});
-			}
-		}
-	});
+            if (d_model === 3) {
+                // Line
+                traces.push({
+                    type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
+                    line: { width: 6, color: '#3b82f6' }, name: `${token} (pos ${pos})`
+                });
+                // Arrow Tip
+                traces.push({
+                    type: 'cone', x: [combined[0]], y: [combined[1]], z: [combined[2]],
+                    u: [peVec[0]], v: [peVec[1]], w: [peVec[2]],
+                    sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+                    colorscale: [[0, '#3b82f6'], [1, '#1d4ed8']], showscale: false
+                });
+            }
+        }
+    });
 
-	// High-Dimensional Plotting (ECharts)
-	if (container && d_model > 3 && typeof echarts !== 'undefined') {
-		Plotly.purge(container);
-		const myChart = echarts.init(container);
-		const axes = Array.from({ length: d_model }, (_, i) => ({ dim: i, name: `D${i}` }));
-		const data = tokens.map((token, idx) => ({ value: injectedEmbeddings[idx], name: token }));
+    if (container && traces.length > 0) {
+        Plotly.newPlot(container, traces, {
+            title: "Semantic Vector → + Positional Shift",
+            scene: {
+                xaxis: {title: 'Dim 0'},
+                yaxis: {title: 'Dim 1'},
+                zaxis: {title: 'Dim 2'}
+            },
+            margin: { l: 0, r: 0, b: 0, t: 40 }
+        });
+    }
 
-		myChart.setOption({
-			tooltip: { trigger: 'item' },
-			parallelAxis: axes,
-			parallel: { left: 40, right: 40, bottom: 20, top: 50 },
-			series: [{ type: 'parallel', data: data, lineStyle: { width: 2, opacity: 0.4, color: '#3b82f6' } }]
-		});
-	} else if (container && traces.length > 0) {
-		const layout = { title: "Positional Injection: Semantic → Combined", margin: { l: 0, r: 0, b: 0, t: 40 } };
-		Plotly.newPlot(container, traces, layout);
-	}
-
-	return injectedEmbeddings; // Return the shifted data for the next stage
+    return injectedEmbeddings;
 }
 
 function calculate_batched_loss(tokens, weights, d_model, n_layers, batchSize = 5) {
