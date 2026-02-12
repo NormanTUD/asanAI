@@ -193,9 +193,44 @@ class AttentionEngine {
 		}
 	}
 
+	renderHeatmap(i, weights) {
+		const containerId = `attn-heatmap-${this.containerId}-${i}`;
+		const container = document.getElementById(containerId);
+		if (!container) return;
+
+		// Numerical labels for rows and columns
+		const labels = weights.map((_, idx) => idx);
+
+		const data = [{
+			z: weights,
+			x: labels,
+			y: labels,
+			type: 'heatmap',
+			colorscale: [
+				[0, 'rgb(255,255,255)'], // White
+				[1, 'rgb(59,130,246)']   // Blue
+			],
+			showscale: false,
+			reversescale: false
+		}];
+
+		const layout = {
+			title: { text: `Head ${i + 1} Attention Matrix`, font: { size: 12 } },
+			margin: { t: 30, b: 30, l: 30, r: 10 },
+			xaxis: { fixedrange: true, tickfont: { size: 10 } },
+			yaxis: { autorange: 'reversed', fixedrange: true, tickfont: { size: 10 } },
+			height: 300,
+			autosize: true
+		};
+
+		const config = { displayModeBar: false, responsive: true };
+
+		// Efficiently update the existing plot
+		Plotly.react(containerId, data, layout, config);
+	}
+
 	executeActualRender(headData, tokens) {
-		if (!this.container) return;
-		if (!tokens.length) return;
+		if (!this.container || !tokens.length) return;
 
 		let html = `<div class="attention-tabs" style="border:1px solid #3b82f6; border-radius:8px; overflow:hidden;">`;
 
@@ -203,28 +238,34 @@ class AttentionEngine {
 		html += `<div class="tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6;">`;
 		headData.forEach((h, i) => {
 			html += `<button class="mha-tab-btn" id="tab-btn-${i}" onclick="showHead(${i})" 
-	style="padding:10px 20px; border:none; border-right:1px solid #3b82f6; cursor:pointer; 
-	background:${i === 0 ? '#fff' : '#e2e8f0'}; font-weight:${i === 0 ? 'bold' : 'normal'}">Head ${i + 1}</button>`;
+	    style="padding:10px 20px; border:none; border-right:1px solid #3b82f6; cursor:pointer; 
+	    background:${i === 0 ? '#fff' : '#e2e8f0'}; font-weight:${i === 0 ? 'bold' : 'normal'}">Head ${i + 1}</button>`;
 		});
 		html += `</div>`;
 
 		// Tab Content
 		headData.forEach((h, i) => {
-			// FIX: Ensure 't' is treated as a string before calling .replace
 			const escapedTokens = tokens.map(t => String(t).replace(/#/g, '\\#'));
 
 			html += `<div id="head-content-${i}" class="head-tab" style="padding:20px; display:${i === 0 ? 'block' : 'none'}">
-	<div style="margin-bottom:20px;">
-	$$ \\text{Head}_{${i}} = \\text{Softmax} \\left( \\frac{Q_i K_i^T}{\\sqrt{d_k}} \\right) \\cdot V_i $$
-	</div>
-	<div style="overflow-x:auto;">
-	${this.generateMathTable(h, escapedTokens)}
-	</div>
-    </div>`;
+	    <div id="attn-heatmap-${this.containerId}-${i}" style="width:100%; margin-bottom:20px;"></div>
+	    <div style="margin-bottom:20px; font-size: 0.9rem;">
+		$$ \\text{Head}_{${i}} = \\text{Softmax} \\left( \\frac{Q_i K_i^T}{\\sqrt{d_k}} \\right) \\cdot V_i $$
+	    </div>
+	    <div style="overflow-x:auto;">
+		${this.generateMathTable(h, escapedTokens)}
+	    </div>
+	</div>`;
 		});
 
 		html += `</div>`;
 		this.container.innerHTML = html;
+
+		// Trigger Plotly renders for each head
+		headData.forEach((h, i) => {
+			this.renderHeatmap(i, h.this_weights, tokens);
+		});
+
 		if (typeof render_temml === "function") render_temml();
 	}
 
@@ -296,18 +337,23 @@ class AttentionEngine {
 }
 
 window.showHead = (idx) => {
-	// Toggle Content
 	document.querySelectorAll('.head-tab').forEach(el => el.style.display = 'none');
-	document.getElementById(`head-content-${idx}`).style.display = 'block';
+	const activeTab = document.getElementById(`head-content-${idx}`);
+	activeTab.style.display = 'block';
 
-	// Toggle Buttons
+	// Highlight Buttons
 	document.querySelectorAll('.mha-tab-btn').forEach(btn => {
 		btn.style.background = '#e2e8f0';
 		btn.style.fontWeight = 'normal';
 	});
-	const activeBtn = document.getElementById(`tab-btn-${idx}`);
-	activeBtn.style.background = '#fff';
-	activeBtn.style.fontWeight = 'bold';
+	document.getElementById(`tab-btn-${idx}`).style.background = '#fff';
+	document.getElementById(`tab-btn-${idx}`).style.fontWeight = 'bold';
+
+	// CRITICAL: Force Plotly to resize for the newly visible container
+	const heatmapDiv = activeTab.querySelector('[id^="attn-heatmap-"]');
+	if (heatmapDiv) {
+		Plotly.Plots.resize(heatmapDiv);
+	}
 
 	if (typeof render_temml === "function") render_temml();
 };
