@@ -1589,6 +1589,9 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 	const plotDiv = document.getElementById(id);
 	if (!plotDiv) return;
 
+	// Ensure the container itself is set to occupy full width
+	plotDiv.style.width = '100%';
+
 	if (d_model <= 3) {
 		const traces = [];
 		tokens.forEach((token, i) => {
@@ -1615,7 +1618,13 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 				});
 			}
 		});
-		Plotly.newPlot(id, traces, { title: `Layer ${layerNum}: Feature Migration` });
+
+		// Use 'responsive: true' in the config object (3rd argument)
+		Plotly.newPlot(id, traces, 
+			{ title: `Layer ${layerNum}: Feature Migration`, autosize: true }, 
+			{ responsive: true }
+		);
+
 	} else {
 		if (typeof echarts === 'undefined') return;
 		Plotly.purge(plotDiv);
@@ -1628,6 +1637,7 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 			value: start_h[tIdx].flatMap((val, i) => [val, end_h[tIdx][i]]),
 			name: token
 		}));
+
 		myChart.setOption({
 			title: { text: `Layer ${layerNum} Migration`, left: 'center' },
 			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
@@ -1638,13 +1648,12 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 				emphasis: { lineStyle: { width: 5, color: '#ef4444' } }
 			}]
 		});
+
+		// Force ECharts to recognize the container width immediately
+		myChart.resize();
 	}
 
-	/**
-	 * LateX Rendering Logic for h_after
-	 * Summarization: Converts the h_after tensor into a LaTeX pmatrix and renders via Temml.
-	 */
-	// 1. Helper to format the tensor as a LaTeX pmatrix
+	// LateX Rendering Logic (Unchanged but included for context)
 	const toPMatrix = (matrix) => {
 		if (!Array.isArray(matrix) || !matrix.length) return '';
 		const rows = matrix.map(row =>
@@ -1653,10 +1662,7 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 		return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
 	};
 
-	// 2. Build the LaTeX string
 	const latexString = `$$h_\\text{after} = ${toPMatrix(h_after)}$$`;
-
-	// 3. Ensure a container exists for the LaTeX output
 	let latexDiv = document.getElementById(id + '-latex-debug');
 	if (!latexDiv) {
 		latexDiv = document.createElement('div');
@@ -1666,8 +1672,6 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 		latexDiv.style.fontSize = '0.8rem';
 		plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
 	}
-
-	// 4. Update and Render
 	latexDiv.innerHTML = latexString;
 	render_temml();
 }
