@@ -204,7 +204,7 @@ class AttentionEngine {
 
 		// Tab Content
 		headData.forEach((h, i) => {
-			log(tokens);
+			console.log(tokens);
 			const escapedTokens = tokens.map(t => t.replace(/#/g, '\\#'));
 			html += `<div id="head-content-${i}" class="head-tab" style="padding:20px; display:${i === 0 ? 'block' : 'none'}">
 	    <div style="margin-bottom:20px;">
