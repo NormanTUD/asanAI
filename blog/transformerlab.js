@@ -1529,7 +1529,6 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model) {
  */
 function render_positional_shift_plot(tokenStrings, d_model, embeddingSpace) {
     const container = document.getElementById('transformer-pe-shift-plot');
-    // Guard: Ensure we have strings to look up
     if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
         console.error("Plotting requires an array of string tokens.");
         return [];
@@ -1539,11 +1538,9 @@ function render_positional_shift_plot(tokenStrings, d_model, embeddingSpace) {
     const traces = [];
 
     tokenStrings.forEach((token, pos) => {
-        // 1. Get the Semantic Base (The 'Start' of the arrow)
         const semanticBase = embeddingSpace[token];
-        if (!semanticBase) return; // Skip if token isn't in space
+        if (!semanticBase) return;
 
-        // 2. Calculate Positional Encoding (The 'Shift' amount)
         const peVec = new Array(d_model).fill(0);
         for (let i = 0; i < d_model; i += 2) {
             let div_term = Math.pow(10000, i / d_model);
@@ -1551,28 +1548,36 @@ function render_positional_shift_plot(tokenStrings, d_model, embeddingSpace) {
             if (i + 1 < d_model) peVec[i + 1] = Math.cos(pos / div_term);
         }
 
-        // 3. Resultant Vector (The 'Tip' of the arrow)
         const combined = semanticBase.map((val, i) => val + peVec[i]);
         injectedEmbeddings.push(combined);
 
-        // 4. Visualization
         if (container && d_model <= 3) {
             const x = [semanticBase[0], combined[0]];
             const y = d_model >= 2 ? [semanticBase[1], combined[1]] : [0, 0];
             const z = d_model === 3 ? [semanticBase[2], combined[2]] : [0, 0];
 
             if (d_model === 3) {
-                // Line
+                // Line Trace
                 traces.push({
-                    type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
-                    line: { width: 6, color: '#3b82f6' }, name: `${token} (pos ${pos})`
+                    type: 'scatter3d', 
+                    x: x, y: y, z: z, 
+                    mode: 'lines',
+                    line: { width: 6, color: '#3b82f6' }, 
+                    name: `${token} (pos ${pos})`,
+                    hoverinfo: 'text',
+                    text: `Token: ${token}<br>Pos: ${pos}` // Added for hover
                 });
-                // Arrow Tip
+                
+                // Arrow Tip (Cone) Trace
                 traces.push({
-                    type: 'cone', x: [combined[0]], y: [combined[1]], z: [combined[2]],
+                    type: 'cone', 
+                    x: [combined[0]], y: [combined[1]], z: [combined[2]],
                     u: [peVec[0]], v: [peVec[1]], w: [peVec[2]],
                     sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-                    colorscale: [[0, '#3b82f6'], [1, '#1d4ed8']], showscale: false
+                    colorscale: [[0, '#3b82f6'], [1, '#1d4ed8']], 
+                    showscale: false,
+                    hoverinfo: 'text',
+                    text: `Token: ${token}` // Added for hover
                 });
             }
         }
