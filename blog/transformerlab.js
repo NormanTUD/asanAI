@@ -1567,6 +1567,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 
 		h_current = h_after;
 	}
+
 	return h_current;
 }
 
