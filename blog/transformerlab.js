@@ -718,6 +718,8 @@ function renderLossGraph() {
 		yaxis: { title: 'Loss' }
 	};
 
+	document.getElementById('training-loss-plot').style.display = 'block';
+
 	Plotly.newPlot('training-loss-plot', [trace], layout);
 }
 

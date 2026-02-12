@@ -81,16 +81,15 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
                 <option value="rmsprop">RMSProp</option>
             </select>
         </div>
-	<div id="training-loss-plot" style="width: 100%; height: 200px; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;"></div>
 
 	<button onclick="train_transformer()" style="background: #10b981; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
 	    Train Model
 	</button>
-	<div id="training-status"></div>
-    </div>
 
-    <div id="training-status" style="margin-top: 10px; font-size: 0.85rem; color: #047857; min-height: 20px;"></div>
-    <div id="training-loss-plot" style="width: 100%; height: 150px; margin-top: 10px; display: none;"></div>
+	<div id="training-status" style="margin-top: 10px; font-size: 0.85rem; color: #047857; min-height: 20px; display: none"></div>
+	<div id="training-loss-plot" style="width: 100%; height: 200px; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; display: none"></div>
+
+    </div>
 </div>
 
 <div class="md">
