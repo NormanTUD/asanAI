@@ -1680,6 +1680,37 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 			}]
 		});
 	}
+
+	/**
+	 * LateX Rendering Logic for h_after
+	 * Summarization: Converts the h_after tensor into a LaTeX pmatrix and renders via Temml.
+	 */
+	// 1. Helper to format the tensor as a LaTeX pmatrix
+	const toPMatrix = (matrix) => {
+		if (!Array.isArray(matrix) || !matrix.length) return '';
+		const rows = matrix.map(row =>
+			row.map(v => v.toFixed(nr_fixed)).join(' & ')
+		).join(' \\\\ ');
+		return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
+	};
+
+	// 2. Build the LaTeX string
+	const latexString = `$$h_\\text{after} = ${toPMatrix(h_after)}$$`;
+
+	// 3. Ensure a container exists for the LaTeX output
+	let latexDiv = document.getElementById(id + '-latex-debug');
+	if (!latexDiv) {
+		latexDiv = document.createElement('div');
+		latexDiv.id = id + '-latex-debug';
+		latexDiv.style.marginTop = '20px';
+		latexDiv.style.overflowX = 'auto';
+		latexDiv.style.fontSize = '0.8rem';
+		plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
+	}
+
+	// 4. Update and Render
+	latexDiv.innerHTML = latexString;
+	render_temml();
 }
 
 function render_positional_shift_plot(tokenStrings, d_model) {
