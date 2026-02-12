@@ -545,7 +545,7 @@ async function train_transformer() {
 		const lossValue = await cost.data();
 		window.lossHistory.push(lossValue[0]);
 
-		if (i % 25 === 0 || i === epochs - 1) {
+		if (i % 5 === 0 || i === epochs - 1) {
 			window.currentWeights = await convert_tensors_to_weights(weightVars);
 			status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(6)}`;
 			renderLossGraph();
