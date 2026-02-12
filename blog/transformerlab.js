@@ -980,9 +980,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 			h_current = run_ffn_block(h_attn, layerWeights);
 		}
 
-		if (typeof render_final_projection === "function") {
-			render_final_projection(h_current, vocabulary, d_model, temperature);
-		}
+		render_final_projection(h_current, vocabulary, d_model, temperature);
 	}
 }
 
