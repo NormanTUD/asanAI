@@ -5,7 +5,7 @@
  */
 
 const nr_fixed = 4;
-const posEmbedScalar = 0.1;
+const posEmbedScalar = 1;
 
 window.addEventListener('DOMContentLoaded', (event) => {
 	document.getElementById("ifscalfactornotone").style.display =  posEmbedScalar == 1 ? 'none' : 'block'
