@@ -1264,7 +1264,8 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
             <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
             $$ \\text{Norm}(h_0) = \\gamma \\odot \\frac{h_0 - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta $$
             <div style="overflow-x:auto;">
-                $$ \\underbrace{${matrixToPmatrix(normH0)}}_{\\text{LayerNorm(h_0)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h0)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+                $$ \\underbrace{${matrixToPmatrix(normH0)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h0)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+		<br>
             </div>
         </div>
 
