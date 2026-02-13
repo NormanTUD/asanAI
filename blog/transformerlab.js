@@ -1489,7 +1489,7 @@ function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	$$ h_2 = h_1 + \\text{out}_{L2} $$
     </div>
     <div style="overflow-x:auto;">
-	$$ ${rawMP(h2)} = \\underbrace{${rawMP(h1)}}_{h_1} + \\underbrace{${rawMP(out_FFN)}}_{\\text{FFN output}} $$
+	$$ \\underbrace{${rawMP(h2)}}_{h_2} = \\underbrace{${rawMP(h1)}}_{h_1} + \\underbrace{${rawMP(out_FFN)}}_{\\text{out}_{L2}} $$
     </div>
     `;
 
