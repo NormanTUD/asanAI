@@ -40,7 +40,7 @@ The **Salamis Tablet** (c. 300 BC), discovered in 1846 and preserved at the **Ep
 * **The "Calculus" Root:** The use of pebbles (*calculi*) illustrates the reduction of reasoning to symbol manipulation, a concept later formalized by **Leibniz** and **Boole**.
 * **Evolution of the Abacus:** While the Salamis Tablet was a stationary counting board, it paved the way for the portable **Roman Hand Abacus** and the eventual bead-and-wire **Suanpan** (China) and **Soroban** (Japan). This transition represents the evolution from "loose" hardware (pebbles on a table) to "integrated" hardware (sliding beads), optimizing calculation speed and portability for merchants.
 
-As noted by \citeauthor{salminictablesource} (\citetitle{salminictablesource}, 1899), this device confirms that modern computation began by reducing thought to a formal calculus executed via a physical interface.
+As noted by \citeauthor{salminictablesource} (\citetitle{salminictablesource}, 1899, p. 393f), this device confirms that modern computation began by reducing thought to a formal calculus executed via a physical interface.
 
 \category{philosophy}
 ## The Roots of Formal Logic
