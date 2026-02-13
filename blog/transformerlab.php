@@ -264,6 +264,7 @@ Here, it is already abstracted away from the concrete Embedding Space (for examp
 </div>
 
 <div id="mha-calculation-details" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #3b82f6; margin-top: 20px;">
+<i>Please wait, while the calculations are loading...</i>
 </div>
 
 <div class="md">
