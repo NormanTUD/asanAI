@@ -1,4 +1,10 @@
 window.bibData = {
+	"galton": {
+		title: "Regression Towards Mediocrity in Hereditary Stature",
+		author: "Francis Galton",
+		year: 1886,
+		url: "http://www.stat.ucla.edu/~nchristo/statistics100C/history_regression.pdf"
+	},
 	"lebombobone": {
 		url: "https://cacm.acm.org/blogcacm/technical-marvels-part-2-lebombo-and-ishango-bones/",
 		author: "Herbert Bruderer",
