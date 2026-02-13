@@ -1257,7 +1257,6 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 
     // ── FIX: Display Pre-LN steps instead of Post-LN ──
     normContainer.innerHTML = `
-    <div style="margin-bottom:20px; padding:15px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
         <p style="font-size:0.9rem; font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
 
         <div style="margin-bottom:15px;">
@@ -1276,7 +1275,6 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
                 $$ \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrix(multiHeadOutput)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W_O} $$
             </div>
         </div>
-    </div>
     `;
 
     finalContainer.innerHTML = `
