@@ -1473,11 +1473,11 @@ function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	    $$ \\underbrace{${rawMP(normed_h1)}}_{\\text{Norm}\\left(h_1\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${rawMP(h1)}}_{h_1},\\; \\underbrace{${rawVP(gamma)}}_\\gamma,\\; \\underbrace{${rawVP(beta)}}_\\beta\\right) $$
 	</div>
     </div>
-    $$ \\text{out}_{L1} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1) \\cdot W_1 + b_1\\right) = ${rawMP(out_L1)} $$
+    $$ \\text{out}_{L1} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1) \\cdot W_1 + b_1\\right) = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} $$
     `;
 
 	document.getElementById('ffn-step-2').innerHTML = `
-    $$ \\text{out}_{L2} = \\text{out}_{L1} \\cdot W_2 + b_2 = ${rawMP(out_FFN)} $$
+    $$ \\text{out}_{L2} = \\text{out}_{L1} \\cdot W_2 + b_2 = \\underbrace{${rawMP(out_FFN)}}_{\\text{Out}_\\text{FFN}} $$
     `;
 
 	// ── FIX: Step 3 now shows simple residual (no post-norm on FFN output) ──
