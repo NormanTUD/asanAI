@@ -80,7 +80,7 @@ function get_or_init_embeddings(tokens, d_model) {
 
 function initWeights(r, c) {
 	const limit = Math.sqrt(6 / (r + c));
-	return Array.from({ length: r }, () => 
+	return Array.from({ length: r }, () =>
 		Array.from({ length: c }, () => (Math.random() * 2 * limit) - limit)
 	);
 }
@@ -117,7 +117,7 @@ class AttentionEngine {
 			throw new Error(`Dimension mismatch: A columns (${A[0].length}) must match B rows (${B.length})`);
 		}
 
-		return A.map(row => 
+		return A.map(row =>
 			B[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * B[j][i], 0))
 		);
 	}
@@ -201,8 +201,8 @@ class AttentionEngine {
 		// Tab Headers
 		html += `<div class="tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6;">`;
 		headData.forEach((h, i) => {
-			html += `<button class="mha-tab-btn" id="tab-btn-${i}" onclick="showHead(${i})" 
-	    style="padding:10px 20px; border:none; border-right:1px solid #3b82f6; cursor:pointer; 
+			html += `<button class="mha-tab-btn" id="tab-btn-${i}" onclick="showHead(${i})"
+	    style="padding:10px 20px; border:none; border-right:1px solid #3b82f6; cursor:pointer;
 	    background:${i === 0 ? '#fff' : '#e2e8f0'}; font-weight:${i === 0 ? 'bold' : 'normal'}">Head ${i + 1}</button>`;
 		});
 		html += `</div>`;
@@ -275,7 +275,7 @@ class AttentionEngine {
 					// Full derivation for the first cell
 					cellEq = `
 	    \\text{SoftMax} \\left( \\frac{
-		\\underbrace{(W_Q h_0[${i}])^T}_{Q_${i}^T} \\cdot 
+		\\underbrace{(W_Q h_0[${i}])^T}_{Q_${i}^T} \\cdot
 		\\underbrace{(W_K h_0[${j}])}_{K_${j}}
 	    }{\\sqrt{${dk_int}}} \\right) \\cdot \\underbrace{V_{${j}}}_{h_{${j}} \\cdot W_V}
 	    = ${weight.toFixed(nr_fixed)} \\cdot ${toColPmatrix(Vi[j])}
@@ -285,7 +285,7 @@ class AttentionEngine {
 					// Descriptive shorthand for subsequent cells
 					// Shows the relationship between Q_i, K_j and the weight
 					cellEq = `
-	    \\underbrace{ \\text{attn}(Q_{${i}}, K_{${j}}) }_{${weight.toFixed(nr_fixed)}} 
+	    \\underbrace{ \\text{attn}(Q_{${i}}, K_{${j}}) }_{${weight.toFixed(nr_fixed)}}
 	    \\cdot \\underbrace{V_{${j}}}_{h_{${j}} \\cdot W_V} = ${toColPmatrix(resultVec)}
 	`.replace(/\s+/g, ' ');
 				}
@@ -322,47 +322,59 @@ window.showHead = (idx) => {
 	render_temml();
 };
 
-function calculate_positional_injection(tokens, d_model) {
+function calculate_positional_injection(tokens, d_model) {    
 	const resultsContainer = document.getElementById('transformer-pe-integration-results');
-	const injectedEncodings = [];
+	const injectedEncodings = [];                                                           
 
 	let html = `<h3>Vector Injection (Inference Sequence)</h3>`;
 
-	tokens.forEach((token, pos) => {
+	tokens.forEach((token, pos) => {                          
 		const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-		const semanticVec = Array.from({length: d_model}, (_, i) => 
-			parseFloat(((Math.abs(hash * (i + 1)) % 1000) / 500 - 1).toFixed(nr_fixed))
-		);
+		const semanticVec = Array.from({length: d_model}, (_, i) =>          
+			parseFloat(((Math.abs(hash * (i + 1)) % 1000) / 500 - 1).toFixed(nr_fixed))                                              
+		);                                                
 
-		const peVec = new Array(d_model);
-		for (let i = 0; i < d_model; i += 2) {
-			// FIXED: Correct exponentiation for the div_term
-			const div_term = Math.pow(10000, i / d_model);
-			
-			peVec[i] = Math.sin(pos / div_term);
-			if (i + 1 < d_model) {
+		const peVec = new Array(d_model);                 
+		for (let i = 0; i < d_model; i += 2) {            
+			const div_term = Math.pow(10000, i / d_model);                                   
+
+			peVec[i] = Math.sin(pos / div_term);                             
+			if (i + 1 < d_model) {                                    
 				peVec[i + 1] = Math.cos(pos / div_term);
-			}
-		}
+			}                                                
+		}                                                                         
 
 		const combined = semanticVec.map((val, i) => val + peVec[i]);
-		injectedEncodings.push(combined);
+		injectedEncodings.push(combined);                 
 
-		if (resultsContainer) {
-			const displayCombined = combined.map(v => v.toFixed(nr_fixed));
-			html += `
-			<div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff; overflow: auto;">
-				<strong>Pos ${pos}: ${token}</strong>
-				<table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px;">
-					<tr><td>PE (Sin/Cos)</td>${peVec.map(v => `<td>${v.toFixed(nr_fixed)}</td>`).join('')}</tr>
-					<tr style="font-weight:bold;"><td>Combined</td>${displayCombined.map(v => `<td>${v}</td>`).join('')}</tr>
-				</table>
-			</div>`;
-		}
-	});
+		if (resultsContainer) {                                                                                                                                                                                                                                                                                                                                                            
+			const displaySemantic = semanticVec.map(v => v.toFixed(nr_fixed));
+			const displayPE = peVec.map(v => v.toFixed(nr_fixed));
+			const displayCombined = combined.map(v => v.toFixed(nr_fixed));                                                                                                                                                                                                
 
-	if (resultsContainer) resultsContainer.innerHTML = html;
-	return injectedEncodings;
+			html += `                                                                                                                                                                                                                                                                    
+	    <div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff; overflow: auto;">                                                                                                   
+		<strong>Pos ${pos}: ${token}</strong>                                                                                                                                                                                                
+		<table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px; border-collapse: collapse;">                                                                                                                     
+		    <tr style="color: #64748b;">
+			<td style="padding-right: 10px;">Embedding Vector</td>
+			${displaySemantic.map(v => `<td>${v}</td>`).join('')}
+		    </tr>
+		    <tr style="color: #3b82f6;">
+			<td style="padding-right: 10px;">PE (Sin/Cos)</td>
+			${displayPE.map(v => `<td>${v}</td>`).join('')}
+		    </tr>                                                                                                                                                                                                         
+		    <tr style="font-weight:bold; border-top: 1px solid #eee;">
+			<td style="padding-right: 10px;">Combined</td>
+			${displayCombined.map(v => `<td>${v}</td>`).join('')}
+		    </tr>                                    
+		</table>                                                                                                                                                                                                                                                                                                                                         
+	    </div>`;                                                                                                                                                                                                                                         
+		}                                                                                                                                                                                                                                                                                                                    
+	});                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+	if (resultsContainer) resultsContainer.innerHTML = html;                                                                                                                                                                                                                                                                                                                                         
+	return injectedEncodings;                                                                                                                                                                                                                                                                                                                                                           
 }
 
 function render_positional_waves(d_model, tokens) {
@@ -1164,10 +1176,10 @@ function render_embedding_plot(dimensions) {
 			parallelAxis: parallelAxis,
 			parallel: { left: 40, right: 40, bottom: 20, top: 50 },
 			series: [{ 
-				type: 'parallel', 
-				data: data, 
+				type: 'parallel',
+				data: data,
 				lineStyle: { width: 2, opacity: 0.5, color: '#6366f1' },
-				emphasis: { lineStyle: { width: 6, color: '#f59e0b' } } 
+				emphasis: { lineStyle: { width: 6, color: '#f59e0b' } }
 			}]
 		});
 	}
@@ -1185,7 +1197,7 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
 	const words = cleanText.split(/\s+/);
 
 	if (type === 'bpe') {
-		// Character-level / Subword Split: 
+		// Character-level / Subword Split:
 		// We split by words first, then break long words into chunks to simulate BPE behavior
 		const words = text.match(/\S+|\s+/g) || [];
 		tokens = words.flatMap(word => {
@@ -1196,7 +1208,7 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
 			return word;
 		});
 	} else {
-		// Standard Regex Word Split: 
+		// Standard Regex Word Split:
 		// Matches sequences of alphanumeric characters or single non-alphanumeric characters
 		tokens = text.match(/[\w]+|[^\w\s]/g) || [];
 	}
@@ -1289,8 +1301,8 @@ function updateConcatenationDisplay(headData, tokens) {
 	if (!container || !headData.length) return [];
 
 	const matrixToPmatrix = (matrix) => {
-		return `\\begin{pmatrix} ` + 
-			matrix.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ') + 
+		return `\\begin{pmatrix} ` +
+			matrix.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ') +
 			` \\end{pmatrix}`;
 	};
 
@@ -1536,7 +1548,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 
 /**
  * Global Registry for Deferred Rendering
- * Stores the latest data for each plot ID to ensure that when it 
+ * Stores the latest data for each plot ID to ensure that when it
  * becomes visible, it renders with the most recent calculation.
  */
 const transformerLabVisMigrationDataRegistry = new Map();
@@ -1572,7 +1584,7 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 		plotDiv.style.cssText = "height: 500px; width: 100%; margin-top: 30px;";
 		container.appendChild(plotDiv);
 
-		// The observer handles the initial visibility check automatically 
+		// The observer handles the initial visibility check automatically
 		// as soon as it starts observing, firing the callback if visible.
 		migrationObserver.observe(plotDiv);
 	}
@@ -1580,13 +1592,13 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 	// Optimization: Use .slice() or Float32Array.from() if start_h/end_h are numeric arrays.
 	// JSON stringify/parse is a major CPU sink for high-dimensional vectors.
 	transformerLabVisMigrationDataRegistry.set(id, {
-		tokens: [...tokens], 
+		tokens: [...tokens],
 		start_h: Array.isArray(start_h) ? start_h.slice() : start_h,
 		end_h: Array.isArray(end_h) ? end_h.slice() : end_h,
 		layerNum: layerNum,
 		d_model: d_model,
 		h_after: h_after,
-		rendered: false 
+		rendered: false
 	});
 }
 
@@ -1625,8 +1637,8 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 		});
 
 		// Use 'responsive: true' in the config object (3rd argument)
-		Plotly.newPlot(id, traces, 
-			{ title: `Layer ${layerNum}: Feature Migration`, autosize: true }, 
+		Plotly.newPlot(id, traces,
+			{ title: `Layer ${layerNum}: Feature Migration`, autosize: true },
 			{ responsive: true }
 		);
 
@@ -1817,9 +1829,9 @@ function syncTransformerSettings(trigger) {
 	}
 
 	// 2. CRITICAL: Clear "Ghost" Memory
-	// This prevents the "4 must match 6" error by forcing the model to 
+	// This prevents the "4 must match 6" error by forcing the model to
 	// recreate matrices that match the new slider values.
-	window.currentWeights = null; 
+	window.currentWeights = null;
 	window.persistentEmbeddingSpace = null;
 	window.last_d_model = d_model;
 
