@@ -277,7 +277,7 @@ class AttentionEngine {
 	    \\text{SoftMax} \\left( \\frac{
 		\\underbrace{(W_Q h_0[${i}])^T}_{Q_${i}^T} \\cdot 
 		\\underbrace{(W_K h_0[${j}])}_{K_${j}}
-	    }{\\sqrt{${dk_int}}} \\right) \\cdot V_{${j}}
+	    }{\\sqrt{${dk_int}}} \\right) \\cdot \\underbrace{V_{${j}}}_{h_{${j}} \\cdot W_V}
 	    = ${weight.toFixed(nr_fixed)} \\cdot ${toColPmatrix(Vi[j])}
 	    = ${toColPmatrix(resultVec)}
 	`.replace(/\s+/g, ' ');
@@ -286,7 +286,7 @@ class AttentionEngine {
 					// Shows the relationship between Q_i, K_j and the weight
 					cellEq = `
 	    \\underbrace{ \\text{attn}(Q_{${i}}, K_{${j}}) }_{${weight.toFixed(nr_fixed)}} 
-	    \\cdot V_{${j}} = ${toColPmatrix(resultVec)}
+	    \\cdot \\underbrace{V_{${j}}}_{h_{${j}} \\cdot W_V} = ${toColPmatrix(resultVec)}
 	`.replace(/\s+/g, ' ');
 				}
 
