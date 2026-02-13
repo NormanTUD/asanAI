@@ -7,8 +7,6 @@ $$y = f(x) = ax + b$$
 
 This is *the smallest possible neural network* already. Just that simple function equation, with $a$ and $b$ being *Parameters* for the function. In this case, $a$ and $b$ are just simple floating point numbers, but usually they are not numbers but tensors, ie. large lists of numbers, such that it can be that they can look like 
 
-The statistical framework of linear regression was famously formalized by \citeauthor{galton} in \citeyear{galton}. He applied this mathematical framework to heredity, demonstrating that children of exceptionally tall or exceptionally short parents tend to have heights closer to the population average than their parents did. By proving that these extreme traits "regress" toward mediocrity, Galton established the statistical foundation for predicting a dependent variable from an independent one, effectively creating the first functional application of the linear model that serves as the basis for modern neurons.
-
 $$ \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} = \begin{bmatrix} 0.5 & -0.2 & 0.1 \\ 0.8 & 0.4 & -0.9 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} + \begin{bmatrix} 0.1 \\ -0.5 \end{bmatrix}. $$
 
 But since normal numbers are tensors as well, this holds true. Given $a$ and $b$ are tensors, is the exact mathematical structure of the \citealternativetitle{rosenblatt1958perceptron}.
@@ -40,6 +38,8 @@ Watch it in real time:
 * **Math Monitor:** This shows the internal state of the neuron. Watch how $a$ (weight) and $b$ (bias) change as the AI fits the data!
 
 A single neuron can only learn a straight line. However, complex AI systems group many of these neurons together into **Layers**. By stacking these layers, where the output of one neuron becomes the input for the next, the model evolves into a **Neural Network** capable of recognizing complex patterns far beyond a simple line. But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).
+
+The statistical framework of linear regression was famously formalized by \citeauthor{galton} in \citeyear{galton}. He applied this mathematical framework to heredity, demonstrating that children of exceptionally tall or exceptionally short parents tend to have heights closer to the population average than their parents did. By proving that these extreme traits "regress" toward mediocrity, Galton established the statistical foundation for predicting a dependent variable from an independent one, effectively creating the first functional application of the linear model that serves as the basis for modern neurons.
 </div>
 
 Learning Rate: <input type="number" id="lin-lr" value="0.001" step="0.01" style="width: 200px">
