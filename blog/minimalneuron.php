@@ -7,7 +7,7 @@ $$y = f(x) = ax + b$$
 
 This is *the smallest possible neural network* already. Just that simple function equation, with $a$ and $b$ being *Parameters* for the function. In this case, $a$ and $b$ are just simple floating point numbers, but usually they are not numbers but tensors, ie. large lists of numbers, such that it can be that they can look like 
 
-> This is called **linear regression** and was introduced by \citeauthor{galton} in \citeyear{galton} for predicting the stature of offspring based on their parents' height. He aimed to explain the "regression towards mediocrity," demonstrating that children of exceptional parents tend to be closer to the population average, thereby establishing the mathematical foundation for predicting dependent variables from independent ones.
+The statistical framework of linear regression was famously formalized by \citeauthor{galton} in \citeyear{galton}. He applied this mathematical framework to heredity, demonstrating that children of exceptionally tall or exceptionally short parents tend to have heights closer to the population average than their parents did. By proving that these extreme traits "regress" toward mediocrity, Galton established the statistical foundation for predicting a dependent variable from an independent one, effectively creating the first functional application of the linear model that serves as the basis for modern neurons.
 
 $$ \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} = \begin{bmatrix} 0.5 & -0.2 & 0.1 \\ 0.8 & 0.4 & -0.9 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ x_3 \end{bmatrix} + \begin{bmatrix} 0.1 \\ -0.5 \end{bmatrix}. $$
 
