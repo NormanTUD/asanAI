@@ -18,8 +18,36 @@ The history of machines is fundamentally a history of **abstraction**, where hum
 
 This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction". Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine. Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
 
-\category{philosophy}
+## The Abacus
 
+
+
+<div class="image-row">
+	<figure>
+		<img src="salamic_table.jpg" alt="The Salamis Tablet" />
+		<figcaption>The \citealternativetitle{salamictablet} from ca. 300 BC, the earliest known precursor to the Abacus</figcaption>
+	</figure>
+	<figure>
+		<img src="abacus.jpg" alt="The earliest depiction of an Abacus" />
+		<figcaption class="md">\citealternativetitle{earliestabacusphoto}</figcaption>
+	</figure>
+</div>
+
+\category{history, hardware}
+## The Salamis Tablet: The First Hardware for Thought
+
+The **Salamis Tablet** (c. 300 BC), discovered on the island of Salamis in 1846, is the oldest surviving counting board and a primary ancestor of the abacus. While later versions used beads on wires, this Greek precursor utilized a marble slab with etched parallel lines, where counters or pebbles (called **calculi**) were moved to perform additions and subtractions.
+
+
+
+* **Spatial Abstraction:** The tablet represents an early "extra level of indirection," where abstract numbers are mapped to physical space.
+* **Mechanical Logic:** By using a grid to represent units, tens, and hundreds, the tablet allowed the user to outsource the "raw labor of the mind" to a physical system of rules.
+* **Efficiency and Memory:** Similar to how modern memory ("The Store") functions in Babbage’s designs, the slab served as an external memory bank, freeing the human from holding complex intermediate sums in their head.
+* **The "Calculus" Root:** The use of pebbles on the Salamis Tablet gave rise to the term *calculus*, reinforcing the idea that reasoning can be reduced to the mechanical manipulation of symbols—a concept that would later be formalized by Leibniz and Boole.
+
+This device proves that the trajectory of modern computation began by reducing thought to a formal calculus that could be executed by a physical interface.
+
+\category{philosophy}
 ## The Roots of Formal Logic
 
 <figure>
