@@ -217,7 +217,7 @@ class AttentionEngine {
 		$$ \\text{Head}_{${i}} = \\text{Softmax} \\left( \\frac{Q_${i} K_${i}^T}{\\sqrt{d_k}} \\right) \\cdot V_${i} $$
 	    </div>
 	    <div style="overflow-x:auto;">
-		${this.generateMathTable(h, escapedTokens, i)}
+		${this.generateMathTable(h, escapedTokens)}
 	    </div>
 	</div>`;
 		});
@@ -228,7 +228,7 @@ class AttentionEngine {
 		render_temml();
 	}
 
-	generateMathTable(head, tokens, head_nr) {
+	generateMathTable(head, tokens) {
 		const { this_weights, Qi, Ki, Vi, h0, WQ, WK, WV } = head;
 
 		// Helper for Matrix display
@@ -277,7 +277,7 @@ class AttentionEngine {
 	    \\text{SoftMax} \\left( \\frac{
 		\\underbrace{(W_Q h_0[${i}])^T}_{Q_${i}^T} \\cdot 
 		\\underbrace{(W_K h_0[${j}])}_{K_${j}}
-	    }{\\sqrt{${dk_int}}} \\right) \\cdot V_{${head_nr}}
+	    }{\\sqrt{${dk_int}}} \\right) \\cdot V_{${j}}
 	    = ${weight.toFixed(nr_fixed)} \\cdot ${toColPmatrix(Vi[j])}
 	    = ${toColPmatrix(resultVec)}
 	`.replace(/\s+/g, ' ');
@@ -286,7 +286,7 @@ class AttentionEngine {
 					// Shows the relationship between Q_i, K_j and the weight
 					cellEq = `
 	    \\underbrace{ \\text{attn}(Q_{${i}}, K_{${j}}) }_{${weight.toFixed(nr_fixed)}} 
-	    \\cdot V_{${head_nr}} = ${toColPmatrix(resultVec)}
+	    \\cdot V_{${j}} = ${toColPmatrix(resultVec)}
 	`.replace(/\s+/g, ' ');
 				}
 
