@@ -1812,8 +1812,34 @@ function syncTransformerSettings(trigger) {
 	}
 }
 
+/**
+ * A standard debounce function.
+ * Credits: This pattern is a staple of web optimization,
+ * popularized by libraries like Underscore.js and Lodash.
+ */
+function debounce(func, wait) {
+	let timeout;
+	return function(...args) {
+		const context = this;
+		clearTimeout(timeout);
+		timeout = setTimeout(() => func.apply(context, args), wait);
+	};
+}
+
+// 1. Define the debounced version of your heavy function
+// 300ms is usually the "sweet spot" for human typing speed
+const debouncedRun = debounce((id) => {
+	run_transformer_demo(id);
+}, 300);
+
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
 	run_transformer_demo()
+
+	const inputElement = document.getElementById('transformer-master-token-input');
+	inputElement.addEventListener('input', (event) => {
+		debouncedRun('transformer-master-token-input');
+	});
+
 	return Promise.resolve();
 }

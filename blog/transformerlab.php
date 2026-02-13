@@ -354,11 +354,9 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 
 <div>
 	<label style="font-weight: bold; display: block; margin-top: 15px; margin-bottom: 8px;">Input (Inference):</label>
-	<input type="text" id="transformer-master-token-input" class="bw-cell"
-	    style="width: 90%; font-size: 1.1rem;"
-	    value="the"
-	    oninput="run_transformer_demo('transformer-master-token-input')">
+	<input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" value="the">
 </div>
+
 
 <div class="md">
 ## Key Intuitions about LLMs
