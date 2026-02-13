@@ -280,12 +280,12 @@ function load_base_js () {
 
 	</script>
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <?php
 	css("prism-tomorrow.min.css");
 	css("style");
+	js("prism.min");
+	js("prism-python.min");
 	js("literature");
 	js("citation_graph");
 	js("jquery-3.7.1.min");
