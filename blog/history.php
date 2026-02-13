@@ -197,6 +197,20 @@ This breakthrough allowed the brain to be viewed not just as a mysterious organ,
 
 This was the conceptual shift from "calculating machines" to the idea that cognition itself might be formalized (see \citetitle{piccini} for more details).
 
+\category{history,hardware}
+### The SNARC: The First Physical Neural Network (1951)
+</div>
+
+<figure>
+    <img style="width: 100%" src="snarc.jpg" alt="SNARC" />
+    <figcaption class="md">\citealternativetitle{snarcphoto}</figcaption>
+</figure>
+
+<div class="md">
+Built by **Marvin Minsky** and **Dean Edmonds** in 1951, the **SNARC** (Stochastic Neural Analog Reinforcement Calculator) was the world's first physical artificial neural network. Inspired directly by the theoretical logic calculus of \citeauthor{mccullochpitts1943} (\citeyear{mccullochpitts1943}), the SNARC translated abstract mathematical neurons into stochastic, learning hardware. It consisted of a randomly connected network of 40 artificial neurons constructed from vacuum tubes, salvaged B-24 bomber gyropilots, and magnetic clutches, designed to simulate a rat learning to navigate a virtual maze.
+
+Rather than relying on explicit programming, the machine learned via mechanical reinforcement. When the network made a random but "correct" move, a reinforcement signal engaged the clutches to turn potentiometers, physically altering the electrical resistance of the active connections. This increased the probability that those specific, successful pathways would fire again. By mechanically formalizing trial-and-error learning, concepts Minsky later detailed in his Princeton dissertation, *\citetitle{minsky1954}* (\citeyear{minsky1954}), the SNARC proved that a decentralized network of McCulloch-Pitts cells could autonomously calculate behavioral adaptation.
+
 \category{hardware,history,computer_science}
 ## Further developments of Computer Hardware and Computing Theory
 

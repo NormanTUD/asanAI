@@ -1,4 +1,17 @@
 window.bibData = {
+	"snarcphoto": {
+		url: "https://www.the-scientist.com/machine--learning--1951-65792",
+		author: "Jef Akst",
+		year: 2019,
+		title: "Machine, Learning, 1951",
+		alternativetitle: "Stochastic Neural Analog Reinforcement Calculator, or in short, SNARC"
+	},
+	"minsky1954": {
+		title: "Neural Nets and the Brain Model Problem",
+		year: 1954,
+		url: "https://people.csail.mit.edu/brooks/idocs/Marvin_Minsky_PhD_Princeton_1953_1954.pdf",
+		author: "Marvin Minsky"
+	},
 	"keyvalmem": {
 		title: "Transformer Feed-Forward Layers Are Key-Value Memories",
 		author: "Mor Geva, Roei Schuster, Jonathan Berant, Omer Levy",
