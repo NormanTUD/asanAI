@@ -1682,74 +1682,95 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 }
 
 function render_positional_shift_plot(tokenStrings, d_model) {
-    const container = document.getElementById('transformer-pe-shift-plot');
-    if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
-        console.error("Plotting requires an array of string tokens.");
-        return [];
-    }
+	const container = document.getElementById('transformer-pe-shift-plot');
+	if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
+		console.error("Plotting requires an array of string tokens.");
+		return [];
+	}
 
-    const injectedEmbeddings = [];
-    const traces = [];
+	// Helper to generate a consistent hash from a string
+	const getHueFromToken = (str) => {
+		let hash = 0;
+		for (let i = 0; i < str.length; i++) {
+			// Simple polynomial rolling hash
+			hash = str.charCodeAt(i) + ((hash << 5) - hash);
+		}
+		// Map hash to 0-360 range
+		return Math.abs(hash) % 360;
+	};
 
-    tokenStrings.forEach((token, pos) => {
-        const semanticBase = window.persistentEmbeddingSpace[token];
-        if (!semanticBase) return;
+	const injectedEmbeddings = [];
+	const traces = [];
 
-        const peVec = new Array(d_model).fill(0);
-	    for (let i = 0; i < d_model; i += 2) {
-		    let div_term = Math.pow(10000, i / d_model);
-		    peVec[i] = Math.sin(pos / div_term) * posEmbedScalar; 
-		    if (i + 1 < d_model) peVec[i + 1] = Math.cos(pos / div_term) * posEmbedScalar;
-        }
+	tokenStrings.forEach((token, pos) => {
+		const semanticBase = window.persistentEmbeddingSpace[token];
+		if (!semanticBase) return;
 
-        const combined = semanticBase.map((val, i) => val + peVec[i]);
-        injectedEmbeddings.push(combined);
+		// 1. Calculate Positional Encoding
+		const peVec = new Array(d_model).fill(0);
+		for (let i = 0; i < d_model; i += 2) {
+			let div_term = Math.pow(10000, i / d_model);
+			peVec[i] = Math.sin(pos / div_term) * posEmbedScalar;
+			if (i + 1 < d_model) {
+				peVec[i + 1] = Math.cos(pos / div_term) * posEmbedScalar;
+			}
+		}
 
-        if (container && d_model <= 3) {
-            const x = [semanticBase[0], combined[0]];
-            const y = d_model >= 2 ? [semanticBase[1], combined[1]] : [0, 0];
-            const z = d_model === 3 ? [semanticBase[2], combined[2]] : [0, 0];
+		const combined = semanticBase.map((val, i) => val + peVec[i]);
+		injectedEmbeddings.push(combined);
 
-            if (d_model === 3) {
-                // Line Trace
-                traces.push({
-                    type: 'scatter3d', 
-                    x: x, y: y, z: z, 
-                    mode: 'lines',
-                    line: { width: 6, color: '#3b82f6' }, 
-                    name: `${token} (pos ${pos})`,
-                    hoverinfo: 'text',
-                    text: `Token: ${token}<br>Pos: ${pos}` // Added for hover
-                });
-                
-                // Arrow Tip (Cone) Trace
-                traces.push({
-                    type: 'cone', 
-                    x: [combined[0]], y: [combined[1]], z: [combined[2]],
-                    u: [peVec[0]], v: [peVec[1]], w: [peVec[2]],
-                    sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-                    colorscale: [[0, '#3b82f6'], [1, '#1d4ed8']], 
-                    showscale: false,
-                    hoverinfo: 'text',
-                    text: `Token: ${token}` // Added for hover
-                });
-            }
-        }
-    });
+		if (container && d_model <= 3) {
+			// 2. Generate color based on TOKEN text, not position
+			const hue = getHueFromToken(token);
+			const tokenColor = `hsl(${hue}, 75%, 50%)`;
 
-    if (container && traces.length > 0) {
-        Plotly.newPlot(container, traces, {
-            title: "Semantic Vector → + Positional Shift",
-            scene: {
-                xaxis: {title: 'Dim 0'},
-                yaxis: {title: 'Dim 1'},
-                zaxis: {title: 'Dim 2'}
-            },
-            margin: { l: 0, r: 0, b: 0, t: 40 }
-        });
-    }
+			const x = [semanticBase[0], combined[0]];
+			const y = d_model >= 2 ? [semanticBase[1], combined[1]] : [0, 0];
+			const z = d_model === 3 ? [semanticBase[2], combined[2]] : [0, 0];
 
-    return injectedEmbeddings;
+			if (d_model === 3) {
+				// Line Trace
+				traces.push({
+					type: 'scatter3d',
+					x: x, y: y, z: z,
+					mode: 'lines',
+					line: { width: 6, color: tokenColor },
+					name: `${token} (pos ${pos})`,
+					legendgroup: token, // Groups identical tokens in the legend
+					hoverinfo: 'text',
+					text: `Token: ${token}<br>Pos: ${pos}`
+				});
+
+				// Arrow Tip (Cone)
+				traces.push({
+					type: 'cone',
+					x: [combined[0]], y: [combined[1]], z: [combined[2]],
+					u: [peVec[0]], v: [peVec[1]], w: [peVec[2]],
+					sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+					colorscale: [[0, tokenColor], [1, tokenColor]],
+					showscale: false,
+					legendgroup: token,
+					showlegend: false,
+					hoverinfo: 'skip'
+				});
+			}
+		}
+	});
+
+	if (container && traces.length > 0) {
+		Plotly.newPlot(container, traces, {
+			title: "Semantic Vector → + Positional Shift",
+			scene: {
+				xaxis: { title: 'Dim 0' },
+				yaxis: { title: 'Dim 1' },
+				zaxis: { title: 'Dim 2' }
+			},
+			margin: { l: 0, r: 0, b: 0, t: 40 },
+			showlegend: true
+		});
+	}
+
+	return injectedEmbeddings;
 }
 
 function calculate_batched_loss(tokens, weights, d_model, n_layers, batchSize = 5) {
