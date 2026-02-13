@@ -214,7 +214,7 @@ class AttentionEngine {
 			html += `<div id="head-content-${i}" class="head-tab" style="padding:20px; display:${i === 0 ? 'block' : 'none'}">
 	    <div id="attn-heatmap-${this.containerId}-${i}" style="width:100%; margin-bottom:20px;"></div>
 	    <div style="margin-bottom:20px; font-size: 0.9rem;">
-		$$ \\text{Head}_{${i}} = \\text{Softmax} \\left( \\frac{Q_i K_i^T}{\\sqrt{d_k}} \\right) \\cdot V_i $$
+		$$ \\text{Head}_{${i}} = \\text{Softmax} \\left( \\frac{Q_${i} K_${i}^T}{\\sqrt{d_k}} \\right) \\cdot V_${i} $$
 	    </div>
 	    <div style="overflow-x:auto;">
 		${this.generateMathTable(h, escapedTokens)}
