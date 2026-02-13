@@ -1,10 +1,14 @@
 window.bibData = {
+	"salminictablesource": {
+		author: "Wilhelm Kubitschek",
+		title: "
+	},
 	"earliestabacusphoto": {
 		title: "Darius Vase abacus",
 		year: "ca 340-320 BC",
 		author: "Darius",
 		url: "https://commons.wikimedia.org/wiki/File:Darius_Vase_abacus.jpg",
-		alternativetitle: "The Darius-Vase (ca. 340-320 BC) contains the earliest known image of an Abacus"
+		alternativetitle: "The Darius-Vase (ca. 340-320 BC) contains the earliest known depiction of an Abacus"
 	},
 	"salamictablet": {
 		url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg",

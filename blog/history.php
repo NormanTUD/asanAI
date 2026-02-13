@@ -18,13 +18,12 @@ The history of machines is fundamentally a history of **abstraction**, where hum
 
 This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction". Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine. Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
 
-## The Abacus
-
-
+\category{history, hardware}
+## The Salamis Tablet: The First Hardware for Thought
 
 <div class="image-row">
 	<figure>
-		<img src="salamic_table.jpg" alt="The Salamis Tablet" />
+		<img src="salamic_table.jpg" style="height: 251px; width: auto;" alt="The Salamis Tablet" />
 		<figcaption>The \citealternativetitle{salamictablet} from ca. 300 BC, the earliest known precursor to the Abacus</figcaption>
 	</figure>
 	<figure>
@@ -33,19 +32,15 @@ This trajectory eventually crossed from the physical to the cognitive. As identi
 	</figure>
 </div>
 
-\category{history, hardware}
-## The Salamis Tablet: The First Hardware for Thought
+The **Salamis Tablet** (c. 300 BC), discovered in 1846 and preserved at the **Epigraphical Museum in Athens**, is the oldest surviving counting board. It utilized a marble slab with etched lines and pebbles—**calculi**—to execute arithmetic through physical manipulation.
 
-The **Salamis Tablet** (c. 300 BC), discovered on the island of Salamis in 1846, is the oldest surviving counting board and a primary ancestor of the abacus. While later versions used beads on wires, this Greek precursor utilized a marble slab with etched parallel lines, where counters or pebbles (called **calculi**) were moved to perform additions and subtractions.
+* **Spatial Abstraction:** It represents a foundational "level of indirection," mapping abstract numbers to physical grid coordinates.
+* **Mechanical Logic:** By utilizing a grid for units and tens, it outsourced mental labor to a rule-based physical system, a precursor to algorithmic processing.
+* **External Memory:** Like the "Store" in **Babbage’s** designs, the slab functioned as an external memory bank for intermediate sums.
+* **The "Calculus" Root:** The use of pebbles (*calculi*) illustrates the reduction of reasoning to symbol manipulation, a concept later formalized by **Leibniz** and **Boole**.
+* **Evolution of the Abacus:** While the Salamis Tablet was a stationary counting board, it paved the way for the portable **Roman Hand Abacus** and the eventual bead-and-wire **Suanpan** (China) and **Soroban** (Japan). This transition represents the evolution from "loose" hardware (pebbles on a table) to "integrated" hardware (sliding beads), optimizing calculation speed and portability for merchants.
 
-
-
-* **Spatial Abstraction:** The tablet represents an early "extra level of indirection," where abstract numbers are mapped to physical space.
-* **Mechanical Logic:** By using a grid to represent units, tens, and hundreds, the tablet allowed the user to outsource the "raw labor of the mind" to a physical system of rules.
-* **Efficiency and Memory:** Similar to how modern memory ("The Store") functions in Babbage’s designs, the slab served as an external memory bank, freeing the human from holding complex intermediate sums in their head.
-* **The "Calculus" Root:** The use of pebbles on the Salamis Tablet gave rise to the term *calculus*, reinforcing the idea that reasoning can be reduced to the mechanical manipulation of symbols—a concept that would later be formalized by Leibniz and Boole.
-
-This device proves that the trajectory of modern computation began by reducing thought to a formal calculus that could be executed by a physical interface.
+As noted by \citeauthor{salminictablesource} (\citetitle{salminictablesource}, 1899), this device confirms that modern computation began by reducing thought to a formal calculus executed via a physical interface.
 
 \category{philosophy}
 ## The Roots of Formal Logic
