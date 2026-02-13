@@ -32,7 +32,7 @@ This trajectory eventually crossed from the physical to the cognitive. As identi
 	</figure>
 </div>
 
-The **Salamis Tablet** (c. 300 BC), discovered in 1846 and preserved at the **Epigraphical Museum in Athens**, is the oldest surviving counting board. It utilized a marble slab with etched lines and pebbles—**calculi**—to execute arithmetic through physical manipulation.
+The **Salamis Tablet** (c. 300 BC), discovered in 1846 and preserved at the **Epigraphical Museum in Athens**, is the oldest surviving counting board. It utilized a marble slab with etched lines and pebbles, **calculi**, to execute arithmetic through physical manipulation.
 
 * **Spatial Abstraction:** It represents a foundational "level of indirection," mapping abstract numbers to physical grid coordinates.
 * **Mechanical Logic:** By utilizing a grid for units and tens, it outsourced mental labor to a rule-based physical system, a precursor to algorithmic processing.
