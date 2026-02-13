@@ -252,7 +252,7 @@ class AttentionEngine {
 		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
 		tokens.forEach((t, j) => {
 			// Render Key as a vertical vector if it's an embedding array
-			const keyVector = Array.isArray(h0[j]) ? `$${toColPmatrix(h0[j])}$` : t;
+			const keyVector = Array.isArray(h0[j]) ? `$K_${j} = ${toColPmatrix(h0[j])}$` : t;
 			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Key: ${keyVector}</th>`;
 		});
 		html += `</tr>`;
@@ -261,7 +261,7 @@ class AttentionEngine {
 		this_weights.forEach((row, i) => {
 			html += `<tr>`;
 			// Render Query as a vertical vector
-			const queryVector = Array.isArray(h0[i]) ? `$${toColPmatrix(h0[i])}$` : tokens[i];
+			const queryVector = Array.isArray(h0[i]) ? `$Q_${i} = ${toColPmatrix(h0[i])}$` : tokens[i];
 			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;"><strong>Query: ${queryVector}</strong></td>`;
 
 			row.forEach((weight, j) => {
@@ -272,17 +272,22 @@ class AttentionEngine {
 
 				let cellEq;
 				if (i === 0 && j === 0) {
+					// Full derivation for the first cell
 					cellEq = `
-		    \\text{SoftMax} \\left( \\frac{
-			\\overbrace{ \\left( W_Q \\cdot ${toColPmatrix(h0[i])} \\right)^T }^{Q_i^T} \\cdot
-			\\overbrace{ \\left( W_K \\cdot ${toColPmatrix(h0[j])} \\right) }^{K_j}
-		    }{\\sqrt{${dk_int}}} \\right) \\cdot V_j
-		    = ${weight.toFixed(nr_fixed)} \\cdot
-		      ${toColPmatrix(Vi[j])}
-		    = ${toColPmatrix(resultVec)}
-		`.replace(/\s+/g, ' ');
+	    \\text{SoftMax} \\left( \\frac{
+		\\underbrace{(W_Q h_0[${i}])^T}_{Q_${i}^T} \\cdot 
+		\\underbrace{(W_K h_0[${j}])}_{K_${j}}
+	    }{\\sqrt{${dk_int}}} \\right) \\cdot V_{${j}}
+	    = ${weight.toFixed(nr_fixed)} \\cdot ${toColPmatrix(Vi[j])}
+	    = ${toColPmatrix(resultVec)}
+	`.replace(/\s+/g, ' ');
 				} else {
-					cellEq = `${weight.toFixed(nr_fixed)} \\cdot ${toColPmatrix(Vi[j])} = ${toColPmatrix(resultVec)}`;
+					// Descriptive shorthand for subsequent cells
+					// Shows the relationship between Q_i, K_j and the weight
+					cellEq = `
+	    \\underbrace{ \\text{attn}(Q_{${i}}, K_{${j}}) }_{${weight.toFixed(nr_fixed)}} 
+	    \\cdot V_{${j}} = ${toColPmatrix(resultVec)}
+	`.replace(/\s+/g, ' ');
 				}
 
 				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">$${cellEq}$</td>`;
