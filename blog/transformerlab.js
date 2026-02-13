@@ -592,6 +592,8 @@ async function train_transformer() {
 			renderLossGraph();
 			run_transformer_demo();
 			await tf.nextFrame();
+
+			calculate_vector_math();
 		}
 		cost.dispose();
 	}
@@ -900,6 +902,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		window.last_d_model = d_model;
 		window.last_n_heads = n_heads;
 		reset_graph();
+		calculate_vector_math();
 	}
 	const weights = window.currentWeights;
 
@@ -1893,7 +1896,7 @@ window.calculate_vector_math = function() {
 	// Tokenize the input equation
 	const tokens = inputVal.match(/[a-zA-ZäöüÄÖÜ0-9_#]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
 	if (!tokens) {
-		resDiv.innerHTML = "<em style='color: #94a3b8;'>Please enter a valid equation.</em>";
+		resDiv.innerHTML = "<em style='color: #94a3b8;'>Enter an equation and press Enter...</em>";
 		return;
 	}
 
