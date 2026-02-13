@@ -15,8 +15,13 @@ The history of machines is fundamentally a history of **abstraction**, where hum
 This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction". Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine. Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
 
 \category{history,archaeology}
-## The Ishango Bone: Prehistoric Math
+## Prehistoric Math
 
+### The Lebombo Bone
+
+The Lebombo bone, a baboon fibula discovered in the Lebombo Mountains of Eswatini and dated to approximately 35,000 BCE, represents the earliest known instance of "outsourcing mathematical thought to physical objects". Featuring 29 distinct notches, the artifact is widely interpreted as a tally stick or lunar calendar used to track the moon's phases or menstrual cycles. As a foundational example of "spatial abstraction," it serves as a prehistoric precursor to modern computation by mapping abstract numbers onto a physical medium. This discovery supports the "mathematical Out of Africa" theory, predating later artifacts like the Ishango bone by over 15,000 years.
+
+### The Ishango Bone
 <figure style="float: right; width: 30%; max-width: 200px; margin: 0 0 1em 1em;">
     <img style="width: 100%; height: auto; display: block;" src="ishango.jpg" alt="Ishango Bone" />
     <figcaption class="md">The \citealternativetitle{ishangobonephoto} is the earliest known attempt of outsourcing mathematical thought to physical objects</figcaption>
