@@ -1,4 +1,16 @@
 window.bibData = {
+	"lebombobone": {
+		url: "https://cacm.acm.org/blogcacm/technical-marvels-part-2-lebombo-and-ishango-bones/",
+		author: "Herbert Bruderer",
+		year: 2024,
+		title: "Technical Marvels, Part 2: Lebombo and Ishango Bones",
+		alternativetitle: "Lebombo Bone"
+	},
+	"lebomboboneoriginal": {
+		author: "Peter Beaumont",
+		title: "Border Cave - A Progress Report",
+		year: 1973
+	},
 	"ishango12": {
 		url: "https://arxiv.org/abs/1204.1019",
 		title: "Does the Ishango Bone Indicate Knowledge of the Base 12? An Interpretation of a Prehistoric Discovery, the First Mathematical Tool of Humankind",

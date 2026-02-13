@@ -19,7 +19,12 @@ This trajectory eventually crossed from the physical to the cognitive. As identi
 
 ### The Lebombo Bone
 
-The Lebombo bone, a baboon fibula discovered in the Lebombo Mountains of Eswatini and dated to approximately 35,000 BCE, represents the earliest known instance of "outsourcing mathematical thought to physical objects". Featuring 29 distinct notches, the artifact is widely interpreted as a tally stick or lunar calendar used to track the moon's phases or menstrual cycles. As a foundational example of "spatial abstraction," it serves as a prehistoric precursor to modern computation by mapping abstract numbers onto a physical medium. This discovery supports the "mathematical Out of Africa" theory, predating later artifacts like the Ishango bone by over 15,000 years.
+<figure>
+    <img style="width: 100%" src="lebombo.jpg" alt="Lebombo Bone" />
+    <figcaption class="md">\citealternativetitle{lebombobone}, found in the 1970s, is the oldest object that was used for mathematical purposes</figcaption>
+</figure>
+
+The Lebombo bone, a baboon fibula discovered by \citeauthor{lebomboboneoriginal} in \citeyear{lebomboboneoriginal} in the Lebombo Mountains of Eswatini and dated to approximately 35,000-40,000 BCE, represents the earliest known instance of "outsourcing mathematical thought to physical objects". Featuring 29 distinct notches, the artifact is widely interpreted as a tally stick or lunar calendar used to track the moon's phases or menstrual cycles. As a foundational example of "spatial abstraction," it serves as a prehistoric precursor to modern computation by mapping abstract numbers onto a physical medium.
 
 ### The Ishango Bone
 <figure style="float: right; width: 30%; max-width: 200px; margin: 0 0 1em 1em;">
