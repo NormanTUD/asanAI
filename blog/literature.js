@@ -12,6 +12,11 @@ window.bibData = {
 		title: "Les Fouilles d'Ishango",
 		alternativetitle: "Ishango-Bone"
 	},
+	"marshackishango": {
+		title: "Notation dans les gravures du Paléolithique Supérieur: nouvelles méthodes d'analyse",
+		year: 1970,
+		author: "Alexander Marshack"
+	},
 	"salminictablesource": {
 		author: "Wilhelm Kubitschek",
 		title: "Die Salaminische Rechentafel",
