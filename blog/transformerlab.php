@@ -118,6 +118,20 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
 	<div id="transformer-plotly-space" style="width: 100%; height: 500px; background: white; border-radius: 8px;"></div>
 	<div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
+
+    <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">
+        Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.
+    </p>
+    <input
+        type="text"
+        id="transformer-vector-math-input"
+        style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1;"
+        placeholder="e.g., king - man + woman"
+        onkeyup="if(event.key==='Enter') calculate_vector_math()"
+    >
+    <div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: #fff; border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
+        <em style="color: #94a3b8;">Enter an equation and press Enter...</em>
+    </div>
 </div>
 
 <div class="md">

@@ -1865,6 +1865,163 @@ const debouncedRun = debounce((id) => {
 	run_transformer_demo(id);
 }, 300);
 
+
+/**
+ * Calculates vector arithmetic dynamically based on the current Transformer Embedding Space.
+ */
+window.calculate_vector_math = function() {
+	const inputVal = document.getElementById('transformer-vector-math-input').value;
+	const resDiv = document.getElementById('transformer-vector-math-result');
+	const space = window.persistentEmbeddingSpace;
+
+	// 1. Validate the environment
+	if (!space || Object.keys(space).length === 0) {
+		resDiv.innerHTML = "<span style='color: #ef4444;'>Embedding space is empty. Please run or train the model first.</span>";
+		return;
+	}
+
+	const vocabKeys = Object.keys(space);
+	const d_model = space[vocabKeys[0]].length;
+	// nr_fixed is pulled from the global scope defined at the top of transformerlab.js
+
+	// 2. Create case-insensitive lookup map
+	const lowerVocab = vocabKeys.reduce((acc, word) => {
+		acc[word.toLowerCase()] = { vec: space[word], original: word };
+		return acc;
+	}, {});
+
+	// Tokenize the input equation
+	const tokens = inputVal.match(/[a-zA-ZäöüÄÖÜ0-9_#]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
+	if (!tokens) {
+		resDiv.innerHTML = "<em style='color: #94a3b8;'>Please enter a valid equation.</em>";
+		return;
+	}
+
+	let pos = 0;
+
+	// Dynamic LaTeX vector formatter based on current d_model
+	const toVecTex = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
+
+	function peek() { return tokens[pos]; }
+	function consume() { return tokens[pos++]; }
+
+	// 3. Recursive Descent Parser
+	function parseFactor() {
+		let token = consume();
+		if (!token) throw new Error("Unexpected end of input");
+
+		if (token === '(') {
+			let res = parseExpression();
+			if (peek() === ')') consume();
+			return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
+		}
+		if (token === '-') {
+			let res = parseFactor();
+			return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
+		}
+
+		// Handle standalone numbers as scalars (if they aren't part of the vocab)
+		if (!isNaN(token) && !lowerVocab[token.toLowerCase()]) {
+			const s = parseFloat(token);
+			return { val: Array(d_model).fill(s), tex: `${s}`, isScalar: true, label: `${s}` };
+		}
+
+		// Handle Vocabulary words
+		const entry = lowerVocab[token.toLowerCase()];
+		const vec = entry ? [...entry.vec] : Array(d_model).fill(0);
+		const displayName = entry ? entry.original : token;
+		const safeName = displayName.replace(/#/g, '\\#').replace(/_/g, '\\_');
+
+		return {
+			val: vec,
+			tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${safeName}}}`,
+			isScalar: false,
+			label: safeName
+		};
+	}
+
+	function parseTerm() {
+		let left = parseFactor();
+		while (peek() === '*' || peek() === '/') {
+			let op = consume();
+			let right = parseFactor();
+			let opTex = op === '*' ? '\\cdot' : '\\div';
+
+			if (op === '*') {
+				if (left.isScalar) {
+					left.val = right.val.map(v => left.val[0] * v);
+					left.isScalar = right.isScalar;
+				} else {
+					left.val = left.val.map(v => v * (right.isScalar ? right.val[0] : 1));
+				}
+			} else if (op === '/') {
+				left.val = left.val.map(v => v / (right.isScalar ? right.val[0] : (right.val[0] || 1)));
+			}
+
+			left.tex = `${left.tex} ${opTex} ${right.tex}`;
+			left.label = `${left.label}${op}${right.label}`;
+		}
+		return left;
+	}
+
+	function parseExpression() {
+		let left = parseTerm();
+		while (peek() === '+' || peek() === '-') {
+			let op = consume();
+			let right = parseTerm();
+
+			if (op === '+') {
+				left.val = left.val.map((v, i) => v + right.val[i]);
+			} else if (op === '-') {
+				left.val = left.val.map((v, i) => v - right.val[i]);
+			}
+
+			left.tex = `${left.tex} ${op} ${right.tex}`;
+			left.label = `${left.label}${op}${right.label}`;
+		}
+		return left;
+	}
+
+	// 4. Execution and Output Formatting
+	try {
+		const result = parseExpression();
+		let nearest = "None";
+		let nearestVec = Array(d_model).fill(0);
+		let minDist = Infinity;
+
+		// Euclidean distance search across the entire current vocab
+		vocabKeys.forEach(w => {
+			const v = space[w];
+			const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - result.val[i], 2), 0));
+			if (d < minDist) {
+				minDist = d;
+				nearest = w;
+				nearestVec = v;
+			}
+		});
+
+		const isExact = minDist < 0.001;
+		const symbol = isExact ? "=" : "\\approx";
+		const safeNearest = nearest.replace(/#/g, '\\#').replace(/_/g, '\\_');
+
+		const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${safeNearest}} \\\\ ${toVecTex(nearestVec)} }}`;
+
+		resDiv.innerHTML = `
+	    <div style="overflow-x: auto; padding: 10px 0; font-size: 1.1em;">
+		$$ ${result.tex} = ${resultTex} $$
+	    </div>
+	`;
+
+		// Trigger LaTeX render
+		if (typeof render_temml === "function") {
+			render_temml();
+		}
+	} catch(e) {
+		console.error("Vector Math Parse Error:", e);
+		resDiv.innerHTML = "<span style='color: #ef4444;'>Syntax Error. Please check your equation formatting.</span>";
+	}
+};
+
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
 	run_transformer_demo()
