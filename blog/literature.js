@@ -1,4 +1,10 @@
 window.bibData = {
+	"ishango12": {
+		url: "https://arxiv.org/abs/1204.1019",
+		title: "Does the Ishango Bone Indicate Knowledge of the Base 12? An Interpretation of a Prehistoric Discovery, the First Mathematical Tool of Humankind",
+		author: "Vladimir Pletser",
+		year: 2012
+	},
 	"ishangobonephoto": {
 		url: "https://de.wikipedia.org/wiki/Datei:Os_d%27Ishango_IRSNB.JPG",
 		year: 2007,
