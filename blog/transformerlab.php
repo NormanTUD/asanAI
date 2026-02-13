@@ -22,10 +22,10 @@ In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers t
 		<label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
 		<span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
 		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-            <b>Dependency:</b> Must be a multiple of Heads. 
+            <b>Dependency:</b> Must be a multiple of Heads.
             <i>Reason:</i> Each head needs an equal integer-sized slice ($d_k = d_{\text{model}} / h$) of the vector to perform dot products.
         </p>
-		<input type="range" id="transformer-dimension-model" min="2" max="16" step="1" value="3" 
+		<input type="range" id="transformer-dimension-model" min="2" max="16" step="1" value="3"
 			style="width: 100%;" oninput="syncTransformerSettings('dim')">
 	</div>
 
@@ -33,10 +33,10 @@ In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers t
 		<label style="font-weight: bold;">Attention Heads ($h$): </label>
 		<span id="heads-val" style="font-weight: bold; color: #3b82f6;">3</span>
 		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-            <b>Dependency:</b> Must divide into Dimension. 
+            <b>Dependency:</b> Must divide into Dimension.
             <i>Reason:</i> Multi-head attention splits the main vector into $h$ parallel "viewpoints." If $d_{\text{model}}$ is 4 and $h$ is 2, each head looks at 2 dimensions.
         </p>
-		<input type="range" id="transformer-heads" min="1" max="8" value="3" 
+		<input type="range" id="transformer-heads" min="1" max="8" value="3"
 			style="width: 100%;" oninput="syncTransformerSettings('heads')">
 	</div>
 
@@ -44,7 +44,7 @@ In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers t
 		<label style="font-weight: bold;">Network Depth ($N$ layers): </label>
 		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">3</span>
 		<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
-		<input type="range" id="transformer-depth" min="1" max="96" value="3" 
+		<input type="range" id="transformer-depth" min="1" max="96" value="3"
 			style="width: 100%;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
 	</div>
 
@@ -179,25 +179,25 @@ Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Soft
 </div>
 
 <div class="md">
-For a sequence of length $n$, the look-ahead mask $M$ is defined as a 
-lower-triangular matrix where the entry $M_{i,j}$ determines if the 
+For a sequence of length $n$, the look-ahead mask $M$ is defined as a
+lower-triangular matrix where the entry $M_{i,j}$ determines if the
 token at position $i$ can attend to the token at position $j$.
 
 Mathematically, the mask is defined as:
 $$M_{i,j} = \begin{cases} 0 & \text{if } i \geq j \\ -\infty & \text{if } i < j \end{cases}$$
 
-In an LLM, this <b>Causal Mask</b> ensures that the self-attention mechanism 
-maintains the autoregressive property. Since the model is trained to predict 
-the next token, it must not "see" into the future. By setting future 
-positions to $-\infty$, the $\text{exp}(M_{i,j})$ term in the Softmax function 
+In an LLM, this <b>Causal Mask</b> ensures that the self-attention mechanism
+maintains the autoregressive property. Since the model is trained to predict
+the next token, it must not "see" into the future. By setting future
+positions to $-\infty$, the $\text{exp}(M_{i,j})$ term in the Softmax function
 becomes $0$, effectively neutralizing the connection.
 
 For a 4-token sequence, the causal mask $M$ is represented as:
-$$M = \begin{pmatrix} 
-	0 & -\infty & -\infty & -\infty \\ 
-	0 & 0 & -\infty & -\infty \\ 
-	0 & 0 & 0 & -\infty \\ 
-	0 & 0 & 0 & 0 
+$$M = \begin{pmatrix}
+	0 & -\infty & -\infty & -\infty \\
+	0 & 0 & -\infty & -\infty \\
+	0 & 0 & 0 & -\infty \\
+	0 & 0 & 0 & 0
 \end{pmatrix}$$
 </div>
 

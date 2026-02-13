@@ -322,40 +322,40 @@ window.showHead = (idx) => {
 	render_temml();
 };
 
-function calculate_positional_injection(tokens, d_model) {    
+function calculate_positional_injection(tokens, d_model) {
 	const resultsContainer = document.getElementById('transformer-pe-integration-results');
-	const injectedEncodings = [];                                                           
+	const injectedEncodings = [];
 
 	let html = `<h3>Vector Injection (Inference Sequence)</h3>`;
 
-	tokens.forEach((token, pos) => {                          
+	tokens.forEach((token, pos) => {
 		const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-		const semanticVec = Array.from({length: d_model}, (_, i) =>          
-			parseFloat(((Math.abs(hash * (i + 1)) % 1000) / 500 - 1).toFixed(nr_fixed))                                              
-		);                                                
+		const semanticVec = Array.from({length: d_model}, (_, i) =>
+			parseFloat(((Math.abs(hash * (i + 1)) % 1000) / 500 - 1).toFixed(nr_fixed))
+		);
 
-		const peVec = new Array(d_model);                 
-		for (let i = 0; i < d_model; i += 2) {            
-			const div_term = Math.pow(10000, i / d_model);                                   
+		const peVec = new Array(d_model);
+		for (let i = 0; i < d_model; i += 2) {
+			const div_term = Math.pow(10000, i / d_model);
 
-			peVec[i] = Math.sin(pos / div_term);                             
-			if (i + 1 < d_model) {                                    
+			peVec[i] = Math.sin(pos / div_term);
+			if (i + 1 < d_model) {
 				peVec[i + 1] = Math.cos(pos / div_term);
-			}                                                
-		}                                                                         
+			}
+		}
 
 		const combined = semanticVec.map((val, i) => val + peVec[i]);
-		injectedEncodings.push(combined);                 
+		injectedEncodings.push(combined);
 
-		if (resultsContainer) {                                                                                                                                                                                                                                                                                                                                                            
+		if (resultsContainer) {
 			const displaySemantic = semanticVec.map(v => v.toFixed(nr_fixed));
 			const displayPE = peVec.map(v => v.toFixed(nr_fixed));
-			const displayCombined = combined.map(v => v.toFixed(nr_fixed));                                                                                                                                                                                                
+			const displayCombined = combined.map(v => v.toFixed(nr_fixed));
 
-			html += `                                                                                                                                                                                                                                                                    
-	    <div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff; overflow: auto;">                                                                                                   
-		<strong>Pos ${pos}: ${token}</strong>                                                                                                                                                                                                
-		<table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px; border-collapse: collapse;">                                                                                                                     
+			html += `
+	    <div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff; overflow: auto;">
+		<strong>Pos ${pos}: ${token}</strong>
+		<table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px; border-collapse: collapse;">
 		    <tr style="color: #64748b;">
 			<td style="padding-right: 10px;">Embedding Vector</td>
 			${displaySemantic.map(v => `<td>${v}</td>`).join('')}
@@ -363,18 +363,18 @@ function calculate_positional_injection(tokens, d_model) {
 		    <tr style="color: #3b82f6;">
 			<td style="padding-right: 10px;">PE (Sin/Cos)</td>
 			${displayPE.map(v => `<td>${v}</td>`).join('')}
-		    </tr>                                                                                                                                                                                                         
+		    </tr>
 		    <tr style="font-weight:bold; border-top: 1px solid #eee;">
 			<td style="padding-right: 10px;">Combined</td>
 			${displayCombined.map(v => `<td>${v}</td>`).join('')}
-		    </tr>                                    
-		</table>                                                                                                                                                                                                                                                                                                                                         
-	    </div>`;                                                                                                                                                                                                                                         
-		}                                                                                                                                                                                                                                                                                                                    
-	});                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+		    </tr>
+		</table>
+	    </div>`;
+		}
+	});
 
-	if (resultsContainer) resultsContainer.innerHTML = html;                                                                                                                                                                                                                                                                                                                                         
-	return injectedEncodings;                                                                                                                                                                                                                                                                                                                                                           
+	if (resultsContainer) resultsContainer.innerHTML = html;
+	return injectedEncodings;
 }
 
 function render_positional_waves(d_model, tokens) {
@@ -382,7 +382,7 @@ function render_positional_waves(d_model, tokens) {
 	const resolution = 0.1;
 	const seqLen = tokens.length;
 	// Ensure a minimum scale for visibility, but fit to tokens.length
-	const maxPos = Math.max(1, seqLen); 
+	const maxPos = Math.max(1, seqLen);
 
 	for (let i = 0; i < d_model; i++) {
 		let x = [], y = [];
@@ -390,20 +390,20 @@ function render_positional_waves(d_model, tokens) {
 			// Frequency scaling logic
 			let div_term = Math.pow(10000, (2 * (Math.floor(i/2))) / d_model);
 
-			// NEW: Normalize the position 'p' relative to sequence length 
+			// NEW: Normalize the position 'p' relative to sequence length
 			// This 'stretches' the wave to fit the actual input tokens.
 			const normalizedP = seqLen > 1 ? p / (seqLen - 1) : p;
 
 			// We multiply by Math.PI to ensure at least half a wave cycle fits the length
-			let val = ((i % 2 === 0)                            
-				? Math.sin((normalizedP * Math.PI) / div_term)                            
+			let val = ((i % 2 === 0)
+				? Math.sin((normalizedP * Math.PI) / div_term)
 				: Math.cos((normalizedP * Math.PI) / div_term)) * posEmbedScalar; // <--- Nudge reduziert
 
 			x.push(p);
 			y.push(val);
 		}
 		traces.push({
-			x: x, y: y, mode: 'lines', 
+			x: x, y: y, mode: 'lines',
 			name: `Dim ${i} ${i%2===0?'Sin':'Cos'}`,
 			line: { shape: 'spline', width: 2 }
 		});
@@ -436,7 +436,7 @@ function run_transformer_demo(activeId = null) {
 
     const trainingInput = document.getElementById('transformer-training-data');
     const masterInput = document.getElementById('transformer-master-token-input');
-    
+
     if (!trainingInput || !masterInput) return;
 
     // 1. Tokenisierung für die Logik (ohne UI-Render)
@@ -468,7 +468,7 @@ function get_init_weights(n_layers, d_model) {
 	for (let n = 0; n < n_layers; n++) {
 		weights.push({
 			// Norm 1 (Pre-Attention)
-			gamma: new Array(d_model).fill(1.0), 
+			gamma: new Array(d_model).fill(1.0),
 			beta: new Array(d_model).fill(0.0),
 
 			// Attention
@@ -480,7 +480,7 @@ function get_init_weights(n_layers, d_model) {
 			},
 
 			// Norm 2 (Pre-FFN) -- NEW: Separate norm for the second block
-			gamma2: new Array(d_model).fill(1.0), 
+			gamma2: new Array(d_model).fill(1.0),
 			beta2: new Array(d_model).fill(0.0),
 
 			// Feed-Forward Network
@@ -723,7 +723,7 @@ function collectTrainableVars(weightVars) {
 
 
 async function convert_tensors_to_weights(vars) {
-	const newWeights = []; 
+	const newWeights = [];
 	for (const layer of vars.layers) {
 		newWeights.push({
 			attention: {
@@ -733,7 +733,7 @@ async function convert_tensors_to_weights(vars) {
 				output: (await layer.wo.array())
 			},
 			// CRITICAL FIX: Explicitly await FFN and Norm 2 parameters
-			W1: await layer.w1.array(), 
+			W1: await layer.w1.array(),
 			b1: await layer.b1.array(),
 			W2: await layer.w2.array(),
 			b2: await layer.b2.array(),
@@ -785,7 +785,7 @@ function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
 	});
 
 	// b. Layers
-	const n_heads = weights[0].attention.query.length > 0 ? 
+	const n_heads = weights[0].attention.query.length > 0 ?
 		weights[0].attention.query.length / (d_model/weights[0].attention.query.length) : 2; // heuristic
 
 	// Use the existing run_deep_layers logic but with provided weights
@@ -1025,14 +1025,14 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 	<p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_\\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure</p>
 	
 	<span class="md">
-To get from the long matrix to the single vector, the model performs a **Terminal Selection**. 
+To get from the long matrix to the single vector, the model performs a **Terminal Selection**.
 
 If we represent the output of the last transformer block as a matrix $H$:
-$$H = \\begin{bmatrix} 
+$$H = \\begin{bmatrix}
 h_0 \\\\
 h_1 \\\\
 \\vdots \\\\
-h_{n-1} 
+h_{n-1}
 \\end{bmatrix} \\in \\mathbb{R}^{n \\times d_{\\text{model}}}$$
 
 The "Migration Map" prints the entire flattened matrix because it wants to show the path of every word. However, the \`render_final_projection\` function is only interested in the <b>prediction</b>:
@@ -1090,7 +1090,7 @@ This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Whe
 	html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 20px;">`;
 	predictions.forEach(p => {
 		const intensity = Math.min(1, p.prob * 5);
-		html += `<button class="predict-chip" onclick="select_suggested_word('${p.word}')" 
+		html += `<button class="predict-chip" onclick="select_suggested_word('${p.word}')"
 	    style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
 	    <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
 	</button>`;
@@ -1149,12 +1149,12 @@ function render_embedding_plot(dimensions) {
 			const vec = window.persistentEmbeddingSpace[token];
 			return {
 				type: dimensions === 3 ? 'scatter3d' : 'scatter',
-				x: [vec[0]], 
-				y: [dimensions >= 2 ? vec[1] : 0], 
+				x: [vec[0]],
+				y: [dimensions >= 2 ? vec[1] : 0],
 				z: [dimensions === 3 ? vec[2] : 0],
-				mode: 'markers+text', 
-				text: [token], 
-				name: token, 
+				mode: 'markers+text',
+				text: [token],
+				name: token,
 				marker: { size: 10 }
 			};
 		});
@@ -1175,7 +1175,7 @@ function render_embedding_plot(dimensions) {
 			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
 			parallelAxis: parallelAxis,
 			parallel: { left: 40, right: 40, bottom: 20, top: 50 },
-			series: [{ 
+			series: [{
 				type: 'parallel',
 				data: data,
 				lineStyle: { width: 2, opacity: 0.5, color: '#6366f1' },
