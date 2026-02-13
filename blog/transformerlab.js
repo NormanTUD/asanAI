@@ -1830,7 +1830,7 @@ function debounce(func, wait) {
 // 300ms is usually the "sweet spot" for human typing speed
 const debouncedRun = debounce((id) => {
 	run_transformer_demo(id);
-}, 300);
+}, 400);
 
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
