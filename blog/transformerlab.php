@@ -64,8 +64,11 @@ In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers t
 </div>
 
 <div class="transformer_corpus">
-	<label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
-	<textarea id="transformer-training-data" style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;"  oninput="run_transformer_demo('transformer-training-data')">the king is wise and brave and the king is brave and wise and the queen is wise and brave and the queen is brave and wise</textarea>
+    <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
+    <textarea
+        id="transformer-training-data"
+        style="width: 90%; height: 60px; font-family: 'Courier New', monospace; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;"
+        oninput="debounced_run_transformer_demo('transformer-training-data')">the king is wise and brave and the king is brave and wise and the queen is wise and brave and the queen is brave and wise</textarea>
 </div>
 
 <div style="background: #f0fdf4; padding: 15px; border: 1px solid #10b981; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;">

@@ -6,6 +6,7 @@
 
 const nr_fixed = 4;
 const posEmbedScalar = 1;
+let trainingDebounceTimer;
 
 window.addEventListener('DOMContentLoaded', (event) => {
 	document.getElementById("ifscalfactornotone").style.display =  posEmbedScalar == 1 ? 'none' : 'block'
@@ -1866,7 +1867,7 @@ function debounce(func, wait) {
 // 300ms is usually the "sweet spot" for human typing speed
 const debouncedRun = debounce((id) => {
 	run_transformer_demo(id);
-}, 300);
+}, 600);
 
 
 /**
@@ -2024,6 +2025,13 @@ window.calculate_vector_math = function() {
 		resDiv.innerHTML = "<span style='color: #ef4444;'>Syntax Error. Please check your equation formatting.</span>";
 	}
 };
+
+function debounced_run_transformer_demo(activeId) {
+	clearTimeout(trainingDebounceTimer);
+	trainingDebounceTimer = setTimeout(() => {
+		run_transformer_demo(activeId);
+	}, 600); // 300ms delay
+}
 
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
