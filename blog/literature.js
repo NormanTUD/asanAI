@@ -1,7 +1,9 @@
 window.bibData = {
 	"salminictablesource": {
 		author: "Wilhelm Kubitschek",
-		title: "
+		title: "Die Salaminische Rechentafel",
+		year: 1899,
+		url: "https://archive.org/details/numismatischezei31stuoft/mode/2up"
 	},
 	"earliestabacusphoto": {
 		title: "Darius Vase abacus",
