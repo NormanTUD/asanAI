@@ -13,9 +13,156 @@ The **Self-Attention mechanism** acts as a semantic GPS. It looks at the surroun
 
 * **The Vector Shift:** If the word "river" is nearby, it exerts a gravitational force on "bank," dragging its coordinates away from finance and toward nature.
 * **The Resulting Embedding:** The final position (represented by the **blue diamond** in the plot below) is the "contextualized" version of the word, informed by its neighbors.
+</div>
 
+<div class="md">
+## Geometric Intuition Lab: Why *That* Equation?
 
+The attention equation looks deceptively simple:
 
+$$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right) V$$
+
+But *why* this specific formula? Why dot products? Why softmax? Why $\sqrt{d_k}$? 
+
+The best way to understand is to **see it working** in spaces small enough to visualize. We'll build up from 1D scalars to 3D vectors, and at each stage, the geometric meaning of every piece of the equation will become obvious.
+</div>
+
+<!-- ===================== SECTION 1: 1D ===================== -->
+<div class="md">
+### 1D: Attention on a Number Line
+
+In one dimension, every embedding is just a **single number**. The Query $q$, Key $k$, and Value $v$ are all scalars. The dot product $q \cdot k$ is just ordinary multiplication.
+
+$$\text{score}_{j} = q \cdot k_j$$
+
+This is the simplest possible "similarity measure": two numbers agree if they have the **same sign and large magnitude**. If $q = 3$ and $k_1 = 4$, the score is $12$ (strong agreement). If $k_2 = -2$, the score is $-6$ (disagreement). After softmax, the output is a **weighted average** of the values:
+
+$$\text{output} = \sum_j \alpha_j \, v_j, \quad \alpha_j = \frac{e^{q \cdot k_j}}{\sum_n e^{q \cdot k_n}}$$
+
+In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see how the query "chooses" which values to attend to — purely based on sign and magnitude agreement on a single number line.
+</div>
+
+<div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 15px 0;">
+  <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 15px;">
+    <div style="flex:1; min-width: 200px;">
+      <label><strong style="color:#2563eb;">Query (q):</strong> <span id="attn1d-q-val">2.0</span></label>
+      <input type="range" id="attn1d-q" min="-5" max="5" step="0.1" value="2.0" style="width:100%;" oninput="updateAttn1D()">
+    </div>
+    <div style="flex:1; min-width: 200px;">
+      <label><strong style="color:#dc2626;">Key₁ / Value₁:</strong> k₁=<span id="attn1d-k1-val">3.0</span>, v₁=<span id="attn1d-v1-val">1.0</span></label>
+      <input type="range" id="attn1d-k1" min="-5" max="5" step="0.1" value="3.0" style="width:100%;" oninput="updateAttn1D()">
+      <input type="range" id="attn1d-v1" min="-5" max="5" step="0.1" value="1.0" style="width:100%;" oninput="updateAttn1D()">
+    </div>
+    <div style="flex:1; min-width: 200px;">
+      <label><strong style="color:#16a34a;">Key₂ / Value₂:</strong> k₂=<span id="attn1d-k2-val">-1.0</span>, v₂=<span id="attn1d-v2-val">4.0</span></label>
+      <input type="range" id="attn1d-k2" min="-5" max="5" step="0.1" value="-1.0" style="width:100%;" oninput="updateAttn1D()">
+      <input type="range" id="attn1d-v2" min="-5" max="5" step="0.1" value="4.0" style="width:100%;" oninput="updateAttn1D()">
+    </div>
+    <div style="flex:1; min-width: 200px;">
+      <label><strong style="color:#9333ea;">Key₃ / Value₃:</strong> k₃=<span id="attn1d-k3-val">0.5</span>, v₃=<span id="attn1d-v3-val">-2.0</span></label>
+      <input type="range" id="attn1d-k3" min="-5" max="5" step="0.1" value="0.5" style="width:100%;" oninput="updateAttn1D()">
+      <input type="range" id="attn1d-v3" min="-5" max="5" step="0.1" value="-2.0" style="width:100%;" oninput="updateAttn1D()">
+    </div>
+  </div>
+  <div id="attn1d-numberline" style="width:100%; height:180px;"></div>
+  <div style="display:flex; gap:15px; flex-wrap:wrap;">
+    <div id="attn1d-weights" style="flex:1; min-width:250px; height:200px;"></div>
+    <div id="attn1d-output" style="flex:1; min-width:250px; height:200px;"></div>
+  </div>
+  <div id="attn1d-math" style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.85rem; overflow-x:auto;"></div>
+</div>
+
+<!-- ===================== SECTION 2: 2D ===================== -->
+<div class="md">
+### 2D: Attention in a Plane — The Dot Product as Angular Alignment
+
+Now each vector lives in $\mathbb{R}^2$. The dot product $\mathbf{q} \cdot \mathbf{k} = \|\mathbf{q}\|\|\mathbf{k}\|\cos\theta$ measures **angular alignment** weighted by magnitude. Two vectors pointing the same way produce a large positive score; perpendicular vectors score zero; opposing vectors score negative.
+
+$$\text{score}_j = \frac{\mathbf{q} \cdot \mathbf{k}_j}{\sqrt{d_k}} = \frac{\mathbf{q} \cdot \mathbf{k}_j}{\sqrt{2}}$$
+
+Here $\sqrt{d_k} = \sqrt{2} \approx 1.41$. This scaling **prevents the scores from growing too large** as dimensionality increases, which would push softmax into near-one-hot territory and kill gradients.
+
+The output is a **weighted average of the value vectors** — geometrically, it's a point inside the **convex hull** (the polygon formed by the value points). Attention can only **interpolate**, never **extrapolate** beyond the values.
+
+Drag the query arrow below. Watch how rotating it toward a key increases that key's attention weight, and the output point slides toward the corresponding value.
+</div>
+
+<div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 15px 0;">
+  <div style="display:flex; flex-wrap:wrap; gap:15px; margin-bottom:15px;">
+    <div style="flex:1; min-width:200px;">
+      <label><strong style="color:#2563eb;">Query angle:</strong> <span id="attn2d-qangle-val">30</span>°, magnitude: <span id="attn2d-qmag-val">2.0</span></label>
+      <input type="range" id="attn2d-qangle" min="0" max="360" step="1" value="30" style="width:100%;" oninput="updateAttn2D()">
+      <input type="range" id="attn2d-qmag" min="0.1" max="3" step="0.1" value="2.0" style="width:100%;" oninput="updateAttn2D()">
+    </div>
+    <div style="flex:1; min-width:200px;">
+      <label><strong>Toggle √d_k scaling:</strong></label><br>
+      <label><input type="checkbox" id="attn2d-scale" checked onchange="updateAttn2D()"> Divide by $\sqrt{2}$</label>
+      <p style="font-size:0.75rem; color:#64748b;">Uncheck to see what happens without scaling — scores explode and softmax saturates.</p>
+    </div>
+  </div>
+  <div style="display:flex; gap:15px; flex-wrap:wrap;">
+    <div id="attn2d-vectors" style="flex:2; min-width:350px; height:450px;"></div>
+    <div style="flex:1; min-width:200px;">
+      <div id="attn2d-weights" style="height:220px;"></div>
+      <div id="attn2d-math" style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8rem; overflow-x:auto;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SECTION 3: 3D ===================== -->
+<div class="md">
+### 3D: Attention in Space — The Full Picture
+
+In three dimensions, we can finally see the complete geometry. Multiple keys orbit in 3D space, and the query "searches" by pointing in a direction. The dot product still measures alignment, but now in full 3D.
+
+$$\text{output} = \sum_j \text{softmax}\!\left(\frac{\mathbf{q} \cdot \mathbf{k}_j}{\sqrt{3}}\right) \mathbf{v}_j$$
+
+The critical insight: **the output (gold star) is always trapped inside the convex hull** of the value vectors (the translucent shape). Attention is fundamentally an **interpolation** mechanism — it blends existing information, it cannot invent new directions. This is why transformers need the Feed-Forward Network after attention: the FFN provides the non-linear "escape" from the convex hull.
+
+Use the sliders to rotate the query direction in 3D (spherical coordinates $\theta, \phi$). Watch the attention weights shift and the output point slide along the interior of the value simplex.
+</div>
+
+<div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 15px 0;">
+  <div style="display:flex; flex-wrap:wrap; gap:15px; margin-bottom:15px;">
+    <div style="flex:1; min-width:200px;">
+      <label><strong style="color:#2563eb;">Query θ (polar):</strong> <span id="attn3d-theta-val">45</span>°</label>
+      <input type="range" id="attn3d-theta" min="0" max="180" step="1" value="45" style="width:100%;" oninput="updateAttn3D()">
+    </div>
+    <div style="flex:1; min-width:200px;">
+      <label><strong style="color:#2563eb;">Query φ (azimuth):</strong> <span id="attn3d-phi-val">30</span>°</label>
+      <input type="range" id="attn3d-phi" min="0" max="360" step="1" value="30" style="width:100%;" oninput="updateAttn3D()">
+    </div>
+    <div style="flex:1; min-width:200px;">
+      <label><strong style="color:#2563eb;">Query magnitude:</strong> <span id="attn3d-mag-val">2.0</span></label>
+      <input type="range" id="attn3d-mag" min="0.5" max="4" step="0.1" value="2.0" style="width:100%;" oninput="updateAttn3D()">
+    </div>
+  </div>
+  <div style="display:flex; gap:15px; flex-wrap:wrap;">
+    <div id="attn3d-scene" style="flex:2; min-width:400px; height:500px;"></div>
+    <div style="flex:1; min-width:220px;">
+      <div id="attn3d-weights" style="height:250px;"></div>
+      <div id="attn3d-math" style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8rem; overflow-x:auto;"></div>
+    </div>
+  </div>
+</div>
+
+<div class="md">
+### Summary: Why *That* Equation?
+
+Having played with all three dimensions, the design choices become clear:
+
+1. **Dot product** $QK^T$: It's the natural measure of directional alignment. In 1D it's just multiplication (same sign = agree). In 2D/3D it's $\|\mathbf{q}\|\|\mathbf{k}\|\cos\theta$ — the projection of one vector onto another. No other simple operation captures "how much do these vectors point the same way?"
+
+2. **$\sqrt{d_k}$ scaling**: Without it, as $d_k$ grows, the expected magnitude of dot products grows as $\sqrt{d_k}$, pushing softmax toward hard one-hot outputs. The scaling keeps the variance of scores constant regardless of dimension, preserving smooth gradients.
+
+3. **Softmax**: Turns raw scores into a **probability distribution** — non-negative weights that sum to 1. This means the output is a **convex combination** of values, geometrically trapped inside their convex hull. It's the minimal assumption: "blend the available information proportionally to relevance."
+
+4. **Weighted sum of Values**: The output is an interpolation, not a lookup. This is differentiable everywhere, enabling gradient-based learning. The FFN layer that follows provides the non-linearity needed to "escape" the convex hull and create genuinely new representations.
+
+$$\boxed{\text{Attention} = \underbrace{\text{softmax}}_{\text{normalize to convex weights}}\!\left(\frac{\overbrace{QK^T}^{\text{directional alignment}}}{\underbrace{\sqrt{d_k}}_{\text{variance control}}}\right) \underbrace{V}_{\text{information to blend}}}$$
+</div>
+
+<div class="md">
 ## The Physics of the "Handshake"
 To decide how much "pull" one word has on another, the model performs a mathematical handshake using three specific projections:
 
