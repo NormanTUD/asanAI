@@ -30,6 +30,8 @@ The **Ishango bone** is a Paleolithic artifact discovered in 1950 by Belgian geo
 
 Researchers have long debated whether the artifact served as a simple tally, a **lunar calendar** as suggested by \citeauthor{marshackishango}, or a more complex mathematical tool. De Heinzelin’s original 1957 publication, \citetitle{ishangobone}, introduced the bone to the scientific community, sparking decades of inquiry into the "mathematical Out of Africa" theory. Modern scholars like **Vladimir Pletser** continue to investigate its potential use as a primitive "slide rule" or evidence of a base-12 counting system, marking it as a critical precursor to later mechanical calculation aids.
 
+Ultimately, the Ishango bone represents the most significant archaeological indicator of prehistoric mathematical reasoning, and thus is a *very* early precursor to modern computers and AI systems.
+
 \category{history,hardware}
 ## The Salamis Tablet
 
