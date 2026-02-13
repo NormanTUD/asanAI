@@ -280,10 +280,10 @@ function load_base_js () {
 
 	</script>
 
-	<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <?php
 	css("prism-tomorrow.min.css");
 	css("style");
+	js("echarts.min");
 	js("prism.min");
 	js("prism-python.min");
 	js("literature");
