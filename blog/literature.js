@@ -3,7 +3,14 @@ window.bibData = {
 		url: "https://de.wikipedia.org/wiki/Datei:Os_d%27Ishango_IRSNB.JPG",
 		year: 2007,
 		title: "Os d'Ishango, Institut Royal des Sciences naturelles de Belgique, Bruxelles",
+		alternativetitle: "Ishango-Bone",
 		author: "Ben2"
+	},
+	"ishangobone": {
+		author: "Jean de Heinzelin de Braucourt",
+		year: 1957,
+		title: "Les Fouilles d'Ishango",
+		alternativetitle: "Ishango-Bone"
 	},
 	"salminictablesource": {
 		author: "Wilhelm Kubitschek",
