@@ -246,7 +246,7 @@ class AttentionEngine {
 	$$ W_V = ${toMatrix(WV)} $$
     `;
 
-		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6; font-size: 0.52rem;">${wq_wk_wv_matrix_html}`;
+		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6;">${wq_wk_wv_matrix_html}`;
 
 		// Header (Keys)
 		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
