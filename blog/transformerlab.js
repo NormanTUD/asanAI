@@ -1285,7 +1285,7 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
         $$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
     </div>
     <div style="overflow-x:auto;">
-        $$ ${matrixToPmatrix(h1)} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_{\\text{proj}}} $$
+        $$ \\underbrace{${matrixToPmatrix(h1)}}_{h_1} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_{\\text{proj}}} $$
     </div>
     `;
 
