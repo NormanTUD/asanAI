@@ -1,9 +1,5 @@
 <?php include_once("functions.php"); ?>
 
-<!--
-https://de.wikipedia.org/wiki/Abakus_(Rechenhilfsmittel)
--->
-
 <div class="md">
 
 \category{history,philosophy}
