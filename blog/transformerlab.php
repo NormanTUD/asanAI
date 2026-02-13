@@ -293,7 +293,7 @@ To calculate the transformation of a contextual vector through the FFN, you appl
 $$\text{FFN}(h_1) = \sigma(h_1 W_1 + b_1)W_2 + b_2$$
 
 Where:
-- $W_1$ is the first weight matrix (expansion to $d_{ff}$, usually $4 \times d_{\text{model}}$).
+- $W_1$ is the first weight matrix (expansion to $d_\\text{ff}$, usually $4 \times d_{\text{model}}$).
 - $b_1$ is the bias vector for the first layer.
 - $\sigma$ is the activation function (like ReLU or GELU).
 - $W_2$ is the second weight matrix (compression back to $d_{\text{model}}$).
