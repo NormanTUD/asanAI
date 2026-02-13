@@ -1,4 +1,10 @@
 window.bibData = {
+	"ishangobonephoto": {
+		url: "https://de.wikipedia.org/wiki/Datei:Os_d%27Ishango_IRSNB.JPG",
+		year: 2007,
+		title: "Os d'Ishango, Institut Royal des Sciences naturelles de Belgique, Bruxelles",
+		author: "Ben2"
+	},
 	"salminictablesource": {
 		author: "Wilhelm Kubitschek",
 		title: "Die Salaminische Rechentafel",

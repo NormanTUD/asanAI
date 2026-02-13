@@ -18,8 +18,20 @@ The history of machines is fundamentally a history of **abstraction**, where hum
 
 This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction". Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine. Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
 
-\category{history, hardware}
-## The Salamis Tablet: The First Hardware for Thought
+\category{history,archaeology}
+## The Ishango Bone: Prehistoric Logic
+
+<figure>
+    <img style="width: 100%" src="Sanzio_01_Plato_Aristotle.jpg" alt="Ars Magna" />
+    <figcaption class="md">\citealternativetitle{aristotleandplato} by \citeauthor{aristotleandplato} (\citeyear{aristotleandplato})</figcaption>
+</figure>
+
+The **Ishango bone** is a celebrated Paleolithic artifact discovered in 1950 by Belgian geologist **Jean de Heinzelin de Braucourt** in what is now the Democratic Republic of the Congo. Dated to approximately **20,000 years BP** (Before Present), this baboon fibula predates the Sumerian and Babylonian mathematical records by over 15,000 years. It features three columns of grouped notches that exhibit curious mathematical properties, such as a column of prime numbers (11, 13, 17, 19) and groups that sum to 60 or 48.
+
+Researchers have long debated whether the artifact served as a simple tally, a **lunar calendar** as suggested by **Alexander Marshack**, or a more complex mathematical tool. De Heinzelin’s original 1957 publication, *Les Fouilles d'Ishango*, introduced the bone to the scientific community, sparking decades of inquiry into the "mathematical Out of Africa" theory. Modern scholars like **Vladimir Pletser** continue to investigate its potential use as a primitive "slide rule" or evidence of a base-12 counting system, marking it as a critical precursor to later mechanical calculation aids.
+
+\category{history,hardware}
+## The Salamis Tablet
 
 <div class="image-row">
 	<figure>

@@ -17,6 +17,7 @@ const categoryConfig = {
 	data: "Data",
 	math: "Math",
 	programming: "Programming",
+	archaeology: "Archaeology",
 	hardware: "Hardware",
 	philosophy: "Philosophy",
 	history: "History",
