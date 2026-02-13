@@ -15,7 +15,7 @@ The history of machines is fundamentally a history of **abstraction**, where hum
 This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction". Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine. Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
 
 \category{history,archaeology}
-## The Ishango Bone: Prehistoric Logic
+## The Ishango Bone: Prehistoric Math
 
 <figure style="float: right; width: 30%; max-width: 200px; margin: 0 0 1em 1em;">
     <img style="width: 100%; height: auto; display: block;" src="ishango.jpg" alt="Ishango Bone" />
