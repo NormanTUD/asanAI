@@ -1471,6 +1471,7 @@ function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	$$ \\text{Norm}(h_1) = \\gamma_{\\text{ffn}} \\odot \\frac{h_1 - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta_{\\text{ffn}} $$
 	<div style="overflow-x:auto;">
 	    $$ \\underbrace{${rawMP(normed_h1)}}_{\\text{Norm}\\left(h_1\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${rawMP(h1)}}_{h_1},\\; \\underbrace{${rawVP(gamma)}}_\\gamma,\\; \\underbrace{${rawVP(beta)}}_\\beta\\right) $$
+		<br>
 	</div>
     </div>
     $$ \\text{out}_{L1} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1) \\cdot W_1 + b_1\\right) = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} $$
