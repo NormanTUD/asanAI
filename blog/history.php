@@ -24,7 +24,7 @@ This trajectory eventually crossed from the physical to the cognitive. As identi
 <div class="image-row">
 	<figure>
 		<img src="salamic_table.jpg" style="height: 251px; width: auto;" alt="The Salamis Tablet" />
-		<figcaption>The \citealternativetitle{salamictablet} from ca. 300 BC, the earliest known precursor to the Abacus</figcaption>
+		<figcaption>The \citealternativetitle{salamictablet} from ca. 300 BC, the earliest known surving counting board</figcaption>
 	</figure>
 	<figure>
 		<img src="abacus.jpg" alt="The earliest depiction of an Abacus" />
