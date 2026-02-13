@@ -1,3 +1,5 @@
+https://home.csulb.edu//~cwallis/artificialn/walter_pitts.html
+
 FlashAttention: To explain why LLMs suddenly got much faster and handled longer contexts in 2023-2024, you need Tri Dao et al. (2022) "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness".
 
 https://en.wikipedia.org/wiki/Benford%27s_law
