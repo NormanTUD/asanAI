@@ -10,7 +10,8 @@ window.bibData = {
 		author: "Jean de Heinzelin de Braucourt",
 		year: 1957,
 		title: "Les Fouilles d'Ishango",
-		alternativetitle: "Ishango-Bone"
+		alternativetitle: "Ishango-Bone",
+		url: "https://biblio.naturalsciences.be/rbins-publications/institut-des-parcs-nationaux-du-congo/exploration-du-parc-national-albert-exploratie-van-het-nationaal-albert-park-mission-zending-j-de-heinzelin-de-braucourt-1950/2-1957-mission-zending-j-heinzelin-de-braucort-1950-les-fouilles-dishango/irscnb_c15838_1840352-20_2-part-1-red.pdf"
 	},
 	"marshackishango": {
 		title: "Notation dans les gravures du Paléolithique Supérieur: nouvelles méthodes d'analyse",
