@@ -474,7 +474,7 @@ if(!server_php_self_ends_with_index_php()) {
 ?>
 		<script>
 			window.addEventListener('load', (event) => {
-				renderGlossary();
+				//renderGlossary();
 				bibtexify();
 				parseCategories();
 				renderMarkdown();

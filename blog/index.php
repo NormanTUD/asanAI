@@ -54,8 +54,8 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 	window.addEventListener('load', async () => {
 	try {
 		// 1. Start sequence
-		updateLoadingStatus("Rendering Glossary...");
-		await renderGlossary();
+		//updateLoadingStatus("Rendering Glossary...");
+		//await renderGlossary();
 
 		updateLoadingStatus("Processing Citations...");
 		await bibtexify();
