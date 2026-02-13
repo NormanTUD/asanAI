@@ -39,7 +39,7 @@ This is the simplest possible "similarity measure": two numbers agree if they ha
 
 $$\text{output} = \sum_j \alpha_j \, v_j, \quad \alpha_j = \frac{e^{q \cdot k_j}}{\sum_n e^{q \cdot k_n}}$$
 
-In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see how the query "chooses" which values to attend to — purely based on sign and magnitude agreement on a single number line.
+In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see how the query "chooses" which values to attend to, purely based on sign and magnitude agreement on a single number line.
 </div>
 
 <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 15px 0;">
@@ -74,7 +74,7 @@ In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see 
 
 <!-- ===================== SECTION 2: 2D ===================== -->
 <div class="md">
-### 2D: Attention in a Plane — The Dot Product as Angular Alignment
+### 2D: Attention in a Plane, The Dot Product as Angular Alignment
 
 Now each vector lives in $\mathbb{R}^2$. The dot product $\mathbf{q} \cdot \mathbf{k} = \|\mathbf{q}\|\|\mathbf{k}\|\cos\theta$ measures **angular alignment** weighted by magnitude. Two vectors pointing the same way produce a large positive score; perpendicular vectors score zero; opposing vectors score negative.
 
@@ -82,7 +82,7 @@ $$\text{score}_j = \frac{\mathbf{q} \cdot \mathbf{k}_j}{\sqrt{d_k}} = \frac{\mat
 
 Here $\sqrt{d_k} = \sqrt{2} \approx 1.41$. This scaling **prevents the scores from growing too large** as dimensionality increases, which would push softmax into near-one-hot territory and kill gradients.
 
-The output is a **weighted average of the value vectors** — geometrically, it's a point inside the **convex hull** (the polygon formed by the value points). Attention can only **interpolate**, never **extrapolate** beyond the values.
+The output is a **weighted average of the value vectors**, geometrically, it's a point inside the **convex hull** (the polygon formed by the value points). Attention can only **interpolate**, never **extrapolate** beyond the values.
 
 Drag the query arrow below. Watch how rotating it toward a key increases that key's attention weight, and the output point slides toward the corresponding value.
 </div>
@@ -97,7 +97,7 @@ Drag the query arrow below. Watch how rotating it toward a key increases that ke
     <div style="flex:1; min-width:200px;">
       <label><strong>Toggle √d_k scaling:</strong></label><br>
       <label><input type="checkbox" id="attn2d-scale" checked onchange="updateAttn2D()"> Divide by $\sqrt{2}$</label>
-      <p style="font-size:0.75rem; color:#64748b;">Uncheck to see what happens without scaling — scores explode and softmax saturates.</p>
+      <p style="font-size:0.75rem; color:#64748b;">Uncheck to see what happens without scaling, scores explode and softmax saturates.</p>
     </div>
   </div>
   <div style="display:flex; gap:15px; flex-wrap:wrap;">
@@ -111,13 +111,13 @@ Drag the query arrow below. Watch how rotating it toward a key increases that ke
 
 <!-- ===================== SECTION 3: 3D ===================== -->
 <div class="md">
-### 3D: Attention in Space — The Full Picture
+### 3D: Attention in Space, The Full Picture
 
 In three dimensions, we can finally see the complete geometry. Multiple keys orbit in 3D space, and the query "searches" by pointing in a direction. The dot product still measures alignment, but now in full 3D.
 
 $$\text{output} = \sum_j \text{softmax}\!\left(\frac{\mathbf{q} \cdot \mathbf{k}_j}{\sqrt{3}}\right) \mathbf{v}_j$$
 
-The critical insight: **the output (gold star) is always trapped inside the convex hull** of the value vectors (the translucent shape). Attention is fundamentally an **interpolation** mechanism — it blends existing information, it cannot invent new directions. This is why transformers need the Feed-Forward Network after attention: the FFN provides the non-linear "escape" from the convex hull.
+The critical insight: **the output (gold star) is always trapped inside the convex hull** of the value vectors (the translucent shape). Attention is fundamentally an **interpolation** mechanism, it blends existing information, it cannot invent new directions. This is why transformers need the Feed-Forward Network after attention: the FFN provides the non-linear "escape" from the convex hull.
 
 Use the sliders to rotate the query direction in 3D (spherical coordinates $\theta, \phi$). Watch the attention weights shift and the output point slide along the interior of the value simplex.
 </div>
@@ -151,11 +151,11 @@ Use the sliders to rotate the query direction in 3D (spherical coordinates $\the
 
 Having played with all three dimensions, the design choices become clear:
 
-1. **Dot product** $QK^T$: It's the natural measure of directional alignment. In 1D it's just multiplication (same sign = agree). In 2D/3D it's $\|\mathbf{q}\|\|\mathbf{k}\|\cos\theta$ — the projection of one vector onto another. No other simple operation captures "how much do these vectors point the same way?"
+1. **Dot product** $QK^T$: It's the natural measure of directional alignment. In 1D it's just multiplication (same sign = agree). In 2D/3D it's $\|\mathbf{q}\|\|\mathbf{k}\|\cos\theta$, the projection of one vector onto another. No other simple operation captures "how much do these vectors point the same way?"
 
 2. **$\sqrt{d_k}$ scaling**: Without it, as $d_k$ grows, the expected magnitude of dot products grows as $\sqrt{d_k}$, pushing softmax toward hard one-hot outputs. The scaling keeps the variance of scores constant regardless of dimension, preserving smooth gradients.
 
-3. **Softmax**: Turns raw scores into a **probability distribution** — non-negative weights that sum to 1. This means the output is a **convex combination** of values, geometrically trapped inside their convex hull. It's the minimal assumption: "blend the available information proportionally to relevance."
+3. **Softmax**: Turns raw scores into a **probability distribution**, non-negative weights that sum to 1. This means the output is a **convex combination** of values, geometrically trapped inside their convex hull. It's the minimal assumption: "blend the available information proportionally to relevance."
 
 4. **Weighted sum of Values**: The output is an interpolation, not a lookup. This is differentiable everywhere, enabling gradient-based learning. The FFN layer that follows provides the non-linearity needed to "escape" the convex hull and create genuinely new representations.
 
