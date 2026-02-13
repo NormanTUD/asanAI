@@ -1879,7 +1879,7 @@ window.calculate_vector_math = function() {
 
 	// 1. Validate the environment
 	if (!space || Object.keys(space).length === 0) {
-		resDiv.innerHTML = "<span style='color: #ef4444;'>Embedding space is empty. Please run or train the model first.</span>";
+		resDiv.innerHTML = "<em style='color: #94a3b8;'>Enter an equation and press Enter...</em>";
 		return;
 	}
 
