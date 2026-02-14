@@ -11,10 +11,26 @@ TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reag
 </div>
 
 <div class="md">
-## The Illusion of Locality: Beyond the Grandmother Neuron
-One important note, before we start: meaning in a Transformer is **holistic and distributed**.
+## The Illusion of Locality: Polysemanticity and Superposition
 
-In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers to a singular neuron triggering for a complex concept, but this isn't true. Knowledge is very distributed, and not localized into single neurons. In the Transformer, no such neuron exists as well. Meaning is an emergent property of the entire vector space; it is held in the collective ratios of the hidden states. They don't inherently *mean* anything; they simply function to produce the desired output. This also holds true for all single parts of the Transformer, which we'll cover now.
+Beyond the rejection of the \citealternativetitle{grandmotherneuron} (a term coined by Jerome Lettvin in 1969 to critique the idea of 1:1 conceptual mapping), modern research into Transformers reveals two critical phenomena:
+
+### 1. Distributed Representations
+The meaning of, for example, "cat", is not stored in a single "cat neuron." Instead, a concept is a **direction** in a high-dimensional vector space. To represent "cat," the model might activate 50 or more different neurons to varying degrees. If you change even one of those activations, the "meaning" shifts slightly (perhaps from "cat" to "kitten").
+
+### 2. Polysemanticity (The Multi-Tasking Neuron)
+Individual neurons are often **polysemantic**, meaning they respond to multiple, unrelated features. A single neuron for example might fire for:
+* Text related to the Golden Gate Bridge.
+* Mathematical formulas involving integers.
+* The concept of "reliability."
+
+### Why Superposition Happens
+Research suggests that models use **Superposition** to represent more features than they have dimensions (neurons). By assigning concepts to nearly orthogonal directions in high-dimensional space, the model can store a massive "dictionary" of features across a smaller number of physical neurons.
+
+### Sources & References
+* **Historical Critique:** Lettvin, J. Y. (1969). *The Grandmother Cell*. (Original critique of localized encoding in neuroscience).
+* **Modern AI Foundational Paper:** Elhage, N., et al. (2022). *Software for the Mind: Superposition, Polysemanticity, and Dictionary Learning*. **Anthropic**.
+* **Empirical Evidence:** Bricken, T., et al. (2023). *Towards Monosemanticity: Decomposing Language Models with Dictionary Learning*. **Anthropic**. (This paper demonstrates how to "untangle" polysemantic neurons using Sparse Autoencoders).
 </div>
 
 <div id="transformer_config">
