@@ -75,7 +75,7 @@ function show_nr_of_params() {
 		return;
 	}
 
-	document.getElementById("nr_params").innerHTML = `The current network has ${{nr_params} internal parameters.`;
+	document.getElementById("nr_params").innerHTML = `The current network has ${nr_params} internal parameters.`;
 	document.getElementById('nr_params').style.display = 'block';
 }
 
@@ -525,6 +525,9 @@ function get_init_weights(n_layers, d_model) {
 			b2: new Array(d_model).fill(0)
 		});
 	}
+
+	show_nr_of_params();
+
 	return weights;
 }
 
