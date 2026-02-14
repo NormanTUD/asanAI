@@ -61,6 +61,7 @@ In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers t
 		<option value="bpe">Byte-Pair Encoding (BPE)</option>
 	    </select>
 	</div>
+	<div id="nr_params" style="display: none"></div>
 </div>
 
 <div class="transformer_corpus">
@@ -96,9 +97,6 @@ In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers t
 
 	<div id="training-status" style="margin-top: 10px; font-size: 0.85rem; color: #047857; min-height: 20px; display: none"></div>
 	<div id="training-loss-plot" style="width: 100%; height: 200px; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; display: none"></div>
-
-	<div id="nr_params" style="display: none"></div>
-
     </div>
 </div>
 
