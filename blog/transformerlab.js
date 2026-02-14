@@ -1707,6 +1707,7 @@ function tlab_render_weight_grid(id, layerNum) {
 			canvas.style.height = "auto";
 			canvas.style.imageRendering = "pixelated";
 			canvas.style.display = "block";
+			canvas.style.maxHeight = "145px";
 			// Optional: slight border to distinguish adjacent white/yellow pixels
 			canvas.style.outline = "1px solid #f1f5f9";
 
