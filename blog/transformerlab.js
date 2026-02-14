@@ -1173,10 +1173,8 @@ function render_embedding_plot(dimensions) {
 
 	// Clean up ghost instances from previous renders (both Plotly and ECharts)
 	Plotly.purge(container);
-	if (typeof echarts !== 'undefined') {
-		const existingChart = echarts.getInstanceByDom(container);
-		if (existingChart) existingChart.dispose();
-	}
+	const existingChart = echarts.getInstanceByDom(container);
+	if (existingChart) existingChart.dispose();
 	container.innerHTML = '';
 
 	const tokens = Object.keys(window.persistentEmbeddingSpace);
@@ -1210,8 +1208,6 @@ function render_embedding_plot(dimensions) {
         
 		Plotly.newPlot(container, traces, layout);
 	} else {
-		if (typeof echarts === 'undefined') return;
-
 		const myChart = echarts.init(container);
 		const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({ dim: i, name: `D${i}` }));
 
@@ -1683,7 +1679,6 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 		);
 
 	} else {
-		if (typeof echarts === 'undefined') return;
 		Plotly.purge(plotDiv);
 		const myChart = echarts.init(plotDiv);
 		const axes = [];
@@ -1776,10 +1771,8 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 
 	// Clean up ghost instances from previous renders
 	Plotly.purge(container);
-	if (typeof echarts !== 'undefined') {
-		const existingChart = echarts.getInstanceByDom(container);
-		if (existingChart) existingChart.dispose();
-	}
+	const existingChart = echarts.getInstanceByDom(container);
+	if (existingChart) existingChart.dispose();
 	container.innerHTML = '';
 
 	// Helper to generate a consistent hash from a string
@@ -1892,7 +1885,7 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 
 			Plotly.newPlot(container, traces, layout);
 
-		} else if (d_model > 3 && typeof echarts !== 'undefined') {
+		} else if (d_model > 3) {
 			const myChart = echarts.init(container);
 			const axes = [];
 			for (let i = 0; i < d_model; i++) {
