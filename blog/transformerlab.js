@@ -1313,7 +1313,7 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 
         <div style="margin-bottom:15px;">
             <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
-            $$ \\text{Norm}(h_0) = \\gamma \\odot \\frac{h_0 - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta $$
+            $$ \\text{Norm}(h_0) = \\underbrace{\\gamma}_{\\text{Learnable parameter}} \\odot \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\text{Learnable parameter}} $$
             <div style="overflow-x:auto;">
                 $$ \\underbrace{${matrixToPmatrix(normH0)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h0)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
 		<br>
