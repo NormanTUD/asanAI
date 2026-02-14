@@ -564,7 +564,10 @@ async function train_transformer() {
 		return;
 	}
 
-	if (!window.currentWeights) window.currentWeights = get_init_weights(n_layers, d_model);
+	if (!window.currentWeights) {
+		window.currentWeights = get_init_weights(n_layers, d_model);
+	}
+
 	get_or_init_embeddings(tokens, d_model);
 
 	const weightVars = convert_weights_to_tensors(window.currentWeights);
