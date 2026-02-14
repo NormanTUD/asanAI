@@ -1798,62 +1798,62 @@ function tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model,
  * Sub-function: LaTeX Logic
  */
 function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model) {
-    // Helper to calculate RGB components based on position
-    const getPosColorComponents = (index, total) => {
-        if (total <= 1) return { r: 59, g: 130, b: 246 };
-        const ratio = index / (total - 1);
-        return {
-            r: Math.round(59 + (16 - 59) * ratio),
-            g: Math.round(130 + (185 - 130) * ratio),
-            b: Math.round(246 + (129 - 246) * ratio)
-        };
-    };
+	// Helper to calculate RGB components based on position
+	const getPosColorComponents = (index, total) => {
+		if (total <= 1) return { r: 59, g: 130, b: 246 };
+		const ratio = index / (total - 1);
+		return {
+			r: Math.round(59 + (16 - 59) * ratio),
+			g: Math.round(130 + (185 - 130) * ratio),
+			b: Math.round(246 + (129 - 246) * ratio)
+		};
+	};
 
-    // Formats color for TeMML: \color[RGB]{r,g,b}
-    const formatTeMMLColor = (c) => `\\color[RGB]{${c.r},${c.g},${c.b}}`;
+	// Formats color for TeMML: \color[RGB]{r,g,b}
+	const formatTeMMLColor = (c) => `\\color[RGB]{${c.r},${c.g},${c.b}}`;
 
-    const toPMatrixColored = (matrix) => {
-        if (!Array.isArray(matrix) || !matrix.length) return '';
-        
-        const rows = matrix.map((row, tIdx) => {
-            const colorObj = getPosColorComponents(tIdx, matrix.length);
-            const colorCmd = formatTeMMLColor(colorObj);
-            // Apply color to each individual cell to avoid grouping errors with '&'
-            return row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
-        }).join(' \\\\ ');
+	const toPMatrixColored = (matrix) => {
+		if (!Array.isArray(matrix) || !matrix.length) return '';
 
-        return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
-    };
+		const rows = matrix.map((row, tIdx) => {
+			const colorObj = getPosColorComponents(tIdx, matrix.length);
+			const colorCmd = formatTeMMLColor(colorObj);
+			// Apply color to each individual cell to avoid grouping errors with '&'
+			return row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
+		}).join(' \\\\ ');
 
-    const vocabRows = tokens.map((_, tIdx) => {
-        const fromList = tlab_get_top_vocab_list(start_h[tIdx], d_model);
-        const toList = tlab_get_top_vocab_list(end_h[tIdx], d_model);
-        
-        const colorObj = getPosColorComponents(tIdx, tokens.length);
-        const colorCmd = formatTeMMLColor(colorObj);
-        
-        // Apply color to each mapping pair (each cell)
-        return fromList.map((fromItem, i) => {
-            const toItem = toList[i] || {word: '???', prob: 0};
-            const cleanFrom = fromItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
-            const cleanTo = toItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
-            return `${colorCmd} \\text{${cleanFrom}} \\rightarrow \\text{${cleanTo}}`;
-        }).join(' & ');
-    }).join(' \\\\ ');
+		return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
+	};
 
-    const latexString = `$$h_\\text{after} = ${toPMatrixColored(h_after)}, \\quad \\approx \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+	const vocabRows = tokens.map((_, tIdx) => {
+		const fromList = tlab_get_top_vocab_list(start_h[tIdx], d_model);
+		const toList = tlab_get_top_vocab_list(end_h[tIdx], d_model);
 
-    let latexDiv = document.getElementById(id + '-latex-debug');
-    if (!latexDiv) {
-        latexDiv = document.createElement('div');
-        latexDiv.id = id + '-latex-debug';
-        latexDiv.style.marginTop = '20px';
-        latexDiv.style.overflowX = 'auto';
-        latexDiv.style.fontSize = '0.8rem';
-        plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
-    }
-    latexDiv.innerHTML = latexString;
-    render_temml();
+		const colorObj = getPosColorComponents(tIdx, tokens.length);
+		const colorCmd = formatTeMMLColor(colorObj);
+
+		// Apply color to each mapping pair (each cell)
+		return fromList.map((fromItem, i) => {
+			const toItem = toList[i] || {word: '???', prob: 0};
+			const cleanFrom = fromItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+			const cleanTo = toItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+			return `${colorCmd} \\text{${cleanFrom}} \\rightarrow \\text{${cleanTo}}`;
+		}).join(' & ');
+	}).join(' \\\\ ');
+
+	const latexString = `$$h_\\text{after} = ${toPMatrixColored(h_after)}, \\quad \\approx \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+
+	let latexDiv = document.getElementById(id + '-latex-debug');
+	if (!latexDiv) {
+		latexDiv = document.createElement('div');
+		latexDiv.id = id + '-latex-debug';
+		latexDiv.style.marginTop = '20px';
+		latexDiv.style.overflowX = 'auto';
+		latexDiv.style.fontSize = '0.8rem';
+		plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
+	}
+	latexDiv.innerHTML = latexString;
+	render_temml();
 }
 
 /**
