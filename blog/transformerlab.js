@@ -1183,6 +1183,14 @@ function render_embedding_plot(dimensions) {
 	const container = document.getElementById('transformer-plotly-space');
 	if (!container) return;
 
+	// Clean up ghost instances from previous renders (both Plotly and ECharts)
+	Plotly.purge(container);
+	if (typeof echarts !== 'undefined') {
+		const existingChart = echarts.getInstanceByDom(container);
+		if (existingChart) existingChart.dispose();
+	}
+	container.innerHTML = '';
+
 	const tokens = Object.keys(window.persistentEmbeddingSpace);
 
 	if (dimensions <= 3) {
@@ -1199,10 +1207,22 @@ function render_embedding_plot(dimensions) {
 				marker: { size: 10 }
 			};
 		});
-		Plotly.newPlot(container, traces, { title: "Embedding Space" });
+        
+		const layout = { title: "Embedding Space" };
+		if (dimensions === 3) {
+			layout.scene = {
+				xaxis: { title: 'Dim 0' },
+				yaxis: { title: 'Dim 1' },
+				zaxis: { title: 'Dim 2' }
+			};
+		} else {
+			layout.xaxis = { title: 'Dim 0' };
+			layout.yaxis = { title: dimensions >= 2 ? 'Dim 1' : '' };
+		}
+        
+		Plotly.newPlot(container, traces, layout);
 	} else {
 		if (typeof echarts === 'undefined') return;
-		Plotly.purge(container);
 
 		const myChart = echarts.init(container);
 		const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({ dim: i, name: `D${i}` }));
@@ -1213,6 +1233,7 @@ function render_embedding_plot(dimensions) {
 		}));
 
 		myChart.setOption({
+			title: { text: "Embedding Space", left: 'center' },
 			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
 			parallelAxis: parallelAxis,
 			parallel: { left: 40, right: 40, bottom: 20, top: 50 },
@@ -1223,6 +1244,8 @@ function render_embedding_plot(dimensions) {
 				emphasis: { lineStyle: { width: 6, color: '#f59e0b' } }
 			}]
 		});
+        
+		myChart.resize();
 	}
 }
 
@@ -1741,19 +1764,26 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 		return [];
 	}
 
+	// Clean up ghost instances from previous renders
+	Plotly.purge(container);
+	if (typeof echarts !== 'undefined') {
+		const existingChart = echarts.getInstanceByDom(container);
+		if (existingChart) existingChart.dispose();
+	}
+	container.innerHTML = '';
+
 	// Helper to generate a consistent hash from a string
 	const getHueFromToken = (str) => {
 		let hash = 0;
 		for (let i = 0; i < str.length; i++) {
-			// Simple polynomial rolling hash
 			hash = str.charCodeAt(i) + ((hash << 5) - hash);
 		}
-		// Map hash to 0-360 range
 		return Math.abs(hash) % 360;
 	};
 
 	const injectedEmbeddings = [];
 	const traces = [];
+	const echartsData = [];
 
 	tokenStrings.forEach((token, pos) => {
 		const semanticBase = window.persistentEmbeddingSpace[token];
@@ -1772,55 +1802,105 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 		const combined = semanticBase.map((val, i) => val + peVec[i]);
 		injectedEmbeddings.push(combined);
 
-		if (container && d_model <= 3) {
-			// 2. Generate color based on TOKEN text, not position
+		if (container) {
 			const hue = getHueFromToken(token);
 			const tokenColor = `hsl(${hue}, 75%, 50%)`;
 
-			const x = [semanticBase[0], combined[0]];
-			const y = d_model >= 2 ? [semanticBase[1], combined[1]] : [0, 0];
-			const z = d_model === 3 ? [semanticBase[2], combined[2]] : [0, 0];
+			if (d_model <= 3) {
+				const x = [semanticBase[0], combined[0]];
+				const y = d_model >= 2 ? [semanticBase[1], combined[1]] : [0, 0];
+				const z = d_model === 3 ? [semanticBase[2], combined[2]] : [0, 0];
 
-			if (d_model === 3) {
-				// Line Trace
-				traces.push({
-					type: 'scatter3d',
-					x: x, y: y, z: z,
-					mode: 'lines',
-					line: { width: 6, color: tokenColor },
+				if (d_model === 3) {
+					// Line Trace
+					traces.push({
+						type: 'scatter3d',
+						x: x, y: y, z: z,
+						mode: 'lines',
+						line: { width: 6, color: tokenColor },
+						name: `${token} (pos ${pos})`,
+						legendgroup: token,
+						hoverinfo: 'text',
+						text: `Token: ${token}<br>Pos: ${pos}`
+					});
+
+					// Arrow Tip (Cone)
+					traces.push({
+						type: 'cone',
+						x: [combined[0]], y: [combined[1]], z: [combined[2]],
+						u: [peVec[0]], v: [peVec[1]], w: [peVec[2]],
+						sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+						colorscale: [[0, tokenColor], [1, tokenColor]],
+						showscale: false,
+						legendgroup: token,
+						showlegend: false,
+						hoverinfo: 'skip'
+					});
+				} else {
+					// 1D and 2D Arrow lines
+					traces.push({
+						type: 'scatter', x: x, y: y, mode: 'lines+markers',
+						line: { width: 3, color: tokenColor },
+						name: `${token} (pos ${pos})`,
+						legendgroup: token,
+						marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: tokenColor },
+						hoverinfo: 'text',
+						text: `Token: ${token}<br>Pos: ${pos}`
+					});
+				}
+			} else {
+				// Formatting for ECharts High-Dimensional plot
+				echartsData.push({
+					value: semanticBase.flatMap((val, i) => [val, combined[i]]),
 					name: `${token} (pos ${pos})`,
-					legendgroup: token, // Groups identical tokens in the legend
-					hoverinfo: 'text',
-					text: `Token: ${token}<br>Pos: ${pos}`
-				});
-
-				// Arrow Tip (Cone)
-				traces.push({
-					type: 'cone',
-					x: [combined[0]], y: [combined[1]], z: [combined[2]],
-					u: [peVec[0]], v: [peVec[1]], w: [peVec[2]],
-					sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-					colorscale: [[0, tokenColor], [1, tokenColor]],
-					showscale: false,
-					legendgroup: token,
-					showlegend: false,
-					hoverinfo: 'skip'
+					lineStyle: { color: tokenColor }
 				});
 			}
 		}
 	});
 
-	if (container && traces.length > 0) {
-		Plotly.newPlot(container, traces, {
-			title: "Semantic Vector → + Positional Shift",
-			scene: {
-				xaxis: { title: 'Dim 0' },
-				yaxis: { title: 'Dim 1' },
-				zaxis: { title: 'Dim 2' }
-			},
-			margin: { l: 0, r: 0, b: 0, t: 40 },
-			showlegend: true
-		});
+	if (container) {
+		if (d_model <= 3 && traces.length > 0) {
+			const layout = {
+				title: "Semantic Vector → + Positional Shift",
+				margin: { l: 40, r: 40, b: 40, t: 40 },
+				showlegend: true
+			};
+
+			// Conditionally add scene so 1D/2D doesn't get rendered on a 3D plane
+			if (d_model === 3) {
+				layout.scene = {
+					xaxis: { title: 'Dim 0' },
+					yaxis: { title: 'Dim 1' },
+					zaxis: { title: 'Dim 2' }
+				};
+				layout.margin = { l: 0, r: 0, b: 0, t: 40 };
+			} else {
+				layout.xaxis = { title: 'Dim 0' };
+				layout.yaxis = { title: d_model === 2 ? 'Dim 1' : '' };
+			}
+
+			Plotly.newPlot(container, traces, layout);
+
+		} else if (d_model > 3 && typeof echarts !== 'undefined') {
+			const myChart = echarts.init(container);
+			const axes = [];
+			for (let i = 0; i < d_model; i++) {
+				axes.push({ dim: i * 2, name: `D${i} Base` }, { dim: i * 2 + 1, name: `D${i} +PE` });
+			}
+
+			myChart.setOption({
+				title: { text: "Semantic Vector → + Positional Shift", left: 'center' },
+				tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+				parallelAxis: axes,
+				series: [{
+					type: 'parallel', data: echartsData,
+					lineStyle: { width: 2, opacity: 0.6 },
+					emphasis: { lineStyle: { width: 5 } }
+				}]
+			});
+			myChart.resize();
+		}
 	}
 
 	return injectedEmbeddings;
