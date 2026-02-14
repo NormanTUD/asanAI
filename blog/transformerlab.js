@@ -1999,34 +1999,12 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 
 
 
-/**
- * tlab_render_trajectory_plot
- * Renders the sequence of arrows from Raw -> PE -> L1 -> L2...
- */
-/**
- * tlab_render_trajectory_plot
- * Renders the full trajectory: Raw Embedding → +PE → Layer 1 → Layer 2 → ...
- * Legend format: "<token> (<position>)" with Plotly's automatic color swatch.
- */
-/**
- * tlab_render_trajectory_plot
- * Renders the full trajectory: Raw Embedding → +PE → Layer 1 → Layer 2 → ...
- * Legend format: "<token> (<position>)" with Plotly's automatic color swatch.
- */
-/**
- * tlab_render_trajectory_plot
- * Renders the full trajectory: Raw Embedding → +PE → Layer 1 → Layer 2 → ...
- * Legend format: "<token> (<position>)" with Plotly's automatic color swatch.
- * Colors: first token = blue, last token = green, intermediate = interpolated.
- * Arrows: real arrowheads on every segment (no circles).
- */
 function tlab_render_trajectory_plot(d_model) {
     const mainContainer = document.getElementById('transformer-migration-plots-container');
     if (!mainContainer || !window.tlab_trajectory_collector) return;
 
     const { tokens, steps, displayTokens } = window.tlab_trajectory_collector;
 
-    // Safety: need at least raw + pe + 1 layer
     const sortedKeys = Object.keys(steps).sort();
     if (sortedKeys.length < 3) return;
 
@@ -2045,9 +2023,8 @@ function tlab_render_trajectory_plot(d_model) {
 
     const dataPoints = sortedKeys.map(k => steps[k]);
 
-    // ── Color gradient: first token = blue, last token = green ──
     const getTokenColor = (tIdx, total) => {
-        if (total <= 1) return 'rgb(59, 130, 246)'; // blue
+        if (total <= 1) return 'rgb(59, 130, 246)';
         const t = tIdx / (total - 1);
         const r = Math.round(59 + (16 - 59) * t);
         const g = Math.round(130 + (185 - 130) * t);
@@ -2064,13 +2041,12 @@ function tlab_render_trajectory_plot(d_model) {
         const z = d_model === 3 ? dataPoints.map(p => p.data[tIdx][2]) : null;
         const tColor = getTokenColor(tIdx, tokens.length);
 
-        // Human-readable label: "<token> (<1-based position>)"
         const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 
-        if (d_model === 3) {
-            // ── 3D: lines + cone arrowheads ──
+        // Hover text now includes the position number
+        const hoverTexts = dataPoints.map(p => `${labels[tIdx]} (${tIdx + 1}) @ ${p.name}`);
 
-            // Path line (no markers — cones serve as arrowheads)
+        if (d_model === 3) {
             traces.push({
                 type: 'scatter3d',
                 x: x, y: y, z: z,
@@ -2079,10 +2055,9 @@ function tlab_render_trajectory_plot(d_model) {
                 line: { width: 5, color: tColor },
                 hoverinfo: 'text',
                 hovertemplate: '<b>%{text}</b><extra></extra>',
-                text: dataPoints.map(p => `${labels[tIdx]} @ ${p.name}`)
+                text: hoverTexts
             });
 
-            // Cone arrowheads at each segment endpoint
             for (let i = 0; i < x.length - 1; i++) {
                 traces.push({
                     type: 'cone',
@@ -2094,14 +2069,7 @@ function tlab_render_trajectory_plot(d_model) {
                 });
             }
 
-            // Stage label at the start point (only for first token to avoid clutter)
-            // 3D annotations are limited in Plotly, so we skip text labels in 3D
-
         } else {
-            // ── 2D: lines only + annotation arrows with arrowheads ──
-
-            // Draw a thin invisible line for the legend entry and hover text.
-            // We use mode: 'lines' (NO markers) so circles don't cover arrowheads.
             traces.push({
                 type: 'scatter',
                 x: x, y: y,
@@ -2110,25 +2078,23 @@ function tlab_render_trajectory_plot(d_model) {
                 line: { width: 2, color: tColor, dash: 'dot' },
                 hoverinfo: 'text',
                 hovertemplate: '<b>%{text}</b><extra></extra>',
-                text: dataPoints.map(p => `${labels[tIdx]} @ ${p.name}`)
+                text: hoverTexts
             });
 
-            // Annotation arrows with real arrowheads for each segment
             for (let i = 0; i < x.length - 1; i++) {
                 annotations.push({
                     x: x[i + 1], y: y[i + 1],
                     ax: x[i], ay: y[i],
                     xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
                     showarrow: true,
-                    arrowhead: 3,      // pointed arrowhead style
-                    arrowsize: 1.5,    // scale up the arrowhead
-                    arrowwidth: 3,     // thick arrow shaft
+                    arrowhead: 3,
+                    arrowsize: 1.5,
+                    arrowwidth: 3,
                     arrowcolor: tColor,
                     opacity: 0.9
                 });
             }
 
-            // Stage labels at each point (only for first token to avoid clutter)
             if (tIdx === 0) {
                 dataPoints.forEach((p, pIdx) => {
                     annotations.push({
@@ -2171,6 +2137,7 @@ function tlab_render_trajectory_plot(d_model) {
 
     Plotly.react(trajDiv.id, traces, layout);
 }
+
 
 
 
