@@ -2012,7 +2012,7 @@ function tlab_render_trajectory_plot(d_model) {
 	if (!trajDiv) {
 		trajDiv = document.createElement('div');
 		trajDiv.id = 'transformer-trajectory-full-path';
-		trajDiv.style.cssText = "width:100%; height:850px; margin-top:100px; border-top:4px solid #3b82f6; background:#fff; padding:20px;";
+		trajDiv.style.cssText = "width:100%; height:850px;";
 		mainContainer.appendChild(trajDiv);
 	}
 
