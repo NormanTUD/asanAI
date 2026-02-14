@@ -20,6 +20,11 @@ window.currentWeights = null;
 window.lossHistory = [];
 window.last_d_model = null;
 
+window.tlab_trajectory_data = {
+	tokens: [],
+	steps: [] // Array of { name: "Stage Name", data: [[dim1, dim2...], ...] }
+};
+
 const contextSize = 128;
 const attentionRenderRegistry = new Map();
 
@@ -95,7 +100,7 @@ function get_or_init_embeddings(tokens, d_model) {
 
 	// 3. Capture the reference AFTER potential resets
 	const space = window.persistentEmbeddingSpace;
-	
+
 	const gaussianRandom = () => {
 		let u = 0, v = 0;
 		while(u === 0) u = Math.random();
@@ -341,7 +346,7 @@ window.showHead = (idx) => {
 	const activeTab = document.getElementById(`head-content-${idx}`);
 	activeTab.style.display = 'block';
 
-	// Highlight Buttons
+// Highlight Buttons
 	document.querySelectorAll('.mha-tab-btn').forEach(btn => {
 		btn.style.background = '#e2e8f0';
 		btn.style.fontWeight = 'normal';
@@ -958,6 +963,13 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		transformerLabVisMigrationDataRegistry.clear();
 	}
 
+	// Reset trajectory collector so it captures fresh data for this run
+	window.tlab_trajectory_collector = null;
+
+	// Remove stale full-trajectory plot so it gets recreated
+	const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
+	if (oldTrajDiv) oldTrajDiv.remove();
+
 	if (tokensWithPositional.length === 0) {
 		document.getElementById('transformer-output-projection').innerHTML =
 			`<div style="padding:20px; color: #64748b; text-align:center;">
@@ -988,9 +1000,15 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 		const h2 = run_ffn_block(h1, weights[0]);
 
-		create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2);
+		// Pass knownTokens (string[]) for labeling
+		create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
 
-		run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1);
+		run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
+
+		// ── All layers processed: trigger trajectory plot immediately ──
+		if (window.tlab_trajectory_collector) {
+			setTimeout(() => tlab_render_trajectory_plot(d_model), 200);
+		}
 	}
 
 	// 3. FINAL PROBABILITIES (based on master-token-input)
@@ -1031,6 +1049,8 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		render_final_projection(h_current, vocabulary, d_model, temperature);
 	}
 }
+
+
 
 window.select_suggested_word = (word) => {
 	const masterInput = document.getElementById('transformer-master-token-input');
@@ -1532,7 +1552,12 @@ function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
  * Goal: Unified N-Layer Trajectory Plotting
  * Logic: Every iteration i maps to Layer i+1 Plot
  */
-function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights, startLayer = 0) {
+/**
+ * Goal: Unified N-Layer Trajectory Plotting
+ * Logic: Every iteration i maps to Layer i+1 Plot
+ * @param {string[]} [tokenStrings] - Human-readable token strings for labeling
+ */
+function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights, startLayer = 0, tokenStrings = null) {
 	let h_current = h_initial;
 
 	for (let n = startLayer; n < total_depth; n++) {
@@ -1565,8 +1590,8 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 		// 3. Sublayer 2: Feed Forward & Add
 		const h_after = run_ffn_block(h_attn, layerWeights);
 
-		// Visualization
-		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, h_after, n + 1, d_model, h_after);
+		// Visualization — pass tokenStrings for human-readable labels
+		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, h_after, n + 1, d_model, h_after, tokenStrings);
 		tlab_render_weight_grid(layerWeights, n);
 
 		h_current = h_after;
@@ -1574,6 +1599,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 
 	return h_current;
 }
+
 
 /**
  * Global Registry for Deferred Rendering
@@ -1591,38 +1617,80 @@ const migrationObserver = new IntersectionObserver((entries) => {
 			const id = entry.target.id;
 			const data = transformerLabVisMigrationDataRegistry.get(id);
 			if (data && !data.rendered) {
-				render_migration_logic(id, data.tokens, data.start_h, data.end_h, data.layerNum, data.d_model, data.h_after);
-				data.rendered = true; // Mark to avoid redundant draws until data changes
+				render_migration_logic(id, data.tokens, data.start_h, data.end_h, data.layerNum, data.d_model, data.h_after, data.tokenStrings);
+				data.rendered = true;
 			}
 		}
 	});
 }, { threshold: 0.1 });
 
-function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after) {
+function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
 	const container = document.getElementById('transformer-migration-plots-container');
 	if (!container) return;
 
+	// Resolve human-readable display names for each token position
+	const displayTokens = (tokenStrings && tokenStrings.length === tokens.length)
+		? tokenStrings
+		: tokens.map((t, i) => {
+			if (typeof t === 'string') return t;
+			return tlab_get_top_word_only(t);
+		});
+
+	const freeze = (data) => JSON.parse(JSON.stringify(data));
+
+	// ── Eagerly capture trajectory data (not deferred to render) ──
+	if (!window.tlab_trajectory_collector) {
+		window.tlab_trajectory_collector = {
+			steps: {},
+			tokens: [...tokens],
+			displayTokens: [...displayTokens],
+			d_model: d_model
+		};
+	}
+
+	// Capture initial states on the very first layer
+	if (!window.tlab_trajectory_collector.steps["00_raw"]) {
+		// Look up raw embeddings using STRING tokens
+		const rawEmbs = displayTokens.map(t => {
+			if (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[t]) {
+				return window.persistentEmbeddingSpace[t];
+			}
+			return new Array(d_model).fill(0);
+		});
+
+		window.tlab_trajectory_collector.steps["00_raw"] = {
+			name: "Original Embedding",
+			data: freeze(rawEmbs)
+		};
+		window.tlab_trajectory_collector.steps["01_pe"] = {
+			name: "Embedding + Position",
+			data: freeze(start_h)
+		};
+	}
+
+	// Capture this layer's output
+	const layerKey = "02_layer_" + String(layerNum).padStart(2, '0');
+	window.tlab_trajectory_collector.steps[layerKey] = {
+		name: `Layer ${layerNum} Output`,
+		data: freeze(end_h)
+	};
+
+	// ── Create DOM element for per-layer migration plot (lazy rendered) ──
 	let plotDiv = document.getElementById(id);
 	if (!plotDiv) {
-		// Create a wrapper div to group the plot, weight grid, and latex matrix
 		const wrapperDiv = document.createElement('div');
 		wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-top: 30px; background: #fff;";
 
 		plotDiv = document.createElement('div');
 		plotDiv.id = id;
-		// Margin-top is shifted to the wrapper to maintain overall spacing
 		plotDiv.style.cssText = "height: 500px; width: 100%;";
 
 		wrapperDiv.appendChild(plotDiv);
 		container.appendChild(wrapperDiv);
 
-		// The observer handles the initial visibility check automatically
-		// as soon as it starts observing, firing the callback if visible.
 		migrationObserver.observe(plotDiv);
 	}
 
-	// Optimization: Use .slice() or Float32Array.from() if start_h/end_h are numeric arrays.
-	// JSON stringify/parse is a major CPU sink for high-dimensional vectors.
 	transformerLabVisMigrationDataRegistry.set(id, {
 		tokens: [...tokens],
 		start_h: Array.isArray(start_h) ? start_h.slice() : start_h,
@@ -1630,9 +1698,12 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 		layerNum: layerNum,
 		d_model: d_model,
 		h_after: h_after,
+		tokenStrings: tokenStrings || null,
 		rendered: false
 	});
 }
+
+
 
 /**
  * Maps a weight value to a colorblind-friendly scale (Blue to Yellow).
@@ -1871,27 +1942,238 @@ function tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model,
 	});
 }
 
-function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after) {
-	const plotDiv = document.getElementById(id);
-	if (!plotDiv) return;
-
-	plotDiv.style.width = '100%';
-
-	const migrationContainers = document.querySelectorAll('[id^="migration-plot-"]');
-	const isLastLayer = migrationContainers.length > 0 &&
-		migrationContainers[migrationContainers.length - 1].id === id;
-	const nextWordIndex = tokens.length - 1;
-
-	if (d_model <= 3) {
-		tlab_render_plotly(id, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex);
-	} else {
-		tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex);
-	}
-
-	tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model);
-
-	tlab_render_weight_grid(id, layerNum);
+// Ensure this exists at the top level of your script
+if (!window.tlab_trajectory_data) {
+    window.tlab_trajectory_data = { tokens: [], steps: [] };
 }
+
+/**
+ * render_migration_logic
+ * Captures the state of tokens at each stage of the forward pass.
+ */
+/**
+ * render_migration_logic
+ * Captures the state of tokens at each stage of the forward pass.
+ * 
+ * @param {string} id - DOM element ID for the plot
+ * @param {Array} tokens - Token embedding vectors (numeric arrays)
+ * @param {Array} start_h - Hidden states before this layer
+ * @param {Array} end_h - Hidden states after this layer
+ * @param {number} layerNum - Current layer number
+ * @param {number} d_model - Model dimension
+ * @param {Array} h_after - Final hidden states after residual
+ * @param {string[]} [tokenStrings] - Human-readable token strings for labeling
+ */
+/**
+ * render_migration_logic
+ * Handles VISUAL rendering of per-layer migration plots.
+ * Data capture is now done eagerly in create_migration_plot.
+ *
+ * @param {string} id - DOM element ID for the plot
+ * @param {Array} tokens - Token embedding vectors (numeric arrays)
+ * @param {Array} start_h - Hidden states before this layer
+ * @param {Array} end_h - Hidden states after this layer
+ * @param {number} layerNum - Current layer number
+ * @param {number} d_model - Model dimension
+ * @param {Array} h_after - Final hidden states after residual
+ * @param {string[]} [tokenStrings] - Human-readable token strings for labeling
+ */
+function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
+    const plotDiv = document.getElementById(id);
+    if (!plotDiv) return;
+    plotDiv.style.width = '100%';
+
+    const nextWordIndex = tokens.length - 1;
+    const migrationContainers = document.querySelectorAll('[id^="migration-layer-"]');
+    const totalLayersCount = migrationContainers.length;
+    const isLastInDom = totalLayersCount > 0 && migrationContainers[totalLayersCount - 1].id === id;
+
+    if (d_model <= 3) {
+        tlab_render_plotly(id, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
+    } else {
+        tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
+    }
+    tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model);
+    tlab_render_weight_grid(id, layerNum);
+}
+
+
+
+/**
+ * tlab_render_trajectory_plot
+ * Renders the sequence of arrows from Raw -> PE -> L1 -> L2...
+ */
+/**
+ * tlab_render_trajectory_plot
+ * Renders the full trajectory: Raw Embedding → +PE → Layer 1 → Layer 2 → ...
+ * Legend format: "<token> (<position>)" with Plotly's automatic color swatch.
+ */
+/**
+ * tlab_render_trajectory_plot
+ * Renders the full trajectory: Raw Embedding → +PE → Layer 1 → Layer 2 → ...
+ * Legend format: "<token> (<position>)" with Plotly's automatic color swatch.
+ */
+/**
+ * tlab_render_trajectory_plot
+ * Renders the full trajectory: Raw Embedding → +PE → Layer 1 → Layer 2 → ...
+ * Legend format: "<token> (<position>)" with Plotly's automatic color swatch.
+ * Colors: first token = blue, last token = green, intermediate = interpolated.
+ * Arrows: real arrowheads on every segment (no circles).
+ */
+function tlab_render_trajectory_plot(d_model) {
+    const mainContainer = document.getElementById('transformer-migration-plots-container');
+    if (!mainContainer || !window.tlab_trajectory_collector) return;
+
+    const { tokens, steps, displayTokens } = window.tlab_trajectory_collector;
+
+    // Safety: need at least raw + pe + 1 layer
+    const sortedKeys = Object.keys(steps).sort();
+    if (sortedKeys.length < 3) return;
+
+    let trajDiv = document.getElementById('transformer-trajectory-full-path');
+    if (!trajDiv) {
+        trajDiv = document.createElement('div');
+        trajDiv.id = 'transformer-trajectory-full-path';
+        trajDiv.style.cssText = "width:100%; height:850px; margin-top:100px; border-top:4px solid #3b82f6; background:#fff; padding:20px;";
+        mainContainer.appendChild(trajDiv);
+    }
+
+    const labels = displayTokens || tokens.map((t, i) => {
+        if (typeof t === 'string') return t;
+        return tlab_get_top_word_only(t);
+    });
+
+    const dataPoints = sortedKeys.map(k => steps[k]);
+
+    // ── Color gradient: first token = blue, last token = green ──
+    const getTokenColor = (tIdx, total) => {
+        if (total <= 1) return 'rgb(59, 130, 246)'; // blue
+        const t = tIdx / (total - 1);
+        const r = Math.round(59 + (16 - 59) * t);
+        const g = Math.round(130 + (185 - 130) * t);
+        const b = Math.round(246 + (129 - 246) * t);
+        return `rgb(${r}, ${g}, ${b})`;
+    };
+
+    const traces = [];
+    const annotations = [];
+
+    tokens.forEach((token, tIdx) => {
+        const x = dataPoints.map(p => p.data[tIdx][0]);
+        const y = dataPoints.map(p => p.data[tIdx][1]);
+        const z = d_model === 3 ? dataPoints.map(p => p.data[tIdx][2]) : null;
+        const tColor = getTokenColor(tIdx, tokens.length);
+
+        // Human-readable label: "<token> (<1-based position>)"
+        const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+
+        if (d_model === 3) {
+            // ── 3D: lines + cone arrowheads ──
+
+            // Path line (no markers — cones serve as arrowheads)
+            traces.push({
+                type: 'scatter3d',
+                x: x, y: y, z: z,
+                mode: 'lines',
+                name: tokenLabel,
+                line: { width: 5, color: tColor },
+                hoverinfo: 'text',
+                hovertemplate: '<b>%{text}</b><extra></extra>',
+                text: dataPoints.map(p => `${labels[tIdx]} @ ${p.name}`)
+            });
+
+            // Cone arrowheads at each segment endpoint
+            for (let i = 0; i < x.length - 1; i++) {
+                traces.push({
+                    type: 'cone',
+                    x: [x[i + 1]], y: [y[i + 1]], z: [z[i + 1]],
+                    u: [x[i + 1] - x[i]], v: [y[i + 1] - y[i]], w: [z[i + 1] - z[i]],
+                    sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+                    colorscale: [[0, tColor], [1, tColor]], showscale: false,
+                    hoverinfo: 'skip', showlegend: false
+                });
+            }
+
+            // Stage label at the start point (only for first token to avoid clutter)
+            // 3D annotations are limited in Plotly, so we skip text labels in 3D
+
+        } else {
+            // ── 2D: lines only + annotation arrows with arrowheads ──
+
+            // Draw a thin invisible line for the legend entry and hover text.
+            // We use mode: 'lines' (NO markers) so circles don't cover arrowheads.
+            traces.push({
+                type: 'scatter',
+                x: x, y: y,
+                mode: 'lines',
+                name: tokenLabel,
+                line: { width: 2, color: tColor, dash: 'dot' },
+                hoverinfo: 'text',
+                hovertemplate: '<b>%{text}</b><extra></extra>',
+                text: dataPoints.map(p => `${labels[tIdx]} @ ${p.name}`)
+            });
+
+            // Annotation arrows with real arrowheads for each segment
+            for (let i = 0; i < x.length - 1; i++) {
+                annotations.push({
+                    x: x[i + 1], y: y[i + 1],
+                    ax: x[i], ay: y[i],
+                    xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+                    showarrow: true,
+                    arrowhead: 3,      // pointed arrowhead style
+                    arrowsize: 1.5,    // scale up the arrowhead
+                    arrowwidth: 3,     // thick arrow shaft
+                    arrowcolor: tColor,
+                    opacity: 0.9
+                });
+            }
+
+            // Stage labels at each point (only for first token to avoid clutter)
+            if (tIdx === 0) {
+                dataPoints.forEach((p, pIdx) => {
+                    annotations.push({
+                        x: x[pIdx], y: y[pIdx],
+                        xref: 'x', yref: 'y',
+                        text: p.name,
+                        showarrow: false,
+                        font: { size: 9, color: '#64748b' },
+                        yshift: 12
+                    });
+                });
+            }
+        }
+    });
+
+    const axisTemplate = {
+        showticklabels: false,
+        showgrid: true,
+        zeroline: false,
+        title: { text: "" },
+        backgroundcolor: "#f9fafb"
+    };
+
+    const layout = {
+        title: `<b>Token Trajectory: Embedding → Position → Layers</b>`,
+        scene: {
+            xaxis: axisTemplate, yaxis: axisTemplate, zaxis: axisTemplate,
+            camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
+        },
+        xaxis: axisTemplate,
+        yaxis: axisTemplate,
+        annotations: d_model !== 3 ? annotations : [],
+        margin: { l: 10, r: 10, b: 50, t: 80 },
+        showlegend: true,
+        legend: {
+            orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1,
+            font: { size: 14 }
+        }
+    };
+
+    Plotly.react(trajDiv.id, traces, layout);
+}
+
+
+
 
 function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model) {
 	// Helper to calculate RGB components based on position
