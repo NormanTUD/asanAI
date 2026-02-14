@@ -1,4 +1,10 @@
 window.bibData = {
+	"hadamardproduct": {
+		author: "Jacques Hadamard",
+		year: 1892,
+		title: "La série de Taylor et son prolongement analytique",
+		url: "https://www.e-periodica.ch/digbib/view?lang=de&pid=ens-001%3A1902%3A4%3A%3A339"
+	},
 	"galton": {
 		title: "Regression Towards Mediocrity in Hereditary Stature",
 		author: "Francis Galton",
