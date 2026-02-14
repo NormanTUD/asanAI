@@ -869,7 +869,7 @@ window.bibData = {
 	},
 	"perceptronimagewiring": {
 		url: "https://lcc-cit.github.io/CS123-CourseMaterials/LectureNotes/CS123-Topic04-1-History.html",
-		title: "Frank Rosenblatt working on wiring for the perceptron.",
+		title: "Frank Rosenblatt working on the wiring for the perceptron.",
 		author: "Unknown photographer",
 	},
 	"historyofmathematicalnotation": {
