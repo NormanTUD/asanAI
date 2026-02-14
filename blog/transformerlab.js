@@ -1631,171 +1631,178 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 }
 
 function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after) {
-	const plotDiv = document.getElementById(id);
-	if (!plotDiv) return;
+    const plotDiv = document.getElementById(id);
+    if (!plotDiv) return;
 
-	// Ensure the container itself is set to occupy full width
-	plotDiv.style.width = '100%';
+    // Ensure the container itself is set to occupy full width
+    plotDiv.style.width = '100%';
 
-	// Detect if this is the last layer by checking the total number of migration containers
-	const migrationContainers = document.querySelectorAll('[id^="migration-plot-"]');
-	const isLastLayer = migrationContainers.length > 0 && 
-		migrationContainers[migrationContainers.length - 1].id === id;
-	const nextWordIndex = tokens.length - 1; 
+    // Detect if this is the last layer by checking the total number of migration containers
+    const migrationContainers = document.querySelectorAll('[id^="migration-plot-"]');
+    const isLastLayer = migrationContainers.length > 0 && 
+        migrationContainers[migrationContainers.length - 1].id === id;
+    const nextWordIndex = tokens.length - 1; 
 
-	// Helper to get just the top word name without LaTeX for tooltips
-	const getTopWordOnly = (h_vec) => {
-		if (!window.persistentEmbeddingSpace) return "???";
-		const vocabulary = Object.keys(window.persistentEmbeddingSpace);
-		let maxDot = -Infinity;
-		let bestWord = "???";
-		vocabulary.forEach(word => {
-			const w_vec = window.persistentEmbeddingSpace[word];
-			const dotProduct = h_vec.reduce((sum, val, i) => sum + val * (w_vec[i] || 0), 0);
-			if (dotProduct > maxDot) {
-				maxDot = dotProduct;
-				bestWord = word;
-			}
-		});
-		return bestWord;
-	};
+    // Helper to get just the top word name without LaTeX for tooltips
+    const getTopWordOnly = (h_vec) => {
+        if (!window.persistentEmbeddingSpace) return "???";
+        const vocabulary = Object.keys(window.persistentEmbeddingSpace);
+        let maxDot = -Infinity;
+        let bestWord = "???";
+        vocabulary.forEach(word => {
+            const w_vec = window.persistentEmbeddingSpace[word];
+            const dotProduct = h_vec.reduce((sum, val, i) => sum + val * (w_vec[i] || 0), 0);
+            if (dotProduct > maxDot) {
+                maxDot = dotProduct;
+                bestWord = word;
+            }
+        });
+        return bestWord;
+    };
 
-	if (d_model <= 3) {
-		const traces = [];
-		tokens.forEach((token, i) => {
-			const isTarget = i === nextWordIndex && isLastLayer;
-			const color = isTarget ? '#ef4444' : '#10b981';
+    if (d_model <= 3) {
+        const traces = [];
+        tokens.forEach((token, i) => {
+            const isTarget = i === nextWordIndex && isLastLayer;
+            const color = isTarget ? '#ef4444' : '#10b981';
 
-			const x = [start_h[i][0], end_h[i][0]];
-			const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
-			const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
+            const x = [start_h[i][0], end_h[i][0]];
+            const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
+            const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
 
-			// Decode both start and end vectors
-			const sourceWord = getTopWordOnly(start_h[i]);
-			const destWord = getTopWordOnly(end_h[i]);
-			const hoverDescription = `From <b>${sourceWord}</b> to <b>${destWord}</b>`;
+            // Decode both start and end vectors
+            const sourceWord = getTopWordOnly(start_h[i]);
+            const destWord = getTopWordOnly(end_h[i]);
+            const hoverDescription = `From <b>${sourceWord}</b> to <b>${destWord}</b>`;
 
-			if (d_model === 3) {
-				traces.push({
-					type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
-					line: { width: isTarget ? 8 : 4, color: color }, 
-					name: token, 
-					showlegend: false,
-					hoverinfo: 'text',
-					text: hoverDescription
-				});
-				traces.push({
-					type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
-					u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
-					sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-					colorscale: [[0, color], [1, color]], showscale: false,
-					hoverinfo: 'text',
-					text: `Target: ${destWord}`
-				});
-			} else {
-				traces.push({
-					type: 'scatter', x: x, y: y, mode: 'lines+markers',
-					name: token, line: { width: isTarget ? 4 : 2, color: color },
-					marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: color },
-					hoverinfo: 'text',
-					text: [sourceWord, hoverDescription] 
-				});
-			}
-		});
+            if (d_model === 3) {
+                traces.push({
+                    type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
+                    line: { width: isTarget ? 8 : 4, color: color }, 
+                    name: token, 
+                    showlegend: false,
+                    hoverinfo: 'text',
+                    text: hoverDescription
+                });
+                traces.push({
+                    type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
+                    u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
+                    sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+                    colorscale: [[0, color], [1, color]], showscale: false,
+                    hoverinfo: 'text',
+                    text: `Target: ${destWord}`
+                });
+            } else {
+                traces.push({
+                    type: 'scatter', x: x, y: y, mode: 'lines+markers',
+                    name: token, line: { width: isTarget ? 4 : 2, color: color },
+                    marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: color },
+                    hoverinfo: 'text',
+                    text: [sourceWord, hoverDescription] 
+                });
+            }
+        });
 
-		Plotly.newPlot(id, traces,
-			{ title: `Layer ${layerNum}: Feature Migration`, autosize: true, hovermode: 'closest' },
-			{ responsive: true }
-		);
+        Plotly.newPlot(id, traces,
+            { title: `Layer ${layerNum}: Feature Migration`, autosize: true, hovermode: 'closest' },
+            { responsive: true }
+        );
 
-	} else {
-		Plotly.purge(plotDiv);
-		const myChart = echarts.init(plotDiv);
-		const axes = [];
-		for (let i = 0; i < d_model; i++) {
-			axes.push({ dim: i * 2, name: `D${i} Pre` }, { dim: i * 2 + 1, name: `D${i} Post` });
-		}
-		const data = tokens.map((token, tIdx) => {
-			const isTarget = tIdx === nextWordIndex && isLastLayer;
-			const sourceWord = getTopWordOnly(start_h[tIdx]);
-			const destWord = getTopWordOnly(end_h[tIdx]);
-			return {
-				value: start_h[tIdx].flatMap((val, i) => [val, end_h[tIdx][i]]),
-				name: token,
-				source: sourceWord,
-				destination: destWord,
-				lineStyle: isTarget ? { width: 6, opacity: 1, color: '#ef4444' } : null
-			};
-		});
+    } else {
+        Plotly.purge(plotDiv);
+        const myChart = echarts.init(plotDiv);
+        const axes = [];
+        for (let i = 0; i < d_model; i++) {
+            axes.push({ dim: i * 2, name: `D${i} Pre` }, { dim: i * 2 + 1, name: `D${i} Post` });
+        }
+        const data = tokens.map((token, tIdx) => {
+            const isTarget = tIdx === nextWordIndex && isLastLayer;
+            const sourceWord = getTopWordOnly(start_h[tIdx]);
+            const destWord = getTopWordOnly(end_h[tIdx]);
+            return {
+                value: start_h[tIdx].flatMap((val, i) => [val, end_h[tIdx][i]]),
+                name: token,
+                source: sourceWord,
+                destination: destWord,
+                lineStyle: isTarget ? { width: 6, opacity: 1, color: '#ef4444' } : null
+            };
+        });
 
-		myChart.setOption({
-			title: { text: `Layer ${layerNum} Migration`, left: 'center' },
-			tooltip: { 
-				trigger: 'item', 
-				formatter: p => `From: <b>${p.data.source}</b><br/>To: <b>${p.data.destination}</b>` 
-			},
-			parallelAxis: axes,
-			series: [{
-				type: 'parallel', data: data,
-				lineStyle: { width: 1.5, opacity: 0.3, color: '#10b981' },
-				emphasis: { lineStyle: { width: 5, color: '#ef4444' } }
-			}]
-		});
+        myChart.setOption({
+            title: { text: `Layer ${layerNum} Migration`, left: 'center' },
+            tooltip: { 
+                trigger: 'item', 
+                formatter: p => `From: <b>${p.data.source}</b><br/>To: <b>${p.data.destination}</b>` 
+            },
+            parallelAxis: axes,
+            series: [{
+                type: 'parallel', data: data,
+                lineStyle: { width: 1.5, opacity: 0.3, color: '#10b981' },
+                emphasis: { lineStyle: { width: 5, color: '#ef4444' } }
+            }]
+        });
 
-		myChart.resize();
-	}
+        myChart.resize();
+    }
 
-	// --- CORRECTED VOCABULARY PROJECTION LOGIC ---
-	const getTopVocabRow = (h_vec) => {
-		if (!window.persistentEmbeddingSpace) return "???";
-		const vocabulary = Object.keys(window.persistentEmbeddingSpace);
-		const tempInput = document.getElementById('transformer-temperature');
-		const temperature = tempInput ? parseFloat(tempInput.value) : 1.0;
+    // --- CORRECTED VOCABULARY PROJECTION LOGIC ---
+    const getTopVocabList = (h_vec) => {
+        if (!window.persistentEmbeddingSpace) return [];
+        const vocabulary = Object.keys(window.persistentEmbeddingSpace);
+        const tempInput = document.getElementById('transformer-temperature');
+        const temperature = tempInput ? parseFloat(tempInput.value) : 1.0;
 
-		let scores = vocabulary.map(word => {
-			const w_vec = window.persistentEmbeddingSpace[word];
-			const dotProduct = h_vec.reduce((sum, val, i) => sum + val * (w_vec[i] || 0), 0);
-			return { word, score: dotProduct };
-		});
+        let scores = vocabulary.map(word => {
+            const w_vec = window.persistentEmbeddingSpace[word];
+            const dotProduct = h_vec.reduce((sum, val, i) => sum + val * (w_vec[i] || 0), 0);
+            return { word, score: dotProduct };
+        });
 
-		const scaledScores = scores.map(s => s.score / temperature);
-		const maxScore = Math.max(...scaledScores);
-		const exps = scaledScores.map(s => Math.exp(s - maxScore));
-		const sumExps = exps.reduce((a, b) => a + b, 0);
-		const probs = exps.map(e => e / sumExps);
+        const scaledScores = scores.map(s => s.score / temperature);
+        const maxScore = Math.max(...scaledScores);
+        const exps = scaledScores.map(s => Math.exp(s - maxScore));
+        const sumExps = exps.reduce((a, b) => a + b, 0);
+        const probs = exps.map(e => e / sumExps);
 
-		const sorted = scores.map((s, i) => ({ word: s.word, prob: probs[i] }))
-			.sort((a, b) => b.prob - a.prob);
+        return scores.map((s, i) => ({ 
+            word: s.word.replace(/#/g, '\\#').replace(/_/g, '\\_'), 
+            prob: probs[i] 
+        })).sort((a, b) => b.prob - a.prob).slice(0, d_model);
+    };
 
-		return sorted.slice(0, d_model).map(s => {
-			const safeWord = s.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
-			return `\\text{${safeWord} (${(s.prob * 100).toFixed(0)}\\%)}`;
-		}).join(' & ');
-	};
+    const toPMatrix = (matrix) => {
+        if (!Array.isArray(matrix) || !matrix.length) return '';
+        const rows = matrix.map(row =>
+            row.map(v => v.toFixed(nr_fixed)).join(' & ')
+        ).join(' \\\\ ');
+        return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
+    };
 
-	const toPMatrix = (matrix) => {
-		if (!Array.isArray(matrix) || !matrix.length) return '';
-		const rows = matrix.map(row =>
-			row.map(v => v.toFixed(nr_fixed)).join(' & ')
-		).join(' \\\\ ');
-		return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
-	};
+    // Construct the movement rows: for each token, pair the i-th top word of start with the i-th top word of end
+    const vocabRows = tokens.map((_, tIdx) => {
+        const fromList = getTopVocabList(start_h[tIdx]);
+        const toList = getTopVocabList(end_h[tIdx]);
+        
+        // Zip them together: w1 -> n1 & w2 -> n2 ...
+        return fromList.map((fromItem, i) => {
+            const toItem = toList[i] || {word: '???', prob: 0};
+            return `\\text{${fromItem.word} (${(fromItem.prob * 100).toFixed(0)}\\%)} \\rightarrow \\text{${toItem.word} (${(toItem.prob * 100).toFixed(0)}\\%)}`;
+        }).join(' & ');
+    }).join(' \\\\ ');
 
-	const vocabRows = h_after.map(h_row => getTopVocabRow(h_row)).join(' \\\\ ');
+    const latexString = `$$h_\\text{after} = ${toPMatrix(h_after)}, \\quad h_\\text{after} \\cdot W_\\text{vocab} \\approx \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
 
-	const latexString = `$$h_\\text{after} = ${toPMatrix(h_after)}, \\quad h_\\text{after} \\cdot W_\\text{vocab} \\approx \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
-
-	let latexDiv = document.getElementById(id + '-latex-debug');
-	if (!latexDiv) {
-		latexDiv = document.createElement('div');
-		latexDiv.id = id + '-latex-debug';
-		latexDiv.style.marginTop = '20px';
-		latexDiv.style.overflowX = 'auto';
-		latexDiv.style.fontSize = '0.8rem';
-		plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
-	}
-	latexDiv.innerHTML = latexString;
-	render_temml();
+    let latexDiv = document.getElementById(id + '-latex-debug');
+    if (!latexDiv) {
+        latexDiv = document.createElement('div');
+        latexDiv.id = id + '-latex-debug';
+        latexDiv.style.marginTop = '20px';
+        latexDiv.style.overflowX = 'auto';
+        latexDiv.style.fontSize = '0.8rem';
+        plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
+    }
+    latexDiv.innerHTML = latexString;
+    render_temml();
 }
 
 function render_positional_shift_plot(tokenStrings, d_model) {
