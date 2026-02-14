@@ -1655,90 +1655,92 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 	tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model);
 }
 
-/**
- * Refined Plotly Rendering: 3D-Compatible Legend
- * Cite: Based on Plotly.js 3D axes and colorbar documentation
- */
 function tlab_render_plotly(id, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex) {
-    const traces = [];
-    
-    tokens.forEach((token, i) => {
-        const t = tokens.length > 1 ? i / (tokens.length - 1) : 0;
-        const r = Math.round(59 + (16 - 59) * t);
-        const g = Math.round(130 + (185 - 130) * t);
-        const b = Math.round(246 + (129 - 246) * t);
-        const posColor = `rgb(${r}, ${g}, ${b})`;
+	const traces = [];
+	const is3D = d_model === 3;
 
-        const sourceWord = tlab_get_top_word_only(start_h[i]);
-        const destWord = tlab_get_top_word_only(end_h[i]);
-        const hoverLabel = `From '${sourceWord}' to '${destWord}', position ${i + 1}`;
+	tokens.forEach((token, i) => {
+		const t = tokens.length > 1 ? i / (tokens.length - 1) : 0;
+		const r = Math.round(59 + (16 - 59) * t);
+		const g = Math.round(130 + (185 - 130) * t);
+		const b = Math.round(246 + (129 - 246) * t);
+		const posColor = `rgb(${r}, ${g}, ${b})`;
 
-        const x = [start_h[i][0], end_h[i][0]];
-        const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
-        const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
+		const sourceWord = tlab_get_top_word_only(start_h[i]);
+		const destWord = tlab_get_top_word_only(end_h[i]);
+		const hoverLabel = `From '${sourceWord}' to '${destWord}', position ${i + 1}`;
 
-        if (d_model === 3) {
-            traces.push({
-                type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
-                line: { width: 4, color: posColor }, 
-                showlegend: false,
-                hovertemplate: `${hoverLabel}<extra></extra>`
-            });
-            traces.push({
-                type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
-                u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
-                sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-                colorscale: [[0, posColor], [1, posColor]], showscale: false,
-                hoverinfo: 'skip', showlegend: false
-            });
-        } else {
-            traces.push({
-                type: 'scatter', x: x, y: y, mode: 'lines+markers',
-                line: { width: 2, color: posColor },
-                marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: posColor },
-                showlegend: false,
-                hovertemplate: `${hoverLabel}<extra></extra>`
-            });
-        }
-    });
+		const x = [start_h[i][0], end_h[i][0]];
+		const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
 
-    // 4. Add Colorbar via a trace type that matches the plot dimensionality
-    // This prevents a 2D grid appearing on top of 3D plots.
-    traces.push({
-        type: d_model === 3 ? 'scatter3d' : 'scatter',
-        x: [null], y: [null], z: d_model === 3 ? [null] : undefined,
-        mode: 'markers',
-        showlegend: false,
-        marker: {
-            colorscale: [[0, 'rgb(59, 130, 246)'], [1, 'rgb(16, 185, 129)']],
-            cmin: 1,
-            cmax: tokens.length,
-            color: [1, tokens.length],
-            showscale: true,
-            colorbar: {
-                title: 'Token Position',
-                titleside: 'top',
-                thickness: 15,
-                len: 0.7
-            }
-        },
-        hoverinfo: 'none'
-    });
+		if (is3D) {
+			const z = [start_h[i][2], end_h[i][2]];
+			// 3D Line
+			traces.push({
+				type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
+				line: { width: 4, color: posColor }, 
+				showlegend: false,
+				hovertemplate: `${hoverLabel}<extra></extra>`
+			});
+			// 3D Cone
+			traces.push({
+				type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
+				u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
+				sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+				colorscale: [[0, posColor], [1, posColor]], showscale: false,
+				hoverinfo: 'skip', showlegend: false
+			});
+		} else {
+			// 2D Line and Arrow
+			traces.push({
+				type: 'scatter', x: x, y: y, mode: 'lines+markers',
+				line: { width: 2, color: posColor },
+				marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: posColor },
+				showlegend: false,
+				hovertemplate: `${hoverLabel}<extra></extra>`
+			});
+		}
+	});
 
-    const layout = {
-        title: `Layer ${layerNum}: Feature Migration`,
-        autosize: true,
-        hovermode: 'closest',
-        margin: { t: 50, b: 20, l: 20, r: 80 },
-        // Ensure background is clean
-        scene: d_model === 3 ? {
-            xaxis: { title: 'Dim 0' },
-            yaxis: { title: 'Dim 1' },
-            zaxis: { title: 'Dim 2' }
-        } : undefined
-    };
+	// Colorbar Trace - dimensionality must match exactly to avoid "b is undefined"
+	const colorbarTrace = {
+		type: is3D ? 'scatter3d' : 'scatter',
+		x: [null], y: [null],
+		mode: 'markers',
+		showlegend: false,
+		marker: {
+			colorscale: [[0, 'rgb(59, 130, 246)'], [1, 'rgb(16, 185, 129)']],
+			cmin: 1, cmax: tokens.length, color: [1, tokens.length],
+			showscale: true,
+			colorbar: { title: 'Position', thickness: 15, len: 0.7 }
+		},
+		hoverinfo: 'none'
+	};
+	if (is3D) colorbarTrace.z = [null];
+	traces.push(colorbarTrace);
 
-    Plotly.newPlot(id, traces, layout, { responsive: true });
+	// Separate Layouts to prevent 3D properties from breaking 2D rendering
+	const commonLayout = {
+		title: `Layer ${layerNum}: Feature Migration`,
+		autosize: true,
+		hovermode: 'closest',
+		margin: { t: 50, b: 20, l: 20, r: 80 }
+	};
+
+	const layout = is3D ? {
+		...commonLayout,
+		scene: {
+			xaxis: { title: 'Dim 0' },
+			yaxis: { title: 'Dim 1' },
+			zaxis: { title: 'Dim 2' }
+		}
+	} : {
+		...commonLayout,
+		xaxis: { title: 'Dim 0' },
+		yaxis: { title: 'Dim 1' }
+	};
+
+	Plotly.newPlot(id, traces, layout, { responsive: true });
 }
 
 /**
