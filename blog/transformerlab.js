@@ -1961,9 +1961,7 @@ function syncTransformerSettings(trigger) {
 	document.getElementById('heads-val').innerText = headSlider.value;
 
 	// 4. Restart Engine
-	if (typeof run_transformer_demo === 'function') {
-		run_transformer_demo();
-	}
+	run_transformer_demo();
 }
 
 /**
