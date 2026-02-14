@@ -7,6 +7,7 @@
 const nr_fixed = 4;
 const posEmbedScalar = 1;
 let trainingDebounceTimer;
+const epsilon = 1e-6;
 
 window.addEventListener('DOMContentLoaded', (event) => {
 	document.getElementById("ifscalfactornotone").style.display =  posEmbedScalar == 1 ? 'none' : 'block'
@@ -695,9 +696,6 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 		const inputIds = tokens.slice(startIdx, startIdx + thiscontextSize)
 			.map(t => vars.vocab_map.indexOf(t));
 
-		// ── KEY FIX: targets for EVERY position in the window ──
-		// Position 0 predicts token at startIdx+1,
-		// Position 1 predicts token at startIdx+2, … etc.
 		const targetIds = tokens.slice(startIdx + 1, startIdx + thiscontextSize + 1)
 			.map(t => vars.vocab_map.indexOf(t));
 
@@ -738,7 +736,6 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 			x = tf.add(x, ffn);
 		}
 
-		// ── KEY FIX: loss at ALL positions, not just the last ──
 		const logits = tf.matMul(x, vars.embeddings.transpose()); // [seqLen, vocabSize]
 		const labels = tf.oneHot(tf.tensor1d(targetIds, 'int32'), vars.vocab_map.length);
 		losses.push(tf.losses.softmaxCrossEntropy(labels, logits));
@@ -772,7 +769,6 @@ async function convert_tensors_to_weights(vars) {
 				value: (await layer.wv.array()),
 				output: (await layer.wo.array())
 			},
-			// CRITICAL FIX: Explicitly await FFN and Norm 2 parameters
 			W1: await layer.w1.array(),
 			b1: await layer.b1.array(),
 			W2: await layer.w2.array(),
@@ -956,7 +952,6 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 	render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
-	// ── FIX: Clear stale migration plots & registry from previous runs ──
 	const migrationContainer = document.getElementById('transformer-migration-plots-container');
 	if (migrationContainer) {
 		migrationContainer.innerHTML = '';
@@ -989,17 +984,12 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 		const h1 = h0.map((row, i) => row.map((val, j) => val + projected[i][j]));
 
-		if (typeof render_h1_logic === "function") {
-			// ── FIX: Pass normH0 for correct Pre-LN formula display ──
-			render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
-		}
+		render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
 
 		const h2 = run_ffn_block(h1, weights[0]);
 
-		// ── FIX: Create migration plot for layer 0 here ──
 		create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2);
 
-		// ── FIX: Start deep layers from 1, not 0, to avoid double-processing ──
 		run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1);
 	}
 
@@ -1142,9 +1132,7 @@ This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Whe
 	container.innerHTML = calculationHtml + html;
 
 	// Trigger TeMML rendering for the math formulas
-	if (typeof render_temml === "function") {
-		render_temml();
-	}
+	render_temml();
 }
 
 window.appendToken = (token) => {
@@ -1387,13 +1375,12 @@ function updateConcatenationDisplay(headData, tokens) {
 }
 
 function calculateLayerNorm(matrix, gamma, beta) {
-	const eps = 1e-6; // FIX: was 1e-5, now matches tf_layer_norm used during training
 	return matrix.map(row => {
 		const mean = row.reduce((a, b) => a + b, 0) / row.length;
 		const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
 
 		return row.map((val, i) => {
-			const standardized = (val - mean) / Math.sqrt(variance + eps);
+			const standardized = (val - mean) / Math.sqrt(variance + epsilon);
 			return standardized * gamma[i] + beta[i];
 		});
 	});
@@ -1499,7 +1486,6 @@ function run_ffn_block(h1, params = {}) {
     // Residual: h2 = h1 + FFN(normed_h1), no post-norm
     const h2 = h1.map((row, i) => row.map((val, j) => val + out_FFN[i][j]));
 
-    // ── FIX: Pass normed_h1 so the render function can display Pre-LN correctly ──
     render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2);
 
     return h2;
@@ -1513,26 +1499,14 @@ function run_ffn_block(h1, params = {}) {
 /**
  * Goal: Show FFN LayerNorm parameters
  */
-/**
- * Goal: Full FFN derivation with concrete LayerNorm weights
- * Origin: Vaswani et al. (2017)
- */
-/**
- * FIX: Updated to display Pre-LN architecture (matching actual computation).
- * Old version showed Post-LN: h2 = h1 + (γ ⊙ standardize(FFN_output) + β)
- * New version shows Pre-LN:   normed = LN(h1), FFN(normed), h2 = h1 + FFN_output
- *
- * NEW SIGNATURE: Added normed_h1 as second parameter.
- */
 function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta) {
 	const rawMP = (m) => `\\begin{pmatrix} ${m.map(r => r.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
 	const rawVP = (v) => `\\begin{pmatrix} ${v.map(val => val.toFixed(nr_fixed)).join(' & ')} \\end{pmatrix}`;
 
-	// ── FIX: Step 1 now shows the Pre-LN normalization + first linear layer ──
 	document.getElementById('ffn-step-1').innerHTML = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
 	<p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1$ before FFN</p>
-	$$ \\text{Norm}(h_1) = \\gamma_{\\text{ffn}} \\odot \\frac{h_1 - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta_{\\text{ffn}} $$
+	$$ \\text{Norm}(h_1) = \\gamma_{\\text{ffn}} \\odot \\frac{h_1 - \\underbrace{\\mu}_{\\text{Mean of } h_1}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_1} + \\underbrace{${epsilon}}_\\epsilon}} + \\beta_{\\text{ffn}} $$
 	<div style="overflow-x:auto;">
 	    $$ \\underbrace{${rawMP(normed_h1)}}_{\\text{Norm}\\left(h_1\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${rawMP(h1)}}_{h_1},\\; \\underbrace{${rawVP(gamma)}}_\\gamma,\\; \\underbrace{${rawVP(beta)}}_\\beta\\right) $$
 		<br>
@@ -1545,7 +1519,6 @@ function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     $$ \\text{out}_{L2} = \\text{out}_{L1} \\cdot W_2 + b_2 = \\underbrace{${rawMP(out_FFN)}}_{\\text{Out}_\\text{FFN}} $$
     `;
 
-	// ── FIX: Step 3 now shows simple residual (no post-norm on FFN output) ──
 	document.getElementById('ffn-step-3').innerHTML = `
     <div style="margin-bottom:10px;">
 	<p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
@@ -1562,11 +1535,6 @@ function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 /**
  * Goal: Unified N-Layer Trajectory Plotting
  * Logic: Every iteration i maps to Layer i+1 Plot
- */
-/**
- * Goal: Unified N-Layer Trajectory Plotting
- * FIX: Added startLayer parameter to avoid re-processing layers
- *      already handled by the explicit visualization block.
  */
 function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights, startLayer = 0) {
 	let h_current = h_initial;
@@ -1917,8 +1885,8 @@ function calculate_batched_loss(tokens, weights, d_model, n_layers, batchSize = 
 function tf_layer_norm(x, gamma, beta) {
 	return tf.tidy(() => {
 		const { mean, variance } = tf.moments(x, -1, true);
-		const epsilon = tf.scalar(1e-6);
-		const normalized = x.sub(mean).div(tf.sqrt(variance.add(epsilon)));
+		const tf_epsilon = tf.scalar(epsilon);
+		const normalized = x.sub(mean).div(tf.sqrt(variance.add(tf_epsilon)));
 		return normalized.mul(gamma).add(beta);
 	});
 }
@@ -2132,9 +2100,7 @@ window.calculate_vector_math = function() {
 	`;
 
 		// Trigger LaTeX render
-		if (typeof render_temml === "function") {
-			render_temml();
-		}
+		render_temml();
 	} catch(e) {
 		console.error("Vector Math Parse Error:", e);
 		resDiv.innerHTML = "<span style='color: #ef4444;'>Syntax Error. Please check your equation formatting.</span>";
