@@ -1929,7 +1929,7 @@ function syncTransformerSettings(trigger) {
 	document.getElementById('heads-val').innerText = headSlider.value;
 
 	// 4. Restart Engine
-	run_transformer_demo();
+	debounced_run_transformer_demo();
 }
 
 /**
@@ -2111,7 +2111,7 @@ function debounced_run_transformer_demo(activeId) {
 	clearTimeout(trainingDebounceTimer);
 	trainingDebounceTimer = setTimeout(() => {
 		run_transformer_demo(activeId);
-	}, 600); // 300ms delay
+	}, 600);
 }
 
 async function loadTransformerModule () {

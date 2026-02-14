@@ -45,7 +45,7 @@ In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers t
 		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">3</span>
 		<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
 		<input type="range" id="transformer-depth" min="1" max="96" value="3"
-			style="width: 100%;" oninput="document.getElementById('depth-val').innerText = this.value; run_transformer_demo();">
+			style="width: 100%;" oninput="document.getElementById('depth-val').innerText = this.value; debounced_run_transformer_demo();">
 	</div>
 
 	<div>
@@ -55,12 +55,12 @@ In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers t
 		    <i>Reason:</i> Low values ($T < 1$) force the model to be deterministic; high values ($T > 1$) increase diversity by making unlikely words more probable.
 		</p>
 		<span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span>
-		<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; run_transformer_demo();">
+		<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; debounced_run_transformer_demo();">
 	</div>
 
 	<div>
 	    <label style="font-weight: bold;">Tokenizer: </label>
-	    <select id="transformer-tokenizer-type" style="padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1;" onchange="run_transformer_demo()">
+	    <select id="transformer-tokenizer-type" style="padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1;" onchange="debounced_run_transformer_demo()">
 		<option value="regex" selected>Words (Non-Alphanumeric Split)</option>
 		<option value="bpe">Byte-Pair Encoding (BPE)</option>
 	    </select>
