@@ -1656,86 +1656,140 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 }
 
 /**
- * Sub-function: Plotly (2D/3D)
+ * Refined Plotly Rendering: 3D-Compatible Legend
+ * Cite: Based on Plotly.js 3D axes and colorbar documentation
  */
 function tlab_render_plotly(id, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex) {
-	const traces = [];
-	tokens.forEach((token, i) => {
-		const isTarget = i === nextWordIndex && isLastLayer;
-		const color = isTarget ? '#ef4444' : '#10b981';
+    const traces = [];
+    
+    tokens.forEach((token, i) => {
+        const t = tokens.length > 1 ? i / (tokens.length - 1) : 0;
+        const r = Math.round(59 + (16 - 59) * t);
+        const g = Math.round(130 + (185 - 130) * t);
+        const b = Math.round(246 + (129 - 246) * t);
+        const posColor = `rgb(${r}, ${g}, ${b})`;
 
-		const x = [start_h[i][0], end_h[i][0]];
-		const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
-		const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
+        const sourceWord = tlab_get_top_word_only(start_h[i]);
+        const destWord = tlab_get_top_word_only(end_h[i]);
+        const hoverLabel = `From '${sourceWord}' to '${destWord}', position ${i + 1}`;
 
-		const sourceWord = tlab_get_top_word_only(start_h[i]);
-		const destWord = tlab_get_top_word_only(end_h[i]);
-		const hoverDescription = `From <b>${sourceWord}</b> to <b>${destWord}</b>`;
+        const x = [start_h[i][0], end_h[i][0]];
+        const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
+        const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
 
-		if (d_model === 3) {
-			traces.push({
-				type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
-				line: { width: isTarget ? 8 : 4, color: color }, 
-				name: token, showlegend: false, hoverinfo: 'text', text: hoverDescription
-			});
-			traces.push({
-				type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
-				u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
-				sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-				colorscale: [[0, color], [1, color]], showscale: false,
-				hoverinfo: 'text', text: `Target: ${destWord}`
-			});
-		} else {
-			traces.push({
-				type: 'scatter', x: x, y: y, mode: 'lines+markers',
-				name: token, line: { width: isTarget ? 4 : 2, color: color },
-				marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: color },
-				hoverinfo: 'text', text: [sourceWord, hoverDescription] 
-			});
-		}
-	});
+        if (d_model === 3) {
+            traces.push({
+                type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
+                line: { width: 4, color: posColor }, 
+                showlegend: false,
+                hovertemplate: `${hoverLabel}<extra></extra>`
+            });
+            traces.push({
+                type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
+                u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
+                sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+                colorscale: [[0, posColor], [1, posColor]], showscale: false,
+                hoverinfo: 'skip', showlegend: false
+            });
+        } else {
+            traces.push({
+                type: 'scatter', x: x, y: y, mode: 'lines+markers',
+                line: { width: 2, color: posColor },
+                marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: posColor },
+                showlegend: false,
+                hovertemplate: `${hoverLabel}<extra></extra>`
+            });
+        }
+    });
 
-	Plotly.newPlot(id, traces,
-		{ title: `Layer ${layerNum}: Feature Migration`, autosize: true, hovermode: 'closest' },
-		{ responsive: true }
-	);
+    // 4. Add Colorbar via a trace type that matches the plot dimensionality
+    // This prevents a 2D grid appearing on top of 3D plots.
+    traces.push({
+        type: d_model === 3 ? 'scatter3d' : 'scatter',
+        x: [null], y: [null], z: d_model === 3 ? [null] : undefined,
+        mode: 'markers',
+        showlegend: false,
+        marker: {
+            colorscale: [[0, 'rgb(59, 130, 246)'], [1, 'rgb(16, 185, 129)']],
+            cmin: 1,
+            cmax: tokens.length,
+            color: [1, tokens.length],
+            showscale: true,
+            colorbar: {
+                title: 'Token Position',
+                titleside: 'top',
+                thickness: 15,
+                len: 0.7
+            }
+        },
+        hoverinfo: 'none'
+    });
+
+    const layout = {
+        title: `Layer ${layerNum}: Feature Migration`,
+        autosize: true,
+        hovermode: 'closest',
+        margin: { t: 50, b: 20, l: 20, r: 80 },
+        // Ensure background is clean
+        scene: d_model === 3 ? {
+            xaxis: { title: 'Dim 0' },
+            yaxis: { title: 'Dim 1' },
+            zaxis: { title: 'Dim 2' }
+        } : undefined
+    };
+
+    Plotly.newPlot(id, traces, layout, { responsive: true });
 }
 
 /**
- * Sub-function: ECharts (Parallel Coordinates)
+ * Sub-function: ECharts with Position Visual Map
+ * Cite: Based on Apache ECharts visualMap and parallel coordinates
  */
 function tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex) {
-	Plotly.purge(plotDiv);
-	const myChart = echarts.init(plotDiv);
-	const axes = [];
-	for (let i = 0; i < d_model; i++) {
-		axes.push({ dim: i * 2, name: `D${i} Pre` }, { dim: i * 2 + 1, name: `D${i} Post` });
-	}
-	const data = tokens.map((token, tIdx) => {
-		const isTarget = tIdx === nextWordIndex && isLastLayer;
-		return {
-			value: start_h[tIdx].flatMap((val, i) => [val, end_h[tIdx][i]]),
-			name: token,
-			source: tlab_get_top_word_only(start_h[tIdx]),
-			destination: tlab_get_top_word_only(end_h[tIdx]),
-			lineStyle: isTarget ? { width: 6, opacity: 1, color: '#ef4444' } : null
-		};
-	});
+    const myChart = echarts.init(plotDiv);
+    
+    const axes = Array.from({ length: d_model }, (_, i) => ({
+        dim: i, name: `Dim ${i}`
+    }));
 
-	myChart.setOption({
-		title: { text: `Layer ${layerNum} Migration`, left: 'center' },
-		tooltip: { 
-			trigger: 'item', 
-			formatter: p => `From: <b>${p.data.source}</b><br/>To: <b>${p.data.destination}</b>` 
-		},
-		parallelAxis: axes,
-		series: [{
-			type: 'parallel', data: data,
-			lineStyle: { width: 1.5, opacity: 0.3, color: '#10b981' },
-			emphasis: { lineStyle: { width: 5, color: '#ef4444' } }
-		}]
-	});
-	myChart.resize();
+    // Prepare data with position index as the last dimension for visualMap
+    const data = tokens.map((token, i) => {
+        const sourceWord = tlab_get_top_word_only(start_h[i]);
+        const destWord = tlab_get_top_word_only(end_h[i]);
+        return {
+            value: [...end_h[i], i + 1], // Attach position as an extra dimension
+            name: token,
+            source: sourceWord,
+            destination: destWord,
+            pos: i + 1
+        };
+    });
+
+    myChart.setOption({
+        title: { text: `Layer ${layerNum} Migration`, left: 'center' },
+        tooltip: { 
+            trigger: 'item', 
+            formatter: p => `From '${p.data.source}' to '${p.data.destination}', position ${p.data.pos}` 
+        },
+        // 4. Color -> Position Gradient Legend
+        visualMap: {
+            type: 'continuous',
+            min: 1,
+            max: tokens.length,
+            dimension: d_model, // Use the position dimension we attached above
+            orient: 'horizontal',
+            bottom: 10,
+            left: 'center',
+            text: ['End Position', 'Start Position'],
+            inRange: { color: ['rgb(59, 130, 246)', 'rgb(16, 185, 129)'] }
+        },
+        parallelAxis: axes,
+        series: [{
+            type: 'parallel',
+            data: data,
+            lineStyle: { width: 2, opacity: 0.7 }
+        }]
+    });
 }
 
 /**
