@@ -26,8 +26,6 @@ Individual neurons are often \citealternativetitle{monosemanticity}, meaning the
 
 ### Why Superposition Happens
 Research suggests that models use **Superposition** to represent more features than they have dimensions (neurons). By assigning concepts to nearly orthogonal directions in high-dimensional space, the model can store a massive "dictionary" of features across a smaller number of physical neurons.
-
-* **Modern AI Foundational Paper:** Elhage, N., et al. (2022). *Software for the Mind: Superposition, Polysemanticity, and Dictionary Learning*. **Anthropic**.
 </div>
 
 <div id="transformer_config">
