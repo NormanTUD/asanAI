@@ -77,8 +77,6 @@ In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers t
 </div>
 
 <div style="background: #f0fdf4; padding: 15px; border: 1px solid #10b981; border-radius: 8px; margin-top: 15px; margin-bottom: 15px;">
-    <p>Training Configuration</p>
-
     <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Epochs:</label>
