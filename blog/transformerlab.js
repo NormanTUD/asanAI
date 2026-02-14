@@ -2119,7 +2119,7 @@ function tlab_render_trajectory_plot(d_model) {
 	};
 
 	const layout = {
-		title: `<b>Token Trajectory: Embedding → Position → Layers</b>`,
+		title: `<b>Token Trajectory from Embedding → Embedding + Position through the Layers</b>`,
 		scene: {
 			xaxis: axisTemplate, yaxis: axisTemplate, zaxis: axisTemplate,
 			camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
