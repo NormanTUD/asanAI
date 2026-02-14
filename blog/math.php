@@ -637,4 +637,63 @@ We can visualize these relationships using a square diagram. It shows that there
 ?>
 </center>
 
+<div class="md">
+## The Hadamard Product ($\odot$)
+
+While standard matrix multiplication follows the "row-by-column" rule, the **Hadamard Product** (also known as the *element-wise product*) is much more straightforward. It takes two matrices or vectors of the **same dimensions** and multiplies the elements that occupy the same position.
+
+In the context of Deep Learning, the $\odot$ symbol is ubiquitous. It is used in **Layer Normalization** to scale normalized values by a learnable parameter $\gamma$, and in **Gating Mechanisms** (like LSTMs or GRUs) to decide which information should pass through a "gate."
+
+### Mathematical Definition
+For two vectors $\vec{a}$ and $\vec{b}$ of length $n$, the product is defined as:
+$$\vec{a} \odot \vec{b} = \begin{pmatrix} a_1 \cdot b_1 \\ a_2 \cdot b_2 \\ \vdots \\ a_n \cdot b_n \end{pmatrix}$$
+
+
+
+### Interactive Experiment
+Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting vector is calculated element-by-element.
+</div>
+
+<div style="background: #ffffff; padding: 25px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin: 20px 0;">
+    <div style="display: flex; justify-content: space-around; align-items: center; gap: 15px; flex-wrap: wrap;">
+        <div style="text-align: center;">
+            <strong style="color: #64748b;">Vector $\vec{a}$</strong><br>
+            <input type="number" id="h-a1" value="3" style="width: 60px; margin: 4px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;"><br>
+            <input type="number" id="h-a2" value="-2" style="width: 60px; margin: 4px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;"><br>
+            <input type="number" id="h-a3" value="5" style="width: 60px; margin: 4px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;">
+        </div>
+        <div style="font-size: 2rem; color: #94a3b8;">$\odot$</div>
+        <div style="text-align: center;">
+            <strong style="color: #64748b;">Vector $\vec{b}$</strong><br>
+            <input type="number" id="h-b1" value="2" step="0.5" style="width: 60px; margin: 4px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;"><br>
+            <input type="number" id="h-b2" value="0.5" step="0.5" style="width: 60px; margin: 4px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;"><br>
+            <input type="number" id="h-b3" value="10" step="0.5" style="width: 60px; margin: 4px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;">
+        </div>
+        <div style="font-size: 2rem; color: #94a3b8;">$=$</div>
+        <div id="hadamard-display" style="min-width: 180px; background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px dashed #cbd5e1; text-align: center;">
+            </div>
+    </div>
+</div>
+
+<script>
+</script>
+
+<div class="md">
+### Implementation in Python (NumPy)
+In modern numerical computing, the standard multiplication operator `*` is overloaded to perform the Hadamard product by default on arrays.
+
+<pre><code class="language-python">import numpy as np
+
+# Define two vectors (rank-1 tensors)
+a = np.array([3, -2, 5])
+b = np.array([2, 0.5, 10])
+
+# The '*' operator performs element-wise multiplication
+result = a * b
+
+print(f"Hadamard Product: {result}")
+# Output: [ 6. -1. 50.]
+</code></pre>
+</div>
+
 TODO Sine Cosine

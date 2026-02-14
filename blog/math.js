@@ -10,6 +10,15 @@ function initDataBasics() {
 	initLogPlot();
 	initInteractiveVectorSpaces();
 	initCompositionPlot();
+	initHadamard();
+}
+
+function initHadamard() {
+
+	['h-a1', 'h-a2', 'h-a3', 'h-b1', 'h-b2', 'h-b3'].forEach(id => {
+		document.getElementById(id).addEventListener('input', runHadamardExperiment);
+	});
+	runHadamardExperiment();
 }
 
 function initCompositionPlot() {
@@ -553,6 +562,23 @@ function initInteractiveVectorSpaces() {
 	// Initial Renders
 	draw1D(); draw2D(); draw3D(); draw4D();
 }
+
+function runHadamardExperiment() {
+	const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
+
+	const a = [getVal('h-a1'), getVal('h-a2'), getVal('h-a3')];
+	const b = [getVal('h-b1'), getVal('h-b2'), getVal('h-b3')];
+	const res = a.map((val, i) => (val * b[i]).toFixed(2));
+
+	const display = document.getElementById('hadamard-display');
+	// Generating the LaTeX string for the result
+	display.innerHTML = `$$ \\begin{pmatrix} ${a[0]} \\cdot ${b[0]} \\\\ ${a[1]} \\cdot ${b[1]} \\\\ ${a[2]} \\cdot ${b[2]} \\end{pmatrix} = \\begin{pmatrix} ${res[0]} \\\\ ${res[1]} \\\\ ${res[2]} \\end{pmatrix} $$`;
+
+	// Trigger Temml/KaTeX re-render if available in the environment
+	refreshMath();
+	render_temml();
+}
+
 
 async function loadMathLabModule() {
 	updateLoadingStatus("Loading section about Math...");
