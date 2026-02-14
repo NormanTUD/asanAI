@@ -1879,9 +1879,9 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 	plotDiv.style.width = '100%';                                           
 
 	const migrationContainers = document.querySelectorAll('[id^="migration-plot-"]');
-	const isLastLayer = migrationContainers.length > 0 &&                   
-		migrationContainers[migrationContainers.length - 1].id === id;  
-	const nextWordIndex = tokens.length - 1;                                                
+	const isLastLayer = migrationContainers.length > 0 &&
+		migrationContainers[migrationContainers.length - 1].id === id;
+	const nextWordIndex = tokens.length - 1;
 
 	if (d_model <= 3) {                                                     
 		tlab_render_plotly(id, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex);                                                                                                                                              
