@@ -1506,7 +1506,7 @@ function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	document.getElementById('ffn-step-1').innerHTML = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
 	<p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1$ before FFN</p>
-	$$ \\text{Norm}(h_1) = \\underbrace{\\gamma}_{\\text{Learnable Parameter}}_{\\text{ffn}} \\odot \\frac{h_1 - \\underbrace{\\mu}_{\\text{Mean of } h_1}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_1} + \\underbrace{${epsilon}}_\\epsilon}} + \\beta_{\\text{ffn}} $$
+	$$ \\text{Norm}(h_1) = \\underbrace{\\gamma_{\\text{ffn}}}_{\\text{Learnable Parameter}} \\odot \\frac{h_1 - \\underbrace{\\mu}_{\\text{Mean of } h_1}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_1} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}}_{\\text{Learnable Parameter}} $$
 	<div style="overflow-x:auto;">
 	    $$ \\underbrace{${rawMP(normed_h1)}}_{\\text{Norm}\\left(h_1\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${rawMP(h1)}}_{h_1},\\; \\underbrace{${rawVP(gamma)}}_\\gamma,\\; \\underbrace{${rawVP(beta)}}_\\beta\\right) $$
 		<br>
