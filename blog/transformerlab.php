@@ -361,6 +361,12 @@ The following plots visualize how each layer "nudges" the token vectors. Each ar
 
 <div class="md">
 ## 10. From Hidden States to Probabilities
+
+<div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 12">
+Everything is in flux.
+</div>
+
+
 After passing through $N$ layers, we reach the final hidden state, **$h_{\text{final}}$**. To turn this into a word, we project it against the entire vocabulary:
 
 $$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
