@@ -1944,7 +1944,7 @@ function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, 
 	}).join(' \\\\ ');
 
 	// Restored h_after and added probability mapping
-	const latexString = `$$h_\\text{after} = ${toPMatrixColored(h_after)}, \\quad \\approx \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+	const latexString = `$$h_\\text{after} = ${toPMatrixColored(h_after)}, \\quad h_\\text{after} \\cdot W_\\text{vocab} \\approx \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
 
 	let latexDiv = document.getElementById(id + '-latex-debug');
 	if (!latexDiv) {
