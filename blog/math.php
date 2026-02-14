@@ -677,25 +677,4 @@ Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting ve
     </div>
 </div>
 
-<script>
-</script>
-
-<div class="md">
-### Implementation in Python (NumPy)
-In modern numerical computing, the standard multiplication operator `*` is overloaded to perform the Hadamard product by default on arrays.
-
-<pre><code class="language-python">import numpy as np
-
-# Define two vectors (rank-1 tensors)
-a = np.array([3, -2, 5])
-b = np.array([2, 0.5, 10])
-
-# The '*' operator performs element-wise multiplication
-result = a * b
-
-print(f"Hadamard Product: {result}")
-# Output: [ 6. -1. 50.]
-</code></pre>
-</div>
-
 TODO Sine Cosine
