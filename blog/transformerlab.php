@@ -19,7 +19,7 @@ Beyond the rejection of the \citealternativetitle{grandmotherneuron} (a term coi
 The meaning of, for example, "cat", is not stored in a single "cat neuron." Instead, a concept is a **direction** in a high-dimensional vector space. To represent "cat," the model might activate 50 or more different neurons to varying degrees. If you change even one of those activations, the "meaning" shifts slightly (perhaps from "cat" to "kitten").
 
 ### 2. Polysemanticity (The Multi-Tasking Neuron)
-Individual neurons are often **polysemantic**, meaning they respond to multiple, unrelated features. A single neuron for example might fire for:
+Individual neurons are often \citealternativetitle{monosemanticity}, meaning they respond to multiple, unrelated features. A single neuron for example might fire for:
 * Text related to the Golden Gate Bridge.
 * Mathematical formulas involving integers.
 * The concept of "reliability."
@@ -27,10 +27,7 @@ Individual neurons are often **polysemantic**, meaning they respond to multiple,
 ### Why Superposition Happens
 Research suggests that models use **Superposition** to represent more features than they have dimensions (neurons). By assigning concepts to nearly orthogonal directions in high-dimensional space, the model can store a massive "dictionary" of features across a smaller number of physical neurons.
 
-### Sources & References
-* **Historical Critique:** Lettvin, J. Y. (1969). *The Grandmother Cell*. (Original critique of localized encoding in neuroscience).
 * **Modern AI Foundational Paper:** Elhage, N., et al. (2022). *Software for the Mind: Superposition, Polysemanticity, and Dictionary Learning*. **Anthropic**.
-* **Empirical Evidence:** Bricken, T., et al. (2023). *Towards Monosemanticity: Decomposing Language Models with Dictionary Learning*. **Anthropic**. (This paper demonstrates how to "untangle" polysemantic neurons using Sparse Autoencoders).
 </div>
 
 <div id="transformer_config">

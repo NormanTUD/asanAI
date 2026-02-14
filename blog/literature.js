@@ -1,4 +1,11 @@
 window.bibData = {
+	"monosemanticity": {
+		url: "https://transformer-circuits.pub/2023/monosemantic-features",
+		title: "Towards Monosemanticity: Decomposing Language Models With Dictionary Learning",
+		author: " Trenton Bricken, Adly Templeton, Joshua Batson, Brian Chen, Adam Jermyn, Tom Conerly, Nicholas L Turner, Cem Anil, Carson Denison, Amanda Askell, Robert Lasenby, Yifan Wu, Shauna Kravec, Nicholas Schiefer, Tim Maxwell, Nicholas Joseph, Alex Tamkin, Karina Nguyen, Brayden McLean, Josiah E Burke, Tristan Hume, Shan Carter, Tom Henighan, Chris Olah ",
+		year: 2023,
+		alternativetitle: "polysemantic"
+	},
 	"hadamardproduct": {
 		author: "Jacques Hadamard",
 		year: 1892,
