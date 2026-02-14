@@ -1059,12 +1059,12 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 To get from the long matrix to the single vector, the model performs a **Terminal Selection**.
 
 If we represent the output of the last transformer block as a matrix $H$:
-$$H = \\begin{bmatrix}
+$$H = \\begin{pmatrix}
 h_0 \\\\
 h_1 \\\\
 \\vdots \\\\
 h_{n-1}
-\\end{bmatrix} \\in \\mathbb{R}^{n \\times d_{\\text{model}}}$$
+\\end{pmatrix} \\in \\mathbb{R}^{n \\times d_{\\text{model}}}$$
 
 The "Migration Map" prints the entire flattened matrix because it wants to show the path of every word. However, the \`render_final_projection\` function is only interested in the <b>prediction</b>:
 
