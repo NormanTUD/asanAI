@@ -50,6 +50,10 @@ In classical neuroscience, the \citealternativetitle{grandmotherneuron} refers t
 
 	<div>
 		<label style="font-weight: bold;">Temperature ($T$): </label>
+		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+		    <b>Effect:</b> Controls the "sharpness" of the probability distribution.
+		    <i>Reason:</i> Low values ($T < 1$) force the model to be deterministic; high values ($T > 1$) increase diversity by making unlikely words more probable.
+		</p>
 		<span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span>
 		<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; run_transformer_demo();">
 	</div>
