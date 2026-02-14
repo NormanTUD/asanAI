@@ -1643,6 +1643,23 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 		migrationContainers[migrationContainers.length - 1].id === id;
 	const nextWordIndex = tokens.length - 1; 
 
+	// Helper to get just the top word name without LaTeX for tooltips
+	const getTopWordOnly = (h_vec) => {
+		if (!window.persistentEmbeddingSpace) return "???";
+		const vocabulary = Object.keys(window.persistentEmbeddingSpace);
+		let maxDot = -Infinity;
+		let bestWord = "???";
+		vocabulary.forEach(word => {
+			const w_vec = window.persistentEmbeddingSpace[word];
+			const dotProduct = h_vec.reduce((sum, val, i) => sum + val * (w_vec[i] || 0), 0);
+			if (dotProduct > maxDot) {
+				maxDot = dotProduct;
+				bestWord = word;
+			}
+		});
+		return bestWord;
+	};
+
 	if (d_model <= 3) {
 		const traces = [];
 		tokens.forEach((token, i) => {
@@ -1650,31 +1667,44 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 			const color = isTarget ? '#ef4444' : '#10b981';
 
 			const x = [start_h[i][0], end_h[i][0]];
-			const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];                                                                                                                                                                                                                                                                            
+			const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
 			const z = d_model === 3 ? [start_h[i][2], end_h[i][2]] : [0, 0];
+
+			// Decode both start and end vectors
+			const sourceWord = getTopWordOnly(start_h[i]);
+			const destWord = getTopWordOnly(end_h[i]);
+			const hoverDescription = `From <b>${sourceWord}</b> to <b>${destWord}</b>`;
 
 			if (d_model === 3) {
 				traces.push({
 					type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
-					line: { width: isTarget ? 8 : 4, color: color }, name: token, showlegend: false
+					line: { width: isTarget ? 8 : 4, color: color }, 
+					name: token, 
+					showlegend: false,
+					hoverinfo: 'text',
+					text: hoverDescription
 				});
 				traces.push({
 					type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
 					u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
 					sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-					colorscale: [[0, color], [1, color]], showscale: false
+					colorscale: [[0, color], [1, color]], showscale: false,
+					hoverinfo: 'text',
+					text: `Target: ${destWord}`
 				});
 			} else {
 				traces.push({
 					type: 'scatter', x: x, y: y, mode: 'lines+markers',
 					name: token, line: { width: isTarget ? 4 : 2, color: color },
-					marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: color }
+					marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: color },
+					hoverinfo: 'text',
+					text: [sourceWord, hoverDescription] 
 				});
 			}
 		});
 
 		Plotly.newPlot(id, traces,
-			{ title: `Layer ${layerNum}: Feature Migration`, autosize: true },
+			{ title: `Layer ${layerNum}: Feature Migration`, autosize: true, hovermode: 'closest' },
 			{ responsive: true }
 		);
 
@@ -1687,16 +1717,23 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 		}
 		const data = tokens.map((token, tIdx) => {
 			const isTarget = tIdx === nextWordIndex && isLastLayer;
+			const sourceWord = getTopWordOnly(start_h[tIdx]);
+			const destWord = getTopWordOnly(end_h[tIdx]);
 			return {
 				value: start_h[tIdx].flatMap((val, i) => [val, end_h[tIdx][i]]),
 				name: token,
+				source: sourceWord,
+				destination: destWord,
 				lineStyle: isTarget ? { width: 6, opacity: 1, color: '#ef4444' } : null
 			};
 		});
 
 		myChart.setOption({
 			title: { text: `Layer ${layerNum} Migration`, left: 'center' },
-			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+			tooltip: { 
+				trigger: 'item', 
+				formatter: p => `From: <b>${p.data.source}</b><br/>To: <b>${p.data.destination}</b>` 
+			},
 			parallelAxis: axes,
 			series: [{
 				type: 'parallel', data: data,
@@ -1730,7 +1767,6 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 		const sorted = scores.map((s, i) => ({ word: s.word, prob: probs[i] }))
 			.sort((a, b) => b.prob - a.prob);
 
-		// Use d_model for the number of columns in the output matrix
 		return sorted.slice(0, d_model).map(s => {
 			const safeWord = s.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
 			return `\\text{${safeWord} (${(s.prob * 100).toFixed(0)}\\%)}`;
