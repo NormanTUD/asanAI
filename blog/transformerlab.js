@@ -2000,142 +2000,142 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 
 
 function tlab_render_trajectory_plot(d_model) {
-    const mainContainer = document.getElementById('transformer-migration-plots-container');
-    if (!mainContainer || !window.tlab_trajectory_collector) return;
+	const mainContainer = document.getElementById('transformer-migration-plots-container');
+	if (!mainContainer || !window.tlab_trajectory_collector) return;
 
-    const { tokens, steps, displayTokens } = window.tlab_trajectory_collector;
+	const { tokens, steps, displayTokens } = window.tlab_trajectory_collector;
 
-    const sortedKeys = Object.keys(steps).sort();
-    if (sortedKeys.length < 3) return;
+	const sortedKeys = Object.keys(steps).sort();
+	if (sortedKeys.length < 3) return;
 
-    let trajDiv = document.getElementById('transformer-trajectory-full-path');
-    if (!trajDiv) {
-        trajDiv = document.createElement('div');
-        trajDiv.id = 'transformer-trajectory-full-path';
-        trajDiv.style.cssText = "width:100%; height:850px; margin-top:100px; border-top:4px solid #3b82f6; background:#fff; padding:20px;";
-        mainContainer.appendChild(trajDiv);
-    }
+	let trajDiv = document.getElementById('transformer-trajectory-full-path');
+	if (!trajDiv) {
+		trajDiv = document.createElement('div');
+		trajDiv.id = 'transformer-trajectory-full-path';
+		trajDiv.style.cssText = "width:100%; height:850px; margin-top:100px; border-top:4px solid #3b82f6; background:#fff; padding:20px;";
+		mainContainer.appendChild(trajDiv);
+	}
 
-    const labels = displayTokens || tokens.map((t, i) => {
-        if (typeof t === 'string') return t;
-        return tlab_get_top_word_only(t);
-    });
+	const labels = displayTokens || tokens.map((t, i) => {
+		if (typeof t === 'string') return t;
+		return tlab_get_top_word_only(t);
+	});
 
-    const dataPoints = sortedKeys.map(k => steps[k]);
+	const dataPoints = sortedKeys.map(k => steps[k]);
 
-    const getTokenColor = (tIdx, total) => {
-        if (total <= 1) return 'rgb(59, 130, 246)';
-        const t = tIdx / (total - 1);
-        const r = Math.round(59 + (16 - 59) * t);
-        const g = Math.round(130 + (185 - 130) * t);
-        const b = Math.round(246 + (129 - 246) * t);
-        return `rgb(${r}, ${g}, ${b})`;
-    };
+	const getTokenColor = (tIdx, total) => {
+		if (total <= 1) return 'rgb(59, 130, 246)';
+		const t = tIdx / (total - 1);
+		const r = Math.round(59 + (16 - 59) * t);
+		const g = Math.round(130 + (185 - 130) * t);
+		const b = Math.round(246 + (129 - 246) * t);
+		return `rgb(${r}, ${g}, ${b})`;
+	};
 
-    const traces = [];
-    const annotations = [];
+	const traces = [];
+	const annotations = [];
 
-    tokens.forEach((token, tIdx) => {
-        const x = dataPoints.map(p => p.data[tIdx][0]);
-        const y = dataPoints.map(p => p.data[tIdx][1]);
-        const z = d_model === 3 ? dataPoints.map(p => p.data[tIdx][2]) : null;
-        const tColor = getTokenColor(tIdx, tokens.length);
+	tokens.forEach((token, tIdx) => {
+		const x = dataPoints.map(p => p.data[tIdx][0]);
+		const y = dataPoints.map(p => p.data[tIdx][1]);
+		const z = d_model === 3 ? dataPoints.map(p => p.data[tIdx][2]) : null;
+		const tColor = getTokenColor(tIdx, tokens.length);
 
-        const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 
-        // Hover text now includes the position number
-        const hoverTexts = dataPoints.map(p => `${labels[tIdx]} (${tIdx + 1}) @ ${p.name}`);
+		// Hover text now includes the position number
+		const hoverTexts = dataPoints.map(p => `${labels[tIdx]} (${tIdx + 1}) @ ${p.name}`);
 
-        if (d_model === 3) {
-            traces.push({
-                type: 'scatter3d',
-                x: x, y: y, z: z,
-                mode: 'lines',
-                name: tokenLabel,
-                line: { width: 5, color: tColor },
-                hoverinfo: 'text',
-                hovertemplate: '<b>%{text}</b><extra></extra>',
-                text: hoverTexts
-            });
+		if (d_model === 3) {
+			traces.push({
+				type: 'scatter3d',
+				x: x, y: y, z: z,
+				mode: 'lines',
+				name: tokenLabel,
+				line: { width: 5, color: tColor },
+				hoverinfo: 'text',
+				hovertemplate: '<b>%{text}</b><extra></extra>',
+				text: hoverTexts
+			});
 
-            for (let i = 0; i < x.length - 1; i++) {
-                traces.push({
-                    type: 'cone',
-                    x: [x[i + 1]], y: [y[i + 1]], z: [z[i + 1]],
-                    u: [x[i + 1] - x[i]], v: [y[i + 1] - y[i]], w: [z[i + 1] - z[i]],
-                    sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-                    colorscale: [[0, tColor], [1, tColor]], showscale: false,
-                    hoverinfo: 'skip', showlegend: false
-                });
-            }
+			for (let i = 0; i < x.length - 1; i++) {
+				traces.push({
+					type: 'cone',
+					x: [x[i + 1]], y: [y[i + 1]], z: [z[i + 1]],
+					u: [x[i + 1] - x[i]], v: [y[i + 1] - y[i]], w: [z[i + 1] - z[i]],
+					sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+					colorscale: [[0, tColor], [1, tColor]], showscale: false,
+					hoverinfo: 'skip', showlegend: false
+				});
+			}
 
-        } else {
-            traces.push({
-                type: 'scatter',
-                x: x, y: y,
-                mode: 'lines',
-                name: tokenLabel,
-                line: { width: 2, color: tColor, dash: 'dot' },
-                hoverinfo: 'text',
-                hovertemplate: '<b>%{text}</b><extra></extra>',
-                text: hoverTexts
-            });
+		} else {
+			traces.push({
+				type: 'scatter',
+				x: x, y: y,
+				mode: 'lines',
+				name: tokenLabel,
+				line: { width: 2, color: tColor, dash: 'dot' },
+				hoverinfo: 'text',
+				hovertemplate: '<b>%{text}</b><extra></extra>',
+				text: hoverTexts
+			});
 
-            for (let i = 0; i < x.length - 1; i++) {
-                annotations.push({
-                    x: x[i + 1], y: y[i + 1],
-                    ax: x[i], ay: y[i],
-                    xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
-                    showarrow: true,
-                    arrowhead: 3,
-                    arrowsize: 1.5,
-                    arrowwidth: 3,
-                    arrowcolor: tColor,
-                    opacity: 0.9
-                });
-            }
+			for (let i = 0; i < x.length - 1; i++) {
+				annotations.push({
+					x: x[i + 1], y: y[i + 1],
+					ax: x[i], ay: y[i],
+					xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+					showarrow: true,
+					arrowhead: 3,
+					arrowsize: 1.5,
+					arrowwidth: 3,
+					arrowcolor: tColor,
+					opacity: 0.9
+				});
+			}
 
-            if (tIdx === 0) {
-                dataPoints.forEach((p, pIdx) => {
-                    annotations.push({
-                        x: x[pIdx], y: y[pIdx],
-                        xref: 'x', yref: 'y',
-                        text: p.name,
-                        showarrow: false,
-                        font: { size: 9, color: '#64748b' },
-                        yshift: 12
-                    });
-                });
-            }
-        }
-    });
+			if (tIdx === 0) {
+				dataPoints.forEach((p, pIdx) => {
+					annotations.push({
+						x: x[pIdx], y: y[pIdx],
+						xref: 'x', yref: 'y',
+						text: p.name,
+						showarrow: false,
+						font: { size: 9, color: '#64748b' },
+						yshift: 12
+					});
+				});
+			}
+		}
+	});
 
-    const axisTemplate = {
-        showticklabels: false,
-        showgrid: true,
-        zeroline: false,
-        title: { text: "" },
-        backgroundcolor: "#f9fafb"
-    };
+	const axisTemplate = {
+		showticklabels: false,
+		showgrid: true,
+		zeroline: false,
+		title: { text: "" },
+		backgroundcolor: "#f9fafb"
+	};
 
-    const layout = {
-        title: `<b>Token Trajectory: Embedding → Position → Layers</b>`,
-        scene: {
-            xaxis: axisTemplate, yaxis: axisTemplate, zaxis: axisTemplate,
-            camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
-        },
-        xaxis: axisTemplate,
-        yaxis: axisTemplate,
-        annotations: d_model !== 3 ? annotations : [],
-        margin: { l: 10, r: 10, b: 50, t: 80 },
-        showlegend: true,
-        legend: {
-            orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1,
-            font: { size: 14 }
-        }
-    };
+	const layout = {
+		title: `<b>Token Trajectory: Embedding → Position → Layers</b>`,
+		scene: {
+			xaxis: axisTemplate, yaxis: axisTemplate, zaxis: axisTemplate,
+			camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
+		},
+		xaxis: axisTemplate,
+		yaxis: axisTemplate,
+		annotations: d_model !== 3 ? annotations : [],
+		margin: { l: 10, r: 10, b: 50, t: 80 },
+		showlegend: true,
+		legend: {
+			orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1,
+			font: { size: 14 }
+		}
+	};
 
-    Plotly.react(trajDiv.id, traces, layout);
+	Plotly.react(trajDiv.id, traces, layout);
 }
 
 
