@@ -490,11 +490,6 @@ function run_transformer_demo(activeId = null) {
 }
 
 /**
- * FULL implementation of run_and_visualize_network
- */
-
-
-/**
  * Origin: Ba et al. (2016) Layer Normalization
  * Goal: Initialize learnable parameters for stabilization
  */
