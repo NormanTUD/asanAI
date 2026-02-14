@@ -1631,28 +1631,129 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 }
 
 /**
- * Refactored Migration Visualization Logic
+ * Maps a weight value to a colorblind-friendly scale (Blue to Yellow).
+ * Low/Negative = Blue, Neutral = Teal, High/Positive = Yellow.
  */
-function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after) {
-	const plotDiv = document.getElementById(id);
-	if (!plotDiv) return;
+function tlab_get_colorblind_pixel(val) {
+    // Clamp value between -1 and 1
+    const t = Math.max(0, Math.min(1, (val + 1) / 2));
+    
+    // Simple Blue-Yellow transition (Cividis-like)
+    // t=0 (Blueish): 0, 32, 77
+    // t=1 (Yellow): 255, 255, 0
+    const r = Math.floor(t * 255);
+    const g = Math.floor(32 + t * 223);
+    const b = Math.floor(77 * (1 - t));
+    
+    return `rgb(${r}, ${g}, ${b})`;
+}
 
-	plotDiv.style.width = '100%';
+/**
+ * Renders weight matrices side-by-side, stretching them to fill the full width.
+ */
+function tlab_render_weight_grid(id, layerNum) {
+    requestAnimationFrame(() => {
+        const plotDiv = document.getElementById(id);
+        if (!plotDiv || !window.currentWeights || !window.currentWeights[layerNum]) return;
+
+        let weightContainer = plotDiv.nextElementSibling;
+        if (!weightContainer || !weightContainer.classList.contains('weight-grid-viz')) {
+            weightContainer = document.createElement('div');
+            weightContainer.className = 'weight-grid-viz';
+            // Column layout: Header on top, then the horizontal row of matrices
+            weightContainer.style = "display: flex; flex-direction: column; align-items: center; margin: 40px 0; padding: 0; clear: both; width: 100%;";
+            plotDiv.parentNode.insertBefore(weightContainer, plotDiv.nextSibling);
+        }
+        
+        weightContainer.innerHTML = ''; 
+
+        // 1. Layer Header
+        const layerHeader = document.createElement('div');
+        layerHeader.style = "font-size: 1.2rem; font-weight: bold; color: #1e293b; margin-bottom: 15px; font-family: sans-serif; width: 100%; text-align: left; border-bottom: 2px solid #f1f5f9; padding-bottom: 5px;";
+        layerHeader.innerText = `Layer ${layerNum}:`;
+        weightContainer.appendChild(layerHeader);
+
+        // 2. Horizontal container for the matrices
+        const gridBox = document.createElement('div');
+        // display: flex with gap ensures they sit side-by-side
+        gridBox.style = "display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 10px; width: 100%;";
+        weightContainer.appendChild(gridBox);
+
+        const weights = window.currentWeights[layerNum];
+        const targets = [
+            { name: 'W1', data: weights.W1 },
+            { name: 'W2', data: weights.W2 },
+            { name: 'Q',  data: weights.attention?.query },
+            { name: 'K',  data: weights.attention?.key },
+            { name: 'V',  data: weights.attention?.value }
+        ];
+
+        targets.forEach(target => {
+            if (!target.data || !target.data.length) return;
+
+            const wrap = document.createElement('div');
+            // flex: 1 tells each matrix to take up an equal share of the width
+            wrap.style = "text-align: center; flex: 1; display: flex; flex-direction: column; min-width: 0;"; 
+            wrap.innerHTML = `<div style="font-size: 10px; font-weight: bold; color: #94a3b8; margin-bottom: 5px; font-family: monospace; white-space: nowrap;">${target.name}</div>`;
+            
+            const canvas = document.createElement('canvas');
+            const rows = target.data.length;
+            const cols = Array.isArray(target.data[0]) ? target.data[0].length : 1;
+            
+            // Set internal resolution
+            canvas.width = cols;
+            canvas.height = rows;
+            
+            // CSS to force it to fill its flex-allocated width
+            canvas.style.width = "100%";
+            canvas.style.height = "auto"; 
+            canvas.style.imageRendering = "pixelated";
+            canvas.style.display = "block";
+            // Optional: slight border to distinguish adjacent white/yellow pixels
+            canvas.style.outline = "1px solid #f1f5f9"; 
+
+            const ctx = canvas.getContext('2d');
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const val = Array.isArray(target.data[r]) ? target.data[r][c] : target.data[r];
+                    
+                    const t = Math.max(0, Math.min(1, (val + 1) / 2));
+                    const red = Math.floor(t * 255);
+                    const green = Math.floor(32 + t * 223);
+                    const blue = Math.floor(77 * (1 - t));
+
+                    ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+                    ctx.fillRect(c, r, 1, 1);
+                }
+            }
+            wrap.appendChild(canvas);
+            gridBox.appendChild(wrap);
+        });
+    });
+}
+
+function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after) {                     
+	const plotDiv = document.getElementById(id);                               
+	if (!plotDiv) return;       
+
+	plotDiv.style.width = '100%';                             
 
 	const migrationContainers = document.querySelectorAll('[id^="migration-plot-"]');
-	const isLastLayer = migrationContainers.length > 0 && 
+	const isLastLayer = migrationContainers.length > 0 &&
 		migrationContainers[migrationContainers.length - 1].id === id;
 	const nextWordIndex = tokens.length - 1;
 
-	// 1. Render Graphics
-	if (d_model <= 3) {
+	if (d_model <= 3) {                                                                                                         
 		tlab_render_plotly(id, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex);
-	} else {
+	} else {                                         
 		tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex);
-	}
+	}                                                                                                       
 
-	// 2. Render LaTeX Math
-	tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model);
+	tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model); 
+
+	// CALL THE NEW GRID RENDERER HERE
+	tlab_render_weight_grid(id, layerNum);
 }
 
 function tlab_render_plotly(id, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex) {
