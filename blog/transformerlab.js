@@ -465,26 +465,28 @@ function render_positional_waves(d_model, tokens) {
 }
 
 function run_transformer_demo(activeId = null) {
-    if (activeId) {
-        window.lastActiveInputId = activeId;
-    }
+	if (activeId) {
+		window.lastActiveInputId = activeId;
+	}
 
-    const trainingInput = document.getElementById('transformer-training-data');
-    const masterInput = document.getElementById('transformer-master-token-input');
+	const trainingInput = document.getElementById('transformer-training-data');
+	const masterInput = document.getElementById('transformer-master-token-input');
 
-    if (!trainingInput || !masterInput) return;
+	if (!trainingInput || !masterInput) return;
 
-    // 1. Tokenisierung für die Logik (ohne UI-Render)
-    const trainingTokens = transformer_tokenize_render(trainingInput.value, null);
-    const masterTokens = transformer_tokenize_render(masterInput.value, null);
+	// 1. Tokenisierung für die Logik (ohne UI-Render)
+	const trainingTokens = transformer_tokenize_render(trainingInput.value, null);
+	const masterTokens = transformer_tokenize_render(masterInput.value, null);
 
-    // 2. Tokenisierung für die VISUELLE ANZEIGE (BPE-Box oben)
-    // Wir rendern die Tokens des Feldes, das gerade bearbeitet wird
-    const vizSourceValue = document.getElementById(window.lastActiveInputId).value;
-    const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe");
+	// 2. Tokenisierung für die VISUELLE ANZEIGE (BPE-Box oben)
+	// Wir rendern die Tokens des Feldes, das gerade bearbeitet wird
+	const vizSourceValue = document.getElementById(window.lastActiveInputId).value;
+	const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe");
 
-    // 3. Netzwerk ausführen
-    run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
+	// 3. Netzwerk ausführen
+	run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
+
+	show_nr_of_params();
 }
 
 /**
