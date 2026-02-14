@@ -45,6 +45,40 @@ function reset_graph() {
 	document.getElementById('training-loss-plot').innerHTML = '';
 }
 
+function countAllNumbers(data) {
+	let count = 0;
+
+	// 1. Fall: Es ist direkt eine Zahl
+	if (typeof data === 'number') {
+		return 1;
+	}
+
+	// 2. Fall: Es ist ein Objekt oder Array (und nicht null)
+	if (data !== null && typeof data === 'object') {
+		// Wir iterieren über alle Werte des Objekts/Arrays
+		for (let key in data) {
+			if (Object.prototype.hasOwnProperty.call(data, key)) {
+				count += countAllNumbers(data[key]);
+			}
+		}
+	}
+
+	return count;
+}
+
+function show_nr_of_params() {
+	const nr_params = countAllNumbers(currentWeights);
+
+	if(!nr_params) {
+		document.getElementById("nr_params").innerHTML = "";
+		document.getElementById('nr_params').style.display = 'none';
+		return;
+	}
+
+	document.getElementById("nr_params").innerHTML = `The current network has ${{nr_params} internal parameters.`;
+	document.getElementById('nr_params').style.display = 'block';
+}
+
 function get_or_init_embeddings(tokens, d_model) {
 	// 1. Ensure the global space exists before any logic
 	if (window.persistentEmbeddingSpace === null) {
