@@ -650,9 +650,6 @@ In the context of Deep Learning, the $\odot$ symbol is ubiquitous. It is used in
 For two vectors $\vec{a}$ and $\vec{b}$ of length $n$, the product is defined as:
 $$\vec{a} \odot \vec{b} = \begin{pmatrix} a_1 \cdot b_1 \\ a_2 \cdot b_2 \\ \vdots \\ a_n \cdot b_n \end{pmatrix}$$
 
-
-
-### Interactive Experiment
 Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting vector is calculated element-by-element.
 </div>
 
