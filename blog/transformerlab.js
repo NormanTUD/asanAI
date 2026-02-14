@@ -1748,86 +1748,112 @@ function tlab_render_plotly(id, tokens, start_h, end_h, layerNum, d_model, isLas
  * Cite: Based on Apache ECharts visualMap and parallel coordinates
  */
 function tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex) {
-    const myChart = echarts.init(plotDiv);
-    
-    const axes = Array.from({ length: d_model }, (_, i) => ({
-        dim: i, name: `Dim ${i}`
-    }));
+	const myChart = echarts.init(plotDiv);
 
-    // Prepare data with position index as the last dimension for visualMap
-    const data = tokens.map((token, i) => {
-        const sourceWord = tlab_get_top_word_only(start_h[i]);
-        const destWord = tlab_get_top_word_only(end_h[i]);
-        return {
-            value: [...end_h[i], i + 1], // Attach position as an extra dimension
-            name: token,
-            source: sourceWord,
-            destination: destWord,
-            pos: i + 1
-        };
-    });
+	const axes = Array.from({ length: d_model }, (_, i) => ({
+		dim: i, name: `Dim ${i}`
+	}));
 
-    myChart.setOption({
-        title: { text: `Layer ${layerNum} Migration`, left: 'center' },
-        tooltip: { 
-            trigger: 'item', 
-            formatter: p => `From '${p.data.source}' to '${p.data.destination}', position ${p.data.pos}` 
-        },
-        // 4. Color -> Position Gradient Legend
-        visualMap: {
-            type: 'continuous',
-            min: 1,
-            max: tokens.length,
-            dimension: d_model, // Use the position dimension we attached above
-            orient: 'horizontal',
-            bottom: 10,
-            left: 'center',
-            text: ['End Position', 'Start Position'],
-            inRange: { color: ['rgb(59, 130, 246)', 'rgb(16, 185, 129)'] }
-        },
-        parallelAxis: axes,
-        series: [{
-            type: 'parallel',
-            data: data,
-            lineStyle: { width: 2, opacity: 0.7 }
-        }]
-    });
+	// Prepare data with position index as the last dimension for visualMap
+	const data = tokens.map((token, i) => {
+		const sourceWord = tlab_get_top_word_only(start_h[i]);
+		const destWord = tlab_get_top_word_only(end_h[i]);
+		return {
+			value: [...end_h[i], i + 1], // Attach position as an extra dimension
+			name: token,
+			source: sourceWord,
+			destination: destWord,
+			pos: i + 1
+		};
+	});
+
+	myChart.setOption({
+		title: { text: `Layer ${layerNum} Migration`, left: 'center' },
+		tooltip: { 
+			trigger: 'item', 
+			formatter: p => `From '${p.data.source}' to '${p.data.destination}', position ${p.data.pos}` 
+		},
+		// 4. Color -> Position Gradient Legend
+		visualMap: {
+			type: 'continuous',
+			min: 1,
+			max: tokens.length,
+			dimension: d_model, // Use the position dimension we attached above
+			orient: 'horizontal',
+			bottom: 10,
+			left: 'center',
+			text: ['End Position', 'Start Position'],
+			inRange: { color: ['rgb(59, 130, 246)', 'rgb(16, 185, 129)'] }
+		},
+		parallelAxis: axes,
+		series: [{
+			type: 'parallel',
+			data: data,
+			lineStyle: { width: 2, opacity: 0.7 }
+		}]
+	});
 }
 
 /**
  * Sub-function: LaTeX Logic
  */
 function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model) {
-	const toPMatrix = (matrix) => {
-		if (!Array.isArray(matrix) || !matrix.length) return '';
-		const rows = matrix.map(row =>
-			row.map(v => v.toFixed(nr_fixed)).join(' & ')
-		).join(' \\\\ ');
-		return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
-	};
+    // Helper to calculate RGB components based on position
+    const getPosColorComponents = (index, total) => {
+        if (total <= 1) return { r: 59, g: 130, b: 246 };
+        const ratio = index / (total - 1);
+        return {
+            r: Math.round(59 + (16 - 59) * ratio),
+            g: Math.round(130 + (185 - 130) * ratio),
+            b: Math.round(246 + (129 - 246) * ratio)
+        };
+    };
 
-	const vocabRows = tokens.map((_, tIdx) => {
-		const fromList = tlab_get_top_vocab_list(start_h[tIdx], d_model);
-		const toList = tlab_get_top_vocab_list(end_h[tIdx], d_model);
-		return fromList.map((fromItem, i) => {
-			const toItem = toList[i] || {word: '???', prob: 0};
-			return `\\text{${fromItem.word} (${(fromItem.prob * 100).toFixed(0)}\\%)} \\rightarrow \\text{${toItem.word} (${(toItem.prob * 100).toFixed(0)}\\%)}`;
-		}).join(' & ');
-	}).join(' \\\\ ');
+    // Formats color for TeMML: \color[RGB]{r,g,b}
+    const formatTeMMLColor = (c) => `\\color[RGB]{${c.r},${c.g},${c.b}}`;
 
-	const latexString = `$$h_\\text{after} = ${toPMatrix(h_after)}, \\quad h_\\text{after} \\cdot W_\\text{vocab} \\approx \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+    const toPMatrixColored = (matrix) => {
+        if (!Array.isArray(matrix) || !matrix.length) return '';
+        
+        const rows = matrix.map((row, tIdx) => {
+            const colorObj = getPosColorComponents(tIdx, matrix.length);
+            const colorCmd = formatTeMMLColor(colorObj);
+            // Apply color to each individual cell to avoid grouping errors with '&'
+            return row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
+        }).join(' \\\\ ');
 
-	let latexDiv = document.getElementById(id + '-latex-debug');
-	if (!latexDiv) {
-		latexDiv = document.createElement('div');
-		latexDiv.id = id + '-latex-debug';
-		latexDiv.style.marginTop = '20px';
-		latexDiv.style.overflowX = 'auto';
-		latexDiv.style.fontSize = '0.8rem';
-		plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
-	}
-	latexDiv.innerHTML = latexString;
-	render_temml();
+        return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
+    };
+
+    const vocabRows = tokens.map((_, tIdx) => {
+        const fromList = tlab_get_top_vocab_list(start_h[tIdx], d_model);
+        const toList = tlab_get_top_vocab_list(end_h[tIdx], d_model);
+        
+        const colorObj = getPosColorComponents(tIdx, tokens.length);
+        const colorCmd = formatTeMMLColor(colorObj);
+        
+        // Apply color to each mapping pair (each cell)
+        return fromList.map((fromItem, i) => {
+            const toItem = toList[i] || {word: '???', prob: 0};
+            const cleanFrom = fromItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+            const cleanTo = toItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+            return `${colorCmd} \\text{${cleanFrom}} \\rightarrow \\text{${cleanTo}}`;
+        }).join(' & ');
+    }).join(' \\\\ ');
+
+    const latexString = `$$h_\\text{after} = ${toPMatrixColored(h_after)}, \\quad \\approx \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+
+    let latexDiv = document.getElementById(id + '-latex-debug');
+    if (!latexDiv) {
+        latexDiv = document.createElement('div');
+        latexDiv.id = id + '-latex-debug';
+        latexDiv.style.marginTop = '20px';
+        latexDiv.style.overflowX = 'auto';
+        latexDiv.style.fontSize = '0.8rem';
+        plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
+    }
+    latexDiv.innerHTML = latexString;
+    render_temml();
 }
 
 /**
