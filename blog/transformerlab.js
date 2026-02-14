@@ -1007,7 +1007,11 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 		// ── All layers processed: trigger trajectory plot immediately ──
 		if (window.tlab_trajectory_collector) {
-			setTimeout(() => tlab_render_trajectory_plot(d_model), 200);
+			if(d_model == 2 || d_model == 3) {
+				setTimeout(() => tlab_render_trajectory_plot(d_model), 200);
+			} else {
+				$("#transformer-trajectory-full-path").remove()
+			}
 		}
 	}
 
