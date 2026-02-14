@@ -1597,20 +1597,23 @@ const migrationObserver = new IntersectionObserver((entries) => {
 	});
 }, { threshold: 0.1 });
 
-/**
- * Optimized migration plot creation.
- * Removed manual layout triggers (getBoundingClientRect) and slow deep-cloning.
- */
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after) {
 	const container = document.getElementById('transformer-migration-plots-container');
 	if (!container) return;
 
 	let plotDiv = document.getElementById(id);
 	if (!plotDiv) {
+		// Create a wrapper div to group the plot, weight grid, and latex matrix
+		const wrapperDiv = document.createElement('div');
+		wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-top: 30px; background: #fff;";
+
 		plotDiv = document.createElement('div');
 		plotDiv.id = id;
-		plotDiv.style.cssText = "height: 500px; width: 100%; margin-top: 30px;";
-		container.appendChild(plotDiv);
+		// Margin-top is shifted to the wrapper to maintain overall spacing
+		plotDiv.style.cssText = "height: 500px; width: 100%;";
+
+		wrapperDiv.appendChild(plotDiv);
+		container.appendChild(wrapperDiv);
 
 		// The observer handles the initial visibility check automatically
 		// as soon as it starts observing, firing the callback if visible.
