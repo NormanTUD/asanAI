@@ -1667,12 +1667,6 @@ function tlab_render_weight_grid(id, layerNum) {
 
 		weightContainer.innerHTML = '';
 
-		// 1. Layer Header
-		const layerHeader = document.createElement('div');
-		layerHeader.style = "font-size: 1.2rem; font-weight: bold; color: #1e293b; margin-bottom: 15px; font-family: sans-serif; width: 100%; text-align: left; border-bottom: 2px solid #f1f5f9; padding-bottom: 5px;";
-		layerHeader.innerText = `Layer ${layerNum}:`;
-		weightContainer.appendChild(layerHeader);
-
 		// 2. Horizontal container for the matrices
 		const gridBox = document.createElement('div');
 		// display: flex with gap ensures they sit side-by-side
