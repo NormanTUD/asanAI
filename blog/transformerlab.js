@@ -1567,7 +1567,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 
 		// Visualization
 		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, h_after, n + 1, d_model, h_after);
-		tlab_render_weight_grid(layerWeights, i);
+		tlab_render_weight_grid(layerWeights, n);
 
 		h_current = h_after;
 	}
