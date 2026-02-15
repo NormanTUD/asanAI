@@ -392,6 +392,33 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 	<input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" value="the">
 </div>
 
+<div class="md">
+### Attention Flow (Sankey Diagram)
+The following Sankey diagram visualizes the same attention weights as the heatmap above, but as a **flow diagram**. The width of each band represents how much "information" flows from one token (as a Query) to another token (as a Key). Thick bands indicate strong attention; thin or absent bands indicate the model is ignoring that connection.
+</div>
+
+<div id="attention-sankey-container" style="width: 100%; min-height: 450px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; margin: 20px 0; padding: 10px;">
+    <div style="padding:20px; color:#64748b;">Scroll to view Attention Sankey...</div>
+</div>
+
+<div style="margin-bottom: 10px;">
+    <label style="font-weight: bold; font-size: 0.85rem;">Sankey Attention Threshold:</label>
+    <input type="range" id="sankey-threshold" min="0" max="0.5" step="0.01" value="0.02"
+        style="width: 200px; vertical-align: middle;"
+        oninput="document.getElementById('sankey-threshold-val').innerText = this.value; tlab_rerender_sankey();">
+    <span id="sankey-threshold-val" style="font-weight: bold; color: #3b82f6;">0.02</span>
+    <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+        Filter out weak attention connections below this weight. Increase to declutter the diagram.
+    </p>
+</div>
+
+<div style="margin-bottom: 15px;">
+    <label style="font-weight: bold; font-size: 0.85rem;">Sankey Head:</label>
+    <select id="sankey-head-select" style="padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1;"
+        onchange="tlab_rerender_sankey();">
+        <option value="0">Head 1</option>
+    </select>
+</div>
 
 <div class="md">
 ## Key Intuitions about LLMs

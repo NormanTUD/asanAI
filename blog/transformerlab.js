@@ -229,6 +229,17 @@ class AttentionEngine {
 		}];
 
 		this.renderUI(headData, tokens);
+
+		// ── Sankey Integration: Feed data to the Sankey renderer ──
+		if (this.containerId === 'mha-calculation-details') {
+			// Resolve human-readable token labels
+			const sankeyTokenLabels = tokens.map((t, i) => {
+				if (typeof t === 'string') return t;
+				return tlab_get_top_word_only(t);
+			});
+			tlab_update_sankey_data(headData, sankeyTokenLabels);
+		}
+
 		return headData;
 	}
 
@@ -996,6 +1007,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 	// Reset trajectory collector so it captures fresh data for this run
 	window.tlab_trajectory_collector = null;
+	window.tlabMultiLayerSankeyData = null;
 
 	// Remove stale full-trajectory plot so it gets recreated
 	const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
@@ -1018,6 +1030,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		});
 
 		const headData = engine.forward(normH0, tokensWithPositional);
+		tlab_collect_layer_attention(0, headData[0].this_weights, knownTokens);
 		const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
 
 		const Wo_layer0 = weights[0]["attention"]["output"];
@@ -1062,6 +1075,29 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 				$("#transformer-trajectory-full-path").remove();
 			}
 		}
+
+		// ── Multi-Layer Sankey: Render if we have data ──
+		if (window.tlabMultiLayerSankeyData &&
+			Object.keys(window.tlabMultiLayerSankeyData.layers).length > 1) {
+
+			let mlSankeyDiv = document.getElementById('multilayer-sankey-container');
+			if (!mlSankeyDiv) {
+				const wrapper = document.createElement('div');
+				wrapper.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-top: 30px; background: #fff;";
+				wrapper.innerHTML = `
+		    <h3 style="margin-top:0; color:#334155;">Cross-Layer Attention Flow</h3>
+		    <p style="font-size:0.85rem; color:#64748b;">
+			This diagram shows how attention routes information across all ${n_layers} layers.
+			Each column represents a layer's output. Links show which input tokens
+			influenced which output tokens at each stage.
+		    </p>
+		    <div id="multilayer-sankey-container" style="width:100%; min-height:450px;"></div>
+		`;
+				document.getElementById('transformer-migration-plots-container').appendChild(wrapper);
+			}
+			tlab_render_multilayer_sankey('multilayer-sankey-container');
+		}
+
 	}
 
 	// 3. FINAL PROBABILITIES (based on master-token-input)
@@ -1630,6 +1666,13 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 
 		const headData = engine.forward(normH, tokens);
 		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
+
+		// ── Multi-Layer Sankey: Collect this layer's attention weights ──
+		const resolvedTokenLabels = (tokenStrings && tokenStrings.length === tokens.length)
+			? tokenStrings
+			: tokens.map((t) => typeof t === 'string' ? t : tlab_get_top_word_only(t));
+		tlab_collect_layer_attention(n, headData[0].this_weights, resolvedTokenLabels);
+
 
 		// Apply Wo (output projection)
 		const Wo = layerWeights["attention"]["output"];
@@ -2709,6 +2752,382 @@ function updateTrainButtonState() {
 		btn.style.opacity = '1';
 		btn.style.cursor = 'pointer';
 	}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SANKEY DIAGRAM: Attention Flow Visualization
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Global store for the latest Sankey-relevant data.
+ * Updated every time the attention engine runs for the primary
+ * "mha-calculation-details" container.
+ */
+window.tlabSankeyData = null;
+
+/**
+ * Intersection Observer for the Sankey container.
+ * Renders only when the user scrolls it into view.
+ */
+const sankeyObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && window.tlabSankeyData && !window.tlabSankeyData.rendered) {
+            tlab_render_attention_sankey();
+            window.tlabSankeyData.rendered = true;
+        }
+    });
+}, { threshold: 0.05 });
+
+// Start observing as soon as the DOM is ready
+window.addEventListener('DOMContentLoaded', () => {
+    const sankeyContainer = document.getElementById('attention-sankey-container');
+    if (sankeyContainer) {
+        sankeyObserver.observe(sankeyContainer);
+    }
+});
+
+/**
+ * Called by the AttentionEngine after computing attention weights.
+ * Stores the data needed for the Sankey and marks it as needing re-render.
+ *
+ * @param {Array} headData - Array of head objects from AttentionEngine.forward()
+ * @param {string[]} tokenStrings - Human-readable token labels
+ */
+function tlab_update_sankey_data(headData, tokenStrings) {
+    if (!headData || !headData.length || !tokenStrings || !tokenStrings.length) return;
+
+    window.tlabSankeyData = {
+        headData: headData,
+        tokens: tokenStrings,
+        rendered: false
+    };
+
+    // Update the head selector dropdown to match the number of heads
+    const headSelect = document.getElementById('sankey-head-select');
+    if (headSelect) {
+        const currentVal = headSelect.value;
+        headSelect.innerHTML = '';
+        headData.forEach((_, i) => {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = `Head ${i + 1}`;
+            headSelect.appendChild(opt);
+        });
+        // Preserve selection if still valid
+        if (parseInt(currentVal) < headData.length) {
+            headSelect.value = currentVal;
+        }
+    }
+
+    // If the container is already visible, render immediately
+    const container = document.getElementById('attention-sankey-container');
+    if (container) {
+        const rect = container.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+        if (isVisible) {
+            tlab_render_attention_sankey();
+            window.tlabSankeyData.rendered = true;
+        }
+    }
+}
+
+/**
+ * Called when the user changes the threshold slider or head selector.
+ * Forces a re-render with the current stored data.
+ */
+function tlab_rerender_sankey() {
+    if (window.tlabSankeyData) {
+        window.tlabSankeyData.rendered = false;
+        tlab_render_attention_sankey();
+        window.tlabSankeyData.rendered = true;
+    }
+}
+
+/**
+ * Core rendering function: Builds and draws the Plotly Sankey diagram.
+ */
+function tlab_render_attention_sankey() {
+    const container = document.getElementById('attention-sankey-container');
+    if (!container || !window.tlabSankeyData) return;
+
+    const { headData, tokens } = window.tlabSankeyData;
+
+    // Read user controls
+    const thresholdInput = document.getElementById('sankey-threshold');
+    const threshold = thresholdInput ? parseFloat(thresholdInput.value) : 0.02;
+
+    const headSelect = document.getElementById('sankey-head-select');
+    const headIdx = headSelect ? parseInt(headSelect.value) : 0;
+
+    if (!headData[headIdx]) return;
+
+    const attn = headData[headIdx].this_weights; // [seq_len × seq_len]
+    const seqLen = tokens.length;
+
+    if (!attn || attn.length === 0) return;
+
+    // ── Build Sankey Node Labels ──
+    // Left column: Query tokens (positions 0..seqLen-1)
+    // Right column: Key tokens (positions seqLen..2*seqLen-1)
+    const labels = [];
+    const nodeColors = [];
+
+    // Color helper: position-based gradient (blue → green)
+    const getPosColor = (idx, total) => {
+        if (total <= 1) return 'rgba(59, 130, 246, 0.8)';
+        const t = idx / (total - 1);
+        const r = Math.round(59 + (16 - 59) * t);
+        const g = Math.round(130 + (185 - 130) * t);
+        const b = Math.round(246 + (129 - 246) * t);
+        return `rgba(${r}, ${g}, ${b}, 0.85)`;
+    };
+
+    for (let i = 0; i < seqLen; i++) {
+        labels.push(`Q: "${tokens[i]}" [${i}]`);
+        nodeColors.push(getPosColor(i, seqLen));
+    }
+    for (let j = 0; j < seqLen; j++) {
+        labels.push(`K: "${tokens[j]}" [${j}]`);
+        nodeColors.push(getPosColor(j, seqLen));
+    }
+
+    // ── Build Sankey Links ──
+    const sources = [];
+    const targets = [];
+    const values = [];
+    const linkColors = [];
+    const linkLabels = [];
+
+    for (let i = 0; i < seqLen; i++) {
+        for (let j = 0; j < seqLen; j++) {
+            // Causal mask: query i can only attend to keys j <= i
+            if (j > i) continue;
+
+            const weight = attn[i][j];
+            if (weight < threshold) continue;
+
+            sources.push(i);                    // Query node index
+            targets.push(seqLen + j);           // Key node index (offset by seqLen)
+            values.push(weight);
+
+            // Link color: blend of source query color with transparency based on weight
+            const t = seqLen > 1 ? i / (seqLen - 1) : 0;
+            const r = Math.round(59 + (16 - 59) * t);
+            const g = Math.round(130 + (185 - 130) * t);
+            const b = Math.round(246 + (129 - 246) * t);
+            const alpha = Math.max(0.15, Math.min(0.85, weight));
+            linkColors.push(`rgba(${r}, ${g}, ${b}, ${alpha})`);
+
+            linkLabels.push(`"${tokens[i]}" → "${tokens[j]}": ${(weight * 100).toFixed(1)}%`);
+        }
+    }
+
+    // ── Handle edge case: no links above threshold ──
+    if (sources.length === 0) {
+        container.innerHTML = `
+            <div style="padding: 30px; text-align: center; color: #94a3b8;">
+                <p>No attention connections above the threshold of <strong>${threshold.toFixed(2)}</strong>.</p>
+                <p style="font-size: 0.85rem;">Try lowering the threshold slider.</p>
+            </div>`;
+        return;
+    }
+
+    // ── Plotly Sankey Trace ──
+    const trace = {
+        type: 'sankey',
+        orientation: 'h',
+        arrangement: 'snap',
+        node: {
+            pad: 20,
+            thickness: 25,
+            line: { color: '#334155', width: 1 },
+            label: labels,
+            color: nodeColors,
+            hovertemplate: '%{label}<extra></extra>'
+        },
+        link: {
+            source: sources,
+            target: targets,
+            value: values,
+            color: linkColors,
+            label: linkLabels,
+            hovertemplate: '%{label}<extra></extra>'
+        }
+    };
+
+    const layout = {
+        title: {
+            text: `Attention Flow — Head ${headIdx + 1} (${sources.length} connections)`,
+            font: { size: 14, color: '#334155' }
+        },
+        font: { size: 11, family: "'Courier New', monospace" },
+        margin: { t: 50, b: 20, l: 10, r: 10 },
+        paper_bgcolor: 'white',
+        plot_bgcolor: 'white',
+        height: Math.max(400, seqLen * 45)
+    };
+
+    Plotly.newPlot(container, [trace], layout, {
+        responsive: true,
+        displayModeBar: true,
+        modeBarButtonsToRemove: ['lasso2d', 'select2d']
+    });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MULTI-LAYER SANKEY: Cross-Layer Information Flow
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Collects attention weights from ALL layers during the forward pass
+ * and renders a multi-stage Sankey showing how information routes
+ * across the entire depth of the network.
+ */
+window.tlabMultiLayerSankeyData = null;
+
+/**
+ * Called from run_deep_layers or the main pipeline to accumulate
+ * per-layer attention data for the multi-layer Sankey.
+ *
+ * @param {number} layerNum - 0-indexed layer number
+ * @param {Array} attnWeights - The [seq_len × seq_len] attention weight matrix
+ * @param {string[]} tokenStrings - Token labels
+ */
+function tlab_collect_layer_attention(layerNum, attnWeights, tokenStrings) {
+    if (!window.tlabMultiLayerSankeyData) {
+        window.tlabMultiLayerSankeyData = {
+            layers: {},
+            tokens: tokenStrings,
+            rendered: false
+        };
+    }
+    window.tlabMultiLayerSankeyData.layers[layerNum] = JSON.parse(JSON.stringify(attnWeights));
+    window.tlabMultiLayerSankeyData.rendered = false;
+}
+
+/**
+ * Renders a multi-layer Sankey diagram.
+ * Each column represents a layer, and links show the dominant
+ * attention connections at that layer.
+ *
+ * @param {string} containerId - DOM element ID to render into
+ */
+function tlab_render_multilayer_sankey(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container || !window.tlabMultiLayerSankeyData) return;
+
+    const { layers, tokens } = window.tlabMultiLayerSankeyData;
+    const layerNums = Object.keys(layers).map(Number).sort((a, b) => a - b);
+    const seqLen = tokens.length;
+
+    if (layerNums.length === 0 || seqLen === 0) return;
+
+    const thresholdInput = document.getElementById('sankey-threshold');
+    const threshold = thresholdInput ? parseFloat(thresholdInput.value) : 0.02;
+
+    // Build nodes: one set of token nodes per layer + one for input
+    // Column 0 = Input tokens, Column 1 = After Layer 0, etc.
+    const numColumns = layerNums.length + 1;
+    const labels = [];
+    const nodeColors = [];
+    const nodeX = [];
+    const nodeY = [];
+
+    const getPosColor = (idx, total) => {
+        if (total <= 1) return 'rgba(59, 130, 246, 0.8)';
+        const t = idx / (total - 1);
+        const r = Math.round(59 + (16 - 59) * t);
+        const g = Math.round(130 + (185 - 130) * t);
+        const b = Math.round(246 + (129 - 246) * t);
+        return `rgba(${r}, ${g}, ${b}, 0.85)`;
+    };
+
+    // Create nodes for each column
+    for (let col = 0; col < numColumns; col++) {
+        const colLabel = col === 0 ? 'Input' : `L${layerNums[col - 1] + 1}`;
+        for (let t = 0; t < seqLen; t++) {
+            labels.push(`${colLabel}: "${tokens[t]}"`);
+            nodeColors.push(getPosColor(t, seqLen));
+            // Position nodes in a grid
+            nodeX.push(col / Math.max(1, numColumns - 1));
+            nodeY.push(seqLen > 1 ? t / (seqLen - 1) : 0.5);
+        }
+    }
+
+    // Build links between consecutive columns
+    const sources = [];
+    const targets = [];
+    const values = [];
+    const linkColors = [];
+
+    layerNums.forEach((layerNum, colIdx) => {
+        const attn = layers[layerNum];
+        const srcColOffset = colIdx * seqLen;       // Input column for this layer
+        const tgtColOffset = (colIdx + 1) * seqLen; // Output column for this layer
+
+        for (let i = 0; i < seqLen; i++) {
+            for (let j = 0; j < seqLen; j++) {
+                if (j > i) continue; // causal mask
+                const weight = attn[i][j];
+                if (weight < threshold) continue;
+
+                // Link: Key token j in source column → Query token i in target column
+                // This represents: "token i in the output was influenced by token j in the input"
+                sources.push(srcColOffset + j);
+                targets.push(tgtColOffset + i);
+                values.push(weight);
+
+                const t = seqLen > 1 ? j / (seqLen - 1) : 0;
+                const r = Math.round(59 + (16 - 59) * t);
+                const g = Math.round(130 + (185 - 130) * t);
+                const b = Math.round(246 + (129 - 246) * t);
+                linkColors.push(`rgba(${r}, ${g}, ${b}, ${Math.max(0.1, weight * 0.7)})`);
+            }
+        }
+    });
+
+    if (sources.length === 0) {
+        container.innerHTML = `
+            <div style="padding: 30px; text-align: center; color: #94a3b8;">
+                <p>No cross-layer attention connections above threshold.</p>
+            </div>`;
+        return;
+    }
+
+    const trace = {
+        type: 'sankey',
+        orientation: 'h',
+        arrangement: 'fixed',
+        node: {
+            pad: 15,
+            thickness: 20,
+            line: { color: '#334155', width: 0.5 },
+            label: labels,
+            color: nodeColors,
+            x: nodeX,
+            y: nodeY,
+            hovertemplate: '%{label}<extra></extra>'
+        },
+        link: {
+            source: sources,
+            target: targets,
+            value: values,
+            color: linkColors,
+            hovertemplate: 'Weight: %{value:.3f}<extra></extra>'
+        }
+    };
+
+    const layout = {
+        title: {
+            text: `Cross-Layer Attention Flow (${layerNums.length} layers)`,
+            font: { size: 14, color: '#334155' }
+        },
+        font: { size: 10, family: "'Courier New', monospace" },
+        margin: { t: 50, b: 20, l: 10, r: 10 },
+        height: Math.max(450, seqLen * 50 + 100)
+    };
+
+    Plotly.newPlot(container, [trace], layout, { responsive: true });
 }
 
 async function loadTransformerModule () {
