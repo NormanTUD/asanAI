@@ -1019,7 +1019,7 @@ function show_clipboard_feedback() {
 		opacity: 0,
 		zIndex: 9999,
 		pointerEvents: 'none',
-		transition: 'opacity 0.1s ease-in-out'
+		transition: 'opacity 0.2s ease-in-out, transform 0.3s ease-out'
 	});
 	$('body').append(feedback);
 	setTimeout(() => feedback.css('opacity', 1), 0);
