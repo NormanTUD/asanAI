@@ -6922,17 +6922,6 @@ async function set_custom_image_training () {
 	await rename_labels();
 }
 
-function get_cam_config() {
-	return {
-		video: {
-			frameRate: { ideal: 30, max: 60 },
-				resizeMode: "crop-and-scale",
-				width: { ideal: 1280, min: 640, max: 1920 },
-				height: { ideal: 720, min: 480, max: 1080 },
-		}
-	};
-}
-
 async function get_data_from_webcam_if_possible(){
 	if(!cam) {
 		dbg("cam was not defined. Trying to get data from webcam");
