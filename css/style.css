@@ -421,10 +421,6 @@ ul {
 	margin-top: -10px;
 }
 
-.descriptions_of_layers {
-	font-size: 12px;
-}
-
 .class_download_img {
 	margin: 1px;
 }
@@ -474,6 +470,9 @@ button:disabled:hover {
 }
 
 .descriptions_of_layers {
+	opacity: 0;
+	transform: scaleY(0.8);
+	font-size: 12px;
 	border-radius: 5px;
 	display: flex;
 	position: absolute;
@@ -1487,17 +1486,6 @@ input:focus, textarea:focus, select:focus {
 	width: calc(var(--base-w, 100px) * var(--img-scale));
 	height: calc(var(--base-h, 100px) * var(--img-scale));
 	object-fit: contain;
-}
-
-.descriptions_of_layers {
-	opacity: 0;
-	transform: scaleY(0.8);
-	transition:
-		top 200ms ease,
-		left 200ms ease,
-		height 200ms ease,
-		opacity 200ms ease,
-		transform 200ms ease;
 }
 
 .descriptions_of_layers.visible {
