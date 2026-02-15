@@ -198,7 +198,7 @@ class AttentionEngine {
 		});
 	}
 
-	forward(h0, tokens) {
+	forward(h0, tokens, tokenStrings = null) {
 		const Q_full = this.dot(h0, this.this_weights.query);
 		const K_full = this.dot(h0, this.this_weights.key);
 		const V_full = this.dot(h0, this.this_weights.value);
@@ -209,22 +209,18 @@ class AttentionEngine {
 			const startCol = head * this.d_k;
 			const endCol = startCol + this.d_k;
 
-			// Slice columns for this head
 			const Qi = Q_full.map(row => row.slice(startCol, endCol));
 			const Ki = K_full.map(row => row.slice(startCol, endCol));
 			const Vi = V_full.map(row => row.slice(startCol, endCol));
 
-			// Slice the weight matrices for display purposes
 			const WQ_slice = this.this_weights.query.map(row => row.slice(startCol, endCol));
 			const WK_slice = this.this_weights.key.map(row => row.slice(startCol, endCol));
 			const WV_slice = this.this_weights.value.map(row => row.slice(startCol, endCol));
 
-			// Scaled dot-product attention per head
 			let scores = this.dot(Qi, this.transpose(Ki)).map(row =>
 				row.map(v => v / Math.sqrt(this.d_k))
 			);
 
-			// Apply causal mask
 			for (let r = 0; r < scores.length; r++) {
 				for (let c = r + 1; c < scores[r].length; c++) {
 					scores[r][c] -= 1e9;
@@ -236,17 +232,15 @@ class AttentionEngine {
 
 			headData.push({
 				headIdx: head,
-				Qi: Qi, Ki: Ki, Vi: Vi,
+				Qi, Ki, Vi,
 				this_weights: attn_weights,
-				context: context,
-				h0: h0,
-				WQ: WQ_slice,
-				WK: WK_slice,
-				WV: WV_slice
+				context,
+				h0,
+				WQ: WQ_slice, WK: WK_slice, WV: WV_slice
 			});
 		}
 
-		this.renderUI(headData, tokens);
+		this.renderUI(headData, tokens, tokenStrings);  // ← pass tokenStrings
 		return headData;
 	}
 
@@ -257,10 +251,9 @@ class AttentionEngine {
 		return M[0].map((_, i) => M.map(row => row[i]));
 	}
 
-	renderUI(headData, tokens) {
+	renderUI(headData, tokens, tokenStrings = null) {
 		if (!this.containerId) return;
 
-		// Register this layer's data into the multi-layer registry
 		if (!multiLayerAttentionRegistry.has(this.containerId)) {
 			multiLayerAttentionRegistry.set(this.containerId, {
 				layers: [],
@@ -272,20 +265,23 @@ class AttentionEngine {
 		entry.layers.push({
 			headData: headData,
 			tokens: tokens,
+			tokenStrings: tokenStrings,  // ← NEW: preserve original order
 			instance: this
 		});
 		entry.rendered = false;
 
-		// Also update the old registry so the IntersectionObserver can trigger
 		attentionRenderRegistry.set(this.containerId, {
 			headData: headData,
 			tokens: tokens,
+			tokenStrings: tokenStrings,  // ← NEW
 			instance: this,
 			rendered: false
 		});
 
-		if (!this.container.innerHTML) {
-			this.container.innerHTML = `<div style="padding:20px; color:#64748b;">Scroll to view Attention Matrix...</div>`;
+		if (!this.container && !this.containerId) return;
+		const containerEl = document.getElementById(this.containerId);
+		if (containerEl && !containerEl.innerHTML) {
+			containerEl.innerHTML = `<div style="padding:20px; color:#64748b;">Scroll to view Attention Matrix...</div>`;
 		}
 	}
 
@@ -382,17 +378,51 @@ class AttentionEngine {
 		const layerInstance = layerData.instance;
 		const escapedTokens = layerTokens.map(t => String(t).replace(/#/g, '\\#'));
 
+		// ── FIX: Use the preserved string tokens if available ──
+		// layerData.tokenStrings is the original ordered array of words.
+		// Only fall back to dot-product lookup if strings weren't provided.
+		const displayTokens = layerData.tokenStrings
+			? [...layerData.tokenStrings]
+			: layerTokens.map(t => {
+				if (typeof t === 'string') return t;
+				return tlab_get_top_word_only(t);
+			});
+
+		// ... rest of the method stays exactly the same ...
+		const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
+		const webCanvasId    = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
+		const webStripId     = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
+
 		headDiv.innerHTML = `
-	<div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>
-	<div style="margin-bottom:20px; font-size: 0.9rem;">
-	    $$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
-	</div>
-	<div style="overflow-x:auto;">
-	    ${layerInstance.generateMathTable(hd, escapedTokens)}
-	</div>`;
+    <p style="margin:0 0 4px 0; color:#1e40af; font-weight:bold;">Attention Connectivity Web</p>
+    <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
+	Hover over a word to see where it focuses its attention.
+    </p>
+    <div id="${webContainerId}" style="position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
+	<canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
+	<div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
+    </div>
+
+    <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>
+    <div style="margin-bottom:20px; font-size: 0.9rem;">
+	$$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
+    </div>
+    <div style="overflow-x:auto;">
+	${layerInstance.generateMathTable(hd, escapedTokens)}
+    </div>`;
 
 		headDiv.dataset.rendered = 'true';
 		render_temml();
+
+		requestAnimationFrame(() => {
+			renderDynamicAttentionWeb(
+				webContainerId,
+				webCanvasId,
+				webStripId,
+				displayTokens,
+				hd.this_weights
+			);
+		});
 	}
 
 	generateMathTable(head, tokens) {
@@ -1021,7 +1051,7 @@ function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
 		// Simplified Attention (assuming 1 head for loss calc speed or implementing full logic?)
 		// To reuse code, we instantiate the engine. This is slower but correct.
 		const engine = new AttentionEngine({ d_model: d_model, n_heads: 2, containerId: null, weights: w.attention });
-		const headData = engine.forward(h, contextTokens);
+		const headData = engine.forward(h, contextTokens, contextTokens);
 
 		// Concatenate
 		const concat = contextTokens.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
@@ -1171,7 +1201,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 			weights: weights[0]["attention"]
 		});
 
-		const headData = engine.forward(normH0, tokensWithPositional);
+		const headData = engine.forward(normH0, tokensWithPositional, knownTokens);
 		const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
 
 		const Wo_layer0 = weights[0]["attention"]["output"];
@@ -1795,7 +1825,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 			weights: layerWeights["attention"]
 		});
 
-		const headData = engine.forward(normH, tokens);
+		const headData = engine.forward(normH, tokens, tokenStrings);
 		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
 
 		// Apply Wo (output projection)
@@ -2875,6 +2905,133 @@ function updateTrainButtonState() {
 		btn.style.opacity = '1';
 		btn.style.cursor = 'pointer';
 	}
+}
+
+/**
+ * Dynamic Attention Web Renderer
+ * Draws bezier arcs between tokens weighted by a real attention matrix.
+ * Mirrors the visual style of SelfAttentionLab.drawWeb() but works
+ * with any tokens[] and weights[][] passed in dynamically.
+ *
+ * The token strip is horizontally scrollable so that long sequences
+ * don't stack vertically, and the canvas is sized to the full
+ * scrollable width so arcs connect correctly.
+ */
+function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weights) {
+	const container = document.getElementById(containerId);
+	const canvas    = document.getElementById(canvasId);
+	const strip     = document.getElementById(stripId);
+	if (!container || !canvas || !strip) return;
+
+	// Build token chips
+	strip.innerHTML = tokens.map((word, i) => {
+		const displayWord = (typeof word === 'string')
+			? word
+			: tlab_get_top_word_only(word);
+		return `<div class="sa-token-block" style="
+		    display:inline-block; padding:8px 14px; margin:0 6px;
+		    background:#e0e7ff; border-radius:8px; cursor:pointer;
+		    font-weight:600; font-size:0.95rem; user-select:none;
+		    white-space:nowrap; flex-shrink:0; min-width:60px;
+		    text-align:center;
+		    border:2px solid transparent; transition: border-color 0.15s;"
+		 data-token-idx="${i}">
+		${displayWord}
+	    </div>`;
+	}).join('');
+
+	const chips = strip.querySelectorAll('.sa-token-block');
+	let hoverIndex = null;
+
+	function drawArcs() {
+		const ctx = canvas.getContext('2d');
+
+		// Size canvas to the SCROLLABLE content dimensions, not the visible viewport.
+		// This ensures arcs render correctly even when the strip is wider than the container.
+		const scrollW = container.scrollWidth;
+		const scrollH = container.scrollHeight;
+		canvas.width  = scrollW;
+		canvas.height = scrollH;
+		// Make the canvas element match the scroll dimensions so it covers all chips
+		canvas.style.width  = scrollW + 'px';
+		canvas.style.height = scrollH + 'px';
+
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		// Use the container's bounding rect as origin reference.
+		// Because the canvas is positioned absolutely inside the container and sized
+		// to scrollWidth, we offset chip positions by the container's own page rect
+		// PLUS the current scrollLeft so arcs stay aligned with the scrolled content.
+		const containerRect = container.getBoundingClientRect();
+
+		for (let i = 0; i < tokens.length; i++) {
+			for (let j = 0; j < tokens.length; j++) {
+				if (i === j) continue;
+				const strength = weights[i][j];
+				if (strength < 0.01) continue;
+
+				const chip1 = chips[i].getBoundingClientRect();
+				const chip2 = chips[j].getBoundingClientRect();
+
+				// Translate from page coordinates to container-scroll coordinates
+				const scrollLeft = container.scrollLeft;
+				const scrollTop  = container.scrollTop;
+
+				const x1 = (chip1.left + chip1.width / 2) - containerRect.left + scrollLeft;
+				const x2 = (chip2.left + chip2.width / 2) - containerRect.left + scrollLeft;
+				const baseY = (chip1.top - containerRect.top) + scrollTop;
+
+				const isSource = (hoverIndex === i);
+
+				ctx.beginPath();
+				if (isSource) {
+					ctx.lineWidth   = 2 + strength * 20;
+					ctx.strokeStyle = `rgba(37, 99, 235, ${0.3 + strength * 0.7})`;
+				} else {
+					ctx.lineWidth   = 1;
+					ctx.strokeStyle = `rgba(203, 213, 225, 0.2)`;
+				}
+
+				const dist = Math.abs(x2 - x1);
+				const h    = Math.min(dist * 0.5, 150);
+
+				ctx.moveTo(x1, baseY);
+				ctx.bezierCurveTo(x1, baseY - h, x2, baseY - h, x2, baseY);
+				ctx.stroke();
+
+				// Show percentage label on hovered arcs
+				if (isSource && strength > 0.05) {
+					ctx.fillStyle = "#1e40af";
+					ctx.font = "bold 14px Inter, sans-serif";
+					const txt = Math.round(strength * 100) + "%";
+					ctx.fillText(txt, (x1 + x2) / 2 - 10, baseY - h / 1.5);
+				}
+			}
+		}
+
+		// Highlight the hovered chip
+		chips.forEach((chip, idx) => {
+			chip.style.borderColor = (idx === hoverIndex) ? '#2563eb' : 'transparent';
+		});
+	}
+
+	// Attach hover events
+	chips.forEach((chip, idx) => {
+		chip.addEventListener('mouseover',  () => { hoverIndex = idx;  drawArcs(); });
+		chip.addEventListener('mouseout',   () => { hoverIndex = null; drawArcs(); });
+	});
+
+	// Redraw when the container is scrolled (arcs must track chip positions)
+	container.addEventListener('scroll', () => drawArcs());
+
+	// Initial draw (all faint)
+	drawArcs();
+
+	// Redraw on window resize
+	const resizeKey = `_resizeHandler_${containerId}`;
+	if (window[resizeKey]) window.removeEventListener('resize', window[resizeKey]);
+	window[resizeKey] = () => drawArcs();
+	window.addEventListener('resize', window[resizeKey]);
 }
 
 async function loadTransformerModule () {
