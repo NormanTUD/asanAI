@@ -133,6 +133,8 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 	<div id="transformer-plotly-space" style="width: 100%; height: 500px; background: white; border-radius: 8px;"></div>
 	<div id="transformer-viz-embeddings" style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
 
+	<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px;"></div>
+
     <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">
         Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.
     </p>

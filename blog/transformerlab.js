@@ -851,6 +851,8 @@ async function train_transformer() {
 			await tf.nextFrame();
 
 			calculate_vector_math();
+
+			tled_syncTableFromSpace();
 		}
 		cost.dispose();
 	}
@@ -1161,6 +1163,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	// 1. Embedding Space
 	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
 	render_embedding_plot(d_model);
+	tled_initEditor();
 
 	// 2. Visualizations
 	tokensWithPositional = calculate_positional_injection(knownTokens, d_model);
@@ -3032,6 +3035,271 @@ function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weigh
 	if (window[resizeKey]) window.removeEventListener('resize', window[resizeKey]);
 	window[resizeKey] = () => drawArcs();
 	window.addEventListener('resize', window[resizeKey]);
+}
+
+/**
+ * Transformer Lab — Embedding Editor
+ * Adapted from embeddinglab.js's interactive table system.
+ * All functions prefixed with `tled_` to avoid namespace collisions
+ * with the Embedding Lab's own functions (e.g., addTokenToSpace, removeTokenFromSpace, etc.).
+ *
+ * Supports N-dimensional embeddings (not just 1D/2D/3D).
+ */
+
+/**
+ * Initializes (or re-initializes) the editable embedding table
+ * for the Transformer Lab's persistentEmbeddingSpace.
+ *
+ * Call this after every run_transformer_demo() so the table
+ * reflects the latest vocabulary and vectors.
+ */
+function tled_initEditor() {
+    const container = document.getElementById('tled-editor-container');
+    if (!container) return;
+
+    const space = window.persistentEmbeddingSpace;
+    if (!space || Object.keys(space).length === 0) {
+        container.innerHTML = `<p style="color:#94a3b8; padding:10px;">No embeddings yet. Enter training data and run the model.</p>`;
+        return;
+    }
+
+    const words = Object.keys(space);
+    const d_model = space[words[0]].length;
+
+    // Build dimension header labels
+    let dimHeaders = '';
+    for (let d = 0; d < d_model; d++) {
+        dimHeaders += `<th style="padding: 10px; text-align: center; white-space: nowrap;">D${d}</th>`;
+    }
+
+    let html = `
+    <div style="overflow-x: auto; margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
+        <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;" id="tled-table">
+            <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                <tr>
+                    <th style="padding: 10px; text-align: left;">Token</th>
+                    ${dimHeaders}
+                </tr>
+            </thead>
+            <tbody>`;
+
+    words.forEach(word => {
+        html += tled_generateRowHtml(word, space[word], d_model);
+    });
+
+    html += `
+            </tbody>
+        </table>
+        <div style="padding: 10px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
+            <input type="text" id="tled-new-token-input" placeholder="New token name..."
+                style="flex-grow: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;"
+                onkeyup="if(event.key==='Enter') tled_addToken()">
+            <button onclick="tled_addToken()"
+                style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                + Add Token
+            </button>
+        </div>
+    </div>`;
+
+    container.innerHTML = html;
+}
+
+/**
+ * Generates a single table row for a token.
+ * Each dimension gets its own numeric input.
+ */
+function tled_generateRowHtml(word, vec, d_model) {
+    // Escape word for use in HTML attributes (handle quotes, etc.)
+    const safeWord = word.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const safeWordAttr = word.replace(/"/g, '&quot;');
+
+    let dimCells = '';
+    for (let d = 0; d < d_model; d++) {
+        dimCells += `
+        <td style="padding: 5px; text-align: center;">
+            <input
+                type="number"
+                value="${vec[d].toFixed(4)}"
+                step="0.1"
+                data-tled-word="${safeWordAttr}"
+                data-tled-dim="${d}"
+                style="width: 70px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 12px;"
+                oninput="tled_updateEmbedding(this)"
+            >
+        </td>`;
+    }
+
+    return `
+    <tr style="border-bottom: 1px solid #f1f5f9;" id="tled-row-${safeWordAttr}">
+        <td style="padding: 8px 10px; font-weight: 500;">${word}</td>
+        ${dimCells}
+    </tr>`;
+}
+
+/**
+ * Called when a user edits a single dimension value in the table.
+ * Updates persistentEmbeddingSpace and refreshes the transformer visualization.
+ */
+function tled_updateEmbedding(inputEl) {
+    const word = inputEl.getAttribute('data-tled-word');
+    const dim = parseInt(inputEl.getAttribute('data-tled-dim'));
+    const val = parseFloat(inputEl.value) || 0;
+
+    const space = window.persistentEmbeddingSpace;
+    if (!space || !space[word]) return;
+
+    // Update the value in the global embedding space
+    space[word][dim] = val;
+
+    // Re-render the embedding plot and vector math (lightweight refresh)
+    const d_model = space[word].length;
+    render_embedding_plot(d_model);
+
+    // Recalculate vector math if there's an active equation
+    if (typeof calculate_vector_math === 'function') {
+        calculate_vector_math();
+    }
+}
+
+/**
+ * Adds a new token to the transformer's embedding space
+ * with Gaussian-random initialization (matching get_or_init_embeddings logic).
+ */
+function tled_addToken() {
+    const nameInput = document.getElementById('tled-new-token-input');
+    if (!nameInput) return;
+
+    const tokenName = nameInput.value.trim();
+    if (!tokenName) {
+        alert("Please enter a token name.");
+        return;
+    }
+
+    const space = window.persistentEmbeddingSpace;
+    if (!space) {
+        alert("No embedding space initialized. Please enter training data first.");
+        return;
+    }
+
+    if (space[tokenName]) {
+        alert(`Token "${tokenName}" already exists in the vocabulary.`);
+        return;
+    }
+
+    const existingWords = Object.keys(space);
+    if (existingWords.length === 0) return;
+
+    const d_model = space[existingWords[0]].length;
+
+    // Gaussian random initialization (same as get_or_init_embeddings)
+    const gaussianRandom = () => {
+        let u = 0, v = 0;
+        while (u === 0) u = Math.random();
+        while (v === 0) v = Math.random();
+        return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    };
+
+    space[tokenName] = Array.from({ length: d_model }, () =>
+        parseFloat(gaussianRandom().toFixed(4))
+    );
+
+    // Update the table by appending a new row
+    const tbody = document.querySelector('#tled-table tbody');
+    if (tbody) {
+        tbody.insertAdjacentHTML('beforeend',
+            tled_generateRowHtml(tokenName, space[tokenName], d_model)
+        );
+    }
+
+    // Clear input
+    nameInput.value = '';
+
+    // Refresh the embedding plot
+    render_embedding_plot(d_model);
+
+    if (typeof calculate_vector_math === 'function') {
+        calculate_vector_math();
+    }
+}
+
+/**
+ * Synchronizes the table to reflect the current state of
+ * persistentEmbeddingSpace. Call this after training steps
+ * update the embeddings so the table shows the trained values.
+ *
+ * Strategy: Instead of rebuilding the entire table (which would
+ * lose focus/scroll position), we update existing input values
+ * in-place and add/remove rows as needed.
+ */
+function tled_syncTableFromSpace() {
+    const container = document.getElementById('tled-editor-container');
+    if (!container) return;
+
+    const space = window.persistentEmbeddingSpace;
+    if (!space || Object.keys(space).length === 0) return;
+
+    const table = document.getElementById('tled-table');
+
+    // If the table doesn't exist yet (first run), do a full init
+    if (!table) {
+        tled_initEditor();
+        return;
+    }
+
+    const words = Object.keys(space);
+    const d_model = space[words[0]].length;
+
+    // Check if d_model changed (dimension slider moved) — full rebuild needed
+    const firstInput = table.querySelector('input[data-tled-dim]');
+    if (firstInput) {
+        const firstWord = firstInput.getAttribute('data-tled-word');
+        const existingDims = table.querySelectorAll(`input[data-tled-word="${firstWord}"]`).length;
+        if (existingDims !== d_model) {
+            tled_initEditor();
+            return;
+        }
+    }
+
+    // Update existing rows in-place
+    const existingRows = new Set();
+    table.querySelectorAll('tbody tr').forEach(row => {
+        const wordCell = row.querySelector('td');
+        if (wordCell) existingRows.add(wordCell.textContent.trim());
+    });
+
+    // Add new tokens that appeared (e.g., from training data change)
+    words.forEach(word => {
+        if (!existingRows.has(word)) {
+            const tbody = table.querySelector('tbody');
+            if (tbody) {
+                tbody.insertAdjacentHTML('beforeend',
+                    tled_generateRowHtml(word, space[word], d_model)
+                );
+            }
+        }
+    });
+
+    // Remove tokens that no longer exist
+    existingRows.forEach(word => {
+        if (!space[word]) {
+            const row = document.getElementById(`tled-row-${word}`);
+            if (row) row.remove();
+        }
+    });
+
+    // Update all input values to match current embeddings
+    words.forEach(word => {
+        const vec = space[word];
+        for (let d = 0; d < d_model; d++) {
+            const input = table.querySelector(
+                `input[data-tled-word="${word}"][data-tled-dim="${d}"]`
+            );
+            if (input && document.activeElement !== input) {
+                // Only update if the user isn't currently editing this cell
+                input.value = vec[d].toFixed(4);
+            }
+        }
+    });
 }
 
 async function loadTransformerModule () {
