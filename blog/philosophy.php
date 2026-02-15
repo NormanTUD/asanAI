@@ -1,5 +1,9 @@
 <?php include_once("functions.php"); ?>
 
+<!--
+TODO https://arxiv.org/abs/2508.18302
+-->
+
 <div class="md">
 ## Mary's Room: The Qualitative Gap
 
