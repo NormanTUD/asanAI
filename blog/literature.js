@@ -1,4 +1,10 @@
 window.bibData = {
+	"cuda": {
+		year: 2006,
+		url: "https://docs.nvidia.com/cuda/cuda-c-programming-guide/",
+		title: "CUDA C++ Programming Guide (Legacy)",
+		author: "Ian Buck, John Nickolls"
+	},
 	"jelinek": {
 		author: "Frederick Jelinek",
 		title: "Applying Information Theoretic Methods: Evaluation of Grammar Quality",
