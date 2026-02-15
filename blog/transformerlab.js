@@ -46,6 +46,25 @@ const attentionObserver = new IntersectionObserver((entries) => {
 	});
 }, { threshold: 0 });
 
+const trajectoryRenderRegistry = new Map();
+
+const trajectoryObserver = new IntersectionObserver((entries) => {
+	entries.forEach(entry => {
+		if (entry.isIntersecting) {
+			const containerId = entry.target.id;
+			const data = trajectoryRenderRegistry.get(containerId);
+
+			if (data && !data.rendered) {
+				console.log("Trajectory visible: Rendering plot...");
+				tlab_render_trajectory_plot(data.d_model);
+				data.rendered = true;
+				// Optional: Stop observing after first render to save resources
+				// trajectoryObserver.unobserve(entry.target);
+			}
+		}
+	});
+}, { threshold: 0.1 });
+
 function reset_graph() {
 	document.getElementById('training-loss-plot').style.display = 'none';
 	document.getElementById('training-loss-plot').innerHTML = '';
@@ -1007,10 +1026,28 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 		// ── All layers processed: trigger trajectory plot immediately ──
 		if (window.tlab_trajectory_collector) {
-			if(d_model == 2 || d_model == 3) {
-				setTimeout(() => tlab_render_trajectory_plot(d_model), 200);
+			if (d_model === 2 || d_model === 3) {
+				const containerId = 'transformer-trajectory-full-path';
+				let trajDiv = document.getElementById(containerId);
+
+				// Recreate div if it was removed
+				if (!trajDiv) {
+					trajDiv = document.createElement('div');
+					trajDiv.id = containerId;
+					// Append to appropriate parent, e.g., migrationContainer or a specific wrapper
+					document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
+				}
+
+				// Register the data for the observer
+				trajectoryRenderRegistry.set(containerId, {
+					d_model: d_model,
+					rendered: false
+				});
+
+				// Start observing
+				trajectoryObserver.observe(trajDiv);
 			} else {
-				$("#transformer-trajectory-full-path").remove()
+				$("#transformer-trajectory-full-path").remove();
 			}
 		}
 	}
