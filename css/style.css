@@ -1503,3 +1503,27 @@ input:focus, textarea:focus, select:focus {
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
+
+@keyframes featureMapPulse {
+	0%   { box-shadow: 0 0 6px 2px rgba(0, 170, 255, 0.6); }
+	50%  { box-shadow: 0 0 18px 6px rgba(0, 170, 255, 1.0); }
+	100% { box-shadow: 0 0 6px 2px rgba(0, 170, 255, 0.6); }
+}
+@keyframes featureMapBorderPulse {
+	0%   { border-color: rgba(0, 170, 255, 0.5); }
+	50%  { border-color: rgba(0, 170, 255, 1.0); }
+	100% { border-color: rgba(0, 170, 255, 0.5); }
+}
+.feature-map-working {
+	border: 3px solid rgba(0, 170, 255, 0.8);
+	border-radius: 6px;
+	animation: featureMapPulse 1.2s ease-in-out infinite,
+	featureMapBorderPulse 1.2s ease-in-out infinite;
+}
+.feature-map-done {
+	border: 3px solid transparent;
+	border-radius: 6px;
+	animation: none;
+	transition: border-color 0.4s ease, box-shadow 0.4s ease;
+	box-shadow: none;
+}

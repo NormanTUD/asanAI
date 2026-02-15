@@ -1,89 +1,139 @@
 "use strict";
 
+/**
+ * Renders the current intermediate tensor data onto a preview canvas.
+ * Called after each gradient ascent iteration for live feedback.
+ */
+function _render_preview_to_canvas(canvas, tensorData, layer_idx, neuron) {
+	if (!canvas || !tensorData) return;
+
+	try {
+		var imageArray = tidy(() => {
+			var dp = deprocess_image(tensorData);
+			if (!dp) return null;
+			return array_sync(dp);
+		});
+
+		if (!imageArray) return;
+
+		var data = imageArray[0];
+		scaleNestedArray(data);
+
+		var data_hash = {
+			layer: layer_idx,
+			neuron: neuron,
+			model_hash: "_preview_"
+		};
+
+		draw_grid(canvas, 1, data, 1, 0, null, null, data_hash, "layer_image");
+	} catch (e) {
+		// Preview rendering is best-effort; don't break the main loop
+		console.warn("Preview render failed:", e);
+	}
+}
+
 async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
-    var current_input_shape = get_input_shape();
-    var canvasses = [];
+	var current_input_shape = get_input_shape();
+	var canvasses = [];
 
-    var original_disable_layer_debuggers = disable_layer_debuggers;
-    disable_layer_debuggers = 1;
+	var original_disable_layer_debuggers = disable_layer_debuggers;
+	disable_layer_debuggers = 1;
 
-    try {
-        var start_image = undefined;
-        var iterations = parse_int($("#max_activation_iterations").val()) || 30;
-        if (!iterations) log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
+	// --- Create a preview canvas upfront and attach it to the DOM ---
+	var previewCanvas = null;
+	var container = document.getElementById("maximally_activated_content");
+	var isImageModel = (model?.input?.shape.length == 4 && model?.input?.shape[3] == 3);
 
-        var full_data = await input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons);
+	if (isImageModel && container) {
+		previewCanvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
+		previewCanvas.classList.add("feature-map-working");
+		container.appendChild(previewCanvas);
+	}
 
-        disable_layer_debuggers = original_disable_layer_debuggers;
+	try {
+		var start_image = undefined;
+		var iterations = parse_int($("#max_activation_iterations").val()) || 30;
+		if (!iterations) log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
 
-        if (full_data["worked"]) {
-            // OPTIMIZATION: Build everything in a DocumentFragment to avoid incremental reflow
-            var fragment = document.createDocumentFragment();
-            // Cache the container element lookup
-            var container = document.getElementById("maximally_activated_content");
+		var full_data = await input_gradient_ascent(
+			layer_idx, neuron, iterations, start_image, max_neurons, 0,
+			previewCanvas  // <-- pass the preview canvas
+		);
 
-            if (full_data.data) {
-                var _tensor = tensor(full_data.data);
-                var t_str = `<span class="temml_me">${array_to_latex_matrix(array_sync(_tensor))}</span>`;
-                log(language[lang]["maximally_activated_tensor"] + ":", t_str);
+		disable_layer_debuggers = original_disable_layer_debuggers;
 
-                var inputElem = document.createElement("input");
-                inputElem.style.width = "100%";
-                inputElem.value = `Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:`;
-                fragment.appendChild(inputElem);
+		// --- Remove the working animation, add done class ---
+		if (previewCanvas) {
+			previewCanvas.classList.remove("feature-map-working");
+			previewCanvas.classList.add("feature-map-done");
+		}
 
-                var pre = document.createElement("pre");
-                pre.innerHTML = t_str;
-                fragment.appendChild(pre);
+		if (full_data["worked"]) {
+			var fragment = document.createDocumentFragment();
 
-                await dispose(_tensor);
-            } else if (full_data.image) {
-                var data = full_data.image[0];
-                // OPTIMIZATION: get_canvas_in_class is assumed to return an existing/new canvas,
-                // but we draw to it BEFORE appending to the fragment.
-                var canvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
-                var data_hash = {
-                    layer: layer_idx,
-                    neuron: neuron,
-                    model_hash: await get_model_config_hash()
-                };
-                scaleNestedArray(data);
+			if (full_data.data) {
+				var _tensor = tensor(full_data.data);
+				var t_str = `<span class="temml_me">${array_to_latex_matrix(array_sync(_tensor))}</span>`;
+				log(language[lang]["maximally_activated_tensor"] + ":", t_str);
 
-                // draw_grid will mutate the canvas; call it before attaching to DOM
-                // This ensures the expensive drawing is done off-DOM or on an already existing/inert canvas.
-                draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
+				var inputElem = document.createElement("input");
+				inputElem.style.width = "100%";
+				inputElem.value = `Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:`;
+				fragment.appendChild(inputElem);
 
-                fragment.appendChild(canvas);
-                canvasses.push(canvas);
-            }
+				var pre = document.createElement("pre");
+				pre.innerHTML = t_str;
+				fragment.appendChild(pre);
 
-            // OPTIMIZATION: Append once natively at the end of all construction
-            if (fragment.childNodes.length && container) {
-                container.appendChild(fragment);
-                // Keep using your existing show_tab_label API (assumed cheap)
-                show_tab_label("maximally_activated_label", 1);
-            }
-        }
-    } catch (e) {
-        await write_error(e, null, null);
-        show_tab_label("visualization_tab", 1);
-        show_tab_label("fcnn_tab_label", 1);
-        return false;
-    }
+				await dispose(_tensor);
 
-    // Await nextFrame() is important to allow browser a repaint cycle before returning,
-    // which helps the UI update incrementally.
-    await nextFrame();
-    return canvasses;
+				if (container) container.appendChild(fragment);
+
+			} else if (full_data.image) {
+				// Final high-quality render onto the same preview canvas
+				var data = full_data.image[0];
+				var data_hash = {
+					layer: layer_idx,
+					neuron: neuron,
+					model_hash: await get_model_config_hash()
+				};
+				scaleNestedArray(data);
+
+				if (previewCanvas) {
+					draw_grid(previewCanvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
+					canvasses.push(previewCanvas);
+				} else {
+					// Fallback if no preview canvas was created
+					var canvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
+					draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
+					fragment.appendChild(canvas);
+					canvasses.push(canvas);
+					if (container) container.appendChild(fragment);
+				}
+			}
+
+			show_tab_label("maximally_activated_label", 1);
+		}
+	} catch (e) {
+		// Clean up the working indicator on error
+		if (previewCanvas) {
+			previewCanvas.classList.remove("feature-map-working");
+			previewCanvas.classList.add("feature-map-done");
+		}
+		await write_error(e, null, null);
+		show_tab_label("visualization_tab", 1);
+		show_tab_label("fcnn_tab_label", 1);
+		return false;
+	}
+
+	await nextFrame();
+	return canvasses;
 }
 
 async function draw_single_maximally_activated_neuron(layer_idx, neurons, is_recursive, type) {
 	var canvasses = [];
-	var fragment = document.createDocumentFragment();
-	// Cache the container element lookup
 	var container = document.getElementById("maximally_activated_content");
 
-	// Cache jQuery lookups done inside the loop and do one-time UI updates
 	var $msgWrapper = $("#generate_images_msg_wrapper");
 	var $msg = $("#generate_images_msg");
 	$msgWrapper.hide();
@@ -98,19 +148,6 @@ async function draw_single_maximally_activated_neuron(layer_idx, neurons, is_rec
 		var base_msg = `${language[lang]["generating_image_for_neuron"]} ${neuron_idx + 1} ${language[lang]["of"]} ${neurons}`;
 
 		await draw_maximally_activated_neuron_with_retries(base_msg, layer_idx, neurons, neuron_idx, is_recursive, type, canvasses, neurons);
-	}
-
-	// OPTIMIZATION: Append all canvases in one batch, using a native append to avoid jQuery wrapping
-	// and minimize DOM reflows by only hitting the live DOM once.
-	for (var i = 0; i < canvasses.length; i++) {
-		// canvasses[i] is an array from draw_maximally_activated_neuron's return
-		var c = canvasses[i] && canvasses[i][0] ? canvasses[i][0] : canvasses[i];
-		if (c) {
-			fragment.appendChild(c);
-		}
-	}
-	if (fragment.childNodes.length && container) {
-		container.appendChild(fragment);
 	}
 
 	log(language[lang]["done_generating_feature_maps"]);
@@ -157,23 +194,23 @@ async function handle_draw_maximally_activated_neuron_multiple_times_error(e, is
 	return tries_left;
 }
 
-function _get_neurons_last_layer (layer_idx, type) {
+function _get_neurons_last_layer(layer_idx, type) {
 	typeassert(layer_idx, int, "layer_idx");
 	typeassert(type, string, "type");
 
 	var neurons = 1;
 
-	if(!Object.keys(model).includes("layers")) {
+	if (!Object.keys(model).includes("layers")) {
 		wrn(language[lang]["cannot_get_model_layers"]);
 		return false;
 	}
 
-	if(!Object.keys(model.layers).includes("" + layer_idx)) {
+	if (!Object.keys(model.layers).includes("" + layer_idx)) {
 		wrn(`${language[lang]["cannot_get_model_layers"]}[${layer_idx}]`);
 		return false;
 	}
 
-	if(type.includes("conv")) {
+	if (type.includes("conv")) {
 		neurons = model?.layers[layer_idx].filters;
 	} else if (type == "dense") {
 		neurons = model?.layers[layer_idx]?.units;
@@ -198,12 +235,10 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 
 	dbg("Button found for layer_idx: " + layer_idx);
 
-	// If generation already running, set flag and exit quickly
 	if (currently_generating_images) {
 		console.log("Generation is already running, stopping...");
 		dbg("Generation running, setting stop flag");
 		stop_generating_images = 1;
-		// batch style change in one RAF
 		(function(btn) {
 			requestAnimationFrame(function() {
 				if (btn && btn.style) btn.style.backgroundColor = "";
@@ -228,7 +263,7 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 			}
 
 			document.body.style.cursor = "wait";
-			add_header_to_maximally_activated_content(layer_idx); 
+			add_header_to_maximally_activated_content(layer_idx);
 		});
 	})(button[0]);
 
@@ -284,7 +319,6 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 	currently_generating_images = false;
 	dbg("Flags reset: stop_generating_images=false, currently_generating_images=false");
 
-	// reset UI in one RAF to avoid layout thrash
 	(function(btn) {
 		requestAnimationFrame(function() {
 			if (btn) btn.style.backgroundColor = "";
@@ -325,23 +359,22 @@ function add_header_to_maximally_activated_content(layer_idx) {
 	h2.appendChild(input);
 	fragment.appendChild(h2);
 
-	// Use native append once (avoid jQuery wrapping overhead)
 	var container = document.getElementById("maximally_activated_content");
 	if (container) container.appendChild(fragment);
 }
 
-function hide_stuff_after_generating_maximally_activated_neurons () {
+function hide_stuff_after_generating_maximally_activated_neurons() {
 	$("#generate_images_msg_wrapper").hide();
 	$("#generate_images_msg").html("");
 }
 
-function reset_cursor () {
+function reset_cursor() {
 	$("body").css("cursor", "default");
 }
 
 function get_types_in_order(layer_idx) {
 	var types_in_order = "";
-	if(get_number_of_layers() - 1 == layer_idx && labels && labels.length) {
+	if (get_number_of_layers() - 1 == layer_idx && labels && labels.length) {
 		types_in_order = " (" + labels.join(", ") + ")";
 	}
 
@@ -376,7 +409,6 @@ async function predict_maximally_activated(item, force_category) {
 	var pre = document.createElement("pre");
 	pre.className = "maximally_activated_predictions";
 
-	// Important: build HTML off-DOM to avoid reflows
 	var temp = document.createElement("div");
 	temp.innerHTML = results;
 	pre.appendChild(temp);
@@ -392,7 +424,7 @@ async function predict_maximally_activated(item, force_category) {
 }
 
 async function wait_for_images_to_be_generated() {
-	if(currently_generating_images) {
+	if (currently_generating_images) {
 		l(language[lang]["cannot_predict_two_layers_at_the_same_time"] + "...");
 
 		while (currently_generating_images) {
@@ -403,15 +435,17 @@ async function wait_for_images_to_be_generated() {
 	await wait_for_updated_page(3);
 }
 
-function handle_scaled_grads_error (e) {
-	if(Object.keys(e).includes("message")) {
+function handle_scaled_grads_error(e) {
+	if (Object.keys(e).includes("message")) {
 		e = e.message;
 	}
 
 	err(`${language[lang]["inside_scaled_grads_creation_error"]}: ${e}`);
 }
 
-async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons, recursion = 0) {
+async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons, recursion, previewCanvas) {
+	if (typeof recursion === "undefined") recursion = 0;
+
 	typeassert(layer_idx, int, "layer_idx");
 	typeassert(neuron, int, "neuron");
 	typeassert(iterations, int, "iterations");
@@ -420,33 +454,32 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 	var worked = 0;
 	var full_data = {};
 
+	// How often to update the preview (every N iterations)
+	var previewInterval = Math.max(1, Math.floor(iterations / 20));
+	// For short runs, update every step; for long runs, ~20 updates total
+	if (iterations <= 20) previewInterval = 1;
+
 	try {
-		// Build the auxiliary model and gradient function OUTSIDE tidy,
-		// so we can run an imperative loop with proper memory management.
 		const layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
 		const aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
 
 		const lossFunction = (input) => aux_model.apply(input, {training: true}).gather([neuron], -1);
 		const grad_function = grad(lossFunction);
 
-		// --- Initialize the image ---
 		var new_input_shape = get_input_shape_with_batch_size();
 		new_input_shape.shift();
 		var data;
 		if (typeof(start_image) != "undefined") {
 			data = start_image;
 		} else {
-			// Start from random noise centered around 0.5 for a neutral starting point
 			data = tidy(() => randomUniform([1, ...new_input_shape], 0.4, 0.6));
 		}
 
 		// --- Configuration for regularization ---
-		const blurInterval = 4;          // Apply Gaussian blur every N steps
-		const decayRate = 0.98;          // L2 decay to prevent pixel explosion
-		const learningRate = 0.05;       // Step size for gradient ascent
+		const blurInterval = 4;
+		const decayRate = 0.98;
+		const learningRate = 0.05;
 
-		// Precompute a 3x3 Gaussian-like smoothing kernel (applied per channel)
-		// Kernel: [1,2,1; 2,4,2; 1,2,1] / 16
 		const gaussianWeights = [1, 2, 1, 2, 4, 2, 1, 2, 1].map(v => v / 16);
 		const blurKernel = tf.tensor4d(gaussianWeights, [3, 3, 1, 1]);
 
@@ -456,24 +489,19 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 				continue;
 			}
 
-			// --- 1. Spatial jitter using pad + slice (no tf.roll needed) ---
+			// --- 1. Spatial jitter using pad + slice ---
 			const jitterMax = 4;
 			const ox = Math.floor(Math.random() * (jitterMax * 2 + 1)) - jitterMax;
 			const oy = Math.floor(Math.random() * (jitterMax * 2 + 1)) - jitterMax;
 
 			var jittered = tidy(() => {
-				// Shift image by (ox, oy) using slice:
-				// Pad with zeros on the edges, then slice out the original size
 				var h = data.shape[1];
 				var w = data.shape[2];
-				// Compute padding: positive offset means shift right/down, so pad left/top
 				var padTop = Math.max(ox, 0);
 				var padBottom = Math.max(-ox, 0);
 				var padLeft = Math.max(oy, 0);
 				var padRight = Math.max(-oy, 0);
-				// Pad: [batch, height, width, channels]
 				var padded = tf.pad(data, [[0, 0], [padTop, padBottom], [padLeft, padRight], [0, 0]]);
-				// Slice out the region that corresponds to the shifted view
 				var sliceTop = Math.max(-ox, 0);
 				var sliceLeft = Math.max(-oy, 0);
 				return tf.slice(padded, [0, sliceTop, sliceLeft, 0], [data.shape[0], h, w, data.shape[3]]);
@@ -497,7 +525,6 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 				}
 			});
 
-			// Apply gradient step with a controlled learning rate
 			var updated = tidy(() => {
 				const step = tf_mul(scaledGrads, tf_constant_shape(learningRate, scaledGrads));
 				return tf_add(data, step);
@@ -506,12 +533,12 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			await dispose(data);
 			data = updated;
 
-			// --- 3. L2 decay: gently pull pixel values toward center to prevent explosion ---
+			// --- 3. L2 decay ---
 			var decayed = tidy(() => tf_mul(data, tf_constant_shape(decayRate, data)));
 			await dispose(data);
 			data = decayed;
 
-			// --- 4. Undo spatial jitter (shift back by -ox, -oy) ---
+			// --- 4. Undo spatial jitter ---
 			var unJittered = tidy(() => {
 				var h = data.shape[1];
 				var w = data.shape[2];
@@ -527,7 +554,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			await dispose(data);
 			data = unJittered;
 
-			// --- 5. Gaussian blur regularization every few steps to suppress high-frequency noise ---
+			// --- 5. Gaussian blur regularization ---
 			if (iteration_idx % blurInterval === 0 && iteration_idx > 0) {
 				var blurred = tidy(() => {
 					var numChannels = data.shape[3];
@@ -541,10 +568,16 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 				data = blurred;
 			}
 
+			// --- 6. Live preview: render current state to the canvas ---
+			if (previewCanvas && (iteration_idx % previewInterval === 0 || iteration_idx === iterations - 1)) {
+				_render_preview_to_canvas(previewCanvas, data, layer_idx, neuron);
+				// Yield to the browser so it can repaint the canvas
+				await nextFrame();
+			}
+
 			worked = 1;
 		}
 
-		// Clean up the blur kernel
 		await dispose(blurKernel);
 
 		var generated_data = data;
@@ -587,10 +620,10 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 	return full_data;
 }
 
-async function handle_input_gradient_descent_error (e, recursion, layer_idx, neuron, iterations, start_image) {
-	if(("" + e).includes("is already disposed")) {
+async function handle_input_gradient_descent_error(e, recursion, layer_idx, neuron, iterations, start_image) {
+	if (("" + e).includes("is already disposed")) {
 		await compile_model();
-		if(recursion > 20) {
+		if (recursion > 20) {
 			await delay(recursion * 1000);
 			return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion + 1, iterations);
 		} else {
@@ -609,16 +642,13 @@ function deprocess_image(x) {
 			var numChannels = x.shape[x.shape.length - 1];
 
 			if (numChannels && numChannels > 1) {
-				// Per-channel normalization for better contrast
 				var channels = tf.split(x, numChannels, -1);
 				var normalizedChannels = channels.map(function(ch) {
 					return tidy(() => {
 						var chMin = ch.min();
 						var chMax = ch.max();
 						var range = tf_add(tf_sub(chMax, chMin), tf_constant_shape(get_epsilon(), chMin));
-						// Normalize to [0, 1]
 						var normalized = tf_div(tf_sub(ch, chMin), range);
-						// Gentle contrast boost: 0.5 + (x - 0.5) * 1.4, then clip
 						var centered = tf_sub(normalized, tf_constant_shape(0.5, normalized));
 						var boosted = tf_mul(centered, tf_constant_shape(1.4, centered));
 						normalized = tf_add(tf_constant_shape(0.5, boosted), boosted);
@@ -630,7 +660,6 @@ function deprocess_image(x) {
 				var combined = tf.concat(normalizedChannels, -1);
 				return clipByValue(combined, 0, 255).asType("int32");
 			} else {
-				// Single-channel fallback: simple min-max normalization
 				var xMin = x.min();
 				var xMax = x.max();
 				var range = tf_add(tf_sub(xMax, xMin), tf_constant_shape(get_epsilon(), xMin));
