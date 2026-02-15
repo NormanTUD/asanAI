@@ -92,6 +92,7 @@ body {
 .layer {
 	min-height: 40px;
 	margin-bottom: 5px;
+	transition: opacity 0.3s ease, transform 0.3s ease, margin 0.3s ease;
 }
 
 .current {
@@ -268,6 +269,8 @@ ul {
 	border: 1px solid #ddd;
 	overflow: hidden;
 	margin: 10px;
+	transform: translateY(-10px);
+	transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .layer_setting {
@@ -1273,6 +1276,7 @@ input, select {
 }
 
 .spinner {
+	will-change: transform;
 	border: 8px solid rgba(0, 0, 0, 0.1); /* Light mode spinner color */
 	border-left: 8px solid #3498db; /* Spinner color */
 	border-radius: 50%;
@@ -1515,6 +1519,7 @@ input:focus, textarea:focus, select:focus {
 	100% { border-color: rgba(0, 170, 255, 0.5); }
 }
 .feature-map-working {
+	will-change: box-shadow, border-color;
 	border: 3px solid rgba(0, 170, 255, 0.8);
 	border-radius: 6px;
 	animation: featureMapPulse 1.2s ease-in-out infinite,
