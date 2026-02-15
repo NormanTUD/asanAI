@@ -91,6 +91,7 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 
 		sendHeight();
 
+		smartquote();
 	} catch (error) {
 		console.error("Initialization failed:", error);
 		updateLoadingStatus("Error loading course. Please refresh.");
