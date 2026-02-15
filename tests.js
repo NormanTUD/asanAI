@@ -1708,6 +1708,8 @@ async function confirmAndRunTests() {
 }
 
 async function test_all_optimizers_on_xor() {
+	await delay(5000);
+
 	log_test("Test all optimizers");
 
 	const wanted_epochs = 2;
