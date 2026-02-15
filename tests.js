@@ -810,6 +810,179 @@ async function run_super_quick_tests (quick=0) {
 
 	//test_equal("test_math_mode_color_generator()", test_math_mode_color_generator(), true);
 
+	var arr1 = [[[0, 10], [5, 20]]];
+	scaleNestedArray(arr1);
+	test_equal("scaleNestedArray min becomes 0", arr1[0][0][0], 0);
+	test_equal("scaleNestedArray max becomes 255", arr1[0][1][1], 255);
+	test_equal("scaleNestedArray mid value scaled", arr1[0][0][1], (10 / 20) * 255);
+
+	var arr_same = [[5, 5]];
+	scaleNestedArray(arr_same);
+	// When min==max, (value - min) * (255 / 0) = NaN
+	test_equal("scaleNestedArray all same values produces NaN", isNaN(arr_same[0][0]), true);
+
+	// --- predict.js: number_of_elements_in_tensor_shape ---
+	test_equal("number_of_elements_in_tensor_shape([2,3])", number_of_elements_in_tensor_shape([2, 3]), 6);
+	test_equal("number_of_elements_in_tensor_shape([null,4,5])", number_of_elements_in_tensor_shape([null, 4, 5]), 20);
+	test_equal("number_of_elements_in_tensor_shape([1])", number_of_elements_in_tensor_shape([1]), 1);
+	test_equal("number_of_elements_in_tensor_shape([null,null,3])", number_of_elements_in_tensor_shape([null, null, 3]), 3);
+	test_equal("number_of_elements_in_tensor_shape([2,3,4])", number_of_elements_in_tensor_shape([2, 3, 4]), 24);
+
+	// --- predict.js: is_null_or_undefined ---
+	test_equal("is_null_or_undefined(null)", is_null_or_undefined(null), true);
+	test_equal("is_null_or_undefined(undefined)", is_null_or_undefined(undefined), true);
+	test_equal("is_null_or_undefined(0)", is_null_or_undefined(0), false);
+	test_equal("is_null_or_undefined('')", is_null_or_undefined(""), false);
+	test_equal("is_null_or_undefined(false)", is_null_or_undefined(false), false);
+
+	// --- predict.js: has_disposed_flag ---
+	test_equal("has_disposed_flag with flag", has_disposed_flag({isDisposedInternal: false}), true);
+	test_equal("has_disposed_flag without flag", has_disposed_flag({foo: 1}), false);
+
+	// --- predict.js: is_disposed ---
+	test_equal("is_disposed true", is_disposed({isDisposedInternal: true}), true);
+	test_equal("is_disposed false", is_disposed({isDisposedInternal: false}), false);
+
+	// --- predict.js: should_abort_predict ---
+	test_equal("should_abort_predict(null)", should_abort_predict(null), true);
+	test_equal("should_abort_predict(undefined)", should_abort_predict(undefined), true);
+	test_equal("should_abort_predict disposed", should_abort_predict({isDisposedInternal: true}), true);
+	test_equal("should_abort_predict not disposed", should_abort_predict({isDisposedInternal: false}), false);
+	test_equal("should_abort_predict no flag", should_abort_predict({foo: 1}), false);
+
+	// --- gui.js: get_dimensionality_from_layer_name ---
+	test_equal("get_dimensionality_from_layer_name('conv1d')", get_dimensionality_from_layer_name("conv1d"), 1);
+	test_equal("get_dimensionality_from_layer_name('conv2d')", get_dimensionality_from_layer_name("conv2d"), 2);
+	test_equal("get_dimensionality_from_layer_name('maxPooling3D')", get_dimensionality_from_layer_name("maxPooling3D"), 3);
+	test_equal("get_dimensionality_from_layer_name('conv2dTranspose')", get_dimensionality_from_layer_name("conv2dTranspose"), 2);
+
+	// --- gui.js: or_none ---
+	test_equal("or_none(null)", or_none(null), "None");
+	test_equal("or_none(undefined)", or_none(undefined), "None");
+	test_equal("or_none('')", or_none(""), "None");
+	test_equal("or_none('relu')", or_none("relu"), "\"relu\"");
+	test_equal("or_none('3.14')", or_none("3.14"), 3.14);
+	test_equal("or_none('42')", or_none("42"), 42);
+
+	// --- gui.js: network_name_is_empty ---
+	test_equal("network_name_is_empty('')", network_name_is_empty(""), true);
+	test_equal("network_name_is_empty('   ')", network_name_is_empty("   "), true);
+	test_equal("network_name_is_empty('mynet')", network_name_is_empty("mynet"), false);
+
+	// --- gui.js: isIntegerLike ---
+	test_equal("isIntegerLike(5)", isIntegerLike(5), true);
+	test_equal("isIntegerLike('5')", isIntegerLike("5"), true);
+	test_equal("isIntegerLike('-3')", isIntegerLike("-3"), true);
+	test_equal("isIntegerLike('3.5')", isIntegerLike("3.5"), false);
+	test_equal("isIntegerLike('')", isIntegerLike(""), false);
+	test_equal("isIntegerLike(' 5')", isIntegerLike(" 5"), false);
+	test_equal("isIntegerLike('abc')", isIntegerLike("abc"), false);
+	test_equal("isIntegerLike(0)", isIntegerLike(0), true);
+	test_equal("isIntegerLike(3.0)", isIntegerLike(3.0), true); // 3.0 is integer in JS
+	test_equal("isIntegerLike(3.5)", isIntegerLike(3.5), false);
+
+	// --- gui.js: parse_target_shape_value ---
+	test_equal("parse_target_shape_value('40,40,3')", JSON.stringify(parse_target_shape_value("40,40,3")), "[40,40,3]");
+	test_equal("parse_target_shape_value('10')", JSON.stringify(parse_target_shape_value("10")), "[10]");
+	test_equal("parse_target_shape_value('')", parse_target_shape_value(""), null);
+	test_equal("parse_target_shape_value('abc')", parse_target_shape_value("abc"), null);
+	test_equal("parse_target_shape_value('1,2,abc')", parse_target_shape_value("1,2,abc"), null);
+	test_equal("parse_target_shape_value('  ')", parse_target_shape_value("  "), null);
+
+	// --- gui.js: getDimFromString / safeGetDim ---
+	test_equal("getDimFromString('conv2d')", getDimFromString("conv2d"), 2);
+	test_equal("getDimFromString('maxPooling1D')", getDimFromString("maxPooling1D"), 1);
+	test_equal("getDimFromString('conv3dTranspose')", getDimFromString("conv3dTranspose"), 3);
+	test_equal("getDimFromString('dense')", getDimFromString("dense"), null);
+	test_equal("safeGetDim('conv2d')", safeGetDim("conv2d"), 2);
+	test_equal("safeGetDim('flatten')", safeGetDim("flatten"), null);
+	test_equal("safeGetDim(123)", safeGetDim(123), null); // non-string input
+
+	// --- gui.js: get_generated_encoding ---
+	test_equal("get_generated_encoding(0, 3)", get_generated_encoding(0, 3), "[1, 0, 0]");
+	test_equal("get_generated_encoding(1, 3)", get_generated_encoding(1, 3), "[0, 1, 0]");
+	test_equal("get_generated_encoding(2, 3)", get_generated_encoding(2, 3), "[0, 0, 1]");
+	test_equal("get_generated_encoding(0, 1)", get_generated_encoding(0, 1), "[1]");
+	test_equal("get_generated_encoding(1, 4)", get_generated_encoding(1, 4), "[0, 1, 0, 0]");
+
+	// --- gui.js: ensure_shape_array ---
+	test_equal("ensure_shape_array([1,2])", JSON.stringify(ensure_shape_array([1, 2])), "[1,2]");
+	test_equal("ensure_shape_array('[5,6,7]')", JSON.stringify(ensure_shape_array("[5,6,7]")), "[5,6,7]");
+
+	// --- gui.js: replace_nullish_with_unknown_with_ok ---
+	var r1 = replace_nullish_with_unknown_with_ok([1, 2, 3]);
+	test_equal("replace_nullish ok array", r1.ok, true);
+	test_equal("replace_nullish ok array value", JSON.stringify(r1.value), "[1,2,3]");
+
+	var r2 = replace_nullish_with_unknown_with_ok([1, null, 3]);
+	test_equal("replace_nullish with null", r2.ok, false);
+	test_equal("replace_nullish null replaced", r2.value[1], "\\text{Parsing Error}");
+
+	var r3 = replace_nullish_with_unknown_with_ok([1, Infinity]);
+	test_equal("replace_nullish with Infinity", r3.ok, false);
+	test_equal("replace_nullish Infinity replaced", r3.value[1], "\\text{NaN}");
+
+	var r4 = replace_nullish_with_unknown_with_ok(["hello", ""]);
+	test_equal("replace_nullish with empty string", r4.ok, false);
+	test_equal("replace_nullish empty string replaced", r4.value[1], "\\text{Empty String}");
+
+	var r5 = replace_nullish_with_unknown_with_ok([[1, null], [3, 4]]);
+	test_equal("replace_nullish nested null", r5.ok, false);
+	test_equal("replace_nullish nested null value", r5.value[0][1], "\\text{Parsing Error}");
+
+	// --- gui.js: human_readable_time edge cases ---
+	test_equal("human_readable_time(0)", human_readable_time(0), language[lang]["one_second"]);
+	test_equal("human_readable_time(null)", human_readable_time(null), language[lang]["one_second"]);
+
+	// --- gui.js: python_data_to_string ---
+	test_equal("python_data_to_string with except", python_data_to_string({units: "10", activation: "relu"}, ["units"]),
+		'\tactivation="relu"');
+	test_equal("python_data_to_string use_bias true", python_data_to_string({use_bias: "True"}, []),
+		'\tuse_bias=True');
+	test_equal("python_data_to_string use_bias false", python_data_to_string({use_bias: "0"}, []),
+		'\tuse_bias=False');
+	test_equal("python_data_to_string strides", python_data_to_string({strides: [2, 2]}, []),
+		'\tstrides=(2, 2)');
+
+	// --- train.js: extractCategoryFromURL ---
+	test_equal("extractCategoryFromURL with path", extractCategoryFromURL("traindata/signs/example/fire.jpg"), "example");
+	test_equal("extractCategoryFromURL with deeper path", extractCategoryFromURL("/data/cats/img001.png"), "cats");
+	test_equal("extractCategoryFromURL null input", extractCategoryFromURL(null), null);
+
+	// --- train.js: findIndexByKey ---
+	test_equal("findIndexByKey(['a','b','c'], 'b')", findIndexByKey(["a", "b", "c"], "b"), 1);
+	test_equal("findIndexByKey(['x','y','z'], 'x')", findIndexByKey(["x", "y", "z"], "x"), 0);
+	test_equal("findIndexByKey(['x','y','z'], 'z')", findIndexByKey(["x", "y", "z"], "z"), 2);
+
+	// --- train.js: get_key_by_value ---
+	test_equal("get_key_by_value({a:1,b:2}, 2)", get_key_by_value({a: 1, b: 2}, 2), "b");
+	test_equal("get_key_by_value({a:1,b:2}, 1)", get_key_by_value({a: 1, b: 2}, 1), "a");
+	test_equal("get_key_by_value({a:1,b:2}, 3)", get_key_by_value({a: 1, b: 2}, 3), undefined);
+
+	// --- predict.js: get_show_green (depends on DOM but quick check) ---
+	// This tests the function returns 0 or 1
+	var show_green_val = get_show_green();
+	test_equal("get_show_green returns 0 or 1", [0, 1].includes(show_green_val), true);
+
+	// --- gui.js: dataURLToBlob ---
+	var tiny_png = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+	var blob = dataURLToBlob(tiny_png);
+	test_equal("dataURLToBlob returns Blob", blob instanceof Blob, true);
+	test_equal("dataURLToBlob correct type", blob.type, "image/png");
+
+	// --- gui.js: show_bars_instead_of_numbers returns boolean ---
+	var bars_val = show_bars_instead_of_numbers();
+	test_equal("show_bars_instead_of_numbers returns bool", typeof bars_val, "boolean");
+
+	// --- gui.js: get_data_origin returns string ---
+	var data_origin = get_data_origin();
+	test_equal("get_data_origin returns string", typeof data_origin, "string");
+
+	// --- predict.js: create_network_name returns string ---
+	var nn = create_network_name();
+	test_equal("create_network_name returns string", typeof nn, "string");
+	test_not_equal("create_network_name is not empty", nn.length, 0);
+
 	if(quick) {
 		remove_num_tests_overlay();
 	}
