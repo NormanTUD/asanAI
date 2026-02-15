@@ -483,6 +483,13 @@ button:disabled:hover {
 	background-color: white;
 	width: 55px;
 	text-align: center;
+	transition:
+		top 200ms ease,
+		left 200ms ease,
+		height 200ms ease,
+		opacity 200ms ease,
+		transform 200ms ease,
+		background-color 0.3s ease;
 }
 
 #webcam_prediction {
@@ -550,6 +557,12 @@ button:disabled:hover {
 	background-color: orange;
 	width: 0%;
 	height: 3px;
+}
+
+#data_progressbar > div,
+#training_progressbar > div,
+.bar > span {
+	transition: width 0.4s ease;
 }
 
 .bar {
