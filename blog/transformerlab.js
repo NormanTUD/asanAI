@@ -105,19 +105,16 @@ function show_nr_of_params() {
 }
 
 function get_or_init_embeddings(tokens, d_model) {
-	// 1. Ensure the global space exists before any logic
 	if (window.persistentEmbeddingSpace === null) {
 		window.persistentEmbeddingSpace = {};
 	}
 
-	// 2. Reset if dimensions changed
 	if (window.last_d_model !== d_model) {
 		window.persistentEmbeddingSpace = {};
 		window.last_d_model = d_model;
 		reset_graph();
 	}
 
-	// 3. Capture the reference AFTER potential resets
 	const space = window.persistentEmbeddingSpace;
 
 	const gaussianRandom = () => {
@@ -128,13 +125,21 @@ function get_or_init_embeddings(tokens, d_model) {
 	};
 
 	tokens.forEach(token => {
-		// space is now guaranteed to be an object {}
 		if (!space[token]) {
 			space[token] = Array.from({ length: d_model }, () =>
 				parseFloat(gaussianRandom().toFixed(nr_fixed))
 			);
 		}
 	});
+
+	// ── FIX: Remove tokens no longer in the training vocabulary ──
+	const tokenSet = new Set(tokens);
+	Object.keys(space).forEach(key => {
+		if (!tokenSet.has(key)) {
+			delete space[key];
+		}
+	});
+
 	return space;
 }
 
