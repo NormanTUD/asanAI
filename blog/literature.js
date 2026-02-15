@@ -1,4 +1,9 @@
 window.bibData = {
+	"jelinek": {
+		author: "Frederick Jelinek",
+		title: "Applying Information Theoretic Methods: Evaluation of Grammar Quality",
+		year: 1988
+	},
 	"monosemanticity": {
 		url: "https://transformer-circuits.pub/2023/monosemantic-features",
 		title: "Towards Monosemanticity: Decomposing Language Models With Dictionary Learning",
