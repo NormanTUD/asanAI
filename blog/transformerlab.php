@@ -115,9 +115,7 @@ Research suggests that models use **Superposition** to represent more features t
 
 <div class="md">
 ## 1. Tokenization
-The journey of a sentence begins with **Byte-Pair Encoding** (**BPE**), which decomposes raw text into subword units. This approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language.
-
-In our example, though, by default, we will use word-wise tokenization, because the tiny Embedding Space is too small for BPE to be really useful.
+The journey of a sentence begins with **Tokenization**, which decomposes raw text into **tokens**. In real LLMs, you would use **Byte-Pair Encoding** (**BPE**), this approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language. But since our embedding space and the amount of data browsers can process is too small, we stick with word-wise tokenization by default. 
 </div>
 
 <div id="transformer-viz-bpe" class="viz-container"></div>
