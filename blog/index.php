@@ -39,8 +39,8 @@
 	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("Transformers & Attention", "attentionlab");
 	incl("Positional Embeddings", "positionalembeddingslab");
-	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformerlab");
 	incl("Top-\$k\$-Sampling: Temperature & Top-\$k\$ Explorer", "samplinglab");
+	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformerlab");
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
 	incl("Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
