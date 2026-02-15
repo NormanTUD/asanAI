@@ -565,6 +565,14 @@ async function train_transformer() {
 	const btn = event.target;
 	const status = document.getElementById('training-status');
 
+	const trainingData = document.getElementById('transformer-training-data').value;
+	const preCheckTokens = transformer_tokenize_render(trainingData, null);
+	if (preCheckTokens.length < 2) {
+		status.style.display = 'block';
+		status.innerText = 'Need at least 2 tokens in training data.';
+		return;
+	}
+
 	if (window.isTraining) {
 		window.isTraining = false;
 		return;
@@ -584,7 +592,6 @@ async function train_transformer() {
 	let optimizer = optType === 'adam' ? tf.train.adam(lr) :
 		optType === 'rmsprop' ? tf.train.rmsprop(lr) : tf.train.sgd(lr);
 
-	const trainingData = document.getElementById('transformer-training-data').value;
 	const tokens = transformer_tokenize_render(trainingData, null);
 
 	if (tokens.length === 0) {
@@ -2677,14 +2684,36 @@ window.calculate_vector_math = function() {
 };
 
 function debounced_run_transformer_demo(activeId) {
+	updateTrainButtonState();
 	clearTimeout(trainingDebounceTimer);
 	trainingDebounceTimer = setTimeout(() => {
 		run_transformer_demo(activeId);
 	}, 600);
 }
 
+function updateTrainButtonState() {
+	const btn = document.querySelector('.train-btn');
+	if (!btn) return;
+
+	const trainingData = document.getElementById('transformer-training-data').value;
+	const tokens = transformer_tokenize_render(trainingData, null);
+
+	if (tokens.length < 2) {
+		btn.disabled = true;
+		btn.title = 'Need at least 2 tokens in training data';
+		btn.style.opacity = '0.5';
+		btn.style.cursor = 'not-allowed';
+	} else {
+		btn.disabled = false;
+		btn.title = '';
+		btn.style.opacity = '1';
+		btn.style.cursor = 'pointer';
+	}
+}
+
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
+	updateTrainButtonState();
 	run_transformer_demo()
 
 	const inputElement = document.getElementById('transformer-master-token-input');
