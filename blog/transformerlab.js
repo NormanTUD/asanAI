@@ -65,6 +65,8 @@ const trajectoryObserver = new IntersectionObserver((entries) => {
 	});
 }, { threshold: 0.1 });
 
+const multiLayerAttentionRegistry = new Map();
+
 function reset_graph() {
 	document.getElementById('training-loss-plot').style.display = 'none';
 	document.getElementById('training-loss-plot').innerHTML = '';
@@ -201,32 +203,48 @@ class AttentionEngine {
 		const K_full = this.dot(h0, this.this_weights.key);
 		const V_full = this.dot(h0, this.this_weights.value);
 
-		// Fix #2: Single-head attention (no head splitting), matching training
-		// Fix #3: Scale by √d_model (not √d_k)
-		let scores = this.dot(Q_full, this.transpose(K_full)).map(row =>
-			row.map(v => v / Math.sqrt(this.d_model))
-		);
+		let headData = [];
 
-		// Fix #4: Apply causal mask (matching training's upper-triangle × 1e9)
-		for (let r = 0; r < scores.length; r++) {
-			for (let c = r + 1; c < scores[r].length; c++) {
-				scores[r][c] -= 1e9;
+		for (let head = 0; head < this.n_heads; head++) {
+			const startCol = head * this.d_k;
+			const endCol = startCol + this.d_k;
+
+			// Slice columns for this head
+			const Qi = Q_full.map(row => row.slice(startCol, endCol));
+			const Ki = K_full.map(row => row.slice(startCol, endCol));
+			const Vi = V_full.map(row => row.slice(startCol, endCol));
+
+			// Slice the weight matrices for display purposes
+			const WQ_slice = this.this_weights.query.map(row => row.slice(startCol, endCol));
+			const WK_slice = this.this_weights.key.map(row => row.slice(startCol, endCol));
+			const WV_slice = this.this_weights.value.map(row => row.slice(startCol, endCol));
+
+			// Scaled dot-product attention per head
+			let scores = this.dot(Qi, this.transpose(Ki)).map(row =>
+				row.map(v => v / Math.sqrt(this.d_k))
+			);
+
+			// Apply causal mask
+			for (let r = 0; r < scores.length; r++) {
+				for (let c = r + 1; c < scores[r].length; c++) {
+					scores[r][c] -= 1e9;
+				}
 			}
+
+			const attn_weights = this.softmax(scores);
+			const context = this.dot(attn_weights, Vi);
+
+			headData.push({
+				headIdx: head,
+				Qi: Qi, Ki: Ki, Vi: Vi,
+				this_weights: attn_weights,
+				context: context,
+				h0: h0,
+				WQ: WQ_slice,
+				WK: WK_slice,
+				WV: WV_slice
+			});
 		}
-
-		const attn_weights = this.softmax(scores);
-		const context = this.dot(attn_weights, V_full);
-
-		let headData = [{
-			headIdx: 0,
-			Qi: Q_full, Ki: K_full, Vi: V_full,
-			this_weights: attn_weights,
-			context: context,
-			h0: h0,
-			WQ: this.this_weights.query,
-			WK: this.this_weights.key,
-			WV: this.this_weights.value
-		}];
 
 		this.renderUI(headData, tokens);
 		return headData;
@@ -242,7 +260,23 @@ class AttentionEngine {
 	renderUI(headData, tokens) {
 		if (!this.containerId) return;
 
-		// Update the registry with the latest calculation data
+		// Register this layer's data into the multi-layer registry
+		if (!multiLayerAttentionRegistry.has(this.containerId)) {
+			multiLayerAttentionRegistry.set(this.containerId, {
+				layers: [],
+				rendered: false
+			});
+		}
+
+		const entry = multiLayerAttentionRegistry.get(this.containerId);
+		entry.layers.push({
+			headData: headData,
+			tokens: tokens,
+			instance: this
+		});
+		entry.rendered = false;
+
+		// Also update the old registry so the IntersectionObserver can trigger
 		attentionRenderRegistry.set(this.containerId, {
 			headData: headData,
 			tokens: tokens,
@@ -250,9 +284,6 @@ class AttentionEngine {
 			rendered: false
 		});
 
-		// If it's already in view, the observer won't "re-fire" unless we nudge it,
-		// so we check visibility manually once or wait for the next scroll.
-		// For responsiveness, we clear the innerHTML with a loader.
 		if (!this.container.innerHTML) {
 			this.container.innerHTML = `<div style="padding:20px; color:#64748b;">Scroll to view Attention Matrix...</div>`;
 		}
@@ -261,33 +292,73 @@ class AttentionEngine {
 	executeActualRender(headData, tokens) {
 		if (!this.container || !tokens.length) return;
 
-		let html = `<div class="attention-tabs" style="border:1px solid #3b82f6; border-radius:8px; overflow:hidden;">`;
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		if (!registry || registry.layers.length === 0) {
+			// Fallback: render just this single layer's data
+			this._renderSingleLayer(headData, tokens, 0);
+			return;
+		}
 
-		// Tab Headers
-		html += `<div class="tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6;">`;
-		headData.forEach((h, i) => {
-			html += `<button class="mha-tab-btn" id="tab-btn-${i}" onclick="showHead(${i})"
-	    style="padding:10px 20px; border:none; border-right:1px solid #3b82f6; cursor:pointer;
-	    background:${i === 0 ? '#fff' : '#e2e8f0'}; font-weight:${i === 0 ? 'bold' : 'normal'}">Head ${i + 1}</button>`;
-		});
+		const layers = registry.layers;
+		const numLayers = layers.length;
+
+		let html = `<div class="attention-layer-tabs" style="border:1px solid #3b82f6; border-radius:8px; overflow:hidden;">`;
+
+		// ── Layer Tab Headers ──
+		html += `<div class="layer-tab-list" style="background:#dbeafe; display:flex; border-bottom:2px solid #3b82f6; flex-wrap:wrap;">`;
+		for (let l = 0; l < numLayers; l++) {
+			html += `<button class="mha-layer-tab-btn" id="layer-tab-btn-${this.containerId}-${l}"
+			onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
+			style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+			background:${l === 0 ? '#fff' : '#bfdbfe'}; font-weight:${l === 0 ? 'bold' : 'normal'}; font-size:0.9rem;">
+			Layer ${l + 1}
+		</button>`;
+		}
 		html += `</div>`;
 
-		// Tab Content
-		headData.forEach((h, i) => {
-			const escapedTokens = tokens.map(t => String(t).replace(/#/g, '\\#'));
+		// ── Layer Tab Content ──
+		for (let l = 0; l < numLayers; l++) {
+			const layerData = layers[l];
+			const layerHeadData = layerData.headData;
+			const layerTokens = layerData.tokens;
+			const layerInstance = layerData.instance;
 
-			html += `<div id="head-content-${i}" class="head-tab" style="padding:20px; display:${i === 0 ? 'block' : 'none'}">
-	    <div id="attn-heatmap-${this.containerId}-${i}" style="width:100%; margin-bottom:20px;"></div>
-	    <div style="margin-bottom:20px; font-size: 0.9rem;">
-		$$ \\text{Head}_{${i}} = \\text{Softmax} \\left( \\frac{Q_${i} K_${i}^T}{\\sqrt{d_k}} \\right) \\cdot V_${i} $$
-	    </div>
-	    <div style="overflow-x:auto;">
-		${this.generateMathTable(h, escapedTokens)}
-	    </div>
-	</div>`;
-		});
+			html += `<div id="layer-content-${this.containerId}-${l}" class="layer-tab-content" 
+			style="display:${l === 0 ? 'block' : 'none'};">`;
 
-		html += `</div>`;
+			// ── Head Tab Headers (nested inside each layer) ──
+			html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap;">`;
+			for (let h = 0; h < layerHeadData.length; h++) {
+				html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${l}-${h}"
+				onclick="showHeadInLayer('${this.containerId}', ${l}, ${h}, ${layerHeadData.length})"
+				style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+				background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
+				Head ${h + 1}
+			</button>`;
+			}
+			html += `</div>`;
+
+			// ── Head Tab Content ──
+			for (let h = 0; h < layerHeadData.length; h++) {
+				const hd = layerHeadData[h];
+				const escapedTokens = layerTokens.map(t => String(t).replace(/#/g, '\\#'));
+
+				html += `<div id="head-content-${this.containerId}-${l}-${h}" class="head-tab-in-layer"
+				style="padding:20px; display:${h === 0 ? 'block' : 'none'}">
+				<div id="attn-heatmap-${this.containerId}-${l}-${h}" style="width:100%; margin-bottom:20px;"></div>
+				<div style="margin-bottom:20px; font-size: 0.9rem;">
+					$$ \\text{Layer}_{${l + 1}},\\; \\text{Head}_{${h + 1}} = \\text{Softmax} \\left( \\frac{Q_{${h + 1}} K_{${h + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${h + 1}} $$
+				</div>
+				<div style="overflow-x:auto;">
+					${layerInstance.generateMathTable(hd, escapedTokens)}
+				</div>
+			</div>`;
+			}
+
+			html += `</div>`; // close layer-content
+		}
+
+		html += `</div>`; // close attention-layer-tabs
 		this.container.innerHTML = html;
 
 		render_temml();
@@ -365,23 +436,91 @@ class AttentionEngine {
 	}
 }
 
+window.showLayer = (containerId, layerIdx, numLayers) => {
+	// Hide all layer contents for this container
+	for (let l = 0; l < numLayers; l++) {
+		const content = document.getElementById(`layer-content-${containerId}-${l}`);
+		if (content) content.style.display = 'none';
+
+		const btn = document.getElementById(`layer-tab-btn-${containerId}-${l}`);
+		if (btn) {
+			btn.style.background = '#bfdbfe';
+			btn.style.fontWeight = 'normal';
+		}
+	}
+
+	// Show selected layer
+	const activeContent = document.getElementById(`layer-content-${containerId}-${layerIdx}`);
+	if (activeContent) activeContent.style.display = 'block';
+
+	const activeBtn = document.getElementById(`layer-tab-btn-${containerId}-${layerIdx}`);
+	if (activeBtn) {
+		activeBtn.style.background = '#fff';
+		activeBtn.style.fontWeight = 'bold';
+	}
+
+	// Force Plotly resize for any visible heatmaps
+	const heatmaps = activeContent?.querySelectorAll('[id^="attn-heatmap-"]');
+	if (heatmaps) {
+		heatmaps.forEach(hm => {
+			try { Plotly.Plots.resize(hm); } catch(e) {}
+		});
+	}
+
+	render_temml();
+};
+
+window.showHeadInLayer = (containerId, layerIdx, headIdx, numHeads) => {
+	// Hide all head contents within this layer
+	for (let h = 0; h < numHeads; h++) {
+		const content = document.getElementById(`head-content-${containerId}-${layerIdx}-${h}`);
+		if (content) content.style.display = 'none';
+
+		const btn = document.getElementById(`head-tab-btn-${containerId}-${layerIdx}-${h}`);
+		if (btn) {
+			btn.style.background = '#e2e8f0';
+			btn.style.fontWeight = 'normal';
+		}
+	}
+
+	// Show selected head
+	const activeContent = document.getElementById(`head-content-${containerId}-${layerIdx}-${headIdx}`);
+	if (activeContent) activeContent.style.display = 'block';
+
+	const activeBtn = document.getElementById(`head-tab-btn-${containerId}-${layerIdx}-${headIdx}`);
+	if (activeBtn) {
+		activeBtn.style.background = '#fff';
+		activeBtn.style.fontWeight = 'bold';
+	}
+
+	// Force Plotly resize
+	const heatmapDiv = activeContent?.querySelector('[id^="attn-heatmap-"]');
+	if (heatmapDiv) {
+		try { Plotly.Plots.resize(heatmapDiv); } catch(e) {}
+	}
+
+	render_temml();
+};
+
+// Keep backward compatibility — old showHead still works for any legacy calls
 window.showHead = (idx) => {
 	document.querySelectorAll('.head-tab').forEach(el => el.style.display = 'none');
 	const activeTab = document.getElementById(`head-content-${idx}`);
-	activeTab.style.display = 'block';
+	if (activeTab) activeTab.style.display = 'block';
 
-// Highlight Buttons
 	document.querySelectorAll('.mha-tab-btn').forEach(btn => {
 		btn.style.background = '#e2e8f0';
 		btn.style.fontWeight = 'normal';
 	});
-	document.getElementById(`tab-btn-${idx}`).style.background = '#fff';
-	document.getElementById(`tab-btn-${idx}`).style.fontWeight = 'bold';
+	const btn = document.getElementById(`tab-btn-${idx}`);
+	if (btn) {
+		btn.style.background = '#fff';
+		btn.style.fontWeight = 'bold';
+	}
 
-	// CRITICAL: Force Plotly to resize for the newly visible container
-	const heatmapDiv = activeTab.querySelector('[id^="attn-heatmap-"]');
+	const heatmapDiv = activeTab?.querySelector('[id^="attn-heatmap-"]');
 	if (heatmapDiv) {
-		Plotly.Plots.resize(heatmapDiv);
+		try { Plotly.Plots.resize(heatmapDiv); } catch(e) {}
 	}
 
 	render_temml();
@@ -1008,6 +1147,8 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	     </div>`;
 	} else {
 		// ── Layer 0: Explicit processing for detailed visualizations ──
+		multiLayerAttentionRegistry.clear();
+
 		const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
 
 		const engine = new AttentionEngine({
@@ -1035,6 +1176,18 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
 
 		run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
+
+		// After run_deep_layers call in run_and_visualize_network:
+		// Force the combined multi-layer render
+		const mhaContainer = document.getElementById('mha-calculation-details');
+		if (mhaContainer) {
+			const registryEntry = attentionRenderRegistry.get('mha-calculation-details');
+			if (registryEntry) {
+				registryEntry.rendered = false;
+				const engineInstance = registryEntry.instance;
+				engineInstance.executeActualRender(registryEntry.headData, registryEntry.tokens);
+			}
+		}
 
 		// ── All layers processed: trigger trajectory plot immediately ──
 		if (window.tlab_trajectory_collector) {
@@ -1621,10 +1774,11 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 		const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
 
 		// 1. Sublayer 1: Attention (on normalized input)
+		// Use the shared container so all layers appear in the tabbed UI
 		const engine = new AttentionEngine({
 			d_model,
 			n_heads,
-			containerId: null,
+			containerId: "mha-calculation-details",
 			weights: layerWeights["attention"]
 		});
 
@@ -1652,7 +1806,6 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 
 	return h_current;
 }
-
 
 /**
  * Global Registry for Deferred Rendering
