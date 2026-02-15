@@ -421,69 +421,145 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 	var full_data = {};
 
 	try {
-		var generated_data = tidy(() => {
-			// Create an auxiliary model of which input is the same as the original
-			// model but the output is the output of the convolutional layer of
-			// interest.
-			const layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
+		// Build the auxiliary model and gradient function OUTSIDE tidy,
+		// so we can run an imperative loop with proper memory management.
+		const layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
+		const aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
 
-			const aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
+		const lossFunction = (input) => aux_model.apply(input, {training: true}).gather([neuron], -1);
+		const grad_function = grad(lossFunction);
 
-			// This function calculates the value of the convolutional layer's
-			// output at the designated filter index.
-			const lossFunction = (input) => aux_model.apply(input, {training: true}).gather([neuron], -1);
+		// --- Initialize the image ---
+		var new_input_shape = get_input_shape_with_batch_size();
+		new_input_shape.shift();
+		var data;
+		if (typeof(start_image) != "undefined") {
+			data = start_image;
+		} else {
+			// Start from random noise centered around 0.5 for a neutral starting point
+			data = tidy(() => randomUniform([1, ...new_input_shape], 0.4, 0.6));
+		}
 
-			// This returned function (`grad_function`) calculates the gradient of the
-			// convolutional filter's output with respect to the input image.
-			const grad_function = grad(lossFunction);
+		// --- Configuration for regularization ---
+		const blurInterval = 4;          // Apply Gaussian blur every N steps
+		const decayRate = 0.98;          // L2 decay to prevent pixel explosion
+		const learningRate = 0.05;       // Step size for gradient ascent
 
-			// Form a random image as the starting point of the gradient ascent.
+		// Precompute a 3x3 Gaussian-like smoothing kernel (applied per channel)
+		// Kernel: [1,2,1; 2,4,2; 1,2,1] / 16
+		const gaussianWeights = [1, 2, 1, 2, 4, 2, 1, 2, 1].map(v => v / 16);
+		const blurKernel = tf.tensor4d(gaussianWeights, [3, 3, 1, 1]);
 
-			var new_input_shape = get_input_shape_with_batch_size();
-			new_input_shape.shift();
-			var data = randomUniform([1, ...new_input_shape], 0, 1);
-			if(typeof(start_image) != "undefined") {
-				data = start_image;
+		for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
+			log(`Layer ${layer_idx}, neuron ${neuron + 1}/${max_neurons}, iteration ${iteration_idx + 1}/${iterations}`);
+			if (stop_generating_images) {
+				continue;
 			}
 
-			for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
-				log(`Layer ${layer_idx}, neuron ${neuron + 1}/${max_neurons}, iteration ${iteration_idx + 1}/${iterations}`);
-				if(stop_generating_images) {
-					continue;
+			// --- 1. Spatial jitter using pad + slice (no tf.roll needed) ---
+			const jitterMax = 4;
+			const ox = Math.floor(Math.random() * (jitterMax * 2 + 1)) - jitterMax;
+			const oy = Math.floor(Math.random() * (jitterMax * 2 + 1)) - jitterMax;
+
+			var jittered = tidy(() => {
+				// Shift image by (ox, oy) using slice:
+				// Pad with zeros on the edges, then slice out the original size
+				var h = data.shape[1];
+				var w = data.shape[2];
+				// Compute padding: positive offset means shift right/down, so pad left/top
+				var padTop = Math.max(ox, 0);
+				var padBottom = Math.max(-ox, 0);
+				var padLeft = Math.max(oy, 0);
+				var padRight = Math.max(-oy, 0);
+				// Pad: [batch, height, width, channels]
+				var padded = tf.pad(data, [[0, 0], [padTop, padBottom], [padLeft, padRight], [0, 0]]);
+				// Slice out the region that corresponds to the shifted view
+				var sliceTop = Math.max(-ox, 0);
+				var sliceLeft = Math.max(-oy, 0);
+				return tf.slice(padded, [0, sliceTop, sliceLeft, 0], [data.shape[0], h, w, data.shape[3]]);
+			});
+			await dispose(data);
+			data = jittered;
+
+			// --- 2. Compute normalized gradients and apply update ---
+			const scaledGrads = tidy(() => {
+				try {
+					const grads = grad_function(data);
+					const grads_sq = tf_square(grads);
+					const grads_sq_mean = tf_mean(grads_sq);
+					const _is = sqrt(grads_sq_mean);
+					const _epsilon = get_epsilon();
+					const _constant_shape = tf_constant_shape(_epsilon, _is);
+					const norm = tf_add(_is, _constant_shape);
+					return tf_div(grads, norm);
+				} catch (e) {
+					handle_scaled_grads_error(e);
 				}
-				const scaledGrads = tidy(() => {
-					try {
-						const grads = grad_function(data);
-						const grads_sq = tf_square(grads);
-						const grads_sq_mean = tf_mean(grads_sq);
-						const _is = sqrt(grads_sq_mean);
-						const _epsilon = get_epsilon();
-						const _constant_shape = tf_constant_shape(_epsilon, _is);
-						const norm = tf_add(_is, _constant_shape);
-						const r = tf_div(grads, norm);
-						return r;
-					} catch (e) {
-						handle_scaled_grads_error(e);
-					}
-				});
+			});
 
-				data = tf_add(data, scaledGrads);
-				worked = 1;
+			// Apply gradient step with a controlled learning rate
+			var updated = tidy(() => {
+				const step = tf_mul(scaledGrads, tf_constant_shape(learningRate, scaledGrads));
+				return tf_add(data, step);
+			});
+			await dispose(scaledGrads);
+			await dispose(data);
+			data = updated;
+
+			// --- 3. L2 decay: gently pull pixel values toward center to prevent explosion ---
+			var decayed = tidy(() => tf_mul(data, tf_constant_shape(decayRate, data)));
+			await dispose(data);
+			data = decayed;
+
+			// --- 4. Undo spatial jitter (shift back by -ox, -oy) ---
+			var unJittered = tidy(() => {
+				var h = data.shape[1];
+				var w = data.shape[2];
+				var padTop = Math.max(-ox, 0);
+				var padBottom = Math.max(ox, 0);
+				var padLeft = Math.max(-oy, 0);
+				var padRight = Math.max(oy, 0);
+				var padded = tf.pad(data, [[0, 0], [padTop, padBottom], [padLeft, padRight], [0, 0]]);
+				var sliceTop = Math.max(ox, 0);
+				var sliceLeft = Math.max(oy, 0);
+				return tf.slice(padded, [0, sliceTop, sliceLeft, 0], [data.shape[0], h, w, data.shape[3]]);
+			});
+			await dispose(data);
+			data = unJittered;
+
+			// --- 5. Gaussian blur regularization every few steps to suppress high-frequency noise ---
+			if (iteration_idx % blurInterval === 0 && iteration_idx > 0) {
+				var blurred = tidy(() => {
+					var numChannels = data.shape[3];
+					var channels = tf.split(data, numChannels, -1);
+					var blurredChannels = channels.map(function(ch) {
+						return tf.conv2d(ch, blurKernel, 1, 'same');
+					});
+					return tf.concat(blurredChannels, -1);
+				});
+				await dispose(data);
+				data = blurred;
 			}
 
-			return data;
-		});
+			worked = 1;
+		}
+
+		// Clean up the blur kernel
+		await dispose(blurKernel);
+
+		var generated_data = data;
+
 	} catch (e) {
 		return await handle_input_gradient_descent_error(e, recursion, layer_idx, neuron, iterations, start_image);
 	}
 
-	if(model?.input?.shape.length == 4 && model?.input?.shape[3] == 3) {
+	if (model?.input?.shape.length == 4 && model?.input?.shape[3] == 3) {
 		try {
 			full_data["image"] = tidy(() => {
 				return array_sync(tidy(() => {
 					var dp = deprocess_image(generated_data);
 
-					if(!dp) {
+					if (!dp) {
 						err(language[lang]["deprocess_image_returned_empty_image"]);
 						full_data["worked"] = 0;
 					}
@@ -492,7 +568,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 				}));
 			});
 		} catch (e) {
-			if(Object.keys(e).includes("message")) {
+			if (Object.keys(e).includes("message")) {
 				e = e.message;
 			}
 
@@ -530,20 +606,40 @@ function deprocess_image(x) {
 
 	var res = tidy(() => {
 		try {
-			const {mean, variance} = tf_moments(x);
-			x = tf_sub(x, mean);
-			// Add a small positive number (EPSILON) to the denominator to prevent
-			// division-by-zero.
-			x = tf_add(tf_div(x, sqrt(variance), tf_constant_shape(get_epsilon(), x)), x);
-			// Clip to [0, 1].
-			x = tf_add(x, tf_constant_shape(0.5, x));
-			x = clipByValue(x, 0, 1);
-			x = tf_mul(x, tf_constant_shape(255, x));
-			return tidy(() => {
-				return clipByValue(x, 0, 255).asType("int32");
-			});
+			var numChannels = x.shape[x.shape.length - 1];
+
+			if (numChannels && numChannels > 1) {
+				// Per-channel normalization for better contrast
+				var channels = tf.split(x, numChannels, -1);
+				var normalizedChannels = channels.map(function(ch) {
+					return tidy(() => {
+						var chMin = ch.min();
+						var chMax = ch.max();
+						var range = tf_add(tf_sub(chMax, chMin), tf_constant_shape(get_epsilon(), chMin));
+						// Normalize to [0, 1]
+						var normalized = tf_div(tf_sub(ch, chMin), range);
+						// Gentle contrast boost: 0.5 + (x - 0.5) * 1.4, then clip
+						var centered = tf_sub(normalized, tf_constant_shape(0.5, normalized));
+						var boosted = tf_mul(centered, tf_constant_shape(1.4, centered));
+						normalized = tf_add(tf_constant_shape(0.5, boosted), boosted);
+						normalized = clipByValue(normalized, 0, 1);
+						return tf_mul(normalized, tf_constant_shape(255, normalized));
+					});
+				});
+
+				var combined = tf.concat(normalizedChannels, -1);
+				return clipByValue(combined, 0, 255).asType("int32");
+			} else {
+				// Single-channel fallback: simple min-max normalization
+				var xMin = x.min();
+				var xMax = x.max();
+				var range = tf_add(tf_sub(xMax, xMin), tf_constant_shape(get_epsilon(), xMin));
+				var normalized = tf_div(tf_sub(x, xMin), range);
+				normalized = tf_mul(normalized, tf_constant_shape(255, normalized));
+				return clipByValue(normalized, 0, 255).asType("int32");
+			}
 		} catch (e) {
-			if(Object.keys(e).includes("message")) {
+			if (Object.keys(e).includes("message")) {
 				e = e.message;
 			}
 
