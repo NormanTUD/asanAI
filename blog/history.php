@@ -1,6 +1,9 @@
 <?php include_once("functions.php"); ?>
 
+<!--
 TODO https://arxiv.org/abs/2212.11279
+TODO https://people.idsia.ch/~juergen/who-invented-backpropagation.html
+-->
 
 <div class="md">
 
