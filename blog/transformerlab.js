@@ -294,7 +294,6 @@ class AttentionEngine {
 
 		const registry = multiLayerAttentionRegistry.get(this.containerId);
 		if (!registry || registry.layers.length === 0) {
-			// Fallback: render just this single layer's data
 			this._renderSingleLayer(headData, tokens, 0);
 			return;
 		}
@@ -304,63 +303,95 @@ class AttentionEngine {
 
 		let html = `<div class="attention-layer-tabs" style="border:1px solid #3b82f6; border-radius:8px; overflow:hidden;">`;
 
-		// ── Layer Tab Headers ──
+		// ── Layer Tab Headers (lightweight) ──
 		html += `<div class="layer-tab-list" style="background:#dbeafe; display:flex; border-bottom:2px solid #3b82f6; flex-wrap:wrap;">`;
 		for (let l = 0; l < numLayers; l++) {
 			html += `<button class="mha-layer-tab-btn" id="layer-tab-btn-${this.containerId}-${l}"
-			onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
-			style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-			background:${l === 0 ? '#fff' : '#bfdbfe'}; font-weight:${l === 0 ? 'bold' : 'normal'}; font-size:0.9rem;">
-			Layer ${l + 1}
-		</button>`;
+	    onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
+	    style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+	    background:${l === 0 ? '#fff' : '#bfdbfe'}; font-weight:${l === 0 ? 'bold' : 'normal'}; font-size:0.9rem;">
+	    Layer ${l + 1}
+	</button>`;
 		}
 		html += `</div>`;
 
-		// ── Layer Tab Content ──
+		// ── Empty layer content containers (NO math generated yet) ──
 		for (let l = 0; l < numLayers; l++) {
-			const layerData = layers[l];
-			const layerHeadData = layerData.headData;
-			const layerTokens = layerData.tokens;
-			const layerInstance = layerData.instance;
-
-			html += `<div id="layer-content-${this.containerId}-${l}" class="layer-tab-content" 
-			style="display:${l === 0 ? 'block' : 'none'};">`;
-
-			// ── Head Tab Headers (nested inside each layer) ──
-			html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap;">`;
-			for (let h = 0; h < layerHeadData.length; h++) {
-				html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${l}-${h}"
-				onclick="showHeadInLayer('${this.containerId}', ${l}, ${h}, ${layerHeadData.length})"
-				style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-				background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
-				Head ${h + 1}
-			</button>`;
-			}
-			html += `</div>`;
-
-			// ── Head Tab Content ──
-			for (let h = 0; h < layerHeadData.length; h++) {
-				const hd = layerHeadData[h];
-				const escapedTokens = layerTokens.map(t => String(t).replace(/#/g, '\\#'));
-
-				html += `<div id="head-content-${this.containerId}-${l}-${h}" class="head-tab-in-layer"
-				style="padding:20px; display:${h === 0 ? 'block' : 'none'}">
-				<div id="attn-heatmap-${this.containerId}-${l}-${h}" style="width:100%; margin-bottom:20px;"></div>
-				<div style="margin-bottom:20px; font-size: 0.9rem;">
-					$$ \\text{Layer}_{${l + 1}},\\; \\text{Head}_{${h + 1}} = \\text{Softmax} \\left( \\frac{Q_{${h + 1}} K_{${h + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${h + 1}} $$
-				</div>
-				<div style="overflow-x:auto;">
-					${layerInstance.generateMathTable(hd, escapedTokens)}
-				</div>
-			</div>`;
-			}
-
-			html += `</div>`; // close layer-content
+			html += `<div id="layer-content-${this.containerId}-${l}" class="layer-tab-content"
+	    style="display:${l === 0 ? 'block' : 'none'};"
+	    data-layer-idx="${l}" data-rendered="false">
+	    <div style="padding:20px; color:#64748b;">Loading Layer ${l + 1}...</div>
+	</div>`;
 		}
 
-		html += `</div>`; // close attention-layer-tabs
+		html += `</div>`;
 		this.container.innerHTML = html;
 
+		// Only render the FIRST visible layer
+		this._renderLayerContent(0);
+	}
+
+	_renderLayerContent(layerIdx) {
+		const contentDiv = document.getElementById(`layer-content-${this.containerId}-${layerIdx}`);
+		if (!contentDiv || contentDiv.dataset.rendered === 'true') return;
+
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		const layerData = registry.layers[layerIdx];
+		const layerHeadData = layerData.headData;
+		const layerTokens = layerData.tokens;
+		const layerInstance = layerData.instance;
+
+		let html = '';
+
+		// Head tab buttons (lightweight)
+		html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap;">`;
+		for (let h = 0; h < layerHeadData.length; h++) {
+			html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
+	    onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
+	    style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+	    background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
+	    Head ${h + 1}
+	</button>`;
+		}
+		html += `</div>`;
+
+		// Empty head containers
+		for (let h = 0; h < layerHeadData.length; h++) {
+			html += `<div id="head-content-${this.containerId}-${layerIdx}-${h}" class="head-tab-in-layer"
+	    style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
+	    data-head-idx="${h}" data-rendered="false">
+	    <div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
+	</div>`;
+		}
+
+		contentDiv.innerHTML = html;
+		contentDiv.dataset.rendered = 'true';
+
+		// Render only the first head
+		this._renderHeadContent(layerIdx, 0);
+	}
+
+	_renderHeadContent(layerIdx, headIdx) {
+		const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${headIdx}`);
+		if (!headDiv || headDiv.dataset.rendered === 'true') return;
+
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		const layerData = registry.layers[layerIdx];
+		const hd = layerData.headData[headIdx];
+		const layerTokens = layerData.tokens;
+		const layerInstance = layerData.instance;
+		const escapedTokens = layerTokens.map(t => String(t).replace(/#/g, '\\#'));
+
+		headDiv.innerHTML = `
+	<div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>
+	<div style="margin-bottom:20px; font-size: 0.9rem;">
+	    $$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
+	</div>
+	<div style="overflow-x:auto;">
+	    ${layerInstance.generateMathTable(hd, escapedTokens)}
+	</div>`;
+
+		headDiv.dataset.rendered = 'true';
 		render_temml();
 	}
 
@@ -437,68 +468,50 @@ class AttentionEngine {
 }
 
 window.showLayer = (containerId, layerIdx, numLayers) => {
-	// Hide all layer contents for this container
 	for (let l = 0; l < numLayers; l++) {
 		const content = document.getElementById(`layer-content-${containerId}-${l}`);
 		if (content) content.style.display = 'none';
-
 		const btn = document.getElementById(`layer-tab-btn-${containerId}-${l}`);
-		if (btn) {
-			btn.style.background = '#bfdbfe';
-			btn.style.fontWeight = 'normal';
-		}
+		if (btn) { btn.style.background = '#bfdbfe'; btn.style.fontWeight = 'normal'; }
 	}
 
-	// Show selected layer
 	const activeContent = document.getElementById(`layer-content-${containerId}-${layerIdx}`);
 	if (activeContent) activeContent.style.display = 'block';
-
 	const activeBtn = document.getElementById(`layer-tab-btn-${containerId}-${layerIdx}`);
-	if (activeBtn) {
-		activeBtn.style.background = '#fff';
-		activeBtn.style.fontWeight = 'bold';
+	if (activeBtn) { activeBtn.style.background = '#fff'; activeBtn.style.fontWeight = 'bold'; }
+
+	// LAZY: Render this layer's content if not yet done
+	const registryEntry = attentionRenderRegistry.get(containerId);
+	if (registryEntry && registryEntry.instance) {
+		registryEntry.instance._renderLayerContent(layerIdx);
 	}
 
-	// Force Plotly resize for any visible heatmaps
 	const heatmaps = activeContent?.querySelectorAll('[id^="attn-heatmap-"]');
-	if (heatmaps) {
-		heatmaps.forEach(hm => {
-			try { Plotly.Plots.resize(hm); } catch(e) {}
-		});
-	}
-
+	if (heatmaps) heatmaps.forEach(hm => { try { Plotly.Plots.resize(hm); } catch(e) {} });
 	render_temml();
 };
 
 window.showHeadInLayer = (containerId, layerIdx, headIdx, numHeads) => {
-	// Hide all head contents within this layer
 	for (let h = 0; h < numHeads; h++) {
 		const content = document.getElementById(`head-content-${containerId}-${layerIdx}-${h}`);
 		if (content) content.style.display = 'none';
-
 		const btn = document.getElementById(`head-tab-btn-${containerId}-${layerIdx}-${h}`);
-		if (btn) {
-			btn.style.background = '#e2e8f0';
-			btn.style.fontWeight = 'normal';
-		}
+		if (btn) { btn.style.background = '#e2e8f0'; btn.style.fontWeight = 'normal'; }
 	}
 
-	// Show selected head
 	const activeContent = document.getElementById(`head-content-${containerId}-${layerIdx}-${headIdx}`);
 	if (activeContent) activeContent.style.display = 'block';
-
 	const activeBtn = document.getElementById(`head-tab-btn-${containerId}-${layerIdx}-${headIdx}`);
-	if (activeBtn) {
-		activeBtn.style.background = '#fff';
-		activeBtn.style.fontWeight = 'bold';
+	if (activeBtn) { activeBtn.style.background = '#fff'; activeBtn.style.fontWeight = 'bold'; }
+
+	// LAZY: Render this head's content if not yet done
+	const registryEntry = attentionRenderRegistry.get(containerId);
+	if (registryEntry && registryEntry.instance) {
+		registryEntry.instance._renderHeadContent(layerIdx, headIdx);
 	}
 
-	// Force Plotly resize
 	const heatmapDiv = activeContent?.querySelector('[id^="attn-heatmap-"]');
-	if (heatmapDiv) {
-		try { Plotly.Plots.resize(heatmapDiv); } catch(e) {}
-	}
-
+	if (heatmapDiv) { try { Plotly.Plots.resize(heatmapDiv); } catch(e) {} }
 	render_temml();
 };
 
