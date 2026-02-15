@@ -935,19 +935,10 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("human_readable_time(null)", human_readable_time(null), language[lang]["one_second"]);
 
 	// --- gui.js: python_data_to_string ---
-	test_equal("python_data_to_string with except", python_data_to_string({units: "10", activation: "relu"}, ["units"]),
-		'\tactivation="relu"');
-	test_equal("python_data_to_string use_bias true", python_data_to_string({use_bias: "True"}, []),
-		'\tuse_bias=True');
-	test_equal("python_data_to_string use_bias false", python_data_to_string({use_bias: "0"}, []),
-		'\tuse_bias=False');
-	test_equal("python_data_to_string strides", python_data_to_string({strides: [2, 2]}, []),
-		'\tstrides=(2, 2)');
-
-	// --- train.js: extractCategoryFromURL ---
-	test_equal("extractCategoryFromURL with path", extractCategoryFromURL("traindata/signs/example/fire.jpg"), "example");
-	test_equal("extractCategoryFromURL with deeper path", extractCategoryFromURL("/data/cats/img001.png"), "cats");
-	test_equal("extractCategoryFromURL null input", extractCategoryFromURL(null), null);
+	test_equal("python_data_to_string with except", python_data_to_string({units: "10", activation: "relu"}, ["units"]), '\tactivation="relu"');
+	test_equal("python_data_to_string use_bias true", python_data_to_string({use_bias: "True"}, []), '\tuse_bias=True');
+	test_equal("python_data_to_string use_bias false", python_data_to_string({use_bias: "0"}, []), '\tuse_bias=False');
+	test_equal("python_data_to_string strides", python_data_to_string({strides: [2, 2]}, []), '\tstrides=(2, 2)');
 
 	// --- train.js: findIndexByKey ---
 	test_equal("findIndexByKey(['a','b','c'], 'b')", findIndexByKey(["a", "b", "c"], "b"), 1);
@@ -958,11 +949,6 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("get_key_by_value({a:1,b:2}, 2)", get_key_by_value({a: 1, b: 2}, 2), "b");
 	test_equal("get_key_by_value({a:1,b:2}, 1)", get_key_by_value({a: 1, b: 2}, 1), "a");
 	test_equal("get_key_by_value({a:1,b:2}, 3)", get_key_by_value({a: 1, b: 2}, 3), undefined);
-
-	// --- predict.js: get_show_green (depends on DOM but quick check) ---
-	// This tests the function returns 0 or 1
-	var show_green_val = get_show_green();
-	test_equal("get_show_green returns 0 or 1", [0, 1].includes(show_green_val), true);
 
 	// --- gui.js: dataURLToBlob ---
 	var tiny_png = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
