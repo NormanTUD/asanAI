@@ -3,7 +3,7 @@
 <!--
 https://nlp.seas.harvard.edu/2018/04/03/attention.html
 
-TODO: Satz anzeigen, für jeden Head die Worte und wie stark sie auf andere reagieren
+https://arxiv.org/html/2505.11611v1
 -->
 
 <div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 54">
