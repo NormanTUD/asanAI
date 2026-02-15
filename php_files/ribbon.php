@@ -464,6 +464,10 @@
 								<td><span style="min-width: 100px;display: inline-block;" class="TRANSLATEME_iterations"></span></td>
 								<td><input type="number" min="1" value="20" id="max_activation_iterations" style="width: 55px;"></td>
 							</tr>
+							<tr>
+								<td><span style="min-width: 100px;display: inline-block;" class="TRANSLATEME_learning_rate"></span></td>
+								<td><input type="number" min="0.00001" max="10" step="0.001" value="0.05" id="max_activation_lr" style="width: 55px;"></td>
+							</tr>
 							<tr class="hide_when_no_conv_visualizations">
 								<td><span class="TRANSLATEME_width_amp_height"></span>:</td>
 								<td><input type="number" min="0" max="1000" step="1" value="0" id="max_activated_neuron_image_size" style="width: 55px;"></td>

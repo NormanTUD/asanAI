@@ -478,7 +478,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 		// --- Configuration for regularization ---
 		const blurInterval = 4;
 		const decayRate = 0.98;
-		const learningRate = 0.05;
+		const learningRate = parse_float($("#max_activation_lr").val()) || 0.05;
 
 		const gaussianWeights = [1, 2, 1, 2, 4, 2, 1, 2, 1].map(v => v / 16);
 		const blurKernel = tf.tensor4d(gaussianWeights, [3, 3, 1, 1]);
