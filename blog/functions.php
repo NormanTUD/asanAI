@@ -173,27 +173,27 @@ function load_base_js () {
 		}
 
 		function observeAndRenderMath(targetNode = document.body) {
-		    if (!targetNode) {
-			console.warn("MutationObserver: Ziel-Element nicht gefunden.");
-			return;
-		    }
-
-		    const config = { childList: true, subtree: true, characterData: true };
-
-		    const callback = function(mutationsList) {
-			for (const mutation of mutationsList) {
-			    if (mutation.type === 'characterData' || mutation.type === 'childList') {
-				const parent = mutation.target.parentElement;
-				if (parent && parent.hasAttribute('data-math-rendered')) {
-				    parent.removeAttribute('data-math-rendered');
-				}
-			    }
+			if (!targetNode) {
+				console.warn("MutationObserver: Ziel-Element nicht gefunden.");
+				return;
 			}
-			render_temml();
-		    };
 
-		    const observer = new MutationObserver(callback);
-		    observer.observe(targetNode, config);
+			const config = { childList: true, subtree: true, characterData: true };
+
+			const callback = function(mutationsList) {
+				for (const mutation of mutationsList) {
+					if (mutation.type === 'characterData' || mutation.type === 'childList') {
+						const parent = mutation.target.parentElement;
+						if (parent && parent.hasAttribute('data-math-rendered')) {
+							parent.removeAttribute('data-math-rendered');
+						}
+					}
+				}
+				render_temml();
+			};
+
+			const observer = new MutationObserver(callback);
+			observer.observe(targetNode, config);
 		}
 
 		function render_temml() {

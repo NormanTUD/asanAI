@@ -602,3 +602,81 @@ async function renderGlossary() {
 		toc();
 	}
 }
+
+function addCopyButtons() {
+	// Alle <pre> mit einer language-* Klasse finden
+	document.querySelectorAll('pre[class*="language-"]').forEach((pre) => {
+		// Wrapper erstellen, damit sticky relativ zum pre funktioniert
+		const wrapper = document.createElement('div');
+		wrapper.style.position = 'relative';
+		pre.parentNode.insertBefore(wrapper, pre);
+		wrapper.appendChild(pre);
+
+		// Pre braucht eine begrenzte Höhe und Scroll, damit sticky wirkt
+		pre.style.position = 'relative';
+		pre.style.overflow = 'auto';
+
+		// Button-Container (sticky)
+		const btnContainer = document.createElement('div');
+		btnContainer.style.cssText = `
+      position: sticky;
+      top: 0;
+      float: right;
+      z-index: 10;
+    `;
+
+		// Copy-Button
+		const btn = document.createElement('button');
+		btn.textContent = 'Copy';
+		btn.style.cssText = `
+      background: #2d2d2d;
+      color: #ccc;
+      border: 1px solid #555;
+      border-radius: 4px;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-size: 12px;
+      margin: 6px 6px 0 0;
+      transition: background 0.2s, color 0.2s;
+    `;
+
+		btn.addEventListener('mouseenter', () => {
+			btn.style.background = '#444';
+			btn.style.color = '#fff';
+		});
+		btn.addEventListener('mouseleave', () => {
+			btn.style.background = '#2d2d2d';
+			btn.style.color = '#ccc';
+		});
+
+		// Klick-Handler: Code kopieren
+		btn.addEventListener('click', () => {
+			const code = pre.querySelector('code');
+			const text = code ? code.innerText : pre.innerText;
+
+			navigator.clipboard.writeText(text).then(() => {
+				btn.textContent = '✓ Copied!';
+				btn.style.color = '#6f6';
+				setTimeout(() => {
+					btn.textContent = 'Copy';
+					btn.style.color = '#ccc';
+				}, 2000);
+			}).catch(() => {
+				// Fallback für ältere Browser
+				const textarea = document.createElement('textarea');
+				textarea.value = text;
+				document.body.appendChild(textarea);
+				textarea.select();
+				document.execCommand('copy');
+				document.body.removeChild(textarea);
+				btn.textContent = '✓ Copied!';
+				setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+			});
+		});
+
+		btnContainer.appendChild(btn);
+
+		// Button-Container VOR den Code-Inhalt im <pre> einfügen
+		pre.insertBefore(btnContainer, pre.firstChild);
+	});
+}
