@@ -38,7 +38,7 @@ In traditional computer vision, engineers manually designed kernels (like the on
 
 	<div>
 		<b>Filter Kernel</b><br>
-		Size: <input type="number" id="k-size" value="3" min="1" max="5" step="2" onchange="initVisionLab()">
+		Size: <input type="number" id="k-size" value="3" min="1" max="5" step="1" onchange="initVisionLab()">
 		<table id="kernel-table" style="margin-top: 10px; border-collapse: collapse;"></table>
 	</div>
 
