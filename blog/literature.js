@@ -1,4 +1,10 @@
 window.bibData = {
+	"watergpt3": {
+		url: "https://interestingengineering.com/innovation/training-chatgpt-consumes-water",
+		title: "GPT-3 training consumed 700k liters of water, ‘enough for producing 370 BMWs’",
+		author: "Christopher McFadden",
+		year: 2023
+	},
 	"fakebidenrobocall": {
 		url: "https://www.bbc.com/news/world-us-canada-68064247",
 		title: "Fake Biden robocall tells voters to skip New Hampshire primary election",
@@ -1314,6 +1320,7 @@ window.bibData = {
 	},
 	"crawford2021atlas": {
 		title: "Atlas of AI: Power, Politics, and the Planetary Costs of Artificial Intelligence",
+		alternativetitle: "Atlas of AI",
 		author: "Kate Crawford",
 		year: 2021,
 		publisher: "Yale University Press"

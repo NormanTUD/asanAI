@@ -331,28 +331,26 @@ By using Uexküll's logic, we see that the AI isn't "failing" to perceive our wo
 
 ## The Physical Cost of Intelligence: Energy, Water, and Extraction
 
-While Large Language Models are often discussed as abstract mathematical entities, their existence is tethered to a massive physical infrastructure. As \citeauthor{crawford2021atlas} argues in *Atlas of AI*, these systems are fundamentally extractive, relying on mineral resources, low-wage labor, and immense energy consumption.
+While Large Language Models (LLMs) are often discussed as abstract mathematical entities, their existence is grounded in a massive physical infrastructure. As Kate Crawford argues in \citealternativetitle{crawford2021atlas}, these systems are fundamentally extractive, relying on mineral resources, low-wage labor, and immense energy and water consumption.
 
 ### Training Costs: The Massive Peak
-Training a state-of-the-art LLM is a one-time resource-intensive event where billions of parameters are optimized over weeks across thousands of GPUs.
 
-* **Financial Investment:** Training GPT-3 (175B parameters) cost approximately 4.6 million Dollar in compute time. Successors like GPT-4 or Llama 3 have likely crossed the 100 million Dollar threshold.
-* **Carbon Footprint:** \citeauthor{strubell2019energy} were among the first to quantify the environmental impact, noting that training a single large model can emit over **280 tons of CO$_2$**, roughly five times the lifetime emissions of an average American car.
-* **Water Consumption:** Rechenzentren (Data centers) require vast amounts of fresh water for cooling. It is estimated that training GPT-3 in Microsoft's state-of-the-art U.S. data centers consumed **700,000 liters** of clean freshwater.
+Training a state-of-the-art LLM is a one-time, resource-intensive event where billions of parameters are optimized over weeks across thousands of GPUs.
 
-
+- **Financial Investment:** Training GPT-3 (175B parameters) cost approximately 4.6 million Dollar in compute time. Successors like GPT-4 have likely crossed the 100 million Dollar threshold when including total development costs.
+- **Carbon Footprint:** \citeauthorlastnameand{strubell2019energy} (\citeyear{strubell2019energy}) were among the first to quantify the environmental impact, noting that training a large model with extensive hyperparameter search can emit over **280 tons of CO₂**. More recent models have even higher emissions: GPT-3's training emitted approximately 552–588 tons of CO₂, and GPT-4's training is estimated at over 5,000 tons.
+- **Water Consumption:** Data centers require vast amounts of fresh water for cooling. Training GPT-3 in Microsoft's U.S. data centers consumed about \cite[**700,000 liters**]{watergpt3} of clean freshwater for on-site cooling. Including off-site water use (e.g., electricity generation), the total can exceed 5 million liters.
 
 ### Inference Costs: The Hidden Flow
-Inference, the act of generating a single "prediction" or response, is cheap individually but expensive at scale.
 
-* **Energy Consumption:** A single LLM request consumes significantly more energy than a traditional search engine query. Estimates suggest that one prompt uses between **3 to 9 Wh**, which is 10 to 30 times the energy of a Google search.
-* **The "Thirsty" AI:** According to research by \citeauthor{li2023thirsty}, the cooling required for a short conversation (approx. 20–50 exchanges) effectively "drinks" about **500ml of water**.
+Inference, the act of generating a single prediction or response, is cheap individually but expensive at scale.
+
+- **Energy Consumption:** A single LLM request (e.g., ChatGPT) typically uses **0.2–3 Wh** of electricity, depending on model size and prompt length. This is about **10 times** the energy of a Google search (0.3 Wh per query, or as low as 0.04 Wh for the most efficient searches).
+- **Water Consumption:** According to Li et al. (2023), the cooling required for a short conversation (approx. 20–50 exchanges) can "drink" up to **500ml of water** in worst-case scenarios. However, more recent studies suggest that typical water use per conversation is much lower, often in the **5–40ml** range for modern models.
 
 ### Structural Impacts
-These costs create a barrier to entry, ensuring that only the most capital-rich entities can participate in the "AI revolution." This concentration of power mirrors the concerns raised by \citeauthor{oneil2016weapons} regarding *Weapons of Math Destruction*, where opaque, resource-heavy algorithms reinforce existing social and economic inequalities.
 
-TODO
-
+These costs create a barrier to entry, ensuring that only the most capital-rich entities can participate in the "AI revolution." This concentration of power mirrors the concerns raised by Crawford in \citealternativetitle{crawford2021atlas} and O'Neil in *Weapons of Math Destruction*, where opaque, resource-heavy algorithms reinforce existing social and economic inequalities.
 
 ## The Societal Impact: \citetitle{truthdecay} and the "Liar's Dividend"
 
