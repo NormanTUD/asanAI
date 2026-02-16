@@ -58,10 +58,10 @@ In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see 
          transition: border-color 0.2s;"></div>
 
     <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-        <span style="font-size:0.85rem; color:#10b981; font-weight:bold;">🌿 −5</span>
-        <input type="range" id="attn1d-q" min="-5" max="5" step="0.1" value="2.0"
+        <span style="font-size:0.85rem; color:#10b981; font-weight:bold;">🌿 −1.6</span>
+        <input type="range" id="attn1d-q" min="-1.6" max="1.6" step="0.2" value="2.0"
                style="flex:1; accent-color:#2563eb;" oninput="updateAttn1D()">
-        <span style="font-size:0.85rem; color:#f59e0b; font-weight:bold;">+5 🏦</span>
+        <span style="font-size:0.85rem; color:#f59e0b; font-weight:bold;">+1.6 🏦</span>
         <span id="attn1d-q-val"
               style="font-size:1.2rem; font-weight:bold; color:#2563eb; min-width:40px; text-align:right;">2.0</span>
     </div>
@@ -109,7 +109,7 @@ Drag the query arrow below. Watch how rotating it toward a key increases that ke
         <div style="flex:1; min-width:200px;">
             <div style="display:flex; align-items:center; gap:8px;">
                 <span style="font-size:0.8rem; color:#10b981; font-weight:bold;">🌿</span>
-                <input type="range" id="attn2d-qx" min="-3" max="3" step="0.1" value="1.5"
+                <input type="range" id="attn2d-qx" min="-3" max="3" step="0.2" value="1.5"
                        style="flex:1; accent-color:#2563eb;" oninput="updateAttn2D()">
                 <span style="font-size:0.8rem; color:#f59e0b; font-weight:bold;">🏦</span>
                 <span id="attn2d-qx-val" style="font-weight:bold; color:#2563eb; min-width:32px; text-align:right;">1.5</span>
@@ -119,7 +119,7 @@ Drag the query arrow below. Watch how rotating it toward a key increases that ke
         <div style="flex:1; min-width:200px;">
             <div style="display:flex; align-items:center; gap:8px;">
                 <span style="font-size:0.8rem; color:#3b82f6; font-weight:bold;">😌</span>
-                <input type="range" id="attn2d-qy" min="-3" max="3" step="0.1" value="0.5"
+                <input type="range" id="attn2d-qy" min="-3" max="3" step="0.2" value="0.5"
                        style="flex:1; accent-color:#2563eb;" oninput="updateAttn2D()">
                 <span style="font-size:0.8rem; color:#ef4444; font-weight:bold;">⚡</span>
                 <span id="attn2d-qy-val" style="font-weight:bold; color:#2563eb; min-width:32px; text-align:right;">0.5</span>
