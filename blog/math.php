@@ -728,7 +728,7 @@ This gives each position a distinct pattern the model can learn to interpret.
 
 <!-- ─── Interactive: Unit Circle ─── -->
 <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
-    <h4 style="margin-top:0;">Interactive Unit Circle</h4>
+    <p style="margin-top:0;">Interactive Unit Circle</p>
     <p style="color:#64748b; font-size:0.9em;">Drag the angle and watch the point move on the unit circle. Its $x$-coordinate is $\cos\theta$ (<span style="color:#2563eb;font-weight:bold;">blue</span>) and its $y$-coordinate is $\sin\theta$ (<span style="color:#ef4444;font-weight:bold;">red</span>).</p>
 
     <div style="margin-bottom:10px;">
@@ -745,7 +745,7 @@ This gives each position a distinct pattern the model can learn to interpret.
 
 <!-- ─── Interactive: Sine & Cosine Waves ─── -->
 <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
-    <h4 style="margin-top:0;">Sine & Cosine Waves</h4>
+    <p style="margin-top:0;">Sine & Cosine Waves</p>
     <p style="color:#64748b; font-size:0.9em;">See how amplitude $A$, frequency $\omega$, and phase shift $\varphi$ change the wave: $f(\theta) = A \sin(\omega\theta + \varphi)$.</p>
 
     <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:10px;">
@@ -770,7 +770,7 @@ This gives each position a distinct pattern the model can learn to interpret.
 
 <!-- ─── Interactive: Taylor Series Approximation ─── -->
 <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
-    <h4 style="margin-top:0;">Taylor Series Approximation</h4>
+    <p style="margin-top:0;">Taylor Series Approximation</p>
     <p style="color:#64748b; font-size:0.9em;">Increase the number of terms to see how the polynomial converges to the true $\sin$ curve. With just 5 terms, the match is nearly perfect over $[-2\pi, 2\pi]$!</p>
 
     <div style="margin-bottom:10px;">
