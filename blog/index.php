@@ -114,6 +114,8 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 			// Fallback für alte Browser
 			setInterval(sendHeight, 1000);
 		}
+
+		addCopyButtons();
 	})();
 	</script>
 </body>

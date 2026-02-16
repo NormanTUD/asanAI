@@ -233,6 +233,8 @@ function load_base_js () {
 			});
 
 			toc();
+
+			addCopyButtons();
 		});
 
 		function sendHeight() {
