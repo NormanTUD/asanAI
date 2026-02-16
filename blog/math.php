@@ -695,11 +695,9 @@ The concept originates in ancient Indian astronomy. \citeauthor{indianastronomer
 
 In \citeyear{chester1145}, \citeauthor{chester1145}, who also produced the first Latin translation of \citealternativetitle{alkwarizma}'s foundational work on algebra that also inspired the name *algebra* (while his name inspired the name *algorithm*), translated *jayb* into the Latin ***sinus*** ("curve," "bay," or "fold").
 
-**Cosine** ("complement's sine") was later coined by **Edmund Gunter** in his 1620 work *Canon Triangulorum*. It describes the sine of the complementary angle:
+**Cosine** ("complement's sine") was later coined by \citeauthor{gunter1620} in his \citeyear{gunter1620} work \citetitle{gunter1620}. It describes the sine of the complementary angle:
 
 $$\sin(\theta) = \cos(90^\circ - \theta)$$
-
-* ****, ** (1620): Coined the term *co-sinus*.
 
 $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 

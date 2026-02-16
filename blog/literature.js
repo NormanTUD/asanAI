@@ -14,7 +14,7 @@ window.bibData = {
 	},
 	"alkwarizma": {
 		author: "محمد بن موسى الخوارزميّ‎ (Al-Khwarizmi)",
-		author: "Al-Khwarizmi",
+		alternativetitle: "Al-Khwarizmi",
 		title: "الكتاب المختصر في حساب الجبر والمقابلة (al-Kitāb al-mukhtaṣar fī ḥisāb al-jabr wa-l-muqābala, The Concise Book of Calculation by Restoration and Balancing)",
 		year: 825,
 		url: "https://archive.org/details/khalifa_158_yahoo_20180430_1221"
