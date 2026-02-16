@@ -349,7 +349,6 @@ print(factorial(5)) # calculates 5 * 4 * 3 * 2 * 1 = 120
 Mathematically, this is expressed as:
 $$n! = \prod_{k=1}^{n} k = 1 \cdot 2 \cdot 3 \cdot \dots \cdot n$$
 The factorial grows extremely quickly, much faster than exponential functions. This growth is essential when calculating the number of possible permutations (orderings) of a set of objects.
-</div>
 
 ### AI Application: Likelihoods
 In AI, the total probability of independent events is the product of their individual probabilities:
