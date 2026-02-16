@@ -356,23 +356,22 @@ TODO
 
 ## The Societal Impact: \citetitle{truthdecay} and the "Liar's Dividend"
 
-TODO
-
-While the philosophical grounding of AI remains hollow, its impact on the sociopolitical landscape is tangible and often destabilizing. The primary concern is not just the creation of "fake news," but the erosion of the concept of objective truth itself.
+While the philosophical grounding of AI remains hollow, its impact on the sociopolitical landscape is tangible and often destabilizing. The primary concern is not just the creation of "fake news," but the erosion of the concept of objective truth itself. This phenomenon is central to what \citeauthor{truthdecay} define as **"Truth Decay"**—the diminishing role of facts and analysis in public life. This decay is characterized by four trends: increasing disagreement about facts and analytical data, the blurring of the line between opinion and fact, the increasing influence of personal experience over fact, and declining trust in formerly respected factual sources \citeyearpar{truthdecay}.
 
 ### The Liar’s Dividend
-\\citeauthorlastnameand{chesney2019deepfakes} coined the term **"Liar’s Dividend"** to describe a secondary effect of generative AI: as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake.
+\citeauthor{chesney2019deepfakes} coined the term **"Liar’s Dividend"** to describe a secondary effect of generative AI: as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake. This strategy exploits the "cognitive biases" identified by \citeauthor{truthdecay}, where individuals struggle to process information that challenges their worldview, leading them to rely on subjective interpretations rather than objective evidence \citeyearpar{truthdecay}.
 
-* **Political Application:** Donald Trump has frequently leveraged this skepticism. For instance, he has suggested that unfavorable videos or recordings, such as his own past statements, might be "AI-generated" or manipulated to discredit him.
+* **Political Application:** Donald Trump has frequently leveraged this skepticism. For instance, he has suggested that unfavorable videos or recordings, such as his own past statements, might be "AI-generated" or manipulated to discredit him. This aligns with the observation by \citeauthor{truthdecay} that political polarization encourages actors to challenge the validity of even the most basic factual evidence to gain a competitive advantage \citeyearpar{truthdecay}.
 
 ### Generative AI in the 2024 Election Cycle
-The 2024 US election marked a turning point where AI-generated content became a mainstream tool for political messaging and misinformation:
+The 2024 US election marked a turning point where AI-generated content became a mainstream tool for political messaging and misinformation: 
 
 * **AI-Generated Imagery:** The Trump campaign and its supporters have utilized AI to create "hyper-real" but fictional scenarios. Notable examples include AI images of Trump surrounded by Black supporters to project a specific demographic appeal, or images of him in stylized, heroic poses.
 * **Targeted Attacks:** AI was used to create fake audio of political opponents, such as the AI-generated robocall of Joe Biden used during the New Hampshire primary to discourage voting, illustrating how the technology scales voter suppression.
 
 ### "Flooding the Zone" with Synthetic Content
-Drawing from Steve Bannon's strategy of "flooding the zone with shit," AI allows for the mass production of low-cost, high-volume misinformation.
-* **The Cost of Misinformation:** Unlike traditional "troll farms" that required human labor, LLMs allow for the automated generation of thousands of unique "fake news" articles and social media posts, making it nearly impossible for fact-checkers to keep pace.
-* **Reinforcing Inequality:** As noted by \citeauthor{oneil2016weapons}, these algorithms often reinforce existing power structures. Those with the most capital can deploy the most sophisticated AI to dominate the information environment, further marginalizing voices without such resources.
+Drawing from Steve Bannon's strategy of "flooding the zone with shit," AI allows for the mass production of low-cost, high-volume misinformation. \citeauthor{truthdecay} note that "changes in the information system," such as the rise of social media and the 24-hour news cycle, have already accelerated the spread of opinionated content; AI further exacerbates this by enabling the automated saturation of the information environment \citeyearpar{truthdecay}.
+
+* **The Cost of Misinformation:** Unlike traditional "troll farms" that required human labor, LLMs allow for the automated generation of thousands of unique "fake news" articles and social media posts, making it nearly impossible for fact-checkers to keep pace. This creates an environment where, as \citeauthor{truthdecay} warn, the sheer volume of conflicting information leads to "political paralysis" and the alienation of the public from civic institutions \citeyearpar{truthdecay}.
+* **Reinforcing Inequality:** As noted by \citeauthor{oneil2016weapons}, these algorithms often reinforce existing power structures. Those with the most capital can deploy the most sophisticated AI to dominate the information environment, further marginalizing voices without such resources. This dynamic worsens the "socioeconomic and demographic polarization" that serves as a primary driver of Truth Decay \citeyearpar{truthdecay}.
 </div>
