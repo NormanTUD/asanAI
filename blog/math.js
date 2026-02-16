@@ -237,7 +237,7 @@ function renderBWTable() {
 		html += '<tr>';
 		for (let c = 0; c < 3; c++) {
 			let val = r === c ? 0 : 255;
-			html += `<td class="bw-cell"><input type="number" value="${val}" min="0" max="255" class="bw-cell-input" oninput="validateInput(this); updateBWPreview()" style="width:55px; padding: 6px; border: 1px solid #ccc; font-weight: bold; text-align: center;"></td>`;
+			html += `<td class="bw-cell"><input type="number" value="${val}" min="0" max="255" class="bw-cell-input" id="bw_image_cell_${r}_${c}" oninput="validateInput(this); updateBWPreview()" style="width:55px; padding: 6px; border: 1px solid #ccc; font-weight: bold; text-align: center;"></td>`;
 		}
 		html += '</tr>';
 	}
