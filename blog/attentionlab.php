@@ -55,7 +55,7 @@ In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see 
     <!-- Live sentence -->
     <div id="attn1d-sentence" style="padding:10px 16px; margin-bottom:14px; background:#fff;
          border-left:4px solid #cbd5e1; border-radius:6px; font-style:italic; color:#334155;
-         transition: border-color 0.2s;"></div>
+         transition: border-color 0.2s;height:50px;"></div>
 
     <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
         <span style="font-size:0.85rem; color:#10b981; font-weight:bold;">🌿 −1</span>
