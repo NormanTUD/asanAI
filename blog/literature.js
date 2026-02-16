@@ -1,4 +1,10 @@
 window.bibData = {
+	"indianastronomerconstruction": {
+		url: "https://arxiv.org/abs/2309.13577",
+		title: "Aryabhata and the Construction of the First Trigonometric Table",
+		author: "Vijay A. Singh, Aneesh Kumar",
+		year: 2023
+	},
 	"gunter1620": {
 		title: "Canon Triangulorum",
 		year: 1620,
