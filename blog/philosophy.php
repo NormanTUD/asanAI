@@ -345,8 +345,8 @@ Training a state-of-the-art LLM is a one-time, resource-intensive event where bi
 
 Inference, the act of generating a single prediction or response, is cheap individually but expensive at scale.
 
-- **Energy Consumption:** A single LLM request (e.g., ChatGPT) typically uses **0.2–3 Wh** of electricity, depending on model size and prompt length. This is about **10 times** the energy of a Google search (0.3 Wh per query, or as low as 0.04 Wh for the most efficient searches).
-- **Water Consumption:** According to Li et al. (2023), the cooling required for a short conversation (approx. 20–50 exchanges) can "drink" up to **500ml of water** in worst-case scenarios. However, more recent studies suggest that typical water use per conversation is much lower, often in the **5–40ml** range for modern models.
+- **Energy Consumption:** A single LLM request (e.g., ChatGPT) typically uses **0.2-3 Wh** of electricity, depending on model size and prompt length. This is about **10 times** the energy of a Google search (0.3 Wh per query, or as low as 0.04 Wh for the most efficient searches).
+- **Water Consumption:** According to \citeauthorlastnameand{li2023thirsty} (\citeyear{li2023thirsty}), the cooling required for a short conversation (approx. 20–50 exchanges) can "drink" up to **500ml of water** in worst-case scenarios. However, more recent studies suggest that typical water use per conversation is much lower, often in the **5-40ml** range for modern models.
 
 ### Structural Impacts
 
