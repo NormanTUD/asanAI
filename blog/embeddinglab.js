@@ -195,6 +195,7 @@ function calcEvo(key) {
 			let op = consume();
 			let right = parseFactor();
 			let opTex = op === '*' ? '\\cdot' : '\\div';
+			let prev = [...left.val]; // capture position BEFORE the operation
 
 			if (op === '*') {
 				if (left.isScalar) {
@@ -206,6 +207,9 @@ function calcEvo(key) {
 			} else if (op === '/') {
 				left.val = left.val.map(v => v / (right.val[0] || 1));
 			}
+
+			// Push a step so an arrow is drawn from the old position to the new one
+			steps.push({ from: prev, to: [...left.val], label: `${op}${right.label}` });
 
 			left.tex = `${left.tex} ${opTex} ${right.tex}`;
 			left.label = `${left.label}${op}${right.label}`;
@@ -257,10 +261,11 @@ function calcEvo(key) {
 		const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${nearest}} \\\\ ${toVecTex(nearestVec)} }}`;
 
 		resDiv.innerHTML = `
-	    <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
-		$$ ${result.tex} = ${resultTex} $$
-	    </div>
-	`;
+		    <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
+			$$ ${result.tex} = ${resultTex} $$
+		    </div>
+		`;
+
 		render_temml();
 		renderSpace(key, result.val, steps);
 	} catch(e) { 

@@ -28,15 +28,12 @@ This allows you to do calculations like $\underbrace{\text{Boiling}}_{100} - \un
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-        <div>
-            <input type="text" id="input-1d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="e.g., Cold + Warm" onkeyup="if(event.key==='Enter') calcEvo('1d')">
-            <div id="res-1d" style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; font-weight: bold; border-left: 4px solid #3b82f6;">Match: -</div>
-        </div>
-        <div id="plot-1d" style="height: 180px; background: #fff; border-radius: 8px;"></div>
+    <div id="plot-1d" style="height: 180px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div>
+        <input type="text" id="input-1d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" placeholder="e.g., Cold + Warm" onkeyup="if(event.key==='Enter') calcEvo('1d')">
+        <div id="res-1d" style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; font-weight: bold; border-left: 4px solid #3b82f6; overflow-x: auto;">Match: -</div>
     </div>
-
-<div class="embedding-table-container" id="editor-1d" data-space="1d"></div>
+    <div class="embedding-table-container" id="editor-1d" data-space="1d"></div>
 </section>
 
 <div class="md">
@@ -52,14 +49,12 @@ This specific property, that word vectors capture semantic relationships through
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-        <div>
-            <input type="text" id="input-2d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="e.g., Man + Power" onkeyup="if(event.key==='Enter') calcEvo('2d')">
-            <div id="res-2d" style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; font-weight: bold; border-left: 4px solid #10b981;">Match: -</div>
-        </div>
-        <div id="plot-2d" style="height: 400px; background: #fff; border-radius: 8px;"></div>
+    <div id="plot-2d" style="height: 400px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div>
+        <input type="text" id="input-2d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" placeholder="e.g., Man + Power" onkeyup="if(event.key==='Enter') calcEvo('2d')">
+        <div id="res-2d" style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; font-weight: bold; border-left: 4px solid #10b981; overflow-x: auto;">Match: -</div>
     </div>
-<div class="embedding-table-container" id="editor-2d" data-space="2d"></div>
+    <div class="embedding-table-container" id="editor-2d" data-space="2d"></div>
 </section>
 
 <div class="md">
@@ -69,14 +64,12 @@ While **3 dimensions** are the maximum we can easily visualize in a graph, moder
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-        <div>
-            <input type="text" id="input-3d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" placeholder="e.g., King + Animal" onkeyup="if(event.key==='Enter') calcEvo('3d')">
-            <div id="res-3d" style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; font-weight: bold; border-left: 4px solid #6366f1;">Match: -</div>
-        </div>
-        <div id="plot-3d" style="height: 500px; background: #fff; border-radius: 8px;"></div>
+    <div id="plot-3d" style="height: 500px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div>
+        <input type="text" id="input-3d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" placeholder="e.g., King + Animal" onkeyup="if(event.key==='Enter') calcEvo('3d')">
+        <div id="res-3d" style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; font-weight: bold; border-left: 4px solid #6366f1; overflow-x: auto;">Match: -</div>
     </div>
-<div class="embedding-table-container" id="editor-3d" data-space="3d"></div>
+    <div class="embedding-table-container" id="editor-3d" data-space="3d"></div>
 </section>
 
 <div class="md">
