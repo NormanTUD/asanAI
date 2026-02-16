@@ -65,6 +65,7 @@ function initDataBasics() {
 	initInteractiveVectorSpaces();
 	initCompositionPlot();
 	initHadamard();
+	initSineCosine();
 }
 
 // ── Hadamard ────────────────────────────────────────────────────────────────
@@ -754,6 +755,239 @@ function runHadamardExperiment() {
 
 	refreshMath();
 	render_temml();
+}
+
+// ── Sine & Cosine Interactive Section ───────────────────────────────────────
+
+function initSineCosine() {
+	// ── 1. Unit Circle ──
+	const sliderTheta = document.getElementById('slider-sc-theta');
+
+	function updateUnitCircle() {
+		const theta = parseFloat(sliderTheta.value);
+		const sinT = Math.sin(theta);
+		const cosT = Math.cos(theta);
+		const deg = (theta * 180 / Math.PI).toFixed(1);
+
+		document.getElementById('disp-sc-theta').textContent = theta.toFixed(2);
+		document.getElementById('disp-sc-deg').textContent = deg + '°';
+
+		document.getElementById('sc-equation-display').innerHTML =
+			`$$ \\sin(${theta.toFixed(2)}) = ${sinT.toFixed(3)}, \\quad \\cos(${theta.toFixed(2)}) = ${cosT.toFixed(3)} $$`;
+		render_temml();
+
+		// Circle outline
+		const circX = [], circY = [];
+		for (let a = 0; a <= 2 * Math.PI + 0.05; a += 0.05) {
+			circX.push(Math.cos(a));
+			circY.push(Math.sin(a));
+		}
+
+		// Arc from 0 to theta
+		const arcX = [0], arcY = [0];
+		const step = theta >= 0 ? 0.02 : -0.02;
+		for (let a = 0; Math.abs(a) <= Math.abs(theta) + 0.01; a += step) {
+			arcX.push(0.25 * Math.cos(a));
+			arcY.push(0.25 * Math.sin(a));
+		}
+
+		const data = [
+			// Unit circle
+			{ x: circX, y: circY, mode: 'lines', line: { color: '#cbd5e1', width: 2 }, showlegend: false, hoverinfo: 'skip' },
+			// Radius line
+			{ x: [0, cosT], y: [0, sinT], mode: 'lines', line: { color: '#334155', width: 3 }, showlegend: false, hoverinfo: 'skip' },
+			// cos projection (horizontal blue line)
+			{ x: [0, cosT], y: [0, 0], mode: 'lines', line: { color: '#2563eb', width: 5 }, name: 'cos θ' },
+			// sin projection (vertical red line)
+			{ x: [cosT, cosT], y: [0, sinT], mode: 'lines', line: { color: '#ef4444', width: 5 }, name: 'sin θ' },
+			// Point on circle
+			{ x: [cosT], y: [sinT], mode: 'markers', marker: { size: 12, color: '#1e293b', line: { color: '#fff', width: 2 } }, showlegend: false },
+			// Dashed horizontal from point to y-axis
+			{ x: [0, cosT], y: [sinT, sinT], mode: 'lines', line: { color: '#ef4444', width: 1, dash: 'dash' }, showlegend: false, hoverinfo: 'skip' },
+			// Dashed vertical from point to x-axis
+			{ x: [cosT, cosT], y: [0, sinT], mode: 'lines', line: { color: '#2563eb', width: 1, dash: 'dash' }, showlegend: false, hoverinfo: 'skip' },
+			// Angle arc
+			{ x: arcX, y: arcY, mode: 'lines', line: { color: '#f59e0b', width: 2 }, fill: 'toself', fillcolor: 'rgba(245,158,11,0.12)', showlegend: false, hoverinfo: 'skip' },
+		];
+
+		const layout = {
+			margin: { t: 10, b: 40, l: 40, r: 10 },
+			xaxis: { range: [-1.5, 1.5], zeroline: true, scaleanchor: 'y', scaleratio: 1, dtick: 0.5 },
+			yaxis: { range: [-1.5, 1.5], zeroline: true, dtick: 0.5 },
+			legend: { orientation: 'h', y: -0.15 },
+			annotations: [
+				{ x: cosT, y: sinT, text: `(${cosT.toFixed(2)}, ${sinT.toFixed(2)})`, showarrow: true, arrowhead: 0, ax: 30, ay: -25, font: { size: 13, color: '#1e293b' } },
+				{ x: 0.32 * Math.cos(theta / 2), y: 0.32 * Math.sin(theta / 2), text: 'θ', showarrow: false, font: { size: 14, color: '#f59e0b', family: 'serif' } },
+			],
+		};
+
+		Plotly.react('plot-unit-circle', data, layout);
+	}
+
+	sliderTheta.addEventListener('input', updateUnitCircle);
+	updateUnitCircle();
+
+	// ── 2. Sine & Cosine Waves ──
+	const sliderAmp = document.getElementById('slider-wave-amp');
+	const sliderFreq = document.getElementById('slider-wave-freq');
+	const sliderPhase = document.getElementById('slider-wave-phase');
+
+	function updateWavePlot() {
+		const A = parseFloat(sliderAmp.value);
+		const w = parseFloat(sliderFreq.value);
+		const phi = parseFloat(sliderPhase.value);
+
+		document.getElementById('disp-wave-amp').textContent = A.toFixed(1);
+		document.getElementById('disp-wave-freq').textContent = w.toFixed(1);
+		document.getElementById('disp-wave-phase').textContent = phi.toFixed(2);
+
+		document.getElementById('wave-formula').innerHTML =
+			`$$f(\\theta) = ${A.toFixed(1)}\\,\\sin(${w.toFixed(1)}\\,\\theta + ${phi.toFixed(2)})$$`;
+		render_temml();
+
+		const xVals = [], ySin = [], yCos = [], yCustom = [];
+		for (let t = -2 * Math.PI; t <= 2 * Math.PI; t += 0.05) {
+			xVals.push(t);
+			ySin.push(Math.sin(t));
+			yCos.push(Math.cos(t));
+			yCustom.push(A * Math.sin(w * t + phi));
+		}
+
+		const data = [
+			{ x: xVals, y: ySin, mode: 'lines', line: { color: '#cbd5e1', width: 1, dash: 'dot' }, name: 'sin θ' },
+			{ x: xVals, y: yCos, mode: 'lines', line: { color: '#e2e8f0', width: 1, dash: 'dot' }, name: 'cos θ' },
+			{ x: xVals, y: yCustom, mode: 'lines', line: { color: '#2563eb', width: 4 }, name: 'f(θ)' },
+		];
+
+		const layout = {
+			margin: { t: 10, b: 40, l: 40, r: 10 },
+			xaxis: { title: 'θ (radians)', range: [-2 * Math.PI, 2 * Math.PI], zeroline: true },
+			yaxis: { title: 'Value', range: [-3.5, 3.5], zeroline: true },
+			legend: { orientation: 'h', y: -0.25 },
+		};
+
+		Plotly.react('plot-sincos-wave', data, layout);
+	}
+
+	sliderAmp.addEventListener('input', updateWavePlot);
+	sliderFreq.addEventListener('input', updateWavePlot);
+	sliderPhase.addEventListener('input', updateWavePlot);
+	updateWavePlot();
+
+	// ── 3. Taylor Series Approximation ──
+	const sliderTaylor = document.getElementById('slider-taylor-n');
+
+	function factorial(n) {
+		let r = 1;
+		for (let i = 2; i <= n; i++) r *= i;
+		return r;
+	}
+
+	function sinTaylor(x, N) {
+		let sum = 0;
+		for (let n = 0; n < N; n++) {
+			sum += Math.pow(-1, n) * Math.pow(x, 2 * n + 1) / factorial(2 * n + 1);
+		}
+		return sum;
+	}
+
+	function updateTaylor() {
+		const N = parseInt(sliderTaylor.value);
+		document.getElementById('disp-taylor-n').textContent = N;
+
+		// Build formula string
+		const terms = [];
+		for (let n = 0; n < N; n++) {
+			const sign = n === 0 ? '' : (n % 2 === 0 ? ' + ' : ' - ');
+			const exp = 2 * n + 1;
+			const denom = factorial(exp);
+			if (n === 0) {
+				terms.push('\\theta');
+			} else {
+				terms.push(`${sign}\\frac{\\theta^{${exp}}}{${denom}}`);
+			}
+		}
+		document.getElementById('taylor-formula').innerHTML =
+			`$$\\sin\\theta \\approx ${terms.join('')}$$`;
+		render_temml();
+
+		const xVals = [], yTrue = [], yApprox = [];
+		for (let t = -2 * Math.PI; t <= 2 * Math.PI; t += 0.05) {
+			xVals.push(t);
+			yTrue.push(Math.sin(t));
+			yApprox.push(sinTaylor(t, N));
+		}
+
+		const data = [
+			{ x: xVals, y: yTrue, mode: 'lines', line: { color: '#94a3b8', width: 2, dash: 'dot' }, name: 'True sin θ' },
+			{ x: xVals, y: yApprox, mode: 'lines', line: { color: '#dc2626', width: 3 }, name: `Taylor (${N} term${N > 1 ? 's' : ''})` },
+		];
+
+		const layout = {
+			margin: { t: 10, b: 40, l: 40, r: 10 },
+			xaxis: { title: 'θ', range: [-2 * Math.PI, 2 * Math.PI], zeroline: true },
+			yaxis: { title: 'Value', range: [-3, 3], zeroline: true },
+			legend: { orientation: 'h', y: -0.25 },
+		};
+
+		Plotly.react('plot-taylor', data, layout);
+	}
+
+	sliderTaylor.addEventListener('input', updateTaylor);
+	updateTaylor();
+
+	// ── 4. Pythagorean Identity ──
+	const sliderPyth = document.getElementById('slider-pyth-theta');
+
+	function updatePythag() {
+		const theta = parseFloat(sliderPyth.value);
+		const s2 = Math.sin(theta) ** 2;
+		const c2 = Math.cos(theta) ** 2;
+
+		document.getElementById('disp-pyth-theta').textContent = theta.toFixed(2);
+		document.getElementById('pyth-equation').innerHTML =
+			`$$ \\sin^2(${theta.toFixed(2)}) + \\cos^2(${theta.toFixed(2)}) = ${s2.toFixed(3)} + ${c2.toFixed(3)} = ${(s2 + c2).toFixed(3)} $$`;
+		render_temml();
+
+		const data = [
+			{
+				x: ['Breakdown'],
+				y: [s2],
+				type: 'bar',
+				name: 'sin²θ',
+				marker: { color: '#ef4444' },
+				width: [0.5],
+			},
+			{
+				x: ['Breakdown'],
+				y: [c2],
+				type: 'bar',
+				name: 'cos²θ',
+				marker: { color: '#2563eb' },
+				width: [0.5],
+			},
+		];
+
+		const layout = {
+			barmode: 'stack',
+			margin: { t: 10, b: 40, l: 40, r: 10 },
+			yaxis: { range: [0, 1.3], title: 'Value', zeroline: true },
+			legend: { orientation: 'h', y: -0.2 },
+			annotations: [
+				{
+					x: 'Breakdown', y: 1.05,
+					text: '<b>= 1.000</b>',
+					showarrow: false,
+					font: { size: 16, color: '#1e293b' },
+				},
+			],
+		};
+
+		Plotly.react('plot-pythag', data, layout);
+	}
+
+	sliderPyth.addEventListener('input', updatePythag);
+	updatePythag();
 }
 
 // ── Module loader ───────────────────────────────────────────────────────────

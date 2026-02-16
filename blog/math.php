@@ -674,4 +674,150 @@ Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting ve
     </div>
 </div>
 
-TODO Sine Cosine
+<div class="md">
+## Sine and Cosine ($\sin$ and $\cos$)
+
+### Origin and Etymology
+
+The story of sine and cosine begins in ancient **India**. The mathematician **Āryabhaṭa** (476–550 CE) used the Sanskrit word *jyā* (meaning "bowstring") to describe the half-chord of a circle — the vertical line you get when you draw a chord across a circle and then cut it in half. This made sense visually: if you imagine a bow, the string is the chord, and *jyā* measures half of it.
+
+When Arab scholars translated Indian astronomical texts, they transliterated *jyā* into Arabic as *jība*. Over time, scribes confused it with the Arabic word *jayb*, meaning "pocket" or "fold." When the Italian mathematician **Robert of Chester** translated these Arabic texts into Latin around 1145, he translated *jayb* as ***sinus*** (Latin for "bay" or "curve"), giving us the modern word **sine**.
+
+**Cosine** simply means "complement's sine." It was named by **Edmund Gunter** in 1620, shortening *co-sinus* — the sine of the complementary angle ($90° - \theta$). In other words:
+
+$$\cos(\theta) = \sin\!\left(90° - \theta\right)$$
+
+### What do they actually measure?
+
+Imagine a circle with radius $r = 1$ centered at the origin — the **unit circle**. Now pick a point on the circle by sweeping an angle $\theta$ counter-clockwise from the positive $x$-axis. The coordinates of that point are exactly $(\cos\theta,\;\sin\theta)$:
+
+$$\cos\theta = \text{horizontal coordinate (}x\text{-value)}$$
+$$\sin\theta = \text{vertical coordinate (}y\text{-value)}$$
+
+This is why they are so fundamental: they convert an **angle** into **coordinates**.
+
+### Original use: Astronomy
+
+Indian and Greek astronomers needed sine and cosine to predict the positions of stars and planets on the celestial sphere. By decomposing circular motion into horizontal and vertical components, they could compute planetary orbits, eclipse timings, and navigation tables — centuries before calculus existed.
+
+### Key Properties
+
+1. **Periodicity** — Both functions repeat every $2\pi$ radians ($360°$):
+$$\sin(\theta + 2\pi) = \sin\theta, \qquad \cos(\theta + 2\pi) = \cos\theta$$
+
+2. **Pythagorean Identity** — For any angle $\theta$:
+$$\sin^2\theta + \cos^2\theta = 1$$
+This follows directly from the unit circle: the point $(\cos\theta, \sin\theta)$ always lies on a circle of radius 1.
+
+3. **Symmetry** — Sine is an *odd* function and cosine is an *even* function:
+$$\sin(-\theta) = -\sin\theta, \qquad \cos(-\theta) = \cos\theta$$
+
+4. **Phase shift** — Cosine is just sine shifted by $\frac{\pi}{2}$:
+$$\cos\theta = \sin\!\left(\theta + \tfrac{\pi}{2}\right)$$
+
+5. **Range** — Both functions are bounded:
+$$-1 \leq \sin\theta \leq 1, \qquad -1 \leq \cos\theta \leq 1$$
+
+6. **Derivatives** (important for AI / backpropagation):
+$$\frac{d}{d\theta}\sin\theta = \cos\theta, \qquad \frac{d}{d\theta}\cos\theta = -\sin\theta$$
+
+### How are they calculated?
+
+Modern computers evaluate sine and cosine using their **Taylor Series** expansions:
+
+$$\sin\theta = \sum_{n=0}^{\infty} \frac{(-1)^n \, \theta^{2n+1}}{(2n+1)!} = \theta - \frac{\theta^3}{3!} + \frac{\theta^5}{5!} - \frac{\theta^7}{7!} + \dots$$
+
+$$\cos\theta = \sum_{n=0}^{\infty} \frac{(-1)^n \, \theta^{2n}}{(2n)!} = 1 - \frac{\theta^2}{2!} + \frac{\theta^4}{4!} - \frac{\theta^6}{6!} + \dots$$
+
+The more terms you add, the closer the approximation gets to the true value. In the interactive plot below, you can control how many terms the computer uses and watch the approximation converge.
+
+### Why AI needs sine and cosine
+
+In modern AI, sine and cosine are used in **Positional Encoding** inside Transformers (the architecture behind GPT). Since Transformers process all words simultaneously (not sequentially), they need a way to encode the *position* of each word. The original Transformer paper (*Attention Is All You Need*, Vaswani et al., 2017) encodes position $\text{pos}$ in dimension $i$ as:
+
+$$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d}}\right), \qquad PE_{(\text{pos}, 2i+1)} = \cos\!\left(\frac{\text{pos}}{10000^{2i/d}}\right)$$
+
+This gives each position a unique "fingerprint" that the model can learn to interpret.
+</div>
+
+<!-- ─── Interactive: Unit Circle ─── -->
+<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+    <h4 style="margin-top:0;">Interactive Unit Circle</h4>
+    <p style="color:#64748b; font-size:0.9em;">Drag the angle slider and watch how $\sin\theta$ and $\cos\theta$ change. The <span style="color:#ef4444;font-weight:bold;">red</span> line is $\sin\theta$ (vertical) and the <span style="color:#2563eb;font-weight:bold;">blue</span> line is $\cos\theta$ (horizontal).</p>
+
+    <div style="margin-bottom:10px;">
+        <strong>Angle $\theta$:</strong>
+        <input type="range" id="slider-sc-theta" min="0" max="6.2832" step="0.01" value="0.78" style="width:300px;">
+        <span id="disp-sc-theta" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.78</span> rad
+        (<span id="disp-sc-deg" style="font-family:monospace;">44.7°</span>)
+    </div>
+
+    <div id="sc-equation-display" style="text-align:center; font-size:1.2em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:50px;">
+        $$ \sin(0.78) = 0.703, \quad \cos(0.78) = 0.711 $$
+    </div>
+
+    <div id="plot-unit-circle" class="plot-container" style="width:100%; height:450px;"></div>
+</div>
+
+<!-- ─── Interactive: Sine & Cosine Waves ─── -->
+<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+    <h4 style="margin-top:0;">Sine & Cosine Waves</h4>
+    <p style="color:#64748b; font-size:0.9em;">See how amplitude $A$, frequency $\omega$, and phase shift $\varphi$ change the wave: $f(\theta) = A \sin(\omega\theta + \varphi)$.</p>
+
+    <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:10px;">
+        <div>
+            <strong>Amplitude $A$:</strong> <span id="disp-wave-amp" style="font-family:monospace; font-weight:bold;">1.0</span><br>
+            <input type="range" id="slider-wave-amp" min="0.1" max="3" step="0.1" value="1.0" style="width:180px;">
+        </div>
+        <div>
+            <strong>Frequency $\omega$:</strong> <span id="disp-wave-freq" style="font-family:monospace; font-weight:bold;">1.0</span><br>
+            <input type="range" id="slider-wave-freq" min="0.1" max="5" step="0.1" value="1.0" style="width:180px;">
+        </div>
+        <div>
+            <strong>Phase $\varphi$:</strong> <span id="disp-wave-phase" style="font-family:monospace; font-weight:bold;">0.0</span><br>
+            <input type="range" id="slider-wave-phase" min="0" max="6.28" step="0.05" value="0" style="width:180px;">
+        </div>
+    </div>
+
+    <div id="wave-formula" style="text-align:center; font-size:1.1em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:40px;">
+        $$f(\theta) = 1.0\,\sin(1.0\,\theta + 0.0)$$
+    </div>
+
+    <div id="plot-sincos-wave" class="plot-container" style="width:100%; height:350px;"></div>
+</div>
+
+<!-- ─── Interactive: Taylor Series Approximation ─── -->
+<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+    <h4 style="margin-top:0;">Taylor Series Approximation</h4>
+    <p style="color:#64748b; font-size:0.9em;">Increase the number of terms to see how the polynomial approximation converges to the true $\sin$ curve. With just 5 terms, the match is nearly perfect over $[-2\pi, 2\pi]$!</p>
+
+    <div style="margin-bottom:10px;">
+        <strong>Number of Taylor terms $N$:</strong>
+        <input type="range" id="slider-taylor-n" min="1" max="10" step="1" value="1" style="width:250px;">
+        <span id="disp-taylor-n" style="font-family:monospace; font-weight:bold; color:#2563eb;">1</span>
+    </div>
+
+    <div id="taylor-formula" style="text-align:center; font-size:1.1em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:40px;">
+        $$\sin\theta \approx \theta$$
+    </div>
+
+    <div id="plot-taylor" class="plot-container" style="width:100%; height:350px;"></div>
+</div>
+
+<!-- ─── Interactive: Pythagorean Identity ─── -->
+<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+    <h4 style="margin-top:0;">Pythagorean Identity: $\sin^2\theta + \cos^2\theta = 1$</h4>
+    <p style="color:#64748b; font-size:0.9em;">No matter what angle you choose, the sum of the squares always equals 1. Watch the stacked bar stay constant.</p>
+
+    <div style="margin-bottom:10px;">
+        <strong>Angle $\theta$:</strong>
+        <input type="range" id="slider-pyth-theta" min="0" max="6.28" step="0.01" value="0.78" style="width:300px;">
+        <span id="disp-pyth-theta" style="font-family:monospace; font-weight:bold;">0.78</span> rad
+    </div>
+
+    <div id="pyth-equation" style="text-align:center; font-size:1.2em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:50px;">
+        $$ \sin^2(0.78) + \cos^2(0.78) = 0.494 + 0.506 = 1.000 $$
+    </div>
+
+    <div id="plot-pythag" class="plot-container" style="width:100%; height:250px;"></div>
+</div>
