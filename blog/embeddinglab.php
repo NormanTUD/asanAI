@@ -131,7 +131,9 @@ While the semantic manifold relies on "use" to define meaning, the system falter
 Even more disruptive are **Glitch Tokens** (described by Yuxi Li et al. in \citeyear{glitchtokens}), which reveal the cracks in the machine's geometric logic. These often arise from anomalies like the Reddit username `SolidGoldMagikarp`, a bot that appeared in thousands of entries within a specific counting thread. Because these strings appeared frequently enough to be assigned a dedicated token but lacked varied, human-semantic context, they do not possess a stable "positional relationship" in the space. When an LLM encounters these tokens, it often suffers a "hallucination of meaning" or total logic failure. In the geometry of meaning, these tokens act like "voids" or "gravity wells", they are products of statistical co-occurrence that do not correlate with any human concept.
 
 ## Similiarity
-To find the dot product of two vectors, you multiply the numbers in the same positions and then add all those results together.
+To find the dot product of two vectors, you multiply the numbers in the same positions and then add all those results together. In general, the equation is:
+
+$$ \underbrace{\vec{A} \cdot \vec{B}}_{\substack{n \text{ entries} \\ \text{each}}} = \sum_{i=1}^{n} a_i b_i $$
 
 If we have two vectors $\vec{A}$ and $\vec{B}$:
 $$\vec{A} = \begin{pmatrix} a_1 \\ a_2 \end{pmatrix}, \vec{B} = \begin{pmatrix} b_1 \\ b_2 \end{pmatrix}$$
