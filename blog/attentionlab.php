@@ -139,6 +139,8 @@ Drag the query arrow below. Watch how rotating it toward a key increases that ke
 <div class="md">
 ### Summary: Why *That* Equation?
 
+$$\boxed{\text{Attention} = \underbrace{\text{softmax}}_{\text{normalize to convex weights}}\!\left(\frac{\overbrace{QK^T}^{\text{directional alignment}}}{\underbrace{\sqrt{d_k}}_{\text{variance control}}}\right) \underbrace{V}_{\text{information to blend}}}$$
+
 Having played with all three dimensions, the design choices become clear:
 
 1. **Dot product** $QK^T$: It's the natural measure of directional alignment. In 1D it's just multiplication (same sign = agree). In 2D/3D it's $\|\mathbf{q}\|\|\mathbf{k}\|\cos\theta$, the projection of one vector onto another. No other simple operation captures "how much do these vectors point the same way?"
@@ -148,8 +150,6 @@ Having played with all three dimensions, the design choices become clear:
 3. **Softmax**: Turns raw scores into a **probability distribution**, non-negative weights that sum to 1. This means the output is a **convex combination** of values, geometrically trapped inside their convex hull. It's the minimal assumption: "blend the available information proportionally to relevance."
 
 4. **Weighted sum of Values**: The output is an interpolation, not a lookup. This is differentiable everywhere, enabling gradient-based learning. The FFN layer that follows provides the non-linearity needed to "escape" the convex hull and create genuinely new representations.
-
-$$\boxed{\text{Attention} = \underbrace{\text{softmax}}_{\text{normalize to convex weights}}\!\left(\frac{\overbrace{QK^T}^{\text{directional alignment}}}{\underbrace{\sqrt{d_k}}_{\text{variance control}}}\right) \underbrace{V}_{\text{information to blend}}}$$
 </div>
 
 <div class="md">
