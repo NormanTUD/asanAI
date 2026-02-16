@@ -103,7 +103,7 @@ Drag the query arrow below. Watch how rotating it toward a key increases that ke
     <!-- Live sentence -->
     <div id="attn2d-sentence" style="padding:10px 16px; margin-bottom:14px; background:#fff;
          border-left:4px solid #cbd5e1; border-radius:6px; font-style:italic; color:#334155;
-         transition: border-color 0.2s;"></div>
+	 transition: border-color 0.2s; height: 50px;"></div>
 
     <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:14px;">
         <div style="flex:1; min-width:200px;">

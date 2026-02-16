@@ -1141,7 +1141,7 @@ function updateAttn2D() {
                 ${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}
             </td>
             <td style="padding:3px 8px; font-family:monospace;">${scores[i].toFixed(2)}</td>
-            <td style="padding:3px 8px;">
+            <td style="padding:3px 8px; width: 200px">
                 <div style="display:inline-block; width:${Math.max(3, weights[i]*120)}px; height:14px;
                      background:${kv.color}; border-radius:3px; vertical-align:middle;
                      opacity:${0.4+weights[i]*0.6}; transition:width 0.12s;"></div>
