@@ -377,62 +377,6 @@ function renderComparison3D(config) {
     `;
 }
 
-function loadEmbeddingModule () {
-	const tasks = [
-		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
-		{ type: 'comparison', id: 'plot-comparison' },
-		{ type: 'comparison3d', id: 'plot-comparison-3d' }
-	];
-
-	// Global Plotly config to reduce overhead
-	const fastConfig = {
-		displayModeBar: false, // Hides the heavy floating menu
-		responsive: true,
-		staticPlot: false,
-		// This hint tells Plotly to prioritize frame rate
-		glProto: 'webgl' 
-	};
-
-	const observer = new IntersectionObserver((entries) => {
-		entries.forEach((entry) => {
-			if (entry.isIntersecting) {
-				const task = tasks.find(t => t.id === entry.target.id);
-				if (task) {
-					// Use a slight delay based on the element's position
-					// to ensure they don't all fire in the same millisecond
-					const delay = entry.boundingClientRect.top < 500 ? 50 : 200;
-
-					setTimeout(() => {
-						requestAnimationFrame(() => {
-							executeTask(task, fastConfig);
-						});
-					}, delay);
-				}
-				observer.unobserve(entry.target);
-			}
-		});
-	}, { 
-		// Reduced margin so we don't pre-render heavy 3D scenes 
-		// that are too far down the page.
-		rootMargin: '50px' 
-	});
-
-	function executeTask(task, config) {
-		if (task.type === 'space') {
-			// Passing config to the existing renderSpace call
-			renderSpace(task.key, null, [], config);
-		} else if (task.type === 'comparison3d') {
-			renderComparison3D(config);
-		}
-	}
-
-	tasks.forEach(task => {
-		const el = document.getElementById(task.id);
-		if (el) observer.observe(el);
-	});
-	initEmbeddingEditor();
-}
-
 /**
  * Initialisiert die Tabellen.
  * Includes a footer with an "Add Token" button.
@@ -710,6 +654,60 @@ function renderDotProductLab() {
 	update();
 }
 
-async function loadEmbeddingModule() {
+function loadEmbeddingModule () {
+	const tasks = [
+		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
+		{ type: 'comparison', id: 'plot-comparison' },
+		{ type: 'comparison3d', id: 'plot-comparison-3d' }
+	];
+
+	// Global Plotly config to reduce overhead
+	const fastConfig = {
+		displayModeBar: false, // Hides the heavy floating menu
+		responsive: true,
+		staticPlot: false,
+		// This hint tells Plotly to prioritize frame rate
+		glProto: 'webgl' 
+	};
+
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach((entry) => {
+			if (entry.isIntersecting) {
+				const task = tasks.find(t => t.id === entry.target.id);
+				if (task) {
+					// Use a slight delay based on the element's position
+					// to ensure they don't all fire in the same millisecond
+					const delay = entry.boundingClientRect.top < 500 ? 50 : 200;
+
+					setTimeout(() => {
+						requestAnimationFrame(() => {
+							executeTask(task, fastConfig);
+						});
+					}, delay);
+				}
+				observer.unobserve(entry.target);
+			}
+		});
+	}, { 
+		// Reduced margin so we don't pre-render heavy 3D scenes 
+		// that are too far down the page.
+		rootMargin: '50px' 
+	});
+
+	function executeTask(task, config) {
+		if (task.type === 'space') {
+			// Passing config to the existing renderSpace call
+			renderSpace(task.key, null, [], config);
+		} else if (task.type === 'comparison3d') {
+			renderComparison3D(config);
+		}
+	}
+
+	tasks.forEach(task => {
+		const el = document.getElementById(task.id);
+		if (el) observer.observe(el);
+	});
+	initEmbeddingEditor();
+
 	renderDotProductLab();
 }
