@@ -135,7 +135,11 @@ function renderSpace(key, highlightPos = null, steps = []) {
 		};
 	}
 
-	Plotly.react(divId, traces, layout);
+	Plotly.react(divId, traces, layout).then(() => {
+		// Remove any lingering loading indicator
+		const loader = plotDiv.querySelector('.plot-loading');
+		if (loader) loader.remove();
+	});;
 }
 
 function calcEvo(key) {
@@ -365,7 +369,11 @@ function renderComparison3D(config) {
 		} 
 	};
 
-	Plotly.react(divId, traces, layout, config);
+	Plotly.react(divId, traces, layout, config).then(() => {
+		// Remove any lingering loading indicator
+		const loader = plotDiv.querySelector('.plot-loading');
+		if (loader) loader.remove();
+	});
 
 	document.getElementById(statsId).innerHTML = `
 	<div style="font-family: sans-serif; font-size: 0.85em; padding:15px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
@@ -705,8 +713,19 @@ function loadEmbeddingModule () {
 
 	tasks.forEach(task => {
 		const el = document.getElementById(task.id);
-		if (el) observer.observe(el);
+		if (el) {
+			// Inject a loading placeholder if the div is empty
+			if (!el.hasChildNodes()) {
+				el.innerHTML = `
+		<div class="plot-loading">
+		    <div class="spinner"></div>
+		    <span>Loading 3D plot…</span>
+		</div>`;
+			}
+			observer.observe(el);
+		}
 	});
+
 	initEmbeddingEditor();
 
 	renderDotProductLab();

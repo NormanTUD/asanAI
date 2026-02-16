@@ -744,3 +744,27 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	width: 100%;
 	height: 100%;
 }
+
+.plot-loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 300px;
+	color: #94a3b8;
+	font-family: sans-serif;
+	font-size: 0.95rem;
+	gap: 10px;
+}
+
+.plot-loading .spinner {
+	width: 24px;
+	height: 24px;
+	border: 3px solid #e2e8f0;
+	border-top: 3px solid #3b82f6;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+	to { transform: rotate(360deg); }
+}
