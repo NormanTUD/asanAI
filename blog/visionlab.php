@@ -57,7 +57,7 @@ In traditional computer vision, engineers manually designed kernels (like the on
         Move mouse over the image to see the math...
     </div>
 
-    <img id="conv-src-hidden" src="example.jpg" crossorigin="anonymous" style="display:none">
+    <img id="conv-src-hidden" src="stop_sign.jpg" crossorigin="anonymous" style="display:none">
     <div id="visionlab-console" style="display: none" class="status-console"></div>
 
 <div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px">
