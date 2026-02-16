@@ -693,7 +693,7 @@ TODO
 
 The concept originates in ancient Indian astronomy. \citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* ("bowstring") to describe the half-chord of a circle, which is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\citetitle{indianastronomer}* (\citetitle{indianastronomer}, ch. 1-2). Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* ("pocket" or "fold"). 
 
-In **1145**, **Robert of Chester**, who also produced the first Latin translation of **Al-Khwarizmi's** foundational work on algebra, *al-Kitāb al-mukhtaṣar fī ḥisāb al-jabr wa-l-muqābala* (Latin: *Liber algebrae et almucabola*), translated *jayb* into the Latin ***sinus*** ("curve," "bay," or "fold").
+In \citeyear{chester1145}, \citeauthor{chester1145}, who also produced the first Latin translation of \citealternativetitle{alkwarizma}'s foundational work on algebra that also inspired the name *algorithm*, translated *jayb* into the Latin ***sinus*** ("curve," "bay," or "fold").
 
 **Cosine** ("complement's sine") was later coined by **Edmund Gunter** in his 1620 work *Canon Triangulorum*. It describes the sine of the complementary angle:
 
@@ -702,7 +702,7 @@ $$\sin(\theta) = \cos(90^\circ - \theta)$$
 **Original Sources:**
 * **Aryabhata**, *Aryabhatiya* (499 CE): Defined the *ardha-jyā* (half-chord).
 * **Al-Khwarizmi**, *Al-Jabr* (c. 820 CE): Provided the Arabic context for algebraic and trigonometric functions.
-* **Robert of Chester**, *Liber algebrae et almucabola* (1145): Introduced the terms to the Latin West.
+* **Robert of Chester**, ** (1145): Introduced the terms to the Latin West.
 * **Edmund Gunter**, *Canon Triangulorum* (1620): Coined the term *co-sinus*.
 
 
