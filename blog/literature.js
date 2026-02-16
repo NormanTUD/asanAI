@@ -1,7 +1,7 @@
 window.bibData = {
 	"oevresdeformat": {
 		url: "https://archive.org/details/oeuvresdefermat02ferm",
-		year: 1891,
+		year: 1654,
 		title: "Œuvres de Fermat",
 		author: "Pierre de Fermat"
 	},

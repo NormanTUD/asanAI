@@ -59,12 +59,10 @@ The first truly scientific treatment came from **Gerolamo Cardano**, who also in
 
 #### The Great Correspondence: Pascal & Fermat (1654)
 
-TODO
-
 The context that solidified this into modern science was the **"Problem of Points."** The **Chevalier de Méré** asked **Blaise Pascal** how to fairly split a prize pot if a game of dice is interrupted.
 
-Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considered the founding moment of probability theory. They moved beyond mere counting and began using the **Binomial Coefficients** (Pascal's Triangle) to predict outcomes for any number of dice.
-    </div>
+Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considered the founding moment of probability theory. They moved beyond mere counting and began using the **Binomial Coefficients** (Pascal's Triangle) to predict outcomes for any number of dice (\cite{oevresdeformat}, p. 288ff).
+</div>
 
     <div class="statlab-interactive-zone" style="display: block !important">
         <div id="dice-matrix-container" style="background: #f1f5f9; padding: 15px; border-radius: 12px; border: 1px dashed #cbd5e1;">
