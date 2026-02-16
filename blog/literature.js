@@ -1,4 +1,10 @@
 window.bibData = {
+	"bain": {
+		year: 1873,
+		title: "Mind and Body: The Theories of Their Relation",
+		author: "Alexander Bain",
+		url: "https://archive.org/details/mindbodytheories00bain"
+	},
 	"watergpt3": {
 		url: "https://interestingengineering.com/innovation/training-chatgpt-consumes-water",
 		title: "GPT-3 training consumed 700k liters of water, ‘enough for producing 370 BMWs’",
