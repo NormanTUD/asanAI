@@ -1,4 +1,10 @@
 window.bibData = {
+	"oevresdeformat": {
+		url: "https://archive.org/details/oeuvresdefermat02ferm",
+		year: 1891,
+		title: "Œuvres de Fermat",
+		author: "Pierre de Fermat"
+	},
 	"indianastronomerconstruction": {
 		url: "https://arxiv.org/abs/2309.13577",
 		title: "Aryabhata and the Construction of the First Trigonometric Table",
