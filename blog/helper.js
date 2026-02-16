@@ -68,10 +68,10 @@ function parseCategories() {
                     // Erstelle den Wrapper
                     currentWrapper = document.createElement('div');
                     currentWrapper.className = 'category-block ' + validKeys.map(k => `cat-${k}`).join(' ');
-                    
+
                     const mainColor = getCategoryColor(validKeys[0]);
                     //currentWrapper.style.cssText = `border-left: 4px solid ${mainColor}; padding-left: 15px; margin-bottom: 20px; display: block;`;
-                    
+
                     // Füge den Wrapper nach dem aktuellen Element ein
                     container.insertBefore(currentWrapper, el.nextSibling);
 
@@ -86,7 +86,7 @@ function parseCategories() {
                         stopLevel = parseInt(nextEl.tagName.substring(1));
                     } else {
                         // Ansonsten stoppen wir bei JEDER Überschrift
-                        stopLevel = 7; 
+                        stopLevel = 7;
                     }
 
                     // Entferne den Tag aus dem Element
@@ -101,7 +101,7 @@ function parseCategories() {
             // --- STOPP-LOGIK ---
             if (/^H[1-6]$/.test(el.tagName)) {
                 const currentLevel = parseInt(el.tagName.substring(1));
-                
+
                 // Wir stoppen, wenn:
                 // 1. Ein Wrapper aktiv ist UND
                 // 2. Der Wrapper bereits Inhalt hat (damit die Start-Überschrift mitgenommen wird) UND
@@ -202,7 +202,7 @@ function renderMarkdown() {
         const regex = /\\index\{([^}]+)\}/g;
         rawContent = rawContent.replace(regex, (match, term) => {
             const normalizedTerm = term.toLowerCase().replace(/_/g, ' ');
-            
+
             // ID generieren (ähnlich wie in deiner restlichen Logik)
             const safeIdBase = normalizedTerm.replace(/\s+/g, '-');
             const occurrenceId = `idx-${safeIdBase}-${Math.random().toString(36).substr(2, 4)}`;
@@ -360,104 +360,104 @@ function smartquote() {
 	if (typeof source_bibliography === "function") source_bibliography();
 }
 
-function bibtexify() {                  
-    const containers = document.querySelectorAll('.md');
-    const mainContent = document.getElementById('contents');
-    let footnotesDiv = document.getElementById('footnotes');
-    let footnotesHTML = "";         
-                                    
-    window.usedCitations = [];      
-    window.citationMap = {};        
-    window.footnoteCounter = 1;     
-                                    
-    const trackCitation = (key, instanceId, isDuplicateInBlock) => {
-        if (!window.bibData || !window.bibData[key]) return null;
-        if (!window.usedCitations.includes(key)) window.usedCitations.push(key);
-        if (!isDuplicateInBlock) {
-            if (!window.citationMap[key]) window.citationMap[key] = [];
-            window.citationMap[key].push(instanceId);
-        }                       
-        return window.bibData[key];
-    };                              
-                                    
-    containers.forEach(container => {
-        let content = container.innerHTML;
-        const citedInThisBlock = new Set();
-                                
-        content = content.replace(/\\(cite|citeauthor|citeauthorlastnameand|citetitle|citeyear|citealternativetitle|citeurl)\{(.+?)\}/g, (match, type, key) => {
-            const isDuplicate = citedInThisBlock.has(key);
-            const instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
-            const data = trackCitation(key, instanceId, isDuplicate);
-            if (!data) {
-		    console.error(`Reference ${key} not found!`);
-		    return `[?${key}?]`;
-	    }
-                                    
-            citedInThisBlock.add(key);
-            const info = `${data.author}: ${data.title}${data.year ? ' ('+data.year+')' : ''}`;
-            let linkText = "";
-            switch(type) {  
-                case 'citeauthor': linkText = data.author; break;
-                case 'citeauthorlastnameand': 
-                    const authors = data.author.split(/, | and /).map(a => a.trim());
-                    const lastNames = authors.map(name => name.split(' ').pop());
-                    if (lastNames.length === 1) linkText = lastNames[0];
-                    else if (lastNames.length === 2) linkText = lastNames.join(" and ");
-                    else {
-                        const last = lastNames.pop();
-                        linkText = lastNames.join(", ") + " and " + last;
-                    }
-                    break;
-                case 'citetitle':  linkText = data.title; break;
-                case 'citealternativetitle':  linkText = data.alternativetitle; break;
-                case 'citeyear':   linkText = data.year; break;
-                case 'citeurl':    linkText = data.title; break;
-                default:           linkText = `[${data.author}, ${data.year}]`;
-            }               
-            
-            const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
-            // NEW: Use iframe-safe-link instead of href
-            return `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${linkText}</a>`;
-        });                     
-                                    
-        content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
-            const fnId = window.footnoteCounter++;
-            const instanceId = `ref-${key}-fn-${fnId}`;
-            const data = trackCitation(key, instanceId, false);
-            if (!data) {
-		    console.error(`Reference ${key} not found!`);
-		    return `<sup>[?${key}?]</sup>`;
-	    }
-                                    
-            let year = data.year ? `, ${data.year}` : "";
-            // NEW: Footnote backlink updated to iframe-safe-link
-            footnotesHTML += `<li id="fn-${fnId}">${data.author}, <a class="iframe-safe-link" data-target="bib-${key}" style="cursor:pointer;">${data.title}</a>${year} <a class="iframe-safe-link" data-target="${instanceId}" style="cursor:pointer;">↩</a></li>\n`;
-            return `<sup class="footnote-ref"><a class="iframe-safe-link" data-target="fn-${fnId}" id="${instanceId}" title="${data.author}: ${data.title}" style="cursor:pointer;">[${fnId}]</a></sup>`;
-        });                     
-                                    
-        container.innerHTML = content;
-    });                             
-                                    
-    if (footnotesHTML) {            
-        if (!footnotesDiv && mainContent) {
-            const footerSection = document.createElement('section');
-            footerSection.id = 'footnotes-section';
-            footerSection.innerHTML = `<h1>Footnotes</h1><div id="footnotes"></div>`;
-            mainContent.appendChild(footerSection);
-            footnotesDiv = document.getElementById('footnotes');
-        }                       
-                                    
-        if(footnotesDiv) {      
-            footnotesDiv.innerHTML = `<ol>${footnotesHTML}</ol>`;
-            document.getElementById('footnotes-section').style.display = 'block';
-        }                       
-    } else if (footnotesDiv) {      
-        const section = document.getElementById('footnotes-section');
-        if (section) section.style.display = 'none';
-    }                               
-                                    
-    bindIframeSafeLinks(); // NEW: Bind listeners to the newly created links
-    if (typeof source_bibliography === "function") source_bibliography();
+function bibtexify() {
+	const containers = document.querySelectorAll('.md');
+	const mainContent = document.getElementById('contents');
+	let footnotesDiv = document.getElementById('footnotes');
+	let footnotesHTML = "";
+
+	window.usedCitations = [];
+	window.citationMap = {};
+	window.footnoteCounter = 1;
+
+	const trackCitation = (key, instanceId, isDuplicateInBlock) => {
+		if (!window.bibData || !window.bibData[key]) return null;
+		if (!window.usedCitations.includes(key)) window.usedCitations.push(key);
+		if (!isDuplicateInBlock) {
+			if (!window.citationMap[key]) window.citationMap[key] = [];
+			window.citationMap[key].push(instanceId);
+		}
+		return window.bibData[key];
+	};
+
+	containers.forEach(container => {
+		let content = container.innerHTML;
+		const citedInThisBlock = new Set();
+
+		content = content.replace(/\\(cite|citeauthor|citeauthorlastnameand|citetitle|citeyear|citealternativetitle|citeurl)\{(.+?)\}/g, (match, type, key) => {
+			const isDuplicate = citedInThisBlock.has(key);
+			const instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
+			const data = trackCitation(key, instanceId, isDuplicate);
+			if (!data) {
+				console.error(`Reference ${key} not found!`);
+				return `[?${key}?]`;
+			}
+
+			citedInThisBlock.add(key);
+			const info = `${data.author}: ${data.title}${data.year ? ' ('+data.year+')' : ''}`;
+			let linkText = "";
+			switch(type) {
+				case 'citeauthor': linkText = data.author; break;
+				case 'citeauthorlastnameand':
+					const authors = data.author.split(/, | and /).map(a => a.trim());
+					const lastNames = authors.map(name => name.split(' ').pop());
+					if (lastNames.length === 1) linkText = lastNames[0];
+					else if (lastNames.length === 2) linkText = lastNames.join(" and ");
+					else {
+						const last = lastNames.pop();
+						linkText = lastNames.join(", ") + " and " + last;
+					}
+					break;
+				case 'citetitle':  linkText = data.title; break;
+				case 'citealternativetitle':  linkText = data.alternativetitle; break;
+				case 'citeyear':   linkText = data.year; break;
+				case 'citeurl':    linkText = data.title; break;
+				default:           linkText = `[${data.author}, ${data.year}]`;
+			}
+
+			const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
+			// NEW: Use iframe-safe-link instead of href
+			return `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${linkText}</a>`;
+		});
+
+		content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
+			const fnId = window.footnoteCounter++;
+			const instanceId = `ref-${key}-fn-${fnId}`;
+			const data = trackCitation(key, instanceId, false);
+			if (!data) {
+				console.error(`Reference ${key} not found!`);
+				return `<sup>[?${key}?]</sup>`;
+			}
+
+			let year = data.year ? `, ${data.year}` : "";
+			// NEW: Footnote backlink updated to iframe-safe-link
+			footnotesHTML += `<li id="fn-${fnId}">${data.author}, <a class="iframe-safe-link" data-target="bib-${key}" style="cursor:pointer;">${data.title}</a>${year} <a class="iframe-safe-link" data-target="${instanceId}" style="cursor:pointer;">↩</a></li>\n`;
+			return `<sup class="footnote-ref"><a class="iframe-safe-link" data-target="fn-${fnId}" id="${instanceId}" title="${data.author}: ${data.title}" style="cursor:pointer;">[${fnId}]</a></sup>`;
+		});
+
+		container.innerHTML = content;
+	});
+
+	if (footnotesHTML) {
+		if (!footnotesDiv && mainContent) {
+			const footerSection = document.createElement('section');
+			footerSection.id = 'footnotes-section';
+			footerSection.innerHTML = `<h1>Footnotes</h1><div id="footnotes"></div>`;
+			mainContent.appendChild(footerSection);
+			footnotesDiv = document.getElementById('footnotes');
+		}
+
+		if(footnotesDiv) {
+			footnotesDiv.innerHTML = `<ol>${footnotesHTML}</ol>`;
+			document.getElementById('footnotes-section').style.display = 'block';
+		}
+	} else if (footnotesDiv) {
+		const section = document.getElementById('footnotes-section');
+		if (section) section.style.display = 'none';
+	}
+
+	bindIframeSafeLinks(); // NEW: Bind listeners to the newly created links
+	if (typeof source_bibliography === "function") source_bibliography();
 }
 
 function source_bibliography() {
@@ -499,7 +499,7 @@ function source_bibliography() {
 		html += `<div id="bib-${key}" class="bib-entry" style="margin-bottom:10px;">${entryText}</div>\n`;
 	});
 
-	sourcesDiv.innerHTML = html; 
+	sourcesDiv.innerHTML = html;
 
 	if (typeof renderMarkdown === "function") {
 		sourcesDiv.querySelectorAll('.bib-entry').forEach(el => {
@@ -557,7 +557,7 @@ async function renderGlossary() {
         container = document.createElement('div');
         container.id = 'glossary-container';
         // Optional: Anker für das Inhaltsverzeichnis hinzufügen
-        container.setAttribute('data-toc-title', 'Glossary'); 
+        container.setAttribute('data-toc-title', 'Glossary');
         mainContent.appendChild(container);
     }
 
@@ -570,14 +570,14 @@ async function renderGlossary() {
 
         // 2. Globalen Tracker zurücksetzen
         window.indexedTerms = {};
-        
+
         // 3. Text in den .md Containern scannen (Nur lesen!)
         const containers = document.querySelectorAll('.md');
-        
+
         glossary.forEach(item => {
             const term = item.term;
             const normalizedTerm = term.toLowerCase().replace(/_/g, ' ');
-            
+
             // Regex mit Word-Boundaries und Escaping für Sonderzeichen
             const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const regex = new RegExp(`\\b(${escapedTerm})\\b`, 'gi');
@@ -615,7 +615,7 @@ async function renderGlossary() {
         glossary.forEach(item => {
             const normalizedTerm = item.term.toLowerCase().replace(/_/g, ' ');
             const count = window.indexedTerms[normalizedTerm] || 0;
-            
+
             if (count > 0) {
                 foundAny = true;
                 html += `
