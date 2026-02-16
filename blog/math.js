@@ -1,3 +1,57 @@
+// ── Lazy-render infrastructure ──────────────────────────────────────────────
+// Tracks which plot containers are currently visible.
+const _visiblePlots = new Set();
+// Stores the latest render function for each plot so we can replay it on scroll-in.
+const _pendingRenders = {};
+
+/**
+ * Central IntersectionObserver for ALL 3D (and other heavy) plots.
+ * When a plot enters the viewport we render it (using the latest pending state
+ * if one was queued while it was off-screen).
+ */
+const _plotVisibilityObserver = new IntersectionObserver(
+	(entries) => {
+		entries.forEach((entry) => {
+			const id = entry.target.id;
+			if (entry.isIntersecting) {
+				_visiblePlots.add(id);
+				// If a render was queued while off-screen, execute it now.
+				if (_pendingRenders[id]) {
+					_pendingRenders[id]();
+				}
+			} else {
+				_visiblePlots.delete(id);
+			}
+		});
+	},
+	{ rootMargin: '200px', threshold: 0.01 }
+);
+
+/**
+ * Conditionally render a plot.
+ *  – If the container is in (or near) the viewport → render immediately.
+ *  – Otherwise → stash the render callback so it fires when the user scrolls to it.
+ */
+function lazyRender(plotId, renderFn) {
+	// Always save the latest state so it's never lost.
+	_pendingRenders[plotId] = renderFn;
+
+	if (_visiblePlots.has(plotId)) {
+		renderFn();
+	}
+	// else: renderFn will be called by the observer when the element scrolls in.
+}
+
+/**
+ * Start observing a plot container. Call once per plot after the DOM is ready.
+ */
+function observePlot(plotId) {
+	const el = document.getElementById(plotId);
+	if (el) _plotVisibilityObserver.observe(el);
+}
+
+// ── Application bootstrap ───────────────────────────────────────────────────
+
 function initDataBasics() {
 	renderBWTable();
 	renderRGBCombinedTable();
@@ -13,16 +67,35 @@ function initDataBasics() {
 	initHadamard();
 }
 
-function initHadamard() {
+// ── Hadamard ────────────────────────────────────────────────────────────────
 
-	['h-a1', 'h-a2', 'h-a3', 'h-b1', 'h-b2', 'h-b3'].forEach(id => {
+function initHadamard() {
+	['h-a1', 'h-a2', 'h-a3', 'h-b1', 'h-b2', 'h-b3'].forEach((id) => {
 		document.getElementById(id).addEventListener('input', runHadamardExperiment);
 	});
 	runHadamardExperiment();
 }
 
+function runHadamardExperiment() {
+	const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
+
+	const a = [getVal('h-a1'), getVal('h-a2'), getVal('h-a3')];
+	const b = [getVal('h-b1'), getVal('h-b2'), getVal('h-b3')];
+	const res = a.map((val, i) => (val * b[i]).toFixed(2));
+
+	const display = document.getElementById('hadamard-display');
+	display.innerHTML = `$$ \\begin{pmatrix} ${a[0]} \\cdot ${b[0]} \\\\ ${a[1]} \\cdot ${b[1]} \\\\ ${a[2]} \\cdot ${b[2]} \\end{pmatrix} = \\begin{pmatrix} ${res[0]} \\\\ ${res[1]} \\\\ ${res[2]} \\end{pmatrix} $$`;
+
+	refreshMath();
+	render_temml();
+}
+
+// ── Composition Plot ────────────────────────────────────────────────────────
+
 function initCompositionPlot() {
-	const sliders = ['a', 'b', 'c', 'd'].map(id => document.getElementById(`slider-comp-${id}`));
+	const sliders = ['a', 'b', 'c', 'd'].map((id) =>
+		document.getElementById(`slider-comp-${id}`)
+	);
 
 	function update() {
 		const a = parseFloat(sliders[0].value);
@@ -30,22 +103,27 @@ function initCompositionPlot() {
 		const c = parseFloat(sliders[2].value);
 		const d = parseFloat(sliders[3].value);
 
-		const xValues = Array.from({length: 40}, (_, i) => (i - 20) / 2);
-		const fVals = xValues.map(x => a * x + b);
-		const gVals = xValues.map(x => c * x + d);
-		const compVals = xValues.map(x => c * (a * x + b) + d);
+		const xValues = Array.from({ length: 40 }, (_, i) => (i - 20) / 2);
+		const fVals = xValues.map((x) => a * x + b);
+		const gVals = xValues.map((x) => c * x + d);
+		const compVals = xValues.map((x) => c * (a * x + b) + d);
 
 		const data = [
-			{ x: xValues, y: fVals, name: 'f(x)', line: {dash: 'dot', color: '#94a3b8'} },
-			{ x: xValues, y: gVals, name: 'g(x)', line: {dash: 'dot', color: '#cbd5e1'} },
-			{ x: xValues, y: compVals, name: '(g ∘ f)(x)', line: {width: 4, color: '#2563eb'} }
+			{ x: xValues, y: fVals, name: 'f(x)', line: { dash: 'dot', color: '#94a3b8' } },
+			{ x: xValues, y: gVals, name: 'g(x)', line: { dash: 'dot', color: '#cbd5e1' } },
+			{
+				x: xValues,
+				y: compVals,
+				name: '(g ∘ f)(x)',
+				line: { width: 4, color: '#2563eb' },
+			},
 		];
 
 		const layout = {
 			margin: { t: 10, b: 30, l: 30, r: 10 },
 			legend: { orientation: 'h', y: -0.2 },
 			xaxis: { range: [-10, 10] },
-			yaxis: { range: [-10, 10] }
+			yaxis: { range: [-10, 10] },
 		};
 
 		Plotly.react('plot-composition', data, layout);
@@ -54,9 +132,11 @@ function initCompositionPlot() {
 		render_temml();
 	}
 
-	sliders.forEach(s => s.addEventListener('input', update));
+	sliders.forEach((s) => s.addEventListener('input', update));
 	update();
 }
+
+// ── Log Plot ────────────────────────────────────────────────────────────────
 
 function initLogPlot() {
 	const sliderBase = document.getElementById('slider-log-base');
@@ -72,95 +152,75 @@ function initLogPlot() {
 		dispBase.textContent = b.toFixed(1);
 		dispX.textContent = inputX.toFixed(1);
 
-		// 1. Generate the Curve Data
 		const xValues = [];
 		const yValues = [];
-
 		for (let i = 0.1; i <= 50; i += 0.5) {
 			xValues.push(i);
 			yValues.push(Math.log(i) / Math.log(b));
 		}
 
 		const currentY = Math.log(inputX) / Math.log(b);
-
-		// --- Dynamic Y-Axis Logic ---
-		// We find the min/max of our curve and the current point to keep them in view
 		const minY = Math.min(...yValues, currentY);
 		const maxY = Math.max(...yValues, currentY);
-		const padding = (maxY - minY) * 0.1 || 1; // Fallback padding of 1 if flat
-		// ----------------------------
+		const padding = (maxY - minY) * 0.1 || 1;
 
-		// 2. Setup Plotly Data
 		const traceCurve = {
 			x: xValues,
 			y: yValues,
 			mode: 'lines',
 			name: `log base ${b.toFixed(1)}`,
-			line: { color: '#2563eb', width: 3 }
+			line: { color: '#2563eb', width: 3 },
 		};
-
 		const tracePoint = {
 			x: [inputX],
 			y: [currentY],
 			mode: 'markers',
 			name: 'Your Value',
-			marker: { size: 12, color: '#db2777', line: {color: 'white', width: 2} }
+			marker: { size: 12, color: '#db2777', line: { color: 'white', width: 2 } },
 		};
-
 		const traceLines = {
 			x: [inputX, inputX, 0],
 			y: [0, currentY, currentY],
 			mode: 'lines',
 			showlegend: false,
-			line: { color: '#94a3b8', width: 1, dash: 'dash' }
+			line: { color: '#94a3b8', width: 1, dash: 'dash' },
 		};
 
 		const layout = {
-			title: { text: `The Logarithm`, font: {size: 16} },
+			title: { text: 'The Logarithm', font: { size: 16 } },
 			xaxis: { title: 'Input (x)', range: [0, 52], zeroline: true },
-			// Updated yaxis uses dynamic range
-			yaxis: { 
-				title: 'Output (y)', 
-				range: [minY - padding, maxY + padding], 
-				zeroline: true 
+			yaxis: {
+				title: 'Output (y)',
+				range: [minY - padding, maxY + padding],
+				zeroline: true,
 			},
 			margin: { l: 50, r: 20, b: 50, t: 40 },
 			showlegend: false,
-			hovermode: 'closest'
+			hovermode: 'closest',
 		};
 
 		Plotly.react('log-plot', [traceCurve, traceLines, tracePoint], layout);
 
-		// 3. Update Math Equation
-		const tex = `$$ \\log_{${b.toFixed(1)}}(${inputX.toFixed(1)}) = ${currentY.toFixed(2)} \\iff ${b.toFixed(1)}^{${currentY.toFixed(2)}} = ${inputX.toFixed(1)} $$`;
+		const tex = `$$ \\log_{${b.toFixed(1)}}(${inputX.toFixed(1)}) = ${currentY.toFixed(
+			2
+		)} \\iff ${b.toFixed(1)}^{${currentY.toFixed(2)}} = ${inputX.toFixed(1)} $$`;
 		formulaContainer.innerHTML = tex;
-
 		render_temml();
 	}
 
 	sliderBase.addEventListener('input', render);
 	sliderX.addEventListener('input', render);
-
 	render();
 }
 
-/**
- * Ensures numbers are whole (integers) and stay between 0 and 255
- */
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
 function validateInput(el) {
 	let val = parseFloat(el.value);
-
-	// Default to 0 if input is empty or not a number
 	if (isNaN(val)) val = 0;
-
-	// 5.6 -> 5 (Force integer)
 	let finalVal = Math.floor(val);
-
-	// Clamp range (0-255)
 	if (finalVal < 0) finalVal = 0;
 	if (finalVal > 255) finalVal = 255;
-
-	// Put the cleaned number back into the box
 	el.value = finalVal;
 }
 
@@ -168,13 +228,15 @@ function refreshMath(selector = '#section-rgb') {
 	render_temml();
 }
 
+// ── BW / RGB tables & previews ──────────────────────────────────────────────
+
 function renderBWTable() {
 	const container = document.getElementById('bw-matrix-container');
 	let html = '<table>';
-	for(let r=0; r<3; r++) {
+	for (let r = 0; r < 3; r++) {
 		html += '<tr>';
-		for(let c=0; c<3; c++) {
-			let val = (r === c) ? 0 : 255; // Initial pattern
+		for (let c = 0; c < 3; c++) {
+			let val = r === c ? 0 : 255;
 			html += `<td class="bw-cell"><input type="number" value="${val}" min="0" max="255" class="bw-cell-input" oninput="validateInput(this); updateBWPreview()" style="width:55px; padding: 6px; border: 1px solid #ccc; font-weight: bold; text-align: center;"></td>`;
 		}
 		html += '</tr>';
@@ -184,35 +246,31 @@ function renderBWTable() {
 
 function renderRGBCombinedTable() {
 	const container = document.getElementById('rgb-combined-container');
-	let html = '<table style="border-spacing: 8px; border-collapse: separate;">';
-
-	for(let r=0; r<3; r++) {
+	let html =
+		'<table style="border-spacing: 8px; border-collapse: separate;">';
+	for (let r = 0; r < 3; r++) {
 		html += '<tr>';
-		for(let c=0; c<3; c++) {
-			let rv = (r === 0) ? 255 : 0;
-			let gv = (r === 1) ? 255 : 0;
-			let bv = (r === 2) ? 255 : 0;
-
+		for (let c = 0; c < 3; c++) {
+			let rv = r === 0 ? 255 : 0;
+			let gv = r === 1 ? 255 : 0;
+			let bv = r === 2 ? 255 : 0;
 			html += `
-	    <td style="background: #ffffff; border: 1px solid #cbd5e0; padding: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-		<div style="display: flex; flex-direction: column; gap: 5px;">
-		    <div style="display: flex; align-items: center; gap: 6px;">
-			<div style="width: 6px; height: 18px; background: #ef4444; border-radius: 2px;"></div>
-			<input type="number" value="${rv}" class="rgb-c-r" oninput="validateInput(this); updateRGBPreview()" 
-			       style="width:55px; font-size:12px; border:1px solid #fee2e2; text-align: center;">
-		    </div>
-		    <div style="display: flex; align-items: center; gap: 6px;">
-			<div style="width: 6px; height: 18px; background: #22c55e; border-radius: 2px;"></div>
-			<input type="number" value="${gv}" class="rgb-c-g" oninput="validateInput(this); updateRGBPreview()" 
-			       style="width:55px; font-size:12px; border:1px solid #dcfce7; text-align: center;">
-		    </div>
-		    <div style="display: flex; align-items: center; gap: 6px;">
-			<div style="width: 6px; height: 18px; background: #3b82f6; border-radius: 2px;"></div>
-			<input type="number" value="${bv}" class="rgb-c-b" oninput="validateInput(this); updateRGBPreview()" 
-			       style="width:55px; font-size:12px; border:1px solid #dbeafe; text-align: center;">
-		    </div>
-		</div>
-	    </td>`;
+			<td style="background: #ffffff; border: 1px solid #cbd5e0; padding: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+				<div style="display: flex; flex-direction: column; gap: 5px;">
+					<div style="display: flex; align-items: center; gap: 6px;">
+						<div style="width: 6px; height: 18px; background: #ef4444; border-radius: 2px;"></div>
+						<input type="number" value="${rv}" class="rgb-c-r" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid #fee2e2; text-align: center;">
+					</div>
+					<div style="display: flex; align-items: center; gap: 6px;">
+						<div style="width: 6px; height: 18px; background: #22c55e; border-radius: 2px;"></div>
+						<input type="number" value="${gv}" class="rgb-c-g" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid #dcfce7; text-align: center;">
+					</div>
+					<div style="display: flex; align-items: center; gap: 6px;">
+						<div style="width: 6px; height: 18px; background: #3b82f6; border-radius: 2px;"></div>
+						<input type="number" value="${bv}" class="rgb-c-b" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid #dbeafe; text-align: center;">
+					</div>
+				</div>
+			</td>`;
 		}
 		html += '</tr>';
 	}
@@ -225,7 +283,6 @@ function updateBWPreview() {
 	const ctx = canvas.getContext('2d');
 	const imgData = ctx.createImageData(3, 3);
 	const cells = document.querySelectorAll('.bw-cell-input');
-
 	cells.forEach((cell, i) => {
 		const val = parseInt(cell.value) || 0;
 		imgData.data[i * 4] = val;
@@ -241,12 +298,10 @@ function updateRGBPreview() {
 	if (!canvas) return;
 	const ctx = canvas.getContext('2d');
 	const imgData = ctx.createImageData(3, 3);
-
 	const reds = document.querySelectorAll('.rgb-c-r');
 	const greens = document.querySelectorAll('.rgb-c-g');
 	const blues = document.querySelectorAll('.rgb-c-b');
-
-	for(let i=0; i<9; i++) {
+	for (let i = 0; i < 9; i++) {
 		imgData.data[i * 4] = parseInt(reds[i].value) || 0;
 		imgData.data[i * 4 + 1] = parseInt(greens[i].value) || 0;
 		imgData.data[i * 4 + 2] = parseInt(blues[i].value) || 0;
@@ -255,38 +310,41 @@ function updateRGBPreview() {
 	ctx.putImageData(imgData, 0, 0);
 }
 
-function renderVectorPlot() {
-	const data = [{
-		x: [0, 3],
-		y: [0, 4],
-		type: 'scatter',
-		mode: 'lines+markers',
-		marker: { size: 10, color: '#3b82f6' },
-		line: { width: 4, color: '#3b82f6' },
-		name: 'Vector [3, 4]'
-	}];
+// ── Simple vector plot (static) ─────────────────────────────────────────────
 
+function renderVectorPlot() {
+	const data = [
+		{
+			x: [0, 3],
+			y: [0, 4],
+			type: 'scatter',
+			mode: 'lines+markers',
+			marker: { size: 10, color: '#3b82f6' },
+			line: { width: 4, color: '#3b82f6' },
+			name: 'Vector [3, 4]',
+		},
+	];
 	const layout = {
 		title: 'Vector Visualization',
 		xaxis: { range: [0, 5], zeroline: true, title: 'x' },
 		yaxis: { range: [0, 5], zeroline: true, title: 'y' },
 		margin: { l: 40, r: 40, b: 40, t: 40 },
-		annotations: [{
-			x: 3, y: 4,
-			ax: 0, ay: 0,
-			xref: 'x', yref: 'y',
-			axref: 'x', ayref: 'y',
-			text: '',
-			showarrow: true,
-			arrowhead: 2,
-			arrowsize: 1,
-			arrowwidth: 3,
-			arrowcolor: '#3b82f6'
-		}]
+		annotations: [
+			{
+				x: 3, y: 4, ax: 0, ay: 0,
+				xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+				text: '', showarrow: true,
+				arrowhead: 2, arrowsize: 1, arrowwidth: 3, arrowcolor: '#3b82f6',
+			},
+		],
 	};
-
 	Plotly.newPlot('vector-plot', data, layout);
 }
+
+// ── ELI5 Math plots (mixed 2-D and 3-D) ────────────────────────────────────
+// 3-D plots: plot-step-4, plot-step-5, plot-step-7  → lazy-rendered
+// 2-D plots: plot-step-1, plot-step-6              → rendered on first view,
+//            then always updated immediately by sliders (cheap)
 
 function renderELI5Math() {
 	const range = [];
@@ -296,89 +354,174 @@ function renderELI5Math() {
 		margin: { t: 10, b: 30, l: 30, r: 10 },
 		xaxis: { range: [-10, 10], fixedrange: true, zeroline: true },
 		yaxis: { range: [-10, 10], fixedrange: true, zeroline: true },
-		showlegend: false
+		showlegend: false,
 	};
 
-	function refreshMath() {
-		render_temml();
-	}
-
+	// ── 2-D: Linear (plot-step-6) ──
 	function updatePlotLinear() {
 		const a = parseFloat(document.getElementById('slider-6-a').value);
 		const b = parseFloat(document.getElementById('slider-6-b').value);
 
-		document.getElementById('formula-6').innerHTML = `$$f(x) = \\underbrace{${a}}_ax + \\underbrace{${b}}_b$$`;
-		refreshMath();
+		document.getElementById('formula-6').innerHTML =
+			`$$f(x) = \\underbrace{${a}}_ax + \\underbrace{${b}}_b$$`;
+		render_temml();
 
-		Plotly.react('plot-step-6', [{
-			x: range, y: range.map(x => a * x + b), 
-			mode: 'lines', line: {color: '#3b82f6', width: 4}
-		}], layoutBase);
+		Plotly.react(
+			'plot-step-6',
+			[
+				{
+					x: range,
+					y: range.map((x) => a * x + b),
+					mode: 'lines',
+					line: { color: '#3b82f6', width: 4 },
+				},
+			],
+			layoutBase
+		);
 	}
 
+	// ── 3-D: Surface (plot-step-7) — LAZY ──
 	function updatePlotSurface() {
 		const a = parseFloat(document.getElementById('slider-7-a').value);
 		const b = parseFloat(document.getElementById('slider-7-b').value);
 
-		document.getElementById('formula-7').innerHTML = `$$f(x, y) = \\underbrace{${a}}_ax + \\underbrace{${b}}_by$$`;
-		refreshMath();
+		// Always update the formula text (cheap)
+		document.getElementById('formula-7').innerHTML =
+			`$$f(x, y) = \\underbrace{${a}}_ax + \\underbrace{${b}}_by$$`;
+		render_temml();
 
-		const zData = range.map(x => range.map(y => (a * x) + (b * y)));
-		Plotly.react('plot-step-7', [{
-			z: zData, x: range, y: range, type: 'surface', colorscale: 'Blues', showscale: false
-		}], {
-			margin: { t: 0, b: 0, l: 0, r: 0 },
-			scene: { zaxis: {range: [-20, 20]}, camera: { eye: { x: 1.5, y: 1.5, z: 1 } } }
+		// Lazy-render the expensive 3-D surface
+		lazyRender('plot-step-7', () => {
+			const zData = range.map((x) => range.map((y) => a * x + b * y));
+			Plotly.react(
+				'plot-step-7',
+				[
+					{
+						z: zData,
+						x: range,
+						y: range,
+						type: 'surface',
+						colorscale: 'Blues',
+						showscale: false,
+					},
+				],
+				{
+					margin: { t: 0, b: 0, l: 0, r: 0 },
+					scene: {
+						zaxis: { range: [-20, 20] },
+						camera: { eye: { x: 1.5, y: 1.5, z: 1 } },
+					},
+				}
+			);
 		});
 	}
 
+	// ── 3-D: Waves (plot-step-5) — LAZY ──
 	function updatePlotWaves() {
 		const freq = parseFloat(document.getElementById('slider-5-freq').value);
 		const amp = parseFloat(document.getElementById('slider-5-amp').value);
 
-		document.getElementById('formula-5').innerHTML = `$$f(x, y) = \\underbrace{${amp}}_\\text{Amplitude} \\cdot (\\sin(\\underbrace{${freq}}_\\text{Frequence}x) + \\sin(\\underbrace{${freq}}_\\text{Frequence}y))$$`;
-		refreshMath();
+		document.getElementById('formula-5').innerHTML =
+			`$$f(x, y) = \\underbrace{${amp}}_\\text{Amplitude} \\cdot (\\sin(\\underbrace{${freq}}_\\text{Frequence}x) + \\sin(\\underbrace{${freq}}_\\text{Frequence}y))$$`;
+		render_temml();
 
-		const zWaves = range.map(x => range.map(y => amp * (Math.sin(x * freq) + Math.sin(y * freq))));
-		Plotly.react('plot-step-5', [{
-			z: zWaves, x: range, y: range, type: 'surface', colorscale: 'Viridis', showscale: false
-		}], {
-			margin: { t: 0, b: 0, l: 0, r: 0 },
-			scene: { zaxis: {range: [-10, 10]}, camera: { eye: { x: 1.8, y: 1.8, z: 1.2 } } }
+		lazyRender('plot-step-5', () => {
+			const zWaves = range.map((x) =>
+				range.map((y) => amp * (Math.sin(x * freq) + Math.sin(y * freq)))
+			);
+			Plotly.react(
+				'plot-step-5',
+				[
+					{
+						z: zWaves,
+						x: range,
+						y: range,
+						type: 'surface',
+						colorscale: 'Viridis',
+						showscale: false,
+					},
+				],
+				{
+					margin: { t: 0, b: 0, l: 0, r: 0 },
+					scene: {
+						zaxis: { range: [-10, 10] },
+						camera: { eye: { x: 1.8, y: 1.8, z: 1.2 } },
+					},
+				}
+			);
 		});
 	}
 
-	const plotJobs = {
-		'plot-step-1': () => Plotly.newPlot('plot-step-1', [{
-			x: range, y: range, mode: 'lines', line: {color: '#333', width: 3}
-		}], layoutBase),
+	// ── 3-D: Static f(x,y)=x+y (plot-step-4) — LAZY ──
+	function renderStep4() {
+		lazyRender('plot-step-4', () => {
+			const zData = range.map((x) => range.map((y) => x + y));
+			Plotly.newPlot(
+				'plot-step-4',
+				[
+					{
+						z: zData,
+						x: range,
+						y: range,
+						type: 'surface',
+						colorscale: 'Greys',
+						showscale: false,
+					},
+				],
+				{
+					margin: { t: 0, b: 0, l: 0, r: 0 },
+					scene: { camera: { eye: { x: 1.5, y: 1.5, z: 1 } } },
+				}
+			);
+		});
+	}
 
-		'plot-step-4': () => {
-			const zData = range.map(x => range.map(y => x + y));
-			Plotly.newPlot('plot-step-4', [{
-				z: zData, x: range, y: range, type: 'surface', colorscale: 'Greys', showscale: false
-			}], {
-				margin: { t: 0, b: 0, l: 0, r: 0 },
-				scene: { camera: { eye: { x: 1.5, y: 1.5, z: 1 } } }
-			});
-		}
+	// ── First-view observer for 2-D plots (one-shot) ──
+	const oneshotJobs = {
+		'plot-step-1': () =>
+			Plotly.newPlot(
+				'plot-step-1',
+				[
+					{
+						x: range,
+						y: range,
+						mode: 'lines',
+						line: { color: '#333', width: 3 },
+					},
+				],
+				layoutBase
+			),
+		'plot-step-6': updatePlotLinear,
 	};
 
-	const observer = new IntersectionObserver((entries) => {
-		entries.forEach(entry => {
-			if (entry.isIntersecting) {
-				const id = entry.target.id;
-				if (plotJobs[id]) plotJobs[id]();
-				if (id === 'plot-step-6') updatePlotLinear();
-				if (id === 'plot-step-7') updatePlotSurface();
-				if (id === 'plot-step-5') updatePlotWaves();
-				observer.unobserve(entry.target);
-			}
-		});
-	}, { rootMargin: '100px', threshold: 0.01 });
+	const oneshotObserver = new IntersectionObserver(
+		(entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					const id = entry.target.id;
+					if (oneshotJobs[id]) oneshotJobs[id]();
+					oneshotObserver.unobserve(entry.target);
+				}
+			});
+		},
+		{ rootMargin: '100px', threshold: 0.01 }
+	);
 
-	document.querySelectorAll('.plot-container').forEach(el => observer.observe(el));
+	// Observe 2-D one-shot plots
+	['plot-step-1', 'plot-step-6'].forEach((id) => {
+		const el = document.getElementById(id);
+		if (el) oneshotObserver.observe(el);
+	});
 
+	// Observe 3-D lazy plots with the global visibility observer
+	['plot-step-4', 'plot-step-5', 'plot-step-7'].forEach(observePlot);
+
+	// Fire initial lazy renders (will only actually draw if in view)
+	renderStep4();
+	updatePlotSurface();
+	updatePlotWaves();
+
+	// Slider listeners — always call the update functions (they internally use lazyRender)
 	document.getElementById('slider-6-a').addEventListener('input', updatePlotLinear);
 	document.getElementById('slider-6-b').addEventListener('input', updatePlotLinear);
 	document.getElementById('slider-7-a').addEventListener('input', updatePlotSurface);
@@ -386,6 +529,8 @@ function renderELI5Math() {
 	document.getElementById('slider-5-freq').addEventListener('input', updatePlotWaves);
 	document.getElementById('slider-5-amp').addEventListener('input', updatePlotWaves);
 }
+
+// ── Movable Vector ──────────────────────────────────────────────────────────
 
 function renderMovableVector() {
 	const plotId = 'movable-vector-plot';
@@ -396,13 +541,13 @@ function renderMovableVector() {
 		const plotDiv = document.getElementById(plotId);
 
 		if (!sX || !sY || !plotDiv) {
-			console.error("[Vector Plot] Update aborted: Elements missing from DOM");
+			console.error('[Vector Plot] Update aborted: Elements missing from DOM');
 			return;
 		}
 
 		const startX = parseFloat(sX.value) || 0;
 		const startY = parseFloat(sY.value) || 0;
-		const vecX = 2; 
+		const vecX = 2;
 		const vecY = 3;
 
 		const data = [
@@ -410,16 +555,15 @@ function renderMovableVector() {
 				x: [0, vecX], y: [0, vecY],
 				type: 'scatter', mode: 'lines',
 				line: { dash: 'dot', color: '#cbd5e0' },
-				name: 'Original'
+				name: 'Original',
 			},
 			{
-				x: [startX, startX + vecX],
-				y: [startY, startY + vecY],
+				x: [startX, startX + vecX], y: [startY, startY + vecY],
 				type: 'scatter', mode: 'lines+markers',
 				marker: { size: 8, color: '#ef4444' },
 				line: { width: 4, color: '#ef4444' },
-				name: 'Moved Vector'
-			}
+				name: 'Moved Vector',
+			},
 		];
 
 		const layout = {
@@ -431,41 +575,35 @@ function renderMovableVector() {
 				{
 					x: vecX, y: vecY, ax: 0, ay: 0,
 					xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
-					showarrow: true, arrowhead: 2, arrowcolor: '#cbd5e0'
+					showarrow: true, arrowhead: 2, arrowcolor: '#cbd5e0',
 				},
 				{
 					x: startX + vecX, y: startY + vecY,
 					ax: startX, ay: startY,
 					xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
 					showarrow: true, arrowhead: 2, arrowsize: 1,
-					arrowwidth: 3, arrowcolor: '#ef4444'
-				}
-			]
+					arrowwidth: 3, arrowcolor: '#ef4444',
+				},
+			],
 		};
 
 		Plotly.react(plotDiv, data, layout);
 	}
 
-	// EVENT DELEGATION: Listen on the document level
-	// This catches events even if the sliders are deleted and recreated
-	document.addEventListener('input', function(event) {
-		if (event.target.id === 'slider-vector-x' || event.target.id === 'slider-vector-y') {
+	document.addEventListener('input', function (event) {
+		if (
+			event.target.id === 'slider-vector-x' ||
+			event.target.id === 'slider-vector-y'
+		) {
 			update();
 		}
 	});
 
-	// Initial draw
 	update();
 }
 
-/**
- * Interactive Vector Space Exploration
- * Encapsulated initialization function.
- */
-/**
- * Interactive Vector Space Demonstration
- * Logic for 1D, 2D, 3D (with outline), and 4D visualization.
- */
+// ── Interactive Vector Spaces ───────────────────────────────────────────────
+
 function initInteractiveVectorSpaces() {
 	const updateMath = (id, values) => {
 		const el = document.getElementById(id);
@@ -479,89 +617,130 @@ function initInteractiveVectorSpaces() {
 	function draw1D() {
 		const x = parseFloat(v1s.value);
 		updateMath('v1-math', [x.toFixed(1)]);
-		Plotly.react('v1-plot', [{
-			x: [0, x], y: [0, 0], mode: 'lines+markers',
-			line: {color: '#2563eb', width: 4}, marker: {size: 10}
-		}], {
-			margin: {t:0, b:20, l:20, r:20}, height: 80,
-			xaxis: {range: [-6, 6]}, yaxis: {visible: false}
-		});
+		Plotly.react(
+			'v1-plot',
+			[
+				{
+					x: [0, x], y: [0, 0],
+					mode: 'lines+markers',
+					line: { color: '#2563eb', width: 4 },
+					marker: { size: 10 },
+				},
+			],
+			{
+				margin: { t: 0, b: 20, l: 20, r: 20 },
+				height: 80,
+				xaxis: { range: [-6, 6] },
+				yaxis: { visible: false },
+			}
+		);
 	}
 
 	// --- 2D Logic ---
-	const v2x = document.getElementById('v2-x'), v2y = document.getElementById('v2-y');
+	const v2x = document.getElementById('v2-x'),
+		v2y = document.getElementById('v2-y');
 	function draw2D() {
-		const x = parseFloat(v2x.value), y = parseFloat(v2y.value);
+		const x = parseFloat(v2x.value),
+			y = parseFloat(v2y.value);
 		updateMath('v2-math', [x.toFixed(1), y.toFixed(1)]);
-		Plotly.react('v2-plot', [{
-			x: [0, x], y: [0, y], mode: 'lines+markers',
-			line: {color: '#059669', width: 4}, marker: {size: 12}
-		}], {
-			margin: {t:10, b:30, l:30, r:10},
-			xaxis: {range: [-6, 6], zeroline: true}, yaxis: {range: [-6, 6], zeroline: true}
-		});
+		Plotly.react(
+			'v2-plot',
+			[
+				{
+					x: [0, x], y: [0, y],
+					mode: 'lines+markers',
+					line: { color: '#059669', width: 4 },
+					marker: { size: 12 },
+				},
+			],
+			{
+				margin: { t: 10, b: 30, l: 30, r: 10 },
+				xaxis: { range: [-6, 6], zeroline: true },
+				yaxis: { range: [-6, 6], zeroline: true },
+			}
+		);
 	}
 
-	// --- 3D Logic (With Black Outline) ---
-	const v3r = document.getElementById('v3-r'), v3g = document.getElementById('v3-g'), v3b = document.getElementById('v3-b');
+	// --- 3D Logic (RGB vector) — LAZY ---
+	const v3r = document.getElementById('v3-r'),
+		v3g = document.getElementById('v3-g'),
+		v3b = document.getElementById('v3-b');
+
 	function draw3D() {
-		const r = v3r.value, g = v3g.value, b = v3b.value;
+		const r = v3r.value,
+			g = v3g.value,
+			b = v3b.value;
 		const color = `rgb(${r},${g},${b})`;
+
+		// Always update the math label (cheap)
 		updateMath('v3-math', [r, g, b]);
 
-		// Trace 1: The Black Outline (slightly thicker)
-		const traceOutline = {
-			x: [0, r], y: [0, g], z: [0, b],
-			type: 'scatter3d', mode: 'lines',
-			line: {color: '#000000', width: 12},
-			showlegend: false
-		};
-
-		// Trace 2: The Actual Color Vector
-		const traceColor = {
-			x: [0, r], y: [0, g], z: [0, b],
-			type: 'scatter3d', mode: 'lines+markers',
-			line: {color: color, width: 8},
-			marker: {size: 4, color: '#000'},
-			showlegend: false
-		};
-
-		Plotly.react('v3-plot', [traceOutline, traceColor], {
-			margin: {t:0, b:0, l:0, r:0},
-			uirevision: 'true',
-			scene: {
-				xaxis: {title: 'Red', range: [0, 255]},
-				yaxis: {title: 'Green', range: [0, 255]},
-				zaxis: {title: 'Blue', range: [0, 255]}
-			}
+		// Lazy-render the expensive 3-D scatter
+		lazyRender('v3-plot', () => {
+			const traceOutline = {
+				x: [0, r], y: [0, g], z: [0, b],
+				type: 'scatter3d', mode: 'lines',
+				line: { color: '#000000', width: 12 },
+				showlegend: false,
+			};
+			const traceColor = {
+				x: [0, r], y: [0, g], z: [0, b],
+				type: 'scatter3d', mode: 'lines+markers',
+				line: { color: color, width: 8 },
+				marker: { size: 4, color: '#000' },
+				showlegend: false,
+			};
+			Plotly.react('v3-plot', [traceOutline, traceColor], {
+				margin: { t: 0, b: 0, l: 0, r: 0 },
+				uirevision: 'true',
+				scene: {
+					xaxis: { title: 'Red', range: [0, 255] },
+					yaxis: { title: 'Green', range: [0, 255] },
+					zaxis: { title: 'Blue', range: [0, 255] },
+				},
+			});
 		});
 	}
 
-	// --- 4D Logic ---
-	const v4Inputs = [1, 2, 3, 4].map(i => document.getElementById(`v4-${i}`));
+	// --- 4D Logic (bar chart — cheap, no lazy needed) ---
+	const v4Inputs = [1, 2, 3, 4].map((i) => document.getElementById(`v4-${i}`));
 	function draw4D() {
-		const vals = v4Inputs.map(el => parseInt(el.value));
+		const vals = v4Inputs.map((el) => parseInt(el.value));
 		updateMath('v4-math', vals);
-		Plotly.react('v4-plot', [{
-			x: ['Sweet', 'Sour', 'Firm', 'Seeds'],
-			y: vals,
-			type: 'bar',
-			marker: {color: '#7c3aed'}
-		}], {
-			margin: {t:10, b:40, l:30, r:10},
-			yaxis: {range: [0, 10]}
-		});
+		Plotly.react(
+			'v4-plot',
+			[
+				{
+					x: ['Sweet', 'Sour', 'Firm', 'Seeds'],
+					y: vals,
+					type: 'bar',
+					marker: { color: '#7c3aed' },
+				},
+			],
+			{
+				margin: { t: 10, b: 40, l: 30, r: 10 },
+				yaxis: { range: [0, 10] },
+			}
+		);
 	}
 
 	// Event Listeners
 	v1s.oninput = draw1D;
 	v2x.oninput = v2y.oninput = draw2D;
 	v3r.oninput = v3g.oninput = v3b.oninput = draw3D;
-	v4Inputs.forEach(el => el.oninput = draw4D);
+	v4Inputs.forEach((el) => (el.oninput = draw4D));
+
+	// Observe the 3D plot for lazy rendering
+	observePlot('v3-plot');
 
 	// Initial Renders
-	draw1D(); draw2D(); draw3D(); draw4D();
+	draw1D();
+	draw2D();
+	draw3D(); // Will only actually render if v3-plot is in view; otherwise queued
+	draw4D();
 }
+
+// ── Hadamard experiment ─────────────────────────────────────────────────────
 
 function runHadamardExperiment() {
 	const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
@@ -571,17 +750,16 @@ function runHadamardExperiment() {
 	const res = a.map((val, i) => (val * b[i]).toFixed(2));
 
 	const display = document.getElementById('hadamard-display');
-	// Generating the LaTeX string for the result
 	display.innerHTML = `$$ \\begin{pmatrix} ${a[0]} \\cdot ${b[0]} \\\\ ${a[1]} \\cdot ${b[1]} \\\\ ${a[2]} \\cdot ${b[2]} \\end{pmatrix} = \\begin{pmatrix} ${res[0]} \\\\ ${res[1]} \\\\ ${res[2]} \\end{pmatrix} $$`;
 
-	// Trigger Temml/KaTeX re-render if available in the environment
 	refreshMath();
 	render_temml();
 }
 
+// ── Module loader ───────────────────────────────────────────────────────────
 
 async function loadMathLabModule() {
-	updateLoadingStatus("Loading section about Math...");
+	updateLoadingStatus('Loading section about Math...');
 	initDataBasics();
 	return Promise.resolve();
 }
