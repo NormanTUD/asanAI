@@ -759,9 +759,14 @@ function runHadamardExperiment() {
 
 // ── Sine & Cosine Interactive Section ───────────────────────────────────────
 
+// ── Sine & Cosine Interactive Section ───────────────────────────────────────
+
 function initSineCosine() {
-	// ── 1. Unit Circle ──
+
+	// ── 1. Unit Circle ──────────────────────────────────────────────────────
+
 	const sliderTheta = document.getElementById('slider-sc-theta');
+	if (!sliderTheta) return;
 
 	function updateUnitCircle() {
 		const theta = parseFloat(sliderTheta.value);
@@ -773,7 +778,7 @@ function initSineCosine() {
 		document.getElementById('disp-sc-deg').textContent = deg + '°';
 
 		document.getElementById('sc-equation-display').innerHTML =
-			`$$ \\sin(${theta.toFixed(2)}) = ${sinT.toFixed(3)}, \\quad \\cos(${theta.toFixed(2)}) = ${cosT.toFixed(3)} $$`;
+			`$$ \\cos(${theta.toFixed(2)}) = ${cosT.toFixed(3)}, \\quad \\sin(${theta.toFixed(2)}) = ${sinT.toFixed(3)} $$`;
 		render_temml();
 
 		// Circle outline
@@ -783,41 +788,62 @@ function initSineCosine() {
 			circY.push(Math.sin(a));
 		}
 
-		// Arc from 0 to theta
+		// Angle arc
 		const arcX = [0], arcY = [0];
-		const step = theta >= 0 ? 0.02 : -0.02;
-		for (let a = 0; Math.abs(a) <= Math.abs(theta) + 0.01; a += step) {
+		const step = 0.02;
+		for (let a = 0; a <= theta + 0.01; a += step) {
 			arcX.push(0.25 * Math.cos(a));
 			arcY.push(0.25 * Math.sin(a));
 		}
 
+		// "Unrolled" sine wave trace on the right side
+		const waveX = [], waveY = [];
+		const waveOffset = 1.8; // start x position for the wave
+		const waveLen = 1.2;    // total width of the wave area
+		for (let a = 0; a <= theta; a += 0.02) {
+			waveX.push(waveOffset + (a / (2 * Math.PI)) * (2 * Math.PI * waveLen / (2 * Math.PI)) * 1);
+			waveY.push(Math.sin(a));
+		}
+		// Simpler: map angle linearly to x
+		const waveX2 = [], waveY2 = [];
+		for (let a = 0; a <= 2 * Math.PI; a += 0.02) {
+			waveX2.push(1.7 + a * 0.35);
+			waveY2.push(Math.sin(a));
+		}
+		const currentWaveX = 1.7 + theta * 0.35;
+
 		const data = [
+			// Full sine wave (faint reference)
+			{ x: waveX2, y: waveY2, mode: 'lines', line: { color: '#fecaca', width: 1.5 }, showlegend: false, hoverinfo: 'skip' },
 			// Unit circle
 			{ x: circX, y: circY, mode: 'lines', line: { color: '#cbd5e1', width: 2 }, showlegend: false, hoverinfo: 'skip' },
 			// Radius line
 			{ x: [0, cosT], y: [0, sinT], mode: 'lines', line: { color: '#334155', width: 3 }, showlegend: false, hoverinfo: 'skip' },
 			// cos projection (horizontal blue line)
-			{ x: [0, cosT], y: [0, 0], mode: 'lines', line: { color: '#2563eb', width: 5 }, name: 'cos θ' },
+			{ x: [0, cosT], y: [0, 0], mode: 'lines', line: { color: '#2563eb', width: 5 }, name: 'cos θ (x-coord)' },
 			// sin projection (vertical red line)
-			{ x: [cosT, cosT], y: [0, sinT], mode: 'lines', line: { color: '#ef4444', width: 5 }, name: 'sin θ' },
+			{ x: [cosT, cosT], y: [0, sinT], mode: 'lines', line: { color: '#ef4444', width: 5 }, name: 'sin θ (y-coord)' },
 			// Point on circle
 			{ x: [cosT], y: [sinT], mode: 'markers', marker: { size: 12, color: '#1e293b', line: { color: '#fff', width: 2 } }, showlegend: false },
-			// Dashed horizontal from point to y-axis
+			// Dashed line from point to y-axis (shows sin value)
 			{ x: [0, cosT], y: [sinT, sinT], mode: 'lines', line: { color: '#ef4444', width: 1, dash: 'dash' }, showlegend: false, hoverinfo: 'skip' },
-			// Dashed vertical from point to x-axis
-			{ x: [cosT, cosT], y: [0, sinT], mode: 'lines', line: { color: '#2563eb', width: 1, dash: 'dash' }, showlegend: false, hoverinfo: 'skip' },
+			// Connecting line from circle point to wave
+			{ x: [cosT, currentWaveX], y: [sinT, sinT], mode: 'lines', line: { color: '#f59e0b', width: 1, dash: 'dot' }, showlegend: false, hoverinfo: 'skip' },
+			// Point on wave
+			{ x: [currentWaveX], y: [sinT], mode: 'markers', marker: { size: 8, color: '#ef4444' }, showlegend: false },
 			// Angle arc
 			{ x: arcX, y: arcY, mode: 'lines', line: { color: '#f59e0b', width: 2 }, fill: 'toself', fillcolor: 'rgba(245,158,11,0.12)', showlegend: false, hoverinfo: 'skip' },
 		];
 
 		const layout = {
 			margin: { t: 10, b: 40, l: 40, r: 10 },
-			xaxis: { range: [-1.5, 1.5], zeroline: true, scaleanchor: 'y', scaleratio: 1, dtick: 0.5 },
+			xaxis: { range: [-1.5, 4.2], zeroline: true, scaleanchor: 'y', scaleratio: 1, dtick: 0.5 },
 			yaxis: { range: [-1.5, 1.5], zeroline: true, dtick: 0.5 },
 			legend: { orientation: 'h', y: -0.15 },
 			annotations: [
-				{ x: cosT, y: sinT, text: `(${cosT.toFixed(2)}, ${sinT.toFixed(2)})`, showarrow: true, arrowhead: 0, ax: 30, ay: -25, font: { size: 13, color: '#1e293b' } },
+				{ x: cosT, y: sinT, text: `(${cosT.toFixed(2)}, ${sinT.toFixed(2)})`, showarrow: true, arrowhead: 0, ax: -40, ay: -25, font: { size: 13, color: '#1e293b' } },
 				{ x: 0.32 * Math.cos(theta / 2), y: 0.32 * Math.sin(theta / 2), text: 'θ', showarrow: false, font: { size: 14, color: '#f59e0b', family: 'serif' } },
+				{ x: 3.0, y: -1.35, text: 'sin wave "unrolled" →', showarrow: false, font: { size: 11, color: '#94a3b8' } },
 			],
 		};
 
@@ -827,7 +853,8 @@ function initSineCosine() {
 	sliderTheta.addEventListener('input', updateUnitCircle);
 	updateUnitCircle();
 
-	// ── 2. Sine & Cosine Waves ──
+	// ── 2. Sine & Cosine Waves ──────────────────────────────────────────────
+
 	const sliderAmp = document.getElementById('slider-wave-amp');
 	const sliderFreq = document.getElementById('slider-wave-freq');
 	const sliderPhase = document.getElementById('slider-wave-phase');
@@ -874,7 +901,8 @@ function initSineCosine() {
 	sliderPhase.addEventListener('input', updateWavePlot);
 	updateWavePlot();
 
-	// ── 3. Taylor Series Approximation ──
+	// ── 3. Taylor Series Approximation ──────────────────────────────────────
+
 	const sliderTaylor = document.getElementById('slider-taylor-n');
 
 	function factorial(n) {
@@ -925,7 +953,7 @@ function initSineCosine() {
 
 		const layout = {
 			margin: { t: 10, b: 40, l: 40, r: 10 },
-			xaxis: { title: 'θ', range: [-2 * Math.PI, 2 * Math.PI], zeroline: true },
+			xaxis: { title: 'θ (radians)', range: [-2 * Math.PI, 2 * Math.PI], zeroline: true },
 			yaxis: { title: 'Value', range: [-3, 3], zeroline: true },
 			legend: { orientation: 'h', y: -0.25 },
 		};
@@ -935,59 +963,6 @@ function initSineCosine() {
 
 	sliderTaylor.addEventListener('input', updateTaylor);
 	updateTaylor();
-
-	// ── 4. Pythagorean Identity ──
-	const sliderPyth = document.getElementById('slider-pyth-theta');
-
-	function updatePythag() {
-		const theta = parseFloat(sliderPyth.value);
-		const s2 = Math.sin(theta) ** 2;
-		const c2 = Math.cos(theta) ** 2;
-
-		document.getElementById('disp-pyth-theta').textContent = theta.toFixed(2);
-		document.getElementById('pyth-equation').innerHTML =
-			`$$ \\sin^2(${theta.toFixed(2)}) + \\cos^2(${theta.toFixed(2)}) = ${s2.toFixed(3)} + ${c2.toFixed(3)} = ${(s2 + c2).toFixed(3)} $$`;
-		render_temml();
-
-		const data = [
-			{
-				x: ['Breakdown'],
-				y: [s2],
-				type: 'bar',
-				name: 'sin²θ',
-				marker: { color: '#ef4444' },
-				width: [0.5],
-			},
-			{
-				x: ['Breakdown'],
-				y: [c2],
-				type: 'bar',
-				name: 'cos²θ',
-				marker: { color: '#2563eb' },
-				width: [0.5],
-			},
-		];
-
-		const layout = {
-			barmode: 'stack',
-			margin: { t: 10, b: 40, l: 40, r: 10 },
-			yaxis: { range: [0, 1.3], title: 'Value', zeroline: true },
-			legend: { orientation: 'h', y: -0.2 },
-			annotations: [
-				{
-					x: 'Breakdown', y: 1.05,
-					text: '<b>= 1.000</b>',
-					showarrow: false,
-					font: { size: 16, color: '#1e293b' },
-				},
-			],
-		};
-
-		Plotly.react('plot-pythag', data, layout);
-	}
-
-	sliderPyth.addEventListener('input', updatePythag);
-	updatePythag();
 }
 
 // ── Module loader ───────────────────────────────────────────────────────────
