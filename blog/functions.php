@@ -41,6 +41,13 @@ function render_gem_tabs($tabs, $groupId = 'tabgroup') {
 	}
 
 	echo '</div>';
+?>
+	<script>
+		window.addEventListener('load', async () => {
+			addCopyButtons();
+		});
+	</script>
+<?php
 }
 
 function js($file) {
