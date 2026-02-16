@@ -1,4 +1,10 @@
 window.bibData = {
+	"truthdecay": {
+		title: "Truth Decay",
+		year: 2018,
+		author: "Jennifer Kavanagh, Michael D. Rich",
+		url: "https://www.rand.org/pubs/research_reports/RR2314.html"
+	},
 	"annotatedhistory": {
 		title: "Annotated History of Modern AI and Deep Learning",
 		author: "Jürgen Schmidhuber",
