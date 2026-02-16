@@ -207,7 +207,6 @@ const SelfAttentionLab = {
 	},
 
 	drawWeb: function() {
-		// Updated to namespaced IDs and Classes
 		const canvas = document.getElementById('sa-attn-canvas');
 		const container = document.getElementById('sa-attention-container');
 		const chips = document.querySelectorAll('.sa-token-block');
@@ -215,11 +214,18 @@ const SelfAttentionLab = {
 		if (!canvas || !container || chips.length === 0) return;
 
 		const ctx = canvas.getContext('2d');
-		canvas.width = container.offsetWidth;
-		canvas.height = container.offsetHeight;
+
+		// Get precise dimensions to avoid incremental growth rounding issues
+		const containerRect = container.getBoundingClientRect();
+
+		// Only update if dimensions actually changed to prevent feedback loops
+		if (canvas.width !== Math.floor(containerRect.width) || 
+			canvas.height !== Math.floor(containerRect.height)) {
+			canvas.width = containerRect.width;
+			canvas.height = containerRect.height;
+		}
 
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		const containerRect = container.getBoundingClientRect();
 
 		this.data.tokens.forEach((_, i) => {
 			this.data.tokens.forEach((_, j) => {
@@ -811,63 +817,114 @@ const SENTENCES_2D = [
 	],
 	// Index 1 = vault/money dominant
 	[
-		{ min: 0.975, text: 'The <b style="color:#f59e0b">💰 bank vault</b> held <b style="color:#f59e0b">$40 million</b> in <b style="color:#eab308">gold reserves</b> behind <b style="color:#94a3b8">three-foot steel doors</b>.' },
-		{ min: 0.95, text: '<b style="color:#dc2626">Federal agents</b> raided the <b style="color:#f59e0b">💰 bank</b> at <b style="color:#94a3b8">dawn</b>, seizing all <b style="color:#f59e0b">financial records</b>.' },
-		{ min: 0.925, text: '<b style="color:#dc2626">Armed guards</b> stood outside the <b style="color:#f59e0b">💰 bank</b> during the <b style="color:#94a3b8">armored</b> <b style="color:#f59e0b">cash transfer</b>.' },
-		{ min: 0.90, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">quarterly earnings</b> exceeded every <b style="color:#f59e0b">analyst\'s</b> forecast.' },
-		{ min: 0.875, text: '<b style="color:#dc2626">Protesters</b> gathered outside the <b style="color:#f59e0b">💰 bank</b> demanding lower <b style="color:#f59e0b">interest rates</b>.' },
-		{ min: 0.85, text: 'The <b style="color:#f59e0b">💰 bank</b> <b style="color:#dc2626">foreclosed</b> on three <b style="color:#f59e0b">properties</b> this <b style="color:#f59e0b">quarter</b> alone.' },
-		{ min: 0.825, text: 'The <b style="color:#f59e0b">💰 bank</b> issued a <b style="color:#f59e0b">dividend</b> that surprised <b style="color:#94a3b8">Wall Street</b>.' },
-		{ min: 0.80, text: 'She nervously entered the <b style="color:#f59e0b">💰 bank</b> to negotiate her <b style="color:#f59e0b">business loan</b>.' },
-		{ min: 0.775, text: 'The <b style="color:#f59e0b">💰 bank</b> approved her <b style="color:#f59e0b">mortgage</b> application after weeks of <b style="color:#94a3b8">paperwork</b>.' },
+		{ min: 0.99, text: 'The <b style="color:#f59e0b">💰 bank</b> was placed under <b style="color:#dc2626">federal receivership</b> after <b style="color:#f59e0b">$2 billion</b> in <b style="color:#f59e0b">toxic assets</b> surfaced on its <b style="color:#f59e0b">balance sheet</b>.' },
+		{ min: 0.98, text: '<b style="color:#dc2626">FBI agents</b> seized <b style="color:#f59e0b">servers</b> from the <b style="color:#f59e0b">💰 bank\'s</b> headquarters in a <b style="color:#dc2626">predawn raid</b> linked to <b style="color:#f59e0b">money laundering</b>.' },
+		{ min: 0.97, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">CEO</b> was <b style="color:#dc2626">indicted</b> on <b style="color:#dc2626">fourteen counts</b> of <b style="color:#f59e0b">securities fraud</b> and <b style="color:#f59e0b">embezzlement</b>.' },
+		{ min: 0.96, text: '<b style="color:#dc2626">Regulators</b> shut down the <b style="color:#f59e0b">💰 bank</b> overnight after a <b style="color:#dc2626">run</b> drained its <b style="color:#f59e0b">cash reserves</b> to zero.' },
+		{ min: 0.95, text: 'The <b style="color:#f59e0b">💰 bank vault</b> held <b style="color:#f59e0b">$40 million</b> in <b style="color:#eab308">gold reserves</b> behind <b style="color:#94a3b8">three-foot steel doors</b>.' },
+		{ min: 0.94, text: '<b style="color:#dc2626">Armored trucks</b> lined up outside the <b style="color:#f59e0b">💰 bank</b> to transport <b style="color:#f59e0b">$100 million</b> in <b style="color:#f59e0b">bearer bonds</b>.' },
+		{ min: 0.93, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">trading floor</b> erupted in <b style="color:#dc2626">panic</b> as the <b style="color:#f59e0b">stock</b> plummeted <b style="color:#dc2626">30%</b> in minutes.' },
+		{ min: 0.92, text: '<b style="color:#dc2626">Federal investigators</b> subpoenaed every record from the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">offshore accounts</b>.' },
+		{ min: 0.91, text: '<b style="color:#dc2626">Armed guards</b> stood outside the <b style="color:#f59e0b">💰 bank</b> during the <b style="color:#94a3b8">armored</b> <b style="color:#f59e0b">cash transfer</b>.' },
+		{ min: 0.90, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">quarterly earnings</b> shattered every <b style="color:#f59e0b">Wall Street</b> forecast this year.' },
+		{ min: 0.89, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">stock price</b> surged <b style="color:#dc2626">18%</b> after the <b style="color:#f59e0b">merger</b> announcement.' },
+		{ min: 0.88, text: '<b style="color:#dc2626">Auditors</b> found <b style="color:#f59e0b">discrepancies</b> in the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">ledgers</b> going back <b style="color:#94a3b8">five years</b>.' },
+		{ min: 0.87, text: 'The <b style="color:#f59e0b">💰 bank</b> <b style="color:#dc2626">foreclosed</b> on three <b style="color:#f59e0b">properties</b> this <b style="color:#f59e0b">quarter</b> alone.' },
+		{ min: 0.86, text: '<b style="color:#dc2626">Protesters</b> gathered outside the <b style="color:#f59e0b">💰 bank</b> demanding lower <b style="color:#f59e0b">interest rates</b> on <b style="color:#f59e0b">student loans</b>.' },
+		{ min: 0.85, text: 'The <b style="color:#f59e0b">💰 bank</b> announced a <b style="color:#f59e0b">hostile takeover bid</b> for its <b style="color:#f59e0b">rival institution</b>.' },
+		{ min: 0.84, text: 'The <b style="color:#f59e0b">💰 bank</b> issued a <b style="color:#f59e0b">dividend</b> that exceeded <b style="color:#f59e0b">analyst</b> expectations by a wide margin.' },
+		{ min: 0.83, text: '<b style="color:#f59e0b">Shareholders</b> voted to replace the <b style="color:#f59e0b">💰 bank\'s</b> entire <b style="color:#f59e0b">board of directors</b>.' },
+		{ min: 0.82, text: 'The <b style="color:#f59e0b">💰 bank</b> raised its <b style="color:#f59e0b">prime lending rate</b> for the <b style="color:#94a3b8">third time</b> this year.' },
+		{ min: 0.81, text: 'She nervously entered the <b style="color:#f59e0b">💰 bank</b> to negotiate the terms of her <b style="color:#f59e0b">business loan</b>.' },
+		{ min: 0.80, text: 'The <b style="color:#f59e0b">💰 bank</b> approved her <b style="color:#f59e0b">mortgage</b> application after weeks of <b style="color:#94a3b8">paperwork</b>.' },
+		{ min: 0.79, text: 'A <b style="color:#f59e0b">financial advisor</b> at the <b style="color:#f59e0b">💰 bank</b> recommended a <b style="color:#f59e0b">diversified portfolio</b>.' },
+		{ min: 0.78, text: 'The <b style="color:#f59e0b">💰 bank</b> wired <b style="color:#f59e0b">$50,000</b> to the <b style="color:#f59e0b">escrow account</b> by <b style="color:#94a3b8">noon</b>.' },
+		{ min: 0.77, text: 'He refinanced his <b style="color:#f59e0b">home loan</b> through the <b style="color:#f59e0b">💰 bank</b> at a lower <b style="color:#f59e0b">rate</b>.' },
+		{ min: 0.76, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">compliance department</b> flagged the <b style="color:#f59e0b">transaction</b> for review.' },
 		{ min: 0.75, text: 'She deposited her <b style="color:#f59e0b">paycheck</b> at the <b style="color:#f59e0b">💰 bank</b> on <b style="color:#94a3b8">Friday afternoon</b>.' },
-		{ min: 0.725, text: 'He checked his <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">balance</b> nervously before making the <b style="color:#f59e0b">purchase</b>.' },
-		{ min: 0.70, text: 'The <b style="color:#f59e0b">💰 bank</b> sent a letter about new <b style="color:#f59e0b">savings account</b> terms.' },
-		{ min: 0.675, text: 'She walked into the <b style="color:#f59e0b">💰 bank</b> to ask about opening a <b style="color:#f59e0b">checking account</b>.' },
-		{ min: 0.65, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">ATM</b> was out of <b style="color:#f59e0b">cash</b> again.' },
-		{ min: 0.625, text: 'He walked toward the <b style="color:#f59e0b">💰 bank</b> to check his <b style="color:#f59e0b">account balance</b>.' },
-		{ min: 0.60, text: 'The <b style="color:#f59e0b">💰 bank</b> <b style="color:#94a3b8">branch</b> on <b style="color:#94a3b8">Main Street</b> was always <b style="color:#94a3b8">crowded</b>.' },
-		{ min: 0.575, text: 'She received a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">statement</b> in the <b style="color:#94a3b8">mail</b>.' },
-		{ min: 0.55, text: 'The <b style="color:#f59e0b">💰 bank</b> offered a <b style="color:#f59e0b">low-interest</b> <b style="color:#f59e0b">credit card</b>.' },
-		{ min: 0.525, text: 'He needed to visit the <b style="color:#f59e0b">💰 bank</b> before it <b style="color:#94a3b8">closed</b> at <b style="color:#94a3b8">five</b>.' },
-		{ min: 0.50, text: 'The <b style="color:#f59e0b">💰 bank</b> had a <b style="color:#94a3b8">long queue</b> snaking out the <b style="color:#94a3b8">door</b>.' },
-		{ min: 0.475, text: '"Bank" is starting to sound like <b style="color:#f59e0b">💰 finance</b> — maybe a <b style="color:#f59e0b">loan office</b>?' },
-		{ min: 0.45, text: 'There\'s a pull toward <b style="color:#f59e0b">💰 money</b>, but it could still go either way.' },
-		{ min: 0.425, text: 'A slight lean toward <b style="color:#f59e0b">💰 finance</b>, but the context is thin.' },
-		{ min: 0.40, text: 'A faint whiff of <b style="color:#f59e0b">💰 money</b>, but nothing conclusive yet.' },
-		{ min: 0.375, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#f59e0b">💰 finance</b>, but barely.' },
-		{ min: 0.35, text: 'There\'s a <b style="color:#94a3b8">whisper</b> of <b style="color:#f59e0b">💰 commerce</b>, but it could mean anything.' },
-		{ min: 0.00, text: 'The word "bank" is almost <b style="color:#94a3b8">neutral</b>.' }
+		{ min: 0.74, text: 'The <b style="color:#f59e0b">💰 bank</b> offered a <b style="color:#f59e0b">signing bonus</b> for new <b style="color:#f59e0b">premium accounts</b>.' },
+		{ min: 0.73, text: 'He checked his <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">balance</b> nervously before making the <b style="color:#f59e0b">purchase</b>.' },
+		{ min: 0.72, text: 'The <b style="color:#f59e0b">💰 bank</b> sent a letter about new <b style="color:#f59e0b">savings account</b> terms and <b style="color:#f59e0b">fees</b>.' },
+		{ min: 0.71, text: 'She walked into the <b style="color:#f59e0b">💰 bank</b> to ask about opening a <b style="color:#f59e0b">checking account</b>.' },
+		{ min: 0.70, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">ATM</b> was out of <b style="color:#f59e0b">cash</b> again this <b style="color:#94a3b8">weekend</b>.' },
+		{ min: 0.69, text: 'He walked toward the <b style="color:#f59e0b">💰 bank</b> to check his <b style="color:#f59e0b">account balance</b> before <b style="color:#94a3b8">lunch</b>.' },
+		{ min: 0.68, text: 'The <b style="color:#f59e0b">💰 bank</b> <b style="color:#94a3b8">branch</b> on <b style="color:#94a3b8">Main Street</b> was always <b style="color:#94a3b8">crowded</b> at <b style="color:#94a3b8">noon</b>.' },
+		{ min: 0.67, text: 'She received a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">statement</b> in the <b style="color:#94a3b8">mail</b> and tossed it on the <b style="color:#94a3b8">counter</b>.' },
+		{ min: 0.66, text: 'The <b style="color:#f59e0b">💰 bank</b> offered a <b style="color:#f59e0b">low-interest</b> <b style="color:#f59e0b">credit card</b> with no <b style="color:#f59e0b">annual fee</b>.' },
+		{ min: 0.65, text: 'He needed to visit the <b style="color:#f59e0b">💰 bank</b> before it <b style="color:#94a3b8">closed</b> at <b style="color:#94a3b8">five</b>.' },
+		{ min: 0.64, text: 'The <b style="color:#f59e0b">💰 bank</b> had a <b style="color:#94a3b8">long queue</b> snaking out the <b style="color:#94a3b8">front door</b>.' },
+		{ min: 0.63, text: 'She set up <b style="color:#f59e0b">direct deposit</b> through the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">mobile app</b>.' },
+		{ min: 0.62, text: 'The <b style="color:#f59e0b">💰 bank</b> notified him of a <b style="color:#f59e0b">suspicious charge</b> on his <b style="color:#f59e0b">debit card</b>.' },
+		{ min: 0.61, text: 'He opened a <b style="color:#f59e0b">joint account</b> at the <b style="color:#f59e0b">💰 bank</b> after the <b style="color:#94a3b8">wedding</b>.' },
+		{ min: 0.60, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">lobby</b> smelled of <b style="color:#94a3b8">carpet cleaner</b> and <b style="color:#94a3b8">stale coffee</b>.' },
+		{ min: 0.59, text: 'She asked the <b style="color:#f59e0b">💰 bank</b> <b style="color:#94a3b8">teller</b> for a <b style="color:#f59e0b">cashier\'s check</b>.' },
+		{ min: 0.58, text: 'The <b style="color:#f59e0b">💰 bank</b> waived the <b style="color:#f59e0b">overdraft fee</b> as a <b style="color:#94a3b8">one-time courtesy</b>.' },
+		{ min: 0.57, text: 'He transferred <b style="color:#f59e0b">funds</b> between <b style="color:#f59e0b">accounts</b> at the <b style="color:#f59e0b">💰 bank</b> online.' },
+		{ min: 0.56, text: 'The <b style="color:#f59e0b">💰 bank</b> mailed a new <b style="color:#f59e0b">debit card</b> after the old one <b style="color:#94a3b8">expired</b>.' },
+		{ min: 0.55, text: 'She scheduled a meeting at the <b style="color:#f59e0b">💰 bank</b> to discuss <b style="color:#f59e0b">retirement planning</b>.' },
+		{ min: 0.54, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">parking lot</b> was full every <b style="color:#94a3b8">Monday morning</b>.' },
+		{ min: 0.53, text: 'He picked up a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">brochure</b> about <b style="color:#f59e0b">CD rates</b> on his way out.' },
+		{ min: 0.52, text: 'The <b style="color:#f59e0b">💰 bank</b> required <b style="color:#94a3b8">two forms of ID</b> to open the <b style="color:#f59e0b">account</b>.' },
+		{ min: 0.51, text: 'She used the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">night deposit box</b> after <b style="color:#94a3b8">closing hours</b>.' },
+		{ min: 0.50, text: 'The <b style="color:#f59e0b">💰 bank</b> was running a <b style="color:#f59e0b">promotion</b> on <b style="color:#f59e0b">home equity loans</b>.' },
+		{ min: 0.49, text: 'He sat in the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">waiting area</b>, flipping through a <b style="color:#94a3b8">magazine</b>.' },
+		{ min: 0.48, text: 'The <b style="color:#f59e0b">💰 bank</b> charged a <b style="color:#f59e0b">monthly maintenance fee</b> on the <b style="color:#f59e0b">basic account</b>.' },
+		{ min: 0.47, text: 'She linked her <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">account</b> to a <b style="color:#94a3b8">budgeting app</b>.' },
+		{ min: 0.46, text: 'The <b style="color:#f59e0b">💰 bank</b> was <b style="color:#94a3b8">closed</b> for the <b style="color:#94a3b8">holiday</b>, so he used the <b style="color:#94a3b8">ATM</b>.' },
+		{ min: 0.45, text: 'He forgot his <b style="color:#94a3b8">PIN</b> and had to call the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">helpline</b>.' },
+		{ min: 0.44, text: 'The <b style="color:#f59e0b">💰 bank</b> offered <b style="color:#f59e0b">free checking</b> for <b style="color:#94a3b8">students</b>.' },
+		{ min: 0.43, text: 'She printed a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">statement</b> for her <b style="color:#94a3b8">landlord</b> as proof of <b style="color:#f59e0b">income</b>.' },
+		{ min: 0.42, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">drive-through</b> lane had a <b style="color:#94a3b8">ten-car wait</b>.' },
+		{ min: 0.41, text: 'He cashed a <b style="color:#f59e0b">check</b> at the <b style="color:#f59e0b">💰 bank</b> and pocketed the <b style="color:#f59e0b">bills</b>.' },
+		{ min: 0.40, text: '"Bank" is starting to sound like <b style="color:#f59e0b">💰 finance</b> — maybe a <b style="color:#f59e0b">loan office</b>?' },
+		{ min: 0.39, text: 'The <b style="color:#f59e0b">💰 bank</b> updated its <b style="color:#94a3b8">mobile app</b> with a new <b style="color:#94a3b8">interface</b>.' },
+		{ min: 0.38, text: 'There\'s a pull toward <b style="color:#f59e0b">💰 money</b>, but it could still go either way.' },
+		{ min: 0.37, text: 'She asked the <b style="color:#f59e0b">💰 bank</b> about <b style="color:#f59e0b">wire transfer</b> <b style="color:#f59e0b">fees</b> for an <b style="color:#94a3b8">international</b> payment.' },
+		{ min: 0.36, text: 'A slight lean toward <b style="color:#f59e0b">💰 finance</b>, but the context is thin.' },
+		{ min: 0.35, text: 'A faint whiff of <b style="color:#f59e0b">💰 money</b>, but nothing conclusive yet.' },
+		{ min: 0.34, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#f59e0b">💰 finance</b>, but barely.' },
+		{ min: 0.33, text: 'There\'s a <b style="color:#94a3b8">whisper</b> of <b style="color:#f59e0b">💰 commerce</b>, but it could mean anything.' },
+		{ min: 0.00, text: 'The word "bank" is almost <b style="color:#94a3b8">neutral</b> — all three meanings compete equally.' }
 	],
-	// Index 2 = bench/park dominant
+// Index 2 = mound/earth dominant
 	[
-		{ min: 0.975, text: 'The old <b style="color:#8b5cf6">🌳 park bench</b> had <b style="color:#f97316">initials</b> carved into every single <b style="color:#a3a3a3">weathered plank</b> by <b style="color:#ec4899">generations</b> of lovers.' },
-		{ min: 0.95, text: 'A <b style="color:#eab308">brass plaque</b> on the <b style="color:#8b5cf6">🌳 bank</b> read: "<b style="color:#ec4899">For Margaret</b>, who loved this <b style="color:#10b981">view</b>."' },
-		{ min: 0.925, text: 'He <b style="color:#0ea5e9">dozed off</b> on the <b style="color:#8b5cf6">🌳 bank</b> under the <b style="color:#10b981">oak tree</b> after a long <b style="color:#f97316">lunch</b>.' },
-		{ min: 0.90, text: 'Someone left a <b style="color:#f97316">dog-eared novel</b> on the <b style="color:#8b5cf6">🌳 bank</b> near the <b style="color:#0ea5e9">fountain</b>.' },
-		{ min: 0.875, text: '<b style="color:#94a3b8">Pigeons</b> gathered around the <b style="color:#8b5cf6">🌳 bank</b> where someone had dropped <b style="color:#f97316">breadcrumbs</b>.' },
-		{ min: 0.85, text: 'Every <b style="color:#f97316">Sunday</b>, the old man fed <b style="color:#94a3b8">sparrows</b> from the same <b style="color:#8b5cf6">🌳 bank</b> in the <b style="color:#10b981">square</b>.' },
-		{ min: 0.825, text: 'A <b style="color:#f97316">street musician</b> played <b style="color:#ec4899">guitar</b> next to the <b style="color:#8b5cf6">🌳 bank</b> as <b style="color:#94a3b8">passersby</b> listened.' },
-		{ min: 0.80, text: 'She sat on the <b style="color:#8b5cf6">🌳 bank</b> and watched <b style="color:#f97316">joggers</b> pass by in the <b style="color:#eab308">morning light</b>.' },
-		{ min: 0.775, text: 'Two <b style="color:#94a3b8">strangers</b> shared the <b style="color:#8b5cf6">🌳 bank</b> in <b style="color:#0ea5e9">comfortable silence</b>, both reading <b style="color:#f97316">newspapers</b>.' },
-		{ min: 0.75, text: 'A <b style="color:#f97316">toddler</b> climbed onto the <b style="color:#8b5cf6">🌳 bank</b> and waved at the <b style="color:#94a3b8">ducks</b> in the <b style="color:#0ea5e9">pond</b>.' },
-		{ min: 0.725, text: 'The <b style="color:#8b5cf6">🌳 bank</b> in the <b style="color:#10b981">park</b> was her favorite <b style="color:#f97316">reading spot</b> on <b style="color:#eab308">warm days</b>.' },
-		{ min: 0.70, text: '<b style="color:#0ea5e9">Rain</b> pooled on the empty <b style="color:#8b5cf6">🌳 bank</b> as the <b style="color:#10b981">park</b> cleared out.' },
-		{ min: 0.675, text: '<b style="color:#10b981">Autumn leaves</b> piled up on the <b style="color:#8b5cf6">🌳 bank</b> nobody had sat on in <b style="color:#94a3b8">weeks</b>.' },
-		{ min: 0.65, text: 'The <b style="color:#8b5cf6">🌳 bank</b> overlooked a <b style="color:#10b981">garden</b> of <b style="color:#ec4899">roses</b> and <b style="color:#10b981">lavender</b>.' },
-		{ min: 0.625, text: 'She <b style="color:#f97316">sketched</b> the <b style="color:#0ea5e9">fountain</b> from the <b style="color:#8b5cf6">🌳 bank</b> every <b style="color:#f97316">Saturday</b>.' },
-		{ min: 0.60, text: 'A <b style="color:#94a3b8">couple</b> held hands on the <b style="color:#8b5cf6">🌳 bank</b> watching the <b style="color:#eab308">sunset</b>.' },
-		{ min: 0.575, text: 'The <b style="color:#a3a3a3">paint</b> on the <b style="color:#8b5cf6">🌳 bank</b> was <b style="color:#a3a3a3">peeling</b>, but nobody minded.' },
-		{ min: 0.55, text: '<b style="color:#94a3b8">Squirrels</b> chased each other under the <b style="color:#8b5cf6">🌳 bank</b> looking for <b style="color:#f97316">acorns</b>.' },
-		{ min: 0.525, text: 'He ate his <b style="color:#f97316">sandwich</b> on the <b style="color:#8b5cf6">🌳 bank</b> and watched the <b style="color:#94a3b8">world</b> go by.' },
-		{ min: 0.50, text: 'The <b style="color:#8b5cf6">🌳 bank</b> was <b style="color:#0ea5e9">damp</b> from the <b style="color:#0ea5e9">morning dew</b>, but she sat down anyway.' },
-		{ min: 0.475, text: 'A <b style="color:#f97316">child\'s</b> forgotten <b style="color:#ec4899">mitten</b> lay on the <b style="color:#8b5cf6">🌳 bank</b> near the <b style="color:#10b981">playground</b>.' },
-		{ min: 0.45, text: '"Bank" here feels like a <b style="color:#8b5cf6">🌳 place to sit</b> — a <b style="color:#8b5cf6">park bench</b>, maybe?' },
-		{ min: 0.425, text: 'There\'s a quiet pull toward <b style="color:#8b5cf6">🌳 the park</b>, but the meaning isn\'t locked in.' },
-		{ min: 0.40, text: 'A gentle lean toward <b style="color:#8b5cf6">🌳 rest and nature</b>, but still ambiguous.' },
-		{ min: 0.375, text: 'A whisper of <b style="color:#8b5cf6">🌳 park benches</b>, but the context could shift any moment.' },
-		{ min: 0.35, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#8b5cf6">🌳 a bench</b>, but barely.' },
-		{ min: 0.00, text: 'The word "bank" is almost <b style="color:#94a3b8">neutral</b>.' }
+		{ min: 0.70, text: 'A vast <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">pristine snow</b> stretched across the <b style="color:#10b981">silent valley</b>, untouched by <b style="color:#94a3b8">footprints</b> or <b style="color:#0ea5e9">wind</b>.' },
+		{ min: 0.69, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">fog</b> settled into the <b style="color:#10b981">hollow</b> like a <b style="color:#94a3b8">sleeping creature</b>, perfectly still in the <b style="color:#eab308">predawn</b> dark.' },
+		{ min: 0.68, text: 'A towering <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">cumulus clouds</b> sat motionless on the <b style="color:#0ea5e9">horizon</b>, glowing <b style="color:#eab308">gold</b> at the edges.' },
+		{ min: 0.67, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> rose gently beside the <b style="color:#10b981">meadow</b>, covered in <b style="color:#10b981">clover</b> and <b style="color:#10b981">wild thyme</b>.' },
+		{ min: 0.66, text: '<b style="color:#94a3b8">Snow</b> had drifted into a deep <b style="color:#8b5cf6">🌾 bank</b> against the <b style="color:#94a3b8">stone wall</b>, soft and <b style="color:#94a3b8">glittering</b> in the <b style="color:#eab308">moonlight</b>.' },
+		{ min: 0.65, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">mist</b> rolled slowly across the <b style="color:#10b981">moor</b>, swallowing the <b style="color:#10b981">heather</b> in <b style="color:#94a3b8">silence</b>.' },
+		{ min: 0.64, text: 'The old <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> along the <b style="color:#10b981">field</b> had been there for <b style="color:#94a3b8">centuries</b>, a quiet boundary between <b style="color:#10b981">farms</b>.' },
+		{ min: 0.63, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">sand</b> curved along the <b style="color:#0ea5e9">shore</b>, shaped by <b style="color:#0ea5e9">tides</b> into a smooth <b style="color:#94a3b8">crescent</b>.' },
+		{ min: 0.62, text: '<b style="color:#10b981">Rabbits</b> had burrowed into the grassy <b style="color:#8b5cf6">🌾 bank</b> at the edge of the <b style="color:#10b981">orchard</b>, their <b style="color:#94a3b8">holes</b> barely visible.' },
+		{ min: 0.61, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">clouds</b> drifted in from the <b style="color:#0ea5e9">west</b>, turning the <b style="color:#eab308">afternoon</b> a soft <b style="color:#94a3b8">grey</b>.' },
+		{ min: 0.60, text: 'A thick <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">snow</b> blocked the <b style="color:#94a3b8">garden gate</b>, so they stayed inside with <b style="color:#f97316">tea</b> and <b style="color:#f97316">books</b>.' },
+		{ min: 0.59, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">fog</b> muffled every sound, turning the <b style="color:#10b981">forest</b> into a <b style="color:#94a3b8">whisper</b>.' },
+		{ min: 0.58, text: '<b style="color:#10b981">Wildflowers</b> spilled down the <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> beside the <b style="color:#94a3b8">old road</b>, a riot of <b style="color:#ec4899">color</b>.' },
+		{ min: 0.57, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">grey cloud</b> hung low over the <b style="color:#10b981">hills</b>, promising <b style="color:#0ea5e9">rain</b> by <b style="color:#eab308">evening</b>.' },
+		{ min: 0.56, text: 'The children <b style="color:#f97316">sledded</b> down the <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">snow</b> behind the <b style="color:#94a3b8">schoolhouse</b>, laughing all the way.' },
+		{ min: 0.55, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">soft earth</b> made a natural <b style="color:#94a3b8">seat</b> overlooking the <b style="color:#10b981">valley</b> below.' },
+		{ min: 0.54, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">fog</b> crept up the <b style="color:#10b981">hillside</b> as <b style="color:#eab308">dusk</b> fell, erasing the <b style="color:#10b981">treeline</b>.' },
+		{ min: 0.53, text: '<b style="color:#10b981">Moss</b> covered the ancient <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> that once marked the <b style="color:#94a3b8">castle boundary</b>.' },
+		{ min: 0.52, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">embers</b> glowed quietly in the <b style="color:#f97316">fireplace</b>, warming the <b style="color:#94a3b8">room</b> without a sound.' },
+		{ min: 0.51, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">sand dunes</b> rippled in the <b style="color:#0ea5e9">breeze</b>, shifting <b style="color:#94a3b8">grain by grain</b>.' },
+		{ min: 0.50, text: 'She leaned against the <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> and watched the <b style="color:#eab308">stars</b> come out one by one.' },
+		{ min: 0.49, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">cloud</b> parted briefly, letting a shaft of <b style="color:#eab308">sunlight</b> through to the <b style="color:#10b981">meadow</b>.' },
+		{ min: 0.48, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">snow</b> was so deep the <b style="color:#94a3b8">fence posts</b> had vanished entirely.' },
+		{ min: 0.47, text: '<b style="color:#10b981">Ferns</b> unfurled along the shady <b style="color:#8b5cf6">🌾 bank</b> where the <b style="color:#94a3b8">ground</b> stayed <b style="color:#0ea5e9">cool</b> and <b style="color:#0ea5e9">damp</b>.' },
+		{ min: 0.46, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">ash</b> was all that remained of the <b style="color:#f97316">bonfire</b>, still faintly <b style="color:#f97316">warm</b> at <b style="color:#eab308">dawn</b>.' },
+		{ min: 0.45, text: '"Bank" here feels like <b style="color:#8b5cf6">🌾 a mound</b> — a ridge of <b style="color:#94a3b8">earth</b>, <b style="color:#94a3b8">snow</b>, or <b style="color:#94a3b8">cloud</b>.' },
+		{ min: 0.44, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">dirt</b> was overgrown with <b style="color:#10b981">grass</b>, a gentle rise in the <b style="color:#10b981">landscape</b>.' },
+		{ min: 0.43, text: 'A quiet lean toward <b style="color:#8b5cf6">🌾 terrain</b> — maybe an <b style="color:#8b5cf6">embankment</b> or <b style="color:#8b5cf6">mound</b>.' },
+		{ min: 0.42, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">fog</b> thinned as the <b style="color:#eab308">sun</b> rose, revealing the <b style="color:#10b981">fields</b> below.' },
+		{ min: 0.41, text: 'There\'s a pull toward <b style="color:#8b5cf6">🌾 earth and landscape</b>, but the meaning isn\'t locked in.' },
+		{ min: 0.40, text: 'A gentle lean toward <b style="color:#8b5cf6">🌾 a mound or ridge</b>, but still ambiguous.' },
+		{ min: 0.39, text: 'He sat on the <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> and watched the <b style="color:#0ea5e9">clouds</b> drift by in <b style="color:#94a3b8">silence</b>.' },
+		{ min: 0.38, text: 'A whisper of <b style="color:#8b5cf6">🌾 embankment</b>, but the context could shift any moment.' },
+		{ min: 0.37, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#8b5cf6">🌾 a mound</b>, but barely.' },
+		{ min: 0.36, text: 'A <b style="color:#94a3b8">whisper</b> of <b style="color:#8b5cf6">🌾 terrain</b>, but it could mean anything at all.' },
+		{ min: 0.35, text: 'The meaning is almost <b style="color:#94a3b8">perfectly split</b> — maybe <b style="color:#8b5cf6">🌾 earth</b>, maybe not.' },
+		{ min: 0.00, text: 'The word "bank" is almost <b style="color:#94a3b8">neutral</b> — all three meanings compete equally.' }
 	]
 ];
 
