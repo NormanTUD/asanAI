@@ -1,6 +1,5 @@
 window.usedCitations = []; // Tracks order of citation usage
 window.footnoteCounter = 1;
-window.indexedTerms = {}; // Global tracker for used terms
 window.quotesLog = [];
 window.indexedTerms = {};
 
