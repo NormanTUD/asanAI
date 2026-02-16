@@ -1,4 +1,10 @@
 window.bibData = {
+	"fakebidenrobocall": {
+		url: "https://www.bbc.com/news/world-us-canada-68064247",
+		title: "Fake Biden robocall tells voters to skip New Hampshire primary election",
+		year: 2024,
+		author: "Max Matza"
+	},
 	"fakeblackstrump": {
 		url: "https://www.bbc.com/news/world-us-canada-68440150",
 		year: 2024,

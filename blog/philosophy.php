@@ -367,7 +367,7 @@ While the philosophical grounding of AI remains hollow, its impact on the sociop
 The 2024 US election marked a turning point where AI-generated content became a mainstream tool for political messaging and misinformation: 
 
 * **AI-Generated Imagery:** The Trump campaign and its supporters have utilized AI to create "hyper-real" but fictional scenarios. Notable examples include AI images of Trump surrounded by \cite[Black supporters]{fakeblackstrump} to project a specific demographic appeal, or images of him in stylized, heroic poses.
-* **Targeted Attacks:** AI was used to create fake audio of political opponents, such as the AI-generated robocall of Joe Biden used during the New Hampshire primary to discourage voting, illustrating how the technology scales voter suppression.
+* **Targeted Attacks:** AI was used to create fake audio of political opponents, such as the \cite[AI-generated robocall of Joe Biden]{fakebidenrobocall} used during the New Hampshire primary to discourage voting, illustrating how the technology scales voter suppression.
 
 ### "Flooding the Zone" with Synthetic Content
 Drawing from Steve Bannon's strategy of "flooding the zone with shit," AI allows for the mass production of low-cost, high-volume misinformation. \citeauthor{truthdecay} note that "changes in the information system," such as the rise of social media and the 24-hour news cycle, have already accelerated the spread of opinionated content; AI further exacerbates this by enabling the automated saturation of the information environment.
