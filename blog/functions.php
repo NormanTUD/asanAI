@@ -11,7 +11,7 @@ function render_gem_tabs($tabs, $groupId = 'tabgroup') {
 	if (empty($tabs)) return '';
 
 	// Generate a unique suffix if multiple groups exist on one page
-	$uniqueHash = substr(md5(serialize($tabs) . $groupId), 0, 6);
+	$uniqueHash = substr(md5(serialize($tabs) . $groupId), 0, 12);
 
 	echo '<div class="gem-tab-container">';
 
