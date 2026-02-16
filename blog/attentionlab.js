@@ -641,29 +641,6 @@ const SENTENCES_1D = [
 		{ min: 0.45, text: 'There\'s a pull toward <b style="color:#f59e0b">💰 money</b>, but it could go either way.' },
 		{ min: 0.40, text: 'A faint whiff of <b style="color:#f59e0b">💰 money</b>, but nothing conclusive yet.' },
 		{ min: 0.00, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#f59e0b">💰 finance</b>, but barely.' }
-	],
-	// Index 2 = bench/park dominant
-	[
-		{ min: 0.64, text: 'The <b style="color:#8b5cf6">fighter jet</b> <b style="color:#8b5cf6">🔄 banked</b> so hard the <b style="color:#dc2626">wingtip</b> nearly scraped the <b style="color:#10b981">canyon wall</b>, pulling <b style="color:#dc2626">seven Gs</b>.' },
-		{ min: 0.63, text: 'At <b style="color:#8b5cf6">400 knots</b>, the pilot <b style="color:#8b5cf6">🔄 banked</b> the aircraft into a <b style="color:#dc2626">near-vertical turn</b> to evade the <b style="color:#dc2626">missile lock</b>.' },
-		{ min: 0.62, text: 'The <b style="color:#8b5cf6">stunt plane</b> <b style="color:#8b5cf6">🔄 banked</b> upside down over the <b style="color:#94a3b8">airshow crowd</b>, trailing <b style="color:#dc2626">red smoke</b>.' },
-		{ min: 0.61, text: 'She <b style="color:#8b5cf6">🔄 banked</b> the <b style="color:#8b5cf6">helicopter</b> sharply to avoid the <b style="color:#dc2626">power lines</b> looming out of the <b style="color:#94a3b8">fog</b>.' },
-		{ min: 0.60, text: 'The <b style="color:#8b5cf6">race car</b> <b style="color:#8b5cf6">🔄 banked</b> through the <b style="color:#94a3b8">curve</b> at <b style="color:#dc2626">180 mph</b>, tires screaming on the <b style="color:#94a3b8">asphalt</b>.' },
-		{ min: 0.59, text: 'The <b style="color:#8b5cf6">airliner</b> <b style="color:#8b5cf6">🔄 banked</b> gently to the <b style="color:#94a3b8">left</b> as it began its <b style="color:#94a3b8">approach</b> into <b style="color:#94a3b8">O\'Hare</b>.' },
-		{ min: 0.58, text: 'He <b style="color:#8b5cf6">🔄 banked</b> the <b style="color:#8b5cf6">billiard shot</b> off the <b style="color:#94a3b8">cushion</b> and sank the <b style="color:#eab308">eight ball</b> cleanly.' },
-		{ min: 0.57, text: 'The <b style="color:#8b5cf6">drone</b> <b style="color:#8b5cf6">🔄 banked</b> around the <b style="color:#10b981">lighthouse</b>, its <b style="color:#94a3b8">camera</b> capturing the <b style="color:#0ea5e9">coastline</b>.' },
-		{ min: 0.56, text: 'She <b style="color:#8b5cf6">🔄 banked</b> the <b style="color:#8b5cf6">basketball</b> off the <b style="color:#94a3b8">backboard</b> for a perfect <b style="color:#eab308">layup</b>.' },
-		{ min: 0.55, text: 'The <b style="color:#8b5cf6">motorcycle</b> <b style="color:#8b5cf6">🔄 banked</b> low through the <b style="color:#94a3b8">hairpin turn</b>, the rider\'s <b style="color:#94a3b8">knee</b> brushing the <b style="color:#94a3b8">pavement</b>.' },
-		{ min: 0.54, text: 'The <b style="color:#8b5cf6">Cessna</b> <b style="color:#8b5cf6">🔄 banked</b> over the <b style="color:#10b981">valley</b>, giving passengers a view of the <b style="color:#10b981">autumn foliage</b>.' },
-		{ min: 0.53, text: 'He <b style="color:#8b5cf6">🔄 banked</b> the <b style="color:#8b5cf6">cue ball</b> off two <b style="color:#94a3b8">rails</b> in a trick shot that left the <b style="color:#94a3b8">bar</b> silent.' },
-		{ min: 0.52, text: 'The <b style="color:#8b5cf6">glider</b> <b style="color:#8b5cf6">🔄 banked</b> into a <b style="color:#0ea5e9">thermal</b>, spiraling upward without a sound.' },
-		{ min: 0.51, text: 'The <b style="color:#8b5cf6">bobsled</b> <b style="color:#8b5cf6">🔄 banked</b> through the <b style="color:#0ea5e9">ice channel</b> at <b style="color:#dc2626">terrifying speed</b>.' },
-		{ min: 0.50, text: '"Bank" here feels like <b style="color:#8b5cf6">🔄 a turn</b> — something <b style="color:#8b5cf6">tilting</b> or <b style="color:#8b5cf6">angling</b>.' },
-		{ min: 0.48, text: 'There\'s a pull toward <b style="color:#8b5cf6">🔄 motion</b> and <b style="color:#8b5cf6">turning</b>, but the meaning isn\'t locked in.' },
-		{ min: 0.46, text: 'A gentle lean toward <b style="color:#8b5cf6">🔄 banking a turn</b>, but still ambiguous.' },
-		{ min: 0.44, text: 'A whisper of <b style="color:#8b5cf6">🔄 aviation</b>, but the context could shift any moment.' },
-		{ min: 0.42, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#8b5cf6">🔄 a turn or tilt</b>, but barely.' },
-		{ min: 0.00, text: 'The word "bank" is almost <b style="color:#94a3b8">neutral</b>.' }
 	]
 ];
 
