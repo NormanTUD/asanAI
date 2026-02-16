@@ -172,11 +172,7 @@ function load_base_js () {
 			if (statusText) statusText.textContent = message;
 		}
 
-		/**
-		 * Überwacht das DOM auf Änderungen und rendert Mathematik automatisch.
-		 */
 		function observeAndRenderMath(targetNode = document.body) {
-		    // Sicherheit: Prüfen, ob das Element existiert
 		    if (!targetNode) {
 			console.warn("MutationObserver: Ziel-Element nicht gefunden.");
 			return;
@@ -186,7 +182,6 @@ function load_base_js () {
 
 		    const callback = function(mutationsList) {
 			for (const mutation of mutationsList) {
-			    // Wenn sich der Inhalt eines Elements ändert, Markierung entfernen
 			    if (mutation.type === 'characterData' || mutation.type === 'childList') {
 				const parent = mutation.target.parentElement;
 				if (parent && parent.hasAttribute('data-math-rendered')) {
@@ -194,7 +189,6 @@ function load_base_js () {
 				}
 			    }
 			}
-			// Nach Änderungen neu scannen
 			render_temml();
 		    };
 
@@ -203,20 +197,20 @@ function load_base_js () {
 		}
 
 		function render_temml() {
-		    // Nur Elemente wählen, die noch nicht verarbeitet wurden
-		    const elements = document.querySelectorAll('p:not([data-math-rendered]), span:not([data-math-rendered]), div:not([data-math-rendered]), li:not([data-math-rendered])');
+			const root = document.getElementById('contents') || document.body;
+			const elements = root.querySelectorAll('p:not([data-math-rendered]), span:not([data-math-rendered]), div:not([data-math-rendered]), li:not([data-math-rendered])');
 
-		    elements.forEach(el => {
-			if (el.textContent.includes('$')) {
-			    temml.renderMathInElement(el, {
-				delimiters: [
-				    {left: "$$", right: "$$", display: true},
-				    {left: "$", right: "$", display: false}
-				]
-			    });
-			    el.setAttribute('data-math-rendered', 'true');
-			}
-		    });
+			elements.forEach(el => {
+				if (el.textContent.includes('$')) {
+					temml.renderMathInElement(el, {
+						delimiters: [
+							{left: "$$", right: "$$", display: true},
+							{left: "$", right: "$", display: false}
+						]
+					});
+					el.setAttribute('data-math-rendered', 'true');
+				}
+			});
 		}
 
 		document.addEventListener("DOMContentLoaded", function() {
@@ -243,7 +237,6 @@ function load_base_js () {
 		});
 
 		function sendHeight() {
-			// Berechne die tatsächliche Höhe des Inhalts
 			var body = document.body,
 				html = document.documentElement;
 
@@ -255,7 +248,6 @@ function load_base_js () {
 				html.offsetHeight
 			);
 
-			// Sende Nachricht an das Elternfenster (WordPress)
 			if (window.parent && window.parent !== window) {
 				window.parent.postMessage({
 					type: 'height',
