@@ -95,7 +95,7 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 			addCopyButtons();
 		} catch (error) {
 			console.error("Initialization failed:", error);
-			updateLoadingStatus("Error loading course. Please refresh.");
+			updateLoadingStatus(`Error loading course. Please refresh. ${error}`);
 		}
 	});
 
