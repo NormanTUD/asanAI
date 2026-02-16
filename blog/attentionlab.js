@@ -1080,9 +1080,8 @@ const KV2 = [
 	{ k: [2.5, 1.5], v: [3.0, 1.5], color: '#f59e0b',
 		kIcon: '💳', kName: 'fee', vIcon: '💰', vName: 'payment',
 		kOff: [18, -20], vOff: [0, 18] },
-	// ⚔️ assault / 🏇 attack — Nature-ish, Urgent
 	{ k: [-1.0, 2.5], v: [-1.5, 3.0], color: '#ef4444',
-		kIcon: '⚔️', kName: 'assault', vIcon: '🏇', vName: 'attack',
+		kIcon: '🏃', kName: 'rush', vIcon: '🌊', vName: 'surge',
 		kOff: [22, 4], vOff: [0, 18] }
 ];
 
