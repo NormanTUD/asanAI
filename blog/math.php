@@ -699,10 +699,7 @@ In \citeyear{chester1145}, \citeauthor{chester1145}, who also produced the first
 
 $$\sin(\theta) = \cos(90^\circ - \theta)$$
 
-**Original Sources:**
-* **Edmund Gunter**, *Canon Triangulorum* (1620): Coined the term *co-sinus*.
-
-
+* ****, ** (1620): Coined the term *co-sinus*.
 
 $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 

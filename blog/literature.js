@@ -1,4 +1,11 @@
 window.bibData = {
+	"gunter1620": {
+		title: "Canon Triangulorum",
+		year: 1620,
+		author: "Edmund Gunter",
+		url: "https://archive.org/details/bim_early-english-books-1475-1640_canon-triangulorum-sive_gunter-edmund_1623"
+
+	},
 	"chester1145": {
 		year: 1145,
 		author: "Robert of Chester",
