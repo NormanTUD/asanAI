@@ -109,43 +109,6 @@ Drag the query arrow below. Watch how rotating it toward a key increases that ke
   </div>
 </div>
 
-<!-- ===================== SECTION 3: 3D ===================== -->
-<div class="md">
-### 3D: Attention in Space, The Full Picture
-
-In three dimensions, we can finally see the complete geometry. Multiple keys orbit in 3D space, and the query "searches" by pointing in a direction. The dot product still measures alignment, but now in full 3D.
-
-$$\text{output} = \sum_j \text{softmax}\!\left(\frac{\mathbf{q} \cdot \mathbf{k}_j}{\sqrt{3}}\right) \mathbf{v}_j$$
-
-The critical insight: **the output (gold star) is always trapped inside the convex hull** of the value vectors (the translucent shape). Attention is fundamentally an **interpolation** mechanism, it blends existing information, it cannot invent new directions. This is why transformers need the Feed-Forward Network after attention: the FFN provides the non-linear "escape" from the convex hull.
-
-Use the sliders to rotate the query direction in 3D (spherical coordinates $\theta, \phi$). Watch the attention weights shift and the output point slide along the interior of the value simplex.
-</div>
-
-<div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 15px 0;">
-  <div style="display:flex; flex-wrap:wrap; gap:15px; margin-bottom:15px;">
-    <div style="flex:1; min-width:200px;">
-      <label><strong style="color:#2563eb;">Query θ (polar):</strong> <span id="attn3d-theta-val">45</span>°</label>
-      <input type="range" id="attn3d-theta" min="0" max="180" step="1" value="45" style="width:100%;" oninput="updateAttn3D()">
-    </div>
-    <div style="flex:1; min-width:200px;">
-      <label><strong style="color:#2563eb;">Query φ (azimuth):</strong> <span id="attn3d-phi-val">30</span>°</label>
-      <input type="range" id="attn3d-phi" min="0" max="360" step="1" value="30" style="width:100%;" oninput="updateAttn3D()">
-    </div>
-    <div style="flex:1; min-width:200px;">
-      <label><strong style="color:#2563eb;">Query magnitude:</strong> <span id="attn3d-mag-val">2.0</span></label>
-      <input type="range" id="attn3d-mag" min="0.5" max="4" step="0.1" value="2.0" style="width:100%;" oninput="updateAttn3D()">
-    </div>
-  </div>
-  <div style="display:flex; gap:15px; flex-wrap:wrap;">
-    <div id="attn3d-scene" style="flex:2; min-width:400px; height:500px;"></div>
-    <div style="flex:1; min-width:220px;">
-      <div id="attn3d-weights" style="height:250px;"></div>
-      <div id="attn3d-math" style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8rem; overflow-x:auto;"></div>
-    </div>
-  </div>
-</div>
-
 <div class="md">
 ### Summary: Why *That* Equation?
 
