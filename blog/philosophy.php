@@ -374,5 +374,5 @@ The 2024 US election marked a turning point where AI-generated content became a 
 ### "Flooding the Zone" with Synthetic Content
 Drawing from Steve Bannon's strategy of "flooding the zone with shit," AI allows for the mass production of low-cost, high-volume misinformation.
 * **The Cost of Misinformation:** Unlike traditional "troll farms" that required human labor, LLMs allow for the automated generation of thousands of unique "fake news" articles and social media posts, making it nearly impossible for fact-checkers to keep pace.
-* **Reinforcing Inequality:** As noted by \\citeauthor{oneil2016weapons}, these algorithms often reinforce existing power structures. Those with the most capital can deploy the most sophisticated AI to dominate the information environment, further marginalizing voices without such resources.
+* **Reinforcing Inequality:** As noted by \citeauthor{oneil2016weapons}, these algorithms often reinforce existing power structures. Those with the most capital can deploy the most sophisticated AI to dominate the information environment, further marginalizing voices without such resources.
 </div>
