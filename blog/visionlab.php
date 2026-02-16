@@ -30,7 +30,7 @@ In traditional computer vision, engineers manually designed kernels (like the on
         <button class="btn" onclick="setKernel([[1/16,2/16,1/16],[2/16,4/16,2/16],[1/16,2/16,1/16]])">Gaussian</button>
     </div>
 
-    <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
+	<div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; justify-content: center;">
         <div style="position: relative; line-height: 0; display: inline-block;">
             <b style="line-height: 1.5; display: block;">Original (Hover me!)</b>
             <canvas id="conv-src-display" class="vision-canvas" width="50" height="50" style="cursor: none; border: 1px solid #ccc;"></canvas>
