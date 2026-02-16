@@ -811,6 +811,5 @@ async function loadAttentionModule() {
 	runUniverse();
 	updateAttn1D();
 	updateAttn2D();
-	updateAttn3D();
 	return Promise.resolve();
 }
