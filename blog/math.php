@@ -700,9 +700,6 @@ In \citeyear{chester1145}, \citeauthor{chester1145}, who also produced the first
 $$\sin(\theta) = \cos(90^\circ - \theta)$$
 
 **Original Sources:**
-* **Aryabhata**, *Aryabhatiya* (499 CE): Defined the *ardha-jyā* (half-chord).
-* **Al-Khwarizmi**, *Al-Jabr* (c. 820 CE): Provided the Arabic context for algebraic and trigonometric functions.
-* **Robert of Chester**, ** (1145): Introduced the terms to the Latin West.
 * **Edmund Gunter**, *Canon Triangulorum* (1620): Coined the term *co-sinus*.
 
 

@@ -2,13 +2,15 @@ window.bibData = {
 	"chester1145": {
 		year: 1145,
 		author: "Robert of Chester",
-		title: "Liber algebrae et almucabola"
+		title: "Liber algebrae et almucabola",
+		url: "https://archive.org/details/robertofchesters00khuw"
 	},
 	"alkwarizma": {
 		author: "محمد بن موسى الخوارزميّ‎ (Al-Khwarizmi)",
 		author: "Al-Khwarizmi",
 		title: "الكتاب المختصر في حساب الجبر والمقابلة (al-Kitāb al-mukhtaṣar fī ḥisāb al-jabr wa-l-muqābala, The Concise Book of Calculation by Restoration and Balancing)",
-		year: 825
+		year: 825,
+		url: "https://archive.org/details/khalifa_158_yahoo_20180430_1221"
 	},
 	"indianastronomer": {
 		year: "499 CE",
