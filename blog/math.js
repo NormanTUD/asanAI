@@ -259,15 +259,15 @@ function renderRGBCombinedTable() {
 				<div style="display: flex; flex-direction: column; gap: 5px;">
 					<div style="display: flex; align-items: center; gap: 6px;">
 						<div style="width: 6px; height: 18px; background: #ef4444; border-radius: 2px;"></div>
-						<input type="number" value="${rv}" class="rgb-c-r" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid #fee2e2; text-align: center;">
+						<input type="number" value="${rv}" class="rgb-c-r" id="rgb_image_${r}_${c}_red" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid #fee2e2; text-align: center;">
 					</div>
 					<div style="display: flex; align-items: center; gap: 6px;">
 						<div style="width: 6px; height: 18px; background: #22c55e; border-radius: 2px;"></div>
-						<input type="number" value="${gv}" class="rgb-c-g" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid #dcfce7; text-align: center;">
+						<input type="number" value="${gv}" class="rgb-c-g" id="rgb_image_${r}_${c}_green" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid #dcfce7; text-align: center;">
 					</div>
 					<div style="display: flex; align-items: center; gap: 6px;">
 						<div style="width: 6px; height: 18px; background: #3b82f6; border-radius: 2px;"></div>
-						<input type="number" value="${bv}" class="rgb-c-b" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid #dbeafe; text-align: center;">
+						<input type="number" value="${bv}" class="rgb-c-b" id="rgb_image_${r}_${c}_blue" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid #dbeafe; text-align: center;">
 					</div>
 				</div>
 			</td>`;
