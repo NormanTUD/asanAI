@@ -136,7 +136,7 @@ To find the dot product of two vectors, you multiply the numbers in the same pos
 If we have two vectors $\vec{A}$ and $\vec{B}$:
 $$\vec{A} = \begin{pmatrix} a_1 \\ a_2 \end{pmatrix}, \vec{B} = \begin{pmatrix} b_1 \\ b_2 \end{pmatrix}$$
 
-The Dot Product ($\vec{A} \cdot \vec{B}$) is:
+The Dot Product $\vec{A} \cdot \vec{B}$ is:
 $$\vec{A} \cdot \vec{B} = (a_1 \times b_1) + (a_2 \times b_2)$$
 
 The Dot Product has a beautiful geometric property:
