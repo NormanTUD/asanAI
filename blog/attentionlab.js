@@ -886,8 +886,37 @@ const SENTENCES_2D = [
 		{ min: 0.33, text: 'There\'s a <b style="color:#94a3b8">whisper</b> of <b style="color:#f59e0b">💰 commerce</b>, but it could mean anything.' },
 		{ min: 0.00, text: 'The word "bank" is almost <b style="color:#94a3b8">neutral</b> — all three meanings compete equally.' }
 	],
-// Index 2 = mound/earth dominant
+	// Index 2 = mound/earth dominant
 	[
+		{ min: 0.99, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">volcanic ash</b> buried the entire <b style="color:#10b981">valley</b> in a <b style="color:#94a3b8">suffocating blanket</b> — nothing remained but <b style="color:#94a3b8">grey desolation</b>.' },
+		{ min: 0.98, text: 'A colossal <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">glacial moraine</b> towered above the <b style="color:#10b981">treeline</b>, a wall of <b style="color:#94a3b8">boulders</b> and <b style="color:#94a3b8">compacted earth</b> left by the <b style="color:#0ea5e9">ice age</b>.' },
+		{ min: 0.97, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">landslide debris</b> dammed the <b style="color:#0ea5e9">gorge</b> completely, creating a <b style="color:#0ea5e9">new lake</b> overnight.' },
+		{ min: 0.96, text: 'An enormous <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">coal slag</b> from the abandoned <b style="color:#94a3b8">mine</b> dominated the <b style="color:#10b981">landscape</b> for miles.' },
+		{ min: 0.95, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> had been raised by <b style="color:#94a3b8">ancient engineers</b> as a <b style="color:#94a3b8">fortification</b>, still standing after <b style="color:#94a3b8">two thousand years</b>.' },
+		{ min: 0.94, text: 'A massive <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">snow</b> collapsed from the <b style="color:#10b981">mountainside</b> in a roaring <b style="color:#94a3b8">avalanche</b> that shook the <b style="color:#10b981">valley floor</b>.' },
+		{ min: 0.93, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">storm clouds</b> stretched from <b style="color:#0ea5e9">horizon</b> to <b style="color:#0ea5e9">horizon</b>, a solid wall of <b style="color:#94a3b8">black and purple</b>.' },
+		{ min: 0.92, text: '<b style="color:#94a3b8">Bulldozers</b> carved into the <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">compacted clay</b>, exposing <b style="color:#94a3b8">fossils</b> embedded in the <b style="color:#94a3b8">strata</b>.' },
+		{ min: 0.91, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">sand dunes</b> shifted relentlessly, swallowing the <b style="color:#94a3b8">abandoned village</b> one <b style="color:#94a3b8">house</b> at a time.' },
+		{ min: 0.90, text: 'A sheer <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">red sandstone</b> rose from the <b style="color:#10b981">desert floor</b>, carved by <b style="color:#0ea5e9">wind</b> into <b style="color:#94a3b8">impossible shapes</b>.' },
+		{ min: 0.89, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">thunderheads</b> advanced across the <b style="color:#10b981">prairie</b>, flickering with <b style="color:#eab308">lightning</b> deep inside.' },
+		{ min: 0.88, text: 'A steep <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">gravel</b> marked where the <b style="color:#94a3b8">railway</b> had been cut through the <b style="color:#10b981">hillside</b>.' },
+		{ min: 0.87, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">snow</b> against the <b style="color:#94a3b8">barn</b> was taller than a <b style="color:#f97316">man</b>, packed solid by the <b style="color:#0ea5e9">blizzard</b>.' },
+		{ min: 0.86, text: '<b style="color:#94a3b8">Archaeologists</b> excavated the <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> and found <b style="color:#94a3b8">Bronze Age pottery</b> buried within.' },
+		{ min: 0.85, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">fog</b> so thick you could barely see your <b style="color:#f97316">hand</b> rolled in from the <b style="color:#0ea5e9">coast</b>.' },
+		{ min: 0.84, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> along the <b style="color:#94a3b8">canal</b> was reinforced with <b style="color:#94a3b8">stone</b> to prevent <b style="color:#0ea5e9">erosion</b>.' },
+		{ min: 0.83, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">cumulus clouds</b> piled up behind the <b style="color:#10b981">mountains</b>, brilliant <b style="color:#94a3b8">white</b> against the <b style="color:#0ea5e9">blue sky</b>.' },
+		{ min: 0.82, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">plowed earth</b> ran the length of the <b style="color:#10b981">field</b>, dark and <b style="color:#94a3b8">rich</b> with <b style="color:#10b981">nutrients</b>.' },
+		{ min: 0.81, text: '<b style="color:#10b981">Sheep</b> grazed along the <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> that bordered the <b style="color:#10b981">pasture</b>, their <b style="color:#94a3b8">wool</b> bright against the <b style="color:#10b981">green</b>.' },
+		{ min: 0.80, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">mist</b> hung in the <b style="color:#10b981">hollow</b>, refusing to lift even as the <b style="color:#eab308">sun</b> climbed higher.' },
+		{ min: 0.79, text: 'The old <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> served as a <b style="color:#94a3b8">windbreak</b> for the <b style="color:#10b981">orchard</b>, sheltering the <b style="color:#10b981">blossoms</b> in <b style="color:#10b981">spring</b>.' },
+		{ min: 0.78, text: '<b style="color:#f97316">Hikers</b> scrambled up the <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">loose scree</b> to reach the <b style="color:#10b981">ridge</b> above.' },
+		{ min: 0.77, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">snow</b> clung to the <b style="color:#94a3b8">north-facing slope</b> long after the rest had <b style="color:#0ea5e9">melted</b>.' },
+		{ min: 0.76, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">cloud</b> turned <b style="color:#ec4899">pink</b> and <b style="color:#eab308">gold</b> as the <b style="color:#eab308">sun</b> set behind the <b style="color:#10b981">hills</b>.' },
+		{ min: 0.75, text: '<b style="color:#10b981">Primroses</b> dotted the <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> beside the <b style="color:#94a3b8">lane</b>, a sign of <b style="color:#10b981">early spring</b>.' },
+		{ min: 0.74, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">fog</b> crept through the <b style="color:#10b981">forest</b>, muffling the <b style="color:#10b981">birdsong</b> to a <b style="color:#94a3b8">whisper</b>.' },
+		{ min: 0.73, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">earth</b> was riddled with <b style="color:#10b981">rabbit warrens</b>, the <b style="color:#94a3b8">soil</b> soft and <b style="color:#94a3b8">crumbling</b>.' },
+		{ min: 0.72, text: '<b style="color:#f97316">Children</b> rolled down the grassy <b style="color:#8b5cf6">🌾 bank</b>, tumbling to the bottom in fits of <b style="color:#f97316">laughter</b>.' },
+		{ min: 0.71, text: 'A <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">dark cloud</b> promised <b style="color:#0ea5e9">rain</b> before <b style="color:#eab308">nightfall</b>.' },
 		{ min: 0.70, text: 'A vast <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">pristine snow</b> stretched across the <b style="color:#10b981">silent valley</b>, untouched by <b style="color:#94a3b8">footprints</b> or <b style="color:#0ea5e9">wind</b>.' },
 		{ min: 0.69, text: 'The <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">fog</b> settled into the <b style="color:#10b981">hollow</b> like a <b style="color:#94a3b8">sleeping creature</b>, perfectly still in the <b style="color:#eab308">predawn</b> dark.' },
 		{ min: 0.68, text: 'A towering <b style="color:#8b5cf6">🌾 bank</b> of <b style="color:#94a3b8">cumulus clouds</b> sat motionless on the <b style="color:#0ea5e9">horizon</b>, glowing <b style="color:#eab308">gold</b> at the edges.' },
@@ -924,6 +953,7 @@ const SENTENCES_2D = [
 		{ min: 0.37, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#8b5cf6">🌾 a mound</b>, but barely.' },
 		{ min: 0.36, text: 'A <b style="color:#94a3b8">whisper</b> of <b style="color:#8b5cf6">🌾 terrain</b>, but it could mean anything at all.' },
 		{ min: 0.35, text: 'The meaning is almost <b style="color:#94a3b8">perfectly split</b> — maybe <b style="color:#8b5cf6">🌾 earth</b>, maybe not.' },
+		{ min: 0.34, text: 'There\'s a <b style="color:#94a3b8">faint hint</b> of <b style="color:#8b5cf6">🌾 landscape</b>, but all three meanings still compete.' },
 		{ min: 0.00, text: 'The word "bank" is almost <b style="color:#94a3b8">neutral</b> — all three meanings compete equally.' }
 	]
 ];
