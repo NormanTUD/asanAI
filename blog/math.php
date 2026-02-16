@@ -693,7 +693,7 @@ TODO
 
 The concept originates in ancient Indian astronomy. \citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* ("bowstring") to describe the half-chord of a circle, which is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\citetitle{indianastronomer}* (\citetitle{indianastronomer}, ch. 1-2). Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* ("pocket" or "fold"). 
 
-In \citeyear{chester1145}, \citeauthor{chester1145}, who also produced the first Latin translation of \citealternativetitle{alkwarizma}'s foundational work on algebra that also inspired the name *algorithm*, translated *jayb* into the Latin ***sinus*** ("curve," "bay," or "fold").
+In \citeyear{chester1145}, \citeauthor{chester1145}, who also produced the first Latin translation of \citealternativetitle{alkwarizma}'s foundational work on algebra that also inspired the name *algebra* (while his name inspired the name *algorithm*), translated *jayb* into the Latin ***sinus*** ("curve," "bay," or "fold").
 
 **Cosine** ("complement's sine") was later coined by **Edmund Gunter** in his 1620 work *Canon Triangulorum*. It describes the sine of the complementary angle:
 
