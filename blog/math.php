@@ -676,7 +676,26 @@ Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting ve
 
 <div class="md">
 ## Sine and Cosine ($\sin$ and $\cos$)
+</div>
 
+<!-- ─── Interactive: Unit Circle ─── -->
+<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+    <p style="margin-top:0;">Interactive Unit Circle</p>
+    <p style="color:#64748b; font-size:0.9em;">Drag the angle and watch the point move on the unit circle. Its $x$-coordinate is $\cos\theta$ (<span style="color:#2563eb;font-weight:bold;">blue</span>) and its $y$-coordinate is $\sin\theta$ (<span style="color:#ef4444;font-weight:bold;">red</span>).</p>
+
+    <div style="margin-bottom:10px;">
+        <strong>Angle $\theta$:</strong>
+        <input type="range" id="slider-sc-theta" min="0" max="6.2832" step="0.01" value="0.78" style="width:300px;">
+        <span id="disp-sc-theta" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.78</span> rad
+        (<span id="disp-sc-deg" style="font-family:monospace;">44.7°</span>)
+    </div>
+
+    <div id="sc-equation-display" style="text-align:center; font-size:1.2em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:50px;"></div>
+
+    <div id="plot-unit-circle" class="plot-container" style="width:100%; height:450px;"></div>
+</div>
+
+<div class="md">
 ### What do they measure?
 
 Imagine a circle with radius $1$ centered at the origin (the **unit circle**). Pick a point on it by sweeping an angle $\theta$ counter-clockwise from the right. The coordinates of that point are:
@@ -688,8 +707,6 @@ That's it: $\cos\theta$ is the horizontal position, $\sin\theta$ is the vertical
 **A note on angles:** We measure $\theta$ in **radians**, not degrees. One full circle is $2\pi$ radians (about $6.28$), so $\pi$ radians $= 180°$. Radians are simply the arc length on a unit circle for a given angle, which makes many formulas cleaner.
 
 ### Origin and Etymology
-
-TODO
 
 The concept originates in ancient Indian astronomy. \citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* ("bowstring") to describe the half-chord of a circle, which is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\citetitle{indianastronomer}* (\citetitle{indianastronomer}, ch. 1-2). Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* ("pocket" or "fold"). 
 
@@ -746,23 +763,6 @@ Transformers (the architecture behind GPT) process all words at once, so they ne
 $$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d}}\right), \qquad PE_{(\text{pos}, 2i+1)} = \cos\!\left(\frac{\text{pos}}{10000^{2i/d}}\right)$$
 
 This gives each position a distinct pattern the model can learn to interpret.
-</div>
-
-<!-- ─── Interactive: Unit Circle ─── -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
-    <p style="margin-top:0;">Interactive Unit Circle</p>
-    <p style="color:#64748b; font-size:0.9em;">Drag the angle and watch the point move on the unit circle. Its $x$-coordinate is $\cos\theta$ (<span style="color:#2563eb;font-weight:bold;">blue</span>) and its $y$-coordinate is $\sin\theta$ (<span style="color:#ef4444;font-weight:bold;">red</span>).</p>
-
-    <div style="margin-bottom:10px;">
-        <strong>Angle $\theta$:</strong>
-        <input type="range" id="slider-sc-theta" min="0" max="6.2832" step="0.01" value="0.78" style="width:300px;">
-        <span id="disp-sc-theta" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.78</span> rad
-        (<span id="disp-sc-deg" style="font-family:monospace;">44.7°</span>)
-    </div>
-
-    <div id="sc-equation-display" style="text-align:center; font-size:1.2em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:50px;"></div>
-
-    <div id="plot-unit-circle" class="plot-container" style="width:100%; height:450px;"></div>
 </div>
 
 <!-- ─── Interactive: Sine & Cosine Waves ─── -->
