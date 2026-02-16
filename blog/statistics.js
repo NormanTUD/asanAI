@@ -1,33 +1,39 @@
 let cltHistory = [];
 let chainData = {};
 
-function initStatistics() {
-	ZarathustraLab.init()
-	renderNormalDistribution();
-	renderDiceDistribution();
-	renderGaussLegendreComplex();
-	renderCorrelationPlayground();
-	renderCeresAstronomy();
-	renderBayesianComplex();
-	renderEntropy();
-	rollCLT();
-	renderStandardScaler();
-	//renderChiSquare();
-	renderDirichletLab();
-	renderGMMContextLab();
-	renderBayesianLanguageLab();
-	trainMarkovModel();
-	initLLMStats();
-	renderBoW();
-	renderExtremeLab();
-	renderPoissonLab();
+async function initStatistics() {
+	await ZarathustraLab.init();
+
+	const tasks = [
+		renderNormalDistribution(),
+		renderDiceDistribution(),
+		renderGaussLegendreComplex(),
+		renderCorrelationPlayground(),
+		renderCeresAstronomy(),
+		renderBayesianComplex(),
+		renderEntropy(),
+		rollCLT(),
+		renderStandardScaler(),
+		// renderChiSquare(),
+		renderDirichletLab(),
+		renderGMMContextLab(),
+		renderBayesianLanguageLab(),
+		trainMarkovModel(),
+		initLLMStats(),
+		renderBoW(),
+		renderExtremeLab(),
+		renderPoissonLab()
+	];
+
+	try {
+		await Promise.all(tasks);
+		console.log("Alle Statistik-Module wurden erfolgreich geladen.");
+	} catch (error) {
+		console.error("Fehler beim parallelen Laden der Module:", error);
+	}
 }
 
-/**
- * Note: Assumes 'chainData' is defined globally in your environment.
- */
-
-function trainMarkovModel() {
+async function trainMarkovModel() {
 	const text = document.getElementById('markov-corpus').value.toLowerCase();
 	const words = text.match(/\b(\w+)\b/g);
 
@@ -140,7 +146,7 @@ function renderLossLab() {
 	update();
 }
 
-function renderDiceDistribution() {
+async function renderDiceDistribution() {
 	const container = document.getElementById('dice-matrix-container');
 	if (!container) return;
 
@@ -218,7 +224,7 @@ function refreshMath() {
 	}
 }
 
-function renderCorrelationPlayground() {
+async function renderCorrelationPlayground() {
 	const inputs = {
 		r: document.getElementById('corr-strength'),
 		mux: document.getElementById('corr-mu-x') || { value: 0 },
@@ -304,7 +310,7 @@ function renderCorrelationPlayground() {
 	update();
 }
 
-function renderCeresAstronomy() {
+async function renderCeresAstronomy() {
 	const sliderSigma = document.getElementById('astro-sigma');
 	if (!sliderSigma) return;
 
@@ -389,7 +395,7 @@ function renderCeresAstronomy() {
 	update();
 }
 
-function renderNormalDistribution() {
+async function renderNormalDistribution() {
 	const sliderMu = document.getElementById('slider-mu');
 	const sliderSigma = document.getElementById('slider-sigma');
 	const sliderPoints = document.getElementById('gauss-points');
@@ -461,7 +467,7 @@ function renderNormalDistribution() {
 	update();
 }
 
-function renderBayesianComplex() {
+async function renderBayesianComplex() {
 	const priorIn = document.getElementById('bay-prior-new');
 	const tpIn = document.getElementById('bay-tp'); 
 	const fpIn = document.getElementById('bay-fp'); 
@@ -507,7 +513,7 @@ function renderBayesianComplex() {
 	update();
 }
 
-function renderEntropy() {
+async function renderEntropy() {
 	const slider1 = document.getElementById('entropy-p1');
 	const slider2 = document.getElementById('entropy-p2');
 	const labelHead = document.getElementById('label-head');
@@ -586,7 +592,7 @@ function renderEntropy() {
 	update(1);
 }
 
-function rollCLT() {
+async function rollCLT() {
 	const n = parseInt(document.getElementById('clt-n').value);
 	const diceContainer = document.getElementById('dice-container');
 
@@ -707,7 +713,7 @@ function createDiceSVG(value) {
 }
 
 // Standardization
-function renderStandardScaler() {
+async function renderStandardScaler() {
 	const inputX = document.getElementById('z-x');
 	const inputMu = document.getElementById('z-mu');
 	const inputSigma = document.getElementById('z-sigma');
@@ -816,7 +822,7 @@ function renderChiSquare() {
 	update();
 }
 
-function renderGaussLegendreComplex() {
+async function renderGaussLegendreComplex() {
 	const noiseIn = document.getElementById('gl-noise-new');
 	const nIn = document.getElementById('gl-n-new');
 	const mathDisplay = document.getElementById('gl-math-complex');
@@ -875,7 +881,7 @@ function renderGaussLegendreComplex() {
 	update();
 }
 
-function renderDirichletLab() {
+async function renderDirichletLab() {
 	const a1In = document.getElementById('diri-a1');
 	const a2In = document.getElementById('diri-a2');
 	const a3In = document.getElementById('diri-a3');
@@ -946,7 +952,7 @@ function renderDirichletLab() {
 	update();
 }
 
-function renderGMMContextLab() {
+async function renderGMMContextLab() {
 	const distSlider = document.getElementById('gmm-dist');
 	const varSlider = document.getElementById('gmm-var');
 
@@ -1004,7 +1010,7 @@ function renderGMMContextLab() {
 	update();
 }
 
-function renderBayesianLanguageLab() {
+async function renderBayesianLanguageLab() {
 	const input = document.getElementById('bayes-text-input');
 
 	// Simple Statistical Dictionary (Likelihoods)
@@ -1478,7 +1484,7 @@ var LLMStatsLab = {
 };
 
 // Add this function to your LLMStatsLab object
-function renderBoW() {
+async function renderBoW() {
 	// 1. Get and clean data
 	let text = document.getElementById('bow-input').value.toLowerCase();
 	// Regex to pull out words only
@@ -1537,7 +1543,7 @@ function renderBoW() {
 }
 
 // Start them all
-function initLLMStats() {
+async function initLLMStats() {
 	LLMStatsLab.renderBoltzmann();
 	LLMStatsLab.renderMLE();
 	LLMStatsLab.renderChainRule();
@@ -1549,7 +1555,7 @@ function initLLMStats() {
  * Visualizes Bernoulli and Gumbel logic.
  */
 
-function renderExtremeLab() {
+async function renderExtremeLab() {
 	const bernPInput = document.getElementById('bern-p');
 	const gumMuInput = document.getElementById('gum-mu');
 	const gumBetaInput = document.getElementById('gum-beta');
@@ -1617,7 +1623,7 @@ function renderExtremeLab() {
 	updateGumbel();
 }
 
-function renderPoissonLab() {
+async function renderPoissonLab() {
 	const lambdaInput = document.getElementById('poisson-lambda');
 	const valDisp = document.getElementById('poisson-lambda-val');
 	const lambda = parseFloat(lambdaInput.value);
@@ -1663,6 +1669,6 @@ function renderPoissonLab() {
 
 async function loadStatisticsModule() {
 	updateLoadingStatus("Loading section about statistics...");
-	initStatistics();
+	await initStatistics();
 	return Promise.resolve();
 }
