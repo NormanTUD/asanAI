@@ -421,20 +421,20 @@ class AttentionEngine {
 	}
 
 	_renderHeadContent(layerIdx, headIdx) {
-    const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${headIdx}`);
-    if (!headDiv || headDiv.dataset.rendered === 'true') return;
+		const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${headIdx}`);
+		if (!headDiv || headDiv.dataset.rendered === 'true') return;
 
-    // Attach metadata so the observer callback knows what to render
-    headDiv.dataset.containerId = this.containerId;
-    headDiv.dataset.layerIdx = layerIdx;
-    headDiv.dataset.headIdx = headIdx;
+		// Attach metadata so the observer callback knows what to render
+		headDiv.dataset.containerId = this.containerId;
+		headDiv.dataset.layerIdx = layerIdx;
+		headDiv.dataset.headIdx = headIdx;
 
-    // Show a lightweight placeholder
-    headDiv.innerHTML = `<div style="padding:20px; color:#94a3b8;">Wait for Head ${headIdx + 1} to load...</div>`;
+		// Show a lightweight placeholder
+		headDiv.innerHTML = `<div style="padding:20px; color:#94a3b8;">Wait for Head ${headIdx + 1}...</div>`;
 
-    // Observe — the actual render fires only when this div is in the viewport
-    headContentObserver.observe(headDiv);
-}
+		// Observe — the actual render fires only when this div is in the viewport
+		headContentObserver.observe(headDiv);
+	}
 
 	_executeHeadRender(layerIdx, headIdx) {
 		const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${headIdx}`);
@@ -2529,7 +2529,7 @@ function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, 
 	}).join(' \\\\ ');
 
 	// Restored h_after and added probability mapping
-	const latexString = `$$h_\\text{after} = ${toPMatrixColored(h_after)}, \\quad h_\\text{after} \\cdot W_\\text{vocab} \\approx \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+	const latexString = `$$h_\\text{after} = ${toPMatrixColored(h_after)}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
 
 	let latexDiv = document.getElementById(id + '-latex-debug');
 	if (!latexDiv) {
