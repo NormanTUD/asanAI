@@ -139,7 +139,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
 		// Remove any lingering loading indicator
 		const loader = plotDiv.querySelector('.plot-loading');
 		if (loader) loader.remove();
-	});;
+	});
 }
 
 function calcEvo(key) {
@@ -370,10 +370,10 @@ function renderComparison3D(config) {
 	};
 
 	Plotly.react(divId, traces, layout, config).then(() => {
-		// Remove any lingering loading indicator
-		const loader = plotDiv.querySelector('.plot-loading');
+		const loader = document.getElementById(divId)?.querySelector('.plot-loading');
 		if (loader) loader.remove();
 	});
+
 
 	document.getElementById(statsId).innerHTML = `
 	<div style="font-family: sans-serif; font-size: 0.85em; padding:15px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
@@ -636,7 +636,11 @@ function renderDotProductLab() {
 			]
 		};
 
-		Plotly.react(plotDiv, data, layout, {displayModeBar: false});
+		Plotly.react(plotDiv, data, layout, {displayModeBar: false}).then(() => {
+			// Remove any lingering loading indicator
+			const loader = plotDiv.querySelector('.plot-loading');
+			if (loader) loader.remove();
+		});
 
 		// --- VEKTOREN ANZEIGE UNTERHALB ---
 		let status = "";
