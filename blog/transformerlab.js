@@ -2524,7 +2524,7 @@ function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, 
 			const fromProb = Math.round(fromItem.prob * 100);
 			const toProb = Math.round(toItem.prob * 100);
 
-			return `${colorCmd} \\text{${cleanFrom}} (${fromProb}\\%) \\rightarrow \\text{${cleanTo}} (${toProb}\\%)`;
+			return `${colorCmd} \\text{${cleanFrom} } (${fromProb}\\%) \\rightarrow \\text{${cleanTo}} (${toProb}\\%)`;
 		}).join(' & ');
 	}).join(' \\\\ ');
 
