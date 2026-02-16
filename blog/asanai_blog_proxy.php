@@ -32,7 +32,13 @@ if (strpos($final_url, $remote_base) !== 0) {
 }
 
 // 4. Content abrufen (via cURL für bessere Header-Unterstützung)
-$ch = curl_init();
+$ch = null;
+try {
+	$ch = curl_init();
+} catch (\Throwable $e) {
+	print("$e: This can mean that you don't have <pre>sudo apt-get install php-curl</pre> installed. Try doing that.");
+	exit(1);
+}
 curl_setopt($ch, CURLOPT_URL, $final_url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
