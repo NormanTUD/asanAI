@@ -360,15 +360,15 @@ function smartquote() {
 	if (typeof source_bibliography === "function") source_bibliography();
 }
 
-function bibtexify() {                  
+function bibtexify() {
 	const containers = document.querySelectorAll('.md');
 	const mainContent = document.getElementById('contents');
 	let footnotesDiv = document.getElementById('footnotes');
-	let footnotesHTML = "";         
+	let footnotesHTML = "";
 
-	window.usedCitations = [];      
-	window.citationMap = {};        
-	window.footnoteCounter = 1;     
+	window.usedCitations = [];
+	window.citationMap = {};
+	window.footnoteCounter = 1;
 
 	const trackCitation = (key, instanceId, isDuplicateInBlock) => {
 		if (!window.bibData || !window.bibData[key]) return null;
@@ -376,9 +376,9 @@ function bibtexify() {
 		if (!isDuplicateInBlock) {
 			if (!window.citationMap[key]) window.citationMap[key] = [];
 			window.citationMap[key].push(instanceId);
-		}                       
+		}
 		return window.bibData[key];
-	};                              
+	};
 
 	containers.forEach(container => {
 		let content = container.innerHTML;
@@ -402,9 +402,9 @@ function bibtexify() {
 			if (manualText !== undefined) {
 				linkText = manualText;
 			} else {
-				switch(type) {  
+				switch(type) {
 					case 'citeauthor': linkText = data.author; break;
-					case 'citeauthorlastnameand': 
+					case 'citeauthorlastnameand':
 						const authors = data.author.split(/, | and /).map(a => a.trim());
 						const lastNames = authors.map(name => name.split(' ').pop());
 						if (lastNames.length === 1) linkText = lastNames[0];
@@ -420,11 +420,11 @@ function bibtexify() {
 					case 'citeurl':    linkText = data.title; break;
 					default:           linkText = `[${data.author}, ${data.year}]`;
 				}
-			}               
+			}
 
 			const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
 			return `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${linkText}</a>`;
-		});                     
+		});
 
 		content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
 			const fnId = window.footnoteCounter++;
@@ -438,28 +438,28 @@ function bibtexify() {
 			let year = data.year ? `, ${data.year}` : "";
 			footnotesHTML += `<li id="fn-${fnId}">${data.author}, <a class="iframe-safe-link" data-target="bib-${key}" style="cursor:pointer;">${data.title}</a>${year} <a class="iframe-safe-link" data-target="${instanceId}" style="cursor:pointer;">↩</a></li>\n`;
 			return `<sup class="footnote-ref"><a class="iframe-safe-link" data-target="fn-${fnId}" id="${instanceId}" title="${data.author}: ${data.title}" style="cursor:pointer;">[${fnId}]</a></sup>`;
-		});                     
+		});
 
 		container.innerHTML = content;
-	});                             
+	});
 
-	if (footnotesHTML) {            
+	if (footnotesHTML) {
 		if (!footnotesDiv && mainContent) {
 			const footerSection = document.createElement('section');
 			footerSection.id = 'footnotes-section';
 			footerSection.innerHTML = `<h1>Footnotes</h1><div id="footnotes"></div>`;
 			mainContent.appendChild(footerSection);
 			footnotesDiv = document.getElementById('footnotes');
-		}                       
+		}
 
-		if(footnotesDiv) {      
+		if(footnotesDiv) {
 			footnotesDiv.innerHTML = `<ol>${footnotesHTML}</ol>`;
 			document.getElementById('footnotes-section').style.display = 'block';
-		}                       
-	} else if (footnotesDiv) {      
+		}
+	} else if (footnotesDiv) {
 		const section = document.getElementById('footnotes-section');
 		if (section) section.style.display = 'none';
-	}                               
+	}
 
 	bindIframeSafeLinks();
 	if (typeof source_bibliography === "function") source_bibliography();
