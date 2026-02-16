@@ -1087,13 +1087,28 @@ const KV2 = [
 ];
 
 function pickSentence2D(weights) {
-    const maxI = weights.indexOf(Math.max(...weights));
-    const w = weights[maxI];
-    const bucket = SENTENCES_2D[maxI];
-    for (let s = 0; s < bucket.length; s++) {
-        if (w >= bucket[s].min) return { idx: maxI, text: bucket[s].text };
-    }
-    return { idx: maxI, text: bucket[bucket.length - 1].text };
+	const maxI = weights.indexOf(Math.max(...weights));
+	const w = weights[maxI];
+
+	// If the strongest signal is very weak, show a truly ambiguous message
+	// that reflects the actual weight distribution
+	if (w < 0.40) {
+		const pcts = weights.map(w => (w * 100).toFixed(0));
+		return { 
+			idx: maxI, 
+			text: `"Charge" is <b style="color:#94a3b8">deeply ambiguous</b> here — ` +
+			`<b style="color:${KV2[0].color}">🔋 energy ${pcts[0]}%</b>, ` +
+			`<b style="color:${KV2[1].color}">💳 fee ${pcts[1]}%</b>, ` +
+			`<b style="color:${KV2[2].color}">⚔️ rush ${pcts[2]}%</b>. ` +
+			`The model can't decide.`
+		};
+	}
+
+	const bucket = SENTENCES_2D[maxI];
+	for (let s = 0; s < bucket.length; s++) {
+		if (w >= bucket[s].min) return { idx: maxI, text: bucket[s].text };
+	}
+	return { idx: maxI, text: bucket[bucket.length - 1].text };
 }
 
 function updateAttn2D() {
