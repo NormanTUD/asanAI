@@ -505,6 +505,10 @@ function renderDotProductLab() {
    Cartesian canvas. No Plotly. Colorful. No overlap.
    ============================================================ */
 
+/* ============================================================
+   ATTENTION GEOMETRY — NAMED CONCEPTS + RICH SENTENCES
+   ============================================================ */
+
 function softmax(scores) {
     const max = Math.max(...scores);
     const exps = scores.map(s => Math.exp(s - max));
@@ -512,7 +516,7 @@ function softmax(scores) {
     return exps.map(e => e / sum);
 }
 
-/* ─── Canvas helpers ─── */
+/* ─── Canvas helpers (same as before) ─── */
 
 function drawDot(ctx, x, y, r, color, alpha) {
     ctx.save();
@@ -576,17 +580,134 @@ function drawSquare(ctx, x, y, s, color, alpha) {
 
 /* ═══════════════════════════════════════════════════════════
    1D — "How Financial Is It?"
-   Axis: 🌿 Nature ←───── 0 ─────→ Finance 🏦
    ═══════════════════════════════════════════════════════════ */
 
 const KV1 = [
-    { k: -3.0, v: -3.5, color: '#10b981', kIcon: '🌊', kName: 'river',  vIcon: '💧', vName: 'water',
-      sentence: 'The bank\'s <b style="color:#10b981">💧 water</b> level rose after the rain.' },
-    { k:  3.5, v:  4.0, color: '#f59e0b', kIcon: '🏦', kName: 'vault',  vIcon: '💰', vName: 'money',
-      sentence: 'The bank\'s <b style="color:#f59e0b">💰 vault</b> held millions in deposits.' },
-    { k:  0.3, v: -1.0, color: '#8b5cf6', kIcon: '🪑', kName: 'bench',  vIcon: '🌳', vName: 'park',
-      sentence: 'The bank was really just a <b style="color:#8b5cf6">🌳 park</b> bench by the path.' }
+    { k: -3.0, v: -3.5, color: '#10b981', kIcon: '🌊', kName: 'river',  vIcon: '💧', vName: 'water' },
+    { k:  3.5, v:  4.0, color: '#f59e0b', kIcon: '🏦', kName: 'vault',  vIcon: '💰', vName: 'money' },
+    { k:  0.3, v: -1.0, color: '#8b5cf6', kIcon: '🪑', kName: 'bench',  vIcon: '🌳', vName: 'park'  }
 ];
+
+const SENTENCES_1D = [
+    // Index 0 = river/water dominant
+    [
+        { min: 0.95, text: 'The <b style="color:#10b981">💧 river bank</b> flooded, washing away the old wooden dock and everything on it.' },
+        { min: 0.90, text: 'Floodwaters carved deep grooves into the <b style="color:#10b981">💧 river bank</b> overnight.' },
+        { min: 0.85, text: 'Salmon leapt upstream along the <b style="color:#10b981">💧 river bank</b> during the spring run.' },
+        { min: 0.80, text: 'A kingfisher perched on a branch overhanging the <b style="color:#10b981">💧 bank</b>.' },
+        { min: 0.75, text: 'Wildflowers lined the <b style="color:#10b981">💧 river bank</b> as far as the eye could see.' },
+        { min: 0.70, text: 'They spread a blanket on the grassy <b style="color:#10b981">💧 bank</b> for a picnic.' },
+        { min: 0.65, text: 'Children skipped stones from the <b style="color:#10b981">💧 bank</b> into the calm water.' },
+        { min: 0.60, text: 'A heron stood motionless on the <b style="color:#10b981">💧 bank</b>, watching for fish.' },
+        { min: 0.55, text: 'The canoe scraped against the sandy <b style="color:#10b981">💧 bank</b> as they pulled ashore.' },
+        { min: 0.50, text: 'The path followed the <b style="color:#10b981">💧 bank</b> of the creek through the woods.' },
+        { min: 0.45, text: '"Bank" here leans toward <b style="color:#10b981">💧 water</b> — probably a riverbank.' },
+        { min: 0.40, text: 'There\'s a pull toward <b style="color:#10b981">💧 nature</b>, but the meaning isn\'t fully settled.' },
+        { min: 0.35, text: 'A faint hint of <b style="color:#10b981">💧 river</b>, but the context is still wide open.' },
+        { min: 0.00, text: 'The word "bank" is almost neutral — maybe <b style="color:#10b981">💧 water</b>, maybe not.' }
+    ],
+    // Index 1 = vault/money dominant
+    [
+        { min: 0.95, text: 'The <b style="color:#f59e0b">💰 bank vault</b> held $40 million in gold reserves behind three-foot steel doors.' },
+        { min: 0.90, text: 'Federal investigators subpoenaed every record from the <b style="color:#f59e0b">💰 bank\'s</b> offshore accounts.' },
+        { min: 0.85, text: 'Armed guards stood outside the <b style="color:#f59e0b">💰 bank</b> during the armored cash transfer.' },
+        { min: 0.80, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> stock price surged after the merger announcement.' },
+        { min: 0.75, text: 'She deposited her paycheck at the <b style="color:#f59e0b">💰 bank</b> on Friday afternoon.' },
+        { min: 0.70, text: 'The <b style="color:#f59e0b">💰 bank</b> approved her mortgage application after weeks of review.' },
+        { min: 0.65, text: 'He checked his <b style="color:#f59e0b">💰 bank</b> balance nervously before making the purchase.' },
+        { min: 0.60, text: 'The <b style="color:#f59e0b">💰 bank</b> sent a letter about new savings account terms.' },
+        { min: 0.55, text: 'She walked into the <b style="color:#f59e0b">💰 bank</b> to ask about opening a checking account.' },
+        { min: 0.50, text: 'He walked toward the <b style="color:#f59e0b">💰 bank</b> to check his account balance.' },
+        { min: 0.45, text: '"Bank" is starting to sound like <b style="color:#f59e0b">💰 finance</b> — maybe a loan office?' },
+        { min: 0.40, text: 'There\'s a pull toward <b style="color:#f59e0b">💰 money</b>, but it could go either way.' },
+        { min: 0.35, text: 'A slight lean toward <b style="color:#f59e0b">💰 finance</b>, but the context is thin.' },
+        { min: 0.00, text: 'The word "bank" is almost neutral — maybe <b style="color:#f59e0b">💰 money</b>, maybe not.' }
+    ],
+    // Index 2 = bench/park dominant
+    [
+        { min: 0.95, text: 'The old <b style="color:#8b5cf6">🌳 park bench</b> had initials carved into every single weathered plank.' },
+        { min: 0.90, text: 'A brass plaque on the <b style="color:#8b5cf6">🌳 bank</b> read: "For Margaret, who loved this spot."' },
+        { min: 0.85, text: 'He dozed off on the <b style="color:#8b5cf6">🌳 bank</b> under the oak tree after a long lunch.' },
+        { min: 0.80, text: 'Someone left a dog-eared novel on the <b style="color:#8b5cf6">🌳 bank</b> near the fountain.' },
+        { min: 0.75, text: 'Pigeons gathered around the <b style="color:#8b5cf6">🌳 bank</b> where someone had dropped breadcrumbs.' },
+        { min: 0.70, text: 'Every Sunday, the old man fed sparrows from the same <b style="color:#8b5cf6">🌳 bank</b>.' },
+        { min: 0.65, text: 'She sat on the <b style="color:#8b5cf6">🌳 bank</b> and watched joggers pass by in the morning light.' },
+        { min: 0.60, text: 'Two strangers shared the <b style="color:#8b5cf6">🌳 bank</b> in comfortable silence.' },
+        { min: 0.55, text: 'The <b style="color:#8b5cf6">🌳 bank</b> in the park was her favorite reading spot on warm days.' },
+        { min: 0.50, text: 'Rain pooled on the empty <b style="color:#8b5cf6">🌳 bank</b> as the park cleared out.' },
+        { min: 0.45, text: '"Bank" here feels like a <b style="color:#8b5cf6">🌳 place to sit</b> — a park bench, maybe?' },
+        { min: 0.40, text: 'There\'s a quiet pull toward <b style="color:#8b5cf6">🌳 the park</b>, but the meaning isn\'t locked in.' },
+        { min: 0.35, text: 'A gentle lean toward <b style="color:#8b5cf6">🌳 rest and nature</b>, but still ambiguous.' },
+        { min: 0.00, text: 'The word "bank" is almost neutral — maybe <b style="color:#8b5cf6">🌳 a bench</b>, maybe not.' }
+    ]
+];
+
+const SENTENCES_2D = [
+    // Index 0 = river/water dominant
+    [
+        { min: 0.95, text: 'The <b style="color:#10b981">💧 river bank</b> crumbled into the rushing current after days of heavy rain.' },
+        { min: 0.90, text: 'Floodwaters spilled over the <b style="color:#10b981">💧 river bank</b>, swallowing the footpath whole.' },
+        { min: 0.85, text: 'Moss and ferns clung to the steep <b style="color:#10b981">💧 river bank</b> above the waterfall.' },
+        { min: 0.80, text: 'A kingfisher dove from the <b style="color:#10b981">💧 bank</b> and snatched a minnow mid-flight.' },
+        { min: 0.75, text: 'They pitched their tent on the <b style="color:#10b981">💧 bank</b> overlooking the stream.' },
+        { min: 0.70, text: 'Salmon fought their way upstream along the muddy <b style="color:#10b981">💧 bank</b>.' },
+        { min: 0.65, text: 'Wildflowers lined the <b style="color:#10b981">💧 bank</b> as far as the eye could see.' },
+        { min: 0.60, text: 'A heron stood motionless on the <b style="color:#10b981">💧 bank</b>, watching for fish.' },
+        { min: 0.55, text: 'The canoe scraped against the sandy <b style="color:#10b981">💧 bank</b> as they pulled ashore.' },
+        { min: 0.50, text: 'Children skipped stones from the <b style="color:#10b981">💧 bank</b> into the calm water.' },
+        { min: 0.45, text: 'The path followed the <b style="color:#10b981">💧 bank</b> of the creek through the woods.' },
+        { min: 0.40, text: '"Bank" here leans toward <b style="color:#10b981">💧 water</b> — maybe a riverbank?' },
+        { min: 0.35, text: 'There\'s a pull toward <b style="color:#10b981">💧 nature</b>, but the meaning isn\'t fully settled.' },
+        { min: 0.00, text: 'A faint hint of <b style="color:#10b981">💧 river</b>, but the context is still wide open.' }
+    ],
+    // Index 1 = vault/money dominant
+    [
+        { min: 0.95, text: 'The <b style="color:#f59e0b">💰 bank</b> foreclosed on three properties this quarter alone.' },
+        { min: 0.90, text: 'Federal agents raided the <b style="color:#f59e0b">💰 bank</b> at dawn, seizing all records.' },
+        { min: 0.85, text: 'Protesters gathered outside the <b style="color:#f59e0b">💰 bank</b> demanding lower interest rates.' },
+        { min: 0.80, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> quarterly earnings exceeded every analyst\'s forecast.' },
+        { min: 0.75, text: 'She nervously entered the <b style="color:#f59e0b">💰 bank</b> to negotiate her business loan.' },
+        { min: 0.70, text: 'The <b style="color:#f59e0b">💰 bank</b> approved her mortgage after weeks of paperwork.' },
+        { min: 0.65, text: 'He deposited his paycheck at the <b style="color:#f59e0b">💰 bank</b> on Friday afternoon.' },
+        { min: 0.60, text: 'The <b style="color:#f59e0b">💰 bank</b> sent a letter about the new savings account terms.' },
+        { min: 0.55, text: 'She checked her <b style="color:#f59e0b">💰 bank</b> balance on her phone while waiting in line.' },
+        { min: 0.50, text: 'He walked toward the <b style="color:#f59e0b">💰 bank</b> to ask about opening an account.' },
+        { min: 0.45, text: '"Bank" is starting to sound like <b style="color:#f59e0b">💰 finance</b> — maybe a loan office?' },
+        { min: 0.40, text: 'There\'s a pull toward <b style="color:#f59e0b">💰 money</b>, but it could still go either way.' },
+        { min: 0.35, text: 'A slight lean toward <b style="color:#f59e0b">💰 finance</b>, but the context is thin.' },
+        { min: 0.00, text: 'A faint whiff of <b style="color:#f59e0b">💰 money</b>, but nothing conclusive yet.' }
+    ],
+    // Index 2 = bench/park dominant
+    [
+        { min: 0.95, text: 'The old <b style="color:#8b5cf6">🌳 park bank</b> had initials carved into every weathered plank.' },
+        { min: 0.90, text: 'A brass plaque on the <b style="color:#8b5cf6">🌳 bank</b> read: "In memory of Margaret, who loved this view."' },
+        { min: 0.85, text: 'Someone left a paperback novel on the <b style="color:#8b5cf6">🌳 bank</b> near the fountain.' },
+        { min: 0.80, text: 'He dozed off on the <b style="color:#8b5cf6">🌳 bank</b> under the oak tree after lunch.' },
+        { min: 0.75, text: 'Pigeons gathered around the <b style="color:#8b5cf6">🌳 bank</b> where someone had dropped breadcrumbs.' },
+        { min: 0.70, text: 'Every Sunday, the old man fed sparrows from the same <b style="color:#8b5cf6">🌳 bank</b> in the square.' },
+        { min: 0.65, text: 'She sat on the <b style="color:#8b5cf6">🌳 bank</b> and watched the sunset paint the sky orange.' },
+        { min: 0.60, text: 'Two strangers shared the <b style="color:#8b5cf6">🌳 bank</b> in silence, both reading newspapers.' },
+        { min: 0.55, text: 'The <b style="color:#8b5cf6">🌳 bank</b> in the park was her favorite spot to sketch.' },
+        { min: 0.50, text: 'Rain pooled on the empty <b style="color:#8b5cf6">🌳 bank</b> as the park cleared out.' },
+        { min: 0.45, text: '"Bank" here feels like a <b style="color:#8b5cf6">🌳 place to sit</b> — a park bench, maybe?' },
+        { min: 0.40, text: 'There\'s a quiet pull toward <b style="color:#8b5cf6">🌳 the park</b>, but the meaning isn\'t locked in.' },
+        { min: 0.35, text: 'A gentle lean toward <b style="color:#8b5cf6">🌳 rest and nature</b>, but still ambiguous.' },
+        { min: 0.00, text: 'A whisper of <b style="color:#8b5cf6">🌳 park benches</b>, but the context could shift any moment.' }
+    ]
+];
+
+
+
+
+function pickSentence1D(weights) {
+    const maxI = weights.indexOf(Math.max(...weights));
+    const w = weights[maxI];
+    const bucket = SENTENCES_1D[maxI];
+    for (let s = 0; s < bucket.length; s++) {
+        if (w >= bucket[s].min) return { idx: maxI, text: bucket[s].text };
+    }
+    return { idx: maxI, text: bucket[bucket.length - 1].text };
+}
 
 function updateAttn1D() {
     const q = parseFloat(document.getElementById('attn1d-q').value);
@@ -596,13 +717,11 @@ function updateAttn1D() {
     const weights = softmax(scores);
     const output  = KV1.reduce((s, kv, i) => s + weights[i] * kv.v, 0);
 
-    // ── Find dominant concept for sentence ──
-    const maxI = weights.indexOf(Math.max(...weights));
-
-    // ── Sentence display ──
+    // ── Sentence ──
+    const pick = pickSentence1D(weights);
     const sentenceEl = document.getElementById('attn1d-sentence');
-    sentenceEl.innerHTML = `<span style="font-size:1.1rem;">"${KV1[maxI].sentence}"</span>`;
-    sentenceEl.style.borderLeftColor = KV1[maxI].color;
+    sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
+    sentenceEl.style.borderLeftColor = KV1[pick.idx].color;
 
     // ── Canvas ──
     const canvas = document.getElementById('attn1d-canvas');
@@ -619,34 +738,31 @@ function updateAttn1D() {
     const range = 5;
     const toX = (v) => pad + ((v + range) / (2 * range)) * (W - 2 * pad);
 
-    const rowQ = H * 0.28;   // Query row
-    const rowK = H * 0.50;   // Keys row
-    const rowV = H * 0.78;   // Values + Output row
+    const rowQ = H * 0.22;
+    const rowK = H * 0.48;
+    const rowV = H * 0.78;
 
-    // ── Axis for Keys ──
+    // ── Key axis ──
     ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(W - pad, rowK); ctx.stroke();
-    // Arrowheads
     ctx.beginPath(); ctx.moveTo(W - pad, rowK); ctx.lineTo(W - pad - 8, rowK - 5); ctx.lineTo(W - pad - 8, rowK + 5); ctx.closePath(); ctx.fillStyle = '#94a3b8'; ctx.fill();
     ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(pad + 8, rowK - 5); ctx.lineTo(pad + 8, rowK + 5); ctx.closePath(); ctx.fill();
 
-    // Axis labels
     drawLabel(ctx, '🌿 Nature', pad + 35, rowK + 22, '#10b981', 12, 'center', true);
     drawLabel(ctx, 'Finance 🏦', W - pad - 35, rowK + 22, '#f59e0b', 12, 'center', true);
 
     // Ticks
-    ctx.fillStyle = '#cbd5e1'; ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
+    ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
     for (let t = -4; t <= 4; t++) {
         const x = toX(t);
         ctx.beginPath(); ctx.moveTo(x, rowK - 3); ctx.lineTo(x, rowK + 3); ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1; ctx.stroke();
         if (t !== 0) { ctx.fillStyle = '#94a3b8'; ctx.fillText(t, x, rowK + 14); }
     }
-    // Zero dashed
     ctx.setLineDash([3, 3]); ctx.strokeStyle = '#cbd5e1';
     ctx.beginPath(); ctx.moveTo(toX(0), rowK - 12); ctx.lineTo(toX(0), rowK + 12); ctx.stroke();
     ctx.setLineDash([]);
 
-    // ── Axis for Values ──
+    // Value axis
     ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(pad, rowV); ctx.lineTo(W - pad, rowV); ctx.stroke();
 
@@ -654,11 +770,11 @@ function updateAttn1D() {
     drawLabel(ctx, 'KEYS', 30, rowK, '#64748b', 10, 'center', true);
     drawLabel(ctx, 'VALUES', 30, rowV, '#64748b', 10, 'center', true);
 
-    // ── Connection lines Q→K (thickness = weight) ──
+    // ── Q→K lines ──
     KV1.forEach((kv, i) => {
         ctx.beginPath();
-        ctx.moveTo(toX(q), rowQ + 12);
-        ctx.lineTo(toX(kv.k), rowK - 12);
+        ctx.moveTo(toX(q), rowQ + 14);
+        ctx.lineTo(toX(kv.k), rowK - 14);
         ctx.strokeStyle = kv.color;
         ctx.lineWidth = 2 + weights[i] * 14;
         ctx.globalAlpha = 0.2 + weights[i] * 0.8;
@@ -672,20 +788,22 @@ function updateAttn1D() {
     drawLabel(ctx, `"bank" = ${q.toFixed(1)}`, toX(q), rowQ - 20, '#2563eb', 14, 'center', true);
 
     // ── Key dots ──
+    // Offsets to prevent overlap: river is left-aligned, vault right-aligned, bench center
+    const kLabelAligns = ['right', 'left', 'center'];
+    const kLabelOffsets = [-16, 16, 0];
     KV1.forEach((kv, i) => {
-        drawDot(ctx, toX(kv.k), rowK, 10, kv.color);
-        // Icon above, name + weight below — offset to avoid axis labels
-        drawLabel(ctx, kv.kIcon, toX(kv.k), rowK - 18, kv.color, 18, 'center');
-        drawLabel(ctx, `${kv.kName}`, toX(kv.k), rowK - 32, kv.color, 11, 'center', true);
-        drawLabel(ctx, `${(weights[i]*100).toFixed(0)}%`, toX(kv.k), rowK + 34, kv.color, 12, 'center', true);
+        const kx = toX(kv.k);
+        drawDot(ctx, kx, rowK, 10, kv.color);
+        drawLabel(ctx, `${kv.kIcon} ${kv.kName}`, kx + kLabelOffsets[i], rowK - 28, kv.color, 12, kLabelAligns[i], true);
+        drawLabel(ctx, `${(weights[i]*100).toFixed(0)}%`, kx + kLabelOffsets[i], rowK - 42, kv.color, 11, kLabelAligns[i], true);
     });
 
-    // ── Dashed lines K→V (mapping) ──
+    // ── K→V dashed lines ──
     KV1.forEach((kv, i) => {
         ctx.beginPath();
         ctx.setLineDash([4, 4]);
-        ctx.moveTo(toX(kv.k), rowK + 12);
-        ctx.lineTo(toX(kv.v), rowV - 10);
+        ctx.moveTo(toX(kv.k), rowK + 14);
+        ctx.lineTo(toX(kv.v), rowV - 12);
         ctx.strokeStyle = kv.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = 0.3 + weights[i] * 0.5;
@@ -706,6 +824,7 @@ function updateAttn1D() {
     drawLabel(ctx, `★ ${output.toFixed(2)}`, toX(output), rowV - 22, '#b45309', 13, 'center', true);
 
     // ── Math table ──
+    const maxI = pick.idx;
     let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
         <tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
             <th style="text-align:left; padding:3px 8px;">Concept</th>
@@ -737,25 +856,29 @@ function updateAttn1D() {
 
 /* ═══════════════════════════════════════════════════════════
    2D — "Where Does 'Bank' Belong?"
-   X-axis: 🌿 Nature ← → Finance 🏦
-   Y-axis: 😌 Calm   ← → Urgent  ⚡
    ═══════════════════════════════════════════════════════════ */
 
 const KV2 = [
     { k: [-2.5, -0.5], v: [-3.0, -0.5], color: '#10b981',
       kIcon: '🌊', kName: 'river', vIcon: '💧', vName: 'water',
-      // Label offsets [dx, dy] from the dot center — hand-tuned to avoid overlap
-      kOff: [-16, -20], vOff: [0, 18],
-      sentence: '"The <b style="color:#10b981">💧 river bank</b> was covered in wildflowers."' },
+      kOff: [-18, -22], vOff: [0, 18] },
     { k: [2.5, 1.8], v: [3.0, 2.0], color: '#f59e0b',
       kIcon: '🏦', kName: 'vault', vIcon: '💰', vName: 'money',
-      kOff: [16, -18], vOff: [0, 18],
-      sentence: '"The <b style="color:#f59e0b">💰 bank vault</b> was heavily guarded."' },
+      kOff: [18, -20], vOff: [0, 18] },
     { k: [-0.3, -2.5], v: [-0.5, -3.0], color: '#8b5cf6',
       kIcon: '🪑', kName: 'bench', vIcon: '🌳', vName: 'park',
-      kOff: [20, 0], vOff: [0, 18],
-      sentence: '"She sat on the <b style="color:#8b5cf6">🌳 park</b> bank and read a book."' }
+      kOff: [22, 4], vOff: [0, 18] }
 ];
+
+function pickSentence2D(weights) {
+    const maxI = weights.indexOf(Math.max(...weights));
+    const w = weights[maxI];
+    const bucket = SENTENCES_2D[maxI];
+    for (let s = 0; s < bucket.length; s++) {
+        if (w >= bucket[s].min) return { idx: maxI, text: bucket[s].text };
+    }
+    return { idx: maxI, text: bucket[bucket.length - 1].text };
+}
 
 function updateAttn2D() {
     const qx = parseFloat(document.getElementById('attn2d-qx').value);
@@ -771,12 +894,11 @@ function updateAttn2D() {
     const out = [0, 0];
     KV2.forEach((kv, i) => { out[0] += weights[i]*kv.v[0]; out[1] += weights[i]*kv.v[1]; });
 
-    const maxI = weights.indexOf(Math.max(...weights));
-
     // ── Sentence ──
+    const pick = pickSentence2D(weights);
     const sentenceEl = document.getElementById('attn2d-sentence');
-    sentenceEl.innerHTML = `<span style="font-size:1.1rem;">${KV2[maxI].sentence}</span>`;
-    sentenceEl.style.borderLeftColor = KV2[maxI].color;
+    sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
+    sentenceEl.style.borderLeftColor = KV2[pick.idx].color;
 
     // ── Canvas ──
     const canvas = document.getElementById('attn2d-canvas');
@@ -806,13 +928,11 @@ function updateAttn2D() {
     ctx.beginPath(); ctx.moveTo(pad, toY(0)); ctx.lineTo(W - pad, toY(0)); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(toX(0), pad); ctx.lineTo(toX(0), H - pad); ctx.stroke();
 
-    // Axis labels — placed in corners to avoid overlap with data
     drawLabel(ctx, '🌿 Nature', pad + 6, toY(0) + 18, '#10b981', 11, 'left', true);
     drawLabel(ctx, 'Finance 🏦', W - pad - 6, toY(0) + 18, '#f59e0b', 11, 'right', true);
     drawLabel(ctx, '⚡ Urgent', toX(0) + 8, pad + 6, '#ef4444', 11, 'left', true);
     drawLabel(ctx, '😌 Calm', toX(0) + 8, H - pad - 6, '#3b82f6', 11, 'left', true);
 
-    // Tick numbers
     ctx.fillStyle = '#94a3b8'; ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
     for (let t = -3; t <= 3; t++) {
         if (t === 0) continue;
@@ -822,7 +942,7 @@ function updateAttn2D() {
         ctx.textAlign = 'center';
     }
 
-    // ── Lines Q→K (thickness = weight) ──
+    // ── Q→K lines ──
     KV2.forEach((kv, i) => {
         ctx.beginPath();
         ctx.moveTo(toX(q[0]), toY(q[1]));
@@ -835,7 +955,7 @@ function updateAttn2D() {
         ctx.globalAlpha = 1;
     });
 
-    // ── Dashed lines V→Output (thickness = weight) ──
+    // ── V→Output dashed lines ──
     KV2.forEach((kv, i) => {
         ctx.beginPath();
         ctx.setLineDash([5, 5]);
@@ -868,12 +988,12 @@ function updateAttn2D() {
     // ── Query diamond ──
     drawDiamond(ctx, toX(q[0]), toY(q[1]), 10, '#2563eb');
     drawLabel(ctx, '"bank"', toX(q[0]), toY(q[1]) - 22, '#2563eb', 14, 'center', true);
-
-    // ── Output star ──
+	    // ── Output star ──
     drawStar(ctx, toX(out[0]), toY(out[1]), 14, '#f59e0b');
-    drawLabel(ctx, `★ bank in context`, toX(out[0]), toY(out[1]) + 24, '#b45309', 12, 'center', true);
+    drawLabel(ctx, '★ bank in context', toX(out[0]), toY(out[1]) + 24, '#b45309', 12, 'center', true);
 
     // ── Math table ──
+    const maxI = pick.idx;
     let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
         <tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
             <th style="text-align:left; padding:3px 8px;">Concept</th>
@@ -908,6 +1028,7 @@ function updateAttn2D() {
     </tr></table>`;
     document.getElementById('attn2d-math').innerHTML = html;
 }
+
 
 // ─────────────────── INITIALIZATION ───────────────────
 
