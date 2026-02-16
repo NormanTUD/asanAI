@@ -139,9 +139,9 @@ The two most popular libraries for AI are \citealternativetitle{tensorflow2016} 
 $visionlabcodetabs = array(
 	"PyTorch" => '
 <div class="md">
-PyTorch is more explicit, requiring you to define the "Forward Pass" where data flows through the model.
+<b>PyTorch</b> is more explicit, requiring you to define the "Forward Pass" where data flows through the model.
 
-You can call this script with the same parameters as you can call the TensorFlow one.
+You can call this script with the same parameters as you can call the <b>TensorFlow</b> one.
 </div>
 <pre><code class="language-python">import os
 import json
@@ -278,7 +278,7 @@ if __name__ == "__main__":
         predict_mode(args.model_out, args.path)</code></pre>
 	',
 	"TensorFlow" => '<div class="md">
-TensorFlow uses a "Sequential" style where you stack layers like LEGO blocks.
+<b>TensorFlow</b> uses a "Sequential" style where you stack layers like LEGO blocks.
 </div>
 <pre><code class="language-python">import sys
 import os
