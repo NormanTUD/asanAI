@@ -505,44 +505,6 @@ function source_bibliography() {
 	bindIframeSafeLinks(); // NEW: Ensure bibliography links are also clickable
 }
 
-/**
- * Checks the URL hash and scrolls to the target element once it is rendered in the DOM.
- * Includes a small delay to ensure dynamic content (like TeX or Markdown) has settled.
- */
-function scrollToHash() {
-	const hash = window.location.hash;
-	if (!hash) return;
-
-	// Remove the '#' to get the ID
-	const targetId = hash.substring(1);
-
-	// Set up an interval to wait for the element to appear in the DOM
-	const checkExist = setInterval(() => {
-		const element = document.getElementById(targetId);
-
-		if (element) {
-			clearInterval(checkExist);
-
-			// Short delay ensures layout engines have finished positioning elements
-			setTimeout(() => {
-				element.scrollIntoView({
-					behavior: 'smooth',
-					block: 'start'
-				});
-			}, 100);
-		}
-	}, 100);
-
-	// Safety timeout: stop looking after 5 seconds if not found
-	setTimeout(() => clearInterval(checkExist), 5000);
-}
-
-// window.indexedTerms bleibt für die Zählung bestehen,
-// wird aber hier nur für die Anzeige im Glossar genutzt.
-/**
- * Liest das Glossar, zählt Vorkommen im Text (.md Container) ohne den Text zu verändern,
- * rendert das Ergebnis als Tabelle und führt am Ende toc() aus.
- */
 async function renderGlossary() {
 	let container = document.getElementById('glossary-container');
 	const mainContent = document.getElementById('contents');

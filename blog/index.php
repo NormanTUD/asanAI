@@ -77,7 +77,6 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 		await toc();
 
 		// 2. Finalize
-		scrollToHash();
 		$("#contents").show();
 
 		// 3. Hide Overlay
