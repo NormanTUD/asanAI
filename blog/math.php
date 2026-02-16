@@ -334,6 +334,7 @@ $$n! = \prod_{i=1}^{n} i = 1 \times 2 \times \dots \times n$$
 According to \citeauthor{historyofmathematicalnotation} (Vol. 2, p. 71, § 448), the familiar exclamation point notation $n!$ was introduced by \citeauthor{kramp1808} in his work \citetitle{kramp1808} (\citeyear{kramp1808}). Before this, mathematicians often used a L-shaped symbol to denote the same operation.
 
 In programming, we can define this function using **recursion**, where a function calls itself to solve smaller versions of the same problem:
+</div>
 
 <pre><code class="language-python">def factorial(n):
     if n == 0:
