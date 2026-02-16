@@ -109,7 +109,7 @@ Drag the query arrow below. Watch how rotating it toward a key increases that ke
         <div style="flex:1; min-width:200px;">
             <div style="display:flex; align-items:center; gap:8px;">
                 <span style="font-size:0.8rem; color:#10b981; font-weight:bold;">🌿</span>
-                <input type="range" id="attn2d-qx" min="-3" max="3" step="0.2" value="1.5"
+                <input type="range" id="attn2d-qx" min="-3" max="3" step="0.1" value="1.5"
                        style="flex:1; accent-color:#2563eb;" oninput="updateAttn2D()">
                 <span style="font-size:0.8rem; color:#f59e0b; font-weight:bold;">🏦</span>
                 <span id="attn2d-qx-val" style="font-weight:bold; color:#2563eb; min-width:32px; text-align:right;">1.5</span>
@@ -119,7 +119,7 @@ Drag the query arrow below. Watch how rotating it toward a key increases that ke
         <div style="flex:1; min-width:200px;">
             <div style="display:flex; align-items:center; gap:8px;">
                 <span style="font-size:0.8rem; color:#3b82f6; font-weight:bold;">😌</span>
-                <input type="range" id="attn2d-qy" min="-3" max="3" step="0.2" value="0.5"
+                <input type="range" id="attn2d-qy" min="-3" max="3" step="0.1" value="0.5"
                        style="flex:1; accent-color:#2563eb;" oninput="updateAttn2D()">
                 <span style="font-size:0.8rem; color:#ef4444; font-weight:bold;">⚡</span>
                 <span id="attn2d-qy-val" style="font-weight:bold; color:#2563eb; min-width:32px; text-align:right;">0.5</span>
