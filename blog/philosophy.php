@@ -354,7 +354,7 @@ These costs create a barrier to entry, ensuring that only the most capital-rich 
 TODO
 
 
-## The Societal Impact: Truth Decay and the "Liar's Dividend"
+## The Societal Impact: \citetitle{truthdecay} and the "Liar's Dividend"
 
 TODO
 
