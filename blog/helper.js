@@ -4,15 +4,6 @@ window.indexedTerms = {}; // Global tracker for used terms
 window.quotesLog = [];
 window.indexedTerms = {};
 
-function getCategoryColor(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const h = Math.abs(hash) % 360;
-    return `hsl(${h}, 70%, 45%)`;
-}
-
 const categoryConfig = {
 	data: "Data",
 	math: "Math",
@@ -29,144 +20,144 @@ const categoryConfig = {
 };
 
 function getCategoryColor(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const h = Math.abs(hash) % 360;
-    return `hsl(${h}, 70%, 45%)`;
+	let hash = 0;
+	for (let i = 0; i < str.length; i++) {
+		hash = str.charCodeAt(i) + ((hash << 5) - hash);
+	}
+	const h = Math.abs(hash) % 360;
+	return `hsl(${h}, 70%, 45%)`;
 }
 
 function parseCategories() {
-    const containers = document.querySelectorAll('.md');
-    const activeCategories = new Set();
-    const catRegex = /\\category\{([^}]+)\}/g;
+	const containers = document.querySelectorAll('.md');
+	const activeCategories = new Set();
+	const catRegex = /\\category\{([^}]+)\}/g;
 
-    containers.forEach(container => {
-        const children = Array.from(container.children);
-        let currentWrapper = null;
-        let stopLevel = null;
+	containers.forEach(container => {
+		const children = Array.from(container.children);
+		let currentWrapper = null;
+		let stopLevel = null;
 
-        children.forEach(el => {
-            if (el.id === 'toc') return;
+		children.forEach(el => {
+			if (el.id === 'toc') return;
 
-            const text = el.textContent || "";
-            const matches = [...text.matchAll(catRegex)];
+			const text = el.textContent || "";
+			const matches = [...text.matchAll(catRegex)];
 
-            if (matches.length > 0) {
-                const foundKeys = [];
-                matches.forEach(m => {
-                    const parts = m[1].split(',').map(s => s.trim());
-                    foundKeys.push(...parts);
-                });
+			if (matches.length > 0) {
+				const foundKeys = [];
+				matches.forEach(m => {
+					const parts = m[1].split(',').map(s => s.trim());
+					foundKeys.push(...parts);
+				});
 
-                const validKeys = foundKeys.filter(k => categoryConfig[k]);
+				const validKeys = foundKeys.filter(k => categoryConfig[k]);
 
-                if (validKeys.length > 0) {
-                    validKeys.forEach(k => activeCategories.add(k));
+				if (validKeys.length > 0) {
+					validKeys.forEach(k => activeCategories.add(k));
 
-                    // Erstelle den Wrapper
-                    currentWrapper = document.createElement('div');
-                    currentWrapper.className = 'category-block ' + validKeys.map(k => `cat-${k}`).join(' ');
+					// Erstelle den Wrapper
+					currentWrapper = document.createElement('div');
+					currentWrapper.className = 'category-block ' + validKeys.map(k => `cat-${k}`).join(' ');
 
-                    const mainColor = getCategoryColor(validKeys[0]);
-                    //currentWrapper.style.cssText = `border-left: 4px solid ${mainColor}; padding-left: 15px; margin-bottom: 20px; display: block;`;
+					const mainColor = getCategoryColor(validKeys[0]);
+					//currentWrapper.style.cssText = `border-left: 4px solid ${mainColor}; padding-left: 15px; margin-bottom: 20px; display: block;`;
 
-                    // Füge den Wrapper nach dem aktuellen Element ein
-                    container.insertBefore(currentWrapper, el.nextSibling);
+					// Füge den Wrapper nach dem aktuellen Element ein
+					container.insertBefore(currentWrapper, el.nextSibling);
 
-                    // LOGIK: Finde das Stopp-Level
-                    // Wir schauen, ob das nächste Element eine Überschrift ist
-                    let nextEl = el.nextElementSibling;
-                    // Überspringe leere Textknoten/Wrapper falls vorhanden
-                    while (nextEl && nextEl === currentWrapper) nextEl = nextEl.nextElementSibling;
+					// LOGIK: Finde das Stopp-Level
+					// Wir schauen, ob das nächste Element eine Überschrift ist
+					let nextEl = el.nextElementSibling;
+					// Überspringe leere Textknoten/Wrapper falls vorhanden
+					while (nextEl && nextEl === currentWrapper) nextEl = nextEl.nextElementSibling;
 
-                    if (nextEl && /^H([1-6])$/.test(nextEl.tagName)) {
-                        // Wenn unmittelbar danach ein H<n> kommt, stoppen wir erst beim nächsten H <= n
-                        stopLevel = parseInt(nextEl.tagName.substring(1));
-                    } else {
-                        // Ansonsten stoppen wir bei JEDER Überschrift
-                        stopLevel = 7;
-                    }
+					if (nextEl && /^H([1-6])$/.test(nextEl.tagName)) {
+						// Wenn unmittelbar danach ein H<n> kommt, stoppen wir erst beim nächsten H <= n
+						stopLevel = parseInt(nextEl.tagName.substring(1));
+					} else {
+						// Ansonsten stoppen wir bei JEDER Überschrift
+						stopLevel = 7;
+					}
 
-                    // Entferne den Tag aus dem Element
-                    el.innerHTML = el.innerHTML.replace(catRegex, '');
-                    if (el.textContent.trim() === "" && el.children.length === 0) {
-                        el.remove();
-                    }
-                    return; // Springe zum nächsten Element (das dann in den Wrapper wandert)
-                }
-            }
+					// Entferne den Tag aus dem Element
+					el.innerHTML = el.innerHTML.replace(catRegex, '');
+					if (el.textContent.trim() === "" && el.children.length === 0) {
+						el.remove();
+					}
+					return; // Springe zum nächsten Element (das dann in den Wrapper wandert)
+				}
+			}
 
-            // --- STOPP-LOGIK ---
-            if (/^H[1-6]$/.test(el.tagName)) {
-                const currentLevel = parseInt(el.tagName.substring(1));
+			// --- STOPP-LOGIK ---
+			if (/^H[1-6]$/.test(el.tagName)) {
+				const currentLevel = parseInt(el.tagName.substring(1));
 
-                // Wir stoppen, wenn:
-                // 1. Ein Wrapper aktiv ist UND
-                // 2. Der Wrapper bereits Inhalt hat (damit die Start-Überschrift mitgenommen wird) UND
-                // 3. Die aktuelle Überschrift Ebene <= stopLevel ist
-                if (currentWrapper && currentWrapper.children.length > 0) {
-                    if (currentLevel <= stopLevel) {
-                        currentWrapper = null;
-                        stopLevel = null;
-                    }
-                }
-            }
+				// Wir stoppen, wenn:
+				// 1. Ein Wrapper aktiv ist UND
+				// 2. Der Wrapper bereits Inhalt hat (damit die Start-Überschrift mitgenommen wird) UND
+				// 3. Die aktuelle Überschrift Ebene <= stopLevel ist
+				if (currentWrapper && currentWrapper.children.length > 0) {
+					if (currentLevel <= stopLevel) {
+						currentWrapper = null;
+						stopLevel = null;
+					}
+				}
+			}
 
-            // --- VERSCHIEBE-LOGIK ---
-            if (currentWrapper && el !== currentWrapper && el.parentNode === container) {
-                currentWrapper.appendChild(el);
-            }
-        });
-    });
+			// --- VERSCHIEBE-LOGIK ---
+			if (currentWrapper && el !== currentWrapper && el.parentNode === container) {
+				currentWrapper.appendChild(el);
+			}
+		});
+	});
 
-    //renderCategoryUI(activeCategories); // TODO re-enable
+	//renderCategoryUI(activeCategories); // TODO re-enable
 }
 
 function renderCategoryUI(activeCategories) {
-    const mainContent = document.getElementById('contents');
-    if (!mainContent || activeCategories.size === 0) return;
+	const mainContent = document.getElementById('contents');
+	if (!mainContent || activeCategories.size === 0) return;
 
-    let filterBar = document.getElementById('category-filter-bar');
-    if (!filterBar) {
-        filterBar = document.createElement('div');
-        filterBar.id = 'category-filter-bar';
-        filterBar.style.cssText = "margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 10px;";
+	let filterBar = document.getElementById('category-filter-bar');
+	if (!filterBar) {
+		filterBar = document.createElement('div');
+		filterBar.id = 'category-filter-bar';
+		filterBar.style.cssText = "margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 10px;";
 
-        // WICHTIG: Wenn ein TOC existiert, füge die Bar DANACH ein, nicht davor
-        const toc = document.getElementById('toc');
-        if (toc && toc.parentNode === mainContent) {
-            toc.insertAdjacentElement('afterend', filterBar);
-        } else {
-            mainContent.prepend(filterBar);
-        }
-    }
+		// WICHTIG: Wenn ein TOC existiert, füge die Bar DANACH ein, nicht davor
+		const toc = document.getElementById('toc');
+		if (toc && toc.parentNode === mainContent) {
+			toc.insertAdjacentElement('afterend', filterBar);
+		} else {
+			mainContent.prepend(filterBar);
+		}
+	}
 
-    filterBar.innerHTML = '';
+	filterBar.innerHTML = '';
 
-    activeCategories.forEach(key => {
-        const color = getCategoryColor(key);
-        const btn = document.createElement('button');
-        btn.innerHTML = categoryConfig[key];
-        btn.style.cssText = `border: 2px solid ${color}; padding: 6px 14px; border-radius: 20px; cursor: pointer; background: ${color}; color: white; font-weight: bold;`;
-        btn.dataset.active = "true";
+	activeCategories.forEach(key => {
+		const color = getCategoryColor(key);
+		const btn = document.createElement('button');
+		btn.innerHTML = categoryConfig[key];
+		btn.style.cssText = `border: 2px solid ${color}; padding: 6px 14px; border-radius: 20px; cursor: pointer; background: ${color}; color: white; font-weight: bold;`;
+		btn.dataset.active = "true";
 
-        btn.onclick = () => {
-            const isActive = btn.dataset.active === "true";
-            btn.dataset.active = !isActive;
-            btn.style.background = !isActive ? color : "transparent";
-            btn.style.color = !isActive ? "white" : color;
+		btn.onclick = () => {
+			const isActive = btn.dataset.active === "true";
+			btn.dataset.active = !isActive;
+			btn.style.background = !isActive ? color : "transparent";
+			btn.style.color = !isActive ? "white" : color;
 
-            const blocks = document.querySelectorAll(`.cat-${key}`);
-            console.log(`Click Debug: Toggling ${blocks.length} blocks for ${key}`);
+			const blocks = document.querySelectorAll(`.cat-${key}`);
+			console.log(`Click Debug: Toggling ${blocks.length} blocks for ${key}`);
 
-            blocks.forEach(b => {
-                b.style.setProperty('display', !isActive ? 'block' : 'none', 'important');
-            });
-        };
-        filterBar.appendChild(btn);
-    });
+			blocks.forEach(b => {
+				b.style.setProperty('display', !isActive ? 'block' : 'none', 'important');
+			});
+		};
+		filterBar.appendChild(btn);
+	});
 }
 
 
@@ -194,33 +185,33 @@ function warn(id, msg) {
 
 function renderMarkdown() {
 	document.querySelectorAll('.md').forEach(container => {
-        // 1. Inhalt holen und Einrückungen fixen
-        let rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
+		// 1. Inhalt holen und Einrückungen fixen
+		let rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
 
-        // 2. Index-Logik VOR dem Markdown-Parsing ausführen
-        // Wir nutzen hier die Logik, die normalerweise in deiner parseIndex-Funktion steht
-        const regex = /\\index\{([^}]+)\}/g;
-        rawContent = rawContent.replace(regex, (match, term) => {
-            const normalizedTerm = term.toLowerCase().replace(/_/g, ' ');
+		// 2. Index-Logik VOR dem Markdown-Parsing ausführen
+		// Wir nutzen hier die Logik, die normalerweise in deiner parseIndex-Funktion steht
+		const regex = /\\index\{([^}]+)\}/g;
+		rawContent = rawContent.replace(regex, (match, term) => {
+			const normalizedTerm = term.toLowerCase().replace(/_/g, ' ');
 
-            // ID generieren (ähnlich wie in deiner restlichen Logik)
-            const safeIdBase = normalizedTerm.replace(/\s+/g, '-');
-            const occurrenceId = `idx-${safeIdBase}-${Math.random().toString(36).substr(2, 4)}`;
+			// ID generieren (ähnlich wie in deiner restlichen Logik)
+			const safeIdBase = normalizedTerm.replace(/\s+/g, '-');
+			const occurrenceId = `idx-${safeIdBase}-${Math.random().toString(36).substr(2, 4)}`;
 
-            // Im globalen Tracker registrieren
-            if (!window.indexedTerms[normalizedTerm]) {
-                window.indexedTerms[normalizedTerm] = [];
-            }
-            window.indexedTerms[normalizedTerm].push(occurrenceId);
+			// Im globalen Tracker registrieren
+			if (!window.indexedTerms[normalizedTerm]) {
+				window.indexedTerms[normalizedTerm] = [];
+			}
+			window.indexedTerms[normalizedTerm].push(occurrenceId);
 
-            // Den Tag durch ein sauberes HTML-Span ersetzen
-            // Marked lässt HTML-Tags in der Regel unberührt, wodurch die ID der Überschrift sauber bleibt
-            return `<span id="${occurrenceId}">${term}</span>`;
-        });
+			// Den Tag durch ein sauberes HTML-Span ersetzen
+			// Marked lässt HTML-Tags in der Regel unberührt, wodurch die ID der Überschrift sauber bleibt
+			return `<span id="${occurrenceId}">${term}</span>`;
+		});
 
-        // 3. Erst jetzt das Markdown (mit den bereits fertigen Spans) parsen
-        container.innerHTML = marked.parse(rawContent);
-    });
+		// 3. Erst jetzt das Markdown (mit den bereits fertigen Spans) parsen
+		container.innerHTML = marked.parse(rawContent);
+	});
 
 	const fnContainer = document.getElementById('footnotes');
 	if (fnContainer) {
@@ -554,99 +545,99 @@ function scrollToHash() {
  * rendert das Ergebnis als Tabelle und führt am Ende toc() aus.
  */
 async function renderGlossary() {
-    let container = document.getElementById('glossary-container');
-    const mainContent = document.getElementById('contents');
+	let container = document.getElementById('glossary-container');
+	const mainContent = document.getElementById('contents');
 
-    // Falls der Container nicht existiert, erstelle ihn und hänge ihn an #contents an
-    if (!container && mainContent) {
-        container = document.createElement('div');
-        container.id = 'glossary-container';
-        // Optional: Anker für das Inhaltsverzeichnis hinzufügen
-        container.setAttribute('data-toc-title', 'Glossary');
-        mainContent.appendChild(container);
-    }
+	// Falls der Container nicht existiert, erstelle ihn und hänge ihn an #contents an
+	if (!container && mainContent) {
+		container = document.createElement('div');
+		container.id = 'glossary-container';
+		// Optional: Anker für das Inhaltsverzeichnis hinzufügen
+		container.setAttribute('data-toc-title', 'Glossary');
+		mainContent.appendChild(container);
+	}
 
-    if (!container) return;
+	if (!container) return;
 
-    try {
-        // 1. Glossar laden
-        const response = await fetch('glossary.json');
-        const glossary = await response.json();
+	try {
+		// 1. Glossar laden
+		const response = await fetch('glossary.json');
+		const glossary = await response.json();
 
-        // 2. Globalen Tracker zurücksetzen
-        window.indexedTerms = {};
+		// 2. Globalen Tracker zurücksetzen
+		window.indexedTerms = {};
 
-        // 3. Text in den .md Containern scannen (Nur lesen!)
-        const containers = document.querySelectorAll('.md');
+		// 3. Text in den .md Containern scannen (Nur lesen!)
+		const containers = document.querySelectorAll('.md');
 
-        glossary.forEach(item => {
-            const term = item.term;
-            const normalizedTerm = term.toLowerCase().replace(/_/g, ' ');
+		glossary.forEach(item => {
+			const term = item.term;
+			const normalizedTerm = term.toLowerCase().replace(/_/g, ' ');
 
-            // Regex mit Word-Boundaries und Escaping für Sonderzeichen
-            const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(`\\b(${escapedTerm})\\b`, 'gi');
+			// Regex mit Word-Boundaries und Escaping für Sonderzeichen
+			const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+			const regex = new RegExp(`\\b(${escapedTerm})\\b`, 'gi');
 
-            containers.forEach(contentContainer => {
-                const text = contentContainer.textContent;
-                const matches = text.match(regex);
+			containers.forEach(contentContainer => {
+				const text = contentContainer.textContent;
+				const matches = text.match(regex);
 
-                if (matches) {
-                    if (!window.indexedTerms[normalizedTerm]) {
-                        window.indexedTerms[normalizedTerm] = 0;
-                    }
-                    window.indexedTerms[normalizedTerm] += matches.length;
-                }
-            });
-        });
+				if (matches) {
+					if (!window.indexedTerms[normalizedTerm]) {
+						window.indexedTerms[normalizedTerm] = 0;
+					}
+					window.indexedTerms[normalizedTerm] += matches.length;
+				}
+			});
+		});
 
-        // 4. Glossar alphabetisch sortieren
-        glossary.sort((a, b) => a.term.localeCompare(b.term));
+		// 4. Glossar alphabetisch sortieren
+		glossary.sort((a, b) => a.term.localeCompare(b.term));
 
-        // 5. HTML als Tabelle generieren
-        let foundAny = false;
-        let html = `
-            <h1 id="glossary-title">Glossary</h1>
-            <table class="glossary-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                <thead>
-                    <tr style="border-bottom: 2px solid #ccc;">
-                        <th style="text-align: left; padding: 10px;">Term</th>
-                        <th style="text-align: left; padding: 10px;">Definition</th>
-                        <th style="text-align: center; padding: 10px;">Occurrences</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+		// 5. HTML als Tabelle generieren
+		let foundAny = false;
+		let html = `
+	    <h1 id="glossary-title">Glossary</h1>
+	    <table class="glossary-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+		<thead>
+		    <tr style="border-bottom: 2px solid #ccc;">
+			<th style="text-align: left; padding: 10px;">Term</th>
+			<th style="text-align: left; padding: 10px;">Definition</th>
+			<th style="text-align: center; padding: 10px;">Occurrences</th>
+		    </tr>
+		</thead>
+		<tbody>`;
 
-        glossary.forEach(item => {
-            const normalizedTerm = item.term.toLowerCase().replace(/_/g, ' ');
-            const count = window.indexedTerms[normalizedTerm] || 0;
+		glossary.forEach(item => {
+			const normalizedTerm = item.term.toLowerCase().replace(/_/g, ' ');
+			const count = window.indexedTerms[normalizedTerm] || 0;
 
-            if (count > 0) {
-                foundAny = true;
-                html += `
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 10px; font-weight: bold; vertical-align: top;">${item.term}</td>
-                        <td style="padding: 10px; vertical-align: top;">${item.definition}</td>
-                        <td style="padding: 10px; text-align: center; vertical-align: top;">${count}</td>
-                    </tr>`;
-            }
-        });
+			if (count > 0) {
+				foundAny = true;
+				html += `
+		    <tr style="border-bottom: 1px solid #eee;">
+			<td style="padding: 10px; font-weight: bold; vertical-align: top;">${item.term}</td>
+			<td style="padding: 10px; vertical-align: top;">${item.definition}</td>
+			<td style="padding: 10px; text-align: center; vertical-align: top;">${count}</td>
+		    </tr>`;
+			}
+		});
 
-        html += '</tbody></table>';
+		html += '</tbody></table>';
 
-        if (!foundAny) {
-            container.style.display = 'none';
-        } else {
-            container.style.display = 'block';
-            container.innerHTML = html;
-        }
+		if (!foundAny) {
+			container.style.display = 'none';
+		} else {
+			container.style.display = 'block';
+			container.innerHTML = html;
+		}
 
-    } catch (error) {
-        console.error("Fehler beim Laden/Rendern des Glossars:", error);
-    }
+	} catch (error) {
+		console.error("Fehler beim Laden/Rendern des Glossars:", error);
+	}
 
-    // 6. Inhaltsverzeichnis aktualisieren, nachdem das Glossar eingefügt wurde
-    if (typeof toc === 'function') {
-        toc();
-    }
+	// 6. Inhaltsverzeichnis aktualisieren, nachdem das Glossar eingefügt wurde
+	if (typeof toc === 'function') {
+		toc();
+	}
 }
