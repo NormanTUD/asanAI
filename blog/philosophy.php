@@ -338,7 +338,7 @@ Training a state-of-the-art LLM is a one-time resource-intensive event where bil
 
 * **Financial Investment:** Training GPT-3 (175B parameters) cost approximately 4.6 million Dollar in compute time. Successors like GPT-4 or Llama 3 have likely crossed the 100 million Dollar threshold.
 * **Carbon Footprint:** \citeauthor{strubell2019energy} were among the first to quantify the environmental impact, noting that training a single large model can emit over **280 tons of CO$_2$**, roughly five times the lifetime emissions of an average American car.
-* **Water Consumption:** Rechenzentren (Data centers) require vast amounts of fresh water for cooling. It is estimated that training GPT-3 in Microsoft’s state-of-the-art U.S. data centers consumed **700,000 liters** of clean freshwater.
+* **Water Consumption:** Rechenzentren (Data centers) require vast amounts of fresh water for cooling. It is estimated that training GPT-3 in Microsoft's state-of-the-art U.S. data centers consumed **700,000 liters** of clean freshwater.
 
 
 
@@ -358,8 +358,8 @@ TODO
 
 While the philosophical grounding of AI remains hollow, its impact on the sociopolitical landscape is tangible and often destabilizing. The primary concern is not just the creation of "fake news," but the erosion of the concept of objective truth itself. This phenomenon is central to what \citeauthorlastnameand{truthdecay} define as **"Truth Decay"**, the diminishing role of facts and analysis in public life. This decay is characterized by four trends: increasing disagreement about facts and analytical data, the blurring of the line between opinion and fact, the increasing influence of personal experience over fact, and declining trust in formerly respected factual sources.
 
-### The Liar’s Dividend
-\citeauthorlastnameand{chesney2019deepfakes} coined the term **"Liar’s Dividend"** to describe a secondary effect of generative AI: as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake. This strategy exploits the "cognitive biases" identified by \citeauthor{truthdecay}, where individuals struggle to process information that challenges their worldview, leading them to rely on subjective interpretations rather than objective evidence \citeyear{truthdecay}.
+### The Liar's Dividend
+\citeauthorlastnameand{chesney2019deepfakes} coined the term **"Liar's Dividend"** to describe a secondary effect of generative AI: as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake. This strategy exploits the "cognitive biases" identified by \citeauthor{truthdecay}, where individuals struggle to process information that challenges their worldview, leading them to rely on subjective interpretations rather than objective evidence \citeyear{truthdecay}.
 
 * **Political Application:** Donald Trump has frequently leveraged this skepticism. For instance, he has suggested that unfavorable videos or recordings, such as his own past statements, might be "AI-generated" or manipulated to discredit him. This aligns with the observation by \citeauthor{truthdecay} that political polarization encourages actors to challenge the validity of even the most basic factual evidence to gain a competitive advantage \citeyear{truthdecay}.
 
