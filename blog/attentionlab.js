@@ -866,7 +866,7 @@ function updateAttn1D() {
         html += `<tr style="${isBold ? 'background:#fefce8;' : ''}">
             <td style="color:${kv.color}; font-weight:bold; padding:3px 8px;">${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}</td>
             <td style="padding:3px 8px; font-family:monospace;">${q.toFixed(1)} × ${kv.k.toFixed(1)} = ${scores[i].toFixed(1)}</td>
-            <td style="padding:3px 8px;">
+            <td style="padding:3px 8px; width: 255px;">
                 <div style="display:inline-block; width:${Math.max(3, weights[i]*120)}px; height:14px;
                      background:${kv.color}; border-radius:3px; vertical-align:middle;
                      opacity:${0.4+weights[i]*0.6}; transition:width 0.12s;"></div>
