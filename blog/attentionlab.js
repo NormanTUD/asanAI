@@ -584,8 +584,7 @@ function drawSquare(ctx, x, y, s, color, alpha) {
 
 const KV1 = [
     { k: -3.0, v: -3.5, color: '#10b981', kIcon: '🌊', kName: 'river',  vIcon: '💧', vName: 'water' },
-    { k:  3.5, v:  4.0, color: '#f59e0b', kIcon: '🏦', kName: 'vault',  vIcon: '💰', vName: 'money' },
-    { k:  0.3, v: -1.0, color: '#8b5cf6', kIcon: '✈️', kName: 'tilt',   vIcon: '🔄', vName: 'turn'  }
+    { k:  3.5, v:  4.0, color: '#f59e0b', kIcon: '🏦', kName: 'vault',  vIcon: '💰', vName: 'money' }
 ];
 
 const SENTENCES_1D = [
@@ -611,7 +610,7 @@ const SENTENCES_1D = [
 		{ min: 0.62, text: 'The <b style="color:#0ea5e9">river</b> had eroded the <b style="color:#10b981">💧 bank</b> into a gentle <b style="color:#f97316">slope</b> over the centuries.' },
 		{ min: 0.58, text: '<b style="color:#10b981">Reeds</b> rustled along the <b style="color:#10b981">💧 bank</b> as the <b style="color:#0ea5e9">tide</b> slowly came in.' },
 		{ min: 0.54, text: 'She sat on the <b style="color:#10b981">💧 bank</b> and dipped her <b style="color:#f97316">toes</b> in the <b style="color:#0ea5e9">water</b>.' },
-		{ min: 0.50, text: 'The word "bank" here leans toward <b style="color:#10b981">💧 water</b> — probably a <b style="color:#10b981">riverbank</b>.' },
+		{ min: 0.50, text: 'The word "bank" here is undecided here, it may be a <b style="color:#10b981">💧 riverbank</b>, but could also be a <b style="color:#f59e0b">💰 money bank\'s</b>.' },
 		{ min: 0.45, text: 'There\'s a pull toward <b style="color:#10b981">💧 nature</b>, but the meaning isn\'t fully settled yet.' },
 		{ min: 0.40, text: 'A faint hint of <b style="color:#10b981">💧 river</b>, but the context is still wide open.' },
 		{ min: 0.00, text: 'The word "bank" is almost <b style="color:#94a3b8">neutral</b>.' }
