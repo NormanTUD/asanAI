@@ -62,6 +62,25 @@ const positionalShiftObserver = new IntersectionObserver((entries) => {
 	});
 }, { threshold: 0 });
 
+const headContentObserver = new IntersectionObserver((entries) => {
+	entries.forEach(entry => {
+		if (entry.isIntersecting) {
+			const el = entry.target;
+			const containerId = el.dataset.containerId;
+			const layerIdx = parseInt(el.dataset.layerIdx);
+			const headIdx = parseInt(el.dataset.headIdx);
+
+			if (el.dataset.rendered === 'true') return;
+
+			const registryEntry = attentionRenderRegistry.get(containerId);
+			if (registryEntry && registryEntry.instance) {
+				console.log(`Head ${headIdx} in Layer ${layerIdx} visible: Rendering...`);
+				registryEntry.instance._executeHeadRender(layerIdx, headIdx);
+			}
+		}
+	});
+}, { threshold: 0 });
+
 /**
  * Intersection Observer for Attention UI
  */
@@ -315,7 +334,7 @@ class AttentionEngine {
 		if (!this.container && !this.containerId) return;
 		const containerEl = document.getElementById(this.containerId);
 		if (containerEl && !containerEl.innerHTML) {
-			containerEl.innerHTML = `<div style="padding:20px; color:#64748b;">Scroll to view Attention Matrix...</div>`;
+			containerEl.innerHTML = `<div style="padding:20px; color:#64748b;">Wait for Attention Matrix to load...</div>`;
 		}
 	}
 
@@ -402,6 +421,22 @@ class AttentionEngine {
 	}
 
 	_renderHeadContent(layerIdx, headIdx) {
+    const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${headIdx}`);
+    if (!headDiv || headDiv.dataset.rendered === 'true') return;
+
+    // Attach metadata so the observer callback knows what to render
+    headDiv.dataset.containerId = this.containerId;
+    headDiv.dataset.layerIdx = layerIdx;
+    headDiv.dataset.headIdx = headIdx;
+
+    // Show a lightweight placeholder
+    headDiv.innerHTML = `<div style="padding:20px; color:#94a3b8;">Wait for Head ${headIdx + 1} to load...</div>`;
+
+    // Observe — the actual render fires only when this div is in the viewport
+    headContentObserver.observe(headDiv);
+}
+
+	_executeHeadRender(layerIdx, headIdx) {
 		const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${headIdx}`);
 		if (!headDiv || headDiv.dataset.rendered === 'true') return;
 
@@ -412,9 +447,6 @@ class AttentionEngine {
 		const layerInstance = layerData.instance;
 		const escapedTokens = layerTokens.map(t => String(t).replace(/#/g, '\\#'));
 
-		// ── FIX: Use the preserved string tokens if available ──
-		// layerData.tokenStrings is the original ordered array of words.
-		// Only fall back to dot-product lookup if strings weren't provided.
 		const displayTokens = layerData.tokenStrings
 			? [...layerData.tokenStrings]
 			: layerTokens.map(t => {
@@ -422,39 +454,38 @@ class AttentionEngine {
 				return tlab_get_top_word_only(t);
 			});
 
-		// ... rest of the method stays exactly the same ...
 		const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
 		const webCanvasId    = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
 		const webStripId     = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
 
 		headDiv.innerHTML = `
-    <p style="margin:0 0 4px 0; color:#1e40af; font-weight:bold;">Attention Connectivity Web</p>
-    <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-	Hover over a word to see where it focuses its attention.
-    </p>
-    <div id="${webContainerId}" style="position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
-	<canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
-	<div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
-    </div>
-
-    <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>
-    <div style="margin-bottom:20px; font-size: 0.9rem;">
-	$$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
-    </div>
-    <div style="overflow-x:auto;">
-	${layerInstance.generateMathTable(hd, escapedTokens)}
-    </div>`;
+	    <p style="margin:0 0 4px 0; color:#1e40af; font-weight:bold;">Attention Connectivity Web</p>
+	    <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
+		Hover over a word to see where it focuses its attention.
+	    </p>
+	    <div id="${webContainerId}" style="position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
+		<canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
+		<div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
+	    </div>
+	    <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>
+	    <div style="margin-bottom:20px; font-size: 0.9rem;">
+		$$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
+	    </div>
+	    <div style="overflow-x:auto;">
+		${layerInstance.generateMathTable(hd, escapedTokens)}
+	    </div>`;
 
 		headDiv.dataset.rendered = 'true';
+
+		// Stop observing since it's now rendered
+		headContentObserver.unobserve(headDiv);
+
 		render_temml();
 
 		requestAnimationFrame(() => {
 			renderDynamicAttentionWeb(
-				webContainerId,
-				webCanvasId,
-				webStripId,
-				displayTokens,
-				hd.this_weights
+				webContainerId, webCanvasId, webStripId,
+				displayTokens, hd.this_weights
 			);
 		});
 	}
@@ -568,7 +599,7 @@ window.showHeadInLayer = (containerId, layerIdx, headIdx, numHeads) => {
 	const activeBtn = document.getElementById(`head-tab-btn-${containerId}-${layerIdx}-${headIdx}`);
 	if (activeBtn) { activeBtn.style.background = '#fff'; activeBtn.style.fontWeight = 'bold'; }
 
-	// LAZY: Render this head's content if not yet done
+	// LAZY: Register the head for observation (renders when visible)
 	const registryEntry = attentionRenderRegistry.get(containerId);
 	if (registryEntry && registryEntry.instance) {
 		registryEntry.instance._renderHeadContent(layerIdx, headIdx);
@@ -1486,7 +1517,7 @@ function render_embedding_plot(dimensions) {
 
 	// Show placeholder if empty
 	if (!container.innerHTML) {
-		container.innerHTML = `<div style="padding:20px; color:#64748b;">Scroll to view Embedding Space...</div>`;
+		container.innerHTML = `<div style="padding:20px; color:#64748b;">Wait for Embedding Space to load...</div>`;
 	}
 
 	// Start observing
@@ -2578,7 +2609,7 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 
 	if (container) {
 		if (!container.innerHTML) {
-			container.innerHTML = `<div style="padding:20px; color:#64748b;">Scroll to view Positional Shift Plot...</div>`;
+			container.innerHTML = `<div style="padding:20px; color:#64748b;">Wait for Positional Shift Plot to load...</div>`;
 		}
 		positionalShiftObserver.observe(container);
 	}
