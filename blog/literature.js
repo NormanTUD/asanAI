@@ -2,7 +2,7 @@ window.bibData = {
 	"indianastronomer": {
 		year: "499 CE",
 		author: "Āryabhaṭa",
-		title: "Āryabhaṭīya",
+		title: "आर्यभटीय (Āryabhaṭīya)",
 		url: "https://archive.org/details/Aryabhatiya1976"
 	},
 	"bain": {

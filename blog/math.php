@@ -691,7 +691,7 @@ That's it: $\cos\theta$ is the horizontal position, $\sin\theta$ is the vertical
 
 TODO
 
-The concept originates in ancient Indian astronomy. \citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* ("bowstring") to describe the half-chord of a circle, which is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\citetitle{indianastronomer}* (\citetitle{indianastronomer}).
+The concept originates in ancient Indian astronomy. \citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* ("bowstring") to describe the half-chord of a circle, which is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\citetitle{indianastronomer}* (\citetitle{indianastronomer}, ch. 1-2).
 
 When Arab scholars transliterated *jyā* into Arabic, it eventually became confused with *jayb* ("pocket"). In 1145, Robert of Chester translated *jayb* into Latin as ***sinus*** ("curve"), giving us **sine**. **Cosine** ("complement's sine") was named by Edmund Gunter around 1620: it is the sine of the complementary angle:
 
