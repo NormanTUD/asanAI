@@ -1,4 +1,10 @@
 window.bibData = {
+	"indianastronomer": {
+		year: "499 CE",
+		author: "Āryabhaṭa",
+		title: "Āryabhaṭīya",
+		url: "https://archive.org/details/Aryabhatiya1976"
+	},
 	"bain": {
 		year: 1873,
 		title: "Mind and Body: The Theories of Their Relation",
