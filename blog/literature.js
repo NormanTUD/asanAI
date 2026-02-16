@@ -1,4 +1,10 @@
 window.bibData = {
+	"fakeblackstrump": {
+		url: "https://www.bbc.com/news/world-us-canada-68440150",
+		year: 2024,
+		title: "Trump supporters target black voters with faked AI images",
+		author: "Marianna Spring"
+	},
 	"truthdecay": {
 		title: "Truth Decay",
 		year: 2018,

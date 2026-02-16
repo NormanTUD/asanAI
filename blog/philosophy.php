@@ -366,7 +366,7 @@ While the philosophical grounding of AI remains hollow, its impact on the sociop
 ### Generative AI in the 2024 Election Cycle
 The 2024 US election marked a turning point where AI-generated content became a mainstream tool for political messaging and misinformation: 
 
-* **AI-Generated Imagery:** The Trump campaign and its supporters have utilized AI to create "hyper-real" but fictional scenarios. Notable examples include AI images of Trump surrounded by Black supporters to project a specific demographic appeal, or images of him in stylized, heroic poses.
+* **AI-Generated Imagery:** The Trump campaign and its supporters have utilized AI to create "hyper-real" but fictional scenarios. Notable examples include AI images of Trump surrounded by \cite[Black supporters]{fakeblackstrump} to project a specific demographic appeal, or images of him in stylized, heroic poses.
 * **Targeted Attacks:** AI was used to create fake audio of political opponents, such as the AI-generated robocall of Joe Biden used during the New Hampshire primary to discourage voting, illustrating how the technology scales voter suppression.
 
 ### "Flooding the Zone" with Synthetic Content
