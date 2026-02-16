@@ -42,35 +42,38 @@ $$\text{output} = \sum_j \alpha_j \, v_j, \quad \alpha_j = \frac{e^{q \cdot k_j}
 In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see how the query "chooses" which values to attend to, purely based on sign and magnitude agreement on a single number line.
 </div>
 
-<div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 15px 0;">
-  <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 15px;">
-    <div style="flex:1; min-width: 200px;">
-      <label><strong style="color:#2563eb;">Query (q):</strong> <span id="attn1d-q-val">2.0</span></label>
-      <input type="range" id="attn1d-q" min="-5" max="5" step="0.1" value="2.0" style="width:100%;" oninput="updateAttn1D()">
+<!-- ===================== 1D: "How Financial Is It?" ===================== -->
+<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
+            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
+
+    <div style="text-align:center; margin-bottom:8px;">
+        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
+            1D: Where does "bank" land on the Nature ↔ Finance axis?
+        </span>
     </div>
-    <div style="flex:1; min-width: 200px;">
-      <label><strong style="color:#dc2626;">Key₁ / Value₁:</strong> k₁=<span id="attn1d-k1-val">3.0</span>, v₁=<span id="attn1d-v1-val">1.0</span></label>
-      <input type="range" id="attn1d-k1" min="-5" max="5" step="0.1" value="3.0" style="width:100%;" oninput="updateAttn1D()">
-      <input type="range" id="attn1d-v1" min="-5" max="5" step="0.1" value="1.0" style="width:100%;" oninput="updateAttn1D()">
+
+    <!-- Live sentence -->
+    <div id="attn1d-sentence" style="padding:10px 16px; margin-bottom:14px; background:#fff;
+         border-left:4px solid #cbd5e1; border-radius:6px; font-style:italic; color:#334155;
+         transition: border-color 0.2s;"></div>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <span style="font-size:0.85rem; color:#10b981; font-weight:bold;">🌿 −5</span>
+        <input type="range" id="attn1d-q" min="-5" max="5" step="0.1" value="2.0"
+               style="flex:1; accent-color:#2563eb;" oninput="updateAttn1D()">
+        <span style="font-size:0.85rem; color:#f59e0b; font-weight:bold;">+5 🏦</span>
+        <span id="attn1d-q-val"
+              style="font-size:1.2rem; font-weight:bold; color:#2563eb; min-width:40px; text-align:right;">2.0</span>
     </div>
-    <div style="flex:1; min-width: 200px;">
-      <label><strong style="color:#16a34a;">Key₂ / Value₂:</strong> k₂=<span id="attn1d-k2-val">-1.0</span>, v₂=<span id="attn1d-v2-val">4.0</span></label>
-      <input type="range" id="attn1d-k2" min="-5" max="5" step="0.1" value="-1.0" style="width:100%;" oninput="updateAttn1D()">
-      <input type="range" id="attn1d-v2" min="-5" max="5" step="0.1" value="4.0" style="width:100%;" oninput="updateAttn1D()">
-    </div>
-    <div style="flex:1; min-width: 200px;">
-      <label><strong style="color:#9333ea;">Key₃ / Value₃:</strong> k₃=<span id="attn1d-k3-val">0.5</span>, v₃=<span id="attn1d-v3-val">-2.0</span></label>
-      <input type="range" id="attn1d-k3" min="-5" max="5" step="0.1" value="0.5" style="width:100%;" oninput="updateAttn1D()">
-      <input type="range" id="attn1d-v3" min="-5" max="5" step="0.1" value="-2.0" style="width:100%;" oninput="updateAttn1D()">
-    </div>
-  </div>
-  <div id="attn1d-numberline" style="width:100%; height:180px;"></div>
-  <div style="display:flex; gap:15px; flex-wrap:wrap;">
-    <div id="attn1d-weights" style="flex:1; min-width:250px; height:200px;"></div>
-    <div id="attn1d-output" style="flex:1; min-width:250px; height:200px;"></div>
-  </div>
-  <div id="attn1d-math" style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.85rem; overflow-x:auto;"></div>
+
+    <canvas id="attn1d-canvas" width="700" height="220"
+            style="display:block; width:100%; height:220px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;"></canvas>
+
+    <div id="attn1d-math" style="margin-top:12px; padding:10px; background:#fff; border-radius:8px;
+         border:1px dashed #cbd5e1; overflow-x:auto;"></div>
 </div>
+
+
 
 <!-- ===================== SECTION 2: 2D ===================== -->
 <div class="md">
@@ -87,26 +90,50 @@ The output is a **weighted average of the value vectors**, geometrically, it's a
 Drag the query arrow below. Watch how rotating it toward a key increases that key's attention weight, and the output point slides toward the corresponding value.
 </div>
 
-<div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 15px 0;">
-  <div style="display:flex; flex-wrap:wrap; gap:15px; margin-bottom:15px;">
-    <div style="flex:1; min-width:200px;">
-      <label><strong style="color:#2563eb;">Query angle:</strong> <span id="attn2d-qangle-val">30</span>°, magnitude: <span id="attn2d-qmag-val">2.0</span></label>
-      <input type="range" id="attn2d-qangle" min="0" max="360" step="1" value="30" style="width:100%;" oninput="updateAttn2D()">
-      <input type="range" id="attn2d-qmag" min="0.1" max="3" step="0.1" value="2.0" style="width:100%;" oninput="updateAttn2D()">
+<!-- ===================== 2D: "Where Does Bank Belong?" ===================== -->
+<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
+            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
+
+    <div style="text-align:center; margin-bottom:8px;">
+        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
+            2D: Drag "bank" through the semantic plane
+        </span>
     </div>
-    <div style="flex:1; min-width:200px;">
-      <label><strong>Toggle √d_k scaling:</strong></label><br>
-      <label><input type="checkbox" id="attn2d-scale" checked onchange="updateAttn2D()"> Divide by $\sqrt{2}$</label>
-      <p style="font-size:0.75rem; color:#64748b;">Uncheck to see what happens without scaling, scores explode and softmax saturates.</p>
+
+    <!-- Live sentence -->
+    <div id="attn2d-sentence" style="padding:10px 16px; margin-bottom:14px; background:#fff;
+         border-left:4px solid #cbd5e1; border-radius:6px; font-style:italic; color:#334155;
+         transition: border-color 0.2s;"></div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:14px;">
+        <div style="flex:1; min-width:200px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:0.8rem; color:#10b981; font-weight:bold;">🌿</span>
+                <input type="range" id="attn2d-qx" min="-3" max="3" step="0.1" value="1.5"
+                       style="flex:1; accent-color:#2563eb;" oninput="updateAttn2D()">
+                <span style="font-size:0.8rem; color:#f59e0b; font-weight:bold;">🏦</span>
+                <span id="attn2d-qx-val" style="font-weight:bold; color:#2563eb; min-width:32px; text-align:right;">1.5</span>
+            </div>
+            <div style="text-align:center; font-size:0.75rem; color:#64748b;">Nature ← x → Finance</div>
+        </div>
+        <div style="flex:1; min-width:200px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:0.8rem; color:#3b82f6; font-weight:bold;">😌</span>
+                <input type="range" id="attn2d-qy" min="-3" max="3" step="0.1" value="0.5"
+                       style="flex:1; accent-color:#2563eb;" oninput="updateAttn2D()">
+                <span style="font-size:0.8rem; color:#ef4444; font-weight:bold;">⚡</span>
+                <span id="attn2d-qy-val" style="font-weight:bold; color:#2563eb; min-width:32px; text-align:right;">0.5</span>
+            </div>
+            <div style="text-align:center; font-size:0.75rem; color:#64748b;">Calm ← y → Urgent</div>
+        </div>
     </div>
-  </div>
-  <div style="display:flex; gap:15px; flex-wrap:wrap;">
-    <div id="attn2d-vectors" style="flex:2; min-width:350px; height:450px;"></div>
-    <div style="flex:1; min-width:200px;">
-      <div id="attn2d-weights" style="height:220px;"></div>
-      <div id="attn2d-math" style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8rem; overflow-x:auto;"></div>
-    </div>
-  </div>
+
+    <canvas id="attn2d-canvas" width="500" height="500"
+            style="display:block; margin:0 auto; max-width:100%; border:1px solid #e2e8f0;
+                   border-radius:8px; background:#fff;"></canvas>
+
+    <div id="attn2d-math" style="margin-top:12px; padding:10px; background:#fff; border-radius:8px;
+         border:1px dashed #cbd5e1; overflow-x:auto;"></div>
 </div>
 
 <div class="md">

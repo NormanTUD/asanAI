@@ -500,304 +500,413 @@ function renderDotProductLab() {
 
 // ─────────────────── UTILITIES ───────────────────
 
+/* ============================================================
+   ATTENTION GEOMETRY — NAMED CONCEPTS + LIVE SENTENCES
+   Cartesian canvas. No Plotly. Colorful. No overlap.
+   ============================================================ */
+
 function softmax(scores) {
-	const max = Math.max(...scores);
-	const exps = scores.map(s => Math.exp(s - max));
-	const sum = exps.reduce((a, b) => a + b, 0);
-	return exps.map(e => e / sum);
+    const max = Math.max(...scores);
+    const exps = scores.map(s => Math.exp(s - max));
+    const sum  = exps.reduce((a, b) => a + b, 0);
+    return exps.map(e => e / sum);
 }
 
-// ─────────────────── 1D ATTENTION ───────────────────
+/* ─── Canvas helpers ─── */
+
+function drawDot(ctx, x, y, r, color, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha != null ? alpha : 1;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.restore();
+}
+
+function drawDiamond(ctx, x, y, r, color) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(Math.PI / 4);
+    ctx.fillStyle = color;
+    ctx.fillRect(-r, -r, r * 2, r * 2);
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(-r, -r, r * 2, r * 2);
+    ctx.restore();
+}
+
+function drawStar(ctx, cx, cy, r, color) {
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) {
+        const a = (i * Math.PI) / 5 - Math.PI / 2;
+        const rad = i % 2 === 0 ? r : r * 0.4;
+        ctx[i === 0 ? 'moveTo' : 'lineTo'](cx + rad * Math.cos(a), cy + rad * Math.sin(a));
+    }
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+}
+
+function drawLabel(ctx, text, x, y, color, size, align, bold) {
+    ctx.font = `${bold ? 'bold ' : ''}${size || 13}px Inter, system-ui, sans-serif`;
+    ctx.fillStyle = color || '#1e293b';
+    ctx.textAlign = align || 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, x, y);
+}
+
+function drawSquare(ctx, x, y, s, color, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha != null ? alpha : 1;
+    ctx.fillStyle = color;
+    ctx.fillRect(x - s, y - s, s * 2, s * 2);
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - s, y - s, s * 2, s * 2);
+    ctx.restore();
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   1D — "How Financial Is It?"
+   Axis: 🌿 Nature ←───── 0 ─────→ Finance 🏦
+   ═══════════════════════════════════════════════════════════ */
+
+const KV1 = [
+    { k: -3.0, v: -3.5, color: '#10b981', kIcon: '🌊', kName: 'river',  vIcon: '💧', vName: 'water',
+      sentence: 'The bank\'s <b style="color:#10b981">💧 water</b> level rose after the rain.' },
+    { k:  3.5, v:  4.0, color: '#f59e0b', kIcon: '🏦', kName: 'vault',  vIcon: '💰', vName: 'money',
+      sentence: 'The bank\'s <b style="color:#f59e0b">💰 vault</b> held millions in deposits.' },
+    { k:  0.3, v: -1.0, color: '#8b5cf6', kIcon: '🪑', kName: 'bench',  vIcon: '🌳', vName: 'park',
+      sentence: 'The bank was really just a <b style="color:#8b5cf6">🌳 park</b> bench by the path.' }
+];
 
 function updateAttn1D() {
-	const q  = parseFloat(document.getElementById('attn1d-q').value);
-	const k1 = parseFloat(document.getElementById('attn1d-k1').value);
-	const v1 = parseFloat(document.getElementById('attn1d-v1').value);
-	const k2 = parseFloat(document.getElementById('attn1d-k2').value);
-	const v2 = parseFloat(document.getElementById('attn1d-v2').value);
-	const k3 = parseFloat(document.getElementById('attn1d-k3').value);
-	const v3 = parseFloat(document.getElementById('attn1d-v3').value);
+    const q = parseFloat(document.getElementById('attn1d-q').value);
+    document.getElementById('attn1d-q-val').innerText = q.toFixed(1);
 
-	// Update labels
-	document.getElementById('attn1d-q-val').innerText = q.toFixed(1);
-	document.getElementById('attn1d-k1-val').innerText = k1.toFixed(1);
-	document.getElementById('attn1d-v1-val').innerText = v1.toFixed(1);
-	document.getElementById('attn1d-k2-val').innerText = k2.toFixed(1);
-	document.getElementById('attn1d-v2-val').innerText = v2.toFixed(1);
-	document.getElementById('attn1d-k3-val').innerText = k3.toFixed(1);
-	document.getElementById('attn1d-v3-val').innerText = v3.toFixed(1);
+    const scores  = KV1.map(kv => q * kv.k);
+    const weights = softmax(scores);
+    const output  = KV1.reduce((s, kv, i) => s + weights[i] * kv.v, 0);
 
-	// Scores (d_k=1, so sqrt=1, no scaling)
-	const scores = [q * k1, q * k2, q * k3];
-	const weights = softmax(scores);
-	const output = weights[0] * v1 + weights[1] * v2 + weights[2] * v3;
+    // ── Find dominant concept for sentence ──
+    const maxI = weights.indexOf(Math.max(...weights));
 
-	// ── Number line plot ──
-	const numberLineTraces = [
-		// Query marker
-		{
-			x: [q], y: [0.6], mode: 'markers+text', text: ['Q=' + q.toFixed(1)],
-			textposition: 'top center',
-			marker: { size: 16, color: '#2563eb', symbol: 'diamond' },
-			name: 'Query', showlegend: true
-		},
-		// Keys
-		{
-			x: [k1], y: [0.3], mode: 'markers+text', text: ['K₁=' + k1.toFixed(1)],
-			textposition: 'bottom center',
-			marker: { size: 12, color: '#dc2626', symbol: 'circle' },
-			name: 'Key 1'
-		},
-		{
-			x: [k2], y: [0.3], mode: 'markers+text', text: ['K₂=' + k2.toFixed(1)],
-			textposition: 'bottom center',
-			marker: { size: 12, color: '#16a34a', symbol: 'circle' },
-			name: 'Key 2'
-		},
-		{
-			x: [k3], y: [0.3], mode: 'markers+text', text: ['K₃=' + k3.toFixed(1)],
-			textposition: 'bottom center',
-			marker: { size: 12, color: '#9333ea', symbol: 'circle' },
-			name: 'Key 3'
-		},
-		// Values on a separate row
-		{
-			x: [v1], y: [-0.3], mode: 'markers+text', text: ['V₁=' + v1.toFixed(1)],
-			textposition: 'bottom center',
-			marker: { size: 10, color: '#dc2626', symbol: 'square', opacity: 0.6 },
-			name: 'Value 1'
-		},
-		{
-			x: [v2], y: [-0.3], mode: 'markers+text', text: ['V₂=' + v2.toFixed(1)],
-			textposition: 'bottom center',
-			marker: { size: 10, color: '#16a34a', symbol: 'square', opacity: 0.6 },
-			name: 'Value 2'
-		},
-		{
-			x: [v3], y: [-0.3], mode: 'markers+text', text: ['V₃=' + v3.toFixed(1)],
-			textposition: 'bottom center',
-			marker: { size: 10, color: '#9333ea', symbol: 'square', opacity: 0.6 },
-			name: 'Value 3'
-		},
-		// Output
-		{
-			x: [output], y: [-0.3], mode: 'markers+text', text: ['Out=' + output.toFixed(2)],
-			textposition: 'top center',
-			marker: { size: 18, color: '#f59e0b', symbol: 'star', line: { width: 2, color: '#000' } },
-			name: 'Output'
-		}
-	];
+    // ── Sentence display ──
+    const sentenceEl = document.getElementById('attn1d-sentence');
+    sentenceEl.innerHTML = `<span style="font-size:1.1rem;">"${KV1[maxI].sentence}"</span>`;
+    sentenceEl.style.borderLeftColor = KV1[maxI].color;
 
-	// Score lines from Q to each K
-	const colors = ['#dc2626', '#16a34a', '#9333ea'];
-	[k1, k2, k3].forEach((k, i) => {
-		numberLineTraces.push({
-			x: [q, k], y: [0.6, 0.3],
-			mode: 'lines', line: { color: colors[i], width: 1 + weights[i] * 8, dash: 'dot' },
-			showlegend: false, hoverinfo: 'none'
-		});
-	});
+    // ── Canvas ──
+    const canvas = document.getElementById('attn1d-canvas');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    const W = rect.width, H = rect.height;
+    ctx.clearRect(0, 0, W, H);
 
-	Plotly.react('attn1d-numberline', numberLineTraces, {
-		xaxis: { range: [-6, 6], title: 'Value on number line', zeroline: true, zerolinewidth: 2 },
-		yaxis: { range: [-0.7, 1.0], visible: false, fixedrange: true },
-		margin: { l: 30, r: 30, t: 10, b: 40 },
-		showlegend: false,
-		annotations: [
-			{ x: -5.5, y: 0.6, text: '<b>Keys & Query</b>', showarrow: false, font: { size: 11, color: '#475569' } },
-			{ x: -5.5, y: -0.3, text: '<b>Values & Output</b>', showarrow: false, font: { size: 11, color: '#475569' } }
-		],
-		shapes: [
-			{ type: 'line', x0: -6, x1: 6, y0: 0.0, y1: 0.0, line: { color: '#cbd5e1', width: 1, dash: 'dash' } }
-		]
-	}, { responsive: true, displayModeBar: false });
+    const pad = 65;
+    const range = 5;
+    const toX = (v) => pad + ((v + range) / (2 * range)) * (W - 2 * pad);
 
-	// ── Weights bar chart ──
-	Plotly.react('attn1d-weights', [{
-		x: ['α₁', 'α₂', 'α₃'],
-		y: weights,
-		type: 'bar',
-		marker: { color: colors },
-		text: weights.map(w => (w * 100).toFixed(1) + '%'),
-		textposition: 'outside'
-	}], {
-		title: { text: 'Attention Weights', font: { size: 13 } },
-		yaxis: { range: [0, 1.1], title: 'Weight' },
-		margin: { l: 40, r: 10, t: 35, b: 30 }
-	}, { responsive: true, displayModeBar: false });
+    const rowQ = H * 0.28;   // Query row
+    const rowK = H * 0.50;   // Keys row
+    const rowV = H * 0.78;   // Values + Output row
 
-	// ── Output visualization ──
-	// Show the weighted contributions as stacked
-	const contributions = [weights[0] * v1, weights[1] * v2, weights[2] * v3];
-	Plotly.react('attn1d-output', [
-		{
-			x: ['α₁·V₁', 'α₂·V₂', 'α₃·V₃', 'Output'],
-			y: [...contributions, output],
-			type: 'bar',
-			marker: { color: [...colors, '#f59e0b'] },
-			text: [...contributions.map(c => c.toFixed(2)), output.toFixed(2)],
-			textposition: 'outside'
-		}
-	], {
-		title: { text: 'Weighted Values → Output', font: { size: 13 } },
-		yaxis: { title: 'Value' },
-		margin: { l: 40, r: 10, t: 35, b: 30 }
-	}, { responsive: true, displayModeBar: false });
+    // ── Axis for Keys ──
+    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(W - pad, rowK); ctx.stroke();
+    // Arrowheads
+    ctx.beginPath(); ctx.moveTo(W - pad, rowK); ctx.lineTo(W - pad - 8, rowK - 5); ctx.lineTo(W - pad - 8, rowK + 5); ctx.closePath(); ctx.fillStyle = '#94a3b8'; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(pad + 8, rowK - 5); ctx.lineTo(pad + 8, rowK + 5); ctx.closePath(); ctx.fill();
 
-	// ── Math display ──
-	document.getElementById('attn1d-math').innerHTML = `
-	Scores: $q \\cdot k_j = [${scores.map(s => s.toFixed(2)).join(',\\;')}]$ &nbsp;→&nbsp;
-	$\\alpha = \\text{softmax}([${scores.map(s => s.toFixed(2)).join(',\\;')}]) = [${weights.map(w => w.toFixed(3)).join(',\\;')}]$ <br>
-	Output: $\\sum \\alpha_j v_j = ${weights[0].toFixed(3)} \\cdot ${v1.toFixed(1)} + ${weights[1].toFixed(3)} \\cdot ${v2.toFixed(1)} + ${weights[2].toFixed(3)} \\cdot ${v3.toFixed(1)} = ${output.toFixed(3)}$
-    `;
-	if (typeof render_temml === 'function') render_temml();
+    // Axis labels
+    drawLabel(ctx, '🌿 Nature', pad + 35, rowK + 22, '#10b981', 12, 'center', true);
+    drawLabel(ctx, 'Finance 🏦', W - pad - 35, rowK + 22, '#f59e0b', 12, 'center', true);
+
+    // Ticks
+    ctx.fillStyle = '#cbd5e1'; ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
+    for (let t = -4; t <= 4; t++) {
+        const x = toX(t);
+        ctx.beginPath(); ctx.moveTo(x, rowK - 3); ctx.lineTo(x, rowK + 3); ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1; ctx.stroke();
+        if (t !== 0) { ctx.fillStyle = '#94a3b8'; ctx.fillText(t, x, rowK + 14); }
+    }
+    // Zero dashed
+    ctx.setLineDash([3, 3]); ctx.strokeStyle = '#cbd5e1';
+    ctx.beginPath(); ctx.moveTo(toX(0), rowK - 12); ctx.lineTo(toX(0), rowK + 12); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // ── Axis for Values ──
+    ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad, rowV); ctx.lineTo(W - pad, rowV); ctx.stroke();
+
+    // Row labels
+    drawLabel(ctx, 'KEYS', 30, rowK, '#64748b', 10, 'center', true);
+    drawLabel(ctx, 'VALUES', 30, rowV, '#64748b', 10, 'center', true);
+
+    // ── Connection lines Q→K (thickness = weight) ──
+    KV1.forEach((kv, i) => {
+        ctx.beginPath();
+        ctx.moveTo(toX(q), rowQ + 12);
+        ctx.lineTo(toX(kv.k), rowK - 12);
+        ctx.strokeStyle = kv.color;
+        ctx.lineWidth = 2 + weights[i] * 14;
+        ctx.globalAlpha = 0.2 + weights[i] * 0.8;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+    });
+
+    // ── Query diamond ──
+    drawDiamond(ctx, toX(q), rowQ, 10, '#2563eb');
+    drawLabel(ctx, `"bank" = ${q.toFixed(1)}`, toX(q), rowQ - 20, '#2563eb', 14, 'center', true);
+
+    // ── Key dots ──
+    KV1.forEach((kv, i) => {
+        drawDot(ctx, toX(kv.k), rowK, 10, kv.color);
+        // Icon above, name + weight below — offset to avoid axis labels
+        drawLabel(ctx, kv.kIcon, toX(kv.k), rowK - 18, kv.color, 18, 'center');
+        drawLabel(ctx, `${kv.kName}`, toX(kv.k), rowK - 32, kv.color, 11, 'center', true);
+        drawLabel(ctx, `${(weights[i]*100).toFixed(0)}%`, toX(kv.k), rowK + 34, kv.color, 12, 'center', true);
+    });
+
+    // ── Dashed lines K→V (mapping) ──
+    KV1.forEach((kv, i) => {
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.moveTo(toX(kv.k), rowK + 12);
+        ctx.lineTo(toX(kv.v), rowV - 10);
+        ctx.strokeStyle = kv.color;
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = 0.3 + weights[i] * 0.5;
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 1;
+    });
+
+    // ── Value squares ──
+    KV1.forEach((kv, i) => {
+        const s = 7 + weights[i] * 4;
+        drawSquare(ctx, toX(kv.v), rowV, s, kv.color, 0.35 + weights[i] * 0.65);
+        drawLabel(ctx, `${kv.vIcon} ${kv.vName}`, toX(kv.v), rowV + s + 14, kv.color, 11, 'center');
+    });
+
+    // ── Output star ──
+    drawStar(ctx, toX(output), rowV, 14, '#f59e0b');
+    drawLabel(ctx, `★ ${output.toFixed(2)}`, toX(output), rowV - 22, '#b45309', 13, 'center', true);
+
+    // ── Math table ──
+    let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+        <tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
+            <th style="text-align:left; padding:3px 8px;">Concept</th>
+            <th style="text-align:left; padding:3px 8px;">Score (q·k)</th>
+            <th style="text-align:left; padding:3px 8px;">Weight α</th>
+            <th style="text-align:right; padding:3px 8px;">α · v</th>
+        </tr>`;
+    KV1.forEach((kv, i) => {
+        const isBold = i === maxI;
+        html += `<tr style="${isBold ? 'background:#fefce8;' : ''}">
+            <td style="color:${kv.color}; font-weight:bold; padding:3px 8px;">${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}</td>
+            <td style="padding:3px 8px; font-family:monospace;">${q.toFixed(1)} × ${kv.k.toFixed(1)} = ${scores[i].toFixed(1)}</td>
+            <td style="padding:3px 8px;">
+                <div style="display:inline-block; width:${Math.max(3, weights[i]*120)}px; height:14px;
+                     background:${kv.color}; border-radius:3px; vertical-align:middle;
+                     opacity:${0.4+weights[i]*0.6}; transition:width 0.12s;"></div>
+                <b style="margin-left:4px;">${(weights[i]*100).toFixed(1)}%</b>
+            </td>
+            <td style="text-align:right; padding:3px 8px; font-family:monospace;">${(weights[i]*kv.v).toFixed(2)}</td>
+        </tr>`;
+    });
+    html += `<tr style="border-top:2px solid #1e293b;">
+        <td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
+        <td style="text-align:right; padding:6px 8px;"><b style="color:#f59e0b; font-size:1.15rem;">${output.toFixed(2)}</b></td>
+    </tr></table>`;
+    document.getElementById('attn1d-math').innerHTML = html;
 }
 
-// ─────────────────── 2D ATTENTION ───────────────────
 
-// Fixed keys and values for 2D demo
-const attn2d_keys = [
-	{ k: [2.5, 1.0], v: [3.0, 0.5], color: '#dc2626', label: '1' },
-	{ k: [-1.0, 2.0], v: [-1.0, 3.0], color: '#16a34a', label: '2' },
-	{ k: [0.5, -2.5], v: [1.0, -2.0], color: '#9333ea', label: '3' }
+/* ═══════════════════════════════════════════════════════════
+   2D — "Where Does 'Bank' Belong?"
+   X-axis: 🌿 Nature ← → Finance 🏦
+   Y-axis: 😌 Calm   ← → Urgent  ⚡
+   ═══════════════════════════════════════════════════════════ */
+
+const KV2 = [
+    { k: [-2.5, -0.5], v: [-3.0, -0.5], color: '#10b981',
+      kIcon: '🌊', kName: 'river', vIcon: '💧', vName: 'water',
+      // Label offsets [dx, dy] from the dot center — hand-tuned to avoid overlap
+      kOff: [-16, -20], vOff: [0, 18],
+      sentence: '"The <b style="color:#10b981">💧 river bank</b> was covered in wildflowers."' },
+    { k: [2.5, 1.8], v: [3.0, 2.0], color: '#f59e0b',
+      kIcon: '🏦', kName: 'vault', vIcon: '💰', vName: 'money',
+      kOff: [16, -18], vOff: [0, 18],
+      sentence: '"The <b style="color:#f59e0b">💰 bank vault</b> was heavily guarded."' },
+    { k: [-0.3, -2.5], v: [-0.5, -3.0], color: '#8b5cf6',
+      kIcon: '🪑', kName: 'bench', vIcon: '🌳', vName: 'park',
+      kOff: [20, 0], vOff: [0, 18],
+      sentence: '"She sat on the <b style="color:#8b5cf6">🌳 park</b> bank and read a book."' }
 ];
 
 function updateAttn2D() {
-	const angle = parseFloat(document.getElementById('attn2d-qangle').value);
-	const mag = parseFloat(document.getElementById('attn2d-qmag').value);
-	const useScale = document.getElementById('attn2d-scale').checked;
+    const qx = parseFloat(document.getElementById('attn2d-qx').value);
+    const qy = parseFloat(document.getElementById('attn2d-qy').value);
+    document.getElementById('attn2d-qx-val').innerText = qx.toFixed(1);
+    document.getElementById('attn2d-qy-val').innerText = qy.toFixed(1);
 
-	document.getElementById('attn2d-qangle-val').innerText = angle;
-	document.getElementById('attn2d-qmag-val').innerText = mag.toFixed(1);
+    const q = [qx, qy];
+    const dk = Math.sqrt(2);
 
-	const rad = angle * Math.PI / 180;
-	const q = [mag * Math.cos(rad), mag * Math.sin(rad)];
-	const dk = useScale ? Math.sqrt(2) : 1.0;
+    const scores  = KV2.map(kv => (q[0]*kv.k[0] + q[1]*kv.k[1]) / dk);
+    const weights = softmax(scores);
+    const out = [0, 0];
+    KV2.forEach((kv, i) => { out[0] += weights[i]*kv.v[0]; out[1] += weights[i]*kv.v[1]; });
 
-	// Compute scores
-	const scores = attn2d_keys.map(kv => (q[0] * kv.k[0] + q[1] * kv.k[1]) / dk);
-	const weights = softmax(scores);
+    const maxI = weights.indexOf(Math.max(...weights));
 
-	// Output = weighted sum of values
-	const out = [0, 0];
-	attn2d_keys.forEach((kv, i) => {
-		out[0] += weights[i] * kv.v[0];
-		out[1] += weights[i] * kv.v[1];
-	});
+    // ── Sentence ──
+    const sentenceEl = document.getElementById('attn2d-sentence');
+    sentenceEl.innerHTML = `<span style="font-size:1.1rem;">${KV2[maxI].sentence}</span>`;
+    sentenceEl.style.borderLeftColor = KV2[maxI].color;
 
-	// ── Vector plot ──
-	const traces = [];
+    // ── Canvas ──
+    const canvas = document.getElementById('attn2d-canvas');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    const W = rect.width, H = rect.height;
+    ctx.clearRect(0, 0, W, H);
 
-	// Draw convex hull of values (filled polygon)
-	const hullX = attn2d_keys.map(kv => kv.v[0]);
-	const hullY = attn2d_keys.map(kv => kv.v[1]);
-	hullX.push(hullX[0]); hullY.push(hullY[0]); // close polygon
-	traces.push({
-		x: hullX, y: hullY, mode: 'lines', fill: 'toself',
-		fillcolor: 'rgba(251, 191, 36, 0.15)', line: { color: '#f59e0b', width: 1, dash: 'dot' },
-		name: 'Value Convex Hull', hoverinfo: 'none'
-	});
+    const pad = 55;
+    const range = 4;
+    const toX = (v) => pad + ((v + range) / (2 * range)) * (W - 2 * pad);
+    const toY = (v) => pad + ((range - v) / (2 * range)) * (H - 2 * pad);
 
-	// Query arrow
-	traces.push({
-		x: [0, q[0]], y: [0, q[1]], mode: 'lines+markers',
-		line: { color: '#2563eb', width: 4 },
-		marker: { size: [0, 10], symbol: 'arrow', angleref: 'previous' },
-		name: 'Query'
-	});
+    // ── Grid ──
+    ctx.strokeStyle = '#f1f5f9'; ctx.lineWidth = 1;
+    for (let t = -3; t <= 3; t++) {
+        ctx.beginPath(); ctx.moveTo(toX(t), pad); ctx.lineTo(toX(t), H - pad); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pad, toY(t)); ctx.lineTo(W - pad, toY(t)); ctx.stroke();
+    }
 
-	// Key arrows and value points
-	attn2d_keys.forEach((kv, i) => {
-		// Key arrow
-		traces.push({
-			x: [0, kv.k[0]], y: [0, kv.k[1]], mode: 'lines+markers',
-			line: { color: kv.color, width: 2 + weights[i] * 6 },
-			marker: { size: [0, 8], symbol: 'arrow', angleref: 'previous' },
-			name: 'K' + kv.label
-		});
-		// Value point
-		traces.push({
-			x: [kv.v[0]], y: [kv.v[1]], mode: 'markers+text',
-			text: ['V' + kv.label], textposition: 'top right',
-			marker: { size: 12, color: kv.color, symbol: 'square', opacity: 0.7 },
-			name: 'V' + kv.label, showlegend: false
-		});
-		// Value point
-		traces.push({
-			x: [kv.v[0]], y: [kv.v[1]], mode: 'markers+text',
-			text: ['V' + kv.label], textposition: 'top right',
-			marker: { size: 12, color: kv.color, symbol: 'square', opacity: 0.7 },
-			name: 'V' + kv.label, showlegend: false
-		});
+    // ── Axes ──
+    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(pad, toY(0)); ctx.lineTo(W - pad, toY(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(toX(0), pad); ctx.lineTo(toX(0), H - pad); ctx.stroke();
 
-		// Dashed line from key tip to value point (shows K→V mapping)
-		traces.push({
-			x: [kv.k[0], kv.v[0]], y: [kv.k[1], kv.v[1]],
-			mode: 'lines', line: { color: kv.color, width: 1, dash: 'dot' },
-			showlegend: false, hoverinfo: 'none'
-		});
+    // Axis labels — placed in corners to avoid overlap with data
+    drawLabel(ctx, '🌿 Nature', pad + 6, toY(0) + 18, '#10b981', 11, 'left', true);
+    drawLabel(ctx, 'Finance 🏦', W - pad - 6, toY(0) + 18, '#f59e0b', 11, 'right', true);
+    drawLabel(ctx, '⚡ Urgent', toX(0) + 8, pad + 6, '#ef4444', 11, 'left', true);
+    drawLabel(ctx, '😌 Calm', toX(0) + 8, H - pad - 6, '#3b82f6', 11, 'left', true);
 
-		// Weight annotation near key arrow
-		const midX = kv.k[0] * 0.6;
-		const midY = kv.k[1] * 0.6;
-		traces.push({
-			x: [midX], y: [midY], mode: 'text',
-			text: [(weights[i] * 100).toFixed(1) + '%'],
-			textfont: { size: 11, color: kv.color, weight: 'bold' },
-			showlegend: false, hoverinfo: 'none'
-		});
-	});
+    // Tick numbers
+    ctx.fillStyle = '#94a3b8'; ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
+    for (let t = -3; t <= 3; t++) {
+        if (t === 0) continue;
+        ctx.fillText(t, toX(t), toY(0) + 14);
+        ctx.textAlign = 'right';
+        ctx.fillText(t, toX(0) - 8, toY(t) + 4);
+        ctx.textAlign = 'center';
+    }
 
-	// Output point (weighted average of values)
-	traces.push({
-		x: [out[0]], y: [out[1]], mode: 'markers+text',
-		text: ['Output'], textposition: 'bottom center',
-		marker: { size: 18, color: '#f59e0b', symbol: 'star', line: { width: 2, color: '#000' } },
-		name: 'Output', showlegend: false
-	});
+    // ── Lines Q→K (thickness = weight) ──
+    KV2.forEach((kv, i) => {
+        ctx.beginPath();
+        ctx.moveTo(toX(q[0]), toY(q[1]));
+        ctx.lineTo(toX(kv.k[0]), toY(kv.k[1]));
+        ctx.strokeStyle = kv.color;
+        ctx.lineWidth = 2 + weights[i] * 12;
+        ctx.globalAlpha = 0.2 + weights[i] * 0.8;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+    });
 
-	// Lines from output to each value (thickness = weight)
-	attn2d_keys.forEach((kv, i) => {
-		traces.push({
-			x: [out[0], kv.v[0]], y: [out[1], kv.v[1]],
-			mode: 'lines', line: { color: kv.color, width: 1 + weights[i] * 6, dash: 'dash' },
-			showlegend: false, hoverinfo: 'none'
-		});
-	});
+    // ── Dashed lines V→Output (thickness = weight) ──
+    KV2.forEach((kv, i) => {
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.moveTo(toX(kv.v[0]), toY(kv.v[1]));
+        ctx.lineTo(toX(out[0]), toY(out[1]));
+        ctx.strokeStyle = kv.color;
+        ctx.lineWidth = 1 + weights[i] * 5;
+        ctx.globalAlpha = 0.2 + weights[i] * 0.6;
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 1;
+    });
 
-	const axRange = [-4, 4];
-	Plotly.react('attn2d-vectors', traces, {
-		xaxis: { range: axRange, zeroline: true, zerolinewidth: 2, zerolinecolor: '#94a3b8', title: 'Dim 1' },
-		yaxis: { range: axRange, zeroline: true, zerolinewidth: 2, zerolinecolor: '#94a3b8', title: 'Dim 2', scaleanchor: 'x' },
-		margin: { l: 50, r: 20, t: 10, b: 50 },
-		showlegend: false,
-		annotations: [
-			{ x: q[0], y: q[1], text: '<b>Q</b>', showarrow: true, arrowhead: 0, ax: 15, ay: -15, font: { color: '#2563eb', size: 14 } }
-		]
-	}, { responsive: true, displayModeBar: false });
+    // ── Key dots ──
+    KV2.forEach((kv, i) => {
+        const kx = toX(kv.k[0]), ky = toY(kv.k[1]);
+        drawDot(ctx, kx, ky, 10 + weights[i] * 4, kv.color);
+        drawLabel(ctx, `${kv.kIcon} ${kv.kName}`, kx + kv.kOff[0], ky + kv.kOff[1], kv.color, 13, 'center', true);
+        drawLabel(ctx, `${(weights[i]*100).toFixed(0)}%`, kx + kv.kOff[0], ky + kv.kOff[1] + 16, kv.color, 12, 'center', true);
+    });
 
-	// ── Weights bar chart ──
-	Plotly.react('attn2d-weights', [{
-		x: ['α₁', 'α₂', 'α₃'],
-		y: weights,
-		type: 'bar',
-		marker: { color: attn2d_keys.map(kv => kv.color) },
-		text: weights.map(w => (w * 100).toFixed(1) + '%'),
-		textposition: 'outside'
-	}], {
-		title: { text: 'Attention Weights', font: { size: 13 } },
-		yaxis: { range: [0, 1.1], title: 'Weight' },
-		margin: { l: 40, r: 10, t: 35, b: 30 }
-	}, { responsive: true, displayModeBar: false });
+    // ── Value squares ──
+    KV2.forEach((kv, i) => {
+        const vx = toX(kv.v[0]), vy = toY(kv.v[1]);
+        const s = 7 + weights[i] * 5;
+        drawSquare(ctx, vx, vy, s, kv.color, 0.35 + weights[i] * 0.65);
+        drawLabel(ctx, `${kv.vIcon} ${kv.vName}`, vx + kv.vOff[0], vy + kv.vOff[1], kv.color, 11, 'center');
+    });
 
-	// ── Math display ──
-	const scaleLabel = useScale ? '\\sqrt{2}' : '1';
-	document.getElementById('attn2d-math').innerHTML = `
-	Scores: $\\frac{q \\cdot k_j}{${scaleLabel}} = [${scores.map(s => s.toFixed(2)).join(',\\;')}]$ <br>
-	$\\alpha = [${weights.map(w => w.toFixed(3)).join(',\\;')}]$ <br>
-	Out: $(${out[0].toFixed(2)},\\; ${out[1].toFixed(2)})$
-    `;
-	if (typeof render_temml === 'function') render_temml();
+    // ── Query diamond ──
+    drawDiamond(ctx, toX(q[0]), toY(q[1]), 10, '#2563eb');
+    drawLabel(ctx, '"bank"', toX(q[0]), toY(q[1]) - 22, '#2563eb', 14, 'center', true);
+
+    // ── Output star ──
+    drawStar(ctx, toX(out[0]), toY(out[1]), 14, '#f59e0b');
+    drawLabel(ctx, `★ bank in context`, toX(out[0]), toY(out[1]) + 24, '#b45309', 12, 'center', true);
+
+    // ── Math table ──
+    let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+        <tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
+            <th style="text-align:left; padding:3px 8px;">Concept</th>
+            <th style="text-align:left; padding:3px 8px;">q·k / √2</th>
+            <th style="text-align:left; padding:3px 8px;">Weight α</th>
+            <th style="text-align:right; padding:3px 8px;">α · v</th>
+        </tr>`;
+    KV2.forEach((kv, i) => {
+        const contrib = [weights[i]*kv.v[0], weights[i]*kv.v[1]];
+        const isBold = i === maxI;
+        html += `<tr style="${isBold ? 'background:#fefce8;' : ''}">
+            <td style="color:${kv.color}; font-weight:bold; padding:3px 8px; white-space:nowrap;">
+                ${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}
+            </td>
+            <td style="padding:3px 8px; font-family:monospace;">${scores[i].toFixed(2)}</td>
+            <td style="padding:3px 8px;">
+                <div style="display:inline-block; width:${Math.max(3, weights[i]*120)}px; height:14px;
+                     background:${kv.color}; border-radius:3px; vertical-align:middle;
+                     opacity:${0.4+weights[i]*0.6}; transition:width 0.12s;"></div>
+                <b style="margin-left:4px;">${(weights[i]*100).toFixed(1)}%</b>
+            </td>
+            <td style="text-align:right; padding:3px 8px; font-family:monospace; white-space:nowrap;">
+                (${contrib[0].toFixed(2)}, ${contrib[1].toFixed(2)})
+            </td>
+        </tr>`;
+    });
+    html += `<tr style="border-top:2px solid #1e293b;">
+        <td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
+        <td style="text-align:right; padding:6px 8px;">
+            <b style="color:#f59e0b; font-size:1.1rem;">(${out[0].toFixed(2)}, ${out[1].toFixed(2)})</b>
+        </td>
+    </tr></table>`;
+    document.getElementById('attn2d-math').innerHTML = html;
 }
 
 // ─────────────────── INITIALIZATION ───────────────────
