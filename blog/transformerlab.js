@@ -30,6 +30,23 @@ const attentionRenderRegistry = new Map();
 
 const positionalShiftRegistry = new Map();
 
+const embeddingRenderRegistry = new Map();
+
+const embeddingObserver = new IntersectionObserver((entries) => {
+	entries.forEach(entry => {
+		if (entry.isIntersecting) {
+			const containerId = entry.target.id;
+			const data = embeddingRenderRegistry.get(containerId);
+
+			if (data && !data.rendered) {
+				console.log("Embedding plot visible: Rendering...");
+				_execute_embedding_render(data.d_model);
+				data.rendered = true;
+			}
+		}
+	});
+}, { threshold: 0 });
+
 const positionalShiftObserver = new IntersectionObserver((entries) => {
 	entries.forEach(entry => {
 		if (entry.isIntersecting) {
@@ -1457,6 +1474,26 @@ function render_architecture_stats(d, h, n, t) {
 }
 
 function render_embedding_plot(dimensions) {
+	const containerId = 'transformer-plotly-space';
+	const container = document.getElementById(containerId);
+	if (!container) return;
+
+	// Register/update the data, reset rendered flag
+	embeddingRenderRegistry.set(containerId, {
+		d_model: dimensions,
+		rendered: false
+	});
+
+	// Show placeholder if empty
+	if (!container.innerHTML) {
+		container.innerHTML = `<div style="padding:20px; color:#64748b;">Scroll to view Embedding Space...</div>`;
+	}
+
+	// Start observing
+	embeddingObserver.observe(container);
+}
+
+function _execute_embedding_render (dimensions) {
 	const container = document.getElementById('transformer-plotly-space');
 	if (!container) return;
 
