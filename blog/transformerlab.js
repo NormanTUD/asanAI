@@ -28,6 +28,25 @@ window.tlab_trajectory_data = {
 const contextSize = 128;
 const attentionRenderRegistry = new Map();
 
+const positionalShiftRegistry = new Map();
+
+const positionalShiftObserver = new IntersectionObserver((entries) => {
+	entries.forEach(entry => {
+		if (entry.isIntersecting) {
+			const containerId = entry.target.id;
+			const data = positionalShiftRegistry.get(containerId);
+
+			if (data && !data.rendered) {
+				console.log("Positional Shift Plot visible: Rendering...");
+				_execute_shift_render(data.tokenStrings, data.d_model);
+				data.rendered = true;
+				// We keep observing so if parameters change, we can re-render
+				// but the 'rendered' flag prevents redundant work.
+			}
+		}
+	});
+}, { threshold: 0.1 });
+
 /**
  * Intersection Observer for Attention UI
  */
@@ -2503,6 +2522,31 @@ function tlab_get_top_vocab_list(h_vec, d_model) {
 }
 
 function render_positional_shift_plot(tokenStrings, d_model) {
+	const containerId = 'transformer-pe-shift-plot';
+	const container = document.getElementById(containerId);
+
+	if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
+		console.error("Plotting requires an array of string tokens.");
+		return [];
+	}
+
+	// Update registry with latest parameters and reset render flag
+	positionalShiftRegistry.set(containerId, {
+		tokenStrings: tokenStrings,
+		d_model: d_model,
+		rendered: false
+	});
+
+	if (container) {
+		// Placeholder if empty to ensure the observer has something to look at
+		if (!container.innerHTML) {
+			container.innerHTML = `<div style="padding:20px; color:#64748b;">Scroll to view Positional Shift Plot...</div>`;
+		}
+		positionalShiftObserver.observe(container);
+	}
+}
+
+function _execute_shift_render(tokenStrings, d_model) {
 	const container = document.getElementById('transformer-pe-shift-plot');
 	if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
 		console.error("Plotting requires an array of string tokens.");
