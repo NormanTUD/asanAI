@@ -1159,21 +1159,28 @@ function updateAttn2D() {
     sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
     sentenceEl.style.borderLeftColor = KV2[pick.idx].color;
 
-    // ── Canvas (FIXED: use cached dimensions to prevent height growth) ──
+    // ── Canvas (FIXED: read width from parent, cap height at 500px) ──
     const canvas = document.getElementById('attn2d-canvas');
     const container = canvas.parentElement;
     const dpr = window.devicePixelRatio || 1;
+    const MAX_HEIGHT = 500;
 
-    // Cache dimensions on the container element itself to prevent feedback loops.
-    // Only re-measure if no cached size exists (first run) or on explicit resize.
     if (!container._cachedW || !container._cachedH) {
+        // Temporarily hide canvas so it doesn't influence container size
+        canvas.style.display = 'none';
         const containerRect = container.getBoundingClientRect();
+        canvas.style.display = '';
         container._cachedW = Math.floor(containerRect.width);
-        container._cachedH = Math.floor(containerRect.height);
+        // Use width as basis for height (square-ish), but cap at MAX_HEIGHT
+        container._cachedH = Math.min(Math.floor(containerRect.width), MAX_HEIGHT);
     }
 
     const W = container._cachedW;
     const H = container._cachedH;
+
+    // Apply explicit CSS size so the canvas doesn't push the container
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
 
     if (canvas.width !== W * dpr || canvas.height !== H * dpr) {
         canvas.width = W * dpr;
