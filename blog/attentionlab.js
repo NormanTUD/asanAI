@@ -1129,15 +1129,29 @@ function updateAttn2D() {
     sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
     sentenceEl.style.borderLeftColor = KV2[pick.idx].color;
 
-    // ── Canvas ──
+    // ── Canvas (FIXED: use cached dimensions to prevent height growth) ──
     const canvas = document.getElementById('attn2d-canvas');
+    const container = canvas.parentElement;
     const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+
+    // Cache dimensions on the container element itself to prevent feedback loops.
+    // Only re-measure if no cached size exists (first run) or on explicit resize.
+    if (!container._cachedW || !container._cachedH) {
+        const containerRect = container.getBoundingClientRect();
+        container._cachedW = Math.floor(containerRect.width);
+        container._cachedH = Math.floor(containerRect.height);
+    }
+
+    const W = container._cachedW;
+    const H = container._cachedH;
+
+    if (canvas.width !== W * dpr || canvas.height !== H * dpr) {
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+    }
+
     const ctx = canvas.getContext('2d');
-    ctx.scale(dpr, dpr);
-    const W = rect.width, H = rect.height;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
 
     const pad = 55;
@@ -1217,7 +1231,8 @@ function updateAttn2D() {
     // ── Query diamond ──
     drawDiamond(ctx, toX(q[0]), toY(q[1]), 10, '#2563eb');
     drawLabel(ctx, '"bank"', toX(q[0]), toY(q[1]) - 22, '#2563eb', 14, 'center', true);
-	    // ── Output star ──
+
+    // ── Output star ──
     drawStar(ctx, toX(out[0]), toY(out[1]), 14, '#f59e0b');
     drawLabel(ctx, '★ bank in context', toX(out[0]), toY(out[1]) + 24, '#b45309', 12, 'center', true);
 
@@ -1257,7 +1272,6 @@ function updateAttn2D() {
     </tr></table>`;
     document.getElementById('attn2d-math').innerHTML = html;
 }
-
 
 // ─────────────────── INITIALIZATION ───────────────────
 
