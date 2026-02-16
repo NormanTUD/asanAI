@@ -1,4 +1,10 @@
 window.bibData = {
+	"annotatedhistory": {
+		title: "Annotated History of Modern AI and Deep Learning",
+		author: "Jürgen Schmidhuber",
+		year: 2022,
+		url: "https://arxiv.org/abs/2212.11279"
+	},
 	"cuda": {
 		year: 2006,
 		url: "https://docs.nvidia.com/cuda/cuda-c-programming-guide/",
