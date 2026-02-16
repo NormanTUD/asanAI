@@ -588,7 +588,6 @@ const KV1 = [
 ];
 
 const SENTENCES_1D = [
-	// Bucket 0: river/water — q from -5.0 to about -0.8
 	[
 		{ min: 0.99, text: 'A <b style="color:#0ea5e9">catastrophic flood</b> obliterated the <b style="color:#10b981">💧 bank</b>, leaving nothing but <b style="color:#10b981">exposed bedrock</b> where the <b style="color:#10b981">meadow</b> once stood.' },
 		{ min: 0.98, text: 'The <b style="color:#10b981">💧 bank</b> <b style="color:#0ea5e9">collapsed</b> with a <b style="color:#0ea5e9">thunderous crack</b>, dumping <b style="color:#10b981">tons of earth</b> into the <b style="color:#10b981">swollen rapids</b>.' },
@@ -610,12 +609,8 @@ const SENTENCES_1D = [
 		{ min: 0.62, text: 'The <b style="color:#0ea5e9">river</b> had eroded the <b style="color:#10b981">💧 bank</b> into a gentle <b style="color:#f97316">slope</b> over the centuries.' },
 		{ min: 0.58, text: '<b style="color:#10b981">Reeds</b> rustled along the <b style="color:#10b981">💧 bank</b> as the <b style="color:#0ea5e9">tide</b> slowly came in.' },
 		{ min: 0.54, text: 'She sat on the <b style="color:#10b981">💧 bank</b> and dipped her <b style="color:#f97316">toes</b> in the <b style="color:#0ea5e9">water</b>.' },
-		{ min: 0.50, text: 'The word "bank" here is undecided here, it may be a <b style="color:#10b981">💧 riverbank</b>, but could also be a <b style="color:#f59e0b">💰 money bank\'s</b>.' },
-		{ min: 0.45, text: 'There\'s a pull toward <b style="color:#10b981">💧 nature</b>, but the meaning isn\'t fully settled yet.' },
-		{ min: 0.40, text: 'A faint hint of <b style="color:#10b981">💧 river</b>, but the context is still wide open.' },
-		{ min: 0.00, text: 'The word "bank" is almost <b style="color:#94a3b8">neutral</b>.' }
+		{ min: 0.50, text: 'The word "bank" here is undecided, could be <b style="color:#10b981">💧 riverbank</b>, or <b style="color:#f59e0b">💰 money banks</b>.' },
 	],
-	// Bucket 1: vault/money — q from about +0.8 to +5.0
 	[
 		{ min: 0.99, text: '<b style="color:#dc2626">FBI agents</b> seized <b style="color:#f59e0b">servers</b> from the <b style="color:#f59e0b">💰 bank\'s</b> headquarters in a <b style="color:#dc2626">predawn raid</b> linked to <b style="color:#f59e0b">money laundering</b>.' },
 		{ min: 0.98, text: 'The <b style="color:#f59e0b">💰 bank</b> was placed under <b style="color:#dc2626">federal receivership</b> after <b style="color:#f59e0b">$2 billion</b> in <b style="color:#f59e0b">toxic assets</b> surfaced on its <b style="color:#f59e0b">balance sheet</b>.' },
@@ -637,10 +632,6 @@ const SENTENCES_1D = [
 		{ min: 0.62, text: 'The <b style="color:#f59e0b">💰 bank</b> <b style="color:#94a3b8">branch</b> on <b style="color:#94a3b8">Main Street</b> was always <b style="color:#94a3b8">crowded</b> at <b style="color:#94a3b8">noon</b>.' },
 		{ min: 0.58, text: 'She received a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">statement</b> in the <b style="color:#94a3b8">mail</b> and tossed it on the <b style="color:#94a3b8">counter</b>.' },
 		{ min: 0.54, text: 'He needed to visit the <b style="color:#f59e0b">💰 bank</b> before it <b style="color:#94a3b8">closed</b> at <b style="color:#94a3b8">five</b>.' },
-		{ min: 0.50, text: '"Bank" is starting to sound like <b style="color:#f59e0b">💰 finance</b> — maybe a <b style="color:#f59e0b">loan office</b>?' },
-		{ min: 0.45, text: 'There\'s a pull toward <b style="color:#f59e0b">💰 money</b>, but it could go either way.' },
-		{ min: 0.40, text: 'A faint whiff of <b style="color:#f59e0b">💰 money</b>, but nothing conclusive yet.' },
-		{ min: 0.00, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#f59e0b">💰 finance</b>, but barely.' }
 	]
 ];
 

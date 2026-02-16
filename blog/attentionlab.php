@@ -58,10 +58,10 @@ In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see 
          transition: border-color 0.2s;"></div>
 
     <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-        <span style="font-size:0.85rem; color:#10b981; font-weight:bold;">🌿 −1.6</span>
-        <input type="range" id="attn1d-q" min="-1.6" max="1.6" step="0.2" value="2.0"
+        <span style="font-size:0.85rem; color:#10b981; font-weight:bold;">🌿 −1</span>
+        <input type="range" id="attn1d-q" min="-1" max="1" step="0.1" value="2.0"
                style="flex:1; accent-color:#2563eb;" oninput="updateAttn1D()">
-        <span style="font-size:0.85rem; color:#f59e0b; font-weight:bold;">+1.6 🏦</span>
+        <span style="font-size:0.85rem; color:#f59e0b; font-weight:bold;">+1 🏦</span>
         <span id="attn1d-q-val"
               style="font-size:1.2rem; font-weight:bold; color:#2563eb; min-width:40px; text-align:right;">2.0</span>
     </div>
