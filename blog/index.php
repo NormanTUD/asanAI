@@ -52,49 +52,51 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 
 <script>
 	window.addEventListener('load', async () => {
-	try {
-		// 1. Start sequence
-		//updateLoadingStatus("Rendering Glossary...");
-		//await renderGlossary();
+		try {
+			// 1. Start sequence
+			//updateLoadingStatus("Rendering Glossary...");
+			//await renderGlossary();
 
-		updateLoadingStatus("Processing Citations...");
-		await bibtexify();
+			updateLoadingStatus("Processing Citations...");
+			await bibtexify();
 
-		updateLoadingStatus("Parsing Categories...");
-		await parseCategories();
+			updateLoadingStatus("Parsing Categories...");
+			await parseCategories();
 
-		updateLoadingStatus("Initializing Attention Labs...");
-		// Call the functions from your other files here
-		if (typeof SelfAttentionLab !== 'undefined') {
-			SelfAttentionLab.init();
-			initShiftExamples();
-			renderDotProductLab();
-			runAttention();
-			runUniverse();
+			updateLoadingStatus("Initializing Attention Labs...");
+			// Call the functions from your other files here
+			if (typeof SelfAttentionLab !== 'undefined') {
+				SelfAttentionLab.init();
+				initShiftExamples();
+				renderDotProductLab();
+				runAttention();
+				runUniverse();
+			}
+
+			updateLoadingStatus("Building Table of Contents...");
+			await toc();
+
+			// 2. Finalize
+			$("#contents").show();
+
+			// 3. Hide Overlay
+			const overlay = document.getElementById('loading-overlay');
+			if (overlay) {
+				overlay.style.opacity = '0';
+				setTimeout(() => {
+				overlay.style.display = 'none';
+				}, 1000);
+			}
+
+			sendHeight();
+
+			smartquote();
+
+			addCopyButtons();
+		} catch (error) {
+			console.error("Initialization failed:", error);
+			updateLoadingStatus("Error loading course. Please refresh.");
 		}
-
-		updateLoadingStatus("Building Table of Contents...");
-		await toc();
-
-		// 2. Finalize
-		$("#contents").show();
-
-		// 3. Hide Overlay
-		const overlay = document.getElementById('loading-overlay');
-		if (overlay) {
-			overlay.style.opacity = '0';
-			setTimeout(() => {
-			overlay.style.display = 'none';
-			}, 1000);
-		}
-
-		sendHeight();
-
-		smartquote();
-	} catch (error) {
-		console.error("Initialization failed:", error);
-		updateLoadingStatus("Error loading course. Please refresh.");
-	}
 	});
 
 	(function() {
@@ -114,8 +116,6 @@ This tutorial was built with the help of Google Gemini. We've done our best to v
 			// Fallback für alte Browser
 			setInterval(sendHeight, 1000);
 		}
-
-		addCopyButtons();
 	})();
 	</script>
 </body>
