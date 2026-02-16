@@ -197,8 +197,7 @@ function load_base_js () {
 		}
 
 		function render_temml() {
-			const root = document.getElementById('contents') || document.body;
-			const elements = root.querySelectorAll('p:not([data-math-rendered]), span:not([data-math-rendered]), div:not([data-math-rendered]), li:not([data-math-rendered])');
+			const elements = document.querySelectorAll('p:not([data-math-rendered]), span:not([data-math-rendered]), div:not([data-math-rendered]), li:not([data-math-rendered])');
 
 			elements.forEach(el => {
 				if (el.textContent.includes('$')) {
