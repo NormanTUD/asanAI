@@ -8,7 +8,8 @@
 
 const EnergyLab = {
 	animationFrame: null,
-	isRolling: false, // Starts paused
+	isRolling: false,
+	hasRendered: false, // Track if Plotly has initialized
 
 	ball: { x: 0, y: 0, z: 0, vx: 0, vy: 0 },
 
@@ -17,14 +18,11 @@ const EnergyLab = {
 		minY: -2, maxY: 2,
 		gridStep: 0.1,
 		friction: 0.9,
-		// This string tells Plotly: "Do not reset camera if this string stays the same"
-		uiRevision: 'interaction-friendly-key' 
+		uiRevision: 'interaction-friendly-key'
 	},
 
 	init: function() {
-		this.renderLandscape();
-
-		// Setup UI listeners
+		// Setup UI listeners (Non-intensive)
 		const ids = ['energy-lr', 'energy-temp'];
 		ids.forEach(id => {
 			const el = document.getElementById(id);
@@ -36,12 +34,41 @@ const EnergyLab = {
 			}
 		});
 
-		// Setup initial ball position (but don't start loop)
-		this.resetBall();
+		// Start observing the plot container
+		this.setupObserver();
 
-		// Ensure button matches initial state
 		const btn = document.getElementById('toggle-roll');
 		if (btn) btn.innerText = "Start Animation";
+	},
+
+	setupObserver: function() {
+		const target = document.getElementById('energy-plot');
+		if (!target) return;
+
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					// 1. Initial Render if it hasn't happened yet
+					if (!this.hasRendered) {
+						this.renderLandscape();
+						this.resetBall();
+						this.hasRendered = true;
+					}
+					// 2. Resume animation if it was previously rolling
+					if (this.isRolling && !this.animationFrame) {
+						this.simulationLoop();
+					}
+				} else {
+					// 3. Pause loop when out of view to save resources
+					if (this.animationFrame) {
+						cancelAnimationFrame(this.animationFrame);
+						this.animationFrame = null;
+					}
+				}
+			});
+		}, { threshold: 0.1 }); // Trigger when 10% of the plot is visible
+
+		observer.observe(target);
 	},
 
 	lossFunction: function(x, y) {
@@ -135,6 +162,7 @@ const EnergyLab = {
 	},
 
 	simulationLoop: function() {
+		// Added safety check for visibility
 		if (!this.isRolling) return;
 
 		const lr = parseFloat(document.getElementById('energy-lr')?.value || 0.02);
@@ -142,11 +170,9 @@ const EnergyLab = {
 
 		const grad = this.calculateGradient(this.ball.x, this.ball.y);
 
-		// Momentum-like physics
 		this.ball.vx -= grad.dx * lr;
 		this.ball.vy -= grad.dy * lr;
 
-		// Thermal noise (Stochasticity)
 		if (temp > 0) {
 			this.ball.vx += (Math.random() - 0.5) * temp * 0.1;
 			this.ball.vy += (Math.random() - 0.5) * temp * 0.1;
@@ -157,7 +183,6 @@ const EnergyLab = {
 		this.ball.vx *= this.config.friction;
 		this.ball.vy *= this.config.friction;
 
-		// Wall Bouncing
 		if (Math.abs(this.ball.x) > 2) { this.ball.x = Math.sign(this.ball.x) * 2; this.ball.vx *= -0.5; }
 		if (Math.abs(this.ball.y) > 2) { this.ball.y = Math.sign(this.ball.y) * 2; this.ball.vy *= -0.5; }
 
@@ -171,8 +196,6 @@ const EnergyLab = {
 	},
 
 	updatePlot: function() {
-		// Using Plotly.restyle on trace [1] (the ball) is the most lightweight 
-		// way to update data without resetting the camera or UI state.
 		Plotly.restyle('energy-plot', {
 			x: [[this.ball.x]],
 			y: [[this.ball.y]],
