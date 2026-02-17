@@ -26,7 +26,7 @@ Fehlt: Paul Christiano et al. (2017): Deep Reinforcement Learning from Human Pre
 
 4. Der "Context Window" Wahnsinn
 Was LLMs heute so mächtig macht, ist die Fähigkeit, ganze Bücher im "Gedächtnis" zu behalten (RAG und Long Context).
-    Blindspot: Die Entwicklung von Softmax-Alternativen oder FlashAttention, um riesige Kontextfenster möglich zu machen (Tri Dao et al., 2022: FlashAttention).
+Blindspot: Die Entwicklung von Softmax-Alternativen oder FlashAttention, um riesige Kontextfenster möglich zu machen (Tri Dao et al., 2022: FlashAttention).
 
 
 5. Open Source Gegengewicht
