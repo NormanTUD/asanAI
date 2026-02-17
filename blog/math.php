@@ -423,8 +423,7 @@ If we multiply $2^{0.5}$ by itself, the rule says:
 $$2^{0.5} \times 2^{0.5} = 2^{0.5 + 0.5} = 2^1 = 2$$
 Since $2^{0.5}$ is a number that, when multiplied by itself, results in $2$, it fits the literal definition of a square root. This logic extends to any floating-point number; for instance, $2^{0.333}$ is approximately the cube root ($\sqrt[3]{2}$) because adding $0.333 + 0.333 + 0.333$ brings us back to roughly $2^1$.
 
-### What about negative numbers?
-Negative exponents do not mean the result becomes negative; instead, they represent the **reciprocal** (division). A negative exponent tells you to "divide" instead of "multiply."
+**What about negative numbers?** Negative exponents do not mean the result becomes negative; instead, they represent the **reciprocal** (division). A negative exponent tells you to "divide" instead of "multiply."
 $$2^{-3} = \frac{1}{2^3} = \frac{1}{8} = 0.125$$
 
 In the context of the continuous curve, as the exponent moves into negative territory, the result simply gets closer and closer to zero, but never quite touches it. This is why logarithms (the inverse) are so useful, they allow us to work with these tiny, microscopic fractions by looking at the exponent instead of the decimal.
