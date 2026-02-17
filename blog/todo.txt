@@ -87,12 +87,7 @@ Calibration / Uncertainty
 Reward Hacking konkret, nicht nur philosophisch
 Gerade bei NN ein Muss.
 
-
-
 https://nlp.seas.harvard.edu/2018/04/03/attention.html
-
-
-Eliza
 
 http://neuralnetworksanddeeplearning.com/chap4.html
 
