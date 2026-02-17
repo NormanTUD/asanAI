@@ -3,7 +3,8 @@ window.bibData = {
 		title: "Deep Contextualized Word Representations",
 		author: "Matthew E. Peters, Mark Neumann, Mohit Iyyer, Matt Gardner, Christopher Clark, Kenton Lee, Luke Zettlemoyer",
 		url: "https://aclanthology.org/N18-1202/",
-		year: 2018
+		year: 2018,
+		alternative: "ELMo"
 	},
 	"oevresdeformat": {
 		url: "https://archive.org/details/oeuvresdefermat02ferm",
