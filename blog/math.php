@@ -191,24 +191,16 @@ $$ \begin{pmatrix} 1 \\ 2 \end{pmatrix} + \begin{pmatrix} 3 \\ 4 \end{pmatrix} =
 
 ### The Matrix (rank 2)
 A **Matrix** is a grid of numbers (like a spreadsheet).
-A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is.
+A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is, when we say $0$ means "black", "255" means white and everything inbetween are different shades of gray.
 $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 
 </div>
-
-    <div id="section-bw">
-        <div class="md">
-            In a black and white image, we only need **one number** for each pixel. 
-            * **0** is like turning the light off (**Black**).
-            * **255** is the maximum brightness (**White**).
-            * Numbers in between make different shades of gray!
-        </div>
-        
-        <div style="display: flex; align-items: center; gap: 40px; padding: 20px; border-radius: 12px; margin-top: 15px;">
-                <div id="bw-matrix-container"></div>
-                <canvas id="bw-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
-        </div>
-    </div>
+<div id="section-bw">
+	<div style="display: flex; align-items: center; gap: 40px; padding: 20px; border-radius: 12px; margin-top: 15px;">
+		<div id="bw-matrix-container"></div>
+		<canvas id="bw-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
+	</div>
+</div>
 
 <div class="md">
 
