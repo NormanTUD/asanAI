@@ -1,4 +1,11 @@
 window.bibData = {
+	"bert": {
+		url: "https://aclanthology.org/N19-1423/",
+		title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+		author: "Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova",
+		year: 2019,
+		alternativetitle: "BERT"
+	},
 	"elmo": {
 		title: "Deep Contextualized Word Representations",
 		author: "Matthew E. Peters, Mark Neumann, Mohit Iyyer, Matt Gardner, Christopher Clark, Kenton Lee, Luke Zettlemoyer",
@@ -261,7 +268,8 @@ window.bibData = {
 		url: "https://papers.baulab.info/papers/also/Radford-2018a.pdf",
 		title: "Improving Language Understanding by Generative Pre-Training",
 		author: "Alec Radford, Karthik Narasimhan, Tim Salimans, Ilya Sutskever",
-		year: 2018
+		year: 2018,
+		alternativetitle: "GPT-1"
 	},
 	"relupaper": {
 		title: "Rectified Linear Units Improve Restricted Boltzmann Machines",
