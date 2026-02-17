@@ -315,7 +315,9 @@ total = sum(numbers)
 
 ## The Product Symbol $\prod$
 
-The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication.
+The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. It works similiar to the $\sum$:
+
+$$\prod_{i = 1}^5 i = 1 \cdot 2 \cdot 3 \cdot 4 \cdot 5 = 120 $$
 
 ### Reading the Symbol
 $$\prod_{i=1}^{n} x_i$$
