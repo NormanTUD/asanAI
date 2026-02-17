@@ -599,7 +599,7 @@ When $\alpha < 1$, the distribution pushes probabilities toward the corners (the
 <div class="statlab-interactive-zone">
     <div class="md">
     ### Interactive: Dirichlet Concentration
-    Adjust the Alpha ($\alpha$) parameters for three potential "Topics" (e.g., Science, Art, Sports). Watch how the "Probability Space" (represented as a 3D simplex) shifts.
+    Adjust the $\alpha$-parameters for three potential "Topics" (e.g., Science, Art, Sports). Watch how the "Probability Space" (represented as a 3D simplex) shifts.
     * **Low Alpha (< 1):** The AI is decisive; it picks one topic.
     * **High Alpha (> 1):** The AI is "blending" topics together.
     </div>
