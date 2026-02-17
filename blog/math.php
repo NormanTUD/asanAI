@@ -390,8 +390,6 @@ $$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$$
 
 The $\lim$ means we look what happens when $n$ reaches $\infty$. Some numbers get bigger when they go towards infinity, some numbers get smaller and some go towards a certain specific number, which is then called convergence. This equation converges, that means, the higher the $n$ gets, the more closely that number comes to the irrational number $e$.
 
-#### Why exactly this equation? (The Logic of Continuous Growth)
-
 The formula $e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$ wasn't just invented; it was discovered through the logic of **compound interest**.
 
 Imagine you have 1.00 Euro in a bank that gives you 100% interest per year.
@@ -405,7 +403,6 @@ While the limit above is the definition, $e$ is most precisely calculated using 
 $$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n = \sum_{n=0}^{\infty} \frac{1}{n!} = \frac{1}{0!} + \frac{1}{1!} + \frac{1}{2!} + \frac{1}{3!} + \frac{1}{4!} \dots$$
 $$e = 1 + 1 + 0.5 + 0.1666 + 0.0416 \dots \approx 2.71828$$
 
-#### The "Infinite" Leap
 The equation asks: *"What if we compound every single microsecond? What if the interest is calculated continuously?"* As $n$ (the frequency of compounding) goes to infinity, the result doesn't explode to infinity. Instead, it hits a "natural ceiling." That ceiling is exactly **2.71828...** or $e$. It is the maximum possible result of 100% growth shared over infinite intervals.
 
 ## Exponentiation
