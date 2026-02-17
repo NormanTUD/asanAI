@@ -254,7 +254,6 @@ We don't just use the raw scores because they can get too huge to handle, making
 
 This forces all the attention for a single word to add up to exactly **100%**. If a word gives 85% of its focus to one neighbor, it only has 15% left to split among everyone else.
 
-## Why This Matters
 When you see a dark blue square with **85%**, you are seeing the model "linking" those concepts. For example, when the word **"hunter"** looks at **"bear,"** it isn't just looking at a string of letters; it is pulling the "Value" ($\mathbf{v}$) of the bear into its own meaning. This is how the model understands that this specific hunter is currently interacting with a predator.
 </div>
 <div id="sa-matrix-container" style="overflow-x: auto;"></div>
