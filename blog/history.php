@@ -544,11 +544,6 @@ The breakthrough of modern AI was predicated on a shift in data philosophy: movi
 
 The final layer of abstraction in the history of LLMs is not mathematical, but teleological. As explored in \citetitle{ouyang2022instructgpt}, the raw statistical power of a base model often results in "hallucinations" or unhelpful outputs because the machine is merely predicting the next likely word, not the user's intent. By introducing **Reinforcement Learning from Human Feedback (RLHF)**, researchers moved beyond the "Black Box" of raw data ingestion into the realm of social alignment. This process essentially acts as a cultural filter, rewarding the model for being helpful, honest, and harmless. This represents the moment where the machine ceased to be a mere calculator of probabilities and began to function as a conversational agent, transitioning from a mirror of the internet's chaos to a tool that respects the subjective constraints of human interaction.
 
-\category{philosophy,data}
-### Data Pollution and the "Low-Background Steel" Analogy
-
-The rapid proliferation of AI-generated content introduces a new risk: data pollution. As future models are trained on the output of current models, they risk "model collapse," where errors and biases are recursively amplified. This mirrors the \citealternativetitle{preaiinternet} phenomenon: for highly sensitive radiation detectors, scientists must harvest steel from sunken pre-1945 warships (like the *SMS Kronprinz Wilhelm*) because any steel produced after the Trinity nuclear test is contaminated with atmospheric radionuclides. Similarly, "clean" human data from the pre-AI era (pre-2022) may become a finite, precious resource, necessary to calibrate the "radioactive" synthetic datasets of the future.
-
 \category{hardware}
 ## From CPU to GPU: The Realization of the "Bitter Lesson"
 
