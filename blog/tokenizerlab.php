@@ -1,9 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-TODO: WordPiece
-
-    Before an AI can "calculate" a word, it must chop the text into pieces. This process is called **Tokenization**. Depending on how you chop, the AI "sees" the world differently.
+Before an AI can "calculate" a word, it must chop the text into pieces. This process is called **Tokenization**. Depending on how you chop, the AI "sees" the world differently.
 </div>
 
 <div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
@@ -49,6 +47,13 @@ This treats every single letter and space as its own token. This is the most gra
 The concept of viewing text as a sequence of raw characters dates back to \citeauthor{markov1913ngram} (\citeyear{markov1913ngram}), who used it to analyze the statistical structure of Russian literature. In the era of Deep Learning, the "raw view" was revitalized by \citeauthor{sutskever2011generating} in their paper \citetitle{sutskever2011generating}, which proved that Recurrent Neural Networks could learn to predict the next character with enough precision to form coherent words and sentences from scratch.
 </div>
 <div id="viz-chars" class="viz-container"></div>
+
+<div class="md" style="margin-top:40px;">
+### WordPiece (The BERT Way)
+
+WordPiece is a subword method closely related to BPE, but instead of merging the most *frequent* pair, it merges the pair that most improves the **likelihood of the training data**. It was introduced by \citeauthor{schuster2012wordpiece} (\citeyear{schuster2012wordpiece}) to handle the massive character sets of Japanese and Korean, and later became famous as the tokenizer behind Google's **BERT**. Continuation fragments are marked with `##` (e.g., "tokenization" → `token`, `##iza`, `##tion`). GPT-style models use BPE instead because byte-level BPE is simpler to train at scale and guarantees coverage of any input without needing an unknown-token fallback.
+</div>
+<div id="viz-wordpiece" class="viz-container"></div>
 
 <div class="md" style="margin-top:40px;">
 ### Sub-word Units (The ChatGPT Way)

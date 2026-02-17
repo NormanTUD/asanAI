@@ -8,7 +8,7 @@ function syncAndTokenize(val) {
 	if (!masterInput) return;
 
 	const text = (val !== undefined) ? val : masterInput.value;
-	const methods = ['spaces', 'trigrams', 'bpe', 'chars'];
+	const methods = ['spaces', 'trigrams', 'bpe', 'wordpiece', 'chars'];
 
 	methods.forEach(type => {
 		renderTokens(type, text);
@@ -54,6 +54,12 @@ function renderTokens(type, text) {
 	else if (type === 'chars') {
 		tokens = text.split('');
 	}
+	else if (type === 'wordpiece') {
+		const words = text.split(/\s+/).filter(t => t.length > 0);
+		words.forEach(word => {
+			tokens.push(...wordpieceTokenize(word));
+		});
+	}
 
 	// HTML Rendering mit konsistentem Hashing für Farben
 	container.innerHTML = tokens.map(t => {
@@ -70,6 +76,72 @@ function renderTokens(type, text) {
 	    </div>
 	`;
 	}).join('');
+}
+
+/**
+ * A small simulated WordPiece vocabulary.
+ * In real BERT, this would be ~30,000 entries learned from data.
+ * We simulate the behavior: known whole words stay whole,
+ * unknown words get split into the longest matching subwords.
+ */
+const wordpieceVocab = [
+	// Whole words
+	"the", "king", "is", "a", "an", "brave", "act", "quick", "slow",
+	"token", "deep", "learn", "model", "train", "data", "word",
+	"un", "re", "pre", "dis",
+	// Subword suffixes (## prefix = continuation)
+	"##ing", "##ly", "##ed", "##er", "##est", "##tion", "##ation",
+	"##ment", "##ness", "##ize", "##iza", "##able", "##ful",
+	"##al", "##ous", "##ive", "##less", "##s", "##en", "##it", "##id",
+	"##e", "##y", "##o", "##i", "##u",
+	// Single characters as fallback (always in WordPiece vocab)
+	"a","b","c","d","e","f","g","h","i","j","k","l","m",
+	"n","o","p","q","r","s","t","u","v","w","x","y","z"
+];
+
+/**
+ * Tokenizes a single word using a greedy longest-match-first WordPiece algorithm.
+ * This mirrors the real BERT tokenizer logic.
+ */
+function wordpieceTokenize(word) {
+	word = word.toLowerCase();
+	// Check if the whole word is in the vocabulary
+	if (wordpieceVocab.includes(word)) return [word];
+
+	const tokens = [];
+	let start = 0;
+	let isFirst = true;
+
+	while (start < word.length) {
+		let end = word.length;
+		let found = false;
+
+		// Greedy: try the longest possible substring first
+		while (start < end) {
+			let substr = word.substring(start, end);
+			if (!isFirst) {
+				substr = "##" + substr;
+			}
+			if (wordpieceVocab.includes(substr)) {
+				tokens.push(substr);
+				found = true;
+				break;
+			}
+			end--;
+		}
+
+		if (!found) {
+			// Fallback: single character (with ## prefix if not first)
+			const ch = word[start];
+			tokens.push(isFirst ? ch : "##" + ch);
+			start++;
+		} else {
+			start = end;
+		}
+		isFirst = false;
+	}
+
+	return tokens;
 }
 
 async function loadTokenizerModule() {
