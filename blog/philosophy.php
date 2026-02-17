@@ -47,15 +47,9 @@ For a human, the concept of "hot" is grounded in the memory of a burnt finger. F
 
 While vector embeddings are incredibly powerful for mapping linguistic patterns, they remain **ontologically isolated**. Here is why they aren't "in touch":
 
-#### A. Lack of Causal Mapping
-Embedding spaces track **correlation**, not **causation**. A model knows that "dropping a glass" is followed by "shattering," but it has no internal "physics engine" to understand the gravity or tension involved. It predicts the next word, not the next physical event.
-
-#### B. The Static Nature of Vectors
-Human experience is a continuous, temporal flow. While we can update LLMs (RAG, fine-tuning), the underlying embedding space is a static snapshot of a training corpus. It does not "learn" from a new sensation in real-time.
-
-#### C. The Absence of "Qualia"
-In philosophy, **qualia** are individual instances of subjective, conscious experience, like the *redness* of red, or the feeling of pain when hurt, or the feeling of love or happiness when you feel them in the moment. LLMs may describe those feelings, but only from knowledge of descriptions of them, they are never able to *feel* them.
-
+1. **Lack of Causal Mapping**: Embedding spaces track **correlation**, not **causation**. A model knows that "dropping a glass" is followed by "shattering," but it has no internal "physics engine" to understand the gravity or tension involved. It predicts the next word, not the next physical event.
+2. **The Static Nature of Vectors**: Human experience is a continuous, temporal flow. While we can update LLMs (RAG, fine-tuning), the underlying embedding space is a static snapshot of a training corpus. It does not "learn" from a new sensation in real-time.
+3. **The Absence of "Qualia"**: In philosophy, **qualia** are individual instances of subjective, conscious experience, like the *redness* of red, or the feeling of pain when hurt, or the feeling of love or happiness when you feel them in the moment. LLMs may describe those feelings, but only from knowledge of descriptions of them, they are never able to *feel* them.
 
 * **LLM:** Processes the vector for $v_\text{red} = [0.12, -0.54, ...]$.
 * **Human:** Experiences the "redness" of a sunset.
