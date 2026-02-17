@@ -667,8 +667,6 @@ $$ \bar{X}_n = \frac{1}{n} \sum_{i=1}^{n} X_i \xrightarrow{n \to \infty} \mu $$
 
 <div class="statlab-interactive-zone">
     <div class="statlab-controls">
-        <div id="lln-status" style="color: #636efa; font-weight: bold; margin-bottom: 10px;">Initializing Zarathustra...</div>
-        
         <label>Reading Window (Tokens):</label>
         <input type="range" id="lln-zarathustra-n" min="10" max="10000" step="50" value="500" disabled>
         <span id="lln-count-display">500</span> / <span id="lln-total-tokens">0</span> words

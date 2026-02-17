@@ -1074,11 +1074,9 @@ const ZarathustraLab = {
 	colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
 
 	init: async function() {
-		const statusEl = document.getElementById('lln-status');
 		const slider = document.getElementById('lln-zarathustra-n');
 
 		try {
-			statusEl.textContent = "Fetching zarathustra.txt...";
 			const response = await fetch('zarathustra.txt');
 
 			if (!response.ok) {
@@ -1086,7 +1084,6 @@ const ZarathustraLab = {
 			}
 
 			const text = await response.text();
-			statusEl.textContent = "Tokenizing text...";
 
 			// Robust tokenization
 			this.tokens = text.toLowerCase()
@@ -1101,8 +1098,6 @@ const ZarathustraLab = {
 					// UI Update
 					document.getElementById('lln-total-tokens').textContent = this.tokens.length;
 					slider.disabled = false;
-					statusEl.textContent = "Ready: Dataset Loaded.";
-					statusEl.style.color = "#10b981";
 
 					this.render();
 					this.renderMarkovLab();
@@ -1111,8 +1106,6 @@ const ZarathustraLab = {
 
 				} catch (error) {
 					console.error("ZarathustraLab Failure:", error);
-					statusEl.textContent = "❌ " + error.message;
-					statusEl.style.color = "#ef4444";
 					document.getElementById('plot-zarathustra-convergence').innerHTML =
 						`<div style="padding:20px; text-align:center;">
 					<b>File Load Error</b><br>${error.message}<br>
