@@ -412,11 +412,6 @@ $$e = 1 + 1 + 0.5 + 0.1666 + 0.0416 \dots \approx 2.71828$$
 #### The "Infinite" Leap
 The equation asks: *"What if we compound every single microsecond? What if the interest is calculated continuously?"* As $n$ (the frequency of compounding) goes to infinity, the result doesn't explode to infinity. Instead, it hits a "natural ceiling." That ceiling is exactly **2.71828...** or $e$. It is the maximum possible result of 100% growth shared over infinite intervals.
 
-## Computer Science Terminology
-
-* Integer: A whole number without a fractional component (e.g., -5, 0, 42).
-* Floating Point Number: A number containing a decimal point or exponent to represent fractions (e.g., 3.14, -0.001).
-
 ## Exponentiation
 In its simplest form, exponentiation is repeated multiplication. If we ask, "What is 2 to the power of 3?" ($2^3$), we mean:
 $$\underbrace{2 \times 2 \times 2}_\text{3 times} = 8$$
