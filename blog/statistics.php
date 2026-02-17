@@ -96,11 +96,6 @@ Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considere
 <div class="md">
 #### The Astronomical Origin: Hunting Ceres
 
-<figure>
-    <img style="width: 100%" src="Della_scoperta_del_nuovo_pianeta_Cerere_Ferdinandea_p1.jpg" alt="Illustration of the paper first describing Ceres" />
-    <figcaption class="md">Illustration in the paper \citetitle{ceresdiscovery}, which first described the back-then newly discovered dwarf-planet Ceres</figcaption>
-</figure>
-
 On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresdiscovery}. It was a monumental find, but the victory was short-lived; Ceres soon vanished into the sun's glare, leaving astronomers with only 41 days of "noisy" and uncertain data. To find it again, the world turned to **Carl Friedrich Gauß**. He, in \citeyear{gauss1809} his work \citetitle{gauss1809} (§ 175-177, p. 208-213), solved this problem, by looking not at single data points, but the whole group of data points as a whole, and the idea that the truth must be somewhere in between.
 </div>
 
