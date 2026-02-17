@@ -452,7 +452,7 @@ However, Deep Blue's victory represented the pinnacle of specific, hand-crafted 
 
 ### The Universal Approximation Theorem
 
-The **Universal Approximation Theorem** (proven by \citeauthor{hornik}) establishes that the power of neural networks is derived from their multilayer feedforward architecture rather than any specific activation function. \citeauthor{hornik} (\citeyear{hornik}) demonstrated that a single hidden layer is sufficient to approximate any function to an arbitrary degree of accuracy, provided there are enough hidden units. A network with $n$ hidden units implements functions of the form:
+The **Universal Approximation Theorem** (proven by \citeauthor{hornik}) establishes that the power of neural networks is derived from their multilayer feedforward architecture rather than any specific activation function. \citeauthor{hornik} demonstrated that a single hidden layer is sufficient to approximate any function to an arbitrary degree of accuracy, provided there are enough hidden units. A network with $n$ hidden units implements functions of the form:
 
 $$h(x) = \sum_{j=1}^{n} \beta_j \psi(a_j^T x - \theta_j)$$
 
