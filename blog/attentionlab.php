@@ -1,7 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-
 In a Transformer model, words don't live in a dictionary; they live in a **Semantic Universe**. Every concept, from "apple" to "existentialism", is assigned a specific coordinate in a high-dimensional map. However, some words suffer from a serious identity crisis.
 
 ## The Semantic GPS
