@@ -353,7 +353,7 @@ The notation $n!$ was introduced by \citeauthor{kramp1808} in \citeyear{kramp180
 Defining $0! = 1$ is a "combinatorial convention". It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, these essential mathematical laws would require complex exceptions or result in division by zero.
 
 \category{advanced_math}
-### Arithmetic with $\infty$ in Computing
+## Arithmetic with $\infty$ in Computing
 
 In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:
 
