@@ -1162,6 +1162,7 @@ const ZarathustraLab = {
 
 		Plotly.react('plot-zarathustra-convergence', traces, layout);
 	},
+
 	renderMarkovLab: function() {
 		const selector = document.getElementById('markov-word-select');
 
