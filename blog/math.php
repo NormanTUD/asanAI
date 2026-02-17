@@ -224,7 +224,7 @@ print(factorial(5)) # calculates 5 * 4 * 3 * 2 * 1 = 120
 <div class="md">
 The factorial grows extremely quickly, much faster than exponential functions. This growth is essential when calculating the number of possible permutations (orderings) of a set of objects.
 
-#### Why $0! = 1$?
+#### Why is $0! = 1$?
 1. **Combinatorics:** $n!$ represents the number of ways to arrange $n$ objects. There is exactly $1$ way to arrange zero items (the empty set).
 2. **Consistency:** To maintain the recursive property $(n-1)! = \frac{n!}{n}$, setting $n=1$ yields $0! = \frac{1!}{1} = 1$.
 
