@@ -66,6 +66,13 @@ function initDataBasics() {
 	initCompositionPlot();
 	initHadamard();
 	initSineCosine();
+
+
+	document.getElementById('sum-start').addEventListener('input', updateSummation);
+	document.getElementById('sum-end').addEventListener('input', updateSummation);
+	document.getElementById('sum-function').addEventListener('input', updateSummation);
+
+	updateSummation();
 }
 
 // ── Hadamard ────────────────────────────────────────────────────────────────
@@ -963,6 +970,20 @@ function initSineCosine() {
 
 	sliderTaylor.addEventListener('input', updateTaylor);
 	updateTaylor();
+}
+
+function updateSummation() {
+	const start = parseInt(document.getElementById('sum-start').value);
+	const end = parseInt(document.getElementById('sum-end').value);
+	const func = document.getElementById('sum-function').value;
+
+	let sum = 0;
+	for (let i = start; i <= end; i++) {
+		sum += eval(func.replace(/i/g, i)); // Replace 'i' in the function with the current index
+	}
+
+	document.getElementById('sum-result').innerHTML = `Result: $$ \\sum_{i=${start}}^{${end}} ${func} = ${sum} $$`;
+	render_temml(); // Re-render math
 }
 
 // ── Module loader ───────────────────────────────────────────────────────────

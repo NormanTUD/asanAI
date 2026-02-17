@@ -292,7 +292,20 @@ If $x$ is the input and $w$ is the weight, the AI calculates a score using this 
 $$\text{Score} = \sum_{i=1}^{n} w_i x_i$$
 
 This is just a compact way of saying: $(w_1 \cdot x_1) + (w_2 \cdot x_2) + \dots + (w_n \cdot x_n)$.
+</div>
 
+<div>
+  Start Index ($i_{\text{start}}$): <input type="number" id="sum-start" value="1" min="1"><br>
+  End Index ($i_{\text{end}}$): <input type="number" id="sum-end" value="5" min="1"><br>
+  Function ($f(i)$): <input type="text" id="sum-function" value="i^2"><br>
+</div>
+<div id="sum-result" style="font-size: 1.2em; margin-top: 10px;">Result: $ \sum_{i=1}^{5} i^2 = 55 $</div>
+
+<script>
+
+</script>
+
+<div class="md">
 \category{programming}
 ### Implementation in Code
 In classical programming, the summation symbol $\sum$ is written as a simple loop:
