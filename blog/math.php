@@ -280,6 +280,7 @@ $$\sum_{i=1}^{n} x_i$$
 * **The Top ($n$):** This is the **stop**. It tells you to stop once you reach the $n$-th item.
 * **The Right ($x_i$):** This is the **rule**. It tells you which values you are actually adding together.
 
+### A Concrete Example
 If we have a vector $\vec{v} = \begin{pmatrix} 10 \\ 20 \\ 30 \\ 40 \end{pmatrix}$, and we want to find the sum of all its elements, we write:
 
 $$\sum_{i=1}^{4} v_i = v_1 + v_2 + v_3 + v_4 = 10 + 20 + 30 + 40 = 100$$
