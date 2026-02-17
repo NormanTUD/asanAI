@@ -354,7 +354,6 @@ The factorial grows extremely quickly, much faster than exponential functions. T
 In AI, the total probability of independent events is the product of their individual probabilities:
 $$P(\text{total}) = \prod_{i=1}^{n} P(x_i)$$
 
-## Factorial Function
 The factorial $n!$ is the product of all positive integers from 1 to $n$:
 $n! = n \times (n-1) \times \dots \times 1$
 
@@ -366,9 +365,7 @@ $n! = n \times (n-1) \times \dots \times 1$
 The notation $n!$ was introduced by \citeauthor{kramp1808} in \citeyear{kramp1808} (p. XI). He sought a notation to simplify the large products found in **combinatorics** and **power series**. 
 
 Defining $0! = 1$ is a "combinatorial convention." It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, these essential mathematical laws would require complex exceptions or result in division by zero.
-</div>
 
-<div class="md">
 \category{advanced_math}
 ### Arithmetic with $\infty$ in Computing
 
