@@ -54,8 +54,7 @@ The most common way to implement $W_s$ is a **$1 \times 1$ Convolution**.
 * **Depth:** It acts as a linear projection across the channels. If input $x$ has $C_\text{in}$ channels and we need $C_\text{out}$ channels, the $1 \times 1$ layer performs a weighted sum of the input channels to produce the desired output depth.
 
 
-#### Mathematical Operation at a single pixel $(i, j)$:
-If input $x \in \mathbb{R}^{H \times W \times C_\text{in}}$ and we want output $y \in \mathbb{R}^{H \times W \times C_\text{out}}$:
+**Mathematical Operation at a single pixel $(i, j)$:** If input $x \in \mathbb{R}^{H \times W \times C_\text{in}}$ and we want output $y \in \mathbb{R}^{H \times W \times C_\text{out}}$:
 
 $$ y_{i,j,k} = \sum_{c=0}^{C_\text{in}} w_{k,c} \cdot x_{i,j,c} $$
 
