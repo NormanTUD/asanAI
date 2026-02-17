@@ -1,4 +1,10 @@
 window.bibData = {
+	"arsconjectandi": {
+		title: "Ars Conjectandi",
+		year: 1713,
+		author: "Jacob Bernoulli",
+		url: "https://archive.org/details/bub_gb_kz9nvk99EWoC"
+	},
 	"geometrischegrundbegriffe": {
 		url: "https://archive.org/details/encyklomath304encyrich",
 		author: "Max Abraham",
