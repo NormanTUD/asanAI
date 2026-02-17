@@ -185,7 +185,6 @@ write more about data
 
 https://yuxi.ml/essays/posts/perceptron-controversy/
 
-
 1. Fokus auf die "Connective Tissue" (Das Bindegewebe)
 Aktuell hast du starke Einzelkapitel. Was den Text noch "runder" machen würde, sind Übergänge.
 Woche 4 (Fokus Struktur): Verbringe Zeit damit, das Ende jedes Kapitels als Brücke zum nächsten zu bauen. Wenn du gerade die Mathematik der Fehlerminimierung erklärt hast, leite über: "Jetzt, wo wir wissen, wie ein einzelnes Neuron lernt, schauen wir uns an, was passiert, wenn wir Milliarden davon zusammenstecken – willkommen in der Ära von Deep Learning." Das hält den Leser im "Flow".
@@ -193,10 +192,6 @@ Woche 4 (Fokus Struktur): Verbringe Zeit damit, das Ende jedes Kapitels als Brü
 4. Ein starkes Fazit: Der "Blick in die Zukunft"
 Der Text endet momentan sehr analytisch und philosophisch.
 Gib dem Leser einen Ausblick: Wo geht die Reise hin? (Agentic AI, Reasoning wie in O1, Energieeffizienz). Ein inspirierendes Schlusswort macht den Text "shareable" – die Leute teilen Dinge eher, wenn sie sich am Ende klüger und ein bisschen inspiriert fühlen.
-
-Einbau-Tipp: Pack das in ein kurzes Kapitel namens "The Cost of Intelligence". Das gibt dem Leser eine Atempause von der harten Mathematik und macht den Text "erwachsener".
-
-
 
 3. Failure Modes (Adversarial Examples / Reward Hacking)
 Das macht extrem viel Spaß zu lesen!
@@ -212,8 +207,6 @@ Warum es passt: Sie stellte die Frage, ob eine Maschine „originär“ denken k
 Der Outsider-Faktor: Ein katalanischer Mystiker aus dem Mittelalter. Er baute Papier-Apparaturen mit konzentrischen Kreisen (die „Logikmaschine“), um alle Wahrheiten über Gott durch Kombination von Begriffen zu finden.
 Warum es passt: Er ist der Ur-Ur-Großvater der kombinatorischen Logik. Seine Idee, dass man Wissen durch das mechanische Kombinieren von Symbolen erzeugen kann, ist im Kern genau das, was ein Transformer macht.
 
-
-
 3. Jakob von Uexküll (1934): Streifzüge durch die Umwelten von Tieren und Menschen
 Der Outsider-Faktor: Ein Biologe, der das Konzept der „Umwelt“ (die subjektive Welt eines Lebwesens) erfand. Er beschrieb, wie eine Zecke die Welt nur durch „Licht“ und „Buttersäure“ wahrnimmt.
 Warum es passt: Das ist die perfekte Analogie für LLMs. Wir denken, sie verstehen unsere Welt, aber sie leben in einer „Umwelt“ aus reiner Statistik und Token-Vektoren. Sie haben kein „Gefühl“ für das Stoppschild, nur eine Koordinate dafür.
@@ -221,6 +214,5 @@ Warum es passt: Das ist die perfekte Analogie für LLMs. Wir denken, sie versteh
 4. Lewis Fry Richardson (1922): Weather Prediction by Numerical Process
 Der Outsider-Faktor: Er wollte das Wetter berechnen, indem er 64.000 Menschen in ein Stadion setzt, die alle gleichzeitig kleine Rechnungen auf Zetteln durchführen und sie sich gegenseitig weiterreichen.
 Warum es passt: Das ist die exakte Beschreibung von parallelem Computing und neuronalen Netzen, Jahrzehnte bevor es Mikrochips gab. Er beschrieb ein „menschliches GPU-Cluster“.
-
 
 Er zitiert Yann LeCun (1989/1998). Frag ihn, warum er moderne Architekturen wie „MoE“ (Mixture of Experts) oder „State Space Models“ (Mamba) ignoriert, wenn er doch den Weg zu ChatGPT erklären will.
