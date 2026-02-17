@@ -1253,6 +1253,7 @@ window.bibData = {
 		year: "2013",
 		title: "Efficient Estimation of Word Representations in Vector Space",
 		url: "https://arxiv.org/abs/1301.3781",
+		alternativetitle: "Word2Vec"
 	},
 	"firth1957distributive": {
 		author: "John Rupert Firth",
