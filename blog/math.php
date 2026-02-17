@@ -501,10 +501,9 @@ When we talk about models being "good enough," we are looking at the balance of 
 * **An "Approximate" Model:** Might be 98% accurate. While it may occasionally mistake a fluffy pillow for a cat, its ability to process millions of images in seconds makes it incredibly valuable anyways.
 
 **Key takeaway:** AI doesn't "know" what a cat is in the way humans do. It has simply built a very sophisticated mathematical approximation of "cat-ness."
-</div>
 
-<div class="md">
-## 1D: The Line
+## Vector Spaces
+### 1D: The Line
 In 1D, you only have one "degree of freedom." You can go forward or backward.
 * **Concept:** A single number describes your entire universe.
 </div>
@@ -516,7 +515,7 @@ In 1D, you only have one "degree of freedom." You can go forward or backward.
 </div>
 
 <div class="md">
-## 2D: The Plane
+### 2D: The Plane
 By adding a second number, we unlock an infinite flat surface.
 </div>
 
@@ -528,7 +527,7 @@ By adding a second number, we unlock an infinite flat surface.
 </div>
 
 <div class="md">
-## 3D: The Color Cube
+### 3D: The Color Cube
 In 3D, we can represent volume. A great way to visualize this is **Color Space**. Every color you see on this screen is just a vector in a 3D space where the axes are **Red**, **Green**, and **Blue**.
 </div>
 
@@ -543,7 +542,7 @@ In 3D, we can represent volume. A great way to visualize this is **Color Space**
 </div>
 
 <div class="md">
-## 4D and Beyond: The "Feature" Space
+### 4D and Beyond: The "Feature" Space
 We cannot "see" 4D, but we can **describe** it. In AI, dimensions are just "features." Imagine we are describing a "Fruit." We can use a 4D vector to describe:
 1. **Sweetness**
 2. **Sourness**
