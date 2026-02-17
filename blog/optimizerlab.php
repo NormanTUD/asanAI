@@ -16,7 +16,8 @@ There are different strategies how to optimize:
 
 In most situations, *Adam* is the optimizer that works best, as it combines the speed of momentum with the ability to automatically adjust the learning rate for every individual parameter, allowing it to handle noisy data and complex architectures with minimal manual tuning.
 
-### Parameters: 
+**Parameters:**
+
 * **Learning Rate:** The size of each step. Set it too high and you'll "jump" over the solution; too low and you'll take forever to get there.
 * **Epochs:** The number of adjustment steps the optimizer takes. Think of this as the "distance" the ball is allowed to travel.
 </div>
