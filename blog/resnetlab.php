@@ -31,8 +31,7 @@ Where:
 * $x$ is the input to the block (the "Identity Connection").
 * $F(x)$ is the learned transformation (usually 2 or 3 convolution layers).
 
-### The Gradient "Superhighway"
-Let's look at the gradient of this new block during backpropagation:
+**The Gradient "Superhighway":** Let's look at the gradient of this new block during backpropagation:
 
 $$ \frac{\partial y}{\partial x} = \frac{\partial (F(x) + x)}{\partial x} = \frac{\partial F(x)}{\partial x} + \mathbf{1} $$
 
