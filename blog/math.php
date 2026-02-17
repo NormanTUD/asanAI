@@ -146,6 +146,95 @@ This model will (most probably) not be perfect. But it can be **good enough** to
 
 Throughout this course, we will look into these building blocks and how the computer then creates this model, and how these building blocks work. We'll start with very simple building blocks for simple numbers, and then go to building blocks to classify images, and end up with Transformers, which are the basic structure for chatGPT, which all take ideas from each other.
 
+## The Sum Symbol $ \sum $
+
+In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for "summation". This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
+
+Think of $\sum$ as a **"for-loop"** for addition.
+
+### How to read the symbol
+A typical summation looks like this:
+
+$$\sum_{i=1}^{n} x_i$$
+
+* **The Bottom ($i=1$):** This is the **start**. It tells you to start with the first item (where the index $i$ is 1).
+* **The Top ($n$):** This is the **stop**. It tells you to stop once you reach the $n$-th item.
+* **The Right ($x_i$):** This is the **rule**. It tells you which values you are actually adding together.
+
+### A Concrete Example
+If we have a vector $\vec{v} = \begin{pmatrix} 10 \\ 20 \\ 30 \\ 40 \end{pmatrix}$, and we want to find the sum of all its elements, we write:
+
+$$\sum_{i=1}^{4} v_i = v_1 + v_2 + v_3 + v_4 = 10 + 20 + 30 + 40 = 100$$
+
+### Why AI needs this: Weighted Sums
+The most common use of the sum symbol in AI is the **Weighted Sum**. When a Neural Network makes a decision, it looks at different inputs (like pixels) and assigns each one a "weight" based on its importance.
+
+If $x$ is the input and $w$ is the weight, the AI calculates a score using this formula:
+$$\text{Score} = \sum_{i=1}^{n} w_i x_i$$
+
+This is just a compact way of saying: $(w_1 \cdot x_1) + (w_2 \cdot x_2) + \dots + (w_n \cdot x_n)$.
+
+\category{programming}
+### Implementation in Code
+In classical programming, the summation symbol $\sum$ is written as a simple loop:
+</div>
+
+<pre><code class="language-python"># The manual way (how the math works)
+numbers = [10, 20, 30, 40]
+total = 0
+
+for x in numbers:
+    total = total + x
+
+print(total) # Output: 100
+
+# The shorthand way in Python
+total = sum(numbers)
+</code></pre>
+
+<div class="md">
+
+## The Product Symbol $\prod$
+
+The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. It works similiar to the $\sum$:
+
+$$\prod_{i = 1}^5 i = 1 \cdot 2 \cdot 3 \cdot 4 \cdot 5 = 120 $$
+
+### The Factorial
+
+A special type of function often encountered in combinatorics and calculus is the **factorial**. It represents the product of all positive integers less than or equal to a non-negative integer $n$.
+
+Factorials ($n!$) are the product of all positive integers up to $n$:
+$$n! = \prod_{k=1}^{n} k = 1 \cdot 2 \cdot 3 \cdot \dots \cdot n$$
+
+According to \citeauthor{historyofmathematicalnotation} (Vol. 2, p. 71, § 448), the familiar exclamation point notation $n!$ was introduced by \citeauthor{kramp1808} in his work \citetitle{kramp1808} (\citeyear{kramp1808}). Before this, mathematicians often used a L-shaped symbol to denote the same operation.
+
+In programming, we can define this function using **recursion**, where a function calls itself to solve smaller versions of the same problem:
+</div>
+
+<pre><code class="language-python">def factorial(n):
+    if n == 0:
+        return 1 # By definition, 0! is 1
+    else:
+        return n * factorial(n - 1)
+
+print(factorial(5)) # calculates 5 * 4 * 3 * 2 * 1 = 120
+</code></pre>
+
+<div class="md">
+The factorial grows extremely quickly, much faster than exponential functions. This growth is essential when calculating the number of possible permutations (orderings) of a set of objects.
+
+#### Why $0! = 1$?
+1. **Combinatorics:** $n!$ represents the number of ways to arrange $n$ objects. There is exactly $1$ way to arrange zero items (the empty set).
+2. **Consistency:** To maintain the recursive property $(n-1)! = \frac{n!}{n}$, setting $n=1$ yields $0! = \frac{1!}{1} = 1$.
+
+#### Reasoning and History
+The notation $n!$ was introduced by \citeauthor{kramp1808} in \citeyear{kramp1808} (p. XI). He sought a notation to simplify the large products found in **combinatorics** and **power series**. 
+
+Defining $0! = 1$ is a "combinatorial convention". It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, these essential mathematical laws would require complex exceptions or result in division by zero.
+
+
+
 ## How Computers see data: Tensors
 
 If you want to talk to an AI about images, you can't just show it a picture. You have to turn everything into numbers. In the AI world, we call every container of numbers a **Tensor**.
@@ -258,93 +347,6 @@ With other methods of making numbers from data (like Embeddings to create number
 <div class="smart-quote red" data-cite="box1987empirical">
   All models are wrong, but some are useful.
 </div>
-
-## The Sum Symbol $ \sum $
-
-In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for "summation". This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
-
-Think of $\sum$ as a **"for-loop"** for addition.
-
-### How to read the symbol
-A typical summation looks like this:
-
-$$\sum_{i=1}^{n} x_i$$
-
-* **The Bottom ($i=1$):** This is the **start**. It tells you to start with the first item (where the index $i$ is 1).
-* **The Top ($n$):** This is the **stop**. It tells you to stop once you reach the $n$-th item.
-* **The Right ($x_i$):** This is the **rule**. It tells you which values you are actually adding together.
-
-### A Concrete Example
-If we have a vector $\vec{v} = \begin{pmatrix} 10 \\ 20 \\ 30 \\ 40 \end{pmatrix}$, and we want to find the sum of all its elements, we write:
-
-$$\sum_{i=1}^{4} v_i = v_1 + v_2 + v_3 + v_4 = 10 + 20 + 30 + 40 = 100$$
-
-### Why AI needs this: Weighted Sums
-The most common use of the sum symbol in AI is the **Weighted Sum**. When a Neural Network makes a decision, it looks at different inputs (like pixels) and assigns each one a "weight" based on its importance.
-
-If $x$ is the input and $w$ is the weight, the AI calculates a score using this formula:
-$$\text{Score} = \sum_{i=1}^{n} w_i x_i$$
-
-This is just a compact way of saying: $(w_1 \cdot x_1) + (w_2 \cdot x_2) + \dots + (w_n \cdot x_n)$.
-
-\category{programming}
-### Implementation in Code
-In classical programming, the summation symbol $\sum$ is written as a simple loop:
-</div>
-
-<pre><code class="language-python"># The manual way (how the math works)
-numbers = [10, 20, 30, 40]
-total = 0
-
-for x in numbers:
-    total = total + x
-
-print(total) # Output: 100
-
-# The shorthand way in Python
-total = sum(numbers)
-</code></pre>
-
-<div class="md">
-
-## The Product Symbol $\prod$
-
-The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. It works similiar to the $\sum$:
-
-$$\prod_{i = 1}^5 i = 1 \cdot 2 \cdot 3 \cdot 4 \cdot 5 = 120 $$
-
-### The Factorial
-
-A special type of function often encountered in combinatorics and calculus is the **factorial**. It represents the product of all positive integers less than or equal to a non-negative integer $n$.
-
-Factorials ($n!$) are the product of all positive integers up to $n$:
-$$n! = \prod_{k=1}^{n} k = 1 \cdot 2 \cdot 3 \cdot \dots \cdot n$$
-
-According to \citeauthor{historyofmathematicalnotation} (Vol. 2, p. 71, § 448), the familiar exclamation point notation $n!$ was introduced by \citeauthor{kramp1808} in his work \citetitle{kramp1808} (\citeyear{kramp1808}). Before this, mathematicians often used a L-shaped symbol to denote the same operation.
-
-In programming, we can define this function using **recursion**, where a function calls itself to solve smaller versions of the same problem:
-</div>
-
-<pre><code class="language-python">def factorial(n):
-    if n == 0:
-        return 1 # By definition, 0! is 1
-    else:
-        return n * factorial(n - 1)
-
-print(factorial(5)) # calculates 5 * 4 * 3 * 2 * 1 = 120
-</code></pre>
-
-<div class="md">
-The factorial grows extremely quickly, much faster than exponential functions. This growth is essential when calculating the number of possible permutations (orderings) of a set of objects.
-
-#### Why $0! = 1$?
-1. **Combinatorics:** $n!$ represents the number of ways to arrange $n$ objects. There is exactly $1$ way to arrange zero items (the empty set).
-2. **Consistency:** To maintain the recursive property $(n-1)! = \frac{n!}{n}$, setting $n=1$ yields $0! = \frac{1!}{1} = 1$.
-
-#### Reasoning and History
-The notation $n!$ was introduced by \citeauthor{kramp1808} in \citeyear{kramp1808} (p. XI). He sought a notation to simplify the large products found in **combinatorics** and **power series**. 
-
-Defining $0! = 1$ is a "combinatorial convention". It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, these essential mathematical laws would require complex exceptions or result in division by zero.
 
 \category{advanced_math}
 ## Arithmetic with $\infty$ in Computing
