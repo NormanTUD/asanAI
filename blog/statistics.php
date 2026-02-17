@@ -34,7 +34,7 @@ Furthermore, these distributions are the backbone of the "scaling laws" that dri
 <div class="statlab-section">
     <div class="md">
         ### The Bernoulli Distribution: The Atom of Probability
-        In *Ars Conjectandi* (1713), **Jacob Bernoulli** defined the simplest possible random variable. It models a single experiment with two outcomes: Success ($1$) and Failure ($0$). It is the "atom" because all complex discrete distributions (like Binomial or Geometric) are just sequences of Bernoulli trials.
+        In \citetitle{arsconjectandi} (\citeyear{arsconjectandi}), \citeauthor{arsconjectandi} defined the simplest possible random variable. It models a single experiment with two outcomes: Success ($1$) and Failure ($0$). It is the "atom" because all complex discrete distributions (like Binomial or Geometric) are just sequences of Bernoulli trials.
 
         The probability $p$ is the only parameter. If $p=0.8$, you have an $80\%$ chance of success. The math is expressed as:
         $$P(X=x) = p^x (1-p)^{1-x} \quad \text{for } x \in \{0, 1\}$$
