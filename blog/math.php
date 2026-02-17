@@ -329,7 +329,7 @@ $$\prod_{i=1}^{n} x_i$$
 A special type of function often encountered in combinatorics and calculus is the **factorial**. It represents the product of all positive integers less than or equal to a non-negative integer $n$.
 
 Factorials ($n!$) are the product of all positive integers up to $n$:
-$$n! = \prod_{i=1}^{n} i = 1 \times 2 \times \dots \times n$$
+$$n! = \prod_{k=1}^{n} k = 1 \cdot 2 \cdot 3 \cdot \dots \cdot n$$
 
 According to \citeauthor{historyofmathematicalnotation} (Vol. 2, p. 71, § 448), the familiar exclamation point notation $n!$ was introduced by \citeauthor{kramp1808} in his work \citetitle{kramp1808} (\citeyear{kramp1808}). Before this, mathematicians often used a L-shaped symbol to denote the same operation.
 
@@ -346,16 +346,11 @@ print(factorial(5)) # calculates 5 * 4 * 3 * 2 * 1 = 120
 </code></pre>
 
 <div class="md">
-Mathematically, this is expressed as:
-$$n! = \prod_{k=1}^{n} k = 1 \cdot 2 \cdot 3 \cdot \dots \cdot n$$
 The factorial grows extremely quickly, much faster than exponential functions. This growth is essential when calculating the number of possible permutations (orderings) of a set of objects.
 
 ### AI Application: Likelihoods
 In AI, the total probability of independent events is the product of their individual probabilities:
 $$P(\text{total}) = \prod_{i=1}^{n} P(x_i)$$
-
-The factorial $n!$ is the product of all positive integers from 1 to $n$:
-$n! = n \times (n-1) \times \dots \times 1$
 
 ### Why $0! = 1$?
 1. **Combinatorics:** $n!$ represents the number of ways to arrange $n$ objects. There is exactly $1$ way to arrange zero items (the empty set).
