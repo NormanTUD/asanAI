@@ -5,7 +5,8 @@ TODO https://arxiv.org/abs/2508.18302
 -->
 
 <div class="md">
-## Mary's Room: The Qualitative Gap
+## Qualia, or the "how it is" to experience something
+### Mary's Room: The Qualitative Gap
 
 The "Knowledge Argument" or \citealternativetitle{jackson1982epiphenomenal} posits a super intelligent scientist who, from birth on, was in a room where everything is kept in gray colors in dim light, so she never saw any color. But being a super smart scientist, she knows every physical fact about color, wavelengths, retinal response, and so on, but has never actually *seen* color. When she leaves her black-and-white room and sees a red rose, does she learn something new?
 
@@ -16,6 +17,37 @@ In the context of AI, this suggests that an LLM could be the world's greatest "M
 * **The Missing Piece:** The subjective *experience* (Qualia).
 
 No matter how high the dimensionality of the embedding space, the model remains in the "black-and-white room" of pure data, lacking the experiential "newness" of a sensory encounter. And it can never access that, since it has no subjective experience, no qualia, no "what is it like to be it"-ness, just as there's no "what it is like to be" for a stone.
+
+### Sentience and Agency: The Missing "I"
+
+While AI can be "intelligent" (excellent at problem-solving), it lacks **Sentience** and **Agency**.
+
+#### Sentience: The Capacity to Feel
+Sentience is the ability to have subjective experiences or *qualia*.
+* **The Practical Example:** If you kick a dog, it feels pain and fear. If you "delete" an AI's memory or "insult" its logic, it registers a state-change in its database.
+* **Sensory vs. Data:** A sentience-capable being feels the *warmth* of the sun. An AI processes the *value* `temperature: 28°C`. There is no "internal movie" playing for the AI; it is a calculation, not a sensation.
+
+#### Agency: The Capacity to Want
+Agency is the ability to act on one's own behalf with intent.
+* **The Passive Processor:** An LLM is **reactive**. It sits in a state of static potential until a user provides a "Prompt." It has no "will" to speak, no hunger to satisfy, and no boredom to alleviate.
+* **Lack of Teleology:** Humans have goals (survival, love, art). AI has a "Loss Function." Its only "goal" is a mathematical minimization of error, which is a far cry from the biological drive of a living agent.
+
+### 4E Cognition: The Biological Bedrock
+
+<div class="smart-quote" data-cite="noe2009outofourheads">
+Consciousness is not something that happens inside us. It is something we do or make. Better: it is something we achieve. Consciousness is more like dancing than it is like digestion.
+</div>
+
+While the Extended Mind Thesis focuses on our tools, **4E Cognition** (Embodied, Embedded, Enacted, Extended) argues that mind and intelligence cannot be understood as mere "data processing." It posits that cognition is a deeply biological and situational phenomenon, creating a massive conceptual hurdle for non-biological AI.
+
+The 4E framework breaks down the "Intelligence" of an AI into four missing dimensions:
+
+* **Embodied:** Our thoughts are shaped by having a nervous system and a body. An AI "knows" the word *pain* but lacks the biological hardware to feel it.
+* **Embedded:** We think within a physical and social context. The AI is "ontologically isolated," living only within the high-dimensional space of its training weights.
+* **Enacted:** Knowledge is gained through action (e.g., a child learning gravity by dropping a toy). AI is passive; it predicts the next word but never "acts" in the world to verify its truth.
+* **Extended:** This is where AI currently lives, as a cognitive prosthesis. We extend our mind *into* the AI, but without the other three 'E's, the AI remains a tool rather than a sentient peer.
+
+**Conclusion:** LLMs represent a triumph of the *Extended* mind, but they are hollow because they lack the *Embodied* grounding that gives language its actual meaning.
 
 ## The Vector Grounding Problem: Symbols, Spaces, and Senses
 
@@ -73,23 +105,6 @@ The **Extended Mind Thesis** suggests that the boundary of the "mind" is not the
 * **Bicycles and Cars:** When you drive or cycle long enough, the vehicle becomes an extension of your body. You don't "operate" the pedals; you "move." Your proprioception extends to the width of the car or the balance of the tires.
 * **Calculators and Computers:** If you use a calculator to solve $\sqrt{5041} = 71$, the "math" happened in a system composed of your brain + the silicon chip.
 * **AI as an External Cortex:** LLMs are becoming the ultimate "extended mind" tool. We use them to brainstorm, draft, and code. The AI isn't just a "search engine"; it's a cognitive prosthesis that changes how we think. If the AI holds your memories and processes your logic, is it "outside" your mind, or is your mind now a distributed network?
-
-## 4E Cognition: The Biological Bedrock
-
-<div class="smart-quote" data-cite="noe2009outofourheads">
-Consciousness is not something that happens inside us. It is something we do or make. Better: it is something we achieve. Consciousness is more like dancing than it is like digestion
-</div>
-
-While the Extended Mind Thesis focuses on our tools, **4E Cognition** (Embodied, Embedded, Enacted, Extended) argues that mind and intelligence cannot be understood as mere "data processing." It posits that cognition is a deeply biological and situational phenomenon, creating a massive conceptual hurdle for non-biological AI.
-
-The 4E framework breaks down the "Intelligence" of an AI into four missing dimensions:
-
-* **Embodied:** Our thoughts are shaped by having a nervous system and a body. An AI "knows" the word *pain* but lacks the biological hardware to feel it.
-* **Embedded:** We think within a physical and social context. The AI is "ontologically isolated," living only within the high-dimensional space of its training weights.
-* **Enacted:** Knowledge is gained through action (e.g., a child learning gravity by dropping a toy). AI is passive; it predicts the next word but never "acts" in the world to verify its truth.
-* **Extended:** This is where AI currently lives, as a cognitive prosthesis. We extend our mind *into* the AI, but without the other three 'E's, the AI remains a tool rather than a sentient peer.
-
-**Conclusion:** LLMs represent a triumph of the *Extended* mind, but they are hollow because they lack the *Embodied* grounding that gives language its actual meaning.
 
 ## The Alignment Problem: The Gap Between Math and Morality
 
@@ -214,20 +229,6 @@ Historically, the Turing Test was the "holy grail" of AI. Today, LLMs surpass th
 However, passing the test only proves **functional mimicry**, not **internal presence**.
 * **The Shell vs. The Core:** An LLM can "act" frustrated or "act" empathetic because it has mapped the linguistic patterns of frustrated or empathetic humans.
 * **The Deception of Fluency:** We often mistake linguistic competence for conscious thought. Just because the machine can manipulate symbols to form a coherent argument doesn't mean there is "anyone home" to believe in that argument.
-
-## Sentience and Agency: The Missing "I"
-
-While AI can be "intelligent" (excellent at problem-solving), it lacks **Sentience** and **Agency**.
-
-### Sentience: The Capacity to Feel
-Sentience is the ability to have subjective experiences or *qualia*.
-* **The Practical Example:** If you kick a dog, it feels pain and fear. If you "delete" an AI's memory or "insult" its logic, it registers a state-change in its database.
-* **Sensory vs. Data:** A sentience-capable being feels the *warmth* of the sun. An AI processes the *value* `temperature: 28°C`. There is no "internal movie" playing for the AI; it is a calculation, not a sensation.
-
-### Agency: The Capacity to Want
-Agency is the ability to act on one's own behalf with intent.
-* **The Passive Processor:** An LLM is **reactive**. It sits in a state of static potential until a user provides a "Prompt." It has no "will" to speak, no hunger to satisfy, and no boredom to alleviate.
-* **Lack of Teleology:** Humans have goals (survival, love, art). AI has a "Loss Function." Its only "goal" is a mathematical minimization of error, which is a far cry from the biological drive of a living agent.
 
 ## The Black Box Problem: The Epistemological Gap
 
