@@ -14,8 +14,8 @@ During backpropagation, to find the gradient of the loss $\mathcal{L}$ with resp
 
 $$ \frac{\partial \mathcal{L}}{\partial x_0} = \frac{\partial \mathcal{L}}{\partial x_L} \cdot \underbrace{\frac{\partial x_L}{\partial x_{L-1}} \cdot \frac{\partial x_{L-1}}{\partial x_{L-2}} \cdots \frac{\partial x_1}{\partial x_0}}_{\text{Multiplicative Chain}} $$
 
-### Why "Vanishing"?
-If the derivatives (gradients) in this chain are small (e.g., $< 1$), multiplying many of them together causes the result to shrink exponentially.
+**Why "Vanishing"?** If the derivatives (gradients) in this chain are small (e.g., $< 1$), multiplying many of them together causes the result to shrink exponentially.
+
 * **Plain Network:** $0.9 \times 0.9 \times 0.9 \dots \approx 0$
 * **Result:** The early layers stop learning because their gradient update is effectively zero. Deep networks become impossible to train.
 
