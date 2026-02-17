@@ -1226,7 +1226,7 @@ window.bibData = {
 		url: "https://link.springer.com/chapter/10.1007/978-3-642-76153-9_28",
 	},
 	"mikolov2013word2vec": {
-		author: "Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean",
+		author: "Tomáš Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean",
 		year: "2013",
 		title: "Efficient Estimation of Word Representations in Vector Space",
 		url: "https://arxiv.org/abs/1301.3781",
