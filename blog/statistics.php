@@ -666,14 +666,13 @@ $$ \bar{X}_n = \frac{1}{n} \sum_{i=1}^{n} X_i \xrightarrow{n \to \infty} \mu $$
 </div>
 
 <div class="statlab-interactive-zone">
-    <div class="statlab-controls">
-        <label>Reading Window (Tokens):</label>
-        <input type="range" id="lln-zarathustra-n" min="10" max="10000" step="50" value="500" disabled>
-        <span id="lln-count-display">500</span> / <span id="lln-total-tokens">0</span> words
-    </div>
+	<div class="statlab-controls">
+		<label>Reading Window (Tokens):</label>
+		<input type="range" id="lln-zarathustra-n" min="10" max="10000" step="50" value="500" disabled>
+		<span id="lln-count-display">500</span> / <span id="lln-total-tokens">0</span> words
+	</div>
     
-    <div id="plot-zarathustra-convergence" style="width:100%; height:450px; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center;">
-    </div>
+	<div id="plot-zarathustra-convergence"></div>
 </div>
 
 <div class="md">
