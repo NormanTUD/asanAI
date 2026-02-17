@@ -179,9 +179,7 @@ The Engine was designed to be powered by steam and constructed from brass and ir
 
 While Babbage focused on the mechanical engineering, **Ada Lovelace** provided the conceptual breakthrough that transformed the Engine from a calculator into a computer. In her 1843 "Notes," she recognized that the Engine's ability to manipulate symbols according to rules meant it could process anything from music to scientific logic.
 
-Lovelace authored what is recognized as the first complex algorithm intended for a machine: a method for calculating **Bernoulli numbers** ($B_n$). She broke the calculation down into a series of iterative steps, anticipating the concept of the "loop." Mathematically, she approached the Bernoulli sequence through the identity:
-
-$$ 0 = -\frac{1}{2}(m+1) + B_1^+(m+1) + \sum_{k=2}^{m} \binom{m+1}{k} B_k $$
+Lovelace authored what is recognized as the first complex algorithm intended for a machine: a method for calculating **Bernoulli numbers**. She broke the calculation down into a series of iterative steps, anticipating the concept of the "loop".
 
 Lovelace's genius lay in her understanding of the "Science of Operations." She saw that the hardware was merely a vessel for the logic, famously stating that the Analytical Engine "weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves" (\citetitle{lovelacequote}).
 
