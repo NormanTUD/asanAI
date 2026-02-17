@@ -144,7 +144,7 @@ Just as the "Red Line" predicts the next point on a curve based on statistical p
 * **Statistical Probabilities:** It doesn't "know" what a house is; it knows that the word "house" has a 75% probability of being followed by "is" or "has."
 * **Lack of Grounding:** Since the AI has no physical "body" or sensorimotor feedback, it remains **ontologically isolated**. It repeats the *structure* of human thought without ever participating in the *substance* of it.
 
-## The "Illusion of Geist" (The Ghost in the Machine)
+## The Ghost in the Machine
 
 <div class="smart-quote" data-cite="weizenbaum1976computer">
 What I had not realized is that extremely short exposures to a relatively simple computer program could induce powerful delusional thinking in quite normal people.
