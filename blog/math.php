@@ -789,3 +789,29 @@ This gives each position a distinct pattern the model can learn to interpret.
 
     <div id="plot-sincos-wave" class="plot-container" style="width:100%; height:350px;"></div>
 </div>
+
+<div class="md">
+## Matrix Transposition
+
+Transposing a matrix means flipping it over its main diagonal,
+turning rows into columns and columns into rows. If $A$ is an
+$m \times n$ matrix with elements $a_{ij}$, then the transpose
+$A^T$ is an $n \times m$ matrix where $(A^T)_{ij} = A_{ji}$.
+
+Example:
+
+    $$A = \begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{pmatrix}
+    \quad \Longrightarrow \quad
+    A^T = \begin{pmatrix} 1 & 4 \\ 2 & 5 \\ 3 & 6 \end{pmatrix}$$
+
+The matrix transpose was introduced in 1858 by the British
+mathematician \citeauthor{caleymemoirmatrices} in his paper \citetitle{caleymemoirmatrices}.
+It arose from the study of bilinear and quadratic forms, where swapping rows and columns was needed
+to express symmetry properties.
+
+The superscript $T$ notation ($A^T$) was not used by Cayley
+himself. No single inventor is definitively recorded — it
+evolved gradually as matrix notation was standardized across
+20th-century textbooks. Other notations include $A'$,
+${}^tA$, and $A^{\text{tr}}$.
+</div>
