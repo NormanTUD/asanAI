@@ -85,7 +85,7 @@ Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considere
 </div>
 
 <div class="md">
-#### The Normal Distribution: From the Stars to AI
+### The Normal Distribution: From the Stars to AI
 </div>
 
 <figure>
@@ -94,7 +94,7 @@ Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considere
 </figure>
 
 <div class="md">
-##### The Astronomical Origin: Hunting Ceres
+#### The Astronomical Origin: Hunting Ceres
 
 <figure>
     <img style="width: 100%" src="Della_scoperta_del_nuovo_pianeta_Cerere_Ferdinandea_p1.jpg" alt="Illustration of the paper first describing Ceres" />
@@ -124,7 +124,7 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
 </div>
 
 <div class="md">
-##### The Mathematical Foundation: The Law of Errors
+#### The Mathematical Foundation: The Law of Errors
 
 Gauß solved the mystery of Ceres by treating every measurement as a composite of a "True Path" and random error. He realized that the problem was "more than determined" ($n > v$); when you have more observations than variables, a perfect fit is impossible because human observation is never free from error.
 
@@ -144,14 +144,14 @@ To bridge the gap between discovery and mathematical permanence, he developed th
 </div>
 
 <div class="md">
-#### The Central Limit Theorem (CLT)
+### The Central Limit Theorem (CLT)
 The **Central Limit Theorem** is the bridge between randomness and order. It explains why, even when individual events are chaotic or "flat," their collective averages inevitably form the **Normal Distribution** (the "Bell Curve"). It was proven by \citeauthor{laplace1810clt} (\citeyear{laplace1810clt}).
 
 The origins of CLT lie in the 18th-century struggle for precision in the physical sciences. **Pierre-Simon Laplace** formalized the theorem in \citetitle{laplace1810clt} to solve the "Problem of Errors." 
 
 Astronomers of the era faced a dilemma: every measurement taken via telescope or pendulum was slightly "noisy" due to atmospheric disturbances or human imperfection. Laplace proved that the **average** of these independent errors would always follow a bell curve, regardless of the nature of the individual mistakes. This realization allowed scientists to mathematically "filter" chaos to find the true position of celestial bodies. By aggregating thousands of imprecise data points, Laplace turned statistical noise into scientific certainty, a method that remains the foundation for how machines learn from "imperfect" real-world data today.
 
-##### The Mechanics of the Simulation
+#### The Mechanics of the Simulation
 1.  **Individual Randomness**: A single die follows a **Uniform Distribution**; every face ($1$ to $6$) has an equal $1/6$ probability.
 2.  **Aggregation**: When you roll $n$ dice and calculate their **average**, the probability shifts. It is much more likely to get an average near $3.5$ than to roll all $1$s or all $6$s.
 3.  **The Convergence**: As $n$ increases, the distribution of these averages tightens around the mean ($\mu = 3.5$).
@@ -226,7 +226,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 
 <div class="statlab-section">
     <div class="md">
-        #### The Gumbel Distribution: The Math of Disasters
+        ### The Gumbel Distribution: The Math of Disasters
         While the Normal Distribution describes the "average" person, **Emil Gumbel** (1954) wanted to describe the "exceptional" event. If you record the maximum river level every year for 50 years, those maximums will not follow a Bell Curve; they follow a Gumbel Distribution.
 
         It is **asymmetrical** (skewed) because while there is a limit to how "small" a maximum can be, the "worst-case scenario" (the tail) can theoretically stretch very far. The PDF is:
@@ -254,7 +254,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 
 <div class="statlab-section">
     <div class="md">
-        #### The Poisson Distribution: The Law of Rare Events
+        ### The Poisson Distribution: The Law of Rare Events
         In \citeyear{poisson}, **\citeauthor{poisson}** published \citetitle{poisson} (section 41-42), where he derived a limit for the Binomial distribution when the number of trials is very large ($n \to \infty$) and the probability is very small ($p \to 0$).
 
         It became famous as the **"Law of Small Numbers"** after \citeauthor{gesetzderkleinenzahlen} (\citetitle{gesetzderkleinenzahlen}) used it to model the number of Prussian soldiers killed by horse kicks (p. 23f, §12), events that are rare but occur at a constant average rate $\lambda$.
