@@ -25,7 +25,7 @@ Methods used here are also applied in many areas of Machine Learning, such as **
 
 <div class="statlab-section">
     <div class="md">
-        ## The Bernoulli Distribution: The Atom of Probability
+        ### The Bernoulli Distribution: The Atom of Probability
         In *Ars Conjectandi* (1713), **Jacob Bernoulli** defined the simplest possible random variable. It models a single experiment with two outcomes: Success ($1$) and Failure ($0$). It is the "atom" because all complex discrete distributions (like Binomial or Geometric) are just sequences of Bernoulli trials.
 
         The probability $p$ is the only parameter. If $p=0.8$, you have an $80\%$ chance of success. The math is expressed as:
@@ -45,19 +45,19 @@ Methods used here are also applied in many areas of Machine Learning, such as **
 
 <div class="md">
 
-### The Binomial Distribution
+#### The Binomial Distribution
 
 While people have rolled dice for millennia, the math of *sums* was long misunderstood. For centuries, gamblers thought all sums were equally likely.
 
 
-#### The Medieval Insight (c. 1250)
+##### The Medieval Insight (c. 1250)
 The earliest known mention of the differing frequencies of dice sums appears in a Latin poem called \citetitle{devetula} (p. 32), whose author is not certain. The author correctly identified that there are only 16 ways to get sums with three dice that result in a specific value, noting for the first time that some totals occur more often than others.
 
-#### The Gambler's Manual: Gerolamo Cardano (1564)
+##### The Gambler's Manual: Gerolamo Cardano (1564)
 
 The first truly scientific treatment came from **Gerolamo Cardano**, who also invented the cardan shift, a brilliant physician and a degenerate gambler. In his book *\citetitle{liberludo}* (chapter 13, *On Composite Numbers Up to Six and Beyond and for Two and Three Dice*), he was probably the first to realize that for two dice, the "circuit" is **36**, and he used this to calculate the odds for the lucky throw.
 
-#### The Great Correspondence: Pascal & Fermat (1654)
+##### The Great Correspondence: Pascal & Fermat (1654)
 
 The context that solidified this into modern science was the **"Problem of Points."** The **Chevalier de Méré** asked **Blaise Pascal** how to fairly split a prize pot if a game of dice is interrupted.
 
@@ -77,7 +77,7 @@ Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considere
 </div>
 
 <div class="md">
-### The Normal Distribution: From the Stars to AI
+#### The Normal Distribution: From the Stars to AI
 </div>
 
 <figure>
@@ -86,7 +86,7 @@ Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considere
 </figure>
 
 <div class="md">
-#### The Astronomical Origin: Hunting Ceres
+##### The Astronomical Origin: Hunting Ceres
 
 <figure>
     <img style="width: 100%" src="Della_scoperta_del_nuovo_pianeta_Cerere_Ferdinandea_p1.jpg" alt="Illustration of the paper first describing Ceres" />
@@ -116,7 +116,7 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
 </div>
 
 <div class="md">
-#### The Mathematical Foundation: The Law of Errors
+##### The Mathematical Foundation: The Law of Errors
 
 Gauß solved the mystery of Ceres by treating every measurement as a composite of a "True Path" and random error. He realized that the problem was "more than determined" ($n > v$); when you have more observations than variables, a perfect fit is impossible because human observation is never free from error.
 
@@ -136,20 +136,20 @@ To bridge the gap between discovery and mathematical permanence, he developed th
 </div>
 
 <div class="md">
-### How knowing about distributions help in developing AI systems
+#### How knowing about distributions help in developing AI systems
 
 The observation of these "distributions" in real-world data, from the photons captured by a telescope to the pixel intensities in medical imaging, is fundamental to AI because it allows machines to model uncertainty. Most natural phenomena are not random chaos but follow mathematical patterns; by recognizing a Gaussian distribution, an AI can distinguish between meaningful "signal" and background noise. For example, in autonomous driving, sensors must decide if a blurred shape is a pedestrian or a lens flare. By knowing the distribution of typical sensor errors, the AI can apply what David Wheeler famously noted: "We can solve any problem by introducing an extra level of indirection." Here, the abstraction of the data into a probability curve allows the machine to make a calculated "guess" rather than stalling on an exact match.
 
 Furthermore, these distributions are the backbone of the "scaling laws" that drive modern large language models. As described in \citetitle{sutton2019bitter} by Rich Sutton, progress in AI often comes from "massive amounts of compute" applied to general statistical patterns rather than hand-coded human rules. When an AI is trained on vast datasets, it is essentially learning to map the distribution of human language. Practical applications like predictive text or weather forecasting rely on the fact that the next word or the next storm front follows a predictable frequency distribution. Knowing these patterns allows developers to initialize neural networks more effectively, ensuring that the model "expects" the right kind of variation in the data it encounters.
 
-### The Central Limit Theorem (CLT)
+#### The Central Limit Theorem (CLT)
 The **Central Limit Theorem** is the bridge between randomness and order. It explains why, even when individual events are chaotic or "flat," their collective averages inevitably form the **Normal Distribution** (the "Bell Curve"). It was proven by \citeauthor{laplace1810clt} (\citeyear{laplace1810clt}).
 
 The origins of CLT lie in the 18th-century struggle for precision in the physical sciences. **Pierre-Simon Laplace** formalized the theorem in \citetitle{laplace1810clt} to solve the "Problem of Errors." 
 
 Astronomers of the era faced a dilemma: every measurement taken via telescope or pendulum was slightly "noisy" due to atmospheric disturbances or human imperfection. Laplace proved that the **average** of these independent errors would always follow a bell curve, regardless of the nature of the individual mistakes. This realization allowed scientists to mathematically "filter" chaos to find the true position of celestial bodies. By aggregating thousands of imprecise data points, Laplace turned statistical noise into scientific certainty, a method that remains the foundation for how machines learn from "imperfect" real-world data today.
 
-#### The Mechanics of the Simulation
+##### The Mechanics of the Simulation
 1.  **Individual Randomness**: A single die follows a **Uniform Distribution**; every face ($1$ to $6$) has an equal $1/6$ probability.
 2.  **Aggregation**: When you roll $n$ dice and calculate their **average**, the probability shifts. It is much more likely to get an average near $3.5$ than to roll all $1$s or all $6$s.
 3.  **The Convergence**: As $n$ increases, the distribution of these averages tightens around the mean ($\mu = 3.5$).
@@ -157,7 +157,6 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
     $$f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2}$$
     where the standard deviation $\sigma$ decreases as more dice are added ($\sigma = \sqrt{\frac{35}{12n}}$), as noted in \citetitle{laplace1810clt}.
 
-### Interactive Laboratory
 * **Adjust $n$**: Choose how many dice to roll at once. Higher $n$ creates a thinner, sharper curve.
 * **Accrue Data**: Click "Roll" repeatedly. The blue bars represent your real-world samples, while the red line shows the mathematical ideal.
 * **Reset**: Clear the history to start a new experiment with a different $n$.
@@ -191,7 +190,7 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
 </div>
 
 <div class="md">
-### Least Squares: The Gauß-Legendre Rivalry
+#### Least Squares: The Gauß-Legendre Rivalry
 
 **Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauß** \citeyear{gauss1809} proved why it worked by inventing the **Normal Distribution**.
 
@@ -225,7 +224,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 
 <div class="statlab-section">
     <div class="md">
-        ## The Gumbel Distribution: The Math of Disasters
+        #### The Gumbel Distribution: The Math of Disasters
         While the Normal Distribution describes the "average" person, **Emil Gumbel** (1954) wanted to describe the "exceptional" event. If you record the maximum river level every year for 50 years, those maximums will not follow a Bell Curve; they follow a Gumbel Distribution.
 
         It is **asymmetrical** (skewed) because while there is a limit to how "small" a maximum can be, the "worst-case scenario" (the tail) can theoretically stretch very far. The PDF is:
@@ -253,7 +252,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 
 <div class="statlab-section">
     <div class="md">
-        ## The Poisson Distribution: The Law of Rare Events
+        #### The Poisson Distribution: The Law of Rare Events
         In \citeyear{poisson}, **\citeauthor{poisson}** published \citetitle{poisson} (section 41-42), where he derived a limit for the Binomial distribution when the number of trials is very large ($n \to \infty$) and the probability is very small ($p \to 0$).
 
         It became famous as the **"Law of Small Numbers"** after \citeauthor{gesetzderkleinenzahlen} (\citetitle{gesetzderkleinenzahlen}) used it to model the number of Prussian soldiers killed by horse kicks (p. 23f, §12), events that are rare but occur at a constant average rate $\lambda$.
