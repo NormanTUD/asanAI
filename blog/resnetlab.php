@@ -47,8 +47,7 @@ When the dimensions don't match, we cannot simply add $x$. We must transform $x$
 
 $$ y = F(x, \{W_i\}) + W_s x $$
 
-### The $1 \times 1$ Convolution
-The most common way to implement $W_s$ is a **$1 \times 1$ Convolution**.
+**The $1 \times 1$ Convolution:** The most common way to implement $W_s$ is a **$1 \times 1$ Convolution**.
 * **Spatial:** A $1 \times 1$ kernel does not look at neighboring pixels; it preserves the spatial height and width ($H \times W$).
 * **Depth:** It acts as a linear projection across the channels. If input $x$ has $C_\text{in}$ channels and we need $C_\text{out}$ channels, the $1 \times 1$ layer performs a weighted sum of the input channels to produce the desired output depth.
 
