@@ -44,7 +44,7 @@
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
 	incl("Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
-	incl("Philosophical implications, ethical usage of AI", "philosophy");
+	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
 ?>
 </div>
 
