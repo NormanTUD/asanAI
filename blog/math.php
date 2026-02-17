@@ -804,12 +804,8 @@ Example:
     \quad \Longrightarrow \quad
     A^T = \begin{pmatrix} 1 & 4 \\ 2 & 5 \\ 3 & 6 \end{pmatrix}$$
 
-The matrix transpose was introduced in 1858 by the British
+The idea of matrix transposition was introduced in 1858 by the British
 mathematician \citeauthor{caleymemoirmatrices} in his paper \citetitle{caleymemoirmatrices}.
 It arose from the study of bilinear and quadratic forms, where swapping rows and columns was needed
 to express symmetry properties.
-
-The superscript $T$ notation ($A^T$) was not used by Cayley
-himself, but it was introduced my \citeauthor{geometrischegrundbegriffe}
-in \citetitle{geometrischegrundbegriffe}, Volume 4:3 (p. ), in \citeyear{geometrischegrundbegriffe}.
 </div>
