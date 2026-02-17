@@ -586,7 +586,7 @@ Imagine an urn filled with marbles of $K$ different colors. If you start with a 
 
 Mathematically, for a probability vector $p = (p_1, \dots, p_K)$, the density is:
 $$f(p_1, \dots, p_K; \alpha_1, \dots, \alpha_K) = \frac{1}{\text{B}(\alpha)} \prod_{i=1}^{K} p_i^{\alpha_i - 1}$$
-Where $\alpha$ (Alpha) is the **concentration parameter**.
+Where $\alpha$ is the **concentration parameter**.
 
 ### How it Relates to AI: Topic Modeling
 In AI, we use this to solve the "Bag of Words" problem. Before a Transformer generates text, it is essentially sampling from a Dirichlet distribution to decide the "mixture" of the text.
