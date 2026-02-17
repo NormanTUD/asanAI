@@ -416,10 +416,7 @@ In the expression $b^y = x$:
 
 While we often start with whole numbers, the exponent $y$ can also be a **floating-point number** (a decimal). For example, $2^{0.5}$ is the same as the square root of 2 ($\approx 1.414$). When the exponent is a fraction, we are no longer just "counting" multiplications; we are looking at continuous growth. This transition from discrete steps to a continuous curve is what makes exponentiation so powerful in modeling natural processes.
 
-While we often start with whole numbers, the exponent $y$ can also be a **floating-point number** (a decimal). For example, $2^{0.5}$ is the same as the square root of 2 ($\approx 1.414$). When the exponent is a fraction, we are no longer just "counting" multiplications; we are looking at continuous growth. This transition from discrete steps to a continuous curve is what makes exponentiation so powerful in modeling natural processes.
-
-### Why is $2^{0.5}$ the square root?
-The reason $2^{0.5}$ (or $2^{1/2}$) equals $\sqrt{2}$ comes from the fundamental rule of exponents: when you multiply two powers with the same base, you add the exponents: 
+**Why is $2^{0.5}$ the square root?** The reason $2^{0.5}$ (or $2^{1/2}$) equals $\sqrt{2}$ comes from the fundamental rule of exponents: when you multiply two powers with the same base, you add the exponents: 
 $$b^m \times b^n = b^{m+n}$$
 
 If we multiply $2^{0.5}$ by itself, the rule says:
