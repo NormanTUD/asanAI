@@ -1,4 +1,10 @@
 window.bibData = {
+	"geometrischegrundbegriffe": {
+		url: "https://archive.org/details/encyklomath304encyrich",
+		author: "Max Abraham",
+		year: 1898,
+		title: "Encyklopädie der mathematischen Wissenschaften mit Einschluss ihrer Anwendungen"
+	},
 	"caleymemoirmatrices": {
 		url: "https://ia902808.us.archive.org/0/items/philtrans05474612/05474612.pdf",
 		title: "A Memoir on the Theory of Matrices",

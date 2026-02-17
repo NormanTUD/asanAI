@@ -810,8 +810,6 @@ It arose from the study of bilinear and quadratic forms, where swapping rows and
 to express symmetry properties.
 
 The superscript $T$ notation ($A^T$) was not used by Cayley
-himself. No single inventor is definitively recorded — it
-evolved gradually as matrix notation was standardized across
-20th-century textbooks. Other notations include $A'$,
-${}^tA$, and $A^{\text{tr}}$.
+himself, but it was introduced my \citeauthor{geometrischegrundbegriffe}
+in \citetitle{geometrischegrundbegriffe}, Volume 4:3 (p. ), in \citeyear{geometrischegrundbegriffe}.
 </div>
