@@ -233,121 +233,6 @@ The notation $n!$ was introduced by \citeauthor{kramp1808} in \citeyear{kramp180
 
 Defining $0! = 1$ is a "combinatorial convention". It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, these essential mathematical laws would require complex exceptions or result in division by zero.
 
-
-
-## How Computers see data: Tensors
-
-If you want to talk to an AI about images, you can't just show it a picture. You have to turn everything into numbers. In the AI world, we call every container of numbers a **Tensor**.
-
-Think of Tensors like a ladder of complexity:
-
-### The Scalar (rank 0)
-A **Scalar** is just one single number. 
-Imagine a single lightbulb. The number tells you how bright it is: **0** is off (black), **255** is full power (white).
-
-$$s \in \left\{1, 2, 3, 4, 5, \dots, 254, 255\right\} \quad \text{Example:} \quad s = 255$$
-
-### The Vector (rank 1)
-A **Vector** is a list of numbers. They are sometimes written with an arrow above them, like this: $\vec{v}$.
-
-To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, and one for Blue. This "package" is a vector.
-$$\vec{v} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} $$
-
-$$\text{Example:} \quad \vec{v} = \begin{pmatrix} 255 \\ 0 \\ 0 \end{pmatrix} \text{ (Pure Red!)}$$
-
-Vectors can also be understood as arrows in space. For example, the vector $\begin{pmatrix} 3 \\ 4 \end{pmatrix}$, means: move 3 to the right and 4 to the top.
-
-<div id="vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
-
-Vectors are not "glued" to one spot. A vector is simply a set of instructions (like "3 right, 4 up"). You can start that instruction anywhere in space, and it is still the same vector!
-
-<div style="text-align: center; margin-bottom: 10px;">
-    Start Position ($x$): <input type="range" id="slider-vector-x" min="0" max="5" step="0.5" value="1">
-    Start Position ($y$): <input type="range" id="slider-vector-y" min="0" max="5" step="0.5" value="1">
-</div>
-
-<div id="movable-vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
-
-Vectors can also have many more dimensions, way too many to visually display them. And they can also be multiplied with by a scalar (multiplying each value in the vector by this scalar):
-
-$$ c \cdot \vec{v} = c \cdot \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} c \cdot v_1 \\ c \cdot v_2 \end{pmatrix} $$
-
-$$ 2 \cdot \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 2 \cdot 3 \\ 2 \cdot 4 \end{pmatrix} = \begin{pmatrix} 6 \\ 8 \end{pmatrix} $$
-
-Vectors can also be added:
-
-$$ \begin{pmatrix} 1 \\ 2 \end{pmatrix} + \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 1 + 3 \\ 2 + 4 \end{pmatrix} = \begin{pmatrix} 4 \\ 6 \end{pmatrix} $$
-
-### The Matrix (rank 2)
-A **Matrix** is a grid of numbers (like a spreadsheet).
-A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is, when we say $0$ means "black", "255" means white and everything inbetween are different shades of gray.
-$$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
-
-</div>
-<div id="section-bw">
-	<div style="display: flex; align-items: center; gap: 40px; padding: 20px; border-radius: 12px; margin-top: 15px;">
-		<div id="bw-matrix-container"></div>
-		<canvas id="bw-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
-	</div>
-</div>
-
-<div class="md">
-
-### The Tensor (rank 3 and beyond)
-When we stack many matrices together, we get a high-level **Tensor**.
-A **Color Photo** is a 3D Tensor. It's a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
-$$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
-
-**The Secret:** In AI, we call *everything* a Tensor. A single number is just a "rank 0 Tensor." This makes it easy for the brain of the AI (the Neural Network) because it treats every piece of data with the same set of math rules!
-
-## The Mathematical View: A $3 \times 3 \times 3$ Tensor
-
-When you type numbers into the grid, the computer organizes them into a structured math object. Here is how your **Color Image** looks as a formal Tensor $\mathcal{T}$.
-
-Notice how each "cell" of the grid is actually a vector (a vertical list) of three values:
-
-$$
-\mathcal{T}_{3 \times 3 \text{ color image}} = \begin{pmatrix}
-\begin{pmatrix} \color{red}{r_{1,1}} \\ \color{green}{g_{1,1}} \\ \color{blue}{b_{1,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{1,2}} \\ \color{green}{g_{1,2}} \\ \color{blue}{b_{1,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{1,3}} \\ \color{green}{g_{1,3}} \\ \color{blue}{b_{1,3}} \end{pmatrix} \\ \\
-\begin{pmatrix} \color{red}{r_{2,1}} \\ \color{green}{g_{2,1}} \\ \color{blue}{b_{2,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{2,2}} \\ \color{green}{g_{2,2}} \\ \color{blue}{b_{2,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{2,3}} \\ \color{green}{g_{2,3}} \\ \color{blue}{b_{2,3}} \end{pmatrix} \\ \\
-\begin{pmatrix} \color{red}{r_{3,1}} \\ \color{green}{g_{3,1}} \\ \color{blue}{b_{3,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{3,2}} \\ \color{green}{g_{3,2}} \\ \color{blue}{b_{3,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{3,3}} \\ \color{green}{g_{3,3}} \\ \color{blue}{b_{3,3}} \end{pmatrix}
-\end{pmatrix}
-$$
-
-The form a tensor has is called a *shape*. The shape defines how many rows and columns a tensor has, and how many nested tensors it has. For example, an image with $ 32 \cdot 32 $ pixels and 3 channels (one for red, green and blue each) has a shape of $ \left[ 32, 32, 3 \right] $.
-
-* **The Grid:** The large outer brackets $\begin{pmatrix} \dots \end{pmatrix}$ represent the **Shape** (Rows and Columns).
-* **The Depth:** Each small inner bracket $\begin{pmatrix} r \\ g \\ b \end{pmatrix}$ is the **Feature Vector** for a single pixel.
-* **The Coordinates:** The numbers like $_{1,2}$ mean: "Row 1, Column 2".
-
-To make colors, we use **three numbers** for every single pixel: one for **Red**, one for **Green**, and one for **Blue**.
-
-We can think of a pixel $P$ as a stack of three values:
-$$P = \begin{pmatrix} \color{red}{R} \\ \color{green}{G} \\ \color{blue}{B} \end{pmatrix}$$
-
-By mixing these three primary lights at different brightness levels (0 to 255), you can create any color in the world!
-</div>
-
-<div id="section-rgb">
-	<div style="display: flex; align-items: center; gap: 40px; padding: 20px; border-radius: 12px; margin-top: 15px;">
-			<div id="rgb-combined-container"></div>
-			<canvas id="rgb-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
-	</div>
-</div>
-
-<div class="md">
-You can then use full images as tensors, ie you can write an image into a variable, and pass it to functions, and get a vector out of it again:
-
-$$ f\left(\text{Image}\right) = \begin{pmatrix} \text{Probability cat} \\ \text{Probability dog} \end{pmatrix} $$
-
-This function, when it is not manually written, we call Model, as it models the behaviour of a function (and thus, acts as this function, even though it is just an approximation for it). 
-
-With other methods of making numbers from data (like Embeddings to create numbers from texts, like chatGPT does, which we will discuss later on), we can create models that do all kinds of stuff. For example, we could create a function that maps $\text{Text} \rightarrow \text{Music}$ or $\text{Image} \rightarrow \text{Text}$.
-
-<div class="smart-quote red" data-cite="box1987empirical">
-  All models are wrong, but some are useful.
-</div>
-
 \category{advanced_math}
 ## Arithmetic with $\infty$ in Computing
 
@@ -565,7 +450,124 @@ Every fruit is now a point in a 4D "Fruit Space."
     <div id="v4-plot" style="width:100%; height:250px;"></div>
 </div>
 
+
 <div class="md">
+## How Computers see data: Tensors
+
+If you want to talk to an AI about images, you can't just show it a picture. You have to turn everything into numbers. In the AI world, we call every container of numbers a **Tensor**.
+
+Think of Tensors like a ladder of complexity:
+
+### The Scalar (rank 0)
+A **Scalar** is just one single number. 
+Imagine a single lightbulb. The number tells you how bright it is: **0** is off (black), **255** is full power (white).
+
+$$s \in \left\{1, 2, 3, 4, 5, \dots, 254, 255\right\} \quad \text{Example:} \quad s = 255$$
+
+### The Vector (rank 1)
+A **Vector** is a list of numbers. They are sometimes written with an arrow above them, like this: $\vec{v}$.
+
+To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, and one for Blue. This "package" is a vector.
+$$\vec{v} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} $$
+
+$$\text{Example:} \quad \vec{v} = \begin{pmatrix} 255 \\ 0 \\ 0 \end{pmatrix} \text{ (Pure Red!)}$$
+
+Vectors can also be understood as arrows in space. For example, the vector $\begin{pmatrix} 3 \\ 4 \end{pmatrix}$, means: move 3 to the right and 4 to the top.
+
+<div id="vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
+
+Vectors are not "glued" to one spot. A vector is simply a set of instructions (like "3 right, 4 up"). You can start that instruction anywhere in space, and it is still the same vector!
+
+<div style="text-align: center; margin-bottom: 10px;">
+    Start Position ($x$): <input type="range" id="slider-vector-x" min="0" max="5" step="0.5" value="1">
+    Start Position ($y$): <input type="range" id="slider-vector-y" min="0" max="5" step="0.5" value="1">
+</div>
+
+<div id="movable-vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
+
+Vectors can also have many more dimensions, way too many to visually display them. And they can also be multiplied with by a scalar (multiplying each value in the vector by this scalar):
+
+$$ c \cdot \vec{v} = c \cdot \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} c \cdot v_1 \\ c \cdot v_2 \end{pmatrix} $$
+
+$$ 2 \cdot \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 2 \cdot 3 \\ 2 \cdot 4 \end{pmatrix} = \begin{pmatrix} 6 \\ 8 \end{pmatrix} $$
+
+Vectors can also be added:
+
+$$ \begin{pmatrix} 1 \\ 2 \end{pmatrix} + \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 1 + 3 \\ 2 + 4 \end{pmatrix} = \begin{pmatrix} 4 \\ 6 \end{pmatrix} $$
+
+### The Matrix (rank 2)
+A **Matrix** is a grid of numbers (like a spreadsheet).
+A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is, when we say $0$ means "black", "255" means white and everything inbetween are different shades of gray.
+$$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
+
+</div>
+<div id="section-bw">
+	<div style="display: flex; align-items: center; gap: 40px; padding: 20px; border-radius: 12px; margin-top: 15px;">
+		<div id="bw-matrix-container"></div>
+		<canvas id="bw-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
+	</div>
+</div>
+
+<div class="md">
+
+### The Tensor (rank 3 and beyond)
+When we stack many matrices together, we get a high-level **Tensor**.
+A **Color Photo** is a 3D Tensor. It's a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
+$$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
+
+**The Secret:** In AI, we call *everything* a Tensor. A single number is just a "rank 0 Tensor." This makes it easy for the brain of the AI (the Neural Network) because it treats every piece of data with the same set of math rules!
+
+## The Mathematical View: A $3 \times 3 \times 3$ Tensor
+
+When you type numbers into the grid, the computer organizes them into a structured math object. Here is how your **Color Image** looks as a formal Tensor $\mathcal{T}$.
+
+Notice how each "cell" of the grid is actually a vector (a vertical list) of three values:
+
+$$
+\mathcal{T}_{3 \times 3 \text{ color image}} = \begin{pmatrix}
+\begin{pmatrix} \color{red}{r_{1,1}} \\ \color{green}{g_{1,1}} \\ \color{blue}{b_{1,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{1,2}} \\ \color{green}{g_{1,2}} \\ \color{blue}{b_{1,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{1,3}} \\ \color{green}{g_{1,3}} \\ \color{blue}{b_{1,3}} \end{pmatrix} \\ \\
+\begin{pmatrix} \color{red}{r_{2,1}} \\ \color{green}{g_{2,1}} \\ \color{blue}{b_{2,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{2,2}} \\ \color{green}{g_{2,2}} \\ \color{blue}{b_{2,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{2,3}} \\ \color{green}{g_{2,3}} \\ \color{blue}{b_{2,3}} \end{pmatrix} \\ \\
+\begin{pmatrix} \color{red}{r_{3,1}} \\ \color{green}{g_{3,1}} \\ \color{blue}{b_{3,1}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{3,2}} \\ \color{green}{g_{3,2}} \\ \color{blue}{b_{3,2}} \end{pmatrix} & \begin{pmatrix} \color{red}{r_{3,3}} \\ \color{green}{g_{3,3}} \\ \color{blue}{b_{3,3}} \end{pmatrix}
+\end{pmatrix}
+$$
+
+The form a tensor has is called a *shape*. The shape defines how many rows and columns a tensor has, and how many nested tensors it has. For example, an image with $ 32 \cdot 32 $ pixels and 3 channels (one for red, green and blue each) has a shape of $ \left[ 32, 32, 3 \right] $.
+
+* **The Grid:** The large outer brackets $\begin{pmatrix} \dots \end{pmatrix}$ represent the **Shape** (Rows and Columns).
+* **The Depth:** Each small inner bracket $\begin{pmatrix} r \\ g \\ b \end{pmatrix}$ is the **Feature Vector** for a single pixel.
+* **The Coordinates:** The numbers like $_{1,2}$ mean: "Row 1, Column 2".
+
+To make colors, we use **three numbers** for every single pixel: one for **Red**, one for **Green**, and one for **Blue**.
+
+We can think of a pixel $P$ as a stack of three values:
+$$P = \begin{pmatrix} \color{red}{R} \\ \color{green}{G} \\ \color{blue}{B} \end{pmatrix}$$
+
+By mixing these three primary lights at different brightness levels (0 to 255), you can create any color in the world!
+</div>
+
+<div id="section-rgb">
+	<div style="display: flex; align-items: center; gap: 40px; padding: 20px; border-radius: 12px; margin-top: 15px;">
+			<div id="rgb-combined-container"></div>
+			<canvas id="rgb-preview-canvas" width="3" height="3" style="width: 180px; height: 180px; image-rendering: pixelated; border: 4px solid #333;"></canvas>
+	</div>
+</div>
+
+<div class="md">
+You can then use full images as tensors, ie you can write an image into a variable, and pass it to functions, and get a vector out of it again:
+
+$$ f\left(\text{Image}\right) = \begin{pmatrix} \text{Probability cat} \\ \text{Probability dog} \end{pmatrix} $$
+
+This function, when it is not manually written, we call Model, as it models the behaviour of a function (and thus, acts as this function, even though it is just an approximation for it). 
+
+With other methods of making numbers from data (like Embeddings to create numbers from texts, like chatGPT does, which we will discuss later on), we can create models that do all kinds of stuff. For example, we could create a function that maps $\text{Text} \rightarrow \text{Music}$ or $\text{Image} \rightarrow \text{Text}$.
+
+<div class="smart-quote red" data-cite="box1987empirical">
+  All models are wrong, but some are useful.
+</div>
+
+
+
+
 ## Chaining Functions (Composition)
 
 In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$.
