@@ -106,7 +106,7 @@ The **red arc** below visualizes the **Cosine Distance**, the "conceptual shift"
 </section>
 
 <div class="md">
-## Similiarity
+### Similiarity
 To find the dot product of two vectors, you multiply the numbers in the same positions and then add all those results together. In general, the equation is:
 
 $$ \underbrace{\vec{A} \cdot \vec{B}}_{\substack{n \text{ entries} \\ \text{each}}} = \sum_{i=1}^{n} a_i b_i $$
