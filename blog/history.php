@@ -387,12 +387,8 @@ It was only understood in \citeyear{rumelhart1986} that using multi-layer Percep
 
 The XOR problem was the ultimate litmus test for **non-linear complexity**. Since early Perceptrons could only classify data separable by a single straight line, they were mathematically incapable of solving XOR, where "True" results sit diagonally across from "False" results. This failure, it was thought, proved that connectionist AI could not handle basic binary addition or complex logic, leading to the **First AI Winter**. It wasn't until the 1980s that multi-layer networks and **Backpropagation** provided the "curved" mathematical logic needed to break through this linear wall.
 
-## Automatic differentiation (1976)
-While the popularization of backpropagation is often credited to the 1980s, its mathematical genesis lies in the 1976 master's thesis of \citeauthor{linnainmaa1976}. He developed the "automatic differentiation" method, specifically the *reverse mode*, originally to efficiently manage rounding errors in complex computer calculations. Without explicitly intending it for neural networks, Linnainmaa created the hochefficient algorithm required to calculate gradients in nested functions. This work serves as the invisible mathematical backbone of modern Deep Learning, allowing error signals to be propagated backward through billions of parameters with minimal computational overhead.
-
-
 \category{history}
-### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
+#### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
 
 <div class="smart-quote" data-cite="lighthillreport" data-page=8>
 In no part of the field have the discoveries made so far produced the
@@ -423,6 +419,10 @@ However, these deep structures were difficult to train until the popularization 
 While AI research suffered through funding winters, the physical substrate of computing was undergoing an explosion. \citealternativetitle{mooreslaw} describes the observation made by Gordon Moore that the number of transistors in a dense integrated circuit doubles about every two years.
 
 This relentless exponential growth meant that while algorithms remained largely unchanged for decades, the machinery running them became millions of times more powerful. This "free" improvement in performance is the engine behind \citetitle{sutton2019bitter}: methods that scale with computation (like neural networks) were destined to eventually overtake methods that relied on human cleverness, simply because the hardware kept getting faster.
+
+## Automatic differentiation (1976)
+While the popularization of backpropagation is often credited to the 1980s, its mathematical genesis lies in the 1976 master's thesis of \citeauthor{linnainmaa1976}. He developed the "automatic differentiation" method, specifically the *reverse mode*, originally to efficiently manage rounding errors in complex computer calculations. Without explicitly intending it for neural networks, Linnainmaa created the hochefficient algorithm required to calculate gradients in nested functions. This work serves as the invisible mathematical backbone of modern Deep Learning, allowing error signals to be propagated backward through billions of parameters with minimal computational overhead.
+
 
 \category{history,software,psychology}
 ## The Illusion of Empathy: The ELIZA-Effect
