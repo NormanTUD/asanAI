@@ -319,13 +319,6 @@ The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated mu
 
 $$\prod_{i = 1}^5 i = 1 \cdot 2 \cdot 3 \cdot 4 \cdot 5 = 120 $$
 
-### Reading the Symbol
-$$\prod_{i=1}^{n} x_i$$
-
-* **Bottom ($i=1$):** Starting index.
-* **Top ($n$):** Stopping value.
-* **Right ($x_i$):** The rule for values to multiply.
-
 ### The Factorial
 
 A special type of function often encountered in combinatorics and calculus is the **factorial**. It represents the product of all positive integers less than or equal to a non-negative integer $n$.
