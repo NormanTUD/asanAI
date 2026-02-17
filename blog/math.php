@@ -64,7 +64,7 @@ You can experiment around with how the parameters by changing them with the slid
 <div id="plot-step-6" class="plot-container" style="height: 300px; margin-bottom: 40px;"></div>
 
 <div id="desc-4" class="md">
-	For example, the $ \text{add} $-function takes 2 inputs, and adds them to each other with the rule $ \text{Output} = \text{First input} + \text{second input} $. We may use shorter names like $x$ and $y$ instead of $\text{First input}$. In python, it looks like this:
+For example, the $ \text{add} $-function takes 2 inputs, and adds them to each other with the rule $ \text{Output} = \text{First input} + \text{second input} $. We may use shorter names like $x$ and $y$ instead of $\text{First input}$. In python, it looks like this:
 </div>
 
 <div id="code-4-container">
