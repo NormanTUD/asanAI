@@ -71,7 +71,7 @@ window.bibData = {
 		url: "https://archive.org/details/khalifa_158_yahoo_20180430_1221"
 	},
 	"indianastronomer": {
-		year: "499 CE",
+		year: "499",
 		author: "आर्यभट (Āryabhaṭa)",
 		title: "आर्यभटीय (Āryabhaṭīya)",
 		url: "https://archive.org/details/Aryabhatiya1976"
