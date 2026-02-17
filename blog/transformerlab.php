@@ -207,7 +207,6 @@ $$\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} +
 
 Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Softmax function turns those values into $0$. Consequently, the model's "focus" for any given word is restricted to itself and the words preceding it.
 
-#### The Causal Mask Matrix
 For a sequence of length $n$, the look-ahead mask $M$ is defined as a
 lower-triangular matrix where the entry $M_{i,j}$ determines if the
 token at position $i$ can attend to the token at position $j$.
@@ -236,9 +235,7 @@ $$M = \begin{pmatrix}
 
 <div class="md">
 
-##### Why -∞?
-
-When we calculate the attention weights, we use the Softmax function:
+**Why $-\infty$**? When we calculate the attention weights, we use the Softmax function:
 
 $$\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$
 
