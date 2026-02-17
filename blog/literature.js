@@ -1,4 +1,11 @@
 window.bibData = {
+	"gpt2": {
+		url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+		title: "Language Models are Unsupervised Multitask Learners",
+		author: "Alec Radford, Jeffrey Wu, Rewon Child, David Luan, Dario Amodei, Ilya Sutskever",
+		year: 2019,
+		alternativetitle: "GPT-2"
+	},
 	"bert": {
 		url: "https://aclanthology.org/N19-1423/",
 		title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
