@@ -606,11 +606,11 @@ window.bibData = {
 		year: 1944
 	},
 	"leibnizrechenmaschine": {
-		url: "https://commons.wikimedia.org/wiki/File:Leibnitzrechenmaschine.jpg",
-		title: "Staffelwalze, or Stepped Reckoner, a digital calculating machine invented by Gottfried Wilhelm Leibniz around 1672 and built around 1700, on display in the Technische Sammlungen museum in Dresden",
+		url: "https://blog.hnf.de/herr-leibniz-und-seine-verlorenen-rechenmaschinen/",
+		title: "Herr Leibniz und seine verlorenen Rechenmaschinen",
 		alternativetitle: "The Stepped Reckoner by Leibniz, invented in 1672 and built in 1700, is the first mechanical working automatic calculation machine",
-		year: 2026,
-		author: "Gottfried Wilhelm Leibniz"
+		year: 2024,
+		author: "Jochen Viehoff"
 	},
 	"wheelerindirection": {
 		url: "https://bwlampson.site/Slides/TuringLecture.htm",
