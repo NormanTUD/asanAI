@@ -42,9 +42,7 @@ The activation function $\sigma$ (such as **ReLU** or **Sigmoid**) is the "glue"
 
 By keeping the non-linear "gates" between the stacks, we allow the network to warp and fold the coordinate space, enabling it to solve complex problems like the **XOR** gate.
 
-## Tip:
-
-Try changing the activation function of the hidden layer.
+**Tip:** Try changing the activation function of the hidden layer.
 </div>
 
 <div style="margin-bottom: 15px; display: flex; gap: 10px;">
