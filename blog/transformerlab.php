@@ -184,9 +184,7 @@ When you add "random" values to a vector, you change its location in the multidi
 
 1. **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word "King" to a new location, but it remains in a "neighborhood" that the model still recognizes as "King."
 2. **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network’s layers. Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.
-
-### The Risk of Overlapping
-During training, the model learns to set the "scale" of the embeddings much larger than the "scale" of the positional encodings. This ensures the position "nudges" the meaning without overwriting it.
+3. **The Risk of Overlapping**: During training, the model learns to set the "scale" of the embeddings much larger than the "scale" of the positional encodings. This ensures the position "nudges" the meaning without overwriting it.
 
 ## 4. Structural Pillars: The Encoder and Decoder
 To understand how the **hidden state** $h$ is constructed, it is useful to examine the two canonical components introduced in the original Transformer architecture: the encoder and the decoder. These are not auxiliary modules but structural patterns that define how attention and computation are organized.
