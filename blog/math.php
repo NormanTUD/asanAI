@@ -517,7 +517,7 @@ $$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
 
 **The Secret:** In AI, we call *everything* a Tensor. A single number is just a "rank 0 Tensor." This makes it easy for the brain of the AI (the Neural Network) because it treats every piece of data with the same set of math rules!
 
-## The Mathematical View: A $3 \times 3 \times 3$ Tensor
+### The Mathematical View: A $3 \times 3 \times 3$ Tensor
 
 When you type numbers into the grid, the computer organizes them into a structured math object. Here is how your **Color Image** looks as a formal Tensor $\mathcal{T}$.
 
