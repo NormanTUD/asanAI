@@ -9,13 +9,11 @@ In the architecture of a Transformer, a word possesses no intrinsic "soul" or st
 
 Even though in this example, we treat tokens as words, they can also be parts of words or single characters like a comma or a semicolon due to *Byte-Pair-Encodings*.
 
-## The Distributional Hypothesis in Practice
-
 In the history of linguistics, the work of \citeauthor{firth1957distributive} (\citeyear{firth1957distributive}) provides the theoretical bedrock for modern word embeddings. Known as the Distributional Hypothesis, his famous maxim, "You shall know a word by the company it keeps" (p. 11), suggests that words occurring in similar contexts share similar meanings. This shift away from fixed dictionary definitions to context-based identity allowed later researchers like \citeauthor{mikolov2013word2vec} to mathematically map language into the vector spaces we see in modern LLMs today.
 
 
 
-### One Dimension
+## One Dimension
 To visualize this, consider a simple **1D Embedding Space** representing temperature. We assign words a single numerical coordinate on an axis:
 * **Freezing**: $-30$
 * **Cold**: $5$
@@ -37,7 +35,7 @@ This allows you to do calculations like $\underbrace{\text{Boiling}}_{100} - \un
 </section>
 
 <div class="md">
-### Two dimensions
+## Two dimensions
 
 Human language is far too nuanced for a single axis. To capture independent features such as gender, power, or biological species, we project tokens into a **vector space** with multiple dimensions. In this space, each dimension represents a latent semantic feature discovered by the model during training.
 
@@ -58,7 +56,7 @@ This specific property, that word vectors capture semantic relationships through
 </section>
 
 <div class="md">
-### Three Dimensions: The Limits of Visualization
+## Three Dimensions: The Limits of Visualization
 
 While **3 dimensions** are the maximum we can easily visualize in a graph, modern LLMs operate in much higher dimensionality, often 768, 1,536, or more. Each added dimension allows the model to capture more granular distinctions between concepts that might appear identical in lower-dimensional projections.
 </div>
@@ -73,15 +71,15 @@ While **3 dimensions** are the maximum we can easily visualize in a graph, moder
 </section>
 
 <div class="md">
-### Quantifying Semantic Proximity
+## Quantifying Semantic Proximity
 In a vector space, "meaning" is a function of distance. If two words appear in similar linguistic environments, their vectors converge toward the same neighborhood.
 
-#### Euclidean Distance
+### Euclidean Distance
 To determine the degree of similarity between two vectors $\mathbf{A}$ and $\mathbf{B}$ in $n$-dimensional space, we can calculate the straight-line gap known as **Euclidean Distance**:
 
 $$ d(\mathbf{A}, \mathbf{B}) = \sqrt{\sum_{i=1}^{n} (B_i - A_i)^2} $$
 
-#### The Semantic Manifold: Cosine Similarity
+### The Semantic Manifold: Cosine Similarity
 </div>
 
 <div class="smart-quote" data-cite="heraclitus500fragments">
@@ -108,14 +106,14 @@ The **red arc** below visualizes the **Cosine Distance**, the "conceptual shift"
 </section>
 
 <div class="md">
-### The Illusion of Interpretability
+## The Illusion of Interpretability
 It is tempting to label specific axes as "Gender," "Power," or "Temperature," but this is often a human-imposed simplification. In modern LLMs, dimensions are **latent features**, mathematical patterns discovered through statistical co-occurrence rather than human-defined categories.
 
 While we can find "directions" in the vector space that correlate with human concepts, most of the 768+ dimensions do not have a name in any human language.
 * **Meaning is Simulated:** The computer does not "understand" what a King is; it only understands that the token "King" consistently appears in specific geometric relationships with other tokens.
 * **No Inherent Soul:** The coordinates are products of linear algebra, not internal experience. Meaning is a human concept we project onto the model's output; the machine is simply navigating a continuous geometric manifold.
 
-### The Outliers of Geometry: Hapax Legomena and Glitch Tokens
+## The Outliers of Geometry: Hapax Legomena and Glitch Tokens
 
 While the semantic manifold relies on "use" to define meaning, the system falters when a word lacks a statistical history. [**Hapax legomena**](https://en.wikipedia.org/wiki/Hapax_legomenon), terms that appear only once in an entire corpus, present a unique challenge for embedding spaces. Because a token's identity is defined entirely by its context, a single occurrence provides insufficient data points to anchor it. In a high-dimensional space, these words become "homeless"; the model cannot triangulate their coordinates through repeated relationships. Without the "gravity" of multiple linguistic environments to pull them into a meaningful neighborhood, their vectors often reside in noisy, semi-random locations, rendering them mathematically isolated from the manifold of human knowledge.
 
