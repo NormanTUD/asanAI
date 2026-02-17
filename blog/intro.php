@@ -33,4 +33,8 @@ By the time you reach the end of this journey, you will have moved from basic ar
 * **Critically evaluate** the societal and philosophical implications of AI, understanding both its technical brilliance and its inherent limitations.
 
 You will see that AI is not a sudden magic invention, but the technical and philosophical culmination of centuries of human inquiry.
+
+## Disclaimer
+
+This tutorial was built with the help of Google Gemini. We've done our best to verify the code and info, but please double-check before using it in production.
 </div>
