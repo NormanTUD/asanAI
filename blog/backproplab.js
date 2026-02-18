@@ -465,7 +465,7 @@ $$\\frac{\\partial E}{\\partial b_4} = \\underbrace{\\delta_{o_2}}_{${f(R.gb4)}}
 <b>Gradient</b> — the chain rule product:
 $$\\frac{\\partial E}{\\partial ${labels[wk]}} = \\underbrace{${m.delta}}_{${m.dv}} \\cdot \\underbrace{${m.inp}}_{${m.iv}} = ${f(m.g)}$$
 
-<b>Update rule</b> — gradient descent with $$\\eta = ${f(lr,2)}$$:
+<b>Update rule</b> — gradient descent with $\\eta = ${f(lr,2)}$:
 $$${labels[wk]}^{\\,\\text{new}} = \\underbrace{${labels[wk]}}_{${f(wVal)}} - \\underbrace{\\eta}_{${f(lr)}} \\cdot \\underbrace{\\frac{\\partial E}{\\partial ${labels[wk]}}}_{${f(m.g)}} = ${f(nw)}$$
 
 $$${dir}$$`);
