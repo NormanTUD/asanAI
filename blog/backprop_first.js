@@ -53,8 +53,8 @@ function renderBackpropVisual(id) {
 <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
   <legend style="font-size:0.78rem; font-weight:700; color:#64748b;">Inputs</legend>
   <div style="display:flex; gap:10px; flex-wrap:wrap;">
-    <div class="bp-group"><label>$$x_1$$</label><input type="number" data-k="x1" step="0.01"></div>
-    <div class="bp-group"><label>$$x_2$$</label><input type="number" data-k="x2" step="0.01"></div>
+    <div class="bp-group"><label>$$x_1$$</label><input style='width: 100px;'type="number" data-k="x1" step="0.01"></div>
+    <div class="bp-group"><label>$$x_2$$</label><input style='width: 100px;'type="number" data-k="x2" step="0.01"></div>
   </div>
 </fieldset>
 
@@ -62,8 +62,8 @@ function renderBackpropVisual(id) {
 <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
   <legend style="font-size:0.78rem; font-weight:700; color:#f59e0b;">Targets (Ground Truth)</legend>
   <div style="display:flex; gap:10px; flex-wrap:wrap;">
-    <div class="bp-group"><label>$$t_1$$</label><input type="number" data-k="t1" step="0.01"></div>
-    <div class="bp-group"><label>$$t_2$$</label><input type="number" data-k="t2" step="0.01"></div>
+    <div class="bp-group"><label>$$t_1$$</label><input style='width: 100px;'type="number" data-k="t1" step="0.01"></div>
+    <div class="bp-group"><label>$$t_2$$</label><input style='width: 100px;'type="number" data-k="t2" step="0.01"></div>
   </div>
 </fieldset>
 
@@ -71,7 +71,7 @@ function renderBackpropVisual(id) {
 <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
   <legend style="font-size:0.78rem; font-weight:700; color:#8b5cf6;">Hyperparameters</legend>
   <div style="display:flex; gap:10px; flex-wrap:wrap;">
-    <div class="bp-group"><label>$$\\eta$$ (learning rate)</label><input type="number" data-k="lr" step="0.05" min="0.01" max="5"></div>
+    <div class="bp-group"><label>$$\\eta$$ (learning rate)</label><input style='width: 100px;'type="number" data-k="lr" step="0.05" min="0.01" max="5"></div>
   </div>
 </fieldset>
 
@@ -79,12 +79,12 @@ function renderBackpropVisual(id) {
 <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
   <legend style="font-size:0.78rem; font-weight:700; color:#3b82f6;">Weights &amp; Biases — Input → Hidden</legend>
   <div style="display:flex; gap:10px; flex-wrap:wrap;">
-    <div class="bp-group"><label>$$w_1$$</label><input type="number" data-k="w1" step="0.01"></div>
-    <div class="bp-group"><label>$$w_2$$</label><input type="number" data-k="w2" step="0.01"></div>
-    <div class="bp-group"><label>$$w_3$$</label><input type="number" data-k="w3" step="0.01"></div>
-    <div class="bp-group"><label>$$w_4$$</label><input type="number" data-k="w4" step="0.01"></div>
-    <div class="bp-group"><label>$$b_1$$</label><input type="number" data-k="b1" step="0.01"></div>
-    <div class="bp-group"><label>$$b_2$$</label><input type="number" data-k="b2" step="0.01"></div>
+    <div class="bp-group"><label>$$w_1$$</label><input style='width: 100px;'type="number" data-k="w1" step="0.01"></div>
+    <div class="bp-group"><label>$$w_2$$</label><input style='width: 100px;'type="number" data-k="w2" step="0.01"></div>
+    <div class="bp-group"><label>$$w_3$$</label><input style='width: 100px;'type="number" data-k="w3" step="0.01"></div>
+    <div class="bp-group"><label>$$w_4$$</label><input style='width: 100px;'type="number" data-k="w4" step="0.01"></div>
+    <div class="bp-group"><label>$$b_1$$</label><input style='width: 100px;'type="number" data-k="b1" step="0.01"></div>
+    <div class="bp-group"><label>$$b_2$$</label><input style='width: 100px;'type="number" data-k="b2" step="0.01"></div>
   </div>
 </fieldset>
 
@@ -92,12 +92,12 @@ function renderBackpropVisual(id) {
 <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
   <legend style="font-size:0.78rem; font-weight:700; color:#10b981;">Weights &amp; Biases — Hidden → Output</legend>
   <div style="display:flex; gap:10px; flex-wrap:wrap;">
-    <div class="bp-group"><label>$$w_5$$</label><input type="number" data-k="w5" step="0.01"></div>
-    <div class="bp-group"><label>$$w_6$$</label><input type="number" data-k="w6" step="0.01"></div>
-    <div class="bp-group"><label>$$w_7$$</label><input type="number" data-k="w7" step="0.01"></div>
-    <div class="bp-group"><label>$$w_8$$</label><input type="number" data-k="w8" step="0.01"></div>
-    <div class="bp-group"><label>$$b_3$$</label><input type="number" data-k="b3" step="0.01"></div>
-    <div class="bp-group"><label>$$b_4$$</label><input type="number" data-k="b4" step="0.01"></div>
+    <div class="bp-group"><label>$$w_5$$</label><input style='width: 100px;'type="number" data-k="w5" step="0.01"></div>
+    <div class="bp-group"><label>$$w_6$$</label><input style='width: 100px;'type="number" data-k="w6" step="0.01"></div>
+    <div class="bp-group"><label>$$w_7$$</label><input style='width: 100px;'type="number" data-k="w7" step="0.01"></div>
+    <div class="bp-group"><label>$$w_8$$</label><input style='width: 100px;'type="number" data-k="w8" step="0.01"></div>
+    <div class="bp-group"><label>$$b_3$$</label><input style='width: 100px;'type="number" data-k="b3" step="0.01"></div>
+    <div class="bp-group"><label>$$b_4$$</label><input style='width: 100px;'type="number" data-k="b4" step="0.01"></div>
   </div>
 </fieldset>
 
