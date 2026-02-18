@@ -1,59 +1,90 @@
 <?php include_once("functions.php"); ?>
 <div class="md">
-## Convolutions, or how a computer can see
+## Convolutions: How a Computer Learns to See
 
-The idea of convolutions was introduced first by \citeauthor{neocognitron} in \citeyear{neocognitron} in his hallmark paper "\citetitle{neocognitron}", but later popularized and developed so far that it could be practically used by Yann LeCun et al. in \citeyear{lecun1989backpropagation}, where he applied to it to recognizing handwritten digits for ZIP codes for the U.S. Postal System.
+### Historical Context
 
-This module demonstrates the fundamental operation behind **Convolutional Neural Networks (CNNs)**, the technology that powers facial recognition, self-driving cars, and medical imaging.
+The idea of hierarchical visual feature detection was first introduced by \citeauthor{neocognitron} in \citeyear{neocognitron} in his landmark paper "\citetitle{neocognitron}", which was directly inspired by \citeauthorlastnameand{hubelwiesel}'s Nobel Prize–winning research on the mammalian visual cortex. Years later, \citeauthor{lecun1989backpropagation} made the concept practical in \citeyear{lecun1989backpropagation} by combining convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service, the first commercially deployed convolutional neural network.
 
-In traditional computer vision, engineers manually designed kernels (like the ones in the buttons above) to find edges or blur noise. In **Deep Learning**, we don't pick these numbers ourselves.
+### What is a Convolution?
 
-* **Kernels are Learnable Parameters:** Just as a standard "Dense" neural layer has weights it adjusts during training, a CNN treats every number in the Filter Kernel as a **weight**.
-* **Feature Extraction:** Through backpropagation, the AI learns which numbers to put in the kernel to detect useful features. It might start by learning simple edges (Sobel filters) in early layers and progress to complex shapes (eyes, wheels) in deeper layers.
+A **convolution** is a mathematical operation that slides a small grid of numbers (the **kernel** or **filter**) across an image, computing a weighted sum at every position. This single operation is the fundamental building block of **Convolutional Neural Networks (CNNs)**, the technology behind facial recognition, autonomous vehicles, medical imaging, and satellite analysis.
+
+$$
+(\mathbf{I} * \mathbf{K})(x, y) = \sum_{i} \sum_{j} \mathbf{I}(x+i,\; y+j) \cdot \mathbf{K}(i,\; j)
+$$
+
+Where $\mathbf{I}$ is the input image, $\mathbf{K}$ is the kernel, and $(x, y)$ is the output pixel coordinate. This is computed independently for each color channel (Red, Green, Blue).
+
+### Why Does This Matter for AI?
+
+In traditional computer vision, engineers **manually designed** kernels (like Sobel, Gaussian, or Laplacian filters) to detect edges, blur noise, or sharpen details. These hand-crafted filters work well for specific tasks but cannot generalize.
+
+In **Deep Learning**, the paradigm shifts completely:
+
+* **Kernels are Learnable Parameters:** Just as a Dense layer has weights adjusted during training, a CNN treats every number in the kernel as a **trainable weight**. The network discovers, through gradient descent, which filter values best extract useful features from the data.
+* **Feature Extraction:** Through backpropagation, the network learns to detect simple edges in early layers and progressively more complex shapes (eyes, wheels, letters) in deeper layers, all without human intervention.
 * **The Convolution Operation:** The math you see when hovering, multiplying a window of pixels by a matrix of weights, is exactly what happens billions of times inside a GPU when an AI processes an image.
 
-* **Sharpen/Edge Detection:** These are "Feature Extractors" that highlight high-frequency information.
-* **Blur:** This acts as a "Low-pass filter," removing noise but also removing detail.
-* **Manual Edit:** Try changing the numbers in the grid. You are manually "training" the network to respond to different patterns.
+### Understanding the Preset Filters
 
-**Note:** Hover your mouse over the source image to see the matrix multiplication in real-time. Notice how a single pixel in the output is a weighted sum of its neighbors.
+* **Sharpen:** Amplifies the difference between a pixel and its neighbors, enhancing fine detail and high-frequency information.
+* **Edge Detection:** Highlights boundaries where pixel intensity changes abruptly. The result is a map of the image's structural skeleton.
+* **Blur / Gaussian:** A low-pass filter that averages neighboring pixels, smoothing out noise at the cost of detail. Gaussian blur applies a bell-curve weighting so closer pixels contribute more.
+* **Sobel (Horizontal / Vertical):** Directional gradient filters that respond strongly to edges in a specific orientation. Named after Irwin Sobel, who introduced them in 1968.
+* **Emboss:** Creates a 3D relief effect by emphasizing directional intensity transitions.
+* **Identity:** Passes the image through unchanged, a useful baseline for comparison.
+
+**Try it yourself:** Click a preset button, then edit the numbers in the kernel grid. You are manually doing what a neural network does automatically during training.
+
+**Hover** your mouse over the source image to see the element-wise multiplication in real-time. Notice how a single output pixel is computed as a weighted sum of its neighbors.
 </div>
-	<div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
-		<button class="btn" onclick="setKernel([[0,-1,0],[-1,5,-1],[0,-1,0]])">Sharpen</button>
-		<button class="btn" onclick="setKernel([[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]])">Blur</button>
-		<button class="btn" onclick="setKernel([[-1,-1,-1],[-1,8,-1],[-1,-1,-1]])">Edge</button>
-		<button class="btn" onclick="setKernel([[0,0,0],[0,1,0],[0,0,0]])">Identity</button>
-		<button class="btn" onclick="setKernel([[-1,-2,-1],[0,0,0],[1,2,1]])">Sobel Horizontal</button>
-		<button class="btn" onclick="setKernel([[-1,0,1],[-2,0,2],[-1,0,1]])">Sobel Vertical</button>
-		<button class="btn" onclick="setKernel([[-2,-1,0],[-1,1,1],[0,1,2]])">Emboss</button>
-		<button class="btn" onclick="setKernel([[1/16,2/16,1/16],[2/16,4/16,2/16],[1/16,2/16,1/16]])">Gaussian</button>
-	</div>
 
-	<div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; justify-content: center;">
+<div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
+	<button class="btn" onclick="setKernel([[0,-1,0],[-1,5,-1],[0,-1,0]])">Sharpen</button>
+	<button class="btn" onclick="setKernel([[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]])">Blur</button>
+	<button class="btn" onclick="setKernel([[-1,-1,-1],[-1,8,-1],[-1,-1,-1]])">Edge</button>
+	<button class="btn" onclick="setKernel([[0,0,0],[0,1,0],[0,0,0]])">Identity</button>
+	<button class="btn" onclick="setKernel([[-1,-2,-1],[0,0,0],[1,2,1]])">Sobel Horizontal</button>
+	<button class="btn" onclick="setKernel([[-1,0,1],[-2,0,2],[-1,0,1]])">Sobel Vertical</button>
+	<button class="btn" onclick="setKernel([[-2,-1,0],[-1,1,1],[0,1,2]])">Emboss</button>
+	<button class="btn" onclick="setKernel([[1/16,2/16,1/16],[2/16,4/16,2/16],[1/16,2/16,1/16]])">Gaussian</button>
+</div>
+
+<div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; justify-content: center;">
 	<div style="position: relative; line-height: 0; display: inline-block;">
 		<b style="line-height: 1.5; display: block;">Original (Hover me!)</b>
-		<canvas id="conv-src-display" class="vision-canvas" width="50" height="50" style="cursor: none; border: 1px solid #ccc;"></canvas>
-		<div id="conv-focus" style="position: absolute; border: 2px solid red; pointer-events: none; display: none; box-sizing: border-box; z-index: 10;"></div>
+		<canvas id="conv-src-display" class="vision-canvas" width="50" height="50" style="cursor: crosshair; border: 2px solid #cbd5e1; border-radius: 6px;"></canvas>
+		<div id="conv-focus" style="position: absolute; border: 2px solid red; pointer-events: none; display: none; box-sizing: border-box; z-index: 10; border-radius: 2px;"></div>
+		<div id="pixel-info" style="display:none; margin-top:6px; font-size:0.75rem; font-family:monospace; line-height:1.5; gap:8px;"></div>
 	</div>
 
 	<div>
 		<b>Filter Kernel</b><br>
-		Size: <input type="number" id="k-size" value="3" min="1" max="5" step="1" onchange="initVisionLab()">
+		Size: <input type="number" id="k-size" value="3" min="1" max="7" step="2" onchange="initVisionLab()" style="width:50px;">
 		<table id="kernel-table" style="margin-top: 10px; border-collapse: collapse;"></table>
+		<div style="margin-top:10px;">
+			<b style="font-size:0.8rem;">Kernel Heatmap</b><br>
+			<canvas id="kernel-viz" width="3" height="3" style="width:80px; height:80px; image-rendering:pixelated; border:1px solid #cbd5e1; border-radius:4px; margin-top:4px;"></canvas>
+			<div style="font-size:0.65rem; color:#94a3b8; margin-top:2px;">
+				<span style="color:#3b82f6;">■</span> Positive
+				<span style="color:#ef4444; margin-left:6px;">■</span> Negative
+			</div>
+		</div>
 	</div>
 
-        <div id="conv-res-container" style="position: relative; line-height: 0; display: inline-block;">
+	<div id="conv-res-container" style="position: relative; line-height: 0; display: inline-block;">
 		<b style="line-height: 1.5; display: block;">Filtered Result</b>
-		<canvas id="conv-res" class="vision-canvas" width="50" height="50" style="border: 1px solid #ccc;"></canvas>
+		<canvas id="conv-res" class="vision-canvas" width="50" height="50" style="border: 2px solid #cbd5e1; border-radius: 6px;"></canvas>
 		<div id="conv-crosshair" style="position: absolute; pointer-events: none; display: none; z-index: 10;">
-			<div style="position: absolute; width: 10px; height: 2px; background: red; left: -5px; top: -1px;"></div>
-			<div style="position: absolute; width: 2px; height: 10px; background: red; left: -1px; top: -5px;"></div>
+			<div style="position: absolute; width: 12px; height: 2px; background: red; left: -6px; top: -1px;"></div>
+			<div style="position: absolute; width: 2px; height: 12px; background: red; left: -1px; top: -6px;"></div>
 		</div>
 	</div>
 </div>
 
-<div id="conv-math-step" style="margin-top: 20px; padding: 15px; background: #f8fafc; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 0.85rem; overflow-x: auto; min-height: 100px;">
-Move mouse over the image to see the math...
+<div id="conv-math-step" style="margin-top: 20px; padding: 18px; background: linear-gradient(to right, #f8fafc, #f1f5f9); border: 1px solid #cbd5e0; border-radius: 10px; font-size: 0.85rem; overflow-x: auto; min-height: 100px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);">
+	<span style="color:#94a3b8; font-style:italic;">👆 Move your mouse over the source image to see the convolution math computed in real-time for each pixel...</span>
 </div>
 
 <img id="conv-src-hidden" src="stop_sign.jpg" crossorigin="anonymous" style="display:none">
@@ -61,27 +92,37 @@ Move mouse over the image to see the math...
 
 <div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px">
 <div class="md">
-### The Power of Hierarchy: Building Complexity
-In deep learning, an AI doesn't identify a "stop sign" in a single leap. Instead, it builds an understanding of the image through a **layered hierarchy**, where each successive layer looks at the one before it to find increasingly complex patterns.
+### The Power of Hierarchy: Building Complexity from Simplicity
 
-#### Layer 1: Simple Edges
-The first layer acts like a microscopic scanner. It only looks at a tiny window of pixels, the $3 \times 3$ kernel, to find basic "primitive" features like lines, angles, or color gradients. At this stage, the AI has no concept of a "sign"; it only knows that there is a vertical line or a diagonal edge at a specific coordinate.
+A deep learning model doesn't identify a "stop sign" in a single leap. Instead, it constructs an understanding through a **layered hierarchy of abstraction**, where each successive layer examines the output of the previous one to discover increasingly complex patterns. This mirrors the architecture of the human visual cortex, where neurons in area V1 respond to simple oriented edges, while neurons in higher areas respond to faces and objects.
 
+#### Layer 1: Primitive Edge Detection
 
-#### Layer 2: Pattern Composition
-The second layer in a CNN doesn't look at the raw pixels of the original image; it looks at the **Feature Maps** produced by Layer 1.
-* **Searching for Patterns in Patterns:** Layer 2 searches for specific combinations of edges. For example, if it detects a "45° Diagonal" activation right next to a "90° Vertical" activation, it interprets this combination as a **corner**.
-* **Expanding the "Receptive Field":** As layers get deeper, each "pixel" in the resulting map represents a much larger area of the original image. This is why the Heatmap highlights the general octagonal shape rather than just thin, disconnected lines.
+The first convolutional layer acts like a microscopic scanner. Each kernel examines a tiny local window of pixels (e.g., $3 \times 3$) to detect basic **primitives**: horizontal lines, vertical lines, diagonal edges, and color gradients.
 
-#### Even more layers
+At this stage, the network has no concept of a "sign", it only knows that there is a strong vertical gradient at coordinate $(23, 41)$ or a diagonal edge at $(67, 12)$. These raw detections form **feature maps**, one per kernel.
 
-In a full-scale network, this process repeats across dozens or even hundreds of layers:
-* **Middle Layers:** Combine corners and curves to detect "parts" like a bolt, a letter, or the specific red octagonal boundary of a sign.
-* **Final Layers:** Combine those parts to realize the **Global Concept**, concluding with high mathematical certainty that the cluster of detected shapes is a **Stop Sign**.
+The four feature maps below show exactly this: each filter responds to edges at a different orientation.
 
-The more layers, the more complex the structures it can detect can be. But there's also a risk of overfitting.
+#### Layer 2: Pattern Composition, Finding Corners and Curves
 
-**The Mathematical Heartbeat:** Every step of this intelligence, from finding a tiny line to identifying a vehicle, is powered by the same **Convolution Operation** you see in the math box. By stacking these simple multiplications, the AI transforms raw numbers into visual logic.
+The second convolutional layer doesn't look at the original image at all. Instead, it looks at the **feature maps** produced by Layer 1.
+
+* **Searching for Patterns in Patterns:** If a "45° Diagonal" activation appears adjacent to a "90° Vertical" activation, Layer 2 can learn to interpret this spatial co-occurrence as a **corner**.
+* **Expanding the Receptive Field:** Because each layer's kernel covers a region of the *previous* layer's output, deeper layers effectively "see" a much larger area of the original image. A $3 \times 3$ kernel in Layer 2, applied to Layer 1's output, actually represents a $5 \times 5$ region of the raw input.
+* **The Heatmap Below:** The combined heatmap squares the activations to amplify regions where multiple filters fire simultaneously, these are the corners and junctions of the octagonal stop sign.
+
+#### Deeper Layers: From Parts to Objects
+
+In a full-scale network (e.g., ResNet-50 with 50 layers, or VGG-16 with 16 layers), this process repeats:
+
+* **Middle Layers (3–8):** Combine corners and curves to detect **parts**, a bolt head, a letter shape, the red octagonal border of a sign.
+* **Deep Layers (9+):** Combine parts into **whole objects**, concluding with high mathematical certainty that the cluster of detected shapes is a **Stop Sign** and not, say, a red umbrella.
+* **Final Layers:** Produce a probability distribution over all possible classes (e.g., 97.3% stop sign, 1.2% yield sign, 0.8% traffic light...).
+
+The more layers, the more abstract and complex the representations become. However, adding layers also increases the risk of **overfitting** (memorizing training data rather than learning general patterns) and **vanishing gradients** (where learning signals fade to zero in very deep networks, a problem addressed by skip connections in ResNets).
+
+**The Mathematical Heartbeat:** Every step of this intelligence, from finding a tiny line to identifying a vehicle, is powered by the same **Convolution Operation** you see in the math box above. By stacking these simple multiplications, the AI transforms raw numbers into visual logic.
 
 </div>
     <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px;">
@@ -90,13 +131,14 @@ The more layers, the more complex the structures it can detect can be. But there
                 <canvas id="feat-src" width="100" height="100" style="border:2px solid #cbd5e1; width:200px; image-rendering:pixelated; border-radius: 4px;"></canvas>
                 <p class="md">Source Image (by \citeauthor{stopsignimage})</p>
             </div>
-            <div style="margin-top: 20px; padding: 10px; background: #f8fafc; border-radius: 6px; font-size: 0.8rem; color: #475569;">
-                <strong>Info:</strong> Each matrix (kernel) acts as a specialized "eye" that searches for specific patterns in the image.
+            <div style="margin-top: 20px; padding: 12px; background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-radius: 8px; font-size: 0.8rem; color: #475569; border: 1px solid #e2e8f0;">
+                <strong>🔍 How to read the feature maps:</strong><br>
+                Each matrix (kernel) acts as a specialized "eye" that searches for specific patterns. Bright pixels in the output mean the filter found a strong match at that location. Dark pixels mean no match was detected.
             </div>
         </div>
 
-        <div id="filter-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-            </div>
+        <div id="filter-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+        </div>
     </div>
 </div>
 
@@ -114,6 +156,7 @@ A Convolutional layer preserves the "grid" shape of an image to find spatial pat
 
 * **What it does:** It "unrolls" the grid. For example, if your feature map is a $3 \times 3$ grid, Flattening turns those 9 pixels into a single vertical list (Vector) of 9 numbers.
 * **Why we do it:** It allows the AI to take every feature it found across the entire image and combine them into a final mathematical score using a weighted sum.
+* **No learnable parameters:** Unlike Conv2D or Dense layers, Flatten has zero trainable weights, it is purely a structural reshaping operation.
 
 $$
 \underbrace{\begin{pmatrix}
@@ -129,6 +172,24 @@ $$
 
 This layer was first described systematically by Yann LeCun in his \citeyear{lecun1998gradientbased} paper \citetitle{lecun1998gradientbased}.
 
+### The Complete CNN Pipeline
+
+Here is the full data flow from raw image to classification:
+
+$$
+\underbrace{\text{Image}}_{\text{100×100×3}}
+\xrightarrow{\text{Conv2D}}
+\underbrace{\text{Feature Maps}}_{\text{98×98×32}}
+\xrightarrow{\text{MaxPool}}
+\underbrace{\text{Downsampled}}_{\text{49×49×32}}
+\xrightarrow{\text{Flatten}}
+\underbrace{\text{Vector}}_{\text{76832×1}}
+\xrightarrow{\text{Dense}}
+\underbrace{\text{Output}}_{\text{P(class)}}
+$$
+
+Each arrow represents a differentiable transformation. Because every step is differentiable, we can compute gradients end-to-end and use backpropagation to train the entire pipeline jointly.
+
 ### Implementation: TensorFlow vs. PyTorch
 
 The two most popular libraries for AI are \citealternativetitle{tensorflow2016} and \citealternativetitle{pytorch}. Here is how you define a simple network that uses a Convolutional layer, Flattens the result, and uses a Dense layer for the final output.
@@ -138,7 +199,7 @@ The two most popular libraries for AI are \citealternativetitle{tensorflow2016} 
 $visionlabcodetabs = array(
 	"PyTorch" => '
 <div class="md">
-<b>PyTorch</b> is more explicit, requiring you to define the "Forward Pass" where data flows through the model.
+<b>PyTorch</b> is more explicit, requiring you to define the "Forward Pass" where data flows through the model. This gives you fine-grained control over every tensor operation, making it the preferred choice in research settings.
 
 You can call this script with the same parameters as you can call the <b>TensorFlow</b> one.
 </div>
@@ -277,7 +338,7 @@ if __name__ == "__main__":
         predict_mode(args.model_out, args.path)</code></pre>
 	',
 	"TensorFlow" => '<div class="md">
-<b>TensorFlow</b> uses a "Sequential" style where you stack layers like LEGO blocks.
+<b>TensorFlow</b> uses a "Sequential" style where you stack layers like LEGO blocks. Its high-level Keras API makes it the go-to choice for rapid prototyping and production deployment.
 </div>
 <pre><code class="language-python">import sys
 import os
@@ -425,14 +486,23 @@ if __name__ == "__main__":
 render_gem_tabs($visionlabcodetabs, "visionlab");
 ?>
 <div class="md">
-Both, the PyTorch and TensorFlow version, can be trained with `python3 tf.py --mode train --path dataset`, where `dataset` is a folder containing one folder with images for each category it should learn. It will save the trained model as `classifier.keras`. The trained model can then be used to classify images with `python3 tf.py --mode predict --path dataset/cat/1.jpg`.
+Both the PyTorch and TensorFlow versions can be trained with `python3 tf.py --mode train --path dataset`, where `dataset` is a folder containing one subfolder of images for each category the model should learn. The trained model is saved as `classifier.keras` (TensorFlow) or `classifier.pth` (PyTorch). You can then classify new images with `python3 tf.py --mode predict --path dataset/cat/1.jpg`.
 </div>
 
-
 <div class="md">
-### Summary of the Flow
-1. **Input:** A Tensor (the image).
-2. **Conv Layer:** Learns kernels to extract features.
-3. **Flatten:** Converts the 2D grid into a 1D list.
-4. **Dense Layer:** Weighs those features to give a final answer.
+### Summary of the Full CNN Flow
+
+$$
+\text{Raw Pixels} \xrightarrow{\text{1. Normalize}} [0,1] \xrightarrow{\text{2. Conv2D}} \text{Feature Maps} \xrightarrow{\text{3. MaxPool}} \text{Downsampled} \xrightarrow{\text{4. Flatten}} \text{Vector} \xrightarrow{\text{5. Dense + Sigmoid}} P(\text{class})
+$$
+
+1. **Input:** A raw image tensor (e.g., $100 \times 100 \times 3$ for RGB).
+2. **Rescaling:** Normalize pixel values from $[0, 255]$ to $[0, 1]$ for numerical stability.
+3. **Conv2D Layer:** Learns $N$ kernels to extract spatial features, edges, textures, gradients.
+4. **MaxPooling:** Reduces spatial dimensions by keeping only the strongest activations in each window, providing translation invariance.
+5. **Flatten:** Converts the 2D feature grid into a 1D vector so it can be fed into a Dense layer.
+6. **Dense Layer:** Weighs all extracted features together to produce a final classification score.
+7. **Sigmoid / Softmax:** Squashes the output into a probability between 0 and 1 (binary) or a probability distribution (multi-class).
+
+Each of these steps is **differentiable**, meaning gradients can flow backward through the entire pipeline during training, this is the essence of **end-to-end learning**.
 </div>
