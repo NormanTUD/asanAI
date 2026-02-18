@@ -13,7 +13,7 @@ The mathematical engine behind step 3 is the **chain rule**, applied systematica
 
 ## The Network We'll Use
 
-We'll work with the simplest possible network that still demonstrates every concept: **2 inputs, 2 hidden neurons, 2 outputs**. This is the same architecture used in Matt Mazur's classic walkthrough, and it's enough to see every moving part.
+We'll work with the simplest possible network that still demonstrates every concept: **2 inputs, 2 hidden neurons, 2 outputs**. This is enough to see every moving part.
 
 $$
 \text{Input } \mathbf{x} = \begin{pmatrix} x_1 \\ x_2 \end{pmatrix}
