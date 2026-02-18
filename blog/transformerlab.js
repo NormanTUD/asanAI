@@ -1041,7 +1041,6 @@ function collectTrainableVars(weightVars) {
 	return vars;
 }
 
-
 async function convert_tensors_to_weights(vars) {
 	const newWeights = [];
 	for (const layer of vars.layers) {
@@ -1365,8 +1364,6 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		render_final_projection(h_current, vocabulary, d_model, temperature);
 	}
 }
-
-
 
 window.select_suggested_word = (word) => {
 	const masterInput = document.getElementById('transformer-master-token-input');
@@ -1843,8 +1840,6 @@ function run_ffn_block(h1, params = {}) {
     return h2;
 }
 
-
-
 /**
  * Erzeugt LaTeX-Output für Matrizen ohne Limitierungen.
  */
@@ -2038,8 +2033,6 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 		rendered: false
 	});
 }
-
-
 
 /**
  * Maps a weight value to a colorblind-friendly scale (Blue to Yellow).
@@ -2907,7 +2900,6 @@ function debounce(func, wait) {
 const debouncedRun = debounce((id) => {
 	run_transformer_demo(id);
 }, 600);
-
 
 /**
  * Calculates vector arithmetic dynamically based on the current Transformer Embedding Space.
