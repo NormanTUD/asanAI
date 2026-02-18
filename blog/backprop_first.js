@@ -358,7 +358,7 @@ $$E_2 = \\tfrac{1}{2}\\bigl(\\underbrace{t_2}_{\\text{target}} - \\underbrace{o_
 
 <b>Forward:</b>
 $$z_{h_1} = \\underbrace{${f(w1)}}_{w_1} \\cdot \\underbrace{${f(x1)}}_{x_1} + \\underbrace{${f(w2)}}_{w_2} \\cdot \\underbrace{${f(x2)}}_{x_2} + \\underbrace{${f(b1)}}_{b_1} = ${f(R.zh1)}$$
-$$h_1 = \\sigma(\\underbrace{${f(R.zh1)}}_{z_{h_1}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zh1)}}_{z_{h_1}}}} = ${f(R.h1)}$$
+$$h_1 = \\text{sigmoid}(\\underbrace{${f(R.zh1)}}_{z_{h_1}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zh1)}}_{z_{h_1}}}} = ${f(R.h1)}$$
 
 <b>Backward</b> — blame arrives from <em>both</em> outputs via $w_5$ and $w_7$:
 
@@ -366,9 +366,9 @@ $$h_1 = \\sigma(\\underbrace{${f(R.zh1)}}_{z_{h_1}}) = \\frac{1}{1+e^{-\\underbr
 
 $$\\frac{\\partial E}{\\partial h_1} = \\underbrace{\\delta_{o_1}}_{\\substack{\\text{error signal}\\\\\\text{from } o_1 = ${f(R.d_o1)}}} \\cdot \\underbrace{w_5}_{${f(w5)}} + \\underbrace{\\delta_{o_2}}_{\\substack{\\text{error signal}\\\\\\text{from } o_2 = ${f(R.d_o2)}}} \\cdot \\underbrace{w_7}_{${f(w7)}} = ${f(R.dE_dh1)}$$
 
-$$\\underbrace{h_1(1-h_1)}_{\\substack{\\text{derivative of sigmoid}\\\\\\sigma'(z_{h_1})}} = \\underbrace{${f(R.h1)}}_{h_1} \\cdot \\underbrace{${f(1-R.h1)}}_{1 - h_1} = ${f(R.h1*(1-R.h1))}$$
+$$\\underbrace{h_1(1-h_1)}_{\\substack{\\text{derivative of sigmoid}\\\\\\text{sigmoid}'(z_{h_1})}} = \\underbrace{${f(R.h1)}}_{h_1} \\cdot \\underbrace{${f(1-R.h1)}}_{1 - h_1} = ${f(R.h1*(1-R.h1))}$$
 
-$$\\delta_{h_1} = \\underbrace{${f(R.dE_dh1)}}_{\\frac{\\partial E}{\\partial h_1}} \\times \\underbrace{${f(R.h1*(1-R.h1))}}_{\\sigma'(z_{h_1})} = ${f(R.d_h1)}$$
+$$\\delta_{h_1} = \\underbrace{${f(R.dE_dh1)}}_{\\frac{\\partial E}{\\partial h_1}} \\times \\underbrace{${f(R.h1*(1-R.h1))}}_{\\text{sigmoid}'(z_{h_1})} = ${f(R.d_h1)}$$
 
 <b>Weight gradients:</b>
 $$\\frac{\\partial E}{\\partial w_1} = \\underbrace{\\delta_{h_1}}_{${f(R.d_h1)}} \\cdot \\underbrace{x_1}_{${f(x1)}} = ${f(R.gw1)}$$
@@ -379,7 +379,7 @@ $$\\frac{\\partial E}{\\partial b_1} = \\underbrace{\\delta_{h_1}}_{${f(R.gb1)}}
 
 <b>Forward:</b>
 $$z_{h_2} = \\underbrace{${f(w3)}}_{w_3} \\cdot \\underbrace{${f(x_1)}}_{x_1} + \\underbrace{${f(w4)}}_{w_4} \\cdot \\underbrace{${f(x_2)}}_{x_2} + \\underbrace{${f(b_2)}}_{b_2} = ${f(R.zh2)}$$
-$$h_2 = \\sigma(\\underbrace{${f(R.zh2)}}_{z_{h_2}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zh2)}}_{z_{h_2}}}} = ${f(R.h2)}$$
+$$h_2 = \\text{sigmoid}(\\underbrace{${f(R.zh2)}}_{z_{h_2}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zh2)}}_{z_{h_2}}}} = ${f(R.h2)}$$
 
 <b>Backward</b> — blame arrives from <em>both</em> outputs via $w_6$ and $w_8$:
 
@@ -387,9 +387,9 @@ $$h_2 = \\sigma(\\underbrace{${f(R.zh2)}}_{z_{h_2}}) = \\frac{1}{1+e^{-\\underbr
 
 $$\\frac{\\partial E}{\\partial h_2} = \\underbrace{\\delta_{o_1}}_{\\substack{\\text{error signal}\\\\\\text{from } o_1 = ${f(R.d_o1)}}} \\cdot \\underbrace{w_6}_{${f(w6)}} + \\underbrace{\\delta_{o_2}}_{\\substack{\\text{error signal}\\\\\\text{from } o_2 = ${f(R.d_o2)}}} \\cdot \\underbrace{w_8}_{${f(w8)}} = ${f(R.dE_dh2)}$$
 
-$$\\underbrace{h_2(1-h_2)}_{\\substack{\\text{derivative of sigmoid}\\\\\\sigma'(z_{h_2})}} = \\underbrace{${f(R.h2)}}_{h_2} \\cdot \\underbrace{${f(1-R.h2)}}_{1 - h_2} = ${f(R.h2*(1-R.h2))}$$
+$$\\underbrace{h_2(1-h_2)}_{\\substack{\\text{derivative of sigmoid}\\\\\\text{sigmoid}'(z_{h_2})}} = \\underbrace{${f(R.h2)}}_{h_2} \\cdot \\underbrace{${f(1-R.h2)}}_{1 - h_2} = ${f(R.h2*(1-R.h2))}$$
 
-$$\\delta_{h_2} = \\underbrace{${f(R.dE_dh2)}}_{\\frac{\\partial E}{\\partial h_2}} \\times \\underbrace{${f(R.h2*(1-R.h2))}}_{\\sigma'(z_{h_2})} = ${f(R.d_h2)}$$
+$$\\delta_{h_2} = \\underbrace{${f(R.dE_dh2)}}_{\\frac{\\partial E}{\\partial h_2}} \\times \\underbrace{${f(R.h2*(1-R.h2))}}_{\\text{sigmoid}'(z_{h_2})} = ${f(R.d_h2)}$$
 
 <b>Weight gradients:</b>
 $$\\frac{\\partial E}{\\partial w_3} = \\underbrace{\\delta_{h_2}}_{${f(R.d_h2)}} \\cdot \\underbrace{x_1}_{${f(x1)}} = ${f(R.gw3)}$$
@@ -401,12 +401,12 @@ $$\\frac{\\partial E}{\\partial b_2} = \\underbrace{\\delta_{h_2}}_{${f(R.gb2)}}
 
 <b>Forward:</b>
 $$z_{o_1} = \\underbrace{${f(w5)}}_{w_5} \\cdot \\underbrace{${f(R.h1)}}_{h_1} + \\underbrace{${f(w6)}}_{w_6} \\cdot \\underbrace{${f(R.h2)}}_{h_2} + \\underbrace{${f(b3)}}_{b_3} = ${f(R.zo1)}$$
-$$o_1 = \\sigma(\\underbrace{${f(R.zo1)}}_{z_{o_1}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zo1)}}_{z_{o_1}}}} = ${f(R.o1)}$$
+$$o_1 = \\text{sigmoid}(\\underbrace{${f(R.zo1)}}_{z_{o_1}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zo1)}}_{z_{o_1}}}} = ${f(R.o1)}$$
 
 <b>Backward — the 3 chain-rule terms:</b>
 $$\\underbrace{\\frac{\\partial E}{\\partial o_1}}_{\\text{how wrong?}} = -(\\underbrace{t_1}_{${f(t1,2)}} - \\underbrace{o_1}_{${f(R.o1)}}) = ${f(R.dE_do1)}$$
-$$\\underbrace{\\frac{\\partial o_1}{\\partial z_{o_1}}}_{\\substack{\\text{derivative of sigmoid}\\\\\\sigma'(z_{o_1})}} = \\underbrace{o_1}_{${f(R.o1)}} \\cdot \\underbrace{(1-o_1)}_{${f(1-R.o1)}} = ${f(R.do1_dz1)}$$
-$$\\delta_{o_1} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${f(R.do1_dz1)}}_{\\sigma'(z_{o_1})} = ${f(R.d_o1)}$$
+$$\\underbrace{\\frac{\\partial o_1}{\\partial z_{o_1}}}_{\\substack{\\text{derivative of sigmoid}\\\\\\text{sigmoid}'(z_{o_1})}} = \\underbrace{o_1}_{${f(R.o1)}} \\cdot \\underbrace{(1-o_1)}_{${f(1-R.o1)}} = ${f(R.do1_dz1)}$$
+$$\\delta_{o_1} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${f(R.do1_dz1)}}_{\\text{sigmoid}'(z_{o_1})} = ${f(R.d_o1)}$$
 
 <em>${dir}</em>
 
@@ -420,12 +420,12 @@ $$\\frac{\\partial E}{\\partial b_3} = \\underbrace{\\delta_{o_1}}_{${f(R.gb3)}}
 
 <b>Forward:</b>
 $$z_{o_2} = \\underbrace{${f(w7)}}_{w_7} \\cdot \\underbrace{${f(R.h1)}}_{h_1} + \\underbrace{${f(w8)}}_{w_8} \\cdot \\underbrace{${f(R.h2)}}_{h_2} + \\underbrace{${f(b4)}}_{b_4} = ${f(R.zo2)}$$
-$$o_2 = \\sigma(\\underbrace{${f(R.zo2)}}_{z_{o_2}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zo2)}}_{z_{o_2}}}} = ${f(R.o2)}$$
+$$o_2 = \\text{sigmoid}(\\underbrace{${f(R.zo2)}}_{z_{o_2}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zo2)}}_{z_{o_2}}}} = ${f(R.o2)}$$
 
 <b>Backward — the 3 chain-rule terms:</b>
 $$\\underbrace{\\frac{\\partial E}{\\partial o_2}}_{\\text{how wrong?}} = -(\\underbrace{t_2}_{${f(t2,2)}} - \\underbrace{o_2}_{${f(R.o2)}}) = ${f(R.dE_do2)}$$
-$$\\underbrace{\\frac{\\partial o_2}{\\partial z_{o_2}}}_{\\substack{\\text{derivative of sigmoid}\\\\\\sigma'(z_{o_2})}} = \\underbrace{o_2}_{${f(R.o2)}} \\cdot \\underbrace{(1-o_2)}_{${f(1-R.o2)}} = ${f(R.do2_dz2)}$$
-$$\\delta_{o_2} = \\underbrace{${f(R.dE_do2)}}_{\\frac{\\partial E}{\\partial o_2}} \\times \\underbrace{${f(R.do2_dz2)}}_{\\sigma'(z_{o_2})} = ${f(R.d_o2)}$$
+$$\\underbrace{\\frac{\\partial o_2}{\\partial z_{o_2}}}_{\\substack{\\text{derivative of sigmoid}\\\\\\text{sigmoid}'(z_{o_2})}} = \\underbrace{o_2}_{${f(R.o2)}} \\cdot \\underbrace{(1-o_2)}_{${f(1-R.o2)}} = ${f(R.do2_dz2)}$$
+$$\\delta_{o_2} = \\underbrace{${f(R.dE_do2)}}_{\\frac{\\partial E}{\\partial o_2}} \\times \\underbrace{${f(R.do2_dz2)}}_{\\text{sigmoid}'(z_{o_2})} = ${f(R.d_o2)}$$
 
 <em>${dir}</em>
 
