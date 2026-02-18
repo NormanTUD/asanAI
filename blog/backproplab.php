@@ -70,371 +70,440 @@ $$
 This is the chain rule applied link by link. The backward pass computes these products starting from the output and working toward the input — that's why it's called **back**propagation.
 </div>
 
-<div id="backprop-interactive"></div>
+<div id="bp-visual"></div>
 
 <script>
-function renderBackpropSliders(containerId) {
-  const root = document.getElementById(containerId);
+function renderBackpropVisual(id) {
+  const root = document.getElementById(id);
   if (!root) return;
-
-  // ── Sigmoid helper ──
   const sig = z => 1 / (1 + Math.exp(-z));
+  const f = (v, d=4) => Number(v).toFixed(d);
 
-  // ── State ──
   const S = {
-    x1: 0.05, x2: 0.10,
-    t1: 0.01, t2: 0.99,
-    lr: 0.5,
-    w1: 0.15, w2: 0.20, w3: 0.25, w4: 0.30,
-    b1: 0.35, b2: 0.35,
-    w5: 0.40, w6: 0.45, w7: 0.50, w8: 0.55,
-    b3: 0.60, b4: 0.60
+    x1:0.05, x2:0.10, t1:0.01, t2:0.99, lr:0.5,
+    w1:0.15, w2:0.20, w3:0.25, w4:0.30, b1:0.35, b2:0.35,
+    w5:0.40, w6:0.45, w7:0.50, w8:0.55, b3:0.60, b4:0.60
   };
 
-  // ── Build HTML ──
   root.innerHTML = `
   <style>
-    #${containerId} { font-family: system-ui, -apple-system, sans-serif; max-width: 960px; }
-    #${containerId} .bp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
-    #${containerId} .bp-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; }
-    #${containerId} .bp-card h3 { margin: 0 0 10px 0; font-size: 0.95rem; color: #334155; }
-    #${containerId} .bp-slider-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.85rem; }
-    #${containerId} .bp-slider-row label { min-width: 28px; font-weight: 600; color: #475569; }
-    #${containerId} .bp-slider-row input[type=range] { flex: 1; accent-color: #3b82f6; }
-    #${containerId} .bp-slider-row .bp-val { min-width: 52px; text-align: right; font-family: monospace; font-size: 0.85rem; color: #1e293b; }
-    #${containerId} .bp-results { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; margin-bottom: 18px; }
-    #${containerId} .bp-results h3 { margin: 0 0 12px 0; font-size: 1rem; }
-    #${containerId} .bp-section { margin-bottom: 16px; }
-    #${containerId} .bp-section h4 { margin: 0 0 6px 0; font-size: 0.9rem; color: #1e40af; border-bottom: 1px solid #dbeafe; padding-bottom: 4px; }
-    #${containerId} .bp-eq { font-family: monospace; font-size: 0.85rem; line-height: 1.9; color: #1e293b; padding: 8px 12px; background: #f1f5f9; border-radius: 6px; overflow-x: auto; }
-    #${containerId} .bp-eq .bp-hl { color: #dc2626; font-weight: 700; }
-    #${containerId} .bp-eq .bp-bl { color: #2563eb; font-weight: 700; }
-    #${containerId} .bp-eq .bp-gr { color: #16a34a; font-weight: 700; }
-    #${containerId} .bp-eq .bp-or { color: #d97706; font-weight: 700; }
-    #${containerId} .bp-loss-bar { height: 24px; border-radius: 4px; transition: width 0.3s ease; }
-    #${containerId} .bp-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-    #${containerId} .bp-table th, #${containerId} .bp-table td { padding: 5px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; }
-    #${containerId} .bp-table th { background: #f1f5f9; font-weight: 600; color: #475569; }
-    #${containerId} .bp-table td { font-family: monospace; }
-    #${containerId} .bp-arrow { font-size: 1.2rem; color: #94a3b8; text-align: center; padding: 4px 0; }
-    @media (max-width: 640px) { #${containerId} .bp-grid { grid-template-columns: 1fr; } }
+    #${id} { font-family: system-ui, sans-serif; max-width: 960px; }
+    #${id} * { box-sizing: border-box; }
+    #${id} .bp-top { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; align-items: flex-end; }
+    #${id} .bp-top label { font-size: 0.72rem; color: #475569; font-weight: 600; }
+    #${id} .bp-top input[type=number] { width: 58px; font-size: 0.8rem; padding: 2px 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; }
+    #${id} .bp-top .bp-group { display: flex; flex-direction: column; gap: 2px; }
+    #${id} .bp-btn { border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600; color: #fff; }
+    #${id} svg text { user-select: none; }
+    #${id} .bp-info-panel { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 18px; min-height: 90px; font-size: 0.85rem; line-height: 1.8; overflow-x: auto; }
+    #${id} .bp-info-panel .eq { font-family: 'Courier New', monospace; font-size: 0.82rem; background: #f1f5f9; padding: 6px 10px; border-radius: 5px; margin: 4px 0; display: block; white-space: pre-wrap; }
+    #${id} .bp-info-panel b.r { color: #dc2626; } 
+    #${id} .bp-info-panel b.b { color: #2563eb; }
+    #${id} .bp-info-panel b.g { color: #16a34a; }
+    #${id} .bp-info-panel b.o { color: #d97706; }
+    #${id} .bp-loss { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+    #${id} .bp-loss-track { flex: 1; height: 14px; background: #fee2e2; border-radius: 7px; overflow: hidden; }
+    #${id} .bp-loss-fill { height: 100%; background: #ef4444; border-radius: 7px; transition: width 0.3s; }
+    @keyframes bpPulse { 0%,100%{stroke-width:2;stroke-opacity:0.3} 50%{stroke-width:7;stroke-opacity:1} }
+    #${id} .pulse { animation: bpPulse 0.7s ease-in-out infinite; }
+    #${id} .dim { opacity: 0.12; }
   </style>
 
-  <div class="bp-grid">
-    <!-- Inputs & Targets -->
-    <div class="bp-card">
-      <h3>📥 Inputs & Targets</h3>
-      <div class="bp-slider-row"><label>x₁</label><input type="range" min="-2" max="2" step="0.01" data-key="x1"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>x₂</label><input type="range" min="-2" max="2" step="0.01" data-key="x2"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>t₁</label><input type="range" min="0" max="1" step="0.01" data-key="t1"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>t₂</label><input type="range" min="0" max="1" step="0.01" data-key="t2"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>η</label><input type="range" min="0.01" max="5" step="0.01" data-key="lr"><span class="bp-val"></span></div>
-    </div>
-
-    <!-- Weights -->
-    <div class="bp-card">
-      <h3>⚖️ Input→Hidden Weights</h3>
-      <div class="bp-slider-row"><label>w₁</label><input type="range" min="-3" max="3" step="0.01" data-key="w1"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>w₂</label><input type="range" min="-3" max="3" step="0.01" data-key="w2"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>w₃</label><input type="range" min="-3" max="3" step="0.01" data-key="w3"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>w₄</label><input type="range" min="-3" max="3" step="0.01" data-key="w4"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>b₁</label><input type="range" min="-3" max="3" step="0.01" data-key="b1"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>b₂</label><input type="range" min="-3" max="3" step="0.01" data-key="b2"><span class="bp-val"></span></div>
-    </div>
-
-    <div class="bp-card">
-      <h3>⚖️ Hidden→Output Weights</h3>
-      <div class="bp-slider-row"><label>w₅</label><input type="range" min="-3" max="3" step="0.01" data-key="w5"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>w₆</label><input type="range" min="-3" max="3" step="0.01" data-key="w6"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>w₇</label><input type="range" min="-3" max="3" step="0.01" data-key="w7"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>w₈</label><input type="range" min="-3" max="3" step="0.01" data-key="w8"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>b₃</label><input type="range" min="-3" max="3" step="0.01" data-key="b3"><span class="bp-val"></span></div>
-      <div class="bp-slider-row"><label>b₄</label><input type="range" min="-3" max="3" step="0.01" data-key="b4"><span class="bp-val"></span></div>
-    </div>
-
-    <!-- Mini network diagram (text-based) -->
-    <div class="bp-card" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
-      <h3>🔗 Network Shape</h3>
-      <pre style="font-size:0.8rem; line-height:1.5; color:#475569; text-align:center;" id="bp-mini-diagram"></pre>
-    </div>
+  <!-- Controls -->
+  <div class="bp-top">
+    <div class="bp-group"><label>x₁</label><input type="number" data-k="x1" step="0.01"></div>
+    <div class="bp-group"><label>x₂</label><input type="number" data-k="x2" step="0.01"></div>
+    <div class="bp-group"><label>t₁</label><input type="number" data-k="t1" step="0.01"></div>
+    <div class="bp-group"><label>t₂</label><input type="number" data-k="t2" step="0.01"></div>
+    <div class="bp-group"><label>η</label><input type="number" data-k="lr" step="0.05" min="0.01" max="5"></div>
+    <div class="bp-group"><label>w₁</label><input type="number" data-k="w1" step="0.01"></div>
+    <div class="bp-group"><label>w₂</label><input type="number" data-k="w2" step="0.01"></div>
+    <div class="bp-group"><label>w₃</label><input type="number" data-k="w3" step="0.01"></div>
+    <div class="bp-group"><label>w₄</label><input type="number" data-k="w4" step="0.01"></div>
+    <div class="bp-group"><label>b₁</label><input type="number" data-k="b1" step="0.01"></div>
+    <div class="bp-group"><label>b₂</label><input type="number" data-k="b2" step="0.01"></div>
+    <div class="bp-group"><label>w₅</label><input type="number" data-k="w5" step="0.01"></div>
+    <div class="bp-group"><label>w₆</label><input type="number" data-k="w6" step="0.01"></div>
+    <div class="bp-group"><label>w₇</label><input type="number" data-k="w7" step="0.01"></div>
+    <div class="bp-group"><label>w₈</label><input type="number" data-k="w8" step="0.01"></div>
+    <div class="bp-group"><label>b₃</label><input type="number" data-k="b3" step="0.01"></div>
+    <div class="bp-group"><label>b₄</label><input type="number" data-k="b4" step="0.01"></div>
+    <button class="bp-btn" style="background:#10b981;" id="${id}-apply">✅ Apply 1 Step</button>
+    <button class="bp-btn" style="background:#8b5cf6;" id="${id}-train">⟳ Train 100</button>
+    <button class="bp-btn" style="background:#64748b;" id="${id}-reset">↺ Reset</button>
   </div>
 
-  <!-- Live Results -->
-  <div class="bp-results" id="bp-results-panel"></div>
+  <!-- SVG Diagram -->
+  <svg id="${id}-svg" width="100%" viewBox="0 0 820 400" style="background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; display:block; margin-bottom:8px;"></svg>
+
+  <!-- Loss bar -->
+  <div class="bp-loss">
+    <span style="font-size:0.8rem; font-weight:600; color:#475569;">Loss:</span>
+    <div class="bp-loss-track"><div class="bp-loss-fill" id="${id}-lossbar"></div></div>
+    <span id="${id}-lossval" style="font-size:0.82rem; font-family:monospace; min-width:70px;"></span>
+  </div>
+
+  <!-- Info panel -->
+  <div class="bp-info-panel" id="${id}-info">
+    <span style="color:#94a3b8;">Hover over any neuron or weight label in the diagram to see its full equations here.</span>
+  </div>
   `;
 
-  // ── Wire up sliders ──
-  const sliders = root.querySelectorAll('input[type=range]');
-  sliders.forEach(sl => {
-    const key = sl.dataset.key;
-    sl.value = S[key];
-    sl.nextElementSibling.textContent = Number(S[key]).toFixed(2);
-    sl.addEventListener('input', () => {
-      S[key] = parseFloat(sl.value);
-      sl.nextElementSibling.textContent = S[key].toFixed(2);
-      recompute();
-    });
+  // ── Wire inputs ──
+  const inputs = root.querySelectorAll('input[data-k]');
+  inputs.forEach(inp => {
+    inp.value = S[inp.dataset.k];
+    inp.addEventListener('input', () => { S[inp.dataset.k] = parseFloat(inp.value) || 0; recompute(); });
   });
+  function syncInputs() {
+    inputs.forEach(inp => { inp.value = parseFloat(S[inp.dataset.k]).toFixed(2); });
+  }
 
-  function f(v, d=4) { return Number(v).toFixed(d); }
+  // ── Node positions ──
+  const nodes = {
+    x1:  {x:80,  y:120, label:'x₁', layer:'input'},
+    x2:  {x:80,  y:280, label:'x₂', layer:'input'},
+    h1:  {x:330, y:120, label:'h₁', layer:'hidden'},
+    h2:  {x:330, y:280, label:'h₂', layer:'hidden'},
+    o1:  {x:580, y:120, label:'o₁', layer:'output'},
+    o2:  {x:580, y:280, label:'o₂', layer:'output'},
+    t1:  {x:750, y:120, label:'t₁', layer:'target'},
+    t2:  {x:750, y:280, label:'t₂', layer:'target'},
+  };
+
+  // ── Connections: [from, to, weight_key, label] ──
+  const conns = [
+    ['x1','h1','w1','w₁'], ['x2','h1','w2','w₂'],
+    ['x1','h2','w3','w₃'], ['x2','h2','w4','w₄'],
+    ['h1','o1','w5','w₅'], ['h2','o1','w6','w₆'],
+    ['h1','o2','w7','w₇'], ['h2','o2','w8','w₈'],
+  ];
+
+  // Which connections are relevant to each node
+  const nodeConns = {
+    h1: ['w1','w2'],
+    h2: ['w3','w4'],
+    o1: ['w5','w6'],
+    o2: ['w7','w8'],
+  };
+  // For backward: which output connections carry blame back
+  const nodeBackConns = {
+    h1: ['w5','w7'],
+    h2: ['w6','w8'],
+  };
+
+  const svg = document.getElementById(`${id}-svg`);
+  const info = document.getElementById(`${id}-info`);
+  let R = {}; // computed results
 
   function recompute() {
-    const { x1, x2, t1, t2, lr, w1, w2, w3, w4, b1, b2, w5, w6, w7, w8, b3, b4 } = S;
+    const {x1,x2,t1,t2,lr,w1,w2,w3,w4,b1,b2,w5,w6,w7,w8,b3,b4} = S;
 
-    // ═══════════════════════════════════════
-    // FORWARD PASS
-    // ═══════════════════════════════════════
+    // Forward
     const zh1 = w1*x1 + w2*x2 + b1;
-    const h1  = sig(zh1);
+    const h1 = sig(zh1);
     const zh2 = w3*x1 + w4*x2 + b2;
-    const h2  = sig(zh2);
-
+    const h2 = sig(zh2);
     const zo1 = w5*h1 + w6*h2 + b3;
-    const o1  = sig(zo1);
+    const o1 = sig(zo1);
     const zo2 = w7*h1 + w8*h2 + b4;
-    const o2  = sig(zo2);
-
+    const o2 = sig(zo2);
     const E1 = 0.5*(t1-o1)**2;
     const E2 = 0.5*(t2-o2)**2;
-    const E  = E1 + E2;
+    const E = E1+E2;
 
-    // ═══════════════════════════════════════
-    // BACKWARD PASS
-    // ═══════════════════════════════════════
+    // Backward
+    const dE_do1 = -(t1-o1);
+    const do1_dz1 = o1*(1-o1);
+    const d_o1 = dE_do1 * do1_dz1;
 
-    // Output deltas
-    const dE_do1 = -(t1 - o1);
-    const do1_dzo1 = o1*(1-o1);
-    const delta_o1 = dE_do1 * do1_dzo1;
+    const dE_do2 = -(t2-o2);
+    const do2_dz2 = o2*(1-o2);
+    const d_o2 = dE_do2 * do2_dz2;
 
-    const dE_do2 = -(t2 - o2);
-    const do2_dzo2 = o2*(1-o2);
-    const delta_o2 = dE_do2 * do2_dzo2;
+    const gw5=d_o1*h1, gw6=d_o1*h2, gb3=d_o1;
+    const gw7=d_o2*h1, gw8=d_o2*h2, gb4=d_o2;
 
-    // Gradients for output weights
-    const gw5 = delta_o1 * h1;
-    const gw6 = delta_o1 * h2;
-    const gb3 = delta_o1;
-    const gw7 = delta_o2 * h1;
-    const gw8 = delta_o2 * h2;
-    const gb4 = delta_o2;
+    const dE_dh1 = d_o1*w5 + d_o2*w7;
+    const d_h1 = dE_dh1 * h1*(1-h1);
+    const dE_dh2 = d_o1*w6 + d_o2*w8;
+    const d_h2 = dE_dh2 * h2*(1-h2);
 
-    // Hidden deltas
-    const dE_dh1 = delta_o1*w5 + delta_o2*w7;
-    const delta_h1 = dE_dh1 * h1*(1-h1);
-    const dE_dh2 = delta_o1*w6 + delta_o2*w8;
-    const delta_h2 = dE_dh2 * h2*(1-h2);
+    const gw1=d_h1*x1, gw2=d_h1*x2, gb1=d_h1;
+    const gw3=d_h2*x1, gw4=d_h2*x2, gb2=d_h2;
 
-    // Gradients for hidden weights
-    const gw1 = delta_h1 * x1;
-    const gw2 = delta_h1 * x2;
-    const gb1_g = delta_h1;
-    const gw3 = delta_h2 * x1;
-    const gw4 = delta_h2 * x2;
-    const gb2_g = delta_h2;
+    R = {zh1,h1,zh2,h2,zo1,o1,zo2,o2,E1,E2,E,
+         dE_do1,do1_dz1,d_o1,dE_do2,do2_dz2,d_o2,
+         gw5,gw6,gb3,gw7,gw8,gb4,
+         dE_dh1,d_h1,dE_dh2,d_h2,
+         gw1,gw2,gb1,gw3,gw4,gb2};
 
-    // Updated weights
-    const nw5 = w5 - lr*gw5, nw6 = w6 - lr*gw6, nw7 = w7 - lr*gw7, nw8 = w8 - lr*gw8;
-    const nb3 = b3 - lr*gb3, nb4 = b4 - lr*gb4;
-    const nw1 = w1 - lr*gw1, nw2 = w2 - lr*gw2, nw3 = w3 - lr*gw3, nw4 = w4 - lr*gw4;
-    const nb1 = b1 - lr*gb1_g, nb2 = b2 - lr*gb2_g;
-
-    // ── Mini diagram ──
-    root.querySelector('#bp-mini-diagram').textContent =
-`  x₁ (${f(x1,2)}) ──w₁──┐          ┌──w₅── o₁ (${f(o1)}) → target ${f(t1,2)}
-              ├─ h₁ (${f(h1)}) ─┤
-  x₂ (${f(x2,2)}) ──w₂──┘          └──w₇── o₂ (${f(o2)}) → target ${f(t2,2)}
-  x₁ (${f(x1,2)}) ──w₃──┐          ┌──w₆──┘
-              ├─ h₂ (${f(h2)}) ─┤
-  x₂ (${f(x2,2)}) ──w₄──┘          └──w₈──┘`;
-
-    // ── Build results HTML ──
-    const panel = root.querySelector('#bp-results-panel');
-    panel.innerHTML = `
-
-    <!-- ════════ FORWARD PASS ════════ -->
-    <div class="bp-section">
-      <h3>➡️ FORWARD PASS</h3>
-
-      <h4>Hidden Neuron h₁</h4>
-      <div class="bp-eq">
-z<sub>h₁</sub> = w₁·x₁ + w₂·x₂ + b₁<br>
-&nbsp;&nbsp;&nbsp;&nbsp; = <span class="bp-bl">${f(w1)}</span> × <span class="bp-bl">${f(x1)}</span> + <span class="bp-bl">${f(w2)}</span> × <span class="bp-bl">${f(x2)}</span> + <span class="bp-bl">${f(b1)}</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp; = ${f(w1*x1)} + ${f(w2*x2)} + ${f(b1)}<br>
-&nbsp;&nbsp;&nbsp;&nbsp; = <b>${f(zh1)}</b><br><br>
-h₁ = σ(${f(zh1)}) = 1 / (1 + e<sup>−${f(zh1)}</sup>) = <b class="bp-bl">${f(h1)}</b>
-      </div>
-
-      <h4>Hidden Neuron h₂</h4>
-      <div class="bp-eq">
-z<sub>h₂</sub> = w₃·x₁ + w₄·x₂ + b₂<br>
-&nbsp;&nbsp;&nbsp;&nbsp; = <span class="bp-bl">${f(w3)}</span> × <span class="bp-bl">${f(x1)}</span> + <span class="bp-bl">${f(w4)}</span> × <span class="bp-bl">${f(x2)}</span> + <span class="bp-bl">${f(b2)}</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp; = ${f(w3*x1)} + ${f(w4*x2)} + ${f(b2)}<br>
-&nbsp;&nbsp;&nbsp;&nbsp; = <b>${f(zh2)}</b><br><br>
-h₂ = σ(${f(zh2)}) = <b class="bp-bl">${f(h2)}</b>
-      </div>
-
-      <h4>Output Neuron o₁</h4>
-      <div class="bp-eq">
-z<sub>o₁</sub> = w₅·h₁ + w₆·h₂ + b₃<br>
-&nbsp;&nbsp;&nbsp;&nbsp; = <span class="bp-bl">${f(w5)}</span> × <span class="bp-bl">${f(h1)}</span> + <span class="bp-bl">${f(w6)}</span> × <span class="bp-bl">${f(h2)}</span> + <span class="bp-bl">${f(b3)}</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp; = ${f(w5*h1)} + ${f(w6*h2)} + ${f(b3)}<br>
-&nbsp;&nbsp;&nbsp;&nbsp; = <b>${f(zo1)}</b><br><br>
-o₁ = σ(${f(zo1)}) = <b class="bp-bl">${f(o1)}</b> &nbsp;&nbsp; (target = ${f(t1,2)})
-      </div>
-
-      <h4>Output Neuron o₂</h4>
-      <div class="bp-eq">
-z<sub>o₂</sub> = w₇·h₁ + w₈·h₂ + b₄<br>
-&nbsp;&nbsp;&nbsp;&nbsp; = <span class="bp-bl">${f(w7)}</span> × <span class="bp-bl">${f(h1)}</span> + <span class="bp-bl">${f(w8)}</span> × <span class="bp-bl">${f(h2)}</span> + <span class="bp-bl">${f(b4)}</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp; = ${f(w7*h1)} + ${f(w8*h2)} + ${f(b4)}<br>
-&nbsp;&nbsp;&nbsp;&nbsp; = <b>${f(zo2)}</b><br><br>
-o₂ = σ(${f(zo2)}) = <b class="bp-bl">${f(o2)}</b> &nbsp;&nbsp; (target = ${f(t2,2)})
-      </div>
-
-      <h4>Total Error</h4>
-      <div class="bp-eq">
-E = ½(t₁ − o₁)² + ½(t₂ − o₂)²<br>
-&nbsp; = ½(${f(t1,2)} − ${f(o1)})² + ½(${f(t2,2)} − ${f(o2)})²<br>
-&nbsp; = ½ × ${f((t1-o1)**2)} + ½ × ${f((t2-o2)**2)}<br>
-&nbsp; = ${f(E1)} + ${f(E2)}<br>
-&nbsp; = <b class="bp-hl">${f(E)}</b>
-      </div>
-      <div style="margin-top:8px;">
-        <div style="background:#fee2e2; border-radius:6px; overflow:hidden; height:24px; width:100%;">
-          <div class="bp-loss-bar" style="background:#ef4444; width:${Math.min(E/0.6*100,100)}%;"></div>
-        </div>
-        <div style="font-size:0.75rem; color:#94a3b8; margin-top:2px;">Loss bar (0 = perfect, ~0.6 = max for these defaults)</div>
-      </div>
-    </div>
-
-    <div class="bp-arrow">⬇️ Now the error flows BACKWARD ⬇️</div>
-
-    <!-- ════════ BACKWARD PASS ════════ -->
-    <div class="bp-section">
-      <h3>⬅️ BACKWARD PASS — The Three Terms for Every Weight</h3>
-
-      <h4>δ<sub>o₁</sub> — Error signal at output neuron o₁</h4>
-      <div class="bp-eq">
-<b>Term 1 (how wrong?):</b> &nbsp; ∂E/∂o₁ = −(t₁ − o₁) = −(${f(t1,2)} − ${f(o1)}) = <span class="bp-hl">${f(dE_do1)}</span><br>
-<b>Term 2 (sigmoid slope):</b> &nbsp; ∂o₁/∂z<sub>o₁</sub> = o₁·(1−o₁) = ${f(o1)} × ${f(1-o1)} = <span class="bp-hl">${f(do1_dzo1)}</span><br><br>
-<b>δ<sub>o₁</sub></b> = Term1 × Term2 = ${f(dE_do1)} × ${f(do1_dzo1)} = <b class="bp-hl">${f(delta_o1)}</b><br>
-<span style="color:#64748b; font-size:0.8rem;">Positive → output is too high. Negative → output is too low.</span>
-      </div>
-
-      <h4>δ<sub>o₂</sub> — Error signal at output neuron o₂</h4>
-      <div class="bp-eq">
-∂E/∂o₂ = −(t₂ − o₂) = −(${f(t2,2)} − ${f(o2)}) = <span class="bp-hl">${f(dE_do2)}</span><br>
-∂o₂/∂z<sub>o₂</sub> = o₂·(1−o₂) = ${f(o2)} × ${f(1-o2)} = <span class="bp-hl">${f(do2_dzo2)}</span><br><br>
-<b>δ<sub>o₂</sub></b> = ${f(dE_do2)} × ${f(do2_dzo2)} = <b class="bp-hl">${f(delta_o2)}</b>
-      </div>
-
-      <h4>Gradients for output-layer weights</h4>
-      <div class="bp-eq">
-<b>∂E/∂w₅</b> = δ<sub>o₁</sub> × h₁ = ${f(delta_o1)} × ${f(h1)} = <b class="bp-hl">${f(gw5)}</b> &nbsp;&nbsp; <span style="color:#64748b;">(Term 3 = h₁, the value that flowed through w₅)</span><br>
-<b>∂E/∂w₆</b> = δ<sub>o₁</sub> × h₂ = ${f(delta_o1)} × ${f(h2)} = <b class="bp-hl">${f(gw6)}</b><br>
-<b>∂E/∂b₃</b> = δ<sub>o₁</sub> × 1 &nbsp;= <b class="bp-hl">${f(gb3)}</b> &nbsp;&nbsp; <span style="color:#64748b;">(bias input is always 1)</span><br>
-<b>∂E/∂w₇</b> = δ<sub>o₂</sub> × h₁ = ${f(delta_o2)} × ${f(h1)} = <b class="bp-hl">${f(gw7)}</b><br>
-<b>∂E/∂w₈</b> = δ<sub>o₂</sub> × h₂ = ${f(delta_o2)} × ${f(h2)} = <b class="bp-hl">${f(gw8)}</b><br>
-<b>∂E/∂b₄</b> = δ<sub>o₂</sub> × 1 &nbsp;= <b class="bp-hl">${f(gb4)}</b>
-      </div>
-
-      <h4>δ<sub>h₁</sub> — Error signal at hidden neuron h₁ (blame from BOTH outputs)</h4>
-      <div class="bp-eq">
-<b>Blame from o₁:</b> δ<sub>o₁</sub> × w₅ = ${f(delta_o1)} × ${f(w5)} = ${f(delta_o1*w5)}<br>
-<b>Blame from o₂:</b> δ<sub>o₂</sub> × w₇ = ${f(delta_o2)} × ${f(w7)} = ${f(delta_o2*w7)}<br>
-<b>Total blame at h₁:</b> ${f(delta_o1*w5)} + ${f(delta_o2*w7)} = <span class="bp-or">${f(dE_dh1)}</span><br><br>
-<b>Sigmoid slope at h₁:</b> h₁·(1−h₁) = ${f(h1)} × ${f(1-h1)} = ${f(h1*(1-h1))}<br><br>
-<b>δ<sub>h₁</sub></b> = ${f(dE_dh1)} × ${f(h1*(1-h1))} = <b class="bp-or">${f(delta_h1)}</b>
-      </div>
-
-      <h4>δ<sub>h₂</sub> — Error signal at hidden neuron h₂</h4>
-      <div class="bp-eq">
-Blame from o₁: δ<sub>o₁</sub> × w₆ = ${f(delta_o1)} × ${f(w6)} = ${f(delta_o1*w6)}<br>
-Blame from o₂: δ<sub>o₂</sub> × w₈ = ${f(delta_o2)} × ${f(w8)} = ${f(delta_o2*w8)}<br>
-Total blame: ${f(delta_o1*w6)} + ${f(delta_o2*w8)} = <span class="bp-or">${f(dE_dh2)}</span><br><br>
-Sigmoid slope: ${f(h2)} × ${f(1-h2)} = ${f(h2*(1-h2))}<br><br>
-<b>δ<sub>h₂</sub></b> = ${f(dE_dh2)} × ${f(h2*(1-h2))} = <b class="bp-or">${f(delta_h2)}</b>
-      </div>
-
-      <h4>Gradients for hidden-layer weights</h4>
-      <div class="bp-eq">
-<b>∂E/∂w₁</b> = δ<sub>h₁</sub> × x₁ = ${f(delta_h1)} × ${f(x1)} = <b class="bp-or">${f(gw1)}</b><br>
-<b>∂E/∂w₂</b> = δ<sub>h₁</sub> × x₂ = ${f(delta_h1)} × ${f(x2)} = <b class="bp-or">${f(gw2)}</b><br>
-<b>∂E/∂b₁</b> = δ<sub>h₁</sub> × 1 &nbsp;= <b class="bp-or">${f(gb1_g)}</b><br>
-<b>∂E/∂w₃</b> = δ<sub>h₂</sub> × x₁ = ${f(delta_h2)} × ${f(x1)} = <b class="bp-or">${f(gw3)}</b><br>
-<b>∂E/∂w₄</b> = δ<sub>h₂</sub> × x₂ = ${f(delta_h2)} × ${f(x2)} = <b class="bp-or">${f(gw4)}</b><br>
-<b>∂E/∂b₂</b> = δ<sub>h₂</sub> × 1 &nbsp;= <b class="bp-or">${f(gb2_g)}</b>
-      </div>
-    </div>
-
-    <div class="bp-arrow">⬇️ Apply gradient descent: w_new = w_old − η × gradient ⬇️</div>
-
-    <!-- ════════ WEIGHT UPDATE ════════ -->
-    <div class="bp-section">
-      <h3>✅ WEIGHT UPDATE (η = ${f(lr,2)})</h3>
-      <table class="bp-table">
-        <thead>
-          <tr><th>Weight</th><th>Old Value</th><th>Gradient</th><th>η × Gradient</th><th>New Value</th><th>Change</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>w₁</td><td>${f(w1)}</td><td>${f(gw1)}</td><td>${f(lr*gw1)}</td><td class="bp-gr">${f(nw1)}</td><td>${f(nw1-w1)}</td></tr>
-          <tr><td>w₂</td><td>${f(w2)}</td><td>${f(gw2)}</td><td>${f(lr*gw2)}</td><td class="bp-gr">${f(nw2)}</td><td>${f(nw2-w2)}</td></tr>
-          <tr><td>w₃</td><td>${f(w3)}</td><td>${f(gw3)}</td><td>${f(lr*gw3)}</td><td class="bp-gr">${f(nw3)}</td><td>${f(nw3-w3)}</td></tr>
-          <tr><td>w₄</td><td>${f(w4)}</td><td>${f(gw4)}</td><td>${f(lr*gw4)}</td><td class="bp-gr">${f(nw4)}</td><td>${f(nw4-w4)}</td></tr>
-          <tr style="border-top:1px solid #cbd5e1;"><td>b₁</td><td>${f(b1)}</td><td>${f(gb1_g)}</td><td>${f(lr*gb1_g)}</td><td class="bp-gr">${f(nb1)}</td><td>${f(nb1-b1)}</td></tr>
-          <tr><td>b₂</td><td>${f(b2)}</td><td>${f(gb2_g)}</td><td>${f(lr*gb2_g)}</td><td class="bp-gr">${f(nb2)}</td><td>${f(nb2-b2)}</td></tr>
-          <tr style="border-top:2px solid #94a3b8;"><td>w₅</td><td>${f(w5)}</td><td>${f(gw5)}</td><td>${f(lr*gw5)}</td><td class="bp-gr">${f(nw5)}</td><td>${f(nw5-w5)}</td></tr>
-          <tr><td>w₆</td><td>${f(w6)}</td><td>${f(gw6)}</td><td>${f(lr*gw6)}</td><td class="bp-gr">${f(nw6)}</td><td>${f(nw6-w6)}</td></tr>
-          <tr><td>w₇</td><td>${f(w7)}</td><td>${f(gw7)}</td><td>${f(lr*gw7)}</td><td class="bp-gr">${f(nw7)}</td><td>${f(nw7-w7)}</td></tr>
-          <tr><td>w₈</td><td>${f(w8)}</td><td>${f(gw8)}</td><td>${f(lr*gw8)}</td><td class="bp-gr">${f(nw8)}</td><td>${f(nw8-w8)}</td></tr>
-          <tr style="border-top:1px solid #cbd5e1;"><td>b₃</td><td>${f(b3)}</td><td>${f(gb3)}</td><td>${f(lr*gb3)}</td><td class="bp-gr">${f(nb3)}</td><td>${f(nb3-b3)}</td></tr>
-          <tr><td>b₄</td><td>${f(b4)}</td><td>${f(gb4)}</td><td>${f(lr*gb4)}</td><td class="bp-gr">${f(nb4)}</td><td>${f(nb4-b4)}</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- ════════ APPLY BUTTON ════════ -->
-    <div style="text-align:center; margin-top:12px;">
-      <button id="bp-apply-btn" style="
-        background: linear-gradient(135deg, #10b981, #059669);
-        color: white; border: none; padding: 12px 32px;
-        border-radius: 8px; font-size: 1rem; font-weight: 700;
-        cursor: pointer; box-shadow: 0 2px 8px rgba(16,185,129,0.3);
-      ">
-        ✅ Apply Updated Weights (set sliders to new values)
-      </button>
-    </div>
-    `;
-
-    // ── Wire up the Apply button ──
-    const applyBtn = root.querySelector('#bp-apply-btn');
-    if (applyBtn) {
-      applyBtn.addEventListener('click', () => {
-        S.w1 = nw1; S.w2 = nw2; S.w3 = nw3; S.w4 = nw4;
-        S.b1 = nb1; S.b2 = nb2;
-        S.w5 = nw5; S.w6 = nw6; S.w7 = nw7; S.w8 = nw8;
-        S.b3 = nb3; S.b4 = nb4;
-
-        // Sync sliders back
-        sliders.forEach(sl => {
-          const key = sl.dataset.key;
-          sl.value = S[key];
-          sl.nextElementSibling.textContent = S[key].toFixed(2);
-        });
-
-        recompute();
-      });
-    }
+    drawSVG();
+    // Loss bar
+    document.getElementById(`${id}-lossbar`).style.width = Math.min(E/0.6*100,100)+'%';
+    document.getElementById(`${id}-lossval`).textContent = f(E);
   }
+
+  function drawSVG() {
+    const {x1,x2,t1,t2} = S;
+    let html = '';
+
+    // Draw connections
+    conns.forEach(([from,to,wk,wl]) => {
+      const a = nodes[from], b = nodes[to];
+      const mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+      const val = S[wk];
+      const thick = Math.max(1, Math.min(5, Math.abs(val)*3));
+      const col = val >= 0 ? '#3b82f6' : '#ef4444';
+      html += `<line class="bp-conn" data-wk="${wk}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${col}" stroke-width="${thick}" stroke-opacity="0.5"/>`;
+      html += `<text class="bp-wlabel" data-wk="${wk}" x="${mx}" y="${my-6}" text-anchor="middle" font-size="11" fill="#334155" font-weight="600" style="cursor:pointer;">${wl}=${f(val,2)}</text>`;
+    });
+
+    // Draw error lines
+    html += `<line x1="${nodes.o1.x}" y1="${nodes.o1.y}" x2="${nodes.t1.x}" y2="${nodes.t1.y}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
+    html += `<line x1="${nodes.o2.x}" y1="${nodes.o2.y}" x2="${nodes.t2.x}" y2="${nodes.t2.y}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
+
+    // Draw nodes
+    const vals = {
+      x1: f(x1,2), x2: f(x2,2),
+      h1: f(R.h1), h2: f(R.h2),
+      o1: f(R.o1), o2: f(R.o2),
+      t1: f(t1,2), t2: f(t2,2),
+    };
+    const colors = {input:'#64748b', hidden:'#3b82f6', output:'#10b981', target:'#f59e0b'};
+    const fills  = {input:'#f1f5f9', hidden:'#eff6ff', output:'#ecfdf5', target:'#fffbeb'};
+    const radii  = {input:28, hidden:34, output:34, target:24};
+
+    for (const [nk, nd] of Object.entries(nodes)) {
+      const r = radii[nd.layer];
+      const col = colors[nd.layer];
+      const fill = fills[nd.layer];
+      html += `<circle class="bp-node" data-nk="${nk}" cx="${nd.x}" cy="${nd.y}" r="${r}" fill="${fill}" stroke="${col}" stroke-width="2.5" style="cursor:pointer;"/>`;
+      html += `<text x="${nd.x}" y="${nd.y-8}" text-anchor="middle" font-size="12" font-weight="700" fill="${col}" style="pointer-events:none;">${nd.label}</text>`;
+      html += `<text x="${nd.x}" y="${nd.y+10}" text-anchor="middle" font-size="11" font-family="monospace" fill="#1e293b" style="pointer-events:none;">${vals[nk]}</text>`;
+
+      // Show delta below hidden/output nodes
+      if (nk === 'h1') html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="10" fill="#d97706" style="pointer-events:none;">δ=${f(R.d_h1)}</text>`;
+      if (nk === 'h2') html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="10" fill="#d97706" style="pointer-events:none;">δ=${f(R.d_h2)}</text>`;
+      if (nk === 'o1') html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="10" fill="#dc2626" style="pointer-events:none;">δ=${f(R.d_o1)}</text>`;
+      if (nk === 'o2') html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="10" fill="#dc2626" style="pointer-events:none;">δ=${f(R.d_o2)}</text>`;
+    }
+
+    // Layer labels
+    html += `<text x="80" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">Input</text>`;
+    html += `<text x="330" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">Hidden</text>`;
+    html += `<text x="580" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">Output</text>`;
+    html += `<text x="750" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">Target</text>`;
+
+    // Loss display
+    html += `<text x="665" y="210" text-anchor="middle" font-size="13" fill="#ef4444" font-weight="700">E = ${f(R.E)}</text>`;
+
+    svg.innerHTML = html;
+
+    // ── Hover events on nodes ──
+    svg.querySelectorAll('.bp-node').forEach(el => {
+      el.addEventListener('mouseenter', () => showNodeInfo(el.dataset.nk));
+      el.addEventListener('mouseleave', clearHighlights);
+    });
+    // ── Hover events on weight labels ──
+    svg.querySelectorAll('.bp-wlabel').forEach(el => {
+      el.addEventListener('mouseenter', () => showWeightInfo(el.dataset.wk));
+      el.addEventListener('mouseleave', clearHighlights);
+    });
+  }
+
+  function highlightWeights(keys) {
+    svg.querySelectorAll('.bp-conn').forEach(el => {
+      if (keys.includes(el.dataset.wk)) {
+        el.classList.add('pulse');
+        el.setAttribute('stroke', '#f59e0b');
+        el.classList.remove('dim');
+      } else {
+        el.classList.add('dim');
+        el.classList.remove('pulse');
+      }
+    });
+    svg.querySelectorAll('.bp-wlabel').forEach(el => {
+      if (!keys.includes(el.dataset.wk)) el.classList.add('dim');
+    });
+  }
+
+  function clearHighlights() {
+    svg.querySelectorAll('.bp-conn').forEach(el => {
+      el.classList.remove('pulse','dim');
+      const val = S[el.dataset.wk];
+      el.setAttribute('stroke', val >= 0 ? '#3b82f6' : '#ef4444');
+    });
+    svg.querySelectorAll('.bp-wlabel').forEach(el => el.classList.remove('dim'));
+    info.innerHTML = `<span style="color:#94a3b8;">Hover over any neuron or weight label to see equations.</span>`;
+  }
+
+  function showNodeInfo(nk) {
+    const {x1,x2,t1,t2,w1,w2,w3,w4,b1,b2,w5,w6,w7,w8,b3,b4} = S;
+    let h = '';
+    if (nk === 'x1') {
+      h = `<b>Input x₁ = ${f(x1,2)}</b> — This is a raw input value. No computation here.`;
+    } else if (nk === 'x2') {
+      h = `<b>Input x₂ = ${f(x2,2)}</b> — This is a raw input value. No computation here.`;
+    } else if (nk === 't1') {
+      h = `<b>Target t₁ = ${f(t1,2)}</b> — What we want o₁ to output. Error₁ = ½(${f(t1,2)} − ${f(R.o1)})² = <b class="r">${f(R.E1)}</b>`;
+    } else if (nk === 't2') {
+      h = `<b>Target t₂ = ${f(t2,2)}</b> — What we want o₂ to output. Error₂ = ½(${f(t2,2)} − ${f(R.o2)})² = <b class="r">${f(R.E2)}</b>`;
+    } else if (nk === 'h1') {
+      highlightWeights(['w1','w2']);
+      h = `<b class="b">Hidden neuron h₁</b><br>
+<b>Forward (weighted sum → sigmoid):</b>
+<span class="eq">z_h₁ = w₁·x₁ + w₂·x₂ + b₁
+     = ${f(w1)}×${f(x1)} + ${f(w2)}×${f(x2)} + ${f(b1)}
+     = ${f(w1*x1)} + ${f(w2*x2)} + ${f(b1)} = <b class="b">${f(R.zh1)}</b>
+
+h₁ = σ(${f(R.zh1)}) = 1/(1+e^(−${f(R.zh1)})) = <b class="b">${f(R.h1)}</b></span>
+<b>Backward (blame from both outputs via w₅ and w₇):</b>
+<span class="eq">∂E/∂h₁ = δ_o₁·w₅ + δ_o₂·w₇
+        = ${f(R.d_o1)}×${f(w5)} + ${f(R.d_o2)}×${f(w7)}
+        = ${f(R.d_o1*w5)} + ${f(R.d_o2*w7)} = <b class="o">${f(R.dE_dh1)}</b>
+
+sigmoid slope = h₁·(1−h₁) = ${f(R.h1)}×${f(1-R.h1)} = ${f(R.h1*(1-R.h1))}
+
+δ_h₁ = ${f(R.dE_dh1)} × ${f(R.h1*(1-R.h1))} = <b class="o">${f(R.d_h1)}</b></span>
+<b>Weight gradients:</b>
+<span class="eq">∂E/∂w₁ = δ_h₁ × x₁ = ${f(R.d_h1)} × ${f(x1)} = <b class="r">${f(R.gw1)}</b>
+∂E/∂w₂ = δ_h₁ × x₂ = ${f(R.d_h1)} × ${f(x2)} = <b class="r">${f(R.gw2)}</b>
+∂E/∂b₁ = δ_h₁ × 1  = <b class="r">${f(R.gb1)}</b></span>`;
+    } else if (nk === 'h2') {
+      highlightWeights(['w3','w4']);
+      h = `<b class="b">Hidden neuron h₂</b><br>
+<b>Forward:</b>
+<span class="eq">z_h₂ = w₃·x₁ + w₄·x₂ + b₂
+     = ${f(w3)}×${f(x1)} + ${f(w4)}×${f(x2)} + ${f(b2)}
+     = ${f(w3*x1)} + ${f(w4*x2)} + ${f(b2)} = <b class="b">${f(R.zh2)}</b>
+
+h₂ = σ(${f(R.zh2)}) = <b class="b">${f(R.h2)}</b></span>
+<b>Backward (blame via w₆ and w₈):</b>
+<span class="eq">∂E/∂h₂ = δ_o₁·w₆ + δ_o₂·w₈
+        = ${f(R.d_o1)}×${f(w6)} + ${f(R.d_o2)}×${f(w8)}
+        = ${f(R.d_o1*w6)} + ${f(R.d_o2*w8)} = <b class="o">${f(R.dE_dh2)}</b>
+
+sigmoid slope = ${f(R.h2)}×${f(1-R.h2)} = ${f(R.h2*(1-R.h2))}
+
+δ_h₂ = ${f(R.dE_dh2)} × ${f(R.h2*(1-R.h2))} = <b class="o">${f(R.d_h2)}</b></span>
+<b>Weight gradients:</b>
+<span class="eq">∂E/∂w₃ = δ_h₂ × x₁ = ${f(R.d_h2)} × ${f(x1)} = <b class="r">${f(R.gw3)}</b>
+∂E/∂w₄ = δ_h₂ × x₂ = ${f(R.d_h2)} × ${f(x2)} = <b class="r">${f(R.gw4)}</b>
+∂E/∂b₂ = δ_h₂ × 1  = <b class="r">${f(R.gb2)}</b></span>`;
+    } else if (nk === 'o1') {
+      highlightWeights(['w5','w6']);
+      h = `<b class="g">Output neuron o₁</b> &nbsp; (target t₁ = ${f(t1,2)})<br>
+<b>Forward:</b>
+<span class="eq">z_o₁ = w₅·h₁ + w₆·h₂ + b₃
+     = ${f(w5)}×${f(R.h1)} + ${f(w6)}×${f(R.h2)} + ${f(b3)}
+     = ${f(w5*R.h1)} + ${f(w6*R.h2)} + ${f(b3)} = <b class="b">${f(R.zo1)}</b>
+
+o₁ = σ(${f(R.zo1)}) = <b class="g">${f(R.o1)}</b></span>
+<b>Backward — the 3 chain-rule terms:</b>
+<span class="eq">Term 1 "how wrong?":   ∂E/∂o₁ = −(t₁−o₁) = −(${f(t1,2)}−${f(R.o1)}) = <b class="r">${f(R.dE_do1)}</b>
+Term 2 "sigmoid slope": ∂o₁/∂z  = o₁·(1−o₁) = ${f(R.o1)}×${f(1-R.o1)} = <b class="r">${f(R.do1_dz1)}</b>
+
+δ_o₁ = Term1 × Term2 = ${f(R.dE_do1)} × ${f(R.do1_dz1)} = <b class="r">${f(R.d_o1)}</b>
+${R.d_o1 > 0 ? '↑ Positive → output is TOO HIGH, needs to decrease' : R.d_o1 < 0 ? '↓ Negative → output is TOO LOW, needs to increase' : '✓ Zero → output is perfect!'}</span>
+<b>Weight gradients (δ × "what flowed through"):</b>
+<span class="eq">∂E/∂w₅ = δ_o₁ × h₁ = ${f(R.d_o1)} × ${f(R.h1)} = <b class="r">${f(R.gw5)}</b>
+∂E/∂w₆ = δ_o₁ × h₂ = ${f(R.d_o1)} × ${f(R.h2)} = <b class="r">${f(R.gw6)}</b>
+∂E/∂b₃ = δ_o₁ × 1  = <b class="r">${f(R.gb3)}</b></span>`;
+    } else if (nk === 'o2') {
+      highlightWeights(['w7','w8']);
+      h = `<b class="g">Output neuron o₂</b> &nbsp; (target t₂ = ${f(t2,2)})<br>
+<b>Forward:</b>
+<span class="eq">z_o₂ = w₇·h₁ + w₈·h₂ + b₄
+     = ${f(w7)}×${f(R.h1)} + ${f(w8)}×${f(R.h2)} + ${f(b4)}
+     = ${f(w7*R.h1)} + ${f(w8*R.h2)} +
+     = ${f(w7*R.h1)} + ${f(w8*R.h2)} + ${f(b4)} = <b class="b">${f(R.zo2)}</b>
+
+o₂ = σ(${f(R.zo2)}) = <b class="g">${f(R.o2)}</b></span>
+<b>Backward — the 3 chain-rule terms:</b>
+<span class="eq">Term 1 "how wrong?":   ∂E/∂o₂ = −(t₂−o₂) = −(${f(t2,2)}−${f(R.o2)}) = <b class="r">${f(R.dE_do2)}</b>
+Term 2 "sigmoid slope": ∂o₂/∂z  = o₂·(1−o₂) = ${f(R.o2)}×${f(1-R.o2)} = <b class="r">${f(R.do2_dz2)}</b>
+
+δ_o₂ = Term1 × Term2 = ${f(R.dE_do2)} × ${f(R.do2_dz2)} = <b class="r">${f(R.d_o2)}</b>
+${R.d_o2 > 0 ? '↑ Positive → output is TOO HIGH, needs to decrease' : R.d_o2 < 0 ? '↓ Negative → output is TOO LOW, needs to increase' : '✓ Zero → output is perfect!'}</span>
+<b>Weight gradients (δ × "what flowed through"):</b>
+<span class="eq">∂E/∂w₇ = δ_o₂ × h₁ = ${f(R.d_o2)} × ${f(R.h1)} = <b class="r">${f(R.gw7)}</b>
+∂E/∂w₈ = δ_o₂ × h₂ = ${f(R.d_o2)} × ${f(R.h2)} = <b class="r">${f(R.gw8)}</b>
+∂E/∂b₄ = δ_o₂ × 1  = <b class="r">${f(R.gb4)}</b></span>`;
+    }
+    info.innerHTML = h;
+  }
+
+  function showWeightInfo(wk) {
+    highlightWeights([wk]);
+    const {x1,x2,t1,t2,w1,w2,w3,w4,b1,b2,w5,w6,w7,w8,b3,b4,lr} = S;
+    const wVal = S[wk];
+    const gradMap = {
+      w1: {g:R.gw1, delta:'δ_h₁', dv:f(R.d_h1), inp:'x₁', iv:f(x1), nw:wVal-lr*R.gw1},
+      w2: {g:R.gw2, delta:'δ_h₁', dv:f(R.d_h1), inp:'x₂', iv:f(x2), nw:wVal-lr*R.gw2},
+      w3: {g:R.gw3, delta:'δ_h₂', dv:f(R.d_h2), inp:'x₁', iv:f(x1), nw:wVal-lr*R.gw3},
+      w4: {g:R.gw4, delta:'δ_h₂', dv:f(R.d_h2), inp:'x₂', iv:f(x2), nw:wVal-lr*R.gw4},
+      w5: {g:R.gw5, delta:'δ_o₁', dv:f(R.d_o1), inp:'h₁', iv:f(R.h1), nw:wVal-lr*R.gw5},
+      w6: {g:R.gw6, delta:'δ_o₁', dv:f(R.d_o1), inp:'h₂', iv:f(R.h2), nw:wVal-lr*R.gw6},
+      w7: {g:R.gw7, delta:'δ_o₂', dv:f(R.d_o2), inp:'h₁', iv:f(R.h1), nw:wVal-lr*R.gw7},
+      w8: {g:R.gw8, delta:'δ_o₂', dv:f(R.d_o2), inp:'h₂', iv:f(R.h2), nw:wVal-lr*R.gw8},
+    };
+    const m = gradMap[wk];
+    if (!m) return;
+    const labels = {w1:'w₁',w2:'w₂',w3:'w₃',w4:'w₄',w5:'w₅',w6:'w₆',w7:'w₇',w8:'w₈'};
+    info.innerHTML = `<b>Weight ${labels[wk]} = ${f(wVal)}</b><br>
+<span class="eq"><b>Gradient:</b>
+∂E/∂${labels[wk]} = ${m.delta} × ${m.inp}
+            = ${m.dv} × ${m.iv}
+            = <b class="r">${f(m.g)}</b>
+
+<b>Update:</b>
+${labels[wk]}_new = ${f(wVal)} − η·${f(m.g)}
+         = ${f(wVal)} − ${f(lr)}×${f(m.g)}
+         = ${f(wVal)} − ${f(lr*m.g)}
+         = <b class="g">${f(m.nw)}</b>  (${m.g > 0 ? '↓ decreases' : m.g < 0 ? '↑ increases' : '— no change'})</span>`;
+  }
+
+  // ── Buttons ──
+  const defaults = JSON.parse(JSON.stringify(S));
+
+  document.getElementById(`${id}-apply`).addEventListener('click', () => {
+    const {lr} = S;
+    S.w1 -= lr*R.gw1; S.w2 -= lr*R.gw2; S.w3 -= lr*R.gw3; S.w4 -= lr*R.gw4;
+    S.b1 -= lr*R.gb1; S.b2 -= lr*R.gb2;
+    S.w5 -= lr*R.gw5; S.w6 -= lr*R.gw6; S.w7 -= lr*R.gw7; S.w8 -= lr*R.gw8;
+    S.b3 -= lr*R.gb3; S.b4 -= lr*R.gb4;
+    syncInputs();
+    recompute();
+  });
+
+  document.getElementById(`${id}-train`).addEventListener('click', () => {
+    for (let i = 0; i < 100; i++) {
+      recompute();
+      const {lr} = S;
+      S.w1 -= lr*R.gw1; S.w2 -= lr*R.gw2; S.w3 -= lr*R.gw3; S.w4 -= lr*R.gw4;
+      S.b1 -= lr*R.gb1; S.b2 -= lr*R.gb2;
+      S.w5 -= lr*R.gw5; S.w6 -= lr*R.gw6; S.w7 -= lr*R.gw7; S.w8 -= lr*R.gw8;
+      S.b3 -= lr*R.gb3; S.b4 -= lr*R.gb4;
+    }
+    syncInputs();
+    recompute();
+  });
+
+  document.getElementById(`${id}-reset`).addEventListener('click', () => {
+    Object.assign(S, JSON.parse(JSON.stringify(defaults)));
+    syncInputs();
+    recompute();
+    info.innerHTML = `<span style="color:#94a3b8;">Reset to defaults. Hover over any neuron or weight label.</span>`;
+  });
 
   // ── Initial render ──
   recompute();
 }
 
-// ── Auto-initialize ──
-renderBackpropSliders('backprop-interactive');
+renderBackpropVisual('bp-visual');
 </script>
+
 
 <div class="md">
 ## What is $\delta$ (delta)? — The Reusable Error Signal
