@@ -2499,18 +2499,18 @@ function tlab_render_trajectory_plot(d_model) {
 				hovertemplate: `<b>${labels[tIdx]} — Start</b><extra></extra>`
 			});
 
-			// 3D End point — rendered as a ★ text glyph (scatter3d has no star symbol)
+			// 3D End point — ★ text glyph anchored at the exact coordinate
 			traces.push({
 				type: 'scatter3d',
 				x: [x[x.length - 1]], y: [y[y.length - 1]], z: [z[z.length - 1]],
 				mode: 'text',
 				text: ['★'],
+				textposition: 'middle center',
 				textfont: { size: 18, color: tColor, family: 'Arial, sans-serif' },
 				showlegend: false,
 				hoverinfo: 'text',
 				hovertemplate: `<b>${labels[tIdx]} — End</b><extra></extra>`
 			});
-
 		} else {
 			// 2D trajectory line
 			traces.push({
