@@ -265,6 +265,8 @@ Instead of one massive attention operation, we use **Multi-Head Attention**. We 
 
 $$\underbrace{\text{head}_i}_{(B, T, d_v)} = \text{Attention}(\underbrace{h_{i-1} W_i^Q}_{Q}, \underbrace{h_{i-1} W_i^K}_{K}, \underbrace{h_{i-1} W_i^V}_{V})$$
 
+The multi-head is then just running different heads simultaneously and concatenating their results.
+
 $$\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)W^O$$
 
 $$(B, T, h \cdot d_v) \rightarrow (B, T, d_{\text{model}})$$
