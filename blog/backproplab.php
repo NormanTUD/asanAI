@@ -71,12 +71,108 @@ $$
 
 This is the chain rule applied link by link. The backward pass computes these products starting from the output and working toward the input — that's why it's called **back**propagation.
 
+## What is $\delta$ (delta)? — The Reusable Error Signal
+
+When you hover over neurons in the lab below, you'll see values like $\delta_{o_1}$ or $\delta_{h_1}$. These are **not** a new concept — they are just a **shorthand name** for a product of two things that gets reused many times. Here's exactly what they mean:
+
+### At an output neuron (e.g., $\delta_{o_1}$):
+
+$$
+\delta_{o_1} = \underbrace{-(t_1 - o_1)}_{\substack{\text{How wrong is the output?} \\ \text{(derivative of the loss)}}} \times \underbrace{o_1 \cdot (1 - o_1)}_{\substack{\text{How steep is the sigmoid here?} \\ \text{(derivative of the activation)}}}
+$$
+
+That's it — **two numbers multiplied together**. The first number says "how far off are we from the target?" and the second says "how sensitive is the sigmoid at this point?" Their product tells us: **if we nudge the input to this neuron by a tiny amount, how much does the total error change?**
+
+**Concrete example** (with default values): $o_1 \approx 0.7514$, target $t_1 = 0.01$:
+$$\delta_{o_1} = -(0.01 - 0.7514) \times 0.7514 \times (1 - 0.7514) = 0.7414 \times 0.1868 \approx 0.1385$$
+
+The positive sign means: "the output is **too high** — we need to push it down."
+
+### At a hidden neuron (e.g., $\delta_{h_1}$):
+
+Hidden neurons don't have their own target, so they receive **blame from every output neuron they connect to**, weighted by the connection strength:
+
+$$
+\delta_{h_1} = \underbrace{\Big(\delta_{o_1} \cdot w_5 + \delta_{o_2} \cdot w_7\Big)}_{\substack{\text{Total blame arriving at } h_1 \\ \text{from both outputs, weighted} \\ \text{by the connection strengths}}} \times \underbrace{h_1 \cdot (1 - h_1)}_{\substack{\text{Sigmoid slope at } h_1}}
+$$
+
+This is the key insight: **the error is distributed proportionally through the same weights that carried the signal forward**. If $w_5$ is large, then $h_1$ contributed a lot to $o_1$'s value, so it receives more blame from $o_1$.
+
+### Why bother giving it a name?
+
+Because $\delta$ gets reused. Once you know $\delta_{o_1}$, you use it to compute the gradient for **every** weight feeding into $o_1$:
+
+$$
+\frac{\partial E}{\partial w_5} = \delta_{o_1} \times h_1 \qquad \frac{\partial E}{\partial w_6} = \delta_{o_1} \times h_2 \qquad \frac{\partial E}{\partial b_3} = \delta_{o_1} \times 1
+$$
+
+Without the shorthand, you'd have to write out $-(t_1 - o_1) \cdot o_1(1-o_1)$ every single time. The $\delta$ is just a **time-saver**, not a new concept.
+
+## How Each Weight Gradient Is Calculated
+
+Once you have the $\delta$ for a node, the gradient for any weight feeding into that node follows a dead-simple pattern:
+
+$$
+\frac{\partial E}{\partial w} = \delta_{\text{node}} \times \text{(whatever value flowed through this weight)}
+$$
+
+For output weights, the "value that flowed through" is the hidden neuron's output:
+$$\frac{\partial E}{\partial w_5} = \delta_{o_1} \times h_1$$
+
+For hidden weights, the "value that flowed through" is the input:
+$$\frac{\partial E}{\partial w_1} = \delta_{h_1} \times x_1$$
+
+For biases, the "value that flowed through" is always 1 (biases have no input multiplier):
+$$\frac{\partial E}{\partial b_3} = \delta_{o_1} \times 1 = \delta_{o_1}$$
+
 ## Interactive Lab
 
 Below is a complete neural network. Every weight, bias, and intermediate value is visible. Click **"Forward Pass"** to see data flow through the network, then click **"Backward Pass"** to watch the error gradient propagate back through every connection. Finally, click **"Update Weights"** to apply gradient descent.
 
+**Hover over any neuron** to see the exact arithmetic for that node. The weights involved in that calculation will **light up and animate** on the diagram so you can see exactly which connections carry the data.
+
 You can edit any weight, bias, input, target, or learning rate and re-run the process to build intuition.
 </div>
+
+<!-- Animation styles for weight highlighting on hover -->
+<style>
+    @keyframes bp-pulse-flow {
+        0%   { stroke-opacity: 0.3; stroke-width: 2; }
+        50%  { stroke-opacity: 1.0; stroke-width: 6; }
+        100% { stroke-opacity: 0.3; stroke-width: 2; }
+    }
+    .bp-highlight-line {
+        animation: bp-pulse-flow 0.8s ease-in-out infinite;
+    }
+    @keyframes bp-dash-flow-forward {
+        to { stroke-dashoffset: -30; }
+    }
+    @keyframes bp-dash-flow-backward {
+        to { stroke-dashoffset: 30; }
+    }
+    .bp-flow-forward {
+        stroke-dasharray: 12, 6;
+        animation: bp-dash-flow-forward 0.5s linear infinite;
+    }
+    .bp-flow-backward {
+        stroke-dasharray: 12, 6;
+        animation: bp-dash-flow-backward 0.5s linear infinite;
+    }
+    .bp-dim-line {
+        opacity: 0.15 !important;
+        transition: opacity 0.2s ease;
+    }
+    .bp-connection {
+        transition: opacity 0.2s ease, stroke 0.2s ease;
+    }
+    .bp-weight-label {
+        transition: opacity 0.2s ease;
+    }
+    .bp-dim-label {
+        opacity: 0.1 !important;
+        transition: opacity 0.2s ease;
+    }
+</style>
 
 <div id="backprop-lab-container" style="padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; flex-direction: column; gap: 20px; background: #fff;">
 
@@ -134,11 +230,12 @@ You can edit any weight, bias, input, target, or learning rate and re-run the pr
             <div style="font-size:0.75rem; color:#64748b; margin-bottom:8px;">
                 <span style="color:#3b82f6;">● Blue = forward signal</span> &nbsp;
                 <span style="color:#ef4444;">● Red = backward gradient</span> &nbsp;
-                <span style="color:#10b981;">● Green = updated</span>
+                <span style="color:#10b981;">● Green = updated</span> &nbsp;
+                <span style="color:#f59e0b;">● Gold pulsing = weights used in hovered calculation</span>
             </div>
-		<svg id="bp-network-svg" width="100%" viewBox="0 0 900 560"
-		     style="background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
-		</svg>
+            <svg id="bp-network-svg" width="100%" viewBox="0 0 900 560"
+                 style="background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
+            </svg>
         </div>
 
         <!-- Weight Editor -->
@@ -171,11 +268,20 @@ You can edit any weight, bias, input, target, or learning rate and re-run the pr
         </div>
     </div>
 
-	    <!-- Math Step-by-Step Display -->
-	<div id="bp-math-display" style="padding: 24px; background: linear-gradient(to right, #f8fafc, #f1f5f9); border: 1px solid #cbd5e0; border-radius: 10px; font-size: 1.0rem; overflow-x: auto; min-height: 120px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);">
-	    <span style="color:#94a3b8; font-style:italic;">Click "Forward Pass" to begin. Every computation will be shown here step by step.</span>
-	</div>
+    <!-- Math Step-by-Step Display -->
+    <div id="bp-math-display" style="padding: 24px; background: linear-gradient(to right, #f8fafc, #f1f5f9); border: 1px solid #cbd5e0; border-radius: 10px; font-size: 1.0rem; overflow-x: auto; min-height: 120px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);">
+        <span style="color:#94a3b8; font-style:italic;">Click "Forward Pass" to begin. Every computation will be shown here step by step.</span>
+    </div>
 
+    <!-- Detailed Walkthrough Panel (new) -->
+    <details id="bp-detailed-walkthrough" style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 0;">
+        <summary style="padding: 14px 18px; cursor: pointer; font-weight: bold; background: #f8fafc; border-radius: 10px; user-select: none;">
+            📖 Show Detailed Hand-Calculation Walkthrough (every single multiplication)
+        </summary>
+        <div id="bp-detailed-content" class="md" style="padding: 18px; font-size: 0.95rem; line-height: 2.0;">
+            <span style="color:#94a3b8; font-style:italic;">Run a forward pass first, then expand this to see every single arithmetic step written out so you can verify with a calculator.</span>
+        </div>
+    </details>
 
     <!-- Loss Chart -->
     <div>
@@ -191,25 +297,62 @@ You can edit any weight, bias, input, target, or learning rate and re-run the pr
 
 2. **Backward Pass:** Watch the red gradient signals flow right-to-left. Starting from the loss, each connection receives a gradient computed via the chain rule. Notice how the gradient at each weight is the product of three terms: the upstream error, the local activation derivative, and the input that fed into that weight.
 
-3. **Weight Update:** Each weight is nudged in the direction that reduces the error: $w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial E}{\partial w}$. After updating, run another forward pass to see the loss decrease.
+3. **Hover over any neuron:** The weights involved in that neuron's calculation will **pulse gold** on the diagram. During the forward pass, you'll see the incoming weights light up. During the backward pass, you'll see both the incoming weights (that carried the signal forward) and the outgoing weights (that carry the error backward). This makes it visually obvious which connections are involved in each calculation.
 
-4. **Auto-Train:** Click "Auto-Train 100 Epochs" to watch the loss curve drop. The network will learn to map $(0.05, 0.10)$ to $(0.01, 0.99)$ — watch the outputs converge toward the targets.
+4. **Weight Update:** Each weight is nudged in the direction that reduces the error: $w_{\text{new}} = w_{\text{old}} - \eta \cdot \frac{\partial E}{\partial w}$. After updating, run another forward pass to see the loss decrease.
 
-5. **Experiment:** Try changing the learning rate. Too high ($> 2$) and the network may overshoot and diverge. Too low ($< 0.01$) and learning is painfully slow. Try changing the initial weights to see how different starting points affect convergence.
+5. **Auto-Train:** Click "Auto-Train 100 Epochs" to watch the loss curve drop. The network will learn to map $(0.05, 0.10)$ to $(0.01, 0.99)$ — watch the outputs converge toward the targets.
 
-## The Full Chain Rule, Expanded
+6. **Experiment:** Try changing the learning rate. Too high ($> 2$) and the network may overshoot and diverge. Too low ($< 0.01$) and learning is painfully slow. Try changing the initial weights to see how different starting points affect convergence.
 
-For an output-layer weight like $w_5$ (connecting $h_1$ to $o_1$):
+## The Full Chain Rule, Expanded — Every Single Step
 
-$$
-\frac{\partial E}{\partial w_5} = \frac{\partial E}{\partial o_1} \cdot \frac{\partial o_1}{\partial z_{o1}} \cdot \frac{\partial z_{o1}}{\partial w_5} = -(t_1 - o_1) \cdot o_1(1 - o_1) \cdot h_1
-$$
+### For an output-layer weight (e.g., $w_5$ connecting $h_1$ to $o_1$):
 
-For a hidden-layer weight like $w_1$ (connecting $x_1$ to $h_1$), the error must flow through **both** output neurons:
+We want $\frac{\partial E}{\partial w_5}$. The chain rule says: trace the path from $E$ back to $w_5$ and multiply the derivatives along the way.
 
-$$
-\frac{\partial E}{\partial w_1} = \left( \delta_{o1} \cdot w_5 + \delta_{o2} \cdot w_7 \right) \cdot h_1(1 - h_1) \cdot x_1
-$$
+**Link 1:** How does $E$ change when $o_1$ changes?
+$$\frac{\partial E}{\partial o_1} = \frac{\partial}{\partial o_1}\left[\frac{1}{2}(t_1 - o_1)^2\right] = -(t_1 - o_1)$$
 
-where $\delta_{o1} = -(t_1 - o_1) \cdot o_1(1 - o_1)$ is the "error signal" at output neuron 1. This is the key insight: **hidden neurons receive error contributions from every output they connect to**, and these contributions are weighted by the connection strengths. This is what "information flowing back" truly means — the error is distributed proportionally through the same weights that carried the signal forward.
+**Link 2:** How does $o_1$ change when $z_{o_1}$ changes? (sigmoid derivative)
+$$\frac{\partial o_1}{\partial z_{o_1}} = o_1 \cdot (1 - o_1)$$
+
+**Link 3:** How does $z_{o_1}$ change when $w_5$ changes?
+$$\frac{\partial z_{o_1}}{\partial w_5} = h_1 \quad \text{(because } z_{o_1} = w_5 \cdot h_1 + w_6 \cdot h_2 + b_3\text{)}$$
+
+**Multiply all three links together:**
+$$\frac{\partial E}{\partial w_5} = \underbrace{-(t_1 - o_1)}_{\text{Link 1}} \cdot \underbrace{o_1(1 - o_1)}_{\text{Link 2}} \cdot \underbrace{h_1}_{\text{Link 3}}$$
+
+**Notice:** Links 1 and 2 together are exactly $\delta_{o_1}$! So:
+$$\frac{\partial E}{\partial w_5} = \delta_{o_1} \cdot h_1$$
+
+### For a hidden-layer weight (e.g., $w_1$ connecting $x_1$ to $h_1$):
+
+This is harder because $h_1$ affects **both** $o_1$ and $o_2$, so the error flows back through **two paths**:
+
+**Path A** (through $o_1$): $E \to o_1 \to z_{o_1} \to h_1$
+$$\frac{\partial E}{\partial h_1}\bigg|_{\text{via }o_1} = \delta_{o_1} \cdot w_5$$
+
+**Path B** (through $o_2$): $E \to o_2 \to z_{o_2} \to h_1$
+$$\frac{\partial E}{\partial h_1}\bigg|_{\text{via }o_2} = \delta_{o_2} \cdot w_7$$
+
+**Total error arriving at $h_1$** (add both paths):
+$$\frac{\partial E}{\partial h_1} = \delta_{o_1} \cdot w_5 + \delta_{o_2} \cdot w_7$$
+
+**Then continue the chain through $h_1$'s sigmoid and down to $w_1$:**
+$$\frac{\partial E}{\partial w_1} = \underbrace{\left( \delta_{o_1} \cdot w_5 + \delta_{o_2} \cdot w_7 \right)}_{\text{total error at } h_1} \cdot \underbrace{h_1(1 - h_1)}_{\text{sigmoid derivative at } h_1} \cdot \underbrace{x_1}_{\text{input through } w_1}$$
+
+Again, the first two factors together are $\delta_{h_1}$:
+$$\frac{\partial E}{\partial w_1} = \delta_{h_1} \cdot x_1$$
+
+## Summary of the $\delta$ Pattern
+
+| Symbol | What it equals | In plain English |
+|---|---|---|
+| $\delta_{o_1}$ | $-(t_1 - o_1) \times o_1(1-o_1)$ | "How wrong is $o_1$?" × "How steep is the sigmoid at $o_1$?" |
+| $\delta_{o_2}$ | $-(t_2 - o_2) \times o_2(1-o_2)$ | Same thing for $o_2$ |
+| $\delta_{h_1}$ | $(\delta_{o_1} \cdot w_5 + \delta_{o_2} \cdot w_7) \times h_1(1-h_1)$ | "Total blame from both outputs" × "sigmoid slope at $h_1$" |
+| $\delta_{h_2}$ | $(\delta_{o_1} \cdot w_6 + \delta_{o_2} \cdot w_8) \times h_2(1-h_2)$ | "Total blame from both outputs" × "sigmoid slope at $h_2$" |
+| $\frac{\partial E}{\partial w}$ | $\delta_{\text{node}} \times \text{input through this weight}$ | "Error signal at the node" × "what flowed through this weight" |
+| $w^+ = w - \eta \cdot \frac{\partial E}{\partial w}$ | | "Nudge the weight to reduce the error" |
 </div>

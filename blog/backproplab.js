@@ -1,6 +1,7 @@
 // ============================================================
 // BACKPROPLAB.JS — Interactive Backpropagation Visualizer
-// Hover-based LaTeX annotations, larger diagram, extensive \underbrace
+// With weight-highlighting hover animations, detailed walkthroughs,
+// and every single arithmetic step shown
 // ============================================================
 
 function initBackpropLab() {
@@ -10,6 +11,8 @@ function initBackpropLab() {
     let lossHistory = [];
     let epoch = 0;
     let phase = 'idle';
+    // Track which phase the diagram is currently showing (for hover logic)
+    let currentHighlightPhase = null;
 
     // --- DOM References ---
     const els = {
@@ -38,7 +41,8 @@ function initBackpropLab() {
         mathDisplay: document.getElementById('bp-math-display'),
         svg: document.getElementById('bp-network-svg'),
         epochCount: document.getElementById('bp-epoch-count'),
-        lossChart: document.getElementById('bp-loss-chart')
+        lossChart: document.getElementById('bp-loss-chart'),
+        detailedContent: document.getElementById('bp-detailed-content')
     };
 
     const gradEls = {
@@ -73,12 +77,11 @@ function initBackpropLab() {
             border-radius: 10px;
             padding: 14px 18px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.18);
-            max-width: 420px;
+            max-width: 480px;
             font-size: 15px;
             line-height: 1.9;
         `;
         tooltipEl.classList.add('md');
-        // Insert right after the SVG's parent so positioning works
         els.svg.parentElement.style.position = 'relative';
         els.svg.parentElement.appendChild(tooltipEl);
     }
@@ -88,19 +91,13 @@ function initBackpropLab() {
         tooltipEl.style.borderColor = borderColor || '#f59e0b';
         tooltipEl.style.display = 'block';
 
-        // Render LaTeX inside tooltip
         if (typeof render_temml === 'function') render_temml();
 
-        // Position relative to SVG container
-        const svgRect = els.svg.getBoundingClientRect();
         const containerRect = els.svg.parentElement.getBoundingClientRect();
-
-        // Get the SVG element's position in SVG coordinates
         const bbox = svgNode.getBoundingClientRect();
         const left = bbox.left - containerRect.left + bbox.width / 2;
         const top = bbox.bottom - containerRect.top + 10;
 
-        // Clamp to stay within container
         const tipW = tooltipEl.offsetWidth;
         const clampedLeft = Math.max(10, Math.min(left - tipW / 2, containerRect.width - tipW - 10));
 
@@ -110,6 +107,62 @@ function initBackpropLab() {
 
     function hideTooltip() {
         tooltipEl.style.display = 'none';
+    }
+
+    // ============================================================
+    // WEIGHT HIGHLIGHT SYSTEM — pulse gold on hover, dim others
+    // ============================================================
+    function highlightWeights(weightKeys, flowDirection) {
+        const svg = els.svg;
+        // Dim all connections and labels first
+        svg.querySelectorAll('.bp-connection').forEach(l => {
+            if (!weightKeys.includes(l.getAttribute('data-weight'))) {
+                l.classList.add('bp-dim-line');
+            }
+        });
+        svg.querySelectorAll('.bp-weight-label').forEach(l => {
+            if (!weightKeys.includes(l.getAttribute('data-weight'))) {
+                l.classList.add('bp-dim-label');
+            }
+        });
+        // Highlight the relevant ones
+        weightKeys.forEach(wKey => {
+            svg.querySelectorAll(`.bp-connection[data-weight="${wKey}"]`).forEach(l => {
+                l.classList.remove('bp-dim-line');
+                l.classList.add('bp-highlight-line');
+                l.setAttribute('data-orig-stroke', l.getAttribute('stroke'));
+                l.setAttribute('stroke', '#f59e0b');
+                if (flowDirection === 'forward') {
+                    l.classList.add('bp-flow-forward');
+                } else if (flowDirection === 'backward') {
+                    l.classList.add('bp-flow-backward');
+                }
+            });
+            svg.querySelectorAll(`.bp-weight-label[data-weight="${wKey}"]`).forEach(l => {
+                l.classList.remove('bp-dim-label');
+                l.setAttribute('data-orig-fill', l.getAttribute('fill'));
+                l.setAttribute('fill', '#f59e0b');
+                l.setAttribute('font-weight', 'bold');
+            });
+        });
+    }
+
+    function clearHighlightWeights() {
+        const svg = els.svg;
+        svg.querySelectorAll('.bp-highlight-line').forEach(l => {
+            l.classList.remove('bp-highlight-line', 'bp-flow-forward', 'bp-flow-backward');
+            const orig = l.getAttribute('data-orig-stroke');
+            if (orig) l.setAttribute('stroke', orig);
+        });
+        svg.querySelectorAll('.bp-dim-line').forEach(l => {
+            l.classList.remove('bp-dim-line');
+        });
+        svg.querySelectorAll('.bp-weight-label').forEach(l => {
+            l.classList.remove('bp-dim-label');
+            const orig = l.getAttribute('data-orig-fill');
+            if (orig) l.setAttribute('fill', orig);
+            l.removeAttribute('font-weight');
+        });
     }
 
     // --- Helpers ---
@@ -248,12 +301,13 @@ function initBackpropLab() {
     }
 
     // ============================================================
-    // SVG NETWORK DRAWING — Clean diagram, hover for details
+    // SVG NETWORK DRAWING — with data-weight tags for hover highlighting
     // ============================================================
     function drawNetwork(highlightPhase) {
         const svg = els.svg;
         svg.innerHTML = '';
         hideTooltip();
+        currentHighlightPhase = highlightPhase;
 
         // --- SVG Helpers ---
         function makeSVG(tag, attrs) {
@@ -289,7 +343,7 @@ function initBackpropLab() {
         function addLine(x1, y1, x2, y2, color, width, dashed) {
             const attrs = { x1, y1, x2, y2, stroke: color, 'stroke-width': width || 1.5 };
             if (dashed) attrs['stroke-dasharray'] = '6,4';
-            addEl('line', attrs);
+            return addEl('line', attrs);
         }
 
         function addCircle(cx, cy, r, fill, strokeColor, strokeWidth) {
@@ -323,9 +377,9 @@ function initBackpropLab() {
         }
 
         // ============================================================
-        // Create a hoverable node group
+        // Create a hoverable node group with weight highlighting
         // ============================================================
-        function makeHoverableNode(cx, cy, r, fill, strokeColor, strokeWidth, tooltipHTML, borderColor) {
+        function makeHoverableNode(cx, cy, r, fill, strokeColor, strokeWidth, tooltipHTML, borderColor, weightsToHighlight, flowDir) {
             const circle = addCircle(cx, cy, r, fill, strokeColor, strokeWidth);
             // Invisible larger hit area
             const hitArea = addCircle(cx, cy, r + 8, 'transparent', 'transparent', 0);
@@ -334,9 +388,13 @@ function initBackpropLab() {
             if (tooltipHTML) {
                 hitArea.addEventListener('mouseenter', function () {
                     showTooltip(circle, tooltipHTML, borderColor || strokeColor);
+                    if (weightsToHighlight && weightsToHighlight.length > 0) {
+                        highlightWeights(weightsToHighlight, flowDir || 'forward');
+                    }
                 });
                 hitArea.addEventListener('mouseleave', function () {
                     hideTooltip();
+                    clearHighlightWeights();
                 });
             }
             return circle;
@@ -377,7 +435,7 @@ function initBackpropLab() {
         addText(colTarget, 72, 'TARGETS', { size: '13', bold: true, color: '#16a34a' });
 
         // ============================================================
-        // CONNECTIONS
+        // CONNECTIONS — tagged with data-weight for hover highlighting
         // ============================================================
         const connections = [
             [nodes.x1, nodes.h1, 'w1'],
@@ -412,7 +470,10 @@ function initBackpropLab() {
             const y1 = from.y;
             const x2 = to.x - nodeR;
             const y2 = to.y;
-            addLine(x1, y1, x2, y2, getLineColor(key), getLineWidth(key));
+            const line = addLine(x1, y1, x2, y2, getLineColor(key), getLineWidth(key));
+            // Tag for hover highlighting
+            line.setAttribute('data-weight', key);
+            line.classList.add('bp-connection');
 
             const mx = (x1 + x2) / 2;
             const my = (y1 + y2) / 2;
@@ -420,14 +481,18 @@ function initBackpropLab() {
             const dy = (y2 - y1);
             const labelOffY = dy > 50 ? -12 : (dy < -50 ? 12 : -12);
 
-            addText(mx, my + labelOffY, `${key}=${fmtShort(w[key])}`, {
+            const label = addText(mx, my + labelOffY, `${key}=${fmtShort(w[key])}`, {
                 size: '11', mono: true, color: '#64748b'
             });
+            label.setAttribute('data-weight', key);
+            label.classList.add('bp-weight-label');
 
             if (highlightPhase === 'backward' && gradients[key] !== undefined) {
-                addText(mx, my + labelOffY + 14, `∂E/∂${key}=${fmtShort(gradients[key])}`, {
+                const gradLabel = addText(mx, my + labelOffY + 14, `∂E/∂${key}=${fmtShort(gradients[key])}`, {
                     size: '10', mono: true, color: '#dc2626', bold: true
                 });
+                gradLabel.setAttribute('data-weight', key);
+                gradLabel.classList.add('bp-weight-label');
             }
         });
 
@@ -436,7 +501,16 @@ function initBackpropLab() {
         // ============================================================
         [['x1', net.x1], ['x2', net.x2]].forEach(([key, value]) => {
             const n = nodes[key];
-            addCircle(n.x, n.y, nodeR, '#dbeafe', '#3b82f6', 2.5);
+            const inputWeights = key === 'x1' ? ['w1', 'w3'] : ['w2', 'w4'];
+            let tipHTML = '';
+            if (value !== undefined) {
+                tipHTML = `<div style="color:#1e40af;">
+                    <b style="font-size:13px;">Input: ${n.label}</b><br>
+                    Value: <b>${fmt(value, 4)}</b><br>
+                    This input feeds into <b>h₁</b> (via ${inputWeights[0]}) and <b>h₂</b> (via ${inputWeights[1]}).
+                </div>`;
+            }
+            makeHoverableNode(n.x, n.y, nodeR, '#dbeafe', '#3b82f6', 2.5, tipHTML, '#3b82f6', inputWeights, 'forward');
             addText(n.x, n.y - 9, n.label, { size: '16', bold: true, color: '#1e40af' });
             if (value !== undefined) {
                 addText(n.x, n.y + 11, fmt(value, 2), { size: '13', mono: true, color: '#3b82f6' });
@@ -444,7 +518,7 @@ function initBackpropLab() {
         });
 
         // ============================================================
-        // HIDDEN NODES — with hover tooltips
+        // HIDDEN NODES — with hover tooltips and weight highlighting
         // ============================================================
         const hiddenData = [
             { key: 'h1', z: net.z_h1, h: net.h1, delta: gradients.delta_h1, dE_dh: gradients.dE_dh1, wFrom: ['w1', 'w2'], wTo: ['w5', 'w7'], inputs: [net.x1, net.x2], biasKey: 'b1' },
@@ -455,49 +529,75 @@ function initBackpropLab() {
             const n = nodes[key];
             const fillColor = highlightPhase === 'backward' ? '#fef2f2' : (highlightPhase === 'forward' ? '#ede9fe' : '#f5f3ff');
 
-            // Build tooltip HTML based on phase
             let tipHTML = '';
             let tipBorder = '#7c3aed';
+            let weightsToHighlight = [];
+            let flowDir = 'forward';
 
             if (highlightPhase === 'forward' && z !== undefined) {
                 const w = readWeights();
                 const bVal = w[biasKey];
                 tipBorder = '#3b82f6';
+                weightsToHighlight = wFrom;
+                flowDir = 'forward';
+
+                // Compute each multiplication explicitly
+                const prod1 = w[wFrom[0]] * inputs[0];
+                const prod2 = w[wFrom[1]] * inputs[1];
+
                 tipHTML = `
                     <div style="color:#1e40af;">
-                    <b style="font-size:13px;">Forward: ${n.label}</b><br>
-                    $\\underbrace{z_{${key}}}_{\\text{pre-activation}} = ${wFrom[0]} \\cdot x_1 + ${wFrom[1]} \\cdot x_2 + ${biasKey}$<br>
-                    $= ${fmtShort(w[wFrom[0]])} \\!\\times\\! ${fmt(inputs[0],2)} + ${fmtShort(w[wFrom[1]])} \\!\\times\\! ${fmt(inputs[1],2)} + ${fmtShort(bVal)} = ${fmtShort(z)}$<br>
-                    $\\underbrace{${key}}_{\\text{output}} = \\sigma(${fmtShort(z)}) = ${fmtShort(h)}$
+                    <b style="font-size:13px;">🔵 Forward Pass: ${n.label}</b><br>
+                    <b>Step 1:</b> Multiply each input by its weight:<br>
+                    $${wFrom[0]} \\cdot x_1 = ${fmtShort(w[wFrom[0]])} \\times ${fmt(inputs[0],4)} = ${fmt(prod1, 6)}$<br>
+                    $${wFrom[1]} \\cdot x_2 = ${fmtShort(w[wFrom[1]])} \\times ${fmt(inputs[1],4)} = ${fmt(prod2, 6)}$<br>
+                    <b>Step 2:</b> Sum them and add bias:<br>
+                    $z_{${key}} = ${fmt(prod1,6)} + ${fmt(prod2,6)} + ${fmtShort(bVal)} = ${fmt(z, 6)}$<br>
+                    <b>Step 3:</b> Apply sigmoid activation:<br>
+                    $${key} = \\sigma(${fmt(z,6)}) = \\frac{1}{1 + e^{-${fmt(z,6)}}} = ${fmt(h, 6)}$<br>
+                    <span style="font-size:11px; color:#64748b;">💡 The gold pulsing lines show which weights carry data into this neuron.</span>
                     </div>`;
             } else if (highlightPhase === 'backward' && delta !== undefined) {
                 const w = readWeights();
                 tipBorder = '#ef4444';
+                weightsToHighlight = [...wFrom, ...wTo];
+                flowDir = 'backward';
+
+                const blameFromO1 = gradients.delta_o1 * w[wTo[0]];
+                const blameFromO2 = gradients.delta_o2 * w[wTo[1]];
+                const sigmoidDeriv = h * (1 - h);
+
                 tipHTML = `
                     <div style="color:#991b1b;">
-                    <b style="font-size:13px;">Backward: ${n.label}</b><br>
-                    $\\underbrace{\\frac{\\partial E}{\\partial ${key}}}_{\\text{error at }${key}} = \\underbrace{\\delta_{o_1} \\!\\cdot\\! ${wTo[0]}}_{\\text{from } o_1} + \\underbrace{\\delta_{o_2} \\!\\cdot\\! ${wTo[1]}}_{\\text{from } o_2}$<br>
-                    $= ${fmtShort(gradients.delta_o1)} \\!\\times\\! ${fmtShort(w[wTo[0]])} + ${fmtShort(gradients.delta_o2)} \\!\\times\\! ${fmtShort(w[wTo[1]])} = ${fmtShort(dE_dh)}$<br>
-                    $\\underbrace{\\delta_{${key}}}_{\\text{local error signal}} = \\frac{\\partial E}{\\partial ${key}} \\cdot \\underbrace{${key}(1\\!-\\!${key})}_{\\sigma'\\text{ (sigmoid derivative)}}$<br>
-                    $= ${fmtShort(dE_dh)} \\!\\times\\! ${fmtShort(h)} \\!\\times\\! ${fmtShort(1 - h)} = ${fmtShort(delta)}$
+                    <b style="font-size:13px;">🔴 Backward Pass: ${n.label}</b><br>
+                    <b>Step 1:</b> Receive blame from o₁ (through ${wTo[0]}):<br>
+                    $\\delta_{o_1} \\cdot ${wTo[0]} = ${fmtShort(gradients.delta_o1)} \\times ${fmtShort(w[wTo[0]])} = ${fmt(blameFromO1, 6)}$<br>
+                    <b>Step 2:</b> Receive blame from o₂ (through ${wTo[1]}):<br>
+                    $\\delta_{o_2} \\cdot ${wTo[1]} = ${fmtShort(gradients.delta_o2)} \\times ${fmtShort(w[wTo[1]])} = ${fmt(blameFromO2, 6)}$<br>
+                    <b>Step 3:</b> Total error arriving at ${key}:<br>
+                    $\\frac{\\partial E}{\\partial ${key}} = ${fmt(blameFromO1,6)} + ${fmt(blameFromO2,6)} = ${fmt(dE_dh, 6)}$<br>
+                    <b>Step 4:</b> Multiply by sigmoid derivative at ${key}:<br>
+		                        $\\sigma'(${key}) = ${key}(1 - ${key}) = ${fmtShort(h)} \\times ${fmtShort(1 - h)} = ${fmtShort(sigmoidDeriv)}$<br>
+                    <b>Step 5:</b> Multiply to get $\\delta_{${key}}$:<br>
+                    $\\delta_{${key}} = ${fmt(dE_dh, 6)} \\times ${fmtShort(sigmoidDeriv)} = ${fmt(delta, 6)}$<br>
+                    <span style="font-size:11px; color:#64748b;">💡 Gold lines show incoming weights (forward signal) AND outgoing weights (backward blame paths).</span>
                     </div>`;
             }
 
-            makeHoverableNode(n.x, n.y, nodeR, fillColor, '#7c3aed', 2.5, tipHTML, tipBorder);
+            makeHoverableNode(n.x, n.y, nodeR, fillColor, '#7c3aed', 2.5, tipHTML, tipBorder, weightsToHighlight, flowDir);
             addText(n.x, n.y - 9, n.label, { size: '16', bold: true, color: '#5b21b6' });
             if (h !== undefined) {
                 addText(n.x, n.y + 11, fmtShort(h), { size: '13', mono: true, color: '#7c3aed' });
             }
             addText(n.x + nodeR + 10, n.y - nodeR + 4, 'σ', { size: '14', color: '#a78bfa', bold: true });
 
-            // Small hover hint
             if (highlightPhase === 'forward' || highlightPhase === 'backward') {
-                addText(n.x, n.y + nodeR + 14, '🔍 hover for math', { size: '9', color: '#94a3b8' });
+                addText(n.x, n.y + nodeR + 14, '🖇 hover for math', { size: '9', color: '#94a3b8' });
             }
         });
 
         // ============================================================
-        // OUTPUT NODES — with hover tooltips
+        // OUTPUT NODES — with hover tooltips and weight highlighting
         // ============================================================
         const outputData = [
             { key: 'o1', z: net.z_o1, o: net.o1, t: net.t1, E: net.E1, delta: gradients.delta_o1, hInputs: [net.h1, net.h2], wKeys: ['w5', 'w6'], biasKey: 'b3', tKey: 't1' },
@@ -510,39 +610,67 @@ function initBackpropLab() {
 
             let tipHTML = '';
             let tipBorder = '#ea580c';
+            let weightsToHighlight = [];
+            let flowDir = 'forward';
 
             if (highlightPhase === 'forward' && z !== undefined) {
                 const w = readWeights();
                 tipBorder = '#f59e0b';
+                weightsToHighlight = wKeys;
+                flowDir = 'forward';
+
+                const prod1 = w[wKeys[0]] * hInputs[0];
+                const prod2 = w[wKeys[1]] * hInputs[1];
+
                 tipHTML = `
                     <div style="color:#92400e;">
-                    <b style="font-size:13px;">Forward: ${n.label}</b><br>
-                    $\\underbrace{z_{${key}}}_{\\text{pre-activation}} = ${wKeys[0]} \\!\\cdot\\! h_1 + ${wKeys[1]} \\!\\cdot\\! h_2 + ${biasKey}$<br>
-                    $= ${fmtShort(w[wKeys[0]])} \\!\\times\\! ${fmtShort(hInputs[0])} + ${fmtShort(w[wKeys[1]])} \\!\\times\\! ${fmtShort(hInputs[1])} + ${fmtShort(w[biasKey])} = ${fmtShort(z)}$<br>
-                    $\\underbrace{${key}}_{\\text{output}} = \\sigma(${fmtShort(z)}) = ${fmtShort(o)}$<br>
-                    $\\underbrace{E_{${key}}}_{\\text{loss}} = \\tfrac{1}{2}(${tKey} - ${key})^2 = \\tfrac{1}{2}(${fmtShort(t)} - ${fmtShort(o)})^2 = ${fmtShort(E)}$
+                    <b style="font-size:13px;">🔵 Forward Pass: ${n.label}</b><br>
+                    <b>Step 1:</b> Multiply each hidden output by its weight:<br>
+                    $${wKeys[0]} \\cdot h_1 = ${fmtShort(w[wKeys[0]])} \\times ${fmtShort(hInputs[0])} = ${fmt(prod1, 6)}$<br>
+                    $${wKeys[1]} \\cdot h_2 = ${fmtShort(w[wKeys[1]])} \\times ${fmtShort(hInputs[1])} = ${fmt(prod2, 6)}$<br>
+                    <b>Step 2:</b> Sum and add bias:<br>
+                    $z_{${key}} = ${fmt(prod1,6)} + ${fmt(prod2,6)} + ${fmtShort(w[biasKey])} = ${fmt(z, 6)}$<br>
+                    <b>Step 3:</b> Apply sigmoid:<br>
+                    $${key} = \\sigma(${fmt(z,6)}) = \\frac{1}{1 + e^{-${fmt(z,6)}}} = ${fmt(o, 6)}$<br>
+                    <b>Step 4:</b> Compute this output's error:<br>
+                    $E_{${key}} = \\frac{1}{2}(${tKey} - ${key})^2 = \\frac{1}{2}(${fmtShort(t)} - ${fmt(o,6)})^2$<br>
+                    $= \\frac{1}{2} \\times ${fmt(Math.pow(t - o, 2), 6)} = ${fmt(E, 6)}$<br>
+                    <span style="font-size:11px; color:#64748b;">💡 Gold lines show the two weights feeding into this output neuron.</span>
                     </div>`;
             } else if (highlightPhase === 'backward' && delta !== undefined) {
                 tipBorder = '#ef4444';
+                weightsToHighlight = wKeys;
+                flowDir = 'backward';
+
+                const lossDeriv = -(t - o);
+                const sigmoidDeriv = o * (1 - o);
+
                 tipHTML = `
                     <div style="color:#991b1b;">
-                    <b style="font-size:13px;">Backward: ${n.label}</b><br>
-                    $\\underbrace{\\frac{\\partial E}{\\partial ${key}}}_{\\text{loss derivative}} = -(${tKey} - ${key}) = ${fmtShort(-(t - o))}$<br>
-                    $\\underbrace{\\sigma'(z)}_{\\text{activation slope}} = ${key}(1\\!-\\!${key}) = ${fmtShort(o * (1 - o))}$<br>
-                    $\\underbrace{\\delta_{${key}}}_{\\text{output error signal}} = ${fmtShort(-(t - o))} \\!\\times\\! ${fmtShort(o * (1 - o))} = ${fmtShort(delta)}$
+                    <b style="font-size:13px;">🔴 Backward Pass: ${n.label}</b><br>
+                    We need $\\delta_{${key}}$, the error signal at this output neuron.<br>
+                    <b>Step 1:</b> Derivative of the loss with respect to ${key}:<br>
+                    $\\frac{\\partial E}{\\partial ${key}} = -(${tKey} - ${key}) = -(${fmtShort(t)} - ${fmt(o,6)}) = ${fmt(lossDeriv, 6)}$<br>
+                    <b>Step 2:</b> Derivative of the sigmoid at this neuron:<br>
+                    $\\sigma'(z_{${key}}) = ${key}(1 - ${key}) = ${fmt(o,6)} \\times ${fmt(1-o,6)} = ${fmt(sigmoidDeriv, 6)}$<br>
+                    <b>Step 3:</b> Multiply them to get $\\delta_{${key}}$:<br>
+                    $\\delta_{${key}} = ${fmt(lossDeriv,6)} \\times ${fmt(sigmoidDeriv,6)} = ${fmt(delta, 6)}$<br>
+                    <b>Step 4:</b> Use $\\delta_{${key}}$ to compute weight gradients:<br>
+                    $\\frac{\\partial E}{\\partial ${wKeys[0]}} = \\delta_{${key}} \\times h_1 = ${fmtShort(delta)} \\times ${fmtShort(hInputs[0])} = ${fmt(delta * hInputs[0], 6)}$<br>
+                    $\\frac{\\partial E}{\\partial ${wKeys[1]}} = \\delta_{${key}} \\times h_2 = ${fmtShort(delta)} \\times ${fmtShort(hInputs[1])} = ${fmt(delta * hInputs[1], 6)}$<br>
+                    <span style="font-size:11px; color:#64748b;">💡 Gold lines show the weights whose gradients are computed using this $\\delta$.</span>
                     </div>`;
             }
 
-            makeHoverableNode(n.x, n.y, nodeR, fillColor, '#ea580c', 2.5, tipHTML, tipBorder);
+            makeHoverableNode(n.x, n.y, nodeR, fillColor, '#ea580c', 2.5, tipHTML, tipBorder, weightsToHighlight, flowDir);
             addText(n.x, n.y - 9, n.label, { size: '16', bold: true, color: '#c2410c' });
             if (o !== undefined) {
                 addText(n.x, n.y + 11, fmtShort(o), { size: '13', mono: true, color: '#ea580c' });
             }
             addText(n.x + nodeR + 10, n.y - nodeR + 4, 'σ', { size: '14', color: '#fb923c', bold: true });
 
-            // Small hover hint
             if (highlightPhase === 'forward' || highlightPhase === 'backward') {
-                addText(n.x, n.y + nodeR + 14, '🔍 hover for math', { size: '9', color: '#94a3b8' });
+                addText(n.x, n.y + nodeR + 14, '🖇 hover for math', { size: '9', color: '#94a3b8' });
             }
         });
 
@@ -557,13 +685,12 @@ function initBackpropLab() {
                 addText(n.x, n.y + 9, fmt(value, 2), { size: '12', mono: true, color: '#16a34a' });
             }
 
-            // Dashed line from output to target
             const oNode = key === 't1' ? nodes.o1 : nodes.o2;
             addLine(oNode.x + nodeR, oNode.y, n.x - 24, n.y, '#94a3b8', 1.5, true);
         });
 
         // ============================================================
-        // LOSS BOX — also hoverable
+        // LOSS BOX — hoverable with detailed breakdown
         // ============================================================
         if (net.E_total !== undefined) {
             const lossX = colTarget;
@@ -574,19 +701,25 @@ function initBackpropLab() {
             addText(lossX, lossY - 14, 'E_total', { size: '13', bold: true, color: '#dc2626' });
             addText(lossX, lossY + 10, fmt(net.E_total, 6), { size: '14', bold: true, color: '#dc2626', mono: true });
 
-            // Hoverable loss box
             const lossHit = addRect(lossX - 70, lossY - 35, 140, 70, 'transparent', 'transparent', 8);
             lossHit.style.cursor = 'pointer';
+
             const lossTipHTML = `
                 <div style="color:#991b1b;">
-                <b style="font-size:13px;">Total Error</b><br>
-                $E_{\\text{total}} = \\underbrace{E_1}_{\\frac{1}{2}(t_1 - o_1)^2} + \\underbrace{E_2}_{\\frac{1}{2}(t_2 - o_2)^2}$<br>
-                $= \\underbrace{${fmtShort(net.E1)}}_{E_1} + \\underbrace{${fmtShort(net.E2)}}_{E_2} = ${fmt(net.E_total, 6)}$
+                <b style="font-size:13px;">Total Error (Loss)</b><br>
+                <b>Step 1:</b> Error from $o_1$:<br>
+                $E_1 = \\frac{1}{2}(t_1 - o_1)^2 = \\frac{1}{2}(${fmtShort(net.t1)} - ${fmt(net.o1,6)})^2$<br>
+                $= \\frac{1}{2} \\times ${fmt(Math.pow(net.t1 - net.o1, 2),6)} = ${fmt(net.E1, 6)}$<br>
+                <b>Step 2:</b> Error from $o_2$:<br>
+                $E_2 = \\frac{1}{2}(t_2 - o_2)^2 = \\frac{1}{2}(${fmtShort(net.t2)} - ${fmt(net.o2,6)})^2$<br>
+                $= \\frac{1}{2} \\times ${fmt(Math.pow(net.t2 - net.o2, 2),6)} = ${fmt(net.E2, 6)}$<br>
+                <b>Step 3:</b> Sum them:<br>
+                $E_{\\text{total}} = E_1 + E_2 = ${fmt(net.E1,6)} + ${fmt(net.E2,6)} = ${fmt(net.E_total, 6)}$
                 </div>`;
-            lossHit.addEventListener('mouseenter', function() {
+            lossHit.addEventListener('mouseenter', function () {
                 showTooltip(lossRect, lossTipHTML, '#dc2626');
             });
-            lossHit.addEventListener('mouseleave', function() {
+            lossHit.addEventListener('mouseleave', function () {
                 hideTooltip();
             });
         }
@@ -619,69 +752,135 @@ function initBackpropLab() {
     }
 
     // ============================================================
-    // MATH DISPLAY BUILDERS — with extensive \underbrace usage
+    // MATH DISPLAY BUILDERS — every single multiplication shown
     // ============================================================
     function buildForwardMath() {
         const { x1, x2, w, z_h1, h1, z_h2, h2, z_o1, o1, z_o2, o2, t1, t2, E1, E2, E_total } = net;
+
+        const prod_w1_x1 = w.w1 * x1;
+        const prod_w2_x2 = w.w2 * x2;
+        const prod_w3_x1 = w.w3 * x1;
+        const prod_w4_x2 = w.w4 * x2;
+        const prod_w5_h1 = w.w5 * h1;
+        const prod_w6_h2 = w.w6 * h2;
+        const prod_w7_h1 = w.w7 * h1;
+        const prod_w8_h2 = w.w8 * h2;
+
         return `
-<div class="md" style="font-size:1.0rem; line-height:2.0;">
+<div class="md" style="font-size:1.0rem; line-height:2.2;">
 <b style="color:#3b82f6; font-size:1.1rem;">━━━ FORWARD PASS ━━━</b>
 
-<b>Step 1: Hidden Neuron $h_1$</b>
-$$\\underbrace{z_{h_1}}_{\\text{pre-activation}} = \\underbrace{w_1 \\cdot x_1}_{${fmt(w.w1,4)} \\times ${fmt(x1,4)}} + \\underbrace{w_2 \\cdot x_2}_{${fmt(w.w2,4)} \\times ${fmt(x2,4)}} + \\underbrace{b_1}_{${fmt(w.b1,4)}} = ${fmt(z_h1,6)}$$
-$$\\underbrace{h_1}_{\\text{activated output}} = \\sigma(z_{h_1}) = \\frac{1}{1 + e^{-${fmt(z_h1,6)}}} = ${fmt(h1,6)}$$
+<b>Step 1: Hidden Neuron $h_1$ — weighted sum</b>
+Multiply each input by its weight:
+$$w_1 \\cdot x_1 = ${fmt(w.w1,4)} \\times ${fmt(x1,4)} = ${fmt(prod_w1_x1, 6)}$$
+$$w_2 \\cdot x_2 = ${fmt(w.w2,4)} \\times ${fmt(x2,4)} = ${fmt(prod_w2_x2, 6)}$$
+Sum them and add bias $b_1$:
+$$z_{h_1} = ${fmt(prod_w1_x1,6)} + ${fmt(prod_w2_x2,6)} + ${fmt(w.b1,4)} = ${fmt(z_h1,6)}$$
+Apply sigmoid activation:
+$$h_1 = \\sigma(${fmt(z_h1,6)}) = \\frac{1}{1 + e^{-${fmt(z_h1,6)}}} = \\frac{1}{1 + ${fmt(Math.exp(-z_h1),6)}} = \\frac{1}{${fmt(1 + Math.exp(-z_h1),6)}} = ${fmt(h1,6)}$$
 
-<b>Step 2: Hidden Neuron $h_2$</b>
-$$\\underbrace{z_{h_2}}_{\\text{pre-activation}} = \\underbrace{w_3 \\cdot x_1}_{${fmt(w.w3,4)} \\times ${fmt(x1,4)}} + \\underbrace{w_4 \\cdot x_2}_{${fmt(w.w4,4)} \\times ${fmt(x2,4)}} + \\underbrace{b_2}_{${fmt(w.b2,4)}} = ${fmt(z_h2,6)}$$
-$$h_2 = \\sigma(z_{h_2}) = \\frac{1}{1 + e^{-${fmt(z_h2,6)}}} = ${fmt(h2,6)}$$
+<b>Step 2: Hidden Neuron $h_2$ — weighted sum</b>
+$$w_3 \\cdot x_1 = ${fmt(w.w3,4)} \\times ${fmt(x1,4)} = ${fmt(prod_w3_x1, 6)}$$
+$$w_4 \\cdot x_2 = ${fmt(w.w4,4)} \\times ${fmt(x2,4)} = ${fmt(prod_w4_x2, 6)}$$
+$$z_{h_2} = ${fmt(prod_w3_x1,6)} + ${fmt(prod_w4_x2,6)} + ${fmt(w.b2,4)} = ${fmt(z_h2,6)}$$
+$$h_2 = \\sigma(${fmt(z_h2,6)}) = \\frac{1}{1 + ${fmt(Math.exp(-z_h2),6)}} = ${fmt(h2,6)}$$
 
-<b>Step 3: Output Neuron $o_1$</b>
-$$\\underbrace{z_{o_1}}_{\\text{pre-activation}} = \\underbrace{w_5 \\cdot h_1}_{${fmt(w.w5,4)} \\times ${fmt(h1,6)}} + \\underbrace{w_6 \\cdot h_2}_{${fmt(w.w6,4)} \\times ${fmt(h2,6)}} + \\underbrace{b_3}_{${fmt(w.b3,4)}} = ${fmt(z_o1,6)}$$
-$$o_1 = \\sigma(z_{o_1}) = ${fmt(o1,6)}$$
+<b>Step 3: Output Neuron $o_1$ — weighted sum of hidden outputs</b>
+$$w_5 \\cdot h_1 = ${fmt(w.w5,4)} \\times ${fmt(h1,6)} = ${fmt(prod_w5_h1, 6)}$$
+$$w_6 \\cdot h_2 = ${fmt(w.w6,4)} \\times ${fmt(h2,6)} = ${fmt(prod_w6_h2, 6)}$$
+$$z_{o_1} = ${fmt(prod_w5_h1,6)} + ${fmt(prod_w6_h2,6)} + ${fmt(w.b3,4)} = ${fmt(z_o1,6)}$$
+$$o_1 = \\sigma(${fmt(z_o1,6)}) = \\frac{1}{1 + ${fmt(Math.exp(-z_o1),6)}} = ${fmt(o1,6)}$$
 
-<b>Step 4: Output Neuron $o_2$</b>
-$$\\underbrace{z_{o_2}}_{\\text{pre-activation}} = \\underbrace{w_7 \\cdot h_1}_{${fmt(w.w7,4)} \\times ${fmt(h1,6)}} + \\underbrace{w_8 \\cdot h_2}_{${fmt(w.w8,4)} \\times ${fmt(h2,6)}} + \\underbrace{b_4}_{${fmt(w.b4,4)}} = ${fmt(z_o2,6)}$$
-$$o_2 = \\sigma(z_{o_2}) = ${fmt(o2,6)}$$
+<b>Step 4: Output Neuron $o_2$ — weighted sum of hidden outputs</b>
+$$w_7 \\cdot h_1 = ${fmt(w.w7,4)} \\times ${fmt(h1,6)} = ${fmt(prod_w7_h1, 6)}$$
+$$w_8 \\cdot h_2 = ${fmt(w.w8,4)} \\times ${fmt(h2,6)} = ${fmt(prod_w8_h2, 6)}$$
+$$z_{o_2} = ${fmt(prod_w7_h1,6)} + ${fmt(prod_w8_h2,6)} + ${fmt(w.b4,4)} = ${fmt(z_o2,6)}$$
+$$o_2 = \\sigma(${fmt(z_o2,6)}) = \\frac{1}{1 + ${fmt(Math.exp(-z_o2),6)}} = ${fmt(o2,6)}$$
 
-<b>Step 5: Total Error</b>
-$$E_1 = \\tfrac{1}{2}\\underbrace{(t_1 - o_1)^2}_{(${fmt(t1,4)} - ${fmt(o1,6)})^2} = ${fmt(E1,6)}$$
-$$E_2 = \\tfrac{1}{2}\\underbrace{(t_2 - o_2)^2}_{(${fmt(t2,4)} - ${fmt(o2,6)})^2} = ${fmt(E2,6)}$$
-$$\\boxed{E_{\\text{total}} = E_1 + E_2 = ${fmt(E_total,6)}}$$
+<b>Step 5: Compute the Error (Loss)</b>
+Error from $o_1$ (how far from target $t_1 = ${fmt(t1,4)}$):
+$$t_1 - o_1 = ${fmt(t1,4)} - ${fmt(o1,6)} = ${fmt(t1 - o1, 6)}$$
+$$(t_1 - o_1)^2 = (${fmt(t1 - o1,6)})^2 = ${fmt(Math.pow(t1 - o1, 2), 6)}$$
+$$E_1 = \\frac{1}{2} \\times ${fmt(Math.pow(t1 - o1, 2),6)} = ${fmt(E1,6)}$$
+
+Error from $o_2$ (how far from target $t_2 = ${fmt(t2,4)}$):
+$$t_2 - o_2 = ${fmt(t2,4)} - ${fmt(o2,6)} = ${fmt(t2 - o2, 6)}$$
+$$(t_2 - o_2)^2 = (${fmt(t2 - o2,6)})^2 = ${fmt(Math.pow(t2 - o2, 2), 6)}$$
+$$E_2 = \\frac{1}{2} \\times ${fmt(Math.pow(t2 - o2, 2),6)} = ${fmt(E2,6)}$$
+
+$$\\boxed{E_{\\text{total}} = E_1 + E_2 = ${fmt(E1,6)} + ${fmt(E2,6)} = ${fmt(E_total,6)}}$$
 </div>`;
     }
 
     function buildBackwardMath() {
         const { x1, x2, t1, t2, w, h1, h2, o1, o2 } = net;
         const g = gradients;
+
+        const lossDeriv_o1 = -(t1 - o1);
+        const lossDeriv_o2 = -(t2 - o2);
+        const sigDeriv_o1 = o1 * (1 - o1);
+        const sigDeriv_o2 = o2 * (1 - o2);
+        const sigDeriv_h1 = h1 * (1 - h1);
+        const sigDeriv_h2 = h2 * (1 - h2);
+
+        const blame_o1_to_h1 = g.delta_o1 * w.w5;
+        const blame_o2_to_h1 = g.delta_o2 * w.w7;
+        const blame_o1_to_h2 = g.delta_o1 * w.w6;
+        const blame_o2_to_h2 = g.delta_o2 * w.w8;
+
         return `
-<div class="md" style="font-size:1.0rem; line-height:2.0;">
-<b style="color:#ef4444; font-size:1.1rem;">━━━ BACKWARD PASS (Chain Rule Applied) ━━━</b>
+<div class="md" style="font-size:1.0rem; line-height:2.2;">
+<b style="color:#ef4444; font-size:1.1rem;">━━━ BACKWARD PASS (Chain Rule, Every Step) ━━━</b>
 
-<b>Step 1: Output Layer Deltas</b>
-$$\\delta_{o_1} = \\underbrace{-(t_1 - o_1)}_{\\text{loss derivative}} \\cdot \\underbrace{o_1(1 - o_1)}_{\\text{sigmoid derivative}} = -(${fmt(t1,4)} - ${fmt(o1,6)}) \\times ${fmt(o1,6)} \\times (1 - ${fmt(o1,6)}) = ${fmt(g.delta_o1,6)}$$
-$$\\delta_{o_2} = \\underbrace{-(t_2 - o_2)}_{\\text{loss derivative}} \\cdot \\underbrace{o_2(1 - o_2)}_{\\text{sigmoid derivative}} = -(${fmt(t2,4)} - ${fmt(o2,6)}) \\times ${fmt(o2,6)} \\times (1 - ${fmt(o2,6)}) = ${fmt(g.delta_o2,6)}$$
+<b>Step 1: $\\delta_{o_1}$ — Error signal at output neuron $o_1$</b>
+First, how wrong is $o_1$? (derivative of loss w.r.t. $o_1$):
+$$\\frac{\\partial E}{\\partial o_1} = -(t_1 - o_1) = -(${fmt(t1,4)} - ${fmt(o1,6)}) = ${fmt(lossDeriv_o1, 6)}$$
+Next, how steep is the sigmoid at $o_1$? (sigmoid derivative):
+$$\\sigma'(z_{o_1}) = o_1 \\cdot (1 - o_1) = ${fmt(o1,6)} \\times ${fmt(1-o1,6)} = ${fmt(sigDeriv_o1, 6)}$$
+Multiply them together:
+$$\\delta_{o_1} = ${fmt(lossDeriv_o1,6)} \\times ${fmt(sigDeriv_o1,6)} = ${fmt(g.delta_o1, 6)}$$
 
-<b>Step 2: Gradients for Output Weights</b>
-Each gradient = $\\underbrace{\\delta}_{\\text{error signal}} \\times \\underbrace{\\text{input}}_{\\text{to this weight}}$:
-$$\\frac{\\partial E}{\\partial w_5} = \\underbrace{\\delta_{o_1}}_{${fmt(g.delta_o1,4)}} \\cdot \\underbrace{h_1}_{${fmt(h1,4)}} = ${fmt(g.w5,6)}$$
-$$\\frac{\\partial E}{\\partial w_6} = \\underbrace{\\delta_{o_1}}_{${fmt(g.delta_o1,4)}} \\cdot \\underbrace{h_2}_{${fmt(h2,4)}} = ${fmt(g.w6,6)}$$
-$$\\frac{\\partial E}{\\partial w_7} = \\underbrace{\\delta_{o_2}}_{${fmt(g.delta_o2,4)}} \\cdot \\underbrace{h_1}_{${fmt(h1,4)}} = ${fmt(g.w7,6)}$$
-$$\\frac{\\partial E}{\\partial w_8} = \\underbrace{\\delta_{o_2}}_{${fmt(g.delta_o2,4)}} \\cdot \\underbrace{h_2}_{${fmt(h2,4)}} = ${fmt(g.w8,6)}$$
-$$\\frac{\\partial E}{\\partial b_3} = \\delta_{o_1} = ${fmt(g.b3,6)} \\qquad \\frac{\\partial E}{\\partial b_4} = \\delta_{o_2} = ${fmt(g.b4,6)}$$
+<b>Step 2: $\\delta_{o_2}$ — Error signal at output neuron $o_2$</b>
+$$\\frac{\\partial E}{\\partial o_2} = -(t_2 - o_2) = -(${fmt(t2,4)} - ${fmt(o2,6)}) = ${fmt(lossDeriv_o2, 6)}$$
+$$\\sigma'(z_{o_2}) = o_2 \\cdot (1 - o_2) = ${fmt(o2,6)} \\times ${fmt(1-o2,6)} = ${fmt(sigDeriv_o2, 6)}$$
+$$\\delta_{o_2} = ${fmt(lossDeriv_o2,6)} \\times ${fmt(sigDeriv_o2,6)} = ${fmt(g.delta_o2, 6)}$$
 
-<b>Step 3: Error Propagated to Hidden Layer</b>
-Each hidden neuron receives error from <em>both</em> outputs:
-$$\\frac{\\partial E}{\\partial h_1} = \\underbrace{\\delta_{o_1} \\cdot w_5}_{\\text{blame from } o_1} + \\underbrace{\\delta_{o_2} \\cdot w_7}_{\\text{blame from } o_2} = ${fmt(g.delta_o1,4)} \\times ${fmt(w.w5,4)} + ${fmt(g.delta_o2,4)} \\times ${fmt(w.w7,4)} = ${fmt(g.dE_dh1,6)}$$
-$$\\frac{\\partial E}{\\partial h_2} = \\underbrace{\\delta_{o_1} \\cdot w_6}_{\\text{blame from } o_1} + \\underbrace{\\delta_{o_2} \\cdot w_8}_{\\text{blame from } o_2} = ${fmt(g.delta_o1,4)} \\times ${fmt(w.w6,4)} + ${fmt(g.delta_o2,4)} \\times ${fmt(w.w8,4)} = ${fmt(g.dE_dh2,6)}$$
+<b>Step 3: Gradients for output-layer weights</b>
+Pattern: $\\frac{\\partial E}{\\partial w} = \\delta_{\\text{output}} \\times \\text{(input that flowed through this weight)}$
 
-<b>Step 4: Hidden Layer Deltas</b>
-$$\\delta_{h_1} = \\underbrace{\\frac{\\partial E}{\\partial h_1}}_{${fmt(g.dE_dh1,4)}} \\cdot \\underbrace{h_1(1 - h_1)}_{\\text{sigmoid deriv} = ${fmtShort(h1*(1-h1))}} = ${fmt(g.delta_h1,6)}$$
-$$\\delta_{h_2} = \\underbrace{\\frac{\\partial E}{\\partial h_2}}_{${fmt(g.dE_dh2,4)}} \\cdot \\underbrace{h_2(1 - h_2)}_{\\text{sigmoid deriv} = ${fmtShort(h2*(1-h2))}} = ${fmt(g.delta_h2,6)}$$
+$$\\frac{\\partial E}{\\partial w_5} = \\delta_{o_1} \\times h_1 = ${fmt(g.delta_o1,6)} \\times ${fmt(h1,6)} = ${fmt(g.w5,6)}$$
+$$\\frac{\\partial E}{\\partial w_6} = \\delta_{o_1} \\times h_2 = ${fmt(g.delta_o1,6)} \\times ${fmt(h2,6)} = ${fmt(g.w6,6)}$$
+$$\\frac{\\partial E}{\\partial w_7} = \\delta_{o_2} \\times h_1 = ${fmt(g.delta_o2,6)} \\times ${fmt(h1,6)} = ${fmt(g.w7,6)}$$
+$$\\frac{\\partial E}{\\partial w_8} = \\delta_{o_2} \\times h_2 = ${fmt(g.delta_o2,6)} \\times ${fmt(h2,6)} = ${fmt(g.w8,6)}$$
+$$\\frac{\\partial E}{\\partial b_3} = \\delta_{o_1} \\times 1 = ${fmt(g.b3,6)} \\qquad \\frac{\\partial E}{\\partial b_4} = \\delta_{o_2} \\times 1 = ${fmt(g.b4,6)}$$
 
-<b>Step 5: Gradients for Hidden Weights</b>
-$$\\frac{\\partial E}{\\partial w_1} = \\underbrace{\\delta_{h_1}}_{${fmt(g.delta_h1,4)}} \\cdot \\underbrace{x_1}_{${fmt(x1,2)}} = ${fmt(g.w1,6)} \\qquad \\frac{\\partial E}{\\partial w_2} = \\underbrace{\\delta_{h_1}}_{${fmt(g.delta_h1,4)}} \\cdot \\underbrace{x_2}_{${fmt(x2,2)}} = ${fmt(g.w2,6)}$$
-$$\\frac{\\partial E}{\\partial w_3} = \\underbrace{\\delta_{h_2}}_{${fmt(g.delta_h2,4)}} \\cdot \\underbrace{x_1}_{${fmt(x1,2)}} = ${fmt(g.w3,6)} \\qquad \\frac{\\partial E}{\\partial w_4} = \\underbrace{\\delta_{h_2}}_{${fmt(g.delta_h2,4)}} \\cdot \\underbrace{x_2}_{${fmt(x2,2)}} = ${fmt(g.w4,6)}$$
-$$\\frac{\\partial E}{\\partial b_1} = \\delta_{h_1} = ${fmt(g.b1,6)} \\qquad \\frac{\\partial E}{\\partial b_2} = \\delta_{h_2} = ${fmt(g.b2,6)}$$
+<b>Step 4: How much blame reaches hidden neuron $h_1$?</b>
+$h_1$ connects to both outputs, so it receives blame from both:
+$$\\text{Blame from } o_1: \\quad \\delta_{o_1} \\times w_5 = ${fmt(g.delta_o1,6)} \\times ${fmt(w.w5,4)} = ${fmt(blame_o1_to_h1, 6)}$$
+$$\\text{Blame from } o_2: \\quad \\delta_{o_2} \\times w_7 = ${fmt(g.delta_o2,6)} \\times ${fmt(w.w7,4)} = ${fmt(blame_o2_to_h1, 6)}$$
+$$\\frac{\\partial E}{\\partial h_1} = ${fmt(blame_o1_to_h1,6)} + ${fmt(blame_o2_to_h1,6)} = ${fmt(g.dE_dh1, 6)}$$
+
+<b>Step 5: $\\delta_{h_1}$ — multiply by sigmoid derivative at $h_1$</b>
+$$\\sigma'(z_{h_1}) = h_1(1 - h_1) = ${fmt(h1,6)} \\times ${fmt(1-h1,6)} = ${fmt(sigDeriv_h1, 6)}$$
+$$\\delta_{h_1} = ${fmt(g.dE_dh1,6)} \\times ${fmt(sigDeriv_h1,6)} = ${fmt(g.delta_h1, 6)}$$
+
+<b>Step 6: How much blame reaches hidden neuron $h_2$?</b>
+$$\\text{Blame from } o_1: \\quad \\delta_{o_1} \\times w_6 = ${fmt(g.delta_o1,6)} \\times ${fmt(w.w6,4)} = ${fmt(blame_o1_to_h2, 6)}$$
+$$\\text{Blame from } o_2: \\quad \\delta_{o_2} \\times w_8 = ${fmt(g.delta_o2,6)} \\times ${fmt(w.w8,4)} = ${fmt(blame_o2_to_h2, 6)}$$
+$$\\frac{\\partial E}{\\partial h_2} = ${fmt(blame_o1_to_h2,6)} + ${fmt(blame_o2_to_h2,6)} = ${fmt(g.dE_dh2, 6)}$$
+
+<b>Step 7: $\\delta_{h_2}$ — multiply by sigmoid derivative at $h_2$</b>
+$$\\sigma'(z_{h_2}) = h_2(1 - h_2) = ${fmt(h2,6)} \\times ${fmt(1-h2,6)} = ${fmt(sigDeriv_h2, 6)}$$
+$$\\delta_{h_2} = ${fmt(g.dE_dh2,6)} \\times ${fmt(sigDeriv_h2,6)} = ${fmt(g.delta_h2, 6)}$$
+
+<b>Step 8: Gradients for hidden-layer weights</b>
+Pattern: $\\frac{\\partial E}{\\partial w} = \\delta_{\\text{hidden}} \\times \\text{(input that flowed through this weight)}$
+
+$$\\frac{\\partial E}{\\partial w_1} = \\delta_{h_1} \\times x_1 = ${fmt(g.delta_h1,6)} \\times ${fmt(x1,4)} = ${fmt(g.w1,6)}$$
+$$\\frac{\\partial E}{\\partial w_2} = \\delta_{h_1} \\times x_2 = ${fmt(g.delta_h1,6)} \\times ${fmt(x2,4)} = ${fmt(g.w2,6)}$$
+$$\\frac{\\partial E}{\\partial w_3} = \\delta_{h_2} \\times x_1 = ${fmt(g.delta_h2,6)} \\times ${fmt(x1,4)} = ${fmt(g.w3,6)}$$
+$$\\frac{\\partial E}{\\partial w_4} = \\delta_{h_2} \\times x_2 = ${fmt(g.delta_h2,6)} \\times ${fmt(x2,4)} = ${fmt(g.w4,6)}$$
+$$\\frac{\\partial E}{\\partial b_1} = \\delta_{h_1} \\times 1 = ${fmt(g.b1,6)} \\qquad \\frac{\\partial E}{\\partial b_2} = \\delta_{h_2} \\times 1 = ${fmt(g.b2,6)}$$
 </div>`;
     }
 
@@ -691,16 +890,162 @@ $$\\frac{\\partial E}{\\partial b_1} = \\delta_{h_1} = ${fmt(g.b1,6)} \\qquad \\
         const keys = ['w1','w2','w3','w4','w5','w6','w7','w8','b1','b2','b3','b4'];
         let lines = keys.map(k => {
             const oldVal = net.w[k] !== undefined ? net.w[k] : 0;
-            return `$$${k}^{+} = \\underbrace{${fmtShort(oldVal)}}_{\\text{old } ${k}} - \\underbrace{${fmt(lr,2)}}_{\\eta} \\times \\underbrace{${fmt(gradients[k],6)}}_{\\partial E / \\partial ${k}} = ${fmtShort(w[k])}$$`;
+            const gradVal = gradients[k];
+            const newVal = w[k];
+            return `<b>${k}:</b>
+$$${k}^{+} = ${fmtShort(oldVal)} - ${fmt(lr,2)} \\times ${fmt(gradVal,6)} = ${fmtShort(oldVal)} - ${fmt(lr * gradVal, 6)} = ${fmtShort(newVal)}$$`;
         });
         return `
-<div class="md" style="font-size:1.0rem; line-height:2.0;">
+<div class="md" style="font-size:1.0rem; line-height:2.2;">
 <b style="color:#10b981; font-size:1.1rem;">━━━ WEIGHT UPDATE (Gradient Descent) ━━━</b>
 
-The update rule: $w^{+} = \\underbrace{w}_{\\text{old weight}} - \\underbrace{\\eta}_{\\text{learning rate}} \\cdot \\underbrace{\\frac{\\partial E}{\\partial w}}_{\\text{gradient}} \\qquad (\\eta = ${fmt(lr,2)})$
+The update rule: $w^{+} = w_{\\text{old}} - \\eta \\cdot \\frac{\\partial E}{\\partial w}$, where $\\eta = ${fmt(lr,2)}$ (learning rate).
+
+For each weight, we subtract the learning rate times the gradient. If the gradient is positive, the weight decreases. If the gradient is negative, the weight increases. This nudges every weight in the direction that reduces the error.
 
 ${lines.join('\n')}
 </div>`;
+    }
+
+    // ============================================================
+    // DETAILED WALKTHROUGH BUILDER — populates the collapsible panel
+    // ============================================================
+    function buildDetailedWalkthrough() {
+        if (!els.detailedContent) return;
+        if (!net.o1) {
+            els.detailedContent.innerHTML = '<span style="color:#94a3b8; font-style:italic;">Run a forward pass first, then expand this to see every single arithmetic step.</span>';
+            return;
+        }
+
+        const { x1, x2, t1, t2, w, z_h1, h1, z_h2, h2, z_o1, o1, z_o2, o2, E1, E2, E_total } = net;
+        const g = gradients;
+        const lr = val('lr');
+
+        let html = `
+<div style="line-height:2.4; font-size:0.95rem;">
+
+<h3 style="color:#3b82f6;">Part 1: Forward Pass — Every Single Multiplication</h3>
+
+<b>Hidden Neuron h₁:</b>
+<ol>
+<li>$w_1 \\times x_1 = ${fmt(w.w1,4)} \\times ${fmt(x1,4)} = ${fmt(w.w1*x1, 8)}$</li>
+<li>$w_2 \\times x_2 = ${fmt(w.w2,4)} \\times ${fmt(x2,4)} = ${fmt(w.w2*x2, 8)}$</li>
+<li>Sum: $${fmt(w.w1*x1,8)} + ${fmt(w.w2*x2,8)} = ${fmt(w.w1*x1 + w.w2*x2, 8)}$</li>
+<li>Add bias $b_1$: $${fmt(w.w1*x1 + w.w2*x2,8)} + ${fmt(w.b1,4)} = ${fmt(z_h1, 8)}$ ← this is $z_{h_1}$</li>
+<li>Compute $e^{-z_{h_1}} = e^{-${fmt(z_h1,8)}} = ${fmt(Math.exp(-z_h1), 8)}$</li>
+<li>Compute $1 + e^{-z_{h_1}} = 1 + ${fmt(Math.exp(-z_h1),8)} = ${fmt(1+Math.exp(-z_h1), 8)}$</li>
+<li>$h_1 = \\frac{1}{${fmt(1+Math.exp(-z_h1),8)}} = ${fmt(h1, 8)}$ ✓</li>
+</ol>
+
+<b>Hidden Neuron h₂:</b>
+<ol>
+<li>$w_3 \\times x_1 = ${fmt(w.w3,4)} \\times ${fmt(x1,4)} = ${fmt(w.w3*x1, 8)}$</li>
+<li>$w_4 \\times x_2 = ${fmt(w.w4,4)} \\times ${fmt(x2,4)} = ${fmt(w.w4*x2, 8)}$</li>
+<li>Sum: $${fmt(w.w3*x1,8)} + ${fmt(w.w4*x2,8)} = ${fmt(w.w3*x1 + w.w4*x2, 8)}$</li>
+<li>Add bias $b_2$: $${fmt(w.w3*x1 + w.w4*x2,8)} + ${fmt(w.b2,4)} = ${fmt(z_h2, 8)}$ ← this is $z_{h_2}$</li>
+<li>Compute $e^{-z_{h_2}} = e^{-${fmt(z_h2,8)}} = ${fmt(Math.exp(-z_h2), 8)}$</li>
+<li>Compute $1 + e^{-z_{h_2}} = ${fmt(1+Math.exp(-z_h2), 8)}$</li>
+<li>$h_2 = \\frac{1}{${fmt(1+Math.exp(-z_h2),8)}} = ${fmt(h2, 8)}$ ✓</li>
+</ol>
+
+<b>Output Neuron o₁:</b>
+<ol>
+<li>$w_5 \\times h_1 = ${fmt(w.w5,4)} \\times ${fmt(h1,8)} = ${fmt(w.w5*h1, 8)}$</li>
+<li>$w_6 \\times h_2 = ${fmt(w.w6,4)} \\times ${fmt(h2,8)} = ${fmt(w.w6*h2, 8)}$</li>
+<li>Sum: $${fmt(w.w5*h1,8)} + ${fmt(w.w6*h2,8)} = ${fmt(w.w5*h1 + w.w6*h2, 8)}$</li>
+<li>Add bias $b_3$: $${fmt(w.w5*h1 + w.w6*h2,8)} + ${fmt(w.b3,4)} = ${fmt(z_o1, 8)}$ ← this is $z_{o_1}$</li>
+<li>$e^{-z_{o_1}} = ${fmt(Math.exp(-z_o1), 8)}$</li>
+<li>$o_1 = \\frac{1}{1 + ${fmt(Math.exp(-z_o1),8)}} = \\frac{1}{${fmt(1+Math.exp(-z_o1),8)}} = ${fmt(o1, 8)}$ ✓</li>
+</ol>
+
+<b>Output Neuron o₂:</b>
+<ol>
+<li>$w_7 \\times h_1 = ${fmt(w.w7,4)} \\times ${fmt(h1,8)} = ${fmt(w.w7*h1, 8)}$</li>
+<li>$w_8 \\times h_2 = ${fmt(w.w8,4)} \\times ${fmt(h2,8)} = ${fmt(w.w8*h2, 8)}$</li>
+<li>Sum: $${fmt(w.w7*h1,8)} + ${fmt(w.w8*h2,8)} = ${fmt(w.w7*h1 + w.w8*h2, 8)}$</li>
+<li>Add bias $b_4$: $${fmt(w.w7*h1 + w.w8*h2,8)} + ${fmt(w.b4,4)} = ${fmt(z_o2, 8)}$ ← this is $z_{o_2}$</li>
+<li>$e^{-z_{o_2}} = ${fmt(Math.exp(-z_o2), 8)}$</li>
+<li>$o_2 = \\frac{1}{1 + ${fmt(Math.exp(-z_o2),8)}} = ${fmt(o2, 8)}$ ✓</li>
+</ol>
+
+<b>Loss Calculation:</b>
+<ol>
+<li>$t_1 - o_1 = ${fmt(t1,4)} - ${fmt(o1,8)} = ${fmt(t1-o1, 8)}$</li>
+<li>$(t_1 - o_1)^2 = (${fmt(t1-o1,8)})^2 = ${fmt(Math.pow(t1-o1,2), 8)}$</li>
+<li>$E_1 = \\frac{1}{2} \\times ${fmt(Math.pow(t1-o1,2),8)} = ${fmt(E1, 8)}$</li>
+<li>$t_2 - o_2 = ${fmt(t2,4)} - ${fmt(o2,8)} = ${fmt(t2-o2, 8)}$</li>
+<li>$(t_2 - o_2)^2 = (${fmt(t2-o2,8)})^2 = ${fmt(Math.pow(t2-o2,2), 8)}$</li>
+<li>$E_2 = \\frac{1}{2} \\times ${fmt(Math.pow(t2-o2,2),8)} = ${fmt(E2, 8)}$</li>
+<li>$E_{\\text{total}} = ${fmt(E1,8)} + ${fmt(E2,8)} = ${fmt(E_total, 8)}$</li>
+</ol>`;
+
+        if (g.delta_o1 !== undefined) {
+            const lossDeriv_o1 = -(t1 - o1);
+            const lossDeriv_o2 = -(t2 - o2);
+            const sigDeriv_o1 = o1 * (1 - o1);
+            const sigDeriv_o2 = o2 * (1 - o2);
+            const sigDeriv_h1 = h1 * (1 - h1);
+            const sigDeriv_h2 = h2 * (1 - h2);
+
+            html += `
+<h3 style="color:#ef4444;">Part 2: Backward Pass — Every Single Multiplication</h3>
+
+<b>δ at output neuron o₁:</b>
+<ol>
+<li>Loss derivative: $-(t_1 - o_1) = -(${fmt(t1,4)} - ${fmt(o1,8)}) = -( ${fmt(t1-o1,8)}) = ${fmt(lossDeriv_o1, 8)}$</li>
+<li>Sigmoid derivative: $o_1 \\times (1 - o_1) = ${fmt(o1,8)} \\times ${fmt(1-o1,8)} = ${fmt(sigDeriv_o1, 8)}$</li>
+<li>$\\delta_{o_1} = ${fmt(lossDeriv_o1,8)} \\times ${fmt(sigDeriv_o1,8)} = ${fmt(g.delta_o1, 8)}$</li>
+</ol>
+
+<b>δ at output neuron o₂:</b>
+<ol>
+<li>Loss derivative: $-(t_2 - o_2) = -(${fmt(t2,4)} - ${fmt(o2,8)}) = ${fmt(lossDeriv_o2, 8)}$</li>
+<li>Sigmoid derivative: $o_2 \\times (1 - o_2) = ${fmt(o2,8)} \\times ${fmt(1-o2,8)} = ${fmt(sigDeriv_o2, 8)}$</li>
+<li>$\\delta_{o_2} = ${fmt(lossDeriv_o2,8)} \\times ${fmt(sigDeriv_o2,8)} = ${fmt(g.delta_o2, 8)}$</li>
+</ol>
+
+<b>Gradients for output-layer weights:</b>
+<ol>
+<li>$\\frac{\\partial E}{\\partial w_5} = \\delta_{o_1} \\times h_1 = ${fmt(g.delta_o1,8)} \\times ${fmt(h1,8)} = ${fmt(g.w5, 8)}$</li>
+<li>$\\frac{\\partial E}{\\partial w_6} = \\delta_{o_1} \\times h_2 = ${fmt(g.delta_o1,8)} \\times ${fmt(h2,8)} = ${fmt(g.w6, 8)}$</li>
+<li>$\\frac{\\partial E}{\\partial w_7} = \\delta_{o_2} \\times h_1 = ${fmt(g.delta_o2,8)} \\times ${fmt(h1,8)} = ${fmt(g.w7, 8)}$</li>
+<li>$\\frac{\\partial E}{\\partial w_8} = \\delta_{o_2} \\times h_2 = ${fmt(g.delta_o2,8)} \\times ${fmt(h2,8)} = ${fmt(g.w8, 8)}$</li>
+<li>$\\frac{\\partial E}{\\partial b_3} = \\delta_{o_1} \\times 1 = ${fmt(g.b3, 8)}$</li>
+<li>$\\frac{\\partial E}{\\partial b_4} = \\delta_{o_2} \\times 1 = ${fmt(g.b4, 8)}$</li>
+</ol>
+
+<b>Blame arriving at h₁ (from both outputs):</b>
+<ol>
+<li>From o₁: $\\delta_{o_1} \\times w_5 = ${fmt(g.delta_o1,8)} \\times ${fmt(w.w5,4)} = ${fmt(g.delta_o1*w.w5, 8)}$</li>
+<li>From o₂: $\\delta_{o_2} \\times w_7 = ${fmt(g.delta_o2,8)} \\times ${fmt(w.w7,4)} = ${fmt(g.delta_o2*w.w7, 8)}$</li>
+<li>Total: $\\frac{\\partial E}{\\partial h_1} = ${fmt(g.delta_o1*w.w5,8)} + ${fmt(g.delta_o2*w.w7,8)} = ${fmt(g.dE_dh1, 8)}$</li>
+<li>Sigmoid derivative at h₁: $h_1(1-h_1) = ${fmt(h1,8)} \\times ${fmt(1-h1,8)} = ${fmt(sigDeriv_h1, 8)}$</li>
+<li>$\\delta_{h_1} = ${fmt(g.dE_dh1,8)} \\times ${fmt(sigDeriv_h1,8)} = ${fmt(g.delta_h1, 8)}$</li>
+</ol>
+
+<b>Blame arriving at h₂ (from both outputs):</b>
+<ol>
+<li>From o₁: $\\delta_{o_1} \\times w_6 = ${fmt(g.delta_o1,8)} \\times ${fmt(w.w6,4)} = ${fmt(g.delta_o1*w.w6, 8)}$</li>
+<li>From o₂: $\\delta_{o_2} \\times w_8 = ${fmt(g.delta_o2,8)} \\times ${fmt(w.w8,4)} = ${fmt(g.delta_o2*w.w8, 8)}$</li>
+<li>Total: $\\frac{\\partial E}{\\partial h_2} = ${fmt(g.delta_o1*w.w6,8)} + ${fmt(g.delta_o2*w.w8,8)} = ${fmt(g.dE_dh2, 8)}$</li>
+<li>Sigmoid derivative at h₂: $h_2(1-h_2) = ${fmt(h2,8)} \\times ${fmt(1-h2,8)} = ${fmt(sigDeriv_h2, 8)}$</li>
+<li>$\\delta_{h_2} = ${fmt(g.dE_dh2,8)} \\times ${fmt(sigDeriv_h2,8)} = ${fmt(g.delta_h2, 8)}$</li>
+</ol>
+
+<b>Gradients for hidden-layer weights:</b>
+<ol>
+<li>$\\frac{\\partial E}{\\partial w_1} = \\delta_{h_1} \\times x_1 = ${fmt(g.delta_h1,8)} \\times ${fmt(x1,4)} = ${fmt(g.w1, 8)}$</li>
+<li>$\\frac{\\partial E}{\\partial w_2} = \\delta_{h_1} \\times x_2 = ${fmt(g.delta_h1,8)} \\times ${fmt(x2,4)} = ${fmt(g.w2, 8)}$</li>
+<li>$\\frac{\\partial E}{\\partial w_3} = \\delta_{h_2} \\times x_1 = ${fmt(g.delta_h2,8)} \\times ${fmt(x1,4)} = ${fmt(g.w3, 8)}$</li>
+<li>$\\frac{\\partial E}{\\partial w_4} = \\delta_{h_2} \\times x_2 = ${fmt(g.delta_h2,8)} \\times ${fmt(x2,4)} = ${fmt(g.w4, 8)}$</li>
+<li>$\\frac{\\partial E}{\\partial b_1} = \\delta_{h_1} \\times 1 = ${fmt(g.b1, 8)}$</li>
+<li>$\\frac{\\partial E}{\\partial b_2} = \\delta_{h_2} \\times 1 = ${fmt(g.b2, 8)}$</li>
+</ol>`;
+        }
+
+        html += `</div>`;
+        els.detailedContent.innerHTML = html;
+        if (typeof render_temml === 'function') render_temml();
     }
 
     // ============================================================
@@ -749,6 +1094,7 @@ ${lines.join('\n')}
         if (typeof render_temml === 'function') render_temml();
         drawLossChart();
         clearGradients();
+        buildDetailedWalkthrough();
         phase = 'forward-done';
         els.btnBackward.disabled = false;
         els.btnUpdate.disabled = true;
@@ -760,6 +1106,7 @@ ${lines.join('\n')}
         displayGradients();
         els.mathDisplay.innerHTML = buildBackwardMath();
         if (typeof render_temml === 'function') render_temml();
+        buildDetailedWalkthrough();
         phase = 'backward-done';
         els.btnUpdate.disabled = false;
     });
@@ -795,14 +1142,15 @@ ${lines.join('\n')}
 
 After ${epoch} total epochs of gradient descent:
 $$\\boxed{E_{\\text{total}} = ${fmt(net.E_total, 6)}}$$
-$$o_1 = ${fmt(net.o1, 6)} \\quad (\\underbrace{\\text{target: } ${fmt(net.t1, 4)}}_{t_1})$$
-$$o_2 = ${fmt(net.o2, 6)} \\quad (\\underbrace{\\text{target: } ${fmt(net.t2, 4)}}_{t_2})$$
+$$o_1 = ${fmt(net.o1, 6)} \\quad (\\text{target: } t_1 = ${fmt(net.t1, 4)})$$
+$$o_2 = ${fmt(net.o2, 6)} \\quad (\\text{target: } t_2 = ${fmt(net.t2, 4)})$$
 
 The network has learned to map the inputs closer to the targets!
 Click "Forward Pass" to see the current state, or "Auto-Train" again for another 100 epochs.
 </div>`;
                 if (typeof render_temml === 'function') render_temml();
                 drawLossChart();
+                buildDetailedWalkthrough();
                 phase = 'idle';
                 els.btnBackward.disabled = true;
                 els.btnUpdate.disabled = true;
@@ -830,7 +1178,11 @@ Click "Forward Pass" to see the current state, or "Auto-Train" again for another
         clearGradients();
         drawNetwork(null);
         hideTooltip();
+        clearHighlightWeights();
         els.mathDisplay.innerHTML = '<span style="color:#94a3b8; font-style:italic;">Click "Forward Pass" to begin. Every computation will be shown here step by step.</span>';
+        if (els.detailedContent) {
+            els.detailedContent.innerHTML = '<span style="color:#94a3b8; font-style:italic;">Run a forward pass first, then expand this to see every single arithmetic step written out so you can verify with a calculator.</span>';
+        }
         drawLossChart();
         els.btnBackward.disabled = true;
         els.btnUpdate.disabled = true;
