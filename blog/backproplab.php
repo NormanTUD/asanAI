@@ -129,7 +129,7 @@ You can edit any weight, bias, input, target, or learning rate and re-run the pr
     </div>
 
     <!-- Network Visualization -->
-    <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
+    <div style="gap: 20px; flex-wrap: wrap; align-items: flex-start;">
         <!-- SVG Network Diagram -->
         <div style="flex: 2; min-width: 450px;">
             <b>Network Diagram</b>

@@ -1,7 +1,7 @@
 // ============================================================
 // BACKPROPLAB.JS — Interactive Backpropagation Visualizer
-// Step-by-step forward pass, backward pass, and weight update
-// with full math display and animated network diagram.
+// Full rewrite with larger diagram, per-neuron math annotations,
+// and weights displayed below in a side-by-side layout.
 // ============================================================
 
 function initBackpropLab() {
@@ -70,6 +70,10 @@ function initBackpropLab() {
         return v.toFixed(d);
     }
 
+    function fmtShort(v) {
+        return v.toFixed(4);
+    }
+
     function readWeights() {
         return {
             w1: val('w1'), w2: val('w2'), w3: val('w3'), w4: val('w4'),
@@ -79,18 +83,18 @@ function initBackpropLab() {
     }
 
     function writeWeights(w) {
-        els.w1.value = fmt(w.w1, 4);
-        els.w2.value = fmt(w.w2, 4);
-        els.w3.value = fmt(w.w3, 4);
-        els.w4.value = fmt(w.w4, 4);
-        els.w5.value = fmt(w.w5, 4);
-        els.w6.value = fmt(w.w6, 4);
-        els.w7.value = fmt(w.w7, 4);
-        els.w8.value = fmt(w.w8, 4);
-        els.b1.value = fmt(w.b1, 4);
-        els.b2.value = fmt(w.b2, 4);
-        els.b3.value = fmt(w.b3, 4);
-        els.b4.value = fmt(w.b4, 4);
+        els.w1.value = fmtShort(w.w1);
+        els.w2.value = fmtShort(w.w2);
+        els.w3.value = fmtShort(w.w3);
+        els.w4.value = fmtShort(w.w4);
+        els.w5.value = fmtShort(w.w5);
+        els.w6.value = fmtShort(w.w6);
+        els.w7.value = fmtShort(w.w7);
+        els.w8.value = fmtShort(w.w8);
+        els.b1.value = fmtShort(w.b1);
+        els.b2.value = fmtShort(w.b2);
+        els.b3.value = fmtShort(w.b3);
+        els.b4.value = fmtShort(w.b4);
     }
 
     // --- Forward Pass ---
@@ -99,19 +103,16 @@ function initBackpropLab() {
         const t1 = val('t1'), t2 = val('t2');
         const w = readWeights();
 
-        // Hidden layer
         const z_h1 = w.w1 * x1 + w.w2 * x2 + w.b1;
         const h1 = sigmoid(z_h1);
         const z_h2 = w.w3 * x1 + w.w4 * x2 + w.b2;
         const h2 = sigmoid(z_h2);
 
-        // Output layer
         const z_o1 = w.w5 * h1 + w.w6 * h2 + w.b3;
         const o1 = sigmoid(z_o1);
         const z_o2 = w.w7 * h1 + w.w8 * h2 + w.b4;
         const o2 = sigmoid(z_o2);
 
-        // Loss
         const E1 = 0.5 * Math.pow(t1 - o1, 2);
         const E2 = 0.5 * Math.pow(t2 - o2, 2);
         const E_total = E1 + E2;
@@ -124,13 +125,9 @@ function initBackpropLab() {
     function backwardPass() {
         const { x1, x2, t1, t2, w, h1, h2, o1, o2 } = net;
 
-        // Output layer deltas
-        // dE/do1 = -(t1 - o1), dE/do2 = -(t2 - o2)
-        // do/dz = o*(1-o)
         const delta_o1 = -(t1 - o1) * o1 * (1 - o1);
         const delta_o2 = -(t2 - o2) * o2 * (1 - o2);
 
-        // Gradients for output weights
         const dE_dw5 = delta_o1 * h1;
         const dE_dw6 = delta_o1 * h2;
         const dE_dw7 = delta_o2 * h1;
@@ -138,14 +135,12 @@ function initBackpropLab() {
         const dE_db3 = delta_o1;
         const dE_db4 = delta_o2;
 
-        // Hidden layer deltas (error flows back through both outputs)
         const dE_dh1 = delta_o1 * w.w5 + delta_o2 * w.w7;
         const delta_h1 = dE_dh1 * h1 * (1 - h1);
 
         const dE_dh2 = delta_o1 * w.w6 + delta_o2 * w.w8;
         const delta_h2 = dE_dh2 * h2 * (1 - h2);
 
-        // Gradients for hidden weights
         const dE_dw1 = delta_h1 * x1;
         const dE_dw2 = delta_h1 * x2;
         const dE_dw3 = delta_h2 * x1;
@@ -197,40 +192,14 @@ function initBackpropLab() {
         });
     }
 
-    // --- SVG Network Drawing ---
+    // ============================================================
+    // SVG NETWORK DRAWING — Large, with per-neuron annotations
+    // ============================================================
     function drawNetwork(highlightPhase) {
         const svg = els.svg;
         svg.innerHTML = '';
 
-        // Node positions
-        const layers = {
-            input:  [{x:80,  y:120, label:'x₁'}, {x:80,  y:260, label:'x₂'}],
-            hidden: [{x:300, y:100, label:'h₁'}, {x:300, y:280, label:'h₂'}],
-            output: [{x:520, y:100, label:'o₁'}, {x:520, y:280, label:'o₂'}],
-            target: [{x:640, y:100, label:'t₁'}, {x:640, y:280, label:'t₂'}],
-            bias1:  [{x:300, y:20,  label:'b₁'}, {x:300, y:360, label:'b₂'}],
-            bias2:  [{x:520, y:20,  label:'b₃'}, {x:520, y:360, label:'b₄'}]
-        };
-
-        // Connection definitions: [from, to, weight_key, gradient_key]
-        const connections = [
-            [layers.input[0], layers.hidden[0], 'w1'],
-            [layers.input[1], layers.hidden[0], 'w2'],
-            [layers.input[0], layers.hidden[1], 'w3'],
-            [layers.input[1], layers.hidden[1], 'w4'],
-            [layers.hidden[0], layers.output[0], 'w5'],
-            [layers.hidden[1], layers.output[0], 'w6'],
-            [layers.hidden[0], layers.output[1], 'w7'],
-            [layers.hidden[1], layers.output[1], 'w8'],
-        ];
-
-        const biasConnections = [
-            [layers.bias1[0], layers.hidden[0], 'b1'],
-            [layers.bias1[1], layers.hidden[1], 'b2'],
-            [layers.bias2[0], layers.output[0], 'b3'],
-            [layers.bias2[1], layers.output[1], 'b4'],
-        ];
-
+        // --- SVG Helpers ---
         function makeSVG(tag, attrs) {
             const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
             for (const [k, v] of Object.entries(attrs)) {
@@ -239,191 +208,349 @@ function initBackpropLab() {
             return el;
         }
 
+        function addEl(tag, attrs) {
+            const el = makeSVG(tag, attrs);
+            svg.appendChild(el);
+            return el;
+        }
+
         function addText(x, y, text, opts = {}) {
             const t = makeSVG('text', {
                 x, y,
-                'font-size': opts.size || '11',
-                'font-family': 'monospace',
+                'font-size': opts.size || '12',
+                'font-family': opts.mono ? 'monospace' : 'system-ui, sans-serif',
                 'text-anchor': opts.anchor || 'middle',
-                'dominant-baseline': 'central',
+                'dominant-baseline': opts.baseline || 'central',
                 fill: opts.color || '#1e293b',
-                'font-weight': opts.bold ? 'bold' : 'normal'
+                'font-weight': opts.bold ? 'bold' : 'normal',
+                'opacity': opts.opacity || '1'
             });
             t.textContent = text;
             svg.appendChild(t);
+            return t;
         }
 
         function addLine(x1, y1, x2, y2, color, width, dashed) {
             const attrs = { x1, y1, x2, y2, stroke: color, 'stroke-width': width || 1.5 };
             if (dashed) attrs['stroke-dasharray'] = '5,3';
-            svg.appendChild(makeSVG('line', attrs));
+            addEl('line', attrs);
         }
 
-        function addCircle(cx, cy, r, fill, strokeColor) {
-            svg.appendChild(makeSVG('circle', {
+        function addCircle(cx, cy, r, fill, strokeColor, strokeWidth) {
+            addEl('circle', {
                 cx, cy, r,
                 fill: fill || '#fff',
                 stroke: strokeColor || '#1e293b',
-                'stroke-width': 2
-            }));
+                'stroke-width': strokeWidth || 2
+            });
         }
 
-        function addRect(x, y, w, h, fill) {
-            svg.appendChild(makeSVG('rect', {
+        function addRect(x, y, w, h, fill, stroke, rx) {
+            addEl('rect', {
                 x, y, width: w, height: h,
                 fill: fill || '#f1f5f9',
-                rx: 4,
-                stroke: '#cbd5e1',
+                rx: rx || 6,
+                stroke: stroke || '#cbd5e1',
                 'stroke-width': 1
-            }));
+            });
         }
 
-        // Draw animated pulse along a line
-        function addPulse(x1, y1, x2, y2, color, delay) {
-            const circle = makeSVG('circle', {
-                cx: x1, cy: y1, r: 4,
-                fill: color, opacity: 0.9
-            });
-            svg.appendChild(circle);
+        // Annotation box: a rounded rect with multiline text
+        function addAnnotationBox(cx, cy, lines, bgColor, borderColor, textColor, maxWidth) {
+            const lineHeight = 14;
+            const padding = 8;
+            const boxH = lines.length * lineHeight + padding * 2;
+            const boxW = maxWidth || 170;
+            const bx = cx - boxW / 2;
+            const by = cy - boxH / 2;
 
-            const anim = makeSVG('animateMotion', {
-                dur: '0.8s',
-                begin: delay + 's',
-                fill: 'freeze',
-                repeatCount: '1'
+            addEl('rect', {
+                x: bx, y: by, width: boxW, height: boxH,
+                fill: bgColor || '#fffbeb',
+                rx: 5,
+                stroke: borderColor || '#f59e0b',
+                'stroke-width': 1,
+                opacity: 0.95
             });
-            const path = makeSVG('path', {
-                d: `M${x1},${y1} L${x2},${y2}`
-            });
-            // animateMotion uses a path child
-            anim.innerHTML = `<mpath href=""/>`;
-            // Simpler: use values
-            circle.innerHTML = `<animateMotion dur="0.8s" begin="${delay}s" fill="freeze" path="M0,0 L${x2 - x1},${y2 - y1}" />`;
 
-            return circle;
+            lines.forEach((line, i) => {
+                addText(cx, by + padding + i * lineHeight + lineHeight / 2, line, {
+                    size: '9.5', mono: true, color: textColor || '#92400e'
+                });
+            });
         }
 
-        // --- Layer labels ---
-        addText(80, 30, 'INPUT', { size: '12', bold: true, color: '#64748b' });
-        addText(300, 30, 'HIDDEN', { size: '12', bold: true, color: '#64748b' });
-        addText(520, 30, 'OUTPUT', { size: '12', bold: true, color: '#64748b' });
-        addText(640, 30, 'TARGET', { size: '12', bold: true, color: '#64748b' });
+        // Arrow head
+        function addArrowHead(x, y, direction, color) {
+            const size = 6;
+            let points;
+            if (direction === 'right') {
+                points = `${x},${y - size / 2} ${x + size},${y} ${x},${y + size / 2}`;
+            } else {
+                points = `${x},${y - size / 2} ${x - size},${y} ${x},${y + size / 2}`;
+            }
+            addEl('polygon', { points, fill: color, stroke: 'none' });
+        }
 
-        // --- Draw connections ---
-        const getColor = (key) => {
+        // ============================================================
+        // LAYOUT — Generous spacing for annotations
+        // ============================================================
+        const nodeR = 26;
+        // Column X positions
+        const colInput = 90;
+        const colHidden = 330;
+        const colOutput = 570;
+        const colTarget = 720;
+        // Row Y positions
+        const row1 = 160;
+        const row2 = 380;
+        // Annotation Y offsets
+        const annoOffsetForward = 70;   // below node for forward
+        const annoOffsetBackward = -75;  // above node for backward
+
+        const nodes = {
+            x1: { x: colInput, y: row1, label: 'x₁' },
+            x2: { x: colInput, y: row2, label: 'x₂' },
+            h1: { x: colHidden, y: row1, label: 'h₁' },
+            h2: { x: colHidden, y: row2, label: 'h₂' },
+            o1: { x: colOutput, y: row1, label: 'o₁' },
+            o2: { x: colOutput, y: row2, label: 'o₂' },
+            t1: { x: colTarget, y: row1, label: 't₁' },
+            t2: { x: colTarget, y: row2, label: 't₂' }
+        };
+
+        // ============================================================
+        // BACKGROUND LAYER LABELS
+        // ============================================================
+        // Layer background bands
+        addEl('rect', { x: colInput - 50, y: 50, width: 100, height: 440, fill: '#eff6ff', rx: 10, opacity: 0.5 });
+        addEl('rect', { x: colHidden - 60, y: 50, width: 120, height: 440, fill: '#f5f3ff', rx: 10, opacity: 0.5 });
+        addEl('rect', { x: colOutput - 60, y: 50, width: 120, height: 440, fill: '#fff7ed', rx: 10, opacity: 0.5 });
+
+        addText(colInput, 70, 'INPUT LAYER', { size: '11', bold: true, color: '#3b82f6' });
+        addText(colHidden, 70, 'HIDDEN LAYER', { size: '11', bold: true, color: '#7c3aed' });
+        addText(colOutput, 70, 'OUTPUT LAYER', { size: '11', bold: true, color: '#ea580c' });
+        addText(colTarget, 70, 'TARGETS', { size: '11', bold: true, color: '#16a34a' });
+
+        // ============================================================
+        // CONNECTIONS
+        // ============================================================
+        const connections = [
+            [nodes.x1, nodes.h1, 'w1'],
+            [nodes.x2, nodes.h1, 'w2'],
+            [nodes.x1, nodes.h2, 'w3'],
+            [nodes.x2, nodes.h2, 'w4'],
+            [nodes.h1, nodes.o1, 'w5'],
+            [nodes.h2, nodes.o1, 'w6'],
+            [nodes.h1, nodes.o2, 'w7'],
+            [nodes.h2, nodes.o2, 'w8'],
+        ];
+
+        const getLineColor = (key) => {
             if (highlightPhase === 'backward' && gradients[key] !== undefined) {
-                return Math.abs(gradients[key]) > 0.01 ? '#ef4444' : '#fca5a5';
+                return Math.abs(gradients[key]) > 0.005 ? '#ef4444' : '#fca5a5';
             }
             if (highlightPhase === 'forward') return '#3b82f6';
             if (highlightPhase === 'updated') return '#10b981';
-            return '#94a3b8';
+            return '#cbd5e1';
         };
 
-        const getWidth = (key) => {
+        const getLineWidth = (key) => {
             if (highlightPhase === 'backward' && gradients[key] !== undefined) {
-                return Math.min(4, 1 + Math.abs(gradients[key]) * 15);
+                return Math.min(5, 1.5 + Math.abs(gradients[key]) * 20);
             }
+            if (highlightPhase === 'forward') return 2;
             return 1.5;
         };
 
-        // Weight connections
         connections.forEach(([from, to, key]) => {
-            addLine(from.x + 20, from.y, to.x - 20, to.y, getColor(key), getWidth(key));
-            // Weight label
-            const mx = (from.x + to.x) / 2;
-            const my = (from.y + to.y) / 2 - 8;
+            const x1 = from.x + nodeR;
+            const y1 = from.y;
+            const x2 = to.x - nodeR;
+            const y2 = to.y;
+            addLine(x1, y1, x2, y2, getLineColor(key), getLineWidth(key));
+
+            // Weight label on connection
+            const mx = (x1 + x2) / 2;
+            const my = (y1 + y2) / 2;
             const w = readWeights();
-            addText(mx, my, `${key}=${fmt(w[key], 2)}`, { size: '8', color: '#64748b' });
+
+            // Offset label to avoid overlap
+            const dy = (y2 - y1);
+            const labelOffY = dy > 50 ? -10 : (dy < -50 ? 10 : -10);
+
+            addText(mx, my + labelOffY, `${key}=${fmtShort(w[key])}`, {
+                size: '8.5', mono: true, color: '#64748b'
+            });
+
+            // Show gradient on connection during backward
             if (highlightPhase === 'backward' && gradients[key] !== undefined) {
-                addText(mx, my + 14, `∂E=${fmt(gradients[key], 4)}`, { size: '7', color: '#ef4444' });
+                addText(mx, my + labelOffY + 12, `∂E/∂${key}=${fmtShort(gradients[key])}`, {
+                    size: '7.5', mono: true, color: '#dc2626', bold: true
+                });
             }
         });
 
-        // Bias connections (dashed)
-        biasConnections.forEach(([from, to, key]) => {
-            addLine(from.x, from.y, to.x, to.y - 20, getColor(key), 1, true);
-        });
+        // ============================================================
+        // NODES
+        // ============================================================
 
-        // --- Draw nodes ---
-        // Input nodes
-        layers.input.forEach((n, i) => {
-            addCircle(n.x, n.y, 20, '#dbeafe', '#3b82f6');
-            addText(n.x, n.y - 6, n.label, { size: '10', bold: true });
-            const v = i === 0 ? net.x1 : net.x2;
-            if (v !== undefined) addText(n.x, n.y + 8, fmt(v, 2), { size: '8', color: '#3b82f6' });
-        });
-
-        // Hidden nodes
-        layers.hidden.forEach((n, i) => {
-            const fill = highlightPhase === 'backward' ? '#fef2f2' : (highlightPhase ? '#dbeafe' : '#f1f5f9');
-            addCircle(n.x, n.y, 22, fill, '#6366f1');
-            addText(n.x, n.y - 8, n.label, { size: '10', bold: true });
-            const h = i === 0 ? net.h1 : net.h2;
-            if (h !== undefined) addText(n.x, n.y + 6, fmt(h, 4), { size: '7', color: '#6366f1' });
-            // Show z value
-            const z = i === 0 ? net.z_h1 : net.z_h2;
-            if (z !== undefined) addText(n.x, n.y + 38, `z=${fmt(z, 4)}`, { size: '7', color: '#94a3b8' });
-            // Show sigma label
-            addText(n.x, n.y - 20, 'σ', { size: '9', color: '#a78bfa' });
-        });
-
-        // Output nodes
-        layers.output.forEach((n, i) => {
-            const fill = highlightPhase === 'backward' ? '#fef2f2' : (highlightPhase ? '#dbeafe' : '#f1f5f9');
-            addCircle(n.x, n.y, 22, fill, '#f97316');
-            addText(n.x, n.y - 8, n.label, { size: '10', bold: true });
-            const o = i === 0 ? net.o1 : net.o2;
-            if (o !== undefined) addText(n.x, n.y + 6, fmt(o, 4), { size: '7', color: '#f97316' });
-            const z = i === 0 ? net.z_o1 : net.z_o2;
-            if (z !== undefined) addText(n.x, n.y + 38, `z=${fmt(z, 4)}`, { size: '7', color: '#94a3b8' });
-            addText(n.x, n.y - 20, 'σ', { size: '9', color: '#fb923c' });
-
-            // Show delta if backward
-            if (highlightPhase === 'backward') {
-                const delta = i === 0 ? gradients.delta_o1 : gradients.delta_o2;
-                if (delta !== undefined) {
-                    addText(n.x + 35, n.y + 20, `δ=${fmt(delta, 4)}`, { size: '7', color: '#ef4444', bold: true });
-                }
+        // --- Input Nodes ---
+        [['x1', net.x1], ['x2', net.x2]].forEach(([key, value]) => {
+            const n = nodes[key];
+            addCircle(n.x, n.y, nodeR, '#dbeafe', '#3b82f6', 2.5);
+            addText(n.x, n.y - 7, n.label, { size: '13', bold: true, color: '#1e40af' });
+            if (value !== undefined) {
+                addText(n.x, n.y + 9, fmt(value, 2), { size: '10', mono: true, color: '#3b82f6' });
             }
         });
 
-        // Target nodes
-        layers.target.forEach((n, i) => {
-            addCircle(n.x, n.y, 16, '#dcfce7', '#22c55e');
-            addText(n.x, n.y - 5, n.label, { size: '9', bold: true });
-            const t = i === 0 ? net.t1 : net.t2;
-            if (t !== undefined) addText(n.x, n.y + 8, fmt(t, 2), { size: '8', color: '#22c55e' });
+        // --- Hidden Nodes ---
+        const hiddenData = [
+            { key: 'h1', z: net.z_h1, h: net.h1, delta: gradients.delta_h1, dE_dh: gradients.dE_dh1, wFrom: ['w1', 'w2'], wTo: ['w5', 'w7'], inputs: [net.x1, net.x2], biasKey: 'b1' },
+            { key: 'h2', z: net.z_h2, h: net.h2, delta: gradients.delta_h2, dE_dh: gradients.dE_dh2, wFrom: ['w3', 'w4'], wTo: ['w6', 'w8'], inputs: [net.x1, net.x2], biasKey: 'b2' }
+        ];
+
+        hiddenData.forEach(({ key, z, h, delta, dE_dh, wFrom, wTo, inputs, biasKey }) => {
+            const n = nodes[key];
+            const fillColor = highlightPhase === 'backward' ? '#fef2f2' : (highlightPhase === 'forward' ? '#ede9fe' : '#f5f3ff');
+            addCircle(n.x, n.y, nodeR, fillColor, '#7c3aed', 2.5);
+            addText(n.x, n.y - 7, n.label, { size: '13', bold: true, color: '#5b21b6' });
+            if (h !== undefined) {
+                addText(n.x, n.y + 9, fmtShort(h), { size: '10', mono: true, color: '#7c3aed' });
+            }
+            // σ label
+            addText(n.x + nodeR + 8, n.y - nodeR + 2, 'σ', { size: '11', color: '#a78bfa', bold: true });
+
+            // --- FORWARD ANNOTATION ---
+            if (highlightPhase === 'forward' && z !== undefined) {
+                const w = readWeights();
+                const bVal = w[biasKey];
+                const lines = [
+                    `z = ${wFrom[0]}·x₁ + ${wFrom[1]}·x₂ + ${biasKey}`,
+                    `  = ${fmtShort(w[wFrom[0]])}·${fmt(inputs[0],2)} + ${fmtShort(w[wFrom[1]])}·${fmt(inputs[1],2)} + ${fmtShort(bVal)}`,
+                    `  = ${fmtShort(z)}`,
+                    `${key} = σ(${fmtShort(z)}) = ${fmtShort(h)}`
+                ];
+                addAnnotationBox(n.x, n.y + annoOffsetForward, lines, '#eff6ff', '#3b82f6', '#1e40af', 200);
+            }
+
+            // --- BACKWARD ANNOTATION ---
+            if (highlightPhase === 'backward' && delta !== undefined) {
+                const w = readWeights();
+                const lines = [
+                    `∂E/∂${key} = δ_o1·${wTo[0]} + δ_o2·${wTo[1]}`,
+                    `  = ${fmtShort(gradients.delta_o1)}·${fmtShort(w[wTo[0]])} + ${fmtShort(gradients.delta_o2)}·${fmtShort(w[wTo[1]])}`,
+                    `  = ${fmtShort(dE_dh)}`,
+                    `δ_${key} = ${fmtShort(dE_dh)} × ${key}(1-${key})`,
+                    `  = ${fmtShort(dE_dh)} × ${fmtShort(h)}×${fmtShort(1 - h)}`,
+                    `  = ${fmtShort(delta)}`
+                ];
+                addAnnotationBox(n.x, n.y + annoOffsetBackward - 10, lines, '#fef2f2', '#ef4444', '#991b1b', 220);
+            }
         });
 
-        // Bias nodes (small)
-        [...layers.bias1, ...layers.bias2].forEach((n) => {
-            addCircle(n.x, n.y, 12, '#fef9c3', '#eab308');
-            addText(n.x, n.y, n.label, { size: '8', bold: true, color: '#a16207' });
+        // --- Output Nodes ---
+        const outputData = [
+            { key: 'o1', z: net.z_o1, o: net.o1, t: net.t1, E: net.E1, delta: gradients.delta_o1, hInputs: [net.h1, net.h2], wKeys: ['w5', 'w6'], biasKey: 'b3', tKey: 't1' },
+            { key: 'o2', z: net.z_o2, o: net.o2, t: net.t2, E: net.E2, delta: gradients.delta_o2, hInputs: [net.h1, net.h2], wKeys: ['w7', 'w8'], biasKey: 'b4', tKey: 't2' }
+        ];
+
+        outputData.forEach(({ key, z, o, t, E, delta, hInputs, wKeys, biasKey, tKey }) => {
+            const n = nodes[key];
+            const fillColor = highlightPhase === 'backward' ? '#fef2f2' : (highlightPhase === 'forward' ? '#fff7ed' : '#fff7ed');
+            addCircle(n.x, n.y, nodeR, fillColor, '#ea580c', 2.5);
+            addText(n.x, n.y - 7, n.label, { size: '13', bold: true, color: '#c2410c' });
+            if (o !== undefined) {
+                addText(n.x, n.y + 9, fmtShort(o), { size: '10', mono: true, color: '#ea580c' });
+            }
+            addText(n.x + nodeR + 8, n.y - nodeR + 2, 'σ', { size: '11', color: '#fb923c', bold: true });
+
+            // --- FORWARD ANNOTATION ---
+            if (highlightPhase === 'forward' && z !== undefined) {
+                const w = readWeights();
+                const lines = [
+                    `z = ${wKeys[0]}·h₁ + ${wKeys[1]}·h₂ + ${biasKey}`,
+                    `  = ${fmtShort(w[wKeys[0]])}·${fmtShort(hInputs[0])} + ${fmtShort(w[wKeys[1]])}·${fmtShort(hInputs[1])} + ${fmtShort(w[biasKey])}`,
+                    `  = ${fmtShort(z)}`,
+                    `${key} = σ(${fmtShort(z)}) = ${fmtShort(o)}`,
+                    `E_${key} = ½(${tKey} - ${key})²`,
+                    `  = ½(${fmtShort(t)} - ${fmtShort(o)})² = ${fmtShort(E)}`
+                ];
+                addAnnotationBox(n.x, n.y + annoOffsetForward + 10, lines, '#fffbeb', '#f59e0b', '#92400e', 220);
+            }
+
+            // --- BACKWARD ANNOTATION ---
+            if (highlightPhase === 'backward' && delta !== undefined) {
+                const lines = [
+                    `∂E/∂${key} = -(${tKey} - ${key})`,
+                    `  = -(${fmtShort(t)} - ${fmtShort(o)}) = ${fmtShort(-(t - o))}`,
+                    `σ'(z) = ${key}(1-${key})`,
+                    `  = ${fmtShort(o)}×${fmtShort(1 - o)} = ${fmtShort(o * (1 - o))}`,
+                    `δ_${key} = ${fmtShort(-(t - o))} × ${fmtShort(o * (1 - o))}`,
+                    `  = ${fmtShort(delta)}`
+                ];
+                addAnnotationBox(n.x, n.y + annoOffsetBackward - 10, lines, '#fef2f2', '#ef4444', '#991b1b', 220);
+            }
         });
 
-        // Loss display
+        // --- Target Nodes ---
+        [['t1', net.t1], ['t2', net.t2]].forEach(([key, value]) => {
+            const n = nodes[key];
+            addCircle(n.x, n.y, 20, '#dcfce7', '#16a34a', 2);
+            addText(n.x, n.y - 6, n.label, { size: '11', bold: true, color: '#166534' });
+            if (value !== undefined) {
+                addText(n.x, n.y + 8, fmt(value, 2), { size: '10', mono: true, color: '#16a34a' });
+            }
+
+            // Dashed line from output to target
+            const oNode = key === 't1' ? nodes.o1 : nodes.o2;
+            addLine(oNode.x + nodeR, oNode.y, n.x - 20, n.y, '#94a3b8', 1, true);
+        });
+
+        // ============================================================
+        // LOSS BOX
+        // ============================================================
         if (net.E_total !== undefined) {
-            addRect(560, 170, 130, 50, highlightPhase === 'backward' ? '#fef2f2' : '#f0fdf4');
-            addText(625, 185, 'E_total', { size: '10', bold: true, color: '#dc2626' });
-            addText(625, 200, fmt(net.E_total, 6), { size: '11', bold: true, color: '#dc2626' });
+            const lossX = colTarget;
+            const lossY = (row1 + row2) / 2;
+            const lossColor = highlightPhase === 'backward' ? '#fef2f2' : '#f0fdf4';
+            const lossBorder = highlightPhase === 'backward' ? '#ef4444' : '#22c55e';
+            addRect(lossX - 65, lossY - 30, 130, 60, lossColor, lossBorder, 8);
+            addText(lossX, lossY - 12, 'E_total', { size: '11', bold: true, color: '#dc2626' });
+            addText(lossX, lossY + 8, fmt(net.E_total, 6), { size: '12', bold: true, color: '#dc2626', mono: true });
         }
 
-        // Backward flow arrows
-        if (highlightPhase === 'backward') {
-            // Big red arrow showing flow direction
-            const arrowY = 355;
-            addLine(580, arrowY, 120, arrowY, '#ef4444', 2);
-            addText(350, arrowY - 10, '← ERROR GRADIENT FLOWS BACKWARD ←', { size: '10', bold: true, color: '#ef4444' });
-        }
-
+        // ============================================================
+        // FLOW DIRECTION INDICATOR
+        // ============================================================
+        const arrowY = 510;
         if (highlightPhase === 'forward') {
-            const arrowY = 355;
-            addLine(120, arrowY, 580, arrowY, '#3b82f6', 2);
-            addText(350, arrowY - 10, '→ DATA FLOWS FORWARD →', { size: '10', bold: true, color: '#3b82f6' });
+            addLine(colInput, arrowY, colOutput + 40, arrowY, '#3b82f6', 2.5);
+            addArrowHead(colOutput + 40, arrowY, 'right', '#3b82f6');
+            addText((colInput + colOutput) / 2, arrowY - 14, '→ DATA FLOWS FORWARD: inputs are multiplied, summed, and squeezed through σ →', {
+		                    size: '9', bold: true, color: '#3b82f6'
+            });
+        }
+
+        if (highlightPhase === 'backward') {
+            addLine(colOutput + 40, arrowY, colInput, arrowY, '#ef4444', 2.5);
+            addArrowHead(colInput, arrowY, 'left', '#ef4444');
+            addText((colInput + colOutput) / 2, arrowY - 14, '← ERROR GRADIENT propagates backward: each node computes its local blame ←', {
+                size: '9', bold: true, color: '#ef4444'
+            });
+        }
+
+        if (highlightPhase === 'updated') {
+            addText((colInput + colOutput) / 2, arrowY, '✓ Weights updated via gradient descent — run Forward Pass again to see the new loss', {
+                size: '9', bold: true, color: '#10b981'
+            });
         }
     }
 
-    // --- Math Display Builders ---
+    // ============================================================
+    // MATH DISPLAY BUILDERS
+    // ============================================================
     function buildForwardMath() {
         const { x1, x2, w, z_h1, h1, z_h2, h2, z_o1, o1, z_o2, o2, t1, t2, E1, E2, E_total } = net;
         return `
@@ -497,7 +624,7 @@ $$\\frac{\\partial E}{\\partial b_1} = \\delta_{h_1} = ${fmt(g.b1,6)} \\qquad \\
         const keys = ['w1','w2','w3','w4','w5','w6','w7','w8','b1','b2','b3','b4'];
         let lines = keys.map(k => {
             const oldVal = net.w[k] !== undefined ? net.w[k] : 0;
-            return `$$${k}^{+} = ${fmt(oldVal,4)} - ${fmt(lr,2)} \\times ${fmt(gradients[k],6)} = ${fmt(w[k],4)}$$`;
+            return `$$${k}^{+} = ${fmtShort(oldVal)} - ${fmt(lr,2)} \\times ${fmt(gradients[k],6)} = ${fmtShort(w[k])}$$`;
         });
         return `
 <div class="md" style="font-size:0.82rem; line-height:1.8;">
@@ -509,7 +636,9 @@ ${lines.join('\n')}
 </div>`;
     }
 
-    // --- Loss Chart ---
+    // ============================================================
+    // LOSS CHART
+    // ============================================================
     function drawLossChart() {
         if (!els.lossChart) return;
         if (lossHistory.length === 0) {
@@ -523,7 +652,7 @@ ${lines.join('\n')}
             type: 'scatter',
             mode: 'lines+markers',
             line: { color: '#ef4444', width: 2 },
-            marker: { size: 4, color: '#ef4444' },
+            marker: { size: lossHistory.length > 50 ? 2 : 4, color: '#ef4444' },
             name: 'E_total'
         }];
 
@@ -540,7 +669,9 @@ ${lines.join('\n')}
         }
     }
 
-    // --- Button Handlers ---
+    // ============================================================
+    // BUTTON HANDLERS
+    // ============================================================
     els.btnForward.addEventListener('click', () => {
         forwardPass();
         lossHistory.push(net.E_total);
@@ -588,14 +719,15 @@ ${lines.join('\n')}
             if (count >= 100) {
                 clearInterval(interval);
                 els.epochCount.textContent = epoch;
-                forwardPass(); // Final forward to show result
+                // Final forward to show result
+                forwardPass();
                 drawNetwork('forward');
                 displayGradients();
                 els.mathDisplay.innerHTML = `
 <div class="md" style="font-size:0.85rem;">
 <b style="color:#8b5cf6;">━━━ AUTO-TRAIN COMPLETE (100 Epochs) ━━━</b>
 
-After 100 epochs of gradient descent:
+After ${epoch} total epochs of gradient descent:
 $$E_{\\text{total}} = ${fmt(net.E_total, 6)}$$
 $$o_1 = ${fmt(net.o1, 6)} \\quad (\\text{target: } ${fmt(net.t1, 4)})$$
 $$o_2 = ${fmt(net.o2, 6)} \\quad (\\text{target: } ${fmt(net.t2, 4)})$$
@@ -613,7 +745,6 @@ Click "Forward Pass" to see the current state, or "Auto-Train" again for another
     });
 
     els.btnReset.addEventListener('click', () => {
-        // Reset weights to defaults
         els.w1.value = '0.15'; els.w2.value = '0.20';
         els.w3.value = '0.25'; els.w4.value = '0.30';
         els.w5.value = '0.40'; els.w6.value = '0.45';
