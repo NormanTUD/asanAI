@@ -348,7 +348,7 @@ $$h_2 = \\sigma(\\underbrace{${f(R.zh2)}}_{z_{h_2}}) = \\frac{1}{1+e^{-\\underbr
 
 $$\\frac{\\partial E}{\\partial h_2} = \\underbrace{\\delta_{o_1}}_{\\substack{\\text{error signal}\\\\\\text{from } o_1 = ${f(R.d_o1)}}} \\cdot \\underbrace{w_6}_{${f(w6)}} + \\underbrace{\\delta_{o_2}}_{\\substack{\\text{error signal}\\\\\\text{from } o_2 = ${f(R.d_o2)}}} \\cdot \\underbrace{w_8}_{${f(w8)}} = ${f(R.dE_dh2)}$$
 
-\\text{derivative of sigmoid}\\\\\\sigma'(z_{h_2})}} = \\underbrace{${f(R.h2)}}_{h_2} \\cdot \\underbrace{${f(1-R.h2)}}_{1 - h_2} = ${f(R.h2*(1-R.h2))}$$
+$$\\underbrace{h_2(1-h_2)}_{\\substack{\\text{derivative of sigmoid}\\\\\\sigma'(z_{h_2})}} = \\underbrace{${f(R.h2)}}_{h_2} \\cdot \\underbrace{${f(1-R.h2)}}_{1 - h_2} = ${f(R.h2*(1-R.h2))}$$
 
 $$\\delta_{h_2} = \\underbrace{${f(R.dE_dh2)}}_{\\frac{\\partial E}{\\partial h_2}} \\times \\underbrace{${f(R.h2*(1-R.h2))}}_{\\sigma'(z_{h_2})} = ${f(R.d_h2)}$$
 
