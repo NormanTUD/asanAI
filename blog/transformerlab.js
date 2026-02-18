@@ -2284,37 +2284,6 @@ if (!window.tlab_trajectory_data) {
     window.tlab_trajectory_data = { tokens: [], steps: [] };
 }
 
-/**
- * render_migration_logic
- * Captures the state of tokens at each stage of the forward pass.
- */
-/**
- * render_migration_logic
- * Captures the state of tokens at each stage of the forward pass.
- * 
- * @param {string} id - DOM element ID for the plot
- * @param {Array} tokens - Token embedding vectors (numeric arrays)
- * @param {Array} start_h - Hidden states before this layer
- * @param {Array} end_h - Hidden states after this layer
- * @param {number} layerNum - Current layer number
- * @param {number} d_model - Model dimension
- * @param {Array} h_after - Final hidden states after residual
- * @param {string[]} [tokenStrings] - Human-readable token strings for labeling
- */
-/**
- * render_migration_logic
- * Handles VISUAL rendering of per-layer migration plots.
- * Data capture is now done eagerly in create_migration_plot.
- *
- * @param {string} id - DOM element ID for the plot
- * @param {Array} tokens - Token embedding vectors (numeric arrays)
- * @param {Array} start_h - Hidden states before this layer
- * @param {Array} end_h - Hidden states after this layer
- * @param {number} layerNum - Current layer number
- * @param {number} d_model - Model dimension
- * @param {Array} h_after - Final hidden states after residual
- * @param {string[]} [tokenStrings] - Human-readable token strings for labeling
- */
 function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
     const plotDiv = document.getElementById(id);
     if (!plotDiv) return;
