@@ -328,7 +328,7 @@ $$E_1 = \\tfrac{1}{2}(t_1 - o_1)^2 = \\tfrac{1}{2}(${f(t1,2)} - ${f(R.o1)})^2 = 
 			h = `<b>Target $$t_2 = ${f(t2,2)}$$</b><br>
 $$E_2 = \\tfrac{1}{2}(t_2 - o_2)^2 = \\tfrac{1}{2}(${f(t2,2)} - ${f(R.o2)})^2 = ${f(R.E2)}$$`;
 		} else if (nk==='h1') {
-			h = `<b>Hidden neuron $$h_1$$</b>
+			h = `<b>Hidden neuron $h_1$</b>
 
 <b>Forward:</b>
 $$z_{h_1} = w_1 x_1 + w_2 x_2 + b_1 = ${f(w1)}\\cdot${f(x1)} + ${f(w2)}\\cdot${f(x2)} + ${f(b1)} = ${f(R.zh1)}$$
@@ -344,7 +344,7 @@ $$\\frac{\\partial E}{\\partial w_1} = \\delta_{h_1} \\cdot x_1 = ${f(R.d_h1)} \
 $$\\frac{\\partial E}{\\partial w_2} = \\delta_{h_1} \\cdot x_2 = ${f(R.d_h1)} \\times ${f(x2)} = ${f(R.gw2)}$$
 $$\\frac{\\partial E}{\\partial b_1} = \\delta_{h_1} = ${f(R.gb1)}$$`;
 		} else if (nk==='h2') {
-			h = `<b>Hidden neuron $$h_2$$</b>
+			h = `<b>Hidden neuron $h_2$</b>
 
 <b>Forward:</b>
 $$z_{h_2} = w_3 x_1 + w_4 x_2 + b_2 = ${f(w3)}\\cdot${f(x1)} + ${f(w4)}\\cdot${f(x2)} + ${f(b2)} = ${f(R.zh2)}$$
