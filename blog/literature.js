@@ -1,9 +1,9 @@
 window.bibData = {
 	"lomekwi": {
-		title: "2.5-million-year-old stone tools from Gona, Ethiopia",
-		author: "S. Semaw, P. Renne, J. W. K. Harris, C. S. Feibel, R. L. Bernor, N. Fesseha, K. Mowbray",
-		year: 1997,
-		url: "https://www.nature.com/articles/385333a0",
+		title: "3.3-million-year-old stone tools from Lomekwi 3, West Turkana, Kenya",
+		author: "Sonia Harmand, Jason E. Lewis, Craig S. Feibel, Christopher J. Lepre, Sandrine Prat, Arnaud Lenoble, Xavier Boës, Rhonda L. Quinn, Michel Brenet, Adrian Arroyo, Nicholas Taylor, Sophie Clément, Guillaume Daver, Jean-Philip Brugal, Louise Leakey, Richard A. Mortlock, James D. Wright, Sammy Lokorodi, Christopher Kirwa, Dennis V. Kent, Hélène Roche",
+		year: 2015,
+		url: "https://www.nature.com/articles/nature14464",
 		alternativetitle: "Lomekwi-Tools"
 	},
 	"processandreality": {
