@@ -2311,7 +2311,6 @@ function tlab_render_trajectory_plot(d_model) {
 		mainContainer.appendChild(trajDiv);
 	}
 
-	// Clear the placeholder outline now that we're actually rendering
 	trajDiv.style.cssText = "width:100%;";
 	trajDiv.innerHTML = '';
 
@@ -2369,6 +2368,7 @@ function tlab_render_trajectory_plot(d_model) {
 				const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 				const hoverTexts = dataPoints.map(p => `${labels[tIdx]} (${tIdx + 1}) @ ${p.name}`);
 
+				// Trajectory line
 				traces.push({
 					type: 'scatter',
 					x: x, y: y,
@@ -2378,9 +2378,10 @@ function tlab_render_trajectory_plot(d_model) {
 					hoverinfo: 'text',
 					hovertemplate: '<b>%{text}</b><extra></extra>',
 					text: hoverTexts,
-					showlegend: isFirstPair  // legend only on the first subplot
+					showlegend: isFirstPair
 				});
 
+				// Direction arrows
 				for (let s = 0; s < x.length - 1; s++) {
 					annotations.push({
 						x: x[s + 1], y: y[s + 1],
@@ -2392,6 +2393,29 @@ function tlab_render_trajectory_plot(d_model) {
 					});
 				}
 
+				// Start point (circle)
+				traces.push({
+					type: 'scatter',
+					x: [x[0]], y: [y[0]],
+					mode: 'markers',
+					marker: { size: 10, symbol: 0, color: tColor,
+						line: { width: 2, color: '#000' } },
+					showlegend: false,
+					hovertemplate: `<b>${labels[tIdx]} — Start</b><extra></extra>`
+				});
+
+				// End point (star)
+				traces.push({
+					type: 'scatter',
+					x: [x[x.length - 1]], y: [y[y.length - 1]],
+					mode: 'markers',
+					marker: { size: 14, symbol: 17, color: tColor,
+						line: { width: 1.5, color: '#000' } },
+					showlegend: false,
+					hovertemplate: `<b>${labels[tIdx]} — End</b><extra></extra>`
+				});
+
+				// Stage labels (first token only)
 				if (tIdx === 0) {
 					dataPoints.forEach((p, pIdx) => {
 						annotations.push({
@@ -2440,6 +2464,7 @@ function tlab_render_trajectory_plot(d_model) {
 		const hoverTexts = dataPoints.map(p => `${labels[tIdx]} (${tIdx + 1}) @ ${p.name}`);
 
 		if (d_model === 3) {
+			// 3D trajectory line
 			traces.push({
 				type: 'scatter3d',
 				x: x, y: y, z: z,
@@ -2451,6 +2476,7 @@ function tlab_render_trajectory_plot(d_model) {
 				text: hoverTexts
 			});
 
+			// 3D direction cones
 			for (let i = 0; i < x.length - 1; i++) {
 				traces.push({
 					type: 'cone',
@@ -2462,7 +2488,31 @@ function tlab_render_trajectory_plot(d_model) {
 				});
 			}
 
+			// 3D Start point (circle marker)
+			traces.push({
+				type: 'scatter3d',
+				x: [x[0]], y: [y[0]], z: [z[0]],
+				mode: 'markers',
+				marker: { size: 6, symbol: 'circle', color: tColor,
+					line: { width: 1, color: '#000' } },
+				showlegend: false,
+				hovertemplate: `<b>${labels[tIdx]} — Start</b><extra></extra>`
+			});
+
+			// 3D End point — rendered as a ★ text glyph (scatter3d has no star symbol)
+			traces.push({
+				type: 'scatter3d',
+				x: [x[x.length - 1]], y: [y[y.length - 1]], z: [z[z.length - 1]],
+				mode: 'text',
+				text: ['★'],
+				textfont: { size: 18, color: tColor, family: 'Arial, sans-serif' },
+				showlegend: false,
+				hoverinfo: 'text',
+				hovertemplate: `<b>${labels[tIdx]} — End</b><extra></extra>`
+			});
+
 		} else {
+			// 2D trajectory line
 			traces.push({
 				type: 'scatter',
 				x: x, y: y,
@@ -2474,6 +2524,7 @@ function tlab_render_trajectory_plot(d_model) {
 				text: hoverTexts
 			});
 
+			// 2D direction arrows
 			for (let i = 0; i < x.length - 1; i++) {
 				annotations.push({
 					x: x[i + 1], y: y[i + 1],
@@ -2488,6 +2539,29 @@ function tlab_render_trajectory_plot(d_model) {
 				});
 			}
 
+			// 2D Start point (circle)
+			traces.push({
+				type: 'scatter',
+				x: [x[0]], y: [y[0]],
+				mode: 'markers',
+				marker: { size: 10, symbol: 0, color: tColor,
+					line: { width: 2, color: '#000' } },
+				showlegend: false,
+				hovertemplate: `<b>${labels[tIdx]} — Start</b><extra></extra>`
+			});
+
+			// 2D End point (star)
+			traces.push({
+				type: 'scatter',
+				x: [x[x.length - 1]], y: [y[y.length - 1]],
+				mode: 'markers',
+				marker: { size: 14, symbol: 17, color: tColor,
+					line: { width: 1.5, color: '#000' } },
+				showlegend: false,
+				hovertemplate: `<b>${labels[tIdx]} — End</b><extra></extra>`
+			});
+
+			// Stage labels (first token only)
 			if (tIdx === 0) {
 				dataPoints.forEach((p, pIdx) => {
 					annotations.push({
