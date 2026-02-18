@@ -1,4 +1,10 @@
 window.bibData = {
+	"lomekwi": {
+		title: "2.5-million-year-old stone tools from Gona, Ethiopia",
+		author: "S. Semaw, P. Renne, J. W. K. Harris, C. S. Feibel, R. L. Bernor, N. Fesseha, K. Mowbray",
+		year: 1997,
+		url: "https://www.nature.com/articles/385333a0"
+	},
 	"processandreality": {
 		author: "Alfred North Whitehead",
 		url: "https://archive.org/details/processrealityes0000unse/page/n5/mode/2up",
