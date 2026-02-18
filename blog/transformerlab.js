@@ -356,7 +356,7 @@ class AttentionEngine {
 			html += `<button class="mha-layer-tab-btn" id="layer-tab-btn-${this.containerId}-${l}"
 	    onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
 	    style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-	    background:${l === 0 ? '#fff' : '#bfdbfe'}; font-weight:${l === 0 ? 'bold' : 'normal'}; font-size:0.9rem;">
+	    background:${l === 0 ? '#fff' : '#bfdbfe'}; font-weight:${l === 0 ? 'bold' : 'normal'};">
 	    Layer ${l + 1}
 	</button>`;
 		}
@@ -466,7 +466,7 @@ class AttentionEngine {
 		<div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
 	    </div>
 	    <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>
-	    <div style="margin-bottom:20px; font-size: 0.9rem;">
+	    <div style="margin-bottom:20px;">
 		$$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
 	    </div>
 	    <div style="overflow-x:auto;">
@@ -1385,7 +1385,7 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 
 	// 2. Calculate Logits and explain step-by-step
 	let calculationHtml = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
-	<h3>1. Step-by-Step Logit Calculation (Manual Verification)</h3>
+	<h3>1. Step-by-Step Logit Calculation</h3>
 	<p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_\\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure</p>
 	
 	<span class="md">
@@ -1427,7 +1427,7 @@ This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Whe
 
 		dotProductFormula += terms.join(' + ') + ` = ${sum.toFixed(nr_fixed)}`;
 
-		calculationHtml += `<div style="margin-bottom: 10px; font-size: 0.9rem;">
+		calculationHtml += `<div style="margin-bottom: 10px; overflow: scroll;">
 	    <strong>Word: "${word}"</strong><br>
 	    $$${dotProductFormula}$$
 	</div>`;
@@ -1492,7 +1492,7 @@ function render_architecture_stats(d, h, n, t) {
 
 	const dv = (d / h).toFixed(nr_fixed);
 	const infoHtml = `
-	<div style="background: #e0f2fe; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 0.9rem;">
+	<div style="background: #e0f2fe; padding: 10px; border-radius: 8px; margin-top: 10px;">
 	    <strong>Configuration:</strong> $d_{v} = ${dv}$, $N = ${n}$, $T = ${t}$ <br>
 	    <em>Note: $T > 1.0$ increases randomness (flattens SoftMax), $T < 1.0$ makes predictions more confident.</em>
 	</div>
@@ -1658,7 +1658,7 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 
     // ── FIX: Display Pre-LN steps instead of Post-LN ──
     normContainer.innerHTML = `
-        <p style="font-size:0.9rem; font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
+        <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
 
         <div style="margin-bottom:15px;">
             <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
