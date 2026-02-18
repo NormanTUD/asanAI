@@ -200,7 +200,9 @@ function renderBackpropVisual(id) {
 
 		conns.forEach(([from,to,wk,wl]) => {
 			const a=nodes[from], b=nodes[to];
-			const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+			let mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+			if (wk === 'w2' || wk === 'w6') my -= 14;  // shift up
+			if (wk === 'w3' || wk === 'w7') my += 32;  // shift down
 			const val=S[wk];
 			const thick=Math.max(1,Math.min(5,Math.abs(val)*3));
 			const col=val>=0?'#3b82f6':'#ef4444';
