@@ -242,7 +242,7 @@ $$\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$
 Because $e^{-\infty}$ approaches $0$, any score that has been masked will result in a $0\%$ attention weight after the Softmax step.
 
 ## 5. The Core Mechanism: Generating Q, K, and V
-To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three weight matrices: $W^Q, W^K,$ and $W^V$.
+To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three learned weight matrices: $W^Q, W^K,$ and $W^V$.
 
 * **Query ($Q = h_0 W^Q$)**: Represents "What am I looking for?"
 * **Key ($K = h_0 W^K$)**: Represents "What information do I contain?"
