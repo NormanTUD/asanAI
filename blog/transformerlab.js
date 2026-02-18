@@ -111,12 +111,10 @@ const trajectoryObserver = new IntersectionObserver((entries) => {
 				console.log("Trajectory visible: Rendering plot...");
 				tlab_render_trajectory_plot(data.d_model);
 				data.rendered = true;
-				// Optional: Stop observing after first render to save resources
-				// trajectoryObserver.unobserve(entry.target);
 			}
 		}
 	});
-}, { threshold: 0.1 });
+}, { threshold: 0 });
 
 const multiLayerAttentionRegistry = new Map();
 
