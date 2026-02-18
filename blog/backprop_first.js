@@ -10,7 +10,7 @@ function renderBackpropVisual(id) {
 		w5:0.40, w6:0.45, w7:0.50, w8:0.55, b3:0.60, b4:0.60
 	};
 
-	let locked = null; // which node/weight is currently locked
+	let locked = null;
 
 	root.innerHTML = `
   <style>
@@ -149,7 +149,6 @@ function renderBackpropVisual(id) {
 		document.getElementById(`${id}-lossbar`).style.width = Math.min(E/0.6*100,100)+'%';
 		document.getElementById(`${id}-lossval`).textContent = f(E);
 
-		// Re-render locked panel if something is locked
 		if (locked) {
 			if (locked.type === 'node') showNodeInfo(locked.key, true);
 			else if (locked.type === 'weight') showWeightInfo(locked.key, true);
@@ -160,7 +159,6 @@ function renderBackpropVisual(id) {
 		const {x1,x2,t1,t2} = S;
 		let html = '';
 
-		// Connections
 		conns.forEach(([from,to,wk,wl]) => {
 			const a=nodes[from], b=nodes[to];
 			const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
@@ -171,11 +169,9 @@ function renderBackpropVisual(id) {
 			html += `<text class="bp-wlabel" data-wk="${wk}" x="${mx}" y="${my-6}" text-anchor="middle" font-size="11" fill="#334155" font-weight="600" style="cursor:pointer;">$${wl}$=${f(val,2)}</text>`;
 		});
 
-		// Error dashed lines
 		html += `<line x1="${nodes.o1.x}" y1="${nodes.o1.y}" x2="${nodes.t1.x}" y2="${nodes.t1.y}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
 		html += `<line x1="${nodes.o2.x}" y1="${nodes.o2.y}" x2="${nodes.t2.x}" y2="${nodes.t2.y}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
 
-		// Nodes
 		const vals = {x1:f(x1,2),x2:f(x2,2),h1:f(R.h1),h2:f(R.h2),o1:f(R.o1),o2:f(R.o2),t1:f(t1,2),t2:f(t2,2)};
 		const colors = {input:'#64748b',hidden:'#3b82f6',output:'#10b981',target:'#f59e0b'};
 		const fills  = {input:'#f1f5f9',hidden:'#eff6ff',output:'#ecfdf5',target:'#fffbeb'};
@@ -191,25 +187,21 @@ function renderBackpropVisual(id) {
 			html += `<text x="${nd.x}" y="${nd.y-8}" text-anchor="middle" font-size="12" font-weight="700" fill="${col}" style="pointer-events:none;">$${nd.label}$</text>`;
 			html += `<text x="${nd.x}" y="${nd.y+10}" text-anchor="middle" font-size="11" font-family="monospace" fill="#1e293b" style="pointer-events:none;">${vals[nk]}</text>`;
 
-			// Deltas below hidden/output
 			if (nk==='h1') html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="10" fill="#d97706" style="pointer-events:none;">$\\delta$=${f(R.d_h1)}</text>`;
 			if (nk==='h2') html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="10" fill="#d97706" style="pointer-events:none;">$\\delta$=${f(R.d_h2)}</text>`;
 			if (nk==='o1') html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="10" fill="#dc2626" style="pointer-events:none;">$\\delta$=${f(R.d_o1)}</text>`;
 			if (nk==='o2') html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="10" fill="#dc2626" style="pointer-events:none;">$\\delta$=${f(R.d_o2)}</text>`;
 		}
 
-		// Layer labels
 		html += `<text x="80" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">Input</text>`;
 		html += `<text x="330" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">Hidden</text>`;
 		html += `<text x="580" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">Output</text>`;
 		html += `<text x="750" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">Target</text>`;
 
-		// Loss
 		html += `<text x="665" y="210" text-anchor="middle" font-size="13" fill="#ef4444" font-weight="700">$E$ = ${f(R.E)}</text>`;
 
 		svg.innerHTML = html;
 
-		// ── Click events on nodes ──
 		svg.querySelectorAll('.bp-node').forEach(el => {
 			el.addEventListener('click', (e) => {
 				e.stopPropagation();
@@ -224,7 +216,6 @@ function renderBackpropVisual(id) {
 			});
 		});
 
-		// ── Click events on weight labels ──
 		svg.querySelectorAll('.bp-wlabel').forEach(el => {
 			el.addEventListener('click', (e) => {
 				e.stopPropagation();
@@ -239,13 +230,11 @@ function renderBackpropVisual(id) {
 			});
 		});
 
-		// Highlight locked connections
 		if (locked) {
 			if (locked.type==='node') highlightForNode(locked.key);
 			else if (locked.type==='weight') highlightWeights([locked.key]);
 		}
 
-		// Render Temml
 		try { render_temml(); } catch(e) {}
 	}
 
@@ -257,12 +246,10 @@ function renderBackpropVisual(id) {
 		try { render_temml(); } catch(e) {}
 	}
 
-	// Click on SVG background to unlock
 	svg.addEventListener('click', (e) => {
 		if (e.target === svg || e.target.tagName === 'svg') unlock();
 	});
 
-	// Click outside SVG on the info panel close button
 	function addCloseButton() {
 		const existing = info.querySelector('.bp-close');
 		if (!existing) {
@@ -323,80 +310,90 @@ function renderBackpropVisual(id) {
 			h = `<b>Input $$x_2 = ${f(x2,2)}$$</b><br>Raw input value — no computation, just fed into the network.`;
 		} else if (nk==='t1') {
 			h = `<b>Target $$t_1 = ${f(t1,2)}$$</b><br>
-$$E_1 = \\tfrac{1}{2}(t_1 - o_1)^2 = \\tfrac{1}{2}(${f(t1,2)} - ${f(R.o1)})^2 = ${f(R.E1)}$$`;
+$$E_1 = \\tfrac{1}{2}\\bigl(\\underbrace{t_1}_{\\text{target}} - \\underbrace{o_1}_{\\text{output}}\\bigr)^2 = \\tfrac{1}{2}(\\underbrace{${f(t1,2)}}_{t_1} - \\underbrace{${f(R.o1)}}_{o_1})^2 = ${f(R.E1)}$$`;
 		} else if (nk==='t2') {
 			h = `<b>Target $$t_2 = ${f(t2,2)}$$</b><br>
-$$E_2 = \\tfrac{1}{2}(t_2 - o_2)^2 = \\tfrac{1}{2}(${f(t2,2)} - ${f(R.o2)})^2 = ${f(R.E2)}$$`;
+$$E_2 = \\tfrac{1}{2}\\bigl(\\underbrace{t_2}_{\\text{target}} - \\underbrace{o_2}_{\\text{output}}\\bigr)^2 = \\tfrac{1}{2}(\\underbrace{${f(t2,2)}}_{t_2} - \\underbrace{${f(R.o2)}}_{o_2})^2 = ${f(R.E2)}$$`;
 		} else if (nk==='h1') {
 			h = `<b>Hidden neuron $h_1$</b>
 
 <b>Forward:</b>
-$$z_{h_1} = w_1 x_1 + w_2 x_2 + b_1 = ${f(w1)}\\cdot${f(x1)} + ${f(w2)}\\cdot${f(x2)} + ${f(b1)} = ${f(R.zh1)}$$
-$$h_1 = \\sigma(${f(R.zh1)}) = \\frac{1}{1+e^{-${f(R.zh1)}}} = ${f(R.h1)}$$
+$$z_{h_1} = \\underbrace{w_1}_{${f(w1)}} \\cdot \\underbrace{x_1}_{${f(x1)}} + \\underbrace{w_2}_{${f(w2)}} \\cdot \\underbrace{x_2}_{${f(x2)}} + \\underbrace{b_1}_{${f(b1)}} = ${f(R.zh1)}$$
+$$h_1 = \\sigma(\\underbrace{${f(R.zh1)}}_{z_{h_1}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zh1)}}_{z_{h_1}}}} = ${f(R.h1)}$$
 
 <b>Backward</b> — blame arrives from <em>both</em> outputs via $w_5$ and $w_7$:
-$$\\frac{\\partial E}{\\partial h_1} = \\delta_{o_1}\\cdot w_5 + \\delta_{o_2}\\cdot w_7 = ${f(R.d_o1)}\\cdot${f(w5)} + ${f(R.d_o2)}\\cdot${f(w7)} = ${f(R.dE_dh1)}$$
-$$\\text{sigmoid slope} = h_1(1-h_1) = ${f(R.h1)}\\cdot${f(1-R.h1)} = ${f(R.h1*(1-R.h1))}$$
-$$\\delta_{h_1} = ${f(R.dE_dh1)} \\times ${f(R.h1*(1-R.h1))} = ${f(R.d_h1)}$$
+
+<em>Recall:</em> $\\delta_{o_1}$ and $\\delta_{o_2}$ are the error signals already computed at the output neurons (click $o_1$ or $o_2$ to see how). They equal $\\frac{\\partial E}{\\partial o_k} \\cdot o_k(1-o_k)$.
+
+$$\\frac{\\partial E}{\\partial h_1} = \\underbrace{\\delta_{o_1}}_{\\substack{\\text{error signal}\\\\\\text{from } o_1 = ${f(R.d_o1)}}} \\cdot \\underbrace{w_5}_{${f(w5)}} + \\underbrace{\\delta_{o_2}}_{\\substack{\\text{error signal}\\\\\\text{from } o_2 = ${f(R.d_o2)}}} \\cdot \\underbrace{w_7}_{${f(w7)}} = ${f(R.dE_dh1)}$$
+
+$$\\underbrace{h_1(1-h_1)}_{\\substack{\\text{derivative of sigmoid}\\\\\\sigma'(z_{h_1})}} = \\underbrace{${f(R.h1)}}_{h_1} \\cdot \\underbrace{${f(1-R.h1)}}_{1 - h_1} = ${f(R.h1*(1-R.h1))}$$
+
+$$\\delta_{h_1} = \\underbrace{${f(R.dE_dh1)}}_{\\frac{\\partial E}{\\partial h_1}} \\times \\underbrace{${f(R.h1*(1-R.h1))}}_{\\sigma'(z_{h_1})} = ${f(R.d_h1)}$$
 
 <b>Weight gradients:</b>
-$$\\frac{\\partial E}{\\partial w_1} = \\delta_{h_1} \\cdot x_1 = ${f(R.d_h1)} \\times ${f(x1)} = ${f(R.gw1)}$$
-$$\\frac{\\partial E}{\\partial w_2} = \\delta_{h_1} \\cdot x_2 = ${f(R.d_h1)} \\times ${f(x2)} = ${f(R.gw2)}$$
-$$\\frac{\\partial E}{\\partial b_1} = \\delta_{h_1} = ${f(R.gb1)}$$`;
+$$\\frac{\\partial E}{\\partial w_1} = \\underbrace{\\delta_{h_1}}_{${f(R.d_h1)}} \\cdot \\underbrace{x_1}_{${f(x1)}} = ${f(R.gw1)}$$
+$$\\frac{\\partial E}{\\partial w_2} = \\underbrace{\\delta_{h_1}}_{${f(R.d_h1)}} \\cdot \\underbrace{x_2}_{${f(x2)}} = ${f(R.gw2)}$$
+$$\\frac{\\partial E}{\\partial b_1} = \\underbrace{\\delta_{h_1}}_{${f(R.gb1)}}$$`;
 		} else if (nk==='h2') {
 			h = `<b>Hidden neuron $h_2$</b>
 
 <b>Forward:</b>
-$$z_{h_2} = w_3 x_1 + w_4 x_2 + b_2 = ${f(w3)}\\cdot${f(x1)} + ${f(w4)}\\cdot${f(x2)} + ${f(b2)} = ${f(R.zh2)}$$
-$$h_2 = \\sigma(${f(R.zh2)}) = ${f(R.h2)}$$
+$$z_{h_2} = \\underbrace{w_3}_{${f(w3)}} \\cdot \\underbrace{x_1}_{${f(x1)}} + \\underbrace{w_4}_{${f(w4)}} \\cdot \\underbrace{x_2}_{${f(x2)}} + \\underbrace{b_2}_{${f(b2)}} = ${f(R.zh2)}$$
+$$h_2 = \\sigma(\\underbrace{${f(R.zh2)}}_{z_{h_2}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zh2)}}_{z_{h_2}}}} = ${f(R.h2)}$$
 
-<b>Backward</b> — blame via $w_6$ and $w_8$:
-$$\\frac{\\partial E}{\\partial h_2} = \\delta_{o_1}\\cdot w_6 + \\delta_{o_2}\\cdot w_8 = ${f(R.d_o1)}\\cdot${f(w6)} + ${f(R.d_o2)}\\cdot${f(w8)} = ${f(R.dE_dh2)}$$
-$$\\text{sigmoid slope} = h_2(1-h_2) = ${f(R.h2*(1-R.h2))}$$
-$$\\delta_{h_2} = ${f(R.dE_dh2)} \\times ${f(R.h2*(1-R.h2))} = ${f(R.d_h2)}$$
+<b>Backward</b> — blame arrives from <em>both</em> outputs via $w_6$ and $w_8$:
+
+<em>Recall:</em> $\\delta_{o_1}$ and $\\delta_{o_2}$ are the error signals already computed at the output neurons (click $o_1$ or $o_2$ to see how). They equal $\\frac{\\partial E}{\\partial o_k} \\cdot o_k(1-o_k)$.
+
+$$\\frac{\\partial E}{\\partial h_2} = \\underbrace{\\delta_{o_1}}_{\\substack{\\text{error signal}\\\\\\text{from } o_1 = ${f(R.d_o1)}}} \\cdot \\underbrace{w_6}_{${f(w6)}} + \\underbrace{\\delta_{o_2}}_{\\substack{\\text{error signal}\\\\\\text{from } o_2 = ${f(R.d_o2)}}} \\cdot \\underbrace{w_8}_{${f(w8)}} = ${f(R.dE_dh2)}$$
+
+\\text{derivative of sigmoid}\\\\\\sigma'(z_{h_2})}} = \\underbrace{${f(R.h2)}}_{h_2} \\cdot \\underbrace{${f(1-R.h2)}}_{1 - h_2} = ${f(R.h2*(1-R.h2))}$$
+
+$$\\delta_{h_2} = \\underbrace{${f(R.dE_dh2)}}_{\\frac{\\partial E}{\\partial h_2}} \\times \\underbrace{${f(R.h2*(1-R.h2))}}_{\\sigma'(z_{h_2})} = ${f(R.d_h2)}$$
 
 <b>Weight gradients:</b>
-$$\\frac{\\partial E}{\\partial w_3} = \\delta_{h_2} \\cdot x_1 = ${f(R.d_h2)} \\times ${f(x1)} = ${f(R.gw3)}$$
-$$\\frac{\\partial E}{\\partial w_4} = \\delta_{h_2} \\cdot x_2 = ${f(R.d_h2)} \\times ${f(x2)} = ${f(R.gw4)}$$
-$$\\frac{\\partial E}{\\partial b_2} = \\delta_{h_2} = ${f(R.gb2)}$$`;
+$$\\frac{\\partial E}{\\partial w_3} = \\underbrace{\\delta_{h_2}}_{${f(R.d_h2)}} \\cdot \\underbrace{x_1}_{${f(x1)}} = ${f(R.gw3)}$$
+$$\\frac{\\partial E}{\\partial w_4} = \\underbrace{\\delta_{h_2}}_{${f(R.d_h2)}} \\cdot \\underbrace{x_2}_{${f(x2)}} = ${f(R.gw4)}$$
+$$\\frac{\\partial E}{\\partial b_2} = \\underbrace{\\delta_{h_2}}_{${f(R.gb2)}}$$`;
 		} else if (nk==='o1') {
 			const dir = R.d_o1 > 0 ? 'too HIGH — needs to decrease' : R.d_o1 < 0 ? 'too LOW — needs to increase' : 'perfect!';
 			h = `<b>Output neuron $o_1$</b> &nbsp;(target $t_1=${f(t1,2)}$)
 
 <b>Forward:</b>
-$$z_{o_1} = w_5 h_1 + w_6 h_2 + b_3 = ${f(w5)}\\cdot${f(R.h1)} + ${f(w6)}\\cdot${f(R.h2)} + ${f(b3)} = ${f(R.zo1)}$$
-$$o_1 = \\sigma(${f(R.zo1)}) = ${f(R.o1)}$$
+$$z_{o_1} = \\underbrace{w_5}_{${f(w5)}} \\cdot \\underbrace{h_1}_{${f(R.h1)}} + \\underbrace{w_6}_{${f(w6)}} \\cdot \\underbrace{h_2}_{${f(R.h2)}} + \\underbrace{b_3}_{${f(b3)}} = ${f(R.zo1)}$$
+$$o_1 = \\sigma(\\underbrace{${f(R.zo1)}}_{z_{o_1}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zo1)}}_{z_{o_1}}}} = ${f(R.o1)}$$
 
 <b>Backward — the 3 chain-rule terms:</b>
-$$\\underbrace{\\frac{\\partial E}{\\partial o_1}}_{\\text{how wrong?}} = -(t_1 - o_1) = -(${f(t1,2)} - ${f(R.o1)}) = ${f(R.dE_do1)}$$
-$$\\underbrace{\\frac{\\partial o_1}{\\partial z_{o_1}}}_{\\text{sigmoid slope}} = o_1(1-o_1) = ${f(R.o1)}\\cdot${f(1-R.o1)} = ${f(R.do1_dz1)}$$
-$$\delta_{o_1} = ${f(R.dE_do1)} \\times ${f(R.do1_dz1)} = ${f(R.d_o1)}$$
+$$\\underbrace{\\frac{\\partial E}{\\partial o_1}}_{\\text{how wrong?}} = -(\\underbrace{t_1}_{${f(t1,2)}} - \\underbrace{o_1}_{${f(R.o1)}}) = ${f(R.dE_do1)}$$
+$$\\underbrace{\\frac{\\partial o_1}{\\partial z_{o_1}}}_{\\substack{\\text{derivative of sigmoid}\\\\\\sigma'(z_{o_1})}} = \\underbrace{o_1}_{${f(R.o1)}} \\cdot \\underbrace{(1-o_1)}_{${f(1-R.o1)}} = ${f(R.do1_dz1)}$$
+$$\\delta_{o_1} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${f(R.do1_dz1)}}_{\\sigma'(z_{o_1})} = ${f(R.d_o1)}$$
 
 <em>${dir}</em>
 
 <b>Weight gradients</b> — each is $$\\delta_{o_1} \\times$$ "what flowed through that weight":
-$$\\frac{\\partial E}{\\partial w_5} = \\delta_{o_1} \\cdot h_1 = ${f(R.d_o1)} \\times ${f(R.h1)} = ${f(R.gw5)}$$
-$$\\frac{\\partial E}{\\partial w_6} = \\delta_{o_1} \\cdot h_2 = ${f(R.d_o1)} \\times ${f(R.h2)} = ${f(R.gw6)}$$
-$$\\frac{\\partial E}{\\partial b_3} = \\delta_{o_1} \\cdot 1 = ${f(R.gb3)}$$`;
+$$\\frac{\\partial E}{\\partial w_5} = \\underbrace{\\delta_{o_1}}_{${f(R.d_o1)}} \\cdot \\underbrace{h_1}_{${f(R.h1)}} = ${f(R.gw5)}$$
+$$\\frac{\\partial E}{\\partial w_6} = \\underbrace{\\delta_{o_1}}_{${f(R.d_o1)}} \\cdot \\underbrace{h_2}_{${f(R.h2)}} = ${f(R.gw6)}$$
+$$\\frac{\\partial E}{\\partial b_3} = \\underbrace{\\delta_{o_1}}_{${f(R.gb3)}}$$`;
 		} else if (nk==='o2') {
 			const dir = R.d_o2 > 0 ? 'too HIGH — needs to decrease' : R.d_o2 < 0 ? 'too LOW — needs to increase' : 'perfect!';
 			h = `<b>Output neuron $o_2$</b> &nbsp;(target $t_2=${f(t2,2)}$)
 
 <b>Forward:</b>
-$$z_{o_2} = w_7 h_1 + w_8 h_2 + b_4 = ${f(w7)}\\cdot${f(R.h1)} + ${f(w8)}\\cdot${f(R.h2)} + ${f(b4)} = ${f(R.zo2)}$$
-$$o_2 = \\sigma(${f(R.zo2)}) = ${f(R.o2)}$$
+$$z_{o_2} = \\underbrace{w_7}_{${f(w7)}} \\cdot \\underbrace{h_1}_{${f(R.h1)}} + \\underbrace{w_8}_{${f(w8)}} \\cdot \\underbrace{h_2}_{${f(R.h2)}} + \\underbrace{b_4}_{${f(b4)}} = ${f(R.zo2)}$$
+$$o_2 = \\sigma(\\underbrace{${f(R.zo2)}}_{z_{o_2}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zo2)}}_{z_{o_2}}}} = ${f(R.o2)}$$
 
 <b>Backward — the 3 chain-rule terms:</b>
-$$\\underbrace{\\frac{\\partial E}{\\partial o_2}}_{\\text{how wrong?}} = -(t_2 - o_2) = -(${f(t2,2)} - ${f(R.o2)}) = ${f(R.dE_do2)}$$
-$$\\underbrace{\\frac{\\partial o_2}{\\partial z_{o_2}}}_{\\text{sigmoid slope}} = o_2(1-o_2) = ${f(R.o2)}\\cdot${f(1-R.o2)} = ${f(R.do2_dz2)}$$
-$$\\delta_{o_2} = ${f(R.dE_do2)} \\times ${f(R.do2_dz2)} = ${f(R.d_o2)}$$
+$$\\underbrace{\\frac{\\partial E}{\\partial o_2}}_{\\text{how wrong?}} = -(\\underbrace{t_2}_{${f(t2,2)}} - \\underbrace{o_2}_{${f(R.o2)}}) = ${f(R.dE_do2)}$$
+$$\\underbrace{\\frac{\\partial o_2}{\\partial z_{o_2}}}_{\\substack{\\text{derivative of sigmoid}\\\\\\sigma'(z_{o_2})}} = \\underbrace{o_2}_{${f(R.o2)}} \\cdot \\underbrace{(1-o_2)}_{${f(1-R.o2)}} = ${f(R.do2_dz2)}$$
+$$\\delta_{o_2} = \\underbrace{${f(R.dE_do2)}}_{\\frac{\\partial E}{\\partial o_2}} \\times \\underbrace{${f(R.do2_dz2)}}_{\\sigma'(z_{o_2})} = ${f(R.d_o2)}$$
 
 <em>${dir}</em>
 
 <b>Weight gradients:</b>
-$$\\frac{\\partial E}{\\partial w_7} = \\delta_{o_2} \\cdot h_1 = ${f(R.d_o2)} \\times ${f(R.h1)} = ${f(R.gw7)}$$
-$$\\frac{\\partial E}{\\partial w_8} = \\delta_{o_2} \\cdot h_2 = ${f(R.d_o2)} \\times ${f(R.h2)} = ${f(R.gw8)}$$
-$$\\frac{\\partial E}{\\partial b_4} = \\delta_{o_2} \\cdot 1 = ${f(R.gb4)}$$`;
+$$\\frac{\\partial E}{\\partial w_7} = \\underbrace{\\delta_{o_2}}_{${f(R.d_o2)}} \\cdot \\underbrace{h_1}_{${f(R.h1)}} = ${f(R.gw7)}$$
+$$\\frac{\\partial E}{\\partial w_8} = \\underbrace{\\delta_{o_2}}_{${f(R.d_o2)}} \\cdot \\underbrace{h_2}_{${f(R.h2)}} = ${f(R.gw8)}$$
+$$\\frac{\\partial E}{\\partial b_4} = \\underbrace{\\delta_{o_2}}_{${f(R.gb4)}}$$`;
 		}
 		renderInfo(h);
 	}
@@ -424,10 +421,10 @@ $$\\frac{\\partial E}{\\partial b_4} = \\delta_{o_2} \\cdot 1 = ${f(R.gb4)}$$`;
 		renderInfo(`<b>Weight $$${labels[wk]} = ${f(wVal)}$$</b>
 
 <b>Gradient</b> — the chain rule product:
-$$\\frac{\\partial E}{\\partial ${labels[wk]}} = ${m.delta} \\cdot ${m.inp} = ${m.dv} \\times ${m.iv} = ${f(m.g)}$$
+$$\\frac{\\partial E}{\\partial ${labels[wk]}} = \\underbrace{${m.delta}}_{${m.dv}} \\cdot \\underbrace{${m.inp}}_{${m.iv}} = ${f(m.g)}$$
 
 <b>Update rule</b> — gradient descent with $$\\eta = ${f(lr,2)}$$:
-$$${labels[wk]}^{\\,\\text{new}} = ${labels[wk]} - \\eta \\cdot \\frac{\\partial E}{\\partial ${labels[wk]}} = ${f(wVal)} - ${f(lr)} \\times ${f(m.g)} = ${f(nw)}$$
+$$${labels[wk]}^{\\,\\text{new}} = \\underbrace{${labels[wk]}}_{${f(wVal)}} - \\underbrace{\\eta}_{${f(lr)}} \\cdot \\underbrace{\\frac{\\partial E}{\\partial ${labels[wk]}}}_{${f(m.g)}} = ${f(nw)}$$
 
 $$${dir}$$`);
 	}
@@ -475,4 +472,3 @@ $$${dir}$$`);
 }
 
 renderBackpropVisual('bp-visual');
-
