@@ -127,12 +127,4 @@ $$\frac{\partial E}{\partial w_1} = \delta_{h_1} \times x_1$$
 
 For biases, the "value that flowed through" is always 1 (biases have no input multiplier):
 $$\frac{\partial E}{\partial b_3} = \delta_{o_1} \times 1 = \delta_{o_1}$$
-
-## Interactive Lab
-
-Below is a complete neural network. Every weight, bias, and intermediate value is visible. Click **"Forward Pass"** to see data flow through the network, then click **"Backward Pass"** to watch the error gradient propagate back through every connection. Finally, click **"Update Weights"** to apply gradient descent.
-
-**Hover over any neuron** to see the exact arithmetic for that node. The weights involved in that calculation will **light up and animate** on the diagram so you can see exactly which connections carry the data.
-
-You can edit any weight, bias, input, target, or learning rate and re-run the process to build intuition.
 </div>
