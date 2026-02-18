@@ -138,7 +138,10 @@ You can edit any weight, bias, input, target, or learning rate and re-run the pr
                 <span style="color:#ef4444;">● Red = backward gradient</span> &nbsp;
                 <span style="color:#10b981;">● Green = updated</span>
             </div>
-            <svg id="bp-network-svg" width="100%" viewBox="0 0 700 380" style="background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;"></svg>
+		<svg id="bp-network-svg" width="100%" viewBox="0 0 800 540"
+		     style="background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
+		</svg>
+
         </div>
 
         <!-- Weight Editor -->
