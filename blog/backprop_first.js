@@ -378,7 +378,7 @@ $$\\frac{\\partial E}{\\partial b_1} = \\underbrace{\\delta_{h_1}}_{${f(R.gb1)}}
 			h = `<b>Hidden neuron $h_2$</b>
 
 <b>Forward:</b>
-$$z_{h_2} = \\underbrace{${f(w3)}}_{w_3} \\cdot \\underbrace{${f(x_1)}}_{x_1} + \\underbrace{${f(w4)}}_{w_4} \\cdot \\underbrace{${f(x_2)}}_{x_2} + \\underbrace{${f(b_2)}}_{b_2} = ${f(R.zh2)}$$
+$$z_{h_2} = \\underbrace{${f(w3)}}_{w_3} \\cdot \\underbrace{${f(x1)}}_{x_1} + \\underbrace{${f(w4)}}_{w_4} \\cdot \\underbrace{${f(x2)}}_{x_2} + \\underbrace{${f(b_2)}}_{b_2} = ${f(R.zh2)}$$
 $$h_2 = \\text{sigmoid}(\\underbrace{${f(R.zh2)}}_{z_{h_2}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zh2)}}_{z_{h_2}}}} = ${f(R.h2)}$$
 
 <b>Backward</b> — blame arrives from <em>both</em> outputs via $w_6$ and $w_8$:
