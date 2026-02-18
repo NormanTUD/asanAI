@@ -319,7 +319,7 @@ $$h_{1} = h_{0} + \text{LayerNorm}(\text{MultiHead}(h_{0}))$$
 ## 8. The Feed-Forward Network: Knowledge Retrieval and $h_2$
 While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token’s representation. In this sense, it functions as the model’s primary per-token computational stage, complementing attention’s role in information routing and aggregation.
 
-Empirical studies (\cite{keyvalmem}) suggest that FFN layers are a major locus of memorized associations and factual patterns, although such knowledge is distributed across the network rather than localized to a single component.
+\cite[Empirical studies]{keyvalmem} suggest that FFN layers are a major locus of memorized associations and factual patterns, although such knowledge is distributed across the network rather than localized to a single component.
 
 To calculate the transformation of a contextual vector through the FFN, you apply two linear transformations with a non-linear activation and biases:
 
