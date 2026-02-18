@@ -1300,29 +1300,30 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 		// ── All layers processed: trigger trajectory plot immediately ──
 		if (window.tlab_trajectory_collector) {
-			if (d_model === 2 || d_model === 3) {
-				const containerId = 'transformer-trajectory-full-path';
-				let trajDiv = document.getElementById(containerId);
+			const containerId = 'transformer-trajectory-full-path';
+			let trajDiv = document.getElementById(containerId);
 
-				// Recreate div if it was removed
-				if (!trajDiv) {
-					trajDiv = document.createElement('div');
-					trajDiv.id = containerId;
-					// Append to appropriate parent, e.g., migrationContainer or a specific wrapper
-					document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
-				}
-
-				// Register the data for the observer
-				trajectoryRenderRegistry.set(containerId, {
-					d_model: d_model,
-					rendered: false
-				});
-
-				// Start observing
-				trajectoryObserver.observe(trajDiv);
-			} else {
-				$("#transformer-trajectory-full-path").remove();
+			// Recreate div if it was removed
+			if (!trajDiv) {
+				trajDiv = document.createElement('div');
+				trajDiv.id = containerId;
+				document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
 			}
+
+			// Show a visible outline/placeholder immediately, before the observer fires
+			trajDiv.style.cssText = "width:100%; min-height:250px; border:2px dashed #cbd5e1; border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;";
+			trajDiv.innerHTML = `<div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
+				Rendering the Token Trajectory Plot may take a while
+			</div>`;
+
+			// Register the data for the observer
+			trajectoryRenderRegistry.set(containerId, {
+				d_model: d_model,
+				rendered: false
+			});
+
+			// Start observing
+			trajectoryObserver.observe(trajDiv);
 		}
 	}
 
@@ -2301,8 +2302,6 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
     tlab_render_weight_grid(id, layerNum);
 }
 
-
-
 function tlab_render_trajectory_plot(d_model) {
 	const mainContainer = document.getElementById('transformer-migration-plots-container');
 	if (!mainContainer || !window.tlab_trajectory_collector) return;
@@ -2316,9 +2315,12 @@ function tlab_render_trajectory_plot(d_model) {
 	if (!trajDiv) {
 		trajDiv = document.createElement('div');
 		trajDiv.id = 'transformer-trajectory-full-path';
-		trajDiv.style.cssText = "width:100%; height:850px;";
 		mainContainer.appendChild(trajDiv);
 	}
+
+	// Clear the placeholder outline now that we're actually rendering
+	trajDiv.style.cssText = "width:100%;";
+	trajDiv.innerHTML = '';
 
 	const labels = displayTokens || tokens.map((t, i) => {
 		if (typeof t === 'string') return t;
@@ -2336,6 +2338,102 @@ function tlab_render_trajectory_plot(d_model) {
 		return `rgb(${r}, ${g}, ${b})`;
 	};
 
+	// ───────────────────────────────────────────────
+	// d_model >= 4  →  2D slices for each (i,j) pair
+	// ───────────────────────────────────────────────
+	if (d_model >= 4) {
+		const pairs = [];
+		for (let i = 0; i < d_model; i++) {
+			for (let j = i + 1; j < d_model; j++) {
+				pairs.push([i, j]);
+			}
+		}
+
+		const heading = document.createElement('div');
+		heading.innerHTML = `<b>Token Trajectory — 2D Projections (${pairs.length} dimension pairs)</b>`;
+		heading.style.cssText = "text-align:center; padding:15px 10px 5px; font-size:1rem; color:#1e40af;";
+		trajDiv.appendChild(heading);
+
+		const grid = document.createElement('div');
+		grid.style.cssText = "display:grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap:15px; padding:10px;";
+		trajDiv.appendChild(grid);
+
+		pairs.forEach(([dimA, dimB], pairIdx) => {
+			const plotId = `traj-slice-${dimA}-${dimB}`;
+			const sliceDiv = document.createElement('div');
+			sliceDiv.id = plotId;
+			sliceDiv.style.cssText = "height:400px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;";
+			grid.appendChild(sliceDiv);
+
+			const traces = [];
+			const annotations = [];
+			const isFirstPair = (pairIdx === 0);
+
+			tokens.forEach((token, tIdx) => {
+				const x = dataPoints.map(p => p.data[tIdx][dimA]);
+				const y = dataPoints.map(p => p.data[tIdx][dimB]);
+				const tColor = getTokenColor(tIdx, tokens.length);
+				const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+				const hoverTexts = dataPoints.map(p => `${labels[tIdx]} (${tIdx + 1}) @ ${p.name}`);
+
+				traces.push({
+					type: 'scatter',
+					x: x, y: y,
+					mode: 'lines',
+					name: tokenLabel,
+					line: { width: 2, color: tColor, dash: 'dot' },
+					hoverinfo: 'text',
+					hovertemplate: '<b>%{text}</b><extra></extra>',
+					text: hoverTexts,
+					showlegend: isFirstPair  // legend only on the first subplot
+				});
+
+				for (let s = 0; s < x.length - 1; s++) {
+					annotations.push({
+						x: x[s + 1], y: y[s + 1],
+						ax: x[s], ay: y[s],
+						xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+						showarrow: true,
+						arrowhead: 3, arrowsize: 1.5, arrowwidth: 2,
+						arrowcolor: tColor, opacity: 0.9
+					});
+				}
+
+				if (tIdx === 0) {
+					dataPoints.forEach((p, pIdx) => {
+						annotations.push({
+							x: x[pIdx], y: y[pIdx],
+							xref: 'x', yref: 'y',
+							text: p.name,
+							showarrow: false,
+							font: { size: 8, color: '#64748b' },
+							yshift: 12
+						});
+					});
+				}
+			});
+
+			const layout = {
+				title: { text: `Dim ${dimA} × Dim ${dimB}`, font: { size: 13 } },
+				xaxis: { title: `Dim ${dimA}`, showgrid: true, zeroline: false },
+				yaxis: { title: `Dim ${dimB}`, showgrid: true, zeroline: false },
+				annotations: annotations,
+				margin: { l: 45, r: 10, b: 45, t: 40 },
+				showlegend: isFirstPair,
+				legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2, font: { size: 11 } }
+			};
+
+			Plotly.newPlot(plotId, traces, layout, { responsive: true });
+		});
+
+		return;
+	}
+
+	// ───────────────────────────────────────────────
+	// d_model 2 or 3  →  original single plot logic
+	// ───────────────────────────────────────────────
+	trajDiv.style.height = '850px';
+
 	const traces = [];
 	const annotations = [];
 
@@ -2346,8 +2444,6 @@ function tlab_render_trajectory_plot(d_model) {
 		const tColor = getTokenColor(tIdx, tokens.length);
 
 		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
-
-		// Hover text now includes the position number
 		const hoverTexts = dataPoints.map(p => `${labels[tIdx]} (${tIdx + 1}) @ ${p.name}`);
 
 		if (d_model === 3) {
