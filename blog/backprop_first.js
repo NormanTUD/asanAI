@@ -361,7 +361,7 @@ $$\\frac{\\partial E}{\\partial w_4} = \\delta_{h_2} \\cdot x_2 = ${f(R.d_h2)} \
 $$\\frac{\\partial E}{\\partial b_2} = \\delta_{h_2} = ${f(R.gb2)}$$`;
 		} else if (nk==='o1') {
 			const dir = R.d_o1 > 0 ? 'too HIGH — needs to decrease' : R.d_o1 < 0 ? 'too LOW — needs to increase' : 'perfect!';
-			h = `<b>Output neuron $o_1$</b> &nbsp;(target $$t_1=${f(t1,2)}$$)
+			h = `<b>Output neuron $o_1$</b> &nbsp;(target $t_1=${f(t1,2)}$)
 
 <b>Forward:</b>
 $$z_{o_1} = w_5 h_1 + w_6 h_2 + b_3 = ${f(w5)}\\cdot${f(R.h1)} + ${f(w6)}\\cdot${f(R.h2)} + ${f(b3)} = ${f(R.zo1)}$$
