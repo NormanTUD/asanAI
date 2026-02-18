@@ -2444,10 +2444,6 @@ function tlab_render_trajectory_plot(d_model) {
 	Plotly.react(trajDiv.id, traces, layout);
 }
 
-
-
-
-
 function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model) {
 	// Helper to calculate RGB components based on position
 	const getPosColorComponents = (index, total) => {
