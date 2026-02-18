@@ -361,7 +361,7 @@ $$\\frac{\\partial E}{\\partial b_2} = \\underbrace{\\delta_{h_2}}_{${f(R.gb2)}}
 			h = `<b>Output neuron $o_1$</b> &nbsp;(target $t_1=${f(t1,2)}$)
 
 <b>Forward:</b>
-$$z_{o_1} = \\underbrace{w_5}_{${f(w5)}} \\cdot \\underbrace{h_1}_{${f(R.h1)}} + \\underbrace{w_6}_{${f(w6)}} \\cdot \\underbrace{h_2}_{${f(R.h2)}} + \\underbrace{b_3}_{${f(b3)}} = ${f(R.zo1)}$$
+$$z_{o_1} = \\underbrace{${f(w5)}}_{w_5} \\cdot \\underbrace{${f(R.h1)}}_{h_1} + \\underbrace{${f(w6)}}_{w_6} \\cdot \\underbrace{${f(R.h2)}}_{h_2} + \\underbrace{${f(b3)}}_{b_3} = ${f(R.zo1)}$$
 $$o_1 = \\sigma(\\underbrace{${f(R.zo1)}}_{z_{o_1}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zo1)}}_{z_{o_1}}}} = ${f(R.o1)}$$
 
 <b>Backward — the 3 chain-rule terms:</b>
@@ -380,7 +380,7 @@ $$\\frac{\\partial E}{\\partial b_3} = \\underbrace{\\delta_{o_1}}_{${f(R.gb3)}}
 			h = `<b>Output neuron $o_2$</b> &nbsp;(target $t_2=${f(t2,2)}$)
 
 <b>Forward:</b>
-$$z_{o_2} = \\underbrace{w_7}_{${f(w7)}} \\cdot \\underbrace{h_1}_{${f(R.h1)}} + \\underbrace{w_8}_{${f(w8)}} \\cdot \\underbrace{h_2}_{${f(R.h2)}} + \\underbrace{b_4}_{${f(b4)}} = ${f(R.zo2)}$$
+$$z_{o_2} = \\underbrace{${f(w7)}}_{w_7} \\cdot \\underbrace{${f(R.h1)}}_{h_1} + \\underbrace{${f(w8)}}_{w_8} \\cdot \\underbrace{${f(R.h2)}}_{h_2} + \\underbrace{${f(b4)}}_{b_4} = ${f(R.zo2)}$$
 $$o_2 = \\sigma(\\underbrace{${f(R.zo2)}}_{z_{o_2}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zo2)}}_{z_{o_2}}}} = ${f(R.o2)}$$
 
 <b>Backward — the 3 chain-rule terms:</b>
