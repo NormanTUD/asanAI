@@ -436,7 +436,7 @@ $$\\frac{\\partial E}{\\partial w_4} = \\delta_{h_2} \\cdot x_2 = ${f(R.d_h2)} \
 $$\\frac{\\partial E}{\\partial b_2} = \\delta_{h_2} = ${f(R.gb2)}$$`;
     } else if (nk==='o1') {
       const dir = R.d_o1 > 0 ? 'too HIGH — needs to decrease' : R.d_o1 < 0 ? 'too LOW — needs to increase' : 'perfect!';
-      h = `<b>Output neuron $$o_1$$</b> &nbsp;(target $$t_1=${f(t1,2)}$$)
+      h = `<b>Output neuron $o_1$</b> &nbsp;(target $$t_1=${f(t1,2)}$$)
 
 <b>Forward:</b>
 $$z_{o_1} = w_5 h_1 + w_6 h_2 + b_3 = ${f(w5)}\\cdot${f(R.h1)} + ${f(w6)}\\cdot${f(R.h2)} + ${f(b3)} = ${f(R.zo1)}$$
@@ -455,7 +455,7 @@ $$\\frac{\\partial E}{\\partial w_6} = \\delta_{o_1} \\cdot h_2 = ${f(R.d_o1)} \
 $$\\frac{\\partial E}{\\partial b_3} = \\delta_{o_1} \\cdot 1 = ${f(R.gb3)}$$`;
     } else if (nk==='o2') {
       const dir = R.d_o2 > 0 ? 'too HIGH — needs to decrease' : R.d_o2 < 0 ? 'too LOW — needs to increase' : 'perfect!';
-      h = `<b>Output neuron $$o_2$$</b> &nbsp;(target $t_2=${f(t2,2)}$)
+      h = `<b>Output neuron $o_2$</b> &nbsp;(target $t_2=${f(t2,2)}$)
 
 <b>Forward:</b>
 $$z_{o_2} = w_7 h_1 + w_8 h_2 + b_4 = ${f(w7)}\\cdot${f(R.h1)} + ${f(w8)}\\cdot${f(R.h2)} + ${f(b4)} = ${f(R.zo2)}$$
