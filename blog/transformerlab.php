@@ -263,9 +263,7 @@ Instead of one massive attention operation, we use **Multi-Head Attention**. We 
 * $T = \text{Sequence Length}$ (The number of tokens/words in each sequence)
 * $d_v = \text{Head Dimension}$ (The dimensionality of the projected keys, queries, and values; usually $d_\text{model} / h$)
 
-$$\text{head}_i = \text{Attention}(h_0 W_i^Q, h_0 W_i^K, h_0 W_i^V)$$
-
-$$Q, K, V \in \mathbb{R}^{B \times T \times d_v}$$
+$$\underbrace{\text{head}_i}_{(B, T, d_v)} = \text{Attention}(\underbrace{h_0 W_i^Q}_{Q}, \underbrace{h_0 W_i^K}_{K}, \underbrace{h_0 W_i^V}_{V})$$
 
 The association between *Query* and *Key* and concrete tokens is only true in the first layer, where it is taken from the concrete embeddings. In further layers, it works on the abstract feature space instead.
 
