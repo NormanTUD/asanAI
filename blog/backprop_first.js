@@ -318,7 +318,7 @@ $$E_2 = \\tfrac{1}{2}\\bigl(\\underbrace{t_2}_{\\text{target}} - \\underbrace{o_
 			h = `<b>Hidden neuron $h_1$</b>
 
 <b>Forward:</b>
-$$z_{h_1} = \\underbrace{w_1}_{${f(w1)}} \\cdot \\underbrace{x_1}_{${f(x1)}} + \\underbrace{w_2}_{${f(w2)}} \\cdot \\underbrace{x_2}_{${f(x2)}} + \\underbrace{b_1}_{${f(b1)}} = ${f(R.zh1)}$$
+$$z_{h_1} = \\underbrace{${f(w1)}}_{w_1} \\cdot \\underbrace{${f(x1)}}_{x_1} + \\underbrace{${f(w2)}}_{w_2} \\cdot \\underbrace{${f(x2)}}_{x_2} + \\underbrace{${f(b1)}}_{b_1} = ${f(R.zh1)}$$
 $$h_1 = \\sigma(\\underbrace{${f(R.zh1)}}_{z_{h_1}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zh1)}}_{z_{h_1}}}} = ${f(R.h1)}$$
 
 <b>Backward</b> — blame arrives from <em>both</em> outputs via $w_5$ and $w_7$:
@@ -339,7 +339,7 @@ $$\\frac{\\partial E}{\\partial b_1} = \\underbrace{\\delta_{h_1}}_{${f(R.gb1)}}
 			h = `<b>Hidden neuron $h_2$</b>
 
 <b>Forward:</b>
-$$z_{h_2} = \\underbrace{w_3}_{${f(w3)}} \\cdot \\underbrace{x_1}_{${f(x1)}} + \\underbrace{w_4}_{${f(w4)}} \\cdot \\underbrace{x_2}_{${f(x2)}} + \\underbrace{b_2}_{${f(b2)}} = ${f(R.zh2)}$$
+$$z_{h_2} = \\underbrace{${f(w3)}}_{w_3} \\cdot \\underbrace{${f(x_1)}}_{x_1} + \\underbrace{${f(w4)}}_{w_4} \\cdot \\underbrace{${f(x_2)}}_{x_2} + \\underbrace{${f(b_2)}}_{b_2} = ${f(R.zh2)}$$
 $$h_2 = \\sigma(\\underbrace{${f(R.zh2)}}_{z_{h_2}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zh2)}}_{z_{h_2}}}} = ${f(R.h2)}$$
 
 <b>Backward</b> — blame arrives from <em>both</em> outputs via $w_6$ and $w_8$:
