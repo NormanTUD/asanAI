@@ -2374,6 +2374,7 @@ function tlab_render_trajectory_plot(d_model) {
 					x: x, y: y,
 					mode: 'lines',
 					name: tokenLabel,
+					legendgroup: tokenLabel,               // ← ADD THIS
 					line: { width: 2, color: tColor, dash: 'dot' },
 					hoverinfo: 'text',
 					hovertemplate: '<b>%{text}</b><extra></extra>',
@@ -2393,24 +2394,26 @@ function tlab_render_trajectory_plot(d_model) {
 					});
 				}
 
-				// Start point (circle)
+				// Start point (circle) — add legendgroup
 				traces.push({
 					type: 'scatter',
 					x: [x[0]], y: [y[0]],
 					mode: 'markers',
 					marker: { size: 10, symbol: 0, color: tColor,
 						line: { width: 2, color: '#000' } },
+					legendgroup: tokenLabel,               // ← ADD THIS
 					showlegend: false,
 					hovertemplate: `<b>${labels[tIdx]} — Start</b><extra></extra>`
 				});
 
-				// End point (star)
+				// End point (star) — add legendgroup
 				traces.push({
 					type: 'scatter',
 					x: [x[x.length - 1]], y: [y[y.length - 1]],
 					mode: 'markers',
 					marker: { size: 14, symbol: 17, color: tColor,
 						line: { width: 1.5, color: '#000' } },
+					legendgroup: tokenLabel,               // ← ADD THIS
 					showlegend: false,
 					hovertemplate: `<b>${labels[tIdx]} — End</b><extra></extra>`
 				});
@@ -2470,6 +2473,7 @@ function tlab_render_trajectory_plot(d_model) {
 				x: x, y: y, z: z,
 				mode: 'lines',
 				name: tokenLabel,
+				legendgroup: tokenLabel,               // ← ADD THIS
 				line: { width: 5, color: tColor },
 				hoverinfo: 'text',
 				hovertemplate: '<b>%{text}</b><extra></extra>',
@@ -2484,22 +2488,25 @@ function tlab_render_trajectory_plot(d_model) {
 					u: [x[i + 1] - x[i]], v: [y[i + 1] - y[i]], w: [z[i + 1] - z[i]],
 					sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
 					colorscale: [[0, tColor], [1, tColor]], showscale: false,
-					hoverinfo: 'skip', showlegend: false
+					hoverinfo: 'skip',
+					legendgroup: tokenLabel,               // ← ADD THIS
+					showlegend: false
 				});
 			}
 
-			// 3D Start point (circle marker)
+			// 3D Start point
 			traces.push({
 				type: 'scatter3d',
 				x: [x[0]], y: [y[0]], z: [z[0]],
 				mode: 'markers',
 				marker: { size: 6, symbol: 'circle', color: tColor,
 					line: { width: 1, color: '#000' } },
+				legendgroup: tokenLabel,               // ← ADD THIS
 				showlegend: false,
 				hovertemplate: `<b>${labels[tIdx]} — Start</b><extra></extra>`
 			});
 
-			// 3D End point — ★ text glyph anchored at the exact coordinate
+			// 3D End point (★ text glyph)
 			traces.push({
 				type: 'scatter3d',
 				x: [x[x.length - 1]], y: [y[y.length - 1]], z: [z[z.length - 1]],
@@ -2507,6 +2514,7 @@ function tlab_render_trajectory_plot(d_model) {
 				text: ['★'],
 				textposition: 'middle center',
 				textfont: { size: 18, color: tColor, family: 'Arial, sans-serif' },
+				legendgroup: tokenLabel,               // ← ADD THIS
 				showlegend: false,
 				hoverinfo: 'text',
 				hovertemplate: `<b>${labels[tIdx]} — End</b><extra></extra>`
@@ -2518,6 +2526,7 @@ function tlab_render_trajectory_plot(d_model) {
 				x: x, y: y,
 				mode: 'lines',
 				name: tokenLabel,
+				legendgroup: tokenLabel,               // ← ADD THIS
 				line: { width: 2, color: tColor, dash: 'dot' },
 				hoverinfo: 'text',
 				hovertemplate: '<b>%{text}</b><extra></extra>',
@@ -2546,6 +2555,7 @@ function tlab_render_trajectory_plot(d_model) {
 				mode: 'markers',
 				marker: { size: 10, symbol: 0, color: tColor,
 					line: { width: 2, color: '#000' } },
+				legendgroup: tokenLabel,               // ← ADD THIS
 				showlegend: false,
 				hovertemplate: `<b>${labels[tIdx]} — Start</b><extra></extra>`
 			});
@@ -2557,6 +2567,7 @@ function tlab_render_trajectory_plot(d_model) {
 				mode: 'markers',
 				marker: { size: 14, symbol: 17, color: tColor,
 					line: { width: 1.5, color: '#000' } },
+				legendgroup: tokenLabel,               // ← ADD THIS
 				showlegend: false,
 				hovertemplate: `<b>${labels[tIdx]} — End</b><extra></extra>`
 			});
