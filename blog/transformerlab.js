@@ -1959,7 +1959,7 @@ const migrationObserver = new IntersectionObserver((entries) => {
 			}
 		}
 	});
-}, { threshold: 0.1 });
+}, { threshold: 0 });
 
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
 	const container = document.getElementById('transformer-migration-plots-container');
