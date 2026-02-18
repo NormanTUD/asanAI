@@ -409,7 +409,7 @@ $$E_2 = \\tfrac{1}{2}(t_2 - o_2)^2 = \\tfrac{1}{2}(${f(t2,2)} - ${f(R.o2)})^2 = 
 $$z_{h_1} = w_1 x_1 + w_2 x_2 + b_1 = ${f(w1)}\\cdot${f(x1)} + ${f(w2)}\\cdot${f(x2)} + ${f(b1)} = ${f(R.zh1)}$$
 $$h_1 = \\sigma(${f(R.zh1)}) = \\frac{1}{1+e^{-${f(R.zh1)}}} = ${f(R.h1)}$$
 
-<b>Backward</b> — blame arrives from <em>both</em> outputs via $$w_5$$ and $$w_7$$:
+<b>Backward</b> — blame arrives from <em>both</em> outputs via $w_5$ and $w_7$:
 $$\\frac{\\partial E}{\\partial h_1} = \\delta_{o_1}\\cdot w_5 + \\delta_{o_2}\\cdot w_7 = ${f(R.d_o1)}\\cdot${f(w5)} + ${f(R.d_o2)}\\cdot${f(w7)} = ${f(R.dE_dh1)}$$
 $$\\text{sigmoid slope} = h_1(1-h_1) = ${f(R.h1)}\\cdot${f(1-R.h1)} = ${f(R.h1*(1-R.h1))}$$
 $$\\delta_{h_1} = ${f(R.dE_dh1)} \\times ${f(R.h1*(1-R.h1))} = ${f(R.d_h1)}$$
