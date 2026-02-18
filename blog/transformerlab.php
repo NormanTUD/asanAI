@@ -265,6 +265,10 @@ Instead of one massive attention operation, we use **Multi-Head Attention**. We 
 
 $$\underbrace{\text{head}_i}_{(B, T, d_v)} = \text{Attention}(\underbrace{h_{i-1} W_i^Q}_{Q}, \underbrace{h_{i-1} W_i^K}_{K}, \underbrace{h_{i-1} W_i^V}_{V})$$
 
+$$\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)W^O$$
+
+$$(B, T, h \cdot d_v) \rightarrow (B, T, d_{\text{model}})$$
+
 The association between *Query* and *Key* and concrete tokens is only true in the first layer, where it is taken from the concrete embeddings. In further layers, it works on the abstract feature space instead.
 
 In this stage, it is already abstracted away from the concrete Embedding Space (for example, by positional encoding), and thus, the numbers don't inherently 'mean' anything anymore.
