@@ -1,9 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## Backpropagation: How a Neural Network Learns From Its Mistakes
-
-### The Core Idea
+## The Core Idea
 
 You've already learned how **gradient descent** finds the bottom of a valley, and how the **chain rule** lets us pass error signals through a chain of operations. **Backpropagation** is the algorithm that puts these two ideas together to train an entire neural network.
 
@@ -15,7 +13,7 @@ The word "backpropagation" literally means **"propagating errors backward."** He
 
 The mathematical engine behind step 3 is the **chain rule**, applied systematically from the output layer all the way back to the first layer.
 
-### The Network We'll Use
+## The Network We'll Use
 
 We'll work with the simplest possible network that still demonstrates every concept: **2 inputs, 2 hidden neurons, 2 outputs**. This is the same architecture used in Matt Mazur's classic walkthrough, and it's enough to see every moving part.
 
@@ -35,7 +33,7 @@ $$
 
 The sigmoid squashes any number into the range $(0, 1)$, which is essential for keeping values bounded and for computing smooth gradients.
 
-### The Sigmoid Derivative (Key Identity)
+## The Sigmoid Derivative (Key Identity)
 
 One reason sigmoid is pedagogically useful is that its derivative has an elegant closed form:
 
@@ -45,7 +43,7 @@ $$
 
 This means once we know the *output* of a sigmoid neuron, we instantly know its derivative — no extra computation needed. You'll see this identity used at every neuron during the backward pass.
 
-### The Loss Function
+## The Loss Function
 
 We use the **Mean Squared Error (MSE)** to measure how wrong the network is:
 
@@ -59,7 +57,7 @@ $$
 \frac{\partial}{\partial o_i} \left[ \frac{1}{2}(t_i - o_i)^2 \right] = -(t_i - o_i)
 $$
 
-### What "Information Flows Back" Really Means
+## What "Information Flows Back" Really Means
 
 During the **forward pass**, numbers flow left-to-right: inputs get multiplied by weights, summed, and squeezed through activation functions to produce outputs.
 
@@ -73,7 +71,7 @@ $$
 
 This is the chain rule applied link by link. The backward pass computes these products starting from the output and working toward the input — that's why it's called **back**propagation.
 
-### Interactive Lab
+## Interactive Lab
 
 Below is a complete neural network. Every weight, bias, and intermediate value is visible. Click **"Forward Pass"** to see data flow through the network, then click **"Backward Pass"** to watch the error gradient propagate back through every connection. Finally, click **"Update Weights"** to apply gradient descent.
 
@@ -138,10 +136,9 @@ You can edit any weight, bias, input, target, or learning rate and re-run the pr
                 <span style="color:#ef4444;">● Red = backward gradient</span> &nbsp;
                 <span style="color:#10b981;">● Green = updated</span>
             </div>
-		<svg id="bp-network-svg" width="100%" viewBox="0 0 800 540"
+		<svg id="bp-network-svg" width="100%" viewBox="0 0 900 560"
 		     style="background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
 		</svg>
-
         </div>
 
         <!-- Weight Editor -->
@@ -174,10 +171,11 @@ You can edit any weight, bias, input, target, or learning rate and re-run the pr
         </div>
     </div>
 
-    <!-- Math Step-by-Step Display -->
-    <div id="bp-math-display" style="padding: 18px; background: linear-gradient(to right, #f8fafc, #f1f5f9); border: 1px solid #cbd5e0; border-radius: 10px; font-size: 0.85rem; overflow-x: auto; min-height: 80px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);">
-        <span style="color:#94a3b8; font-style:italic;">Click "Forward Pass" to begin. Every computation will be shown here step by step.</span>
-    </div>
+	    <!-- Math Step-by-Step Display -->
+	<div id="bp-math-display" style="padding: 24px; background: linear-gradient(to right, #f8fafc, #f1f5f9); border: 1px solid #cbd5e0; border-radius: 10px; font-size: 1.0rem; overflow-x: auto; min-height: 120px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);">
+	    <span style="color:#94a3b8; font-style:italic;">Click "Forward Pass" to begin. Every computation will be shown here step by step.</span>
+	</div>
+
 
     <!-- Loss Chart -->
     <div>
@@ -187,7 +185,7 @@ You can edit any weight, bias, input, target, or learning rate and re-run the pr
 </div>
 
 <div class="md" style="margin-top: 30px;">
-### What to Watch For
+## What to Watch For
 
 1. **Forward Pass:** Watch the blue signals propagate left-to-right. Each neuron computes a weighted sum, adds a bias, and applies the sigmoid. The final outputs $o_1$ and $o_2$ are compared to the targets to compute the total error.
 
@@ -199,7 +197,7 @@ You can edit any weight, bias, input, target, or learning rate and re-run the pr
 
 5. **Experiment:** Try changing the learning rate. Too high ($> 2$) and the network may overshoot and diverge. Too low ($< 0.01$) and learning is painfully slow. Try changing the initial weights to see how different starting points affect convergence.
 
-### The Full Chain Rule, Expanded
+## The Full Chain Rule, Expanded
 
 For an output-layer weight like $w_5$ (connecting $h_1$ to $o_1$):
 

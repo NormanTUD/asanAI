@@ -26,7 +26,7 @@
 	incl("The intuition for what LLMs are", "intuition");
 	incl("Loss: Teaching through Failure", "losslab");
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
-	incl("Back-Propagation", "backproplab");
+	incl("Backpropagation: How a Neural Network Learns From Its Mistakes", "backproplab");
 	incl("Optimizer", "optimizerlab");
 	incl("Smallest possible neural network", "minimalneuron");
 	incl("Activation Functions: The Neural Decision Makers", "activationlab");
