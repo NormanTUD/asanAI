@@ -137,6 +137,11 @@ In a Transformer (like ChatGPT), this is the "Handshake." When a word "looks" at
 
 <div class="md">
 ## The Illusion of Interpretability
+
+<div class="smart-quote" data-cite="processandreality" data-page=471>
+Mathematical physics translates the saying of Heraclitus, 'All things flow,' into its own language. It then becomes, All things are vectors.
+</div>
+
 It is tempting to label specific axes as "Gender," "Power," or "Temperature," but this is often a human-imposed simplification. In modern LLMs, dimensions are **latent features**, mathematical patterns discovered through statistical co-occurrence rather than human-defined categories.
 
 While we can find "directions" in the vector space that correlate with human concepts, most of the 768+ dimensions do not have a name in any human language.

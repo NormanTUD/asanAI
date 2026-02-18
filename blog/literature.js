@@ -1,4 +1,10 @@
 window.bibData = {
+	"processandreality": {
+		author: "Alfred North Whitehead",
+		url: "https://archive.org/details/processrealityes0000unse/page/n5/mode/2up",
+		title: "Process and Reality",
+		year: 1928
+	},
 	"arsconjectandi": {
 		title: "Ars Conjectandi",
 		year: 1713,
