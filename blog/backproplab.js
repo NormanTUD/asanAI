@@ -511,6 +511,7 @@ $$${dir}$$`);
 	// ── Initial render ──
 	recompute();
 	try { render_temml(); } catch(e) {}
+	syncInputs();
 }
 
 async function loadBackproplabModule () {
