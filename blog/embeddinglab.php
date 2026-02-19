@@ -1,10 +1,10 @@
 <?php include_once("functions.php"); ?>
 
-<div class="md">
 <div class="smart-quote" data-cite="wittgenstein1953investigations">
   The meaning of a word is its use in the language.
 </div>
 
+<div class="md">
 In the architecture of a Transformer, a word possesses no intrinsic "soul" or static dictionary definition. Instead, its identity is defined entirely by its context, its **use**. This philosophical principle is operationalized through a high-dimensional **Embedding Space**, where semantic concepts are mapped as coordinates in a continuous geometric manifold.
 
 Even though in this example, we treat tokens as words, they can also be parts of words or single characters like a comma or a semicolon due to *Byte-Pair-Encodings*.
@@ -137,11 +137,13 @@ In a Transformer (like ChatGPT), this is the "Handshake." When a word "looks" at
 
 <div class="md">
 ## The Illusion of Interpretability
+</div>
 
 <div class="smart-quote" data-cite="processandreality" data-page=471>
 Mathematical physics translates the saying of Heraclitus, 'All things flow,' into its own language. It then becomes, All things are vectors.
 </div>
 
+<div class="md">
 It is tempting to label specific axes as "Gender," "Power," or "Temperature," but this is often a human-imposed simplification. In modern LLMs, dimensions are **latent features**, mathematical patterns discovered through statistical co-occurrence rather than human-defined categories.
 
 While we can find "directions" in the vector space that correlate with human concepts, most of the 768+ dimensions do not have a name in any human language.
@@ -153,3 +155,4 @@ While we can find "directions" in the vector space that correlate with human con
 While the semantic manifold relies on "use" to define meaning, the system falters when a word lacks a statistical history. [**Hapax legomena**](https://en.wikipedia.org/wiki/Hapax_legomenon), terms that appear only once in an entire corpus, present a unique challenge for embedding spaces. Because a token's identity is defined entirely by its context, a single occurrence provides insufficient data points to anchor it. In a high-dimensional space, these words become "homeless"; the model cannot triangulate their coordinates through repeated relationships. Without the "gravity" of multiple linguistic environments to pull them into a meaningful neighborhood, their vectors often reside in noisy, semi-random locations, rendering them mathematically isolated from the manifold of human knowledge.
 
 Even more disruptive are **Glitch Tokens** (described by Yuxi Li et al. in \citeyear{glitchtokens}), which reveal the cracks in the machine's geometric logic. These often arise from anomalies like the Reddit username `SolidGoldMagikarp`, a bot that appeared in thousands of entries within a specific counting thread. Because these strings appeared frequently enough to be assigned a dedicated token but lacked varied, human-semantic context, they do not possess a stable "positional relationship" in the space. When an LLM encounters these tokens, it often suffers a "hallucination of meaning" or total logic failure. In the geometry of meaning, these tokens act like "voids" or "gravity wells", they are products of statistical co-occurrence that do not correlate with any human concept.
+</div>

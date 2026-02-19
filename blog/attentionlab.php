@@ -10,9 +10,7 @@ The **Self-Attention mechanism** acts as a semantic GPS. It looks at the surroun
 
 * **The Vector Shift:** If the word "river" is nearby, it exerts a gravitational force on "bank," dragging its coordinates away from finance and toward nature.
 * **The Resulting Embedding:** The final position (represented by the **blue diamond** in the plot below) is the "contextualized" version of the word, informed by its neighbors.
-</div>
 
-<div class="md">
 ## Geometric Intuition Lab: Why *That* Equation?
 
 The attention equation looks deceptively simple:
@@ -22,10 +20,7 @@ $$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\righ
 But *why* this specific formula? Why dot products? Why softmax? Why $\sqrt{d_k}$? 
 
 The best way to understand is to **see it working** in spaces small enough to visualize. We'll build up from 1D scalars to 3D vectors, and at each stage, the geometric meaning of every piece of the equation will become obvious.
-</div>
 
-<!-- ===================== SECTION 1: 1D ===================== -->
-<div class="md">
 ### 1D: Attention on a Number Line
 
 In one dimension, every embedding is just a **single number**. The Query $q$, Key $k$, and Value $v$ are all scalars. The dot product $q \cdot k$ is just ordinary multiplication.
@@ -147,9 +142,7 @@ Having played with all three dimensions, the design choices become clear:
 3. **Softmax**: Turns raw scores into a **probability distribution**, non-negative weights that sum to 1. This means the output is a **convex combination** of values, geometrically trapped inside their convex hull. It's the minimal assumption: "blend the available information proportionally to relevance."
 
 4. **Weighted sum of Values**: The output is an interpolation, not a lookup. This is differentiable everywhere, enabling gradient-based learning. The FFN layer that follows provides the non-linearity needed to "escape" the convex hull and create genuinely new representations.
-</div>
 
-<div class="md">
 ## The Physics of the "Handshake"
 To decide how much "pull" one word has on another, the model performs a mathematical handshake using three specific projections:
 
@@ -272,9 +265,7 @@ Think of a word as a point floating in a high-dimensional space. In isolation, i
 
 <div class="md" style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
 The person was eating the *juicy* **apple**.
-</div>
 
-<div class="md">
 * **Neutral State:** "Apple" sits between *Technology* and *Fruit*.
 * **The Context:** "I ate a juicy **apple**."
 * **The Pull:** The word "juicy" exerts a high attention score.
@@ -286,9 +277,7 @@ The person was eating the *juicy* **apple**.
 
 <div class="md" style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
 The pianist played the entire piece of **music** in the wrong **key**.
-</div>
 
-<div class="md">
 * **Neutral State:** "Key" sits between *Music*, *Security*, and *Data*.
 * **The Context:** "The pianist hit the wrong **key**."
 * **The Pull:** The word "pianist" creates a mathematical "handshake" with "key".
