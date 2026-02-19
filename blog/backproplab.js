@@ -135,7 +135,7 @@ function renderBackpropVisual(id) {
 		});
 	});
 	function syncInputs() {
-		numInputs.forEach(inp => { inp.value = parseFloat(S[inp.dataset.k]).toFixed(2); });
+		numInputs.forEach(inp => { inp.value = parseFloat(S[inp.dataset.k]).toFixed(4); });
 	}
 
 	// ── Node positions ──
@@ -214,7 +214,7 @@ function renderBackpropVisual(id) {
 		html += `<line x1="${nodes.o1.x}" y1="${nodes.o1.y}" x2="${nodes.t1.x}" y2="${nodes.t1.y}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
 		html += `<line x1="${nodes.o2.x}" y1="${nodes.o2.y}" x2="${nodes.t2.x}" y2="${nodes.t2.y}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
 
-		const vals = {x1:f(x1,2),x2:f(x2,2),h1:f(R.h1),h2:f(R.h2),o1:f(R.o1),o2:f(R.o2),t1:f(t1,2),t2:f(t2,2)};
+		const vals = {x1:f(x1,4),x2:f(x2,4),h1:f(R.h1),h2:f(R.h2),o1:f(R.o1),o2:f(R.o2),t1:f(t1,4),t2:f(t2,4)};
 		const colors = {input:'#64748b',hidden:'#3b82f6',output:'#10b981',target:'#f59e0b'};
 		const fills  = {input:'#f1f5f9',hidden:'#eff6ff',output:'#ecfdf5',target:'#fffbeb'};
 		const radii  = {input:28,hidden:34,output:34,target:24};
@@ -347,15 +347,15 @@ function renderBackpropVisual(id) {
 		let h = '';
 
 		if (nk==='x1') {
-			h = `<b>Input $$x_1 = ${f(x1,2)}$$</b><br>Raw input value — no computation, just fed into the network.`;
+			h = `<b>Input $$x_1 = ${f(x1,4)}$$</b><br>Raw input value — no computation, just fed into the network.`;
 		} else if (nk==='x2') {
-			h = `<b>Input $$x_2 = ${f(x2,2)}$$</b><br>Raw input value — no computation, just fed into the network.`;
+			h = `<b>Input $$x_2 = ${f(x2,4)}$$</b><br>Raw input value — no computation, just fed into the network.`;
 		} else if (nk==='t1') {
-			h = `<b>Target $$t_1 = ${f(t1,2)}$$</b><br>
-$$E_1 = \\tfrac{1}{2}\\bigl(\\underbrace{t_1}_{\\text{target}} - \\underbrace{o_1}_{\\text{output}}\\bigr)^2 = \\tfrac{1}{2}(\\underbrace{${f(t1,2)}}_{t_1} - \\underbrace{${f(R.o1)}}_{o_1})^2 = ${f(R.E1)}$$`;
+			h = `<b>Target $$t_1 = ${f(t1,4)}$$</b><br>
+$$E_1 = \\tfrac{1}{2}\\bigl(\\underbrace{t_1}_{\\text{target}} - \\underbrace{o_1}_{\\text{output}}\\bigr)^2 = \\tfrac{1}{2}(\\underbrace{${f(t1,4)}}_{t_1} - \\underbrace{${f(R.o1)}}_{o_1})^2 = ${f(R.E1)}$$`;
 		} else if (nk==='t2') {
-			h = `<b>Target $$t_2 = ${f(t2,2)}$$</b><br>
-$$E_2 = \\tfrac{1}{2}\\bigl(\\underbrace{t_2}_{\\text{target}} - \\underbrace{o_2}_{\\text{output}}\\bigr)^2 = \\tfrac{1}{2}(\\underbrace{${f(t2,2)}}_{t_2} - \\underbrace{${f(R.o2)}}_{o_2})^2 = ${f(R.E2)}$$`;
+			h = `<b>Target $$t_2 = ${f(t2,4)}$$</b><br>
+$$E_2 = \\tfrac{1}{2}\\bigl(\\underbrace{t_2}_{\\text{target}} - \\underbrace{o_2}_{\\text{output}}\\bigr)^2 = \\tfrac{1}{2}(\\underbrace{${f(t2,4)}}_{t_2} - \\underbrace{${f(R.o2)}}_{o_2})^2 = ${f(R.E2)}$$`;
 		} else if (nk==='h1') {
 			h = `<b>Hidden neuron $h_1$</b>
 
@@ -400,14 +400,14 @@ $$\\frac{\\partial E}{\\partial w_4} = \\underbrace{\\delta_{h_2}}_{${f(R.d_h2)}
 $$\\frac{\\partial E}{\\partial b_2} = \\underbrace{\\delta_{h_2}}_{${f(R.gb2)}}$$`;
 		} else if (nk==='o1') {
 			const dir = R.d_o1 > 0 ? 'too HIGH — needs to decrease' : R.d_o1 < 0 ? 'too LOW — needs to increase' : 'perfect!';
-			h = `<b>Output neuron $o_1$</b> &nbsp;(target $t_1=${f(t1,2)}$)
+			h = `<b>Output neuron $o_1$</b> &nbsp;(target $t_1=${f(t1,4)}$)
 
 <b>Forward:</b>
 $$z_{o_1} = \\underbrace{${f(w5)}}_{w_5} \\cdot \\underbrace{${f(R.h1)}}_{h_1} + \\underbrace{${f(w6)}}_{w_6} \\cdot \\underbrace{${f(R.h2)}}_{h_2} + \\underbrace{${f(b3)}}_{b_3} = ${f(R.zo1)}$$
 $$o_1 = \\text{sigmoid}(\\underbrace{${f(R.zo1)}}_{z_{o_1}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zo1)}}_{z_{o_1}}}} = ${f(R.o1)}$$
 
 <b>Backward — the 3 chain-rule terms:</b>
-$$\\underbrace{\\frac{\\partial E}{\\partial o_1}}_{\\text{how wrong?}} = -(\\underbrace{t_1}_{${f(t1,2)}} - \\underbrace{o_1}_{${f(R.o1)}}) = ${f(R.dE_do1)}$$
+$$\\underbrace{\\frac{\\partial E}{\\partial o_1}}_{\\text{how wrong?}} = -(\\underbrace{t_1}_{${f(t1,4)}} - \\underbrace{o_1}_{${f(R.o1)}}) = ${f(R.dE_do1)}$$
 $$\\underbrace{\\frac{\\partial o_1}{\\partial z_{o_1}}}_{\\substack{\\text{derivative of sigmoid}\\\\\\text{sigmoid}'(z_{o_1})}} = \\underbrace{o_1}_{${f(R.o1)}} \\cdot \\underbrace{(1-o_1)}_{${f(1-R.o1)}} = ${f(R.do1_dz1)}$$
 $$\\delta_{o_1} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${f(R.do1_dz1)}}_{\\text{sigmoid}'(z_{o_1})} = ${f(R.d_o1)}$$
 
@@ -419,14 +419,14 @@ $$\\frac{\\partial E}{\\partial w_6} = \\underbrace{\\delta_{o_1}}_{${f(R.d_o1)}
 $$\\frac{\\partial E}{\\partial b_3} = \\underbrace{\\delta_{o_1}}_{${f(R.gb3)}}$$`;
 		} else if (nk==='o2') {
 			const dir = R.d_o2 > 0 ? 'too HIGH — needs to decrease' : R.d_o2 < 0 ? 'too LOW — needs to increase' : 'perfect!';
-			h = `<b>Output neuron $o_2$</b> &nbsp;(target $t_2=${f(t2,2)}$)
+			h = `<b>Output neuron $o_2$</b> &nbsp;(target $t_2=${f(t2,4)}$)
 
 <b>Forward:</b>
 $$z_{o_2} = \\underbrace{${f(w7)}}_{w_7} \\cdot \\underbrace{${f(R.h1)}}_{h_1} + \\underbrace{${f(w8)}}_{w_8} \\cdot \\underbrace{${f(R.h2)}}_{h_2} + \\underbrace{${f(b4)}}_{b_4} = ${f(R.zo2)}$$
 $$o_2 = \\text{sigmoid}(\\underbrace{${f(R.zo2)}}_{z_{o_2}}) = \\frac{1}{1+e^{-\\underbrace{${f(R.zo2)}}_{z_{o_2}}}} = ${f(R.o2)}$$
 
 <b>Backward — the 3 chain-rule terms:</b>
-$$\\underbrace{\\frac{\\partial E}{\\partial o_2}}_{\\text{how wrong?}} = -(\\underbrace{t_2}_{${f(t2,2)}} - \\underbrace{o_2}_{${f(R.o2)}}) = ${f(R.dE_do2)}$$
+$$\\underbrace{\\frac{\\partial E}{\\partial o_2}}_{\\text{how wrong?}} = -(\\underbrace{t_2}_{${f(t2,4)}} - \\underbrace{o_2}_{${f(R.o2)}}) = ${f(R.dE_do2)}$$
 $$\\underbrace{\\frac{\\partial o_2}{\\partial z_{o_2}}}_{\\substack{\\text{derivative of sigmoid}\\\\\\text{sigmoid}'(z_{o_2})}} = \\underbrace{o_2}_{${f(R.o2)}} \\cdot \\underbrace{(1-o_2)}_{${f(1-R.o2)}} = ${f(R.do2_dz2)}$$
 $$\\delta_{o_2} = \\underbrace{${f(R.dE_do2)}}_{\\frac{\\partial E}{\\partial o_2}} \\times \\underbrace{${f(R.do2_dz2)}}_{\\text{sigmoid}'(z_{o_2})} = ${f(R.d_o2)}$$
 
@@ -465,7 +465,7 @@ $$\\frac{\\partial E}{\\partial b_4} = \\underbrace{\\delta_{o_2}}_{${f(R.gb4)}}
 <b>Gradient</b> — the chain rule product:
 $$\\frac{\\partial E}{\\partial ${labels[wk]}} = \\underbrace{${m.delta}}_{${m.dv}} \\cdot \\underbrace{${m.inp}}_{${m.iv}} = ${f(m.g)}$$
 
-<b>Update rule</b> — gradient descent with $\\eta = ${f(lr,2)}$:
+<b>Update rule</b> — gradient descent with $\\eta = ${f(lr,4)}$:
 $$${labels[wk]}^{\\,\\text{new}} = \\underbrace{${labels[wk]}}_{${f(wVal)}} - \\underbrace{\\eta}_{${f(lr)}} \\cdot \\underbrace{\\frac{\\partial E}{\\partial ${labels[wk]}}}_{${f(m.g)}} = ${f(nw)}$$
 
 $$${dir}$$`);
