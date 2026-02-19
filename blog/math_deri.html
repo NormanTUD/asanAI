@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Derivatives — An Interactive Guide</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1c25;
+            --accent: #6c63ff;
+            --accent2: #ff6584;
+            --text: #e0e0e0;
+            --muted: #888;
+            --border: #2a2d3a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a1c25 0%, #2a1a3e 100%);
+            padding: 80px 40px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--muted);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        section h2 {
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        section h3 {
+            font-size: 1.3rem;
+            color: var(--accent2);
+            margin: 25px 0 10px;
+        }
+
+        p, li {
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        ul { padding-left: 24px; }
+
+        .formula {
+            background: #12131a;
+            border-left: 4px solid var(--accent);
+            padding: 16px 24px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            overflow-x: auto;
+        }
+
+        .plot-container {
+            margin: 24px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .slider-group {
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .slider-group label {
+            color: var(--muted);
+            min-width: 80px;
+        }
+
+        .slider-group input[type="range"] {
+            flex: 1;
+            min-width: 200px;
+            accent-color: var(--accent);
+        }
+
+        .slider-group .val {
+            color: var(--accent);
+            font-weight: bold;
+            min-width: 60px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        th {
+            background: #12131a;
+            color: var(--accent);
+        }
+
+        .note {
+            background: rgba(108, 99, 255, 0.1);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .toc {
+            columns: 2;
+            column-gap: 20px;
+        }
+
+        .toc li {
+            break-inside: avoid;
+        }
+
+        .toc a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .toc a:hover { text-decoration: underline; }
+
+        @media (max-width: 700px) {
+            header h1 { font-size: 2rem; }
+            section { padding: 24px 16px; }
+            .toc { columns: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📐 Understanding Derivatives</h1>
+    <p>An interactive visual guide to differential calculus, powered by Plotly.js</p>
+</header>
+
+<div class="container">
+
+    <!-- TABLE OF CONTENTS -->
+    <section>
+        <h2>📑 Table of Contents</h2>
+        <ul class="toc">
+            <li><a href="#intuition">1. The Intuition — Slopes & Tangent Lines</a></li>
+            <li><a href="#limit">2. The Limit Definition</a></li>
+            <li><a href="#power">3. Power Rule</a></li>
+            <li><a href="#constant">4. Constant & Constant Multiple Rules</a></li>
+            <li><a href="#sum">5. Sum & Difference Rule</a></li>
+            <li><a href="#product">6. Product Rule</a></li>
+            <li><a href="#quotient">7. Quotient Rule</a></li>
+            <li><a href="#chain">8. Chain Rule</a></li>
+            <li><a href="#trig">9. Trigonometric Derivatives</a></li>
+            <li><a href="#exp">10. Exponential & Logarithmic Derivatives</a></li>
+            <li><a href="#higher">11. Higher-Order Derivatives</a></li>
+            <li><a href="#applications">12. Applications — Maxima, Minima & Inflection</a></li>
+        </ul>
+    </section>
+
+    <!-- 1. INTUITION -->
+    <section id="intuition">
+        <h2>1. The Intuition — Slopes & Tangent Lines</h2>
+        <p>
+            The derivative of a function at a point tells you the <strong>instantaneous rate of change</strong> — the slope of the tangent line at that point.
+            Imagine zooming in on a curve until it looks like a straight line. The slope of that line is the derivative.
+        </p>
+        <p>Use the slider below to move the point along <strong>f(x) = x²</strong> and see the tangent line update in real time.</p>
+
+        <div class="slider-group">
+            <label>x₀ =</label>
+            <input type="range" id="tangentSlider" min="-3" max="3" step="0.1" value="1">
+            <span class="val" id="tangentVal">1.0</span>
+        </div>
+        <div class="plot-container" id="plotTangent"></div>
+
+        <script>
+        (function() {
+            const slider = document.getElementById('tangentSlider');
+            const valSpan = document.getElementById('tangentVal');
+
+            function draw(x0) {
+                const xs = [], ys = [];
+                for (let x = -4; x <= 4; x += 0.05) { xs.push(x); ys.push(x * x); }
+
+                const slope = 2 * x0;
+                const y0 = x0 * x0;
+                const txs = [], tys = [];
+                for (let x = x0 - 2; x <= x0 + 2; x += 0.05) {
+                    txs.push(x);
+                    tys.push(slope * (x - x0) + y0);
+                }
+
+                Plotly.react('plotTangent', [
+                    { x: xs, y: ys, name: 'f(x) = x²', line: { color: '#6c63ff', width: 3 } },
+                    { x: txs, y: tys, name: `Tangent (slope = ${slope.toFixed(2)})`, line: { color: '#ff6584', width: 2, dash: 'dash' } },
+                    { x: [x0], y: [y0], mode: 'markers', name: `(${x0.toFixed(1)}, ${y0.toFixed(2)})`, marker: { size: 12, color: '#ff6584' } }
+                ], {
+                    paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                    font: { color: '#e0e0e0' },
+                    xaxis: { range: [-4, 4], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                    yaxis: { range: [-2, 16], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                    margin: { t: 30, b: 40, l: 50, r: 20 },
+                    legend: { x: 0.02, y: 0.98 }
+                }, { responsive: true });
+            }
+
+            slider.addEventListener('input', () => {
+                const v = parseFloat(slider.value);
+                valSpan.textContent = v.toFixed(1);
+                draw(v);
+            });
+            draw(1);
+        })();
+        </script>
+    </section>
+
+    <!-- 2. LIMIT DEFINITION -->
+    <section id="limit">
+        <h2>2. The Limit Definition</h2>
+        <p>The formal definition of the derivative is:</p>
+        <div class="formula">f'(x) = lim<sub>h→0</sub> [ f(x + h) − f(x) ] / h</div>
+        <p>
+            This is the slope of the <strong>secant line</strong> between <em>(x, f(x))</em> and <em>(x+h, f(x+h))</em> as <em>h</em> shrinks to zero.
+            Watch the secant line approach the tangent line as you decrease <em>h</em>:
+        </p>
+
+        <div class="slider-group">
+            <label>h =</label>
+            <input type="range" id="hSlider" min="0.01" max="3" step="0.01" value="2">
+            <span class="val" id="hVal">2.00</span>
+        </div>
+        <div class="plot-container" id="plotLimit"></div>
+
+        <script>
+        (function() {
+            const slider = document.getElementById('hSlider');
+            const valSpan = document.getElementById('hVal');
+            const x0 = 1;
+
+            function f(x) { return x * x; }
+
+            function draw(h) {
+                const xs = [], ys = [];
+                for (let x = -1; x <= 4; x += 0.05) { xs.push(x); ys.push(f(x)); }
+
+                const secantSlope = (f(x0 + h) - f(x0)) / h;
+                const tangentSlope = 2 * x0;
+
+                const sxs = [], sys = [], txs = [], tys = [];
+                for (let x = -0.5; x <= 3.5; x += 0.05) {
+                    sxs.push(x); sys.push(secantSlope * (x - x0) + f(x0));
+                    txs.push(x); tys.push(tangentSlope * (x - x0) + f(x0));
+                }
+
+                Plotly.react('plotLimit', [
+                    { x: xs, y: ys, name: 'f(x) = x²', line: { color: '#6c63ff', width: 3 } },
+                    { x: txs, y: tys, name: `Tangent (slope = ${tangentSlope.toFixed(2)})`, line: { color: '#ff6584', width: 2, dash: 'dot' } },
+                    { x: sxs, y: sys, name: `Secant (slope = ${secantSlope.toFixed(2)})`, line: { color: '#ffc107', width: 2 } },
+                    { x: [x0, x0 + h], y: [f(x0), f(x0 + h)], mode: 'markers', name: 'Points', marker: { size: 10, color: '#ffc107' } }
+                ], {
+                    paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                    font: { color: '#e0e0e0' },
+                    xaxis: { range: [-1, 4], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                    yaxis: { range: [-2, 12], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                    margin: { t: 30, b: 40, l: 50, r: 20 },
+                    legend: { x: 0.02, y: 0.98 }
+                }, { responsive: true });
+            }
+
+            slider.addEventListener('input', () => {
+                const v = parseFloat(slider.value);
+                valSpan.textContent = v.toFixed(2);
+                draw(v);
+            });
+            draw(2);
+        })();
+        </script>
+
+        <div class="note">
+            💡 <strong>Key insight:</strong> As h → 0, the yellow secant line converges to the pink tangent line. The secant slope approaches the true derivative.
+        </div>
+    </section>
+
+    <!-- 3. POWER RULE -->
+    <section id="power">
+        <h2>3. Power Rule</h2>
+        <div class="formula">d/dx [ xⁿ ] = n · x<sup>n−1</sup></div>
+        <p>This is the most fundamental differentiation rule. Change <strong>n</strong> below to see f(x) = xⁿ and its derivative side by side.</p>
+
+        <div class="slider-group">
+            <label>n =</label>
+            <input type="range" id="powerSlider" min="-3" max="5" step="0.5" value="2">
+            <span class="val" id="powerVal">2</span>
+        </div>
+        <div class="plot-container" id="plotPower"></div>
+
+        <script>
+        (function() {
+            const slider = document.getElementById('powerSlider');
+            const valSpan = document.getElementById('powerVal');
+
+            function draw(n) {
+                const xs = [], ys = [], dys = [];
+                for (let x = -3; x <= 3; x += 0.02) {
+                    xs.push(x);
+                    const val = Math.pow(x, n);
+                    const dval = n * Math.pow(x, n - 1);
+                    ys.push(isFinite(val) && Math.abs(val) < 100 ? val : null);
+                    dys.push(isFinite(dval) && Math.abs(dval) < 100 ? dval : null);
+                }
+
+                Plotly.react('plotPower', [
+                    { x: xs, y: ys, name: `f(x) = x^${n}`, line: { color: '#6c63ff', width: 3 }, connectgaps: false },
+                    { x: xs, y: dys, name: `f'(x) = ${n}·x^${(n-1)}`, line: { color: '#ff6584', width: 3 }, connectgaps: false }
+                ], {
+                    paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                    font: { color: '#e0e0e0' },
+                    xaxis: { range: [-3, 3], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                    yaxis: { range: [-10, 10], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                    margin: { t: 30, b: 40, l: 50, r: 20 },
+                    legend: { x: 0.02, y: 0.98 }
+                }, { responsive: true });
+            }
+
+            slider.addEventListener('input', () => {
+                const v = parseFloat(slider.value);
+                valSpan.textContent = v;
+                draw(v);
+            });
+            draw(2);
+        })();
+        </script>
+
+        <h3>Common Examples</h3>
+        <table>
+            <tr><th>f(x)</th><th>f'(x)</th></tr>
+            <tr><td>x²</td><td>2x</td></tr>
+            <tr><td>x³</td><td>3x²</td></tr>
+            <tr><td>x⁻¹ = 1/x</td><td>−x⁻² = −1/x²</td></tr>
+            <tr><td>x<sup>½</sup> = √x</td><td>½ x<sup>−½</sup> = 1/(2√x)</td></tr>
+        </table>
+    </section>
+
+    <!-- 4. CONSTANT RULES -->
+    <section id="constant">
+        <h2>4. Constant & Constant Multiple Rules</h2>
+        <div class="formula">d/dx [ c ] = 0 &nbsp;&nbsp;&nbsp; (constant rule)</div>
+        <div class="formula">d/dx [ c · f(x) ] = c · f'(x) &nbsp;&nbsp;&nbsp; (constant multiple rule)</div>
+        <p>A constant has zero slope everywhere. Multiplying a function by a constant scales its derivative by the same constant. Adjust <strong>c</strong> below:</p>
+
+        <div class="slider-group">
+            <label>c =</label>
+            <input type="range" id="constSlider" min="-3" max="3" step="0.25" value="1">
+            <span class="val" id="constVal">1</span>
+        </div>
+        <div class="plot-container" id="plotConst"></div>
+
+        <script>
+        (function() {
+            const slider = document.getElementById('constSlider');
+            const valSpan = document.getElementById('constVal');
+
+            function draw(c) {
+                const xs = [], ys = [], dys = [];
+                for (let x = -4; x <= 4; x += 0.05) {
+                    xs.push(x);
+                    ys.push(c * x * x);
+                    dys.push(c * 2 * x);
+                }
+
+                Plotly.react('plotConst', [
+                    { x: xs, y: ys, name: `f(x) = ${c}·x²`, line: { color: '#6c63ff', width: 3 } },
+                    { x: xs, y: dys, name: `f'(x) = ${c * 2}·x`, line: { color: '#ff6584', width: 3 } }
+                ], {
+                    paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                    font: { color: '#e0e0e0' },
+                    xaxis: { range: [-4, 4], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                    yaxis: { range: [-20, 20], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                    margin: { t: 30, b: 40, l: 50, r: 20 },
+                    legend: { x: 0.02, y: 0.98 }
+                }, { responsive: true });
+            }
+
+            slider.addEventListener('input', () => {
+                const v = parseFloat(slider.value);
+                valSpan.textContent = v;
+                draw(v);
+            });
+            draw(1);
+        })();
+        </script>
+    </section>
+
+    <!-- 5. SUM & DIFFERENCE -->
+    <section id="sum">
+        <h2>5. Sum & Difference Rule</h2>
+        <div class="formula">d/dx [ f(x) ± g(x) ] = f'(x) ± g'(x)</div>
+        <p>The derivative of a sum (or difference) is the sum (or difference) of the derivatives. Below we visualize <strong>f(x) = x³</strong> and <strong>g(x) = x²</strong>, their sum, and the derivative of the sum.</p>
+
+        <div class="plot-container" id="plotSum"></div>
+
+        <script>
+        (function() {
+            const xs = [], f = [], g = [], s = [], df = [], dg = [], ds = [];
+            for (let x = -2; x <= 2; x += 0.03) {
+                xs.push(x);
+                f.push(x ** 3);
+                g.push(x ** 2);
+                s.push(x ** 3 + x ** 2);
+                df.push(3 * x ** 2);
+                dg.push(2 * x);
+                ds.push(3 * x ** 2 + 2 * x);
+            }
+
+            Plotly.newPlot('plotSum', [
+                { x: xs, y: f, name: 'f(x) = x³', line: { color: '#6c63ff', width: 2 } },
+                { x: xs, y: g, name: 'g(x) = x²', line: { color: '#ffc107', width: 2 } },
+                { x: xs, y: s, name: 'f+g = x³+x²', line: { color: '#00e676', width: 3 } },
+                { x: xs, y: ds, name: "(f+g)' = 3x²+2x", line: { color: '#ff6584', width: 3, dash: 'dash' } }
+            ], {
+                paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                font: { color: '#e0e0e0' },
+                xaxis: { range: [-2, 2], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                yaxis: { range: [-5, 10], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                margin: { t: 30, b: 40, l: 50, r: 20 },
+                legend: { x: 0.02, y: 0.98 }
+            }, { responsive: true });
+        })();
+        </script>
+    </section>
+
+    <!-- 6. PRODUCT RULE -->
+    <section id="product">
+        <h2>6. Product Rule</h2>
+        <div class="formula">d/dx [ f(x) · g(x) ] = f'(x)·g(x) + f(x)·g'(x)</div>
+        <p>Let <strong>f(x) = x</strong> and <strong>g(x) = sin(x)</strong>. Then the product is <strong>x·sin(x)</strong> and its derivative is <strong>sin(x) + x·cos(x)</strong>.</p>
+
+        <div class="plot-container" id="plotProduct"></div>
+
+        <script>
+        (function() {
+            const xs = [], prod = [], dprod = [], fpart = [], gpart = [];
+            for (let x = -8; x <= 8; x += 0.05) {
+                xs.push(x);
+                prod.push(x * Math.sin(x));
+                dprod.push(Math.sin(x) + x * Math.cos(x));
+                fpart.push(x);
+                gpart.push(Math.sin(x));
+            }
+
+            Plotly.newPlot('plotProduct', [
+                { x: xs, y: fpart, name: 'f(x) = x', line: { color: '#6c63ff', width: 1, dash: 'dot' }, opacity: 0.5 },
+                { x: xs, y: gpart, name: 'g(x) = sin(x)', line: { color: '#ffc107', width: 1, dash: 'dot' }, opacity: 0.5 },
+                { x: xs, y: prod, name: 'f·g = x·sin(x)', line: { color: '#00e676', width: 3 } },
+                { x: xs, y: dprod, name: "(f·g)' = sin(x)+x·cos(x)", line: { color: '#ff6584', width: 3, dash: 'dash' } }
+            ], {
+                paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                font: { color: '#e0e0e0' },
+                xaxis: { gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                yaxis: { range: [-10, 10], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                margin: { t: 30, b: 40, l: 50, r: 20 },
+                legend: { x: 0.02, y: 0.98 }
+            }, { responsive: true });
+        })();
+        </script>
+
+        <div class="note">
+            💡 <strong>Mnemonic:</strong> "First times derivative of second, plus second times derivative of first" — or simply <em>f'g + fg'</em>.
+        </div>
+    </section>
+
+    <!-- 7. QUOTIENT RULE -->
+    <section id="quotient">
+        <h2>7. Quotient Rule</h2>
+        <div class="formula">d/dx [ f(x)/g(x) ] = [ f'(x)·g(x) − f(x)·g'(x) ] / [ g(x) ]²</div>
+        <p>Example: <strong>f(x) = sin(x)</strong>, <strong>g(x) = x</strong>. So we differentiate <strong>sin(x)/x</strong> (the sinc-like function).</p>
+
+        <div class="plot-container" id="plotQuotient"></div>
+
+        <script>
+        (function() {
+            const xs = [], q = [], dq = [];
+            for (let x = -12; x <= 12; x += 0.05) {
+                xs.push(x);
+                if (Math.abs(x) < 0.001) {
+                    q.push(1);
+                    dq.push(0);
+                } else {
+                    q.push(Math.sin(x) / x);
+                    dq.push((Math.cos(x) * x - Math.sin(x)) / (x * x));
+                }
+            }
+
+            Plotly.newPlot('plotQuotient', [
+                { x: xs, y: q, name: 'sin(x)/x', line: { color: '#6c63ff', width: 3 } },
+                { x: xs, y: dq, name: "d/dx [sin(x)/x]", line: { color: '#ff6584', width: 3, dash: 'dash' } }
+            ], {
+                paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                font: { color: '#e0e0e0' },
+                xaxis: { gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                yaxis: { range: [-0.5, 1.2], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                margin: { t: 30, b: 40, l: 50, r: 20 },
+                legend: { x: 0.02, y: 0.98 }
+            }, { responsive: true });
+        })();
+        </script>
+
+        <div class="note">
+            💡 <strong>Mnemonic:</strong> "Low d-high minus high d-low, over the square of what's below."
+        </div>
+    </section>
+
+    <!-- 8. CHAIN RULE -->
+    <section id="chain">
+        <h2>8. Chain Rule</h2>
+        <div class="formula">d/dx [ f(g(x)) ] = f'(g(x)) · g'(x)</div>
+        <p>The chain rule handles <strong>compositions</strong>. Example: <strong>f(x) = sin(x²)</strong>. Here the outer function is sin(u) and the inner function is u = x². The derivative is <strong>cos(x²) · 2x</strong>.</p>
+
+        <div class="plot-container" id="plotChain"></div>
+
+        <script>
+        (function() {
+            const xs = [], ys = [], dys = [];
+            for (let x = -4; x <= 4; x += 0.02) {
+                xs.push(x);
+                ys.push(Math.sin(x * x));
+                dys.push(Math.cos(x * x) * 2 * x);
+            }
+
+            Plotly.newPlot('plotChain', [
+                { x: xs, y: ys, name: 'f(x) = sin(x²)', line: { color: '#6c63ff', width: 3 } },
+                { x: xs, y: dys, name: "f'(x) = 2x·cos(x²)", line: { color: '#ff6584', width: 3, dash: 'dash' } }
+            ], {
+                paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                font: { color: '#e0e0e0' },
+                xaxis: { gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                yaxis: { range: [-8, 8], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                margin: { t: 30, b: 40, l: 50, r: 20 },
+                legend: { x: 0.02, y: 0.98 }
+            }, { responsive: true });
+        })();
+        </script>
+
+        <h3>Another Example: Nested Chain Rule</h3>
+        <p><strong>f(x) = e<sup>sin(x)</sup></strong> → f'(x) = e<sup>sin(x)</sup> · cos(x)</p>
+
+        <div class="plot-container" id="plotChain2"></div>
+
+        <script>
+        (function() {
+            const xs = [], ys = [], dys = [];
+            for (let x = -6; x <= 6; x += 0.03) {
+                xs.push(x);
+                ys.push(Math.exp(Math.sin(x)));
+                dys.push(Math.exp(Math.sin(x)) * Math.cos(x));
+            }
+
+            Plotly.newPlot('plotChain2', [
+                { x: xs, y: ys, name: 'e^sin(x)', line: { color: '#6c63ff', width: 3 } },
+                { x: xs, y: dys, name: "e^sin(x) · cos(x)", line: { color: '#ff6584', width: 3, dash: 'dash' } }
+            ], {
+                paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                font: { color: '#e0e0e0' },
+                xaxis: { gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                yaxis: { range: [-3, 4], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                margin: { t: 30, b: 40, l: 50, r: 20 },
+                legend: { x: 0.02, y: 0.98 }
+            }, { responsive: true });
+        })();
+        </script>
+
+        <div class="note">
+            💡 <strong>Think of it as peeling layers:</strong> Differentiate the outer function, leave the inner alone, then multiply by the derivative of the inner function. Repeat for deeper nesting.
+        </div>
+    </section>
+
+    <!-- 9. TRIG DERIVATIVES -->
+    <section id="trig">
+        <h2>9. Trigonometric Derivatives</h2>
+        <table>
+            <tr><th>f(x)</th><th>f'(x)</th></tr>
+            <tr><td>sin(x)</td><td>cos(x)</td></tr>
+            <tr><td>cos(x)</td><td>−sin(x)</td></tr>
+            <tr><td>tan(x)</td><td>sec²(x)</td></tr>
+            <tr><td>cot(x)</td><td>−csc²(x)</td></tr>
+            <tr><td>sec(x)</td><td>sec(x)·tan(x)</td></tr>
+            <tr><td>csc(x)</td><td>−csc(x)·cot(x)</td></tr>
+        </table>
+
+        <p>Below you can toggle between the six trig functions and see each one alongside its derivative:</p>
+
+        <div class="slider-group">
+            <label>Function:</label>
+            <select id="trigSelect" style="background:#12131a;color:#e0e0e0;border:1px solid #2a2d3a;padding:8px 12px;border-radius:6px;font-size:1rem;">
+                <option value="sin">sin(x)</option>
+                <option value="cos">cos(x)</option>
+                <option value="tan">tan(x)</option>
+                <option value="cot">cot(x)</option>
+                <option value="sec">sec(x)</option>
+                <option value="csc">csc(x)</option>
+            </select>
+        </div>
+        <div class="plot-container" id="plotTrig"></div>
+
+        <script>
+        (function() {
+            const sel = document.getElementById('trigSelect');
+
+            const funcs = {
+                sin: { f: Math.sin, df: Math.cos, fname: 'sin(x)', dname: 'cos(x)' },
+                cos: { f: Math.cos, df: x => -Math.sin(x), fname: 'cos(x)', dname: '−sin(x)' },
+                tan: { f: Math.tan, df: x => 1 / (Math.cos(x) ** 2), fname: 'tan(x)', dname: 'sec²(x)' },
+                cot: { f: x => 1 / Math.tan(x), df: x => -1 / (Math.sin(x) ** 2), fname: 'cot(x)', dname: '−csc²(x)' },
+                sec: { f: x => 1 / Math.cos(x), df: x => Math.tan(x) / Math.cos(x), fname: 'sec(x)', dname: 'sec(x)·tan(x)' },
+                csc: { f: x => 1 / Math.sin(x), df: x => -1 / (Math.sin(x) * Math.tan(x)), fname: 'csc(x)', dname: '−csc(x)·cot(x)' }
+            };
+
+            function draw(key) {
+                const { f, df, fname, dname } = funcs[key];
+                const xs = [], ys = [], dys = [];
+                for (let x = -2 * Math.PI; x <= 2 * Math.PI; x += 0.02) {
+                    xs.push(x);
+                    const yv = f(x), dyv = df(x);
+                    ys.push(Math.abs(yv) < 20 ? yv : null);
+                    dys.push(Math.abs(dyv) < 20 ? dyv : null);
+                }
+
+                Plotly.react('plotTrig', [
+                    { x: xs, y: ys, name: fname, line: { color: '#6c63ff', width: 3 }, connectgaps: false },
+                    { x: xs, y: dys, name: dname, line: { color: '#ff6584', width: 3, dash: 'dash' }, connectgaps: false }
+                ], {
+                    paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                    font: { color: '#e0e0e0' },
+                    xaxis: { range: [-2 * Math.PI, 2 * Math.PI], gridcolor: '#2a2d3a', zerolinecolor: '#444',
+                        tickvals: [-6.28, -4.71, -3.14, -1.57, 0, 1.57, 3.14, 4.71, 6.28],
+                        ticktext: ['-2π', '-3π/2', '-π', '-π/2', '0', 'π/2', 'π', '3π/2', '2π'] },
+                    yaxis: { range: [-8, 8], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                    margin: { t: 30, b: 40, l: 50, r: 20 },
+                    legend: { x: 0.02, y: 0.98 }
+                }, { responsive: true });
+            }
+
+            sel.addEventListener('change', () => draw(sel.value));
+            draw('sin');
+        })();
+        </script>
+
+        <div class="note">
+            💡 <strong>Cyclic pattern of sin:</strong> sin → cos → −sin → −cos → sin → ... Differentiating sin(x) four times brings you back to sin(x)!
+        </div>
+    </section>
+
+    <!-- 10. EXPONENTIAL & LOG -->
+    <section id="exp">
+        <h2>10. Exponential & Logarithmic Derivatives</h2>
+        <div class="formula">d/dx [ eˣ ] = eˣ</div>
+        <div class="formula">d/dx [ aˣ ] = aˣ · ln(a)</div>
+        <div class="formula">d/dx [ ln(x) ] = 1/x</div>
+        <div class="formula">d/dx [ log<sub>a</sub>(x) ] = 1 / (x · ln(a))</div>
+
+        <p>The exponential function eˣ is its own derivative — a truly remarkable property! Adjust the base <strong>a</strong> below to see how aˣ and its derivative compare:</p>
+
+        <div class="slider-group">
+            <label>Base a =</label>
+            <input type="range" id="expSlider" min="0.5" max="5" step="0.1" value="2.718">
+            <span class="val" id="expVal">e ≈ 2.72</span>
+        </div>
+        <div class="plot-container" id="plotExp"></div>
+
+        <script>
+        (function() {
+            const slider = document.getElementById('expSlider');
+            const valSpan = document.getElementById('expVal');
+
+            function draw(a) {
+                const xs = [], ys = [], dys = [];
+                const lna = Math.log(a);
+                for (let x = -3; x <= 3; x += 0.03) {
+                    xs.push(x);
+                    const v = Math.pow(a, x);
+                    ys.push(v < 50 ? v : null);
+                    dys.push(v * lna < 50 ? v * lna : null);
+                }
+
+                Plotly.react('plotExp', [
+                    { x: xs, y: ys, name: `f(x) = ${a.toFixed(2)}^x`, line: { color: '#6c63ff', width: 3 } },
+                    { x: xs, y: dys, name: `f'(x) = ${a.toFixed(2)}^x · ln(${a.toFixed(2)})`, line: { color: '#ff6584', width: 3, dash: 'dash' } }
+                ], {
+                    paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                    font: { color: '#e0e0e0' },
+                    xaxis: { range: [-3, 3], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                    yaxis: { range: [-2, 20], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                    margin: { t: 30, b: 40, l: 50, r: 20 },
+                    legend: { x: 0.02, y: 0.98 }
+                }, { responsive: true });
+            }
+
+            slider.addEventListener('input', () => {
+                const v = parseFloat(slider.value);
+                const label = Math.abs(v - Math.E) < 0.05 ? `e ≈ ${v.toFixed(2)}` : v.toFixed(2);
+                valSpan.textContent = label;
+                draw(v);
+            });
+            draw(Math.E);
+        })();
+        </script>
+
+        <h3>Natural Logarithm</h3>
+        <div class="plot-container" id="plotLog"></div>
+
+        <script>
+        (function() {
+            const xs = [], ys = [], dys = [];
+            for (let x = 0.05; x <= 8; x += 0.03) {
+                xs.push(x);
+                ys.push(Math.log(x));
+                dys.push(1 / x);
+            }
+
+            Plotly.newPlot('plotLog', [
+                { x: xs, y: ys, name: 'ln(x)', line: { color: '#6c63ff', width: 3 } },
+                { x: xs, y: dys, name: "1/x", line: { color: '#ff6584', width: 3, dash: 'dash' } }
+            ], {
+                paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                font: { color: '#e0e0e0' },
+                xaxis: { range: [0, 8], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                yaxis: { range: [-3, 5], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                margin: { t: 30, b: 40, l: 50, r: 20 },
+                legend: { x: 0.02, y: 0.98 }
+            }, { responsive: true });
+        })();
+        </script>
+
+        <div class="note">
+            💡 <strong>When a = e ≈ 2.718:</strong> the function and its derivative are <em>identical</em>. Slide the base to e and watch the two curves overlap perfectly!
+        </div>
+    </section>
+
+    <!-- 11. HIGHER-ORDER DERIVATIVES -->
+    <section id="higher">
+        <h2>11. Higher-Order Derivatives</h2>
+        <p>You can differentiate a derivative to get the <strong>second derivative</strong> f''(x), then the <strong>third derivative</strong> f'''(x), and so on.</p>
+        <ul>
+            <li><strong>f'(x)</strong> — velocity (rate of change)</li>
+            <li><strong>f''(x)</strong> — acceleration (rate of change of rate of change)</li>
+            <li><strong>f'''(x)</strong> — jerk</li>
+        </ul>
+        <p>Below: <strong>f(x) = sin(x)</strong> and its first four derivatives.</p>
+
+        <div class="plot-container" id="plotHigher"></div>
+
+        <script>
+        (function() {
+            const xs = [], d0 = [], d1 = [], d2 = [], d3 = [], d4 = [];
+            for (let x = -2 * Math.PI; x <= 2 * Math.PI; x += 0.03) {
+                xs.push(x);
+                d0.push(Math.sin(x));
+                d1.push(Math.cos(x));
+                d2.push(-Math.sin(x));
+                d3.push(-Math.cos(x));
+                d4.push(Math.sin(x));
+            }
+
+            Plotly.newPlot('plotHigher', [
+                { x: xs, y: d0, name: 'f = sin(x)', line: { color: '#6c63ff', width: 3 } },
+                { x: xs, y: d1, name: "f' = cos(x)", line: { color: '#ff6584', width: 2 } },
+                { x: xs, y: d2, name: "f'' = −sin(x)", line: { color: '#ffc107', width: 2 } },
+                { x: xs, y: d3, name: "f''' = −cos(x)", line: { color: '#00e676', width: 2 } },
+                { x: xs, y: d4, name: "f'''' = sin(x)", line: { color: '#e040fb', width: 2, dash: 'dot' } }
+            ], {
+                paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                font: { color: '#e0e0e0' },
+                xaxis: { gridcolor: '#2a2d3a', zerolinecolor: '#444',
+                    tickvals: [-6.28, -3.14, 0, 3.14, 6.28],
+                    ticktext: ['-2π', '-π', '0', 'π', '2π'] },
+                yaxis: { range: [-1.5, 1.5], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                margin: { t: 30, b: 40, l: 50, r: 20 },
+                legend: { x: 0.02, y: 0.98 }
+            }, { responsive: true });
+        })();
+        </script>
+
+        <div class="note">
+            💡 Notice how the 4th derivative of sin(x) is sin(x) again — the cycle repeats every 4 differentiations! The purple dotted line sits exactly on top of the blue line.
+        </div>
+    </section>
+
+    <!-- 12. APPLICATIONS -->
+    <section id="applications">
+        <h2>12. Applications — Maxima, Minima & Inflection Points</h2>
+        <p>Derivatives are the key tool for analyzing the shape of a function:</p>
+        <ul>
+            <li><strong>f'(x) = 0</strong> → critical points (potential maxima or minima)</li>
+            <li><strong>f''(x) > 0</strong> at a critical point → <strong>local minimum</strong> (concave up)</li>
+            <li><strong>f''(x) < 0</strong> at a critical point → <strong>local maximum</strong> (concave down)</li>
+            <li><strong>f''(x) = 0</strong> and sign change → <strong>inflection point</strong></li>
+        </ul>
+
+        <p>Example: <strong>f(x) = x³ − 3x + 1</strong>. We have f'(x) = 3x² − 3 and f''(x) = 6x.</p>
+        <p>Critical points at x = ±1. f''(−1) = −6 < 0 → local max. f''(1) = 6 > 0 → local min. Inflection at x = 0.</p>
+
+        <div class="plot-container" id="plotApp"></div>
+
+        <script>
+        (function() {
+            const xs = [], ys = [], dys = [], ddys = [];
+            for (let x = -2.5; x <= 2.5; x += 0.02) {
+                xs.push(x);
+                ys.push(x ** 3 - 3 * x + 1);
+                dys.push(3 * x ** 2 - 3);
+                ddys.push(6 * x);
+            }
+
+            // Critical points
+            const cpx = [-1, 1, 0];
+            const cpy = [(-1)**3 - 3*(-1) + 1, (1)**3 - 3*(1) + 1, (0)**3 - 3*(0) + 1]; // 3, -1, 1
+            const cpLabels = ['Local Max (−1, 3)', 'Local Min (1, −1)', 'Inflection (0, 1)'];
+            const cpColors = ['#ff6584', '#00e676', '#ffc107'];
+
+            Plotly.newPlot('plotApp', [
+                { x: xs, y: ys, name: 'f(x) = x³−3x+1', line: { color: '#6c63ff', width: 3 } },
+                { x: xs, y: dys, name: "f'(x) = 3x²−3", line: { color: '#ff6584', width: 2, dash: 'dash' } },
+                { x: xs, y: ddys, name: "f''(x) = 6x", line: { color: '#ffc107', width: 2, dash: 'dot' } },
+                {
+                    x: cpx, y: cpy, mode: 'markers+text', name: 'Key Points',
+                    text: cpLabels,
+                    textposition: ['top center', 'bottom center', 'top right'],
+                    textfont: { color: '#e0e0e0', size: 11 },
+                    marker: { size: 14, color: cpColors, line: { width: 2, color: '#fff' } }
+                }
+            ], {
+                paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                font: { color: '#e0e0e0' },
+                xaxis: { range: [-2.5, 2.5], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                yaxis: { range: [-8, 8], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                margin: { t: 30, b: 40, l: 50, r: 20 },
+                legend: { x: 0.02, y: 0.98 },
+                shapes: [
+                    { type: 'line', x0: -1, x1: -1, y0: -8, y1: 8, line: { color: '#ff658444', width: 1, dash: 'dot' } },
+                    { type: 'line', x0: 1, x1: 1, y0: -8, y1: 8, line: { color: '#00e67644', width: 1, dash: 'dot' } },
+                    { type: 'line', x0: 0, x1: 0, y0: -8, y1: 8, line: { color: '#ffc10744', width: 1, dash: 'dot' } }
+                ]
+            }, { responsive: true });
+        })();
+        </script>
+
+        <h3>Concavity Visualization</h3>
+        <p>The shaded regions below show where the function is <strong style="color:#00e676;">concave up</strong> (f'' > 0) and <strong style="color:#ff6584;">concave down</strong> (f'' < 0).</p>
+
+        <div class="plot-container" id="plotConcavity"></div>
+
+        <script>
+        (function() {
+            const xs = [], ys = [], upX = [], upY = [], downX = [], downY = [];
+            for (let x = -2.5; x <= 2.5; x += 0.02) {
+                xs.push(x);
+                const y = x ** 3 - 3 * x + 1;
+                ys.push(y);
+                const dd = 6 * x;
+                if (dd >= 0) { upX.push(x); upY.push(y); downX.push(x); downY.push(null); }
+                else { downX.push(x); downY.push(y); upX.push(x); upY.push(null); }
+            }
+
+            Plotly.newPlot('plotConcavity', [
+                { x: xs, y: ys, name: 'f(x)', line: { color: '#6c63ff', width: 1 }, opacity: 0.3 },
+                { x: upX, y: upY, name: 'Concave Up (f\'\' > 0)', fill: 'tozeroy', fillcolor: 'rgba(0,230,118,0.15)', line: { color: '#00e676', width: 3 }, connectgaps: false },
+                { x: downX, y: downY, name: 'Concave Down (f\'\' < 0)', fill: 'tozeroy', fillcolor: 'rgba(255,101,132,0.15)', line: { color: '#ff6584', width: 3 }, connectgaps: false }
+            ], {
+                paper_bgcolor: '#1a1c25', plot_bgcolor: '#12131a',
+                font: { color: '#e0e0e0' },
+                xaxis: { range: [-2.5, 2.5], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                yaxis: { range: [-6, 6], gridcolor: '#2a2d3a', zerolinecolor: '#444' },
+                margin: { t: 30, b: 40, l: 50, r: 20 },
+                legend: { x: 0.02, y: 0.98 }
+            }, { responsive: true });
+        })();
+        </script>
+    </section>
+
+    <!-- SUMMARY -->
+    <section>
+        <h2>🎓 Summary — All Derivative Rules at a Glance</h2>
+        <table>
+            <tr><th>Rule</th><th>Formula</th></tr>
+            <tr><td>Power Rule</td><td>d/dx [xⁿ] = n·x<sup>n−1</sup></td></tr>
+            <tr><td>Constant</td><td>d/dx [c] = 0</td></tr>
+            <tr><td>Constant Multiple</td><td>d/dx [c·f] = c·f'</td></tr>
+            <tr><td>Sum / Difference</td><td>d/dx [f ± g] = f' ± g'</td></tr>
+            <tr><td>Product Rule</td><td>d/dx [f·g] = f'g + fg'</td></tr>
+            <tr><td>Quotient Rule</td><td>d/dx [f/g] = (f'g − fg') / g²</td></tr>
+            <tr><td>Chain Rule</td><td>d/dx [f(g(x))] = f'(g(x))·g'(x)</td></tr>
+            <tr><td>Exponential</td><td>d/dx [eˣ] = eˣ</td></tr>
+            <tr><td>General Exponential</td><td>d/dx [aˣ] = aˣ·ln(a)</td></tr>
+            <tr><td>Natural Log</td><td>d/dx [ln(x)] = 1/x</td></tr>
+            <tr><td>sin(x)</td><td>cos(x)</td></tr>
+            <tr><td>cos(x)</td><td>−sin(x)</td></tr>
+            <tr><td>tan(x)</td><td>sec²(x)</td></tr>
+        </table>
+
+        <p style="text-align:center; margin-top:30px; color:var(--muted);">
+            Made with ❤️ and Plotly.js — Happy differentiating!
+        </p>
+    </section>
+
+</div>
+
+</body>
+</html>
