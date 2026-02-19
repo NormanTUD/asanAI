@@ -73,36 +73,31 @@ function renderSpace(key, highlightPos = null, steps = []) {
 	// Render Calculation Steps (Paths)
 	steps.forEach(step => {
 		if (is3D) {
-			// 3D Path logic using Lines + Cones
+			// 3D Path: Line trace WITH hover on every point of the line
+			const midX = (step.from[0] + step.to[0]) / 2;
+			const midY = (step.from[1] + step.to[1]) / 2;
+			const midZ = (step.from[2] + step.to[2]) / 2;
+
 			traces.push({
-				x: [step.from[0], step.to[0]],
-				y: [step.from[1], step.to[1]],
-				z: [step.from[2], step.to[2]],
+				type: 'scatter3d',
+				x: [step.from[0], midX, step.to[0]],
+				y: [step.from[1], midY, step.to[1]],
+				z: [step.from[2], midZ, step.to[2]],
 				mode: 'lines',
 				line: { color: '#3b82f6', width: 4 },
-				hoverinfo: 'skip',
-				type: 'scatter3d',
+				text: [step.label, step.label, step.label],
+				hoverinfo: 'text',
 				showlegend: false
 			});
 			traces.push({
-				type: 'cone', x: [step.to[0]], y: [step.to[1]], z: [step.to[2]],
-				u: [step.to[0] - step.from[0]], v: [step.to[1] - step.from[1]], w: [step.to[2] - step.from[2]],
+				type: 'cone',
+				x: [step.to[0]], y: [step.to[1]], z: [step.to[2]],
+				u: [step.to[0] - step.from[0]],
+				v: [step.to[1] - step.from[1]],
+				w: [step.to[2] - step.from[2]],
 				sizemode: 'absolute', sizeref: 2, showscale: false,
 				colorscale: [[0, '#3b82f6'], [1, '#3b82f6']],
 				hoverinfo: 'skip'
-			});
-
-			// 3D Arrow Hover Label: invisible marker at midpoint, label on hover only
-			traces.push({
-				type: 'scatter3d',
-				x: [(step.from[0] + step.to[0]) / 2],
-				y: [(step.from[1] + step.to[1]) / 2],
-				z: [(step.from[2] + step.to[2]) / 2],
-				mode: 'markers',
-				marker: { size: 6, color: 'rgba(59,130,246,0.01)', symbol: 'circle' },
-				text: [step.label],
-				hovertemplate: '<b>%{text}</b><extra></extra>',
-				showlegend: false
 			});
 		} else {
 			// 1D/2D Path logic using Annotations (Arrows)
@@ -122,7 +117,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
 				arrowcolor: '#3b82f6'
 			});
 
-			// 2D Arrow Hover Label: invisible marker at midpoint, label on hover only
+			// 2D Arrow Hover Label: invisible marker at midpoint
 			traces.push({
 				type: 'scatter',
 				x: [(step.from[0] + step.to[0]) / 2],
