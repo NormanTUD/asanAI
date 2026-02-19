@@ -6,6 +6,12 @@
 
 The idea of hierarchical visual feature detection was first introduced by \citeauthor{neocognitron} in \citeyear{neocognitron} in his landmark paper "\citetitle{neocognitron}", which was directly inspired by \citeauthorlastnameand{hubelwiesel}'s Nobel Prize–winning research on the mammalian visual cortex. Years later, \citeauthor{lecun1989backpropagation} made the concept practical in \citeyear{lecun1989backpropagation} by combining convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service, the first commercially deployed convolutional neural network.
 
+\citeauthorlastnameand{hubelwiesel}'s paper serves as the direct biological blueprint for Convolutional Neural Networks (CNNs):
+
+* **Local Connectivity:** Cells respond only to small portions of the visual field (Receptive Fields).
+* **Feature Hierarchy:** Simple features (edges) are combined to form complex features.
+* **Pooling/Invariance:** The concept of complex cells corresponds to "Max-Pooling" in modern architectures, achieving translation invariance.
+
 ### What is a Convolution?
 
 A **convolution** is a mathematical operation that slides a small grid of numbers (the **kernel** or **filter**) across an image, computing a weighted sum at every position. This single operation is the fundamental building block of **Convolutional Neural Networks (CNNs)**, the technology behind facial recognition, autonomous vehicles, medical imaging, and satellite analysis.
