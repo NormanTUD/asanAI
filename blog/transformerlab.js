@@ -3593,24 +3593,22 @@ function tled_generateRowHtml(word, vec, d_model) {
  * Updates persistentEmbeddingSpace and refreshes the transformer visualization.
  */
 function tled_updateEmbedding(inputEl) {
-    const word = inputEl.getAttribute('data-tled-word');
-    const dim = parseInt(inputEl.getAttribute('data-tled-dim'));
-    const val = parseFloat(inputEl.value) || 0;
+	const word = inputEl.getAttribute('data-tled-word');
+	const dim = parseInt(inputEl.getAttribute('data-tled-dim'));
+	const val = parseFloat(inputEl.value) || 0;
 
-    const space = window.persistentEmbeddingSpace;
-    if (!space || !space[word]) return;
+	const space = window.persistentEmbeddingSpace;
+	if (!space || !space[word]) return;
 
-    // Update the value in the global embedding space
-    space[word][dim] = val;
+	// Update the value in the global embedding space
+	space[word][dim] = val;
 
-    // Re-render the embedding plot and vector math (lightweight refresh)
-    const d_model = space[word].length;
-    render_embedding_plot(d_model);
+	// Re-render the embedding plot and vector math (lightweight refresh)
+	const d_model = space[word].length;
+	render_embedding_plot(d_model);
 
-    // Recalculate vector math if there's an active equation
-    if (typeof calculate_vector_math === 'function') {
-        calculate_vector_math();
-    }
+	// Recalculate vector math if there's an active equation
+	calculate_vector_math();
 }
 
 /**
@@ -3618,60 +3616,58 @@ function tled_updateEmbedding(inputEl) {
  * with Gaussian-random initialization (matching get_or_init_embeddings logic).
  */
 function tled_addToken() {
-    const nameInput = document.getElementById('tled-new-token-input');
-    if (!nameInput) return;
+	const nameInput = document.getElementById('tled-new-token-input');
+	if (!nameInput) return;
 
-    const tokenName = nameInput.value.trim();
-    if (!tokenName) {
-        alert("Please enter a token name.");
-        return;
-    }
+	const tokenName = nameInput.value.trim();
+	if (!tokenName) {
+		alert("Please enter a token name.");
+		return;
+	}
 
-    const space = window.persistentEmbeddingSpace;
-    if (!space) {
-        alert("No embedding space initialized. Please enter training data first.");
-        return;
-    }
+	const space = window.persistentEmbeddingSpace;
+	if (!space) {
+		alert("No embedding space initialized. Please enter training data first.");
+		return;
+	}
 
-    if (space[tokenName]) {
-        alert(`Token "${tokenName}" already exists in the vocabulary.`);
-        return;
-    }
+	if (space[tokenName]) {
+		alert(`Token "${tokenName}" already exists in the vocabulary.`);
+		return;
+	}
 
-    const existingWords = Object.keys(space);
-    if (existingWords.length === 0) return;
+	const existingWords = Object.keys(space);
+	if (existingWords.length === 0) return;
 
-    const d_model = space[existingWords[0]].length;
+	const d_model = space[existingWords[0]].length;
 
-    // Gaussian random initialization (same as get_or_init_embeddings)
-    const gaussianRandom = () => {
-        let u = 0, v = 0;
-        while (u === 0) u = Math.random();
-        while (v === 0) v = Math.random();
-        return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-    };
+	// Gaussian random initialization (same as get_or_init_embeddings)
+	const gaussianRandom = () => {
+		let u = 0, v = 0;
+		while (u === 0) u = Math.random();
+		while (v === 0) v = Math.random();
+		return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+	};
 
-    space[tokenName] = Array.from({ length: d_model }, () =>
-        parseFloat(gaussianRandom().toFixed(4))
-    );
+	space[tokenName] = Array.from({ length: d_model }, () =>
+		parseFloat(gaussianRandom().toFixed(4))
+	);
 
-    // Update the table by appending a new row
-    const tbody = document.querySelector('#tled-table tbody');
-    if (tbody) {
-        tbody.insertAdjacentHTML('beforeend',
-            tled_generateRowHtml(tokenName, space[tokenName], d_model)
-        );
-    }
+	// Update the table by appending a new row
+	const tbody = document.querySelector('#tled-table tbody');
+	if (tbody) {
+		tbody.insertAdjacentHTML('beforeend',
+			tled_generateRowHtml(tokenName, space[tokenName], d_model)
+		);
+	}
 
-    // Clear input
-    nameInput.value = '';
+	// Clear input
+	nameInput.value = '';
 
-    // Refresh the embedding plot
-    render_embedding_plot(d_model);
+	// Refresh the embedding plot
+	render_embedding_plot(d_model);
 
-    if (typeof calculate_vector_math === 'function') {
-        calculate_vector_math();
-    }
+	calculate_vector_math();
 }
 
 /**
