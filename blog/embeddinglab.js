@@ -53,7 +53,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
 	const is3D = (space.dims === 3);
 	const rangeX = space.rangeX || [-30, 30];
 	let traces = [];
-	let annotations = []; // Container for our 1D/2D arrows
+	let annotations = [];
 
 	// Render Vocabulary Points
 	Object.keys(space.vocab).forEach(word => {
@@ -65,7 +65,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
 			marker: { size: 6, opacity: 0.5, color: '#94a3b8' },
 			cliponaxis: false
 		};
-		if (is3D) { trace.type = 'scatter3d'; trace.z = [v[2]]; } 
+		if (is3D) { trace.type = 'scatter3d'; trace.z = [v[2]]; }
 		else { trace.type = 'scatter'; }
 		traces.push(trace);
 	});
@@ -75,18 +75,34 @@ function renderSpace(key, highlightPos = null, steps = []) {
 		if (is3D) {
 			// 3D Path logic using Lines + Cones
 			traces.push({
-				x: [step.from[0], step.to[0]], 
+				x: [step.from[0], step.to[0]],
 				y: [step.from[1], step.to[1]],
 				z: [step.from[2], step.to[2]],
-				mode: 'lines', 
-				line: { color: '#3b82f6', width: 4 }, 
+				mode: 'lines',
+				line: { color: '#3b82f6', width: 4 },
 				hoverinfo: 'skip',
-				type: 'scatter3d'
+				type: 'scatter3d',
+				showlegend: false
 			});
 			traces.push({
 				type: 'cone', x: [step.to[0]], y: [step.to[1]], z: [step.to[2]],
-				u: [step.to[0]-step.from[0]], v: [step.to[1]-step.from[1]], w: [step.to[2]-step.from[2]],
-				sizemode: 'absolute', sizeref: 2, showscale: false, colorscale: [[0, '#3b82f6'], [1, '#3b82f6']]
+				u: [step.to[0] - step.from[0]], v: [step.to[1] - step.from[1]], w: [step.to[2] - step.from[2]],
+				sizemode: 'absolute', sizeref: 2, showscale: false,
+				colorscale: [[0, '#3b82f6'], [1, '#3b82f6']],
+				hoverinfo: 'skip'
+			});
+
+			// 3D Arrow Hover Label: invisible marker at midpoint, label on hover only
+			traces.push({
+				type: 'scatter3d',
+				x: [(step.from[0] + step.to[0]) / 2],
+				y: [(step.from[1] + step.to[1]) / 2],
+				z: [(step.from[2] + step.to[2]) / 2],
+				mode: 'markers',
+				marker: { size: 6, color: 'rgba(59,130,246,0.01)', symbol: 'circle' },
+				text: [step.label],
+				hovertemplate: '<b>%{text}</b><extra></extra>',
+				showlegend: false
 			});
 		} else {
 			// 1D/2D Path logic using Annotations (Arrows)
@@ -105,6 +121,19 @@ function renderSpace(key, highlightPos = null, steps = []) {
 				arrowwidth: 3,
 				arrowcolor: '#3b82f6'
 			});
+
+			// 2D Arrow Hover Label: invisible marker at midpoint, label on hover only
+			traces.push({
+				type: 'scatter',
+				x: [(step.from[0] + step.to[0]) / 2],
+				y: [(step.from[1] + step.to[1]) / 2],
+				mode: 'markers',
+				marker: { size: 12, color: 'rgba(59,130,246,0.01)' },
+				text: [step.label],
+				hovertemplate: '<b>%{text}</b><extra></extra>',
+				showlegend: false,
+				cliponaxis: false
+			});
 		}
 	});
 
@@ -114,7 +143,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
 			x: [highlightPos[0]], y: [highlightPos[1]],
 			mode: 'markers', marker: { size: 12, color: '#ef4444', symbol: 'diamond' }
 		};
-		if (is3D) { res.type = 'scatter3d'; res.z = [highlightPos[2]]; } 
+		if (is3D) { res.type = 'scatter3d'; res.z = [highlightPos[2]]; }
 		else { res.type = 'scatter'; }
 		traces.push(res);
 	}
@@ -124,7 +153,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
 		showlegend: false,
 		xaxis: { range: rangeX, title: space.axes.x },
 		yaxis: { range: [-30, 30], title: space.axes.y || '', visible: space.dims > 1 },
-		annotations: annotations // Attach arrows to the layout
+		annotations: annotations
 	};
 
 	if (is3D) {
@@ -136,7 +165,6 @@ function renderSpace(key, highlightPos = null, steps = []) {
 	}
 
 	Plotly.react(divId, traces, layout).then(() => {
-		// Remove any lingering loading indicator
 		const loader = plotDiv.querySelector('.plot-loading');
 		if (loader) loader.remove();
 	});
