@@ -240,7 +240,7 @@ function renderBackpropVisual(id) {
 		html += `<text x="580" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">Output</text>`;
 		html += `<text x="750" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">Target</text>`;
 
-		html += `<text x="665" y="210" text-anchor="middle" font-size="13" fill="#ef4444" font-weight="700">$E$ = ${f(R.E)}</text>`;
+		html += `<text x="665" y="210" text-anchor="middle" font-size="13" fill="#ef4444" font-weight="700">Loss = ${f(R.E)}</text>`;
 
 		svg.innerHTML = html;
 
