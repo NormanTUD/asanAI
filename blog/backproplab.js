@@ -71,7 +71,7 @@ function renderBackpropVisual(id) {
 <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
   <legend style="font-size:0.78rem; font-weight:700; color:#8b5cf6;">Hyperparameters</legend>
   <div style="display:flex; gap:10px; flex-wrap:wrap;">
-    <div class="bp-group"><label>$$\\eta$$ (learning rate)</label><input style='width: 100px;'type="number" data-k="lr" step="0.05" min="0.01" max="5"></div>
+    <div class="bp-group"><label>$$\\eta \\text{ (learning rate)}$$</label><input style='width: 100px;'type="number" data-k="lr" step="0.05" min="0.01" max="5"></div>
   </div>
 </fieldset>
 
