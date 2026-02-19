@@ -20,8 +20,8 @@ Each connection has a weight (e.g., $w_1, w_2$) and each neuron has a bias (e.g.
 
 $$
 \mathbf{x} = \begin{pmatrix} x_1 \\ x_2 \end{pmatrix}
-\to \mathbf{h} = \begin{pmatrix} h_1 \\ h_2 \end{pmatrix}
-\to \mathbf{o} = \begin{pmatrix} o_1 \\ o_2 \end{pmatrix}
+\longrightarrow \mathbf{h} = \begin{pmatrix} h_1 \\ h_2 \end{pmatrix}
+\longrightarrow \mathbf{o} = \begin{pmatrix} o_1 \\ o_2 \end{pmatrix}
 $$
 
 ## Mathematics Behind the Network
