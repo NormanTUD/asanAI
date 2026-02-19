@@ -229,10 +229,26 @@ function renderBackpropVisual(id) {
 			html += `<text x="${nd.x}" y="${nd.y-8}" text-anchor="middle" font-size="12" font-weight="700" fill="${col}" style="pointer-events:none;">$${nd.label}$</text>`;
 			html += `<text x="${nd.x}" y="${nd.y+10}" text-anchor="middle" font-size="11" font-family="monospace" fill="#1e293b" style="pointer-events:none;">${vals[nk]}</text>`;
 
-			if (nk==='h1') html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="10" fill="#d97706" style="pointer-events:none;">δ=${f(R.d_h1)}</text>`;
-			if (nk==='h2') html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="10" fill="#d97706" style="pointer-events:none;">δ=${f(R.d_h2)}</text>`;
-			if (nk==='o1') html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="10" fill="#dc2626" style="pointer-events:none;">δ=${f(R.d_o1)}</text>`;
-			if (nk==='o2') html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="10" fill="#dc2626" style="pointer-events:none;">δ=${f(R.d_o2)}</text>`;
+			nd.y = nd.y + 5;
+
+			if (nk==='h1') {
+				html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="15" fill="#d97706" style="pointer-events:none;">δ<tspan baseline-shift="sub" font-size="7">h<tspan baseline-shift="sub" font-size="5">1</tspan></tspan> = ${f(R.d_h1)}</text>`;
+			}
+
+			// h2
+			if (nk==='h2') {
+				html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="15" fill="#d97706" style="pointer-events:none;">δ<tspan baseline-shift="sub" font-size="7">h<tspan baseline-shift="sub" font-size="5">2</tspan></tspan> = ${f(R.d_h2)}</text>`;
+			}
+
+			// o1
+			if (nk==='o1') {
+				html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="15" fill="#dc2626" style="pointer-events:none;">δ<tspan baseline-shift="sub" font-size="7">o<tspan baseline-shift="sub" font-size="5">1</tspan></tspan> = ${f(R.d_o1)}</text>`;
+			}
+
+			// o2
+			if (nk==='o2') {
+				html += `<text x="${nd.x}" y="${nd.y+r+14}" text-anchor="middle" font-size="15" fill="#dc2626" style="pointer-events:none;">δ<tspan baseline-shift="sub" font-size="7">o<tspan baseline-shift="sub" font-size="5">2</tspan></tspan> = ${f(R.d_o2)}</text>`;
+			}
 		}
 
 		html += `<text x="80" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">Input</text>`;
