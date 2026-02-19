@@ -208,7 +208,7 @@ function renderBackpropVisual(id) {
 			const col=val>=0?'#3b82f6':'#ef4444';
 			html += `<line class="bp-conn" data-wk="${wk}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${col}" stroke-width="${thick}" stroke-opacity="0.5"/>`;
 			const [base, sub] = wl.split('_'); // e.g., "w_1" → ["w", "1"]
-			html += `<text class="bp-wlabel" data-wk="${wk}" x="${mx}" y="${my-6}" text-anchor="middle" font-size="11" fill="#334155" font-weight="600" style="cursor:pointer;">${base}<tspan font-size="8" dy="3">${sub}</tspan><tspan dy="-3">=${f(val,2)}</tspan></text>`;
+			html += `<text class="bp-wlabel" data-wk="${wk}" x="${mx}" y="${my-6}" text-anchor="middle" font-size="11" fill="#334155" font-weight="600" style="cursor:pointer;">${base}<tspan font-size="8" dy="3">${sub}</tspan><tspan dy="-3">=${f(val,4)}</tspan></text>`;
 		});
 
 		html += `<line x1="${nodes.o1.x}" y1="${nodes.o1.y}" x2="${nodes.t1.x}" y2="${nodes.t1.y}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
