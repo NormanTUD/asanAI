@@ -1500,31 +1500,29 @@ function render_architecture_stats(d, h, n, t) {
 	statsContainer.innerHTML = infoHtml;
 }
 
-function render_embedding_plot(dimensions) {
+function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
 	const containerId = 'transformer-plotly-space';
 	const container = document.getElementById(containerId);
 	if (!container) return;
 
-	// Register/update the data, reset rendered flag
 	embeddingRenderRegistry.set(containerId, {
 		d_model: dimensions,
+		highlightPos: highlightPos,
+		steps: steps,
 		rendered: false
 	});
 
-	// Show placeholder if empty
 	if (!container.innerHTML) {
 		container.innerHTML = `<div style="padding:20px; color:#64748b;">Wait for Embedding Space to load...</div>`;
 	}
 
-	// Start observing
 	embeddingObserver.observe(container);
 }
 
-function _execute_embedding_render (dimensions) {
+function _execute_embedding_render(dimensions, highlightPos = null, steps = []) {
 	const container = document.getElementById('transformer-plotly-space');
 	if (!container) return;
 
-	// Clean up ghost instances from previous renders (both Plotly and ECharts)
 	Plotly.purge(container);
 	const existingChart = echarts.getInstanceByDom(container);
 	if (existingChart) existingChart.dispose();
@@ -1533,22 +1531,233 @@ function _execute_embedding_render (dimensions) {
 	const tokens = Object.keys(window.persistentEmbeddingSpace);
 
 	if (dimensions <= 3) {
-		const traces = tokens.map(token => {
+		const is3D = (dimensions === 3);
+		let traces = [];
+		let annotations = [];
+
+		// ── Helper: Build a 3D arrowhead from line segments ──
+		// Creates 3 short lines forming a triangular cone shape at `tip`,
+		// pointing in the direction from `from` toward `tip`.
+		function make3DArrowhead(from, tip, color, headLength) {
+			// Direction vector from → tip
+			const dx = tip[0] - from[0];
+			const dy = tip[1] - from[1];
+			const dz = tip[2] - from[2];
+			const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+			if (mag < 1e-10) return []; // Zero-length arrow, skip
+
+			// Normalized direction
+			const nx = dx / mag;
+			const ny = dy / mag;
+			const nz = dz / mag;
+
+			// Find two vectors perpendicular to the direction
+			// Pick an arbitrary vector not parallel to (nx, ny, nz)
+			let ax, ay, az;
+			if (Math.abs(nx) < 0.9) {
+				ax = 1; ay = 0; az = 0;
+			} else {
+				ax = 0; ay = 1; az = 0;
+			}
+
+			// Cross product: perp1 = direction × arbitrary
+			let p1x = ny * az - nz * ay;
+			let p1y = nz * ax - nx * az;
+			let p1z = nx * ay - ny * ax;
+			const p1mag = Math.sqrt(p1x * p1x + p1y * p1y + p1z * p1z);
+			p1x /= p1mag; p1y /= p1mag; p1z /= p1mag;
+
+			// Cross product: perp2 = direction × perp1
+			let p2x = ny * p1z - nz * p1y;
+			let p2y = nz * p1x - nx * p1z;
+			let p2z = nx * p1y - ny * p1x;
+			const p2mag = Math.sqrt(p2x * p2x + p2y * p2y + p2z * p2z);
+			p2x /= p2mag; p2y /= p2mag; p2z /= p2mag;
+
+			// Base center of the arrowhead (pulled back from tip along direction)
+			const bx = tip[0] - nx * headLength;
+			const by = tip[1] - ny * headLength;
+			const bz = tip[2] - nz * headLength;
+
+			const spread = headLength * 0.4;
+
+			// 3 points around the base of the arrowhead
+			const pts = [];
+			const nPetals = 3;
+			for (let i = 0; i < nPetals; i++) {
+				const angle = (2 * Math.PI * i) / nPetals;
+				const cos = Math.cos(angle);
+				const sin = Math.sin(angle);
+				pts.push([
+					bx + spread * (cos * p1x + sin * p2x),
+					by + spread * (cos * p1y + sin * p2y),
+					bz + spread * (cos * p1z + sin * p2z)
+				]);
+			}
+
+			// Create line traces from each base point to the tip
+			const arrowTraces = [];
+			for (let i = 0; i < nPetals; i++) {
+				arrowTraces.push({
+					type: 'scatter3d',
+					x: [pts[i][0], tip[0]],
+					y: [pts[i][1], tip[1]],
+					z: [pts[i][2], tip[2]],
+					mode: 'lines',
+					line: { color: color, width: 6 },
+					hoverinfo: 'skip',
+					showlegend: false
+				});
+			}
+
+			// Connect the base points to form the triangle base
+			for (let i = 0; i < nPetals; i++) {
+				const j = (i + 1) % nPetals;
+				arrowTraces.push({
+					type: 'scatter3d',
+					x: [pts[i][0], pts[j][0]],
+					y: [pts[i][1], pts[j][1]],
+					z: [pts[i][2], pts[j][2]],
+					mode: 'lines',
+					line: { color: color, width: 6 },
+					hoverinfo: 'skip',
+					showlegend: false
+				});
+			}
+
+			return arrowTraces;
+		}
+
+		// ── Render Vocabulary Points ──
+		tokens.forEach(token => {
 			const vec = window.persistentEmbeddingSpace[token];
-			return {
-				type: dimensions === 3 ? 'scatter3d' : 'scatter',
+			let trace = {
 				x: [vec[0]],
 				y: [dimensions >= 2 ? vec[1] : 0],
-				z: [dimensions === 3 ? vec[2] : 0],
 				mode: 'markers+text',
 				text: [token],
+				textposition: 'top center',
 				name: token,
-				marker: { size: 10 }
+				marker: { size: 8, opacity: 0.85 },
+				cliponaxis: false
 			};
+			if (is3D) {
+				trace.type = 'scatter3d';
+				trace.z = [vec[2]];
+				trace.marker.size = 6;
+			} else {
+				trace.type = 'scatter';
+			}
+			traces.push(trace);
 		});
 
-		const layout = { title: "Embedding Space" };
-		if (dimensions === 3) {
+		// ── Render Calculation Steps (Arrows) ──
+		steps.forEach(step => {
+			const arrowColor = '#3b82f6';
+
+			if (is3D) {
+				// 3D: Line shaft
+				traces.push({
+					type: 'scatter3d',
+					x: [step.from[0], step.to[0]],
+					y: [step.from[1], step.to[1]],
+					z: [step.from[2], step.to[2]],
+					mode: 'lines',
+					line: { color: arrowColor, width: 5 },
+					hoverinfo: 'text',
+					text: [step.label, step.label],
+					showlegend: false
+				});
+
+				// 3D: Geometric arrowhead at tip
+				// Calculate a reasonable head length based on arrow length
+				const dx = step.to[0] - step.from[0];
+				const dy = step.to[1] - step.from[1];
+				const dz = step.to[2] - step.from[2];
+				const arrowLen = Math.sqrt(dx * dx + dy * dy + dz * dz);
+				const headLen = Math.min(arrowLen * 0.25, 0.5);
+
+				const headTraces = make3DArrowhead(step.from, step.to, arrowColor, headLen);
+				headTraces.forEach(ht => traces.push(ht));
+
+				// 3D: Hover label at midpoint
+				const midX = (step.from[0] + step.to[0]) / 2;
+				const midY = (step.from[1] + step.to[1]) / 2;
+				const midZ = (step.from[2] + step.to[2]) / 2;
+				traces.push({
+					type: 'scatter3d',
+					x: [midX], y: [midY], z: [midZ],
+					mode: 'markers',
+					marker: { size: 4, color: 'rgba(59,130,246,0.01)' },
+					text: [step.label],
+					hovertemplate: '<b>%{text}</b><extra></extra>',
+					showlegend: false
+				});
+
+			} else {
+				// 1D/2D: Plotly annotation arrows
+				annotations.push({
+					ax: step.from[0],
+					ay: dimensions >= 2 ? step.from[1] : 0,
+					axref: 'x',
+					ayref: 'y',
+					x: step.to[0],
+					y: dimensions >= 2 ? step.to[1] : 0,
+					xref: 'x',
+					yref: 'y',
+					showarrow: true,
+					arrowhead: 2,
+					arrowsize: 1.5,
+					arrowwidth: 3,
+					arrowcolor: arrowColor
+				});
+
+				// Invisible hover marker at midpoint
+				traces.push({
+					type: 'scatter',
+					x: [(step.from[0] + step.to[0]) / 2],
+					y: [((dimensions >= 2 ? step.from[1] : 0) + (dimensions >= 2 ? step.to[1] : 0)) / 2],
+					mode: 'markers',
+					marker: { size: 12, color: 'rgba(59,130,246,0.01)' },
+					text: [step.label],
+					hovertemplate: '<b>%{text}</b><extra></extra>',
+					showlegend: false,
+					cliponaxis: false
+				});
+			}
+		});
+
+		// ── Render Result Highlight (Red Diamond) ──
+		if (highlightPos) {
+			let resultTrace = {
+				x: [highlightPos[0]],
+				y: [dimensions >= 2 ? highlightPos[1] : 0],
+				mode: 'markers',
+				marker: { size: 14, color: '#ef4444', symbol: 'diamond' },
+				name: 'Result',
+				showlegend: false
+			};
+			if (is3D) {
+				resultTrace.type = 'scatter3d';
+				resultTrace.z = [highlightPos[2]];
+				resultTrace.marker.size = 10;
+				resultTrace.hovertemplate = '<b>Result</b><br>(%{x:.4f}, %{y:.4f}, %{z:.4f})<extra></extra>';
+			} else {
+				resultTrace.type = 'scatter';
+				resultTrace.hovertemplate = '<b>Result</b><br>(%{x:.4f}, %{y:.4f})<extra></extra>';
+			}
+			traces.push(resultTrace);
+		}
+
+		// ── Layout ──
+		const layout = {
+			title: "Embedding Space",
+			showlegend: false,
+			annotations: annotations
+		};
+
+		if (is3D) {
 			layout.scene = {
 				xaxis: { title: 'Dim 0' },
 				yaxis: { title: 'Dim 1' },
@@ -1560,7 +1769,9 @@ function _execute_embedding_render (dimensions) {
 		}
 
 		Plotly.newPlot(container, traces, layout);
+
 	} else {
+		// ── High-dimensional: ECharts parallel coordinates ──
 		const myChart = echarts.init(container);
 		const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({ dim: i, name: `D${i}` }));
 
@@ -2976,7 +3187,6 @@ window.calculate_vector_math = function() {
 	const resDiv = document.getElementById('transformer-vector-math-result');
 	const space = window.persistentEmbeddingSpace;
 
-	// 1. Validate the environment
 	if (!space || Object.keys(space).length === 0) {
 		resDiv.innerHTML = "<em style='color: #94a3b8;'>Enter an equation and press Enter...</em>";
 		return;
@@ -2984,30 +3194,27 @@ window.calculate_vector_math = function() {
 
 	const vocabKeys = Object.keys(space);
 	const d_model = space[vocabKeys[0]].length;
-	// nr_fixed is pulled from the global scope defined at the top of transformerlab.js
 
-	// 2. Create case-insensitive lookup map
 	const lowerVocab = vocabKeys.reduce((acc, word) => {
 		acc[word.toLowerCase()] = { vec: space[word], original: word };
 		return acc;
 	}, {});
 
-	// Tokenize the input equation
 	const tokens = inputVal.match(/[a-zA-ZäöüÄÖÜ0-9_#]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
 	if (!tokens) {
 		resDiv.innerHTML = "<em style='color: #94a3b8;'>Enter an equation and press Enter...</em>";
+		_execute_embedding_render(d_model, null, []);
 		return;
 	}
 
 	let pos = 0;
+	let steps = [];
 
-	// Dynamic LaTeX vector formatter based on current d_model
 	const toVecTex = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
 
 	function peek() { return tokens[pos]; }
 	function consume() { return tokens[pos++]; }
 
-	// 3. Recursive Descent Parser
 	function parseFactor() {
 		let token = consume();
 		if (!token) throw new Error("Unexpected end of input");
@@ -3022,13 +3229,11 @@ window.calculate_vector_math = function() {
 			return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
 		}
 
-		// Handle standalone numbers as scalars (if they aren't part of the vocab)
 		if (!isNaN(token) && !lowerVocab[token.toLowerCase()]) {
 			const s = parseFloat(token);
 			return { val: Array(d_model).fill(s), tex: `${s}`, isScalar: true, label: `${s}` };
 		}
 
-		// Handle Vocabulary words
 		const entry = lowerVocab[token.toLowerCase()];
 		const vec = entry ? [...entry.vec] : Array(d_model).fill(0);
 		const displayName = entry ? entry.original : token;
@@ -3071,6 +3276,7 @@ window.calculate_vector_math = function() {
 		while (peek() === '+' || peek() === '-') {
 			let op = consume();
 			let right = parseTerm();
+			let prev = [...left.val];
 
 			if (op === '+') {
 				left.val = left.val.map((v, i) => v + right.val[i]);
@@ -3078,20 +3284,24 @@ window.calculate_vector_math = function() {
 				left.val = left.val.map((v, i) => v - right.val[i]);
 			}
 
+			steps.push({
+				from: prev,
+				to: [...left.val],
+				label: `${op} ${right.label}`
+			});
+
 			left.tex = `${left.tex} ${op} ${right.tex}`;
 			left.label = `${left.label}${op}${right.label}`;
 		}
 		return left;
 	}
 
-	// 4. Execution and Output Formatting
 	try {
 		const result = parseExpression();
 		let nearest = "None";
 		let nearestVec = Array(d_model).fill(0);
 		let minDist = Infinity;
 
-		// Euclidean distance search across the entire current vocab
 		vocabKeys.forEach(w => {
 			const v = space[w];
 			const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - result.val[i], 2), 0));
@@ -3109,13 +3319,15 @@ window.calculate_vector_math = function() {
 		const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${safeNearest}} \\\\ ${toVecTex(nearestVec)} }}`;
 
 		resDiv.innerHTML = `
-	    <div style="overflow-x: auto; padding: 10px 0; font-size: 1.1em;">
-		$$ ${result.tex} = ${resultTex} $$
-	    </div>
-	`;
+		    <div style="overflow-x: auto; padding: 10px 0; font-size: 1.1em;">
+			$$ ${result.tex} = ${resultTex} $$
+		    </div>
+		`;
 
-		// Trigger LaTeX render
 		render_temml();
+
+		_execute_embedding_render(d_model, result.val, steps);
+
 	} catch(e) {
 		console.error("Vector Math Parse Error:", e);
 		resDiv.innerHTML = "<span style='color: #ef4444;'>Syntax Error. Please check your equation formatting.</span>";
