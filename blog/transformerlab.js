@@ -27,10 +27,11 @@ window.tlab_trajectory_data = {
 
 const contextSize = 128;
 const attentionRenderRegistry = new Map();
-
 const positionalShiftRegistry = new Map();
-
 const embeddingRenderRegistry = new Map();
+const trajectoryRenderRegistry = new Map();
+const multiLayerAttentionRegistry = new Map();
+const transformerLabVisMigrationDataRegistry = new Map();
 
 const embeddingObserver = new IntersectionObserver((entries) => {
 	entries.forEach(entry => {
@@ -99,8 +100,6 @@ const attentionObserver = new IntersectionObserver((entries) => {
 	});
 }, { threshold: 0 });
 
-const trajectoryRenderRegistry = new Map();
-
 const trajectoryObserver = new IntersectionObserver((entries) => {
 	entries.forEach(entry => {
 		if (entry.isIntersecting) {
@@ -115,8 +114,6 @@ const trajectoryObserver = new IntersectionObserver((entries) => {
 		}
 	});
 }, { threshold: 0 });
-
-const multiLayerAttentionRegistry = new Map();
 
 function reset_graph() {
 	document.getElementById('training-loss-plot').style.display = 'none';
@@ -2148,7 +2145,6 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
  * Stores the latest data for each plot ID to ensure that when it
  * becomes visible, it renders with the most recent calculation.
  */
-const transformerLabVisMigrationDataRegistry = new Map();
 
 /**
  * Intersection Observer for Lazy Rendering
