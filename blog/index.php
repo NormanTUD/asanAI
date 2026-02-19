@@ -38,7 +38,7 @@
 	incl("Understanding Layer Normalization", "normalizationlab");
 	incl("Tokenization: How Words become Numbers", "tokenizerlab");
 	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
-	incl("The Semantic Tug-of-War: How Transformers \"Think\"", "attentionlab");
+	incl("The Semantic Tug-of-War: How Transformers 'Think'", "attentionlab");
 	incl("Positional Embeddings", "positionalembeddingslab");
 	incl("Top-\$k\$-Sampling: Temperature & Top-\$k\$ Explorer", "samplinglab");
 	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformerlab");
