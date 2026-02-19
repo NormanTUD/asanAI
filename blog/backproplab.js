@@ -1,3 +1,263 @@
+function sigmoid_plot() {
+    // Reason 10: guard against missing dependencies or DOM
+    if (typeof Plotly === 'undefined') {
+        console.error('sigmoid_plot: Plotly not loaded');
+        return;
+    }
+    var container = document.getElementById('sigmoid-plot');
+    if (!container) {
+        console.error('sigmoid_plot: #sigmoid-plot not found');
+        return;
+    }
+
+    var sigmoid = function(z) { return 1 / (1 + Math.exp(-z)); };
+    var sigmoid_deriv = function(z) { var s = sigmoid(z); return s * (1 - s); };
+
+    var N = 500;
+    var zMin = -10, zMax = 10;
+    var z_vals = [], sig_vals = [], deriv_vals = [];
+    for (var i = 0; i <= N; i++) {
+        var z = zMin + (zMax - zMin) * i / N;
+        z_vals.push(z);
+        sig_vals.push(sigmoid(z));
+        deriv_vals.push(sigmoid_deriv(z));
+    }
+
+    var yMin = -0.15, yMax = 1.15;
+
+    var traces = [
+        {
+            x: z_vals, y: sig_vals,
+            type: 'scatter', mode: 'lines',
+            name: 'Sigmoid',
+            line: { color: '#2E86AB', width: 3 },
+            hoverinfo: 'none'
+        },
+        {
+            x: z_vals, y: deriv_vals,
+            type: 'scatter', mode: 'lines',
+            name: 'Derivative',
+            line: { color: '#e74c3c', width: 2, dash: 'dot' },
+            hoverinfo: 'none'
+        }
+    ];
+
+    var margins = { t: 50, b: 70, l: 55, r: 20 };
+
+    var layout = {
+        title: { text: 'Sigmoid and derivative of Sigmoid', font: { size: 17 } },
+        xaxis: {
+            title: 'z', range: [zMin, zMax],
+            gridcolor: '#E5E5E5', zeroline: true, zerolinecolor: '#aaa'
+        },
+        yaxis: {
+            title: 'Value', range: [yMin, yMax],
+            gridcolor: '#E5E5E5', zeroline: true, zerolinecolor: '#aaa'
+        },
+        plot_bgcolor: 'white',
+        paper_bgcolor: 'white',
+        hovermode: false,
+        showlegend: true,
+        legend: {
+            x: 0.01, y: 0.99,
+            bgcolor: 'rgba(255,255,255,0.85)',
+            bordercolor: '#ccc', borderwidth: 1
+        },
+        margin: margins
+    };
+
+    // Reason 1 & 3: use staticPlot to kill Plotly event interference
+    var config = {
+        displayModeBar: false,
+        responsive: true,
+        staticPlot: true
+    };
+
+    Plotly.newPlot(container, traces, layout, config).then(function() {
+
+        // Reason 6: ensure container is positioning context
+        container.style.position = 'relative';
+
+        // Reason 1: force pointer events on container
+        container.style.pointerEvents = 'all';
+
+        // Create canvas overlay
+        var canvas = document.createElement('canvas');
+        canvas.style.position = 'absolute';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        // Reason 7: canvas must not block mouse events on container
+        canvas.style.pointerEvents = 'none';
+        // Reason 7: ensure canvas is on top
+        canvas.style.zIndex = '1000';
+        container.appendChild(canvas);
+
+        var ctx = canvas.getContext('2d');
+
+        // Reason 9: handle high-DPI
+        function resizeCanvas() {
+            var dpr = window.devicePixelRatio || 1;
+            var rect = container.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Reason 3 & 4: compute plot area from Plotly internals, cached
+        var plotArea = null;
+
+        function updatePlotArea() {
+            var fl = container._fullLayout;
+            if (!fl || !fl.xaxis || !fl.yaxis) return false;
+            var xa = fl.xaxis;
+            var ya = fl.yaxis;
+            plotArea = {
+                // pixel offsets relative to the container
+                left: xa._offset,
+                top: ya._offset,
+                width: xa._length,
+                height: ya._length,
+                xMin: xa.range[0],
+                xMax: xa.range[1],
+                yMin: ya.range[0],
+                yMax: ya.range[1]
+            };
+            return true;
+        }
+        updatePlotArea();
+        window.addEventListener('resize', function() {
+            setTimeout(function() { updatePlotArea(); resizeCanvas(); }, 100);
+        });
+
+        // Convert data coords to pixel coords relative to container
+        function dataToPixel(dataX, dataY) {
+            if (!plotArea) return null;
+            var px = plotArea.left + (dataX - plotArea.xMin) / (plotArea.xMax - plotArea.xMin) * plotArea.width;
+            var py = plotArea.top + (1 - (dataY - plotArea.yMin) / (plotArea.yMax - plotArea.yMin)) * plotArea.height;
+            return { x: px, y: py };
+        }
+
+        // Convert pixel coords (relative to container) to data coords
+        function pixelToData(px, py) {
+            if (!plotArea) return null;
+            var dataX = plotArea.xMin + (px - plotArea.left) / plotArea.width * (plotArea.xMax - plotArea.xMin);
+            var dataY = plotArea.yMin + (1 - (py - plotArea.top) / plotArea.height) * (plotArea.yMax - plotArea.yMin);
+            return { z: dataX, v: dataY };
+        }
+
+        function clearCanvas() {
+            var rect = container.getBoundingClientRect();
+            ctx.clearRect(0, 0, rect.width, rect.height);
+        }
+
+        function drawTangent(z) {
+            clearCanvas();
+
+            var s = sigmoid(z);
+            var slope = sigmoid_deriv(z);
+
+            // Tangent line endpoints in data space
+            var halfLen = 2.5;
+            var tZ0 = z - halfLen, tZ1 = z + halfLen;
+            var tY0 = s + slope * (tZ0 - z);
+            var tY1 = s + slope * (tZ1 - z);
+
+            var p0 = dataToPixel(tZ0, tY0);
+            var p1 = dataToPixel(tZ1, tY1);
+            var pc = dataToPixel(z, s);
+            if (!p0 || !p1 || !pc) return;
+
+            // Draw tangent line
+            ctx.beginPath();
+            ctx.moveTo(p0.x, p0.y);
+            ctx.lineTo(p1.x, p1.y);
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Draw point
+            ctx.beginPath();
+            ctx.arc(pc.x, pc.y, 6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#f59e0b';
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw label
+            ctx.font = '13px monospace';
+            ctx.fillStyle = '#334155';
+            var label = 'z=' + z.toFixed(2) +
+                        '  σ(z)=' + s.toFixed(4) +
+                        '  slope=' + slope.toFixed(4);
+            // Position label above or below the point
+            var labelY = pc.y - 18;
+            if (labelY < plotArea.top + 20) labelY = pc.y + 24;
+            var labelX = pc.x + 10;
+
+            // Background for readability
+            var textWidth = ctx.measureText(label).width;
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.fillRect(labelX - 4, labelY - 13, textWidth + 8, 18);
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(labelX - 4, labelY - 13, textWidth + 8, 18);
+
+            ctx.fillStyle = '#334155';
+            ctx.fillText(label, labelX, labelY);
+        }
+
+        // Reason 8: throttle with requestAnimationFrame
+        var rafId = null;
+        var lastMouseX = null, lastMouseY = null;
+
+        function onFrame() {
+            rafId = null;
+            if (lastMouseX === null) return;
+            if (!plotArea) { updatePlotArea(); }
+            if (!plotArea) return;
+
+            var containerRect = container.getBoundingClientRect();
+            var px = lastMouseX - containerRect.left;
+            var py = lastMouseY - containerRect.top;
+
+            // Check if inside plot area
+            if (px < plotArea.left || px > plotArea.left + plotArea.width ||
+                py < plotArea.top || py > plotArea.top + plotArea.height) {
+                clearCanvas();
+                return;
+            }
+
+            var data = pixelToData(px, py);
+            if (!data || data.z < zMin || data.z > zMax) {
+                clearCanvas();
+                return;
+            }
+
+            drawTangent(data.z);
+        }
+
+        // Reason 7: listen on container, not canvas
+        container.addEventListener('mousemove', function(evt) {
+            lastMouseX = evt.clientX;
+            lastMouseY = evt.clientY;
+            if (!rafId) {
+                rafId = requestAnimationFrame(onFrame);
+            }
+        });
+
+        container.addEventListener('mouseleave', function() {
+            lastMouseX = null;
+            lastMouseY = null;
+            clearCanvas();
+        });
+    });
+}
+
 function renderBackpropVisual(id) {
 	const root = document.getElementById(id);
 	if (!root) return;
@@ -530,4 +790,5 @@ $$${dir}$$`);
 
 async function loadBackproplabModule () {
 	renderBackpropVisual('bp-visual');
+	sigmoid_plot();
 }

@@ -44,6 +44,8 @@ $$
 
 This means that once we know the output of a sigmoid neuron, we can instantly compute its derivative.
 
+<div id="sigmoid-plot" style="width: 100%; height: 500px;"></div>
+
 ## Loss Function
 
 The network's error is measured using the **Mean Squared Error (MSE)**:
