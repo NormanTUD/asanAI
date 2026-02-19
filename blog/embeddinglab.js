@@ -153,7 +153,7 @@ function calcEvo(key) {
 		return acc;
 	}, {});
 
-	const tokens = inputVal.match(/[a-zA-ZäöüÄÖÜ]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
+	const tokens = inputVal.match(/[a-zA-Z\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
 	if (!tokens) return;
 
 	let pos = 0;
@@ -199,21 +199,21 @@ function calcEvo(key) {
 			let op = consume();
 			let right = parseFactor();
 			let opTex = op === '*' ? '\\cdot' : '\\div';
-			let prev = [...left.val]; // capture position BEFORE the operation
 
 			if (op === '*') {
 				if (left.isScalar) {
 					left.val = right.val.map(v => left.val[0] * v);
 					left.isScalar = right.isScalar;
-				} else {
-					left.val = left.val.map(v => v * (right.isScalar ? right.val[0] : 1));
+				} else if (right.isScalar) {
+					left.val = left.val.map(v => v * right.val[0]);
 				}
 			} else if (op === '/') {
 				left.val = left.val.map(v => v / (right.val[0] || 1));
 			}
 
-			// Push a step so an arrow is drawn from the old position to the new one
-			steps.push({ from: prev, to: [...left.val], label: `${op}${right.label}` });
+			// Do NOT push a step here — multiplication/division computes
+			// an intermediate vector value, not a spatial movement on the plot.
+			// Only +/- in parseExpression should generate arrows.
 
 			left.tex = `${left.tex} ${opTex} ${right.tex}`;
 			left.label = `${left.label}${op}${right.label}`;
