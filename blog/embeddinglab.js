@@ -2035,8 +2035,6 @@ function loadEmbeddingModule () {
 
 	renderCrossLingualFrame();
 
-	renderCrossLingualFrame();
-
 	renderMetricTensor();
 
 	setParallelogramConcept('royalty');
