@@ -94,8 +94,6 @@ The encoding is a **smooth, continuous version of binary counting**:
 - **Dim 2, 3** (low freq) barely moves like the most significant bit
 
 Fast waves distinguish neighbors; slow waves track long range position. Together, every position maps to a unique point on a high dimensional torus (product of circles).
-
-
 </div>
 
 <div id="pe-fourier-demo"></div>
