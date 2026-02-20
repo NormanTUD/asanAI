@@ -118,7 +118,7 @@ function initPeFourierDemo() {
 	  <canvas id="pfd-waves" width="380" height="260" style="border:1px solid #ccc;border-radius:6px;background:#fafafa;width:100%;"></canvas>
 	  <div style="margin-top:8px;">
 	    <label><b>Position:</b></label>
-	    <input type="range" id="pfd-pos" min="0" max="50" value="3" style="width:70%;vertical-align:middle;">
+	    <input type="range" id="pfd-pos" min="0" max="100" value="3" style="width:70%;vertical-align:middle;">
 	    <span id="pfd-pos-label" style="font-weight:bold;">3</span>
 	  </div>
 	  <div style="margin-top:4px;">
@@ -164,7 +164,7 @@ function initPeFourierDemo() {
 		const W = c.width, H = c.height;
 		ctx.clearRect(0, 0, W, H);
 
-		const maxP = 50;
+		const maxP = 100;
 		const padL = 30, padR = 10, padT = 10, padB = 24;
 		const gW = W - padL - padR, gH = H - padT - padB;
 
