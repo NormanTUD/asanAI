@@ -70,8 +70,6 @@ The challenge of processing text in parallel (instead of word-by-word like older
 
 ## Why Sinusoidal Positional Encodings Work: A Fourier Perspective
 
-### The Encoding Is a Hand Crafted Fourier Basis
-
 Each dimension pair $(2i, 2i+1)$ in the positional encoding is a **sine cosine pair at a specific frequency**, exactly one term in a Fourier series [[12]]:
 
 $$\text{PE}_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right), \quad \text{PE}_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
