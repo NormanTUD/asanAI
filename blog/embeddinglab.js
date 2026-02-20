@@ -1285,6 +1285,315 @@ function resetCrossLingualAlignment() {
 	renderCrossLingualFrame();
 }
 
+// ============================================================
+// ATTENTION AS METRIC TENSOR WARPING
+// ============================================================
+
+const metricTensorState = {
+    tokens: {
+        'King':     { pos: [3.0,  1.5], group: 'royalty' },
+        'Queen':    { pos: [3.5,  3.5], group: 'royalty' },
+        'Prince':   { pos: [2.0,  2.0], group: 'royalty' },
+        'Princess': { pos: [2.5,  4.0], group: 'royalty' },
+        'Man':      { pos: [0.5,  1.0], group: 'person' },
+        'Woman':    { pos: [0.5,  3.5], group: 'person' },
+        'Boy':      { pos: [-1.0, 1.5], group: 'person' },
+        'Girl':     { pos: [-1.0, 3.5], group: 'person' },
+        'Cat':      { pos: [-3.0, 2.5], group: 'animal' },
+        'Dog':      { pos: [-3.5, 1.0], group: 'animal' },
+        'Lion':     { pos: [-2.0, 0.5], group: 'animal' },
+        'Democracy':{ pos: [-3.0, 4.5], group: 'abstract' },
+        'Freedom':  { pos: [-2.5, 5.0], group: 'abstract' },
+        'Power':    { pos: [1.5,  0.0], group: 'abstract' },
+    },
+    // Semantic similarity matrix (simplified: same group = high, adjacent groups = medium)
+    groupSimilarity: {
+        'royalty-royalty': 0.95,
+        'royalty-person': 0.6,
+        'royalty-abstract': 0.4,
+        'royalty-animal': 0.15,
+        'person-person': 0.9,
+        'person-animal': 0.3,
+        'person-abstract': 0.35,
+        'animal-animal': 0.85,
+        'animal-abstract': 0.1,
+        'abstract-abstract': 0.7,
+    },
+    attendedToken: null,
+    warpStrength: 0.65
+};
+
+function getGroupSimilarity(g1, g2) {
+    const key1 = `${g1}-${g2}`;
+    const key2 = `${g2}-${g1}`;
+    return metricTensorState.groupSimilarity[key1] || metricTensorState.groupSimilarity[key2] || 0.2;
+}
+
+function computeWarpedPosition(originalPos, attendedTokenKey) {
+    const st = metricTensorState;
+    if (!attendedTokenKey) return originalPos;
+
+    const attended = st.tokens[attendedTokenKey];
+    const attendedPos = attended.pos;
+    const attendedGroup = attended.group;
+
+    // For grid points, we warp toward/away from the attended token
+    // based on a radial function
+    const dx = originalPos[0] - attendedPos[0];
+    const dy = originalPos[1] - attendedPos[1];
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < 0.001) return originalPos;
+
+    // Warp: pull nearby grid points closer, push far ones slightly away
+    // This creates the "pinch" effect
+    const influence = Math.exp(-dist * dist / 8) * st.warpStrength;
+    const warpedX = originalPos[0] - dx * influence * 0.4;
+    const warpedY = originalPos[1] - dy * influence * 0.4;
+
+    return [warpedX, warpedY];
+}
+
+function computeWarpedTokenPosition(tokenKey, attendedTokenKey) {
+    const st = metricTensorState;
+    if (!attendedTokenKey) return st.tokens[tokenKey].pos;
+
+    const token = st.tokens[tokenKey];
+    const attended = st.tokens[attendedTokenKey];
+
+    if (tokenKey === attendedTokenKey) return token.pos;
+
+    const sim = getGroupSimilarity(token.group, attended.group);
+    const dx = token.pos[0] - attended.pos[0];
+    const dy = token.pos[1] - attended.pos[1];
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < 0.001) return token.pos;
+
+    // High similarity → pull closer; low similarity → push away
+    const pullStrength = (sim - 0.3) * st.warpStrength * 1.8;
+    const factor = pullStrength * Math.exp(-dist * dist / 20);
+
+    return [
+        token.pos[0] - dx * factor,
+        token.pos[1] - dy * factor
+    ];
+}
+
+function renderMetricTensor(animate = false) {
+    const plotDiv = document.getElementById('plot-metric-tensor');
+    if (!plotDiv) return;
+
+    const st = metricTensorState;
+    const attended = st.attendedToken;
+    const traces = [];
+
+    const groupColors = {
+        'royalty': '#f59e0b',
+        'person': '#3b82f6',
+        'animal': '#10b981',
+        'abstract': '#8b5cf6'
+    };
+
+    // --- 1. Draw the deformable grid ---
+    const gridMin = -5, gridMax = 6.5, gridStep = 0.5;
+    const gridLines = [];
+
+    // Horizontal lines
+    for (let y = gridMin; y <= gridMax; y += gridStep) {
+        const lineX = [], lineY = [];
+        for (let x = gridMin; x <= gridMax; x += gridStep / 2) {
+            const warped = computeWarpedPosition([x, y], attended);
+            lineX.push(warped[0]);
+            lineY.push(warped[1]);
+        }
+        traces.push({
+            x: lineX, y: lineY,
+            mode: 'lines',
+            line: { color: attended ? 'rgba(148, 163, 184, 0.35)' : 'rgba(148, 163, 184, 0.2)', width: 1 },
+            showlegend: false, hoverinfo: 'skip'
+        });
+    }
+
+    // Vertical lines
+    for (let x = gridMin; x <= gridMax; x += gridStep) {
+        const lineX = [], lineY = [];
+        for (let y = gridMin; y <= gridMax; y += gridStep / 2) {
+            const warped = computeWarpedPosition([x, y], attended);
+            lineX.push(warped[0]);
+            lineY.push(warped[1]);
+        }
+        traces.push({
+            x: lineX, y: lineY,
+            mode: 'lines',
+            line: { color: attended ? 'rgba(148, 163, 184, 0.35)' : 'rgba(148, 163, 184, 0.2)', width: 1 },
+            showlegend: false, hoverinfo: 'skip'
+        });
+    }
+
+    // --- 2. Draw attention halo (if attending) ---
+    if (attended) {
+        const attendedPos = st.tokens[attended].pos;
+        const haloSteps = 60;
+        for (let r = 0; r < 3; r++) {
+            const radius = 0.8 + r * 1.2;
+            const opacity = 0.25 - r * 0.07;
+            const haloX = [], haloY = [];
+            for (let i = 0; i <= haloSteps; i++) {
+                const angle = (i / haloSteps) * 2 * Math.PI;
+                haloX.push(attendedPos[0] + radius * Math.cos(angle));
+                haloY.push(attendedPos[1] + radius * Math.sin(angle));
+            }
+            traces.push({
+                x: haloX, y: haloY,
+                mode: 'lines', fill: 'toself',
+                fillcolor: `rgba(139, 92, 246, ${opacity * 0.3})`,
+                line: { color: `rgba(139, 92, 246, ${opacity})`, width: 1.5 },
+                showlegend: false, hoverinfo: 'skip'
+            });
+        }
+    }
+
+    // --- 3. Draw connection lines (attention weights) ---
+    if (attended) {
+        for (const [word, token] of Object.entries(st.tokens)) {
+            if (word === attended) continue;
+            const sim = getGroupSimilarity(token.group, st.tokens[attended].group);
+            if (sim < 0.25) continue;
+
+            const warpedPos = computeWarpedTokenPosition(word, attended);
+            const attendedPos = st.tokens[attended].pos;
+
+            traces.push({
+                x: [attendedPos[0], warpedPos[0]],
+                y: [attendedPos[1], warpedPos[1]],
+                mode: 'lines',
+                line: {
+                    color: `rgba(139, 92, 246, ${sim * 0.6})`,
+                    width: sim * 4,
+                    dash: sim > 0.5 ? 'solid' : 'dot'
+                },
+                showlegend: false, hoverinfo: 'skip'
+            });
+        }
+    }
+
+    // --- 4. Draw token points ---
+    for (const [word, token] of Object.entries(st.tokens)) {
+        const pos = attended ? computeWarpedTokenPosition(word, attended) : token.pos;
+        const isAttended = word === attended;
+        const sim = attended ? getGroupSimilarity(token.group, st.tokens[attended]?.group || token.group) : 0;
+
+        traces.push({
+            x: [pos[0]], y: [pos[1]],
+            mode: 'markers+text',
+            text: [word],
+            textposition: 'top center',
+            textfont: {
+                size: isAttended ? 14 : 11,
+                color: isAttended ? '#7c3aed' : '#1e293b',
+                weight: isAttended ? 'bold' : 'normal'
+            },
+            marker: {
+                size: isAttended ? 18 : 10,
+                color: groupColors[token.group],
+                opacity: attended ? (isAttended ? 1 : 0.4 + sim * 0.6) : 0.9,
+                line: {
+                    width: isAttended ? 3 : 1,
+                    color: isAttended ? '#7c3aed' : '#fff'
+                }
+            },
+            showlegend: false,
+            hovertemplate: `<b>${word}</b><br>Group: ${token.group}${attended && !isAttended ? '<br>Similarity to ' + attended + ': ' + (sim * 100).toFixed(0) + '%' : ''}<extra></extra>`,
+            customdata: [word]
+        });
+    }
+
+    // --- 5. Legend for groups ---
+    const legendY = 5.5;
+    const legendItems = [
+        { label: '👑 Royalty', color: groupColors.royalty, x: -4.5 },
+        { label: '🧑 Person', color: groupColors.person, x: -2.0 },
+        { label: '🐾 Animal', color: groupColors.animal, x: 0.5 },
+        { label: '💡 Abstract', color: groupColors.abstract, x: 3.0 },
+    ];
+
+    const annotations = legendItems.map(item => ({
+        x: item.x, y: legendY + 0.8,
+        text: `<b>${item.label}</b>`,
+        showarrow: false,
+        font: { size: 11, color: item.color },
+        xref: 'x', yref: 'y'
+    }));
+
+    if (attended) {
+        annotations.push({
+            x: st.tokens[attended].pos[0],
+            y: st.tokens[attended].pos[1] - 0.7,
+            text: `<b>⚡ Attending to: ${attended}</b>`,
+            showarrow: false,
+            font: { size: 12, color: '#7c3aed' },
+            bgcolor: 'rgba(237, 233, 254, 0.9)',
+            borderpad: 4
+        });
+    }
+
+    const layout = {
+        margin: { l: 40, r: 40, b: 40, t: 20 },
+        showlegend: false,
+        xaxis: {
+            range: [-5.5, 7],
+            zeroline: false,
+            showgrid: false,
+            title: '',
+            fixedrange: true
+        },
+        yaxis: {
+            range: [-2, 7],
+            zeroline: false,
+            showgrid: false,
+            title: '',
+            scaleanchor: 'x',
+            fixedrange: true
+        },
+        annotations: annotations,
+        plot_bgcolor: '#fff'
+    };
+
+    Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true }).then(() => {
+        // Attach click handler
+        plotDiv.removeAllListeners?.('plotly_click');
+        plotDiv.on('plotly_click', function(data) {
+            if (data.points && data.points[0] && data.points[0].customdata) {
+                const clickedWord = data.points[0].customdata;
+                if (st.tokens[clickedWord]) {
+                    st.attendedToken = clickedWord;
+                    const statusEl = document.getElementById('metric-status');
+                    if (statusEl) {
+                        const group = st.tokens[clickedWord].group;
+                        statusEl.innerHTML = `⚡ Attending to <b>${clickedWord}</b> (${group}). Related tokens pulled closer, unrelated pushed away.`;
+                        statusEl.style.color = '#7c3aed';
+                    }
+                    renderMetricTensor(true);
+                }
+            }
+        });
+    });
+}
+
+function resetMetricTensor() {
+    const st = metricTensorState;
+    st.attendedToken = null;
+
+    const statusEl = document.getElementById('metric-status');
+    if (statusEl) {
+        statusEl.textContent = 'Click any token to apply attention.';
+        statusEl.style.color = '#64748b';
+    }
+
+    renderMetricTensor();
+}
+
 function loadEmbeddingModule () {
 	const tasks = [
 		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
@@ -1358,4 +1667,8 @@ function loadEmbeddingModule () {
 	renderManifoldVisualization();
 
 	renderCrossLingualFrame();
+
+	renderCrossLingualFrame();
+
+	renderMetricTensor();
 }
