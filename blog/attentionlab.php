@@ -3,6 +3,10 @@
 <div class="md">
 In a Transformer model, words don't live in a dictionary; they live in a **Semantic Universe**. Every concept, from "apple" to "existentialism", is assigned a specific coordinate in a high-dimensional map. However, some words suffer from a serious identity crisis.
 
+Even though in this example, we treat tokens as words, they can also be parts of words or single characters like a comma or a semicolon due to *Byte-Pair-Encodings*, invented by \citeauthor{gage1994bpe}.
+
+In the history of linguistics, the work of \citeauthor{firth1957distributive} (\citeyear{firth1957distributive}) provides the theoretical bedrock for modern word embeddings. Known as the Distributional Hypothesis, his famous maxim, "You shall know a word by the company it keeps", suggests that words occurring in similar contexts share similar meanings. This shift away from fixed dictionary definitions to context-based identity allowed later researchers like \citeauthor{mikolov2013word2vec} (\citeyear{mikolov2013word2vec}) to mathematically map language into the vector spaces we see in modern LLMs today.
+
 ## The Semantic GPS
 Take the word **"Bank."** In isolation, its vector sits in a "neutral" zone, mathematically halfway between a nature walk and a trip to the vault. It is ambiguous because its coordinate hasn't been "anchored" yet.
 
@@ -69,7 +73,7 @@ In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see 
 
 <!-- ===================== SECTION 2: 2D ===================== -->
 <div class="md">
-### 2D: Attention in a Plane, The Dot Product as Angular Alignment
+### 2D: Attention in a Plane
 
 Now each vector lives in $\mathbb{R}^2$. The dot product $\mathbf{q} \cdot \mathbf{k} = \|\mathbf{q}\|\|\mathbf{k}\|\cos\theta$ measures **angular alignment** weighted by magnitude. Two vectors pointing the same way produce a large positive score; perpendicular vectors score zero; opposing vectors score negative.
 
@@ -80,6 +84,10 @@ Here $\sqrt{d_k} = \sqrt{2} \approx 1.41$. This scaling **prevents the scores fr
 The output is a **weighted average of the value vectors**, geometrically, it's a point inside the **convex hull** (the polygon formed by the value points). Attention can only **interpolate**, never **extrapolate** beyond the values.
 
 Drag the query arrow below. Watch how rotating it toward a key increases that key's attention weight, and the output point slides toward the corresponding value.
+
+Human language is far too nuanced for a single axis. To capture independent features such as gender, power, or biological species, we project tokens into a **vector space** with multiple dimensions. In this space, each dimension represents a latent semantic feature discovered by the model during training.
+
+Because these positions are derived from logical relationships in data, the space itself becomes "computable". We can perform algebraic operations on these vectors to navigate human concepts:
 </div>
 
 <!-- ===================== 2D: "Where Does Bank Belong?" ===================== -->
