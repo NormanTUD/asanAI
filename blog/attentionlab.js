@@ -358,71 +358,71 @@ function initShiftExamples() {
    ============================================================ */
 
 function softmax(scores) {
-    const max = Math.max(...scores);
-    const exps = scores.map(s => Math.exp(s - max));
-    const sum  = exps.reduce((a, b) => a + b, 0);
-    return exps.map(e => e / sum);
+	const max = Math.max(...scores);
+	const exps = scores.map(s => Math.exp(s - max));
+	const sum  = exps.reduce((a, b) => a + b, 0);
+	return exps.map(e => e / sum);
 }
 
 /* ─── Canvas helpers (same as before) ─── */
 
 function drawDot(ctx, x, y, r, color, alpha) {
-    ctx.save();
-    ctx.globalAlpha = alpha != null ? alpha : 1;
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.fillStyle = color;
-    ctx.fill();
-    ctx.strokeStyle = '#1e293b';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-    ctx.restore();
+	ctx.save();
+	ctx.globalAlpha = alpha != null ? alpha : 1;
+	ctx.beginPath();
+	ctx.arc(x, y, r, 0, Math.PI * 2);
+	ctx.fillStyle = color;
+	ctx.fill();
+	ctx.strokeStyle = '#1e293b';
+	ctx.lineWidth = 1.5;
+	ctx.stroke();
+	ctx.restore();
 }
 
 function drawDiamond(ctx, x, y, r, color) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(Math.PI / 4);
-    ctx.fillStyle = color;
-    ctx.fillRect(-r, -r, r * 2, r * 2);
-    ctx.strokeStyle = '#1e293b';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(-r, -r, r * 2, r * 2);
-    ctx.restore();
+	ctx.save();
+	ctx.translate(x, y);
+	ctx.rotate(Math.PI / 4);
+	ctx.fillStyle = color;
+	ctx.fillRect(-r, -r, r * 2, r * 2);
+	ctx.strokeStyle = '#1e293b';
+	ctx.lineWidth = 2;
+	ctx.strokeRect(-r, -r, r * 2, r * 2);
+	ctx.restore();
 }
 
 function drawStar(ctx, cx, cy, r, color) {
-    ctx.beginPath();
-    for (let i = 0; i < 10; i++) {
-        const a = (i * Math.PI) / 5 - Math.PI / 2;
-        const rad = i % 2 === 0 ? r : r * 0.4;
-        ctx[i === 0 ? 'moveTo' : 'lineTo'](cx + rad * Math.cos(a), cy + rad * Math.sin(a));
-    }
-    ctx.closePath();
-    ctx.fillStyle = color;
-    ctx.fill();
-    ctx.strokeStyle = '#1e293b';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+	ctx.beginPath();
+	for (let i = 0; i < 10; i++) {
+		const a = (i * Math.PI) / 5 - Math.PI / 2;
+		const rad = i % 2 === 0 ? r : r * 0.4;
+		ctx[i === 0 ? 'moveTo' : 'lineTo'](cx + rad * Math.cos(a), cy + rad * Math.sin(a));
+	}
+	ctx.closePath();
+	ctx.fillStyle = color;
+	ctx.fill();
+	ctx.strokeStyle = '#1e293b';
+	ctx.lineWidth = 1.5;
+	ctx.stroke();
 }
 
 function drawLabel(ctx, text, x, y, color, size, align, bold) {
-    ctx.font = `${bold ? 'bold ' : ''}${size || 13}px Inter, system-ui, sans-serif`;
-    ctx.fillStyle = color || '#1e293b';
-    ctx.textAlign = align || 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(text, x, y);
+	ctx.font = `${bold ? 'bold ' : ''}${size || 13}px Inter, system-ui, sans-serif`;
+	ctx.fillStyle = color || '#1e293b';
+	ctx.textAlign = align || 'center';
+	ctx.textBaseline = 'middle';
+	ctx.fillText(text, x, y);
 }
 
 function drawSquare(ctx, x, y, s, color, alpha) {
-    ctx.save();
-    ctx.globalAlpha = alpha != null ? alpha : 1;
-    ctx.fillStyle = color;
-    ctx.fillRect(x - s, y - s, s * 2, s * 2);
-    ctx.strokeStyle = '#1e293b';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(x - s, y - s, s * 2, s * 2);
-    ctx.restore();
+	ctx.save();
+	ctx.globalAlpha = alpha != null ? alpha : 1;
+	ctx.fillStyle = color;
+	ctx.fillRect(x - s, y - s, s * 2, s * 2);
+	ctx.strokeStyle = '#1e293b';
+	ctx.lineWidth = 1;
+	ctx.strokeRect(x - s, y - s, s * 2, s * 2);
+	ctx.restore();
 }
 
 
@@ -431,8 +431,8 @@ function drawSquare(ctx, x, y, s, color, alpha) {
    ═══════════════════════════════════════════════════════════ */
 
 const KV1 = [
-    { k: -3.0, v: -3.5, color: '#10b981', kIcon: '🌊', kName: 'river',  vIcon: '💧', vName: 'water' },
-    { k:  3.5, v:  4.0, color: '#f59e0b', kIcon: '🏦', kName: 'vault',  vIcon: '💰', vName: 'money' }
+	{ k: -3.0, v: -3.5, color: '#10b981', kIcon: '🌊', kName: 'river',  vIcon: '💧', vName: 'water' },
+	{ k:  3.5, v:  4.0, color: '#f59e0b', kIcon: '🏦', kName: 'vault',  vIcon: '💰', vName: 'money' }
 ];
 
 const SENTENCES_1D = [
@@ -587,118 +587,118 @@ const SENTENCES_1D = [
 ];
 
 const SENTENCES_2D = [
-    // ═══════════════════════════════════════════════════════════════
-    // Bucket 0 = 🔋 battery / ⚡ energy  (key: [-2.0, -1.5])
-    // Dominant when query → Nature (−X) and Calm (−Y)
-    // ═══════════════════════════════════════════════════════════════
-    [
-        { min: 0.99, text: 'The <b style="color:#10b981">🔋 charge</b> crept into the <b style="color:#10b981">old battery</b> at a <b style="color:#3b82f6">😌 glacial pace</b>, electrons drifting through <b style="color:#10b981">copper windings</b> in a <b style="color:#10b981">🌿 hand-built solar rig</b> deep in the <b style="color:#10b981">forest cabin</b> — pure <b style="color:#10b981">🌿 nature-powered</b>, utterly <b style="color:#3b82f6">😌 unhurried</b>.' },
-        { min: 0.98, text: 'She left the <b style="color:#10b981">🔋 charge</b> running on the <b style="color:#10b981">🌿 solar panel</b> overnight, the <b style="color:#10b981">off-grid system</b> humming <b style="color:#3b82f6">😌 softly</b> in the <b style="color:#10b981">mountain stillness</b> — no rush, just <b style="color:#10b981">⚡ photons</b> becoming <b style="color:#10b981">⚡ stored energy</b>.' },
-        { min: 0.97, text: 'The <b style="color:#10b981">🔋 charge</b> trickled into the <b style="color:#10b981">🌿 hand-crank generator</b> as he turned it <b style="color:#3b82f6">😌 slowly</b> by the <b style="color:#10b981">campfire</b>, storing just enough <b style="color:#10b981">⚡ energy</b> to power the <b style="color:#10b981">lantern</b> through the night.' },
-        { min: 0.96, text: 'The <b style="color:#10b981">🌿 wind turbine</b> fed a <b style="color:#3b82f6">😌 steady</b> <b style="color:#10b981">🔋 charge</b> into the <b style="color:#10b981">deep-cycle batteries</b> buried beneath the <b style="color:#10b981">meadow</b> — <b style="color:#10b981">🌿 nature\'s own</b> power grid, <b style="color:#3b82f6">😌 patient</b> and silent.' },
-        { min: 0.95, text: 'He monitored the <b style="color:#10b981">🔋 charge</b> level on the <b style="color:#10b981">🌿 hydroelectric cell</b> fed by the <b style="color:#10b981">creek</b> — a <b style="color:#3b82f6">😌 gentle</b> current producing a <b style="color:#3b82f6">😌 gentle</b> <b style="color:#10b981">⚡ charge</b>, nothing forced.' },
-        { min: 0.94, text: 'The <b style="color:#10b981">🔋 charge</b> from the <b style="color:#10b981">🌿 geothermal tap</b> was <b style="color:#3b82f6">😌 slow but inexhaustible</b>, warming the <b style="color:#10b981">cabin</b> and filling the <b style="color:#10b981">batteries</b> with <b style="color:#10b981">⚡ earth-heat energy</b>.' },
-        { min: 0.93, text: 'A <b style="color:#10b981">🌿 moss-covered</b> solar array fed a <b style="color:#3b82f6">😌 trickle</b> <b style="color:#10b981">🔋 charge</b> to the <b style="color:#10b981">weather station</b> perched on the <b style="color:#10b981">ridge</b> — <b style="color:#10b981">🌿 wilderness tech</b>, <b style="color:#3b82f6">😌 unhurried</b>.' },
-        { min: 0.92, text: 'The <b style="color:#10b981">🔋 charge</b> indicator blinked <b style="color:#3b82f6">😌 lazily</b> on the <b style="color:#10b981">🌿 portable solar charger</b> spread across the <b style="color:#10b981">riverbank rocks</b> — <b style="color:#10b981">⚡ energy</b> from <b style="color:#10b981">🌿 sunlight</b>, no deadline.' },
-        { min: 0.91, text: 'She checked the <b style="color:#10b981">🔋 charge</b> on her <b style="color:#10b981">headlamp batteries</b> before the <b style="color:#3b82f6">😌 evening hike</b> through the <b style="color:#10b981">🌿 old-growth forest</b> — plenty of <b style="color:#10b981">⚡ power</b>, no rush.' },
-        { min: 0.90, text: 'The <b style="color:#10b981">🔋 charge</b> held <b style="color:#3b82f6">😌 steady</b> in the <b style="color:#10b981">🌿 field research battery pack</b> as the <b style="color:#10b981">biologist</b> recorded <b style="color:#10b981">birdsong</b> at <b style="color:#3b82f6">😌 dawn</b>.' },
-        { min: 0.89, text: 'He plugged the <b style="color:#10b981">🔋 charge</b> cable into the <b style="color:#10b981">🌿 rain-barrel generator</b> and <b style="color:#3b82f6">😌 waited</b> — the <b style="color:#10b981">⚡ energy</b> would come when the <b style="color:#10b981">🌿 rain</b> came.' },
-        { min: 0.88, text: 'The <b style="color:#10b981">🔋 charge</b> from the <b style="color:#10b981">🌿 bicycle dynamo</b> was enough to keep the <b style="color:#10b981">radio</b> alive during the <b style="color:#3b82f6">😌 leisurely ride</b> through the <b style="color:#10b981">countryside</b>.' },
-        { min: 0.87, text: 'A <b style="color:#3b82f6">😌 slow</b> <b style="color:#10b981">🔋 charge</b> built up in the <b style="color:#10b981">capacitor bank</b> as the <b style="color:#10b981">🌿 windmill</b> turned in the <b style="color:#3b82f6">😌 afternoon breeze</b>.' },
-        { min: 0.86, text: 'The <b style="color:#10b981">🔋 charge</b> was at <b style="color:#10b981">80%</b> — the <b style="color:#10b981">🌿 solar panels</b> on the <b style="color:#10b981">barn roof</b> had done their <b style="color:#3b82f6">😌 quiet work</b> all day.' },
-        { min: 0.85, text: 'She nursed the <b style="color:#10b981">🔋 charge</b> on her <b style="color:#10b981">phone</b> through the <b style="color:#10b981">🌿 camping trip</b>, using it only to <b style="color:#3b82f6">😌 photograph wildflowers</b>.' },
-        { min: 0.84, text: 'The <b style="color:#10b981">🔋 charge</b> light glowed <b style="color:#10b981">green</b> on the <b style="color:#10b981">🌿 portable power station</b> beside the <b style="color:#10b981">tent</b> — <b style="color:#3b82f6">😌 full and ready</b>.' },
-        { min: 0.83, text: 'He let the <b style="color:#10b981">🔋 charge</b> build <b style="color:#3b82f6">😌 overnight</b> from the <b style="color:#10b981">🌿 micro-hydro turbine</b> in the <b style="color:#10b981">stream</b> behind the <b style="color:#10b981">cabin</b>.' },
-        { min: 0.82, text: 'The <b style="color:#10b981">🔋 charge</b> on the <b style="color:#10b981">GPS unit</b> lasted the whole <b style="color:#10b981">🌿 backcountry trek</b> — <b style="color:#3b82f6">😌 no stress</b>, just <b style="color:#10b981">⚡ reliable energy</b>.' },
-        { min: 0.81, text: 'A <b style="color:#10b981">🔋 full charge</b> meant <b style="color:#3b82f6">😌 peace of mind</b> for the <b style="color:#10b981">🌿 nature photographer</b> heading into the <b style="color:#10b981">wetlands</b> at <b style="color:#3b82f6">😌 sunrise</b>.' },
-        { min: 0.80, text: 'The <b style="color:#10b981">🔋 charge</b> came from <b style="color:#10b981">🌿 sunlight</b> alone — a <b style="color:#3b82f6">😌 patient</b>, <b style="color:#10b981">natural</b> process powering the <b style="color:#10b981">trail marker lights</b>.' },
-        { min: 0.79, text: 'She watched the <b style="color:#10b981">🔋 charge</b> meter <b style="color:#3b82f6">😌 inch upward</b> as the <b style="color:#10b981">🌿 solar blanket</b> soaked in the <b style="color:#10b981">afternoon rays</b>.' },
-        { min: 0.78, text: 'The <b style="color:#10b981">🔋 charge</b> was enough to run the <b style="color:#10b981">water pump</b> for the <b style="color:#10b981">🌿 garden irrigation</b> — <b style="color:#3b82f6">😌 simple, sustainable</b>.' },
-        { min: 0.77, text: 'He topped off the <b style="color:#10b981">🔋 charge</b> on the <b style="color:#10b981">lantern</b> before the <b style="color:#3b82f6">😌 evening</b> <b style="color:#10b981">🌿 birdwatching session</b>.' },
-        { min: 0.76, text: 'The <b style="color:#10b981">🔋 charge</b> held <b style="color:#3b82f6">😌 well</b> in the <b style="color:#10b981">cold</b> — the <b style="color:#10b981">🌿 lithium cells</b> were rated for <b style="color:#10b981">winter camping</b>.' },
-        { min: 0.75, text: 'A <b style="color:#3b82f6">😌 gentle</b> <b style="color:#10b981">🔋 charge</b> flowed from the <b style="color:#10b981">🌿 rooftop panels</b> into the <b style="color:#10b981">home battery</b> — <b style="color:#10b981">⚡ clean energy</b>, no hurry.' },
-        { min: 0.74, text: 'The <b style="color:#10b981">🔋 charge</b> cycle completed <b style="color:#3b82f6">😌 silently</b> on the <b style="color:#10b981">🌿 off-grid power bank</b> in the <b style="color:#10b981">workshop</b>.' },
-        { min: 0.73, text: 'She left the <b style="color:#10b981">🔋 charge</b> going while she <b style="color:#3b82f6">😌 napped</b> in the <b style="color:#10b981">🌿 hammock</b> between two <b style="color:#10b981">pines</b>.' },
-        { min: 0.72, text: 'The <b style="color:#10b981">🔋 charge</b> on the <b style="color:#10b981">tablet</b> was low but <b style="color:#3b82f6">😌 sufficient</b> for <b style="color:#10b981">🌿 reading by the lake</b>.' },
-        { min: 0.71, text: 'He checked the <b style="color:#10b981">🔋 charge</b> — <b style="color:#10b981">60%</b> — and decided it was <b style="color:#3b82f6">😌 plenty</b> for the <b style="color:#10b981">🌿 afternoon walk</b>.' },
-        { min: 0.70, text: 'The <b style="color:#10b981">🔋 charge</b> indicator showed <b style="color:#10b981">⚡ full</b> after a <b style="color:#3b82f6">😌 day in the sun</b> on the <b style="color:#10b981">🌿 porch</b>.' },
-        { min: 0.69, text: 'A <b style="color:#10b981">🔋 trickle charge</b> kept the <b style="color:#10b981">🌿 greenhouse sensors</b> alive through the <b style="color:#3b82f6">😌 winter months</b>.' },
-        { min: 0.68, text: 'The <b style="color:#10b981">🔋 charge</b> was <b style="color:#3b82f6">😌 steady</b> — the <b style="color:#10b981">🌿 wind</b> had been <b style="color:#3b82f6">😌 consistent</b> all week.' },
-        { min: 0.67, text: 'She plugged in the <b style="color:#10b981">🔋 charge</b> cable and <b style="color:#3b82f6">😌 forgot about it</b> — the <b style="color:#10b981">🌿 solar system</b> handled the rest.' },
-        { min: 0.66, text: 'The <b style="color:#10b981">🔋 charge</b> was a <b style="color:#3b82f6">😌 background hum</b> in the <b style="color:#10b981">🌿 quiet cabin</b> — <b style="color:#10b981">⚡ electrons</b> doing their work.' },
-        { min: 0.65, text: 'He didn\'t worry about the <b style="color:#10b981">🔋 charge</b> — the <b style="color:#10b981">🌿 panels</b> always <b style="color:#3b82f6">😌 delivered</b> by morning.' },
-        { min: 0.64, text: 'The <b style="color:#10b981">🔋 charge</b> was part of the <b style="color:#3b82f6">😌 daily rhythm</b> at the <b style="color:#10b981">🌿 eco-lodge</b> — sun up, batteries full.' },
-        { min: 0.63, text: 'A <b style="color:#10b981">🔋 charge</b> from <b style="color:#10b981">🌿 renewable sources</b> — <b style="color:#3b82f6">😌 nothing urgent</b>, just <b style="color:#10b981">⚡ clean power</b>.' },
-        { min: 0.62, text: 'The <b style="color:#10b981">🔋 charge</b> was <b style="color:#3b82f6">😌 almost done</b> — the <b style="color:#10b981">🌿 battery bank</b> would be ready by <b style="color:#3b82f6">😌 evening</b>.' },
-        { min: 0.61, text: 'She monitored the <b style="color:#10b981">🔋 charge</b> <b style="color:#3b82f6">😌 casually</b> from the <b style="color:#10b981">🌿 garden bench</b>.' },
-        { min: 0.60, text: 'The <b style="color:#10b981">🔋 charge</b> was <b style="color:#3b82f6">😌 reliable</b> — <b style="color:#10b981">🌿 nature-powered</b> and <b style="color:#3b82f6">😌 stress-free</b>.' },
-        { min: 0.55, text: '"Charge" here likely means <b style="color:#10b981">🔋 battery energy</b> — something <b style="color:#10b981">🌿 natural</b> and <b style="color:#3b82f6">😌 calm</b>.' },
-        { min: 0.50, text: '"Charge" leans toward <b style="color:#10b981">🔋 stored energy</b> — a <b style="color:#10b981">🌿 nature</b>-side, <b style="color:#3b82f6">😌 calm</b> reading.' },
-        { min: 0.45, text: 'A pull toward <b style="color:#10b981">🔋 battery</b> — probably <b style="color:#10b981">🌿 physical energy</b>, <b style="color:#3b82f6">😌 unhurried</b>.' },
-        { min: 0.40, text: '"Charge" might mean <b style="color:#10b981">🔋 energy</b>, but the signal is weak. Could shift.' },
-        { min: 0.35, text: 'A faint hint of <b style="color:#10b981">🔋 battery</b>, but all three meanings still compete.' },
-        { min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and ⚔️ attack all compete equally.' }
-    ],
+	// ═══════════════════════════════════════════════════════════════
+	// Bucket 0 = 🔋 battery / ⚡ energy  (key: [-2.0, -1.5])
+	// Dominant when query → Nature (−X) and Calm (−Y)
+	// ═══════════════════════════════════════════════════════════════
+	[
+		{ min: 0.99, text: 'The <b style="color:#10b981">🔋 charge</b> crept into the <b style="color:#10b981">old battery</b> at a <b style="color:#3b82f6">😌 glacial pace</b>, electrons drifting through <b style="color:#10b981">copper windings</b> in a <b style="color:#10b981">🌿 hand-built solar rig</b> deep in the <b style="color:#10b981">forest cabin</b> — pure <b style="color:#10b981">🌿 nature-powered</b>, utterly <b style="color:#3b82f6">😌 unhurried</b>.' },
+		{ min: 0.98, text: 'She left the <b style="color:#10b981">🔋 charge</b> running on the <b style="color:#10b981">🌿 solar panel</b> overnight, the <b style="color:#10b981">off-grid system</b> humming <b style="color:#3b82f6">😌 softly</b> in the <b style="color:#10b981">mountain stillness</b> — no rush, just <b style="color:#10b981">⚡ photons</b> becoming <b style="color:#10b981">⚡ stored energy</b>.' },
+		{ min: 0.97, text: 'The <b style="color:#10b981">🔋 charge</b> trickled into the <b style="color:#10b981">🌿 hand-crank generator</b> as he turned it <b style="color:#3b82f6">😌 slowly</b> by the <b style="color:#10b981">campfire</b>, storing just enough <b style="color:#10b981">⚡ energy</b> to power the <b style="color:#10b981">lantern</b> through the night.' },
+		{ min: 0.96, text: 'The <b style="color:#10b981">🌿 wind turbine</b> fed a <b style="color:#3b82f6">😌 steady</b> <b style="color:#10b981">🔋 charge</b> into the <b style="color:#10b981">deep-cycle batteries</b> buried beneath the <b style="color:#10b981">meadow</b> — <b style="color:#10b981">🌿 nature\'s own</b> power grid, <b style="color:#3b82f6">😌 patient</b> and silent.' },
+		{ min: 0.95, text: 'He monitored the <b style="color:#10b981">🔋 charge</b> level on the <b style="color:#10b981">🌿 hydroelectric cell</b> fed by the <b style="color:#10b981">creek</b> — a <b style="color:#3b82f6">😌 gentle</b> current producing a <b style="color:#3b82f6">😌 gentle</b> <b style="color:#10b981">⚡ charge</b>, nothing forced.' },
+		{ min: 0.94, text: 'The <b style="color:#10b981">🔋 charge</b> from the <b style="color:#10b981">🌿 geothermal tap</b> was <b style="color:#3b82f6">😌 slow but inexhaustible</b>, warming the <b style="color:#10b981">cabin</b> and filling the <b style="color:#10b981">batteries</b> with <b style="color:#10b981">⚡ earth-heat energy</b>.' },
+		{ min: 0.93, text: 'A <b style="color:#10b981">🌿 moss-covered</b> solar array fed a <b style="color:#3b82f6">😌 trickle</b> <b style="color:#10b981">🔋 charge</b> to the <b style="color:#10b981">weather station</b> perched on the <b style="color:#10b981">ridge</b> — <b style="color:#10b981">🌿 wilderness tech</b>, <b style="color:#3b82f6">😌 unhurried</b>.' },
+		{ min: 0.92, text: 'The <b style="color:#10b981">🔋 charge</b> indicator blinked <b style="color:#3b82f6">😌 lazily</b> on the <b style="color:#10b981">🌿 portable solar charger</b> spread across the <b style="color:#10b981">riverbank rocks</b> — <b style="color:#10b981">⚡ energy</b> from <b style="color:#10b981">🌿 sunlight</b>, no deadline.' },
+		{ min: 0.91, text: 'She checked the <b style="color:#10b981">🔋 charge</b> on her <b style="color:#10b981">headlamp batteries</b> before the <b style="color:#3b82f6">😌 evening hike</b> through the <b style="color:#10b981">🌿 old-growth forest</b> — plenty of <b style="color:#10b981">⚡ power</b>, no rush.' },
+		{ min: 0.90, text: 'The <b style="color:#10b981">🔋 charge</b> held <b style="color:#3b82f6">😌 steady</b> in the <b style="color:#10b981">🌿 field research battery pack</b> as the <b style="color:#10b981">biologist</b> recorded <b style="color:#10b981">birdsong</b> at <b style="color:#3b82f6">😌 dawn</b>.' },
+		{ min: 0.89, text: 'He plugged the <b style="color:#10b981">🔋 charge</b> cable into the <b style="color:#10b981">🌿 rain-barrel generator</b> and <b style="color:#3b82f6">😌 waited</b> — the <b style="color:#10b981">⚡ energy</b> would come when the <b style="color:#10b981">🌿 rain</b> came.' },
+		{ min: 0.88, text: 'The <b style="color:#10b981">🔋 charge</b> from the <b style="color:#10b981">🌿 bicycle dynamo</b> was enough to keep the <b style="color:#10b981">radio</b> alive during the <b style="color:#3b82f6">😌 leisurely ride</b> through the <b style="color:#10b981">countryside</b>.' },
+		{ min: 0.87, text: 'A <b style="color:#3b82f6">😌 slow</b> <b style="color:#10b981">🔋 charge</b> built up in the <b style="color:#10b981">capacitor bank</b> as the <b style="color:#10b981">🌿 windmill</b> turned in the <b style="color:#3b82f6">😌 afternoon breeze</b>.' },
+		{ min: 0.86, text: 'The <b style="color:#10b981">🔋 charge</b> was at <b style="color:#10b981">80%</b> — the <b style="color:#10b981">🌿 solar panels</b> on the <b style="color:#10b981">barn roof</b> had done their <b style="color:#3b82f6">😌 quiet work</b> all day.' },
+		{ min: 0.85, text: 'She nursed the <b style="color:#10b981">🔋 charge</b> on her <b style="color:#10b981">phone</b> through the <b style="color:#10b981">🌿 camping trip</b>, using it only to <b style="color:#3b82f6">😌 photograph wildflowers</b>.' },
+		{ min: 0.84, text: 'The <b style="color:#10b981">🔋 charge</b> light glowed <b style="color:#10b981">green</b> on the <b style="color:#10b981">🌿 portable power station</b> beside the <b style="color:#10b981">tent</b> — <b style="color:#3b82f6">😌 full and ready</b>.' },
+		{ min: 0.83, text: 'He let the <b style="color:#10b981">🔋 charge</b> build <b style="color:#3b82f6">😌 overnight</b> from the <b style="color:#10b981">🌿 micro-hydro turbine</b> in the <b style="color:#10b981">stream</b> behind the <b style="color:#10b981">cabin</b>.' },
+		{ min: 0.82, text: 'The <b style="color:#10b981">🔋 charge</b> on the <b style="color:#10b981">GPS unit</b> lasted the whole <b style="color:#10b981">🌿 backcountry trek</b> — <b style="color:#3b82f6">😌 no stress</b>, just <b style="color:#10b981">⚡ reliable energy</b>.' },
+		{ min: 0.81, text: 'A <b style="color:#10b981">🔋 full charge</b> meant <b style="color:#3b82f6">😌 peace of mind</b> for the <b style="color:#10b981">🌿 nature photographer</b> heading into the <b style="color:#10b981">wetlands</b> at <b style="color:#3b82f6">😌 sunrise</b>.' },
+		{ min: 0.80, text: 'The <b style="color:#10b981">🔋 charge</b> came from <b style="color:#10b981">🌿 sunlight</b> alone — a <b style="color:#3b82f6">😌 patient</b>, <b style="color:#10b981">natural</b> process powering the <b style="color:#10b981">trail marker lights</b>.' },
+		{ min: 0.79, text: 'She watched the <b style="color:#10b981">🔋 charge</b> meter <b style="color:#3b82f6">😌 inch upward</b> as the <b style="color:#10b981">🌿 solar blanket</b> soaked in the <b style="color:#10b981">afternoon rays</b>.' },
+		{ min: 0.78, text: 'The <b style="color:#10b981">🔋 charge</b> was enough to run the <b style="color:#10b981">water pump</b> for the <b style="color:#10b981">🌿 garden irrigation</b> — <b style="color:#3b82f6">😌 simple, sustainable</b>.' },
+		{ min: 0.77, text: 'He topped off the <b style="color:#10b981">🔋 charge</b> on the <b style="color:#10b981">lantern</b> before the <b style="color:#3b82f6">😌 evening</b> <b style="color:#10b981">🌿 birdwatching session</b>.' },
+		{ min: 0.76, text: 'The <b style="color:#10b981">🔋 charge</b> held <b style="color:#3b82f6">😌 well</b> in the <b style="color:#10b981">cold</b> — the <b style="color:#10b981">🌿 lithium cells</b> were rated for <b style="color:#10b981">winter camping</b>.' },
+		{ min: 0.75, text: 'A <b style="color:#3b82f6">😌 gentle</b> <b style="color:#10b981">🔋 charge</b> flowed from the <b style="color:#10b981">🌿 rooftop panels</b> into the <b style="color:#10b981">home battery</b> — <b style="color:#10b981">⚡ clean energy</b>, no hurry.' },
+		{ min: 0.74, text: 'The <b style="color:#10b981">🔋 charge</b> cycle completed <b style="color:#3b82f6">😌 silently</b> on the <b style="color:#10b981">🌿 off-grid power bank</b> in the <b style="color:#10b981">workshop</b>.' },
+		{ min: 0.73, text: 'She left the <b style="color:#10b981">🔋 charge</b> going while she <b style="color:#3b82f6">😌 napped</b> in the <b style="color:#10b981">🌿 hammock</b> between two <b style="color:#10b981">pines</b>.' },
+		{ min: 0.72, text: 'The <b style="color:#10b981">🔋 charge</b> on the <b style="color:#10b981">tablet</b> was low but <b style="color:#3b82f6">😌 sufficient</b> for <b style="color:#10b981">🌿 reading by the lake</b>.' },
+		{ min: 0.71, text: 'He checked the <b style="color:#10b981">🔋 charge</b> — <b style="color:#10b981">60%</b> — and decided it was <b style="color:#3b82f6">😌 plenty</b> for the <b style="color:#10b981">🌿 afternoon walk</b>.' },
+		{ min: 0.70, text: 'The <b style="color:#10b981">🔋 charge</b> indicator showed <b style="color:#10b981">⚡ full</b> after a <b style="color:#3b82f6">😌 day in the sun</b> on the <b style="color:#10b981">🌿 porch</b>.' },
+		{ min: 0.69, text: 'A <b style="color:#10b981">🔋 trickle charge</b> kept the <b style="color:#10b981">🌿 greenhouse sensors</b> alive through the <b style="color:#3b82f6">😌 winter months</b>.' },
+		{ min: 0.68, text: 'The <b style="color:#10b981">🔋 charge</b> was <b style="color:#3b82f6">😌 steady</b> — the <b style="color:#10b981">🌿 wind</b> had been <b style="color:#3b82f6">😌 consistent</b> all week.' },
+		{ min: 0.67, text: 'She plugged in the <b style="color:#10b981">🔋 charge</b> cable and <b style="color:#3b82f6">😌 forgot about it</b> — the <b style="color:#10b981">🌿 solar system</b> handled the rest.' },
+		{ min: 0.66, text: 'The <b style="color:#10b981">🔋 charge</b> was a <b style="color:#3b82f6">😌 background hum</b> in the <b style="color:#10b981">🌿 quiet cabin</b> — <b style="color:#10b981">⚡ electrons</b> doing their work.' },
+		{ min: 0.65, text: 'He didn\'t worry about the <b style="color:#10b981">🔋 charge</b> — the <b style="color:#10b981">🌿 panels</b> always <b style="color:#3b82f6">😌 delivered</b> by morning.' },
+		{ min: 0.64, text: 'The <b style="color:#10b981">🔋 charge</b> was part of the <b style="color:#3b82f6">😌 daily rhythm</b> at the <b style="color:#10b981">🌿 eco-lodge</b> — sun up, batteries full.' },
+		{ min: 0.63, text: 'A <b style="color:#10b981">🔋 charge</b> from <b style="color:#10b981">🌿 renewable sources</b> — <b style="color:#3b82f6">😌 nothing urgent</b>, just <b style="color:#10b981">⚡ clean power</b>.' },
+		{ min: 0.62, text: 'The <b style="color:#10b981">🔋 charge</b> was <b style="color:#3b82f6">😌 almost done</b> — the <b style="color:#10b981">🌿 battery bank</b> would be ready by <b style="color:#3b82f6">😌 evening</b>.' },
+		{ min: 0.61, text: 'She monitored the <b style="color:#10b981">🔋 charge</b> <b style="color:#3b82f6">😌 casually</b> from the <b style="color:#10b981">🌿 garden bench</b>.' },
+		{ min: 0.60, text: 'The <b style="color:#10b981">🔋 charge</b> was <b style="color:#3b82f6">😌 reliable</b> — <b style="color:#10b981">🌿 nature-powered</b> and <b style="color:#3b82f6">😌 stress-free</b>.' },
+		{ min: 0.55, text: '"Charge" here likely means <b style="color:#10b981">🔋 battery energy</b> — something <b style="color:#10b981">🌿 natural</b> and <b style="color:#3b82f6">😌 calm</b>.' },
+		{ min: 0.50, text: '"Charge" leans toward <b style="color:#10b981">🔋 stored energy</b> — a <b style="color:#10b981">🌿 nature</b>-side, <b style="color:#3b82f6">😌 calm</b> reading.' },
+		{ min: 0.45, text: 'A pull toward <b style="color:#10b981">🔋 battery</b> — probably <b style="color:#10b981">🌿 physical energy</b>, <b style="color:#3b82f6">😌 unhurried</b>.' },
+		{ min: 0.40, text: '"Charge" might mean <b style="color:#10b981">🔋 energy</b>, but the signal is weak. Could shift.' },
+		{ min: 0.35, text: 'A faint hint of <b style="color:#10b981">🔋 battery</b>, but all three meanings still compete.' },
+		{ min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and ⚔️ attack all compete equally.' }
+	],
 
-    // ═══════════════════════════════════════════════════════════════
-    // Bucket 1 = 💳 fee / 💰 payment  (key: [2.5, 1.5])
-    // Dominant when query → Finance (+X) and Urgent (+Y)
-    // ═══════════════════════════════════════════════════════════════
-    [
-        { min: 0.99, text: 'The <b style="color:#f59e0b">💳 charge</b> of <b style="color:#f59e0b">$47,000</b> hit the <b style="color:#f59e0b">corporate account</b> <b style="color:#ef4444">⚡ without warning</b> — a <b style="color:#f59e0b">💰 fraudulent transaction</b> that triggered an <b style="color:#ef4444">⚡ immediate freeze</b> on all <b style="color:#f59e0b">🏦 assets</b>. Pure <b style="color:#f59e0b">🏦 finance</b>, <b style="color:#ef4444">⚡ maximum urgency</b>.' },
-        { min: 0.98, text: '<b style="color:#ef4444">⚡ Fraud alerts</b> fired across the <b style="color:#f59e0b">🏦 network</b> as the <b style="color:#f59e0b">💳 charge</b> was flagged — <b style="color:#f59e0b">$12,000</b> in <b style="color:#f59e0b">unauthorized purchases</b> in <b style="color:#ef4444">⚡ under an hour</b>. <b style="color:#f59e0b">🏦 Financial</b> <b style="color:#ef4444">⚡ emergency</b>.' },
-        { min: 0.97, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#ef4444">⚡ disputed immediately</b> — the <b style="color:#f59e0b">🏦 bank</b> reversed the <b style="color:#f59e0b">💰 $8,500 payment</b> and launched an <b style="color:#ef4444">⚡ emergency investigation</b>.' },
-        { min: 0.96, text: 'A <b style="color:#f59e0b">💳 charge</b> of <b style="color:#f59e0b">$25,000</b> appeared on the <b style="color:#f59e0b">🏦 statement</b> — the <b style="color:#f59e0b">💰 penalty fee</b> for <b style="color:#ef4444">⚡ breaching</b> the <b style="color:#f59e0b">loan covenant</b>. <b style="color:#ef4444">⚡ Due immediately</b>.' },
-        { min: 0.95, text: 'The <b style="color:#f59e0b">💳 charge</b> to the <b style="color:#f59e0b">🏦 escrow account</b> was <b style="color:#ef4444">⚡ time-sensitive</b> — miss the <b style="color:#ef4444">⚡ deadline</b> and the <b style="color:#f59e0b">💰 deal</b> collapses.' },
-        { min: 0.94, text: '<b style="color:#ef4444">⚡ Collections</b> added a <b style="color:#f59e0b">💳 late charge</b> of <b style="color:#f59e0b">$350</b> to the <b style="color:#f59e0b">🏦 overdue account</b> — <b style="color:#ef4444">⚡ pay now</b> or face <b style="color:#f59e0b">further penalties</b>.' },
-        { min: 0.93, text: 'The <b style="color:#f59e0b">💳 charge</b> for the <b style="color:#f59e0b">🏦 wire transfer</b> was <b style="color:#f59e0b">$45</b>, and it had to clear <b style="color:#ef4444">⚡ before market close</b> — no room for delay.' },
-        { min: 0.92, text: 'His <b style="color:#f59e0b">💳 credit card charge</b> was <b style="color:#ef4444">⚡ declined</b> at the <b style="color:#f59e0b">🏦 point of sale</b> — the <b style="color:#f59e0b">💰 account</b> had been <b style="color:#ef4444">⚡ frozen</b> for suspicious activity.' },
-        { min: 0.91, text: 'The <b style="color:#f59e0b">💳 charge</b> showed up as <b style="color:#f59e0b">💰 pending</b> on the <b style="color:#f59e0b">🏦 mobile banking app</b> — she needed to <b style="color:#ef4444">⚡ verify it fast</b> before the hold expired.' },
-        { min: 0.90, text: 'A <b style="color:#f59e0b">💳 service charge</b> of <b style="color:#f59e0b">3.5%</b> was applied to every <b style="color:#f59e0b">🏦 international transaction</b> — <b style="color:#ef4444">⚡ non-negotiable</b>, effective <b style="color:#ef4444">⚡ immediately</b>.' },
-        { min: 0.89, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 overdraft protection</b> kicked in <b style="color:#ef4444">⚡ automatically</b> when the <b style="color:#f59e0b">💰 balance</b> dipped below zero.' },
-        { min: 0.88, text: 'She <b style="color:#ef4444">⚡ contested</b> the <b style="color:#f59e0b">💳 charge</b> on her <b style="color:#f59e0b">🏦 statement</b> — <b style="color:#f59e0b">$200</b> for a <b style="color:#f59e0b">💰 subscription</b> she\'d already <b style="color:#ef4444">⚡ cancelled</b>.' },
-        { min: 0.87, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#ef4444">⚡ reversed</b> within the hour after she called the <b style="color:#f59e0b">🏦 fraud department</b> — <b style="color:#f59e0b">💰 money</b> back, <b style="color:#ef4444">⚡ crisis averted</b>.' },
-        { min: 0.86, text: 'A <b style="color:#f59e0b">💳 recurring charge</b> of <b style="color:#f59e0b">$99/month</b> appeared on the <b style="color:#f59e0b">🏦 business account</b> — the <b style="color:#f59e0b">💰 software license</b> had <b style="color:#ef4444">⚡ auto-renewed</b>.' },
-        { min: 0.85, text: 'The <b style="color:#f59e0b">💳 charge</b> to his <b style="color:#f59e0b">🏦 debit card</b> was <b style="color:#f59e0b">$1,200</b> for the <b style="color:#f59e0b">💰 insurance premium</b> — <b style="color:#ef4444">⚡ due today</b>.' },
-        { min: 0.84, text: 'She noticed an <b style="color:#f59e0b">💳 unexpected charge</b> on the <b style="color:#f59e0b">🏦 joint account</b> and <b style="color:#ef4444">⚡ texted her partner immediately</b>.' },
-        { min: 0.83, text: 'The <b style="color:#f59e0b">💳 charge</b> for the <b style="color:#f59e0b">🏦 annual fee</b> posted on the <b style="color:#f59e0b">first of the month</b> — <b style="color:#f59e0b">💰 $150</b>, <b style="color:#ef4444">⚡ non-refundable</b>.' },
-        { min: 0.82, text: 'He set up <b style="color:#f59e0b">💳 automatic charges</b> for all <b style="color:#f59e0b">🏦 utility bills</b> — <b style="color:#f59e0b">💰 payments</b> pulled on the <b style="color:#ef4444">⚡ due date</b>, no exceptions.' },
-        { min: 0.81, text: 'The <b style="color:#f59e0b">💳 charge</b> cleared the <b style="color:#f59e0b">🏦 merchant account</b> in <b style="color:#ef4444">⚡ two business days</b> — standard <b style="color:#f59e0b">💰 processing</b>.' },
-        { min: 0.80, text: 'A <b style="color:#f59e0b">💳 charge</b> of <b style="color:#f59e0b">$35</b> for the <b style="color:#f59e0b">🏦 returned check</b> — <b style="color:#f59e0b">💰 bank policy</b>, <b style="color:#ef4444">⚡ applied automatically</b>.' },
-        { min: 0.79, text: 'The <b style="color:#f59e0b">💳 charge</b> was split across two <b style="color:#f59e0b">🏦 credit cards</b> — <b style="color:#f59e0b">💰 $500</b> each, both <b style="color:#ef4444">⚡ processed instantly</b>.' },
-        { min: 0.78, text: 'She reviewed every <b style="color:#f59e0b">💳 charge</b> on the <b style="color:#f59e0b">🏦 monthly statement</b> — <b style="color:#f59e0b">💰 groceries, gas, subscriptions</b>.' },
-        { min: 0.77, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 express shipping</b> was <b style="color:#f59e0b">💰 $15</b> — worth it for <b style="color:#ef4444">⚡ next-day delivery</b>.' },
-        // ── Bucket 1 continued (💳 fee / 💰 payment) ──
-        { min: 0.76, text: 'He disputed the <b style="color:#f59e0b">💳 charge</b> on his <b style="color:#f59e0b">🏦 statement</b> — <b style="color:#f59e0b">$75</b> for a <b style="color:#f59e0b">💰 service</b> he never <b style="color:#ef4444">⚡ authorized</b>.' },
-        { min: 0.75, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 same-day processing</b> was <b style="color:#f59e0b">💰 $25</b> — <b style="color:#ef4444">⚡ steep but necessary</b>.' },
-        { min: 0.74, text: 'A <b style="color:#f59e0b">💳 convenience charge</b> of <b style="color:#f59e0b">$3</b> was added to every <b style="color:#f59e0b">🏦 online payment</b> — small but <b style="color:#ef4444">⚡ annoying</b>.' },
-        { min: 0.73, text: 'The <b style="color:#f59e0b">💳 charge</b> posted to her <b style="color:#f59e0b">🏦 account</b> at <b style="color:#ef4444">⚡ midnight</b> — the <b style="color:#f59e0b">💰 auto-renewal</b> she forgot to cancel.' },
-        { min: 0.72, text: 'He noticed a <b style="color:#f59e0b">💳 double charge</b> on his <b style="color:#f59e0b">🏦 receipt</b> and <b style="color:#ef4444">⚡ flagged it</b> with the <b style="color:#f59e0b">cashier</b>.' },
-        { min: 0.71, text: 'The <b style="color:#f59e0b">💳 charge</b> for the <b style="color:#f59e0b">🏦 currency conversion</b> was <b style="color:#f59e0b">💰 2.5%</b> — standard for <b style="color:#f59e0b">international purchases</b>.' },
-        { min: 0.70, text: 'A <b style="color:#f59e0b">💳 minimum charge</b> of <b style="color:#f59e0b">$10</b> applied to all <b style="color:#f59e0b">🏦 card transactions</b> at the <b style="color:#f59e0b">store</b>.' },
-        { min: 0.69, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#f59e0b">💰 refunded</b> to her <b style="color:#f59e0b">🏦 account</b> within <b style="color:#ef4444">⚡ 48 hours</b>.' },
-        { min: 0.68, text: 'She checked whether the <b style="color:#f59e0b">💳 charge</b> had <b style="color:#f59e0b">💰 cleared</b> on her <b style="color:#f59e0b">🏦 banking app</b>.' },
-        { min: 0.67, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 late payment</b> was <b style="color:#f59e0b">💰 $29</b> — added <b style="color:#ef4444">⚡ automatically</b>.' },
-        { min: 0.66, text: 'He set a <b style="color:#f59e0b">💳 spending alert</b> for any <b style="color:#f59e0b">🏦 charge</b> over <b style="color:#f59e0b">💰 $100</b>.' },
-        { min: 0.65, text: 'The <b style="color:#f59e0b">💳 charge</b> appeared as <b style="color:#f59e0b">💰 pending</b> on the <b style="color:#f59e0b">🏦 statement</b> — not yet finalized.' },
-        { min: 0.64, text: 'She split the <b style="color:#f59e0b">💳 charge</b> across <b style="color:#f59e0b">three monthly 💰 installments</b> through the <b style="color:#f59e0b">🏦 payment plan</b>.' },
-        { min: 0.63, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 premium membership</b> was <b style="color:#f59e0b">💰 $49/year</b> — reasonable.' },
-        { min: 0.62, text: 'He reviewed the <b style="color:#f59e0b">💳 itemized charges</b> on the <b style="color:#f59e0b">🏦 invoice</b> before <b style="color:#f59e0b">💰 paying</b>.' },
-        { min: 0.61, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#f59e0b">💰 small</b> — just <b style="color:#f59e0b">$5</b> for the <b style="color:#f59e0b">🏦 transaction fee</b>.' },
-        { min: 0.60, text: 'A <b style="color:#f59e0b">💳 charge</b> showed up on the <b style="color:#f59e0b">🏦 family account</b> — probably the <b style="color:#f59e0b">💰 grocery run</b>.' },
-        { min: 0.55, text: '"Charge" here likely means <b style="color:#f59e0b">💳 a financial fee</b> — something <b style="color:#f59e0b">🏦 monetary</b> and somewhat <b style="color:#ef4444">⚡ pressing</b>.' },
-        { min: 0.50, text: '"Charge" leans toward <b style="color:#f59e0b">💳 payment</b> — a <b style="color:#f59e0b">🏦 finance</b>-side reading.' },
-        { min: 0.45, text: 'A pull toward <b style="color:#f59e0b">💳 fee</b> — probably <b style="color:#f59e0b">🏦 financial</b>, with some <b style="color:#ef4444">⚡ urgency</b>.' },
-        { min: 0.40, text: '"Charge" might mean <b style="color:#f59e0b">💳 payment</b>, but the signal is weak. Could shift.' },
-        { min: 0.35, text: 'A faint hint of <b style="color:#f59e0b">💳 fee</b>, but all three meanings still compete.' },
-        { min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and ⚔️ attack all compete equally.' }
-    ],
+	// ═══════════════════════════════════════════════════════════════
+	// Bucket 1 = 💳 fee / 💰 payment  (key: [2.5, 1.5])
+	// Dominant when query → Finance (+X) and Urgent (+Y)
+	// ═══════════════════════════════════════════════════════════════
+	[
+		{ min: 0.99, text: 'The <b style="color:#f59e0b">💳 charge</b> of <b style="color:#f59e0b">$47,000</b> hit the <b style="color:#f59e0b">corporate account</b> <b style="color:#ef4444">⚡ without warning</b> — a <b style="color:#f59e0b">💰 fraudulent transaction</b> that triggered an <b style="color:#ef4444">⚡ immediate freeze</b> on all <b style="color:#f59e0b">🏦 assets</b>. Pure <b style="color:#f59e0b">🏦 finance</b>, <b style="color:#ef4444">⚡ maximum urgency</b>.' },
+		{ min: 0.98, text: '<b style="color:#ef4444">⚡ Fraud alerts</b> fired across the <b style="color:#f59e0b">🏦 network</b> as the <b style="color:#f59e0b">💳 charge</b> was flagged — <b style="color:#f59e0b">$12,000</b> in <b style="color:#f59e0b">unauthorized purchases</b> in <b style="color:#ef4444">⚡ under an hour</b>. <b style="color:#f59e0b">🏦 Financial</b> <b style="color:#ef4444">⚡ emergency</b>.' },
+		{ min: 0.97, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#ef4444">⚡ disputed immediately</b> — the <b style="color:#f59e0b">🏦 bank</b> reversed the <b style="color:#f59e0b">💰 $8,500 payment</b> and launched an <b style="color:#ef4444">⚡ emergency investigation</b>.' },
+		{ min: 0.96, text: 'A <b style="color:#f59e0b">💳 charge</b> of <b style="color:#f59e0b">$25,000</b> appeared on the <b style="color:#f59e0b">🏦 statement</b> — the <b style="color:#f59e0b">💰 penalty fee</b> for <b style="color:#ef4444">⚡ breaching</b> the <b style="color:#f59e0b">loan covenant</b>. <b style="color:#ef4444">⚡ Due immediately</b>.' },
+		{ min: 0.95, text: 'The <b style="color:#f59e0b">💳 charge</b> to the <b style="color:#f59e0b">🏦 escrow account</b> was <b style="color:#ef4444">⚡ time-sensitive</b> — miss the <b style="color:#ef4444">⚡ deadline</b> and the <b style="color:#f59e0b">💰 deal</b> collapses.' },
+		{ min: 0.94, text: '<b style="color:#ef4444">⚡ Collections</b> added a <b style="color:#f59e0b">💳 late charge</b> of <b style="color:#f59e0b">$350</b> to the <b style="color:#f59e0b">🏦 overdue account</b> — <b style="color:#ef4444">⚡ pay now</b> or face <b style="color:#f59e0b">further penalties</b>.' },
+		{ min: 0.93, text: 'The <b style="color:#f59e0b">💳 charge</b> for the <b style="color:#f59e0b">🏦 wire transfer</b> was <b style="color:#f59e0b">$45</b>, and it had to clear <b style="color:#ef4444">⚡ before market close</b> — no room for delay.' },
+		{ min: 0.92, text: 'His <b style="color:#f59e0b">💳 credit card charge</b> was <b style="color:#ef4444">⚡ declined</b> at the <b style="color:#f59e0b">🏦 point of sale</b> — the <b style="color:#f59e0b">💰 account</b> had been <b style="color:#ef4444">⚡ frozen</b> for suspicious activity.' },
+		{ min: 0.91, text: 'The <b style="color:#f59e0b">💳 charge</b> showed up as <b style="color:#f59e0b">💰 pending</b> on the <b style="color:#f59e0b">🏦 mobile banking app</b> — she needed to <b style="color:#ef4444">⚡ verify it fast</b> before the hold expired.' },
+		{ min: 0.90, text: 'A <b style="color:#f59e0b">💳 service charge</b> of <b style="color:#f59e0b">3.5%</b> was applied to every <b style="color:#f59e0b">🏦 international transaction</b> — <b style="color:#ef4444">⚡ non-negotiable</b>, effective <b style="color:#ef4444">⚡ immediately</b>.' },
+		{ min: 0.89, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 overdraft protection</b> kicked in <b style="color:#ef4444">⚡ automatically</b> when the <b style="color:#f59e0b">💰 balance</b> dipped below zero.' },
+		{ min: 0.88, text: 'She <b style="color:#ef4444">⚡ contested</b> the <b style="color:#f59e0b">💳 charge</b> on her <b style="color:#f59e0b">🏦 statement</b> — <b style="color:#f59e0b">$200</b> for a <b style="color:#f59e0b">💰 subscription</b> she\'d already <b style="color:#ef4444">⚡ cancelled</b>.' },
+		{ min: 0.87, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#ef4444">⚡ reversed</b> within the hour after she called the <b style="color:#f59e0b">🏦 fraud department</b> — <b style="color:#f59e0b">💰 money</b> back, <b style="color:#ef4444">⚡ crisis averted</b>.' },
+		{ min: 0.86, text: 'A <b style="color:#f59e0b">💳 recurring charge</b> of <b style="color:#f59e0b">$99/month</b> appeared on the <b style="color:#f59e0b">🏦 business account</b> — the <b style="color:#f59e0b">💰 software license</b> had <b style="color:#ef4444">⚡ auto-renewed</b>.' },
+		{ min: 0.85, text: 'The <b style="color:#f59e0b">💳 charge</b> to his <b style="color:#f59e0b">🏦 debit card</b> was <b style="color:#f59e0b">$1,200</b> for the <b style="color:#f59e0b">💰 insurance premium</b> — <b style="color:#ef4444">⚡ due today</b>.' },
+		{ min: 0.84, text: 'She noticed an <b style="color:#f59e0b">💳 unexpected charge</b> on the <b style="color:#f59e0b">🏦 joint account</b> and <b style="color:#ef4444">⚡ texted her partner immediately</b>.' },
+		{ min: 0.83, text: 'The <b style="color:#f59e0b">💳 charge</b> for the <b style="color:#f59e0b">🏦 annual fee</b> posted on the <b style="color:#f59e0b">first of the month</b> — <b style="color:#f59e0b">💰 $150</b>, <b style="color:#ef4444">⚡ non-refundable</b>.' },
+		{ min: 0.82, text: 'He set up <b style="color:#f59e0b">💳 automatic charges</b> for all <b style="color:#f59e0b">🏦 utility bills</b> — <b style="color:#f59e0b">💰 payments</b> pulled on the <b style="color:#ef4444">⚡ due date</b>, no exceptions.' },
+		{ min: 0.81, text: 'The <b style="color:#f59e0b">💳 charge</b> cleared the <b style="color:#f59e0b">🏦 merchant account</b> in <b style="color:#ef4444">⚡ two business days</b> — standard <b style="color:#f59e0b">💰 processing</b>.' },
+		{ min: 0.80, text: 'A <b style="color:#f59e0b">💳 charge</b> of <b style="color:#f59e0b">$35</b> for the <b style="color:#f59e0b">🏦 returned check</b> — <b style="color:#f59e0b">💰 bank policy</b>, <b style="color:#ef4444">⚡ applied automatically</b>.' },
+		{ min: 0.79, text: 'The <b style="color:#f59e0b">💳 charge</b> was split across two <b style="color:#f59e0b">🏦 credit cards</b> — <b style="color:#f59e0b">💰 $500</b> each, both <b style="color:#ef4444">⚡ processed instantly</b>.' },
+		{ min: 0.78, text: 'She reviewed every <b style="color:#f59e0b">💳 charge</b> on the <b style="color:#f59e0b">🏦 monthly statement</b> — <b style="color:#f59e0b">💰 groceries, gas, subscriptions</b>.' },
+		{ min: 0.77, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 express shipping</b> was <b style="color:#f59e0b">💰 $15</b> — worth it for <b style="color:#ef4444">⚡ next-day delivery</b>.' },
+		// ── Bucket 1 continued (💳 fee / 💰 payment) ──
+		{ min: 0.76, text: 'He disputed the <b style="color:#f59e0b">💳 charge</b> on his <b style="color:#f59e0b">🏦 statement</b> — <b style="color:#f59e0b">$75</b> for a <b style="color:#f59e0b">💰 service</b> he never <b style="color:#ef4444">⚡ authorized</b>.' },
+		{ min: 0.75, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 same-day processing</b> was <b style="color:#f59e0b">💰 $25</b> — <b style="color:#ef4444">⚡ steep but necessary</b>.' },
+		{ min: 0.74, text: 'A <b style="color:#f59e0b">💳 convenience charge</b> of <b style="color:#f59e0b">$3</b> was added to every <b style="color:#f59e0b">🏦 online payment</b> — small but <b style="color:#ef4444">⚡ annoying</b>.' },
+		{ min: 0.73, text: 'The <b style="color:#f59e0b">💳 charge</b> posted to her <b style="color:#f59e0b">🏦 account</b> at <b style="color:#ef4444">⚡ midnight</b> — the <b style="color:#f59e0b">💰 auto-renewal</b> she forgot to cancel.' },
+		{ min: 0.72, text: 'He noticed a <b style="color:#f59e0b">💳 double charge</b> on his <b style="color:#f59e0b">🏦 receipt</b> and <b style="color:#ef4444">⚡ flagged it</b> with the <b style="color:#f59e0b">cashier</b>.' },
+		{ min: 0.71, text: 'The <b style="color:#f59e0b">💳 charge</b> for the <b style="color:#f59e0b">🏦 currency conversion</b> was <b style="color:#f59e0b">💰 2.5%</b> — standard for <b style="color:#f59e0b">international purchases</b>.' },
+		{ min: 0.70, text: 'A <b style="color:#f59e0b">💳 minimum charge</b> of <b style="color:#f59e0b">$10</b> applied to all <b style="color:#f59e0b">🏦 card transactions</b> at the <b style="color:#f59e0b">store</b>.' },
+		{ min: 0.69, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#f59e0b">💰 refunded</b> to her <b style="color:#f59e0b">🏦 account</b> within <b style="color:#ef4444">⚡ 48 hours</b>.' },
+		{ min: 0.68, text: 'She checked whether the <b style="color:#f59e0b">💳 charge</b> had <b style="color:#f59e0b">💰 cleared</b> on her <b style="color:#f59e0b">🏦 banking app</b>.' },
+		{ min: 0.67, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 late payment</b> was <b style="color:#f59e0b">💰 $29</b> — added <b style="color:#ef4444">⚡ automatically</b>.' },
+		{ min: 0.66, text: 'He set a <b style="color:#f59e0b">💳 spending alert</b> for any <b style="color:#f59e0b">🏦 charge</b> over <b style="color:#f59e0b">💰 $100</b>.' },
+		{ min: 0.65, text: 'The <b style="color:#f59e0b">💳 charge</b> appeared as <b style="color:#f59e0b">💰 pending</b> on the <b style="color:#f59e0b">🏦 statement</b> — not yet finalized.' },
+		{ min: 0.64, text: 'She split the <b style="color:#f59e0b">💳 charge</b> across <b style="color:#f59e0b">three monthly 💰 installments</b> through the <b style="color:#f59e0b">🏦 payment plan</b>.' },
+		{ min: 0.63, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 premium membership</b> was <b style="color:#f59e0b">💰 $49/year</b> — reasonable.' },
+		{ min: 0.62, text: 'He reviewed the <b style="color:#f59e0b">💳 itemized charges</b> on the <b style="color:#f59e0b">🏦 invoice</b> before <b style="color:#f59e0b">💰 paying</b>.' },
+		{ min: 0.61, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#f59e0b">💰 small</b> — just <b style="color:#f59e0b">$5</b> for the <b style="color:#f59e0b">🏦 transaction fee</b>.' },
+		{ min: 0.60, text: 'A <b style="color:#f59e0b">💳 charge</b> showed up on the <b style="color:#f59e0b">🏦 family account</b> — probably the <b style="color:#f59e0b">💰 grocery run</b>.' },
+		{ min: 0.55, text: '"Charge" here likely means <b style="color:#f59e0b">💳 a financial fee</b> — something <b style="color:#f59e0b">🏦 monetary</b> and somewhat <b style="color:#ef4444">⚡ pressing</b>.' },
+		{ min: 0.50, text: '"Charge" leans toward <b style="color:#f59e0b">💳 payment</b> — a <b style="color:#f59e0b">🏦 finance</b>-side reading.' },
+		{ min: 0.45, text: 'A pull toward <b style="color:#f59e0b">💳 fee</b> — probably <b style="color:#f59e0b">🏦 financial</b>, with some <b style="color:#ef4444">⚡ urgency</b>.' },
+		{ min: 0.40, text: '"Charge" might mean <b style="color:#f59e0b">💳 payment</b>, but the signal is weak. Could shift.' },
+		{ min: 0.35, text: 'A faint hint of <b style="color:#f59e0b">💳 fee</b>, but all three meanings still compete.' },
+		{ min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and ⚔️ attack all compete equally.' }
+	],
 
-    // ═══════════════════════════════════════════════════════════════
-// Bucket 2 = 🏃 rush / 🌊 surge  (key: [-1.0, 2.5])
-// Dominant when query → Nature (−X) and Urgent (+Y)
-// "Charge" = to rush forward, surge, stampede — physical momentum
-// ═══════════════════════════════════════════════════════════════
+	// ═══════════════════════════════════════════════════════════════
+	// Bucket 2 = 🏃 rush / 🌊 surge  (key: [-1.0, 2.5])
+	// Dominant when query → Nature (−X) and Urgent (+Y)
+	// "Charge" = to rush forward, surge, stampede — physical momentum
+	// ═══════════════════════════════════════════════════════════════
 	[
 		{ min: 0.99, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#ef4444">⚡ stampeding herd</b> shook the <b style="color:#10b981">🌿 entire savanna</b> — <b style="color:#ef4444">⚡ thousands of hooves</b> thundering across the <b style="color:#10b981">sun-baked earth</b>, a <b style="color:#ef4444">🌊 wall of dust and muscle</b> that nothing could stop. Pure <b style="color:#10b981">🌿 wild force</b>, <b style="color:#ef4444">⚡ unstoppable momentum</b>.' },
 		{ min: 0.98, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#ef4444">🌊 flash flood</b> swept through the <b style="color:#10b981">🌿 canyon</b> with <b style="color:#ef4444">⚡ terrifying speed</b> — <b style="color:#10b981">boulders</b> tumbling like pebbles, <b style="color:#10b981">ancient trees</b> snapping like twigs in the <b style="color:#ef4444">🌊 surging torrent</b>.' },
@@ -751,157 +751,157 @@ const SENTENCES_2D = [
 ];
 
 function pickSentence1D(weights) {
-    const maxI = weights.indexOf(Math.max(...weights));
-    const w = weights[maxI];
-    const bucket = SENTENCES_1D[maxI];
-    for (let s = 0; s < bucket.length; s++) {
-        if (w >= bucket[s].min) return { idx: maxI, text: bucket[s].text };
-    }
-    return { idx: maxI, text: bucket[bucket.length - 1].text };
+	const maxI = weights.indexOf(Math.max(...weights));
+	const w = weights[maxI];
+	const bucket = SENTENCES_1D[maxI];
+	for (let s = 0; s < bucket.length; s++) {
+		if (w >= bucket[s].min) return { idx: maxI, text: bucket[s].text };
+	}
+	return { idx: maxI, text: bucket[bucket.length - 1].text };
 }
 
 function updateAttn1D() {
-    const q = parseFloat(document.getElementById('attn1d-q').value);
-    document.getElementById('attn1d-q-val').innerText = q.toFixed(1);
+	const q = parseFloat(document.getElementById('attn1d-q').value);
+	document.getElementById('attn1d-q-val').innerText = q.toFixed(1);
 
-    const scores  = KV1.map(kv => q * kv.k);
-    const weights = softmax(scores);
-    const output  = KV1.reduce((s, kv, i) => s + weights[i] * kv.v, 0);
+	const scores  = KV1.map(kv => q * kv.k);
+	const weights = softmax(scores);
+	const output  = KV1.reduce((s, kv, i) => s + weights[i] * kv.v, 0);
 
-    // ── Sentence ──
-    const pick = pickSentence1D(weights);
-    const sentenceEl = document.getElementById('attn1d-sentence');
-    sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
-    sentenceEl.style.borderLeftColor = KV1[pick.idx].color;
+	// ── Sentence ──
+	const pick = pickSentence1D(weights);
+	const sentenceEl = document.getElementById('attn1d-sentence');
+	sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
+	sentenceEl.style.borderLeftColor = KV1[pick.idx].color;
 
-    // ── Canvas ──
-    const canvas = document.getElementById('attn1d-canvas');
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    const ctx = canvas.getContext('2d');
-    ctx.scale(dpr, dpr);
-    const W = rect.width, H = rect.height;
-    ctx.clearRect(0, 0, W, H);
+	// ── Canvas ──
+	const canvas = document.getElementById('attn1d-canvas');
+	const dpr = window.devicePixelRatio || 1;
+	const rect = canvas.getBoundingClientRect();
+	canvas.width = rect.width * dpr;
+	canvas.height = rect.height * dpr;
+	const ctx = canvas.getContext('2d');
+	ctx.scale(dpr, dpr);
+	const W = rect.width, H = rect.height;
+	ctx.clearRect(0, 0, W, H);
 
-    const pad = 65;
-    const range = 5;
-    const toX = (v) => pad + ((v + range) / (2 * range)) * (W - 2 * pad);
+	const pad = 65;
+	const range = 5;
+	const toX = (v) => pad + ((v + range) / (2 * range)) * (W - 2 * pad);
 
-    const rowQ = H * 0.22;
-    const rowK = H * 0.48;
-    const rowV = H * 0.78;
+	const rowQ = H * 0.22;
+	const rowK = H * 0.48;
+	const rowV = H * 0.78;
 
-    // ── Key axis ──
-    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(W - pad, rowK); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(W - pad, rowK); ctx.lineTo(W - pad - 8, rowK - 5); ctx.lineTo(W - pad - 8, rowK + 5); ctx.closePath(); ctx.fillStyle = '#94a3b8'; ctx.fill();
-    ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(pad + 8, rowK - 5); ctx.lineTo(pad + 8, rowK + 5); ctx.closePath(); ctx.fill();
+	// ── Key axis ──
+	ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+	ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(W - pad, rowK); ctx.stroke();
+	ctx.beginPath(); ctx.moveTo(W - pad, rowK); ctx.lineTo(W - pad - 8, rowK - 5); ctx.lineTo(W - pad - 8, rowK + 5); ctx.closePath(); ctx.fillStyle = '#94a3b8'; ctx.fill();
+	ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(pad + 8, rowK - 5); ctx.lineTo(pad + 8, rowK + 5); ctx.closePath(); ctx.fill();
 
-    drawLabel(ctx, '🌿 Nature', pad + 35, rowK + 22, '#10b981', 12, 'center', true);
-    drawLabel(ctx, 'Finance 🏦', W - pad - 35, rowK + 22, '#f59e0b', 12, 'center', true);
+	drawLabel(ctx, '🌿 Nature', pad + 35, rowK + 22, '#10b981', 12, 'center', true);
+	drawLabel(ctx, 'Finance 🏦', W - pad - 35, rowK + 22, '#f59e0b', 12, 'center', true);
 
-    // Ticks
-    ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
-    for (let t = -4; t <= 4; t++) {
-        const x = toX(t);
-        ctx.beginPath(); ctx.moveTo(x, rowK - 3); ctx.lineTo(x, rowK + 3); ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1; ctx.stroke();
-        if (t !== 0) { ctx.fillStyle = '#94a3b8'; ctx.fillText(t, x, rowK + 14); }
-    }
-    ctx.setLineDash([3, 3]); ctx.strokeStyle = '#cbd5e1';
-    ctx.beginPath(); ctx.moveTo(toX(0), rowK - 12); ctx.lineTo(toX(0), rowK + 12); ctx.stroke();
-    ctx.setLineDash([]);
+	// Ticks
+	ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
+	for (let t = -4; t <= 4; t++) {
+		const x = toX(t);
+		ctx.beginPath(); ctx.moveTo(x, rowK - 3); ctx.lineTo(x, rowK + 3); ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1; ctx.stroke();
+		if (t !== 0) { ctx.fillStyle = '#94a3b8'; ctx.fillText(t, x, rowK + 14); }
+	}
+	ctx.setLineDash([3, 3]); ctx.strokeStyle = '#cbd5e1';
+	ctx.beginPath(); ctx.moveTo(toX(0), rowK - 12); ctx.lineTo(toX(0), rowK + 12); ctx.stroke();
+	ctx.setLineDash([]);
 
-    // Value axis
-    ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(pad, rowV); ctx.lineTo(W - pad, rowV); ctx.stroke();
+	// Value axis
+	ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
+	ctx.beginPath(); ctx.moveTo(pad, rowV); ctx.lineTo(W - pad, rowV); ctx.stroke();
 
-    // Row labels
-    drawLabel(ctx, 'KEYS', 30, rowK, '#64748b', 10, 'center', true);
-    drawLabel(ctx, 'VALUES', 30, rowV, '#64748b', 10, 'center', true);
+	// Row labels
+	drawLabel(ctx, 'KEYS', 30, rowK, '#64748b', 10, 'center', true);
+	drawLabel(ctx, 'VALUES', 30, rowV, '#64748b', 10, 'center', true);
 
-    // ── Q→K lines ──
-    KV1.forEach((kv, i) => {
-        ctx.beginPath();
-        ctx.moveTo(toX(q), rowQ + 14);
-        ctx.lineTo(toX(kv.k), rowK - 14);
-        ctx.strokeStyle = kv.color;
-        ctx.lineWidth = 2 + weights[i] * 14;
-        ctx.globalAlpha = 0.2 + weights[i] * 0.8;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-    });
+	// ── Q→K lines ──
+	KV1.forEach((kv, i) => {
+		ctx.beginPath();
+		ctx.moveTo(toX(q), rowQ + 14);
+		ctx.lineTo(toX(kv.k), rowK - 14);
+		ctx.strokeStyle = kv.color;
+		ctx.lineWidth = 2 + weights[i] * 14;
+		ctx.globalAlpha = 0.2 + weights[i] * 0.8;
+		ctx.lineCap = 'round';
+		ctx.stroke();
+		ctx.globalAlpha = 1;
+	});
 
-    // ── Query diamond ──
-    drawDiamond(ctx, toX(q), rowQ, 10, '#2563eb');
-    drawLabel(ctx, `"bank" = ${q.toFixed(1)}`, toX(q), rowQ - 20, '#2563eb', 14, 'center', true);
+	// ── Query diamond ──
+	drawDiamond(ctx, toX(q), rowQ, 10, '#2563eb');
+	drawLabel(ctx, `"bank" = ${q.toFixed(1)}`, toX(q), rowQ - 20, '#2563eb', 14, 'center', true);
 
-    // ── Key dots ──
-    // Offsets to prevent overlap: river is left-aligned, vault right-aligned, bench center
-    const kLabelAligns = ['right', 'left', 'center'];
-    const kLabelOffsets = [-16, 16, 0];
-    KV1.forEach((kv, i) => {
-        const kx = toX(kv.k);
-        drawDot(ctx, kx, rowK, 10, kv.color);
-        drawLabel(ctx, `${kv.kIcon} ${kv.kName}`, kx + kLabelOffsets[i], rowK - 28, kv.color, 12, kLabelAligns[i], true);
-        drawLabel(ctx, `${(weights[i]*100).toFixed(0)}%`, kx + kLabelOffsets[i], rowK - 42, kv.color, 11, kLabelAligns[i], true);
-    });
+	// ── Key dots ──
+	// Offsets to prevent overlap: river is left-aligned, vault right-aligned, bench center
+	const kLabelAligns = ['right', 'left', 'center'];
+	const kLabelOffsets = [-16, 16, 0];
+	KV1.forEach((kv, i) => {
+		const kx = toX(kv.k);
+		drawDot(ctx, kx, rowK, 10, kv.color);
+		drawLabel(ctx, `${kv.kIcon} ${kv.kName}`, kx + kLabelOffsets[i], rowK - 28, kv.color, 12, kLabelAligns[i], true);
+		drawLabel(ctx, `${(weights[i]*100).toFixed(0)}%`, kx + kLabelOffsets[i], rowK - 42, kv.color, 11, kLabelAligns[i], true);
+	});
 
-    // ── K→V dashed lines ──
-    KV1.forEach((kv, i) => {
-        ctx.beginPath();
-        ctx.setLineDash([4, 4]);
-        ctx.moveTo(toX(kv.k), rowK + 14);
-        ctx.lineTo(toX(kv.v), rowV - 12);
-        ctx.strokeStyle = kv.color;
-        ctx.lineWidth = 1;
-        ctx.globalAlpha = 0.3 + weights[i] * 0.5;
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.globalAlpha = 1;
-    });
+	// ── K→V dashed lines ──
+	KV1.forEach((kv, i) => {
+		ctx.beginPath();
+		ctx.setLineDash([4, 4]);
+		ctx.moveTo(toX(kv.k), rowK + 14);
+		ctx.lineTo(toX(kv.v), rowV - 12);
+		ctx.strokeStyle = kv.color;
+		ctx.lineWidth = 1;
+		ctx.globalAlpha = 0.3 + weights[i] * 0.5;
+		ctx.stroke();
+		ctx.setLineDash([]);
+		ctx.globalAlpha = 1;
+	});
 
-    // ── Value squares ──
-    KV1.forEach((kv, i) => {
-        const s = 7 + weights[i] * 4;
-        drawSquare(ctx, toX(kv.v), rowV, s, kv.color, 0.35 + weights[i] * 0.65);
-        drawLabel(ctx, `${kv.vIcon} ${kv.vName}`, toX(kv.v), rowV + s + 14, kv.color, 11, 'center');
-    });
+	// ── Value squares ──
+	KV1.forEach((kv, i) => {
+		const s = 7 + weights[i] * 4;
+		drawSquare(ctx, toX(kv.v), rowV, s, kv.color, 0.35 + weights[i] * 0.65);
+		drawLabel(ctx, `${kv.vIcon} ${kv.vName}`, toX(kv.v), rowV + s + 14, kv.color, 11, 'center');
+	});
 
-    // ── Output star ──
-    drawStar(ctx, toX(output), rowV, 14, '#f59e0b');
-    drawLabel(ctx, `★ ${output.toFixed(2)}`, toX(output), rowV - 22, '#b45309', 13, 'center', true);
+	// ── Output star ──
+	drawStar(ctx, toX(output), rowV, 14, '#f59e0b');
+	drawLabel(ctx, `★ ${output.toFixed(2)}`, toX(output), rowV - 22, '#b45309', 13, 'center', true);
 
-    // ── Math table ──
-    const maxI = pick.idx;
-    let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-        <tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
-            <th style="text-align:left; padding:3px 8px;">Concept</th>
-            <th style="text-align:left; padding:3px 8px;">Score (q·k)</th>
-            <th style="text-align:left; padding:3px 8px;">Weight α</th>
-            <th style="text-align:right; padding:3px 8px;">α · v</th>
-        </tr>`;
-    KV1.forEach((kv, i) => {
-        const isBold = i === maxI;
-        html += `<tr style="${isBold ? 'background:#fefce8;' : ''}">
-            <td style="color:${kv.color}; font-weight:bold; padding:3px 8px;">${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}</td>
-            <td style="padding:3px 8px; font-family:monospace;">${q.toFixed(1)} × ${kv.k.toFixed(1)} = ${scores[i].toFixed(1)}</td>
-            <td style="padding:3px 8px; width: 255px;">
-                <div style="display:inline-block; width:${Math.max(3, weights[i]*120)}px; height:14px;
-                     background:${kv.color}; border-radius:3px; vertical-align:middle;
-                     opacity:${0.4+weights[i]*0.6}; transition:width 0.12s;"></div>
-                <b style="margin-left:4px;">${(weights[i]*100).toFixed(1)}%</b>
-            </td>
-            <td style="text-align:right; padding:3px 8px; font-family:monospace;">${(weights[i]*kv.v).toFixed(2)}</td>
-        </tr>`;
-    });
-    html += `<tr style="border-top:2px solid #1e293b;">
-        <td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
-        <td style="text-align:right; padding:6px 8px;"><b style="color:#f59e0b; font-size:1.15rem;">${output.toFixed(2)}</b></td>
+	// ── Math table ──
+	const maxI = pick.idx;
+	let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+	<tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
+	    <th style="text-align:left; padding:3px 8px;">Concept</th>
+	    <th style="text-align:left; padding:3px 8px;">Score (q·k)</th>
+	    <th style="text-align:left; padding:3px 8px;">Weight α</th>
+	    <th style="text-align:right; padding:3px 8px;">α · v</th>
+	</tr>`;
+	KV1.forEach((kv, i) => {
+		const isBold = i === maxI;
+		html += `<tr style="${isBold ? 'background:#fefce8;' : ''}">
+	    <td style="color:${kv.color}; font-weight:bold; padding:3px 8px;">${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}</td>
+	    <td style="padding:3px 8px; font-family:monospace;">${q.toFixed(1)} × ${kv.k.toFixed(1)} = ${scores[i].toFixed(1)}</td>
+	    <td style="padding:3px 8px; width: 255px;">
+		<div style="display:inline-block; width:${Math.max(3, weights[i]*120)}px; height:14px;
+		     background:${kv.color}; border-radius:3px; vertical-align:middle;
+		     opacity:${0.4+weights[i]*0.6}; transition:width 0.12s;"></div>
+		<b style="margin-left:4px;">${(weights[i]*100).toFixed(1)}%</b>
+	    </td>
+	    <td style="text-align:right; padding:3px 8px; font-family:monospace;">${(weights[i]*kv.v).toFixed(2)}</td>
+	</tr>`;
+	});
+	html += `<tr style="border-top:2px solid #1e293b;">
+	<td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
+	<td style="text-align:right; padding:6px 8px;"><b style="color:#f59e0b; font-size:1.15rem;">${output.toFixed(2)}</b></td>
     </tr></table>`;
-    document.getElementById('attn1d-math').innerHTML = html;
+	document.getElementById('attn1d-math').innerHTML = html;
 }
 
 
@@ -955,190 +955,190 @@ function pickSentence2D(weights) {
 }
 
 function updateAttn2D() {
-    const qx = parseFloat(document.getElementById('attn2d-qx').value);
-    const qy = parseFloat(document.getElementById('attn2d-qy').value);
-    document.getElementById('attn2d-qx-val').innerText = qx.toFixed(1);
-    document.getElementById('attn2d-qy-val').innerText = qy.toFixed(1);
+	const qx = parseFloat(document.getElementById('attn2d-qx').value);
+	const qy = parseFloat(document.getElementById('attn2d-qy').value);
+	document.getElementById('attn2d-qx-val').innerText = qx.toFixed(1);
+	document.getElementById('attn2d-qy-val').innerText = qy.toFixed(1);
 
-    const q = [qx, qy];
-    const dk = Math.sqrt(2); // √d_k where d_k = 2 dimensions
+	const q = [qx, qy];
+	const dk = Math.sqrt(2); // √d_k where d_k = 2 dimensions
 
-    // ── Scaled dot-product attention across BOTH dimensions ──
-    // score_i = (q[0]*k_i[0] + q[1]*k_i[1]) / √2
-    const scores  = KV2.map(kv => (q[0] * kv.k[0] + q[1] * kv.k[1]) / dk);
-    const weights = softmax(scores);
+	// ── Scaled dot-product attention across BOTH dimensions ──
+	// score_i = (q[0]*k_i[0] + q[1]*k_i[1]) / √2
+	const scores  = KV2.map(kv => (q[0] * kv.k[0] + q[1] * kv.k[1]) / dk);
+	const weights = softmax(scores);
 
-    // ── Weighted sum of 2D value vectors ──
-    const out = [0, 0];
-    KV2.forEach((kv, i) => {
-        out[0] += weights[i] * kv.v[0];
-        out[1] += weights[i] * kv.v[1];
-    });
+	// ── Weighted sum of 2D value vectors ──
+	const out = [0, 0];
+	KV2.forEach((kv, i) => {
+		out[0] += weights[i] * kv.v[0];
+		out[1] += weights[i] * kv.v[1];
+	});
 
-    // ── Pick sentence based on which meaning wins ──
-    const pick = pickSentence2D(weights);
-    const sentenceEl = document.getElementById('attn2d-sentence');
-    sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
-    sentenceEl.style.borderLeftColor = KV2[pick.idx].color;
+	// ── Pick sentence based on which meaning wins ──
+	const pick = pickSentence2D(weights);
+	const sentenceEl = document.getElementById('attn2d-sentence');
+	sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
+	sentenceEl.style.borderLeftColor = KV2[pick.idx].color;
 
-    // ── Canvas setup (read width from parent, cap height) ──
-    const canvas = document.getElementById('attn2d-canvas');
-    const container = canvas.parentElement;
-    const dpr = window.devicePixelRatio || 1;
-    const MAX_HEIGHT = 500;
+	// ── Canvas setup (read width from parent, cap height) ──
+	const canvas = document.getElementById('attn2d-canvas');
+	const container = canvas.parentElement;
+	const dpr = window.devicePixelRatio || 1;
+	const MAX_HEIGHT = 500;
 
-    if (!container._cachedW || !container._cachedH) {
-        canvas.style.display = 'none';
-        const containerRect = container.getBoundingClientRect();
-        canvas.style.display = '';
-        container._cachedW = Math.floor(containerRect.width);
-        container._cachedH = Math.min(Math.floor(containerRect.width), MAX_HEIGHT);
-    }
+	if (!container._cachedW || !container._cachedH) {
+		canvas.style.display = 'none';
+		const containerRect = container.getBoundingClientRect();
+		canvas.style.display = '';
+		container._cachedW = Math.floor(containerRect.width);
+		container._cachedH = Math.min(Math.floor(containerRect.width), MAX_HEIGHT);
+	}
 
-    const W = container._cachedW;
-    const H = container._cachedH;
+	const W = container._cachedW;
+	const H = container._cachedH;
 
-    canvas.style.width = W + 'px';
-    canvas.style.height = H + 'px';
+	canvas.style.width = W + 'px';
+	canvas.style.height = H + 'px';
 
-    if (canvas.width !== W * dpr || canvas.height !== H * dpr) {
-        canvas.width = W * dpr;
-        canvas.height = H * dpr;
-    }
+	if (canvas.width !== W * dpr || canvas.height !== H * dpr) {
+		canvas.width = W * dpr;
+		canvas.height = H * dpr;
+	}
 
-    const ctx = canvas.getContext('2d');
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, W, H);
+	const ctx = canvas.getContext('2d');
+	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	ctx.clearRect(0, 0, W, H);
 
-    // ── Coordinate mapping: -3 to 3 in 0.5 steps ──
-    const pad = 55;
-    const range = 3.5; // slightly beyond 3 for visual padding
-    const toX = (v) => pad + ((v + range) / (2 * range)) * (W - 2 * pad);
-    const toY = (v) => pad + ((range - v) / (2 * range)) * (H - 2 * pad);
+	// ── Coordinate mapping: -3 to 3 in 0.5 steps ──
+	const pad = 55;
+	const range = 3.5; // slightly beyond 3 for visual padding
+	const toX = (v) => pad + ((v + range) / (2 * range)) * (W - 2 * pad);
+	const toY = (v) => pad + ((range - v) / (2 * range)) * (H - 2 * pad);
 
-    // ── Grid lines at 0.5 steps ──
-    ctx.lineWidth = 1;
-    for (let t = -3; t <= 3; t += 0.5) {
-        // Thicker lines at whole numbers, thinner at 0.5 steps
-        if (t === Math.round(t)) {
-            ctx.strokeStyle = '#e2e8f0';
-        } else {
-            ctx.strokeStyle = '#f1f5f9';
-        }
-        ctx.beginPath(); ctx.moveTo(toX(t), pad); ctx.lineTo(toX(t), H - pad); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(pad, toY(t)); ctx.lineTo(W - pad, toY(t)); ctx.stroke();
-    }
+	// ── Grid lines at 0.5 steps ──
+	ctx.lineWidth = 1;
+	for (let t = -3; t <= 3; t += 0.5) {
+		// Thicker lines at whole numbers, thinner at 0.5 steps
+		if (t === Math.round(t)) {
+			ctx.strokeStyle = '#e2e8f0';
+		} else {
+			ctx.strokeStyle = '#f1f5f9';
+		}
+		ctx.beginPath(); ctx.moveTo(toX(t), pad); ctx.lineTo(toX(t), H - pad); ctx.stroke();
+		ctx.beginPath(); ctx.moveTo(pad, toY(t)); ctx.lineTo(W - pad, toY(t)); ctx.stroke();
+	}
 
-    // ── Main axes ──
-    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(pad, toY(0)); ctx.lineTo(W - pad, toY(0)); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(toX(0), pad); ctx.lineTo(toX(0), H - pad); ctx.stroke();
+	// ── Main axes ──
+	ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+	ctx.beginPath(); ctx.moveTo(pad, toY(0)); ctx.lineTo(W - pad, toY(0)); ctx.stroke();
+	ctx.beginPath(); ctx.moveTo(toX(0), pad); ctx.lineTo(toX(0), H - pad); ctx.stroke();
 
-    // ── Axis labels ──
-    drawLabel(ctx, '🌿 Nature', pad + 6, toY(0) + 18, '#10b981', 11, 'left', true);
-    drawLabel(ctx, 'Finance 💳', W - pad - 6, toY(0) + 18, '#f59e0b', 11, 'right', true);
-    drawLabel(ctx, '⚡ Urgent', toX(0) + 8, pad + 6, '#ef4444', 11, 'left', true);
-    drawLabel(ctx, '😌 Calm', toX(0) + 8, H - pad - 6, '#3b82f6', 11, 'left', true);
+	// ── Axis labels ──
+	drawLabel(ctx, '🌿 Nature', pad + 6, toY(0) + 18, '#10b981', 11, 'left', true);
+	drawLabel(ctx, 'Finance 💳', W - pad - 6, toY(0) + 18, '#f59e0b', 11, 'right', true);
+	drawLabel(ctx, '⚡ Urgent', toX(0) + 8, pad + 6, '#ef4444', 11, 'left', true);
+	drawLabel(ctx, '😌 Calm', toX(0) + 8, H - pad - 6, '#3b82f6', 11, 'left', true);
 
-    // ── Tick labels at whole numbers ──
-    ctx.fillStyle = '#94a3b8'; ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
-    for (let t = -3; t <= 3; t++) {
-        if (t === 0) continue;
-        ctx.fillText(t, toX(t), toY(0) + 14);
-        ctx.textAlign = 'right';
-        ctx.fillText(t, toX(0) - 8, toY(t) + 4);
-        ctx.textAlign = 'center';
-    }
+	// ── Tick labels at whole numbers ──
+	ctx.fillStyle = '#94a3b8'; ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
+	for (let t = -3; t <= 3; t++) {
+		if (t === 0) continue;
+		ctx.fillText(t, toX(t), toY(0) + 14);
+		ctx.textAlign = 'right';
+		ctx.fillText(t, toX(0) - 8, toY(t) + 4);
+		ctx.textAlign = 'center';
+	}
 
-    // ── Q→K attention lines (thickness = weight) ──
-    KV2.forEach((kv, i) => {
-        ctx.beginPath();
-        ctx.moveTo(toX(q[0]), toY(q[1]));
-        ctx.lineTo(toX(kv.k[0]), toY(kv.k[1]));
-        ctx.strokeStyle = kv.color;
-        ctx.lineWidth = 2 + weights[i] * 12;
-        ctx.globalAlpha = 0.2 + weights[i] * 0.8;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-    });
+	// ── Q→K attention lines (thickness = weight) ──
+	KV2.forEach((kv, i) => {
+		ctx.beginPath();
+		ctx.moveTo(toX(q[0]), toY(q[1]));
+		ctx.lineTo(toX(kv.k[0]), toY(kv.k[1]));
+		ctx.strokeStyle = kv.color;
+		ctx.lineWidth = 2 + weights[i] * 12;
+		ctx.globalAlpha = 0.2 + weights[i] * 0.8;
+		ctx.lineCap = 'round';
+		ctx.stroke();
+		ctx.globalAlpha = 1;
+	});
 
-    // ── V→Output dashed lines ──
-    KV2.forEach((kv, i) => {
-        ctx.beginPath();
-        ctx.setLineDash([5, 5]);
-        ctx.moveTo(toX(kv.v[0]), toY(kv.v[1]));
-        ctx.lineTo(toX(out[0]), toY(out[1]));
-        ctx.strokeStyle = kv.color;
-        ctx.lineWidth = 1 + weights[i] * 5;
-        ctx.globalAlpha = 0.2 + weights[i] * 0.6;
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.globalAlpha = 1;
-    });
+	// ── V→Output dashed lines ──
+	KV2.forEach((kv, i) => {
+		ctx.beginPath();
+		ctx.setLineDash([5, 5]);
+		ctx.moveTo(toX(kv.v[0]), toY(kv.v[1]));
+		ctx.lineTo(toX(out[0]), toY(out[1]));
+		ctx.strokeStyle = kv.color;
+		ctx.lineWidth = 1 + weights[i] * 5;
+		ctx.globalAlpha = 0.2 + weights[i] * 0.6;
+		ctx.stroke();
+		ctx.setLineDash([]);
+		ctx.globalAlpha = 1;
+	});
 
-    // ── Key dots (with weight % labels) ──
-    KV2.forEach((kv, i) => {
-        const kx = toX(kv.k[0]), ky = toY(kv.k[1]);
-        drawDot(ctx, kx, ky, 10 + weights[i] * 4, kv.color);
-        drawLabel(ctx, `${kv.kIcon} ${kv.kName}`, kx + kv.kOff[0], ky + kv.kOff[1], kv.color, 13, 'center', true);
-        drawLabel(ctx, `${(weights[i] * 100).toFixed(0)}%`, kx + kv.kOff[0], ky + kv.kOff[1] + 16, kv.color, 12, 'center', true);
-    });
+	// ── Key dots (with weight % labels) ──
+	KV2.forEach((kv, i) => {
+		const kx = toX(kv.k[0]), ky = toY(kv.k[1]);
+		drawDot(ctx, kx, ky, 10 + weights[i] * 4, kv.color);
+		drawLabel(ctx, `${kv.kIcon} ${kv.kName}`, kx + kv.kOff[0], ky + kv.kOff[1], kv.color, 13, 'center', true);
+		drawLabel(ctx, `${(weights[i] * 100).toFixed(0)}%`, kx + kv.kOff[0], ky + kv.kOff[1] + 16, kv.color, 12, 'center', true);
+	});
 
-    // ── Value squares ──
-    KV2.forEach((kv, i) => {
-        const vx = toX(kv.v[0]), vy = toY(kv.v[1]);
-        const s = 7 + weights[i] * 5;
-        drawSquare(ctx, vx, vy, s, kv.color, 0.35 + weights[i] * 0.65);
-        drawLabel(ctx, `${kv.vIcon} ${kv.vName}`, vx + kv.vOff[0], vy + kv.vOff[1], kv.color, 11, 'center');
-    });
+	// ── Value squares ──
+	KV2.forEach((kv, i) => {
+		const vx = toX(kv.v[0]), vy = toY(kv.v[1]);
+		const s = 7 + weights[i] * 5;
+		drawSquare(ctx, vx, vy, s, kv.color, 0.35 + weights[i] * 0.65);
+		drawLabel(ctx, `${kv.vIcon} ${kv.vName}`, vx + kv.vOff[0], vy + kv.vOff[1], kv.color, 11, 'center');
+	});
 
-    // ── Query diamond ("charge") ──
-    drawDiamond(ctx, toX(q[0]), toY(q[1]), 10, '#2563eb');
-    drawLabel(ctx, '"charge"', toX(q[0]), toY(q[1]) - 22, '#2563eb', 14, 'center', true);
+	// ── Query diamond ("charge") ──
+	drawDiamond(ctx, toX(q[0]), toY(q[1]), 10, '#2563eb');
+	drawLabel(ctx, '"charge"', toX(q[0]), toY(q[1]) - 22, '#2563eb', 14, 'center', true);
 
-    // ── Output star ──
-    drawStar(ctx, toX(out[0]), toY(out[1]), 14, '#f59e0b');
-    drawLabel(ctx, '★ charge in context', toX(out[0]), toY(out[1]) + 24, '#b45309', 12, 'center', true);
+	// ── Output star ──
+	drawStar(ctx, toX(out[0]), toY(out[1]), 14, '#f59e0b');
+	drawLabel(ctx, '★ charge in context', toX(out[0]), toY(out[1]) + 24, '#b45309', 12, 'center', true);
 
-    // ── Math table (shows both dimensions in dot product) ──
-    const maxI = pick.idx;
-    let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-        <tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
-            <th style="text-align:left; padding:3px 8px;">Concept</th>
-            <th style="text-align:left; padding:3px 8px;">q·k / √2</th>
-            <th style="text-align:left; padding:3px 8px;">Weight α</th>
-            <th style="text-align:right; padding:3px 8px;">α · v</th>
-        </tr>`;
-    KV2.forEach((kv, i) => {
-        const dotRaw = q[0] * kv.k[0] + q[1] * kv.k[1];
-        const contrib = [weights[i] * kv.v[0], weights[i] * kv.v[1]];
-        const isBold = i === maxI;
-        html += `<tr style="${isBold ? 'background:#fefce8;' : ''}">
-            <td style="color:${kv.color}; font-weight:bold; padding:3px 8px; white-space:nowrap;">
-                ${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}
-            </td>
-            <td style="padding:3px 8px; font-family:monospace;" title="(${q[0].toFixed(1)}×${kv.k[0].toFixed(1)}) + (${q[1].toFixed(1)}×${kv.k[1].toFixed(1)}) = ${dotRaw.toFixed(2)}, then ÷√2 = ${scores[i].toFixed(2)}">
-                ${scores[i].toFixed(2)}
-            </td>
-            <td style="padding:3px 8px; width: 200px">
-                <div style="display:inline-block; width:${Math.max(3, weights[i] * 120)}px; height:14px;
-                     background:${kv.color}; border-radius:3px; vertical-align:middle;
-                     opacity:${0.4 + weights[i] * 0.6}; transition:width 0.12s;"></div>
-                <b style="margin-left:4px;">${(weights[i] * 100).toFixed(1)}%</b>
-            </td>
-            <td style="text-align:right; padding:3px 8px; font-family:monospace; white-space:nowrap;">
-                (${contrib[0].toFixed(2)}, ${contrib[1].toFixed(2)})
-            </td>
-        </tr>`;
-    });
-    html += `<tr style="border-top:2px solid #1e293b;">
-        <td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
-        <td style="text-align:right; padding:6px 8px;">
-            <b style="color:#f59e0b; font-size:1.1rem;">(${out[0].toFixed(2)}, ${out[1].toFixed(2)})</b>
-        </td>
+	// ── Math table (shows both dimensions in dot product) ──
+	const maxI = pick.idx;
+	let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+	<tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
+	    <th style="text-align:left; padding:3px 8px;">Concept</th>
+	    <th style="text-align:left; padding:3px 8px;">q·k / √2</th>
+	    <th style="text-align:left; padding:3px 8px;">Weight α</th>
+	    <th style="text-align:right; padding:3px 8px;">α · v</th>
+	</tr>`;
+	KV2.forEach((kv, i) => {
+		const dotRaw = q[0] * kv.k[0] + q[1] * kv.k[1];
+		const contrib = [weights[i] * kv.v[0], weights[i] * kv.v[1]];
+		const isBold = i === maxI;
+		html += `<tr style="${isBold ? 'background:#fefce8;' : ''}">
+	    <td style="color:${kv.color}; font-weight:bold; padding:3px 8px; white-space:nowrap;">
+		${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}
+	    </td>
+	    <td style="padding:3px 8px; font-family:monospace;" title="(${q[0].toFixed(1)}×${kv.k[0].toFixed(1)}) + (${q[1].toFixed(1)}×${kv.k[1].toFixed(1)}) = ${dotRaw.toFixed(2)}, then ÷√2 = ${scores[i].toFixed(2)}">
+		${scores[i].toFixed(2)}
+	    </td>
+	    <td style="padding:3px 8px; width: 200px">
+		<div style="display:inline-block; width:${Math.max(3, weights[i] * 120)}px; height:14px;
+		     background:${kv.color}; border-radius:3px; vertical-align:middle;
+		     opacity:${0.4 + weights[i] * 0.6}; transition:width 0.12s;"></div>
+		<b style="margin-left:4px;">${(weights[i] * 100).toFixed(1)}%</b>
+	    </td>
+	    <td style="text-align:right; padding:3px 8px; font-family:monospace; white-space:nowrap;">
+		(${contrib[0].toFixed(2)}, ${contrib[1].toFixed(2)})
+	    </td>
+	</tr>`;
+	});
+	html += `<tr style="border-top:2px solid #1e293b;">
+	<td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
+	<td style="text-align:right; padding:6px 8px;">
+	    <b style="color:#f59e0b; font-size:1.1rem;">(${out[0].toFixed(2)}, ${out[1].toFixed(2)})</b>
+	</td>
     </tr></table>`;
-    document.getElementById('attn2d-math').innerHTML = html;
+	document.getElementById('attn2d-math').innerHTML = html;
 }
 
 // ─────────────────── INITIALIZATION ───────────────────
