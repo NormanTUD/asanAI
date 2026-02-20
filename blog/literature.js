@@ -1489,5 +1489,23 @@ window.bibData = {
 		author: "Nelson Elhage, Neel Nanda, Catherine Olsson, Tom Henighan, Nicholas Joseph, Ben Mann, Amanda Askell, Yuntao Bai, Anna Chen, Tom Conerly, Nova DasSarma, Dawn Drain, Deep Ganguli, Tom Goldstein, Jared Kaplan, Jackson Kernion, Liane Lovitt, Kamal Ndousse, Chris Olah",
 		year: 2021,
 		url: "https://transformer-circuits.pub/2021/framework/index.html"
-	}
+	},
+	"sogaard2018limitations": {
+		title: "On the Limitations of Unsupervised Bilingual Dictionary Induction",
+		author: "Anders Søgaard, Sebastian Ruder, Ivan Vulić",
+		year: 2018,
+		url: "https://arxiv.org/abs/1805.10680"
+	},
+	"bengio2013representation": {
+		title: "Representation Learning: A Review and New Perspectives",
+		author: "Yoshua Bengio, Aaron Courville, Pascal Vincent",
+		year: 2013,
+		url: "https://arxiv.org/abs/1206.5538"
+	},
+	"bronstein2021geometric": {
+		title: "Geometric Deep Learning: Grids, Groups, Graphs, Geodesics, and Gauges",
+		author: "Michael M. Bronstein, Joan Bruna, Taco Cohen, Petar Veličković",
+		year: 2021,
+		url: "https://arxiv.org/abs/2104.13478"
+	},
 };

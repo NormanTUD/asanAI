@@ -171,3 +171,21 @@ This is also why the Attention mechanism is so central. Attention computes pairw
 </div>
 
 <div id="plot-rotational-invariance" style="height: 500px;"></div>
+
+<div class="md">
+## The Limits of Isomorphism
+
+While the cross-lingual alignment story is compelling, the isomorphism between language embedding spaces is not perfect. The alignment quality degrades significantly for typologically distant language pairs, English to Japanese, for instance, is far harder to align than English to Spanish (\cite{sogaard2018limitations}). This suggests that the "universal geometric structure of human concepts" has real limits. Languages don't just rotate the same space; they can **warp** it. Cultures that carve up semantic space differently, languages with different color term boundaries, or kinship systems, produce embedding geometries that are locally similar but globally distorted. The rotation-plus-scaling model is a first-order approximation, not the full story.
+
+## The Manifold Hypothesis
+
+The deeper theoretical reason the path-finding framing works is the **Manifold Hypothesis**: the idea that high-dimensional data, like language, actually lies on or near a much lower-dimensional manifold embedded in the high-dimensional space (\cite{bengio2013representation}). If sentences trace paths on a manifold, then translation is literally a mapping between two manifolds that share the same topology. The Transformer's attention layers can be seen as learning the **local coordinate charts** of these manifolds, the rules for how to navigate the surface at each point.
+
+## Attention as Metric Tensor
+
+There is an even more geometric way to think about attention. In differential geometry, a **metric tensor** defines how distances are measured locally on a manifold, it tells you the "shape" of space at each point. The attention matrix in a Transformer does something analogous: it dynamically redefines which tokens are "close" to which other tokens at each layer, effectively warping the local geometry of the embedding space as the representation is processed. This is not merely a metaphor, the connections between attention mechanisms and geometric structures on manifolds have been formalized in the framework of Geometric Deep Learning (\cite{bronstein2021geometric}).
+
+## The Residual Stream as Geodesic
+
+Building on the mechanistic analysis of Transformer circuits (\cite{elhage2021mathematical}), there is an elegant way to think about the **residual stream**. Each layer of the Transformer adds a small update to the residual, it does not replace the representation, it *nudges* it. This is structurally identical to how a **geodesic**, the shortest path on a curved surface, is computed: you take small steps, each determined by the local curvature. The residual stream, then, traces something like a geodesic through meaning-space, with each attention head and MLP layer contributing a local correction based on the geometry it perceives. The Transformer does not jump from input to output. It *walks* there, one careful step at a time, along the surface of the manifold.
+</div>
