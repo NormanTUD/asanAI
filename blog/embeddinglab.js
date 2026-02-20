@@ -689,6 +689,170 @@ function renderDotProductLab() {
 	update();
 }
 
+function renderRotationalInvariance() {
+	const plotDiv = document.getElementById('plot-rotational-invariance');
+	if (!plotDiv) return;
+
+	// --- Define a small "language" cluster ---
+	const originalPoints = {
+		'King':    [20, -8],
+		'Queen':   [20,  8],
+		'Man':     [5,  -8],
+		'Woman':   [5,   8],
+		'Prince':  [12, -8],
+		'Princess':[12,  8],
+	};
+
+	// --- Rotation function ---
+	function rotate2D(points, angleDeg, offsetX, offsetY) {
+		const rad = angleDeg * Math.PI / 180;
+		const result = {};
+		for (const [key, [x, y]] of Object.entries(points)) {
+			result[key] = [
+				x * Math.cos(rad) - y * Math.sin(rad) + offsetX,
+				x * Math.sin(rad) + y * Math.cos(rad) + offsetY
+			];
+		}
+		return result;
+	}
+
+	// "Language A" — original orientation
+	const langA = rotate2D(originalPoints, 0, -20, 0);
+	// "Language B" — rotated by 55°, shifted right
+	const langB = rotate2D(originalPoints, 55, 25, 0);
+
+	const traces = [];
+	const colors = {
+		'King': '#f59e0b', 'Queen': '#f59e0b',
+		'Man': '#3b82f6', 'Woman': '#3b82f6',
+		'Prince': '#10b981', 'Princess': '#10b981'
+	};
+
+	// --- Draw Language A points ---
+	for (const [word, [x, y]] of Object.entries(langA)) {
+		traces.push({
+			x: [x], y: [y],
+			mode: 'markers+text',
+			text: [word],
+			textposition: 'top center',
+			marker: { size: 10, color: colors[word], opacity: 0.9 },
+			showlegend: false,
+			hovertemplate: `<b>${word}</b> (Language A)<br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
+		});
+	}
+
+	// --- Draw Language B points ---
+	for (const [word, [x, y]] of Object.entries(langB)) {
+		traces.push({
+			x: [x], y: [y],
+			mode: 'markers+text',
+			text: [word],
+			textposition: 'top center',
+			marker: { size: 10, color: colors[word], opacity: 0.9, symbol: 'diamond' },
+			showlegend: false,
+			hovertemplate: `<b>${word}</b> (Language B)<br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
+		});
+	}
+
+	// --- Draw internal structure lines for Language A (Gender pairs) ---
+	const pairs = [['King','Queen'], ['Man','Woman'], ['Prince','Princess']];
+	for (const [a, b] of pairs) {
+		traces.push({
+			x: [langA[a][0], langA[b][0]], y: [langA[a][1], langA[b][1]],
+			mode: 'lines', line: { color: '#94a3b8', width: 1.5, dash: 'dot' },
+			showlegend: false, hoverinfo: 'skip'
+		});
+		traces.push({
+			x: [langB[a][0], langB[b][0]], y: [langB[a][1], langB[b][1]],
+			mode: 'lines', line: { color: '#94a3b8', width: 1.5, dash: 'dot' },
+			showlegend: false, hoverinfo: 'skip'
+		});
+	}
+
+	// --- Draw "Power" axis lines (Man→King) for each language ---
+	const powerPairs = [['Man','Prince'], ['Prince','King'], ['Woman','Princess'], ['Princess','Queen']];
+	for (const [a, b] of powerPairs) {
+		traces.push({
+			x: [langA[a][0], langA[b][0]], y: [langA[a][1], langA[b][1]],
+			mode: 'lines', line: { color: '#cbd5e1', width: 1 },
+			showlegend: false, hoverinfo: 'skip'
+		});
+		traces.push({
+			x: [langB[a][0], langB[b][0]], y: [langB[a][1], langB[b][1]],
+			mode: 'lines', line: { color: '#cbd5e1', width: 1 },
+			showlegend: false, hoverinfo: 'skip'
+		});
+	}
+
+	// --- Draw a "translation path" arrow from Lang A King to Lang B King ---
+	const translationPairs = [['Man', 'King'], ['King', 'Queen']];
+	for (const [a, b] of translationPairs) {
+		// Path in Language A (solid blue arrow)
+		traces.push({
+			x: [langA[a][0], langA[b][0]], y: [langA[a][1], langA[b][1]],
+			mode: 'lines', line: { color: '#3b82f6', width: 3 },
+			showlegend: false, hoverinfo: 'skip'
+		});
+		// Corresponding path in Language B (solid green arrow)
+		traces.push({
+			x: [langB[a][0], langB[b][0]], y: [langB[a][1], langB[b][1]],
+			mode: 'lines', line: { color: '#10b981', width: 3 },
+			showlegend: false, hoverinfo: 'skip'
+		});
+	}
+
+	// --- Labels for the two spaces ---
+	const annotations = [
+		{
+			x: -20, y: 18, text: '<b>Language A</b><br>(Original orientation)',
+			showarrow: false, font: { size: 13, color: '#475569' },
+			bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
+		},
+		{
+			x: 25, y: 28, text: '<b>Language B</b><br>(Rotated 55°)',
+			showarrow: false, font: { size: 13, color: '#475569' },
+			bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
+		},
+		// Arrow annotations for the translation paths in A
+		{
+			ax: langA['Man'][0], ay: langA['Man'][1],
+			x: langA['King'][0], y: langA['King'][1],
+			axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+			showarrow: true, arrowhead: 2, arrowsize: 1.5, arrowwidth: 3, arrowcolor: '#3b82f6'
+		},
+		{
+			ax: langA['King'][0], ay: langA['King'][1],
+			x: langA['Queen'][0], y: langA['Queen'][1],
+			axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+			showarrow: true, arrowhead: 2, arrowsize: 1.5, arrowwidth: 3, arrowcolor: '#3b82f6'
+		},
+		// Arrow annotations for the translation paths in B
+		{
+			ax: langB['Man'][0], ay: langB['Man'][1],
+			x: langB['King'][0], y: langB['King'][1],
+			axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+			showarrow: true, arrowhead: 2, arrowsize: 1.5, arrowwidth: 3, arrowcolor: '#10b981'
+		},
+		{
+			ax: langB['King'][0], ay: langB['King'][1],
+			x: langB['Queen'][0], y: langB['Queen'][1],
+			axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+			showarrow: true, arrowhead: 2, arrowsize: 1.5, arrowwidth: 3, arrowcolor: '#10b981'
+		}
+	];
+
+	const layout = {
+		margin: { l: 40, r: 40, b: 40, t: 20 },
+		showlegend: false,
+		xaxis: { range: [-45, 50], zeroline: false, showgrid: true, gridcolor: '#f1f5f9' },
+		yaxis: { range: [-30, 35], zeroline: false, showgrid: true, gridcolor: '#f1f5f9', scaleanchor: 'x' },
+		annotations: annotations,
+		plot_bgcolor: '#fff'
+	};
+
+	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+}
+
 function loadEmbeddingModule () {
 	const tasks = [
 		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
@@ -756,4 +920,6 @@ function loadEmbeddingModule () {
 	initEmbeddingEditor();
 
 	renderDotProductLab();
+
+	renderRotationalInvariance();
 }

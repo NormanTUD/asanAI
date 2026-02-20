@@ -168,3 +168,5 @@ In other words, the Transformer doesn't translate *words*. It translates **paths
 
 This is also why the Attention mechanism is so central. Attention computes pairwise relationships (via dot products) between all tokens in a sequence, effectively building a map of the local geometry, which points are near each other, which are aligned, which are orthogonal. This relational map is what gets preserved and transferred, not any individual coordinate.
 </div>
+
+<div id="plot-rotational-invariance" style="height: 500px;"></div>
