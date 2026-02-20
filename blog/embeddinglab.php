@@ -177,7 +177,7 @@ This is also why the Attention mechanism is so central. Attention computes pairw
 
 The static plot above shows two language spaces side by side. But the real magic is in the **transformation itself**. Below, you can watch Language B's embedding space smoothly rotate and scale to align with Language A. This is exactly what algorithms like Procrustes alignment do: they find the optimal rotation matrix $\mathbf{W}$ such that $\mathbf{X}_B \mathbf{W} \approx \mathbf{X}_A$, minimizing the distance between corresponding word pairs across languages (\cite{smith2017orthogonal}, \cite{conneau2018word}).
 
-Click **"Align"** to animate the transformation. Notice how the internal structure — the distances between King/Queen, Man/Woman — is perfectly preserved. Only the orientation changes. This is rotational invariance made visible.
+Click **"Align"** to animate the transformation. Notice how the internal structure, the distances between King/Queen, Man/Woman, is perfectly preserved. Only the orientation changes. This is rotational invariance made visible.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -185,13 +185,13 @@ Click **"Align"** to animate the transformation. Notice how the internal structu
     <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
         <button id="btn-align" onclick="animateCrossLingualAlignment()" style="background: #3b82f6; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">▶ Align Languages</button>
         <button id="btn-reset-align" onclick="resetCrossLingualAlignment()" style="background: #64748b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">↺ Reset</button>
-        <span id="align-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready — Language B is rotated 55° from Language A.</span>
+        <span id="align-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready, Language B is rotated 55° from Language A.</span>
     </div>
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
         <b>What you're seeing:</b> Language A (●&nbsp;circles) and Language B (◆&nbsp;diamonds) encode the same concepts in different orientations. 
         The <span style="color:#3b82f6; font-weight:bold;">blue arrows</span> show the <code>Man → King → Queen</code> path in Language A; 
         the <span style="color:#10b981; font-weight:bold;">green arrows</span> show the same path in Language B. 
-        When you click <b>Align</b>, Language B is smoothly rotated to match Language A — the diamonds slide into position next to their circle counterparts. 
+        When you click <b>Align</b>, Language B is smoothly rotated to match Language A, the diamonds slide into position next to their circle counterparts. 
         The internal geometry (all distances and angles between words) is <i>perfectly preserved</i>.
     </div>
 </section>
@@ -209,7 +209,7 @@ The deeper theoretical reason the path-finding framing works is the **Manifold H
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div id="plot-manifold" style="height: 550px; background: #fff; border-radius: 8px; width: 100%;"></div>
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6;">
-        <b>The Manifold Hypothesis visualized.</b> The translucent blue surface is the <b>semantic manifold</b> — a lower-dimensional curved sheet embedded in the full 3D space. All meaningful word vectors (colored dots) live <i>on</i> this surface, not scattered through the volume. The grey dots represent the unused ambient dimensions — noise with no semantic content. The <span style="color:#3b82f6; font-weight:bold;">blue path</span> is a <b>geodesic</b>: the shortest route <i>along the surface</i> from Man → Prince → King → Queen, following the curvature of meaning. The <span style="color:#ef4444; font-weight:bold;">red dashed line</span> is the Euclidean shortcut — a straight line that cuts through empty, meaningless space. A Transformer's residual stream follows the geodesic, not the shortcut.
+        <b>The Manifold Hypothesis visualized.</b> The translucent blue surface is the <b>semantic manifold</b>, a lower-dimensional curved sheet embedded in the full 3D space. All meaningful word vectors (colored dots) live <i>on</i> this surface, not scattered through the volume. The grey dots represent the unused ambient dimensions, noise with no semantic content. The <span style="color:#3b82f6; font-weight:bold;">blue path</span> is a <b>geodesic</b>: the shortest route <i>along the surface</i> from Man → Prince → King → Queen, following the curvature of meaning. The <span style="color:#ef4444; font-weight:bold;">red dashed line</span> is the Euclidean shortcut, a straight line that cuts through empty, meaningless space. A Transformer's residual stream follows the geodesic, not the shortcut.
     </div>
 </section>
 
@@ -220,9 +220,9 @@ There is an even more geometric way to think about attention. In differential ge
 
 ### Interactive: Attention Warps the Geometry of Meaning
 
-Below is a 2D grid representing the local geometry of embedding space. Each colored dot is a token. **Click on any token** to "attend" to it — watch how the grid warps, pulling semantically related tokens closer and pushing unrelated ones further away. This is what the attention mechanism does at every layer: it dynamically redefines which tokens are "near" each other, bending the metric of the space itself.
+Below is a 2D grid representing the local geometry of embedding space. Each colored dot is a token. **Click on any token** to "attend" to it, watch how the grid warps, pulling semantically related tokens closer and pushing unrelated ones further away. This is what the attention mechanism does at every layer: it dynamically redefines which tokens are "near" each other, bending the metric of the space itself.
 
-The grid lines show the distortion — like a rubber sheet being pinched. In differential geometry, this is exactly what a **metric tensor** does: it tells you how to measure distances locally, and attention changes that measurement at every step.
+The grid lines show the distortion, like a rubber sheet being pinched. In differential geometry, this is exactly what a **metric tensor** does: it tells you how to measure distances locally, and attention changes that measurement at every step.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -232,7 +232,7 @@ The grid lines show the distortion — like a rubber sheet being pinched. In dif
         <span id="metric-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Click any token to apply attention.</span>
     </div>
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
-        <b>How to read this:</b> The grid represents the "fabric" of embedding space. In the unwarped state, all tokens are equally spaced — the metric is flat (Euclidean). When you click a token, attention <i>warps</i> the metric: related tokens are pulled closer (the grid compresses between them), and unrelated tokens are pushed away (the grid stretches). The <span style="color:#8b5cf6; font-weight:bold;">purple halo</span> shows the attention "field" — stronger near the attended token, fading with semantic distance.
+        <b>How to read this:</b> The grid represents the "fabric" of embedding space. In the unwarped state, all tokens are equally spaced, the metric is flat (Euclidean). When you click a token, attention <i>warps</i> the metric: related tokens are pulled closer (the grid compresses between them), and unrelated tokens are pushed away (the grid stretches). The <span style="color:#8b5cf6; font-weight:bold;">purple halo</span> shows the attention "field", stronger near the attended token, fading with semantic distance.
     </div>
 </section>
 
@@ -241,4 +241,51 @@ The grid lines show the distortion — like a rubber sheet being pinched. In dif
 ## The Residual Stream as Geodesic
 
 Building on the mechanistic analysis of Transformer circuits (\cite{elhage2021mathematical}), there is an elegant way to think about the **residual stream**. Each layer of the Transformer adds a small update to the residual, it does not replace the representation, it *nudges* it. This is structurally identical to how a **geodesic**, the shortest path on a curved surface, is computed: you take small steps, each determined by the local curvature. The residual stream, then, traces something like a geodesic through meaning-space, with each attention head and MLP layer contributing a local correction based on the geometry it perceives. The Transformer does not jump from input to output. It *walks* there, one careful step at a time, along the surface of the manifold.
+
+## Translation Invariance: The Parallelogram Law
+
+Rotational invariance tells us that spinning the entire space preserves meaning. But there's a second, equally profound invariance: **translation invariance of relational offsets**. The vector from "Man" to "King", the "royalty direction", is approximately the same as the vector from "Woman" to "Queen." This isn't a coincidence; it's a geometric regularity that emerges from training on co-occurrence statistics (\cite{mikolov2013word2vec}).
+
+This means concepts like "royalty," "gender," or "youth" aren't points in the space, they're **directions**. And those directions are consistent everywhere. You can pick up the "royalty" vector from one pair and transplant it onto another. This is the **parallelogram law** of analogies, and it's what makes vector arithmetic on words possible at all.
+
+Below, you can explore this interactively. Select different "concept directions" and watch the same offset vector produce valid analogies across multiple word pairs, forming perfect parallelograms in the embedding space.
 </div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-parallelogram" style="height: 480px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
+        <label style="font-family: sans-serif; font-size: 0.9em; font-weight: bold; color: #475569;">Concept Direction:</label>
+        <button class="parallelogram-btn" onclick="setParallelogramConcept('royalty')" id="btn-para-royalty" style="background: #3b82f6; color: white; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: bold;">👑 Royalty</button>
+        <button class="parallelogram-btn" onclick="setParallelogramConcept('gender')" id="btn-para-gender" style="background: #64748b; color: white; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: bold;">⚤ Gender</button>
+        <button class="parallelogram-btn" onclick="setParallelogramConcept('age')" id="btn-para-age" style="background: #64748b; color: white; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: bold;">📅 Age</button>
+    </div>
+    <div id="parallelogram-status" style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> The <span style="color:#3b82f6; font-weight:bold;">blue arrows</span> show the same concept offset applied to different word pairs. If the arrows are parallel and equal in length, the analogy holds, the concept is a <i>consistent direction</i> in the space, not tied to any specific word.
+    </div>
+</section>
+
+
+<div class="md">
+## Scale Invariance: Direction Is Meaning, Magnitude Is Noise
+
+There's a subtle but critical property that explains *why* cosine similarity is preferred over Euclidean distance in most embedding applications: **scale invariance**. Two vectors can point in exactly the same direction, encoding the same semantic content, but differ wildly in magnitude. Euclidean distance would call them "far apart." Cosine similarity correctly identifies them as identical in meaning.
+
+Why does magnitude vary? During training, tokens that appear more frequently accumulate more gradient updates, inflating their vector norms. A rare synonym of "King" might encode the same directional relationships but have a much shorter vector. Cosine similarity is blind to this artifact; Euclidean distance is fooled by it.
+
+Below, drag the **magnitude slider** to stretch or shrink a token's vector without changing its direction. Watch how Euclidean distance changes dramatically while cosine similarity stays perfectly constant.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-scale-invariance" style="height: 420px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Magnitude of Token B:</b>
+            <input type="range" id="scale-magnitude" min="0.3" max="3.0" step="0.05" value="1.0" style="width: 200px; vertical-align: middle;">
+            <span id="scale-mag-val" style="font-weight: bold; color: #3b82f6;">1.0×</span>
+        </label>
+    </div>
+    <div id="scale-invariance-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 500px; margin: 0 auto;"></div>
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>Key insight:</b> As you drag the slider, Token B (the diamond) moves along its direction ray, getting closer or farther from the origin. The <span style="color:#ef4444; font-weight:bold;">Euclidean distance</span> (dashed line) changes dramatically. But the <span style="color:#10b981; font-weight:bold;">cosine similarity</span> (the angle between the vectors) stays <i>perfectly constant</i>. This is why cosine similarity is the standard metric in embedding spaces: it measures <b>what</b> a token means, not <b>how often</b> it was seen during training.
+    </div>
+</section>

@@ -1594,6 +1594,373 @@ function resetMetricTensor() {
     renderMetricTensor();
 }
 
+// ============================================================
+// TRANSLATION INVARIANCE — PARALLELOGRAM LAW
+// ============================================================
+
+const parallelogramState = {
+    currentConcept: 'royalty',
+    points: {
+        'Boy':      [-15, -10],
+        'Girl':     [-15,  10],
+        'Man':      [0,   -10],
+        'Woman':    [0,    10],
+        'Prince':   [12,  -10],
+        'Princess': [12,   10],
+        'King':     [25,  -10],
+        'Queen':    [25,   10],
+    },
+    concepts: {
+        royalty: {
+            label: '👑 Royalty',
+            pairs: [
+                ['Man', 'King'],
+                ['Woman', 'Queen'],
+                ['Boy', 'Prince'],
+                ['Girl', 'Princess']
+            ],
+            color: '#f59e0b',
+            description: 'The "royalty" direction: the same offset transforms commoners into royals, regardless of gender or age.'
+        },
+        gender: {
+            label: '⚤ Gender',
+            pairs: [
+                ['Man', 'Woman'],
+                ['King', 'Queen'],
+                ['Prince', 'Princess'],
+                ['Boy', 'Girl']
+            ],
+            color: '#ec4899',
+            description: 'The "gender" direction: the same offset transforms male tokens into female tokens, regardless of rank or age.'
+        },
+        age: {
+            label: '📅 Age',
+            pairs: [
+                ['Boy', 'Man'],
+                ['Girl', 'Woman'],
+                ['Prince', 'King'],
+                ['Princess', 'Queen']
+            ],
+            color: '#10b981',
+            description: 'The "age/maturity" direction: the same offset transforms young tokens into adult tokens, regardless of gender or rank.'
+        }
+    }
+};
+
+function setParallelogramConcept(concept) {
+    parallelogramState.currentConcept = concept;
+
+    // Update button styles
+    document.querySelectorAll('.parallelogram-btn').forEach(btn => {
+        btn.style.background = '#64748b';
+    });
+    const activeBtn = document.getElementById(`btn-para-${concept}`);
+    if (activeBtn) activeBtn.style.background = '#3b82f6';
+
+    renderParallelogram();
+}
+
+function renderParallelogram() {
+    const plotDiv = document.getElementById('plot-parallelogram');
+    if (!plotDiv) return;
+
+    const st = parallelogramState;
+    const concept = st.concepts[st.currentConcept];
+    const pts = st.points;
+    const traces = [];
+    const annotations = [];
+
+    const tokenColors = {
+        'King': '#f59e0b', 'Queen': '#f59e0b',
+        'Prince': '#10b981', 'Princess': '#10b981',
+        'Man': '#3b82f6', 'Woman': '#3b82f6',
+        'Boy': '#8b5cf6', 'Girl': '#8b5cf6'
+    };
+
+    // --- Draw all tokens ---
+    for (const [word, [x, y]] of Object.entries(pts)) {
+        traces.push({
+            x: [x], y: [y],
+            mode: 'markers+text',
+            text: [word],
+            textposition: 'top center',
+            textfont: { size: 12, color: '#1e293b' },
+            marker: { size: 10, color: tokenColors[word] || '#94a3b8', opacity: 0.9, line: { width: 1, color: '#fff' } },
+            showlegend: false,
+            hovertemplate: `<b>${word}</b><br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
+        });
+    }
+
+    // --- Draw light grid connecting all structural pairs ---
+    const structuralPairs = [
+        ['Boy', 'Girl'], ['Man', 'Woman'], ['Prince', 'Princess'], ['King', 'Queen'],
+        ['Boy', 'Man'], ['Girl', 'Woman'], ['Man', 'King'], ['Woman', 'Queen'],
+        ['Boy', 'Prince'], ['Girl', 'Princess'], ['Prince', 'King'], ['Princess', 'Queen']
+    ];
+    for (const [a, b] of structuralPairs) {
+        traces.push({
+            x: [pts[a][0], pts[b][0]], y: [pts[a][1], pts[b][1]],
+            mode: 'lines',
+            line: { color: 'rgba(203, 213, 225, 0.5)', width: 1 },
+            showlegend: false, hoverinfo: 'skip'
+        });
+    }
+
+    // --- Draw the concept offset arrows ---
+    // Compute the average offset vector for display
+    let avgDx = 0, avgDy = 0;
+    for (const [from, to] of concept.pairs) {
+        avgDx += pts[to][0] - pts[from][0];
+        avgDy += pts[to][1] - pts[from][1];
+    }
+    avgDx /= concept.pairs.length;
+    avgDy /= concept.pairs.length;
+
+    for (let i = 0; i < concept.pairs.length; i++) {
+        const [from, to] = concept.pairs[i];
+        const fromPos = pts[from];
+        const toPos = pts[to];
+
+        // Thick colored arrow for the concept direction
+        annotations.push({
+            ax: fromPos[0], ay: fromPos[1],
+            x: toPos[0], y: toPos[1],
+            axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+            showarrow: true,
+            arrowhead: 2, arrowsize: 1.5, arrowwidth: 4,
+            arrowcolor: concept.color,
+            opacity: 0.85
+        });
+
+        // Label on the first arrow only
+        if (i === 0) {
+            const midX = (fromPos[0] + toPos[0]) / 2;
+            const midY = (fromPos[1] + toPos[1]) / 2;
+            annotations.push({
+                x: midX, y: midY + 3,
+                text: `<b>${concept.label}</b><br>Δ = [${avgDx.toFixed(0)}, ${avgDy.toFixed(0)}]`,
+                showarrow: false,
+                font: { size: 12, color: concept.color },
+                bgcolor: 'rgba(255,255,255,0.85)',
+                borderpad: 4
+            });
+        }
+    }
+
+    // --- Draw parallelogram shading for the first two pairs ---
+    if (concept.pairs.length >= 2) {
+        const [a1, b1] = concept.pairs[0];
+        const [a2, b2] = concept.pairs[1];
+        traces.push({
+            x: [pts[a1][0], pts[b1][0], pts[b2][0], pts[a2][0], pts[a1][0]],
+            y: [pts[a1][1], pts[b1][1], pts[b2][1], pts[a2][1], pts[a1][1]],
+            mode: 'lines',
+            fill: 'toself',
+            fillcolor: concept.color + '15',
+            line: { color: concept.color + '40', width: 2, dash: 'dot' },
+            showlegend: false, hoverinfo: 'skip'
+        });
+    }
+
+    // Update description
+    const statusEl = document.getElementById('parallelogram-status');
+    if (statusEl) {
+        const pairsStr = concept.pairs.map(([a, b]) => `${a} → ${b}`).join(', ');
+        statusEl.innerHTML = `<b>${concept.description}</b><br>Pairs: ${pairsStr}. All arrows are parallel and equal in length — the offset vector <code>Δ = [${avgDx.toFixed(0)}, ${avgDy.toFixed(0)}]</code> is the same everywhere.`;
+    }
+
+    const layout = {
+        margin: { l: 40, r: 40, b: 40, t: 20 },
+        showlegend: false,
+        xaxis: { range: [-25, 35], zeroline: false, showgrid: true, gridcolor: '#f1f5f9' },
+        yaxis: { range: [-20, 22], zeroline: false, showgrid: true, gridcolor: '#f1f5f9', scaleanchor: 'x' },
+        annotations: annotations,
+        plot_bgcolor: '#fff'
+    };
+
+    Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+}
+
+// ============================================================
+// SCALE INVARIANCE VISUALIZATION
+// ============================================================
+
+const scaleInvarianceState = {
+    tokenA: { label: 'King', angle: 30, magnitude: 1.0, color: '#f59e0b' },
+    tokenB: { label: 'Monarch', angle: 30, magnitude: 1.0, color: '#3b82f6' },  // Same direction!
+    tokenC: { label: 'Cat', angle: 150, magnitude: 1.0, color: '#10b981' },     // Different direction
+    baseLength: 8
+};
+
+function renderScaleInvariance() {
+    const plotDiv = document.getElementById('plot-scale-invariance');
+    if (!plotDiv) return;
+
+    const st = scaleInvarianceState;
+    const slider = document.getElementById('scale-magnitude');
+    const magVal = document.getElementById('scale-mag-val');
+    const statsDiv = document.getElementById('scale-invariance-stats');
+
+    const mag = parseFloat(slider.value);
+    st.tokenB.magnitude = mag;
+    magVal.textContent = mag.toFixed(2) + '×';
+
+    const radA = st.tokenA.angle * Math.PI / 180;
+    const radB = st.tokenB.angle * Math.PI / 180;
+    const radC = st.tokenC.angle * Math.PI / 180;
+
+    const ax = st.baseLength * st.tokenA.magnitude * Math.cos(radA);
+    const ay = st.baseLength * st.tokenA.magnitude * Math.sin(radA);
+    const bx = st.baseLength * st.tokenB.magnitude * Math.cos(radB);
+    const by = st.baseLength * st.tokenB.magnitude * Math.sin(radB);
+    const cx = st.baseLength * st.tokenC.magnitude * Math.cos(radC);
+    const cy = st.baseLength * st.tokenC.magnitude * Math.sin(radC);
+
+    // Compute metrics
+    const eucAB = Math.sqrt((ax - bx) ** 2 + (ay - by) ** 2);
+    const eucAC = Math.sqrt((ax - cx) ** 2 + (ay - cy) ** 2);
+    const dotAB = ax * bx + ay * by;
+    const dotAC = ax * cx + ay * cy;
+    const magA = Math.sqrt(ax * ax + ay * ay);
+    const magB = Math.sqrt(bx * bx + by * by);
+    const magC = Math.sqrt(cx * cx + cy * cy);
+    const cosAB = dotAB / (magA * magB || 1);
+    const cosAC = dotAC / (magA * magC || 1);
+
+    // Direction ray for Token B
+    const rayLen = st.baseLength * 3.5;
+    const rayX = rayLen * Math.cos(radB);
+    const rayY = rayLen * Math.sin(radB);
+
+    const traces = [
+        // Direction ray (shows the line Token B moves along)
+        {
+            x: [0, rayX], y: [0, rayY],
+            mode: 'lines',
+            line: { color: 'rgba(59, 130, 246, 0.15)', width: 12 },
+            showlegend: false, hoverinfo: 'skip'
+        },
+        // Vector A
+        {
+            x: [0, ax], y: [0, ay],
+            mode: 'lines+markers+text',
+            text: ['', st.tokenA.label],
+            textposition: 'top right',
+            textfont: { size: 13, color: st.tokenA.color, weight: 'bold' },
+            line: { color: st.tokenA.color, width: 4 },
+            marker: { size: [4, 12], color: st.tokenA.color },
+            showlegend: false,
+            hovertemplate: `<b>${st.tokenA.label}</b><br>Magnitude: ${st.tokenA.magnitude.toFixed(2)}<extra></extra>`
+        },
+        // Vector B (the one being scaled)
+        {
+            x: [0, bx], y: [0, by],
+            mode: 'lines+markers+text',
+            text: ['', st.tokenB.label],
+            textposition: 'top right',
+            textfont: { size: 13, color: st.tokenB.color, weight: 'bold' },
+            line: { color: st.tokenB.color, width: 4 },
+            marker: { size: [4, 14], color: st.tokenB.color, symbol: ['circle', 'diamond'] },
+            showlegend: false,
+            hovertemplate: `<b>${st.tokenB.label}</b><br>Magnitude: ${mag.toFixed(2)}×<extra></extra>`
+        },
+        // Vector C (reference — different direction)
+        {
+            x: [0, cx], y: [0, cy],
+            mode: 'lines+markers+text',
+            text: ['', st.tokenC.label],
+            textposition: 'top left',
+            textfont: { size: 13, color: st.tokenC.color, weight: 'bold' },
+            line: { color: st.tokenC.color, width: 3, dash: 'dot' },
+            marker: { size: [4, 10], color: st.tokenC.color },
+            showlegend: false,
+            hovertemplate: `<b>${st.tokenC.label}</b><br>Different direction entirely<extra></extra>`
+        },
+        // Euclidean distance line A↔B
+        {
+            x: [ax, bx], y: [ay, by],
+            mode: 'lines',
+            line: { color: '#ef4444', width: 2.5, dash: 'dash' },
+            showlegend: false,
+            hovertemplate: `Euclidean(${st.tokenA.label}, ${st.tokenB.label}): ${eucAB.toFixed(2)}<extra></extra>`
+        }
+    ];
+
+    // Angle arc between A and B (should stay constant)
+    const arcRadius = 2.5;
+    const arcSteps = 30;
+    const arcX = [0], arcY = [0];
+    const startAngle = Math.min(radA, radB);
+    const endAngle = Math.max(radA, radB);
+    for (let i = 0; i <= arcSteps; i++) {
+        const t = startAngle + (i / arcSteps) * (endAngle - startAngle);
+        arcX.push(arcRadius * Math.cos(t));
+        arcY.push(arcRadius * Math.sin(t));
+    }
+    arcX.push(0);
+    arcY.push(0);
+
+    // Only show arc if A and B have different angles (they don't here, but keeping for robustness)
+    if (Math.abs(st.tokenA.angle - st.tokenB.angle) > 0.5) {
+        traces.push({
+            x: arcX, y: arcY,
+            mode: 'lines', fill: 'toself',
+            fillcolor: 'rgba(16, 185, 129, 0.15)',
+            line: { color: '#10b981', width: 2 },
+            showlegend: false, hoverinfo: 'skip'
+        });
+    }
+
+    const annotations = [
+        {
+            x: (ax + bx) / 2 + 0.5, y: (ay + by) / 2 + 0.5,
+            text: `<b>Euclidean: ${eucAB.toFixed(2)}</b>`,
+            showarrow: false,
+            font: { size: 11, color: '#ef4444' },
+            bgcolor: 'rgba(255,255,255,0.85)', borderpad: 3
+        }
+    ];
+
+    // If same direction, show "θ = 0°" label
+    if (Math.abs(st.tokenA.angle - st.tokenB.angle) < 1) {
+        annotations.push({
+            x: 3.5 * Math.cos(radA), y: 3.5 * Math.sin(radA) + 1.2,
+            text: `<b>θ = 0° → cos = ${cosAB.toFixed(4)}</b>`,
+            showarrow: false,
+            font: { size: 12, color: '#10b981' },
+            bgcolor: 'rgba(255,255,255,0.85)', borderpad: 3
+        });
+    }
+
+    const layout = {
+        margin: { l: 40, r: 40, b: 40, t: 20 },
+        showlegend: false,
+        xaxis: { range: [-20, 30], zeroline: true, zerolinecolor: '#e2e8f0', showgrid: true, gridcolor: '#f1f5f9' },
+        yaxis: { range: [-5, 22], zeroline: true, zerolinecolor: '#e2e8f0', showgrid: true, gridcolor: '#f1f5f9', scaleanchor: 'x' },
+        annotations: annotations,
+        plot_bgcolor: '#fff'
+    };
+
+    Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+
+    // Update stats
+    if (statsDiv) {
+        statsDiv.innerHTML = `
+            <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+                <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Cosine Similarity</div>
+                <div style="font-size: 1.6em; font-weight: bold; color: #10b981;">${cosAB.toFixed(4)}</div>
+                <div style="font-size: 0.75em; color: #94a3b8; margin-top: 2px;">Direction match — constant!</div>
+            </div>
+            <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+                <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Euclidean Distance</div>
+                <div style="font-size: 1.6em; font-weight: bold; color: #ef4444;">${eucAB.toFixed(2)}</div>
+                <div style="font-size: 0.75em; color: #94a3b8; margin-top: 2px;">Magnitude-dependent — changes!</div>
+            </div>
+        `;
+    }
+}
+
+
 function loadEmbeddingModule () {
 	const tasks = [
 		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
@@ -1671,4 +2038,9 @@ function loadEmbeddingModule () {
 	renderCrossLingualFrame();
 
 	renderMetricTensor();
+
+	const slider = document.getElementById('scale-magnitude');
+	if (slider) {
+		slider.addEventListener('input', renderScaleInvariance);
+	}
 }
