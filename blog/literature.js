@@ -1461,4 +1461,33 @@ window.bibData = {
 		author: "Emily M. Bender, Timnit Gebru, Angelina McMillan-Major, Shmargaret Shmitchell",
 		year: 2021
 	},
+
+
+
+
+	"mikolov2013exploiting": {
+		title: "Exploiting Similarities among Languages for Machine Translation",
+		author: "Tomas Mikolov, Quoc V. Le, Ilya Sutskever",
+		year: 2013,
+		url: "https://arxiv.org/abs/1309.4168"
+	},
+	"conneau2018word": {
+		title: "Word Translation Without Parallel Data",
+		author: "Alexis Conneau, Guillaume Lample, Marc'Aurelio Ranzato, Ludovic Denoyer, Hervé Jégou",
+		year: 2018,
+		url: "https://arxiv.org/abs/1710.04087",
+		alternativetitle: "MUSE"
+	},
+	"smith2017orthogonal": {
+		title: "Offline bilingual word vectors, orthogonal transformations and the inverted softmax",
+		author: "Samuel L. Smith, David H.P. Turban, Steven Hamblin, Nils Y. Hammerla",
+		year: 2017,
+		url: "https://arxiv.org/abs/1702.03859"
+	},
+	"elhage2021mathematical": {
+		title: "A Mathematical Framework for Transformer Circuits",
+		author: "Nelson Elhage, Neel Nanda, Catherine Olsson, Tom Henighan, Nicholas Joseph, Ben Mann, Amanda Askell, Yuntao Bai, Anna Chen, Tom Conerly, Nova DasSarma, Dawn Drain, Deep Ganguli, Tom Goldstein, Jared Kaplan, Jackson Kernion, Liane Lovitt, Kamal Ndousse, Chris Olah",
+		year: 2021,
+		url: "https://transformer-circuits.pub/2021/framework/index.html"
+	}
 };
