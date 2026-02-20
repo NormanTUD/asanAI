@@ -2039,7 +2039,10 @@ function loadEmbeddingModule () {
 
 	renderMetricTensor();
 
+	setParallelogramConcept('royalty');
+
 	const slider = document.getElementById('scale-magnitude');
+	renderScaleInvariance();
 	if (slider) {
 		slider.addEventListener('input', renderScaleInvariance);
 	}
