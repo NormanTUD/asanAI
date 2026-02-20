@@ -814,12 +814,12 @@ function renderRotationalInvariance() {
 	// --- Labels for the two spaces ---
 	const annotations = [
 		{
-			x: -20, y: 18, text: '<b>English</b><br>(Original orientation)',
+			x: -20, y: 18, text: '<b>English</b>',
 			showarrow: false, font: { size: 13, color: '#475569' },
 			bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
 		},
 		{
-			x: 25, y: 28, text: '<b>Japanese</b><br>(Rotated 55°)',
+			x: 25, y: 28, text: '<b>Japanese</b>',
 			showarrow: false, font: { size: 13, color: '#475569' },
 			bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
 		},
