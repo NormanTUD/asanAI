@@ -278,19 +278,9 @@ The person was eating the *juicy* **apple**.
 * **The Context:** "I ate a juicy **apple**."
 * **The Pull:** The word "juicy" exerts a high attention score.
 * **The Result:** The vector for "apple" is pulled toward the *Fruit* coordinate, away from the *iPhone* coordinate.
-
-## Example 2: The "Key" Shift
 </div>
-<div id="key-shift-plot" style="height:400px;"></div>
 
-<div class="md" style="padding: 15px; border-left: 5px solid #2e7d32; background-color: #f9f9f9; font-style: italic; margin-bottom: 20px;">
-The pianist played the entire piece of **music** in the wrong **key**.
-
-* **Neutral State:** "Key" sits between *Music*, *Security*, and *Data*.
-* **The Context:** "The pianist hit the wrong **key**."
-* **The Pull:** The word "pianist" creates a mathematical "handshake" with "key".
-* **The Result:** The final output vector ($\mathbf{z}$) for "key" is now 90% "Music" and 10% "Security," resolving its identity crisis in real-time.
-
+<div class="md">
 ## The Bottom Line
 Mathematically, the "contextualized" word is just a weighted average of the information (Values) around it:
 $$\mathbf{z}_{i} = \sum_{j} \alpha_{i,j} \mathbf{v}_j$$
