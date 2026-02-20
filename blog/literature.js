@@ -1494,7 +1494,7 @@ window.bibData = {
 		title: "On the Limitations of Unsupervised Bilingual Dictionary Induction",
 		author: "Anders Søgaard, Sebastian Ruder, Ivan Vulić",
 		year: 2018,
-		url: "https://arxiv.org/abs/1805.10680"
+		url: "https://arxiv.org/abs/1805.03620"
 	},
 	"bengio2013representation": {
 		title: "Representation Learning: A Review and New Perspectives",
