@@ -173,6 +173,30 @@ This is also why the Attention mechanism is so central. Attention computes pairw
 <div id="plot-rotational-invariance" style="height: 500px;"></div>
 
 <div class="md">
+### Cross-Lingual Alignment: Watching the Rotation
+
+The static plot above shows two language spaces side by side. But the real magic is in the **transformation itself**. Below, you can watch Language B's embedding space smoothly rotate and scale to align with Language A. This is exactly what algorithms like Procrustes alignment do: they find the optimal rotation matrix $\mathbf{W}$ such that $\mathbf{X}_B \mathbf{W} \approx \mathbf{X}_A$, minimizing the distance between corresponding word pairs across languages (\cite{smith2017orthogonal}, \cite{conneau2018word}).
+
+Click **"Align"** to animate the transformation. Notice how the internal structure — the distances between King/Queen, Man/Woman — is perfectly preserved. Only the orientation changes. This is rotational invariance made visible.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-crosslingual-align" style="height: 500px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
+        <button id="btn-align" onclick="animateCrossLingualAlignment()" style="background: #3b82f6; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">▶ Align Languages</button>
+        <button id="btn-reset-align" onclick="resetCrossLingualAlignment()" style="background: #64748b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">↺ Reset</button>
+        <span id="align-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready — Language B is rotated 55° from Language A.</span>
+    </div>
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> Language A (●&nbsp;circles) and Language B (◆&nbsp;diamonds) encode the same concepts in different orientations. 
+        The <span style="color:#3b82f6; font-weight:bold;">blue arrows</span> show the <code>Man → King → Queen</code> path in Language A; 
+        the <span style="color:#10b981; font-weight:bold;">green arrows</span> show the same path in Language B. 
+        When you click <b>Align</b>, Language B is smoothly rotated to match Language A — the diamonds slide into position next to their circle counterparts. 
+        The internal geometry (all distances and angles between words) is <i>perfectly preserved</i>.
+    </div>
+</section>
+
+<div class="md">
 ## The Limits of Isomorphism
 
 While the cross-lingual alignment story is compelling, the isomorphism between language embedding spaces is not perfect. The alignment quality degrades significantly for typologically distant language pairs, English to Japanese, for instance, is far harder to align than English to Spanish (\cite{sogaard2018limitations}). This suggests that the "universal geometric structure of human concepts" has real limits. Languages don't just rotate the same space; they can **warp** it. Cultures that carve up semantic space differently, languages with different color term boundaries, or kinship systems, produce embedding geometries that are locally similar but globally distorted. The rotation-plus-scaling model is a first-order approximation, not the full story.

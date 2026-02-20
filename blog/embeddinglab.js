@@ -1035,6 +1035,256 @@ function renderManifoldVisualization() {
 	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
 }
 
+// ============================================================
+// CROSS-LINGUAL ALIGNMENT ANIMATION
+// ============================================================
+
+const crossLingualState = {
+	originalPoints: {
+		'King':     [20, -8],
+		'Queen':    [20,  8],
+		'Man':      [5,  -8],
+		'Woman':    [5,   8],
+		'Prince':   [12, -8],
+		'Princess': [12,  8],
+	},
+	targetAngleDeg: 55,
+	offsetX: 25,
+	offsetY: 0,
+	currentAngleDeg: 55,   // current animated angle of Language B
+	currentOffsetX: 25,
+	currentOffsetY: 0,
+	animating: false,
+	aligned: false
+};
+
+function clRotate2D(points, angleDeg, offsetX, offsetY) {
+	const rad = angleDeg * Math.PI / 180;
+	const result = {};
+	for (const [key, [x, y]] of Object.entries(points)) {
+		result[key] = [
+			x * Math.cos(rad) - y * Math.sin(rad) + offsetX,
+			x * Math.sin(rad) + y * Math.cos(rad) + offsetY
+		];
+	}
+	return result;
+}
+
+function renderCrossLingualFrame() {
+	const plotDiv = document.getElementById('plot-crosslingual-align');
+	if (!plotDiv) return;
+
+	const st = crossLingualState;
+	const langA = clRotate2D(st.originalPoints, 0, -20, 0);
+	const langB = clRotate2D(st.originalPoints, st.currentAngleDeg, st.currentOffsetX, st.currentOffsetY);
+
+	const traces = [];
+	const colors = {
+		'King': '#f59e0b', 'Queen': '#f59e0b',
+		'Man': '#3b82f6', 'Woman': '#3b82f6',
+		'Prince': '#10b981', 'Princess': '#10b981'
+	};
+
+	// Language A points (circles)
+	for (const [word, [x, y]] of Object.entries(langA)) {
+		traces.push({
+			x: [x], y: [y],
+			mode: 'markers+text', text: [word], textposition: 'top center',
+			marker: { size: 11, color: colors[word], opacity: 0.9 },
+			showlegend: false,
+			hovertemplate: `<b>${word}</b> (Language A)<br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
+		});
+	}
+
+	// Language B points (diamonds)
+	for (const [word, [x, y]] of Object.entries(langB)) {
+		traces.push({
+			x: [x], y: [y],
+			mode: 'markers+text', text: [word], textposition: 'bottom center',
+			marker: { size: 11, color: colors[word], opacity: 0.9, symbol: 'diamond' },
+			showlegend: false,
+			hovertemplate: `<b>${word}</b> (Language B)<br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
+		});
+	}
+
+	// Internal structure lines (gender pairs)
+	const pairs = [['King','Queen'], ['Man','Woman'], ['Prince','Princess']];
+	for (const [a, b] of pairs) {
+		traces.push({
+			x: [langA[a][0], langA[b][0]], y: [langA[a][1], langA[b][1]],
+			mode: 'lines', line: { color: '#94a3b8', width: 1.5, dash: 'dot' },
+			showlegend: false, hoverinfo: 'skip'
+		});
+		traces.push({
+			x: [langB[a][0], langB[b][0]], y: [langB[a][1], langB[b][1]],
+			mode: 'lines', line: { color: '#94a3b8', width: 1.5, dash: 'dot' },
+			showlegend: false, hoverinfo: 'skip'
+		});
+	}
+
+	// Power axis lines
+	const powerPairs = [['Man','Prince'], ['Prince','King'], ['Woman','Princess'], ['Princess','Queen']];
+	for (const [a, b] of powerPairs) {
+		traces.push({
+			x: [langA[a][0], langA[b][0]], y: [langA[a][1], langA[b][1]],
+			mode: 'lines', line: { color: '#cbd5e1', width: 1 },
+			showlegend: false, hoverinfo: 'skip'
+		});
+		traces.push({
+			x: [langB[a][0], langB[b][0]], y: [langB[a][1], langB[b][1]],
+			mode: 'lines', line: { color: '#cbd5e1', width: 1 },
+			showlegend: false, hoverinfo: 'skip'
+		});
+	}
+
+	// Translation path arrows (Man → King → Queen)
+	const annotations = [];
+	const arrowPairs = [['Man', 'King'], ['King', 'Queen']];
+	for (const [a, b] of arrowPairs) {
+		// Language A arrows (blue)
+		annotations.push({
+			ax: langA[a][0], ay: langA[a][1],
+			x: langA[b][0], y: langA[b][1],
+			axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+			showarrow: true, arrowhead: 2, arrowsize: 1.5, arrowwidth: 3, arrowcolor: '#3b82f6'
+		});
+		// Language B arrows (green)
+		annotations.push({
+			ax: langB[a][0], ay: langB[a][1],
+			x: langB[b][0], y: langB[b][1],
+			axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+			showarrow: true, arrowhead: 2, arrowsize: 1.5, arrowwidth: 3, arrowcolor: '#10b981'
+		});
+	}
+
+	// Connecting lines between corresponding words (show alignment)
+	if (st.currentAngleDeg < 50) {
+		const opacity = Math.max(0, 1 - st.currentAngleDeg / 50);
+		for (const word of Object.keys(langA)) {
+			traces.push({
+				x: [langA[word][0], langB[word][0]],
+				y: [langA[word][1], langB[word][1]],
+				mode: 'lines',
+				line: { color: `rgba(139, 92, 246, ${opacity * 0.5})`, width: 1.5, dash: 'dash' },
+				showlegend: false, hoverinfo: 'skip'
+			});
+		}
+	}
+
+	// Labels
+	const labelAngle = st.currentAngleDeg;
+	annotations.push({
+		x: -20, y: 18,
+		text: '<b>Language A</b><br>(Reference)',
+		showarrow: false, font: { size: 13, color: '#475569' },
+		bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
+	});
+	annotations.push({
+		x: st.currentOffsetX, y: 28,
+		text: `<b>Language B</b><br>(Rotated ${Math.round(labelAngle)}°)`,
+		showarrow: false, font: { size: 13, color: '#475569' },
+		bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
+	});
+
+	const layout = {
+		margin: { l: 40, r: 40, b: 40, t: 20 },
+		showlegend: false,
+		xaxis: { range: [-45, 50], zeroline: false, showgrid: true, gridcolor: '#f1f5f9' },
+		yaxis: { range: [-30, 35], zeroline: false, showgrid: true, gridcolor: '#f1f5f9', scaleanchor: 'x' },
+		annotations: annotations,
+		plot_bgcolor: '#fff'
+	};
+
+	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+}
+
+function animateCrossLingualAlignment() {
+	const st = crossLingualState;
+	if (st.animating) return;
+
+	if (st.aligned) {
+		// Already aligned — do nothing, user should reset first
+		return;
+	}
+
+	st.animating = true;
+	const statusEl = document.getElementById('align-status');
+	const btnAlign = document.getElementById('btn-align');
+	btnAlign.disabled = true;
+	btnAlign.style.opacity = '0.5';
+
+	const startAngle = st.currentAngleDeg;
+	const startOffsetX = st.currentOffsetX;
+	const startOffsetY = st.currentOffsetY;
+
+	// Target: angle 0, offset to -20 (same as Language A)
+	const targetAngle = 0;
+	const targetOffsetX = -20;
+	const targetOffsetY = 0;
+
+	const duration = 2000; // ms
+	const startTime = performance.now();
+
+	function easeInOutCubic(t) {
+		return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+	}
+
+	function step(now) {
+		const elapsed = now - startTime;
+		const rawT = Math.min(elapsed / duration, 1);
+		const t = easeInOutCubic(rawT);
+
+		st.currentAngleDeg = startAngle + (targetAngle - startAngle) * t;
+		st.currentOffsetX = startOffsetX + (targetOffsetX - startOffsetX) * t;
+		st.currentOffsetY = startOffsetY + (targetOffsetY - startOffsetY) * t;
+
+		if (statusEl) {
+			statusEl.textContent = `Aligning... rotation: ${Math.round(st.currentAngleDeg)}° → 0°`;
+		}
+
+		renderCrossLingualFrame();
+
+		if (rawT < 1) {
+			requestAnimationFrame(step);
+		} else {
+			st.currentAngleDeg = 0;
+			st.currentOffsetX = -20;
+			st.currentOffsetY = 0;
+			st.animating = false;
+			st.aligned = true;
+			btnAlign.disabled = true;
+			if (statusEl) {
+				statusEl.innerHTML = '✓ <b>Aligned!</b> Both languages now share the same coordinate frame. Internal geometry is preserved.';
+				statusEl.style.color = '#10b981';
+			}
+			renderCrossLingualFrame();
+		}
+	}
+
+	requestAnimationFrame(step);
+}
+
+function resetCrossLingualAlignment() {
+	const st = crossLingualState;
+	if (st.animating) return;
+
+	st.currentAngleDeg = st.targetAngleDeg;
+	st.currentOffsetX = st.offsetX;
+	st.currentOffsetY = st.offsetY;
+	st.aligned = false;
+
+	const btnAlign = document.getElementById('btn-align');
+	const statusEl = document.getElementById('align-status');
+	btnAlign.disabled = false;
+	btnAlign.style.opacity = '1';
+	if (statusEl) {
+		statusEl.textContent = 'Ready — Language B is rotated 55° from Language A.';
+		statusEl.style.color = '#64748b';
+	}
+
+	renderCrossLingualFrame();
+}
+
 function loadEmbeddingModule () {
 	const tasks = [
 		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
@@ -1106,4 +1356,6 @@ function loadEmbeddingModule () {
 	renderRotationalInvariance();
 
 	renderManifoldVisualization();
+
+	renderCrossLingualFrame();
 }
