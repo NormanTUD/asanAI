@@ -703,6 +703,16 @@ function renderRotationalInvariance() {
 		'Princess':[12,  8],
 	};
 
+	// Japanese labels for Language B
+	const japaneseLabels = {
+		'King':     '王様',
+		'Queen':    '女王',
+		'Man':      '男',
+		'Woman':    '女',
+		'Prince':   '王子',
+		'Princess': '王女',
+	};
+
 	// --- Rotation function ---
 	function rotate2D(points, angleDeg, offsetX, offsetY) {
 		const rad = angleDeg * Math.PI / 180;
@@ -716,9 +726,9 @@ function renderRotationalInvariance() {
 		return result;
 	}
 
-	// "Language A" — original orientation
+	// "English" — original orientation
 	const langA = rotate2D(originalPoints, 0, -20, 0);
-	// "Language B" — rotated by 55°, shifted right
+	// "Japanese" — rotated by 55°, shifted right
 	const langB = rotate2D(originalPoints, 55, 25, 0);
 
 	const traces = [];
@@ -728,7 +738,7 @@ function renderRotationalInvariance() {
 		'Prince': '#10b981', 'Princess': '#10b981'
 	};
 
-	// --- Draw Language A points ---
+	// --- Draw English points ---
 	for (const [word, [x, y]] of Object.entries(langA)) {
 		traces.push({
 			x: [x], y: [y],
@@ -737,24 +747,24 @@ function renderRotationalInvariance() {
 			textposition: 'top center',
 			marker: { size: 10, color: colors[word], opacity: 0.9 },
 			showlegend: false,
-			hovertemplate: `<b>${word}</b> (Language A)<br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
+			hovertemplate: `<b>${word}</b> (English)<br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
 		});
 	}
 
-	// --- Draw Language B points ---
+	// --- Draw Japanese points (with Japanese labels) ---
 	for (const [word, [x, y]] of Object.entries(langB)) {
 		traces.push({
 			x: [x], y: [y],
 			mode: 'markers+text',
-			text: [word],
+			text: [japaneseLabels[word]],
 			textposition: 'top center',
 			marker: { size: 10, color: colors[word], opacity: 0.9, symbol: 'diamond' },
 			showlegend: false,
-			hovertemplate: `<b>${word}</b> (Language B)<br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
+			hovertemplate: `<b>${japaneseLabels[word]}</b> (Japanese)<br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
 		});
 	}
 
-	// --- Draw internal structure lines for Language A (Gender pairs) ---
+	// --- Draw internal structure lines for English (Gender pairs) ---
 	const pairs = [['King','Queen'], ['Man','Woman'], ['Prince','Princess']];
 	for (const [a, b] of pairs) {
 		traces.push({
@@ -787,13 +797,13 @@ function renderRotationalInvariance() {
 	// --- Draw a "translation path" arrow from Lang A King to Lang B King ---
 	const translationPairs = [['Man', 'King'], ['King', 'Queen']];
 	for (const [a, b] of translationPairs) {
-		// Path in Language A (solid blue arrow)
+		// Path in English (solid blue arrow)
 		traces.push({
 			x: [langA[a][0], langA[b][0]], y: [langA[a][1], langA[b][1]],
 			mode: 'lines', line: { color: '#3b82f6', width: 3 },
 			showlegend: false, hoverinfo: 'skip'
 		});
-		// Corresponding path in Language B (solid green arrow)
+		// Corresponding path in Japanese (solid green arrow)
 		traces.push({
 			x: [langB[a][0], langB[b][0]], y: [langB[a][1], langB[b][1]],
 			mode: 'lines', line: { color: '#10b981', width: 3 },
@@ -804,12 +814,12 @@ function renderRotationalInvariance() {
 	// --- Labels for the two spaces ---
 	const annotations = [
 		{
-			x: -20, y: 18, text: '<b>Language A</b><br>(Original orientation)',
+			x: -20, y: 18, text: '<b>English</b><br>(Original orientation)',
 			showarrow: false, font: { size: 13, color: '#475569' },
 			bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
 		},
 		{
-			x: 25, y: 28, text: '<b>Language B</b><br>(Rotated 55°)',
+			x: 25, y: 28, text: '<b>Japanese</b><br>(Rotated 55°)',
 			showarrow: false, font: { size: 13, color: '#475569' },
 			bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
 		},
@@ -1078,6 +1088,16 @@ function renderCrossLingualFrame() {
 	const langA = clRotate2D(st.originalPoints, 0, -20, 0);
 	const langB = clRotate2D(st.originalPoints, st.currentAngleDeg, st.currentOffsetX, st.currentOffsetY);
 
+	// Japanese labels for Language B
+	const japaneseLabels = {
+		'King':     '王様',
+		'Queen':    '女王',
+		'Man':      '男',
+		'Woman':    '女',
+		'Prince':   '王子',
+		'Princess': '王女',
+	};
+
 	const traces = [];
 	const colors = {
 		'King': '#f59e0b', 'Queen': '#f59e0b',
@@ -1085,25 +1105,25 @@ function renderCrossLingualFrame() {
 		'Prince': '#10b981', 'Princess': '#10b981'
 	};
 
-	// Language A points (circles)
+	// English points (circles)
 	for (const [word, [x, y]] of Object.entries(langA)) {
 		traces.push({
 			x: [x], y: [y],
 			mode: 'markers+text', text: [word], textposition: 'top center',
 			marker: { size: 11, color: colors[word], opacity: 0.9 },
 			showlegend: false,
-			hovertemplate: `<b>${word}</b> (Language A)<br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
+			hovertemplate: `<b>${word}</b> (English)<br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
 		});
 	}
 
-	// Language B points (diamonds)
+	// Japanese points (diamonds, with Japanese labels)
 	for (const [word, [x, y]] of Object.entries(langB)) {
 		traces.push({
 			x: [x], y: [y],
-			mode: 'markers+text', text: [word], textposition: 'bottom center',
+			mode: 'markers+text', text: [japaneseLabels[word]], textposition: 'bottom center',
 			marker: { size: 11, color: colors[word], opacity: 0.9, symbol: 'diamond' },
 			showlegend: false,
-			hovertemplate: `<b>${word}</b> (Language B)<br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
+			hovertemplate: `<b>${japaneseLabels[word]}</b> (Japanese)<br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
 		});
 	}
 
@@ -1141,14 +1161,14 @@ function renderCrossLingualFrame() {
 	const annotations = [];
 	const arrowPairs = [['Man', 'King'], ['King', 'Queen']];
 	for (const [a, b] of arrowPairs) {
-		// Language A arrows (blue)
+		// English arrows (blue)
 		annotations.push({
 			ax: langA[a][0], ay: langA[a][1],
 			x: langA[b][0], y: langA[b][1],
 			axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
 			showarrow: true, arrowhead: 2, arrowsize: 1.5, arrowwidth: 3, arrowcolor: '#3b82f6'
 		});
-		// Language B arrows (green)
+		// Japanese arrows (green)
 		annotations.push({
 			ax: langB[a][0], ay: langB[a][1],
 			x: langB[b][0], y: langB[b][1],
@@ -1175,13 +1195,13 @@ function renderCrossLingualFrame() {
 	const labelAngle = st.currentAngleDeg;
 	annotations.push({
 		x: -20, y: 18,
-		text: '<b>Language A</b><br>(Reference)',
+		text: '<b>English</b><br>(Reference)',
 		showarrow: false, font: { size: 13, color: '#475569' },
 		bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
 	});
 	annotations.push({
 		x: st.currentOffsetX, y: 28,
-		text: `<b>Language B</b><br>(Rotated ${Math.round(labelAngle)}°)`,
+		text: `<b>Japanese</b><br>(Rotated ${Math.round(labelAngle)}°)`,
 		showarrow: false, font: { size: 13, color: '#475569' },
 		bgcolor: 'rgba(248,250,252,0.8)', borderpad: 4
 	});
