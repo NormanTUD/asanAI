@@ -70,7 +70,7 @@ The challenge of processing text in parallel (instead of word-by-word like older
 
 ## Why Sinusoidal Positional Encodings Work: A Fourier Perspective
 
-Each dimension pair $(2i, 2i+1)$ in the positional encoding is a **sine cosine pair at a specific frequency**, exactly one term in a Fourier series [[12]]:
+Each dimension pair $(2i, 2i+1)$ in the positional encoding is a **sine cosine pair at a specific frequency**, exactly one term in a Fourier series:
 
 $$\text{PE}_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right), \quad \text{PE}_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
 
@@ -88,7 +88,7 @@ A fixed offset $k$ is a **fixed rotation matrix** independent of $\text{pos}$. T
 
 ### The Binary Clock Analogy
 
-The encoding is a **smooth, continuous version of binary counting** [[12]]:
+The encoding is a **smooth, continuous version of binary counting**:
 
 - **Dim 0, 1** (high freq) flips fast like the least significant bit
 - **Dim 2, 3** (low freq) barely moves like the most significant bit
