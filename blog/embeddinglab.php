@@ -175,7 +175,7 @@ This is also why the Attention mechanism is so central. Attention computes pairw
 <div class="md">
 ### Cross-Lingual Alignment: Watching the Rotation
 
-The static plot above shows two language spaces side by side. But the real magic is in the **transformation itself**. Below, you can watch Language B's embedding space smoothly rotate and scale to align with Language A. This is exactly what algorithms like Procrustes alignment do: they find the optimal rotation matrix $\mathbf{W}$ such that $\mathbf{X}_B \mathbf{W} \approx \mathbf{X}_A$, minimizing the distance between corresponding word pairs across languages (\cite{smith2017orthogonal}, \cite{conneau2018word}).
+The static plot above shows two language spaces side by side. But the real magic is in the **transformation itself**. Below, you can watch Japanese's embedding space smoothly rotate and scale to align with English. This is exactly what algorithms like Procrustes alignment do: they find the optimal rotation matrix $\mathbf{W}$ such that $\mathbf{X}_B \mathbf{W} \approx \mathbf{X}_A$, minimizing the distance between corresponding word pairs across languages (\cite{smith2017orthogonal}, \cite{conneau2018word}).
 
 Click **"Align"** to animate the transformation. Notice how the internal structure, the distances between King/Queen, Man/Woman, is perfectly preserved. Only the orientation changes. This is rotational invariance made visible.
 </div>
@@ -185,13 +185,13 @@ Click **"Align"** to animate the transformation. Notice how the internal structu
     <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
         <button id="btn-align" onclick="animateCrossLingualAlignment()" style="background: #3b82f6; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">▶ Align Languages</button>
         <button id="btn-reset-align" onclick="resetCrossLingualAlignment()" style="background: #64748b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">↺ Reset</button>
-        <span id="align-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready, Language B is rotated 55° from Language A.</span>
+        <span id="align-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready, Japanese is rotated 55° from English.</span>
     </div>
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
-        <b>What you're seeing:</b> Language A (●&nbsp;circles) and Language B (◆&nbsp;diamonds) encode the same concepts in different orientations. 
-        The <span style="color:#3b82f6; font-weight:bold;">blue arrows</span> show the <code>Man → King → Queen</code> path in Language A; 
-        the <span style="color:#10b981; font-weight:bold;">green arrows</span> show the same path in Language B. 
-        When you click <b>Align</b>, Language B is smoothly rotated to match Language A, the diamonds slide into position next to their circle counterparts. 
+        <b>What you're seeing:</b> English (●&nbsp;circles) and Japanese (◆&nbsp;diamonds) encode the same concepts in different orientations. 
+        The <span style="color:#3b82f6; font-weight:bold;">blue arrows</span> show the <code>Man → King → Queen</code> path in English; 
+        the <span style="color:#10b981; font-weight:bold;">green arrows</span> show the same path in Japanese. 
+        When you click <b>Align</b>, Japanese is smoothly rotated to match English, the diamonds slide into position next to their circle counterparts. 
         The internal geometry (all distances and angles between words) is <i>perfectly preserved</i>.
     </div>
 </section>
