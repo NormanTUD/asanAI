@@ -67,4 +67,37 @@ The challenge of processing text in parallel (instead of word-by-word like older
 * **The "\citetitle{vaswani2017attention}" Paper (\citeyear{vaswani2017attention}):** This landmark work by Vaswani et al. replaced sequential processing with the Transformer architecture. Since Transformers have no inherent sense of order, the authors introduced **Sinusoidal Positional Encodings**.
 * **Why Waves?** The researchers chose alternating sine and cosine functions because they allow the model to attend to relative positions. The different frequencies, ranging from "fast" wiggles to "slow" curves, act like a multi-scale clock, marking every position in a sequence with a unique, bounded mathematical signature.
 * **Residual Connections (X + Attention):** The idea of "Residual Connections" ($X_{new} = X + f(X)$) used in the Transformer was actually pioneered earlier by **Kaiming He et al. (\citeyear{he2015resnet})** in the **ResNet** architecture for computer vision. The Transformer team adapted this to ensure that gradients could flow through dozens of layers without the model "forgetting" the original input tokens.
+
+## Why Sinusoidal Positional Encodings Work: A Fourier Perspective
+
+### The Encoding Is a Hand Crafted Fourier Basis
+
+Each dimension pair $(2i, 2i+1)$ in the positional encoding is a **sine cosine pair at a specific frequency**, exactly one term in a Fourier series [[12]]:
+
+$$\text{PE}_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right), \quad \text{PE}_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
+
+Instead of *decomposing* a signal into frequencies (analysis), the encoding **constructs a unique vector per position** by sampling across a bank of geometrically spaced frequencies (synthesis). Each position gets a unique spectral fingerprint.
+
+### Why Sine and Cosine Specifically?
+
+**Shift = Rotation.** The angle addition identities give us:
+
+$$\text{PE}(\text{pos} + k) = M_k \cdot \text{PE}(\text{pos}), \quad M_k = \begin{pmatrix} \cos(k\omega) & \sin(k\omega) \\ -\sin(k\omega) & \cos(k\omega) \end{pmatrix}$$
+
+A fixed offset $k$ is a **fixed rotation matrix** independent of $\text{pos}$. The model can learn relative distances via simple linear operations. This is the same reason Fourier bases dominate signal processing: time shifts become phase rotations in frequency space.
+
+**Orthogonality.** Different frequency components are orthogonal, so each dimension encodes **independent** positional information with zero redundancy.
+
+### The Binary Clock Analogy
+
+The encoding is a **smooth, continuous version of binary counting** [[12]]:
+
+- **Dim 0, 1** (high freq) flips fast like the least significant bit
+- **Dim 2, 3** (low freq) barely moves like the most significant bit
+
+Fast waves distinguish neighbors; slow waves track long range position. Together, every position maps to a unique point on a high dimensional torus (product of circles).
+
+
 </div>
+
+<div id="pe-fourier-demo"></div>
