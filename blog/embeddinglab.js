@@ -853,6 +853,188 @@ function renderRotationalInvariance() {
 	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
 }
 
+function renderManifoldVisualization() {
+	const plotDiv = document.getElementById('plot-manifold');
+	if (!plotDiv) return;
+
+	// --- 1. Generate the 2D manifold surface (a curved sheet in 3D) ---
+	const resolution = 40;
+	const uRange = Array.from({length: resolution}, (_, i) => -2 + (4 * i / (resolution - 1)));
+	const vRange = Array.from({length: resolution}, (_, i) => -2 + (4 * i / (resolution - 1)));
+
+	const surfX = [], surfY = [], surfZ = [];
+
+	for (let i = 0; i < resolution; i++) {
+		const rowX = [], rowY = [], rowZ = [];
+		for (let j = 0; j < resolution; j++) {
+			const u = uRange[i];
+			const v = vRange[j];
+			// A curved 2D sheet embedded in 3D — like a saddle / Pringle shape
+			rowX.push(u);
+			rowY.push(v);
+			rowZ.push(0.3 * (u * u - v * v) + 0.15 * Math.sin(u * 2) * Math.cos(v * 2));
+		}
+		surfX.push(rowX);
+		surfY.push(rowY);
+		surfZ.push(rowZ);
+	}
+
+	// --- 2. Place "word" points ON the manifold surface ---
+	const manifoldWords = {
+		'King':     { u:  1.2, v: -0.8 },
+		'Queen':    { u:  1.2, v:  0.8 },
+		'Man':      { u: -0.3, v: -0.8 },
+		'Woman':    { u: -0.3, v:  0.8 },
+		'Prince':   { u:  0.5, v: -0.8 },
+		'Princess': { u:  0.5, v:  0.8 },
+		'Boy':      { u: -1.2, v: -0.8 },
+		'Girl':     { u: -1.2, v:  0.8 },
+		'Power':    { u:  1.8, v:  0.0 },
+		'Child':    { u: -1.6, v:  0.0 },
+	};
+
+	function manifoldZ(u, v) {
+		return 0.3 * (u * u - v * v) + 0.15 * Math.sin(u * 2) * Math.cos(v * 2);
+	}
+
+	const wordX = [], wordY = [], wordZ = [], wordLabels = [], wordColors = [];
+	const colorMap = {
+		'King': '#f59e0b', 'Queen': '#f59e0b',
+		'Man': '#3b82f6', 'Woman': '#3b82f6',
+		'Prince': '#10b981', 'Princess': '#10b981',
+		'Boy': '#8b5cf6', 'Girl': '#8b5cf6',
+		'Power': '#ef4444', 'Child': '#ec4899'
+	};
+
+	for (const [word, {u, v}] of Object.entries(manifoldWords)) {
+		wordX.push(u);
+		wordY.push(v);
+		wordZ.push(manifoldZ(u, v));
+		wordLabels.push(word);
+		wordColors.push(colorMap[word] || '#64748b');
+	}
+
+	// --- 3. Place "noise" points OFF the manifold (in the ambient 3D space) ---
+	const noiseX = [], noiseY = [], noiseZ = [];
+	for (let i = 0; i < 60; i++) {
+		const nx = (Math.random() - 0.5) * 5;
+		const ny = (Math.random() - 0.5) * 5;
+		const onManifold = manifoldZ(nx, ny);
+		// Offset significantly away from the surface
+		const nz = onManifold + (Math.random() - 0.5) * 4 + (Math.random() > 0.5 ? 1.5 : -1.5);
+		noiseX.push(nx);
+		noiseY.push(ny);
+		noiseZ.push(nz);
+	}
+
+	// --- 4. Draw a geodesic path on the manifold: Man → Prince → King → Queen ---
+	const pathWords = ['Man', 'Prince', 'King', 'Queen'];
+	const pathSteps = 20;
+	const geoX = [], geoY = [], geoZ = [];
+
+	for (let seg = 0; seg < pathWords.length - 1; seg++) {
+		const from = manifoldWords[pathWords[seg]];
+		const to = manifoldWords[pathWords[seg + 1]];
+		for (let s = 0; s <= pathSteps; s++) {
+			const t = s / pathSteps;
+			const iu = from.u + t * (to.u - from.u);
+			const iv = from.v + t * (to.v - from.v);
+			geoX.push(iu);
+			geoY.push(iv);
+			geoZ.push(manifoldZ(iu, iv));
+		}
+	}
+
+	// --- 5. Draw a STRAIGHT LINE (Euclidean) from Man to Queen for contrast ---
+	const manPos = [manifoldWords['Man'].u, manifoldWords['Man'].v, manifoldZ(manifoldWords['Man'].u, manifoldWords['Man'].v)];
+	const queenPos = [manifoldWords['Queen'].u, manifoldWords['Queen'].v, manifoldZ(manifoldWords['Queen'].u, manifoldWords['Queen'].v)];
+	const straightX = [], straightY = [], straightZ = [];
+	for (let s = 0; s <= pathSteps; s++) {
+		const t = s / pathSteps;
+		straightX.push(manPos[0] + t * (queenPos[0] - manPos[0]));
+		straightY.push(manPos[1] + t * (queenPos[1] - manPos[1]));
+		straightZ.push(manPos[2] + t * (queenPos[2] - manPos[2]));
+	}
+
+	const traces = [
+		// The manifold surface
+		{
+			type: 'surface',
+			x: surfX, y: surfY, z: surfZ,
+			colorscale: [[0, 'rgba(219, 234, 254, 0.6)'], [0.5, 'rgba(191, 219, 254, 0.6)'], [1, 'rgba(147, 197, 253, 0.6)']],
+			showscale: false,
+			opacity: 0.45,
+			hoverinfo: 'skip',
+			contours: {
+				x: { show: true, color: 'rgba(148, 163, 184, 0.2)', width: 1 },
+				y: { show: true, color: 'rgba(148, 163, 184, 0.2)', width: 1 },
+				z: { show: false }
+			},
+			name: 'Semantic Manifold'
+		},
+		// Noise points (off-manifold)
+		{
+			type: 'scatter3d',
+			x: noiseX, y: noiseY, z: noiseZ,
+			mode: 'markers',
+			marker: { size: 2.5, color: '#cbd5e1', opacity: 0.3 },
+			name: 'Unused dimensions (noise)',
+			hovertemplate: '<b>Off-manifold noise</b><br>This region of the ambient space<br>contains no meaningful data.<extra></extra>'
+		},
+		// Word points ON the manifold
+		{
+			type: 'scatter3d',
+			x: wordX, y: wordY, z: wordZ,
+			mode: 'markers+text',
+			text: wordLabels,
+			textposition: 'top center',
+			textfont: { size: 11, color: '#1e293b' },
+			marker: { size: 7, color: wordColors, opacity: 0.95, line: { width: 1, color: '#fff' } },
+			name: 'Words (on manifold)',
+			hovertemplate: '<b>%{text}</b><br>Lives on the manifold surface<br>x: %{x:.2f}, y: %{y:.2f}, z: %{z:.2f}<extra></extra>'
+		},
+		// Geodesic path (on the manifold surface)
+		{
+			type: 'scatter3d',
+			x: geoX, y: geoY, z: geoZ,
+			mode: 'lines',
+			line: { width: 6, color: '#3b82f6' },
+			name: 'Geodesic (on manifold)',
+			hovertemplate: '<b>Geodesic path</b><br>Man → Prince → King → Queen<br>Follows the curved surface<extra></extra>'
+		},
+		// Straight Euclidean line (through ambient space)
+		{
+			type: 'scatter3d',
+			x: straightX, y: straightY, z: straightZ,
+			mode: 'lines',
+			line: { width: 4, color: '#ef4444', dash: 'dash' },
+			name: 'Euclidean (through space)',
+			hovertemplate: '<b>Euclidean shortcut</b><br>Man → Queen (straight line)<br>Cuts through empty space — not meaningful<extra></extra>'
+		}
+	];
+
+	const layout = {
+		margin: { l: 0, r: 0, b: 0, t: 0 },
+		showlegend: true,
+		legend: {
+			x: 0.01, y: 0.99,
+			bgcolor: 'rgba(255,255,255,0.85)',
+			bordercolor: '#e2e8f0',
+			borderwidth: 1,
+			font: { size: 11 }
+		},
+		scene: {
+			xaxis: { title: '', showgrid: true, gridcolor: '#f1f5f9', zeroline: false, showticklabels: false },
+			yaxis: { title: '', showgrid: true, gridcolor: '#f1f5f9', zeroline: false, showticklabels: false },
+			zaxis: { title: '', showgrid: true, gridcolor: '#f1f5f9', zeroline: false, showticklabels: false },
+			camera: { eye: { x: 1.8, y: 1.2, z: 1.0 } },
+			bgcolor: '#fff'
+		}
+	};
+
+	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+}
+
 function loadEmbeddingModule () {
 	const tasks = [
 		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
@@ -922,4 +1104,6 @@ function loadEmbeddingModule () {
 	renderDotProductLab();
 
 	renderRotationalInvariance();
+
+	renderManifoldVisualization();
 }

@@ -180,7 +180,16 @@ While the cross-lingual alignment story is compelling, the isomorphism between l
 ## The Manifold Hypothesis
 
 The deeper theoretical reason the path-finding framing works is the **Manifold Hypothesis**: the idea that high-dimensional data, like language, actually lies on or near a much lower-dimensional manifold embedded in the high-dimensional space (\cite{bengio2013representation}). If sentences trace paths on a manifold, then translation is literally a mapping between two manifolds that share the same topology. The Transformer's attention layers can be seen as learning the **local coordinate charts** of these manifolds, the rules for how to navigate the surface at each point.
+</div>
 
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-manifold" style="height: 550px; background: #fff; border-radius: 8px; width: 100%;"></div>
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6;">
+        <b>The Manifold Hypothesis visualized.</b> The translucent blue surface is the <b>semantic manifold</b> — a lower-dimensional curved sheet embedded in the full 3D space. All meaningful word vectors (colored dots) live <i>on</i> this surface, not scattered through the volume. The grey dots represent the unused ambient dimensions — noise with no semantic content. The <span style="color:#3b82f6; font-weight:bold;">blue path</span> is a <b>geodesic</b>: the shortest route <i>along the surface</i> from Man → Prince → King → Queen, following the curvature of meaning. The <span style="color:#ef4444; font-weight:bold;">red dashed line</span> is the Euclidean shortcut — a straight line that cuts through empty, meaningless space. A Transformer's residual stream follows the geodesic, not the shortcut.
+    </div>
+</section>
+
+<div class="md">
 ## Attention as Metric Tensor
 
 There is an even more geometric way to think about attention. In differential geometry, a **metric tensor** defines how distances are measured locally on a manifold, it tells you the "shape" of space at each point. The attention matrix in a Transformer does something analogous: it dynamically redefines which tokens are "close" to which other tokens at each layer, effectively warping the local geometry of the embedding space as the representation is processed. This is not merely a metaphor, the connections between attention mechanisms and geometric structures on manifolds have been formalized in the framework of Geometric Deep Learning (\cite{bronstein2021geometric}).
