@@ -960,12 +960,12 @@ $$${cv(C.hid,hLabel)} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(zh))}\\right) = ${
 <div class="bp-section bp-section-out"><b>② Prerequisite: Output deltas (needed to compute $\\delta_{${hLabel}}$)</b>
 
 <b>Output $o_1$:</b>
-$$${cv(C.out,'z_{o_1}')} = ${cv(C.w_ho,f(w5))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w6))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b3))} = ${cv(C.out,f(R.zo1))}$$
+$$${cv(C.out,'z_{o_1}')} = \\underbrace{${cv(C.w_ho,f(w5))}}_{w_5} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{h_1} + \\underbrace{${cv(C.w_ho,f(w6))}}_{w_6} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{h_2} + \\underbrace{${cv(C.b_o,f(b3))}}_{b_3} = ${cv(C.out,f(R.zo1))}$$
 $$${cv(C.out,'o_1')} = \\text{sigmoid}\\left(${cv(C.out,f(R.zo1))}\\right) = ${cv(C.out,f(R.o1))}$$
 $$${cv(C.delta,'\\delta_{o_1}')} = -(${cv(C.tgt,f(t1))} - ${cv(C.out,f(R.o1))}) \\cdot ${cv(C.out,f(R.o1))} \\cdot ${cv(C.out,f(1-R.o1))} = ${cv(C.delta,f(R.d_o1))}$$
 
 <b>Output $o_2$:</b>
-$$${cv(C.out,'z_{o_2}')} = ${cv(C.w_ho,f(w7))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w8))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b4))} = ${cv(C.out,f(R.zo2))}$$
+$$${cv(C.out,'z_{o_2}')} = \\underbrace{${cv(C.w_ho,f(w7))}}_{w_7} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{h_1} + \\underbrace{${cv(C.w_ho,f(w8))}}_{w_8} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{h_2} + \\underbrace{${cv(C.b_o,f(b4))}}_{b_4} = ${cv(C.out,f(R.zo2))}$$
 $$${cv(C.out,'o_2')} = \\text{sigmoid}\\left(${cv(C.out,f(R.zo2))}\\right) = ${cv(C.out,f(R.o2))}$$
 $$${cv(C.delta,'\\delta_{o_2}')} = -(${cv(C.tgt,f(t2))} - ${cv(C.out,f(R.o2))}) \\cdot ${cv(C.out,f(R.o2))} \\cdot ${cv(C.out,f(1-R.o2))} = ${cv(C.delta,f(R.d_o2))}$$
 </div>
