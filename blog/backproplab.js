@@ -699,7 +699,7 @@ We need $\\delta_{o_1}$ and $\\delta_{o_2}$ to compute the backward pass for $h_
 
 <b>Output $o_1$:</b>
 $$${cv(C.out,'z_{o_1}')} = ${cv(C.w_ho,f(w5))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w6))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b3))} = ${cv(C.out,f(R.zo1))}$$
-$$${cv(C.out,'o_1')} = \\text{sigmoid}\\left(${cv(C.out,f(R.zo1))}\\right) = ${cv(C.out,f(R.o1))}$$
+$$${cv(C.out,'o_1')} = \\text{sigmoid}\\left(\\underbrace{${cv(C.out,f(R.zo1))}}_{z_{o_1}}\\right) = ${cv(C.out,f(R.o1))}$$
 $$\\frac{\\partial E}{\\partial o_1} = -(${cv(C.tgt,f(t1))} - ${cv(C.out,f(R.o1))}) = ${f(R.dE_do1)}$$
 $$${cv(C.delta,'\\delta_{o_1}')} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${cv(C.out,f(R.o1))} \\cdot ${cv(C.out,f(1-R.o1))}}_{\\text{sigmoid}'\\left(z_{o_1}\\right)} = ${cv(C.delta,f(R.d_o1))}$$
 
@@ -756,7 +756,7 @@ We need $\\delta_{o_1}$ and $\\delta_{o_2}$ to compute the backward pass for $h_
 
 <b>Output $o_1$:</b>
 $$${cv(C.out,'z_{o_1}')} = ${cv(C.w_ho,f(w5))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w6))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b3))} = ${cv(C.out,f(R.zo1))}$$
-$$${cv(C.out,'o_1')} = \\text{sigmoid}\\left(${cv(C.out,f(R.zo1))}\\right) = ${cv(C.out,f(R.o1))}$$
+$$${cv(C.out,'o_1')} = \\text{sigmoid}\\left(\\underbrace{${cv(C.out,f(R.zo1))}}_{z_{o_1}}\\right) = ${cv(C.out,f(R.o1))}$$
 $$\\frac{\\partial E}{\\partial o_1} = -(${cv(C.tgt,f(t1))} - ${cv(C.out,f(R.o1))}) = ${f(R.dE_do1)}$$
 $$${cv(C.delta,'\\delta_{o_1}')} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${cv(C.out,f(R.o1))} \\cdot ${cv(C.out,f(1-R.o1))}}_{\\text{sigmoid}'\\left(z_{o_1}\\right)} = ${cv(C.delta,f(R.d_o1))}$$
 
