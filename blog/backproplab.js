@@ -801,7 +801,7 @@ $$${cv(C.b_h,'b_2^{\\,\\text{new}}')} = \\underbrace{${cv(C.b_h,f(b2))}}_{b_2} -
 		// ════════════════════════════════════════════════════════════
 		else if (nk==='o1') {
 			const dir = R.d_o1 > 0 ? 'Prediction too HIGH — needs to decrease' : R.d_o1 < 0 ? 'Prediction too LOW — needs to increase' : 'Perfect!';
-			h = `<h3>${cv(C.out,'o_1')} — Output Neuron</h3>
+			h = `<h3>$${cv(C.out,'o_1')}$ — Output Neuron</h3>
 <p style="color:#64748b;"><em>${dir}</em> &nbsp; (target $${cv(C.tgt,'t_1')} = ${cv(C.tgt,f(t1,4))}$)</p>
 
 <div class="bp-section bp-section-hid"><b>① Prerequisite: Hidden layer forward pass (needed to get $h_1, h_2$)</b>
@@ -858,7 +858,7 @@ $$${cv(C.b_o,'b_3^{\\,\\text{new}}')} = \\underbrace{${cv(C.b_o,f(b3))}}_{b_3} -
 
 		else if (nk==='o2') {
 			const dir = R.d_o2 > 0 ? 'Prediction too HIGH — needs to decrease' : R.d_o2 < 0 ? 'Prediction too LOW — needs to increase' : 'Perfect!';
-			h = `<h3>${cv(C.out,'o_2')} — Output Neuron</h3>
+			h = `<h3>$${cv(C.out,'o_2')}$ — Output Neuron</h3>
 <p style="color:#64748b;"><em>${dir}</em> &nbsp; (target $${cv(C.tgt,'t_2')} = ${cv(C.tgt,f(t2,4))}$)</p>
 
 <div class="bp-section bp-section-hid"><b>① Prerequisite: Hidden layer forward pass (needed to get $h_1, h_2$)</b>
