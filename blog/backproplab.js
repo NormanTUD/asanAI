@@ -176,7 +176,7 @@ function sigmoid_plot() {
             ctx.font = '13px monospace';
             ctx.fillStyle = '#334155';
             var label = 'z=' + z.toFixed(2) +
-                        '  σ(z)=' + s.toFixed(4) +
+                        '  sigmoid(z)=' + s.toFixed(4) +
                         '  slope=' + slope.toFixed(4);
             var labelY = pc.y - 18;
             if (labelY < plotArea.top + 20) labelY = pc.y + 24;
@@ -645,13 +645,13 @@ This is a raw input value. No computation is performed — it is fed directly in
 
 <b>Step 1 — Hidden layer forward pass (needed to get $h_1, h_2$):</b>
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w2))}}_{${cv(C.w_ih,'w_2')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
-$$${cv(C.hid,'h_1')} = \\sigma\\!\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
+$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
-$$${cv(C.hid,'h_2')} = \\sigma\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
+$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
 
 <b>Step 2 — Output neuron $o_1$ forward pass:</b>
 $$${cv(C.out,'z_{o_1}')} = \\underbrace{${cv(C.w_ho,f(w5))}}_{${cv(C.w_ho,'w_5')}} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{${cv(C.hid,'h_1')}} + \\underbrace{${cv(C.w_ho,f(w6))}}_{${cv(C.w_ho,'w_6')}} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{${cv(C.hid,'h_2')}} + \\underbrace{${cv(C.b_o,f(b3))}}_{${cv(C.b_o,'b_3')}} = ${cv(C.out,f(R.zo1))}$$
-$$${cv(C.out,'o_1')} = \\sigma\\!\\left(${cv(C.out,f(R.zo1))}\\right) = ${cv(C.out,f(R.o1))}$$
+$$${cv(C.out,'o_1')} = \\text{sigmoid}\\!\\left(${cv(C.out,f(R.zo1))}\\right) = ${cv(C.out,f(R.o1))}$$
 </div>
 
 <div class="bp-section bp-section-loss"><b>⬇ Loss computation for $t_1$:</b>
@@ -665,13 +665,13 @@ $$${cv(C.loss,'E_{\\text{total}}')} = ${cv(C.loss,'E_1')} + ${cv(C.loss,'E_2')} 
 
 <b>Step 1 — Hidden layer forward pass:</b>
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w2))}}_{${cv(C.w_ih,'w_2')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
-$$${cv(C.hid,'h_1')} = \\sigma\\!\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
+$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
-$$${cv(C.hid,'h_2')} = \\sigma\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
+$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
 
 <b>Step 2 — Output neuron $o_2$ forward pass:</b>
 $$${cv(C.out,'z_{o_2}')} = \\underbrace{${cv(C.w_ho,f(w7))}}_{${cv(C.w_ho,'w_7')}} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{${cv(C.hid,'h_1')}} + \\underbrace{${cv(C.w_ho,f(w8))}}_{${cv(C.w_ho,'w_8')}} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{${cv(C.hid,'h_2')}} + \\underbrace{${cv(C.b_o,f(b4))}}_{${cv(C.b_o,'b_4')}} = ${cv(C.out,f(R.zo2))}$$
-$$${cv(C.out,'o_2')} = \\sigma\\!\\left(${cv(C.out,f(R.zo2))}\\right) = ${cv(C.out,f(R.o2))}$$
+$$${cv(C.out,'o_2')} = \\text{sigmoid}\\!\\left(${cv(C.out,f(R.zo2))}\\right) = ${cv(C.out,f(R.o2))}$$
 </div>
 
 <div class="bp-section bp-section-loss"><b>⬇ Loss computation for $t_2$:</b>
@@ -690,7 +690,7 @@ $$${cv(C.loss,'E_{\\text{total}}')} = ${cv(C.loss,'E_1')} + ${cv(C.loss,'E_2')} 
 
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{\\substack{${cv(C.w_ih,'w_1')} \\\\ \\text{weight from }${cv(C.inp,'x_1')}}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} \\;+\\; \\underbrace{${cv(C.w_ih,f(w2))}}_{\\substack{${cv(C.w_ih,'w_2')} \\\\ \\text{weight from }${cv(C.inp,'x_2')}}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} \\;+\\; \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
 
-$$${cv(C.hid,'h_1')} = \\underbrace{\\sigma\\!\\left(${cv(C.hid,f(R.zh1))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.hid,f(R.zh1))}}} = \\boxed{${cv(C.hid,f(R.h1))}}$$
+$$${cv(C.hid,'h_1')} = \\underbrace{\\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh1))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.hid,f(R.zh1))}}} = \\boxed{${cv(C.hid,f(R.h1))}}$$
 </div>
 
 <div class="bp-section bp-section-out"><b>② Prerequisite: Output layer forward + backward (needed for $\\delta_{o_1}, \\delta_{o_2}$)</b>
@@ -699,15 +699,15 @@ We need $\\delta_{o_1}$ and $\\delta_{o_2}$ to compute the backward pass for $h_
 
 <b>Output $o_1$:</b>
 $$${cv(C.out,'z_{o_1}')} = ${cv(C.w_ho,f(w5))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w6))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b3))} = ${cv(C.out,f(R.zo1))}$$
-$$${cv(C.out,'o_1')} = \\sigma(${cv(C.out,f(R.zo1))}) = ${cv(C.out,f(R.o1))}$$
+$$${cv(C.out,'o_1')} = \\text{sigmoid}(${cv(C.out,f(R.zo1))}) = ${cv(C.out,f(R.o1))}$$
 $$\\frac{\\partial E}{\\partial o_1} = -(${cv(C.tgt,f(t1))} - ${cv(C.out,f(R.o1))}) = ${f(R.dE_do1)}$$
-$$${cv(C.delta,'\\delta_{o_1}')} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${cv(C.out,f(R.o1))} \\cdot ${cv(C.out,f(1-R.o1))}}_{\\sigma'(z_{o_1})} = ${cv(C.delta,f(R.d_o1))}$$
+$$${cv(C.delta,'\\delta_{o_1}')} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${cv(C.out,f(R.o1))} \\cdot ${cv(C.out,f(1-R.o1))}}_{\\text{sigmoid}'(z_{o_1})} = ${cv(C.delta,f(R.d_o1))}$$
 
 <b>Output $o_2$:</b>
 $$${cv(C.out,'z_{o_2}')} = ${cv(C.w_ho,f(w7))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w8))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b4))} = ${cv(C.out,f(R.zo2))}$$
-$$${cv(C.out,'o_2')} = \\sigma(${cv(C.out,f(R.zo2))}) = ${cv(C.out,f(R.o2))}$$
+$$${cv(C.out,'o_2')} = \\text{sigmoid}(${cv(C.out,f(R.zo2))}) = ${cv(C.out,f(R.o2))}$$
 $$\\frac{\\partial E}{\\partial o_2} = -(${cv(C.tgt,f(t2))} - ${cv(C.out,f(R.o2))}) = ${f(R.dE_do2)}$$
-$$${cv(C.delta,'\\delta_{o_2}')} = \\underbrace{${f(R.dE_do2)}}_{\\frac{\\partial E}{\\partial o_2}} \\times \\underbrace{${cv(C.out,f(R.o2))} \\cdot ${cv(C.out,f(1-R.o2))}}_{\\sigma'(z_{o_2})} = ${cv(C.delta,f(R.d_o2))}$$
+$$${cv(C.delta,'\\delta_{o_2}')} = \\underbrace{${f(R.dE_do2)}}_{\\frac{\\partial E}{\\partial o_2}} \\times \\underbrace{${cv(C.out,f(R.o2))} \\cdot ${cv(C.out,f(1-R.o2))}}_{\\text{sigmoid}'(z_{o_2})} = ${cv(C.delta,f(R.d_o2))}$$
 </div>
 
 <div class="bp-section bp-section-back"><b>③ Backward Pass — Error signal for $${cv(C.hid,'h_1')}$</b>
@@ -716,9 +716,9 @@ Blame arrives from <em>both</em> output neurons, weighted by the connections:
 
 $$\\frac{\\partial E}{\\partial h_1} = \\underbrace{${cv(C.delta,f(R.d_o1))}}_{\\substack{${cv(C.delta,'\\delta_{o_1}')} \\\\ \\text{error from }${cv(C.out,'o_1')}}} \\cdot \\underbrace{${cv(C.w_ho,f(w5))}}_{\\substack{${cv(C.w_ho,'w_5')} \\\\ h_1 \\to o_1}} \\;+\\; \\underbrace{${cv(C.delta,f(R.d_o2))}}_{\\substack{${cv(C.delta,'\\delta_{o_2}')} \\\\ \\text{error from }${cv(C.out,'o_2')}}} \\cdot \\underbrace{${cv(C.w_ho,f(w7))}}_{\\substack{${cv(C.w_ho,'w_7')} \\\\ h_1 \\to o_2}} = ${f(R.dE_dh1)}$$
 
-$$\\underbrace{${cv(C.hid,'h_1')}(1-${cv(C.hid,'h_1')})}_{\\substack{${cv(C.sig,"\\sigma'(z_{h_1})")} \\\\ \\text{sigmoid derivative}}} = ${cv(C.hid,f(R.h1))} \\times ${f(1-R.h1)} = ${f(R.h1*(1-R.h1))}$$
+$$\\underbrace{${cv(C.hid,'h_1')}(1-${cv(C.hid,'h_1')})}_{\\substack{${cv(C.sig,"\\text{sigmoid}'(z_{h_1})")} \\\\ \\text{sigmoid derivative}}} = ${cv(C.hid,f(R.h1))} \\times ${f(1-R.h1)} = ${f(R.h1*(1-R.h1))}$$
 
-$$${cv(C.delta,'\\delta_{h_1}')} = \\underbrace{${f(R.dE_dh1)}}_{\\frac{\\partial E}{\\partial h_1}} \\times \\underbrace{${f(R.h1*(1-R.h1))}}_{\\sigma'(z_{h_1})} = \\boxed{${cv(C.delta,f(R.d_h1))}}$$
+$$${cv(C.delta,'\\delta_{h_1}')} = \\underbrace{${f(R.dE_dh1)}}_{\\frac{\\partial E}{\\partial h_1}} \\times \\underbrace{${f(R.h1*(1-R.h1))}}_{\\text{sigmoid}'(z_{h_1})} = \\boxed{${cv(C.delta,f(R.d_h1))}}$$
 </div>
 
 <div class="bp-section bp-section-grad"><b>④ Weight Gradients — How much each weight feeding into $h_1$ should change</b>
@@ -747,7 +747,7 @@ $$${cv(C.b_h,'b_1^{\\,\\text{new}}')} = \\underbrace{${cv(C.b_h,f(b1))}}_{b_1} -
 
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{\\substack{${cv(C.w_ih,'w_3')} \\\\ \\text{weight from }${cv(C.inp,'x_1')}}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} \\;+\\; \\underbrace{${cv(C.w_ih,f(w4))}}_{\\substack{${cv(C.w_ih,'w_4')} \\\\ \\text{weight from }${cv(C.inp,'x_2')}}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} \\;+\\; \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
 
-$$${cv(C.hid,'h_2')} = \\underbrace{\\sigma\\!\\left(${cv(C.hid,f(R.zh2))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.hid,f(R.zh2))}}} = \\boxed{${cv(C.hid,f(R.h2))}}$$
+$$${cv(C.hid,'h_2')} = \\underbrace{\\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.hid,f(R.zh2))}}} = \\boxed{${cv(C.hid,f(R.h2))}}$$
 </div>
 
 <div class="bp-section bp-section-out"><b>② Prerequisite: Output layer forward + backward (needed for $\\delta_{o_1}, \\delta_{o_2}$)</b>
@@ -756,15 +756,15 @@ We need $\\delta_{o_1}$ and $\\delta_{o_2}$ to compute the backward pass for $h_
 
 <b>Output $o_1$:</b>
 $$${cv(C.out,'z_{o_1}')} = ${cv(C.w_ho,f(w5))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w6))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b3))} = ${cv(C.out,f(R.zo1))}$$
-$$${cv(C.out,'o_1')} = \\sigma(${cv(C.out,f(R.zo1))}) = ${cv(C.out,f(R.o1))}$$
+$$${cv(C.out,'o_1')} = \\text{sigmoid}(${cv(C.out,f(R.zo1))}) = ${cv(C.out,f(R.o1))}$$
 $$\\frac{\\partial E}{\\partial o_1} = -(${cv(C.tgt,f(t1))} - ${cv(C.out,f(R.o1))}) = ${f(R.dE_do1)}$$
-$$${cv(C.delta,'\\delta_{o_1}')} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${cv(C.out,f(R.o1))} \\cdot ${cv(C.out,f(1-R.o1))}}_{\\sigma'(z_{o_1})} = ${cv(C.delta,f(R.d_o1))}$$
+$$${cv(C.delta,'\\delta_{o_1}')} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${cv(C.out,f(R.o1))} \\cdot ${cv(C.out,f(1-R.o1))}}_{\\text{sigmoid}'(z_{o_1})} = ${cv(C.delta,f(R.d_o1))}$$
 
 <b>Output $o_2$:</b>
 $$${cv(C.out,'z_{o_2}')} = ${cv(C.w_ho,f(w7))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w8))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b4))} = ${cv(C.out,f(R.zo2))}$$
-$$${cv(C.out,'o_2')} = \\sigma(${cv(C.out,f(R.zo2))}) = ${cv(C.out,f(R.o2))}$$
+$$${cv(C.out,'o_2')} = \\text{sigmoid}(${cv(C.out,f(R.zo2))}) = ${cv(C.out,f(R.o2))}$$
 $$\\frac{\\partial E}{\\partial o_2} = -(${cv(C.tgt,f(t2))} - ${cv(C.out,f(R.o2))}) = ${f(R.dE_do2)}$$
-$$${cv(C.delta,'\\delta_{o_2}')} = \\underbrace{${f(R.dE_do2)}}_{\\frac{\\partial E}{\\partial o_2}} \\times \\underbrace{${cv(C.out,f(R.o2))} \\cdot ${cv(C.out,f(1-R.o2))}}_{\\sigma'(z_{o_2})} = ${cv(C.delta,f(R.d_o2))}$$
+$$${cv(C.delta,'\\delta_{o_2}')} = \\underbrace{${f(R.dE_do2)}}_{\\frac{\\partial E}{\\partial o_2}} \\times \\underbrace{${cv(C.out,f(R.o2))} \\cdot ${cv(C.out,f(1-R.o2))}}_{\\text{sigmoid}'(z_{o_2})} = ${cv(C.delta,f(R.d_o2))}$$
 </div>
 
 <div class="bp-section bp-section-back"><b>③ Backward Pass — Error signal for $${cv(C.hid,'h_2')}$</b>
@@ -773,9 +773,9 @@ Blame arrives from <em>both</em> output neurons, weighted by the connections:
 
 $$\\frac{\\partial E}{\\partial h_2} = \\underbrace{${cv(C.delta,f(R.d_o1))}}_{\\substack{${cv(C.delta,'\\delta_{o_1}')} \\\\ \\text{error from }${cv(C.out,'o_1')}}} \\cdot \\underbrace{${cv(C.w_ho,f(w6))}}_{\\substack{${cv(C.w_ho,'w_6')} \\\\ h_2 \\to o_1}} \\;+\\; \\underbrace{${cv(C.delta,f(R.d_o2))}}_{\\substack{${cv(C.delta,'\\delta_{o_2}')} \\\\ \\text{error from }${cv(C.out,'o_2')}}} \\cdot \\underbrace{${cv(C.w_ho,f(w8))}}_{\\substack{${cv(C.w_ho,'w_8')} \\\\ h_2 \\to o_2}} = ${f(R.dE_dh2)}$$
 
-$$\\underbrace{${cv(C.hid,'h_2')}(1-${cv(C.hid,'h_2')})}_{\\substack{${cv(C.sig,"\\sigma'(z_{h_2})")} \\\\ \\text{sigmoid derivative}}} = ${cv(C.hid,f(R.h2))} \\times ${f(1-R.h2)} = ${f(R.h2*(1-R.h2))}$$
+$$\\underbrace{${cv(C.hid,'h_2')}(1-${cv(C.hid,'h_2')})}_{\\substack{${cv(C.sig,"\\text{sigmoid}'(z_{h_2})")} \\\\ \\text{sigmoid derivative}}} = ${cv(C.hid,f(R.h2))} \\times ${f(1-R.h2)} = ${f(R.h2*(1-R.h2))}$$
 
-$$${cv(C.delta,'\\delta_{h_2}')} = \\underbrace{${f(R.dE_dh2)}}_{\\frac{\\partial E}{\\partial h_2}} \\times \\underbrace{${f(R.h2*(1-R.h2))}}_{\\sigma'(z_{h_2})} = \\boxed{${cv(C.delta,f(R.d_h2))}}$$
+$$${cv(C.delta,'\\delta_{h_2}')} = \\underbrace{${f(R.dE_dh2)}}_{\\frac{\\partial E}{\\partial h_2}} \\times \\underbrace{${f(R.h2*(1-R.h2))}}_{\\text{sigmoid}'(z_{h_2})} = \\boxed{${cv(C.delta,f(R.d_h2))}}$$
 </div>
 
 <div class="bp-section bp-section-grad"><b>④ Weight Gradients — How much each weight feeding into $h_2$ should change</b>
@@ -808,17 +808,17 @@ $$${cv(C.b_h,'b_2^{\\,\\text{new}}')} = \\underbrace{${cv(C.b_h,f(b2))}}_{b_2} -
 <div class="bp-section bp-section-hid"><b>① Prerequisite: Hidden layer forward pass (needed to get $h_1, h_2$)</b>
 
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w2))}}_{${cv(C.w_ih,'w_2')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
-$$${cv(C.hid,'h_1')} = \\sigma\\!\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
+$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
 
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
-$$${cv(C.hid,'h_2')} = \\sigma\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
+$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
 </div>
 
 <div class="bp-section bp-section-out"><b>② Forward Pass — Computing $${cv(C.out,'o_1')}$</b>
 
 $$${cv(C.out,'z_{o_1}')} = \\underbrace{${cv(C.w_ho,f(w5))}}_{\\substack{${cv(C.w_ho,'w_5')} \\\\ \\text{weight from }${cv(C.hid,'h_1')}}} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{${cv(C.hid,'h_1')}} \\;+\\; \\underbrace{${cv(C.w_ho,f(w6))}}_{\\substack{${cv(C.w_ho,'w_6')} \\\\ \\text{weight from }${cv(C.hid,'h_2')}}} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{${cv(C.hid,'h_2')}} \\;+\\; \\underbrace{${cv(C.b_o,f(b3))}}_{${cv(C.b_o,'b_3')}} = ${cv(C.out,f(R.zo1))}$$
 
-$$${cv(C.out,'o_1')} = \\underbrace{\\sigma\\!\\left(${cv(C.out,f(R.zo1))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.out,f(R.zo1))}}} = \\boxed{${cv(C.out,f(R.o1))}}$$
+$$${cv(C.out,'o_1')} = \\underbrace{\\text{sigmoid}\\!\\left(${cv(C.out,f(R.zo1))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.out,f(R.zo1))}}} = \\boxed{${cv(C.out,f(R.o1))}}$$
 </div>
 
 <div class="bp-section bp-section-loss"><b>③ Loss — How wrong is this prediction?</b>
@@ -831,9 +831,9 @@ $$${cv(C.loss,'E_{\\text{total}}')} = ${cv(C.loss,'E_1')} + ${cv(C.loss,'E_2')} 
 
 $$\\underbrace{\\frac{\\partial E}{\\partial o_1}}_{\\substack{\\text{how wrong?} \\\\ \\text{direction of error}}} = -\\!\\left(\\underbrace{${cv(C.tgt,f(t1,4))}}_{${cv(C.tgt,'t_1')}} - \\underbrace{${cv(C.out,f(R.o1))}}_{${cv(C.out,'o_1')}}\\right) = ${f(R.dE_do1)}$$
 
-$$\\underbrace{\\frac{\\partial o_1}{\\partial z_{o_1}}}_{\\substack{${cv(C.sig,"\\sigma'(z_{o_1})")} \\\\ \\text{sigmoid derivative}}} = \\underbrace{${cv(C.out,f(R.o1))}}_{o_1} \\cdot \\underbrace{${cv(C.out,f(1-R.o1))}}_{1-o_1} = ${f(R.do1_dz1)}$$
+$$\\underbrace{\\frac{\\partial o_1}{\\partial z_{o_1}}}_{\\substack{${cv(C.sig,"\\text{sigmoid}'(z_{o_1})")} \\\\ \\text{sigmoid derivative}}} = \\underbrace{${cv(C.out,f(R.o1))}}_{o_1} \\cdot \\underbrace{${cv(C.out,f(1-R.o1))}}_{1-o_1} = ${f(R.do1_dz1)}$$
 
-$$${cv(C.delta,'\\delta_{o_1}')} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${f(R.do1_dz1)}}_{\\sigma'(z_{o_1})} = \\boxed{${cv(C.delta,f(R.d_o1))}}$$
+$$${cv(C.delta,'\\delta_{o_1}')} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${f(R.do1_dz1)}}_{\\text{sigmoid}'(z_{o_1})} = \\boxed{${cv(C.delta,f(R.d_o1))}}$$
 </div>
 
 <div class="bp-section bp-section-grad"><b>⑤ Weight Gradients</b>
@@ -865,17 +865,17 @@ $$${cv(C.b_o,'b_3^{\\,\\text{new}}')} = \\underbrace{${cv(C.b_o,f(b3))}}_{b_3} -
 <div class="bp-section bp-section-hid"><b>① Prerequisite: Hidden layer forward pass (needed to get $h_1, h_2$)</b>
 
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w2))}}_{${cv(C.w_ih,'w_2')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
-$$${cv(C.hid,'h_1')} = \\sigma\\!\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
+$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
 
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
-$$${cv(C.hid,'h_2')} = \\sigma\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
+$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
 </div>
 
 <div class="bp-section bp-section-out"><b>② Forward Pass — Computing $${cv(C.out,'o_2')}$</b>
 
 $$${cv(C.out,'z_{o_2}')} = \\underbrace{${cv(C.w_ho,f(w7))}}_{\\substack{${cv(C.w_ho,'w_7')} \\\\ \\text{weight from }${cv(C.hid,'h_1')}}} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{${cv(C.hid,'h_1')}} \\;+\\; \\underbrace{${cv(C.w_ho,f(w8))}}_{\\substack{${cv(C.w_ho,'w_8')} \\\\ \\text{weight from }${cv(C.hid,'h_2')}}} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{${cv(C.hid,'h_2')}} \\;+\\; \\underbrace{${cv(C.b_o,f(b4))}}_{${cv(C.b_o,'b_4')}} = ${cv(C.out,f(R.zo2))}$$
 
-$$${cv(C.out,'o_2')} = \\underbrace{\\sigma\\!\\left(${cv(C.out,f(R.zo2))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.out,f(R.zo2))}}} = \\boxed{${cv(C.out,f(R.o2))}}$$
+$$${cv(C.out,'o_2')} = \\underbrace{\\text{sigmoid}\\!\\left(${cv(C.out,f(R.zo2))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.out,f(R.zo2))}}} = \\boxed{${cv(C.out,f(R.o2))}}$$
 </div>
 
 <div class="bp-section bp-section-loss"><b>③ Loss — How wrong is this prediction?</b>
@@ -888,9 +888,9 @@ $$${cv(C.loss,'E_{\\text{total}}')} = ${cv(C.loss,'E_1')} + ${cv(C.loss,'E_2')} 
 
 $$\\underbrace{\\frac{\\partial E}{\\partial o_2}}_{\\substack{\\text{how wrong?} \\\\ \\text{direction of error}}} = -\\!\\left(\\underbrace{${cv(C.tgt,f(t2,4))}}_{${cv(C.tgt,'t_2')}} - \\underbrace{${cv(C.out,f(R.o2))}}_{${cv(C.out,'o_2')}}\\right) = ${f(R.dE_do2)}$$
 
-$$\\underbrace{\\frac{\\partial o_2}{\\partial z_{o_2}}}_{\\substack{${cv(C.sig,"\\sigma'(z_{o_2})")} \\\\ \\text{sigmoid derivative}}} = \\underbrace{${cv(C.out,f(R.o2))}}_{o_2} \\cdot \\underbrace{${cv(C.out,f(1-R.o2))}}_{1-o_2} = ${f(R.do2_dz2)}$$
+$$\\underbrace{\\frac{\\partial o_2}{\\partial z_{o_2}}}_{\\substack{${cv(C.sig,"\\text{sigmoid}'(z_{o_2})")} \\\\ \\text{sigmoid derivative}}} = \\underbrace{${cv(C.out,f(R.o2))}}_{o_2} \\cdot \\underbrace{${cv(C.out,f(1-R.o2))}}_{1-o_2} = ${f(R.do2_dz2)}$$
 
-$$${cv(C.delta,'\\delta_{o_2}')} = \\underbrace{${f(R.dE_do2)}}_{\\frac{\\partial E}{\\partial o_2}} \\times \\underbrace{${f(R.do2_dz2)}}_{\\sigma'(z_{o_2})} = \\boxed{${cv(C.delta,f(R.d_o2))}}$$
+$$${cv(C.delta,'\\delta_{o_2}')} = \\underbrace{${f(R.dE_do2)}}_{\\frac{\\partial E}{\\partial o_2}} \\times \\underbrace{${f(R.do2_dz2)}}_{\\text{sigmoid}'(z_{o_2})} = \\boxed{${cv(C.delta,f(R.d_o2))}}$$
 </div>
 
 <div class="bp-section bp-section-grad"><b>⑤ Weight Gradients</b>
@@ -954,19 +954,19 @@ $$${cv(C.b_o,'b_4^{\\,\\text{new}}')} = \\underbrace{${cv(C.b_o,f(b4))}}_{b_4} -
 
 $$${cv(C.hid,'z_{'+hLabel+'}')} = \\underbrace{${cv(C.w_ih,f(wH1))}}_{${cv(C.w_ih,wH1l)}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} \\;+\\; \\underbrace{${cv(C.w_ih,f(wH2))}}_{${cv(C.w_ih,wH2l)}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} \\;+\\; \\underbrace{${cv(C.b_h,f(bVal))}}_{${cv(C.b_h,bLabel)}} = ${cv(C.hid,f(zh))}$$
 
-$$${cv(C.hid,hLabel)} = \\sigma\\!\\left(${cv(C.hid,f(zh))}\\right) = ${cv(C.hid,f(hVal))}$$
+$$${cv(C.hid,hLabel)} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(zh))}\\right) = ${cv(C.hid,f(hVal))}$$
 </div>
 
 <div class="bp-section bp-section-out"><b>② Prerequisite: Output deltas (needed to compute $\\delta_{${hLabel}}$)</b>
 
 <b>Output $o_1$:</b>
 $$${cv(C.out,'z_{o_1}')} = ${cv(C.w_ho,f(w5))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w6))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b3))} = ${cv(C.out,f(R.zo1))}$$
-$$${cv(C.out,'o_1')} = \\sigma(${cv(C.out,f(R.zo1))}) = ${cv(C.out,f(R.o1))}$$
+$$${cv(C.out,'o_1')} = \\text{sigmoid}(${cv(C.out,f(R.zo1))}) = ${cv(C.out,f(R.o1))}$$
 $$${cv(C.delta,'\\delta_{o_1}')} = -(${cv(C.tgt,f(t1))} - ${cv(C.out,f(R.o1))}) \\cdot ${cv(C.out,f(R.o1))} \\cdot ${cv(C.out,f(1-R.o1))} = ${cv(C.delta,f(R.d_o1))}$$
 
 <b>Output $o_2$:</b>
 $$${cv(C.out,'z_{o_2}')} = ${cv(C.w_ho,f(w7))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w8))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b4))} = ${cv(C.out,f(R.zo2))}$$
-$$${cv(C.out,'o_2')} = \\sigma(${cv(C.out,f(R.zo2))}) = ${cv(C.out,f(R.o2))}$$
+$$${cv(C.out,'o_2')} = \\text{sigmoid}(${cv(C.out,f(R.zo2))}) = ${cv(C.out,f(R.o2))}$$
 $$${cv(C.delta,'\\delta_{o_2}')} = -(${cv(C.tgt,f(t2))} - ${cv(C.out,f(R.o2))}) \\cdot ${cv(C.out,f(R.o2))} \\cdot ${cv(C.out,f(1-R.o2))} = ${cv(C.delta,f(R.d_o2))}$$
 </div>
 
@@ -974,7 +974,7 @@ $$${cv(C.delta,'\\delta_{o_2}')} = -(${cv(C.tgt,f(t2))} - ${cv(C.out,f(R.o2))}) 
 
 $$\\frac{\\partial E}{\\partial ${hLabel}} = \\underbrace{${cv(C.delta,f(R.d_o1))}}_{${cv(C.delta,'\\delta_{o_1}')}} \\cdot \\underbrace{${cv(C.w_ho,f(w_o1))}}_{${cv(C.w_ho,w_o1l)}} \\;+\\; \\underbrace{${cv(C.delta,f(R.d_o2))}}_{${cv(C.delta,'\\delta_{o_2}')}} \\cdot \\underbrace{${cv(C.w_ho,f(w_o2))}}_{${cv(C.w_ho,w_o2l)}} = ${f(dE_dh)}$$
 
-$$${cv(C.delta,'\\delta_{'+hLabel+'}')} = \\underbrace{${f(dE_dh)}}_{\\frac{\\partial E}{\\partial ${hLabel}}} \\times \\underbrace{${cv(C.hid,f(hVal))} \\cdot ${cv(C.hid,f(1-hVal))}}_{\\sigma'(z_{${hLabel}})} = ${cv(C.delta,f(dH))}$$
+$$${cv(C.delta,'\\delta_{'+hLabel+'}')} = \\underbrace{${f(dE_dh)}}_{\\frac{\\partial E}{\\partial ${hLabel}}} \\times \\underbrace{${cv(C.hid,f(hVal))} \\cdot ${cv(C.hid,f(1-hVal))}}_{\\text{sigmoid}'(z_{${hLabel}})} = ${cv(C.delta,f(dH))}$$
 </div>
 
 <div class="bp-section bp-section-grad"><b>④ Gradient for this weight</b>
@@ -1020,17 +1020,17 @@ $$${dir}$$
 <div class="bp-section bp-section-hid"><b>① Prerequisite: Hidden layer forward pass</b>
 
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w2))}}_{${cv(C.w_ih,'w_2')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
-$$${cv(C.hid,'h_1')} = \\sigma(${cv(C.hid,f(R.zh1))}) = ${cv(C.hid,f(R.h1))}$$
+$$${cv(C.hid,'h_1')} = \\text{sigmoid}(${cv(C.hid,f(R.zh1))}) = ${cv(C.hid,f(R.h1))}$$
 
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
-$$${cv(C.hid,'h_2')} = \\sigma(${cv(C.hid,f(R.zh2))}) = ${cv(C.hid,f(R.h2))}$$
+$$${cv(C.hid,'h_2')} = \\text{sigmoid}(${cv(C.hid,f(R.zh2))}) = ${cv(C.hid,f(R.h2))}$$
 </div>
 
 <div class="bp-section bp-section-out"><b>② Forward Pass — How $${cv(C.out,oLabel)}$ was computed (this weight participates here)</b>
 
 $$${cv(C.out,'z_{'+oLabel+'}')} = \\underbrace{${cv(C.w_ho,f(wO1))}}_{${cv(C.w_ho,wO1l)}} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{${cv(C.hid,'h_1')}} \\;+\\; \\underbrace{${cv(C.w_ho,f(wO2))}}_{${cv(C.w_ho,wO2l)}} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{${cv(C.hid,'h_2')}} \\;+\\; \\underbrace{${cv(C.b_o,f(bVal))}}_{${cv(C.b_o,bLabel)}} = ${cv(C.out,f(zo))}$$
 
-$$${cv(C.out,oLabel)} = \\sigma\\!\\left(${cv(C.out,f(zo))}\\right) = ${cv(C.out,f(oVal))}$$
+$$${cv(C.out,oLabel)} = \\text{sigmoid}\\!\\left(${cv(C.out,f(zo))}\\right) = ${cv(C.out,f(oVal))}$$
 </div>
 
 <div class="bp-section bp-section-loss"><b>③ Loss</b>
@@ -1042,7 +1042,7 @@ $$${cv(C.loss,'E_{'+oLabel.replace('o_','')+'}')} = \\tfrac{1}{2}\\!\\left(${cv(
 
 $$\\frac{\\partial E}{\\partial ${oLabel}} = -(${cv(C.tgt,f(tVal))} - ${cv(C.out,f(oVal))}) = ${f(dE_do)}$$
 
-$$${cv(C.delta,'\\delta_{'+oLabel+'}')} = \\underbrace{${f(dE_do)}}_{\\frac{\\partial E}{\\partial ${oLabel}}} \\times \\underbrace{${cv(C.out,f(oVal))} \\cdot ${cv(C.out,f(1-oVal))}}_{\\sigma'(z_{${oLabel}})} = ${cv(C.delta,f(dO))}$$
+$$${cv(C.delta,'\\delta_{'+oLabel+'}')} = \\underbrace{${f(dE_do)}}_{\\frac{\\partial E}{\\partial ${oLabel}}} \\times \\underbrace{${cv(C.out,f(oVal))} \\cdot ${cv(C.out,f(1-oVal))}}_{\\text{sigmoid}'(z_{${oLabel}})} = ${cv(C.delta,f(dO))}$$
 </div>
 
 <div class="bp-section bp-section-grad"><b>⑤ Gradient for this weight</b>
