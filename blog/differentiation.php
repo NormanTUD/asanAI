@@ -147,16 +147,17 @@ You can explore the derivative rules interactively below. Choose a function and 
     <div style="margin-bottom:10px;">
         <strong>Function:</strong>
         <select id="select-deriv-rule" style="padding:5px 10px; border-radius:4px; border:1px solid #cbd5e1; font-size:0.95em;">
-            <option value="x2">Power Rule: $f(x) = x^2$</option>
-            <option value="x3">Power Rule: $f(x) = x^3$</option>
-            <option value="sqrt">Power Rule: $f(x) = \sqrt{x}$</option>
-            <option value="sin">Trig: $f(x) = \sin(x)$</option>
-            <option value="cos">Trig: $f(x) = \cos(x)$</option>
-            <option value="ex">Exponential: $f(x) = e^x$</option>
-            <option value="ln">Logarithm: $f(x) = \ln(x)$</option>
-            <option value="product">Product Rule: $f(x) = x^2 \sin(x)$</option>
-            <option value="chain">Chain Rule: $f(x) = \sin(x^2)$</option>
-        </select>
+		<option value="x2">Power Rule: f(x) = x²</option>
+		<option value="x3">Power Rule: f(x) = x³</option>
+		<option value="sqrt">Power Rule: f(x) = sqrt(x)</option>
+		<option value="sin">Trig: f(x) = sin(x)</option>
+		<option value="cos">Trig: f(x) = cos(x)</option>
+		<option value="ex">Exponential: f(x) = eˣ</option>
+		<option value="ln">Logarithm: f(x) = ln(x)</option>
+		<option value="product">Product Rule: f(x) = x² sin(x)</option>
+		<option value="chain">Chain Rule: f(x) = sin(x²)</option>
+	</select>
+
     </div>
 
     <div id="deriv-rule-formula" style="text-align:center; font-size:1.15em; margin:10px 0; background:#f8fafc; padding:12px; border-radius:6px; min-height:50px;"></div>
