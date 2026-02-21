@@ -134,9 +134,9 @@ async function update_translations(force=0) {
 		wd = 1;
 	}
 
-	await show_visual_explanations(wd);
-
-
+	if (typeof show_visual_explanations === 'function') {
+		await show_visual_explanations(wd);
+	}
 }
 
 // Update translations when language selector links are clicked
