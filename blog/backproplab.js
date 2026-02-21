@@ -693,7 +693,7 @@ $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{\\substack{${cv(C.
 $$${cv(C.hid,'h_1')} = \\underbrace{\\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh1))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.hid,f(R.zh1))}}} = \\boxed{${cv(C.hid,f(R.h1))}}$$
 </div>
 
-<div class="bp-section bp-section-out"><b>② Prerequisite: Output layer forward + backward (needed for $\\delta_{o_1}, \\delta_{o_2}$)</b>
+<div class="bp-section bp-section-out"><b>② Prerequisite: Output layer forward + backward (needed for $\\delta_{o_1}, \\delta_{o_2}$)</b><br>
 
 We need $\\delta_{o_1}$ and $\\delta_{o_2}$ to compute the backward pass for $h_1$. Here's how they were computed:<br>
 
@@ -750,7 +750,7 @@ $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{\\substack{${cv(C.
 $$${cv(C.hid,'h_2')} = \\underbrace{\\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.hid,f(R.zh2))}}} = \\boxed{${cv(C.hid,f(R.h2))}}$$
 </div>
 
-<div class="bp-section bp-section-out"><b>② Prerequisite: Output layer forward + backward (needed for $\\delta_{o_1}, \\delta_{o_2}$)</b>
+<div class="bp-section bp-section-out"><b>② Prerequisite: Output layer forward + backward (needed for $\\delta_{o_1}, \\delta_{o_2}$)</b><br>
 
 We need $\\delta_{o_1}$ and $\\delta_{o_2}$ to compute the backward pass for $h_2$. Here's how they were computed:<br>
 
