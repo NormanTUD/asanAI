@@ -315,10 +315,20 @@ function renderBackpropVisual(id) {
   function drawSVG() {
     let html = "";
 
+    // Compute weight magnitude range for thickness scaling
+    const allWeights = CONNS.map(([,, wk]) => Math.abs(S[wk]));
+    const minW = Math.min(...allWeights);
+    const maxW = Math.max(...allWeights);
+    const MIN_THICK = 1;
+    const MAX_THICK = 8;
+
     // Connection lines + weight labels
     CONNS.forEach(([from, to, wk, wl]) => {
       const a = NODES[from], b = NODES[to], val = S[wk];
-      const thick = Math.max(1, Math.min(5, Math.abs(val) * 3));
+      const absVal = Math.abs(val);
+      // Linear interpolation: weakest → thinnest, strongest → thickest
+      const t = maxW > minW ? (absVal - minW) / (maxW - minW) : 0.5;
+      const thick = MIN_THICK + t * (MAX_THICK - MIN_THICK);
       const col = val >= 0 ? "#3b82f6" : "#ef4444";
       let mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
       if (wk === "w2" || wk === "w6") my -= 14;
@@ -363,175 +373,175 @@ function renderBackpropVisual(id) {
     tryRender();
   }
 
-  function svgCircle(nd, sty, isLocked) {
-    const stroke = isLocked ? "#f59e0b" : sty.color;
-    const sw = isLocked ? 3.5 : 2.5;
-    let s = `<circle class="bp-node" data-nk="${nd.label.replace('_','')}" cx="${nd.x}" cy="${nd.y}" r="${sty.r}" fill="${sty.fill}" stroke="${stroke}" stroke-width="${sw}" style="cursor:pointer;"/>`;
-    if (isLocked) s += `<circle class="bp-locked-ring" cx="${nd.x}" cy="${nd.y}" r="${sty.r + 5}"/>`;
-    return s;
-  }
+	function svgCircle(nd, sty, isLocked) {
+		const stroke = isLocked ? "#f59e0b" : sty.color;
+		const sw = isLocked ? 3.5 : 2.5;
+		let s = `<circle class="bp-node" data-nk="${nd.label.replace('_','')}" cx="${nd.x}" cy="${nd.y}" r="${sty.r}" fill="${sty.fill}" stroke="${stroke}" stroke-width="${sw}" style="cursor:pointer;"/>`;
+		if (isLocked) s += `<circle class="bp-locked-ring" cx="${nd.x}" cy="${nd.y}" r="${sty.r + 5}"/>`;
+		return s;
+	}
 
-  function svgNodeLabel(nd, color, valStr) {
-    return `<text x="${nd.x}" y="${nd.y - 8}" text-anchor="middle" font-size="12" font-weight="700" fill="${color}" style="pointer-events:none;">$${nd.label}$</text>` +
-           `<text x="${nd.x}" y="${nd.y + 10}" text-anchor="middle" font-size="11" font-family="monospace" fill="#1e293b" style="pointer-events:none;">${valStr}</text>`;
-  }
+	function svgNodeLabel(nd, color, valStr) {
+		return `<text x="${nd.x}" y="${nd.y - 8}" text-anchor="middle" font-size="12" font-weight="700" fill="${color}" style="pointer-events:none;">$${nd.label}$</text>` +
+			`<text x="${nd.x}" y="${nd.y + 10}" text-anchor="middle" font-size="11" font-family="monospace" fill="#1e293b" style="pointer-events:none;">${valStr}</text>`;
+	}
 
-  function svgDeltaLabel(nk, nd, r) {
-    const deltaMap = { h1: ["h", 1, R.d_h1, "#d97706"], h2: ["h", 2, R.d_h2, "#d97706"],
-                       o1: ["o", 1, R.d_o1, "#dc2626"], o2: ["o", 2, R.d_o2, "#dc2626"] };
-    const d = deltaMap[nk];
-    if (!d) return "";
-    const [prefix, idx, val, col] = d;
-    return `<text x="${nd.x}" y="${nd.y + r + 14}" text-anchor="middle" font-size="15" fill="${col}" style="pointer-events:none;">δ<tspan baseline-shift="sub" font-size="7">${prefix}<tspan baseline-shift="sub" font-size="5">${idx}</tspan></tspan> = ${fmt(val)}</text>`;
-  }
+	function svgDeltaLabel(nk, nd, r) {
+		const deltaMap = { h1: ["h", 1, R.d_h1, "#d97706"], h2: ["h", 2, R.d_h2, "#d97706"],
+			o1: ["o", 1, R.d_o1, "#dc2626"], o2: ["o", 2, R.d_o2, "#dc2626"] };
+		const d = deltaMap[nk];
+		if (!d) return "";
+		const [prefix, idx, val, col] = d;
+		return `<text x="${nd.x}" y="${nd.y + r + 14}" text-anchor="middle" font-size="15" fill="${col}" style="pointer-events:none;">δ<tspan baseline-shift="sub" font-size="7">${prefix}<tspan baseline-shift="sub" font-size="5">${idx}</tspan></tspan> = ${fmt(val)}</text>`;
+	}
 
-  function dashedLine(a, b) {
-    return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
-  }
+	function dashedLine(a, b) {
+		return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
+	}
 
-  // ── SVG interaction ──
-  function attachSVGListeners() {
-    svg.querySelectorAll(".bp-node").forEach((el) => {
-      el.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const nk = el.dataset.nk;
-        toggleLock("node", nk);
-      });
-    });
-    svg.querySelectorAll(".bp-wlabel").forEach((el) => {
-      el.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleLock("weight", el.dataset.wk);
-      });
-    });
-    svg.addEventListener("click", (e) => {
-      if (e.target === svg || e.target.tagName === "svg") unlock();
-    });
-  }
+	// ── SVG interaction ──
+	function attachSVGListeners() {
+		svg.querySelectorAll(".bp-node").forEach((el) => {
+			el.addEventListener("click", (e) => {
+				e.stopPropagation();
+				const nk = el.dataset.nk;
+				toggleLock("node", nk);
+			});
+		});
+		svg.querySelectorAll(".bp-wlabel").forEach((el) => {
+			el.addEventListener("click", (e) => {
+				e.stopPropagation();
+				toggleLock("weight", el.dataset.wk);
+			});
+		});
+		svg.addEventListener("click", (e) => {
+			if (e.target === svg || e.target.tagName === "svg") unlock();
+		});
+	}
 
-  function toggleLock(type, key) {
-    if (locked?.type === type && locked.key === key) return unlock();
-    locked = { type, key };
-    showLockedInfo();
-    drawSVG();
-  }
+	function toggleLock(type, key) {
+		if (locked?.type === type && locked.key === key) return unlock();
+		locked = { type, key };
+		showLockedInfo();
+		drawSVG();
+	}
 
-  function unlock() {
-    locked = null;
-    clearHighlights();
-    showDefaultInfo();
-    drawSVG();
-  }
+	function unlock() {
+		locked = null;
+		clearHighlights();
+		showDefaultInfo();
+		drawSVG();
+	}
 
-  function showLockedInfo() {
-    if (locked.type === "node") showNodeInfo(locked.key);
-    else showWeightInfo(locked.key);
-  }
+	function showLockedInfo() {
+		if (locked.type === "node") showNodeInfo(locked.key);
+		else showWeightInfo(locked.key);
+	}
 
-  function showDefaultInfo() {
-    infoPanel.innerHTML = `<div class="md"><span style="color:#94a3b8;">Click any neuron or weight label to see its equations.</span></div>`;
-    tryRender();
-  }
+	function showDefaultInfo() {
+		infoPanel.innerHTML = `<div class="md"><span style="color:#94a3b8;">Click any neuron or weight label to see its equations.</span></div>`;
+		tryRender();
+	}
 
-  // ── Highlight helpers ──
-  function highlightWeights(keys) {
-    svg.querySelectorAll(".bp-conn").forEach((el) => {
-      if (keys.includes(el.dataset.wk)) {
-        el.classList.add("pulse"); el.classList.remove("dim");
-        el.setAttribute("stroke", "#f59e0b");
-      } else {
-        el.classList.add("dim"); el.classList.remove("pulse");
-      }
-    });
-    svg.querySelectorAll(".bp-wlabel").forEach((el) => {
-      if (!keys.includes(el.dataset.wk)) el.classList.add("dim");
-    });
-  }
+	// ── Highlight helpers ──
+	function highlightWeights(keys) {
+		svg.querySelectorAll(".bp-conn").forEach((el) => {
+			if (keys.includes(el.dataset.wk)) {
+				el.classList.add("pulse"); el.classList.remove("dim");
+				el.setAttribute("stroke", "#f59e0b");
+			} else {
+				el.classList.add("dim"); el.classList.remove("pulse");
+			}
+		});
+		svg.querySelectorAll(".bp-wlabel").forEach((el) => {
+			if (!keys.includes(el.dataset.wk)) el.classList.add("dim");
+		});
+	}
 
-  function clearHighlights() {
-    svg.querySelectorAll(".bp-conn").forEach((el) => {
-      el.classList.remove("pulse", "dim");
-      el.setAttribute("stroke", S[el.dataset.wk] >= 0 ? "#3b82f6" : "#ef4444");
-    });
-    svg.querySelectorAll(".bp-wlabel").forEach((el) => el.classList.remove("dim"));
-  }
+	function clearHighlights() {
+		svg.querySelectorAll(".bp-conn").forEach((el) => {
+			el.classList.remove("pulse", "dim");
+			el.setAttribute("stroke", S[el.dataset.wk] >= 0 ? "#3b82f6" : "#ef4444");
+		});
+		svg.querySelectorAll(".bp-wlabel").forEach((el) => el.classList.remove("dim"));
+	}
 
-  // ── Info panel rendering ──
-  function renderInfoHTML(html) {
-    infoPanel.innerHTML = `<div class="md">${html}</div>`;
-    const btn = document.createElement("button");
-    btn.className = "bp-close"; btn.textContent = "✕";
-    btn.addEventListener("click", unlock);
-    infoPanel.prepend(btn);
-    tryRender();
-  }
+	// ── Info panel rendering ──
+	function renderInfoHTML(html) {
+		infoPanel.innerHTML = `<div class="md">${html}</div>`;
+		const btn = document.createElement("button");
+		btn.className = "bp-close"; btn.textContent = "✕";
+		btn.addEventListener("click", unlock);
+		infoPanel.prepend(btn);
+		tryRender();
+	}
 
-  // ═════════════════════════════════════════════════════════════════
-  // INFO PANELS — Node info (the big one)
-  // ═════════════════════════════════════════════════════════════════
+	// ═════════════════════════════════════════════════════════════════
+	// INFO PANELS — Node info (the big one)
+	// ═════════════════════════════════════════════════════════════════
 
-  function showNodeInfo(nk) {
-    if (nk === "x1" || nk === "x2") return renderInfoHTML(inputNodeInfo(nk));
-    if (nk === "t1" || nk === "t2") return renderInfoHTML(targetNodeInfo(nk));
-    if (nk === "h1" || nk === "h2") return renderInfoHTML(hiddenNodeInfo(nk));
-    if (nk === "o1" || nk === "o2") return renderInfoHTML(outputNodeInfo(nk));
-  }
+	function showNodeInfo(nk) {
+		if (nk === "x1" || nk === "x2") return renderInfoHTML(inputNodeInfo(nk));
+		if (nk === "t1" || nk === "t2") return renderInfoHTML(targetNodeInfo(nk));
+		if (nk === "h1" || nk === "h2") return renderInfoHTML(hiddenNodeInfo(nk));
+		if (nk === "o1" || nk === "o2") return renderInfoHTML(outputNodeInfo(nk));
+	}
 
-  function showWeightInfo(wk) {
-    highlightWeights([wk]);
-    const idx = parseInt(wk[1]); // 1-8
-    if (idx <= 4) renderInfoHTML(inputHiddenWeightInfo(wk));
-    else renderInfoHTML(hiddenOutputWeightInfo(wk));
-  }
+	function showWeightInfo(wk) {
+		highlightWeights([wk]);
+		const idx = parseInt(wk[1]); // 1-8
+		if (idx <= 4) renderInfoHTML(inputHiddenWeightInfo(wk));
+		else renderInfoHTML(hiddenOutputWeightInfo(wk));
+	}
 
-  // ── Input node info ──
-  function inputNodeInfo(nk) {
-    const i = nk === "x1" ? 1 : 2;
-    const wTo = nk === "x1" ? ["w_1", "w_3"] : ["w_2", "w_4"];
-    return `<h3>$${NODES[nk].label}$ — Input Neuron</h3>
+	// ── Input node info ──
+	function inputNodeInfo(nk) {
+		const i = nk === "x1" ? 1 : 2;
+		const wTo = nk === "x1" ? ["w_1", "w_3"] : ["w_2", "w_4"];
+		return `<h3>$${NODES[nk].label}$ — Input Neuron</h3>
 <div class="bp-section">
 $$${NODES[nk].label} = ${fmt(S[nk], 4)}$$
 Raw input fed into the hidden layer via $${wTo[0]}$ (to $h_1$) and $${wTo[1]}$ (to $h_2$).
 </div>`;
-  }
+	}
 
-  // ── Target node info ──
-  function targetNodeInfo(nk) {
-    const i = nk === "t1" ? 1 : 2;
-    const oKey = "o" + i;
-    return `<h3>$${NODES[nk].label}$ — Target (Ground Truth)</h3>
+	// ── Target node info ──
+	function targetNodeInfo(nk) {
+		const i = nk === "t1" ? 1 : 2;
+		const oKey = "o" + i;
+		return `<h3>$${NODES[nk].label}$ — Target (Ground Truth)</h3>
 <div class="bp-section bp-section-out"><b>⬆ Prerequisite: How was $${NODES[oKey].label}$ computed?</b>
-${hiddenForwardLatex("Step 1 — Hidden layer forward pass (needed to get $h_1, h_2$):")}
-${outputForwardLatex(oKey, `Step 2 — Output neuron $${NODES[oKey].label}$ forward pass:`)}
+			${hiddenForwardLatex("Step 1 — Hidden layer forward pass (needed to get $h_1, h_2$):")}
+		${outputForwardLatex(oKey, `Step 2 — Output neuron $${NODES[oKey].label}$ forward pass:`)}
 </div>
 <div class="bp-section bp-section-loss"><b>⬇ Loss computation for $${NODES[nk].label}$:</b>
-${lossLatex(i)}
-${totalLossLatex()}
+			${lossLatex(i)}
+		${totalLossLatex()}
 </div>`;
-  }
+	}
 
-  function hiddenNodeInfo(nk) {
-    const cfg = HIDDEN_CFG[nk];
-    const i = cfg.idx;
-    const hVal = R["h" + i], zh = R["zh" + i], dH = R["d_h" + i], dE_dh = R["dE_dh" + i];
-    const [wA, wB] = cfg.wIn, [wAl, wBl] = cfg.wInLabels;
-    const [wOutA, wOutB] = cfg.wOut, [wOutAl, wOutBl] = cfg.wOutLabels;
-    const sigDeriv = hVal * (1 - hVal);
-    const gw = [R["g" + wA], R["g" + wB]], gb = R["gb" + i];
+	function hiddenNodeInfo(nk) {
+		const cfg = HIDDEN_CFG[nk];
+		const i = cfg.idx;
+		const hVal = R["h" + i], zh = R["zh" + i], dH = R["d_h" + i], dE_dh = R["dE_dh" + i];
+		const [wA, wB] = cfg.wIn, [wAl, wBl] = cfg.wInLabels;
+		const [wOutA, wOutB] = cfg.wOut, [wOutAl, wOutBl] = cfg.wOutLabels;
+		const sigDeriv = hVal * (1 - hVal);
+		const gw = [R["g" + wA], R["g" + wB]], gb = R["gb" + i];
 
-    return `<h3>$h_${i}$ — Hidden Neuron</h3>
+		return `<h3>$h_${i}$ — Hidden Neuron</h3>
 
 <div class="bp-section bp-section-hid"><b>① Forward Pass — Computing $h_${i}$</b>
-${neuronForwardLatex(`z_{h_${i}}`, `h_${i}`,
-  [S[wA], S[wB]], [wAl, wBl],
-  [S.x1, S.x2], ["x_1", "x_2"],
-  S[cfg.bias], `b_${i}`, zh, hVal)}
+			${neuronForwardLatex(`z_{h_${i}}`, `h_${i}`,
+				[S[wA], S[wB]], [wAl, wBl],
+				[S.x1, S.x2], ["x_1", "x_2"],
+				S[cfg.bias], `b_${i}`, zh, hVal)}
 </div>
 
 <div class="bp-section bp-section-out"><b>② Prerequisite: Output deltas (needed for $\\delta_{o_1}, \\delta_{o_2}$)</b><br>
 We need $\\delta_{o_1}$ and $\\delta_{o_2}$ to compute the backward pass for $h_${i}$:<br>
-${outputDeltaLatex(1)}
-${outputDeltaLatex(2)}
+			${outputDeltaLatex(1)}
+		${outputDeltaLatex(2)}
 </div>
 
 <div class="bp-section bp-section-back"><b>③ Backward Pass — Error signal for $h_${i}$</b>
@@ -542,52 +552,52 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\frac{\\partial E}{\\partial 
 </div>
 
 <div class="bp-section bp-section-grad"><b>④ Weight Gradients</b>
-${gradientLatex(wAl, `\\delta_{h_${i}}`, dH, "x_1", S.x1, gw[0])}
-${gradientLatex(wBl, `\\delta_{h_${i}}`, dH, "x_2", S.x2, gw[1])}
+		${gradientLatex(wAl, `\\delta_{h_${i}}`, dH, "x_1", S.x1, gw[0])}
+	${gradientLatex(wBl, `\\delta_{h_${i}}`, dH, "x_2", S.x2, gw[1])}
 $$\\frac{\\partial E}{\\partial b_${i}} = \\delta_{h_${i}} = ${fmt(gb)}$$
 </div>
 
 <div class="bp-section bp-section-update"><b>⑤ Weight Updates</b>
-${updateLatex(wAl, S[wA], gw[0])}
-${updateLatex(wBl, S[wB], gw[1])}
-${updateLatex(`b_${i}`, S[cfg.bias], gb)}
+			${updateLatex(wAl, S[wA], gw[0])}
+		${updateLatex(wBl, S[wB], gw[1])}
+		${updateLatex(`b_${i}`, S[cfg.bias], gb)}
 </div>`;
-  }
+	}
 
-  // ═════════════════════════════════════════════════════════════════
-  // Output node info
-  // ═════════════════════════════════════════════════════════════════
+	// ═════════════════════════════════════════════════════════════════
+	// Output node info
+	// ═════════════════════════════════════════════════════════════════
 
-  function outputNodeInfo(nk) {
-    const cfg = OUTPUT_CFG[nk];
-    const i = cfg.idx;
-    const oVal = R["o" + i], zo = R["zo" + i];
-    const dE_do = R["dE_do" + i], do_dz = R["do" + i + "_dz" + i], dO = R["d_o" + i];
-    const tVal = S[cfg.target];
-    const Ei = R["E" + i];
-    const [wA, wB] = cfg.wIn, [wAl, wBl] = cfg.wInLabels;
-    const gw = [R["g" + wA], R["g" + wB]], gb = R["gb" + (i + 2)];
-    const bKey = cfg.bias, bLabel = `b_${i + 2}`;
-    const dir = dO > 0 ? "Prediction too HIGH — needs to decrease"
-              : dO < 0 ? "Prediction too LOW — needs to increase" : "Perfect!";
+	function outputNodeInfo(nk) {
+		const cfg = OUTPUT_CFG[nk];
+		const i = cfg.idx;
+		const oVal = R["o" + i], zo = R["zo" + i];
+		const dE_do = R["dE_do" + i], do_dz = R["do" + i + "_dz" + i], dO = R["d_o" + i];
+		const tVal = S[cfg.target];
+		const Ei = R["E" + i];
+		const [wA, wB] = cfg.wIn, [wAl, wBl] = cfg.wInLabels;
+		const gw = [R["g" + wA], R["g" + wB]], gb = R["gb" + (i + 2)];
+		const bKey = cfg.bias, bLabel = `b_${i + 2}`;
+		const dir = dO > 0 ? "Prediction too HIGH — needs to decrease"
+			: dO < 0 ? "Prediction too LOW — needs to increase" : "Perfect!";
 
-    return `<h3>$o_${i}$ — Output Neuron</h3>
+		return `<h3>$o_${i}$ — Output Neuron</h3>
 <p style="color:#64748b;"><em>${dir}</em> &nbsp; (target $t_${i} = ${fmt(tVal, 4)}$)</p>
 
 <div class="bp-section bp-section-hid"><b>① Prerequisite: Hidden layer forward pass</b>
-${hiddenForwardLatex()}
+			${hiddenForwardLatex()}
 </div>
 
 <div class="bp-section bp-section-out"><b>② Forward Pass — Computing $o_${i}$</b>
-${neuronForwardLatex(`z_{o_${i}}`, `o_${i}`,
-  [S[wA], S[wB]], [wAl, wBl],
-  [R.h1, R.h2], ["h_1", "h_2"],
-  S[bKey], bLabel, zo, oVal)}
+			${neuronForwardLatex(`z_{o_${i}}`, `o_${i}`,
+				[S[wA], S[wB]], [wAl, wBl],
+				[R.h1, R.h2], ["h_1", "h_2"],
+				S[bKey], bLabel, zo, oVal)}
 </div>
 
 <div class="bp-section bp-section-loss"><b>③ Loss</b>
-${lossLatex(i)}
-${totalLossLatex()}
+			${lossLatex(i)}
+		${totalLossLatex()}
 </div>
 
 <div class="bp-section bp-section-back"><b>④ Backward Pass — The 3 chain-rule factors</b>
@@ -707,9 +717,10 @@ $$${dir}$$
 
   // Generic neuron forward: z = w·x + w·x + b, then sigmoid
   function neuronForwardLatex(zLabel, outLabel, wVals, wLabels, xVals, xLabels, bVal, bLabel, zResult, outResult) {
-    return `$$${zLabel} = \\underbrace{${fmt(wVals[0])}}_{\\substack{${wLabels[0]} \\\\ \\text{weight from }${xLabels[0]}}} \\cdot \\underbrace{${fmt(xVals[0])}}_{${xLabels[0]}} \\;+\\; \\underbrace{${fmt(wVals[1])}}_{\\substack{${wLabels[1]} \\\\ \\text{weight from }${xLabels[1]}}} \\cdot \\underbrace{${fmt(xVals[1])}}_{${xLabels[1]}} \\;+\\; \\underbrace{${fmt(bVal)}}_{${bLabel}} = ${fmt(zResult)}$$
-$$${outLabel} = \\underbrace{\\text{sigmoid}\\!\\left(\\underbrace{${fmt(zResult)}}_{${zLabel}}\\right)}_{\\substack{\\text{sigmoid squashes} \\\\ \\text{to range (0,1)}}} = \\frac{1}{1+e^{-${fmt(zResult)}}} = \\boxed{${fmt(outResult)}}$$`;
+    return `$$${zLabel} = \\underbrace{${fmt(wVals[0])}}_{\\substack{${wLabels[0]} \\\\ \\text{weight from }${xLabels[0]}}} \\cdot \\underbrace{${fmt(xVals[0])}}_{\\substack{${xLabels[0]} \\\\ \\text{input}}} \\;+\\; \\underbrace{${fmt(wVals[1])}}_{\\substack{${wLabels[1]} \\\\ \\text{weight from }${xLabels[1]}}} \\cdot \\underbrace{${fmt(xVals[1])}}_{\\substack{${xLabels[1]} \\\\ \\text{input}}} \\;+\\; \\underbrace{${fmt(bVal)}}_{\\substack{${bLabel} \\\\ \\text{bias}}} = ${fmt(zResult)}$$
+$$${outLabel} = \\underbrace{\\text{sigmoid}\\!\\left(\\underbrace{${fmt(zResult)}}_{\\substack{${zLabel} \\\\ \\text{pre-activation}}}\\right)}_{\\substack{\\text{sigmoid squashes} \\\\ \\text{to range (0,1)}}} = \\frac{1}{1+e^{-${fmt(zResult)}}} = \\boxed{${fmt(outResult)}}$$`;
   }
+
 
   // Both hidden neurons forward pass (used as prerequisite block)
   function hiddenForwardLatex(heading) {
