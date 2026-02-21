@@ -28,7 +28,8 @@
 	/*
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
 	 */
-	incl('Derivatives', "differentiation");
+	incl('Differentiation', "differentiation");
+	incl('Automatic Differentiation', "autodiff");
 	incl("Backpropagation: How a Neural Network Learns From Its Mistakes", "backproplab");
 	incl("Optimizer", "optimizerlab");
 	incl("Smallest possible neural network", "minimalneuron");
