@@ -1,8 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## Backpropagation: The Basics
-
 Backpropagation is a method to improve a neural network by systematically adjusting its weights and biases based on the error it makes. It uses two main steps:
 
 1. **Forward Pass**: Inputs are passed through the network layer by layer, producing outputs (predictions).

@@ -261,7 +261,8 @@ function renderBackpropVisual(id) {
 	};
 
 	// Helper: wrap value in \color
-	const cv = (color, text) => `\\color{${color}}{${text}}`;
+	//const cv = (color, text) => `\\color{${color}}{${text}}`;
+	const cv = (color, text) => `${text}`;
 
 	const S = {
 		x1:0.05, x2:0.10, t1:0.01, t2:0.99, lr:0.5,
