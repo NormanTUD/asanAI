@@ -704,7 +704,7 @@ $$\\frac{\\partial E}{\\partial o_1} = -(\\underbrace{${cv(C.tgt,f(t1))}}_{t_1} 
 $$${cv(C.delta,'\\delta_{o_1}')} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${cv(C.out,f(R.o1))} \\cdot ${cv(C.out,f(1-R.o1))}}_{\\text{sigmoid}'\\left(z_{o_1}\\right)} = ${cv(C.delta,f(R.d_o1))}$$
 
 <b>Output $o_2$:</b>
-$$${cv(C.out,'z_{o_2}')} = ${cv(C.w_ho,f(w7))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w8))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b4))} = ${cv(C.out,f(R.zo2))}$$
+$$${cv(C.out,'z_{o_2}')} = \\underbrace{${cv(C.w_ho,f(w7))}}_{w_7} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{h_1} + \\underbrace{${cv(C.w_ho,f(w8))}}_{w_8} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{h_2} + \\underbrace{${cv(C.b_o,f(b4))}}_{b_4} = ${cv(C.out,f(R.zo2))}$$
 $$${cv(C.out,'o_2')} = \\text{sigmoid}\\left(\\underbrace{${cv(C.out,f(R.zo2))}}_{z_{o_2}}\\right) = ${cv(C.out,f(R.o2))}$$
 $$\\frac{\\partial E}{\\partial o_2} = -(${cv(C.tgt,f(t2))} - ${cv(C.out,f(R.o2))}) = ${f(R.dE_do2)}$$
 $$${cv(C.delta,'\\delta_{o_2}')} = \\underbrace{${f(R.dE_do2)}}_{\\frac{\\partial E}{\\partial o_2}} \\times \\underbrace{${cv(C.out,f(R.o2))} \\cdot ${cv(C.out,f(1-R.o2))}}_{\\text{sigmoid}'\\left(z_{o_2}\\right)} = ${cv(C.delta,f(R.d_o2))}$$
@@ -761,7 +761,7 @@ $$\\frac{\\partial E}{\\partial o_1} = -(\\underbrace{${cv(C.tgt,f(t1))}}_{t_1} 
 $$${cv(C.delta,'\\delta_{o_1}')} = \\underbrace{${f(R.dE_do1)}}_{\\frac{\\partial E}{\\partial o_1}} \\times \\underbrace{${cv(C.out,f(R.o1))} \\cdot ${cv(C.out,f(1-R.o1))}}_{\\text{sigmoid}'\\left(z_{o_1}\\right)} = ${cv(C.delta,f(R.d_o1))}$$
 
 <b>Output $o_2$:</b>
-$$${cv(C.out,'z_{o_2}')} = ${cv(C.w_ho,f(w7))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w8))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b4))} = ${cv(C.out,f(R.zo2))}$$
+$$${cv(C.out,'z_{o_2}')} = \\underbrace{${cv(C.w_ho,f(w7))}}_{w_7} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{h_1} + \\underbrace{${cv(C.w_ho,f(w8))}}_{w_8} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{h_2} + \\underbrace{${cv(C.b_o,f(b4))}}_{b_4} = ${cv(C.out,f(R.zo2))}$$
 $$${cv(C.out,'o_2')} = \\text{sigmoid}\\left(\\underbrace{${cv(C.out,f(R.zo2))}}_{z_{o_2}}\\right) = ${cv(C.out,f(R.o2))}$$
 $$\\frac{\\partial E}{\\partial o_2} = -(${cv(C.tgt,f(t2))} - ${cv(C.out,f(R.o2))}) = ${f(R.dE_do2)}$$
 $$${cv(C.delta,'\\delta_{o_2}')} = \\underbrace{${f(R.dE_do2)}}_{\\frac{\\partial E}{\\partial o_2}} \\times \\underbrace{${cv(C.out,f(R.o2))} \\cdot ${cv(C.out,f(1-R.o2))}}_{\\text{sigmoid}'\\left(z_{o_2}\\right)} = ${cv(C.delta,f(R.d_o2))}$$
