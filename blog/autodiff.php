@@ -10,7 +10,9 @@ Automatic differentiation is neither symbolic differentiation (manipulating alge
 
 ### Historical Origins
 
-The mathematical foundation of reverse-mode automatic differentiation was laid by \citeauthor{linnainmaa1976} in his \citeyear{linnainmaa1976} master's thesis, \citetitle{linnainmaa1976}. Linnainmaa's original motivation was not neural networks at all — he sought an efficient way to track how rounding errors accumulate through long chains of floating-point computations. His key insight was that by recording each elementary operation and then traversing that record in reverse, one could compute the partial derivatives of the final result with respect to *every* intermediate variable in a single backward pass.
+The earliest work on what we now call automatic differentiation dates to \citeauthor{wengert1964} in \citeyear{wengert1964}. In his paper \citetitle{wengert1964}, Wengert described a procedure for the automatic evaluation of total and partial derivatives of arbitrary algebraic functions by decomposing them into sequences of elementary expressions, without ever developing symbolic derivative formulas. This forward-mode technique laid the conceptual groundwork for all later AD systems.
+
+The critical extension to **reverse mode** was made by \citeauthor{linnainmaa1976} in his \citeyear{linnainmaa1976} master's thesis, \citetitle{linnainmaa1976}. Linnainmaa's original motivation was not neural networks at all, he sought an efficient way to track how rounding errors accumulate through long chains of floating-point computations. His key insight was that by recording each elementary operation and then traversing that record in reverse, one could compute the partial derivatives of the final result with respect to *every* intermediate variable in a single backward pass. Where Wengert's forward mode required one pass per input variable, Linnainmaa's reverse mode required only one pass per *output*, an asymmetry that would prove decisive for training neural networks with millions of parameters and a single scalar loss.
 
 This technique was later independently rediscovered and applied to neural network training by \citeauthor{werbos1974} in his \citeyear{werbos1974} doctoral thesis \citetitle{werbos1974}, where he proposed using reverse-mode AD to compute gradients for multi-layer networks. However, it was the landmark \citeyear{rumelhart1986} paper by \citeauthor{rumelhart1986}, \citetitle{rumelhart1986}, that popularized the method under the name **backpropagation** and demonstrated its practical effectiveness, reigniting interest in connectionist models after the first AI winter.
 
@@ -18,15 +20,15 @@ This technique was later independently rediscovered and applied to neural networ
 
 Before understanding *how* AD works, it helps to understand *why* the alternatives fail at scale:
 
-**Symbolic Differentiation** (like what Mathematica or Wolfram Alpha does) manipulates algebraic expressions directly. For a simple function like $f(x) = x^2 \sin(x)$, it produces an exact symbolic derivative. However, for a neural network with millions of parameters and deeply nested compositions, the resulting symbolic expressions grow exponentially — a phenomenon called **expression swell**. The derivative of a 100-layer network would be an algebraic expression larger than any computer could store.
+**Symbolic Differentiation** (like what Mathematica or Wolfram Alpha does) manipulates algebraic expressions directly. For a simple function like $f(x) = x^2 \sin(x)$, it produces an exact symbolic derivative. However, for a neural network with millions of parameters and deeply nested compositions, the resulting symbolic expressions grow exponentially, a phenomenon called **expression swell**. The derivative of a 100-layer network would be an algebraic expression larger than any computer could store.
 
 **Numerical Differentiation** approximates derivatives using finite differences:
 
 $$\frac{\partial f}{\partial x_i} \approx \frac{f(x_1, \dots, x_i + h, \dots, x_n) - f(x_1, \dots, x_i, \dots, x_n)}{h}$$
 
-This requires **one forward pass per parameter** to compute each partial derivative. For a model with $n$ parameters, that means $n + 1$ forward passes. GPT-3 has 175 billion parameters — numerical differentiation would require 175 billion forward passes per training step. It is also numerically unstable: too large an $h$ introduces truncation error, too small an $h$ introduces floating-point cancellation error.
+This requires **one forward pass per parameter** to compute each partial derivative. For a model with $n$ parameters, that means $n + 1$ forward passes. GPT-3 has 175 billion parameters, numerical differentiation would require 175 billion forward passes per training step. It is also numerically unstable: too large an $h$ introduces truncation error, too small an $h$ introduces floating-point cancellation error.
 
-**Automatic Differentiation** computes exact derivatives (up to floating-point precision) in at most a constant factor more work than the original function evaluation. Reverse-mode AD, specifically, computes the gradient of a scalar output with respect to *all* inputs in a single backward pass — regardless of how many parameters there are.
+**Automatic Differentiation** computes exact derivatives (up to floating-point precision) in at most a constant factor more work than the original function evaluation. Reverse-mode AD, specifically, computes the gradient of a scalar output with respect to *all* inputs in a single backward pass, regardless of how many parameters there are.
 
 ### The Chain Rule: The Mathematical Engine
 
@@ -50,7 +52,7 @@ There are two "directions" in which the chain rule can be evaluated:
 
 **Forward Mode** propagates derivatives *alongside* the computation, from inputs to outputs. It computes $\frac{\partial v_i}{\partial x}$ for a chosen input $x$ at each step. This is efficient when there are **few inputs and many outputs** (e.g., computing the Jacobian column by column).
 
-**Reverse Mode** first completes the entire forward computation, then propagates derivatives *backward* from the output to all inputs. It computes $\frac{\partial y}{\partial v_i}$ for all intermediate variables $v_i$ in one pass. This is efficient when there are **many inputs and few outputs** — exactly the situation in neural network training, where we have millions of weights (inputs) and a single scalar loss (output).
+**Reverse Mode** first completes the entire forward computation, then propagates derivatives *backward* from the output to all inputs. It computes $\frac{\partial y}{\partial v_i}$ for all intermediate variables $v_i$ in one pass. This is efficient when there are **many inputs and few outputs**, exactly the situation in neural network training, where we have millions of weights (inputs) and a single scalar loss (output).
 
 $$\text{Forward mode cost:} \quad \mathcal{O}(n) \text{ passes for } n \text{ inputs}$$
 $$\text{Reverse mode cost:} \quad \mathcal{O}(m) \text{ passes for } m \text{ outputs}$$
@@ -59,7 +61,7 @@ Since training always reduces to minimizing a single scalar loss $L$, reverse mo
 
 ## The Tape: Recording the Computation
 
-The central data structure in reverse-mode AD is the **computational graph**, colloquially called the **tape** (by analogy with a magnetic tape that records operations sequentially). During the forward pass, every elementary operation — addition, multiplication, exponentiation, activation functions — is recorded on this tape along with its inputs and the local partial derivatives.
+The central data structure in reverse-mode AD is the **computational graph**, colloquially called the **tape** (by analogy with a magnetic tape that records operations sequentially). During the forward pass, every elementary operation, addition, multiplication, exponentiation, activation functions, is recorded on this tape along with its inputs and the local partial derivatives.
 
 ### A Concrete Example
 
@@ -73,8 +75,8 @@ Evaluated at $x = \frac{\pi}{2}, \; y = 1$:
 
 | Step | Operation | Result | Local Derivatives |
 |------|-----------|--------|-------------------|
-| $v_0$ | input $x$ | $\frac{\pi}{2} \approx 1.5708$ | — |
-| $v_1$ | input $y$ | $1$ | — |
+| $v_0$ | input $x$ | $\frac{\pi}{2} \approx 1.5708$ |, |
+| $v_1$ | input $y$ | $1$ |, |
 | $v_2 = v_0 + v_1$ | add | $2.5708$ | $\frac{\partial v_2}{\partial v_0} = 1, \quad \frac{\partial v_2}{\partial v_1} = 1$ |
 | $v_3 = \sin(v_0)$ | sin | $1.0$ | $\frac{\partial v_3}{\partial v_0} = \cos(v_0) = 0$ |
 | $v_4 = v_2 \cdot v_3$ | multiply | $2.5708$ | $\frac{\partial v_4}{\partial v_2} = v_3 = 1, \quad \frac{\partial v_4}{\partial v_3} = v_2 = 2.5708$ |
@@ -211,7 +213,7 @@ Modern deep learning frameworks implement reverse-mode AD as a core feature. The
 
 ### PyTorch: Implicit Tape with `autograd`
 
-\citealternativetitle{pytorch} uses an **implicit tape** — any tensor created with `requires_grad=True` automatically records operations performed on it. The tape is built dynamically during the forward pass (this is called **define-by-run** or **eager mode**), which makes debugging more intuitive.
+\citealternativetitle{pytorch} uses an **implicit tape**, any tensor created with `requires_grad=True` automatically records operations performed on it. The tape is built dynamically during the forward pass (this is called **define-by-run** or **eager mode**), which makes debugging more intuitive.
 
 Both approaches produce identical mathematical results. The choice between them is largely a matter of API preference and ecosystem.
 </div>
@@ -327,7 +329,7 @@ Both frameworks produce mathematically identical gradients. The choice is primar
 
 ## Building a Minimal Autograd Engine
 
-To truly understand tape-based AD, it helps to build one from scratch. The following is a minimal but complete implementation of a reverse-mode autograd engine in pure Python. It supports addition, multiplication, and the sine function — enough to differentiate our example $f(x, y) = (x + y) \cdot \sin(x)$.
+To truly understand tape-based AD, it helps to build one from scratch. The following is a minimal but complete implementation of a reverse-mode autograd engine in pure Python. It supports addition, multiplication, and the sine function, enough to differentiate our example $f(x, y) = (x + y) \cdot \sin(x)$.
 </div>
 
 <pre><code class="language-python">import math
@@ -406,7 +408,7 @@ When the chain rule is applied through many layers, the gradient is a product of
 
 $$\frac{\partial L}{\partial w_1} = \frac{\partial L}{\partial a_n} \cdot \frac{\partial a_n}{\partial z_n} \cdot \frac{\partial z_n}{\partial a_{n-1}} \cdots \frac{\partial a_1}{\partial z_1} \cdot \frac{\partial z_1}{\partial w_1}$$
 
-This is a product of $n$ local derivatives. If each factor is small (say, less than 1), the product shrinks **exponentially** toward zero as $n$ grows — the gradient **vanishes**. Conversely, if each factor is greater than 1, the product **explodes** toward infinity.
+This is a product of $n$ local derivatives. If each factor is small (say, less than 1), the product shrinks **exponentially** toward zero as $n$ grows, the gradient **vanishes**. Conversely, if each factor is greater than 1, the product **explodes** toward infinity.
 
 ### Vanishing Gradients
 
@@ -418,7 +420,7 @@ The maximum value of $\sigma'(z)$ is $0.25$, occurring at $z = 0$. This means th
 
 $$\left(0.25\right)^{10} \approx 9.5 \times 10^{-7}$$
 
-The gradient reaching the first layer is less than one millionth of the gradient at the output. The early layers effectively stop learning — they receive no useful signal about how to update their weights.
+The gradient reaching the first layer is less than one millionth of the gradient at the output. The early layers effectively stop learning, they receive no useful signal about how to update their weights.
 
 ### Exploding Gradients
 
@@ -472,7 +474,7 @@ You can explore the vanishing gradient problem interactively below. Adjust the n
 
 An important distinction in modern AD frameworks is whether the computational graph is built **statically** (before execution) or **dynamically** (during execution).
 
-**Static Graphs** (TensorFlow 1.x, early Theano): The entire computation is defined symbolically before any data flows through it. This allows aggressive compiler-level optimizations but makes debugging difficult — you cannot simply insert a `print()` statement to inspect intermediate values.
+**Static Graphs** (TensorFlow 1.x, early Theano): The entire computation is defined symbolically before any data flows through it. This allows aggressive compiler-level optimizations but makes debugging difficult, you cannot simply insert a `print()` statement to inspect intermediate values.
 
 **Dynamic Graphs** (PyTorch, TensorFlow 2.x eager mode): The graph is built on-the-fly as operations execute. Each forward pass constructs a fresh tape, which is then consumed during the backward pass. This "define-by-run" approach is more intuitive and Pythonic, allowing standard control flow (`if`, `for`, `while`) to be used naturally within the model.
 
@@ -491,5 +493,5 @@ The Transformer architecture (\citeauthor{vaswani2017attention}, \citeyear{vaswa
 | **Dynamic Graphs** | Tape built during execution (PyTorch, TF2 eager) |
 | **Static Graphs** | Tape defined before execution (TF1, compiled mode) |
 
-Automatic differentiation is the invisible engine of modern AI. Every time a model learns — every weight update, every gradient descent step, every backpropagation pass — it is the tape being built and unwound, the chain rule being applied mechanically and exactly, at a scale that \citeauthor{linnainmaa1976} could never have imagined when he first described the algorithm in \citeyear{linnainmaa1976}.
+Automatic differentiation is the invisible engine of modern AI. Every time a model learns, every weight update, every gradient descent step, every backpropagation pass, it is the tape being built and unwound, the chain rule being applied mechanically and exactly, at a scale that \citeauthor{linnainmaa1976} could never have imagined when he first described the algorithm in \citeyear{linnainmaa1976}.
 </div>

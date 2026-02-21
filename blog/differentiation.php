@@ -6,7 +6,7 @@
 
 The concept of a **derivative** is one of the most important ideas in all of mathematics. It answers a deceptively simple question: *How fast is something changing at this exact moment?*
 
-If you drive a car and your speedometer reads 60 km/h, that number is a derivative — it tells you the instantaneous rate of change of your position with respect to time. But how do we define "instantaneous" mathematically, when an instant has zero duration?
+If you drive a car and your speedometer reads 60 km/h, that number is a derivative, it tells you the instantaneous rate of change of your position with respect to time. But how do we define "instantaneous" mathematically, when an instant has zero duration?
 
 This question puzzled mathematicians for centuries, and its resolution gave birth to an entire branch of mathematics: **Calculus**.
 
@@ -15,9 +15,9 @@ This question puzzled mathematicians for centuries, and its resolution gave birt
 
 The development of calculus is one of the most famous (and contentious) stories in the history of science. Two towering figures independently developed the core ideas in the late 17th century.
 
-**Isaac Newton** (1642–1727) developed his "method of fluxions" around 1665–1666, motivated by problems in physics — he needed a way to describe the motion of planets and falling objects. He thought of quantities as "flowing" and their rates of change as "fluxions." Newton's approach was deeply rooted in the physical world: velocity is the fluxion of position, and acceleration is the fluxion of velocity. However, Newton was notoriously secretive and did not publish his methods until decades later.
+**Isaac Newton** (1642–1727) developed his "method of fluxions" around 1665–1666, motivated by problems in physics, he needed a way to describe the motion of planets and falling objects. He thought of quantities as "flowing" and their rates of change as "fluxions." Newton's approach was deeply rooted in the physical world: velocity is the fluxion of position, and acceleration is the fluxion of velocity. However, Newton was notoriously secretive and did not publish his methods until decades later.
 
-**Gottfried Wilhelm Leibniz** (1646–1716), working independently in the 1670s and 1680s, developed his own version of calculus with a focus on notation and formal manipulation. His notation — the $\frac{dy}{dx}$ that we still use today — was published in \citeyear{leibniz1684nova} in his paper \citetitle{leibniz1684nova}. Leibniz's genius lay in creating a symbolic language so powerful and intuitive that it made calculus accessible and practical. As \citeauthor{historyofmathematicalnotation} notes (Vol. 2, p. 197ff), Leibniz's differential notation proved far more influential than Newton's dot notation for the long-term development of analysis.
+**Gottfried Wilhelm Leibniz** (1646–1716), working independently in the 1670s and 1680s, developed his own version of calculus with a focus on notation and formal manipulation. His notation, the $\frac{dy}{dx}$ that we still use today, was published in \citeyear{leibniz1684nova} in his paper \citetitle{leibniz1684nova}. Leibniz's genius lay in creating a symbolic language so powerful and intuitive that it made calculus accessible and practical. As \citeauthor{historyofmathematicalnotation} notes (Vol. 2, p. 197ff), Leibniz's differential notation proved far more influential than Newton's dot notation for the long-term development of analysis.
 
 The bitter priority dispute between Newton and Leibniz, fueled by nationalistic pride between England and continental Europe, overshadowed the fact that both men made monumental contributions. Today, historians recognize that both arrived at the fundamental ideas independently. We use Leibniz's notation ($\frac{dy}{dx}$, $\int$) almost universally, while Newton's physical intuition shaped the application of calculus to science.
 
@@ -26,7 +26,7 @@ Before both of them, \citeauthor{oevresdeformat} had already explored the idea o
 \category{math,calculus}
 ### The Limit Definition of the Derivative
 
-The derivative is built on the concept of a **limit**, which we introduced earlier. The key idea is to start with something we *can* compute — the average rate of change over an interval — and then shrink that interval to zero.
+The derivative is built on the concept of a **limit**, which we introduced earlier. The key idea is to start with something we *can* compute, the average rate of change over an interval, and then shrink that interval to zero.
 
 #### The Average Rate of Change (The Secant Line)
 
@@ -126,7 +126,7 @@ $$\frac{d}{dx}\left[\frac{f(x)}{g(x)}\right] = \frac{f'(x) \cdot g(x) - f(x) \cd
 
 #### The Chain Rule
 
-The **Chain Rule** is arguably the most important rule for AI and deep learning. It tells us how to differentiate **composed functions** — functions inside functions:
+The **Chain Rule** is arguably the most important rule for AI and deep learning. It tells us how to differentiate **composed functions**, functions inside functions:
 
 $$\frac{d}{dx}[f(g(x))] = f'(g(x)) \cdot g'(x)$$
 
@@ -176,9 +176,9 @@ Some derivatives appear so frequently in AI and science that they are worth memo
 | $\ln(x)$ | $\frac{1}{x}$ | Natural logarithm |
 | $\sin(x)$ | $\cos(x)$ | |
 | $\cos(x)$ | $-\sin(x)$ | |
-| $\sigma(x) = \frac{1}{1+e^{-x}}$ | $\sigma(x)(1-\sigma(x))$ | The sigmoid — crucial for neural networks |
+| $\sigma(x) = \frac{1}{1+e^{-x}}$ | $\sigma(x)(1-\sigma(x))$ | The sigmoid, crucial for neural networks |
 
-The fact that $e^x$ is its own derivative is not a coincidence — it is essentially the *definition* of $e$. The number $e$ is the unique base for which the exponential function has this self-replicating property.
+The fact that $e^x$ is its own derivative is not a coincidence, it is essentially the *definition* of $e$. The number $e$ is the unique base for which the exponential function has this self-replicating property.
 
 \category{math,calculus}
 ### The Geometric Meaning: Tangent Lines
@@ -195,7 +195,7 @@ You can explore the tangent line interactively below. Move the point along the c
 <!-- ─── Interactive: Tangent Line Explorer ─── -->
 <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="margin-top:0;"><strong>Tangent Line Explorer</strong></p>
-    <p style="color:#64748b; font-size:0.9em;">Move the point along $f(x) = x^3 - 3x$ and see the tangent line. Notice where the derivative is zero (horizontal tangent) — these are the local maxima and minima!</p>
+    <p style="color:#64748b; font-size:0.9em;">Move the point along $f(x) = x^3 - 3x$ and see the tangent line. Notice where the derivative is zero (horizontal tangent), these are the local maxima and minima!</p>
 
     <div style="margin-bottom:10px;">
         <strong>$x = $</strong>
@@ -222,7 +222,7 @@ In a neural network with layers $L_1, L_2, \dots, L_n$, the chain rule extends n
 
 $$\frac{\partial \text{Loss}}{\partial w_1} = \frac{\partial \text{Loss}}{\partial L_n} \cdot \frac{\partial L_n}{\partial L_{n-1}} \cdots \frac{\partial L_2}{\partial L_1} \cdot \frac{\partial L_1}{\partial w_1}$$
 
-This is exactly what **backpropagation** computes — the chain rule applied layer by layer from the output back to the input.
+This is exactly what **backpropagation** computes, the chain rule applied layer by layer from the output back to the input.
 </div>
 
 <!-- ─── Interactive: Chain Rule Demo ─── -->
@@ -245,15 +245,15 @@ This is exactly what **backpropagation** computes — the chain rule applied lay
 \category{math,calculus}
 ### Why Derivatives Matter for AI
 
-Derivatives are not just an abstract mathematical concept — they are the **engine** that drives all of modern machine learning. Here is why:
+Derivatives are not just an abstract mathematical concept, they are the **engine** that drives all of modern machine learning. Here is why:
 
 1. **Gradient Descent**: To train a neural network, we need to minimize a **loss function** that measures how wrong the model's predictions are. The derivative (or **gradient**, in multiple dimensions) tells us which direction to adjust the weights to reduce the loss. This is the algorithm called **Gradient Descent**, first described by \citeauthor{cauchy1847} in \citeyear{cauchy1847}.
 
 2. **Backpropagation**: As we saw, the **chain rule** allows us to compute the gradient of the loss with respect to every single weight in a deep network, no matter how many layers it has. This algorithm, popularized by \citeauthor{rumelhart1986} in \citeyear{rumelhart1986}, is what makes deep learning possible.
 
-3. **Optimization Landscape**: The derivative tells us about the "shape" of the loss function — where it slopes up, where it slopes down, and where it is flat (critical points). Understanding this landscape is key to training models effectively.
+3. **Optimization Landscape**: The derivative tells us about the "shape" of the loss function, where it slopes up, where it slopes down, and where it is flat (critical points). Understanding this landscape is key to training models effectively.
 
-4. **The Sigmoid Derivative**: As we saw in the backpropagation section, the sigmoid function $\sigma(z) = \frac{1}{1+e^{-z}}$ has the elegant derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$. This means once you compute the forward pass, the backward pass is nearly free — you already have all the values you need.
+4. **The Sigmoid Derivative**: As we saw in the backpropagation section, the sigmoid function $\sigma(z) = \frac{1}{1+e^{-z}}$ has the elegant derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$. This means once you compute the forward pass, the backward pass is nearly free, you already have all the values you need.
 
 In summary, without derivatives, there would be no way to train neural networks, and modern AI as we know it would not exist.
 
@@ -270,7 +270,7 @@ The collection of all partial derivatives forms the **gradient vector**:
 
 $$\nabla f = \begin{pmatrix} \frac{\partial f}{\partial x} \\ \frac{\partial f}{\partial y} \end{pmatrix}$$
 
-The gradient points in the direction of **steepest ascent**. To minimize a function (like a loss function), we move in the *opposite* direction of the gradient — this is **gradient descent**.
+The gradient points in the direction of **steepest ascent**. To minimize a function (like a loss function), we move in the *opposite* direction of the gradient, this is **gradient descent**.
 
 The symbol $\partial$ for partial derivatives was introduced by \citeauthor{legendre1805} in \citetitle{legendre1805} (\citeyear{legendre1805}).
 </div>
@@ -278,7 +278,7 @@ The symbol $\partial$ for partial derivatives was introduced by \citeauthor{lege
 <!-- ─── Interactive: Gradient on a 3D Surface ─── -->
 <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="margin-top:0;"><strong>Gradient Descent on a Surface</strong></p>
-    <p style="color:#64748b; font-size:0.9em;">The surface is $f(x,y) = x^2 + y^2$ (a simple "bowl"). The red arrow shows the negative gradient direction — the direction gradient descent would move. Drag the point to see how the gradient changes.</p>
+    <p style="color:#64748b; font-size:0.9em;">The surface is $f(x,y) = x^2 + y^2$ (a simple "bowl"). The red arrow shows the negative gradient direction, the direction gradient descent would move. Drag the point to see how the gradient changes.</p>
 
     <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:10px;">
         <div>
