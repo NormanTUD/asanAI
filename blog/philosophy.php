@@ -326,6 +326,17 @@ The AI's bubble is filled exclusively with **statistical relationships between t
 
 By using Uexküll's logic, we see that the AI isn't "failing" to perceive our world; it is simply inhabiting its own. It is a creature of pure syntax, living in a mathematical Umwelt where "meaning" is not a feeling or a sensation, but merely the distance between two points in a sea of data.
 
+#### World View of an AI
+
+<figure>
+    <img style="width: 100%" src="weltbild.jpg" alt="World view" />
+    <figcaption>Created by *Gemini*</figcaption>
+</figure>
+
+In search of finding an image for this article, I tried to generate an image that would be understandable to an \citeauthor{arsmagna} would have understood. I didn't specify everything exactly, and thus, this image show's it's own world-view
+
+Since the bubble of the AI is only the technical data it gathered from *the internet*, it thinks the Internet is the main base.
+
 ## The Physical Cost of Intelligence: Energy, Water, and Extraction
 
 While Large Language Models (LLMs) are often discussed as abstract mathematical entities, their existence is grounded in a massive physical infrastructure. As Kate Crawford argues in \citealternativetitle{crawford2021atlas}, these systems are fundamentally extractive, relying on mineral resources, low-wage labor, and immense energy and water consumption.
