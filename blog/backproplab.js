@@ -690,7 +690,7 @@ $$${cv(C.loss,'E_{\\text{total}}')} = ${cv(C.loss,'E_1')} + ${cv(C.loss,'E_2')} 
 
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{\\substack{${cv(C.w_ih,'w_1')} \\\\ \\text{weight from }${cv(C.inp,'x_1')}}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} \\;+\\; \\underbrace{${cv(C.w_ih,f(w2))}}_{\\substack{${cv(C.w_ih,'w_2')} \\\\ \\text{weight from }${cv(C.inp,'x_2')}}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} \\;+\\; \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
 
-$$${cv(C.hid,'h_1')} = \\underbrace{\\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh1))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.hid,f(R.zh1))}}} = \\boxed{${cv(C.hid,f(R.h1))}}$$
+$$${cv(C.hid,'h_1')} = \\underbrace{\\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh1))}}_{z_{h_1}}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.hid,f(R.zh1))}}} = \\boxed{${cv(C.hid,f(R.h1))}}$$
 </div>
 
 <div class="bp-section bp-section-out"><b>② Prerequisite: Output layer forward + backward (needed for $\\delta_{o_1}, \\delta_{o_2}$)</b><br>
@@ -747,7 +747,7 @@ $$${cv(C.b_h,'b_1^{\\,\\text{new}}')} = \\underbrace{${cv(C.b_h,f(b1))}}_{b_1} -
 
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{\\substack{${cv(C.w_ih,'w_3')} \\\\ \\text{weight from }${cv(C.inp,'x_1')}}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} \\;+\\; \\underbrace{${cv(C.w_ih,f(w4))}}_{\\substack{${cv(C.w_ih,'w_4')} \\\\ \\text{weight from }${cv(C.inp,'x_2')}}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} \\;+\\; \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
 
-$$${cv(C.hid,'h_2')} = \\underbrace{\\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.hid,f(R.zh2))}}} = \\boxed{${cv(C.hid,f(R.h2))}}$$
+$$${cv(C.hid,'h_2')} = \\underbrace{\\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh2))}}_{z_{h_2}}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.hid,f(R.zh2))}}} = \\boxed{${cv(C.hid,f(R.h2))}}$$
 </div>
 
 <div class="bp-section bp-section-out"><b>② Prerequisite: Output layer forward + backward (needed for $\\delta_{o_1}, \\delta_{o_2}$)</b><br>
@@ -818,7 +818,7 @@ $$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh2)
 
 $$${cv(C.out,'z_{o_1}')} = \\underbrace{${cv(C.w_ho,f(w5))}}_{\\substack{${cv(C.w_ho,'w_5')} \\\\ \\text{weight from }${cv(C.hid,'h_1')}}} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{${cv(C.hid,'h_1')}} \\;+\\; \\underbrace{${cv(C.w_ho,f(w6))}}_{\\substack{${cv(C.w_ho,'w_6')} \\\\ \\text{weight from }${cv(C.hid,'h_2')}}} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{${cv(C.hid,'h_2')}} \\;+\\; \\underbrace{${cv(C.b_o,f(b3))}}_{${cv(C.b_o,'b_3')}} = ${cv(C.out,f(R.zo1))}$$
 
-$$${cv(C.out,'o_1')} = \\underbrace{\\text{sigmoid}\\!\\left(${cv(C.out,f(R.zo1))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.out,f(R.zo1))}}} = \\boxed{${cv(C.out,f(R.o1))}}$$
+$$${cv(C.out,'o_1')} = \\underbrace{\\text{sigmoid}\\!\\left(\\underbrace{${cv(C.out,f(R.zo1))}}_{z_{o_1}}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.out,f(R.zo1))}}} = \\boxed{${cv(C.out,f(R.o1))}}$$
 </div>
 
 <div class="bp-section bp-section-loss"><b>③ Loss — How wrong is this prediction?</b>
@@ -875,7 +875,7 @@ $$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh2)
 
 $$${cv(C.out,'z_{o_2}')} = \\underbrace{${cv(C.w_ho,f(w7))}}_{\\substack{${cv(C.w_ho,'w_7')} \\\\ \\text{weight from }${cv(C.hid,'h_1')}}} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{${cv(C.hid,'h_1')}} \\;+\\; \\underbrace{${cv(C.w_ho,f(w8))}}_{\\substack{${cv(C.w_ho,'w_8')} \\\\ \\text{weight from }${cv(C.hid,'h_2')}}} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{${cv(C.hid,'h_2')}} \\;+\\; \\underbrace{${cv(C.b_o,f(b4))}}_{${cv(C.b_o,'b_4')}} = ${cv(C.out,f(R.zo2))}$$
 
-$$${cv(C.out,'o_2')} = \\underbrace{\\text{sigmoid}\\!\\left(${cv(C.out,f(R.zo2))}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.out,f(R.zo2))}}} = \\boxed{${cv(C.out,f(R.o2))}}$$
+$$${cv(C.out,'o_2')} = \\underbrace{\\text{sigmoid}\\!\\left(\\underbrace{${cv(C.out,f(R.zo2))}}_{z_{o_2}}\\right)}_{\\substack{${cv(C.sig,'\\text{sigmoid squashes}')} \\\\ ${cv(C.sig,'\\text{to range (0,1)}')}}} = \\frac{1}{1+e^{-${cv(C.out,f(R.zo2))}}} = \\boxed{${cv(C.out,f(R.o2))}}$$
 </div>
 
 <div class="bp-section bp-section-loss"><b>③ Loss — How wrong is this prediction?</b>
