@@ -645,7 +645,7 @@ This is a raw input value. No computation is performed — it is fed directly in
 
 <b>Step 1 — Hidden layer forward pass (needed to get $h_1, h_2$):</b>
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w2))}}_{${cv(C.w_ih,'w_2')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
-$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
+$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh1))}}_{z_{h_1}}\\right) = ${cv(C.hid,f(R.h1))}$$
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
 $$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
 
@@ -665,9 +665,9 @@ $$${cv(C.loss,'E_{\\text{total}}')} = ${cv(C.loss,'E_1')} + ${cv(C.loss,'E_2')} 
 
 <b>Step 1 — Hidden layer forward pass:</b>
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w2))}}_{${cv(C.w_ih,'w_2')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
-$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
+$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh1))}}_{z_{h_1}}\\right) = ${cv(C.hid,f(R.h1))}$$
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
-$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
+$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh2))}}_{z_{h_2}}\\right) = ${cv(C.hid,f(R.h2))}$$
 
 <b>Step 2 — Output neuron $o_2$ forward pass:</b>
 $$${cv(C.out,'z_{o_2}')} = \\underbrace{${cv(C.w_ho,f(w7))}}_{${cv(C.w_ho,'w_7')}} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{${cv(C.hid,'h_1')}} + \\underbrace{${cv(C.w_ho,f(w8))}}_{${cv(C.w_ho,'w_8')}} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{${cv(C.hid,'h_2')}} + \\underbrace{${cv(C.b_o,f(b4))}}_{${cv(C.b_o,'b_4')}} = ${cv(C.out,f(R.zo2))}$$
@@ -808,7 +808,7 @@ $$${cv(C.b_h,'b_2^{\\,\\text{new}}')} = \\underbrace{${cv(C.b_h,f(b2))}}_{b_2} -
 <div class="bp-section bp-section-hid"><b>① Prerequisite: Hidden layer forward pass (needed to get $h_1, h_2$)</b>
 
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w2))}}_{${cv(C.w_ih,'w_2')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
-$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
+$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh1))}}_{z_{h_1}}\\right) = ${cv(C.hid,f(R.h1))}$$
 
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
 $$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
@@ -865,7 +865,7 @@ $$${cv(C.b_o,'b_3^{\\,\\text{new}}')} = \\underbrace{${cv(C.b_o,f(b3))}}_{b_3} -
 <div class="bp-section bp-section-hid"><b>① Prerequisite: Hidden layer forward pass (needed to get $h_1, h_2$)</b>
 
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w2))}}_{${cv(C.w_ih,'w_2')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
-$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
+$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh1))}}_{z_{h_1}}\\right) = ${cv(C.hid,f(R.h1))}$$
 
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
 $$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
@@ -1020,7 +1020,7 @@ $$${dir}$$
 <div class="bp-section bp-section-hid"><b>① Prerequisite: Hidden layer forward pass</b>
 
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w2))}}_{${cv(C.w_ih,'w_2')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
-$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\left(${cv(C.hid,f(R.zh1))}\\right) = ${cv(C.hid,f(R.h1))}$$
+$$${cv(C.hid,'h_1')} = \\text{sigmoid}\\left(\\underbrace{${cv(C.hid,f(R.zh1))}}_{z_{h_1}}\\right) = ${cv(C.hid,f(R.h1))}$$
 
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
 $$${cv(C.hid,'h_2')} = \\text{sigmoid}\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
