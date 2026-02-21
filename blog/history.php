@@ -221,6 +221,11 @@ Operating Systems, later frameworks, growing complexity on the system side to re
 
 The foundation of AI rests upon the *Neuron Doctrine*, established by the Spanish neuroanatomist \citeauthor{cajaltextura}. Working in the late 19th century, he used specialized staining techniques to prove that the brain was composed of discrete, individual cells rather than a continuous web, a concept known as the Reticular Theory. His discovery that neurons are the fundamental signaling units of the nervous system earned him the *Nobel Prize in Physiology or Medicine* in 1906. This shift provided the physical blueprint that would later be digitized into the first artificial neural models.
 
+### Ferdinand de Saussure: The Sign Without Solid Ground
+The theoretical foundation for modern word embeddings was laid as early as 1916 in \citetitle{saussure1916}. \citeauthor{saussure1916} recognized that the linguistic sign is arbitrary, there is no natural connection between the word "tree" (the signifier) and the concept of a tree (the signified). This was already implied by Nietzsches '\citetitle{ueberwahrheitundluege}' in \citeyear{ueberwahrheitundluege}.
+
+More importantly, he defined language as a system of differences. A word derives its meaning only because it is *not* any other word in the system. When we state today that the meaning of a word is determined by its position in a high-dimensional vector space, we are simply fulfilling Saussure’s vision of a purely relational semantics.
+
 \category{history}
 ## The earliest roots of modern AI
 

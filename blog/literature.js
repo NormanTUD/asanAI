@@ -1540,5 +1540,17 @@ window.bibData = {
 		year: 2020,
 		author: "Sara Hooker",
 		title: "The Hardware Lottery"
+	},
+	"saussure1916": {
+		title: "Cours de linguistique générale",
+		url: "https://archive.org/details/courseingenerall00saus",
+		author: "Ferdinand de Saussure",
+		year: 1916
+	},
+	"ueberwahrheitundluege": {
+		author: "Friedrich Wilhelm Nietzsche",
+		year: 1876,
+		title: "Über Wahrheit und Lüge im außermoralischen Sinne",
+		url: "https://archive.org/details/NietzscheberWahrheitUndLLgeImAussermoralischenSinneAuswahl"
 	}
 };
