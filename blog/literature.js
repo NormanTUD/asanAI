@@ -1521,4 +1521,11 @@ window.bibData = {
 		title: "Théorie des fonctions analytiques",
 		url: "https://archive.org/details/theoriedesfoncti00lagr"
 	},
+
+	"wengert1964": {
+		title: "A Simple Automatic Derivative Evaluation Program",
+		author: "R. Wengert",
+		year: 1964,
+		url: "https://www.scribd.com/document/863222571/Wengert-1964-A-Simple-Automatic-Derivative-Evaluation-Program"
+	},
 };
