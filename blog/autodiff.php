@@ -75,8 +75,8 @@ Evaluated at $x = \frac{\pi}{2}, \; y = 1$:
 
 | Step | Operation | Result | Local Derivatives |
 |------|-----------|--------|-------------------|
-| $v_0$ | input $x$ | $\frac{\pi}{2} \approx 1.5708$ |, |
-| $v_1$ | input $y$ | $1$ |, |
+| $v_0$ | input $x$ | $\frac{\pi}{2} \approx 1.5708$ | 1 (constant) |
+| $v_1$ | input $y$ | $1$ | 1 (constant) |
 | $v_2 = v_0 + v_1$ | add | $2.5708$ | $\frac{\partial v_2}{\partial v_0} = 1, \quad \frac{\partial v_2}{\partial v_1} = 1$ |
 | $v_3 = \sin(v_0)$ | sin | $1.0$ | $\frac{\partial v_3}{\partial v_0} = \cos(v_0) = 0$ |
 | $v_4 = v_2 \cdot v_3$ | multiply | $2.5708$ | $\frac{\partial v_4}{\partial v_2} = v_3 = 1, \quad \frac{\partial v_4}{\partial v_3} = v_2 = 2.5708$ |
