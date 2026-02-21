@@ -7,6 +7,16 @@ TODO https://en.wikipedia.org/wiki/History_of_artificial_neural_networks
 -->
 
 <div class="md">
+## The Concrescence of Disparate Paths
+
+This history is not a record of a pre-determined destination, but an exploration of how independent threads of human inquiry have **interwoven** over millennia. The milestones documented here were rarely intended to birth a digital mind; they were local solutions to **vastly different questions**:
+
+* **Aristotelian logic** sought to formalize the structure of truth, not to automate speech.
+* **Mechanical hardware**, from Babbage’s engines to the GPU, emerged from needs for navigation and visual throughput.
+* **Neural modeling** began as a quest to map biological reality, only later becoming a substrate for statistical calculation.
+
+LLMs represent just one possible **outcome**, a single pattern emerging from a **highly complex, always changing reality**. We trace this specific lineage while acknowledging that every invention remains part of a broader, inseparable web of ideas that no single narrative can fully contain.
+
 \category{history,philosophy}
 ## The Abstraction of Labor: From Wheels to Thought
 
