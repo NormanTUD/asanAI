@@ -484,7 +484,6 @@ function renderBackpropVisual(id) {
 
 	function showNodeInfo(nk) {
 		if (nk === "x1" || nk === "x2") return renderInfoHTML(inputNodeInfo(nk));
-		if (nk === "t1" || nk === "t2") return renderInfoHTML(targetNodeInfo(nk));
 		if (nk === "h1" || nk === "h2") return renderInfoHTML(hiddenNodeInfo(nk));
 		if (nk === "o1" || nk === "o2") return renderInfoHTML(outputNodeInfo(nk));
 	}
@@ -861,12 +860,8 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
 	}
 
 	function buildRootHTML(id) {
-		// (This returns the same HTML template as before — the fieldsets,
-		//  SVG container, loss bar, and info panel. Unchanged from original.
-		//  Omitted here for brevity since it's pure markup, not logic.)
 		return `
   <style>
-    /* ... same CSS as original, unchanged ... */
     #${id} { font-family: system-ui, sans-serif; max-width: 960px; }
     #${id} * { box-sizing: border-box; }
     #${id} .bp-top { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; align-items: flex-end; }
@@ -890,7 +885,7 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
     #${id} .bp-loss-fill { height: 100%; background: #ef4444; border-radius: 7px; transition: width 0.3s; }
     @keyframes bpPulse { 0%,100%{stroke-width:2;stroke-opacity:0.3} 50%{stroke-width:7;stroke-opacity:1} }
     #${id} .pulse { animation: bpPulse 5s ease-in-out infinite; }
-	#${id} .dim { opacity: 0.12; }
+    #${id} .dim { opacity: 0.12; }
     #${id} .bp-locked-ring { fill: none; stroke: #f59e0b; stroke-width: 3; stroke-dasharray: 4,3; }
   </style>
 
@@ -943,7 +938,7 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
     </div>
   </div>
 
-  <svg id="${id}-svg" width="100%" viewBox="0 0 820 400"
+  <svg id="${id}-svg" width="100%" viewBox="0 0 660 400"
        style="background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; display:block; margin-bottom:8px; cursor:default;">
   </svg>
 
