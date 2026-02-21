@@ -213,9 +213,8 @@ function renderBackpropVisual(id) {
 		h2: { x: 330, y: 280, label: "h_2", layer: "hidden" },
 		o1: { x: 580, y: 120, label: "o_1", layer: "output" },
 		o2: { x: 580, y: 280, label: "o_2", layer: "output" },
-		t1: { x: 750, y: 120, label: "t_1", layer: "target" },
-		t2: { x: 750, y: 280, label: "t_2", layer: "target" },
 	};
+
 
 	const CONNS = [
 		["x1", "h1", "w1", "w_1"], ["x2", "h1", "w2", "w_2"],
@@ -227,8 +226,7 @@ function renderBackpropVisual(id) {
 	const LAYER_STYLE = {
 		input:  { color: "#64748b", fill: "#f1f5f9", r: 28 },
 		hidden: { color: "#3b82f6", fill: "#eff6ff", r: 34 },
-		output: { color: "#10b981", fill: "#ecfdf5", r: 34 },
-		target: { color: "#f59e0b", fill: "#fffbeb", r: 24 },
+		output: { color: "#10b981", fill: "#ecfdf5", r: 42 },
 	};
 
 	// Neuron config: which index (1 or 2), which weights feed in/out, etc.
@@ -253,8 +251,6 @@ function renderBackpropVisual(id) {
 		h2: ["w3", "w4", "w6", "w8"],
 		o1: ["w1", "w2", "w3", "w4", "w5", "w6"],
 		o2: ["w1", "w2", "w3", "w4", "w7", "w8"],
-		t1: ["w1", "w2", "w3", "w4", "w5", "w6"],
-		t2: ["w1", "w2", "w3", "w4", "w7", "w8"],
 	};
 
 	// ── Inject HTML ──
@@ -326,7 +322,6 @@ function renderBackpropVisual(id) {
 		CONNS.forEach(([from, to, wk, wl]) => {
 			const a = NODES[from], b = NODES[to], val = S[wk];
 			const absVal = Math.abs(val);
-			// Linear interpolation: weakest → thinnest, strongest → thickest
 			const t = maxW > minW ? (absVal - minW) / (maxW - minW) : 0.5;
 			const thick = MIN_THICK + t * (MAX_THICK - MIN_THICK);
 			const col = val >= 0 ? "#3b82f6" : "#ef4444";
@@ -338,31 +333,27 @@ function renderBackpropVisual(id) {
 			html += `<text class="bp-wlabel" data-wk="${wk}" x="${mx}" y="${my - 6}" text-anchor="middle" font-size="11" fill="#334155" font-weight="600" style="cursor:pointer;">${base}<tspan font-size="8" dy="3">${sub}</tspan><tspan dy="-3">=${fmt(val, 4)}</tspan></text>`;
 		});
 
-		// Dashed lines to targets
-		html += dashedLine(NODES.o1, NODES.t1);
-		html += dashedLine(NODES.o2, NODES.t2);
-
 		// Neuron circles + values + deltas
 		const nodeVals = {
 			x1: S.x1, x2: S.x2, h1: R.h1, h2: R.h2,
-			o1: R.o1, o2: R.o2, t1: S.t1, t2: S.t2,
+			o1: R.o1, o2: R.o2,
 		};
 		for (const [nk, nd] of Object.entries(NODES)) {
 			const sty = LAYER_STYLE[nd.layer];
 			const isLocked = locked?.type === "node" && locked.key === nk;
 			html += svgCircle(nd, sty, isLocked);
-			html += svgNodeLabel(nd, sty.color, fmt(nodeVals[nk]));
+			html += svgNodeLabel(nd, sty.color, fmt(nodeVals[nk]), nk);
 			html += svgDeltaLabel(nk, nd, sty.r);
 		}
 
 		// Layer headers
-		["Input:80", "Hidden:330", "Output:580", "Target:750"].forEach((s) => {
+		["Input:80", "Hidden:330", "Output:580"].forEach((s) => {
 			const [label, x] = s.split(":");
 			html += `<text x="${x}" y="30" text-anchor="middle" font-size="13" fill="#94a3b8" font-weight="600">${label}</text>`;
 		});
 
 		// Central loss display
-		html += `<text x="665" y="210" text-anchor="middle" font-size="13" fill="#ef4444" font-weight="700">Loss = ${fmt(R.E)}</text>`;
+		html += `<text x="580" y="210" text-anchor="middle" font-size="13" fill="#ef4444" font-weight="700">Loss = ${fmt(R.E)}</text>`;
 
 		svg.innerHTML = html;
 		attachSVGListeners();
@@ -381,7 +372,18 @@ function renderBackpropVisual(id) {
 		return s;
 	}
 
-	function svgNodeLabel(nd, color, valStr) {
+	function svgNodeLabel(nd, color, valStr, nk) {
+		if (nk === "o1" || nk === "o2") {
+			const i = nk === "o1" ? 1 : 2;
+			const oVal = R["o" + i];
+			const tVal = S["t" + i];
+			const diff = oVal - tVal;
+			const diffColor = Math.abs(diff) < 0.01 ? "#10b981" : "#ef4444";
+			return `<text x="${nd.x}" y="${nd.y - 18}" text-anchor="middle" font-size="12" font-weight="700" fill="${color}" style="pointer-events:none;">$${nd.label}$</text>` +
+				`<text x="${nd.x}" y="${nd.y - 2}" text-anchor="middle" font-size="10" font-family="monospace" fill="#1e293b" style="pointer-events:none;">out=${fmt(oVal)}</text>` +
+				`<text x="${nd.x}" y="${nd.y + 12}" text-anchor="middle" font-size="10" font-family="monospace" fill="#f59e0b" style="pointer-events:none;">tgt=${fmt(tVal)}</text>` +
+				`<text x="${nd.x}" y="${nd.y + 26}" text-anchor="middle" font-size="9" font-family="monospace" fill="${diffColor}" style="pointer-events:none;">Δ=${fmt(diff)}</text>`;
+		}
 		return `<text x="${nd.x}" y="${nd.y - 8}" text-anchor="middle" font-size="12" font-weight="700" fill="${color}" style="pointer-events:none;">$${nd.label}$</text>` +
 			`<text x="${nd.x}" y="${nd.y + 10}" text-anchor="middle" font-size="11" font-family="monospace" fill="#1e293b" style="pointer-events:none;">${valStr}</text>`;
 	}
