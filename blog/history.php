@@ -560,9 +560,14 @@ After the second AI winter, the field shifted back to connectionism. In \citeyea
 \category{hardware,history}
 ## The Hardware Lottery: How Gamers Saved AI
 
+We tend to view the progress of AI as a purely mathematical evolution. However, \citeauthor{hooker2020} reminds us of a grounded reality in \citetitle{hooker2020}: the success of an algorithm is often dictated by available hardware rather than intellectual superiority.
+
+Ideas win when they are "hardware-friendly." Because GPUs were optimized for parallel matrix multiplication (due to the gaming industry), models that relied on these operations, like Deep Learning and Transformers, surpassed their rivals. Highly efficient but difficult-to-parallelize approaches were relegated to the "researcher’s graveyard." We conduct our research in the shadow of the computing architectures we happened to inherit.
+
 While the theoretical foundations of deep learning were laid in the 1980s, the field remained dormant largely due to a lack of computing power. The solution came from an unlikely source: the video game industry.
 
 In the mid-2000s, researchers began to realize that the mathematical operations required to render 3D video games, specifically, the manipulation of massive matrices of pixels, were mathematically identical to the operations required to train neural networks.
+
 
 ### The "Why": SIMD vs. MIMD
 The fundamental difference lies in architecture. A **CPU** (Central Processing Unit) is designed for **latency**: it has a few powerful cores optimized to do complex, sequential logic (MIMD: Multiple Instruction, Multiple Data). It is like a professor who can solve difficult calculus problems one by one.

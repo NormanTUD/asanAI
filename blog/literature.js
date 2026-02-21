@@ -1535,4 +1535,10 @@ window.bibData = {
 		year: 2011,
 		author: "Richard Socher, Cliff Chiung-Yu Lin, Andrew Y. Ng, Christopher D. Manning"
 	},
+	"hooker2020": {
+		url: "https://arxiv.org/abs/2009.06489",
+		year: 2020,
+		author: "Sara Hooker",
+		title: "The Hardware Lottery"
+	}
 };
