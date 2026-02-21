@@ -1552,5 +1552,11 @@ window.bibData = {
 		year: 1876,
 		title: "Über Wahrheit und Lüge im außermoralischen Sinne",
 		url: "https://archive.org/details/NietzscheberWahrheitUndLLgeImAussermoralischenSinneAuswahl"
+	},
+	"uebersinnundbedeutung": {
+		author: "Gottlob Frege",
+		year: 1892,
+		title: "Über Sinn und Bedeutung",
+		url: "https://archive.org/details/frege_sinn_und_bedeutung"
 	}
 };
