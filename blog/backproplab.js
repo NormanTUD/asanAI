@@ -716,7 +716,7 @@ Blame arrives from <em>both</em> output neurons, weighted by the connections:
 
 $$\\frac{\\partial E}{\\partial h_1} = \\underbrace{${cv(C.delta,f(R.d_o1))}}_{\\substack{${cv(C.delta,'\\delta_{o_1}')} \\\\ \\text{error from }${cv(C.out,'o_1')}}} \\cdot \\underbrace{${cv(C.w_ho,f(w5))}}_{\\substack{${cv(C.w_ho,'w_5')} \\\\ h_1 \\to o_1}} \\;+\\; \\underbrace{${cv(C.delta,f(R.d_o2))}}_{\\substack{${cv(C.delta,'\\delta_{o_2}')} \\\\ \\text{error from }${cv(C.out,'o_2')}}} \\cdot \\underbrace{${cv(C.w_ho,f(w7))}}_{\\substack{${cv(C.w_ho,'w_7')} \\\\ h_1 \\to o_2}} = ${f(R.dE_dh1)}$$
 
-$$\\underbrace{${cv(C.hid,'h_1')}(1-${cv(C.hid,'h_1')})}_{\\substack{${cv(C.sig,"\\text{sigmoid}'(z_{h_1})")} \\\\ \\text{sigmoid derivative}}} = ${cv(C.hid,f(R.h1))} \\times ${f(1-R.h1)} = ${f(R.h1*(1-R.h1))}$$
+$$\\underbrace{${cv(C.hid,'h_1')}(1-${cv(C.hid,'h_1')})}_{\\substack{${cv(C.sig,"\\text{sigmoid}'(z_{h_1})")} \\\\ \\text{sigmoid derivative}}} = \\underbrace{${cv(C.hid,f(R.h1))}}_{h_2} \\times \\underbrace{${f(1-R.h1)}}_{1 - h_2} = ${f(R.h1*(1-R.h1))}$$
 
 $$${cv(C.delta,'\\delta_{h_1}')} = \\underbrace{${f(R.dE_dh1)}}_{\\frac{\\partial E}{\\partial h_1}} \\times \\underbrace{${f(R.h1*(1-R.h1))}}_{\\text{sigmoid}'(z_{h_1})} = \\boxed{${cv(C.delta,f(R.d_h1))}}$$
 </div>
@@ -773,7 +773,7 @@ Blame arrives from <em>both</em> output neurons, weighted by the connections:
 
 $$\\frac{\\partial E}{\\partial h_2} = \\underbrace{${cv(C.delta,f(R.d_o1))}}_{\\substack{${cv(C.delta,'\\delta_{o_1}')} \\\\ \\text{error from }${cv(C.out,'o_1')}}} \\cdot \\underbrace{${cv(C.w_ho,f(w6))}}_{\\substack{${cv(C.w_ho,'w_6')} \\\\ h_2 \\to o_1}} \\;+\\; \\underbrace{${cv(C.delta,f(R.d_o2))}}_{\\substack{${cv(C.delta,'\\delta_{o_2}')} \\\\ \\text{error from }${cv(C.out,'o_2')}}} \\cdot \\underbrace{${cv(C.w_ho,f(w8))}}_{\\substack{${cv(C.w_ho,'w_8')} \\\\ h_2 \\to o_2}} = ${f(R.dE_dh2)}$$
 
-$$\\underbrace{${cv(C.hid,'h_2')}(1-${cv(C.hid,'h_2')})}_{\\substack{${cv(C.sig,"\\text{sigmoid}'(z_{h_2})")} \\\\ \\text{sigmoid derivative}}} = ${cv(C.hid,f(R.h2))} \\times ${f(1-R.h2)} = ${f(R.h2*(1-R.h2))}$$
+$$\\underbrace{${cv(C.hid,'h_2')}(1-${cv(C.hid,'h_2')})}_{\\substack{${cv(C.sig,"\\text{sigmoid}'(z_{h_2})")} \\\\ \\text{sigmoid derivative}}} = \\underbrace{${cv(C.hid,f(R.h2))}}_{h_2} \\times \\underbrace{${f(1-R.h2)}}_{1 - h_2} = ${f(R.h2*(1-R.h2))}$$
 
 $$${cv(C.delta,'\\delta_{h_2}')} = \\underbrace{${f(R.dE_dh2)}}_{\\frac{\\partial E}{\\partial h_2}} \\times \\underbrace{${f(R.h2*(1-R.h2))}}_{\\text{sigmoid}'(z_{h_2})} = \\boxed{${cv(C.delta,f(R.d_h2))}}$$
 </div>
