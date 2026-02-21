@@ -695,7 +695,7 @@ $$${cv(C.hid,'h_1')} = \\underbrace{\\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh1)
 
 <div class="bp-section bp-section-out"><b>② Prerequisite: Output layer forward + backward (needed for $\\delta_{o_1}, \\delta_{o_2}$)</b>
 
-We need $\\delta_{o_1}$ and $\\delta_{o_2}$ to compute the backward pass for $h_1$. Here's how they were computed:
+We need $\\delta_{o_1}$ and $\\delta_{o_2}$ to compute the backward pass for $h_1$. Here's how they were computed:<br>
 
 <b>Output $o_1$:</b>
 $$${cv(C.out,'z_{o_1}')} = ${cv(C.w_ho,f(w5))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w6))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b3))} = ${cv(C.out,f(R.zo1))}$$
@@ -752,7 +752,7 @@ $$${cv(C.hid,'h_2')} = \\underbrace{\\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2)
 
 <div class="bp-section bp-section-out"><b>② Prerequisite: Output layer forward + backward (needed for $\\delta_{o_1}, \\delta_{o_2}$)</b>
 
-We need $\\delta_{o_1}$ and $\\delta_{o_2}$ to compute the backward pass for $h_2$. Here's how they were computed:
+We need $\\delta_{o_1}$ and $\\delta_{o_2}$ to compute the backward pass for $h_2$. Here's how they were computed:<br>
 
 <b>Output $o_1$:</b>
 $$${cv(C.out,'z_{o_1}')} = ${cv(C.w_ho,f(w5))} \\cdot ${cv(C.hid,f(R.h1))} + ${cv(C.w_ho,f(w6))} \\cdot ${cv(C.hid,f(R.h2))} + ${cv(C.b_o,f(b3))} = ${cv(C.out,f(R.zo1))}$$
