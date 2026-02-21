@@ -647,7 +647,7 @@ This is a raw input value. No computation is performed — it is fed directly in
 $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w2))}}_{${cv(C.w_ih,'w_2')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b1))}}_{${cv(C.b_h,'b_1')}} = ${cv(C.hid,f(R.zh1))}$$
 $$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh1))}}_{z_{h_1}}\\right) = ${cv(C.hid,f(R.h1))}$$
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
-$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
+$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh2))}}_{z_{h_2}}\\right) = ${cv(C.hid,f(R.h2))}$$
 
 <b>Step 2 — Output neuron $o_1$ forward pass:</b>
 $$${cv(C.out,'z_{o_1}')} = \\underbrace{${cv(C.w_ho,f(w5))}}_{${cv(C.w_ho,'w_5')}} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{${cv(C.hid,'h_1')}} + \\underbrace{${cv(C.w_ho,f(w6))}}_{${cv(C.w_ho,'w_6')}} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{${cv(C.hid,'h_2')}} + \\underbrace{${cv(C.b_o,f(b3))}}_{${cv(C.b_o,'b_3')}} = ${cv(C.out,f(R.zo1))}$$
@@ -811,7 +811,7 @@ $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')
 $$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh1))}}_{z_{h_1}}\\right) = ${cv(C.hid,f(R.h1))}$$
 
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
-$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
+$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh2))}_{z_{h_2}}}\\right) = ${cv(C.hid,f(R.h2))}$$
 </div>
 
 <div class="bp-section bp-section-out"><b>② Forward Pass — Computing $${cv(C.out,'o_1')}$</b>
@@ -868,7 +868,7 @@ $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')
 $$${cv(C.hid,'h_1')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh1))}}_{z_{h_1}}\\right) = ${cv(C.hid,f(R.h1))}$$
 
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
-$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
+$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\!\\left(\\underbrace{${cv(C.hid,f(R.zh2))}_{z_{h_2}}}\\right) = ${cv(C.hid,f(R.h2))}$$
 </div>
 
 <div class="bp-section bp-section-out"><b>② Forward Pass — Computing $${cv(C.out,'o_2')}$</b>
@@ -1023,7 +1023,7 @@ $$${cv(C.hid,'z_{h_1}')} = \\underbrace{${cv(C.w_ih,f(w1))}}_{${cv(C.w_ih,'w_1')
 $$${cv(C.hid,'h_1')} = \\text{sigmoid}\\left(\\underbrace{${cv(C.hid,f(R.zh1))}}_{z_{h_1}}\\right) = ${cv(C.hid,f(R.h1))}$$
 
 $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} + \\underbrace{${cv(C.w_ih,f(w4))}}_{${cv(C.w_ih,'w_4')}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} + \\underbrace{${cv(C.b_h,f(b2))}}_{${cv(C.b_h,'b_2')}} = ${cv(C.hid,f(R.zh2))}$$
-$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\left(${cv(C.hid,f(R.zh2))}\\right) = ${cv(C.hid,f(R.h2))}$$
+$$${cv(C.hid,'h_2')} = \\text{sigmoid}\\left(\\underbrace{${cv(C.hid,f(R.zh2))}}_{z_{h_2}}\\right) = ${cv(C.hid,f(R.h2))}$$
 </div>
 
 <div class="bp-section bp-section-out"><b>② Forward Pass — How $${cv(C.out,oLabel)}$ was computed (this weight participates here)</b>
