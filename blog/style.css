@@ -768,3 +768,19 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 @keyframes spin {
 	to { transform: rotate(360deg); }
 }
+
+#bp-visual-info math {
+	display: inline-block; /* Helps with margins/padding on math elements */
+	margin-top: 20px;
+	margin-bottom: 20px;
+	font-size: 1.1em;
+	color: inherit;
+	vertical-align: middle;
+	max-width: 100%;
+}
+
+#bp-visual-info math[display="block"] {
+	display: block;
+	margin: 25px auto;
+	overflow-x: auto;
+}
