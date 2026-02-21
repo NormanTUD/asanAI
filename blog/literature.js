@@ -1508,4 +1508,17 @@ window.bibData = {
 		year: 2021,
 		url: "https://arxiv.org/abs/2104.13478"
 	},
+
+	"leibniz1684nova": {
+		author: "Gottfried Wilhelm Leibniz",
+		year: 1684,
+		title: "Nova Methodus pro Maximis et Minimis",
+		// url: "https://archive.org/details/s1id13206500"
+	},
+	"lagrange1797theorie": {
+		author: "Joseph-Louis Lagrange",
+		year: 1797,
+		title: "Théorie des fonctions analytiques",
+		url: "https://archive.org/details/theoriedesfoncti00lagr"
+	},
 };
