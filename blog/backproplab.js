@@ -950,7 +950,7 @@ $$${cv(C.b_o,'b_4^{\\,\\text{new}}')} = \\underbrace{${cv(C.b_o,f(b4))}}_{b_4} -
 			let h = `<h3>$${cv(C.w_ih,labels[wk])} = ${cv(C.w_ih,f(wVal))}$ — Weight (Input → Hidden)</h3>
 <p>Connects $${cv(C.inp,inputLabel)}$ to $${cv(C.hid,hLabel)}$</p>
 
-<div class="bp-section bp-section-hid"><b>① Forward Pass — How $${cv(C.hid,hLabel)}$ was computed (this weight participates here)</b>
+<div class="bp-section bp-section-hid"><b>① Forward Pass — How $${cv(C.hid,hLabel)}$ was computed</b>
 
 $$${cv(C.hid,'z_{'+hLabel+'}')} = \\underbrace{${cv(C.w_ih,f(wH1))}}_{${cv(C.w_ih,wH1l)}} \\cdot \\underbrace{${cv(C.inp,f(x1))}}_{${cv(C.inp,'x_1')}} \\;+\\; \\underbrace{${cv(C.w_ih,f(wH2))}}_{${cv(C.w_ih,wH2l)}} \\cdot \\underbrace{${cv(C.inp,f(x2))}}_{${cv(C.inp,'x_2')}} \\;+\\; \\underbrace{${cv(C.b_h,f(bVal))}}_{${cv(C.b_h,bLabel)}} = ${cv(C.hid,f(zh))}$$
 
@@ -1026,7 +1026,7 @@ $$${cv(C.hid,'z_{h_2}')} = \\underbrace{${cv(C.w_ih,f(w3))}}_{${cv(C.w_ih,'w_3')
 $$${cv(C.hid,'h_2')} = \\text{sigmoid}\\left(\\underbrace{${cv(C.hid,f(R.zh2))}}_{z_{h_2}}\\right) = ${cv(C.hid,f(R.h2))}$$
 </div>
 
-<div class="bp-section bp-section-out"><b>② Forward Pass — How $${cv(C.out,oLabel)}$ was computed (this weight participates here)</b>
+<div class="bp-section bp-section-out"><b>② Forward Pass — How $${cv(C.out,oLabel)}$ was computed</b>
 
 $$${cv(C.out,'z_{'+oLabel+'}')} = \\underbrace{${cv(C.w_ho,f(wO1))}}_{${cv(C.w_ho,wO1l)}} \\cdot \\underbrace{${cv(C.hid,f(R.h1))}}_{${cv(C.hid,'h_1')}} \\;+\\; \\underbrace{${cv(C.w_ho,f(wO2))}}_{${cv(C.w_ho,wO2l)}} \\cdot \\underbrace{${cv(C.hid,f(R.h2))}}_{${cv(C.hid,'h_2')}} \\;+\\; \\underbrace{${cv(C.b_o,f(bVal))}}_{${cv(C.b_o,bLabel)}} = ${cv(C.out,f(zo))}$$
 
