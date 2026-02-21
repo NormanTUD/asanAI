@@ -544,6 +544,11 @@ The breakthrough of modern AI was predicated on a shift in data philosophy: movi
 
 The final layer of abstraction in the history of LLMs is not mathematical, but teleological. As explored in \citetitle{ouyang2022instructgpt}, the raw statistical power of a base model often results in "hallucinations" or unhelpful outputs because the machine is merely predicting the next likely word, not the user's intent. By introducing **Reinforcement Learning from Human Feedback (RLHF)**, researchers moved beyond the "Black Box" of raw data ingestion into the realm of social alignment. This process essentially acts as a cultural filter, rewarding the model for being helpful, honest, and harmless. This represents the moment where the machine ceased to be a mere calculator of probabilities and began to function as a conversational agent, transitioning from a mirror of the internet's chaos to a tool that respects the subjective constraints of human interaction.
 
+## The Dream of Structure: Recursive Neural Networks
+For decades, it was considered an axiom that language possesses an inherent hierarchical architecture. In \citetitle{socher2011}, Richard Socher et al. argued that neural networks must explicitly map this structure to succeed. Rather than treating words as beads on a string, these models used parsers to combine semantic vectors within a tree-like hierarchy.
+
+This represents a pivotal moment in the intellectual history of LLMs: the eventual departure from the idea that we must impose human syntax on the machine. The Transformer did not prevail because it possessed "better" linguistics, but because it ignored rigid structure in favor of patterns learned implicitly through massive scaling.
+
 \category{hardware}
 ## From CPU to GPU: The Realization of the "Bitter Lesson"
 

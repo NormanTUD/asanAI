@@ -1528,4 +1528,11 @@ window.bibData = {
 		year: 1964,
 		url: "https://www.scribd.com/document/863222571/Wengert-1964-A-Simple-Automatic-Derivative-Evaluation-Program"
 	},
+
+	"socher2011": {
+		title: "Parsing Natural Scenes and Natural Language with Recursive Neural Networks",
+		url: "https://nlp.stanford.edu/pubs/SocherLinNgManning_ICML2011.pdf",
+		year: 2011,
+		author: "Richard Socher, Cliff Chiung-Yu Lin, Andrew Y. Ng, Christopher D. Manning"
+	},
 };
