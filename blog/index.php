@@ -25,7 +25,10 @@
 	incl("Statistical Foundations: The Language of AI", "statistics");
 	incl("The intuition for what LLMs are", "intuition");
 	incl("Loss: Teaching through Failure", "losslab");
+	/*
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
+	 */
+	incl('Derivatives', "differentiation");
 	incl("Backpropagation: How a Neural Network Learns From Its Mistakes", "backproplab");
 	incl("Optimizer", "optimizerlab");
 	incl("Smallest possible neural network", "minimalneuron");
