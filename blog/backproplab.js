@@ -697,8 +697,8 @@ ${lossLatex(oi)}
 </div>
 
 <div class="bp-section bp-section-back"><b>④ Output delta $\\delta_{o_${oi}}$</b>
-$$\\frac{\\partial E}{\\partial o_${oi}} = -(${fmt(tVal)} - ${fmt(oVal)}) = ${fmt(dE_do)}$$
-$$\\delta_{o_${oi}} = \\underbrace{${fmt(dE_do)}}_{\\frac{\\partial E}{\\partial o_${oi}}} \\times \\underbrace{${fmt(oVal)} \\cdot ${fmt(1 - oVal)}}_{\\text{sigmoid}'(z_{o_${oi}})} = ${fmt(dO)}$$
+$$\\frac{\\partial E}{\\partial o_${oi}} = -\\!\\left(\\underbrace{${fmt(tVal)}}_{\\substack{t_${oi} \\\\ \\text{target}}} - \\underbrace{${fmt(oVal)}}_{\\substack{o_${oi} \\\\ \\text{prediction}}}\\right) = ${fmt(dE_do)}$$
+$$\\delta_{o_${oi}} = \\underbrace{${fmt(dE_do)}}_{\\substack{\\frac{\\partial E}{\\partial o_${oi}} \\\\ \\text{error signal}}} \\times \\underbrace{${fmt(oVal)} \\cdot ${fmt(1 - oVal)}}_{\\substack{\\text{sigmoid}'(z_{o_${oi}}) \\\\ \\text{local gradient}}} = ${fmt(dO)}$$
 </div>
 
 <div class="bp-section bp-section-grad"><b>⑤ Gradient for this weight</b>
@@ -735,9 +735,10 @@ $$${outLabel} = \\underbrace{\\text{sigmoid}\\!\\left(\\underbrace{${fmt(zResult
     const cfg = HIDDEN_CFG["h" + i];
     const [wA, wB] = cfg.wIn, [wAl, wBl] = cfg.wInLabels;
     const zh = R["zh" + i], hVal = R["h" + i];
-    return `$$z_{h_${i}} = \\underbrace{${fmt(S[wA])}}_{${wAl}} \\cdot \\underbrace{${fmt(S.x1)}}_{x_1} + \\underbrace{${fmt(S[wB])}}_{${wBl}} \\cdot \\underbrace{${fmt(S.x2)}}_{x_2} + \\underbrace{${fmt(S[cfg.bias])}}_{b_${i}} = ${fmt(zh)}$$
-$$h_${i} = \\text{sigmoid}\\!\\left(\\underbrace{${fmt(zh)}}_{z_{h_${i}}}\\right) = ${fmt(hVal)}$$`;
+    return `$$z_{h_${i}} = \\underbrace{${fmt(S[wA])}}_{\\substack{${wAl} \\\\ \\text{weight from }x_1}} \\cdot \\underbrace{${fmt(S.x1)}}_{\\substack{x_1 \\\\ \\text{input}}} + \\underbrace{${fmt(S[wB])}}_{\\substack{${wBl} \\\\ \\text{weight from }x_2}} \\cdot \\underbrace{${fmt(S.x2)}}_{\\substack{x_2 \\\\ \\text{input}}} + \\underbrace{${fmt(S[cfg.bias])}}_{\\substack{b_${i} \\\\ \\text{bias}}} = ${fmt(zh)}$$
+$$h_${i} = \\text{sigmoid}\\!\\left(\\underbrace{${fmt(zh)}}_{\\substack{z_{h_${i}} \\\\ \\text{pre-activation}}}\\right) = ${fmt(hVal)}$$`;
   }
+
 
   // Single output neuron forward (compact)
   function outputForwardLatex(oKey, heading) {
@@ -747,21 +748,21 @@ $$h_${i} = \\text{sigmoid}\\!\\left(\\underbrace{${fmt(zh)}}_{z_{h_${i}}}\\right
     const zo = R["zo" + i], oVal = R["o" + i];
     const prefix = heading ? `<b>${heading}</b>\n` : "";
     return prefix +
-`$$z_{o_${i}} = \\underbrace{${fmt(S[wA])}}_{${wAl}} \\cdot \\underbrace{${fmt(R.h1)}}_{h_1} + \\underbrace{${fmt(S[wB])}}_{${wBl}} \\cdot \\underbrace{${fmt(R.h2)}}_{h_2} + \\underbrace{${fmt(S[cfg.bias])}}_{b_${i + 2}} = ${fmt(zo)}$$
-$$o_${i} = \\text{sigmoid}\\!\\left(\\underbrace{${fmt(zo)}}_{z_{o_${i}}}\\right) = ${fmt(oVal)}$$`;
+`$$z_{o_${i}} = \\underbrace{${fmt(S[wA])}}_{\\substack{${wAl} \\\\ \\text{weight from }h_1}} \\cdot \\underbrace{${fmt(R.h1)}}_{\\substack{h_1 \\\\ \\text{hidden out}}} + \\underbrace{${fmt(S[wB])}}_{\\substack{${wBl} \\\\ \\text{weight from }h_2}} \\cdot \\underbrace{${fmt(R.h2)}}_{\\substack{h_2 \\\\ \\text{hidden out}}} + \\underbrace{${fmt(S[cfg.bias])}}_{\\substack{b_${i + 2} \\\\ \\text{bias}}} = ${fmt(zo)}$$
+$$o_${i} = \\text{sigmoid}\\!\\left(\\underbrace{${fmt(zo)}}_{\\substack{z_{o_${i}} \\\\ \\text{pre-activation}}}\\right) = ${fmt(oVal)}$$`;
   }
+
 
   // Output delta for output neuron i (1 or 2)
   function outputDeltaLatex(i) {
     const oVal = R["o" + i], dE_do = R["dE_do" + i], dO = R["d_o" + i];
     const tVal = S["t" + i];
-    const cfg = OUTPUT_CFG["o" + i];
-    const [wA, wB] = cfg.wIn, [wAl, wBl] = cfg.wInLabels;
     return `<b>Output $o_${i}$:</b>
 ${outputForwardLatex("o" + i)}
-$$\\frac{\\partial E}{\\partial o_${i}} = -(\\underbrace{${fmt(tVal)}}_{t_${i}} - \\underbrace{${fmt(oVal)}}_{o_${i}}) = ${fmt(dE_do)}$$
-$$\\delta_{o_${i}} = \\underbrace{${fmt(dE_do)}}_{\\frac{\\partial E}{\\partial o_${i}}} \\times \\underbrace{${fmt(oVal)} \\cdot ${fmt(1 - oVal)}}_{\\text{sigmoid}'(z_{o_${i}})} = ${fmt(dO)}$$`;
+$$\\frac{\\partial E}{\\partial o_${i}} = -\\!\\left(\\underbrace{${fmt(tVal)}}_{\\substack{t_${i} \\\\ \\text{target}}} - \\underbrace{${fmt(oVal)}}_{\\substack{o_${i} \\\\ \\text{prediction}}}\\right) = ${fmt(dE_do)}$$
+$$\\delta_{o_${i}} = \\underbrace{${fmt(dE_do)}}_{\\substack{\\frac{\\partial E}{\\partial o_${i}} \\\\ \\text{error signal}}} \\times \\underbrace{${fmt(oVal)} \\cdot ${fmt(1 - oVal)}}_{\\substack{\\text{sigmoid}'(z_{o_${i}}) \\\\ \\text{local gradient}}} = ${fmt(dO)}$$`;
   }
+
 
   // Hidden delta for hidden neuron i (1 or 2)
   function hiddenDeltaLatex(i) {
@@ -769,15 +770,18 @@ $$\\delta_{o_${i}} = \\underbrace{${fmt(dE_do)}}_{\\frac{\\partial E}{\\partial 
     const [wOutA, wOutB] = cfg.wOut, [wOutAl, wOutBl] = cfg.wOutLabels;
     const hVal = R["h" + i], dE_dh = R["dE_dh" + i], dH = R["d_h" + i];
     const sigDeriv = hVal * (1 - hVal);
-    return `$$\\frac{\\partial E}{\\partial h_${i}} = \\underbrace{${fmt(R.d_o1)}}_{\\delta_{o_1}} \\cdot \\underbrace{${fmt(S[wOutA])}}_{${wOutAl}} \\;+\\; \\underbrace{${fmt(R.d_o2)}}_{\\delta_{o_2}} \\cdot \\underbrace{${fmt(S[wOutB])}}_{${wOutBl}} = ${fmt(dE_dh)}$$
-$$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\frac{\\partial E}{\\partial h_${i}}} \\times \\underbrace{${fmt(hVal)} \\cdot ${fmt(1 - hVal)}}_{\\text{sigmoid}'(z_{h_${i}})} = \\boxed{${fmt(dH)}}$$`;
+    return `$$\\frac{\\partial E}{\\partial h_${i}} = \\underbrace{${fmt(R.d_o1)}}_{\\substack{\\delta_{o_1} \\\\ \\text{error from }o_1}} \\cdot \\underbrace{${fmt(S[wOutA])}}_{\\substack{${wOutAl} \\\\ h_${i} \\to o_1}} \\;+\\; \\underbrace{${fmt(R.d_o2)}}_{\\substack{\\delta_{o_2} \\\\ \\text{error from }o_2}} \\cdot \\underbrace{${fmt(S[wOutB])}}_{\\substack{${wOutBl} \\\\ h_${i} \\to o_2}} = ${fmt(dE_dh)}$$
+$$\\underbrace{h_${i}(1-h_${i})}_{\\substack{\\text{sigmoid}'(z_{h_${i}}) \\\\ \\text{local gradient}}} = ${fmt(hVal)} \\times ${fmt(1 - hVal)} = ${fmt(sigDeriv)}$$
+$$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}{\\partial h_${i}} \\\\ \\text{upstream gradient}}} \\times \\underbrace{${fmt(sigDeriv)}}_{\\substack{\\text{sigmoid}'(z_{h_${i}}) \\\\ \\text{local gradient}}} = \\boxed{${fmt(dH)}}$$`;
   }
+
 
   // Loss for output i
   function lossLatex(i) {
     const tVal = S["t" + i], oVal = R["o" + i], Ei = R["E" + i];
-    return `$$E_${i} = \\tfrac{1}{2}\\!\\left(\\underbrace{${fmt(tVal, 4)}}_{t_${i}} - \\underbrace{${fmt(oVal)}}_{o_${i}}\\right)^{\\!2} = ${fmt(Ei)}$$`;
+    return `$$E_${i} = \\tfrac{1}{2}\\!\\left(\\underbrace{${fmt(tVal, 4)}}_{\\substack{t_${i} \\\\ \\text{target}}} - \\underbrace{${fmt(oVal)}}_{\\substack{o_${i} \\\\ \\text{prediction}}}\\right)^{\\!2} = ${fmt(Ei)}$$`;
   }
+
 
   // Total loss
   function totalLossLatex() {
@@ -786,14 +790,16 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\frac{\\partial E}{\\partial 
 
   // Single gradient line: ∂E/∂w = delta · input = value
   function gradientLatex(wLabel, deltaLabel, deltaVal, inputLabel, inputVal, gradVal) {
-    return `$$\\frac{\\partial E}{\\partial ${wLabel}} = \\underbrace{${fmt(deltaVal)}}_{${deltaLabel}} \\cdot \\underbrace{${fmt(inputVal)}}_{${inputLabel}} = ${fmt(gradVal)}$$`;
+    return `$$\\frac{\\partial E}{\\partial ${wLabel}} = \\underbrace{${fmt(deltaVal)}}_{\\substack{${deltaLabel} \\\\ \\text{error signal}}} \\cdot \\underbrace{${fmt(inputVal)}}_{\\substack{${inputLabel} \\\\ \\text{activation}}} = ${fmt(gradVal)}$$`;
   }
+
 
   // Single weight update line
   function updateLatex(wLabel, wVal, gradVal) {
     const nw = wVal - S.lr * gradVal;
-    return `$$${wLabel}^{\\,\\text{new}} = \\underbrace{${fmt(wVal)}}_{${wLabel}} - \\underbrace{${fmt(S.lr)}}_{\\eta} \\cdot \\underbrace{${fmt(gradVal)}}_{\\frac{\\partial E}{\\partial ${wLabel}}} = ${fmt(nw)}$$`;
+    return `$$${wLabel}^{\\,\\text{new}} = \\underbrace{${fmt(wVal)}}_{\\substack{${wLabel} \\\\ \\text{current weight}}} - \\underbrace{${fmt(S.lr)}}_{\\substack{\\eta \\\\ \\text{learning rate}}} \\cdot \\underbrace{${fmt(gradVal)}}_{\\substack{\\frac{\\partial E}{\\partial ${wLabel}} \\\\ \\text{gradient}}} = ${fmt(nw)}$$`;
   }
+
 
   // Direction arrow for weight change
   function directionArrow(grad) {
