@@ -150,6 +150,8 @@ When we observe a modern Transformer model calculating the relationship between 
 
 Of course, Llull could not foresee modern AI systems. He was just the first one to explicitly work on symbolic combinatorics, which later, after many more inventions, innovations and discoveries, got us to our modern AI systems.
 
+A complete guide on how to use the Llullian **Volvette** as intended by Llull can be found \cite[here]{artandlogicofllull}.
+
 The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
 \category{hardware,philosophy}

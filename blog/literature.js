@@ -1,4 +1,10 @@
 window.bibData = {
+	"artandlogicofllull": {
+		url: "https://uberty.org/wp-content/uploads/2015/12/Anthony_Bonner_The_art_and_logic_of_Ramon_Llull.pdf",
+		author: "Anthony Bonner",
+		title: "The Art and Logic of Ramon Llull",
+		year: 2007
+	},
 	"volvelles": {
 		url: "https://link.springer.com/chapter/10.1007/978-3-031-90976-4_1",
 		title: "Paper Instruments as Objects of Research",
