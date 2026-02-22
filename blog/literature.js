@@ -1,4 +1,10 @@
 window.bibData = {
+	"tractatusdespheara": {
+		title: "Tractatus de Sphaera",
+		author: "Johannes de Sacrobosco",
+		url: "https://www.digitale-sammlungen.de/de/view/bsb00065139?page=,1",
+		year: "1230"
+	},
 	"lomekwi": {
 		title: "3.3-million-year-old stone tools from Lomekwi 3, West Turkana, Kenya",
 		author: "Sonia Harmand, Jason E. Lewis, Craig S. Feibel, Christopher J. Lepre, Sandrine Prat, Arnaud Lenoble, Xavier Boës, Rhonda L. Quinn, Michel Brenet, Adrian Arroyo, Nicholas Taylor, Sophie Clément, Guillaume Daver, Jean-Philip Brugal, Louise Leakey, Richard A. Mortlock, James D. Wright, Sammy Lokorodi, Christopher Kirwa, Dennis V. Kent, Hélène Roche",
