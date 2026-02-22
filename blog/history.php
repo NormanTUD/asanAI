@@ -139,7 +139,7 @@ The \citealternativetitle{antikytherasciam} is an ancient Greek hand-powered orr
 
 <figure>
     <img style="width: 100%" src="FigurScheiben.jpg" alt="Ars Magna" />
-    <figcaption class="md">Even though based on even earlier ideas (ie. \citetitle{tractatusdespheara}, for displaying astronomical data and inspired by the early-arabic astrological Zairja, as described by \citeau{volvelles}), the volvelle by \citeauthor{arsmagnavolvelle}, released in \citeyear{arsmagnavolvelle} was perhaps the first attempt to create combinations of *ideas* mechanically, and therefore, a precursor to the idea of artificial intelligence, where a physical device can calculate answers through logical means</figcaption>
+    <figcaption class="md">Even though based on even earlier ideas (ie. \citetitle{tractatusdespheara}, for displaying astronomical data and inspired by the early-arabic astrological Zairja, as described by \citeauthor{volvelles}), the volvelle by \citeauthor{arsmagnavolvelle}, released in \citeyear{arsmagnavolvelle} was perhaps the first attempt to create combinations of *ideas* mechanically, and therefore, a precursor to the idea of artificial intelligence, where a physical device can calculate answers through logical means</figcaption>
 </figure>
 
 Long before silicon chips, the 13th-century Majorcan mystic \citeauthor{arsmagna} attempted to mechanize thought itself. In his seminal work \citealternativetitle{arsmagna}, he designed a system of rotating, concentric paper circles inscribed with letters representing fundamental philosophical and theological concepts. By turning these wheels, one could generate every logically possible combination of ideas.
