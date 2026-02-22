@@ -6,7 +6,7 @@ At the heart of every modern neural network lies a deceptively simple question: 
 
 Automatic differentiation is neither symbolic differentiation (manipulating algebraic expressions like a CAS) nor numerical differentiation (using finite differences like $\frac{f(x+h) - f(x)}{h}$). Instead, it is an *exact* method that computes derivatives by systematically applying the **chain rule** to elementary operations recorded on a computational graph, often called a **tape**.
 
-### Historical Origins
+## Historical Origins
 
 The earliest work on what we now call automatic differentiation dates to \citeauthor{wengert1964} in \citeyear{wengert1964}. In his paper \citetitle{wengert1964}, Wengert described a procedure for the automatic evaluation of total and partial derivatives of arbitrary algebraic functions by decomposing them into sequences of elementary expressions, without ever developing symbolic derivative formulas. This forward-mode technique laid the conceptual groundwork for all later AD systems.
 
@@ -14,7 +14,7 @@ The critical extension to **reverse mode** was made by \citeauthor{linnainmaa197
 
 This technique was later independently rediscovered and applied to neural network training by \citeauthor{werbos1974} in his \citeyear{werbos1974} doctoral thesis \citetitle{werbos1974}, where he proposed using reverse-mode AD to compute gradients for multi-layer networks. However, it was the landmark \citeyear{rumelhart1986} paper by \citeauthor{rumelhart1986}, \citetitle{rumelhart1986}, that popularized the method under the name **backpropagation** and demonstrated its practical effectiveness, reigniting interest in connectionist models after the first AI winter.
 
-### Why Not Symbolic or Numerical Differentiation?
+## Why Not Symbolic or Numerical Differentiation?
 
 Before understanding *how* AD works, it helps to understand *why* the alternatives fail at scale:
 
@@ -28,7 +28,7 @@ This requires **one forward pass per parameter** to compute each partial derivat
 
 **Automatic Differentiation** computes exact derivatives (up to floating-point precision) in at most a constant factor more work than the original function evaluation. Reverse-mode AD, specifically, computes the gradient of a scalar output with respect to *all* inputs in a single backward pass, regardless of how many parameters there are.
 
-### The Chain Rule: The Mathematical Engine
+## The Chain Rule: The Mathematical Engine
 
 The entire machinery of AD rests on the **chain rule** of calculus. If a function $y$ is computed through a chain of intermediate steps:
 
@@ -44,7 +44,7 @@ $$\frac{dy}{dx} = \frac{dy}{dv_k} \cdot \frac{dv_k}{dv_{k-1}} \cdots \frac{dv_2}
 
 AD automates this process by recording each elementary operation and its local derivative, then chaining them together.
 
-### Forward Mode vs. Reverse Mode
+## Forward Mode vs. Reverse Mode
 
 There are two "directions" in which the chain rule can be evaluated:
 
@@ -61,7 +61,7 @@ Since training always reduces to minimizing a single scalar loss $L$, reverse mo
 
 The central data structure in reverse-mode AD is the **computational graph**, colloquially called the **tape** (by analogy with a magnetic tape that records operations sequentially). During the forward pass, every elementary operation, addition, multiplication, exponentiation, activation functions, is recorded on this tape along with its inputs and the local partial derivatives.
 
-### A Concrete Example
+## A Concrete Example
 
 Consider the function:
 
