@@ -309,7 +309,7 @@ If you slip a question in Chinese under the door, the person can follow the rule
 <div class="md">
 
 ### The Multiverse of the Meadow: Uexküll's Bubble
-To understand the fundamental isolation of an AI's intelligence, we can look to the opening of Jakob von Uexküll's "A Stroll Through the Worlds of Animals and Men" `\citeauthor{uexkull1934}`. He invites us to perform a radical mental experiment to understand that there is no single "objective" world, only a collection of subjective ones:
+To understand the fundamental isolation of an AI's intelligence, we can look to the opening of Jakob von Uexküll's "A Stroll Through the Worlds of Animals and Men" \citeauthor{uexkull1934}. He invites us to perform a radical mental experiment to understand that there is no single "objective" world, only a collection of subjective ones:
 
 <div class="smart-quote" data-cite="uexkull1934" data-page=43>
   "We begin such a stroll on a sunny day before a flowering meadow [...] and we make a bubble around each of the animals living in the meadow. The bubble represents each animal's environment and contains all the features accessible to the subject. [...] A new world arises in each bubble."
