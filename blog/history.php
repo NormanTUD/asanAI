@@ -632,8 +632,6 @@ What changed since the early days was not the basic ideas, but the availability 
 \category{history,philosophy,hardware}
 ## The Great Convergence: From Syllogisms to Silicon
 
-TODO: https://blog.hnf.de/das-universum-des-ramon-llull/
-
 The emergence of ChatGPT represents the "Great Convergence" of a multi-millennial effort to decouple human thought from biology and translate it into formal abstraction. This journey began with **Aristotle's** syllogisms and was radicalized by **Llull's** mechanical knowledge wheels and **Leibniz's** binary alphabet, the idea that all reasoning could be reduced to a series of calculations. From **Babbage and Lovelace's** "algebraic patterns" to **McCulloch and Pitts'** mathematical neurons, the lineage of AI has always sought to treat thought as a formal calculus.
 
 However, the final transition required more than logic; it required a physical substrate of sufficient scale. As noted in \citetitle{sutton2019bitter}, the "Bitter Lesson" of AI history is that raw computation eventually outpaces human intuition. This was made possible by **Moore's Law** \cite{mooreslaw} and the revolutionary discovery that the massiv-parallel **SIMD** architecture of **GPUs**, originally forged for the sensory demands of video games, provided the perfect engine for neural matrix operations (\cite{oh2004gpu}, \cite{raina2009large}).
