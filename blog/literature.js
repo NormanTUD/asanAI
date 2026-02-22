@@ -1,4 +1,10 @@
 window.bibData = {
+	"volvelles": {
+		url: "https://link.springer.com/chapter/10.1007/978-3-031-90976-4_1",
+		title: "Paper Instruments as Objects of Research",
+		year: 2025,
+		author: "Alica-Nana Citron"
+	},
 	"tractatusdespheara": {
 		title: "Tractatus de Sphaera",
 		author: "Johannes de Sacrobosco",
