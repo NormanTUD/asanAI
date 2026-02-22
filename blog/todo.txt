@@ -1,5 +1,7 @@
 https://cprimozic.net/blog/building-embedding-visualizations-from-user-profiles/
 
+https://www.cs.cmu.edu/~dst/WordEmbeddingDemo/
+
 https://lamyiowce.github.io/word2viz/
 
 https://github.com/turbomaze/word2vecjson/tree/master real embedding
