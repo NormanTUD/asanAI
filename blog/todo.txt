@@ -1,6 +1,8 @@
 A Theory of Adaptive Pattern Classifiers
 SHUNICHI AMARI
 
+https://www.scribd.com/document/555389784/d41586-021-01429-6
+
 
 https://en.wikipedia.org/wiki/Grokking_(machine_learning)
 
