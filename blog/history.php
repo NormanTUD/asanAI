@@ -168,7 +168,7 @@ The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with
 
 <figure>
     <img style="width: 100%" src="Leibnizrechenmaschine.jpg" alt="Rechenmaschine by Leibniz" />
-    <figcaption class="md">\citealternativetitle{leibnizrechenmaschine}</figcaption>
+    <figcaption class="md">\citealternativetitle{leibnizcc}</figcaption>
 </figure>
 
 Leibniz's vision was revolutionary: he sought to mechanize thought by creating a symbolic system

@@ -1,4 +1,12 @@
 window.bibData = {
+	"leibnizcc": {
+		url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg",
+		author: "Eremeev",
+		year: 2016,
+		alternativetitle: "The Stepped Reckoner by Leibniz, invented in 1672 and built in 1700, is the first mechanical working automatic calculation machine",
+		license: "CC",
+		title: "Gottfried Wilhelm Leibniz - Rechenmaschine"
+	},
 	"artandlogicofllull": {
 		url: "https://uberty.org/wp-content/uploads/2015/12/Anthony_Bonner_The_art_and_logic_of_Ramon_Llull.pdf",
 		author: "Anthony Bonner",
