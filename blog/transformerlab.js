@@ -4479,84 +4479,84 @@ class AttentionPathVisualizer {
     /**
      * Matrix View: Renders a compact heatmap grid for each active head.
      */
-    _drawMatrixView(svg, headDataArray, tokens) {
-        const n = tokens.length;
-        const cellSize = Math.max(18, Math.min(40, 300 / n));
-        const matrixSize = n * cellSize;
-        const padding = 80;
-        const headGap = 30;
+	_drawMatrixView(svg, headDataArray, tokens) {
+		const n = tokens.length;
+		const cellSize = Math.max(18, Math.min(40, 300 / n));
+		const matrixSize = n * cellSize;
+		const padding = 80;
 
-        const activeHeads = [...this._activeHeads].sort((a, b) => a - b);
-        const totalWidth = activeHeads.length * (matrixSize + padding) + (activeHeads.length - 1) * headGap + padding;
-        const totalHeight = matrixSize + padding + 40;
+		const activeHeads = [...this._activeHeads].sort((a, b) => a - b);
+		const totalWidth = matrixSize + padding;
+		const totalHeight = activeHeads.length * (matrixSize + padding) + padding;
 
-        svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
-        svg.style.minHeight = totalHeight + 'px';
+		svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
+		svg.style.minHeight = totalHeight + 'px';
 
-        let svgContent = '';
+		let svgContent = '';
 
-        activeHeads.forEach((hIdx, col) => {
-            const offsetX = padding / 2 + col * (matrixSize + padding + headGap);
-            const offsetY = padding;
-            const color = AttentionPathVisualizer.HEAD_COLORS[hIdx % AttentionPathVisualizer.HEAD_COLORS.length];
-            const weights = headDataArray[hIdx].this_weights;
+		activeHeads.forEach((hIdx, row) => {
+			const offsetX = padding / 2;
+			const offsetY = padding / 2 + row * (matrixSize + padding);
+			const color = AttentionPathVisualizer.HEAD_COLORS[hIdx % AttentionPathVisualizer.HEAD_COLORS.length];
+			const weights = headDataArray[hIdx].this_weights;
 
-            // Head label
-            svgContent += `<text x="${offsetX + matrixSize / 2}" y="${offsetY - 30}"
-                font-size="12" fill="${color}" font-weight="700" text-anchor="middle"
-                >Head ${hIdx + 1}</text>`;
+			// Head label
+			svgContent += `<text x="${offsetX + matrixSize / 2}" y="${offsetY - 30}"
+	    font-size="12" fill="${color}" font-weight="700" text-anchor="middle"
+	    >Head ${hIdx + 1}</text>`;
 
-            // Row labels (queries)
-            for (let i = 0; i < n; i++) {
-                svgContent += `<text x="${offsetX - 4}" y="${offsetY + i * cellSize + cellSize / 2 + 4}"
-                    font-size="9" fill="#64748b" text-anchor="end"
-                    >${this._escapeHtml(tokens[i])}</text>`;
-            }
+			// Row labels (queries)
+			for (let i = 0; i < n; i++) {
+				svgContent += `<text x="${offsetX - 4}" y="${offsetY + i * cellSize + cellSize / 2 + 4}"
+		font-size="9" fill="#64748b" text-anchor="end"
+		>${this._escapeHtml(tokens[i])}</text>`;
+			}
 
-            // Column labels (keys) — rotated
-            for (let j = 0; j < n; j++) {
-                svgContent += `<text
-                    x="${offsetX + j * cellSize + cellSize / 2}"
-                    y="${offsetY - 6}"
-                    font-size="9" fill="#64748b" text-anchor="start"
-                    transform="rotate(-45, ${offsetX + j * cellSize + cellSize / 2}, ${offsetY - 6})"
-                    >${this._escapeHtml(tokens[j])}</text>`;
-            }
+			// Column labels (keys) — rotated
+			for (let j = 0; j < n; j++) {
+				svgContent += `<text
+		x="${offsetX + j * cellSize + cellSize / 2}"
+		y="${offsetY - 6}"
+		font-size="9" fill="#64748b" text-anchor="start"
+		transform="rotate(-45, ${offsetX + j * cellSize + cellSize / 2}, ${offsetY - 6})"
+		>${this._escapeHtml(tokens[j])}</text>`;
+			}
 
-            // Cells
-            for (let qi = 0; qi < n; qi++) {
-                for (let ki = 0; ki < n; ki++) {
-                    const w = weights[qi][ki];
-                    const x = offsetX + ki * cellSize;
-                    const y = offsetY + qi * cellSize;
+			// Cells
+			for (let qi = 0; qi < n; qi++) {
+				for (let ki = 0; ki < n; ki++) {
+					const w = weights[qi][ki];
+					const x = offsetX + ki * cellSize;
+					const y = offsetY + qi * cellSize;
 
-                    // Color intensity
-                    const alpha = Math.max(0.05, w);
+					// Color intensity
+					const alpha = Math.max(0.05, w);
 
-                    svgContent += `<rect x="${x}" y="${y}"
-                        width="${cellSize}" height="${cellSize}"
-                        fill="${color}" fill-opacity="${alpha.toFixed(3)}"
-                        stroke="#e2e8f0" stroke-width="0.5"
-                        data-apv-head="${hIdx}" data-apv-qi="${qi}" data-apv-ki="${ki}"
-                        style="cursor:crosshair;"
-                    />`;
+					svgContent += `<rect x="${x}" y="${y}"
+		    width="${cellSize}" height="${cellSize}"
+		    fill="${color}" fill-opacity="${alpha.toFixed(3)}"
+		    stroke="#e2e8f0" stroke-width="0.5"
+		    data-apv-head="${hIdx}" data-apv-qi="${qi}" data-apv-ki="${ki}"
+		    style="cursor:crosshair;"
+		/>`;
 
-                    // Show value text in cells if they're large enough
-                    if (cellSize >= 28 && w > 0.05) {
-                        svgContent += `<text x="${x + cellSize / 2}" y="${y + cellSize / 2 + 3}"
-                            font-size="8" fill="${w > 0.5 ? '#fff' : '#334155'}"
-                            text-anchor="middle" pointer-events="none"
-                            >${(w * 100).toFixed(0)}</text>`;
-                    }
-                }
-            }
-        });
+					// Show value text in cells if they're large enough
+					if (cellSize >= 28 && w > 0.05) {
+						svgContent += `<text x="${x + cellSize / 2}" y="${y + cellSize / 2 + 3}"
+			font-size="8" fill="${w > 0.5 ? '#fff' : '#334155'}"
+			text-anchor="middle" pointer-events="none"
+			>${(w * 100).toFixed(0)}</text>`;
+					}
+				}
+			}
+		});
 
-        svg.innerHTML = svgContent;
+		svg.innerHTML = svgContent;
 
-        // Tooltip on hover for matrix cells
-        this._attachMatrixTooltip(svg, headDataArray, tokens);
-    }
+		// Tooltip on hover for matrix cells
+		this._attachMatrixTooltip(svg, headDataArray, tokens);
+	}
+
 
     // ═══════════════════════════════════════════════════
     //  PRIVATE: EVENT HANDLING
