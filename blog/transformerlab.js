@@ -2538,12 +2538,54 @@ function tlab_render_trajectory_plot(d_model) {
 	};
 
 	/**
-	 * Helper: For a given hidden-state vector, find the closest vocabulary word
-	 * (the "logit" word — what the model would predict if this were the final state).
+	 * Snapshot the embedding space at render time so logit lookups
+	 * are consistent with the CURRENT vocabulary vectors.
+	 * We deep-copy to avoid any mutation issues.
+	 */
+	const embSnap = {};
+	if (window.persistentEmbeddingSpace) {
+		for (const word in window.persistentEmbeddingSpace) {
+			embSnap[word] = [...window.persistentEmbeddingSpace[word]];
+		}
+	}
+	const snapVocab = Object.keys(embSnap);
+
+	/**
+	 * Find the nearest vocabulary word for a hidden-state vector
+	 * using cosine similarity instead of raw dot product.
+	 * Cosine similarity is magnitude-invariant, so a vector always
+	 * matches itself regardless of scale differences between tokens.
 	 */
 	const getLogitWord = (hVec) => {
-		if (!hVec || !window.persistentEmbeddingSpace) return '???';
-		return tlab_get_top_word_only(hVec);
+		if (!hVec || snapVocab.length === 0) return '???';
+
+		let bestWord = '???';
+		let bestSim = -Infinity;
+
+		// Precompute query magnitude
+		let hMag = 0;
+		for (let i = 0; i < hVec.length; i++) hMag += hVec[i] * hVec[i];
+		hMag = Math.sqrt(hMag);
+		if (hMag < 1e-12) return '???';
+
+		for (let w = 0; w < snapVocab.length; w++) {
+			const word = snapVocab[w];
+			const wVec = embSnap[word];
+			let dot = 0, wMag = 0;
+			for (let i = 0; i < hVec.length; i++) {
+				dot += hVec[i] * (wVec[i] || 0);
+				wMag += (wVec[i] || 0) * (wVec[i] || 0);
+			}
+			wMag = Math.sqrt(wMag);
+			if (wMag < 1e-12) continue;
+
+			const cosSim = dot / (hMag * wMag);
+			if (cosSim > bestSim) {
+				bestSim = cosSim;
+				bestWord = word;
+			}
+		}
+		return bestWord;
 	};
 
 	// ───────────────────────────────────────────────
@@ -2582,11 +2624,14 @@ function tlab_render_trajectory_plot(d_model) {
 				const tColor = getTokenColor(tIdx, tokens.length);
 				const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 
-				// Build per-point hover texts including logit word and stage info
+				// Build per-point hover texts with logit word and from/to stage info
 				const hoverTexts = dataPoints.map((p, pIdx) => {
 					const logitWord = getLogitWord(p.data[tIdx]);
+					const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
+					const toStage = p.name;
 					return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
-						`Stage: ${p.name}<br>` +
+						`From: ${fromStage}<br>` +
+						`To: ${toStage}<br>` +
 						`Nearest logit: <b>${logitWord}</b>`;
 				});
 
@@ -2626,7 +2671,8 @@ function tlab_render_trajectory_plot(d_model) {
 				});
 
 				// End point (star)
-				const endLogit = getLogitWord(dataPoints[dataPoints.length - 1].data[tIdx]);
+				const endIdx = dataPoints.length - 1;
+				const endLogit = getLogitWord(dataPoints[endIdx].data[tIdx]);
 				traces.push({
 					type: 'scatter',
 					x: [x[x.length - 1]], y: [y[y.length - 1]],
@@ -2637,7 +2683,7 @@ function tlab_render_trajectory_plot(d_model) {
 					showlegend: false,
 					hoverinfo: 'text',
 					hovertemplate: '%{text}<extra></extra>',
-					text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[dataPoints.length - 1].name}<br>Nearest logit: <b>${endLogit}</b>`]
+					text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b>`]
 				});
 
 				// Stage labels (first token only — informational, always visible)
@@ -2708,11 +2754,11 @@ function tlab_render_trajectory_plot(d_model) {
 				legendgroup: tokenLabel,
 				line: { width: 5, color: tColor },
 				hoverinfo: 'text',
-				hovertemplate: '<b>%{text}</b><extra></extra>',
+				hovertemplate: '%{text}<extra></extra>',
 				text: hoverTexts
 			});
 
-			// Cones (arrowheads) — now with hover showing logit word
+			// Cones (arrowheads) — with hover showing logit word
 			for (let i = 0; i < x.length - 1; i++) {
 				const logitWord = getLogitWord(dataPoints[i + 1].data[tIdx]);
 				const fromStage = dataPoints[i].name;
@@ -2752,7 +2798,8 @@ function tlab_render_trajectory_plot(d_model) {
 			});
 
 			// End point
-			const endLogit = getLogitWord(dataPoints[dataPoints.length - 1].data[tIdx]);
+			const endIdx = dataPoints.length - 1;
+			const endLogit = getLogitWord(dataPoints[endIdx].data[tIdx]);
 			traces.push({
 				type: 'scatter3d',
 				x: [x[x.length - 1]], y: [y[y.length - 1]], z: [z[z.length - 1]],
@@ -2763,11 +2810,10 @@ function tlab_render_trajectory_plot(d_model) {
 				legendgroup: tokenLabel,
 				showlegend: false,
 				hoverinfo: 'text',
-				hovertemplate: `Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[dataPoints.length - 1].name}<br>Nearest logit: <b>${endLogit}</b><extra></extra>`
+				hovertemplate: `Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b><extra></extra>`
 			});
 		} else {
 			// ═══ 2D ═══
-			// Trajectory line with trace-based arrow markers for direction
 			traces.push({
 				type: 'scatter',
 				x: x, y: y,
@@ -2802,7 +2848,8 @@ function tlab_render_trajectory_plot(d_model) {
 			});
 
 			// End point (star)
-			const endLogit = getLogitWord(dataPoints[dataPoints.length - 1].data[tIdx]);
+			const endIdx = dataPoints.length - 1;
+			const endLogit = getLogitWord(dataPoints[endIdx].data[tIdx]);
 			traces.push({
 				type: 'scatter',
 				x: [x[x.length - 1]], y: [y[y.length - 1]],
@@ -2813,10 +2860,10 @@ function tlab_render_trajectory_plot(d_model) {
 				showlegend: false,
 				hoverinfo: 'text',
 				hovertemplate: '%{text}<extra></extra>',
-				text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[dataPoints.length - 1].name}<br>Nearest logit: <b>${endLogit}</b>`]
+				text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b>`]
 			});
 
-			// Stage labels (first token only — informational, always visible)
+			// Stage labels (first token only)
 			if (tIdx === 0) {
 				dataPoints.forEach((p, pIdx) => {
 					annotations.push({
