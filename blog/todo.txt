@@ -2,6 +2,7 @@
 
 https://arxiv.org/pdf/2505.00014#:~:text=Sphere%3A%20normalize%20embeddings%20to,norm%2C%20projecting%20onto%20unit Key Insight: Embeddings can be explicitly constrained to lie on geometric manifolds (spheres, tori, Möbius strips), with visualizations revealing how semantic relationships (e.g., polarity, cyclicity) map to geometric features
 
+https://arxiv.org/html/2310.04475v2
 
 https://ar5iv.labs.arxiv.org/html/2205.10964#:~:text=axes%20encode%20information%20such%20as%20token
 
