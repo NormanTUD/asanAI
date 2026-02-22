@@ -1,4 +1,11 @@
 window.bibData = {
+	"lebomboarticle": {
+		url: "https://www.pnas.org/doi/10.1073/pnas.1204213109",
+		title: "Early evidence of San material culture represented by organic artifacts from Border Cave, South Africa",
+		author: "Francesco d’Errico, Lucinda Backwell, Paola Villa, Ilaria Degano, Jeannette J. Lucejko, Marion K. Bamford, Thomas F. G. Higham, Maria Perla Colombini, Peter B. Beaumont ",
+		year: 2012,
+		licensenotes: 'https://www.pnas.org/author-center/publication-charges/standard-pnas-license-terms Anyone may, without requesting permission, use original figures or tables from PNAS articles that published under the exclusive license to publish for noncommercial and educational use (i.e., in a review article, in a book that is not for sale), provided that the full journal reference is cited and, for articles published in volumes 90–105 (1993–2008), "Copyright (copyright year) National Academy of Sciences." Commercial reuse of figures and tables (i.e., in promotional materials, in a textbook for sale) requires permission from PNAS.'
+	},
 	"leibnizcc": {
 		url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg",
 		author: "Eremeev",
