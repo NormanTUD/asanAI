@@ -50,7 +50,7 @@ The Lebombo bone, a baboon fibula discovered by \citeauthor{lebomboboneoriginal}
 #### The Ishango Bone
 <figure style="float: right; width: 30%; max-width: 200px; margin: 0 0 1em 1em;">
     <img style="width: 100%; height: auto; display: block;" src="ishango.jpg" alt="Ishango Bone" />
-    <figcaption class="md">The \citealternativetitle{ishangobonephoto} is the earliest known attempt of outsourcing mathematical thought to physical objects</figcaption>
+    <figcaption class="md">The \citealternativetitle{ishangobonephoto} is one of the earliest known attempts of outsourcing mathematical thought to physical objects</figcaption>
 </figure>
 
 The **Ishango bone** is a Paleolithic artifact discovered in 1950 by Belgian geologist \citeauthor{ishangobone} in what is now the Democratic Republic of the Congo. Dated to approximately **20,000 years BP** (Before Present), this baboon fibula predates the Sumerian and Babylonian mathematical records by over 15,000 years. It features three columns of grouped notches that exhibit curious mathematical properties, such as a column of prime numbers (11, 13, 17, 19) and groups that sum to 60 or 48.
