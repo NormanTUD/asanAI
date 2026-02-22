@@ -2538,9 +2538,7 @@ function tlab_render_trajectory_plot(d_model) {
 	};
 
 	/**
-	 * Snapshot the embedding space at render time so logit lookups
-	 * are consistent with the CURRENT vocabulary vectors.
-	 * We deep-copy to avoid any mutation issues.
+	 * Snapshot the embedding space at render time for consistent logit lookups.
 	 */
 	const embSnap = {};
 	if (window.persistentEmbeddingSpace) {
@@ -2551,23 +2549,16 @@ function tlab_render_trajectory_plot(d_model) {
 	const snapVocab = Object.keys(embSnap);
 
 	/**
-	 * Find the nearest vocabulary word for a hidden-state vector
-	 * using cosine similarity instead of raw dot product.
-	 * Cosine similarity is magnitude-invariant, so a vector always
-	 * matches itself regardless of scale differences between tokens.
+	 * Find the nearest vocabulary word using cosine similarity.
 	 */
 	const getLogitWord = (hVec) => {
 		if (!hVec || snapVocab.length === 0) return '???';
-
 		let bestWord = '???';
 		let bestSim = -Infinity;
-
-		// Precompute query magnitude
 		let hMag = 0;
 		for (let i = 0; i < hVec.length; i++) hMag += hVec[i] * hVec[i];
 		hMag = Math.sqrt(hMag);
 		if (hMag < 1e-12) return '???';
-
 		for (let w = 0; w < snapVocab.length; w++) {
 			const word = snapVocab[w];
 			const wVec = embSnap[word];
@@ -2578,7 +2569,6 @@ function tlab_render_trajectory_plot(d_model) {
 			}
 			wMag = Math.sqrt(wMag);
 			if (wMag < 1e-12) continue;
-
 			const cosSim = dot / (hMag * wMag);
 			if (cosSim > bestSim) {
 				bestSim = cosSim;
@@ -2586,6 +2576,87 @@ function tlab_render_trajectory_plot(d_model) {
 			}
 		}
 		return bestWord;
+	};
+
+	// ───────────────────────────────────────────────
+	// Embedding landmark builders
+	// ───────────────────────────────────────────────
+
+	/**
+	 * 3D landmarks: split into TWO traces (markers + text) to avoid
+	 * the Plotly "r is undefined" raycasting bug with mode:'markers+text'
+	 * on scatter3d.
+	 */
+	const buildEmbeddingLandmarks3D = () => {
+		const xs = [], ys = [], zs = [], texts = [];
+		for (const word of snapVocab) {
+			const v = embSnap[word];
+			xs.push(v[0]);
+			ys.push(v[1] || 0);
+			zs.push(v[2] || 0);
+			texts.push(word);
+		}
+		return [
+			// Marker trace
+			{
+				type: 'scatter3d',
+				x: xs, y: ys, z: zs,
+				mode: 'markers',
+				marker: {
+					size: 5,
+					symbol: 'diamond',
+					color: 'rgba(100, 116, 139, 0.8)',
+					line: { width: 1, color: '#334155' }
+				},
+				text: texts,
+				hovertemplate: '<b>Embedding: %{text}</b><extra></extra>',
+				name: 'Vocab Embeddings',
+				legendgroup: 'vocab_emb',
+				showlegend: true
+			},
+			// Text label trace (separate to avoid the picking bug)
+			{
+				type: 'scatter3d',
+				x: xs, y: ys, z: zs,
+				mode: 'text',
+				text: texts,
+				textposition: 'top center',
+				textfont: { size: 10, color: '#475569', family: 'Inter, sans-serif' },
+				hoverinfo: 'skip',
+				name: 'Vocab Labels',
+				legendgroup: 'vocab_emb',
+				showlegend: false
+			}
+		];
+	};
+
+	const buildEmbeddingLandmarks2D = (dimA, dimB) => {
+		const xs = [], ys = [], texts = [];
+		for (const word of snapVocab) {
+			const v = embSnap[word];
+			xs.push(v[dimA] || 0);
+			ys.push(v[dimB] || 0);
+			texts.push(word);
+		}
+		return {
+			type: 'scatter',
+			x: xs, y: ys,
+			mode: 'markers+text',
+			text: texts,
+			textposition: 'top center',
+			textfont: { size: 10, color: '#475569' },
+			marker: {
+				size: 8,
+				symbol: 'diamond',
+				color: 'rgba(100, 116, 139, 0.7)',
+				line: { width: 1, color: '#334155' }
+			},
+			name: 'Vocab Embeddings',
+			legendgroup: 'vocab_emb',
+			showlegend: true,
+			hoverinfo: 'text',
+			hovertemplate: '<b>Embedding: %{text}</b><extra></extra>'
+		};
 	};
 
 	// ───────────────────────────────────────────────
@@ -2618,13 +2689,15 @@ function tlab_render_trajectory_plot(d_model) {
 			const traces = [];
 			const annotations = [];
 
+			// Embedding landmarks
+			traces.push(buildEmbeddingLandmarks2D(dimA, dimB));
+
 			tokens.forEach((token, tIdx) => {
 				const x = dataPoints.map(p => p.data[tIdx][dimA]);
 				const y = dataPoints.map(p => p.data[tIdx][dimB]);
 				const tColor = getTokenColor(tIdx, tokens.length);
 				const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 
-				// Build per-point hover texts with logit word and from/to stage info
 				const hoverTexts = dataPoints.map((p, pIdx) => {
 					const logitWord = getLogitWord(p.data[tIdx]);
 					const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
@@ -2635,7 +2708,6 @@ function tlab_render_trajectory_plot(d_model) {
 						`Nearest logit: <b>${logitWord}</b>`;
 				});
 
-				// Trajectory line with trace-based arrow markers for direction
 				traces.push({
 					type: 'scatter',
 					x: x, y: y,
@@ -2655,7 +2727,6 @@ function tlab_render_trajectory_plot(d_model) {
 					showlegend: true
 				});
 
-				// Start point (circle)
 				const startLogit = getLogitWord(dataPoints[0].data[tIdx]);
 				traces.push({
 					type: 'scatter',
@@ -2670,7 +2741,6 @@ function tlab_render_trajectory_plot(d_model) {
 					text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
 				});
 
-				// End point (star)
 				const endIdx = dataPoints.length - 1;
 				const endLogit = getLogitWord(dataPoints[endIdx].data[tIdx]);
 				traces.push({
@@ -2686,7 +2756,6 @@ function tlab_render_trajectory_plot(d_model) {
 					text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b>`]
 				});
 
-				// Stage labels (first token only — informational, always visible)
 				if (tIdx === 0) {
 					dataPoints.forEach((p, pIdx) => {
 						annotations.push({
@@ -2725,6 +2794,13 @@ function tlab_render_trajectory_plot(d_model) {
 	const traces = [];
 	const annotations = [];
 
+	// Embedding landmarks (first traces so they render behind trajectories)
+	if (d_model === 3) {
+		buildEmbeddingLandmarks3D().forEach(t => traces.push(t));
+	} else {
+		traces.push(buildEmbeddingLandmarks2D(0, 1));
+	}
+
 	tokens.forEach((token, tIdx) => {
 		const x = dataPoints.map(p => p.data[tIdx][0]);
 		const y = dataPoints.map(p => p.data[tIdx][1]);
@@ -2733,7 +2809,6 @@ function tlab_render_trajectory_plot(d_model) {
 
 		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 
-		// Build per-point hover texts with logit info and stage from/to
 		const hoverTexts = dataPoints.map((p, pIdx) => {
 			const logitWord = getLogitWord(p.data[tIdx]);
 			const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
@@ -2758,7 +2833,7 @@ function tlab_render_trajectory_plot(d_model) {
 				text: hoverTexts
 			});
 
-			// Cones (arrowheads) — with hover showing logit word
+			// Cones (arrowheads) with hover
 			for (let i = 0; i < x.length - 1; i++) {
 				const logitWord = getLogitWord(dataPoints[i + 1].data[tIdx]);
 				const fromStage = dataPoints[i].name;
@@ -2832,7 +2907,7 @@ function tlab_render_trajectory_plot(d_model) {
 				text: hoverTexts
 			});
 
-			// Start point (circle)
+			// Start point
 			const startLogit = getLogitWord(dataPoints[0].data[tIdx]);
 			traces.push({
 				type: 'scatter',
@@ -2847,7 +2922,7 @@ function tlab_render_trajectory_plot(d_model) {
 				text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
 			});
 
-			// End point (star)
+			// End point
 			const endIdx = dataPoints.length - 1;
 			const endLogit = getLogitWord(dataPoints[endIdx].data[tIdx]);
 			traces.push({
