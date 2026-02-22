@@ -1,3 +1,5 @@
+https://cprimozic.net/blog/building-embedding-visualizations-from-user-profiles/
+
 https://github.com/turbomaze/word2vecjson/tree/master real embedding
 
 
