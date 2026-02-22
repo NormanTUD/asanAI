@@ -136,7 +136,7 @@
 			tf.env().set('WEBGL_PACK_DEPTHWISECONV', false);
 		</script>
 <?php
-		if($_SERVER["HTTP_HOST"] != "localhost") {
+		if(isset($_SERVER["HTTP_HOST"]) && $_SERVER["HTTP_HOST"] != "localhost") {
 ?>
 			<script>
 				if (window.location.host == "localhost") {
