@@ -709,6 +709,14 @@ window.bibData = {
 		url: "https://xenopraxis.net/readings/uexkull_foray.pdf"
 	},
 
+	"arsmagnavolvelle": {
+		url: "https://blog.hnf.de/das-universum-des-ramon-llull/",
+		title: "Llull-Diagramm from Ars Magna",
+		author: "Ramon Llull",
+		license: "CC",
+		year: 1305
+	},
+
 	"arsmagna": {
 		url: "https://www.352capitalpartners.eu/blog/2017/10/9/a-very-short-history-of-artificial-intelligence",
 		year: 1305,
