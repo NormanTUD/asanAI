@@ -396,6 +396,13 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 	<input type="text" id="transformer-master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" value="the">
 </div>
 
+<div class="md">
+## Attention Path Visualizer
+Hover over tokens to see where each head focuses its attention.
+Toggle individual heads on/off. Switch between Head View and Matrix View.
+</div>
+
+<div id="attention-path-viz" style="margin: 20px 0;"></div>
 
 <div class="md">
 ## Key Intuitions about LLMs
