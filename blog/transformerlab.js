@@ -905,7 +905,7 @@ async function train_transformer() {
 		// ── NEW: Update progress bar every epoch ──
 		updateTrainingProgressBar(i + 1, epochs, lossValue[0]);
 
-		if (i % 25 === 0 || i === epochs - 1) {
+		if ((i - 1) % 10 === 0 || i === epochs - 1) {
 			// --- ETA Calculation ---
 			const currentTime = performance.now();
 			const elapsed = currentTime - startTime;
