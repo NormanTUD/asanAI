@@ -825,6 +825,13 @@ async function train_transformer() {
 	btn.innerText = 'Stop Training';
 	status.style.display = 'block';
 
+	// ── NEW: Reset loss history and graph ──
+	window.lossHistory = [];
+	reset_graph();
+
+	// ── NEW: Show progress bar ──
+	showTrainingProgressBar();
+
 	const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
 	const epochs = parseInt(document.getElementById('train-epochs').value) || 500;
 	const optType = document.getElementById('train-optimizer').value;
@@ -840,6 +847,7 @@ async function train_transformer() {
 		window.isTraining = false;
 		btn.classList.remove('active');
 		btn.innerText = 'Train Model';
+		hideTrainingProgressBar();
 		return;
 	}
 
@@ -894,6 +902,9 @@ async function train_transformer() {
 		const lossValue = await cost.data();
 		window.lossHistory.push(lossValue[0]);
 
+		// ── NEW: Update progress bar every epoch ──
+		updateTrainingProgressBar(i + 1, epochs, lossValue[0]);
+
 		if (i % 25 === 0 || i === epochs - 1) {
 			// --- ETA Calculation ---
 			const currentTime = performance.now();
@@ -921,6 +932,117 @@ async function train_transformer() {
 	btn.classList.remove('active');
 	btn.innerText = 'Train Model';
 	status.innerText += completedAll ? " Training Complete!" : " Training Stopped.";
+
+	// ── NEW: Hide progress bar ──
+	hideTrainingProgressBar();
+}
+
+/**
+ * Creates and shows a fixed progress bar at the bottom of the screen.
+ */
+function showTrainingProgressBar() {
+	// Remove any existing one first
+	hideTrainingProgressBar();
+
+	const bar = document.createElement('div');
+	bar.id = 'training-progress-bar-container';
+	bar.style.cssText = `
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		background: #1e293b;
+		color: #f8fafc;
+		padding: 10px 20px;
+		display: flex;
+		align-items: center;
+		gap: 15px;
+		z-index: 99999;
+		font-family: 'Inter', sans-serif;
+		font-size: 0.85rem;
+		box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+		transition: opacity 0.3s ease;
+	`;
+
+	bar.innerHTML = `
+		<span id="training-progress-label" style="white-space: nowrap; min-width: 180px;">
+			Starting training...
+		</span>
+		<div style="flex-grow: 1; background: #334155; border-radius: 6px; height: 18px; overflow: hidden; position: relative;">
+			<div id="training-progress-fill" style="
+				width: 0%;
+				height: 100%;
+				background: linear-gradient(90deg, #3b82f6, #10b981);
+				border-radius: 6px;
+				transition: width 0.15s ease;
+			"></div>
+			<span id="training-progress-percent" style="
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 0.75rem;
+				font-weight: 600;
+				color: #fff;
+				text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+				pointer-events: none;
+			">0%</span>
+		</div>
+		<span id="training-progress-loss" style="white-space: nowrap; min-width: 120px; text-align: right; color: #94a3b8;">
+			Loss: —
+		</span>
+		<button onclick="window.isTraining = false;" style="
+			background: #ef4444;
+			color: white;
+			border: none;
+			margin-right: 50px;
+			padding: 6px 16px;
+			border-radius: 6px;
+			cursor: pointer;
+			font-weight: 600;
+			font-size: 0.82rem;
+			white-space: nowrap;
+			transition: background 0.15s;
+		" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
+			⏹ Stop
+		</button>
+	`;
+
+	document.body.appendChild(bar);
+}
+
+/**
+ * Updates the progress bar with current epoch, total epochs, and loss.
+ */
+function updateTrainingProgressBar(currentEpoch, totalEpochs, loss) {
+	const fill = document.getElementById('training-progress-fill');
+	const label = document.getElementById('training-progress-label');
+	const percent = document.getElementById('training-progress-percent');
+	const lossLabel = document.getElementById('training-progress-loss');
+
+	if (!fill || !label || !percent || !lossLabel) return;
+
+	const pct = Math.min(100, (currentEpoch / totalEpochs) * 100);
+
+	fill.style.width = pct.toFixed(1) + '%';
+	percent.textContent = pct.toFixed(1) + '%';
+	label.textContent = `Epoch ${currentEpoch} / ${totalEpochs}`;
+	lossLabel.textContent = `Loss: ${loss.toFixed(6)}`;
+}
+
+/**
+ * Removes the progress bar from the DOM.
+ */
+function hideTrainingProgressBar() {
+	const bar = document.getElementById('training-progress-bar-container');
+	if (bar) {
+		bar.style.opacity = '0';
+		setTimeout(() => bar.remove(), 300);
+	}
 }
 
 function convert_weights_to_tensors(weights) {
