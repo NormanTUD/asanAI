@@ -627,6 +627,7 @@ window.bibData = {
 	},
 	"babbage": {
 		url: "https://commons.wikimedia.org/wiki/File:Babbages_Analytical_Engine,_1834-1871._(9660574685).jpg",
+		license: "CC",
 		title: "Babbage's Analytical Engine",
 		alternativetitle: "Babbage's Analytical Engine (1871)",
 		author: "John Cummings"
