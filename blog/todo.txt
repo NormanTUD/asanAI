@@ -1,3 +1,9 @@
+🔄 Geometric Trajectories and Token Evolution Key Insight: The meaning of tokens evolves as they "travel" through the layers of a Transformer, following geometric paths (e.g., on a hypersphere). UMAP or PCA projections can visualize these trajectories, revealing how context shapes meaning. Visual Example: Layer-wise trajectory plots of token embeddings, showing smooth or twisting paths in latent space.
+https://ar5iv.labs.arxiv.org/html/2309.07315#:~:text=W_%7BE%7D%20to%20accurately%20reflect,the%20words%20in%20the
+
+
+
+
 A Theory of Adaptive Pattern Classifiers
 SHUNICHI AMARI
 
