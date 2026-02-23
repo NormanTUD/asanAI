@@ -101,10 +101,7 @@ As Frankfurt argues, the "bullshitter" is different because they are simply indi
 
 One of the most effective ways to reduce hallucinations is a technique called **Chain of Thought (CoT)** prompting. Instead of asking for a final answer immediately, you ask the AI to "think step-by-step."
 
-### Why it Works
-When an AI generates a response, every word it writes becomes part of the "Context" for the next word. If you force the AI to write out its reasoning, it populates its own context with logical steps. If the reasoning path is sound, the statistical probability of the final answer being correct increases significantly.
-
-
+**Why it Works:** When an AI generates a response, every word it writes becomes part of the "Context" for the next word. If you force the AI to write out its reasoning, it populates its own context with logical steps. If the reasoning path is sound, the statistical probability of the final answer being correct increases significantly.
 
 ## Detection: How to Spot a Hallucination
 
