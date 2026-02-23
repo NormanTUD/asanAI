@@ -325,7 +325,7 @@ Turing argued that defining "thinking" was too ambiguous. Instead, he proposed t
 The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificialintelligence} when **John McCarthy**, along with Marvin Minsky, Nathaniel Rochester, and Claude Shannon, submitted a proposal for the \citealternativetitle{darthmouthartificialintelligence}. The workshop was founded on the conjecture that "every aspect of learning or any other feature of intelligence can in principle be so precisely described that a machine can be made to simulate it," marking the official birth of the field.
 
 \category{history,hardware,psychology}
-## The Beginning of Neural Networks
+## The Beginning of Modern Artificial Neural Networks
 
 <figure>
 	<img style="max-width: 100%" src="FrankRosenblattWiringPerceptron.jpg" alt="Perceptron Wiring" />
