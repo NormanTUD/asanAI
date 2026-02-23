@@ -377,7 +377,6 @@ This is **Bayesian Inference**. Named after **Thomas Bayes**, this method allows
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    ### Interactive: The Context Shift
     Type a sentence in English, French, or German (e.g., *"Hello"* vs *"Bonjour"* vs *"Guten Tag"*). Watch how the model's "Belief" shifts in real-time as it processes each word.
     </div>
     
@@ -551,7 +550,6 @@ Where $r$ is the rank of the word and $s$ is the exponent (typically close to 1)
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    ### Interactive: Zarathustra's Power Law
     Below, we analyze the actual word distribution of \citetitle{nietzsche1883zarathustra}. 
     - **Linear Scale:** Shows the "Long Tail" (a few words dominate everything).
     - **Log-Log Scale:** Reveals the underlying mathematical "straight line" of the language.
@@ -589,7 +587,6 @@ When $\alpha < 1$, the distribution pushes probabilities toward the corners (the
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    ### Interactive: Dirichlet Concentration
     Adjust the $\alpha$-parameters for three potential "Topics" (e.g., Science, Art, Sports). Watch how the "Probability Space" (represented as a 3D simplex) shifts.
     * **Low Alpha (< 1):** The AI is decisive; it picks one topic.
     * **High Alpha (> 1):** The AI is "blending" topics together.
@@ -625,7 +622,6 @@ In LLMs, this is why a prompt works. By typing "Import torch," you are statistic
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    ### Interactive: The Mixture Model Lab
     Adjust the "Cluster Separation." When clusters overlap, the AI's "Choice" is statistically noisy (uncertain). As the Transformer sees more context, it effectively "pushes" these distributions apart to make a clear choice.
     </div>
 
@@ -682,7 +678,6 @@ If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the 
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    ### Interactive: The Zarathustra Predictor
     Select a word found in the \citetitle{nietzsche1883zarathustra} by \citeauthor{nietzsche1883zarathustra} to show you every word that ever followed it and how likely they are depending on their real statistics.
     </div>
 
