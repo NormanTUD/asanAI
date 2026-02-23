@@ -195,16 +195,6 @@ This is also why the Attention mechanism is so central. Attention computes pairw
 
 </div>
 
-<div id="plot-rotational-invariance" style="height: 500px;"></div>
-
-<div class="md">
-### Cross-Lingual Alignment: Watching the Rotation
-
-The static plot above shows two language spaces side by side. But the real magic is in the **transformation itself**. Below, you can watch Japanese's embedding space smoothly rotate and scale to align with English. This is exactly what algorithms like Procrustes alignment do: they find the optimal rotation matrix $\mathbf{W}$ such that $\mathbf{X}_B \mathbf{W} \approx \mathbf{X}_A$, minimizing the distance between corresponding word pairs across languages (\cite{smith2017orthogonal}, \cite{conneau2018word}).
-
-Click **"Align"** to animate the transformation. Notice how the internal structure, the distances between King/Queen, Man/Woman, is perfectly preserved. Only the orientation changes. This is rotational invariance made visible.
-</div>
-
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div id="plot-crosslingual-align" style="height: 500px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
@@ -222,7 +212,13 @@ Click **"Align"** to animate the transformation. Notice how the internal structu
 </section>
 
 <div class="md">
-## The Limits of Isomorphism
+The real magic is in the **transformation itself**. Below, you can watch Japanese's embedding space smoothly rotate and scale to align with English. This is exactly what algorithms like Procrustes alignment do: they find the optimal rotation matrix $\mathbf{W}$ such that $\mathbf{X}_B \mathbf{W} \approx \mathbf{X}_A$, minimizing the distance between corresponding word pairs across languages (\cite{smith2017orthogonal}, \cite{conneau2018word}).
+
+Click **"Align"** to animate the transformation. Notice how the internal structure, the distances between King/Queen, Man/Woman, is perfectly preserved. Only the orientation changes. This is rotational invariance made visible.
+</div>
+
+<div class="md">
+### The Limits of Isomorphism
 
 While the cross-lingual alignment story is compelling, the isomorphism between language embedding spaces is not perfect. The alignment quality degrades significantly for typologically distant language pairs, English to Japanese, for instance, is far harder to align than English to Spanish (\cite{sogaard2018limitations}). This suggests that the "universal geometric structure of human concepts" has real limits. Languages don't just rotate the same space; they can **warp** it. Cultures that carve up semantic space differently, languages with different color term boundaries, or kinship systems, produce embedding geometries that are locally similar but globally distorted. The rotation-plus-scaling model is a first-order approximation, not the full story.
 
