@@ -1,5 +1,7 @@
 https://ar5iv.labs.arxiv.org/html/2309.07315#:~:text=W_%7BE%7D%20to%20accurately%20reflect,the%20words%20in%20the
 
+https://www.aiav.technikum-wien.at/post/der-kluge-hans-und-die-betr%C3%BCgende-ai
+
 https://cprimozic.net/blog/building-embedding-visualizations-from-user-profiles/
 
 https://www.cs.cmu.edu/~dst/WordEmbeddingDemo/
