@@ -2391,16 +2391,18 @@ function renderScaleInvariance() {
 // ============================================================
 
 // ============================================================
-// THE PLATONIC REPRESENTATION HYPOTHESIS (optimized)
+// THE PLATONIC REPRESENTATION HYPOTHESIS (2D)
 // ============================================================
 
 const platonicState = {
-    visionRotZ: 65,
-    audioRotZ: -50,
-    audioRotY: 35,
-    currentVisionRotZ: 65,
-    currentAudioRotZ: -50,
-    currentAudioRotY: 35,
+    visionRotDeg: 65,
+    audioRotDeg: -130,
+    visionOffset: [25, 18],
+    audioOffset: [-25, 18],
+    currentVisionRotDeg: 65,
+    currentAudioRotDeg: -130,
+    currentVisionOffset: [25, 18],
+    currentAudioOffset: [-25, 18],
     aligned: false,
     animating: false,
     showCorrespondence: true,
@@ -2408,14 +2410,14 @@ const platonicState = {
 };
 
 const platonicConcepts = [
-    { name: 'Dog',     pos: [ 1.5, -1.0, -1.5], group: 'animal' },
-    { name: 'Cat',     pos: [ 1.0,  0.5, -1.5], group: 'animal' },
-    { name: 'Bird',    pos: [ 0.5, -0.3, -0.8], group: 'animal' },
-    { name: 'Car',     pos: [-1.5, -1.0,  0.3], group: 'machine' },
-    { name: 'Guitar',  pos: [-0.5,  1.5,  0.8], group: 'music' },
-    { name: 'Piano',   pos: [-1.0,  1.8,  0.3], group: 'music' },
-    { name: 'Thunder', pos: [ 0.0, -1.5,  1.5], group: 'nature' },
-    { name: 'Rain',    pos: [ 0.3, -1.0,  1.2], group: 'nature' },
+    { name: 'Dog',     pos: [ 5,   -3],   group: 'animal' },
+    { name: 'Cat',     pos: [ 3,    1],   group: 'animal' },
+    { name: 'Bird',    pos: [ 1.5, -1],   group: 'animal' },
+    { name: 'Car',     pos: [-5,   -3],   group: 'machine' },
+    { name: 'Guitar',  pos: [-1.5,  5],   group: 'music' },
+    { name: 'Piano',   pos: [-3.5,  5.5], group: 'music' },
+    { name: 'Thunder', pos: [ 0,   -5.5], group: 'nature' },
+    { name: 'Rain',    pos: [ 1,   -4],   group: 'nature' },
 ];
 
 const platonicStructurePairs = [
@@ -2431,33 +2433,25 @@ const platonicGroupColors = {
     nature:  '#14b8a6'
 };
 
-function platonicRotateZ(pos, deg) {
+function platonicRotate2D(pos, deg, offsetX, offsetY) {
     const rad = deg * Math.PI / 180;
     return [
-        pos[0] * Math.cos(rad) - pos[1] * Math.sin(rad),
-        pos[0] * Math.sin(rad) + pos[1] * Math.cos(rad),
-        pos[2]
-    ];
-}
-
-function platonicRotateY(pos, deg) {
-    const rad = deg * Math.PI / 180;
-    return [
-        pos[0] * Math.cos(rad) + pos[2] * Math.sin(rad),
-        pos[1],
-       -pos[0] * Math.sin(rad) + pos[2] * Math.cos(rad)
+        pos[0] * Math.cos(rad) - pos[1] * Math.sin(rad) + offsetX,
+        pos[0] * Math.sin(rad) + pos[1] * Math.cos(rad) + offsetY
     ];
 }
 
 function getPlatonicModPos(concept, modality) {
     const st = platonicState;
-    const p = [...concept.pos];
-    if (modality === 'language') return p;
-    if (modality === 'vision')  return platonicRotateZ(p, st.currentVisionRotZ);
-    if (modality === 'audio') {
-        return platonicRotateY(platonicRotateZ(p, st.currentAudioRotZ), st.currentAudioRotY);
-    }
-    return p;
+    const p = concept.pos;
+    if (modality === 'language') return [...p];
+    if (modality === 'vision')
+        return platonicRotate2D(p, st.currentVisionRotDeg,
+            st.currentVisionOffset[0], st.currentVisionOffset[1]);
+    if (modality === 'audio')
+        return platonicRotate2D(p, st.currentAudioRotDeg,
+            st.currentAudioOffset[0], st.currentAudioOffset[1]);
+    return [...p];
 }
 
 function renderPlatonicHypothesis() {
@@ -2466,39 +2460,73 @@ function renderPlatonicHypothesis() {
 
     const st = platonicState;
     const traces = [];
+    const annotations = [];
 
-	const modalityConfig = [
-		{ key: 'language', label: 'Language Model',  color: '#3b82f6', symbol: 'circle',  textColor: '#1e40af', prefix: '',    textPos: 'top center' },
-		{ key: 'vision',   label: 'Vision Model',   color: '#f59e0b', symbol: 'diamond', textColor: '#92400e', prefix: '👁 ', textPos: 'bottom center' },
-		{ key: 'audio',    label: 'Audio Model',     color: '#10b981', symbol: 'square',  textColor: '#065f46', prefix: '🔊 ', textPos: 'middle right' },
-	];
+    // --- Convergence metric: 0 = fully separated, 1 = fully aligned ---
+    const totalRange = Math.abs(st.visionRotDeg) + Math.abs(st.audioRotDeg) +
+        Math.abs(st.visionOffset[0]) + Math.abs(st.visionOffset[1]) +
+        Math.abs(st.audioOffset[0]) + Math.abs(st.audioOffset[1]);
+    const currentDelta = Math.abs(st.currentVisionRotDeg) + Math.abs(st.currentAudioRotDeg) +
+        Math.abs(st.currentVisionOffset[0]) + Math.abs(st.currentVisionOffset[1]) +
+        Math.abs(st.currentAudioOffset[0]) + Math.abs(st.currentAudioOffset[1]);
+    const convergence = totalRange > 0 ? 1 - (currentDelta / totalRange) : 1;
 
-    // --- 1. Points: one trace per modality (3 traces) ---
-	modalityConfig.forEach(mod => {
-		const xs = [], ys = [], zs = [], labels = [], colors = [];
-		platonicConcepts.forEach(c => {
-			const p = getPlatonicModPos(c, mod.key);
-			xs.push(p[0]); ys.push(p[1]); zs.push(p[2]);
-			labels.push(mod.prefix + c.name);
-			colors.push(platonicGroupColors[c.group]);
-		});
-		traces.push({
-			type: 'scatter3d',
-			x: xs, y: ys, z: zs,
-			mode: 'markers+text',
-			text: labels,
-			textposition: mod.textPos,           // <-- each modality on a different side
-			textfont: { size: 9, color: mod.textColor },
-			marker: { size: 6, color: colors, opacity: 0.9, symbol: mod.symbol, line: { width: 1, color: '#fff' } },
-			name: mod.label,
-			hovertemplate: '<b>%{text}</b> (' + mod.label + ')<extra></extra>'
-		});
-	});
+    const modalityConfig = [
+        { key: 'language', label: 'Language Model',  color: '#3b82f6', symbol: 'circle',  textColor: '#1e40af', prefix: '' },
+        { key: 'vision',   label: 'Vision Model',   color: '#f59e0b', symbol: 'diamond', textColor: '#92400e', prefix: '👁 ' },
+        { key: 'audio',    label: 'Audio Model',     color: '#10b981', symbol: 'square',  textColor: '#065f46', prefix: '🔊 ' },
+    ];
 
-    // --- 2. Cluster structure: one batched line trace per modality (3 traces) ---
+    // Small offsets so converged markers fan out instead of stacking
+    const nudgeVectors = {
+        language: [0,    0.45],
+        vision:   [0.5, -0.3],
+        audio:    [-0.5,-0.3]
+    };
+
+    // --- 1. Points: one trace per modality ---
+    modalityConfig.forEach(mod => {
+        const xs = [], ys = [], labels = [], hoverLabels = [], colors = [];
+
+        // Hide vision/audio text once they're close to the language labels
+        const showText = mod.key === 'language' || convergence < 0.75;
+
+        // Nudge ramps in smoothly as modalities overlap
+        const nudgeFactor = Math.pow(Math.max(0, convergence - 0.3) / 0.7, 2);
+        const nudge = nudgeVectors[mod.key];
+
+        platonicConcepts.forEach(c => {
+            const p = getPlatonicModPos(c, mod.key);
+            xs.push(p[0] + nudge[0] * nudgeFactor);
+            ys.push(p[1] + nudge[1] * nudgeFactor);
+            labels.push(showText ? (mod.prefix + c.name) : '');
+            hoverLabels.push(mod.prefix + c.name);
+            colors.push(platonicGroupColors[c.group]);
+        });
+
+        traces.push({
+            type: 'scatter',
+            x: xs, y: ys,
+            mode: 'markers+text',
+            text: labels,
+            customdata: hoverLabels,
+            textposition: mod.key === 'language' ? 'top center' :
+                          mod.key === 'vision'   ? 'bottom right' : 'bottom left',
+            textfont: { size: 10, color: mod.textColor },
+            marker: {
+                size: 11, color: colors, opacity: 0.9,
+                symbol: mod.symbol,
+                line: { width: 1, color: '#fff' }
+            },
+            name: mod.label,
+            hovertemplate: '<b>%{customdata}</b> (' + mod.label + ')<extra></extra>'
+        });
+    });
+
+    // --- 2. Cluster structure lines ---
     if (st.showStructure) {
         modalityConfig.forEach(mod => {
-            const lx = [], ly = [], lz = [];
+            const lx = [], ly = [];
             platonicStructurePairs.forEach(([a, b]) => {
                 const ca = platonicConcepts.find(c => c.name === a);
                 const cb = platonicConcepts.find(c => c.name === b);
@@ -2506,11 +2534,10 @@ function renderPlatonicHypothesis() {
                 const pb = getPlatonicModPos(cb, mod.key);
                 lx.push(pa[0], pb[0], null);
                 ly.push(pa[1], pb[1], null);
-                lz.push(pa[2], pb[2], null);
             });
             traces.push({
-                type: 'scatter3d',
-                x: lx, y: ly, z: lz,
+                type: 'scatter',
+                x: lx, y: ly,
                 mode: 'lines',
                 line: { color: mod.color, width: 2 },
                 opacity: 0.25,
@@ -2521,60 +2548,65 @@ function renderPlatonicHypothesis() {
         });
     }
 
-    // --- 3. Correspondence lines: one single batched trace (1 trace) ---
+    // --- 3. Correspondence lines ---
     if (st.showCorrespondence) {
-        const cx = [], cy = [], cz = [];
+        // Fade out correspondence lines as modalities merge
+        const corrOpacity = Math.max(0.05, 1 - convergence);
+        const cx = [], cy = [];
         platonicConcepts.forEach(c => {
             const pL = getPlatonicModPos(c, 'language');
             const pV = getPlatonicModPos(c, 'vision');
             const pA = getPlatonicModPos(c, 'audio');
             cx.push(pL[0], pV[0], null);
             cy.push(pL[1], pV[1], null);
-            cz.push(pL[2], pV[2], null);
             cx.push(pL[0], pA[0], null);
             cy.push(pL[1], pA[1], null);
-            cz.push(pL[2], pA[2], null);
         });
         traces.push({
-            type: 'scatter3d',
-            x: cx, y: cy, z: cz,
+            type: 'scatter',
+            x: cx, y: cy,
             mode: 'lines',
-            line: { color: 'rgba(139,92,246,0.3)', width: 1.5, dash: 'dash' },
+            line: { color: `rgba(139,92,246,${(0.3 * corrOpacity).toFixed(2)})`, width: 1.5, dash: 'dash' },
             showlegend: false,
             hoverinfo: 'skip',
             connectgaps: false
         });
     }
 
-    // --- 4. Modality centroid labels: one combined trace (1 trace) ---
-    const labelX = [], labelY = [], labelZ = [], labelText = [], labelColors = [];
+    // --- 4. Modality centroid labels ---
     modalityConfig.forEach(mod => {
-        let cx = 0, cy = 0, cz = 0;
+        let cx = 0, cy = 0;
+        const nudgeFactor = Math.pow(Math.max(0, convergence - 0.3) / 0.7, 2);
+        const nudge = nudgeVectors[mod.key];
         platonicConcepts.forEach(c => {
             const p = getPlatonicModPos(c, mod.key);
-            cx += p[0]; cy += p[1]; cz += p[2];
+            cx += p[0] + nudge[0] * nudgeFactor;
+            cy += p[1] + nudge[1] * nudgeFactor;
         });
         const n = platonicConcepts.length;
-        labelX.push(cx / n);
-        labelY.push(cy / n);
-        labelZ.push(cz / n + 1.0);
-        labelText.push(mod.label);
-        labelColors.push(mod.color);
-    });
-    traces.push({
-        type: 'scatter3d',
-        x: labelX, y: labelY, z: labelZ,
-        mode: 'text',
-        text: labelText,
-        textfont: { size: 13, color: labelColors },
-        showlegend: false,
-        hoverinfo: 'skip'
-    });
 
-    // Total: 3 + 3 + 1 + 1 = 8 traces (down from ~37)
+        // When converged, spread the centroid labels out more so they don't overlap either
+        const labelSpread = convergence > 0.8 ? 2.5 : 0;
+        const labelNudge = {
+            language: [0,  4.5 + labelSpread],
+            vision:   [6,  -3 - labelSpread],
+            audio:    [-6, -3 - labelSpread]
+        };
+
+        annotations.push({
+            x: cx / n + labelNudge[mod.key][0],
+            y: cy / n + labelNudge[mod.key][1],
+            text: '<b>' + mod.label + '</b>',
+            showarrow: convergence > 0.8,
+            ax: 0, ay: mod.key === 'language' ? -25 : 25,
+            font: { size: 13, color: mod.color },
+            bgcolor: 'rgba(255,255,255,0.8)',
+            borderpad: 4
+        });
+    });
 
     const layout = {
-        margin: { l: 0, r: 0, b: 0, t: 0 },
+        margin: { l: 40, r: 40, b: 40, t: 20 },
         showlegend: true,
         legend: {
             x: 0.01, y: 0.99,
@@ -2582,14 +2614,17 @@ function renderPlatonicHypothesis() {
             bordercolor: '#e2e8f0', borderwidth: 1,
             font: { size: 11 }
         },
-        scene: {
-            xaxis: { title: '', showgrid: true, gridcolor: '#f1f5f9', zeroline: false, showticklabels: false },
-            yaxis: { title: '', showgrid: true, gridcolor: '#f1f5f9', zeroline: false, showticklabels: false },
-            zaxis: { title: '', showgrid: true, gridcolor: '#f1f5f9', zeroline: false, showticklabels: false },
-            camera: { eye: { x: 2.2, y: 1.6, z: 1.0 } },
-            bgcolor: '#fff',
-            aspectmode: 'cube'
-        }
+        xaxis: {
+            zeroline: false, showgrid: true,
+            gridcolor: '#f1f5f9', showticklabels: false
+        },
+        yaxis: {
+            zeroline: false, showgrid: true,
+            gridcolor: '#f1f5f9', showticklabels: false,
+            scaleanchor: 'x'
+        },
+        annotations: annotations,
+        plot_bgcolor: '#fff'
     };
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
@@ -2606,9 +2641,10 @@ window.animatePlatonicAlignment = function() {
     btn.disabled = true;
     btn.style.opacity = '0.5';
 
-    const startVZ = st.currentVisionRotZ;
-    const startAZ = st.currentAudioRotZ;
-    const startAY = st.currentAudioRotY;
+    const startVRot = st.currentVisionRotDeg;
+    const startARot = st.currentAudioRotDeg;
+    const startVOff = [...st.currentVisionOffset];
+    const startAOff = [...st.currentAudioOffset];
     const duration = 2500;
     const startTime = performance.now();
 
@@ -2621,15 +2657,16 @@ window.animatePlatonicAlignment = function() {
         const rawT = Math.min(elapsed / duration, 1);
         const t = easeInOutCubic(rawT);
 
-        st.currentVisionRotZ = startVZ * (1 - t);
-        st.currentAudioRotZ  = startAZ * (1 - t);
-        st.currentAudioRotY  = startAY * (1 - t);
+        st.currentVisionRotDeg = startVRot * (1 - t);
+        st.currentAudioRotDeg  = startARot * (1 - t);
+        st.currentVisionOffset = [startVOff[0] * (1 - t), startVOff[1] * (1 - t)];
+        st.currentAudioOffset  = [startAOff[0] * (1 - t), startAOff[1] * (1 - t)];
 
         const statusEl = document.getElementById('platonic-status');
         if (statusEl) {
-            statusEl.textContent = 'Converging... Vision: ' + Math.round(st.currentVisionRotZ) +
-                '° → 0° | Audio: ' + Math.round(st.currentAudioRotZ) + '°, ' +
-                Math.round(st.currentAudioRotY) + '° → 0°';
+            statusEl.textContent = 'Converging... Vision: ' +
+                Math.round(st.currentVisionRotDeg) + '° → 0° | Audio: ' +
+                Math.round(st.currentAudioRotDeg) + '° → 0°';
         }
 
         renderPlatonicHypothesis();
@@ -2637,9 +2674,10 @@ window.animatePlatonicAlignment = function() {
         if (rawT < 1) {
             requestAnimationFrame(step);
         } else {
-            st.currentVisionRotZ = 0;
-            st.currentAudioRotZ = 0;
-            st.currentAudioRotY = 0;
+            st.currentVisionRotDeg = 0;
+            st.currentAudioRotDeg  = 0;
+            st.currentVisionOffset = [0, 0];
+            st.currentAudioOffset  = [0, 0];
             st.animating = false;
             st.aligned = true;
             btn.disabled = true;
@@ -2660,9 +2698,10 @@ window.resetPlatonicAlignment = function() {
     const st = platonicState;
     if (st.animating) return;
 
-    st.currentVisionRotZ = st.visionRotZ;
-    st.currentAudioRotZ  = st.audioRotZ;
-    st.currentAudioRotY  = st.audioRotY;
+    st.currentVisionRotDeg = st.visionRotDeg;
+    st.currentAudioRotDeg  = st.audioRotDeg;
+    st.currentVisionOffset = [...st.visionOffset];
+    st.currentAudioOffset  = [...st.audioOffset];
     st.aligned = false;
 
     const btn = document.getElementById('btn-platonic-align');
