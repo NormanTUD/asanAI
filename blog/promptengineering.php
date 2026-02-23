@@ -14,6 +14,13 @@
 * **When to use:** Use when you have a rigid vision of the outcome or need to integrate the output into a specific workflow.
 * **Example:** Instead of "Write a story," use "Write a 200-word suspenseful story about a cat named Slimer who discovers a portal in a kitchen cabinet."
 
+### Avoid Negations
+* **How it works:** LLMs rely on distributional semantics where "not" acts as a minor statistical nudge rather than a logical inverter. Geometrically, the vector for "not happy" remains closer to "happy" than to "sad" because they frequently co-occur in training data. This makes negations structurally "noisy" in embedding space.
+  $$\vec{v}_{\text{not happy}} = \vec{v}_{\text{not}} + \vec{v}_{\text{happy}} \approx \vec{v}_{\text{happy}} + \epsilon \neq \vec{v}_{\text{sad}}$$
+  
+* **When to use:** Use when setting constraints to avoid priming the model with the very concept you want to exclude.
+* **Example:** Instead of "Do not be informal," use "Maintain a strictly professional tone."
+
 ### Use Delimiters
 * **How it works:** Delimiters (like triple quotes, XML tags, or dashed lines) create distinct boundaries in the prompt. This prevents the AI from confusing your instructions (the "system" message) with the data it needs to process (the "user" content), reducing prompt injection risks and confusion.
 * **When to use:** Essential when pasting long text, code blocks, or articles that need analysis or summarization.
