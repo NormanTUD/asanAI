@@ -2952,6 +2952,232 @@ function renderAnisotropy() {
 	}
 }
 
+// ============================================================
+// SUPERPOSITION & POLYSEMANTICITY VISUALIZATION
+// ============================================================
+
+const superpositionState = {
+    featureLabels: [
+        'Royalty', 'Gender', 'Species', 'Formality', 'Emotion', 'Time',
+        'Agency', 'Plural', 'Negation', 'Cause', 'Abstract', 'Animacy'
+    ],
+    featureColors: [
+        '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#06b6d4',
+        '#84cc16', '#f97316', '#6366f1', '#14b8a6', '#e11d48', '#0ea5e9'
+    ]
+};
+
+function renderSuperposition() {
+    const plotDiv = document.getElementById('plot-superposition');
+    if (!plotDiv) return;
+
+    const slider  = document.getElementById('superposition-n');
+    const nSpan   = document.getElementById('superposition-n-val');
+    const statDiv = document.getElementById('superposition-stats');
+    const matDiv  = document.getElementById('superposition-matrix');
+
+    const N = parseInt(slider.value);
+    nSpan.textContent = N;
+
+    const st = superpositionState;
+    const traces = [];
+
+    // ---- Upper-half unit circle (reference arc) ----
+    const circX = [], circY = [];
+    for (let i = 0; i <= 100; i++) {
+        const t = (i / 100) * Math.PI;
+        circX.push(Math.cos(t));
+        circY.push(Math.sin(t));
+    }
+    traces.push({
+        x: circX, y: circY,
+        mode: 'lines',
+        line: { color: 'rgba(148,163,184,0.25)', width: 1.5, dash: 'dot' },
+        showlegend: false, hoverinfo: 'skip'
+    });
+
+    // ---- Compute feature directions ----
+    // Spread N features evenly over [0°, 180°):  θ_i = i·π/N
+    const angles  = [];
+    const vectors = [];
+    for (let i = 0; i < N; i++) {
+        const a = (i * Math.PI) / N;
+        angles.push(a);
+        vectors.push([Math.cos(a), Math.sin(a)]);
+    }
+
+    // ---- Pairwise dot-product matrix ----
+    const dotMat = [];
+    let maxIntf = 0, totalIntf = 0, pairs = 0;
+    for (let i = 0; i < N; i++) {
+        dotMat[i] = [];
+        for (let j = 0; j < N; j++) {
+            const d = vectors[i][0]*vectors[j][0] + vectors[i][1]*vectors[j][1];
+            dotMat[i][j] = d;
+            if (j > i) {
+                const a = Math.abs(d);
+                totalIntf += a;
+                pairs++;
+                if (a > maxIntf) maxIntf = a;
+            }
+        }
+    }
+    const avgIntf      = pairs > 0 ? totalIntf / pairs : 0;
+    const minAngleDeg  = N > 1 ? 180 / N : 180;
+    const isSuperposed = N > 2;
+
+    // ---- Interference lines between feature tips ----
+    for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+            const ad = Math.abs(dotMat[i][j]);
+            if (ad > 0.08) {
+                traces.push({
+                    x: [vectors[i][0], vectors[j][0]],
+                    y: [vectors[i][1], vectors[j][1]],
+                    mode: 'lines',
+                    line: {
+                        color: `rgba(239,68,68,${Math.min(ad * 0.65, 0.55)})`,
+                        width: 1 + ad * 4
+                    },
+                    showlegend: false,
+                    hovertemplate:
+                        `<b>${st.featureLabels[i % 12]} ↔ ${st.featureLabels[j % 12]}</b>` +
+                        `<br>|dot| = ${ad.toFixed(3)}` +
+                        `<br>Interference: ${(ad * 100).toFixed(1)}%<extra></extra>`
+                });
+            }
+        }
+    }
+
+    // ---- Feature arrows + labels ----
+    for (let i = 0; i < N; i++) {
+        const [vx, vy] = vectors[i];
+        const color = st.featureColors[i % 12];
+        const label = st.featureLabels[i % 12];
+        const deg   = angles[i] * 180 / Math.PI;
+
+        // Choose text position based on angle
+        let tPos;
+        if      (deg < 25)  tPos = 'middle right';
+        else if (deg < 65)  tPos = 'top right';
+        else if (deg < 115) tPos = 'top center';
+        else if (deg < 155) tPos = 'top left';
+        else                tPos = 'middle left';
+
+        const fontSize = N > 8 ? 8 : (N > 5 ? 9 : 10);
+
+        // Arrow line
+        traces.push({
+            x: [0, vx], y: [0, vy],
+            mode: 'lines',
+            line: { color, width: 3.5 },
+            showlegend: false, hoverinfo: 'skip'
+        });
+        // Tip marker + label
+        traces.push({
+            x: [vx], y: [vy],
+            mode: 'markers+text',
+            text: [label], textposition: tPos,
+            textfont: { size: fontSize, color, weight: 'bold' },
+            marker: { size: 9, color, line: { width: 1, color: '#fff' } },
+            showlegend: false,
+            hovertemplate: `<b>${label}</b><br>θ = ${deg.toFixed(1)}°<extra></extra>`
+        });
+    }
+
+    // ---- Right-angle marker when N = 2 ----
+    if (N === 2) {
+        const s = 0.07;
+        traces.push({
+            x: [s, s, 0], y: [0, s, s],
+            mode: 'lines',
+            line: { color: '#10b981', width: 2 },
+            showlegend: false, hoverinfo: 'skip'
+        });
+    }
+
+    // ---- Origin dot ----
+    traces.push({
+        x: [0], y: [0],
+        mode: 'markers',
+        marker: { size: 5, color: '#1e293b' },
+        showlegend: false, hoverinfo: 'skip'
+    });
+
+    // ---- Layout ----
+    Plotly.react(plotDiv, traces, {
+        margin: { l: 30, r: 30, b: 30, t: 10 },
+        showlegend: false,
+        xaxis: {
+            range: [-1.5, 1.5], zeroline: true, zerolinecolor: '#e2e8f0',
+            showgrid: true, gridcolor: '#f1f5f9', scaleanchor: 'y', dtick: 0.5
+        },
+        yaxis: {
+            range: [-0.25, 1.5], zeroline: true, zerolinecolor: '#e2e8f0',
+            showgrid: true, gridcolor: '#f1f5f9', dtick: 0.5
+        },
+        plot_bgcolor: '#fff'
+    }, { displayModeBar: false, responsive: true });
+
+    // ---- Stats cards ----
+    if (statDiv) {
+        statDiv.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px;">
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+                <div style="font-size:0.7em; color:#64748b;">Features</div>
+                <div style="font-size:1.3em; font-weight:bold; color:#3b82f6;">${N}</div>
+            </div>
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+                <div style="font-size:0.7em; color:#64748b;">Min Angle</div>
+                <div style="font-size:1.3em; font-weight:bold; color:${isSuperposed ? '#f59e0b' : '#10b981'};">${minAngleDeg.toFixed(0)}°</div>
+            </div>
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid ${isSuperposed ? '#fecaca' : '#bbf7d0'}; text-align:center;">
+                <div style="font-size:0.7em; color:#64748b;">Max |dot|</div>
+                <div style="font-size:1.3em; font-weight:bold; color:${isSuperposed ? '#ef4444' : '#10b981'};">${maxIntf.toFixed(2)}</div>
+            </div>
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+                <div style="font-size:0.7em; color:#64748b;">Status</div>
+                <div style="font-size:0.95em; font-weight:bold; color:${isSuperposed ? '#ef4444' : '#10b981'};">${isSuperposed ? '⚠️ Superposition' : '✅ Orthogonal'}</div>
+            </div>
+        </div>`;
+    }
+
+    // ---- Interference matrix (HTML table) ----
+    if (matDiv) {
+        let h = '<div style="font-size:0.8em; color:#475569; margin-bottom:6px; font-family:sans-serif; text-align:center;"><b>Interference Matrix  ( |dot product| )</b></div>';
+        h += '<div style="overflow-x:auto;"><table style="border-collapse:collapse; font-size:0.72em; font-family:monospace; margin:0 auto;">';
+
+        // Header
+        h += '<tr><td style="padding:2px 4px;"></td>';
+        for (let j = 0; j < N; j++) {
+            const lab = st.featureLabels[j % 12].slice(0, 3);
+            h += `<td style="padding:2px 4px; text-align:center; font-weight:bold; color:${st.featureColors[j % 12]}; font-size:0.9em;">${lab}</td>`;
+        }
+        h += '</tr>';
+
+        for (let i = 0; i < N; i++) {
+            const lab = st.featureLabels[i % 12].slice(0, 3);
+            h += `<tr><td style="padding:2px 4px; font-weight:bold; color:${st.featureColors[i % 12]}; font-size:0.9em;">${lab}</td>`;
+            for (let j = 0; j < N; j++) {
+                const ad = Math.abs(dotMat[i][j]);
+                let bg, tc;
+                if (i === j) {
+                    bg = '#f0f9ff'; tc = '#94a3b8';
+                } else if (ad < 0.05) {
+                    bg = 'rgba(16,185,129,0.1)'; tc = '#10b981';
+                } else {
+                    bg = `rgba(239,68,68,${Math.min(ad, 1) * 0.25})`; tc = ad > 0.5 ? '#dc2626' : '#475569';
+                }
+                const txt = i === j ? '—' : ad.toFixed(2);
+                h += `<td style="padding:2px 4px; text-align:center; background:${bg}; color:${tc}; border:1px solid #f1f5f9;">${txt}</td>`;
+            }
+            h += '</tr>';
+        }
+        h += '</table></div>';
+        matDiv.innerHTML = h;
+    }
+}
+
 function loadEmbeddingModule () {
 	const tasks = [
 		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
@@ -3047,4 +3273,12 @@ function loadEmbeddingModule () {
 	if (anisotropySlider) {
 		anisotropySlider.addEventListener('input', renderAnisotropy);
 	}
+
+	// Superposition visualization
+	renderSuperposition();
+	const spSlider = document.getElementById('superposition-n');
+	if (spSlider) {
+		spSlider.addEventListener('input', renderSuperposition);
+	}
+
 }

@@ -386,3 +386,44 @@ Below, drag the **anisotropy slider** from isotropic (vectors spread uniformly) 
         <b>What you're seeing:</b> The left panel shows word vectors emanating from the origin. In an <b>isotropic</b> space (slider at 0%), vectors spread uniformly in all directions. As <b>anisotropy</b> increases, vectors collapse into a <span style="color:#ef4444; font-weight:bold;">narrow cone</span> (shaded red wedge). The right panel shows the distribution of <i>all pairwise cosine similarities</i>. Notice how it shifts from a wide spread centered near 0 to a narrow spike near 1.0 — the <span style="color:#ef4444; font-weight:bold;">effective bandwidth</span> for distinguishing "truly similar" from "merely average" shrinks dramatically.
     </div>
 </section>
+
+<div class="md">
+## Polysemanticity
+
+The observable consequence of superposition at the neuron level is **polysemanticity**: individual neurons fire in response to multiple, seemingly unrelated concepts. Polysemanticity is not a training failure — it is a direct, predictable result of the model compressing $M$ features into $N$ dimensions where $M \gg N$ (as in the Pigeonhole principle). A single neuron might activate for both "legal terminology" and "French cuisine" because its activation direction in embedding space lies near both feature vectors. The reason this compression works at all is **sparsity**: for any given input, most features are inactive. If "legal terminology" and "French cuisine" rarely co-occur in the same context window, the neuron almost never needs to represent both simultaneously, so the interference remains tolerable in practice. This is the core insight of the Superposition Hypothesis (\cite{elhage2022superposition}) — the model exploits the sparsity structure of natural language to pack exponentially more features than it has dimensions, at the cost of occasional crosstalk when two co-represented features happen to co-activate.
+
+Below, you can explore this tradeoff directly. The visualization shows a **2-dimensional** space attempting to represent $N$ feature directions. With $N = 2$, both features align with the two available axes — perfectly orthogonal, zero interference. The moment you push $N$ past 2, the features must crowd together on the unit circle, and their pairwise dot products (interference) grow. In a real model with 768+ dimensions, the model can pack thousands of near-orthogonal features — but "near" still means some crosstalk leaks through, which is why individual neurons become polysemantic.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-superposition" style="height: 480px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+
+    <!-- Slider -->
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Features to represent (N):</b>
+            <input type="range" id="superposition-n" min="2" max="12" step="1" value="2" style="width: 220px; vertical-align: middle;">
+            <span id="superposition-n-val" style="font-weight: bold; color: #3b82f6;">2</span>
+        </label>
+        <span style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            Available dimensions: <b style="color: #ef4444;">2</b>
+        </span>
+    </div>
+
+    <!-- Stats cards -->
+    <div id="superposition-stats" style="max-width: 650px; margin: 0 auto 15px auto;"></div>
+
+    <!-- Interference matrix -->
+    <div id="superposition-matrix" style="max-width: 650px; margin: 0 auto 15px auto;"></div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 8px;">
+        <b>What you're seeing:</b> Each <b>arrow</b> is a feature direction on the unit circle in 2D.
+        With N &le; 2, features are perfectly orthogonal (the <span style="color:#10b981; font-weight:bold;">green</span> right-angle marker confirms it).
+        The moment N exceeds 2, features must share angular space &mdash; this is <b>superposition</b>.
+        The <span style="color:#ef4444; font-weight:bold;">red lines</span> between arrow tips show interference: thicker and more opaque means a higher |dot product|.
+        The matrix below shows every pairwise value. In a real LLM with 768+ dimensions,
+        the model can fit <i>thousands</i> of near-orthogonal features, but "near" still means
+        each neuron ends up <b>polysemantic</b> &mdash; responding to multiple features at once.
+    </div>
+</section>
