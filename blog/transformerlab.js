@@ -560,7 +560,7 @@ async function train_transformer() {
 					...vocab.map(v => v.length),
 					1
 				);
-				const chipMinWidth = Math.max(90, maxWordLen * 9 + 70) + 'px';
+				const chipMinWidth = Math.max(150, maxWordLen * 9 + 70) + 'px';
 
 				const windowsHtml = window.currentTrainingWindows.map((w, idx) => {
 					// Run a quick forward pass for this window to get predictions
