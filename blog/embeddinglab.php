@@ -228,9 +228,49 @@ The deeper theoretical reason the path-finding framing works is the **Manifold H
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-manifold" style="height: 550px; background: #fff; border-radius: 8px; width: 100%;"></div>
-    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6;">
-        <b>The Manifold Hypothesis visualized.</b> The translucent blue surface is the <b>semantic manifold</b>, a lower-dimensional curved sheet embedded in the full 3D space. All meaningful word vectors (colored dots) live <i>on</i> this surface, not scattered through the volume. The grey dots represent the unused ambient dimensions, noise with no semantic content. The <span style="color:#3b82f6; font-weight:bold;">blue path</span> is a <b>geodesic</b>: the shortest route <i>along the surface</i> from Man → Prince → King → Queen, following the curvature of meaning. The <span style="color:#ef4444; font-weight:bold;">red dashed line</span> is the Euclidean shortcut, a straight line that cuts through empty, meaningless space. A Transformer's residual stream follows the geodesic, not the shortcut.
+    <div id="plot-dual-manifolds" style="height: 600px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+
+    <!-- Sliders -->
+    <div style="display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569;">
+            <b>Rotation:</b>
+            <input type="range" id="dm-rotation" min="0" max="180" step="1" value="55" oninput="updateDualManifold()" style="width: 140px; vertical-align: middle;">
+            <span id="dm-rot-val" style="font-weight: bold; color: #8b5cf6;">55°</span>
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569;">
+            <b>Separation:</b>
+            <input type="range" id="dm-separation" min="0" max="8" step="0.1" value="5" oninput="updateDualManifold()" style="width: 140px; vertical-align: middle;">
+            <span id="dm-sep-val" style="font-weight: bold; color: #8b5cf6;">5.0</span>
+        </label>
+    </div>
+
+    <!-- Toggles -->
+    <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="dm-correspondence" checked onchange="toggleDualManifold()"> Correspondence lines
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="dm-paths" checked onchange="toggleDualManifold()"> Translation paths
+        </label>
+    </div>
+
+    <!-- Buttons -->
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
+        <button id="btn-dm-align" onclick="animateDualManifoldAlignment()" style="background: #3b82f6; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">▶ Align Manifolds</button>
+        <button onclick="resetDualManifold()" style="background: #64748b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">↺ Reset</button>
+        <span id="dm-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready — Japanese manifold is rotated 55° and separated.</span>
+    </div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>Translation as path-finding on manifolds.</b>
+        The <span style="color:#3b82f6; font-weight:bold;">blue surface</span> is the English semantic manifold;
+        the <span style="color:#10b981; font-weight:bold;">green surface</span> is the Japanese manifold.
+        Both encode the same conceptual relationships — the same internal distances and angles — but live in different orientations and positions in the ambient space.
+        The <span style="color:#8b5cf6; font-weight:bold;">purple dashed lines</span> bridge corresponding word pairs across languages.
+        The <span style="color:#3b82f6; font-weight:bold;">blue path</span> traces Man → King → Queen along the English surface;
+        the <span style="color:#10b981; font-weight:bold;">green path</span> traces 男 → 王様 → 女王 along the Japanese surface — the <i>same semantic journey</i> on a different manifold.
+        Use the <b>sliders</b> to rotate and separate the surfaces manually, or click <b>Align</b> to watch the Japanese manifold smoothly merge into the English one, proving the internal geometry is preserved.
     </div>
 </section>
 

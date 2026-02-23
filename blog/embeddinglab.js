@@ -44,6 +44,412 @@ const evoSpaces = {
 	}
 };
 
+// ============================================================
+// TRANSLATION AS PATH-FINDING ON DUAL MANIFOLDS
+// ============================================================
+
+const dualManifoldState = {
+	rotationDeg: 55,
+	separation: 5,
+	showCorrespondence: true,
+	showPaths: true,
+	aligned: false,
+	animating: false,
+	origRotation: 55,
+	origSeparation: 5
+};
+
+function dualManifoldZ(u, v) {
+	return 0.3 * (u * u - v * v) + 0.15 * Math.sin(u * 2) * Math.cos(v * 2);
+}
+
+function getDualEnPos(u, v) {
+	return [u, v, dualManifoldZ(u, v)];
+}
+
+function getDualJpPos(u, v) {
+	const st = dualManifoldState;
+	const x = u, y = v, z = dualManifoldZ(u, v);
+	const rad = st.rotationDeg * Math.PI / 180;
+	// Rotate the (x, y) plane around the Z axis, then offset vertically
+	return [
+		x * Math.cos(rad) - y * Math.sin(rad),
+		x * Math.sin(rad) + y * Math.cos(rad),
+		z + st.separation
+	];
+}
+
+function renderDualManifolds() {
+	const plotDiv = document.getElementById('plot-dual-manifolds');
+	if (!plotDiv) return;
+
+	const st = dualManifoldState;
+	const resolution = 30;
+	const uRange = Array.from({length: resolution}, (_, i) => -2 + (4 * i / (resolution - 1)));
+	const vRange = Array.from({length: resolution}, (_, i) => -1.5 + (3 * i / (resolution - 1)));
+
+	// --- English manifold surface ---
+	const enSX = [], enSY = [], enSZ = [];
+	for (let i = 0; i < resolution; i++) {
+		const rx = [], ry = [], rz = [];
+		for (let j = 0; j < resolution; j++) {
+			const [x, y, z] = getDualEnPos(uRange[i], vRange[j]);
+			rx.push(x); ry.push(y); rz.push(z);
+		}
+		enSX.push(rx); enSY.push(ry); enSZ.push(rz);
+	}
+
+	// --- Japanese manifold surface (rotated + offset) ---
+	const jpSX = [], jpSY = [], jpSZ = [];
+	for (let i = 0; i < resolution; i++) {
+		const rx = [], ry = [], rz = [];
+		for (let j = 0; j < resolution; j++) {
+			const [x, y, z] = getDualJpPos(uRange[i], vRange[j]);
+			rx.push(x); ry.push(y); rz.push(z);
+		}
+		jpSX.push(rx); jpSY.push(ry); jpSZ.push(rz);
+	}
+
+	// --- Word definitions (shared parametric coords) ---
+	const wordDefs = [
+		{ en: 'King',     jp: '王様',  u:  1.2, v: -0.6, color: '#f59e0b' },
+		{ en: 'Queen',    jp: '女王',  u:  1.2, v:  0.6, color: '#f59e0b' },
+		{ en: 'Man',      jp: '男',    u: -0.5, v: -0.6, color: '#3b82f6' },
+		{ en: 'Woman',    jp: '女',    u: -0.5, v:  0.6, color: '#3b82f6' },
+		{ en: 'Prince',   jp: '王子',  u:  0.4, v: -0.6, color: '#10b981' },
+		{ en: 'Princess', jp: '王女',  u:  0.4, v:  0.6, color: '#10b981' },
+	];
+
+	const traces = [];
+
+	// ---- Surfaces ----
+	traces.push({
+		type: 'surface',
+		x: enSX, y: enSY, z: enSZ,
+		colorscale: [[0, 'rgba(191,219,254,0.7)'], [1, 'rgba(96,165,250,0.7)']],
+		showscale: false, opacity: 0.4, hoverinfo: 'skip',
+		name: 'English Manifold',
+		contours: {
+			x: { show: true, color: 'rgba(59,130,246,0.15)', width: 1 },
+			y: { show: true, color: 'rgba(59,130,246,0.15)', width: 1 },
+			z: { show: false }
+		}
+	});
+	traces.push({
+		type: 'surface',
+		x: jpSX, y: jpSY, z: jpSZ,
+		colorscale: [[0, 'rgba(187,247,208,0.7)'], [1, 'rgba(74,222,128,0.7)']],
+		showscale: false, opacity: 0.4, hoverinfo: 'skip',
+		name: 'Japanese Manifold',
+		contours: {
+			x: { show: true, color: 'rgba(16,185,129,0.15)', width: 1 },
+			y: { show: true, color: 'rgba(16,185,129,0.15)', width: 1 },
+			z: { show: false }
+		}
+	});
+
+	// ---- Internal structure lines on BOTH manifolds ----
+	const structPairs = [
+		// Gender pairs (horizontal in v)
+		['Man', 'Woman'], ['King', 'Queen'], ['Prince', 'Princess'],
+		// Power chain (horizontal in u)
+		['Man', 'Prince'], ['Prince', 'King'],
+		['Woman', 'Princess'], ['Princess', 'Queen']
+	];
+
+	structPairs.forEach(([a, b]) => {
+		const wa = wordDefs.find(w => w.en === a);
+		const wb = wordDefs.find(w => w.en === b);
+
+		// English structure
+		const ea = getDualEnPos(wa.u, wa.v);
+		const eb = getDualEnPos(wb.u, wb.v);
+		traces.push({
+			type: 'scatter3d',
+			x: [ea[0], eb[0]], y: [ea[1], eb[1]], z: [ea[2], eb[2]],
+			mode: 'lines',
+			line: { color: 'rgba(148,163,184,0.4)', width: 2 },
+			showlegend: false, hoverinfo: 'skip'
+		});
+
+		// Japanese structure
+		const ja = getDualJpPos(wa.u, wa.v);
+		const jb = getDualJpPos(wb.u, wb.v);
+		traces.push({
+			type: 'scatter3d',
+			x: [ja[0], jb[0]], y: [ja[1], jb[1]], z: [ja[2], jb[2]],
+			mode: 'lines',
+			line: { color: 'rgba(148,163,184,0.4)', width: 2 },
+			showlegend: false, hoverinfo: 'skip'
+		});
+	});
+
+	// ---- Word points ----
+	const enX = [], enY = [], enZ = [], enLabels = [], enColors = [];
+	const jpX = [], jpY = [], jpZ = [], jpLabels = [], jpColors = [];
+
+	wordDefs.forEach(w => {
+		const ep = getDualEnPos(w.u, w.v);
+		enX.push(ep[0]); enY.push(ep[1]); enZ.push(ep[2]);
+		enLabels.push(w.en); enColors.push(w.color);
+
+		const jp = getDualJpPos(w.u, w.v);
+		jpX.push(jp[0]); jpY.push(jp[1]); jpZ.push(jp[2]);
+		jpLabels.push(w.jp); jpColors.push(w.color);
+	});
+
+	traces.push({
+		type: 'scatter3d',
+		x: enX, y: enY, z: enZ,
+		mode: 'markers+text',
+		text: enLabels, textposition: 'top center',
+		textfont: { size: 11, color: '#1e40af' },
+		marker: { size: 7, color: enColors, opacity: 0.95, line: { width: 1, color: '#fff' } },
+		name: 'English words',
+		hovertemplate: '<b>%{text}</b> (English)<extra></extra>'
+	});
+
+	traces.push({
+		type: 'scatter3d',
+		x: jpX, y: jpY, z: jpZ,
+		mode: 'markers+text',
+		text: jpLabels, textposition: 'top center',
+		textfont: { size: 11, color: '#065f46' },
+		marker: { size: 7, color: jpColors, opacity: 0.95, symbol: 'diamond', line: { width: 1, color: '#fff' } },
+		name: 'Japanese words (日本語)',
+		hovertemplate: '<b>%{text}</b> (日本語)<extra></extra>'
+	});
+
+	// ---- Manifold labels ----
+	const enLabelPos = getDualEnPos(-1.9, 0);
+	traces.push({
+		type: 'scatter3d',
+		x: [enLabelPos[0]], y: [enLabelPos[1]], z: [enLabelPos[2] - 0.6],
+		mode: 'text', text: ['English'],
+		textfont: { size: 14, color: '#1e40af' },
+		showlegend: false, hoverinfo: 'skip'
+	});
+
+	const jpLabelPos = getDualJpPos(-1.9, 0);
+	traces.push({
+		type: 'scatter3d',
+		x: [jpLabelPos[0]], y: [jpLabelPos[1]], z: [jpLabelPos[2] - 0.6],
+		mode: 'text', text: ['日本語'],
+		textfont: { size: 14, color: '#065f46' },
+		showlegend: false, hoverinfo: 'skip'
+	});
+
+	// ---- Correspondence lines (cross-manifold bridges) ----
+	if (st.showCorrespondence) {
+		wordDefs.forEach(w => {
+			const ep = getDualEnPos(w.u, w.v);
+			const jp = getDualJpPos(w.u, w.v);
+			traces.push({
+				type: 'scatter3d',
+				x: [ep[0], jp[0]], y: [ep[1], jp[1]], z: [ep[2], jp[2]],
+				mode: 'lines',
+				line: { color: 'rgba(139,92,246,0.5)', width: 3, dash: 'dash' },
+				showlegend: false,
+				hovertemplate: `<b>${w.en} ↔ ${w.jp}</b><br>Cross-lingual correspondence<extra></extra>`
+			});
+		});
+	}
+
+	// ---- Translation paths (geodesics on each surface) ----
+	if (st.showPaths) {
+		const pathWords = ['Man', 'King', 'Queen'];
+		const pathSteps = 25;
+		const enPX = [], enPY = [], enPZ = [];
+		const jpPX = [], jpPY = [], jpPZ = [];
+
+		for (let seg = 0; seg < pathWords.length - 1; seg++) {
+			const from = wordDefs.find(w => w.en === pathWords[seg]);
+			const to = wordDefs.find(w => w.en === pathWords[seg + 1]);
+			for (let s = 0; s <= pathSteps; s++) {
+				const t = s / pathSteps;
+				const iu = from.u + t * (to.u - from.u);
+				const iv = from.v + t * (to.v - from.v);
+
+				const ep = getDualEnPos(iu, iv);
+				enPX.push(ep[0]); enPY.push(ep[1]); enPZ.push(ep[2]);
+
+				const jp = getDualJpPos(iu, iv);
+				jpPX.push(jp[0]); jpPY.push(jp[1]); jpPZ.push(jp[2]);
+			}
+		}
+
+		traces.push({
+			type: 'scatter3d',
+			x: enPX, y: enPY, z: enPZ,
+			mode: 'lines',
+			line: { width: 7, color: '#3b82f6' },
+			name: 'English: Man → King → Queen',
+			hovertemplate: '<b>English geodesic</b><br>Man → King → Queen<extra></extra>'
+		});
+
+		traces.push({
+			type: 'scatter3d',
+			x: jpPX, y: jpPY, z: jpPZ,
+			mode: 'lines',
+			line: { width: 7, color: '#10b981' },
+			name: 'Japanese: 男 → 王様 → 女王',
+			hovertemplate: '<b>Japanese geodesic</b><br>男 → 王様 → 女王<extra></extra>'
+		});
+
+		// Arrowhead cones at the end of each path
+		const enEnd = getDualEnPos(wordDefs.find(w=>w.en==='Queen').u, wordDefs.find(w=>w.en==='Queen').v);
+		const enPrev = getDualEnPos(wordDefs.find(w=>w.en==='King').u, wordDefs.find(w=>w.en==='King').v);
+		traces.push({
+			type: 'cone',
+			x: [enEnd[0]], y: [enEnd[1]], z: [enEnd[2]],
+			u: [enEnd[0]-enPrev[0]], v: [enEnd[1]-enPrev[1]], w: [enEnd[2]-enPrev[2]],
+			sizemode: 'absolute', sizeref: 0.4, showscale: false,
+			colorscale: [[0,'#3b82f6'],[1,'#3b82f6']], hoverinfo: 'skip'
+		});
+
+		const jpEnd = getDualJpPos(wordDefs.find(w=>w.en==='Queen').u, wordDefs.find(w=>w.en==='Queen').v);
+		const jpPrev = getDualJpPos(wordDefs.find(w=>w.en==='King').u, wordDefs.find(w=>w.en==='King').v);
+		traces.push({
+			type: 'cone',
+			x: [jpEnd[0]], y: [jpEnd[1]], z: [jpEnd[2]],
+			u: [jpEnd[0]-jpPrev[0]], v: [jpEnd[1]-jpPrev[1]], w: [jpEnd[2]-jpPrev[2]],
+			sizemode: 'absolute', sizeref: 0.4, showscale: false,
+			colorscale: [[0,'#10b981'],[1,'#10b981']], hoverinfo: 'skip'
+		});
+	}
+
+	const layout = {
+		margin: { l: 0, r: 0, b: 0, t: 0 },
+		showlegend: true,
+		legend: {
+			x: 0.01, y: 0.99,
+			bgcolor: 'rgba(255,255,255,0.9)',
+			bordercolor: '#e2e8f0', borderwidth: 1,
+			font: { size: 11 }
+		},
+		scene: {
+			xaxis: { title: '', showgrid: true, gridcolor: '#f1f5f9', zeroline: false, showticklabels: false },
+			yaxis: { title: '', showgrid: true, gridcolor: '#f1f5f9', zeroline: false, showticklabels: false },
+			zaxis: { title: '', showgrid: true, gridcolor: '#f1f5f9', zeroline: false, showticklabels: false },
+			camera: { eye: { x: 1.5, y: 1.8, z: 1.2 } },
+			bgcolor: '#fff',
+			aspectmode: 'data'
+		}
+	};
+
+	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+}
+
+// ---- Controls ----
+
+window.updateDualManifold = function() {
+	const st = dualManifoldState;
+	const rotSlider = document.getElementById('dm-rotation');
+	const sepSlider = document.getElementById('dm-separation');
+
+	st.rotationDeg = parseFloat(rotSlider.value);
+	st.separation = parseFloat(sepSlider.value);
+
+	document.getElementById('dm-rot-val').textContent = Math.round(st.rotationDeg) + '°';
+	document.getElementById('dm-sep-val').textContent = st.separation.toFixed(1);
+
+	renderDualManifolds();
+};
+
+window.toggleDualManifold = function() {
+	const st = dualManifoldState;
+	st.showCorrespondence = document.getElementById('dm-correspondence').checked;
+	st.showPaths = document.getElementById('dm-paths').checked;
+	renderDualManifolds();
+};
+
+window.animateDualManifoldAlignment = function() {
+	const st = dualManifoldState;
+	if (st.animating || st.aligned) return;
+
+	st.animating = true;
+	const btn = document.getElementById('btn-dm-align');
+	btn.disabled = true;
+	btn.style.opacity = '0.5';
+
+	const startRot = st.rotationDeg;
+	const startSep = st.separation;
+	const duration = 2500;
+	const startTime = performance.now();
+
+	function easeInOutCubic(t) {
+		return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+	}
+
+	function step(now) {
+		const elapsed = now - startTime;
+		const rawT = Math.min(elapsed / duration, 1);
+		const t = easeInOutCubic(rawT);
+
+		st.rotationDeg = startRot * (1 - t);
+		st.separation = startSep * (1 - t);
+
+		document.getElementById('dm-rotation').value = st.rotationDeg;
+		document.getElementById('dm-separation').value = st.separation;
+		document.getElementById('dm-rot-val').textContent = Math.round(st.rotationDeg) + '°';
+		document.getElementById('dm-sep-val').textContent = st.separation.toFixed(1);
+
+		const statusEl = document.getElementById('dm-status');
+		if (statusEl) {
+			statusEl.textContent = `Aligning... rotation: ${Math.round(st.rotationDeg)}° → 0°, separation: ${st.separation.toFixed(1)} → 0`;
+		}
+
+		renderDualManifolds();
+
+		if (rawT < 1) {
+			requestAnimationFrame(step);
+		} else {
+			st.rotationDeg = 0;
+			st.separation = 0;
+			st.animating = false;
+			st.aligned = true;
+			btn.disabled = true;
+
+			document.getElementById('dm-rotation').value = 0;
+			document.getElementById('dm-separation').value = 0;
+			document.getElementById('dm-rot-val').textContent = '0°';
+			document.getElementById('dm-sep-val').textContent = '0.0';
+
+			if (statusEl) {
+				statusEl.innerHTML = '✅ <b>Aligned!</b> Both manifolds overlap — the paths merge. Translation is the same geometric journey on both surfaces.';
+				statusEl.style.color = '#10b981';
+			}
+			renderDualManifolds();
+		}
+	}
+	requestAnimationFrame(step);
+};
+
+window.resetDualManifold = function() {
+	const st = dualManifoldState;
+	if (st.animating) return;
+
+	st.rotationDeg = st.origRotation;
+	st.separation = st.origSeparation;
+	st.aligned = false;
+
+	document.getElementById('dm-rotation').value = st.origRotation;
+	document.getElementById('dm-separation').value = st.origSeparation;
+	document.getElementById('dm-rot-val').textContent = st.origRotation + '°';
+	document.getElementById('dm-sep-val').textContent = st.origSeparation.toFixed(1);
+
+	const btn = document.getElementById('btn-dm-align');
+	btn.disabled = false;
+	btn.style.opacity = '1';
+
+	const statusEl = document.getElementById('dm-status');
+	if (statusEl) {
+		statusEl.textContent = 'Ready — Japanese manifold is rotated 55° and separated.';
+		statusEl.style.color = '#64748b';
+	}
+	renderDualManifolds();
+};
+
 function renderSpace(key, highlightPos = null, steps = []) {
 	const divId = `plot-${key}`;
 	const plotDiv = document.getElementById(divId);
@@ -2058,6 +2464,8 @@ function loadEmbeddingModule () {
 	renderMetricTensor();
 
 	setParallelogramConcept('royalty');
+
+	renderDualManifolds();
 
 	const slider = document.getElementById('scale-magnitude');
 	renderScaleInvariance();
