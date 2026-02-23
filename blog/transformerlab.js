@@ -716,7 +716,10 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 	// at every position, so the old "halve the context" trick is no longer needed.
 	const thiscontextSize = Math.min(contextSize, tokens.length - 1);
 
-	if (thiscontextSize < 1) return tf.scalar(10);
+	if (thiscontextSize < 1) {
+		console.error("Context must have at least 2 elements");
+		return tf.scalar(10);
+	}
 
 	// Causal mask (upper triangle → future positions get -1e9 after subtraction)
 	const mask = tf.tidy(() => {
