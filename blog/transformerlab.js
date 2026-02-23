@@ -541,14 +541,131 @@ async function train_transformer() {
 		const lossValue = await cost.data();
 		window.lossHistory.push(lossValue[0]);
 
-		// Display current training sentences
+		// Display current training sentences with actual predictions
 		const sentenceSpan = document.getElementById('current_training_sentence');
 
 		if (sentenceSpan && window.currentTrainingWindows.length > 0) {
+			// Get current predictions for each window
+			const vocab = Object.keys(window.persistentEmbeddingSpace);
+			const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
+
 			const windowsHtml = window.currentTrainingWindows.map((w, idx) => {
-				return `<div style="margin-bottom:4px; padding:4px 8px; background:#f1f5f9; border-radius:4px; font-family:monospace; font-size:0.85rem;">
+				// Run a quick forward pass for this window to get predictions
+				const predictions = [];
+				try {
+					const inputIds = w.input.map(t => vocab.indexOf(t));
+
+					// Build input embeddings + positional encoding
+					let h = inputIds.map((id, pos) => {
+						const emb = [...embMatrix[id]];
+						for (let i = 0; i < d_model; i++) {
+							const div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+							emb[i] += (i % 2 === 0) 
+								? Math.sin(pos / div_term) * posEmbedScalar 
+								: Math.cos(pos / div_term) * posEmbedScalar;
+						}
+						return emb;
+					});
+
+					// Run through transformer layers
+					for (let l = 0; l < n_layers; l++) {
+						const lw = window.currentWeights[l];
+
+						// Pre-LN
+						const normH = calculateLayerNorm(h, lw.gamma, lw.beta);
+
+						// Simplified self-attention (single head approximation for speed)
+						const Q = normH.map(row => lw.attention.query[0].map((_, j) => 
+							row.reduce((sum, val, k) => sum + val * lw.attention.query[k][j], 0)));
+						const K = normH.map(row => lw.attention.key[0].map((_, j) => 
+							row.reduce((sum, val, k) => sum + val * lw.attention.key[k][j], 0)));
+						const V = normH.map(row => lw.attention.value[0].map((_, j) => 
+							row.reduce((sum, val, k) => sum + val * lw.attention.value[k][j], 0)));
+
+						// Attention scores with causal mask
+						const scale = Math.sqrt(d_model);
+						const attnOut = Q.map((q, qi) => {
+							const scores = K.map((k, ki) => {
+								if (ki > qi) return -1e9; // causal mask
+								return q.reduce((sum, val, d) => sum + val * k[d], 0) / scale;
+							});
+							// Softmax
+							const maxS = Math.max(...scores);
+							const exps = scores.map(s => Math.exp(s - maxS));
+							const sumE = exps.reduce((a, b) => a + b, 0);
+							const weights = exps.map(e => e / sumE);
+							// Weighted sum of V
+							return V[0].map((_, d) => weights.reduce((sum, w, vi) => sum + w * V[vi][d], 0));
+						});
+
+						// Output projection + residual
+						const projected = attnOut.map(row => 
+							lw.attention.output[0].map((_, j) => 
+								row.reduce((sum, val, k) => sum + val * lw.attention.output[k][j], 0)));
+						h = h.map((row, i) => row.map((val, j) => val + projected[i][j]));
+
+						// FFN with Pre-LN
+						const normH2 = calculateLayerNorm(h, lw.gamma2, lw.beta2);
+						const d_ff = d_model * 4;
+						const ffn1 = normH2.map(row => 
+							lw.b1.map((bias, j) => {
+								let sum = bias;
+								for (let k = 0; k < d_model; k++) sum += row[k] * lw.W1[k][j];
+								return Math.max(0, sum); // ReLU
+							}));
+						const ffn2 = ffn1.map(row => 
+							lw.b2.map((bias, j) => {
+								let sum = bias;
+								for (let k = 0; k < d_ff; k++) sum += row[k] * lw.W2[k][j];
+								return sum;
+							}));
+						h = h.map((row, i) => row.map((val, j) => val + ffn2[i][j]));
+					}
+
+					// Project each position to vocabulary (logits)
+					for (let pos = 0; pos < h.length; pos++) {
+						const logits = embMatrix.map(embRow => 
+							h[pos].reduce((sum, val, k) => sum + val * embRow[k], 0));
+						const maxLogit = Math.max(...logits);
+						const exps = logits.map(l => Math.exp(l - maxLogit));
+						const sumExps = exps.reduce((a, b) => a + b, 0);
+						const probs = exps.map(e => e / sumExps);
+
+						// Find top prediction
+						let bestIdx = 0;
+						for (let j = 1; j < probs.length; j++) {
+							if (probs[j] > probs[bestIdx]) bestIdx = j;
+						}
+						predictions.push({
+							word: vocab[bestIdx],
+							prob: probs[bestIdx]
+						});
+					}
+				} catch (e) {
+					// If forward pass fails, show "?" for predictions
+					w.target.forEach(() => predictions.push({ word: '?', prob: 0 }));
+				}
+
+				// Build the display with target vs actual
+				const targetHtml = w.target.map((targetWord, pos) => {
+					const pred = predictions[pos] || { word: '?', prob: 0 };
+					const isCorrect = pred.word === targetWord;
+					const icon = isCorrect ? '✅' : '❌';
+					const probStr = (pred.prob * 100).toFixed(1);
+					const bgColor = isCorrect ? '#dcfce7' : '#fee2e2';
+
+					return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem;" title="Target: ${targetWord} | Predicted: ${pred.word} (${probStr}%)">
+		${icon} <b>${targetWord}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${pred.word}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
+	    </span>`;
+				}).join('');
+
+				return `<div style="margin-bottom:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-family:monospace; font-size:0.85rem;">
 	    <strong>Window ${idx + 1}:</strong> 
-	    [${w.input.join(' ')}] → [${w.target.join(' ')}]
+	    [${w.input.join(' ')}] →<br>
+	    <div style="margin-top:4px; margin-left:10px;">
+		<span style="color:#64748b; font-size:0.75rem;">Expected vs Predicted:</span><br>
+		${targetHtml}
+	    </div>
 	</div>`;
 			}).join('');
 			sentenceSpan.innerHTML = windowsHtml;
