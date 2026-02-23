@@ -3591,7 +3591,6 @@ function tled_addToken() {
 
 	const d_model = space[existingWords[0]].length;
 
-	// Gaussian random initialization (same as get_or_init_embeddings)
 	const gaussianRandom = () => {
 		let u = 0, v = 0;
 		while (u === 0) u = Math.random();
