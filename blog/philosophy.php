@@ -144,6 +144,8 @@ The **Extended Mind Thesis** suggests that the boundary of the "mind" is not the
 
 In your machine learning lab, the model has a singular "purpose": to minimize the **Loss**. This is its "God," its only objective. In AI safety, this is known as the **Alignment Problem**. It is the challenge of ensuring that an AI's internal objective (the mathematical "loss function") aligns with human values and intentions.
 
+### The Orthogonality Thesis: Intelligence vs. Intent
+
 <div class="smart-quote" data-cite="bostrom2012orthogonal">
 Intelligence and final goals are orthogonal axes along which possible agents can freely vary. In other words, more or less any level of intelligence could in principle be combined with more or less any final goal.
 </div>
