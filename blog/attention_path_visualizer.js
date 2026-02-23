@@ -581,46 +581,43 @@ class AttentionPathVisualizer {
 		});
 	}
 
-	/**
-	 * NON-DESTRUCTIVE hover update.
-	 * Instead of rebuilding the entire SVG (which destroys the element
-	 * under the cursor and causes an infinite mouseover/mouseout loop),
-	 * this method updates stroke-opacity and stroke-width on existing
-	 * <path> elements and font-weight on existing <text> elements.
-	 */
-	_updateHoverState(svg) {
-		const { headDataArray, displayTokens } = this._currentData;
-		const { minOpacity } = this.options;
-		const hovered = this._hoveredToken;
+/**
+ * NON-DESTRUCTIVE hover update.
+ * Instead of rebuilding the entire SVG (which destroys the element
+ * under the cursor and causes an infinite mouseover/mouseout loop),
+ * this method updates stroke-opacity and stroke-width on existing
+ * <path> elements and font-weight on existing <text> elements.
+ */
+_updateHoverState(svg) {
+    const { headDataArray, displayTokens } = this._currentData;
+    const { minOpacity } = this.options;
+    const hovered = this._hoveredToken;
 
-		// ── Update all attention arc paths ──
-		const paths = svg.querySelectorAll('path[data-apv-qi]');
-		paths.forEach(path => {
-			const hIdx = parseInt(path.getAttribute('data-apv-head'));
-			const qi = parseInt(path.getAttribute('data-apv-qi'));
-			const ki = parseInt(path.getAttribute('data-apv-ki'));
+    // ── Update all attention arc paths ──
+    const paths = svg.querySelectorAll('path[data-apv-qi]');
+    paths.forEach(path => {
+        const hIdx = parseInt(path.getAttribute('data-apv-head'));
+        const qi = parseInt(path.getAttribute('data-apv-qi'));
+        const ki = parseInt(path.getAttribute('data-apv-ki'));
 
-			if (!this._activeHeads.has(hIdx)) {
-				path.setAttribute('stroke-opacity', '0');
-				return;
-			}
+        if (!this._activeHeads.has(hIdx)) {
+            path.setAttribute('stroke-opacity', '0');
+            return;
+        }
 
-			const w = headDataArray[hIdx].this_weights[qi][ki];
+        const w = headDataArray[hIdx].this_weights[qi][ki];
 
-			if (!hovered) {
-				// No hover: show natural weights
-				path.setAttribute('stroke-opacity', w.toFixed(3));
-				path.setAttribute('stroke-width', (1 + w * 5).toFixed(1));
-			} else {
-				const { side, index } = hovered;
-				if ((side === 'left' && index === qi) || (side === 'right' && index === ki)) {
-// This arc is connected to the hovered token — highlight it
+        if (!hovered) {
+            path.setAttribute('stroke-opacity', w.toFixed(3));
+            path.setAttribute('stroke-width', (1 + w * 5).toFixed(1));
+        } else {
+            const { side, index } = hovered;
+            if ((side === 'left' && index === qi) || (side === 'right' && index === ki)) {
                 const opacity = 0.3 + w * 0.7;
                 const strokeWidth = 2 + w * 8;
                 path.setAttribute('stroke-opacity', opacity.toFixed(3));
                 path.setAttribute('stroke-width', strokeWidth.toFixed(1));
             } else {
-                // Dim everything else
                 path.setAttribute('stroke-opacity', '0.04');
                 path.setAttribute('stroke-width', '0.5');
             }
@@ -639,12 +636,15 @@ class AttentionPathVisualizer {
     });
 
     // ── Update percentage labels ──
-    // Remove old labels
     svg.querySelectorAll('.apv-weight-label').forEach(el => el.remove());
 
-    // Add new labels for hovered connections
     if (hovered) {
         const { rowHeight, leftColumnX, rightColumnX, topPadding } = this.options;
+        const arcX1 = leftColumnX + 6;
+        const arcX2 = rightColumnX - 6;
+
+        // 1) Collect all label candidates
+        const labelCandidates = [];
 
         headDataArray.forEach((head, hIdx) => {
             if (!this._activeHeads.has(hIdx)) return;
@@ -662,22 +662,76 @@ class AttentionPathVisualizer {
                                        (side === 'right' && index === ki);
                     if (!isRelevant) continue;
 
-                    const y1 = topPadding + qi * rowHeight;
-                    const y2 = topPadding + ki * rowHeight;
-                    const cpx = (leftColumnX + 6 + rightColumnX - 6) / 2;
-                    const labelY = (y1 + y2) / 2;
+                    // Label goes at the OTHER end of the arc, near the target word
+                    const targetIdx = (side === 'left') ? ki : qi;
 
-                    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    label.setAttribute('x', cpx);
-                    label.setAttribute('y', labelY - 4);
-                    label.setAttribute('font-size', '9');
-                    label.setAttribute('fill', color);
-                    label.setAttribute('font-weight', '700');
-                    label.setAttribute('text-anchor', 'middle');
-                    label.setAttribute('class', 'apv-weight-label');
-                    label.textContent = `${(w * 100).toFixed(0)}%`;
-                    svg.appendChild(label);
+                    labelCandidates.push({
+                        targetIdx,
+                        color,
+                        text: `${(w * 100).toFixed(0)}%`,
+                        hIdx
+                    });
                 }
+            }
+        });
+
+        // 2) Group labels by which target token they sit next to
+        const groups = new Map();
+        labelCandidates.forEach(lbl => {
+            if (!groups.has(lbl.targetIdx)) groups.set(lbl.targetIdx, []);
+            groups.get(lbl.targetIdx).push(lbl);
+        });
+
+        // 3) Render each group, spreading horizontally if multiple heads share a target
+        const labelGap = 30;
+
+        groups.forEach((group, targetIdx) => {
+            const y = topPadding + targetIdx * rowHeight + 4;
+
+            group.sort((a, b) => a.hIdx - b.hIdx);
+
+            if (hovered.side === 'left') {
+                // Hovered query on left → labels near RIGHT column, spread leftward
+                const anchorX = arcX2 - 4;
+
+                group.forEach((lbl, i) => {
+                    const lx = anchorX - i * labelGap;
+                    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    label.setAttribute('x', lx.toFixed(1));
+                    label.setAttribute('y', y.toFixed(1));
+                    label.setAttribute('font-size', '9');
+                    label.setAttribute('fill', lbl.color);
+                    label.setAttribute('font-weight', '700');
+                    label.setAttribute('text-anchor', 'end');
+                    label.setAttribute('class', 'apv-weight-label');
+                    // Black outline for readability
+                    label.setAttribute('stroke', '#000');
+                    label.setAttribute('stroke-width', '2.5');
+                    label.setAttribute('paint-order', 'stroke');
+                    label.textContent = lbl.text;
+                    svg.appendChild(label);
+                });
+            } else {
+                // Hovered key on right → labels near LEFT column, spread rightward
+                const anchorX = arcX1 + 4;
+
+                group.forEach((lbl, i) => {
+                    const lx = anchorX + i * labelGap;
+                    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    label.setAttribute('x', lx.toFixed(1));
+                    label.setAttribute('y', y.toFixed(1));
+                    label.setAttribute('font-size', '9');
+                    label.setAttribute('fill', lbl.color);
+                    label.setAttribute('font-weight', '700');
+                    label.setAttribute('text-anchor', 'start');
+                    label.setAttribute('class', 'apv-weight-label');
+                    // Black outline for readability
+                    label.setAttribute('stroke', '#000');
+                    label.setAttribute('stroke-width', '2.5');
+                    label.setAttribute('paint-order', 'stroke');
+                    label.textContent = lbl.text;
+                    svg.appendChild(label);
+                });
             }
         });
     }
