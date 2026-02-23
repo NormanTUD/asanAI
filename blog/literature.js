@@ -1,4 +1,10 @@
 window.bibData = {
+	"nickel2017poincare": {
+		title: "Poincaré Embeddings for Learning Hierarchical Representations",
+		year: 2017,
+		author: "Maximilian Nickel, Douwe Kiela",
+		url: "https://arxiv.org/abs/1705.08039"
+	},
 	"kassner2020negated": {
 		author: "Nora Kassner, Hinrich Schütze",
 		url: "https://arxiv.org/abs/1911.03343",

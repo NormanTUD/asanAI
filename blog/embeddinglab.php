@@ -431,7 +431,7 @@ Below, you can explore this tradeoff directly. The visualization shows a **2-dim
 <div class="md">
 ## The Geometry of In-Context Learning
 
-One of the most active research frontiers concerns what happens when you give a model a handful of examples directly in the prompt. Rather than updating any weights, the model appears to construct an implicit **task vector** in activation space on the fly. \citeauthor{hendel2023incontext} (\citeyear{hendel2023incontext}) demonstrated that the function learned via in-context learning can be compressed into a single vector — extracted by computing the difference between the model's internal activations *with* the few-shot examples and *without* them — and then **injected** into a blank prompt to reproduce the same behavior.
+One of the most active research frontiers concerns what happens when you give a model a handful of examples directly in the prompt. Rather than updating any weights, the model appears to construct an implicit **task vector** in activation space on the fly. \citeauthor{hendel2023incontext} (\citeyear{hendel2023incontext}) demonstrated that the function learned via in-context learning can be compressed into a single vector, extracted by computing the difference between the model's internal activations *with* the few-shot examples and *without* them, and then **injected** into a blank prompt to reproduce the same behavior.
 
 To see this concretely, imagine prompting a model with:
 
@@ -440,11 +440,11 @@ To see this concretely, imagine prompting a model with:
 > *Q: What is the capital of Japan?  A: Tokyo*
 > *Q: What is the capital of Italy?  A: ???*
 
-Each example pair creates an **offset vector** in the model's internal activation space — a directional arrow pointing from where "France" lives to where "Paris" lives. These individual arrows are noisy: the *France → Paris* offset is not identical to the *Germany → Berlin* offset because each word occupies a slightly different region of the high-dimensional manifold. But when the model averages across all the examples, a single coherent **task direction** emerges — a vector that encodes "move from a country token to its capital-city token." When the query token "Italy" enters the residual stream, this task direction **steers** it toward the correct answer region, landing it near "Rome" — without any weight update whatsoever.
+Each example pair creates an **offset vector** in the model's internal activation space, a directional arrow pointing from where "France" lives to where "Paris" lives. These individual arrows are noisy: the *France → Paris* offset is not identical to the *Germany → Berlin* offset because each word occupies a slightly different region of the high-dimensional manifold. But when the model averages across all the examples, a single coherent **task direction** emerges, a vector that encodes "move from a country token to its capital-city token." When the query token "Italy" enters the residual stream, this task direction **steers** it toward the correct answer region, landing it near "Rome", without any weight update whatsoever.
 
-This is why in-context learning is so powerful and so mysterious: the model is not being retrained. It is performing a geometric operation — constructing a direction from examples and applying it to a query — entirely within the forward pass. The task vector is not stored in any weight matrix; it exists only as a transient pattern in the activation geometry, assembled and discarded with each new prompt.
+This is why in-context learning is so powerful and so mysterious: the model is not being retrained. It is performing a geometric operation, constructing a direction from examples and applying it to a query, entirely within the forward pass. The task vector is not stored in any weight matrix; it exists only as a transient pattern in the activation geometry, assembled and discarded with each new prompt.
 
-Below, you can watch this process unfold. The **left panel** shows the geometric view: each **colored arrow** connects a country to its capital in activation space, and the **right panel** shows the actual prompt the model receives, color-coded to match. The arrows are averaged into a single **task vector** (blue). Use the slider to add or remove examples and watch the task vector stabilize — with too few examples the averaged direction is noisy and may miss the answer region; with enough examples, it converges precisely on the correct answer.
+Below, you can watch this process unfold. The **left panel** shows the geometric view: each **colored arrow** connects a country to its capital in activation space, and the **right panel** shows the actual prompt the model receives, color-coded to match. The arrows are averaged into a single **task vector** (blue). Use the slider to add or remove examples and watch the task vector stabilize, with too few examples the averaged direction is noisy and may miss the answer region; with enough examples, it converges precisely on the correct answer.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -467,7 +467,7 @@ Below, you can watch this process unfold. The **left panel** shows the geometric
     <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
         <button id="btn-icl-inject" onclick="animateICLInjection()" style="background: #3b82f6; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">⚡ Inject Task Vector</button>
         <button onclick="resetICL()" style="background: #64748b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">↺ Reset</button>
-        <span id="icl-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready — adjust examples and click Inject.</span>
+        <span id="icl-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready, adjust examples and click Inject.</span>
     </div>
 
     <!-- Stats -->
@@ -536,5 +536,44 @@ Below, select any word (or type "not X") and observe how "not X" drifts only sli
         The <span style="color:#f59e0b; font-weight:bold;">gold arrow</span> is the tiny "not" perturbation; the
         <span style="color:rgba(16,185,129,0.4);">faded green line</span> is the path logic <i>expects</i>.
         <b>Negation is invisible to the geometry.</b>
+    </div>
+</section>
+
+<div class="md">
+## Hyperbolic Embeddings
+
+Standard embedding spaces use Euclidean geometry, but human language is rife with hierarchical structure, taxonomies (animal → mammal → dog → poodle), hypernymy chains, parse trees, organizational hierarchies. Euclidean space is fundamentally ill-suited for representing trees: the number of nodes at depth $d$ in a tree with branching factor $b$ grows as $\mathcal{O}(b^d)$, exponentially, but the volume of a Euclidean ball of radius $r$ in $n$ dimensions grows only polynomially as $\mathcal{O}(r^n)$. This mismatch means that as a tree grows deeper, a Euclidean embedding must either introduce severe distance distortion or consume prohibitively many dimensions to accommodate the exponential proliferation of leaf nodes (\cite{nickel2017poincare}).
+
+**Hyperbolic space** resolves this tension. Spaces of constant negative curvature exhibit **exponential volume growth**, the circumference of a hyperbolic circle of radius $r$ grows as $\sim e^r$, not $\sim r$, making them the natural geometric habitat for embedding hierarchies with minimal distortion (\cite{nickel2017poincare}). In the **Poincaré disk model**, the entire hyperbolic plane is mapped to the interior of a unit disk. Points near the **center** represent general, high-level concepts ("entity"), while points near the **boundary** represent increasingly specific leaves ("golden retriever"). The metric that governs this world is:
+
+$$ d_{\mathbb{H}}(\mathbf{u}, \mathbf{v}) = \operatorname{arccosh}\!\left(1 + 2\,\frac{\|\mathbf{u} - \mathbf{v}\|^2}{(1 - \|\mathbf{u}\|^2)(1 - \|\mathbf{v}\|^2)}\right) $$
+
+Notice the denominator: as either point approaches the boundary ($\|\mathbf{u}\| \to 1$), the distance **explodes**, even for vanishingly small Euclidean displacements. This is the geometric mechanism that provides "exponential room" near the edge, exactly where the exponentially many leaf nodes of a deep taxonomy need to reside. Geodesics in the Poincaré disk are not straight lines but **arcs of circles orthogonal to the boundary**, curving inward through the disk, a striking visual signature of negative curvature (\cite{nickel2017poincare}).
+
+Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chain** traces Entity → Animal → Mammal → Dog → Poodle from center to boundary. Drag the **curvature slider** from Euclidean (flat, uniformly spaced depth rings, straight edges) to Hyperbolic (exponentially compressed rings, inward-curving geodesics) and watch the geometry transform, a stark contrast to the flat Euclidean grids explored above.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start;">
+        <div id="plot-poincare-disk" style="height: 560px; background: #fff; border-radius: 8px; width: 100%;"></div>
+        <div id="poincare-stats" style="width: 100%;"></div>
+    </div>
+
+    <!-- Curvature slider -->
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin: 15px 0;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Curvature:</b>
+            <input type="range" id="poincare-curvature" min="0" max="1" step="0.01" value="1" style="width: 280px; vertical-align: middle;">
+            <span id="poincare-curvature-val" style="font-weight: bold; color: #8b5cf6;">Hyperbolic</span>
+        </label>
+    </div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> A taxonomy tree embedded in the <span style="color:#8b5cf6; font-weight:bold;">Poincaré disk</span>.
+        General concepts like "Entity" sit near the <b>center</b>; specific concepts like "Poodle" and "Tabby" crowd near the <b>boundary</b>.
+        The <span style="color:#6366f1; font-weight:bold;">curved arcs</span> are <b>geodesics</b>, shortest paths in hyperbolic space, which bend inward through the disk.
+        The <span style="color:#f59e0b; font-weight:bold;">amber chain</span> highlights Entity → Animal → Mammal → Dog → Poodle.
+        Drag the <b>curvature slider</b> to 0 (Euclidean) and watch the depth rings become evenly spaced and the edges straighten; slide to 1 (Hyperbolic) and the outer rings compress toward the boundary while geodesics curve inward, exponential room for exponentially many leaves.
     </div>
 </section>

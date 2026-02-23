@@ -3968,6 +3968,480 @@ function renderNegation() {
 	}
 }
 
+// ============================================================
+// HYPERBOLIC EMBEDDINGS — POINCARÉ DISK VISUALIZATION
+// ============================================================
+
+const hyperbolicState = {
+    curvature: 1.0,
+    tree: null,
+    maxDepth: 4
+};
+
+function buildHyperbolicTree() {
+    const nodes = [
+        { name: 'Entity',      depth: 0, parent: null,         group: 'root' },
+        { name: 'Animal',      depth: 1, parent: 'Entity',     group: 'animal' },
+        { name: 'Object',      depth: 1, parent: 'Entity',     group: 'object' },
+        { name: 'Mammal',      depth: 2, parent: 'Animal',     group: 'animal' },
+        { name: 'Bird',        depth: 2, parent: 'Animal',     group: 'animal' },
+        { name: 'Vehicle',     depth: 2, parent: 'Object',     group: 'object' },
+        { name: 'Instrument',  depth: 2, parent: 'Object',     group: 'object' },
+        { name: 'Dog',         depth: 3, parent: 'Mammal',     group: 'animal' },
+        { name: 'Cat',         depth: 3, parent: 'Mammal',     group: 'animal' },
+        { name: 'Lion',        depth: 3, parent: 'Mammal',     group: 'animal' },
+        { name: 'Eagle',       depth: 3, parent: 'Bird',       group: 'animal' },
+        { name: 'Sparrow',     depth: 3, parent: 'Bird',       group: 'animal' },
+        { name: 'Car',         depth: 3, parent: 'Vehicle',    group: 'object' },
+        { name: 'Plane',       depth: 3, parent: 'Vehicle',    group: 'object' },
+        { name: 'Guitar',      depth: 3, parent: 'Instrument', group: 'object' },
+        { name: 'Piano',       depth: 3, parent: 'Instrument', group: 'object' },
+        { name: 'Poodle',      depth: 4, parent: 'Dog',        group: 'animal' },
+        { name: 'Retriever',   depth: 4, parent: 'Dog',        group: 'animal' },
+        { name: 'Tabby',       depth: 4, parent: 'Cat',        group: 'animal' },
+        { name: 'Siamese',     depth: 4, parent: 'Cat',        group: 'animal' },
+        { name: 'Sedan',       depth: 4, parent: 'Car',        group: 'object' },
+        { name: 'SUV',         depth: 4, parent: 'Car',        group: 'object' },
+    ];
+
+    var childrenMap = {};
+    nodes.forEach(function(n) { childrenMap[n.name] = []; });
+    nodes.forEach(function(n) {
+        if (n.parent && childrenMap[n.parent]) {
+            childrenMap[n.parent].push(n);
+        }
+    });
+
+    function leafCount(name) {
+        var ch = childrenMap[name];
+        if (!ch || ch.length === 0) return 1;
+        var sum = 0;
+        for (var i = 0; i < ch.length; i++) {
+            sum += leafCount(ch[i].name);
+        }
+        return sum;
+    }
+
+    function layoutNode(name, aMin, aMax) {
+        var node = null;
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].name === name) { node = nodes[i]; break; }
+        }
+        if (!node) return;
+        node.angle = (aMin + aMax) / 2;
+        node.angleMin = aMin;
+        node.angleMax = aMax;
+
+        var children = childrenMap[name];
+        if (!children || children.length === 0) return;
+
+        var totalLeaves = 0;
+        for (var i = 0; i < children.length; i++) {
+            totalLeaves += leafCount(children[i].name);
+        }
+
+        var cur = aMin;
+        for (var i = 0; i < children.length; i++) {
+            var weight = leafCount(children[i].name) / totalLeaves;
+            var next = cur + weight * (aMax - aMin);
+            layoutNode(children[i].name, cur, next);
+            cur = next;
+        }
+    }
+
+    layoutNode('Entity', 0, 2 * Math.PI);
+    return nodes;
+}
+
+function getHyperbolicRadius(depth, curvature) {
+    var hypR = Math.tanh(depth * 0.55);
+    var eucR = depth / (hyperbolicState.maxDepth + 0.5);
+    return eucR + curvature * (hypR - eucR);
+}
+
+function getHypNodePos(node, curvature) {
+    if (!node || node.depth === 0) return [0, 0];
+    var r = getHyperbolicRadius(node.depth, curvature);
+    var a = node.angle || 0;
+    return [r * Math.cos(a), r * Math.sin(a)];
+}
+
+function poincareGeodesic(p1, p2, nPts) {
+    nPts = nPts || 50;
+    var x1 = p1[0], y1 = p1[1], x2 = p2[0], y2 = p2[1];
+    var n1 = x1*x1 + y1*y1;
+    var n2 = x2*x2 + y2*y2;
+    var cross = x1*y2 - x2*y1;
+
+    // Straight-line fallback
+    if (Math.abs(cross) < 1e-6 || n1 < 1e-8 || n2 < 1e-8) {
+        var xs = [], ys = [];
+        for (var i = 0; i <= nPts; i++) {
+            var t = i / nPts;
+            xs.push(x1 + t*(x2 - x1));
+            ys.push(y1 + t*(y2 - y1));
+        }
+        return { x: xs, y: ys };
+    }
+
+    var a1 = 2*(x2 - x1), b1 = 2*(y2 - y1);
+    var c1 = x2*x2 + y2*y2 - x1*x1 - y1*y1;
+    var a2 = 2*x1, b2 = 2*y1;
+    var c2 = x1*x1 + y1*y1 + 1;
+    var det = a1*b2 - a2*b1;
+
+    if (Math.abs(det) < 1e-10) {
+        var xs = [], ys = [];
+        for (var i = 0; i <= nPts; i++) {
+            var t = i / nPts;
+            xs.push(x1 + t*(x2 - x1));
+            ys.push(y1 + t*(y2 - y1));
+        }
+        return { x: xs, y: ys };
+    }
+
+    var cx = (c1*b2 - c2*b1) / det;
+    var cy = (a1*c2 - a2*c1) / det;
+    var r  = Math.sqrt((cx - x1)*(cx - x1) + (cy - y1)*(cy - y1));
+
+    var ang1 = Math.atan2(y1 - cy, x1 - cx);
+    var ang2 = Math.atan2(y2 - cy, x2 - cx);
+    var diff = ang2 - ang1;
+    while (diff >  Math.PI) diff -= 2*Math.PI;
+    while (diff < -Math.PI) diff += 2*Math.PI;
+
+    var midA = ang1 + diff/2;
+    var mx = cx + r*Math.cos(midA), my = cy + r*Math.sin(midA);
+    if (mx*mx + my*my > 1.02) {
+        diff = diff > 0 ? diff - 2*Math.PI : diff + 2*Math.PI;
+    }
+
+    var xs = [], ys = [];
+    for (var i = 0; i <= nPts; i++) {
+        var a = ang1 + (i/nPts)*diff;
+        xs.push(cx + r*Math.cos(a));
+        ys.push(cy + r*Math.sin(a));
+    }
+    return { x: xs, y: ys };
+}
+
+function poincareDistance(p1, p2) {
+    var dx = p1[0]-p2[0], dy = p1[1]-p2[1];
+    var num = dx*dx + dy*dy;
+    var d1 = 1 - p1[0]*p1[0] - p1[1]*p1[1];
+    var d2 = 1 - p2[0]*p2[0] - p2[1]*p2[1];
+    if (d1 <= 0 || d2 <= 0) return Infinity;
+    var arg = 1 + 2*num/(d1*d2);
+    return Math.acosh(Math.max(1, arg));
+}
+
+function getHypEdgePath(p1, p2, curvature) {
+    if (curvature < 0.01) {
+        return { x: [p1[0], p2[0]], y: [p1[1], p2[1]] };
+    }
+    var geo = poincareGeodesic(p1, p2);
+    if (curvature > 0.99) return geo;
+
+    var n = geo.x.length;
+    var xs = [], ys = [];
+    for (var i = 0; i < n; i++) {
+        var t = i / (n - 1);
+        var sx = p1[0] + t*(p2[0] - p1[0]);
+        var sy = p1[1] + t*(p2[1] - p1[1]);
+        xs.push(sx + curvature*(geo.x[i] - sx));
+        ys.push(sy + curvature*(geo.y[i] - sy));
+    }
+    return { x: xs, y: ys };
+}
+
+function hypTextPos(angle, depth) {
+    if (depth === 0) return 'top center';
+    var deg = ((angle * 180 / Math.PI) % 360 + 360) % 360;
+    if (deg <  30 || deg > 330) return 'middle right';
+    if (deg <  70)  return 'top right';
+    if (deg < 110)  return 'top center';
+    if (deg < 150)  return 'top left';
+    if (deg < 210)  return 'middle left';
+    if (deg < 250)  return 'bottom left';
+    if (deg < 290)  return 'bottom center';
+    return 'bottom right';
+}
+
+function renderHyperbolicEmbedding() {
+    var plotDiv = document.getElementById('plot-poincare-disk');
+    if (!plotDiv) { console.warn('Hyperbolic: plot div not found'); return; }
+
+    // ── Lazy-build the tree if it hasn't been built yet ──
+    if (!hyperbolicState.tree || hyperbolicState.tree.length === 0) {
+        hyperbolicState.tree = buildHyperbolicTree();
+    }
+    var nodes = hyperbolicState.tree;
+    if (!nodes || nodes.length === 0) {
+        console.warn('Hyperbolic: tree is empty');
+        return;
+    }
+
+    var slider = document.getElementById('poincare-curvature');
+    var valEl  = document.getElementById('poincare-curvature-val');
+    var curvature = (slider) ? parseFloat(slider.value) : 1.0;
+    if (isNaN(curvature)) curvature = 1.0;
+    hyperbolicState.curvature = curvature;
+
+    if (valEl) {
+        if      (curvature < 0.1)  valEl.textContent = 'Euclidean (flat)';
+        else if (curvature < 0.35) valEl.textContent = 'Slightly curved';
+        else if (curvature < 0.65) valEl.textContent = 'Moderately curved';
+        else if (curvature < 0.9)  valEl.textContent = 'Strongly curved';
+        else                       valEl.textContent = 'Hyperbolic';
+    }
+
+    var traces = [];
+
+    // ASCII arrow for edge key matching (avoids Unicode copy-paste issues)
+    var chainNames = { 'Entity':1, 'Animal':1, 'Mammal':1, 'Dog':1, 'Poodle':1 };
+    var chainEdges = [
+        ['Entity','Animal'], ['Animal','Mammal'],
+        ['Mammal','Dog'],    ['Dog','Poodle']
+    ];
+    var chainEdgeKeys = {};
+    chainEdges.forEach(function(e) { chainEdgeKeys[e[0] + '->' + e[1]] = true; });
+
+    var depthColors = ['#1e293b','#8b5cf6','#6366f1','#3b82f6','#10b981'];
+    var groupColors = { root: '#1e293b', animal: '#ef4444', object: '#6366f1' };
+
+    // ── 1. Boundary circle ──
+    if (curvature > 0.05) {
+        var cX = [], cY = [];
+        for (var i = 0; i <= 120; i++) {
+            var a = (i/120) * 2 * Math.PI;
+            cX.push(Math.cos(a));
+            cY.push(Math.sin(a));
+        }
+        traces.push({
+            type: 'scatter', x: cX, y: cY, mode: 'lines',
+            line: { color: 'rgba(100,116,139,' + (0.15 + curvature*0.35).toFixed(2) + ')', width: 2 },
+            showlegend: false, hoverinfo: 'skip'
+        });
+    }
+
+    // ── 2. Depth rings ──
+    for (var d = 1; d <= hyperbolicState.maxDepth; d++) {
+        var r = getHyperbolicRadius(d, curvature);
+        var rX = [], rY = [];
+        for (var i = 0; i <= 90; i++) {
+            var a = (i/90) * 2 * Math.PI;
+            rX.push(r * Math.cos(a));
+            rY.push(r * Math.sin(a));
+        }
+        traces.push({
+            type: 'scatter', x: rX, y: rY, mode: 'lines',
+            line: { color: 'rgba(203,213,225,0.35)', width: 1, dash: 'dot' },
+            showlegend: false, hoverinfo: 'skip'
+        });
+        traces.push({
+            type: 'scatter', x: [r + 0.04], y: [0],
+            mode: 'text', text: ['d=' + d],
+            textfont: { size: 9, color: 'rgba(148,163,184,0.7)' },
+            showlegend: false, hoverinfo: 'skip'
+        });
+    }
+
+    // ── 3. Normal edges (geodesics) ──
+    nodes.forEach(function(node) {
+        if (!node.parent) return;
+        var edgeKey = node.parent + '->' + node.name;
+        if (chainEdgeKeys[edgeKey]) return;
+
+        var parent = null;
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].name === node.parent) { parent = nodes[i]; break; }
+        }
+        if (!parent) return;
+
+        var p1 = getHypNodePos(parent, curvature);
+        var p2 = getHypNodePos(node, curvature);
+        var path = getHypEdgePath(p1, p2, curvature);
+
+        traces.push({
+            type: 'scatter', x: path.x, y: path.y, mode: 'lines',
+            line: { color: 'rgba(99,102,241,' + (0.15 + curvature*0.25).toFixed(2) + ')', width: 1.8 },
+            showlegend: false, hoverinfo: 'skip'
+        });
+    });
+
+    // ── 4. Chain edges (amber, thick) ──
+    chainEdges.forEach(function(pair) {
+        var pName = pair[0], cName = pair[1];
+        var parentNode = null, childNode = null;
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].name === pName) parentNode = nodes[i];
+            if (nodes[i].name === cName) childNode = nodes[i];
+        }
+        if (!parentNode || !childNode) return;
+
+        var p1 = getHypNodePos(parentNode, curvature);
+        var p2 = getHypNodePos(childNode, curvature);
+        var path = getHypEdgePath(p1, p2, curvature);
+
+        traces.push({
+            type: 'scatter', x: path.x, y: path.y, mode: 'lines',
+            line: { color: '#f59e0b', width: 4 },
+            showlegend: false,
+            hovertemplate: '<b>' + pName + ' -> ' + cName + '</b><br>Depth ' + parentNode.depth + ' -> ' + childNode.depth + '<extra></extra>'
+        });
+    });
+
+    // ── 5. Node points ──
+    nodes.forEach(function(node) {
+        var pos     = getHypNodePos(node, curvature);
+        var hasChild = false;
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].parent === node.name) { hasChild = true; break; }
+        }
+        var isLeaf  = !hasChild;
+        var onChain = !!chainNames[node.name];
+        var color   = onChain ? '#f59e0b' : (groupColors[node.group] || depthColors[node.depth] || '#64748b');
+        var sz      = node.depth === 0 ? 15 : (onChain ? 11 : (isLeaf ? 6 : 9));
+        var fSz     = node.depth === 0 ? 14 : (node.depth <= 2 ? 11 : (isLeaf ? 9 : 10));
+        var rr      = Math.sqrt(pos[0]*pos[0] + pos[1]*pos[1]);
+
+        var hoverStr = '<b>' + node.name + '</b><br>Depth: ' + node.depth +
+                       '<br>Parent: ' + (node.parent || '(root)') +
+                       '<br>Radius: ' + rr.toFixed(4);
+
+        if (curvature > 0.4 && node.depth > 0) {
+            var hd = poincareDistance([0,0], pos);
+            if (isFinite(hd)) {
+                hoverStr += '<br>Hyp dist to root: ' + hd.toFixed(2);
+            }
+        }
+        hoverStr += '<extra></extra>';
+
+        traces.push({
+            type: 'scatter',
+            x: [pos[0]], y: [pos[1]],
+            mode: 'markers+text',
+            text: [node.name],
+            textposition: hypTextPos(node.angle || 0, node.depth),
+            textfont: {
+                size: fSz,
+                color: onChain ? '#92400e' : (depthColors[Math.min(node.depth, 4)] || '#1e293b'),
+                weight: (node.depth <= 1 || onChain) ? 'bold' : 'normal'
+            },
+            marker: {
+                size: sz, color: color, opacity: 0.92,
+                line: { width: onChain ? 2 : 1, color: onChain ? '#fbbf24' : '#fff' }
+            },
+            showlegend: false,
+            hovertemplate: hoverStr
+        });
+    });
+
+    // ── 6. Plotly render ──
+    var pad = 1.22;
+    Plotly.react(plotDiv, traces, {
+        margin: { l: 20, r: 20, b: 20, t: 15 },
+        showlegend: false,
+        xaxis: {
+            range: [-pad, pad], zeroline: false,
+            showgrid: curvature < 0.25,
+            gridcolor: '#f1f5f9', showticklabels: false,
+            scaleanchor: 'y'
+        },
+        yaxis: {
+            range: [-pad, pad], zeroline: false,
+            showgrid: curvature < 0.25,
+            gridcolor: '#f1f5f9', showticklabels: false
+        },
+        plot_bgcolor: '#fff'
+    }, { displayModeBar: false, responsive: true });
+
+    // ── 7. Stats panel ──
+    var statsDiv = document.getElementById('poincare-stats');
+    if (!statsDiv) return;
+
+    renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColors);
+}
+
+// Stats panel in its own function so an error here can't prevent the plot
+function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColors) {
+    try {
+        var html = '';
+
+        // Depth -> Radius table
+        html += '<div style="font-family:sans-serif;font-size:0.82em;color:#475569;">';
+        html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:12px;">';
+        html += '<div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">Depth &rarr; Radius</div>';
+        for (var d = 0; d <= hyperbolicState.maxDepth; d++) {
+            var r = getHyperbolicRadius(d, curvature);
+            var dc = depthColors[d] || '#1e293b';
+            html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;">';
+            html += '<span style="color:' + dc + ';">Depth ' + d + '</span>';
+            html += '<span style="font-family:monospace;font-weight:bold;">r = ' + r.toFixed(4) + '</span>';
+            html += '</div>';
+        }
+        if (curvature > 0.5) {
+            html += '<div style="font-size:0.8em;color:#94a3b8;margin-top:6px;">Exponential compression &mdash; leaves cluster near r &rarr; 1</div>';
+        } else if (curvature < 0.15) {
+            html += '<div style="font-size:0.8em;color:#94a3b8;margin-top:6px;">Linear spacing &mdash; uniform depth intervals</div>';
+        } else {
+            html += '<div style="font-size:0.8em;color:#94a3b8;margin-top:6px;">Interpolating between linear and exponential</div>';
+        }
+        html += '</div>';
+
+        // Chain distances
+        if (curvature > 0.3) {
+            html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:12px;">';
+            html += '<div style="font-weight:bold;margin-bottom:8px;color:#92400e;">&#x1F536; Highlighted Chain Distances</div>';
+            var totalHyp = 0;
+            chainEdges.forEach(function(pair) {
+                var pNode = null, cNode = null;
+                for (var i = 0; i < nodes.length; i++) {
+                    if (nodes[i].name === pair[0]) pNode = nodes[i];
+                    if (nodes[i].name === pair[1]) cNode = nodes[i];
+                }
+                if (!pNode || !cNode) return;
+                var p1 = getHypNodePos(pNode, curvature);
+                var p2 = getHypNodePos(cNode, curvature);
+                var hd = poincareDistance(p1, p2);
+                var ed = Math.sqrt(Math.pow(p1[0]-p2[0],2) + Math.pow(p1[1]-p2[1],2));
+                totalHyp += (isFinite(hd) ? hd : 0);
+                html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;font-size:0.85em;">';
+                html += '<span>' + pair[0] + ' &rarr; ' + pair[1] + '</span>';
+                html += '<span style="font-family:monospace;"><span style="color:#f59e0b;font-weight:bold;">' + (isFinite(hd)?hd.toFixed(2):'&infin;') + '</span>';
+                html += ' <span style="color:#94a3b8;">(euc: ' + ed.toFixed(3) + ')</span></span>';
+                html += '</div>';
+            });
+            html += '<div style="display:flex;justify-content:space-between;padding:5px 0 0;font-size:0.85em;font-weight:bold;border-top:2px solid #fef3c7;">';
+            html += '<span>Total path</span>';
+            html += '<span style="color:#f59e0b;font-family:monospace;">' + totalHyp.toFixed(2) + '</span>';
+            html += '</div></div>';
+        }
+
+        // Geometry summary
+        html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;">';
+        html += '<div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">Geometry</div>';
+        html += '<div style="font-size:0.85em;line-height:1.6;">';
+        if (curvature > 0.5) {
+            html += '<span style="color:#8b5cf6;">&#9679;</span> <b>Exponential</b> room near boundary<br>';
+            html += '<span style="color:#8b5cf6;">&#9679;</span> Geodesics <b>curve inward</b><br>';
+            html += '<span style="color:#8b5cf6;">&#9679;</span> Distance <b>explodes</b> near edge<br>';
+            html += '<span style="color:#8b5cf6;">&#9679;</span> Trees embed with <b>low distortion</b>';
+        } else {
+            html += '<span style="color:#94a3b8;">&#9679;</span> Uniform polynomial spacing<br>';
+            html += '<span style="color:#94a3b8;">&#9679;</span> Geodesics are straight lines<br>';
+            html += '<span style="color:#94a3b8;">&#9679;</span> Polynomial volume growth<br>';
+            html += '<span style="color:#ef4444;">&#9679;</span> <b>Leaf nodes crowd together</b>';
+        }
+        html += '</div></div></div>';
+
+        statsDiv.innerHTML = html;
+    } catch(e) {
+        console.error('Hyperbolic stats error:', e);
+        statsDiv.innerHTML = '<div style="color:#ef4444;padding:12px;">Stats rendering error &mdash; see console.</div>';
+    }
+}
+
 function loadEmbeddingModule () {
 	const tasks = [
 		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
@@ -4074,4 +4548,16 @@ function loadEmbeddingModule () {
 	renderNegation();
 
 	initICL();
+
+	// ── Hyperbolic Embeddings — Poincaré Disk ──
+	try {
+		hyperbolicState.tree = buildHyperbolicTree();
+		renderHyperbolicEmbedding();
+		var poincareSlider = document.getElementById('poincare-curvature');
+		if (poincareSlider) {
+			poincareSlider.addEventListener('input', renderHyperbolicEmbedding);
+		}
+	} catch(e) {
+		console.error('Hyperbolic init failed:', e);
+	}
 }
