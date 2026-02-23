@@ -20,7 +20,11 @@ window.tlab_trajectory_data = {
 	steps: [] // Array of { name: "Stage Name", data: [[dim1, dim2...], ...] }
 };
 
-const contextSize = 6;
+function getContextSize() {
+	const slider = document.getElementById('transformer-context-size');
+	return slider ? parseInt(slider.value) : 16;
+}
+
 window.currentTrainingWindows = [];
 const attentionRenderRegistry = new Map();
 const positionalShiftRegistry = new Map();
@@ -514,7 +518,7 @@ async function train_transformer() {
 			break;
 		}
 
-		const thiscontextSize = Math.min(contextSize, tokens.length - 1);
+		const thiscontextSize = Math.min(getContextSize(), tokens.length - 1);
 		window.currentTrainingWindows = [];
 		for (let startIdx = 0; startIdx < tokens.length - thiscontextSize; startIdx++) {
 			const inputSlice = tokens.slice(startIdx, startIdx + thiscontextSize);
@@ -856,7 +860,7 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 
 	// Full context window,  multi-position loss provides dense gradient signal
 	// at every position, so the old "halve the context" trick is no longer needed.
-	const thiscontextSize = Math.min(contextSize, tokens.length - 1);
+	const thiscontextSize = Math.min(getContextSize(), tokens.length - 1);
 
 	if (thiscontextSize < 1) {
 		console.error("Context must have at least 2 elements");
@@ -976,7 +980,7 @@ function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
 	// Pick a random window of context size 3-5.
 	// Pick a random start index ensuring we have a 'next' token
 	const startIdx = 0;
-	const endIdx = Math.min(startIdx + contextSize, tokens.length - 1);
+	const endIdx = Math.min(startIdx + getContextSize(), tokens.length - 1);
 
 	const contextTokens = tokens.slice(startIdx, endIdx);
 	const targetToken = tokens[endIdx]; // The token coming AFTER the context
