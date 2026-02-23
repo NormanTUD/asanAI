@@ -1,5 +1,7 @@
 <?php include_once("functions.php"); ?>
 
+<script src="attention_engine.js"></script>
+
 <!--
 https://nlp.seas.harvard.edu/2018/04/03/attention.html
 
