@@ -1,9 +1,3 @@
-/**
- * AttentionEngine: Modular Transformer Component
- * Origin: Vaswani et al. (2017)
- * Methods: Multi-Head Projection, Scaled Dot-Product, LaTeX Logging
- */
-
 const replot_every_n_epochs = 50;
 const nr_fixed = 4;
 const posEmbedScalar = 1;
