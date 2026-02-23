@@ -263,7 +263,7 @@ class AttentionPathVisualizer {
 		// Title + mode buttons
 		html += `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
 	<h3 style="margin:0; color:#1e293b; font-size:1.05rem;">
-	    🔍 Attention Path Visualizer — Layer ${layerIndex + 1}
+	    Attention Path Visualizer — Layer ${layerIndex + 1}
 	</h3>
 	<div style="display:flex; gap:8px;">
 	    <button onclick="window.__apv_instances['${this.containerId}'].setMode('headview')"
