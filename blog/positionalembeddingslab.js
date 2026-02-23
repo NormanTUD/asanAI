@@ -114,7 +114,7 @@ function initPeFourierDemo() {
     <div style="font-family:sans-serif;max-width:820px;margin:0 auto;">
       <div style="display:flex;gap:20px;flex-wrap:wrap;">
 	<div style="flex:1;min-width:380px;">
-	  <h3 style="margin:0 0 6px;">🌊 Fourier Wave Bank <span style="font-weight:normal;font-size:13px;">(d_model = 8)</span></h3>
+	  <h3 style="margin:0 0 6px;">Fourier Wave Bank <span style="font-weight:normal;font-size:13px;">(d_model = 8)</span></h3>
 	  <canvas id="pfd-waves" width="380" height="260" style="border:1px solid #ccc;border-radius:6px;background:#fafafa;width:100%;"></canvas>
 	  <div style="margin-top:8px;">
 	    <label><b>Position:</b></label>
@@ -128,13 +128,13 @@ function initPeFourierDemo() {
 	  </div>
 	</div>
 	<div style="flex:0 0 220px;">
-	  <h3 style="margin:0 0 6px;">🔄 Rotation (Dim 0,1)</h3>
+	  <h3 style="margin:0 0 6px;">Rotation (Dim 0,1)</h3>
 	  <canvas id="pfd-circle" width="220" height="220" style="border:1px solid #ccc;border-radius:6px;background:#fafafa;"></canvas>
 	  <p style="font-size:12px;color:#555;margin:6px 0 0;">Blue = PE(pos), Red = PE(pos+k).<br>The rotation angle depends only on <b>k</b>.</p>
 	</div>
       </div>
       <div style="margin-top:14px;">
-	<h3 style="margin:0 0 6px;">📊 Position Fingerprint Vector</h3>
+	<h3 style="margin:0 0 6px;">Position Fingerprint Vector</h3>
 	<canvas id="pfd-bar" width="760" height="100" style="border:1px solid #ccc;border-radius:6px;background:#fafafa;width:100%;"></canvas>
 	<p style="font-size:12px;color:#555;margin:4px 0 0;">Each bar = one dimension's PE value in [-1, 1]. No two positions produce the same pattern.</p>
       </div>
