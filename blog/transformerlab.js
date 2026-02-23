@@ -182,7 +182,6 @@ function get_or_init_embeddings(tokens, d_model) {
 		}
 	});
 
-	// ── FIX: Remove tokens no longer in the training vocabulary ──
 	const tokenSet = new Set(tokens);
 	Object.keys(space).forEach(key => {
 		if (!tokenSet.has(key)) {
