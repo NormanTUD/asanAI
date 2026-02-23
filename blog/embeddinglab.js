@@ -213,7 +213,7 @@ function renderDualManifolds() {
 		type: 'scatter3d',
 		x: jpX, y: jpY, z: jpZ,
 		mode: 'markers+text',
-		text: jpLabels, textposition: 'top center',
+		text: jpLabels, textposition: 'bottom center',
 		textfont: { size: 11, color: '#065f46' },
 		marker: { size: 7, color: jpColors, opacity: 0.95, symbol: 'diamond', line: { width: 1, color: '#fff' } },
 		name: 'Japanese words (日本語)',
