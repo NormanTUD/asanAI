@@ -266,10 +266,7 @@ In computing, we treat $\infty$ as a value, but in mathematics, we use limits to
 
 ## Euler's Number ($e$)
 
-$e$ is not an arbitrary constant; it is the natural language of growth and change. It is often used in math and machine learning.
-
-### What is $e$? (The Mathematical Definition)
-Euler's number ($e \approx 2.71828$) is an irrational number defined by the limit of compound interest as the frequency of compounding approaches infinity. Mathematically, it is defined as:
+$e$ is not an arbitrary constant; it is the natural language of growth and change. It is often used in math and machine learning. Euler's number ($e \approx 2.71828$) is an irrational number defined by the limit of compound interest as the frequency of compounding approaches infinity. Mathematically, it is defined as:
 
 $$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$$
 
