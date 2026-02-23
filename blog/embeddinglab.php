@@ -305,3 +305,55 @@ Below, you can explore this interactively. Select different "concept directions"
         <b>What you're seeing:</b> The <span style="color:#3b82f6; font-weight:bold;">blue arrows</span> show the same concept offset applied to different word pairs. If the arrows are parallel and equal in length, the analogy holds, the concept is a <i>consistent direction</i> in the space, not tied to any specific word.
     </div>
 </section>
+
+<h2>The Platonic Representation Hypothesis</h2>
+
+<div class="smart-quote" data-cite="plato380republic">
+To them, I said, the truth would be literally nothing but the shadows of the images.
+</div>
+
+<div class="md">
+Perhaps the most provocative recent finding (\cite{huh2024platonic}): different models trained on completely different data modalities — text, images, audio — appear to be converging toward the same underlying representation of reality. Vision models and language models, when aligned, share similar geometric structures. This suggests that there may be a "platonic" embedding space — an optimal geometry for representing the statistical structure of the real world — and that all sufficiently powerful models are independently discovering it.
+
+The analogy to Plato's theory of Forms is deliberate. Just as Plato argued that the physical world is a shadow of a more perfect realm of ideal Forms, the Platonic Representation Hypothesis suggests that all model embeddings are **projections** — different rotations and scalings of a single, underlying geometric truth. A vision model that learns "dog" from millions of photographs, a language model that learns "dog" from billions of sentences, and an audio model that learns "dog" from spectrograms of barking — all three converge to place "dog" in the *same neighborhood*, near "cat" and "wolf," far from "piano" and "thunder." The internal distances and angles between concepts are preserved across modalities, even though no model ever saw another's training data.
+
+This would explain why cross-lingual alignment works (as we saw above): not just because human languages share syntactic structure, but because **the world they describe has a fixed geometry**. French and English converge not merely because both are human languages, but because both are attempting to model the same underlying reality — and that reality has a unique optimal embedding. As models grow more powerful and see more data, they are all climbing the same mountain from different sides, converging toward the summit: the platonic representation.
+
+Below, three independently trained models — a **Language model** (●), a **Vision model** (◆), and an **Audio model** (■) — have each learned to embed the same real-world concepts. Each model lives in its own rotated coordinate frame. But the **internal geometry** — which concepts are near which, what clusters form, what distances separate them — is identical across all three. Click **Align** to watch all three modalities converge onto a single shared structure, revealing the "platonic" geometry underneath.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-platonic" style="height: 600px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+
+    <!-- Toggles -->
+    <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="platonic-correspondence" checked onchange="togglePlatonicOption()"> Correspondence lines
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="platonic-structure" checked onchange="togglePlatonicOption()"> Cluster structure
+        </label>
+    </div>
+
+    <!-- Buttons -->
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
+        <button id="btn-platonic-align" onclick="animatePlatonicAlignment()" style="background: #3b82f6; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">▲ Align Modalities</button>
+        <button onclick="resetPlatonicAlignment()" style="background: #64748b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">↻ Reset</button>
+        <span id="platonic-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready — three models, three different orientations, one shared geometry.</span>
+    </div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b>
+        Three models trained on entirely different data:
+        the <span style="color:#3b82f6; font-weight:bold;">Language model</span> (● circles) learned from text,
+        the <span style="color:#f59e0b; font-weight:bold;">Vision model</span> (◆ diamonds) learned from images,
+        and the <span style="color:#10b981; font-weight:bold;">Audio model</span> (■ squares) learned from sound.
+        Each model discovered its own coordinate frame — but the internal structure is the same.
+        <span style="color:#ef4444;">Animals</span> cluster together,
+        <span style="color:#ec4899;">instruments</span> cluster together,
+        <span style="color:#14b8a6;">nature sounds</span> cluster together — in <i>every</i> modality.
+        The <span style="color:#8b5cf6; font-weight:bold;">purple dashed lines</span> connect the same concept across modalities.
+        Click <b>Align</b> to rotate all three into the same frame and watch them collapse onto one geometry: the <b>platonic representation</b>.
+    </div>
+</section>

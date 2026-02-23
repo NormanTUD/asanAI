@@ -1,4 +1,16 @@
 window.bibData = {
+	"plato380republic": {
+		author: "Plato",
+		year: "ca. 380 BC",
+		title: "The Republic",
+		url: "https://people.bu.edu/wwildman/courses/wphil/readings/wphil_rdg02b_republic_cave.htm"
+	},
+	"huh2024platonic": {
+		url: "https://arxiv.org/abs/2405.07987",
+		title: "The Platonic Representation Hypothesis",
+		year: 2024,
+		author: "Minyoung Huh, Brian Cheung, Tongzhou Wang, Phillip Isola"
+	},
 	"lebomboarticle": {
 		url: "https://www.pnas.org/doi/10.1073/pnas.1204213109",
 		title: "Early evidence of San material culture represented by organic artifacts from Border Cave, South Africa",

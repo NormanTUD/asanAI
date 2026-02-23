@@ -416,7 +416,7 @@ window.animateDualManifoldAlignment = function() {
 			document.getElementById('dm-sep-val').textContent = '0.0';
 
 			if (statusEl) {
-				statusEl.innerHTML = '✅ <b>Aligned!</b> Both manifolds overlap — the paths merge. Translation is the same geometric journey on both surfaces.';
+statusEl.innerHTML = '✅ <b>Aligned!</b> Both manifolds overlap — the paths merge. Translation is the same geometric journey on both surfaces.';
 				statusEl.style.color = '#10b981';
 			}
 			renderDualManifolds();
@@ -2386,6 +2386,305 @@ function renderScaleInvariance() {
     }
 }
 
+// ============================================================
+// THE PLATONIC REPRESENTATION HYPOTHESIS
+// ============================================================
+
+// ============================================================
+// THE PLATONIC REPRESENTATION HYPOTHESIS (optimized)
+// ============================================================
+
+const platonicState = {
+    visionRotZ: 65,
+    audioRotZ: -50,
+    audioRotY: 35,
+    currentVisionRotZ: 65,
+    currentAudioRotZ: -50,
+    currentAudioRotY: 35,
+    aligned: false,
+    animating: false,
+    showCorrespondence: true,
+    showStructure: true
+};
+
+const platonicConcepts = [
+    { name: 'Dog',     pos: [ 1.5, -1.0, -1.5], group: 'animal' },
+    { name: 'Cat',     pos: [ 1.0,  0.5, -1.5], group: 'animal' },
+    { name: 'Bird',    pos: [ 0.5, -0.3, -0.8], group: 'animal' },
+    { name: 'Car',     pos: [-1.5, -1.0,  0.3], group: 'machine' },
+    { name: 'Guitar',  pos: [-0.5,  1.5,  0.8], group: 'music' },
+    { name: 'Piano',   pos: [-1.0,  1.8,  0.3], group: 'music' },
+    { name: 'Thunder', pos: [ 0.0, -1.5,  1.5], group: 'nature' },
+    { name: 'Rain',    pos: [ 0.3, -1.0,  1.2], group: 'nature' },
+];
+
+const platonicStructurePairs = [
+    ['Dog', 'Cat'], ['Dog', 'Bird'], ['Cat', 'Bird'],
+    ['Guitar', 'Piano'],
+    ['Thunder', 'Rain'],
+];
+
+const platonicGroupColors = {
+    animal:  '#ef4444',
+    machine: '#6366f1',
+    music:   '#ec4899',
+    nature:  '#14b8a6'
+};
+
+function platonicRotateZ(pos, deg) {
+    const rad = deg * Math.PI / 180;
+    return [
+        pos[0] * Math.cos(rad) - pos[1] * Math.sin(rad),
+        pos[0] * Math.sin(rad) + pos[1] * Math.cos(rad),
+        pos[2]
+    ];
+}
+
+function platonicRotateY(pos, deg) {
+    const rad = deg * Math.PI / 180;
+    return [
+        pos[0] * Math.cos(rad) + pos[2] * Math.sin(rad),
+        pos[1],
+       -pos[0] * Math.sin(rad) + pos[2] * Math.cos(rad)
+    ];
+}
+
+function getPlatonicModPos(concept, modality) {
+    const st = platonicState;
+    const p = [...concept.pos];
+    if (modality === 'language') return p;
+    if (modality === 'vision')  return platonicRotateZ(p, st.currentVisionRotZ);
+    if (modality === 'audio') {
+        return platonicRotateY(platonicRotateZ(p, st.currentAudioRotZ), st.currentAudioRotY);
+    }
+    return p;
+}
+
+function renderPlatonicHypothesis() {
+    const plotDiv = document.getElementById('plot-platonic');
+    if (!plotDiv) return;
+
+    const st = platonicState;
+    const traces = [];
+
+	const modalityConfig = [
+		{ key: 'language', label: 'Language Model',  color: '#3b82f6', symbol: 'circle',  textColor: '#1e40af', prefix: '',    textPos: 'top center' },
+		{ key: 'vision',   label: 'Vision Model',   color: '#f59e0b', symbol: 'diamond', textColor: '#92400e', prefix: '👁 ', textPos: 'bottom center' },
+		{ key: 'audio',    label: 'Audio Model',     color: '#10b981', symbol: 'square',  textColor: '#065f46', prefix: '🔊 ', textPos: 'middle right' },
+	];
+
+    // --- 1. Points: one trace per modality (3 traces) ---
+	modalityConfig.forEach(mod => {
+		const xs = [], ys = [], zs = [], labels = [], colors = [];
+		platonicConcepts.forEach(c => {
+			const p = getPlatonicModPos(c, mod.key);
+			xs.push(p[0]); ys.push(p[1]); zs.push(p[2]);
+			labels.push(mod.prefix + c.name);
+			colors.push(platonicGroupColors[c.group]);
+		});
+		traces.push({
+			type: 'scatter3d',
+			x: xs, y: ys, z: zs,
+			mode: 'markers+text',
+			text: labels,
+			textposition: mod.textPos,           // <-- each modality on a different side
+			textfont: { size: 9, color: mod.textColor },
+			marker: { size: 6, color: colors, opacity: 0.9, symbol: mod.symbol, line: { width: 1, color: '#fff' } },
+			name: mod.label,
+			hovertemplate: '<b>%{text}</b> (' + mod.label + ')<extra></extra>'
+		});
+	});
+
+    // --- 2. Cluster structure: one batched line trace per modality (3 traces) ---
+    if (st.showStructure) {
+        modalityConfig.forEach(mod => {
+            const lx = [], ly = [], lz = [];
+            platonicStructurePairs.forEach(([a, b]) => {
+                const ca = platonicConcepts.find(c => c.name === a);
+                const cb = platonicConcepts.find(c => c.name === b);
+                const pa = getPlatonicModPos(ca, mod.key);
+                const pb = getPlatonicModPos(cb, mod.key);
+                lx.push(pa[0], pb[0], null);
+                ly.push(pa[1], pb[1], null);
+                lz.push(pa[2], pb[2], null);
+            });
+            traces.push({
+                type: 'scatter3d',
+                x: lx, y: ly, z: lz,
+                mode: 'lines',
+                line: { color: mod.color, width: 2 },
+                opacity: 0.25,
+                showlegend: false,
+                hoverinfo: 'skip',
+                connectgaps: false
+            });
+        });
+    }
+
+    // --- 3. Correspondence lines: one single batched trace (1 trace) ---
+    if (st.showCorrespondence) {
+        const cx = [], cy = [], cz = [];
+        platonicConcepts.forEach(c => {
+            const pL = getPlatonicModPos(c, 'language');
+            const pV = getPlatonicModPos(c, 'vision');
+            const pA = getPlatonicModPos(c, 'audio');
+            cx.push(pL[0], pV[0], null);
+            cy.push(pL[1], pV[1], null);
+            cz.push(pL[2], pV[2], null);
+            cx.push(pL[0], pA[0], null);
+            cy.push(pL[1], pA[1], null);
+            cz.push(pL[2], pA[2], null);
+        });
+        traces.push({
+            type: 'scatter3d',
+            x: cx, y: cy, z: cz,
+            mode: 'lines',
+            line: { color: 'rgba(139,92,246,0.3)', width: 1.5, dash: 'dash' },
+            showlegend: false,
+            hoverinfo: 'skip',
+            connectgaps: false
+        });
+    }
+
+    // --- 4. Modality centroid labels: one combined trace (1 trace) ---
+    const labelX = [], labelY = [], labelZ = [], labelText = [], labelColors = [];
+    modalityConfig.forEach(mod => {
+        let cx = 0, cy = 0, cz = 0;
+        platonicConcepts.forEach(c => {
+            const p = getPlatonicModPos(c, mod.key);
+            cx += p[0]; cy += p[1]; cz += p[2];
+        });
+        const n = platonicConcepts.length;
+        labelX.push(cx / n);
+        labelY.push(cy / n);
+        labelZ.push(cz / n + 1.0);
+        labelText.push(mod.label);
+        labelColors.push(mod.color);
+    });
+    traces.push({
+        type: 'scatter3d',
+        x: labelX, y: labelY, z: labelZ,
+        mode: 'text',
+        text: labelText,
+        textfont: { size: 13, color: labelColors },
+        showlegend: false,
+        hoverinfo: 'skip'
+    });
+
+    // Total: 3 + 3 + 1 + 1 = 8 traces (down from ~37)
+
+    const layout = {
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        showlegend: true,
+        legend: {
+            x: 0.01, y: 0.99,
+            bgcolor: 'rgba(255,255,255,0.9)',
+            bordercolor: '#e2e8f0', borderwidth: 1,
+            font: { size: 11 }
+        },
+        scene: {
+            xaxis: { title: '', showgrid: true, gridcolor: '#f1f5f9', zeroline: false, showticklabels: false },
+            yaxis: { title: '', showgrid: true, gridcolor: '#f1f5f9', zeroline: false, showticklabels: false },
+            zaxis: { title: '', showgrid: true, gridcolor: '#f1f5f9', zeroline: false, showticklabels: false },
+            camera: { eye: { x: 2.2, y: 1.6, z: 1.0 } },
+            bgcolor: '#fff',
+            aspectmode: 'cube'
+        }
+    };
+
+    Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+}
+
+// --- Animate alignment ---
+
+window.animatePlatonicAlignment = function() {
+    const st = platonicState;
+    if (st.animating || st.aligned) return;
+
+    st.animating = true;
+    const btn = document.getElementById('btn-platonic-align');
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+
+    const startVZ = st.currentVisionRotZ;
+    const startAZ = st.currentAudioRotZ;
+    const startAY = st.currentAudioRotY;
+    const duration = 2500;
+    const startTime = performance.now();
+
+    function easeInOutCubic(t) {
+        return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+    }
+
+    function step(now) {
+        const elapsed = now - startTime;
+        const rawT = Math.min(elapsed / duration, 1);
+        const t = easeInOutCubic(rawT);
+
+        st.currentVisionRotZ = startVZ * (1 - t);
+        st.currentAudioRotZ  = startAZ * (1 - t);
+        st.currentAudioRotY  = startAY * (1 - t);
+
+        const statusEl = document.getElementById('platonic-status');
+        if (statusEl) {
+            statusEl.textContent = 'Converging... Vision: ' + Math.round(st.currentVisionRotZ) +
+                '° → 0° | Audio: ' + Math.round(st.currentAudioRotZ) + '°, ' +
+                Math.round(st.currentAudioRotY) + '° → 0°';
+        }
+
+        renderPlatonicHypothesis();
+
+        if (rawT < 1) {
+            requestAnimationFrame(step);
+        } else {
+            st.currentVisionRotZ = 0;
+            st.currentAudioRotZ = 0;
+            st.currentAudioRotY = 0;
+            st.animating = false;
+            st.aligned = true;
+            btn.disabled = true;
+
+            if (statusEl) {
+                statusEl.innerHTML = '✅ <b>Converged!</b> All three modalities collapse onto the same geometry — the platonic representation.';
+                statusEl.style.color = '#10b981';
+            }
+            renderPlatonicHypothesis();
+        }
+    }
+    requestAnimationFrame(step);
+};
+
+// --- Reset ---
+
+window.resetPlatonicAlignment = function() {
+    const st = platonicState;
+    if (st.animating) return;
+
+    st.currentVisionRotZ = st.visionRotZ;
+    st.currentAudioRotZ  = st.audioRotZ;
+    st.currentAudioRotY  = st.audioRotY;
+    st.aligned = false;
+
+    const btn = document.getElementById('btn-platonic-align');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+
+    const statusEl = document.getElementById('platonic-status');
+    if (statusEl) {
+        statusEl.textContent = 'Ready — three models, three different orientations, one shared geometry.';
+        statusEl.style.color = '#64748b';
+    }
+
+    renderPlatonicHypothesis();
+};
+
+// --- Toggles ---
+
+window.togglePlatonicOption = function() {
+    platonicState.showCorrespondence = document.getElementById('platonic-correspondence').checked;
+    platonicState.showStructure = document.getElementById('platonic-structure').checked;
+    renderPlatonicHypothesis();
+};
 
 function loadEmbeddingModule () {
 	const tasks = [
@@ -2466,6 +2765,8 @@ function loadEmbeddingModule () {
 	setParallelogramConcept('royalty');
 
 	renderDualManifolds();
+
+	renderPlatonicHypothesis();
 
 	const slider = document.getElementById('scale-magnitude');
 	renderScaleInvariance();
