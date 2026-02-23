@@ -6,6 +6,19 @@ TODO https://arxiv.org/abs/2508.18302
 
 <div class="md">
 ## Qualia, or the "how it is" to experience something
+
+### The Vector Grounding Problem: Symbols, Spaces, and Senses
+
+<div class="smart-quote" data-cite="harnad1990symbol">
+How can the semantic interpretation of a formal symbol system be made intrinsic to the system, rather than just parasitic on the meanings in our heads?
+</div>
+
+At the heart of modern AI lies a profound philosophical and technical gap. While Large Language Models (LLMs) can discuss the smell of rain or the sting of betrayal with poetic eloquence, they lack a fundamental connection to the world they describe. This is known as the **Grounding Problem**.
+
+The "Grounding Problem" asks how digital symbols (words, numbers) acquire meaning. For LLMs, meaning is defined through **distributional semantics**: a word's meaning is simply its relationship to other words.
+
+In an embedding space, the word "apple" is not a crisp, sweet fruit; it is a point in a high-dimensional vector space, perhaps closer to "pear" and "fruit" and further from "carburetor."
+
 ### Mary's Room: The Qualitative Gap
 
 The "Knowledge Argument" or \citealternativetitle{jackson1982epiphenomenal} posits a super intelligent scientist who, from birth on, was in a room where everything is kept in gray colors in dim light, so she never saw any color. But being a super smart scientist, she knows every physical fact about color, wavelengths, retinal response, and so on, but has never actually *seen* color. When she leaves her black-and-white room and sees a red rose, does she learn something new?
@@ -49,17 +62,51 @@ The 4E framework breaks down the "Intelligence" of an AI into four missing dimen
 
 **Conclusion:** LLMs represent a triumph of the *Extended* mind, but they are hollow because they lack the *Embodied* grounding that gives language its actual meaning.
 
-## The Vector Grounding Problem: Symbols, Spaces, and Senses
+### The Chinese Room Argument (John Searle)
+In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.
 
-<div class="smart-quote" data-cite="harnad1990symbol">
-How can the semantic interpretation of a formal symbol system be made intrinsic to the system, rather than just parasitic on the meanings in our heads?
+<div class="smart-quote" data-cite="searle1980minds">
+  The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning).
 </div>
 
-At the heart of modern AI lies a profound philosophical and technical gap. While Large Language Models (LLMs) can discuss the smell of rain or the sting of betrayal with poetic eloquence, they lack a fundamental connection to the world they describe. This is known as the **Grounding Problem**.
+Imagine a person who speaks only English sitting inside a locked room. They have a rulebook (the "program") that says: *"If you see this shape (Chinese character), output that shape."*
+If you slip a question in Chinese under the door, the person can follow the rulebook and slide a perfect answer back out.
 
-The "Grounding Problem" asks how digital symbols (words, numbers) acquire meaning. For LLMs, meaning is defined through **distributional semantics**: a word's meaning is simply its relationship to other words.
+* **The Result:** To the person outside, it looks like the person in the room understands Chinese.
+* **The Reality:** The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning).
+* **The Lesson:** AI is the person in the room. It has a perfect rulebook for English, but it doesn't *understand* the words "Paris" or "France." It just knows they go together.
+</div>
 
-In an embedding space, the word "apple" is not a crisp, sweet fruit; it is a point in a high-dimensional vector space, perhaps closer to "pear" and "fruit" and further from "carburetor."
+<div class="md">
+
+### The Multiverse of the Meadow: Uexküll's Bubble
+To understand the fundamental isolation of an AI's intelligence, we can look to the opening of Jakob von Uexküll's "A Stroll Through the Worlds of Animals and Men" \citeauthor{uexkull1934}. He invites us to perform a radical mental experiment to understand that there is no single "objective" world, only a collection of subjective ones:
+
+<div class="smart-quote" data-cite="uexkull1934" data-page=43>
+  "We begin such a stroll on a sunny day before a flowering meadow [...] and we make a bubble around each of the animals living in the meadow. The bubble represents each animal's environment and contains all the features accessible to the subject. [...] A new world arises in each bubble."
+</div>
+
+Think of a **froghopper** sitting on a stem of grass in that meadow. For the froghopper, the "meadow" as a scenic landscape does not exist. Its world consists only of the mechanical resistance of the plant's skin and the chemical composition of the sap it drinks.
+
+Now, imagine a **Large Language Model** placed in that same meadow. If we were to draw a bubble around the AI, what would be inside?
+* No sunlight, because it has no photoreceptors.
+* No scent of flowers, because it has no olfactory sensors.
+* No buzzing of bees, because it has no microphone.
+
+The AI's bubble is filled exclusively with **statistical relationships between tokens**. For the AI, the "meadow" is a high-dimensional coordinate where the vector for "flower" is likely to be found near "petal" and "fragrance."
+
+By using Uexküll's logic, we see that the AI isn't "failing" to perceive our world; it is simply inhabiting its own. It is a creature of pure syntax, living in a mathematical Umwelt where "meaning" is not a feeling or a sensation, but merely the distance between two points in a sea of data.
+
+#### World View of an AI
+
+<figure>
+    <img style="width: 100%" src="weltbild.jpg" alt="World view" />
+    <figcaption>Created by <i>Gemini</i></figcaption>
+</figure>
+
+In search of finding an image for this article, I tried to generate an image that would be understandable to an \citeauthor{arsmagna} would have understood. I didn't specify everything exactly, and thus, this image show's it's own world-view
+
+Since the bubble of the AI is only the technical data it gathered from *the internet*, it thinks the Internet is the main base.
 
 ### The "Dictionary" Paradox
 
@@ -94,7 +141,7 @@ LLMs have mastered the **map** (language) but have never set foot in the **terri
 
 Until an AI is granted a body, sensors, and a need to survive within a physical environment, its "knowledge" remains a beautiful, complex, but hollow mathematical projection. And even if it had a body, it is not clear whether it would really be able to *experience* things, as in the end, it just deals with vectors, tensors and matrices, and it is not clear that this could lead to any experience.
 
-## The Extended Mind Thesis: Tools as Biology
+### The Extended Mind Thesis: Tools as Biology
 
 <div class="smart-quote" data-cite="clark1998extended" data-page=8>
 Epistemic action, we suggest, demands spread of epistemic credit. If, as we confront some task, a part of the world functions as a process which, were it done in the head, we would have no hesitation in recognizing as part of the cognitive process, then that part of the world is (so we claim) part of the cognitive process. Cognitive processes ain't (all) in the head!
@@ -290,52 +337,6 @@ The rapid proliferation of AI-generated content introduces a new risk: data poll
 * **The Environmental Cost:** Training massive models requires immense electricity and water for cooling. Programmers should learn to optimize for "Green AI" rather than just "Big AI." As Bruce Schneier notes, "Data is the pollution problem of the information age," and its processing has a physical footprint.
 * **Active Inclusion, Not Just Bias-Fixing:** It is not enough to just remove "bad" data. Developers must actively ensure that minority languages, cultures, and perspectives are included. If a model only sees the "majority," it will treat everyone else as an "error" in the code.
 * **Red Teaming for Safety:** Before a model is released, it must be "stress-tested" by people trying to break it. Programmers need to learn that "security is not a product, but a process" (Bruce Schneier). This involves imagining the worst-case scenarios, like the "Paperclip Maximizer" logic, and building guardrails before the model goes live.
-
-### The Chinese Room Argument (John Searle)
-In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.
-
-<div class="smart-quote" data-cite="searle1980minds">
-  The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning).
-</div>
-
-Imagine a person who speaks only English sitting inside a locked room. They have a rulebook (the "program") that says: *"If you see this shape (Chinese character), output that shape."*
-If you slip a question in Chinese under the door, the person can follow the rulebook and slide a perfect answer back out.
-
-* **The Result:** To the person outside, it looks like the person in the room understands Chinese.
-* **The Reality:** The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning).
-* **The Lesson:** AI is the person in the room. It has a perfect rulebook for English, but it doesn't *understand* the words "Paris" or "France." It just knows they go together.
-</div>
-
-<div class="md">
-
-### The Multiverse of the Meadow: Uexküll's Bubble
-To understand the fundamental isolation of an AI's intelligence, we can look to the opening of Jakob von Uexküll's "A Stroll Through the Worlds of Animals and Men" \citeauthor{uexkull1934}. He invites us to perform a radical mental experiment to understand that there is no single "objective" world, only a collection of subjective ones:
-
-<div class="smart-quote" data-cite="uexkull1934" data-page=43>
-  "We begin such a stroll on a sunny day before a flowering meadow [...] and we make a bubble around each of the animals living in the meadow. The bubble represents each animal's environment and contains all the features accessible to the subject. [...] A new world arises in each bubble."
-</div>
-
-Think of a **froghopper** sitting on a stem of grass in that meadow. For the froghopper, the "meadow" as a scenic landscape does not exist. Its world consists only of the mechanical resistance of the plant's skin and the chemical composition of the sap it drinks.
-
-Now, imagine a **Large Language Model** placed in that same meadow. If we were to draw a bubble around the AI, what would be inside?
-* No sunlight, because it has no photoreceptors.
-* No scent of flowers, because it has no olfactory sensors.
-* No buzzing of bees, because it has no microphone.
-
-The AI's bubble is filled exclusively with **statistical relationships between tokens**. For the AI, the "meadow" is a high-dimensional coordinate where the vector for "flower" is likely to be found near "petal" and "fragrance."
-
-By using Uexküll's logic, we see that the AI isn't "failing" to perceive our world; it is simply inhabiting its own. It is a creature of pure syntax, living in a mathematical Umwelt where "meaning" is not a feeling or a sensation, but merely the distance between two points in a sea of data.
-
-#### World View of an AI
-
-<figure>
-    <img style="width: 100%" src="weltbild.jpg" alt="World view" />
-    <figcaption>Created by *Gemini*</figcaption>
-</figure>
-
-In search of finding an image for this article, I tried to generate an image that would be understandable to an \citeauthor{arsmagna} would have understood. I didn't specify everything exactly, and thus, this image show's it's own world-view
-
-Since the bubble of the AI is only the technical data it gathered from *the internet*, it thinks the Internet is the main base.
 
 ## The Physical Cost of Intelligence: Energy, Water, and Extraction
 
