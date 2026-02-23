@@ -718,7 +718,7 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 
 	if (thiscontextSize < 1) {
 		console.error("Context must have at least 2 elements");
-		return tf.scalar(10);
+		return tf.scalar(100);
 	}
 
 	// Causal mask (upper triangle → future positions get -1e9 after subtraction)
