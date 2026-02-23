@@ -279,25 +279,6 @@ The deeper theoretical reason the path-finding framing works is the **Manifold H
 
 There is an even more geometric way to think about attention. In differential geometry, a **metric tensor** defines how distances are measured locally on a manifold, it tells you the "shape" of space at each point. The attention matrix in a Transformer does something analogous: it dynamically redefines which tokens are "close" to which other tokens at each layer, effectively warping the local geometry of the embedding space as the representation is processed. This is not merely a metaphor, the connections between attention mechanisms and geometric structures on manifolds have been formalized in the framework of Geometric Deep Learning (\cite{bronstein2021geometric}).
 
-### Interactive: Attention Warps the Geometry of Meaning
-
-Below is a 2D grid representing the local geometry of embedding space. Each colored dot is a token. **Click on any token** to "attend" to it, watch how the grid warps, pulling semantically related tokens closer and pushing unrelated ones further away. This is what the attention mechanism does at every layer: it dynamically redefines which tokens are "near" each other, bending the metric of the space itself.
-
-The grid lines show the distortion, like a rubber sheet being pinched. In differential geometry, this is exactly what a **metric tensor** does: it tells you how to measure distances locally, and attention changes that measurement at every step.
-</div>
-
-<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-metric-tensor" style="height: 550px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px; cursor: pointer;"></div>
-    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
-        <button onclick="resetMetricTensor()" style="background: #64748b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">↺ Reset Grid</button>
-        <span id="metric-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Click any token to apply attention.</span>
-    </div>
-    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
-        <b>How to read this:</b> The grid represents the "fabric" of embedding space. In the unwarped state, all tokens are equally spaced, the metric is flat (Euclidean). When you click a token, attention <i>warps</i> the metric: related tokens are pulled closer (the grid compresses between them), and unrelated tokens are pushed away (the grid stretches). The <span style="color:#8b5cf6; font-weight:bold;">purple halo</span> shows the attention "field", stronger near the attended token, fading with semantic distance.
-    </div>
-</section>
-
-
 <div class="md">
 ## The Residual Stream as Geodesic
 
