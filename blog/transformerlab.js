@@ -546,8 +546,9 @@ async function train_transformer() {
 
 		renderLossGraph();
 
+		window.currentWeights = await convert_tensors_to_weights(weightVars);
+
 		if ((i + 1) % replot_every_n_epochs === 0 || i === epochs - 1) {
-			window.currentWeights = await convert_tensors_to_weights(weightVars);
 			run_transformer_demo();
 			await tf.nextFrame();
 
