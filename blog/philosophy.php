@@ -221,7 +221,7 @@ However, unless you explicitly tell it otherwise, a rigid logical system cannot 
 To a human, these are "common sense." To a machine, the price of tea in China is just another variable in the database. If the machine doesn't have a rule saying "Moving a cup does not affect international tea markets," it technically cannot be certain of the state of the world post-action.
 
 ### In Simple Dense Layer Networks
-In a basic MLP (Multi-Layer Perceptron), the Frame Problem manifests as a lack of **structural stability**. Because every neuron in a dense layer is connected to every neuron in the next, a single weight update (learning) can have "ripples" that overwrite unrelated information.
+In a basic MLP (Multi-Layer Perceptron), the Frame Problem manifests as a lack of **structural stability**. Because every neuron in a dense layer is connected to every neuron in the previous and next layer, a single weight update (learning) can have "ripples" that overwrite unrelated information.
 * **Catastrophic Forgetting:** This is the Frame Problem in a learning context. When the network learns a new task (moving the cup), it might accidentally "change the price of tea" (overwrite the weights for a different task) because it doesn't have a modular "frame" to protect its existing knowledge.
 
 ### In LLMs and Modern Systems
