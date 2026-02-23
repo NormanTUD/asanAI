@@ -170,7 +170,7 @@ function get_or_init_embeddings(tokens, d_model) {
 	tokens.forEach(token => {
 		if (!space[token]) {
 			space[token] = Array.from({ length: d_model }, () =>
-				parseFloat(gaussianRandom().toFixed(nr_fixed))
+				parseFloat(gaussianRandom(20, 20).toFixed(nr_fixed))
 			);
 		}
 	});
@@ -3553,11 +3553,31 @@ function tled_updateEmbedding(inputEl) {
 	calculate_vector_math();
 }
 
-const gaussianRandom = () => {
+const gaussianRandom = (min, max) => {
 	let u = 0, v = 0;
 	while (u === 0) u = Math.random();
 	while (v === 0) v = Math.random();
-	return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+
+	// Standard Normal Distribution (mean = 0, std = 1)
+	let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+
+	// If no range is provided, return standard distribution
+	if (min === undefined || max === undefined) return num;
+
+	/**
+	 * Scaling the value:
+	 * 1. Divide by 10 to narrow the spread (mostly within -1.0 to 1.0).
+	 * 2. Shift by 0.5 to center it.
+	 * 3. Scale by the range (max - min).
+	 */
+	num = num / 10.0 + 0.5; // Translate to 0 -> 1
+
+	// Clamp to [0, 1] if the value falls in the far tails
+	if (num > 1 || num < 0) {
+		return gaussianRandom(min, max); // Resample if out of bounds
+	}
+
+	return num * (max - min) + min;
 };
 
 /**
