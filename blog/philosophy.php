@@ -5,7 +5,7 @@ TODO https://arxiv.org/abs/2508.18302
 -->
 
 <div class="md">
-## Qualia, or the "how it is" to experience something
+## Qualia, or the "how it is" to experience something and how it is to be human vs. be AI
 
 ### The Vector Grounding Problem: Symbols, Spaces, and Senses
 
