@@ -27,12 +27,12 @@ https://arxiv.org/html/2505.11611v1
 
 	<div style="margin-bottom: 15px;">
 		<label style="font-weight: bold;">Attention Heads ($h$): </label>
-		<span id="heads-val" style="font-weight: bold; color: #3b82f6;">4</span>
+		<span id="heads-val" style="font-weight: bold; color: #3b82f6;">3</span>
 		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
             <b>Dependency:</b> Must divide into Dimension.
             <i>Reason:</i> Multi-head attention splits the main vector into $h$ parallel "viewpoints." If $d_{\text{model}}$ is 4 and $h$ is 2, each head looks at 2 dimensions.
         </p>
-		<input type="range" id="transformer-heads" min="1" max="8" value="4"
+		<input type="range" id="transformer-heads" min="1" max="8" value="3"
 			style="width: 100%;" oninput="syncTransformerSettings('heads')">
 	</div>
 

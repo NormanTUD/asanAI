@@ -555,6 +555,13 @@ async function train_transformer() {
 				const vocab = Object.keys(window.persistentEmbeddingSpace);
 				const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
 
+				const maxWordLen = Math.max(
+					...window.currentTrainingWindows.flatMap(w => w.target.map(t => t.length)),
+					...vocab.map(v => v.length),
+					1
+				);
+				const chipMinWidth = Math.max(90, maxWordLen * 9 + 70) + 'px';
+
 				const windowsHtml = window.currentTrainingWindows.map((w, idx) => {
 					// Run a quick forward pass for this window to get predictions
 					const predictions = [];
@@ -660,9 +667,9 @@ async function train_transformer() {
 						const probStr = (pred.prob * 100).toFixed(1);
 						const bgColor = isCorrect ? '#dcfce7' : '#fee2e2';
 
-						return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem;" title="Target: ${targetWord} | Predicted: ${pred.word} (${probStr}%)">
-			${icon} <b>${targetWord}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${pred.word}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
-		    </span>`;
+						return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem; min-width:${chipMinWidth}; text-align:center; box-sizing:border-box;" title="Target: ${targetWord} | Predicted: ${pred.word} (${probStr}%)">
+	    ${icon} <b>${targetWord}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${pred.word}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
+	</span>`;
 					}).join('');
 
 					return `<div style="margin-bottom:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-family:monospace; font-size:0.85rem;">
