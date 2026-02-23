@@ -468,3 +468,56 @@ Below, you can watch this process unfold. Each **example pair** produces an offs
         Add more examples with the slider to watch the task vector stabilize and point more precisely toward the correct answer.
     </div>
 </section>
+
+<div class="md">
+## The Geometry of Negation
+
+One of the most counter-intuitive failures of embedding spaces is that **negation doesn't work geometrically** the way you'd expect. The vector for "not happy" is closer to "happy" than to "sad", because "not" and "happy" co-occur in the same sentences, and distributional semantics encodes co-occurrence, not logical opposition. This is a deep structural limitation: embedding spaces capture **associative similarity**, not **logical relationships**.
+
+In a distributional model, the meaning of "not" is itself a vector, learned from all the contexts where "not" appears. When you compose "not happy" (by adding the vectors), the "not" component provides only a small perturbation, a slight directional nudge, rather than a $180°$ reversal to the antonym. The result is a vector that still sits firmly in the neighborhood of "happy," surrounded by words like "cheerful," "pleased," and "joyful." The actual antonym, "sad," remains far away in a completely different region of the space.
+
+$$\vec{v}_{\text{not happy}} = \vec{v}_{\text{not}} + \vec{v}_{\text{happy}} \approx \vec{v}_{\text{happy}} + \varepsilon \quad \neq \quad \vec{v}_{\text{sad}}$$
+
+This negation problem has been extensively studied (\cite{kassner2020negated}) and remains partially unsolved even in large contextual models like BERT and GPT. While Transformers with attention can handle negation better than static embeddings, because the surrounding context modulates the representation across layers, the underlying geometric limitation persists in the embedding layers themselves. The word "not" simply does not encode a logical inversion operator in vector space; it encodes "the kinds of sentences where 'not' appears," which overwhelmingly co-occur with the very concepts being negated.
+
+Below, select any word (or type "not X") and observe how "not X" drifts only slightly from X in embedding space, rather than jumping to its logical antonym. The faded circle marks where "not X" *should* land if geometry respected logic.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-negation" style="height: 520px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+
+    <!-- Text input -->
+    <div style="margin-bottom: 12px;">
+        <input type="text" id="input-negation"
+            style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;"
+            placeholder='Type a word or "not X" (e.g., not Happy, Love, Cold...)'
+            oninput="handleNegationInput(this.value)">
+    </div>
+
+    <!-- Buttons -->
+    <div style="display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; font-weight: bold; color: #475569;">Try negating:</label>
+        <button class="negation-btn" id="btn-neg-happy" onclick="setNegationWord('Happy')" style="background: #3b82f6; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85em;">Happy</button>
+        <button class="negation-btn" id="btn-neg-good" onclick="setNegationWord('Good')" style="background: #64748b; opacity: 0.7; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85em;">Good</button>
+        <button class="negation-btn" id="btn-neg-love" onclick="setNegationWord('Love')" style="background: #64748b; opacity: 0.7; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85em;">Love</button>
+        <button class="negation-btn" id="btn-neg-alive" onclick="setNegationWord('Alive')" style="background: #64748b; opacity: 0.7; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85em;">Alive</button>
+        <button class="negation-btn" id="btn-neg-hot" onclick="setNegationWord('Hot')" style="background: #64748b; opacity: 0.7; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85em;">Hot</button>
+        <button class="negation-btn" id="btn-neg-big" onclick="setNegationWord('Big')" style="background: #64748b; opacity: 0.7; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85em;">Big</button>
+    </div>
+
+    <!-- Stats cards -->
+    <div id="negation-stats" style="max-width: 650px; margin: 0 auto 12px auto;"></div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6;">
+        <b>What you're seeing:</b> The <span style="color:#3b82f6; font-weight:bold;">blue dot</span> is the original word.
+        The <span style="color:#ef4444; font-weight:bold;">red diamond</span> is "not [word]", its <i>actual</i> position in embedding space,
+        computed by adding the "not" vector. The <span style="color:#10b981; font-weight:bold;">green dot</span> is the logical antonym.
+        The <span style="color:rgba(239,68,68,0.4);">faded red circle</span> shows where "not [word]" <i>should</i> land if negation worked logically.
+        Notice the red diamond barely moves from the blue dot, because in distributional semantics,
+        "not happy" co-occurs in the same contexts as "happy," so they end up as neighbors.
+        The <span style="color:#f59e0b; font-weight:bold;">gold arrow</span> is the tiny "not" perturbation; the
+        <span style="color:rgba(16,185,129,0.4);">faded green line</span> is the path logic <i>expects</i>.
+        <b>Negation is invisible to the geometry.</b>
+    </div>
+</section>

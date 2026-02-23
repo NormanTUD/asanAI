@@ -1,4 +1,10 @@
 window.bibData = {
+	"kassner2020negated": {
+		author: "Nora Kassner, Hinrich Schütze",
+		url: "https://arxiv.org/abs/1911.03343",
+		year: 2019,
+		title: "Negated and Misprimed Probes for Pretrained Language Models: Birds Can Talk, But Cannot Fly"
+	},
 	"hendel2023incontext": {
 		url: "https://arxiv.org/abs/2310.15916",
 		author: "Roee Hendel, Mor Geva, Amir Globerson",

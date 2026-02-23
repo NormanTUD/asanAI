@@ -3531,6 +3531,302 @@ function initICL() {
     renderICL();
 }
 
+// ============================================================
+// THE GEOMETRY OF NEGATION
+// ============================================================
+
+const negationState = {
+    selectedWord: 'Happy',
+    words: {
+        'Happy':  { pos: [7,  5],   antonym: 'Sad' },
+        'Sad':    { pos: [-8,  4],  antonym: 'Happy' },
+        'Good':   { pos: [5,  2],   antonym: 'Bad' },
+        'Bad':    { pos: [-6,  1],  antonym: 'Good' },
+        'Love':   { pos: [8, -1],   antonym: 'Hate' },
+        'Hate':   { pos: [-7, -2],  antonym: 'Love' },
+        'Alive':  { pos: [4, -4],   antonym: 'Dead' },
+        'Dead':   { pos: [-5, -5],  antonym: 'Alive' },
+        'Hot':    { pos: [6, -6],   antonym: 'Cold' },
+        'Cold':   { pos: [-6, -6],  antonym: 'Hot' },
+        'Big':    { pos: [3,  7],   antonym: 'Small' },
+        'Small':  { pos: [-4,  7],  antonym: 'Big' },
+    },
+    // The "not" vector. In real embeddings, vec("not") is a small, generic
+    // function-word vector — it does NOT encode logical inversion.
+    notVector: [-1.5, -0.8],
+};
+
+function getNegatedPosition(wordKey) {
+    const st = negationState;
+    const w = st.words[wordKey];
+    return [
+        w.pos[0] + st.notVector[0],
+        w.pos[1] + st.notVector[1]
+    ];
+}
+
+function setNegationWord(word) {
+    negationState.selectedWord = word;
+
+    // Update button highlights
+    document.querySelectorAll('.negation-btn').forEach(btn => {
+        btn.style.background = '#64748b';
+        btn.style.opacity = '0.7';
+    });
+    const activeBtn = document.getElementById(`btn-neg-${word.toLowerCase()}`);
+    if (activeBtn) {
+        activeBtn.style.background = '#3b82f6';
+        activeBtn.style.opacity = '1';
+    }
+
+    renderNegation();
+}
+
+window.handleNegationInput = function(val) {
+    let word = val.trim();
+    // Accept "not happy" or just "happy"
+    if (word.toLowerCase().startsWith('not ')) {
+        word = word.substring(4).trim();
+    }
+    const match = Object.keys(negationState.words).find(
+        w => w.toLowerCase() === word.toLowerCase()
+    );
+    if (match) {
+        setNegationWord(match);
+    }
+};
+
+function renderNegation() {
+	const plotDiv = document.getElementById('plot-negation');
+	if (!plotDiv) return;
+
+	const st       = negationState;
+	const selected = st.selectedWord;
+	const selData  = st.words[selected];
+	const antKey   = selData.antonym;
+	const antData  = st.words[antKey];
+	const notPos   = getNegatedPosition(selected);
+
+	// Distances
+	const distToNot = Math.sqrt(
+		Math.pow(notPos[0] - selData.pos[0], 2) +
+		Math.pow(notPos[1] - selData.pos[1], 2)
+	);
+	const distNotToAnt = Math.sqrt(
+		Math.pow(antData.pos[0] - notPos[0], 2) +
+		Math.pow(antData.pos[1] - notPos[1], 2)
+	);
+	const ratio = (distNotToAnt / distToNot).toFixed(1);
+
+	const traces      = [];
+	const annotations = [];
+
+	// ---- 1. Background words (faded) ----
+	for (const [word, data] of Object.entries(st.words)) {
+		if (word === selected || word === antKey) continue;
+		traces.push({
+			x: [data.pos[0]], y: [data.pos[1]],
+			mode: 'markers+text',
+			text: [word], textposition: 'top center',
+			textfont: { size: 10, color: '#94a3b8' },
+			marker: { size: 6, color: '#cbd5e1', opacity: 0.5 },
+			showlegend: false,
+			hovertemplate: `<b>${word}</b><br>x: %{x:.1f}, y: %{y:.1f}<extra></extra>`
+		});
+	}
+
+	// ---- 2. "Expected" ghost circle at antonym ----
+	const ghostSteps = 50;
+	const ghostR     = 1.8;
+	const gX = [], gY = [];
+	for (let i = 0; i <= ghostSteps; i++) {
+		const a = (i / ghostSteps) * 2 * Math.PI;
+		gX.push(antData.pos[0] + ghostR * Math.cos(a));
+		gY.push(antData.pos[1] + ghostR * Math.sin(a));
+	}
+	traces.push({
+		x: gX, y: gY,
+		mode: 'lines', fill: 'toself',
+		fillcolor: 'rgba(239, 68, 68, 0.06)',
+		line: { color: 'rgba(239, 68, 68, 0.3)', width: 2, dash: 'dash' },
+		showlegend: false,
+		hovertemplate: `<b>Expected position of "not ${selected}"</b><br>If negation worked logically<extra></extra>`
+	});
+	annotations.push({
+		x: antData.pos[0], y: antData.pos[1] - 2.5,
+		text: `<i>Expected: "not ${selected}"</i>`,
+		showarrow: false,
+		font: { size: 10, color: 'rgba(239, 68, 68, 0.55)' }
+	});
+
+	// ---- 3. Faded "expected logic" line: selected → antonym ----
+	traces.push({
+		x: [selData.pos[0], antData.pos[0]],
+		y: [selData.pos[1], antData.pos[1]],
+		mode: 'lines',
+		line: { color: 'rgba(16, 185, 129, 0.18)', width: 2.5, dash: 'dash' },
+		showlegend: false,
+		hovertemplate: `Expected logical negation path<br>"${selected}" → "${antKey}"<extra></extra>`
+	});
+
+	// ---- 4. Gold arrow: selected → "not selected" (the tiny real displacement) ----
+	annotations.push({
+		ax: selData.pos[0], ay: selData.pos[1],
+		x: notPos[0], y: notPos[1],
+		axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+		showarrow: true,
+		arrowhead: 2, arrowsize: 1.5, arrowwidth: 3,
+		arrowcolor: '#f59e0b'
+	});
+
+	// ---- 5. Dotted line: "not selected" → antonym (still far!) ----
+	traces.push({
+		x: [notPos[0], antData.pos[0]],
+		y: [notPos[1], antData.pos[1]],
+		mode: 'lines',
+		line: { color: '#ef4444', width: 2, dash: 'dot' },
+		showlegend: false,
+		hovertemplate: `Distance to antonym: ${distNotToAnt.toFixed(2)}<extra></extra>`
+	});
+
+	// ---- 6. The selected word (blue) ----
+	traces.push({
+		x: [selData.pos[0]], y: [selData.pos[1]],
+		mode: 'markers+text',
+		text: [selected], textposition: 'top center',
+		textfont: { size: 14, color: '#1e40af', weight: 'bold' },
+		marker: { size: 16, color: '#3b82f6', opacity: 0.95, line: { width: 2, color: '#fff' } },
+		name: `"${selected}"`,
+		hovertemplate: `<b>${selected}</b><br>The original word<extra></extra>`
+	});
+
+	// ---- 7. "not [word]" (red diamond) ----
+	traces.push({
+		x: [notPos[0]], y: [notPos[1]],
+		mode: 'markers+text',
+		text: [`not ${selected}`], textposition: 'bottom right',
+		textfont: { size: 13, color: '#dc2626', weight: 'bold' },
+		marker: { size: 16, color: '#ef4444', opacity: 0.95, symbol: 'diamond', line: { width: 2, color: '#fff' } },
+		name: `"not ${selected}" (actual)`,
+		hovertemplate: `<b>not ${selected}</b><br>Actual embedding position<br>Dist to "${selected}": ${distToNot.toFixed(2)}<br>Dist to "${antKey}": ${distNotToAnt.toFixed(2)}<extra></extra>`
+	});
+
+	// ---- 8. The antonym (green) ----
+	traces.push({
+		x: [antData.pos[0]], y: [antData.pos[1]],
+		mode: 'markers+text',
+		text: [antKey], textposition: 'top center',
+		textfont: { size: 14, color: '#065f46', weight: 'bold' },
+		marker: { size: 16, color: '#10b981', opacity: 0.95, line: { width: 2, color: '#fff' } },
+		name: `"${antKey}" (antonym)`,
+		hovertemplate: `<b>${antKey}</b><br>The logical antonym of "${selected}"<extra></extra>`
+	});
+
+	// ---- 9. "not" vector indicator (bottom-right legend) ----
+	const nvOriginX = 8.5, nvOriginY = -7;
+	traces.push({
+		x: [nvOriginX, nvOriginX + st.notVector[0]],
+		y: [nvOriginY, nvOriginY + st.notVector[1]],
+		mode: 'lines',
+		line: { color: '#f59e0b', width: 3 },
+		showlegend: false, hoverinfo: 'skip'
+	});
+	annotations.push({
+		ax: nvOriginX, ay: nvOriginY,
+		x: nvOriginX + st.notVector[0], y: nvOriginY + st.notVector[1],
+		axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+		showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 2,
+		arrowcolor: '#f59e0b'
+	});
+	annotations.push({
+		x: nvOriginX + st.notVector[0] / 2, y: nvOriginY + st.notVector[1] / 2 - 1,
+		text: '<b>vec("not")</b>',
+		showarrow: false,
+		font: { size: 10, color: '#f59e0b' },
+		bgcolor: 'rgba(255,255,255,0.85)', borderpad: 2
+	});
+
+	// ---- 10. Distance labels ----
+	const midNotX = (selData.pos[0] + notPos[0]) / 2;
+	const midNotY = (selData.pos[1] + notPos[1]) / 2;
+	annotations.push({
+		x: midNotX + 1.2, y: midNotY + 0.6,
+		text: `<b>d = ${distToNot.toFixed(1)}</b>`,
+		showarrow: false,
+		font: { size: 12, color: '#f59e0b' },
+		bgcolor: 'rgba(255,255,255,0.9)', borderpad: 3
+	});
+
+	const midAntX = (notPos[0] + antData.pos[0]) / 2;
+	const midAntY = (notPos[1] + antData.pos[1]) / 2;
+	annotations.push({
+		x: midAntX, y: midAntY - 1.2,
+		text: `<b>d = ${distNotToAnt.toFixed(1)}</b>`,
+		showarrow: false,
+		font: { size: 12, color: '#ef4444' },
+		bgcolor: 'rgba(255,255,255,0.9)', borderpad: 3
+	});
+
+	// ---- 11. Verdict banner ----
+	annotations.push({
+		x: 0, y: -9,
+		text: `<b>⚠️ "not ${selected}" is ${ratio}× closer to "${selected}" than to "${antKey}"</b>`,
+		showarrow: false,
+		font: { size: 13, color: '#dc2626' },
+		bgcolor: 'rgba(254, 226, 226, 0.9)',
+		borderpad: 6
+	});
+
+	// ---- Layout ----
+	const layout = {
+		margin: { l: 40, r: 40, b: 60, t: 20 },
+		showlegend: true,
+		legend: {
+			x: 0.01, y: 0.99,
+			bgcolor: 'rgba(255,255,255,0.9)',
+			bordercolor: '#e2e8f0', borderwidth: 1,
+			font: { size: 11 }
+		},
+		xaxis: {
+			range: [-12, 13], zeroline: false,
+			showgrid: true, gridcolor: '#f1f5f9',
+			title: ''
+		},
+		yaxis: {
+			range: [-11, 10], zeroline: false,
+			showgrid: true, gridcolor: '#f1f5f9',
+			scaleanchor: 'x', title: ''
+		},
+		annotations: annotations,
+		plot_bgcolor: '#fff'
+	};
+
+	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+
+	// ---- Stats cards ----
+	const statsEl = document.getElementById('negation-stats');
+	if (statsEl) {
+		statsEl.innerHTML = `
+	<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+	    <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+		<div style="font-size: 0.75em; color: #64748b; margin-bottom: 4px;">"${selected}" → "not ${selected}"</div>
+		<div style="font-size: 1.6em; font-weight: bold; color: #f59e0b;">${distToNot.toFixed(2)}</div>
+		<div style="font-size: 0.7em; color: #94a3b8;">Barely moved!</div>
+	    </div>
+	    <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+		<div style="font-size: 0.75em; color: #64748b; margin-bottom: 4px;">"not ${selected}" → "${antKey}"</div>
+		<div style="font-size: 1.6em; font-weight: bold; color: #ef4444;">${distNotToAnt.toFixed(2)}</div>
+		<div style="font-size: 0.7em; color: #94a3b8;">Still far away</div>
+	    </div>
+	    <div style="padding: 12px; background: #fff; border-radius: 8px; border: 2px solid #fecaca; text-align: center;">
+		<div style="font-size: 0.75em; color: #64748b; margin-bottom: 4px;">Failure Ratio</div>
+		<div style="font-size: 1.6em; font-weight: bold; color: #dc2626;">${ratio}×</div>
+		<div style="font-size: 0.7em; color: #dc2626;">Closer to original than antonym</div>
+	    </div>
+	</div>`;
+	}
+}
+
 function loadEmbeddingModule () {
 	const tasks = [
 		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
@@ -3633,6 +3929,8 @@ function loadEmbeddingModule () {
 	if (spSlider) {
 		spSlider.addEventListener('input', renderSuperposition);
 	}
+
+	renderNegation();
 
 	initICL();
 }
