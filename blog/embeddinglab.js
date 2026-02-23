@@ -224,7 +224,7 @@ function renderDualManifolds() {
 	const enLabelPos = getDualEnPos(-1.9, 0);
 	traces.push({
 		type: 'scatter3d',
-		x: [enLabelPos[0]], y: [enLabelPos[1]], z: [enLabelPos[2] - 0.6],
+		x: [enLabelPos[0]], y: [enLabelPos[1]], z: [enLabelPos[2] + 0.6],
 		mode: 'text', text: ['English'],
 		textfont: { size: 14, color: '#1e40af' },
 		showlegend: false, hoverinfo: 'skip'
