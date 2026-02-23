@@ -71,15 +71,9 @@ Where:
 
 The term $\delta$ quantifies how much a neuron contributed to the total error:
 
-### For Output Neurons:
-$$
-\delta_{\text{output}} = -(t - o) \cdot o \cdot (1 - o)
-$$
+**For Output Neurons:** $\delta_{\text{output}} = -(t - o) \cdot o \cdot (1 - o)$
 
-### For Hidden Neurons:
-$$
-\delta_{\text{hidden}} = (\delta_{\text{next}} \cdot w_{\text{next}}) \cdot h \cdot (1 - h)
-$$
+**For Hidden Neurons:** $\delta_{\text{hidden}} = (\delta_{\text{next}} \cdot w_{\text{next}}) \cdot h \cdot (1 - h)$
 
 ## Weight Updates
 
