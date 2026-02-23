@@ -5,6 +5,20 @@ TODO https://arxiv.org/abs/2508.18302
 -->
 
 <div class="md">
+## The Turing Test: Performance vs. Presence
+
+<div class="smart-quote" data-cite="turing1950computing" data-page=442>
+I believe that in about fifty years' time it will be possible to programme computers [...] to make them play the imitation game so well that an average interrogator will not have more than 70 percent chance of making the right identification after five minutes of questioning. [...]
+</div>
+
+The **Turing Test**, originally proposed by Alan Turing in 1950 as the "Imitation Game," was designed to bypass the messy question of "Can machines think?" by asking "Can machines *act* like they think?"
+
+Historically, the Turing Test was the "holy grail" of AI. Today, LLMs surpass the Turing Test regularly. They can mimic the cadence, humor, and even the "errors" of human speech so effectively that a human judge can no longer reliably distinguish between silicon and soul in a text-based chat.
+
+However, passing the test only proves **functional mimicry**, not **internal presence**.
+* **The Shell vs. The Core:** An LLM can "act" frustrated or "act" empathetic because it has mapped the linguistic patterns of frustrated or empathetic humans.
+* **The Deception of Fluency:** We often mistake linguistic competence for conscious thought. Just because the machine can manipulate symbols to form a coherent argument doesn't mean there is "anyone home" to believe in that argument.
+
 ## Qualia, or the "how it is" to experience something and how it is to be human vs. be AI
 
 ### The Vector Grounding Problem: Symbols, Spaces, and Senses
@@ -246,21 +260,6 @@ $$ \text{Reasoning} \approx \text{Low Computation} $$
 $$ \text{Perception/Mobility} \approx \text{High Computation} $$
 
 This is why we have AI that can pass the Bar Exam but we don't have a robot that can reliably clear a dinner table. Evolution has "encoded" millions of years of sensorimotor optimization into our biology, making it feel "easy" to us, whereas abstract logic is a recent, thin veneer that is computationally easier to simulate with silicon.
-
-## The Turing Test: Performance vs. Presence
-
-<div class="smart-quote" data-cite="turing1950computing" data-page=442>
-I believe that in about fifty years' time it will be possible to programme computers [...] to make them play the imitation game so well that an average interrogator will not have more than 70 percent chance of making the right identification after five minutes of questioning. [...]
-</div>
-
-The **Turing Test**, originally proposed by Alan Turing in 1950 as the "Imitation Game," was designed to bypass the messy question of "Can machines think?" by asking "Can machines *act* like they think?"
-
-### Beyond the Imitation Game
-Historically, the Turing Test was the "holy grail" of AI. Today, LLMs surpass the Turing Test regularly. They can mimic the cadence, humor, and even the "errors" of human speech so effectively that a human judge can no longer reliably distinguish between silicon and soul in a text-based chat.
-
-However, passing the test only proves **functional mimicry**, not **internal presence**.
-* **The Shell vs. The Core:** An LLM can "act" frustrated or "act" empathetic because it has mapped the linguistic patterns of frustrated or empathetic humans.
-* **The Deception of Fluency:** We often mistake linguistic competence for conscious thought. Just because the machine can manipulate symbols to form a coherent argument doesn't mean there is "anyone home" to believe in that argument.
 
 ## The Black Box Problem: The Epistemological Gap
 
