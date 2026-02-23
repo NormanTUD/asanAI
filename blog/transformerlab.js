@@ -167,13 +167,6 @@ function get_or_init_embeddings(tokens, d_model) {
 
 	const space = window.persistentEmbeddingSpace;
 
-	const gaussianRandom = () => {
-		let u = 0, v = 0;
-		while(u === 0) u = Math.random();
-		while(v === 0) v = Math.random();
-		return (Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v));
-	};
-
 	tokens.forEach(token => {
 		if (!space[token]) {
 			space[token] = Array.from({ length: d_model }, () =>
@@ -3560,6 +3553,13 @@ function tled_updateEmbedding(inputEl) {
 	calculate_vector_math();
 }
 
+const gaussianRandom = () => {
+	let u = 0, v = 0;
+	while (u === 0) u = Math.random();
+	while (v === 0) v = Math.random();
+	return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+};
+
 /**
  * Adds a new token to the transformer's embedding space
  * with Gaussian-random initialization
@@ -3589,13 +3589,6 @@ function tled_addToken() {
 	if (existingWords.length === 0) return;
 
 	const d_model = space[existingWords[0]].length;
-
-	const gaussianRandom = () => {
-		let u = 0, v = 0;
-		while (u === 0) u = Math.random();
-		while (v === 0) v = Math.random();
-		return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-	};
 
 	space[tokenName] = Array.from({ length: d_model }, () =>
 		parseFloat(gaussianRandom().toFixed(4))
