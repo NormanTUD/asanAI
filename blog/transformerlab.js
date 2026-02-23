@@ -546,7 +546,7 @@ async function train_transformer() {
 		window.lossHistory.push(lossValue[0]);
 
 
-		if (i == 0 || (i + 1) % replot_every_n_epochs === 0 || i === epochs - 1) {
+		if (true || i == 0 || (i + 1) % replot_every_n_epochs === 0 || i === epochs - 1) {
 			// Display current training sentences with actual predictions
 			const sentenceSpan = document.getElementById('current_training_sentence');
 
