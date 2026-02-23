@@ -18,10 +18,10 @@ https://arxiv.org/html/2505.11611v1
 
 Beyond the rejection of the \citealternativetitle{grandmotherneuron} (a term coined by Jerome Lettvin in 1969 to critique the idea of 1:1 conceptual mapping), modern research into Transformers reveals two critical phenomena:
 
-### 1. Distributed Representations
+### Distributed Representations
 The meaning of, for example, "cat", is not stored in a single "cat neuron." Instead, a concept is a **direction** in a high-dimensional vector space. To represent "cat," the model might activate 50 or more different neurons to varying degrees. If you change even one of those activations, the "meaning" shifts slightly (perhaps from "cat" to "kitten").
 
-### 2. Polysemanticity (The Multi-Tasking Neuron)
+### Polysemanticity (The Multi-Tasking Neuron)
 Individual neurons are often \citealternativetitle{monosemanticity}, meaning they respond to multiple, unrelated features. A single neuron for example might fire for:
 * Text related to the Golden Gate Bridge.
 * Mathematical formulas involving integers.
