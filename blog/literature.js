@@ -1,4 +1,10 @@
 window.bibData = {
+	"elhage2022superposition": {
+		title: "Toy Models of Superposition",
+		year: 2022,
+		author: "Nelson Elhage, Tristan Hume, Catherine Olsson, Nicholas Schiefer, Tom Henighan, Shauna Kravec, Zac Hatfield-Dodds, Robert Lasenby, Dawn Drain, Carol Chen, Roger Grosse, Sam McCandlish, Jared Kaplan, Dario Amodei, Martin Wattenberg, Christopher Olah",
+		url: "https://arxiv.org/abs/2209.10652"
+	},
 	"plato380republic": {
 		author: "Plato",
 		year: "ca. 380 BC",
