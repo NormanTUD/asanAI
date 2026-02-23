@@ -577,7 +577,6 @@ Mathematically, for a probability vector $p = (p_1, \dots, p_K)$, the density is
 $$f(p_1, \dots, p_K; \alpha_1, \dots, \alpha_K) = \frac{1}{\text{B}(\alpha)} \prod_{i=1}^{K} p_i^{\alpha_i - 1}$$
 Where $\alpha$ is the **concentration parameter**.
 
-### How it Relates to AI: Topic Modeling
 In AI, we use this to solve the "Bag of Words" problem. Before a Transformer generates text, it is essentially sampling from a Dirichlet distribution to decide the "mixture" of the text.
 * Is this 80% "Technical Manual" and 20% "Friendly Tutorial"?
 * The $\alpha$ values represent the model's "prior knowledge" about how words group together in the training dataset.
