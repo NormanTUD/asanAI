@@ -170,7 +170,7 @@ function get_or_init_embeddings(tokens, d_model) {
 	tokens.forEach(token => {
 		if (!space[token]) {
 			space[token] = Array.from({ length: d_model }, () =>
-				parseFloat(gaussianRandom(20, 20).toFixed(nr_fixed))
+				parseFloat(gaussianRandom(-20, 20).toFixed(nr_fixed))
 			);
 		}
 	});
