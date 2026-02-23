@@ -3182,212 +3182,364 @@ function renderSuperposition() {
 // THE GEOMETRY OF IN-CONTEXT LEARNING
 // ============================================================
 
+// ============================================================
+// THE GEOMETRY OF IN-CONTEXT LEARNING
+// ============================================================
+
 const iclState = {
     numExamples: 3,
     injected: false,
     animating: false,
-    queryAnimT: 0, // 0 = original position, 1 = fully steered
+    queryAnimT: 0,
 
-    // Example pairs: each has an input position and a label position.
-    // The "task" is classification: input → category label.
+    // Each pair: the prompt sentence "Q: capital of {input}?  A: {label}"
+    // Positions approximate where each token lands in the residual stream.
+    // The first pair is intentionally noisier (different offset direction)
+    // to show why averaging over more examples helps.
     examplePairs: [
-        { input: 'dog',       inputPos: [ 6,  -2], label: 'animal', labelPos: [14,  4] },
-        { input: 'cat',       inputPos: [ 4,   1], label: 'animal', labelPos: [13,  5] },
-        { input: 'sparrow',   inputPos: [ 3,  -4], label: 'animal', labelPos: [12,  3] },
-        { input: 'rose',      inputPos: [-5,   2], label: 'plant',  labelPos: [-12, 10] },
-        { input: 'oak',       inputPos: [-7,  -1], label: 'plant',  labelPos: [-13,  8] },
-        { input: 'tulip',     inputPos: [-4,   4], label: 'plant',  labelPos: [-11, 11] },
+        { input: 'Germany',   inputPos: [-5,   2],  label: 'Berlin',   labelPos: [7,  13],  color: '#8b5cf6' },
+        { input: 'France',    inputPos: [-8,  -2],  label: 'Paris',    labelPos: [7,   5],  color: '#f59e0b' },
+        { input: 'Japan',     inputPos: [-10, -5],  label: 'Tokyo',    labelPos: [5,   4],  color: '#06b6d4' },
+        { input: 'Spain',     inputPos: [-4,  -3],  label: 'Madrid',   labelPos: [10,  4],  color: '#ec4899' },
+        { input: 'Brazil',    inputPos: [-9,   3],  label: 'Brasília', labelPos: [4,  11],  color: '#84cc16' },
+        { input: 'Australia', inputPos: [-3,  -6],  label: 'Canberra', labelPos: [12,  2],  color: '#f97316' },
     ],
 
-    // The query token and its expected answer region
-    query:       { token: 'eagle', pos: [5, -5] },
-    answerCenter: [13, 2.5],  // center of the "correct answer" region
-    answerRadius: 3.5
+    query:          { token: 'Italy', pos: [-7, 0] },
+    expectedAnswer: { token: 'Rome',  pos: [8, 8] },
+    answerRadius: 2.5
 };
 
+/* ---------- helpers ---------- */
+
 function getICLTaskVector() {
-    const st = iclState;
-    const n = st.numExamples;
-    let dx = 0, dy = 0;
-    for (let i = 0; i < n; i++) {
-        const ex = st.examplePairs[i];
+    var st = iclState;
+    var n  = st.numExamples;
+    var dx = 0, dy = 0;
+    for (var i = 0; i < n; i++) {
+        var ex = st.examplePairs[i];
         dx += ex.labelPos[0] - ex.inputPos[0];
         dy += ex.labelPos[1] - ex.inputPos[1];
     }
     return [dx / n, dy / n];
 }
 
+function iclSteeredPos() {
+    var tv = getICLTaskVector();
+    var t  = iclState.queryAnimT;
+    return [
+        iclState.query.pos[0] + tv[0] * t,
+        iclState.query.pos[1] + tv[1] * t
+    ];
+}
+
+function iclDistToAnswer() {
+    var p = iclSteeredPos();
+    var a = iclState.expectedAnswer.pos;
+    return Math.sqrt(Math.pow(p[0] - a[0], 2) + Math.pow(p[1] - a[1], 2));
+}
+
+/* ---------- prompt preview panel ---------- */
+
+function updateICLPromptPanel() {
+    var panel = document.getElementById('icl-prompt-preview');
+    if (!panel) return;
+
+    var st  = iclState;
+    var n   = st.numExamples;
+    var tv  = getICLTaskVector();
+    var sp  = iclSteeredPos();
+    var dist = iclDistToAnswer();
+    var inside = dist <= st.answerRadius;
+
+    // ---- Prompt block (dark terminal look) ----
+    var html = '' +
+        '<div style="font-family:\'Courier New\',monospace; font-size:0.78em; background:#1e293b; color:#e2e8f0;' +
+        ' border-radius:8px; padding:14px; line-height:1.9; margin-bottom:10px;">' +
+
+        '<div style="color:#94a3b8; margin-bottom:6px; font-family:sans-serif; font-size:0.92em;">' +
+        '<b>📝 Few-shot Prompt</b> <span style="color:#475569;">(what the model sees)</span></div>' +
+
+        '<div style="border-bottom:1px solid #334155; margin-bottom:8px; padding-bottom:4px; color:#94a3b8; font-style:italic;">' +
+        'Task: Given a country, name its capital.</div>';
+
+    // Example lines
+    for (var i = 0; i < st.examplePairs.length; i++) {
+        var ex     = st.examplePairs[i];
+        var active = i < n;
+        var dx     = ex.labelPos[0] - ex.inputPos[0];
+        var dy     = ex.labelPos[1] - ex.inputPos[1];
+
+        html += '<div style="opacity:' + (active ? 1 : 0.22) + '; display:flex; align-items:center; gap:8px;' +
+            ' padding:2px 0; transition:opacity 0.3s;">' +
+            '<span style="display:inline-block; width:10px; height:10px; border-radius:50%;' +
+            ' background:' + ex.color + '; flex-shrink:0;"></span>' +
+            '<span>Q: ' + ex.input + '&nbsp;&nbsp;A: <b>' + ex.label + '</b></span>';
+        if (active) {
+            html += '<span style="color:#64748b; margin-left:auto; font-size:0.85em; white-space:nowrap;">' +
+                'Δ=[' + dx + ',' + dy + ']</span>';
+        }
+        html += '</div>';
+    }
+
+    // Query line
+    var answerText = st.injected ? (inside ? st.expectedAnswer.token + ' ✓' : '??? (close)') : '???';
+    var answerColor = st.injected ? (inside ? '#10b981' : '#fbbf24') : '#ef4444';
+
+    html += '<div style="border-top:1px solid #334155; margin-top:8px; padding-top:8px;' +
+        ' display:flex; align-items:center; gap:8px;">' +
+        '<span style="display:inline-block; width:10px; height:10px; background:#ef4444;' +
+        ' transform:rotate(45deg); flex-shrink:0;"></span>' +
+        '<span style="color:#fbbf24;">Q: ' + st.query.token + '&nbsp;&nbsp;A: ' +
+        '<b style="color:' + answerColor + ';">' + answerText + '</b></span></div></div>';
+
+    // ---- Offset computation block ----
+    html += '<div style="font-family:\'Courier New\',monospace; font-size:0.75em; background:#f8fafc;' +
+        ' border:1px solid #e2e8f0; border-radius:8px; padding:12px; line-height:1.8;">' +
+        '<div style="font-family:sans-serif; font-size:0.95em; color:#475569; margin-bottom:6px;">' +
+        '<b>⚙️ Task Vector Computation</b></div>';
+
+    for (var i = 0; i < n; i++) {
+        var ex = st.examplePairs[i];
+        var dx = ex.labelPos[0] - ex.inputPos[0];
+        var dy = ex.labelPos[1] - ex.inputPos[1];
+        html += '<div style="color:' + ex.color + ';">' +
+            'Δ<sub>' + (i + 1) + '</sub> = ' + ex.label + ' − ' + ex.input +
+            ' = [' + dx + ', ' + dy + ']</div>';
+    }
+
+    html += '<div style="border-top:1px solid #e2e8f0; margin-top:6px; padding-top:6px;' +
+        ' color:#3b82f6; font-weight:bold;">' +
+        'Avg Δ = [' + tv[0].toFixed(1) + ', ' + tv[1].toFixed(1) + ']</div>';
+
+    html += '<div style="color:#64748b; font-size:0.9em; margin-top:4px;">' +
+        'Apply to ' + st.query.token + ': [' + st.query.pos[0] + ', ' + st.query.pos[1] + ']' +
+        ' + Δ = [' + sp[0].toFixed(1) + ', ' + sp[1].toFixed(1) + ']</div>';
+
+    html += '<div style="color:' + (inside && st.injected ? '#10b981' : '#94a3b8') +
+        '; font-size:0.85em; margin-top:3px;">' +
+        'Distance to ' + st.expectedAnswer.token + ': ' + dist.toFixed(2) +
+        (inside ? ' ✅ inside' : ' — radius ' + st.answerRadius) + '</div></div>';
+
+    panel.innerHTML = html;
+}
+
+/* ---------- main render ---------- */
+
 function renderICL() {
-    const plotDiv = document.getElementById('plot-icl-task-vector');
+    var plotDiv = document.getElementById('plot-icl-task-vector');
     if (!plotDiv) return;
 
-    const st = iclState;
-    const n = st.numExamples;
-    const taskVec = getICLTaskVector();
-    const traces = [];
-    const annotations = [];
+    var st  = iclState;
+    var n   = st.numExamples;
+    var tv  = getICLTaskVector();
+    var qPos = st.query.pos;
+    var t   = st.queryAnimT;
 
-    // ---- 1. Answer region (green shaded circle) ----
-    const circSteps = 60;
-    const circX = [], circY = [];
-    for (let i = 0; i <= circSteps; i++) {
-        const a = (i / circSteps) * 2 * Math.PI;
-        circX.push(st.answerCenter[0] + st.answerRadius * Math.cos(a));
-        circY.push(st.answerCenter[1] + st.answerRadius * Math.sin(a));
+    var traces      = [];
+    var annotations = [];
+
+    // ---- 1. Answer region (green circle around Rome) ----
+    var cSteps = 60, cX = [], cY = [];
+    for (var i = 0; i <= cSteps; i++) {
+        var a = (i / cSteps) * 2 * Math.PI;
+        cX.push(st.expectedAnswer.pos[0] + st.answerRadius * Math.cos(a));
+        cY.push(st.expectedAnswer.pos[1] + st.answerRadius * Math.sin(a));
     }
     traces.push({
-        x: circX, y: circY,
-        mode: 'lines', fill: 'toself',
-        fillcolor: 'rgba(16,185,129,0.10)',
+        x: cX, y: cY, mode: 'lines', fill: 'toself',
+        fillcolor: 'rgba(16,185,129,0.08)',
         line: { color: 'rgba(16,185,129,0.4)', width: 2, dash: 'dot' },
         showlegend: false, hoverinfo: 'skip'
     });
+
+    // Rome marker
+    traces.push({
+        x: [st.expectedAnswer.pos[0]], y: [st.expectedAnswer.pos[1]],
+        mode: 'markers+text',
+        text: ['Rome'], textposition: 'top center',
+        textfont: { size: 11, color: '#10b981' },
+        marker: { size: 9, color: '#10b981', symbol: 'star', opacity: 0.7 },
+        showlegend: false,
+        hovertemplate: '<b>Rome</b> (expected answer)<extra></extra>'
+    });
     annotations.push({
-        x: st.answerCenter[0], y: st.answerCenter[1] + st.answerRadius + 0.8,
-        text: '<b>Answer Region</b>',
+        x: st.expectedAnswer.pos[0],
+        y: st.expectedAnswer.pos[1] + st.answerRadius + 1.2,
+        text: '<b>🏛️ Answer Region</b>',
         showarrow: false,
-        font: { size: 11, color: '#10b981' },
-        bgcolor: 'rgba(255,255,255,0.8)', borderpad: 3
+        font: { size: 10, color: '#10b981' },
+        bgcolor: 'rgba(255,255,255,0.85)', borderpad: 3
     });
 
-    // ---- 2. Example pair arrows (gray, from input to label) ----
-    for (let i = 0; i < n; i++) {
-        const ex = st.examplePairs[i];
+    // ---- 2. Inactive example pairs (very faint) ----
+    for (var i = n; i < st.examplePairs.length; i++) {
+        var ex = st.examplePairs[i];
+        traces.push({
+            x: [ex.inputPos[0]], y: [ex.inputPos[1]],
+            mode: 'markers', marker: { size: 4, color: '#cbd5e1', opacity: 0.25 },
+            showlegend: false, hovertemplate: '<b>' + ex.input + '</b> (inactive)<extra></extra>'
+        });
+        traces.push({
+            x: [ex.labelPos[0]], y: [ex.labelPos[1]],
+            mode: 'markers', marker: { size: 4, color: '#cbd5e1', opacity: 0.25, symbol: 'triangle-up' },
+            showlegend: false, hovertemplate: '<b>' + ex.label + '</b> (inactive)<extra></extra>'
+        });
+    }
 
-        // Input point
+    // ---- 3. Active example pairs (color-coded arrows) ----
+    for (var i = 0; i < n; i++) {
+        var ex = st.examplePairs[i];
+        var dx = ex.labelPos[0] - ex.inputPos[0];
+        var dy = ex.labelPos[1] - ex.inputPos[1];
+
+        // Input point (circle)
         traces.push({
             x: [ex.inputPos[0]], y: [ex.inputPos[1]],
             mode: 'markers+text',
-            text: [ex.input], textposition: 'bottom center',
-            textfont: { size: 10, color: '#64748b' },
-            marker: { size: 7, color: '#94a3b8', opacity: 0.8 },
+            text: [ex.input], textposition: 'bottom left',
+            textfont: { size: 10, color: ex.color },
+            marker: { size: 9, color: ex.color, opacity: 0.9 },
             showlegend: false,
-            hovertemplate: `<b>${ex.input}</b> (input)<extra></extra>`
+            hovertemplate: '<b>' + ex.input + '</b> (input)<br>[' +
+                ex.inputPos[0] + ', ' + ex.inputPos[1] + ']<extra></extra>'
         });
 
-        // Label point
+        // Label point (triangle)
         traces.push({
             x: [ex.labelPos[0]], y: [ex.labelPos[1]],
             mode: 'markers+text',
-            text: [ex.label], textposition: 'top center',
-            textfont: { size: 10, color: '#64748b' },
-            marker: { size: 7, color: '#94a3b8', opacity: 0.8, symbol: 'triangle-up' },
+            text: [ex.label], textposition: 'top right',
+            textfont: { size: 10, color: ex.color },
+            marker: { size: 9, color: ex.color, opacity: 0.9, symbol: 'triangle-up' },
             showlegend: false,
-            hovertemplate: `<b>${ex.label}</b> (label for ${ex.input})<extra></extra>`
+            hovertemplate: '<b>' + ex.label + '</b> (label for ' + ex.input + ')' +
+                '<br>Δ = [' + dx + ', ' + dy + ']<extra></extra>'
         });
 
-        // Offset arrow (gray)
+        // Arrow from input → label
         annotations.push({
             ax: ex.inputPos[0], ay: ex.inputPos[1],
             x: ex.labelPos[0], y: ex.labelPos[1],
             axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
             showarrow: true,
-            arrowhead: 2, arrowsize: 1.2, arrowwidth: 2,
-            arrowcolor: 'rgba(148,163,184,0.55)'
+            arrowhead: 2, arrowsize: 1.2, arrowwidth: 2.5,
+            arrowcolor: ex.color, opacity: 0.6
         });
 
-        // Label on arrow midpoint
-        const mx = (ex.inputPos[0] + ex.labelPos[0]) / 2;
-        const my = (ex.inputPos[1] + ex.labelPos[1]) / 2;
+        // Midpoint label (e.g., "France → Paris")
+        var mx = (ex.inputPos[0] + ex.labelPos[0]) / 2;
+        var my = (ex.inputPos[1] + ex.labelPos[1]) / 2;
         annotations.push({
-            x: mx, y: my + 0.8,
-            text: `<i>${ex.input}→${ex.label}</i>`,
+            x: mx + (i % 2 === 0 ? 1 : -1) * 0.8,
+            y: my + 0.9,
+            text: '<i>' + ex.input + ' → ' + ex.label + '</i>',
             showarrow: false,
-            font: { size: 8, color: '#94a3b8' }
+            font: { size: 8, color: ex.color },
+            opacity: 0.7
         });
     }
 
-    // ---- 3. Averaged Task Vector (blue, drawn from query position) ----
-    const qPos = st.query.pos;
-    const taskMag = Math.sqrt(taskVec[0] ** 2 + taskVec[1] ** 2);
+    // ---- 4. Task vector preview (dashed blue, from query) ----
+    var tvEndX = qPos[0] + tv[0];
+    var tvEndY = qPos[1] + tv[1];
 
-    // Draw the task vector from origin (to show its direction independently)
-    const tvOriginX = 0, tvOriginY = -8;
-    annotations.push({
-        ax: tvOriginX, ay: tvOriginY,
-        x: tvOriginX + taskVec[0] * 0.45,
-        y: tvOriginY + taskVec[1] * 0.45,
-        axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
-        showarrow: true,
-        arrowhead: 2, arrowsize: 1.8, arrowwidth: 4,
-        arrowcolor: '#3b82f6'
-    });
-    annotations.push({
-        x: tvOriginX + taskVec[0] * 0.25,
-        y: tvOriginY + taskVec[1] * 0.25 - 1.2,
-        text: `<b>Task Vector</b><br>Δ = [${taskVec[0].toFixed(1)}, ${taskVec[1].toFixed(1)}]`,
-        showarrow: false,
-        font: { size: 11, color: '#3b82f6' },
-        bgcolor: 'rgba(255,255,255,0.85)', borderpad: 4
-    });
+    if (t < 0.01) {
+        // Before injection — show where the task vector would send the query
+        traces.push({
+            x: [qPos[0], tvEndX], y: [qPos[1], tvEndY],
+            mode: 'lines',
+            line: { color: 'rgba(59,130,246,0.25)', width: 3, dash: 'dash' },
+            showlegend: false, hoverinfo: 'skip'
+        });
+        annotations.push({
+            ax: qPos[0], ay: qPos[1],
+            x: tvEndX, y: tvEndY,
+            axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+            showarrow: true,
+            arrowhead: 2, arrowsize: 1.5, arrowwidth: 3,
+            arrowcolor: 'rgba(59,130,246,0.3)'
+        });
+        // Label
+        annotations.push({
+            x: (qPos[0] + tvEndX) / 2 + 2,
+            y: (qPos[1] + tvEndY) / 2 - 0.5,
+            text: '<b>Task Vector</b><br>Δ̄ = [' + tv[0].toFixed(1) + ', ' + tv[1].toFixed(1) + ']',
+            showarrow: true, ax: 25, ay: -20,
+            font: { size: 11, color: '#3b82f6' },
+            bgcolor: 'rgba(255,255,255,0.9)', borderpad: 4,
+            arrowcolor: '#3b82f6', arrowwidth: 1, arrowhead: 0
+        });
+    }
 
-    // ---- 4. Query token (red diamond) ----
-    const t = st.queryAnimT;
-    const steeredX = qPos[0] + taskVec[0] * t;
-    const steeredY = qPos[1] + taskVec[1] * t;
+    // ---- 5. Query token ----
+    var sX = qPos[0] + tv[0] * t;
+    var sY = qPos[1] + tv[1] * t;
+    var insideNow = iclDistToAnswer() <= st.answerRadius;
 
-    // Ghost of original position (if animating)
+    // Ghost of original position + animated path
     if (t > 0.01) {
         traces.push({
             x: [qPos[0]], y: [qPos[1]],
             mode: 'markers+text',
             text: [st.query.token], textposition: 'bottom right',
-            textfont: { size: 10, color: 'rgba(239,68,68,0.3)' },
-            marker: { size: 12, color: 'rgba(239,68,68,0.2)', symbol: 'diamond' },
+            textfont: { size: 9, color: 'rgba(239,68,68,0.25)' },
+            marker: { size: 12, color: 'rgba(239,68,68,0.15)', symbol: 'diamond' },
             showlegend: false, hoverinfo: 'skip'
         });
-
-        // Dashed line from original to steered
         traces.push({
-            x: [qPos[0], steeredX], y: [qPos[1], steeredY],
+            x: [qPos[0], sX], y: [qPos[1], sY],
             mode: 'lines',
-            line: { color: 'rgba(59,130,246,0.4)', width: 2.5, dash: 'dash' },
+            line: { color: 'rgba(59,130,246,0.45)', width: 3, dash: 'dash' },
             showlegend: false, hoverinfo: 'skip'
         });
-    }
-
-    // Current query position
-    const qColor = t > 0.95 ? '#10b981' : '#ef4444';
-    traces.push({
-        x: [steeredX], y: [steeredY],
-        mode: 'markers+text',
-        text: [st.query.token],
-        textposition: 'top right',
-        textfont: { size: 13, color: qColor, weight: 'bold' },
-        marker: { size: 14, color: qColor, symbol: 'diamond', line: { width: 2, color: '#fff' } },
-        showlegend: false,
-        hovertemplate: `<b>${st.query.token}</b> (query)<br>Position: [${steeredX.toFixed(1)}, ${steeredY.toFixed(1)}]<extra></extra>`
-    });
-
-    // ---- 5. Task vector applied to query (blue arrow on query) ----
-    if (t > 0.01) {
         annotations.push({
             ax: qPos[0], ay: qPos[1],
-            x: steeredX, y: steeredY,
+            x: sX, y: sY,
             axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
             showarrow: true,
             arrowhead: 2, arrowsize: 1.5, arrowwidth: 3,
             arrowcolor: '#3b82f6',
             opacity: Math.min(t * 1.5, 1)
         });
+        // Label the applied task vector during/after animation
+        annotations.push({
+            x: (qPos[0] + sX) / 2 + 2,
+            y: (qPos[1] + sY) / 2 - 0.5,
+            text: '<b>Task Vector applied</b><br>Δ̄ = [' + tv[0].toFixed(1) + ', ' + tv[1].toFixed(1) + ']',
+            showarrow: true, ax: 25, ay: -20,
+            font: { size: 10, color: '#3b82f6' },
+            bgcolor: 'rgba(255,255,255,0.9)', borderpad: 3,
+            arrowcolor: '#3b82f6', arrowwidth: 1, arrowhead: 0
+        });
     }
 
+    // Current query marker
+    var qColor = (t > 0.95 && insideNow) ? '#10b981' : '#ef4444';
+    traces.push({
+        x: [sX], y: [sY],
+        mode: 'markers+text',
+        text: [st.query.token],
+        textposition: t > 0.5 ? 'bottom right' : 'top left',
+        textfont: { size: 14, color: qColor, weight: 'bold' },
+        marker: { size: 16, color: qColor, symbol: 'diamond',
+            line: { width: 2, color: '#fff' } },
+        showlegend: false,
+        hovertemplate: '<b>' + st.query.token + '</b> (query)' +
+            '<br>[' + sX.toFixed(1) + ', ' + sY.toFixed(1) + ']<extra></extra>'
+    });
+
     // ---- Layout ----
-    const layout = {
-        margin: { l: 40, r: 40, b: 40, t: 20 },
+    var layout = {
+        margin: { l: 35, r: 15, b: 35, t: 15 },
         showlegend: false,
         xaxis: {
-            range: [-20, 22],
-            zeroline: true, zerolinecolor: '#e2e8f0',
-            showgrid: true, gridcolor: '#f1f5f9',
-            title: ''
+            range: [-14, 17], zeroline: true, zerolinecolor: '#e2e8f0',
+            showgrid: true, gridcolor: '#f1f5f9', title: ''
         },
         yaxis: {
-            range: [-12, 16],
-            zeroline: true, zerolinecolor: '#e2e8f0',
-            showgrid: true, gridcolor: '#f1f5f9',
-            scaleanchor: 'x',
-            title: ''
+            range: [-10, 17], zeroline: true, zerolinecolor: '#e2e8f0',
+            showgrid: true, gridcolor: '#f1f5f9', scaleanchor: 'x', title: ''
         },
         annotations: annotations,
         plot_bgcolor: '#fff'
@@ -3395,61 +3547,64 @@ function renderICL() {
 
     Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
 
-    // ---- Stats ----
-    const statsDiv = document.getElementById('icl-stats');
-    if (statsDiv) {
-        const distToAnswer = Math.sqrt(
-            (steeredX - st.answerCenter[0]) ** 2 +
-            (steeredY - st.answerCenter[1]) ** 2
-        );
-        const insideRegion = distToAnswer <= st.answerRadius;
+    // ---- Side panels ----
+    updateICLPromptPanel();
 
-        statsDiv.innerHTML = `
-            <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
-                <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Task Vector Magnitude</div>
-                <div style="font-size: 1.5em; font-weight: bold; color: #3b82f6;">${taskMag.toFixed(1)}</div>
-                <div style="font-size: 0.75em; color: #94a3b8;">‖Δ‖ from ${n} example${n > 1 ? 's' : ''}</div>
-            </div>
-            <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
-                <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Distance to Answer</div>
-                <div style="font-size: 1.5em; font-weight: bold; color: ${insideRegion ? '#10b981' : '#ef4444'};">${distToAnswer.toFixed(1)}</div>
-                <div style="font-size: 0.75em; color: #94a3b8;">${insideRegion ? '✅ Inside answer region' : '⬜ Outside answer region'}</div>
-            </div>
-            <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
-                <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Examples Used</div>
-                <div style="font-size: 1.5em; font-weight: bold; color: #8b5cf6;">${n} / ${st.examplePairs.length}</div>
-                <div style="font-size: 0.75em; color: #94a3b8;">More examples → stabler vector</div>
-            </div>
-        `;
+    // ---- Stats cards ----
+    var statsDiv = document.getElementById('icl-stats');
+    if (statsDiv) {
+        var mag  = Math.sqrt(tv[0] * tv[0] + tv[1] * tv[1]);
+        var dist = iclDistToAnswer();
+        var ok   = dist <= st.answerRadius;
+
+        statsDiv.innerHTML =
+            '<div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">' +
+                '<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Task Vector ‖Δ̄‖</div>' +
+                '<div style="font-size:1.5em; font-weight:bold; color:#3b82f6;">' + mag.toFixed(1) + '</div>' +
+                '<div style="font-size:0.75em; color:#94a3b8;">from ' + n + ' example' + (n > 1 ? 's' : '') + '</div>' +
+            '</div>' +
+            '<div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">' +
+                '<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Distance to Rome</div>' +
+                '<div style="font-size:1.5em; font-weight:bold; color:' + (ok ? '#10b981' : '#ef4444') + ';">' +
+                    dist.toFixed(2) + '</div>' +
+                '<div style="font-size:0.75em; color:#94a3b8;">' +
+                    (ok ? '✅ Inside answer region' : '⬜ Outside (radius ' + st.answerRadius + ')') + '</div>' +
+            '</div>' +
+            '<div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">' +
+                '<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Examples Used</div>' +
+                '<div style="font-size:1.5em; font-weight:bold; color:#8b5cf6;">' + n + ' / ' +
+                    st.examplePairs.length + '</div>' +
+                '<div style="font-size:0.75em; color:#94a3b8;">More → stabler direction</div>' +
+            '</div>';
     }
 }
 
-// ---- Animation: Inject Task Vector ----
+/* ---------- animation ---------- */
 
 window.animateICLInjection = function() {
-    const st = iclState;
+    var st = iclState;
     if (st.animating || st.injected) return;
 
     st.animating = true;
-    const btn = document.getElementById('btn-icl-inject');
+    var btn = document.getElementById('btn-icl-inject');
     btn.disabled = true;
     btn.style.opacity = '0.5';
 
-    const duration = 1500;
-    const startTime = performance.now();
+    var duration  = 1500;
+    var startTime = performance.now();
 
-    function easeInOutCubic(t) {
+    function ease(t) {
         return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     }
 
     function step(now) {
-        const elapsed = now - startTime;
-        const rawT = Math.min(elapsed / duration, 1);
-        st.queryAnimT = easeInOutCubic(rawT);
+        var elapsed = now - startTime;
+        var rawT    = Math.min(elapsed / duration, 1);
+        st.queryAnimT = ease(rawT);
 
-        const statusEl = document.getElementById('icl-status');
+        var statusEl = document.getElementById('icl-status');
         if (statusEl) {
-            statusEl.textContent = `Injecting task vector... ${Math.round(rawT * 100)}%`;
+            statusEl.textContent = 'Injecting task vector… ' + Math.round(rawT * 100) + '%';
             statusEl.style.color = '#3b82f6';
         }
 
@@ -3459,68 +3614,54 @@ window.animateICLInjection = function() {
             requestAnimationFrame(step);
         } else {
             st.queryAnimT = 1;
-            st.animating = false;
-            st.injected = true;
-            btn.disabled = true;
+            st.animating  = false;
+            st.injected   = true;
+            btn.disabled  = true;
 
             if (statusEl) {
-                const taskVec = getICLTaskVector();
-                const steeredX = st.query.pos[0] + taskVec[0];
-                const steeredY = st.query.pos[1] + taskVec[1];
-                const dist = Math.sqrt(
-                    (steeredX - st.answerCenter[0]) ** 2 +
-                    (steeredY - st.answerCenter[1]) ** 2
-                );
-                const inside = dist <= st.answerRadius;
-
-                statusEl.innerHTML = inside
-                    ? '✅ <b>Success!</b> The task vector steered "eagle" into the answer region. The model "learned" the task from examples alone.'
-                    : '⚠️ <b>Injected</b>, but the query landed outside the answer region. Try adding more examples for a more precise task vector.';
-                statusEl.style.color = inside ? '#10b981' : '#f59e0b';
+                var ok = iclDistToAnswer() <= st.answerRadius;
+                statusEl.innerHTML = ok
+                    ? '✅ <b>Success!</b> The task vector steered "Italy" into the answer region near "Rome" — no weight update needed.'
+                    : '⚠️ <b>Injected</b>, but landed outside the answer region. Try adding more examples for a more precise task vector.';
+                statusEl.style.color = ok ? '#10b981' : '#f59e0b';
             }
-
             renderICL();
         }
     }
-
     requestAnimationFrame(step);
 };
 
-// ---- Reset ----
+/* ---------- reset ---------- */
 
 window.resetICL = function() {
-    const st = iclState;
+    var st = iclState;
     if (st.animating) return;
 
     st.queryAnimT = 0;
-    st.injected = false;
+    st.injected   = false;
 
-    const btn = document.getElementById('btn-icl-inject');
+    var btn = document.getElementById('btn-icl-inject');
     btn.disabled = false;
     btn.style.opacity = '1';
 
-    const statusEl = document.getElementById('icl-status');
+    var statusEl = document.getElementById('icl-status');
     if (statusEl) {
         statusEl.textContent = 'Ready — adjust examples and click Inject.';
         statusEl.style.color = '#64748b';
     }
-
     renderICL();
 };
 
-// ---- Slider handler ----
+/* ---------- slider ---------- */
 
 function initICL() {
-    const slider = document.getElementById('icl-num-examples');
+    var slider = document.getElementById('icl-num-examples');
     if (!slider) return;
 
     function onSliderChange() {
-        const st = iclState;
-        st.numExamples = parseInt(slider.value);
-        document.getElementById('icl-num-val').textContent = st.numExamples;
-
-        // If already injected, reset so the user can re-inject with new count
-        if (st.injected) {
+        iclState.numExamples = parseInt(slider.value);
+        document.getElementById('icl-num-val').textContent = iclState.numExamples;
+        if (iclState.injected) {
             resetICL();
         } else {
             renderICL();
