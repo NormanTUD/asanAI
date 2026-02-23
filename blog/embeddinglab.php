@@ -429,6 +429,26 @@ Below, you can explore this tradeoff directly. The visualization shows a **2-dim
 </section>
 
 <div class="md">
+TODO This was copied here from transformer, but has info duplicates from previous
+## The Illusion of Locality: Polysemanticity and Superposition
+
+Beyond the rejection of the \citealternativetitle{grandmotherneuron} (a term coined by Jerome Lettvin in 1969 to critique the idea of 1:1 conceptual mapping), modern research into Transformers reveals two critical phenomena:
+
+### Distributed Representations
+The meaning of, for example, "cat", is not stored in a single "cat neuron." Instead, a concept is a **direction** in a high-dimensional vector space. To represent "cat," the model might activate 50 or more different neurons to varying degrees. If you change even one of those activations, the "meaning" shifts slightly (perhaps from "cat" to "kitten").
+
+### Polysemanticity (The Multi-Tasking Neuron)
+Individual neurons are often \citealternativetitle{monosemanticity}, meaning they respond to multiple, unrelated features. A single neuron for example might fire for:
+* Text related to the Golden Gate Bridge.
+* Mathematical formulas involving integers.
+* The concept of "reliability."
+
+### Why Superposition Happens
+Research suggests that models use **Superposition** to represent more features than they have dimensions (neurons). By assigning concepts to nearly orthogonal directions in high-dimensional space, the model can store a massive "dictionary" of features across a smaller number of physical neurons.
+</div>
+
+
+<div class="md">
 ## The Geometry of In-Context Learning
 
 One of the most active research frontiers concerns what happens when you give a model a handful of examples directly in the prompt. Rather than updating any weights, the model appears to construct an implicit **task vector** in activation space on the fly. \citeauthor{hendel2023incontext} (\citeyear{hendel2023incontext}) demonstrated that the function learned via in-context learning can be compressed into a single vector, extracted by computing the difference between the model's internal activations *with* the few-shot examples and *without* them, and then **injected** into a blank prompt to reproduce the same behavior.

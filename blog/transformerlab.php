@@ -13,24 +13,6 @@ https://arxiv.org/html/2505.11611v1
 	The hidden harmony is better than the obvious one
 </div>
 
-<div class="md">
-## The Illusion of Locality: Polysemanticity and Superposition
-
-Beyond the rejection of the \citealternativetitle{grandmotherneuron} (a term coined by Jerome Lettvin in 1969 to critique the idea of 1:1 conceptual mapping), modern research into Transformers reveals two critical phenomena:
-
-### Distributed Representations
-The meaning of, for example, "cat", is not stored in a single "cat neuron." Instead, a concept is a **direction** in a high-dimensional vector space. To represent "cat," the model might activate 50 or more different neurons to varying degrees. If you change even one of those activations, the "meaning" shifts slightly (perhaps from "cat" to "kitten").
-
-### Polysemanticity (The Multi-Tasking Neuron)
-Individual neurons are often \citealternativetitle{monosemanticity}, meaning they respond to multiple, unrelated features. A single neuron for example might fire for:
-* Text related to the Golden Gate Bridge.
-* Mathematical formulas involving integers.
-* The concept of "reliability."
-
-### Why Superposition Happens
-Research suggests that models use **Superposition** to represent more features than they have dimensions (neurons). By assigning concepts to nearly orthogonal directions in high-dimensional space, the model can store a massive "dictionary" of features across a smaller number of physical neurons.
-</div>
-
 <div id="transformer_config">
 	<div style="margin-bottom: 15px;">
 		<label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
