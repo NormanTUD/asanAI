@@ -156,7 +156,7 @@ An AI could be a super-intelligent genius capable of solving $N$-body problems o
 
 ### The Paperclip Apocalypse (Instrumental Convergence)
 
-<div class="smart-quote" data-cite="bostrom2003ethical">
+<div class="smart-quote" data-cite="bostrom2003ethical" data-page="3">
 This could result [...] in a superintelligence whose top goal is the manufacturing of paperclips, with the consequence that it starts transforming first all of earth and then increasing portions of space into paperclip manufacturing facilities.
 </div>
 
