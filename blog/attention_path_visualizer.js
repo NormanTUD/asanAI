@@ -73,29 +73,45 @@ class AttentionPathVisualizer {
      *   Each element: { headIdx, this_weights (attention matrix), Qi, Ki, Vi, context, ... }
      * @param {string[]} tokenStrings     - Human-readable token labels
      */
-    renderLayer(layerIndex, headDataArray, tokenStrings) {
-        if (!this.container) {
-            console.error(`AttentionPathVisualizer: container '${this.containerId}' not found`);
-            return;
-        }
+	renderLayer(layerIndex, headDataArray, tokenStrings) {
+		if (!this.container) {
+			console.error(`AttentionPathVisualizer: container '${this.containerId}' not found`);
+			return;
+		}
 
-        // Resolve display tokens
-        const displayTokens = this._resolveTokenLabels(tokenStrings, headDataArray);
+		const displayTokens = this._resolveTokenLabels(tokenStrings, headDataArray);
 
-        // Cache for re-renders on hover/toggle
-        this._currentData = {
-            layerIndex,
-            headDataArray,
-            displayTokens
-        };
+		this._currentData = {
+			layerIndex,
+			headDataArray,
+			displayTokens
+		};
 
-        // Activate all heads by default
-        this._activeHeads.clear();
-        headDataArray.forEach((_, i) => this._activeHeads.add(i));
+		// ── Restore persisted state, or default to all heads on + headview ──
+		const saved = this._loadState();
 
-        // Build the full UI
-        this._buildUI();
-    }
+		this._activeHeads.clear();
+
+		if (saved && Array.isArray(saved.activeHeads)) {
+			// Validate saved heads against actual head count
+			const validHeads = saved.activeHeads.filter(h => h >= 0 && h < headDataArray.length);
+			if (validHeads.length > 0) {
+				validHeads.forEach(h => this._activeHeads.add(h));
+			} else {
+				// Saved state had heads that no longer exist — default to head 0
+				this._activeHeads.add(0);
+			}
+		} else {
+			// No saved state — default: all heads active
+			headDataArray.forEach((_, i) => this._activeHeads.add(i));
+		}
+
+		if (saved && saved.mode) {
+			this.options.mode = saved.mode;
+		}
+
+		this._buildUI();
+	}
 
     /**
      * Render all layers at once (model view).
@@ -145,27 +161,42 @@ class AttentionPathVisualizer {
 
         // Render first layer
         this._renderLayerPanel(0);
+
+	    // ── Restore persisted layer, or default to layer 0 ──
+	    const saved = this._loadState();
+	    let startLayer = 0;
+
+	    if (saved && typeof saved.activeLayer === 'number' &&
+		    saved.activeLayer >= 0 && saved.activeLayer < allLayersData.length) {
+		    startLayer = saved.activeLayer;
+	    }
+
+	    this._activeLayer = startLayer;
+	    this.switchLayer(startLayer);
+
     }
 
     /**
      * Switch to a different layer tab (called from onclick).
      */
-    switchLayer(layerIdx) {
-        if (!this._allLayersData) return;
+	switchLayer(layerIdx) {
+		if (!this._allLayersData) return;
 
-        // Toggle tabs
-        this._allLayersData.forEach((_, l) => {
-            const panel = document.getElementById(`apv-lpanel-${this.containerId}-${l}`);
-            const tab = document.getElementById(`apv-ltab-${this.containerId}-${l}`);
-            if (panel) panel.style.display = l === layerIdx ? 'block' : 'none';
-            if (tab) {
-                tab.style.background = l === layerIdx ? '#fff' : '#dbeafe';
-                tab.style.fontWeight = l === layerIdx ? 'bold' : 'normal';
-            }
-        });
+		this._activeLayer = layerIdx;  // ← track it
 
-        this._renderLayerPanel(layerIdx);
-    }
+		this._allLayersData.forEach((_, l) => {
+			const panel = document.getElementById(`apv-lpanel-${this.containerId}-${l}`);
+			const tab = document.getElementById(`apv-ltab-${this.containerId}-${l}`);
+			if (panel) panel.style.display = l === layerIdx ? 'block' : 'none';
+			if (tab) {
+				tab.style.background = l === layerIdx ? '#fff' : '#dbeafe';
+				tab.style.fontWeight = l === layerIdx ? 'bold' : 'normal';
+			}
+		});
+
+		this._renderLayerPanel(layerIdx);
+		this._saveState();  // ← persist
+	}
 
     // ═══════════════════════════════════════════════════
     //  STATIC CONVENIENCE METHOD
@@ -212,76 +243,85 @@ class AttentionPathVisualizer {
     //  PRIVATE: UI CONSTRUCTION
     // ═══════════════════════════════════════════════════
 
-    _buildUI() {
-        const { layerIndex, headDataArray, displayTokens } = this._currentData;
-        const numHeads = headDataArray.length;
+	_buildUI() {
+		const { layerIndex, headDataArray, displayTokens } = this._currentData;
+		const numHeads = headDataArray.length;
 
-        let html = `<div class="apv-root" style="
-            font-family: 'Inter', sans-serif;
-            background: #fafbfc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 16px;
-            overflow: hidden;
-        ">`;
+		// Determine active mode for button highlighting
+		const isHead = this.options.mode === 'headview';
+		const isMatrix = this.options.mode === 'matrix';
 
-        // Title
-        html += `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-            <h3 style="margin:0; color:#1e293b; font-size:1.05rem;">
-                🔍 Attention Path Visualizer — Layer ${layerIndex + 1}
-            </h3>
-            <div style="display:flex; gap:8px;">
-                <button onclick="window.__apv_instances['${this.containerId}'].setMode('headview')"
-                    class="apv-mode-btn" style="padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;
-                    cursor:pointer; font-size:0.8rem; background:#fff;">Head View</button>
-                <button onclick="window.__apv_instances['${this.containerId}'].setMode('matrix')"
-                    class="apv-mode-btn" style="padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;
-                    cursor:pointer; font-size:0.8rem; background:#fff;">Matrix View</button>
-            </div>
-        </div>`;
+		let html = `<div class="apv-root" style="
+	font-family: 'Inter', sans-serif;
+	background: #fafbfc;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	padding: 16px;
+	overflow: hidden;
+    ">`;
 
-        // Head selector checkboxes
-        if (this.options.showHeadSelector) {
-            html += `<div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; align-items:center;">
-                <span style="font-size:0.8rem; color:#64748b; font-weight:600;">Heads:</span>`;
-            for (let h = 0; h < numHeads; h++) {
-                const color = AttentionPathVisualizer.HEAD_COLORS[h % AttentionPathVisualizer.HEAD_COLORS.length];
-                html += `<label style="display:flex; align-items:center; gap:4px; cursor:pointer; font-size:0.82rem;">
-                    <input type="checkbox" checked
-                        onchange="window.__apv_instances['${this.containerId}'].toggleHead(${h}, this.checked)"
-                        style="accent-color:${color};">
-                    <span style="color:${color}; font-weight:600;">Head ${h + 1}</span>
-                </label>`;
-            }
-            html += `</div>`;
-        }
+		// Title + mode buttons
+		html += `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+	<h3 style="margin:0; color:#1e293b; font-size:1.05rem;">
+	    🔍 Attention Path Visualizer — Layer ${layerIndex + 1}
+	</h3>
+	<div style="display:flex; gap:8px;">
+	    <button onclick="window.__apv_instances['${this.containerId}'].setMode('headview')"
+		class="apv-mode-btn" style="padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;
+		cursor:pointer; font-size:0.8rem;
+		background:${isHead ? '#3b82f6' : '#fff'};
+		color:${isHead ? '#fff' : '#334155'};">Head View</button>
+	    <button onclick="window.__apv_instances['${this.containerId}'].setMode('matrix')"
+		class="apv-mode-btn" style="padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;
+		cursor:pointer; font-size:0.8rem;
+		background:${isMatrix ? '#3b82f6' : '#fff'};
+		color:${isMatrix ? '#fff' : '#334155'};">Matrix View</button>
+	</div>
+    </div>`;
 
-        // SVG canvas for the attention arcs
-        const canvasId = `apv-canvas-${this.containerId}`;
-        html += `<div id="apv-viewport-${this.containerId}" style="
-            position:relative; overflow-x:auto; overflow-y:hidden;
-            background:#fff; border:1px solid #e2e8f0; border-radius:8px;
-            min-height:200px;
-        ">
-            <svg id="${canvasId}" style="width:100%; min-height:200px;"></svg>
-        </div>`;
+		// Head selector checkboxes
+		if (this.options.showHeadSelector) {
+			html += `<div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; align-items:center;">
+	    <span style="font-size:0.8rem; color:#64748b; font-weight:600;">Heads:</span>`;
+			for (let h = 0; h < numHeads; h++) {
+				const color = AttentionPathVisualizer.HEAD_COLORS[h % AttentionPathVisualizer.HEAD_COLORS.length];
+				const isChecked = this._activeHeads.has(h);
+				html += `<label style="display:flex; align-items:center; gap:4px; cursor:pointer; font-size:0.82rem;">
+		<input type="checkbox" ${isChecked ? 'checked' : ''}
+		    onchange="window.__apv_instances['${this.containerId}'].toggleHead(${h}, this.checked)"
+		    style="accent-color:${color};">
+		<span style="color:${color}; font-weight:600;">Head ${h + 1}</span>
+	    </label>`;
+			}
+			html += `</div>`;
+		}
 
-        // Legend
-        html += `<div style="margin-top:10px; font-size:0.75rem; color:#94a3b8; text-align:center;">
-            Hover over a token to highlight its attention connections. Line thickness = attention weight.
-        </div>`;
+		// SVG canvas for the attention arcs
+		const canvasId = `apv-canvas-${this.containerId}`;
+		html += `<div id="apv-viewport-${this.containerId}" style="
+	position:relative; overflow-x:auto; overflow-y:hidden;
+	background:#fff; border:1px solid #e2e8f0; border-radius:8px;
+	min-height:200px;
+    ">
+	<svg id="${canvasId}" style="width:100%; min-height:200px;"></svg>
+    </div>`;
 
-        html += `</div>`;
+		// Legend
+		html += `<div style="margin-top:10px; font-size:0.75rem; color:#94a3b8; text-align:center;">
+	Hover over a token to highlight its attention connections. Line thickness = attention weight.
+    </div>`;
 
-        this.container.innerHTML = html;
+		html += `</div>`;
 
-        // Store instance for callbacks
-        if (!window.__apv_instances) window.__apv_instances = {};
-        window.__apv_instances[this.containerId] = this;
+		this.container.innerHTML = html;
 
-        // Draw
-        requestAnimationFrame(() => this._draw());
-    }
+		// Store instance for callbacks
+		if (!window.__apv_instances) window.__apv_instances = {};
+		window.__apv_instances[this.containerId] = this;
+
+		// Draw
+		requestAnimationFrame(() => this._draw());
+	}
 
     /**
      * Render a layer panel inside the model-view tabs.
@@ -690,13 +730,14 @@ class AttentionPathVisualizer {
 		} else {
 			this._activeHeads.delete(headIdx);
 		}
-		// Head toggle changes which paths exist, so a full redraw is needed
 		this._draw();
+		this._saveState();  // ← persist
 	}
 
 	setMode(mode) {
-	    this.options.mode = mode;
-	    this._buildUI(); // Full rebuild only on mode switch
+		this.options.mode = mode;
+		this._buildUI();
+		this._saveState();  // ← persist
 	}
 
     // ═══════════════════════════════════════════════════
@@ -730,4 +771,36 @@ class AttentionPathVisualizer {
         div.textContent = str;
         return div.innerHTML;
     }
+
+// ═══════════════════════════════════════════════════
+//  PRIVATE: STATE PERSISTENCE
+// ═══════════════════════════════════════════════════
+
+	_getStorageKey() {
+		return `apv-state-${this.containerId}`;
+	}
+
+	_saveState(extra = {}) {
+		try {
+			const state = {
+				mode: this.options.mode,
+				activeHeads: [...this._activeHeads],
+				activeLayer: this._activeLayer ?? 0,
+				...extra
+			};
+			localStorage.setItem(this._getStorageKey(), JSON.stringify(state));
+		} catch (e) {
+			// localStorage might be full or unavailable — fail silently
+		}
+	}
+
+	_loadState() {
+		try {
+			const raw = localStorage.getItem(this._getStorageKey());
+			if (raw) return JSON.parse(raw);
+		} catch (e) {
+			// Corrupted or unavailable — fall through to defaults
+		}
+		return null;
+	}
 }
