@@ -541,19 +541,19 @@ async function train_transformer() {
 		// ── NEW: Update progress bar every epoch ──
 		updateTrainingProgressBar(i + 1, epochs, lossValue[0]);
 
-		if ((i + 1) % replot_every_n_epochs === 0 || i === epochs - 1) {
-			// --- ETA Calculation ---
-			const currentTime = performance.now();
-			const elapsed = currentTime - startTime;
-			const avgTimePerEpoch = elapsed / (i + 1);
-			const remainingEpochs = epochs - (i + 1);
-			const etaMs = remainingEpochs * avgTimePerEpoch;
-			const etaString = formatETA(etaMs);
-			// -----------------------
+		// --- ETA Calculation ---
+		const currentTime = performance.now();
+		const elapsed = currentTime - startTime;
+		const avgTimePerEpoch = elapsed / (i + 1);
+		const remainingEpochs = epochs - (i + 1);
+		const etaMs = remainingEpochs * avgTimePerEpoch;
+		const etaString = formatETA(etaMs);
+		status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(6)} | ETA: ${etaString}`;
 
+		renderLossGraph();
+
+		if ((i + 1) % replot_every_n_epochs === 0 || i === epochs - 1) {
 			window.currentWeights = await convert_tensors_to_weights(weightVars);
-			status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(6)} | ETA: ${etaString}`;
-			renderLossGraph();
 			run_transformer_demo();
 			await tf.nextFrame();
 
