@@ -20,7 +20,8 @@ window.tlab_trajectory_data = {
 	steps: [] // Array of { name: "Stage Name", data: [[dim1, dim2...], ...] }
 };
 
-const contextSize = 128;
+const contextSize = 6;
+window.currentTrainingWindows = [];
 const attentionRenderRegistry = new Map();
 const positionalShiftRegistry = new Map();
 const embeddingRenderRegistry = new Map();
@@ -513,6 +514,14 @@ async function train_transformer() {
 			break;
 		}
 
+		const thiscontextSize = Math.min(contextSize, tokens.length - 1);
+		window.currentTrainingWindows = [];
+		for (let startIdx = 0; startIdx < tokens.length - thiscontextSize; startIdx++) {
+			const inputSlice = tokens.slice(startIdx, startIdx + thiscontextSize);
+			const targetSlice = tokens.slice(startIdx + 1, startIdx + thiscontextSize + 1);
+			window.currentTrainingWindows.push({ input: inputSlice, target: targetSlice });
+		}
+
 		const { value: cost, grads } = tf.variableGrads(
 			() => tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers)),
 			allVars
@@ -531,6 +540,22 @@ async function train_transformer() {
 
 		const lossValue = await cost.data();
 		window.lossHistory.push(lossValue[0]);
+
+		// Display current training sentences
+		const sentenceSpan = document.getElementById('current_training_sentence');
+
+		if (sentenceSpan && window.currentTrainingWindows.length > 0) {
+			const windowsHtml = window.currentTrainingWindows.map((w, idx) => {
+				return `<div style="margin-bottom:4px; padding:4px 8px; background:#f1f5f9; border-radius:4px; font-family:monospace; font-size:0.85rem;">
+	    <strong>Window ${idx + 1}:</strong> 
+	    [${w.input.join(' ')}] → [${w.target.join(' ')}]
+	</div>`;
+			}).join('');
+			sentenceSpan.innerHTML = windowsHtml;
+
+			$("#show_training_sentences").show();
+		}
+
 
 		// ── NEW: Update progress bar every epoch ──
 		updateTrainingProgressBar(i + 1, epochs, lossValue[0]);
