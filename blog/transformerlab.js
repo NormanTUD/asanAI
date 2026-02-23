@@ -556,6 +556,7 @@ async function train_transformer() {
 
 			tled_syncTableFromSpace();
 		}
+
 		cost.dispose();
 	}
 
