@@ -29,15 +29,14 @@ This is a **Polynomial Regression** model. Instead of "knowing" it's a sine wave
 * **$w$ (Weights):** These are the coefficients the AI adjusts during training to change the shape of the curve.
 * **$b$ (Bias):** A constant value that allows the AI to move the entire curve up or down.
 
-### The "Loss" (MSE)
-The **MSE Loss** (Mean Squared Error) is the AI's "stress level." It calculates the average squared distance between the Red Line and the Black Dots:
+### The Loss
+The **Loss** we use here is **MSE** (Mean Squared Error), and it is the AI's "stress level." It calculates the average squared distance between the Red Line and the Black Dots:
 
 $$\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_\text{observed} - y_\text{predicted})^2$$
 
 * **Low Loss:** The AI is happy; it has successfully "memorized" the dots.
 * **High Loss:** The AI is still confused and hasn't found a curve that fits the data yet.
 
-## Try This Experiment:
 1.  **Underfitting:** Set the **Degree** to **1** or **2**. Notice that even after training, the red line is too "stiff" to follow the wave. This is **High Bias**.
 2.  **Overfitting:** Set the **Degree** to **15** and **Noise** to **0.5**. Start training. The AI will eventually "wiggle" the red line frantically to touch every single random dot.
 3.  **The Extrapolation Trap:** Look at what happens to the Red Line **outside** the Grey Box. Even if it looks perfect inside the box, it usually shoots off toward infinity outside of it. This shows that the AI has "memorized" the local area but doesn't actually understand the "global" pattern of the wave.
