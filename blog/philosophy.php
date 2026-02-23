@@ -146,7 +146,7 @@ In your machine learning lab, the model has a singular "purpose": to minimize th
 
 ### The Orthogonality Thesis: Intelligence vs. Intent
 
-<div class="smart-quote" data-cite="bostrom2012orthogonal">
+<div class="smart-quote" data-cite="bostrom2012orthogonal" data-page="3">
 Intelligence and final goals are orthogonal axes along which possible agents can freely vary. In other words, more or less any level of intelligence could in principle be combined with more or less any final goal.
 </div>
 
