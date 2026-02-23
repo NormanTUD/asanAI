@@ -3563,7 +3563,7 @@ function tled_updateEmbedding(inputEl) {
 
 /**
  * Adds a new token to the transformer's embedding space
- * with Gaussian-random initialization (matching get_or_init_embeddings logic).
+ * with Gaussian-random initialization
  */
 function tled_addToken() {
 	const nameInput = document.getElementById('tled-new-token-input');
