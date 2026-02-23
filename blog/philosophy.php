@@ -97,17 +97,6 @@ The AI's bubble is filled exclusively with **statistical relationships between t
 
 By using Uexküll's logic, we see that the AI isn't "failing" to perceive our world; it is simply inhabiting its own. It is a creature of pure syntax, living in a mathematical Umwelt where "meaning" is not a feeling or a sensation, but merely the distance between two points in a sea of data.
 
-#### World View of an AI
-
-<figure>
-    <img style="width: 100%" src="weltbild.jpg" alt="World view" />
-    <figcaption>Created by <i>Gemini</i></figcaption>
-</figure>
-
-In search of finding an image for this article, I tried to generate an image that would be understandable to an \citeauthor{arsmagna} would have understood. I didn't specify everything exactly, and thus, this image show's it's own world-view
-
-Since the bubble of the AI is only the technical data it gathered from *the internet*, it thinks the Internet is the main base.
-
 ### The "Dictionary" Paradox
 
 Imagine trying to learn a foreign language using only a dictionary written in that same language. You can follow the definitions in a circle forever, but you will never know what the words actually *refer* to in the physical world. LLMs are, essentially, the world's most sophisticated circular dictionaries.
