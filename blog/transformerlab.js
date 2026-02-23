@@ -497,7 +497,7 @@ async function train_transformer() {
 		window.currentWeights = get_init_weights(n_layers, d_model);
 	}
 
-	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
+	get_or_init_embeddings(tokens, d_model);
 
 	const weightVars = convert_weights_to_tensors(window.currentWeights);
 	const allVars = collectTrainableVars(weightVars);
