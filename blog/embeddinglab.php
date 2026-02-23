@@ -200,7 +200,7 @@ This is also why the Attention mechanism is so central. Attention computes pairw
     <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
         <button id="btn-align" onclick="animateCrossLingualAlignment()" style="background: #3b82f6; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">▶ Align Languages</button>
         <button id="btn-reset-align" onclick="resetCrossLingualAlignment()" style="background: #64748b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">↺ Reset</button>
-        <span id="align-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready, Japanese is rotated 55° from English.</span>
+        <span id="align-status" style="width: 100%; text-align: center; font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready, Japanese is rotated 55° from English.</span>
     </div>
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
         <b>What you're seeing:</b> English (●&nbsp;circles) and Japanese (◆&nbsp;diamonds) encode the same concepts in different orientations. 
