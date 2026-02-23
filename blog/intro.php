@@ -10,7 +10,7 @@ This is a journey through the evolution of human thought where technical milesto
 
 To understand a Neural Network is to understand a tapestry of ideas that often sidetracked into unexpected fields:
 
-* **Astronomy and Precision:** We will see how 4th-century astronomers, trying to map the stars with imperfect data, developed the very optimization tools that allow modern LLMs to learn from the internet.
+* **Astronomy and Precision:** We will see how astronomers from the fourth century and beyond, trying to map the stars with imperfect data, developed the very optimization tools that allow modern LLMs to learn from the internet.
 * **The Technical and The Philosophical:** We will not just look at code. We will explore how concepts of logic, language, and "Geist" have transitioned from philosophical debates into billions of trainable parameters.
 * **AI in Society:** We address the technology as a cultural mirror by looking at how these systems interact with human values, the risks of hallucinations, and the ethical responsibility of building intelligent tools.
 
