@@ -1,4 +1,10 @@
 window.bibData = {
+	"ethayarajh2019contextual": {
+		url: "https://aclanthology.org/D19-1006/",
+		author: "Kawin Ethayarajh",
+		year: 2019,
+		title: "How Contextual are Contextualized Word Representations? Comparing the Geometry of BERT, ELMo, and GPT-2 Embeddings"
+	},
 	"elhage2022superposition": {
 		title: "Toy Models of Superposition",
 		year: 2022,

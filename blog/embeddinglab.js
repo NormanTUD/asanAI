@@ -2725,6 +2725,233 @@ window.togglePlatonicOption = function() {
     renderPlatonicHypothesis();
 };
 
+// ============================================================
+// ANISOTROPY VISUALIZATION
+// ============================================================
+
+const anisotropyState = {
+    numVectors: 80,
+    level: 0,
+    baseVectors: [],
+    coneCenter: Math.PI / 4, // 45° — the dominant direction the cone points toward
+    labeledIndices: {}
+};
+
+function initAnisotropy() {
+    const st = anisotropyState;
+    st.baseVectors = [];
+
+    for (let i = 0; i < st.numVectors; i++) {
+        st.baseVectors.push({
+            baseAngle: Math.random() * 2 * Math.PI,
+            magnitude: 0.4 + Math.random() * 0.6
+        });
+    }
+
+    // Assign word labels to a subset of vectors for tangibility
+    const labels = [
+        'King', 'Queen', 'Man', 'Woman', 'Cat', 'Dog', 'Run',
+        'Think', 'Democracy', 'Sandwich', 'River', 'Happy',
+        'Blue', 'Ancient', 'Protein'
+    ];
+    const step = Math.floor(st.numVectors / labels.length);
+    labels.forEach((label, i) => {
+        st.labeledIndices[i * step] = label;
+    });
+}
+
+function getAnisotropicVectors(level) {
+    const st = anisotropyState;
+    const center = st.coneCenter;
+    const vectors = [];
+
+    for (let i = 0; i < st.numVectors; i++) {
+        const base = st.baseVectors[i];
+
+        // Compute angular offset from cone center, normalized to [-π, π]
+        let offset = base.baseAngle - center;
+        while (offset > Math.PI) offset -= 2 * Math.PI;
+        while (offset < -Math.PI) offset += 2 * Math.PI;
+
+        // Compress the offset as anisotropy increases
+        const compressedOffset = offset * (1 - level * 0.93);
+        const finalAngle = center + compressedOffset;
+
+        vectors.push({
+            x: base.magnitude * Math.cos(finalAngle),
+            y: base.magnitude * Math.sin(finalAngle),
+            angle: finalAngle,
+            mag: base.magnitude,
+            idx: i
+        });
+    }
+    return vectors;
+}
+
+function computePairwiseCosines(vectors) {
+    const sims = [];
+    for (let i = 0; i < vectors.length; i++) {
+        for (let j = i + 1; j < vectors.length; j++) {
+            const a = vectors[i], b = vectors[j];
+            const dot = a.x * b.x + a.y * b.y;
+            const mA = Math.sqrt(a.x * a.x + a.y * a.y);
+            const mB = Math.sqrt(b.x * b.x + b.y * b.y);
+            if (mA > 1e-6 && mB > 1e-6) {
+                sims.push(dot / (mA * mB));
+            }
+        }
+    }
+    return sims;
+}
+
+function renderAnisotropy() {
+	const scatterDiv = document.getElementById('plot-anisotropy-scatter');
+	const histDiv    = document.getElementById('plot-anisotropy-histogram');
+	const statsDiv   = document.getElementById('anisotropy-stats');
+	if (!scatterDiv || !histDiv) return;
+
+	const st     = anisotropyState;
+	const slider = document.getElementById('anisotropy-slider');
+	const valEl  = document.getElementById('anisotropy-val');
+
+	st.level = parseFloat(slider.value);
+	const pct = Math.round(st.level * 100);
+
+	let tag = `${pct}%`;
+	if      (pct === 0)  tag += ' (Isotropic)';
+	else if (pct < 30)   tag += ' (Mild)';
+	else if (pct < 60)   tag += ' (Moderate)';
+	else if (pct < 85)   tag += ' (Strong)';
+	else                  tag += ' (Extreme)';
+	valEl.textContent = tag;
+
+	const vectors = getAnisotropicVectors(st.level);
+	const sims    = computePairwiseCosines(vectors);
+
+	// ───────── LEFT: Scatter Plot ─────────
+	const scatterTraces = [];
+
+	// Reference unit circle
+	const cX = [], cY = [];
+	for (let i = 0; i <= 64; i++) {
+		const a = (i / 64) * 2 * Math.PI;
+		cX.push(Math.cos(a));
+		cY.push(Math.sin(a));
+	}
+	scatterTraces.push({
+		x: cX, y: cY, mode: 'lines',
+		line: { color: 'rgba(203,213,225,0.4)', width: 1 },
+		showlegend: false, hoverinfo: 'skip'
+	});
+
+	// Cone wedge highlight (only visible when anisotropy > 5%)
+	if (st.level > 0.05) {
+		const halfAngle = Math.PI * (1 - st.level * 0.93);
+		const wX = [0], wY = [0];
+		for (let i = 0; i <= 40; i++) {
+			const t = st.coneCenter - halfAngle + (2 * halfAngle * i / 40);
+			wX.push(1.25 * Math.cos(t));
+			wY.push(1.25 * Math.sin(t));
+		}
+		wX.push(0); wY.push(0);
+		scatterTraces.push({
+			x: wX, y: wY, mode: 'lines', fill: 'toself',
+			fillcolor: 'rgba(239,68,68,0.07)',
+			line: { color: 'rgba(239,68,68,0.25)', width: 1.5, dash: 'dash' },
+			showlegend: false, hoverinfo: 'skip'
+		});
+	}
+
+	// Unlabeled vector lines + endpoints
+	const endX = [], endY = [];
+	vectors.forEach((v, i) => {
+		if (st.labeledIndices[i]) return; // handled below
+		scatterTraces.push({
+			x: [0, v.x], y: [0, v.y], mode: 'lines',
+			line: { color: 'rgba(148,163,184,0.35)', width: 1 },
+			showlegend: false, hoverinfo: 'skip'
+		});
+		endX.push(v.x); endY.push(v.y);
+	});
+	scatterTraces.push({
+		x: endX, y: endY, mode: 'markers',
+		marker: { size: 3.5, color: '#94a3b8', opacity: 0.6 },
+		showlegend: false, hoverinfo: 'skip'
+	});
+
+	// Labeled vectors (on top)
+	vectors.forEach((v, i) => {
+		const label = st.labeledIndices[i];
+		if (!label) return;
+		scatterTraces.push({
+			x: [0, v.x], y: [0, v.y],
+			mode: 'lines+markers+text',
+			text: ['', label], textposition: 'top center',
+			textfont: { size: 10, color: '#1e293b' },
+			line: { color: '#3b82f6', width: 2 },
+			marker: { size: [0, 6], color: '#3b82f6' },
+			showlegend: false,
+			hovertemplate: `<b>${label}</b><br>Angle: ${(v.angle * 180 / Math.PI).toFixed(1)}°<extra></extra>`
+		});
+	});
+
+	Plotly.react(scatterDiv, scatterTraces, {
+		margin: { l: 30, r: 30, b: 30, t: 35 },
+		showlegend: false,
+		xaxis: { range: [-1.45, 1.45], zeroline: true, zerolinecolor: '#e2e8f0', showgrid: false, scaleanchor: 'y' },
+		yaxis: { range: [-1.45, 1.45], zeroline: true, zerolinecolor: '#e2e8f0', showgrid: false },
+		plot_bgcolor: '#fff',
+		title: { text: 'Embedding Vectors', font: { size: 13, color: '#64748b' } }
+	}, { displayModeBar: false, responsive: true });
+
+	// ───────── RIGHT: Histogram ─────────
+	const barColor = st.level < 0.3 ? 'rgba(59,130,246,0.6)'
+		: st.level < 0.7 ? 'rgba(245,158,11,0.6)'
+		:                   'rgba(239,68,68,0.6)';
+
+	Plotly.react(histDiv, [{
+		x: sims, type: 'histogram', nbinsx: 50,
+		marker: { color: barColor, line: { color: '#fff', width: 0.5 } },
+		hovertemplate: 'Cosine Sim: %{x:.2f}<br>Count: %{y}<extra></extra>'
+	}], {
+		margin: { l: 45, r: 30, b: 45, t: 35 },
+		xaxis: { title: 'Cosine Similarity', range: [-1.05, 1.05], dtick: 0.25 },
+		yaxis: { title: 'Pair Count' },
+		plot_bgcolor: '#fff',
+		bargap: 0.05,
+		title: { text: 'Pairwise Cosine Similarities', font: { size: 13, color: '#64748b' } }
+	}, { displayModeBar: false, responsive: true });
+
+	// ───────── STATS ─────────
+	if (statsDiv && sims.length) {
+		const avg   = sims.reduce((a, b) => a + b, 0) / sims.length;
+		const lo    = Math.min(...sims);
+		const hi    = Math.max(...sims);
+		const range = hi - lo;
+
+		const colorFor = (good, warn, val, threshGood, threshWarn) =>
+			val > threshWarn ? '#ef4444' : val > threshGood ? '#f59e0b' : '#10b981';
+
+		statsDiv.innerHTML = `
+	    <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+		<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Avg Cosine Similarity</div>
+		<div style="font-size:1.5em; font-weight:bold; color:${colorFor(0,0,avg,0.3,0.6)};">${avg.toFixed(3)}</div>
+		<div style="font-size:0.75em; color:#94a3b8;">Isotropic ideal: ≈ 0.000</div>
+	    </div>
+	    <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+		<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Similarity Range</div>
+		<div style="font-size:1.5em; font-weight:bold; color:${range < 0.5 ? '#ef4444' : range < 1.2 ? '#f59e0b' : '#10b981'};">${lo.toFixed(2)} → ${hi.toFixed(2)}</div>
+		<div style="font-size:0.75em; color:#94a3b8;">Full range: −1.0 → +1.0</div>
+	    </div>
+	    <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+		<div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Effective Bandwidth</div>
+		<div style="font-size:1.5em; font-weight:bold; color:${range < 0.5 ? '#ef4444' : range < 1.2 ? '#f59e0b' : '#10b981'};">${range.toFixed(3)}</div>
+		<div style="font-size:0.75em; color:#94a3b8;">Discriminative capacity</div>
+	    </div>
+	`;
+	}
+}
+
 function loadEmbeddingModule () {
 	const tasks = [
 		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
@@ -2811,5 +3038,13 @@ function loadEmbeddingModule () {
 	renderScaleInvariance();
 	if (slider) {
 		slider.addEventListener('input', renderScaleInvariance);
+	}
+
+	// Inside loadEmbeddingModule():
+	initAnisotropy();
+	renderAnisotropy();
+	const anisotropySlider = document.getElementById('anisotropy-slider');
+	if (anisotropySlider) {
+		anisotropySlider.addEventListener('input', renderAnisotropy);
 	}
 }

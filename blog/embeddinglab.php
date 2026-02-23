@@ -278,6 +278,7 @@ The deeper theoretical reason the path-finding framing works is the **Manifold H
 ## Attention as Metric Tensor
 
 There is an even more geometric way to think about attention. In differential geometry, a **metric tensor** defines how distances are measured locally on a manifold, it tells you the "shape" of space at each point. The attention matrix in a Transformer does something analogous: it dynamically redefines which tokens are "close" to which other tokens at each layer, effectively warping the local geometry of the embedding space as the representation is processed. This is not merely a metaphor, the connections between attention mechanisms and geometric structures on manifolds have been formalized in the framework of Geometric Deep Learning (\cite{bronstein2021geometric}).
+</div>
 
 <div class="md">
 ## The Residual Stream as Geodesic
@@ -355,5 +356,33 @@ Below, three independently trained models — a **Language model** (●), a **Vi
         <span style="color:#14b8a6;">nature sounds</span> cluster together — in <i>every</i> modality.
         The <span style="color:#8b5cf6; font-weight:bold;">purple dashed lines</span> connect the same concept across modalities.
         Click <b>Align</b> to rotate all three into the same frame and watch them collapse onto one geometry: the <b>platonic representation</b>.
+    </div>
+</section>
+
+<div class="md">
+## Anisotropy
+
+Embedding spaces are typically **anisotropic** — the vectors are not uniformly distributed through the space but instead cluster in a narrow cone or occupy only a subregion of the available volume. \citeauthor{ethayarajh2019contextual} (\citeyear{ethayarajh2019contextual}) showed that in models like BERT and GPT-2, embeddings at later layers become increasingly anisotropic, meaning the average cosine similarity between random word pairs is surprisingly high (often 0.5–0.9). This is problematic because it compresses the effective range of cosine similarity, making it harder to distinguish genuinely similar words from merely average ones. Techniques like **whitening** or **isotropy calibration** are used to counteract this.
+
+To understand why this matters, consider the geometry. In a perfectly **isotropic** space, word vectors are scattered uniformly across all directions. A random pair of words would have an expected cosine similarity near zero, leaving the full range from $-1$ to $+1$ available to encode genuine semantic relationships. But when the distribution collapses into a narrow cone — as it does in the deeper layers of most Transformers — even unrelated words end up pointing in roughly the same direction. The cosine similarity between "Democracy" and "Sandwich" might be $0.7$, while the similarity between "King" and "Queen" might be $0.85$. The *absolute* numbers look high in both cases; only a narrow band of $0.15$ separates meaningful relatedness from noise. This is the anisotropy problem: the metric that is supposed to measure "how similar are these concepts?" becomes almost useless when the entire vocabulary is squeezed into a small angular region of the space.
+
+Below, drag the **anisotropy slider** from isotropic (vectors spread uniformly) to highly anisotropic (vectors crushed into a narrow cone). Watch how the histogram of pairwise cosine similarities collapses from a wide distribution into a tight spike — and how the effective discriminative range shrinks to almost nothing.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
+        <div id="plot-anisotropy-scatter" style="height: 450px; background: #fff; border-radius: 8px; width: 100%;"></div>
+        <div id="plot-anisotropy-histogram" style="height: 450px; background: #fff; border-radius: 8px; width: 100%;"></div>
+    </div>
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin: 15px 0;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Anisotropy:</b>
+            <input type="range" id="anisotropy-slider" min="0" max="1" step="0.01" value="0" style="width: 260px; vertical-align: middle;">
+            <span id="anisotropy-val" style="font-weight: bold; color: #3b82f6;">0% (Isotropic)</span>
+        </label>
+    </div>
+    <div id="anisotropy-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; max-width: 700px; margin: 0 auto;"></div>
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> The left panel shows word vectors emanating from the origin. In an <b>isotropic</b> space (slider at 0%), vectors spread uniformly in all directions. As <b>anisotropy</b> increases, vectors collapse into a <span style="color:#ef4444; font-weight:bold;">narrow cone</span> (shaded red wedge). The right panel shows the distribution of <i>all pairwise cosine similarities</i>. Notice how it shifts from a wide spread centered near 0 to a narrow spike near 1.0 — the <span style="color:#ef4444; font-weight:bold;">effective bandwidth</span> for distinguishing "truly similar" from "merely average" shrinks dramatically.
     </div>
 </section>
