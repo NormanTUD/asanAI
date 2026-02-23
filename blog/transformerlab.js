@@ -3637,67 +3637,67 @@ function tled_addToken() {
  * in-place and add/remove rows as needed.
  */
 function tled_syncTableFromSpace() {
-    const container = document.getElementById('tled-editor-container');
-    if (!container) return;
+	const container = document.getElementById('tled-editor-container');
+	if (!container) return;
 
-    const space = window.persistentEmbeddingSpace;
-    if (!space || Object.keys(space).length === 0) return;
+	const space = window.persistentEmbeddingSpace;
+	if (!space || Object.keys(space).length === 0) return;
 
-    const table = document.getElementById('tled-table');
+	const table = document.getElementById('tled-table');
 
-    // If the table doesn't exist yet (first run), do a full init
-    if (!table) {
-        tled_initEditor();
-        return;
-    }
+	// If the table doesn't exist yet (first run), do a full init
+	if (!table) {
+		tled_initEditor();
+		return;
+	}
 
-    const words = Object.keys(space);
-    const d_model = space[words[0]].length;
+	const words = Object.keys(space);
+	const d_model = space[words[0]].length;
 
-    // Check if d_model changed (dimension slider moved) — full rebuild needed
-    const firstInput = table.querySelector('input[data-tled-dim]');
-    if (firstInput) {
-        const firstWord = firstInput.getAttribute('data-tled-word');
-        const existingDims = table.querySelectorAll(`input[data-tled-word="${firstWord}"]`).length;
-        if (existingDims !== d_model) {
-            tled_initEditor();
-            return;
-        }
-    }
+	// Check if d_model changed (dimension slider moved) — full rebuild needed
+	const firstInput = table.querySelector('input[data-tled-dim]');
+	if (firstInput) {
+		const firstWord = firstInput.getAttribute('data-tled-word');
+		const existingDims = table.querySelectorAll(`input[data-tled-word="${firstWord}"]`).length;
+		if (existingDims !== d_model) {
+			tled_initEditor();
+			return;
+		}
+	}
 
-    // Update existing rows in-place
-    const existingRows = new Set();
-    table.querySelectorAll('tbody tr').forEach(row => {
-        const wordCell = row.querySelector('td');
-        if (wordCell) existingRows.add(wordCell.textContent.trim());
-    });
+	// Update existing rows in-place
+	const existingRows = new Set();
+	table.querySelectorAll('tbody tr').forEach(row => {
+		const wordCell = row.querySelector('td');
+		if (wordCell) existingRows.add(wordCell.textContent.trim());
+	});
 
-    // Add new tokens that appeared (e.g., from training data change)
-    words.forEach(word => {
-        if (!existingRows.has(word)) {
-            const tbody = table.querySelector('tbody');
-            if (tbody) {
-                tbody.insertAdjacentHTML('beforeend',
-                    tled_generateRowHtml(word, space[word], d_model)
-                );
-            }
-        }
-    });
+	// Add new tokens that appeared (e.g., from training data change)
+	words.forEach(word => {
+		if (!existingRows.has(word)) {
+			const tbody = table.querySelector('tbody');
+			if (tbody) {
+				tbody.insertAdjacentHTML('beforeend',
+					tled_generateRowHtml(word, space[word], d_model)
+				);
+			}
+		}
+	});
 
-    // Remove tokens that no longer exist
-    existingRows.forEach(word => {
-        if (!space[word]) {
-            const row = document.getElementById(`tled-row-${word}`);
-            if (row) row.remove();
-        }
-    });
+	// Remove tokens that no longer exist
+	existingRows.forEach(word => {
+		if (!space[word]) {
+			const row = document.getElementById(`tled-row-${word}`);
+			if (row) row.remove();
+		}
+	});
 
-    // Update all input values to match current embeddings
-    words.forEach(word => {
-        const vec = space[word];
-        for (let d = 0; d < d_model; d++) {
-            const input = table.querySelector(
-                `input[data-tled-word="${word}"][data-tled-dim="${d}"]`
+	// Update all input values to match current embeddings
+	words.forEach(word => {
+		const vec = space[word];
+		for (let d = 0; d < d_model; d++) {
+			const input = table.querySelector(
+`input[data-tled-word="${word}"][data-tled-dim="${d}"]`
             );
             if (input && document.activeElement !== input) {
                 // Only update if the user isn't currently editing this cell
