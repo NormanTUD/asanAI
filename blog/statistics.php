@@ -708,7 +708,7 @@ Now, we visualize the transition probabilities $P(w_n | w_{n-1})$. The training 
 
 <div class="statlab-interactive-zone" style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0;">
     
-    <div class="md">### Source Text</div>
+    <div class="md">**Source Text**:</div>
     <textarea id="markov-corpus" onchange="trainMarkovModel()" style="width: 100%; height: 100px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; margin-bottom: 10px;">
 When Zarathustra was thirty years old, he left his home and the lake of
 his home, and went into the mountains. There he enjoyed his spirit and
@@ -751,7 +751,7 @@ Thus began Zarathustra's down-going.
     </textarea>
 
     <div style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-        <div class="md" style="margin-bottom: 10px;">### Live Predictions</div>
+        <div class="md" style="margin-bottom: 10px;">**Live Predictions**:</div>
         
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <input type="text" id="seed-word" placeholder="Enter word (e.g., 'zarathustra')" style="flex-grow: 1; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
