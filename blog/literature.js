@@ -1,4 +1,10 @@
 window.bibData = {
+	"hendel2023incontext": {
+		url: "https://arxiv.org/abs/2310.15916",
+		author: "Roee Hendel, Mor Geva, Amir Globerson",
+		title: "In-Context Learning Creates Task Vectors",
+		year: "2023"
+	},
 	"ethayarajh2019contextual": {
 		url: "https://aclanthology.org/D19-1006/",
 		author: "Kawin Ethayarajh",

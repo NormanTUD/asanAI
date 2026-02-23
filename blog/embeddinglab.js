@@ -3178,6 +3178,359 @@ function renderSuperposition() {
     }
 }
 
+// ============================================================
+// THE GEOMETRY OF IN-CONTEXT LEARNING
+// ============================================================
+
+const iclState = {
+    numExamples: 3,
+    injected: false,
+    animating: false,
+    queryAnimT: 0, // 0 = original position, 1 = fully steered
+
+    // Example pairs: each has an input position and a label position.
+    // The "task" is classification: input → category label.
+    examplePairs: [
+        { input: 'dog',       inputPos: [ 6,  -2], label: 'animal', labelPos: [14,  4] },
+        { input: 'cat',       inputPos: [ 4,   1], label: 'animal', labelPos: [13,  5] },
+        { input: 'sparrow',   inputPos: [ 3,  -4], label: 'animal', labelPos: [12,  3] },
+        { input: 'rose',      inputPos: [-5,   2], label: 'plant',  labelPos: [-12, 10] },
+        { input: 'oak',       inputPos: [-7,  -1], label: 'plant',  labelPos: [-13,  8] },
+        { input: 'tulip',     inputPos: [-4,   4], label: 'plant',  labelPos: [-11, 11] },
+    ],
+
+    // The query token and its expected answer region
+    query:       { token: 'eagle', pos: [5, -5] },
+    answerCenter: [13, 2.5],  // center of the "correct answer" region
+    answerRadius: 3.5
+};
+
+function getICLTaskVector() {
+    const st = iclState;
+    const n = st.numExamples;
+    let dx = 0, dy = 0;
+    for (let i = 0; i < n; i++) {
+        const ex = st.examplePairs[i];
+        dx += ex.labelPos[0] - ex.inputPos[0];
+        dy += ex.labelPos[1] - ex.inputPos[1];
+    }
+    return [dx / n, dy / n];
+}
+
+function renderICL() {
+    const plotDiv = document.getElementById('plot-icl-task-vector');
+    if (!plotDiv) return;
+
+    const st = iclState;
+    const n = st.numExamples;
+    const taskVec = getICLTaskVector();
+    const traces = [];
+    const annotations = [];
+
+    // ---- 1. Answer region (green shaded circle) ----
+    const circSteps = 60;
+    const circX = [], circY = [];
+    for (let i = 0; i <= circSteps; i++) {
+        const a = (i / circSteps) * 2 * Math.PI;
+        circX.push(st.answerCenter[0] + st.answerRadius * Math.cos(a));
+        circY.push(st.answerCenter[1] + st.answerRadius * Math.sin(a));
+    }
+    traces.push({
+        x: circX, y: circY,
+        mode: 'lines', fill: 'toself',
+        fillcolor: 'rgba(16,185,129,0.10)',
+        line: { color: 'rgba(16,185,129,0.4)', width: 2, dash: 'dot' },
+        showlegend: false, hoverinfo: 'skip'
+    });
+    annotations.push({
+        x: st.answerCenter[0], y: st.answerCenter[1] + st.answerRadius + 0.8,
+        text: '<b>Answer Region</b>',
+        showarrow: false,
+        font: { size: 11, color: '#10b981' },
+        bgcolor: 'rgba(255,255,255,0.8)', borderpad: 3
+    });
+
+    // ---- 2. Example pair arrows (gray, from input to label) ----
+    for (let i = 0; i < n; i++) {
+        const ex = st.examplePairs[i];
+
+        // Input point
+        traces.push({
+            x: [ex.inputPos[0]], y: [ex.inputPos[1]],
+            mode: 'markers+text',
+            text: [ex.input], textposition: 'bottom center',
+            textfont: { size: 10, color: '#64748b' },
+            marker: { size: 7, color: '#94a3b8', opacity: 0.8 },
+            showlegend: false,
+            hovertemplate: `<b>${ex.input}</b> (input)<extra></extra>`
+        });
+
+        // Label point
+        traces.push({
+            x: [ex.labelPos[0]], y: [ex.labelPos[1]],
+            mode: 'markers+text',
+            text: [ex.label], textposition: 'top center',
+            textfont: { size: 10, color: '#64748b' },
+            marker: { size: 7, color: '#94a3b8', opacity: 0.8, symbol: 'triangle-up' },
+            showlegend: false,
+            hovertemplate: `<b>${ex.label}</b> (label for ${ex.input})<extra></extra>`
+        });
+
+        // Offset arrow (gray)
+        annotations.push({
+            ax: ex.inputPos[0], ay: ex.inputPos[1],
+            x: ex.labelPos[0], y: ex.labelPos[1],
+            axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+            showarrow: true,
+            arrowhead: 2, arrowsize: 1.2, arrowwidth: 2,
+            arrowcolor: 'rgba(148,163,184,0.55)'
+        });
+
+        // Label on arrow midpoint
+        const mx = (ex.inputPos[0] + ex.labelPos[0]) / 2;
+        const my = (ex.inputPos[1] + ex.labelPos[1]) / 2;
+        annotations.push({
+            x: mx, y: my + 0.8,
+            text: `<i>${ex.input}→${ex.label}</i>`,
+            showarrow: false,
+            font: { size: 8, color: '#94a3b8' }
+        });
+    }
+
+    // ---- 3. Averaged Task Vector (blue, drawn from query position) ----
+    const qPos = st.query.pos;
+    const taskMag = Math.sqrt(taskVec[0] ** 2 + taskVec[1] ** 2);
+
+    // Draw the task vector from origin (to show its direction independently)
+    const tvOriginX = 0, tvOriginY = -8;
+    annotations.push({
+        ax: tvOriginX, ay: tvOriginY,
+        x: tvOriginX + taskVec[0] * 0.45,
+        y: tvOriginY + taskVec[1] * 0.45,
+        axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+        showarrow: true,
+        arrowhead: 2, arrowsize: 1.8, arrowwidth: 4,
+        arrowcolor: '#3b82f6'
+    });
+    annotations.push({
+        x: tvOriginX + taskVec[0] * 0.25,
+        y: tvOriginY + taskVec[1] * 0.25 - 1.2,
+        text: `<b>Task Vector</b><br>Δ = [${taskVec[0].toFixed(1)}, ${taskVec[1].toFixed(1)}]`,
+        showarrow: false,
+        font: { size: 11, color: '#3b82f6' },
+        bgcolor: 'rgba(255,255,255,0.85)', borderpad: 4
+    });
+
+    // ---- 4. Query token (red diamond) ----
+    const t = st.queryAnimT;
+    const steeredX = qPos[0] + taskVec[0] * t;
+    const steeredY = qPos[1] + taskVec[1] * t;
+
+    // Ghost of original position (if animating)
+    if (t > 0.01) {
+        traces.push({
+            x: [qPos[0]], y: [qPos[1]],
+            mode: 'markers+text',
+            text: [st.query.token], textposition: 'bottom right',
+            textfont: { size: 10, color: 'rgba(239,68,68,0.3)' },
+            marker: { size: 12, color: 'rgba(239,68,68,0.2)', symbol: 'diamond' },
+            showlegend: false, hoverinfo: 'skip'
+        });
+
+        // Dashed line from original to steered
+        traces.push({
+            x: [qPos[0], steeredX], y: [qPos[1], steeredY],
+            mode: 'lines',
+            line: { color: 'rgba(59,130,246,0.4)', width: 2.5, dash: 'dash' },
+            showlegend: false, hoverinfo: 'skip'
+        });
+    }
+
+    // Current query position
+    const qColor = t > 0.95 ? '#10b981' : '#ef4444';
+    traces.push({
+        x: [steeredX], y: [steeredY],
+        mode: 'markers+text',
+        text: [st.query.token],
+        textposition: 'top right',
+        textfont: { size: 13, color: qColor, weight: 'bold' },
+        marker: { size: 14, color: qColor, symbol: 'diamond', line: { width: 2, color: '#fff' } },
+        showlegend: false,
+        hovertemplate: `<b>${st.query.token}</b> (query)<br>Position: [${steeredX.toFixed(1)}, ${steeredY.toFixed(1)}]<extra></extra>`
+    });
+
+    // ---- 5. Task vector applied to query (blue arrow on query) ----
+    if (t > 0.01) {
+        annotations.push({
+            ax: qPos[0], ay: qPos[1],
+            x: steeredX, y: steeredY,
+            axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+            showarrow: true,
+            arrowhead: 2, arrowsize: 1.5, arrowwidth: 3,
+            arrowcolor: '#3b82f6',
+            opacity: Math.min(t * 1.5, 1)
+        });
+    }
+
+    // ---- Layout ----
+    const layout = {
+        margin: { l: 40, r: 40, b: 40, t: 20 },
+        showlegend: false,
+        xaxis: {
+            range: [-20, 22],
+            zeroline: true, zerolinecolor: '#e2e8f0',
+            showgrid: true, gridcolor: '#f1f5f9',
+            title: ''
+        },
+        yaxis: {
+            range: [-12, 16],
+            zeroline: true, zerolinecolor: '#e2e8f0',
+            showgrid: true, gridcolor: '#f1f5f9',
+            scaleanchor: 'x',
+            title: ''
+        },
+        annotations: annotations,
+        plot_bgcolor: '#fff'
+    };
+
+    Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+
+    // ---- Stats ----
+    const statsDiv = document.getElementById('icl-stats');
+    if (statsDiv) {
+        const distToAnswer = Math.sqrt(
+            (steeredX - st.answerCenter[0]) ** 2 +
+            (steeredY - st.answerCenter[1]) ** 2
+        );
+        const insideRegion = distToAnswer <= st.answerRadius;
+
+        statsDiv.innerHTML = `
+            <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+                <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Task Vector Magnitude</div>
+                <div style="font-size: 1.5em; font-weight: bold; color: #3b82f6;">${taskMag.toFixed(1)}</div>
+                <div style="font-size: 0.75em; color: #94a3b8;">‖Δ‖ from ${n} example${n > 1 ? 's' : ''}</div>
+            </div>
+            <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+                <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Distance to Answer</div>
+                <div style="font-size: 1.5em; font-weight: bold; color: ${insideRegion ? '#10b981' : '#ef4444'};">${distToAnswer.toFixed(1)}</div>
+                <div style="font-size: 0.75em; color: #94a3b8;">${insideRegion ? '✅ Inside answer region' : '⬜ Outside answer region'}</div>
+            </div>
+            <div style="padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center;">
+                <div style="font-size: 0.8em; color: #64748b; margin-bottom: 4px;">Examples Used</div>
+                <div style="font-size: 1.5em; font-weight: bold; color: #8b5cf6;">${n} / ${st.examplePairs.length}</div>
+                <div style="font-size: 0.75em; color: #94a3b8;">More examples → stabler vector</div>
+            </div>
+        `;
+    }
+}
+
+// ---- Animation: Inject Task Vector ----
+
+window.animateICLInjection = function() {
+    const st = iclState;
+    if (st.animating || st.injected) return;
+
+    st.animating = true;
+    const btn = document.getElementById('btn-icl-inject');
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+
+    const duration = 1500;
+    const startTime = performance.now();
+
+    function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function step(now) {
+        const elapsed = now - startTime;
+        const rawT = Math.min(elapsed / duration, 1);
+        st.queryAnimT = easeInOutCubic(rawT);
+
+        const statusEl = document.getElementById('icl-status');
+        if (statusEl) {
+            statusEl.textContent = `Injecting task vector... ${Math.round(rawT * 100)}%`;
+            statusEl.style.color = '#3b82f6';
+        }
+
+        renderICL();
+
+        if (rawT < 1) {
+            requestAnimationFrame(step);
+        } else {
+            st.queryAnimT = 1;
+            st.animating = false;
+            st.injected = true;
+            btn.disabled = true;
+
+            if (statusEl) {
+                const taskVec = getICLTaskVector();
+                const steeredX = st.query.pos[0] + taskVec[0];
+                const steeredY = st.query.pos[1] + taskVec[1];
+                const dist = Math.sqrt(
+                    (steeredX - st.answerCenter[0]) ** 2 +
+                    (steeredY - st.answerCenter[1]) ** 2
+                );
+                const inside = dist <= st.answerRadius;
+
+                statusEl.innerHTML = inside
+                    ? '✅ <b>Success!</b> The task vector steered "eagle" into the answer region. The model "learned" the task from examples alone.'
+                    : '⚠️ <b>Injected</b>, but the query landed outside the answer region. Try adding more examples for a more precise task vector.';
+                statusEl.style.color = inside ? '#10b981' : '#f59e0b';
+            }
+
+            renderICL();
+        }
+    }
+
+    requestAnimationFrame(step);
+};
+
+// ---- Reset ----
+
+window.resetICL = function() {
+    const st = iclState;
+    if (st.animating) return;
+
+    st.queryAnimT = 0;
+    st.injected = false;
+
+    const btn = document.getElementById('btn-icl-inject');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+
+    const statusEl = document.getElementById('icl-status');
+    if (statusEl) {
+        statusEl.textContent = 'Ready — adjust examples and click Inject.';
+        statusEl.style.color = '#64748b';
+    }
+
+    renderICL();
+};
+
+// ---- Slider handler ----
+
+function initICL() {
+    const slider = document.getElementById('icl-num-examples');
+    if (!slider) return;
+
+    function onSliderChange() {
+        const st = iclState;
+        st.numExamples = parseInt(slider.value);
+        document.getElementById('icl-num-val').textContent = st.numExamples;
+
+        // If already injected, reset so the user can re-inject with new count
+        if (st.injected) {
+            resetICL();
+        } else {
+            renderICL();
+        }
+    }
+
+    slider.addEventListener('input', onSliderChange);
+    renderICL();
+}
+
 function loadEmbeddingModule () {
 	const tasks = [
 		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
@@ -3281,4 +3634,5 @@ function loadEmbeddingModule () {
 		spSlider.addEventListener('input', renderSuperposition);
 	}
 
+	initICL();
 }

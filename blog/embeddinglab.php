@@ -427,3 +427,44 @@ Below, you can explore this tradeoff directly. The visualization shows a **2-dim
         each neuron ends up <b>polysemantic</b> &mdash; responding to multiple features at once.
     </div>
 </section>
+
+<div class="md">
+## The Geometry of In-Context Learning
+
+One of the most active research frontiers concerns what happens when you give a model a handful of examples directly in the prompt. Rather than updating any weights, the model appears to construct an implicit **task vector** in activation space on the fly. \citeauthor{hendel2023incontext} (\citeyear{hendel2023incontext}) demonstrated that the function learned via in-context learning can be compressed into a single vector, extracted by computing the difference between the model's internal activations *with* the few-shot examples and *without* them, and then **injected** into a blank prompt to reproduce the same behavior. Geometrically, each example pair (e.g., *"dog → animal", "rose → plant"*) contributes a small directional arrow in the residual stream. These arrows, while individually noisy, average into a coherent **task direction**, a single vector that encodes "classify this input into its category." When a new query token (e.g., "eagle") enters the residual stream, this task direction **rotates** the model's internal processing toward the correct answer region (e.g., the neighborhood of "animal"), as if the few-shot examples had installed a temporary compass needle pointing toward the desired output.
+
+This is why in-context learning is so powerful and so mysterious: the model is not being retrained. It is performing a geometric operation, constructing a direction from examples and applying it to a query, entirely within the forward pass. The task vector is not stored in any weight matrix; it exists only as a transient pattern in the activation geometry, assembled and discarded with each new prompt.
+
+Below, you can watch this process unfold. Each **example pair** produces an offset arrow (shown in gray). These arrows are averaged into a single **task vector** (shown in blue). When applied to the **query token** (the red diamond), it is steered toward the correct **answer region** (the green zone). Use the slider to add or remove examples and watch the task vector stabilize as more evidence accumulates.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-icl-task-vector" style="height: 520px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+
+    <!-- Controls -->
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Number of few-shot examples:</b>
+            <input type="range" id="icl-num-examples" min="1" max="6" step="1" value="3" style="width: 200px; vertical-align: middle;">
+            <span id="icl-num-val" style="font-weight: bold; color: #3b82f6;">3</span>
+        </label>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <button id="btn-icl-inject" onclick="animateICLInjection()" style="background: #3b82f6; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">⚡ Inject Task Vector</button>
+        <button onclick="resetICL()" style="background: #64748b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">↺ Reset</button>
+        <span id="icl-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready, adjust examples and click Inject.</span>
+    </div>
+
+    <!-- Stats -->
+    <div id="icl-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; max-width: 700px; margin: 0 auto 15px auto;"></div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> Each <span style="color:#94a3b8; font-weight:bold;">gray arrow</span> is the offset vector from one few-shot example's input to its label (e.g., "dog" → "animal").
+        The <span style="color:#3b82f6; font-weight:bold;">blue arrow</span> is the <b>averaged task vector</b>, the implicit "task direction" the model extracts from the examples.
+        The <span style="color:#ef4444; font-weight:bold;">red diamond</span> is the query token ("eagle") before injection.
+        When you click <b>Inject</b>, the task vector is applied to the query, steering it into the <span style="color:#10b981; font-weight:bold;">green answer region</span>.
+        Add more examples with the slider to watch the task vector stabilize and point more precisely toward the correct answer.
+    </div>
+</section>
