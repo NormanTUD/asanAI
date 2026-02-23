@@ -62,6 +62,14 @@ The 4E framework breaks down the "Intelligence" of an AI into four missing dimen
 
 **Conclusion:** LLMs represent a triumph of the *Extended* mind, but they are hollow because they lack the *Embodied* grounding that gives language its actual meaning.
 
+Human "grounding" is **embodied**. Our understanding of the world is filtered through biological sensors and physical interaction:
+
+* **Sensorimotor Feedback:** We know what "heavy" means because our muscles strain.
+* **Affective Weight:** We know what "danger" means because our heart rate spikes and adrenaline flows.
+* **Shared Reality:** Our language evolved to coordinate physical actions in a shared environment (e.g., "Look at that tree").
+
+For a human, the concept of "hot" is grounded in the memory of a burnt finger. For an LLM, "hot" is just a token frequently found near "stove," "sun," or "spicy."
+
 ### The Chinese Room Argument (John Searle)
 In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.
 
@@ -100,16 +108,6 @@ By using Uexküll's logic, we see that the AI isn't "failing" to perceive our wo
 ### The "Dictionary" Paradox
 
 Imagine trying to learn a foreign language using only a dictionary written in that same language. You can follow the definitions in a circle forever, but you will never know what the words actually *refer* to in the physical world. LLMs are, essentially, the world's most sophisticated circular dictionaries.
-
-### Human Experience: Embodied Cognition
-
-Human "grounding" is **embodied**. Our understanding of the world is filtered through biological sensors and physical interaction:
-
-* **Sensorimotor Feedback:** We know what "heavy" means because our muscles strain.
-* **Affective Weight:** We know what "danger" means because our heart rate spikes and adrenaline flows.
-* **Shared Reality:** Our language evolved to coordinate physical actions in a shared environment (e.g., "Look at that tree").
-
-For a human, the concept of "hot" is grounded in the memory of a burnt finger. For an LLM, "hot" is just a token frequently found near "stove," "sun," or "spicy."
 
 ### Why Embedding Spaces are not "Reality"
 
@@ -184,7 +182,6 @@ If an AI can write poetry about love, does it feel love? Many researchers, notab
 
 Bender argues that because these models learn only from the statistical likelihood of word sequences, they are merely "haphazardly stitching together sequences of linguistic forms... without any reference to meaning". When an AI hallucinates, it is just "parroting" a pattern it saw somewhere else, regardless of whether it makes sense in the real world.
 
-### The Mechanism of the Parrot
 Just as the "Red Line" predicts the next point on a curve based on statistical patterns, an LLM predicts the next "token" based on massive amounts of training data.
 * **Statistical Probabilities:** It doesn't "know" what a house is; it knows that the word "house" has a 75% probability of being followed by "is" or "has."
 * **Lack of Grounding:** Since the AI has no physical "body" or sensorimotor feedback, it remains **ontologically isolated**. It repeats the *structure* of human thought without ever participating in the *substance* of it.
