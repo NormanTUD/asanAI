@@ -705,7 +705,7 @@ _updateHoverState(svg) {
                     label.setAttribute('text-anchor', 'end');
                     label.setAttribute('class', 'apv-weight-label');
                     // Black outline for readability
-                    label.setAttribute('stroke', '#000');
+                    label.setAttribute('stroke', '#fff');
                     label.setAttribute('stroke-width', '2.5');
                     label.setAttribute('paint-order', 'stroke');
                     label.textContent = lbl.text;
@@ -726,7 +726,7 @@ _updateHoverState(svg) {
                     label.setAttribute('text-anchor', 'start');
                     label.setAttribute('class', 'apv-weight-label');
                     // Black outline for readability
-                    label.setAttribute('stroke', '#000');
+                    label.setAttribute('stroke', '#fff');
                     label.setAttribute('stroke-width', '2.5');
                     label.setAttribute('paint-order', 'stroke');
                     label.textContent = lbl.text;
