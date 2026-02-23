@@ -3910,7 +3910,7 @@ function renderNegation() {
 
 	// ---- 11. Verdict banner ----
 	annotations.push({
-		x: 0, y: -9,
+		x: 0, y: -11,
 		text: `<b>⚠️ "not ${selected}" is ${ratio}× closer to "${selected}" than to "${antKey}"</b>`,
 		showarrow: false,
 		font: { size: 13, color: '#dc2626' },
