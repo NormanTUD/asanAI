@@ -136,6 +136,31 @@ In a Transformer (like ChatGPT), this is the "Handshake." When a word "looks" at
 </div>
 
 <div class="md">
+### Scale Invariance: Direction Is Meaning, Magnitude Is Noise
+
+There's a subtle but critical property that explains *why* cosine similarity is preferred over Euclidean distance in most embedding applications: **scale invariance**. Two vectors can point in exactly the same direction, encoding the same semantic content, but differ wildly in magnitude. Euclidean distance would call them "far apart." Cosine similarity correctly identifies them as identical in meaning.
+
+Why does magnitude vary? During training, tokens that appear more frequently accumulate more gradient updates, inflating their vector norms. A rare synonym of "King" might encode the same directional relationships but have a much shorter vector. Cosine similarity is blind to this artifact; Euclidean distance is fooled by it.
+
+Below, drag the **magnitude slider** to stretch or shrink a token's vector without changing its direction. Watch how Euclidean distance changes dramatically while cosine similarity stays perfectly constant.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-scale-invariance" style="height: 420px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Magnitude of Token B:</b>
+            <input type="range" id="scale-magnitude" min="0.3" max="3.0" step="0.05" value="1.0" style="width: 200px; vertical-align: middle;">
+            <span id="scale-mag-val" style="font-weight: bold; color: #3b82f6;">1.0×</span>
+        </label>
+    </div>
+    <div id="scale-invariance-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 500px; margin: 0 auto;"></div>
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>Key insight:</b> As you drag the slider, Token B (the diamond) moves along its direction ray, getting closer or farther from the origin. The <span style="color:#ef4444; font-weight:bold;">Euclidean distance</span> (dashed line) changes dramatically. But the <span style="color:#10b981; font-weight:bold;">cosine similarity</span> (the angle between the vectors) stays <i>perfectly constant</i>. This is why cosine similarity is the standard metric in embedding spaces: it measures <b>what</b> a token means, not <b>how often</b> it was seen during training.
+    </div>
+</section>
+
+<div class="md">
 ## The Illusion of Interpretability
 </div>
 
@@ -261,31 +286,5 @@ Below, you can explore this interactively. Select different "concept directions"
     </div>
     <div id="parallelogram-status" style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
         <b>What you're seeing:</b> The <span style="color:#3b82f6; font-weight:bold;">blue arrows</span> show the same concept offset applied to different word pairs. If the arrows are parallel and equal in length, the analogy holds, the concept is a <i>consistent direction</i> in the space, not tied to any specific word.
-    </div>
-</section>
-
-
-<div class="md">
-## Scale Invariance: Direction Is Meaning, Magnitude Is Noise
-
-There's a subtle but critical property that explains *why* cosine similarity is preferred over Euclidean distance in most embedding applications: **scale invariance**. Two vectors can point in exactly the same direction, encoding the same semantic content, but differ wildly in magnitude. Euclidean distance would call them "far apart." Cosine similarity correctly identifies them as identical in meaning.
-
-Why does magnitude vary? During training, tokens that appear more frequently accumulate more gradient updates, inflating their vector norms. A rare synonym of "King" might encode the same directional relationships but have a much shorter vector. Cosine similarity is blind to this artifact; Euclidean distance is fooled by it.
-
-Below, drag the **magnitude slider** to stretch or shrink a token's vector without changing its direction. Watch how Euclidean distance changes dramatically while cosine similarity stays perfectly constant.
-</div>
-
-<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div id="plot-scale-invariance" style="height: 420px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
-    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;">
-        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
-            <b>Magnitude of Token B:</b>
-            <input type="range" id="scale-magnitude" min="0.3" max="3.0" step="0.05" value="1.0" style="width: 200px; vertical-align: middle;">
-            <span id="scale-mag-val" style="font-weight: bold; color: #3b82f6;">1.0×</span>
-        </label>
-    </div>
-    <div id="scale-invariance-stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 500px; margin: 0 auto;"></div>
-    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
-        <b>Key insight:</b> As you drag the slider, Token B (the diamond) moves along its direction ray, getting closer or farther from the origin. The <span style="color:#ef4444; font-weight:bold;">Euclidean distance</span> (dashed line) changes dramatically. But the <span style="color:#10b981; font-weight:bold;">cosine similarity</span> (the angle between the vectors) stays <i>perfectly constant</i>. This is why cosine similarity is the standard metric in embedding spaces: it measures <b>what</b> a token means, not <b>how often</b> it was seen during training.
     </div>
 </section>
