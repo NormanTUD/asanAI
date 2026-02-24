@@ -914,7 +914,7 @@ async function train_transformer() {
 		const remainingEpochs = epochs - (i + 1);
 		const etaMs = remainingEpochs * avgTimePerEpoch;
 		const etaString = formatETA(etaMs);
-		status.innerText = `Epoch ${i}: Loss = ${lossValue[0].toFixed(6)} | ETA: ${etaString}`;
+		status.innerText = `Epoch ${i + 1}: Loss = ${lossValue[0].toFixed(6)} | ETA: ${etaString}`;
 
 		renderLossGraph();
 
