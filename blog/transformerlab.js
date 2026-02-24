@@ -1316,16 +1316,20 @@ function collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, cont
 	const losses = [];
 
 	for (let startIdx = 0; startIdx < tokens.length - contextSize; startIdx++) {
-		const inputIds  = mapTokensToIds(tokens, startIdx, contextSize, vars.vocab_map);
-		const targetIds = mapTokensToIds(tokens, startIdx + 1, contextSize, vars.vocab_map);
+		const loss = tf.tidy(() => {
+			const inputIds  = mapTokensToIds(tokens, startIdx, contextSize, vars.vocab_map);
+			const targetIds = mapTokensToIds(tokens, startIdx + 1, contextSize, vars.vocab_map);
 
-		let x = embedAndEncodePositions(inputIds, vars.embeddings, d_model);
+			let x = embedAndEncodePositions(inputIds, vars.embeddings, d_model);
 
-		x = applyTransformerLayers(x, vars.layers, n_layers, n_heads, d_k, contextSize, d_model, mask);
+			x = applyTransformerLayers(x, vars.layers, n_layers, n_heads, d_k, contextSize, d_model, mask);
 
-		const logits = tf.matMul(x, vars.embeddings.transpose());
-		const labels = tf.oneHot(tf.tensor1d(targetIds, 'int32'), vars.vocab_map.length);
-		losses.push(tf.losses.softmaxCrossEntropy(labels, logits));
+			const logits = tf.matMul(x, vars.embeddings.transpose());
+			const labels = tf.oneHot(tf.tensor1d(targetIds, 'int32'), vars.vocab_map.length);
+			return tf.losses.softmaxCrossEntropy(labels, logits);
+		});
+
+		losses.push(loss);
 	}
 
 	return losses;
