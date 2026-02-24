@@ -627,9 +627,9 @@ window.showHead = (idx) => {
 };
 
 function calculate_positional_injection(tokens, d_model) {
-    const injectedEncodings = computeInjectedEncodings(tokens, d_model);
-    renderPositionalInjectionHtml(tokens, injectedEncodings, d_model);
-    return injectedEncodings;
+	const injectedEncodings = computeInjectedEncodings(tokens, d_model);
+	renderPositionalInjectionHtml(tokens, injectedEncodings, d_model);
+	return injectedEncodings;
 }
 
 /**
@@ -637,37 +637,37 @@ function calculate_positional_injection(tokens, d_model) {
  * Pure computation — no DOM access.
  */
 function computeInjectedEncodings(tokens, d_model) {
-    return tokens.map((token, pos) => {
-        const semanticVec = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[token])
-            ? window.persistentEmbeddingSpace[token].map(v => parseFloat(v.toFixed(nr_fixed)))
-            : Array.from({ length: d_model }, () => 0);
+	return tokens.map((token, pos) => {
+		const semanticVec = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[token])
+			? window.persistentEmbeddingSpace[token].map(v => parseFloat(v.toFixed(nr_fixed)))
+			: Array.from({ length: d_model }, () => 0);
 
-        const peVec = computePositionalEncoding(pos, d_model, posEmbedScalar);
-        return semanticVec.map((val, i) => val + peVec[i]);
-    });
+		const peVec = computePositionalEncoding(pos, d_model, posEmbedScalar);
+		return semanticVec.map((val, i) => val + peVec[i]);
+	});
 }
 
 /**
  * Renders the positional injection table into the DOM.
  */
 function renderPositionalInjectionHtml(tokens, injectedEncodings, d_model) {
-    const resultsContainer = document.getElementById('transformer-pe-integration-results');
-    if (!resultsContainer) return;
+	const resultsContainer = document.getElementById('transformer-pe-integration-results');
+	if (!resultsContainer) return;
 
-    let html = `<h3>Vector Injection (Inference Sequence)</h3>`;
+	let html = `<h3>Vector Injection (Inference Sequence)</h3>`;
 
-    tokens.forEach((token, pos) => {
-        const semanticVec = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[token])
-            ? window.persistentEmbeddingSpace[token].map(v => parseFloat(v.toFixed(nr_fixed)))
-            : Array.from({ length: d_model }, () => 0);
+	tokens.forEach((token, pos) => {
+		const semanticVec = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[token])
+			? window.persistentEmbeddingSpace[token].map(v => parseFloat(v.toFixed(nr_fixed)))
+			: Array.from({ length: d_model }, () => 0);
 
-        const peVec = computePositionalEncoding(pos, d_model, posEmbedScalar);
-        const combined = injectedEncodings[pos];
+		const peVec = computePositionalEncoding(pos, d_model, posEmbedScalar);
+		const combined = injectedEncodings[pos];
 
-        html += buildInjectionRowHtml(token, pos, semanticVec, peVec, combined);
-    });
+		html += buildInjectionRowHtml(token, pos, semanticVec, peVec, combined);
+	});
 
-    resultsContainer.innerHTML = html;
+	resultsContainer.innerHTML = html;
 }
 
 /**
@@ -4751,7 +4751,7 @@ function tled_syncTableFromSpace() {
 		if (wordCell) existingRows.add(wordCell.textContent.trim());
 	});
 
-	// Add new tokens that appeared (e.g., from training data change)
+// Add new tokens that appeared (e.g., from training data change)
 	words.forEach(word => {
 		if (!existingRows.has(word)) {
 			const tbody = table.querySelector('tbody');
