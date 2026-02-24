@@ -574,7 +574,7 @@ Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chai
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div style="display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start;">
+    <div style="display: grid; gap: 20px; align-items: start;">
         <div id="plot-poincare-disk" style="height: 560px; background: #fff; border-radius: 8px; width: 100%;"></div>
         <div id="poincare-stats" style="width: 100%;"></div>
     </div>
