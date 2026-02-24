@@ -115,15 +115,21 @@ function causalMultiHeadAttention(normH, weights, d_model, n_heads) {
  * because they don't affect weight shapes.
  */
 function lockArchitectureControls(lock) {
-	const architectureControlIds = [
+	const controlIds = [
+		// Architecture (would break weights)
 		'transformer-dimension-model',   // d_model
 		'transformer-heads',             // n_heads
 		'transformer-depth',             // n_layers
 		'transformer-context-size',      // context size
 		'transformer-tokenizer-type',    // tokenizer
+
+		// Training hyperparameters (safe, but locked by request)
+		'train-epochs',                  // epochs
+		'train-lr',                      // learning rate
+		'train-optimizer',               // optimizer
 	];
 
-	architectureControlIds.forEach(id => {
+	controlIds.forEach(id => {
 		const el = document.getElementById(id);
 		if (!el) return;
 
