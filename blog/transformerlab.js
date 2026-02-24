@@ -3358,7 +3358,7 @@ window.calculate_vector_math = function() {
 					left.val = right.val.map(v => left.val[0] * v);
 					left.isScalar = right.isScalar;
 				} else {
-					left.val = left.val.map(v => v * (right.isScalar ? right.val[0] : 1));
+					left.val = left.val.map((v, i) => v * (right.isScalar ? right.val[0] : right.val[i]));
 				}
 			} else if (op === '/') {
 				left.val = left.val.map(v => v / (right.isScalar ? right.val[0] : (right.val[0] || 1)));
