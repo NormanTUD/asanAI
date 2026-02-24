@@ -21,6 +21,22 @@ window.tlab_trajectory_data = {
 };
 
 /**
+ * Looks up embeddings for each token from the persistent embedding space
+ * and adds sinusoidal positional encoding.
+ *
+ * @param {string[]} tokens  - Array of token strings
+ * @param {number}   d_model - Embedding dimension
+ * @param {object}   [embSpace=window.persistentEmbeddingSpace] - Embedding lookup
+ * @returns {number[][]} Matrix [tokens.length × d_model] with PE added
+ */
+function embedTokensWithPE(tokens, d_model, embSpace = window.persistentEmbeddingSpace) {
+	return tokens.map((token, pos) => {
+		const emb = (embSpace && embSpace[token]) || new Array(d_model).fill(0);
+		return addPositionalEncoding(emb, pos, d_model, posEmbedScalar);
+	});
+}
+
+/**
  * Computes softmax probabilities from an array of raw logit values.
  * Uses the max-subtraction trick for numerical stability.
  * @param {number[]} logits - Raw scores
@@ -1050,10 +1066,7 @@ function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
 
 	// a. Embeddings + PE
 	const space = window.persistentEmbeddingSpace;
-	let h = contextTokens.map((t, pos) => {
-		const emb = window.persistentEmbeddingSpace[t] || new Array(d_model).fill(0);
-		return addPositionalEncoding(emb, pos, d_model, posEmbedScalar);
-	});
+	let h = embedTokensWithPE(contextTokens, d_model);
 
 	// b. Layers
 	const n_heads = weights[0].attention.query.length > 0 ?
@@ -1293,11 +1306,8 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
 
 	if (knownMasterTokens.length > 0) {
-		let h_master = knownMasterTokens.map((t, pos) => {
-			const emb = window.persistentEmbeddingSpace[t] || new Array(d_model).fill(0);
-			return addPositionalEncoding(emb, pos, d_model, posEmbedScalar);
-		});
-
+		let h_master = embedTokensWithPE(knownMasterTokens, d_model);
+		
 		let h_current = h_master;
 		for (let l = 0; l < n_layers; l++) {
 			const result = forwardOneLayer(h_current, weights[l], d_model, n_heads, knownMasterTokens, null);
@@ -2932,7 +2942,7 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 	}
 
 	// Compute embeddings eagerly so we can return them immediately
-	const injectedEmbeddings = compute_positional_injections(tokenStrings, d_model);
+	const injectedEmbeddings = embedTokensWithPE(tokenStrings, d_model);
 
 	// Update registry with latest parameters, pre-computed embeddings, and reset render flag
 	positionalShiftRegistry.set(containerId, {
@@ -2950,14 +2960,6 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 	}
 
 	return injectedEmbeddings;
-}
-
-function compute_positional_injections(tokenStrings, d_model) {
-	return tokenStrings.map((token, pos) => {
-		const semanticBase = window.persistentEmbeddingSpace[token];
-		if (!semanticBase) return new Array(d_model).fill(0);
-		return addPositionalEncoding(semanticBase, pos, d_model, posEmbedScalar);
-	});
 }
 
 function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
