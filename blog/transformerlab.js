@@ -973,11 +973,15 @@ function convert_weights_to_tensors(weights) {
 	return vars;
 }
 
-function calculate_tf_loss(tokens, vars, d_model, n_layers) {
+function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
+	// Default to config value so existing call sites still work
+	if (n_heads === undefined) {
+		n_heads = getTransformerConfig().n_heads;
+	}
+
+	const d_k = d_model / n_heads;   // ← per-head dimension
 	const losses = [];
 
-	// Full context window,  multi-position loss provides dense gradient signal
-	// at every position, so the old "halve the context" trick is no longer needed.
 	const thiscontextSize = Math.min(getContextSize(), tokens.length - 1);
 
 	if (thiscontextSize < 1) {
@@ -1022,15 +1026,48 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 		// Transformer layers (Pre-LN)
 		for (let i = 0; i < n_layers; i++) {
 			const l = vars.layers[i];
+
+			// ── Pre-LN before attention ──
 			let normX = tf_layer_norm(x, l.gamma, l.beta);
-			const q = tf.matMul(normX, l.wq);
+
+			// ── Linear projections ──
+			const q = tf.matMul(normX, l.wq); // [seqLen, d_model]
 			const k = tf.matMul(normX, l.wk);
 			const v = tf.matMul(normX, l.wv);
-			let scores = tf.matMul(q, k.transpose()).div(tf.sqrt(tf.scalar(d_model)));
-			scores = tf.sub(scores, mask);
-			const weights = tf.softmax(scores);
-			x = tf.add(x, tf.matMul(tf.matMul(weights, v), l.wo));
 
+			// ── FIX: Split into heads ──
+			// [seqLen, d_model] → [seqLen, n_heads, d_k] → [n_heads, seqLen, d_k]
+			const qHeads = q.reshape([thiscontextSize, n_heads, d_k])
+				.transpose([1, 0, 2]);
+			const kHeads = k.reshape([thiscontextSize, n_heads, d_k])
+				.transpose([1, 0, 2]);
+			const vHeads = v.reshape([thiscontextSize, n_heads, d_k])
+				.transpose([1, 0, 2]);
+
+			// ── FIX: Scale by √d_k, not √d_model ──
+			// [n_heads, seqLen, d_k] × [n_heads, d_k, seqLen] → [n_heads, seqLen, seqLen]
+			let scores = tf.matMul(qHeads, kHeads.transpose([0, 2, 1]))
+				.div(tf.sqrt(tf.scalar(d_k)));
+
+			// Causal mask — broadcast [seqLen, seqLen] → [1, seqLen, seqLen]
+			// across the n_heads batch dimension
+			scores = tf.sub(scores, mask.expandDims(0));
+
+			const attnWeights = tf.softmax(scores, -1);
+
+			// Weighted value sum per head
+			// [n_heads, seqLen, seqLen] × [n_heads, seqLen, d_k] → [n_heads, seqLen, d_k]
+			const context = tf.matMul(attnWeights, vHeads);
+
+			// ── FIX: Concatenate heads back ──
+			// [n_heads, seqLen, d_k] → [seqLen, n_heads, d_k] → [seqLen, d_model]
+			const concat = context.transpose([1, 0, 2])
+				.reshape([thiscontextSize, d_model]);
+
+			// Output projection + residual
+			x = tf.add(x, tf.matMul(concat, l.wo));
+
+			// ── FFN block (Pre-LN) ──
 			let normX2 = tf_layer_norm(x, l.gamma2, l.beta2);
 			let ffn = tf.relu(tf.add(tf.matMul(normX2, l.w1), l.b1));
 			ffn = tf.add(tf.matMul(ffn, l.w2), l.b2);
