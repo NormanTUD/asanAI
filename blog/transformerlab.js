@@ -387,17 +387,12 @@ function calculate_positional_injection(tokens, d_model) {
 			parseFloat(((Math.abs(hash * (i + 1)) % 1000) / 500 - 1).toFixed(nr_fixed))
 		);
 
-		const peVec = new Array(d_model);
-		for (let i = 0; i < d_model; i += 2) {
-			const div_term = Math.pow(10000, i / d_model);
-
-			peVec[i] = Math.sin(pos / div_term);
-			if (i + 1 < d_model) {
-				peVec[i + 1] = Math.cos(pos / div_term);
-			}
-		}
-
+		// ✅ REFACTORED: Was a manual 8-line loop, now one call.
+		// Using posEmbedScalar for consistency with the rest of the codebase.
+		// (Previously this was the only PE site that omitted the scalar.)
+		const peVec = computePositionalEncoding(pos, d_model, posEmbedScalar);
 		const combined = semanticVec.map((val, i) => val + peVec[i]);
+
 		injectedEncodings.push(combined);
 
 		if (resultsContainer) {
@@ -680,17 +675,10 @@ async function train_transformer() {
 						const inputIds = w.input.map(t => vocab.indexOf(t));
 
 						// Build input embeddings + positional encoding
-						let h = inputIds.map((id, pos) => {
-							const emb = [...embMatrix[id]];
-							for (let i = 0; i < d_model; i++) {
-								const div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-								emb[i] += (i % 2 === 0) 
-									? Math.sin(pos / div_term) * posEmbedScalar 
-									: Math.cos(pos / div_term) * posEmbedScalar;
-							}
-							return emb;
-						});
-
+						let h = inputIds.map((id, pos) =>
+							addPositionalEncoding(embMatrix[id], pos, d_model, posEmbedScalar)
+						);
+						
 						// Run through transformer layers
 						// Run through transformer layers
 						const n_heads_local = parseInt(document.getElementById('transformer-heads').value);
@@ -2971,30 +2959,11 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 }
 
 function compute_positional_injections(tokenStrings, d_model) {
-	const injectedEmbeddings = [];
-
-	tokenStrings.forEach((token, pos) => {
+	return tokenStrings.map((token, pos) => {
 		const semanticBase = window.persistentEmbeddingSpace[token];
-		if (!semanticBase) {
-			// If token not found, push zeros so indices stay aligned
-			injectedEmbeddings.push(new Array(d_model).fill(0));
-			return;
-		}
-
-		const peVec = new Array(d_model).fill(0);
-		for (let i = 0; i < d_model; i += 2) {
-			const div_term = Math.pow(10000, i / d_model);
-			peVec[i] = Math.sin(pos / div_term) * posEmbedScalar;
-			if (i + 1 < d_model) {
-				peVec[i + 1] = Math.cos(pos / div_term) * posEmbedScalar;
-			}
-		}
-
-		const combined = semanticBase.map((val, i) => val + peVec[i]);
-		injectedEmbeddings.push(combined);
+		if (!semanticBase) return new Array(d_model).fill(0);
+		return addPositionalEncoding(semanticBase, pos, d_model, posEmbedScalar);
 	});
-
-	return injectedEmbeddings;
 }
 
 function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
