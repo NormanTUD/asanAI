@@ -120,6 +120,22 @@ function reset_graph() {
 	document.getElementById('training-loss-plot').innerHTML = '';
 }
 
+function computePositionalEncoding(pos, d_model, scalar = 1.0) {
+	const pe = new Array(d_model);
+	for (let i = 0; i < d_model; i++) {
+		const divTerm = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+		pe[i] = ((i % 2 === 0)
+			? Math.sin(pos / divTerm)
+			: Math.cos(pos / divTerm)) * scalar;
+	}
+	return pe;
+}
+
+function addPositionalEncoding(embedding, pos, d_model, scalar = 1.0) {
+	const pe = computePositionalEncoding(pos, d_model, scalar);
+	return embedding.map((val, i) => val + pe[i]);
+}
+
 function countAllNumbers(data) {
 	let count = 0;
 
@@ -1002,14 +1018,8 @@ function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
 	// a. Embeddings + PE
 	const space = window.persistentEmbeddingSpace;
 	let h = contextTokens.map((t, pos) => {
-		const emb = space[t] || Array(d_model).fill(0);
-		// Add simple PE (re-calculating PE here is fast enough)
-		const pe = new Array(d_model).fill(0);
-		for (let i = 0; i < d_model; i++) {
-			let div = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-			pe[i] = (i % 2 === 0) ? Math.sin(pos / div) : Math.cos(pos / div);
-		}
-		return emb.map((v, i) => v + pe[i]);
+		const emb = window.persistentEmbeddingSpace[t] || new Array(d_model).fill(0);
+		return addPositionalEncoding(emb, pos, d_model);
 	});
 
 	// b. Layers
@@ -1254,12 +1264,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	if (knownMasterTokens.length > 0) {
 		let h_master = knownMasterTokens.map((t, pos) => {
 			const emb = window.persistentEmbeddingSpace[t] || new Array(d_model).fill(0);
-			const pe = new Array(d_model).fill(0);
-			for (let i = 0; i < d_model; i++) {
-				let div = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-				pe[i] = (i % 2 === 0) ? Math.sin(pos / div) : Math.cos(pos / div);
-			}
-			return emb.map((v, i) => v + pe[i]);
+			return addPositionalEncoding(emb, pos, d_model);
 		});
 
 		let h_current = h_master;
