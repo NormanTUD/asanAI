@@ -270,7 +270,7 @@ function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings
 	// 1. Pre-LN before attention
 	const normH = calculateLayerNorm(h_current, layerWeights.gamma, layerWeights.beta);
 
-	// 2. FIX: Multi-head attention WITH causal mask (matches training)
+	// 2. Multi-head attention WITH causal mask
 	const headData = causalMultiHeadAttention(
 		normH,
 		layerWeights.attention,
@@ -278,10 +278,7 @@ function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings
 		n_heads
 	);
 
-	// 3. Visualization: set up AttentionEngine for rendering, then override
-	//    the registry's headData with the correctly causal-masked version.
-	//    engine.forward() builds the DOM scaffolding and registers the
-	//    instance; we just swap in the right numbers afterwards.
+	// 3. Visualization setup (unchanged)
 	if (containerId) {
 		const engine = new AttentionEngine({
 			d_model,
@@ -289,19 +286,16 @@ function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings
 			containerId,
 			weights: layerWeights.attention
 		});
-		// Let engine create its DOM structure + register in attentionRenderRegistry
 		engine.forward(normH, tokenStrings || h_current, tokenStrings);
 
-		// Override with correctly-masked headData so that
-		// executeActualRender() and the heatmaps show the causal pattern
 		const entry = attentionRenderRegistry.get(containerId);
 		if (entry) {
 			entry.headData = headData;
-			entry.rendered = false;   // force re-render with correct data
+			entry.rendered = false;
 		}
 	}
 
-	// 4. Concatenate heads → [seqLen, d_model]
+	// 4. Concatenate heads
 	const concat = h_current.map((_, tIdx) =>
 		[].concat(...headData.map(hd => hd.context[tIdx]))
 	);
@@ -310,11 +304,12 @@ function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings
 	const Wo = layerWeights.attention.output;
 	const projected = matMul(concat, Wo);
 
-	// 6. Residual connection (attention)
+	// 6. Residual connection
 	const h_attn = matAdd(h_current, projected);
 
-	// 7. FFN block (includes Pre-LN, ReLU, residual)
-	const h_out = run_ffn_block(h_attn, layerWeights);
+	// 7. FFN block — ALWAYS skip render here.
+	//    Only runVisualizedLayer0 should write to ffn-step-1/2/3.
+	const h_out = run_ffn_block(h_attn, layerWeights, /*skipRender=*/ true);
 
 	return { h_out, headData, concat, projected, normH, h_attn };
 }
@@ -2581,7 +2576,7 @@ function assertShape(name, value, expected_rows, expected_cols) {
         }
 }
 
-function run_ffn_block(h1, params = {}) {
+function run_ffn_block(h1, params = {}, skipRender = false) {
 	const d_model = h1[0].length;
 	const d_ff = d_model * 4;
 
@@ -2602,7 +2597,9 @@ function run_ffn_block(h1, params = {}) {
 	// Residual: h2 = h1 + FFN(normed_h1), no post-norm
 	const h2 = matAdd(h1, out_FFN);
 
-	render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2);
+	if (!skipRender) {
+		render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2);
+	}
 
 	return h2;
 }
