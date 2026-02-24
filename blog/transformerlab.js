@@ -335,18 +335,18 @@ const transformerLabVisMigrationDataRegistry = new Map();
  * @returns {IntersectionObserver}
  */
 function createLazyRenderObserver(registry, renderFn, options = { threshold: 0 }) {
-	return new IntersectionObserver((entries) => {
-		entries.forEach(entry => {
-			if (entry.isIntersecting) {
-				const containerId = entry.target.id;
-				const data = registry.get(containerId);
-				if (data && !data.rendered) {
-					renderFn(containerId, data);
-					data.rendered = true;
-				}
-			}
-		});
-	}, options);
+    return new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const containerId = entry.target.id;
+                const data = registry.get(containerId);
+                if (data && !data.rendered) {
+                    renderFn(containerId, data);
+                    data.rendered = true;
+                }
+            }
+        });
+    }, options);
 }
 
 const embeddingObserver = createLazyRenderObserver(embeddingRenderRegistry, (id, data) => {
@@ -1333,6 +1333,14 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		window.last_n_heads = n_heads;
 		reset_graph();
 		calculate_vector_math();
+
+		// ── On full reinit, we DO need to clear migration containers
+		// because the old plots have incompatible dimensions ──
+		const migrationContainer = document.getElementById('transformer-migration-plots-container');
+		if (migrationContainer) {
+			migrationContainer.innerHTML = '';
+			transformerLabVisMigrationDataRegistry.clear();
+		}
 	}
 	const weights = window.currentWeights;
 
@@ -1349,18 +1357,30 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 	render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
+	// ── UPDATED: Reuse existing migration containers instead of destroying them ──
 	const migrationContainer = document.getElementById('transformer-migration-plots-container');
-	if (migrationContainer) {
-		migrationContainer.innerHTML = '';
-		transformerLabVisMigrationDataRegistry.clear();
+	if (migrationContainer && !needsReinit) {
+		// Mark all existing entries as stale so they get re-rendered with fresh data
+		// but DON'T destroy the DOM — this prevents flicker
+		transformerLabVisMigrationDataRegistry.forEach((val, key) => {
+			val.rendered = false;
+		});
 	}
+
+	// Track which IDs are still active this pass — we'll prune orphans after rendering
+	window._activeMigrationIds = new Set();
 
 	// Reset trajectory collector so it captures fresh data for this run
 	window.tlab_trajectory_collector = null;
 
-	// Remove stale full-trajectory plot so it gets recreated
+	// DON'T remove the trajectory div — just mark it for re-render
 	const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
-	if (oldTrajDiv) oldTrajDiv.remove();
+	if (oldTrajDiv) {
+		const trajEntry = trajectoryRenderRegistry.get('transformer-trajectory-full-path');
+		if (trajEntry) {
+			trajEntry.rendered = false;
+		}
+	}
 
 	if (tokensWithPositional.length === 0) {
 		document.getElementById('transformer-output-projection').innerHTML =
@@ -1450,27 +1470,69 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 			const containerId = 'transformer-trajectory-full-path';
 			let trajDiv = document.getElementById(containerId);
 
-			// Recreate div if it was removed
+			// Only create the div if it doesn't exist yet — reuse otherwise
 			if (!trajDiv) {
 				trajDiv = document.createElement('div');
 				trajDiv.id = containerId;
 				document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
+
+				// Show a visible outline/placeholder immediately, before the observer fires
+				trajDiv.style.cssText = "width:100%; min-height:250px; border:2px dashed #cbd5e1; border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;";
+				trajDiv.innerHTML = `<div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
+					Rendering the Token Trajectory Plot may take a while
+				</div>`;
 			}
 
-			// Show a visible outline/placeholder immediately, before the observer fires
-			trajDiv.style.cssText = "width:100%; min-height:250px; border:2px dashed #cbd5e1; border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;";
-			trajDiv.innerHTML = `<div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
-				Rendering the Token Trajectory Plot may take a while
-			</div>`;
-
-			// Register the data for the observer
+			// Register the data for the observer (mark as not rendered so it re-renders)
 			trajectoryRenderRegistry.set(containerId, {
 				d_model: d_model,
 				rendered: false
 			});
 
-			// Start observing
+			// Start observing (safe to call multiple times — observer deduplicates)
 			trajectoryObserver.observe(trajDiv);
+
+			// ── IMMEDIATE RENDER if the trajectory div is already visible ──
+			if (isElementInViewport(trajDiv)) {
+				tlab_render_trajectory_plot(d_model);
+				const trajEntry = trajectoryRenderRegistry.get(containerId);
+				if (trajEntry) trajEntry.rendered = true;
+			}
+		}
+
+		// ── Prune orphaned migration plots that no longer correspond to any layer ──
+		if (migrationContainer && window._activeMigrationIds) {
+			const activeIds = window._activeMigrationIds;
+
+			// Remove DOM elements and registry entries for plots that weren't touched this pass
+			const keysToDelete = [];
+			transformerLabVisMigrationDataRegistry.forEach((val, key) => {
+				if (!activeIds.has(key)) {
+					keysToDelete.push(key);
+				}
+			});
+
+			keysToDelete.forEach(key => {
+				// Remove the plot div and its wrapper
+				const orphanDiv = document.getElementById(key);
+				if (orphanDiv) {
+					const wrapper = orphanDiv.closest('[data-migration-wrapper]') || orphanDiv.parentNode;
+					if (wrapper && wrapper.parentNode) {
+						wrapper.remove();
+					}
+				}
+
+				// Remove associated latex sibling
+				const latexDiv = document.getElementById(key + '-latex-debug');
+				if (latexDiv) latexDiv.remove();
+
+				// Remove associated weight grid sibling
+				// (it's the nextElementSibling of the plot div, but since we removed
+				// the wrapper above, it's already gone if it was inside the wrapper)
+
+				// Clean up the registry
+				transformerLabVisMigrationDataRegistry.delete(key);
+			});
 		}
 	}
 
@@ -2162,82 +2224,112 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
  */
 
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
-	const container = document.getElementById('transformer-migration-plots-container');
-	if (!container) return;
+    const container = document.getElementById('transformer-migration-plots-container');
+    if (!container) return;
 
-	// Resolve human-readable display names for each token position
-	const displayTokens = (tokenStrings && tokenStrings.length === tokens.length)
-		? tokenStrings
-		: tokens.map((t, i) => {
-			if (typeof t === 'string') return t;
-			return tlab_get_top_word_only(t);
-		});
+    // Track this ID as active for orphan cleanup
+    if (window._activeMigrationIds) {
+        window._activeMigrationIds.add(id);
+    }
 
-	const freeze = (data) => JSON.parse(JSON.stringify(data));
+    // Resolve human-readable display names for each token position
+    const displayTokens = (tokenStrings && tokenStrings.length === tokens.length)
+        ? tokenStrings
+        : tokens.map((t, i) => {
+            if (typeof t === 'string') return t;
+            return tlab_get_top_word_only(t);
+        });
 
-	// ── Eagerly capture trajectory data (not deferred to render) ──
-	if (!window.tlab_trajectory_collector) {
-		window.tlab_trajectory_collector = {
-			steps: {},
-			tokens: [...tokens],
-			displayTokens: [...displayTokens],
-			d_model: d_model
-		};
-	}
+    const freeze = (data) => JSON.parse(JSON.stringify(data));
 
-	// Capture initial states on the very first layer
-	if (!window.tlab_trajectory_collector.steps["00_raw"]) {
-		// Look up raw embeddings using STRING tokens
-		const rawEmbs = displayTokens.map(t => {
-			if (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[t]) {
-				return window.persistentEmbeddingSpace[t];
-			}
-			return new Array(d_model).fill(0);
-		});
+    // ── Eagerly capture trajectory data (not deferred to render) ──
+    if (!window.tlab_trajectory_collector) {
+        window.tlab_trajectory_collector = {
+            steps: {},
+            tokens: [...tokens],
+            displayTokens: [...displayTokens],
+            d_model: d_model
+        };
+    }
 
-		window.tlab_trajectory_collector.steps["00_raw"] = {
-			name: "Original Embedding",
-			data: freeze(rawEmbs)
-		};
-		window.tlab_trajectory_collector.steps["01_pe"] = {
-			name: "Embedding + Position",
-			data: freeze(start_h)
-		};
-	}
+    // Capture initial states on the very first layer
+    if (!window.tlab_trajectory_collector.steps["00_raw"]) {
+        const rawEmbs = displayTokens.map(t => {
+            if (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[t]) {
+                return window.persistentEmbeddingSpace[t];
+            }
+            return new Array(d_model).fill(0);
+        });
 
-	// Capture this layer's output
-	const layerKey = "02_layer_" + String(layerNum).padStart(2, '0');
-	window.tlab_trajectory_collector.steps[layerKey] = {
-		name: `Layer ${layerNum} Output`,
-		data: freeze(end_h)
-	};
+        window.tlab_trajectory_collector.steps["00_raw"] = {
+            name: "Original Embedding",
+            data: freeze(rawEmbs)
+        };
+        window.tlab_trajectory_collector.steps["01_pe"] = {
+            name: "Embedding + Position",
+            data: freeze(start_h)
+        };
+    }
 
-	// ── Create DOM element for per-layer migration plot (lazy rendered) ──
-	let plotDiv = document.getElementById(id);
-	if (!plotDiv) {
-		const wrapperDiv = document.createElement('div');
-		wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-top: 30px; background: #fff;";
+    // Capture this layer's output
+    const layerKey = "02_layer_" + String(layerNum).padStart(2, '0');
+    window.tlab_trajectory_collector.steps[layerKey] = {
+        name: `Layer ${layerNum} Output`,
+        data: freeze(end_h)
+    };
 
-		plotDiv = document.createElement('div');
-		plotDiv.id = id;
-		plotDiv.style.cssText = "height: 500px; width: 100%;";
+    // ── REUSE existing DOM element, only create if it doesn't exist yet ──
+    let plotDiv = document.getElementById(id);
+    if (!plotDiv) {
+        const wrapperDiv = document.createElement('div');
+        wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-top: 30px; background: #fff;";
+        wrapperDiv.setAttribute('data-migration-wrapper', id);
 
-		wrapperDiv.appendChild(plotDiv);
-		container.appendChild(wrapperDiv);
+        plotDiv = document.createElement('div');
+        plotDiv.id = id;
+        plotDiv.style.cssText = "height: 500px; width: 100%;";
 
-		migrationObserver.observe(plotDiv);
-	}
+        wrapperDiv.appendChild(plotDiv);
+        container.appendChild(wrapperDiv);
 
-	transformerLabVisMigrationDataRegistry.set(id, {
-		tokens: [...tokens],
-		start_h: Array.isArray(start_h) ? start_h.slice() : start_h,
-		end_h: Array.isArray(end_h) ? end_h.slice() : end_h,
-		layerNum: layerNum,
-		d_model: d_model,
-		h_after: h_after,
-		tokenStrings: tokenStrings || null,
-		rendered: false
-	});
+        migrationObserver.observe(plotDiv);
+    }
+
+    // Update the registry with fresh data; mark as not yet rendered
+    transformerLabVisMigrationDataRegistry.set(id, {
+        tokens: [...tokens],
+        start_h: Array.isArray(start_h) ? start_h.slice() : start_h,
+        end_h: Array.isArray(end_h) ? end_h.slice() : end_h,
+        layerNum: layerNum,
+        d_model: d_model,
+        h_after: h_after,
+        tokenStrings: tokenStrings || null,
+        rendered: false
+    });
+
+    // ── IMMEDIATE RENDER if the element is already visible ──
+    // This is the key fix: instead of waiting for the IntersectionObserver
+    // (which may not fire if the element is already in the viewport),
+    // we check visibility and render immediately.
+    if (isElementInViewport(plotDiv)) {
+        render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings);
+        const entry = transformerLabVisMigrationDataRegistry.get(id);
+        if (entry) entry.rendered = true;
+    }
+}
+
+/**
+ * Helper: Check if an element is currently visible in the viewport.
+ * Used to decide whether to render immediately or defer to the observer.
+ */
+function isElementInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    return (
+        rect.top < (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.bottom > 0 &&
+        rect.left < (window.innerWidth || document.documentElement.clientWidth) &&
+        rect.right > 0
+    );
 }
 
 /**
@@ -2262,158 +2354,98 @@ function tlab_get_colorblind_pixel(val) {
  * Renders weight matrices side-by-side, stretching them to fill the full width.
  */
 function tlab_render_weight_grid(id, layerNum) {
-	requestAnimationFrame(() => {
-		const plotDiv = document.getElementById(id);
-		if (!plotDiv || !window.currentWeights || !window.currentWeights[layerNum]) return;
+    requestAnimationFrame(() => {
+        const plotDiv = document.getElementById(id);
+        if (!plotDiv || !window.currentWeights || !window.currentWeights[layerNum]) return;
 
-		let weightContainer = plotDiv.nextElementSibling;
-		if (!weightContainer || !weightContainer.classList.contains('weight-grid-viz')) {
-			weightContainer = document.createElement('div');
-			weightContainer.className = 'weight-grid-viz';
-			// Column layout: Header on top, then the horizontal row of matrices
-			weightContainer.style = "display: flex; flex-direction: column; align-items: center; margin: 40px 0; padding: 0; clear: both; width: 100%;";
-			plotDiv.parentNode.insertBefore(weightContainer, plotDiv.nextSibling);
-		}
+        // Track this ID as active for orphan cleanup
+        if (window._activeMigrationIds) {
+            window._activeMigrationIds.add(id);
+        }
 
-		weightContainer.innerHTML = '';
+        let weightContainer = plotDiv.nextElementSibling;
+        if (!weightContainer || !weightContainer.classList.contains('weight-grid-viz')) {
+            weightContainer = document.createElement('div');
+            weightContainer.className = 'weight-grid-viz';
+            weightContainer.style = "display: flex; flex-direction: column; align-items: center; margin: 40px 0; padding: 0; clear: both; width: 100%;";
+            plotDiv.parentNode.insertBefore(weightContainer, plotDiv.nextSibling);
+        }
 
-		// 2. Horizontal container for the matrices
-		const gridBox = document.createElement('div');
-		// display: flex with gap ensures they sit side-by-side
-		gridBox.style = "display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 10px; width: 100%;";
-		weightContainer.appendChild(gridBox);
+        // ── REUSE existing gridBox instead of clearing innerHTML ──
+        let gridBox = weightContainer.querySelector('.weight-grid-row');
+        if (!gridBox) {
+            gridBox = document.createElement('div');
+            gridBox.className = 'weight-grid-row';
+            gridBox.style = "display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 10px; width: 100%;";
+            weightContainer.appendChild(gridBox);
+        }
 
-		const weights = window.currentWeights[layerNum];
-		const targets = [
-			{ name: 'W1', data: weights.W1 },
-			{ name: 'W2', data: weights.W2 },
-			{ name: 'Q',  data: weights.attention?.query },
-			{ name: 'K',  data: weights.attention?.key },
-			{ name: 'V',  data: weights.attention?.value }
-		];
+        const weights = window.currentWeights[layerNum];
+        const targets = [
+            { name: 'W1', data: weights.W1 },
+            { name: 'W2', data: weights.W2 },
+            { name: 'Q',  data: weights.attention?.query },
+            { name: 'K',  data: weights.attention?.key },
+            { name: 'V',  data: weights.attention?.value }
+        ];
 
-		targets.forEach(target => {
-			if (!target.data || !target.data.length) return;
+        targets.forEach((target, targetIdx) => {
+            if (!target.data || !target.data.length) return;
 
-			const wrap = document.createElement('div');
-			// flex: 1 tells each matrix to take up an equal share of the width
-			wrap.style = "text-align: center; flex: 1; display: flex; flex-direction: column; min-width: 0;";
-			wrap.innerHTML = `<div style="font-size: 10px; font-weight: bold; color: #94a3b8; margin-bottom: 5px; font-family: monospace; white-space: nowrap;">${target.name}</div>`;
+            const rows = target.data.length;
+            const cols = Array.isArray(target.data[0]) ? target.data[0].length : 1;
 
-			const canvas = document.createElement('canvas');
-			const rows = target.data.length;
-			const cols = Array.isArray(target.data[0]) ? target.data[0].length : 1;
+            // ── REUSE existing wrapper and canvas by data attribute ──
+            let wrap = gridBox.querySelector(`[data-weight-name="${target.name}"]`);
+            let canvas;
 
-			// Set internal resolution
-			canvas.width = cols;
-			canvas.height = rows;
+            if (!wrap) {
+                // First time: create the wrapper, label, and canvas
+                wrap = document.createElement('div');
+                wrap.setAttribute('data-weight-name', target.name);
+                wrap.style = "text-align: center; flex: 1 1 0%; display: flex; flex-direction: column; min-width: 0px;";
+                wrap.innerHTML = `<div style="font-size: 10px; font-weight: bold; color: #94a3b8; margin-bottom: 5px; font-family: monospace; white-space: nowrap;">${target.name}</div>`;
 
-			// CSS to force it to fill its flex-allocated width
-			canvas.style.width = "100%";
-			canvas.style.height = "auto";
-			canvas.style.imageRendering = "pixelated";
-			canvas.style.display = "block";
-			canvas.style.maxHeight = "145px";
-			// Optional: slight border to distinguish adjacent white/yellow pixels
-			canvas.style.outline = "1px solid #f1f5f9";
+                canvas = document.createElement('canvas');
+                canvas.style.width = "100%";
+                canvas.style.height = "auto";
+                canvas.style.imageRendering = "pixelated";
+                canvas.style.display = "block";
+                canvas.style.maxHeight = "145px";
+                canvas.style.outline = "1px solid #f1f5f9";
 
-			const ctx = canvas.getContext('2d');
+                wrap.appendChild(canvas);
+                gridBox.appendChild(wrap);
+            } else {
+                // Reuse existing canvas
+                canvas = wrap.querySelector('canvas');
+            }
 
-			for (let r = 0; r < rows; r++) {
-				for (let c = 0; c < cols; c++) {
-					const val = Array.isArray(target.data[r]) ? target.data[r][c] : target.data[r];
-					ctx.fillStyle = tlab_get_colorblind_pixel(val);
-					ctx.fillRect(c, r, 1, 1);
-				}
-			}
-			wrap.appendChild(canvas);
-			gridBox.appendChild(wrap);
-		});
-	});
-}
+            // Update canvas dimensions only if they changed
+            if (canvas.width !== cols || canvas.height !== rows) {
+                canvas.width = cols;
+                canvas.height = rows;
+            }
 
-function tlab_render_plotly(id, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex) {
-	const traces = [];
-	const is3D = d_model === 3;
+            // Repaint pixel data (this is the actual update — no DOM destruction)
+            const ctx = canvas.getContext('2d');
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const val = Array.isArray(target.data[r]) ? target.data[r][c] : target.data[r];
+                    ctx.fillStyle = tlab_get_colorblind_pixel(val);
+                    ctx.fillRect(c, r, 1, 1);
+                }
+            }
+        });
 
-	tokens.forEach((token, i) => {
-		const posColor = getPositionColor(i, tokens.length);
-
-		const sourceWord = tlab_get_top_word_only(start_h[i]);
-		const destWord = tlab_get_top_word_only(end_h[i]);
-		const hoverLabel = `From '${sourceWord}' to '${destWord}', position ${i + 1}`;
-
-		const x = [start_h[i][0], end_h[i][0]];
-		const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
-
-		if (is3D) {
-			const z = [start_h[i][2], end_h[i][2]];
-			// 3D Line
-			traces.push({
-				type: 'scatter3d', x: x, y: y, z: z, mode: 'lines',
-				line: { width: 4, color: posColor },
-				showlegend: false,
-				hovertemplate: `${hoverLabel}<extra></extra>`
-			});
-			// 3D Cone
-			traces.push({
-				type: 'cone', x: [x[1]], y: [y[1]], z: [z[1]],
-				u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
-				sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-				colorscale: [[0, posColor], [1, posColor]], showscale: false,
-				hoverinfo: 'skip', showlegend: false
-			});
-		} else {
-			// 2D Line and Arrow
-			traces.push({
-				type: 'scatter', x: x, y: y, mode: 'lines+markers',
-				line: { width: 2, color: posColor },
-				marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: posColor },
-				showlegend: false,
-				hovertemplate: `${hoverLabel}<extra></extra>`
-			});
-		}
-	});
-
-	// Colorbar Trace - dimensionality must match exactly to avoid "b is undefined"
-	const colorbarTrace = {
-		type: is3D ? 'scatter3d' : 'scatter',
-		x: [null], y: [null],
-		mode: 'markers',
-		showlegend: false,
-		marker: {
-			colorscale: [[0, 'rgb(59, 130, 246)'], [1, 'rgb(16, 185, 129)']],
-			cmin: 1, cmax: tokens.length, color: [1, tokens.length],
-			showscale: true,
-			colorbar: { title: 'Position', thickness: 15, len: 0.7 }
-		},
-		hoverinfo: 'none'
-	};
-	if (is3D) colorbarTrace.z = [null];
-	traces.push(colorbarTrace);
-
-	// Separate Layouts to prevent 3D properties from breaking 2D rendering
-	const commonLayout = {
-		title: `Layer ${layerNum}: Feature Migration`,
-		autosize: true,
-		hovermode: 'closest',
-		margin: { t: 50, b: 20, l: 20, r: 80 }
-	};
-
-	const layout = is3D ? {
-		...commonLayout,
-		scene: {
-			xaxis: { title: 'Dim 0' },
-			yaxis: { title: 'Dim 1' },
-			zaxis: { title: 'Dim 2' }
-		}
-	} : {
-		...commonLayout,
-		xaxis: { title: 'Dim 0' },
-		yaxis: { title: 'Dim 1' }
-	};
-
-	Plotly.newPlot(id, traces, layout, { responsive: true });
+        // Remove any orphaned weight wrappers (e.g., if a matrix was removed)
+        const activeNames = new Set(targets.filter(t => t.data && t.data.length).map(t => t.name));
+        gridBox.querySelectorAll('[data-weight-name]').forEach(el => {
+            if (!activeNames.has(el.getAttribute('data-weight-name'))) {
+                el.remove();
+            }
+        });
+    });
 }
 
 /**
@@ -3074,46 +3106,55 @@ function tlab_render_trajectory_plot(d_model) {
 }
 
 function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model) {
-	const toPMatrixColored = (matrix) => {
-		if (!Array.isArray(matrix) || !matrix.length) return '';
-		const rows = matrix.map((row, tIdx) => {
-			const colorCmd = getPositionColor(tIdx, matrix.length, 'temml');
-			return row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
-		}).join(' \\\\ ');
-		return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
-	};
+    const toPMatrixColored = (matrix) => {
+        if (!Array.isArray(matrix) || !matrix.length) return '';
+        const rows = matrix.map((row, tIdx) => {
+            const colorCmd = getPositionColor(tIdx, matrix.length, 'temml');
+            return row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
+        }).join(' \\\\ ');
+        return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
+    };
 
-	const vocabRows = tokens.map((_, tIdx) => {
-		const fromList = tlab_get_top_vocab_list(start_h[tIdx], d_model);
-		const toList = tlab_get_top_vocab_list(end_h[tIdx], d_model);
+    const vocabRows = tokens.map((_, tIdx) => {
+        const fromList = tlab_get_top_vocab_list(start_h[tIdx], d_model);
+        const toList = tlab_get_top_vocab_list(end_h[tIdx], d_model);
 
-		const colorCmd = getPositionColor(tIdx, tokens.length, 'temml');
+        const colorCmd = getPositionColor(tIdx, tokens.length, 'temml');
 
-		return fromList.map((fromItem, i) => {
-			const toItem = toList[i] || {word: '???', prob: 0};
-			const cleanFrom = fromItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
-			const cleanTo = toItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+        return fromList.map((fromItem, i) => {
+            const toItem = toList[i] || {word: '???', prob: 0};
+            const cleanFrom = fromItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+            const cleanTo = toItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
 
-			const fromProb = Math.round(fromItem.prob * 100);
-			const toProb = Math.round(toItem.prob * 100);
+            const fromProb = Math.round(fromItem.prob * 100);
+            const toProb = Math.round(toItem.prob * 100);
 
-			return `${colorCmd} \\text{${cleanFrom} } (${fromProb}\\%) \\rightarrow \\text{${cleanTo}} (${toProb}\\%)`;
-		}).join(' & ');
-	}).join(' \\\\ ');
+            return `${colorCmd} \\text{${cleanFrom} } (${fromProb}\\%) \\rightarrow \\text{${cleanTo}} (${toProb}\\%)`;
+        }).join(' & ');
+    }).join(' \\\\ ');
 
-	const latexString = `$$h_\\text{after} = ${toPMatrixColored(h_after)}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+    const latexString = `$$h_\\text{after} = ${toPMatrixColored(h_after)}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
 
-	let latexDiv = document.getElementById(id + '-latex-debug');
-	if (!latexDiv) {
-		latexDiv = document.createElement('div');
-		latexDiv.id = id + '-latex-debug';
-		latexDiv.style.marginTop = '20px';
-		latexDiv.style.overflowX = 'auto';
-		latexDiv.style.fontSize = '0.8rem';
-		plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
-	}
-	latexDiv.innerHTML = latexString;
-	render_temml();
+    // ── REUSE existing div — only create if it doesn't exist ──
+    let latexDiv = document.getElementById(id + '-latex-debug');
+    if (!latexDiv) {
+        latexDiv = document.createElement('div');
+        latexDiv.id = id + '-latex-debug';
+        latexDiv.style.marginTop = '20px';
+        latexDiv.style.overflowX = 'auto';
+        latexDiv.style.fontSize = '0.8rem';
+        // Insert after the weight grid if it exists, otherwise after plotDiv
+        const weightGrid = plotDiv.nextElementSibling;
+        if (weightGrid && weightGrid.classList.contains('weight-grid-viz')) {
+            weightGrid.parentNode.insertBefore(latexDiv, weightGrid.nextSibling);
+        } else {
+            plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
+        }
+    }
+
+    // Update content in place (no DOM destruction)
+    latexDiv.innerHTML = latexString;
+    render_temml();
 }
 
 /**
