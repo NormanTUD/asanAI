@@ -1655,7 +1655,7 @@ function renderTrajectoryPlot(d_model) {
 		document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
 
 		trajDiv.style.cssText = "width:100%; min-height:250px; border:2px dashed #cbd5e1; border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;";
-		trajDiv.innerHTML = `<div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
+		trajDiv.innerHTML = `<div class="traj-loading-placeholder" style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
 			Rendering the Token Trajectory Plot may take a while
 		</div>`;
 	}
@@ -3201,8 +3201,8 @@ function _traj_ensure_heading(trajDiv, pairCount) {
     if (!heading) {
         heading = document.createElement('div');
         heading.setAttribute('data-traj-heading', 'true');
-        heading.style.cssText = "text-align:center; padding:15px 10px 5px; font-size:1rem; color:#1e40af;";
-        trajDiv.appendChild(heading);
+        heading.style.cssText = "text-align:center; padding:15px 10px 5px; font-size:1rem; color:#1e40af; width:100%;";
+        trajDiv.prepend(heading);  // Use prepend to ensure it's ABOVE the grid
     }
     heading.innerHTML = `<b>Token Trajectory — 2D Projections (${pairCount} dimension pairs)</b>`;
     return heading;
@@ -3621,6 +3621,13 @@ function tlab_render_trajectory_plot(d_model) {
 		trajDiv.id = 'transformer-trajectory-full-path';
 		mainContainer.appendChild(trajDiv);
 	}
+
+	// Remove the loading placeholder and reset flex centering styles
+	const placeholder = trajDiv.querySelector('.traj-loading-placeholder');
+	if (placeholder) placeholder.remove();
+	trajDiv.style.display = 'block';
+	trajDiv.style.alignItems = '';
+	trajDiv.style.justifyContent = '';
 
 	trajDiv.style.width = '100%';
 
