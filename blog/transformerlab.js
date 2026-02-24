@@ -107,6 +107,45 @@ function causalMultiHeadAttention(normH, weights, d_model, n_heads) {
 }
 
 /**
+ * Locks all architecture-defining controls during training.
+ * These parameters define weight matrix shapes — changing them
+ * mid-training would destroy all learned weights.
+ *
+ * Temperature, learning rate, epochs, and optimizer remain unlocked
+ * because they don't affect weight shapes.
+ */
+function lockArchitectureControls(lock) {
+	const architectureControlIds = [
+		'transformer-dimension-model',   // d_model
+		'transformer-heads',             // n_heads
+		'transformer-depth',             // n_layers
+		'transformer-context-size',      // context size
+		'transformer-tokenizer-type',    // tokenizer
+	];
+
+	architectureControlIds.forEach(id => {
+		const el = document.getElementById(id);
+		if (!el) return;
+
+		el.disabled = lock;
+
+		// Visual feedback: grey out when locked
+		el.style.opacity = lock ? '0.45' : '1';
+		el.style.cursor  = lock ? 'not-allowed' : '';
+		el.style.pointerEvents = lock ? 'none' : '';
+	});
+
+	// Also lock the training data textarea — changing vocabulary
+	// would invalidate the embedding matrix dimensions
+	const trainingData = document.getElementById('transformer-training-data');
+	if (trainingData) {
+		trainingData.disabled = lock;
+		trainingData.style.opacity = lock ? '0.45' : '1';
+		trainingData.style.cursor  = lock ? 'not-allowed' : '';
+	}
+}
+
+/**
  * Element-wise addition of two matrices of the same shape.
  * Used for residual connections throughout the transformer.
  * @param {number[][]} A - First matrix  [rows × cols]
@@ -827,6 +866,7 @@ function validateTrainingPreconditions(status) {
  */
 function initTrainingSession(btn, status) {
 	window.isTraining = true;
+	lockArchitectureControls(true);   // ← ADD THIS LINE
 	btn.classList.add('active');
 	btn.innerText = 'Stop Training';
 	status.style.display = 'block';
@@ -988,6 +1028,7 @@ function formatETA(ms) {
  */
 function finalizeTrainingSession(btn, status, completedAll) {
 	window.isTraining = false;
+	lockArchitectureControls(false);  // ← ADD THIS LINE
 	btn.classList.remove('active');
 	btn.innerText = 'Train Model';
 	status.innerText += completedAll ? " Training Complete!" : " Training Stopped.";
