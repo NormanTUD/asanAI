@@ -2740,389 +2740,175 @@ function tlab_render_plotly_react(id, tokens, start_h, end_h, layerNum, d_model,
 	Plotly.react(id, traces, layout, { responsive: true });
 }
 
-function tlab_render_trajectory_plot(d_model) {
-	const mainContainer = document.getElementById('transformer-migration-plots-container');
-	if (!mainContainer || !window.tlab_trajectory_collector) return;
-
-	const { tokens, steps, displayTokens } = window.tlab_trajectory_collector;
-
-	const sortedKeys = Object.keys(steps).sort();
-	if (sortedKeys.length < 3) return;
-
-	let trajDiv = document.getElementById('transformer-trajectory-full-path');
-	if (!trajDiv) {
-		trajDiv = document.createElement('div');
-		trajDiv.id = 'transformer-trajectory-full-path';
-		mainContainer.appendChild(trajDiv);
-	}
-
-	// ── FIX: Do NOT clear innerHTML — let Plotly.react() update in place ──
-	// This was destroying the existing Plotly chart and causing flicker.
-	// Plotly.react() below handles updating the chart smoothly.
-
-	// Only set width; preserve existing content for Plotly to update
-	trajDiv.style.width = '100%';
-
-	const labels = displayTokens || tokens.map((t, i) => {
-		if (typeof t === 'string') return t;
-		return tlab_get_top_word_only(t);
-	});
-
-	const dataPoints = sortedKeys.map(k => steps[k]);
-
-	/**
-	 * Snapshot the embedding space at render time for consistent logit lookups.
-	 */
+// ─── Helper: Snapshot embedding space and build vocabulary lookup ───
+function _traj_snapshot_embeddings() {
 	const embSnap = {};
 	if (window.persistentEmbeddingSpace) {
 		for (const word in window.persistentEmbeddingSpace) {
 			embSnap[word] = [...window.persistentEmbeddingSpace[word]];
 		}
 	}
-	const snapVocab = Object.keys(embSnap);
+	return { embSnap, snapVocab: Object.keys(embSnap) };
+}
 
-	/**
-	 * Find the nearest vocabulary word using cosine similarity.
-	 */
-	const getLogitWord = (hVec) => {
-		if (!hVec || snapVocab.length === 0) return '???';
-		let bestWord = '???';
-		let bestSim = -Infinity;
-		let hMag = 0;
-		for (let i = 0; i < hVec.length; i++) hMag += hVec[i] * hVec[i];
-		hMag = Math.sqrt(hMag);
-		if (hMag < 1e-12) return '???';
-		for (let w = 0; w < snapVocab.length; w++) {
-			const word = snapVocab[w];
-			const wVec = embSnap[word];
-			let dot = 0, wMag = 0;
-			for (let i = 0; i < hVec.length; i++) {
-				dot += hVec[i] * (wVec[i] || 0);
-				wMag += (wVec[i] || 0) * (wVec[i] || 0);
-			}
-			wMag = Math.sqrt(wMag);
-			if (wMag < 1e-12) continue;
-			const cosSim = dot / (hMag * wMag);
-			if (cosSim > bestSim) {
-				bestSim = cosSim;
-				bestWord = word;
-			}
+// ─── Helper: Find nearest vocabulary word by cosine similarity ───
+function _traj_get_logit_word(hVec, embSnap, snapVocab) {
+	if (!hVec || snapVocab.length === 0) return '???';
+	let bestWord = '???';
+	let bestSim = -Infinity;
+	let hMag = 0;
+	for (let i = 0; i < hVec.length; i++) hMag += hVec[i] * hVec[i];
+	hMag = Math.sqrt(hMag);
+	if (hMag < 1e-12) return '???';
+	for (let w = 0; w < snapVocab.length; w++) {
+		const word = snapVocab[w];
+		const wVec = embSnap[word];
+		let dot = 0, wMag = 0;
+		for (let i = 0; i < hVec.length; i++) {
+			dot += hVec[i] * (wVec[i] || 0);
+			wMag += (wVec[i] || 0) * (wVec[i] || 0);
 		}
-		return bestWord;
-	};
-
-	// ───────────────────────────────────────────────
-	// Embedding landmark builders
-	// ───────────────────────────────────────────────
-
-	const buildEmbeddingLandmarks3D = () => {
-		const xs = [], ys = [], zs = [], texts = [];
-		for (const word of snapVocab) {
-			const v = embSnap[word];
-			xs.push(v[0]);
-			ys.push(v[1] || 0);
-			zs.push(v[2] || 0);
-			texts.push(word);
+		wMag = Math.sqrt(wMag);
+		if (wMag < 1e-12) continue;
+		const cosSim = dot / (hMag * wMag);
+		if (cosSim > bestSim) {
+			bestSim = cosSim;
+			bestWord = word;
 		}
-		return [
-			{
-				type: 'scatter3d',
-				x: xs, y: ys, z: zs,
-				mode: 'markers',
-				marker: {
-					size: 5,
-					symbol: 'diamond',
-					color: 'rgba(100, 116, 139, 0.8)',
-					line: { width: 1, color: '#334155' }
-				},
-				text: texts,
-				hovertemplate: '<b>Embedding: %{text}</b><extra></extra>',
-				name: 'Vocab Embeddings',
-				legendgroup: 'vocab_emb',
-				showlegend: true
-			},
-			{
-				type: 'scatter3d',
-				x: xs, y: ys, z: zs,
-				mode: 'text',
-				text: texts,
-				textposition: 'top center',
-				textfont: { size: 10, color: '#475569', family: 'Inter, sans-serif' },
-				hoverinfo: 'skip',
-				name: 'Vocab Labels',
-				legendgroup: 'vocab_emb',
-				showlegend: false
-			}
-		];
-	};
+	}
+	return bestWord;
+}
 
-	const buildEmbeddingLandmarks2D = (dimA, dimB) => {
-		const xs = [], ys = [], texts = [];
-		for (const word of snapVocab) {
-			const v = embSnap[word];
-			xs.push(v[dimA] || 0);
-			ys.push(v[dimB] || 0);
-			texts.push(word);
-		}
-		return {
-			type: 'scatter',
-			x: xs, y: ys,
-			mode: 'markers+text',
-			text: texts,
-			textposition: 'top center',
-			textfont: { size: 10, color: '#475569' },
+// ─── Helper: Build 3D embedding landmark traces ───
+function _traj_build_embedding_landmarks_3D(embSnap, snapVocab) {
+	const xs = [], ys = [], zs = [], texts = [];
+	for (const word of snapVocab) {
+		const v = embSnap[word];
+		xs.push(v[0]);
+		ys.push(v[1] || 0);
+		zs.push(v[2] || 0);
+		texts.push(word);
+	}
+	return [
+		{
+			type: 'scatter3d',
+			x: xs, y: ys, z: zs,
+			mode: 'markers',
 			marker: {
-				size: 8,
+				size: 5,
 				symbol: 'diamond',
-				color: 'rgba(100, 116, 139, 0.7)',
+				color: 'rgba(100, 116, 139, 0.8)',
 				line: { width: 1, color: '#334155' }
 			},
+			text: texts,
+			hovertemplate: '<b>Embedding: %{text}</b><extra></extra>',
 			name: 'Vocab Embeddings',
 			legendgroup: 'vocab_emb',
-			showlegend: true,
-			hoverinfo: 'text',
-			hovertemplate: '<b>Embedding: %{text}</b><extra></extra>'
-		};
+			showlegend: true
+		},
+		{
+			type: 'scatter3d',
+			x: xs, y: ys, z: zs,
+			mode: 'text',
+			text: texts,
+			textposition: 'top center',
+			textfont: { size: 10, color: '#475569', family: 'Inter, sans-serif' },
+			hoverinfo: 'skip',
+			name: 'Vocab Labels',
+			legendgroup: 'vocab_emb',
+			showlegend: false
+		}
+	];
+}
+
+// ─── Helper: Build 2D embedding landmark trace ───
+function _traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB) {
+	const xs = [], ys = [], texts = [];
+	for (const word of snapVocab) {
+		const v = embSnap[word];
+		xs.push(v[dimA] || 0);
+		ys.push(v[dimB] || 0);
+		texts.push(word);
+	}
+	return {
+		type: 'scatter',
+		x: xs, y: ys,
+		mode: 'markers+text',
+		text: texts,
+		textposition: 'top center',
+		textfont: { size: 10, color: '#475569' },
+		marker: {
+			size: 8,
+			symbol: 'diamond',
+			color: 'rgba(100, 116, 139, 0.7)',
+			line: { width: 1, color: '#334155' }
+		},
+		name: 'Vocab Embeddings',
+		legendgroup: 'vocab_emb',
+		showlegend: true,
+		hoverinfo: 'text',
+		hovertemplate: '<b>Embedding: %{text}</b><extra></extra>'
 	};
+}
 
-	// ───────────────────────────────────────────────
-	// d_model >= 4  →  2D slices for each (i,j) pair
-	// ───────────────────────────────────────────────
-	if (d_model >= 4) {
-		const pairs = [];
-		for (let i = 0; i < d_model; i++) {
-			for (let j = i + 1; j < d_model; j++) {
-				pairs.push([i, j]);
-			}
+// ─── Helper: Render high-dimensional (d_model >= 4) 2D slice grid ───
+function _traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab) {
+	const pairs = [];
+	for (let i = 0; i < d_model; i++) {
+		for (let j = i + 1; j < d_model; j++) {
+			pairs.push([i, j]);
 		}
-
-		// ── FIX: Reuse heading and grid elements instead of rebuilding ──
-		let heading = trajDiv.querySelector('[data-traj-heading]');
-		if (!heading) {
-			heading = document.createElement('div');
-			heading.setAttribute('data-traj-heading', 'true');
-			heading.style.cssText = "text-align:center; padding:15px 10px 5px; font-size:1rem; color:#1e40af;";
-			trajDiv.appendChild(heading);
-		}
-		heading.innerHTML = `<b>Token Trajectory — 2D Projections (${pairs.length} dimension pairs)</b>`;
-
-		let grid = trajDiv.querySelector('[data-traj-grid]');
-		if (!grid) {
-			grid = document.createElement('div');
-			grid.setAttribute('data-traj-grid', 'true');
-			grid.style.cssText = "display:grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap:15px; padding:10px;";
-			trajDiv.appendChild(grid);
-		}
-
-		pairs.forEach(([dimA, dimB], pairIdx) => {
-			const plotId = `traj-slice-${dimA}-${dimB}`;
-
-			// ── FIX: Reuse existing slice div ──
-			let sliceDiv = document.getElementById(plotId);
-			if (!sliceDiv) {
-				sliceDiv = document.createElement('div');
-				sliceDiv.id = plotId;
-				sliceDiv.style.cssText = "height:400px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;";
-				grid.appendChild(sliceDiv);
-			}
-
-			const traces = [];
-			const annotations = [];
-
-			traces.push(buildEmbeddingLandmarks2D(dimA, dimB));
-
-			tokens.forEach((token, tIdx) => {
-				const x = dataPoints.map(p => p.data[tIdx][dimA]);
-				const y = dataPoints.map(p => p.data[tIdx][dimB]);
-				const tColor = getPositionColor(tIdx, tokens.length);
-				const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
-
-				const hoverTexts = dataPoints.map((p, pIdx) => {
-					const logitWord = getLogitWord(p.data[tIdx]);
-					const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
-					const toStage = p.name;
-					return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
-						`From: ${fromStage}<br>` +
-						`To: ${toStage}<br>` +
-						`Nearest logit: <b>${logitWord}</b>`;
-				});
-
-				traces.push({
-					type: 'scatter',
-					x: x, y: y,
-					mode: 'lines+markers',
-					name: tokenLabel,
-					legendgroup: tokenLabel,
-					line: { width: 2, color: tColor },
-					marker: {
-						size: x.map((_, i) => i === 0 ? 0 : 10),
-						symbol: 'arrow',
-						angleref: 'previous',
-						color: tColor
-					},
-					hoverinfo: 'text',
-					hovertemplate: '%{text}<extra></extra>',
-					text: hoverTexts,
-					showlegend: true
-				});
-
-				const startLogit = getLogitWord(dataPoints[0].data[tIdx]);
-				traces.push({
-					type: 'scatter',
-					x: [x[0]], y: [y[0]],
-					mode: 'markers',
-					marker: { size: 10, symbol: 0, color: tColor,
-						line: { width: 2, color: '#000' } },
-					legendgroup: tokenLabel,
-					showlegend: false,
-					hoverinfo: 'text',
-					hovertemplate: '%{text}<extra></extra>',
-					text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
-				});
-
-				const endIdx = dataPoints.length - 1;
-				const endLogit = getLogitWord(dataPoints[endIdx].data[tIdx]);
-				traces.push({
-					type: 'scatter',
-					x: [x[x.length - 1]], y: [y[y.length - 1]],
-					mode: 'markers',
-					marker: { size: 14, symbol: 17, color: tColor,
-						line: { width: 1.5, color: '#000' } },
-					legendgroup: tokenLabel,
-					showlegend: false,
-					hoverinfo: 'text',
-					hovertemplate: '%{text}<extra></extra>',
-					text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b>`]
-				});
-
-				if (tIdx === 0) {
-					dataPoints.forEach((p, pIdx) => {
-						annotations.push({
-							x: x[pIdx], y: y[pIdx],
-							xref: 'x', yref: 'y',
-							text: p.name,
-							showarrow: false,
-							font: { size: 8, color: '#64748b' },
-							yshift: 12
-						});
-					});
-				}
-			});
-
-			const layout = {
-				title: { text: `Dim ${dimA} × Dim ${dimB}`, font: { size: 13 } },
-				xaxis: { title: `Dim ${dimA}`, showgrid: true, zeroline: false },
-				yaxis: { title: `Dim ${dimB}`, showgrid: true, zeroline: false },
-				annotations: annotations,
-				margin: { l: 45, r: 10, b: 45, t: 40 },
-				showlegend: true,
-				legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2, font: { size: 11 } }
-			};
-
-			// ── FIX: Use Plotly.react instead of Plotly.newPlot ──
-			Plotly.react(plotId, traces, layout, { responsive: true });
-		});
-
-		return;
 	}
 
-	// ───────────────────────────────────────────────
-	// d_model 2 or 3  →  original single plot logic
-	// ───────────────────────────────────────────────
-	trajDiv.style.height = '850px';
+	let heading = trajDiv.querySelector('[data-traj-heading]');
+	if (!heading) {
+		heading = document.createElement('div');
+		heading.setAttribute('data-traj-heading', 'true');
+		heading.style.cssText = "text-align:center; padding:15px 10px 5px; font-size:1rem; color:#1e40af;";
+		trajDiv.appendChild(heading);
+	}
+	heading.innerHTML = `<b>Token Trajectory — 2D Projections (${pairs.length} dimension pairs)</b>`;
 
-	const traces = [];
-	const annotations = [];
-
-	if (d_model === 3) {
-		buildEmbeddingLandmarks3D().forEach(t => traces.push(t));
-	} else {
-		traces.push(buildEmbeddingLandmarks2D(0, 1));
+	let grid = trajDiv.querySelector('[data-traj-grid]');
+	if (!grid) {
+		grid = document.createElement('div');
+		grid.setAttribute('data-traj-grid', 'true');
+		grid.style.cssText = "display:grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap:15px; padding:10px;";
+		trajDiv.appendChild(grid);
 	}
 
-	tokens.forEach((token, tIdx) => {
-		const x = dataPoints.map(p => p.data[tIdx][0]);
-		const y = dataPoints.map(p => p.data[tIdx][1]);
-		const z = d_model === 3 ? dataPoints.map(p => p.data[tIdx][2]) : null;
-		const tColor = getPositionColor(tIdx, tokens.length);
+	pairs.forEach(([dimA, dimB]) => {
+		const plotId = `traj-slice-${dimA}-${dimB}`;
 
-		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+		let sliceDiv = document.getElementById(plotId);
+		if (!sliceDiv) {
+			sliceDiv = document.createElement('div');
+			sliceDiv.id = plotId;
+			sliceDiv.style.cssText = "height:400px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;";
+			grid.appendChild(sliceDiv);
+		}
 
-		const hoverTexts = dataPoints.map((p, pIdx) => {
-			const logitWord = getLogitWord(p.data[tIdx]);
-			const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
-			const toStage = p.name;
-			return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
-				`From: ${fromStage}<br>` +
-				`To: ${toStage}<br>` +
-				`Nearest logit: <b>${logitWord}</b>`;
-		});
+		const traces = [];
+		const annotations = [];
 
-		if (d_model === 3) {
-			traces.push({
-				type: 'scatter3d',
-				x: x, y: y, z: z,
-				mode: 'lines',
-				name: tokenLabel,
-				legendgroup: tokenLabel,
-				line: { width: 5, color: tColor },
-				hoverinfo: 'text',
-				hovertemplate: '%{text}<extra></extra>',
-				text: hoverTexts
-			});
+		traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB));
 
-			for (let i = 0; i < x.length - 1; i++) {
-				const logitWord = getLogitWord(dataPoints[i + 1].data[tIdx]);
-				const fromStage = dataPoints[i].name;
-				const toStage = dataPoints[i + 1].name;
-				const coneHoverText = `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
+		tokens.forEach((token, tIdx) => {
+			const x = dataPoints.map(p => p.data[tIdx][dimA]);
+			const y = dataPoints.map(p => p.data[tIdx][dimB]);
+			const tColor = getPositionColor(tIdx, tokens.length);
+			const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+
+			const hoverTexts = dataPoints.map((p, pIdx) => {
+				const logitWord = _traj_get_logit_word(p.data[tIdx], embSnap, snapVocab);
+				const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
+				const toStage = p.name;
+				return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
 					`From: ${fromStage}<br>` +
 					`To: ${toStage}<br>` +
 					`Nearest logit: <b>${logitWord}</b>`;
-
-				traces.push({
-					type: 'cone',
-					x: [x[i + 1]], y: [y[i + 1]], z: [z[i + 1]],
-					u: [x[i + 1] - x[i]], v: [y[i + 1] - y[i]], w: [z[i + 1] - z[i]],
-					sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-					colorscale: [[0, tColor], [1, tColor]], showscale: false,
-					hoverinfo: 'text',
-					text: [coneHoverText],
-					hovertemplate: '%{text}<extra></extra>',
-					legendgroup: tokenLabel,
-					showlegend: false
-				});
-			}
-
-			const startLogit = getLogitWord(dataPoints[0].data[tIdx]);
-			traces.push({
-				type: 'scatter3d',
-				x: [x[0]], y: [y[0]], z: [z[0]],
-				mode: 'markers',
-				marker: { size: 6, symbol: 'circle', color: tColor,
-					line: { width: 1, color: '#000' } },
-				legendgroup: tokenLabel,
-				showlegend: false,
-				hoverinfo: 'text',
-				hovertemplate: '%{text}<extra></extra>',
-				text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
 			});
 
-			const endIdx = dataPoints.length - 1;
-			const endLogit = getLogitWord(dataPoints[endIdx].data[tIdx]);
-			traces.push({
-				type: 'scatter3d',
-				x: [x[x.length - 1]], y: [y[y.length - 1]], z: [z[z.length - 1]],
-				mode: 'text',
-				text: ['★'],
-				textposition: 'middle center',
-				textfont: { size: 18, color: tColor, family: 'Arial, sans-serif' },
-				legendgroup: tokenLabel,
-				showlegend: false,
-				hoverinfo: 'text',
-				hovertemplate: `Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b><extra></extra>`
-			});
-		} else {
 			traces.push({
 				type: 'scatter',
 				x: x, y: y,
@@ -3138,10 +2924,11 @@ function tlab_render_trajectory_plot(d_model) {
 				},
 				hoverinfo: 'text',
 				hovertemplate: '%{text}<extra></extra>',
-				text: hoverTexts
+				text: hoverTexts,
+				showlegend: true
 			});
 
-			const startLogit = getLogitWord(dataPoints[0].data[tIdx]);
+			const startLogit = _traj_get_logit_word(dataPoints[0].data[tIdx], embSnap, snapVocab);
 			traces.push({
 				type: 'scatter',
 				x: [x[0]], y: [y[0]],
@@ -3156,7 +2943,7 @@ function tlab_render_trajectory_plot(d_model) {
 			});
 
 			const endIdx = dataPoints.length - 1;
-			const endLogit = getLogitWord(dataPoints[endIdx].data[tIdx]);
+			const endLogit = _traj_get_logit_word(dataPoints[endIdx].data[tIdx], embSnap, snapVocab);
 			traces.push({
 				type: 'scatter',
 				x: [x[x.length - 1]], y: [y[y.length - 1]],
@@ -3177,13 +2964,219 @@ function tlab_render_trajectory_plot(d_model) {
 						xref: 'x', yref: 'y',
 						text: p.name,
 						showarrow: false,
-						font: { size: 9, color: '#64748b' },
+						font: { size: 8, color: '#64748b' },
 						yshift: 12
 					});
 				});
 			}
+		});
+
+		const layout = {
+			title: { text: `Dim ${dimA} × Dim ${dimB}`, font: { size: 13 } },
+			xaxis: { title: `Dim ${dimA}`, showgrid: true, zeroline: false },
+			yaxis: { title: `Dim ${dimB}`, showgrid: true, zeroline: false },
+			annotations: annotations,
+			margin: { l: 45, r: 10, b: 45, t: 40 },
+			showlegend: true,
+			legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2, font: { size: 11 } }
+		};
+
+		Plotly.react(plotId, traces, layout, { responsive: true });
+	});
+}
+
+// ─── Helper: Build 3D token trajectory traces ───
+function _traj_build_3d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab) {
+	const traces = [];
+
+	_traj_build_embedding_landmarks_3D(embSnap, snapVocab).forEach(t => traces.push(t));
+
+	tokens.forEach((token, tIdx) => {
+		const x = dataPoints.map(p => p.data[tIdx][0]);
+		const y = dataPoints.map(p => p.data[tIdx][1]);
+		const z = dataPoints.map(p => p.data[tIdx][2]);
+		const tColor = getPositionColor(tIdx, tokens.length);
+		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+
+		const hoverTexts = dataPoints.map((p, pIdx) => {
+			const logitWord = _traj_get_logit_word(p.data[tIdx], embSnap, snapVocab);
+			const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
+			const toStage = p.name;
+			return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
+				`From: ${fromStage}<br>` +
+				`To: ${toStage}<br>` +
+				`Nearest logit: <b>${logitWord}</b>`;
+		});
+
+		traces.push({
+			type: 'scatter3d',
+			x: x, y: y, z: z,
+			mode: 'lines',
+			name: tokenLabel,
+			legendgroup: tokenLabel,
+			line: { width: 5, color: tColor },
+			hoverinfo: 'text',
+			hovertemplate: '%{text}<extra></extra>',
+			text: hoverTexts
+		});
+
+		for (let i = 0; i < x.length - 1; i++) {
+			const logitWord = _traj_get_logit_word(dataPoints[i + 1].data[tIdx], embSnap, snapVocab);
+			const fromStage = dataPoints[i].name;
+			const toStage = dataPoints[i + 1].name;
+			const coneHoverText = `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
+				`From: ${fromStage}<br>` +
+				`To: ${toStage}<br>` +
+				`Nearest logit: <b>${logitWord}</b>`;
+
+			traces.push({
+				type: 'cone',
+				x: [x[i + 1]], y: [y[i + 1]], z: [z[i + 1]],
+				u: [x[i + 1] - x[i]], v: [y[i + 1] - y[i]], w: [z[i + 1] - z[i]],
+				sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+				colorscale: [[0, tColor], [1, tColor]], showscale: false,
+				hoverinfo: 'text',
+				text: [coneHoverText],
+				hovertemplate: '%{text}<extra></extra>',
+				legendgroup: tokenLabel,
+				showlegend: false
+			});
+		}
+
+		const startLogit = _traj_get_logit_word(dataPoints[0].data[tIdx], embSnap, snapVocab);
+		traces.push({
+			type: 'scatter3d',
+			x: [x[0]], y: [y[0]], z: [z[0]],
+			mode: 'markers',
+			marker: { size: 6, symbol: 'circle', color: tColor,
+				line: { width: 1, color: '#000' } },
+			legendgroup: tokenLabel,
+			showlegend: false,
+			hoverinfo: 'text',
+			hovertemplate: '%{text}<extra></extra>',
+			text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
+		});
+
+		const endIdx = dataPoints.length - 1;
+		const endLogit = _traj_get_logit_word(dataPoints[endIdx].data[tIdx], embSnap, snapVocab);
+		traces.push({
+			type: 'scatter3d',
+			x: [x[x.length - 1]], y: [y[y.length - 1]], z: [z[z.length - 1]],
+			mode: 'text',
+			text: ['★'],
+			textposition: 'middle center',
+			textfont: { size: 18, color: tColor, family: 'Arial, sans-serif' },
+			legendgroup: tokenLabel,
+			showlegend: false,
+			hoverinfo: 'text',
+			hovertemplate: `Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b><extra></extra>`
+		});
+	});
+
+	return traces;
+}
+
+// ─── Helper: Build 2D token trajectory traces ───
+function _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab) {
+	const traces = [];
+	const annotations = [];
+
+	traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, 0, 1));
+
+	tokens.forEach((token, tIdx) => {
+		const x = dataPoints.map(p => p.data[tIdx][0]);
+		const y = dataPoints.map(p => p.data[tIdx][1]);
+		const tColor = getPositionColor(tIdx, tokens.length);
+		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+
+		const hoverTexts = dataPoints.map((p, pIdx) => {
+			const logitWord = _traj_get_logit_word(p.data[tIdx], embSnap, snapVocab);
+			const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
+			const toStage = p.name;
+			return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
+				`From: ${fromStage}<br>` +
+				`To: ${toStage}<br>` +
+				`Nearest logit: <b>${logitWord}</b>`;
+		});
+
+		traces.push({
+			type: 'scatter',
+			x: x, y: y,
+			mode: 'lines+markers',
+			name: tokenLabel,
+			legendgroup: tokenLabel,
+			line: { width: 2, color: tColor },
+			marker: {
+				size: x.map((_, i) => i === 0 ? 0 : 10),
+				symbol: 'arrow',
+				angleref: 'previous',
+				color: tColor
+			},
+			hoverinfo: 'text',
+			hovertemplate: '%{text}<extra></extra>',
+			text: hoverTexts
+		});
+
+		const startLogit = _traj_get_logit_word(dataPoints[0].data[tIdx], embSnap, snapVocab);
+		traces.push({
+			type: 'scatter',
+			x: [x[0]], y: [y[0]],
+			mode: 'markers',
+			marker: { size: 10, symbol: 0, color: tColor,
+				line: { width: 2, color: '#000' } },
+			legendgroup: tokenLabel,
+			showlegend: false,
+			hoverinfo: 'text',
+			hovertemplate: '%{text}<extra></extra>',
+			text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
+		});
+
+		const endIdx = dataPoints.length - 1;
+		const endLogit = _traj_get_logit_word(dataPoints[endIdx].data[tIdx], embSnap, snapVocab);
+		traces.push({
+			type: 'scatter',
+			x: [x[x.length - 1]], y: [y[y.length - 1]],
+			mode: 'markers',
+			marker: { size: 14, symbol: 17, color: tColor,
+				line: { width: 1.5, color: '#000' } },
+			legendgroup: tokenLabel,
+			showlegend: false,
+			hoverinfo: 'text',
+			hovertemplate: '%{text}<extra></extra>',
+			text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b>`]
+		});
+
+		if (tIdx === 0) {
+			dataPoints.forEach((p, pIdx) => {
+				annotations.push({
+					x: x[pIdx], y: y[pIdx],
+					xref: 'x', yref: 'y',
+					text: p.name,
+					showarrow: false,
+					font: { size: 9, color: '#64748b' },
+					yshift: 12
+				});
+			});
 		}
 	});
+
+	return { traces, annotations };
+}
+
+// ─── Helper: Render the low-dimensional (d_model 2 or 3) single trajectory plot ───
+function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab) {
+	trajDiv.style.height = '850px';
+
+	let traces, annotations;
+
+	if (d_model === 3) {
+		traces = _traj_build_3d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
+		annotations = [];
+	} else {
+		const result = _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
+		traces = result.traces;
+		annotations = result.annotations;
+	}
 
 	const axisTemplate = {
 		showticklabels: false,
@@ -3210,10 +3203,42 @@ function tlab_render_trajectory_plot(d_model) {
 		}
 	};
 
-	// ── This was already correct — Plotly.react does in-place updates ──
-	// The fix is that we no longer destroy the div contents above,
-	// so Plotly.react can actually do a smooth transition.
 	Plotly.react(trajDiv.id, traces, layout);
+}
+
+// ─── Main function: now a clean orchestrator ───
+function tlab_render_trajectory_plot(d_model) {
+	const mainContainer = document.getElementById('transformer-migration-plots-container');
+	if (!mainContainer || !window.tlab_trajectory_collector) return;
+
+	const { tokens, steps, displayTokens } = window.tlab_trajectory_collector;
+
+	const sortedKeys = Object.keys(steps).sort();
+	if (sortedKeys.length < 3) return;
+
+	let trajDiv = document.getElementById('transformer-trajectory-full-path');
+	if (!trajDiv) {
+		trajDiv = document.createElement('div');
+		trajDiv.id = 'transformer-trajectory-full-path';
+		mainContainer.appendChild(trajDiv);
+	}
+
+	trajDiv.style.width = '100%';
+
+	const labels = displayTokens || tokens.map((t, i) => {
+		if (typeof t === 'string') return t;
+		return tlab_get_top_word_only(t);
+	});
+
+	const dataPoints = sortedKeys.map(k => steps[k]);
+
+	const { embSnap, snapVocab } = _traj_snapshot_embeddings();
+
+	if (d_model >= 4) {
+		_traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
+	} else {
+		_traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
+	}
 }
 
 function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model) {
