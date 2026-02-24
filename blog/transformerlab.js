@@ -892,76 +892,74 @@ async function train_transformer() {
 		window.lossHistory.push(lossValue[0]);
 
 
-		if (true) {
-			// Display current training sentences with actual predictions
-			const sentenceSpan = document.getElementById('current_training_sentence');
+		// Display current training sentences with actual predictions
+		const sentenceSpan = document.getElementById('current_training_sentence');
 
-			if (sentenceSpan && window.currentTrainingWindows.length > 0) {
-				// Get current predictions for each window
-				const vocab = Object.keys(window.persistentEmbeddingSpace);
-				const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
+		if (sentenceSpan && window.currentTrainingWindows.length > 0) {
+			// Get current predictions for each window
+			const vocab = Object.keys(window.persistentEmbeddingSpace);
+			const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
 
-				const maxWordLen = Math.max(
-					...window.currentTrainingWindows.flatMap(w => w.target.map(t => t.length)),
-					...vocab.map(v => v.length),
-					1
-				);
-				const chipMinWidth = Math.max(250, maxWordLen * 9 + 70) + 'px';
+			const maxWordLen = Math.max(
+				...window.currentTrainingWindows.flatMap(w => w.target.map(t => t.length)),
+				...vocab.map(v => v.length),
+				1
+			);
+			const chipMinWidth = Math.max(250, maxWordLen * 9 + 70) + 'px';
 
-				const windowsHtml = window.currentTrainingWindows.map((w, idx) => {
-					// Run a quick forward pass for this window to get predictions
-					const predictions = [];
-					try {
-						const { n_heads: n_heads_local } = getTransformerConfig();
-						let h = runSimpleForwardPass(w.input, window.currentWeights, d_model, n_heads_local, n_layers);
+			const windowsHtml = window.currentTrainingWindows.map((w, idx) => {
+				// Run a quick forward pass for this window to get predictions
+				const predictions = [];
+				try {
+					const { n_heads: n_heads_local } = getTransformerConfig();
+					let h = runSimpleForwardPass(w.input, window.currentWeights, d_model, n_heads_local, n_layers);
 
-						// Project each position to vocabulary (logits)
-						for (let pos = 0; pos < h.length; pos++) {
-							const logits = embMatrix.map(embRow =>
-								h[pos].reduce((sum, val, k) => sum + val * embRow[k], 0));
-							const probs = softmax(logits);
+					// Project each position to vocabulary (logits)
+					for (let pos = 0; pos < h.length; pos++) {
+						const logits = embMatrix.map(embRow =>
+							h[pos].reduce((sum, val, k) => sum + val * embRow[k], 0));
+						const probs = softmax(logits);
 
-							// Find top prediction
-							let bestIdx = 0;
-							for (let j = 1; j < probs.length; j++) {
-								if (probs[j] > probs[bestIdx]) bestIdx = j;
-							}
-							predictions.push({
-								word: vocab[bestIdx],
-								prob: probs[bestIdx]
-							});
+						// Find top prediction
+						let bestIdx = 0;
+						for (let j = 1; j < probs.length; j++) {
+							if (probs[j] > probs[bestIdx]) bestIdx = j;
 						}
-					} catch (e) {
-						// If forward pass fails, show "?" for predictions
-						w.target.forEach(() => predictions.push({ word: '?', prob: 0 }));
+						predictions.push({
+							word: vocab[bestIdx],
+							prob: probs[bestIdx]
+						});
 					}
+				} catch (e) {
+					// If forward pass fails, show "?" for predictions
+					w.target.forEach(() => predictions.push({ word: '?', prob: 0 }));
+				}
 
-					// Build the display with target vs actual
-					const targetHtml = w.target.map((targetWord, pos) => {
-						const pred = predictions[pos] || { word: '?', prob: 0 };
-						const isCorrect = pred.word === targetWord;
-						const icon = isCorrect ? '✅' : '❌';
-						const probStr = (pred.prob * 100).toFixed(1);
-						const bgColor = isCorrect ? '#dcfce7' : '#fee2e2';
+				// Build the display with target vs actual
+				const targetHtml = w.target.map((targetWord, pos) => {
+					const pred = predictions[pos] || { word: '?', prob: 0 };
+					const isCorrect = pred.word === targetWord;
+					const icon = isCorrect ? '✅' : '❌';
+					const probStr = (pred.prob * 100).toFixed(1);
+					const bgColor = isCorrect ? '#dcfce7' : '#fee2e2';
 
-						return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem; min-width:${chipMinWidth}; text-align:center; box-sizing:border-box;" title="Target: ${targetWord} | Predicted: ${pred.word} (${probStr}%)">
-	    ${icon} <b>${targetWord}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${pred.word}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
-	</span>`;
-					}).join('');
-
-					return `<div style="margin-bottom:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-family:monospace; font-size:0.85rem;">
-		    <strong>Window ${idx + 1}:</strong> 
-		    [${w.input.join(' ')}] →<br>
-		    <div style="margin-top:4px; margin-left:10px;">
-			<span style="color:#64748b; font-size:0.75rem;">Expected vs Predicted:</span><br>
-			${targetHtml}
-		    </div>
-		</div>`;
+					return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem; min-width:${chipMinWidth}; text-align:center; box-sizing:border-box;" title="Target: ${targetWord} | Predicted: ${pred.word} (${probStr}%)">
+    ${icon} <b>${targetWord}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${pred.word}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
+</span>`;
 				}).join('');
-				sentenceSpan.innerHTML = windowsHtml;
 
-				$("#show_training_sentences").show();
-			}
+				return `<div style="margin-bottom:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-family:monospace; font-size:0.85rem;">
+	    <strong>Window ${idx + 1}:</strong> 
+	    [${w.input.join(' ')}] →<br>
+	    <div style="margin-top:4px; margin-left:10px;">
+		<span style="color:#64748b; font-size:0.75rem;">Expected vs Predicted:</span><br>
+		${targetHtml}
+	    </div>
+	</div>`;
+			}).join('');
+			sentenceSpan.innerHTML = windowsHtml;
+
+			$("#show_training_sentences").show();
 		}
 
 
@@ -981,14 +979,12 @@ async function train_transformer() {
 
 		window.currentWeights = await convert_tensors_to_weights(weightVars);
 
-		if(true) {
-			run_transformer_demo();
-			await tf.nextFrame();
+		run_transformer_demo();
+		await tf.nextFrame();
 
-			calculate_vector_math();
+		calculate_vector_math();
 
-			tled_syncTableFromSpace();
-		}
+		tled_syncTableFromSpace();
 
 		cost.dispose();
 	}
