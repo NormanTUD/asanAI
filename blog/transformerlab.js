@@ -448,10 +448,12 @@ function calculate_positional_injection(tokens, d_model) {
 	let html = `<h3>Vector Injection (Inference Sequence)</h3>`;
 
 	tokens.forEach((token, pos) => {
-		const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-		const semanticVec = Array.from({length: d_model}, (_, i) =>
-			parseFloat(((Math.abs(hash * (i + 1)) % 1000) / 500 - 1).toFixed(nr_fixed))
-		);
+		// ✅ FIX: Use the actual learned embedding instead of a fake hash-based vector.
+		// The persistent embedding space is guaranteed to be initialized before this
+		// function is called (via get_or_init_embeddings in run_and_visualize_network).
+		const semanticVec = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[token])
+			? window.persistentEmbeddingSpace[token].map(v => parseFloat(v.toFixed(nr_fixed)))
+			: Array.from({length: d_model}, () => 0);
 
 		// ✅ REFACTORED: Was a manual 8-line loop, now one call.
 		// Using posEmbedScalar for consistency with the rest of the codebase.
@@ -501,17 +503,16 @@ function render_positional_waves(d_model, tokens) {
 	for (let i = 0; i < d_model; i++) {
 		let x = [], y = [];
 		for (let p = 0; p <= maxPos; p += resolution) {
-			// Frequency scaling logic
-			let div_term = Math.pow(10000, (2 * (Math.floor(i/2))) / d_model);
+			// ✅ FIX: Use the exact same formula as computePositionalEncoding().
+			// The old code normalized p by (seqLen - 1) and multiplied by Math.PI,
+			// which did NOT match the actual PE the model computes. The canonical
+			// sinusoidal PE from Vaswani et al. uses raw position / divTerm with
+			// no normalization or PI scaling.
+			let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
 
-			// NEW: Normalize the position 'p' relative to sequence length
-			// This 'stretches' the wave to fit the actual input tokens.
-			const normalizedP = seqLen > 1 ? p / (seqLen - 1) : p;
-
-			// We multiply by Math.PI to ensure at least half a wave cycle fits the length
 			let val = ((i % 2 === 0)
-				? Math.sin((normalizedP * Math.PI) / div_term)
-				: Math.cos((normalizedP * Math.PI) / div_term)) * posEmbedScalar; // <--- Nudge reduziert
+				? Math.sin(p / div_term)
+				: Math.cos(p / div_term)) * posEmbedScalar;
 
 			x.push(p);
 			y.push(val);
@@ -534,9 +535,9 @@ function render_positional_waves(d_model, tokens) {
 	});
 
 	const layout = {
-		title: 'Adaptive Sinusoidal Positional Waves',
+		title: 'Sinusoidal Positional Waves',
 		margin: { t: 40, b: 40, l: 40, r: 20 },
-		xaxis: { title: 'Normalized Token Position' },
+		xaxis: { title: 'Token Position' },
 		yaxis: { title: 'PE Value', range: [-1.1, 1.1] }
 	};
 
@@ -1038,6 +1039,8 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers) {
 		losses.push(tf.losses.softmaxCrossEntropy(labels, logits));
 	}
 
+	mask.dispose();
+
 	if (losses.length === 0) return tf.scalar(10);
 	return tf.addN(losses).div(tf.scalar(losses.length));
 }
@@ -1355,7 +1358,6 @@ Remember that the $n$ is the number of tokens in the <b>Inference</b>-sequence, 
 </span>
 
 This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. When the model is, for example, $d_{\\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage, their influence is already baked into that last vector.
-	</span>
 
 	<p style="margin-bottom: 10px; overflow: scroll;">Current $h_\\text{last} = [${h_last.map(v => v.toFixed(nr_fixed)).join(', ')}]$</p>
 `;
@@ -1895,23 +1897,6 @@ function get_h1(h0, multiHeadOutput, gamma, beta) {
 	return h1;
 }
 
-function concatenateHeads(headData) {
-	const numHeads = headData.length;
-	const numTokens = headData[0].context.length;
-	const d_v = headData[0].context[0].length;
-
-	// Initialize h_concat matrix (Tokens x d_model)
-	let concatenatedResult = Array.from({ length: numTokens }, () => []);
-
-	for (let t = 0; t < numTokens; t++) {
-		for (let h = 0; h < numHeads; h++) {
-			// Append the d_v vector of Head H for Token T
-			concatenatedResult[t] = concatenatedResult[t].concat(headData[h].context[t]);
-		}
-	}
-	return concatenatedResult;
-}
-
 /**
  * Validiert die Form der übergebenen Matrizen/Vektoren
  */
@@ -1926,7 +1911,7 @@ function validateShape(name, data, expectedRows, expectedCols) {
 	return true;
 }
 
-function assert_or_init(name, value, expected_rows, expected_cols) {
+function assertShape(name, value, expected_rows, expected_cols) {
         try {
                 validateShape(name, value, expected_rows, expected_cols);
                 return value;
@@ -1950,10 +1935,10 @@ function run_ffn_block(h1, params = {}) {
 	const d_model = h1[0].length;
 	const d_ff = d_model * 4;
 
-	let W1 = assert_or_init('W1', params.W1, d_model, d_ff);
-	let b1 = assert_or_init('b1', params.b1, d_ff, 1);
-	let W2 = assert_or_init('W2', params.W2, d_ff, d_model);
-	let b2 = assert_or_init('b2', params.b2, d_model, 1);
+	let W1 = assertShape('W1', params.W1, d_model, d_ff);
+	let b1 = assertShape('b1', params.b1, d_ff, 1);
+	let W2 = assertShape('W2', params.W2, d_ff, d_model);
+	let b2 = assertShape('b2', params.b2, d_model, 1);
 	let gamma2 = params.gamma2 || new Array(d_model).fill(1.0);
 	let beta2 = params.beta2 || new Array(d_model).fill(0.0);
 
