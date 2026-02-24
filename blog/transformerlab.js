@@ -2272,42 +2272,42 @@ function buildResultHighlightTrace(highlightPos, dimensions, is3D) {
  * Renders the embedding space for d_model <= 3 using Plotly.
  */
 function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, steps) {
-    const is3D = (dimensions === 3);
-    const traces = [];
-    const annotations = [];
+	const is3D = (dimensions === 3);
+	const traces = [];
+	const annotations = [];
 
-    // Vocabulary points
-    traces.push(...buildVocabPointTraces(tokens, is3D));
+	// Vocabulary points
+	traces.push(...buildVocabPointTraces(tokens, is3D));
 
-    // Step arrows
-    const arrowResult = buildStepArrowTraces(steps, dimensions, is3D);
-    traces.push(...arrowResult.traces);
-    annotations.push(...arrowResult.annotations);
+	// Step arrows
+	const arrowResult = buildStepArrowTraces(steps, dimensions, is3D);
+	traces.push(...arrowResult.traces);
+	annotations.push(...arrowResult.annotations);
 
-    // Result highlight
-    if (highlightPos) {
-        traces.push(buildResultHighlightTrace(highlightPos, dimensions, is3D));
-    }
+	// Result highlight
+	if (highlightPos) {
+		traces.push(buildResultHighlightTrace(highlightPos, dimensions, is3D));
+	}
 
-    // Layout
-    const layout = {
-        title: "Embedding Space",
-        showlegend: false,
-        annotations
-    };
+	// Layout
+	const layout = {
+		title: "Embedding Space",
+		showlegend: false,
+		annotations
+	};
 
-    if (is3D) {
-        layout.scene = {
-            xaxis: { title: 'Dim 0' },
-            yaxis: { title: 'Dim 1' },
-            zaxis: { title: 'Dim 2' }
-        };
-    } else {
-        layout.xaxis = { title: 'Dim 0' };
-        layout.yaxis = { title: dimensions >= 2 ? 'Dim 1' : '' };
-    }
+	if (is3D) {
+		layout.scene = {
+			xaxis: { title: 'Dim 0' },
+			yaxis: { title: 'Dim 1' },
+			zaxis: { title: 'Dim 2' }
+		};
+	} else {
+		layout.xaxis = { title: 'Dim 0' };
+		layout.yaxis = { title: dimensions >= 2 ? 'Dim 1' : '' };
+	}
 
-    Plotly.newPlot(container, traces, layout);
+	Plotly.react(container, traces, layout);
 }
 
 /**
