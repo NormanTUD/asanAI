@@ -20,6 +20,51 @@ window.tlab_trajectory_data = {
 	steps: [] // Array of { name: "Stage Name", data: [[dim1, dim2...], ...] }
 };
 
+/**
+ * Runs a single transformer layer forward pass (Pre-LN architecture).
+ * Returns the output hidden state after attention + FFN + residuals.
+ *
+ * @param {number[][]} h_current  - Input hidden states [seqLen × d_model]
+ * @param {object}     layerWeights - Weight object for this layer
+ * @param {number}     d_model
+ * @param {number}     n_heads
+ * @param {string[]|null} tokenStrings - Human-readable token labels (for AttentionEngine)
+ * @param {string|null}   containerId  - AttentionEngine container ID (null = no viz)
+ * @returns {{ h_out: number[][], headData: object[], concat: number[][] }}
+ */
+function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings = null, containerId = null) {
+	// 1. Pre-LN before attention
+	const normH = calculateLayerNorm(h_current, layerWeights.gamma, layerWeights.beta);
+
+	// 2. Multi-head attention
+	const engine = new AttentionEngine({
+		d_model,
+		n_heads,
+		containerId,
+		weights: layerWeights.attention
+	});
+	const headData = engine.forward(normH, tokenStrings || h_current, tokenStrings);
+
+	// 3. Concatenate heads
+	const concat = h_current.map((_, tIdx) =>
+		[].concat(...headData.map(hd => hd.context[tIdx]))
+	);
+
+	// 4. Output projection
+	const Wo = layerWeights.attention.output;
+	const projected = concat.map(row =>
+		Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
+	);
+
+	// 5. Residual connection (attention)
+	const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
+
+	// 6. FFN block (includes Pre-LN, ReLU, residual)
+	const h_out = run_ffn_block(h_attn, layerWeights);
+
+	return { h_out, headData, concat, projected, normH, h_attn };
+}
+
 function matrixToPmatrix(matrix) {
 	return `\\begin{pmatrix} ` +
 		matrix.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ') +
@@ -639,58 +684,11 @@ async function train_transformer() {
 						});
 
 						// Run through transformer layers
+						// Run through transformer layers
+						const n_heads_local = parseInt(document.getElementById('transformer-heads').value);
 						for (let l = 0; l < n_layers; l++) {
-							const lw = window.currentWeights[l];
-
-							// Pre-LN
-							const normH = calculateLayerNorm(h, lw.gamma, lw.beta);
-
-							// Simplified self-attention (single head approximation for speed)
-							const Q = normH.map(row => lw.attention.query[0].map((_, j) => 
-								row.reduce((sum, val, k) => sum + val * lw.attention.query[k][j], 0)));
-							const K = normH.map(row => lw.attention.key[0].map((_, j) => 
-								row.reduce((sum, val, k) => sum + val * lw.attention.key[k][j], 0)));
-							const V = normH.map(row => lw.attention.value[0].map((_, j) => 
-								row.reduce((sum, val, k) => sum + val * lw.attention.value[k][j], 0)));
-
-							// Attention scores with causal mask
-							const scale = Math.sqrt(d_model);
-							const attnOut = Q.map((q, qi) => {
-								const scores = K.map((k, ki) => {
-									if (ki > qi) return -1e9; // causal mask
-									return q.reduce((sum, val, d) => sum + val * k[d], 0) / scale;
-								});
-								// Softmax
-								const maxS = Math.max(...scores);
-								const exps = scores.map(s => Math.exp(s - maxS));
-								const sumE = exps.reduce((a, b) => a + b, 0);
-								const weights = exps.map(e => e / sumE);
-								// Weighted sum of V
-								return V[0].map((_, d) => weights.reduce((sum, w, vi) => sum + w * V[vi][d], 0));
-							});
-
-							// Output projection + residual
-							const projected = attnOut.map(row => 
-								lw.attention.output[0].map((_, j) => 
-									row.reduce((sum, val, k) => sum + val * lw.attention.output[k][j], 0)));
-							h = h.map((row, i) => row.map((val, j) => val + projected[i][j]));
-
-							// FFN with Pre-LN
-							const normH2 = calculateLayerNorm(h, lw.gamma2, lw.beta2);
-							const d_ff = d_model * 4;
-							const ffn1 = normH2.map(row => 
-								lw.b1.map((bias, j) => {
-									let sum = bias;
-									for (let k = 0; k < d_model; k++) sum += row[k] * lw.W1[k][j];
-									return Math.max(0, sum); // ReLU
-								}));
-							const ffn2 = ffn1.map(row => 
-								lw.b2.map((bias, j) => {
-									let sum = bias;
-									for (let k = 0; k < d_ff; k++) sum += row[k] * lw.W2[k][j];
-									return sum;
-								}));
-							h = h.map((row, i) => row.map((val, j) => val + ffn2[i][j]));
+							const result = forwardOneLayer(h, window.currentWeights[l], d_model, n_heads_local, w.input, null);
+							h = result.h_out;
 						}
 
 						// Project each position to vocabulary (logits)
@@ -1311,24 +1309,10 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 		let h_current = h_master;
 		for (let l = 0; l < n_layers; l++) {
-			const layerWeights = weights[l];
-
-			const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
-
-			const attnEngine = new AttentionEngine({ d_model, n_heads, containerId: null, weights: layerWeights["attention"] });
-			const headData = attnEngine.forward(normH, knownMasterTokens);
-
-			const concat = knownMasterTokens.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
-
-			const Wo = layerWeights["attention"]["output"];
-			const projected = concat.map(row =>
-				Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
-			);
-
-			const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
-
-			h_current = run_ffn_block(h_attn, layerWeights);
+			const result = forwardOneLayer(h_current, weights[l], d_model, n_heads, knownMasterTokens, null);
+			h_current = result.h_out;
 		}
+
 
 		render_final_projection(h_current, vocabulary, d_model, temperature);
 	}
@@ -1837,7 +1821,7 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 
         <div style="margin-bottom:15px;">
             <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
-            $$ \\text{Norm}(h_0) = \\underbrace{\\gamma}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
+            $$ \\text{LayerNorm}(h_0) = \\underbrace{\\gamma}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
             <div style="overflow-x:auto;">
                 $$ \\underbrace{${matrixToPmatrix(normH0)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h0)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
 		<br>
@@ -2059,40 +2043,13 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 
 	for (let n = startLayer; n < total_depth; n++) {
 		const h_before_layer = JSON.parse(JSON.stringify(h_current));
-		const layerWeights = this_weights[n];
 
-		// Pre-LN: normalize BEFORE attention
-		const normH = calculateLayerNorm(h_current, layerWeights["gamma"], layerWeights["beta"]);
+		const result = forwardOneLayer(h_current, this_weights[n], d_model, n_heads, tokenStrings, "mha-calculation-details");
 
-		// 1. Sublayer 1: Attention (on normalized input)
-		// Use the shared container so all layers appear in the tabbed UI
-		const engine = new AttentionEngine({
-			d_model,
-			n_heads,
-			containerId: "mha-calculation-details",
-			weights: layerWeights["attention"]
-		});
+		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, result.h_out, n + 1, d_model, result.h_out, tokenStrings);
+		tlab_render_weight_grid(this_weights[n], n);
 
-		const headData = engine.forward(normH, tokens, tokenStrings);
-		const concatOutput = tokens.map((_, tIdx) => [].concat(...headData.map(h => h.context[tIdx])));
-
-		// Apply Wo (output projection)
-		const Wo = layerWeights["attention"]["output"];
-		const projected = concatOutput.map(row =>
-			Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
-		);
-
-		// 2. Residual connection
-		const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
-
-		// 3. Sublayer 2: Feed Forward & Add
-		const h_after = run_ffn_block(h_attn, layerWeights);
-
-		// Visualization — pass tokenStrings for human-readable labels
-		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, h_after, n + 1, d_model, h_after, tokenStrings);
-		tlab_render_weight_grid(layerWeights, n);
-
-		h_current = h_after;
+		h_current = result.h_out;
 	}
 
 	return h_current;
