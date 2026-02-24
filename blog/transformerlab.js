@@ -2199,13 +2199,7 @@ function tlab_render_weight_grid(id, layerNum) {
 			for (let r = 0; r < rows; r++) {
 				for (let c = 0; c < cols; c++) {
 					const val = Array.isArray(target.data[r]) ? target.data[r][c] : target.data[r];
-
-					const t = Math.max(0, Math.min(1, (val + 1) / 2));
-					const red = Math.floor(t * 255);
-					const green = Math.floor(32 + t * 223);
-					const blue = Math.floor(77 * (1 - t));
-
-					ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
+					ctx.fillStyle = tlab_get_colorblind_pixel(val);
 					ctx.fillRect(c, r, 1, 1);
 				}
 			}
