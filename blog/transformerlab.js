@@ -1,7 +1,6 @@
 "use strict";
 
 const widthEmbeddingInit = 5;
-const replot_every_n_epochs = 50;
 const nr_fixed = 4;
 const posEmbedScalar = 1;
 let trainingDebounceTimer;
@@ -893,7 +892,6 @@ async function train_transformer() {
 		window.lossHistory.push(lossValue[0]);
 
 
-		//if (true || i == 0 || (i + 1) % replot_every_n_epochs === 0 || i === epochs - 1) {
 		if (true) {
 			// Display current training sentences with actual predictions
 			const sentenceSpan = document.getElementById('current_training_sentence');
@@ -983,7 +981,6 @@ async function train_transformer() {
 
 		window.currentWeights = await convert_tensors_to_weights(weightVars);
 
-		//if ((i + 1) % replot_every_n_epochs === 0 || i === epochs - 1) {
 		if(true) {
 			run_transformer_demo();
 			await tf.nextFrame();
