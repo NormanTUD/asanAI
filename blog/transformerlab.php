@@ -113,6 +113,22 @@ https://arxiv.org/html/2505.11611v1
 	<p>Current Training Windows: <span id="current_training_sentence"></span></p><br>
 </div>
 
+<!-- Data View Toggle -->
+<div id="data-view-toggle" style="margin-bottom: 15px; padding: 10px 15px; background: #f0f4ff; border: 1px solid #3b82f6; border-radius: 8px; display: flex; align-items: center; gap: 15px;">
+    <label style="font-weight: bold; font-size: 0.95rem; color: #1e40af;">Visualize:</label>
+    <button id="view-toggle-train" onclick="setVisualizationMode('train')"
+        style="padding: 6px 18px; border-radius: 6px; border: 2px solid #3b82f6; background: #3b82f6; color: white; font-weight: bold; cursor: pointer; transition: all 0.15s;">
+        Training Data
+    </button>
+    <button id="view-toggle-inference" onclick="setVisualizationMode('inference')"
+        style="padding: 6px 18px; border-radius: 6px; border: 2px solid #3b82f6; background: white; color: #3b82f6; font-weight: bold; cursor: pointer; transition: all 0.15s;">
+        Inference Data
+    </button>
+    <span style="font-size: 0.78rem; color: #64748b; margin-left: 10px;">
+        Controls which token sequence is shown in all plots. Does not affect training or inference computation.
+    </span>
+</div>
+
 <div class="md">
 ## 1. Tokenization
 The journey of a sentence begins with **Tokenization**, which decomposes raw text into **tokens**. In real LLMs, you would use **Byte-Pair Encoding** (**BPE**), this approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language. But since our embedding space and the amount of data browsers can process is too small, we stick with word-wise tokenization by default. 

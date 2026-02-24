@@ -717,28 +717,30 @@ function _execute_positional_waves_render(d_model, tokens) {
 }
 
 function run_transformer_demo(activeId = null) {
-	if (activeId) {
-		window.lastActiveInputId = activeId;
-	}
+    if (activeId) {
+        window.lastActiveInputId = activeId;
+    }
 
-	const trainingInput = document.getElementById('transformer-training-data');
-	const masterInput = document.getElementById('transformer-master-token-input');
+    const trainingInput = document.getElementById('transformer-training-data');
+    const masterInput = document.getElementById('transformer-master-token-input');
 
-	if (!trainingInput || !masterInput) return;
+    if (!trainingInput || !masterInput) return;
 
-	// 1. Tokenisierung für die Logik (ohne UI-Render)
-	const trainingTokens = transformer_tokenize_render(trainingInput.value, null);
-	const masterTokens = transformer_tokenize_render(masterInput.value, null);
+    // 1. Tokenize both for logic
+    const trainingTokens = transformer_tokenize_render(trainingInput.value, null);
+    const masterTokens = transformer_tokenize_render(masterInput.value, null);
 
-	// 2. Tokenisierung für die VISUELLE ANZEIGE (BPE-Box oben)
-	// Wir rendern die Tokens des Feldes, das gerade bearbeitet wird
-	const vizSourceValue = document.getElementById(window.lastActiveInputId).value;
-	const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe");
+    // 2. BPE visualization: respect the toggle mode
+    const vizMode = window.tlabVisualizationMode || 'train';
+    const vizSourceValue = (vizMode === 'inference')
+        ? masterInput.value
+        : trainingInput.value;
+    const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe");
 
-	// 3. Netzwerk ausführen
-	run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
+    // 3. Run the network
+    run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
 
-	show_nr_of_params();
+    show_nr_of_params();
 }
 
 /**
@@ -1595,60 +1597,65 @@ function pruneOrphanedMigrationPlots() {
  * and renders all visualizations.
  */
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
-	const { d_model, n_heads, temperature, n_layers } = getTransformerConfig();
+    const { d_model, n_heads, temperature, n_layers } = getTransformerConfig();
 
-	const vocabulary = [...new Set(trainingTokens)];
-	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
+    const vocabulary = [...new Set(trainingTokens)];
 
-	if (d_model % n_heads !== 0) {
-		const container = document.getElementById('transformer-output-projection');
-		if (container) container.innerHTML = `<div style="color:red; padding:20px;">Error: d_model (${d_model}) must be divisible by n_heads (${n_heads}).</div>`;
-		return;
-	}
+    // ── NEW: Choose which tokens to visualize based on toggle ──
+    const vizMode = window.tlabVisualizationMode || 'train';
+    const vizSourceTokens = (vizMode === 'inference') ? masterTokens : inputTokens;
+    const knownTokens = vizSourceTokens.filter(token => vocabulary.includes(token));
 
-	// 1. Reinitialize weights if config changed
-	const needsReinit = handleWeightReinit(d_model, n_heads, n_layers);
-	const weights = window.currentWeights;
+    if (d_model % n_heads !== 0) {
+        const container = document.getElementById('transformer-output-projection');
+        if (container) container.innerHTML = `<div style="color:red; padding:20px;">Error: d_model (${d_model}) must be divisible by n_heads (${n_heads}).</div>`;
+        return;
+    }
 
-	// 2. Pre-attention visualizations (embeddings, positional encoding, etc.)
-	const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
-	const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
+    // 1. Reinitialize weights if config changed
+    const needsReinit = handleWeightReinit(d_model, n_heads, n_layers);
+    const weights = window.currentWeights;
 
-	// 3. Prepare migration/trajectory state for this pass
-	prepareMigrationState(needsReinit);
+    // 2. Pre-attention visualizations (embeddings, positional encoding, etc.)
+    const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
+    const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
 
-	if (tokensWithPositional.length === 0) {
-		document.getElementById('transformer-output-projection').innerHTML =
-			`<div style="padding:20px; color: #64748b; text-align:center;">
-				Input words not found in Training Data.
-			</div>`;
-	} else {
-		// 4. Run and visualize Layer 0 in detail
-		const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
+    // 3. Prepare migration/trajectory state for this pass
+    prepareMigrationState(needsReinit);
 
-		// 5. First migration plot (layer 1)
-		create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
+    if (tokensWithPositional.length === 0) {
+        document.getElementById('transformer-output-projection').innerHTML =
+            `<div style="padding:20px; color: #64748b; text-align:center;">
+                Input words not found in Training Data.
+            </div>`;
+    } else {
+        // 4. Run and visualize Layer 0 in detail
+        const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
 
-		// 6. Run remaining layers
-		run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
+        // 5. First migration plot (layer 1)
+        create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
 
-		// 7. Render attention detail panels
-		renderAttentionDetails();
+        // 6. Run remaining layers
+        run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
 
-		// 8. Trajectory plot
-		renderTrajectoryPlot(d_model);
+        // 7. Render attention detail panels
+        renderAttentionDetails();
 
-		// 9. Clean up orphaned migration plots
-		pruneOrphanedMigrationPlots();
-	}
+        // 8. Trajectory plot
+        renderTrajectoryPlot(d_model);
 
-	// 10. Final probabilities (based on master-token-input)
-	const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
+        // 9. Clean up orphaned migration plots
+        pruneOrphanedMigrationPlots();
+    }
 
-	if (knownMasterTokens.length > 0) {
-		const h_final = runSimpleForwardPass(knownMasterTokens, weights, d_model, n_heads, n_layers);
-		render_final_projection(h_final, vocabulary, d_model, temperature);
-	}
+    // 10. Final probabilities — ALWAYS based on master-token-input
+    //     (this is the actual inference output, independent of viz mode)
+    const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
+
+    if (knownMasterTokens.length > 0) {
+        const h_final = runSimpleForwardPass(knownMasterTokens, weights, d_model, n_heads, n_layers);
+        render_final_projection(h_final, vocabulary, d_model, temperature);
+    }
 }
 
 window.select_suggested_word = (word) => {
@@ -2894,6 +2901,9 @@ function _traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_mo
 		traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB));
 
 		tokens.forEach((token, tIdx) => {
+			const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
+			if (!hasDataInAllSteps) return;
+
 			const x = dataPoints.map(p => p.data[tIdx][dimA]);
 			const y = dataPoints.map(p => p.data[tIdx][dimB]);
 			const tColor = getPositionColor(tIdx, tokens.length);
@@ -2992,6 +3002,9 @@ function _traj_build_3d_token_traces(tokens, labels, dataPoints, embSnap, snapVo
 	_traj_build_embedding_landmarks_3D(embSnap, snapVocab).forEach(t => traces.push(t));
 
 	tokens.forEach((token, tIdx) => {
+		const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
+		if (!hasDataInAllSteps) return;
+
 		const x = dataPoints.map(p => p.data[tIdx][0]);
 		const y = dataPoints.map(p => p.data[tIdx][1]);
 		const z = dataPoints.map(p => p.data[tIdx][2]);
@@ -3084,6 +3097,9 @@ function _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVo
 	traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, 0, 1));
 
 	tokens.forEach((token, tIdx) => {
+		const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
+		if (!hasDataInAllSteps) return;
+
 		const x = dataPoints.map(p => p.data[tIdx][0]);
 		const y = dataPoints.map(p => p.data[tIdx][1]);
 		const tColor = getPositionColor(tIdx, tokens.length);
@@ -4173,6 +4189,37 @@ function tled_syncTableFromSpace() {
             }
         }
     });
+}
+
+// ── Visualization mode: 'train' (default) or 'inference' ──
+window.tlabVisualizationMode = 'train';
+
+/**
+ * Switches which data (training tokens or inference tokens) is shown
+ * in all plots and visualizations. Does NOT affect any computation.
+ */
+function setVisualizationMode(mode) {
+    window.tlabVisualizationMode = mode;
+
+    // Update button styles
+    const trainBtn = document.getElementById('view-toggle-train');
+    const inferBtn = document.getElementById('view-toggle-inference');
+    if (trainBtn && inferBtn) {
+        if (mode === 'train') {
+            trainBtn.style.background = '#3b82f6';
+            trainBtn.style.color = 'white';
+            inferBtn.style.background = 'white';
+            inferBtn.style.color = '#3b82f6';
+        } else {
+            inferBtn.style.background = '#3b82f6';
+            inferBtn.style.color = 'white';
+            trainBtn.style.background = 'white';
+            trainBtn.style.color = '#3b82f6';
+        }
+    }
+
+    // Re-run visualization with the new mode (no retraining)
+    run_transformer_demo();
 }
 
 async function loadTransformerModule () {
