@@ -115,6 +115,17 @@ const trajectoryObserver = new IntersectionObserver((entries) => {
 	});
 }, { threshold: 0 });
 
+function getPositionColor(index, total, format = 'rgb') {
+	const t = total > 1 ? index / (total - 1) : 0;
+	const r = Math.round(59 + (16 - 59) * t);
+	const g = Math.round(130 + (185 - 130) * t);
+	const b = Math.round(246 + (129 - 246) * t);
+
+	if (format === 'object') return { r, g, b };
+	if (format === 'temml')  return `\\color[RGB]{${r},${g},${b}}`;
+	return `rgb(${r}, ${g}, ${b})`;
+}
+
 function reset_graph() {
 	document.getElementById('training-loss-plot').style.display = 'none';
 	document.getElementById('training-loss-plot').innerHTML = '';
@@ -2275,11 +2286,7 @@ function tlab_render_plotly(id, tokens, start_h, end_h, layerNum, d_model, isLas
 	const is3D = d_model === 3;
 
 	tokens.forEach((token, i) => {
-		const t = tokens.length > 1 ? i / (tokens.length - 1) : 0;
-		const r = Math.round(59 + (16 - 59) * t);
-		const g = Math.round(130 + (185 - 130) * t);
-		const b = Math.round(246 + (129 - 246) * t);
-		const posColor = `rgb(${r}, ${g}, ${b})`;
+		const posColor = getPositionColor(i, tokens.length);
 
 		const sourceWord = tlab_get_top_word_only(start_h[i]);
 		const destWord = tlab_get_top_word_only(end_h[i]);
@@ -2914,30 +2921,12 @@ function tlab_render_trajectory_plot(d_model) {
 }
 
 function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model) {
-	// Helper to calculate RGB components based on position
-	const getPosColorComponents = (index, total) => {
-		if (total <= 1) return { r: 59, g: 130, b: 246 };
-		const ratio = index / (total - 1);
-		return {
-			r: Math.round(59 + (16 - 59) * ratio),
-			g: Math.round(130 + (185 - 130) * ratio),
-			b: Math.round(246 + (129 - 246) * ratio)
-		};
-	};
-
-	// Formats color for TeMML: \color[RGB]{r,g,b}
-	const formatTeMMLColor = (c) => `\\color[RGB]{${c.r},${c.g},${c.b}}`;
-
 	const toPMatrixColored = (matrix) => {
 		if (!Array.isArray(matrix) || !matrix.length) return '';
-
 		const rows = matrix.map((row, tIdx) => {
-			const colorObj = getPosColorComponents(tIdx, matrix.length);
-			const colorCmd = formatTeMMLColor(colorObj);
-			// Apply color to each individual cell to avoid grouping errors with '&'
+			const colorCmd = getPositionColor(tIdx, matrix.length, 'temml');
 			return row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
 		}).join(' \\\\ ');
-
 		return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
 	};
 
@@ -2945,16 +2934,13 @@ function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, 
 		const fromList = tlab_get_top_vocab_list(start_h[tIdx], d_model);
 		const toList = tlab_get_top_vocab_list(end_h[tIdx], d_model);
 
-		const colorObj = getPosColorComponents(tIdx, tokens.length);
-		const colorCmd = formatTeMMLColor(colorObj);
+		const colorCmd = getPositionColor(tIdx, tokens.length, 'temml');
 
-		// Apply color to each mapping pair (each cell)
 		return fromList.map((fromItem, i) => {
 			const toItem = toList[i] || {word: '???', prob: 0};
 			const cleanFrom = fromItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
 			const cleanTo = toItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
 
-			// Calculate percentage strings
 			const fromProb = Math.round(fromItem.prob * 100);
 			const toProb = Math.round(toItem.prob * 100);
 
@@ -2962,7 +2948,6 @@ function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, 
 		}).join(' & ');
 	}).join(' \\\\ ');
 
-	// Restored h_after and added probability mapping
 	const latexString = `$$h_\\text{after} = ${toPMatrixColored(h_after)}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
 
 	let latexDiv = document.getElementById(id + '-latex-debug');
