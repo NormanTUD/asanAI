@@ -21,6 +21,19 @@ window.tlab_trajectory_data = {
 };
 
 /**
+ * Computes softmax probabilities from an array of raw logit values.
+ * Uses the max-subtraction trick for numerical stability.
+ * @param {number[]} logits - Raw scores
+ * @returns {number[]} Probabilities that sum to 1
+ */
+function softmax(logits) {
+	const maxLogit = Math.max(...logits);
+	const exps = logits.map(l => Math.exp(l - maxLogit));
+	const sumExps = exps.reduce((a, b) => a + b, 0);
+	return exps.map(e => e / sumExps);
+}
+
+/**
  * Runs a single transformer layer forward pass (Pre-LN architecture).
  * Returns the output hidden state after attention + FFN + residuals.
  *
@@ -695,10 +708,7 @@ async function train_transformer() {
 						for (let pos = 0; pos < h.length; pos++) {
 							const logits = embMatrix.map(embRow => 
 								h[pos].reduce((sum, val, k) => sum + val * embRow[k], 0));
-							const maxLogit = Math.max(...logits);
-							const exps = logits.map(l => Math.exp(l - maxLogit));
-							const sumExps = exps.reduce((a, b) => a + b, 0);
-							const probs = exps.map(e => e / sumExps);
+							const probs = softmax(logits);
 
 							// Find top prediction
 							let bestIdx = 0;
@@ -1393,13 +1403,11 @@ This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Whe
 
 	// 3. Probabilities (Softmax)
 	const scaledLogits = logits.map(item => item.val / temperature);
-	const maxLogit = Math.max(...scaledLogits);
-	const exps = scaledLogits.map(val => Math.exp(val - maxLogit));
-	const sumExps = exps.reduce((a, b) => a + b, 0);
+	const probs = softmax(scaledLogits);
 
 	const predictions = logits.map((item, i) => ({
 		word: item.word,
-		prob: exps[i] / sumExps,
+		prob: probs[i],
 		logit: item.val
 	})).sort((a, b) => b.prob - a.prob);
 
@@ -2959,10 +2967,7 @@ function tlab_get_top_vocab_list(h_vec, d_model) {
 	});
 
 	const scaledScores = scores.map(s => s.score / temperature);
-	const maxScore = Math.max(...scaledScores);
-	const exps = scaledScores.map(s => Math.exp(s - maxScore));
-	const sumExps = exps.reduce((a, b) => a + b, 0);
-	const probs = exps.map(e => e / sumExps);
+	const probs = softmax(scaledScores);
 
 	return scores.map((s, i) => ({
 		word: s.word.replace(/#/g, '\\#').replace(/_/g, '\\_'),
