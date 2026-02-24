@@ -975,87 +975,102 @@ function finalizeTrainingSession(btn, status, completedAll) {
 }
 
 async function train_transformer() {
-	const { d_model, n_layers, n_heads } = getTransformerConfig();
+    const { d_model, n_layers, n_heads } = getTransformerConfig();
+    const btn    = document.querySelector('.train-btn');
+    const status = document.getElementById('training-status');
 
-	const btn    = document.querySelector('.train-btn');
-	const status = document.getElementById('training-status');
+    if (!validateTrainingPreconditions(status)) return;
+    if (window.isTraining) { window.isTraining = false; return; }
 
-	// ── 1. Validate ──
-	if (!validateTrainingPreconditions(status)) return;
+    const { lr, epochs, optType } = initTrainingSession(btn, status);
+    const optimizer = createOptimizer(optType, lr);
 
-	if (window.isTraining) {
-		window.isTraining = false;
-		return;
-	}
+    const tokens = getTrainingTokens();
+    if (tokens.length === 0) { finalizeTrainingSession(btn, status, false); return; }
 
-	// ── 2. Initialize session ──
-	const { lr, epochs, optType } = initTrainingSession(btn, status);
-	const optimizer = createOptimizer(optType, lr);
+    ensureWeightsAndEmbeddings(tokens, n_layers, d_model);
 
-	const trainingData = document.getElementById('transformer-training-data').value;
-	const tokens = transformer_tokenize_render(trainingData, null);
+    const weightVars = convert_weights_to_tensors(window.currentWeights);
+    const allVars    = collectTrainableVars(weightVars);
+    const startTime  = performance.now();
+    let completedAll = true;
 
-	if (tokens.length === 0) {
-		finalizeTrainingSession(btn, status, false);
-		return;
-	}
+    for (let i = 0; i < epochs; i++) {
+        if (!window.isTraining) { completedAll = false; break; }
+        await runSingleEpoch(i, epochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime);
+    }
 
-	if (!window.currentWeights) {
-		window.currentWeights = get_init_weights(n_layers, d_model);
-	}
-	get_or_init_embeddings(tokens, d_model);
+    finalizeTrainingSession(btn, status, completedAll);
+}
 
-	// ── 3. Convert to tensors ──
-	const weightVars = convert_weights_to_tensors(window.currentWeights);
-	const allVars    = collectTrainableVars(weightVars);
-	const clipValue  = 1.0;
-	let completedAll = true;
+/**
+ * Tokenizes the training data from the DOM input.
+ */
+function getTrainingTokens() {
+    const trainingData = document.getElementById('transformer-training-data').value;
+    return transformer_tokenize_render(trainingData, null);
+}
 
-	const startTime = performance.now();
+/**
+ * Ensures weights and embeddings are initialized for the current config.
+ */
+function ensureWeightsAndEmbeddings(tokens, n_layers, d_model) {
+    if (!window.currentWeights) {
+        window.currentWeights = get_init_weights(n_layers, d_model);
+    }
+    get_or_init_embeddings(tokens, d_model);
+}
 
-	// ── 4. Training loop ──
-	for (let i = 0; i < epochs; i++) {
-		if (!window.isTraining) {
-			completedAll = false;
-			break;
-		}
+/**
+ * Runs a single training epoch: gradient step, predictions, progress update, state sync.
+ */
+async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime) {
+    const clipValue = 1.0;
+    const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
+    buildTrainingWindows(tokens, thisContextSize);
 
-		const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
-		buildTrainingWindows(tokens, thisContextSize);
+    // Gradient step
+    const cost = computeAndApplyGradients(
+        tokens, weightVars, d_model, n_layers, n_heads, allVars, optimizer, clipValue
+    );
 
-		// 4a. Gradient step
-		const cost = computeAndApplyGradients(
-			tokens, weightVars, d_model, n_layers, n_heads,
-			allVars, optimizer, clipValue
-		);
+    const lossValue = await cost.data();
+    window.lossHistory.push(lossValue[0]);
 
-		const lossValue = await cost.data();
-		window.lossHistory.push(lossValue[0]);
+    // Render predictions
+    renderTrainingWindowPredictions(d_model, n_layers);
 
-		// 4b. Render predictions
-		renderTrainingWindowPredictions(d_model, n_layers);
+    // Progress & ETA
+    updateEpochProgress(epochIdx, totalEpochs, lossValue[0], startTime, status);
 
-		// 4c. Progress & ETA
-		updateTrainingProgressBar(i + 1, epochs, lossValue[0]);
+    // Sync state
+    await syncTrainingState(weightVars);
 
-		const elapsed         = performance.now() - startTime;
-		const avgTimePerEpoch = elapsed / (i + 1);
-		const etaMs           = (epochs - (i + 1)) * avgTimePerEpoch;
-		status.innerText = `Epoch ${i + 1}: Loss = ${lossValue[0].toFixed(6)} | ETA: ${formatETA(etaMs)}`;
+    cost.dispose();
+}
 
-		// 4d. Sync state
-		renderLossGraph();
-		window.currentWeights = await convert_tensors_to_weights(weightVars);
-		run_transformer_demo();
-		await tf.nextFrame();
-		calculate_vector_math();
-		tled_syncTableFromSpace();
+/**
+ * Updates the progress bar and status text for the current epoch.
+ */
+function updateEpochProgress(epochIdx, totalEpochs, loss, startTime, status) {
+    updateTrainingProgressBar(epochIdx + 1, totalEpochs, loss);
 
-		cost.dispose();
-	}
+    const elapsed         = performance.now() - startTime;
+    const avgTimePerEpoch = elapsed / (epochIdx + 1);
+    const etaMs           = (totalEpochs - (epochIdx + 1)) * avgTimePerEpoch;
+    status.innerText = `Epoch ${epochIdx + 1}: Loss = ${loss.toFixed(6)} | ETA: ${formatETA(etaMs)}`;
+}
 
-	// ── 5. Teardown ──
-	finalizeTrainingSession(btn, status, completedAll);
+/**
+ * Syncs tensor weights back to JS, re-renders the demo, and yields to the browser.
+ */
+async function syncTrainingState(weightVars) {
+    renderLossGraph();
+    window.currentWeights = await convert_tensors_to_weights(weightVars);
+    run_transformer_demo();
+    await tf.nextFrame();
+    calculate_vector_math();
+    tled_syncTableFromSpace();
 }
 
 /**
@@ -1199,115 +1214,139 @@ function convert_weights_to_tensors(weights) {
 }
 
 function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
-	// Default to config value so existing call sites still work
-	if (n_heads === undefined) {
-		n_heads = getTransformerConfig().n_heads;
-	}
+    if (n_heads === undefined) n_heads = getTransformerConfig().n_heads;
 
-	const d_k = d_model / n_heads;   // ← per-head dimension
-	const losses = [];
+    const d_k = d_model / n_heads;
+    const thiscontextSize = Math.min(getContextSize(), tokens.length - 1);
 
-	const thiscontextSize = Math.min(getContextSize(), tokens.length - 1);
+    if (thiscontextSize < 1) {
+        console.error("Context must have at least 2 elements");
+        return tf.scalar(100);
+    }
 
-	if (thiscontextSize < 1) {
-		console.error("Context must have at least 2 elements");
-		return tf.scalar(100);
-	}
+    const mask = buildCausalMask(thiscontextSize);
+    const losses = collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, thiscontextSize, mask);
 
-	// Causal mask (upper triangle → future positions get -1e9 after subtraction)
-	const mask = tf.tidy(() => {
-		const ones = tf.ones([thiscontextSize, thiscontextSize]);
-		const upperTriangle = tf.linalg.bandPart(ones, 0, -1);
-		const diagonal = tf.linalg.bandPart(ones, 0, 0);
-		return tf.sub(upperTriangle, diagonal).mul(tf.scalar(1e9));
-	});
+    mask.dispose();
 
-	for (let startIdx = 0; startIdx < tokens.length - thiscontextSize; startIdx++) {
-		const inputIds = tokens.slice(startIdx, startIdx + thiscontextSize)
-			.map(t => vars.vocab_map.indexOf(t));
+    if (losses.length === 0) return tf.scalar(10);
+    return tf.addN(losses).div(tf.scalar(losses.length));
+}
 
-		const targetIds = tokens.slice(startIdx + 1, startIdx + thiscontextSize + 1)
-			.map(t => vars.vocab_map.indexOf(t));
+/**
+ * Builds the upper-triangle causal mask tensor.
+ */
+function buildCausalMask(contextSize) {
+    return tf.tidy(() => {
+        const ones = tf.ones([contextSize, contextSize]);
+        const upperTriangle = tf.linalg.bandPart(ones, 0, -1);
+        const diagonal = tf.linalg.bandPart(ones, 0, 0);
+        return tf.sub(upperTriangle, diagonal).mul(tf.scalar(1e9));
+    });
+}
 
-		let x = tf.gather(vars.embeddings, tf.tensor1d(inputIds, 'int32'));
+/**
+ * Collects cross-entropy losses for all sliding windows.
+ */
+function collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, contextSize, mask) {
+    const losses = [];
 
-		// Positional encoding
-		const peTensor = tf.tidy(() => {
-			const pos = tf.range(0, inputIds.length, 1).reshape([inputIds.length, 1]);
-			const i = tf.range(0, d_model, 1).reshape([1, d_model]);
-			const divTerm = tf.pow(
-				tf.scalar(10000),
-				i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model))
-			);
-			const args = pos.div(divTerm);
-			return tf.where(
-				i.mod(tf.scalar(2)).equal(tf.scalar(0)),
-				tf.sin(args),
-				tf.cos(args)
-			).mul(tf.scalar(posEmbedScalar));
-		});
-		x = tf.add(x, peTensor);
+    for (let startIdx = 0; startIdx < tokens.length - contextSize; startIdx++) {
+        const inputIds  = mapTokensToIds(tokens, startIdx, contextSize, vars.vocab_map);
+        const targetIds = mapTokensToIds(tokens, startIdx + 1, contextSize, vars.vocab_map);
 
-		// Transformer layers (Pre-LN)
-		for (let i = 0; i < n_layers; i++) {
-			const l = vars.layers[i];
+        let x = embedAndEncodePositions(inputIds, vars.embeddings, d_model);
 
-			// ── Pre-LN before attention ──
-			let normX = tf_layer_norm(x, l.gamma, l.beta);
+        x = applyTransformerLayers(x, vars.layers, n_layers, n_heads, d_k, contextSize, d_model, mask);
 
-			// ── Linear projections ──
-			const q = tf.matMul(normX, l.wq); // [seqLen, d_model]
-			const k = tf.matMul(normX, l.wk);
-			const v = tf.matMul(normX, l.wv);
+        const logits = tf.matMul(x, vars.embeddings.transpose());
+        const labels = tf.oneHot(tf.tensor1d(targetIds, 'int32'), vars.vocab_map.length);
+        losses.push(tf.losses.softmaxCrossEntropy(labels, logits));
+    }
 
-			// ── FIX: Split into heads ──
-			// [seqLen, d_model] → [seqLen, n_heads, d_k] → [n_heads, seqLen, d_k]
-			const qHeads = q.reshape([thiscontextSize, n_heads, d_k])
-				.transpose([1, 0, 2]);
-			const kHeads = k.reshape([thiscontextSize, n_heads, d_k])
-				.transpose([1, 0, 2]);
-			const vHeads = v.reshape([thiscontextSize, n_heads, d_k])
-				.transpose([1, 0, 2]);
+    return losses;
+}
 
-			// ── FIX: Scale by √d_k, not √d_model ──
-			// [n_heads, seqLen, d_k] × [n_heads, d_k, seqLen] → [n_heads, seqLen, seqLen]
-			let scores = tf.matMul(qHeads, kHeads.transpose([0, 2, 1]))
-				.div(tf.sqrt(tf.scalar(d_k)));
+/**
+ * Maps a slice of tokens to vocabulary indices.
+ */
+function mapTokensToIds(tokens, startIdx, contextSize, vocabMap) {
+    return tokens.slice(startIdx, startIdx + contextSize)
+        .map(t => vocabMap.indexOf(t));
+}
 
-			// Causal mask — broadcast [seqLen, seqLen] → [1, seqLen, seqLen]
-			// across the n_heads batch dimension
-			scores = tf.sub(scores, mask.expandDims(0));
+/**
+ * Gathers embeddings and adds sinusoidal positional encoding (TF tensors).
+ */
+function embedAndEncodePositions(inputIds, embeddingsTensor, d_model) {
+    let x = tf.gather(embeddingsTensor, tf.tensor1d(inputIds, 'int32'));
 
-			const attnWeights = tf.softmax(scores, -1);
+    const peTensor = tf.tidy(() => {
+        const pos = tf.range(0, inputIds.length, 1).reshape([inputIds.length, 1]);
+        const i = tf.range(0, d_model, 1).reshape([1, d_model]);
+        const divTerm = tf.pow(
+            tf.scalar(10000),
+            i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model))
+        );
+        const args = pos.div(divTerm);
+        return tf.where(
+            i.mod(tf.scalar(2)).equal(tf.scalar(0)),
+            tf.sin(args),
+            tf.cos(args)
+        ).mul(tf.scalar(posEmbedScalar));
+    });
 
-			// Weighted value sum per head
-			// [n_heads, seqLen, seqLen] × [n_heads, seqLen, d_k] → [n_heads, seqLen, d_k]
-			const context = tf.matMul(attnWeights, vHeads);
+    return tf.add(x, peTensor);
+}
 
-			// ── FIX: Concatenate heads back ──
-			// [n_heads, seqLen, d_k] → [seqLen, n_heads, d_k] → [seqLen, d_model]
-			const concat = context.transpose([1, 0, 2])
-				.reshape([thiscontextSize, d_model]);
+/**
+ * Applies all transformer layers (Pre-LN) to the input tensor.
+ */
+function applyTransformerLayers(x, layers, n_layers, n_heads, d_k, contextSize, d_model, mask) {
+    for (let i = 0; i < n_layers; i++) {
+        x = applySingleTransformerLayer(x, layers[i], n_heads, d_k, contextSize, d_model, mask);
+    }
+    return x;
+}
 
-			// Output projection + residual
-			x = tf.add(x, tf.matMul(concat, l.wo));
+/**
+ * Applies a single Pre-LN transformer layer: attention + FFN.
+ */
+function applySingleTransformerLayer(x, layer, n_heads, d_k, contextSize, d_model, mask) {
+    // Pre-LN + Multi-Head Attention
+    const normX = tf_layer_norm(x, layer.gamma, layer.beta);
+    const attnOutput = computeTfMultiHeadAttention(normX, layer, n_heads, d_k, contextSize, d_model, mask);
+    x = tf.add(x, attnOutput);
 
-			// ── FFN block (Pre-LN) ──
-			let normX2 = tf_layer_norm(x, l.gamma2, l.beta2);
-			let ffn = tf.relu(tf.add(tf.matMul(normX2, l.w1), l.b1));
-			ffn = tf.add(tf.matMul(ffn, l.w2), l.b2);
-			x = tf.add(x, ffn);
-		}
+    // Pre-LN + FFN
+    const normX2 = tf_layer_norm(x, layer.gamma2, layer.beta2);
+    let ffn = tf.relu(tf.add(tf.matMul(normX2, layer.w1), layer.b1));
+    ffn = tf.add(tf.matMul(ffn, layer.w2), layer.b2);
+    return tf.add(x, ffn);
+}
 
-		const logits = tf.matMul(x, vars.embeddings.transpose()); // [seqLen, vocabSize]
-		const labels = tf.oneHot(tf.tensor1d(targetIds, 'int32'), vars.vocab_map.length);
-		losses.push(tf.losses.softmaxCrossEntropy(labels, logits));
-	}
+/**
+ * Computes multi-head attention with causal masking in TensorFlow.js.
+ */
+function computeTfMultiHeadAttention(normX, layer, n_heads, d_k, contextSize, d_model, mask) {
+    const q = tf.matMul(normX, layer.wq);
+    const k = tf.matMul(normX, layer.wk);
+    const v = tf.matMul(normX, layer.wv);
 
-	mask.dispose();
+    const qHeads = q.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
+    const kHeads = k.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
+    const vHeads = v.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
 
-	if (losses.length === 0) return tf.scalar(10);
-	return tf.addN(losses).div(tf.scalar(losses.length));
+    let scores = tf.matMul(qHeads, kHeads.transpose([0, 2, 1]))
+        .div(tf.sqrt(tf.scalar(d_k)));
+
+    scores = tf.sub(scores, mask.expandDims(0));
+
+    const attnWeights = tf.softmax(scores, -1);
+    const context = tf.matMul(attnWeights, vHeads);
+
+    const concat = context.transpose([1, 0, 2]).reshape([contextSize, d_model]);
+    return tf.matMul(concat, layer.wo);
 }
 
 function collectTrainableVars(weightVars) {
@@ -1649,66 +1688,101 @@ function pruneOrphanedMigrationPlots() {
  * Main orchestrator: runs a complete forward pass through the transformer
  * and renders all visualizations.
  */
+/**
+ * Main orchestrator: runs a complete forward pass through the transformer
+ * and renders all visualizations.
+ */
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
-    const { d_model, n_heads, temperature, n_layers } = getTransformerConfig();
+    const config = getTransformerConfig();
+    const { d_model, n_heads, temperature, n_layers } = config;
 
     const vocabulary = [...new Set(trainingTokens)];
+    const knownTokens = getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary);
 
-    // ── NEW: Choose which tokens to visualize based on toggle ──
-    const vizMode = window.tlabVisualizationMode || 'train';
-    const vizSourceTokens = (vizMode === 'inference') ? masterTokens : inputTokens;
-    const knownTokens = vizSourceTokens.filter(token => vocabulary.includes(token));
-
-    if (d_model % n_heads !== 0) {
-        const container = document.getElementById('transformer-output-projection');
-        if (container) container.innerHTML = `<div style="color:red; padding:20px;">Error: d_model (${d_model}) must be divisible by n_heads (${n_heads}).</div>`;
-        return;
-    }
+    if (!validateModelDimensions(d_model, n_heads)) return;
 
     // 1. Reinitialize weights if config changed
     const needsReinit = handleWeightReinit(d_model, n_heads, n_layers);
     const weights = window.currentWeights;
 
-    // 2. Pre-attention visualizations (embeddings, positional encoding, etc.)
+    // 2. Pre-attention visualizations
     const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
     const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
 
-    // 3. Prepare migration/trajectory state for this pass
+    // 3. Prepare migration/trajectory state
     prepareMigrationState(needsReinit);
 
+    // 4. Core forward pass + visualization
+    renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
+
+    // 5. Final probabilities — ALWAYS based on master-token-input
+    renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
+}
+
+/**
+ * Determines which tokens to visualize based on the current toggle mode.
+ */
+function getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary) {
+    const vizMode = window.tlabVisualizationMode || 'train';
+    const vizSourceTokens = (vizMode === 'inference') ? masterTokens : inputTokens;
+    return vizSourceTokens.filter(token => vocabulary.includes(token));
+}
+
+/**
+ * Validates that d_model is divisible by n_heads. Shows error if not.
+ * @returns {boolean} true if valid
+ */
+function validateModelDimensions(d_model, n_heads) {
+    if (d_model % n_heads !== 0) {
+        const container = document.getElementById('transformer-output-projection');
+        if (container) {
+            container.innerHTML = `<div style="color:red; padding:20px;">Error: d_model (${d_model}) must be divisible by n_heads (${n_heads}).</div>`;
+        }
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Runs the forward pass with visualization if tokens exist,
+ * otherwise shows a placeholder message.
+ */
+function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers) {
     if (tokensWithPositional.length === 0) {
-        document.getElementById('transformer-output-projection').innerHTML =
-            `<div style="padding:20px; color: #64748b; text-align:center;">
-                Input words not found in Training Data.
-            </div>`;
-    } else {
-        // 4. Run and visualize Layer 0 in detail
-        const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
-
-        // 5. First migration plot (layer 1)
-        create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
-
-        // 6. Run remaining layers
-        run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
-
-        // 7. Render attention detail panels
-        renderAttentionDetails();
-
-        // 8. Trajectory plot
-        renderTrajectoryPlot(d_model);
-
-        // 9. Clean up orphaned migration plots
-        pruneOrphanedMigrationPlots();
+        showEmptyInputMessage();
+        return;
     }
 
-    // 10. Final probabilities — ALWAYS based on master-token-input
-    //     (this is the actual inference output, independent of viz mode)
+    const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
+
+    create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
+
+    run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
+
+    renderAttentionDetails();
+    renderTrajectoryPlot(d_model);
+    pruneOrphanedMigrationPlots();
+}
+
+/**
+ * Shows a message when no input tokens match the training vocabulary.
+ */
+function showEmptyInputMessage() {
+    document.getElementById('transformer-output-projection').innerHTML =
+        `<div style="padding:20px; color: #64748b; text-align:center;">
+            Input words not found in Training Data.
+        </div>`;
+}
+
+/**
+ * Renders final prediction probabilities from the master token input.
+ */
+function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature) {
     const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
+    if (knownMasterTokens.length === 0) return;
 
-    if (knownMasterTokens.length > 0) {
-        const h_final = runSimpleForwardPass(knownMasterTokens, weights, d_model, n_heads, n_layers);
-        render_final_projection(h_final, vocabulary, d_model, temperature);
-    }
+    const h_final = runSimpleForwardPass(knownMasterTokens, weights, d_model, n_heads, n_layers);
+    render_final_projection(h_final, vocabulary, d_model, temperature);
 }
 
 window.select_suggested_word = (word) => {
@@ -3773,157 +3847,228 @@ window.calculate_vector_math = function() {
  * The actual heavy computation + rendering logic.
  * Extracted from the old calculate_vector_math so it can be called lazily.
  */
+/**
+ * The actual heavy computation + rendering logic for vector math.
+ */
 function _execute_vector_math() {
-	const inputVal = document.getElementById('transformer-vector-math-input').value;
-	const resDiv = document.getElementById('transformer-vector-math-result');
-	const space = window.persistentEmbeddingSpace;
+    const inputVal = document.getElementById('transformer-vector-math-input').value;
+    const resDiv   = document.getElementById('transformer-vector-math-result');
+    const space    = window.persistentEmbeddingSpace;
 
-	if (!space || Object.keys(space).length === 0) {
-		resDiv.innerHTML = "<em style='color: #94a3b8;'>Enter an equation and press Enter...</em>";
-		return;
-	}
+    if (!hasValidEmbeddingSpace(space)) {
+        resDiv.innerHTML = "<em style='color: #94a3b8;'>Enter an equation and press Enter...</em>";
+        return;
+    }
 
-	const vocabKeys = Object.keys(space);
-	const d_model = space[vocabKeys[0]].length;
+    const vocabKeys = Object.keys(space);
+    const d_model   = space[vocabKeys[0]].length;
+    const tokens    = tokenizeVectorMathInput(inputVal);
 
-	const lowerVocab = vocabKeys.reduce((acc, word) => {
-		acc[word.toLowerCase()] = { vec: space[word], original: word };
-		return acc;
-	}, {});
+    if (!tokens) {
+        resDiv.innerHTML = "<em style='color: #94a3b8;'>Enter an equation and press Enter...</em>";
+        _execute_embedding_render(d_model, null, []);
+        return;
+    }
 
-	const tokens = inputVal.match(/[a-zA-ZäöüÄÖÜ0-9_#]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
-	if (!tokens) {
-		resDiv.innerHTML = "<em style='color: #94a3b8;'>Enter an equation and press Enter...</em>";
-		_execute_embedding_render(d_model, null, []);
-		return;
-	}
+    try {
+        const { result, steps } = evaluateVectorExpression(tokens, space, vocabKeys, d_model);
+        const nearest = findNearestEmbedding(result.val, space, vocabKeys);
+        const html    = buildVectorMathResultHtml(result, nearest, d_model);
 
-	let pos = 0;
-	let steps = [];
-
-	const toVecTex = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
-
-	function peek() { return tokens[pos]; }
-	function consume() { return tokens[pos++]; }
-
-	function parseFactor() {
-		let token = consume();
-		if (!token) throw new Error("Unexpected end of input");
-
-		if (token === '(') {
-			let res = parseExpression();
-			if (peek() === ')') consume();
-			return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
-		}
-		if (token === '-') {
-			let res = parseFactor();
-			return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
-		}
-
-		if (!isNaN(token) && !lowerVocab[token.toLowerCase()]) {
-			const s = parseFloat(token);
-			return { val: Array(d_model).fill(s), tex: `${s}`, isScalar: true, label: `${s}` };
-		}
-
-		const entry = lowerVocab[token.toLowerCase()];
-		const vec = entry ? [...entry.vec] : Array(d_model).fill(0);
-		const displayName = entry ? entry.original : token;
-		const safeName = displayName.replace(/#/g, '\\#').replace(/_/g, '\\_');
-
-		return {
-			val: vec,
-			tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${safeName}}}`,
-			isScalar: false,
-			label: safeName
-		};
-	}
-
-	function parseTerm() {
-		let left = parseFactor();
-		while (peek() === '*' || peek() === '/') {
-			let op = consume();
-			let right = parseFactor();
-			let opTex = op === '*' ? '\\cdot' : '\\div';
-
-			if (op === '*') {
-				if (left.isScalar) {
-					left.val = right.val.map(v => left.val[0] * v);
-					left.isScalar = right.isScalar;
-				} else {
-					left.val = left.val.map((v, i) => v * (right.isScalar ? right.val[0] : right.val[i]));
-				}
-			} else if (op === '/') {
-				left.val = left.val.map(v => v / (right.isScalar ? right.val[0] : (right.val[0] || 1)));
-			}
-
-			left.tex = `${left.tex} ${opTex} ${right.tex}`;
-			left.label = `${left.label}${op}${right.label}`;
-		}
-		return left;
-	}
-
-	function parseExpression() {
-		let left = parseTerm();
-		while (peek() === '+' || peek() === '-') {
-			let op = consume();
-			let right = parseTerm();
-			let prev = [...left.val];
-
-			if (op === '+') {
-				left.val = left.val.map((v, i) => v + right.val[i]);
-			} else if (op === '-') {
-				left.val = left.val.map((v, i) => v - right.val[i]);
-			}
-
-			steps.push({
-				from: prev,
-				to: [...left.val],
-				label: `${op} ${right.label}`
-			});
-
-			left.tex = `${left.tex} ${op} ${right.tex}`;
-			left.label = `${left.label}${op}${right.label}`;
-		}
-		return left;
-	}
-
-	try {
-		const result = parseExpression();
-		let nearest = "None";
-		let nearestVec = Array(d_model).fill(0);
-		let minDist = Infinity;
-
-		vocabKeys.forEach(w => {
-			const v = space[w];
-			const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - result.val[i], 2), 0));
-			if (d < minDist) {
-				minDist = d;
-				nearest = w;
-				nearestVec = v;
-			}
-		});
-
-		const isExact = minDist < 0.001;
-		const symbol = isExact ? "=" : "\\approx";
-		const safeNearest = nearest.replace(/#/g, '\\#').replace(/_/g, '\\_');
-
-		const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${safeNearest}} \\\\ ${toVecTex(nearestVec)} }}`;
-
-		resDiv.innerHTML = `
-	    <div style="overflow-x: auto; padding: 10px 0; font-size: 1.1em;">
-		$$ ${result.tex} = ${resultTex} $$
-	    </div>
-	`;
-
-		render_temml();
-
-		_execute_embedding_render(d_model, result.val, steps);
-
-	} catch(e) {
-		console.error("Vector Math Parse Error:", e);
-		resDiv.innerHTML = "<span style='color: #ef4444;'>Syntax Error. Please check your equation formatting.</span>";
-	}
+        resDiv.innerHTML = html;
+        render_temml();
+        _execute_embedding_render(d_model, result.val, steps);
+    } catch (e) {
+        console.error("Vector Math Parse Error:", e);
+        resDiv.innerHTML = "<span style='color: #ef4444;'>Syntax Error. Please check your equation formatting.</span>";
+    }
 }
+
+/**
+ * Checks if the embedding space is initialized and non-empty.
+ */
+function hasValidEmbeddingSpace(space) {
+    return space && Object.keys(space).length > 0;
+}
+
+/**
+ * Tokenizes the vector math input string into operators and operands.
+ */
+function tokenizeVectorMathInput(inputVal) {
+    return inputVal.match(/[a-zA-ZäöüÄÖÜ0-9_#]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
+}
+
+/**
+ * Evaluates a vector math expression and returns the result + intermediate steps.
+ * Uses a recursive descent parser.
+ */
+function evaluateVectorExpression(tokens, space, vocabKeys, d_model) {
+    const lowerVocab = buildLowerCaseVocabMap(space, vocabKeys);
+    let pos = 0;
+    let steps = [];
+
+    const toVecTex = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
+
+    function peek()    { return tokens[pos]; }
+    function consume() { return tokens[pos++]; }
+
+    function parseFactor() {
+        let token = consume();
+        if (!token) throw new Error("Unexpected end of input");
+
+        if (token === '(') return parseParenthesized();
+        if (token === '-') return parseNegation();
+        if (isNumericLiteral(token, lowerVocab)) return parseScalar(token, d_model);
+        return parseWordVector(token, lowerVocab, d_model, toVecTex);
+    }
+
+    function parseParenthesized() {
+        let res = parseExpression();
+        if (peek() === ')') consume();
+        return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
+    }
+
+    function parseNegation() {
+        let res = parseFactor();
+        return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
+    }
+
+    function parseTerm() {
+        let left = parseFactor();
+        while (peek() === '*' || peek() === '/') {
+            let op = consume();
+            let right = parseFactor();
+            left = applyMultiplicativeOp(left, right, op);
+        }
+        return left;
+    }
+
+    function parseExpression() {
+        let left = parseTerm();
+        while (peek() === '+' || peek() === '-') {
+            let op = consume();
+            let right = parseTerm();
+            let prev = [...left.val];
+
+            left.val = (op === '+')
+                ? left.val.map((v, i) => v + right.val[i])
+                : left.val.map((v, i) => v - right.val[i]);
+
+            steps.push({ from: prev, to: [...left.val], label: `${op} ${right.label}` });
+            left.tex   = `${left.tex} ${op} ${right.tex}`;
+            left.label = `${left.label}${op}${right.label}`;
+        }
+        return left;
+    }
+
+    const result = parseExpression();
+    return { result, steps };
+}
+
+/**
+ * Builds a lowercase → { vec, original } lookup map from the embedding space.
+ */
+function buildLowerCaseVocabMap(space, vocabKeys) {
+    return vocabKeys.reduce((acc, word) => {
+        acc[word.toLowerCase()] = { vec: space[word], original: word };
+        return acc;
+    }, {});
+}
+
+/**
+ * Checks if a token is a numeric literal (not a vocabulary word).
+ */
+function isNumericLiteral(token, lowerVocab) {
+    return !isNaN(token) && !lowerVocab[token.toLowerCase()];
+}
+
+/**
+ * Parses a numeric scalar into a vector-math operand.
+ */
+function parseScalar(token, d_model) {
+    const s = parseFloat(token);
+    return { val: Array(d_model).fill(s), tex: `${s}`, isScalar: true, label: `${s}` };
+}
+
+/**
+ * Parses a word token into its embedding vector operand.
+ */
+function parseWordVector(token, lowerVocab, d_model, toVecTex) {
+    const entry = lowerVocab[token.toLowerCase()];
+    const vec = entry ? [...entry.vec] : Array(d_model).fill(0);
+    const displayName = entry ? entry.original : token;
+    const safeName = displayName.replace(/#/g, '\\#').replace(/_/g, '\\_');
+
+    return {
+        val: vec,
+        tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${safeName}}}`,
+        isScalar: false,
+        label: safeName
+    };
+}
+
+/**
+ * Applies * or / between two vector-math operands.
+ */
+function applyMultiplicativeOp(left, right, op) {
+    const opTex = op === '*' ? '\\cdot' : '\\div';
+
+    if (op === '*') {
+        if (left.isScalar) {
+            left.val = right.val.map(v => left.val[0] * v);
+            left.isScalar = right.isScalar;
+        } else {
+            left.val = left.val.map((v, i) => v * (right.isScalar ? right.val[0] : right.val[i]));
+        }
+    } else {
+        left.val = left.val.map(v => v / (right.isScalar ? right.val[0] : (right.val[0] || 1)));
+    }
+
+    left.tex   = `${left.tex} ${opTex} ${right.tex}`;
+    left.label = `${left.label}${op}${right.label}`;
+    return left;
+}
+
+/**
+ * Finds the nearest vocabulary word to a result vector by Euclidean distance.
+ */
+function findNearestEmbedding(resultVec, space, vocabKeys) {
+    let nearest = "None";
+    let nearestVec = Array(resultVec.length).fill(0);
+    let minDist = Infinity;
+
+    vocabKeys.forEach(w => {
+        const v = space[w];
+        const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - resultVec[i], 2), 0));
+        if (d < minDist) {
+            minDist = d;
+            nearest = w;
+            nearestVec = v;
+        }
+    });
+
+    return { word: nearest, vec: nearestVec, distance: minDist };
+}
+
+/**
+ * Builds the LaTeX HTML for the vector math result display.
+ */
+function buildVectorMathResultHtml(result, nearest, d_model) {
+    const toVecTex = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
+
+    const isExact = nearest.distance < 0.001;
+    const symbol = isExact ? "=" : "\\approx";
+    const safeNearest = nearest.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+
+    const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${safeNearest}} \\\\ ${toVecTex(nearest.vec)} }}`;
+
+    return `
+        <div style="overflow-x: auto; padding: 10px 0; font-size: 1.1em;">
+            $$ ${result.tex} = ${resultTex} $$
+        </div>
+    `;
+}
+
 
 function debounced_run_transformer_demo(activeId) {
 	updateTrainButtonState();
