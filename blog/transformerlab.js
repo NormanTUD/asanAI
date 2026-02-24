@@ -1,3 +1,5 @@
+"use strict";
+
 const replot_every_n_epochs = 50;
 const nr_fixed = 4;
 const posEmbedScalar = 1;
@@ -1199,7 +1201,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	tled_initEditor();
 
 	// 2. Visualizations
-	tokensWithPositional = calculate_positional_injection(knownTokens, d_model);
+	const tokensWithPositional = calculate_positional_injection(knownTokens, d_model);
 	render_positional_waves(d_model, knownTokens);
 
 	const h0 = render_positional_shift_plot(knownTokens, d_model);
