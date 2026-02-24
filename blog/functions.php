@@ -203,20 +203,61 @@ function load_base_js () {
 			observer.observe(targetNode, config);
 		}
 
+		// ── Place once, near your other observers ──
+		const _temmlOpts = {
+		    delimiters: [
+			{ left: "$$", right: "$$", display: true },
+			{ left: "$",  right: "$",  display: false }
+		    ]
+		};
+
+		const _temmlObserver = new IntersectionObserver((entries) => {
+		    entries.forEach(entry => {
+			if (entry.isIntersecting) {
+			    const el = entry.target;
+			    // Guard: skip if already rendered, detached from DOM, or no math left
+			    if (el.isConnected &&
+				!el.hasAttribute('data-math-rendered') &&
+				el.textContent.includes('$')) {
+				temml.renderMathInElement(el, _temmlOpts);
+				el.setAttribute('data-math-rendered', 'true');
+			    }
+			    _temmlObserver.unobserve(el);
+			}
+		    });
+		}, {
+		    threshold: 0,
+		    rootMargin: '300px 0px'   // pre-render 300px before scrolling into view
+		});
+
 		function render_temml() {
-			const elements = document.querySelectorAll('p:not([data-math-rendered]), span:not([data-math-rendered]), div:not([data-math-rendered]), li:not([data-math-rendered])');
+			const elements = document.querySelectorAll(
+				'p:not([data-math-rendered]), span:not([data-math-rendered]), div:not([data-math-rendered]), li:not([data-math-rendered])'
+		    );
 
 			elements.forEach(el => {
-				if (el.textContent.includes('$')) {
-					temml.renderMathInElement(el, {
-						delimiters: [
-							{left: "$$", right: "$$", display: true},
-							{left: "$", right: "$", display: false}
-						]
-					});
-					el.setAttribute('data-math-rendered', 'true');
-				}
-			});
+			if (!el.textContent.includes('$')) return;
+
+			const rect = el.getBoundingClientRect();
+
+			// ① FIX: Elements inside hidden tabs (display:none) have zero
+			//    dimensions. IntersectionObserver will NEVER fire for them.
+			//    Render immediately so they're ready when the tab is shown.
+			if (rect.width === 0 && rect.height === 0) {
+				temml.renderMathInElement(el, _temmlOpts);
+				el.setAttribute('data-math-rendered', 'true');
+				return;
+			}
+
+			// ② Elements in/near the viewport → render immediately
+			if (rect.bottom > -300 && rect.top < window.innerHeight + 300) {
+				temml.renderMathInElement(el, _temmlOpts);
+				el.setAttribute('data-math-rendered', 'true');
+			} else {
+				// ③ Far off-screen → defer until scrolled into view
+				_temmlObserver.observe(el);
+			}
+		    });
 		}
 
 		document.addEventListener("DOMContentLoaded", function() {
