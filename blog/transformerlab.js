@@ -1868,282 +1868,356 @@ function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
 	embeddingObserver.observe(container);
 }
 
+// ── 3D Arrowhead geometry (extracted from _execute_embedding_render) ──
+
+/**
+ * Creates 3D arrowhead line traces forming a triangular cone at `tip`.
+ * @param {number[]} from - Arrow origin [x, y, z]
+ * @param {number[]} tip  - Arrow destination [x, y, z]
+ * @param {string}   color
+ * @param {number}   headLength
+ * @returns {object[]} Array of Plotly scatter3d traces
+ */
+function make3DArrowhead(from, tip, color, headLength) {
+    const dx = tip[0] - from[0];
+    const dy = tip[1] - from[1];
+    const dz = tip[2] - from[2];
+    const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+    if (mag < 1e-10) return [];
+
+    const nx = dx / mag;
+    const ny = dy / mag;
+    const nz = dz / mag;
+
+    const { perp1, perp2 } = computePerpendicularVectors(nx, ny, nz);
+
+    const bx = tip[0] - nx * headLength;
+    const by = tip[1] - ny * headLength;
+    const bz = tip[2] - nz * headLength;
+
+    const spread = headLength * 0.4;
+    const nPetals = 3;
+    const basePoints = computeArrowBasePoints(bx, by, bz, perp1, perp2, spread, nPetals);
+
+    return [
+        ...buildPetalToTipTraces(basePoints, tip, color, nPetals),
+        ...buildBaseRingTraces(basePoints, color, nPetals)
+    ];
+}
+
+/**
+ * Finds two vectors perpendicular to a given normalized direction.
+ */
+function computePerpendicularVectors(nx, ny, nz) {
+    let ax, ay, az;
+    if (Math.abs(nx) < 0.9) {
+        ax = 1; ay = 0; az = 0;
+    } else {
+        ax = 0; ay = 1; az = 0;
+    }
+
+    // Cross product: perp1 = direction × arbitrary
+    let p1x = ny * az - nz * ay;
+    let p1y = nz * ax - nx * az;
+    let p1z = nx * ay - ny * ax;
+    const p1mag = Math.sqrt(p1x * p1x + p1y * p1y + p1z * p1z);
+    p1x /= p1mag; p1y /= p1mag; p1z /= p1mag;
+
+    // Cross product: perp2 = direction × perp1
+    let p2x = ny * p1z - nz * p1y;
+    let p2y = nz * p1x - nx * p1z;
+    let p2z = nx * p1y - ny * p1x;
+    const p2mag = Math.sqrt(p2x * p2x + p2y * p2y + p2z * p2z);
+    p2x /= p2mag; p2y /= p2mag; p2z /= p2mag;
+
+    return {
+        perp1: { x: p1x, y: p1y, z: p1z },
+        perp2: { x: p2x, y: p2y, z: p2z }
+    };
+}
+
+/**
+ * Computes points around the base of an arrowhead cone.
+ */
+function computeArrowBasePoints(bx, by, bz, perp1, perp2, spread, nPetals) {
+    const pts = [];
+    for (let i = 0; i < nPetals; i++) {
+        const angle = (2 * Math.PI * i) / nPetals;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        pts.push([
+            bx + spread * (cos * perp1.x + sin * perp2.x),
+            by + spread * (cos * perp1.y + sin * perp2.y),
+            bz + spread * (cos * perp1.z + sin * perp2.z)
+        ]);
+    }
+    return pts;
+}
+
+/**
+ * Builds scatter3d line traces from each base point to the tip.
+ */
+function buildPetalToTipTraces(basePoints, tip, color, nPetals) {
+    const traces = [];
+    for (let i = 0; i < nPetals; i++) {
+        traces.push({
+            type: 'scatter3d',
+            x: [basePoints[i][0], tip[0]],
+            y: [basePoints[i][1], tip[1]],
+            z: [basePoints[i][2], tip[2]],
+            mode: 'lines',
+            line: { color, width: 6 },
+            hoverinfo: 'skip',
+            showlegend: false
+        });
+    }
+    return traces;
+}
+
+/**
+ * Connects adjacent base points to form the triangular ring.
+ */
+function buildBaseRingTraces(basePoints, color, nPetals) {
+    const traces = [];
+    for (let i = 0; i < nPetals; i++) {
+        const j = (i + 1) % nPetals;
+        traces.push({
+            type: 'scatter3d',
+            x: [basePoints[i][0], basePoints[j][0]],
+            y: [basePoints[i][1], basePoints[j][1]],
+            z: [basePoints[i][2], basePoints[j][2]],
+            mode: 'lines',
+            line: { color, width: 6 },
+            hoverinfo: 'skip',
+            showlegend: false
+        });
+    }
+    return traces;
+}
+
+/**
+ * Builds Plotly traces for vocabulary token points.
+ * Works for 1D, 2D, and 3D.
+ */
+function buildVocabPointTraces(tokens, is3D) {
+    return tokens.map(token => {
+        const vec = window.persistentEmbeddingSpace[token];
+        const trace = {
+            x: [vec[0]],
+            y: [vec.length >= 2 ? vec[1] : 0],
+            mode: 'markers+text',
+            text: [token],
+            textposition: 'top center',
+            name: token,
+            marker: { size: is3D ? 6 : 8, opacity: 0.85 },
+            cliponaxis: false,
+            type: is3D ? 'scatter3d' : 'scatter'
+        };
+        if (is3D) trace.z = [vec[2]];
+        return trace;
+    });
+}
+
+/**
+ * Builds Plotly traces and annotations for calculation step arrows.
+ */
+function buildStepArrowTraces(steps, dimensions, is3D) {
+    const traces = [];
+    const annotations = [];
+    const arrowColor = '#3b82f6';
+
+    steps.forEach(step => {
+        if (is3D) {
+            traces.push(...build3DArrowTraces(step, arrowColor));
+        } else {
+            annotations.push(build2DAnnotationArrow(step, dimensions, arrowColor));
+            traces.push(build2DHoverMarker(step, dimensions, arrowColor));
+        }
+    });
+
+    return { traces, annotations };
+}
+
+function build3DArrowTraces(step, arrowColor) {
+    const traces = [];
+
+    // Line shaft
+    traces.push({
+        type: 'scatter3d',
+        x: [step.from[0], step.to[0]],
+        y: [step.from[1], step.to[1]],
+        z: [step.from[2], step.to[2]],
+        mode: 'lines',
+        line: { color: arrowColor, width: 5 },
+        hoverinfo: 'text',
+        text: [step.label, step.label],
+        showlegend: false
+    });
+
+    // Arrowhead
+    const dx = step.to[0] - step.from[0];
+    const dy = step.to[1] - step.from[1];
+    const dz = step.to[2] - step.from[2];
+    const arrowLen = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    const headLen = Math.min(arrowLen * 0.25, 0.5);
+    traces.push(...make3DArrowhead(step.from, step.to, arrowColor, headLen));
+
+    // Midpoint hover label
+    traces.push({
+        type: 'scatter3d',
+        x: [(step.from[0] + step.to[0]) / 2],
+        y: [(step.from[1] + step.to[1]) / 2],
+        z: [(step.from[2] + step.to[2]) / 2],
+        mode: 'markers',
+        marker: { size: 4, color: 'rgba(59,130,246,0.01)' },
+        text: [step.label],
+        hovertemplate: '<b>%{text}</b><extra></extra>',
+        showlegend: false
+    });
+
+    return traces;
+}
+
+function build2DAnnotationArrow(step, dimensions, arrowColor) {
+    return {
+        ax: step.from[0],
+        ay: dimensions >= 2 ? step.from[1] : 0,
+        axref: 'x', ayref: 'y',
+        x: step.to[0],
+        y: dimensions >= 2 ? step.to[1] : 0,
+        xref: 'x', yref: 'y',
+        showarrow: true,
+        arrowhead: 2, arrowsize: 1.5,
+        arrowwidth: 3, arrowcolor: arrowColor
+    };
+}
+
+function build2DHoverMarker(step, dimensions, arrowColor) {
+    return {
+        type: 'scatter',
+        x: [(step.from[0] + step.to[0]) / 2],
+        y: [((dimensions >= 2 ? step.from[1] : 0) + (dimensions >= 2 ? step.to[1] : 0)) / 2],
+        mode: 'markers',
+        marker: { size: 12, color: 'rgba(59,130,246,0.01)' },
+        text: [step.label],
+        hovertemplate: '<b>%{text}</b><extra></extra>',
+        showlegend: false,
+        cliponaxis: false
+    };
+}
+
+/**
+ * Builds the red diamond highlight trace for a result position.
+ */
+function buildResultHighlightTrace(highlightPos, dimensions, is3D) {
+    const trace = {
+        x: [highlightPos[0]],
+        y: [dimensions >= 2 ? highlightPos[1] : 0],
+        mode: 'markers',
+        marker: { size: is3D ? 10 : 14, color: '#ef4444', symbol: 'diamond' },
+        name: 'Result',
+        showlegend: false,
+        type: is3D ? 'scatter3d' : 'scatter',
+        hovertemplate: is3D
+            ? '<b>Result</b><br>(%{x:.4f}, %{y:.4f}, %{z:.4f})<extra></extra>'
+            : '<b>Result</b><br>(%{x:.4f}, %{y:.4f})<extra></extra>'
+    };
+    if (is3D) trace.z = [highlightPos[2]];
+    return trace;
+}
+
+/**
+ * Renders the embedding space for d_model <= 3 using Plotly.
+ */
+function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, steps) {
+    const is3D = (dimensions === 3);
+    const traces = [];
+    const annotations = [];
+
+    // Vocabulary points
+    traces.push(...buildVocabPointTraces(tokens, is3D));
+
+    // Step arrows
+    const arrowResult = buildStepArrowTraces(steps, dimensions, is3D);
+    traces.push(...arrowResult.traces);
+    annotations.push(...arrowResult.annotations);
+
+    // Result highlight
+    if (highlightPos) {
+        traces.push(buildResultHighlightTrace(highlightPos, dimensions, is3D));
+    }
+
+    // Layout
+    const layout = {
+        title: "Embedding Space",
+        showlegend: false,
+        annotations
+    };
+
+    if (is3D) {
+        layout.scene = {
+            xaxis: { title: 'Dim 0' },
+            yaxis: { title: 'Dim 1' },
+            zaxis: { title: 'Dim 2' }
+        };
+    } else {
+        layout.xaxis = { title: 'Dim 0' };
+        layout.yaxis = { title: dimensions >= 2 ? 'Dim 1' : '' };
+    }
+
+    Plotly.newPlot(container, traces, layout);
+}
+
+/**
+ * Renders the embedding space for d_model >= 4 using ECharts parallel coordinates.
+ */
+function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
+    const myChart = echarts.init(container);
+    const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({
+        dim: i, name: `D${i}`
+    }));
+
+    const data = tokens.map(token => ({
+        name: token,
+        value: window.persistentEmbeddingSpace[token]
+    }));
+
+    myChart.setOption({
+        title: { text: "Embedding Space", left: 'center' },
+        tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+        parallelAxis,
+        parallel: { left: 40, right: 40, bottom: 20, top: 50 },
+        series: [{
+            type: 'parallel',
+            data,
+            lineStyle: { width: 2, opacity: 0.5, color: '#6366f1' },
+            emphasis: { lineStyle: { width: 6, color: '#f59e0b' } }
+        }]
+    });
+
+    myChart.resize();
+}
+
+/**
+ * Main embedding render — now a clean dispatcher.
+ */
 function _execute_embedding_render(dimensions, highlightPos = null, steps = []) {
-	const container = document.getElementById('transformer-plotly-space');
-	if (!container) return;
+    const container = document.getElementById('transformer-plotly-space');
+    if (!container) return;
 
-	Plotly.purge(container);
-	const existingChart = echarts.getInstanceByDom(container);
-	if (existingChart) existingChart.dispose();
-	container.innerHTML = '';
+    Plotly.purge(container);
+    const existingChart = echarts.getInstanceByDom(container);
+    if (existingChart) existingChart.dispose();
+    container.innerHTML = '';
 
-	const tokens = Object.keys(window.persistentEmbeddingSpace);
+    const tokens = Object.keys(window.persistentEmbeddingSpace);
 
-	if (dimensions <= 3) {
-		const is3D = (dimensions === 3);
-		let traces = [];
-		let annotations = [];
-
-		// ── Helper: Build a 3D arrowhead from line segments ──
-		// Creates 3 short lines forming a triangular cone shape at `tip`,
-		// pointing in the direction from `from` toward `tip`.
-		function make3DArrowhead(from, tip, color, headLength) {
-			// Direction vector from → tip
-			const dx = tip[0] - from[0];
-			const dy = tip[1] - from[1];
-			const dz = tip[2] - from[2];
-			const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-			if (mag < 1e-10) return []; // Zero-length arrow, skip
-
-			// Normalized direction
-			const nx = dx / mag;
-			const ny = dy / mag;
-			const nz = dz / mag;
-
-			// Find two vectors perpendicular to the direction
-			// Pick an arbitrary vector not parallel to (nx, ny, nz)
-			let ax, ay, az;
-			if (Math.abs(nx) < 0.9) {
-				ax = 1; ay = 0; az = 0;
-			} else {
-				ax = 0; ay = 1; az = 0;
-			}
-
-			// Cross product: perp1 = direction × arbitrary
-			let p1x = ny * az - nz * ay;
-			let p1y = nz * ax - nx * az;
-			let p1z = nx * ay - ny * ax;
-			const p1mag = Math.sqrt(p1x * p1x + p1y * p1y + p1z * p1z);
-			p1x /= p1mag; p1y /= p1mag; p1z /= p1mag;
-
-			// Cross product: perp2 = direction × perp1
-			let p2x = ny * p1z - nz * p1y;
-			let p2y = nz * p1x - nx * p1z;
-			let p2z = nx * p1y - ny * p1x;
-			const p2mag = Math.sqrt(p2x * p2x + p2y * p2y + p2z * p2z);
-			p2x /= p2mag; p2y /= p2mag; p2z /= p2mag;
-
-			// Base center of the arrowhead (pulled back from tip along direction)
-			const bx = tip[0] - nx * headLength;
-			const by = tip[1] - ny * headLength;
-			const bz = tip[2] - nz * headLength;
-
-			const spread = headLength * 0.4;
-
-			// 3 points around the base of the arrowhead
-			const pts = [];
-			const nPetals = 3;
-			for (let i = 0; i < nPetals; i++) {
-				const angle = (2 * Math.PI * i) / nPetals;
-				const cos = Math.cos(angle);
-				const sin = Math.sin(angle);
-				pts.push([
-					bx + spread * (cos * p1x + sin * p2x),
-					by + spread * (cos * p1y + sin * p2y),
-					bz + spread * (cos * p1z + sin * p2z)
-				]);
-			}
-
-			// Create line traces from each base point to the tip
-			const arrowTraces = [];
-			for (let i = 0; i < nPetals; i++) {
-				arrowTraces.push({
-					type: 'scatter3d',
-					x: [pts[i][0], tip[0]],
-					y: [pts[i][1], tip[1]],
-					z: [pts[i][2], tip[2]],
-					mode: 'lines',
-					line: { color: color, width: 6 },
-					hoverinfo: 'skip',
-					showlegend: false
-				});
-			}
-
-			// Connect the base points to form the triangle base
-			for (let i = 0; i < nPetals; i++) {
-				const j = (i + 1) % nPetals;
-				arrowTraces.push({
-					type: 'scatter3d',
-					x: [pts[i][0], pts[j][0]],
-					y: [pts[i][1], pts[j][1]],
-					z: [pts[i][2], pts[j][2]],
-					mode: 'lines',
-					line: { color: color, width: 6 },
-					hoverinfo: 'skip',
-					showlegend: false
-				});
-			}
-
-			return arrowTraces;
-		}
-
-		// ── Render Vocabulary Points ──
-		tokens.forEach(token => {
-			const vec = window.persistentEmbeddingSpace[token];
-			let trace = {
-				x: [vec[0]],
-				y: [dimensions >= 2 ? vec[1] : 0],
-				mode: 'markers+text',
-				text: [token],
-				textposition: 'top center',
-				name: token,
-				marker: { size: 8, opacity: 0.85 },
-				cliponaxis: false
-			};
-			if (is3D) {
-				trace.type = 'scatter3d';
-				trace.z = [vec[2]];
-				trace.marker.size = 6;
-			} else {
-				trace.type = 'scatter';
-			}
-			traces.push(trace);
-		});
-
-		// ── Render Calculation Steps (Arrows) ──
-		steps.forEach(step => {
-			const arrowColor = '#3b82f6';
-
-			if (is3D) {
-				// 3D: Line shaft
-				traces.push({
-					type: 'scatter3d',
-					x: [step.from[0], step.to[0]],
-					y: [step.from[1], step.to[1]],
-					z: [step.from[2], step.to[2]],
-					mode: 'lines',
-					line: { color: arrowColor, width: 5 },
-					hoverinfo: 'text',
-					text: [step.label, step.label],
-					showlegend: false
-				});
-
-				// 3D: Geometric arrowhead at tip
-				// Calculate a reasonable head length based on arrow length
-				const dx = step.to[0] - step.from[0];
-				const dy = step.to[1] - step.from[1];
-				const dz = step.to[2] - step.from[2];
-				const arrowLen = Math.sqrt(dx * dx + dy * dy + dz * dz);
-				const headLen = Math.min(arrowLen * 0.25, 0.5);
-
-				const headTraces = make3DArrowhead(step.from, step.to, arrowColor, headLen);
-				headTraces.forEach(ht => traces.push(ht));
-
-				// 3D: Hover label at midpoint
-				const midX = (step.from[0] + step.to[0]) / 2;
-				const midY = (step.from[1] + step.to[1]) / 2;
-				const midZ = (step.from[2] + step.to[2]) / 2;
-				traces.push({
-					type: 'scatter3d',
-					x: [midX], y: [midY], z: [midZ],
-					mode: 'markers',
-					marker: { size: 4, color: 'rgba(59,130,246,0.01)' },
-					text: [step.label],
-					hovertemplate: '<b>%{text}</b><extra></extra>',
-					showlegend: false
-				});
-
-			} else {
-				// 1D/2D: Plotly annotation arrows
-				annotations.push({
-					ax: step.from[0],
-					ay: dimensions >= 2 ? step.from[1] : 0,
-					axref: 'x',
-					ayref: 'y',
-					x: step.to[0],
-					y: dimensions >= 2 ? step.to[1] : 0,
-					xref: 'x',
-					yref: 'y',
-					showarrow: true,
-					arrowhead: 2,
-					arrowsize: 1.5,
-					arrowwidth: 3,
-					arrowcolor: arrowColor
-				});
-
-				// Invisible hover marker at midpoint
-				traces.push({
-					type: 'scatter',
-					x: [(step.from[0] + step.to[0]) / 2],
-					y: [((dimensions >= 2 ? step.from[1] : 0) + (dimensions >= 2 ? step.to[1] : 0)) / 2],
-					mode: 'markers',
-					marker: { size: 12, color: 'rgba(59,130,246,0.01)' },
-					text: [step.label],
-					hovertemplate: '<b>%{text}</b><extra></extra>',
-					showlegend: false,
-					cliponaxis: false
-				});
-			}
-		});
-
-		// ── Render Result Highlight (Red Diamond) ──
-		if (highlightPos) {
-			let resultTrace = {
-				x: [highlightPos[0]],
-				y: [dimensions >= 2 ? highlightPos[1] : 0],
-				mode: 'markers',
-				marker: { size: 14, color: '#ef4444', symbol: 'diamond' },
-				name: 'Result',
-				showlegend: false
-			};
-			if (is3D) {
-				resultTrace.type = 'scatter3d';
-				resultTrace.z = [highlightPos[2]];
-				resultTrace.marker.size = 10;
-				resultTrace.hovertemplate = '<b>Result</b><br>(%{x:.4f}, %{y:.4f}, %{z:.4f})<extra></extra>';
-			} else {
-				resultTrace.type = 'scatter';
-				resultTrace.hovertemplate = '<b>Result</b><br>(%{x:.4f}, %{y:.4f})<extra></extra>';
-			}
-			traces.push(resultTrace);
-		}
-
-		// ── Layout ──
-		const layout = {
-			title: "Embedding Space",
-			showlegend: false,
-			annotations: annotations
-		};
-
-		if (is3D) {
-			layout.scene = {
-				xaxis: { title: 'Dim 0' },
-				yaxis: { title: 'Dim 1' },
-				zaxis: { title: 'Dim 2' }
-			};
-		} else {
-			layout.xaxis = { title: 'Dim 0' };
-			layout.yaxis = { title: dimensions >= 2 ? 'Dim 1' : '' };
-		}
-
-		Plotly.newPlot(container, traces, layout);
-
-	} else {
-		// ── High-dimensional: ECharts parallel coordinates ──
-		const myChart = echarts.init(container);
-		const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({ dim: i, name: `D${i}` }));
-
-		const data = tokens.map(token => ({
-			name: token,
-			value: window.persistentEmbeddingSpace[token]
-		}));
-
-		myChart.setOption({
-			title: { text: "Embedding Space", left: 'center' },
-			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
-			parallelAxis: parallelAxis,
-			parallel: { left: 40, right: 40, bottom: 20, top: 50 },
-			series: [{
-				type: 'parallel',
-				data: data,
-				lineStyle: { width: 2, opacity: 0.5, color: '#6366f1' },
-				emphasis: { lineStyle: { width: 6, color: '#f59e0b' } }
-			}]
-		});
-
-		myChart.resize();
-	}
+    if (dimensions <= 3) {
+        renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, steps);
+    } else {
+        renderHighDimEmbeddingPlot(container, tokens, dimensions);
+    }
 }
 
 // Updated Tokenizer to allow different containers
