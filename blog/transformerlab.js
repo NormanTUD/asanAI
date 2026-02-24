@@ -1721,7 +1721,6 @@ This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Whe
 		dotProductFormula += terms.join(' + ') + ` = ${sum.toFixed(nr_fixed)}`;
 
 		calculationHtml += `<div style="margin-bottom: 10px; overflow: scroll;">
-	    <strong>Word: "${word}"</strong><br>
 	    $$${dotProductFormula}$$
 	</div>`;
 
