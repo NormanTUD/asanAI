@@ -21,6 +21,28 @@ window.tlab_trajectory_data = {
 };
 
 /**
+ * Runs a complete inference forward pass without visualization:
+ * embeds tokens with positional encoding, then passes through
+ * all transformer layers, returning the final hidden states.
+ *
+ * @param {string[]}  tokens   - Array of token strings
+ * @param {object[]}  weights  - Array of layer weight objects
+ * @param {number}    d_model  - Model dimension
+ * @param {number}    n_heads  - Number of attention heads
+ * @param {number}    [n_layers=weights.length] - Layers to run (defaults to all)
+ * @returns {number[][]} Final hidden states [seqLen × d_model]
+ */
+function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers) {
+    if (n_layers === undefined) n_layers = weights.length;
+    let h = embedTokensWithPE(tokens, d_model);
+    for (let l = 0; l < n_layers; l++) {
+        const result = forwardOneLayer(h, weights[l], d_model, n_heads, tokens, null);
+        h = result.h_out;
+    }
+    return h;
+}
+
+/**
  * Looks up embeddings for each token from the persistent embedding space
  * and adds sinusoidal positional encoding.
  *
@@ -688,24 +710,12 @@ async function train_transformer() {
 					// Run a quick forward pass for this window to get predictions
 					const predictions = [];
 					try {
-						const inputIds = w.input.map(t => vocab.indexOf(t));
-
-						// Build input embeddings + positional encoding
-						let h = inputIds.map((id, pos) =>
-							addPositionalEncoding(embMatrix[id], pos, d_model, posEmbedScalar)
-						);
-						
-						// Run through transformer layers
-						// Run through transformer layers
 						const n_heads_local = parseInt(document.getElementById('transformer-heads').value);
-						for (let l = 0; l < n_layers; l++) {
-							const result = forwardOneLayer(h, window.currentWeights[l], d_model, n_heads_local, w.input, null);
-							h = result.h_out;
-						}
+						let h = runSimpleForwardPass(w.input, window.currentWeights, d_model, n_heads_local, n_layers);
 
 						// Project each position to vocabulary (logits)
 						for (let pos = 0; pos < h.length; pos++) {
-							const logits = embMatrix.map(embRow => 
+							const logits = embMatrix.map(embRow =>
 								h[pos].reduce((sum, val, k) => sum + val * embRow[k], 0));
 							const probs = softmax(logits);
 
@@ -1060,38 +1070,8 @@ function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
 	const contextTokens = tokens.slice(startIdx, endIdx);
 	const targetToken = tokens[endIdx]; // The token coming AFTER the context
 
-	// 1. Run Forward Pass
-	// We use a simplified forward pass that returns just the final hidden state
-	// Note: We use the existing logic but stripped down for speed
-
-	// a. Embeddings + PE
-	const space = window.persistentEmbeddingSpace;
-	let h = embedTokensWithPE(contextTokens, d_model);
-
-	// b. Layers
-	const n_heads = weights[0].attention.query.length > 0 ?
-		weights[0].attention.query.length / (d_model/weights[0].attention.query.length) : 2; // heuristic
-
-	// Use the existing run_deep_layers logic but with provided weights
-	// We need to adapt run_deep_layers to accept custom weights easily or reimplement the loop here.
-	// For speed/stability in this "fake" trainer, we reimplement the core loop:
-
-	for(let l=0; l<n_layers; l++) {
-		const w = weights[l];
-		// Simplified Attention (assuming 1 head for loss calc speed or implementing full logic?)
-		// To reuse code, we instantiate the engine. This is slower but correct.
-		const engine = new AttentionEngine({ d_model: d_model, n_heads: 2, containerId: null, weights: w.attention });
-		const headData = engine.forward(h, contextTokens, contextTokens);
-
-		// Concatenate
-		const concat = contextTokens.map((_, tIdx) => [].concat(...headData.map(hd => hd.context[tIdx])));
-
-		// Post-LN
-		const h1 = get_h1(h, concat, w.gamma, w.beta);
-
-		// FFN
-		h = run_ffn_block(h1, w);
-	}
+	const n_heads_local = weights[0].attention.query.length > 0 ? 2 : 2; // or pass as param
+	let h = runSimpleForwardPass(contextTokens, weights, d_model, n_heads_local, n_layers);
 
 	const h_final = h[h.length - 1]; // Last token's hidden state
 
@@ -1306,16 +1286,8 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
 
 	if (knownMasterTokens.length > 0) {
-		let h_master = embedTokensWithPE(knownMasterTokens, d_model);
-		
-		let h_current = h_master;
-		for (let l = 0; l < n_layers; l++) {
-			const result = forwardOneLayer(h_current, weights[l], d_model, n_heads, knownMasterTokens, null);
-			h_current = result.h_out;
-		}
-
-
-		render_final_projection(h_current, vocabulary, d_model, temperature);
+		const h_final = runSimpleForwardPass(knownMasterTokens, weights, d_model, n_heads, n_layers);
+		render_final_projection(h_final, vocabulary, d_model, temperature);
 	}
 }
 
