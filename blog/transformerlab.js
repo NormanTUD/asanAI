@@ -2020,7 +2020,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 		const result = forwardOneLayer(h_current, this_weights[n], d_model, n_heads, tokenStrings, "mha-calculation-details");
 
 		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, result.h_out, n + 1, d_model, result.h_out, tokenStrings);
-		tlab_render_weight_grid(this_weights[n], n);
+		tlab_render_weight_grid(`migration-layer-${n + 1}`, n);
 
 		h_current = result.h_out;
 	}
