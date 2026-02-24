@@ -4270,22 +4270,22 @@ function parseWordVector(token, lowerVocab, d_model, toVecTex) {
  * Applies * or / between two vector-math operands.
  */
 function applyMultiplicativeOp(left, right, op) {
-    const opTex = op === '*' ? '\\cdot' : '\\div';
+	const opTex = op === '*' ? '\\cdot' : '\\div';
 
-    if (op === '*') {
-        if (left.isScalar) {
-            left.val = right.val.map(v => left.val[0] * v);
-            left.isScalar = right.isScalar;
-        } else {
-            left.val = left.val.map((v, i) => v * (right.isScalar ? right.val[0] : right.val[i]));
-        }
-    } else {
-        left.val = left.val.map(v => v / (right.isScalar ? right.val[0] : (right.val[0] || 1)));
-    }
+	if (op === '*') {
+		if (left.isScalar) {
+			left.val = right.val.map(v => left.val[0] * v);
+			left.isScalar = right.isScalar;
+		} else {
+			left.val = left.val.map((v, i) => v * (right.isScalar ? right.val[0] : right.val[i]));
+		}
+	} else {
+		left.val = left.val.map(v => v / (right.isScalar ? right.val[0] : (right.val[0] || 1)));
+	}
 
-    left.tex   = `${left.tex} ${opTex} ${right.tex}`;
-    left.label = `${left.label}${op}${right.label}`;
-    return left;
+	left.tex   = `${left.tex} ${opTex} ${right.tex}`;
+	left.label = `${left.label}${op}${right.label}`;
+	return left;
 }
 
 /**
