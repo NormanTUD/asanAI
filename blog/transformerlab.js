@@ -4578,32 +4578,32 @@ function tled_initEditor() {
  * Each dimension gets its own numeric input.
  */
 function tled_generateRowHtml(word, vec, d_model) {
-    // Escape word for use in HTML attributes (handle quotes, etc.)
-    const safeWord = word.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    const safeWordAttr = word.replace(/"/g, '&quot;');
+	// Escape word for use in HTML attributes (handle quotes, etc.)
+	const safeWord = word.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+		const safeWordAttr = word.replace(/"/g, '&quot;');
 
-    let dimCells = '';
-    for (let d = 0; d < d_model; d++) {
-        dimCells += `
-        <td style="padding: 5px; text-align: center;">
-            <input
-                type="number"
-                value="${vec[d].toFixed(4)}"
-                step="0.1"
-                data-tled-word="${safeWordAttr}"
-                data-tled-dim="${d}"
-                style="width: 70px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 12px;"
-                oninput="tled_updateEmbedding(this)"
-            >
-        </td>`;
-    }
+			let dimCells = '';
+			for (let d = 0; d < d_model; d++) {
+				dimCells += `
+	<td style="padding: 5px; text-align: center;">
+	    <input
+		type="number"
+		value="${vec[d].toFixed(4)}"
+		step="0.1"
+		data-tled-word="${safeWordAttr}"
+		data-tled-dim="${d}"
+		style="width: 70px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 12px;"
+		oninput="tled_updateEmbedding(this)"
+	    >
+	</td>`;
+			}
 
-    return `
+			return `
     <tr style="border-bottom: 1px solid #f1f5f9;" id="tled-row-${safeWordAttr}">
-        <td style="padding: 8px 10px; font-weight: 500;">${word}</td>
-        ${dimCells}
+	<td style="padding: 8px 10px; font-weight: 500;">${word}</td>
+	${dimCells}
     </tr>`;
-}
+		}
 
 /**
  * Called when a user edits a single dimension value in the table.
