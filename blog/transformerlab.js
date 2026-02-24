@@ -1666,16 +1666,59 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 	const lastIdx = h_final.length - 1;
 	const h_last = h_final[lastIdx];
 
-	// 1. Prepare W_vocab
 	const W_vocab = vocabulary.map(word => window.persistentEmbeddingSpace[word] || new Array(d_model).fill(0));
 
-	// 2. Calculate Logits and explain step-by-step
-	let calculationHtml = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
-	<h3>Step-by-Step Logit Calculation</h3>
-	<p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_\\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure</p>
-	
-	<span class="md">
-To get from the long matrix to the single vector, the model performs a **Terminal Selection**.
+	// ── Calculate logits ──
+	const logits = vocabulary.map((word, i) => {
+		const w_row = W_vocab[i];
+		let sum = 0;
+		h_last.forEach((h_val, dim) => { sum += h_val * w_row[dim]; });
+		return { word, val: sum, w_row };
+	});
+
+	const scaledLogits = logits.map(item => item.val / temperature);
+	const probs = softmax(scaledLogits);
+	const predictions = logits.map((item, i) => ({
+		word: item.word, prob: probs[i], logit: item.val
+	})).sort((a, b) => b.prob - a.prob);
+
+	// ── Ensure stable sub-containers exist (created once, reused) ──
+	let chipsDiv = document.getElementById('tlab-final-chips');
+	let detailsDiv = document.getElementById('tlab-final-details');
+
+	if (!chipsDiv || !detailsDiv) {
+		container.innerHTML = `
+	    <div id="tlab-final-chips" style="position: sticky; top: 0; z-index: 10; background: #fff; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;"></div>
+	    <div id="tlab-final-details"></div>
+	`;
+		chipsDiv = document.getElementById('tlab-final-chips');
+		detailsDiv = document.getElementById('tlab-final-details');
+	}
+
+	// ── 1. Update prediction chips (always visible, never pushed down) ──
+	let chipsHtml = `<h3>2. Final Probabilities (Click to Generate)</h3>`;
+	chipsHtml += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">`;
+	predictions.forEach(p => {
+		const intensity = Math.min(1, p.prob * 5);
+		const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+		chipsHtml += `<button class="predict-chip" onclick="select_suggested_word('${safeWord}')"
+	    style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
+	    <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
+	</button>`;
+	});
+	chipsHtml += `</div>`;
+	chipsDiv.innerHTML = chipsHtml;
+
+	// ── 2. Update logit details (with ALL original explanatory text) ──
+	//    Only update if NOT training, or if the section is in the viewport.
+	//    This prevents layout shifts that cause scroll jumps during training.
+	if (!window.isTraining || isElementInViewport(detailsDiv)) {
+		let calculationHtml = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+    <strong>Step-by-Step Logit Calculation</strong>
+    <p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_\\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure</p>
+
+    <span class="md">
+To get from the long matrix to the single vector, the model performs a <strong>Terminal Selection</strong>.
 
 If we represent the output of the last transformer block as a matrix $H$:
 $$H = \\begin{pmatrix}
@@ -1685,7 +1728,7 @@ h_1 \\\\
 h_{n-1}
 \\end{pmatrix} \\in \\mathbb{R}^{n \\times d_{\\text{model}}}$$
 
-The "Migration Map" prints the entire flattened matrix because it wants to show the path of every word. However, the \`render_final_projection\` function is only interested in the <b>prediction</b>:
+The "Migration Map" prints the entire flattened matrix because it wants to show the path of every word. However, the final projection is only interested in the <b>prediction</b>:
 
 $$h_{\\text{last}} = H[n-1]$$
 
@@ -1694,61 +1737,23 @@ Remember that the $n$ is the number of tokens in the <b>Inference</b>-sequence, 
 
 This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. When the model is, for example, $d_{\\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage, their influence is already baked into that last vector.
 
-	<p style="margin-bottom: 10px; overflow: scroll;">Current $h_\\text{last} = [${h_last.map(v => v.toFixed(nr_fixed)).join(', ')}]$</p>
+    <p style="margin-bottom: 10px; overflow: scroll;">Current $h_\\text{last} = [${h_last.map(v => v.toFixed(nr_fixed)).join(', ')}]$</p>
 `;
 
-	const logits = vocabulary.map((word, i) => {
-		const w_row = W_vocab[i];
-
-		// Manual calculation string for LaTeX
-		let dotProductFormula = `\\text{logit}_{\\text{${word}}} = `;
-		let sum = 0;
-		let terms = [];
-
-		h_last.forEach((h_val, dim) => {
-			const product = h_val * w_row[dim];
-			sum += product;
-			terms.push(`(${h_val.toFixed(nr_fixed)} \\cdot ${w_row[dim].toFixed(nr_fixed)})`);
+		logits.forEach(({ word, val, w_row }) => {
+			let terms = [];
+			h_last.forEach((h_val, dim) => {
+				terms.push(`(${h_val.toFixed(nr_fixed)} \\cdot ${w_row[dim].toFixed(nr_fixed)})`);
+			});
+			calculationHtml += `<div style="margin-bottom: 10px; overflow: scroll;">
+	$$\\text{logit}_{\\text{${word}}} = ${terms.join(' + ')} = ${val.toFixed(nr_fixed)}$$
+    </div>`;
 		});
 
-		dotProductFormula += terms.join(' + ') + ` = ${sum.toFixed(nr_fixed)}`;
+		calculationHtml += `</div>`;
+		detailsDiv.innerHTML = calculationHtml;
+	}
 
-		calculationHtml += `<div style="margin-bottom: 10px; overflow: scroll;">
-	    $$${dotProductFormula}$$
-	</div>`;
-
-		return { word, val: sum, w_row };
-	});
-
-	calculationHtml += `</div>`;
-
-	// 3. Probabilities (Softmax)
-	const scaledLogits = logits.map(item => item.val / temperature);
-	const probs = softmax(scaledLogits);
-
-	const predictions = logits.map((item, i) => ({
-		word: item.word,
-		prob: probs[i],
-		logit: item.val
-	})).sort((a, b) => b.prob - a.prob);
-
-	// 4. Build Interface
-	let html = `<h3>2. Final Probabilities (Click to Generate)</h3>`;
-	html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 20px;">`;
-	predictions.forEach(p => {
-		const intensity = Math.min(1, p.prob * 5);
-		const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-		html += `<button class="predict-chip" onclick="select_suggested_word('${safeWord}')"
-	    style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
-	    <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
-	</button>`;
-	});
-	html += `</div>`;
-
-	// Combine both parts
-	container.innerHTML = calculationHtml + html;
-
-	// Trigger TeMML rendering for the math formulas
 	render_temml();
 }
 
