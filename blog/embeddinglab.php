@@ -370,7 +370,7 @@ Below, drag the **anisotropy slider** from isotropic (vectors spread uniformly) 
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
+    <div style="">
         <div id="plot-anisotropy-scatter" style="height: 450px; background: #fff; border-radius: 8px; width: 100%;"></div>
         <div id="plot-anisotropy-histogram" style="height: 450px; background: #fff; border-radius: 8px; width: 100%;"></div>
     </div>
