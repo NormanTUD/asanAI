@@ -2000,6 +2000,13 @@ function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
 	}
 
 	embeddingObserver.observe(container);
+
+	// ── FIX: If already in viewport, render immediately ──
+	if (isElementInViewport(container)) {
+		_execute_embedding_render(dimensions, highlightPos, steps);
+		const entry = embeddingRenderRegistry.get(containerId);
+		if (entry) entry.rendered = true;
+	}
 }
 
 // ── 3D Arrowhead geometry (extracted from _execute_embedding_render) ──
