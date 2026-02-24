@@ -192,13 +192,13 @@ function getTransformerConfig() {
  * @returns {number[][]} Final hidden states [seqLen × d_model]
  */
 function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers) {
-    if (n_layers === undefined) n_layers = weights.length;
-    let h = embedTokensWithPE(tokens, d_model);
-    for (let l = 0; l < n_layers; l++) {
-        const result = forwardOneLayer(h, weights[l], d_model, n_heads, tokens, null);
-        h = result.h_out;
-    }
-    return h;
+	if (n_layers === undefined) n_layers = weights.length;
+	let h = embedTokensWithPE(tokens, d_model);
+	for (let l = 0; l < n_layers; l++) {
+		const result = forwardOneLayer(h, weights[l], d_model, n_heads, tokens, null);
+		h = result.h_out;
+	}
+	return h;
 }
 
 /**
@@ -380,18 +380,18 @@ const transformerLabVisMigrationDataRegistry = new Map();
  * @returns {IntersectionObserver}
  */
 function createLazyRenderObserver(registry, renderFn, options = { threshold: 0 }) {
-    return new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const containerId = entry.target.id;
-                const data = registry.get(containerId);
-                if (data && !data.rendered) {
-                    renderFn(containerId, data);
-                    data.rendered = true;
-                }
-            }
-        });
-    }, options);
+	return new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				const containerId = entry.target.id;
+				const data = registry.get(containerId);
+				if (data && !data.rendered) {
+					renderFn(containerId, data);
+					data.rendered = true;
+				}
+			}
+		});
+	}, options);
 }
 
 const embeddingObserver = createLazyRenderObserver(embeddingRenderRegistry, (id, data) => {
@@ -4769,7 +4769,7 @@ function tled_syncTableFromSpace() {
 			const row = document.getElementById(`tled-row-${word}`);
 			if (row) row.remove();
 		}
-	});
+});
 
 	// Update all input values to match current embeddings
 	words.forEach(word => {
@@ -4794,27 +4794,27 @@ window.tlabVisualizationMode = 'train';
  * in all plots and visualizations. Does NOT affect any computation.
  */
 function setVisualizationMode(mode) {
-    window.tlabVisualizationMode = mode;
+	window.tlabVisualizationMode = mode;
 
-    // Update button styles
-    const trainBtn = document.getElementById('view-toggle-train');
-    const inferBtn = document.getElementById('view-toggle-inference');
-    if (trainBtn && inferBtn) {
-        if (mode === 'train') {
-            trainBtn.style.background = '#3b82f6';
-            trainBtn.style.color = 'white';
-            inferBtn.style.background = 'white';
-            inferBtn.style.color = '#3b82f6';
-        } else {
-            inferBtn.style.background = '#3b82f6';
-            inferBtn.style.color = 'white';
-            trainBtn.style.background = 'white';
-            trainBtn.style.color = '#3b82f6';
-        }
-    }
+	// Update button styles
+	const trainBtn = document.getElementById('view-toggle-train');
+	const inferBtn = document.getElementById('view-toggle-inference');
+	if (trainBtn && inferBtn) {
+		if (mode === 'train') {
+			trainBtn.style.background = '#3b82f6';
+			trainBtn.style.color = 'white';
+			inferBtn.style.background = 'white';
+			inferBtn.style.color = '#3b82f6';
+		} else {
+			inferBtn.style.background = '#3b82f6';
+			inferBtn.style.color = 'white';
+			trainBtn.style.background = 'white';
+			trainBtn.style.color = '#3b82f6';
+		}
+	}
 
-    // Re-run visualization with the new mode (no retraining)
-    run_transformer_demo();
+	// Re-run visualization with the new mode (no retraining)
+	run_transformer_demo();
 }
 
 async function loadTransformerModule () {
