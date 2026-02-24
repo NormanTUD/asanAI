@@ -21,6 +21,17 @@ window.tlab_trajectory_data = {
 };
 
 /**
+ * Element-wise addition of two matrices of the same shape.
+ * Used for residual connections throughout the transformer.
+ * @param {number[][]} A - First matrix  [rows × cols]
+ * @param {number[][]} B - Second matrix [rows × cols]
+ * @returns {number[][]} Result matrix A + B [rows × cols]
+ */
+function matAdd(A, B) {
+	return A.map((row, i) => row.map((val, j) => val + B[i][j]));
+}
+
+/**
  * Runs a complete inference forward pass without visualization:
  * embeds tokens with positional encoding, then passes through
  * all transformer layers, returning the final hidden states.
@@ -122,7 +133,7 @@ function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings
 	const projected = matMul(concat, Wo);
 
 	// 5. Residual connection (attention)
-	const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
+	const h_attn = matAdd(h_current, projected);
 
 	// 6. FFN block (includes Pre-LN, ReLU, residual)
 	const h_out = run_ffn_block(h_attn, layerWeights);
@@ -1218,7 +1229,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		const Wo_layer0 = weights[0]["attention"]["output"];
 		const projected = matMul(multiHeadOutput, Wo_layer0);
 		
-		const h1 = h0.map((row, i) => row.map((val, j) => val + projected[i][j]));
+		const h1 = matAdd(h0, projected);
 
 		render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
 
@@ -1774,52 +1785,52 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
  * NEW SIGNATURE: Added normH0 as second parameter.
  */
 function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
-    const normContainer = document.getElementById('transformer-h1-layernorm-viz');
-    const finalContainer = document.getElementById('transformer-h1-final-viz');
-    if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
+	const normContainer = document.getElementById('transformer-h1-layernorm-viz');
+	const finalContainer = document.getElementById('transformer-h1-final-viz');
+	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
 
-    // Project the Multi-Head Output using WO
-    const projectedMHA = multiHeadOutput.map(row =>
-        WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
-    );
+	// Project the Multi-Head Output using WO
+	const projectedMHA = multiHeadOutput.map(row =>
+		WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
+	);
 
-    // h1 = h0 + projected (Pre-LN: no normalization on the sublayer output)
-    const h1 = h0.map((row, i) => row.map((val, j) => val + projectedMHA[i][j]));
+	// h1 = h0 + projected (Pre-LN: no normalization on the sublayer output)
+	const h1 = matAdd(h0, projectedMHA);
 
-    // ── FIX: Display Pre-LN steps instead of Post-LN ──
-    normContainer.innerHTML = `
-        <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
+	// ── FIX: Display Pre-LN steps instead of Post-LN ──
+	normContainer.innerHTML = `
+	<p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
 
-        <div style="margin-bottom:15px;">
-            <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
-            $$ \\text{LayerNorm}(h_0) = \\underbrace{\\gamma}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
-            <div style="overflow-x:auto;">
-                $$ \\underbrace{${matrixToPmatrix(normH0)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h0)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+	<div style="margin-bottom:15px;">
+	    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
+	    $$ \\text{LayerNorm}(h_0) = \\underbrace{\\gamma}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
+	    <div style="overflow-x:auto;">
+		$$ \\underbrace{${matrixToPmatrix(normH0)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h0)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
 		<br>
-            </div>
-        </div>
+	    </div>
+	</div>
 
-        <div style="margin-bottom:15px;">
-            <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
-            $$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
-            <div style="overflow-x:auto;">
-                $$ \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrix(multiHeadOutput)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O} $$
-            </div>
-        </div>
+	<div style="margin-bottom:15px;">
+	    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
+	    $$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
+	    <div style="overflow-x:auto;">
+		$$ \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrix(multiHeadOutput)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O} $$
+	    </div>
+	</div>
     `;
 
-    finalContainer.innerHTML = `
+	finalContainer.innerHTML = `
     <div style="margin-bottom:10px;">
-        <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
-        $$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
+	<p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
+	$$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
     </div>
     <div style="overflow-x:auto;">
-        $$ \\underbrace{${matrixToPmatrix(h1)}}_{h_1} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_{\\text{proj}}} $$
+	$$ \\underbrace{${matrixToPmatrix(h1)}}_{h_1} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_{\\text{proj}}} $$
     </div>
     `;
 
-    render_temml();
-    return h1;
+	render_temml();
+	return h1;
 }
 
 /**
@@ -1868,9 +1879,7 @@ function get_h1(h0, multiHeadOutput, gamma, beta) {
 	const normMH = calculateLayerNorm(multiHeadOutput, gamma, beta);
 
 	// 2. Element-wise addition (Residual Connection)
-	const h1 = h0.map((row, i) =>
-		row.map((val, j) => val + normMH[i][j])
-	);
+	const h1 = matAdd(h0, normMH);
 
 	return h1;
 }
@@ -1945,7 +1954,7 @@ function run_ffn_block(h1, params = {}) {
 	const out_FFN = matMul(out_L1, W2, b2);
 
 	// Residual: h2 = h1 + FFN(normed_h1), no post-norm
-	const h2 = h1.map((row, i) => row.map((val, j) => val + out_FFN[i][j]));
+	const h2 = matAdd(h1, out_FFN);
 
 	render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2);
 
