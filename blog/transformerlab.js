@@ -1719,61 +1719,57 @@ window.select_suggested_word = (word) => {
 	run_transformer_demo('transformer-master-token-input');
 };
 
-function render_final_projection(h_final, vocabulary, d_model, temperature) {
-	const container = document.getElementById('transformer-output-projection');
-	if (!container) return;
+/**
+ * Computes logits and sorted predictions from the final hidden state.
+ * Pure computation — no DOM access.
+ */
+function computeFinalPredictions(h_last, vocabulary, d_model, temperature) {
+    const W_vocab = vocabulary.map(word =>
+        window.persistentEmbeddingSpace[word] || new Array(d_model).fill(0)
+    );
 
-	const lastIdx = h_final.length - 1;
-	const h_last = h_final[lastIdx];
+    const logits = vocabulary.map((word, i) => {
+        const w_row = W_vocab[i];
+        let sum = 0;
+        h_last.forEach((h_val, dim) => { sum += h_val * w_row[dim]; });
+        return { word, val: sum, w_row };
+    });
 
-	const W_vocab = vocabulary.map(word => window.persistentEmbeddingSpace[word] || new Array(d_model).fill(0));
+    const scaledLogits = logits.map(item => item.val / temperature);
+    const probs = softmax(scaledLogits);
 
-	// ── Calculate logits ──
-	const logits = vocabulary.map((word, i) => {
-		const w_row = W_vocab[i];
-		let sum = 0;
-		h_last.forEach((h_val, dim) => { sum += h_val * w_row[dim]; });
-		return { word, val: sum, w_row };
-	});
+    const predictions = logits.map((item, i) => ({
+        word: item.word, prob: probs[i], logit: item.val
+    })).sort((a, b) => b.prob - a.prob);
 
-	const scaledLogits = logits.map(item => item.val / temperature);
-	const probs = softmax(scaledLogits);
-	const predictions = logits.map((item, i) => ({
-		word: item.word, prob: probs[i], logit: item.val
-	})).sort((a, b) => b.prob - a.prob);
+    return { logits, predictions };
+}
 
-	// ── Ensure stable sub-containers exist (created once, reused) ──
-	let chipsDiv = document.getElementById('tlab-final-chips');
-	let detailsDiv = document.getElementById('tlab-final-details');
+/**
+ * Builds the clickable prediction chip HTML.
+ */
+function buildPredictionChipsHtml(predictions) {
+    let html = `<h3>2. Final Probabilities (Click to Generate)</h3>`;
+    html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">`;
 
-	if (!chipsDiv || !detailsDiv) {
-		container.innerHTML = `
-	    <div id="tlab-final-chips" style="position: sticky; top: 0; z-index: 10; background: #fff; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;"></div>
-	    <div id="tlab-final-details"></div>
-	`;
-		chipsDiv = document.getElementById('tlab-final-chips');
-		detailsDiv = document.getElementById('tlab-final-details');
-	}
+    predictions.forEach(p => {
+        const intensity = Math.min(1, p.prob * 5);
+        const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        html += `<button class="predict-chip" onclick="select_suggested_word('${safeWord}')"
+            style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
+            <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
+        </button>`;
+    });
 
-	// ── 1. Update prediction chips (always visible, never pushed down) ──
-	let chipsHtml = `<h3>2. Final Probabilities (Click to Generate)</h3>`;
-	chipsHtml += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">`;
-	predictions.forEach(p => {
-		const intensity = Math.min(1, p.prob * 5);
-		const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-		chipsHtml += `<button class="predict-chip" onclick="select_suggested_word('${safeWord}')"
-	    style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
-	    <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
-	</button>`;
-	});
-	chipsHtml += `</div>`;
-	chipsDiv.innerHTML = chipsHtml;
+    html += `</div>`;
+    return html;
+}
 
-	// ── 2. Update logit details (with ALL original explanatory text) ──
-	//    Only update if NOT training, or if the section is in the viewport.
-	//    This prevents layout shifts that cause scroll jumps during training.
-	if (!window.isTraining || isElementInViewport(detailsDiv)) {
-		let calculationHtml = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+/**
+ * Builds the step-by-step logit calculation LaTeX HTML.
+ */
+function buildLogitDetailsHtml(h_last, logits) {
+    let html = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
     <strong>Step-by-Step Logit Calculation</strong>
     <p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_\\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure</p>
 
@@ -1800,21 +1796,63 @@ This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Whe
     <p style="margin-bottom: 10px; overflow: scroll;">Current $h_\\text{last} = [${h_last.map(v => v.toFixed(nr_fixed)).join(', ')}]$</p>
 `;
 
-		logits.forEach(({ word, val, w_row }) => {
-			let terms = [];
-			h_last.forEach((h_val, dim) => {
-				terms.push(`(${h_val.toFixed(nr_fixed)} \\cdot ${w_row[dim].toFixed(nr_fixed)})`);
-			});
-			calculationHtml += `<div style="margin-bottom: 10px; overflow: scroll;">
-	$$\\text{logit}_{\\text{${word}}} = ${terms.join(' + ')} = ${val.toFixed(nr_fixed)}$$
-    </div>`;
-		});
+    logits.forEach(({ word, val, w_row }) => {
+        const terms = h_last.map((h_val, dim) =>
+            `(${h_val.toFixed(nr_fixed)} \\cdot ${w_row[dim].toFixed(nr_fixed)})`
+        );
+        html += `<div style="margin-bottom: 10px; overflow: scroll;">
+    $$\\text{logit}_{\\text{${word}}} = ${terms.join(' + ')} = ${val.toFixed(nr_fixed)}$$
+        </div>`;
+    });
 
-		calculationHtml += `</div>`;
-		detailsDiv.innerHTML = calculationHtml;
-	}
+    html += `</div>`;
+    return html;
+}
 
-	render_temml();
+/**
+ * Ensures the stable sub-containers exist inside the projection container.
+ * Returns { chipsDiv, detailsDiv }.
+ */
+function ensureProjectionSubContainers(container) {
+    let chipsDiv = document.getElementById('tlab-final-chips');
+    let detailsDiv = document.getElementById('tlab-final-details');
+
+    if (!chipsDiv || !detailsDiv) {
+        container.innerHTML = `
+            <div id="tlab-final-chips" style="position: sticky; top: 0; z-index: 10; background: #fff; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;"></div>
+            <div id="tlab-final-details"></div>
+        `;
+        chipsDiv = document.getElementById('tlab-final-chips');
+        detailsDiv = document.getElementById('tlab-final-details');
+    }
+
+    return { chipsDiv, detailsDiv };
+}
+
+/**
+ * Renders the final output projection — now a clean orchestrator.
+ */
+function render_final_projection(h_final, vocabulary, d_model, temperature) {
+    const container = document.getElementById('transformer-output-projection');
+    if (!container) return;
+
+    const h_last = h_final[h_final.length - 1];
+
+    // 1. Pure computation
+    const { logits, predictions } = computeFinalPredictions(h_last, vocabulary, d_model, temperature);
+
+    // 2. Ensure DOM structure
+    const { chipsDiv, detailsDiv } = ensureProjectionSubContainers(container);
+
+    // 3. Always update chips
+    chipsDiv.innerHTML = buildPredictionChipsHtml(predictions);
+
+    // 4. Conditionally update details (avoid layout shifts during training)
+    if (!window.isTraining || isElementInViewport(detailsDiv)) {
+        detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
+    }
+
+    render_temml();
 }
 
 window.appendToken = (token) => {
