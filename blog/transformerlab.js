@@ -1094,81 +1094,83 @@ async function syncTrainingState(weightVars) {
 }
 
 /**
- * Creates and shows a fixed progress bar at the bottom of the screen.
+ * Creates the progress bar label element.
+ */
+function createProgressLabel() {
+    const span = document.createElement('span');
+    span.id = 'training-progress-label';
+    span.style.cssText = 'white-space: nowrap; min-width: 180px;';
+    span.textContent = 'Starting training...';
+    return span;
+}
+
+/**
+ * Creates the progress bar track with fill and percentage overlay.
+ */
+function createProgressTrack() {
+    const track = document.createElement('div');
+    track.style.cssText = 'flex-grow: 1; background: #334155; border-radius: 6px; height: 18px; overflow: hidden; position: relative;';
+
+    const fill = document.createElement('div');
+    fill.id = 'training-progress-fill';
+    fill.style.cssText = 'width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #10b981); border-radius: 6px; transition: width 0.15s ease;';
+
+    const percent = document.createElement('span');
+    percent.id = 'training-progress-percent';
+    percent.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); pointer-events: none;';
+    percent.textContent = '0%';
+
+    track.appendChild(fill);
+    track.appendChild(percent);
+    return track;
+}
+
+/**
+ * Creates the loss display label.
+ */
+function createLossLabel() {
+    const span = document.createElement('span');
+    span.id = 'training-progress-loss';
+    span.style.cssText = 'white-space: nowrap; min-width: 120px; text-align: right; color: #94a3b8;';
+    span.textContent = 'Loss: —';
+    return span;
+}
+
+/**
+ * Creates the stop training button.
+ */
+function createStopButton() {
+    const btn = document.createElement('button');
+    btn.textContent = '⏹ Stop';
+    btn.style.cssText = 'background: #ef4444; color: white; border: none; margin-right: 50px; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.82rem; white-space: nowrap; transition: background 0.15s;';
+    btn.addEventListener('click', () => { window.isTraining = false; });
+    btn.addEventListener('mouseover', () => { btn.style.background = '#dc2626'; });
+    btn.addEventListener('mouseout', () => { btn.style.background = '#ef4444'; });
+    return btn;
+}
+
+/**
+ * Refactored: assembles the progress bar from smaller components.
  */
 function showTrainingProgressBar() {
-	// Remove any existing one first
-	hideTrainingProgressBar();
+    hideTrainingProgressBar();
 
-	const bar = document.createElement('div');
-	bar.id = 'training-progress-bar-container';
-	bar.style.cssText = `
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		width: 100%;
-		background: #1e293b;
-		color: #f8fafc;
-		padding: 10px 20px;
-		display: flex;
-		align-items: center;
-		gap: 15px;
-		z-index: 99999;
-		font-family: 'Inter', sans-serif;
-		font-size: 0.85rem;
-		box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
-		transition: opacity 0.3s ease;
-	`;
+    const bar = document.createElement('div');
+    bar.id = 'training-progress-bar-container';
+    bar.style.cssText = `
+        position: fixed; bottom: 0; left: 0; width: 100%;
+        background: #1e293b; color: #f8fafc; padding: 10px 20px;
+        display: flex; align-items: center; gap: 15px; z-index: 99999;
+        font-family: 'Inter', sans-serif; font-size: 0.85rem;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.3); transition: opacity 0.3s ease;
+    `;
 
-	bar.innerHTML = `
-		<span id="training-progress-label" style="white-space: nowrap; min-width: 180px;">
-			Starting training...
-		</span>
-		<div style="flex-grow: 1; background: #334155; border-radius: 6px; height: 18px; overflow: hidden; position: relative;">
-			<div id="training-progress-fill" style="
-				width: 0%;
-				height: 100%;
-				background: linear-gradient(90deg, #3b82f6, #10b981);
-				border-radius: 6px;
-				transition: width 0.15s ease;
-			"></div>
-			<span id="training-progress-percent" style="
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				font-size: 0.75rem;
-				font-weight: 600;
-				color: #fff;
-				text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-				pointer-events: none;
-			">0%</span>
-		</div>
-		<span id="training-progress-loss" style="white-space: nowrap; min-width: 120px; text-align: right; color: #94a3b8;">
-			Loss: —
-		</span>
-		<button onclick="window.isTraining = false;" style="
-			background: #ef4444;
-			color: white;
-			border: none;
-			margin-right: 50px;
-			padding: 6px 16px;
-			border-radius: 6px;
-			cursor: pointer;
-			font-weight: 600;
-			font-size: 0.82rem;
-			white-space: nowrap;
-			transition: background 0.15s;
-		" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">
-			⏹ Stop
-		</button>
-	`;
+    bar.appendChild(createProgressLabel());
+    bar.appendChild(createProgressTrack());
+    bar.appendChild(createLossLabel());
+    bar.appendChild(createStopButton());
 
-	document.body.appendChild(bar);
+    document.body.appendChild(bar);
 }
 
 /**
@@ -2353,47 +2355,61 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 }
 
 // Updated Tokenizer to allow different containers
+/**
+ * Tokenizes text based on the selected tokenizer type.
+ * Pure computation — no DOM access.
+ */
+function tokenizeText(text, type) {
+    if (type === 'bpe') {
+        const words = text.match(/\S+|\s+/g) || [];
+        return words.flatMap(word => {
+            if (word.length > 4) {
+                return word.match(/.{1,3}/g);
+            }
+            return word;
+        });
+    }
+    return text.match(/[\w]+|[^\w\s]/g) || [];
+}
+
+/**
+ * Generates a stable hash-based hue for a token string.
+ */
+function getTokenHue(token) {
+    const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+    return Math.abs(hash) % 360;
+}
+
+/**
+ * Renders token chips into a container element.
+ */
+function renderTokenChips(container, tokens) {
+    if (!container) return;
+
+    container.innerHTML = tokens.map(t => {
+        const hue = getTokenHue(t);
+        const id = Math.abs(t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0)) % 1000;
+        return `
+        <div style="background: hsl(${hue}, 65%, 40%); color: white; padding: 5px 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center;">
+            ${t}
+            <span style="font-size: 0.6rem; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; text-align: center;">ID: ${id}</span>
+        </div>`;
+    }).join('');
+}
+
+/**
+ * Refactored: tokenizes and optionally renders.
+ */
 function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") {
-	const container = document.getElementById(containerId);
+    const typeElement = document.getElementById('transformer-tokenizer-type');
+    const type = typeElement ? typeElement.value : 'regex';
 
-	const typeElement = document.getElementById('transformer-tokenizer-type');
-	const type = typeElement ? typeElement.value : 'regex';
+    const tokens = tokenizeText(text, type);
 
-	let tokens = [];
-	const cleanText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,""); // `
-	const words = cleanText.split(/\s+/);
+    const container = document.getElementById(containerId);
+    renderTokenChips(container, tokens);
 
-	if (type === 'bpe') {
-		// Character-level / Subword Split:
-		// We split by words first, then break long words into chunks to simulate BPE behavior
-		const words = text.match(/\S+|\s+/g) || [];
-		tokens = words.flatMap(word => {
-			if (word.length > 4) {
-				// Split long words into chunks of 3 for demonstration
-				return word.match(/.{1,3}/g);
-			}
-			return word;
-		});
-	} else {
-		// Standard Regex Word Split:
-		// Matches sequences of alphanumeric characters or single non-alphanumeric characters
-		tokens = text.match(/[\w]+|[^\w\s]/g) || [];
-	}
-
-	if (container) {
-		container.innerHTML = tokens.map(t => {
-			const hash = t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-			const hue = Math.abs(hash) % 360;
-			return `
-	<div style="background: hsl(${hue}, 65%, 40%); color: white; padding: 5px 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center;">
-	${t}
-	<span style="font-size: 0.6rem; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; text-align: center;">ID: ${Math.abs(hash) % 1000}</span>
-	</div>
-	`;
-		}).join('');
-	}
-
-	return tokens;
+    return tokens;
 }
 
 /**
@@ -2922,110 +2938,132 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 	tlab_render_weight_grid(id, layerNum - 1);
 }
 
+/**
+ * Builds a single token's migration traces (line + arrowhead).
+ */
+function buildMigrationTokenTrace(token, i, start_h, end_h, d_model, is3D, tokens) {
+    const posColor = getPositionColor(i, tokens.length);
+    const sourceWord = tlab_get_top_word_only(start_h[i]);
+    const destWord = tlab_get_top_word_only(end_h[i]);
+    const hoverLabel = `From '${sourceWord}' to '${destWord}', position ${i + 1}`;
+
+    const x = [start_h[i][0], end_h[i][0]];
+    const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
+
+    if (is3D) {
+        return buildMigration3DTraces(x, y, start_h[i], end_h[i], posColor, hoverLabel);
+    } else {
+        return buildMigration2DTraces(x, y, posColor, hoverLabel);
+    }
+}
+
+function buildMigration3DTraces(x, y, startVec, endVec, posColor, hoverLabel) {
+    const z = [startVec[2], endVec[2]];
+    return [
+        {
+            type: 'scatter3d',
+            x, y, z,
+            mode: 'lines',
+            line: { width: 4, color: posColor },
+            showlegend: false,
+            hovertemplate: `${hoverLabel}<extra></extra>`
+        },
+        {
+            type: 'cone',
+            x: [x[1]], y: [y[1]], z: [z[1]],
+            u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
+            sizemode: 'absolute',
+            sizeref: 0.15,
+            anchor: 'tip',
+            colorscale: [[0, posColor], [1, posColor]],
+            showscale: false,
+            hoverinfo: 'skip',
+            showlegend: false
+        }
+    ];
+}
+
+function buildMigration2DTraces(x, y, posColor, hoverLabel) {
+    return [
+        {
+            type: 'scatter',
+            x, y,
+            mode: 'lines+markers',
+            line: { width: 2, color: posColor },
+            marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: posColor },
+            showlegend: false,
+            hovertemplate: `${hoverLabel}<extra></extra>`
+        }
+    ];
+}
+
+/**
+ * Builds the invisible colorbar reference trace.
+ */
+function buildMigrationColorbarTrace(is3D, tokens) {
+    const trace = {
+        type: is3D ? 'scatter3d' : 'scatter',
+        x: [null], y: [null],
+        mode: 'markers',
+        showlegend: false,
+        marker: {
+            colorscale: [[0, 'rgb(59, 130, 246)'], [1, 'rgb(16, 185, 129)']],
+            cmin: 1,
+            cmax: tokens.length,
+            color: [1, tokens.length],
+            showscale: true,
+            colorbar: { title: 'Position', thickness: 15, len: 0.7 }
+        },
+        hoverinfo: 'none'
+    };
+    if (is3D) trace.z = [null];
+    return trace;
+}
+
+/**
+ * Builds the Plotly layout for migration plots.
+ */
+function buildMigrationLayout(layerNum, is3D) {
+    const commonLayout = {
+        title: `Layer ${layerNum}: Feature Migration`,
+        autosize: true,
+        hovermode: 'closest',
+        margin: { t: 50, b: 20, l: 20, r: 80 }
+    };
+
+    if (is3D) {
+        return {
+            ...commonLayout,
+            scene: {
+                xaxis: { title: 'Dim 0' },
+                yaxis: { title: 'Dim 1' },
+                zaxis: { title: 'Dim 2' }
+            }
+        };
+    }
+    return {
+        ...commonLayout,
+        xaxis: { title: 'Dim 0' },
+        yaxis: { title: 'Dim 1' }
+    };
+}
+
+/**
+ * Refactored: now a clean orchestrator.
+ */
 function tlab_render_plotly_react(id, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex) {
-	const traces = [];
-	const is3D = d_model === 3;
+    const is3D = d_model === 3;
+    const traces = [];
 
-	tokens.forEach((token, i) => {
-		const posColor = getPositionColor(i, tokens.length);
+    tokens.forEach((token, i) => {
+        traces.push(...buildMigrationTokenTrace(token, i, start_h, end_h, d_model, is3D, tokens));
+    });
 
-		const sourceWord = tlab_get_top_word_only(start_h[i]);
-		const destWord = tlab_get_top_word_only(end_h[i]);
-		const hoverLabel = `From '${sourceWord}' to '${destWord}', position ${i + 1}`;
+    traces.push(buildMigrationColorbarTrace(is3D, tokens));
 
-		const x = [start_h[i][0], end_h[i][0]];
-		const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
+    const layout = buildMigrationLayout(layerNum, is3D);
 
-		if (is3D) {
-			const z = [start_h[i][2], end_h[i][2]];
-			// 3D Line
-			traces.push({
-				type: 'scatter3d',
-				x: x,
-				y: y,
-				z: z,
-				mode: 'lines',
-				line: { width: 4, color: posColor },
-				showlegend: false,
-				hovertemplate: `${hoverLabel}<extra></extra>`
-			});
-			// 3D Cone
-			traces.push({
-				type: 'cone',
-				x: [x[1]],
-				y: [y[1]],
-				z: [z[1]],
-				u: [x[1] - x[0]],
-				v: [y[1] - y[0]],
-				w: [z[1] - z[0]],
-				sizemode: 'absolute',
-				sizeref: 0.15,
-				anchor: 'tip',
-				colorscale: [[0, posColor], [1, posColor]],
-				showscale: false,
-				hoverinfo: 'skip',
-				showlegend: false
-			});
-		} else {
-			// 2D Line and Arrow
-			traces.push({
-				type: 'scatter',
-				x: x,
-				y: y,
-				mode: 'lines+markers',
-				line: { width: 2, color: posColor },
-				marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: posColor },
-				showlegend: false,
-				hovertemplate: `${hoverLabel}<extra></extra>`
-			});
-		}
-	});
-
-	// Colorbar Trace - dimensionality must match exactly to avoid "b is undefined"
-	const colorbarTrace = {
-		type: is3D ? 'scatter3d' : 'scatter',
-		x: [null],
-		y: [null],
-		mode: 'markers',
-		showlegend: false,
-		marker: {
-			colorscale: [[0, 'rgb(59, 130, 246)'], [1, 'rgb(16, 185, 129)']],
-			cmin: 1,
-			cmax: tokens.length,
-			color: [1, tokens.length],
-			showscale: true,
-			colorbar: { title: 'Position', thickness: 15, len: 0.7 }
-		},
-		hoverinfo: 'none'
-	};
-	if (is3D) colorbarTrace.z = [null];
-	traces.push(colorbarTrace);
-
-	// Separate Layouts to prevent 3D properties from breaking 2D rendering
-	const commonLayout = {
-		title: `Layer ${layerNum}: Feature Migration`,
-		autosize: true,
-		hovermode: 'closest',
-		margin: { t: 50, b: 20, l: 20, r: 80 }
-	};
-
-	const layout = is3D
-		? {
-			...commonLayout,
-			scene: {
-				xaxis: { title: 'Dim 0' },
-				yaxis: { title: 'Dim 1' },
-				zaxis: { title: 'Dim 2' }
-			}
-		}
-		: {
-			...commonLayout,
-			xaxis: { title: 'Dim 0' },
-			yaxis: { title: 'Dim 1' }
-		};
-
-	// Use Plotly.react for smoother updates
-	Plotly.react(id, traces, layout, { responsive: true });
+    Plotly.react(id, traces, layout, { responsive: true });
 }
 
 // ─── Helper: Snapshot embedding space and build vocabulary lookup ───
@@ -3538,37 +3576,44 @@ function tlab_render_trajectory_plot(d_model) {
 	}
 }
 
-function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model) {
-    const toPMatrixColored = (matrix) => {
-        if (!Array.isArray(matrix) || !matrix.length) return '';
-        const rows = matrix.map((row, tIdx) => {
-            const colorCmd = getPositionColor(tIdx, matrix.length, 'temml');
-            return row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
-        }).join(' \\\\ ');
-        return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
-    };
+/**
+ * Builds a colored pmatrix LaTeX string from a numeric matrix.
+ */
+function toColoredPMatrix(matrix) {
+    if (!Array.isArray(matrix) || !matrix.length) return '';
+    const rows = matrix.map((row, tIdx) => {
+        const colorCmd = getPositionColor(tIdx, matrix.length, 'temml');
+        return row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
+    }).join(' \\\\ ');
+    return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
+}
 
-    const vocabRows = tokens.map((_, tIdx) => {
+/**
+ * Builds the vocabulary probability transition rows for the LaTeX display.
+ */
+function buildVocabTransitionRows(tokens, start_h, end_h, d_model) {
+    return tokens.map((_, tIdx) => {
         const fromList = tlab_get_top_vocab_list(start_h[tIdx], d_model);
         const toList = tlab_get_top_vocab_list(end_h[tIdx], d_model);
-
         const colorCmd = getPositionColor(tIdx, tokens.length, 'temml');
 
         return fromList.map((fromItem, i) => {
-            const toItem = toList[i] || {word: '???', prob: 0};
+            const toItem = toList[i] || { word: '???', prob: 0 };
             const cleanFrom = fromItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
             const cleanTo = toItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
-
             const fromProb = Math.round(fromItem.prob * 100);
             const toProb = Math.round(toItem.prob * 100);
 
             return `${colorCmd} \\text{${cleanFrom} } (${fromProb}\\%) \\rightarrow \\text{${cleanTo}} (${toProb}\\%)`;
         }).join(' & ');
     }).join(' \\\\ ');
+}
 
-    const latexString = `$$h_\\text{after} = ${toPMatrixColored(h_after)}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
-
-    // ── REUSE existing div — only create if it doesn't exist ──
+/**
+ * Ensures the LaTeX debug div exists in the DOM, creating it if needed.
+ * @returns {HTMLElement}
+ */
+function ensureLatexDebugDiv(id, plotDiv) {
     let latexDiv = document.getElementById(id + '-latex-debug');
     if (!latexDiv) {
         latexDiv = document.createElement('div');
@@ -3576,7 +3621,7 @@ function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, 
         latexDiv.style.marginTop = '20px';
         latexDiv.style.overflowX = 'auto';
         latexDiv.style.fontSize = '0.8rem';
-        // Insert after the weight grid if it exists, otherwise after plotDiv
+
         const weightGrid = plotDiv.nextElementSibling;
         if (weightGrid && weightGrid.classList.contains('weight-grid-viz')) {
             weightGrid.parentNode.insertBefore(latexDiv, weightGrid.nextSibling);
@@ -3584,8 +3629,17 @@ function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, 
             plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
         }
     }
+    return latexDiv;
+}
 
-    // Update content in place (no DOM destruction)
+/**
+ * Refactored: now a clean orchestrator.
+ */
+function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model) {
+    const vocabRows = buildVocabTransitionRows(tokens, start_h, end_h, d_model);
+    const latexString = `$$h_\\text{after} = ${toColoredPMatrix(h_after)}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+
+    const latexDiv = ensureLatexDebugDiv(id, plotDiv);
     latexDiv.innerHTML = latexString;
     render_temml();
 }
