@@ -1570,7 +1570,7 @@ This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Whe
 	predictions.forEach(p => {
 		const intensity = Math.min(1, p.prob * 5);
 		const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-		html += `<button class="predict-chip" onclick="select_suggested_word('${p.word}')"
+		html += `<button class="predict-chip" onclick="select_suggested_word('${safeWord}')"
 	    style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
 	    <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
 	</button>`;
