@@ -613,7 +613,7 @@ window.isTraining = false;
 async function train_transformer() {
 	const { d_model, n_layers } = getTransformerConfig();
 
-	const btn = event.target;
+	const btn = document.querySelector('.train-btn');
 	const status = document.getElementById('training-status');
 
 	const trainingData = document.getElementById('transformer-training-data').value;
