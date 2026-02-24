@@ -1971,12 +1971,6 @@ function run_ffn_block(h1, params = {}) {
 	return h2;
 }
 
-/**
- * Erzeugt LaTeX-Output für Matrizen ohne Limitierungen.
- */
-/**
- * Goal: Show FFN LayerNorm parameters
- */
 function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta) {
 	document.getElementById('ffn-step-1').innerHTML = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
