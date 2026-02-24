@@ -4280,7 +4280,7 @@ function applyMultiplicativeOp(left, right, op) {
 			left.val = left.val.map((v, i) => v * (right.isScalar ? right.val[0] : right.val[i]));
 		}
 	} else {
-		left.val = left.val.map(v => v / (right.isScalar ? right.val[0] : (right.val[0] || 1)));
+		left.val = left.val.map((v, i) => v / (right.isScalar ? right.val[0] : (right.val[i] || 1)));
 	}
 
 	left.tex   = `${left.tex} ${opTex} ${right.tex}`;
