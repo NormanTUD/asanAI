@@ -1,5 +1,6 @@
 "use strict";
 
+const widthEmbeddingInit = 5;
 const replot_every_n_epochs = 50;
 const nr_fixed = 4;
 const posEmbedScalar = 1;
@@ -361,7 +362,7 @@ function get_or_init_embeddings(tokens, d_model) {
 	tokens.forEach(token => {
 		if (!space[token]) {
 			space[token] = Array.from({ length: d_model }, () =>
-				parseFloat(gaussianRandom(-5, 5).toFixed(nr_fixed))
+				parseFloat(gaussianRandom(-widthEmbeddingInit, widthEmbeddingInit).toFixed(nr_fixed))
 			);
 		}
 	});
@@ -1170,7 +1171,9 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
 
 	if (d_model % n_heads !== 0) {
-		console.warn(`Incompatible Dimensions: d_model (${d_model}) must be divisible by n_heads (${n_heads}).`);
+		const container = document.getElementById('transformer-output-projection');
+		if (container) container.innerHTML = `<div style="color:red; padding:20px;">Error: d_model (${d_model}) must be divisible by n_heads (${n_heads}).</div>`;
+		return;
 	}
 
 	const needsReinit = !window.currentWeights ||
@@ -1397,6 +1400,7 @@ This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Whe
 	html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 20px;">`;
 	predictions.forEach(p => {
 		const intensity = Math.min(1, p.prob * 5);
+		const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 		html += `<button class="predict-chip" onclick="select_suggested_word('${p.word}')"
 	    style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
 	    <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
@@ -1877,23 +1881,6 @@ function calculateLayerNorm(matrix, gamma, beta) {
 	});
 }
 
-/**
- * Goal: Calculate h1 = h0 + LayerNorm(MultiHead(h0))
- * Note: This implements the "Post-LN" architecture.
- */
-function get_h1(h0, multiHeadOutput, gamma, beta) {
-	// 1. Apply LayerNorm to the Multi-Head output
-	const normMH = calculateLayerNorm(multiHeadOutput, gamma, beta);
-
-	// 2. Element-wise addition (Residual Connection)
-	const h1 = matAdd(h0, normMH);
-
-	return h1;
-}
-
-/**
- * Validiert die Form der übergebenen Matrizen/Vektoren
- */
 function validateShape(name, data, expectedRows, expectedCols) {
 	if (!data) return false;
 	const actualRows = data.length;
@@ -1916,15 +1903,6 @@ function assertShape(name, value, expected_rows, expected_cols) {
         }
 }
 
-/**
- * FFN Block mit optionalen Gewichten und Biases
- * @param {Array} h1 - Input Hidden State
- * @param {Object} params - {W1, b1, W2, b2} (optional)
- */
-/**
- * Goal: Execute FFN with concrete Gamma/Beta for visualization
- * Origin: Vaswani et al. (2017)
- */
 function run_ffn_block(h1, params = {}) {
 	const d_model = h1[0].length;
 	const d_ff = d_model * 4;
@@ -3621,7 +3599,7 @@ function tled_addToken() {
 	const d_model = space[existingWords[0]].length;
 
 	space[tokenName] = Array.from({ length: d_model }, () =>
-		parseFloat(gaussianRandom().toFixed(4))
+		parseFloat(gaussianRandom(-widthEmbeddingInit, widthEmbeddingInit).toFixed(4))
 	);
 
 	// Update the table by appending a new row
