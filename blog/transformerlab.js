@@ -32,6 +32,23 @@ function matAdd(A, B) {
 }
 
 /**
+ * Reads all transformer hyperparameter values from the DOM sliders.
+ * Centralizes the repeated getElementById + parseInt/parseFloat pattern
+ * from run_and_visualize_network, train_transformer, tlab_get_top_vocab_list,
+ * and the training-loop forward-pass display.
+ *
+ * @returns {{ d_model: number, n_heads: number, n_layers: number, temperature: number }}
+ */
+function getTransformerConfig() {
+	return {
+		d_model:     parseInt(document.getElementById('transformer-dimension-model')?.value)  || 3,
+		n_heads:     parseInt(document.getElementById('transformer-heads')?.value)             || 1,
+		n_layers:    parseInt(document.getElementById('transformer-depth')?.value)             || 1,
+		temperature: parseFloat(document.getElementById('transformer-temperature')?.value)     || 1.0,
+	};
+}
+
+/**
  * Runs a complete inference forward pass without visualization:
  * embeds tokens with positional encoding, then passes through
  * all transformer layers, returning the final hidden states.
@@ -594,6 +611,8 @@ function get_init_weights(n_layers, d_model) {
 window.isTraining = false;
 
 async function train_transformer() {
+	const { d_model, n_layers } = getTransformerConfig();
+
 	const btn = event.target;
 	const status = document.getElementById('training-status');
 
@@ -625,8 +644,6 @@ async function train_transformer() {
 	const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
 	const epochs = parseInt(document.getElementById('train-epochs').value) || 500;
 	const optType = document.getElementById('train-optimizer').value;
-	const d_model = parseInt(document.getElementById('transformer-dimension-model').value);
-	const n_layers = parseInt(document.getElementById('transformer-depth').value);
 
 	let optimizer = optType === 'adam' ? tf.train.adam(lr) :
 		optType === 'rmsprop' ? tf.train.rmsprop(lr) : tf.train.sgd(lr);
@@ -721,7 +738,7 @@ async function train_transformer() {
 					// Run a quick forward pass for this window to get predictions
 					const predictions = [];
 					try {
-						const n_heads_local = parseInt(document.getElementById('transformer-heads').value);
+						const { n_heads: n_heads_local } = getTransformerConfig();
 						let h = runSimpleForwardPass(w.input, window.currentWeights, d_model, n_heads_local, n_layers);
 
 						// Project each position to vocabulary (logits)
@@ -1149,14 +1166,7 @@ function renderLossGraph() {
 }
 
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
-	const dimSlider = document.getElementById('transformer-dimension-model');
-	const d_model = parseInt(dimSlider.value);
-	const headSlider = document.getElementById('transformer-heads');
-	const n_heads = parseInt(headSlider.value);
-	const tempSlider = document.getElementById('transformer-temperature');
-	const temperature = parseFloat(tempSlider.value);
-	const depthSlider = document.getElementById('transformer-depth');
-	const n_layers = parseInt(depthSlider.value);
+	const { d_model, n_heads, temperature, n_layers } = getTransformerConfig();
 
 	const vocabulary = [...new Set(trainingTokens)];
 	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
@@ -2895,8 +2905,7 @@ function tlab_get_top_word_only(h_vec) {
 function tlab_get_top_vocab_list(h_vec, d_model) {
 	if (!window.persistentEmbeddingSpace) return [];
 	const vocabulary = Object.keys(window.persistentEmbeddingSpace);
-	const tempInput = document.getElementById('transformer-temperature');
-	const temperature = tempInput ? parseFloat(tempInput.value) : 1.0;
+	const { temperature } = getTransformerConfig();
 
 	let scores = vocabulary.map(word => {
 		const w_vec = window.persistentEmbeddingSpace[word];
