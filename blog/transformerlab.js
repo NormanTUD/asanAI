@@ -2361,7 +2361,7 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 		tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
 	}
 	tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model);
-	tlab_render_weight_grid(id, layerNum);
+	tlab_render_weight_grid(id, layerNum - 1);
 }
 
 function tlab_render_trajectory_plot(d_model) {
