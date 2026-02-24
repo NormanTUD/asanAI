@@ -24,6 +24,84 @@ window.tlab_trajectory_data = {
 };
 
 /**
+ * Pure-JS multi-head self-attention WITH causal mask.
+ * Matches the training path in calculate_tf_loss exactly:
+ *   - Q/K/V split into n_heads of dimension d_k = d_model / n_heads
+ *   - Scores scaled by √d_k
+ *   - Strict upper-triangle positions set to -1e9 before softmax
+ *
+ * @param {number[][]} normH    - Layer-normed hidden states [seqLen × d_model]
+ * @param {object}     weights  - { query, key, value } weight matrices [d_model × d_model]
+ * @param {number}     d_model
+ * @param {number}     n_heads
+ * @returns {object[]} headData - One entry per head, each with
+ *          { q, k, v, scores, weights, context }
+ */
+function causalMultiHeadAttention(normH, weights, d_model, n_heads) {
+	const seqLen = normH.length;
+	const d_k = d_model / n_heads;
+
+	// Full-width linear projections
+	const Q = matMul(normH, weights.query);   // [seqLen, d_model]
+	const K = matMul(normH, weights.key);
+	const V = matMul(normH, weights.value);
+
+	const headData = [];
+
+	for (let h = 0; h < n_heads; h++) {
+		const off = h * d_k;
+
+		// Slice this head's dimensions from the full projection
+		const qH = Q.map(row => row.slice(off, off + d_k));
+		const kH = K.map(row => row.slice(off, off + d_k));
+		const vH = V.map(row => row.slice(off, off + d_k));
+
+		// ── Scaled dot-product scores: (Q_h · K_h^T) / √d_k ──
+		const scores = Array.from({ length: seqLen }, (_, i) =>
+			Array.from({ length: seqLen }, (_, j) => {
+				let dot = 0;
+				for (let d = 0; d < d_k; d++) dot += qH[i][d] * kH[j][d];
+				return dot / Math.sqrt(d_k);
+			})
+		);
+
+		// ── CAUSAL MASK: token i cannot attend to any token j > i ──
+		// Mirrors training:  scores = tf.sub(scores, mask)
+		// where mask is upper-triangle × 1e9
+		for (let i = 0; i < seqLen; i++) {
+			for (let j = i + 1; j < seqLen; j++) {
+				scores[i][j] = -1e9;
+			}
+		}
+
+		// Softmax per query position (rows)
+		const attnWeights = scores.map(row => softmax(row));
+
+		// Context: weighted sum of value vectors
+		const context = Array.from({ length: seqLen }, (_, i) => {
+			const out = new Array(d_k).fill(0);
+			for (let j = 0; j < seqLen; j++) {
+				for (let d = 0; d < d_k; d++) {
+					out[d] += attnWeights[i][j] * vH[j][d];
+				}
+			}
+			return out;
+		});
+
+		headData.push({
+			q: qH,
+			k: kH,
+			v: vH,
+			scores: scores,
+			weights: attnWeights,
+			context: context
+		});
+	}
+
+	return headData;
+}
+
+/**
  * Element-wise addition of two matrices of the same shape.
  * Used for residual connections throughout the transformer.
  * @param {number[][]} A - First matrix  [rows × cols]
@@ -120,42 +198,72 @@ function matMul(matrix, weights, bias = null) {
 
 /**
  * Runs a single transformer layer forward pass (Pre-LN architecture).
- * Returns the output hidden state after attention + FFN + residuals.
  *
- * @param {number[][]} h_current  - Input hidden states [seqLen × d_model]
- * @param {object}     layerWeights - Weight object for this layer
- * @param {number}     d_model
- * @param {number}     n_heads
- * @param {string[]|null} tokenStrings - Human-readable token labels (for AttentionEngine)
+ * FIX: Attention is now computed inline via causalMultiHeadAttention(),
+ * which applies a causal mask matching the training path. Previously
+ * the entire computation was delegated to AttentionEngine, which used
+ * BIDIRECTIONAL attention (no mask) — a critical train/inference mismatch.
+ *
+ * AttentionEngine is still instantiated when containerId is provided so
+ * its rendering scaffolding is created, but the registry's headData is
+ * overwritten with the correctly-masked version.
+ *
+ * @param {number[][]}    h_current    - Input hidden states [seqLen × d_model]
+ * @param {object}        layerWeights - Weight object for this layer
+ * @param {number}        d_model
+ * @param {number}        n_heads
+ * @param {string[]|null} tokenStrings - Human-readable token labels (for visualization)
  * @param {string|null}   containerId  - AttentionEngine container ID (null = no viz)
- * @returns {{ h_out: number[][], headData: object[], concat: number[][] }}
+ * @returns {{ h_out, headData, concat, projected, normH, h_attn }}
  */
 function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings = null, containerId = null) {
 	// 1. Pre-LN before attention
 	const normH = calculateLayerNorm(h_current, layerWeights.gamma, layerWeights.beta);
 
-	// 2. Multi-head attention
-	const engine = new AttentionEngine({
+	// 2. FIX: Multi-head attention WITH causal mask (matches training)
+	const headData = causalMultiHeadAttention(
+		normH,
+		layerWeights.attention,
 		d_model,
-		n_heads,
-		containerId,
-		weights: layerWeights.attention
-	});
-	const headData = engine.forward(normH, tokenStrings || h_current, tokenStrings);
+		n_heads
+	);
 
-	// 3. Concatenate heads
+	// 3. Visualization: set up AttentionEngine for rendering, then override
+	//    the registry's headData with the correctly causal-masked version.
+	//    engine.forward() builds the DOM scaffolding and registers the
+	//    instance; we just swap in the right numbers afterwards.
+	if (containerId) {
+		const engine = new AttentionEngine({
+			d_model,
+			n_heads,
+			containerId,
+			weights: layerWeights.attention
+		});
+		// Let engine create its DOM structure + register in attentionRenderRegistry
+		engine.forward(normH, tokenStrings || h_current, tokenStrings);
+
+		// Override with correctly-masked headData so that
+		// executeActualRender() and the heatmaps show the causal pattern
+		const entry = attentionRenderRegistry.get(containerId);
+		if (entry) {
+			entry.headData = headData;
+			entry.rendered = false;   // force re-render with correct data
+		}
+	}
+
+	// 4. Concatenate heads → [seqLen, d_model]
 	const concat = h_current.map((_, tIdx) =>
 		[].concat(...headData.map(hd => hd.context[tIdx]))
 	);
 
-	// 4. Output projection
+	// 5. Output projection
 	const Wo = layerWeights.attention.output;
 	const projected = matMul(concat, Wo);
 
-	// 5. Residual connection (attention)
+	// 6. Residual connection (attention)
 	const h_attn = matAdd(h_current, projected);
 
-	// 6. FFN block (includes Pre-LN, ReLU, residual)
+	// 7. FFN block (includes Pre-LN, ReLU, residual)
 	const h_out = run_ffn_block(h_attn, layerWeights);
 
 	return { h_out, headData, concat, projected, normH, h_attn };
@@ -1264,19 +1372,43 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 		const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
 
+		// ──────────────────────────────────────────────────────────────
+		// FIX: Compute attention with causal mask (matches training).
+		// Previously this called engine.forward() which used BIDIRECTIONAL
+		// attention — no causal mask — causing a critical train/inference
+		// mismatch. Now we compute the correct causal headData first, then
+		// let AttentionEngine build its DOM scaffolding, and finally
+		// override the registry so visualizations show the masked pattern.
+		// ──────────────────────────────────────────────────────────────
+		const headData = causalMultiHeadAttention(
+			normH0,
+			weights[0]["attention"],
+			d_model,
+			n_heads
+		);
+
+		// Still create AttentionEngine for visualization scaffolding only
 		const engine = new AttentionEngine({
 			d_model: d_model,
 			n_heads: n_heads,
 			containerId: "mha-calculation-details",
 			weights: weights[0]["attention"]
 		});
+		// Let engine build its DOM structure + register in attentionRenderRegistry
+		engine.forward(normH0, tokensWithPositional, knownTokens);
 
-		const headData = engine.forward(normH0, tokensWithPositional, knownTokens);
+		// Override the registry with correctly causal-masked headData
+		const regEntry = attentionRenderRegistry.get("mha-calculation-details");
+		if (regEntry) {
+			regEntry.headData = headData;
+			regEntry.rendered = false;
+		}
+
 		const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
 
 		const Wo_layer0 = weights[0]["attention"]["output"];
 		const projected = matMul(multiHeadOutput, Wo_layer0);
-		
+
 		const h1 = matAdd(h0, projected);
 
 		render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
@@ -1303,7 +1435,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 				if (apvContainer) {
 					// Pull all layers from the registry that was populated during forward passes
 					const apvViz = AttentionPathVisualizer.fromRegistry(
-'mha-calculation-details',   // source: your existing AttentionEngine container
+						'mha-calculation-details',   // source: your existing AttentionEngine container
 						'attention-path-viz',         // target: the new viz container
 						{ mode: 'headview' }
 					);
