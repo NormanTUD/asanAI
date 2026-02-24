@@ -394,6 +394,11 @@ const headContentObserver = new IntersectionObserver((entries) => {
 	});
 }, { threshold: 0 });
 
+const positionalWavesRegistry = new Map();
+
+const positionalWavesObserver = createLazyRenderObserver(positionalWavesRegistry, (id, data) => {
+	_execute_positional_waves_render(data.d_model, data.tokens);
+});
 
 const vectorMathObserver = new IntersectionObserver((entries) => {
 	entries.forEach(entry => {
@@ -635,32 +640,56 @@ function calculate_positional_injection(tokens, d_model) {
 }
 
 function render_positional_waves(d_model, tokens) {
+	const containerId = 'transformer-pe-wave-plot';
+	const container = document.getElementById(containerId);
+	if (!container) return;
+
+	// Store latest data in registry, mark as needing render
+	positionalWavesRegistry.set(containerId, {
+		d_model: d_model,
+		tokens: tokens,
+		rendered: false
+	});
+
+	// Placeholder only on first call (don't clobber existing Plotly chart)
+	if (!container.innerHTML) {
+		container.innerHTML = `<div style="padding:20px; color:#64748b;">Waiting for Positional Waves plot to load...</div>`;
+	}
+
+	// Start observing (no-op if already observed)
+	positionalWavesObserver.observe(container);
+
+	// If already in viewport, render immediately
+	if (isElementInViewport(container)) {
+		_execute_positional_waves_render(d_model, tokens);
+		const entry = positionalWavesRegistry.get(containerId);
+		if (entry) entry.rendered = true;
+	}
+}
+
+function _execute_positional_waves_render(d_model, tokens) {
+	const containerId = 'transformer-pe-wave-plot';
+	const container = document.getElementById(containerId);
+	if (!container) return;
+
 	const traces = [];
 	const resolution = 0.1;
 	const seqLen = tokens.length;
-	// Ensure a minimum scale for visibility, but fit to tokens.length
 	const maxPos = Math.max(1, seqLen);
 
 	for (let i = 0; i < d_model; i++) {
 		let x = [], y = [];
 		for (let p = 0; p <= maxPos; p += resolution) {
-			// ✅ FIX: Use the exact same formula as computePositionalEncoding().
-			// The old code normalized p by (seqLen - 1) and multiplied by Math.PI,
-			// which did NOT match the actual PE the model computes. The canonical
-			// sinusoidal PE from Vaswani et al. uses raw position / divTerm with
-			// no normalization or PI scaling.
 			let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-
 			let val = ((i % 2 === 0)
 				? Math.sin(p / div_term)
 				: Math.cos(p / div_term)) * posEmbedScalar;
-
 			x.push(p);
 			y.push(val);
 		}
 		traces.push({
 			x: x, y: y, mode: 'lines',
-			name: `Dim ${i} ${i%2===0?'Sin':'Cos'}`,
+			name: `Dim ${i} ${i % 2 === 0 ? 'Sin' : 'Cos'}`,
 			line: { shape: 'spline', width: 2 }
 		});
 	}
@@ -682,7 +711,9 @@ function render_positional_waves(d_model, tokens) {
 		yaxis: { title: 'PE Value', range: [-1.1, 1.1] }
 	};
 
-	Plotly.newPlot('transformer-pe-wave-plot', traces, layout);
+	// Plotly.react does an efficient diff-and-patch update in place,
+	// unlike newPlot which tears down and rebuilds the entire chart.
+	Plotly.react(containerId, traces, layout);
 }
 
 function run_transformer_demo(activeId = null) {
