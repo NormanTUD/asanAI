@@ -25,6 +25,15 @@ function getContextSize() {
 	return slider ? parseInt(slider.value) : 16;
 }
 
+function dotProduct(a, b) {
+	let sum = 0;
+	const len = Math.min(a.length, b.length);
+	for (let i = 0; i < len; i++) {
+		sum += a[i] * (b[i] || 0);
+	}
+	return sum;
+}
+
 window.currentTrainingWindows = [];
 const attentionRenderRegistry = new Map();
 const positionalShiftRegistry = new Map();
@@ -2964,9 +2973,9 @@ function tlab_get_top_word_only(h_vec) {
 	let bestWord = "???";
 	vocabulary.forEach(word => {
 		const w_vec = window.persistentEmbeddingSpace[word];
-		const dotProduct = h_vec.reduce((sum, val, i) => sum + val * (w_vec[i] || 0), 0);
-		if (dotProduct > maxDot) {
-			maxDot = dotProduct;
+		const dot = dotProduct(h_vec, w_vec);
+		if (dot > maxDot) {
+			maxDot = dot;
 			bestWord = word;
 		}
 	});
@@ -2981,8 +2990,8 @@ function tlab_get_top_vocab_list(h_vec, d_model) {
 
 	let scores = vocabulary.map(word => {
 		const w_vec = window.persistentEmbeddingSpace[word];
-		const dotProduct = h_vec.reduce((sum, val, i) => sum + val * (w_vec[i] || 0), 0);
-		return { word, score: dotProduct };
+		const dot = dotProduct(h_vec, w_vec);
+		return { word, score: dot };
 	});
 
 	const scaledScores = scores.map(s => s.score / temperature);
