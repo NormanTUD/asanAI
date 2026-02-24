@@ -173,22 +173,18 @@ function createLazyRenderObserver(registry, renderFn, options = { threshold: 0 }
 }
 
 const embeddingObserver = createLazyRenderObserver(embeddingRenderRegistry, (id, data) => {
-	console.log("Embedding plot visible: Rendering...");
 	_execute_embedding_render(data.d_model);
 });
 
 const positionalShiftObserver = createLazyRenderObserver(positionalShiftRegistry, (id, data) => {
-	console.log("Positional Shift Plot visible: Rendering...");
 	_execute_shift_render(data.tokenStrings, data.d_model, data.injectedEmbeddings);
 });
 
 const attentionObserver = createLazyRenderObserver(attentionRenderRegistry, (id, data) => {
-	console.log("Starting actual rendering");
 	data.instance.executeActualRender(data.headData, data.tokens);
 });
 
 const trajectoryObserver = createLazyRenderObserver(trajectoryRenderRegistry, (id, data) => {
-	console.log("Trajectory visible: Rendering plot...");
 	tlab_render_trajectory_plot(data.d_model);
 });
 
