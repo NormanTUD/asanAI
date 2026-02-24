@@ -2466,15 +2466,6 @@ function tlab_render_trajectory_plot(d_model) {
 
 	const dataPoints = sortedKeys.map(k => steps[k]);
 
-	const getTokenColor = (tIdx, total) => {
-		if (total <= 1) return 'rgb(59, 130, 246)';
-		const t = tIdx / (total - 1);
-		const r = Math.round(59 + (16 - 59) * t);
-		const g = Math.round(130 + (185 - 130) * t);
-		const b = Math.round(246 + (129 - 246) * t);
-		return `rgb(${r}, ${g}, ${b})`;
-	};
-
 	/**
 	 * Snapshot the embedding space at render time for consistent logit lookups.
 	 */
@@ -2633,7 +2624,7 @@ function tlab_render_trajectory_plot(d_model) {
 			tokens.forEach((token, tIdx) => {
 				const x = dataPoints.map(p => p.data[tIdx][dimA]);
 				const y = dataPoints.map(p => p.data[tIdx][dimB]);
-				const tColor = getTokenColor(tIdx, tokens.length);
+				const tColor = getPositionColor(tIdx, tokens.length);
 				const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 
 				const hoverTexts = dataPoints.map((p, pIdx) => {
@@ -2743,7 +2734,7 @@ function tlab_render_trajectory_plot(d_model) {
 		const x = dataPoints.map(p => p.data[tIdx][0]);
 		const y = dataPoints.map(p => p.data[tIdx][1]);
 		const z = d_model === 3 ? dataPoints.map(p => p.data[tIdx][2]) : null;
-		const tColor = getTokenColor(tIdx, tokens.length);
+		const tColor = getPositionColor(tIdx, tokens.length);
 
 		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 
