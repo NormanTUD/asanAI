@@ -3271,6 +3271,12 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 		positionalShiftObserver.observe(container);
 	}
 
+	if (container && isElementInViewport(container)) {
+		_execute_shift_render(tokenStrings, d_model, injectedEmbeddings);
+		const entry = positionalShiftRegistry.get(containerId);
+		if (entry) entry.rendered = true;
+	}
+
 	return injectedEmbeddings;
 }
 
