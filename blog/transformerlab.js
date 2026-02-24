@@ -1334,13 +1334,17 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		reset_graph();
 		calculate_vector_math();
 
-		// ── On full reinit, we DO need to clear migration containers
-		// because the old plots have incompatible dimensions ──
 		const migrationContainer = document.getElementById('transformer-migration-plots-container');
 		if (migrationContainer) {
 			migrationContainer.innerHTML = '';
 			transformerLabVisMigrationDataRegistry.clear();
 		}
+
+		// ── On full reinit, also clear the trajectory collector and div ──
+		window.tlab_trajectory_collector = null;
+		const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
+		if (oldTrajDiv) oldTrajDiv.remove();
+		trajectoryRenderRegistry.delete('transformer-trajectory-full-path');
 	}
 	const weights = window.currentWeights;
 
@@ -1357,23 +1361,25 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 	render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
-	// ── UPDATED: Reuse existing migration containers instead of destroying them ──
 	const migrationContainer = document.getElementById('transformer-migration-plots-container');
 	if (migrationContainer && !needsReinit) {
-		// Mark all existing entries as stale so they get re-rendered with fresh data
-		// but DON'T destroy the DOM — this prevents flicker
 		transformerLabVisMigrationDataRegistry.forEach((val, key) => {
 			val.rendered = false;
 		});
 	}
 
-	// Track which IDs are still active this pass — we'll prune orphans after rendering
 	window._activeMigrationIds = new Set();
 
-	// Reset trajectory collector so it captures fresh data for this run
-	window.tlab_trajectory_collector = null;
+	// ── FIX: Instead of nulling the collector, just clear its steps ──
+	// This preserves the object reference so the trajectory div doesn't
+	// need to be recreated, and Plotly.react can do a smooth update.
+	if (window.tlab_trajectory_collector) {
+		window.tlab_trajectory_collector.steps = {};
+	}
+	// (If it's null — e.g., first run or after reinit — create_migration_plot
+	//  will create a fresh one automatically.)
 
-	// DON'T remove the trajectory div — just mark it for re-render
+	// ── FIX: Don't destroy the trajectory div — just mark for re-render ──
 	const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
 	if (oldTrajDiv) {
 		const trajEntry = trajectoryRenderRegistry.get('transformer-trajectory-full-path');
@@ -1388,19 +1394,10 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		Input words not found in Training Data.
 	     </div>`;
 	} else {
-		// ── Layer 0: Explicit processing for detailed visualizations ──
 		multiLayerAttentionRegistry.clear();
 
 		const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
 
-		// ──────────────────────────────────────────────────────────────
-		// FIX: Compute attention with causal mask (matches training).
-		// Previously this called engine.forward() which used BIDIRECTIONAL
-		// attention — no causal mask — causing a critical train/inference
-		// mismatch. Now we compute the correct causal headData first, then
-		// let AttentionEngine build its DOM scaffolding, and finally
-		// override the registry so visualizations show the masked pattern.
-		// ──────────────────────────────────────────────────────────────
 		const headData = causalMultiHeadAttention(
 			normH0,
 			weights[0]["attention"],
@@ -1408,17 +1405,14 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 			n_heads
 		);
 
-		// Still create AttentionEngine for visualization scaffolding only
 		const engine = new AttentionEngine({
 			d_model: d_model,
 			n_heads: n_heads,
 			containerId: "mha-calculation-details",
 			weights: weights[0]["attention"]
 		});
-		// Let engine build its DOM structure + register in attentionRenderRegistry
 		engine.forward(normH0, tokensWithPositional, knownTokens);
 
-		// Override the registry with correctly causal-masked headData
 		const regEntry = attentionRenderRegistry.get("mha-calculation-details");
 		if (regEntry) {
 			regEntry.headData = headData;
@@ -1436,13 +1430,10 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 		const h2 = run_ffn_block(h1, weights[0]);
 
-		// Pass knownTokens (string[]) for labeling
 		create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
 
 		run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
 
-		// After run_deep_layers call in run_and_visualize_network:
-		// Force the combined multi-layer render
 		const mhaContainer = document.getElementById('mha-calculation-details');
 		if (mhaContainer) {
 			const registryEntry = attentionRenderRegistry.get('mha-calculation-details');
@@ -1451,48 +1442,44 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 				const engineInstance = registryEntry.instance;
 				engineInstance.executeActualRender(registryEntry.headData, registryEntry.tokens);
 
-				// ── Attention Path Visualizer (BertViz-style) ──
 				const apvContainer = document.getElementById('attention-path-viz');
 				if (apvContainer) {
-					// Pull all layers from the registry that was populated during forward passes
 					const apvViz = AttentionPathVisualizer.fromRegistry(
-						'mha-calculation-details',   // source: your existing AttentionEngine container
-						'attention-path-viz',         // target: the new viz container
+						'mha-calculation-details',
+						'attention-path-viz',
 						{ mode: 'headview' }
 					);
 				}
-
 			}
 		}
 
-		// ── All layers processed: trigger trajectory plot immediately ──
+		// ── Trajectory plot: create/reuse div, register, and render ──
 		if (window.tlab_trajectory_collector) {
 			const containerId = 'transformer-trajectory-full-path';
 			let trajDiv = document.getElementById(containerId);
 
-			// Only create the div if it doesn't exist yet — reuse otherwise
 			if (!trajDiv) {
 				trajDiv = document.createElement('div');
 				trajDiv.id = containerId;
 				document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
 
-				// Show a visible outline/placeholder immediately, before the observer fires
+				// Placeholder styling — only shown on first creation
 				trajDiv.style.cssText = "width:100%; min-height:250px; border:2px dashed #cbd5e1; border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;";
 				trajDiv.innerHTML = `<div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
 					Rendering the Token Trajectory Plot may take a while
 				</div>`;
 			}
+			// ── FIX: Don't reset styles/innerHTML on existing div ──
+			// The placeholder is only for the very first render.
+			// After Plotly.react has drawn into it, we leave it alone.
 
-			// Register the data for the observer (mark as not rendered so it re-renders)
 			trajectoryRenderRegistry.set(containerId, {
 				d_model: d_model,
 				rendered: false
 			});
 
-			// Start observing (safe to call multiple times — observer deduplicates)
 			trajectoryObserver.observe(trajDiv);
 
-			// ── IMMEDIATE RENDER if the trajectory div is already visible ──
 			if (isElementInViewport(trajDiv)) {
 				tlab_render_trajectory_plot(d_model);
 				const trajEntry = trajectoryRenderRegistry.get(containerId);
@@ -1500,18 +1487,16 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 			}
 		}
 
-		// ── Prune orphaned migration plots that no longer correspond to any layer ──
+		// Prune orphaned migration plots
 		if (migrationContainer && window._activeMigrationIds) {
 			const activeIds = window._activeMigrationIds;
 
-			// Remove DOM elements and registry entries for plots that weren't touched this pass
 			const keysToDelete = [];
 			transformerLabVisMigrationDataRegistry.forEach((val, key) => {
 				if (!activeIds.has(key)) {
 					keysToDelete.push(key);
 				}
 			});
-
 			keysToDelete.forEach(key => {
 				// Remove the plot div and its wrapper
 				const orphanDiv = document.getElementById(key);
@@ -1525,10 +1510,6 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 				// Remove associated latex sibling
 				const latexDiv = document.getElementById(key + '-latex-debug');
 				if (latexDiv) latexDiv.remove();
-
-				// Remove associated weight grid sibling
-				// (it's the nextElementSibling of the plot div, but since we removed
-				// the wrapper above, it's already gone if it was inside the wrapper)
 
 				// Clean up the registry
 				transformerLabVisMigrationDataRegistry.delete(key);
@@ -1545,6 +1526,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	}
 }
 
+			
 window.select_suggested_word = (word) => {
 	const masterInput = document.getElementById('transformer-master-token-input');
 	masterInput.value += " " + word;
@@ -2650,8 +2632,12 @@ function tlab_render_trajectory_plot(d_model) {
 		mainContainer.appendChild(trajDiv);
 	}
 
-	trajDiv.style.cssText = "width:100%;";
-	trajDiv.innerHTML = '';
+	// ── FIX: Do NOT clear innerHTML — let Plotly.react() update in place ──
+	// This was destroying the existing Plotly chart and causing flicker.
+	// Plotly.react() below handles updating the chart smoothly.
+
+	// Only set width; preserve existing content for Plotly to update
+	trajDiv.style.width = '100%';
 
 	const labels = displayTokens || tokens.map((t, i) => {
 		if (typeof t === 'string') return t;
@@ -2705,11 +2691,6 @@ function tlab_render_trajectory_plot(d_model) {
 	// Embedding landmark builders
 	// ───────────────────────────────────────────────
 
-	/**
-	 * 3D landmarks: split into TWO traces (markers + text) to avoid
-	 * the Plotly "r is undefined" raycasting bug with mode:'markers+text'
-	 * on scatter3d.
-	 */
 	const buildEmbeddingLandmarks3D = () => {
 		const xs = [], ys = [], zs = [], texts = [];
 		for (const word of snapVocab) {
@@ -2720,7 +2701,6 @@ function tlab_render_trajectory_plot(d_model) {
 			texts.push(word);
 		}
 		return [
-			// Marker trace
 			{
 				type: 'scatter3d',
 				x: xs, y: ys, z: zs,
@@ -2737,7 +2717,6 @@ function tlab_render_trajectory_plot(d_model) {
 				legendgroup: 'vocab_emb',
 				showlegend: true
 			},
-			// Text label trace (separate to avoid the picking bug)
 			{
 				type: 'scatter3d',
 				x: xs, y: ys, z: zs,
@@ -2793,26 +2772,39 @@ function tlab_render_trajectory_plot(d_model) {
 			}
 		}
 
-		const heading = document.createElement('div');
+		// ── FIX: Reuse heading and grid elements instead of rebuilding ──
+		let heading = trajDiv.querySelector('[data-traj-heading]');
+		if (!heading) {
+			heading = document.createElement('div');
+			heading.setAttribute('data-traj-heading', 'true');
+			heading.style.cssText = "text-align:center; padding:15px 10px 5px; font-size:1rem; color:#1e40af;";
+			trajDiv.appendChild(heading);
+		}
 		heading.innerHTML = `<b>Token Trajectory — 2D Projections (${pairs.length} dimension pairs)</b>`;
-		heading.style.cssText = "text-align:center; padding:15px 10px 5px; font-size:1rem; color:#1e40af;";
-		trajDiv.appendChild(heading);
 
-		const grid = document.createElement('div');
-		grid.style.cssText = "display:grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap:15px; padding:10px;";
-		trajDiv.appendChild(grid);
+		let grid = trajDiv.querySelector('[data-traj-grid]');
+		if (!grid) {
+			grid = document.createElement('div');
+			grid.setAttribute('data-traj-grid', 'true');
+			grid.style.cssText = "display:grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap:15px; padding:10px;";
+			trajDiv.appendChild(grid);
+		}
 
 		pairs.forEach(([dimA, dimB], pairIdx) => {
 			const plotId = `traj-slice-${dimA}-${dimB}`;
-			const sliceDiv = document.createElement('div');
-			sliceDiv.id = plotId;
-			sliceDiv.style.cssText = "height:400px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;";
-			grid.appendChild(sliceDiv);
+
+			// ── FIX: Reuse existing slice div ──
+			let sliceDiv = document.getElementById(plotId);
+			if (!sliceDiv) {
+				sliceDiv = document.createElement('div');
+				sliceDiv.id = plotId;
+				sliceDiv.style.cssText = "height:400px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;";
+				grid.appendChild(sliceDiv);
+			}
 
 			const traces = [];
 			const annotations = [];
 
-			// Embedding landmarks
 			traces.push(buildEmbeddingLandmarks2D(dimA, dimB));
 
 			tokens.forEach((token, tIdx) => {
@@ -2903,7 +2895,8 @@ function tlab_render_trajectory_plot(d_model) {
 				legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2, font: { size: 11 } }
 			};
 
-			Plotly.newPlot(plotId, traces, layout, { responsive: true });
+			// ── FIX: Use Plotly.react instead of Plotly.newPlot ──
+			Plotly.react(plotId, traces, layout, { responsive: true });
 		});
 
 		return;
@@ -2917,7 +2910,6 @@ function tlab_render_trajectory_plot(d_model) {
 	const traces = [];
 	const annotations = [];
 
-	// Embedding landmarks (first traces so they render behind trajectories)
 	if (d_model === 3) {
 		buildEmbeddingLandmarks3D().forEach(t => traces.push(t));
 	} else {
@@ -2943,7 +2935,6 @@ function tlab_render_trajectory_plot(d_model) {
 		});
 
 		if (d_model === 3) {
-			// ═══ 3D ═══
 			traces.push({
 				type: 'scatter3d',
 				x: x, y: y, z: z,
@@ -2956,7 +2947,6 @@ function tlab_render_trajectory_plot(d_model) {
 				text: hoverTexts
 			});
 
-			// Cones (arrowheads) with hover
 			for (let i = 0; i < x.length - 1; i++) {
 				const logitWord = getLogitWord(dataPoints[i + 1].data[tIdx]);
 				const fromStage = dataPoints[i].name;
@@ -2980,7 +2970,6 @@ function tlab_render_trajectory_plot(d_model) {
 				});
 			}
 
-			// Start point
 			const startLogit = getLogitWord(dataPoints[0].data[tIdx]);
 			traces.push({
 				type: 'scatter3d',
@@ -2995,7 +2984,6 @@ function tlab_render_trajectory_plot(d_model) {
 				text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
 			});
 
-			// End point
 			const endIdx = dataPoints.length - 1;
 			const endLogit = getLogitWord(dataPoints[endIdx].data[tIdx]);
 			traces.push({
@@ -3011,7 +2999,6 @@ function tlab_render_trajectory_plot(d_model) {
 				hovertemplate: `Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b><extra></extra>`
 			});
 		} else {
-			// ═══ 2D ═══
 			traces.push({
 				type: 'scatter',
 				x: x, y: y,
@@ -3030,7 +3017,6 @@ function tlab_render_trajectory_plot(d_model) {
 				text: hoverTexts
 			});
 
-			// Start point
 			const startLogit = getLogitWord(dataPoints[0].data[tIdx]);
 			traces.push({
 				type: 'scatter',
@@ -3045,7 +3031,6 @@ function tlab_render_trajectory_plot(d_model) {
 				text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
 			});
 
-			// End point
 			const endIdx = dataPoints.length - 1;
 			const endLogit = getLogitWord(dataPoints[endIdx].data[tIdx]);
 			traces.push({
@@ -3061,7 +3046,6 @@ function tlab_render_trajectory_plot(d_model) {
 				text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b>`]
 			});
 
-			// Stage labels (first token only)
 			if (tIdx === 0) {
 				dataPoints.forEach((p, pIdx) => {
 					annotations.push({
@@ -3102,6 +3086,9 @@ function tlab_render_trajectory_plot(d_model) {
 		}
 	};
 
+	// ── This was already correct — Plotly.react does in-place updates ──
+	// The fix is that we no longer destroy the div contents above,
+	// so Plotly.react can actually do a smooth transition.
 	Plotly.react(trajDiv.id, traces, layout);
 }
 
