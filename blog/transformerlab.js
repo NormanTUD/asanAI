@@ -1371,18 +1371,12 @@ function renderLossGraph() {
 	Plotly.newPlot('training-loss-plot', [trace], layout);
 }
 
-function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
-	const { d_model, n_heads, temperature, n_layers } = getTransformerConfig();
-
-	const vocabulary = [...new Set(trainingTokens)];
-	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
-
-	if (d_model % n_heads !== 0) {
-		const container = document.getElementById('transformer-output-projection');
-		if (container) container.innerHTML = `<div style="color:red; padding:20px;">Error: d_model (${d_model}) must be divisible by n_heads (${n_heads}).</div>`;
-		return;
-	}
-
+/**
+ * Checks if weights need reinitialization due to config changes,
+ * and performs the reinit if necessary.
+ * @returns {boolean} Whether a reinit was performed
+ */
+function handleWeightReinit(d_model, n_heads, n_layers) {
 	const needsReinit = !window.currentWeights ||
 		window.currentWeights.length !== n_layers ||
 		window.last_d_model !== d_model ||
@@ -1401,27 +1395,41 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 			transformerLabVisMigrationDataRegistry.clear();
 		}
 
-		// ── On full reinit, also clear the trajectory collector and div ──
 		window.tlab_trajectory_collector = null;
 		const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
 		if (oldTrajDiv) oldTrajDiv.remove();
 		trajectoryRenderRegistry.delete('transformer-trajectory-full-path');
 	}
-	const weights = window.currentWeights;
 
-	// 1. Embedding Space
+	return needsReinit;
+}
+
+/**
+ * Renders all pre-attention visualizations: embedding space, positional
+ * injection, positional waves, shift plot, and architecture stats.
+ * @returns {number[][]} h0 — the positional-shift embeddings
+ */
+function renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature) {
 	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
 	render_embedding_plot(d_model);
 	tled_initEditor();
 
-	// 2. Visualizations
-	const tokensWithPositional = calculate_positional_injection(knownTokens, d_model);
+	calculate_positional_injection(knownTokens, d_model);
 	render_positional_waves(d_model, knownTokens);
 
 	const h0 = render_positional_shift_plot(knownTokens, d_model);
 
 	render_architecture_stats(d_model, n_heads, n_layers, temperature);
 
+	return h0;
+}
+
+/**
+ * Prepares migration and trajectory state for a new forward pass.
+ * Resets trajectory steps, marks migration entries for re-render,
+ * and initializes the active migration ID set.
+ */
+function prepareMigrationState(needsReinit) {
 	const migrationContainer = document.getElementById('transformer-migration-plots-container');
 	if (migrationContainer && !needsReinit) {
 		transformerLabVisMigrationDataRegistry.forEach((val, key) => {
@@ -1431,16 +1439,10 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 
 	window._activeMigrationIds = new Set();
 
-	// ── FIX: Instead of nulling the collector, just clear its steps ──
-	// This preserves the object reference so the trajectory div doesn't
-	// need to be recreated, and Plotly.react can do a smooth update.
 	if (window.tlab_trajectory_collector) {
 		window.tlab_trajectory_collector.steps = {};
 	}
-	// (If it's null — e.g., first run or after reinit — create_migration_plot
-	//  will create a fresh one automatically.)
 
-	// ── FIX: Don't destroy the trajectory div — just mark for re-render ──
 	const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
 	if (oldTrajDiv) {
 		const trajEntry = trajectoryRenderRegistry.get('transformer-trajectory-full-path');
@@ -1448,137 +1450,199 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 			trajEntry.rendered = false;
 		}
 	}
+}
+
+/**
+ * Runs the detailed Layer-0 forward pass with full visualization:
+ * layer norm, multi-head attention, concatenation, projection,
+ * residual connection, and FFN block.
+ * @returns {number[][]} h2 — hidden states after layer 0
+ */
+function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads) {
+	multiLayerAttentionRegistry.clear();
+
+	const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
+
+	const headData = causalMultiHeadAttention(
+		normH0,
+		weights[0]["attention"],
+		d_model,
+		n_heads
+	);
+
+	const engine = new AttentionEngine({
+		d_model: d_model,
+		n_heads: n_heads,
+		containerId: "mha-calculation-details",
+		weights: weights[0]["attention"]
+	});
+	engine.forward(normH0, tokensWithPositional, knownTokens);
+
+	const regEntry = attentionRenderRegistry.get("mha-calculation-details");
+	if (regEntry) {
+		regEntry.headData = headData;
+		regEntry.rendered = false;
+	}
+
+	const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
+
+	const Wo_layer0 = weights[0]["attention"]["output"];
+	const projected = matMul(multiHeadOutput, Wo_layer0);
+
+	const h1 = matAdd(h0, projected);
+
+	render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
+
+	const h2 = run_ffn_block(h1, weights[0]);
+
+	return h2;
+}
+
+/**
+ * Triggers the detailed attention rendering and path visualization
+ * for the MHA calculation details container.
+ */
+function renderAttentionDetails() {
+	const mhaContainer = document.getElementById('mha-calculation-details');
+	if (mhaContainer) {
+		const registryEntry = attentionRenderRegistry.get('mha-calculation-details');
+		if (registryEntry) {
+			registryEntry.rendered = false;
+			const engineInstance = registryEntry.instance;
+			engineInstance.executeActualRender(registryEntry.headData, registryEntry.tokens);
+
+			const apvContainer = document.getElementById('attention-path-viz');
+			if (apvContainer) {
+				AttentionPathVisualizer.fromRegistry(
+					'mha-calculation-details',
+					'attention-path-viz',
+					{ mode: 'headview' }
+				);
+			}
+		}
+	}
+}
+
+/**
+ * Creates or updates the trajectory plot div, registers it for
+ * lazy rendering, and renders immediately if already in viewport.
+ */
+function renderTrajectoryPlot(d_model) {
+	if (!window.tlab_trajectory_collector) return;
+
+	const containerId = 'transformer-trajectory-full-path';
+	let trajDiv = document.getElementById(containerId);
+
+	if (!trajDiv) {
+		trajDiv = document.createElement('div');
+		trajDiv.id = containerId;
+		document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
+
+		trajDiv.style.cssText = "width:100%; min-height:250px; border:2px dashed #cbd5e1; border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;";
+		trajDiv.innerHTML = `<div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
+			Rendering the Token Trajectory Plot may take a while
+		</div>`;
+	}
+
+	trajectoryRenderRegistry.set(containerId, {
+		d_model: d_model,
+		rendered: false
+	});
+
+	trajectoryObserver.observe(trajDiv);
+
+	if (isElementInViewport(trajDiv)) {
+		tlab_render_trajectory_plot(d_model);
+		const trajEntry = trajectoryRenderRegistry.get(containerId);
+		if (trajEntry) trajEntry.rendered = true;
+	}
+}
+
+/**
+ * Removes migration plot DOM elements and registry entries
+ * for layers that are no longer active.
+ */
+function pruneOrphanedMigrationPlots() {
+	const migrationContainer = document.getElementById('transformer-migration-plots-container');
+	if (!migrationContainer || !window._activeMigrationIds) return;
+
+	const activeIds = window._activeMigrationIds;
+
+	const keysToDelete = [];
+	transformerLabVisMigrationDataRegistry.forEach((val, key) => {
+		if (!activeIds.has(key)) {
+			keysToDelete.push(key);
+		}
+	});
+	keysToDelete.forEach(key => {
+		const orphanDiv = document.getElementById(key);
+		if (orphanDiv) {
+			const wrapper = orphanDiv.closest('[data-migration-wrapper]') || orphanDiv.parentNode;
+			if (wrapper && wrapper.parentNode) {
+				wrapper.remove();
+			}
+		}
+
+		const latexDiv = document.getElementById(key + '-latex-debug');
+		if (latexDiv) latexDiv.remove();
+
+		transformerLabVisMigrationDataRegistry.delete(key);
+	});
+}
+
+/**
+ * Main orchestrator: runs a complete forward pass through the transformer
+ * and renders all visualizations.
+ */
+function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
+	const { d_model, n_heads, temperature, n_layers } = getTransformerConfig();
+
+	const vocabulary = [...new Set(trainingTokens)];
+	const knownTokens = inputTokens.filter(token => vocabulary.includes(token));
+
+	if (d_model % n_heads !== 0) {
+		const container = document.getElementById('transformer-output-projection');
+		if (container) container.innerHTML = `<div style="color:red; padding:20px;">Error: d_model (${d_model}) must be divisible by n_heads (${n_heads}).</div>`;
+		return;
+	}
+
+	// 1. Reinitialize weights if config changed
+	const needsReinit = handleWeightReinit(d_model, n_heads, n_layers);
+	const weights = window.currentWeights;
+
+	// 2. Pre-attention visualizations (embeddings, positional encoding, etc.)
+	const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
+	const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
+
+	// 3. Prepare migration/trajectory state for this pass
+	prepareMigrationState(needsReinit);
 
 	if (tokensWithPositional.length === 0) {
 		document.getElementById('transformer-output-projection').innerHTML =
 			`<div style="padding:20px; color: #64748b; text-align:center;">
-		Input words not found in Training Data.
-	     </div>`;
+				Input words not found in Training Data.
+			</div>`;
 	} else {
-		multiLayerAttentionRegistry.clear();
+		// 4. Run and visualize Layer 0 in detail
+		const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
 
-		const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
-
-		const headData = causalMultiHeadAttention(
-			normH0,
-			weights[0]["attention"],
-			d_model,
-			n_heads
-		);
-
-		const engine = new AttentionEngine({
-			d_model: d_model,
-			n_heads: n_heads,
-			containerId: "mha-calculation-details",
-			weights: weights[0]["attention"]
-		});
-		engine.forward(normH0, tokensWithPositional, knownTokens);
-
-		const regEntry = attentionRenderRegistry.get("mha-calculation-details");
-		if (regEntry) {
-			regEntry.headData = headData;
-			regEntry.rendered = false;
-		}
-
-		const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
-
-		const Wo_layer0 = weights[0]["attention"]["output"];
-		const projected = matMul(multiHeadOutput, Wo_layer0);
-
-		const h1 = matAdd(h0, projected);
-
-		render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
-
-		const h2 = run_ffn_block(h1, weights[0]);
-
+		// 5. First migration plot (layer 1)
 		create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
 
+		// 6. Run remaining layers
 		run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
 
-		const mhaContainer = document.getElementById('mha-calculation-details');
-		if (mhaContainer) {
-			const registryEntry = attentionRenderRegistry.get('mha-calculation-details');
-			if (registryEntry) {
-				registryEntry.rendered = false;
-				const engineInstance = registryEntry.instance;
-				engineInstance.executeActualRender(registryEntry.headData, registryEntry.tokens);
+		// 7. Render attention detail panels
+		renderAttentionDetails();
 
-				const apvContainer = document.getElementById('attention-path-viz');
-				if (apvContainer) {
-					const apvViz = AttentionPathVisualizer.fromRegistry(
-						'mha-calculation-details',
-						'attention-path-viz',
-						{ mode: 'headview' }
-					);
-				}
-			}
-		}
+		// 8. Trajectory plot
+		renderTrajectoryPlot(d_model);
 
-		// ── Trajectory plot: create/reuse div, register, and render ──
-		if (window.tlab_trajectory_collector) {
-			const containerId = 'transformer-trajectory-full-path';
-			let trajDiv = document.getElementById(containerId);
-
-			if (!trajDiv) {
-				trajDiv = document.createElement('div');
-				trajDiv.id = containerId;
-				document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
-
-				// Placeholder styling — only shown on first creation
-				trajDiv.style.cssText = "width:100%; min-height:250px; border:2px dashed #cbd5e1; border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;";
-				trajDiv.innerHTML = `<div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
-					Rendering the Token Trajectory Plot may take a while
-				</div>`;
-			}
-			// ── FIX: Don't reset styles/innerHTML on existing div ──
-			// The placeholder is only for the very first render.
-			// After Plotly.react has drawn into it, we leave it alone.
-
-			trajectoryRenderRegistry.set(containerId, {
-				d_model: d_model,
-				rendered: false
-			});
-
-			trajectoryObserver.observe(trajDiv);
-
-			if (isElementInViewport(trajDiv)) {
-				tlab_render_trajectory_plot(d_model);
-				const trajEntry = trajectoryRenderRegistry.get(containerId);
-				if (trajEntry) trajEntry.rendered = true;
-			}
-		}
-
-		// Prune orphaned migration plots
-		if (migrationContainer && window._activeMigrationIds) {
-			const activeIds = window._activeMigrationIds;
-
-			const keysToDelete = [];
-			transformerLabVisMigrationDataRegistry.forEach((val, key) => {
-				if (!activeIds.has(key)) {
-					keysToDelete.push(key);
-				}
-			});
-			keysToDelete.forEach(key => {
-				// Remove the plot div and its wrapper
-				const orphanDiv = document.getElementById(key);
-				if (orphanDiv) {
-					const wrapper = orphanDiv.closest('[data-migration-wrapper]') || orphanDiv.parentNode;
-					if (wrapper && wrapper.parentNode) {
-						wrapper.remove();
-					}
-				}
-
-				// Remove associated latex sibling
-				const latexDiv = document.getElementById(key + '-latex-debug');
-				if (latexDiv) latexDiv.remove();
-
-				// Clean up the registry
-				transformerLabVisMigrationDataRegistry.delete(key);
-			});
-		}
+		// 9. Clean up orphaned migration plots
+		pruneOrphanedMigrationPlots();
 	}
 
-	// 3. FINAL PROBABILITIES (based on master-token-input)
+	// 10. Final probabilities (based on master-token-input)
 	const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
 
 	if (knownMasterTokens.length > 0) {
@@ -1587,7 +1651,6 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	}
 }
 
-			
 window.select_suggested_word = (word) => {
 	const masterInput = document.getElementById('transformer-master-token-input');
 	masterInput.value += " " + word;
