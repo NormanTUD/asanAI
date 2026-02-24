@@ -1090,15 +1090,9 @@ async function convert_tensors_to_weights(vars) {
 	return newWeights;
 }
 
-/**
- * NEW Helper: Calculate Cross-Entropy Loss over the corpus
- * Strategy: Predict next token for a random window in the text
- */
 function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
-	// Optimization: Don't calculate loss on the *entire* text every epoch (too slow).
-	// Pick a random window of context size 3-5.
-	// Pick a random start index ensuring we have a 'next' token
-	const startIdx = 0;
+	const maxStart = Math.max(1, tokens.length - getContextSize());
+	const startIdx = Math.floor(Math.random() * maxStart);
 	const endIdx = Math.min(startIdx + getContextSize(), tokens.length - 1);
 
 	const contextTokens = tokens.slice(startIdx, endIdx);
@@ -1110,24 +1104,22 @@ function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
 	const h_final = h[h.length - 1]; // Last token's hidden state
 
 	// 2. Project to Vocabulary (Logits)
-	// We only care about the target token's probability vs the others.
-	// In a real generic transformer, we project to ALL tokens.
 	const vocab = [...new Set(tokens)];
 
-	// To save time, we calculate logits for the Target and a few random Negatives
-	// (Sampled Softmax) - but for small demos, full softmax is fine.
-
+	// ✅ FIX: Use the actual learned embeddings (weight tying) instead of
+	// hash-based fake projection weights. This matches how calculate_tf_loss
+	// computes logits:
+	//     logits = tf.matMul(x, vars.embeddings.transpose())
+	// and how render_final_projection does it:
+	//     W_vocab = vocabulary.map(word => persistentEmbeddingSpace[word])
 	let maxLogit = -Infinity;
 	const logits = vocab.map(word => {
-		// Re-generate fixed vocab weight on the fly (same seed logic as render_final_projection)
-		const hash = word.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-		const w_row = Array.from({ length: d_model }, (_, i) => {
-			const seed = Math.abs(hash * (i + 13));
-			return ((seed % 2000) / 1000) - 1;
-		});
+		const w_row = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[word])
+			? window.persistentEmbeddingSpace[word]
+			: new Array(d_model).fill(0);
 
 		const val = h_final.reduce((sum, v, i) => sum + v * w_row[i], 0);
-		if(val > maxLogit) maxLogit = val;
+		if (val > maxLogit) maxLogit = val;
 		return { word, val };
 	});
 
