@@ -1966,7 +1966,7 @@ function run_ffn_block(h1, params = {}) {
 	// Residual: h2 = h1 + FFN(normed_h1), no post-norm
 	const h2 = matAdd(h1, out_FFN);
 
-	render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2);
+	render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2);
 
 	return h2;
 }
@@ -1977,7 +1977,7 @@ function run_ffn_block(h1, params = {}) {
 /**
  * Goal: Show FFN LayerNorm parameters
  */
-function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta) {
+function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta) {
 	document.getElementById('ffn-step-1').innerHTML = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
 	<p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1$ before FFN</p>
