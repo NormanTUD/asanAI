@@ -1099,7 +1099,7 @@ function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
 	const contextTokens = tokens.slice(startIdx, endIdx);
 	const targetToken = tokens[endIdx]; // The token coming AFTER the context
 
-	const n_heads_local = weights[0].attention.query.length > 0 ? 2 : 2; // or pass as param
+	const { n_heads: n_heads_local } = getTransformerConfig();
 	let h = runSimpleForwardPass(contextTokens, weights, d_model, n_heads_local, n_layers);
 
 	const h_final = h[h.length - 1]; // Last token's hidden state
