@@ -20,6 +20,30 @@ window.tlab_trajectory_data = {
 	steps: [] // Array of { name: "Stage Name", data: [[dim1, dim2...], ...] }
 };
 
+function switchTab(containerId, activeIdx, totalCount, idPrefixes, inactiveStyle, activeStyle) {
+	// Hide all and reset button styles
+	for (let i = 0; i < totalCount; i++) {
+		const content = document.getElementById(`${idPrefixes.content}-${containerId}-${i}`);
+		if (content) content.style.display = 'none';
+		const btn = document.getElementById(`${idPrefixes.btn}-${containerId}-${i}`);
+		if (btn) {
+			btn.style.background = inactiveStyle.bg;
+			btn.style.fontWeight = 'normal';
+		}
+	}
+
+	// Show active and highlight its button
+	const activeContent = document.getElementById(`${idPrefixes.content}-${containerId}-${activeIdx}`);
+	if (activeContent) activeContent.style.display = 'block';
+	const activeBtn = document.getElementById(`${idPrefixes.btn}-${containerId}-${activeIdx}`);
+	if (activeBtn) {
+		activeBtn.style.background = activeStyle.bg;
+		activeBtn.style.fontWeight = 'bold';
+	}
+
+	return activeContent;
+}
+
 function getContextSize() {
 	const slider = document.getElementById('transformer-context-size');
 	return slider ? parseInt(slider.value) : 16;
@@ -229,17 +253,11 @@ function initWeights(r, c) {
 }
 
 window.showLayer = (containerId, layerIdx, numLayers) => {
-	for (let l = 0; l < numLayers; l++) {
-		const content = document.getElementById(`layer-content-${containerId}-${l}`);
-		if (content) content.style.display = 'none';
-		const btn = document.getElementById(`layer-tab-btn-${containerId}-${l}`);
-		if (btn) { btn.style.background = '#bfdbfe'; btn.style.fontWeight = 'normal'; }
-	}
-
-	const activeContent = document.getElementById(`layer-content-${containerId}-${layerIdx}`);
-	if (activeContent) activeContent.style.display = 'block';
-	const activeBtn = document.getElementById(`layer-tab-btn-${containerId}-${layerIdx}`);
-	if (activeBtn) { activeBtn.style.background = '#fff'; activeBtn.style.fontWeight = 'bold'; }
+	const activeContent = switchTab(containerId, layerIdx, numLayers,
+		{ content: 'layer-content', btn: 'layer-tab-btn' },
+		{ bg: '#bfdbfe' },
+		{ bg: '#fff' }
+	);
 
 	// LAZY: Render this layer's content if not yet done
 	const registryEntry = attentionRenderRegistry.get(containerId);
@@ -253,17 +271,11 @@ window.showLayer = (containerId, layerIdx, numLayers) => {
 };
 
 window.showHeadInLayer = (containerId, layerIdx, headIdx, numHeads) => {
-	for (let h = 0; h < numHeads; h++) {
-		const content = document.getElementById(`head-content-${containerId}-${layerIdx}-${h}`);
-		if (content) content.style.display = 'none';
-		const btn = document.getElementById(`head-tab-btn-${containerId}-${layerIdx}-${h}`);
-		if (btn) { btn.style.background = '#e2e8f0'; btn.style.fontWeight = 'normal'; }
-	}
-
-	const activeContent = document.getElementById(`head-content-${containerId}-${layerIdx}-${headIdx}`);
-	if (activeContent) activeContent.style.display = 'block';
-	const activeBtn = document.getElementById(`head-tab-btn-${containerId}-${layerIdx}-${headIdx}`);
-	if (activeBtn) { activeBtn.style.background = '#fff'; activeBtn.style.fontWeight = 'bold'; }
+	const activeContent = switchTab(`${containerId}-${layerIdx}`, headIdx, numHeads,
+		{ content: 'head-content', btn: 'head-tab-btn' },
+		{ bg: '#e2e8f0' },
+		{ bg: '#fff' }
+	);
 
 	// LAZY: Register the head for observation (renders when visible)
 	const registryEntry = attentionRenderRegistry.get(containerId);
