@@ -34,6 +34,22 @@ function softmax(logits) {
 }
 
 /**
+ * Multiplies a matrix (rows of vectors) by a weight matrix.
+ * @param {number[][]} matrix - Input matrix [seqLen × inputDim]
+ * @param {number[][]} weights - Weight matrix [inputDim × outputDim]
+ * @returns {number[][]} Result matrix [seqLen × outputDim]
+ */
+function matMul(matrix, weights, bias = null) {
+	return matrix.map(row =>
+		weights[0].map((_, j) => {
+			let sum = bias ? bias[j] : 0;
+			for (let k = 0; k < row.length; k++) sum += row[k] * weights[k][j];
+			return sum;
+		})
+	);
+}
+
+/**
  * Runs a single transformer layer forward pass (Pre-LN architecture).
  * Returns the output hidden state after attention + FFN + residuals.
  *
@@ -65,9 +81,7 @@ function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings
 
 	// 4. Output projection
 	const Wo = layerWeights.attention.output;
-	const projected = concat.map(row =>
-		Wo[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo[k][j], 0))
-	);
+	const projected = matMul(concat, Wo);
 
 	// 5. Residual connection (attention)
 	const h_attn = h_current.map((row, i) => row.map((val, j) => val + projected[i][j]));
@@ -1240,10 +1254,8 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 		const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
 
 		const Wo_layer0 = weights[0]["attention"]["output"];
-		const projected = multiHeadOutput.map(row =>
-			Wo_layer0[0].map((_, j) => row.reduce((sum, val, k) => sum + val * Wo_layer0[k][j], 0))
-		);
-
+		const projected = matMul(multiHeadOutput, Wo_layer0);
+		
 		const h1 = h0.map((row, i) => row.map((val, j) => val + projected[i][j]));
 
 		render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
@@ -1964,41 +1976,29 @@ function assert_or_init(name, value, expected_rows, expected_cols) {
  * Origin: Vaswani et al. (2017)
  */
 function run_ffn_block(h1, params = {}) {
-    const d_model = h1[0].length;
-    const d_ff = d_model * 4;
+	const d_model = h1[0].length;
+	const d_ff = d_model * 4;
 
-    let W1 = assert_or_init('W1', params.W1, d_model, d_ff);
-    let b1 = assert_or_init('b1', params.b1, d_ff, 1);
-    let W2 = assert_or_init('W2', params.W2, d_ff, d_model);
-    let b2 = assert_or_init('b2', params.b2, d_model, 1);
-    let gamma2 = params.gamma2 || new Array(d_model).fill(1.0);
-    let beta2 = params.beta2 || new Array(d_model).fill(0.0);
+	let W1 = assert_or_init('W1', params.W1, d_model, d_ff);
+	let b1 = assert_or_init('b1', params.b1, d_ff, 1);
+	let W2 = assert_or_init('W2', params.W2, d_ff, d_model);
+	let b2 = assert_or_init('b2', params.b2, d_model, 1);
+	let gamma2 = params.gamma2 || new Array(d_model).fill(1.0);
+	let beta2 = params.beta2 || new Array(d_model).fill(0.0);
 
-    // Pre-LN: normalize h1 BEFORE FFN
-    const normed_h1 = calculateLayerNorm(h1, gamma2, beta2);
+	// Pre-LN: normalize h1 BEFORE FFN
+	const normed_h1 = calculateLayerNorm(h1, gamma2, beta2);
 
-    const out_L1 = normed_h1.map(row => {
-        return b1.map((bias, j) => {
-            let sum = bias;
-            for (let i = 0; i < d_model; i++) sum += row[i] * W1[i][j];
-            return Math.max(0, sum);
-        });
-    });
+	const out_L1 = matMul(normed_h1, W1, b1).map(row => row.map(v => Math.max(0, v)));
 
-    const out_FFN = out_L1.map(row => {
-        return b2.map((bias, j) => {
-            let sum = bias;
-            for (let i = 0; i < d_ff; i++) sum += row[i] * W2[i][j];
-            return sum;
-        });
-    });
+	const out_FFN = matMul(out_L1, W2, b2);
 
-    // Residual: h2 = h1 + FFN(normed_h1), no post-norm
-    const h2 = h1.map((row, i) => row.map((val, j) => val + out_FFN[i][j]));
+	// Residual: h2 = h1 + FFN(normed_h1), no post-norm
+	const h2 = h1.map((row, i) => row.map((val, j) => val + out_FFN[i][j]));
 
-    render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2);
+	render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2);
 
-    return h2;
+	return h2;
 }
 
 /**
