@@ -3177,141 +3177,198 @@ function _traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB) {
 	};
 }
 
-// ─── Helper: Render high-dimensional (d_model >= 4) 2D slice grid ───
+// ─── 1. Generate all unique dimension pairs ───
+function _traj_generate_dimension_pairs(d_model) {
+    const pairs = [];
+    for (let i = 0; i < d_model; i++) {
+        for (let j = i + 1; j < d_model; j++) {
+            pairs.push([i, j]);
+        }
+    }
+    return pairs;
+}
+
+// ─── 2. Ensure the heading element exists and update its text ───
+function _traj_ensure_heading(trajDiv, pairCount) {
+    let heading = trajDiv.querySelector('[data-traj-heading]');
+    if (!heading) {
+        heading = document.createElement('div');
+        heading.setAttribute('data-traj-heading', 'true');
+        heading.style.cssText = "text-align:center; padding:15px 10px 5px; font-size:1rem; color:#1e40af;";
+        trajDiv.appendChild(heading);
+    }
+    heading.innerHTML = `<b>Token Trajectory — 2D Projections (${pairCount} dimension pairs)</b>`;
+    return heading;
+}
+
+// ─── 3. Ensure the grid container exists ───
+function _traj_ensure_grid(trajDiv) {
+    let grid = trajDiv.querySelector('[data-traj-grid]');
+    if (!grid) {
+        grid = document.createElement('div');
+        grid.setAttribute('data-traj-grid', 'true');
+        grid.style.cssText = "display:grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap:15px; padding:10px;";
+        trajDiv.appendChild(grid);
+    }
+    return grid;
+}
+
+// ─── 4. Ensure a slice plot div exists for a given dimension pair ───
+function _traj_ensure_slice_div(grid, dimA, dimB) {
+    const plotId = `traj-slice-${dimA}-${dimB}`;
+    let sliceDiv = document.getElementById(plotId);
+    if (!sliceDiv) {
+        sliceDiv = document.createElement('div');
+        sliceDiv.id = plotId;
+        sliceDiv.style.cssText = "height:400px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;";
+        grid.appendChild(sliceDiv);
+    }
+    return plotId;
+}
+
+// ─── 5. Build hover text array for a single token across all stages ───
+function _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab) {
+    return dataPoints.map((p, pIdx) => {
+        const logitWord = _traj_get_logit_word(p.data[tIdx], embSnap, snapVocab);
+        const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
+        const toStage = p.name;
+        return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
+            `From: ${fromStage}<br>` +
+            `To: ${toStage}<br>` +
+            `Nearest logit: <b>${logitWord}</b>`;
+    });
+}
+
+// ─── 6. Build the main trajectory line trace for one token in a 2D slice ───
+function _traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts) {
+    return {
+        type: 'scatter',
+        x: x, y: y,
+        mode: 'lines+markers',
+        name: tokenLabel,
+        legendgroup: tokenLabel,
+        line: { width: 2, color: tColor },
+        marker: {
+            size: x.map((_, i) => i === 0 ? 0 : 10),
+            symbol: 'arrow',
+            angleref: 'previous',
+            color: tColor
+        },
+        hoverinfo: 'text',
+        hovertemplate: '%{text}<extra></extra>',
+        text: hoverTexts,
+        showlegend: true
+    };
+}
+
+// ─── 7. Build the start marker trace for one token ───
+function _traj_build_start_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab) {
+    const startLogit = _traj_get_logit_word(dataPoints[0].data[tIdx], embSnap, snapVocab);
+    return {
+        type: 'scatter',
+        x: [x[0]], y: [y[0]],
+        mode: 'markers',
+        marker: { size: 10, symbol: 0, color: tColor, line: { width: 2, color: '#000' } },
+        legendgroup: tokenLabel,
+        showlegend: false,
+        hoverinfo: 'text',
+        hovertemplate: '%{text}<extra></extra>',
+        text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
+    };
+}
+
+// ─── 8. Build the end marker trace for one token ───
+function _traj_build_end_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab) {
+    const endIdx = dataPoints.length - 1;
+    const endLogit = _traj_get_logit_word(dataPoints[endIdx].data[tIdx], embSnap, snapVocab);
+    return {
+        type: 'scatter',
+        x: [x[x.length - 1]], y: [y[y.length - 1]],
+        mode: 'markers',
+        marker: { size: 14, symbol: 17, color: tColor, line: { width: 1.5, color: '#000' } },
+        legendgroup: tokenLabel,
+        showlegend: false,
+        hoverinfo: 'text',
+        hovertemplate: '%{text}<extra></extra>',
+        text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b>`]
+    };
+}
+
+// ─── 9. Build stage-label annotations (only for the first token) ───
+function _traj_build_stage_annotations(x, y, dataPoints) {
+    return dataPoints.map((p, pIdx) => ({
+        x: x[pIdx], y: y[pIdx],
+        xref: 'x', yref: 'y',
+        text: p.name,
+        showarrow: false,
+        font: { size: 8, color: '#64748b' },
+        yshift: 12
+    }));
+}
+
+// ─── 10. Collect all traces and annotations for a single dimension-pair slice ───
+function _traj_build_slice_traces(tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab) {
+    const traces = [];
+    const annotations = [];
+
+    // Embedding landmark points
+    traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB));
+
+    tokens.forEach((token, tIdx) => {
+        const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
+        if (!hasDataInAllSteps) return;
+
+        const x = dataPoints.map(p => p.data[tIdx][dimA]);
+        const y = dataPoints.map(p => p.data[tIdx][dimB]);
+        const tColor = getPositionColor(tIdx, tokens.length);
+        const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+
+        const hoverTexts = _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab);
+
+        traces.push(_traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts));
+        traces.push(_traj_build_start_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab));
+        traces.push(_traj_build_end_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab));
+
+        // Stage annotations only for the first token to avoid clutter
+        if (tIdx === 0) {
+            annotations.push(..._traj_build_stage_annotations(x, y, dataPoints));
+        }
+    });
+
+    return { traces, annotations };
+}
+
+// ─── 11. Build the Plotly layout for a single dimension-pair slice ───
+function _traj_build_slice_layout(dimA, dimB, annotations) {
+    return {
+        title: { text: `Dim ${dimA} × Dim ${dimB}`, font: { size: 13 } },
+        xaxis: { title: `Dim ${dimA}`, showgrid: true, zeroline: false },
+        yaxis: { title: `Dim ${dimB}`, showgrid: true, zeroline: false },
+        annotations: annotations,
+        margin: { l: 45, r: 10, b: 45, t: 40 },
+        showlegend: true,
+        legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2, font: { size: 11 } }
+    };
+}
+
+// ─── 12. Render a single dimension-pair slice plot ───
+function _traj_render_single_slice(grid, tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab) {
+    const plotId = _traj_ensure_slice_div(grid, dimA, dimB);
+    const { traces, annotations } = _traj_build_slice_traces(tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab);
+    const layout = _traj_build_slice_layout(dimA, dimB, annotations);
+    Plotly.react(plotId, traces, layout, { responsive: true });
+}
+
+// ─── Main function: now a clean orchestrator ───
 function _traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab) {
-	const pairs = [];
-	for (let i = 0; i < d_model; i++) {
-		for (let j = i + 1; j < d_model; j++) {
-			pairs.push([i, j]);
-		}
-	}
+    const pairs = _traj_generate_dimension_pairs(d_model);
 
-	let heading = trajDiv.querySelector('[data-traj-heading]');
-	if (!heading) {
-		heading = document.createElement('div');
-		heading.setAttribute('data-traj-heading', 'true');
-		heading.style.cssText = "text-align:center; padding:15px 10px 5px; font-size:1rem; color:#1e40af;";
-		trajDiv.appendChild(heading);
-	}
-	heading.innerHTML = `<b>Token Trajectory — 2D Projections (${pairs.length} dimension pairs)</b>`;
+    _traj_ensure_heading(trajDiv, pairs.length);
+    const grid = _traj_ensure_grid(trajDiv);
 
-	let grid = trajDiv.querySelector('[data-traj-grid]');
-	if (!grid) {
-		grid = document.createElement('div');
-		grid.setAttribute('data-traj-grid', 'true');
-		grid.style.cssText = "display:grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap:15px; padding:10px;";
-		trajDiv.appendChild(grid);
-	}
-
-	pairs.forEach(([dimA, dimB]) => {
-		const plotId = `traj-slice-${dimA}-${dimB}`;
-
-		let sliceDiv = document.getElementById(plotId);
-		if (!sliceDiv) {
-			sliceDiv = document.createElement('div');
-			sliceDiv.id = plotId;
-			sliceDiv.style.cssText = "height:400px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;";
-			grid.appendChild(sliceDiv);
-		}
-
-		const traces = [];
-		const annotations = [];
-
-		traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB));
-
-		tokens.forEach((token, tIdx) => {
-			const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
-			if (!hasDataInAllSteps) return;
-
-			const x = dataPoints.map(p => p.data[tIdx][dimA]);
-			const y = dataPoints.map(p => p.data[tIdx][dimB]);
-			const tColor = getPositionColor(tIdx, tokens.length);
-			const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
-
-			const hoverTexts = dataPoints.map((p, pIdx) => {
-				const logitWord = _traj_get_logit_word(p.data[tIdx], embSnap, snapVocab);
-				const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
-				const toStage = p.name;
-				return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
-					`From: ${fromStage}<br>` +
-					`To: ${toStage}<br>` +
-					`Nearest logit: <b>${logitWord}</b>`;
-			});
-
-			traces.push({
-				type: 'scatter',
-				x: x, y: y,
-				mode: 'lines+markers',
-				name: tokenLabel,
-				legendgroup: tokenLabel,
-				line: { width: 2, color: tColor },
-				marker: {
-					size: x.map((_, i) => i === 0 ? 0 : 10),
-					symbol: 'arrow',
-					angleref: 'previous',
-					color: tColor
-				},
-				hoverinfo: 'text',
-				hovertemplate: '%{text}<extra></extra>',
-				text: hoverTexts,
-				showlegend: true
-			});
-
-			const startLogit = _traj_get_logit_word(dataPoints[0].data[tIdx], embSnap, snapVocab);
-			traces.push({
-				type: 'scatter',
-				x: [x[0]], y: [y[0]],
-				mode: 'markers',
-				marker: { size: 10, symbol: 0, color: tColor,
-					line: { width: 2, color: '#000' } },
-				legendgroup: tokenLabel,
-				showlegend: false,
-				hoverinfo: 'text',
-				hovertemplate: '%{text}<extra></extra>',
-				text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
-			});
-
-			const endIdx = dataPoints.length - 1;
-			const endLogit = _traj_get_logit_word(dataPoints[endIdx].data[tIdx], embSnap, snapVocab);
-			traces.push({
-				type: 'scatter',
-				x: [x[x.length - 1]], y: [y[y.length - 1]],
-				mode: 'markers',
-				marker: { size: 14, symbol: 17, color: tColor,
-					line: { width: 1.5, color: '#000' } },
-				legendgroup: tokenLabel,
-				showlegend: false,
-				hoverinfo: 'text',
-				hovertemplate: '%{text}<extra></extra>',
-				text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b>`]
-			});
-
-			if (tIdx === 0) {
-				dataPoints.forEach((p, pIdx) => {
-					annotations.push({
-						x: x[pIdx], y: y[pIdx],
-						xref: 'x', yref: 'y',
-						text: p.name,
-						showarrow: false,
-						font: { size: 8, color: '#64748b' },
-						yshift: 12
-					});
-				});
-			}
-		});
-
-		const layout = {
-			title: { text: `Dim ${dimA} × Dim ${dimB}`, font: { size: 13 } },
-			xaxis: { title: `Dim ${dimA}`, showgrid: true, zeroline: false },
-			yaxis: { title: `Dim ${dimB}`, showgrid: true, zeroline: false },
-			annotations: annotations,
-			margin: { l: 45, r: 10, b: 45, t: 40 },
-			showlegend: true,
-			legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2, font: { size: 11 } }
-		};
-
-		Plotly.react(plotId, traces, layout, { responsive: true });
-	});
+    pairs.forEach(([dimA, dimB]) => {
+        _traj_render_single_slice(grid, tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab);
+    });
 }
 
 // ─── Helper: Build 3D token trajectory traces ───
