@@ -784,218 +784,278 @@ function get_init_weights(n_layers, d_model) {
 // Global state flag
 window.isTraining = false;
 
-async function train_transformer() {
-	const { d_model, n_layers, n_heads } = getTransformerConfig();
-
-	const btn = document.querySelector('.train-btn');
-	const status = document.getElementById('training-status');
-
+/**
+ * Checks whether training can start. Returns the token array if valid,
+ * or null if training should be aborted.
+ */
+function validateTrainingPreconditions(status) {
 	const trainingData = document.getElementById('transformer-training-data').value;
 	const preCheckTokens = transformer_tokenize_render(trainingData, null);
+
 	if (preCheckTokens.length < 2) {
 		status.style.display = 'block';
 		status.innerText = 'Need at least 2 tokens in training data.';
-		return;
+		return null;
 	}
+
+	return preCheckTokens;
+}
+
+/**
+ * Sets up UI state and resets history for a new training run.
+ * Returns the parsed hyperparameters.
+ */
+function initTrainingSession(btn, status) {
+	window.isTraining = true;
+	btn.classList.add('active');
+	btn.innerText = 'Stop Training';
+	status.style.display = 'block';
+
+	window.lossHistory = [];
+	reset_graph();
+	showTrainingProgressBar();
+
+	return {
+		lr:       parseFloat(document.getElementById('train-lr').value) || 0.05,
+		epochs:   parseInt(document.getElementById('train-epochs').value) || 500,
+		optType:  document.getElementById('train-optimizer').value,
+	};
+}
+
+/**
+ * Instantiates the TensorFlow.js optimizer based on user selection.
+ */
+function createOptimizer(optType, lr) {
+	if (optType === 'adam')    return tf.train.adam(lr);
+	if (optType === 'rmsprop') return tf.train.rmsprop(lr);
+	return tf.train.sgd(lr);
+}
+
+/**
+ * Constructs sliding-window input/target pairs for the current epoch.
+ * Mutates window.currentTrainingWindows.
+ */
+function buildTrainingWindows(tokens, contextSize) {
+	window.currentTrainingWindows = [];
+	for (let startIdx = 0; startIdx < tokens.length - contextSize; startIdx++) {
+		const inputSlice  = tokens.slice(startIdx, startIdx + contextSize);
+		const targetSlice = tokens.slice(startIdx + 1, startIdx + contextSize + 1);
+		window.currentTrainingWindows.push({ input: inputSlice, target: targetSlice });
+	}
+}
+
+/**
+ * Runs one gradient step: computes loss, clips gradients, applies them.
+ * Returns the loss tensor (caller must dispose).
+ */
+function computeAndApplyGradients(tokens, weightVars, d_model, n_layers, n_heads, allVars, optimizer, clipValue) {
+	const { value: cost, grads } = tf.variableGrads(
+		() => tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers, n_heads)),
+		allVars
+	);
+
+	const clippedGrads = {};
+	for (const name in grads) {
+		clippedGrads[name] = tf.clipByValue(grads[name], -clipValue, clipValue);
+	}
+	optimizer.applyGradients(clippedGrads);
+
+	for (const name in grads) {
+		grads[name].dispose();
+		clippedGrads[name].dispose();
+	}
+
+	return cost;
+}
+
+/**
+ * Generates HTML showing expected vs. predicted tokens for each
+ * training window, and injects it into the DOM.
+ */
+function renderTrainingWindowPredictions(d_model, n_layers) {
+    const sentenceSpan = document.getElementById('current_training_sentence');
+    if (!sentenceSpan || window.currentTrainingWindows.length === 0) return;
+
+    const vocab     = Object.keys(window.persistentEmbeddingSpace);
+    const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
+    const { n_heads: n_heads_local } = getTransformerConfig();
+
+    const maxWordLen = Math.max(
+        ...window.currentTrainingWindows.flatMap(w => w.target.map(t => t.length)),
+        ...vocab.map(v => v.length),
+        1
+    );
+    const chipMinWidth = Math.max(250, maxWordLen * 9 + 70) + 'px';
+
+    const windowsHtml = window.currentTrainingWindows.map((w, idx) => {
+        const predictions = getPredictionsForWindow(w, vocab, embMatrix, d_model, n_heads_local, n_layers);
+        return renderSingleWindowHtml(w, predictions, idx, chipMinWidth);
+    }).join('');
+
+    sentenceSpan.innerHTML = windowsHtml;
+    $("#show_training_sentences").show();
+}
+
+/**
+ * Runs a forward pass for a single training window and returns
+ * top-1 predictions at each position.
+ */
+function getPredictionsForWindow(w, vocab, embMatrix, d_model, n_heads, n_layers) {
+    const predictions = [];
+    try {
+        const h = runSimpleForwardPass(w.input, window.currentWeights, d_model, n_heads, n_layers);
+
+        for (let pos = 0; pos < h.length; pos++) {
+            const logits = embMatrix.map(embRow =>
+                h[pos].reduce((sum, val, k) => sum + val * embRow[k], 0));
+            const probs = softmax(logits);
+
+            let bestIdx = 0;
+            for (let j = 1; j < probs.length; j++) {
+                if (probs[j] > probs[bestIdx]) bestIdx = j;
+            }
+            predictions.push({ word: vocab[bestIdx], prob: probs[bestIdx] });
+        }
+    } catch (e) {
+        w.target.forEach(() => predictions.push({ word: '?', prob: 0 }));
+    }
+    return predictions;
+}
+
+/**
+ * Builds the HTML chip display for a single training window.
+ */
+function renderSingleWindowHtml(w, predictions, idx, chipMinWidth) {
+	const targetHtml = w.target.map((targetWord, pos) => {
+		const pred      = predictions[pos] || { word: '?', prob: 0 };
+		const isCorrect = pred.word === targetWord;
+		const icon      = isCorrect ? '✅' : '❌';
+		const probStr   = (pred.prob * 100).toFixed(1);
+		const bgColor   = isCorrect ? '#dcfce7' : '#fee2e2';
+
+		return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem; min-width:${chipMinWidth}; text-align:center; box-sizing:border-box;" title="Target: ${targetWord} | Predicted: ${pred.word} (${probStr}%)">
+	    ${icon} <b>${targetWord}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${pred.word}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
+	</span>`;
+	}).join('');
+
+	return `<div style="margin-bottom:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-family:monospace; font-size:0.85rem;">
+	<strong>Window ${idx + 1}:</strong>
+	[${w.input.join(' ')}] →<br>
+	<div style="margin-top:4px; margin-left:10px;">
+	    <span style="color:#64748b; font-size:0.75rem;">Expected vs Predicted:</span><br>
+	    ${targetHtml}
+	</div>
+    </div>`;
+}
+
+/**
+ * Formats a duration in milliseconds as HH:MM:SS.
+ */
+function formatETA(ms) {
+	if (isNaN(ms) || ms < 0) return "Calculating...";
+	let seconds = Math.floor(ms / 1000);
+	const hours   = Math.floor(seconds / 3600);
+	seconds %= 3600;
+	const minutes = Math.floor(seconds / 60);
+	seconds %= 60;
+	return [hours, minutes, seconds]
+		.map(v => v < 10 ? "0" + v : v)
+		.join(":");
+}
+
+/**
+ * Resets UI elements after training completes or is stopped.
+ */
+function finalizeTrainingSession(btn, status, completedAll) {
+	window.isTraining = false;
+	btn.classList.remove('active');
+	btn.innerText = 'Train Model';
+	status.innerText += completedAll ? " Training Complete!" : " Training Stopped.";
+	hideTrainingProgressBar();
+}
+
+async function train_transformer() {
+	const { d_model, n_layers, n_heads } = getTransformerConfig();
+
+	const btn    = document.querySelector('.train-btn');
+	const status = document.getElementById('training-status');
+
+	// ── 1. Validate ──
+	if (!validateTrainingPreconditions(status)) return;
 
 	if (window.isTraining) {
 		window.isTraining = false;
 		return;
 	}
 
-	window.isTraining = true;
-	btn.classList.add('active');
-	btn.innerText = 'Stop Training';
-	status.style.display = 'block';
+	// ── 2. Initialize session ──
+	const { lr, epochs, optType } = initTrainingSession(btn, status);
+	const optimizer = createOptimizer(optType, lr);
 
-	// ── NEW: Reset loss history and graph ──
-	window.lossHistory = [];
-	reset_graph();
-
-	// ── NEW: Show progress bar ──
-	showTrainingProgressBar();
-
-	const lr = parseFloat(document.getElementById('train-lr').value) || 0.05;
-	const epochs = parseInt(document.getElementById('train-epochs').value) || 500;
-	const optType = document.getElementById('train-optimizer').value;
-
-	let optimizer = optType === 'adam' ? tf.train.adam(lr) :
-		optType === 'rmsprop' ? tf.train.rmsprop(lr) : tf.train.sgd(lr);
-
+	const trainingData = document.getElementById('transformer-training-data').value;
 	const tokens = transformer_tokenize_render(trainingData, null);
 
 	if (tokens.length === 0) {
-		window.isTraining = false;
-		btn.classList.remove('active');
-		btn.innerText = 'Train Model';
-		hideTrainingProgressBar();
+		finalizeTrainingSession(btn, status, false);
 		return;
 	}
 
 	if (!window.currentWeights) {
 		window.currentWeights = get_init_weights(n_layers, d_model);
 	}
-
 	get_or_init_embeddings(tokens, d_model);
 
+	// ── 3. Convert to tensors ──
 	const weightVars = convert_weights_to_tensors(window.currentWeights);
-	const allVars = collectTrainableVars(weightVars);
-	const clipValue = 1.0;
+	const allVars    = collectTrainableVars(weightVars);
+	const clipValue  = 1.0;
 	let completedAll = true;
 
-	// --- ETA Logic: Start ---
 	const startTime = performance.now();
-	const formatETA = (ms) => {
-		if (isNaN(ms) || ms < 0) return "Calculating...";
-		let seconds = Math.floor(ms / 1000);
-		let hours = Math.floor(seconds / 3600);
-		seconds %= 3600;
-		let minutes = Math.floor(seconds / 60);
-		seconds %= 60;
-		return [hours, minutes, seconds]
-			.map(v => v < 10 ? "0" + v : v)
-			.join(":");
-	};
-	// --- ETA Logic: End ---
 
+	// ── 4. Training loop ──
 	for (let i = 0; i < epochs; i++) {
 		if (!window.isTraining) {
 			completedAll = false;
 			break;
 		}
 
-		const thiscontextSize = Math.min(getContextSize(), tokens.length - 1);
-		window.currentTrainingWindows = [];
-		for (let startIdx = 0; startIdx < tokens.length - thiscontextSize; startIdx++) {
-			const inputSlice = tokens.slice(startIdx, startIdx + thiscontextSize);
-			const targetSlice = tokens.slice(startIdx + 1, startIdx + thiscontextSize + 1);
-			window.currentTrainingWindows.push({ input: inputSlice, target: targetSlice });
-		}
+		const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
+		buildTrainingWindows(tokens, thisContextSize);
 
-		const { value: cost, grads } = tf.variableGrads(
-			() => tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers, n_heads)),
-			allVars
+		// 4a. Gradient step
+		const cost = computeAndApplyGradients(
+			tokens, weightVars, d_model, n_layers, n_heads,
+			allVars, optimizer, clipValue
 		);
-
-		const clippedGrads = {};
-		for (const name in grads) {
-			clippedGrads[name] = tf.clipByValue(grads[name], -clipValue, clipValue);
-		}
-		optimizer.applyGradients(clippedGrads);
-
-		for (const name in grads) {
-			grads[name].dispose();
-			clippedGrads[name].dispose();
-		}
 
 		const lossValue = await cost.data();
 		window.lossHistory.push(lossValue[0]);
 
+		// 4b. Render predictions
+		renderTrainingWindowPredictions(d_model, n_layers);
 
-		// Display current training sentences with actual predictions
-		const sentenceSpan = document.getElementById('current_training_sentence');
-
-		if (sentenceSpan && window.currentTrainingWindows.length > 0) {
-			// Get current predictions for each window
-			const vocab = Object.keys(window.persistentEmbeddingSpace);
-			const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
-
-			const maxWordLen = Math.max(
-				...window.currentTrainingWindows.flatMap(w => w.target.map(t => t.length)),
-				...vocab.map(v => v.length),
-				1
-			);
-			const chipMinWidth = Math.max(250, maxWordLen * 9 + 70) + 'px';
-
-			const windowsHtml = window.currentTrainingWindows.map((w, idx) => {
-				// Run a quick forward pass for this window to get predictions
-				const predictions = [];
-				try {
-					const { n_heads: n_heads_local } = getTransformerConfig();
-					let h = runSimpleForwardPass(w.input, window.currentWeights, d_model, n_heads_local, n_layers);
-
-					// Project each position to vocabulary (logits)
-					for (let pos = 0; pos < h.length; pos++) {
-						const logits = embMatrix.map(embRow =>
-							h[pos].reduce((sum, val, k) => sum + val * embRow[k], 0));
-						const probs = softmax(logits);
-
-						// Find top prediction
-						let bestIdx = 0;
-						for (let j = 1; j < probs.length; j++) {
-							if (probs[j] > probs[bestIdx]) bestIdx = j;
-						}
-						predictions.push({
-							word: vocab[bestIdx],
-							prob: probs[bestIdx]
-						});
-					}
-				} catch (e) {
-					// If forward pass fails, show "?" for predictions
-					w.target.forEach(() => predictions.push({ word: '?', prob: 0 }));
-				}
-
-				// Build the display with target vs actual
-				const targetHtml = w.target.map((targetWord, pos) => {
-					const pred = predictions[pos] || { word: '?', prob: 0 };
-					const isCorrect = pred.word === targetWord;
-					const icon = isCorrect ? '✅' : '❌';
-					const probStr = (pred.prob * 100).toFixed(1);
-					const bgColor = isCorrect ? '#dcfce7' : '#fee2e2';
-
-					return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem; min-width:${chipMinWidth}; text-align:center; box-sizing:border-box;" title="Target: ${targetWord} | Predicted: ${pred.word} (${probStr}%)">
-    ${icon} <b>${targetWord}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${pred.word}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
-</span>`;
-				}).join('');
-
-				return `<div style="margin-bottom:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-family:monospace; font-size:0.85rem;">
-	    <strong>Window ${idx + 1}:</strong> 
-	    [${w.input.join(' ')}] →<br>
-	    <div style="margin-top:4px; margin-left:10px;">
-		<span style="color:#64748b; font-size:0.75rem;">Expected vs Predicted:</span><br>
-		${targetHtml}
-	    </div>
-	</div>`;
-			}).join('');
-			sentenceSpan.innerHTML = windowsHtml;
-
-			$("#show_training_sentences").show();
-		}
-
-
-		// ── NEW: Update progress bar every epoch ──
+		// 4c. Progress & ETA
 		updateTrainingProgressBar(i + 1, epochs, lossValue[0]);
 
-		// --- ETA Calculation ---
-		const currentTime = performance.now();
-		const elapsed = currentTime - startTime;
+		const elapsed         = performance.now() - startTime;
 		const avgTimePerEpoch = elapsed / (i + 1);
-		const remainingEpochs = epochs - (i + 1);
-		const etaMs = remainingEpochs * avgTimePerEpoch;
-		const etaString = formatETA(etaMs);
-		status.innerText = `Epoch ${i + 1}: Loss = ${lossValue[0].toFixed(6)} | ETA: ${etaString}`;
+		const etaMs           = (epochs - (i + 1)) * avgTimePerEpoch;
+		status.innerText = `Epoch ${i + 1}: Loss = ${lossValue[0].toFixed(6)} | ETA: ${formatETA(etaMs)}`;
 
+		// 4d. Sync state
 		renderLossGraph();
-
 		window.currentWeights = await convert_tensors_to_weights(weightVars);
-
 		run_transformer_demo();
 		await tf.nextFrame();
-
 		calculate_vector_math();
-
 		tled_syncTableFromSpace();
 
 		cost.dispose();
 	}
 
-	window.isTraining = false;
-	btn.classList.remove('active');
-	btn.innerText = 'Train Model';
-	status.innerText += completedAll ? " Training Complete!" : " Training Stopped.";
-
-	// ── NEW: Hide progress bar ──
-	hideTrainingProgressBar();
+	// ── 5. Teardown ──
+	finalizeTrainingSession(btn, status, completedAll);
 }
 
 /**
