@@ -18,6 +18,12 @@ window.currentWeights = null;
 window.lossHistory = [];
 window.last_d_model = null;
 
+const vectorMathRenderRegistry = {
+	lastRendered: false,
+	needsUpdate: false,
+	isInViewport: false
+};
+
 window.tlab_trajectory_data = {
 	tokens: [],
 	steps: [] // Array of { name: "Stage Name", data: [[dim1, dim2...], ...] }
@@ -387,6 +393,30 @@ const headContentObserver = new IntersectionObserver((entries) => {
 		}
 	});
 }, { threshold: 0 });
+
+
+const vectorMathObserver = new IntersectionObserver((entries) => {
+	entries.forEach(entry => {
+		vectorMathRenderRegistry.isInViewport = entry.isIntersecting;
+		// If it just scrolled into view and there's a pending update, render now
+		if (entry.isIntersecting && vectorMathRenderRegistry.needsUpdate) {
+			_execute_vector_math();
+			vectorMathRenderRegistry.needsUpdate = false;
+		}
+	});
+}, { threshold: 0 });
+
+function observer_vector_math () {
+	const vmContainer = document.getElementById('transformer-vector-math-result');
+	if (vmContainer) {
+		vectorMathObserver.observe(vmContainer);
+	}
+	// Also observe the input container in case it's separate
+	const vmInput = document.getElementById('transformer-vector-math-input');
+	if (vmInput && vmInput.parentElement) {
+		vectorMathObserver.observe(vmInput.parentElement);
+	}
+}
 
 function getPositionColor(index, total, format = 'rgb') {
 	const t = total > 1 ? index / (total - 1) : 0;
@@ -3418,10 +3448,22 @@ const debouncedRun = debounce((id) => {
 	run_transformer_demo(id);
 }, 600);
 
-/**
- * Calculates vector arithmetic dynamically based on the current Transformer Embedding Space.
- */
 window.calculate_vector_math = function() {
+    // If currently visible, render immediately
+    if (vectorMathRenderRegistry.isInViewport) {
+        _execute_vector_math();
+        vectorMathRenderRegistry.needsUpdate = false;
+    } else {
+        // Not visible — just flag that we need a re-render when it scrolls into view
+        vectorMathRenderRegistry.needsUpdate = true;
+    }
+};
+
+/**
+ * The actual heavy computation + rendering logic.
+ * Extracted from the old calculate_vector_math so it can be called lazily.
+ */
+function _execute_vector_math() {
 	const inputVal = document.getElementById('transformer-vector-math-input').value;
 	const resDiv = document.getElementById('transformer-vector-math-result');
 	const space = window.persistentEmbeddingSpace;
@@ -3558,10 +3600,10 @@ window.calculate_vector_math = function() {
 		const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${safeNearest}} \\\\ ${toVecTex(nearestVec)} }}`;
 
 		resDiv.innerHTML = `
-		    <div style="overflow-x: auto; padding: 10px 0; font-size: 1.1em;">
-			$$ ${result.tex} = ${resultTex} $$
-		    </div>
-		`;
+	    <div style="overflow-x: auto; padding: 10px 0; font-size: 1.1em;">
+		$$ ${result.tex} = ${resultTex} $$
+	    </div>
+	`;
 
 		render_temml();
 
@@ -3571,7 +3613,7 @@ window.calculate_vector_math = function() {
 		console.error("Vector Math Parse Error:", e);
 		resDiv.innerHTML = "<span style='color: #ef4444;'>Syntax Error. Please check your equation formatting.</span>";
 	}
-};
+}
 
 function debounced_run_transformer_demo(activeId) {
 	updateTrainButtonState();
@@ -4010,6 +4052,9 @@ function tled_syncTableFromSpace() {
 
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
+
+	observer_vector_math();
+
 	updateTrainButtonState();
 	run_transformer_demo()
 
