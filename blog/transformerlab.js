@@ -20,6 +20,16 @@ window.tlab_trajectory_data = {
 	steps: [] // Array of { name: "Stage Name", data: [[dim1, dim2...], ...] }
 };
 
+function matrixToPmatrix(matrix) {
+	return `\\begin{pmatrix} ` +
+		matrix.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ') +
+		` \\end{pmatrix}`;
+}
+
+function vecToPmatrix(vec) {
+	return `\\begin{pmatrix} ${vec.map(v => v.toFixed(nr_fixed)).join(' & ')} \\end{pmatrix}`;
+}
+
 function switchTab(containerId, activeIdx, totalCount, idPrefixes, inactiveStyle, activeStyle) {
 	// Hide all and reset button styles
 	for (let i = 0; i < totalCount; i++) {
@@ -1813,12 +1823,6 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
     const finalContainer = document.getElementById('transformer-h1-final-viz');
     if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
 
-    const matrixToPmatrix = (matrix) =>
-        `\\begin{pmatrix} ` + matrix.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ') + ` \\end{pmatrix}`;
-
-    const vecToPmatrix = (vec) =>
-        `\\begin{pmatrix} ${vec.map(v => v.toFixed(nr_fixed)).join(' & ')} \\end{pmatrix}`;
-
     // Project the Multi-Head Output using WO
     const projectedMHA = multiHeadOutput.map(row =>
         WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
@@ -1870,12 +1874,6 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 function updateConcatenationDisplay(headData, tokens) {
 	const container = document.getElementById('transformer-concat-viz');
 	if (!container || !headData.length) return [];
-
-	const matrixToPmatrix = (matrix) => {
-		return `\\begin{pmatrix} ` +
-			matrix.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ') +
-			` \\end{pmatrix}`;
-	};
 
 	const headMatricesLaTeX = headData.map((h, i) => {
 		return `\\underbrace{${matrixToPmatrix(h.context)}}_{\\text{Head } ${i + 1}}`;
@@ -2018,23 +2016,20 @@ function run_ffn_block(h1, params = {}) {
  * Goal: Show FFN LayerNorm parameters
  */
 function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta) {
-	const rawMP = (m) => `\\begin{pmatrix} ${m.map(r => r.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
-	const rawVP = (v) => `\\begin{pmatrix} ${v.map(val => val.toFixed(nr_fixed)).join(' & ')} \\end{pmatrix}`;
-
 	document.getElementById('ffn-step-1').innerHTML = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
 	<p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1$ before FFN</p>
 	$$ \\text{LayerNorm}(h_1) = \\underbrace{\\gamma_{\\text{ffn}}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_1 - \\underbrace{\\mu}_{\\text{Mean of } h_1}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_1} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
 	<div style="overflow-x:auto;">
-	    $$ \\underbrace{${rawMP(normed_h1)}}_{\\text{Norm}\\left(h_1\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${rawMP(h1)}}_{h_1},\\; \\underbrace{${rawVP(gamma)}}_\\gamma,\\; \\underbrace{${rawVP(beta)}}_\\beta\\right) $$
+	    $$ \\underbrace{${matrixToPmatrix(normed_h1)}}_{\\text{Norm}\\left(h_1\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h1)}}_{h_1},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
 		<br>
 	</div>
     </div>
-    $$ \\text{out}_{L1} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1) \\cdot W_1 + b_1\\right) = \\underbrace{${rawMP(out_L1)}}_{\\text{out}_{L1}} $$
+    $$ \\text{out}_{L1} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1) \\cdot W_1 + b_1\\right) = \\underbrace{${matrixToPmatrix(out_L1)}}_{\\text{out}_{L1}} $$
     `;
 
 	document.getElementById('ffn-step-2').innerHTML = `
-    $$ \\text{out}_{L2} = \\text{out}_{L1} \\cdot W_2 + b_2 = \\underbrace{${rawMP(out_FFN)}}_{\\text{Out}_\\text{FFN}} $$
+    $$ \\text{out}_{L2} = \\text{out}_{L1} \\cdot W_2 + b_2 = \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{Out}_\\text{FFN}} $$
     `;
 
 	document.getElementById('ffn-step-3').innerHTML = `
@@ -2043,7 +2038,7 @@ function render_ffn_absolute_full(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	$$ h_2 = h_1 + \\text{out}_{L2} $$
     </div>
     <div style="overflow-x:auto;">
-	$$ \\underbrace{${rawMP(h2)}}_{h_2} = \\underbrace{${rawMP(h1)}}_{h_1} + \\underbrace{${rawMP(out_FFN)}}_{\\text{out}_{L2}} $$
+	$$ \\underbrace{${matrixToPmatrix(h2)}}_{h_2} = \\underbrace{${matrixToPmatrix(h1)}}_{h_1} + \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{out}_{L2}} $$
     </div>
     `;
 
