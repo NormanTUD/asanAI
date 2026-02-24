@@ -587,55 +587,75 @@ window.showHead = (idx) => {
 };
 
 function calculate_positional_injection(tokens, d_model) {
-	const resultsContainer = document.getElementById('transformer-pe-integration-results');
-	const injectedEncodings = [];
+    const injectedEncodings = computeInjectedEncodings(tokens, d_model);
+    renderPositionalInjectionHtml(tokens, injectedEncodings, d_model);
+    return injectedEncodings;
+}
 
-	let html = `<h3>Vector Injection (Inference Sequence)</h3>`;
+/**
+ * Computes the combined embedding + PE vector for each token.
+ * Pure computation — no DOM access.
+ */
+function computeInjectedEncodings(tokens, d_model) {
+    return tokens.map((token, pos) => {
+        const semanticVec = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[token])
+            ? window.persistentEmbeddingSpace[token].map(v => parseFloat(v.toFixed(nr_fixed)))
+            : Array.from({ length: d_model }, () => 0);
 
-	tokens.forEach((token, pos) => {
-		// ✅ FIX: Use the actual learned embedding instead of a fake hash-based vector.
-		// The persistent embedding space is guaranteed to be initialized before this
-		// function is called (via get_or_init_embeddings in run_and_visualize_network).
-		const semanticVec = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[token])
-			? window.persistentEmbeddingSpace[token].map(v => parseFloat(v.toFixed(nr_fixed)))
-			: Array.from({length: d_model}, () => 0);
+        const peVec = computePositionalEncoding(pos, d_model, posEmbedScalar);
+        return semanticVec.map((val, i) => val + peVec[i]);
+    });
+}
 
-		// ✅ REFACTORED: Was a manual 8-line loop, now one call.
-		// Using posEmbedScalar for consistency with the rest of the codebase.
-		// (Previously this was the only PE site that omitted the scalar.)
-		const peVec = computePositionalEncoding(pos, d_model, posEmbedScalar);
-		const combined = semanticVec.map((val, i) => val + peVec[i]);
+/**
+ * Renders the positional injection table into the DOM.
+ */
+function renderPositionalInjectionHtml(tokens, injectedEncodings, d_model) {
+    const resultsContainer = document.getElementById('transformer-pe-integration-results');
+    if (!resultsContainer) return;
 
-		injectedEncodings.push(combined);
+    let html = `<h3>Vector Injection (Inference Sequence)</h3>`;
 
-		if (resultsContainer) {
-			const displaySemantic = semanticVec.map(v => v.toFixed(nr_fixed));
-			const displayPE = peVec.map(v => v.toFixed(nr_fixed));
-			const displayCombined = combined.map(v => v.toFixed(nr_fixed));
+    tokens.forEach((token, pos) => {
+        const semanticVec = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[token])
+            ? window.persistentEmbeddingSpace[token].map(v => parseFloat(v.toFixed(nr_fixed)))
+            : Array.from({ length: d_model }, () => 0);
 
-			html += `
-	    <div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff; overflow: auto;">
-		<strong>Pos ${pos}: ${token}</strong>
-		<table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px; border-collapse: collapse;">
-		    <tr style="color: #64748b;">
-			<td style="padding-right: 10px;">Embedding Vector</td>
-			${displaySemantic.map(v => `<td>${v}</td>`).join('')}
-		    </tr>
-		    <tr style="color: #3b82f6;">
-			<td style="padding-right: 10px;">PE (Sin/Cos)</td>
-			${displayPE.map(v => `<td>${v}</td>`).join('')}
-		    </tr>
-		    <tr style="font-weight:bold; border-top: 1px solid #eee;">
-			<td style="padding-right: 10px;">Combined</td>
-			${displayCombined.map(v => `<td>${v}</td>`).join('')}
-		    </tr>
-		</table>
-	    </div>`;
-		}
-	});
+        const peVec = computePositionalEncoding(pos, d_model, posEmbedScalar);
+        const combined = injectedEncodings[pos];
 
-	if (resultsContainer) resultsContainer.innerHTML = html;
-	return injectedEncodings;
+        html += buildInjectionRowHtml(token, pos, semanticVec, peVec, combined);
+    });
+
+    resultsContainer.innerHTML = html;
+}
+
+/**
+ * Builds the HTML for a single token's injection row.
+ */
+function buildInjectionRowHtml(token, pos, semanticVec, peVec, combined) {
+    const displaySemantic = semanticVec.map(v => v.toFixed(nr_fixed));
+    const displayPE = peVec.map(v => v.toFixed(nr_fixed));
+    const displayCombined = combined.map(v => v.toFixed(nr_fixed));
+
+    return `
+    <div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff; overflow: auto;">
+        <strong>Pos ${pos}: ${token}</strong>
+        <table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px; border-collapse: collapse;">
+            <tr style="color: #64748b;">
+                <td style="padding-right: 10px;">Embedding Vector</td>
+                ${displaySemantic.map(v => `<td>${v}</td>`).join('')}
+            </tr>
+            <tr style="color: #3b82f6;">
+                <td style="padding-right: 10px;">PE (Sin/Cos)</td>
+                ${displayPE.map(v => `<td>${v}</td>`).join('')}
+            </tr>
+            <tr style="font-weight:bold; border-top: 1px solid #eee;">
+                <td style="padding-right: 10px;">Combined</td>
+                ${displayCombined.map(v => `<td>${v}</td>`).join('')}
+            </tr>
+        </table>
+    </div>`;
 }
 
 function render_positional_waves(d_model, tokens) {
@@ -2714,93 +2734,111 @@ function tlab_render_weight_grid(id, layerNum) {
         const plotDiv = document.getElementById(id);
         if (!plotDiv || !window.currentWeights || !window.currentWeights[layerNum]) return;
 
-        // Track this ID as active for orphan cleanup
         if (window._activeMigrationIds) {
             window._activeMigrationIds.add(id);
         }
 
-        let weightContainer = plotDiv.nextElementSibling;
-        if (!weightContainer || !weightContainer.classList.contains('weight-grid-viz')) {
-            weightContainer = document.createElement('div');
-            weightContainer.className = 'weight-grid-viz';
-            weightContainer.style = "display: flex; flex-direction: column; align-items: center; margin: 40px 0; padding: 0; clear: both; width: 100%;";
-            plotDiv.parentNode.insertBefore(weightContainer, plotDiv.nextSibling);
+        const gridBox = ensureWeightGridContainer(plotDiv);
+        const targets = getWeightTargets(layerNum);
+
+        targets.forEach(target => renderSingleWeightCanvas(gridBox, target));
+        removeOrphanedWeightWrappers(gridBox, targets);
+    });
+}
+
+/**
+ * Ensures the weight grid container and row exist, creating them if needed.
+ * @returns {HTMLElement} The grid row element
+ */
+function ensureWeightGridContainer(plotDiv) {
+    let weightContainer = plotDiv.nextElementSibling;
+    if (!weightContainer || !weightContainer.classList.contains('weight-grid-viz')) {
+        weightContainer = document.createElement('div');
+        weightContainer.className = 'weight-grid-viz';
+        weightContainer.style = "display: flex; flex-direction: column; align-items: center; margin: 40px 0; padding: 0; clear: both; width: 100%;";
+        plotDiv.parentNode.insertBefore(weightContainer, plotDiv.nextSibling);
+    }
+
+    let gridBox = weightContainer.querySelector('.weight-grid-row');
+    if (!gridBox) {
+        gridBox = document.createElement('div');
+        gridBox.className = 'weight-grid-row';
+        gridBox.style = "display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 10px; width: 100%;";
+        weightContainer.appendChild(gridBox);
+    }
+
+    return gridBox;
+}
+
+/**
+ * Extracts the weight matrices to visualize for a given layer.
+ */
+function getWeightTargets(layerNum) {
+    const weights = window.currentWeights[layerNum];
+    return [
+        { name: 'W1', data: weights.W1 },
+        { name: 'W2', data: weights.W2 },
+        { name: 'Q',  data: weights.attention?.query },
+        { name: 'K',  data: weights.attention?.key },
+        { name: 'V',  data: weights.attention?.value }
+    ].filter(t => t.data && t.data.length);
+}
+
+/**
+ * Renders (or updates) a single weight matrix as a pixel canvas.
+ */
+function renderSingleWeightCanvas(gridBox, target) {
+    const rows = target.data.length;
+    const cols = Array.isArray(target.data[0]) ? target.data[0].length : 1;
+
+    let wrap = gridBox.querySelector(`[data-weight-name="${target.name}"]`);
+    let canvas;
+
+    if (!wrap) {
+        wrap = document.createElement('div');
+        wrap.setAttribute('data-weight-name', target.name);
+        wrap.style = "text-align: center; flex: 1 1 0%; display: flex; flex-direction: column; min-width: 0px;";
+        wrap.innerHTML = `<div style="font-size: 10px; font-weight: bold; color: #94a3b8; margin-bottom: 5px; font-family: monospace; white-space: nowrap;">${target.name}</div>`;
+
+        canvas = document.createElement('canvas');
+        canvas.style.cssText = "width:100%; height:auto; image-rendering:pixelated; display:block; max-height:145px; outline:1px solid #f1f5f9;";
+        wrap.appendChild(canvas);
+        gridBox.appendChild(wrap);
+    } else {
+        canvas = wrap.querySelector('canvas');
+    }
+
+    if (canvas.width !== cols || canvas.height !== rows) {
+        canvas.width = cols;
+        canvas.height = rows;
+    }
+
+    paintWeightPixels(canvas, target.data, rows, cols);
+}
+
+/**
+ * Paints weight values as colored pixels onto a canvas.
+ */
+function paintWeightPixels(canvas, data, rows, cols) {
+    const ctx = canvas.getContext('2d');
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            const val = Array.isArray(data[r]) ? data[r][c] : data[r];
+            ctx.fillStyle = tlab_get_colorblind_pixel(val);
+            ctx.fillRect(c, r, 1, 1);
         }
+    }
+}
 
-        // ── REUSE existing gridBox instead of clearing innerHTML ──
-        let gridBox = weightContainer.querySelector('.weight-grid-row');
-        if (!gridBox) {
-            gridBox = document.createElement('div');
-            gridBox.className = 'weight-grid-row';
-            gridBox.style = "display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 10px; width: 100%;";
-            weightContainer.appendChild(gridBox);
+/**
+ * Removes weight wrapper elements that no longer correspond to active matrices.
+ */
+function removeOrphanedWeightWrappers(gridBox, targets) {
+    const activeNames = new Set(targets.map(t => t.name));
+    gridBox.querySelectorAll('[data-weight-name]').forEach(el => {
+        if (!activeNames.has(el.getAttribute('data-weight-name'))) {
+            el.remove();
         }
-
-        const weights = window.currentWeights[layerNum];
-        const targets = [
-            { name: 'W1', data: weights.W1 },
-            { name: 'W2', data: weights.W2 },
-            { name: 'Q',  data: weights.attention?.query },
-            { name: 'K',  data: weights.attention?.key },
-            { name: 'V',  data: weights.attention?.value }
-        ];
-
-        targets.forEach((target, targetIdx) => {
-            if (!target.data || !target.data.length) return;
-
-            const rows = target.data.length;
-            const cols = Array.isArray(target.data[0]) ? target.data[0].length : 1;
-
-            // ── REUSE existing wrapper and canvas by data attribute ──
-            let wrap = gridBox.querySelector(`[data-weight-name="${target.name}"]`);
-            let canvas;
-
-            if (!wrap) {
-                // First time: create the wrapper, label, and canvas
-                wrap = document.createElement('div');
-                wrap.setAttribute('data-weight-name', target.name);
-                wrap.style = "text-align: center; flex: 1 1 0%; display: flex; flex-direction: column; min-width: 0px;";
-                wrap.innerHTML = `<div style="font-size: 10px; font-weight: bold; color: #94a3b8; margin-bottom: 5px; font-family: monospace; white-space: nowrap;">${target.name}</div>`;
-
-                canvas = document.createElement('canvas');
-                canvas.style.width = "100%";
-                canvas.style.height = "auto";
-                canvas.style.imageRendering = "pixelated";
-                canvas.style.display = "block";
-                canvas.style.maxHeight = "145px";
-                canvas.style.outline = "1px solid #f1f5f9";
-
-                wrap.appendChild(canvas);
-                gridBox.appendChild(wrap);
-            } else {
-                // Reuse existing canvas
-                canvas = wrap.querySelector('canvas');
-            }
-
-            // Update canvas dimensions only if they changed
-            if (canvas.width !== cols || canvas.height !== rows) {
-                canvas.width = cols;
-                canvas.height = rows;
-            }
-
-            // Repaint pixel data (this is the actual update — no DOM destruction)
-            const ctx = canvas.getContext('2d');
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const val = Array.isArray(target.data[r]) ? target.data[r][c] : target.data[r];
-                    ctx.fillStyle = tlab_get_colorblind_pixel(val);
-                    ctx.fillRect(c, r, 1, 1);
-                }
-            }
-        });
-
-        // Remove any orphaned weight wrappers (e.g., if a matrix was removed)
-        const activeNames = new Set(targets.filter(t => t.data && t.data.length).map(t => t.name));
-        gridBox.querySelectorAll('[data-weight-name]').forEach(el => {
-            if (!activeNames.has(el.getAttribute('data-weight-name'))) {
-                el.remove();
-            }
-        });
     });
 }
 
@@ -3628,130 +3666,182 @@ function render_positional_shift_plot(tokenStrings, d_model) {
 }
 
 function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
-	const container = document.getElementById('transformer-pe-shift-plot');
-	if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
-		console.error("Plotting requires an array of string tokens.");
-		return;
-	}
+    const container = document.getElementById('transformer-pe-shift-plot');
+    if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
+        console.error("Plotting requires an array of string tokens.");
+        return;
+    }
 
-	// Clean up ghost instances from previous renders
-	Plotly.purge(container);
-	const existingChart = echarts.getInstanceByDom(container);
-	if (existingChart) existingChart.dispose();
-	container.innerHTML = '';
+    purgeExistingCharts(container);
 
-	const getHueFromToken = (str) => {
-		let hash = 0;
-		for (let i = 0; i < str.length; i++) {
-			hash = str.charCodeAt(i) + ((hash << 5) - hash);
-		}
-		return Math.abs(hash) % 360;
-	};
+    const traceData = buildShiftTraceData(tokenStrings, d_model, injectedEmbeddings);
 
-	const traces = [];
-	const echartsData = [];
+    if (d_model <= 3 && traceData.plotlyTraces.length > 0) {
+        renderShiftPlotly(container, traceData.plotlyTraces, d_model);
+    } else if (d_model > 3) {
+        renderShiftECharts(container, traceData.echartsData, d_model);
+    }
+}
 
-	tokenStrings.forEach((token, pos) => {
-		const semanticBase = window.persistentEmbeddingSpace[token];
-		if (!semanticBase) return;
+/**
+ * Tears down any previous Plotly or ECharts instance on the container.
+ */
+function purgeExistingCharts(container) {
+    Plotly.purge(container);
+    const existingChart = echarts.getInstanceByDom(container);
+    if (existingChart) existingChart.dispose();
+    container.innerHTML = '';
+}
 
-		const combined = injectedEmbeddings[pos];
-		if (!combined) return;
+/**
+ * Derives a stable hue from a token string for consistent coloring.
+ */
+function getHueFromToken(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return Math.abs(hash) % 360;
+}
 
-		// Derive the PE vector for visualization (arrow direction)
-		const peVec = combined.map((val, i) => val - semanticBase[i]);
+/**
+ * Builds all Plotly traces (for d_model <= 3) and ECharts data (for d_model > 3)
+ * representing the positional shift arrows from base embedding to PE-injected embedding.
+ *
+ * @returns {{ plotlyTraces: object[], echartsData: object[] }}
+ */
+function buildShiftTraceData(tokenStrings, d_model, injectedEmbeddings) {
+    const plotlyTraces = [];
+    const echartsData = [];
 
-		const hue = getHueFromToken(token);
-		const tokenColor = `hsl(${hue}, 75%, 50%)`;
+    tokenStrings.forEach((token, pos) => {
+        const semanticBase = window.persistentEmbeddingSpace[token];
+        if (!semanticBase) return;
 
-		if (d_model <= 3) {
-			const x = [semanticBase[0], combined[0]];
-			const y = d_model >= 2 ? [semanticBase[1], combined[1]] : [0, 0];
-			const z = d_model === 3 ? [semanticBase[2], combined[2]] : [0, 0];
+        const combined = injectedEmbeddings[pos];
+        if (!combined) return;
 
-			if (d_model === 3) {
-				traces.push({
-					type: 'scatter3d',
-					x: x, y: y, z: z,
-					mode: 'lines',
-					line: { width: 6, color: tokenColor },
-					name: `${token} (pos ${pos})`,
-					legendgroup: token,
-					hoverinfo: 'text',
-					text: `Token: ${token}<br>Pos: ${pos}`
-				});
+        const peVec = combined.map((val, i) => val - semanticBase[i]);
+        const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
 
-				traces.push({
-					type: 'cone',
-					x: [combined[0]], y: [combined[1]], z: [combined[2]],
-					u: [peVec[0]], v: [peVec[1]], w: [peVec[2]],
-					sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-					colorscale: [[0, tokenColor], [1, tokenColor]],
-					showscale: false,
-					legendgroup: token,
-					showlegend: false,
-					hoverinfo: 'skip'
-				});
-			} else {
-				traces.push({
-					type: 'scatter', x: x, y: y, mode: 'lines+markers',
-					line: { width: 3, color: tokenColor },
-					name: `${token} (pos ${pos})`,
-					legendgroup: token,
-					marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: tokenColor },
-					hoverinfo: 'text',
-					text: `Token: ${token}<br>Pos: ${pos}`
-				});
-			}
-		} else {
-			echartsData.push({
-				value: semanticBase.flatMap((val, i) => [val, combined[i]]),
-				name: `${token} (pos ${pos})`,
-				lineStyle: { color: tokenColor }
-			});
-		}
-	});
+        if (d_model <= 3) {
+            plotlyTraces.push(
+                ...buildShiftPlotlyTraces(token, pos, semanticBase, combined, peVec, tokenColor, d_model)
+            );
+        } else {
+            echartsData.push(buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor));
+        }
+    });
 
-	if (d_model <= 3 && traces.length > 0) {
-		const layout = {
-			title: "Semantic Vector → + Positional Shift",
-			margin: { l: 40, r: 40, b: 40, t: 40 },
-			showlegend: true
-		};
+    return { plotlyTraces, echartsData };
+}
 
-		if (d_model === 3) {
-			layout.scene = {
-				xaxis: { title: 'Dim 0' },
-				yaxis: { title: 'Dim 1' },
-				zaxis: { title: 'Dim 2' }
-			};
-			layout.margin = { l: 0, r: 0, b: 0, t: 40 };
-		} else {
-			layout.xaxis = { title: 'Dim 0' };
-			layout.yaxis = { title: d_model === 2 ? 'Dim 1' : '' };
-		}
+/**
+ * Builds Plotly traces for a single token's positional shift (2D or 3D).
+ */
+function buildShiftPlotlyTraces(token, pos, semanticBase, combined, peVec, tokenColor, d_model) {
+    const traces = [];
+    const x = [semanticBase[0], combined[0]];
+    const y = d_model >= 2 ? [semanticBase[1], combined[1]] : [0, 0];
 
-		Plotly.newPlot(container, traces, layout);
+    if (d_model === 3) {
+        const z = [semanticBase[2], combined[2]];
 
-	} else if (d_model > 3) {
-		const myChart = echarts.init(container);
-		const axes = [];
-		for (let i = 0; i < d_model; i++) {
-			axes.push({ dim: i * 2, name: `D${i} Base` }, { dim: i * 2 + 1, name: `D${i} +PE` });
-		}
+        traces.push({
+            type: 'scatter3d',
+            x, y, z,
+            mode: 'lines',
+            line: { width: 6, color: tokenColor },
+            name: `${token} (pos ${pos})`,
+            legendgroup: token,
+            hoverinfo: 'text',
+            text: `Token: ${token}<br>Pos: ${pos}`
+        });
 
-		myChart.setOption({
-			title: { text: "Semantic Vector → + Positional Shift", left: 'center' },
-			tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
-			parallelAxis: axes,
-			series: [{
-				type: 'parallel', data: echartsData,
-				lineStyle: { width: 2, opacity: 0.6 },
-				emphasis: { lineStyle: { width: 5 } }
-			}]
-		});
-		myChart.resize();
-	}
+        traces.push({
+            type: 'cone',
+            x: [combined[0]], y: [combined[1]], z: [combined[2]],
+            u: [peVec[0]], v: [peVec[1]], w: [peVec[2]],
+            sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+            colorscale: [[0, tokenColor], [1, tokenColor]],
+            showscale: false,
+            legendgroup: token,
+            showlegend: false,
+            hoverinfo: 'skip'
+        });
+    } else {
+        traces.push({
+            type: 'scatter', x, y,
+            mode: 'lines+markers',
+            line: { width: 3, color: tokenColor },
+            name: `${token} (pos ${pos})`,
+            legendgroup: token,
+            marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: tokenColor },
+            hoverinfo: 'text',
+            text: `Token: ${token}<br>Pos: ${pos}`
+        });
+    }
+
+    return traces;
+}
+
+/**
+ * Builds a single ECharts parallel-coordinates data entry for high-dimensional shifts.
+ */
+function buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor) {
+    return {
+        value: semanticBase.flatMap((val, i) => [val, combined[i]]),
+        name: `${token} (pos ${pos})`,
+        lineStyle: { color: tokenColor }
+    };
+}
+
+/**
+ * Renders the positional shift plot using Plotly (d_model <= 3).
+ */
+function renderShiftPlotly(container, traces, d_model) {
+    const layout = {
+        title: "Semantic Vector → + Positional Shift",
+        margin: { l: 40, r: 40, b: 40, t: 40 },
+        showlegend: true
+    };
+
+    if (d_model === 3) {
+        layout.scene = {
+            xaxis: { title: 'Dim 0' },
+            yaxis: { title: 'Dim 1' },
+            zaxis: { title: 'Dim 2' }
+        };
+        layout.margin = { l: 0, r: 0, b: 0, t: 40 };
+    } else {
+        layout.xaxis = { title: 'Dim 0' };
+        layout.yaxis = { title: d_model === 2 ? 'Dim 1' : '' };
+    }
+
+    Plotly.newPlot(container, traces, layout);
+}
+
+/**
+ * Renders the positional shift plot using ECharts parallel coordinates (d_model > 3).
+ */
+function renderShiftECharts(container, echartsData, d_model) {
+    const myChart = echarts.init(container);
+    const axes = [];
+    for (let i = 0; i < d_model; i++) {
+        axes.push({ dim: i * 2, name: `D${i} Base` }, { dim: i * 2 + 1, name: `D${i} +PE` });
+    }
+
+    myChart.setOption({
+        title: { text: "Semantic Vector → + Positional Shift", left: 'center' },
+        tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+        parallelAxis: axes,
+        series: [{
+            type: 'parallel', data: echartsData,
+            lineStyle: { width: 2, opacity: 0.6 },
+            emphasis: { lineStyle: { width: 5 } }
+        }]
+    });
+    myChart.resize();
 }
 
 function calculate_batched_loss(tokens, weights, d_model, n_layers, batchSize = 5) {
@@ -4109,120 +4199,138 @@ function updateTrainButtonState() {
  * scrollable width so arcs connect correctly.
  */
 function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weights) {
-	const container = document.getElementById(containerId);
-	const canvas    = document.getElementById(canvasId);
-	const strip     = document.getElementById(stripId);
-	if (!container || !canvas || !strip) return;
+    const container = document.getElementById(containerId);
+    const canvas    = document.getElementById(canvasId);
+    const strip     = document.getElementById(stripId);
+    if (!container || !canvas || !strip) return;
 
-	// Build token chips
-	strip.innerHTML = tokens.map((word, i) => {
-		const displayWord = (typeof word === 'string')
-			? word
-			: tlab_get_top_word_only(word);
-		return `<div class="sa-token-block" style="
-		    display:inline-block; padding:8px 14px; margin:0 6px;
-		    background:#e0e7ff; border-radius:8px; cursor:pointer;
-		    font-weight:600; font-size:0.95rem; user-select:none;
-		    white-space:nowrap; flex-shrink:0; min-width:60px;
-		    text-align:center;
-		    border:2px solid transparent; transition: border-color 0.15s;"
-		 data-token-idx="${i}">
-		${displayWord}
-	    </div>`;
-	}).join('');
+    const chips = buildTokenChipStrip(strip, tokens);
+    let hoverIndex = null;
 
-	const chips = strip.querySelectorAll('.sa-token-block');
-	let hoverIndex = null;
+    const drawArcs = () => drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex);
 
-	function drawArcs() {
-		const ctx = canvas.getContext('2d');
+    attachChipHoverEvents(chips, (idx) => { hoverIndex = idx; drawArcs(); }, () => { hoverIndex = null; drawArcs(); });
+    container.addEventListener('scroll', drawArcs);
 
-		// Size canvas to the SCROLLABLE content dimensions, not the visible viewport.
-		// This ensures arcs render correctly even when the strip is wider than the container.
-		const scrollW = container.scrollWidth;
-		const scrollH = container.scrollHeight;
-		canvas.width  = scrollW;
-		canvas.height = scrollH;
-		// Make the canvas element match the scroll dimensions so it covers all chips
-		canvas.style.width  = scrollW + 'px';
-		canvas.style.height = scrollH + 'px';
+    drawArcs();
 
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+    attachResizeHandler(containerId, drawArcs);
+}
 
-		// Use the container's bounding rect as origin reference.
-		// Because the canvas is positioned absolutely inside the container and sized
-		// to scrollWidth, we offset chip positions by the container's own page rect
-		// PLUS the current scrollLeft so arcs stay aligned with the scrolled content.
-		const containerRect = container.getBoundingClientRect();
+/**
+ * Builds the token chip HTML strip and returns the chip elements.
+ */
+function buildTokenChipStrip(strip, tokens) {
+    strip.innerHTML = tokens.map((word, i) => {
+        const displayWord = (typeof word === 'string') ? word : tlab_get_top_word_only(word);
+        return `<div class="sa-token-block" style="
+            display:inline-block; padding:8px 14px; margin:0 6px;
+            background:#e0e7ff; border-radius:8px; cursor:pointer;
+            font-weight:600; font-size:0.95rem; user-select:none;
+            white-space:nowrap; flex-shrink:0; min-width:60px;
+            text-align:center;
+            border:2px solid transparent; transition: border-color 0.15s;"
+            data-token-idx="${i}">
+            ${displayWord}
+        </div>`;
+    }).join('');
 
-		for (let i = 0; i < tokens.length; i++) {
-			for (let j = 0; j < tokens.length; j++) {
-				if (i === j) continue;
-				const strength = weights[i][j];
-				if (strength < 0.01) continue;
+    return strip.querySelectorAll('.sa-token-block');
+}
 
-				const chip1 = chips[i].getBoundingClientRect();
-				const chip2 = chips[j].getBoundingClientRect();
+/**
+ * Attaches mouseover/mouseout events to each chip.
+ */
+function attachChipHoverEvents(chips, onHover, onLeave) {
+    chips.forEach((chip, idx) => {
+        chip.addEventListener('mouseover', () => onHover(idx));
+        chip.addEventListener('mouseout', onLeave);
+    });
+}
 
-				// Translate from page coordinates to container-scroll coordinates
-				const scrollLeft = container.scrollLeft;
-				const scrollTop  = container.scrollTop;
+/**
+ * Draws bezier attention arcs on the canvas.
+ */
+function drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex) {
+    const scrollW = container.scrollWidth;
+    const scrollH = container.scrollHeight;
+    canvas.width  = scrollW;
+    canvas.height = scrollH;
+    canvas.style.width  = scrollW + 'px';
+    canvas.style.height = scrollH + 'px';
 
-				const x1 = (chip1.left + chip1.width / 2) - containerRect.left + scrollLeft;
-				const x2 = (chip2.left + chip2.width / 2) - containerRect.left + scrollLeft;
-				const baseY = (chip1.top - containerRect.top) + scrollTop;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-				const isSource = (hoverIndex === i);
+    const containerRect = container.getBoundingClientRect();
 
-				ctx.beginPath();
-				if (isSource) {
-					ctx.lineWidth   = 2 + strength * 20;
-					ctx.strokeStyle = `rgba(37, 99, 235, ${0.3 + strength * 0.7})`;
-				} else {
-					ctx.lineWidth   = 1;
-					ctx.strokeStyle = `rgba(203, 213, 225, 0.2)`;
-				}
+    for (let i = 0; i < tokens.length; i++) {
+        for (let j = 0; j < tokens.length; j++) {
+            if (i === j) continue;
+            const strength = weights[i][j];
+            if (strength < 0.01) continue;
 
-				const dist = Math.abs(x2 - x1);
-				const h    = Math.min(dist * 0.5, 150);
+            drawSingleArc(ctx, container, containerRect, chips[i], chips[j], strength, hoverIndex === i);
+        }
+    }
 
-				ctx.moveTo(x1, baseY);
-				ctx.bezierCurveTo(x1, baseY - h, x2, baseY - h, x2, baseY);
-				ctx.stroke();
+    highlightHoveredChip(chips, hoverIndex);
+}
 
-				// Show percentage label on hovered arcs
-				if (isSource && strength > 0.05) {
-					ctx.fillStyle = "#1e40af";
-					ctx.font = "bold 14px Inter, sans-serif";
-					const txt = Math.round(strength * 100) + "%";
-					ctx.fillText(txt, (x1 + x2) / 2 - 10, baseY - h / 1.5);
-				}
-			}
-		}
+/**
+ * Draws a single bezier arc between two chips.
+ */
+function drawSingleArc(ctx, container, containerRect, chip1El, chip2El, strength, isSource) {
+    const chip1 = chip1El.getBoundingClientRect();
+    const chip2 = chip2El.getBoundingClientRect();
 
-		// Highlight the hovered chip
-		chips.forEach((chip, idx) => {
-			chip.style.borderColor = (idx === hoverIndex) ? '#2563eb' : 'transparent';
-		});
-	}
+    const scrollLeft = container.scrollLeft;
+    const scrollTop  = container.scrollTop;
 
-	// Attach hover events
-	chips.forEach((chip, idx) => {
-		chip.addEventListener('mouseover',  () => { hoverIndex = idx;  drawArcs(); });
-		chip.addEventListener('mouseout',   () => { hoverIndex = null; drawArcs(); });
-	});
+    const x1 = (chip1.left + chip1.width / 2) - containerRect.left + scrollLeft;
+    const x2 = (chip2.left + chip2.width / 2) - containerRect.left + scrollLeft;
+    const baseY = (chip1.top - containerRect.top) + scrollTop;
 
-	// Redraw when the container is scrolled (arcs must track chip positions)
-	container.addEventListener('scroll', () => drawArcs());
+    ctx.beginPath();
+    if (isSource) {
+        ctx.lineWidth   = 2 + strength * 20;
+        ctx.strokeStyle = `rgba(37, 99, 235, ${0.3 + strength * 0.7})`;
+    } else {
+        ctx.lineWidth   = 1;
+        ctx.strokeStyle = `rgba(203, 213, 225, 0.2)`;
+    }
 
-	// Initial draw (all faint)
-	drawArcs();
+    const dist = Math.abs(x2 - x1);
+    const h    = Math.min(dist * 0.5, 150);
 
-	// Redraw on window resize
-	const resizeKey = `_resizeHandler_${containerId}`;
-	if (window[resizeKey]) window.removeEventListener('resize', window[resizeKey]);
-	window[resizeKey] = () => drawArcs();
-	window.addEventListener('resize', window[resizeKey]);
+    ctx.moveTo(x1, baseY);
+    ctx.bezierCurveTo(x1, baseY - h, x2, baseY - h, x2, baseY);
+    ctx.stroke();
+
+    if (isSource && strength > 0.05) {
+        ctx.fillStyle = "#1e40af";
+        ctx.font = "bold 14px Inter, sans-serif";
+        ctx.fillText(Math.round(strength * 100) + "%", (x1 + x2) / 2 - 10, baseY - h / 1.5);
+    }
+}
+
+/**
+ * Highlights the hovered chip with a border.
+ */
+function highlightHoveredChip(chips, hoverIndex) {
+    chips.forEach((chip, idx) => {
+        chip.style.borderColor = (idx === hoverIndex) ? '#2563eb' : 'transparent';
+    });
+}
+
+/**
+ * Attaches a window resize handler, cleaning up any previous one.
+ */
+function attachResizeHandler(containerId, drawFn) {
+    const resizeKey = `_resizeHandler_${containerId}`;
+    if (window[resizeKey]) window.removeEventListener('resize', window[resizeKey]);
+    window[resizeKey] = drawFn;
+    window.addEventListener('resize', drawFn);
 }
 
 /**
