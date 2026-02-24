@@ -615,7 +615,7 @@ function get_init_weights(n_layers, d_model) {
 window.isTraining = false;
 
 async function train_transformer() {
-	const { d_model, n_layers } = getTransformerConfig();
+	const { d_model, n_layers, n_heads } = getTransformerConfig();
 
 	const btn = document.querySelector('.train-btn');
 	const status = document.getElementById('training-status');
@@ -703,7 +703,7 @@ async function train_transformer() {
 		}
 
 		const { value: cost, grads } = tf.variableGrads(
-			() => tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers)),
+			() => tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers, n_heads)),
 			allVars
 		);
 
