@@ -87,11 +87,11 @@ https://arxiv.org/html/2505.11611v1
     <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Epochs:</label>
-            <input type="number" id="train-epochs" value="1000" style="width: 60px; padding: 4px;">
+            <input type="number" id="train-epochs" value="100" style="width: 60px; padding: 4px;">
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Learning Rate:</label>
-            <input type="number" id="train-lr" value="0.001" step="0.01" style="width: 70px; padding: 4px;">
+            <input type="number" id="train-lr" value="0.05" step="0.01" style="width: 70px; padding: 4px;">
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Optimizer:</label>
