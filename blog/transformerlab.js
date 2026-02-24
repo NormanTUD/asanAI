@@ -148,35 +148,53 @@ const trajectoryRenderRegistry = new Map();
 const multiLayerAttentionRegistry = new Map();
 const transformerLabVisMigrationDataRegistry = new Map();
 
-const embeddingObserver = new IntersectionObserver((entries) => {
-	entries.forEach(entry => {
-		if (entry.isIntersecting) {
-			const containerId = entry.target.id;
-			const data = embeddingRenderRegistry.get(containerId);
-
-			if (data && !data.rendered) {
-				console.log("Embedding plot visible: Rendering...");
-				_execute_embedding_render(data.d_model);
-				data.rendered = true;
+/**
+ * Creates a lazy IntersectionObserver that fires a render callback
+ * the first time an element becomes visible, then marks it as rendered.
+ *
+ * @param {Map}      registry   - A Map keyed by container ID holding { rendered, ...data }
+ * @param {Function} renderFn   - Called as renderFn(containerId, dataFromRegistry)
+ * @param {object}   [options]  - IntersectionObserver options (default: { threshold: 0 })
+ * @returns {IntersectionObserver}
+ */
+function createLazyRenderObserver(registry, renderFn, options = { threshold: 0 }) {
+	return new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				const containerId = entry.target.id;
+				const data = registry.get(containerId);
+				if (data && !data.rendered) {
+					renderFn(containerId, data);
+					data.rendered = true;
+				}
 			}
-		}
-	});
-}, { threshold: 0 });
+		});
+	}, options);
+}
 
-const positionalShiftObserver = new IntersectionObserver((entries) => {
-	entries.forEach(entry => {
-		if (entry.isIntersecting) {
-			const containerId = entry.target.id;
-			const data = positionalShiftRegistry.get(containerId);
+const embeddingObserver = createLazyRenderObserver(embeddingRenderRegistry, (id, data) => {
+	console.log("Embedding plot visible: Rendering...");
+	_execute_embedding_render(data.d_model);
+});
 
-			if (data && !data.rendered) {
-				console.log("Positional Shift Plot visible: Rendering...");
-				_execute_shift_render(data.tokenStrings, data.d_model, data.injectedEmbeddings);
-				data.rendered = true;
-			}
-		}
-	});
-}, { threshold: 0 });
+const positionalShiftObserver = createLazyRenderObserver(positionalShiftRegistry, (id, data) => {
+	console.log("Positional Shift Plot visible: Rendering...");
+	_execute_shift_render(data.tokenStrings, data.d_model, data.injectedEmbeddings);
+});
+
+const attentionObserver = createLazyRenderObserver(attentionRenderRegistry, (id, data) => {
+	console.log("Starting actual rendering");
+	data.instance.executeActualRender(data.headData, data.tokens);
+});
+
+const trajectoryObserver = createLazyRenderObserver(trajectoryRenderRegistry, (id, data) => {
+	console.log("Trajectory visible: Rendering plot...");
+	tlab_render_trajectory_plot(data.d_model);
+});
+
+const migrationObserver = createLazyRenderObserver(transformerLabVisMigrationDataRegistry, (id, data) => {
+	render_migration_logic(id, data.tokens, data.start_h, data.end_h, data.layerNum, data.d_model, data.h_after, data.tokenStrings);
+});
 
 const headContentObserver = new IntersectionObserver((entries) => {
 	entries.forEach(entry => {
@@ -192,39 +210,6 @@ const headContentObserver = new IntersectionObserver((entries) => {
 			if (registryEntry && registryEntry.instance) {
 				console.log(`Head ${headIdx} in Layer ${layerIdx} visible: Rendering...`);
 				registryEntry.instance._executeHeadRender(layerIdx, headIdx);
-			}
-		}
-	});
-}, { threshold: 0 });
-
-/**
- * Intersection Observer for Attention UI
- */
-const attentionObserver = new IntersectionObserver((entries) => {
-	entries.forEach(entry => {
-		if (entry.isIntersecting) {
-			const containerId = entry.target.id;
-			const data = attentionRenderRegistry.get(containerId);
-			if (data && !data.rendered) {
-				console.log("Starting actual rendering");
-				const engineInstance = data.instance;
-				engineInstance.executeActualRender(data.headData, data.tokens);
-				data.rendered = true;
-			}
-		}
-	});
-}, { threshold: 0 });
-
-const trajectoryObserver = new IntersectionObserver((entries) => {
-	entries.forEach(entry => {
-		if (entry.isIntersecting) {
-			const containerId = entry.target.id;
-			const data = trajectoryRenderRegistry.get(containerId);
-
-			if (data && !data.rendered) {
-				console.log("Trajectory visible: Rendering plot...");
-				tlab_render_trajectory_plot(data.d_model);
-				data.rendered = true;
 			}
 		}
 	});
@@ -2068,22 +2053,6 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
  * Stores the latest data for each plot ID to ensure that when it
  * becomes visible, it renders with the most recent calculation.
  */
-
-/**
- * Intersection Observer for Lazy Rendering
- */
-const migrationObserver = new IntersectionObserver((entries) => {
-	entries.forEach(entry => {
-		if (entry.isIntersecting) {
-			const id = entry.target.id;
-			const data = transformerLabVisMigrationDataRegistry.get(id);
-			if (data && !data.rendered) {
-				render_migration_logic(id, data.tokens, data.start_h, data.end_h, data.layerNum, data.d_model, data.h_after, data.tokenStrings);
-				data.rendered = true;
-			}
-		}
-	});
-}, { threshold: 0 });
 
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
 	const container = document.getElementById('transformer-migration-plots-container');
