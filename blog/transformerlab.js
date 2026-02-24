@@ -1052,7 +1052,7 @@ function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
 	const space = window.persistentEmbeddingSpace;
 	let h = contextTokens.map((t, pos) => {
 		const emb = window.persistentEmbeddingSpace[t] || new Array(d_model).fill(0);
-		return addPositionalEncoding(emb, pos, d_model);
+		return addPositionalEncoding(emb, pos, d_model, posEmbedScalar);
 	});
 
 	// b. Layers
@@ -1295,7 +1295,7 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 	if (knownMasterTokens.length > 0) {
 		let h_master = knownMasterTokens.map((t, pos) => {
 			const emb = window.persistentEmbeddingSpace[t] || new Array(d_model).fill(0);
-			return addPositionalEncoding(emb, pos, d_model);
+			return addPositionalEncoding(emb, pos, d_model, posEmbedScalar);
 		});
 
 		let h_current = h_master;
