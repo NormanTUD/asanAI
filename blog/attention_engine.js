@@ -108,26 +108,70 @@ class AttentionEngine {
 		}
 
 		const entry = multiLayerAttentionRegistry.get(this.containerId);
-		entry.layers.push({
+
+		const existingLayerIndex = entry.layers.findIndex(l => l.instance === this);
+		const layerEntry = {
 			headData: headData,
 			tokens: tokens,
-			tokenStrings: tokenStrings,  // ← NEW: preserve original order
+			tokenStrings: tokenStrings,
 			instance: this
-		});
+		};
+
+		if (existingLayerIndex !== -1) {
+			entry.layers[existingLayerIndex] = layerEntry;
+		} else {
+			entry.layers.push(layerEntry);
+		}
 		entry.rendered = false;
 
 		attentionRenderRegistry.set(this.containerId, {
 			headData: headData,
 			tokens: tokens,
-			tokenStrings: tokenStrings,  // ← NEW
+			tokenStrings: tokenStrings,
 			instance: this,
 			rendered: false
 		});
 
 		if (!this.container && !this.containerId) return;
 		const containerEl = document.getElementById(this.containerId);
-		if (containerEl && !containerEl.innerHTML) {
+		if (containerEl && !containerEl.innerHTML.trim()) {
 			containerEl.innerHTML = `<div style="padding:20px; color:#64748b;">Wait for Attention Matrix to load...</div>`;
+		}
+	}
+
+	_updateLayerContent(layerIdx) {
+		const contentDiv = document.getElementById(`layer-content-${this.containerId}-${layerIdx}`);
+		if (!contentDiv) return;
+
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		const layerData = registry.layers[layerIdx];
+		const layerHeadData = layerData.headData;
+
+		const headTabList = contentDiv.querySelector('.head-tab-list');
+		const existingHeadBtnCount = headTabList ? headTabList.querySelectorAll('.mha-head-tab-btn').length : 0;
+
+		if (existingHeadBtnCount !== layerHeadData.length && headTabList) {
+			let headTabHtml = '';
+			for (let h = 0; h < layerHeadData.length; h++) {
+				const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${h}`);
+				const isActive = headDiv ? headDiv.style.display !== 'none' : h === 0;
+				headTabHtml += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
+		onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
+		style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+		background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
+		Head ${h + 1}
+	    </button>`;
+			}
+			headTabList.innerHTML = headTabHtml;
+		}
+
+		// Directly re-render heads that were already rendered — no observer, no placeholder
+		for (let h = 0; h < layerHeadData.length; h++) {
+			const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${h}`);
+			if (headDiv && headDiv.dataset.wasRenderedOnce === 'true') {
+				headDiv.dataset.rendered = 'false';
+				this._executeHeadRender(layerIdx, h);
+			}
 		}
 	}
 
@@ -143,9 +187,51 @@ class AttentionEngine {
 		const layers = registry.layers;
 		const numLayers = layers.length;
 
+		const existingTabs = this.container.querySelector('.attention-layer-tabs');
+		if (existingTabs) {
+			const tabList = existingTabs.querySelector('.layer-tab-list');
+			const existingBtnCount = tabList ? tabList.querySelectorAll('.mha-layer-tab-btn').length : 0;
+
+			if (existingBtnCount !== numLayers) {
+				let tabHtml = '';
+				for (let l = 0; l < numLayers; l++) {
+					const contentDiv = document.getElementById(`layer-content-${this.containerId}-${l}`);
+					const isActive = contentDiv ? contentDiv.style.display !== 'none' : l === 0;
+					tabHtml += `<button class="mha-layer-tab-btn" id="layer-tab-btn-${this.containerId}-${l}"
+		    onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
+		    style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+		    background:${isActive ? '#fff' : '#bfdbfe'}; font-weight:${isActive ? 'bold' : 'normal'};">
+		    Layer ${l + 1}
+		</button>`;
+				}
+				tabList.innerHTML = tabHtml;
+
+				for (let l = 0; l < numLayers; l++) {
+					let contentDiv = document.getElementById(`layer-content-${this.containerId}-${l}`);
+					if (!contentDiv) {
+						contentDiv = document.createElement('div');
+						contentDiv.id = `layer-content-${this.containerId}-${l}`;
+						contentDiv.className = 'layer-tab-content';
+						contentDiv.style.display = 'none';
+						contentDiv.dataset.layerIdx = l;
+						contentDiv.dataset.rendered = 'false';
+						contentDiv.innerHTML = `<div style="padding:20px; color:#64748b;">Loading Layer ${l + 1}...</div>`;
+						existingTabs.appendChild(contentDiv);
+					}
+				}
+			}
+
+			for (let l = 0; l < numLayers; l++) {
+				const contentDiv = document.getElementById(`layer-content-${this.containerId}-${l}`);
+				if (contentDiv && contentDiv.dataset.rendered === 'true') {
+					this._updateLayerContent(l);
+				}
+			}
+			return;
+		}
+
 		let html = `<div class="attention-layer-tabs" style="border:1px solid #3b82f6; border-radius:8px; overflow:hidden;">`;
 
-		// ── Layer Tab Headers (lightweight) ──
 		html += `<div class="layer-tab-list" style="background:#dbeafe; display:flex; border-bottom:2px solid #3b82f6; flex-wrap:wrap;">`;
 		for (let l = 0; l < numLayers; l++) {
 			html += `<button class="mha-layer-tab-btn" id="layer-tab-btn-${this.containerId}-${l}"
@@ -157,7 +243,6 @@ class AttentionEngine {
 		}
 		html += `</div>`;
 
-		// ── Empty layer content containers (NO math generated yet) ──
 		for (let l = 0; l < numLayers; l++) {
 			html += `<div id="layer-content-${this.containerId}-${l}" class="layer-tab-content"
 	    style="display:${l === 0 ? 'block' : 'none'};"
@@ -169,23 +254,26 @@ class AttentionEngine {
 		html += `</div>`;
 		this.container.innerHTML = html;
 
-		// Only render the FIRST visible layer
 		this._renderLayerContent(0);
 	}
 
 	_renderLayerContent(layerIdx) {
 		const contentDiv = document.getElementById(`layer-content-${this.containerId}-${layerIdx}`);
-		if (!contentDiv || contentDiv.dataset.rendered === 'true') return;
+		if (!contentDiv) return;
 
 		const registry = multiLayerAttentionRegistry.get(this.containerId);
 		const layerData = registry.layers[layerIdx];
 		const layerHeadData = layerData.headData;
-		const layerTokens = layerData.tokens;
-		const layerInstance = layerData.instance;
 
+		// If already rendered, delegate to the update path (no placeholders)
+		if (contentDiv.dataset.rendered === 'true') {
+			this._updateLayerContent(layerIdx);
+			return;
+		}
+
+		// First-time render for this layer
 		let html = '';
 
-		// Head tab buttons (lightweight)
 		html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap;">`;
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
@@ -197,7 +285,6 @@ class AttentionEngine {
 		}
 		html += `</div>`;
 
-		// Empty head containers
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<div id="head-content-${this.containerId}-${layerIdx}-${h}" class="head-tab-in-layer"
 	    style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
@@ -209,7 +296,6 @@ class AttentionEngine {
 		contentDiv.innerHTML = html;
 		contentDiv.dataset.rendered = 'true';
 
-		// Render only the first head
 		this._renderHeadContent(layerIdx, 0);
 	}
 
@@ -217,15 +303,19 @@ class AttentionEngine {
 		const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${headIdx}`);
 		if (!headDiv || headDiv.dataset.rendered === 'true') return;
 
-		// Attach metadata so the observer callback knows what to render
 		headDiv.dataset.containerId = this.containerId;
 		headDiv.dataset.layerIdx = layerIdx;
 		headDiv.dataset.headIdx = headIdx;
 
-		// Show a lightweight placeholder
-		headDiv.innerHTML = `<div style="padding:20px; color:#94a3b8;">Wait for Head ${headIdx + 1}...</div>`;
+		// If this head was already rendered once, skip the placeholder entirely
+		// and render directly (synchronous update, no observer needed)
+		if (headDiv.dataset.wasRenderedOnce === 'true') {
+			this._executeHeadRender(layerIdx, headIdx);
+			return;
+		}
 
-		// Observe — the actual render fires only when this div is in the viewport
+		// First time: show placeholder and use lazy observer
+		headDiv.innerHTML = `<div style="padding:20px; color:#94a3b8;">Loading Head ${headIdx + 1}...</div>`;
 		headContentObserver.observe(headDiv);
 	}
 
@@ -252,25 +342,25 @@ class AttentionEngine {
 		const webStripId     = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
 
 		headDiv.innerHTML = `
-	    <p style="margin:0 0 4px 0; color:#1e40af; font-weight:bold;">Attention Connectivity Web</p>
-	    <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-		Hover over a word to see where it focuses its attention.
-	    </p>
-	    <div id="${webContainerId}" style="position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
-		<canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
-		<div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
-	    </div>
-	    <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>
-	    <div style="margin-bottom:20px;">
-		$$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
-	    </div>
-	    <div style="overflow-x:auto;">
-		${layerInstance.generateMathTable(hd, escapedTokens)}
-	    </div>`;
+	<p style="margin:0 0 4px 0; color:#1e40af; font-weight:bold;">Attention Connectivity Web</p>
+	<p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
+	    Hover over a word to see where it focuses its attention.
+	</p>
+	<div id="${webContainerId}" style="position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
+	    <canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
+	    <div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
+	</div>
+	<div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>
+	<div style="margin-bottom:20px;">
+	    $$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
+	</div>
+	<div style="overflow-x:auto;">
+	    ${layerInstance.generateMathTable(hd, escapedTokens)}
+	</div>`;
 
 		headDiv.dataset.rendered = 'true';
+		headDiv.dataset.wasRenderedOnce = 'true';
 
-		// Stop observing since it's now rendered
 		headContentObserver.unobserve(headDiv);
 
 		render_temml();
