@@ -2395,18 +2395,23 @@ function renderScaleInvariance() {
 // ============================================================
 
 const platonicState = {
-    visionRotDeg: 65,
-    audioRotDeg: -130,
-    visionOffset: [25, 18],
-    audioOffset: [-25, 18],
-    currentVisionRotDeg: 65,
-    currentAudioRotDeg: -130,
-    currentVisionOffset: [25, 18],
-    currentAudioOffset: [-25, 18],
-    aligned: false,
-    animating: false,
-    showCorrespondence: true,
-    showStructure: true
+	visionRotDeg: 65,
+	audioRotDeg: -130,
+	visionOffset: [25, 18],
+	audioOffset: [-25, 18],
+	currentVisionRotDeg: 65,
+	currentAudioRotDeg: -130,
+	currentVisionOffset: [25, 18],
+	currentAudioOffset: [-25, 18],
+	// NEW: residual misalignment — models converge but never perfectly
+	residualVisionRotDeg: 3,
+	residualAudioRotDeg: -5,
+	residualVisionOffset: [0.6, 0.4],
+	residualAudioOffset: [-0.5, -0.3],
+	aligned: false,
+	animating: false,
+	showCorrespondence: true,
+	showStructure: true
 };
 
 const platonicConcepts = [
@@ -2463,12 +2468,22 @@ function renderPlatonicHypothesis() {
     const annotations = [];
 
     // --- Convergence metric: 0 = fully separated, 1 = fully aligned ---
-    const totalRange = Math.abs(st.visionRotDeg) + Math.abs(st.audioRotDeg) +
-        Math.abs(st.visionOffset[0]) + Math.abs(st.visionOffset[1]) +
-        Math.abs(st.audioOffset[0]) + Math.abs(st.audioOffset[1]);
-    const currentDelta = Math.abs(st.currentVisionRotDeg) + Math.abs(st.currentAudioRotDeg) +
-        Math.abs(st.currentVisionOffset[0]) + Math.abs(st.currentVisionOffset[1]) +
-        Math.abs(st.currentAudioOffset[0]) + Math.abs(st.currentAudioOffset[1]);
+    const totalRange =
+        Math.abs(st.visionRotDeg - st.residualVisionRotDeg) +
+        Math.abs(st.audioRotDeg - st.residualAudioRotDeg) +
+        Math.abs(st.visionOffset[0] - st.residualVisionOffset[0]) +
+        Math.abs(st.visionOffset[1] - st.residualVisionOffset[1]) +
+        Math.abs(st.audioOffset[0] - st.residualAudioOffset[0]) +
+        Math.abs(st.audioOffset[1] - st.residualAudioOffset[1]);
+
+    const currentDelta =
+        Math.abs(st.currentVisionRotDeg - st.residualVisionRotDeg) +
+        Math.abs(st.currentAudioRotDeg - st.residualAudioRotDeg) +
+        Math.abs(st.currentVisionOffset[0] - st.residualVisionOffset[0]) +
+        Math.abs(st.currentVisionOffset[1] - st.residualVisionOffset[1]) +
+        Math.abs(st.currentAudioOffset[0] - st.residualAudioOffset[0]) +
+        Math.abs(st.currentAudioOffset[1] - st.residualAudioOffset[1]);
+
     const convergence = totalRange > 0 ? 1 - (currentDelta / totalRange) : 1;
 
     const modalityConfig = [
@@ -2524,8 +2539,10 @@ function renderPlatonicHypothesis() {
     });
 
     // --- 2. Cluster structure lines ---
+        // --- 2. Cluster structure lines (differentiated per modality) ---
     if (st.showStructure) {
-        modalityConfig.forEach(mod => {
+        const dashStyles = ['solid', 'dash', 'dot'];
+        modalityConfig.forEach((mod, modIdx) => {
             const lx = [], ly = [];
             platonicStructurePairs.forEach(([a, b]) => {
                 const ca = platonicConcepts.find(c => c.name === a);
@@ -2539,8 +2556,12 @@ function renderPlatonicHypothesis() {
                 type: 'scatter',
                 x: lx, y: ly,
                 mode: 'lines',
-                line: { color: mod.color, width: 2 },
-                opacity: 0.25,
+                line: {
+                    color: mod.color,
+                    width: 2.5 - modIdx * 0.3,
+                    dash: dashStyles[modIdx]
+                },
+                opacity: 0.35,
                 showlegend: false,
                 hoverinfo: 'skip',
                 connectgaps: false
@@ -2551,7 +2572,7 @@ function renderPlatonicHypothesis() {
     // --- 3. Correspondence lines ---
     if (st.showCorrespondence) {
         // Fade out correspondence lines as modalities merge
-        const corrOpacity = Math.max(0.05, 1 - convergence);
+	const corrOpacity = Math.max(0.15, 1 - convergence * 0.85);
         const cx = [], cy = [];
         platonicConcepts.forEach(c => {
             const pL = getPlatonicModPos(c, 'language');
@@ -2584,25 +2605,47 @@ function renderPlatonicHypothesis() {
             cy += p[1] + nudge[1] * nudgeFactor;
         });
         const n = platonicConcepts.length;
+        const centroidX = cx / n;
+        const centroidY = cy / n;
 
-        // When converged, spread the centroid labels out more so they don't overlap either
-        const labelSpread = convergence > 0.8 ? 2.5 : 0;
-        const labelNudge = {
-            language: [0,  4.5 + labelSpread],
+        const labelSpread = convergence > 0.8 ? 3.0 : 0;
+        const labelOffset = {
+            language: [0,   4.5 + labelSpread],
             vision:   [6,  -3 - labelSpread],
             audio:    [-6, -3 - labelSpread]
         };
 
-        annotations.push({
-            x: cx / n + labelNudge[mod.key][0],
-            y: cy / n + labelNudge[mod.key][1],
-            text: '<b>' + mod.label + '</b>',
-            showarrow: convergence > 0.8,
-            ax: 0, ay: mod.key === 'language' ? -25 : 25,
-            font: { size: 13, color: mod.color },
-            bgcolor: 'rgba(255,255,255,0.8)',
-            borderpad: 4
-        });
+        if (convergence > 0.8) {
+            // Arrow from label text → modality centroid (data-coord refs)
+            annotations.push({
+                x: centroidX,
+                y: centroidY,
+                ax: centroidX + labelOffset[mod.key][0],
+                ay: centroidY + labelOffset[mod.key][1],
+                axref: 'x',
+                ayref: 'y',
+                text: '<b>' + mod.label + '</b>',
+                showarrow: true,
+                arrowhead: 2,
+                arrowsize: 1,
+                arrowwidth: 1.5,
+                arrowcolor: mod.color,
+                font: { size: 13, color: mod.color },
+                bgcolor: 'rgba(255,255,255,0.85)',
+                borderpad: 4
+            });
+        } else {
+            // Text near centroid, no arrow needed
+            annotations.push({
+                x: centroidX + labelOffset[mod.key][0],
+                y: centroidY + labelOffset[mod.key][1],
+                text: '<b>' + mod.label + '</b>',
+                showarrow: false,
+                font: { size: 13, color: mod.color },
+                bgcolor: 'rgba(255,255,255,0.8)',
+                borderpad: 4
+            });
+        }
     });
 
     const layout = {
@@ -2645,6 +2688,13 @@ window.animatePlatonicAlignment = function() {
     const startARot = st.currentAudioRotDeg;
     const startVOff = [...st.currentVisionOffset];
     const startAOff = [...st.currentAudioOffset];
+
+    // Target residual values, NOT zero
+    const targetVRot = st.residualVisionRotDeg;
+    const targetARot = st.residualAudioRotDeg;
+    const targetVOff = st.residualVisionOffset;
+    const targetAOff = st.residualAudioOffset;
+
     const duration = 2500;
     const startTime = performance.now();
 
@@ -2657,16 +2707,22 @@ window.animatePlatonicAlignment = function() {
         const rawT = Math.min(elapsed / duration, 1);
         const t = easeInOutCubic(rawT);
 
-        st.currentVisionRotDeg = startVRot * (1 - t);
-        st.currentAudioRotDeg  = startARot * (1 - t);
-        st.currentVisionOffset = [startVOff[0] * (1 - t), startVOff[1] * (1 - t)];
-        st.currentAudioOffset  = [startAOff[0] * (1 - t), startAOff[1] * (1 - t)];
+        st.currentVisionRotDeg = startVRot + (targetVRot - startVRot) * t;
+        st.currentAudioRotDeg  = startARot + (targetARot - startARot) * t;
+        st.currentVisionOffset = [
+            startVOff[0] + (targetVOff[0] - startVOff[0]) * t,
+            startVOff[1] + (targetVOff[1] - startVOff[1]) * t
+        ];
+        st.currentAudioOffset = [
+            startAOff[0] + (targetAOff[0] - startAOff[0]) * t,
+            startAOff[1] + (targetAOff[1] - startAOff[1]) * t
+        ];
 
         const statusEl = document.getElementById('platonic-status');
         if (statusEl) {
-            statusEl.textContent = 'Converging... Vision: ' +
-                Math.round(st.currentVisionRotDeg) + '° → 0° | Audio: ' +
-                Math.round(st.currentAudioRotDeg) + '° → 0°';
+            statusEl.textContent = 'Converging… Vision: ' +
+                Math.round(st.currentVisionRotDeg) + '° → ~' + targetVRot + '° | Audio: ' +
+                Math.round(st.currentAudioRotDeg) + '° → ~' + targetARot + '°';
         }
 
         renderPlatonicHypothesis();
@@ -2674,16 +2730,16 @@ window.animatePlatonicAlignment = function() {
         if (rawT < 1) {
             requestAnimationFrame(step);
         } else {
-            st.currentVisionRotDeg = 0;
-            st.currentAudioRotDeg  = 0;
-            st.currentVisionOffset = [0, 0];
-            st.currentAudioOffset  = [0, 0];
+            st.currentVisionRotDeg = targetVRot;
+            st.currentAudioRotDeg  = targetARot;
+            st.currentVisionOffset = [...targetVOff];
+            st.currentAudioOffset  = [...targetAOff];
             st.animating = false;
             st.aligned = true;
             btn.disabled = true;
 
             if (statusEl) {
-                statusEl.innerHTML = '✅ <b>Converged!</b> All three modalities collapse onto the same geometry — the platonic representation.';
+                statusEl.innerHTML = '✅ <b>Converged!</b> All three modalities approach the same geometry — but with residual differences, just as the hypothesis predicts (*approximately* the same, not identical).';
                 statusEl.style.color = '#10b981';
             }
             renderPlatonicHypothesis();
