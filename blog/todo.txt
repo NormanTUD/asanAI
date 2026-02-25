@@ -1,3 +1,5 @@
+https://jmlr.org/papers/v22/20-302.html
+
 6. Layer-Depth Progression
 Research has also shown that attention patterns change systematically across layers:
 - Early layers tend to show more local/positional patterns (diagonal, adjacent tokens)
