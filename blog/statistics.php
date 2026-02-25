@@ -61,7 +61,7 @@ The earliest known mention of the differing frequencies of dice sums appears in 
 
 ##### The Gambler's Manual: Gerolamo Cardano (1564)
 
-The first truly scientific treatment came from **Gerolamo Cardano**, who also invented the cardan shift, a brilliant physician and a degenerate gambler. In his book *\citetitle{liberludo}* (chapter 13, *On Composite Numbers Up to Six and Beyond and for Two and Three Dice*), he was probably the first to realize that for two dice, the "circuit" is **36**, and he used this to calculate the odds for the lucky throw.
+The first truly scientific treatment came from **Gerolamo Cardano**, who also invented the cardan shaft, a brilliant physician and a degenerate gambler. In his book *\citetitle{liberludo}* (chapter 13, *On Composite Numbers Up to Six and Beyond and for Two and Three Dice*), he was probably the first to realize that for two dice, the "circuit" is **36**, and he used this to calculate the odds for the lucky throw.
 
 ##### The Great Correspondence: Pascal & Fermat (1654)
 
