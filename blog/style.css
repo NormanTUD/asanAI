@@ -864,3 +864,7 @@ pre, code, .status-console, .matrix-input {
 	tab-size: 4;
 	font-variant-numeric: tabular-nums slashed-zero;
 }
+
+#contents ::marker {
+	font-variant-numeric: oldstyle-nums; /* If numbered lists */
+}
