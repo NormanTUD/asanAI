@@ -18,8 +18,8 @@ https://arxiv.org/html/2505.11611v1
 		<label style="font-weight: bold;">Model Dimension ($d_{\text{model}}$): </label>
 		<span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
 		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-            <b>Dependency:</b> Must be a multiple of Heads.
-            <i>Reason:</i> Each head needs an equal integer-sized slice ($d_k = d_{\text{model}} / h$) of the vector to perform dot products.
+            <b>Dependency:</b> Must be a multiple of Heads.<br>
+            <b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = d_{\text{model}} / h$) of the vector to perform dot products.
         </p>
 		<input type="range" id="transformer-dimension-model" min="2" max="16" step="1" value="3"
 			style="width: 100%;" oninput="syncTransformerSettings('dim')">
@@ -29,8 +29,8 @@ https://arxiv.org/html/2505.11611v1
 		<label style="font-weight: bold;">Attention Heads ($h$): </label>
 		<span id="heads-val" style="font-weight: bold; color: #3b82f6;">3</span>
 		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-            <b>Dependency:</b> Must divide into Dimension.
-            <i>Reason:</i> Multi-head attention splits the main vector into $h$ parallel "viewpoints." If $d_{\text{model}}$ is 4 and $h$ is 2, each head looks at 2 dimensions.
+            <b>Dependency:</b> Must divide into Dimension.<br>
+            <b>Reason:</b> Multi-head attention splits the main vector into $h$ parallel "viewpoints." If $d_{\text{model}}$ is 4 and $h$ is 2, each head looks at 2 dimensions.
         </p>
 		<input type="range" id="transformer-heads" min="1" max="8" value="3"
 			style="width: 100%;" oninput="syncTransformerSettings('heads')">
@@ -47,8 +47,8 @@ https://arxiv.org/html/2505.11611v1
 	<div>
 		<label style="font-weight: bold;">Temperature ($T$): </label>
 		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-		    <b>Effect:</b> Controls the "sharpness" of the probability distribution.
-		    <i>Reason:</i> Low values ($T < 1$) force the model to be deterministic; high values ($T > 1$) increase diversity by making unlikely words more probable.
+		    <b>Effect:</b> Controls the "sharpness" of the probability distribution.<br>
+		    <b>Reason:</b> Low values ($T < 1$) force the model to be deterministic; high values ($T > 1$) increase diversity by making unlikely words more probable.
 		</p>
 		<span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span>
 		<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 200px; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; debounced_run_transformer_demo();">
@@ -58,8 +58,8 @@ https://arxiv.org/html/2505.11611v1
 	    <label style="font-weight: bold;">Context Size: </label>
 	    <span id="context-val" style="font-weight: bold; color: #3b82f6;">64</span>
 	    <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-		<b>Effect:</b> Sets the maximum number of tokens the model can "see" at once during training and inference.
-		<i>Reason:</i> A larger context window allows the model to capture longer-range dependencies between words, but increases memory and computation cost quadratically due to the attention matrix being of size $\text{Context}^2$.
+		<b>Effect:</b> Sets the maximum number of tokens the model can "see" at once during training and inference.<br>
+		<b>Reason:</b> A larger context window allows the model to capture longer-range dependencies between words, but increases memory and computation cost quadratically due to the attention matrix being of size $\text{Context}^2$.
 	    </p>
 	    <input type="range" id="transformer-context-size" min="2" max="128" step="1" value="64"
 		style="width: 100%;" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();">
