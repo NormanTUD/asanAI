@@ -878,3 +878,8 @@ pre, code, .status-console, .matrix-input {
 	font-weight: 700;
 	color: var(--primary);
 }
+
+blockquote p {
+	hanging-punctuation: first;
+	text-indent: -0.4em; /* Manual fallback for browsers without support */
+}
