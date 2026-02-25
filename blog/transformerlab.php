@@ -362,9 +362,17 @@ This discovery is significant because it shows that models don't just learn
 static "Syntactic" rules; they learn to build dynamic "search engines" that
 allow them to learn new patterns in real-time during a single prompt.
 
-### What the attention heads do with respect to the layers
+### Layer-Depth Progression and Abstraction in Transformers
 
-Similiar to how in Convolutional Neural Networks the first layers look at the actual pixels, and later layers look at the analysis of the earlier layers, abstracting more and more away from the concrete pixel values, the attention heads in the first layer look at the sentence data itself, while the ones in the second layer look at the results of the first layer and so on. This way, what they look at, is more and more abstracted away from the concrete training- and inference-data.
+The progression of data through the layers of a Transformer follows a systematic evolution that mirrors the hierarchical structure of Convolutional Neural Networks. In a CNN, the initial layers focus on raw pixels while subsequent layers analyze the output of those earlier stages to form abstract concepts. Similarly, Transformer attention heads in the first layer look at the concrete sentence data itself. As information moves deeper, each layer processes the results of the previous one, gradually abstracting away from the specific training and inference data toward higher-level representations.
+
+This systematic change in attention patterns can be categorized as follows:
+
+- **Early Layers:** Local and positional patterns dominate. The model focuses on the actual data tokens, looking at diagonal or adjacent positions similar to how a CNN identifies basic edges or pixels.
+- **Middle Layers:** Semantic and syntactic patterns emerge. Here, the model begins to identify dependency arcs and coreference resolution, focusing on the structural relationships between tokens.
+- **Late Layers:** Focus becomes diffuse or highly task-specific. These layers concentrate on tokens relevant to the final prediction, representing a high level of abstraction that is far removed from the concrete input values.
+
+By switching between layers in a visualization, you can observe this transition from raw data processing to complex, abstracted analysis.
 
 ## 7. Mathematical Assembly: Concatenation and $h_1$
 
