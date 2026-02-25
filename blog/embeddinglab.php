@@ -277,7 +277,7 @@ The deeper theoretical reason the path-finding framing works is the **\cite[Mani
 <div class="md">
 ## Attention as Metric Tensor
 
-There is an even more geometric way to think about attention. In differential geometry, a **metric tensor** defines how distances are measured locally on a manifold, it tells you the "shape" of space at each point. The attention matrix in a Transformer does something analogous: it dynamically redefines which tokens are "close" to which other tokens at each layer, effectively warping the local geometry of the embedding space as the representation is processed. This is not merely a metaphor, the connections between attention mechanisms and geometric structures on manifolds have been formalized in the framework of Geometric Deep Learning (\cite{bronstein2021geometric}).
+There is an even more geometric way to think about attention. In differential geometry, a **metric tensor** defines how distances are measured locally on a manifold, it tells you the "shape" of space at each point. The attention matrix in a Transformer does something analogous: it dynamically redefines which tokens are "close" to which other tokens at each layer, effectively warping the local geometry of the embedding space as the representation is processed. This is not merely a metaphor, the connections between attention mechanisms and geometric structures on manifolds have been formalized in the \cite[framework of Geometric Deep Learning]{bronstein2021geometric}.
 </div>
 
 <div class="md">
