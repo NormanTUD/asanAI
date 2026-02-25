@@ -334,7 +334,7 @@ blockquote footer {
 	margin-top: 10px;
 	font-size: 0.95rem;
 	color: #555;
-	font-style: normal; /* Damit das "—" nicht kursiv ist */
+	font-style: normal;
 }
 
 .quote-author {
