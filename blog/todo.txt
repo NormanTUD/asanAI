@@ -1,3 +1,5 @@
+philosophical insights into llms: https://arxiv.org/html/2405.03207v1 https://arxiv.org/abs/2401.03910
+
 https://artificial-intuition.beehiiv.com/p/unreasonable-effectiveness-next-token-prediction
 
 https://arxiv.org/html/2409.03752v2 Attention Heads of Large Language Models: A Survey
