@@ -212,7 +212,7 @@ This is also why the Attention mechanism is so central. Attention computes pairw
 </section>
 
 <div class="md">
-The real magic is in the **transformation itself**. Below, you can watch Japanese's embedding space smoothly rotate and scale to align with English. This is exactly what algorithms like Procrustes alignment do: they find the optimal rotation matrix $\mathbf{W}$ such that $\mathbf{X}_B \mathbf{W} \approx \mathbf{X}_A$, minimizing the distance between corresponding word pairs across languages (\cite{smith2017orthogonal}, \cite{conneau2018word}).
+The real magic is in the **transformation itself**. You can watch Japanese's embedding space smoothly rotate and scale to align with English. This is exactly what algorithms like Procrustes alignment do: they find the optimal rotation matrix $\mathbf{W}$ such that $\mathbf{X}_B \mathbf{W} \approx \mathbf{X}_A$, minimizing the distance between corresponding word pairs across languages (\cite{smith2017orthogonal}, \cite{conneau2018word}).
 
 Click **"Align"** to animate the transformation. Notice how the internal structure, the distances between King/Queen, Man/Woman, is perfectly preserved. Only the orientation changes. This is rotational invariance made visible.
 </div>
