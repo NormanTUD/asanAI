@@ -94,12 +94,11 @@ In 1980, philosopher John Searle proposed a famous thought experiment called the
 Imagine a person who speaks only English sitting inside a locked room. They have a rulebook (the "program") that says: *"If you see this shape (Chinese character), output that shape."*
 If you slip a question in Chinese under the door, the person can follow the rulebook and slide a perfect answer back out.
 
+This is the exact situation the LLM is in when you pass a text to it. First, it is tokenized, so it only sees vectors representing it (to which, because it is not embodied and grounded, it has no inherent meaning or value, just the meaning of the tokens in relation to all other tokens). Then, attention heads and the feed forward network move the state again and again. At no point is there any real *understanding*, even though in the end it may look like it.
+
 * **The Result:** To the person outside, it looks like the person in the room understands Chinese.
 * **The Reality:** The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning).
 * **The Lesson:** AI is the person in the room. It has a perfect rulebook for English, but it doesn't *understand* the words "Paris" or "France." It just knows they go together.
-</div>
-
-<div class="md">
 
 ### The Multiverse of the Meadow: Uexküll's Bubble
 To understand the fundamental isolation of an AI's intelligence, we can look to the opening of Jakob von Uexküll's "A Stroll Through the Worlds of Animals and Men" \citeauthor{uexkull1934}. He invites us to perform a radical mental experiment to understand that there is no single "objective" world, only a collection of subjective ones:
