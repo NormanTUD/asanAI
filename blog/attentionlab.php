@@ -21,21 +21,38 @@ The attention equation looks deceptively simple:
 
 $$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right) V$$
 
-But *why* this specific formula? Why dot products? Why softmax? Why $\sqrt{d_k}$? 
+We divide by $\sqrt{d_k}$ for a very specific reason: **variance control**.
 
-The best way to understand is to **see it working** in spaces small enough to visualize. We'll build up from 1D scalars to 3D vectors, and at each stage, the geometric meaning of every piece of the equation will become obvious.
+If $Q$ and $K$ have entries drawn from a distribution with mean 0 and variance 1, then their dot product $Q \cdot K = \sum_{i=1}^{d_k} q_i k_i$ has:
+$$\text{Var}(Q \cdot K) = d_k$$
+
+As the dimensionality $d_k$ increases, the standard deviation grows as $\sqrt{d_k}$. Dividing by $\sqrt{d_k}$ normalizes the variance back to 1:
+$$\text{Var}\left(\frac{Q \cdot K}{\sqrt{d_k}}\right) = 1$$
+
+**The "Aha!" Moment:** Without this scaling, if $d_k = 64$, your dot products would have a standard deviation of ~8. Applying Softmax over values spread across a wide range (like $[-24, +24]$) produces "near-one-hot" outputs, where one token gets ~100% of the weight and everything else gets ~0%. This causes gradients to vanish and learning to die.
+
+The $\sqrt{d_k}$ division keeps scores in the **"Goldilocks zone"** where softmax produces soft distributions that gradients can flow through. It is the difference between asking "rate this restaurant 1–10" (useful) vs. "rate it 1–10,000,000" (where nuance is lost).
+
+$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right) V$$
+
+But *why* this specific formula? Why dot products? Why softmax? Why $\sqrt{d_k}$?
+
+The best way to understand is to **see it working** in spaces small enough to visualize. We’ll build up from 1D scalars to 3D vectors; at each stage, the geometric meaning of every piece of the equation will become obvious.
 
 ### 1D: Attention on a Number Line
 
-In one dimension, every embedding is just a **single number**. The Query $q$, Key $k$, and Value $v$ are all scalars. The dot product $q \cdot k$ is just ordinary multiplication.
+In one dimension, every embedding is just a **single number**. The Query $q$, Key $k$, and Value $v$ are all scalars. The dot product $q \cdot k$ is just ordinary multiplication:
+$$\text{score}_j = q \cdot k_j$$
 
-$$\text{score}_{j} = q \cdot k_j$$
+This is the simplest possible "similarity measure": two numbers agree if they have the **same sign and large magnitude**.
+* If $q = 3$ and $k_1 = 4$, the score is $12$ (strong agreement).
+* If $k_2 = -2$, the score is $-6$ (disagreement).
 
-This is the simplest possible "similarity measure": two numbers agree if they have the **same sign and large magnitude**. If $q = 3$ and $k_1 = 4$, the score is $12$ (strong agreement). If $k_2 = -2$, the score is $-6$ (disagreement). After softmax, the output is a **weighted average** of the values:
-
-$$\text{output} = \sum_j \alpha_j \, v_j, \quad \alpha_j = \frac{e^{q \cdot k_j}}{\sum_n e^{q \cdot k_n}}$$
+After softmax, the output is a **weighted average** of the values:
+$$\text{output} = \sum_j \alpha_j v_j, \quad \alpha_j = \frac{e^{q \cdot k_j}}{\sum_n e^{q \cdot k_n}}$$
 
 In 1D, $\sqrt{d_k} = 1$, so scaling does nothing. Drag the sliders below to see how the query "chooses" which values to attend to, purely based on sign and magnitude agreement on a single number line.
+
 </div>
 
 <!-- ===================== 1D: "How Financial Is It?" ===================== -->
