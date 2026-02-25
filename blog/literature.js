@@ -3,7 +3,8 @@ window.bibData = {
 		title: "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
 		url: "https://jmlr.org/papers/v21/20-074.html",
 		year: 2020,
-		author: "Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, Peter J. Liu"
+		author: "Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, Peter J. Liu",
+		alternativetitle: "T5"
 	},
 	"xiong2020": {
 		url: "https://arxiv.org/abs/2002.04745",
