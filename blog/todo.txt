@@ -5,6 +5,7 @@ Research has also shown that attention patterns change systematically across lay
 - Late layers often become more diffuse or task-specific, concentrating on tokens relevant to the final prediction
 https://arxiv.org/html/2601.21709v1
 
+https://arxiv.org/abs/1906.04341
 
 
 https://karpathy.github.io/2026/02/12/microgpt/
