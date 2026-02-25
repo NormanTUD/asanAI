@@ -1,9 +1,15 @@
 class AttentionEngine {
+	static HEAD_COLORS = [
+		'#3b82f6', '#ef4444', '#10b981', '#f59e0b',
+		'#8b5cf6', '#ec4899', '#06b6d4', '#84cc16',
+		'#f97316', '#6366f1', '#14b8a6', '#e11d48'
+	];
+
 	constructor(config) {
 		this.d_model = config.d_model;
 		this.n_heads = config.n_heads;
 		this.d_k = config.d_model / config.n_heads;
-		this.containerId = config.containerId; // Store ID specifically
+		this.containerId = config.containerId;
 		this.container = document.getElementById(config.containerId);
 
 		this.this_weights = config.weights || {
@@ -13,7 +19,23 @@ class AttentionEngine {
 			output: initWeights(this.d_model, this.d_model)
 		};
 
-		// Start observing if container exists
+		// APV state per layer
+		this._apvActiveHeads = new Map();   // layerIdx → Set of active head indices
+		this._apvHoveredToken = new Map();  // layerIdx → { side, index } | null
+		this._apvMode = new Map();          // layerIdx → 'headview' | 'matrix'
+		this._apvOptions = Object.assign({
+			arcHeight: 120,
+			minOpacity: 0.02,
+			tokenSpacing: 80,
+			columnGap: 30,
+			showHeadSelector: true,
+			mode: 'headview',
+			rowHeight: 22,
+			leftColumnX: 100,
+			rightColumnX: 350,
+			topPadding: 40,
+		}, config.apvOptions || {});
+
 		if (this.container) {
 			attentionObserver.observe(this.container);
 		}
@@ -139,6 +161,27 @@ class AttentionEngine {
 		}
 	}
 
+	_apvEscapeHtml(str) {
+		const div = document.createElement('div');
+		div.textContent = str;
+		return div.innerHTML;
+	}
+
+	_apvResolveTokenLabels(tokenStrings, headDataArray) {
+		if (tokenStrings && Array.isArray(tokenStrings) && typeof tokenStrings[0] === 'string') {
+			return [...tokenStrings];
+		}
+		if (headDataArray && headDataArray[0] && headDataArray[0].h0) {
+			return headDataArray[0].h0.map(vec => {
+				if (typeof tlab_get_top_word_only === 'function') {
+					return tlab_get_top_word_only(vec);
+				}
+				return '???';
+			});
+		}
+		return tokenStrings || [];
+	}
+
 	_updateLayerContent(layerIdx) {
 		const contentDiv = document.getElementById(`layer-content-${this.containerId}-${layerIdx}`);
 		if (!contentDiv) return;
@@ -156,16 +199,19 @@ class AttentionEngine {
 				const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${h}`);
 				const isActive = headDiv ? headDiv.style.display !== 'none' : h === 0;
 				headTabHtml += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
-		onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-		style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-		background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
-		Head ${h + 1}
-	    </button>`;
+		    onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
+		    style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+		    background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
+		    Head ${h + 1}
+		</button>`;
 			}
 			headTabList.innerHTML = headTabHtml;
 		}
 
-		// Directly re-render heads that were already rendered — no observer, no placeholder
+		// Re-draw APV SVG with updated data
+		requestAnimationFrame(() => this._apvDraw(layerIdx));
+
+		// Re-render heads that were already rendered
 		for (let h = 0; h < layerHeadData.length; h++) {
 			const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${h}`);
 			if (headDiv && headDiv.dataset.wasRenderedOnce === 'true') {
@@ -198,11 +244,11 @@ class AttentionEngine {
 					const contentDiv = document.getElementById(`layer-content-${this.containerId}-${l}`);
 					const isActive = contentDiv ? contentDiv.style.display !== 'none' : l === 0;
 					tabHtml += `<button class="mha-layer-tab-btn" id="layer-tab-btn-${this.containerId}-${l}"
-		    onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
-		    style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-		    background:${isActive ? '#fff' : '#bfdbfe'}; font-weight:${isActive ? 'bold' : 'normal'};">
-		    Layer ${l + 1}
-		</button>`;
+			onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
+			style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+			background:${isActive ? '#fff' : '#bfdbfe'}; font-weight:${isActive ? 'bold' : 'normal'};">
+			Layer ${l + 1}
+		    </button>`;
 				}
 				tabList.innerHTML = tabHtml;
 
@@ -230,31 +276,43 @@ class AttentionEngine {
 			return;
 		}
 
+		// ── First-time build: restore persisted layer ──
+		const saved = this._apvLoadState();
+		let startLayer = 0;
+		if (saved && typeof saved.activeLayer === 'number' &&
+			saved.activeLayer >= 0 && saved.activeLayer < numLayers) {
+			startLayer = saved.activeLayer;
+		}
+
 		let html = `<div class="attention-layer-tabs" style="border:1px solid #3b82f6; border-radius:8px; overflow:hidden;">`;
 
 		html += `<div class="layer-tab-list" style="background:#dbeafe; display:flex; border-bottom:2px solid #3b82f6; flex-wrap:wrap;">`;
 		for (let l = 0; l < numLayers; l++) {
 			html += `<button class="mha-layer-tab-btn" id="layer-tab-btn-${this.containerId}-${l}"
-	    onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
-	    style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-	    background:${l === 0 ? '#fff' : '#bfdbfe'}; font-weight:${l === 0 ? 'bold' : 'normal'};">
-	    Layer ${l + 1}
-	</button>`;
+		onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
+		style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+		background:${l === startLayer ? '#fff' : '#bfdbfe'}; font-weight:${l === startLayer ? 'bold' : 'normal'};">
+		Layer ${l + 1}
+	    </button>`;
 		}
 		html += `</div>`;
 
 		for (let l = 0; l < numLayers; l++) {
 			html += `<div id="layer-content-${this.containerId}-${l}" class="layer-tab-content"
-	    style="display:${l === 0 ? 'block' : 'none'};"
-	    data-layer-idx="${l}" data-rendered="false">
-	    <div style="padding:20px; color:#64748b;">Loading Layer ${l + 1}...</div>
-	</div>`;
+		style="display:${l === startLayer ? 'block' : 'none'};"
+		data-layer-idx="${l}" data-rendered="false">
+		<div style="padding:20px; color:#64748b;">Loading Layer ${l + 1}...</div>
+	    </div>`;
 		}
 
 		html += `</div>`;
 		this.container.innerHTML = html;
 
-		this._renderLayerContent(0);
+		// Store engine instance globally for APV callbacks
+		if (!window.__apv_instances) window.__apv_instances = {};
+		window.__apv_instances[this.containerId] = this;
+
+		this._renderLayerContent(startLayer);
 	}
 
 	_renderLayerContent(layerIdx) {
@@ -265,37 +323,123 @@ class AttentionEngine {
 		const layerData = registry.layers[layerIdx];
 		const layerHeadData = layerData.headData;
 
-		// If already rendered, delegate to the update path (no placeholders)
 		if (contentDiv.dataset.rendered === 'true') {
 			this._updateLayerContent(layerIdx);
 			return;
 		}
 
-		// First-time render for this layer
+		// ── Initialize APV state for this layer ──
+		const saved = this._apvLoadState();
+		if (!this._apvActiveHeads.has(layerIdx)) {
+			const heads = new Set();
+			if (saved && saved.layerStates && saved.layerStates[layerIdx] &&
+				Array.isArray(saved.layerStates[layerIdx].activeHeads)) {
+				saved.layerStates[layerIdx].activeHeads
+					.filter(h => h >= 0 && h < layerHeadData.length)
+					.forEach(h => heads.add(h));
+				if (heads.size === 0) heads.add(0);
+			} else {
+				layerHeadData.forEach((_, i) => heads.add(i));
+			}
+			this._apvActiveHeads.set(layerIdx, heads);
+		}
+		if (!this._apvMode.has(layerIdx)) {
+			if (saved && saved.layerStates && saved.layerStates[layerIdx] && saved.layerStates[layerIdx].mode) {
+				this._apvMode.set(layerIdx, saved.layerStates[layerIdx].mode);
+			} else {
+				this._apvMode.set(layerIdx, 'headview');
+			}
+		}
+		if (!this._apvHoveredToken.has(layerIdx)) {
+			this._apvHoveredToken.set(layerIdx, null);
+		}
+
+		const mode = this._apvMode.get(layerIdx);
+		const isHead = mode === 'headview';
+		const isMatrix = mode === 'matrix';
+
 		let html = '';
 
-		html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap;">`;
+		// ── APV Section: Attention Path Visualizer ──
+		html += `<div class="apv-section" style="padding:16px; background:#fafbfc; border-bottom:1px solid #e2e8f0;">`;
+
+		// Title + mode buttons
+		html += `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+	    <h3 style="margin:0; color:#1e293b; font-size:1.05rem;">
+		Attention Path Visualizer — Layer ${layerIdx + 1}
+	    </h3>
+	    <div style="display:flex; gap:8px;">
+		<button onclick="window.__apv_instances['${this.containerId}'].apvSetMode(${layerIdx}, 'headview')"
+		    class="apv-mode-btn" style="padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;
+		    cursor:pointer; font-size:0.8rem;
+		    background:${isHead ? '#3b82f6' : '#fff'};
+		    color:${isHead ? '#fff' : '#334155'};">Head View</button>
+		<button onclick="window.__apv_instances['${this.containerId}'].apvSetMode(${layerIdx}, 'matrix')"
+		    class="apv-mode-btn" style="padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;
+		    cursor:pointer; font-size:0.8rem;
+		    background:${isMatrix ? '#3b82f6' : '#fff'};
+		    color:${isMatrix ? '#fff' : '#334155'};">Matrix View</button>
+	    </div>
+	</div>`;
+
+		// Head selector checkboxes
+		html += `<div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; align-items:center;">
+	    <span style="font-size:0.8rem; color:#64748b; font-weight:600;">Heads:</span>`;
 		for (let h = 0; h < layerHeadData.length; h++) {
-			html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
-	    onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-	    style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-	    background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
-	    Head ${h + 1}
-	</button>`;
+			const color = AttentionEngine.HEAD_COLORS[h % AttentionEngine.HEAD_COLORS.length];
+			const isChecked = this._apvActiveHeads.get(layerIdx).has(h);
+			html += `<label style="display:flex; align-items:center; gap:4px; cursor:pointer; font-size:0.82rem;">
+		<input type="checkbox" ${isChecked ? 'checked' : ''}
+		    onchange="window.__apv_instances['${this.containerId}'].apvToggleHead(${layerIdx}, ${h}, this.checked)"
+		    style="accent-color:${color};">
+		<span style="color:${color}; font-weight:600;">Head ${h + 1}</span>
+	    </label>`;
 		}
 		html += `</div>`;
 
+		// SVG canvas
+		const canvasId = `apv-canvas-${this.containerId}-${layerIdx}`;
+		html += `<div id="apv-viewport-${this.containerId}-${layerIdx}" style="
+	    position:relative; overflow-x:auto; overflow-y:hidden;
+	    background:#fff; border:1px solid #e2e8f0; border-radius:8px;
+	    min-height:200px;">
+	    <svg id="${canvasId}" style="width:100%; min-height:200px;"></svg>
+	</div>`;
+
+		html += `<div style="margin-top:10px; font-size:0.75rem; color:#94a3b8; text-align:center;">
+	    Hover over a token to highlight its attention connections. Line thickness = attention weight.
+	</div>`;
+
+		html += `</div>`; // end .apv-section
+
+		// ── Head tabs (existing) ──
+		html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap;">`;
+		for (let h = 0; h < layerHeadData.length; h++) {
+			html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
+		onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
+		style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+		background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
+		Head ${h + 1}
+	    </button>`;
+		}
+		html += `</div>`;
+
+		// ── Head content panels (existing) ──
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<div id="head-content-${this.containerId}-${layerIdx}-${h}" class="head-tab-in-layer"
-	    style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
-	    data-head-idx="${h}" data-rendered="false">
-	    <div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
-	</div>`;
+		style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
+		data-head-idx="${h}" data-rendered="false">
+		<div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
+	    </div>`;
 		}
 
 		contentDiv.innerHTML = html;
 		contentDiv.dataset.rendered = 'true';
 
+		// Draw the APV SVG
+		requestAnimationFrame(() => this._apvDraw(layerIdx));
+
+		// Render first head content
 		this._renderHeadContent(layerIdx, 0);
 	}
 
@@ -442,5 +586,455 @@ class AttentionEngine {
 
 		html += `</table>`;
 		return html;
+	}
+
+	_apvDraw(layerIdx) {
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		if (!registry) return;
+		const layerData = registry.layers[layerIdx];
+		if (!layerData) return;
+
+		const headDataArray = layerData.headData;
+		const displayTokens = this._apvResolveTokenLabels(layerData.tokenStrings, headDataArray);
+
+		const canvasId = `apv-canvas-${this.containerId}-${layerIdx}`;
+		const svg = document.getElementById(canvasId);
+		if (!svg) return;
+
+		const mode = this._apvMode.get(layerIdx) || 'headview';
+
+		if (mode === 'matrix') {
+			this._apvDrawMatrixView(svg, layerIdx, headDataArray, displayTokens);
+		} else {
+			this._apvDrawHeadView(svg, layerIdx, headDataArray, displayTokens);
+		}
+	}
+
+	_apvDrawHeadView(svg, layerIdx, headDataArray, tokens) {
+		const n = tokens.length;
+		const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
+		const activeHeads = this._apvActiveHeads.get(layerIdx) || new Set();
+
+		const svgHeight = topPadding + n * rowHeight + 40;
+		const svgWidth = rightColumnX + 120;
+
+		svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
+		svg.style.minHeight = svgHeight + 'px';
+
+		let svgContent = '';
+
+		svgContent += `<text x="${leftColumnX}" y="18" font-size="11" fill="#64748b"
+	    font-weight="600" text-anchor="middle">Query (attending)</text>`;
+		svgContent += `<text x="${rightColumnX}" y="18" font-size="11" fill="#64748b"
+	    font-weight="600" text-anchor="middle">Key (attended to)</text>`;
+
+		const hovered = this._apvHoveredToken.get(layerIdx);
+
+		for (let i = 0; i < n; i++) {
+			const y = topPadding + i * rowHeight;
+			const isHoveredLeft = hovered && hovered.side === 'left' && hovered.index === i;
+			const isHoveredRight = hovered && hovered.side === 'right' && hovered.index === i;
+
+			svgContent += `<text x="${leftColumnX}" y="${y + 4}"
+		font-size="12" fill="${isHoveredLeft ? '#1e40af' : '#334155'}"
+		font-weight="${isHoveredLeft ? '700' : '500'}" text-anchor="end"
+		style="cursor:pointer;"
+		data-apv-side="left" data-apv-idx="${i}"
+		>${this._apvEscapeHtml(tokens[i])}</text>`;
+
+			svgContent += `<text x="${rightColumnX}" y="${y + 4}"
+		font-size="12" fill="${isHoveredRight ? '#1e40af' : '#334155'}"
+		font-weight="${isHoveredRight ? '700' : '500'}" text-anchor="start"
+		style="cursor:pointer;"
+		data-apv-side="right" data-apv-idx="${i}"
+		>${this._apvEscapeHtml(tokens[i])}</text>`;
+		}
+
+		headDataArray.forEach((head, hIdx) => {
+			if (!activeHeads.has(hIdx)) return;
+
+			const color = AttentionEngine.HEAD_COLORS[hIdx % AttentionEngine.HEAD_COLORS.length];
+			const weights = head.this_weights;
+
+			for (let qi = 0; qi < n; qi++) {
+				for (let ki = 0; ki < n; ki++) {
+					const w = weights[qi][ki];
+					if (w < minOpacity) continue;
+
+					const y1 = topPadding + qi * rowHeight;
+					const y2 = topPadding + ki * rowHeight;
+					const x1 = leftColumnX + 6;
+					const x2 = rightColumnX - 6;
+					const cpx = (x1 + x2) / 2;
+
+					svgContent += `<path d="M ${x1} ${y1} C ${cpx} ${y1}, ${cpx} ${y2}, ${x2} ${y2}"
+			fill="none" stroke="${color}"
+			stroke-width="${(1 + w * 5).toFixed(1)}"
+			stroke-opacity="${w.toFixed(3)}"
+			data-apv-head="${hIdx}" data-apv-qi="${qi}" data-apv-ki="${ki}"
+		    />`;
+				}
+			}
+		});
+
+		svg.innerHTML = svgContent;
+		this._apvAttachHoverEvents(svg, layerIdx);
+	}
+
+	_apvAttachHoverEvents(svg, layerIdx) {
+		const self = this;
+		let currentHover = null;
+
+		svg.addEventListener('mouseover', (e) => {
+			const el = e.target.closest('[data-apv-side]');
+			if (el) {
+				const side = el.getAttribute('data-apv-side');
+				const index = parseInt(el.getAttribute('data-apv-idx'));
+				const key = `${side}-${index}`;
+				if (currentHover === key) return;
+				currentHover = key;
+				self._apvHoveredToken.set(layerIdx, { side, index });
+				self._apvUpdateHoverState(svg, layerIdx);
+			}
+		});
+
+		svg.addEventListener('mouseout', (e) => {
+			const el = e.target.closest('[data-apv-side]');
+			if (el) {
+				const related = e.relatedTarget?.closest?.('[data-apv-side]');
+				if (related) return;
+				currentHover = null;
+				self._apvHoveredToken.set(layerIdx, null);
+				self._apvUpdateHoverState(svg, layerIdx);
+			}
+		});
+	}
+
+	_apvUpdateHoverState(svg, layerIdx) {
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		if (!registry) return;
+		const layerData = registry.layers[layerIdx];
+		const headDataArray = layerData.headData;
+		const displayTokens = this._apvResolveTokenLabels(layerData.tokenStrings, headDataArray);
+		const { minOpacity } = this._apvOptions;
+		const hovered = this._apvHoveredToken.get(layerIdx);
+		const activeHeads = this._apvActiveHeads.get(layerIdx) || new Set();
+
+		// Update paths
+		const paths = svg.querySelectorAll('path[data-apv-qi]');
+		paths.forEach(path => {
+			const hIdx = parseInt(path.getAttribute('data-apv-head'));
+			const qi = parseInt(path.getAttribute('data-apv-qi'));
+			const ki = parseInt(path.getAttribute('data-apv-ki'));
+
+			if (!activeHeads.has(hIdx)) {
+				path.setAttribute('stroke-opacity', '0');
+				return;
+			}
+
+			const w = headDataArray[hIdx].this_weights[qi][ki];
+
+			if (!hovered) {
+				path.setAttribute('stroke-opacity', w.toFixed(3));
+				path.setAttribute('stroke-width', (1 + w * 5).toFixed(1));
+			} else {
+				const { side, index } = hovered;
+				if ((side === 'left' && index === qi) || (side === 'right' && index === ki)) {
+					const opacity = 0.3 + w * 0.7;
+					const strokeWidth = 2 + w * 8;
+					path.setAttribute('stroke-opacity', opacity.toFixed(3));
+					path.setAttribute('stroke-width', strokeWidth.toFixed(1));
+				} else {
+					path.setAttribute('stroke-opacity', '0.04');
+					path.setAttribute('stroke-width', '0.5');
+				}
+			}
+		});
+
+		// ── Update token text styling ──
+		const texts = svg.querySelectorAll('text[data-apv-side]');
+		texts.forEach(text => {
+			const side = text.getAttribute('data-apv-side');
+			const idx = parseInt(text.getAttribute('data-apv-idx'));
+
+			const isHovered = hovered && hovered.side === side && hovered.index === idx;
+			text.setAttribute('fill', isHovered ? '#1e40af' : '#334155');
+			text.setAttribute('font-weight', isHovered ? '700' : '500');
+		});
+
+		// ── Update percentage labels ──
+		svg.querySelectorAll('.apv-weight-label').forEach(el => el.remove());
+
+		if (hovered) {
+			const { rowHeight, leftColumnX, rightColumnX, topPadding } = this._apvOptions;
+			const arcX1 = leftColumnX + 6;
+			const arcX2 = rightColumnX - 6;
+
+			const labelCandidates = [];
+
+			headDataArray.forEach((head, hIdx) => {
+				if (!activeHeads.has(hIdx)) return;
+				const color = AttentionEngine.HEAD_COLORS[hIdx % AttentionEngine.HEAD_COLORS.length];
+				const weights = head.this_weights;
+				const n = displayTokens.length;
+
+				for (let qi = 0; qi < n; qi++) {
+					for (let ki = 0; ki < n; ki++) {
+						const w = weights[qi][ki];
+						if (w < 0.05) continue;
+
+						const { side, index } = hovered;
+						const isRelevant = (side === 'left' && index === qi) ||
+							(side === 'right' && index === ki);
+						if (!isRelevant) continue;
+
+						const targetIdx = (side === 'left') ? ki : qi;
+
+						labelCandidates.push({
+							targetIdx,
+							color,
+							text: `${(w * 100).toFixed(0)}%`,
+							hIdx
+						});
+					}
+				}
+			});
+
+			const groups = new Map();
+			labelCandidates.forEach(lbl => {
+				if (!groups.has(lbl.targetIdx)) groups.set(lbl.targetIdx, []);
+				groups.get(lbl.targetIdx).push(lbl);
+			});
+
+			const labelGap = 30;
+
+			groups.forEach((group, targetIdx) => {
+				const y = topPadding + targetIdx * rowHeight + 4;
+				group.sort((a, b) => a.hIdx - b.hIdx);
+
+				if (hovered.side === 'left') {
+					const anchorX = arcX2 - 4;
+					group.forEach((lbl, i) => {
+						const lx = anchorX - i * labelGap;
+						const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+						label.setAttribute('x', lx.toFixed(1));
+						label.setAttribute('y', y.toFixed(1));
+						label.setAttribute('font-size', '9');
+						label.setAttribute('fill', lbl.color);
+						label.setAttribute('font-weight', '700');
+						label.setAttribute('text-anchor', 'end');
+						label.setAttribute('class', 'apv-weight-label');
+						label.setAttribute('stroke', '#fff');
+						label.setAttribute('stroke-width', '2.5');
+						label.setAttribute('paint-order', 'stroke');
+						label.textContent = lbl.text;
+						svg.appendChild(label);
+					});
+				} else {
+					const anchorX = arcX1 + 4;
+					group.forEach((lbl, i) => {
+						const lx = anchorX + i * labelGap;
+						const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+						label.setAttribute('x', lx.toFixed(1));
+						label.setAttribute('y', y.toFixed(1));
+						label.setAttribute('font-size', '9');
+						label.setAttribute('fill', lbl.color);
+						label.setAttribute('font-weight', '700');
+						label.setAttribute('text-anchor', 'start');
+						label.setAttribute('class', 'apv-weight-label');
+						label.setAttribute('stroke', '#fff');
+						label.setAttribute('stroke-width', '2.5');
+						label.setAttribute('paint-order', 'stroke');
+						label.textContent = lbl.text;
+						svg.appendChild(label);
+					});
+				}
+			});
+		}
+	}
+
+	_apvDrawMatrixView(svg, layerIdx, headDataArray, tokens) {
+		const n = tokens.length;
+		const cellSize = Math.max(18, Math.min(40, 300 / n));
+		const matrixSize = n * cellSize;
+		const padding = 80;
+		const activeHeads = [...(this._apvActiveHeads.get(layerIdx) || new Set())].sort((a, b) => a - b);
+
+		const totalWidth = matrixSize + padding;
+		const totalHeight = activeHeads.length * (matrixSize + padding) + padding;
+
+		svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
+		svg.style.minHeight = totalHeight + 'px';
+
+		let svgContent = '';
+
+		activeHeads.forEach((hIdx, row) => {
+			const offsetX = padding / 2;
+			const offsetY = padding / 2 + row * (matrixSize + padding);
+			const color = AttentionEngine.HEAD_COLORS[hIdx % AttentionEngine.HEAD_COLORS.length];
+			const weights = headDataArray[hIdx].this_weights;
+
+			svgContent += `<text x="${offsetX + matrixSize / 2}" y="${offsetY - 30}"
+		font-size="12" fill="${color}" font-weight="700" text-anchor="middle"
+		>Head ${hIdx + 1}</text>`;
+
+			for (let i = 0; i < n; i++) {
+				svgContent += `<text x="${offsetX - 4}" y="${offsetY + i * cellSize + cellSize / 2 + 4}"
+		    font-size="9" fill="#64748b" text-anchor="end"
+		    >${this._apvEscapeHtml(tokens[i])}</text>`;
+			}
+
+			for (let j = 0; j < n; j++) {
+				svgContent += `<text
+		    x="${offsetX + j * cellSize + cellSize / 2}"
+		    y="${offsetY - 6}"
+		    font-size="9" fill="#64748b" text-anchor="start"
+		    transform="rotate(-45, ${offsetX + j * cellSize + cellSize / 2}, ${offsetY - 6})"
+		    >${this._apvEscapeHtml(tokens[j])}</text>`;
+			}
+
+			for (let qi = 0; qi < n; qi++) {
+				for (let ki = 0; ki < n; ki++) {
+					const w = weights[qi][ki];
+					const x = offsetX + ki * cellSize;
+					const y = offsetY + qi * cellSize;
+					const alpha = Math.max(0.05, w);
+
+					svgContent += `<rect x="${x}" y="${y}"
+			width="${cellSize}" height="${cellSize}"
+			fill="${color}" fill-opacity="${alpha.toFixed(3)}"
+			stroke="#e2e8f0" stroke-width="0.5"
+			data-apv-head="${hIdx}" data-apv-qi="${qi}" data-apv-ki="${ki}"
+			style="cursor:crosshair;"
+		    />`;
+
+					if (cellSize >= 28 && w > 0.05) {
+						svgContent += `<text x="${x + cellSize / 2}" y="${y + cellSize / 2 + 3}"
+			    font-size="8" fill="${w > 0.5 ? '#fff' : '#334155'}"
+			    text-anchor="middle" pointer-events="none"
+			    >${(w * 100).toFixed(0)}</text>`;
+					}
+				}
+			}
+		});
+
+		svg.innerHTML = svgContent;
+		this._apvAttachMatrixTooltip(svg, layerIdx, headDataArray, tokens);
+	}
+
+	_apvAttachMatrixTooltip(svg, layerIdx, headDataArray, tokens) {
+		const tooltipId = `apv-tooltip-${this.containerId}-${layerIdx}`;
+		let tooltip = document.getElementById(tooltipId);
+		if (!tooltip) {
+			tooltip = document.createElement('div');
+			tooltip.id = tooltipId;
+			tooltip.style.cssText = `
+		position:fixed; padding:6px 10px; background:#1e293b; color:#fff;
+		border-radius:6px; font-size:0.78rem; pointer-events:none;
+		z-index:9999; display:none; white-space:nowrap;
+		box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+	    `;
+			document.body.appendChild(tooltip);
+		}
+
+		svg.addEventListener('mousemove', (e) => {
+			const rect = e.target.closest('rect[data-apv-qi]');
+			if (rect) {
+				const hIdx = parseInt(rect.getAttribute('data-apv-head'));
+				const qi = parseInt(rect.getAttribute('data-apv-qi'));
+				const ki = parseInt(rect.getAttribute('data-apv-ki'));
+				const w = headDataArray[hIdx].this_weights[qi][ki];
+
+				tooltip.innerHTML = `<b>Head ${hIdx + 1}</b>: "${tokens[qi]}" → "${tokens[ki]}" = <b>${(w * 100).toFixed(1)}%</b>`;
+				tooltip.style.display = 'block';
+				tooltip.style.left = (e.clientX + 12) + 'px';
+				tooltip.style.top = (e.clientY - 30) + 'px';
+			} else {
+				tooltip.style.display = 'none';
+			}
+		});
+
+		svg.addEventListener('mouseleave', () => {
+			tooltip.style.display = 'none';
+		});
+	}
+
+	_apvLoadState() {
+		try {
+			const raw = localStorage.getItem(this._apvGetStorageKey());
+			if (raw) return JSON.parse(raw);
+		} catch (e) {
+			// Corrupted or unavailable — fall through to defaults
+		}
+		return null;
+	}
+
+	_apvSaveState() {
+		try {
+			const layerStates = {};
+			this._apvActiveHeads.forEach((heads, layerIdx) => {
+				layerStates[layerIdx] = {
+					activeHeads: [...heads],
+					mode: this._apvMode.get(layerIdx) || 'headview'
+				};
+			});
+
+			// Determine active layer from visible tab
+			let activeLayer = 0;
+			const registry = multiLayerAttentionRegistry.get(this.containerId);
+			if (registry) {
+				for (let l = 0; l < registry.layers.length; l++) {
+					const contentDiv = document.getElementById(`layer-content-${this.containerId}-${l}`);
+					if (contentDiv && contentDiv.style.display !== 'none') {
+						activeLayer = l;
+						break;
+					}
+				}
+			}
+
+			const state = {
+				activeLayer,
+				layerStates
+			};
+			localStorage.setItem(this._apvGetStorageKey(), JSON.stringify(state));
+		} catch (e) {
+			// localStorage might be full or unavailable — fail silently
+		}
+	}
+
+	_apvGetStorageKey() {
+		return `apv-state-${this.containerId}`;
+	}
+
+	apvToggleHead(layerIdx, headIdx, isActive) {
+		const heads = this._apvActiveHeads.get(layerIdx);
+		if (!heads) return;
+		if (isActive) {
+			heads.add(headIdx);
+		} else {
+			heads.delete(headIdx);
+		}
+		this._apvDraw(layerIdx);
+		this._apvSaveState();
+	}
+
+	apvSetMode(layerIdx, mode) {
+		this._apvMode.set(layerIdx, mode);
+
+		// Update button styling without full rebuild
+		const contentDiv = document.getElementById(`layer-content-${this.containerId}-${layerIdx}`);
+		if (contentDiv) {
+			const buttons = contentDiv.querySelectorAll('.apv-mode-btn');
+			buttons.forEach(btn => {
+				const isHead = btn.textContent.trim() === 'Head View' && mode === 'headview';
+				const isMatrix = btn.textContent.trim() === 'Matrix View' && mode === 'matrix';
+				const active = isHead || isMatrix;
+				btn.style.background = active ? '#3b82f6' : '#fff';
+				btn.style.color = active ? '#fff' : '#334155';
+			});
+		}
+
+		this._apvDraw(layerIdx);
+		this._apvSaveState();
 	}
 }

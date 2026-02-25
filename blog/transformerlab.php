@@ -1,7 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <script src="attention_engine.js"></script>
-<script src="attention_path_visualizer.js"></script>
 
 <!--
 https://nlp.seas.harvard.edu/2018/04/03/attention.html
@@ -315,14 +314,6 @@ In this stage, it is already abstracted away from the concrete Embedding Space (
 <div id="mha-calculation-details" style="margin-top: 20px;">
 <i>Please wait, while the <b>Multi-Attention-Head</b>-equations are loading...</i>
 </div>
-
-<div class="md">
-## Attention Path Visualizer
-Hover over tokens to see where each head focuses its attention.
-Toggle individual heads on/off. Switch between Head View and Matrix View.
-</div>
-
-<div id="attention-path-viz" style="margin: 20px 0;"></div>
 
 <div class="md">
 ## 7. Mathematical Assembly: Concatenation and $h_1$
