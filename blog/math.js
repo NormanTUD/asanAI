@@ -22,7 +22,7 @@ const _sectionInitObserver = new IntersectionObserver(
 			}
 		});
 	},
-	{ rootMargin: '300px', threshold: 0.01 }   // 300px lookahead
+	{ rootMargin: '500px', threshold: 0 }   // 300px lookahead
 );
 
 /**
@@ -60,7 +60,7 @@ const _plotVisibilityObserver = new IntersectionObserver(
 			}
 		});
 	},
-	{ rootMargin: '200px', threshold: 0.01 }
+	{ rootMargin: '500px', threshold: 0 }
 );
 
 /**
@@ -558,7 +558,7 @@ function renderELI5Math() {
 				}
 			});
 		},
-		{ rootMargin: '100px', threshold: 0.01 }
+		{ rootMargin: '500px', threshold: 0 }
 	);
 
 	// Observe 2-D one-shot plots
