@@ -51,6 +51,9 @@ html {
 	margin-bottom: 1.2em;
 
 	font-variant-numeric: oldstyle-nums proportional-nums;
+	hyphenate-limit-lines: 2; /* No more than 2 consecutive hyphenated lines */
+	hyphenate-limit-zone: 8%; /* Only hyphenate if the line would be ≥8% short */
+
 }
 
 #contents a {
@@ -831,4 +834,11 @@ figcaption {
 	margin-top: 2em;
 	margin-bottom: 0.5em;
 	line-height: 1.2;
+}
+
+#contents a {
+	text-decoration-color: rgba(37, 99, 235, 0.35);
+}
+#contents a:hover {
+	text-decoration-color: currentColor; /* Full opacity on hover */
 }
