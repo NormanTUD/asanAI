@@ -1,3 +1,12 @@
+6. Layer-Depth Progression
+Research has also shown that attention patterns change systematically across layers:
+- Early layers tend to show more local/positional patterns (diagonal, adjacent tokens)
+- Middle layers develop more semantic/syntactic patterns (dependency arcs, coreference)
+- Late layers often become more diffuse or task-specific, concentrating on tokens relevant to the final prediction
+
+
+
+
 https://karpathy.github.io/2026/02/12/microgpt/
 
 https://ar5iv.labs.arxiv.org/html/2309.07315#:~:text=W_%7BE%7D%20to%20accurately%20reflect,the%20words%20in%20the
