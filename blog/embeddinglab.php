@@ -449,10 +449,13 @@ One of the most active research frontiers concerns what happens when you give a 
 
 To see this concretely, imagine prompting a model with:
 
-> *Q: What is the capital of France?  A: Paris*
-> *Q: What is the capital of Germany?  A: Berlin*
-> *Q: What is the capital of Japan?  A: Tokyo*
-> *Q: What is the capital of Italy?  A: ???*
+*Q: What is the capital of France?  A: Paris*
+
+*Q: What is the capital of Germany?  A: Berlin*
+
+*Q: What is the capital of Japan?  A: Tokyo*
+
+*Q: What is the capital of Italy?  A: ???*
 
 Each example pair creates an **offset vector** in the model's internal activation space, a directional arrow pointing from where "France" lives to where "Paris" lives. These individual arrows are noisy: the *France → Paris* offset is not identical to the *Germany → Berlin* offset because each word occupies a slightly different region of the high-dimensional manifold. But when the model averages across all the examples, a single coherent **task direction** emerges, a vector that encodes "move from a country token to its capital-city token." When the query token "Italy" enters the residual stream, this task direction **steers** it toward the correct answer region, landing it near "Rome", without any weight update whatsoever.
 
