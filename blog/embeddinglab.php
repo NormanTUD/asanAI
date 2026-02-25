@@ -224,7 +224,7 @@ While the cross-lingual alignment story is compelling, the isomorphism between l
 
 ## The Manifold Hypothesis
 
-The deeper theoretical reason the path-finding framing works is the **Manifold Hypothesis**: the idea that high-dimensional data, like language, actually lies on or near a much lower-dimensional manifold embedded in the high-dimensional space (\cite{bengio2013representation}). If sentences trace paths on a manifold, then translation is literally a mapping between two manifolds that share the same topology. The Transformer's attention layers can be seen as learning the **local coordinate charts** of these manifolds, the rules for how to navigate the surface at each point.
+The deeper theoretical reason the path-finding framing works is the **\cite[Manifold Hypothesis]{bengio2013representation}**: the idea that high-dimensional data, like language, actually lies on or near a much lower-dimensional manifold embedded in the high-dimensional space. If sentences trace paths on a manifold, then translation is literally a mapping between two manifolds that share the same topology. The Transformer's attention layers can be seen as learning the **local coordinate charts** of these manifolds, the rules for how to navigate the surface at each point.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
