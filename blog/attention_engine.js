@@ -918,18 +918,18 @@ class AttentionEngine {
 		this._apvAttachMatrixTooltip(svg, layerIdx, headDataArray, tokens);
 	}
 
-	_apvAttachMatrixTooltip(svg, layerIdx, headDataArray, tokens) {
+	_apvAttachMatrixTooltip(svg, layerIdx, headDataArray, tokens, headDisplayOffset = 0) {
 		const tooltipId = `apv-tooltip-${this.containerId}-${layerIdx}`;
 		let tooltip = document.getElementById(tooltipId);
 		if (!tooltip) {
 			tooltip = document.createElement('div');
 			tooltip.id = tooltipId;
 			tooltip.style.cssText = `
-		position:fixed; padding:6px 10px; background:#1e293b; color:#fff;
-		border-radius:6px; font-size:0.78rem; pointer-events:none;
-		z-index:9999; display:none; white-space:nowrap;
-		box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-	    `;
+	    position:fixed; padding:6px 10px; background:#1e293b; color:#fff;
+	    border-radius:6px; font-size:0.78rem; pointer-events:none;
+	    z-index:9999; display:none; white-space:nowrap;
+	    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+	`;
 			document.body.appendChild(tooltip);
 		}
 
@@ -939,9 +939,18 @@ class AttentionEngine {
 				const hIdx = parseInt(rect.getAttribute('data-apv-head'));
 				const qi = parseInt(rect.getAttribute('data-apv-qi'));
 				const ki = parseInt(rect.getAttribute('data-apv-ki'));
-				const w = headDataArray[hIdx].this_weights[qi][ki];
 
-				tooltip.innerHTML = `<b>Head ${hIdx + 1}</b>: "${tokens[qi]}" → "${tokens[ki]}" = <b>${(w * 100).toFixed(1)}%</b>`;
+				// Guard against out-of-bounds index
+				if (!headDataArray[hIdx]) {
+					tooltip.style.display = 'none';
+					return;
+				}
+
+				const w = headDataArray[hIdx].this_weights[qi][ki];
+				// Use headDisplayOffset so the tooltip shows the real head number
+				const displayHeadNum = hIdx + headDisplayOffset + 1;
+
+				tooltip.innerHTML = `<b>Head ${displayHeadNum}</b>: "${tokens[qi]}" → "${tokens[ki]}" = <b>${(w * 100).toFixed(1)}%</b>`;
 				tooltip.style.display = 'block';
 				tooltip.style.left = (e.clientX + 12) + 'px';
 				tooltip.style.top = (e.clientY - 30) + 'px';
@@ -1145,11 +1154,12 @@ class AttentionEngine {
 				const y = offsetY + qi * cellSize;
 				const alpha = Math.max(0.05, w);
 
+				// FIX: use data-apv-head="0" to match the [headData] wrapper array index
 				svgContent += `<rect x="${x}" y="${y}"
 		width="${cellSize}" height="${cellSize}"
 		fill="${color}" fill-opacity="${alpha.toFixed(3)}"
 		stroke="#e2e8f0" stroke-width="0.5"
-		data-apv-head="${headIdx}" data-apv-qi="${qi}" data-apv-ki="${ki}"
+		data-apv-head="0" data-apv-qi="${qi}" data-apv-ki="${ki}"
 		style="cursor:crosshair;"
 	    />`;
 
@@ -1163,7 +1173,8 @@ class AttentionEngine {
 		}
 
 		svg.innerHTML = svgContent;
-		this._apvAttachMatrixTooltip(svg, layerIdx, [headData], tokens);
+		// FIX: pass headIdx as headDisplayOffset so the tooltip shows the correct head number
+		this._apvAttachMatrixTooltip(svg, layerIdx, [headData], tokens, headIdx);
 	}
 
 	_apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, headData, tokens) {
