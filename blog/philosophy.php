@@ -114,7 +114,7 @@ Now, imagine a **Large Language Model** placed in that same meadow. If we were t
 * No scent of flowers, because it has no olfactory sensors.
 * No buzzing of bees, because it has no microphone.
 
-The AI's bubble is filled exclusively with **statistical relationships between tokens**. For the AI, the "meadow" is a high-dimensional coordinate where the vector for "flower" is likely to be found near "petal" and "fragrance."
+The AI's bubble is filled exclusively with **statistical relationships between tokens**, that is, for the AI, it's bubble *is* the Embedding Space and nothing else. For the AI, the "meadow" is a high-dimensional coordinate where the vector for "flower" is likely to be found near "petal" and "fragrance."
 
 By using Uexküll's logic, we see that the AI isn't "failing" to perceive our world; it is simply inhabiting its own. It is a creature of pure syntax, living in a mathematical Umwelt where "meaning" is not a feeling or a sensation, but merely the distance between two points in a sea of data.
 
