@@ -4530,7 +4530,6 @@ function loadEmbeddingModule () {
 		slider.addEventListener('input', renderScaleInvariance);
 	}
 
-	// Inside loadEmbeddingModule():
 	initAnisotropy();
 	renderAnisotropy();
 	const anisotropySlider = document.getElementById('anisotropy-slider');
