@@ -322,6 +322,7 @@ blockquote {
 	padding: 15px 20px;
 	border-left: 5px solid #2e7d32;
 	background-color: #d9f2d6;
+	border-radius: 10px;
 }
 
 blockquote p {
