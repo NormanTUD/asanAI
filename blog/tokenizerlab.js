@@ -136,6 +136,24 @@ function wordpieceTokenize(word) {
 
 async function loadTokenizerModule() {
 	updateLoadingStatus("Loading section about Tokenizer...");
+
+	// Detect when the input bar becomes sticky
+	const stickyEl = document.getElementById('sticky-input-wrapper');
+	if (stickyEl) {
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				stickyEl.classList.toggle('is-stuck', !entry.isIntersecting);
+			},
+			{ threshold: 1.0, rootMargin: '-1px 0px 0px 0px' }
+		);
+		// Create a sentinel element right above the sticky bar
+		const sentinel = document.createElement('div');
+		sentinel.style.height = '1px';
+		sentinel.style.visibility = 'hidden';
+		stickyEl.parentElement.insertBefore(sentinel, stickyEl);
+		observer.observe(sentinel);
+	}
+
 	syncAndTokenize();
 	return Promise.resolve();
 }

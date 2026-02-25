@@ -875,3 +875,11 @@ pre, code, .status-console, .matrix-input {
 	max-height: 600px;
 	overflow: scroll;
 }
+
+#sticky-input-wrapper {
+	transition: box-shadow 0.2s ease;
+}
+
+#sticky-input-wrapper.is-stuck {
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

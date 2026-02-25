@@ -4,12 +4,13 @@
 Before an AI can "calculate" a word, it must chop the text into pieces. This process is called **Tokenization**. Depending on how you chop, the AI "sees" the world differently.
 </div>
 
-<div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
-    <label style="font-weight: bold; display: block; margin-bottom: 8px;">Input Text:</label>
-    <input type="text" id="master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" 
-           value="The king is acting bravely and wisely and the queen is also acting wisely and bravely"
-           oninput="syncAndTokenize(this.value)">
-</div>
+<div id="tokenizer-section">
+    <div id="sticky-input-wrapper" style="position: sticky; top: 0; z-index: 100; background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
+        <label style="font-weight: bold; display: block; margin-bottom: 8px;">Input Text:</label>
+        <input type="text" id="master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" 
+               value="The king is acting bravely and wisely and the queen is also acting wisely and bravely"
+               oninput="syncAndTokenize(this.value)">
+    </div>
 
 <div class="md" style="margin-top:20px;">
 ## Simple Splitting (Word-Level)
@@ -62,3 +63,4 @@ Modern AIs use **BPE (Byte-Pair Encoding)**. It keeps common words whole but spl
 The history of BPE is a classic case of an algorithm being repurposed for a new era. Originally, \citeauthor{gage1994bpe} (\citeyear{gage1994bpe}) developed the technique strictly for data compression, using iterative byte-pair replacement to shrink files. It remained a niche compression tool until \citeauthor{sennrich2016subword} (\citeyear{sennrich2016subword}) adapted the logic into a subword tokenization strategy. This shift allowed modern models to handle rare words by breaking them into frequent fragments, effectively solving the "Out-of-Vocabulary" problem that had previously limited word-level neural networks.
 </div>
 <div id="viz-bpe" class="viz-container"></div>
+</div>
