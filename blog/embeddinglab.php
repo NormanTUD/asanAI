@@ -388,11 +388,25 @@ Below, drag the **anisotropy slider** from isotropic (vectors spread uniformly) 
 </section>
 
 <div class="md">
-## Polysemanticity
+## Polysemanticity and the Superposition Hypothesis
 
-The observable consequence of superposition at the neuron level is **polysemanticity**: individual neurons fire in response to multiple, seemingly unrelated concepts. Polysemanticity is not a training failure, it is a direct, predictable result of the model compressing $M$ features into $N$ dimensions where $M \gg N$ (as in the Pigeonhole principle). A single neuron might activate for both "legal terminology" and "French cuisine" because its activation direction in embedding space lies near both feature vectors. The reason this compression works at all is **sparsity**: for any given input, most features are inactive. If "legal terminology" and "French cuisine" rarely co-occur in the same context window, the neuron almost never needs to represent both simultaneously, so the interference remains tolerable in practice. This is the core insight of the Superposition Hypothesis (\cite{elhage2022superposition}), the model exploits the sparsity structure of natural language to pack exponentially more features than it has dimensions, at the cost of occasional crosstalk when two co-represented features happen to co-activate.
+Modern research into Transformers reveals that the brain-inspired "one neuron, one concept" model, often critiqued as the **"Grandmother Neuron"** (coined by \cite[Jerome Lettvin]{grandmotherneuron} in 1969), is an illusion. Instead, models utilize two critical phenomena to represent information:
 
-Below, you can explore this tradeoff directly. The visualization shows a **2-dimensional** space attempting to represent $N$ feature directions. With $N = 2$, both features align with the two available axes, perfectly orthogonal, zero interference. The moment you push $N$ past 2, the features must crowd together on the unit circle, and their pairwise dot products (interference) grow. In a real model with 768+ dimensions, the model can pack thousands of near-orthogonal features, but "near" still means some crosstalk leaks through, which is why individual neurons become polysemantic.
+### 1. Distributed Representations
+A concept like "cat" is not stored in a single neuron. Instead, it is a **direction** in a high-dimensional vector space. To represent a specific concept, the model activates a pattern across dozens of neurons. Shifting a single activation in this ensemble slightly alters the meaning (e.g., from "cat" to "kitten").
+
+### 2. Polysemanticity (The Multi-Tasking Neuron)
+The observable consequence of this structure is **polysemanticity**: individual neurons fire in response to multiple, seemingly unrelated concepts. For example, a single neuron might activate for:
+* Text related to the Golden Gate Bridge.
+* Mathematical formulas involving integers.
+* The concept of "reliability" or "French cuisine."
+
+### Why Superposition Happens
+Polysemanticity is not a training failure; it is a predictable result of the model compressing $M$ features into $N$ dimensions where $M \gg N$ (analogous to the **Pigeonhole Principle**). 
+
+The core mechanism is **\cite[Superposition]{elhage2022superposition}**. The model exploits the **sparsity** of natural language, the fact that "legal terminology" and "French cuisine" rarely co-occur in the same context. By assigning concepts to nearly orthogonal directions in high-dimensional space, the model packs exponentially more features than it has physical neurons, accepting occasional "crosstalk" (interference) as a tolerable trade-off for massive representational capacity.
+
+**The Dimensionality Trade-off:** In a 2D space, you can only have two perfectly orthogonal (zero interference) features. In a 768+ dimensional model, thousands of "near-orthogonal" features can coexist, though this proximity is exactly why individual neurons appear polysemantic.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -427,26 +441,6 @@ Below, you can explore this tradeoff directly. The visualization shows a **2-dim
         each neuron ends up <b>polysemantic</b> &mdash; responding to multiple features at once.
     </div>
 </section>
-
-<div class="md">
-TODO This was copied here from transformer, but has info duplicates from previous
-## The Illusion of Locality: Polysemanticity and Superposition
-
-Beyond the rejection of the \citealternativetitle{grandmotherneuron} (a term coined by Jerome Lettvin in 1969 to critique the idea of 1:1 conceptual mapping), modern research into Transformers reveals two critical phenomena:
-
-### Distributed Representations
-The meaning of, for example, "cat", is not stored in a single "cat neuron." Instead, a concept is a **direction** in a high-dimensional vector space. To represent "cat," the model might activate 50 or more different neurons to varying degrees. If you change even one of those activations, the "meaning" shifts slightly (perhaps from "cat" to "kitten").
-
-### Polysemanticity (The Multi-Tasking Neuron)
-Individual neurons are often \citealternativetitle{monosemanticity}, meaning they respond to multiple, unrelated features. A single neuron for example might fire for:
-* Text related to the Golden Gate Bridge.
-* Mathematical formulas involving integers.
-* The concept of "reliability."
-
-### Why Superposition Happens
-Research suggests that models use **Superposition** to represent more features than they have dimensions (neurons). By assigning concepts to nearly orthogonal directions in high-dimensional space, the model can store a massive "dictionary" of features across a smaller number of physical neurons.
-</div>
-
 
 <div class="md">
 ## The Geometry of In-Context Learning
