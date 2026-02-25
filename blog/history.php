@@ -314,7 +314,7 @@ His **Big Idea:** Data and instructions are stored in the same memory. This allo
 
 Before the term "Artificial Intelligence" even existed, **Alan Turing** laid the philosophical groundwork in \citeyear{turing1950computing} with his paper *\citetitle{turing1950computing}*.
 <div class="smart-quote" data-cite="turing1950computing" data-page=1>
-I propose to consider the question, 'Can machines think?
+I propose to consider the question, 'Can machines think?'
 </div>
 
 Turing argued that defining "thinking" was too ambiguous. Instead, he proposed the **Imitation Game** (now known as the Turing Test), a practical standard where a computer is considered intelligent if it can converse indistinguishably from a human. This shifted the goal of AI from replicating biological mechanics to replicating observable behavior.
