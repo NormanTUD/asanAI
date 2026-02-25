@@ -791,3 +791,8 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 	margin-bottom: 20px;
 	border: 1px solid #e0e0e0;
 }
+
+#vector-plot,
+#movable-vector-plot {
+	min-height: 300px; /* just enough for the observer to "see" them */
+}

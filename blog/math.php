@@ -470,10 +470,13 @@ $$\vec{v} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} $$
 $$\text{Example:} \quad \vec{v} = \begin{pmatrix} 255 \\ 0 \\ 0 \end{pmatrix} \text{ (Pure Red!)}$$
 
 Vectors can also be understood as arrows in space. For example, the vector $\begin{pmatrix} 3 \\ 4 \end{pmatrix}$, means: move 3 to the right and 4 to the top.
+</div>
 
 <div id="vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
 
+<div class="md">
 Vectors are not "glued" to one spot. A vector is simply a set of instructions (like "3 right, 4 up"). You can start that instruction anywhere in space, and it is still the same vector!
+</div>
 
 <div style="text-align: center; margin-bottom: 10px;">
     Start Position ($x$): <input type="range" id="slider-vector-x" min="0" max="5" step="0.5" value="1">
@@ -482,6 +485,7 @@ Vectors are not "glued" to one spot. A vector is simply a set of instructions (l
 
 <div id="movable-vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
 
+<div class="md">
 Vectors can also have many more dimensions, way too many to visually display them. And they can also be multiplied with by a scalar (multiplying each value in the vector by this scalar):
 
 $$ c \cdot \vec{v} = c \cdot \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} c \cdot v_1 \\ c \cdot v_2 \end{pmatrix} $$

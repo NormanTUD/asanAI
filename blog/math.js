@@ -4,6 +4,42 @@ const _visiblePlots = new Set();
 // Stores the latest render function for each plot so we can replay it on scroll-in.
 const _pendingRenders = {};
 
+// ── Lazy section-init infrastructure ────────────────────────────────────────
+// Ensures each init function runs at most once, only when its section is near.
+const _initializedSections = new Set();
+const _sectionInitFns = new Map();
+
+const _sectionInitObserver = new IntersectionObserver(
+	(entries) => {
+		entries.forEach((entry) => {
+			const id = entry.target.id;
+			if (entry.isIntersecting && !_initializedSections.has(id)) {
+				_initializedSections.add(id);
+				const fn = _sectionInitFns.get(id);
+				if (fn) fn();
+				_sectionInitObserver.unobserve(entry.target);   // one-shot
+				_sectionInitFns.delete(id);                     // free reference
+			}
+		});
+	},
+	{ rootMargin: '300px', threshold: 0.01 }   // 300px lookahead
+);
+
+/**
+ * Defer an init function until the element `sectionId` is near the viewport.
+ * If the element is already in view, it fires immediately on the next frame.
+ */
+function lazyInit(sectionId, initFn) {
+	const el = document.getElementById(sectionId);
+	if (!el) {
+		console.warn(`[lazyInit] #${sectionId} not found – running initFn eagerly`);
+		initFn();
+		return;
+	}
+	_sectionInitFns.set(sectionId, initFn);
+	_sectionInitObserver.observe(el);
+}
+
 /**
  * Central IntersectionObserver for ALL 3D (and other heavy) plots.
  * When a plot enters the viewport we render it (using the latest pending state
@@ -53,19 +89,36 @@ function observePlot(plotId) {
 // ── Application bootstrap ───────────────────────────────────────────────────
 
 function initDataBasics() {
-	renderBWTable();
-	renderRGBCombinedTable();
-	updateBWPreview();
-	updateRGBPreview();
+	// ── Cheap / global work – always run immediately ──
 	refreshMath();
-	renderVectorPlot();
-	renderELI5Math();
-	renderMovableVector();
-	initLogPlot();
-	initInteractiveVectorSpaces();
-	initCompositionPlot();
-	initHadamard();
-	initSineCosine();
+
+	// ── Everything else – deferred until its section scrolls near ──
+
+	lazyInit('bw-matrix-container', () => {
+		renderBWTable();
+		updateBWPreview();
+	});
+
+	lazyInit('rgb-combined-container', () => {
+		renderRGBCombinedTable();
+		updateRGBPreview();
+	});
+
+	lazyInit('vector-plot',           renderVectorPlot);
+	lazyInit('movable-vector-plot',   renderMovableVector);
+	lazyInit('log-plot',              initLogPlot);
+	lazyInit('plot-composition',      initCompositionPlot);
+	lazyInit('hadamard-display',      initHadamard);
+
+	// ELI5Math already has internal lazy-render logic for its 3-D plots,
+	// but we still defer the whole setup until the first ELI5 element is near.
+	lazyInit('plot-step-1',           renderELI5Math);
+
+	// Interactive vector spaces (1D–4D); the 3D sub-plot already uses lazyRender internally.
+	lazyInit('v1-plot',               initInteractiveVectorSpaces);
+
+	// Sine & Cosine section
+	lazyInit('plot-unit-circle',      initSineCosine);
 }
 
 // ── Hadamard ────────────────────────────────────────────────────────────────
