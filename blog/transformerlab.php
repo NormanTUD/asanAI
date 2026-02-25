@@ -378,9 +378,7 @@ The final state of this block, **$h_2$**, is formed by another residual connecti
 $$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
 </div>
 
-<div id="ffn-step-1" class="math_transformer"></div>
-<div id="ffn-step-2" class="math_transformer"></div>
-<div id="ffn-step-3" class="math_transformer"></div>
+<div id="ffn-equations-container"></div>
 
 <div class="md">
 ## 9. Generalizing the Flow: The $N$-Layer Recurrence

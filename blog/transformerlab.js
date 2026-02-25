@@ -266,7 +266,7 @@ function matMul(matrix, weights, bias = null) {
  * @param {string|null}   containerId  - AttentionEngine container ID (null = no viz)
  * @returns {{ h_out, headData, concat, projected, normH, h_attn }}
  */
-function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings = null, containerId = null) {
+function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings = null, containerId = null, ffnLayerIndex = null) {
 	// 1. Pre-LN before attention
 	const normH = calculateLayerNorm(h_current, layerWeights.gamma, layerWeights.beta);
 
@@ -307,9 +307,9 @@ function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings
 	// 6. Residual connection
 	const h_attn = matAdd(h_current, projected);
 
-	// 7. FFN block — ALWAYS skip render here.
-	//    Only runVisualizedLayer0 should write to ffn-step-1/2/3.
-	const h_out = run_ffn_block(h_attn, layerWeights, /*skipRender=*/ true);
+	// 7. FFN block — render only when ffnLayerIndex is provided
+	const skipFFNRender = (ffnLayerIndex === null);
+	const h_out = run_ffn_block(h_attn, layerWeights, skipFFNRender, ffnLayerIndex !== null ? ffnLayerIndex : 0);
 
 	return { h_out, headData, concat, projected, normH, h_attn };
 }
@@ -1818,20 +1818,22 @@ function validateModelDimensions(d_model, n_heads) {
  * otherwise shows a placeholder message.
  */
 function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers) {
-    if (tokensWithPositional.length === 0) {
-        showEmptyInputMessage();
-        return;
-    }
+	if (tokensWithPositional.length === 0) {
+		showEmptyInputMessage();
+		return;
+	}
 
-    const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
+	clearFFNEquationsContainer();   // ← ADD THIS LINE
 
-    create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
+	const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
 
-    run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
+	create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
 
-    renderAttentionDetails();
-    renderTrajectoryPlot(d_model);
-    pruneOrphanedMigrationPlots();
+	run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
+
+	renderAttentionDetails();
+	renderTrajectoryPlot(d_model);
+	pruneOrphanedMigrationPlots();
 }
 
 /**
@@ -2582,7 +2584,44 @@ function assertShape(name, value, expected_rows, expected_cols) {
         }
 }
 
-function run_ffn_block(h1, params = {}, skipRender = false) {
+/**
+ * Ensures the three FFN step divs exist for a given layer index.
+ * Creates them inside #ffn-equations-container on first call per layer.
+ */
+function ensureFFNLayerContainers(layerIndex) {
+	const container = document.getElementById('ffn-equations-container');
+	if (!container) return;
+
+	const prefix = `ffn-layer-${layerIndex}`;
+	if (document.getElementById(`${prefix}-step-1`)) return; // already created
+
+	const wrapper = document.createElement('div');
+	wrapper.id = `${prefix}-wrapper`;
+	wrapper.className = 'ffn-layer-equations';
+	wrapper.style.cssText = 'margin-top: 25px; padding: 15px; border: 1px solid #c7d2fe; border-radius: 12px; background: #f8f9ff;';
+
+	wrapper.innerHTML = `
+	<p style="color: #1e40af; margin: 0 0 12px 0; font-size: 1rem;">
+	    Feed-Forward Network — Layer ${layerIndex + 1}
+	</p>
+	<div id="${prefix}-step-1" class="math_transformer"></div>
+	<div id="${prefix}-step-2" class="math_transformer"></div>
+	<div id="${prefix}-step-3" class="math_transformer"></div>
+    `;
+
+	container.appendChild(wrapper);
+}
+
+/**
+ * Removes all dynamically created FFN equation blocks so they
+ * can be cleanly recreated on the next forward pass.
+ */
+function clearFFNEquationsContainer() {
+	const container = document.getElementById('ffn-equations-container');
+	if (container) container.innerHTML = '';
+}
+
+function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0) {
 	const d_model = h1[0].length;
 	const d_ff = d_model * 4;
 
@@ -2604,36 +2643,41 @@ function run_ffn_block(h1, params = {}, skipRender = false) {
 	const h2 = matAdd(h1, out_FFN);
 
 	if (!skipRender) {
-		render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2);
+		render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2, layerIndex);
 	}
 
 	return h2;
 }
 
-function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta) {
-	document.getElementById('ffn-step-1').innerHTML = `
+function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex = 0) {
+	ensureFFNLayerContainers(layerIndex);
+	const prefix = `ffn-layer-${layerIndex}`;
+	const L = layerIndex + 1;
+	const sup = `^{(${L})}`;
+
+	document.getElementById(`${prefix}-step-1`).innerHTML = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
-	<p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1$ before FFN</p>
-	$$ \\text{LayerNorm}(h_1) = \\underbrace{\\gamma_{\\text{ffn}}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_1 - \\underbrace{\\mu}_{\\text{Mean of } h_1}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_1} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
+	<p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1${sup}$ before FFN</p>
+	$$ \\text{LayerNorm}(h_1${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_1${sup} - \\underbrace{\\mu}_{\\text{Mean of } h_1${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_1${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
 	<div style="overflow-x:auto;">
-	    $$ \\underbrace{${matrixToPmatrix(normed_h1)}}_{\\text{Norm}\\left(h_1\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h1)}}_{h_1},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+	    $$ \\underbrace{${matrixToPmatrix(normed_h1)}}_{\\text{Norm}\\left(h_1${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h1)}}_{h_1${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
 		<br>
 	</div>
     </div>
-    $$ \\text{out}_{L1} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1) \\cdot W_1 + b_1\\right) = \\underbrace{${matrixToPmatrix(out_L1)}}_{\\text{out}_{L1}} $$
+    $$ \\text{out}_{L1}${sup} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1${sup}) \\cdot W_1${sup} + b_1${sup}\\right) = \\underbrace{${matrixToPmatrix(out_L1)}}_{\\text{out}_{L1}${sup}} $$
     `;
 
-	document.getElementById('ffn-step-2').innerHTML = `
-    $$ \\text{out}_{L2} = \\text{out}_{L1} \\cdot W_2 + b_2 = \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{Out}_\\text{FFN}} $$
+	document.getElementById(`${prefix}-step-2`).innerHTML = `
+    $$ \\text{out}_{L2}${sup} = \\text{out}_{L1}${sup} \\cdot W_2${sup} + b_2${sup} = \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{Out}_\\text{FFN}${sup}} $$
     `;
 
-	document.getElementById('ffn-step-3').innerHTML = `
+	document.getElementById(`${prefix}-step-3`).innerHTML = `
     <div style="margin-bottom:10px;">
 	<p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
-	$$ h_2 = h_1 + \\text{out}_{L2} $$
+	$$ h_2${sup} = h_1${sup} + \\text{out}_{L2}${sup} $$
     </div>
     <div style="overflow-x:auto;">
-	$$ \\underbrace{${matrixToPmatrix(h2)}}_{h_2} = \\underbrace{${matrixToPmatrix(h1)}}_{h_1} + \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{out}_{L2}} $$
+	$$ \\underbrace{${matrixToPmatrix(h2)}}_{h_2${sup}} = \\underbrace{${matrixToPmatrix(h1)}}_{h_1${sup}} + \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{out}_{L2}${sup}} $$
     </div>
     `;
 
@@ -2655,7 +2699,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 	for (let n = startLayer; n < total_depth; n++) {
 		const h_before_layer = JSON.parse(JSON.stringify(h_current));
 
-		const result = forwardOneLayer(h_current, this_weights[n], d_model, n_heads, tokenStrings, "mha-calculation-details");
+		const result = forwardOneLayer(h_current, this_weights[n], d_model, n_heads, tokenStrings, "mha-calculation-details", n);
 
 		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, result.h_out, n + 1, d_model, result.h_out, tokenStrings);
 		tlab_render_weight_grid(`migration-layer-${n + 1}`, n);
