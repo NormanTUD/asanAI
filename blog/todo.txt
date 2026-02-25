@@ -1,3 +1,5 @@
+https://artificial-intuition.beehiiv.com/p/unreasonable-effectiveness-next-token-prediction
+
 https://arxiv.org/html/2409.03752v2 Attention Heads of Large Language Models: A Survey
 
 https://arxiv.org/html/2409.03752v2
