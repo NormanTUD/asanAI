@@ -1182,6 +1182,7 @@ window.bibData = {
 		year: "1994",
 		title: "A New Algorithm for Data Compression",
 		url: "https://www.derczynski.com/papers/archive/BPE_Gage.pdf",
+		alternativetitle: "Byte-Pair-Encoding"
 	},
 	"schuster2012wordpiece": {
 		author: "Mike Schuster, Kaisuke Nakajima",
