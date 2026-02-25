@@ -49,6 +49,8 @@ html {
 	orphans: 3;
 	widows: 3;
 	margin-bottom: 1.2em;
+
+	font-variant-numeric: oldstyle-nums proportional-nums;
 }
 
 #contents a {
@@ -805,4 +807,17 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 #contents {
 	font-kerning: normal;
 	font-variant-ligatures: common-ligatures contextual;
+}
+
+p {
+	overflow-wrap: break-word; /* keep as emergency fallback */
+	word-break: normal;        /* let hyphens: auto do its job */
+}
+
+figcaption {
+	font-size: 0.85em;
+	color: #64748b;
+	margin-top: 0.5em;
+	text-align: center;
+	font-variant-numeric: oldstyle-nums;
 }
