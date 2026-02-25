@@ -250,7 +250,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
         ### The Poisson Distribution: The Law of Rare Events
         In \citeyear{poisson}, **\citeauthor{poisson}** published \citetitle{poisson} (section 41-42), where he derived a limit for the Binomial distribution when the number of trials is very large ($n \to \infty$) and the probability is very small ($p \to 0$).
 
-        It became famous as the **"Law of Small Numbers"** after \citeauthor{gesetzderkleinenzahlen} (\citetitle{gesetzderkleinenzahlen}) used it to model the number of Prussian soldiers killed by horse kicks (p. 23f, §12), events that are rare but occur at a constant average rate $\lambda$.
+        It became famous as the **"Law of Small Numbers"** after \citeauthor{gesetzderkleinenzahlen} used it to model the number of Prussian soldiers killed by horse kicks (p. 23f, §12), events that are rare but occur at a constant average rate $\lambda$.
 
         The math is expressed as:
         $$P(X=k) = \frac{\lambda^k e^{-\lambda}}{k!}$$
