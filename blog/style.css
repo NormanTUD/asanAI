@@ -323,6 +323,7 @@ blockquote {
 	border-left: 5px solid #2e7d32;
 	background-color: #e9f6ed;
 	border-radius: 10px;
+	border: 1px solid #10b981;
 }
 
 blockquote p {
