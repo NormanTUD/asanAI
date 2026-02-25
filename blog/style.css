@@ -842,3 +842,16 @@ figcaption {
 #contents a:hover {
 	text-decoration-color: currentColor; /* Full opacity on hover */
 }
+
+/* Remove margin between consecutive paragraphs, use indent instead */
+#contents p + p {
+    text-indent: 1.5em;
+    margin-top: 0;
+}
+
+/* Never indent the first paragraph after a heading */
+#contents h1 + p,
+#contents h2 + p,
+#contents h3 + p {
+    text-indent: 0;
+}
