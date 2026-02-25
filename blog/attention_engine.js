@@ -386,7 +386,60 @@ class AttentionEngine {
 
 	_executeHeadRender(layerIdx, headIdx) {
 		const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${headIdx}`);
-		if (!headDiv || headDiv.dataset.rendered === 'true') return;
+		if (!headDiv) return;
+
+		// ── If already rendered once, do a PATCH update instead of full rebuild ──
+		if (headDiv.dataset.wasRenderedOnce === 'true') {
+			headDiv.dataset.rendered = 'true';
+
+			const registry = multiLayerAttentionRegistry.get(this.containerId);
+			const layerData = registry.layers[layerIdx];
+			const hd = layerData.headData[headIdx];
+			const displayTokens = layerData.tokenStrings
+				? [...layerData.tokenStrings]
+				: layerData.tokens.map(t => {
+					if (typeof t === 'string') return t;
+					return tlab_get_top_word_only(t);
+				});
+
+			// Compute a simple hash of the weights to detect actual changes
+			const weightsHash = this._apvComputeWeightsHash(hd.this_weights);
+			const hashKey = `_apvLastHash_${layerIdx}_${headIdx}`;
+			if (this[hashKey] === weightsHash) {
+				return; // Nothing changed — skip all re-rendering
+			}
+			this[hashKey] = weightsHash;
+
+			requestAnimationFrame(() => {
+				// Patch SVGs in-place (no flicker)
+				this._apvDrawSingleHead(layerIdx, headIdx, 'headview');
+				this._apvDrawSingleHead(layerIdx, headIdx, 'matrix');
+
+				// Update the attention web
+				const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
+				const webCanvasId = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
+				const webStripId = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
+				renderDynamicAttentionWeb(
+					webContainerId, webCanvasId, webStripId,
+					displayTokens, hd.this_weights
+				);
+
+				// Update the math table — use a precise selector to avoid matching
+				// the headview/matrix wrappers which also have overflow-x:auto
+				const mathTableId = `apv-math-table-${this.containerId}-${layerIdx}-${headIdx}`;
+				const mathTableContainer = document.getElementById(mathTableId);
+				if (mathTableContainer && mathTableContainer.offsetParent !== null) {
+					const layerInstance = layerData.instance;
+					const escapedTokens = layerData.tokens.map(t => String(t).replace(/#/g, '\\#'));
+					mathTableContainer.innerHTML = layerInstance.generateMathTable(hd, escapedTokens);
+					render_temml();
+				}
+			});
+
+			return;
+		}
+
+		if (headDiv.dataset.rendered === 'true') return;
 
 		const registry = multiLayerAttentionRegistry.get(this.containerId);
 		const layerData = registry.layers[layerIdx];
@@ -439,12 +492,16 @@ class AttentionEngine {
     <div style="margin-bottom:20px;">
 	$$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
     </div>
-    <div style="overflow-x:auto;">
+    <div id="apv-math-table-${this.containerId}-${layerIdx}-${headIdx}" style="overflow-x:auto;">
 	${layerInstance.generateMathTable(hd, escapedTokens)}
     </div>`;
 
 		headDiv.dataset.rendered = 'true';
 		headDiv.dataset.wasRenderedOnce = 'true';
+
+		// Store initial weights hash
+		const hashKey = `_apvLastHash_${layerIdx}_${headIdx}`;
+		this[hashKey] = this._apvComputeWeightsHash(hd.this_weights);
 
 		headContentObserver.unobserve(headDiv);
 
@@ -459,6 +516,28 @@ class AttentionEngine {
 				displayTokens, hd.this_weights
 			);
 		});
+	}
+
+	_apvComputeWeightsHash(weights) {
+		// Fast hash: sample a few values and combine them
+		// This avoids iterating every cell while still detecting meaningful changes
+		if (!weights || weights.length === 0) return '0';
+		const n = weights.length;
+		let hash = n;
+		// Sample diagonal + first row + last row
+		for (let i = 0; i < n; i++) {
+			hash = (hash * 31 + (weights[i][i] * 10000 | 0)) | 0;          // diagonal
+			hash = (hash * 31 + (weights[0][i] * 10000 | 0)) | 0;          // first row
+			hash = (hash * 31 + (weights[n - 1][i] * 10000 | 0)) | 0;      // last row
+		}
+		// Also sample middle row if exists
+		if (n > 2) {
+			const mid = (n / 2) | 0;
+			for (let i = 0; i < n; i++) {
+				hash = (hash * 31 + (weights[mid][i] * 10000 | 0)) | 0;
+			}
+		}
+		return String(hash);
 	}
 
 	_apvDrawSingleHead(layerIdx, headIdx, mode) {
@@ -540,41 +619,160 @@ class AttentionEngine {
 		const svg = document.getElementById(canvasId);
 		if (!svg) return;
 
-		// ── Double-buffer: draw into an offscreen clone, then swap ──
-		const buffer = svg.cloneNode(false);          // shallow clone (same tag + attributes, no children)
-		buffer.removeAttribute('id');                  // avoid duplicate IDs in DOM
-		buffer.style.position = 'absolute';
-		buffer.style.left = '-9999px';
-		buffer.style.visibility = 'hidden';
-		svg.parentNode.appendChild(buffer);
+		// Always try to patch first if SVG has children, regardless of token count change
+		const prevTokenCount = parseInt(svg.dataset.apvTokenCount || '0');
+		const tokenCountChanged = prevTokenCount !== displayTokens.length;
 
-		if (mode === 'matrix') {
-			this._apvDrawSingleHeadMatrix(buffer, layerIdx, headIdx, singleHeadData, displayTokens);
-		} else {
-			this._apvDrawSingleHeadView(buffer, layerIdx, headIdx, singleHeadData, displayTokens);
-		}
-
-		// Swap: move all children from buffer into the real SVG in one rAF
-		requestAnimationFrame(() => {
-			// Transfer the viewBox and dimensions the draw functions set on the buffer
-			const vb = buffer.getAttribute('viewBox');
-			if (vb) svg.setAttribute('viewBox', vb);
-			const mh = buffer.style.minHeight;
-			if (mh) svg.style.minHeight = mh;
-
-			// Single innerHTML swap — one paint, no blank frame
-			svg.innerHTML = buffer.innerHTML;
-
-			// Re-attach hover events on the now-populated real SVG
+		if (svg.hasChildNodes() && !tokenCountChanged) {
+			// Patch: update existing DOM elements in-place — no flicker
 			if (mode === 'matrix') {
+				this._apvPatchMatrix(svg, layerIdx, headIdx, singleHeadData, displayTokens);
+			} else {
+				this._apvPatchHeadView(svg, layerIdx, headIdx, singleHeadData, displayTokens);
+			}
+		} else {
+			// Full render needed: use DocumentFragment to avoid blank-frame flicker
+			if (mode === 'matrix') {
+				this._apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, singleHeadData, displayTokens);
 				this._apvAttachMatrixTooltip(svg, layerIdx, [singleHeadData], displayTokens, headIdx);
 			} else {
+				this._apvDrawSingleHeadView(svg, layerIdx, headIdx, singleHeadData, displayTokens);
 				this._apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, singleHeadData, displayTokens);
 			}
+			svg.dataset.apvTokenCount = displayTokens.length;
+		}
+	}
 
-			// Clean up the offscreen buffer
-			if (buffer.parentNode) buffer.parentNode.removeChild(buffer);
+	_apvPatchHeadView(svg, layerIdx, headIdx, headData, tokens) {
+		const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
+		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+		const weights = headData.this_weights;
+		const n = tokens.length;
+
+		// ── Patch token labels ──
+		const textEls = svg.querySelectorAll('text[data-apv-side]');
+		textEls.forEach(el => {
+			const idx = parseInt(el.getAttribute('data-apv-idx'));
+			if (idx < n) {
+				el.textContent = tokens[idx];
+			}
 		});
+
+		// ── Build a lookup of existing paths by qi-ki ──
+		const existingPaths = new Map();
+		svg.querySelectorAll('path[data-apv-qi]').forEach(p => {
+			const qi = p.getAttribute('data-apv-qi');
+			const ki = p.getAttribute('data-apv-ki');
+			existingPaths.set(`${qi}-${ki}`, p);
+		});
+
+		// ── Patch or create/remove paths ──
+		const neededPaths = new Set();
+		for (let qi = 0; qi < n; qi++) {
+			for (let ki = 0; ki < n; ki++) {
+				const w = weights[qi][ki];
+				const key = `${qi}-${ki}`;
+
+				if (w < minOpacity) {
+					// Remove if exists
+					const existing = existingPaths.get(key);
+					if (existing) existing.remove();
+					continue;
+				}
+
+				neededPaths.add(key);
+
+				const y1 = topPadding + qi * rowHeight;
+				const y2 = topPadding + ki * rowHeight;
+				const x1 = leftColumnX + 6;
+				const x2 = rightColumnX - 6;
+				const cpx = (x1 + x2) / 2;
+				const d = `M ${x1} ${y1} C ${cpx} ${y1}, ${cpx} ${y2}, ${x2} ${y2}`;
+				const sw = (1 + w * 5).toFixed(1);
+				const so = w.toFixed(3);
+
+				const existing = existingPaths.get(key);
+				if (existing) {
+					// Update in place
+					existing.setAttribute('d', d);
+					existing.setAttribute('stroke-width', sw);
+					existing.setAttribute('stroke-opacity', so);
+					existing.setAttribute('stroke', color);
+				} else {
+					// Create new path
+					const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+					path.setAttribute('d', d);
+					path.setAttribute('fill', 'none');
+					path.setAttribute('stroke', color);
+					path.setAttribute('stroke-width', sw);
+					path.setAttribute('stroke-opacity', so);
+					path.setAttribute('data-apv-qi', qi);
+					path.setAttribute('data-apv-ki', ki);
+					svg.appendChild(path);
+				}
+			}
+		}
+
+		// Remove paths that are no longer needed
+		existingPaths.forEach((path, key) => {
+			if (!neededPaths.has(key)) path.remove();
+		});
+	}
+
+	_apvPatchMatrix(svg, layerIdx, headIdx, headData, tokens) {
+		const n = tokens.length;
+		const cellSize = Math.max(18, Math.min(40, 300 / n));
+		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+		const weights = headData.this_weights;
+		const padding = 80;
+		const offsetX = padding / 2;
+		const offsetY = padding / 2;
+
+		// ── Patch row labels (left side) ──
+		const allText = svg.querySelectorAll('text');
+		// Row labels and column labels are not tagged with data attributes,
+		// so we update rects and their value labels instead.
+
+		// ── Patch rect fill-opacity and value text ──
+		const rects = svg.querySelectorAll('rect[data-apv-qi]');
+		rects.forEach(rect => {
+			const qi = parseInt(rect.getAttribute('data-apv-qi'));
+			const ki = parseInt(rect.getAttribute('data-apv-ki'));
+			if (qi >= n || ki >= n) return;
+
+			const w = weights[qi][ki];
+			const alpha = Math.max(0.05, w);
+			rect.setAttribute('fill-opacity', alpha.toFixed(3));
+			rect.setAttribute('fill', color);
+		});
+
+		// ── Patch value text inside cells ──
+		// Value texts are siblings right after each rect, with pointer-events:none
+		// We find them by position matching
+		if (cellSize >= 28) {
+			const valueTexts = svg.querySelectorAll('text[pointer-events="none"]');
+			valueTexts.forEach(txt => {
+				// Reverse-engineer qi/ki from position
+				const x = parseFloat(txt.getAttribute('x'));
+				const y = parseFloat(txt.getAttribute('y'));
+				const ki = Math.round((x - offsetX - cellSize / 2) / cellSize);
+				const qi = Math.round((y - offsetY - cellSize / 2 - 3) / cellSize);
+
+				// More robust: find from the y attribute
+				const qiCalc = Math.round((y - 3 - offsetY - cellSize / 2) / cellSize);
+				const kiCalc = Math.round((x - offsetX - cellSize / 2) / cellSize);
+
+				if (qiCalc >= 0 && qiCalc < n && kiCalc >= 0 && kiCalc < n) {
+					const w = weights[qiCalc][kiCalc];
+					if (w > 0.05) {
+						txt.textContent = (w * 100).toFixed(0);
+						txt.setAttribute('fill', w > 0.5 ? '#fff' : '#334155');
+					} else {
+						txt.textContent = '';
+					}
+				}
+			});
+		}
 	}
 
 	_apvFlushHeadDraw(key) {
@@ -1143,12 +1341,34 @@ class AttentionEngine {
 		svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
 		svg.style.minHeight = svgHeight + 'px';
 
-		let svgContent = '';
+		// Build into a DocumentFragment to avoid blank-frame flicker
+		const frag = document.createDocumentFragment();
 
-		svgContent += `<text x="${leftColumnX}" y="18" font-size="11" fill="#64748b"
-	font-weight="600" text-anchor="middle">Query (attending)</text>`;
-		svgContent += `<text x="${rightColumnX}" y="18" font-size="11" fill="#64748b"
-	font-weight="600" text-anchor="middle">Key (attended to)</text>`;
+		const makeText = (attrs, content) => {
+			const el = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+			for (const [k, v] of Object.entries(attrs)) {
+				if (k === 'style') el.style.cssText = v;
+				else el.setAttribute(k, v);
+			}
+			el.textContent = content;
+			return el;
+		};
+
+		const makePath = (attrs) => {
+			const el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+			for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+			return el;
+		};
+
+		frag.appendChild(makeText({
+			x: String(leftColumnX), y: '18', 'font-size': '11', fill: '#64748b',
+			'font-weight': '600', 'text-anchor': 'middle'
+		}, 'Query (attending)'));
+
+		frag.appendChild(makeText({
+			x: String(rightColumnX), y: '18', 'font-size': '11', fill: '#64748b',
+			'font-weight': '600', 'text-anchor': 'middle'
+		}, 'Key (attended to)'));
 
 		const hoverKey = `${layerIdx}-${headIdx}`;
 		const hovered = this._apvHoveredToken.get(hoverKey) || null;
@@ -1158,19 +1378,21 @@ class AttentionEngine {
 			const isHoveredLeft = hovered && hovered.side === 'left' && hovered.index === i;
 			const isHoveredRight = hovered && hovered.side === 'right' && hovered.index === i;
 
-			svgContent += `<text x="${leftColumnX}" y="${y + 4}"
-	    font-size="12" fill="${isHoveredLeft ? '#1e40af' : '#334155'}"
-	    font-weight="${isHoveredLeft ? '700' : '500'}" text-anchor="end"
-	    style="cursor:pointer;"
-	    data-apv-side="left" data-apv-idx="${i}"
-	    >${this._apvEscapeHtml(tokens[i])}</text>`;
+			frag.appendChild(makeText({
+				x: String(leftColumnX), y: String(y + 4),
+				'font-size': '12', fill: isHoveredLeft ? '#1e40af' : '#334155',
+				'font-weight': isHoveredLeft ? '700' : '500', 'text-anchor': 'end',
+				style: 'cursor:pointer;',
+				'data-apv-side': 'left', 'data-apv-idx': String(i)
+			}, tokens[i]));
 
-			svgContent += `<text x="${rightColumnX}" y="${y + 4}"
-	    font-size="12" fill="${isHoveredRight ? '#1e40af' : '#334155'}"
-	    font-weight="${isHoveredRight ? '700' : '500'}" text-anchor="start"
-	    style="cursor:pointer;"
-	    data-apv-side="right" data-apv-idx="${i}"
-	    >${this._apvEscapeHtml(tokens[i])}</text>`;
+			frag.appendChild(makeText({
+				x: String(rightColumnX), y: String(y + 4),
+				'font-size': '12', fill: isHoveredRight ? '#1e40af' : '#334155',
+				'font-weight': isHoveredRight ? '700' : '500', 'text-anchor': 'start',
+				style: 'cursor:pointer;',
+				'data-apv-side': 'right', 'data-apv-idx': String(i)
+			}, tokens[i]));
 		}
 
 		const weights = headData.this_weights;
@@ -1185,18 +1407,19 @@ class AttentionEngine {
 				const x2 = rightColumnX - 6;
 				const cpx = (x1 + x2) / 2;
 
-				svgContent += `<path d="M ${x1} ${y1} C ${cpx} ${y1}, ${cpx} ${y2}, ${x2} ${y2}"
-		fill="none" stroke="${color}"
-		stroke-width="${(1 + w * 5).toFixed(1)}"
-		stroke-opacity="${w.toFixed(3)}"
-		data-apv-qi="${qi}" data-apv-ki="${ki}"
-	    />`;
+				frag.appendChild(makePath({
+					d: `M ${x1} ${y1} C ${cpx} ${y1}, ${cpx} ${y2}, ${x2} ${y2}`,
+					fill: 'none', stroke: color,
+					'stroke-width': (1 + w * 5).toFixed(1),
+					'stroke-opacity': w.toFixed(3),
+					'data-apv-qi': String(qi), 'data-apv-ki': String(ki)
+				}));
 			}
 		}
 
-		svg.innerHTML = svgContent;
-		// NOTE: event listeners are NOT attached here anymore.
-		// _apvExecuteDraw handles attaching them after the buffer swap.
+		// Atomic swap: replaceChildren removes all old children and appends the fragment in one
+		// synchronous operation — the browser won't paint a blank frame between removal and insertion
+		svg.replaceChildren(frag);
 	}
 
 	_apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, headData, tokens) {
@@ -1213,28 +1436,43 @@ class AttentionEngine {
 		svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
 		svg.style.minHeight = totalHeight + 'px';
 
-		let svgContent = '';
+		// Build into a DocumentFragment to avoid blank-frame flicker
+		const frag = document.createDocumentFragment();
+
+		const makeSvgEl = (tag, attrs, content) => {
+			const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+			for (const [k, v] of Object.entries(attrs)) {
+				if (k === 'style') el.style.cssText = v;
+				else el.setAttribute(k, v);
+			}
+			if (content !== undefined) el.textContent = content;
+			return el;
+		};
 
 		const offsetX = padding / 2;
 		const offsetY = padding / 2;
 
-		svgContent += `<text x="${offsetX + matrixSize / 2}" y="${offsetY - 30}"
-	font-size="12" fill="${color}" font-weight="700" text-anchor="middle"
-	>Head ${headIdx + 1}</text>`;
+		frag.appendChild(makeSvgEl('text', {
+			x: String(offsetX + matrixSize / 2), y: String(offsetY - 30),
+			'font-size': '12', fill: color, 'font-weight': '700', 'text-anchor': 'middle'
+		}, `Head ${headIdx + 1}`));
 
 		for (let i = 0; i < n; i++) {
-			svgContent += `<text x="${offsetX - 4}" y="${offsetY + i * cellSize + cellSize / 2 + 4}"
-	    font-size="9" fill="#64748b" text-anchor="end"
-	    >${this._apvEscapeHtml(tokens[i])}</text>`;
+			frag.appendChild(makeSvgEl('text', {
+				x: String(offsetX - 4),
+				y: String(offsetY + i * cellSize + cellSize / 2 + 4),
+				'font-size': '9', fill: '#64748b', 'text-anchor': 'end'
+			}, tokens[i]));
 		}
 
 		for (let j = 0; j < n; j++) {
-			svgContent += `<text
-	    x="${offsetX + j * cellSize + cellSize / 2}"
-	    y="${offsetY - 6}"
-	    font-size="9" fill="#64748b" text-anchor="start"
-	    transform="rotate(-45, ${offsetX + j * cellSize + cellSize / 2}, ${offsetY - 6})"
-	    >${this._apvEscapeHtml(tokens[j])}</text>`;
+			const cx = offsetX + j * cellSize + cellSize / 2;
+			const cy = offsetY - 6;
+			frag.appendChild(makeSvgEl('text', {
+				x: String(cx), y: String(cy),
+				'font-size': '9', fill: '#64748b', 'text-anchor': 'start',
+				transform: `rotate(-45, ${cx}, ${cy})`
+			}, tokens[j]));
 		}
 
 		for (let qi = 0; qi < n; qi++) {
@@ -1244,26 +1482,27 @@ class AttentionEngine {
 				const y = offsetY + qi * cellSize;
 				const alpha = Math.max(0.05, w);
 
-				svgContent += `<rect x="${x}" y="${y}"
-		width="${cellSize}" height="${cellSize}"
-		fill="${color}" fill-opacity="${alpha.toFixed(3)}"
-		stroke="#e2e8f0" stroke-width="0.5"
-		data-apv-head="0" data-apv-qi="${qi}" data-apv-ki="${ki}"
-		style="cursor:crosshair;"
-	    />`;
+				frag.appendChild(makeSvgEl('rect', {
+					x: String(x), y: String(y),
+					width: String(cellSize), height: String(cellSize),
+					fill: color, 'fill-opacity': alpha.toFixed(3),
+					stroke: '#e2e8f0', 'stroke-width': '0.5',
+					'data-apv-head': '0', 'data-apv-qi': String(qi), 'data-apv-ki': String(ki),
+					style: 'cursor:crosshair;'
+				}));
 
 				if (cellSize >= 28 && w > 0.05) {
-					svgContent += `<text x="${x + cellSize / 2}" y="${y + cellSize / 2 + 3}"
-		    font-size="8" fill="${w > 0.5 ? '#fff' : '#334155'}"
-		    text-anchor="middle" pointer-events="none"
-		    >${(w * 100).toFixed(0)}</text>`;
+					frag.appendChild(makeSvgEl('text', {
+						x: String(x + cellSize / 2), y: String(y + cellSize / 2 + 3),
+						'font-size': '8', fill: w > 0.5 ? '#fff' : '#334155',
+						'text-anchor': 'middle', 'pointer-events': 'none'
+					}, (w * 100).toFixed(0)));
 				}
 			}
 		}
 
-		svg.innerHTML = svgContent;
-		// NOTE: event listeners are NOT attached here anymore.
-		// _apvExecuteDraw handles attaching them after the buffer swap.
+		// Atomic swap — no blank frame
+		svg.replaceChildren(frag);
 	}
 
 	_apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, headData, tokens) {
