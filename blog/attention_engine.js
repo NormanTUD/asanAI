@@ -462,6 +462,71 @@ class AttentionEngine {
 	}
 
 	_apvDrawSingleHead(layerIdx, headIdx, mode) {
+		// ── Lazy-init the per-head visibility observer & tracking maps ──
+		if (!this._apvHeadVisibility) {
+			this._apvHeadVisibility = new Map();  // "layerIdx-headIdx" → boolean
+			this._apvHeadPending    = new Map();  // "layerIdx-headIdx-mode" → true
+			this._apvHeadDebounce   = new Map();  // "layerIdx-headIdx-mode" → timerId
+
+			this._apvSectionObserver = new IntersectionObserver((entries) => {
+				for (const entry of entries) {
+					const el    = entry.target;
+					const lIdx  = parseInt(el.dataset.apvLayerIdx);
+					const hIdx  = parseInt(el.dataset.apvHeadIdx);
+					const key   = `${lIdx}-${hIdx}`;
+					const wasVisible = this._apvHeadVisibility.get(key) || false;
+					this._apvHeadVisibility.set(key, entry.isIntersecting);
+
+					// Became visible → flush any pending draws
+					if (entry.isIntersecting && !wasVisible) {
+						for (const m of ['headview', 'matrix']) {
+							const pendingKey = `${lIdx}-${hIdx}-${m}`;
+							if (this._apvHeadPending.get(pendingKey)) {
+								this._apvHeadPending.delete(pendingKey);
+								this._apvExecuteDraw(lIdx, hIdx, m);
+							}
+						}
+					}
+				}
+			}, { threshold: 0 });
+		}
+
+		const visKey     = `${layerIdx}-${headIdx}`;
+		const debounceKey = `${layerIdx}-${headIdx}-${mode}`;
+
+		// ── Observe the .apv-per-head-section wrapper if not already ──
+		const headDiv = document.getElementById(
+			`head-content-${this.containerId}-${layerIdx}-${headIdx}`
+		);
+		if (headDiv && !this._apvHeadVisibility.has(visKey)) {
+			const section = headDiv.querySelector('.apv-per-head-section');
+			if (section) {
+				section.dataset.apvLayerIdx = layerIdx;
+				section.dataset.apvHeadIdx  = headIdx;
+				this._apvSectionObserver.observe(section);
+				// Assume not visible until the observer fires
+				this._apvHeadVisibility.set(visKey, false);
+			}
+		}
+
+		// ── Debounce: cancel any prior timer for this key, start a new one ──
+		const prevTimer = this._apvHeadDebounce.get(debounceKey);
+		if (prevTimer) cancelAnimationFrame(prevTimer);
+
+		this._apvHeadDebounce.set(debounceKey, requestAnimationFrame(() => {
+			this._apvHeadDebounce.delete(debounceKey);
+
+			// If currently in view → draw immediately
+			if (this._apvHeadVisibility.get(visKey)) {
+				this._apvExecuteDraw(layerIdx, headIdx, mode);
+			} else {
+				// Not in view → just mark pending; the observer will flush it
+				this._apvHeadPending.set(debounceKey, true);
+			}
+		}));
+	}
+
+	_apvExecuteDraw(layerIdx, headIdx, mode) {
 		const registry = multiLayerAttentionRegistry.get(this.containerId);
 		if (!registry) return;
 		const layerData = registry.layers[layerIdx];
@@ -469,6 +534,61 @@ class AttentionEngine {
 
 		const headDataArray = layerData.headData;
 		const displayTokens = this._apvResolveTokenLabels(layerData.tokenStrings, headDataArray);
+		const singleHeadData = headDataArray[headIdx];
+
+		const canvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-${mode}`;
+		const svg = document.getElementById(canvasId);
+		if (!svg) return;
+
+		// ── Double-buffer: draw into an offscreen clone, then swap ──
+		const buffer = svg.cloneNode(false);          // shallow clone (same tag + attributes, no children)
+		buffer.removeAttribute('id');                  // avoid duplicate IDs in DOM
+		buffer.style.position = 'absolute';
+		buffer.style.left = '-9999px';
+		buffer.style.visibility = 'hidden';
+		svg.parentNode.appendChild(buffer);
+
+		if (mode === 'matrix') {
+			this._apvDrawSingleHeadMatrix(buffer, layerIdx, headIdx, singleHeadData, displayTokens);
+		} else {
+			this._apvDrawSingleHeadView(buffer, layerIdx, headIdx, singleHeadData, displayTokens);
+		}
+
+		// Swap: move all children from buffer into the real SVG in one rAF
+		requestAnimationFrame(() => {
+			// Transfer the viewBox and dimensions the draw functions set on the buffer
+			const vb = buffer.getAttribute('viewBox');
+			if (vb) svg.setAttribute('viewBox', vb);
+			const mh = buffer.style.minHeight;
+			if (mh) svg.style.minHeight = mh;
+
+			// Single innerHTML swap — one paint, no blank frame
+			svg.innerHTML = buffer.innerHTML;
+
+			// Re-attach hover events on the now-populated real SVG
+			if (mode === 'matrix') {
+				this._apvAttachMatrixTooltip(svg, layerIdx, [singleHeadData], displayTokens, headIdx);
+			} else {
+				this._apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, singleHeadData, displayTokens);
+			}
+
+			// Clean up the offscreen buffer
+			if (buffer.parentNode) buffer.parentNode.removeChild(buffer);
+		});
+	}
+
+	_apvFlushHeadDraw(key) {
+		const [layerIdxStr, headIdxStr, mode] = key.split('-');
+		const layerIdx = parseInt(layerIdxStr, 10);
+		const headIdx  = parseInt(headIdxStr, 10);
+
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		if (!registry) return;
+		const layerData = registry.layers[layerIdx];
+		if (!layerData) return;
+
+		const headDataArray  = layerData.headData;
+		const displayTokens  = this._apvResolveTokenLabels(layerData.tokenStrings, headDataArray);
 		const singleHeadData = headDataArray[headIdx];
 
 		const canvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-${mode}`;
@@ -1075,7 +1195,8 @@ class AttentionEngine {
 		}
 
 		svg.innerHTML = svgContent;
-		this._apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, headData, tokens);
+		// NOTE: event listeners are NOT attached here anymore.
+		// _apvExecuteDraw handles attaching them after the buffer swap.
 	}
 
 	_apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, headData, tokens) {
@@ -1123,7 +1244,6 @@ class AttentionEngine {
 				const y = offsetY + qi * cellSize;
 				const alpha = Math.max(0.05, w);
 
-				// FIX: use data-apv-head="0" to match the [headData] wrapper array index
 				svgContent += `<rect x="${x}" y="${y}"
 		width="${cellSize}" height="${cellSize}"
 		fill="${color}" fill-opacity="${alpha.toFixed(3)}"
@@ -1142,8 +1262,8 @@ class AttentionEngine {
 		}
 
 		svg.innerHTML = svgContent;
-		// FIX: pass headIdx as headDisplayOffset so the tooltip shows the correct head number
-		this._apvAttachMatrixTooltip(svg, layerIdx, [headData], tokens, headIdx);
+		// NOTE: event listeners are NOT attached here anymore.
+		// _apvExecuteDraw handles attaching them after the buffer swap.
 	}
 
 	_apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, headData, tokens) {
