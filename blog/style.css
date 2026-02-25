@@ -1,3 +1,7 @@
+html {
+	font-size: clamp(1rem, 0.92rem + 0.4vw, 1.125rem);
+}
+
 #contents, #loading-overlay {
 	font-family: sans-serif;
 	margin: 0px;
@@ -44,6 +48,7 @@
 	text-wrap: pretty; /* Verhindert einzelne Wörter in der letzten Zeile */
 	orphans: 3;
 	widows: 3;
+	margin-bottom: 1.2em;
 }
 
 #contents a {
