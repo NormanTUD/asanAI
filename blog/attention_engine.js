@@ -413,13 +413,6 @@ class AttentionEngine {
 
 		headDiv.innerHTML = `
     <div class="apv-per-head-section" style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px;">
-	<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-	    <h3 style="margin:0; font-size:1.05rem;">
-		<span style="color:${color};">&#9679;</span>
-		<span style="color:#1e293b;"> Attention Path Visualizer — Layer ${layerIdx + 1}, Head ${headIdx + 1}</span>
-	    </h3>
-	</div>
-
 	<div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
 	    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
 	    <svg id="${apvHeadCanvasId}" style="width:100%; min-height:180px;"></svg>
@@ -435,7 +428,6 @@ class AttentionEngine {
 	</div>
     </div>
 
-    <p style="margin:0 0 4px 0; color:#1e40af; font-weight:bold;">Attention Connectivity Web</p>
     <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
 	Hover over a word to see where it focuses its attention.
     </p>
