@@ -384,6 +384,19 @@ class AttentionEngine {
 		headContentObserver.observe(headDiv);
 	}
 
+	generateEquationsOnly(head) {
+		const { WQ, WK, WV } = head;
+		const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+
+		return `
+<div style="display:flex; flex-wrap:wrap; justify-content:center; gap:24px;">
+	<div>$$ W_Q = ${toMatrix(WQ)} $$</div>
+	<div>$$ W_K = ${toMatrix(WK)} $$</div>
+	<div>$$ W_V = ${toMatrix(WV)} $$</div>
+</div>
+`;
+	}
+
 	_executeHeadRender(layerIdx, headIdx) {
 		const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${headIdx}`);
 		if (!headDiv) return;
@@ -424,8 +437,16 @@ class AttentionEngine {
 					displayTokens, hd.this_weights
 				);
 
-				// Update the math table — use a precise selector to avoid matching
-				// the headview/matrix wrappers which also have overflow-x:auto
+				// Update the equations (W_Q, W_K, W_V)
+				const equationsId = `apv-equations-${this.containerId}-${layerIdx}-${headIdx}`;
+				const equationsContainer = document.getElementById(equationsId);
+				if (equationsContainer) {
+					const layerInstance = layerData.instance;
+					equationsContainer.innerHTML = layerInstance.generateEquationsOnly(hd);
+					render_temml();
+				}
+
+				// Update the math table
 				const mathTableId = `apv-math-table-${this.containerId}-${layerIdx}-${headIdx}`;
 				const mathTableContainer = document.getElementById(mathTableId);
 				if (mathTableContainer && mathTableContainer.offsetParent !== null) {
@@ -465,36 +486,44 @@ class AttentionEngine {
 		const apvMatrixCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-matrix`;
 
 		headDiv.innerHTML = `
-    <div class="apv-per-head-section" style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px;">
+<div style="margin-bottom:20px;">
+	$$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
+</div>
+<div id="apv-equations-${this.containerId}-${layerIdx}-${headIdx}" style="overflow-x:auto; margin-bottom:20px;">
+	${layerInstance.generateEquationsOnly(hd)}
+</div>
+
+<p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
+	Hover over a word to see where it focuses its attention.
+</p>
+<div id="${webContainerId}" style="position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
+	<canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
+	<div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
+</div>
+
+<div class="apv-per-head-section" style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px;">
 	<div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
 	    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
 	    <svg id="${apvHeadCanvasId}" style="width:100%; min-height:180px;"></svg>
 	</div>
 
+	<div style="font-size:0.75rem; color:#94a3b8; text-align:center;">
+	    Hover over a token to highlight its attention connections. Line thickness = attention weight.
+	</div>
+</div>
+
+<div style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px;">
 	<div id="apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}"
 	    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
 	    <svg id="${apvMatrixCanvasId}" style="width:100%; min-height:180px;"></svg>
 	</div>
+</div>
 
-	<div style="font-size:0.75rem; color:#94a3b8; text-align:center;">
-	    Hover over a token to highlight its attention connections. Line thickness = attention weight.
-	</div>
-    </div>
-
-    <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-	Hover over a word to see where it focuses its attention.
-    </p>
-    <div id="${webContainerId}" style="position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
-	<canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
-	<div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
-    </div>
-    <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>
-    <div style="margin-bottom:20px;">
-	$$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
-    </div>
-    <div id="apv-math-table-${this.containerId}-${layerIdx}-${headIdx}" style="overflow-x:auto;">
+<div id="apv-math-table-${this.containerId}-${layerIdx}-${headIdx}" style="overflow-x:auto; margin-bottom:20px;">
 	${layerInstance.generateMathTable(hd, escapedTokens)}
-    </div>`;
+</div>
+
+<div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>`;
 
 		headDiv.dataset.rendered = 'true';
 		headDiv.dataset.wasRenderedOnce = 'true';
@@ -803,36 +832,24 @@ class AttentionEngine {
 	generateMathTable(head, tokens) {
 		const { this_weights, Qi, Ki, Vi, h0, WQ, WK, WV } = head;
 
-		// Helper for Matrix display
 		const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
 
-		// Helper for Column Vector display
 		const toColPmatrix = (arr) => {
-			if (!Array.isArray(arr)) return arr; // Fallback for raw strings
+			if (!Array.isArray(arr)) return arr;
 			return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' \\\\ ')} \\end{pmatrix}`;
 		};
 
-		const wq_wk_wv_matrix_html = `
-	$$ W_Q = ${toMatrix(WQ)} $$
-	$$ W_K = ${toMatrix(WK)} $$
-	$$ W_V = ${toMatrix(WV)} $$
-    `;
+		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6;">`;
 
-		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6;">${wq_wk_wv_matrix_html}`;
-
-		// Header (Keys)
 		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
 		tokens.forEach((t, j) => {
-			// Render Key as a vertical vector if it's an embedding array
 			const keyVector = Array.isArray(h0[j]) ? `$K_${j} = ${toColPmatrix(h0[j])}$` : t;
 			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Key: ${keyVector}</th>`;
 		});
 		html += `</tr>`;
 
-		// Rows (Queries)
 		this_weights.forEach((row, i) => {
 			html += `<tr>`;
-			// Render Query as a vertical vector
 			const queryVector = Array.isArray(h0[i]) ? `$Q_${i} = ${toColPmatrix(h0[i])}$` : tokens[i];
 			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;"><strong>Query: ${queryVector}</strong></td>`;
 
@@ -844,7 +861,6 @@ class AttentionEngine {
 
 				let cellEq;
 				if (i === 0 && j === 0) {
-					// Full derivation for the first cell
 					cellEq = `
 	    \\text{SoftMax} \\left( \\frac{
 		\\underbrace{(W_Q h_0[${i}])^T}_{Q_${i}^T} \\cdot
@@ -854,8 +870,6 @@ class AttentionEngine {
 	    = ${toColPmatrix(resultVec)}
 	`.replace(/\s+/g, ' ');
 				} else {
-					// Descriptive shorthand for subsequent cells
-					// Shows the relationship between Q_i, K_j and the weight
 					cellEq = `
 	    \\underbrace{ \\text{attn}(Q_{${i}}, K_{${j}}) }_{${weight.toFixed(nr_fixed)}}
 	    \\cdot \\underbrace{V_{${j}}}_{h_{${j}} \\cdot W_V} = ${toColPmatrix(resultVec)}
