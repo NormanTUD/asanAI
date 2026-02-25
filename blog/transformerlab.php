@@ -340,6 +340,28 @@ In the paper \citetitle{analyzingmultiheads}, the study identified that the most
 * **Syntactic Heads**: These heads align with specific syntactic dependencies. They show a high success rate in identifying grammatical relationships, such as the relation between a verb and its direct object.
 * **Rare Words Heads**: Typically found in the first layer of the encoder, these heads specifically attend to the most infrequent tokens in a sentence, helping the model manage low-frequency vocabulary.
 
+### Attention-Heads and In-Context-Learning
+
+Induction heads represent a specialized evolutionary step beyond the "Positional Heads"
+described in Voita et al. (2019). While a standard positional head might only look at
+the token immediately before it, the Induction Head circuit uses that information
+to perform algorithmic copying.
+
+In a sequence like "Harry Potter ... Harry", the process unfolds as follows:
+
+- **Step 1: The Previous Token Head (Early Layer):** This functions like the
+  "Positional Head" you noted. At the first instance of [Potter], it looks back
+  at [Harry] and encodes that "Harry preceded me."
+- **Step 2: The Induction Head (Later Layer):** When the model sees [Harry]
+  a second time, this head searches the entire context for previous [Harry]
+  tokens. It ignores the current position and instead "attends" to the
+  [Potter] token because [Potter] carries the signal that it follows [Harry].
+- **The Result:** The model copies [Potter] into its current prediction.
+
+This discovery is significant because it shows that models don't just learn
+static "Syntactic" rules; they learn to build dynamic "search engines" that
+allow them to learn new patterns in real-time during a single prompt.
+
 ### What the attention heads do with respect to the layers
 
 Similiar to how in Convolutional Neural Networks the first layers look at the actual pixels, and later layers look at the analysis of the earlier layers, abstracting more and more away from the concrete pixel values, the attention heads in the first layer look at the sentence data itself, while the ones in the second layer look at the results of the first layer and so on. This way, what they look at, is more and more abstracted away from the concrete training- and inference-data.
