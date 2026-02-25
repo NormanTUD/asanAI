@@ -56,7 +56,8 @@ const dualManifoldState = {
 	aligned: false,
 	animating: false,
 	origRotation: 55,
-	origSeparation: 5
+	origSeparation: 5,
+	rendered: false
 };
 
 function dualManifoldZ(u, v) {
@@ -337,7 +338,12 @@ function renderDualManifolds() {
 		}
 	};
 
-	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+	Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true })
+		.then(() => {
+			dualManifoldState.rendered = true;
+			const loader = plotDiv.querySelector('.plot-loading');
+			if (loader) loader.remove();
+		});
 }
 
 // ---- Controls ----
@@ -4522,7 +4528,36 @@ function loadEmbeddingModule () {
 
 	setParallelogramConcept('royalty');
 
-	renderDualManifolds();
+	// ── Lazy-load Dual Manifolds ──
+	const dualPlotDiv = document.getElementById('plot-dual-manifolds');
+	if (dualPlotDiv) {
+		// Show a spinner placeholder until the section scrolls into view
+		if (!dualPlotDiv.hasChildNodes() || !dualManifoldState.rendered) {
+			dualPlotDiv.innerHTML = `
+	    <div class="plot-loading" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; min-height:350px; gap:14px;">
+		<div class="spinner"></div>
+		<span style="color:#64748b; font-size:0.95em;">Please wait while it's rendering…</span>
+	    </div>`;
+		}
+
+		const dualObserver = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					// Small delay so the browser finishes layout/paint first
+					setTimeout(() => {
+						requestAnimationFrame(() => {
+							renderDualManifolds();
+						});
+					}, 100);
+					dualObserver.unobserve(entry.target);
+				}
+			});
+		}, {
+			rootMargin: '200px'   // start rendering when ~200px away from viewport
+		});
+
+		dualObserver.observe(dualPlotDiv);
+	}
 
 	renderPlatonicHypothesis();
 
