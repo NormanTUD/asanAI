@@ -2731,7 +2731,7 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
     let plotDiv = document.getElementById(id);
     if (!plotDiv) {
         const wrapperDiv = document.createElement('div');
-        wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; padding: 20px; margin-top: 30px; background: #fff;";
+        wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; margin-top: 30px; background: #fff;";
         wrapperDiv.setAttribute('data-migration-wrapper', id);
 
         plotDiv = document.createElement('div');
