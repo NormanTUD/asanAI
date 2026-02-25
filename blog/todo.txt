@@ -1,3 +1,7 @@
+12. Token Prediction and the Phenomenology of Time
+Here's a more speculative one. LLMs process text autoregressively — each token is generated conditioned on all previous tokens, creating an asymmetric temporal arrow. The model has a "past" (the context window) but no "future" until it generates it.This mirrors Husserl's phenomenology of time-consciousness: the present moment is always constituted by retention (memory of what just happened) and protention (anticipation of what comes next). An LLM's forward pass is, in a precise mathematical sense, a retention-protention machine. The context window is retention; the probability distribution over next tokens is protention.Whether this is a deep structural parallel or a superficial analogy is itself a philosophical question worth taking seriously.
+
+
 philosophical insights into llms: https://arxiv.org/html/2405.03207v1 https://arxiv.org/abs/2401.03910
 
 https://artificial-intuition.beehiiv.com/p/unreasonable-effectiveness-next-token-prediction
