@@ -343,14 +343,14 @@ In the paper \citetitle{analyzingmultiheads}, the study identified that the most
 ### Attention-Heads and In-Context-Learning
 
 Induction heads represent a specialized evolutionary step beyond the "Positional Heads"
-described in Voita et al. (2019). While a standard positional head might only look at
+described in Voita et al. (\citeyear{incontextlearninghead}). While a standard positional head might only look at
 the token immediately before it, the Induction Head circuit uses that information
 to perform algorithmic copying.
 
 In a sequence like "Harry Potter ... Harry", the process unfolds as follows:
 
 - **Step 1: The Previous Token Head (Early Layer):** This functions like the
-  "Positional Head" you noted. At the first instance of [Potter], it looks back
+  "Positional Head". At the first instance of [Potter], it looks back
   at [Harry] and encodes that "Harry preceded me."
 - **Step 2: The Induction Head (Later Layer):** When the model sees [Harry]
   a second time, this head searches the entire context for previous [Harry]
