@@ -97,3 +97,24 @@ Fast waves distinguish neighbors; slow waves track long range position. Together
 </div>
 
 <div id="pe-fourier-demo"></div>
+
+<div class="md">
+## Positional Encoding Creates a Manifold, Not Just Labels
+
+The wave plots above show each dimension's projection individually, flat curves on a screen. But the PE formula actually maps each position to a point on a **high-dimensional helix**. The visualization below reconstructs this by plotting the first three PE dimensions as 3D coordinates:
+
+- **Dims 0, 1** (fastest sin/cos pair) trace a **circle**, the cross-section of the helix
+- **Dim 2** (next slower frequency) provides **axial drift**, stretching the circle into a helix
+
+### What to look for
+
+**Adjacent positions are close together.** Neighboring points sit right next to each other on the curve. The model does not memorize "position 5 is special", nearness is encoded geometrically.
+
+**Translational symmetry.** The **blue segment** (pos 5 to 8) and the **red segment** (pos 105 to 108) have the **same length and direction**. A fixed offset $k$ corresponds to a fixed rotation matrix $M_k$ independent of absolute position, just like a clock face lets you compute "3 hours from now" regardless of what time it currently is.
+
+**Generalization to unseen lengths.** Because the geometry of "nearby" vs "far away" is baked into the encoding rather than memorized, Transformers can generalize to sequence lengths they were never trained on.
+
+**Try rotating the 3D plot**, from directly above you will see the circular cross-section (Dims 0, 1). From the side you will see the axial drift (Dim 2). The two colored segments always subtend the same arc.
+</div>
+
+<div id="helix-manifold" style="width:100%; height:500px; margin: 20px 0; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>

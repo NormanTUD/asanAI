@@ -341,9 +341,114 @@ function initPeFourierDemo() {
 	render();
 }
 
+function initHelixManifoldDemo() {
+	// Plot positions as points on a 3D helix using the first 3 PE dimensions
+	const D = 8;
+	const BASE = 10000;
+	const maxPos = 120;
+
+	function pe(pos, d) {
+		const v = [];
+		for (let i = 0; i < d; i += 2) {
+			const w = 1 / Math.pow(BASE, i / d);
+			v.push(Math.sin(pos * w));
+			if (i + 1 < d) v.push(Math.cos(pos * w));
+		}
+		return v;
+	}
+
+	// Generate the helix curve (smooth)
+	const helixX = [], helixY = [], helixZ = [];
+	const markerX = [], markerY = [], markerZ = [], markerText = [];
+
+	for (let p = 0; p <= maxPos; p += 0.2) {
+		const v = pe(p, D);
+		helixX.push(v[0]); // sin(pos * w0) — fast rotation
+		helixY.push(v[1]); // cos(pos * w0) — fast rotation
+		helixZ.push(v[2]); // sin(pos * w1) — slow drift = helix axis
+	}
+
+	// Integer position markers
+	for (let p = 0; p <= maxPos; p++) {
+		const v = pe(p, D);
+		markerX.push(v[0]);
+		markerY.push(v[1]);
+		markerZ.push(v[2]);
+		markerText.push('pos=' + p);
+	}
+
+	// Highlight two pairs to show translational symmetry:
+	// Pair A: pos 5 → 8 (offset 3)
+	// Pair B: pos 105 → 108 (offset 3)
+	function pairTrace(posA, posB, color, label) {
+		const vA = pe(posA, D), vB = pe(posB, D);
+		return {
+			x: [vA[0], vB[0]],
+			y: [vA[1], vB[1]],
+			z: [vA[2], vB[2]],
+			mode: 'lines+markers+text',
+			type: 'scatter3d',
+			marker: { size: 7, color: color },
+			line: { color: color, width: 5 },
+			text: ['pos=' + posA, 'pos=' + posB],
+			textposition: 'top center',
+			name: label
+		};
+	}
+
+	const traces = [
+		{
+			x: helixX, y: helixY, z: helixZ,
+			mode: 'lines',
+			type: 'scatter3d',
+			line: { color: '#cbd5e1', width: 2 },
+			opacity: 0.4,
+			name: 'PE Manifold (helix)',
+			showlegend: true
+		},
+		{
+			x: markerX, y: markerY, z: markerZ,
+			mode: 'markers',
+			type: 'scatter3d',
+			marker: {
+				size: 3,
+				color: markerZ.map((_, i) => i),
+				colorscale: 'Viridis',
+				opacity: 0.6
+			},
+			text: markerText,
+			hoverinfo: 'text',
+			name: 'Integer positions'
+		},
+		pairTrace(5, 8, '#2563eb', 'pos 5→8 (Δ=3)'),
+		pairTrace(105, 108, '#dc2626', 'pos 105→108 (Δ=3)')
+	];
+
+	const layout = {
+		title: '🌊 Positional Encoding Manifold: The High-Dimensional Helix',
+		scene: {
+			xaxis: { title: 'Dim 0 (sin, fast)' },
+			yaxis: { title: 'Dim 1 (cos, fast)' },
+			zaxis: { title: 'Dim 2 (sin, slow)' },
+			camera: { eye: { x: 1.5, y: 1.5, z: 0.8 } }
+		},
+		margin: { t: 50, b: 20, l: 20, r: 20 },
+		annotations: [{
+			text: 'Blue & Red segments are the SAME length → translational symmetry!',
+			showarrow: false,
+			x: 0.5, y: -0.05,
+			xref: 'paper', yref: 'paper',
+			font: { size: 13, color: '#475569' }
+		}]
+	};
+
+	Plotly.newPlot('helix-manifold', traces, layout, { responsive: true });
+}
+
 async function loadPositionalEmbeddingsModule() {
 	updateLoadingStatus("Loading section about positional embeddings...");
 	PositionalLab.update(1)
 	initPeFourierDemo();
+	initHelixManifoldDemo();
 	return Promise.resolve();
 }
