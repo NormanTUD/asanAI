@@ -1,4 +1,11 @@
 window.bibData = {
+	"baars": {
+		url: "https://bernardbaars.pbworks.com/f/++++Functions+of+Consciousness.pdf",
+		year: 1988,
+		title: "A Cognitive Theory of Consciousness",
+		author: "Bernard J. Baars",
+		alternativetitle: "Global Workspace Theory"
+	},
 	"incontextlearninghead": {
 		url: "https://arxiv.org/abs/2209.11895",
 		title: "In-context Learning and Induction Heads",
