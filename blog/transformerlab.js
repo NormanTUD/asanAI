@@ -1702,7 +1702,7 @@ function renderTrajectoryPlot(d_model) {
 		trajDiv.id = containerId;
 		document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
 
-		trajDiv.style.cssText = "width:100%; min-height:250px; border:2px dashed #cbd5e1; border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;";
+		trajDiv.style.cssText = "width:100%; min-height:250px; border: 2px solid rgb(203, 213, 225); border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;";
 		trajDiv.innerHTML = `<div class="traj-loading-placeholder" style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
 			Rendering the Token Trajectory Plot may take a while
 		</div>`;
