@@ -821,3 +821,14 @@ figcaption {
 	text-align: center;
 	font-variant-numeric: oldstyle-nums;
 }
+
+::selection {
+	background: #bfdbfe; /* light blue matching your --primary */
+	color: #1e293b;
+}
+
+#contents h1, #contents h2, #contents h3 {
+	margin-top: 2em;
+	margin-bottom: 0.5em;
+	line-height: 1.2;
+}
