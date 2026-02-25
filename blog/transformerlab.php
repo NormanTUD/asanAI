@@ -312,7 +312,7 @@ The association between *Query* and *Key* and concrete tokens is only true in th
 In this stage, it is already abstracted away from the concrete Embedding Space (for example, by positional encoding), and thus, the numbers don't inherently 'mean' anything anymore.
 </div>
 
-<div id="mha-calculation-details" style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #3b82f6; margin-top: 20px;">
+<div id="mha-calculation-details" style="border-radius: 12px; border: 1px solid #3b82f6; margin-top: 20px;">
 <i>Please wait, while the <b>Multi-Attention-Head</b>-equations are loading...</i>
 </div>
 
