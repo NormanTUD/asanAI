@@ -1,3 +1,5 @@
+https://karpathy.github.io/2026/02/12/microgpt/
+
 https://ar5iv.labs.arxiv.org/html/2309.07315#:~:text=W_%7BE%7D%20to%20accurately%20reflect,the%20words%20in%20the
 
 https://www.aiav.technikum-wien.at/post/der-kluge-hans-und-die-betr%C3%BCgende-ai
