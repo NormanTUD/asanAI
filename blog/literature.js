@@ -1,4 +1,10 @@
 window.bibData = {
+	"grokking": {
+		url: "https://arxiv.org/abs/2201.02177",
+		author: "Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, Vedant Misra",
+		year: 2022,
+		title: "Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets"
+	},
 	"baars": {
 		url: "https://bernardbaars.pbworks.com/f/++++Functions+of+Consciousness.pdf",
 		year: 1988,
