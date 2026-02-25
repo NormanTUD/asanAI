@@ -7,7 +7,7 @@ Before an AI can "calculate" a word, it must chop the text into pieces. This pro
 <div style="background: #f0f4f8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #3b82f6;">
     <label style="font-weight: bold; display: block; margin-bottom: 8px;">Input Text:</label>
     <input type="text" id="master-token-input" class="bw-cell" style="width: 90%; font-size: 1.1rem;" 
-           value="The king is acting bravely"
+           value="The king is acting bravely and wisely and the queen is also acting wisely and bravely"
            oninput="syncAndTokenize(this.value)">
 </div>
 

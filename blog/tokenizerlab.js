@@ -38,7 +38,7 @@ function renderTokens(type, text) {
 	} 
 	else if (type === 'bpe') {
 		const tokenizer = new BPETokenizer();
-		tokenizer.train(text, 10);
+		tokenizer.train(text, 15);
 		tokens = tokenizer.tokenize(text);
 	}
 	else if (type === 'chars') {

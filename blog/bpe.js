@@ -1,45 +1,69 @@
 class BPETokenizer {
     constructor() {
-        this.vocab = {};    // Vocabulary to store tokens and their frequencies
-        this.merges = [];   // List of merge rules (in order)
-        this.mergeSet = new Set(); // For fast lookup
+        this.vocab = {};
+        this.merges = [];
     }
 
     /**
      * Train the BPE tokenizer on a given text corpus.
      * @param {string} text - The input text corpus.
-     * @param {number} vocabSize - The desired vocabulary size.
+     * @param {object} [options] - Optional settings.
+     * @param {number} [options.minFrequency=2] - Minimum pair frequency to consider merging.
+     * @param {number} [options.maxMerges] - Optional hard cap on number of merges.
      */
-    train(text, vocabSize) {
-        // Step 1: Initialize the vocabulary with character-level tokens
-        this.vocab = this._initializeVocab(text);
+    train(text, options = {}) {
+        const minFrequency = options.minFrequency ?? 2;
+        const maxMerges = options.maxMerges ?? Infinity;
 
-        // Step 2: Iteratively merge the most frequent pairs
-        while (Object.keys(this.vocab).length < vocabSize) {
+        this.vocab = this._initializeVocab(text);
+        this.merges = [];
+
+        let mergeCount = 0;
+        while (mergeCount < maxMerges) {
             const pairFrequencies = this._getPairFrequencies();
             const pairs = Object.entries(pairFrequencies);
             if (pairs.length === 0) break;
 
-            // Find the most frequent pair using a simple loop (faster than reduce)
-            let bestPair = pairs[0][0];
-            let bestCount = pairs[0][1];
-            for (let i = 1; i < pairs.length; i++) {
+            let bestPair = null;
+            let bestCount = 0;
+            for (let i = 0; i < pairs.length; i++) {
                 if (pairs[i][1] > bestCount) {
                     bestPair = pairs[i][0];
                     bestCount = pairs[i][1];
                 }
             }
 
-            // Merge the most frequent pair
+            if (bestCount < minFrequency) break;
+
             this._mergePair(bestPair);
             this.merges.push(bestPair);
-            this.mergeSet.add(bestPair);
+            mergeCount++;
+        }
+
+        // Build the final token vocabulary for recognizing known subwords
+        this._buildTokenVocab();
+    }
+
+    /**
+     * Build a set of all known tokens from the trained vocabulary.
+     * Used during tokenization to handle unseen words gracefully.
+     */
+    _buildTokenVocab() {
+        this.knownTokens = new Set();
+
+        const entries = Object.entries(this.vocab);
+        for (let e = 0; e < entries.length; e++) {
+            const tokens = entries[e][0].split(' ');
+            for (const token of tokens) {
+                this.knownTokens.add(token);
+            }
         }
     }
 
     /**
      * Tokenize a given text using the trained BPE vocabulary.
-     * Applies merges in the order they were learned (important for correctness).
+     * Produces ## prefixed continuation tokens for subword pieces.
+     * Falls back to character-level with ## prefixes for unknown words.
      * @param {string} text - The input text to tokenize.
      * @returns {Array<string>} - The BPE tokens.
      */
@@ -50,7 +74,7 @@ class BPETokenizer {
         words.forEach(word => {
             let chars = word.split('');
 
-            // Apply merges in the order they were learned
+            // Apply merges in learned order
             for (const merge of this.merges) {
                 if (chars.length <= 1) break;
 
@@ -68,10 +92,64 @@ class BPETokenizer {
                 chars = newChars;
             }
 
-            tokens.push(...chars);
+            // If the word was fully merged into one token, push it as-is
+            if (chars.length === 1) {
+                tokens.push(chars[0]);
+                return;
+            }
+
+            // Otherwise, try greedy longest-match from the known token vocab
+            // to avoid single-character splits for rare words
+            const subwords = this._greedyTokenize(word);
+
+            // Add ## prefix to continuation tokens (not the first piece)
+            for (let i = 0; i < subwords.length; i++) {
+                if (i === 0) {
+                    tokens.push(subwords[i]);
+                } else {
+                    tokens.push('##' + subwords[i]);
+                }
+            }
         });
 
         return tokens;
+    }
+
+    /**
+     * Greedy longest-match tokenization using the known token vocabulary.
+     * This handles rare words better than pure BPE merge replay,
+     * by matching the longest known subword at each step.
+     * @param {string} word - The word to tokenize.
+     * @returns {Array<string>} - Subword tokens.
+     */
+    _greedyTokenize(word) {
+        const subwords = [];
+        let start = 0;
+
+        while (start < word.length) {
+            let end = word.length;
+            let found = false;
+
+            // Try longest match first, shrink until we find a known token
+            while (end > start) {
+                const substr = word.slice(start, end);
+                if (this.knownTokens.has(substr)) {
+                    subwords.push(substr);
+                    start = end;
+                    found = true;
+                    break;
+                }
+                end--;
+            }
+
+            // If no known token found, take a single character
+            if (!found) {
+                subwords.push(word[start]);
+                start++;
+            }
+        }
+
+        return subwords;
     }
 
     /**
@@ -113,14 +191,11 @@ class BPETokenizer {
 
     /**
      * Merge a token pair in the vocabulary.
-     * Uses token-aware merging instead of regex (correct for multi-char tokens).
-     * @param {string} pair - The merged token string (e.g., "ab").
+     * @param {string} pair - The merged token string.
      */
     _mergePair(pair) {
         const newVocab = {};
 
-        // We need to find which two adjacent tokens combine to form `pair`.
-        // We do this by checking each vocab entry's token list.
         const entries = Object.entries(this.vocab);
         for (let e = 0; e < entries.length; e++) {
             const [word, freq] = entries[e];
