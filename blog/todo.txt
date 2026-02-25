@@ -3,7 +3,7 @@ Research has also shown that attention patterns change systematically across lay
 - Early layers tend to show more local/positional patterns (diagonal, adjacent tokens)
 - Middle layers develop more semantic/syntactic patterns (dependency arcs, coreference)
 - Late layers often become more diffuse or task-specific, concentrating on tokens relevant to the final prediction
-
+https://arxiv.org/html/2601.21709v1
 
 
 
