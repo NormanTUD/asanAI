@@ -2403,11 +2403,10 @@ const platonicState = {
 	currentAudioRotDeg: -130,
 	currentVisionOffset: [25, 18],
 	currentAudioOffset: [-25, 18],
-	// NEW: residual misalignment — models converge but never perfectly
-	residualVisionRotDeg: 3,
-	residualAudioRotDeg: -5,
-	residualVisionOffset: [0.6, 0.4],
-	residualAudioOffset: [-0.5, -0.3],
+	residualVisionRotDeg: 1.5,
+	residualAudioRotDeg: -2,
+	residualVisionOffset: [0.15, 0.1],
+	residualAudioOffset: [-0.12, -0.08],
 	aligned: false,
 	animating: false,
 	showCorrespondence: true,
@@ -2594,60 +2593,7 @@ function renderPlatonicHypothesis() {
         });
     }
 
-    // --- 4. Modality centroid labels ---
-    modalityConfig.forEach(mod => {
-        let cx = 0, cy = 0;
-        const nudgeFactor = Math.pow(Math.max(0, convergence - 0.3) / 0.7, 2);
-        const nudge = nudgeVectors[mod.key];
-        platonicConcepts.forEach(c => {
-            const p = getPlatonicModPos(c, mod.key);
-            cx += p[0] + nudge[0] * nudgeFactor;
-            cy += p[1] + nudge[1] * nudgeFactor;
-        });
-        const n = platonicConcepts.length;
-        const centroidX = cx / n;
-        const centroidY = cy / n;
-
-        const labelSpread = convergence > 0.8 ? 3.0 : 0;
-        const labelOffset = {
-            language: [0,   4.5 + labelSpread],
-            vision:   [6,  -3 - labelSpread],
-            audio:    [-6, -3 - labelSpread]
-        };
-
-        if (convergence > 0.8) {
-            // Arrow from label text → modality centroid (data-coord refs)
-            annotations.push({
-                x: centroidX,
-                y: centroidY,
-                ax: centroidX + labelOffset[mod.key][0],
-                ay: centroidY + labelOffset[mod.key][1],
-                axref: 'x',
-                ayref: 'y',
-                text: '<b>' + mod.label + '</b>',
-                showarrow: true,
-                arrowhead: 2,
-                arrowsize: 1,
-                arrowwidth: 1.5,
-                arrowcolor: mod.color,
-                font: { size: 13, color: mod.color },
-                bgcolor: 'rgba(255,255,255,0.85)',
-                borderpad: 4
-            });
-        } else {
-            // Text near centroid, no arrow needed
-            annotations.push({
-                x: centroidX + labelOffset[mod.key][0],
-                y: centroidY + labelOffset[mod.key][1],
-                text: '<b>' + mod.label + '</b>',
-                showarrow: false,
-                font: { size: 13, color: mod.color },
-                bgcolor: 'rgba(255,255,255,0.8)',
-                borderpad: 4
-            });
-        }
-    });
-
+    
     const layout = {
         margin: { l: 40, r: 40, b: 40, t: 20 },
         showlegend: true,
