@@ -191,7 +191,7 @@ A **translation Transformer**, then, can be understood as a system that performs
 
 In other words, the Transformer doesn't translate *words*. It translates **paths through meaning-space**. It identifies the geometric signature of the input, which clusters were visited, in what order, with what transitions, and reconstructs an analogous trajectory in the output space. This is why translations can be fluent even when there is no one-to-one word correspondence between languages: the model is matching *shapes*, not *points*.
 
-This is also why the Attention mechanism is so central. Attention computes pairwise relationships (via dot products) between all tokens in a sequence, effectively building a map of the local geometry, which points are near each other, which are aligned, which are orthogonal (\cite{vaswani2017attention}). This relational map is what gets preserved and transferred, not any individual coordinate (\cite{elhage2021mathematical}).
+This is also why the Attention mechanism is so central. Attention computes pairwise relationships (via dot products) between all tokens in a sequence, effectively building a map of the local geometry, which points are near each other, which are aligned, which are \cite[orthogonal]{vaswani2017attention}. This relational map is what gets preserved and transferred, \cite[not any individual coordinate]{elhage2021mathematical}.
 
 </div>
 
