@@ -1,5 +1,5 @@
 window.bibData = {
-	"": {
+	"analyzingmultiheads": {
 		url: "https://arxiv.org/abs/1905.09418",
 		title: "Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting, the Rest Can Be Pruned",
 		author: "Elena Voita, David Talbot, Fedor Moiseev, Rico Sennrich, Ivan Titov",

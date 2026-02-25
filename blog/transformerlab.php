@@ -336,6 +336,12 @@ The diagonal reads $\frac{1}{1},\; \frac{1}{2},\; \frac{1}{3},\; \frac{1}{4},\; 
 
 Similiar to how in Convolutional Neural Networks the first layers look at the actual pixels, and later layers look at the analysis of the earlier layers, abstracting more and more away from the concrete pixel values, the attention heads in the first layer look at the sentence data itself, while the ones in the second layer look at the results of the first layer and so on. This way, what they look at, is more and more abstracted away from the concrete training- and inference-data.
 
+In the paper \citetitle{analyzingmultiheads}, the study identified that the most "important" heads often perform three specific, interpretable functions:
+
+* **Positional Heads**: These heads attend to adjacent tokens, usually the previous or the next token in the sequence. They are essential for capturing the local structural order of the sentence.
+* **Syntactic Heads**: These heads align with specific syntactic dependencies. They show a high success rate in identifying grammatical relationships, such as the relation between a verb and its direct object.
+* **Rare Words Heads**: Typically found in the first layer of the encoder, these heads specifically attend to the most infrequent tokens in a sentence, helping the model manage low-frequency vocabulary.
+
 ## 7. Mathematical Assembly: Concatenation and $h_1$
 
 ### Concatenation Definition
