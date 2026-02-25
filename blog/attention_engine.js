@@ -199,19 +199,16 @@ class AttentionEngine {
 				const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${h}`);
 				const isActive = headDiv ? headDiv.style.display !== 'none' : h === 0;
 				headTabHtml += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
-		    onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-		    style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-		    background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
-		    Head ${h + 1}
-		</button>`;
+		onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
+		style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+		background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
+		Head ${h + 1}
+	    </button>`;
 			}
 			headTabList.innerHTML = headTabHtml;
 		}
 
-		// Re-draw APV SVG with updated data
-		requestAnimationFrame(() => this._apvDraw(layerIdx));
-
-		// Re-render heads that were already rendered
+		// Re-render heads that were already rendered (re-draw per-head APV)
 		for (let h = 0; h < layerHeadData.length; h++) {
 			const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${h}`);
 			if (headDiv && headDiv.dataset.wasRenderedOnce === 'true') {
@@ -330,19 +327,6 @@ class AttentionEngine {
 
 		// ── Initialize APV state for this layer ──
 		const saved = this._apvLoadState();
-		if (!this._apvActiveHeads.has(layerIdx)) {
-			const heads = new Set();
-			if (saved && saved.layerStates && saved.layerStates[layerIdx] &&
-				Array.isArray(saved.layerStates[layerIdx].activeHeads)) {
-				saved.layerStates[layerIdx].activeHeads
-					.filter(h => h >= 0 && h < layerHeadData.length)
-					.forEach(h => heads.add(h));
-				if (heads.size === 0) heads.add(0);
-			} else {
-				layerHeadData.forEach((_, i) => heads.add(i));
-			}
-			this._apvActiveHeads.set(layerIdx, heads);
-		}
 		if (!this._apvMode.has(layerIdx)) {
 			if (saved && saved.layerStates && saved.layerStates[layerIdx] && saved.layerStates[layerIdx].mode) {
 				this._apvMode.set(layerIdx, saved.layerStates[layerIdx].mode);
@@ -354,90 +338,35 @@ class AttentionEngine {
 			this._apvHoveredToken.set(layerIdx, null);
 		}
 
-		const mode = this._apvMode.get(layerIdx);
-		const isHead = mode === 'headview';
-		const isMatrix = mode === 'matrix';
-
 		let html = '';
 
-		// ── APV Section: Attention Path Visualizer ──
-		html += `<div class="apv-section" style="padding:16px; background:#fafbfc; border-bottom:1px solid #e2e8f0;">`;
-
-		// Title + mode buttons
-		html += `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-	    <h3 style="margin:0; color:#1e293b; font-size:1.05rem;">
-		Attention Path Visualizer — Layer ${layerIdx + 1}
-	    </h3>
-	    <div style="display:flex; gap:8px;">
-		<button onclick="window.__apv_instances['${this.containerId}'].apvSetMode(${layerIdx}, 'headview')"
-		    class="apv-mode-btn" style="padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;
-		    cursor:pointer; font-size:0.8rem;
-		    background:${isHead ? '#3b82f6' : '#fff'};
-		    color:${isHead ? '#fff' : '#334155'};">Head View</button>
-		<button onclick="window.__apv_instances['${this.containerId}'].apvSetMode(${layerIdx}, 'matrix')"
-		    class="apv-mode-btn" style="padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;
-		    cursor:pointer; font-size:0.8rem;
-		    background:${isMatrix ? '#3b82f6' : '#fff'};
-		    color:${isMatrix ? '#fff' : '#334155'};">Matrix View</button>
-	    </div>
-	</div>`;
-
-		// Head selector checkboxes
-		html += `<div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; align-items:center;">
-	    <span style="font-size:0.8rem; color:#64748b; font-weight:600;">Heads:</span>`;
-		for (let h = 0; h < layerHeadData.length; h++) {
-			const color = AttentionEngine.HEAD_COLORS[h % AttentionEngine.HEAD_COLORS.length];
-			const isChecked = this._apvActiveHeads.get(layerIdx).has(h);
-			html += `<label style="display:flex; align-items:center; gap:4px; cursor:pointer; font-size:0.82rem;">
-		<input type="checkbox" ${isChecked ? 'checked' : ''}
-		    onchange="window.__apv_instances['${this.containerId}'].apvToggleHead(${layerIdx}, ${h}, this.checked)"
-		    style="accent-color:${color};">
-		<span style="color:${color}; font-weight:600;">Head ${h + 1}</span>
-	    </label>`;
-		}
-		html += `</div>`;
-
-		// SVG canvas
-		const canvasId = `apv-canvas-${this.containerId}-${layerIdx}`;
-		html += `<div id="apv-viewport-${this.containerId}-${layerIdx}" style="
-	    position:relative; overflow-x:auto; overflow-y:hidden;
-	    background:#fff; border:1px solid #e2e8f0; border-radius:8px;
-	    min-height:200px;">
-	    <svg id="${canvasId}" style="width:100%; min-height:200px;"></svg>
-	</div>`;
-
-		html += `<div style="margin-top:10px; font-size:0.75rem; color:#94a3b8; text-align:center;">
-	    Hover over a token to highlight its attention connections. Line thickness = attention weight.
-	</div>`;
-
-		html += `</div>`; // end .apv-section
-
-		// ── Head tabs (existing) ──
+		// ── Head tabs (no APV section above anymore) ──
 		html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap;">`;
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
-		onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-		style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-		background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
-		Head ${h + 1}
-	    </button>`;
+	    onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
+	    style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+	    background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
+	    Head ${h + 1}
+	</button>`;
 		}
 		html += `</div>`;
 
-		// ── Head content panels (existing) ──
+		// ── Head content panels ──
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<div id="head-content-${this.containerId}-${layerIdx}-${h}" class="head-tab-in-layer"
-		style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
-		data-head-idx="${h}" data-rendered="false">
-		<div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
-	    </div>`;
+	    style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
+	    data-head-idx="${h}" data-rendered="false">
+	    <div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
+	</div>`;
 		}
 
 		contentDiv.innerHTML = html;
 		contentDiv.dataset.rendered = 'true';
 
-		// Draw the APV SVG
-		requestAnimationFrame(() => this._apvDraw(layerIdx));
+		// Store engine instance globally for APV callbacks
+		if (!window.__apv_instances) window.__apv_instances = {};
+		window.__apv_instances[this.containerId] = this;
 
 		// Render first head content
 		this._renderHeadContent(layerIdx, 0);
@@ -485,22 +414,65 @@ class AttentionEngine {
 		const webCanvasId    = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
 		const webStripId     = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
 
+		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+		const mode = this._apvMode.get(layerIdx) || 'headview';
+		const isHead = mode === 'headview';
+		const isMatrix = mode === 'matrix';
+
+		const apvHeadCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-headview`;
+		const apvMatrixCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-matrix`;
+
 		headDiv.innerHTML = `
-	<p style="margin:0 0 4px 0; color:#1e40af; font-weight:bold;">Attention Connectivity Web</p>
-	<p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-	    Hover over a word to see where it focuses its attention.
-	</p>
-	<div id="${webContainerId}" style="position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
-	    <canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
-	    <div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
+    <div class="apv-per-head-section" style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px;">
+	<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+	    <h3 style="margin:0; font-size:1.05rem;">
+		<span style="color:${color};">&#9679;</span>
+		<span style="color:#1e293b;"> Attention Path Visualizer — Layer ${layerIdx + 1}, Head ${headIdx + 1}</span>
+	    </h3>
+	    <div style="display:flex; gap:8px;">
+		<button onclick="window.__apv_instances['${this.containerId}'].apvSetModePerHead(${layerIdx}, ${headIdx}, 'headview')"
+		    class="apv-mode-btn-${this.containerId}-${layerIdx}-${headIdx}" style="padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;
+		    cursor:pointer; font-size:0.8rem;
+		    background:${isHead ? '#3b82f6' : '#fff'};
+		    color:${isHead ? '#fff' : '#334155'};">Head View</button>
+		<button onclick="window.__apv_instances['${this.containerId}'].apvSetModePerHead(${layerIdx}, ${headIdx}, 'matrix')"
+		    class="apv-mode-btn-${this.containerId}-${layerIdx}-${headIdx}" style="padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;
+		    cursor:pointer; font-size:0.8rem;
+		    background:${isMatrix ? '#3b82f6' : '#fff'};
+		    color:${isMatrix ? '#fff' : '#334155'};">Matrix View</button>
+	    </div>
 	</div>
-	<div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>
-	<div style="margin-bottom:20px;">
-	    $$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
+
+	<div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
+	    style="display:${isHead ? 'block' : 'none'}; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
+	    <svg id="${apvHeadCanvasId}" style="width:100%; min-height:180px;"></svg>
 	</div>
-	<div style="overflow-x:auto;">
-	    ${layerInstance.generateMathTable(hd, escapedTokens)}
-	</div>`;
+
+	<div id="apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}"
+	    style="display:${isMatrix ? 'block' : 'none'}; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
+	    <svg id="${apvMatrixCanvasId}" style="width:100%; min-height:180px;"></svg>
+	</div>
+
+	<div style="font-size:0.75rem; color:#94a3b8; text-align:center;">
+	    Hover over a token to highlight its attention connections. Line thickness = attention weight.
+	</div>
+    </div>
+
+    <p style="margin:0 0 4px 0; color:#1e40af; font-weight:bold;">Attention Connectivity Web</p>
+    <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
+	Hover over a word to see where it focuses its attention.
+    </p>
+    <div id="${webContainerId}" style="position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
+	<canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
+	<div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
+    </div>
+    <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>
+    <div style="margin-bottom:20px;">
+	$$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
+    </div>
+    <div style="overflow-x:auto;">
+	${layerInstance.generateMathTable(hd, escapedTokens)}
+    </div>`;
 
 		headDiv.dataset.rendered = 'true';
 		headDiv.dataset.wasRenderedOnce = 'true';
@@ -510,11 +482,35 @@ class AttentionEngine {
 		render_temml();
 
 		requestAnimationFrame(() => {
+			this._apvDrawSingleHead(layerIdx, headIdx, 'headview');
+			this._apvDrawSingleHead(layerIdx, headIdx, 'matrix');
+
 			renderDynamicAttentionWeb(
 				webContainerId, webCanvasId, webStripId,
 				displayTokens, hd.this_weights
 			);
 		});
+	}
+
+	_apvDrawSingleHead(layerIdx, headIdx, mode) {
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		if (!registry) return;
+		const layerData = registry.layers[layerIdx];
+		if (!layerData) return;
+
+		const headDataArray = layerData.headData;
+		const displayTokens = this._apvResolveTokenLabels(layerData.tokenStrings, headDataArray);
+		const singleHeadData = headDataArray[headIdx];
+
+		const canvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-${mode}`;
+		const svg = document.getElementById(canvasId);
+		if (!svg) return;
+
+		if (mode === 'matrix') {
+			this._apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, singleHeadData, displayTokens);
+		} else {
+			this._apvDrawSingleHeadView(svg, layerIdx, headIdx, singleHeadData, displayTokens);
+		}
 	}
 
 	generateMathTable(head, tokens) {
@@ -1035,6 +1031,293 @@ class AttentionEngine {
 		}
 
 		this._apvDraw(layerIdx);
+		this._apvSaveState();
+	}
+
+	_apvDrawSingleHeadView(svg, layerIdx, headIdx, headData, tokens) {
+		const n = tokens.length;
+		const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
+		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+
+		const svgHeight = topPadding + n * rowHeight + 40;
+		const svgWidth = rightColumnX + 120;
+
+		svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
+		svg.style.minHeight = svgHeight + 'px';
+
+		let svgContent = '';
+
+		svgContent += `<text x="${leftColumnX}" y="18" font-size="11" fill="#64748b"
+	font-weight="600" text-anchor="middle">Query (attending)</text>`;
+		svgContent += `<text x="${rightColumnX}" y="18" font-size="11" fill="#64748b"
+	font-weight="600" text-anchor="middle">Key (attended to)</text>`;
+
+		const hoverKey = `${layerIdx}-${headIdx}`;
+		const hovered = this._apvHoveredToken.get(hoverKey) || null;
+
+		for (let i = 0; i < n; i++) {
+			const y = topPadding + i * rowHeight;
+			const isHoveredLeft = hovered && hovered.side === 'left' && hovered.index === i;
+			const isHoveredRight = hovered && hovered.side === 'right' && hovered.index === i;
+
+			svgContent += `<text x="${leftColumnX}" y="${y + 4}"
+	    font-size="12" fill="${isHoveredLeft ? '#1e40af' : '#334155'}"
+	    font-weight="${isHoveredLeft ? '700' : '500'}" text-anchor="end"
+	    style="cursor:pointer;"
+	    data-apv-side="left" data-apv-idx="${i}"
+	    >${this._apvEscapeHtml(tokens[i])}</text>`;
+
+			svgContent += `<text x="${rightColumnX}" y="${y + 4}"
+	    font-size="12" fill="${isHoveredRight ? '#1e40af' : '#334155'}"
+	    font-weight="${isHoveredRight ? '700' : '500'}" text-anchor="start"
+	    style="cursor:pointer;"
+	    data-apv-side="right" data-apv-idx="${i}"
+	    >${this._apvEscapeHtml(tokens[i])}</text>`;
+		}
+
+		const weights = headData.this_weights;
+		for (let qi = 0; qi < n; qi++) {
+			for (let ki = 0; ki < n; ki++) {
+				const w = weights[qi][ki];
+				if (w < minOpacity) continue;
+
+				const y1 = topPadding + qi * rowHeight;
+				const y2 = topPadding + ki * rowHeight;
+				const x1 = leftColumnX + 6;
+				const x2 = rightColumnX - 6;
+				const cpx = (x1 + x2) / 2;
+
+				svgContent += `<path d="M ${x1} ${y1} C ${cpx} ${y1}, ${cpx} ${y2}, ${x2} ${y2}"
+		fill="none" stroke="${color}"
+		stroke-width="${(1 + w * 5).toFixed(1)}"
+		stroke-opacity="${w.toFixed(3)}"
+		data-apv-qi="${qi}" data-apv-ki="${ki}"
+	    />`;
+			}
+		}
+
+		svg.innerHTML = svgContent;
+		this._apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, headData, tokens);
+	}
+
+	_apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, headData, tokens) {
+		const n = tokens.length;
+		const cellSize = Math.max(18, Math.min(40, 300 / n));
+		const matrixSize = n * cellSize;
+		const padding = 80;
+		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+		const weights = headData.this_weights;
+
+		const totalWidth = matrixSize + padding;
+		const totalHeight = matrixSize + padding;
+
+		svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
+		svg.style.minHeight = totalHeight + 'px';
+
+		let svgContent = '';
+
+		const offsetX = padding / 2;
+		const offsetY = padding / 2;
+
+		svgContent += `<text x="${offsetX + matrixSize / 2}" y="${offsetY - 30}"
+	font-size="12" fill="${color}" font-weight="700" text-anchor="middle"
+	>Head ${headIdx + 1}</text>`;
+
+		for (let i = 0; i < n; i++) {
+			svgContent += `<text x="${offsetX - 4}" y="${offsetY + i * cellSize + cellSize / 2 + 4}"
+	    font-size="9" fill="#64748b" text-anchor="end"
+	    >${this._apvEscapeHtml(tokens[i])}</text>`;
+		}
+
+		for (let j = 0; j < n; j++) {
+			svgContent += `<text
+	    x="${offsetX + j * cellSize + cellSize / 2}"
+	    y="${offsetY - 6}"
+	    font-size="9" fill="#64748b" text-anchor="start"
+	    transform="rotate(-45, ${offsetX + j * cellSize + cellSize / 2}, ${offsetY - 6})"
+	    >${this._apvEscapeHtml(tokens[j])}</text>`;
+		}
+
+		for (let qi = 0; qi < n; qi++) {
+			for (let ki = 0; ki < n; ki++) {
+				const w = weights[qi][ki];
+				const x = offsetX + ki * cellSize;
+				const y = offsetY + qi * cellSize;
+				const alpha = Math.max(0.05, w);
+
+				svgContent += `<rect x="${x}" y="${y}"
+		width="${cellSize}" height="${cellSize}"
+		fill="${color}" fill-opacity="${alpha.toFixed(3)}"
+		stroke="#e2e8f0" stroke-width="0.5"
+		data-apv-head="${headIdx}" data-apv-qi="${qi}" data-apv-ki="${ki}"
+		style="cursor:crosshair;"
+	    />`;
+
+				if (cellSize >= 28 && w > 0.05) {
+					svgContent += `<text x="${x + cellSize / 2}" y="${y + cellSize / 2 + 3}"
+		    font-size="8" fill="${w > 0.5 ? '#fff' : '#334155'}"
+		    text-anchor="middle" pointer-events="none"
+		    >${(w * 100).toFixed(0)}</text>`;
+				}
+			}
+		}
+
+		svg.innerHTML = svgContent;
+		this._apvAttachMatrixTooltip(svg, layerIdx, [headData], tokens);
+	}
+
+	_apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, headData, tokens) {
+		const self = this;
+		const hoverKey = `${layerIdx}-${headIdx}`;
+		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+		const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
+		let currentHover = null;
+
+		svg.addEventListener('mouseover', (e) => {
+			const el = e.target.closest('[data-apv-side]');
+			if (el) {
+				const side = el.getAttribute('data-apv-side');
+				const index = parseInt(el.getAttribute('data-apv-idx'));
+				const key = `${side}-${index}`;
+				if (currentHover === key) return;
+				currentHover = key;
+				self._apvHoveredToken.set(hoverKey, { side, index });
+				updateHover();
+			}
+		});
+
+		svg.addEventListener('mouseout', (e) => {
+			const el = e.target.closest('[data-apv-side]');
+			if (el) {
+				const related = e.relatedTarget?.closest?.('[data-apv-side]');
+				if (related) return;
+				currentHover = null;
+				self._apvHoveredToken.set(hoverKey, null);
+				updateHover();
+			}
+		});
+
+		function updateHover() {
+			const hovered = self._apvHoveredToken.get(hoverKey);
+			const weights = headData.this_weights;
+			const n = tokens.length;
+
+			// Update paths
+			const paths = svg.querySelectorAll('path[data-apv-qi]');
+			paths.forEach(path => {
+				const qi = parseInt(path.getAttribute('data-apv-qi'));
+				const ki = parseInt(path.getAttribute('data-apv-ki'));
+				const w = weights[qi][ki];
+
+				if (!hovered) {
+					path.setAttribute('stroke-opacity', w.toFixed(3));
+					path.setAttribute('stroke-width', (1 + w * 5).toFixed(1));
+				} else {
+					const { side, index } = hovered;
+					if ((side === 'left' && index === qi) || (side === 'right' && index === ki)) {
+						const opacity = 0.3 + w * 0.7;
+						const strokeWidth = 2 + w * 8;
+						path.setAttribute('stroke-opacity', opacity.toFixed(3));
+						path.setAttribute('stroke-width', strokeWidth.toFixed(1));
+					} else {
+						path.setAttribute('stroke-opacity', '0.04');
+						path.setAttribute('stroke-width', '0.5');
+					}
+				}
+			});
+
+			// Update token text styling
+			const texts = svg.querySelectorAll('text[data-apv-side]');
+			texts.forEach(text => {
+				const side = text.getAttribute('data-apv-side');
+				const idx = parseInt(text.getAttribute('data-apv-idx'));
+				const isHovered = hovered && hovered.side === side && hovered.index === idx;
+				text.setAttribute('fill', isHovered ? '#1e40af' : '#334155');
+				text.setAttribute('font-weight', isHovered ? '700' : '500');
+			});
+
+			// Update percentage labels
+			svg.querySelectorAll('.apv-weight-label').forEach(el => el.remove());
+
+			if (hovered) {
+				const arcX1 = leftColumnX + 6;
+				const arcX2 = rightColumnX - 6;
+
+				for (let qi = 0; qi < n; qi++) {
+					for (let ki = 0; ki < n; ki++) {
+						const w = weights[qi][ki];
+						if (w < 0.05) continue;
+
+						const { side, index } = hovered;
+						const isRelevant = (side === 'left' && index === qi) ||
+							(side === 'right' && index === ki);
+						if (!isRelevant) continue;
+
+						const targetIdx = (side === 'left') ? ki : qi;
+						const y = topPadding + targetIdx * rowHeight + 4;
+						const anchorX = (side === 'left') ? arcX2 - 4 : arcX1 + 4;
+						const textAnchor = (side === 'left') ? 'end' : 'start';
+
+						const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+						label.setAttribute('x', anchorX.toFixed(1));
+						label.setAttribute('y', y.toFixed(1));
+						label.setAttribute('font-size', '9');
+						label.setAttribute('fill', color);
+						label.setAttribute('font-weight', '700');
+						label.setAttribute('text-anchor', textAnchor);
+						label.setAttribute('class', 'apv-weight-label');
+						label.setAttribute('stroke', '#fff');
+						label.setAttribute('stroke-width', '2.5');
+						label.setAttribute('paint-order', 'stroke');
+						label.textContent = `${(w * 100).toFixed(0)}%`;
+						svg.appendChild(label);
+					}
+				}
+			}
+		}
+	}
+
+	apvSetModePerHead(layerIdx, headIdx, mode) {
+		this._apvMode.set(layerIdx, mode);
+
+		const headviewWrap = document.getElementById(`apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}`);
+		const matrixWrap = document.getElementById(`apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}`);
+
+		if (headviewWrap) headviewWrap.style.display = (mode === 'headview') ? 'block' : 'none';
+		if (matrixWrap) matrixWrap.style.display = (mode === 'matrix') ? 'block' : 'none';
+
+		// Update button styling
+		const buttons = document.querySelectorAll(`.apv-mode-btn-${this.containerId}-${layerIdx}-${headIdx}`);
+		buttons.forEach(btn => {
+			const isHead = btn.textContent.trim() === 'Head View' && mode === 'headview';
+			const isMatrix = btn.textContent.trim() === 'Matrix View' && mode === 'matrix';
+			const active = isHead || isMatrix;
+			btn.style.background = active ? '#3b82f6' : '#fff';
+			btn.style.color = active ? '#fff' : '#334155';
+		});
+
+		// Also update all other visible heads in this layer to match the mode toggle
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		if (registry && registry.layers[layerIdx]) {
+			const numHeads = registry.layers[layerIdx].headData.length;
+			for (let h = 0; h < numHeads; h++) {
+				if (h === headIdx) continue;
+				const hvWrap = document.getElementById(`apv-headview-wrap-${this.containerId}-${layerIdx}-${h}`);
+				const mxWrap = document.getElementById(`apv-matrix-wrap-${this.containerId}-${layerIdx}-${h}`);
+				if (hvWrap) hvWrap.style.display = (mode === 'headview') ? 'block' : 'none';
+				if (mxWrap) mxWrap.style.display = (mode === 'matrix') ? 'block' : 'none';
+
+				const otherBtns = document.querySelectorAll(`.apv-mode-btn-${this.containerId}-${layerIdx}-${h}`);
+				otherBtns.forEach(btn => {
+					const isH = btn.textContent.trim() === 'Head View' && mode === 'headview';
+					const isM = btn.textContent.trim() === 'Matrix View' && mode === 'matrix';
+					const act = isH || isM;
+					btn.style.background = act ? '#3b82f6' : '#fff';
+					btn.style.color = act ? '#fff' : '#334155';
+				});
+			}
+		}
+
 		this._apvSaveState();
 	}
 }
