@@ -868,3 +868,8 @@ pre, code, .status-console, .matrix-input {
 #contents ::marker {
 	font-variant-numeric: oldstyle-nums; /* If numbered lists */
 }
+
+.transformer_positional_embeddings {
+	max-height: 600px;
+	overflow: scroll;
+}
