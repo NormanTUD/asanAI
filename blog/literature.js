@@ -1,4 +1,10 @@
 window.bibData = {
+	"incontextlearninghead": {
+		url: "https://arxiv.org/abs/2209.11895",
+		title: "In-context Learning and Induction Heads",
+		year: 2022,
+		author: "Catherine Olsson, Nelson Elhage, Neel Nanda, Nicholas Joseph, Nova DasSarma, Tom Henighan, Ben Mann, Amanda Askell, Yuntao Bai, Anna Chen, Tom Conerly, Dawn Drain, Deep Ganguli, Zac Hatfield-Dodds, Danny Hernandez, Scott Johnston, Andy Jones, Jackson Kernion, Liane Lovitt, Kamal Ndousse, Dario Amodei, Tom Brown, Jack Clark, Jared Kaplan, Sam McCandlish, Chris Olah"
+	},
 	"analyzingmultiheads": {
 		url: "https://arxiv.org/abs/1905.09418",
 		title: "Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting, the Rest Can Be Pruned",
