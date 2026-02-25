@@ -204,15 +204,13 @@ When you add "random" values to a vector, you change its location in the multidi
 
 ## 4. Structural Pillar: The Decoder-Only Architecture
 
-To understand how the **hidden state** $h$ is constructed, it is important to clarify what this lab implements and how it relates to the historical Transformer design.
-
-This lab does **not** use the original Encoder-Decoder architecture from Vaswani et al. (2017). Instead, it implements a **Decoder-only** Transformer with **Pre-Layer Normalization** — the same structural family that powers today's leading LLMs (GPT, Claude, Gemini and so on). There is no separate Encoder, and there is no cross-attention. The entire model is a stack of identical Decoder (with different weights) blocks, each containing:
+Here, we do **not** use the original Encoder-Decoder architecture from Vaswani et al. (2017). Instead, this example implements a **Decoder-only** Transformer with **Pre-Layer Normalization** — the same structural family that powers today's leading LLMs (GPT, Claude, Gemini and so on). There is no separate Encoder, and there is no cross-attention. The entire model is a stack of identical Decoder (with different weights) blocks, each containing:
 
 1.  **Pre-LN**: Layer Normalization is applied *before* each sublayer (attention and FFN), rather than after. This is a more modern convention (Xiong et al., 2020) that improves gradient flow and training stability through deep stacks, compared to the original Post-LN design.
 2.  **Masked (Causal) Self-Attention**: Every token can only attend to itself and the tokens that came before it. This is enforced by setting the upper triangle of the attention score matrix to $-\infty$ (in practice, $-10^9$) before the softmax. This causal constraint is what makes the model **autoregressive**: to predict token $t_{n+1}$, the model processes $[t_1, t_2, \ldots, t_n]$ and prevents any token from "cheating" by looking at future positions.
 3.  **A Feed-Forward Network (FFN)** with ReLU activation and its own Pre-LN and residual connection.
 
-This is the architecture you are interacting with in every visualization in this lab. When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always dark (near-zero weights).
+This is the architecture you are interacting with in every visualization here. When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always dark (near-zero weights).
 
 ### Historical Context: The Original Encoder-Decoder (What We Don't Use)
 
@@ -229,7 +227,7 @@ The modern Generative AI era has effectively proven that a stack of Decoder laye
 2.  **Unified capability**: The causal self-attention in the Decoder is sufficient for learning rich contextual representations. During training, the model learns to "encode" the meaning of earlier tokens into the hidden state implicitly, without needing a dedicated bidirectional Encoder.
 3.  **Scalability**: Decoder-only models exhibit more predictable scaling behavior, which is critical when training models with hundreds of billions of parameters across thousands of accelerators.
 
-This is why this lab implements a Decoder-only, Pre-LN Transformer: it is the architecture behind virtually every modern large language model, and it lets us study the core mechanisms — causal attention, residual streams, and layer-by-layer transformation — in their most contemporary form.
+This is we here implement a Decoder-only, Pre-LN Transformer: it is the architecture behind virtually every modern large language model, and it lets us study the core mechanisms — causal attention, residual streams, and layer-by-layer transformation — in their most contemporary form.
 
 ### Masked self-attention
 
