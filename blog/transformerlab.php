@@ -425,6 +425,8 @@ Where:
 - $W_2$ is the second weight matrix (compression back to $d_{\text{model}}$).
 - $b_2$ is the bias vector for the second layer.
 
+While attention decides what to look at. The FFN decides what to do with it.
+
 The final state of this block, **$h_2$**, is formed by another residual connection:
 $$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
 </div>
