@@ -6,6 +6,12 @@ window.bibData = {
 		author: "Bernard J. Baars",
 		alternativetitle: "Global Workspace Theory"
 	},
+	"dehaene": {
+		url: "https://www.sciencedirect.com/science/article/abs/pii/S0010027700001232",
+		title: "Towards a cognitive neuroscience of consciousness: basic evidence and a workspace framework",
+		year: 2001,
+		author: "Stanislas Dehaene, Lionel Naccache"
+	},
 	"incontextlearninghead": {
 		url: "https://arxiv.org/abs/2209.11895",
 		title: "In-context Learning and Induction Heads",
