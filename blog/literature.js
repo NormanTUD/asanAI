@@ -1,4 +1,11 @@
 window.bibData = {
+	"bart": {
+		title: "BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation, Translation, and Comprehension",
+		url: "https://arxiv.org/abs/1910.13461",
+		year: 2019,
+		author: "Mike Lewis, Yinhan Liu, Naman Goyal, Marjan Ghazvininejad, Abdelrahman Mohamed, Omer Levy, Ves Stoyanov, Luke Zettlemoyer",
+		alternativetitle: "BART"
+	},
 	"tfive": {
 		title: "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
 		url: "https://jmlr.org/papers/v21/20-074.html",
