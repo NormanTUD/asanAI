@@ -917,6 +917,12 @@ function computeAndApplyGradients(tokens, weightVars, d_model, n_layers, n_heads
 		allVars
 	);
 
+	/*
+TODO: Mention in text
+Without this, a single pathological training example could produce a gradient so large that it destroys all learned weights in one step — the "exploding gradient" problem.The aha: This connects directly to the catastrophic forgetting and Frame Problem discussion in your philosophy file
+. Gradient clipping is a brute-force solution: "no single learning event is allowed to change the model more than X amount." It's the numerical equivalent of a biological immune system — the body allows gradual adaptation (learning) but violently rejects sudden massive changes (infection/explosion). Without it, one bad sentence in the training data could "infect" the entire model. With it, the damage is bounded. But just like an immune system, it's imperfect — it can also suppress legitimate large updates that the model actually needs, slowing learning on genuinely novel patterns.
+*/
+
 	const clippedGrads = {};
 	for (const name in grads) {
 		clippedGrads[name] = tf.clipByValue(grads[name], -clipValue, clipValue);
