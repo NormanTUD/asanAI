@@ -512,7 +512,7 @@ In a distributional model, the meaning of "not" is itself a vector, learned from
 
 $$\vec{v}_{\text{not happy}} = \vec{v}_{\text{not}} + \vec{v}_{\text{happy}} \approx \vec{v}_{\text{happy}} + \varepsilon \quad \neq \quad \vec{v}_{\text{sad}}$$
 
-This negation problem has been extensively studied (\cite{kassner2020negated}) and remains partially unsolved even in large contextual models like BERT and GPT. While Transformers with attention can handle negation better than static embeddings, because the surrounding context modulates the representation across layers, the underlying geometric limitation persists in the embedding layers themselves. The word "not" simply does not encode a logical inversion operator in vector space; it encodes "the kinds of sentences where 'not' appears," which overwhelmingly co-occur with the very concepts being negated.
+This negation problem has been \cite[extensively studied]{kassner2020negated} and remains partially unsolved even in large contextual models like BERT and GPT. While Transformers with attention can handle negation better than static embeddings, because the surrounding context modulates the representation across layers, the underlying geometric limitation persists in the embedding layers themselves. The word "not" simply does not encode a logical inversion operator in vector space; it encodes "the kinds of sentences where 'not' appears," which overwhelmingly co-occur with the very concepts being negated.
 
 Below, select any word (or type "not X") and observe how "not X" drifts only slightly from X in embedding space, rather than jumping to its logical antonym. The faded circle marks where "not X" *should* land if geometry respected logic.
 </div>
