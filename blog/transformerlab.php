@@ -231,7 +231,7 @@ This is we here implement a Decoder-only, Pre-LN Transformer: it is the architec
 
 ### Masked self-attention
 
-In a real GPT architecture, we must prevent the model from "looking into the future" during training. If the model is trying to predict the third word in a sentence, it shouldn't be allowed to see the third, fourth, or fifth words.
+We must prevent the model from "looking into the future" during training. If the model is trying to predict the third word in a sentence, it shouldn't be allowed to see the third, fourth, or fifth words.
 
 We achieve this by applying a **Causal Mask** to the attention scores before the Softmax operation. This mask is a lower-triangular matrix filled with $-\infty$ in the upper-right section.
 
