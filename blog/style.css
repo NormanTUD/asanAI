@@ -868,18 +868,3 @@ pre, code, .status-console, .matrix-input {
 #contents ::marker {
 	font-variant-numeric: oldstyle-nums; /* If numbered lists */
 }
-
-#contents > p:first-of-type::first-letter {
-	font-size: 3.2em;
-	float: left;
-	line-height: 0.8;
-	padding-right: 0.08em;
-	margin-top: 0.05em;
-	font-weight: 700;
-	color: var(--primary);
-}
-
-blockquote p {
-	hanging-punctuation: first;
-	text-indent: -0.4em; /* Manual fallback for browsers without support */
-}
