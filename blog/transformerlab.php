@@ -202,11 +202,34 @@ When you add "random" values to a vector, you change its location in the multidi
 2. **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network’s layers. Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.
 3. **The Risk of Overlapping**: During training, the model learns to set the "scale" of the embeddings much larger than the "scale" of the positional encodings. This ensures the position "nudges" the meaning without overwriting it.
 
-## 4. Structural Pillars: The Encoder and Decoder
-To understand how the **hidden state** $h$ is constructed, it is useful to examine the two canonical components introduced in the original Transformer architecture: the encoder and the decoder. These are not auxiliary modules but structural patterns that define how attention and computation are organized.
+## 4. Structural Pillar: The Decoder-Only Architecture
 
-* The **Encoder** (The Understanding Engine): In the original "\citetitle{vaswani2017attention}" (Vaswani et al., \citeyear{vaswani2017attention}) framework, the encoder was the first half of a translation pipeline. It processes the entire input sequence simultaneously using unmasked self-attention, allowing every token to "see" every other token. This creates a bidirectional context where the word "bank" can be disambiguated by words appearing later in the sentence (e.g., "...river" vs. "...money"). While less common in generative models today, this architecture remains the gold standard for non-generative tasks like sentiment analysis, entity recognition, and search (e.g., the BERT family).
-* The **Decoder** (The Generative Standard): While originally designed to take "hints" from an encoder via cross-attention, the modern Generative AI era is dominated by the Decoder-only architecture. This engine is autoregressive, it predicts the next token based strictly on the sequence that came before it. It employs Masked Self-Attention, a causal constraint that prevents a token from "cheating" by looking at future words during training. Today’s LLMs (GPT, Claude, Gemini) have effectively discarded the separate Encoder, proving that a stack of Decoders alone can both understand context and generate coherent, long-form text.
+To understand how the **hidden state** $h$ is constructed, it is important to clarify what this lab implements and how it relates to the historical Transformer design.
+
+This lab does **not** use the original Encoder-Decoder architecture from Vaswani et al. (2017). Instead, it implements a **Decoder-only** Transformer with **Pre-Layer Normalization** — the same structural family that powers today's leading LLMs (GPT, Claude, Gemini). There is no separate Encoder, and there is no cross-attention. The entire model is a stack of identical Decoder blocks, each containing:
+
+1.  **Pre-LN**: Layer Normalization is applied *before* each sublayer (attention and FFN), rather than after. This is a more modern convention (Xiong et al., 2020) that improves gradient flow and training stability through deep stacks, compared to the original Post-LN design.
+2.  **Masked (Causal) Self-Attention**: Every token can only attend to itself and the tokens that came before it. This is enforced by setting the upper triangle of the attention score matrix to $-\infty$ (in practice, $-10^9$) before the softmax. This causal constraint is what makes the model **autoregressive**: to predict token $t_{n+1}$, the model processes $[t_1, t_2, \ldots, t_n]$ and prevents any token from "cheating" by looking at future positions.
+3.  **A Feed-Forward Network (FFN)** with ReLU activation and its own Pre-LN and residual connection.
+
+This is the architecture you are interacting with in every visualization in this lab. When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always dark (near-zero weights).
+
+### Historical Context: The Original Encoder-Decoder (What We Don't Use)
+
+To appreciate *why* the Decoder-only design dominates, it helps to understand what came before it:
+
+* **The Encoder (The Understanding Engine)**: In the original 2017 framework, the Encoder was the first half of a translation pipeline. It processes the entire input sequence simultaneously using **unmasked** self-attention, allowing every token to "see" every other token. This creates a bidirectional context where the word "bank" can be disambiguated by words appearing later in the sentence (e.g., "...river" vs. "...money"). While we do not use it here, this architecture remains the gold standard for non-generative tasks like sentiment analysis, entity recognition, and search (e.g., the BERT family).
+* **The Decoder with Cross-Attention (The Original Generator)**: The Decoder was originally designed to take "hints" from the Encoder via **cross-attention** — an additional attention sublayer where the Decoder's queries attend to the Encoder's key-value representations. Its self-attention was already masked (causal), just as in our lab, but it also had this second attention mechanism to "read" the Encoder's output. This full Encoder-Decoder design is still used in sequence-to-sequence tasks like machine translation (e.g., the T5 and BART families).
+
+### Why Decoder-Only Is the Modern Standard
+
+The modern Generative AI era has effectively proven that a stack of Decoder layers alone can both understand context *and* generate coherent, long-form text — no separate Encoder is required. The key reasons are:
+
+1.  **Simplicity**: One repeated block type (rather than two different block types plus cross-attention) drastically simplifies training infrastructure, model parallelism, and engineering effort.
+2.  **Unified capability**: The causal self-attention in the Decoder is sufficient for learning rich contextual representations. During training, the model learns to "encode" the meaning of earlier tokens into the hidden state implicitly, without needing a dedicated bidirectional Encoder.
+3.  **Scalability**: Decoder-only models exhibit more predictable scaling behavior, which is critical when training models with hundreds of billions of parameters across thousands of accelerators.
+
+This is why this lab implements a Decoder-only, Pre-LN Transformer: it is the architecture behind virtually every modern large language model, and it lets us study the core mechanisms — causal attention, residual streams, and layer-by-layer transformation — in their most contemporary form.
 
 ### Masked self-attention
 
