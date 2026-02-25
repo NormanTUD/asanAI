@@ -1,4 +1,10 @@
 window.bibData = {
+	"": {
+		url: "https://arxiv.org/abs/1905.09418",
+		title: "Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting, the Rest Can Be Pruned",
+		author: "Elena Voita, David Talbot, Fedor Moiseev, Rico Sennrich, Ivan Titov",
+		year: 2019
+	},
 	"bart": {
 		title: "BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation, Translation, and Comprehension",
 		url: "https://arxiv.org/abs/1910.13461",

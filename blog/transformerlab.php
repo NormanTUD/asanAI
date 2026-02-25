@@ -332,6 +332,10 @@ $$A = \begin{pmatrix} \mathbf{1.000} & 0 & 0 & 0 & 0 \\ 0.500 & \mathbf{0.500} &
 
 The diagonal reads $\frac{1}{1},\; \frac{1}{2},\; \frac{1}{3},\; \frac{1}{4},\; \frac{1}{5}$. The small deviations come from the random weights not producing *perfectly* identical scores, but they're close enough that softmax still spreads probability nearly uniformly. After training, $W_Q$ and $W_K$ learn to produce sharply different scores, so attention concentrates on semantically important tokens and this uniform $\frac{1}{n}$ pattern disappears.
 
+### What the attention heads do in the layers
+
+Similiar to how in Convolutional Neural Networks the first layers look at the actual pixels, and later layers look at the analysis of the earlier layers, abstracting more and more away from the concrete pixel values, the attention heads in the first layer look at the sentence data itself, while the ones in the second layer look at the results of the first layer and so on. This way, what they look at, is more and more abstracted away from the concrete training- and inference-data.
+
 ## 7. Mathematical Assembly: Concatenation and $h_1$
 
 ### Concatenation Definition
