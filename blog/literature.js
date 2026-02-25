@@ -1,4 +1,10 @@
 window.bibData = {
+	"xiong2020": {
+		url: "https://arxiv.org/abs/2002.04745",
+		title: "On Layer Normalization in the Transformer Architecture",
+		year: 2020,
+		author: "Ruibin Xiong, Yunchang Yang, Di He, Kai Zheng, Shuxin Zheng, Chen Xing, Huishuai Zhang, Yanyan Lan, Liwei Wang, Tie-Yan Liu"
+	},
 	"nickel2017poincare": {
 		title: "Poincaré Embeddings for Learning Hierarchical Representations",
 		year: 2017,
