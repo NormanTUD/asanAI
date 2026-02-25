@@ -326,39 +326,31 @@ class AttentionEngine {
 		}
 
 		// ── Initialize APV state for this layer ──
-		const saved = this._apvLoadState();
-		if (!this._apvMode.has(layerIdx)) {
-			if (saved && saved.layerStates && saved.layerStates[layerIdx] && saved.layerStates[layerIdx].mode) {
-				this._apvMode.set(layerIdx, saved.layerStates[layerIdx].mode);
-			} else {
-				this._apvMode.set(layerIdx, 'headview');
-			}
-		}
 		if (!this._apvHoveredToken.has(layerIdx)) {
 			this._apvHoveredToken.set(layerIdx, null);
 		}
 
 		let html = '';
 
-		// ── Head tabs (no APV section above anymore) ──
+		// ── Head tabs ──
 		html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap;">`;
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
-	    onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-	    style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-	    background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
-	    Head ${h + 1}
-	</button>`;
+	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
+	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+	background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
+	Head ${h + 1}
+    </button>`;
 		}
 		html += `</div>`;
 
 		// ── Head content panels ──
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<div id="head-content-${this.containerId}-${layerIdx}-${h}" class="head-tab-in-layer"
-	    style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
-	    data-head-idx="${h}" data-rendered="false">
-	    <div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
-	</div>`;
+	style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
+	data-head-idx="${h}" data-rendered="false">
+	<div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
+    </div>`;
 		}
 
 		contentDiv.innerHTML = html;
@@ -415,9 +407,6 @@ class AttentionEngine {
 		const webStripId     = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
 
 		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
-		const mode = this._apvMode.get(layerIdx) || 'headview';
-		const isHead = mode === 'headview';
-		const isMatrix = mode === 'matrix';
 
 		const apvHeadCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-headview`;
 		const apvMatrixCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-matrix`;
@@ -429,27 +418,15 @@ class AttentionEngine {
 		<span style="color:${color};">&#9679;</span>
 		<span style="color:#1e293b;"> Attention Path Visualizer — Layer ${layerIdx + 1}, Head ${headIdx + 1}</span>
 	    </h3>
-	    <div style="display:flex; gap:8px;">
-		<button onclick="window.__apv_instances['${this.containerId}'].apvSetModePerHead(${layerIdx}, ${headIdx}, 'headview')"
-		    class="apv-mode-btn-${this.containerId}-${layerIdx}-${headIdx}" style="padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;
-		    cursor:pointer; font-size:0.8rem;
-		    background:${isHead ? '#3b82f6' : '#fff'};
-		    color:${isHead ? '#fff' : '#334155'};">Head View</button>
-		<button onclick="window.__apv_instances['${this.containerId}'].apvSetModePerHead(${layerIdx}, ${headIdx}, 'matrix')"
-		    class="apv-mode-btn-${this.containerId}-${layerIdx}-${headIdx}" style="padding:4px 10px; border-radius:6px; border:1px solid #cbd5e1;
-		    cursor:pointer; font-size:0.8rem;
-		    background:${isMatrix ? '#3b82f6' : '#fff'};
-		    color:${isMatrix ? '#fff' : '#334155'};">Matrix View</button>
-	    </div>
 	</div>
 
 	<div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
-	    style="display:${isHead ? 'block' : 'none'}; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
+	    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
 	    <svg id="${apvHeadCanvasId}" style="width:100%; min-height:180px;"></svg>
 	</div>
 
 	<div id="apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}"
-	    style="display:${isMatrix ? 'block' : 'none'}; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
+	    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
 	    <svg id="${apvMatrixCanvasId}" style="width:100%; min-height:180px;"></svg>
 	</div>
 
@@ -1286,49 +1263,5 @@ class AttentionEngine {
 				}
 			}
 		}
-	}
-
-	apvSetModePerHead(layerIdx, headIdx, mode) {
-		this._apvMode.set(layerIdx, mode);
-
-		const headviewWrap = document.getElementById(`apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}`);
-		const matrixWrap = document.getElementById(`apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}`);
-
-		if (headviewWrap) headviewWrap.style.display = (mode === 'headview') ? 'block' : 'none';
-		if (matrixWrap) matrixWrap.style.display = (mode === 'matrix') ? 'block' : 'none';
-
-		// Update button styling
-		const buttons = document.querySelectorAll(`.apv-mode-btn-${this.containerId}-${layerIdx}-${headIdx}`);
-		buttons.forEach(btn => {
-			const isHead = btn.textContent.trim() === 'Head View' && mode === 'headview';
-			const isMatrix = btn.textContent.trim() === 'Matrix View' && mode === 'matrix';
-			const active = isHead || isMatrix;
-			btn.style.background = active ? '#3b82f6' : '#fff';
-			btn.style.color = active ? '#fff' : '#334155';
-		});
-
-		// Also update all other visible heads in this layer to match the mode toggle
-		const registry = multiLayerAttentionRegistry.get(this.containerId);
-		if (registry && registry.layers[layerIdx]) {
-			const numHeads = registry.layers[layerIdx].headData.length;
-			for (let h = 0; h < numHeads; h++) {
-				if (h === headIdx) continue;
-				const hvWrap = document.getElementById(`apv-headview-wrap-${this.containerId}-${layerIdx}-${h}`);
-				const mxWrap = document.getElementById(`apv-matrix-wrap-${this.containerId}-${layerIdx}-${h}`);
-				if (hvWrap) hvWrap.style.display = (mode === 'headview') ? 'block' : 'none';
-				if (mxWrap) mxWrap.style.display = (mode === 'matrix') ? 'block' : 'none';
-
-				const otherBtns = document.querySelectorAll(`.apv-mode-btn-${this.containerId}-${layerIdx}-${h}`);
-				otherBtns.forEach(btn => {
-					const isH = btn.textContent.trim() === 'Head View' && mode === 'headview';
-					const isM = btn.textContent.trim() === 'Matrix View' && mode === 'matrix';
-					const act = isH || isM;
-					btn.style.background = act ? '#3b82f6' : '#fff';
-					btn.style.color = act ? '#fff' : '#334155';
-				});
-			}
-		}
-
-		this._apvSaveState();
 	}
 }
