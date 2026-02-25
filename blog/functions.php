@@ -131,6 +131,7 @@ function incl($headline, $base_name) {
 function load_base_js () {
 ?>
 	<?php js("temml.min"); ?>
+	<?php js("bpe"); ?>
 	<?php css("Temml-Local.min"); ?>
 
 	<script>

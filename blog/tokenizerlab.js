@@ -37,19 +37,9 @@ function renderTokens(type, text) {
 		}
 	} 
 	else if (type === 'bpe') {
-		const words = text.split(/\s+/);
-		words.forEach(word => {
-			let found = false;
-			for (let unit of subUnits) {
-				if (word.toLowerCase().endsWith(unit) && word.length > unit.length) {
-					tokens.push(word.substring(0, word.length - unit.length));
-					tokens.push("##" + unit);
-					found = true;
-					break;
-				}
-			}
-			if (!found && word.length > 0) tokens.push(word);
-		});
+		const tokenizer = new BPETokenizer();
+		tokenizer.train(text, 10);
+		tokens = tokenizer.tokenize(text);
 	}
 	else if (type === 'chars') {
 		tokens = text.split('');
