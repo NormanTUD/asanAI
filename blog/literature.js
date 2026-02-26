@@ -1,4 +1,10 @@
 window.bibData = {
+	"momentum": {
+		title: "Some methods of speeding up the convergence of iteration methods",
+		url: "https://papers.baulab.info/papers/also/Polyak-1964.pdf",
+		year: 1962,
+		author: "Boris Teodorovich Polyak"
+	},
 	"simulatorstheory": {
 		alternativetitle: "simulators theory",
 		url: "https://www.lesswrong.com/posts/vJFdjigzmcXMhNTsx/simulators",
