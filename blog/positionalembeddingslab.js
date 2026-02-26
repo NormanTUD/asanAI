@@ -447,8 +447,28 @@ function initHelixManifoldDemo() {
 
 async function loadPositionalEmbeddingsModule() {
 	updateLoadingStatus("Loading section about positional embeddings...");
-	PositionalLab.update(1)
+	PositionalLab.update(1);
 	initPeFourierDemo();
-	initHelixManifoldDemo();
+
+	// Lazy-load the helix manifold demo only when it's near the viewport
+	const helixTarget = document.getElementById('helix-manifold');
+	if (helixTarget) {
+		let helixLoaded = false;
+		const observer = new IntersectionObserver((entries, obs) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting && !helixLoaded) {
+					helixLoaded = true;
+					initHelixManifoldDemo();
+					obs.unobserve(helixTarget); // Stop observing once loaded
+				}
+			});
+		}, {
+			// rootMargin lets you trigger *before* the element is fully in view.
+			// '200px' means "fire when the element is within 200px of the viewport"
+			rootMargin: '200px'
+		});
+		observer.observe(helixTarget);
+	}
+
 	return Promise.resolve();
 }
