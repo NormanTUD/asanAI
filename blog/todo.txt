@@ -63,9 +63,6 @@ Given how central the residual stream is to your narrative, an interactive where
 14. Copyright and the "Blurry JPEG" Analogy
 You touch on data rights in the ethics section, but Ted Chiang's framing deserves mention: an LLM is a "blurry JPEG of the web". It's a lossy compression of its training data. This analogy makes the copyright question visceral: if you compress a copyrighted book into a JPEG and then "decompress" it (generate text), is the output a derivative work? This connects directly to your discussion of the model as a "universal compressor" 
 
-12. The "Waluigi Effect" and Jailbreaking
-Your section on hallucinations and safety is strong, but you could add the Waluigi Effect — the observation that for every "helpful assistant" persona (Luigi) the model learns during RLHF, there exists an equally coherent "evil assistant" persona (Waluigi) in the model's latent space. Jailbreaking is essentially finding prompts that navigate from Luigi to Waluigi. This connects to your superposition discussion: both personas coexist as directions in the same high-dimensional space 
-
 11. The "Stochastic Parrot" Debate Has a Counterargument
 You present Bender's Stochastic Parrot thesis well, but the strongest counterargument deserves mention: Othello-GPT (Li et al., 2023). Researchers trained a GPT model purely on sequences of Othello moves (just text tokens like "C4", "D3"). When they probed the model's internal representations, they found it had learned a complete, accurate internal model of the board state — despite never being shown a board. This suggests that next-token prediction on sufficient data can produce genuine world models, not just surface statistics. The aha-moment: the parrot might actually understand the cage
 .

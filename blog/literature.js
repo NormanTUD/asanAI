@@ -1,4 +1,10 @@
 window.bibData = {
+	"waluigi": {
+		url: "https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-effect-mega-post",
+		year: 2023,
+		author: "Cleo Nardo",
+		title: "The Waluigi-Effect"
+	},
 	"neuralturingmachinestwo": {
 		url: "https://blog.acolyer.org/2016/03/09/neural-turing-machines/",
 		title: "Neural Turing Machines",

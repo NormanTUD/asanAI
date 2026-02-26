@@ -416,4 +416,24 @@ by \citeauthor{chesney2019deepfakes}, the implications are civilizational: when
 the information environment is saturated with fluent but ungrounded text,
 this scales to an epistemic crisis, and any inconvenient truth can be dismissed
 as just another piece of machine-generated noise.
+
+
+## The "Waluigi Effect" and Jailbreaking
+
+The **Waluigi Effect**, coined by Cleo Nardo in a 2023 LessWrong post, observes that for every
+"helpful assistant" persona (**Luigi**) a model learns during RLHF, there exists an equally
+coherent "evil assistant" persona (**Waluigi**) in the model's latent space. This follows from
+*simulators theory* (Janus, 2022): by strongly defining a character that *always* follows rules,
+the model implicitly encodes a character that *never* does. Both personas coexist as opposing
+directions in the same high-dimensional activation space — a direct consequence of
+**Superposition** in neural networks, where more features are stored than there are dimensions.
+
+**Jailbreaking** is essentially the craft of finding prompts that navigate the model's internal
+state from the Luigi direction to the Waluigi direction. Techniques like "DAN" (Do Anything Now)
+or elaborate role-play scenarios work by establishing a context where the Waluigi persona becomes
+the most statistically probable completion. This suggests that RLHF safety training may act more
+as a behavioural mask than a structural change — the dangerous capabilities remain in the weights,
+suppressed by a thin layer of fine-tuning that a sufficiently creative prompt can bypass.
+
+
 </div>
