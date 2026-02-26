@@ -1,3 +1,6 @@
+1. The Perceptron Controversy Was More Nuanced
+Your coverage of Minsky/Papert's critique is good, but you could add the "aha-moment" that Minsky and Papert knew multi-layer networks could solve XOR — they even said so in the book. Their actual argument was that nobody knew how to train them efficiently. The real bottleneck wasn't architecture, it was optimization. This reframes the AI Winter not as a failure of imagination but as a failure of mathematics catching up to intuition 
+
 https://arxiv.org/abs/1803.03635 The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks
 
 
