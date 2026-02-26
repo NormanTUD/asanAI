@@ -524,6 +524,28 @@ $$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
 <div id="ffn-equations-container"></div>
 
 <div class="md">
+### Mixture of Experts (MoE)
+
+The Feed-Forward Network (FFN) described above applies the same dense
+transformation to every token: $\text{FFN}(x) = \sigma(xW_1 + b_1)W_2 + b_2$.
+This example uses exactly that standard, dense FFN. However, modern
+large-scale systems replace it with a \textbf{Mixture of Experts} (MoE)
+layer to dramatically increase model capacity without proportionally
+increasing compute cost. The core idea, first proposed in
+\cite[Adaptive Mixtures of Local Experts]{jacobs1991moe}, is to maintain
+multiple parallel FFN sub-networks (experts) alongside a learned gating
+network that routes each input to the most relevant expert --- a
+"divide and conquer" approach where specialised networks handle
+different regions of the input space. This concept remained difficult to
+scale until \cite[the Sparsely-Gated MoE layer]{shazeer2017moe}
+introduced the critical principle of \textbf{sparsity}: instead of
+activating all experts for every token, a sparse gating function selects
+only the top one or two, so the output becomes
+$\sum_{i \in \text{TopK}} G(x)_i \cdot \text{FFN}_i(x)$ over just the
+chosen experts. This allows models to scale to trillions of total
+parameters while keeping per-token compute roughly constant, since only
+a small fraction of parameters are active for any given input.
+
 ## 9. Generalizing the Flow: The $N$-Layer Recurrence
 In practice, a Transformer is not just two steps ($h_0 \to h_2$); it is a stack of $N$ structurally identical but independently weighted blocks, each moving the representation further through the Feature Space to refine meaning.
 

@@ -1,4 +1,17 @@
 window.bibData = {
+	"jacobs1991moe": {
+		title: "Adaptive Mixtures of Local Experts",
+		author: "Robert A. Jacobs, Michael I. Jordan, Steven J. Nowlan, Geoffrey E. Hinton",
+		year: 1991,
+		url: "https://www.cs.toronto.edu/~hinton/absps/jjnh91.pdf"
+	},
+	"shazeer2017moe": {
+		title: "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer",
+		author: "Noam Shazeer, Azalia Mirhoseini, Krzysztof Maziarz, Andy Davis, Quoc Le, Geoffrey Hinton, Jeff Dean",
+		year: 2017,
+		url: "https://arxiv.org/abs/1701.06538",
+		alternativetitle: "Sparsely-Gated Mixture-of-Experts"
+	},
 	"sparseautoencoders": {
 		title: "Sparse Autoencoders Find Highly Interpretable Features in Language Models",
 		url: "https://arxiv.org/abs/2309.08600",
