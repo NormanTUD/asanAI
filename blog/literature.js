@@ -1,4 +1,10 @@
 window.bibData = {
+	"thetacitdimension": {
+		title: "The Tacit Dimension",
+		author: "Michael Polanyi",
+		year: 1966,
+		url: "https://archive.org/details/tacitdimension0000mich_w4j8"
+	},
 	"weatherfactory": {
 		author: "Lewis Fry Richardson",
 		year: 1922,
