@@ -20,7 +20,7 @@
 <div id="contents" style="display: none">
 <?php
 	incl("From $ 1 + 1 = 2 $ to ChatGPT: Beyond the Black Box", "intro");
-	incl("The intuition for what LLMs are", "intuition");
+	incl("An Intuition of how Large Language Models (LLMs) work", "intuition");
 	incl("Brief History of AI", "history");
 	incl("Basic math concepts", "math");
 	incl("Statistical Foundations: The Language of AI", "statistics");
