@@ -1,3 +1,6 @@
+16. Why ReLU Works: It Creates Sparse Representations
+You explain ReLU as "derivative is 1 for positive, 0 for negative." But the deeper insight is that ReLU creates sparsity: for any given input, roughly half the neurons output exactly zero. This means the network is effectively using a different sparse subnetwork for each input — connecting back to the Lottery Ticket Hypothesis in your todo. The aha-moment: ReLU doesn't just prevent vanishing gradients — it forces the network to use a different "team" of neurons for every input, creating implicit specialization 
+
 15. The Attention Matrix Is a Doubly Stochastic Relaxation
 Each row of the attention matrix sums to 1 (due to softmax), making it right-stochastic. But the columns generally do not sum to 1. This asymmetry means some tokens are "attended to" much more than others — they become information hubs. The [CLS] token in BERT or the last token in GPT often accumulates massive column-sums, acting as a "sink" that aggregates information from the entire sequence. The aha-moment: not all tokens are equal — some become gravitational centers that the entire sequence orbits around.
 
