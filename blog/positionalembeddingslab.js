@@ -445,6 +445,241 @@ function initHelixManifoldDemo() {
 	Plotly.newPlot('helix-manifold', traces, layout, { responsive: true });
 }
 
+function initGroupStructureDemo() {
+	var N = 12; // clock size
+
+	/* ────────── helper: clock position → (x, y) ────────── */
+	function clockXY(i) {
+		var theta = -Math.PI / 2 + ((i % N) * 2 * Math.PI) / N;
+		return { x: Math.cos(theta), y: Math.sin(theta) };
+	}
+
+	/* ═══════════════════════════════════════════════════════
+       VIZ 1 — Group Axioms on ℤ₁₂
+       ═══════════════════════════════════════════════════════ */
+	function renderGroupAxioms(a, b) {
+		var ab   = (a + b) % N;
+		var invA = (N - a) % N;
+
+		// smooth circle outline
+		var cX = [], cY = [];
+		for (var t = 0; t <= 2 * Math.PI + 0.01; t += 0.04) {
+			cX.push(Math.cos(t));
+			cY.push(Math.sin(t));
+		}
+
+		// all 12 clock positions
+		var allX = [], allY = [], allLabels = [];
+		for (var i = 0; i < N; i++) {
+			var p = clockXY(i);
+			allX.push(p.x);  allY.push(p.y);  allLabels.push(String(i));
+		}
+
+		var traces = [
+			{ x: cX, y: cY, mode: 'lines', line: { color: '#e2e8f0', width: 1 },
+				showlegend: false, hoverinfo: 'skip' },
+			{ x: allX, y: allY, mode: 'markers+text',
+				marker: { size: 10, color: '#cbd5e1' },
+				text: allLabels, textposition: 'top center',
+				textfont: { size: 11, color: '#94a3b8' },
+				showlegend: false, hoverinfo: 'text',
+				hovertext: allLabels.map(function(l){ return 'Position ' + l; }) },
+			// identity
+			{ x: [clockXY(0).x], y: [clockXY(0).y], mode: 'markers',
+				marker: { size: 16, color: '#a3a3a3', symbol: 'star',
+					line: { width: 2, color: '#525252' } },
+				name: 'Identity (M₀ = I)' },
+			// a
+			{ x: [clockXY(a).x], y: [clockXY(a).y], mode: 'markers',
+				marker: { size: 18, color: '#2563eb', symbol: 'circle',
+					line: { width: 2, color: '#1d4ed8' } },
+				name: 'a = M' + a },
+			// b
+			{ x: [clockXY(b).x], y: [clockXY(b).y], mode: 'markers',
+				marker: { size: 18, color: '#dc2626', symbol: 'diamond',
+					line: { width: 2, color: '#b91c1c' } },
+				name: 'b = M' + b },
+			// a · b
+			{ x: [clockXY(ab).x], y: [clockXY(ab).y], mode: 'markers',
+				marker: { size: 18, color: '#16a34a', symbol: 'square',
+					line: { width: 2, color: '#15803d' } },
+				name: 'a·b = M' + ab + ' (closure)' },
+			// inverse of a
+			{ x: [clockXY(invA).x], y: [clockXY(invA).y], mode: 'markers',
+				marker: { size: 16, color: '#9333ea', symbol: 'triangle-up',
+					line: { width: 2, color: '#7e22ce' } },
+				name: 'a⁻¹ = M' + invA + ' (inverse)' }
+		];
+
+		var shapes = [
+			{ type:'line', x0:0, y0:0, x1:clockXY(a).x,  y1:clockXY(a).y,
+				line:{ color:'#2563eb', width:2, dash:'dot' } },
+			{ type:'line', x0:0, y0:0, x1:clockXY(b).x,  y1:clockXY(b).y,
+				line:{ color:'#dc2626', width:2, dash:'dot' } },
+			{ type:'line', x0:0, y0:0, x1:clockXY(ab).x, y1:clockXY(ab).y,
+				line:{ color:'#16a34a', width:2, dash:'dot' } }
+		];
+
+		var layout = {
+			title: 'Group Axioms on ℤ₁₂ (Clock Arithmetic)',
+			xaxis: { range:[-1.55,1.55], scaleanchor:'y',
+				showgrid:false, zeroline:false, showticklabels:false },
+			yaxis: { range:[-1.55,1.55],
+				showgrid:false, zeroline:false, showticklabels:false },
+			margin: { t:50, b:55, l:30, r:160 },
+			shapes: shapes,
+			showlegend: true,
+			legend: { x:1.02, y:1, font:{ size:11 } },
+			annotations: [{
+				x:0, y:-1.45, xref:'x', yref:'y', showarrow:false,
+				text: 'M<sub>'+a+'</sub> · M<sub>'+b+'</sub> = M<sub>'+ab+
+				'</sub>   |   M<sub>'+a+'</sub> · M<sub>'+invA+'</sub> = M<sub>0</sub> = I',
+				font:{ size:13, color:'#475569' }
+			}]
+		};
+
+		Plotly.newPlot('group-axioms-chart', traces, layout, { responsive:true });
+	}
+
+	/* ═══════════════════════════════════════════════════════
+       VIZ 2 — Compass (translation invariance)
+       ═══════════════════════════════════════════════════════ */
+	function renderCompass(k) {
+		var D = 8, BASE = 10000;
+		var w0 = 1 / Math.pow(BASE, 0 / D);  // = 1 for the first pair
+
+		var starts = [0, 5, 12, 25, 40];
+		var colors = ['#2563eb','#dc2626','#16a34a','#f59e0b','#9333ea'];
+
+		// unit circle outline
+		var cX = [], cY = [];
+		for (var t = 0; t <= 2*Math.PI+0.01; t += 0.04) {
+			cX.push(Math.cos(t)); cY.push(Math.sin(t));
+		}
+
+		var traces = [
+			{ x:cX, y:cY, mode:'lines', line:{ color:'#e2e8f0', width:1 },
+				showlegend:false, hoverinfo:'skip' }
+		];
+		var annotations = [];
+
+		starts.forEach(function(pos, idx) {
+			var a1 = pos * w0,  a2 = (pos + k) * w0;
+			var x1 = Math.cos(a1), y1 = Math.sin(a1);
+			var x2 = Math.cos(a2), y2 = Math.sin(a2);
+
+			// filled start dot
+			traces.push({
+				x:[x1], y:[y1], mode:'markers',
+				marker:{ size:14, color:colors[idx] },
+				name:'pos='+pos,
+				hovertext:'PE(pos='+pos+'), θ='+(a1%(2*Math.PI)).toFixed(2)+' rad',
+				hoverinfo:'text'
+			});
+			// open end dot
+			traces.push({
+				x:[x2], y:[y2], mode:'markers',
+				marker:{ size:14, color:colors[idx], symbol:'circle-open',
+					line:{ width:3, color:colors[idx] } },
+				showlegend:false,
+				name:'pos='+(pos+k),
+				hovertext:'PE(pos='+(pos+k)+'), θ='+(a2%(2*Math.PI)).toFixed(2)+' rad',
+				hoverinfo:'text'
+			});
+			// arrow
+			annotations.push({
+				x:x2, y:y2, ax:x1, ay:y1,
+				xref:'x', yref:'y', axref:'x', ayref:'y',
+				showarrow:true, arrowhead:2, arrowsize:1.5,
+				arrowwidth:2, arrowcolor:colors[idx], opacity:0.7
+			});
+		});
+
+		annotations.push({
+			x:0, y:-1.48, xref:'x', yref:'y', showarrow:false,
+			text:'Every arrow = M<sub>'+k+'</sub>: same rotation (Δθ = '+
+			(k*w0).toFixed(2)+' rad) regardless of starting position.',
+			font:{ size:12, color:'#475569' }
+		});
+
+		var layout = {
+			title:'The Compass: Offset k='+k+' → Same Rotation Everywhere',
+			xaxis:{ range:[-1.65,1.65], scaleanchor:'y',
+				showgrid:false, zeroline:false, showticklabels:false },
+			yaxis:{ range:[-1.65,1.65],
+				showgrid:false, zeroline:false, showticklabels:false },
+			margin:{ t:50, b:55, l:30, r:160 },
+			showlegend:true,
+			legend:{ x:1.02, y:1, font:{ size:11 } },
+			annotations:annotations
+		};
+
+		Plotly.newPlot('group-compass-chart', traces, layout, { responsive:true });
+	}
+
+	/* ═══════════════════════════════════════════════════════
+       VIZ 3 — Cayley Table heatmap
+       ═══════════════════════════════════════════════════════ */
+	function renderCayleyTable() {
+		var z = [], labels = [];
+		for (var i = 0; i < N; i++) {
+			labels.push('M'+i);
+			var row = [];
+			for (var j = 0; j < N; j++) row.push((i+j) % N);
+			z.push(row);
+		}
+
+		var trace = {
+			z:z, x:labels, y:labels, type:'heatmap',
+			colorscale:'Viridis',
+			hovertemplate:'%{y} · %{x} = M<sub>%{z}</sub><extra></extra>',
+			showscale:true,
+			colorbar:{ title:'Result index' }
+		};
+
+		// cell value text
+		var ann = [];
+		for (var ii = 0; ii < N; ii++) {
+			for (var jj = 0; jj < N; jj++) {
+				ann.push({
+					x:labels[jj], y:labels[ii],
+					text:String(z[ii][jj]), showarrow:false,
+					font:{ size:10, color: z[ii][jj] > N/2 ? 'white' : '#333' }
+				});
+			}
+		}
+
+		var layout = {
+			title:'Cayley Table: Mᵢ · Mⱼ = M<sub>(i+j) mod 12</sub>',
+			xaxis:{ title:'Mⱼ', side:'bottom' },
+			yaxis:{ title:'Mᵢ', autorange:'reversed' },
+			margin:{ t:50, b:60, l:60, r:20 },
+			annotations:ann
+		};
+
+		Plotly.newPlot('group-cayley-chart', [trace], layout, { responsive:true });
+	}
+
+	/* ── initial render ── */
+	renderGroupAxioms(3, 5);
+	renderCompass(3);
+	renderCayleyTable();
+
+	/* ── wire sliders ── */
+	document.getElementById('group-a-slider').addEventListener('input', function(){
+		document.getElementById('group-a-label').textContent = this.value;
+		renderGroupAxioms(+this.value, +document.getElementById('group-b-slider').value);
+	});
+	document.getElementById('group-b-slider').addEventListener('input', function(){
+		document.getElementById('group-b-label').textContent = this.value;
+		renderGroupAxioms(+document.getElementById('group-a-slider').value, +this.value);
+	});
+	document.getElementById('group-k-slider').addEventListener('input', function(){
+		document.getElementById('group-k-label').textContent = this.value;
+		renderCompass(+this.value);
+	});
+}
+
 async function loadPositionalEmbeddingsModule() {
 	updateLoadingStatus("Loading section about positional embeddings...");
 	PositionalLab.update(1);
@@ -468,6 +703,22 @@ async function loadPositionalEmbeddingsModule() {
 			rootMargin: '200px'
 		});
 		observer.observe(helixTarget);
+	}
+
+	// Lazy-load the group structure demo
+	var groupTarget = document.getElementById('group-axioms-chart');
+	if (groupTarget) {
+		var groupLoaded = false;
+		var groupObserver = new IntersectionObserver(function(entries, obs) {
+			entries.forEach(function(entry) {
+				if (entry.isIntersecting && !groupLoaded) {
+					groupLoaded = true;
+					initGroupStructureDemo();
+					obs.unobserve(groupTarget);
+				}
+			});
+		}, { rootMargin: '200px' });
+		groupObserver.observe(groupTarget);
 	}
 
 	return Promise.resolve();

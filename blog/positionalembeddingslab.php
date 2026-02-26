@@ -118,3 +118,87 @@ The wave plots above show each dimension's projection individually, flat curves 
 </div>
 
 <div id="helix-manifold" style="width:100%; height:500px; margin: 20px 0; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+
+<div class="md">
+## Positional Encoding Creates a Group Structure
+
+We've shown that a position shift by a fixed offset $k$ corresponds to multiplying by a rotation matrix $M_k$. But these matrices aren't just a convenient trick — they form a **mathematical group**, and that algebraic fact is the deepest reason sinusoidal PE works so well.
+
+### What Is a Group?
+
+A **group** is one of the most fundamental structures in all of mathematics: the formal language of *symmetry*. It is a set $G$ equipped with a single combining operation "$\cdot$" that satisfies exactly four axioms:
+
+| Axiom | Statement | PE Rotation Example |
+|---|---|---|
+| **Closure** | If $a, b \in G$ then $a \cdot b \in G$ | $M_3 \cdot M_5 = M_8$ — still a valid offset matrix |
+| **Associativity** | $(a \cdot b) \cdot c = a \cdot (b \cdot c)$ | $(M_2 \cdot M_3) \cdot M_4 = M_2 \cdot (M_3 \cdot M_4) = M_9$ |
+| **Identity** | $\exists\; e$ such that $e \cdot a = a \cdot e = a$ | $M_0 = I$ — zero offset changes nothing |
+| **Inverse** | $\forall\; a$, $\exists\; a^{-1}$ with $a \cdot a^{-1} = e$ | $M_k \cdot M_{-k} = M_0 = I$ — every shift is reversible |
+
+The simplest everyday example is **clock arithmetic**: the 12 hours form a group under addition mod 12. Going forward 5 hours then 9 hours is the same as going forward 2 hours ($5+9=14\equiv2\pmod{12}$). The identity is $+0$ hours, and the inverse of $+5$ is $+7$ (since $5+7\equiv0$). The first interactive below lets you explore this directly.
+
+### The PE Rotation Group
+
+Recall the rotation matrix for each sine-cosine pair at frequency $\omega$:
+
+$$M_k = \begin{pmatrix} \cos(k\omega) & \sin(k\omega) \\ -\sin(k\omega) & \cos(k\omega) \end{pmatrix}$$
+
+The set $\{M_k : k \in \mathbb{R}\}$ satisfies all four axioms — it is the **circle group** $SO(2)$, the group of all 2D rotations. Since a full PE vector is a stack of independent sine-cosine pairs at different frequencies, the complete positional encoding lives in a **product of circle groups — a torus**, the same manifold we visualised as a helix above.
+
+### Why the Group Structure Matters for Attention
+
+1. **"3 apart" is always the same $M_3$**, whether you start at position 2 or position 2000.
+2. **Compositions compose predictably**: "3 forward, then 5 forward" equals "8 forward" ($M_3 \cdot M_5 = M_8$).
+3. **Reversibility**: the model can ask "what was 3 positions *before* me?" via $M_{-3}$.
+
+The attention mechanism learns these rotations through its $Q$ and $K$ linear projections. The group structure guarantees that once the model learns the "shape" of an offset, it **generalises to every position in the sequence for free**. No special circuitry, no lookup tables — just linear algebra riding on top of algebraic symmetry.
+
+**The aha-moment:** Positional encoding doesn't just *label* positions — it gives the model an **algebraic compass** that works identically everywhere in the sequence.
+</div>
+
+<!-- ── Group Axioms Interactive ── -->
+<div style="margin: 20px 0; font-family: sans-serif;">
+    <strong>Explore: Group Axioms on a Clock (ℤ₁₂)</strong>
+    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:8px;">
+        <div>
+            <label><b>Element a:</b></label>
+            <input type="range" id="group-a-slider" min="0" max="11" value="3" style="width:130px;vertical-align:middle;">
+            <span id="group-a-label" style="font-weight:bold;">3</span>
+        </div>
+        <div>
+            <label><b>Element b:</b></label>
+            <input type="range" id="group-b-slider" min="0" max="11" value="5" style="width:130px;vertical-align:middle;">
+            <span id="group-b-label" style="font-weight:bold;">5</span>
+        </div>
+    </div>
+</div>
+<div id="group-axioms-chart" style="width:100%; height:460px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+
+<!-- ── Compass Interactive ── -->
+<div style="margin: 24px 0 8px; font-family: sans-serif;">
+    <strong>The Compass: Same Rotation Everywhere</strong>
+    <div style="margin-top:6px;">
+        <label><b>Offset k:</b></label>
+        <input type="range" id="group-k-slider" min="1" max="10" value="3" style="width:200px;vertical-align:middle;">
+        <span id="group-k-label" style="font-weight:bold;">3</span>
+    </div>
+</div>
+<div id="group-compass-chart" style="width:100%; height:460px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+
+<div class="md">
+### Reading the Compass Plot
+
+Each **filled dot** is a starting position on the unit circle (determined by its PE angle $\text{pos}\cdot\omega_0$). Each **open dot** is the result after applying $M_k$. The arrow between them is *the same rotation* in every case — the arrow length and arc angle never change, only the starting point moves. This is exactly the translation-invariance that lets a Transformer generalise "3 tokens apart" to any location it has never seen.
+</div>
+
+<!-- ── Cayley Table ── -->
+<div style="margin: 24px 0 8px; font-family: sans-serif;">
+    <strong>Cayley Table (Group Multiplication Table for ℤ₁₂)</strong>
+</div>
+<div id="group-cayley-chart" style="width:100%; max-width:600px; height:520px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+
+<div class="md">
+### Reading the Cayley Table
+
+The heatmap shows every possible composition $M_i \cdot M_j = M_{(i+j)\bmod 12}$. Notice the **diagonal stripe pattern**: each row is just the previous row shifted one step to the left. That perfect regularity *is* the group structure — it means the combining rule is completely uniform, with no exceptions or special cases. Hover over any cell to see the composition.
+</div>
