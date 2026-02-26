@@ -36,5 +36,5 @@ You will see that AI is not a sudden magic invention, but the technical and phil
 
 ## Disclaimer
 
-This tutorial was built with the help of Google Gemini. We've done our best to verify the code and info, but please double-check before using it in production.
+This tutorial was built with the help of Google Gemini, Claude, chatGPT and other LLM systems. We've done our best to verify the code and info, but please double-check before using it in production.
 </div>
