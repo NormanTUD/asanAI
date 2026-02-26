@@ -770,88 +770,138 @@ const AutoregressiveViz = {
         { input: 'Once upon a time there was a', output: 'dragon.', prob: 0.31 },
         { input: 'Once upon a time there was a dragon.', output: '|endoftext|', prob: 0.52 },
     ],
+    originalInput: 'Once upon a',
     currentStep: 0,
     animating: false,
+    timeoutId: null,
+
+    updateButton: function() {
+        const btn = document.getElementById('autoregressive-play');
+        if (!btn) return;
+
+        if (this.animating) {
+            btn.textContent = '⏹ Stop Generation';
+            btn.style.background = '#dc2626';
+            btn.style.borderColor = '#dc2626';
+            btn.style.color = '#fff';
+        } else {
+            btn.textContent = '▶ Play Generation';
+            btn.style.background = '#3b82f6';
+            btn.style.borderColor = '#3b82f6';
+            btn.style.color = '#fff';
+        }
+        btn.disabled = false;
+        btn.style.opacity = '1';
+    },
 
     render: function() {
         const container = document.getElementById('autoregressive-viz');
         if (!container) return;
 
         const step = this.currentStep;
-        let html = '<div style="font-family:monospace; font-size:0.85em; line-height:2.2;">';
+        const s = this.steps[Math.min(step, this.steps.length - 1)];
 
-        for (let i = 0; i <= Math.min(step, this.steps.length - 1); i++) {
-            const s = this.steps[i];
-            const isActive = (i === step);
-            const opacity = isActive ? 1 : 0.5;
+        // Split input into tokens
+        const inputWords = s.input.split(' ');
+        const originalWords = this.originalInput.split(' ');
+        const originalCount = originalWords.length;
 
-            html += `<div style="display:flex; align-items:center; gap:8px; padding:6px 10px; margin:4px 0;
-                        background:${isActive ? '#eff6ff' : '#fff'}; border-radius:8px;
-                        border-left:3px solid ${isActive ? '#3b82f6' : '#e2e8f0'};
-                        opacity:${opacity}; transition:all 0.3s;">`;
+        // Build the sentence display with color coding
+        let sentenceHtml = '';
 
-            // Input tokens
-            html += `<span style="color:#64748b;">LLM(</span>`;
-            html += `<span style="color:#1e293b; font-weight:bold;">"${s.input}"</span>`;
-            html += `<span style="color:#64748b;">) →</span>`;
-
-            // Output token
-            if (s.output === '|endoftext|') {
-                html += `<span style="background:#fee2e2; color:#dc2626; padding:2px 8px; border-radius:4px; font-weight:bold;">⏹ STOP</span>`;
+        inputWords.forEach((word, i) => {
+            if (i < originalCount) {
+                // Original user input — amber/orange
+                sentenceHtml += `<span style="color:#b45309; font-weight:bold; background:#fef3c7; padding:1px 4px; border-radius:3px; margin-right:6px;">${word}</span>`;
+            } else if (i === inputWords.length - 1 && step > 0) {
+                // Just added from previous prediction — green
+                sentenceHtml += `<span style="color:#16a34a; font-weight:bold; background:#dcfce7; padding:1px 4px; border-radius:3px; margin-right:6px;">${word}</span>`;
             } else {
-                html += `<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:4px; font-weight:bold;">"${s.output}"</span>`;
+                // Previously generated context — default dark
+                sentenceHtml += `<span style="color:#1e293b; margin-right:6px;">${word}</span>`;
             }
+        });
 
-            // Probability
-            html += `<span style="color:#94a3b8; font-size:0.8em; margin-left:auto;">(p=${s.prob.toFixed(2)})</span>`;
-
-            html += `</div>`;
+        // The predicted next token
+        let predictionHtml = '';
+        if (s.output === '|endoftext|') {
+            predictionHtml = `<span style="background:#fee2e2; color:#dc2626; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out;">⏹ STOP</span>`;
+        } else {
+            predictionHtml = `<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out;">${s.output}</span>`;
         }
 
-        // Current full text
-        if (step < this.steps.length) {
-            const currentText = this.steps[step].input;
-            const nextWord = step <= this.steps.length - 1 ? this.steps[step].output : '';
-            html += `<div style="margin-top:12px; padding:10px 14px; background:#f0fdf4; border-radius:8px; border:1px solid #bbf7d0;">
-                <b style="color:#166534;">Current text:</b> "${currentText}"
-                ${nextWord && nextWord !== '|endoftext|' ? `<span style="color:#3b82f6; font-weight:bold;"> + "${nextWord}"</span>` : ''}
+        const html = `
+            <div style="font-family:monospace; font-size:0.85em;">
+                <!-- Fixed-size sentence display -->
+                <div style="padding:14px 16px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; min-height:48px; display:flex; align-items:center; flex-wrap:wrap;">
+                    ${sentenceHtml}
+                </div>
+
+                <!-- Prediction row -->
+                <div style="display:flex; align-items:center; gap:10px; padding:10px 16px; margin-top:8px; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
+                    <span style="color:#64748b;">→ Predicts:</span>
+                    ${predictionHtml}
+                    <span style="color:#94a3b8; font-size:0.8em; margin-left:auto;">(p=${s.prob.toFixed(2)})</span>
+                </div>
+
+                <!-- Color legend -->
+                <div style="display:flex; align-items:center; margin-top:10px; padding:0 4px;">
+                    <div style="display:flex; gap:14px; font-size:0.75em; color:#64748b;">
+                        <span><span style="color:#b45309; background:#fef3c7; padding:0 3px; border-radius:2px;">■</span> user input</span>
+                        <span><span style="color:#1e293b;">■</span> generated</span>
+                        <span><span style="color:#16a34a; background:#dcfce7; padding:0 3px; border-radius:2px;">■</span> just added</span>
+                        <span><span style="color:#1e40af; background:#dbeafe; padding:0 3px; border-radius:2px;">■</span> next prediction</span>
+                    </div>
+                </div>
             </div>`;
-        }
 
-        html += '</div>';
         container.innerHTML = html;
     },
 
     animate: function() {
-        if (this.animating) return;
-        this.animating = true;
-        this.currentStep = 0;
+        // Toggle: if already animating, stop it
+        if (this.animating) {
+            this.stop();
+            return;
+        }
 
-        const btn = document.getElementById('autoregressive-play');
-        if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
+        this.animating = true;
+        this.updateButton();
+
+        // If we're at the end, restart from the beginning
+        if (this.currentStep >= this.steps.length - 1) {
+            this.currentStep = 0;
+        }
 
         const step = () => {
             this.render();
-            if (this.currentStep < this.steps.length - 1) {
+            if (this.currentStep < this.steps.length - 1 && this.animating) {
                 this.currentStep++;
-                setTimeout(step, 1200);
+                this.timeoutId = setTimeout(step, 1200);
             } else {
                 this.animating = false;
-                if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+                this.timeoutId = null;
+                this.updateButton();
             }
         };
         step();
     },
 
-    reset: function() {
-        this.currentStep = 0;
+    stop: function() {
         this.animating = false;
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+            this.timeoutId = null;
+        }
+        this.updateButton();
+    },
+
+    reset: function() {
+        this.stop();
+        this.currentStep = 0;
         this.render();
-        const btn = document.getElementById('autoregressive-play');
-        if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
     }
 };
-
 
 // ============================================================
 // INITIALIZATION

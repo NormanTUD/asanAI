@@ -32,19 +32,19 @@ $$\text{LLM}(\underbrace{\text{"Once upon a"}}_{\text{User Input}} \ \underbrace
             margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
     <div style="text-align:center; margin-bottom:12px;">
         <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-            🔄 The Autoregressive Loop — One Word at a Time
-        </span>
+	    🔄 The Autoregressive Loop — One Word at a Time
+	</span>
     </div>
     <div id="autoregressive-viz" style="min-height:200px;"></div>
     <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
-        <button id="autoregressive-play" onclick="AutoregressiveViz.animate()"
-                style="background:#3b82f6; color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
-            ▶ Play Generation
-        </button>
-        <button onclick="AutoregressiveViz.reset()"
-                style="background:#64748b; color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
-            ↺ Reset
-        </button>
+	<button id="autoregressive-play" onclick="AutoregressiveViz.animate()"
+		style="background:#3b82f6; color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
+	    ▶ Play Generation
+	</button>
+	<button onclick="AutoregressiveViz.reset()"
+		style="background:#64748b; color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
+	    ↺ Reset
+	</button>
     </div>
 </div>
 
@@ -71,21 +71,21 @@ Most tokens are common words or word fragments. For example, `"understanding"` m
 <!-- STEP 1: TOKENIZATION VISUALIZATION -->
 <!-- ============================================================ -->
 <div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
-            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
+	    margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
     <div style="text-align:center; margin-bottom:12px;">
-        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-            ✂️ Step 1: Tokenization — Chopping Text into Pieces
-        </span>
+	<span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
+	    ✂️ Step 1: Tokenization — Chopping Text into Pieces
+	</span>
     </div>
     <input type="text" id="tokenizer-input"
-           style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:1em; margin-bottom:12px;"
-           placeholder="Type something... e.g., 'The transformer is playing greatly'"
-           value="The transformer is playing greatly">
+	   style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:1em; margin-bottom:12px;"
+	   placeholder="Type something... e.g., 'The transformer is playing greatly'"
+	   value="The transformer is playing greatly">
     <div id="tokenizer-output" style="min-height:60px;"></div>
     <div id="tokenizer-stats" style="margin-top:10px;"></div>
     <div style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8em; color:#64748b;">
-        💡 Try typing <b>"understanding"</b> or <b>"unbreakable"</b> to see subword splitting in action.
-        The model breaks unknown words into known pieces it learned during training.
+	💡 Try typing <b>"understanding"</b> or <b>"unbreakable"</b> to see subword splitting in action.
+	The model breaks unknown words into known pieces it learned during training.
     </div>
 </div>
 
@@ -109,32 +109,32 @@ The direction from "man" to "woman" represents something like the concept of gen
 <!-- STEP 2: EMBEDDING VISUALIZATION -->
 <!-- ============================================================ -->
 <div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
-            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
+	    margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
     <div style="text-align:center; margin-bottom:12px;">
-        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-            📍 Step 2: Embedding — Words as Points in Space
-        </span>
+	<span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
+	    📍 Step 2: Embedding — Words as Points in Space
+	</span>
     </div>
     <input type="text" id="embedding-viz-input"
-           style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:1em; margin-bottom:8px;"
-           placeholder="Type words to highlight (e.g., king queen man woman)"
-           value="king queen man woman">
+	   style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:1em; margin-bottom:8px;"
+	   placeholder="Type words to highlight (e.g., king queen man woman)"
+	   value="king queen man woman">
     <div id="embedding-viz-plot" style="height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
 
     <!-- Vector Arithmetic -->
     <div style="margin-top:14px; padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
-        <div style="font-weight:bold; color:#1e293b; margin-bottom:8px;">🧮 Vector Arithmetic</div>
-        <div style="display:flex; gap:8px;">
-            <input type="text" id="embedding-arithmetic-input"
-                   style="flex:1; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-family:monospace;"
-                   placeholder="e.g., king - man + woman"
-                   value="king - man + woman">
-            <button onclick="EmbeddingViz.doArithmetic()"
-                    style="background:#3b82f6; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">
-                Compute
-            </button>
-        </div>
-        <div id="embedding-arithmetic-result" style="margin-top:8px; min-height:24px;"></div>
+	<div style="font-weight:bold; color:#1e293b; margin-bottom:8px;">🧮 Vector Arithmetic</div>
+	<div style="display:flex; gap:8px;">
+	    <input type="text" id="embedding-arithmetic-input"
+		   style="flex:1; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-family:monospace;"
+		   placeholder="e.g., king - man + woman"
+		   value="king - man + woman">
+	    <button onclick="EmbeddingViz.doArithmetic()"
+		    style="background:#3b82f6; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">
+		Compute
+	    </button>
+	</div>
+	<div id="embedding-arithmetic-result" style="margin-top:8px; min-height:24px;"></div>
     </div>
 </div>
 
@@ -154,18 +154,18 @@ This is required, because the embedding and attention operations have no built-i
 <!-- STEP 3: POSITIONAL ENCODING VISUALIZATION -->
 <!-- ============================================================ -->
 <div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
-            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
+	    margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
     <div style="text-align:center; margin-bottom:12px;">
-        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-            📐 Step 3: Positional Encoding — Where Am I in the Sentence?
-        </span>
+	<span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
+	    📐 Step 3: Positional Encoding — Where Am I in the Sentence?
+	</span>
     </div>
 
     <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-        <label style="font-size:0.85em; color:#475569; font-weight:bold;">Dimensions to show:</label>
-        <input type="range" id="pe-num-dims" min="2" max="12" step="1" value="8"
-               style="flex:1; accent-color:#8b5cf6;">
-        <span style="font-weight:bold; color:#8b5cf6; min-width:24px;">8</span>
+	<label style="font-size:0.85em; color:#475569; font-weight:bold;">Dimensions to show:</label>
+	<input type="range" id="pe-num-dims" min="2" max="12" step="1" value="8"
+	       style="flex:1; accent-color:#8b5cf6;">
+	<span style="font-weight:bold; color:#8b5cf6; min-width:24px;">8</span>
     </div>
 
     <!-- Sine/Cosine wave plot -->
@@ -178,16 +178,16 @@ This is required, because the embedding and attention operations have no built-i
     <!-- Same word, different positions demo -->
     <div style="font-weight:bold; color:#1e293b; margin-bottom:6px;">Same Word, Different Positions</div>
     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
-        <input type="text" id="pe-demo-word" value="cat" placeholder="Word"
-               style="width:80px; padding:6px; border-radius:6px; border:1px solid #cbd5e1;">
-        <label style="font-size:0.85em; color:#475569;">Pos 1:
-            <input type="number" id="pe-demo-pos1" value="0" min="0" max="19"
-                   style="width:50px; padding:4px; border-radius:4px; border:1px solid #cbd5e1;">
-        </label>
-        <label style="font-size:0.85em; color:#475569;">Pos 2:
-            <input type="number" id="pe-demo-pos2" value="5" min="0" max="19"
-                   style="width:50px; padding:4px; border-radius:4px; border:1px solid #cbd5e1;">
-        </label>
+	<input type="text" id="pe-demo-word" value="cat" placeholder="Word"
+	       style="width:80px; padding:6px; border-radius:6px; border:1px solid #cbd5e1;">
+	<label style="font-size:0.85em; color:#475569;">Pos 1:
+	    <input type="number" id="pe-demo-pos1" value="0" min="0" max="19"
+		   style="width:50px; padding:4px; border-radius:4px; border:1px solid #cbd5e1;">
+	</label>
+	<label style="font-size:0.85em; color:#475569;">Pos 2:
+	    <input type="number" id="pe-demo-pos2" value="5" min="0" max="19"
+		   style="width:50px; padding:4px; border-radius:4px; border:1px solid #cbd5e1;">
+	</label>
     </div>
     <div id="pe-addition-demo"></div>
 </div>
@@ -210,30 +210,30 @@ Inside each layer, two things happen:
 <!-- STEP 4: TRANSFORMER LAYERS — RESIDUAL STREAM -->
 <!-- ============================================================ -->
 <div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
-            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
+	    margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
     <div style="text-align:center; margin-bottom:12px;">
-        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-            🧠 Step 4: Transformer Layers — The Residual Stream
-        </span>
+	<span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
+	    🧠 Step 4: Transformer Layers — The Residual Stream
+	</span>
     </div>
 
     <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-        <span style="font-size:0.85em; color:#475569; font-weight:bold;">Layer:</span>
-        <input type="range" id="residual-stream-layer" min="0" max="6" step="1" value="0"
-               style="flex:1; accent-color:#8b5cf6;">
-        <button id="residual-stream-play" onclick="ResidualStreamViz.animate()"
-                style="background:#3b82f6; color:white; border:none; padding:6px 16px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.85em;">
-            ▶ Animate All Layers
-        </button>
+	<span style="font-size:0.85em; color:#475569; font-weight:bold;">Layer:</span>
+	<input type="range" id="residual-stream-layer" min="0" max="6" step="1" value="0"
+	       style="flex:1; accent-color:#8b5cf6;">
+	<button id="residual-stream-play" onclick="ResidualStreamViz.animate()"
+		style="background:#3b82f6; color:white; border:none; padding:6px 16px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.85em;">
+	    ▶ Animate All Layers
+	</button>
     </div>
 
     <div id="residual-stream-plot" style="height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
     <div id="residual-stream-info"></div>
 
     <div style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8em; color:#64748b;">
-        💡 Each dot is a token's vector. The <b>dotted trail</b> shows how it moved through previous layers.
-        The <b>solid arrow</b> shows the current layer's nudge: <code>x := x + Layer(x)</code>.
-        Notice how tokens that are semantically related gradually cluster together.
+	💡 Each dot is a token's vector. The <b>dotted trail</b> shows how it moved through previous layers.
+	The <b>solid arrow</b> shows the current layer's nudge: <code>x := x + Layer(x)</code>.
+	Notice how tokens that are semantically related gradually cluster together.
     </div>
 </div>
 
