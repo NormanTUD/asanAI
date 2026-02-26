@@ -34,7 +34,7 @@ $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\
             margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
     <div style="text-align:center; margin-bottom:12px;">
         <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-	    🔄 The Autoregressive Loop — One Word at a Time
+	    🔄 The Autoregressive Loop: One Word at a Time
 	</span>
     </div>
     <div id="autoregressive-viz" style="min-height:200px;"></div>
@@ -55,7 +55,6 @@ $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\
 
 The LLM learned to predict the next word by reading **massive** amounts of text (books, websites, articles) and noticing patterns in how language works. But how does it actually go from a string of words to a prediction? Let's walk through it.
 
-
 ### Step 1: Tokenization
 
 Computers don't understand words. They understand numbers. So the very first thing an LLM does is **chop the input into small pieces called tokens**.
@@ -74,7 +73,7 @@ What it splits and where is dependent on the data it has seen. It choses that au
 	    margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
     <div style="text-align:center; margin-bottom:12px;">
 	<span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-	    ✂️ Step 1: Tokenization — Chopping Text into Pieces
+	    ✂️ Step 1: Tokenization: Chopping Text into Pieces
 	</span>
     </div>
     <input type="text" id="tokenizer-input"
@@ -112,7 +111,7 @@ The direction from "man" to "woman" represents something like the concept of gen
 	    margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
     <div style="text-align:center; margin-bottom:12px;">
 	<span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-	    📍 Step 2: Embedding — Words as Points in Space
+	    📍 Step 2: Embedding: Words as Points in Space
 	</span>
     </div>
     <input type="text" id="embedding-viz-input"
@@ -154,7 +153,7 @@ This is required, because the embedding and attention operations have no built-i
 	    margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
     <div style="text-align:center; margin-bottom:12px;">
 	<span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-	    📐 Step 3: Positional Encoding — Where Am I in the Sentence?
+	    📐 Step 3: Positional Encoding: Where Am I in the Sentence?
 	</span>
     </div>
 
@@ -218,7 +217,7 @@ Neither the **Attention Heads** nor the **Neural Network** are configured by han
 </div>
 
 <!-- ============================================================ -->
-<!-- STEP 4: TRANSFORMER LAYERS — RESIDUAL STREAM -->
+<!-- STEP 4: TRANSFORMER LAYERS - RESIDUAL STREAM -->
 <!-- ============================================================ -->
 <div id="residual-stream-plot"></div>
 
@@ -265,7 +264,7 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
             margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
     <div style="text-align:center; margin-bottom:12px;">
         <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-            🎯 Step 5: The Final Prediction — Probability over Vocabulary
+            🎯 Step 5: The Final Prediction: Probability over Vocabulary
         </span>
         <div style="font-size:0.85em; color:#64748b; margin-top:4px;">
             Input: "Once upon a" → What comes next?
@@ -286,11 +285,19 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
 
     <div style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8em; color:#64748b;">
         💡 <b>Temperature</b> controls randomness. At T→0, the model always picks the top word (greedy).
-        At high T, the distribution flattens and rare words get a chance — that's what makes LLMs "creative."
+        At high T, the distribution flattens and rare words get a chance, that's what makes LLMs "creative."
         The model doesn't "know" the answer; it assigns probabilities and <b>samples</b>.
     </div>
 </div>
 
 <div class="md">
-**The key insight:** There is no "understanding" module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
+## The key insight
+
+There is no "understanding" module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
+
+## What this tutorial will be about
+
+We will try to cover every topic here in as much detail as is required to really understand them, from the point of view of a programmer, a mathematician and a historian. We will try to find which ideas lead to this type of system, and how they all work and play together.
+
+
 </div>
