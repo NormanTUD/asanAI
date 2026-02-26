@@ -1,4 +1,10 @@
 window.bibData = {
+	"poincareembeddings": {
+		url: "https://arxiv.org/abs/1705.08039",
+		year: 2017,
+		title: "Poincaré Embeddings for Learning Hierarchical Representations",
+		author: "Maximilian Nickel, Douwe Kiela"
+	},
 	"adam": {
 		title: "Adam: A Method for Stochastic Optimization",
 		year: 2014,
