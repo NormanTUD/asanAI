@@ -228,10 +228,9 @@ This perspective is formalised in \citetitle{elhage2021mathematical}, which iden
 There is, however, a deeper information-theoretic consequence to this additive
 architecture that the "shared bus" metaphor alone does not capture. The
 Information Bottleneck principle, formalised by
-\citeauthor{tishby2000informationbottleneck}, states that optimal
+\citeauthorlastnameand{tishby2000informationbottleneck}, states that optimal
 representations compress the input $X$ while retaining maximal information about
-the target $Y$, governed by the trade-off
-$\min_T I(X;T) - \beta \cdot I(T;Y)$. In the Transformer, the residual stream
+the target $Y$. In the Transformer, the residual stream
 has a fixed dimensionality $d_{\text{model}}$ regardless of sequence length. As
 information accumulates across layers, an ever-increasing volume of context must
 be compressed into this fixed-width channel. Each layer's attention heads and
