@@ -4,7 +4,7 @@
 
 ### Historical Context
 
-The idea of hierarchical visual feature detection was first introduced by \citeauthor{neocognitron} in \citeyear{neocognitron} in his landmark paper about the "\cite[Neocognitron]{neocognitron}", which was directly inspired by \citeauthorlastnameand{hubelwiesel}'s Nobel Prize–winning research on the mammalian visual cortex. Years later, \citeauthor{lecun1989backpropagation} made the concept practical in \citeyear{lecun1989backpropagation} by combining convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service, the first commercially deployed convolutional neural network.
+The idea of hierarchical visual feature detection was first introduced by \citeauthor{neocognitron} in \citeyear{neocognitron} in his landmark paper about the \cite[Neocognitron]{neocognitron}, which was directly inspired by \citeauthorlastnameand{hubelwiesel}'s Nobel Prize–winning research on the mammalian visual cortex. Years later, \citeauthor{lecun1989backpropagation} made the concept practical in \citeyear{lecun1989backpropagation} by combining convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service, the first commercially deployed convolutional neural network.
 
 \citeauthorlastnameand{hubelwiesel}'s paper serves as the direct biological blueprint for Convolutional Neural Networks (CNNs):
 
