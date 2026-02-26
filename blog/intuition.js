@@ -1302,60 +1302,60 @@ const AutoregressiveViz = {
 // ============================================================
 
 function loadIntuitionVizModule() {
-    // Step 1: Tokenizer
-    const tokInput = document.getElementById('tokenizer-input');
-    if (tokInput) {
-        tokInput.addEventListener('input', () => TokenizerViz.render());
-        TokenizerViz.render();
-    }
+	// Step 1: Tokenizer
+	const tokInput = document.getElementById('tokenizer-input');
+	if (tokInput) {
+		tokInput.addEventListener('input', () => TokenizerViz.render());
+		TokenizerViz.render();
+	}
 
-    // Step 2: Embedding
-    const embInput = document.getElementById('embedding-viz-input');
-    if (embInput) {
-        embInput.addEventListener('input', () => EmbeddingViz.render());
-    }
-    const embArithInput = document.getElementById('embedding-arithmetic-input');
-    if (embArithInput) {
-        embArithInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') EmbeddingViz.doArithmetic();
-        });
-    }
-    EmbeddingViz.render();
+	// Step 2: Embedding
+	const embInput = document.getElementById('embedding-viz-input');
+	if (embInput) {
+		embInput.addEventListener('input', () => EmbeddingViz.render());
+	}
+	const embArithInput = document.getElementById('embedding-arithmetic-input');
+	if (embArithInput) {
+		embArithInput.addEventListener('keyup', (e) => {
+			if (e.key === 'Enter') EmbeddingViz.doArithmetic();
+		});
+	}
+	EmbeddingViz.render();
 	EmbeddingViz.doArithmetic()
 
-    // Step 3: Positional Encoding
-    const peSlider = document.getElementById('pe-num-dims');
-    if (peSlider) {
-        peSlider.addEventListener('input', () => PositionalEncodingViz.render());
-    }
-    PositionalEncodingViz.render();
-    PositionalEncodingViz.renderAdditionDemo();
+	// Step 3: Positional Encoding
+	const peSlider = document.getElementById('pe-num-dims');
+	if (peSlider) {
+		peSlider.addEventListener('input', () => PositionalEncodingViz.render());
+	}
+	PositionalEncodingViz.render();
+	PositionalEncodingViz.renderAdditionDemo();
 
-    // Position demo controls
-    ['pe-demo-word', 'pe-demo-pos1', 'pe-demo-pos2'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', () => PositionalEncodingViz.renderAdditionDemo());
-    });
+	// Position demo controls
+	['pe-demo-word', 'pe-demo-pos1', 'pe-demo-pos2'].forEach(id => {
+		const el = document.getElementById(id);
+		if (el) el.addEventListener('input', () => PositionalEncodingViz.renderAdditionDemo());
+	});
 
-// Step 4: Residual Stream
-ResidualStreamViz.init();
-ResidualStreamViz.render();
-const layerSlider = document.getElementById('residual-stream-layer');
-if (layerSlider) {
-    layerSlider.addEventListener('input', function () {
-        ResidualStreamViz.setLayer(parseInt(this.value));
-    });
-}
+	// Step 4: Residual Stream
+	ResidualStreamViz.init();
+	ResidualStreamViz.render();
+	const layerSlider = document.getElementById('residual-stream-layer');
+	if (layerSlider) {
+		layerSlider.addEventListener('input', function () {
+			ResidualStreamViz.setLayer(parseInt(this.value));
+		});
+	}
 
-    // Step 5: Prediction
-    const tempSlider = document.getElementById('prediction-temperature');
-    if (tempSlider) {
-        tempSlider.addEventListener('input', () => PredictionViz.render());
-    }
-    PredictionViz.render();
+	// Step 5: Prediction
+	const tempSlider = document.getElementById('prediction-temperature');
+	if (tempSlider) {
+		tempSlider.addEventListener('input', () => PredictionViz.render());
+	}
+	PredictionViz.render();
 
-    // Autoregressive loop
-    AutoregressiveViz.render();
+	// Autoregressive loop
+	AutoregressiveViz.render();
 }
 
 async function loadIntuitionModule() {
