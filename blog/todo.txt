@@ -1,3 +1,6 @@
+5. The "Residual Stream" as the Central Narrative
+You mention the residual stream in several places (embeddings, the GWT analogy, geodesics), but you could unify these into a single powerful aha-moment section. The key insight from Elhage et al. (2021) is that the residual stream is the primary object — attention heads and MLPs are just readers and writers to this shared bus. Each layer doesn't transform the representation; it adds a correction. This reframes the entire Transformer: it's not a pipeline, it's a collaborative editing process where dozens of specialists each scribble annotations on the same document 
+
 4. The Connection Between Attention and Retrieval-Augmented Memory
 Your attention explanation is excellent, but you could draw a deeper parallel: attention is essentially a differentiable database lookup. The Query is the search query, the Keys are the index, and the Values are the stored records. This connects to:
     Why RAG (Retrieval-Augmented Generation) works — it's literally extending the Key-Value store beyond the model's weights
