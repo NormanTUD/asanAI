@@ -75,10 +75,6 @@ Show users why LLMs can't count letters. Let them type "strawberry" and watch th
 16. An Interactive "Residual Stream" Visualizer
 Given how central the residual stream is to your narrative, an interactive where users can watch a token's vector get incrementally nudged by each attention head and MLP layer — showing the actual vector additions — would be a powerful aha-moment. Users could toggle individual heads on/off to see their contribution.
 
-15. The "Dead Internet Theory" and Synthetic Data Loops
-You cover model collapse well, but the societal dimension deserves expansion. The Dead Internet Theory — originally a conspiracy theory — is becoming partially real: an increasing fraction of web content is AI-generated. If Common Crawl 2026 contains 30% synthetic text, and that text is used to train the next generation of models, we get a feedback loop that's mathematically identical to your model collapse discussion but with civilizational implications. The pre-AI internet becomes like your "low-background steel" — a finite, non-renewable resource 
-
-
 14. Copyright and the "Blurry JPEG" Analogy
 You touch on data rights in the ethics section, but Ted Chiang's framing deserves mention: an LLM is a "blurry JPEG of the web". It's a lossy compression of its training data. This analogy makes the copyright question visceral: if you compress a copyrighted book into a JPEG and then "decompress" it (generate text), is the output a derivative work? This connects directly to your discussion of the model as a "universal compressor" 
 
