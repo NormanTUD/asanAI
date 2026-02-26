@@ -1282,14 +1282,40 @@ const AutoregressiveViz = {
         return output === '|endoftext|';
     },
 
-    renderStopPrediction: function() {
-        return `<span style="background:#fee2e2; color:#dc2626; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out;">⏹ STOP</span>`;
-    },
+    // In AutoregressiveViz, replace these three methods:
 
-    renderWordPrediction: function(output) {
-        return `<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out;">${output}</span>`;
-    },
+renderStopPrediction: function() {
+    return `<span style="background:#fee2e2; color:#dc2626; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out; cursor:pointer;"
+                  onclick="AutoregressiveViz.clickAdvance()"
+            >⏹ STOP</span>`;
+},
 
+renderWordPrediction: function(output) {
+    return `<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out; cursor:pointer; transition: background 0.15s;"
+                  onmouseover="this.style.background='#bfdbfe'"
+                  onmouseout="this.style.background='#dbeafe'"
+                  onclick="AutoregressiveViz.clickAdvance()"
+                  title="Click to add this word and continue"
+            >${output}</span>`;
+},
+
+// Add this new method to AutoregressiveViz:
+clickAdvance: function() {
+    // If currently animating, don't interfere
+    if (this.animating) return;
+
+    // If we're at the last step, reset
+    if (this.isAtEnd()) {
+        this.reset();
+        return;
+    }
+
+    // Advance to the next step and re-render
+    this.advanceStep();
+    this.render();
+},
+
+    
     buildPredictionHtml: function(output) {
         if (this.isEndToken(output)) {
             return this.renderStopPrediction();
