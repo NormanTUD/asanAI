@@ -37,4 +37,85 @@ Residue stream as global workbook where many "expert" systems for many small thi
 Then neural networks to decide based on the infos they learnt, where the next would should be.
 
 This document will look into all of those steps in great detail.
+
+
+
+
+
+## How does the network do that?
+
+The LLM learned to predict the next word by reading **massive** amounts of text (books, websites, articles) and noticing patterns in how language works. But how does it actually go from a string of words to a prediction? Let's walk through it.
+
+
+### Step 1: Tokenization
+
+Computers don't understand words. They understand numbers. So the very first thing an LLM does is **chop the input into small pieces called tokens**.
+
+$$\text{"Once upon a time"} \rightarrow [\text{"Once"}, \ \text{"upon"}, \ \text{"a"}, \ \text{"time"}]$$
+
+Most tokens are common words or word fragments. For example, `"understanding"` might be split into `"under"` + `"standing"`, two tokens. This way the model can handle words it has never seen before by combining pieces it *has* seen.
+
+
+### Step 2: Embedding
+
+A raw token doesn't tell the model anything about what a word *means*. So the model replaces each token with a **long list of numbers** (called a vector) that represents its meaning.
+
+$$\text{"king"} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$
+
+These vectors live in a high-dimensional space where **words with similar meanings end up close together**. "King" and "queen" are near each other. "Banana" and "monarchy" are far apart. Nobody hand-designs these vectors. The model learns them automatically during training, purely from seeing which words appear in similar contexts across billions of sentences.
+
+What's remarkable is that this space captures *relationships*, not just similarity. The most famous example:
+
+$$\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{queen}}$$
+
+The direction from "man" to "woman" represents something like the concept of gender. That same direction, applied to "king," lands you right next to "queen." The model was never told any of this. These relationships emerge on their own, just from reading text.
+
+
+### Step 3: Positional Encoding
+
+"The dog bites man" means something very different from "The man bites dog." Same words, different order. So a **positional encoding** is added to each token's embedding, a unique signal that says "I'm the 1st word," "I'm the 2nd word," and so on.
+
+$$\text{Final Input} = \text{Embedding}(\text{token}) + \text{Position}(\text{index})$$
+
+Now each token carries two pieces of information: **what it is** and **where it is**.
+
+This is required, because the embedding and attention operations have no built-in notion of sequence order, so without it, "dog bites man" and "man bites dog" would look identical to the model.
+
+### Step 4: The Transformer Layers
+
+This is the heart of the model. The token vectors flow through **many layers** stacked on top of each other (modern LLMs can have 80+ layers). Each layer refines the model's understanding a little more.
+
+You can think of the token vectors as a **shared notebook** (researchers call it the *residual stream*). Each layer reads from the notebook, does some thinking, and **writes its findings back**:
+
+$$\mathbf{x} := \mathbf{x} + \text{Layer}(\mathbf{x})$$
+
+The `+ x` means each layer **adds** information rather than replacing it. Nothing learned earlier gets thrown away.
+
+Inside each layer, two things happen:
+
+#### 4a: Attention - "Which other words matter for *this* word?"
+
+Attention lets the model **look at other tokens** to understand context. In *"The cat sat on the mat because **it** was tired"*, what does "it" refer to? An **attention head** figures this out by comparing "it" to every other word and deciding that "it" is most related to "cat."
+
+The model has **many attention heads** running in parallel, each a tiny specialist. One might track which noun a pronoun refers to, another might connect verbs to their objects, another might notice adjectives describing nearby nouns.
+
+#### 4b: Feed-Forward Network - "What do I conclude?"
+
+After attention has gathered context, a small **neural network** processes each token individually. This is where the model applies knowledge it memorized during training: facts, patterns, and rules of language.
+
+If attention is *gathering clues*, the feed-forward network is *drawing conclusions*.
+
+
+### Step 5: The Final Prediction
+
+After all layers, the model takes the **last token's vector** and produces a **score for every word in the vocabulary** (often 50,000+ words). These scores are converted into probabilities:
+
+$$P(\text{"time"}) = 0.72, \quad P(\text{"day"}) = 0.08, \quad P(\text{"hill"}) = 0.002, \quad \ldots$$
+
+The model then **picks a word**, usually one of the top candidates, with a bit of randomness so it doesn't always say the exact same thing. That's what makes it creative.
+
+And then, as we saw in Part I, that word gets appended to the input and the whole process repeats, one word at a time, until the model decides it's done.
+
+**The key insight:** There is no "understanding" module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
+
 </div>
