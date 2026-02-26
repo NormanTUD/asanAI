@@ -1,3 +1,7 @@
+9. KV-Cache: Why Inference Is Cheaper Than You Think
+You explain the autoregressive loop but don't mention the KV-cache, which is the key engineering insight that makes inference practical. During generation, the Keys and Values for all previous tokens don't change — only the new token's Q, K, V need to be computed. So the model caches all previous K and V tensors, turning each generation step from O(n2)O(n2) to O(n)O(n). This is why LLMs can generate long sequences at reasonable speed, and why context window size is primarily a memory constraint, not a compute constraint 
+
+
 6. Why Cross-Entropy Loss Specifically?
 You explain MSE and Cross-Entropy as loss functions, but the deeper aha-moment is why cross-entropy is the natural choice for classification. It comes from information theory: minimizing cross-entropy is equivalent to maximizing the likelihood of the training data under the model's predicted distribution. And the gradient of cross-entropy with softmax is the beautifully simple (ppred−ptrue)(ppred​−ptrue​) — the error signal is just "how wrong were you?" This is why it pairs so perfectly with softmax
 .
