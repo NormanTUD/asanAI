@@ -536,7 +536,9 @@ increasing compute cost. The core idea, first proposed in
 multiple parallel FFN sub-networks (experts) alongside a learned gating
 network that routes each input to the most relevant expert, a
 "divide and conquer" approach where specialised networks handle
-different regions of the input space. This concept remained difficult to
+different regions of the input space.
+
+This concept remained difficult to
 scale until \cite[the Sparsely-Gated MoE layer]{shazeer2017moe}
 introduced the critical principle of \textbf{sparsity}: instead of
 activating all experts for every token, a sparse gating function selects
