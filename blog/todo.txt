@@ -1,3 +1,11 @@
+12. The "Waluigi Effect" and Jailbreaking
+Your section on hallucinations and safety is strong, but you could add the Waluigi Effect — the observation that for every "helpful assistant" persona (Luigi) the model learns during RLHF, there exists an equally coherent "evil assistant" persona (Waluigi) in the model's latent space. Jailbreaking is essentially finding prompts that navigate from Luigi to Waluigi. This connects to your superposition discussion: both personas coexist as directions in the same high-dimensional space 
+
+11. The "Stochastic Parrot" Debate Has a Counterargument
+You present Bender's Stochastic Parrot thesis well, but the strongest counterargument deserves mention: Othello-GPT (Li et al., 2023). Researchers trained a GPT model purely on sequences of Othello moves (just text tokens like "C4", "D3"). When they probed the model's internal representations, they found it had learned a complete, accurate internal model of the board state — despite never being shown a board. This suggests that next-token prediction on sufficient data can produce genuine world models, not just surface statistics. The aha-moment: the parrot might actually understand the cage
+.
+
+
 10. Mixture of Experts (MoE): Not All Parameters Are Active
 You discuss parameter counts (175B for GPT-3), but modern models like Mixtral and likely GPT-4 use Mixture of Experts architectures, where only a fraction of parameters are active for any given token. The aha-moment: a model can have 1 trillion parameters but only use 50 billion per forward pass. This breaks the intuition that "bigger model = proportionally more compute" and connects back to the Lottery Ticket idea 
 
