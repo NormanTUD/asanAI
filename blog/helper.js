@@ -482,16 +482,11 @@ function bibtexify() {
 			const lastWord = linkWords.pop(); // Get the last word
 			const precedingText = linkWords.join(" "); // All but the last word
 
-			// Wrap the last word and SVG icon together in a single <a> tag
-			const lastWordWithIcon = data.url
-				? `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer; white-space: nowrap;">${lastWord}${svgIcon}</a>`
-				: `<span style="white-space: nowrap;">${lastWord}</span>`;
+			// Combine the preceding text, last word, and SVG icon into a single <a> tag
+			const fullLink = `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer; white-space: nowrap;">${precedingText} ${lastWord}${svgIcon}</a>`;
 
 			// Return the final citation element
-			return `<span class="autociteelement">
-    <a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${precedingText}</a>
-    ${lastWordWithIcon}
-</span>`;
+			return `<span class="autociteelement">${fullLink}</span>`;
 		});
 
 		content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
