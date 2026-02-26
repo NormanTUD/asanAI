@@ -725,6 +725,56 @@ const ResidualStreamViz = {
 		this._syncControls();
 	},
 
+	drawArrowHead: function(x, y, angle, color) {
+		const h = 8;
+		this.ctx.fillStyle = color;
+		this.ctx.beginPath();
+		this.ctx.moveTo(x, y);
+		this.ctx.lineTo(x - h * Math.cos(angle - 0.5), y - h * Math.sin(angle - 0.5));
+		this.ctx.lineTo(x - h * Math.cos(angle + 0.5), y - h * Math.sin(angle + 0.5));
+		this.ctx.fill();
+	},
+
+	handleCanvasClick: function (e) {
+		const rect = this.canvas.getBoundingClientRect();
+		const scale = this.canvas.width / (window.devicePixelRatio || 1) / rect.width;
+		const clickY = (e.clientY - rect.top) * scale;
+
+		// Accurate hit-box detection
+		for (let l = 0; l <= this.numLayers; l++) {
+			const yBase = this.topPad + l * this.rowH;
+			if (clickY >= yBase && clickY <= yBase + this.rowH) {
+				this.currentLayer = l;
+				// Force immediate UI sync
+				this.renderFrame();
+				this._updateInfo();
+				this._syncControls();
+				break; 
+			}
+		}
+	},
+
+	drawVerticalStreamArrows: function(l, layout) {
+		if (l >= this.numLayers) return;
+		const { streamX, vecW, yBase, cellH, alpha } = layout;
+		const nextY = yBase + this.rowH;
+		const centerX = streamX + (vecW / 2);
+
+		// Arrow starts after the last token in the current block
+		const startY = yBase + (this.tokens.length * (cellH + 3)) + 5;
+
+		this.ctx.globalAlpha = l < this.currentLayer ? 0.8 : 0.2;
+		this.ctx.beginPath();
+		this.ctx.moveTo(centerX, startY);
+		this.ctx.lineTo(centerX, nextY - 15);
+		this.ctx.strokeStyle = '#3b82f6'; // Blue stream color
+		this.ctx.lineWidth = 3;
+		this.ctx.stroke();
+
+		// Arrow head
+		this.drawArrowHead(centerX, nextY - 15, Math.PI / 2, '#3b82f6');
+	},
+
 	renderFrame: function () {
 		const ctx = this.ctx;
 		if (!ctx) return;
@@ -737,6 +787,7 @@ const ResidualStreamViz = {
 
 			this.drawLayerBackground(l, layout);
 			this.drawStream(l, layout);
+			this.drawVerticalStreamArrows(l, layout); // Added vertical flow
 
 			if (l >= 1) {
 				this.drawProcessingBlocks(l, layout);
@@ -745,8 +796,6 @@ const ResidualStreamViz = {
 			}
 		}
 	},
-
-	// ── Refactored Sub-Methods ──
 
 	clearAndSetupCanvas: function() {
 		this.ctx.clearRect(0, 0, this.W, this.H);
@@ -855,14 +904,19 @@ const ResidualStreamViz = {
 	drawReturnArrow: function(l, layout, arrowLW, arrowAlpha) {
 		const { yBase, ffnBoxX, vecW, streamX, tokenBlockH, isCurrent } = layout;
 		const ffnBoxW = vecW * 0.75 + 10;
-		const verticalStreamX = streamX + vecW / 2;
-		const returnY = yBase + tokenBlockH + 30;
+		const centerX = streamX + vecW / 2;
+
+		// Start from bottom-center of the FFN box
+		const startX = ffnBoxX + (ffnBoxW / 2);
+		const startY = yBase + tokenBlockH + 15;
+		const returnY = yBase + tokenBlockH + 40;
 
 		this.ctx.globalAlpha = arrowAlpha;
 		this.ctx.beginPath();
-		this.ctx.moveTo(ffnBoxX + ffnBoxW - 10, yBase + 25);
-		this.ctx.bezierCurveTo(ffnBoxX + ffnBoxW + 40, returnY + 20, verticalStreamX + 40, returnY + 20, verticalStreamX + 2, returnY);
-		this.ctx.strokeStyle = '#10b981';
+		this.ctx.moveTo(startX, startY);
+		// Curve back to the center of the stream
+		this.ctx.bezierCurveTo(startX, returnY + 20, centerX + 40, returnY + 20, centerX, returnY + 10);
+		this.ctx.strokeStyle = '#10b981'; // Green addition color
 		this.ctx.lineWidth = arrowLW;
 		this.ctx.stroke();
 
@@ -870,11 +924,11 @@ const ResidualStreamViz = {
 			this.ctx.globalAlpha = 1;
 			this.ctx.fillStyle = '#10b981';
 			this.ctx.beginPath();
-			this.ctx.arc(verticalStreamX, returnY, 8, 0, Math.PI * 2);
+			this.ctx.arc(centerX, returnY + 10, 8, 0, Math.PI * 2);
 			this.ctx.fill();
 			this.ctx.fillStyle = '#fff';
 			this.ctx.textAlign = 'center';
-			this.ctx.fillText('+', verticalStreamX, returnY + 4);
+			this.ctx.fillText('+', centerX, returnY + 14);
 		}
 	},
 
