@@ -65,8 +65,31 @@ Computers don't understand words. They understand numbers. So the very first thi
 $$\text{"Once upon a time"} \rightarrow [\text{"Once"}, \ \text{"upon"}, \ \text{"a"}, \ \text{"time"}]$$
 
 Most tokens are common words or word fragments. For example, `"understanding"` might be split into `"under"` + `"standing"`, two tokens. This way the model can handle words it has never seen before by combining pieces it *has* seen.
+</div>
 
+<!-- ============================================================ -->
+<!-- STEP 1: TOKENIZATION VISUALIZATION -->
+<!-- ============================================================ -->
+<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
+            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
+    <div style="text-align:center; margin-bottom:12px;">
+        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
+            ✂️ Step 1: Tokenization — Chopping Text into Pieces
+        </span>
+    </div>
+    <input type="text" id="tokenizer-input"
+           style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:1em; margin-bottom:12px;"
+           placeholder="Type something... e.g., 'The transformer is playing greatly'"
+           value="The transformer is playing greatly">
+    <div id="tokenizer-output" style="min-height:60px;"></div>
+    <div id="tokenizer-stats" style="margin-top:10px;"></div>
+    <div style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8em; color:#64748b;">
+        💡 Try typing <b>"understanding"</b> or <b>"unbreakable"</b> to see subword splitting in action.
+        The model breaks unknown words into known pieces it learned during training.
+    </div>
+</div>
 
+<div class="md">
 ### Step 2: Embedding
 
 A raw token doesn't tell the model anything about what a word *means*. So the model replaces each token with a **long list of numbers** (called a vector) that represents its meaning.
@@ -80,8 +103,42 @@ What's remarkable is that this space captures *relationships*, not just similari
 $$\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{queen}}$$
 
 The direction from "man" to "woman" represents something like the concept of gender. That same direction, applied to "king," lands you right next to "queen." The model was never told any of this. These relationships emerge on their own, just from reading text.
+</div>
 
+<!-- ============================================================ -->
+<!-- STEP 2: EMBEDDING VISUALIZATION -->
+<!-- ============================================================ -->
+<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
+            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
+    <div style="text-align:center; margin-bottom:12px;">
+        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
+            📍 Step 2: Embedding — Words as Points in Space
+        </span>
+    </div>
+    <input type="text" id="embedding-viz-input"
+           style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:1em; margin-bottom:8px;"
+           placeholder="Type words to highlight (e.g., king queen man woman)"
+           value="king queen man woman">
+    <div id="embedding-viz-plot" style="height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
 
+    <!-- Vector Arithmetic -->
+    <div style="margin-top:14px; padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
+        <div style="font-weight:bold; color:#1e293b; margin-bottom:8px;">🧮 Vector Arithmetic</div>
+        <div style="display:flex; gap:8px;">
+            <input type="text" id="embedding-arithmetic-input"
+                   style="flex:1; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-family:monospace;"
+                   placeholder="e.g., king - man + woman"
+                   value="king - man + woman">
+            <button onclick="EmbeddingViz.doArithmetic()"
+                    style="background:#3b82f6; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">
+                Compute
+            </button>
+        </div>
+        <div id="embedding-arithmetic-result" style="margin-top:8px; min-height:24px;"></div>
+    </div>
+</div>
+
+<div class="md">
 ### Step 3: Positional Encoding
 
 "The dog bites man" means something very different from "The man bites dog." Same words, different order. So a **positional encoding** is added to each token's embedding, a unique signal that says "I'm the 1st word," "I'm the 2nd word," and so on.
@@ -130,64 +187,6 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
 **The key insight:** There is no "understanding" module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
 
 </div>
-
-
-<!-- ============================================================ -->
-<!-- STEP 1: TOKENIZATION VISUALIZATION -->
-<!-- ============================================================ -->
-<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
-            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
-    <div style="text-align:center; margin-bottom:12px;">
-        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-            ✂️ Step 1: Tokenization — Chopping Text into Pieces
-        </span>
-    </div>
-    <input type="text" id="tokenizer-input"
-           style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:1em; margin-bottom:12px;"
-           placeholder="Type something... e.g., 'The transformer is playing greatly'"
-           value="The transformer is playing greatly">
-    <div id="tokenizer-output" style="min-height:60px;"></div>
-    <div id="tokenizer-stats" style="margin-top:10px;"></div>
-    <div style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8em; color:#64748b;">
-        💡 Try typing <b>"understanding"</b> or <b>"unbreakable"</b> to see subword splitting in action.
-        The model breaks unknown words into known pieces it learned during training.
-    </div>
-</div>
-
-
-<!-- ============================================================ -->
-<!-- STEP 2: EMBEDDING VISUALIZATION -->
-<!-- ============================================================ -->
-<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
-            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
-    <div style="text-align:center; margin-bottom:12px;">
-        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-            📍 Step 2: Embedding — Words as Points in Space
-        </span>
-    </div>
-    <input type="text" id="embedding-viz-input"
-           style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; box-sizing:border-box; font-size:1em; margin-bottom:8px;"
-           placeholder="Type words to highlight (e.g., king queen man woman)"
-           value="king queen man woman">
-    <div id="embedding-viz-plot" style="height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-
-    <!-- Vector Arithmetic -->
-    <div style="margin-top:14px; padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
-        <div style="font-weight:bold; color:#1e293b; margin-bottom:8px;">🧮 Vector Arithmetic</div>
-        <div style="display:flex; gap:8px;">
-            <input type="text" id="embedding-arithmetic-input"
-                   style="flex:1; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-family:monospace;"
-                   placeholder="e.g., king - man + woman"
-                   value="king - man + woman">
-            <button onclick="EmbeddingViz.doArithmetic()"
-                    style="background:#3b82f6; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">
-                Compute
-            </button>
-        </div>
-        <div id="embedding-arithmetic-result" style="margin-top:8px; min-height:24px;"></div>
-    </div>
-</div>
-
 
 <!-- ============================================================ -->
 <!-- STEP 3: POSITIONAL ENCODING VISUALIZATION -->
