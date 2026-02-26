@@ -401,7 +401,7 @@ The diagonal reads $\frac{1}{1},\; \frac{1}{2},\; \frac{1}{3},\; \frac{1}{4},\; 
 
 ### What the heads actually react to
 
-In the paper \citetitle{analyzingmultiheads}, the study identified that the most "important" heads often perform three specific, interpretable functions:
+In the paper \citealternativetitle{analyzingmultiheads}, the study identified that the most "important" heads often perform three specific, interpretable functions:
 
 * **Positional Heads**: These heads attend to adjacent tokens, usually the previous or the next token in the sequence. They are essential for capturing the local structural order of the sentence.
 * **Syntactic Heads**: These heads align with specific syntactic dependencies. They show a high success rate in identifying grammatical relationships, such as the relation between a verb and its direct object.
