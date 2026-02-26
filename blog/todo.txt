@@ -1,3 +1,6 @@
+13. Why the Transformer Was Invented for Translation, Not Generation
+Your history section could emphasize that the original "Attention Is All You Need" paper was a machine translation paper. The authors weren't trying to build a chatbot — they were trying to beat LSTMs on English-to-German translation. The discovery that the decoder-only variant could generate coherent text was almost accidental, a byproduct of the architecture's generality. The aha-moment: ChatGPT exists because a translation team at Google accidentally built a universal text generator 
+
 12. The Perceptron Learning Rule Is Hebb's Rule Made Precise
 You cover Hebb ("neurons that fire together wire together") and Rosenblatt's Perceptron separately. The explicit bridge: the Perceptron learning rule Δw=η⋅(target−output)⋅inputΔw=η⋅(target−output)⋅input is a supervised version of Hebb's rule. When the output matches the target, Δw=0Δw=0 (no change). When there's an error, the weight changes in proportion to the input — exactly "fire together, wire together," but with an error signal. The aha-moment: Rosenblatt didn't invent a new idea — he gave Hebb's biological intuition a mathematical error-correction mechanism 
 
