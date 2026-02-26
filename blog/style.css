@@ -883,3 +883,10 @@ pre, code, .status-console, .matrix-input {
 #sticky-input-wrapper.is-stuck {
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
+.external_link_icon {
+	max-width: 1em;
+	max-height: 1em;
+	display: inline-block;
+	margin-left: 0.5rem;
+}
