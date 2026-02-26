@@ -374,6 +374,25 @@ This systematic change in attention patterns can be categorized as follows:
 
 By switching between layers in a visualization, you can observe this transition from raw data processing to complex, abstracted analysis.
 
+### Why calculating the Query-Key-Values is not as expensive as it looks like
+
+The KV Cache is an optimization that prevents $\mathcal{O}(T^2)$ redundancy during generation.
+Since the Transformer is autoregressive, the hidden states of past tokens
+remain static once computed. Instead of re-processing the entire
+sequence for every new word, we store the Key ($K$) and Value ($V$)
+vectors in a dedicated cache.
+
+During each step of inference:
+1. Only the newest token is projected into its $Q$, $K$, and $V$ components.
+2. This new $K$ and $V$ pair is added to the cache history.
+3. The current Query ($Q$) performs a dot-product attention against all
+   cached Keys to determine relevance.
+4. The result is used to weigh the cached Values, producing the next
+   hidden state without re-calculating the past.
+
+This reduces the computational complexity of the projection phase from
+linear to constant time relative to sequence length.
+
 ## 7. Mathematical Assembly: Concatenation and $h_1$
 
 ### Concatenation Definition
