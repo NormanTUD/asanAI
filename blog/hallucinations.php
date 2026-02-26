@@ -226,15 +226,20 @@ This leads to several critical issues:
 - **Lack of a Global State**: LLMs process information linearly. They lack a "scratchpad" or a centralized registry to store carrying values or intermediate remainders unless explicitly prompted to do so via **Chain-of-Thought** techniques.
 
 You should treat LLM math outputs as "informed guesses" rather than hard facts. Because the model is optimized for **plausibility** over **precision**, it can provide a wrong answer with extreme confidence, making the error difficult to spot at a glance. For high-stakes calculations, it is always safer to use a symbolic calculator or have the model generate Python code to execute the logic.
-</div>
 
+### Tool Use as Mitigation
 
-<div class="md">
+Modern LLMs like GPT-4 and Claude can call external tools, calculators, Python interpreters, or Wolfram Alpha, to outsource arithmetic to deterministic symbolic systems. Instead of "guessing" that $14 \times 18 = 252$ via next-token prediction, the model delegates the computation and returns a verified result.
+
+This is a practical instantiation of the **\cite[Extended Mind Thesis]{clark1998extended}**: the LLM extends its cognitive architecture to compensate for its statistical weaknesses, much like a human using a calculator.
+
+**Note:** The model must still correctly *formulate* the problem before delegating it. If it sends the wrong expression to the calculator, the result will be precisely wrong.
+
 ## Covariate Shift: The "Knowledge Cutoff" Problem
 
 In statistics, **Covariate Shift** occurs when the distribution of the input variables changes between the training phase and the production phase. For an LLM, the training data is a "snapshot" of human knowledge up to a certain date.
 
-When you ask a model that was trained on data up to 2024 about an event from 2025, you are providing "Out-of-Distribution" (OOD) data. The model tries to map this new "territory" onto its old "map." Because the statistical overlap is low, the model's confidence intervals collapse, leading it to "fill in the gaps" with high-probability but factually incorrect tokens—a hallucination.
+When you ask a model that was trained on data up to 2024 about an event from 2025, you are providing "Out-of-Distribution" (OOD) data. The model tries to map this new "territory" onto its old "map." Because the statistical overlap is low, the model's confidence intervals collapse, leading it to "fill in the gaps" with high-probability but factually incorrect tokens, a hallucination.
 </div>
 
 <div class="statlab-interactive-zone">
