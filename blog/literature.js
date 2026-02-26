@@ -1,4 +1,10 @@
 window.bibData = {
+	"neuralturingmachinestwo": {
+		url: "https://blog.acolyer.org/2016/03/09/neural-turing-machines/",
+		title: "Neural Turing Machines",
+		year: 2016,
+		author: "Adrian Colyer"
+	},
 	"neuralturingmachines": {
 		title: "Neural Turing Machines",
 		url: "https://arxiv.org/pdf/1410.5401",
