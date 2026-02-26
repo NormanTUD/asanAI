@@ -20,10 +20,10 @@
 <div id="contents" style="display: none">
 <?php
 	incl("From $ 1 + 1 = 2 $ to ChatGPT: Beyond the Black Box", "intro");
+	incl("The intuition for what LLMs are", "intuition");
 	incl("Brief History of AI", "history");
 	incl("Basic math concepts", "math");
 	incl("Statistical Foundations: The Language of AI", "statistics");
-	incl("The intuition for what LLMs are", "intuition");
 	incl("Loss: Teaching through Failure", "losslab");
 	/*
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
