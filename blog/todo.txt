@@ -1,3 +1,11 @@
+6. Why Cross-Entropy Loss Specifically?
+You explain MSE and Cross-Entropy as loss functions, but the deeper aha-moment is why cross-entropy is the natural choice for classification. It comes from information theory: minimizing cross-entropy is equivalent to maximizing the likelihood of the training data under the model's predicted distribution. And the gradient of cross-entropy with softmax is the beautifully simple (ppred−ptrue)(ppred​−ptrue​) — the error signal is just "how wrong were you?" This is why it pairs so perfectly with softmax
+.
+7. The Jacobian and Why Backpropagation is a Matrix Chain
+Your autodiff section is thorough, but you could add the insight that backpropagation through a network is really just multiplying a chain of Jacobian matrices. Each layer's local derivative is a Jacobian, and the chain rule is matrix multiplication. The vanishing gradient problem is then immediately obvious: if every Jacobian has singular values < 1, the product shrinks exponentially. ResNets fix this because their Jacobian is I+JFI+JF​ — the identity matrix guarantees singular values ≥ 1 
+
+
+
 5. The "Residual Stream" as the Central Narrative
 You mention the residual stream in several places (embeddings, the GWT analogy, geodesics), but you could unify these into a single powerful aha-moment section. The key insight from Elhage et al. (2021) is that the residual stream is the primary object — attention heads and MLPs are just readers and writers to this shared bus. Each layer doesn't transform the representation; it adds a correction. This reframes the entire Transformer: it's not a pipeline, it's a collaborative editing process where dozens of specialists each scribble annotations on the same document 
 
