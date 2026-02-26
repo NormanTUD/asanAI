@@ -298,6 +298,10 @@ The person was eating the *juicy* **apple**.
 </div>
 
 <div class="md">
+## Attention Heads as Differentiable Turing Machine Read Heads
+
+Graves et al. (2014) introduced the Neural Turing Machine (NTM), demonstrating that a neural network coupled with an external memory and differentiable read/write heads could learn algorithms end-to-end via gradient descent [[1]](https://arxiv.org/pdf/1410.5401) [[2]](https://www.semanticscholar.org/paper/Neural-Turing-Machines-Graves-Wayne/c1126fbffd6b8547a44c58b192b36b08b18299de). The critical mechanism enabling this was an *attentional process* over memory locations — the read head produces a weighting vector with one component per memory cell, determining what to retrieve [[3]](https://blog.acolyer.org/2016/03/09/neural-turing-machines/). What has gone largely unacknowledged is that a standard Transformer during autoregressive generation **is** this architecture. The KV-cache — the growing matrix of past Keys and Values — serves as the external memory tape. Each attention head functions as a differentiable read head: the **Query** is the address request ("what am I looking for?"), the **Keys** are the address tags stored at each memory location, and the **Values** are the content to be retrieved [[4]](file://attentionlab.php). The causal mask enforces that the head can only look backward along the sequence, mirroring a unidirectional tape. A Transformer with *h* attention heads is therefore a learned Turing machine with *h* parallel read heads, where the "program" — what to read and how to combine it — is acquired from data rather than hand-coded. This explains both why Transformers can learn algorithmic tasks (sorting, addition, in-context learning) and why they sometimes fail: the read heads emit *soft*, probabilistic weightings via softmax [[4]](file://attentionlab.php), meaning they can approximate but never perfectly execute the discrete, hard-addressed steps a classical Turing machine performs.
+
 ## The Bottom Line
 Mathematically, the "contextualized" word is just a weighted average of the information (Values) around it:
 $$\mathbf{z}_{i} = \sum_{j} \alpha_{i,j} \mathbf{v}_j$$

@@ -1,4 +1,10 @@
 window.bibData = {
+	"neuralturingmachines": {
+		title: "Neural Turing Machines",
+		url: "https://arxiv.org/pdf/1410.5401",
+		author: "Alex Graves, Greg Wayne, Ivo Danihelka",
+		year: 2014
+	},
 	"belkin2019": {
 		title: "Reconciling modern machine learning practice and the bias-variance trade-off",
 		url: "https://arxiv.org/abs/1812.11118",
