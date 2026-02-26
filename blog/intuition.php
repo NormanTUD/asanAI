@@ -200,15 +200,6 @@ $$\mathbf{x} := \mathbf{x} + \text{Layer}(\mathbf{x})$$
 
 The `x +` means each layer **adds** information rather than replacing it. Nothing learned earlier gets thrown away.
 
-Inside each layer, two things happen:
-
-1. **Attention Heads** are used to determine which input relates to which other input. For example, in the sentence "*The cat sat on the mat*", the "sat" references to the *cat*, but also attends to the *mat*. This nudges each input token to some direction, according to the context it is used in. You can imagine the **Attention Heads** as experts at once very specific tiny task. They do their task, like determining what word relates to what other word, or determining if a word is referencing to the past, present or future, and return.
-2. A **Neural Network** receives all the results from the **Attention Heads** and decides what to do with them.
-
-The result is then returned and simply added to the **Residual Stream**.
-
-Neither the **Attention Heads** nor the **Neural Network** are configured by hand. They learn what to look for by looking at massive amounts of data.
-
 #### 4a: Attention - "Which other words matter for *this* word?"
 
 Attention lets the model **look at other tokens** to understand context. In *"The cat sat on the mat because **it** was tired"*, what does "it" refer to? An **attention head** figures this out by comparing "it" to every other word and deciding that "it" is most related to "cat."
@@ -220,6 +211,10 @@ The model has **many attention heads** running in parallel, each a tiny speciali
 After attention has gathered context, a small **neural network** processes each token individually. This is where the model applies knowledge it memorized during training: facts, patterns, and rules of language.
 
 If attention is *gathering clues*, the feed-forward network is *drawing conclusions*.
+
+The result of both, the Attention Heads and then the Feed-Forward-Network, are then returned and simply added to the **Residual Stream**.
+
+Neither the **Attention Heads** nor the **Neural Network** are configured by hand. They learn what to look for by looking at massive amounts of data.
 </div>
 
 <!-- ============================================================ -->
