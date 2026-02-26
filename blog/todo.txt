@@ -1,3 +1,6 @@
+14. Richardson's "Human GPU Cluster" (1922)
+You mention this in your todo but haven't integrated it. Lewis Fry Richardson proposed weather prediction by having 64,000 humans in a stadium, each computing one cell of a differential equation and passing results to neighbors. This is exactly how modern GPU clusters work: thousands of simple cores, each doing one small computation, passing results to neighbors via high-bandwidth interconnects. The aha-moment: the architecture of modern AI hardware was described by a meteorologist in 1922, using humans as transistors 
+
 13. Why the Transformer Was Invented for Translation, Not Generation
 Your history section could emphasize that the original "Attention Is All You Need" paper was a machine translation paper. The authors weren't trying to build a chatbot — they were trying to beat LSTMs on English-to-German translation. The discovery that the decoder-only variant could generate coherent text was almost accidental, a byproduct of the architecture's generality. The aha-moment: ChatGPT exists because a translation team at Google accidentally built a universal text generator 
 
