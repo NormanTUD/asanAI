@@ -211,6 +211,18 @@ Here, we do **not** use the original Encoder-Decoder architecture from Vaswani e
 
 This is the architecture you are interacting with in every visualization here. When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always near-zero.
 
+### The Residual Stream
+
+<div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 12">
+Everything is in flux.
+</div>
+
+The Transformer's architecture is the mathematical embodiment of Heraclitus’s flux, where the **Residual Stream** serves as a river of hidden harmony. At the input, each token is cast into the **Embedding Space**, a static "geometric fingerprint" that establishes its initial identity. As this vector flows through the network, it enters the **Feature Space**, a dynamic realm where the representation is no longer fixed but "migrates" based on its surroundings. This journey is facilitated by the **skip connection**, an identity term $h_n$ that ensures the original signal is never fully overwritten by the transformations of the layer.
+
+In this stream, the **Attention Heads** and **Feed-Forward Networks (FFN)** operate like a multitude of experts writing into a single, shared notebook: the **Residual Stream**. The Attention Heads function as the "scouts," performing a search through the past to find linguistic relationships, syntax, logic, or rare word patterns, and adding those insights to the vector. Meanwhile, the FFN acts as a repository of learned associations, applying non-linear transformations that function as knowledge retrieval stages for each token independently. 
+
+Crucially, these experts do not replace the page; they merely add their "nudges" to the existing entries. Because the process is additive, the final hidden state $h_{\text{final}}$ is the original identity $h_0$ plus the sum of every expert's contribution. This allows the model to achieve a "hidden harmony" where the token for "king" can evolve through layers of abstract reasoning while still tethered to its source, proving that persistence of identity does not require stasis, but rather a mechanism for carrying the source signal through the flow of transformation.
+
 ### Historical Context: The Original Encoder-Decoder (What We Don't Use)
 
 To appreciate *why* the Decoder-only design dominates, it helps to understand what came before it:
@@ -475,11 +487,6 @@ The following plots visualize how each layer "nudges" the token vectors. Each ar
 
 <div class="md">
 ## 10. From Hidden States to Probabilities
-
-<div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 12">
-Everything is in flux.
-</div>
-
 
 After passing through $N$ layers, we reach the final hidden state, **$h_{\text{final}}$**. To turn this into a word, we project it against the entire vocabulary:
 
