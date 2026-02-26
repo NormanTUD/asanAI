@@ -1185,124 +1185,240 @@ const AutoregressiveViz = {
     animating: false,
     timeoutId: null,
 
+    // ── Button state ──
+
     updateButton: function() {
         const btn = document.getElementById('autoregressive-play');
         if (!btn) return;
 
         if (this.animating) {
-            btn.textContent = '⏹ Stop Generation';
-            btn.style.background = '#dc2626';
-            btn.style.borderColor = '#dc2626';
-            btn.style.color = '#fff';
+            this.styleButtonAsStop(btn);
         } else {
-            btn.textContent = '▶ Play Generation';
-            btn.style.background = '#3b82f6';
-            btn.style.borderColor = '#3b82f6';
-            btn.style.color = '#fff';
+            this.styleButtonAsPlay(btn);
         }
+        this.enableButton(btn);
+    },
+
+    styleButtonAsStop: function(btn) {
+        btn.textContent = '⏹ Stop Generation';
+        btn.style.background = '#dc2626';
+        btn.style.borderColor = '#dc2626';
+        btn.style.color = '#fff';
+    },
+
+    styleButtonAsPlay: function(btn) {
+        btn.textContent = '▶ Play Generation';
+        btn.style.background = '#3b82f6';
+        btn.style.borderColor = '#3b82f6';
+        btn.style.color = '#fff';
+    },
+
+    enableButton: function(btn) {
         btn.disabled = false;
         btn.style.opacity = '1';
     },
+
+    // ── Current step data ──
+
+    getCurrentStepData: function() {
+        return this.steps[Math.min(this.currentStep, this.steps.length - 1)];
+    },
+
+    getOriginalWordCount: function() {
+        return this.originalInput.split(' ').length;
+    },
+
+    getInputWords: function(stepData) {
+        return stepData.input.split(' ');
+    },
+
+    // ── Word classification ──
+
+    isOriginalWord: function(index, originalCount) {
+        return index < originalCount;
+    },
+
+    isJustAddedWord: function(index, totalWords, step) {
+        return index === totalWords - 1 && step > 0;
+    },
+
+    // ── Word HTML rendering ──
+
+    renderOriginalWord: function(word) {
+        return `<span style="color:#b45309; font-weight:bold; background:#fef3c7; padding:1px 4px; border-radius:3px; margin-right:6px;">${word}</span>`;
+    },
+
+    renderJustAddedWord: function(word) {
+        return `<span style="color:#16a34a; font-weight:bold; background:#dcfce7; padding:1px 4px; border-radius:3px; margin-right:6px;">${word}</span>`;
+    },
+
+    renderContextWord: function(word) {
+        return `<span style="color:#1e293b; margin-right:6px;">${word}</span>`;
+    },
+
+    renderWordSpan: function(word, index, totalWords, originalCount, step) {
+        if (this.isOriginalWord(index, originalCount)) {
+            return this.renderOriginalWord(word);
+        }
+        if (this.isJustAddedWord(index, totalWords, step)) {
+            return this.renderJustAddedWord(word);
+        }
+        return this.renderContextWord(word);
+    },
+
+    // ── Sentence HTML ──
+
+    buildSentenceHtml: function(inputWords, originalCount, step) {
+        let html = '';
+        inputWords.forEach((word, i) => {
+            html += this.renderWordSpan(word, i, inputWords.length, originalCount, step);
+        });
+        return html;
+    },
+
+    // ── Prediction HTML ──
+
+    isEndToken: function(output) {
+        return output === '|endoftext|';
+    },
+
+    renderStopPrediction: function() {
+        return `<span style="background:#fee2e2; color:#dc2626; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out;">⏹ STOP</span>`;
+    },
+
+    renderWordPrediction: function(output) {
+        return `<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out;">${output}</span>`;
+    },
+
+    buildPredictionHtml: function(output) {
+        if (this.isEndToken(output)) {
+            return this.renderStopPrediction();
+        }
+        return this.renderWordPrediction(output);
+    },
+
+    // ── Layout sections ──
+
+    buildSentenceDisplayHtml: function(sentenceHtml) {
+        return `
+            <div style="padding:14px 16px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; min-height:48px; display:flex; align-items:center; flex-wrap:wrap;">
+                ${sentenceHtml}
+            </div>`;
+    },
+
+    buildPredictionRowHtml: function(predictionHtml, prob) {
+        return `
+            <div style="display:flex; align-items:center; gap:10px; padding:10px 16px; margin-top:8px; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
+                <span style="color:#64748b;">→ Predicts:</span>
+                ${predictionHtml}
+                <span style="color:#94a3b8; font-size:0.8em; margin-left:auto;">(p=${prob.toFixed(2)})</span>
+            </div>`;
+    },
+
+    buildLegendHtml: function() {
+        return `
+            <div style="display:flex; align-items:center; margin-top:10px; padding:0 4px;">
+                <div style="display:flex; gap:14px; font-size:0.75em; color:#64748b;">
+                    <span><span style="color:#b45309; background:#fef3c7; padding:0 3px; border-radius:2px;">■</span> user input</span>
+                    <span><span style="color:#1e293b;">■</span> generated</span>
+                    <span><span style="color:#16a34a; background:#dcfce7; padding:0 3px; border-radius:2px;">■</span> just added</span>
+                    <span><span style="color:#1e40af; background:#dbeafe; padding:0 3px; border-radius:2px;">■</span> next prediction</span>
+                </div>
+            </div>`;
+    },
+
+    // ── Main render ──
 
     render: function() {
         const container = document.getElementById('autoregressive-viz');
         if (!container) return;
 
-        const step = this.currentStep;
-        const s = this.steps[Math.min(step, this.steps.length - 1)];
+        const s = this.getCurrentStepData();
+        const inputWords = this.getInputWords(s);
+        const originalCount = this.getOriginalWordCount();
 
-        // Split input into tokens
-        const inputWords = s.input.split(' ');
-        const originalWords = this.originalInput.split(' ');
-        const originalCount = originalWords.length;
-
-        // Build the sentence display with color coding
-        let sentenceHtml = '';
-
-        inputWords.forEach((word, i) => {
-            if (i < originalCount) {
-                // Original user input — amber/orange
-                sentenceHtml += `<span style="color:#b45309; font-weight:bold; background:#fef3c7; padding:1px 4px; border-radius:3px; margin-right:6px;">${word}</span>`;
-            } else if (i === inputWords.length - 1 && step > 0) {
-                // Just added from previous prediction — green
-                sentenceHtml += `<span style="color:#16a34a; font-weight:bold; background:#dcfce7; padding:1px 4px; border-radius:3px; margin-right:6px;">${word}</span>`;
-            } else {
-                // Previously generated context — default dark
-                sentenceHtml += `<span style="color:#1e293b; margin-right:6px;">${word}</span>`;
-            }
-        });
-
-        // The predicted next token
-        let predictionHtml = '';
-        if (s.output === '|endoftext|') {
-            predictionHtml = `<span style="background:#fee2e2; color:#dc2626; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out;">⏹ STOP</span>`;
-        } else {
-            predictionHtml = `<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out;">${s.output}</span>`;
-        }
+        const sentenceHtml = this.buildSentenceHtml(inputWords, originalCount, this.currentStep);
+        const predictionHtml = this.buildPredictionHtml(s.output);
 
         const html = `
             <div style="font-family:monospace; font-size:0.85em;">
-                <!-- Fixed-size sentence display -->
-                <div style="padding:14px 16px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; min-height:48px; display:flex; align-items:center; flex-wrap:wrap;">
-                    ${sentenceHtml}
-                </div>
-
-                <!-- Prediction row -->
-                <div style="display:flex; align-items:center; gap:10px; padding:10px 16px; margin-top:8px; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
-                    <span style="color:#64748b;">→ Predicts:</span>
-                    ${predictionHtml}
-                    <span style="color:#94a3b8; font-size:0.8em; margin-left:auto;">(p=${s.prob.toFixed(2)})</span>
-                </div>
-
-                <!-- Color legend -->
-                <div style="display:flex; align-items:center; margin-top:10px; padding:0 4px;">
-                    <div style="display:flex; gap:14px; font-size:0.75em; color:#64748b;">
-                        <span><span style="color:#b45309; background:#fef3c7; padding:0 3px; border-radius:2px;">■</span> user input</span>
-                        <span><span style="color:#1e293b;">■</span> generated</span>
-                        <span><span style="color:#16a34a; background:#dcfce7; padding:0 3px; border-radius:2px;">■</span> just added</span>
-                        <span><span style="color:#1e40af; background:#dbeafe; padding:0 3px; border-radius:2px;">■</span> next prediction</span>
-                    </div>
-                </div>
+                ${this.buildSentenceDisplayHtml(sentenceHtml)}
+                ${this.buildPredictionRowHtml(predictionHtml, s.prob)}
+                ${this.buildLegendHtml()}
             </div>`;
 
         container.innerHTML = html;
     },
 
-    animate: function() {
-        // Toggle: if already animating, stop it
-        if (this.animating) {
-            this.stop();
-            return;
-        }
+    // ── Animation control ──
 
-        this.animating = true;
-        this.updateButton();
+    isAtEnd: function() {
+        return this.currentStep >= this.steps.length - 1;
+    },
 
-        // If we're at the end, restart from the beginning
-        if (this.currentStep >= this.steps.length - 1) {
+    shouldContinueAnimating: function() {
+        return !this.isAtEnd() && this.animating;
+    },
+
+    restartIfAtEnd: function() {
+        if (this.isAtEnd()) {
             this.currentStep = 0;
         }
+    },
 
+    beginAnimating: function() {
+        this.animating = true;
+        this.updateButton();
+    },
+
+    endAnimating: function() {
+        this.animating = false;
+        this.timeoutId = null;
+        this.updateButton();
+    },
+
+    scheduleNextStep: function(callback, delay) {
+        this.timeoutId = setTimeout(callback, delay);
+    },
+
+    advanceStep: function() {
+        this.currentStep++;
+    },
+
+    runAnimationLoop: function() {
         const step = () => {
             this.render();
-            if (this.currentStep < this.steps.length - 1 && this.animating) {
-                this.currentStep++;
-                this.timeoutId = setTimeout(step, 1200);
+            if (this.shouldContinueAnimating()) {
+                this.advanceStep();
+                this.scheduleNextStep(step, 1200);
             } else {
-                this.animating = false;
-                this.timeoutId = null;
-                this.updateButton();
+                this.endAnimating();
             }
         };
         step();
     },
 
-    stop: function() {
-        this.animating = false;
+    animate: function() {
+        if (this.animating) {
+            this.stop();
+            return;
+        }
+
+        this.restartIfAtEnd();
+        this.beginAnimating();
+        this.runAnimationLoop();
+    },
+
+    clearScheduledTimeout: function() {
         if (this.timeoutId) {
             clearTimeout(this.timeoutId);
             this.timeoutId = null;
         }
+    },
+
+    stop: function() {
+        this.animating = false;
+        this.clearScheduledTimeout();
         this.updateButton();
     },
 
