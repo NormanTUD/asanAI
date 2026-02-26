@@ -233,7 +233,7 @@ Neither the **Attention Heads** nor the **Neural Network** are configured by han
         style="padding:9px 22px; border-radius:8px; border:none; background:#3b82f6; color:#fff; cursor:pointer; font-size:14px; font-weight:600;">
         Next Layer →
     </button>
-    <input type="range" id="residual-stream-layer" min="0" max="6" value="0"
+    <input type="range" id="residual-stream-layer" min="0" max="3" value="0"
         oninput="ResidualStreamViz.setLayer(parseInt(this.value))"
         style="width:140px; margin-left:8px;">
     <button onclick="ResidualStreamViz.reset()"
