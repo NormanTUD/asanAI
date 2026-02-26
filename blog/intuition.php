@@ -148,44 +148,6 @@ $$\text{Final Input} = \text{Embedding}(\text{token}) + \text{Position}(\text{in
 Now each token carries two pieces of information: **what it is** and **where it is**.
 
 This is required, because the embedding and attention operations have no built-in notion of sequence order, so without it, "dog bites man" and "man bites dog" would look identical to the model.
-
-### Step 4: The Transformer Layers
-
-This is the heart of the model. The token vectors flow through **many layers** stacked on top of each other (modern LLMs can have 80+ layers). Each layer refines the model's understanding a little more.
-
-You can think of the token vectors as a **shared notebook** (researchers call it the *residual stream*). Each layer reads from the notebook, does some thinking, and **writes its findings back**:
-
-$$\mathbf{x} := \mathbf{x} + \text{Layer}(\mathbf{x})$$
-
-The `+ x` means each layer **adds** information rather than replacing it. Nothing learned earlier gets thrown away.
-
-Inside each layer, two things happen:
-
-#### 4a: Attention - "Which other words matter for *this* word?"
-
-Attention lets the model **look at other tokens** to understand context. In *"The cat sat on the mat because **it** was tired"*, what does "it" refer to? An **attention head** figures this out by comparing "it" to every other word and deciding that "it" is most related to "cat."
-
-The model has **many attention heads** running in parallel, each a tiny specialist. One might track which noun a pronoun refers to, another might connect verbs to their objects, another might notice adjectives describing nearby nouns.
-
-#### 4b: Feed-Forward Network - "What do I conclude?"
-
-After attention has gathered context, a small **neural network** processes each token individually. This is where the model applies knowledge it memorized during training: facts, patterns, and rules of language.
-
-If attention is *gathering clues*, the feed-forward network is *drawing conclusions*.
-
-
-### Step 5: The Final Prediction
-
-After all layers, the model takes the **last token's vector** and produces a **score for every word in the vocabulary** (often 50,000+ words). These scores are converted into probabilities:
-
-$$P(\text{"time"}) = 0.72, \quad P(\text{"day"}) = 0.08, \quad P(\text{"hill"}) = 0.002, \quad \ldots$$
-
-The model then **picks a word**, usually one of the top candidates, with a bit of randomness so it doesn't always say the exact same thing. That's what makes it creative.
-
-And then, as we saw in Part I, that word gets appended to the input and the whole process repeats, one word at a time, until the model decides it's done.
-
-**The key insight:** There is no "understanding" module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
-
 </div>
 
 <!-- ============================================================ -->
@@ -230,6 +192,19 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
     <div id="pe-addition-demo"></div>
 </div>
 
+<div class="md">
+### Step 4: The Transformer Layers
+
+This is the heart of the model. The token vectors flow through **many layers** stacked on top of each other (modern LLMs can have 80+ layers). Each layer refines the model's understanding a little more.
+
+You can think of the token vectors as a **shared notebook** (researchers call it the *residual stream*). Each layer reads from the notebook, does some thinking, and **writes its findings back**:
+
+$$\mathbf{x} := \mathbf{x} + \text{Layer}(\mathbf{x})$$
+
+The `+ x` means each layer **adds** information rather than replacing it. Nothing learned earlier gets thrown away.
+
+Inside each layer, two things happen:
+</div>
 
 <!-- ============================================================ -->
 <!-- STEP 4: TRANSFORMER LAYERS — RESIDUAL STREAM -->
@@ -262,6 +237,33 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
     </div>
 </div>
 
+<div class="md">
+#### 4a: Attention - "Which other words matter for *this* word?"
+
+Attention lets the model **look at other tokens** to understand context. In *"The cat sat on the mat because **it** was tired"*, what does "it" refer to? An **attention head** figures this out by comparing "it" to every other word and deciding that "it" is most related to "cat."
+
+The model has **many attention heads** running in parallel, each a tiny specialist. One might track which noun a pronoun refers to, another might connect verbs to their objects, another might notice adjectives describing nearby nouns.
+
+#### 4b: Feed-Forward Network - "What do I conclude?"
+
+After attention has gathered context, a small **neural network** processes each token individually. This is where the model applies knowledge it memorized during training: facts, patterns, and rules of language.
+
+If attention is *gathering clues*, the feed-forward network is *drawing conclusions*.
+
+
+### Step 5: The Final Prediction
+
+After all layers, the model takes the **last token's vector** and produces a **score for every word in the vocabulary** (often 50,000+ words). These scores are converted into probabilities:
+
+$$P(\text{"time"}) = 0.72, \quad P(\text{"day"}) = 0.08, \quad P(\text{"hill"}) = 0.002, \quad \ldots$$
+
+The model then **picks a word**, usually one of the top candidates, with a bit of randomness so it doesn't always say the exact same thing. That's what makes it creative.
+
+And then, as we saw in Part I, that word gets appended to the input and the whole process repeats, one word at a time, until the model decides it's done.
+
+**The key insight:** There is no "understanding" module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
+
+</div>
 
 <!-- ============================================================ -->
 <!-- STEP 5: FINAL PREDICTION -->
