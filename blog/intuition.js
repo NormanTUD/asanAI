@@ -512,21 +512,55 @@ const ResidualStreamViz = {
 
     tokenColors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
 
-    // What each layer "learns" — plausible descriptions
     layerRoles: [
-        { short: 'Raw embeddings', detail: 'Each token is just an ID — no context yet' },
-        { short: 'Local neighbors', detail: 'Attn: "upon" sees "Once" next to it\nFFN: activates basic word-type features' },
-        { short: 'Phrase structure', detail: 'Attn: groups "once upon" as a phrase\nFFN: recognizes common bigrams' },
-        { short: 'Syntax & roles', detail: 'Attn: "a" links to "time" (determiner→noun)\nFFN: encodes part-of-speech patterns' },
-        { short: 'Semantic context', detail: 'Attn: "once upon a time" = fairy-tale idiom\nFFN: activates story-related knowledge' },
-        { short: 'Prediction prep', detail: 'Attn: focuses on what matters for next word\nFFN: sharpens the most likely continuations' },
-        { short: 'Output layer', detail: 'Attn: final refinement of token relationships\nFFN: projects toward vocabulary prediction' },
+        {
+            short: 'Raw embeddings',
+            attnDesc: '',
+            ffnDesc: '',
+            example: 'Each token is just a vector ID — no context yet.'
+        },
+        {
+            short: 'Positional & local',
+            attnDesc: '"upon" attends to "Once" next to it',
+            ffnDesc: 'Activates word-type features: noun? prep?',
+            example: 'Once ← upon  (adjacent tokens link)'
+        },
+        {
+            short: 'Phrase grouping',
+            attnDesc: '"upon" and "a" both attend back to "Once"',
+            ffnDesc: 'Recognizes "once upon" as a common bigram',
+            example: '[Once upon] [a] [time]  (phrases form)'
+        },
+        {
+            short: 'Syntax & grammar',
+            attnDesc: '"a" links to "time" — determiner→noun',
+            ffnDesc: 'Encodes roles: "a"=det, "time"=noun',
+            example: 'a → time  (dependency found)'
+        },
+        {
+            short: 'Semantic meaning',
+            attnDesc: 'All tokens attend to full phrase — idiom found',
+            ffnDesc: 'Fires on fairy-tale knowledge in weights',
+            example: '"once upon a time" = story opener'
+        },
+        {
+            short: 'Next-token focus',
+            attnDesc: '"time" attends to "once upon a" for prediction',
+            ffnDesc: 'Sharpens: "there" "in" "long" rise as candidates',
+            example: 'time → predicts: "there was a..."'
+        },
+        {
+            short: 'Output projection',
+            attnDesc: 'Final cleanup — suppresses irrelevant features',
+            ffnDesc: 'Boosts winning prediction, suppresses rest',
+            example: 'time → "," (most likely next token)'
+        },
     ],
 
     // Layout
-    W: 820,
+    W: 900,
     H: 0,
-    rowH: 100,
+    rowH: 170,
     topPad: 62,
 
     init: function () {
@@ -560,14 +594,10 @@ const ResidualStreamViz = {
             }
         });
 
-        this.H = this.topPad + (this.numLayers + 1) * this.rowH + 60;
+        this.H = this.topPad + (this.numLayers + 1) * this.rowH + 70;
     },
 
     // ── Helpers ──
-
-    _hexRgba: function (hex, a) {
-        return `rgba(${parseInt(hex.slice(1, 3), 16)},${parseInt(hex.slice(3, 5), 16)},${parseInt(hex.slice(5, 7), 16)},${a})`;
-    },
 
     drawVector: function (vec, x, y, cellW, cellH, hue, alpha) {
         const ctx = this.ctx;
@@ -588,27 +618,43 @@ const ResidualStreamViz = {
         ctx.globalAlpha = 1;
     },
 
-    drawSmoothArrow: function (x1, y1, x2, y2, bendX, bendY, color, lineW, alpha) {
+    drawCurvedArrow: function (x1, y1, x2, y2, curve, color, lineW, alpha) {
         const ctx = this.ctx;
         ctx.globalAlpha = alpha || 1;
+        const midX = (x1 + x2) / 2;
+        const midY = (y1 + y2) / 2 + (curve || 0);
+
         ctx.beginPath();
         ctx.moveTo(x1, y1);
-        ctx.bezierCurveTo(bendX, y1, bendX, y2, x2, y2);
+        ctx.quadraticCurveTo(midX, midY, x2, y2);
         ctx.strokeStyle = color;
         ctx.lineWidth = lineW || 1.5;
         ctx.stroke();
 
-        // Arrowhead
-        const hs = 6;
-        const angle = Math.atan2(y2 - bendY, x2 - bendX);
+        const t = 0.95;
+        const t1 = 1 - t;
+        const px = t1 * t1 * x1 + 2 * t1 * t * midX + t * t * x2;
+        const py = t1 * t1 * y1 + 2 * t1 * t * midY + t * t * y2;
+        const angle = Math.atan2(y2 - py, x2 - px);
+        const hs = 7;
         ctx.beginPath();
         ctx.moveTo(x2, y2);
-        ctx.lineTo(x2 - hs * Math.cos(angle - Math.PI / 5), y2 - hs * Math.sin(angle - Math.PI / 5));
-        ctx.lineTo(x2 - hs * Math.cos(angle + Math.PI / 5), y2 - hs * Math.sin(angle + Math.PI / 5));
+        ctx.lineTo(x2 - hs * Math.cos(angle - Math.PI / 5.5), y2 - hs * Math.sin(angle - Math.PI / 5.5));
+        ctx.lineTo(x2 - hs * Math.cos(angle + Math.PI / 5.5), y2 - hs * Math.sin(angle + Math.PI / 5.5));
         ctx.closePath();
         ctx.fillStyle = color;
         ctx.fill();
         ctx.globalAlpha = 1;
+    },
+
+    drawMultiline: function (text, x, y, font, color, lineH) {
+        const lines = text.split('\n');
+        const ctx = this.ctx;
+        ctx.font = font;
+        ctx.fillStyle = color;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        lines.forEach((line, i) => ctx.fillText(line, x, y + i * (lineH || 15)));
     },
 
     // ── Main render ──
@@ -621,13 +667,14 @@ const ResidualStreamViz = {
 
         if (!this.canvas || this.canvas.parentNode !== container) {
             container.innerHTML = '';
+            container.style.overflow = 'auto';
+            container.style.maxHeight = '720px';
             this.canvas = document.createElement('canvas');
             this.canvas.style.width = '100%';
             this.canvas.style.maxWidth = this.W + 'px';
             this.canvas.style.display = 'block';
             this.canvas.style.margin = '0 auto';
             this.canvas.style.cursor = 'pointer';
-            container.style.overflow = 'visible';
             container.appendChild(this.canvas);
 
             this.canvas.addEventListener('click', (e) => {
@@ -691,56 +738,77 @@ const ResidualStreamViz = {
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, W, H);
 
-        // ── Column positions ──
-        const streamLabelX = 16;
-        const streamX = 130;
-        const cellW = 9;
-        const cellH = 16;
+        // ── Layout ──
+        const cellW = 8;
+        const cellH = 14;
         const vecW = this.dims * (cellW + 1);
+        const tokenBlockH = this.tokens.length * (cellH + 3);
 
-        // Right panel: attn and ffn with generous spacing
-        const attnX = streamX + vecW + 80;
-        const ffnX = attnX + vecW + 40;
-        const descX = ffnX + vecW + 24;
+        // Column positions — generous left margin to prevent overflow
+        const leftMargin = 30;
+        const streamX = leftMargin + 80;                     // left edge of stream heatmap
+        const streamRightX = streamX + vecW;
+
+        const attnBoxX = streamRightX + 70;
+        const attnBoxW = vecW + 16;
+        const ffnBoxX = attnBoxX + attnBoxW + 36;
+        const ffnBoxW = vecW + 16;
+
+        // Description column — far right, with enough room
+        const descColX = ffnBoxX + ffnBoxW + 24;
+        const descColW = W - descColX - 16;
 
         // ── Title ──
-        ctx.font = 'bold 17px system-ui, -apple-system, sans-serif';
+        ctx.font = 'bold 16px system-ui, -apple-system, sans-serif';
         ctx.fillStyle = '#1e293b';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'bottom';
-        ctx.fillText('Residual Stream', streamLabelX, this.topPad - 22);
+        ctx.fillText('Residual Stream', leftMargin, this.topPad - 22);
 
-        ctx.font = '12px system-ui, sans-serif';
+        ctx.font = '11px system-ui, sans-serif';
         ctx.fillStyle = '#94a3b8';
-        ctx.fillText('Click a row or use controls below. Each layer reads, computes, and adds back.', streamLabelX, this.topPad - 6);
+        ctx.fillText('Each layer reads from the stream, computes, and adds back.', leftMargin + 150, this.topPad - 22);
 
         // ── Column headers ──
-        const headerY = this.topPad + 10;
+        const headerY = this.topPad - 2;
         ctx.font = '600 10px system-ui, sans-serif';
+        ctx.textBaseline = 'bottom';
+
         ctx.fillStyle = '#64748b';
         ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText('RESIDUAL VECTOR', streamX + vecW / 2, headerY);
+        ctx.fillText('RESIDUAL x', streamX + vecW / 2, headerY);
+
         ctx.fillStyle = '#8b5cf6';
-        ctx.fillText('ATTENTION', attnX + vecW / 2, headerY);
+        ctx.fillText('ATTENTION', attnBoxX + attnBoxW / 2, headerY);
+
         ctx.fillStyle = '#d97706';
-        ctx.fillText('FFN', ffnX + vecW / 2, headerY);
+        ctx.fillText('FFN', ffnBoxX + ffnBoxW / 2, headerY);
+
+        ctx.fillStyle = '#64748b';
+        ctx.textAlign = 'left';
+        ctx.fillText('WHAT THIS LAYER DOES', descColX, headerY);
+
+        // Thin header line
+        ctx.beginPath();
+        ctx.moveTo(leftMargin, this.topPad + 2);
+        ctx.lineTo(W - 12, this.topPad + 2);
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1;
+        ctx.stroke();
 
         // ── Rows ──
-        const rowStart = this.topPad + 16;
-
         for (let l = 0; l <= this.numLayers; l++) {
-            const yBase = rowStart + l * this.rowH;
+            const yBase = this.topPad + 8 + l * this.rowH;
             const isCurrent = l === layer;
             const isActive = l <= layer;
             const isHover = l === this.hoverLayer && !isCurrent;
-            const alpha = isActive ? 1 : 0.15;
+            const alpha = isActive ? 1 : 0.13;
 
-            // ── Row background ──
+            // ── Row highlight ──
             if (isCurrent) {
-                ctx.fillStyle = '#eff6ff';
+                ctx.fillStyle = '#f0f7ff';
                 ctx.beginPath();
-                ctx.roundRect(8, yBase - 4, W - 16, this.rowH - 8, 10);
+                ctx.roundRect(leftMargin - 8, yBase - 6, W - leftMargin, this.rowH - 10, 12);
                 ctx.fill();
                 ctx.strokeStyle = '#bfdbfe';
                 ctx.lineWidth = 1;
@@ -748,182 +816,61 @@ const ResidualStreamViz = {
             } else if (isHover) {
                 ctx.fillStyle = '#fafbfe';
                 ctx.beginPath();
-                ctx.roundRect(8, yBase - 4, W - 16, this.rowH - 8, 10);
+                ctx.roundRect(leftMargin - 8, yBase - 6, W - leftMargin, this.rowH - 10, 12);
                 ctx.fill();
             }
 
-            // ── Left label (layer name + role) ──
+            // ── Left label ──
             ctx.globalAlpha = Math.max(alpha, 0.3);
-            ctx.font = isCurrent ? 'bold 13px system-ui, sans-serif' : '12px system-ui, sans-serif';
+            ctx.font = isCurrent ? 'bold 12px system-ui, sans-serif' : '11px system-ui, sans-serif';
             ctx.fillStyle = isCurrent ? '#1e293b' : '#94a3b8';
-            ctx.textAlign = 'right';
+            ctx.textAlign = 'left';
             ctx.textBaseline = 'top';
-            ctx.fillText(l === 0 ? 'Embed' : `Layer ${l}`, streamX - 50, yBase + 8);
+            ctx.fillText(l === 0 ? 'Embed' : `Layer ${l}`, leftMargin, yBase + 4);
 
-            // Role short name
-            ctx.font = '10px system-ui, sans-serif';
+            ctx.font = '9px system-ui, sans-serif';
             ctx.fillStyle = isCurrent ? '#3b82f6' : '#cbd5e1';
-            ctx.fillText(this.layerRoles[l].short, streamX - 50, yBase + 26);
+            ctx.fillText(this.layerRoles[l].short, leftMargin, yBase + 20);
 
-            // ── Token labels (between left label and stream) ──
+            // ── Token labels + residual stream heatmap ──
+            ctx.globalAlpha = alpha;
             this.tokens.forEach((token, ti) => {
                 const vy = yBase + 6 + ti * (cellH + 3);
+                // Token label
                 ctx.globalAlpha = Math.max(alpha, 0.25);
-                ctx.font = '10px monospace';
+                ctx.font = '9px monospace';
                 ctx.fillStyle = this.tokenColors[ti];
                 ctx.textAlign = 'right';
                 ctx.textBaseline = 'top';
-                ctx.fillText(token, streamX - 6, vy + 1);
-            });
+                ctx.fillText(token, streamX - 5, vy + 1);
+                ctx.globalAlpha = alpha;
 
-            // ── Residual stream vector heatmap ──
-            ctx.globalAlpha = alpha;
-            this.tokens.forEach((token, ti) => {
+                // Heatmap — use the state AT this layer (changes each layer)
                 const state = this.layerStates[token][Math.min(l, this.numLayers)];
                 const hue = [217, 160, 38, 0][ti];
-                const vy = yBase + 6 + ti * (cellH + 3);
                 this.drawVector(state, streamX, vy, cellW, cellH, hue, alpha);
             });
 
-            // ── Right side: Attention + FFN (layers >= 1) ──
-            if (l >= 1) {
-                ctx.globalAlpha = alpha;
-
-                // Attention heatmap
-                this.tokens.forEach((token, ti) => {
-                    const contrib = this.layerContributions[token][l - 1];
-                    const vy = yBase + 6 + ti * (cellH + 3);
-                    this.drawVector(contrib.attn, attnX, vy, cellW, cellH, 270, alpha);
-                });
-
-                // FFN heatmap
-                this.tokens.forEach((token, ti) => {
-                    const contrib = this.layerContributions[token][l - 1];
-                    const vy = yBase + 6 + ti * (cellH + 3);
-                    this.drawVector(contrib.ffn, ffnX, vy, cellW, cellH, 38, alpha);
-                });
-
-                // ── Curved arrows from Attn → stream and FFN → stream ──
-                if (isActive) {
-                    const streamRightEdge = streamX + vecW + 8;
-                    const attnLeftEdge = attnX - 8;
-                    const ffnLeftEdge = ffnX - 8;
-                    const midGapX = (streamRightEdge + attnLeftEdge) / 2;
-
-                    // Arrow: Attn → residual stream
-                    const attnArrowY = yBase + 22;
-                    this.drawSmoothArrow(
-                        attnLeftEdge, attnArrowY,
-                        streamRightEdge + 18, attnArrowY,
-                        midGapX, attnArrowY,
-                        '#8b5cf6', isCurrent ? 2 : 1.2, isCurrent ? 0.9 : 0.35
-                    );
-
-                    // Arrow: FFN → residual stream
-                    const ffnArrowY = yBase + 52;
-                    // FFN arrow goes from ffn, curves down and left to stream
-                    ctx.globalAlpha = isCurrent ? 0.9 : 0.35;
-                    ctx.beginPath();
-                    ctx.moveTo(ffnLeftEdge, ffnArrowY);
-                    ctx.bezierCurveTo(
-                        ffnLeftEdge - 40, ffnArrowY + 12,
-                        streamRightEdge + 50, ffnArrowY + 12,
-                        streamRightEdge + 18, ffnArrowY
-                    );
-                    ctx.strokeStyle = '#d97706';
-                    ctx.lineWidth = isCurrent ? 2 : 1.2;
-                    ctx.stroke();
-                    // Arrowhead
-                    const hs = 6;
-                    ctx.beginPath();
-                    ctx.moveTo(streamRightEdge + 18, ffnArrowY);
-                    ctx.lineTo(streamRightEdge + 18 + hs, ffnArrowY - hs / 2);
-                    ctx.lineTo(streamRightEdge + 18 + hs, ffnArrowY + hs / 2);
-                    ctx.closePath();
-                    ctx.fillStyle = '#d97706';
-                    ctx.fill();
-                    ctx.globalAlpha = 1;
-
-                    // "+" badge — positioned in the gap, vertically centered between the two arrows
-                    if (isCurrent) {
-                        const badgeX = streamRightEdge + 18;
-                        const badgeY = (attnArrowY + ffnArrowY) / 2;
-                        ctx.beginPath();
-                        ctx.arc(badgeX, badgeY, 11, 0, Math.PI * 2);
-                        ctx.fillStyle = '#10b981';
-                        ctx.fill();
-                        ctx.font = 'bold 15px system-ui, sans-serif';
-                        ctx.fillStyle = '#fff';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText('+', badgeX, badgeY);
-
-                        // Small labels on arrows
-                        ctx.font = '9px system-ui, sans-serif';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'bottom';
-                        ctx.fillStyle = '#8b5cf6';
-                        ctx.fillText('+attn', midGapX, attnArrowY - 5);
-                        ctx.fillStyle = '#d97706';
-                        ctx.textBaseline = 'top';
-                        ctx.fillText('+ffn', midGapX, ffnArrowY + 6);
-                    }
-                }
-
-                // ── Description for current layer (far right) ──
-                if (isCurrent) {
-                    ctx.globalAlpha = 1;
-                    ctx.font = '11px system-ui, sans-serif';
-                    ctx.textAlign = 'left';
-                    ctx.textBaseline = 'top';
-                    const lines = this.layerRoles[l].detail.split('\n');
-                    lines.forEach((line, li) => {
-                        // Color the "Attn:" and "FFN:" prefixes
-                        if (line.startsWith('Attn:')) {
-                            ctx.fillStyle = '#8b5cf6';
-                            ctx.fillText('Attn:', descX, yBase + 10 + li * 18);
-                            ctx.fillStyle = '#475569';
-                            ctx.fillText(line.slice(5), descX + 32, yBase + 10 + li * 18);
-                        } else if (line.startsWith('FFN:')) {
-                            ctx.fillStyle = '#d97706';
-                            ctx.fillText('FFN:', descX, yBase + 10 + li * 18);
-                            ctx.fillStyle = '#475569';
-                            ctx.fillText(line.slice(4), descX + 28, yBase + 10 + li * 18);
-                        } else {
-                            ctx.fillStyle = '#475569';
-                            ctx.fillText(line, descX, yBase + 10 + li * 18);
-                        }
-                    });
-                }
-
-                ctx.globalAlpha = 1;
-
-            } else {
-                // Embed row: description on the right
-                if (isCurrent) {
-                    ctx.globalAlpha = 1;
-                    ctx.font = '11px system-ui, sans-serif';
-                    ctx.fillStyle = '#475569';
-                    ctx.textAlign = 'left';
-                    ctx.textBaseline = 'top';
-                    ctx.fillText('Each token becomes a vector.', attnX, yBase + 14);
-                    ctx.fillText('No context — just raw identity.', attnX, yBase + 32);
-                }
-            }
-
-            ctx.globalAlpha = 1;
-
-            // ── Flow chevron between rows ──
+            // ── Vertical flow arrow BETWEEN residual stream rows ──
             if (l < this.numLayers) {
                 const arrowX = streamX + vecW / 2;
-                const ay1 = yBase + this.rowH - 14;
-                const ay2 = yBase + this.rowH - 2;
-                const arrowAlpha = l < layer ? 0.45 : 0.1;
+                const arrowTopY = yBase + tokenBlockH + 12;
+                const arrowBotY = yBase + this.rowH - 8;
+                const arrowAlpha = l < layer ? 0.5 : 0.1;
+
                 ctx.globalAlpha = arrowAlpha;
+                // Vertical line
                 ctx.beginPath();
-                ctx.moveTo(arrowX - 5, ay1);
-                ctx.lineTo(arrowX, ay2);
-                ctx.lineTo(arrowX + 5, ay1);
+                ctx.moveTo(arrowX, arrowTopY);
+                ctx.lineTo(arrowX, arrowBotY);
+                ctx.strokeStyle = '#3b82f6';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                // Chevron
+                ctx.beginPath();
+                ctx.moveTo(arrowX - 5, arrowBotY - 6);
+                ctx.lineTo(arrowX, arrowBotY);
+                ctx.lineTo(arrowX + 5, arrowBotY - 6);
                 ctx.strokeStyle = '#3b82f6';
                 ctx.lineWidth = 2;
                 ctx.lineCap = 'round';
@@ -931,10 +878,206 @@ const ResidualStreamViz = {
                 ctx.stroke();
                 ctx.globalAlpha = 1;
             }
+
+            // ── Layers >= 1: Attn box, FFN box, arrows, description ──
+            if (l >= 1) {
+                const boxTop = yBase + 2;
+                const boxH = tokenBlockH + 12;
+
+                // ── Attention box ──
+                ctx.globalAlpha = alpha;
+                ctx.beginPath();
+                ctx.roundRect(attnBoxX, boxTop, attnBoxW, boxH, 8);
+                ctx.fillStyle = isCurrent ? '#faf5ff' : '#fafafa';
+                ctx.fill();
+                ctx.strokeStyle = isCurrent ? '#c4b5fd' : '#e5e7eb';
+                ctx.lineWidth = isCurrent ? 1.5 : 1;
+                ctx.stroke();
+
+                ctx.font = 'bold 9px system-ui, sans-serif';
+                ctx.fillStyle = '#8b5cf6';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                ctx.fillText('Attn', attnBoxX + 6, boxTop + 3);
+
+                this.tokens.forEach((token, ti) => {
+                    const contrib = this.layerContributions[token][l - 1];
+                    const vy = boxTop + 16 + ti * (cellH + 3);
+                    this.drawVector(contrib.attn, attnBoxX + 8, vy, cellW, cellH, 270, alpha);
+                });
+
+                // ── FFN box ──
+                ctx.globalAlpha = alpha;
+                ctx.beginPath();
+                ctx.roundRect(ffnBoxX, boxTop, ffnBoxW, boxH, 8);
+                ctx.fillStyle = isCurrent ? '#fffbeb' : '#fafafa';
+                ctx.fill();
+                ctx.strokeStyle = isCurrent ? '#fcd34d' : '#e5e7eb';
+                ctx.lineWidth = isCurrent ? 1.5 : 1;
+                ctx.stroke();
+
+                ctx.font = 'bold 9px system-ui, sans-serif';
+                ctx.fillStyle = '#d97706';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                ctx.fillText('FFN', ffnBoxX + 6, boxTop + 3);
+
+                this.tokens.forEach((token, ti) => {
+                    const contrib = this.layerContributions[token][l - 1];
+                    const vy = boxTop + 16 + ti * (cellH + 3);
+                    this.drawVector(contrib.ffn, ffnBoxX + 8, vy, cellW, cellH, 38, alpha);
+                });
+
+                // ── ARROWS: Stream → Attn → FFN → Stream ──
+                // All arrows below the boxes, never overlapping content
+                if (isActive) {
+                    const arrowAlpha = isCurrent ? 0.85 : 0.3;
+                    const arrowLW = isCurrent ? 2 : 1.2;
+                    const arrowLane = boxTop + boxH + 14; // well below boxes
+
+                    // Arrow 1: Residual stream → Attention (purple)
+                    // Starts below stream heatmap, curves down to below attn box
+                    this.drawCurvedArrow(
+                        streamRightX + 4, arrowLane - 6,
+                        attnBoxX + 4, arrowLane - 6,
+                        14,
+                        '#8b5cf6', arrowLW, arrowAlpha
+                    );
+                    if (isCurrent) {
+                        ctx.globalAlpha = 0.8;
+                        ctx.font = '9px system-ui, sans-serif';
+                        ctx.fillStyle = '#8b5cf6';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'top';
+                        ctx.fillText('read', (streamRightX + attnBoxX) / 2 + 2, arrowLane + 6);
+                        ctx.globalAlpha = 1;
+                    }
+
+                    // Arrow 2: Attention → FFN (amber)
+                    this.drawCurvedArrow(
+                        attnBoxX + attnBoxW - 4, arrowLane - 6,
+                        ffnBoxX + 4, arrowLane - 6,
+                        14,
+                        '#d97706', arrowLW, arrowAlpha
+                    );
+                    if (isCurrent) {
+                        ctx.globalAlpha = 0.8;
+                        ctx.font = '9px system-ui, sans-serif';
+                        ctx.fillStyle = '#d97706';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'top';
+                        ctx.fillText('then', (attnBoxX + attnBoxW + ffnBoxX) / 2, arrowLane + 6);
+                        ctx.globalAlpha = 1;
+                    }
+
+                    // Arrow 3: FFN → Residual stream (green, big sweep back)
+                    const returnY = arrowLane + 18;
+                    ctx.globalAlpha = arrowAlpha;
+                    ctx.beginPath();
+                    ctx.moveTo(ffnBoxX + ffnBoxW - 4, arrowLane - 6);
+                    ctx.bezierCurveTo(
+                        ffnBoxX + ffnBoxW + 20, returnY + 8,
+                        streamRightX - 20, returnY + 8,
+                        streamRightX + 4, returnY
+                    );
+                    ctx.strokeStyle = '#10b981';
+                    ctx.lineWidth = arrowLW;
+                    ctx.stroke();
+                    // Arrowhead pointing left
+                    const hs = 7;
+                    ctx.beginPath();
+                    ctx.moveTo(streamRightX + 4, returnY);
+                    ctx.lineTo(streamRightX + 4 + hs, returnY - hs / 2.2);
+                    ctx.lineTo(streamRightX + 4 + hs, returnY + hs / 2.2);
+                    ctx.closePath();
+                    ctx.fillStyle = '#10b981';
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+
+                    // "+" badge at merge point
+                    if (isCurrent) {
+                        const badgeX = streamRightX - 6;
+                        const badgeY = returnY;
+                        ctx.beginPath();
+                        ctx.arc(badgeX, badgeY, 9, 0, Math.PI * 2);
+                        ctx.fillStyle = '#10b981';
+                        ctx.fill();
+                        ctx.font = 'bold 13px system-ui, sans-serif';
+                        ctx.fillStyle = '#fff';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('+', badgeX, badgeY);
+
+                        ctx.font = '9px system-ui, sans-serif';
+                        ctx.fillStyle = '#10b981';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'top';
+                        ctx.fillText('add back', (streamRightX + ffnBoxX + ffnBoxW) / 2, returnY + 4);
+                    }
+                }
+
+                // ── Description column (far right) ──
+                ctx.globalAlpha = isCurrent ? 1 : Math.max(alpha, 0.15);
+
+                if (isCurrent) {
+                    const dy = yBase + 6;
+
+                    // Attn description
+                    ctx.font = 'bold 10px system-ui, sans-serif';
+                    ctx.fillStyle = '#8b5cf6';
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'top';
+                    ctx.fillText('Attention:', descColX, dy);
+                    ctx.font = '10px system-ui, sans-serif';
+                    ctx.fillStyle = '#475569';
+                    ctx.fillText(this.layerRoles[l].attnDesc, descColX, dy + 14);
+
+                    // FFN description
+                    ctx.font = 'bold 10px system-ui, sans-serif';
+                    ctx.fillStyle = '#d97706';
+                    ctx.fillText('FFN:', descColX, dy + 36);
+                    ctx.font = '10px system-ui, sans-serif';
+                    ctx.fillStyle = '#475569';
+                    ctx.fillText(this.layerRoles[l].ffnDesc, descColX, dy + 50);
+
+                    // Example
+                    ctx.font = 'bold 10px system-ui, sans-serif';
+                    ctx.fillStyle = '#10b981';
+                    ctx.fillText('Example:', descColX, dy + 72);
+                    ctx.font = '11px monospace';
+                    ctx.fillStyle = '#1e293b';
+                    ctx.fillText(this.layerRoles[l].example, descColX, dy + 86);
+
+                } else if (isActive || isHover) {
+                    // Faded short summary for non-current active rows
+                    ctx.font = '10px system-ui, sans-serif';
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'top';
+                    ctx.fillText(this.layerRoles[l].example, descColX, yBase + 20);
+                }
+
+                ctx.globalAlpha = 1;
+
+            } else {
+                // ── Embed row: description in the desc column ──
+                if (isCurrent) {
+                    ctx.globalAlpha = 1;
+                    ctx.font = '11px system-ui, sans-serif';
+                    ctx.fillStyle = '#475569';
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'top';
+                    ctx.fillText('Each token becomes a vector.', descColX, yBase + 10);
+                    ctx.fillText('No context — just raw identity.', descColX, yBase + 28);
+                    ctx.fillText('Everything after this is added on top.', descColX, yBase + 46);
+                }
+            }
+
+            ctx.globalAlpha = 1;
         }
 
-        // ── Bottom magnitude bar ──
-        const barY = this.H - 44;
+        // ── Bottom: magnitude bar + equation ──
+        const barY = this.H - 50;
         const token = this.tokens[this.tokens.length - 1];
         const maxMag = Math.sqrt(this.layerStates[token][this.numLayers].reduce((s, v) => s + v * v, 0));
         const curState = this.layerStates[token][layer];
@@ -945,18 +1088,16 @@ const ResidualStreamViz = {
         ctx.fillStyle = '#64748b';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
-        ctx.fillText(`Magnitude of "${token}" vector:`, streamLabelX, barY);
+        ctx.fillText(`"${token}" magnitude:`, leftMargin, barY);
 
-        const barX = 220;
-        const barMaxW = 300;
+        const barX = leftMargin + 120;
+        const barMaxW = 280;
 
-        // Background
         ctx.fillStyle = '#f1f5f9';
         ctx.beginPath();
         ctx.roundRect(barX, barY, barMaxW, 16, 8);
         ctx.fill();
 
-        // Fill
         const fillW = Math.max(6, (curMag / maxMag) * barMaxW);
         const barGrad = ctx.createLinearGradient(barX, 0, barX + fillW, 0);
         barGrad.addColorStop(0, '#3b82f6');
@@ -966,23 +1107,17 @@ const ResidualStreamViz = {
         ctx.roundRect(barX, barY, fillW, 16, 8);
         ctx.fill();
 
-        // Label
         ctx.font = 'bold 11px monospace';
         ctx.fillStyle = '#1e293b';
-        ctx.textAlign = 'left';
-        ctx.textBaseline = 'top';
-        ctx.fillText(`‖x‖ = ${curMag.toFixed(2)}  (+${((curMag / initMag - 1) * 100).toFixed(0)}%)`, barX + fillW + 10, barY + 1);
+        ctx.fillText(`‖x‖ = ${curMag.toFixed(2)}  (+${((curMag / initMag - 1) * 100).toFixed(0)}%)`, barX + fillW + 10, barY + 2);
 
-        // Equation
         ctx.font = '11px monospace';
         ctx.fillStyle = '#94a3b8';
-        ctx.textAlign = 'left';
         ctx.fillText(
             `x${layer} = x0${Array.from({ length: layer }, (_, i) => ` + Δ${i + 1}`).join('')}`,
             barX, barY + 24
         );
     },
-
     _updateInfo: function () {
         const layer = this.currentLayer;
         const infoDiv = document.getElementById('residual-stream-info');
@@ -990,12 +1125,12 @@ const ResidualStreamViz = {
 
         const descriptions = [
             'The residual stream starts with <b>raw embeddings</b>. Each token is a vector — no context, no meaning beyond identity. Everything that follows will be <b>added</b> to these initial vectors.',
-            '<b>Layer 1 — Local neighbors.</b> Attention heads let adjacent tokens see each other. "upon" now knows "Once" is to its left. The FFN sub-layer activates basic word-type features. Both outputs are added to the stream.',
-            '<b>Layer 2 — Phrase structure.</b> Attention groups "once upon" as a recognized phrase. The FFN fires on common bigram patterns. The residual stream now carries phrase-level information.',
-            '<b>Layer 3 — Syntax & roles.</b> Attention connects "a" to "time" (determiner → noun). The FFN encodes part-of-speech patterns. Grammatical structure is emerging in the vectors.',
-            '<b>Layer 4 — Semantic context.</b> The full phrase "once upon a time" is now recognized as a fairy-tale idiom. The FFN activates story-related world knowledge. Meaning is crystallizing.',
-            '<b>Layer 5 — Prediction prep.</b> Attention focuses on which tokens matter most for predicting the next word. The FFN sharpens the probability distribution over likely continuations.',
-            '<b>Layer 6 — Output.</b> Final refinements. The last token\'s residual vector will be projected onto the full vocabulary to produce logits. The stream carries the sum of <b>all</b> previous contributions.'
+            '<b>Layer 1 — Positional & local.</b> Attention heads look at nearby tokens. "upon" sees "Once" right next to it. The FFN activates basic word-type features. Both outputs are added to the stream.',
+            '<b>Layer 2 — Phrase grouping.</b> Attention groups "once upon" as a recognized phrase. The FFN fires on common bigram patterns it learned during training. The residual stream now carries phrase-level information.',
+            '<b>Layer 3 — Syntax & grammar.</b> Attention connects "a" to "time" — a determiner finding its noun. The FFN encodes part-of-speech patterns. Grammatical structure is emerging in the vectors.',
+            '<b>Layer 4 — Semantic meaning.</b> The full phrase "once upon a time" is recognized as a fairy-tale idiom. The FFN activates story-related world knowledge stored in its weights. Meaning crystallizes.',
+            '<b>Layer 5 — Next-token focus.</b> Attention focuses on which tokens matter most for predicting the next word. The FFN sharpens the probability distribution — "there", "in", "long" become top candidates.',
+            '<b>Layer 6 — Output.</b> Final refinements. The last token\'s residual vector will be projected onto the full vocabulary to produce logits. The stream carries the sum of <b>all</b> previous layer contributions.'
         ];
 
         infoDiv.innerHTML = `
@@ -1011,11 +1146,16 @@ const ResidualStreamViz = {
         const label = document.getElementById('residual-stream-layer-label');
         if (label) label.textContent = this.currentLayer === 0 ? 'Embedding' : `Layer ${this.currentLayer}`;
 
-        // Disable prev/next at boundaries
         const prevBtn = document.getElementById('residual-stream-prev');
         const nextBtn = document.getElementById('residual-stream-next');
-        if (prevBtn) prevBtn.disabled = this.currentLayer <= 0;
-        if (nextBtn) nextBtn.disabled = this.currentLayer >= this.numLayers;
+        if (prevBtn) {
+            prevBtn.disabled = this.currentLayer <= 0;
+            prevBtn.style.opacity = this.currentLayer <= 0 ? '0.4' : '1';
+        }
+        if (nextBtn) {
+            nextBtn.disabled = this.currentLayer >= this.numLayers;
+            nextBtn.style.opacity = this.currentLayer >= this.numLayers ? '0.4' : '1';
+        }
     },
 
     // ── Step-wise controls ──

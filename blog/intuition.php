@@ -208,29 +208,29 @@ Inside each layer, two things happen:
 <!-- ============================================================ -->
 <div id="residual-stream-plot"></div>
 
-<div style="display:flex; align-items:center; gap:12px; margin-top:12px; justify-content:center; flex-wrap:wrap;">
-    <button onclick="ResidualStreamViz.reset()" 
-        style="padding:8px 16px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; cursor:pointer; font-size:13px;">
-        ⏮ Reset
+<div style="display:flex; align-items:center; gap:14px; margin-top:14px; justify-content:center; flex-wrap:wrap;">
+    <button id="residual-stream-prev" onclick="ResidualStreamViz.prevLayer()"
+        style="padding:9px 18px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; cursor:pointer; font-size:14px;">
+        ← Prev
     </button>
-    <button onclick="ResidualStreamViz.prevLayer()" 
-        style="padding:8px 16px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; cursor:pointer; font-size:13px;">
-        ← Prev Layer
-    </button>
-    <span id="residual-stream-layer-label" 
-        style="font-weight:bold; font-size:14px; min-width:100px; text-align:center; color:#1e293b;">
+    <span id="residual-stream-layer-label"
+        style="font-weight:bold; font-size:15px; min-width:110px; text-align:center; color:#1e293b;">
         Embedding
     </span>
-    <button onclick="ResidualStreamViz.nextLayer()" 
-        style="padding:8px 20px; border-radius:8px; border:none; background:#3b82f6; color:#fff; cursor:pointer; font-size:13px; font-weight:600;">
+    <button id="residual-stream-next" onclick="ResidualStreamViz.nextLayer()"
+        style="padding:9px 22px; border-radius:8px; border:none; background:#3b82f6; color:#fff; cursor:pointer; font-size:14px; font-weight:600;">
         Next Layer →
     </button>
-    <input type="range" id="residual-stream-layer" min="0" max="6" value="0" 
+    <input type="range" id="residual-stream-layer" min="0" max="6" value="0"
         oninput="ResidualStreamViz.setLayer(parseInt(this.value))"
-        style="width:120px;">
+        style="width:140px; margin-left:8px;">
+    <button onclick="ResidualStreamViz.reset()"
+        style="padding:9px 14px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; cursor:pointer; font-size:13px; color:#64748b;">
+        Reset
+    </button>
 </div>
 
-<div id="residual-stream-info" style="margin-top:12px;"></div>
+<div id="residual-stream-info" style="margin-top:14px;"></div>
 
 <div class="md">
 #### 4a: Attention - "Which other words matter for *this* word?"
