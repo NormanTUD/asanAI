@@ -1,4 +1,10 @@
 window.bibData = {
+	"galoisgroup": {
+		author: "Evariste Galois",
+		year: 1832,
+		title: "Mémoire sur les conditions de résolubilité des équations par radicaux",
+		url: "https://www.gutenberg.org/files/40213/40213-pdf.pdf"
+	},
 	"tishby2000informationbottleneck": {
 		url: "https://arxiv.org/abs/physics/0004057",
 		title: "The information bottleneck method",
