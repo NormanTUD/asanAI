@@ -476,7 +476,7 @@ An important distinction in modern AD frameworks is whether the computational gr
 
 **Dynamic Graphs** (PyTorch, TensorFlow 2.x eager mode): The graph is built on-the-fly as operations execute. Each forward pass constructs a fresh tape, which is then consumed during the backward pass. This "define-by-run" approach is more intuitive and Pythonic, allowing standard control flow (`if`, `for`, `while`) to be used naturally within the model.
 
-The Transformer architecture (\citeauthor{vaswani2017attention}, \citeyear{vaswani2017attention}), which powers modern LLMs like GPT, relies heavily on dynamic computation patterns (variable-length sequences, masked attention), making dynamic graphs the natural choice. This is one reason PyTorch became the dominant framework in research.
+The Transformer architecture, released in \citeyear{vaswani2017attention}, which powers modern LLMs like GPT, relies heavily on dynamic computation patterns (variable-length sequences, masked attention), making dynamic graphs the natural choice. This is one reason PyTorch became the dominant framework in research.
 
 ## Summary
 
