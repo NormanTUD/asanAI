@@ -731,7 +731,7 @@ const ResidualStreamViz = {
 			this.ctx.font = 'bold 12px system-ui';
 			this.ctx.fillStyle = '#1e293b';
 			this.ctx.textAlign = 'center';
-			this.ctx.fillText('→ Unembedding → Next Token: the', centerX, endY + 5);
+			this.ctx.fillText('→ Compare result to all words in the dictionary to chose the next most likely ones', centerX + 100, endY + 10);
 			this.ctx.globalAlpha = 1;
 		}
 	},
