@@ -223,6 +223,8 @@ In this stream, the **Attention Heads** and **Feed-Forward Networks (FFN)** oper
 
 Crucially, these experts do not replace the page; they merely add their "nudges" to the existing entries. Because the process is additive, the final hidden state $h_{\text{final}}$ is the original identity $h_0$ plus the sum of every expert's contribution. This allows the model to achieve a "hidden harmony" where the token for "king" can evolve through layers of abstract reasoning while still tethered to its source, proving that persistence of identity does not require stasis, but rather a mechanism for carrying the source signal through the flow of transformation.
 
+This perspective is formalised in \citetitle{elhage2021mathematical}, which identifies the **Residual Stream** as the primary communication channel of the model, a "shared bus" where information is stored and retrieved. Rather than viewing the Transformer as a sequential pipeline that destroys and replaces information at each step, Elhage et al. demonstrate that the architecture is fundamentally additive. Each attention head and MLP layer acts as a "reader" and "writer" to this stream, using linear projections to either extract relevant features or deposit new computations. This mathematical framework reveals that layers do not merely transform the state, but rather perform "collaborative editing," where the final output is the cumulative result of numerous specialized sub-components scribbling annotations onto the same persistent document.
+
 ### Historical Context: The Original Encoder-Decoder (What We Don't Use)
 
 To appreciate *why* the Decoder-only design dominates, it helps to understand what came before it:
