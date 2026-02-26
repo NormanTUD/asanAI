@@ -387,8 +387,4 @@ Adversarial Examples: Erwähne das Bild vom Panda, das durch ein bisschen Rausch
 Reward Hacking: Das ist das perfekte Beispiel für die philosophische Diskussion am Ende. Eine KI, die lernt, ein Spiel zu gewinnen, indem sie einfach den Highscore-Speicherwert im RAM überschreibt, statt zu spielen. Das ist witzig und bleibt hängen.
 https://blog.mlreview.com/the-intuition-behind-adversarial-attacks-on-neural-networks-71fdd427a33b
 
-3. Jakob von Uexküll (1934): Streifzüge durch die Umwelten von Tieren und Menschen
-Der Outsider-Faktor: Ein Biologe, der das Konzept der „Umwelt“ (die subjektive Welt eines Lebwesens) erfand. Er beschrieb, wie eine Zecke die Welt nur durch „Licht“ und „Buttersäure“ wahrnimmt.
-Warum es passt: Das ist die perfekte Analogie für LLMs. Wir denken, sie verstehen unsere Welt, aber sie leben in einer „Umwelt“ aus reiner Statistik und Token-Vektoren. Sie haben kein „Gefühl“ für das Stoppschild, nur eine Koordinate dafür.
-
 Er zitiert Yann LeCun (1989/1998). Frag ihn, warum er moderne Architekturen wie „MoE“ (Mixture of Experts) oder „State Space Models“ (Mamba) ignoriert, wenn er doch den Weg zu ChatGPT erklären will.
