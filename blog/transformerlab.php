@@ -301,6 +301,19 @@ $$M = \begin{pmatrix}
 	0 & 0 & 0 & -\infty \\
 	0 & 0 & 0 & 0
 \end{pmatrix}$$
+</div>
+
+<div class="md" id="transformer-mask-logic-breakdown">
+    <div id="mask-rows-container"></div>
+</div>
+
+<div class="md">
+
+**Why $-\infty$**? When we calculate the attention weights, we use the Softmax function:
+
+$$\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$
+
+Because $e^{-\infty}$ approaches $0$, any score that has been masked will result in a $0\%$ attention weight after the Softmax step.
 
 #### The Causal Mask Creates an Asymmetric Information Geometry
 
@@ -327,20 +340,6 @@ placing it at the *beginning* means it can only be passively attended to
 by later tokens, which may reinterpret or dilute it. In effect, the
 causal mask turns token position into a form of **informational privilege**,
 making the geometry of attention inherently asymmetric and position-dependent.
-
-</div>
-
-<div class="md" id="transformer-mask-logic-breakdown">
-    <div id="mask-rows-container"></div>
-</div>
-
-<div class="md">
-
-**Why $-\infty$**? When we calculate the attention weights, we use the Softmax function:
-
-$$\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$
-
-Because $e^{-\infty}$ approaches $0$, any score that has been masked will result in a $0\%$ attention weight after the Softmax step.
 
 ## 5. The Core Mechanism: Generating Q, K, and V
 To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three learned weight matrices: $W^Q, W^K,$ and $W^V$.
