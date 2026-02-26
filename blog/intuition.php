@@ -23,4 +23,18 @@ $$\text{LLM}(\underbrace{\text{"Once upon a"}}_{\text{User Input}} \ \underbrace
 $$\text{LLM}(\underbrace{\text{"Once upon a"}}_{\text{User Input}} \ \underbrace{\text{"time there was a dragon."}}_{\text{Words 1–5}}) \rightarrow \underbrace{\texttt{|endoftext|}}_{\text{Stop}}$$
 
 **Final output: "Once upon a time there was a dragon."**
+
+## How does the network do that?
+
+It looks at huge amounts of text and detects how it is structurized and how to imitate it.
+
+First, the input is tokenized
+Then Embedding
+Then Positional Embedding
+Then run through many layers
+x = x + layer
+Residue stream as global workbook where many "expert" systems for many small things work, like Attention Heads that can see what verb connects to what objects or things like that. Each of these "experts" checks only one "simple" thing (all by doing math).
+Then neural networks to decide based on the infos they learnt, where the next would should be.
+
+This document will look into all of those steps in great detail.
 </div>
