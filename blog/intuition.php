@@ -198,9 +198,15 @@ You can think of the token vectors as a **shared notebook** (researchers call it
 
 $$\mathbf{x} := \mathbf{x} + \text{Layer}(\mathbf{x})$$
 
-The `+ x` means each layer **adds** information rather than replacing it. Nothing learned earlier gets thrown away.
+The `x +` means each layer **adds** information rather than replacing it. Nothing learned earlier gets thrown away.
 
 Inside each layer, two things happen:
+
+1. **Attention Heads** are used to determine which input relates to which other input. For example, in the sentence "*The cat sat on it's mat*", the "it's" references to the *Cat*. This nudges each input token to some direction, according to the context it is used in.
+2. A **Neural Network** receives all the results from the **Attention Heads** and decides what to do with them.
+
+The result is then returned and simply added to the **Residual Stream**.
+
 </div>
 
 <!-- ============================================================ -->
