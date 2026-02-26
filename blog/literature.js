@@ -1,4 +1,10 @@
 window.bibData = {
+	"jungpsychologyandreligion": {
+		title: "Psychology and Religion",
+		year: 1938,
+		author: "Carl Gustav Jung",
+		url: "https://psipp.itb-ad.ac.id/wp-content/uploads/2020/10/The-Terry-Lectures-Carl-Gustav-Jung-Psychology-and-Religion-1960-Yale-University-Press.pdf"
+	},
 	"waluigi": {
 		url: "https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-effect-mega-post",
 		year: 2023,

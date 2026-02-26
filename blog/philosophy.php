@@ -420,6 +420,10 @@ as just another piece of machine-generated noise.
 
 ## The "Waluigi Effect" and Jailbreaking
 
+<div class="smart-quote" data-cite="jungpsychologyandreligion">
+Everyone carries a shadow, and the less it is embodied in the individual’s conscious life, the blacker and denser it is.
+</div>
+
 The **Waluigi Effect**, coined by Cleo Nardo in a 2023 LessWrong post, observes that for every
 "helpful assistant" persona (**Luigi**) a model learns during RLHF, there exists an equally
 coherent "evil assistant" persona (**Waluigi**) in the model's latent space. This follows from
