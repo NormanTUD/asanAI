@@ -414,7 +414,7 @@ function bibtexify() {
 
 			// Add SVG icon if URL is available
 			const svgIcon = data.url
-				? `<a href="${data.url}" target="_blank" rel="noopener noreferrer" title="View source"><span class="external_link_icon">
+				? `<a class='bibtexify_auto_link_icon' href="${data.url}" target="_blank" rel="noopener noreferrer" title="View source"><span class="external_link_icon">
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
