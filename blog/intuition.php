@@ -202,11 +202,12 @@ The `x +` means each layer **adds** information rather than replacing it. Nothin
 
 Inside each layer, two things happen:
 
-1. **Attention Heads** are used to determine which input relates to which other input. For example, in the sentence "*The cat sat on it's mat*", the "it's" references to the *Cat*. This nudges each input token to some direction, according to the context it is used in.
+1. **Attention Heads** are used to determine which input relates to which other input. For example, in the sentence "*The cat sat on it's mat*", the "it's" references to the *Cat*. This nudges each input token to some direction, according to the context it is used in. You can imagine the **Attention Heads** as experts at once very specific tiny task. They do their task, like determining what word relates to what other word, or determining if a word is referencing to the past, present or future, and return.
 2. A **Neural Network** receives all the results from the **Attention Heads** and decides what to do with them.
 
 The result is then returned and simply added to the **Residual Stream**.
 
+Neither the **Attention Heads** nor the **Neural Network** are configured by hand. They learn what to look for by looking at massive amounts of data.
 </div>
 
 <!-- ============================================================ -->
