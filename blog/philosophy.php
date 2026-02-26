@@ -430,7 +430,7 @@ coherent "evil assistant" persona (**Waluigi**) in the model's latent space. Thi
 \citealternativetitle{simulatorstheory}: by strongly defining a character that *always* follows rules,
 the model implicitly encodes a character that *never* does. Both personas coexist as opposing
 directions in the same high-dimensional activation space, a direct consequence of
-**Superposition** in neural networks, where more features are stored than there are dimensions.
+**\cite[Superposition]{elhage2022superposition}** in neural networks, where more features are stored than there are dimensions.
 
 **Jailbreaking** is essentially the craft of finding prompts that navigate the model's internal
 state from the Luigi direction to the Waluigi direction. Techniques like "DAN" (Do Anything Now)
