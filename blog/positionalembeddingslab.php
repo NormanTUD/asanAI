@@ -200,7 +200,7 @@ Each **filled dot** is a starting position on the unit circle (determined by its
 <div id="group-cayley-chart" style="width:100%; max-width:600px; height:520px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
 
 <div class="md">
-### Reading the Cayley Table
+### Reading the \cite[Cayley Table]{caleygroups}
 
 The heatmap shows every possible composition $M_i \cdot M_j = M_{(i+j)\bmod 12}$. Notice the **diagonal stripe pattern**: each row is just the previous row shifted one step to the left. That perfect regularity *is* the group structure, it means the combining rule is completely uniform, with no exceptions or special cases. Hover over any cell to see the composition.
 </div>

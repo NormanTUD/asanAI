@@ -1,4 +1,10 @@
 window.bibData = {
+	"caleygroups": {
+		url: "https://www.jstor.org/stable/2369415",
+		title: "On the Theory of Groups",
+		year: 1889,
+		author: "Arthur Cayley"
+	},
 	"galoisgroup": {
 		author: "Evariste Galois",
 		year: 1832,
