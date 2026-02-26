@@ -1,3 +1,6 @@
+17. A "Tokenization Failure" Demo
+Show users why LLMs can't count letters. Let them type "strawberry" and watch the BPE tokenizer split it into tokens that don't respect letter boundaries, making it visually obvious why the model can't count the 'r's.
+
 16. An Interactive "Residual Stream" Visualizer
 Given how central the residual stream is to your narrative, an interactive where users can watch a token's vector get incrementally nudged by each attention head and MLP layer — showing the actual vector additions — would be a powerful aha-moment. Users could toggle individual heads on/off to see their contribution.
 
