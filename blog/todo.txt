@@ -1,3 +1,6 @@
+15. The Attention Matrix Is a Doubly Stochastic Relaxation
+Each row of the attention matrix sums to 1 (due to softmax), making it right-stochastic. But the columns generally do not sum to 1. This asymmetry means some tokens are "attended to" much more than others — they become information hubs. The [CLS] token in BERT or the last token in GPT often accumulates massive column-sums, acting as a "sink" that aggregates information from the entire sequence. The aha-moment: not all tokens are equal — some become gravitational centers that the entire sequence orbits around.
+
 14. Richardson's "Human GPU Cluster" (1922)
 You mention this in your todo but haven't integrated it. Lewis Fry Richardson proposed weather prediction by having 64,000 humans in a stadium, each computing one cell of a differential equation and passing results to neighbors. This is exactly how modern GPU clusters work: thousands of simple cores, each doing one small computation, passing results to neighbors via high-bandwidth interconnects. The aha-moment: the architecture of modern AI hardware was described by a meteorologist in 1922, using humans as transistors 
 
