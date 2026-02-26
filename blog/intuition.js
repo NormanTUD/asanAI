@@ -535,7 +535,7 @@ const ResidualStreamViz = {
 			short: 'Next-token prediction',
 			attnDesc: '"on" attends to "cat sat" → gathers full context for prediction',
 			ffnDesc: 'Boosts location nouns: "the" "a" "mat" "floor" rise; suppresses verbs',
-			example: 'on → predicts "the" (p=0.42), "a" (p=0.18), "mat" (p=0.07)'
+			example: 'on → predicts "the" (42%), "a" (18%), "mat" (7%), ...'
 		},
 	],
 
