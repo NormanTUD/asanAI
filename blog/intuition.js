@@ -927,6 +927,7 @@ function loadIntuitionVizModule() {
         });
     }
     EmbeddingViz.render();
+	EmbeddingViz.doArithmetic()
 
     // Step 3: Positional Encoding
     const peSlider = document.getElementById('pe-num-dims');

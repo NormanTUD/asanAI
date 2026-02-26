@@ -129,7 +129,7 @@ The direction from "man" to "woman" represents something like the concept of gen
 		   style="flex:1; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-family:monospace;"
 		   placeholder="e.g., king - man + woman"
 		   value="king - man + woman">
-	    <button onclick="EmbeddingViz.doArithmetic()"
+	    <button onkeyup="EmbeddingViz.doArithmetic()"
 		    style="background:#3b82f6; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">
 		Compute
 	    </button>
