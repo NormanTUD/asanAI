@@ -150,7 +150,7 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
 3.  **The Convergence**: As $n$ increases, the distribution of these averages tightens around the mean ($\mu = 3.5$).
 4.  **The Red Line**: This represents the **Probability Density Function (PDF)** for a Normal Distribution, calculated as:
     $$f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2}$$
-    where the standard deviation $\sigma$ decreases as more dice are added ($\sigma = \sqrt{\frac{35}{12n}}$), as noted in \citetitle{laplace1810clt}.
+    where the standard deviation $\sigma$ decreases as more dice are added ($\sigma = \sqrt{\frac{35}{12n}}$).
 
 * **Adjust $n$**: Choose how many dice to roll at once. Higher $n$ creates a thinner, sharper curve.
 * **Accrue Data**: Click "Roll" repeatedly. The blue bars represent your real-world samples, while the red line shows the mathematical ideal.
