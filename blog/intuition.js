@@ -725,217 +725,236 @@ const ResidualStreamViz = {
 		this._syncControls();
 	},
 
-	// Innerhalb des ResidualStreamViz Objekts:
-
 	renderFrame: function () {
 		const ctx = this.ctx;
-		const layer = this.currentLayer;
 		if (!ctx) return;
 
-		const W = this.W;
-		const H = this.H;
+		this.clearAndSetupCanvas();
+		this.drawHeaders();
 
-		ctx.clearRect(0, 0, W, H);
-		ctx.fillStyle = '#ffffff';
-		ctx.fillRect(0, 0, W, H);
+		for (let l = 0; l <= this.numLayers; l++) {
+			const layout = this.calculateLayout(l);
 
-		// -- LAYOUT & SCALING --
-		const cellW = 6; // Schmalere Zellen für kompaktere Boxen
+			this.drawLayerBackground(l, layout);
+			this.drawStream(l, layout);
+
+			if (l >= 1) {
+				this.drawProcessingBlocks(l, layout);
+				this.drawMetadata(l, layout);
+				this.drawFlowArrows(l, layout);
+			}
+		}
+	},
+
+	// ── Refactored Sub-Methods ──
+
+	clearAndSetupCanvas: function() {
+		this.ctx.clearRect(0, 0, this.W, this.H);
+		this.ctx.fillStyle = '#ffffff';
+		this.ctx.fillRect(0, 0, this.W, this.H);
+	},
+
+	calculateLayout: function(l) {
+		const cellW = 6;
 		const cellH = 14;
 		const vecW = this.dims * (cellW + 1);
 		const tokenBlockH = this.tokens.length * (cellH + 3);
+		const yBase = this.topPad + 8 + l * this.rowH;
+		const streamX = 150; // leftMargin (30) + 120
 
-		const leftMargin = 30;
-		const streamX = leftMargin + 120;
+		return {
+			yBase, cellW, cellH, vecW, tokenBlockH, streamX,
+			isCurrent: l === this.currentLayer,
+			isActive: l <= this.currentLayer,
+			alpha: l <= this.currentLayer ? 1 : 0.15,
+			attnBoxX: streamX + vecW + 50,
+			ffnBoxX: streamX + vecW + 50 + (vecW * 0.75 + 10) + 30,
+			descColX: streamX + vecW + 50 + 2 * (vecW * 0.75 + 10) + 60
+		};
+	},
+
+	drawLayerBackground: function(l, { yBase, isCurrent }) {
+		if (!isCurrent) return;
+		this.ctx.fillStyle = '#f8fafc';
+		this.ctx.beginPath();
+		this.ctx.roundRect(25, yBase - 10, this.W - 25, this.rowH - 5, 12);
+		this.ctx.fill();
+		this.ctx.strokeStyle = '#3b82f6';
+		this.ctx.lineWidth = 2;
+		this.ctx.stroke();
+	},
+
+	drawStream: function(l, { yBase, streamX, cellW, cellH, isCurrent, alpha }) {
+		const ctx = this.ctx;
+		ctx.font = isCurrent ? 'bold 14px system-ui' : '12px system-ui';
+		ctx.fillStyle = isCurrent ? '#1e293b' : '#94a3b8';
+		ctx.textAlign = 'left';
+		ctx.fillText(l === 0 ? 'Embed' : `Layer ${l}`, 30, yBase + 10);
+
+		this.tokens.forEach((token, ti) => {
+			const vy = yBase + 10 + ti * (cellH + 3);
+			const state = this.layerStates[token][l];
+			const hue = [217, 160, 38, 0][ti];
+			this.drawVector(state, streamX, vy, cellW, cellH, hue, alpha);
+
+			ctx.font = '10px monospace';
+			ctx.fillStyle = this.tokenColors[ti];
+			ctx.textAlign = 'right';
+			ctx.fillText(token, streamX - 8, vy + 10);
+		});
+	},
+
+	drawProcessingBlocks: function(l, layout) {
+		const { yBase, attnBoxX, ffnBoxX, tokenBlockH, alpha, isCurrent, cellW, cellH } = layout;
+		const boxH = tokenBlockH + 15;
+		const boxW = layout.vecW * 0.75 + 10;
+
+		// Draw Attention Box
+		this.drawModuleBox(attnBoxX, yBase + 5, boxW, boxH, '#faf5ff', isCurrent ? '#8b5cf6' : '#e2e8f0', alpha);
+		// Draw FFN Box
+		this.drawModuleBox(ffnBoxX, yBase + 5, boxW, boxH, '#fffbeb', isCurrent ? '#d97706' : '#e2e8f0', alpha);
+
+		this.tokens.forEach((token, ti) => {
+			const contrib = this.layerContributions[token][l - 1];
+			const vy = yBase + 13 + ti * (cellH + 3);
+			this.drawVector(contrib.attn, attnBoxX + 5, vy, cellW - 1, cellH, 270, alpha);
+			this.drawVector(contrib.ffn, ffnBoxX + 5, vy, cellW - 1, cellH, 38, alpha);
+		});
+	},
+
+	drawModuleBox: function(x, y, w, h, fill, stroke, alpha) {
+		this.ctx.globalAlpha = alpha;
+		this.ctx.beginPath();
+		this.ctx.roundRect(x, y, w, h, 6);
+		this.ctx.fillStyle = fill;
+		this.ctx.fill();
+		this.ctx.strokeStyle = stroke;
+		this.ctx.lineWidth = 1;
+		this.ctx.stroke();
+		this.ctx.globalAlpha = 1;
+	},
+
+	drawFlowArrows: function(l, layout) {
+		if (!layout.isActive) return;
+		const { yBase, streamX, vecW, attnBoxX, ffnBoxX, isCurrent } = layout;
+		const arrowAlpha = isCurrent ? 0.85 : 0.3;
+		const arrowLW = isCurrent ? 2 : 1.2;
 		const streamRightX = streamX + vecW;
-		const verticalStreamX = streamX + vecW / 2;
 
-		// Boxen schmaler machen (ca. 70% der Vektorbreite)
+		// Stream -> Attention
+		this.drawCurvedArrow(streamRightX + 5, yBase + 15, attnBoxX + 5, yBase + 15, -20, '#8b5cf6', arrowLW, arrowAlpha);
+
+		// Attention -> FFN
 		const attnBoxW = vecW * 0.75 + 10;
+		this.drawCurvedArrow(attnBoxX + attnBoxW - 5, yBase + 20, ffnBoxX + 5, yBase + 20, -10, '#d97706', arrowLW, arrowAlpha);
+
+		// Return Path: FFN -> Stream
+		this.drawReturnArrow(l, layout, arrowLW, arrowAlpha);
+	},
+
+	drawReturnArrow: function(l, layout, arrowLW, arrowAlpha) {
+		const { yBase, ffnBoxX, vecW, streamX, tokenBlockH, isCurrent } = layout;
 		const ffnBoxW = vecW * 0.75 + 10;
+		const verticalStreamX = streamX + vecW / 2;
+		const returnY = yBase + tokenBlockH + 30;
 
-		const attnBoxX = streamRightX + 50;
-		const ffnBoxX = attnBoxX + attnBoxW + 30;
-		const descColX = ffnBoxX + ffnBoxW + 30;
+		this.ctx.globalAlpha = arrowAlpha;
+		this.ctx.beginPath();
+		this.ctx.moveTo(ffnBoxX + ffnBoxW - 10, yBase + 25);
+		this.ctx.bezierCurveTo(ffnBoxX + ffnBoxW + 40, returnY + 20, verticalStreamX + 40, returnY + 20, verticalStreamX + 2, returnY);
+		this.ctx.strokeStyle = '#10b981';
+		this.ctx.lineWidth = arrowLW;
+		this.ctx.stroke();
 
-		// -- HEADER (Größerer Text) --
+		if (isCurrent) {
+			this.ctx.globalAlpha = 1;
+			this.ctx.fillStyle = '#10b981';
+			this.ctx.beginPath();
+			this.ctx.arc(verticalStreamX, returnY, 8, 0, Math.PI * 2);
+			this.ctx.fill();
+			this.ctx.fillStyle = '#fff';
+			this.ctx.textAlign = 'center';
+			this.ctx.fillText('+', verticalStreamX, returnY + 4);
+		}
+	},
+
+	drawVector: function (vec, x, y, cellW, cellH, hue, alpha) {
+		const ctx = this.ctx;
+		const maxAbs = Math.max(...vec.map(Math.abs), 0.001);
+		ctx.globalAlpha = alpha;
+
+		vec.forEach((v, i) => {
+			const norm = v / maxAbs;
+			const intensity = Math.abs(norm);
+			// Color logic based on positive/negative values
+			ctx.fillStyle = norm >= 0 
+				? `hsla(${hue}, 80%, ${88 - intensity * 42}%, ${0.35 + intensity * 0.65})`
+				: `hsla(${(hue + 180) % 360}, 55%, ${88 - intensity * 38}%, ${0.35 + intensity * 0.65})`;
+
+			ctx.beginPath();
+			ctx.roundRect(x + i * (cellW + 1), y, cellW, cellH, 2);
+			ctx.fill();
+		});
+		ctx.globalAlpha = 1;
+	},
+
+	drawMetadata: function(l, { yBase, descColX, isCurrent }) {
+		if (!isCurrent) return;
+		const ctx = this.ctx;
+		const dy = yBase + 5;
+		const role = this.layerRoles[l];
+
+		ctx.globalAlpha = 1;
+		ctx.textAlign = 'left';
+
+		// Attention Text
+		ctx.font = 'bold 15px system-ui';
+		ctx.fillStyle = '#8b5cf6';
+		ctx.fillText('Attention:', descColX, dy + 5);
+		ctx.font = '14px system-ui';
+		ctx.fillStyle = '#475569';
+		ctx.fillText(role.attnDesc, descColX, dy + 25);
+
+		// FFN Text
+		ctx.font = 'bold 15px system-ui';
+		ctx.fillStyle = '#d97706';
+		ctx.fillText('FFN (Knowledge):', descColX, dy + 60);
+		ctx.font = '14px system-ui';
+		ctx.fillStyle = '#475569';
+		ctx.fillText(role.ffnDesc, descColX, dy + 80);
+
+		// Example Text
+		ctx.font = 'bold 14px monospace';
+		ctx.fillStyle = '#10b981';
+		ctx.fillText('Example:', descColX, dy + 115);
+		ctx.fillText(role.example, descColX + 5, dy + 135);
+	},
+
+	drawHeaders: function() {
+		const ctx = this.ctx;
+		const streamX = 150; // matches calculateLayout
+		const vecW = this.dims * 7; // (cellW + 1)
+
 		ctx.font = 'bold 18px system-ui, sans-serif';
 		ctx.fillStyle = '#1e293b';
 		ctx.textAlign = 'left';
 		ctx.textBaseline = 'bottom';
-		ctx.fillText('Residual Stream Flow', leftMargin, this.topPad - 25);
+		ctx.fillText('Residual Stream Flow', 30, this.topPad - 25);
 
-		// Spalten-Beschriftungen
 		ctx.font = '600 11px system-ui, sans-serif';
-		ctx.fillStyle = '#64748b';
 		ctx.textAlign = 'center';
+
+		// Column Labels
+		ctx.fillStyle = '#64748b';
 		ctx.fillText('RESIDUAL x', streamX + vecW / 2, this.topPad - 5);
+
 		ctx.fillStyle = '#8b5cf6';
-		ctx.fillText('ATTENTION', attnBoxX + attnBoxW / 2, this.topPad - 5);
+		ctx.fillText('ATTENTION', streamX + vecW + 65, this.topPad - 5);
+
 		ctx.fillStyle = '#d97706';
-		ctx.fillText('FFN', ffnBoxX + ffnBoxW / 2, this.topPad - 5);
-
-		// -- ROWS --
-		for (let l = 0; l <= this.numLayers; l++) {
-			const yBase = this.topPad + 8 + l * this.rowH;
-			const isCurrent = l === layer;
-			const isActive = l <= layer;
-			const alpha = isActive ? 1 : 0.15;
-
-			if (isCurrent) {
-				ctx.fillStyle = '#f8fafc';
-				ctx.beginPath();
-				ctx.roundRect(leftMargin - 5, yBase - 10, W - 25, this.rowH - 5, 12);
-				ctx.fill();
-				ctx.strokeStyle = '#3b82f6';
-				ctx.lineWidth = 2;
-				ctx.stroke();
-			}
-
-			// Layer Labels
-			ctx.font = isCurrent ? 'bold 14px system-ui' : '12px system-ui';
-			ctx.fillStyle = isCurrent ? '#1e293b' : '#94a3b8';
-			ctx.textAlign = 'left';
-			ctx.fillText(l === 0 ? 'Embed' : `Layer ${l}`, leftMargin, yBase + 10);
-
-			// 1. Residual Stream Vektoren
-			this.tokens.forEach((token, ti) => {
-				const vy = yBase + 10 + ti * (cellH + 3);
-				const state = this.layerStates[token][Math.min(l, this.numLayers)];
-				const hue = [217, 160, 38, 0][ti];
-				this.drawVector(state, streamX, vy, cellW, cellH, hue, alpha);
-
-				// Token Name links neben dem Stream
-				ctx.font = '10px monospace';
-				ctx.fillStyle = this.tokenColors[ti];
-				ctx.textAlign = 'right';
-				ctx.fillText(token, streamX - 8, vy + 10);
-			});
-
-			// 2. Attn & FFN Boxen + Vektoren (nur ab Layer 1)
-			if (l >= 1) {
-				const boxTop = yBase + 5;
-				const boxH = tokenBlockH + 15;
-
-				// Attention Box & Content
-				ctx.globalAlpha = alpha;
-				ctx.beginPath();
-				ctx.roundRect(attnBoxX, boxTop, attnBoxW, boxH, 6);
-				ctx.fillStyle = '#faf5ff';
-				ctx.fill();
-				ctx.strokeStyle = isCurrent ? '#8b5cf6' : '#e2e8f0';
-				ctx.stroke();
-
-				this.tokens.forEach((token, ti) => {
-					const contrib = this.layerContributions[token][l - 1];
-					const vy = boxTop + 8 + ti * (cellH + 3);
-					this.drawVector(contrib.attn, attnBoxX + 5, vy, cellW - 1, cellH, 270, alpha);
-				});
-
-				// FFN Box & Content
-				ctx.beginPath();
-				ctx.roundRect(ffnBoxX, boxTop, ffnBoxW, boxH, 6);
-				ctx.fillStyle = '#fffbeb';
-				ctx.fill();
-				ctx.strokeStyle = isCurrent ? '#d97706' : '#e2e8f0';
-				ctx.stroke();
-
-				this.tokens.forEach((token, ti) => {
-					const contrib = this.layerContributions[token][l - 1];
-					const vy = boxTop + 8 + ti * (cellH + 3);
-					this.drawVector(contrib.ffn, ffnBoxX + 5, vy, cellW - 1, cellH, 38, alpha);
-				});
-
-				// -- TEXT RECHTS (Größer & Englisch) --
-				if (isCurrent) {
-					const dy = yBase + 5;
-					ctx.globalAlpha = 1;
-					ctx.textAlign = 'left';
-
-					ctx.font = 'bold 15px system-ui';
-					ctx.fillStyle = '#8b5cf6';
-					ctx.fillText('Attention:', descColX, dy + 5);
-					ctx.font = '14px system-ui';
-					ctx.fillStyle = '#475569';
-					ctx.fillText(this.layerRoles[l].attnDesc, descColX, dy + 25);
-
-					ctx.font = 'bold 15px system-ui';
-					ctx.fillStyle = '#d97706';
-					ctx.fillText('FFN (Knowledge):', descColX, dy + 60);
-					ctx.font = '14px system-ui';
-					ctx.fillStyle = '#475569';
-					ctx.fillText(this.layerRoles[l].ffnDesc, descColX, dy + 80);
-
-					ctx.font = 'bold 14px monospace';
-					ctx.fillStyle = '#10b981';
-					ctx.fillText('Example:', descColX, dy + 115);
-					ctx.fillText(this.layerRoles[l].example, descColX + 5, dy + 135);
-				}
-
-				// -- ARROWS: Stream → Attn → FFN → Stream --
-				if (isActive) {
-					const arrowAlpha = isCurrent ? 0.85 : 0.3;
-					const arrowLW = isCurrent ? 2 : 1.2;
-
-					// Lane 1: Stream -> Attention (Oben)
-					const readY = boxTop - 15;
-					this.drawCurvedArrow(
-						streamRightX + 5, yBase + 15,
-						attnBoxX + 5, yBase + 15,
-						-20, // Kurve nach oben
-						'#8b5cf6', arrowLW, arrowAlpha
-					);
-
-					// Lane 2: Attention -> FFN (Mitte)
-					this.drawCurvedArrow(
-						attnBoxX + attnBoxW - 5, yBase + 20,
-						ffnBoxX + 5, yBase + 20,
-						-10,
-						'#d97706', arrowLW, arrowAlpha
-					);
-
-					// Lane 3: FFN -> Stream (Unten zurück)
-					// Geht unter den Boxen her, um Überlappung zu vermeiden
-					const returnY = yBase + tokenBlockH + 30;
-					ctx.globalAlpha = arrowAlpha;
-					ctx.beginPath();
-					ctx.moveTo(ffnBoxX + ffnBoxW - 10, yBase + 25);
-					ctx.bezierCurveTo(
-						ffnBoxX + ffnBoxW + 40, returnY + 20, // Kontrollpunkt rechts außen
-						verticalStreamX + 40, returnY + 20,    // Kontrollpunkt beim Stream
-						verticalStreamX + 2, returnY          // Ziel am vertikalen Fluss
-					);
-					ctx.strokeStyle = '#10b981';
-					ctx.lineWidth = arrowLW;
-					ctx.stroke();
-
-					// Pfeilspitze für Return
-					const hs = 7;
-					ctx.beginPath();
-					ctx.moveTo(verticalStreamX + 2, returnY);
-					ctx.lineTo(verticalStreamX + 2 + hs, returnY - 4);
-					ctx.lineTo(verticalStreamX + 2 + hs, returnY + 4);
-					ctx.fillStyle = '#10b981';
-					ctx.fill();
-
-					if (isCurrent) {
-						ctx.globalAlpha = 1;
-						ctx.font = 'bold 11px system-ui';
-						ctx.textAlign = 'center';
-
-						ctx.fillStyle = '#10b981';
-						ctx.beginPath();
-						ctx.arc(verticalStreamX, returnY, 8, 0, Math.PI * 2);
-						ctx.fill();
-						ctx.fillStyle = '#fff';
-						ctx.fillText('+', verticalStreamX, returnY + 4);
-					}
-				}
-			}
-			ctx.globalAlpha = 1;
-		}
+		ctx.fillText('FFN', streamX + vecW + 165, this.topPad - 5);
 	},
-
+	
 	_updateInfo: function () {
 		const layer = this.currentLayer;
 		const infoDiv = document.getElementById('residual-stream-info');
