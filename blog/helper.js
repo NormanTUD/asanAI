@@ -412,9 +412,9 @@ function bibtexify() {
 				}
 			}
 
-			// Add SVG icon if URL is available
-			const svgIcon = data.url
-				? `<a class='bibtexify_auto_link_icon' href="${data.url}" target="_blank" rel="noopener noreferrer" title="View source"><span class="external_link_icon">
+                        // Add SVG icon if URL is available
+                        const svgIcon = data.url
+                                ? `<a class='bibtexify_auto_link_icon' href="${data.url}" target="_blank" rel="noopener noreferrer" title="View source"><span class="external_link_icon">
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -472,13 +472,23 @@ function bibtexify() {
        style="fill:currentColor" />
   </g>
 </svg>
-</span>
-		</a>`
-				: "";
+</span></a>`
+                                : "";
 
 			const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
-			return `<span class="autociteelement"><a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${linkText}</a>${svgIcon}</span>`;
-		});
+
+                        // Split the link text into words
+                        const linkWords = String(linkText).split(" ");
+                        const lastWord = linkWords.pop(); // Get the last word
+                        const precedingText = linkWords.join(" "); // All but the last word
+
+                        // Wrap the last word and SVG icon together in a nowrap span
+                        const lastWordWithIcon = `<span style="white-space: nowrap;">${lastWord}${svgIcon}</span>`;
+
+                        // Return the final citation element
+                        return `<span class="autociteelement"><a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${precedingText} </a>${lastWordWithIcon}</span>`;
+
+                });
 
 		content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
 			const fnId = window.footnoteCounter++;
