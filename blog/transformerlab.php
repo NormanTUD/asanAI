@@ -301,6 +301,33 @@ $$M = \begin{pmatrix}
 	0 & 0 & 0 & -\infty \\
 	0 & 0 & 0 & 0
 \end{pmatrix}$$
+
+#### The Causal Mask Creates an Asymmetric Information Geometry
+
+The causal mask does more than simply prevent
+tokens from "looking into the future", it imposes a fundamental asymmetry
+in the information available to each position in the sequence. Because token
+*i* can only attend to tokens $\left\{1, \dots, i\right\}$ and never to $\left\{i + 1, \dots, n\right\}$, its
+representation is computed from strictly less information than that of token
+$i + 1$. This creates a natural **information gradient** across the sequence:
+later tokens accumulate progressively richer, more contextually informed
+representations, while earlier tokens remain comparatively impoverished.
+The last token in the sequence is uniquely privileged, it is the only
+position that has "seen" the entire preceding context, which is precisely
+why decoder-only models use its final hidden state for next-token prediction.
+
+This gradient can be understood as an **information funnel**, where meaning
+gathers toward the end of the sequence much like a river accumulating
+tributaries. The geometric consequence is practical as well as theoretical:
+it is the reason **prompt engineering** works. By carefully ordering
+information within a prompt, you control which tokens have access to which
+context. Placing a critical instruction at the *end* of a prompt ensures
+that its representation is built from the full preceding context, whereas
+placing it at the *beginning* means it can only be passively attended to
+by later tokens, which may reinterpret or dilute it. In effect, the
+causal mask turns token position into a form of **informational privilege**,
+making the geometry of attention inherently asymmetric and position-dependent.
+
 </div>
 
 <div class="md" id="transformer-mask-logic-breakdown">
