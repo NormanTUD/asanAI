@@ -106,6 +106,172 @@ const PositionalLab = {
 	}
 };
 
+function initRepetitionStarburstDemo() {
+    const D = 8;
+    const BASE = 10000;
+    const NUM_REPETITIONS = 200;
+
+    const baseWord = [1.688, -0.454, 0, 0, 0.5, -0.3, 0.1, 0.2];
+
+    function pe(pos, d) {
+        const v = [];
+        for (let i = 0; i < d; i += 2) {
+            const w = 1 / Math.pow(BASE, i / d);
+            v.push(Math.sin(pos * w));
+            if (i + 1 < d) v.push(Math.cos(pos * w));
+        }
+        return v;
+    }
+
+    function addVectors(a, b) {
+        return a.map((val, i) => val + b[i]);
+    }
+
+    const allEmbeddings = [];
+    for (let p = 0; p < NUM_REPETITIONS; p++) {
+        const peVec = pe(p, D);
+        allEmbeddings.push(addVectors(baseWord, peVec));
+    }
+
+    const centerX = baseWord[0];
+    const centerY = baseWord[1];
+    const centerZ = baseWord[2];
+
+    // Build line traces from center to each endpoint
+    const lineTraces = [];
+
+    // Collect cone data (arrow tips at the endpoints)
+    const coneX = [], coneY = [], coneZ = [];
+    const coneU = [], coneV = [], coneW = [];
+    const coneColors = [];
+
+    for (let p = 0; p < NUM_REPETITIONS; p++) {
+        const emb = allEmbeddings[p];
+
+        // Direction vector from center to endpoint
+        const dx = emb[0] - centerX;
+        const dy = emb[1] - centerY;
+        const dz = emb[2] - centerZ;
+
+        // Normalize the direction for consistent cone size
+        const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        const nx = mag > 0 ? dx / mag : 0;
+        const ny = mag > 0 ? dy / mag : 0;
+        const nz = mag > 0 ? dz / mag : 0;
+
+        // Place the cone at the endpoint, pointing outward
+        coneX.push(emb[0]);
+        coneY.push(emb[1]);
+        coneZ.push(emb[2]);
+        coneU.push(nx);
+        coneV.push(ny);
+        coneW.push(nz);
+        coneColors.push(p);
+
+	    function getPositionColor(index, total, format = 'rgb') {
+		    const t = total > 1 ? index / (total - 1) : 0;
+		    const r = Math.round(59 + (16 - 59) * t);
+		    const g = Math.round(130 + (185 - 130) * t);
+		    const b = Math.round(246 + (129 - 246) * t);
+
+		    if (format === 'object') return { r, g, b };
+		    if (format === 'temml')  return `\\color[RGB]{${r},${g},${b}}`;
+		    return `rgb(${r}, ${g}, ${b})`;
+	    }
+
+
+	    // Line from center to endpoint
+	    lineTraces.push({
+		    x: [centerX, emb[0]],
+		    y: [centerY, emb[1]],
+		    z: [centerZ, emb[2]],
+		    mode: 'lines',
+		    type: 'scatter3d',
+		    line: {
+			    color: getPositionColor(p, NUM_REPETITIONS),
+			    width: 6
+		    },
+		    showlegend: false,
+		    hoverinfo: 'skip'
+	    });
+
+    }
+
+    // Cone trace — 3D arrowheads at each endpoint
+    const coneTrace = {
+        type: 'cone',
+        x: coneX,
+        y: coneY,
+        z: coneZ,
+        u: coneU,
+        v: coneV,
+        w: coneW,
+        sizemode: 'absolute',
+        sizeref: 0.12,
+        anchor: 'tail',
+        colorscale: 'HSV',
+        cmin: 0,
+        cmax: NUM_REPETITIONS,
+        colorbar: {
+            title: 'Position',
+            thickness: 15,
+            len: 0.6
+        },
+        hoverinfo: 'text',
+        hovertext: coneX.map((_, i) => {
+            const emb = allEmbeddings[i];
+            return `"king" at pos ${i}<br>Δ = [${(emb[0] - centerX).toFixed(3)}, ${(emb[1] - centerY).toFixed(3)}, ${(emb[2] - centerZ).toFixed(3)}]`;
+        }),
+        name: '"king" + PE (positions 0–' + (NUM_REPETITIONS - 1) + ')',
+        showscale: true
+    };
+
+    // Center point trace
+    const centerTrace = {
+        x: [centerX],
+        y: [centerY],
+        z: [centerZ],
+        mode: 'markers+text',
+        type: 'scatter3d',
+        marker: {
+            size: 10,
+            color: '#000',
+            symbol: 'diamond',
+            line: { width: 2, color: '#fff' }
+        },
+        text: ['"king" (no PE)'],
+        textposition: 'top center',
+        textfont: { size: 13, color: '#000', family: 'sans-serif' },
+        name: 'Original "king" (no PE)',
+        hoverinfo: 'text',
+        hovertext: ['Raw semantic embedding of "king"<br>[' + baseWord.slice(0, 3).map(v => v.toFixed(3)).join(', ') + ', ...]']
+    };
+
+    const traces = [...lineTraces, coneTrace, centerTrace];
+
+    const layout = {
+        title: '⭐ Repetition Starburst: "king" repeated ' + NUM_REPETITIONS + ' times',
+        scene: {
+            xaxis: { title: 'Dim 0 (sin, fast)' },
+            yaxis: { title: 'Dim 1 (cos, fast)' },
+            zaxis: { title: 'Dim 2 (sin, slow)' },
+            camera: { eye: { x: 1.8, y: 1.2, z: 1.0 } }
+        },
+        margin: { t: 50, b: 20, l: 20, r: 20 },
+        showlegend: false,
+        legend: { x: 0.01, y: 0.99, font: { size: 11 } },
+        annotations: [{
+            text: 'Each arrow points from the raw "king" vector to its positionally-encoded copy. Cone tips reveal the PE geometry.',
+            showarrow: false,
+            x: 0.5, y: -0.05,
+            xref: 'paper', yref: 'paper',
+            font: { size: 12, color: '#475569' }
+        }]
+    };
+
+    Plotly.newPlot('repetition-starburst', traces, layout, { responsive: true });
+}
+
 function initPeFourierDemo() {
 	const root = document.getElementById("pe-fourier-demo");
 	if (!root) return;
@@ -603,6 +769,23 @@ async function loadPositionalEmbeddingsModule() {
 	updateLoadingStatus("Loading section about positional embeddings...");
 	PositionalLab.update(1);
 	initPeFourierDemo();
+
+	// Lazy-load the repetition starburst demo
+	const starburstTarget = document.getElementById('repetition-starburst');
+	if (starburstTarget) {
+		let starburstLoaded = false;
+		const starburstObserver = new IntersectionObserver((entries, obs) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting && !starburstLoaded) {
+					starburstLoaded = true;
+					initRepetitionStarburstDemo();
+					obs.unobserve(starburstTarget);
+				}
+			});
+		}, { rootMargin: '200px' });
+		starburstObserver.observe(starburstTarget);
+	}
+
 
 	// Lazy-load the helix manifold demo only when it's near the viewport
 	const helixTarget = document.getElementById('helix-manifold');

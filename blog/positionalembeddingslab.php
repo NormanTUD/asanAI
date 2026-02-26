@@ -120,6 +120,20 @@ The wave plots above show each dimension's projection individually, flat curves 
 <div id="helix-manifold" style="width:100%; height:500px; margin: 20px 0; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
 
 <div class="md">
+## The Repetition Starburst: One Word, Many Positions
+
+What happens when you repeat the same word hundreds of times in a sequence? The **semantic embedding** is identical every time — but the **positional encoding** nudges each copy to a slightly different point in space.
+
+The plot below places the **raw embedding** of "king" (with no positional encoding) at the center. From it, **hundreds of lines** radiate outward to the final embedding of "king" at each position (0 through 199). The result is a starburst that reveals the geometry of positional encoding itself:
+
+- **Short lines** mean the PE at that position barely moved the vector.
+- **The pattern of directions** shows how the sine/cosine waves systematically sweep the word through embedding space.
+- **No two endpoints are the same** — every position is unique, even though the word is identical.
+</div>
+
+<div id="repetition-starburst" style="width:100%; height:600px; margin: 20px 0; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+
+<div class="md">
 ## Positional Encoding Creates a Group Structure
 
 We've shown that a position shift by a fixed offset $k$ corresponds to multiplying by a rotation matrix $M_k$. But these matrices aren't just a convenient trick, they form a **mathematical group**, and that algebraic fact is the deepest reason sinusoidal PE works so well.
