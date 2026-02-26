@@ -1,4 +1,10 @@
 window.bibData = {
+	"geometryoftruth": {
+		title: "The Geometry of Truth: Emergent Linear Structure in LLM Representations of True/False Datasets",
+		author: "Samuel Marks",
+		year: 2024,
+		url: "https://arxiv.org/abs/2310.06824v3"
+	},
 	"jacobs1991moe": {
 		title: "Adaptive Mixtures of Local Experts",
 		author: "Robert A. Jacobs, Michael I. Jordan, Steven J. Nowlan, Geoffrey E. Hinton",
