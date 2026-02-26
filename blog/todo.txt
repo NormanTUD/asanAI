@@ -1,3 +1,6 @@
+The connection between Zipf's Law and BPE is implicit but never made explicit: BPE's merge operations naturally produce a token frequency distribution that approximates Zipf's Law, which is why it works so well — it aligns the tokenizer's granularity with the statistical structure of language.
+
+
 Add a "How ChatGPT Actually Works" summary section near the end that ties together every component (tokenization → embedding → positional encoding → N × [attention + FFN] → unembedding → sampling) into a single, clean diagram with links back to each section. Your transformer lab does this interactively, but a static "reference card" would help readers who want to see the whole picture at once.
 
 
