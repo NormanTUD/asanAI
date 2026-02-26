@@ -202,12 +202,24 @@ The `x +` means each layer **adds** information rather than replacing it. Nothin
 
 Inside each layer, two things happen:
 
-1. **Attention Heads** are used to determine which input relates to which other input. For example, in the sentence "*The cat sat on it's mat*", the "it's" references to the *Cat*. This nudges each input token to some direction, according to the context it is used in. You can imagine the **Attention Heads** as experts at once very specific tiny task. They do their task, like determining what word relates to what other word, or determining if a word is referencing to the past, present or future, and return.
+1. **Attention Heads** are used to determine which input relates to which other input. For example, in the sentence "*The cat sat on the mat*", the "sat" references to the *cat*, but also attends to the *mat*. This nudges each input token to some direction, according to the context it is used in. You can imagine the **Attention Heads** as experts at once very specific tiny task. They do their task, like determining what word relates to what other word, or determining if a word is referencing to the past, present or future, and return.
 2. A **Neural Network** receives all the results from the **Attention Heads** and decides what to do with them.
 
 The result is then returned and simply added to the **Residual Stream**.
 
 Neither the **Attention Heads** nor the **Neural Network** are configured by hand. They learn what to look for by looking at massive amounts of data.
+
+#### 4a: Attention - "Which other words matter for *this* word?"
+
+Attention lets the model **look at other tokens** to understand context. In *"The cat sat on the mat because **it** was tired"*, what does "it" refer to? An **attention head** figures this out by comparing "it" to every other word and deciding that "it" is most related to "cat."
+
+The model has **many attention heads** running in parallel, each a tiny specialist. One might track which noun a pronoun refers to, another might connect verbs to their objects, another might notice adjectives describing nearby nouns.
+
+#### 4b: Feed-Forward Network - "What do I conclude?"
+
+After attention has gathered context, a small **neural network** processes each token individually. This is where the model applies knowledge it memorized during training: facts, patterns, and rules of language.
+
+If attention is *gathering clues*, the feed-forward network is *drawing conclusions*.
 </div>
 
 <!-- ============================================================ -->
@@ -240,19 +252,6 @@ Neither the **Attention Heads** nor the **Neural Network** are configured by han
 <div id="residual-stream-info" style="margin-top:14px;"></div>
 
 <div class="md">
-#### 4a: Attention - "Which other words matter for *this* word?"
-
-Attention lets the model **look at other tokens** to understand context. In *"The cat sat on the mat because **it** was tired"*, what does "it" refer to? An **attention head** figures this out by comparing "it" to every other word and deciding that "it" is most related to "cat."
-
-The model has **many attention heads** running in parallel, each a tiny specialist. One might track which noun a pronoun refers to, another might connect verbs to their objects, another might notice adjectives describing nearby nouns.
-
-#### 4b: Feed-Forward Network - "What do I conclude?"
-
-After attention has gathered context, a small **neural network** processes each token individually. This is where the model applies knowledge it memorized during training: facts, patterns, and rules of language.
-
-If attention is *gathering clues*, the feed-forward network is *drawing conclusions*.
-
-
 ### Step 5: The Final Prediction
 
 After all layers, the model takes the **last token's vector** and produces a **score for every word in the vocabulary** (often 50,000+ words). These scores are converted into probabilities:
