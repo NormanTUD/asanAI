@@ -391,6 +391,4 @@ https://blog.mlreview.com/the-intuition-behind-adversarial-attacks-on-neural-net
 Der Outsider-Faktor: Ein Biologe, der das Konzept der „Umwelt“ (die subjektive Welt eines Lebwesens) erfand. Er beschrieb, wie eine Zecke die Welt nur durch „Licht“ und „Buttersäure“ wahrnimmt.
 Warum es passt: Das ist die perfekte Analogie für LLMs. Wir denken, sie verstehen unsere Welt, aber sie leben in einer „Umwelt“ aus reiner Statistik und Token-Vektoren. Sie haben kein „Gefühl“ für das Stoppschild, nur eine Koordinate dafür.
 
-Warum es passt: Das ist die exakte Beschreibung von parallelem Computing und neuronalen Netzen, Jahrzehnte bevor es Mikrochips gab. Er beschrieb ein „menschliches GPU-Cluster“.
-
 Er zitiert Yann LeCun (1989/1998). Frag ihn, warum er moderne Architekturen wie „MoE“ (Mixture of Experts) oder „State Space Models“ (Mamba) ignoriert, wenn er doch den Weg zu ChatGPT erklären will.
