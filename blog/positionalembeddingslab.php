@@ -137,6 +137,8 @@ A **group** is one of the most fundamental structures in all of mathematics: the
 
 The simplest everyday example is **clock arithmetic**: the 12 hours form a group under addition mod 12. Going forward 5 hours then 9 hours is the same as going forward 2 hours ($5+9=14\equiv2\pmod{12}$). The identity is $+0$ hours, and the inverse of $+5$ is $+7$ (since $5+7\equiv0$). The first interactive below lets you explore this directly.
 
+\citeauthor{galoisgroup} introduced the concept of a group to decode the hidden structural properties of algebraic equations. His primary objective was to determine why equations of the fifth degree and higher lack general solutions involving radicals (roots). He discovered that an equation is solvable by radicals if and only if the **symmetry group of its roots**—now known as the Galois group—possesses a specific internal architecture, categorized today as a **solvable group**.
+
 ### The PE Rotation Group
 
 Recall the rotation matrix for each sine-cosine pair at frequency $\omega$:
