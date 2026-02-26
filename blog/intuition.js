@@ -599,25 +599,6 @@ const ResidualStreamViz = {
 
 	// ── Helpers ──
 
-	drawVector: function (vec, x, y, cellW, cellH, hue, alpha) {
-		const ctx = this.ctx;
-		const maxAbs = Math.max(...vec.map(Math.abs), 0.001);
-		ctx.globalAlpha = alpha;
-		vec.forEach((v, i) => {
-			const norm = v / maxAbs;
-			const intensity = Math.abs(norm);
-			if (norm >= 0) {
-				ctx.fillStyle = `hsla(${hue}, 80%, ${88 - intensity * 42}%, ${0.35 + intensity * 0.65})`;
-			} else {
-				ctx.fillStyle = `hsla(${(hue + 180) % 360}, 55%, ${88 - intensity * 38}%, ${0.35 + intensity * 0.65})`;
-			}
-			ctx.beginPath();
-			ctx.roundRect(x + i * (cellW + 1), y, cellW, cellH, 2);
-			ctx.fill();
-		});
-		ctx.globalAlpha = 1;
-	},
-
 	drawCurvedArrow: function (x1, y1, x2, y2, curve, color, lineW, alpha) {
 		const ctx = this.ctx;
 		ctx.globalAlpha = alpha || 1;
@@ -678,8 +659,9 @@ const ResidualStreamViz = {
 
 			this.canvas.addEventListener('click', (e) => {
 				const rect = this.canvas.getBoundingClientRect();
-				const scale = this.canvas.width / (window.devicePixelRatio || 1) / rect.width;
-				const clickY = (e.clientY - rect.top) * scale;
+				// Map from CSS coordinates to logical canvas coordinates
+				const scaleY = this.H / rect.height;
+				const clickY = (e.clientY - rect.top) * scaleY;
 				for (let l = 0; l <= this.numLayers; l++) {
 					const yBase = this.topPad + l * this.rowH;
 					if (clickY >= yBase && clickY <= yBase + this.rowH) {
@@ -694,8 +676,8 @@ const ResidualStreamViz = {
 
 			this.canvas.addEventListener('mousemove', (e) => {
 				const rect = this.canvas.getBoundingClientRect();
-				const scale = this.canvas.width / (window.devicePixelRatio || 1) / rect.width;
-				const my = (e.clientY - rect.top) * scale;
+				const scaleY = this.H / rect.height;
+				const my = (e.clientY - rect.top) * scaleY;
 				let found = -1;
 				for (let l = 0; l <= this.numLayers; l++) {
 					const yBase = this.topPad + l * this.rowH;
@@ -733,25 +715,6 @@ const ResidualStreamViz = {
 		this.ctx.lineTo(x - h * Math.cos(angle - 0.5), y - h * Math.sin(angle - 0.5));
 		this.ctx.lineTo(x - h * Math.cos(angle + 0.5), y - h * Math.sin(angle + 0.5));
 		this.ctx.fill();
-	},
-
-	handleCanvasClick: function (e) {
-		const rect = this.canvas.getBoundingClientRect();
-		const scale = this.canvas.width / (window.devicePixelRatio || 1) / rect.width;
-		const clickY = (e.clientY - rect.top) * scale;
-
-		// Accurate hit-box detection
-		for (let l = 0; l <= this.numLayers; l++) {
-			const yBase = this.topPad + l * this.rowH;
-			if (clickY >= yBase && clickY <= yBase + this.rowH) {
-				this.currentLayer = l;
-				// Force immediate UI sync
-				this.renderFrame();
-				this._updateInfo();
-				this._syncControls();
-				break; 
-			}
-		}
 	},
 
 	drawVerticalStreamArrows: function(l, layout) {
@@ -986,8 +949,9 @@ const ResidualStreamViz = {
 
 	drawHeaders: function() {
 		const ctx = this.ctx;
-		const streamX = 150; // matches calculateLayout
-		const vecW = this.dims * 7; // (cellW + 1)
+		const cellW = 6;
+		const streamX = 150;
+		const vecW = this.dims * (cellW + 1);
 
 		ctx.font = 'bold 18px system-ui, sans-serif';
 		ctx.fillStyle = '#1e293b';
@@ -998,7 +962,6 @@ const ResidualStreamViz = {
 		ctx.font = '600 11px system-ui, sans-serif';
 		ctx.textAlign = 'center';
 
-		// Column Labels
 		ctx.fillStyle = '#64748b';
 		ctx.fillText('RESIDUAL x', streamX + vecW / 2, this.topPad - 5);
 
