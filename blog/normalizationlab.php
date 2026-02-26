@@ -66,7 +66,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
         </aside>
 
         <article>
-            <div id="math-display" style="background: #ffffff; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; min-height: 400px;">
+            <div id="math-display" style="background: #ffffff; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; max-height: 500px; overflow-y: scroll;">
                 </div>
         </article>
     </div>
