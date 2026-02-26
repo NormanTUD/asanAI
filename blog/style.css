@@ -892,5 +892,5 @@ pre, code, .status-console, .matrix-input {
 }
 
 .bibtexify_auto_link_icon {
-	text-decoration: none;
+	text-decoration: none !important;
 }
