@@ -28,20 +28,6 @@ $$\text{LLM}(\underbrace{\text{"Once upon a"}}_{\text{User Input}} \ \underbrace
 
 It looks at huge amounts of text and detects how it is structurized and how to imitate it.
 
-First, the input is tokenized
-Then Embedding
-Then Positional Embedding
-Then run through many layers
-x = x + layer
-Residue stream as global workbook where many "expert" systems for many small things work, like Attention Heads that can see what verb connects to what objects or things like that. Each of these "experts" checks only one "simple" thing (all by doing math).
-Then neural networks to decide based on the infos they learnt, where the next would should be.
-
-This document will look into all of those steps in great detail.
-
-
-
-
-
 ## How does the network do that?
 
 The LLM learned to predict the next word by reading **massive** amounts of text (books, websites, articles) and noticing patterns in how language works. But how does it actually go from a string of words to a prediction? Let's walk through it.
