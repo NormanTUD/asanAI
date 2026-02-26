@@ -1,3 +1,10 @@
+4. The Connection Between Attention and Retrieval-Augmented Memory
+Your attention explanation is excellent, but you could draw a deeper parallel: attention is essentially a differentiable database lookup. The Query is the search query, the Keys are the index, and the Values are the stored records. This connects to:
+    Why RAG (Retrieval-Augmented Generation) works — it's literally extending the Key-Value store beyond the model's weights
+    Why KV-caching during inference is so important for speed
+    The deep link between Transformers and Hopfield Networks (Ramsauer et al., 2021), which shows that modern attention is mathematically equivalent to an energy-based associative memory
+
+
 1. The Perceptron Controversy Was More Nuanced
 Your coverage of Minsky/Papert's critique is good, but you could add the "aha-moment" that Minsky and Papert knew multi-layer networks could solve XOR — they even said so in the book. Their actual argument was that nobody knew how to train them efficiently. The real bottleneck wasn't architecture, it was optimization. This reframes the AI Winter not as a failure of imagination but as a failure of mathematics catching up to intuition 
 
