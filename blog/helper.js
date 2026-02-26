@@ -477,7 +477,7 @@ function bibtexify() {
 				: "";
 
 			const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
-			return `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${linkText}</a>${svgIcon}`;
+			return `<span class="autociteelement"><a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${linkText}</a>${svgIcon}</span>`;
 		});
 
 		content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {

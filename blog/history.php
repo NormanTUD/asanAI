@@ -69,7 +69,7 @@ Ultimately, the Ishango bone represents the most significant archaeological indi
 	</figure>
 	<figure>
 		<img src="abacus.jpg" alt="The earliest depiction of an Abacus" />
-		<figcaption class="md">\citealternativetitle{earliestabacusphoto}</figcaption>
+		<figcaption class="md">\citealternativetitle{earliestabacusphoto} contains the earliest known depiction of an Abacus</figcaption>
 	</figure>
 </div>
 
@@ -152,14 +152,14 @@ Of course, Llull could not foresee modern AI systems. He was just the first one 
 
 A complete guide on how to use the Llullian **Volvette** as intended by Llull can be found \cite[here]{artandlogicofllull}.
 
-The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
+The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In his \citeyear{leibniz1685calculus} work \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
 \category{hardware,philosophy}
 ### Gottfried Wilhelm Leibniz 
 
 <div class="smart-quote" data-cite="leibniz1685calculus">
     <div class="full-quote">
-        If controversies were to arise, there would be no more need of disputation between two philosophers than between two accountants. For it would suffice to take their pencils in their hands, to sit down to their slates, and to say to each other: Let us calculate! (Calculemus!)
+	If controversies were to arise, there would be no more need of disputation between two philosophers than between two accountants. For it would suffice to take their pencils in their hands, to sit down to their slates, and to say to each other: Let us calculate! (Calculemus!)
     </div>
     <div class="short-quote">Let us calculate! (Calculemus!)</div>
 </div>
@@ -168,7 +168,7 @@ The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with
 
 <figure>
     <img style="width: 100%" src="Leibnizrechenmaschine.jpg" alt="Rechenmaschine by Leibniz" />
-    <figcaption class="md">\citealternativetitle{leibnizcc}</figcaption>
+    <figcaption class="md">\citealternativetitle{leibnizcc}, invented in 1672 and built in 1700, is the first mechanical working automatic calculation machine</figcaption>
 </figure>
 
 Leibniz's vision was revolutionary: he sought to mechanize thought by creating a symbolic system
@@ -212,7 +212,7 @@ I was too lazy to calculate by hand.
 
 <figure>
     <img style="width: 100%" src="zuse.jpg" alt="Zuses Z1" />
-    <figcaption class="md">\citealternativetitle{zusez1}</figcaption>
+    <figcaption class="md">\citealternativetitle{zusez1}, the first fully automatic turing complete (even though that concept wasn't invented yet) programmable Computer, created in 1937</figcaption>
 </figure>
 
 \citeauthor{zusebook}, a civil engineer tired of manual arithmetic, spent 1936 to 1945 building the first binary computers in his parents' Berlin living room. His Z-series evolved from the mechanical **Z1**, which used sliding metal plates but suffered from frequent jams, to the **Z3** (1941), the world's first functional, programmable, and fully automatic digital computer. By switching from mechanical parts to 2,000 electromagnetic telephone relays, Zuse proved that binary electricity was the future of calculation. He even pioneered the first high-level programming language, **Plankalkül**, while hiding his **Z4** model in the Alps to survive WWII, eventually launching the world's first commercial computer company (\citetitle{zusebook}, p. 72ff, 156ff).
@@ -270,7 +270,7 @@ $$y = \begin{cases} 1 & \text{if } \sum_{i=1}^{n} w_i x_i \geq \theta \\ 0 & \te
 
 This breakthrough allowed the brain to be viewed not just as a mysterious organ, but as a computational engine. Parallel to this, \citeauthor{wiener1948cybernetics} defined the field of **\citealternativetitle{wiener1948cybernetics}** in \citeyear{wiener1948cybernetics}. Wiener recognized that both machines and living organisms operate on principles of feedback loops and information transmission. This synthesis of biology, logic, and engineering provided the fertile soil from which modern AI would eventually grow.
 
-This was the conceptual shift from "calculating machines" to the idea that cognition itself might be formalized (see \citetitle{piccini} for more details).
+This was the conceptual shift from "calculating machines" to the idea that cognition itself might be formalized (see the work of \citeauthor{piccini} for more details).
 
 \category{history,hardware}
 ### The SNARC: The First Physical Neural Network (1951)

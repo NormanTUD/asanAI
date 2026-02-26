@@ -894,3 +894,7 @@ pre, code, .status-console, .matrix-input {
 .bibtexify_auto_link_icon {
 	text-decoration: none !important;
 }
+
+.autociteelement {
+	display: ruby-base-container;
+}

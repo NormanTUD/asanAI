@@ -116,7 +116,7 @@ window.bibData = {
 		url: "https://de.wikipedia.org/wiki/Datei:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg",
 		author: "Eremeev",
 		year: 2016,
-		alternativetitle: "The Stepped Reckoner by Leibniz, invented in 1672 and built in 1700, is the first mechanical working automatic calculation machine",
+		alternativetitle: "The Stepped Reckoner by Leibniz",
 		license: "CC",
 		title: "Gottfried Wilhelm Leibniz - Rechenmaschine"
 	},
@@ -342,7 +342,7 @@ window.bibData = {
 		year: "ca 340-320 BC",
 		author: "Darius",
 		url: "https://commons.wikimedia.org/wiki/File:Darius_Vase_abacus.jpg",
-		alternativetitle: "The Darius-Vase (ca. 340-320 BC) contains the earliest known depiction of an Abacus"
+		alternativetitle: "The Darius-Vase (ca. 340-320 BC)"
 	},
 	"salamictablet": {
 		url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg",
@@ -750,7 +750,7 @@ window.bibData = {
 		url: "https://www.math.berlin/mathematiker/konrad-zuse.html",
 		title: "Mathematiker des Monats März 2017 - Konrad Zuse (1910-1995)",
 		author: "Horst Zuse",
-		alternativetitle: "Konrad Zuse with a replica of his Z1 - the first fully automatic turing complete (even though that concept wasn't invented yet) programmable Computer, created in 1937"
+		alternativetitle: "Konrad Zuse with a replica of his Z1"
 	},
 	"zusetoolazy": {
 		url: "https://www.derstandard.at/consent/tcf/story/574514/ich-bin-zu-faul-zum-rechnen",
