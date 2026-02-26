@@ -1,4 +1,10 @@
 window.bibData = {
+	"simulatorstheory": {
+		alternativetitle: "simulators theory",
+		url: "https://www.lesswrong.com/posts/vJFdjigzmcXMhNTsx/simulators",
+		author: "janus",
+		year: 2022
+	},
 	"jungpsychologyandreligion": {
 		title: "Psychology and Religion",
 		year: 1938,
