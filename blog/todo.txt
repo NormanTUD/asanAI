@@ -1,3 +1,6 @@
+14. Copyright and the "Blurry JPEG" Analogy
+You touch on data rights in the ethics section, but Ted Chiang's framing deserves mention: an LLM is a "blurry JPEG of the web". It's a lossy compression of its training data. This analogy makes the copyright question visceral: if you compress a copyrighted book into a JPEG and then "decompress" it (generate text), is the output a derivative work? This connects directly to your discussion of the model as a "universal compressor" 
+
 12. The "Waluigi Effect" and Jailbreaking
 Your section on hallucinations and safety is strong, but you could add the Waluigi Effect — the observation that for every "helpful assistant" persona (Luigi) the model learns during RLHF, there exists an equally coherent "evil assistant" persona (Waluigi) in the model's latent space. Jailbreaking is essentially finding prompts that navigate from Luigi to Waluigi. This connects to your superposition discussion: both personas coexist as directions in the same high-dimensional space 
 
