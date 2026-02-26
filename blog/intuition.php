@@ -128,11 +128,8 @@ The direction from "man" to "woman" represents something like the concept of gen
 	    <input type="text" id="embedding-arithmetic-input"
 		   style="flex:1; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-family:monospace;"
 		   placeholder="e.g., king - man + woman"
+			onkeyup="EmbeddingViz.doArithmetic()"
 		   value="king - man + woman">
-	    <button onkeyup="EmbeddingViz.doArithmetic()"
-		    style="background:#3b82f6; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">
-		Compute
-	    </button>
 	</div>
 	<div id="embedding-arithmetic-result" style="margin-top:8px; min-height:24px;"></div>
     </div>

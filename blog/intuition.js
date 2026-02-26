@@ -164,7 +164,7 @@ const EmbeddingViz = {
         'good': [5, 5], 'great': [6, 5.5], 'big': [4, -1], 'small': [-4, -1],
     },
 
-    currentDemo: 'basic', // 'basic' or 'arithmetic'
+    currentDemo: 'basic',
     arithmeticResult: null,
 
     render: function() {
@@ -176,8 +176,9 @@ const EmbeddingViz = {
         const words = text.split(/\s+/).filter(w => this.embeddings[w]);
 
         const traces = [];
+        const annotations = [];
 
-        // Background vocabulary (faded)
+        // ── Background vocabulary (greyed out but visible) ──
         const bgWords = Object.keys(this.embeddings).filter(w => !words.includes(w));
         if (bgWords.length > 0) {
             traces.push({
@@ -193,7 +194,7 @@ const EmbeddingViz = {
             });
         }
 
-        // Active words
+        // ── Active (typed) words ──
         const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
         words.forEach((word, i) => {
             const pos = this.embeddings[word];
@@ -209,23 +210,59 @@ const EmbeddingViz = {
             });
         });
 
-        // Vector arithmetic demo
+        // ── Vector arithmetic: draw arrows for each calculation step ──
         if (this.arithmeticResult) {
             const r = this.arithmeticResult;
-            // Draw arrows for the arithmetic
-            if (r.steps) {
-                r.steps.forEach(step => {
+
+            if (r.steps && r.steps.length > 0) {
+                r.steps.forEach((step, idx) => {
+                    // 1. Plotly annotation arrow (from → to) with arrowhead
+                    annotations.push({
+                        ax: step.from[0],
+                        ay: step.from[1],
+                        axref: 'x',
+                        ayref: 'y',
+                        x: step.to[0],
+                        y: step.to[1],
+                        xref: 'x',
+                        yref: 'y',
+                        showarrow: true,
+                        arrowhead: 2,
+                        arrowsize: 1.5,
+                        arrowwidth: 3,
+                        arrowcolor: '#3b82f6'
+                    });
+
+                    // 2. Invisible midpoint marker for hover label on the arrow
+                    const midX = (step.from[0] + step.to[0]) / 2;
+                    const midY = (step.from[1] + step.to[1]) / 2;
                     traces.push({
-                        x: [step.from[0], step.to[0]],
-                        y: [step.from[1], step.to[1]],
-                        mode: 'lines',
-                        line: { color: '#3b82f6', width: 3, dash: 'dash' },
+                        x: [midX],
+                        y: [midY],
+                        mode: 'markers',
+                        marker: { size: 14, color: 'rgba(59,130,246,0.01)' },
+                        text: [step.label],
+                        hovertemplate: '<b>%{text}</b><extra></extra>',
                         showlegend: false,
-                        hoverinfo: 'skip'
+                        cliponaxis: false
+                    });
+
+                    // 3. Visible text label next to the arrow midpoint
+                    annotations.push({
+                        x: midX,
+                        y: midY + 0.7,
+                        xref: 'x',
+                        yref: 'y',
+                        text: `<b>${step.label}</b>`,
+                        showarrow: false,
+                        font: { size: 11, color: '#3b82f6' },
+                        bgcolor: 'rgba(255,255,255,0.85)',
+                        borderpad: 3
                     });
                 });
             }
-            // Result point
+
+            // ── Result point (diamond) ──
             traces.push({
                 x: [r.pos[0]], y: [r.pos[1]],
                 text: ['≈ ' + r.nearest],
@@ -243,6 +280,7 @@ const EmbeddingViz = {
             showlegend: false,
             xaxis: { title: 'Dimension 1', range: [-10, 12], gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
             yaxis: { title: 'Dimension 2', range: [-10, 10], gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0', scaleanchor: 'x' },
+            annotations: annotations,
             plot_bgcolor: '#fff'
         };
 
@@ -278,7 +316,11 @@ const EmbeddingViz = {
                         result[0] -= vec[0];
                         result[1] -= vec[1];
                     }
-                    steps.push({ from: prev, to: [...result] });
+                    steps.push({
+                        from: prev,
+                        to: [...result],
+                        label: `${op === '+' ? '+' : '−'}${token}`
+                    });
                 }
             }
         });
@@ -306,7 +348,6 @@ const EmbeddingViz = {
         this.render();
     }
 };
-
 
 // ============================================================
 // STEP 3: POSITIONAL ENCODING VISUALIZER
