@@ -439,6 +439,22 @@ the most statistically probable completion. This suggests that RLHF safety train
 as a behavioural mask than a structural change, the dangerous capabilities remain in the weights,
 suppressed by a thin layer of fine-tuning that a sufficiently creative prompt can bypass.
 
+## Mathematical limits of what language models can represent
+
+The softmax bottleneck, formalized by \citeauthorlastnameand{breakingsoftmaxbottleneck}, reveals a hard mathematical
+ceiling on what a language model can represent. Because the log-probability matrix is
+constrained by the hidden dimension:
+
+$$\underbrace{\text{rank}(\log P_\theta)}_{\text{expressiveness of the model}} \leq \underbrace{d}_{\substack{\text{hidden state} \\ \text{dimension}}} \leq \underbrace{|V|}_{\substack{\text{vocabulary} \\ \text{size}}}$$
+
+There are valid distributions over language the model *cannot express*, no matter how long or
+how well it is trained. This means Uexküll's perceptual "bubble" is not just a metaphor:
+it has a precise dimensionality, and there are regions of linguistic reality that lie
+provably outside it. Even setting aside embodiment and qualia entirely, the model's
+representation of meaning is necessarily incomplete, not due to insufficient data or
+training, but because the architecture itself forbids it.
+
+
 ## Linear Representations of Truth: The Geometry of Knowing Without Acting
 
 Research by \citeauthor{geometryoftruth} from \citeyear{geometryoftruth} provides perhaps the most mathematically precise demonstration of the gap between representation and generation in LLMs. Working with models from the LLaMA-2 family, they showed that at sufficient scale, LLMs develop **linear representations of truth**: specific directions in their internal activation space along which true statements and false statements are cleanly separable. Using PCA visualizations, cross-dataset probe transfer experiments, and causal interventions, surgically adding or subtracting the identified "truth direction" from hidden states to flip the model's output from `TRUE` to `FALSE` and vice versa, they established that these representations are not merely correlates of text probability but encode something genuinely truth-relevant, persisting even when true statements are *less* probable than false ones (as with negated sentences like "The city of Paris is not in France"). They further showed that this linear structure emerges with scale: larger models develop more abstract, cross-domain truth representations that generalize across topically and structurally diverse datasets, while smaller models represent only surface-level features.

@@ -1,4 +1,10 @@
 window.bibData = {
+	"breakingsoftmaxbottleneck": {
+		title: "Breaking the Softmax Bottleneck: A High-Rank RNN Language Model",
+		year: 2017,
+		author: "Zhilin Yang, Zihang Dai, Ruslan Salakhutdinov, William W. Cohen",
+		url: "https://arxiv.org/abs/1711.03953"
+	},
 	"geometryoftruth": {
 		title: "The Geometry of Truth: Emergent Linear Structure in LLM Representations of True/False Datasets",
 		author: "Samuel Marks",
