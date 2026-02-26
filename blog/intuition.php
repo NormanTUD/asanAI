@@ -260,9 +260,6 @@ $$P(\text{"time"}) = 0.72, \quad P(\text{"day"}) = 0.08, \quad P(\text{"hill"}) 
 The model then **picks a word**, usually one of the top candidates, with a bit of randomness so it doesn't always say the exact same thing. That's what makes it creative.
 
 And then, as we saw in Part I, that word gets appended to the input and the whole process repeats, one word at a time, until the model decides it's done.
-
-**The key insight:** There is no "understanding" module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
-
 </div>
 
 <!-- ============================================================ -->
@@ -296,4 +293,8 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
         At high T, the distribution flattens and rare words get a chance — that's what makes LLMs "creative."
         The model doesn't "know" the answer; it assigns probabilities and <b>samples</b>.
     </div>
+</div>
+
+<div class="md">
+**The key insight:** There is no "understanding" module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
 </div>
