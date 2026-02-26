@@ -206,33 +206,31 @@ Inside each layer, two things happen:
 <!-- ============================================================ -->
 <!-- STEP 4: TRANSFORMER LAYERS — RESIDUAL STREAM -->
 <!-- ============================================================ -->
-<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
-	    margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
-    <div style="text-align:center; margin-bottom:12px;">
-	<span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-	    🧠 Step 4: Transformer Layers — The Residual Stream
-	</span>
-    </div>
+<div id="residual-stream-plot"></div>
 
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-	<span style="font-size:0.85em; color:#475569; font-weight:bold;">Layer:</span>
-	<input type="range" id="residual-stream-layer" min="0" max="6" step="1" value="0"
-	       style="flex:1; accent-color:#8b5cf6;">
-	<button id="residual-stream-play" onclick="ResidualStreamViz.animate()"
-		style="background:#3b82f6; color:white; border:none; padding:6px 16px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.85em;">
-	    ▶ Animate All Layers
-	</button>
-    </div>
-
-    <div id="residual-stream-plot" style="height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
-    <div id="residual-stream-info"></div>
-
-    <div style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8em; color:#64748b;">
-	💡 Each dot is a token's vector. The <b>dotted trail</b> shows how it moved through previous layers.
-	The <b>solid arrow</b> shows the current layer's nudge: <code>x := x + Layer(x)</code>.
-	Notice how tokens that are semantically related gradually cluster together.
-    </div>
+<div style="display:flex; align-items:center; gap:12px; margin-top:12px; justify-content:center; flex-wrap:wrap;">
+    <button onclick="ResidualStreamViz.reset()" 
+        style="padding:8px 16px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; cursor:pointer; font-size:13px;">
+        ⏮ Reset
+    </button>
+    <button onclick="ResidualStreamViz.prevLayer()" 
+        style="padding:8px 16px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; cursor:pointer; font-size:13px;">
+        ← Prev Layer
+    </button>
+    <span id="residual-stream-layer-label" 
+        style="font-weight:bold; font-size:14px; min-width:100px; text-align:center; color:#1e293b;">
+        Embedding
+    </span>
+    <button onclick="ResidualStreamViz.nextLayer()" 
+        style="padding:8px 20px; border-radius:8px; border:none; background:#3b82f6; color:#fff; cursor:pointer; font-size:13px; font-weight:600;">
+        Next Layer →
+    </button>
+    <input type="range" id="residual-stream-layer" min="0" max="6" value="0" 
+        oninput="ResidualStreamViz.setLayer(parseInt(this.value))"
+        style="width:120px;">
 </div>
+
+<div id="residual-stream-info" style="margin-top:12px;"></div>
 
 <div class="md">
 #### 4a: Attention - "Which other words matter for *this* word?"
