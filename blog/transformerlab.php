@@ -376,7 +376,7 @@ By switching between layers in a visualization, you can observe this transition 
 
 ### Why calculating the Query-Key-Values is not as expensive as it looks like
 
-The (**Key-Value-Cache**) **KV-Cache** is an optimization that prevents $\mathcal{O}(T^2)$ redundancy during generation.
+The **KV-Cache** (**Key-Value-Cache**) is an optimization that prevents $\mathcal{O}(T^2)$ redundancy during generation.
 Since the Transformer is autoregressive, the hidden states of past tokens
 remain static once computed. Instead of re-processing the entire
 sequence for every new word, we store the Key ($K$) and Value ($V$)
