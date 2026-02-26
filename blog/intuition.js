@@ -668,7 +668,6 @@ const ResidualStreamViz = {
         if (!this.canvas || this.canvas.parentNode !== container) {
             container.innerHTML = '';
             container.style.overflow = 'auto';
-            container.style.maxHeight = '720px';
             this.canvas = document.createElement('canvas');
             this.canvas.style.width = '100%';
             this.canvas.style.maxWidth = this.W + 'px';
