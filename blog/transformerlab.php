@@ -534,7 +534,7 @@ layer to dramatically increase model capacity without proportionally
 increasing compute cost. The core idea, first proposed in
 \cite[Adaptive Mixtures of Local Experts]{jacobs1991moe}, is to maintain
 multiple parallel FFN sub-networks (experts) alongside a learned gating
-network that routes each input to the most relevant expert --- a
+network that routes each input to the most relevant expert, a
 "divide and conquer" approach where specialised networks handle
 different regions of the input space. This concept remained difficult to
 scale until \cite[the Sparsely-Gated MoE layer]{shazeer2017moe}
