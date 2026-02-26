@@ -1,3 +1,6 @@
+3. Why Adam Works: It Learns the Learning Rate
+You cover Adam as the "smart" optimizer, but the deeper aha-moment is why it dominates. SGD uses one learning rate for all parameters. Adam maintains a per-parameter running estimate of both the first moment (mean of gradients) and second moment (mean of squared gradients). This means parameters that receive sparse, infrequent updates (like rare word embeddings) get larger effective learning rates, while parameters that receive dense, frequent updates get smaller ones. Adam doesn't just navigate the loss landscape — it reshapes the landscape to be more uniform for each parameter independently. This connects to your Zipf's Law discussion: rare tokens need bigger steps because they get fewer gradient signals 
+
 The connection between Zipf's Law and BPE is implicit but never made explicit: BPE's merge operations naturally produce a token frequency distribution that approximates Zipf's Law, which is why it works so well — it aligns the tokenizer's granularity with the statistical structure of language.
 
 
