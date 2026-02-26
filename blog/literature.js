@@ -1,4 +1,11 @@
 window.bibData = {
+	"weatherfactory": {
+		author: "Lewis Fry Richardson",
+		year: 1922,
+		title: "Weather Prediction by Numerical Process",
+		url: "https://maths.ucd.ie/~plynch/Dream/Book/CHAP01.pdf",
+		alternativetitle: "Weather Factory"
+	},
 	"grokking": {
 		url: "https://arxiv.org/abs/2201.02177",
 		author: "Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, Vedant Misra",

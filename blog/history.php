@@ -611,6 +611,10 @@ While early attempts to use GPUs for neural networks date back to **Oh & Jung** 
 
 This hardware lottery, the fact that AI researchers could piggyback on the massive R&D budget of the gaming industry, is likely the single most important factor in the 21st-century AI boom.
 
+The "Hardware Lottery" describes how the success of an idea depends less on its brilliance and more on whether it fits existing technology. This is perfectly illustrated by **\citeauthor{weatherfactory}'s** **"\citealternativetitle{weatherfactory}"** (\citeyear{weatherfactory}). Richardson envisioned a massive theater filled with 64,000 humans performing manual calculations (then called "computers") in parallel to predict global weather. While mathematically sound, it was a practical failure because human "hardware" was too slow and expensive to outpace the actual weather.
+
+Just as Richardson’s vision remained a "researcher’s graveyard" until electronic computers arrived, **Deep Learning** remained relatively dormant in the 1980s. The breakthrough wasn't mainly a new mathematical discovery, but the realization that **GPUs**, built for the gaming industry, were essentially Richardson’s "Weather Factory" on a chip. By using **SIMD (Single Instruction, Multiple Data)** architecture, a single GPU could perform the work of thousands of sequential processors simultaneously. This shifted AI from the slow, logical processing of a CPU to the massive throughput required for modern **LLMs**, finally providing the "hardware-friendly" environment Richardson’s numerical methods always required.
+
 ### CUDA
 
 **CUDA** (**Compute Unified Device Architecture**), introduced by NVIDIA in \citeyear{cuda}, revolutionized AI by enabling GPUs to perform general-purpose computations using standard C code. This innovation unlocked GPUs' potential for parallel processing, crucial for tasks like matrix multiplications in neural networks. For instance, AlexNet (2012) leveraged CUDA-enabled GPUs to train in days instead of years, marking a turning point in deep learning. CUDA exemplifies the "Bitter Lesson" that scalable, compute-heavy methods outperform handcrafted algorithms over time.
