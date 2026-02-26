@@ -23,7 +23,32 @@ $$\text{LLM}(\underbrace{\text{"Once upon a"}}_{\text{User Input}} \ \underbrace
 $$\text{LLM}(\underbrace{\text{"Once upon a"}}_{\text{User Input}} \ \underbrace{\text{"time there was a dragon."}}_{\text{Words 1–5}}) \rightarrow \underbrace{\texttt{|endoftext|}}_{\text{Stop}}$$
 
 **Final output: "Once upon a time there was a dragon."**
+</div>
 
+<!-- ============================================================ -->
+<!-- STEP 0: AUTOREGRESSIVE LOOP VISUALIZATION -->
+<!-- ============================================================ -->
+<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
+            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
+    <div style="text-align:center; margin-bottom:12px;">
+        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
+            🔄 The Autoregressive Loop — One Word at a Time
+        </span>
+    </div>
+    <div id="autoregressive-viz" style="min-height:200px;"></div>
+    <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
+        <button id="autoregressive-play" onclick="AutoregressiveViz.animate()"
+                style="background:#3b82f6; color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
+            ▶ Play Generation
+        </button>
+        <button onclick="AutoregressiveViz.reset()"
+                style="background:#64748b; color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
+            ↺ Reset
+        </button>
+    </div>
+</div>
+
+<div class="md">
 ## How does the network do that?
 
 It looks at huge amounts of text and detects how it is structurized and how to imitate it.
@@ -104,30 +129,6 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
 
 **The key insight:** There is no "understanding" module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
 
-</div>
-
-
-<!-- ============================================================ -->
-<!-- STEP 0: AUTOREGRESSIVE LOOP VISUALIZATION -->
-<!-- ============================================================ -->
-<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
-            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
-    <div style="text-align:center; margin-bottom:12px;">
-        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-            🔄 The Autoregressive Loop — One Word at a Time
-        </span>
-    </div>
-    <div id="autoregressive-viz" style="min-height:200px;"></div>
-    <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
-        <button id="autoregressive-play" onclick="AutoregressiveViz.animate()"
-                style="background:#3b82f6; color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
-            ▶ Play Generation
-        </button>
-        <button onclick="AutoregressiveViz.reset()"
-                style="background:#64748b; color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
-            ↺ Reset
-        </button>
-    </div>
 </div>
 
 
