@@ -70,6 +70,7 @@ In most situations, *Adam* is the optimizer that works best, as it combines the 
 In \citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published their paper "\citetitle{sgd}", introducing the **Robbins-Monro Process**. This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.
 
 The modern **SGD** update rule is a direct application of their iterative formula:
+
 $$x_{n+1} = x_n + a_n(\alpha - y_n)$$
 
 While Robbins and Monro added the "Stochastic" element, the core concept of **Gradient Descent** was introduced over a century earlier by \citeauthor{cauchy1847} in \citeyear{cauchy1847}. He used it to solve non-linear equations in astronomy.
