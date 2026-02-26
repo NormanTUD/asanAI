@@ -1,3 +1,7 @@
+11. Shannon's Entropy and the Transformer's Loss Function Are the Same Equation
+You cover Shannon's entropy and cross-entropy loss separately. But the connection deserves an explicit "aha" callout: the loss function used to train every LLM — cross-entropy — is literally Shannon's information-theoretic measure of surprise. When the model trains, it's minimizing the number of bits needed to encode the training text using its predicted probability distribution. A perfectly trained model would be the optimal compressor of its training data. The aha-moment: training an LLM is equivalent to building the world's best text compression algorithm, and intelligence emerges as a side effect of compression
+. This connects to Hutter's prize and the "intelligence is compression" thesis.
+
 9. Positional Encoding Creates a Group Structure
 You explain sinusoidal PE beautifully with the Fourier analogy, but there's an algebraic aha-moment: the rotation matrix MkMk​ that maps PE(pos)PE(pos) to PE(pos+k)PE(pos+k) forms a mathematical group under composition. Mk⋅Mj=Mk+jMk​⋅Mj​=Mk+j​, and M0=IM0​=I (identity). This means the model can learn relative positions using linear algebra alone — no special circuitry needed. The attention mechanism just needs to learn the rotation matrices, and then "3 positions apart" is always the same transformation regardless of absolute position. The aha-moment: positional encoding doesn't just label positions — it gives the model a compass that works the same everywhere in the sequence 
 
