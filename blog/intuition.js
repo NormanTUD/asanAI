@@ -576,7 +576,7 @@ const ResidualStreamViz = {
 			}
 		});
 
-		this.H = this.topPad + (this.numLayers + 1) * this.rowH + 70;
+		this.H = this.topPad + (this.numLayers + 1) * this.rowH + 130; // was + 70
 	},
 
 	// ── Helpers ──
@@ -700,24 +700,40 @@ const ResidualStreamViz = {
 	},
 
 	drawVerticalStreamArrows: function(l, layout) {
-		if (l >= this.numLayers) return;
-		const { streamX, vecW, yBase, cellH, alpha } = layout;
-		const nextY = yBase + this.rowH;
+		const { streamX, vecW, yBase, cellH } = layout;
 		const centerX = streamX + (vecW / 2);
-
-		// Arrow starts after the last token in the current block
 		const startY = yBase + (this.tokens.length * (cellH + 3)) + 5;
 
-		this.ctx.globalAlpha = l < this.currentLayer ? 0.8 : 0.2;
-		this.ctx.beginPath();
-		this.ctx.moveTo(centerX, startY);
-		this.ctx.lineTo(centerX, nextY - 15);
-		this.ctx.strokeStyle = '#3b82f6'; // Blue stream color
-		this.ctx.lineWidth = 3;
-		this.ctx.stroke();
+		if (l < this.numLayers) {
+			// Existing logic: arrow to next layer
+			const nextY = yBase + this.rowH;
+			this.ctx.globalAlpha = l < this.currentLayer ? 0.8 : 0.2;
+			this.ctx.beginPath();
+			this.ctx.moveTo(centerX, startY);
+			this.ctx.lineTo(centerX, nextY - 15);
+			this.ctx.strokeStyle = '#3b82f6';
+			this.ctx.lineWidth = 3;
+			this.ctx.stroke();
+			this.drawArrowHead(centerX, nextY - 15, Math.PI / 2, '#3b82f6');
+		} else {
+			// NEW: Final layer → draw arrow to "Next Token Prediction"
+			const endY = startY + 100;
+			this.ctx.globalAlpha = this.currentLayer === this.numLayers ? 0.9 : 0.2;
+			this.ctx.beginPath();
+			this.ctx.moveTo(centerX, startY);
+			this.ctx.lineTo(centerX, endY - 10);
+			this.ctx.strokeStyle = '#3b82f6';
+			this.ctx.lineWidth = 3;
+			this.ctx.stroke();
+			this.drawArrowHead(centerX, endY - 10, Math.PI / 2, '#3b82f6');
 
-		// Arrow head
-		this.drawArrowHead(centerX, nextY - 15, Math.PI / 2, '#3b82f6');
+			// Label
+			this.ctx.font = 'bold 12px system-ui';
+			this.ctx.fillStyle = '#1e293b';
+			this.ctx.textAlign = 'center';
+			this.ctx.fillText('→ Unembedding → Next Token: the', centerX, endY + 5);
+			this.ctx.globalAlpha = 1;
+		}
 	},
 
 	renderFrame: function () {
