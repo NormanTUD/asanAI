@@ -1,4 +1,10 @@
 window.bibData = {
+	"tishby2000informationbottleneck": {
+		url: "https://arxiv.org/abs/physics/0004057",
+		title: "The information bottleneck method",
+		author: "Naftali Tishby, Fernando C. Pereira, William Bialek",
+		year: 2000
+	},
 	"thetacitdimension": {
 		title: "The Tacit Dimension",
 		author: "Michael Polanyi",

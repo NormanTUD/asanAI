@@ -225,6 +225,36 @@ Crucially, these experts do not replace the page; they merely add their "nudges"
 
 This perspective is formalised in \citetitle{elhage2021mathematical}, which identifies the **Residual Stream** as the primary communication channel of the model, a "shared bus" where information is stored and retrieved. Rather than viewing the Transformer as a sequential pipeline that destroys and replaces information at each step, Elhage et al. demonstrate that the architecture is fundamentally additive. Each attention head and MLP layer acts as a "reader" and "writer" to this stream, using linear projections to either extract relevant features or deposit new computations. This mathematical framework reveals that layers do not merely transform the state, but rather perform "collaborative editing," where the final output is the cumulative result of numerous specialized sub-components scribbling annotations onto the same persistent document.
 
+There is, however, a deeper information-theoretic consequence to this additive
+architecture that the "shared bus" metaphor alone does not capture. The
+Information Bottleneck principle, formalised by
+\citeauthor{tishby2000informationbottleneck}, states that optimal
+representations compress the input $X$ while retaining maximal information about
+the target $Y$, governed by the trade-off
+$\min_T I(X;T) - \beta \cdot I(T;Y)$. In the Transformer, the residual stream
+has a fixed dimensionality $d_{\text{model}}$ regardless of sequence length. As
+information accumulates across layers, an ever-increasing volume of context must
+be compressed into this fixed-width channel. Each layer's attention heads and
+FFN must therefore decide what to preserve and what to discard, and compression,
+by its nature, is abstraction. Early layers can afford to retain surface-level
+features, lexical identity, positional detail, local syntax, but as depth
+increases and the cumulative writing of dozens of specialised heads saturates the
+stream, only what is predictively useful survives. This is why empirical probing
+consistently finds that deeper layers encode increasingly abstract,
+task-relevant representations: they have been squeezed through the bottleneck.
+
+The implication is that $d_{\text{model}}$ is not merely a hyperparameter to be
+tuned for performance; it functions as an implicit regulariser that sets a
+ceiling on the level of abstraction the model can achieve. This reframes the
+Heraclitean metaphor: the river's width determines not just how much can flow,
+but what kind of understanding crystallises along its banks. In the language of
+4E Cognition, this bottleneck is the closest the Transformer comes to an
+architectural analogue of embodied constraint: just as the finite bandwidth of
+human sensory channels forces our brains to abstract ruthlessly from raw
+perception, the fixed width of the residual stream forces the model to distill
+token-level noise into something approaching conceptual structure. It is
+abstraction born not of insight, but of necessity.
+
 ### Historical Context: The Original Encoder-Decoder (What We Don't Use)
 
 To appreciate *why* the Decoder-only design dominates, it helps to understand what came before it:
