@@ -63,6 +63,8 @@ Computers don't understand words. They understand numbers. So the very first thi
 $$\text{"Once upon a time"} \rightarrow [\text{"Once"}, \ \text{"upon"}, \ \text{"a"}, \ \text{"time"}]$$
 
 Most tokens are common words or word fragments. For example, `"understanding"` might be split into `"under"` + `"standing"`, two tokens. This way the model can handle words it has never seen before by combining pieces it *has* seen.
+
+What it splits and where is dependent on the data it has seen. It choses that automatically.
 </div>
 
 <!-- ============================================================ -->
