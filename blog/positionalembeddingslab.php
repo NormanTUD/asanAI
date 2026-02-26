@@ -176,17 +176,6 @@ The attention mechanism learns these rotations through its $Q$ and $K$ linear pr
 </div>
 <div id="group-axioms-chart" style="width:100%; height:460px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
 
-<!-- ── Compass Interactive ── -->
-<div style="margin: 24px 0 8px; font-family: sans-serif;">
-    <strong>The Compass: Same Rotation Everywhere</strong>
-    <div style="margin-top:6px;">
-        <label><b>Offset k:</b></label>
-        <input type="range" id="group-k-slider" min="1" max="10" value="3" style="width:200px;vertical-align:middle;">
-        <span id="group-k-label" style="font-weight:bold;">3</span>
-    </div>
-</div>
-<div id="group-compass-chart" style="width:100%; height:460px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-
 <div class="md">
 ### Reading the Compass Plot
 

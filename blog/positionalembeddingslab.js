@@ -542,82 +542,6 @@ function initGroupStructureDemo() {
 	}
 
 	/* ═══════════════════════════════════════════════════════
-       VIZ 2 — Compass (translation invariance)
-       ═══════════════════════════════════════════════════════ */
-	function renderCompass(k) {
-		var D = 8, BASE = 10000;
-		var w0 = 1 / Math.pow(BASE, 0 / D);  // = 1 for the first pair
-
-		var starts = [0, 5, 12, 25, 40];
-		var colors = ['#2563eb','#dc2626','#16a34a','#f59e0b','#9333ea'];
-
-		// unit circle outline
-		var cX = [], cY = [];
-		for (var t = 0; t <= 2*Math.PI+0.01; t += 0.04) {
-			cX.push(Math.cos(t)); cY.push(Math.sin(t));
-		}
-
-		var traces = [
-			{ x:cX, y:cY, mode:'lines', line:{ color:'#e2e8f0', width:1 },
-				showlegend:false, hoverinfo:'skip' }
-		];
-		var annotations = [];
-
-		starts.forEach(function(pos, idx) {
-			var a1 = pos * w0,  a2 = (pos + k) * w0;
-			var x1 = Math.cos(a1), y1 = Math.sin(a1);
-			var x2 = Math.cos(a2), y2 = Math.sin(a2);
-
-			// filled start dot
-			traces.push({
-				x:[x1], y:[y1], mode:'markers',
-				marker:{ size:14, color:colors[idx] },
-				name:'pos='+pos,
-				hovertext:'PE(pos='+pos+'), θ='+(a1%(2*Math.PI)).toFixed(2)+' rad',
-				hoverinfo:'text'
-			});
-			// open end dot
-			traces.push({
-				x:[x2], y:[y2], mode:'markers',
-				marker:{ size:14, color:colors[idx], symbol:'circle-open',
-					line:{ width:3, color:colors[idx] } },
-				showlegend:false,
-				name:'pos='+(pos+k),
-				hovertext:'PE(pos='+(pos+k)+'), θ='+(a2%(2*Math.PI)).toFixed(2)+' rad',
-				hoverinfo:'text'
-			});
-			// arrow
-			annotations.push({
-				x:x2, y:y2, ax:x1, ay:y1,
-				xref:'x', yref:'y', axref:'x', ayref:'y',
-				showarrow:true, arrowhead:2, arrowsize:1.5,
-				arrowwidth:2, arrowcolor:colors[idx], opacity:0.7
-			});
-		});
-
-		annotations.push({
-			x:0, y:-1.48, xref:'x', yref:'y', showarrow:false,
-			text:'Every arrow = M<sub>'+k+'</sub>: same rotation (Δθ = '+
-			(k*w0).toFixed(2)+' rad) regardless of starting position.',
-			font:{ size:12, color:'#475569' }
-		});
-
-		var layout = {
-			title:'The Compass: Offset k='+k+' → Same Rotation Everywhere',
-			xaxis:{ range:[-1.65,1.65], scaleanchor:'y',
-				showgrid:false, zeroline:false, showticklabels:false },
-			yaxis:{ range:[-1.65,1.65],
-				showgrid:false, zeroline:false, showticklabels:false },
-			margin:{ t:50, b:55, l:30, r:160 },
-			showlegend:true,
-			legend:{ x:1.02, y:1, font:{ size:11 } },
-			annotations:annotations
-		};
-
-		Plotly.newPlot('group-compass-chart', traces, layout, { responsive:true });
-	}
-
-	/* ═══════════════════════════════════════════════════════
        VIZ 3 — Cayley Table heatmap
        ═══════════════════════════════════════════════════════ */
 	function renderCayleyTable() {
@@ -662,7 +586,6 @@ function initGroupStructureDemo() {
 
 	/* ── initial render ── */
 	renderGroupAxioms(3, 5);
-	renderCompass(3);
 	renderCayleyTable();
 
 	/* ── wire sliders ── */
@@ -673,10 +596,6 @@ function initGroupStructureDemo() {
 	document.getElementById('group-b-slider').addEventListener('input', function(){
 		document.getElementById('group-b-label').textContent = this.value;
 		renderGroupAxioms(+document.getElementById('group-a-slider').value, +this.value);
-	});
-	document.getElementById('group-k-slider').addEventListener('input', function(){
-		document.getElementById('group-k-label').textContent = this.value;
-		renderCompass(+this.value);
 	});
 }
 
