@@ -157,6 +157,7 @@ const EmbeddingViz = {
         'once': [2, 5], 'upon': [3, 5.5], 'a': [0, 0.5], 'time': [4, 3],
         'the': [0.5, 0.2], 'king': [8, -3], 'queen': [8, 3],
         'man': [3, -3], 'woman': [3, 3], 'prince': [6, -3], 'princess': [6, 3],
+	'baby': [6, 0],
         'boy': [-1, -3], 'girl': [-1, 3],
         'cat': [-5, -6], 'dog': [-5, -4], 'dragon': [-3, -8],
         'happy': [6, 6], 'sad': [-6, 6], 'love': [7, 7],
