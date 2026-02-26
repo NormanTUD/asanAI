@@ -9,18 +9,18 @@ We can think of LLMs as machines that predict the next most likely word, given a
 $$\text{Next Word} = \text{LLM}(\underbrace{\text{"Once upon a"}}_{\text{User Input}}) \rightarrow \text{"time"}$$
 
 **Step 2: The Glue**
-$$\text{New Input} = \underbrace{\text{"Once upon a"}}_{\text{User Input}} + \text{"time"} = \text{"Once upon a time"}$$
+$$\text{New Input} = \underbrace{\text{"Once upon a"}}_{\text{User Input}} + \underbrace{\text{"time"}}_{\text{Word 1}} = \text{"Once upon a time"}$$
 
 **Step 3: The Repeat**
-$$\text{Next Word} = \text{LLM}(\text{"Once upon a time"}) \rightarrow \text{"there"}$$
+$$\text{LLM}(\underbrace{\text{"Once upon a"}}_{\text{User Input}} \ \underbrace{\text{"time"}}_{\text{Word 1}}) \rightarrow \underbrace{\text{"there"}}_{\text{Word 2}}$$
 
-$$\text{Next Word} = \text{LLM}(\text{"Once upon a time there"}) \rightarrow \text{"was"}$$
+$$\text{LLM}(\underbrace{\text{"Once upon a"}}_{\text{User Input}} \ \underbrace{\text{"time there"}}_{\text{Words 1–2}}) \rightarrow \underbrace{\text{"was"}}_{\text{Word 3}}$$
 
-$$\text{Next Word} = \text{LLM}(\text{"Once upon a time there was"}) \rightarrow \text{"a"}$$
+$$\text{LLM}(\underbrace{\text{"Once upon a"}}_{\text{User Input}} \ \underbrace{\text{"time there was"}}_{\text{Words 1–3}}) \rightarrow \underbrace{\text{"a"}}_{\text{Word 4}}$$
 
-$$\text{Next Word} = \text{LLM}(\text{"Once upon a time there was a"}) \rightarrow \text{"dragon."}$$
+$$\text{LLM}(\underbrace{\text{"Once upon a"}}_{\text{User Input}} \ \underbrace{\text{"time there was a"}}_{\text{Words 1–4}}) \rightarrow \underbrace{\text{"dragon."}}_{\text{Word 5}}$$
 
-$$\text{Next Word} = \text{LLM}(\text{"Once upon a time there was a dragon."}) \rightarrow \texttt{|endoftext|}$$
+$$\text{LLM}(\underbrace{\text{"Once upon a"}}_{\text{User Input}} \ \underbrace{\text{"time there was a dragon."}}_{\text{Words 1–5}}) \rightarrow \underbrace{\texttt{|endoftext|}}_{\text{Stop}}$$
 
 **Final output: "Once upon a time there was a dragon."**
 </div>
