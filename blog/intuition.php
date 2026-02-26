@@ -295,9 +295,7 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
 
 There is no "understanding" module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
 
-## What this tutorial will be about
+## What this document will be about
 
-We will try to cover every topic here in as much detail as is required to really understand them, from the point of view of a programmer, a mathematician and a historian. We will try to find which ideas lead to this type of system, and how they all work and play together.
-
-
+We will try to cover every topic here in as much detail as is required to really understand them, from the point of view of a programmer, a mathematician and a historian. We will try to find which ideas lead to this type of system, and how they all work and play together. For each point we try to make, we implemented interactive demos so you can not only read passively, but try to understand by *doing*.
 </div>
