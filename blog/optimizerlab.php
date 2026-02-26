@@ -67,7 +67,7 @@ In most situations, *Adam* is the optimizer that works best, as it combines the 
 <div class="md">
 ### History of Optimizers
 
-In \citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published "\citetitle{sgd}", introducing the **Robbins-Monro Process**. This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.
+In \citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published their paper "\citetitle{sgd}", introducing the **Robbins-Monro Process**. This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.
 
 The modern **SGD** update rule is a direct application of their iterative formula:
 $$x_{n+1} = x_n + a_n(\alpha - y_n)$$
