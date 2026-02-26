@@ -500,12 +500,12 @@ const PositionalEncodingViz = {
 // ============================================================
 
 const ResidualStreamViz = {
-	tokens: ['Once', 'upon', 'a', 'time'],
-	numLayers: 6,
+	tokens: ['The', 'cat', 'sat', 'on'],
+	numLayers: 3,
 	currentLayer: 0,
 	canvas: null,
 	ctx: null,
-	dims: 12,
+	dims: 8,
 	layerStates: null,
 	layerContributions: null,
 	hoverLayer: -1,
@@ -517,43 +517,25 @@ const ResidualStreamViz = {
 			short: 'Raw embeddings',
 			attnDesc: '',
 			ffnDesc: '',
-			example: 'Each token is just a vector ID — no context yet.'
+			example: 'Each token is an isolated vector — "cat" ≠ animal yet, just ID #9001.'
 		},
 		{
-			short: 'Positional & local',
-			attnDesc: '"upon" attends to "Once" next to it',
-			ffnDesc: 'Activates word-type features: noun? prep?',
-			example: 'Once ← upon  (adjacent tokens link)'
+			short: 'Local syntax & word roles',
+			attnDesc: '"cat" attends to "The" → learns it\'s a definite noun phrase',
+			ffnDesc: 'Activates part-of-speech features: "cat"→noun, "sat"→verb',
+			example: '"The cat" groups into a noun phrase; "sat" tagged as past-tense verb.'
 		},
 		{
-			short: 'Phrase grouping',
-			attnDesc: '"upon" and "a" both attend back to "Once"',
-			ffnDesc: 'Recognizes "once upon" as a common bigram',
-			example: '[Once upon] [a] [time]  (phrases form)'
+			short: 'Clause structure & relationships',
+			attnDesc: '"sat" attends to "cat" → identifies subject-verb link',
+			ffnDesc: 'Encodes who-did-what: agent="cat", action="sat", prep="on"',
+			example: '"cat" is the one sitting; "on" opens a prepositional phrase → expects a location next.'
 		},
 		{
-			short: 'Syntax & grammar',
-			attnDesc: '"a" links to "time" — determiner→noun',
-			ffnDesc: 'Encodes roles: "a"=det, "time"=noun',
-			example: 'a → time  (dependency found)'
-		},
-		{
-			short: 'Semantic meaning',
-			attnDesc: 'All tokens attend to full phrase — idiom found',
-			ffnDesc: 'Fires on fairy-tale knowledge in weights',
-			example: '"once upon a time" = story opener'
-		},
-		{
-			short: 'Next-token focus',
-			attnDesc: '"time" attends to "once upon a" for prediction',
-			ffnDesc: 'Sharpens: "there" "in" "long" rise as candidates',
-			example: 'time → predicts: "there was a..."'
-		},
-		{
-			short: 'Output projection',
-			attnDesc: 'Final cleanup — suppresses irrelevant features',
-			ffnDesc: 'Boosts winning prediction, suppresses rest',
-			example: 'time → "," (most likely next token)'
+			short: 'Next-token prediction',
+			attnDesc: '"on" attends to "cat sat" → gathers full context for prediction',
+			ffnDesc: 'Boosts location nouns: "the" "a" "mat" "floor" rise; suppresses verbs',
+			example: 'on → predicts "the" (p=0.42), "a" (p=0.18), "mat" (p=0.07)'
 		},
 	],
 
@@ -978,19 +960,19 @@ const ResidualStreamViz = {
 		if (!infoDiv) return;
 
 		const descriptions = [
-			'The residual stream starts with <b>raw embeddings</b>. Each token is a vector — no context, no meaning beyond identity. Everything that follows will be <b>added</b> to these initial vectors.',
-			'<b>Layer 1 — Positional & local.</b> Attention heads look at nearby tokens. "upon" sees "Once" right next to it. The FFN activates basic word-type features. Both outputs are added to the stream.',
-			'<b>Layer 2 — Phrase grouping.</b> Attention groups "once upon" as a recognized phrase. The FFN fires on common bigram patterns it learned during training. The residual stream now carries phrase-level information.',
-			'<b>Layer 3 — Syntax & grammar.</b> Attention connects "a" to "time" — a determiner finding its noun. The FFN encodes part-of-speech patterns. Grammatical structure is emerging in the vectors.',
-			'<b>Layer 4 — Semantic meaning.</b> The full phrase "once upon a time" is recognized as a fairy-tale idiom. The FFN activates story-related world knowledge stored in its weights. Meaning crystallizes.',
-			'<b>Layer 5 — Next-token focus.</b> Attention focuses on which tokens matter most for predicting the next word. The FFN sharpens the probability distribution — "there", "in", "long" become top candidates.',
-			'<b>Layer 6 — Output.</b> Final refinements. The last token\'s residual vector will be projected onto the full vocabulary to produce logits. The stream carries the sum of <b>all</b> previous layer contributions.'
+			'The residual stream starts with <b>raw embeddings</b>. "The", "cat", "sat", "on" are just lookup vectors — no grammar, no meaning, no context. Everything that follows will be <b>added</b> to these vectors.',
+
+			'<b>Layer 1 — Local syntax & word roles.</b> Attention heads look at adjacent tokens: "cat" attends to "The" and recognizes it\'s part of a definite noun phrase. The FFN fires part-of-speech detectors — tagging "cat" as a noun and "sat" as a past-tense verb. These features are <b>added</b> to the residual stream.',
+
+			'<b>Layer 2 — Clause structure & relationships.</b> Attention now connects "sat" back to "cat" — identifying the subject-verb dependency (who did the sitting?). The FFN encodes thematic roles: "cat" = agent, "sat" = action, "on" = preposition expecting a location. The stream now carries grammatical structure.',
+
+			'<b>Layer 3 — Next-token prediction.</b> "on" attends broadly to "The cat sat" to gather full sentence context. The FFN sharpens the output distribution: location-related words like "the", "a", "mat", "floor" get boosted while verbs and adjectives are suppressed. The final residual vector at "on" is ready to be projected onto the vocabulary.'
 		];
 
 		infoDiv.innerHTML = `
-	    <div style="padding:14px 18px; background:#fff; border-radius:10px; border:1px solid #e2e8f0;">
-		<div style="font-size:0.95em; color:#334155; line-height:1.6;">${descriptions[layer]}</div>
-	    </div>`;
+	<div style="padding:14px 18px; background:#fff; border-radius:10px; border:1px solid #e2e8f0;">
+	    <div style="font-size:0.95em; color:#334155; line-height:1.6;">${descriptions[layer]}</div>
+	</div>`;
 	},
 
 	_syncControls: function () {
