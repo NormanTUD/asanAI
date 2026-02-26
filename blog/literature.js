@@ -4,7 +4,7 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1812.11118",
 		year: 2019,
 		author: "Mikhail Belkin, Daniel Hsu, Siyuan Ma, Soumik Mandal"
-	}
+	},
 	"caleygroups": {
 		url: "https://www.jstor.org/stable/2369415",
 		title: "On the Theory of Groups",

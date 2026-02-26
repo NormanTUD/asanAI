@@ -535,6 +535,8 @@ $$
 \underbrace{D_{\text{ambient}}}_{\text{175B params}} \implies
 \text{No overfitting even when } N \approx D
 $$
+
+This was first described by \citeauthorlastnameand{belkin2019}.
 </div>
 
 <div class="md">
