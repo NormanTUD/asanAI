@@ -743,17 +743,19 @@ const ResidualStreamViz = {
         const vecW = this.dims * (cellW + 1);
         const tokenBlockH = this.tokens.length * (cellH + 3);
 
-        // Column positions — generous left margin to prevent overflow
+        // Column positions
         const leftMargin = 30;
-        const streamX = leftMargin + 80;                     // left edge of stream heatmap
+        // FIX 1: Increased offset from 80 to 120 to fix left text overlap
+        const streamX = leftMargin + 120;                     
         const streamRightX = streamX + vecW;
+        const verticalStreamX = streamX + vecW / 2; // Center line for the flow
 
         const attnBoxX = streamRightX + 70;
         const attnBoxW = vecW + 16;
         const ffnBoxX = attnBoxX + attnBoxW + 36;
         const ffnBoxW = vecW + 16;
 
-        // Description column — far right, with enough room
+        // Description column 
         const descColX = ffnBoxX + ffnBoxW + 24;
         const descColW = W - descColX - 16;
 
@@ -835,7 +837,7 @@ const ResidualStreamViz = {
             ctx.globalAlpha = alpha;
             this.tokens.forEach((token, ti) => {
                 const vy = yBase + 6 + ti * (cellH + 3);
-                // Token label
+                
                 ctx.globalAlpha = Math.max(alpha, 0.25);
                 ctx.font = '9px monospace';
                 ctx.fillStyle = this.tokenColors[ti];
@@ -844,7 +846,6 @@ const ResidualStreamViz = {
                 ctx.fillText(token, streamX - 5, vy + 1);
                 ctx.globalAlpha = alpha;
 
-                // Heatmap — use the state AT this layer (changes each layer)
                 const state = this.layerStates[token][Math.min(l, this.numLayers)];
                 const hue = [217, 160, 38, 0][ti];
                 this.drawVector(state, streamX, vy, cellW, cellH, hue, alpha);
@@ -852,24 +853,22 @@ const ResidualStreamViz = {
 
             // ── Vertical flow arrow BETWEEN residual stream rows ──
             if (l < this.numLayers) {
-                const arrowX = streamX + vecW / 2;
                 const arrowTopY = yBase + tokenBlockH + 12;
                 const arrowBotY = yBase + this.rowH - 8;
                 const arrowAlpha = l < layer ? 0.5 : 0.1;
 
                 ctx.globalAlpha = arrowAlpha;
-                // Vertical line
                 ctx.beginPath();
-                ctx.moveTo(arrowX, arrowTopY);
-                ctx.lineTo(arrowX, arrowBotY);
+                ctx.moveTo(verticalStreamX, arrowTopY);
+                ctx.lineTo(verticalStreamX, arrowBotY);
                 ctx.strokeStyle = '#3b82f6';
                 ctx.lineWidth = 2;
                 ctx.stroke();
-                // Chevron
+                
                 ctx.beginPath();
-                ctx.moveTo(arrowX - 5, arrowBotY - 6);
-                ctx.lineTo(arrowX, arrowBotY);
-                ctx.lineTo(arrowX + 5, arrowBotY - 6);
+                ctx.moveTo(verticalStreamX - 5, arrowBotY - 6);
+                ctx.lineTo(verticalStreamX, arrowBotY);
+                ctx.lineTo(verticalStreamX + 5, arrowBotY - 6);
                 ctx.strokeStyle = '#3b82f6';
                 ctx.lineWidth = 2;
                 ctx.lineCap = 'round';
@@ -928,14 +927,12 @@ const ResidualStreamViz = {
                 });
 
                 // ── ARROWS: Stream → Attn → FFN → Stream ──
-                // All arrows below the boxes, never overlapping content
                 if (isActive) {
                     const arrowAlpha = isCurrent ? 0.85 : 0.3;
                     const arrowLW = isCurrent ? 2 : 1.2;
-                    const arrowLane = boxTop + boxH + 14; // well below boxes
+                    const arrowLane = boxTop + boxH + 14; 
 
-                    // Arrow 1: Residual stream → Attention (purple)
-                    // Starts below stream heatmap, curves down to below attn box
+                    // Arrow 1: Stream → Attention
                     this.drawCurvedArrow(
                         streamRightX + 4, arrowLane - 6,
                         attnBoxX + 4, arrowLane - 6,
@@ -952,7 +949,7 @@ const ResidualStreamViz = {
                         ctx.globalAlpha = 1;
                     }
 
-                    // Arrow 2: Attention → FFN (amber)
+                    // Arrow 2: Attention → FFN
                     this.drawCurvedArrow(
                         attnBoxX + attnBoxW - 4, arrowLane - 6,
                         ffnBoxX + 4, arrowLane - 6,
@@ -969,49 +966,50 @@ const ResidualStreamViz = {
                         ctx.globalAlpha = 1;
                     }
 
-                    // Arrow 3: FFN → Residual stream (green, big sweep back)
+                    // FIX 2: Arrow 3 (FFN → Residual stream) correctly points to vertical stream
                     const returnY = arrowLane + 18;
+                    const mergeTargetX = verticalStreamX + 10; 
+                    
                     ctx.globalAlpha = arrowAlpha;
                     ctx.beginPath();
                     ctx.moveTo(ffnBoxX + ffnBoxW - 4, arrowLane - 6);
                     ctx.bezierCurveTo(
-                        ffnBoxX + ffnBoxW + 20, returnY + 8,
-                        streamRightX - 20, returnY + 8,
-                        streamRightX + 4, returnY
+                        ffnBoxX + ffnBoxW + 30, returnY + 15,
+                        mergeTargetX + 60, returnY + 5,
+                        mergeTargetX, returnY
                     );
                     ctx.strokeStyle = '#10b981';
                     ctx.lineWidth = arrowLW;
                     ctx.stroke();
-                    // Arrowhead pointing left
+                    
+                    // Arrowhead pointing left exactly at center vertical flow
                     const hs = 7;
                     ctx.beginPath();
-                    ctx.moveTo(streamRightX + 4, returnY);
-                    ctx.lineTo(streamRightX + 4 + hs, returnY - hs / 2.2);
-                    ctx.lineTo(streamRightX + 4 + hs, returnY + hs / 2.2);
+                    ctx.moveTo(mergeTargetX, returnY);
+                    ctx.lineTo(mergeTargetX + hs, returnY - hs / 2.2);
+                    ctx.lineTo(mergeTargetX + hs, returnY + hs / 2.2);
                     ctx.closePath();
                     ctx.fillStyle = '#10b981';
                     ctx.fill();
                     ctx.globalAlpha = 1;
 
-                    // "+" badge at merge point
+                    // "+" badge centered on the vertical stream
                     if (isCurrent) {
-                        const badgeX = streamRightX - 6;
-                        const badgeY = returnY;
                         ctx.beginPath();
-                        ctx.arc(badgeX, badgeY, 9, 0, Math.PI * 2);
+                        ctx.arc(verticalStreamX, returnY, 9, 0, Math.PI * 2);
                         ctx.fillStyle = '#10b981';
                         ctx.fill();
                         ctx.font = 'bold 13px system-ui, sans-serif';
                         ctx.fillStyle = '#fff';
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
-                        ctx.fillText('+', badgeX, badgeY);
+                        ctx.fillText('+', verticalStreamX, returnY);
 
                         ctx.font = '9px system-ui, sans-serif';
                         ctx.fillStyle = '#10b981';
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'top';
-                        ctx.fillText('add back', (streamRightX + ffnBoxX + ffnBoxW) / 2, returnY + 4);
+                        ctx.fillText('add back', (verticalStreamX + ffnBoxX + ffnBoxW) / 2, returnY + 4);
                     }
                 }
 
@@ -1021,48 +1019,47 @@ const ResidualStreamViz = {
                 if (isCurrent) {
                     const dy = yBase + 6;
 
-                    // Attn description
-                    ctx.font = 'bold 10px system-ui, sans-serif';
+                    // FIX 3: Increased font sizes and expanded vertical line spacing (dy + X)
+                    ctx.font = 'bold 12px system-ui, sans-serif';
                     ctx.fillStyle = '#8b5cf6';
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'top';
                     ctx.fillText('Attention:', descColX, dy);
-                    ctx.font = '10px system-ui, sans-serif';
+                    ctx.font = '12px system-ui, sans-serif';
                     ctx.fillStyle = '#475569';
-                    ctx.fillText(this.layerRoles[l].attnDesc, descColX, dy + 14);
+                    ctx.fillText(this.layerRoles[l].attnDesc, descColX, dy + 16);
 
                     // FFN description
-                    ctx.font = 'bold 10px system-ui, sans-serif';
+                    ctx.font = 'bold 12px system-ui, sans-serif';
                     ctx.fillStyle = '#d97706';
-                    ctx.fillText('FFN:', descColX, dy + 36);
-                    ctx.font = '10px system-ui, sans-serif';
+                    ctx.fillText('FFN:', descColX, dy + 40);
+                    ctx.font = '12px system-ui, sans-serif';
                     ctx.fillStyle = '#475569';
-                    ctx.fillText(this.layerRoles[l].ffnDesc, descColX, dy + 50);
+                    ctx.fillText(this.layerRoles[l].ffnDesc, descColX, dy + 56);
 
                     // Example
-                    ctx.font = 'bold 10px system-ui, sans-serif';
+                    ctx.font = 'bold 12px system-ui, sans-serif';
                     ctx.fillStyle = '#10b981';
-                    ctx.fillText('Example:', descColX, dy + 72);
-                    ctx.font = '11px monospace';
+                    ctx.fillText('Example:', descColX, dy + 82);
+                    ctx.font = '13px monospace';
                     ctx.fillStyle = '#1e293b';
-                    ctx.fillText(this.layerRoles[l].example, descColX, dy + 86);
+                    ctx.fillText(this.layerRoles[l].example, descColX, dy + 98);
 
                 } else if (isActive || isHover) {
-                    // Faded short summary for non-current active rows
-                    ctx.font = '10px system-ui, sans-serif';
+                    ctx.font = '12px system-ui, sans-serif';
                     ctx.fillStyle = '#94a3b8';
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'top';
-                    ctx.fillText(this.layerRoles[l].example, descColX, yBase + 20);
+                    ctx.fillText(this.layerRoles[l].example, descColX, yBase + 24);
                 }
 
                 ctx.globalAlpha = 1;
 
             } else {
-                // ── Embed row: description in the desc column ──
+                // ── Embed row description ──
                 if (isCurrent) {
                     ctx.globalAlpha = 1;
-                    ctx.font = '11px system-ui, sans-serif';
+                    ctx.font = '12px system-ui, sans-serif';
                     ctx.fillStyle = '#475569';
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'top';
