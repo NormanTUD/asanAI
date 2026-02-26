@@ -1,3 +1,6 @@
+Add a "How ChatGPT Actually Works" summary section near the end that ties together every component (tokenization → embedding → positional encoding → N × [attention + FFN] → unembedding → sampling) into a single, clean diagram with links back to each section. Your transformer lab does this interactively, but a static "reference card" would help readers who want to see the whole picture at once.
+
+
 17. A "Tokenization Failure" Demo
 Show users why LLMs can't count letters. Let them type "strawberry" and watch the BPE tokenizer split it into tokens that don't respect letter boundaries, making it visually obvious why the model can't count the 'r's.
 
