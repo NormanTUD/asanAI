@@ -246,9 +246,7 @@ The implication is that $d_{\text{model}}$ is not merely a hyperparameter to be
 tuned for performance; it functions as an implicit regulariser that sets a
 ceiling on the level of abstraction the model can achieve. This reframes the
 Heraclitean metaphor: the river's width determines not just how much can flow,
-but what kind of understanding crystallises along its banks. In the language of
-4E Cognition, this bottleneck is the closest the Transformer comes to an
-architectural analogue of embodied constraint: just as the finite bandwidth of
+but what kind of understanding crystallises along its banks. Just as the finite bandwidth of
 human sensory channels forces our brains to abstract ruthlessly from raw
 perception, the fixed width of the residual stream forces the model to distill
 token-level noise into something approaching conceptual structure. It is
