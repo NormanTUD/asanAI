@@ -57,6 +57,7 @@ window.bibData = {
 	"simulatorstheory": {
 		alternativetitle: "simulators theory",
 		url: "https://www.lesswrong.com/posts/vJFdjigzmcXMhNTsx/simulators",
+		title: "Simulators",
 		author: "janus",
 		year: 2022
 	},
