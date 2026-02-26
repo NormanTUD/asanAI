@@ -406,6 +406,10 @@ Polysemanticity is not a training failure; it is a predictable result of the mod
 
 The core mechanism is **\cite[Superposition]{elhage2022superposition}**. The model exploits the **sparsity** of natural language, the fact that "legal terminology" and "French cuisine" rarely co-occur in the same context. By assigning concepts to nearly orthogonal directions in high-dimensional space, the model packs exponentially more features than it has physical neurons, accepting occasional "crosstalk" (interference) as a tolerable trade-off for massive representational capacity.
 
+### Golden-Gate-Claude
+
+A vivid demonstration of these principles is \citetitle{goldengateclaude}, in which researchers from Anthropic used \cite[Sparse Autoencoders]{sparseautoencoders} to isolate a specific feature direction within Claude Sonnet's activation space corresponding to the concept of the Golden Gate Bridge. By artificially amplifying this single direction during inference, the model became fixated on the bridge, mentioning it in nearly every response regardless of topic. This confirms that concepts are encoded as **directions** in high-dimensional space, not in individual neurons, and that these directions are causally active: amplifying one is sufficient to dominate the model's output. It is also a direct consequence of superposition — because "Golden Gate Bridge" shares neuronal substrate with countless other features via near-orthogonal packing, isolating it required the decomposition tools described above rather than simply toggling a single neuron.
+
 **The Dimensionality Trade-off:** In a 2D space, you can only have two perfectly orthogonal (zero interference) features. In a 768+ dimensional model, thousands of "near-orthogonal" features can coexist, though this proximity is exactly why individual neurons appear polysemantic.
 </div>
 

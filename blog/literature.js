@@ -1,4 +1,16 @@
 window.bibData = {
+	"sparseautoencoders": {
+		title: "Sparse Autoencoders Find Highly Interpretable Features in Language Models",
+		url: "https://arxiv.org/abs/2309.08600",
+		year: 2023,
+		author: "Hoagy Cunningham, Aidan Ewart, Logan Riggs, Robert Huben, Lee Sharkey"
+	},
+	"goldengateclaude": {
+		url: "https://www.anthropic.com/news/golden-gate-claude",
+		year: 2024,
+		title: "Golden Gate Claude",
+		author: "Adly Templeton, Tom Conerly, Jonathan Marcus, Jack Lindsey, Trenton Bricken, Brian Chen, Adam Pearce, Craig Citro, Emmanuel Ameisen, Andy Jones, Hoagy Cunningham, Nicholas L Turner, Callum McDougall, Monte MacDiarmid, Alex Tamkin, Esin Durmus, Tristan Hume, Francesco Mosconi, C. Daniel Freeman, Theodore R. Sumers, Edward Rees, Joshua Batson, Adam Jermyn, Shan Carter, Chris Olah, Tom Henighan"
+	},
 	"poincareembeddings": {
 		url: "https://arxiv.org/abs/1705.08039",
 		year: 2017,
