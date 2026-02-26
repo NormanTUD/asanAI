@@ -504,6 +504,40 @@ Below, you can watch this process unfold. The **left panel** shows the geometric
 </section>
 
 <div class="md">
+## The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit
+
+Classical statistics tells us that fitting a model with $P$ parameters to $N$ data
+points requires $N \gg P$ to avoid overfitting. GPT-3 has **175 billion parameters**
+but was trained on **~300 billion tokens**, a ratio of roughly **1.7:1**, which
+classical theory says should catastrophically overfit.
+
+The resolution is the **Manifold Hypothesis**: although the parameter space is
+175-billion-dimensional, the data lives on a much **lower-dimensional manifold**.
+The effective dimensionality of the problem is determined by the *intrinsic
+dimension* of the data manifold, not the ambient parameter space. Natural language,
+despite its surface complexity, has a much lower intrinsic dimension because of the
+constraints of grammar, logic, physics, and human cognition.
+
+LLMs don't overfit despite having more parameters than data
+points because the data constrains them to a low-dimensional manifold in parameter
+space. The 175 billion parameters are not 175 billion independent degrees of
+freedom, they're 175 billion coordinates describing a position on a manifold
+whose intrinsic dimension might be **orders of magnitude smaller**.
+
+This is why **scaling works**: adding more parameters doesn't add proportionally more
+degrees of freedom, it adds more *resolution* for describing the same
+low-dimensional structure. It's like going from a 100×100 pixel image to a
+1000×1000 pixel image of the same scene, more numbers, but the same underlying
+reality.
+
+$$
+\underbrace{d_{\text{intrinsic}}}_{\text{effective DoF}} \ll
+\underbrace{D_{\text{ambient}}}_{\text{175B params}} \implies
+\text{No overfitting even when } N \approx D
+$$
+</div>
+
+<div class="md">
 ## The Geometry of Negation
 
 One of the most counter-intuitive failures of embedding spaces is that **negation doesn't work geometrically** the way you'd expect. The vector for "not happy" is closer to "happy" than to "sad", because "not" and "happy" co-occur in the same sentences, and distributional semantics encodes co-occurrence, not logical opposition. This is a deep structural limitation: embedding spaces capture **associative similarity**, not **logical relationships**.

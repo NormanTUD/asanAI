@@ -4373,81 +4373,81 @@ function renderHyperbolicEmbedding() {
 
 // Stats panel in its own function so an error here can't prevent the plot
 function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColors) {
-    try {
-        var html = '';
+	try {
+		var html = '';
 
-        // Depth -> Radius table
-        html += '<div style="font-family:sans-serif;font-size:0.82em;color:#475569;">';
-        html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:12px;">';
-        html += '<div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">Depth &rarr; Radius</div>';
-        for (var d = 0; d <= hyperbolicState.maxDepth; d++) {
-            var r = getHyperbolicRadius(d, curvature);
-            var dc = depthColors[d] || '#1e293b';
-            html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;">';
-            html += '<span style="color:' + dc + ';">Depth ' + d + '</span>';
-            html += '<span style="font-family:monospace;font-weight:bold;">r = ' + r.toFixed(4) + '</span>';
-            html += '</div>';
-        }
-        if (curvature > 0.5) {
-            html += '<div style="font-size:0.8em;color:#94a3b8;margin-top:6px;">Exponential compression &mdash; leaves cluster near r &rarr; 1</div>';
-        } else if (curvature < 0.15) {
-            html += '<div style="font-size:0.8em;color:#94a3b8;margin-top:6px;">Linear spacing &mdash; uniform depth intervals</div>';
-        } else {
-            html += '<div style="font-size:0.8em;color:#94a3b8;margin-top:6px;">Interpolating between linear and exponential</div>';
-        }
-        html += '</div>';
+		// Depth -> Radius table
+		html += '<div style="font-family:sans-serif;font-size:0.82em;color:#475569;">';
+		html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:12px;">';
+		html += '<div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">Depth &rarr; Radius</div>';
+		for (var d = 0; d <= hyperbolicState.maxDepth; d++) {
+			var r = getHyperbolicRadius(d, curvature);
+			var dc = depthColors[d] || '#1e293b';
+			html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;">';
+			html += '<span style="color:' + dc + ';">Depth ' + d + '</span>';
+			html += '<span style="font-family:monospace;font-weight:bold;">r = ' + r.toFixed(4) + '</span>';
+			html += '</div>';
+		}
+		if (curvature > 0.5) {
+			html += '<div style="font-size:0.8em;color:#94a3b8;margin-top:6px;">Exponential compression &mdash; leaves cluster near r &rarr; 1</div>';
+		} else if (curvature < 0.15) {
+			html += '<div style="font-size:0.8em;color:#94a3b8;margin-top:6px;">Linear spacing &mdash; uniform depth intervals</div>';
+		} else {
+			html += '<div style="font-size:0.8em;color:#94a3b8;margin-top:6px;">Interpolating between linear and exponential</div>';
+		}
+		html += '</div>';
 
-        // Chain distances
-        if (curvature > 0.3) {
-            html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:12px;">';
-            html += '<div style="font-weight:bold;margin-bottom:8px;color:#92400e;">&#x1F536; Highlighted Chain Distances</div>';
-            var totalHyp = 0;
-            chainEdges.forEach(function(pair) {
-                var pNode = null, cNode = null;
-                for (var i = 0; i < nodes.length; i++) {
-                    if (nodes[i].name === pair[0]) pNode = nodes[i];
-                    if (nodes[i].name === pair[1]) cNode = nodes[i];
-                }
-                if (!pNode || !cNode) return;
-                var p1 = getHypNodePos(pNode, curvature);
-                var p2 = getHypNodePos(cNode, curvature);
-                var hd = poincareDistance(p1, p2);
-                var ed = Math.sqrt(Math.pow(p1[0]-p2[0],2) + Math.pow(p1[1]-p2[1],2));
-                totalHyp += (isFinite(hd) ? hd : 0);
-                html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;font-size:0.85em;">';
-                html += '<span>' + pair[0] + ' &rarr; ' + pair[1] + '</span>';
-                html += '<span style="font-family:monospace;"><span style="color:#f59e0b;font-weight:bold;">' + (isFinite(hd)?hd.toFixed(2):'&infin;') + '</span>';
-                html += ' <span style="color:#94a3b8;">(euc: ' + ed.toFixed(3) + ')</span></span>';
-                html += '</div>';
-            });
-            html += '<div style="display:flex;justify-content:space-between;padding:5px 0 0;font-size:0.85em;font-weight:bold;border-top:2px solid #fef3c7;">';
-            html += '<span>Total path</span>';
-            html += '<span style="color:#f59e0b;font-family:monospace;">' + totalHyp.toFixed(2) + '</span>';
-            html += '</div></div>';
-        }
+		// Chain distances
+		if (curvature > 0.3) {
+			html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:12px;">';
+			html += '<div style="font-weight:bold;margin-bottom:8px;color:#92400e;">&#x1F536; Highlighted Chain Distances</div>';
+			var totalHyp = 0;
+			chainEdges.forEach(function(pair) {
+				var pNode = null, cNode = null;
+				for (var i = 0; i < nodes.length; i++) {
+					if (nodes[i].name === pair[0]) pNode = nodes[i];
+					if (nodes[i].name === pair[1]) cNode = nodes[i];
+				}
+				if (!pNode || !cNode) return;
+				var p1 = getHypNodePos(pNode, curvature);
+				var p2 = getHypNodePos(cNode, curvature);
+				var hd = poincareDistance(p1, p2);
+				var ed = Math.sqrt(Math.pow(p1[0]-p2[0],2) + Math.pow(p1[1]-p2[1],2));
+				totalHyp += (isFinite(hd) ? hd : 0);
+				html += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f1f5f9;font-size:0.85em;">';
+				html += '<span>' + pair[0] + ' &rarr; ' + pair[1] + '</span>';
+				html += '<span style="font-family:monospace;"><span style="color:#f59e0b;font-weight:bold;">' + (isFinite(hd)?hd.toFixed(2):'&infin;') + '</span>';
+				html += ' <span style="color:#94a3b8;">(euc: ' + ed.toFixed(3) + ')</span></span>';
+				html += '</div>';
+			});
+			html += '<div style="display:flex;justify-content:space-between;padding:5px 0 0;font-size:0.85em;font-weight:bold;border-top:2px solid #fef3c7;">';
+			html += '<span>Total path</span>';
+			html += '<span style="color:#f59e0b;font-family:monospace;">' + totalHyp.toFixed(2) + '</span>';
+			html += '</div></div>';
+		}
 
-        // Geometry summary
-        html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;">';
-        html += '<div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">Geometry</div>';
-        html += '<div style="font-size:0.85em;line-height:1.6;">';
-        if (curvature > 0.5) {
-            html += '<span style="color:#8b5cf6;">&#9679;</span> <b>Exponential</b> room near boundary<br>';
-            html += '<span style="color:#8b5cf6;">&#9679;</span> Geodesics <b>curve inward</b><br>';
-            html += '<span style="color:#8b5cf6;">&#9679;</span> Distance <b>explodes</b> near edge<br>';
-            html += '<span style="color:#8b5cf6;">&#9679;</span> Trees embed with <b>low distortion</b>';
-        } else {
-            html += '<span style="color:#94a3b8;">&#9679;</span> Uniform polynomial spacing<br>';
-            html += '<span style="color:#94a3b8;">&#9679;</span> Geodesics are straight lines<br>';
-            html += '<span style="color:#94a3b8;">&#9679;</span> Polynomial volume growth<br>';
-            html += '<span style="color:#ef4444;">&#9679;</span> <b>Leaf nodes crowd together</b>';
-        }
-        html += '</div></div></div>';
+		// Geometry summary
+		html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:12px;">';
+		html += '<div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">Geometry</div>';
+		html += '<div style="font-size:0.85em;line-height:1.6;">';
+		if (curvature > 0.5) {
+			html += '<span style="color:#8b5cf6;">&#9679;</span> <b>Exponential</b> room near boundary<br>';
+			html += '<span style="color:#8b5cf6;">&#9679;</span> Geodesics <b>curve inward</b><br>';
+			html += '<span style="color:#8b5cf6;">&#9679;</span> Distance <b>explodes</b> near edge<br>';
+			html += '<span style="color:#8b5cf6;">&#9679;</span> Trees embed with <b>low distortion</b>';
+		} else {
+			html += '<span style="color:#94a3b8;">&#9679;</span> Uniform polynomial spacing<br>';
+			html += '<span style="color:#94a3b8;">&#9679;</span> Geodesics are straight lines<br>';
+			html += '<span style="color:#94a3b8;">&#9679;</span> Polynomial volume growth<br>';
+			html += '<span style="color:#ef4444;">&#9679;</span> <b>Leaf nodes crowd together</b>';
+		}
+		html += '</div></div></div>';
 
-        statsDiv.innerHTML = html;
-    } catch(e) {
-        console.error('Hyperbolic stats error:', e);
-        statsDiv.innerHTML = '<div style="color:#ef4444;padding:12px;">Stats rendering error &mdash; see console.</div>';
-    }
+		statsDiv.innerHTML = html;
+	} catch(e) {
+		console.error('Hyperbolic stats error:', e);
+		statsDiv.innerHTML = '<div style="color:#ef4444;padding:12px;">Stats rendering error &mdash; see console.</div>';
+	}
 }
 
 function loadEmbeddingModule () {
