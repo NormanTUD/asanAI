@@ -1,4 +1,10 @@
 window.bibData = {
+	"adam": {
+		title: "Adam: A Method for Stochastic Optimization",
+		year: 2014,
+		url: "https://arxiv.org/abs/1412.6980",
+		author: "Diederik P. Kingma, Jimmy Ba"
+	},
 	"momentum": {
 		title: "Some methods of speeding up the convergence of iteration methods",
 		url: "https://papers.baulab.info/papers/also/Polyak-1964.pdf",

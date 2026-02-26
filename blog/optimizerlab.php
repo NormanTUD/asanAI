@@ -12,7 +12,7 @@ There are different strategies how to optimize:
 
 * **SGD (\cite[Stochastic Gradient Descent]{sgd}):** Takes simple, direct steps. It's consistent but can be slow or get stuck in small "potholes" (local minima).
 * **\cite[Momentum]{momentum}:** Like a heavy ball, it gains speed as it rolls down long slopes, helping it plow through flat spots and small bumps.
-* **Adam:** The "smart" navigator. It tracks the history of previous steps to adjust the speed for each parameter individually, making it the industry standard for complex data.
+* **\cite[Adam]{adam}:** The "smart" navigator. It tracks the history of previous steps to adjust the speed for each parameter individually, making it the industry standard for complex data.
 
 In most situations, *Adam* is the optimizer that works best, as it combines the speed of momentum with the ability to automatically adjust the learning rate for every individual parameter, allowing it to handle noisy data and complex architectures with minimal manual tuning.
 
