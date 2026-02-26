@@ -499,7 +499,21 @@ Both the PyTorch and TensorFlow versions can be trained with `python3 tf.py --mo
 ### Summary of the Full CNN Flow
 
 $$
-\text{Raw Pixels} \xrightarrow{\text{1. Normalize}} [0,1] \xrightarrow{\text{2. Conv2D}} \text{Feature Maps} \xrightarrow{\text{3. MaxPool}} \text{Downsampled} \xrightarrow{\text{4. Flatten}} \text{Vector} \xrightarrow{\text{5. Dense + Sigmoid}} P(\text{class})
+\begin{array}{c}
+\text{Raw Pixels} \\
+\downarrow \\
+\text{Normalize } [0,1] \\
+\downarrow \\
+\text{Conv2D (Feature Maps)} \\
+\downarrow \\
+\text{MaxPool (Downsample)} \\
+\downarrow \\
+\text{Flatten (Vector)} \\
+\downarrow \\
+\text{Dense + Sigmoid} \\
+\downarrow \\
+P(\text{class})
+\end{array}
 $$
 
 1. **Input:** A raw image tensor (e.g., $100 \times 100 \times 3$ for RGB).
