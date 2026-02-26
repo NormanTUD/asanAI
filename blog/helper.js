@@ -412,9 +412,9 @@ function bibtexify() {
 				}
 			}
 
-                        // Add SVG icon if URL is available
-                        const svgIcon = data.url
-                                ? `<a class='bibtexify_auto_link_icon' href="${data.url}" target="_blank" rel="noopener noreferrer" title="View source"><span class="external_link_icon">
+			// Add SVG icon if URL is available
+			const svgIcon = data.url
+				? `<a class='bibtexify_auto_link_icon' href="${data.url}" target="_blank" rel="noopener noreferrer" title="View source"><span class="external_link_icon">
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -433,10 +433,10 @@ function bibtexify() {
      id="metadata3035">
     <rdf:RDF>
       <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+	 rdf:about="">
+	<dc:format>image/svg+xml</dc:format>
+	<dc:type
+	   rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -473,22 +473,26 @@ function bibtexify() {
   </g>
 </svg>
 </span></a>`
-                                : "";
+				: "";
 
 			const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
 
-                        // Split the link text into words
-                        const linkWords = String(linkText).split(" ");
-                        const lastWord = linkWords.pop(); // Get the last word
-                        const precedingText = linkWords.join(" "); // All but the last word
+			// Split the link text into words
+			const linkWords = String(linkText).split(" ");
+			const lastWord = linkWords.pop(); // Get the last word
+			const precedingText = linkWords.join(" "); // All but the last word
 
-                        // Wrap the last word and SVG icon together in a nowrap span
-                        const lastWordWithIcon = `<span style="white-space: nowrap;">${lastWord}${svgIcon}</span>`;
+			// Wrap the last word and SVG icon together in a single <a> tag
+			const lastWordWithIcon = data.url
+				? `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer; white-space: nowrap;">${lastWord}${svgIcon}</a>`
+				: `<span style="white-space: nowrap;">${lastWord}</span>`;
 
-                        // Return the final citation element
-                        return `<span class="autociteelement"><a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${precedingText} </a>${lastWordWithIcon}</span>`;
-
-                });
+			// Return the final citation element
+			return `<span class="autociteelement">
+    <a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${precedingText}</a>
+    ${lastWordWithIcon}
+</span>`;
+		});
 
 		content = content.replace(/\\footcite\{(.+?)\}/g, (match, key) => {
 			const fnId = window.footnoteCounter++;
