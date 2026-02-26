@@ -1172,287 +1172,287 @@ const PredictionViz = {
 // ============================================================
 
 const AutoregressiveViz = {
-    steps: [
-        { input: 'Once upon a', output: 'time', prob: 0.72 },
-        { input: 'Once upon a time', output: 'there', prob: 0.45 },
-        { input: 'Once upon a time there', output: 'was', prob: 0.88 },
-        { input: 'Once upon a time there was', output: 'a', prob: 0.65 },
-        { input: 'Once upon a time there was a', output: 'dragon.', prob: 0.31 },
-        { input: 'Once upon a time there was a dragon.', output: '|endoftext|', prob: 0.52 },
-    ],
-    originalInput: 'Once upon a',
-    currentStep: 0,
-    animating: false,
-    timeoutId: null,
+	steps: [
+		{ input: 'Once upon a', output: 'time', prob: 0.72 },
+		{ input: 'Once upon a time', output: 'there', prob: 0.45 },
+		{ input: 'Once upon a time there', output: 'was', prob: 0.88 },
+		{ input: 'Once upon a time there was', output: 'a', prob: 0.65 },
+		{ input: 'Once upon a time there was a', output: 'dragon.', prob: 0.31 },
+		{ input: 'Once upon a time there was a dragon.', output: '|endoftext|', prob: 0.52 },
+	],
+	originalInput: 'Once upon a',
+	currentStep: 0,
+	animating: false,
+	timeoutId: null,
 
-    // ── Button state ──
+	// ── Button state ──
 
-    updateButton: function() {
-        const btn = document.getElementById('autoregressive-play');
-        if (!btn) return;
+	updateButton: function() {
+		const btn = document.getElementById('autoregressive-play');
+		if (!btn) return;
 
-        if (this.animating) {
-            this.styleButtonAsStop(btn);
-        } else {
-            this.styleButtonAsPlay(btn);
-        }
-        this.enableButton(btn);
-    },
+		if (this.animating) {
+			this.styleButtonAsStop(btn);
+		} else {
+			this.styleButtonAsPlay(btn);
+		}
+		this.enableButton(btn);
+	},
 
-    styleButtonAsStop: function(btn) {
-        btn.textContent = '⏹ Stop Generation';
-        btn.style.background = '#dc2626';
-        btn.style.borderColor = '#dc2626';
-        btn.style.color = '#fff';
-    },
+	styleButtonAsStop: function(btn) {
+		btn.textContent = '⏹ Stop Generation';
+		btn.style.background = '#dc2626';
+		btn.style.borderColor = '#dc2626';
+		btn.style.color = '#fff';
+	},
 
-    styleButtonAsPlay: function(btn) {
-        btn.textContent = '▶ Play Generation';
-        btn.style.background = '#3b82f6';
-        btn.style.borderColor = '#3b82f6';
-        btn.style.color = '#fff';
-    },
+	styleButtonAsPlay: function(btn) {
+		btn.textContent = '▶ Play Generation';
+		btn.style.background = '#3b82f6';
+		btn.style.borderColor = '#3b82f6';
+		btn.style.color = '#fff';
+	},
 
-    enableButton: function(btn) {
-        btn.disabled = false;
-        btn.style.opacity = '1';
-    },
+	enableButton: function(btn) {
+		btn.disabled = false;
+		btn.style.opacity = '1';
+	},
 
-    // ── Current step data ──
+	// ── Current step data ──
 
-    getCurrentStepData: function() {
-        return this.steps[Math.min(this.currentStep, this.steps.length - 1)];
-    },
+	getCurrentStepData: function() {
+		return this.steps[Math.min(this.currentStep, this.steps.length - 1)];
+	},
 
-    getOriginalWordCount: function() {
-        return this.originalInput.split(' ').length;
-    },
+	getOriginalWordCount: function() {
+		return this.originalInput.split(' ').length;
+	},
 
-    getInputWords: function(stepData) {
-        return stepData.input.split(' ');
-    },
+	getInputWords: function(stepData) {
+		return stepData.input.split(' ');
+	},
 
-    // ── Word classification ──
+	// ── Word classification ──
 
-    isOriginalWord: function(index, originalCount) {
-        return index < originalCount;
-    },
+	isOriginalWord: function(index, originalCount) {
+		return index < originalCount;
+	},
 
-    isJustAddedWord: function(index, totalWords, step) {
-        return index === totalWords - 1 && step > 0;
-    },
+	isJustAddedWord: function(index, totalWords, step) {
+		return index === totalWords - 1 && step > 0;
+	},
 
-    // ── Word HTML rendering ──
+	// ── Word HTML rendering ──
 
-    renderOriginalWord: function(word) {
-        return `<span style="color:#b45309; font-weight:bold; background:#fef3c7; padding:1px 4px; border-radius:3px; margin-right:6px;">${word}</span>`;
-    },
+	renderOriginalWord: function(word) {
+		return `<span style="color:#b45309; font-weight:bold; background:#fef3c7; padding:1px 4px; border-radius:3px; margin-right:6px;">${word}</span>`;
+	},
 
-    renderJustAddedWord: function(word) {
-        return `<span style="color:#16a34a; font-weight:bold; background:#dcfce7; padding:1px 4px; border-radius:3px; margin-right:6px;">${word}</span>`;
-    },
+	renderJustAddedWord: function(word) {
+		return `<span style="color:#16a34a; font-weight:bold; background:#dcfce7; padding:1px 4px; border-radius:3px; margin-right:6px;">${word}</span>`;
+	},
 
-    renderContextWord: function(word) {
-        return `<span style="color:#1e293b; margin-right:6px;">${word}</span>`;
-    },
+	renderContextWord: function(word) {
+		return `<span style="color:#1e293b; margin-right:6px;">${word}</span>`;
+	},
 
-    renderWordSpan: function(word, index, totalWords, originalCount, step) {
-        if (this.isOriginalWord(index, originalCount)) {
-            return this.renderOriginalWord(word);
-        }
-        if (this.isJustAddedWord(index, totalWords, step)) {
-            return this.renderJustAddedWord(word);
-        }
-        return this.renderContextWord(word);
-    },
+	renderWordSpan: function(word, index, totalWords, originalCount, step) {
+		if (this.isOriginalWord(index, originalCount)) {
+			return this.renderOriginalWord(word);
+		}
+		if (this.isJustAddedWord(index, totalWords, step)) {
+			return this.renderJustAddedWord(word);
+		}
+		return this.renderContextWord(word);
+	},
 
-    // ── Sentence HTML ──
+	// ── Sentence HTML ──
 
-    buildSentenceHtml: function(inputWords, originalCount, step) {
-        let html = '';
-        inputWords.forEach((word, i) => {
-            html += this.renderWordSpan(word, i, inputWords.length, originalCount, step);
-        });
-        return html;
-    },
+	buildSentenceHtml: function(inputWords, originalCount, step) {
+		let html = '';
+		inputWords.forEach((word, i) => {
+			html += this.renderWordSpan(word, i, inputWords.length, originalCount, step);
+		});
+		return html;
+	},
 
-    // ── Prediction HTML ──
+	// ── Prediction HTML ──
 
-    isEndToken: function(output) {
-        return output === '|endoftext|';
-    },
+	isEndToken: function(output) {
+		return output === '|endoftext|';
+	},
 
-    // In AutoregressiveViz, replace these three methods:
+	// In AutoregressiveViz, replace these three methods:
 
-renderStopPrediction: function() {
-    return `<span style="background:#fee2e2; color:#dc2626; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out; cursor:pointer;"
-                  onclick="AutoregressiveViz.clickAdvance()"
-            >⏹ STOP</span>`;
-},
+	renderStopPrediction: function() {
+		return `<span style="background:#fee2e2; color:#dc2626; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out; cursor:pointer;"
+		  onclick="AutoregressiveViz.clickAdvance()"
+	    >⏹ STOP</span>`;
+	},
 
-renderWordPrediction: function(output) {
-    return `<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out; cursor:pointer; transition: background 0.15s;"
-                  onmouseover="this.style.background='#bfdbfe'"
-                  onmouseout="this.style.background='#dbeafe'"
-                  onclick="AutoregressiveViz.clickAdvance()"
-                  title="Click to add this word and continue"
-            >${output}</span>`;
-},
+	renderWordPrediction: function(output) {
+		return `<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:4px; font-weight:bold; animation: arPulse 0.6s ease-in-out; cursor:pointer; transition: background 0.15s;"
+		  onmouseover="this.style.background='#bfdbfe'"
+		  onmouseout="this.style.background='#dbeafe'"
+		  onclick="AutoregressiveViz.clickAdvance()"
+		  title="Click to add this word and continue"
+	    >${output}</span>`;
+	},
 
-// Add this new method to AutoregressiveViz:
-clickAdvance: function() {
-    // If currently animating, don't interfere
-    if (this.animating) return;
+	// Add this new method to AutoregressiveViz:
+	clickAdvance: function() {
+		// If currently animating, don't interfere
+		if (this.animating) return;
 
-    // If we're at the last step, reset
-    if (this.isAtEnd()) {
-        this.reset();
-        return;
-    }
+		// If we're at the last step, reset
+		if (this.isAtEnd()) {
+			this.reset();
+			return;
+		}
 
-    // Advance to the next step and re-render
-    this.advanceStep();
-    this.render();
-},
+		// Advance to the next step and re-render
+		this.advanceStep();
+		this.render();
+	},
 
-    
-    buildPredictionHtml: function(output) {
-        if (this.isEndToken(output)) {
-            return this.renderStopPrediction();
-        }
-        return this.renderWordPrediction(output);
-    },
 
-    // ── Layout sections ──
+	buildPredictionHtml: function(output) {
+		if (this.isEndToken(output)) {
+			return this.renderStopPrediction();
+		}
+		return this.renderWordPrediction(output);
+	},
 
-    buildSentenceDisplayHtml: function(sentenceHtml) {
-        return `
-            <div style="padding:14px 16px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; min-height:48px; display:flex; align-items:center; flex-wrap:wrap;">
-                ${sentenceHtml}
-            </div>`;
-    },
+	// ── Layout sections ──
 
-    buildPredictionRowHtml: function(predictionHtml, prob) {
-        return `
-            <div style="display:flex; align-items:center; gap:10px; padding:10px 16px; margin-top:8px; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
-                <span style="color:#64748b;">→ Predicts:</span>
-                ${predictionHtml}
-                <span style="color:#94a3b8; font-size:0.8em; margin-left:auto;">(p=${prob.toFixed(2)})</span>
-            </div>`;
-    },
+	buildSentenceDisplayHtml: function(sentenceHtml) {
+		return `
+	    <div style="padding:14px 16px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; min-height:48px; display:flex; align-items:center; flex-wrap:wrap;">
+		${sentenceHtml}
+	    </div>`;
+	},
 
-    buildLegendHtml: function() {
-        return `
-            <div style="display:flex; align-items:center; margin-top:10px; padding:0 4px;">
-                <div style="display:flex; gap:14px; font-size:0.75em; color:#64748b;">
-                    <span><span style="color:#b45309; background:#fef3c7; padding:0 3px; border-radius:2px;">■</span> user input</span>
-                    <span><span style="color:#1e293b;">■</span> generated</span>
-                    <span><span style="color:#16a34a; background:#dcfce7; padding:0 3px; border-radius:2px;">■</span> just added</span>
-                    <span><span style="color:#1e40af; background:#dbeafe; padding:0 3px; border-radius:2px;">■</span> next prediction</span>
-                </div>
-            </div>`;
-    },
+	buildPredictionRowHtml: function(predictionHtml, prob) {
+		return `
+	    <div style="display:flex; align-items:center; gap:10px; padding:10px 16px; margin-top:8px; background:#eff6ff; border-radius:8px; border-left:3px solid #3b82f6;">
+		<span style="color:#64748b;">→ Predicts:</span>
+		${predictionHtml}
+		<span style="color:#94a3b8; font-size:0.8em; margin-left:auto;">(p=${prob.toFixed(2)})</span>
+	    </div>`;
+	},
 
-    // ── Main render ──
+	buildLegendHtml: function() {
+		return `
+	    <div style="display:flex; align-items:center; margin-top:10px; padding:0 4px;">
+		<div style="display:flex; gap:14px; font-size:0.75em; color:#64748b;">
+		    <span><span style="color:#b45309; background:#fef3c7; padding:0 3px; border-radius:2px;">■</span> user input</span>
+		    <span><span style="color:#1e293b;">■</span> generated</span>
+		    <span><span style="color:#16a34a; background:#dcfce7; padding:0 3px; border-radius:2px;">■</span> just added</span>
+		    <span><span style="color:#1e40af; background:#dbeafe; padding:0 3px; border-radius:2px;">■</span> next prediction</span>
+		</div>
+	    </div>`;
+	},
 
-    render: function() {
-        const container = document.getElementById('autoregressive-viz');
-        if (!container) return;
+	// ── Main render ──
 
-        const s = this.getCurrentStepData();
-        const inputWords = this.getInputWords(s);
-        const originalCount = this.getOriginalWordCount();
+	render: function() {
+		const container = document.getElementById('autoregressive-viz');
+		if (!container) return;
 
-        const sentenceHtml = this.buildSentenceHtml(inputWords, originalCount, this.currentStep);
-        const predictionHtml = this.buildPredictionHtml(s.output);
+		const s = this.getCurrentStepData();
+		const inputWords = this.getInputWords(s);
+		const originalCount = this.getOriginalWordCount();
 
-        const html = `
-            <div style="font-family:monospace; font-size:0.85em;">
-                ${this.buildSentenceDisplayHtml(sentenceHtml)}
-                ${this.buildPredictionRowHtml(predictionHtml, s.prob)}
-                ${this.buildLegendHtml()}
-            </div>`;
+		const sentenceHtml = this.buildSentenceHtml(inputWords, originalCount, this.currentStep);
+		const predictionHtml = this.buildPredictionHtml(s.output);
 
-        container.innerHTML = html;
-    },
+		const html = `
+	    <div style="font-family:monospace; font-size:0.85em;">
+		${this.buildSentenceDisplayHtml(sentenceHtml)}
+		${this.buildPredictionRowHtml(predictionHtml, s.prob)}
+		${this.buildLegendHtml()}
+	    </div>`;
 
-    // ── Animation control ──
+		container.innerHTML = html;
+	},
 
-    isAtEnd: function() {
-        return this.currentStep >= this.steps.length - 1;
-    },
+	// ── Animation control ──
 
-    shouldContinueAnimating: function() {
-        return !this.isAtEnd() && this.animating;
-    },
+	isAtEnd: function() {
+		return this.currentStep >= this.steps.length - 1;
+	},
 
-    restartIfAtEnd: function() {
-        if (this.isAtEnd()) {
-            this.currentStep = 0;
-        }
-    },
+	shouldContinueAnimating: function() {
+		return !this.isAtEnd() && this.animating;
+	},
 
-    beginAnimating: function() {
-        this.animating = true;
-        this.updateButton();
-    },
+	restartIfAtEnd: function() {
+		if (this.isAtEnd()) {
+			this.currentStep = 0;
+		}
+	},
 
-    endAnimating: function() {
-        this.animating = false;
-        this.timeoutId = null;
-        this.updateButton();
-    },
+	beginAnimating: function() {
+		this.animating = true;
+		this.updateButton();
+	},
 
-    scheduleNextStep: function(callback, delay) {
-        this.timeoutId = setTimeout(callback, delay);
-    },
+	endAnimating: function() {
+		this.animating = false;
+		this.timeoutId = null;
+		this.updateButton();
+	},
 
-    advanceStep: function() {
-        this.currentStep++;
-    },
+	scheduleNextStep: function(callback, delay) {
+		this.timeoutId = setTimeout(callback, delay);
+	},
 
-    runAnimationLoop: function() {
-        const step = () => {
-            this.render();
-            if (this.shouldContinueAnimating()) {
-                this.advanceStep();
-                this.scheduleNextStep(step, 1200);
-            } else {
-                this.endAnimating();
-            }
-        };
-        step();
-    },
+	advanceStep: function() {
+		this.currentStep++;
+	},
 
-    animate: function() {
-        if (this.animating) {
-            this.stop();
-            return;
-        }
+	runAnimationLoop: function() {
+		const step = () => {
+			this.render();
+			if (this.shouldContinueAnimating()) {
+				this.advanceStep();
+				this.scheduleNextStep(step, 1200);
+			} else {
+				this.endAnimating();
+			}
+		};
+		step();
+	},
 
-        this.restartIfAtEnd();
-        this.beginAnimating();
-        this.runAnimationLoop();
-    },
+	animate: function() {
+		if (this.animating) {
+			this.stop();
+			return;
+		}
 
-    clearScheduledTimeout: function() {
-        if (this.timeoutId) {
-            clearTimeout(this.timeoutId);
-            this.timeoutId = null;
-        }
-    },
+		this.restartIfAtEnd();
+		this.beginAnimating();
+		this.runAnimationLoop();
+	},
 
-    stop: function() {
-        this.animating = false;
-        this.clearScheduledTimeout();
-        this.updateButton();
-    },
+	clearScheduledTimeout: function() {
+		if (this.timeoutId) {
+			clearTimeout(this.timeoutId);
+			this.timeoutId = null;
+		}
+	},
 
-    reset: function() {
-        this.stop();
-        this.currentStep = 0;
-        this.render();
-    }
+	stop: function() {
+		this.animating = false;
+		this.clearScheduledTimeout();
+		this.updateButton();
+	},
+
+	reset: function() {
+		this.stop();
+		this.currentStep = 0;
+		this.render();
+	}
 };
 
 // ============================================================
