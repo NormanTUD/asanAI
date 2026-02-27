@@ -205,6 +205,8 @@ Attention lets the model **look at other tokens** to understand context. In *"Th
 
 The model has **many attention heads** running in parallel, each a tiny specialist. One might track which noun a pronoun refers to, another might connect verbs to their objects, another might notice adjectives describing nearby nouns.
 
+It is important to note that not all attention heads to something that is humanly interpretable. They may look like they're reacting to nouns or verbs, but in reality, it's just a pattern learnt from statistics. They are not programmed to react to those words, and they don't 'know' what they are.
+
 #### 4b: Feed-Forward Network - "What do I conclude?"
 
 After attention has gathered context, a small **neural network** processes each token individually. This is where the model applies knowledge it memorized during training: facts, patterns, and rules of language.
