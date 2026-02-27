@@ -353,7 +353,6 @@ const CRSim = (() => {
 
   // ── Expose public API ─────────────────────────────────────────────
   return { start, revealTranslations };
-
 })();
 
 function loadPhilosophyModule () {
