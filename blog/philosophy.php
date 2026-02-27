@@ -99,7 +99,128 @@ This is the exact situation the LLM is in when you pass a text to it. First, it 
 * **The Result:** To the person outside, it looks like the person in the room understands Chinese.
 * **The Reality:** The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning).
 * **The Lesson:** AI is the person in the room. It has a perfect rulebook for English, but it doesn't *understand* the words "Paris" or "France." It just knows they go together.
+</div>
 
+<!-- Chinese Room Simulator: Inuktitut Edition -->
+<div id="chinese-room-sim" style="max-width:760px; margin:2em auto; font-family: 'Segoe UI', system-ui, sans-serif;">
+
+  <!-- Title -->
+  <div style="text-align:center; margin-bottom:1.5em;">
+    <p style="margin:0 0 0.3em 0;">🧱 The Chinese Room Simulator</p>
+    <p style="margin:0; color:#888; font-size:0.9em;">You are locked inside the room. You don't speak Inuktitut. You have a rulebook.</p>
+  </div>
+
+  <!-- Room visual frame -->
+  <div id="cr-room" style="border:3px solid #555; border-radius:12px; background:#1a1a2e; color:#eee; padding:1.5em; position:relative; min-height:340px; overflow:hidden;">
+
+    <!-- Round indicator -->
+    <div id="cr-round-indicator" style="text-align:center; font-size:0.85em; color:#888; margin-bottom:1em;">
+      Round <span id="cr-round-num">1</span> of <span id="cr-total-rounds">6</span>
+    </div>
+
+    <!-- Incoming message area -->
+    <div id="cr-incoming-area" style="text-align:center; margin-bottom:1.2em;">
+      <div style="font-size:0.8em; color:#aaa; margin-bottom:0.3em;">📩 A note slides under the door:</div>
+      <div id="cr-incoming-msg" style="font-size:2.4em; letter-spacing:0.15em; min-height:1.5em; transition: opacity 0.5s, transform 0.5s; font-weight: bold; color:#f0e68c;">
+        <!-- Inuktitut input appears here -->
+      </div>
+    </div>
+
+    <!-- Rulebook -->
+    <div id="cr-rulebook" style="background:#16213e; border:1px solid #444; border-radius:8px; padding:1em; margin-bottom:1.2em;">
+      <div style="font-size:0.8em; color:#aaa; margin-bottom:0.6em;">📖 Your Rulebook says:</div>
+      <table id="cr-rulebook-table" style="width:100%; border-collapse:collapse; font-size:1.05em;">
+        <thead>
+          <tr style="color:#888; font-size:0.8em;">
+            <th style="text-align:left; padding:0.3em 0.5em; border-bottom:1px solid #333;">If you see…</th>
+            <th style="text-align:left; padding:0.3em 0.5em; border-bottom:1px solid #333;">Slide back…</th>
+          </tr>
+        </thead>
+        <tbody id="cr-rulebook-body">
+          <!-- Rules injected by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Response options -->
+    <div id="cr-options-area" style="text-align:center;">
+      <div style="font-size:0.8em; color:#aaa; margin-bottom:0.5em;">Choose your response:</div>
+      <div id="cr-options" style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.6em;">
+        <!-- Option buttons injected by JS -->
+      </div>
+    </div>
+
+    <!-- Feedback flash -->
+    <div id="cr-feedback" style="text-align:center; margin-top:1em; font-size:1.1em; min-height:1.5em; transition: opacity 0.4s;">
+    </div>
+
+    <!-- Timer -->
+    <div id="cr-timer" style="text-align:center; font-size:0.8em; color:#666; margin-top:0.5em;">
+      ⏱ <span id="cr-timer-val">0.0</span>s
+    </div>
+  </div>
+
+  <!-- Outside-the-room reveal (hidden initially) -->
+  <div id="cr-reveal" style="display:none; margin-top:1.5em;">
+
+    <!-- Outside observer -->
+    <div id="cr-outside" style="background:#e8f5e9; border:2px solid #66bb6a; border-radius:12px; padding:1.2em; text-align:center; margin-bottom:1em;">
+      <div style="font-size:1.6em; margin-bottom:0.3em;">🧑 Person outside the room:</div>
+      <div style="font-size:1.2em; font-style:italic; color:#2e7d32;">"Incredible! You speak perfect Inuktitut!"</div>
+    </div>
+
+    <!-- Plotly chart -->
+    <div id="cr-chart" style="width:100%; height:260px; margin-bottom:1em;"></div>
+
+    <!-- The lesson -->
+    <div id="cr-lesson" style="background:#fff3e0; border:2px solid #ffb74d; border-radius:12px; padding:1.2em; color:#333; line-height:1.6;">
+      <strong>The Lesson:</strong> You never understood a single syllable. You matched shapes. You followed rules.
+      This is <em>exactly</em> what a Large Language Model does &mdash; it manipulates symbols based on
+      <strong>syntax</strong> (statistical patterns) without any <strong>semantics</strong> (meaning).
+      You were the person in <strong>Searle's Chinese Room</strong>.
+      <br><br>
+      <em>"The person inside is just manipulating symbols based on syntax (rules) without any semantics (meaning)."</em>
+      &mdash; John Searle, 1980
+    </div>
+
+    <!-- What did I actually say? -->
+    <div style="text-align:center; margin-top:1em;">
+      <button id="cr-reveal-translations-btn" onclick="CRSim.revealTranslations()"
+        style="padding:0.6em 1.5em; font-size:1em; border:2px solid #7e57c2; background:#ede7f6; color:#4527a0; border-radius:8px; cursor:pointer;">
+        🔍 What did I actually say?
+      </button>
+    </div>
+
+    <!-- Translation table (hidden) -->
+    <div id="cr-translations" style="display:none; margin-top:1em;">
+      <table id="cr-translation-table" style="width:100%; border-collapse:collapse; font-size:0.95em; background:#f5f5f5; border-radius:8px; overflow:hidden;">
+        <thead>
+          <tr style="background:#e0e0e0;">
+            <th style="text-align:left; padding:0.5em;">They asked (Inuktitut)</th>
+            <th style="text-align:left; padding:0.5em;">You replied (Inuktitut)</th>
+            <th style="text-align:left; padding:0.5em;">Actual conversation (English)</th>
+          </tr>
+        </thead>
+        <tbody id="cr-translation-body">
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
+      <p style="text-align:center; color:#888; font-size:0.85em; margin-top:0.5em;">
+        You had an entire conversation about the weather and directions &mdash; and you had no idea.
+      </p>
+    </div>
+
+    <!-- Restart -->
+    <div style="text-align:center; margin-top:1.2em;">
+      <button onclick="CRSim.start()"
+        style="padding:0.5em 1.5em; font-size:0.95em; border:1px solid #999; background:#fafafa; border-radius:6px; cursor:pointer;">
+        🔄 Try Again
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="md">
 ### The Multiverse of the Meadow: Uexküll's Bubble
 To understand the fundamental isolation of an AI's intelligence, we can look to the opening of Jakob von Uexküll's "A Stroll Through the Worlds of Animals and Men" \citeauthor{uexkull1934}. He invites us to perform a radical mental experiment to understand that there is no single "objective" world, only a collection of subjective ones:
 
