@@ -56,7 +56,7 @@ const CRSim = (() => {
       english: "Q: Do you know the way? → A: Go past it to the left."
     },
     {
-      // Round 6: THE TRICK — input is NOT in the rulebook
+      // Round 6: THE TRICK, input is NOT in the rulebook
       input: "ᐃᓕᓐᓂᐊᕐᕕᒃ ᒪᑐᓯᒪᕖᑦ?",
       correct: null, // no correct answer exists
       distractors: ["ᐊᕐᓇᖅ ᐃᒡᓗᒥ", "ᓯᓚ ᐊᒃᓱᕈᕐᓇᖅᑐᖅ ᐅᓪᓗᒥ", "ᐄ, ᐊᓄᕆ ᓴᖑᓪᓗᓂ", "ᓂᐅᕕᕐᕕᒧᑦ ᐊᐅᓪᓚᖅᑐᖓ"],
@@ -65,7 +65,7 @@ const CRSim = (() => {
         ["ᓇᒧᑦ ᐊᐅᓪᓚᖅᐱᑦ?", "ᓂᐅᕕᕐᕕᒧᑦ ᐊᐅᓪᓚᖅᑐᖓ"],
         ["ᖃᐅᔨᒪᕖᑦ ᐊᖅᑯᑎᒥᒃ?", "ᓴᐅᒥᖕᒧᑦ ᐊᓂᒍᐊᕐᓗᑎᑦ"]
       ],
-      english: "Q: Is the school closed? → (Not in your rulebook — you're stuck!)",
+      english: "Q: Is the school closed? → (Not in your rulebook, you're stuck!)",
       isTrick: true
     }
   ];
@@ -200,7 +200,7 @@ const CRSim = (() => {
       allBtns.forEach(b => { b.disabled = true; b.style.cursor = 'default'; b.style.opacity = '0.6'; });
 
       feedbackEl.innerHTML = `❌ <strong>That's not in the rulebook!</strong><br>
-        <span style="font-size:0.85em; color:#ffab91;">The input doesn't match any rule. You're stuck — just like an LLM
+        <span style="font-size:0.85em; color:#ffab91;">The input doesn't match any rule. You're stuck, just like an LLM
         encountering something truly outside its training distribution.</span>`;
       feedbackEl.style.color = '#ef9a9a';
 
@@ -238,7 +238,7 @@ const CRSim = (() => {
       }, 1200);
 
     } else {
-      // Wrong — highlight the correct rule, let them try again
+      // Wrong, highlight the correct rule, let them try again
       btnEl.style.background = '#c0392b';
       btnEl.style.borderColor = '#e74c3c';
       btnEl.disabled = true;
@@ -309,7 +309,7 @@ const CRSim = (() => {
       font: { family: 'Segoe UI, system-ui, sans-serif' },
       annotations: [{
         x: 0.5, y: 1.08, xref: 'paper', yref: 'paper',
-        text: 'You followed the rules perfectly — but understood nothing.',
+        text: 'You followed the rules perfectly, but understood nothing.',
         showarrow: false,
         font: { size: 13, color: '#888' }
       }]
