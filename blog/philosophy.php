@@ -106,7 +106,6 @@ This is the exact situation the LLM is in when you pass a text to it. First, it 
 
   <!-- Title -->
   <div style="text-align:center; margin-bottom:1.5em;">
-    <p style="margin:0 0 0.3em 0;">🧱 The Chinese Room Simulator</p>
     <p style="margin:0; color:#888; font-size:0.9em;">You are locked inside the room. You don't speak Inuktitut. You have a rulebook.</p>
   </div>
 
