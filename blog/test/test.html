@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>How LLMs Store Information — Deep Interactive Demonstrator</title>
+		<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+		<style>
+:root {
+	--bg: #0c0e16;
+	--card: #151825;
+	--card2: #1c2035;
+	--accent: #7c6aff;
+	--accent2: #00e8b0;
+	--accent3: #ff6b6b;
+	--accent4: #ffbe0b;
+	--text: #dde;
+	--dim: #778;
+	--border: #282c44;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+	font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+	background: var(--bg);
+	color: var(--text);
+	line-height:1.7;
+}
+  .container { max-width:1200px; margin:0 auto; padding:16px; }
+  h1 {
+	  text-align:center; font-size:2.4em; margin:30px 0 6px;
+	  background: linear-gradient(135deg, var(--accent), var(--accent2));
+	  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .subtitle { text-align:center; color:var(--dim); margin-bottom:30px; font-size:1.05em; }
+  .tabs {
+	  display:flex; justify-content:center; gap:6px; margin:20px 0; flex-wrap:wrap;
+  }
+  .tabs button {
+	  background:var(--card); color:var(--dim); border:2px solid var(--border);
+	  padding:10px 18px; border-radius:10px; cursor:pointer; font-weight:700;
+	  font-size:0.92em; transition:all .25s;
+  }
+  .tabs button:hover { border-color:var(--accent); color:var(--text); }
+  .tabs button.active { border-color:var(--accent); background:var(--accent); color:#fff; }
+  .section { display:none; }
+  .section.active { display:block; }
+  .card {
+	  background:var(--card); border:1px solid var(--border);
+	  border-radius:14px; padding:28px; margin-bottom:24px;
+  }
+  .card h2 { color:var(--accent2); font-size:1.45em; margin-bottom:12px; }
+  .card h3 { color:var(--accent); font-size:1.1em; margin:16px 0 8px; }
+  .card p, .card li { margin-bottom:8px; }
+  .card ul { padding-left:18px; }
+  .math-block {
+	  background:#0d0f18; border-left:3px solid var(--accent);
+	  padding:14px 18px; margin:14px 0; border-radius:0 8px 8px 0;
+	  overflow-x:auto; text-align:center; font-size:1.1em;
+  }
+  .math-inline { font-size:1.02em; }
+  .plot-box {
+	  border-radius:10px; overflow:hidden; margin:12px 0;
+	  border:1px solid var(--border);
+  }
+  .ctrl {
+	  display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+	  padding:14px; background:var(--card2); border-radius:10px; margin:12px 0;
+  }
+  .ctrl label { color:var(--accent2); font-weight:700; font-size:.9em; }
+  .ctrl input[type=range] { width:160px; accent-color:var(--accent); }
+  .ctrl span.val { color:var(--accent4); min-width:42px; font-weight:700; font-family:monospace; }
+  .ctrl button, .btn {
+	  background:var(--accent); color:#fff; border:none;
+	  padding:8px 16px; border-radius:8px; cursor:pointer;
+	  font-weight:700; transition:background .2s; font-size:.9em;
+  }
+  .ctrl button:hover, .btn:hover { background:#6a58e8; }
+  .btn-danger { background:var(--accent3); }
+  .btn-danger:hover { background:#e05050; }
+  .btn-green { background:#00b894; }
+  .btn-green:hover { background:#00a080; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  @media(max-width:800px) { .grid2,.grid3 { grid-template-columns:1fr; } }
+  .weight-matrix {
+	  display:grid; gap:2px; margin:8px 0;
+	  font-family:monospace; font-size:.78em;
+  }
+  .weight-cell {
+	  padding:4px; text-align:center; border-radius:4px;
+	  cursor:pointer; transition:transform .15s; font-weight:700;
+	  user-select:none;
+  }
+  .weight-cell:hover { transform:scale(1.25); z-index:2; }
+  .info-box {
+	  background:#0d0f18; border:1px solid var(--border);
+	  border-radius:8px; padding:12px; margin:8px 0;
+	  font-size:.92em; color:var(--dim);
+  }
+  .info-box.highlight-box { border-color:var(--accent); color:var(--text); }
+  .token-bar {
+	  display:flex; gap:4px; flex-wrap:wrap; margin:8px 0;
+  }
+  .token {
+	  padding:6px 12px; border-radius:6px; font-weight:700;
+	  font-family:monospace; font-size:.95em; cursor:pointer;
+	  transition:all .2s; border:2px solid transparent;
+  }
+  .token:hover { transform:translateY(-2px); }
+  .token.active { border-color:var(--accent4); }
+  canvas.drag-canvas {
+	  border-radius:10px; cursor:crosshair;
+	  border:1px solid var(--border);
+  }
+  .legend-item {
+	  display:inline-flex; align-items:center; gap:5px;
+	  margin-right:14px; font-size:.85em;
+  }
+  .legend-dot {
+	  width:12px; height:12px; border-radius:50%; display:inline-block;
+  }
+  .slider-group { display:flex; flex-direction:column; gap:2px; }
+  .slider-group label { font-size:.82em; }
+  .log-area {
+	  background:#0a0c14; border:1px solid var(--border);
+	  border-radius:8px; padding:10px; margin:8px 0;
+	  font-family:monospace; font-size:.82em; color:var(--accent2);
+	  max-height:200px; overflow-y:auto; line-height:1.5;
+  }
+  .progress-bar {
+	  height:6px; background:var(--border); border-radius:3px;
+	  margin:8px 0; overflow:hidden;
+  }
+  .progress-bar .fill {
+	  height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2));
+	  border-radius:3px; transition:width .3s;
+  }
+  footer { text-align:center; padding:30px; color:var(--dim); font-size:.85em; }
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>How LLMs Store Information</h1>
+			<p class="subtitle">Drag vectors, edit weights, train a mini-network, and watch knowledge emerge from geometry</p>
+
+			<div class="tabs" id="mainTabs">
+				<button class="active" onclick="showTab(0)">1 · Vectors &amp; Directions</button>
+				<button onclick="showTab(1)">2 · MLP Key-Value</button>
+				<button onclick="showTab(2)">3 · Superposition</button>
+				<button onclick="showTab(3)">4 · Polysemantic Neurons</button>
+				<button onclick="showTab(4)">5 · Live Training</button>
+				<button onclick="showTab(5)">6 · Full Transformer</button>
+			</div>
+
+			<!-- ===================== TAB 0 ===================== -->
+			<div class="section active" id="tab0">
+				<div class="card">
+					<h2>§1 — The Residual Stream: Draggable Concept Geometry</h2>
+					<p>Every token's "state" is a vector <span class="math-inline" id="m_x_rd"></span>. Concepts are <strong>directions</strong>. Drag the feature vectors and the input vector on the canvas below to build intuition.</p>
+					<div class="math-block" id="m_residual_eq"></div>
+					<div class="grid2">
+						<div>
+							<canvas class="drag-canvas" id="canvas0" width="520" height="520"></canvas>
+							<div style="margin-top:6px;">
+								<span class="legend-item"><span class="legend-dot" style="background:#7c6aff"></span> Feature A</span>
+								<span class="legend-item"><span class="legend-dot" style="background:#00e8b0"></span> Feature B</span>
+								<span class="legend-item"><span class="legend-dot" style="background:#ff6b6b"></span> Feature C</span>
+								<span class="legend-item"><span class="legend-dot" style="background:#ffbe0b"></span> Input x</span>
+							</div>
+						</div>
+						<div>
+							<div class="info-box highlight-box" id="canvas0_info">
+								Drag the colored circles to move feature directions.<br>
+								Drag the yellow circle to move the input vector.<br>
+								Projections (dot products) update live.
+							</div>
+							<h3>Live Projections</h3>
+							<div class="math-block" id="m_proj_a"></div>
+							<div class="math-block" id="m_proj_b"></div>
+							<div class="math-block" id="m_proj_c"></div>
+							<div class="plot-box" id="proj_bar_plot" style="height:200px;"></div>
+							<p style="font-size:.9em; color:var(--dim);">The projection <span class="math-inline" id="m_proj_formula"></span> tells us how much the model is "thinking about" each feature. Larger projection = stronger activation of that concept.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- ===================== TAB 1 ===================== -->
+			<div class="section" id="tab1">
+				<div class="card">
+					<h2>§2 — MLP as Key-Value Memory: Drag to Explore</h2>
+					<div class="math-block" id="m_mlp_eq"></div>
+					<p>Each neuron checks <span class="math-inline" id="m_kv_dot"></span>. If positive, it writes <span class="math-inline" id="m_kv_write"></span> into the residual stream. Drag the input, key, and value vectors below.</p>
+					<div class="grid2">
+						<div>
+							<canvas class="drag-canvas" id="canvas1" width="520" height="520"></canvas>
+							<div style="margin-top:6px;">
+								<span class="legend-item"><span class="legend-dot" style="background:#ffbe0b"></span> Input x</span>
+								<span class="legend-item"><span class="legend-dot" style="background:#7c6aff"></span> Key kᵢ</span>
+								<span class="legend-item"><span class="legend-dot" style="background:#00e8b0"></span> Value vᵢ</span>
+								<span class="legend-item"><span class="legend-dot" style="background:#ff6b6b"></span> Output aᵢ·vᵢ</span>
+							</div>
+						</div>
+						<div>
+							<div class="info-box highlight-box" id="canvas1_info">
+								Drag input (yellow), key (purple), and value (green).<br>
+								The red output vector = ReLU(k·x) × v.
+							</div>
+							<h3>Live Computation</h3>
+							<div class="math-block" id="m_kv_live1"></div>
+							<div class="math-block" id="m_kv_live2"></div>
+							<div class="math-block" id="m_kv_live3"></div>
+							<h3>Multi-Neuron Mode</h3>
+							<div class="ctrl">
+								<label>Number of neurons:</label>
+								<input type="range" id="nNeurons" min="1" max="8" value="1" oninput="updateNeuronCount()">
+								<span class="val" id="nNeurons_val">1</span>
+								<button onclick="randomizeNeurons()">🎲 Randomize</button>
+							</div>
+							<div class="plot-box" id="multi_neuron_plot" style="height:250px;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- ===================== TAB 2 ===================== -->
+			<div class="section" id="tab2">
+				<div class="card">
+					<h2>§3 — Superposition: Packing Features Beyond Dimensions</h2>
+					<div class="math-block" id="m_super_eq"></div>
+					<p>In <span class="math-inline" id="m_d_dim"></span> dimensions you can only fit <span class="math-inline" id="m_d_ortho"></span> orthogonal vectors. But with superposition, you can pack exponentially more — at the cost of small interference.</p>
+					<div class="grid2">
+						<div>
+							<canvas class="drag-canvas" id="canvas2" width="520" height="520"></canvas>
+							<div class="ctrl">
+								<label>Features:</label>
+								<input type="range" id="superN" min="2" max="30" value="3" oninput="updateSuper()">
+								<span class="val" id="superN_val">3</span>
+								<button onclick="optimizeSuper()">⚡ Optimize Packing</button>
+								<button onclick="randomSuper()">🎲 Random</button>
+							</div>
+						</div>
+						<div>
+							<h3>Interference Matrix</h3>
+							<p style="font-size:.88em;">Each cell shows <span class="math-inline" id="m_dot_ij"></span>. Red = high interference.</p>
+							<div id="interference_matrix"></div>
+							<div class="info-box" id="super_stats"></div>
+							<h3>Johnson-Lindenstrauss Bound</h3>
+							<div class="math-block" id="m_jl_eq"></div>
+							<div class="ctrl">
+								<div class="slider-group">
+									<label>Dimensions d:</label>
+									<input type="range" id="jl_d" min="2" max="4096" value="128" oninput="updateJL()">
+									<span class="val" id="jl_d_val">128</span>
+								</div>
+								<div class="slider-group">
+									<label>Max distortion ε:</label>
+									<input type="range" id="jl_eps" min="0.01" max="0.5" step="0.01" value="0.1" oninput="updateJL()">
+									<span class="val" id="jl_eps_val">0.10</span>
+								</div>
+							</div>
+							<div class="info-box highlight-box" id="jl_result"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- ===================== TAB 3 ===================== -->
+			<div class="section" id="tab3">
+				<div class="card">
+					<h2>§4 — Polysemantic Neurons: Dissection Tool</h2>
+					<div class="math-block" id="m_poly_eq"></div>
+					<p>A polysemantic neuron's key is a mixture of feature directions. Use the sliders to control each feature's presence in the input and watch the neuron's response.</p>
+					<div class="grid2">
+						<div>
+							<canvas class="drag-canvas" id="canvas3" width="520" height="520"></canvas>
+						</div>
+						<div>
+							<h3>Feature Activations in Input</h3>
+							<div class="ctrl" style="flex-direction:column; align-items:stretch;">
+								<div style="display:flex; align-items:center; gap:8px;">
+									<span class="legend-dot" style="background:#7c6aff"></span>
+									<label style="flex:1;">🐱 "cat" feature:</label>
+									<input type="range" id="pf1" min="0" max="1" step="0.01" value="0.8" oninput="updatePolyCanvas()">
+									<span class="val" id="pf1_val">0.80</span>
+								</div>
+								<div style="display:flex; align-items:center; gap:8px;">
+									<span class="legend-dot" style="background:#00e8b0"></span>
+									<label style="flex:1;">⚖️ "legal" feature:</label>
+									<input type="range" id="pf2" min="0" max="1" step="0.01" value="0" oninput="updatePolyCanvas()">
+									<span class="val" id="pf2_val">0.00</span>
+								</div>
+								<div style="display:flex; align-items:center; gap:8px;">
+									<span class="legend-dot" style="background:#ff6b6b"></span>
+									<label style="flex:1;">🇫🇷 "French" feature:</label>
+									<input type="range" id="pf3" min="0" max="1" step="0.01" value="0" oninput="updatePolyCanvas()">
+									<span class="val" id="pf3_val">0.00</span>
+								</div>
+								<div style="display:flex; align-items:center; gap:8px;">
+									<span class="legend-dot" style="background:#ffbe0b"></span>
+									<label style="flex:1;">🔢 "math" feature:</label>
+									<input type="range" id="pf4" min="0" max="1" step="0.01" value="0" oninput="updatePolyCanvas()">
+									<span class="val" id="pf4_val">0.00</span>
+								</div>
+							</div>
+							<div class="math-block" id="m_poly_live"></div>
+							<h3>Neuron Activation Breakdown</h3>
+							<div class="plot-box" id="poly_breakdown_plot" style="height:220px;"></div>
+							<h3>The Ambiguity Problem</h3>
+							<div class="info-box highlight-box" id="poly_ambiguity">
+								Adjust the sliders to see: the neuron <em>cannot distinguish</em> which feature caused it to fire. This is the fundamental cost of polysemanticity.
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- ===================== TAB 4 ===================== -->
+			<div class="section" id="tab4">
+				<div class="card">
+					<h2>§5 — Live Training: Watch Knowledge Form</h2>
+					<p>A tiny 2D network learns to map 4 "queries" to 4 "answers". Watch the weight matrices evolve via gradient descent and see knowledge emerge as geometric structure.</p>
+					<div class="math-block" id="m_train_eq"></div>
+					<div class="grid2">
+						<div>
+							<h3>Weight Matrices (click cells to edit!)</h3>
+							<div class="grid2">
+								<div>
+									<p style="font-size:.85em; color:var(--accent);">W_in (keys) — 4×2</p>
+									<div id="win_matrix"></div>
+								</div>
+								<div>
+									<p style="font-size:.85em; color:var(--accent2);">W_out (values) — 2×4</p>
+									<div id="wout_matrix"></div>
+								</div>
+							</div>
+							<h3>Training Data</h3>
+							<div id="training_data_display"></div>
+							<div class="ctrl">
+								<button class="btn-green" onclick="startTraining()">▶ Train</button>
+								<button onclick="pauseTraining()">⏸ Pause</button>
+								<button class="btn-danger" onclick="resetTraining()">↺ Reset</button>
+								<div class="slider-group">
+									<label>Learning rate:</label>
+									<input type="range" id="lr" min="0.001" max="0.5" step="0.001" value="0.05" oninput="document.getElementById('lr_val').textContent=parseFloat(this.value).toFixed(3)">
+									<span class="val" id="lr_val">0.050</span>
+								</div>
+							</div>
+							<div class="progress-bar"><div class="fill" id="train_progress" style="width:0%"></div></div>
+							<div class="info-box" id="train_stats">Epoch: 0 | Loss: —</div>
+						</div>
+						<div>
+							<h3>Geometry of Keys &amp; Values</h3>
+							<canvas class="drag-canvas" id="canvas4" width="520" height="520"></canvas>
+							<h3>Loss Curve</h3>
+							<div class="plot-box" id="loss_plot" style="height:200px;"></div>
+						</div>
+					</div>
+					<div class="log-area" id="train_log">Training log will appear here...</div>
+				</div>
+			</div>
+
+			<!-- ===================== TAB 5 ===================== -->
+			<div class="section" id="tab5">
+				<div class="card">
+					<h2>§6 — Full Mini-Transformer: Step-by-Step Forward Pass</h2>
+					<p>A 2D, 1-layer transformer with 2 attention heads and a 4-neuron MLP processes a 4-token sequence. Step through each operation and watch the residual stream evolve.</p>
+					<div class="math-block" id="m_transformer_eq"></div>
+
+					<h3>Input Tokens</h3>
+					<div class="token-bar" id="token_bar"></div>
+
+					<div class="ctrl">
+						<button class="btn-green" onclick="stepTransformer()">▶ Next Step</button>
+						<button class="btn-danger" onclick="resetTransformer()">↺ Reset</button>
+						<button onclick="autoRunTransformer()">⏩ Auto-Run</button>
+						<span style="color:var(--dim); font-size:.9em;" id="tf_step_label">Step: Embedding</span>
+					</div>
+
+					<div class="grid2">
+						<div>
+							<h3>Residual Stream (per token)</h3>
+							<canvas class="drag-canvas" id="canvas5" width="520" height="520"></canvas>
+							<div style="margin-top:6px;">
+								<span class="legend-item"><span class="legend-dot" style="background:#7c6aff"></span> "The"</span>
+								<span class="legend-item"><span class="legend-dot" style="background:#00e8b0"></span> "capital"</span>
+								<span class="legend-item"><span class="legend-dot" style="background:#ff6b6b"></span> "of"</span>
+								<span class="legend-item"><span class="legend-dot" style="background:#ffbe0b"></span> "France"</span>
+							</div>
+						</div>
+						<div>
+							<h3>Current Operation</h3>
+							<div class="info-box highlight-box" id="tf_operation_info">
+								Press "Next Step" to begin the forward pass.
+							</div>
+							<div class="math-block" id="m_tf_live"></div>
+							<h3>Attention Weights</h3>
+							<div id="attn_matrix_display"></div>
+							<h3>MLP Neuron Activations</h3>
+							<div class="plot-box" id="mlp_activations_plot" style="height:180px;"></div>
+							<h3>Output Logits</h3>
+							<div class="plot-box" id="logits_plot" style="height:180px;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<footer>Interactive LLM Knowledge Storage Demonstrator — Plotly.js, Canvas2D &amp; Temml</footer>
+
+		<script>
+			// ============================================================
+			// GLOBALS & UTILS
+			// ============================================================
+			const TAU = Math.PI * 2;
+			function showTab(i) {
+				document.querySelectorAll('.section').forEach((s,j) => s.classList.toggle('active', j===i));
+				document.querySelectorAll('.tabs button').forEach((b,j) => b.classList.toggle('active', j===i));
+			}
+			function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+			function dot2(a, b) { return a[0]*b[0] + a[1]*b[1]; }
+			function norm2(a) { return Math.sqrt(a[0]*a[0]+a[1]*a[1]); }
+			function normalize2(a) { const n=norm2(a)||1; return [a[0]/n, a[1]/n]; }
+			function scale2(a,s) { return [a[0]*s, a[1]*s]; }
+			function add2(a,b) { return [a[0]+b[0], a[1]+b[1]]; }
+			function sub2(a,b) { return [a[0]-b[0], a[1]-b[1]]; }
+			function lerp(a,b,t) { return a+(b-a)*t; }
+			function colorFromVal(v) {
+				// v in [-1,1] -> blue to red
+				const t = (v+1)/2;
+				const r = Math.round(lerp(40, 255, t));
+				const g = Math.round(lerp(80, 80, 1-Math.abs(v)));
+				const b = Math.round(lerp(255, 60, t));
+				return `rgb(${r},${g},${b})`;
+			}
+			function renderM(id, tex, disp=true) {
+				const el = document.getElementById(id);
+				if(!el) return;
+				try { el.innerHTML = temml.renderToString(tex, {displayMode:disp}); }
+				catch(e) { el.textContent = tex; }
+			}
+			const plotLay = {
+				paper_bgcolor:'#151825', plot_bgcolor:'#0d0f18',
+				font:{color:'#dde',family:'Inter,Segoe UI,system-ui,sans-serif',size:11},
+				margin:{l:40,r:20,t:30,b:35}
+			};
+			const plotCfg = {responsive:true, displayModeBar:false};
+
+			// ============================================================
+			// DRAGGABLE CANVAS ENGINE
+			// ============================================================
+			class VecCanvas {
+				constructor(canvasId, opts={}) {
+					this.canvas = document.getElementById(canvasId);
+					this.ctx = this.canvas.getContext('2d');
+					this.w = this.canvas.width;
+					this.h = this.canvas.height;
+					this.cx = this.w/2;
+					this.cy = this.h/2;
+					this.scale = opts.scale || 200;
+					this.handles = []; // {pos:[x,y], color, label, radius, draggable}
+					this.dragging = null;
+					this.onUpdate = opts.onUpdate || (()=>{});
+					this.drawExtra = opts.drawExtra || (()=>{});
+
+					this.canvas.addEventListener('mousedown', e => this._down(e));
+					this.canvas.addEventListener('mousemove', e => this._move(e));
+					this.canvas.addEventListener('mouseup', () => this._up());
+					this.canvas.addEventListener('mouseleave', () => this._up());
+					this.canvas.addEventListener('touchstart', e => { e.preventDefault(); this._down(e.touches[0]); }, {passive:false});
+					this.canvas.addEventListener('touchmove', e => { e.preventDefault(); this._move(e.touches[0]); }, {passive:false});
+					this.canvas.addEventListener('touchend', () => this._up());
+				}
+				addHandle(pos, color, label, draggable=true) {
+					this.handles.push({pos:[...pos], color, label, radius:10, draggable});
+					return this.handles.length-1;
+				}
+				toScreen(p) { return [this.cx + p[0]*this.scale, this.cy - p[1]*this.scale]; }
+				fromScreen(sx, sy) { return [(sx-this.cx)/this.scale, (this.cy-sy)/this.scale]; }
+				_down(e) {
+					const rect = this.canvas.getBoundingClientRect();
+					const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+					for (let i = this.handles.length-1; i >= 0; i--) {
+						if (!this.handles[i].draggable) continue;
+						const sp = this.toScreen(this.handles[i].pos);
+						const dx = sx-sp[0], dy = sy-sp[1];
+						if (dx*dx+dy*dy < 400) { this.dragging = i; return; }
+					}
+				}
+				_move(e) {
+					if (this.dragging === null) return;
+					const rect = this.canvas.getBoundingClientRect();
+					const sx = e.clientX - rect.left, sy = e.clientY - rect.top;
+					this.handles[this.dragging].pos = this.fromScreen(sx, sy);
+					this.onUpdate();
+					this.draw();
+				}
+				_up() { this.dragging = null; }
+				drawArrow(from, to, color, width=2, dashed=false) {
+					const ctx = this.ctx;
+					const sf = this.toScreen(from), st = this.toScreen(to);
+					ctx.save();
+					ctx.beginPath();
+					if(dashed) ctx.setLineDash([8,5]);
+					ctx.moveTo(sf[0], sf[1]);
+					ctx.lineTo(st[0], st[1]);
+					ctx.strokeStyle = color;
+					ctx.lineWidth = width;
+					ctx.stroke();
+					ctx.setLineDash([]);
+					// Arrowhead
+					const dx = st[0]-sf[0], dy = st[1]-sf[1];
+					const len = Math.sqrt(dx*dx+dy*dy);
+					if(len > 10) {
+						const ux = dx/len, uy = dy/len;
+						const hs = Math.min(12, len*0.3);
+						ctx.beginPath();
+						ctx.moveTo(st[0], st[1]);
+						ctx.lineTo(st[0]-ux*hs+uy*hs*0.4, st[1]-uy*hs-ux*hs*0.4);
+						ctx.lineTo(st[0]-ux*hs-uy*hs*0.4, st[1]-uy*hs+ux*hs*0.4);
+						ctx.closePath();
+						ctx.fillStyle = color;
+						ctx.fill();
+					}
+					ctx.restore();
+				}
+				drawDottedLine(from, to, color, width=1) {
+					this.drawArrow(from, to, color, width, true);
+				}
+				drawLabel(pos, text, color, offsetX=12, offsetY=-12) {
+					const sp = this.toScreen(pos);
+					this.ctx.font = 'bold 13px Inter, system-ui, sans-serif';
+					this.ctx.fillStyle = color;
+					this.ctx.fillText(text, sp[0]+offsetX, sp[1]+offsetY);
+				}
+				drawArc(center, radius, startAngle, endAngle, color, width=1) {
+					const ctx = this.ctx;
+					const sc = this.toScreen(center);
+					ctx.beginPath();
+					ctx.arc(sc[0], sc[1], radius*this.scale, -endAngle, -startAngle);
+					ctx.strokeStyle = color;
+					ctx.lineWidth = width;
+					ctx.stroke();
+				}
+				draw() {
+					const ctx = this.ctx;
+					ctx.clearRect(0, 0, this.w, this.h);
+					// Background grid
+					ctx.strokeStyle = '#1e2140';
+					ctx.lineWidth = 1;
+					const step = this.scale * 0.5;
+					for(let x = this.cx % step; x < this.w; x += step) {
+						ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,this.h); ctx.stroke();
+					}
+					for(let y = this.cy % step; y < this.h; y += step) {
+						ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(this.w,y); ctx.stroke();
+					}
+					// Axes
+					ctx.strokeStyle = '#2a2d50';
+					ctx.lineWidth = 2;
+					ctx.beginPath(); ctx.moveTo(0,this.cy); ctx.lineTo(this.w,this.cy); ctx.stroke();
+					ctx.beginPath(); ctx.moveTo(this.cx,0); ctx.lineTo(this.cx,this.h); ctx.stroke();
+					// Unit circle
+					ctx.beginPath();
+					ctx.arc(this.cx, this.cy, this.scale, 0, TAU);
+					ctx.strokeStyle = '#2a2d50';
+					ctx.lineWidth = 1;
+					ctx.setLineDash([4,4]);
+					ctx.stroke();
+					ctx.setLineDash([]);
+					// Custom drawing
+					this.drawExtra(this);
+					// Handles: draw arrows from origin and circles
+					for(const h of this.handles) {
+						this.drawArrow([0,0], h.pos, h.color, 3);
+						const sp = this.toScreen(h.pos);
+						ctx.beginPath();
+						ctx.arc(sp[0], sp[1], h.radius, 0, TAU);
+						ctx.fillStyle = h.color;
+						ctx.globalAlpha = 0.85;
+						ctx.fill();
+						ctx.globalAlpha = 1;
+						ctx.strokeStyle = '#fff';
+						ctx.lineWidth = 2;
+						ctx.stroke();
+						this.drawLabel(h.pos, h.label, h.color);
+					}
+				}
+			}
+
+			// ============================================================
+			// TAB 0: VECTORS & DIRECTIONS
+			// ============================================================
+			let vc0;
+			function initTab0() {
+				vc0 = new VecCanvas('canvas0', {
+					scale: 180,
+					onUpdate: updateTab0,
+					drawExtra: (vc) => {
+						// Draw projection lines (dotted) from input to each feature direction
+						const x = vc.handles[3].pos;
+						for(let i=0; i<3; i++) {
+							const f = normalize2(vc.handles[i].pos);
+							const proj = dot2(x, f);
+							const projPt = scale2(f, proj);
+							vc.drawDottedLine(x, projPt, vc.handles[i].color, 1);
+							// Small square at projection point
+							const sp = vc.toScreen(projPt);
+							vc.ctx.fillStyle = vc.handles[i].color;
+							vc.ctx.globalAlpha = 0.6;
+							vc.ctx.fillRect(sp[0]-4, sp[1]-4, 8, 8);
+							vc.ctx.globalAlpha = 1;
+						}
+					}
+				});
+				vc0.addHandle([0.8, 0.3], '#7c6aff', 'f̂_A');
+				vc0.addHandle([-0.2, 0.9], '#00e8b0', 'f̂_B');
+				vc0.addHandle([-0.6, -0.5], '#ff6b6b', 'f̂_C');
+				vc0.addHandle([0.5, 0.7], '#ffbe0b', 'x');
+				updateTab0();
+				vc0.draw();
+			}
+			function updateTab0() {
+				const x = vc0.handles[3].pos;
+				const feats = [0,1,2].map(i => ({
+					dir: normalize2(vc0.handles[i].pos),
+					label: ['A','B','C'][i],
+					color: vc0.handles[i].color
+				}));
+				const projs = feats.map(f => dot2(x, f.dir));
+
+				renderM('m_proj_a', String.raw`\langle \mathbf{x},\, \hat{\mathbf{f}}_A \rangle = ${projs[0].toFixed(3)}`);
+				renderM('m_proj_b', String.raw`\langle \mathbf{x},\, \hat{\mathbf{f}}_B \rangle = ${projs[1].toFixed(3)}`);
+				renderM('m_proj_c', String.raw`\langle \mathbf{x},\, \hat{\mathbf{f}}_C \rangle = ${projs[2].toFixed(3)}`);
+
+				Plotly.react('proj_bar_plot', [{
+					type:'bar', x:['Feature A','Feature B','Feature C'], y:projs,
+					marker:{color:['#7c6aff','#00e8b0','#ff6b6b']}
+				}], {
+					...plotLay, height:200,
+					title:{text:'Projection (dot product) onto each feature',font:{size:12}},
+					yaxis:{range:[-1.5,1.5], gridcolor:'#282c44', zerolinecolor:'#444'}
+				}, plotCfg);
+			}
+
+			// ============================================================
+			// TAB 1: MLP KEY-VALUE
+			// ============================================================
+			let vc1;
+			let extraNeurons = []; // additional neurons for multi-neuron mode
+			function initTab1() {
+				vc1 = new VecCanvas('canvas1', {
+					scale: 180,
+					onUpdate: updateTab1,
+					drawExtra: (vc) => {
+						const x = vc.handles[0].pos;
+						const k = vc.handles[1].pos;
+						const v = vc.handles[2].pos;
+						const kn = normalize2(k);
+						const d = dot2(x, kn);
+						const a = Math.max(0, d);
+						const out = scale2(normalize2(v), a * norm2(v));
+						// Draw output vector (non-draggable)
+						if(a > 0.001) {
+							vc.drawArrow([0,0], out, '#ff6b6b', 4);
+							vc.drawLabel(out, `a·v (${a.toFixed(2)})`, '#ff6b6b');
+						}
+						// Draw projection arc
+						if(a > 0.01) {
+							const projPt = scale2(kn, d);
+							vc.drawDottedLine(x, projPt, '#7c6aff88', 1);
+						}
+						// Multi-neuron contributions
+						for(const en of extraNeurons) {
+							const ekn = normalize2(en.key);
+							const ed = dot2(x, ekn);
+							const ea = Math.max(0, ed);
+							if(ea > 0.001) {
+								const eout = scale2(normalize2(en.val), ea * norm2(en.val));
+								vc.drawArrow([0,0], eout, en.color+'88', 2, true);
+							}
+							// Draw key direction faintly
+							vc.drawArrow([0,0], scale2(ekn, 0.4), en.color+'44', 1, true);
+						}
+					}
+				});
+				vc1.addHandle([0.6, 0.5], '#ffbe0b', 'x');
+				vc1.addHandle([0.7, 0.7], '#7c6aff', 'kᵢ');
+				vc1.addHandle([-0.3, 0.8], '#00e8b0', 'vᵢ');
+				updateTab1();
+				vc1.draw();
+			}
+			function updateTab1() {
+				const x = vc1.handles[0].pos;
+				const k = vc1.handles[1].pos;
+				const v = vc1.handles[2].pos;
+				const kn = normalize2(k);
+				const d = dot2(x, kn);
+				const a = Math.max(0, d);
+
+				renderM('m_kv_live1', String.raw`\mathbf{k}_i \cdot \mathbf{x} = ${d.toFixed(4)}`);
+				renderM('m_kv_live2', String.raw`a_i = \text{ReLU}(${d.toFixed(4)}) = ${a.toFixed(4)}`);
+				renderM('m_kv_live3', String.raw`\text{output}_i = ${a.toFixed(3)} \cdot \mathbf{v}_i`);
+
+				// Multi-neuron bar chart
+				const labels = ['Neuron 1 (main)'];
+				const vals = [a];
+				const colors = ['#7c6aff'];
+				extraNeurons.forEach((en, i) => {
+					const ekn = normalize2(en.key);
+					const ea = Math.max(0, dot2(x, ekn));
+					labels.push(`Neuron ${i+2}`);
+					vals.push(ea);
+					colors.push(en.color);
+				});
+				Plotly.react('multi_neuron_plot', [{
+					type:'bar', x:labels, y:vals, marker:{color:colors}
+				}], {
+					...plotLay, height:250,
+					title:{text:'Neuron activations ReLU(kᵢ·x)',font:{size:12}},
+					yaxis:{range:[0,1.5], gridcolor:'#282c44'}
+				}, plotCfg);
+			}
+			function updateNeuronCount() {
+				const n = parseInt(document.getElementById('nNeurons').value);
+				document.getElementById('nNeurons_val').textContent = n;
+				const nColors = ['#fb5607','#8338ec','#3a86ff','#ff006e','#06d6a0','#e07a5f','#f2cc8f'];
+				extraNeurons = [];
+				for(let i = 1; i < n; i++) {
+					const angle = Math.random() * TAU;
+					const vAngle = Math.random() * TAU;
+					extraNeurons.push({
+						key: [Math.cos(angle), Math.sin(angle)],
+						val: [Math.cos(vAngle)*0.7, Math.sin(vAngle)*0.7],
+						color: nColors[(i-1) % nColors.length]
+					});
+				}
+				updateTab1();
+				vc1.draw();
+			}
+			function randomizeNeurons() {
+				const n = parseInt(document.getElementById('nNeurons').value);
+				// Also randomize main neuron
+				const a1 = Math.random()*TAU, a2 = Math.random()*TAU;
+				vc1.handles[1].pos = [Math.cos(a1)*0.8, Math.sin(a1)*0.8];
+				vc1.handles[2].pos = [Math.cos(a2)*0.7, Math.sin(a2)*0.7];
+				updateNeuronCount();
+			}
+
+			// ============================================================
+			// TAB 2: SUPERPOSITION
+			// ============================================================
+			let vc2;
+			let superVecs = [];
+			function initTab2() {
+				vc2 = new VecCanvas('canvas2', {
+					scale: 200,
+					onUpdate: updateSuperInfo,
+					drawExtra: (vc) => {
+						// Draw interference lines between high-dot pairs
+						for(let i=0; i<vc.handles.length; i++) {
+							for(let j=i+1; j<vc.handles.length; j++) {
+								const ni = normalize2(vc.handles[i].pos);
+								const nj = normalize2(vc.handles[j].pos);
+								const d = Math.abs(dot2(ni, nj));
+								if(d > 0.25) {
+									vc.ctx.save();
+									vc.ctx.globalAlpha = d * 0.7;
+									vc.drawDottedLine(vc.handles[i].pos, vc.handles[j].pos, '#ff6b6b', 1+d*3);
+									vc.ctx.restore();
+								}
+							}
+						}
+					}
+				});
+				updateSuper();
+			}
+			const superColors = ['#7c6aff','#00e8b0','#ff6b6b','#ffbe0b','#fb5607','#8338ec','#3a86ff',
+				'#ff006e','#06d6a0','#118ab2','#ef476f','#ffd166','#073b4c','#e07a5f','#81b29a',
+				'#f2cc8f','#3d405b','#e63946','#457b9d','#a8dadc','#264653','#2a9d8f','#e9c46a',
+				'#f4a261','#e76f51','#606c38','#283618','#dda15e','#bc6c25','#540b0e'];
+			function updateSuper() {
+				const n = parseInt(document.getElementById('superN').value);
+				document.getElementById('superN_val').textContent = n;
+				vc2.handles = [];
+				for(let i=0; i<n; i++) {
+					const angle = (TAU * i) / n;
+					vc2.addHandle([Math.cos(angle)*0.9, Math.sin(angle)*0.9], superColors[i%superColors.length], `f${i+1}`);
+				}
+				updateSuperInfo();
+				vc2.draw();
+			}
+			function randomSuper() {
+				const n = parseInt(document.getElementById('superN').value);
+				vc2.handles = [];
+				for(let i=0; i<n; i++) {
+					const angle = Math.random() * TAU;
+					const r = 0.5 + Math.random()*0.5;
+					vc2.addHandle([Math.cos(angle)*r, Math.sin(angle)*r], superColors[i%superColors.length], `f${i+1}`);
+				}
+				updateSuperInfo();
+				vc2.draw();
+			}
+			function optimizeSuper() {
+				// Repulsion-based optimization to minimize max dot product
+				const n = vc2.handles.length;
+				if(n < 2) return;
+				// Initialize from current positions
+				let angles = vc2.handles.map(h => Math.atan2(h.pos[1], h.pos[0]));
+				const iters = 500;
+				const lr = 0.02;
+				for(let iter=0; iter<iters; iter++) {
+					const forces = new Array(n).fill(0);
+					for(let i=0; i<n; i++) {
+						for(let j=0; j<n; j++) {
+							if(i===j) continue;
+							const diff = angles[i] - angles[j];
+							const d = Math.cos(diff);
+							// Repulsive force proportional to cos similarity
+							forces[i] += Math.sin(diff) * (1 / (1.001 - d*d));
+						}
+					}
+					for(let i=0; i<n; i++) {
+						angles[i] += lr * forces[i] / n;
+					}
+				}
+				for(let i=0; i<n; i++) {
+					vc2.handles[i].pos = [Math.cos(angles[i])*0.9, Math.sin(angles[i])*0.9];
+				}
+				updateSuperInfo();
+				vc2.draw();
+			}
+			function updateSuperInfo() {
+				const n = vc2.handles.length;
+				// Compute interference matrix
+				const norms = vc2.handles.map(h => normalize2(h.pos));
+				let maxDot = 0, avgDot = 0, cnt = 0;
+				let html = '<div class="weight-matrix" style="grid-template-columns:repeat('+(n+1)+',1fr);">';
+				html += '<div class="weight-cell" style="background:transparent;"></div>';
+				for(let j=0; j<n; j++) html += `<div class="weight-cell" style="background:transparent;color:${superColors[j%superColors.length]}">f${j+1}</div>`;
+				for(let i=0; i<n; i++) {
+					html += `<div class="weight-cell" style="background:transparent;color:${superColors[i%superColors.length]}">f${i+1}</div>`;
+					for(let j=0; j<n; j++) {
+						const d = dot2(norms[i], norms[j]);
+						const ad = Math.abs(d);
+						if(i!==j) { if(ad>maxDot) maxDot=ad; avgDot+=ad; cnt++; }
+						const bg = i===j ? '#2a2d50' : colorFromVal(d);
+						html += `<div class="weight-cell" style="background:${bg};color:#fff;font-size:.7em;" title="⟨f${i+1},f${j+1}⟩=${d.toFixed(3)}">${d.toFixed(2)}</div>`;
+					}
+				}
+				html += '</div>';
+				document.getElementById('interference_matrix').innerHTML = html;
+				if(cnt>0) avgDot /= cnt;
+
+				document.getElementById('super_stats').innerHTML =
+					`<strong>Max |⟨fᵢ,fⱼ⟩|:</strong> <span style="color:${maxDot>0.5?'#ff6b6b':'#00e8b0'}">${maxDot.toFixed(4)}</span> &nbsp;|&nbsp; ` +
+					`<strong>Avg:</strong> ${avgDot.toFixed(4)} &nbsp;|&nbsp; ` +
+					`<strong>${n} features in 2D</strong> — ` +
+					(n<=2 ? '✅ Perfect orthogonality possible' :
+						maxDot<0.5 ? '⚡ Manageable interference' :
+						'⚠️ Heavy interference — in 4096D this would be fine!');
+			}
+			function updateJL() {
+				const d = parseInt(document.getElementById('jl_d').value);
+				const eps = parseFloat(document.getElementById('jl_eps').value);
+				document.getElementById('jl_d_val').textContent = d;
+				document.getElementById('jl_eps_val').textContent = eps.toFixed(2);
+				const maxM = Math.exp(eps*eps*d/8);
+				const logM = eps*eps*d/8;
+				document.getElementById('jl_result').innerHTML =
+					`With <strong>d = ${d}</strong> dimensions and <strong>ε = ${eps.toFixed(2)}</strong>:<br>` +
+					`Max features ≤ e<sup>${logM.toFixed(1)}</sup> ≈ <strong style="color:#ffbe0b;">${logM > 50 ? '10^' + (logM/Math.LN10).toFixed(1) : maxM.toExponential(2)}</strong><br>` +
+					(d >= 4096 ? `<span style="color:#00e8b0;">🚀 That's an astronomically large number of nearly-orthogonal directions!</span>` :
+						d >= 128 ? `<span style="color:#7c6aff;">Plenty of room for millions of features.</span>` :
+						`<span style="color:#ff6b6b;">Small space — limited capacity.</span>`);
+			}
+
+			// ============================================================
+			// TAB 3: POLYSEMANTIC NEURONS
+			// ============================================================
+			let vc3;
+			const polyFeatDirs = [
+				{angle: 25, color:'#7c6aff', label:'🐱cat'},
+				{angle: 130, color:'#00e8b0', label:'⚖️legal'},
+				{angle: 220, color:'#ff6b6b', label:'🇫🇷French'},
+				{angle: 310, color:'#ffbe0b', label:'🔢math'}
+			];
+			function initTab3() {
+				vc3 = new VecCanvas('canvas3', {
+					scale: 180,
+					onUpdate: () => {},
+					drawExtra: (vc) => {
+						const vals = [
+							parseFloat(document.getElementById('pf1').value),
+							parseFloat(document.getElementById('pf2').value),
+							parseFloat(document.getElementById('pf3').value),
+							parseFloat(document.getElementById('pf4').value)
+						];
+						const dirs = polyFeatDirs.map(f => {
+							const r = f.angle * Math.PI/180;
+							return [Math.cos(r), Math.sin(r)];
+						});
+						// Draw feature directions
+						dirs.forEach((d, i) => {
+							vc.drawArrow([0,0], d, polyFeatDirs[i].color, 2, true);
+							vc.drawLabel(d, polyFeatDirs[i].label, polyFeatDirs[i].color);
+						});
+						// Neuron key = normalized sum of all feature dirs
+						let kx=0, ky=0;
+						dirs.forEach(d => { kx+=d[0]; ky+=d[1]; });
+						const kn = normalize2([kx,ky]);
+						vc.drawArrow([0,0], scale2(kn,1.1), '#fff', 3);
+						vc.drawLabel(scale2(kn,1.1), 'key kᵢ', '#fff', -50, -5);
+						// Input = weighted sum of active features
+						let ix=0, iy=0;
+						vals.forEach((v,i) => { ix+=v*dirs[i][0]; iy+=v*dirs[i][1]; });
+						const inNorm = norm2([ix,iy]) || 1;
+						const input = [ix/inNorm, iy/inNorm];
+						if(norm2([ix,iy]) > 0.01) {
+							vc.drawArrow([0,0], input, '#fff700', 4);
+							vc.drawLabel(input, 'input x', '#fff700', 10, 15);
+							// Projection onto key
+							const proj = dot2(input, kn);
+							const projPt = scale2(kn, proj);
+							vc.drawDottedLine(input, projPt, '#ffffff44', 1);
+						}
+						// Activation meter on right side
+						const d = norm2([ix,iy]) > 0.01 ? dot2([ix/inNorm,iy/inNorm], kn) : 0;
+						const a = Math.max(0, d);
+						const barX = vc.w - 40;
+						const barH = 300;
+						const barY = vc.cy - barH/2;
+						vc.ctx.fillStyle = '#1c2035';
+						vc.ctx.fillRect(barX-15, barY, 30, barH);
+						vc.ctx.fillStyle = a > 0.5 ? '#ff6b6b' : a > 0 ? '#ffbe0b' : '#333';
+						const fillH = a * barH;
+						vc.ctx.fillRect(barX-12, barY+barH-fillH, 24, fillH);
+						vc.ctx.fillStyle = '#fff';
+						vc.ctx.font = 'bold 11px Inter,system-ui';
+						vc.ctx.fillText(`a=${a.toFixed(2)}`, barX-20, barY-8);
+						vc.ctx.fillText('ReLU', barX-18, barY+barH+15);
+					}
+				});
+				updatePolyCanvas();
+				vc3.draw();
+			}
+			function updatePolyCanvas() {
+				const vals = [
+					parseFloat(document.getElementById('pf1').value),
+					parseFloat(document.getElementById('pf2').value),
+					parseFloat(document.getElementById('pf3').value),
+					parseFloat(document.getElementById('pf4').value)
+				];
+				document.getElementById('pf1_val').textContent = vals[0].toFixed(2);
+				document.getElementById('pf2_val').textContent = vals[1].toFixed(2);
+				document.getElementById('pf3_val').textContent = vals[2].toFixed(2);
+				document.getElementById('pf4_val').textContent = vals[3].toFixed(2);
+
+				const dirs = polyFeatDirs.map(f => {
+					const r = f.angle * Math.PI/180;
+					return [Math.cos(r), Math.sin(r)];
+				});
+				let kx=0, ky=0;
+				dirs.forEach(d => { kx+=d[0]; ky+=d[1]; });
+				const kn = normalize2([kx,ky]);
+
+				let ix=0, iy=0;
+				vals.forEach((v,i) => { ix+=v*dirs[i][0]; iy+=v*dirs[i][1]; });
+				const inNorm = norm2([ix,iy]) || 1;
+				const input = norm2([ix,iy]) > 0.01 ? [ix/inNorm, iy/inNorm] : [0,0];
+				const d = dot2(input, kn);
+				const a = Math.max(0, d);
+
+				// Per-feature contribution to activation
+				const contribs = vals.map((v,i) => v * dot2(normalize2(dirs[i]), kn));
+
+				renderM('m_poly_live',
+					String.raw`\mathbf{k}_i \cdot \mathbf{x} = ${d.toFixed(3)}, \quad a_i = \text{ReLU}(${d.toFixed(3)}) = ${a.toFixed(3)}`
+				);
+
+				// Breakdown bar chart
+				Plotly.react('poly_breakdown_plot', [{
+					type:'bar',
+					x: polyFeatDirs.map(f => f.label),
+					y: contribs,
+					marker:{color: polyFeatDirs.map(f => f.color)}
+				}], {
+					...plotLay, height:220,
+					title:{text:'Per-feature contribution to k·x',font:{size:12}},
+					yaxis:{gridcolor:'#282c44', zerolinecolor:'#444'}
+				}, plotCfg);
+
+				// Ambiguity info
+				const activeFeats = vals.filter(v => v > 0.1).length;
+				const el = document.getElementById('poly_ambiguity');
+				if(activeFeats > 1) {
+					el.innerHTML = `<span style="color:#ff6b6b;">⚠️ ${activeFeats} features active!</span> The neuron fires with activation ${a.toFixed(3)}, but it <strong>cannot tell</strong> which combination of features caused this. A "cat" input and a "legal" input could produce the same activation. This is the <strong>fundamental ambiguity</strong> of polysemanticity.`;
+				} else if(activeFeats === 1) {
+					el.innerHTML = `<span style="color:#00e8b0;">✅ Single feature active.</span> The neuron can be interpreted clearly. But in practice, multiple features are often active simultaneously.`;
+				} else {
+					el.innerHTML = `No features active. The neuron is silent (activation = 0).`;
+				}
+
+				vc3.draw();
+			}
+
+			// ============================================================
+			// TAB 4: LIVE TRAINING
+			// ============================================================
+			// Tiny network: 2D input -> 4 hidden (ReLU) -> 2D output
+			// Learns to map 4 input directions to 4 output directions
+			let W_in, W_out, biases;
+			let trainingData = [];
+			let trainInterval = null;
+			let epoch = 0;
+			let lossHistory = [];
+
+			function initTrainingData() {
+				// 4 query-answer pairs as 2D vectors
+				trainingData = [
+					{ input:[0.9, 0.2], target:[0.3, 0.9], label:'France→Paris', color:'#7c6aff' },
+					{ input:[-0.8, 0.4], target:[-0.5, -0.7], label:'Japan→Tokyo', color:'#00e8b0' },
+					{ input:[0.1, -0.9], target:[0.8, -0.3], label:'Egypt→Cairo', color:'#ff6b6b' },
+					{ input:[-0.3, -0.7], target:[-0.9, 0.2], label:'Brazil→Brasília', color:'#ffbe0b' }
+				];
+			}
+			function initWeights() {
+				W_in = Array.from({length:4}, () => Array.from({length:2}, () => (Math.random()-0.5)*0.8));
+				W_out = Array.from({length:2}, () => Array.from({length:4}, () => (Math.random()-0.5)*0.8));
+				biases = Array.from({length:4}, () => (Math.random()-0.5)*0.2);
+			}
+			function forward(x) {
+				// hidden = ReLU(W_in * x + b)
+				const hidden = W_in.map((row, i) => Math.max(0, row[0]*x[0] + row[1]*x[1] + biases[i]));
+				// output = W_out * hidden
+				const output = W_out.map(row => row.reduce((s, w, i) => s + w * hidden[i], 0));
+				return { hidden, output };
+			}
+			function computeLoss() {
+				let total = 0;
+				for(const d of trainingData) {
+					const {output} = forward(d.input);
+					total += (output[0]-d.target[0])**2 + (output[1]-d.target[1])**2;
+				}
+				return total / trainingData.length;
+			}
+			function trainStep() {
+				const lr = parseFloat(document.getElementById('lr').value);
+				// Numerical gradients (simple & clear for demonstration)
+				const eps = 1e-4;
+				const baseLoss = computeLoss();
+
+				// Gradient for W_in
+				for(let i=0;i<4;i++) for(let j=0;j<2;j++) {
+					W_in[i][j] += eps;
+					const lp = computeLoss();
+					W_in[i][j] -= 2*eps;
+					const lm = computeLoss();
+					W_in[i][j] += eps;
+					const grad = (lp - lm) / (2*eps);
+					W_in[i][j] -= lr * grad;
+				}
+				// Gradient for W_out
+				for(let i=0;i<2;i++) for(let j=0;j<4;j++) {
+					W_out[i][j] += eps;
+					const lp = computeLoss();
+					W_out[i][j] -= 2*eps;
+					const lm = computeLoss();
+					W_out[i][j] += eps;
+					const grad = (lp - lm) / (2*eps);
+					W_out[i][j] -= lr * grad;
+				}
+				// Gradient for biases
+				for(let i=0;i<4;i++) {
+					biases[i] += eps;
+					const lp = computeLoss();
+					biases[i] -= 2*eps;
+					const lm = computeLoss();
+					biases[i] += eps;
+					const grad = (lp - lm) / (2*eps);
+					biases[i] -= lr * grad;
+				}
+
+				epoch++;
+				const loss = computeLoss();
+				lossHistory.push(loss);
+				return loss;
+			}
+			function renderWeightMatrices() {
+				// W_in: 4 rows x 2 cols
+				let html = '<div class="weight-matrix" style="grid-template-columns:repeat(2,1fr);">';
+				for(let i=0;i<4;i++) for(let j=0;j<2;j++) {
+					const v = W_in[i][j];
+					html += `<div class="weight-cell" style="background:${colorFromVal(v/1.5)}" 
+      onclick="editWeight('in',${i},${j})" title="W_in[${i}][${j}]=${v.toFixed(4)}">${v.toFixed(2)}</div>`;
+				}
+				html += '</div>';
+				document.getElementById('win_matrix').innerHTML = html;
+
+				// W_out: 2 rows x 4 cols
+				html = '<div class="weight-matrix" style="grid-template-columns:repeat(4,1fr);">';
+				for(let i=0;i<2;i++) for(let j=0;j<4;j++) {
+					const v = W_out[i][j];
+					html += `<div class="weight-cell" style="background:${colorFromVal(v/1.5)}" 
+      onclick="editWeight('out',${i},${j})" title="W_out[${i}][${j}]=${v.toFixed(4)}">${v.toFixed(2)}</div>`;
+				}
+				html += '</div>';
+				document.getElementById('wout_matrix').innerHTML = html;
+			}
+			function editWeight(matrix, i, j) {
+				const current = matrix === 'in' ? W_in[i][j] : W_out[i][j];
+				const newVal = prompt(`Edit ${matrix === 'in' ? 'W_in' : 'W_out'}[${i}][${j}]\nCurrent: ${current.toFixed(4)}\nEnter new value:`, current.toFixed(4));
+				if(newVal !== null && !isNaN(parseFloat(newVal))) {
+					if(matrix === 'in') W_in[i][j] = parseFloat(newVal);
+					else W_out[i][j] = parseFloat(newVal);
+					renderWeightMatrices();
+					drawTrainingCanvas();
+					updateTrainStats();
+				}
+			}
+			function renderTrainingData() {
+				let html = '<div style="display:flex;flex-wrap:wrap;gap:6px;">';
+				trainingData.forEach(d => {
+					html += `<div style="background:${d.color}22;border:1px solid ${d.color};border-radius:8px;padding:6px 10px;font-size:.82em;">
+      <strong style="color:${d.color}">${d.label}</strong><br>
+      [${d.input.map(v=>v.toFixed(1)).join(',')}] → [${d.target.map(v=>v.toFixed(1)).join(',')}]
+    </div>`;
+				});
+				html += '</div>';
+				document.getElementById('training_data_display').innerHTML = html;
+			}
+			let vc4;
+			function initTab4() {
+				initTrainingData();
+				initWeights();
+				renderTrainingData();
+				renderWeightMatrices();
+
+				vc4 = new VecCanvas('canvas4', {
+					scale: 180,
+					onUpdate: () => {},
+					drawExtra: drawTrainingVectors
+				});
+				drawTrainingCanvas();
+				updateTrainStats();
+
+				// Init loss plot
+				Plotly.react('loss_plot', [{x:[], y:[], type:'scatter', line:{color:'#7c6aff',width:2}}], {
+					...plotLay, height:200,
+					title:{text:'Loss over training',font:{size:12}},
+					xaxis:{title:'Epoch',gridcolor:'#282c44'},
+					yaxis:{title:'MSE Loss',gridcolor:'#282c44'}
+				}, plotCfg);
+			}
+			function drawTrainingVectors(vc) {
+				// Draw key directions (rows of W_in, normalized)
+				const keyColors = ['#7c6aff88','#00e8b088','#ff6b6b88','#ffbe0b88'];
+				for(let i=0;i<4;i++) {
+					const k = normalize2(W_in[i]);
+					vc.drawArrow([0,0], scale2(k,0.6), keyColors[i], 2, true);
+					vc.drawLabel(scale2(k,0.6), `k${i+1}`, keyColors[i].slice(0,7), -25, -5);
+				}
+				// Draw value directions (columns of W_out, normalized)
+				for(let j=0;j<4;j++) {
+					const v = normalize2([W_out[0][j], W_out[1][j]]);
+					vc.drawArrow([0,0], scale2(v,0.5), keyColors[j], 2);
+					vc.drawLabel(scale2(v,0.5), `v${j+1}`, keyColors[j].slice(0,7), 10, 10);
+				}
+				// Draw training data: inputs and targets
+				trainingData.forEach((d, i) => {
+					const inp = normalize2(d.input);
+					const tgt = normalize2(d.target);
+					// Input
+					vc.drawArrow([0,0], scale2(inp, 1.0), d.color, 3);
+					vc.drawLabel(scale2(inp, 1.0), d.label.split('→')[0], d.color, -40, -15);
+					// Target
+					vc.drawArrow([0,0], scale2(tgt, 1.0), d.color, 2, true);
+					vc.drawLabel(scale2(tgt, 1.0), d.label.split('→')[1], d.color+'88');
+					// Actual output
+					const {output} = forward(d.input);
+					const outN = norm2(output) > 0.01 ? normalize2(output) : [0,0];
+					vc.ctx.save();
+					vc.ctx.setLineDash([3,3]);
+					vc.drawArrow([0,0], scale2(outN, 0.85), '#ffffff88', 2);
+					vc.ctx.restore();
+					// Small circle at output tip
+					const sp = vc.toScreen(scale2(outN, 0.85));
+					vc.ctx.beginPath();
+					vc.ctx.arc(sp[0], sp[1], 5, 0, TAU);
+					vc.ctx.fillStyle = d.color;
+					vc.ctx.fill();
+				});
+			}
+			function drawTrainingCanvas() {
+				vc4.draw();
+			}
+			function updateTrainStats() {
+				const loss = computeLoss();
+				document.getElementById('train_stats').innerHTML =
+					`<strong>Epoch:</strong> ${epoch} &nbsp;|&nbsp; <strong>Loss:</strong> <span style="color:${loss<0.1?'#00e8b0':loss<0.5?'#ffbe0b':'#ff6b6b'}">${loss.toFixed(6)}</span>`;
+				document.getElementById('train_progress').style.width = Math.min(100, epoch/5) + '%';
+			}
+			function startTraining() {
+				if(trainInterval) return;
+				const logEl = document.getElementById('train_log');
+				trainInterval = setInterval(() => {
+					const loss = trainStep();
+					renderWeightMatrices();
+					drawTrainingCanvas();
+					updateTrainStats();
+
+					// Update loss plot
+					Plotly.react('loss_plot', [{
+						x: lossHistory.map((_,i)=>i),
+						y: lossHistory,
+						type:'scatter', line:{color:'#7c6aff',width:2}, fill:'tozeroy', fillcolor:'#7c6aff18'
+					}], {
+						...plotLay, height:200,
+						title:{text:'Loss over training',font:{size:12}},
+						xaxis:{title:'Epoch',gridcolor:'#282c44'},
+						yaxis:{title:'MSE Loss',gridcolor:'#282c44',rangemode:'tozero'}
+					}, plotCfg);
+
+					if(epoch % 20 === 0) {
+						logEl.innerHTML += `Epoch ${epoch}: loss = ${loss.toFixed(6)}\n`;
+						logEl.scrollTop = logEl.scrollHeight;
+					}
+					if(loss < 0.001) {
+						pauseTraining();
+						logEl.innerHTML += `<span style="color:#00e8b0;">✅ Converged at epoch ${epoch}! Loss = ${loss.toFixed(6)}</span>\n`;
+					}
+				}, 30);
+			}
+			function pauseTraining() {
+				if(trainInterval) { clearInterval(trainInterval); trainInterval = null; }
+			}
+			function resetTraining() {
+				pauseTraining();
+				epoch = 0;
+				lossHistory = [];
+				initWeights();
+				renderWeightMatrices();
+				drawTrainingCanvas();
+				updateTrainStats();
+				document.getElementById('train_log').innerHTML = 'Training log will appear here...\n';
+				Plotly.react('loss_plot', [{x:[], y:[], type:'scatter', line:{color:'#7c6aff',width:2}}], {
+					...plotLay, height:200,
+					title:{text:'Loss over training',font:{size:12}},
+					xaxis:{title:'Epoch',gridcolor:'#282c44'},
+					yaxis:{title:'MSE Loss',gridcolor:'#282c44'}
+				}, plotCfg);
+			}
+
+			// ============================================================
+			// TAB 5: MINI TRANSFORMER
+			// ============================================================
+			const TF_TOKENS = [
+				{ text:'The', color:'#7c6aff', embed:[0.6, 0.2] },
+				{ text:'capital', color:'#00e8b0', embed:[0.1, 0.8] },
+				{ text:'of', color:'#ff6b6b', embed:[-0.3, 0.4] },
+				{ text:'France', color:'#ffbe0b', embed:[0.7, 0.7] }
+			];
+			// Tiny transformer weights (pre-set for demonstration)
+			const TF = {
+				// Attention: Q, K, V are 2x2 matrices (1 head simplified)
+				Wq: [[0.8, -0.3], [0.2, 0.9]],
+				Wk: [[0.7, 0.1], [-0.2, 0.8]],
+				Wv: [[0.5, 0.4], [-0.3, 0.6]],
+				// MLP: 4 hidden neurons
+				Wmlp_in: [[0.6,0.3],[-0.4,0.7],[0.8,-0.2],[-0.1,0.9]].map(r=>r||[0,0]),
+				Wmlp_out: [[0.4,-0.3,0.5,0.2],[0.1,0.6,-0.2,0.7]].map(r=>r||[0,0]),
+				mlp_bias: [0.1, -0.1, 0.05, -0.05],
+				// Unembedding: maps to 5 "vocab" logits
+				Wu: [[0.3,0.9],[0.1,-0.8],[0.8,0.2],[-0.5,0.6],[0.7,0.7]].map(r=>r||[0,0]),
+				vocab: ['Paris','London','Berlin','Tokyo','Rome']
+			};
+			// Fix the unicode minus signs that might cause issues
+			TF.Wmlp_in = [[0.6,0.3],[-0.4,0.7],[0.8,-0.2],[-0.1,0.9]];
+			TF.Wmlp_out = [[0.4,-0.3,0.5,0.2],[0.1,0.6,-0.2,0.7]];
+			TF.Wu = [[0.3,0.9],[0.1,-0.8],[0.8,0.2],[-0.5,0.6],[0.7,0.7]];
+
+			let tfStep = 0;
+			let tfResiduals = [];
+			let tfAttnWeights = [];
+			let tfHidden = [];
+			let tfLogits = [];
+			let vc5;
+			let tfAutoInterval = null;
+
+			const TF_STEPS = [
+				'Embedding',
+				'Compute Q, K, V',
+				'Attention Scores',
+				'Attention Output',
+				'Add & Norm (Attn)',
+				'MLP Forward',
+				'Add & Norm (MLP)',
+				'Unembedding → Logits'
+			];
+
+			function initTab5() {
+				// Token bar
+				let html = '';
+				TF_TOKENS.forEach((t, i) => {
+					html += `<div class="token" style="background:${t.color}22;color:${t.color};" id="tok_${i}">${t.text}</div>`;
+				});
+				document.getElementById('token_bar').innerHTML = html;
+
+				vc5 = new VecCanvas('canvas5', {
+					scale: 160,
+					onUpdate: () => {},
+					drawExtra: drawTransformerState
+				});
+
+				resetTransformer();
+			}
+			function resetTransformer() {
+				if(tfAutoInterval) { clearInterval(tfAutoInterval); tfAutoInterval = null; }
+				tfStep = 0;
+				tfResiduals = TF_TOKENS.map(t => [...t.embed]);
+				tfAttnWeights = [];
+				tfHidden = [];
+				tfLogits = [];
+				updateTransformerDisplay();
+				vc5.draw();
+			}
+			function softmax(arr) {
+				const max = Math.max(...arr);
+				const exps = arr.map(v => Math.exp(v - max));
+				const sum = exps.reduce((a,b) => a+b, 0);
+				return exps.map(v => v/sum);
+			}
+			function matVec2(M, v) {
+				return M.map(row => row[0]*v[0] + row[1]*v[1]);
+			}
+			function stepTransformer() {
+				if(tfStep >= TF_STEPS.length) return;
+
+				const n = TF_TOKENS.length;
+
+				switch(tfStep) {
+					case 0: // Embedding (already done)
+						break;
+
+					case 1: { // Compute Q, K, V
+						// Store Q, K, V for display
+						TF._Q = tfResiduals.map(r => matVec2(TF.Wq, r));
+						TF._K = tfResiduals.map(r => matVec2(TF.Wk, r));
+						TF._V = tfResiduals.map(r => matVec2(TF.Wv, r));
+						break;
+					}
+
+					case 2: { // Attention scores
+						const Q = TF._Q, K = TF._K;
+						const scale = Math.sqrt(2);
+						tfAttnWeights = Q.map(q =>
+							softmax(K.map(k => (q[0]*k[0] + q[1]*k[1]) / scale))
+						);
+						break;
+					}
+
+					case 3: { // Attention output
+						const V = TF._V;
+						TF._attnOut = tfAttnWeights.map(weights => {
+							let o = [0, 0];
+							weights.forEach((w, j) => { o[0] += w*V[j][0]; o[1] += w*V[j][1]; });
+							return o;
+						});
+						break;
+					}
+
+					case 4: { // Residual add (attention)
+						tfResiduals = tfResiduals.map((r, i) => [
+							r[0] + TF._attnOut[i][0],
+							r[1] + TF._attnOut[i][1]
+						]);
+						break;
+					}
+
+					case 5: { // MLP forward
+						tfHidden = tfResiduals.map(r =>
+							TF.Wmlp_in.map((row, i) => Math.max(0, row[0]*r[0] + row[1]*r[1] + TF.mlp_bias[i]))
+						);
+						TF._mlpOut = tfResiduals.map((r, ti) =>
+							TF.Wmlp_out.map(row => row.reduce((s, w, j) => s + w * tfHidden[ti][j], 0))
+						);
+						break;
+					}
+
+					case 6: { // Residual add (MLP)
+						tfResiduals = tfResiduals.map((r, i) => [
+							r[0] + TF._mlpOut[i][0],
+							r[1] + TF._mlpOut[i][1]
+						]);
+						break;
+					}
+
+					case 7: { // Unembedding
+						// Only compute logits for last token position
+						const lastR = tfResiduals[n-1];
+						tfLogits = TF.Wu.map(row => row[0]*lastR[0] + row[1]*lastR[1]);
+						break;
+					}
+				}
+
+				tfStep++;
+				updateTransformerDisplay();
+				vc5.draw();
+			}
+			function autoRunTransformer() {
+				if(tfAutoInterval) { clearInterval(tfAutoInterval); tfAutoInterval = null; return; }
+				resetTransformer();
+				tfAutoInterval = setInterval(() => {
+					if(tfStep >= TF_STEPS.length) { clearInterval(tfAutoInterval); tfAutoInterval = null; return; }
+					stepTransformer();
+				}, 1200);
+			}
+			function drawTransformerState(vc) {
+				// Draw residual stream vectors for each token
+				tfResiduals.forEach((r, i) => {
+					const t = TF_TOKENS[i];
+					vc.drawArrow([0,0], r, t.color, 3);
+					vc.drawLabel(r, `"${t.text}"`, t.color);
+					// Draw original embedding faintly
+					vc.drawArrow([0,0], t.embed, t.color + '33', 1, true);
+				});
+
+				// If we have attention output, draw it
+				if(tfStep > 3 && TF._attnOut) {
+					TF._attnOut.forEach((ao, i) => {
+						const t = TF_TOKENS[i];
+						vc.ctx.save();
+						vc.ctx.globalAlpha = 0.3;
+						vc.drawArrow([0,0], ao, t.color, 1, true);
+						vc.ctx.restore();
+					});
+				}
+
+				// If we have MLP output, draw it
+				if(tfStep > 5 && TF._mlpOut) {
+					TF._mlpOut.forEach((mo, i) => {
+						const t = TF_TOKENS[i];
+						vc.ctx.save();
+						vc.ctx.globalAlpha = 0.25;
+						vc.drawArrow([0,0], mo, '#ffffff', 1, true);
+						vc.ctx.restore();
+					});
+				}
+
+				// Draw vocab directions if at logits step
+				if(tfStep >= 8) {
+					TF.Wu.forEach((row, i) => {
+						const dir = normalize2(row);
+						vc.drawArrow([0,0], scale2(dir, 0.5), '#ffffff44', 1, true);
+						vc.drawLabel(scale2(dir, 0.5), TF.vocab[i], '#ffffff66', -30, 12);
+					});
+				}
+			}
+			function updateTransformerDisplay() {
+				const stepIdx = Math.min(tfStep, TF_STEPS.length) - 1;
+				const stepName = stepIdx >= 0 ? TF_STEPS[stepIdx] : 'Ready';
+				document.getElementById('tf_step_label').textContent = `Step ${tfStep}/${TF_STEPS.length}: ${stepName}`;
+
+				// Highlight active token
+				TF_TOKENS.forEach((t, i) => {
+					document.getElementById(`tok_${i}`).classList.toggle('active', tfStep >= 1);
+				});
+
+				// Operation info
+				const infoEl = document.getElementById('tf_operation_info');
+				const mathEl = document.getElementById('m_tf_live');
+				switch(tfStep) {
+					case 0:
+						infoEl.innerHTML = 'Press "Next Step" to begin. Each token starts as its embedding vector.';
+						renderM('m_tf_live', String.raw`\mathbf{x}_i^{(0)} = \text{embed}(\text{token}_i) \in \mathbb{R}^2`);
+						break;
+					case 1:
+						infoEl.innerHTML = '<strong>Embedding complete.</strong> Each token is now a 2D vector in the residual stream. These are the starting "thoughts".';
+						renderM('m_tf_live', String.raw`\mathbf{x}_{\text{France}}^{(0)} = [${tfResiduals[3].map(v=>v.toFixed(2)).join(',\,')}]`);
+						break;
+					case 2:
+						infoEl.innerHTML = '<strong>Q, K, V computed.</strong> Each token\'s residual is projected through learned matrices to create queries, keys, and values.';
+						renderM('m_tf_live', String.raw`\mathbf{q}_i = W_Q \mathbf{x}_i, \quad \mathbf{k}_i = W_K \mathbf{x}_i, \quad \mathbf{v}_i = W_V \mathbf{x}_i`);
+						break;
+					case 3:
+						infoEl.innerHTML = '<strong>Attention scores computed.</strong> Each query attends to all keys via softmax. See the attention matrix below.';
+						renderM('m_tf_live', String.raw`\alpha_{ij} = \text{softmax}_j\!\left(\frac{\mathbf{q}_i \cdot \mathbf{k}_j}{\sqrt{d}}\right)`);
+						break;
+					case 4:
+						infoEl.innerHTML = '<strong>Attention output.</strong> Each token\'s new representation is a weighted sum of values, based on attention weights.';
+						renderM('m_tf_live', String.raw`\text{Attn}_i = \sum_j \alpha_{ij}\, \mathbf{v}_j`);
+						break;
+					case 5:
+						infoEl.innerHTML = '<strong>Residual connection (attention).</strong> The attention output is <em>added</em> to the original residual stream. Watch the vectors shift!';
+						renderM('m_tf_live', String.raw`\mathbf{x}_i^{(1)} = \mathbf{x}_i^{(0)} + \text{Attn}_i`);
+						break;
+					case 6:
+						infoEl.innerHTML = '<strong>MLP forward pass.</strong> Each token\'s residual goes through the key-value memory (4 neurons with ReLU). See activations below.';
+						renderM('m_tf_live', String.raw`\text{MLP}(\mathbf{x}) = W_{\text{out}}\, \text{ReLU}(W_{\text{in}}\, \mathbf{x} + \mathbf{b})`);
+						break;
+					case 7:
+						infoEl.innerHTML = '<strong>Residual connection (MLP).</strong> MLP output added to residual stream. The vectors now encode the full computation.';
+						renderM('m_tf_live', String.raw`\mathbf{x}_i^{(2)} = \mathbf{x}_i^{(1)} + \text{MLP}(\mathbf{x}_i^{(1)})`);
+						break;
+					case 8:
+						infoEl.innerHTML = '<strong>Unembedding → Logits!</strong> The last token\'s residual is projected onto vocabulary directions. The highest logit wins!';
+						const probs = softmax(tfLogits);
+						const maxIdx = probs.indexOf(Math.max(...probs));
+						renderM('m_tf_live', String.raw`\text{logit}_w = \mathbf{w}_{\text{unembed}} \cdot \mathbf{x}_{\text{France}}^{(2)} \;\;\Rightarrow\;\; \text{Prediction: \textbf{${TF.vocab[maxIdx]}}}`);
+						break;
+				}
+
+				// Attention matrix
+				if(tfStep >= 3 && tfAttnWeights.length > 0) {
+					let html = '<div class="weight-matrix" style="grid-template-columns:repeat(5,1fr);">';
+					html += '<div class="weight-cell" style="background:transparent;font-size:.7em;">→</div>';
+					TF_TOKENS.forEach(t => {
+						html += `<div class="weight-cell" style="background:transparent;color:${t.color};font-size:.75em;">${t.text}</div>`;
+					});
+					tfAttnWeights.forEach((row, i) => {
+						html += `<div class="weight-cell" style="background:transparent;color:${TF_TOKENS[i].color};font-size:.75em;">${TF_TOKENS[i].text}</div>`;
+						row.forEach(v => {
+							const alpha = Math.round(v * 255);
+							html += `<div class="weight-cell" style="background:rgba(124,106,255,${v.toFixed(2)});color:#fff;font-size:.7em;">${v.toFixed(2)}</div>`;
+						});
+					});
+					html += '</div>';
+					document.getElementById('attn_matrix_display').innerHTML = html;
+				} else {
+					document.getElementById('attn_matrix_display').innerHTML = '<div class="info-box">Attention weights will appear after step 3.</div>';
+				}
+
+				// MLP activations
+				if(tfStep >= 6 && tfHidden.length > 0) {
+					// Show activations for last token
+					const lastH = tfHidden[tfHidden.length - 1];
+					Plotly.react('mlp_activations_plot', [{
+						type:'bar',
+						x: lastH.map((_, i) => `Neuron ${i+1}`),
+						y: lastH,
+						marker:{color: lastH.map(v => v > 0 ? '#00e8b0' : '#333')}
+					}], {
+						...plotLay, height:180,
+						title:{text:'MLP neuron activations (last token "France")',font:{size:11}},
+						yaxis:{gridcolor:'#282c44', rangemode:'tozero'}
+					}, plotCfg);
+				} else {
+					Plotly.react('mlp_activations_plot', [{type:'bar',x:[],y:[]}], {
+						...plotLay, height:180, title:{text:'MLP activations (after step 6)',font:{size:11}}
+					}, plotCfg);
+				}
+
+				// Logits
+				if(tfStep >= 8 && tfLogits.length > 0) {
+					const probs = softmax(tfLogits);
+					Plotly.react('logits_plot', [{
+						type:'bar',
+						x: TF.vocab,
+						y: probs,
+						marker:{color: probs.map((p, i) => p === Math.max(...probs) ? '#ffbe0b' : '#7c6aff')}
+					}], {
+						...plotLay, height:180,
+						title:{text:'Output probabilities (softmax of logits)',font:{size:11}},
+						yaxis:{gridcolor:'#282c44', range:[0,1]}
+					}, plotCfg);
+				} else {
+					Plotly.react('logits_plot', [{type:'bar',x:[],y:[]}], {
+						...plotLay, height:180, title:{text:'Logits (after step 8)',font:{size:11}}
+					}, plotCfg);
+				}
+			}
+
+			// ============================================================
+				// RENDER ALL STATIC MATH & INIT
+			// ============================================================
+				function renderAllStaticMath() {
+					renderM('m_x_rd', String.raw`\mathbf{x} \in \mathbb{R}^{d_{\text{model}}}`, false);
+					renderM('m_residual_eq', String.raw`\mathbf{x}^{(\ell+1)} = \mathbf{x}^{(\ell)} + \text{Attn}^{(\ell)}(\mathbf{x}^{(\ell)}) + \text{MLP}^{(\ell)}(\mathbf{x}^{(\ell)})`);
+					renderM('m_proj_formula', String.raw`\langle \mathbf{x}, \hat{\mathbf{f}} \rangle`, false);
+					renderM('m_mlp_eq', String.raw`\text{MLP}(\mathbf{x}) = W_{\text{out}} \cdot \text{ReLU}(W_{\text{in}}\,\mathbf{x} + \mathbf{b}) = \sum_{i=1}^{d_{\text{hidden}}} \text{ReLU}(\mathbf{k}_i \cdot \mathbf{x} + b_i)\;\mathbf{v}_i`);
+					renderM('m_kv_dot', String.raw`\mathbf{k}_i \cdot \mathbf{x}`, false);
+					renderM('m_kv_write', String.raw`a_i \, \mathbf{v}_i`, false);
+					renderM('m_super_eq', String.raw`|\langle \hat{\mathbf{f}}_i,\, \hat{\mathbf{f}}_j \rangle| \leq \varepsilon \ll 1 \quad \text{for } i \neq j, \quad \text{with } m \gg d_{\text{model}}`);
+					renderM('m_d_dim', String.raw`d`, false);
+					renderM('m_d_ortho', String.raw`d`, false);
+					renderM('m_dot_ij', String.raw`\langle \hat{\mathbf{f}}_i, \hat{\mathbf{f}}_j \rangle`, false);
+					renderM('m_jl_eq', String.raw`d \geq \frac{8\ln m}{\varepsilon^2} \;\;\Longrightarrow\;\; m \leq e^{\varepsilon^2 d/8}`);
+					renderM('m_poly_eq', String.raw`\mathbf{k}_i = \alpha_1 \hat{\mathbf{f}}_{\text{cat}} + \alpha_2 \hat{\mathbf{f}}_{\text{legal}} + \alpha_3 \hat{\mathbf{f}}_{\text{French}} + \alpha_4 \hat{\mathbf{f}}_{\text{math}}`);
+					renderM('m_train_eq', String.raw`\mathcal{L} = \frac{1}{N}\sum_{n=1}^{N} \left\| W_{\text{out}}\,\text{ReLU}(W_{\text{in}}\,\mathbf{x}_n + \mathbf{b}) - \mathbf{y}_n \right\|^2`);
+					renderM('m_transformer_eq', String.raw`\mathbf{x}^{(\ell+1)}_i = \mathbf{x}^{(\ell)}_i + \underbrace{\sum_j \alpha_{ij}\, W_V \mathbf{x}^{(\ell)}_j}_{\text{Attention}} + \underbrace{W_{\text{out}}\,\text{ReLU}(W_{\text{in}}\,\mathbf{x}^{(\ell)}_i + \mathbf{b})}_{\text{MLP}}`);
+				}
+
+			// ============================================================
+				// BOOT
+			// ============================================================
+				document.addEventListener('DOMContentLoaded', () => {
+					renderAllStaticMath();
+					initTab0();
+					initTab1();
+					initTab2();
+					initTab3();
+					initTab4();
+					initTab5();
+					updateJL();
+				});
+		</script>
+	</body>
+</html>
