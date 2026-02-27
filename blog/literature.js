@@ -873,7 +873,7 @@ window.bibData = {
 		url: "https://www.mediastorehouse.com/fine-art-storehouse/bettmann-archive/mathematician-howard-aiken-early-computer-39321803.html",
 		author: "Unknown photographer",
 		title: "Howard Aiken with Early Computer Print",
-		alternativetitle: "Howard Aiken with his early Mark I, officially named as Automatic Sequence Controlled Calculator",
+		alternativetitle: "Howard Aiken with his early Mark I",
 		year: 1944
 	},
 	"leibnizrechenmaschine": {

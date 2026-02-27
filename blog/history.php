@@ -293,7 +293,7 @@ Rather than relying on explicit programming, the machine learned via mechanical 
 
 <figure>
     <img style="width: 100%" src="aiken.jpg" alt="Howard Aiken" />
-    <figcaption class="md">\citealternativetitle{aikenphoto}</figcaption>
+    <figcaption class="md">\citealternativetitle{aikenphoto}, officially named as Automatic Sequence Controlled Calculator</figcaption>
 </figure>
 
 Inspired by Babbage's Analytical Engine, Aiken designed the **ASCC (Mark I)**. While Zuse used binary, Aiken stuck to **decimal** wheels. It was a massive, 50-foot long mechanical beast synchronized by a long rotating shaft.
