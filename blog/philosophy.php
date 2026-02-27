@@ -132,7 +132,7 @@ This is the exact situation the LLM is in when you pass a text to it. First, it 
         <thead>
           <tr style="color:#888; font-size:0.8em;">
             <th style="text-align:left; padding:0.3em 0.5em; border-bottom:1px solid #333;">If you see…</th>
-            <th style="text-align:left; padding:0.3em 0.5em; border-bottom:1px solid #333;">Slide back…</th>
+            <th style="text-align:left; padding:0.3em 0.5em; border-bottom:1px solid #333;">Write back…</th>
           </tr>
         </thead>
         <tbody id="cr-rulebook-body">
