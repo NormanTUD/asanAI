@@ -318,10 +318,10 @@ function smartquote() {
 				const shortHtml = shortEl.innerHTML.trim().replace(/^["»]|["«]$/g, '');
 				const fullHtml = fullEl.innerHTML.trim().replace(/^["»]|["«]$/g, '');
 				p.setAttribute('data-state', 'short');
-				p.innerHTML = `»${shortHtml}« <span class="quote-expand-hint">[click to show full]</span>`;
+				p.innerHTML = `»${shortHtml}« <span class="quote-expand-hint">[click to show full quote]</span>`;
 				p.onclick = () => {
 					const isShort = p.getAttribute('data-state') === 'short';
-					p.innerHTML = isShort ? `»${fullHtml}«` : `»${shortHtml}« <span class="quote-expand-hint">[click to show full]</span>`;
+					p.innerHTML = isShort ? `»${fullHtml}«` : `»${shortHtml}« <span class="quote-expand-hint">[click to show full quote]</span>`;
 					p.setAttribute('data-state', isShort ? 'full' : 'short');
 				};
 			} else {
