@@ -1,4 +1,10 @@
 window.bibData = {
+	"blanquerna": {
+		title: "Romanç d'Evast e Blaquerna",
+		year: "ca. 1285",
+		url: "https://archive.org/details/llibredevastebla0000llul",
+		author: "Ramon Llull"
+	},
 	"twocultures": {
 		title: "Two Cultures",
 		year: 1959,
