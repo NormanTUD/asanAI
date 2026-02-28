@@ -356,13 +356,36 @@ To allow a token to "scout" the rest of the sequence, we derive three distinct r
 * **Value ($V = h_0 W^V$)**: Represents "What is the actual content I offer?"
 
 These act as the simplest form of a "neural network", one layer, no non-linear activation function. They are used to project the tokens from the Embedding Space into subspaces of the full Embedding Space.
+</div>
+
+<div id="qkv-subspace-projection-viz" 
+     style="width:100%; min-height:520px; border:2px solid #e2e8f0; border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center; margin:20px 0;">
+    <div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
+        ⏳ Scroll here to load the Q, K, V subspace projection visualization...
+    </div>
+</div>
+
+<div class="md">
+
+Each word in the vocabulary lives as a **3D vector** in the full embedding space (shown as grey points). The matrices $W^Q$, $W^K$, and $W^V$ are **linear projections** — they take each 3D vector and project it onto a **2D subspace** (a plane through the origin).
+
+- **Grey points**: Original 3D token embeddings.
+- **Colored points on the plane**: Where each token lands after being multiplied by the weight matrix. The colored lines show the projection "shadow" from 3D down to the plane.
+- **The translucent plane**: The 2D subspace that the weight matrix projects onto. Each of Q, K, V has a *different* plane, meaning each one "sees" the tokens from a different angle.
+
+This is exactly what happens inside the transformer: the same set of token vectors is viewed through three different "lenses" (Q, K, V), each defined by a learned $d_\text{model} \times d_k$ matrix. Because each lens projects onto a different subspace, the same word can appear close to different neighbors depending on whether you're asking "What am I looking for?" (Q), "What do I contain?" (K), or "What do I offer?" (V).
+
+In this demo, we use a **3D → 2D** projection for visual clarity, but in real transformers with $d_\text{model} = 4096$, the same principle applies in much higher dimensions.
 
 **The Shapes:**
 * **Hidden State ($h_0$)**: $(\text{Batch}, \text{Length}, d_{\text{model}})$
 * **Weights ($W^Q, W^K, W^V$)**: $(d_{\text{model}}, d_{k})$
 * **Resulting $Q, K, V$**: $(\text{Batch}, \text{Length}, d_{k})$
 
-The **Single-Head Attention** output:
+### The **Single-Head Attention**
+
+The job of of a Single Attention Head is to find some form of relation between all the input tokens after they've been multiplied with the $Q$, $K$ and $V$-matrices. This could be, for example, to detect which part of a sentence is a verb and which object it attends to. Usually, in real transformers, it rarely is that interpretable, though.
+
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) \cdot V$$
 
 ## Multi-Head Attention: Lateral Parallelism
