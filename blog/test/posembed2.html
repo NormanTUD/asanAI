@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Positional Encoding — Overlapping Circles Visualization</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #08090e;
+    color: #ccc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  h1 {
+    margin-top: 24px;
+    font-size: 1.5rem;
+    background: linear-gradient(90deg, #f97316, #ec4899, #8b5cf6, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .subtitle {
+    color: #666;
+    font-size: 0.88rem;
+    margin: 6px 0 18px;
+    text-align: center;
+    max-width: 640px;
+    line-height: 1.5;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .cg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .cg label { font-size: 0.75rem; color: #777; text-transform: uppercase; letter-spacing: .5px; }
+  .cg input[type=range] { width: 200px; accent-color: #8b5cf6; }
+  .cg .v { color: #a78bfa; font-weight: 700; font-size: 0.95rem; }
+  canvas { border-radius: 12px; cursor: crosshair; }
+  .info-row {
+    display: flex;
+    gap: 24px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .info-box {
+    background: #111320;
+    border: 1px solid #222540;
+    border-radius: 10px;
+    padding: 14px 18px;
+    max-width: 340px;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: #999;
+  }
+  .info-box strong { color: #ddd; }
+  .info-box .highlight { color: #a78bfa; font-weight: 600; }
+  #modeToggle {
+    background: #1a1d2e;
+    border: 1px solid #333;
+    color: #aaa;
+    padding: 7px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  #modeToggle:hover { background: #252840; color: #fff; }
+</style>
+</head>
+<body>
+
+<h1>Positional Encoding as Overlapping Circles</h1>
+<p class="subtitle">
+  Each circle represents a frequency dimension. A token's position is a point on each circle.
+  Where all the points <strong>converge</strong> — that's the unique "fingerprint" of that position.
+  Move the slider and watch the interference pattern collapse into a new identity.
+</p>
+
+<div class="controls">
+  <div class="cg">
+    <label>Position</label>
+    <input type="range" id="posSlider" min="0" max="99" value="0">
+    <span class="v" id="posVal">0</span>
+  </div>
+  <div class="cg">
+    <label>Num Frequencies</label>
+    <input type="range" id="freqSlider" min="2" max="12" value="6">
+    <span class="v" id="freqVal">6</span>
+  </div>
+  <div class="cg">
+    <label>Sequence Length</label>
+    <input type="range" id="seqSlider" min="10" max="200" value="100">
+    <span class="v" id="seqVal">100</span>
+  </div>
+  <div class="cg">
+    <label>Compare Position</label>
+    <input type="range" id="cmpSlider" min="-1" max="99" value="-1">
+    <span class="v" id="cmpVal">off</span>
+  </div>
+  <div class="cg">
+    <label>&nbsp;</label>
+    <button id="modeToggle">Mode: Interference</button>
+  </div>
+</div>
+
+<canvas id="mainCanvas"></canvas>
+
+<div class="info-row">
+  <div class="info-box">
+    <strong>🔵 Circles = Frequency Dimensions</strong><br>
+    Each circle's center is spaced along a line. The radius encodes the wavelength — 
+    <span class="highlight">small circles = high frequency</span> (fine detail), 
+    <span class="highlight">large circles = low frequency</span> (coarse structure).
+  </div>
+  <div class="info-box">
+    <strong>✨ Bright Points = Position on Each Circle</strong><br>
+    For a given token position, sin/cos determine the angle on each circle.
+    The <span class="highlight">convergence zone</span> where arcs cluster is the unique encoding.
+    Like wave interference — only one pattern matches each position.
+  </div>
+  <div class="info-box">
+    <strong>🟡 Compare Mode</strong><br>
+    Drag "Compare Position" above -1 to see a second position (gold).
+    Notice how <span class="highlight">nearby positions</span> have similar convergence zones,
+    while <span class="highlight">distant positions</span> create completely different patterns.
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d');
+
+let POS = 0, NUM_FREQ = 6, SEQ_LEN = 100, CMP_POS = -1;
+let MODE = 'interference'; // 'interference' | 'connections' | 'field'
+const MODES = ['interference', 'connections', 'field'];
+let modeIdx = 0;
+
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  const w = Math.min(window.innerWidth - 40, 960);
+  const h = Math.min(window.innerHeight - 380, 640);
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { w, h };
+}
+
+function getFrequencies(n) {
+  const freqs = [];
+  for (let i = 0; i < n; i++) {
+    freqs.push(1 / Math.pow(10000, (2 * i) / (n * 2)));
+  }
+  return freqs;
+}
+
+function getCircleLayout(W, H, n) {
+  const circles = [];
+  const freqs = getFrequencies(n);
+  const maxR = Math.min(W, H) * 0.35;
+  const minR = maxR * 0.12;
+  const centerY = H * 0.48;
+  const spreadX = W * 0.7;
+  const startX = (W - spreadX) / 2;
+
+  for (let i = 0; i < n; i++) {
+    const t = n === 1 ? 0.5 : i / (n - 1);
+    const cx = startX + t * spreadX;
+    const cy = centerY + Math.sin(t * Math.PI) * H * 0.08; // slight arc
+    // radius: high freq = small, low freq = large
+    const r = minR + (1 - freqs[i] / freqs[0]) * (maxR - minR);
+    // but actually invert: first freq is highest, should be smallest
+    const rActual = minR + (i / Math.max(n - 1, 1)) * (maxR - minR);
+    circles.push({ cx, cy, r: rActual, freq: freqs[i], idx: i });
+  }
+  return circles;
+}
+
+function posOnCircle(circle, pos) {
+  const angle = pos * circle.freq;
+  const sinVal = Math.sin(angle);
+  const cosVal = Math.cos(angle);
+  return {
+    x: circle.cx + cosVal * circle.r,
+    y: circle.cy - sinVal * circle.r,
+    angle,
+    sinVal,
+    cosVal
+  };
+}
+
+function hsl(h, s, l, a) {
+  return `hsla(${h}, ${s}%, ${l}%, ${a || 1})`;
+}
+
+const CIRCLE_HUES = [0, 30, 60, 120, 180, 220, 260, 290, 320, 340, 15, 45];
+
+function draw() {
+  const { w: W, h: H } = resize();
+
+  // Background
+  ctx.fillStyle = '#08090e';
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y < H; y += 40) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  const circles = getCircleLayout(W, H, NUM_FREQ);
+
+  if (MODE === 'field') {
+    drawField(W, H, circles);
+    return;
+  }
+
+  // Draw ghost positions (faint) for context
+  for (let p = 0; p < SEQ_LEN; p += Math.max(1, Math.floor(SEQ_LEN / 40))) {
+    if (p === POS || p === CMP_POS) continue;
+    circles.forEach((c, ci) => {
+      const pt = posOnCircle(c, p);
+      ctx.fillStyle = hsl(CIRCLE_HUES[ci % 12], 50, 50, 0.06);
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  // Draw circles
+  circles.forEach((c, ci) => {
+    const hue = CIRCLE_HUES[ci % 12];
+
+    // Circle ring
+    ctx.strokeStyle = hsl(hue, 60, 40, 0.25);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(c.cx, c.cy, c.r, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Glow
+    const grad = ctx.createRadialGradient(c.cx, c.cy, c.r * 0.8, c.cx, c.cy, c.r * 1.2);
+    grad.addColorStop(0, hsl(hue, 60, 50, 0));
+    grad.addColorStop(0.5, hsl(hue, 60, 50, 0.04));
+    grad.addColorStop(1, hsl(hue, 60, 50, 0));
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(c.cx, c.cy, c.r * 1.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Center dot
+    ctx.fillStyle = hsl(hue, 50, 50, 0.4);
+    ctx.beginPath();
+    ctx.arc(c.cx, c.cy, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Label
+    ctx.fillStyle = hsl(hue, 40, 60, 0.7);
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`f${ci}`, c.cx, c.cy + c.r + 16);
+    ctx.fillStyle = hsl(hue, 30, 50, 0.4);
+    ctx.fillText(`λ=${(2 * Math.PI / c.freq).toFixed(0)}`, c.cx, c.cy + c.r + 28);
+  });
+
+  // Compute primary position points
+  const primaryPts = circles.map(c => posOnCircle(c, POS));
+
+  // Draw arc trails for primary position
+  circles.forEach((c, ci) => {
+    const hue = CIRCLE_HUES[ci % 12];
+    const pt = primaryPts[ci];
+    // Arc from 0 to current angle
+    ctx.strokeStyle = hsl(hue, 70, 60, 0.35);
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(c.cx, c.cy, c.r, 0, -pt.angle, true);
+    ctx.stroke();
+  });
+
+  // MODE: connections — draw lines between all primary points
+  if (MODE === 'connections') {
+    for (let i = 0; i < primaryPts.length; i++) {
+      for (let j = i + 1; j < primaryPts.length; j++) {
+        const a = primaryPts[i], b = primaryPts[j];
+        const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+        grad.addColorStop(0, hsl(CIRCLE_HUES[i % 12], 70, 60, 0.15));
+        grad.addColorStop(1, hsl(CIRCLE_HUES[j % 12], 70, 60, 0.15));
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // MODE: interference — draw ripples from each point
+  if (MODE === 'interference') {
+    primaryPts.forEach((pt, ci) => {
+      const hue = CIRCLE_HUES[ci % 12];
+      for (let ring = 1; ring <= 4; ring++) {
+        const r = ring * 20;
+        ctx.strokeStyle = hsl(hue, 60, 60, 0.08 / ring);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    });
+
+    // Compute interference field at convergence centroid
+    const centX = primaryPts.reduce((s, p) => s + p.x, 0) / primaryPts.length;
+    const centY = primaryPts.reduce((s, p) => s + p.y, 0) / primaryPts.length;
+
+    // Draw convergence glow
+    const convergenceR = 30;
+    const cGrad = ctx.createRadialGradient(centX, centY, 0, centX, centY, convergenceR);
+    cGrad.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+    cGrad.addColorStop(0.5, 'rgba(139, 92, 246, 0.1)');
+    cGrad.addColorStop(1, 'rgba(139, 92, 246, 0)');
+    ctx.fillStyle = cGrad;
+    ctx.beginPath();
+    ctx.arc(centX, centY, convergenceR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Convergence label
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`convergence`, centX, centY + convergenceR + 14);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '10px sans-serif';
+    ctx.fillText(`pos=${POS}`, centX, centY + convergenceR + 27);
+
+    // Lines from each point to centroid
+    primaryPts.forEach((pt, ci) => {
+      ctx.strokeStyle = hsl(CIRCLE_HUES[ci % 12], 60, 60, 0.2);
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(pt.x, pt.y);
+      ctx.lineTo(centX, centY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+  }
+
+  // Draw primary position points
+  primaryPts.forEach((pt, ci) => {
+    const hue = CIRCLE_HUES[ci % 12];
+    // Outer glow
+    const glow = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 16);
+    glow.addColorStop(0, hsl(hue, 80, 70, 0.6));
+    glow.addColorStop(1, hsl(hue, 80, 70, 0));
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 16, 0, Math.PI * 2);
+    ctx.fill();
+    // Dot
+    ctx.fillStyle = hsl(hue, 80, 75, 1);
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    // White center
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Compare position (gold)
+  if (CMP_POS >= 0 && CMP_POS < SEQ_LEN) {
+    const cmpPts = circles.map(c => posOnCircle(c, CMP_POS));
+
+    // Connection lines for compare
+    if (MODE === 'interference') {
+      const centX2 = cmpPts.reduce((s, p) => s + p.x, 0) / cmpPts.length;
+      const centY2 = cmpPts.reduce((s, p) => s + p.y, 0) / cmpPts.length;
+
+      const cGrad2 = ctx.createRadialGradient(centX2, centY2, 0, centX2, centY2, 25);
+      cGrad2.addColorStop(0, 'rgba(250, 204, 21, 0.2)');
+      cGrad2.addColorStop(1, 'rgba(250, 204, 21, 0)');
+      ctx.fillStyle = cGrad2;
+      ctx.beginPath();
+      ctx.arc(centX2, centY2, 25, 0, Math.PI * 2);
+      ctx.fill();
+
+      cmpPts.forEach((pt) => {
+        ctx.strokeStyle = 'rgba(250, 204, 21, 0.15)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(pt.x, pt.y);
+        ctx.lineTo(centX2, centY2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      });
+
+      ctx.fillStyle = 'rgba(250, 204, 21, 0.5)';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`cmp pos=${CMP_POS}`, centX2, centY2 + 30);
+    }
+
+    cmpPts.forEach((pt, ci) => {
+      // Gold dot
+      ctx.fillStyle = 'rgba(250, 204, 21, 0.7)';
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(250, 204, 21, 0.4)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2);
+      ctx.stroke();
+    });
+  }
+
+  // Encoding vector readout at bottom
+  const vec = primaryPts.map(pt => pt.sinVal.toFixed(2) + ',' + pt.cosVal.toFixed(2));
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(`PE[${POS}] = [${vec.join(' | ')}]`, W / 2, H - 12);
+}
+
+// ============ FIELD MODE ============
+function drawField(W, H, circles) {
+  // Render a 2D interference-like intensity field
+  const res = 4; // pixel step
+  const imgData = ctx.createImageData(canvas.width, canvas.height);
+  const dpr = window.devicePixelRatio || 1;
+
+  const primaryPts = circles.map(c => posOnCircle(c, POS));
+  const cmpPts = CMP_POS >= 0 ? circles.map(c => posOnCircle(c, CMP_POS)) : null;
+
+  for (let py = 0; py < H; py += res) {
+    for (let px = 0; px < W; px += res) {
+      // Sum of "wave" contributions from each primary point
+      let intensity = 0;
+      primaryPts.forEach(pt => {
+        const dx = px - pt.x;
+        const dy = py - pt.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        intensity += Math.cos(dist * 0.15) / (1 + dist * 0.02);
+      });
+      intensity /= primaryPts.length;
+
+      let cmpIntensity = 0;
+      if (cmpPts) {
+        cmpPts.forEach(pt => {
+          const dx = px - pt.x;
+          const dy = py - pt.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          cmpIntensity += Math.cos(dist * 0.15) / (1 + dist * 0.02);
+        });
+        cmpIntensity /= cmpPts.length;
+      }
+
+      // Map to color
+      const v = Math.max(0, Math.min(1, (intensity + 1) / 2));
+      const r = Math.floor(v * 100 + (cmpPts ? cmpIntensity * 30 : 0));
+      const g = Math.floor(v * 40 + (cmpPts ? Math.max(0, cmpIntensity) * 60 : 0));
+      const b = Math.floor(v * 180);
+
+      // Fill block
+      for (let dy2 = 0; dy2 < res * dpr && (py * dpr + dy2) < canvas.height; dy2++) {
+        for (let dx2 = 0; dx2 < res * dpr && (px * dpr + dx2) < canvas.width; dx2++) {
+          const idx = ((py * dpr + dy2) * canvas.width + (px * dpr + dx2)) * 4;
+          imgData.data[idx] = r;
+          imgData.data[idx + 1] = g;
+          imgData.data[idx + 2] = b;
+          imgData.data[idx + 3] = 255;
+        }
+      }
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+
+  // Overlay circle outlines and points
+  circles.forEach((c, ci) => {
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(c.cx, c.cy, c.r, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+
+  primaryPts.forEach((pt) => {
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  if (cmpPts) {
+    cmpPts.forEach((pt) => {
+      ctx.fillStyle = 'rgba(250, 204, 21, 0.8)';
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Interference Field — bright zones = constructive overlap', W / 2, 20);
+}
+
+// ============ CONTROLS ============
+function bind() {
+  const posS = document.getElementById('posSlider');
+  const freqS = document.getElementById('freqSlider');
+  const seqS = document.getElementById('seqSlider');
+  const cmpS = document.getElementById('cmpSlider');
+  const modeBtn = document.getElementById('modeToggle');
+
+  posS.addEventListener('input', () => {
+    POS = +posS.value;
+    document.getElementById('posVal').textContent = POS;
+    draw();
+  });
+
+  freqS.addEventListener('input', () => {
+    NUM_FREQ = +freqS.value;
+    document.getElementById('freqVal').textContent = NUM_FREQ;
+    draw();
+  });
+
+  seqS.addEventListener('input', () => {
+    SEQ_LEN = +seqS.value;
+    document.getElementById('seqVal').textContent = SEQ_LEN;
+    posS.max = SEQ_LEN - 1;
+    cmpS.max = SEQ_LEN - 1;
+    if (POS >= SEQ_LEN) { POS = SEQ_LEN - 1; posS.value = POS; }
+    document.getElementById('posVal').textContent = POS;
+    draw();
+  });
+
+  cmpS.addEventListener('input', () => {
+    CMP_POS = +cmpS.value;
+    document.getElementById('cmpVal').textContent = CMP_POS < 0 ? 'off' : CMP_POS;
+    draw();
+  });
+
+  modeBtn.addEventListener('click', () => {
+    modeIdx = (modeIdx + 1) % MODES.length;
+    MODE = MODES[modeIdx];
+    modeBtn.textContent = `Mode: ${MODE.charAt(0).toUpperCase() + MODE.slice(1)}`;
+    draw();
+  });
+}
+
+// ============ ANIMATION (subtle idle pulse) ============
+let animFrame = 0;
+function animate() {
+  animFrame++;
+  // Only auto-animate in field mode for performance
+  if (MODE === 'field' && animFrame % 3 === 0) {
+    // skip auto-redraw for field (expensive)
+  }
+  requestAnimationFrame(animate);
+}
+
+// ============ INIT ============
+window.addEventListener('load', () => {
+  bind();
+  draw();
+  animate();
+});
+window.addEventListener('resize', draw);
+
+// Auto-play: slowly advance position
+let autoPlay = false;
+document.addEventListener('keydown', (e) => {
+  if (e.key === ' ') {
+    e.preventDefault();
+    autoPlay = !autoPlay;
+    if (autoPlay) {
+      const step = () => {
+        if (!autoPlay) return;
+        POS = (POS + 1) % SEQ_LEN;
+        document.getElementById('posSlider').value = POS;
+        document.getElementById('posVal').textContent = POS;
+        draw();
+        setTimeout(step, 80);
+      };
+      step();
+    }
+  }
+});
+</script>
+
+</body>
+</html>
+
