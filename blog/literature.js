@@ -1,4 +1,11 @@
 window.bibData = {
+	"twocultures": {
+		title: "Two Cultures",
+		year: 1959,
+		author: "Charles Percy Snow",
+		url: "https://sciencepolicy.colorado.edu/students/envs_5110/snow_1959.pdf",
+		alternativetitle: "Two-Cultures"
+	},
 	"breakingsoftmaxbottleneck": {
 		title: "Breaking the Softmax Bottleneck: A High-Rank RNN Language Model",
 		year: 2017,

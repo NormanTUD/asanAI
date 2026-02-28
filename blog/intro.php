@@ -14,6 +14,8 @@ To understand a Neural Network is to understand a tapestry of ideas that often s
 * **The Technical and The Philosophical:** We will not just look at code. We will explore how concepts of logic, language, and "Geist" have transitioned from philosophical debates into billions of trainable parameters.
 * **AI in Society:** We address the technology as a cultural mirror by looking at how these systems interact with human values, the risks of hallucinations, and the ethical responsibility of building intelligent tools.
 
+We will try to overcome the "\citetitle{twocultures}-Problem", i.e. that the sciences and the humanities have become split into two distinct worlds, unable to communicate or understand the methods and values of the other. We believe that reality is One, and different sciences are different ways of looking at the same world.
+
 ## Your Interactive Playground
 
 This site is not a book to be read passively. It is designed as a playground for exploration.
