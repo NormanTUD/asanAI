@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Positional Encoding — Wave Collapse</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #06070b;
+    color: #ccc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+  h1 {
+    margin-top: 16px;
+    font-size: 1.3rem;
+    color: #e0e0e0;
+  }
+  .sub {
+    color: #555;
+    font-size: 0.78rem;
+    margin: 4px 0 14px;
+    text-align: center;
+    max-width: 600px;
+    line-height: 1.45;
+  }
+  .sub em { color: #a78bfa; font-style: normal; }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .slider-row label {
+    font-size: 0.78rem;
+    color: #777;
+  }
+  .slider-row input[type=range] {
+    width: 260px;
+    accent-color: #8b5cf6;
+  }
+  .slider-row .v {
+    color: #c4b5fd;
+    font-weight: 700;
+    font-size: 1.1rem;
+    min-width: 32px;
+    text-align: center;
+  }
+  .canvas-wrap {
+    position: relative;
+  }
+  canvas { border-radius: 10px; display: block; }
+  .bottom-text {
+    max-width: 760px;
+    padding: 12px 16px;
+    margin: 10px 12px 24px;
+    background: #0c0e17;
+    border: 1px solid #181c2e;
+    border-radius: 10px;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: #777;
+  }
+  .bottom-text strong { color: #bbb; }
+  .bottom-text em { color: #c4b5fd; font-style: normal; }
+  .key-hint {
+    font-size: 0.7rem;
+    color: #444;
+    margin-bottom: 6px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Positional Encoding = Wave Interference</h1>
+<p class="sub">
+  Each frequency dimension places a <em>source point</em> on its circle.
+  Each source emits ripples. Where all ripples <em>constructively overlap</em> → bright.
+  That bright pattern is the <em>unique fingerprint</em> of this position.
+</p>
+
+<div class="slider-row">
+  <label>TOKEN POSITION</label>
+  <input type="range" id="posSlider" min="0" max="99" value="0">
+  <span class="v" id="posVal">0</span>
+</div>
+
+<p class="key-hint">← → arrow keys for fine control · spacebar to auto-animate</p>
+
+<div class="canvas-wrap">
+  <canvas id="C"></canvas>
+</div>
+
+<div class="bottom-text">
+  <strong>What you're seeing:</strong>
+  There are 5 circles, each representing one <em>frequency dimension</em> of the positional encoding.
+  The leftmost circle has the <em>highest frequency</em> (spins fast → encodes fine position differences).
+  The rightmost has the <em>lowest frequency</em> (spins slow → encodes coarse structure) [[4]] [[10]].
+  <br><br>
+  <strong>Why it works:</strong>
+  At each position, the combination of angles across all circles is <em>unique</em> — like clock hands.
+  The second hand (high freq) distinguishes nearby positions. The hour hand (low freq) distinguishes distant ones.
+  Together they give every position a distinct identity [[4]] [[9]].
+  <br><br>
+  <strong>The interference pattern:</strong>
+  Each source point emits cosine ripples that decay with distance.
+  The field you see is the <em>sum of all ripples</em>. Bright zones = all waves in phase (constructive).
+  Dark zones = waves cancel (destructive). This is analogous to how the dot product between two
+  positional encodings captures their <em>relative distance</em> — nearby positions share similar bright zones [[6]] [[10]].
+</div>
+
+<script>
+const canvas = document.getElementById('C');
+const ctx = canvas.getContext('2d');
+
+const NFREQ = 5;
+const WAVE_K = 0.18;
+let POS = 0;
+let SEQLEN = 100;
+
+const HUES = [350, 30, 140, 210, 275];
+const FREQ_LABELS = [
+  'highest freq\n(fine detail)',
+  'high freq',
+  'mid freq',
+  'low freq',
+  'lowest freq\n(coarse structure)'
+];
+
+function getFreq(i) {
+  return 1 / Math.pow(10000, (2 * i) / (NFREQ * 2));
+}
+
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  const w = Math.min(window.innerWidth - 20, 900);
+  const h = Math.min(Math.max(window.innerHeight - 300, 350), 560);
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { w, h };
+}
+
+function getCircles(W, H) {
+  const circles = [];
+  const maxR = Math.min(W / (NFREQ + 1), H * 0.32) * 0.85;
+  const minR = maxR * 0.25;
+  const cy = H * 0.44;
+  const totalW = W * 0.82;
+  const sx = (W - totalW) / 2 + maxR * 0.5;
+  const usableW = totalW - maxR;
+
+  for (let i = 0; i < NFREQ; i++) {
+    const t = NFREQ === 1 ? 0.5 : i / (NFREQ - 1);
+    const r = minR + t * (maxR - minR);
+    circles.push({
+      cx: sx + t * usableW,
+      cy: cy,
+      r: r,
+      freq: getFreq(i),
+      hue: HUES[i],
+      label: FREQ_LABELS[i],
+      idx: i
+    });
+  }
+  return circles;
+}
+
+function ptOn(c, pos) {
+  const a = pos * c.freq;
+  return {
+    x: c.cx + Math.cos(a) * c.r,
+    y: c.cy - Math.sin(a) * c.r,
+    angle: a
+  };
+}
+
+// ---- Plasma-ish color map ----
+function cmap(t) {
+  t = Math.max(0, Math.min(1, t));
+  const r = Math.min(255, Math.floor(t < 0.4 ? t * 500 : 200 + t * 55));
+  const g = Math.min(255, Math.floor(t < 0.25 ? 0 : t < 0.6 ? (t - 0.25) * 200 : t < 0.85 ? 70 + (t - 0.6) * 500 : 195 + (t - 0.85) * 400));
+  const b = Math.min(255, Math.floor(t < 0.3 ? 40 + t * 600 : t < 0.6 ? 220 - (t - 0.3) * 500 : 70 - (t - 0.6) * 150));
+  return [r, g, b];
+}
+
+function draw() {
+  const { w: W, h: H } = resize();
+  const circles = getCircles(W, H);
+  const pts = circles.map(c => ptOn(c, POS));
+
+  // ---- RENDER INTERFERENCE FIELD ----
+  const res = 3;
+  const dpr = window.devicePixelRatio || 1;
+  const imgData = ctx.createImageData(canvas.width, canvas.height);
+
+  for (let py = 0; py < H; py += res) {
+    for (let px = 0; px < W; px += res) {
+      let intensity = 0;
+      for (let i = 0; i < pts.length; i++) {
+        const dx = px - pts[i].x;
+        const dy = py - pts[i].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        intensity += Math.cos(dist * WAVE_K) / (1 + dist * 0.012);
+      }
+      intensity /= pts.length;
+
+      let t = (intensity + 1) / 2;
+      t = Math.pow(t, 0.8);
+      const [r, g, b] = cmap(t);
+
+      for (let dy2 = 0; dy2 < res * dpr && (py * dpr + dy2) < canvas.height; dy2++) {
+        for (let dx2 = 0; dx2 < res * dpr && (px * dpr + dx2) < canvas.width; dx2++) {
+          const idx = ((py * dpr + dy2) * canvas.width + (px * dpr + dx2)) * 4;
+          imgData.data[idx] = r;
+          imgData.data[idx + 1] = g;
+          imgData.data[idx + 2] = b;
+          imgData.data[idx + 3] = 255;
+        }
+      }
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+
+  // ---- DRAW CIRCLES ----
+  circles.forEach((c, i) => {
+    // Circle outline
+    ctx.strokeStyle = `hsla(${c.hue}, 50%, 60%, 0.35)`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(c.cx, c.cy, c.r, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Subtle fill
+    const cFill = ctx.createRadialGradient(c.cx, c.cy, 0, c.cx, c.cy, c.r);
+    cFill.addColorStop(0, `hsla(${c.hue}, 40%, 30%, 0.06)`);
+    cFill.addColorStop(1, `hsla(${c.hue}, 40%, 30%, 0)`);
+    ctx.fillStyle = cFill;
+    ctx.beginPath();
+    ctx.arc(c.cx, c.cy, c.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Arc showing rotation from angle 0 to current
+    const pt = pts[i];
+    ctx.strokeStyle = `hsla(${c.hue}, 65%, 60%, 0.5)`;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(c.cx, c.cy, c.r, 0, -pt.angle, true);
+    ctx.stroke();
+
+    // Thin line from center to point (radius arm)
+    ctx.strokeStyle = `hsla(${c.hue}, 40%, 55%, 0.2)`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(c.cx, c.cy);
+    ctx.lineTo(pt.x, pt.y);
+    ctx.stroke();
+
+    // ---- LABELS ----
+    // Frequency label above circle
+    const lines = c.label.split('\n');
+    ctx.fillStyle = `hsla(${c.hue}, 45%, 70%, 0.75)`;
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+    lines.forEach((line, li) => {
+      ctx.fillText(line, c.cx, c.cy - c.r - 18 + li * 13);
+    });
+
+    // Circle number
+    ctx.fillStyle = `hsla(${c.hue}, 35%, 55%, 0.5)`;
+    ctx.font = '9px sans-serif';
+    ctx.fillText(`dim pair ${i}`, c.cx, c.cy - c.r - 18 + lines.length * 13);
+
+    // Wavelength below circle
+    const wl = (2 * Math.PI / c.freq).toFixed(0);
+    ctx.fillStyle = `hsla(${c.hue}, 30%, 50%, 0.45)`;
+    ctx.font = '9px sans-serif';
+    ctx.fillText(`wavelength ≈ ${wl}`, c.cx, c.cy + c.r + 16);
+
+    // Angle value
+    const deg = ((pt.angle * 180 / Math.PI) % 360).toFixed(1);
+    ctx.fillStyle = `hsla(${c.hue}, 40%, 65%, 0.55)`;
+    ctx.font = '9px sans-serif';
+    ctx.fillText(`θ = ${deg}°`, c.cx, c.cy + c.r + 29);
+
+    // sin/cos values
+    const sinV = Math.sin(pt.angle).toFixed(3);
+    const cosV = Math.cos(pt.angle).toFixed(3);
+    ctx.fillStyle = `hsla(${c.hue}, 30%, 55%, 0.4)`;
+    ctx.font = '8px monospace';
+    ctx.fillText(`sin=${sinV}  cos=${cosV}`, c.cx, c.cy + c.r + 41);
+  });
+
+  // ---- DRAW SOURCE POINTS ----
+  pts.forEach((pt, i) => {
+    const c = circles[i];
+
+    // Ripple rings emanating from source
+    for (let ring = 1; ring <= 6; ring++) {
+      const rr = ring * (2 * Math.PI / WAVE_K) * 0.16;
+      const alpha = 0.18 / (ring * 0.7);
+      ctx.strokeStyle = `hsla(${c.hue}, 55%, 70%, ${alpha})`;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, rr, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Glow
+    const glow = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 20);
+    glow.addColorStop(0, `hsla(${c.hue}, 85%, 82%, 0.9)`);
+    glow.addColorStop(0.5, `hsla(${c.hue}, 85%, 82%, 0.2)`);
+    glow.addColorStop(1, `hsla(${c.hue}, 85%, 82%, 0)`);
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 20, 0, Math.PI * 2);
+    ctx.fill();
+
+    // White dot
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // "source" label
+    ctx.fillStyle = `hsla(${c.hue}, 60%, 80%, 0.8)`;
+    ctx.font = 'bold 9px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`source ${i}`, pt.x, pt.y - 14);
+  });
+
+  // ---- CONVERGENCE ANNOTATION ----
+  // Find the point of maximum constructive interference near the centroid
+  const centX = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+  const centY = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+
+  // Search small area around centroid for actual max
+  let maxInt = -Infinity, maxX = centX, maxY = centY;
+  for (let sy = centY - 40; sy <= centY + 40; sy += 4) {
+    for (let sx = centX - 40; sx <= centX + 40; sx += 4) {
+      let val = 0;
+      for (let i = 0; i < pts.length; i++) {
+        const dx = sx - pts[i].x, dy = sy - pts[i].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        val += Math.cos(dist * WAVE_K) / (1 + dist * 0.012);
+      }
+      if (val > maxInt) { maxInt = val; maxX = sx; maxY = sy; }
+    }
+  }
+
+  // Convergence glow
+  const convGlow = ctx.createRadialGradient(maxX, maxY, 0, maxX, maxY, 40);
+  convGlow.addColorStop(0, 'rgba(255,255,255,0.15)');
+  convGlow.addColorStop(0.5, 'rgba(200,180,255,0.06)');
+  convGlow.addColorStop(1, 'rgba(200,180,255,0)');
+  ctx.fillStyle = convGlow;
+  ctx.beginPath();
+  ctx.arc(maxX, maxY, 40, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Crosshair
+  ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(maxX - 12, maxY); ctx.lineTo(maxX + 12, maxY);
+  ctx.moveTo(maxX, maxY - 12); ctx.lineTo(maxX, maxY + 12);
+  ctx.stroke();
+
+  // Dashed lines from each source to convergence
+  pts.forEach((pt, i) => {
+    ctx.strokeStyle = `hsla(${circles[i].hue}, 45%, 60%, 0.15)`;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 5]);
+    ctx.beginPath();
+    ctx.moveTo(pt.x, pt.y);
+    ctx.lineTo(maxX, maxY);
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
+  // Convergence label
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('WAVE COLLAPSE', maxX, maxY + 50);
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.font = '10px sans-serif';
+  ctx.fillText(`all ${NFREQ} waves in phase here`, maxX, maxY + 64);
+  ctx.fillText(`→ unique fingerprint of position ${POS}`, maxX, maxY + 77);
+
+  // ---- TOP-LEFT: POSITION INDICATOR ----
+  ctx.fillStyle = 'rgba(6,7,11,0.7)';
+  roundRect(ctx, 10, 10, 170, 58, 8);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, 10, 10, 170, 58, 8);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('TOKEN POSITION', 20, 28);
+  ctx.fillStyle = '#c4b5fd';
+  ctx.font = 'bold 22px sans-serif';
+  ctx.fillText(`${POS}`, 20, 55);
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.font = '10px sans-serif';
+  ctx.fillText(`of ${SEQLEN}`, 55, 55);
+
+  // ---- TOP-RIGHT: ENCODING VECTOR ----
+  const vecW = Math.min(280, NFREQ * 56);
+  ctx.fillStyle = 'rgba(6,7,11,0.7)';
+  roundRect(ctx, W - vecW - 16, 10, vecW + 6, 58, 8);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  roundRect(ctx, W - vecW - 16, 10, vecW + 6, 58, 8);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('ENCODING VECTOR PE[' + POS + ']', W - vecW - 8, 28);
+
+  // Mini colored cells
+  const cellW = Math.min(24, (vecW - 8) / (NFREQ * 2));
+  const cellStartX = W - vecW - 8;
+  for (let i = 0; i < NFREQ; i++) {
+    const freq = circles[i].freq;
+    const sinV = Math.sin(POS * freq);
+    const cosV = Math.cos(POS * freq);
+
+    [sinV, cosV].forEach((v, j) => {
+      const ci = i * 2 + j;
+      const x = cellStartX + ci * (cellW + 2);
+      let r, g, b;
+      if (v >= 0) {
+        r = Math.floor(v * 255); g = Math.floor(v * 140); b = Math.floor(v * 20);
+      } else {
+        const a = -v;
+        r = Math.floor(a * 20); g = Math.floor(a * 80); b = Math.floor(a * 255);
+      }
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(x, 36, cellW, 14);
+
+      // s/c label
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.font = '7px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(j === 0 ? 's' : 'c', x + cellW / 2, 60);
+    });
+  }
+
+  // Color legend for vector
+  ctx.fillStyle = 'rgba(255,140,20,0.4)';
+  ctx.font = '7px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('+1', cellStartX + NFREQ * 2 * (cellW + 2) + 4, 44);
+  ctx.fillStyle = 'rgba(60,100,255,0.4)';
+  ctx.fillText('-1', cellStartX + NFREQ * 2 * (cellW + 2) + 4, 54);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+// ============ CONTROLS ============
+document.getElementById('posSlider').addEventListener('input', function() {
+  POS = +this.value;
+  document.getElementById('posVal').textContent = POS;
+  draw();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    POS = Math.min(POS + 1, SEQLEN - 1);
+    document.getElementById('posSlider').value = POS;
+    document.getElementById('posVal').textContent = POS;
+    draw();
+  }
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    POS = Math.max(POS - 1, 0);
+    document.getElementById('posSlider').value = POS;
+    document.getElementById('posVal').textContent = POS;
+    draw();
+  }
+  if (e.key === ' ') {
+    e.preventDefault();
+    autoPlay = !autoPlay;
+    if (autoPlay) autoStep();
+  }
+});
+
+let autoPlay = false;
+function autoStep() {
+  if (!autoPlay) return;
+  POS = (POS + 1) % SEQLEN;
+  document.getElementById('posSlider').value = POS;
+  document.getElementById('posVal').textContent = POS;
+  draw();
+  setTimeout(autoStep, 100);
+}
+
+window.addEventListener('load', draw);
+window.addEventListener('resize', draw);
+</script>
+
+</body>
+</html>
+
