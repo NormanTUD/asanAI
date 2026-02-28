@@ -1,3 +1,6 @@
+positional embeddings unendlichkeitsmaschine https://www.exploratorium.edu/exhibits/machine-with-concrete
+
+
 LANDAU TODO
 
 11. The Softmax Function Enforces a Zero-Sum Economy of Attention
