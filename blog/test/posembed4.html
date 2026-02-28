@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Positional Encoding — Die Unendlichkeitsmaschine</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #05060a;
+    color: #ccc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+  h1 {
+    margin-top: 16px;
+    font-size: 1.35rem;
+    color: #e8e8e8;
+    letter-spacing: 0.5px;
+  }
+  .sub {
+    color: #555;
+    font-size: 0.78rem;
+    margin: 4px 0 14px;
+    text-align: center;
+    max-width: 660px;
+    line-height: 1.5;
+  }
+  .sub em { color: #f0c060; font-style: normal; }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .slider-row label {
+    font-size: 0.75rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .slider-row input[type=range] {
+    width: 300px;
+    accent-color: #d4a040;
+  }
+  .slider-row .v {
+    color: #f0c060;
+    font-weight: 700;
+    font-size: 1.2rem;
+    min-width: 36px;
+    text-align: center;
+  }
+  canvas { border-radius: 10px; display: block; }
+  .key-hint {
+    font-size: 0.68rem;
+    color: #3a3a3a;
+    margin: 4px 0 8px;
+  }
+  .bottom {
+    max-width: 780px;
+    padding: 14px 18px;
+    margin: 10px 12px 24px;
+    background: #0a0c14;
+    border: 1px solid #161a2a;
+    border-radius: 10px;
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: #666;
+  }
+  .bottom strong { color: #bbb; }
+  .bottom em { color: #e0b050; font-style: normal; }
+  .speed-bar {
+    display: flex;
+    gap: 2px;
+    margin: 8px 0 4px;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .speed-bar .bar {
+    border-radius: 3px 3px 0 0;
+    width: 28px;
+    text-align: center;
+    font-size: 7px;
+    color: rgba(255,255,255,0.4);
+    padding-top: 3px;
+  }
+</style>
+</head>
+<body>
+
+<h1>⚙ Die Unendlichkeitsmaschine</h1>
+<p class="sub">
+  Positional Encoding als Zahnradkaskade: Jedes Zahnrad dreht sich <em>exponentiell langsamer</em> als das vorherige.
+  Das schnellste unterscheidet benachbarte Positionen. Das langsamste braucht tausende Positionen für eine Umdrehung.
+  Zusammen erzeugen sie für jede Position ein <em>einzigartiges Interferenzmuster</em> — den Fingerabdruck der Position.
+</p>
+
+<div class="slider-row">
+  <label>Position</label>
+  <input type="range" id="posSlider" min="0" max="199" value="0">
+  <span class="v" id="posVal">0</span>
+</div>
+<p class="key-hint">← → Pfeiltasten · Leertaste = Auto-Animation · Mausrad = Feinsteuerung</p>
+
+<canvas id="C"></canvas>
+
+<div class="bottom">
+  <strong>⚙ Die Unendlichkeitsmaschine</strong> im Deutschen Museum hat Zahnräder, die sich von Stufe zu Stufe
+  zehnmal langsamer drehen. Das letzte Zahnrad dreht sich einmal in 100 Millionen Jahren.
+  <br><br>
+  <strong>Genau so funktioniert Positional Encoding:</strong>
+  Die Frequenzdimensionen bilden eine <em>geometrische Progression</em> von schnell nach langsam.
+  Dimension 0 (das schnellste Zahnrad) oszilliert bei jeder Position — sie unterscheidet Position 5 von Position 6.
+  Die letzte Dimension (das langsamste Zahnrad) braucht ~10.000 Positionen für eine volle Umdrehung —
+  sie unterscheidet den Anfang eines Textes von der Mitte.
+  <br><br>
+  <strong>Das Interferenzfeld:</strong> Jedes Zahnrad erzeugt an seiner aktuellen Winkelposition eine Welle.
+  Wo sich <em>alle Wellen konstruktiv überlagern</em> → hell. Dieses Muster ist für jede Position einzigartig.
+  Benachbarte Positionen erzeugen ähnliche Muster (= ähnliche Embeddings), weit entfernte völlig verschiedene.
+  <br><br>
+  <strong>Warum sin & cos?</strong> Jedes Zahnrad-Paar nutzt Sinus und Kosinus — das beschreibt einen Punkt auf einem Kreis.
+  Der mathematische Trick: <em>cos(a−b) = cos(a)cos(b) + sin(a)sin(b)</em>.
+  Dadurch hängt die Ähnlichkeit zweier Positionen nur vom <em>Abstand</em> ab, nicht von der absoluten Position.
+  Das Modell kann lernen: "3 Tokens zurück" — egal wo im Text.
+</div>
+
+<script>
+const canvas = document.getElementById('C');
+const ctx = canvas.getContext('2d');
+
+const NFREQ = 7;
+const WAVE_K = 0.16;
+let POS = 0;
+const SEQLEN = 200;
+
+// Gear colors — warm brass/copper palette
+const GEAR_COLORS = [
+  { h: 35, s: 80, l: 65 },  // bright gold
+  { h: 28, s: 70, l: 58 },  // copper
+  { h: 42, s: 65, l: 52 },  // brass
+  { h: 20, s: 60, l: 48 },  // bronze
+  { h: 38, s: 50, l: 42 },  // dark brass
+  { h: 25, s: 45, l: 38 },  // dark copper
+  { h: 30, s: 35, l: 32 },  // aged bronze
+];
+
+function getFreq(i) {
+  return 1 / Math.pow(10000, (2 * i) / (NFREQ * 2));
+}
+
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  const w = Math.min(window.innerWidth - 16, 960);
+  const h = Math.min(Math.max(window.innerHeight - 320, 360), 580);
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { w, h };
+}
+
+function getGears(W, H) {
+  const gears = [];
+  const maxR = Math.min(W / (NFREQ + 0.5), H * 0.34) * 0.82;
+  const minR = maxR * 0.18;
+  const cy = H * 0.42;
+  const totalW = W * 0.86;
+  const sx = (W - totalW) / 2 + maxR * 0.3;
+  const usableW = totalW - maxR * 0.6;
+
+  for (let i = 0; i < NFREQ; i++) {
+    const t = NFREQ === 1 ? 0.5 : i / (NFREQ - 1);
+    const r = minR + t * (maxR - minR);
+    const freq = getFreq(i);
+    const wl = 2 * Math.PI / freq;
+    const rpm = freq * 1000; // relative speed indicator
+    gears.push({
+      cx: sx + t * usableW,
+      cy: cy + Math.sin(t * Math.PI) * H * 0.04,
+      r, freq, idx: i,
+      wavelength: wl,
+      color: GEAR_COLORS[i],
+      teeth: Math.max(8, Math.floor(r * 0.6)),
+      speedLabel: i === 0 ? 'FASTEST' : i === NFREQ - 1 ? 'SLOWEST' : '',
+      rpm
+    });
+  }
+  return gears;
+}
+
+function ptOn(g, pos) {
+  const a = pos * g.freq;
+  return { x: g.cx + Math.cos(a) * g.r, y: g.cy - Math.sin(a) * g.r, angle: a };
+}
+
+// Draw a gear shape
+function drawGearShape(cx, cy, r, teeth, rotation, color, alpha) {
+  const toothDepth = r * 0.12;
+  const toothWidth = Math.PI / teeth;
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-rotation);
+
+  // Gear body
+  ctx.beginPath();
+  for (let i = 0; i < teeth; i++) {
+    const a0 = (i / teeth) * Math.PI * 2;
+    const a1 = a0 + toothWidth * 0.3;
+    const a2 = a0 + toothWidth * 0.7;
+    const a3 = a0 + toothWidth;
+    const a4 = a0 + (1 / teeth) * Math.PI * 2;
+
+    if (i === 0) {
+      ctx.moveTo(Math.cos(a0) * r, Math.sin(a0) * r);
+    }
+    ctx.lineTo(Math.cos(a1) * r, Math.sin(a1) * r);
+    ctx.lineTo(Math.cos(a1) * (r + toothDepth), Math.sin(a1) * (r + toothDepth));
+    ctx.lineTo(Math.cos(a2) * (r + toothDepth), Math.sin(a2) * (r + toothDepth));
+    ctx.lineTo(Math.cos(a3) * r, Math.sin(a3) * r);
+    ctx.lineTo(Math.cos(a4) * r, Math.sin(a4) * r);
+  }
+  ctx.closePath();
+
+  ctx.fillStyle = `hsla(${color.h}, ${color.s}%, ${color.l}%, ${alpha * 0.12})`;
+  ctx.fill();
+  ctx.strokeStyle = `hsla(${color.h}, ${color.s}%, ${color.l}%, ${alpha * 0.5})`;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Center hole
+  ctx.beginPath();
+  ctx.arc(0, 0, r * 0.12, 0, Math.PI * 2);
+  ctx.fillStyle = `hsla(${color.h}, ${color.s - 20}%, ${color.l - 15}%, ${alpha * 0.4})`;
+  ctx.fill();
+  ctx.strokeStyle = `hsla(${color.h}, ${color.s}%, ${color.l}%, ${alpha * 0.3})`;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Spokes
+  for (let s = 0; s < 4; s++) {
+    const sa = (s / 4) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(sa) * r * 0.15, Math.sin(sa) * r * 0.15);
+    ctx.lineTo(Math.cos(sa) * r * 0.7, Math.sin(sa) * r * 0.7);
+    ctx.strokeStyle = `hsla(${color.h}, ${color.s - 10}%, ${color.l}%, ${alpha * 0.15})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+// Warm color map for field
+function warmMap(t) {
+  t = Math.max(0, Math.min(1, t));
+  // Dark brown → amber → bright gold → white-hot
+  const r = Math.min(255, Math.floor(t < 0.3 ? 15 + t * 300 : t < 0.7 ? 105 + (t - 0.3) * 375 : 255));
+  const g = Math.min(255, Math.floor(t < 0.2 ? 5 + t * 100 : t < 0.5 ? 25 + (t - 0.2) * 250 : t < 0.8 ? 100 + (t - 0.5) * 350 : 205 + (t - 0.8) * 250));
+  const b = Math.min(255, Math.floor(t < 0.4 ? 2 + t * 30 : t < 0.7 ? 14 + (t - 0.4) * 60 : t < 0.9 ? 32 + (t - 0.7) * 300 : 92 + (t - 0.9) * 600));
+  return [r, g, b];
+}
+
+function draw() {
+  const { w: W, h: H } = resize();
+  const gears = getGears(W, H);
+  const pts = gears.map(g => ptOn(g, POS));
+
+  // ---- RENDER INTERFERENCE FIELD ----
+  const res = 3;
+  const dpr = window.devicePixelRatio || 1;
+  const imgData = ctx.createImageData(canvas.width, canvas.height);
+
+  for (let py = 0; py < H; py += res) {
+    for (let px = 0; px < W; px += res) {
+      let intensity = 0;
+      for (let i = 0; i < pts.length; i++) {
+        const dx = px - pts[i].x;
+        const dy = py - pts[i].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        intensity += Math.cos(dist * WAVE_K) / (1 + dist * 0.012);
+      }
+      intensity /= pts.length;
+
+      let t = (intensity + 1) / 2;
+      t = Math.pow(t, 0.75);
+      const [r, g, b] = warmMap(t);
+
+      for (let dy2 = 0; dy2 < res * dpr && (py * dpr + dy2) < canvas.height; dy2++) {
+        for (let dx2 = 0; dx2 < res * dpr && (px * dpr + dx2) < canvas.width; dx2++) {
+          const idx = ((py * dpr + dy2) * canvas.width + (px * dpr + dx2)) * 4;
+          imgData.data[idx] = r;
+          imgData.data[idx + 1] = g;
+          imgData.data[idx + 2] = b;
+          imgData.data[idx + 3] = 255;
+        }
+      }
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+
+  // ---- DRAW GEARS ----
+  gears.forEach((g, i) => {
+    const pt = pts[i];
+    const c = g.color;
+
+    // Gear shape (rotated by current angle)
+    drawGearShape(g.cx, g.cy, g.r, g.teeth, pt.angle, c, 1);
+
+    // Connection chain between adjacent gears
+    if (i < gears.length - 1) {
+      const next = gears[i + 1];
+      ctx.strokeStyle = `rgba(180, 150, 80, 0.12)`;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      ctx.moveTo(g.cx + g.r * 0.9, g.cy);
+      ctx.lineTo(next.cx - next.r * 0.9, next.cy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Ratio label on chain
+      const mx = (g.cx + g.r + next.cx - next.r) / 2;
+      const my = (g.cy + next.cy) / 2;
+      const ratio = (g.freq / next.freq).toFixed(1);
+      ctx.fillStyle = 'rgba(180, 150, 80, 0.3)';
+      ctx.font = '8px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`÷${ratio}×`, mx, my - 6);
+      ctx.fillText('slower', mx, my + 5);
+    }
+
+    // Arc trail showing rotation
+    ctx.strokeStyle = `hsla(${c.h}, ${c.s}%, ${c.l + 10}%, 0.55)`;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    const arcLen = Math.min(pt.angle, Math.PI * 2);
+    ctx.arc(g.cx, g.cy, g.r * 0.75, 0, -arcLen, true);
+    ctx.stroke();
+
+    // ---- GEAR LABELS ----
+
+    // Speed label (FASTEST / SLOWEST)
+    if (g.speedLabel) {
+      ctx.fillStyle = g.speedLabel === 'FASTEST'
+        ? 'rgba(255, 200, 60, 0.8)'
+        : 'rgba(140, 120, 80, 0.6)';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(g.speedLabel, g.cx, g.cy - g.r - 36);
+
+      // Arrow
+      ctx.fillStyle = g.speedLabel === 'FASTEST'
+        ? 'rgba(255, 200, 60, 0.4)'
+        : 'rgba(140, 120, 80, 0.3)';
+      ctx.fillText('↓', g.cx, g.cy - g.r - 24);
+    }
+
+    // Gear number and role
+    ctx.fillStyle = `hsla(${c.h}, ${c.s - 10}%, ${c.l + 15}%, 0.75)`;
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Zahnrad ${i}`, g.cx, g.cy - g.r - 12);
+
+    // Frequency info
+    ctx.fillStyle = `hsla(${c.h}, ${c.s - 20}%, ${c.l}%, 0.5)`;
+    ctx.font = '9px sans-serif';
+    ctx.fillText(`freq = ${g.freq.toFixed(5)}`, g.cx, g.cy + g.r + 18);
+
+    // Wavelength
+    ctx.fillText(`λ ≈ ${g.wavelength.toFixed(0)} Positionen pro Umdrehung`, g.cx, g.cy + g.r + 31);
+
+    // Current angle
+    const deg = ((pt.angle * 180 / Math.PI) % 360).toFixed(1);
+    const fullRotations = (pt.angle / (2 * Math.PI)).toFixed(2);
+    ctx.fillStyle = `hsla(${c.h}, ${c.s}%, ${c.l + 10}%, 0.6)`;
+    ctx.font = '9px sans-serif';
+    ctx.fillText(`θ = ${deg}° (${fullRotations} Umdrehungen)`, g.cx, g.cy + g.r + 44);
+
+    // sin/cos
+    const sinV = Math.sin(pt.angle);
+    const cosV = Math.cos(pt.angle);
+    ctx.fillStyle = `hsla(${c.h}, ${c.s - 20}%, ${c.l}%, 0.4)`;
+    ctx.font = '8px monospace';
+    ctx.fillText(`sin=${sinV.toFixed(3)}  cos=${cosV.toFixed(3)}`, g.cx, g.cy + g.r + 56);
+
+    // What this gear detects
+    const detectLabel = i === 0 ? '↑ unterscheidet benachbarte Positionen'
+      : i === NFREQ - 1 ? '↑ unterscheidet Textanfang von Textmitte'
+      : i <= 1 ? '↑ feine Positionsunterschiede'
+      : i >= NFREQ - 2 ? '↑ grobe Positionsunterschiede'
+      : '';
+    if (detectLabel) {
+      ctx.fillStyle = `hsla(${c.h}, ${c.s - 10}%, ${c.l + 5}%, 0.35)`;
+      ctx.font = '8px sans-serif';
+      ctx.fillText(detectLabel, g.cx, g.cy + g.r + 68);
+    }
+  });
+
+  // ---- SOURCE POINTS ON GEARS ----
+  pts.forEach((pt, i) => {
+    const g = gears[i];
+    const c = g.color;
+
+    // Ripple rings
+    for (let ring = 1; ring <= 5; ring++) {
+      const rr = ring * (2 * Math.PI / WAVE_K) * 0.16;
+      ctx.strokeStyle = `hsla(${c.h}, ${c.s}%, ${c.l + 15}%, ${0.15 / (ring * 0.6)})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, rr, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Glow
+    const glow = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 22);
+    glow.addColorStop(0, `hsla(${c.h}, 90%, 85%, 0.9)`);
+    glow.addColorStop(0.4, `hsla(${c.h}, 90%, 85%, 0.25)`);
+    glow.addColorStop(1, `hsla(${c.h}, 90%, 85%, 0)`);
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 22, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Bright dot
+    ctx.fillStyle = `hsla(${c.h}, 90%, 92%, 1)`;
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // White center
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // ---- CONVERGENCE / WAVE COLLAPSE ----
+  const centX = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+  const centY = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+
+  // Search for actual max near centroid
+  let maxInt = -Infinity, maxX = centX, maxY = centY;
+  for (let sy = centY - 50; sy <= centY + 50; sy += 3) {
+    for (let sx = centX - 50; sx <= centX + 50; sx += 3) {
+      let val = 0;
+      for (let i = 0; i < pts.length; i++) {
+        const dx = sx - pts[i].x, dy = sy - pts[i].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        val += Math.cos(dist * WAVE_K) / (1 + dist * 0.012);
+      }
+      if (val > maxInt) { maxInt = val; maxX = sx; maxY = sy; }
+    }
+  }
+
+  // Dashed lines from sources to collapse point
+  pts.forEach((pt, i) => {
+    const c = gears[i].color;
+    ctx.strokeStyle = `hsla(${c.h}, ${c.s}%, ${c.l}%, 0.15)`;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 5]);
+    ctx.beginPath();
+    ctx.moveTo(pt.x, pt.y);
+    ctx.lineTo(maxX, maxY);
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
+  // Collapse glow
+  const collapseGlow = ctx.createRadialGradient(maxX, maxY, 0, maxX, maxY, 45);
+  collapseGlow.addColorStop(0, 'rgba(255, 220, 100, 0.2)');
+  collapseGlow.addColorStop(0.4, 'rgba(255, 180, 60, 0.08)');
+  collapseGlow.addColorStop(1, 'rgba(255, 180, 60, 0)');
+  ctx.fillStyle = collapseGlow;
+  ctx.beginPath();
+  ctx.arc(maxX, maxY, 45, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Crosshair
+  ctx.strokeStyle = 'rgba(255, 220, 120, 0.5)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(maxX - 14, maxY); ctx.lineTo(maxX + 14, maxY);
+  ctx.moveTo(maxX, maxY - 14); ctx.lineTo(maxX, maxY + 14);
+  ctx.stroke();
+
+  // Collapse label
+  ctx.fillStyle = 'rgba(255, 220, 120, 0.85)';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('⚡ WELLENKOLLAPS', maxX, maxY - 52);
+  ctx.fillStyle = 'rgba(255, 220, 120, 0.55)';
+  ctx.font = '10px sans-serif';
+  ctx.fillText('Alle Wellen in Phase', maxX, maxY - 38);
+  ctx.fillStyle = 'rgba(255, 220, 120, 0.4)';
+  ctx.font = '9px sans-serif';
+  ctx.fillText(`= Fingerabdruck von Position ${POS}`, maxX, maxY - 26);
+
+  // ---- TOP-LEFT: POSITION BOX ----
+  ctx.fillStyle = 'rgba(5,6,10,0.75)';
+  roundRect(ctx, 10, 10, 200, 70, 8);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(200,170,80,0.1)';
+  roundRect(ctx, 10, 10, 200, 70, 8);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255,220,120,0.5)';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('TOKEN POSITION', 20, 28);
+  ctx.fillStyle = '#f0c060';
+  ctx.font = 'bold 26px sans-serif';
+  ctx.fillText(`${POS}`, 20, 60);
+  ctx.fillStyle = 'rgba(255,220,120,0.3)';
+  ctx.font = '10px sans-serif';
+  ctx.fillText(`von ${SEQLEN} · ${NFREQ} Zahnräder`, 65, 60);
+
+  // ---- TOP-RIGHT: ENCODING VECTOR ----
+  const vecBoxW = NFREQ * 48 + 30;
+  const vecBoxX = W - vecBoxW - 10;
+  ctx.fillStyle = 'rgba(5,6,10,0.75)';
+  roundRect(ctx, vecBoxX, 10, vecBoxW, 70, 8);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(200,170,80,0.1)';
+  roundRect(ctx, vecBoxX, 10, vecBoxW, 70, 8);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255,220,120,0.5)';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(`ENCODING-VEKTOR  PE[${POS}]`, vecBoxX + 10, 28);
+
+  // Colored cells for each sin/cos pair
+  const cellW = 20;
+  const cellStartX = vecBoxX + 12;
+  for (let i = 0; i < NFREQ; i++) {
+    const freq = gears[i].freq;
+    const gc = gears[i].color;
+    const sinV = Math.sin(POS * freq);
+    const cosV = Math.cos(POS * freq);
+
+    [sinV, cosV].forEach((v, j) => {
+      const ci = i * 2 + j;
+      const x = cellStartX + ci * (cellW + 3);
+      // Cell background
+      let r, g, b;
+      if (v >= 0) {
+        r = Math.floor(20 + v * 200);
+        g = Math.floor(15 + v * 140);
+        b = Math.floor(5 + v * 20);
+      } else {
+        const a = -v;
+        r = Math.floor(5 + a * 15);
+        g = Math.floor(10 + a * 40);
+        b = Math.floor(20 + a * 180);
+      }
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(x, 36, cellW, 16);
+
+      // Border
+      ctx.strokeStyle = `hsla(${gc.h}, ${gc.s}%, ${gc.l}%, 0.3)`;
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(x, 36, cellW, 16);
+
+      // Value text
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = '7px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(v.toFixed(2), x + cellW / 2, 47);
+
+      // sin/cos label below
+      ctx.fillStyle = `hsla(${gc.h}, ${gc.s}%, ${gc.l}%, 0.45)`;
+      ctx.font = '7px sans-serif';
+      ctx.fillText(j === 0 ? 'sin' : 'cos', x + cellW / 2, 62);
+
+      // Gear index label (only on sin)
+      if (j === 0) {
+        ctx.fillStyle = `hsla(${gc.h}, ${gc.s}%, ${gc.l}%, 0.3)`;
+        ctx.fillText(`⚙${i}`, x + cellW + 1, 70);
+      }
+    });
+  }
+
+  // Color legend for vector
+  ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(220,170,40,0.45)';
+  ctx.font = '8px sans-serif';
+  ctx.fillText('+1 warm', vecBoxX + vecBoxW - 52, 42);
+  ctx.fillStyle = 'rgba(50,80,200,0.45)';
+  ctx.fillText('−1 kalt', vecBoxX + vecBoxW - 52, 54);
+
+  // ---- SPEED COMPARISON BAR (bottom-left) ----
+  const barBoxX = 10, barBoxY = H - 80;
+  ctx.fillStyle = 'rgba(5,6,10,0.7)';
+  roundRect(ctx, barBoxX, barBoxY, 220, 70, 8);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(200,170,80,0.08)';
+  roundRect(ctx, barBoxX, barBoxY, 220, 70, 8);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255,220,120,0.45)';
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('RELATIVE DREHGESCHWINDIGKEIT', barBoxX + 10, barBoxY + 14);
+
+  const maxBarH = 40;
+  const barW = 18;
+  const barGap = (200 - NFREQ * barW) / (NFREQ + 1);
+  const maxFreq = gears[0].freq;
+
+  gears.forEach((g, i) => {
+    const relSpeed = g.freq / gears[NFREQ - 1].freq;
+    const logSpeed = Math.log10(relSpeed + 1) / Math.log10(gears[0].freq / gears[NFREQ - 1].freq + 1);
+    const bh = Math.max(4, logSpeed * maxBarH);
+    const bx = barBoxX + 10 + barGap + i * (barW + barGap);
+    const by = barBoxY + 60 - bh;
+
+    ctx.fillStyle = `hsla(${g.color.h}, ${g.color.s}%, ${g.color.l}%, 0.6)`;
+    ctx.fillRect(bx, by, barW, bh);
+    ctx.strokeStyle = `hsla(${g.color.h}, ${g.color.s}%, ${g.color.l}%, 0.3)`;
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(bx, by, barW, bh);
+
+    // Gear label
+    ctx.fillStyle = `hsla(${g.color.h}, ${g.color.s}%, ${g.color.l}%, 0.5)`;
+    ctx.font = '7px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`⚙${i}`, bx + barW / 2, barBoxY + 65);
+
+    // Speed multiplier
+    if (i === 0) {
+      ctx.fillStyle = 'rgba(255,200,60,0.5)';
+      ctx.font = '7px sans-serif';
+      ctx.fillText(`${relSpeed.toFixed(0)}×`, bx + barW / 2, by - 4);
+    } else if (i === NFREQ - 1) {
+      ctx.fillText('1×', bx + barW / 2, by - 4);
+    }
+  });
+
+  // ---- BOTTOM-RIGHT: FORMULA ----
+  const fBoxW = 300, fBoxH = 70;
+  const fBoxX = W - fBoxW - 10, fBoxY = H - fBoxH - 10;
+  ctx.fillStyle = 'rgba(5,6,10,0.7)';
+  roundRect(ctx, fBoxX, fBoxY, fBoxW, fBoxH, 8);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(200,170,80,0.08)';
+  roundRect(ctx, fBoxX, fBoxY, fBoxW, fBoxH, 8);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255,220,120,0.45)';
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('DIE FORMEL', fBoxX + 10, fBoxY + 14);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.font = '11px monospace';
+  ctx.fillText('PE(pos, 2i)   = sin(pos / 10000^(2i/d))', fBoxX + 10, fBoxY + 32);
+  ctx.fillText('PE(pos, 2i+1) = cos(pos / 10000^(2i/d))', fBoxX + 10, fBoxY + 48);
+
+  ctx.fillStyle = 'rgba(255,220,120,0.3)';
+  ctx.font = '8px sans-serif';
+  ctx.fillText('Jedes Zahnrad = ein anderes i → andere Frequenz', fBoxX + 10, fBoxY + 63);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+// ============ CONTROLS ============
+const posSlider = document.getElementById('posSlider');
+posSlider.addEventListener('input', function() {
+  POS = +this.value;
+  document.getElementById('posVal').textContent = POS;
+  draw();
+});
+
+// Mouse wheel on canvas for fine control
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  POS = Math.max(0, Math.min(SEQLEN - 1, POS + (e.deltaY > 0 ? 1 : -1)));
+  posSlider.value = POS;
+  document.getElementById('posVal').textContent = POS;
+  draw();
+}, { passive: false });
+
+// Keyboard
+let autoPlay = false;
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    POS = Math.min(POS + 1, SEQLEN - 1);
+    posSlider.value = POS;
+    document.getElementById('posVal').textContent = POS;
+    draw();
+  }
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    POS = Math.max(POS - 1, 0);
+    posSlider.value = POS;
+    document.getElementById('posVal').textContent = POS;
+    draw();
+  }
+  if (e.key === ' ') {
+    e.preventDefault();
+    autoPlay = !autoPlay;
+    if (autoPlay) autoStep();
+  }
+});
+
+function autoStep() {
+  if (!autoPlay) return;
+  POS = (POS + 1) % SEQLEN;
+  posSlider.value = POS;
+  document.getElementById('posVal').textContent = POS;
+  draw();
+  setTimeout(autoStep, 90);
+}
+
+// ============ INIT ============
+window.addEventListener('load', draw);
+window.addEventListener('resize', draw);
+</script>
+
+</body>
+</html>
