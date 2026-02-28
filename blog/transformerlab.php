@@ -369,6 +369,8 @@ These act as the simplest form of a "neural network", one layer, no non-linear a
 
 Each word in the vocabulary lives as a **3D vector** in the full embedding space (shown as grey points). The matrices $W^Q$, $W^K$, and $W^V$ are **linear projections** — they take each 3D vector and project it onto a **2D subspace** (a plane through the origin).
 
+Each head has its own set of projection matrices, allowing the model to focus on different linguistic aspects (e.g., syntax vs. logic) simultaneously.
+
 - **Grey points**: Original 3D token embeddings.
 - **Colored points on the plane**: Where each token lands after being multiplied by the weight matrix. The colored lines show the projection "shadow" from 3D down to the plane.
 - **The translucent plane**: The 2D subspace that the weight matrix projects onto. Each of Q, K, V has a *different* plane, meaning each one "sees" the tokens from a different angle.
