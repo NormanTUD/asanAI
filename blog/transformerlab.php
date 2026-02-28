@@ -359,7 +359,7 @@ These act as the simplest form of a "neural network", one layer, no non-linear a
 </div>
 
 <div id="qkv-subspace-projection-viz" 
-     style="width:100%; min-height:520px; border:2px solid #e2e8f0; border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center; margin:20px 0;">
+     style="width:100%; min-height:520px; border:2px solid #e2e8f0; border-radius:12px; background:#f8fafc; align-items:center; justify-content:center; margin:20px 0;">
     <div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
         ⏳ Scroll here to load the Q, K, V subspace projection visualization...
     </div>
