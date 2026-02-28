@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Positional Encoding — Die Unendlichkeitsmaschine</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #05060a;
+    color: #ccc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+  h1 { margin-top: 14px; font-size: 1.3rem; color: #e8e8e8; }
+  .sub {
+    color: #555; font-size: 0.76rem; margin: 4px 0 12px;
+    text-align: center; max-width: 660px; line-height: 1.5;
+  }
+  .sub em { color: #f0c060; font-style: normal; }
+  .slider-row {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 4px; flex-wrap: wrap; justify-content: center;
+  }
+  .slider-row label { font-size: 0.72rem; color: #666; text-transform: uppercase; letter-spacing: .5px; }
+  .slider-row input[type=range] { width: 300px; accent-color: #d4a040; }
+  .slider-row .v { color: #f0c060; font-weight: 700; font-size: 1.15rem; min-width: 36px; text-align: center; }
+  canvas { border-radius: 10px; display: block; }
+  .key-hint { font-size: 0.66rem; color: #3a3a3a; margin: 3px 0 6px; }
+  .bottom {
+    max-width: 780px; padding: 14px 18px; margin: 8px 12px 24px;
+    background: #0a0c14; border: 1px solid #161a2a; border-radius: 10px;
+    font-size: 0.76rem; line-height: 1.65; color: #666;
+  }
+  .bottom strong { color: #bbb; }
+  .bottom em { color: #e0b050; font-style: normal; }
+</style>
+</head>
+<body>
+
+<h1>⚙ Die Unendlichkeitsmaschine</h1>
+<p class="sub">
+  Jedes Zahnrad dreht sich <em>exponentiell langsamer</em> als das vorherige — und sie greifen ineinander.
+  Das schnellste unterscheidet benachbarte Positionen. Das langsamste braucht tausende für eine Umdrehung.
+  Zusammen erzeugen sie ein <em>einzigartiges Interferenzmuster</em> — den Fingerabdruck jeder Position.
+</p>
+
+<div class="slider-row">
+  <label>Position</label>
+  <input type="range" id="posSlider" min="0" max="199" value="0">
+  <span class="v" id="posVal">0</span>
+</div>
+<p class="key-hint">← → Pfeiltasten · Leertaste = Animation · Mausrad = Feinsteuerung</p>
+
+<canvas id="C"></canvas>
+
+<div class="bottom">
+  <strong>⚙ Wie eine echte Unendlichkeitsmaschine:</strong>
+  Die Zahnräder greifen ineinander — jedes treibt das nächste an, aber dreht sich langsamer.
+  Benachbarte Zahnräder drehen sich in <em>entgegengesetzte Richtungen</em>, genau wie bei echten Getrieben.
+  <br><br>
+  <strong>Positional Encoding:</strong>
+  Jedes Zahnrad ist eine <em>Frequenzdimension</em>. Die Formel:
+  PE(pos, 2i) = sin(pos / 10000^(2i/d)),  PE(pos, 2i+1) = cos(pos / 10000^(2i/d)).
+  Die Frequenzen bilden eine <em>geometrische Progression</em> — genau wie die Übersetzungsverhältnisse.
+  <br><br>
+  <strong>Das Interferenzfeld:</strong>
+  Jeder Quellpunkt sendet Wellen aus. Wo sich <em>alle konstruktiv überlagern</em> → hell.
+  Dieses Muster ist für jede Position einzigartig.
+  <br><br>
+  <strong>Warum sin & cos?</strong> cos(a−b) = cos(a)cos(b) + sin(a)sin(b) →
+  die Ähnlichkeit zweier Positionen hängt nur vom <em>Abstand</em> ab, nicht von der absoluten Position.
+</div>
+
+<script>
+const canvas = document.getElementById('C');
+const ctx = canvas.getContext('2d');
+
+const NFREQ = 7;
+const WAVE_K = 0.16;
+let POS = 0;
+const SEQLEN = 200;
+
+// Brass/copper palette — brighter now
+const GEAR_COLORS = [
+  { h: 42, s: 90, l: 72 },
+  { h: 35, s: 82, l: 65 },
+  { h: 48, s: 75, l: 58 },
+  { h: 28, s: 70, l: 52 },
+  { h: 40, s: 62, l: 47 },
+  { h: 30, s: 55, l: 42 },
+  { h: 35, s: 45, l: 37 },
+];
+
+function getFreq(i) {
+  return 1 / Math.pow(10000, (2 * i) / (NFREQ * 2));
+}
+
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  const w = Math.min(window.innerWidth - 16, 960);
+  const h = Math.min(Math.max(window.innerHeight - 310, 370), 600);
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { w, h };
+}
+
+/*
+  GEAR MESHING MATH:
+  - Module m = constant for all gears (so teeth can mesh)
+  - Radius = m * teeth / 2  (pitch radius)
+  - Two gears mesh when center distance = r1 + r2
+  - Tooth on gear A aligns with gap on gear B:
+    phase offset = PI / teeth (half a tooth)
+  - Gear B rotation = -Gear A rotation * (teethA / teethB)
+*/
+
+function buildGearTrain(W, H) {
+  const module = 3.2; // tooth size module — constant for meshing
+  const gears = [];
+  const freqs = [];
+  for (let i = 0; i < NFREQ; i++) freqs.push(getFreq(i));
+
+  // Teeth count: more teeth = bigger gear = slower
+  // Scale so they fit on screen
+  const minTeeth = 12;
+  const maxTeeth = 48;
+  const teethCounts = [];
+  for (let i = 0; i < NFREQ; i++) {
+    const t = i / (NFREQ - 1);
+    teethCounts.push(Math.round(minTeeth + t * (maxTeeth - minTeeth)));
+  }
+
+  // Make sure adjacent teeth counts work well (even sum for clean meshing)
+  for (let i = 0; i < NFREQ; i++) {
+    if (teethCounts[i] % 2 !== 0) teethCounts[i]++;
+  }
+
+  // Build gears left to right, touching
+  const cy = H * 0.42;
+  let cx = 40;
+
+  for (let i = 0; i < NFREQ; i++) {
+    const teeth = teethCounts[i];
+    const pitchR = (module * teeth) / 2;
+    const toothH = module * 1.1; // addendum
+    const outerR = pitchR + toothH;
+
+    if (i > 0) {
+      const prev = gears[i - 1];
+      // Center distance = sum of pitch radii (teeth mesh at pitch circle)
+      cx = prev.cx + prev.pitchR + pitchR;
+    }
+
+    // Alternating vertical offset for visual interest
+    const yOff = (i % 2 === 0) ? 0 : module * 2.5;
+
+    gears.push({
+      cx, cy: cy + yOff,
+      pitchR, outerR, toothH, teeth, module,
+      freq: freqs[i],
+      color: GEAR_COLORS[i],
+      idx: i,
+      wavelength: (2 * Math.PI / freqs[i]).toFixed(0)
+    });
+  }
+
+  // Center the train
+  const totalW = gears[NFREQ - 1].cx + gears[NFREQ - 1].outerR + 40;
+  const offsetX = (W - totalW) / 2;
+  gears.forEach(g => g.cx += offsetX);
+
+  return gears;
+}
+
+/*
+  Compute rotation angle for each gear so teeth mesh correctly.
+  Gear 0 is the driver. Each subsequent gear:
+    angle[i] = -angle[i-1] * (teeth[i-1] / teeth[i]) + phase_offset
+  Phase offset ensures tooth meets gap.
+*/
+function getGearAngles(gears, pos) {
+  const angles = [];
+  // Driver gear: angle from positional encoding frequency
+  const driverAngle = pos * gears[0].freq;
+  angles.push(driverAngle);
+
+  for (let i = 1; i < gears.length; i++) {
+    const ratio = gears[i - 1].teeth / gears[i].teeth;
+    // Reverse direction and scale by ratio
+    const rawAngle = -angles[i - 1] * ratio;
+    // Phase offset: half a tooth on the new gear so tooth meets gap
+    const phaseOffset = Math.PI / gears[i].teeth;
+    angles.push(rawAngle + phaseOffset);
+  }
+  return angles;
+}
+
+// Source point on gear (using the actual encoding frequency, not gear rotation)
+function srcPoint(gear, pos) {
+  const a = pos * gear.freq;
+  return {
+    x: gear.cx + Math.cos(a) * gear.pitchR,
+    y: gear.cy - Math.sin(a) * gear.pitchR,
+    angle: a
+  };
+}
+
+/*
+  Draw a single gear with involute-style teeth.
+  Teeth are drawn as trapezoids for clean meshing appearance.
+*/
+function drawGear(g, angle) {
+  const { cx, cy, pitchR, toothH, teeth, module: mod, color: c } = g;
+  const dedendum = mod * 0.9; // below pitch circle
+  const rootR = pitchR - dedendum;
+  const tipR = pitchR + toothH;
+  const toothArc = (2 * Math.PI) / teeth;
+  const toothWidthHalf = toothArc * 0.22; // tooth is ~44% of pitch
+  const tipWidthHalf = toothArc * 0.16;   // narrower at tip (involute-ish)
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-angle);
+
+  // ---- GEAR BODY ----
+  ctx.beginPath();
+  for (let i = 0; i < teeth; i++) {
+    const a = i * toothArc;
+
+    // Root (gap between teeth)
+    const gapStart = a - toothWidthHalf;
+    const gapEnd = a + toothWidthHalf;
+
+    // Previous tooth tip end → root
+    if (i === 0) {
+      ctx.moveTo(Math.cos(gapStart) * rootR, Math.sin(gapStart) * rootR);
+    }
+
+    // Root arc (the gap)
+    // Just connect with line for simplicity — small arc
+    ctx.lineTo(Math.cos(gapStart) * rootR, Math.sin(gapStart) * rootR);
+
+    // Tooth flank: root → tip (left side)
+    ctx.lineTo(Math.cos(a - tipWidthHalf) * tipR, Math.sin(a - tipWidthHalf) * tipR);
+
+    // Tooth tip arc
+    ctx.lineTo(Math.cos(a + tipWidthHalf) * tipR, Math.sin(a + tipWidthHalf) * tipR);
+
+    // Tooth flank: tip → root (right side)
+    ctx.lineTo(Math.cos(gapEnd) * rootR, Math.sin(gapEnd) * rootR);
+
+    // Root to next tooth
+    const nextGapStart = (i + 1) * toothArc - toothWidthHalf;
+    ctx.lineTo(Math.cos(nextGapStart) * rootR, Math.sin(nextGapStart) * rootR);
+  }
+  ctx.closePath();
+
+  // Solid fill — much more visible now
+  const bodyGrad = ctx.createRadialGradient(0, 0, rootR * 0.5, 0, 0, tipR);
+  bodyGrad.addColorStop(0, `hsla(${c.h}, ${c.s}%, ${c.l + 5}%, 0.35)`);
+  bodyGrad.addColorStop(0.7, `hsla(${c.h}, ${c.s}%, ${c.l - 5}%, 0.22)`);
+  bodyGrad.addColorStop(1, `hsla(${c.h}, ${c.s}%, ${c.l - 10}%, 0.15)`);
+  ctx.fillStyle = bodyGrad;
+  ctx.fill();
+
+  // Strong outline
+  ctx.strokeStyle = `hsla(${c.h}, ${c.s}%, ${c.l + 10}%, 0.8)`;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Pitch circle (dashed, subtle)
+  ctx.beginPath();
+  ctx.arc(0, 0, pitchR, 0, Math.PI * 2);
+  ctx.strokeStyle = `hsla(${c.h}, ${c.s - 20}%, ${c.l}%, 0.15)`;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Axle hole
+  const axleR = Math.max(4, rootR * 0.12);
+  ctx.beginPath();
+  ctx.arc(0, 0, axleR, 0, Math.PI * 2);
+  ctx.fillStyle = `hsla(${c.h}, ${c.s - 20}%, ${Math.max(c.l - 20, 10)}%, 0.7)`;
+  ctx.fill();
+  ctx.strokeStyle = `hsla(${c.h}, ${c.s}%, ${c.l + 5}%, 0.5)`;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Spokes
+  const nSpokes = teeth > 30 ? 8 : teeth > 20 ? 6 : 4;
+  for (let s = 0; s < nSpokes; s++) {
+    const sa = (s / nSpokes) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(sa) * (axleR + 2), Math.sin(sa) * (axleR + 2));
+    ctx.lineTo(Math.cos(sa) * (rootR - 2), Math.sin(sa) * (rootR - 2));
+    ctx.strokeStyle = `hsla(${c.h}, ${c.s - 10}%, ${c.l}%, 0.18)`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // Inner ring
+  const innerRingR = (axleR + rootR) * 0.5;
+  ctx.beginPath();
+  ctx.arc(0, 0, innerRingR, 0, Math.PI * 2);
+  ctx.strokeStyle = `hsla(${c.h}, ${c.s - 10}%, ${c.l}%, 0.12)`;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+// Subtle warm field
+function warmMap(t) {
+  t = Math.max(0, Math.min(1, t));
+  // Much more subtle — darker overall
+  const r = Math.min(255, Math.floor(t < 0.3 ? 6 + t * 140 : t < 0.7 ? 48 + (t - 0.3) * 180 : 120 + (t - 0.7) * 200));
+  const g = Math.min(255, Math.floor(t < 0.3 ? 3 + t * 60 : t < 0.7 ? 21 + (t - 0.3) * 90 : 57 + (t - 0.7) * 140));
+  const b = Math.min(255, Math.floor(t < 0.5 ? 2 + t * 15 : 10 + (t - 0.5) * 40));
+  return [r, g, b];
+}
+
+function draw() {
+  const { w: W, h: H } = resize();
+  const gears = buildGearTrain(W, H);
+  const angles = getGearAngles(gears, POS);
+  const srcPts = gears.map(g => srcPoint(g, POS));
+
+  // ---- SUBTLE INTERFERENCE FIELD ----
+  const res = 4; // coarser for performance, field is subtle anyway
+  const dpr = window.devicePixelRatio || 1;
+  const imgData = ctx.createImageData(canvas.width, canvas.height);
+
+  for (let py = 0; py < H; py += res) {
+    for (let px = 0; px < W; px += res) {
+      let intensity = 0;
+      for (let i = 0; i < srcPts.length; i++) {
+        const dx = px - srcPts[i].x;
+        const dy = py - srcPts[i].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        intensity += Math.cos(dist * WAVE_K) / (1 + dist * 0.015);
+      }
+      intensity /= srcPts.length;
+      let t = (intensity + 1) / 2;
+      t = Math.pow(t, 0.8);
+      const [r, g, b] = warmMap(t);
+
+      for (let dy2 = 0; dy2 < res * dpr && (py * dpr + dy2) < canvas.height; dy2++) {
+        for (let dx2 = 0; dx2 < res * dpr && (px * dpr + dx2) < canvas.width; dx2++) {
+          const idx = ((py * dpr + dy2) * canvas.width + (px * dpr + dx2)) * 4;
+          imgData.data[idx] = r;
+          imgData.data[idx + 1] = g;
+          imgData.data[idx + 2] = b;
+          imgData.data[idx + 3] = 255;
+        }
+      }
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+
+  // ---- DRAW GEARS (strong, meshing) ----
+  gears.forEach((g, i) => {
+    drawGear(g, angles[i]);
+  });
+
+  // ---- MESH CONTACT POINTS ----
+  for (let i = 0; i < gears.length - 1; i++) {
+    const a = gears[i], b = gears[i + 1];
+    // Contact point is on the line between centers, at pitch circle
+    const dx = b.cx - a.cx;
+    const dy = b.cy - a.cy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const nx = dx / dist, ny = dy / dist;
+    const meshX = a.cx + nx * a.pitchR;
+    const meshY = a.cy + ny * a.pitchR;
+
+    // Spark glow
+    const sparkGlow = ctx.createRadialGradient(meshX, meshY, 0, meshX, meshY, 10);
+    sparkGlow.addColorStop(0, 'rgba(255, 230, 130, 0.35)');
+    sparkGlow.addColorStop(1, 'rgba(255, 230, 130, 0)');
+    ctx.fillStyle = sparkGlow;
+    ctx.beginPath();
+    ctx.arc(meshX, meshY, 10, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ratio label
+    const ratio = (a.teeth / b.teeth).toFixed(2);
+    const labelX = meshX;
+    const labelY = meshY - 16;
+    ctx.fillStyle = 'rgba(255, 220, 110, 0.6)';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${a.teeth}:${b.teeth}`, labelX, labelY);
+    ctx.fillStyle = 'rgba(255, 220, 110, 0.35)';
+    ctx.font = '7px sans-serif';
+    ctx.fillText(`(${ratio}× langsamer)`, labelX, labelY + 10);
+  }
+
+  // ---- GEAR LABELS ----
+  gears.forEach((g, i) => {
+    const c = g.color;
+    const topY = g.cy - g.outerR;
+    const botY = g.cy + g.outerR;
+
+    // Speed label for first and last
+    if (i === 0) {
+      ctx.fillStyle = 'rgba(255, 215, 80, 0.85)';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('⚡ SCHNELLSTES', g.cx, topY - 22);
+      ctx.fillStyle = 'rgba(255, 215, 80, 0.45)';
+      ctx.font = '8px sans-serif';
+      ctx.fillText('feine Details', g.cx, topY - 11);
+    } else if (i === NFREQ - 1) {
+      ctx.fillStyle = 'rgba(170, 150, 100, 0.75)';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🐢 LANGSAMSTES', g.cx, topY - 22);
+      ctx.fillStyle = 'rgba(170, 150, 100, 0.4)';
+      ctx.font = '8px sans-serif';
+      ctx.fillText('grobe Struktur', g.cx, topY - 11);
+    }
+
+    // Gear name + teeth count
+    ctx.fillStyle = `hsla(${c.h}, ${c.s}%, ${c.l + 12}%, 0.8)`;
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`⚙ Zahnrad ${i}`, g.cx, botY + 16);
+    ctx.fillStyle = `hsla(${c.h}, ${c.s - 10}%, ${c.l}%, 0.5)`;
+    ctx.font = '8px sans-serif';
+    ctx.fillText(`${g.teeth} Zähne · λ≈${g.wavelength}`, g.cx, botY + 28);
+
+    // Angle + rotations
+    const realAngle = POS * g.freq;
+    const deg = ((realAngle * 180 / Math.PI) % 360).toFixed(1);
+    const rotations = (realAngle / (2 * Math.PI)).toFixed(2);
+    ctx.fillStyle = `hsla(${c.h}, ${c.s}%, ${c.l + 5}%, 0.4)`;
+    ctx.font = '8px sans-serif';
+    ctx.fillText(`θ=${deg}° (${rotations} Umdr.)`, g.cx, botY + 40);
+
+    // sin/cos
+    ctx.fillStyle = `hsla(${c.h}, ${c.s - 20}%, ${c.l}%, 0.35)`;
+    ctx.font = '7px monospace';
+    ctx.fillText(`sin=${Math.sin(realAngle).toFixed(3)} cos=${Math.cos(realAngle).toFixed(3)}`, g.cx, botY + 51);
+  });
+
+  // ---- SOURCE POINTS ----
+  srcPts.forEach((pt, i) => {
+    const c = gears[i].color;
+
+    // Ripples
+    for (let ring = 1; ring <= 4; ring++) {
+      const rr = ring * (2 * Math.PI / WAVE_K) * 0.16;
+      ctx.strokeStyle = `hsla(${c.h}, ${c.s}%, ${c.l + 15}%, ${0.1 / (ring * 0.5)})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, rr, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Glow
+    const glow = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 18);
+    glow.addColorStop(0, `hsla(${c.h}, 95%, 90%, 0.95)`);
+    glow.addColorStop(0.4, `hsla(${c.h}, 95%, 90%, 0.25)`);
+    glow.addColorStop(1, `hsla(${c.h}, 95%, 90%, 0)`);
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 18, 0, Math.PI * 2);
+    ctx.fill();
+
+    // White dot
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // ---- WAVE COLLAPSE ----
+  const centX = srcPts.reduce((s, p) => s + p.x, 0) / srcPts.length;
+  const centY = srcPts.reduce((s, p) => s + p.y, 0) / srcPts.length;
+
+  let maxInt = -Infinity, maxX = centX, maxY = centY;
+  for (let sy = centY - 50; sy <= centY + 50; sy += 3) {
+    for (let sx = centX - 50; sx <= centX + 50; sx += 3) {
+      let val = 0;
+      for (let i = 0; i < srcPts.length; i++) {
+        const dx = sx - srcPts[i].x, dy = sy - srcPts[i].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        val += Math.cos(dist * WAVE_K) / (1 + dist * 0.015);
+      }
+      if (val > maxInt) { maxInt = val; maxX = sx; maxY = sy; }
+    }
+  }
+
+  // Lines to collapse
+  srcPts.forEach((pt, i) => {
+    ctx.strokeStyle = `hsla(${gears[i].color.h}, 45%, 60%, 0.1)`;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 5]);
+    ctx.beginPath();
+    ctx.moveTo(pt.x, pt.y);
+    ctx.lineTo(maxX, maxY);
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
+  // Collapse glow
+  const colGlow = ctx.createRadialGradient(maxX, maxY, 0, maxX, maxY, 35);
+  colGlow.addColorStop(0, 'rgba(255, 225, 110, 0.2)');
+  colGlow.addColorStop(0.5, 'rgba(255, 190, 70, 0.06)');
+  colGlow.addColorStop(1, 'rgba(255, 190, 70, 0)');
+  ctx.fillStyle = colGlow;
+  ctx.beginPath();
+  ctx.arc(maxX, maxY, 35, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Crosshair
+  ctx.strokeStyle = 'rgba(255, 225, 120, 0.5)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(maxX - 10, maxY); ctx.lineTo(maxX + 10, maxY);
+  ctx.moveTo(maxX, maxY - 10); ctx.lineTo(maxX, maxY + 10);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255, 225, 120, 0.8)';
+  ctx.font = 'bold 10px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('⚡ WELLENKOLLAPS', maxX, maxY - 42);
+  ctx.fillStyle = 'rgba(255, 225, 120, 0.45)';
+  ctx.font = '9px sans-serif';
+  ctx.fillText(`Fingerabdruck Position ${POS}`, maxX, maxY - 30);
+
+  // ---- TOP-LEFT: POSITION ----
+  ctx.fillStyle = 'rgba(5,6,10,0.85)';
+  roundRect(ctx, 8, 8, 170, 55, 8); ctx.fill();
+  ctx.fillStyle = 'rgba(255,220,120,0.5)';
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('TOKEN POSITION', 18, 24);
+  ctx.fillStyle = '#f0c060';
+  ctx.font = 'bold 24px sans-serif';
+  ctx.fillText(`${POS}`, 18, 50);
+  ctx.fillStyle = 'rgba(255,220,120,0.3)';
+  ctx.font = '9px sans-serif';
+  ctx.fillText(`von ${SEQLEN}`, 60, 50);
+
+  // ---- TOP-RIGHT: ENCODING VECTOR ----
+  const vecW = Math.min(NFREQ * 44 + 40, W * 0.45);
+  const vecX = W - vecW - 8;
+  ctx.fillStyle = 'rgba(5,6,10,0.85)';
+  roundRect(ctx, vecX, 8, vecW, 55, 8); ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,220,120,0.5)';
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(`ENCODING PE[${POS}]`, vecX + 10, 24);
+
+  const cellW = 17;
+  const cellStart = vecX + 12;
+  for (let i = 0; i < NFREQ; i++) {
+    const freq = gears[i].freq;
+    const gc = gears[i].color;
+    const sinV = Math.sin(POS * freq);
+    const cosV = Math.cos(POS * freq);
+
+    [sinV, cosV].forEach((v, j) => {
+      const ci = i * 2 + j;
+      const x = cellStart + ci * (cellW + 2);
+      let r, g, b;
+      if (v >= 0) {
+        r = Math.floor(20 + v * 200);
+        g = Math.floor(15 + v * 140);
+        b = Math.floor(5 + v * 20);
+      } else {
+        const a = -v;
+        r = Math.floor(5 + a * 15);
+        g = Math.floor(10 + a * 40);
+        b = Math.floor(20 + a * 180);
+      }
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(x, 32, cellW, 13);
+      ctx.strokeStyle = `hsla(${gc.h}, ${gc.s}%, ${gc.l}%, 0.3)`;
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(x, 32, cellW, 13);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.font = '6px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(v.toFixed(2), x + cellW / 2, 42);
+
+      ctx.fillStyle = `hsla(${gc.h}, ${gc.s}%, ${gc.l}%, 0.4)`;
+      ctx.font = '6px sans-serif';
+      ctx.fillText(j === 0 ? 's' : 'c', x + cellW / 2, 54);
+    });
+  }
+
+  // ---- BOTTOM-RIGHT: FORMULA ----
+  const fW = 280, fH = 50;
+  const fX = W - fW - 10, fY = H - fH - 8;
+  ctx.fillStyle = 'rgba(5,6,10,0.85)';
+  roundRect(ctx, fX, fY, fW, fH, 8); ctx.fill();
+
+  ctx.fillStyle = 'rgba(255,220,120,0.4)';
+  ctx.font = '8px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('DIE FORMEL', fX + 10, fY + 13);
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '10px monospace';
+  ctx.fillText('PE(pos,2i)   = sin(pos/10000^(2i/d))', fX + 10, fY + 28);
+  ctx.fillText('PE(pos,2i+1) = cos(pos/10000^(2i/d))', fX + 10, fY + 42);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+// ============ CONTROLS ============
+const posSlider = document.getElementById('posSlider');
+posSlider.addEventListener('input', function() {
+  POS = +this.value;
+  document.getElementById('posVal').textContent = POS;
+  draw();
+});
+
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  POS = Math.max(0, Math.min(SEQLEN - 1, POS + (e.deltaY > 0 ? 1 : -1)));
+  posSlider.value = POS;
+  document.getElementById('posVal').textContent = POS;
+  draw();
+}, { passive: false });
+
+let autoPlay = false;
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    POS = Math.min(POS + 1, SEQLEN - 1);
+    posSlider.value = POS;
+    document.getElementById('posVal').textContent = POS;
+    draw();
+  }
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    POS = Math.max(POS - 1, 0);
+    posSlider.value = POS;
+    document.getElementById('posVal').textContent = POS;
+    draw();
+  }
+  if (e.key === ' ') {
+    e.preventDefault();
+    autoPlay = !autoPlay;
+    if (autoPlay) autoStep();
+  }
+});
+
+function autoStep() {
+  if (!autoPlay) return;
+  POS = (POS + 1) % SEQLEN;
+  posSlider.value = POS;
+  document.getElementById('posVal').textContent = POS;
+  draw();
+  setTimeout(autoStep, 90);
+}
+
+window.addEventListener('load', draw);
+window.addEventListener('resize', draw);
+</script>
+
+</body>
+</html>
+
