@@ -1,3 +1,14 @@
+6. LayerNorm als geometrische Normalisierung
+Idee: LayerNorm projiziert Vektoren auf eine Einheitskugel (nach Zentrierung). Das lässt sich direkt in 3D zeigen:
+    Zeige die Original-Vektoren als Punkte im 3D-Raum
+    Zeige die Einheitskugel (Radius 1)
+    Zeige, wie LayerNorm jeden Vektor auf die Kugeloberfläche "zieht"
+    γγ und ββ skalieren und verschieben dann die Punkte auf der Kugel
+
+
+
+
+
 positional embeddings unendlichkeitsmaschine https://www.exploratorium.edu/exhibits/machine-with-concrete
 
 https://de.wikipedia.org/wiki/As_We_May_Think
