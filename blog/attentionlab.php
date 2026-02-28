@@ -1,6 +1,8 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
+TODO Long Distance Dependencies
+
 In a Transformer model, words don't live in a dictionary; they live in a **Semantic Universe**. Every concept, from "apple" to "existentialism", is assigned a specific coordinate in a high-dimensional map. However, some words suffer from a serious identity crisis.
 
 Even though in this example, we treat tokens as words, they can also be parts of words or single characters like a comma or a semicolon due to *Byte-Pair-Encodings*, invented by \citeauthor{gage1994bpe}.
