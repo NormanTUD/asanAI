@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sinusoidal Positional Embeddings — Interactive Visualization</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0f1117;
+    color: #e0e0e0;
+    overflow-x: hidden;
+  }
+  h1 {
+    text-align: center;
+    padding: 24px 16px 8px;
+    font-size: 1.6rem;
+    background: linear-gradient(90deg, #6ee7b7, #3b82f6, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 12px 20px 20px;
+  }
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .control-group label {
+    font-size: 0.82rem;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .control-group input[type=range] {
+    width: 180px;
+    accent-color: #3b82f6;
+  }
+  .control-group .val {
+    font-size: 0.9rem;
+    color: #6ee7b7;
+    font-weight: 600;
+  }
+  .sections {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding: 0 20px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #181b24;
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid #2a2d3a;
+  }
+  .card h2 {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    color: #93c5fd;
+  }
+  .card p.desc {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  canvas {
+    width: 100%;
+    border-radius: 8px;
+    background: #12141c;
+  }
+  .heatmap-container {
+    overflow-x: auto;
+  }
+  #dotProductCanvas {
+    max-height: 340px;
+  }
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    justify-content: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    color: #bbb;
+  }
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+  }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+  @media (max-width: 800px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Sinusoidal Positional Embeddings</h1>
+<p class="subtitle">Interactive visualization — see how Transformers encode position</p>
+
+<div class="controls">
+  <div class="control-group">
+    <label>Sequence Length</label>
+    <input type="range" id="seqLen" min="8" max="128" value="50" step="1">
+    <span class="val" id="seqLenVal">50</span>
+  </div>
+  <div class="control-group">
+    <label>Embedding Dim</label>
+    <input type="range" id="embDim" min="4" max="128" value="64" step="2">
+    <span class="val" id="embDimVal">64</span>
+  </div>
+  <div class="control-group">
+    <label>Highlighted Position</label>
+    <input type="range" id="hlPos" min="0" max="49" value="10" step="1">
+    <span class="val" id="hlPosVal">10</span>
+  </div>
+</div>
+
+<div class="sections">
+
+  <!-- Section 1: The Waves -->
+  <div class="card">
+    <h2>① Individual Sinusoidal Waves per Dimension</h2>
+    <p class="desc">
+      Each dimension of the positional embedding is a sine or cosine wave at a different frequency.
+      Low dimensions oscillate fast (fine-grained position), high dimensions oscillate slowly (coarse position).
+      Think of it like a <strong>clock</strong>: the second hand spins fast, the hour hand spins slowly — together they uniquely identify any time.
+    </p>
+    <canvas id="wavesCanvas" height="300"></canvas>
+    <div class="legend" id="wavesLegend"></div>
+  </div>
+
+  <div class="two-col">
+    <!-- Section 2: Circle view -->
+    <div class="card">
+      <h2>② The Circle Intuition</h2>
+      <p class="desc">
+        Each pair of dimensions (sin, cos at the same frequency) traces a <strong>circle</strong>.
+        As position advances, the point rotates. Different frequency pairs rotate at different speeds.
+        The highlighted position is shown as a bright dot.
+      </p>
+      <canvas id="circleCanvas" height="340"></canvas>
+    </div>
+
+    <!-- Section 3: Dot product -->
+    <div class="card">
+      <h2>③ Dot Product = Relative Distance</h2>
+      <p class="desc">
+        The dot product of two positional encodings depends <strong>only on their distance</strong>, not absolute position.
+        This plot shows dot product of the highlighted position with every other position. Notice the symmetric, distance-dependent pattern.
+      </p>
+      <canvas id="dotProductCanvas" height="340"></canvas>
+    </div>
+  </div>
+
+  <!-- Section 4: Heatmap -->
+  <div class="card">
+    <h2>④ Full Positional Encoding Heatmap</h2>
+    <p class="desc">
+      Each row is a position (token index), each column is an embedding dimension.
+      Color encodes the value (blue = −1, black = 0, orange = +1).
+      Notice the "barcode" pattern: low dimensions change rapidly, high dimensions change slowly — like binary counting but continuous.
+    </p>
+    <div class="heatmap-container">
+      <canvas id="heatmapCanvas" height="400"></canvas>
+    </div>
+  </div>
+
+  <!-- Section 5: Binary analogy -->
+  <div class="card">
+    <h2>⑤ Binary Counter Analogy</h2>
+    <p class="desc">
+      The top row shows actual binary representations. The bottom row shows the sinusoidal encoding.
+      See how the sinusoidal version is a <strong>smooth, continuous generalization</strong> of binary counting!
+    </p>
+    <canvas id="binaryCanvas" height="300"></canvas>
+  </div>
+
+</div>
+
+<script>
+// ============ MATH ============
+function positionalEncoding(seqLen, dModel) {
+  // PE(pos, 2i)   = sin(pos / 10000^(2i/dModel))
+  // PE(pos, 2i+1) = cos(pos / 10000^(2i/dModel))
+  const pe = [];
+  for (let pos = 0; pos < seqLen; pos++) {
+    const row = [];
+    for (let i = 0; i < dModel; i++) {
+      const dimIdx = Math.floor(i / 2);
+      const freq = 1 / Math.pow(10000, (2 * dimIdx) / dModel);
+      row.push(i % 2 === 0 ? Math.sin(pos * freq) : Math.cos(pos * freq));
+    }
+    pe.push(row);
+  }
+  return pe;
+}
+
+function dotProduct(a, b) {
+  let s = 0;
+  for (let i = 0; i < a.length; i++) s += a[i] * b[i];
+  return s;
+}
+
+// ============ GLOBALS ============
+let SEQ_LEN = 50, EMB_DIM = 64, HL_POS = 10;
+let PE = positionalEncoding(SEQ_LEN, EMB_DIM);
+
+function recompute() {
+  PE = positionalEncoding(SEQ_LEN, EMB_DIM);
+}
+
+// ============ DRAWING HELPERS ============
+function hiDPI(canvas, w, h) {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return ctx;
+}
+
+const COLORS = [
+  '#f87171','#fb923c','#facc15','#4ade80','#22d3ee','#818cf8','#e879f9','#f472b6',
+  '#34d399','#60a5fa','#a78bfa','#fbbf24'
+];
+
+// ============ 1. WAVES ============
+function drawWaves() {
+  const canvas = document.getElementById('wavesCanvas');
+  const W = canvas.parentElement.clientWidth - 40;
+  const H = 280;
+  const ctx = hiDPI(canvas, W, H);
+
+  ctx.fillStyle = '#12141c';
+  ctx.fillRect(0, 0, W, H);
+
+  const numWaves = Math.min(6, Math.floor(EMB_DIM / 2));
+  const dimIndices = [];
+  for (let k = 0; k < numWaves; k++) {
+    dimIndices.push(Math.floor(k * (EMB_DIM / 2 - 1) / (numWaves - 1)));
+  }
+
+  const padL = 50, padR = 20, padT = 20, padB = 30;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  // axes
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT);
+  ctx.lineTo(padL, padT + plotH);
+  ctx.lineTo(padL + plotW, padT + plotH);
+  ctx.stroke();
+
+  // zero line
+  ctx.strokeStyle = '#2a2d3a';
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  const zeroY = padT + plotH / 2;
+  ctx.moveTo(padL, zeroY);
+  ctx.lineTo(padL + plotW, zeroY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // labels
+  ctx.fillStyle = '#666';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('+1', padL - 6, padT + 12);
+  ctx.fillText('0', padL - 6, zeroY + 4);
+  ctx.fillText('-1', padL - 6, padT + plotH);
+  ctx.textAlign = 'center';
+  ctx.fillText('Position →', padL + plotW / 2, H - 4);
+
+  // draw waves
+  const legendEl = document.getElementById('wavesLegend');
+  legendEl.innerHTML = '';
+  dimIndices.forEach((di, k) => {
+    const freq = 1 / Math.pow(10000, (2 * di) / EMB_DIM);
+    const color = COLORS[k % COLORS.length];
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x = 0; x <= plotW; x++) {
+      const pos = (x / plotW) * (SEQ_LEN - 1);
+      const val = Math.sin(pos * freq);
+      const px = padL + x;
+      const py = padT + plotH / 2 - val * (plotH / 2 - 4);
+      x === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    // highlight position dot
+    const hlX = padL + (HL_POS / (SEQ_LEN - 1)) * plotW;
+    const hlVal = Math.sin(HL_POS * freq);
+    const hlY = padT + plotH / 2 - hlVal * (plotH / 2 - 4);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(hlX, hlY, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // legend
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<div class="legend-swatch" style="background:${color}"></div>dim pair ${di} (λ≈${(2*Math.PI/freq).toFixed(0)})`;
+    legendEl.appendChild(item);
+  });
+
+  // vertical line at highlighted pos
+  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+  ctx.setLineDash([3,3]);
+  ctx.lineWidth = 1;
+  const hlX = padL + (HL_POS / (SEQ_LEN - 1)) * plotW;
+  ctx.beginPath();
+  ctx.moveTo(hlX, padT);
+  ctx.lineTo(hlX, padT + plotH);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#fff';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`pos=${HL_POS}`, hlX, padT + plotH + 16);
+}
+
+// ============ 2. CIRCLES ============
+function drawCircles() {
+  const canvas = document.getElementById('circleCanvas');
+  const W = canvas.parentElement.clientWidth - 40;
+  const H = 320;
+  const ctx = hiDPI(canvas, W, H);
+
+  ctx.fillStyle = '#12141c';
+  ctx.fillRect(0, 0, W, H);
+
+  const numCircles = Math.min(4, Math.floor(EMB_DIM / 2));
+  const dimIndices = [];
+  for (let k = 0; k < numCircles; k++) {
+    dimIndices.push(Math.floor(k * (EMB_DIM / 2 - 1) / Math.max(numCircles - 1, 1)));
+  }
+
+  const cols = numCircles <= 2 ? numCircles : Math.min(numCircles, 4);
+  const rows = Math.ceil(numCircles / cols);
+  const cellW = W / cols;
+  const cellH = H / rows;
+  const R = Math.min(cellW, cellH) * 0.32;
+
+  dimIndices.forEach((di, k) => {
+    const col = k % cols;
+    const row = Math.floor(k / cols);
+    const cx = cellW * col + cellW / 2;
+    const cy = cellH * row + cellH / 2;
+    const freq = 1 / Math.pow(10000, (2 * di) / EMB_DIM);
+    const color = COLORS[k % COLORS.length];
+
+    // circle outline
+    ctx.strokeStyle = '#2a2d3a';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // trace path
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath();
+    for (let pos = 0; pos < SEQ_LEN; pos++) {
+      const angle = pos * freq;
+      const px = cx + Math.cos(angle) * R;
+      const py = cy - Math.sin(angle) * R;
+      pos === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // position dots
+    for (let pos = 0; pos < SEQ_LEN; pos++) {
+      const angle = pos * freq;
+      const px = cx + Math.cos(angle) * R;
+      const py = cy - Math.sin(angle) * R;
+      ctx.fillStyle = pos === HL_POS ? '#fff' : color;
+      ctx.globalAlpha = pos === HL_POS ? 1 : 0.25;
+      ctx.beginPath();
+      ctx.arc(px, py, pos === HL_POS ? 5 : 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // label
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`dim pair ${di}`, cx, cy + R + 18);
+    ctx.fillStyle = '#666';
+    ctx.fillText(`freq=${freq.toFixed(5)}`, cx, cy + R + 32);
+  });
+}
+
+// ============ 3. DOT PRODUCT ============
+function drawDotProduct() {
+  const canvas = document.getElementById('dotProductCanvas');
+  const W = canvas.parentElement.clientWidth - 40;
+  const H = 300;
+  const ctx = hiDPI(canvas, W, H);
+
+  ctx.fillStyle = '#12141c';
+  ctx.fillRect(0, 0, W, H);
+
+  const padL = 55, padR = 20, padT = 20, padB = 40;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  const hlVec = PE[HL_POS];
+  const dots = PE.map(row => dotProduct(hlVec, row));
+  const maxDot = Math.max(...dots.map(Math.abs));
+
+  // axes
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padL, padT);
+  ctx.lineTo(padL, padT + plotH);
+  ctx.lineTo(padL + plotW, padT + plotH);
+  ctx.stroke();
+
+  // zero line
+  const zeroY = padT + plotH / 2;
+  ctx.strokeStyle = '#2a2d3a';
+  ctx.setLineDash([4,4]);
+  ctx.beginPath();
+  ctx.moveTo(padL, zeroY);
+  ctx.lineTo(padL + plotW, zeroY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // bars
+  const barW = Math.max(1, plotW / SEQ_LEN - 1);
+  dots.forEach((d, i) => {
+    const normD = d / maxDot;
+    const x = padL + (i / SEQ_LEN) * plotW;
+    const barH = Math.abs(normD) * (plotH / 2);
+    const y = normD >= 0 ? zeroY - barH : zeroY;
+    const isHL = i === HL_POS;
+    ctx.fillStyle = isHL ? '#fff' : (normD >= 0 ? '#3b82f6' : '#f87171');
+    ctx.globalAlpha = isHL ? 1 : 0.7;
+    ctx.fillRect(x, y, barW, barH);
+  });
+  ctx.globalAlpha = 1;
+
+  // labels
+  ctx.fillStyle = '#666';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Position →', padL + plotW / 2, H - 6);
+  ctx.textAlign = 'right';
+  ctx.fillText(`+${maxDot.toFixed(0)}`, padL - 6, padT + 12);
+  ctx.fillText('0', padL - 6, zeroY + 4);
+  ctx.fillText(`-${maxDot.toFixed(0)}`, padL - 6, padT + plotH);
+
+  ctx.fillStyle = '#93c5fd';
+  ctx.textAlign = 'center';
+  ctx.fillText(`Dot product of pos ${HL_POS} with all others`, padL + plotW / 2, H - 20);
+}
+
+// ============ 4. HEATMAP ============
+function drawHeatmap() {
+  const canvas = document.getElementById('heatmapCanvas');
+  const W = canvas.parentElement.clientWidth - 40;
+  const H = 380;
+  const ctx = hiDPI(canvas, W, H);
+
+  ctx.fillStyle = '#12141c';
+  ctx.fillRect(0, 0, W, H);
+
+  const padL = 45, padR = 60, padT = 20, padB = 30;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  const cellW = plotW / EMB_DIM;
+  const cellH = plotH / SEQ_LEN;
+
+  for (let pos = 0; pos < SEQ_LEN; pos++) {
+    for (let d = 0; d < EMB_DIM; d++) {
+      const v = PE[pos][d]; // -1 to 1
+      let r, g, b;
+      if (v >= 0) {
+        // black to orange
+        r = Math.floor(v * 251);
+        g = Math.floor(v * 146);
+        b = Math.floor(v * 30);
+      } else {
+        // black to blue
+        const av = -v;
+        r = Math.floor(av * 30);
+        g = Math.floor(av * 100);
+        b = Math.floor(av * 240);
+      }
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(padL + d * cellW, padT + pos * cellH, Math.ceil(cellW), Math.ceil(cellH));
+    }
+  }
+
+  // highlight row
+  ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(padL, padT + HL_POS * cellH, plotW, cellH);
+
+  // labels
+  ctx.fillStyle = '#666';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Embedding Dimension →', padL + plotW / 2, H - 6);
+  ctx.save();
+  ctx.translate(12, padT + plotH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('Position →', 0, 0);
+  ctx.restore();
+
+  // color bar
+  const cbX = W - padR + 14;
+  const cbW = 14;
+  for (let y = 0; y < plotH; y++) {
+    const v = 1 - 2 * (y / plotH); // +1 top, -1 bottom
+    let r, g, b2;
+    if (v >= 0) {
+      r = Math.floor(v * 251); g = Math.floor(v * 146); b2 = Math.floor(v * 30);
+    } else {
+      const av = -v;
+      r = Math.floor(av * 30); g = Math.floor(av * 100); b2 = Math.floor(av * 240);
+    }
+    ctx.fillStyle = `rgb(${r},${g},${b2})`;
+    ctx.fillRect(cbX, padT + y, cbW, 1);
+  }
+  ctx.fillStyle = '#aaa';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('+1', cbX + cbW + 4, padT + 8);
+  ctx.fillText('0', cbX + cbW + 4, padT + plotH / 2 + 4);
+  ctx.fillText('-1', cbX + cbW + 4, padT + plotH);
+}
+
+// ============ 5. BINARY ANALOGY ============
+function drawBinary() {
+  const canvas = document.getElementById('binaryCanvas');
+  const W = canvas.parentElement.clientWidth - 40;
+  const H = 280;
+  const ctx = hiDPI(canvas, W, H);
+
+  ctx.fillStyle = '#12141c';
+  ctx.fillRect(0, 0, W, H);
+
+  const numBits = 8;
+  const numPos = Math.min(SEQ_LEN, 32);
+  const padL = 50, padR = 20, padT = 30, padB = 10;
+  const plotW = W - padL - padR;
+  const halfH = (H - padT - padB) / 2 - 10;
+
+  const cellW = plotW / numPos;
+  const cellH1 = halfH / numBits;
+
+  // Binary section
+  ctx.fillStyle = '#aaa';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('Binary', padL - 6, padT + halfH / 2 + 4);
+
+  for (let pos = 0; pos < numPos; pos++) {
+    for (let bit = 0; bit < numBits; bit++) {
+      const val = (pos >> bit) & 1;
+      ctx.fillStyle = val ? '#facc15' : '#1a1d28';
+      ctx.fillRect(padL + pos * cellW, padT + (numBits - 1 - bit) * cellH1, Math.ceil(cellW) - 1, Math.ceil(cellH1) - 1);
+    }
+  }
+
+  // Sinusoidal section
+  const topSin = padT + halfH + 20;
+  ctx.fillStyle = '#aaa';
+  ctx.textAlign = 'right';
+  ctx.fillText('Sinusoidal', padL - 6, topSin + halfH / 2 + 4);
+
+  const sinDim = numBits * 2; // use same number of "visual rows" as bits
+  const cellH2 = halfH / sinDim;
+  const peSm = positionalEncoding(numPos, sinDim);
+
+  for (let pos = 0; pos < numPos; pos++) {
+    for (let d = 0; d < sinDim; d++) {
+      const v = peSm[pos][d];
+      let r, g, b;
+      if (v >= 0) {
+        r = Math.floor(v * 250); g = Math.floor(v * 204); b = Math.floor(v * 21);
+      } else {
+        const av = -v;
+        r = Math.floor(av * 26); g = Math.floor(av * 29); b = Math.floor(av * 40);
+      }
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(padL + pos * cellW, topSin + d * cellH2, Math.ceil(cellW) - 1, Math.ceil(cellH2) - 1);
+    }
+  }
+
+  // position labels
+  ctx.fillStyle = '#555';
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'center';
+  for (let pos = 0; pos < numPos; pos += Math.max(1, Math.floor(numPos / 16))) {
+    ctx.fillText(pos, padL + pos * cellW + cellW / 2, padT - 6);
+  }
+}
+
+// ============ BINDALL ============
+function drawAll() {
+  drawWaves();
+  drawCircles();
+  drawDotProduct();
+  drawHeatmap();
+  drawBinary();
+}
+
+function bindControls() {
+  const seqSlider = document.getElementById('seqLen');
+  const dimSlider = document.getElementById('embDim');
+  const hlSlider = document.getElementById('hlPos');
+
+  seqSlider.addEventListener('input', () => {
+    SEQ_LEN = +seqSlider.value;
+    document.getElementById('seqLenVal').textContent = SEQ_LEN;
+    hlSlider.max = SEQ_LEN - 1;
+    if (HL_POS >= SEQ_LEN) { HL_POS = SEQ_LEN - 1; hlSlider.value = HL_POS; }
+    document.getElementById('hlPosVal').textContent = HL_POS;
+    recompute();
+    drawAll();
+  });
+
+  dimSlider.addEventListener('input', () => {
+    EMB_DIM = +dimSlider.value;
+    document.getElementById('embDimVal').textContent = EMB_DIM;
+    recompute();
+    drawAll();
+  });
+
+  hlSlider.addEventListener('input', () => {
+    HL_POS = +hlSlider.value;
+    document.getElementById('hlPosVal').textContent = HL_POS;
+    drawAll();
+  });
+}
+
+// ============ INIT ============
+window.addEventListener('load', () => {
+  bindControls();
+  recompute();
+  drawAll();
+});
+
+window.addEventListener('resize', () => {
+  drawAll();
+});
+</script>
+
+</body>
+</html>
