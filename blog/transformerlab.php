@@ -355,6 +355,8 @@ To allow a token to "scout" the rest of the sequence, we derive three distinct r
 * **Key ($K = h_0 W^K$)**: Represents "What information do I contain?"
 * **Value ($V = h_0 W^V$)**: Represents "What is the actual content I offer?"
 
+These act as the simplest form of a "neural network", one layer, no non-linear activation function. They are used to project the tokens from the Embedding Space into subspaces of the full Embedding Space.
+
 **The Shapes:**
 * **Hidden State ($h_0$)**: $(\text{Batch}, \text{Length}, d_{\text{model}})$
 * **Weights ($W^Q, W^K, W^V$)**: $(d_{\text{model}}, d_{k})$
