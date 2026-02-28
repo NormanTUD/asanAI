@@ -136,14 +136,14 @@ The **context window** defines the maximum number of tokens a Transformer can "s
 But the context window is more than a technical parameter, it maps onto a powerful cognitive analogy. The **weights** of the model are its **long-term memory**: everything the model learned during training is crystallized into these fixed parameters, and they do not change during inference. The **context window**, by contrast, is the model's **working memory** or **short-term memory**: it is constructed fresh for every conversation, holds only what has been provided in the current prompt, and is entirely volatile. This maps directly to the psychological distinction between **declarative memory** (stable, accumulated knowledge) and **working memory** (temporary, capacity-limited, actively maintained). When the context window overflows, when a conversation or document exceeds the token limit, the model experiences something analogous to **cognitive overload**: it literally cannot hold all the information simultaneously, and earlier tokens are dropped or truncated. The deeper implication is striking: an LLM has **amnesia between conversations** (no persistent short-term memory carries over) and a **frozen worldview** (no weight updates occur during inference). Every interaction begins from the same fixed long-term knowledge, with no recollection of yesterday. It is, in a sense, like speaking to someone who wakes up every morning with the same education but no memory of any previous conversation.
 
 
-## 1. Tokenization
+## Tokenization
 The journey of a sentence begins with **Tokenization**, which decomposes raw text into **tokens**. In real LLMs, you would use **Byte-Pair Encoding** (**BPE**), this approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language. But since our embedding space and the amount of data browsers can process is too small, we stick with word-wise tokenization by default. 
 </div>
 
 <div id="transformer-viz-bpe" class="viz-container"></div>
 
 <div class="md">
-## 2. Embedding & The Feature Space
+## Embedding & The Feature Space
 
 Once tokenized, these units are converted into vectors. It is crucial to distinguish between the **Embedding Space** and the **Feature Space**:
 
@@ -173,7 +173,7 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 </div>
 
 <div class="md">
-## 3. Positional Encoding
+## Positional Encoding
 
 To address the lack of sequence order in transformers, a "position signal" is added to each token's embedding, forming the initial hidden state $h_{0}$:
 
@@ -208,7 +208,7 @@ When you add "random" values to a vector, you change its location in the multidi
 2. **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network’s layers. Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.
 3. **The Risk of Overlapping**: During training, the model learns to set the "scale" of the embeddings much larger than the "scale" of the positional encodings. This ensures the position "nudges" the meaning without overwriting it.
 
-## 4. Structural Pillar: The Decoder-Only Architecture
+## Structural Pillar: The Decoder-Only Architecture
 
 Here, we do **not** use the original Encoder-Decoder architecture from Vaswani et al. (\citeyear{vaswani2017attention}). Instead, this example implements a **Decoder-only** Transformer with **Pre-Layer Normalization**, the same structural family that powers today's leading LLMs (GPT, Claude, Gemini and so on). There is no separate Encoder, and there is no cross-attention. The entire model is a stack of identical Decoder (with different weights) blocks, each containing:
 
@@ -218,7 +218,7 @@ Here, we do **not** use the original Encoder-Decoder architecture from Vaswani e
 
 This is the architecture you are interacting with in every visualization here. When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always near-zero.
 
-### The Residual Stream
+## The Residual Stream
 
 <div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 12">
 Everything is in flux.
@@ -348,7 +348,7 @@ by later tokens, which may reinterpret or dilute it. In effect, the
 causal mask turns token position into a form of **informational privilege**,
 making the geometry of attention inherently asymmetric and position-dependent.
 
-## 5. The Core Mechanism: Generating Q, K, and V
+## The Core Mechanism: Generating Q, K, and V
 To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three learned weight matrices: $W^Q, W^K,$ and $W^V$.
 
 * **Query ($Q = h_0 W^Q$)**: Represents "What am I looking for?"
@@ -363,7 +363,7 @@ To allow a token to "scout" the rest of the sequence, we derive three distinct r
 The **Single-Head Attention** output:
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) \cdot V$$
 
-## 6. Multi-Head Attention: Lateral Parallelism
+## Multi-Head Attention: Lateral Parallelism
 Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different "heads." Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different linguistic aspects (e.g., syntax vs. logic, but also very abstract features, for which human language doesn't have any names) simultaneously.
 
 * $B = \text{Batch Size}$ (The number of independent sequences processed in a single forward pass)
@@ -464,7 +464,7 @@ During each step of inference:
 This reduces the computational complexity of the projection phase from
 linear to constant time relative to sequence length.
 
-## 7. Mathematical Assembly: Concatenation and $h_1$
+## Mathematical Assembly: Concatenation and $h_1$
 
 ### Concatenation Definition
 For $h$ heads, where each head has dimension $d_v$:
@@ -499,7 +499,7 @@ This Layer Normalization ensures that the values don't 'explode' and get too lar
 </div>
 
 <div class="md">
-## 8. The Feed-Forward Network: Knowledge Retrieval and $h_2$
+## The Feed-Forward Network: Knowledge Retrieval and $h_2$
 While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token’s representation. In this sense, it functions as the model’s primary per-token computational stage, complementing attention’s role in information routing and aggregation.
 
 \cite[Empirical studies]{keyvalmem} suggest that FFN layers are a major locus of memorized associations and factual patterns, although such knowledge is distributed across the network rather than localized to a single component.
@@ -548,7 +548,7 @@ chosen experts. This allows models to scale to trillions of total
 parameters while keeping per-token compute roughly constant, since only
 a small fraction of parameters are active for any given input.
 
-## 9. Generalizing the Flow: The $N$-Layer Recurrence
+## Generalizing the Flow: The $N$-Layer Recurrence
 In practice, a Transformer is not just two steps ($h_0 \to h_2$); it is a stack of $N$ structurally identical but independently weighted blocks, each moving the representation further through the Feature Space to refine meaning.
 
 For any layer $n$, the transition to the next hidden state $h_{n+1}$ can be generalized as:
