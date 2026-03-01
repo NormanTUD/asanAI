@@ -394,7 +394,7 @@ Instead of one massive attention operation, we use **Multi-Head Attention**. We 
 
 For a single head, we say:
 
-$$\underbrace{\text{head}_i}_{(B, T, d_v)} = \text{Attention}(\underbrace{h_{i-1} W_i^Q}_{Q}, \underbrace{h_{i-1} W_i^K}_{K}, \underbrace{h_{i-1} W_i^V}_{V})$$
+$$\underbrace{\text{head}_{i+1}}_{(B, T, d_v)} = \text{Attention}(\underbrace{h_i W_i^Q}_{Q}, \underbrace{h_i W_i^K}_{K}, \underbrace{h_i W_i^V}_{V})$$
 
 Which transforms the input in the shape of $(B, T, h \cdot d_v)$ to $(B, T, d_{\text{model}})$.
 
