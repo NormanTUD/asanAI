@@ -213,12 +213,14 @@ It is important to note that not all attention heads to something that is humanl
 
 It does so by moving the Embedding of a word in dependence of the context it's used in to a place called **contextualized Embedding** that looks not only at the word, but at the context the word is used in.
 
-Type **"bank river"** or **"bank money"** below. Notice how the diamond, the contextualized "Bank", leaps toward the neighbor that defines it.
+This is best exemplified when using words that have multiple meanings, like "bank", which could be a **river bank**, or a **bank** where you put your **money**.
+
+Type **"bank river"** or **"bank money"** below. Notice how the diamond, the contextualized "Bank", leaps toward the neighbor that defines it. This is what **Attention** does: it looks at the context a word is used in, and moves the **Embedding** of a word in the **Embedding Space** to a point closer to it's meaning.
 
 </div>
 
     <div class="layers-vertical">
-	<p>Ready. Type 'bank river' or 'bank money'...</p>
+	<p>Type 'bank river' or 'bank money'.</p>
         <input type="text" id="trans-input" class="bw-cell" style="width: 90%;" 
                value="bank river" oninput="runAttention()">
         
