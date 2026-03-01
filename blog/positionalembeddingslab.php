@@ -75,7 +75,6 @@ This gives each position a distinct pattern the model can learn to interpret.
 
 <!-- ─── Interactive: Sine & Cosine Waves ─── -->
 <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
-    <p style="margin-top:0;">Sine & Cosine Waves</p>
     <p style="color:#64748b; font-size:0.9em;">See how amplitude $A$, frequency $\omega$, and phase shift $\varphi$ change the wave: $f(\theta) = A \sin(\omega\theta + \varphi)$.</p>
 
     <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:10px;">
