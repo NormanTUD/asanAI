@@ -215,20 +215,16 @@ It does so by moving the Embedding of a word in dependence of the context it's u
 
 This is best exemplified when using words that have multiple meanings, like "bank", which could be a **river bank**, or a **bank** where you put your **money**.
 
-Type **"bank river"** or **"bank money"** below. Notice how the diamond, the contextualized "Bank", leaps toward the neighbor that defines it. This is what **Attention** does: it looks at the context a word is used in, and moves the **Embedding** of a word in the **Embedding Space** to a point closer to it's meaning.
+Type **"bank river"** or **"bank money"** below. Notice how the diamond, the contextualized "Bank", leaps toward the neighbor that defines it. This is what **Attention** does: it looks at the context a word is used in, and moves the **Embedding** of a word in the **Embedding Space** to a point closer to it's meaning in the context its used in.
 
 </div>
 
-    <div class="layers-vertical">
-        <input type="text" id="trans-input" class="bw-cell" style="width: 90%;" 
-               value="bank river" oninput="runAttention()">
-        
+<div class="layers-vertical">
+	<input type="text" id="trans-input" class="bw-cell" style="width: 90%;" value="bank river" oninput="runAttention()">
+	<p>The diamond shows where "Bank" moves in context.</p>
+</div>
+<div id="transformer-plot" class="plot-container" style="height: 450px; background: #fff;"></div>
 
-        <p style="font-size: 0.8rem; color: #64748b;">
-            *Orange line = Attention. The diamond shows where "Bank" moves in context.*
-        </p>
-    </div>
-    <div id="transformer-plot" class="plot-container" style="height: 450px; background: #fff;"></div>
 <script>
 	runAttention();
 </script>
