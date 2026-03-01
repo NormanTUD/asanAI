@@ -2,6 +2,8 @@ window.usedCitations = []; // Tracks order of citation usage
 window.footnoteCounter = 1;
 window.quotesLog = [];
 window.indexedTerms = {};
+const _sectionInitFns = new Map();
+const _initializedSections = new Set();
 
 const categoryConfig = {
 	data: "Data",
@@ -749,3 +751,32 @@ function addCopyButtons() {
 		wrapper.appendChild(btn);
 	});
 }
+
+function lazyInit(sectionId, initFn) {
+	const el = document.getElementById(sectionId);
+	if (!el) {
+		console.warn(`[lazyInit] #${sectionId} not found – running initFn eagerly`);
+		initFn();
+		return;
+	}
+	_sectionInitFns.set(sectionId, initFn);
+	_sectionInitObserver.observe(el);
+}
+
+const _sectionInitObserver = new IntersectionObserver(
+	(entries) => {
+		entries.forEach((entry) => {
+			const id = entry.target.id;
+			if (entry.isIntersecting && !_initializedSections.has(id)) {
+				_initializedSections.add(id);
+				const fn = _sectionInitFns.get(id);
+				if (fn) fn();
+				_sectionInitObserver.unobserve(entry.target);   // one-shot
+				_sectionInitFns.delete(id);                     // free reference
+			}
+		});
+	},
+	{ rootMargin: '500px', threshold: 0 }   // 300px lookahead
+);
+
+
