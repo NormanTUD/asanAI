@@ -225,7 +225,7 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
 </div>
 
         <h2>The Connectivity Web</h2>
-        <p class="sa-small-desc">Hover over the words to see the invisible threads of meaning.</p>
+        <p>Hover over the words to see the invisible threads of meaning.</p>
         
         <div id="sa-attention-container" style="position: relative; height: 300px; margin-top: 20px; background: #fcfdfe;">
             <canvas id="sa-attn-canvas" style="position: absolute; top: 0; left: 0; pointer-events: none; z-index: 5;"></canvas>
