@@ -6,7 +6,7 @@ Idee: LayerNorm projiziert Vektoren auf eine Einheitskugel (nach Zentrierung). D
     γγ und ββ skalieren und verschieben dann die Punkte auf der Kugel
 
 
-
+https://arxiv.org/abs/2306.13817
 
 
 positional embeddings unendlichkeitsmaschine https://www.exploratorium.edu/exhibits/machine-with-concrete
