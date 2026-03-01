@@ -220,7 +220,6 @@ Type **"bank river"** or **"bank money"** below. Notice how the diamond, the con
 </div>
 
     <div class="layers-vertical">
-	<p>Type 'bank river' or 'bank money'.</p>
         <input type="text" id="trans-input" class="bw-cell" style="width: 90%;" 
                value="bank river" oninput="runAttention()">
         
