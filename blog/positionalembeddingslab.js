@@ -1,6 +1,5 @@
 // ── Sine & Cosine Interactive Section ───────────────────────────────────────
 function initSineCosine() {
-
 	// ── 1. Unit Circle ──────────────────────────────────────────────────────
 
 	const sliderTheta = document.getElementById('slider-sc-theta');
