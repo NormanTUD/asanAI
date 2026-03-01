@@ -92,7 +92,7 @@ The more terms you include, the better the approximation. You can explore this b
 </div>
 
 
-
+<div class="md">
 Transformers (the architecture behind GPT) process all words at once, so they need a way to encode each word's **position**. The original Transformer paper (\citetitle{vaswani2017attention}) uses sine and cosine to create a unique positional fingerprint:
 
 $$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d}}\right), \qquad PE_{(\text{pos}, 2i+1)} = \cos\!\left(\frac{\text{pos}}{10000^{2i/d}}\right)$$
