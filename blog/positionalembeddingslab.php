@@ -79,15 +79,11 @@ $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 <div class="md">
 ### Key Properties of Sine and Cosine
 
-**Periodicity:** Both repeat every $2\pi$: $\sin(\theta + 2\pi) = \sin\theta$
-
-**Pythagorean Identity:** $\sin^2\theta + \cos^2\theta = 1$ (the point always lies on the unit circle)
-
-**Symmetry:** $\sin$ is odd, $\cos$ is even: $\sin(-\theta) = -\sin\theta$, $\cos(-\theta) = \cos\theta$
-
-**Bounded:** Both always stay between $-1$ and $1$
-
-**Derivatives:** $\frac{d}{d\theta}\sin\theta = \cos\theta$, $\frac{d}{d\theta}\cos\theta = -\sin\theta$
+* **Periodicity:** Both repeat every $2\pi$: $\sin(\theta + 2\pi) = \sin\theta$
+* **Pythagorean Identity:** $\sin^2\theta + \cos^2\theta = 1$ (the point always lies on the unit circle)
+* **Symmetry:** $\sin$ is odd, $\cos$ is even: $\sin(-\theta) = -\sin\theta$, $\cos(-\theta) = \cos\theta$
+* **Bounded:** Both always stay between $-1$ and $1$
+* **Derivatives:** $\frac{d}{d\theta}\sin\theta = \cos\theta$, $\frac{d}{d\theta}\cos\theta = -\sin\theta$
 
 ## Positional Embeddings with Sine and Cosine
 
@@ -96,9 +92,6 @@ The original Transformer paper (\citetitle{vaswani2017attention}) uses sine and 
 $$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d}}\right), \qquad PE_{(\text{pos}, 2i+1)} = \cos\!\left(\frac{\text{pos}}{10000^{2i/d}}\right)$$
 
 This gives each position a distinct pattern the model can learn to interpret.
-
-* **Boundedness:** Values stay between $[-1, 1]$, so they don't "overpower" the original word meaning.
-* **Relative Distance:** The model can learn that words are 2 or 3 spots apart because the waves change predictably.
 
 ## Concrete Example: Nudging the "King"
 In our Lab, the word **"king"** is represented by the vector:
