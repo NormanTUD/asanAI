@@ -236,10 +236,6 @@ After attention has gathered context, a small **neural network** processes each 
 
 If attention is *gathering clues*, the feed-forward network is *drawing conclusions*.
 
-The result of both, the Attention Heads and then the Feed-Forward-Network, are then returned and simply added to the **Residual Stream**.
-
-Neither the **Attention Heads** nor the **Neural Network** are configured by hand. They learn what to look for by looking at massive amounts of data.
-
 If Attention is about *looking around* at other words, the Feed-Forward Network (FFN) is about *looking inward* into the model's memory.
 
 Researchers often describe the FFN as a massive dictionary of **Key-Value pairs** or **If-Then rules**.
@@ -307,6 +303,10 @@ $$ \text{FFN}(x) = W_2 \cdot \max(0, W_1 \cdot x + b_1) + b_2 $$
 Where $W_1$ acts as the detectors, the $\max(0, ...)$ is the ReLU filter shutting down negative matches, and $W_2$ contains the knowledge vectors that get added together.
 
 #### 4c: All together
+
+The result of both, the Attention Heads and then the Feed-Forward-Network, are then returned and simply added to the **Residual Stream**.
+
+Neither the **Attention Heads** nor the **Neural Network** are configured by hand. They learn what to look for by looking at massive amounts of data.
 </div>
 
 <!-- ============================================================ -->
