@@ -13,6 +13,13 @@ In a Transformer, words are processed in parallel. Without **Positional Encoding
 
 To fix this, we **add** a unique mathematical "signature" to each word's vector based on its position ($\text{pos}$), with on sine and cosine.
 
+## The Invention of the Transformer & Positional Encoding
+The challenge of processing text in parallel (instead of word-by-word like older RNNs) required a new way to inject "time" or "order" into the model.
+
+* **The "\citetitle{vaswani2017attention}" Paper:** This landmark work by Vaswani et al. replaced sequential processing with the Transformer architecture. Since Transformers have no inherent sense of order, the authors introduced **Sinusoidal Positional Encodings**.
+* **Why Waves?** The researchers chose alternating sine and cosine functions because they allow the model to attend to relative positions. The different frequencies, ranging from "fast" wiggles to "slow" curves, act like a multi-scale clock, marking every position in a sequence with a unique, bounded mathematical signature.
+* **Residual Connections (X + Attention):** The idea of "Residual Connections" ($X_{new} = X + f(X)$) used in the Transformer was actually pioneered earlier by **\cite[Kaiming He et al.]{he2015resnet}** in the **\cite[ResNet]{he2015resnet}** architecture for computer vision. The Transformer team adapted this to ensure that gradients could flow through dozens of layers without the model "forgetting" the original input tokens.
+
 ## Sine and Cosine
 
 Imagine a circle with radius $1$ centered at the origin (the **unit circle**). Pick a point on it by sweeping an angle $\theta$ counter-clockwise from the right. The coordinates of that point are:
@@ -131,13 +138,6 @@ When you look at the **Semantic Embedding Space** plot in the panel below, you a
 3. **Residual Connections:** Notice the "Layer Flow & Residuals" panel. We don't just transform $X$; we add the transformation *back* to the original $X$.
    $$X_\text{new} = X + \text{Attention}(X)$$
    This ensures that the model doesn't "forget" the original word while it's busy calculating the context.
-
-### The Invention of the Transformer & Positional Encoding
-The challenge of processing text in parallel (instead of word-by-word like older RNNs) required a new way to inject "time" or "order" into the model.
-
-* **The "\citetitle{vaswani2017attention}" Paper:** This landmark work by Vaswani et al. replaced sequential processing with the Transformer architecture. Since Transformers have no inherent sense of order, the authors introduced **Sinusoidal Positional Encodings**.
-* **Why Waves?** The researchers chose alternating sine and cosine functions because they allow the model to attend to relative positions. The different frequencies, ranging from "fast" wiggles to "slow" curves, act like a multi-scale clock, marking every position in a sequence with a unique, bounded mathematical signature.
-* **Residual Connections (X + Attention):** The idea of "Residual Connections" ($X_{new} = X + f(X)$) used in the Transformer was actually pioneered earlier by **\cite[Kaiming He et al.]{he2015resnet}** in the **\cite[ResNet]{he2015resnet}** architecture for computer vision. The Transformer team adapted this to ensure that gradients could flow through dozens of layers without the model "forgetting" the original input tokens.
 
 ## Why Sinusoidal Positional Encodings Work: A Fourier Perspective
 
