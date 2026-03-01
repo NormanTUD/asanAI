@@ -252,12 +252,6 @@ Let's look at the word **"Apple"**. Because of the *Attention* step, its vector 
 
 <div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
             margin:15px 0; max-width:800px; margin-left:auto; margin-right:auto; font-family: system-ui, sans-serif;">
-    <div style="text-align:center; margin-bottom:12px;">
-        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
-            🧠 Step 4b: The Feed-Forward Network (Memory & Facts)
-        </span>
-    </div>
-
     <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
         <button onclick="FFNViz.setScenario('apple_fruit')" id="btn-ffn-fruit"
                 style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; cursor:pointer; font-weight:bold; transition: 0.2s;">
