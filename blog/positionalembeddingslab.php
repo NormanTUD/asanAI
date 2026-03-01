@@ -66,33 +66,6 @@ $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 
 **Derivatives:** $\frac{d}{d\theta}\sin\theta = \cos\theta$, $\frac{d}{d\theta}\cos\theta = -\sin\theta$
 
-### How are they calculated?
-
-Computers evaluate sine and cosine using **Taylor Series** (infinite polynomial approximations):
-
-$$\sin\theta = \theta - \frac{\theta^3}{3!} + \frac{\theta^5}{5!} - \frac{\theta^7}{7!} + \dots \qquad \cos\theta = 1 - \frac{\theta^2}{2!} + \frac{\theta^4}{4!} - \frac{\theta^6}{6!} + \dots$$
-
-The more terms you include, the better the approximation. You can explore this below.
-
-</div>
-<!-- ─── Interactive: Taylor Series Approximation ─── -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
-    <p style="margin-top:0;">Taylor Series Approximation</p>
-    <p style="color:#64748b; font-size:0.9em;">Increase the number of terms to see how the polynomial converges to the true $\sin$ curve. With just 5 terms, the match is nearly perfect over $[-2\pi, 2\pi]$!</p>
-
-    <div style="margin-bottom:10px;">
-        <strong>Number of Taylor terms $N$:</strong>
-        <input type="range" id="slider-taylor-n" min="1" max="10" step="1" value="1" style="width:250px;">
-        <span id="disp-taylor-n" style="font-family:monospace; font-weight:bold; color:#2563eb;">1</span>
-    </div>
-
-    <div id="taylor-formula" style="text-align:center; font-size:1.1em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:40px; overflow-x:auto; white-space:nowrap;"></div>
-
-    <div id="plot-taylor" class="plot-container" style="width:100%; height:350px;"></div>
-</div>
-
-
-<div class="md">
 Transformers (the architecture behind GPT) process all words at once, so they need a way to encode each word's **position**. The original Transformer paper (\citetitle{vaswani2017attention}) uses sine and cosine to create a unique positional fingerprint:
 
 $$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d}}\right), \qquad PE_{(\text{pos}, 2i+1)} = \cos\!\left(\frac{\text{pos}}{10000^{2i/d}}\right)$$
