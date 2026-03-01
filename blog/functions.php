@@ -508,6 +508,7 @@ if(!server_php_self_ends_with_index_php()) {
 				parseCategories();
 				renderMarkdown();
 				smartquote();
+				initOptionalBlocks();
 				make_external_a_href_target_blank();
 				toc();
 			});

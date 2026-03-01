@@ -94,6 +94,7 @@
 			sendHeight();
 
 			smartquote();
+			initOptionalBlocks();
 
 			addCopyButtons();
 		} catch (error) {

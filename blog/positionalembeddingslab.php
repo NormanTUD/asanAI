@@ -41,7 +41,7 @@ That's it: $\cos\theta$ is the horizontal position, $\sin\theta$ is the vertical
     <div id="plot-unit-circle" class="plot-container" style="width:100%; height:450px;"></div>
 </div>
 
-<div class="md">
+<div class="optional md" data-headline="History and Etymology of Sine and Cosine">
 ### Origin and Etymology
 
 The concept originates in ancient Indian astronomy. \citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* ("bowstring") to describe the half-chord of a circle, which is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\citetitle{indianastronomer}* (\citetitle{indianastronomer}, ch. 1-2). Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* ("pocket" or "fold"). See the paper \citetitle{indianastronomerconstruction} if you want to know how \citeauthor{indianastronomer} constructed his tables.
@@ -53,7 +53,9 @@ In \citeyear{chester1145}, \citeauthor{chester1145}, who also produced the first
 $$\sin(\theta) = \cos(90^\circ - \theta)$$
 
 $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
+</div>
 
+<div class="md">
 ### Key Properties
 
 **Periodicity:** Both repeat every $2\pi$: $\sin(\theta + 2\pi) = \sin\theta$

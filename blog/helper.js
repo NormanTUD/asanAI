@@ -5,6 +5,22 @@ window.indexedTerms = {};
 const _sectionInitFns = new Map();
 const _initializedSections = new Set();
 
+const _sectionInitObserver = new IntersectionObserver(
+	(entries) => {
+		entries.forEach((entry) => {
+			const id = entry.target.id;
+			if (entry.isIntersecting && !_initializedSections.has(id)) {
+				_initializedSections.add(id);
+				const fn = _sectionInitFns.get(id);
+				if (fn) fn();
+				_sectionInitObserver.unobserve(entry.target);   // one-shot
+				_sectionInitFns.delete(id);                     // free reference
+			}
+		});
+	},
+	{ rootMargin: '500px', threshold: 0 }   // 300px lookahead
+);
+
 const categoryConfig = {
 	data: "Data",
 	math: "Math",
@@ -763,20 +779,40 @@ function lazyInit(sectionId, initFn) {
 	_sectionInitObserver.observe(el);
 }
 
-const _sectionInitObserver = new IntersectionObserver(
-	(entries) => {
-		entries.forEach((entry) => {
-			const id = entry.target.id;
-			if (entry.isIntersecting && !_initializedSections.has(id)) {
-				_initializedSections.add(id);
-				const fn = _sectionInitFns.get(id);
-				if (fn) fn();
-				_sectionInitObserver.unobserve(entry.target);   // one-shot
-				_sectionInitFns.delete(id);                     // free reference
-			}
-		});
-	},
-	{ rootMargin: '500px', threshold: 0 }   // 300px lookahead
-);
+function initOptionalBlocks() {
+	document.querySelectorAll('div.optional').forEach(block => {
+		// Prevent double initialization
+		if (block.classList.contains('optional-initialized')) return;
+		block.classList.add('optional-initialized');
 
+		const headline = block.getAttribute('data-headline') || "More Information";
+		const contentHtml = block.innerHTML;
+		block.innerHTML = '';
 
+		// Create Header
+		const header = document.createElement('div');
+		header.className = 'optional-header';
+		header.style.cursor = 'pointer';
+		header.innerHTML = `
+			<span class="optional-icon">▶</span>
+			<span class="optional-title">${headline}</span>
+		`;
+
+		// Create Content Wrapper (initially hidden)
+		const contentWrapper = document.createElement('div');
+		contentWrapper.className = 'optional-content md'; // Keep md class for your renderer
+		contentWrapper.style.display = 'none';
+		contentWrapper.innerHTML = contentHtml;
+
+		block.appendChild(header);
+		block.appendChild(contentWrapper);
+
+		// Toggle Logic
+		header.onclick = () => {
+			const isHidden = contentWrapper.style.display === 'none';
+			contentWrapper.style.display = isHidden ? 'block' : 'none';
+			header.querySelector('.optional-icon').innerHTML = isHidden ? '▼' : '▶';
+			header.classList.toggle('active', isHidden);
+		};
+	});
+}
