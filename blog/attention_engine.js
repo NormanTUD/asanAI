@@ -86,7 +86,7 @@ class AttentionEngine {
 			const WV_slice = this.this_weights.value.map(row => row.slice(startCol, endCol));
 
 			let scores = this.dot(Qi, this.transpose(Ki)).map(row =>
-				row.map(v => v / Math.sqrt(this.d_k))
+				row.map(v => v / Math.sqrt(this.d_model))
 			);
 
 			for (let r = 0; r < scores.length; r++) {
@@ -104,11 +104,12 @@ class AttentionEngine {
 				this_weights: attn_weights,
 				context,
 				h0,
-				WQ: WQ_slice, WK: WK_slice, WV: WV_slice
+				WQ: WQ_slice, WK: WK_slice, WV: WV_slice,
+				d_model: this.d_model
 			});
 		}
 
-		this.renderUI(headData, tokens, tokenStrings);  // ← pass tokenStrings
+		this.renderUI(headData, tokens, tokenStrings);
 		return headData;
 	}
 
@@ -1233,8 +1234,8 @@ class AttentionEngine {
 				const hd = headDataArray[hIdx];
 				const w = hd.this_weights[qi][ki];
 				const displayHeadNum = hIdx + headDisplayOffset + 1;
-				const dk = hd.Qi[0].length;
-				const dk_int = Math.round(dk);
+				const d_model = hd.d_model || self.d_model;
+				const d_model_int = Math.round(d_model);
 
 				// Get vectors
 				const q_i = hd.Qi[qi];
@@ -1242,14 +1243,14 @@ class AttentionEngine {
 				const h0_qi = hd.h0[qi];
 				const h0_kj = hd.h0[ki];
 
-				// Raw score (before softmax)
-				const rawScore = dotVec(q_i, k_j) / Math.sqrt(dk);
+				// Raw score (before softmax) — using d_model, matching forward()
+				const rawScore = dotVec(q_i, k_j) / Math.sqrt(d_model);
 
 				// All raw scores for this row (for softmax display)
 				const n = tokens.length;
 				const rawScoresRow = [];
 				for (let c = 0; c < n; c++) {
-					let s = dotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(dk);
+					let s = dotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(d_model);
 					if (c > qi) s = -1e9;
 					rawScoresRow.push(s);
 				}
@@ -1270,7 +1271,7 @@ class AttentionEngine {
 
 				// Row 1: Abstract equation
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${dk_int}}} = ${rawScore.toFixed(nr_fixed)}$`;
+				html += `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_{\\text{model}}}} = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_model_int}}} = ${rawScore.toFixed(nr_fixed)}$`;
 				html += `</div>`;
 
 				// Row 2: Full numerical equation with underbraces, including token word labels
@@ -1283,7 +1284,7 @@ class AttentionEngine {
 				html += `</div>`;
 
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\frac{\\underbrace{${toRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${tokens[qi]}"})} \\cdot \\underbrace{${toColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${tokens[ki]}"})}}{\\sqrt{${dk_int}}} = \\frac{${dotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(dk).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
+				html += `$\\frac{\\underbrace{${toRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${tokens[qi]}"})} \\cdot \\underbrace{${toColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${tokens[ki]}"})}}{\\sqrt{${d_model_int}}} = \\frac{${dotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(d_model).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
 				html += `</div>`;
 
 				// Row 3: Softmax over the full row, highlighting current cell
