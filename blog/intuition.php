@@ -238,7 +238,7 @@ If attention is *gathering clues*, the feed-forward network is *drawing conclusi
 
 If Attention is about *looking around* at other words, the Feed-Forward Network (FFN) is about *looking inward* into the model's memory.
 
-The Feed-Foward-Network is often thought of as the **Knowledge bank** of a Transformer. Here it is decided, in what direction in the Embedding Space the **Contextualized Embedding** should be moved to get closer to a meaningful next word.
+The Feed-Foward-Network is often thought of as the **\cite[Knowledge bank]{keyvalmem}** of a Transformer. Here it is decided, in what direction in the Embedding Space the **Contextualized Embedding** should be moved to get closer to a meaningful next word.
 
 1. **The Detectors (Layer 1):** The model expands the word's vector to check for thousands of specific patterns. ("Is this a French landmark?" "Is this about technology?")
 2. **The Filter (Activation Function):** A mathematical filter (like ReLU) zeroes out any detector that didn't find a match. Only the strong signals survive.
