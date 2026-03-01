@@ -65,7 +65,9 @@ $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 
 **Derivatives:** $\frac{d}{d\theta}\sin\theta = \cos\theta$, $\frac{d}{d\theta}\cos\theta = -\sin\theta$
 
-Transformers process all words at once, so they need a way to encode each word's **position**. The original Transformer paper (\citetitle{vaswani2017attention}) uses sine and cosine to create a unique positional fingerprint:
+## Positional Embeddings
+
+The original Transformer paper (\citetitle{vaswani2017attention}) uses sine and cosine to create a unique positional fingerprint based on their position in the text:
 
 $$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d}}\right), \qquad PE_{(\text{pos}, 2i+1)} = \cos\!\left(\frac{\text{pos}}{10000^{2i/d}}\right)$$
 
