@@ -596,7 +596,7 @@ The following plots visualize how each layer "nudges" the token vectors. Each ar
 </div>
 
 <div class="md">
-## 10. From Hidden States to Probabilities
+## From Hidden States to Probabilities
 
 After passing through $N$ layers, we reach the final hidden state, **$h_{\text{final}}$**. To turn this into a word, we project it against the entire vocabulary:
 
