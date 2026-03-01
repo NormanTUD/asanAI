@@ -128,14 +128,6 @@ You might notice that **Dim 0** and **Dim 1** wiggle quickly, while **Dim 2** an
 
 If you were to expand the slider to **Position 1000**, you would see those straight lines finally start to curve into waves!
 
-## Why Sinusoidal Positional Encodings Work: A Fourier Perspective
-
-Each dimension pair $(2i, 2i+1)$ in the positional encoding is a **sine cosine pair at a specific frequency**, exactly one term in a Fourier series:
-
-$$\text{PE}_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right), \quad \text{PE}_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
-
-Instead of *decomposing* a signal into frequencies (analysis), the encoding **constructs a unique vector per position** by sampling across a bank of geometrically spaced frequencies (synthesis). Each position gets a unique spectral fingerprint.
-
 ### Why Sine and Cosine Specifically?
 
 **Shift = Rotation.** The angle addition identities give us:
