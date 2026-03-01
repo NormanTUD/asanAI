@@ -57,7 +57,7 @@ The LLM learned to predict the next word by reading **massive** amounts of text 
 
 ### Step 1: Tokenization
 
-Computers don't understand words. They understand numbers. So the very first thing an LLM does is **chop the input into small pieces called tokens**.
+Computers don't understand words. They understand numbers. So the very first thing an LLM does is **chop the input into small pieces called tokens**. We can first think of these tokens as words, but they need not to be. They can be sub-words, numbers or any part of a text.
 
 $$\text{"Once upon a time"} \rightarrow [\text{"Once"}, \ \text{"upon"}, \ \text{"a"}, \ \text{"time"}]$$
 
