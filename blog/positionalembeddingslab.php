@@ -94,7 +94,7 @@ $$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d}}\right), \q
 This gives each position a distinct pattern the model can learn to interpret.
 
 ## Concrete Example: Nudging the "King"
-In our Lab, the word **"king"** is represented by the vector:
+Let's say, the word **"king"** is represented by the vector:
 $$\text{king} = [1.688, -0.454, 0, 0]$$
 
 When "king" is at **Position 1**, we calculate a PE vector and add it. This "nudges" the king's position in 4D space.
