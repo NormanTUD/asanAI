@@ -1172,6 +1172,9 @@ class AttentionEngine {
 
 		const self = this;
 
+		// ── Tooltip caching: avoid redundant render_temml() calls ──
+		let lastTooltipKey = null;
+
 		// Helper: format a vector as a column pmatrix
 		const toColVec = (arr) => {
 			return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' \\\\ ')} \\end{pmatrix}`;
@@ -1190,9 +1193,11 @@ class AttentionEngine {
 		// Helper: compute dot product of two arrays
 		const dotVec = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
 
+		// Layer label: h_0 for layer 0, h_1 for layer 1, etc.
+		const hLabel = `h_{${layerIdx}}`;
+
 		const positionTooltip = (e) => {
 			tooltip.style.display = 'block';
-			// Position: try right of cursor, but clamp to viewport
 			const tw = tooltip.offsetWidth;
 			const th = tooltip.offsetHeight;
 			let left = e.clientX + 16;
@@ -1212,6 +1217,14 @@ class AttentionEngine {
 				const qi = parseInt(rect.getAttribute('data-apv-qi'));
 				const ki = parseInt(rect.getAttribute('data-apv-ki'));
 
+				// ── Cache check: skip rebuild if same cell ──
+				const tooltipKey = `rect-${hIdx}-${qi}-${ki}`;
+				if (tooltipKey === lastTooltipKey) {
+					positionTooltip(e);
+					return;
+				}
+				lastTooltipKey = tooltipKey;
+
 				if (!headDataArray[hIdx]) {
 					tooltip.style.display = 'none';
 					return;
@@ -1224,10 +1237,10 @@ class AttentionEngine {
 				const dk_int = Math.round(dk);
 
 				// Get vectors
-				const q_i = hd.Qi[qi];   // query vector for token qi
-				const k_j = hd.Ki[ki];   // key vector for token ki
-				const h0_qi = hd.h0[qi]; // input embedding for query token
-				const h0_kj = hd.h0[ki]; // input embedding for key token
+				const q_i = hd.Qi[qi];
+				const k_j = hd.Ki[ki];
+				const h0_qi = hd.h0[qi];
+				const h0_kj = hd.h0[ki];
 
 				// Raw score (before softmax)
 				const rawScore = dotVec(q_i, k_j) / Math.sqrt(dk);
@@ -1237,7 +1250,6 @@ class AttentionEngine {
 				const rawScoresRow = [];
 				for (let c = 0; c < n; c++) {
 					let s = dotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(dk);
-					// Apply causal mask
 					if (c > qi) s = -1e9;
 					rawScoresRow.push(s);
 				}
@@ -1261,30 +1273,22 @@ class AttentionEngine {
 				html += `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${dk_int}}} = ${rawScore.toFixed(nr_fixed)}$`;
 				html += `</div>`;
 
-				// Row 2: Full numerical equation with underbraces
+				// Row 2: Full numerical equation with underbraces, including token word labels
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$Q_{${qi}} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_qi)}}_{h_0[${qi}]} = ${toColVec(q_i)}$`;
+				html += `$Q_{${qi}} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_qi)}}_{\\substack{${hLabel}[${qi}] \\\\ \\text{"${tokens[qi]}"}}} = ${toColVec(q_i)}$`;
 				html += `</div>`;
 
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$K_{${ki}} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_kj)}}_{h_0[${ki}]} = ${toColVec(k_j)}$`;
+				html += `$K_{${ki}} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_kj)}}_{\\substack{${hLabel}[${ki}] \\\\ \\text{"${tokens[ki]}"}}} = ${toColVec(k_j)}$`;
 				html += `</div>`;
 
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\frac{\\underbrace{${toRowVec(q_i)}}_{Q_{${qi}}^T} \\cdot \\underbrace{${toColVec(k_j)}}_{K_{${ki}}}}{\\sqrt{${dk_int}}} = \\frac{${dotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(dk).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
+				html += `$\\frac{\\underbrace{${toRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${tokens[qi]}"})} \\cdot \\underbrace{${toColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${tokens[ki]}"})}}{\\sqrt{${dk_int}}} = \\frac{${dotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(dk).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
 				html += `</div>`;
 
 				// Row 3: Softmax over the full row, highlighting current cell
 				html += `<div style="margin-bottom:4px;">`;
-				// Build the softmax equation showing all values
-				let softmaxNumer = '';
-				let softmaxDenom = '';
-				const maskedScores = rawScoresRow.map((s, c) => c > qi ? '-\\infty' : s.toFixed(nr_fixed));
-
-				// Numerator: e^{score_{qi,ki}}
-				softmaxNumer = `e^{${ki > qi ? '-\\infty' : rawScoresRow[ki].toFixed(nr_fixed)}}`;
-
-				// Denominator: sum of e^{score_{qi,c}} for all c
+				let softmaxNumer = `e^{${ki > qi ? '-\\infty' : rawScoresRow[ki].toFixed(nr_fixed)}}`;
 				let denomParts = [];
 				for (let c = 0; c < n; c++) {
 					if (c > qi) {
@@ -1293,12 +1297,11 @@ class AttentionEngine {
 						denomParts.push(`e^{${rawScoresRow[c].toFixed(nr_fixed)}}`);
 					}
 				}
-				softmaxDenom = denomParts.join(' + ');
-
+				let softmaxDenom = denomParts.join(' + ');
 				html += `$\\text{softmax}_{${ki}} = \\frac{${softmaxNumer}}{${softmaxDenom}}$`;
 				html += `</div>`;
 
-				// Show the full softmax result row with the current cell highlighted
+				// Full softmax result row with current cell highlighted
 				html += `<div style="margin-bottom:2px;">`;
 				html += `$= \\Big(`;
 				let parts = [];
@@ -1326,7 +1329,14 @@ class AttentionEngine {
 				const side = textEl.getAttribute('data-apv-token-side');
 				const idx = parseInt(textEl.getAttribute('data-apv-token-idx'));
 
-				// Use head index 0 from headDataArray (single-head context: headDataArray has 1 element)
+				// ── Cache check: skip rebuild if same label ──
+				const tooltipKey = `label-${side}-${idx}`;
+				if (tooltipKey === lastTooltipKey) {
+					positionTooltip(e);
+					return;
+				}
+				lastTooltipKey = tooltipKey;
+
 				const hd = headDataArray[0];
 				if (!hd) {
 					tooltip.style.display = 'none';
@@ -1341,27 +1351,27 @@ class AttentionEngine {
 
 				let html = '';
 				html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
-				html += `Token "${tokens[idx]}" (index ${idx}) — Head ${displayHeadNum}`;
+				html += `Token "${tokens[idx]}" (index ${idx}) — Head ${displayHeadNum}, Layer ${layerIdx + 1}`;
 				html += `</div>`;
 
-				// Input embedding
+				// Input embedding with token word label
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\underbrace{${toColVec(h0_vec)}}_{h_0[${idx}]}$`;
+				html += `$\\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokens[idx]}"}}}$`;
 				html += `</div>`;
 
-				// Q projection
+				// Q projection with token word label
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\underbrace{Q_{${idx}}}_{W_Q^T \\cdot h_0[${idx}]} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{h_0[${idx}]} = ${toColVec(q_vec)}$`;
+				html += `$\\underbrace{Q_{${idx}}}_{\\text{"${tokens[idx]}"}} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokens[idx]}"}}} = ${toColVec(q_vec)}$`;
 				html += `</div>`;
 
-				// K projection
+				// K projection with token word label
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\underbrace{K_{${idx}}}_{W_K^T \\cdot h_0[${idx}]} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{h_0[${idx}]} = ${toColVec(k_vec)}$`;
+				html += `$\\underbrace{K_{${idx}}}_{\\text{"${tokens[idx]}"}} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokens[idx]}"}}} = ${toColVec(k_vec)}$`;
 				html += `</div>`;
 
-				// V projection
+				// V projection with token word label
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\underbrace{V_{${idx}}}_{W_V^T \\cdot h_0[${idx}]} = \\underbrace{${toMatrix(hd.WV)}}_{W_V}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{h_0[${idx}]} = ${toColVec(v_vec)}$`;
+				html += `$\\underbrace{V_{${idx}}}_{\\text{"${tokens[idx]}"}} = \\underbrace{${toMatrix(hd.WV)}}_{W_V}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokens[idx]}"}}} = ${toColVec(v_vec)}$`;
 				html += `</div>`;
 
 				tooltip.innerHTML = html;
@@ -1372,10 +1382,12 @@ class AttentionEngine {
 
 			// ── Case 3: Not hovering anything relevant ──
 			tooltip.style.display = 'none';
+			lastTooltipKey = null;
 		});
 
 		svg.addEventListener('mouseleave', () => {
 			tooltip.style.display = 'none';
+			lastTooltipKey = null;
 		});
 	}
 
@@ -1610,6 +1622,58 @@ class AttentionEngine {
 			}, tokens[j]));
 		}
 
+		// ── Causal mask diagonal: shade upper-triangle cells and draw boundary ──
+		// Draw a subtle overlay on masked (upper-triangle) cells
+		for (let qi = 0; qi < n; qi++) {
+			for (let ki = qi + 1; ki < n; ki++) {
+				const x = offsetX + ki * cellSize;
+				const y = offsetY + qi * cellSize;
+				frag.appendChild(makeSvgEl('rect', {
+					x: String(x), y: String(y),
+					width: String(cellSize), height: String(cellSize),
+					fill: '#94a3b8', 'fill-opacity': '0.12',
+					'pointer-events': 'none'
+				}));
+			}
+		}
+
+		// Draw the causal mask diagonal boundary line
+		// The boundary goes from top-left of cell (0,1) to bottom-right of cell (n-1,n)
+		// i.e. staircase along the diagonal
+		if (n > 1) {
+			let pathD = '';
+			// Build a staircase path along the diagonal
+			for (let i = 0; i < n; i++) {
+				const x1 = offsetX + (i + 1) * cellSize;
+				const y1 = offsetY + i * cellSize;
+				const y2 = offsetY + (i + 1) * cellSize;
+				if (i === 0) {
+					pathD += `M ${x1} ${y1}`;
+				} else {
+					pathD += ` L ${x1} ${y1}`;
+				}
+				pathD += ` L ${x1} ${y2}`;
+			}
+			frag.appendChild(makeSvgEl('path', {
+				d: pathD,
+				fill: 'none',
+				stroke: '#64748b',
+				'stroke-width': '1.5',
+				'stroke-dasharray': '4,3',
+				'pointer-events': 'none',
+				'opacity': '0.6'
+			}));
+
+			// Small label for the mask
+			frag.appendChild(makeSvgEl('text', {
+				x: String(offsetX + matrixSize - 2),
+				y: String(offsetY + 12),
+				'font-size': '7', fill: '#94a3b8', 'text-anchor': 'end',
+				'pointer-events': 'none', 'font-style': 'italic'
+			}, 'causal mask'));
+		}
+
+		// ── Attention weight cells ──
 		for (let qi = 0; qi < n; qi++) {
 			for (let ki = 0; ki < n; ki++) {
 				const w = weights[qi][ki];
