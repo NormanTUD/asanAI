@@ -757,12 +757,23 @@ class AttentionEngine {
 		const offsetX = padding / 2;
 		const offsetY = padding / 2;
 
-		// ── Patch row labels (left side) ──
-		const allText = svg.querySelectorAll('text');
-		// Row labels and column labels are not tagged with data attributes,
-		// so we update rects and their value labels instead.
+		// ── Patch row labels ──
+		svg.querySelectorAll('text[data-apv-token-side="row"]').forEach(el => {
+			const idx = parseInt(el.getAttribute('data-apv-token-idx'));
+			if (idx < n) {
+				el.textContent = tokens[idx];
+			}
+		});
 
-		// ── Patch rect fill-opacity and value text ──
+		// ── Patch column labels ──
+		svg.querySelectorAll('text[data-apv-token-side="col"]').forEach(el => {
+			const idx = parseInt(el.getAttribute('data-apv-token-idx'));
+			if (idx < n) {
+				el.textContent = tokens[idx];
+			}
+		});
+
+		// ── Patch rect fill-opacity ──
 		const rects = svg.querySelectorAll('rect[data-apv-qi]');
 		rects.forEach(rect => {
 			const qi = parseInt(rect.getAttribute('data-apv-qi'));
@@ -776,20 +787,13 @@ class AttentionEngine {
 		});
 
 		// ── Patch value text inside cells ──
-		// Value texts are siblings right after each rect, with pointer-events:none
-		// We find them by position matching
 		if (cellSize >= 28) {
 			const valueTexts = svg.querySelectorAll('text[pointer-events="none"]');
 			valueTexts.forEach(txt => {
-				// Reverse-engineer qi/ki from position
 				const x = parseFloat(txt.getAttribute('x'));
 				const y = parseFloat(txt.getAttribute('y'));
-				const ki = Math.round((x - offsetX - cellSize / 2) / cellSize);
-				const qi = Math.round((y - offsetY - cellSize / 2 - 3) / cellSize);
-
-				// More robust: find from the y attribute
-				const qiCalc = Math.round((y - 3 - offsetY - cellSize / 2) / cellSize);
 				const kiCalc = Math.round((x - offsetX - cellSize / 2) / cellSize);
+				const qiCalc = Math.round((y - 3 - offsetY - cellSize / 2) / cellSize);
 
 				if (qiCalc >= 0 && qiCalc < n && kiCalc >= 0 && kiCalc < n) {
 					const w = weights[qiCalc][kiCalc];
@@ -1220,44 +1224,224 @@ class AttentionEngine {
 	}
 
 	_apvAttachMatrixTooltip(svg, layerIdx, headDataArray, tokens, headDisplayOffset = 0) {
-		const tooltipId = `apv-tooltip-${this.containerId}-${layerIdx}`;
+		const tooltipId = `apv-tooltip-${this.containerId}-${layerIdx}-${headDisplayOffset}`;
 		let tooltip = document.getElementById(tooltipId);
-		if (!tooltip) {
-			tooltip = document.createElement('div');
-			tooltip.id = tooltipId;
-			tooltip.style.cssText = `
-	    position:fixed; padding:6px 10px; background:#1e293b; color:#fff;
-	    border-radius:6px; font-size:0.78rem; pointer-events:none;
-	    z-index:9999; display:none; white-space:nowrap;
-	    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-	`;
-			document.body.appendChild(tooltip);
-		}
+		if (tooltip) tooltip.remove();
+
+		tooltip = document.createElement('div');
+		tooltip.id = tooltipId;
+		tooltip.style.cssText = `
+	position:fixed; padding:10px 14px; background:#1e293b; color:#fff;
+	border-radius:8px; font-size:0.8rem; pointer-events:none;
+	z-index:9999; display:none; white-space:normal;
+	box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+	max-width:90vw; max-height:80vh; overflow-y:auto;
+	line-height:1.5;
+    `;
+		document.body.appendChild(tooltip);
+
+		const self = this;
+
+		// Helper: format a vector as a column pmatrix
+		const toColVec = (arr) => {
+			return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' \\\\ ')} \\end{pmatrix}`;
+		};
+
+		// Helper: format a matrix as pmatrix
+		const toMatrix = (mat) => {
+			return `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+		};
+
+		// Helper: format a row vector as a row pmatrix
+		const toRowVec = (arr) => {
+			return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' & ')} \\end{pmatrix}`;
+		};
+
+		// Helper: compute dot product of two arrays
+		const dotVec = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
+
+		const positionTooltip = (e) => {
+			tooltip.style.display = 'block';
+			// Position: try right of cursor, but clamp to viewport
+			const tw = tooltip.offsetWidth;
+			const th = tooltip.offsetHeight;
+			let left = e.clientX + 16;
+			let top = e.clientY - 20;
+			if (left + tw > window.innerWidth - 10) left = e.clientX - tw - 16;
+			if (top + th > window.innerHeight - 10) top = window.innerHeight - th - 10;
+			if (top < 10) top = 10;
+			tooltip.style.left = left + 'px';
+			tooltip.style.top = top + 'px';
+		};
 
 		svg.addEventListener('mousemove', (e) => {
+			// ── Case 1: Hovering a grid cell (rect) ──
 			const rect = e.target.closest('rect[data-apv-qi]');
 			if (rect) {
 				const hIdx = parseInt(rect.getAttribute('data-apv-head'));
 				const qi = parseInt(rect.getAttribute('data-apv-qi'));
 				const ki = parseInt(rect.getAttribute('data-apv-ki'));
 
-				// Guard against out-of-bounds index
 				if (!headDataArray[hIdx]) {
 					tooltip.style.display = 'none';
 					return;
 				}
 
-				const w = headDataArray[hIdx].this_weights[qi][ki];
-				// Use headDisplayOffset so the tooltip shows the real head number
+				const hd = headDataArray[hIdx];
+				const w = hd.this_weights[qi][ki];
 				const displayHeadNum = hIdx + headDisplayOffset + 1;
+				const dk = hd.Qi[0].length;
+				const dk_int = Math.round(dk);
 
-				tooltip.innerHTML = `<b>Head ${displayHeadNum}</b>: "${tokens[qi]}" → "${tokens[ki]}" = <b>${(w * 100).toFixed(1)}%</b>`;
-				tooltip.style.display = 'block';
-				tooltip.style.left = (e.clientX + 12) + 'px';
-				tooltip.style.top = (e.clientY - 30) + 'px';
-			} else {
-				tooltip.style.display = 'none';
+				// Get vectors
+				const q_i = hd.Qi[qi];   // query vector for token qi
+				const k_j = hd.Ki[ki];   // key vector for token ki
+				const h0_qi = hd.h0[qi]; // input embedding for query token
+				const h0_kj = hd.h0[ki]; // input embedding for key token
+
+				// Raw score (before softmax)
+				const rawScore = dotVec(q_i, k_j) / Math.sqrt(dk);
+
+				// All raw scores for this row (for softmax display)
+				const n = tokens.length;
+				const rawScoresRow = [];
+				for (let c = 0; c < n; c++) {
+					let s = dotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(dk);
+					// Apply causal mask
+					if (c > qi) s = -1e9;
+					rawScoresRow.push(s);
+				}
+
+				// Softmax computation
+				const maxVal = Math.max(...rawScoresRow);
+				const exps = rawScoresRow.map(v => Math.exp(v - maxVal));
+				const sumExp = exps.reduce((a, b) => a + b, 0);
+				const softmaxRow = exps.map(v => v / sumExp);
+
+				// ── Build HTML ──
+				let html = '';
+
+				// Line 1: Header
+				html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
+				html += `Head ${displayHeadNum}: "${tokens[qi]}" → "${tokens[ki]}" = ${(w * 100).toFixed(1)}%`;
+				html += `</div>`;
+
+				// Row 1: Abstract equation
+				html += `<div style="margin-bottom:6px;">`;
+				html += `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${dk_int}}} = ${rawScore.toFixed(nr_fixed)}$`;
+				html += `</div>`;
+
+				// Row 2: Full numerical equation with underbraces
+				html += `<div style="margin-bottom:6px;">`;
+				html += `$Q_{${qi}} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_qi)}}_{h_0[${qi}]} = ${toColVec(q_i)}$`;
+				html += `</div>`;
+
+				html += `<div style="margin-bottom:6px;">`;
+				html += `$K_{${ki}} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_kj)}}_{h_0[${ki}]} = ${toColVec(k_j)}$`;
+				html += `</div>`;
+
+				html += `<div style="margin-bottom:6px;">`;
+				html += `$\\frac{\\underbrace{${toRowVec(q_i)}}_{Q_{${qi}}^T} \\cdot \\underbrace{${toColVec(k_j)}}_{K_{${ki}}}}{\\sqrt{${dk_int}}} = \\frac{${dotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(dk).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
+				html += `</div>`;
+
+				// Row 3: Softmax over the full row, highlighting current cell
+				html += `<div style="margin-bottom:4px;">`;
+				// Build the softmax equation showing all values
+				let softmaxNumer = '';
+				let softmaxDenom = '';
+				const maskedScores = rawScoresRow.map((s, c) => c > qi ? '-\\infty' : s.toFixed(nr_fixed));
+
+				// Numerator: e^{score_{qi,ki}}
+				softmaxNumer = `e^{${ki > qi ? '-\\infty' : rawScoresRow[ki].toFixed(nr_fixed)}}`;
+
+				// Denominator: sum of e^{score_{qi,c}} for all c
+				let denomParts = [];
+				for (let c = 0; c < n; c++) {
+					if (c > qi) {
+						denomParts.push(`e^{-\\infty}`);
+					} else {
+						denomParts.push(`e^{${rawScoresRow[c].toFixed(nr_fixed)}}`);
+					}
+				}
+				softmaxDenom = denomParts.join(' + ');
+
+				html += `$\\text{softmax}_{${ki}} = \\frac{${softmaxNumer}}{${softmaxDenom}}$`;
+				html += `</div>`;
+
+				// Show the full softmax result row with the current cell highlighted
+				html += `<div style="margin-bottom:2px;">`;
+				html += `$= \\Big(`;
+				let parts = [];
+				for (let c = 0; c < n; c++) {
+					const val = (softmaxRow[c] * 100).toFixed(1) + '\\%';
+					if (c === ki) {
+						parts.push(`\\boxed{\\underbrace{${val}}_{\\text{${tokens[c]}}}}`);
+					} else {
+						parts.push(`\\underbrace{${val}}_{\\text{${tokens[c]}}}`);
+					}
+				}
+				html += parts.join(',\\;');
+				html += `\\Big)$`;
+				html += `</div>`;
+
+				tooltip.innerHTML = html;
+				render_temml();
+				positionTooltip(e);
+				return;
 			}
+
+			// ── Case 2: Hovering a border word (row or column label) ──
+			const textEl = e.target.closest('text[data-apv-token-side]');
+			if (textEl) {
+				const side = textEl.getAttribute('data-apv-token-side');
+				const idx = parseInt(textEl.getAttribute('data-apv-token-idx'));
+
+				// Use head index 0 from headDataArray (single-head context: headDataArray has 1 element)
+				const hd = headDataArray[0];
+				if (!hd) {
+					tooltip.style.display = 'none';
+					return;
+				}
+
+				const h0_vec = hd.h0[idx];
+				const q_vec = hd.Qi[idx];
+				const k_vec = hd.Ki[idx];
+				const v_vec = hd.Vi[idx];
+				const displayHeadNum = headDisplayOffset + 1;
+
+				let html = '';
+				html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
+				html += `Token "${tokens[idx]}" (index ${idx}) — Head ${displayHeadNum}`;
+				html += `</div>`;
+
+				// Input embedding
+				html += `<div style="margin-bottom:6px;">`;
+				html += `$\\underbrace{${toColVec(h0_vec)}}_{h_0[${idx}]}$`;
+				html += `</div>`;
+
+				// Q projection
+				html += `<div style="margin-bottom:6px;">`;
+				html += `$\\underbrace{Q_{${idx}}}_{W_Q^T \\cdot h_0[${idx}]} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{h_0[${idx}]} = ${toColVec(q_vec)}$`;
+				html += `</div>`;
+
+				// K projection
+				html += `<div style="margin-bottom:6px;">`;
+				html += `$\\underbrace{K_{${idx}}}_{W_K^T \\cdot h_0[${idx}]} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{h_0[${idx}]} = ${toColVec(k_vec)}$`;
+				html += `</div>`;
+
+				// V projection
+				html += `<div style="margin-bottom:6px;">`;
+				html += `$\\underbrace{V_{${idx}}}_{W_V^T \\cdot h_0[${idx}]} = \\underbrace{${toMatrix(hd.WV)}}_{W_V}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{h_0[${idx}]} = ${toColVec(v_vec)}$`;
+				html += `</div>`;
+
+				tooltip.innerHTML = html;
+				render_temml();
+				positionTooltip(e);
+				return;
+			}
+
+			// ── Case 3: Not hovering anything relevant ──
+			tooltip.style.display = 'none';
 		});
 
 		svg.addEventListener('mouseleave', () => {
@@ -1450,7 +1634,6 @@ class AttentionEngine {
 		svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
 		svg.style.minHeight = totalHeight + 'px';
 
-		// Build into a DocumentFragment to avoid blank-frame flicker
 		const frag = document.createDocumentFragment();
 
 		const makeSvgEl = (tag, attrs, content) => {
@@ -1471,21 +1654,29 @@ class AttentionEngine {
 			'font-size': '12', fill: color, 'font-weight': '700', 'text-anchor': 'middle'
 		}, `Head ${headIdx + 1}`));
 
+		// Row labels (query side) — with data attributes for hover
 		for (let i = 0; i < n; i++) {
 			frag.appendChild(makeSvgEl('text', {
 				x: String(offsetX - 4),
 				y: String(offsetY + i * cellSize + cellSize / 2 + 4),
-				'font-size': '9', fill: '#64748b', 'text-anchor': 'end'
+				'font-size': '9', fill: '#64748b', 'text-anchor': 'end',
+				'data-apv-token-side': 'row',
+				'data-apv-token-idx': String(i),
+				style: 'cursor:pointer;'
 			}, tokens[i]));
 		}
 
+		// Column labels (key side) — with data attributes for hover
 		for (let j = 0; j < n; j++) {
 			const cx = offsetX + j * cellSize + cellSize / 2;
 			const cy = offsetY - 6;
 			frag.appendChild(makeSvgEl('text', {
 				x: String(cx), y: String(cy),
 				'font-size': '9', fill: '#64748b', 'text-anchor': 'start',
-				transform: `rotate(-45, ${cx}, ${cy})`
+				transform: `rotate(-45, ${cx}, ${cy})`,
+				'data-apv-token-side': 'col',
+				'data-apv-token-idx': String(j),
+				style: 'cursor:pointer;'
 			}, tokens[j]));
 		}
 
@@ -1515,7 +1706,6 @@ class AttentionEngine {
 			}
 		}
 
-		// Atomic swap — no blank frame
 		svg.replaceChildren(frag);
 	}
 
