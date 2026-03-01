@@ -744,6 +744,18 @@ class AttentionEngine {
 		const offsetX = padding / 2;
 		const offsetY = padding / 2;
 
+		// ── Update live tooltip data so the mousemove handler reads fresh values ──
+		if (svg._apvTooltipData) {
+			svg._apvTooltipData.headDataArray = [headData];
+			svg._apvTooltipData.tokens = tokens;
+			svg._apvTooltipData.layerIdx = layerIdx;
+		}
+
+		// ── Invalidate tooltip cache so hovering the same cell shows updated numbers ──
+		if (svg._apvTooltipCache) {
+			svg._apvTooltipCache.lastKey = null;
+		}
+
 		// ── Patch row labels ──
 		svg.querySelectorAll('text[data-apv-token-side="row"]').forEach(el => {
 			const idx = parseInt(el.getAttribute('data-apv-token-idx'));
@@ -1156,6 +1168,28 @@ class AttentionEngine {
 
 	_apvAttachMatrixTooltip(svg, layerIdx, headDataArray, tokens, headDisplayOffset = 0) {
 		const tooltipId = `apv-tooltip-${this.containerId}-${layerIdx}-${headDisplayOffset}`;
+
+		// ── Store live-updating data reference on the SVG element itself ──
+		// This allows the closure to always read the LATEST data,
+		// even after training steps update headDataArray and tokens.
+		svg._apvTooltipData = {
+			headDataArray: headDataArray,
+			tokens: tokens,
+			layerIdx: layerIdx,
+			headDisplayOffset: headDisplayOffset
+		};
+
+		// ── Only create tooltip div and attach listeners ONCE per SVG ──
+		// On subsequent calls (during training), we just update _apvTooltipData above.
+		if (svg._apvTooltipAttached) {
+			// Invalidate cache so next mousemove rebuilds with fresh data
+			if (svg._apvTooltipCache) {
+				svg._apvTooltipCache.lastKey = null;
+			}
+			return;
+		}
+		svg._apvTooltipAttached = true;
+
 		let tooltip = document.getElementById(tooltipId);
 		if (tooltip) tooltip.remove();
 
@@ -1173,8 +1207,9 @@ class AttentionEngine {
 
 		const self = this;
 
-		// ── Tooltip caching: avoid redundant render_temml() calls ──
-		let lastTooltipKey = null;
+		// ── Tooltip caching object stored on SVG for external invalidation ──
+		const cache = { lastKey: null };
+		svg._apvTooltipCache = cache;
 
 		// Helper: format a vector as a column pmatrix
 		const toColVec = (arr) => {
@@ -1194,9 +1229,6 @@ class AttentionEngine {
 		// Helper: compute dot product of two arrays
 		const dotVec = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
 
-		// Layer label: h_0 for layer 0, h_1 for layer 1, etc.
-		const hLabel = `h_{${layerIdx}}`;
-
 		const positionTooltip = (e) => {
 			tooltip.style.display = 'block';
 			const tw = tooltip.offsetWidth;
@@ -1211,6 +1243,15 @@ class AttentionEngine {
 		};
 
 		svg.addEventListener('mousemove', (e) => {
+			// ── Read LIVE data from the SVG element ──
+			const liveData = svg._apvTooltipData;
+			if (!liveData) return;
+			const liveHeadDataArray = liveData.headDataArray;
+			const liveTokens = liveData.tokens;
+			const liveLayerIdx = liveData.layerIdx;
+			const liveHeadDisplayOffset = liveData.headDisplayOffset;
+			const hLabel = `h_{${liveLayerIdx}}`;
+
 			// ── Case 1: Hovering a grid cell (rect) ──
 			const rect = e.target.closest('rect[data-apv-qi]');
 			if (rect) {
@@ -1218,22 +1259,22 @@ class AttentionEngine {
 				const qi = parseInt(rect.getAttribute('data-apv-qi'));
 				const ki = parseInt(rect.getAttribute('data-apv-ki'));
 
-				// ── Cache check: skip rebuild if same cell ──
+				// ── Cache check: skip rebuild if same cell AND data hasn't been invalidated ──
 				const tooltipKey = `rect-${hIdx}-${qi}-${ki}`;
-				if (tooltipKey === lastTooltipKey) {
+				if (tooltipKey === cache.lastKey) {
 					positionTooltip(e);
 					return;
 				}
-				lastTooltipKey = tooltipKey;
+				cache.lastKey = tooltipKey;
 
-				if (!headDataArray[hIdx]) {
+				if (!liveHeadDataArray[hIdx]) {
 					tooltip.style.display = 'none';
 					return;
 				}
 
-				const hd = headDataArray[hIdx];
+				const hd = liveHeadDataArray[hIdx];
 				const w = hd.this_weights[qi][ki];
-				const displayHeadNum = hIdx + headDisplayOffset + 1;
+				const displayHeadNum = hIdx + liveHeadDisplayOffset + 1;
 				const d_model = hd.d_model || self.d_model;
 				const d_model_int = Math.round(d_model);
 
@@ -1247,7 +1288,7 @@ class AttentionEngine {
 				const rawScore = dotVec(q_i, k_j) / Math.sqrt(d_model);
 
 				// All raw scores for this row (for softmax display)
-				const n = tokens.length;
+				const n = liveTokens.length;
 				const rawScoresRow = [];
 				for (let c = 0; c < n; c++) {
 					let s = dotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(d_model);
@@ -1266,7 +1307,7 @@ class AttentionEngine {
 
 				// Line 1: Header
 				html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
-				html += `Head ${displayHeadNum}: "${tokens[qi]}" → "${tokens[ki]}" = ${(w * 100).toFixed(1)}%`;
+				html += `Head ${displayHeadNum}: "${liveTokens[qi]}" → "${liveTokens[ki]}" = ${(w * 100).toFixed(1)}%`;
 				html += `</div>`;
 
 				// Row 1: Abstract equation
@@ -1276,15 +1317,15 @@ class AttentionEngine {
 
 				// Row 2: Full numerical equation with underbraces, including token word labels
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$Q_{${qi}} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_qi)}}_{\\substack{${hLabel}[${qi}] \\\\ \\text{"${tokens[qi]}"}}} = ${toColVec(q_i)}$`;
+				html += `$Q_{${qi}} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_qi)}}_{\\substack{${hLabel}[${qi}] \\\\ \\text{"${liveTokens[qi]}"}}} = ${toColVec(q_i)}$`;
 				html += `</div>`;
 
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$K_{${ki}} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_kj)}}_{\\substack{${hLabel}[${ki}] \\\\ \\text{"${tokens[ki]}"}}} = ${toColVec(k_j)}$`;
+				html += `$K_{${ki}} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_kj)}}_{\\substack{${hLabel}[${ki}] \\\\ \\text{"${liveTokens[ki]}"}}} = ${toColVec(k_j)}$`;
 				html += `</div>`;
 
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\frac{\\underbrace{${toRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${tokens[qi]}"})} \\cdot \\underbrace{${toColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${tokens[ki]}"})}}{\\sqrt{${d_model_int}}} = \\frac{${dotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(d_model).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
+				html += `$\\frac{\\underbrace{${toRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${liveTokens[qi]}"})} \\cdot \\underbrace{${toColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${liveTokens[ki]}"})}}{\\sqrt{${d_model_int}}} = \\frac{${dotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(d_model).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
 				html += `</div>`;
 
 				// Row 3: Softmax over the full row, highlighting current cell
@@ -1309,9 +1350,9 @@ class AttentionEngine {
 				for (let c = 0; c < n; c++) {
 					const val = (softmaxRow[c] * 100).toFixed(1) + '\\%';
 					if (c === ki) {
-						parts.push(`\\boxed{\\underbrace{${val}}_{\\text{${tokens[c]}}}}`);
+						parts.push(`\\boxed{\\underbrace{${val}}_{\\text{${liveTokens[c]}}}}`);
 					} else {
-						parts.push(`\\underbrace{${val}}_{\\text{${tokens[c]}}}`);
+						parts.push(`\\underbrace{${val}}_{\\text{${liveTokens[c]}}}`);
 					}
 				}
 				html += parts.join(',\\;');
@@ -1332,13 +1373,13 @@ class AttentionEngine {
 
 				// ── Cache check: skip rebuild if same label ──
 				const tooltipKey = `label-${side}-${idx}`;
-				if (tooltipKey === lastTooltipKey) {
+				if (tooltipKey === cache.lastKey) {
 					positionTooltip(e);
 					return;
 				}
-				lastTooltipKey = tooltipKey;
+				cache.lastKey = tooltipKey;
 
-				const hd = headDataArray[0];
+				const hd = liveHeadDataArray[0];
 				if (!hd) {
 					tooltip.style.display = 'none';
 					return;
@@ -1348,31 +1389,31 @@ class AttentionEngine {
 				const q_vec = hd.Qi[idx];
 				const k_vec = hd.Ki[idx];
 				const v_vec = hd.Vi[idx];
-				const displayHeadNum = headDisplayOffset + 1;
+				const displayHeadNum = liveHeadDisplayOffset + 1;
 
 				let html = '';
 				html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
-				html += `Token "${tokens[idx]}" (index ${idx}) — Head ${displayHeadNum}, Layer ${layerIdx + 1}`;
+				html += `Token "${liveTokens[idx]}" (index ${idx}) — Head ${displayHeadNum}, Layer ${liveLayerIdx + 1}`;
 				html += `</div>`;
 
 				// Input embedding with token word label
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokens[idx]}"}}}$`;
+				html += `$\\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${liveTokens[idx]}"}}}$`;
 				html += `</div>`;
 
 				// Q projection with token word label
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\underbrace{Q_{${idx}}}_{\\text{"${tokens[idx]}"}} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokens[idx]}"}}} = ${toColVec(q_vec)}$`;
+				html += `$\\underbrace{Q_{${idx}}}_{\\text{"${liveTokens[idx]}"}} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${liveTokens[idx]}"}}} = ${toColVec(q_vec)}$`;
 				html += `</div>`;
 
 				// K projection with token word label
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\underbrace{K_{${idx}}}_{\\text{"${tokens[idx]}"}} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokens[idx]}"}}} = ${toColVec(k_vec)}$`;
+				html += `$\\underbrace{K_{${idx}}}_{\\text{"${liveTokens[idx]}"}} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${liveTokens[idx]}"}}} = ${toColVec(k_vec)}$`;
 				html += `</div>`;
 
 				// V projection with token word label
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\underbrace{V_{${idx}}}_{\\text{"${tokens[idx]}"}} = \\underbrace{${toMatrix(hd.WV)}}_{W_V}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokens[idx]}"}}} = ${toColVec(v_vec)}$`;
+				html += `$\\underbrace{V_{${idx}}}_{\\text{"${liveTokens[idx]}"}} = \\underbrace{${toMatrix(hd.WV)}}_{W_V}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${liveTokens[idx]}"}}} = ${toColVec(v_vec)}$`;
 				html += `</div>`;
 
 				tooltip.innerHTML = html;
@@ -1383,12 +1424,12 @@ class AttentionEngine {
 
 			// ── Case 3: Not hovering anything relevant ──
 			tooltip.style.display = 'none';
-			lastTooltipKey = null;
+			cache.lastKey = null;
 		});
 
 		svg.addEventListener('mouseleave', () => {
 			tooltip.style.display = 'none';
-			lastTooltipKey = null;
+			cache.lastKey = null;
 		});
 	}
 
@@ -1624,7 +1665,6 @@ class AttentionEngine {
 		}
 
 		// ── Causal mask diagonal: shade upper-triangle cells and draw boundary ──
-		// Draw a subtle overlay on masked (upper-triangle) cells
 		for (let qi = 0; qi < n; qi++) {
 			for (let ki = qi + 1; ki < n; ki++) {
 				const x = offsetX + ki * cellSize;
@@ -1639,11 +1679,8 @@ class AttentionEngine {
 		}
 
 		// Draw the causal mask diagonal boundary line
-		// The boundary goes from top-left of cell (0,1) to bottom-right of cell (n-1,n)
-		// i.e. staircase along the diagonal
 		if (n > 1) {
 			let pathD = '';
-			// Build a staircase path along the diagonal
 			for (let i = 0; i < n; i++) {
 				const x1 = offsetX + (i + 1) * cellSize;
 				const y1 = offsetY + i * cellSize;
@@ -1665,7 +1702,6 @@ class AttentionEngine {
 				'opacity': '0.6'
 			}));
 
-			// Small label for the mask
 			frag.appendChild(makeSvgEl('text', {
 				x: String(offsetX + matrixSize - 2),
 				y: String(offsetY + 12),
