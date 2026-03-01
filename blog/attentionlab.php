@@ -266,7 +266,7 @@ In the world of Transformers, meaning is **movement**. Instead of looking up a w
 ## The Intuition: Contextual Gravity
 Think of a word as a point floating in a high-dimensional space. In isolation, it sits in a "neutral" zone. Self-attention allows other words in the sentence to act like magnets, dragging that point toward a more specific meaning.
 
-## Example 1: The "Apple" Shift
+## The "Apple" Shift
 </div>
 <div id="apple-shift-plot" style="height:400px;"></div>
 
