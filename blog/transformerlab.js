@@ -1901,7 +1901,7 @@ function computeFinalPredictions(h_last, vocabulary, d_model, temperature) {
  * Builds the clickable prediction chip HTML.
  */
 function buildPredictionChipsHtml(predictions) {
-    let html = `<h3>2. Final Probabilities (Click to Generate)</h3>`;
+    let html = `<b>Final Probabilities (Click to Generate)</b>`;
     html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">`;
 
     predictions.forEach(p => {
