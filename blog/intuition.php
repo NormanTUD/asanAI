@@ -211,6 +211,7 @@ The model has **many attention heads** running in parallel, each a tiny speciali
 
 It is important to note that not all attention heads to something that is humanly interpretable. They may look like they're reacting to nouns or verbs, but in reality, it's just a pattern learnt from statistics. They are not programmed to react to those words, and they don't 'know' what they are.
 
+It does so by moving the Embedding of a word in dependence of the context it's used in to a place called **contextualized Embedding**.
 
 #### 4b: Feed-Forward Network - "What do I conclude?"
 
