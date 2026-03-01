@@ -40,6 +40,30 @@ That's it: $\cos\theta$ is the horizontal position, $\sin\theta$ is the vertical
     <div id="plot-unit-circle" class="plot-container" style="width:100%; height:450px;"></div>
 </div>
 
+<!-- ─── Interactive: Sine & Cosine Waves ─── -->
+<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
+    <p style="color:#64748b; font-size:0.9em;">See how amplitude $A$, frequency $\omega$, and phase shift $\varphi$ change the wave: $f(\theta) = A \sin(\omega\theta + \varphi)$.</p>
+
+    <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:10px;">
+        <div>
+            <strong>Amplitude $A$:</strong> <span id="disp-wave-amp" style="font-family:monospace; font-weight:bold;">1.0</span><br>
+            <input type="range" id="slider-wave-amp" min="0.1" max="3" step="0.1" value="1.0" style="width:180px;">
+        </div>
+        <div>
+            <strong>Frequency $\omega$:</strong> <span id="disp-wave-freq" style="font-family:monospace; font-weight:bold;">1.0</span><br>
+            <input type="range" id="slider-wave-freq" min="0.1" max="5" step="0.1" value="1.0" style="width:180px;">
+        </div>
+        <div>
+            <strong>Phase $\varphi$:</strong> <span id="disp-wave-phase" style="font-family:monospace; font-weight:bold;">0.0</span><br>
+            <input type="range" id="slider-wave-phase" min="0" max="6.28" step="0.05" value="0" style="width:180px;">
+        </div>
+    </div>
+
+    <div id="wave-formula" style="text-align:center; font-size:1.1em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:40px;"></div>
+
+    <div id="plot-sincos-wave" class="plot-container" style="width:100%; height:350px;"></div>
+</div>
+
 <div class="optional md" data-headline="History and Etymology of Sine and Cosine">
 The concept originates in ancient Indian astronomy. Indian Astronomer \citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* ("bowstring") to describe the half-chord of a circle, which is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\citetitle{indianastronomer}* (\citetitle{indianastronomer}, ch. 1-2). Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* ("pocket" or "fold"). See the paper \citetitle{indianastronomerconstruction} if you want to know how \citeauthor{indianastronomer} constructed his tables.
 
@@ -72,33 +96,7 @@ The original Transformer paper (\citetitle{vaswani2017attention}) uses sine and 
 $$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d}}\right), \qquad PE_{(\text{pos}, 2i+1)} = \cos\!\left(\frac{\text{pos}}{10000^{2i/d}}\right)$$
 
 This gives each position a distinct pattern the model can learn to interpret.
-</div>
 
-<!-- ─── Interactive: Sine & Cosine Waves ─── -->
-<div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
-    <p style="color:#64748b; font-size:0.9em;">See how amplitude $A$, frequency $\omega$, and phase shift $\varphi$ change the wave: $f(\theta) = A \sin(\omega\theta + \varphi)$.</p>
-
-    <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:10px;">
-        <div>
-            <strong>Amplitude $A$:</strong> <span id="disp-wave-amp" style="font-family:monospace; font-weight:bold;">1.0</span><br>
-            <input type="range" id="slider-wave-amp" min="0.1" max="3" step="0.1" value="1.0" style="width:180px;">
-        </div>
-        <div>
-            <strong>Frequency $\omega$:</strong> <span id="disp-wave-freq" style="font-family:monospace; font-weight:bold;">1.0</span><br>
-            <input type="range" id="slider-wave-freq" min="0.1" max="5" step="0.1" value="1.0" style="width:180px;">
-        </div>
-        <div>
-            <strong>Phase $\varphi$:</strong> <span id="disp-wave-phase" style="font-family:monospace; font-weight:bold;">0.0</span><br>
-            <input type="range" id="slider-wave-phase" min="0" max="6.28" step="0.05" value="0" style="width:180px;">
-        </div>
-    </div>
-
-    <div id="wave-formula" style="text-align:center; font-size:1.1em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:40px;"></div>
-
-    <div id="plot-sincos-wave" class="plot-container" style="width:100%; height:350px;"></div>
-</div>
-
-<div class="md">
 * **Boundedness:** Values stay between $[-1, 1]$, so they don't "overpower" the original word meaning.
 * **Relative Distance:** The model can learn that words are 2 or 3 spots apart because the waves change predictably.
 
