@@ -392,10 +392,10 @@ Below, drag the **anisotropy slider** from isotropic (vectors spread uniformly) 
 
 Modern research into Transformers reveals that the brain-inspired "one neuron, one concept" model, often critiqued as the **"Grandmother Neuron"** (coined by \cite[Jerome Lettvin]{grandmotherneuron} in 1969), is an illusion. Instead, models utilize two critical phenomena to represent information:
 
-### 1. Distributed Representations
+### Distributed Representations
 A concept like "cat" is not stored in a single neuron. Instead, it is a **direction** in a high-dimensional vector space. To represent a specific concept, the model activates a pattern across dozens of neurons. Shifting a single activation in this ensemble slightly alters the meaning (e.g., from "cat" to "kitten").
 
-### 2. Polysemanticity (The Multi-Tasking Neuron)
+### Polysemanticity (The Multi-Tasking Neuron)
 The observable consequence of this structure is **polysemanticity**: individual neurons fire in response to multiple, seemingly unrelated concepts. For example, a single neuron might activate for:
 * Text related to the Golden Gate Bridge.
 * Mathematical formulas involving integers.
