@@ -207,8 +207,6 @@ Attention lets the model **look at other tokens** to understand context. In *"Th
 
 Attention Heads solve what linguists call **Long Distance Dependencies**: a word at the beginning of a long text may influence the meaning of a word at the very end. Attention allows to find out which word attends to which other word over short or even very long texts.
 
-The model has **many attention heads** running in parallel, each a tiny specialist. One might track which noun a pronoun refers to, another might connect verbs to their objects, another might notice adjectives describing nearby nouns.
-
 It is important to note that not all attention heads to something that is humanly interpretable. They may look like they're reacting to nouns or verbs, but in reality, it's just a pattern learnt from statistics. They are not programmed to react to those words, and they don't 'know' what they are.
 
 It does so by moving the Embedding of a word in dependence of the context it's used in to a place called **contextualized Embedding** that looks not only at the word, but at the context the word is used in.
@@ -230,6 +228,8 @@ Type **"bank river"** or **"bank money"** below. Notice how the diamond, the con
 </script>
 
 <div class="md">
+
+LLM models have **many attention heads** running in parallel, each a tiny specialist. One might track which noun a pronoun refers to, another might connect verbs to their objects, another might notice adjectives describing nearby nouns.
 #### 4b: Feed-Forward Network - "What do I conclude?"
 
 After attention has gathered context, a small **neural network** processes each token individually. This is where the model applies knowledge it memorized during training: facts, patterns, and rules of language.
