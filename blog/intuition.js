@@ -1579,7 +1579,7 @@ function runAttention() {
 		traces.push({
 			x: [currentPos[0]], y: [currentPos[1]],
 			mode: 'markers+text',
-			text: 'BANK (in context)',
+			text: 'Contextualized Embedding for "Bank"',
 			textposition: 'top center',
 			marker: { 
 				size: 16, 
