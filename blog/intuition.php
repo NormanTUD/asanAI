@@ -205,7 +205,7 @@ The `x +` means each layer **adds** information rather than replacing it. Nothin
 
 Attention lets the model **look at other tokens** to understand context. In *"The cat sat on the mat because **it** was tired"*, what does "it" refer to? An **attention head** figures this out by comparing "it" to every other word and deciding that "it" is most related to "cat".
 
-Attention Heads solve what linguists call **Long Distance Dependencies**: a word at the beginning of a long text may influence the meaning of a word at the very end. Attention allows to find out which word attends to which other word over short or even very long texts.
+Attention Heads solve what linguists call **Long Distance Dependencies**: a word at the beginning of a long text may influence the meaning of a word at the very end. Attention allows to find out which word attends to which other word over short or even very long texts, and it can do so over the whole **context length** of the LLM model.
 
 It does so by moving the Embedding of a word in dependence of the context it's used in to a place called **contextualized Embedding** that looks not only at the word, but at the context the word is used in.
 
