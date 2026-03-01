@@ -226,7 +226,6 @@ Type **"bank river"** or **"bank money"** below. Notice how the diamond, the con
 </script>
 
 <div class="md">
-
 LLM models have **many attention heads** running in parallel, each a tiny specialist. One might track which noun a pronoun refers to, another might connect verbs to their objects, another might notice adjectives describing nearby nouns.
 
 It is important to note that not all attention heads to something that is humanly interpretable. They may look like they're reacting to nouns or verbs, but in reality, it's just a pattern learnt from statistics. They are not programmed to react to those words, and they don't 'know' what they are.
