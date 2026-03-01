@@ -252,7 +252,7 @@ perception, the fixed width of the residual stream forces the model to distill
 token-level noise into something approaching conceptual structure. It is
 abstraction born not of insight, but of necessity.
 
-**Residual Connections (X + Attention):** The idea of "Residual Connections" ($x_\text{new} = x + f(x)$) used in the Transformer was actually pioneered earlier by **\cite[Kaiming He et al.]{he2015resnet}** in the **\cite[ResNet]{he2015resnet}** architecture for computer vision. The Transformer team adapted this to ensure that gradients could flow through dozens of layers without the model "forgetting" the original input tokens.
+**Residual Connections (X + Attention):** The idea of "Residual Connections" ($x_\text{new} = x + f(x)$) used in the Transformer was actually pioneered earlier by **\cite[Kaiming He et al.]{he2015resnet}** in the **\cite[ResNet]{he2015resnet}** architecture for computer vision. The Transformer team adapted this to ensure that gradients could flow through dozens of layers without the model "forgetting" the original input tokens, a phenomenon called *Vanishing Gradient*.
 
 ### Historical Context: The Original Encoder-Decoder (What We Don't Use)
 
