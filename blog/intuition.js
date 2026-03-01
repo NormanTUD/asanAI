@@ -475,7 +475,7 @@ const PositionalEncodingViz = {
         }
 
         container.innerHTML = `
-            <div style="font-family:monospace; font-size:0.85em; line-height:2; padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
+            <div style="background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
                 <div style="margin-bottom:8px;">
                     <b style="color:#3b82f6;">"${word}" at position ${pos1}:</b><br>
                     Embedding: [${baseEmb.map(v => v.toFixed(2)).join(', ')}]<br>
@@ -490,7 +490,7 @@ const PositionalEncodingViz = {
                 </div>
                 <div style="margin-top:10px; padding-top:10px; border-top:1px solid #e2e8f0; color:#64748b;">
                     ⚡ Same word, different positions → <b>different vectors</b>!<br>
-                    This is how "The <b>dog</b> bites man" differs from "The man bites <b>dog</b>".
+                    This is how "The <b>dog</b> bites <b>man</b>" differs from "The <b>man</b> bites <b>dog</b>".
                 </div>
             </div>`;
     }
