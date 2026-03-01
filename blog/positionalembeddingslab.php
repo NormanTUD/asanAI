@@ -128,29 +128,6 @@ You might notice that **Dim 0** and **Dim 1** wiggle quickly, while **Dim 2** an
 
 If you were to expand the slider to **Position 1000**, you would see those straight lines finally start to curve into waves!
 
-### Why Sine and Cosine Specifically?
-
-**Shift = Rotation.** The angle addition identities give us:
-
-$$\text{PE}(\text{pos} + k) = M_k \cdot \text{PE}(\text{pos}), \quad M_k = \begin{pmatrix} \cos(k\omega) & \sin(k\omega) \\ -\sin(k\omega) & \cos(k\omega) \end{pmatrix}$$
-
-A fixed offset $k$ is a **fixed rotation matrix** independent of $\text{pos}$. The model can learn relative distances via simple linear operations. This is the same reason Fourier bases dominate signal processing: time shifts become phase rotations in frequency space.
-
-**Orthogonality.** Different frequency components are orthogonal, so each dimension encodes **independent** positional information with zero redundancy.
-
-### The Binary Clock Analogy
-
-The encoding is a **smooth, continuous version of binary counting**:
-
-- **Dim 0, 1** (high freq) flips fast like the least significant bit
-- **Dim 2, 3** (low freq) barely moves like the most significant bit
-
-Fast waves distinguish neighbors; slow waves track long range position. Together, every position maps to a unique point on a high dimensional torus (product of circles).
-</div>
-
-<div id="pe-fourier-demo"></div>
-
-<div class="md">
 ## Positional Encoding Creates a Manifold, Not Just Labels
 
 The wave plots above show each dimension's projection individually, flat curves on a screen. But the PE formula actually maps each position to a point on a **high-dimensional helix**. The visualization below reconstructs this by plotting the first three PE dimensions as 3D coordinates:
