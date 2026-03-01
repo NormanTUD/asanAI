@@ -54,7 +54,7 @@ $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 </div>
 
 <div class="md">
-### Key Properties
+### Key Properties of Sine and Cosine
 
 **Periodicity:** Both repeat every $2\pi$: $\sin(\theta + 2\pi) = \sin\theta$
 
