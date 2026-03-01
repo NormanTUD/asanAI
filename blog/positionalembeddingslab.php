@@ -26,7 +26,6 @@ That's it: $\cos\theta$ is the horizontal position, $\sin\theta$ is the vertical
 
 <!-- ─── Interactive: Unit Circle ─── -->
 <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
-    <p style="margin-top:0;">Interactive Unit Circle</p>
     <p style="color:#64748b; font-size:0.9em;">Drag the angle and watch the point move on the unit circle. Its $x$-coordinate is $\cos\theta$ (<span style="color:#2563eb;font-weight:bold;">blue</span>) and its $y$-coordinate is $\sin\theta$ (<span style="color:#ef4444;font-weight:bold;">red</span>).</p>
 
     <div style="margin-bottom:10px;">
@@ -66,7 +65,7 @@ $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 
 **Derivatives:** $\frac{d}{d\theta}\sin\theta = \cos\theta$, $\frac{d}{d\theta}\cos\theta = -\sin\theta$
 
-Transformers (the architecture behind GPT) process all words at once, so they need a way to encode each word's **position**. The original Transformer paper (\citetitle{vaswani2017attention}) uses sine and cosine to create a unique positional fingerprint:
+Transformers process all words at once, so they need a way to encode each word's **position**. The original Transformer paper (\citetitle{vaswani2017attention}) uses sine and cosine to create a unique positional fingerprint:
 
 $$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d}}\right), \qquad PE_{(\text{pos}, 2i+1)} = \cos\!\left(\frac{\text{pos}}{10000^{2i/d}}\right)$$
 
