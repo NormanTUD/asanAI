@@ -445,16 +445,6 @@ class AttentionEngine {
 					equationsContainer.innerHTML = layerInstance.generateEquationsOnly(hd);
 					render_temml();
 				}
-
-				// Update the math table
-				const mathTableId = `apv-math-table-${this.containerId}-${layerIdx}-${headIdx}`;
-				const mathTableContainer = document.getElementById(mathTableId);
-				if (mathTableContainer && mathTableContainer.offsetParent !== null) {
-					const layerInstance = layerData.instance;
-					const escapedTokens = layerData.tokens.map(t => String(t).replace(/#/g, '\\#'));
-					mathTableContainer.innerHTML = layerInstance.generateMathTable(hd, escapedTokens);
-					render_temml();
-				}
 			});
 
 			return;
@@ -517,10 +507,6 @@ class AttentionEngine {
 	    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
 	    <svg id="${apvMatrixCanvasId}" style="width:100%; min-height:180px;"></svg>
 	</div>
-</div>
-
-<div id="apv-math-table-${this.containerId}-${layerIdx}-${headIdx}" style="overflow-x:auto; margin-bottom:20px;">
-	${layerInstance.generateMathTable(hd, escapedTokens)}
 </div>
 
 <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>`;
@@ -831,62 +817,6 @@ class AttentionEngine {
 		} else {
 			this._apvDrawSingleHeadView(svg, layerIdx, headIdx, singleHeadData, displayTokens);
 		}
-	}
-
-	generateMathTable(head, tokens) {
-		const { this_weights, Qi, Ki, Vi, h0, WQ, WK, WV } = head;
-
-		const toMatrix = (mat) => `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
-
-		const toColPmatrix = (arr) => {
-			if (!Array.isArray(arr)) return arr;
-			return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' \\\\ ')} \\end{pmatrix}`;
-		};
-
-		let html = `<table style="border-collapse: collapse; width: 100%; border: 1px solid #3b82f6;">`;
-
-		html += `<tr><th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Query \\ Key</th>`;
-		tokens.forEach((t, j) => {
-			const keyVector = Array.isArray(h0[j]) ? `$K_${j} = ${toColPmatrix(h0[j])}$` : t;
-			html += `<th style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;">Key: ${keyVector}</th>`;
-		});
-		html += `</tr>`;
-
-		this_weights.forEach((row, i) => {
-			html += `<tr>`;
-			const queryVector = Array.isArray(h0[i]) ? `$Q_${i} = ${toColPmatrix(h0[i])}$` : tokens[i];
-			html += `<td style="border: 1px solid #3b82f6; padding: 8px; background: #f8fafc;"><strong>Query: ${queryVector}</strong></td>`;
-
-			row.forEach((weight, j) => {
-				const intensity = Math.floor(255 - (weight * 150));
-				const bgColor = `rgb(${intensity}, ${intensity}, 255)`;
-				const dk_int = Math.round(this.d_k);
-				const resultVec = Vi[j].map(v => v * weight);
-
-				let cellEq;
-				if (i === 0 && j === 0) {
-					cellEq = `
-	    \\text{SoftMax} \\left( \\frac{
-		\\underbrace{(W_Q h_0[${i}])^T}_{Q_${i}^T} \\cdot
-		\\underbrace{(W_K h_0[${j}])}_{K_${j}}
-	    }{\\sqrt{${dk_int}}} \\right) \\cdot \\underbrace{V_{${j}}}_{h_{${j}} \\cdot W_V}
-	    = ${weight.toFixed(nr_fixed)} \\cdot ${toColPmatrix(Vi[j])}
-	    = ${toColPmatrix(resultVec)}
-	`.replace(/\s+/g, ' ');
-				} else {
-					cellEq = `
-	    \\underbrace{ \\text{attn}(Q_{${i}}, K_{${j}}) }_{${weight.toFixed(nr_fixed)}}
-	    \\cdot \\underbrace{V_{${j}}}_{h_{${j}} \\cdot W_V} = ${toColPmatrix(resultVec)}
-	`.replace(/\s+/g, ' ');
-				}
-
-				html += `<td style="border: 1px solid #3b82f6; padding: 12px; background: ${bgColor}; text-align: center;">$${cellEq}$</td>`;
-			});
-			html += `</tr>`;
-		});
-
-		html += `</table>`;
-		return html;
 	}
 
 	_apvDraw(layerIdx) {
