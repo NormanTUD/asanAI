@@ -9,16 +9,9 @@ as the embeddings, so that the two can be summed.
 </div>
 
 <div class="md">
-In a Transformer, words are processed in parallel. Without **Positional Encoding (PE)**, the model would treat the sentence *"The dog bit the man"* exactly the same as *"The man bit the dog"*. The semantic vectors alone don't know who is doing the biting.
+In a Transformer, words are processed in parallel. Without **Positional Encoding (PE)**, the model would treat the sentence *"The dog bit the man"* exactly the same as *"The man bit the dog"* (and also the same as *"dog the The man bit"* and all other combinations of these words).
 
 To fix this, we **add** a unique mathematical "signature" to each word's vector based on its position ($\text{pos}$). 
-
-## Concrete Example: Nudging the "King"
-In our Lab, the word **"king"** is represented by the vector:
-$$\text{king} = [1.688, -0.454, 0, 0]$$
-
-When "king" is at **Position 1**, we calculate a PE vector and add it. This "nudges" the king's position in 4D space.
-$$\text{king}_\text{final} = \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmatrix} + \begin{pmatrix} \text{PE}_{\text{pos}1, \text{dim}0} \\ \text{PE}_{\text{pos}1, \text{dim}1} \\ \text{PE}_{\text{pos}1, \text{dim}2} \\ \text{PE}_{\text{pos}1, \text{dim}3} \end{pmatrix}$$
 
 ### How the Waves work
 We use sine and cosine functions of different frequencies to ensure every position is unique (with $i$ being the position and $d_\text{model}$ being the dimensionality of the embedding space):
@@ -28,6 +21,13 @@ $$\text{PE}_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text
 
 * **Boundedness:** Values stay between $[-1, 1]$, so they don't "overpower" the original word meaning.
 * **Relative Distance:** The model can learn that words are 2 or 3 spots apart because the waves change predictably.
+
+## Concrete Example: Nudging the "King"
+In our Lab, the word **"king"** is represented by the vector:
+$$\text{king} = [1.688, -0.454, 0, 0]$$
+
+When "king" is at **Position 1**, we calculate a PE vector and add it. This "nudges" the king's position in 4D space.
+$$\text{king}_\text{final} = \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmatrix} + \begin{pmatrix} \text{PE}_{\text{pos}1, \text{dim}0} \\ \text{PE}_{\text{pos}1, \text{dim}1} \\ \text{PE}_{\text{pos}1, \text{dim}2} \\ \text{PE}_{\text{pos}1, \text{dim}3} \end{pmatrix}$$
 </div>
 
 <div style="margin-bottom: 20px; font-family: sans-serif;">
