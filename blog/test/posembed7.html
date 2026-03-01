@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Word Is Not a Point — It's a Helix</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.8;
+        }
+        .hero {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 60px 24px 20px;
+        }
+        .hero h1 {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #38bdf8, #818cf8, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 14px;
+        }
+        .hero .subtitle {
+            font-size: 1.15em;
+            color: #94a3b8;
+            max-width: 760px;
+            margin-bottom: 32px;
+        }
+        .content {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+        .content h2 {
+            font-size: 1.5em;
+            color: #f8fafc;
+            margin: 44px 0 12px;
+            border-left: 4px solid #818cf8;
+            padding-left: 14px;
+        }
+        .content h3 {
+            font-size: 1.15em;
+            color: #c4b5fd;
+            margin: 28px 0 8px;
+        }
+        .content p {
+            color: #cbd5e1;
+            margin-bottom: 16px;
+            font-size: 1.02em;
+        }
+        .content em { color: #a5b4fc; font-style: italic; }
+        .content strong { color: #f1f5f9; }
+        .content code {
+            background: #1e293b;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 0.92em;
+            color: #38bdf8;
+        }
+        .content ul { margin: 0 0 16px 20px; }
+        .content li { color: #cbd5e1; margin-bottom: 6px; }
+        .plot-box {
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            height: 660px;
+            background: #1e293b;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            margin: 24px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .plot-box .js-plotly-plot,
+        .plot-box .plotly,
+        .plot-box .plot-container {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .plot-box .placeholder {
+            color: #475569;
+            font-size: 1.1em;
+            text-align: center;
+        }
+        .plot-box .placeholder .spinner {
+            display: inline-block;
+            width: 28px; height: 28px;
+            border: 3px solid #334155;
+            border-top-color: #818cf8;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .math-block {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            color: #a5b4fc;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .insight-box {
+            background: linear-gradient(135deg, rgba(129,140,248,0.1), rgba(56,189,248,0.08));
+            border: 1px solid #4f46e5;
+            border-radius: 10px;
+            padding: 18px 22px;
+            margin: 20px 0;
+        }
+        .insight-box strong { color: #a5b4fc; }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 16px 0;
+            align-items: center;
+        }
+        .controls label {
+            color: #94a3b8;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .controls select, .controls input[type=range] {
+            background: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 0.95em;
+        }
+        .controls input[type=range] { width: 160px; }
+        .controls .val { color: #38bdf8; font-weight: bold; min-width: 30px; }
+        .diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+        .diagram .box {
+            background: #1e293b;
+            border: 2px solid #475569;
+            border-radius: 8px;
+            padding: 14px 18px;
+            text-align: center;
+            font-size: 0.95em;
+            min-width: 120px;
+        }
+        .diagram .box.highlight {
+            border-color: #818cf8;
+            background: rgba(129,140,248,0.1);
+        }
+        .diagram .arrow {
+            font-size: 1.6em;
+            color: #475569;
+        }
+        .slices-grid {
+            display: grid;
+            gap: 12px;
+            margin: 24px 0;
+        }
+        .slice-box {
+            width: 100%;
+            overflow: hidden;
+            height: 360px;
+            background: #1e293b;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            position: relative;
+        }
+        .slice-box .js-plotly-plot,
+        .slice-box .plotly,
+        .slice-box .plot-container {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .dim-badge {
+            display: inline-block;
+            background: #334155;
+            color: #a5b4fc;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 0 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>A Word Is Not a Point.<br>It's a Helix.</h1>
+    <p class="subtitle">
+        In a Transformer's embedding space, a token's raw embedding is a single fixed point.
+        But the moment you add sinusoidal positional encoding, that point gets swept along a
+        <em>high-dimensional helical curve</em>. Every position maps the same word to a different
+        spot on that helix. The word becomes a spiral through space.
+    </p>
+</div>
+
+<div class="content">
+
+    <h2>Why a Helix?</h2>
+    <p>
+        The positional encoding formula assigns each position a vector built from sine and cosine
+        pairs at <strong>different frequencies</strong>:
+    </p>
+    <div class="math-block">
+PE(pos, 2i)   = sin(pos / 10000^(2i/d))
+PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
+    </div>
+    <p>
+        Each dimension pair <code>(2i, 2i+1)</code> traces a <strong>circle</strong> as
+        <code>pos</code> increases — because <code>(sin θ, cos θ)</code> is a point
+        on the unit circle. But <strong>different pairs rotate at different speeds</strong>:
+    </p>
+    <ul>
+        <li><strong>Dims 0, 1</strong> (highest frequency): rotate fast — the <em>circular cross-section</em></li>
+        <li><strong>Dims 2, 3</strong> (lower frequency): rotate slowly — the <em>axial drift</em></li>
+        <li><strong>Dims 4, 5, 6, 7…</strong>: even slower, adding drift in higher dimensions</li>
+    </ul>
+    <p>
+        The result is a <strong>corkscrew</strong>: the fast pair draws circles, the slow pairs
+        stretch those circles along additional axes. In 3D this is a classic helix. In the full
+        <code>d</code>-dimensional space, it's a curve on a <em>high-dimensional torus</em>
+        (a product of circles) [[11]].
+    </p>
+
+    <div class="insight-box">
+        <strong>Why not a sphere?</strong> A sphere would mean positions scatter <em>uniformly</em>
+        in all directions. But positions are <em>ordered</em>. Position 5 sits between 4 and 6
+        on the curve. The helix preserves sequential ordering geometrically: <strong>adjacent
+        positions are adjacent points on the curve</strong> [[11]].
+    </div>
+
+    <h2>What the FFN Actually Sees</h2>
+
+    <div class="diagram">
+        <div class="box">Token Embedding<br><code>e("king")</code><br><em>fixed point</em></div>
+        <div class="arrow">+</div>
+        <div class="box">Positional Encoding<br><code>PE(pos)</code><br><em>point on helix</em></div>
+        <div class="arrow">→</div>
+        <div class="box">Self-Attention</div>
+        <div class="arrow">→</div>
+        <div class="box highlight">FFN sees this<br><code>one vector</code><br><em>combined, inseparable</em></div>
+    </div>
+
+    <p>
+        The FFN <strong>never sees the raw embedding or the positional encoding separately</strong>.
+        It receives only the sum — a single vector that is a point <em>on the word's helix</em>,
+        after it has also been mixed by self-attention [[11]].
+    </p>
+    <p>The FFN must learn to disentangle:</p>
+    <ul>
+        <li><strong>"Which helix am I on?"</strong> → word identity</li>
+        <li><strong>"Where on the helix am I?"</strong> → position in the sequence</li>
+    </ul>
+
+    <h2>Interactive 3D Helix</h2>
+    <p>
+        The <strong>black diamond</strong> is the raw embedding. The <strong>coloured spiral</strong>
+        is the helix — each point is the word at a specific sequence position. Colour encodes
+        position number. <strong>Blue and red segments</strong> show the same offset Δ at different
+        absolute positions — they always have the same shape (translational symmetry) [[11]].
+    </p>
+
+    <div class="controls">
+        <label>Positions:
+            <input type="range" id="ctrl-npos" min="20" max="500" step="10" value="300">
+            <span class="val" id="ctrl-npos-val">300</span>
+        </label>
+        <label>Dimensions:
+            <input type="range" id="ctrl-dims" min="2" max="10" step="2" value="4">
+            <span class="val" id="ctrl-dims-val">4</span>
+        </label>
+        <label>Helix tube:
+            <input type="range" id="ctrl-tube" min="0" max="10" step="1" value="3">
+            <span class="val" id="ctrl-tube-val">0.3</span>
+        </label>
+        <label>Word:
+            <select id="ctrl-word">
+                <option value="king" selected>"king"</option>
+                <option value="queen">"queen"</option>
+                <option value="the">"the"</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="plot-box" id="helix-plot">
+        <div class="placeholder" id="helix-placeholder">
+            <div class="spinner"></div><br>
+            Scroll here to load the 3D plot…
+        </div>
+    </div>
+
+    <h2>Dimension Pair Slices</h2>
+    <p>
+        With <strong>4 or more dimensions</strong>, we can't see the full helix in a single 3D plot.
+        Instead, each plot below shows a <strong>2D slice</strong> — one sin/cos dimension pair
+        plotted against another. Each slice reveals a different aspect of the helical manifold.
+        Fast pairs show tight circles; slow pairs show gentle arcs. Cross-frequency slices show
+        the characteristic <em>Lissajous-like</em> patterns that make every position unique.
+    </p>
+    <p id="slices-info" style="color:#64748b; font-size:0.9em;"></p>
+
+    <div class="slices-grid" id="slices-grid"></div>
+
+    <h2>Why This Geometry Matters</h2>
+
+    <h3>1. Adjacency is geometric</h3>
+    <p>
+        Position 42 and 43 are <em>neighbours on the helix</em>. The model doesn't memorise
+        "42 is next to 43" — it's encoded in the curve's continuity [[11]].
+    </p>
+
+    <h3>2. Relative distance = fixed rotation</h3>
+    <p>
+        "3 positions apart" always corresponds to the <strong>same rotation matrix M₃</strong>,
+        whether at position 2 or 2000. This group structure lets the model generalise to
+        unseen sequence lengths [[11]].
+    </p>
+
+    <h3>3. The helix never self-intersects</h3>
+    <p>
+        The incommensurate frequencies ensure the curve <strong>never returns to the same point</strong>.
+        Every position gets a truly unique encoding — the same principle that makes irrational
+        rotations on a torus produce dense, non-repeating orbits [[11]].
+    </p>
+
+    <h3>4. Why not tanh or sigmoid?</h3>
+    <p>
+        Functions like <code>tanh(pos)</code> saturate at ±1 and lack the <strong>rotation
+        property</strong>: there is no matrix <code>M_k</code> such that
+        <code>tanh(pos + k) = M_k · tanh(pos)</code>. Without that algebraic structure,
+        the model cannot generalise relative distances [[11]].
+    </p>
+
+</div>
+
+<script>
+(function() {
+    const WORDS = {
+        king:  { base: [1.688, -0.454, 0.0, 0.0, 0.5, -0.3, 0.1, 0.2, 0.05, -0.1] },
+        queen: { base: [-0.5, 1.2, 0.8, -0.2, 0.3, 0.6, -0.4, 0.1, 0.15, -0.05] },
+        the:   { base: [0.1, 0.05, -0.02, 0.03, -0.01, 0.02, 0.0, -0.01, 0.005, 0.01] }
+    };
+    const BASE_FREQ = 10000;
+
+    function pe(pos, d) {
+        const v = [];
+        for (let i = 0; i < d; i += 2) {
+            const w = 1 / Math.pow(BASE_FREQ, i / d);
+            v.push(Math.sin(pos * w));
+            if (i + 1 < d) v.push(Math.cos(pos * w));
+        }
+        return v;
+    }
+
+    function getState() {
+        return {
+            word: document.getElementById('ctrl-word').value,
+            nPos: parseInt(document.getElementById('ctrl-npos').value),
+            dims: parseInt(document.getElementById('ctrl-dims').value),
+            tubeOpacity: parseInt(document.getElementById('ctrl-tube').value) / 10
+        };
+    }
+
+    function buildMainPlot() {
+        const { word, nPos, dims, tubeOpacity } = getState();
+        const base = WORDS[word].base.slice(0, dims);
+
+        // Smooth helix curve
+        const smoothX = [], smoothY = [], smoothZ = [];
+        for (let p = 0; p <= nPos; p += 0.3) {
+            const v = pe(p, dims);
+            smoothX.push(base[0] + v[0]);
+            smoothY.push((base[1] || 0) + (v[1] || 0));
+            smoothZ.push((base[2] || 0) + (v[2] || 0));
+        }
+
+        // Integer markers
+        const mX = [], mY = [], mZ = [], texts = [], colors = [];
+        for (let p = 0; p <= nPos; p++) {
+            const v = pe(p, dims);
+            mX.push(base[0] + v[0]);
+            mY.push((base[1] || 0) + (v[1] || 0));
+            mZ.push((base[2] || 0) + (v[2] || 0));
+            texts.push(`"${word}" @ pos ${p}`);
+            colors.push(p);
+        }
+
+        // Tube mesh
+        const tubeX = [], tubeY = [], tubeZ = [];
+        const tubeI = [], tubeJ = [], tubeK = [];
+        const tubeR = 0.05;
+        const tubeRes = 8;
+
+        if (tubeOpacity > 0) {
+            for (let s = 0; s < smoothX.length; s++) {
+                let tx, ty, tz;
+                if (s < smoothX.length - 1) {
+                    tx = smoothX[s+1] - smoothX[s];
+                    ty = smoothY[s+1] - smoothY[s];
+                    tz = smoothZ[s+1] - smoothZ[s];
+                } else {
+                    tx = smoothX[s] - smoothX[s-1];
+                    ty = smoothY[s] - smoothY[s-1];
+                    tz = smoothZ[s] - smoothZ[s-1];
+                }
+                const tLen = Math.sqrt(tx*tx + ty*ty + tz*tz) || 1;
+                tx /= tLen; ty /= tLen; tz /= tLen;
+
+                let px, py, pz;
+                if (Math.abs(tx) < 0.9) { px = 0; py = -tz; pz = ty; }
+                else { px = -tz; py = 0; pz = tx; }
+                const pLen = Math.sqrt(px*px + py*py + pz*pz) || 1;
+                px /= pLen; py /= pLen; pz /= pLen;
+
+                const qx = ty*pz - tz*py;
+                const qy = tz*px - tx*pz;
+                const qz = tx*py - ty*px;
+
+                for (let r = 0; r < tubeRes; r++) {
+                    const angle = (2 * Math.PI * r) / tubeRes;
+                    const ca = Math.cos(angle), sa = Math.sin(angle);
+                    tubeX.push(smoothX[s] + tubeR * (ca * px + sa * qx));
+                    tubeY.push(smoothY[s] + tubeR * (ca * py + sa * qy));
+                    tubeZ.push(smoothZ[s] + tubeR * (ca * pz + sa * qz));
+                }
+                if (s < smoothX.length - 1) {
+                    for (let r = 0; r < tubeRes; r++) {
+                        const r2 = (r + 1) % tubeRes;
+                        const b1 = s * tubeRes, b2 = (s + 1) * tubeRes;
+                        tubeI.push(b1+r); tubeJ.push(b1+r2); tubeK.push(b2+r);
+                        tubeI.push(b1+r2); tubeJ.push(b2+r2); tubeK.push(b2+r);
+                    }
+                }
+            }
+        }
+
+        // Symmetry segments
+        function segTrace(pA, pB, col, label) {
+            const xs = [], ys = [], zs = [];
+            for (let p = pA; p <= pB; p++) {
+                const v = pe(p, dims);
+                xs.push(base[0] + v[0]);
+                ys.push((base[1]||0) + (v[1]||0));
+                zs.push((base[2]||0) + (v[2]||0));
+            }
+            return {
+                type: 'scatter3d', x: xs, y: ys, z: zs,
+                mode: 'lines+markers',
+                line: { color: col, width: 8 },
+                marker: { size: 5, color: col },
+                name: label, hoverinfo: 'name'
+            };
+        }
+
+        const traces = [];
+
+        if (tubeOpacity > 0 && tubeX.length > 0) {
+            traces.push({
+                type: 'mesh3d',
+                x: tubeX, y: tubeY, z: tubeZ,
+                i: tubeI, j: tubeJ, k: tubeK,
+                color: '#818cf8', opacity: tubeOpacity,
+                name: 'Helix tube', hoverinfo: 'skip',
+                flatshading: false,
+                lighting: { ambient: 0.7, diffuse: 0.4, specular: 0.1 }
+            });
+        }
+
+        traces.push({
+            type: 'scatter3d', x: smoothX, y: smoothY, z: smoothZ,
+            mode: 'lines',
+            line: { color: 'rgba(148,163,184,0.35)', width: 2 },
+            hoverinfo: 'skip', showlegend: false
+        });
+
+        traces.push({
+            type: 'scatter3d', x: mX, y: mY, z: mZ,
+            mode: 'markers',
+            marker: {
+                size: 3, color: colors, colorscale: 'Portland',
+                colorbar: { title: 'Position', thickness: 12, len: 0.5, x: 1.02 },
+                opacity: 0.9
+            },
+            text: texts, hoverinfo: 'text', name: 'Positions on helix'
+        });
+
+        const segLen = 3;
+        if (nPos >= 20) {
+            traces.push(segTrace(5, 5 + segLen, '#2563eb', `pos 5→${5+segLen} (Δ=${segLen})`));
+            const far = Math.min(Math.floor(nPos * 0.8), nPos - segLen);
+            traces.push(segTrace(far, far + segLen, '#dc2626', `pos ${far}→${far+segLen} (Δ=${segLen})`));
+        }
+
+        traces.push({
+            type: 'scatter3d',
+            x: [base[0]], y: [base[1]||0], z: [base[2]||0],
+            mode: 'markers+text',
+            marker: { size: 9, color: '#000', symbol: 'diamond', line: { width: 2, color: '#fff' } },
+            text: [`"${word}" (no PE)`],
+            textposition: 'top center',
+            textfont: { size: 13, color: '#fff' },
+            name: `Raw "${word}" embedding`,
+            hoverinfo: 'text'
+        });
+
+        const dimLabels = [];
+        for (let i = 0; i < Math.min(dims, 3); i++) {
+            const type = i % 2 === 0 ? 'sin' : 'cos';
+            const speed = i < 2 ? 'fast' : (i < 4 ? 'medium' : 'slow');
+            dimLabels.push(`Dim ${i} (${type}, ${speed})`);
+        }
+
+        const layout = {
+            paper_bgcolor: '#1e293b',
+            plot_bgcolor: '#1e293b',
+            font: { color: '#e2e8f0' },
+            scene: {
+                xaxis: { title: dimLabels[0] || 'Dim 0', gridcolor: '#334155', zerolinecolor: '#475569', color: '#94a3b8' },
+                yaxis: { title: dimLabels[1] || 'Dim 1', gridcolor: '#334155', zerolinecolor: '#475569', color: '#94a3b8' },
+                zaxis: { title: dimLabels[2] || 'Dim 2', gridcolor: '#334155', zerolinecolor: '#475569', color: '#94a3b8' },
+                bgcolor: '#1e293b',
+                camera: { eye: { x: 1.8, y: 1.4, z: 1.0 } },
+                aspectmode: 'data'
+            },
+            margin: { t: 30, b: 10, l: 10, r: 10 },
+            showlegend: true,
+            legend: { x: 0.01, y: 0.99, bgcolor: 'rgba(30,41,59,0.8)', font: { size: 11 } }
+        };
+
+        document.getElementById('helix-placeholder').style.display = 'none';
+        Plotly.react('helix-plot', traces, layout, { responsive: true });
+    }
+
+    function buildSlices() {
+        const { word, nPos, dims } = getState();
+        const base = WORDS[word].base.slice(0, dims);
+        const grid = document.getElementById('slices-grid');
+        const info = document.getElementById('slices-info');
+
+        if (dims < 4) {
+            grid.innerHTML = '';
+            info.textContent = 'Set dimensions to 4 or higher to see 2D slices of all dimension-pair combinations.';
+            grid.style.gridTemplateColumns = '1fr';
+            return;
+        }
+
+        // Compute all encoded positions once
+        const encoded = [];
+        for (let p = 0; p <= nPos; p++) {
+            const v = pe(p, dims);
+            const combined = [];
+            for (let i = 0; i < dims; i++) {
+                combined.push((base[i] || 0) + (v[i] || 0));
+            }
+            encoded.push(combined);
+        }
+
+        // Generate all unique pairs
+        const pairs = [];
+        for (let a = 0; a < dims; a++) {
+            for (let b = a + 1; b < dims; b++) {
+                pairs.push([a, b]);
+            }
+        }
+
+        const cols = pairs.length <= 3 ? pairs.length : (pairs.length <= 6 ? 3 : (pairs.length <= 10 ? 4 : 5));
+        grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+        info.textContent = `${dims} dimensions → ${pairs.length} unique dimension pairs shown below. Each plot is a 2D projection of the helix onto that pair.`;
+
+        // Build or reuse slice containers
+        grid.innerHTML = '';
+        pairs.forEach(function(pair, idx) {
+            const a = pair[0], b = pair[1];
+            const id = 'slice-' + a + '-' + b;
+            const div = document.createElement('div');
+            div.className = 'slice-box';
+            div.id = id;
+            grid.appendChild(div);
+
+            const xs = encoded.map(function(e) { return e[a]; });
+            const ys = encoded.map(function(e) { return e[b]; });
+            const cols = encoded.map(function(_, i) { return i; });
+
+            function dimLabel(d) {
+                const type = d % 2 === 0 ? 'sin' : 'cos';
+                const pairIdx = Math.floor(d / 2);
+                const speed = pairIdx === 0 ? 'fast' : (pairIdx === 1 ? 'med' : 'slow');
+                return 'D' + d + ' (' + type + ', ' + speed + ')';
+            }
+
+            const traces = [{
+                x: xs, y: ys,
+                mode: 'markers',
+                marker: {
+                    size: 3,
+                    color: cols,
+                    colorscale: 'Portland',
+                    opacity: 0.8
+                },
+                hoverinfo: 'text',
+                text: cols.map(function(c) { return 'pos ' + c; })
+            }, {
+                x: xs, y: ys,
+                mode: 'lines',
+                line: { color: 'rgba(148,163,184,0.2)', width: 1 },
+                hoverinfo: 'skip',
+                showlegend: false
+            }, {
+                x: [base[a] || 0], y: [base[b] || 0],
+                mode: 'markers',
+                marker: { size: 8, color: '#000', symbol: 'diamond', line: { width: 2, color: '#fff' } },
+                showlegend: false,
+                hoverinfo: 'text',
+                text: ['Raw embedding']
+            }];
+
+            const layout = {
+                paper_bgcolor: '#1e293b',
+                plot_bgcolor: '#1e293b',
+                font: { color: '#94a3b8', size: 10 },
+                xaxis: { title: dimLabel(a), gridcolor: '#334155', zerolinecolor: '#475569', color: '#94a3b8' },
+                yaxis: { title: dimLabel(b), gridcolor: '#334155', zerolinecolor: '#475569', color: '#94a3b8', scaleanchor: 'x', scaleratio: 1 },
+                margin: { t: 30, b: 50, l: 50, r: 10 },
+                title: { text: 'D' + a + ' vs D' + b, font: { size: 12, color: '#c4b5fd' } },
+                showlegend: false
+            };
+
+            Plotly.newPlot(id, traces, layout, { responsive: true });
+        });
+    }
+    function buildAll() {
+        buildMainPlot();
+        buildSlices();
+    }
+
+    // Lazy-load Plotly
+    let plotlyLoaded = false;
+    let plotBuilt = false;
+
+    function loadAndBuild() {
+        if (plotBuilt) { buildAll(); return; }
+        if (plotlyLoaded) { plotBuilt = true; buildAll(); return; }
+
+        const script = document.createElement('script');
+        script.src = 'https://cdn.plot.ly/plotly-2.27.0.min.js';
+        script.onload = function() {
+            plotlyLoaded = true;
+            plotBuilt = true;
+            buildAll();
+        };
+        document.head.appendChild(script);
+    }
+
+    // IntersectionObserver for lazy loading
+    const target = document.getElementById('helix-plot');
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                loadAndBuild();
+                observer.unobserve(target);
+            }
+        });
+    }, { rootMargin: '300px' });
+    observer.observe(target);
+
+    // Wire up controls
+    document.getElementById('ctrl-npos').addEventListener('input', function() {
+        document.getElementById('ctrl-npos-val').textContent = this.value;
+        if (plotBuilt) buildAll();
+    });
+    document.getElementById('ctrl-dims').addEventListener('input', function() {
+        document.getElementById('ctrl-dims-val').textContent = this.value;
+        if (plotBuilt) buildAll();
+    });
+    document.getElementById('ctrl-tube').addEventListener('input', function() {
+        document.getElementById('ctrl-tube-val').textContent = (this.value / 10).toFixed(1);
+        if (plotBuilt) buildMainPlot();
+    });
+    document.getElementById('ctrl-word').addEventListener('change', function() {
+        if (plotBuilt) buildAll();
+    });
+})();
+</script>
+
+</body>
+</html>
