@@ -11,7 +11,7 @@ as the embeddings, so that the two can be summed.
 <div class="md">
 In a Transformer, words are processed in parallel. Without **Positional Encoding (PE)**, the model would treat the sentence *"The dog bit the man"* exactly the same as *"The man bit the dog"* (and also the same as *"dog the The man bit"* and all other combinations of these words).
 
-To fix this, we **add** a unique mathematical "signature" to each word's vector based on its position ($\text{pos}$). 
+To fix this, we **add** a unique mathematical "signature" to each word's vector based on its position ($\text{pos}$), based on sine and cosine.
 
 ## Sine and Cosine
 
