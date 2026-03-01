@@ -50,6 +50,7 @@
 	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
+	incl("Appendix", "appendix");
 ?>
 </div>
 
