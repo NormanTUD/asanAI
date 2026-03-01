@@ -135,8 +135,6 @@ The wave plots above show each dimension's projection individually, flat curves 
 - **Dims 0, 1** (fastest sin/cos pair) trace a **circle**, the cross-section of the helix
 - **Dim 2** (next slower frequency) provides **axial drift**, stretching the circle into a helix
 
-### What to look for
-
 **Adjacent positions are close together.** Neighboring points sit right next to each other on the curve. The model does not memorize "position 5 is special", nearness is encoded geometrically.
 
 **Translational symmetry.** The **blue segment** (pos 5 to 8) and the **red segment** (pos 105 to 108) have the **same length and direction**. A fixed offset $k$ corresponds to a fixed rotation matrix $M_k$ independent of absolute position, just like a clock face lets you compute "3 hours from now" regardless of what time it currently is.
