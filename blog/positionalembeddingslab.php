@@ -18,7 +18,6 @@ The challenge of processing text in parallel (instead of word-by-word like older
 
 * **The "\citetitle{vaswani2017attention}" Paper:** This landmark work by Vaswani et al. replaced sequential processing with the Transformer architecture. Since Transformers have no inherent sense of order, the authors introduced **Sinusoidal Positional Encodings**.
 * **Why Waves?** The researchers chose alternating sine and cosine functions because they allow the model to attend to relative positions. The different frequencies, ranging from "fast" wiggles to "slow" curves, act like a multi-scale clock, marking every position in a sequence with a unique, bounded mathematical signature.
-* **Residual Connections (X + Attention):** The idea of "Residual Connections" ($x_\text{new} = x + f(x)$) used in the Transformer was actually pioneered earlier by **\cite[Kaiming He et al.]{he2015resnet}** in the **\cite[ResNet]{he2015resnet}** architecture for computer vision. The Transformer team adapted this to ensure that gradients could flow through dozens of layers without the model "forgetting" the original input tokens.
 
 ## Sine and Cosine
 
