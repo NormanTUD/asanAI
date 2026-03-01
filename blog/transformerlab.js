@@ -1937,7 +1937,7 @@ function buildLogitDetailsHtml(h_last, logits) {
 	</p>
 
     <span class="md">
-To get from the long matrix to the single vector, the model performs a <strong>Terminal Selection</strong>.
+To get from the long matrix to the single vector, the model performs a <strong>Terminal Selection</strong>.<br>
 
 If we represent the output of the last transformer block as a matrix $H$:
 $$H = \\begin{pmatrix}
