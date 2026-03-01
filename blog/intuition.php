@@ -240,6 +240,78 @@ The result of both, the Attention Heads and then the Feed-Forward-Network, are t
 
 Neither the **Attention Heads** nor the **Neural Network** are configured by hand. They learn what to look for by looking at massive amounts of data.
 
+If Attention is about *looking around* at other words, the Feed-Forward Network (FFN) is about *looking inward* into the model's memory.
+
+Researchers often describe the FFN as a massive dictionary of **Key-Value pairs** or **If-Then rules**.
+1. **The Detectors (Layer 1):** The model expands the word's vector to check for thousands of specific patterns. ("Is this a French landmark?" "Is this about technology?")
+2. **The Filter (Activation Function):** A mathematical filter (like ReLU) zeroes out any detector that didn't find a match. Only the strong signals survive.
+3. **The Knowledge (Layer 2):** For every detector that "fired," the model adds associated facts back into the token's vector.
+
+Let's look at the word **"Apple"**. Because of the *Attention* step, its vector already contains clues about its context. Watch how the FFN reacts differently based on that context.
+</div>
+
+<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
+            margin:15px 0; max-width:800px; margin-left:auto; margin-right:auto; font-family: system-ui, sans-serif;">
+    <div style="text-align:center; margin-bottom:12px;">
+        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
+            🧠 Step 4b: The Feed-Forward Network (Memory & Facts)
+        </span>
+    </div>
+
+    <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button onclick="FFNViz.setScenario('apple_fruit')" id="btn-ffn-fruit"
+                style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; cursor:pointer; font-weight:bold; transition: 0.2s;">
+            🍎 Context: "eating an apple"
+        </button>
+        <button onclick="FFNViz.setScenario('apple_tech')" id="btn-ffn-tech"
+                style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; cursor:pointer; font-weight:bold; transition: 0.2s;">
+            💻 Context: "buying an apple"
+        </button>
+    </div>
+
+    <div id="ffn-viz-container" style="position: relative; height: 350px; background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 20px; display: flex; justify-content: space-between; align-items: center; overflow: hidden;">
+
+        <div style="width: 120px; text-align: center; z-index: 2;">
+            <div style="font-weight: bold; color: #475569; margin-bottom: 8px;">Input Vector</div>
+            <div id="ffn-input-box" style="background: #e0e7ff; border: 2px solid #818cf8; padding: 10px; border-radius: 8px; font-weight: bold; color: #312e81; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                "Apple" + Context
+            </div>
+        </div>
+
+        <div style="width: 180px; text-align: center; z-index: 2;">
+            <div style="font-weight: bold; color: #475569; margin-bottom: 8px;">Pattern Detectors</div>
+            <div id="ffn-detectors" style="display: flex; flex-direction: column; gap: 10px;">
+                </div>
+        </div>
+
+        <div style="width: 200px; text-align: center; z-index: 2;">
+            <div style="font-weight: bold; color: #475569; margin-bottom: 8px;">Added Knowledge</div>
+            <div id="ffn-facts" style="display: flex; flex-direction: column; gap: 10px;">
+                </div>
+        </div>
+
+        <div style="width: 120px; text-align: center; z-index: 2;">
+            <div style="font-weight: bold; color: #475569; margin-bottom: 8px;">Output Vector</div>
+            <div id="ffn-output-box" style="background: #dcfce7; border: 2px solid #34d399; padding: 10px; border-radius: 8px; font-weight: bold; color: #065f46; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                Enriched Vector
+            </div>
+        </div>
+
+        <svg id="ffn-lines" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;">
+            </svg>
+
+    </div>
+
+    <div id="ffn-explanation" style="margin-top:15px; padding:12px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.9em; color:#475569; text-align: center;">
+        Select a context above to see how the FFN processes it.
+    </div>
+</div>
+
+<div class="md">
+Technically, this is expressed with the formula:
+$$ \text{FFN}(x) = W_2 \cdot \max(0, W_1 \cdot x + b_1) + b_2 $$
+Where $W_1$ acts as the detectors, the $\max(0, ...)$ is the ReLU filter shutting down negative matches, and $W_2$ contains the knowledge vectors that get added together.
+
 #### 4c: All together
 </div>
 
