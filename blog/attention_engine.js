@@ -751,9 +751,12 @@ class AttentionEngine {
 			svg._apvTooltipData.layerIdx = layerIdx;
 		}
 
-		// ── Invalidate tooltip cache so hovering the same cell shows updated numbers ──
+		// ── Invalidate tooltip cache and force immediate rebuild if visible ──
 		if (svg._apvTooltipCache) {
 			svg._apvTooltipCache.lastKey = null;
+		}
+		if (svg._apvTooltipRebuild) {
+			svg._apvTooltipRebuild();
 		}
 
 		// ── Patch row labels ──
@@ -1170,8 +1173,6 @@ class AttentionEngine {
 		const tooltipId = `apv-tooltip-${this.containerId}-${layerIdx}-${headDisplayOffset}`;
 
 		// ── Store live-updating data reference on the SVG element itself ──
-		// This allows the closure to always read the LATEST data,
-		// even after training steps update headDataArray and tokens.
 		svg._apvTooltipData = {
 			headDataArray: headDataArray,
 			tokens: tokens,
@@ -1180,11 +1181,13 @@ class AttentionEngine {
 		};
 
 		// ── Only create tooltip div and attach listeners ONCE per SVG ──
-		// On subsequent calls (during training), we just update _apvTooltipData above.
 		if (svg._apvTooltipAttached) {
-			// Invalidate cache so next mousemove rebuilds with fresh data
 			if (svg._apvTooltipCache) {
 				svg._apvTooltipCache.lastKey = null;
+			}
+			// Force rebuild if tooltip is currently visible
+			if (svg._apvTooltipRebuild) {
+				svg._apvTooltipRebuild();
 			}
 			return;
 		}
@@ -1210,6 +1213,9 @@ class AttentionEngine {
 		// ── Tooltip caching object stored on SVG for external invalidation ──
 		const cache = { lastKey: null };
 		svg._apvTooltipCache = cache;
+
+		// ── Track last mouse event so we can rebuild without a new mousemove ──
+		let lastMouseEvent = null;
 
 		// Helper: format a vector as a column pmatrix
 		const toColVec = (arr) => {
@@ -1242,7 +1248,8 @@ class AttentionEngine {
 			tooltip.style.top = top + 'px';
 		};
 
-		svg.addEventListener('mousemove', (e) => {
+		// ── Core tooltip build logic, extracted so it can be called from mousemove OR forced rebuild ──
+		function buildTooltip(e) {
 			// ── Read LIVE data from the SVG element ──
 			const liveData = svg._apvTooltipData;
 			if (!liveData) return;
@@ -1425,12 +1432,26 @@ class AttentionEngine {
 			// ── Case 3: Not hovering anything relevant ──
 			tooltip.style.display = 'none';
 			cache.lastKey = null;
+		}
+
+		svg.addEventListener('mousemove', (e) => {
+			lastMouseEvent = e;
+			buildTooltip(e);
 		});
 
 		svg.addEventListener('mouseleave', () => {
+			lastMouseEvent = null;
 			tooltip.style.display = 'none';
 			cache.lastKey = null;
 		});
+
+		// ── Expose a rebuild function so _apvPatchMatrix can force a refresh ──
+		svg._apvTooltipRebuild = () => {
+			if (lastMouseEvent && tooltip.style.display !== 'none') {
+				cache.lastKey = null; // force rebuild
+				buildTooltip(lastMouseEvent);
+			}
+		};
 	}
 
 	_apvLoadState() {
