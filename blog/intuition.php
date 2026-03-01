@@ -239,6 +239,8 @@ If attention is *gathering clues*, the feed-forward network is *drawing conclusi
 The result of both, the Attention Heads and then the Feed-Forward-Network, are then returned and simply added to the **Residual Stream**.
 
 Neither the **Attention Heads** nor the **Neural Network** are configured by hand. They learn what to look for by looking at massive amounts of data.
+
+#### 4c: All together
 </div>
 
 <!-- ============================================================ -->
