@@ -1517,6 +1517,93 @@ function loadIntuitionVizModule() {
 	AutoregressiveViz.render();
 }
 
+const contextVocab = {
+	'bank':  { base: [5, 5], color: '#3b82f6' },
+	'river': { base: [1, 9], color: '#10b981' },
+	'money': { base: [9, 1], color: '#f59e0b' }
+};
+
+function runAttention() {
+	const inputField = document.getElementById('trans-input');
+	const container = 'transformer-plot';
+
+	if (!inputField || !document.getElementById(container)) return;
+
+	const input = inputField.value.toLowerCase();
+	const words = input.split(/\s+/).filter(w => contextVocab[w]);
+
+	let traces = [];
+
+	// 1. Static Vocabulary (Background)
+	Object.keys(contextVocab).forEach(word => {
+		const pos = contextVocab[word].base;
+		traces.push({
+			x: [pos[0]], y: [pos[1]],
+			mode: 'markers+text',
+			name: word,
+			text: word,
+			textposition: 'bottom center',
+			marker: { size: 12, opacity: 0.6, color: contextVocab[word].color },
+			type: 'scatter' // Changed from scatter3d
+		});
+	});
+
+	// 2. Attention Logic
+	if (words.includes('bank')) {
+		const bankBase = contextVocab['bank'].base;
+		// Start at the base position
+		let currentPos = [...bankBase]; 
+
+		words.forEach(other => {
+			if (other !== 'bank') {
+				const otherBase = contextVocab[other].base;
+
+				// Move 50% of the remaining distance to the "other" word
+				// Formula: Current + (Target - Current) * 0.5
+				currentPos = currentPos.map((coord, i) => coord + (otherBase[i] - coord) * 0.5);
+
+				// Draw attention line (the "Handshake") from the original bank base
+				traces.push({
+					x: [bankBase[0], otherBase[0]],
+					y: [bankBase[1], otherBase[1]],
+					mode: 'lines',
+					line: { color: '#f97316', width: 3, dash: 'dot' },
+					hoverinfo: 'none',
+					showlegend: false,
+					type: 'scatter'
+				});
+			}
+		});
+
+		// The Resulting Contextual Embedding (now using the iteratively shifted position)
+		traces.push({
+			x: [currentPos[0]], y: [currentPos[1]],
+			mode: 'markers+text',
+			text: 'BANK (in context)',
+			textposition: 'top center',
+			marker: { 
+				size: 16, 
+				color: '#3b82f6', 
+				symbol: 'diamond', 
+				line: {color:'black', width:2} 
+			},
+			type: 'scatter'
+		});
+	}
+
+	const layout = {
+		margin: { l: 40, r: 40, b: 40, t: 40 },
+		hovermode: 'closest',
+		xaxis: { range: [0, 10], title: 'Semantic Dim A', gridcolor: '#e2e8f0' },
+		yaxis: { range: [0, 10], title: 'Semantic Dim B', gridcolor: '#e2e8f0' },
+		showlegend: false
+	};
+
+	Plotly.react(container, traces, layout);
+}
+
+
+
 async function loadIntuitionModule() {
 	// Add CSS animation for token appearance
 	const intuitionStyle = document.createElement('style');
@@ -1527,4 +1614,5 @@ async function loadIntuitionModule() {
 	    }
 	`;
 	document.head.appendChild(intuitionStyle);
+	runAttention();
 }

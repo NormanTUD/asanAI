@@ -211,8 +211,28 @@ The model has **many attention heads** running in parallel, each a tiny speciali
 
 It is important to note that not all attention heads to something that is humanly interpretable. They may look like they're reacting to nouns or verbs, but in reality, it's just a pattern learnt from statistics. They are not programmed to react to those words, and they don't 'know' what they are.
 
-It does so by moving the Embedding of a word in dependence of the context it's used in to a place called **contextualized Embedding**.
+It does so by moving the Embedding of a word in dependence of the context it's used in to a place called **contextualized Embedding** that looks not only at the word, but at the context the word is used in.
 
+Type **"bank river"** or **"bank money"** below. Notice how the diamond, the contextualized "Bank", leaps toward the neighbor that defines it.
+
+</div>
+
+    <div class="layers-vertical">
+	<p>Ready. Type 'bank river' or 'bank money'...</p>
+        <input type="text" id="trans-input" class="bw-cell" style="width: 90%;" 
+               value="bank river" oninput="runAttention()">
+        
+
+        <p style="font-size: 0.8rem; color: #64748b;">
+            *Orange line = Attention. The diamond shows where "Bank" moves in context.*
+        </p>
+    </div>
+    <div id="transformer-plot" class="plot-container" style="height: 450px; background: #fff;"></div>
+<script>
+	runAttention();
+</script>
+
+<div class="md">
 #### 4b: Feed-Forward Network - "What do I conclude?"
 
 After attention has gathered context, a small **neural network** processes each token individually. This is where the model applies knowledge it memorized during training: facts, patterns, and rules of language.

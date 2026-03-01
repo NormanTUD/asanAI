@@ -181,26 +181,6 @@ The model calculates an alignment score using the dot product:
 $$\text{score}_{i,j} = \mathbf{q}_i \cdot \mathbf{k}_j^T$$
 If the Query and Key point in a similar direction, the connection is strong. This produces the **orange "Handshake" lines** you see in the simulation.
 
-## Interactive Lab: Mapping Meaning
-Type **"bank river"** or **"bank money"** below. Notice how the diamond, the contextualized "Bank", leaps toward the neighbor that defines it. You are literally watching the model resolve an identity crisis in real-time.
-
-</div>
-
-    <div class="layers-vertical">
-        <h2>Context Input</h2>
-	<p>Ready. Type 'bank river' or 'bank money'...</p>
-        <input type="text" id="trans-input" class="bw-cell" style="width: 90%;" 
-               value="bank river" oninput="runAttention()">
-        
-
-        <p style="font-size: 0.8rem; color: #64748b;">
-            *Orange line = Attention. The diamond shows where "Bank" moves in context.*
-        </p>
-    </div>
-    <div id="transformer-plot" class="plot-container" style="height: 450px; background: #fff;"></div>
-
-<div class="md">
-
 In modern NLP, words are not merely strings; they are high-dimensional vectors. **Self-Attention** is the operation that allows a model to dynamically re-weight these vectors based on their contextual relevance to one another.
 
 ## From Embeddings to Q, K, V
