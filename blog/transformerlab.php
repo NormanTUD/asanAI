@@ -418,7 +418,7 @@ In a causal attention matrix, token $i$ can attend to tokens $0, 1, \dots, i$, e
 
 $$\sum_{j=0}^{i} \alpha_{i,j} = 1$$
 
-When the model is **untrained**, $W_Q$ and $W_K$ are randomly initialized (Xavier/Glorot), so all dot-product scores $Q_i \cdot K_j^T$ are roughly similar. Softmax over nearly-equal values produces a **near-uniform distribution**, meaning the self-attention weight on the diagonal is approximately:
+When the model is **untrained**, $W_Q$ and $W_K$ are randomly initialized, so all dot-product scores $Q_i \cdot K_j^T$ are roughly similar. Softmax over nearly-equal values produces a **near-uniform distribution**, meaning the self-attention weight on the diagonal is approximately:
 
 $$\alpha_{i,i} \;\approx\; \frac{1}{i+1}$$
 
