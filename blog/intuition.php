@@ -103,7 +103,7 @@ $$\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{q
 
 The direction from "man" to "woman" represents something like the concept of gender. That same direction, applied to "king," lands you right next to "queen." The model was never told any of this. These relationships emerge on their own, just from reading text.
 
-Real networks don't just use 2 or 3 dimensional Embedding Spaces, but thousands of dimensions. They are not visualizable anymore.
+Real networks don't just use 2 or 3 dimensional Embedding Spaces, but thousands of dimensions. That are too many to visualizable, but the basic idea stays the same.
 </div>
 
 <!-- ============================================================ -->
