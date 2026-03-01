@@ -128,16 +128,6 @@ You might notice that **Dim 0** and **Dim 1** wiggle quickly, while **Dim 2** an
 
 If you were to expand the slider to **Position 1000**, you would see those straight lines finally start to curve into waves!
 
-### The Geometry of Certainty
-
-When you look at the **Semantic Embedding Space** plot in the panel below, you are seeing a 2D projection of a 4D world.
-
-1. **Alignment:** When the **Query** of "wise" aligns with the **Key** of "king," their vectors point in the same direction. This creates a high dot-product score.
-2. **The Softmax Filter:** The Softmax function turns these scores into a probability distribution. If the model is "sure" about a relationship, you will see one bar dominate the **Next Token Prediction** chart.
-3. **Residual Connections:** Notice the "Layer Flow & Residuals" panel. We don't just transform $X$; we add the transformation *back* to the original $X$.
-   $$X_\text{new} = X + \text{Attention}(X)$$
-   This ensures that the model doesn't "forget" the original word while it's busy calculating the context.
-
 ## Why Sinusoidal Positional Encodings Work: A Fourier Perspective
 
 Each dimension pair $(2i, 2i+1)$ in the positional encoding is a **sine cosine pair at a specific frequency**, exactly one term in a Fourier series:
