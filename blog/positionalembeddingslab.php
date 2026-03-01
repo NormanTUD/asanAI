@@ -42,8 +42,6 @@ That's it: $\cos\theta$ is the horizontal position, $\sin\theta$ is the vertical
 </div>
 
 <div class="optional md" data-headline="History and Etymology of Sine and Cosine">
-### Origin and Etymology
-
 The concept originates in ancient Indian astronomy. \citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* ("bowstring") to describe the half-chord of a circle, which is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\citetitle{indianastronomer}* (\citetitle{indianastronomer}, ch. 1-2). Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* ("pocket" or "fold"). See the paper \citetitle{indianastronomerconstruction} if you want to know how \citeauthor{indianastronomer} constructed his tables.
 
 In \citeyear{chester1145}, \citeauthor{chester1145}, who also produced the first Latin translation of \citealternativetitle{alkwarizma}'s foundational work on algebra that also inspired the term *algebra* (from 'Al-Jabr'; his personal name also inspired the term *algorithm*), translated *jayb* into the Latin ***sinus*** ("curve," "bay," or "fold").
