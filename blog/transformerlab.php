@@ -372,7 +372,7 @@ Each head has its own set of projection matrices, allowing the model to focus on
 
 This is exactly what happens inside the transformer: the same set of token vectors is viewed through three different "lenses" (Q, K, V), each defined by a learned $d_\text{model} \times d_k$ matrix. Because each lens projects onto a different subspace, the same word can appear close to different neighbors depending on whether you're asking "What am I looking for?" (Q), "What do I contain?" (K), or "What do I offer?" (V).
 
-In this demo, we use a **3D → 2D** projection for visual clarity, but in real transformers with $d_\text{model} = 4096$, the same principle applies in much higher dimensions.
+In this demo, we use a **3D → 2D** projection for visual clarity, but in real transformers, the same principle applies in much higher dimensions.
 
 **The Shapes:**
 * **Hidden State ($h_0$)**: $(\text{Batch}, \text{Length}, d_{\text{model}})$
