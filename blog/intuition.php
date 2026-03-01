@@ -53,7 +53,7 @@ $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\
 <div class="md">
 ## How does the Computer find the next word?
 
-The LLM learned to predict the next word by reading **massive** amounts of text (books, websites, articles) and noticing patterns in how language works. But how does it actually go from a string of words to a prediction? Let's walk through it.
+The LLM learned to predict the next word by reading **massive** amounts of text (books, websites, articles) and noticing patterns in how language works, and also learning facts from the texts it read. But how does it actually go from a string of words to a prediction? Let's walk through it.
 
 ### Step 1: Tokenization
 
