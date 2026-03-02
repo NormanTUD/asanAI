@@ -1241,9 +1241,27 @@ line-height:1.5;
 			const th = tooltip.offsetHeight;
 			let left = e.clientX + 16;
 			let top = e.clientY - 20;
-			if (left + tw > window.innerWidth - 10) left = e.clientX - tw - 16;
-			if (top + th > window.innerHeight - 10) top = window.innerHeight - th - 10;
-			if (top < 10) top = 10;
+
+			// ── Right edge: flip to left side of cursor ──
+			if (left + tw > window.innerWidth - 10) {
+				left = e.clientX - tw - 16;
+			}
+
+			// ── Left edge: clamp so tooltip never goes behind the left side ──
+			if (left < 10) {
+				left = 10;
+			}
+
+			// ── Bottom edge: push up ──
+			if (top + th > window.innerHeight - 10) {
+				top = window.innerHeight - th - 10;
+			}
+
+			// ── Top edge: clamp ──
+			if (top < 10) {
+				top = 10;
+			}
+
 			tooltip.style.left = left + 'px';
 			tooltip.style.top = top + 'px';
 		};
@@ -1282,8 +1300,11 @@ line-height:1.5;
 				const hd = liveHeadDataArray[hIdx];
 				const w = hd.this_weights[qi][ki];
 				const displayHeadNum = hIdx + liveHeadDisplayOffset + 1;
-				const d_k = hd.Qi[0].length;  // ← FIX: derive d_k from the actual head dimension
+				const d_k = hd.Qi[0].length;
 				const d_k_int = Math.round(d_k);
+				const d_model = hd.d_model || self.d_model;
+				const d_model_int = Math.round(d_model);
+				const n_heads = Math.round(d_model / d_k);
 
 				// Get vectors
 				const q_i = hd.Qi[qi];
@@ -1291,14 +1312,14 @@ line-height:1.5;
 				const h0_qi = hd.h0[qi];
 				const h0_kj = hd.h0[ki];
 
-				// Raw score (before softmax) — FIX: scale by √d_k, not √d_model
+				// Raw score (before softmax) — scale by √d_k
 				const rawScore = dotVec(q_i, k_j) / Math.sqrt(d_k);
 
 				// All raw scores for this row (for softmax display)
 				const n = liveTokens.length;
 				const rawScoresRow = [];
 				for (let c = 0; c < n; c++) {
-					let s = dotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(d_k);  // ← FIX
+					let s = dotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(d_k);
 					if (c > qi) s = -1e9;
 					rawScoresRow.push(s);
 				}
@@ -1317,7 +1338,12 @@ line-height:1.5;
 				html += `Head ${displayHeadNum}: "${liveTokens[qi]}" → "${liveTokens[ki]}" = ${(w * 100).toFixed(1)}%`;
 				html += `</div>`;
 
-				// Row 1: Abstract equation — FIX: label as d_k
+				// Row 0: Explain d_k derivation from d_model and n_heads
+				html += `<div style="margin-bottom:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">`;
+				html += `$d_k = \\frac{d_{\\text{model}}}{n_{\\text{heads}}} = \\frac{${d_model_int}}{${n_heads}} = ${d_k_int}$`;
+				html += `</div>`;
+
+				// Row 1: Abstract equation
 				html += `<div style="margin-bottom:6px;">`;
 				html += `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_k_int}}} = ${rawScore.toFixed(nr_fixed)}$`;
 				html += `</div>`;
