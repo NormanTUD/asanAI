@@ -371,7 +371,7 @@ In traditional programming, we aim for **exactness**. If you write a function to
 
 An **approximation** (from latin *approximātus*, "to come near, approach", see \citetitle{kleinetymology}, p. 45) is a result that is "close enough" to the truth to be useful, even if it isn't perfect.
 
-### Why AI uses approximations
+### Most Artificial Intelligence is approximations
 Most tasks we want AI to solve, like recognizing a face, translating a language, or driving a car, are too complex for "if-then" logic. 
 
 * **Complexity:** There is no single mathematical formula for a "cat." A cat can be any color, in any pose, and in any lighting.
