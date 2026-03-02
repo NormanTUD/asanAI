@@ -58,7 +58,7 @@ https://arxiv.org/html/2505.11611v1
 	    <span id="context-val" style="font-weight: bold; color: #3b82f6;">64</span>
 	    <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
 		<b>Effect:</b> Sets the maximum number of tokens the model can "see" at once during training and inference.<br>
-		<b>Reason:</b> A larger context window allows the model to capture longer-range dependencies between words, but increases memory and computation cost quadratically due to the attention matrix being of size $\text{Context}^2$.
+		<b>Reason:</b> A larger context window allows the model to capture longer-range dependencies between words, but increases memory and computation cost quadratically due to the attention matrix being of size $\text{Context}^2$ (this can me mitigated through the <i>KV-Cache</i>).
 	    </p>
 	    <input type="range" id="transformer-context-size" min="2" max="128" step="1" value="64"
 		style="width: 100%;" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();">
