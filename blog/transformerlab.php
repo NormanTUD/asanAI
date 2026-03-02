@@ -503,7 +503,7 @@ The output width is simply the sum of the input widths.
 
 ### The Multi-Attention-Head
 
-After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. We then create the next stage, **$h_1$**, using a Residual Connection and normalization:
+After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. We then create the next stage, **$h_1$**, using a **Residual Connection** and **Normalization**:
 
 $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
 $$h_{1} = h_{0} + \text{LayerNorm}(\text{MultiHead}(h_{0}))$$
