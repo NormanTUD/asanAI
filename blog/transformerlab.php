@@ -551,7 +551,7 @@ $$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
 The Feed-Forward Network (FFN) described above applies the same dense
 transformation to every token: $\text{FFN}(x) = \sigma(xW_1 + b_1)W_2 + b_2$.
 This example uses exactly that standard, dense FFN. However, modern
-large-scale systems replace it with a \textbf{Mixture of Experts} (MoE)
+large-scale systems replace it with a **Mixture of Experts** (MoE)
 layer to dramatically increase model capacity without proportionally
 increasing compute cost. The core idea, first proposed in
 \cite[Adaptive Mixtures of Local Experts]{jacobs1991moe}, is to maintain
