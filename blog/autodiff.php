@@ -327,7 +327,7 @@ Both frameworks produce mathematically identical gradients. The choice is primar
 
 ## Building a Minimal Autograd Engine
 
-To truly understand tape-based AD, it helps to build one from scratch. The following is a minimal but complete implementation of a reverse-mode autograd engine in pure Python. It supports addition, multiplication, and the sine function, enough to differentiate our example $f(x, y) = (x + y) \cdot \sin(x)$.
+To truly understand tape-based Autodifferentiation, it helps to build one from scratch. The following is a minimal but complete implementation of a reverse-mode autograd engine in pure Python. It supports addition, multiplication, and the sine function, enough to differentiate our example $f(x, y) = (x + y) \cdot \sin(x)$.
 </div>
 
 <pre><code class="language-python">import math
@@ -400,7 +400,7 @@ This minimal engine implements the exact same algorithm that PyTorch and TensorF
 
 ## The Vanishing and Exploding Gradient Problem
 
-One critical consequence of tape-based AD in deep networks is the **vanishing gradient problem**, first identified by \citeauthor{hochreiter1991vanishing} in \citeyear{hochreiter1991vanishing} and further analyzed by \citeauthor{bengio1994learning} in \citeyear{bengio1994learning}.
+One critical consequence of tape-based Autodifferentiation in deep networks is the **vanishing gradient problem**, first identified by \citeauthor{hochreiter1991vanishing} in \citeyear{hochreiter1991vanishing} and further analyzed by \citeauthor{bengio1994learning} in \citeyear{bengio1994learning}.
 
 When the chain rule is applied through many layers, the gradient is a product of many local derivatives:
 
