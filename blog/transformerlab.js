@@ -476,6 +476,7 @@ function getPositionColor(index, total, format = 'rgb') {
 function reset_graph() {
 	document.getElementById('training-loss-plot').style.display = 'none';
 	document.getElementById('training-loss-plot').innerHTML = '';
+	$("#show_training_sentences").hide();
 }
 
 function computePositionalEncoding(pos, d_model, scalar = 1.0) {
