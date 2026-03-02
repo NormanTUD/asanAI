@@ -562,7 +562,7 @@ different regions of the input space.
 
 This concept remained difficult to
 scale until \cite[the Sparsely-Gated MoE layer]{shazeer2017moe}
-introduced the critical principle of \textbf{sparsity}: instead of
+introduced the critical principle of **sparsity**: instead of
 activating all experts for every token, a sparse gating function selects
 only the top one or two, so the output becomes
 $\sum_{i \in \text{TopK}} G(x)_i \cdot \text{FFN}_i(x)$ over just the
