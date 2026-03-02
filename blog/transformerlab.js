@@ -516,17 +516,361 @@ function countAllNumbers(data) {
 	return count;
 }
 
+// ═══════════════════════════════════════════════════════════════
+// Parameter Breakdown — Click-to-expand + Lazy Load
+// ═══════════════════════════════════════════════════════════════
+
+/** Tracks whether the breakdown panel is open */
+window._paramBreakdownOpen = false;
+
+/** Tracks whether the chart has been rendered at least once */
+window._paramBreakdownRendered = false;
+
+/** Lazy IntersectionObserver — renders chart only when scrolled into view */
+const paramBreakdownObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && window._paramBreakdownOpen && !window._paramBreakdownRendered) {
+            _executeParamBreakdownRender();
+        }
+    });
+}, { threshold: 0.05 });
+
+/**
+ * Updated: shows total param count and reveals the toggle button.
+ * Does NOT render the chart — that's deferred to click + visibility.
+ */
 function show_nr_of_params() {
-	const nr_params = countAllNumbers(currentWeights);
+    const weights = window.currentWeights;
+    const nr_params = countAllNumbers(weights);
 
-	if(!nr_params) {
-		document.getElementById("nr_params").innerHTML = "";
-		document.getElementById('nr_params').style.display = 'none';
-		return;
-	}
+    const nrDiv = document.getElementById('nr_params');
+    const toggleDiv = document.getElementById('param-breakdown-toggle');
 
-	document.getElementById("nr_params").innerHTML = `The current network has ${nr_params} internal parameters.`;
-	document.getElementById('nr_params').style.display = 'block';
+    if (!nr_params || !weights || weights.length === 0) {
+        if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
+        if (toggleDiv) toggleDiv.style.display = 'none';
+        document.getElementById('param-breakdown-chart').style.display = 'none';
+        return;
+    }
+
+    if (nrDiv) {
+        nrDiv.innerHTML = `The current network has <b>${nr_params.toLocaleString()}</b> internal parameters.`;
+        nrDiv.style.display = 'block';
+    }
+
+    if (toggleDiv) toggleDiv.style.display = 'block';
+
+    // If the panel is already open, mark it for re-render
+    if (window._paramBreakdownOpen) {
+        window._paramBreakdownRendered = false;
+        const chartDiv = document.getElementById('param-breakdown-chart');
+        if (chartDiv && isElementInViewport(chartDiv)) {
+            _executeParamBreakdownRender();
+        }
+    }
+}
+
+/**
+ * Toggle button handler — opens/closes the breakdown panel.
+ * On first open, starts observing for lazy load.
+ */
+function toggleParamBreakdown() {
+    const chartDiv = document.getElementById('param-breakdown-chart');
+    const arrow = document.getElementById('param-breakdown-arrow');
+    const btn = document.getElementById('param-breakdown-btn');
+    if (!chartDiv) return;
+
+    window._paramBreakdownOpen = !window._paramBreakdownOpen;
+
+    if (window._paramBreakdownOpen) {
+        chartDiv.style.display = 'block';
+        arrow.style.transform = 'rotate(90deg)';
+        btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(90deg);">▶</span> Hide Parameter Breakdown`;
+
+        // Start observing for lazy render
+        paramBreakdownObserver.observe(chartDiv);
+
+        // If already in viewport, render immediately
+        if (isElementInViewport(chartDiv)) {
+            _executeParamBreakdownRender();
+        }
+    } else {
+        chartDiv.style.display = 'none';
+        btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s;">▶</span> Show Parameter Breakdown`;
+        paramBreakdownObserver.unobserve(chartDiv);
+    }
+}
+
+/**
+ * The actual heavy render — only called when panel is open AND visible.
+ */
+function _executeParamBreakdownRender() {
+    const weights = window.currentWeights;
+    if (!weights || weights.length === 0) return;
+
+    window._paramBreakdownRendered = true;
+    renderParamBreakdown(weights);
+}
+
+/**
+ * Computes a detailed parameter count breakdown per layer and component,
+ * then renders a sunburst chart and a summary table.
+ */
+function renderParamBreakdown(weights) {
+    const { d_model, n_heads } = getTransformerConfig();
+    const d_ff = d_model * 4;
+    const n_layers = weights.length;
+
+    // Count embedding parameters
+    const vocab = window.persistentEmbeddingSpace ? Object.keys(window.persistentEmbeddingSpace) : [];
+    const embeddingParams = vocab.length * d_model;
+
+    // Per-layer breakdown
+    const layerBreakdowns = [];
+    let totalAttention = 0;
+    let totalFFN = 0;
+    let totalNorm = 0;
+
+    for (let l = 0; l < n_layers; l++) {
+        const layer = weights[l];
+
+        const qParams = countAllNumbers(layer.attention.query);
+        const kParams = countAllNumbers(layer.attention.key);
+        const vParams = countAllNumbers(layer.attention.value);
+        const oParams = countAllNumbers(layer.attention.output);
+        const attnTotal = qParams + kParams + vParams + oParams;
+
+        const w1Params = countAllNumbers(layer.W1);
+        const b1Params = countAllNumbers(layer.b1);
+        const w2Params = countAllNumbers(layer.W2);
+        const b2Params = countAllNumbers(layer.b2);
+        const ffnTotal = w1Params + b1Params + w2Params + b2Params;
+
+        const norm1Params = countAllNumbers(layer.gamma) + countAllNumbers(layer.beta);
+        const norm2Params = countAllNumbers(layer.gamma2 || []) + countAllNumbers(layer.beta2 || []);
+        const normTotal = norm1Params + norm2Params;
+
+        totalAttention += attnTotal;
+        totalFFN += ffnTotal;
+        totalNorm += normTotal;
+
+        layerBreakdowns.push({
+            layer: l + 1,
+            attention: { q: qParams, k: kParams, v: vParams, o: oParams, total: attnTotal },
+            ffn: { w1: w1Params, b1: b1Params, w2: w2Params, b2: b2Params, total: ffnTotal },
+            norm: { pre_attn: norm1Params, pre_ffn: norm2Params, total: normTotal },
+            total: attnTotal + ffnTotal + normTotal
+        });
+    }
+
+    const grandTotal = embeddingParams + totalAttention + totalFFN + totalNorm;
+
+    renderParamSunburst(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff);
+    renderParamTable(layerBreakdowns, embeddingParams, grandTotal);
+}
+
+/**
+ * Renders a Plotly sunburst chart showing the parameter hierarchy.
+ */
+function renderParamSunburst(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff) {
+    const ids = [], labels = [], parents = [], values = [], hoverTexts = [], colors = [];
+
+    const embColor = '#6366f1';
+    const attnColor = '#3b82f6';
+    const ffnColor = '#f59e0b';
+    const normColor = '#10b981';
+
+    ids.push('total');
+    labels.push(`Total: ${grandTotal.toLocaleString()}`);
+    parents.push('');
+    values.push(grandTotal);
+    hoverTexts.push(`Total parameters: ${grandTotal.toLocaleString()}`);
+    colors.push('#1e293b');
+
+    ids.push('embeddings');
+    labels.push('Embeddings');
+    parents.push('total');
+    values.push(embeddingParams);
+    hoverTexts.push(`Embedding table: ${embeddingParams.toLocaleString()} params<br>vocab × d_model`);
+    colors.push(embColor);
+
+    layerBreakdowns.forEach((lb) => {
+        const layerId = `layer-${lb.layer}`;
+
+        ids.push(layerId);
+        labels.push(`Layer ${lb.layer}`);
+        parents.push('total');
+        values.push(lb.total);
+        hoverTexts.push(`Layer ${lb.layer}: ${lb.total.toLocaleString()} params`);
+        colors.push('#475569');
+
+        // Attention
+        const attnId = `${layerId}-attn`;
+        ids.push(attnId);
+        labels.push('Attention');
+        parents.push(layerId);
+        values.push(lb.attention.total);
+        hoverTexts.push(`Attention: ${lb.attention.total.toLocaleString()} params<br>Q + K + V + O projections`);
+        colors.push(attnColor);
+
+        [
+            { key: 'q', label: 'W_Q', desc: `Query: ${d_model}×${d_model}` },
+            { key: 'k', label: 'W_K', desc: `Key: ${d_model}×${d_model}` },
+            { key: 'v', label: 'W_V', desc: `Value: ${d_model}×${d_model}` },
+            { key: 'o', label: 'W_O', desc: `Output: ${d_model}×${d_model}` }
+        ].forEach(({ key, label, desc }) => {
+            ids.push(`${attnId}-${key}`);
+            labels.push(label);
+            parents.push(attnId);
+            values.push(lb.attention[key]);
+            hoverTexts.push(`${label}: ${lb.attention[key].toLocaleString()} params<br>${desc}`);
+            colors.push(attnColor);
+        });
+
+        // FFN
+        const ffnId = `${layerId}-ffn`;
+        ids.push(ffnId);
+        labels.push('FFN');
+        parents.push(layerId);
+        values.push(lb.ffn.total);
+        hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} params<br>W1 + b1 + W2 + b2`);
+        colors.push(ffnColor);
+
+        [
+            { key: 'w1', label: 'W₁', desc: `Expansion: ${d_model}×${d_ff}` },
+            { key: 'b1', label: 'b₁', desc: `Bias: ${d_ff}` },
+            { key: 'w2', label: 'W₂', desc: `Compression: ${d_ff}×${d_model}` },
+            { key: 'b2', label: 'b₂', desc: `Bias: ${d_model}` }
+        ].forEach(({ key, label, desc }) => {
+            ids.push(`${ffnId}-${key}`);
+            labels.push(label);
+            parents.push(ffnId);
+            values.push(lb.ffn[key]);
+            hoverTexts.push(`${label}: ${lb.ffn[key].toLocaleString()} params<br>${desc}`);
+            colors.push(ffnColor);
+        });
+
+        // LayerNorm
+        const normId = `${layerId}-norm`;
+        ids.push(normId);
+        labels.push('LayerNorm');
+        parents.push(layerId);
+        values.push(lb.norm.total);
+        hoverTexts.push(`LayerNorm: ${lb.norm.total.toLocaleString()} params<br>γ + β (pre-attn & pre-FFN)`);
+        colors.push(normColor);
+
+        ids.push(`${normId}-pre-attn`);
+        labels.push('Pre-Attn');
+        parents.push(normId);
+        values.push(lb.norm.pre_attn);
+        hoverTexts.push(`Pre-Attention Norm: ${lb.norm.pre_attn.toLocaleString()} params<br>γ (${d_model}) + β (${d_model})`);
+        colors.push(normColor);
+
+        ids.push(`${normId}-pre-ffn`);
+        labels.push('Pre-FFN');
+        parents.push(normId);
+        values.push(lb.norm.pre_ffn);
+        hoverTexts.push(`Pre-FFN Norm: ${lb.norm.pre_ffn.toLocaleString()} params<br>γ₂ (${d_model}) + β₂ (${d_model})`);
+        colors.push(normColor);
+    });
+
+    const trace = {
+        type: 'sunburst',
+        ids, labels, parents, values,
+        hovertext: hoverTexts,
+        hoverinfo: 'text',
+        branchvalues: 'total',
+        marker: { colors, line: { width: 1, color: '#fff' } },
+        textinfo: 'label+percent parent',
+        insidetextorientation: 'radial',
+        maxdepth: 3
+    };
+
+    const layout = {
+        title: { text: 'Parameter Distribution', font: { size: 14, color: '#1e293b' } },
+        margin: { t: 40, b: 10, l: 10, r: 10 }
+    };
+
+    Plotly.react('param-breakdown-plotly', [trace], layout, { responsive: true });
+}
+
+/**
+ * Renders a compact HTML summary table of parameter counts.
+ */
+function renderParamTable(layerBreakdowns, embeddingParams, grandTotal) {
+	const tableDiv = document.getElementById('param-breakdown-table');
+	if (!tableDiv) return;
+
+	const pct = (n) => ((n / grandTotal) * 100).toFixed(1);
+	const fmt = (n) => n.toLocaleString();
+
+	let totalAttn = 0, totalFFN = 0, totalNorm = 0;
+	layerBreakdowns.forEach(lb => {
+		totalAttn += lb.attention.total;
+		totalFFN += lb.ffn.total;
+		totalNorm += lb.norm.total;
+	});
+
+	const vocab = window.persistentEmbeddingSpace ? Object.keys(window.persistentEmbeddingSpace) : [];
+	const d_model = layerBreakdowns.length > 0 ? (layerBreakdowns[0].norm.pre_attn / 2) : 0;
+
+	let html = `<table style="width:100%; border-collapse:collapse; font-family:'Inter',sans-serif; font-size:0.8rem;">
+    <thead>
+	<tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
+	    <th style="padding:6px 10px; text-align:left;">Component</th>
+	    <th style="padding:6px 10px; text-align:right;">Parameters</th>
+	    <th style="padding:6px 10px; text-align:right;">% of Total</th>
+	    <th style="padding:6px 10px; text-align:left;">Shape</th>
+	</tr>
+    </thead>
+    <tbody>`;
+
+	html += `<tr style="background:#eef2ff; border-bottom:1px solid #e2e8f0;">
+	<td style="padding:6px 10px; font-weight:600; color:#6366f1;">📦 Embeddings</td>
+	<td style="padding:6px 10px; text-align:right; font-weight:600;">${fmt(embeddingParams)}</td>
+	<td style="padding:6px 10px; text-align:right;">${pct(embeddingParams)}%</td>
+	<td style="padding:6px 10px; color:#64748b;">${vocab.length} × ${d_model || '?'}</td>
+    </tr>`;
+
+	layerBreakdowns.forEach(lb => {
+		html += `<tr style="background:#f8fafc; border-bottom:1px solid #f1f5f9;">
+	    <td style="padding:6px 10px; font-weight:600;" colspan="4">🔁 Layer ${lb.layer} — ${fmt(lb.total)} params (${pct(lb.total)}%)</td>
+	</tr>`;
+
+		html += `<tr style="border-bottom:1px solid #f1f5f9;">
+	    <td style="padding:4px 10px 4px 30px; color:#3b82f6;">🔍 Attention (Q+K+V+O)</td>
+	    <td style="padding:4px 10px; text-align:right;">${fmt(lb.attention.total)}</td>
+	    <td style="padding:4px 10px; text-align:right;">${pct(lb.attention.total)}%</td>
+	    <td style="padding:4px 10px; color:#64748b;">4 × (d×d)</td>
+	</tr>`;
+
+		html += `<tr style="border-bottom:1px solid #f1f5f9;">
+	    <td style="padding:4px 10px 4px 30px; color:#f59e0b;">⚡ FFN (W₁+b₁+W₂+b₂)</td>
+	    <td style="padding:4px 10px; text-align:right;">${fmt(lb.ffn.total)}</td>
+	    <td style="padding:4px 10px; text-align:right;">${pct(lb.ffn.total)}%</td>
+	    <td style="padding:4px 10px; color:#64748b;">d×4d + 4d + 4d×d + d</td>
+	</tr>`;
+
+		html += `<tr style="border-bottom:1px solid #e2e8f0;">
+	    <td style="padding:4px 10px 4px 30px; color:#10b981;">📏 LayerNorm (γ+β ×2)</td>
+	    <td style="padding:4px 10px; text-align:right;">${fmt(lb.norm.total)}</td>
+	    <td style="padding:4px 10px; text-align:right;">${pct(lb.norm.total)}%</td>
+	    <td style="padding:4px 10px; color:#64748b;">4 × d</td>
+	</tr>`;
+	});
+
+	const attnVsFFN = totalAttn > 0 ? (totalFFN / totalAttn).toFixed(1) : '—';
+	html += `<tr style="background:#f0fdf4; border-top:2px solid #10b981; font-weight:700;">
+	<td style="padding:8px 10px;">Total</td>
+	<td style="padding:8px 10px; text-align:right;">${fmt(grandTotal)}</td>
+	<td style="padding:8px 10px; text-align:right;">100%</td>
+	<td style="padding:8px 10px; color:#064e3b; font-weight:normal; font-size:0.75rem;">
+	    FFN is ${attnVsFFN}× the size of Attention
+	</td>
+    </tr>`;
+
+	html += `</tbody></table>`;
+	tableDiv.innerHTML = html;
 }
 
 function get_or_init_embeddings(tokens, d_model) {

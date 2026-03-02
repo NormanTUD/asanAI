@@ -72,7 +72,23 @@ https://arxiv.org/html/2505.11611v1
 	    </select>
 	</div>
 	<div id="nr_params" style="display: none"></div>
-</div>
+
+	<div id="param-breakdown-toggle" style="display: none; margin-top: 8px;">
+	    <button id="param-breakdown-btn" onclick="toggleParamBreakdown()"
+		style="background: none; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 16px;
+		       cursor: pointer; font-size: 0.85rem; color: #3b82f6; font-weight: 600;
+		       display: flex; align-items: center; gap: 6px; transition: all 0.15s;">
+		<span id="param-breakdown-arrow" style="transition: transform 0.2s;">▶</span>
+		Show Parameter Breakdown
+	    </button>
+	</div>
+
+	<div id="param-breakdown-chart" style="display: none; margin-top: 10px; padding: 15px;
+	     background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
+	    <div id="param-breakdown-plotly" style="width: 100%; height: 350px;"></div>
+	    <div id="param-breakdown-table" style="margin-top: 10px; font-size: 0.82rem; overflow-x: auto;"></div>
+	</div>
+	</div>
 
 <div class="transformer_corpus">
     <label style="font-weight: bold; display: block; margin-bottom: 8px;">Training Data (Corpus):</label>
