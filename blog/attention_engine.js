@@ -86,7 +86,7 @@ class AttentionEngine {
 			const WV_slice = this.this_weights.value.map(row => row.slice(startCol, endCol));
 
 			let scores = this.dot(Qi, this.transpose(Ki)).map(row =>
-				row.map(v => v / Math.sqrt(this.d_model))
+				row.map(v => v / Math.sqrt(this.d_k))
 			);
 
 			for (let r = 0; r < scores.length; r++) {
@@ -1199,13 +1199,13 @@ class AttentionEngine {
 		tooltip = document.createElement('div');
 		tooltip.id = tooltipId;
 		tooltip.style.cssText = `
-	position:fixed; padding:10px 14px; background:#1e293b; color:#fff;
-	border-radius:8px; font-size:0.8rem; pointer-events:none;
-	z-index:9999; display:none; white-space:normal;
-	box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-	max-width:90vw; max-height:80vh; overflow-y:auto;
-	line-height:1.5;
-    `;
+position:fixed; padding:10px 14px; background:#1e293b; color:#fff;
+border-radius:8px; font-size:0.8rem; pointer-events:none;
+z-index:9999; display:none; white-space:normal;
+box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+max-width:90vw; max-height:80vh; overflow-y:auto;
+line-height:1.5;
+	`;
 		document.body.appendChild(tooltip);
 
 		const self = this;
@@ -1282,8 +1282,8 @@ class AttentionEngine {
 				const hd = liveHeadDataArray[hIdx];
 				const w = hd.this_weights[qi][ki];
 				const displayHeadNum = hIdx + liveHeadDisplayOffset + 1;
-				const d_model = hd.d_model || self.d_model;
-				const d_model_int = Math.round(d_model);
+				const d_k = hd.Qi[0].length;  // ← FIX: derive d_k from the actual head dimension
+				const d_k_int = Math.round(d_k);
 
 				// Get vectors
 				const q_i = hd.Qi[qi];
@@ -1291,14 +1291,14 @@ class AttentionEngine {
 				const h0_qi = hd.h0[qi];
 				const h0_kj = hd.h0[ki];
 
-				// Raw score (before softmax) — using d_model, matching forward()
-				const rawScore = dotVec(q_i, k_j) / Math.sqrt(d_model);
+				// Raw score (before softmax) — FIX: scale by √d_k, not √d_model
+				const rawScore = dotVec(q_i, k_j) / Math.sqrt(d_k);
 
 				// All raw scores for this row (for softmax display)
 				const n = liveTokens.length;
 				const rawScoresRow = [];
 				for (let c = 0; c < n; c++) {
-					let s = dotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(d_model);
+					let s = dotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(d_k);  // ← FIX
 					if (c > qi) s = -1e9;
 					rawScoresRow.push(s);
 				}
@@ -1317,9 +1317,9 @@ class AttentionEngine {
 				html += `Head ${displayHeadNum}: "${liveTokens[qi]}" → "${liveTokens[ki]}" = ${(w * 100).toFixed(1)}%`;
 				html += `</div>`;
 
-				// Row 1: Abstract equation
+				// Row 1: Abstract equation — FIX: label as d_k
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_{\\text{model}}}} = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_model_int}}} = ${rawScore.toFixed(nr_fixed)}$`;
+				html += `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_k_int}}} = ${rawScore.toFixed(nr_fixed)}$`;
 				html += `</div>`;
 
 				// Row 2: Full numerical equation with underbraces, including token word labels
@@ -1332,7 +1332,7 @@ class AttentionEngine {
 				html += `</div>`;
 
 				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\frac{\\underbrace{${toRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${liveTokens[qi]}"})} \\cdot \\underbrace{${toColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${liveTokens[ki]}"})}}{\\sqrt{${d_model_int}}} = \\frac{${dotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(d_model).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
+				html += `$\\frac{\\underbrace{${toRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${liveTokens[qi]}"})} \\cdot \\underbrace{${toColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${liveTokens[ki]}"})}}{\\sqrt{${d_k_int}}} = \\frac{${dotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(d_k).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
 				html += `</div>`;
 
 				// Row 3: Softmax over the full row, highlighting current cell
