@@ -285,7 +285,7 @@ When you start a new conversation with an AI like ChatGPT, you are not continuin
 
 ## The Alignment Problem: The Gap Between Math and Morality
 
-In your machine learning lab, the model has a singular "purpose": to minimize the **Loss**. This is its "God," its only objective. In AI safety, this is known as the **Alignment Problem**. It is the challenge of ensuring that an AI's internal objective (the mathematical "loss function") aligns with human values and intentions.
+In the machine learning lab, the model has a singular "purpose": to minimize the **Loss**. This is its "God," its only objective. In AI safety, this is known as the **Alignment Problem**. It is the challenge of ensuring that an AI's internal objective (the mathematical "loss function") aligns with human values and intentions.
 
 ### The Orthogonality Thesis: Intelligence vs. Intent
 
