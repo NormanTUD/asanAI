@@ -270,14 +270,6 @@ the next token, it must not "see" into the future. By setting future
 positions to $-\infty$, the $\text{exp}(M_{i,j})$ term in the Softmax function
 becomes $0$, effectively neutralizing the connection.
 
-</div>
-
-<div class="md" id="transformer-mask-logic-breakdown">
-    <div id="mask-rows-container"></div>
-</div>
-
-<div class="md">
-
 **Why $-\infty$**? When we calculate the attention weights, we use the Softmax function:
 
 $$\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$
