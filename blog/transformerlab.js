@@ -1,5 +1,6 @@
 "use strict";
 
+window.isTraining = false;
 window._paramBreakdownOpen = false;
 window._paramBreakdownRendered = false;
 const widthEmbeddingInit = 5;
@@ -1073,10 +1074,6 @@ function run_transformer_demo(activeId = null) {
     show_nr_of_params();
 }
 
-/**
- * Origin: Ba et al. (2016) Layer Normalization
- * Goal: Initialize learnable parameters for stabilization
- */
 function get_init_weights(n_layers, d_model) {
 	const weights = [];
 	const d_ff = d_model * 4;
@@ -1112,13 +1109,6 @@ function get_init_weights(n_layers, d_model) {
 	return weights;
 }
 
-// Global state flag
-window.isTraining = false;
-
-/**
- * Checks whether training can start. Returns the token array if valid,
- * or null if training should be aborted.
- */
 function validateTrainingPreconditions(status) {
 	const trainingData = document.getElementById('transformer-training-data').value;
 	const preCheckTokens = transformer_tokenize_render(trainingData, null);
@@ -1132,10 +1122,6 @@ function validateTrainingPreconditions(status) {
 	return preCheckTokens;
 }
 
-/**
- * Sets up UI state and resets history for a new training run.
- * Returns the parsed hyperparameters.
- */
 function initTrainingSession(btn, status) {
 	window.isTraining = true;
 	lockArchitectureControls(true);   // ← ADD THIS LINE
