@@ -233,42 +233,9 @@ This is the architecture you are interacting with in every visualization here. W
 Everything is in flux.
 </div>
 
-The Transformer's architecture is the mathematical embodiment of Heraclitus' flux, where the **Residual Stream** serves as a river of hidden harmony. At the input, each token is cast into the **Embedding Space**, a static "geometric fingerprint" that establishes its initial identity. As this vector flows through the network, it enters the **Feature Space**, a dynamic realm where the representation is no longer fixed but "migrates" based on its surroundings. This journey is facilitated by the **skip connection**, an identity term $h_n$ that ensures the original signal is never fully overwritten by the transformations of the layer.
+In the Transformer, the Residual Stream embodies Heraclitus’ flux, serving as a "river of hidden harmony" or a shared "notebook" where the original identity $h_0$ is preserved through \cite[additive skip connections]{he2015resnet} $x_{\text{new}} = x + f(x)$. Moving from the static Embedding Space to the dynamic Feature Space, the stream acts as a \cite[communication bus]{elhage2021mathematical} where "experts", **Attention Heads** as scouts for relationships and Feed-Forward Networks as knowledge repositories, perform "collaborative editing" by adding insights rather than overwriting the signal.
 
-In this stream, the **Attention Heads** and **Feed-Forward Networks (FFN)** operate like a multitude of experts writing into a single, shared notebook: the **Residual Stream**. The Attention Heads function as the "scouts," performing a search through the past to find linguistic relationships, syntax, logic, or rare word patterns, and adding those insights to the vector. Meanwhile, the FFN acts as a repository of learned associations, applying non-linear transformations that function as knowledge retrieval stages for each token independently. 
-
-Crucially, these experts do not replace the page; they merely add their "nudges" to the existing entries. Because the process is additive, the final hidden state $h_{\text{final}}$ is the original identity $h_0$ plus the sum of every expert's contribution. This allows the model to achieve a "hidden harmony" where the token for "king" can evolve through layers of abstract reasoning while still tethered to its source, proving that persistence of identity does not require stasis, but rather a mechanism for carrying the source signal through the flow of transformation.
-
-This perspective is formalised in \citetitle{elhage2021mathematical}, which identifies the **Residual Stream** as the primary communication channel of the model, a "shared bus" where information is stored and retrieved. Rather than viewing the Transformer as a sequential pipeline that destroys and replaces information at each step, Elhage et al. demonstrate that the architecture is fundamentally additive. Each attention head and MLP layer acts as a "reader" and "writer" to this stream, using linear projections to either extract relevant features or deposit new computations. This mathematical framework reveals that layers do not merely transform the state, but rather perform "collaborative editing," where the final output is the cumulative result of numerous specialized sub-components scribbling annotations onto the same persistent document.
-
-There is, however, a deeper information-theoretic consequence to this additive
-architecture that the "shared bus" metaphor alone does not capture. The
-Information Bottleneck principle, formalised by
-\citeauthorlastnameand{tishby2000informationbottleneck}, states that optimal
-representations compress the input $X$ while retaining maximal information about
-the target $Y$. In the Transformer, the residual stream
-has a fixed dimensionality $d_{\text{model}}$ regardless of sequence length. As
-information accumulates across layers, an ever-increasing volume of context must
-be compressed into this fixed-width channel. Each layer's attention heads and
-FFN must therefore decide what to preserve and what to discard, and compression,
-by its nature, is abstraction. Early layers can afford to retain surface-level
-features, lexical identity, positional detail, local syntax, but as depth
-increases and the cumulative writing of dozens of specialised heads saturates the
-stream, only what is predictively useful survives. This is why empirical probing
-consistently finds that deeper layers encode increasingly abstract,
-task-relevant representations: they have been squeezed through the bottleneck.
-
-The implication is that $d_{\text{model}}$ is not merely a hyperparameter to be
-tuned for performance; it functions as an implicit regulariser that sets a
-ceiling on the level of abstraction the model can achieve. This reframes the
-Heraclitean metaphor: the river's width determines not just how much can flow,
-but what kind of understanding crystallises along its banks. Just as the finite bandwidth of
-human sensory channels forces our brains to abstract ruthlessly from raw
-perception, the fixed width of the residual stream forces the model to distill
-token-level noise into something approaching conceptual structure. It is
-abstraction born not of insight, but of necessity.
-
-**Residual Connections:** The idea of "Residual Connections" ($x_\text{new} = x + f(x)$) used in the Transformer was actually pioneered earlier by **\cite[Kaiming He et al.]{he2015resnet}** in the **\cite[ResNet]{he2015resnet}** architecture for computer vision. The Transformer team adapted this to ensure that gradients could flow through dozens of layers without the model "forgetting" the original input tokens, a phenomenon called *Vanishing Gradient*.
+This architecture is governed by the \cite[Information Bottleneck principle]{tishby2000informationbottleneck}; because the dimensionality $d_{\text{model}}$ is fixed, the stream forces a transition from surface-level features to task-relevant abstractions as depth increases. Ultimately, this constrained "river width" acts as an implicit regularizer, necessitating that token-level noise distill into conceptual structure to survive the journey through the layers.
 
 ### Historical Context: The Original Encoder-Decoder (What We Don't Use)
 
@@ -378,7 +345,7 @@ These act as the simplest form of a "neural network", one layer, no non-linear a
 
 <div class="md">
 
-Each word in the vocabulary lives as a **3D vector** in the full embedding space (shown as grey points). The matrices $W^Q$, $W^K$, and $W^V$ are **linear projections** — they take each 3D vector and project it onto a **2D subspace** (a plane through the origin).
+Each word in the vocabulary lives as a **3D vector** in the full embedding space (shown as grey points). The matrices $W^Q$, $W^K$, and $W^V$ are **linear projections**, they take each 3D vector and project it onto a **2D subspace** (a plane through the origin).
 
 Each head has its own set of projection matrices, allowing the model to focus on different linguistic aspects (e.g., syntax vs. logic) simultaneously.
 
