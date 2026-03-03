@@ -535,39 +535,50 @@ const paramBreakdownObserver = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.05 });
 
-/**
- * Updated: shows total param count and reveals the toggle button.
- * Does NOT render the chart — that's deferred to click + visibility.
- */
 function show_nr_of_params() {
-    const weights = window.currentWeights;
-    const nr_params = countAllNumbers(weights);
+	const weights = window.currentWeights;
+	const nrDiv = document.getElementById('nr_params');
+	const toggleDiv = document.getElementById('param-breakdown-toggle');
 
-    const nrDiv = document.getElementById('nr_params');
-    const toggleDiv = document.getElementById('param-breakdown-toggle');
+	if (!weights || weights.length === 0) {
+		if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
+		if (toggleDiv) toggleDiv.style.display = 'none';
+		document.getElementById('param-breakdown-chart').style.display = 'none';
+		return;
+	}
 
-    if (!nr_params || !weights || weights.length === 0) {
-        if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
-        if (toggleDiv) toggleDiv.style.display = 'none';
-        document.getElementById('param-breakdown-chart').style.display = 'none';
-        return;
-    }
+	// Count internal layer parameters (attention, FFN, LayerNorm)
+	const internalParams = countAllNumbers(weights);
 
-    if (nrDiv) {
-        nrDiv.innerHTML = `The current network has <b>${nr_params.toLocaleString()}</b> internal parameters.`;
-        nrDiv.style.display = 'block';
-    }
+	// Count embedding parameters (vocab_size × d_model) to match the sunburst chart
+	const vocab = window.persistentEmbeddingSpace ? Object.keys(window.persistentEmbeddingSpace) : [];
+	const d_model = window.last_d_model || 0;
+	const embeddingParams = vocab.length * d_model;
 
-    if (toggleDiv) toggleDiv.style.display = 'block';
+	const nr_params = internalParams + embeddingParams;
 
-    // If the panel is already open, mark it for re-render
-    if (window._paramBreakdownOpen) {
-        window._paramBreakdownRendered = false;
-        const chartDiv = document.getElementById('param-breakdown-chart');
-        if (chartDiv && isElementInViewport(chartDiv)) {
-            _executeParamBreakdownRender();
-        }
-    }
+	if (!nr_params) {
+		if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
+		if (toggleDiv) toggleDiv.style.display = 'none';
+		document.getElementById('param-breakdown-chart').style.display = 'none';
+		return;
+	}
+
+	if (nrDiv) {
+		nrDiv.innerHTML = `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`;
+		nrDiv.style.display = 'block';
+	}
+
+	if (toggleDiv) toggleDiv.style.display = 'block';
+
+	// If the panel is already open, mark it for re-render
+	if (window._paramBreakdownOpen) {
+		window._paramBreakdownRendered = false;
+		const chartDiv = document.getElementById('param-breakdown-chart');
+		if (chartDiv && isElementInViewport(chartDiv)) {
+			_executeParamBreakdownRender();
+		}
+	}
 }
 
 /**
