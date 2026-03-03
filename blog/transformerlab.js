@@ -29,6 +29,37 @@ window.tlab_trajectory_data = {
 };
 
 /**
+ * Registers data for lazy rendering: stores in a registry, observes with
+ * an IntersectionObserver, and renders immediately if already in viewport.
+ *
+ * @param {string}               containerId  - DOM element ID
+ * @param {Map}                  registry     - The registry Map for this visualization type
+ * @param {IntersectionObserver} observer     - The observer that triggers deferred rendering
+ * @param {object}               data         - Data to store in the registry (will have `rendered: false` set)
+ * @param {Function}             renderFn     - Called as renderFn() for immediate render if in viewport
+ * @param {string}               [placeholder] - Optional placeholder HTML for first load
+ */
+function registerLazyRenderable(containerId, registry, observer, data, renderFn, placeholder) {
+	const container = document.getElementById(containerId);
+	if (!container) return;
+
+	data.rendered = false;
+	registry.set(containerId, data);
+
+	if (placeholder && !container.innerHTML) {
+		container.innerHTML = placeholder;
+	}
+
+	observer.observe(container);
+
+	if (isElementInViewport(container)) {
+		renderFn();
+		const entry = registry.get(containerId);
+		if (entry) entry.rendered = true;
+	}
+}
+
+/**
  * Pure-JS multi-head self-attention WITH causal mask.
  * Matches the training path in calculate_tf_loss exactly:
  *   - Q/K/V split into n_heads of dimension d_k = d_model / n_heads
@@ -1066,31 +1097,16 @@ function buildInjectionRowHtml(token, pos, semanticVec, peVec, combined) {
 }
 
 function render_positional_waves(d_model, tokens) {
-	const containerId = 'transformer-pe-wave-plot';
-	const container = document.getElementById(containerId);
-	if (!container) return;
+    const containerId = 'transformer-pe-wave-plot';
 
-	// Store latest data in registry, mark as needing render
-	positionalWavesRegistry.set(containerId, {
-		d_model: d_model,
-		tokens: tokens,
-		rendered: false
-	});
-
-	// Placeholder only on first call (don't clobber existing Plotly chart)
-	if (!container.innerHTML) {
-		container.innerHTML = `<div style="padding:20px; color:#64748b;">Waiting for Positional Waves plot to load...</div>`;
-	}
-
-	// Start observing (no-op if already observed)
-	positionalWavesObserver.observe(container);
-
-	// If already in viewport, render immediately
-	if (isElementInViewport(container)) {
-		_execute_positional_waves_render(d_model, tokens);
-		const entry = positionalWavesRegistry.get(containerId);
-		if (entry) entry.rendered = true;
-	}
+    registerLazyRenderable(
+        containerId,
+        positionalWavesRegistry,
+        positionalWavesObserver,
+        { d_model, tokens },
+        () => _execute_positional_waves_render(d_model, tokens),
+        `<div style="padding:20px; color:#64748b;">Waiting for Positional Waves plot to load...</div>`
+    );
 }
 
 function _execute_positional_waves_render(d_model, tokens) {
@@ -2063,34 +2079,29 @@ function renderAttentionDetails() {
  * lazy rendering, and renders immediately if already in viewport.
  */
 function renderTrajectoryPlot(d_model) {
-	if (!window.tlab_trajectory_collector) return;
+    if (!window.tlab_trajectory_collector) return;
 
-	const containerId = 'transformer-trajectory-full-path';
-	let trajDiv = document.getElementById(containerId);
+    const containerId = 'transformer-trajectory-full-path';
+    let trajDiv = document.getElementById(containerId);
 
-	if (!trajDiv) {
-		trajDiv = document.createElement('div');
-		trajDiv.id = containerId;
-		document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
+    if (!trajDiv) {
+        trajDiv = document.createElement('div');
+        trajDiv.id = containerId;
+        document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
 
-		trajDiv.style.cssText = "width:100%; min-height:250px; border: 2px solid rgb(203, 213, 225); border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;";
-		trajDiv.innerHTML = `<div class="traj-loading-placeholder" style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
-			Rendering the Token Trajectory Plot may take a while
-		</div>`;
-	}
+        trajDiv.style.cssText = "width:100%; min-height:250px; border: 2px solid rgb(203, 213, 225); border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;";
+    }
 
-	trajectoryRenderRegistry.set(containerId, {
-		d_model: d_model,
-		rendered: false
-	});
-
-	trajectoryObserver.observe(trajDiv);
-
-	if (isElementInViewport(trajDiv)) {
-		tlab_render_trajectory_plot(d_model);
-		const trajEntry = trajectoryRenderRegistry.get(containerId);
-		if (trajEntry) trajEntry.rendered = true;
-	}
+    registerLazyRenderable(
+        containerId,
+        trajectoryRenderRegistry,
+        trajectoryObserver,
+        { d_model },
+        () => tlab_render_trajectory_plot(d_model),
+        `<div class="traj-loading-placeholder" style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
+            Rendering the Token Trajectory Plot may take a while
+        </div>`
+    );
 }
 
 /**
@@ -2416,29 +2427,16 @@ function render_architecture_stats(d, h, n, t) {
 }
 
 function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
-	const containerId = 'transformer-plotly-space';
-	const container = document.getElementById(containerId);
-	if (!container) return;
+    const containerId = 'transformer-plotly-space';
 
-	embeddingRenderRegistry.set(containerId, {
-		d_model: dimensions,
-		highlightPos: highlightPos,
-		steps: steps,
-		rendered: false
-	});
-
-	if (!container.innerHTML) {
-		container.innerHTML = `<div style="padding:20px; color:#64748b;">Wait for Embedding Space to load...</div>`;
-	}
-
-	embeddingObserver.observe(container);
-
-	// ── FIX: If already in viewport, render immediately ──
-	if (isElementInViewport(container)) {
-		_execute_embedding_render(dimensions, highlightPos, steps);
-		const entry = embeddingRenderRegistry.get(containerId);
-		if (entry) entry.rendered = true;
-	}
+    registerLazyRenderable(
+        containerId,
+        embeddingRenderRegistry,
+        embeddingObserver,
+        { d_model: dimensions, highlightPos, steps },
+        () => _execute_embedding_render(dimensions, highlightPos, steps),
+        `<div style="padding:20px; color:#64748b;">Wait for Embedding Space to load...</div>`
+    );
 }
 
 // ── 3D Arrowhead geometry (extracted from _execute_embedding_render) ──
@@ -3102,12 +3100,10 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
     const container = document.getElementById('transformer-migration-plots-container');
     if (!container) return;
 
-    // Track this ID as active for orphan cleanup
     if (window._activeMigrationIds) {
         window._activeMigrationIds.add(id);
     }
 
-    // Resolve human-readable display names for each token position
     const displayTokens = (tokenStrings && tokenStrings.length === tokens.length)
         ? tokenStrings
         : tokens.map((t, i) => {
@@ -3117,7 +3113,7 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 
     const freeze = (data) => JSON.parse(JSON.stringify(data));
 
-    // ── Eagerly capture trajectory data (not deferred to render) ──
+    // Trajectory collector logic (unchanged)
     if (!window.tlab_trajectory_collector) {
         window.tlab_trajectory_collector = {
             steps: {},
@@ -3127,7 +3123,6 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
         };
     }
 
-    // Capture initial states on the very first layer
     if (!window.tlab_trajectory_collector.steps["00_raw"]) {
         const rawEmbs = displayTokens.map(t => {
             if (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[t]) {
@@ -3146,14 +3141,13 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
         };
     }
 
-    // Capture this layer's output
     const layerKey = "02_layer_" + String(layerNum).padStart(2, '0');
     window.tlab_trajectory_collector.steps[layerKey] = {
         name: `Layer ${layerNum} Output`,
         data: freeze(end_h)
     };
 
-    // ── REUSE existing DOM element, only create if it doesn't exist yet ──
+    // Ensure DOM element exists
     let plotDiv = document.getElementById(id);
     if (!plotDiv) {
         const wrapperDiv = document.createElement('div');
@@ -3166,31 +3160,25 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 
         wrapperDiv.appendChild(plotDiv);
         container.appendChild(wrapperDiv);
-
-        migrationObserver.observe(plotDiv);
     }
 
-    // Update the registry with fresh data; mark as not yet rendered
-    transformerLabVisMigrationDataRegistry.set(id, {
+    const registryData = {
         tokens: [...tokens],
         start_h: Array.isArray(start_h) ? start_h.slice() : start_h,
         end_h: Array.isArray(end_h) ? end_h.slice() : end_h,
-        layerNum: layerNum,
-        d_model: d_model,
-        h_after: h_after,
+        layerNum,
+        d_model,
+        h_after,
         tokenStrings: tokenStrings || null,
-        rendered: false
-    });
+    };
 
-    // ── IMMEDIATE RENDER if the element is already visible ──
-    // This is the key fix: instead of waiting for the IntersectionObserver
-    // (which may not fire if the element is already in the viewport),
-    // we check visibility and render immediately.
-    if (isElementInViewport(plotDiv)) {
-        render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings);
-        const entry = transformerLabVisMigrationDataRegistry.get(id);
-        if (entry) entry.rendered = true;
-    }
+    registerLazyRenderable(
+        id,
+        transformerLabVisMigrationDataRegistry,
+        migrationObserver,
+        registryData,
+        () => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings)
+    );
 }
 
 /**
@@ -4231,39 +4219,25 @@ function tlab_get_top_vocab_list(h_vec, d_model) {
 }
 
 function render_positional_shift_plot(tokenStrings, d_model) {
-	const containerId = 'transformer-pe-shift-plot';
-	const container = document.getElementById(containerId);
+    const containerId = 'transformer-pe-shift-plot';
 
-	if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
-		console.error("Plotting requires an array of string tokens.");
-		return [];
-	}
+    if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
+        console.error("Plotting requires an array of string tokens.");
+        return [];
+    }
 
-	// Compute embeddings eagerly so we can return them immediately
-	const injectedEmbeddings = embedTokensWithPE(tokenStrings, d_model);
+    const injectedEmbeddings = embedTokensWithPE(tokenStrings, d_model);
 
-	// Update registry with latest parameters, pre-computed embeddings, and reset render flag
-	positionalShiftRegistry.set(containerId, {
-		tokenStrings: tokenStrings,
-		d_model: d_model,
-		injectedEmbeddings: injectedEmbeddings,
-		rendered: false
-	});
+    registerLazyRenderable(
+        containerId,
+        positionalShiftRegistry,
+        positionalShiftObserver,
+        { tokenStrings, d_model, injectedEmbeddings },
+        () => _execute_shift_render(tokenStrings, d_model, injectedEmbeddings),
+        `<div style="padding:20px; color:#64748b;">Wait for Positional Shift Plot to load...</div>`
+    );
 
-	if (container) {
-		if (!container.innerHTML) {
-			container.innerHTML = `<div style="padding:20px; color:#64748b;">Wait for Positional Shift Plot to load...</div>`;
-		}
-		positionalShiftObserver.observe(container);
-	}
-
-	if (container && isElementInViewport(container)) {
-		_execute_shift_render(tokenStrings, d_model, injectedEmbeddings);
-		const entry = positionalShiftRegistry.get(containerId);
-		if (entry) entry.rendered = true;
-	}
-
-	return injectedEmbeddings;
+    return injectedEmbeddings;
 }
 
 function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
