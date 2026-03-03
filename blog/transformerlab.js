@@ -2213,7 +2213,7 @@ This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Whe
         const terms = h_last.map((h_val, dim) =>
             `(${h_val.toFixed(nr_fixed)} \\cdot ${w_row[dim].toFixed(nr_fixed)})`
         );
-        html += `<div style="margin-bottom: 10px; overflow: scroll;">
+        html += `<div style="margin-bottom: 10px; overflow-y: hidden; overflow-x: scroll;">
     $$\\text{logit}_{\\text{${word}}} = ${terms.join(' + ')} = \\boxed{${val.toFixed(nr_fixed)}}$$
         </div>`;
     });
