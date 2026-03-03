@@ -4302,152 +4302,150 @@ function tf_layer_norm(x, gamma, beta) {
 }
 
 function syncTransformerSettings(trigger) {
-    const dimSlider = document.getElementById('transformer-dimension-model');
-    const headSlider = document.getElementById('transformer-heads');
+	const dimSlider = document.getElementById('transformer-dimension-model');
+	const headSlider = document.getElementById('transformer-heads');
 
-    let d_model = parseInt(dimSlider.value);
-    let h = parseInt(headSlider.value);
+	let d_model = parseInt(dimSlider.value);
+	let h = parseInt(headSlider.value);
 
-    // ── NO AUTO-SNAPPING ──
-    // Just update the labels to reflect whatever the user chose.
-    document.getElementById('dim-val').innerText = d_model;
-    document.getElementById('heads-val').innerText = h;
+	// ── NO AUTO-SNAPPING ──
+	// Just update the labels to reflect whatever the user chose.
+	document.getElementById('dim-val').innerText = d_model;
+	document.getElementById('heads-val').innerText = h;
 
-    // Clear stale weights so the next valid run reinitializes cleanly
-    window.currentWeights = null;
-    window.persistentEmbeddingSpace = null;
-    window.last_d_model = d_model;
+	// Clear stale weights so the next valid run reinitializes cleanly
+	window.currentWeights = null;
+	window.persistentEmbeddingSpace = null;
+	window.last_d_model = d_model;
 
-    // Check validity and update the UI accordingly
-    updateArchitectureValidityUI();
+	// Check validity and update the UI accordingly
+	updateArchitectureValidityUI();
 
-    // Only re-run the demo if the config is valid
-    if (d_model % h === 0) {
-        debounced_run_transformer_demo();
-    }
+	// Only re-run the demo if the config is valid
+	if (d_model % h === 0) {
+		debounced_run_transformer_demo();
+	}
 }
 
-/**
- * Checks whether d_model % n_heads === 0.
- * If invalid:  disables the Train button, shows an explanatory message,
- *              and lists valid alternatives.
- * If valid:    hides the message and re-enables training.
- */
 function updateArchitectureValidityUI() {
-    const d_model = parseInt(document.getElementById('transformer-dimension-model').value) || 3;
-    const h       = parseInt(document.getElementById('transformer-heads').value) || 1;
-    const isValid = (d_model % h === 0);
+	const d_model = parseInt(document.getElementById('transformer-dimension-model').value) || 3;
+	const h       = parseInt(document.getElementById('transformer-heads').value) || 1;
+	const isValid = (d_model % h === 0);
 
-    // ── Train button ──
-    const trainBtn = document.querySelector('.train-btn');
-    if (trainBtn) {
-        // We still respect the token-count check from updateTrainButtonState(),
-        // so only force-disable here; re-enable only if BOTH checks pass.
-        if (!isValid) {
-            trainBtn.disabled = true;
-            trainBtn.title = `d_model (${d_model}) must be divisible by heads (${h})`;
-            trainBtn.style.opacity = '0.45';
-            trainBtn.style.cursor = 'not-allowed';
-        } else {
-            // Delegate to the existing function so the token-count check
-            // is also evaluated before enabling.
-            updateTrainButtonState();
-        }
-    }
+	// ── Train button ──
+	const trainBtn = document.querySelector('.train-btn');
+	if (trainBtn) {
+		if (!isValid) {
+			trainBtn.disabled = true;
+			trainBtn.title = `d_model (${d_model}) must be divisible by heads (${h})`;
+			trainBtn.style.opacity = '0.45';
+			trainBtn.style.cursor = 'not-allowed';
+		} else {
+			// Delegate to the existing function so the token-count check
+			// is also evaluated before enabling.
+			updateTrainButtonState();
+		}
+	}
 
-    // ── Validity message container ──
-    let msgDiv = document.getElementById('arch-validity-message');
-    if (!msgDiv) {
-        // Create it once, right after the heads slider's parent
-        const headsSlider = document.getElementById('transformer-heads');
-        if (!headsSlider) return;
-        msgDiv = document.createElement('div');
-        msgDiv.id = 'arch-validity-message';
-        // Insert after the heads slider's containing <div>
-        headsSlider.closest('div[style]').after(msgDiv);
-    }
+	// ── Validity message container ──
+	let msgDiv = document.getElementById('arch-validity-message');
+	if (!msgDiv) {
+		const headsSlider = document.getElementById('transformer-heads');
+		if (!headsSlider) return;
+		msgDiv = document.createElement('div');
+		msgDiv.id = 'arch-validity-message';
+		const parentDiv = headsSlider.closest('div[style]');
+		if (parentDiv && parentDiv.parentNode) {
+			parentDiv.parentNode.insertBefore(msgDiv, parentDiv.nextSibling);
+		}
+	}
 
-    if (isValid) {
-        msgDiv.style.display = 'none';
-        msgDiv.innerHTML = '';
+	if (isValid) {
+		msgDiv.style.display = 'none';
+		msgDiv.innerHTML = '';
+		setSliderOutline('transformer-dimension-model', '');
+		setSliderOutline('transformer-heads', '');
+		return;
+	}
 
-        // Remove red outlines from sliders
-        setSliderOutline('transformer-dimension-model', '');
-        setSliderOutline('transformer-heads', '');
-        return;
-    }
+	// ── Invalid state: build the message ──
+	setSliderOutline('transformer-dimension-model', '2px solid #ef4444');
+	setSliderOutline('transformer-heads', '2px solid #ef4444');
 
-    // ── Invalid state: build the message ──
-    setSliderOutline('transformer-dimension-model', '2px solid #ef4444');
-    setSliderOutline('transformer-heads', '2px solid #ef4444');
+	const validHeads = getValidHeads(d_model);
+	const validDims  = getValidDimensions(h);
 
-    const validHeads = getValidHeads(d_model);
-    const validDims  = getValidDimensions(h);
+	const dkValue = (d_model / h).toFixed(2);
 
-    msgDiv.style.display = 'block';
-    msgDiv.style.cssText = `
-        display: block;
-        margin-top: 10px;
-        padding: 12px 16px;
-        background: #fef2f2;
-        border: 2px solid #ef4444;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        color: #991b1b;
-        line-height: 1.5;
+	msgDiv.style.cssText = `
+	display: block;
+	margin-top: 10px;
+	padding: 12px 16px;
+	background: #fef2f2;
+	border: 2px solid #ef4444;
+	border-radius: 8px;
+	font-size: 0.85rem;
+	color: #991b1b;
+	line-height: 1.7;
     `;
 
-    msgDiv.innerHTML = `
-        <strong>⚠️ Invalid Configuration</strong><br>
-        <code>d_model</code> (${d_model}) must be evenly divisible by
-        <code>heads</code> (${h}).<br>
-        Each head needs an equal integer-sized slice:
-        <code>d_k = d_model / h = ${d_model} / ${h} = ${(d_model / h).toFixed(2)}</code>
-        — this is <strong>not an integer</strong>.<br><br>
+	msgDiv.innerHTML = `
+	<strong>⚠️ Invalid Configuration — Training Disabled</strong><br>
+	<p>
+	    $d_{\\text{model}}$ must be evenly divisible by $h$ so that each
+	    attention head receives an equal integer-sized slice of the vector:
+	</p>
+	<p style="text-align:center;">
+	    $d_k = \\dfrac{d_{\\text{model}}}{h} = \\dfrac{${d_model}}{${h}} = ${dkValue}$
+	    &nbsp;— <strong>not an integer.</strong>
+	</p>
 
-        <strong>Training is disabled</strong> until you pick a valid pair.<br><br>
-
-        <strong>Fix option A</strong> — keep <code>d_model = ${d_model}</code>,
-        change heads to one of:
-        <code>${validHeads.length > 0 ? validHeads.join(', ') : 'none in slider range'}</code><br>
-
-        <strong>Fix option B</strong> — keep <code>heads = ${h}</code>,
-        change d_model to one of:
-        <code>${validDims.length > 0 ? validDims.join(', ') : 'none in slider range'}</code>
+	<p style="margin-top:8px;">
+	    <strong>Fix option A</strong> — keep $d_{\\text{model}} = ${d_model}$,
+	    change $h$ to one of:
+	    <code>${validHeads.length > 0 ? validHeads.join(', ') : 'none in slider range'}</code>
+	</p>
+	<p>
+	    <strong>Fix option B</strong> — keep $h = ${h}$,
+	    change $d_{\\text{model}}$ to one of:
+	    <code>${validDims.length > 0 ? validDims.join(', ') : 'none in slider range'}</code>
+	</p>
     `;
+
+	render_temml();
 }
 
 /**
  * Returns all valid head counts (within the slider range) for a given d_model.
  */
 function getValidHeads(d_model) {
-    const maxHeads = parseInt(document.getElementById('transformer-heads').max) || 8;
-    const valid = [];
-    for (let candidate = 1; candidate <= maxHeads; candidate++) {
-        if (d_model % candidate === 0) valid.push(candidate);
-    }
-    return valid;
+	const maxHeads = parseInt(document.getElementById('transformer-heads').max) || 8;
+	const valid = [];
+	for (let candidate = 1; candidate <= maxHeads; candidate++) {
+		if (d_model % candidate === 0) valid.push(candidate);
+	}
+	return valid;
 }
 
 /**
  * Returns all valid d_model values (within the slider range) for a given head count.
  */
 function getValidDimensions(h) {
-    const minDim = parseInt(document.getElementById('transformer-dimension-model').min) || 2;
-    const maxDim = parseInt(document.getElementById('transformer-dimension-model').max) || 16;
-    const valid = [];
-    for (let candidate = minDim; candidate <= maxDim; candidate++) {
-        if (candidate % h === 0) valid.push(candidate);
-    }
-    return valid;
+	const minDim = parseInt(document.getElementById('transformer-dimension-model').min) || 2;
+	const maxDim = parseInt(document.getElementById('transformer-dimension-model').max) || 16;
+	const valid = [];
+	for (let candidate = minDim; candidate <= maxDim; candidate++) {
+		if (candidate % h === 0) valid.push(candidate);
+	}
+	return valid;
 }
 
 /**
  * Utility: sets a colored outline on a slider to indicate validity.
  */
 function setSliderOutline(sliderId, outline) {
-    const el = document.getElementById(sliderId);
-    if (el) el.style.outline = outline;
+	const el = document.getElementById(sliderId);
+	if (el) el.style.outline = outline;
 }
 
 /**
@@ -4717,31 +4715,31 @@ function debounced_run_transformer_demo(activeId) {
 }
 
 function updateTrainButtonState() {
-    const btn = document.querySelector('.train-btn');
-    if (!btn) return;
+	const btn = document.querySelector('.train-btn');
+	if (!btn) return;
 
-    const trainingData = document.getElementById('transformer-training-data').value;
-    const tokens = transformer_tokenize_render(trainingData, null);
+	const trainingData = document.getElementById('transformer-training-data').value;
+	const tokens = transformer_tokenize_render(trainingData, null);
 
-    const d_model = parseInt(document.getElementById('transformer-dimension-model').value) || 3;
-    const h       = parseInt(document.getElementById('transformer-heads').value) || 1;
+	const d_model = parseInt(document.getElementById('transformer-dimension-model').value) || 3;
+	const h       = parseInt(document.getElementById('transformer-heads').value) || 1;
 
-    if (d_model % h !== 0) {
-        btn.disabled = true;
-        btn.title = `d_model (${d_model}) must be divisible by heads (${h})`;
-        btn.style.opacity = '0.45';
-        btn.style.cursor = 'not-allowed';
-    } else if (tokens.length < 2) {
-        btn.disabled = true;
-        btn.title = 'Need at least 2 tokens in training data';
-        btn.style.opacity = '0.5';
-        btn.style.cursor = 'not-allowed';
-    } else {
-        btn.disabled = false;
-        btn.title = '';
-        btn.style.opacity = '1';
-        btn.style.cursor = 'pointer';
-    }
+	if (d_model % h !== 0) {
+		btn.disabled = true;
+		btn.title = `d_model (${d_model}) must be divisible by heads (${h})`;
+		btn.style.opacity = '0.45';
+		btn.style.cursor = 'not-allowed';
+	} else if (tokens.length < 2) {
+		btn.disabled = true;
+		btn.title = 'Need at least 2 tokens in training data';
+		btn.style.opacity = '0.5';
+		btn.style.cursor = 'not-allowed';
+	} else {
+		btn.disabled = false;
+		btn.title = '';
+		btn.style.opacity = '1';
+		btn.style.cursor = 'pointer';
+	}
 }
 
 /**
