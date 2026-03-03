@@ -1509,7 +1509,7 @@ window.bibData = {
 	"heraclitus500fragments": {
 		author: "Heraclitus",
 		year: "c. 500 BCE",
-		title: "On Nature (Only fragments survived)",
+		title: "On Nature",
 		url: "https://en.wikisource.org/wiki/Fragments_of_Heraclitus",
 	},
 	"nietzsche1883zarathustra": {
