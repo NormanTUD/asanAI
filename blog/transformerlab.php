@@ -295,11 +295,6 @@ This is exactly what happens inside the transformer: the same set of token vecto
 
 In this demo, we use a **3D → 2D** projection for visual clarity, but in real transformers, the same principle applies in much higher dimensions.
 
-**The Shapes:**
-* **Hidden State ($h_0$)**: $(\text{Batch}, \text{Length}, d_{\text{model}})$
-* **Weights ($W^Q, W^K, W^V$)**: $(d_{\text{model}}, d_{k})$
-* **Resulting $Q, K, V$**: $(\text{Batch}, \text{Length}, d_{k})$
-
 ### The **Single-Head Attention**
 
 The job of of a Single Attention Head is to find some form of relation between all the input tokens after they've been multiplied with the $Q$, $K$ and $V$-matrices. This could be, for example, to detect which part of a sentence is a verb and which object it attends to. Usually, in real transformers, it rarely is that interpretable, though.
