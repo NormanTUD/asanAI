@@ -240,67 +240,29 @@ In the Transformer, the Residual Stream embodies Heraclitus’ flux, serving as 
 
 This architecture is governed by the \cite[Information Bottleneck principle]{tishby2000informationbottleneck}; because the dimensionality $d_{\text{model}}$ is fixed, the stream forces a transition from surface-level features to task-relevant abstractions as depth increases. Ultimately, this constrained "river width" acts as an implicit regularizer, necessitating that token-level noise distill into conceptual structure to survive the journey through the layers.
 
-### Masked self-attention
+### Masked Self-Attention
 
-We must prevent the model from "looking into the future" during training. If the model is trying to predict the third word in a sentence, it shouldn't be allowed to see the third, fourth, or fifth words. By enforcing this constraint, we ensure the model learns to generate text based only on the context it has already "seen," accurately reflecting how it will be expected to perform in real-world, word-by-word generation tasks.
+To ensure the model learns to generate text autoregressively, we prevent it from "looking into the future" during training. For any token $i$, we restrict its focus to itself and preceding tokens $\{1, \dots, i\}$.
 
-We achieve this by applying a **Causal Mask** to the attention scores before the Softmax operation. This mask is a lower-triangular matrix filled with $-\infty$ in the upper-right section.
+#### The Causal Mask
+We enforce this constraint by adding a **Causal Mask** ($M$) to the attention scores before the Softmax operation. This lower-triangular matrix is defined as:
 
-Mathematically, the mask is defined as:
+$$M_{i,j} = \begin{cases} 0 & \text{if } i \geq j \\ -\infty & \text{if } i < j \end{cases}$$
 
-$$M_{i,j} = \begin{cases} 0 & \text{if } i \geq j \\ -\infty & \text{if } i \lt j \end{cases}$$
+For a 4-token sequence, $M$ is:
+$$M = \begin{pmatrix} 0 & -\infty & -\infty & -\infty \\ 0 & 0 & -\infty & -\infty \\ 0 & 0 & 0 & -\infty \\ 0 & 0 & 0 & 0 \end{pmatrix}$$
 
-For a 4-token sequence, the causal mask $M$ is represented as:
-$$M = \begin{pmatrix}
-	0 & -\infty & -\infty & -\infty \\
-	0 & 0 & -\infty & -\infty \\
-	0 & 0 & 0 & -\infty \\
-	0 & 0 & 0 & 0
-\end{pmatrix}$$
-
-Then, the attention calculation becomes:
-
+The modified attention calculation then is:
 $$\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} + M \right) V$$
 
-Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Softmax function turns those values into $0$. Consequently, the model's "focus" for any given word is restricted to itself and the words preceding it.
+Since $e^{-\infty}$ approaches $0$, the Softmax function nullifies the weights for all "future" positions ($i < j$), effectively neutralizing those connections.
 
-In an LLM, this **Causal Mask** ensures that the self-attention mechanism
-maintains the autoregressive property. Since the model is trained to predict
-the next token, it must not "see" into the future. By setting future
-positions to $-\infty$, the $\text{exp}(M_{i,j})$ term in the Softmax function
-becomes $0$, effectively neutralizing the connection.
+#### Asymmetric Information Geometry
+The causal mask creates an **information gradient** across the sequence. Because later tokens attend to more preceding context, their representations are richer than those of earlier, "impoverished" tokens. This **information funnel** makes the last token uniquely privileged, as it is the only position that has "seen" the entire context, which is why its hidden state is used for next-token prediction.
 
-**Why $-\infty$**? When we calculate the attention weights, we use the Softmax function:
-
-$$\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$
-
-Because $e^{-\infty}$ approaches $0$, any score that has been masked will result in a $0\%$ attention weight after the Softmax step.
-
-#### The Causal Mask Creates an Asymmetric Information Geometry
-
-The causal mask does more than simply prevent
-tokens from "looking into the future", it imposes a fundamental asymmetry
-in the information available to each position in the sequence. Because token
-*i* can only attend to tokens $\left\{1, \dots, i\right\}$ and never to $\left\{i + 1, \dots, n\right\}$, its
-representation is computed from strictly less information than that of token
-$i + 1$. This creates a natural **information gradient** across the sequence:
-later tokens accumulate progressively richer, more contextually informed
-representations, while earlier tokens remain comparatively impoverished.
-The last token in the sequence is uniquely privileged, it is the only
-position that has "seen" the entire preceding context, which is precisely
-why decoder-only models use its final hidden state for next-token prediction.
-
-This gradient can be understood as an **information funnel**, where meaning
-gathers toward the end of the sequence much like a river accumulating
-tributaries. The geometric consequence is practical as well as theoretical:
-it is the reason **prompt engineering** works. By carefully ordering
-information within a prompt, you control which tokens have access to which
-context. Placing a critical instruction at the *end* of a prompt ensures
-that its representation is built from the full preceding context, whereas
-placing it at the *beginning* means it can only be passively attended to
-by later tokens, which may reinterpret or dilute it. In effect, the
-causal mask turns token position into a form of **informational privilege**,
-making the geometry of attention inherently asymmetric and position-dependent.
+This geometry explains why **prompt engineering** is effective:
+* **Position matters:** Token position acts as a form of informational privilege.
+* **Context accumulation:** Placing critical instructions at the *end* of a prompt ensures they are built from the full preceding context, whereas instructions at the *beginning* can only be passively attended to (and potentially diluted) by later tokens.
 
 ## The Core Mechanism: Generating Q, K, and V
 To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three learned weight matrices: $W^Q, W^K,$ and $W^V$.
