@@ -214,26 +214,6 @@ function matMul(matrix, weights, bias = null) {
 	);
 }
 
-/**
- * Runs a single transformer layer forward pass (Pre-LN architecture).
- *
- * FIX: Attention is now computed inline via causalMultiHeadAttention(),
- * which applies a causal mask matching the training path. Previously
- * the entire computation was delegated to AttentionEngine, which used
- * BIDIRECTIONAL attention (no mask) — a critical train/inference mismatch.
- *
- * AttentionEngine is still instantiated when containerId is provided so
- * its rendering scaffolding is created, but the registry's headData is
- * overwritten with the correctly-masked version.
- *
- * @param {number[][]}    h_current    - Input hidden states [seqLen × d_model]
- * @param {object}        layerWeights - Weight object for this layer
- * @param {number}        d_model
- * @param {number}        n_heads
- * @param {string[]|null} tokenStrings - Human-readable token labels (for visualization)
- * @param {string|null}   containerId  - AttentionEngine container ID (null = no viz)
- * @returns {{ h_out, headData, concat, projected, normH, h_attn }}
- */
 function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings = null, containerId = null, ffnLayerIndex = null) {
 	// 1. Pre-LN before attention
 	const normH = calculateLayerNorm(h_current, layerWeights.gamma, layerWeights.beta);
@@ -330,15 +310,6 @@ function dotProduct(a, b) {
 	return sum;
 }
 
-/**
- * Creates a lazy IntersectionObserver that fires a render callback
- * the first time an element becomes visible, then marks it as rendered.
- *
- * @param {Map}      registry   - A Map keyed by container ID holding { rendered, ...data }
- * @param {Function} renderFn   - Called as renderFn(containerId, dataFromRegistry)
- * @param {object}   [options]  - IntersectionObserver options (default: { threshold: 0 })
- * @returns {IntersectionObserver}
- */
 function createLazyRenderObserver(registry, renderFn, options = { threshold: 0 }) {
 	return new IntersectionObserver((entries) => {
 		entries.forEach(entry => {
@@ -474,7 +445,6 @@ function countAllNumbers(data) {
 	return count;
 }
 
-/** Lazy IntersectionObserver — renders chart only when scrolled into view */
 const paramBreakdownObserver = new IntersectionObserver((entries) => {
 	entries.forEach(entry => {
 		if (entry.isIntersecting && window._paramBreakdownOpen && !window._paramBreakdownRendered) {
@@ -589,181 +559,178 @@ function _executeParamBreakdownRender() {
 }
 
 function renderParamBreakdown(weights) {
-    const { d_model, n_heads } = getTransformerConfig();
-    const d_ff = d_model * 4;
-    const n_layers = weights.length;
+	const { d_model, n_heads } = getTransformerConfig();
+	const d_ff = d_model * 4;
+	const n_layers = weights.length;
 
-    // Count embedding parameters
-    const vocab = window.persistentEmbeddingSpace ? Object.keys(window.persistentEmbeddingSpace) : [];
-    const embeddingParams = vocab.length * d_model;
+	// Count embedding parameters
+	const vocab = window.persistentEmbeddingSpace ? Object.keys(window.persistentEmbeddingSpace) : [];
+	const embeddingParams = vocab.length * d_model;
 
-    // Per-layer breakdown
-    const layerBreakdowns = [];
-    let totalAttention = 0;
-    let totalFFN = 0;
-    let totalNorm = 0;
+	// Per-layer breakdown
+	const layerBreakdowns = [];
+	let totalAttention = 0;
+	let totalFFN = 0;
+	let totalNorm = 0;
 
-    for (let l = 0; l < n_layers; l++) {
-        const layer = weights[l];
+	for (let l = 0; l < n_layers; l++) {
+		const layer = weights[l];
 
-        const qParams = countAllNumbers(layer.attention.query);
-        const kParams = countAllNumbers(layer.attention.key);
-        const vParams = countAllNumbers(layer.attention.value);
-        const oParams = countAllNumbers(layer.attention.output);
-        const attnTotal = qParams + kParams + vParams + oParams;
+		const qParams = countAllNumbers(layer.attention.query);
+		const kParams = countAllNumbers(layer.attention.key);
+		const vParams = countAllNumbers(layer.attention.value);
+		const oParams = countAllNumbers(layer.attention.output);
+		const attnTotal = qParams + kParams + vParams + oParams;
 
-        const w1Params = countAllNumbers(layer.W1);
-        const b1Params = countAllNumbers(layer.b1);
-        const w2Params = countAllNumbers(layer.W2);
-        const b2Params = countAllNumbers(layer.b2);
-        const ffnTotal = w1Params + b1Params + w2Params + b2Params;
+		const w1Params = countAllNumbers(layer.W1);
+		const b1Params = countAllNumbers(layer.b1);
+		const w2Params = countAllNumbers(layer.W2);
+		const b2Params = countAllNumbers(layer.b2);
+		const ffnTotal = w1Params + b1Params + w2Params + b2Params;
 
-        const norm1Params = countAllNumbers(layer.gamma) + countAllNumbers(layer.beta);
-        const norm2Params = countAllNumbers(layer.gamma2 || []) + countAllNumbers(layer.beta2 || []);
-        const normTotal = norm1Params + norm2Params;
+		const norm1Params = countAllNumbers(layer.gamma) + countAllNumbers(layer.beta);
+		const norm2Params = countAllNumbers(layer.gamma2 || []) + countAllNumbers(layer.beta2 || []);
+		const normTotal = norm1Params + norm2Params;
 
-        totalAttention += attnTotal;
-        totalFFN += ffnTotal;
-        totalNorm += normTotal;
+		totalAttention += attnTotal;
+		totalFFN += ffnTotal;
+		totalNorm += normTotal;
 
-        layerBreakdowns.push({
-            layer: l + 1,
-            attention: { q: qParams, k: kParams, v: vParams, o: oParams, total: attnTotal },
-            ffn: { w1: w1Params, b1: b1Params, w2: w2Params, b2: b2Params, total: ffnTotal },
-            norm: { pre_attn: norm1Params, pre_ffn: norm2Params, total: normTotal },
-            total: attnTotal + ffnTotal + normTotal
-        });
-    }
+		layerBreakdowns.push({
+			layer: l + 1,
+			attention: { q: qParams, k: kParams, v: vParams, o: oParams, total: attnTotal },
+			ffn: { w1: w1Params, b1: b1Params, w2: w2Params, b2: b2Params, total: ffnTotal },
+			norm: { pre_attn: norm1Params, pre_ffn: norm2Params, total: normTotal },
+			total: attnTotal + ffnTotal + normTotal
+		});
+	}
 
-    const grandTotal = embeddingParams + totalAttention + totalFFN + totalNorm;
+	const grandTotal = embeddingParams + totalAttention + totalFFN + totalNorm;
 
-    renderParamSunburst(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff);
-    renderParamTable(layerBreakdowns, embeddingParams, grandTotal);
+	renderParamSunburst(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff);
+	renderParamTable(layerBreakdowns, embeddingParams, grandTotal);
 }
 
-/**
- * Renders a Plotly sunburst chart showing the parameter hierarchy.
- */
 function renderParamSunburst(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff) {
-    const ids = [], labels = [], parents = [], values = [], hoverTexts = [], colors = [];
+	const ids = [], labels = [], parents = [], values = [], hoverTexts = [], colors = [];
 
-    const embColor = '#6366f1';
-    const attnColor = '#3b82f6';
-    const ffnColor = '#f59e0b';
-    const normColor = '#10b981';
+	const embColor = '#6366f1';
+	const attnColor = '#3b82f6';
+	const ffnColor = '#f59e0b';
+	const normColor = '#10b981';
 
-    ids.push('total');
-    labels.push(`Total: ${grandTotal.toLocaleString()}`);
-    parents.push('');
-    values.push(grandTotal);
-    hoverTexts.push(`Total parameters: ${grandTotal.toLocaleString()}`);
-    colors.push('#1e293b');
+	ids.push('total');
+	labels.push(`Total: ${grandTotal.toLocaleString()}`);
+	parents.push('');
+	values.push(grandTotal);
+	hoverTexts.push(`Total parameters: ${grandTotal.toLocaleString()}`);
+	colors.push('#1e293b');
 
-    ids.push('embeddings');
-    labels.push('Embeddings');
-    parents.push('total');
-    values.push(embeddingParams);
-    hoverTexts.push(`Embedding table: ${embeddingParams.toLocaleString()} params<br>vocab × d_model`);
-    colors.push(embColor);
+	ids.push('embeddings');
+	labels.push('Embeddings');
+	parents.push('total');
+	values.push(embeddingParams);
+	hoverTexts.push(`Embedding table: ${embeddingParams.toLocaleString()} params<br>vocab × d_model`);
+	colors.push(embColor);
 
-    layerBreakdowns.forEach((lb) => {
-        const layerId = `layer-${lb.layer}`;
+	layerBreakdowns.forEach((lb) => {
+		const layerId = `layer-${lb.layer}`;
 
-        ids.push(layerId);
-        labels.push(`Layer ${lb.layer}`);
-        parents.push('total');
-        values.push(lb.total);
-        hoverTexts.push(`Layer ${lb.layer}: ${lb.total.toLocaleString()} params`);
-        colors.push('#475569');
+		ids.push(layerId);
+		labels.push(`Layer ${lb.layer}`);
+		parents.push('total');
+		values.push(lb.total);
+		hoverTexts.push(`Layer ${lb.layer}: ${lb.total.toLocaleString()} params`);
+		colors.push('#475569');
 
-        // Attention
-        const attnId = `${layerId}-attn`;
-        ids.push(attnId);
-        labels.push('Attention');
-        parents.push(layerId);
-        values.push(lb.attention.total);
-        hoverTexts.push(`Attention: ${lb.attention.total.toLocaleString()} params<br>Q + K + V + O projections`);
-        colors.push(attnColor);
+		// Attention
+		const attnId = `${layerId}-attn`;
+		ids.push(attnId);
+		labels.push('Attention');
+		parents.push(layerId);
+		values.push(lb.attention.total);
+		hoverTexts.push(`Attention: ${lb.attention.total.toLocaleString()} params<br>Q + K + V + O projections`);
+		colors.push(attnColor);
 
-        [
-            { key: 'q', label: 'W_Q', desc: `Query: ${d_model}×${d_model}` },
-            { key: 'k', label: 'W_K', desc: `Key: ${d_model}×${d_model}` },
-            { key: 'v', label: 'W_V', desc: `Value: ${d_model}×${d_model}` },
-            { key: 'o', label: 'W_O', desc: `Output: ${d_model}×${d_model}` }
-        ].forEach(({ key, label, desc }) => {
-            ids.push(`${attnId}-${key}`);
-            labels.push(label);
-            parents.push(attnId);
-            values.push(lb.attention[key]);
-            hoverTexts.push(`${label}: ${lb.attention[key].toLocaleString()} params<br>${desc}`);
-            colors.push(attnColor);
-        });
+		[
+			{ key: 'q', label: 'W_Q', desc: `Query: ${d_model}×${d_model}` },
+			{ key: 'k', label: 'W_K', desc: `Key: ${d_model}×${d_model}` },
+			{ key: 'v', label: 'W_V', desc: `Value: ${d_model}×${d_model}` },
+			{ key: 'o', label: 'W_O', desc: `Output: ${d_model}×${d_model}` }
+		].forEach(({ key, label, desc }) => {
+			ids.push(`${attnId}-${key}`);
+			labels.push(label);
+			parents.push(attnId);
+			values.push(lb.attention[key]);
+			hoverTexts.push(`${label}: ${lb.attention[key].toLocaleString()} params<br>${desc}`);
+			colors.push(attnColor);
+		});
 
-        // FFN
-        const ffnId = `${layerId}-ffn`;
-        ids.push(ffnId);
-        labels.push('FFN');
-        parents.push(layerId);
-        values.push(lb.ffn.total);
-        hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} params<br>W1 + b1 + W2 + b2`);
-        colors.push(ffnColor);
+		// FFN
+		const ffnId = `${layerId}-ffn`;
+		ids.push(ffnId);
+		labels.push('FFN');
+		parents.push(layerId);
+		values.push(lb.ffn.total);
+		hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} params<br>W1 + b1 + W2 + b2`);
+		colors.push(ffnColor);
 
-        [
-            { key: 'w1', label: 'W₁', desc: `Expansion: ${d_model}×${d_ff}` },
-            { key: 'b1', label: 'b₁', desc: `Bias: ${d_ff}` },
-            { key: 'w2', label: 'W₂', desc: `Compression: ${d_ff}×${d_model}` },
-            { key: 'b2', label: 'b₂', desc: `Bias: ${d_model}` }
-        ].forEach(({ key, label, desc }) => {
-            ids.push(`${ffnId}-${key}`);
-            labels.push(label);
-            parents.push(ffnId);
-            values.push(lb.ffn[key]);
-            hoverTexts.push(`${label}: ${lb.ffn[key].toLocaleString()} params<br>${desc}`);
-            colors.push(ffnColor);
-        });
+		[
+			{ key: 'w1', label: 'W₁', desc: `Expansion: ${d_model}×${d_ff}` },
+			{ key: 'b1', label: 'b₁', desc: `Bias: ${d_ff}` },
+			{ key: 'w2', label: 'W₂', desc: `Compression: ${d_ff}×${d_model}` },
+			{ key: 'b2', label: 'b₂', desc: `Bias: ${d_model}` }
+		].forEach(({ key, label, desc }) => {
+			ids.push(`${ffnId}-${key}`);
+			labels.push(label);
+			parents.push(ffnId);
+			values.push(lb.ffn[key]);
+			hoverTexts.push(`${label}: ${lb.ffn[key].toLocaleString()} params<br>${desc}`);
+			colors.push(ffnColor);
+		});
 
-        // LayerNorm
-        const normId = `${layerId}-norm`;
-        ids.push(normId);
-        labels.push('LayerNorm');
-        parents.push(layerId);
-        values.push(lb.norm.total);
-        hoverTexts.push(`LayerNorm: ${lb.norm.total.toLocaleString()} params<br>γ + β (pre-attn & pre-FFN)`);
-        colors.push(normColor);
+		// LayerNorm
+		const normId = `${layerId}-norm`;
+		ids.push(normId);
+		labels.push('LayerNorm');
+		parents.push(layerId);
+		values.push(lb.norm.total);
+		hoverTexts.push(`LayerNorm: ${lb.norm.total.toLocaleString()} params<br>γ + β (pre-attn & pre-FFN)`);
+		colors.push(normColor);
 
-        ids.push(`${normId}-pre-attn`);
-        labels.push('Pre-Attn');
-        parents.push(normId);
-        values.push(lb.norm.pre_attn);
-        hoverTexts.push(`Pre-Attention Norm: ${lb.norm.pre_attn.toLocaleString()} params<br>γ (${d_model}) + β (${d_model})`);
-        colors.push(normColor);
+		ids.push(`${normId}-pre-attn`);
+		labels.push('Pre-Attn');
+		parents.push(normId);
+		values.push(lb.norm.pre_attn);
+		hoverTexts.push(`Pre-Attention Norm: ${lb.norm.pre_attn.toLocaleString()} params<br>γ (${d_model}) + β (${d_model})`);
+		colors.push(normColor);
 
-        ids.push(`${normId}-pre-ffn`);
-        labels.push('Pre-FFN');
-        parents.push(normId);
-        values.push(lb.norm.pre_ffn);
-        hoverTexts.push(`Pre-FFN Norm: ${lb.norm.pre_ffn.toLocaleString()} params<br>γ₂ (${d_model}) + β₂ (${d_model})`);
-        colors.push(normColor);
-    });
+		ids.push(`${normId}-pre-ffn`);
+		labels.push('Pre-FFN');
+		parents.push(normId);
+		values.push(lb.norm.pre_ffn);
+		hoverTexts.push(`Pre-FFN Norm: ${lb.norm.pre_ffn.toLocaleString()} params<br>γ₂ (${d_model}) + β₂ (${d_model})`);
+		colors.push(normColor);
+	});
 
-    const trace = {
-        type: 'sunburst',
-        ids, labels, parents, values,
-        hovertext: hoverTexts,
-        hoverinfo: 'text',
-        branchvalues: 'total',
-        marker: { colors, line: { width: 1, color: '#fff' } },
-        textinfo: 'label+percent parent',
-        insidetextorientation: 'radial',
-        maxdepth: 3
-    };
+	const trace = {
+		type: 'sunburst',
+		ids, labels, parents, values,
+		hovertext: hoverTexts,
+		hoverinfo: 'text',
+		branchvalues: 'total',
+		marker: { colors, line: { width: 1, color: '#fff' } },
+		textinfo: 'label+percent parent',
+		insidetextorientation: 'radial',
+		maxdepth: 3
+	};
 
-    const layout = {
-        title: { text: 'Parameter Distribution', font: { size: 14, color: '#1e293b' } },
-        margin: { t: 40, b: 10, l: 10, r: 10 }
-    };
+	const layout = {
+		title: { text: 'Parameter Distribution', font: { size: 14, color: '#1e293b' } },
+		margin: { t: 40, b: 10, l: 10, r: 10 }
+	};
 
-    Plotly.react('param-breakdown-plotly', [trace], layout, { responsive: true });
+	Plotly.react('param-breakdown-plotly', [trace], layout, { responsive: true });
 }
 
 /**
