@@ -1,4 +1,16 @@
 window.bibData = {
+	"successorheads": {
+		year: 2023,
+		title: "Successor Heads: Recurring, Interpretable Attention Heads In The Wild",
+		url: "https://arxiv.org/abs/2312.09230",
+		author: "Rhys Gould, Euan Ong, George Ogden, Arthur Conmy"
+	},
+	"safetyheads": {
+		url: "https://arxiv.org/abs/2410.13708",
+		title: "On the Role of Attention Heads in Large Language Model Safety",
+		year: 2024,
+		author: "Zhenhong Zhou, Haiyang Yu, Xinghua Zhang, Rongwu Xu, Fei Huang, Kun Wang, Yang Liu, Junfeng Fang, Yongbin Li"
+	},
 	"copysuppression": {
 		url: "https://arxiv.org/abs/2310.04625",
 		title: "Copy Suppression: Comprehensively Understanding an Attention Head",

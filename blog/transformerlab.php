@@ -352,12 +352,13 @@ In the paper \citealternativetitle{analyzingmultiheads}, the study identified th
 * **Syntactic Heads**: These heads align with specific syntactic dependencies. They show a high success rate in identifying grammatical relationships, such as the relation between a verb and its direct object.
 * **Rare Words Heads**: Typically found in the first layer of the encoder, these heads specifically attend to the most infrequent tokens in a sentence, helping the model manage low-frequency vocabulary.
 
-However, research into larger Decoder-only models \cite[Elhage et al., 2021]{elhage2021mathematical} \cite[Olsson et al., 2022]{incontextlearninghead} has revealed more complex mechanisms that drive emergent abilities like In-Context Learning (ICL):
+However, research into larger Decoder-only models \cite[Elhage et al., 2021]{elhage2021mathematical} \cite[Olsson et al., 2022]{incontextlearninghead} and recent discoveries in mechanistic interpretability have revealed even more specialized mechanisms:
 
 * **Induction Heads**: These specialized heads develop in the middle layers and are responsible for pattern matching. If they see a sequence like [A][B] and later encounter [A], they "induce" that [B] should follow. This is considered the primary mechanism behind a model's ability to follow instructions in a prompt.
-* **Duplicate Token Heads**: Often appearing in earlier layers than induction heads, these signal that a token has appeared before in the context, acting as a precursor to the induction mechanism \cite[Elhage et al., 2021]{elhage2021mathematical}.
+* **Successor Heads**: Identified as universal circuits across various architectures \cite[Gould et al., 2024]{successorheads}, these heads perform logical incrementation. They map tokens to their ordinal successors, such as "Monday" to "Tuesday", "January" to "February", or "1" to "2".
 * **Name Mover Heads**: Observed in tasks like Indirect Object Identification by \cite[Wang et al., 2022]{interpretabilityinwild}, these heads extract specific entities (like names) from the earlier context and "move" them to the final token position to ensure logical consistency in the output.
-* **Negative Heads**: These counter-intuitive heads \cite[McDougall et al., 2023]{copysuppression} suppress specific tokens that would otherwise be over-predicted by the model, essentially acting as a "sanity check" to reduce repetitive or incorrect outputs.
+* **Negative / Copy Suppression Heads**: These heads, identified by \cite[McDougall et al., 2023]{copysuppression}, actively suppress tokens that are over-predicted by other circuits. They act as a corrective mechanism to prevent the model from repeating itself or making common probabilistic errors.
+* **Safety / Refusal Heads**: Recent research by \cite[Zhou et al.]{safetyheads} suggests that specific heads act as "gatekeepers" for safety alignment. When these heads are ablated, models may lose their ability to refuse harmful prompts, indicating they are key feature extractors for safety boundaries.
 * **S-Inhibition / Delimiter Heads**: These heads act as structural anchors, often attending to punctuation or special tokens. They help the model manage signal-to-noise ratios by providing a "resting place" for attention when no relevant semantic information is found.
 
 ### Attention-Heads and In-Context-Learning
