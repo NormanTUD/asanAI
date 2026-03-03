@@ -580,7 +580,7 @@ const paramBreakdownObserver = new IntersectionObserver((entries) => {
 			_executeParamBreakdownRender();
 		}
 	});
-}, { threshold: 0.05 });
+}, { threshold: 0 });
 
 function show_nr_of_params() {
 	const weights = window.currentWeights;
@@ -5247,7 +5247,7 @@ function initQKVSubspaceViz() {
 				observer.unobserve(entry.target);
 			}
 		});
-	}, { threshold: 0.05 });
+	}, { threshold: 0 });
 
 	observer.observe(container);
 
