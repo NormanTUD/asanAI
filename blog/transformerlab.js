@@ -2759,7 +2759,7 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 	<div style="margin-bottom:15px;">
 	    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
 	    $$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
-	    <div style="overflow-x:auto;">
+	    <div style="overflow-x:auto; overflow-y: hidden;">
 		$$ \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrix(multiHeadOutput)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O} $$
 	    </div>
 	</div>
@@ -2797,7 +2797,7 @@ function updateConcatenationDisplay(headData, tokens) {
 	});
 
 	const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrix(fullMatrixData)}}_{\\text{Total } d_{\\text{model}}}`;
-	container.innerHTML = `$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$`;
+	container.innerHTML = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
 
 	render_temml();
 
