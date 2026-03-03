@@ -253,7 +253,6 @@ $$\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} +
 
 Since $e^{-\infty}$ approaches $0$, the Softmax function nullifies the weights for all "future" positions ($i < j$), effectively neutralizing those connections.
 
-#### Asymmetric Information Geometry
 The causal mask creates an **information gradient** across the sequence. Because later tokens attend to more preceding context, their representations are richer than those of earlier, "impoverished" tokens. This **information funnel** makes the last token uniquely privileged, as it is the only position that has "seen" the entire context, which is why its hidden state is used for next-token prediction.
 
 This is also important for **prompt engineering**:
