@@ -550,10 +550,10 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 
 At no point does the model manipulate symbols or rules, like non-connectionist AI systems tried to do. Everything is:
 
-- vector projection
-- geometric alignment
-- weighted averaging
-- non-linear transformation
+- vector projection,
+- geometric alignment,
+- weighted averaging,
+- non-linear transformation.
 
 Meaning emerges not from words themselves, but from how vectors **move, align, and combine** in space.
 </div>
