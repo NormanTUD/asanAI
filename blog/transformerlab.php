@@ -208,14 +208,15 @@ In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">
 
 <div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
 
-<div class="md">
-### Does Positional Encoding "Break" the Word's Meaning?
-When you add "random" values to a vector, you change its location in the multidimensional embedding space. However, this doesn't "break" the word for two specific reasons:
+<div class="optional md" data-headline="Does Positional Encoding 'break' the Word's Meaning?">
+When you add "random" values to a vector, you change its location in the multidimensional embedding space. However, this doesn't "break" the word:
 
 1. **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word "King" to a new location, but it remains in a "neighborhood" that the model still recognizes as "King."
 2. **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network’s layers. Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.
 3. **The Risk of Overlapping**: During training, the model learns to set the "scale" of the embeddings much larger than the "scale" of the positional encodings. This ensures the position "nudges" the meaning without overwriting it.
+</div>
 
+<div class="md">
 ## Structural Pillar: The Decoder-Only Architecture
 
 Here, we do **not** use the original Encoder-Decoder architecture from Vaswani et al. (\citeyear{vaswani2017attention}). Instead, this example implements a **Decoder-only** Transformer with **Pre-Layer Normalization**, the same structural family that powers today's leading LLMs (GPT, Claude, Gemini and so on). There is no separate Encoder, and there is no cross-attention. The entire model is a stack of identical Decoder (with different weights) blocks, each containing:
