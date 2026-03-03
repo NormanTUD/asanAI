@@ -2770,7 +2770,7 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 	<p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
 	$$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
     </div>
-    <div style="overflow-x:auto;">
+    <div style="overflow-x:auto; overflow-y: hidden">
 	$$ \\underbrace{${matrixToPmatrix(h1)}}_{h_1} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_{\\text{proj}}} $$
     </div>
     `;
@@ -2930,7 +2930,7 @@ function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, b
 	<p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
 	$$ h_2${sup} = h_1${sup} + \\text{out}_{L2}${sup} $$
     </div>
-    <div style="overflow-x:auto;">
+    <div style="overflow-x:auto; overflow-y: hidden">
 	$$ \\underbrace{${matrixToPmatrix(h2)}}_{h_2${sup}} = \\underbrace{${matrixToPmatrix(h1)}}_{h_1${sup}} + \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{out}_{L2}${sup}} $$
     </div>
     `;
