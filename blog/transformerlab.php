@@ -246,24 +246,9 @@ We must prevent the model from "looking into the future" during training. If the
 
 We achieve this by applying a **Causal Mask** to the attention scores before the Softmax operation. This mask is a lower-triangular matrix filled with $-\infty$ in the upper-right section.
 
-Mathematically, the attention calculation becomes:
-
-$$\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} + M \right) V$$
-
-Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Softmax function turns those values into $0$. Consequently, the model's "focus" for any given word is restricted to itself and the words preceding it.
-
-For a sequence of length $n$, the look-ahead mask $M$ is defined as a
-lower-triangular matrix where the entry $M_{i,j}$ determines if the
-token at position $i$ can attend to the token at position $j$.
-
 Mathematically, the mask is defined as:
-$$M_{i,j} = \begin{cases} 0 & \text{if } i \geq j \\ -\infty & \text{if } i < j \end{cases}$$
 
-In an LLM, this <b>Causal Mask</b> ensures that the self-attention mechanism
-maintains the autoregressive property. Since the model is trained to predict
-the next token, it must not "see" into the future. By setting future
-positions to $-\infty$, the $\text{exp}(M_{i,j})$ term in the Softmax function
-becomes $0$, effectively neutralizing the connection.
+$$M_{i,j} = \begin{cases} 0 & \text{if } i \geq j \\ -\infty & \text{if } i \lt j \end{cases}$$
 
 For a 4-token sequence, the causal mask $M$ is represented as:
 $$M = \begin{pmatrix}
@@ -272,6 +257,19 @@ $$M = \begin{pmatrix}
 	0 & 0 & 0 & -\infty \\
 	0 & 0 & 0 & 0
 \end{pmatrix}$$
+
+Then, the attention calculation becomes:
+
+$$\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} + M \right) V$$
+
+Where $M$ is the mask. When we add $-\infty$ to the "future" positions, the Softmax function turns those values into $0$. Consequently, the model's "focus" for any given word is restricted to itself and the words preceding it.
+
+In an LLM, this **Causal Mask** ensures that the self-attention mechanism
+maintains the autoregressive property. Since the model is trained to predict
+the next token, it must not "see" into the future. By setting future
+positions to $-\infty$, the $\text{exp}(M_{i,j})$ term in the Softmax function
+becomes $0$, effectively neutralizing the connection.
+
 </div>
 
 <div class="md" id="transformer-mask-logic-breakdown">
