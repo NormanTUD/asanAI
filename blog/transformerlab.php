@@ -233,7 +233,7 @@ This is the architecture you are interacting with in every visualization here. W
 Everything is in flux.
 </div>
 
-In the Transformer, the Residual Stream embodies Heraclitus’ flux, serving as a "river of hidden harmony" or a shared "notebook" where the original identity $h_0$ is preserved through \cite[additive skip connections]{he2015resnet} $x_{\text{new}} = x + f(x)$. Moving from the static Embedding Space to the dynamic Feature Space, the stream acts as a \cite[communication bus]{elhage2021mathematical} where "experts", **Attention Heads** as scouts for relationships and Feed-Forward Networks as knowledge repositories, perform "collaborative editing" by adding insights rather than overwriting the signal.
+In the Transformer, the Residual Stream embodies Heraclitus’ flux, serving as a shared "notebook" where the original identity $h_0$ is preserved through \cite[additive skip connections]{he2015resnet} $x_{\text{new}} = x + f(x)$. Moving from the static Embedding Space to the dynamic Feature Space, the stream acts as a \cite[communication bus]{elhage2021mathematical} where "experts", **Attention Heads** as scouts for relationships and Feed-Forward Networks as knowledge repositories, perform "collaborative editing" by adding insights rather than overwriting the signal.
 
 This architecture is governed by the \cite[Information Bottleneck principle]{tishby2000informationbottleneck}; because the dimensionality $d_{\text{model}}$ is fixed, the stream forces a transition from surface-level features to task-relevant abstractions as depth increases. Ultimately, this constrained "river width" acts as an implicit regularizer, necessitating that token-level noise distill into conceptual structure to survive the journey through the layers.
 
