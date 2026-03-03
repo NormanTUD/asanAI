@@ -1,4 +1,10 @@
 window.bibData = {
+	"copysuppression": {
+		url: "https://arxiv.org/abs/2310.04625",
+		title: "Copy Suppression: Comprehensively Understanding an Attention Head",
+		year: 2023,
+		author: "Callum McDougall, Arthur Conmy, Cody Rushing, Thomas McGrath, Neel Nanda"
+	},
 	"interpretabilityinwild": {
 		title: "Interpretability in the Wild: a Circuit for Indirect Object Identification in GPT-2 small",
 		url: "https://arxiv.org/abs/2211.00593",

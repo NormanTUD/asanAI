@@ -355,7 +355,9 @@ In the paper \citealternativetitle{analyzingmultiheads}, the study identified th
 However, research into larger Decoder-only models \cite[Elhage et al., 2021]{elhage2021mathematical} \cite[Olsson et al., 2022]{incontextlearninghead} has revealed more complex mechanisms that drive emergent abilities like In-Context Learning (ICL):
 
 * **Induction Heads**: These specialized heads develop in the middle layers and are responsible for pattern matching. If they see a sequence like [A][B] and later encounter [A], they "induce" that [B] should follow. This is considered the primary mechanism behind a model's ability to follow instructions in a prompt.
+* **Duplicate Token Heads**: Often appearing in earlier layers than induction heads, these signal that a token has appeared before in the context, acting as a precursor to the induction mechanism \cite[Elhage et al., 2021]{elhage2021mathematical}.
 * **Name Mover Heads**: Observed in tasks like Indirect Object Identification \cite[Wang et al., 2022]{interpretabilityinwild}, these heads extract specific entities (like names) from the earlier context and "move" them to the final token position to ensure logical consistency in the output.
+* **Negative Heads**: These counter-intuitive heads \cite[McDougall et al., 2023]{copysuppression} suppress specific tokens that would otherwise be over-predicted by the model, essentially acting as a "sanity check" to reduce repetitive or incorrect outputs.
 * **S-Inhibition / Delimiter Heads**: These heads act as structural anchors, often attending to punctuation or special tokens. They help the model manage signal-to-noise ratios by providing a "resting place" for attention when no relevant semantic information is found.
 
 ### Attention-Heads and In-Context-Learning
