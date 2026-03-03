@@ -487,7 +487,7 @@ class AttentionEngine {
 <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
 	Hover over a word to see where it focuses its attention.
 </p>
-<div id="${webContainerId}" style="position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
+<div id="${webContainerId}" style="padding-top:20px;position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
 	<canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
 	<div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
 </div>

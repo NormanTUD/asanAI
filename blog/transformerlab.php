@@ -240,7 +240,7 @@ In the Transformer, the Residual Stream embodies Heraclitus’ flux, serving as 
 
 This architecture is governed by the \cite[Information Bottleneck principle]{tishby2000informationbottleneck}; because the dimensionality $d_{\text{model}}$ is fixed, the stream forces a transition from surface-level features to task-relevant abstractions as depth increases. Ultimately, this constrained "river width" acts as an implicit regularizer, necessitating that token-level noise distill into conceptual structure to survive the journey through the layers.
 
-### Masked Self-Attention
+## Masked Self-Attention
 
 To ensure the model learns to generate text autoregressively, we prevent it from "looking into the future" during training. For any token $i$, we restrict its focus to itself and preceding tokens $\{1, \dots, i\}$.
 
