@@ -145,7 +145,7 @@ https://arxiv.org/html/2505.11611v1
 
 <div class="md">
 ## Tokenization
-The journey of a sentence begins with **Tokenization**, which decomposes raw text into **tokens**. In real LLMs, you would use **Byte-Pair Encoding** (**BPE**), this approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language. But since our embedding space and the amount of data browsers can process is too small, we stick with word-wise tokenization. 
+The journey of a sentence begins with **Tokenization**, which decomposes raw text into **tokens**. Real LLMs would use **Byte-Pair Encoding** (**BPE**), as this approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language. But since our embedding space and the amount of data browsers can process is too small for **BPE**, we stick with word-wise tokenization. 
 </div>
 
 <div id="transformer-viz-bpe" class="viz-container"></div>
