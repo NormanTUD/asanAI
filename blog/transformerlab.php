@@ -242,7 +242,7 @@ This architecture is governed by the \cite[Information Bottleneck principle]{tis
 
 ### Masked self-attention
 
-We must prevent the model from "looking into the future" during training. If the model is trying to predict the third word in a sentence, it shouldn't be allowed to see the third, fourth, or fifth words.
+We must prevent the model from "looking into the future" during training. If the model is trying to predict the third word in a sentence, it shouldn't be allowed to see the third, fourth, or fifth words. By enforcing this constraint, we ensure the model learns to generate text based only on the context it has already "seen," accurately reflecting how it will be expected to perform in real-world, word-by-word generation tasks.
 
 We achieve this by applying a **Causal Mask** to the attention scores before the Softmax operation. This mask is a lower-triangular matrix filled with $-\infty$ in the upper-right section.
 
