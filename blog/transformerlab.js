@@ -2214,7 +2214,7 @@ This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Whe
             `(${h_val.toFixed(nr_fixed)} \\cdot ${w_row[dim].toFixed(nr_fixed)})`
         );
         html += `<div style="margin-bottom: 10px; overflow: scroll;">
-    $$\\text{logit}_{\\text{${word}}} = ${terms.join(' + ')} = ${val.toFixed(nr_fixed)}$$
+    $$\\text{logit}_{\\text{${word}}} = ${terms.join(' + ')} = \\boxed{${val.toFixed(nr_fixed)}}$$
         </div>`;
     });
 
