@@ -260,7 +260,7 @@ Since $e^{-\infty}$ approaches $0$, the Softmax function nullifies the weights f
 #### Asymmetric Information Geometry
 The causal mask creates an **information gradient** across the sequence. Because later tokens attend to more preceding context, their representations are richer than those of earlier, "impoverished" tokens. This **information funnel** makes the last token uniquely privileged, as it is the only position that has "seen" the entire context, which is why its hidden state is used for next-token prediction.
 
-This geometry explains why **prompt engineering** is effective:
+This is also important for **prompt engineering**:
 * **Position matters:** Token position acts as a form of informational privilege.
 * **Context accumulation:** Placing critical instructions at the *end* of a prompt ensures they are built from the full preceding context, whereas instructions at the *beginning* can only be passively attended to (and potentially diluted) by later tokens.
 
