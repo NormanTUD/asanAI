@@ -39,7 +39,7 @@ https://arxiv.org/html/2505.11611v1
 		<label style="font-weight: bold;">Network Depth ($N$ layers): </label>
 		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">3</span>
 		<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
-		<input type="range" id="transformer-depth" min="1" max="96" value="3"
+		<input type="range" id="transformer-depth" min="1" max="12" value="3"
 			style="width: 100%;" oninput="document.getElementById('depth-val').innerText = this.value; debounced_run_transformer_demo();">
 	</div>
 
