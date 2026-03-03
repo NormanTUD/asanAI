@@ -64,7 +64,7 @@ https://arxiv.org/html/2505.11611v1
 		style="width: 100%;" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();">
 	</div>
 
-	<div>
+	<div style="display: none">
 	    <label style="font-weight: bold;">Tokenizer: </label>
 	    <select id="transformer-tokenizer-type" style="padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1;" onchange="debounced_run_transformer_demo()">
 		<option value="regex" selected>Words (Non-Alphanumeric Split)</option>
