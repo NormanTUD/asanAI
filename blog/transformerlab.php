@@ -240,23 +240,6 @@ In the Transformer, the Residual Stream embodies Heraclitus’ flux, serving as 
 
 This architecture is governed by the \cite[Information Bottleneck principle]{tishby2000informationbottleneck}; because the dimensionality $d_{\text{model}}$ is fixed, the stream forces a transition from surface-level features to task-relevant abstractions as depth increases. Ultimately, this constrained "river width" acts as an implicit regularizer, necessitating that token-level noise distill into conceptual structure to survive the journey through the layers.
 
-### Historical Context: The Original Encoder-Decoder (What We Don't Use)
-
-To appreciate *why* the Decoder-only design dominates, it helps to understand what came before it:
-
-* **The Encoder (The Understanding Engine)**: In the original \citeyear{vaswani2017attention} framework, the Encoder was the first half of a translation pipeline. It processes the entire input sequence simultaneously using **unmasked** self-attention, allowing every token to "see" every other token. This creates a bidirectional context where the word "bank" can be disambiguated by words appearing later in the sentence (e.g., "... river" vs. "... money"). While we do not use it here, this architecture remains the gold standard for non-generative tasks like sentiment analysis, entity recognition, and search (e.g., the \citealternativetitle{bert}-family).
-* **The Decoder with Cross-Attention (The Original Generator)**: The Decoder was originally designed to take "hints" from the Encoder via **cross-attention**, an additional attention sublayer where the Decoder's queries attend to the Encoder's key-value representations. Its self-attention was already masked (causal), just as in our lab, but it also had this second attention mechanism to "read" the Encoder's output. This full Encoder-Decoder design is still used in sequence-to-sequence tasks like machine translation (e.g., the \citealternativetitle{tfive}- and \citealternativetitle{bart}-families).
-
-### Why Decoder-Only Is the Modern Standard
-
-The modern Generative AI era has effectively proven that a stack of Decoder layers alone can both understand context *and* generate coherent, long-form text, no separate Encoder is required. The key reasons are:
-
-1.  **Simplicity**: One repeated block type (rather than two different block types plus cross-attention) drastically simplifies training infrastructure, model parallelism, and engineering effort.
-2.  **Unified capability**: The causal self-attention in the Decoder is sufficient for learning rich contextual representations. During training, the model learns to "encode" the meaning of earlier tokens into the hidden state implicitly, without needing a dedicated bidirectional Encoder.
-3.  **Scalability**: Decoder-only models exhibit more predictable scaling behavior, which is critical when training models with hundreds of billions of parameters across thousands of accelerators.
-
-This is we here implement a Decoder-only, Pre-LN Transformer: it is the architecture behind virtually every modern large language model, and it lets us study the core mechanisms, causal attention, residual streams, and layer-by-layer transformation, in their most contemporary form.
-
 ### Masked self-attention
 
 We must prevent the model from "looking into the future" during training. If the model is trying to predict the third word in a sentence, it shouldn't be allowed to see the third, fourth, or fifth words.
