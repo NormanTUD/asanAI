@@ -29,6 +29,26 @@ window.tlab_trajectory_data = {
 };
 
 /**
+ * Builds a single hover text string for a token at a given trajectory stage.
+ *
+ * @param {string} tokenLabel  - Display name of the token
+ * @param {number} tIdx        - Token position index
+ * @param {string} fromStage   - Name of the previous stage (or '(start)')
+ * @param {string} toStage     - Name of the current stage
+ * @param {number[]} hVec      - Hidden state vector at this stage
+ * @param {object} embSnap     - Snapshot of embedding space
+ * @param {string[]} snapVocab - Vocabulary keys
+ * @returns {string} HTML hover text
+ */
+function buildTrajectoryHoverText(tokenLabel, tIdx, fromStage, toStage, hVec, embSnap, snapVocab) {
+    const logitWord = _traj_get_logit_word(hVec, embSnap, snapVocab);
+    return `Token: ${tokenLabel} (pos ${tIdx + 1})<br>` +
+        `From: ${fromStage}<br>` +
+        `To: ${toStage}<br>` +
+        `Nearest logit: <b>${logitWord}</b>`;
+}
+
+/**
  * Registers data for lazy rendering: stores in a registry, observes with
  * an IntersectionObserver, and renders immediately if already in viewport.
  *
@@ -3842,189 +3862,180 @@ function _traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_mo
     });
 }
 
-// ─── Helper: Build 3D token trajectory traces ───
 function _traj_build_3d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab) {
-	const traces = [];
+    const traces = [];
 
-	_traj_build_embedding_landmarks_3D(embSnap, snapVocab).forEach(t => traces.push(t));
+    _traj_build_embedding_landmarks_3D(embSnap, snapVocab).forEach(t => traces.push(t));
 
-	tokens.forEach((token, tIdx) => {
-		const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
-		if (!hasDataInAllSteps) return;
+    tokens.forEach((token, tIdx) => {
+        const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
+        if (!hasDataInAllSteps) return;
 
-		const x = dataPoints.map(p => p.data[tIdx][0]);
-		const y = dataPoints.map(p => p.data[tIdx][1]);
-		const z = dataPoints.map(p => p.data[tIdx][2]);
-		const tColor = getPositionColor(tIdx, tokens.length);
-		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+        const x = dataPoints.map(p => p.data[tIdx][0]);
+        const y = dataPoints.map(p => p.data[tIdx][1]);
+        const z = dataPoints.map(p => p.data[tIdx][2]);
+        const tColor = getPositionColor(tIdx, tokens.length);
+        const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 
-		const hoverTexts = dataPoints.map((p, pIdx) => {
-			const logitWord = _traj_get_logit_word(p.data[tIdx], embSnap, snapVocab);
-			const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
-			const toStage = p.name;
-			return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
-				`From: ${fromStage}<br>` +
-				`To: ${toStage}<br>` +
-				`Nearest logit: <b>${logitWord}</b>`;
-		});
+        // ← Uses extracted function
+        const hoverTexts = dataPoints.map((p, pIdx) => {
+            const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
+            return buildTrajectoryHoverText(labels[tIdx], tIdx, fromStage, p.name, p.data[tIdx], embSnap, snapVocab);
+        });
 
-		traces.push({
-			type: 'scatter3d',
-			x: x, y: y, z: z,
-			mode: 'lines',
-			name: tokenLabel,
-			legendgroup: tokenLabel,
-			line: { width: 5, color: tColor },
-			hoverinfo: 'text',
-			hovertemplate: '%{text}<extra></extra>',
-			text: hoverTexts
-		});
+        traces.push({
+            type: 'scatter3d',
+            x, y, z,
+            mode: 'lines',
+            name: tokenLabel,
+            legendgroup: tokenLabel,
+            line: { width: 5, color: tColor },
+            hoverinfo: 'text',
+            hovertemplate: '%{text}<extra></extra>',
+            text: hoverTexts
+        });
 
-		for (let i = 0; i < x.length - 1; i++) {
-			const logitWord = _traj_get_logit_word(dataPoints[i + 1].data[tIdx], embSnap, snapVocab);
-			const fromStage = dataPoints[i].name;
-			const toStage = dataPoints[i + 1].name;
-			const coneHoverText = `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
-				`From: ${fromStage}<br>` +
-				`To: ${toStage}<br>` +
-				`Nearest logit: <b>${logitWord}</b>`;
+        for (let i = 0; i < x.length - 1; i++) {
+            // ← Uses extracted function
+            const coneHoverText = buildTrajectoryHoverText(
+                labels[tIdx], tIdx, dataPoints[i].name, dataPoints[i + 1].name,
+                dataPoints[i + 1].data[tIdx], embSnap, snapVocab
+            );
 
-			traces.push({
-				type: 'cone',
-				x: [x[i + 1]], y: [y[i + 1]], z: [z[i + 1]],
-				u: [x[i + 1] - x[i]], v: [y[i + 1] - y[i]], w: [z[i + 1] - z[i]],
-				sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-				colorscale: [[0, tColor], [1, tColor]], showscale: false,
-				hoverinfo: 'text',
-				text: [coneHoverText],
-				hovertemplate: '%{text}<extra></extra>',
-				legendgroup: tokenLabel,
-				showlegend: false
-			});
-		}
+            traces.push({
+                type: 'cone',
+                x: [x[i + 1]], y: [y[i + 1]], z: [z[i + 1]],
+                u: [x[i + 1] - x[i]], v: [y[i + 1] - y[i]], w: [z[i + 1] - z[i]],
+                sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
+                colorscale: [[0, tColor], [1, tColor]], showscale: false,
+                hoverinfo: 'text',
+                text: [coneHoverText],
+                hovertemplate: '%{text}<extra></extra>',
+                legendgroup: tokenLabel,
+                showlegend: false
+            });
+        }
 
-		const startLogit = _traj_get_logit_word(dataPoints[0].data[tIdx], embSnap, snapVocab);
-		traces.push({
-			type: 'scatter3d',
-			x: [x[0]], y: [y[0]], z: [z[0]],
-			mode: 'markers',
-			marker: { size: 6, symbol: 'circle', color: tColor,
-				line: { width: 1, color: '#000' } },
-			legendgroup: tokenLabel,
-			showlegend: false,
-			hoverinfo: 'text',
-			hovertemplate: '%{text}<extra></extra>',
-			text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
-		});
+        // Start marker
+        const startLogit = _traj_get_logit_word(dataPoints[0].data[tIdx], embSnap, snapVocab);
+        traces.push({
+            type: 'scatter3d',
+            x: [x[0]], y: [y[0]], z: [z[0]],
+            mode: 'markers',
+            marker: { size: 6, symbol: 'circle', color: tColor,
+                line: { width: 1, color: '#000' } },
+            legendgroup: tokenLabel,
+            showlegend: false,
+            hoverinfo: 'text',
+            hovertemplate: '%{text}<extra></extra>',
+            text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
+        });
 
-		const endIdx = dataPoints.length - 1;
-		const endLogit = _traj_get_logit_word(dataPoints[endIdx].data[tIdx], embSnap, snapVocab);
-		traces.push({
-			type: 'scatter3d',
-			x: [x[x.length - 1]], y: [y[y.length - 1]], z: [z[z.length - 1]],
-			mode: 'text',
-			text: ['★'],
-			textposition: 'middle center',
-			textfont: { size: 18, color: tColor, family: 'Arial, sans-serif' },
-			legendgroup: tokenLabel,
-			showlegend: false,
-			hoverinfo: 'text',
-			hovertemplate: `Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b><extra></extra>`
-		});
-	});
+        // End marker
+        const endIdx = dataPoints.length - 1;
+        const endLogit = _traj_get_logit_word(dataPoints[endIdx].data[tIdx], embSnap, snapVocab);
+        traces.push({
+            type: 'scatter3d',
+            x: [x[x.length - 1]], y: [y[y.length - 1]], z: [z[z.length - 1]],
+            mode: 'text',
+            text: ['☖'],
+            textposition: 'middle center',
+            textfont: { size: 18, color: tColor, family: 'Arial, sans-serif' },
+            legendgroup: tokenLabel,
+            showlegend: false,
+            hoverinfo: 'text',
+            hovertemplate: `Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b><extra></extra>`
+        });
+    });
 
-	return traces;
+    return traces;
 }
 
-// ─── Helper: Build 2D token trajectory traces ───
 function _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab) {
-	const traces = [];
-	const annotations = [];
+    const traces = [];
+    const annotations = [];
 
-	traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, 0, 1));
+    traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, 0, 1));
 
-	tokens.forEach((token, tIdx) => {
-		const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
-		if (!hasDataInAllSteps) return;
+    tokens.forEach((token, tIdx) => {
+        const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
+        if (!hasDataInAllSteps) return;
 
-		const x = dataPoints.map(p => p.data[tIdx][0]);
-		const y = dataPoints.map(p => p.data[tIdx][1]);
-		const tColor = getPositionColor(tIdx, tokens.length);
-		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+        const x = dataPoints.map(p => p.data[tIdx][0]);
+        const y = dataPoints.map(p => p.data[tIdx][1]);
+        const tColor = getPositionColor(tIdx, tokens.length);
+        const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 
-		const hoverTexts = dataPoints.map((p, pIdx) => {
-			const logitWord = _traj_get_logit_word(p.data[tIdx], embSnap, snapVocab);
-			const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
-			const toStage = p.name;
-			return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
-				`From: ${fromStage}<br>` +
-				`To: ${toStage}<br>` +
-				`Nearest logit: <b>${logitWord}</b>`;
-		});
+        // ← Uses extracted function
+        const hoverTexts = dataPoints.map((p, pIdx) => {
+            const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
+            return buildTrajectoryHoverText(labels[tIdx], tIdx, fromStage, p.name, p.data[tIdx], embSnap, snapVocab);
+        });
 
-		traces.push({
-			type: 'scatter',
-			x: x, y: y,
-			mode: 'lines+markers',
-			name: tokenLabel,
-			legendgroup: tokenLabel,
-			line: { width: 2, color: tColor },
-			marker: {
-				size: x.map((_, i) => i === 0 ? 0 : 10),
-				symbol: 'arrow',
-				angleref: 'previous',
-				color: tColor
-			},
-			hoverinfo: 'text',
-			hovertemplate: '%{text}<extra></extra>',
-			text: hoverTexts
-		});
+        traces.push({
+            type: 'scatter',
+            x, y,
+            mode: 'lines+markers',
+            name: tokenLabel,
+            legendgroup: tokenLabel,
+            line: { width: 2, color: tColor },
+            marker: {
+                size: x.map((_, i) => i === 0 ? 0 : 10),
+                symbol: 'arrow',
+                angleref: 'previous',
+                color: tColor
+            },
+            hoverinfo: 'text',
+            hovertemplate: '%{text}<extra></extra>',
+            text: hoverTexts
+        });
 
-		const startLogit = _traj_get_logit_word(dataPoints[0].data[tIdx], embSnap, snapVocab);
-		traces.push({
-			type: 'scatter',
-			x: [x[0]], y: [y[0]],
-			mode: 'markers',
-			marker: { size: 10, symbol: 0, color: tColor,
-				line: { width: 2, color: '#000' } },
-			legendgroup: tokenLabel,
-			showlegend: false,
-			hoverinfo: 'text',
-			hovertemplate: '%{text}<extra></extra>',
-			text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
-		});
+        const startLogit = _traj_get_logit_word(dataPoints[0].data[tIdx], embSnap, snapVocab);
+        traces.push({
+            type: 'scatter',
+            x: [x[0]], y: [y[0]],
+            mode: 'markers',
+            marker: { size: 10, symbol: 0, color: tColor,
+                line: { width: 2, color: '#000' } },
+            legendgroup: tokenLabel,
+            showlegend: false,
+            hoverinfo: 'text',
+            hovertemplate: '%{text}<extra></extra>',
+            text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
+        });
 
-		const endIdx = dataPoints.length - 1;
-		const endLogit = _traj_get_logit_word(dataPoints[endIdx].data[tIdx], embSnap, snapVocab);
-		traces.push({
-			type: 'scatter',
-			x: [x[x.length - 1]], y: [y[y.length - 1]],
-			mode: 'markers',
-			marker: { size: 14, symbol: 17, color: tColor,
-				line: { width: 1.5, color: '#000' } },
-			legendgroup: tokenLabel,
-			showlegend: false,
-			hoverinfo: 'text',
-			hovertemplate: '%{text}<extra></extra>',
-			text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b>`]
-		});
+        const endIdx = dataPoints.length - 1;
+        const endLogit = _traj_get_logit_word(dataPoints[endIdx].data[tIdx], embSnap, snapVocab);
+        traces.push({
+            type: 'scatter',
+            x: [x[x.length - 1]], y: [y[y.length - 1]],
+            mode: 'markers',
+            marker: { size: 14, symbol: 17, color: tColor,
+                line: { width: 1.5, color: '#000' } },
+            legendgroup: tokenLabel,
+            showlegend: false,
+            hoverinfo: 'text',
+            hovertemplate: '%{text}<extra></extra>',
+            text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b>`]
+        });
 
-		if (tIdx === 0) {
-			dataPoints.forEach((p, pIdx) => {
-				annotations.push({
-					x: x[pIdx], y: y[pIdx],
-					xref: 'x', yref: 'y',
-					text: p.name,
-					showarrow: false,
-					font: { size: 9, color: '#64748b' },
-					yshift: 12
-				});
-			});
-		}
-	});
+        if (tIdx === 0) {
+            dataPoints.forEach((p, pIdx) => {
+                annotations.push({
+                    x: x[pIdx], y: y[pIdx],
+                    xref: 'x', yref: 'y',
+                    text: p.name,
+                    showarrow: false,
+                    font: { size: 9, color: '#64748b' },
+                    yshift: 12
+                });
+            });
+        }
+    });
 
-	return { traces, annotations };
+    return { traces, annotations };
 }
+
 
 // ─── Helper: Render the low-dimensional (d_model 2 or 3) single trajectory plot ───
 function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab) {
