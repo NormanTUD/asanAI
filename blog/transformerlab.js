@@ -1,5 +1,7 @@
 "use strict";
 
+window._paramBreakdownOpen = false;
+window._paramBreakdownRendered = false;
 const widthEmbeddingInit = 5;
 const nr_fixed = 4;
 const posEmbedScalar = 1;
@@ -25,40 +27,17 @@ const vectorMathRenderRegistry = {
 
 window.tlab_trajectory_data = {
 	tokens: [],
-	steps: [] // Array of { name: "Stage Name", data: [[dim1, dim2...], ...] }
+	steps: []
 };
 
-/**
- * Builds a single hover text string for a token at a given trajectory stage.
- *
- * @param {string} tokenLabel  - Display name of the token
- * @param {number} tIdx        - Token position index
- * @param {string} fromStage   - Name of the previous stage (or '(start)')
- * @param {string} toStage     - Name of the current stage
- * @param {number[]} hVec      - Hidden state vector at this stage
- * @param {object} embSnap     - Snapshot of embedding space
- * @param {string[]} snapVocab - Vocabulary keys
- * @returns {string} HTML hover text
- */
 function buildTrajectoryHoverText(tokenLabel, tIdx, fromStage, toStage, hVec, embSnap, snapVocab) {
-    const logitWord = _traj_get_logit_word(hVec, embSnap, snapVocab);
-    return `Token: ${tokenLabel} (pos ${tIdx + 1})<br>` +
-        `From: ${fromStage}<br>` +
-        `To: ${toStage}<br>` +
-        `Nearest logit: <b>${logitWord}</b>`;
+	const logitWord = _traj_get_logit_word(hVec, embSnap, snapVocab);
+	return `Token: ${tokenLabel} (pos ${tIdx + 1})<br>` +
+		`From: ${fromStage}<br>` +
+		`To: ${toStage}<br>` +
+		`Nearest logit: <b>${logitWord}</b>`;
 }
 
-/**
- * Registers data for lazy rendering: stores in a registry, observes with
- * an IntersectionObserver, and renders immediately if already in viewport.
- *
- * @param {string}               containerId  - DOM element ID
- * @param {Map}                  registry     - The registry Map for this visualization type
- * @param {IntersectionObserver} observer     - The observer that triggers deferred rendering
- * @param {object}               data         - Data to store in the registry (will have `rendered: false` set)
- * @param {Function}             renderFn     - Called as renderFn() for immediate render if in viewport
- * @param {string}               [placeholder] - Optional placeholder HTML for first load
- */
 function registerLazyRenderable(containerId, registry, observer, data, renderFn, placeholder) {
 	const container = document.getElementById(containerId);
 	if (!container) return;
@@ -566,12 +545,6 @@ function countAllNumbers(data) {
 
 	return count;
 }
-
-/** Tracks whether the breakdown panel is open */
-window._paramBreakdownOpen = false;
-
-/** Tracks whether the chart has been rendered at least once */
-window._paramBreakdownRendered = false;
 
 /** Lazy IntersectionObserver — renders chart only when scrolled into view */
 const paramBreakdownObserver = new IntersectionObserver((entries) => {
