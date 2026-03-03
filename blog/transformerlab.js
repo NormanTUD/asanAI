@@ -5236,26 +5236,26 @@ function setVisualizationMode(mode) {
  * Call initQKVSubspaceViz() once after the DOM is ready.
  */
 function initQKVSubspaceViz() {
-    const containerId = 'qkv-subspace-projection-viz';
-    const container = document.getElementById(containerId);
-    if (!container) return;
+	const containerId = 'qkv-subspace-projection-viz';
+	const container = document.getElementById(containerId);
+	if (!container) return;
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                _renderQKVSubspaceViz(containerId);
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.05 });
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				_renderQKVSubspaceViz(containerId);
+				observer.unobserve(entry.target);
+			}
+		});
+	}, { threshold: 0.05 });
 
-    observer.observe(container);
+	observer.observe(container);
 
-    // If already in viewport, render immediately
-    if (typeof isElementInViewport === 'function' && isElementInViewport(container)) {
-        _renderQKVSubspaceViz(containerId);
-        observer.unobserve(container);
-    }
+	// If already in viewport, render immediately
+	if (typeof isElementInViewport === 'function' && isElementInViewport(container)) {
+		_renderQKVSubspaceViz(containerId);
+		observer.unobserve(container);
+	}
 }
 
 /**
