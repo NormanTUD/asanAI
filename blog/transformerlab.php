@@ -327,9 +327,7 @@ In this stage, it is already abstracted away from the concrete Embedding Space (
 <i>Please wait, while the <b>Multi-Attention-Head</b>-equations are loading...</i>
 </div>
 
-<div class="md">
-### Why the Diagonal Gets Weaker: It's Just $\frac{1}{n}$
-
+<div class="optional md" data-headline="Why the Diagonal Gets Weaker: It's Just 1/n">
 In a causal attention matrix, token $i$ can attend to tokens $0, 1, \dots, i$, exactly $i + 1$ candidates. Since softmax forces each row to sum to 1:
 
 $$\sum_{j=0}^{i} \alpha_{i,j} = 1$$
@@ -343,7 +341,9 @@ Here is the theoretical attention matrix for a 5-token sequence under uniform at
 $$A = \begin{pmatrix} \mathbf{1.000} & 0 & 0 & 0 & 0 \\ 0.500 & \mathbf{0.500} & 0 & 0 & 0 \\ 0.333 & 0.333 & \mathbf{0.333} & 0 & 0 \\ 0.250 & 0.250 & 0.250 & \mathbf{0.250} & 0 \\ 0.200 & 0.200 & 0.200 & 0.200 & \mathbf{0.200} \end{pmatrix}$$
 
 The diagonal reads $\frac{1}{1},\; \frac{1}{2},\; \frac{1}{3},\; \frac{1}{4},\; \frac{1}{5}$. The small deviations come from the random weights not producing *perfectly* identical scores, but they're close enough that softmax still spreads probability nearly uniformly. After training, $W_Q$ and $W_K$ learn to produce sharply different scores, so attention concentrates on semantically important tokens and this uniform $\frac{1}{n}$ pattern disappears.
+</div>
 
+<div class="md">
 ### What the heads actually react to
 
 In the paper \citealternativetitle{analyzingmultiheads}, the study identified that the most "important" heads often perform three specific, interpretable functions:
