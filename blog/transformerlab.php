@@ -244,7 +244,7 @@ This architecture is governed by the \cite[Information Bottleneck principle]{tis
 
 To ensure the model learns to generate text autoregressively, we prevent it from "looking into the future" during training. For any token $i$, we restrict its focus to itself and preceding tokens $\{1, \dots, i\}$.
 
-#### The Causal Mask
+### The Causal Mask
 We enforce this constraint by adding a **Causal Mask** ($M$) to the attention scores before the Softmax operation. This lower-triangular matrix is defined as:
 
 $$M_{i,j} = \begin{cases} 0 & \text{if } i \geq j \\ -\infty & \text{if } i < j \end{cases}$$
