@@ -129,23 +129,21 @@ https://arxiv.org/html/2505.11611v1
 
 <!-- Data View Toggle -->
 <div id="data-view-toggle" style="margin-bottom: 15px; padding: 10px 15px; background: #f0f4ff; border: 1px solid #3b82f6; border-radius: 8px; display: flex; align-items: center; gap: 15px;">
-    <label style="font-weight: bold; font-size: 0.95rem; color: #1e40af;">Visualize:</label>
-    <button id="view-toggle-train" onclick="setVisualizationMode('train')"
-        style="padding: 6px 18px; border-radius: 6px; border: 2px solid #3b82f6; background: #3b82f6; color: white; font-weight: bold; cursor: pointer; transition: all 0.15s;">
-        Training Data
-    </button>
-    <button id="view-toggle-inference" onclick="setVisualizationMode('inference')"
-        style="padding: 6px 18px; border-radius: 6px; border: 2px solid #3b82f6; background: white; color: #3b82f6; font-weight: bold; cursor: pointer; transition: all 0.15s;">
-        Inference Data
-    </button>
-    <span style="font-size: 0.78rem; color: #64748b; margin-left: 10px;">
-        Controls which token sequence is shown in all plots. Does not affect training or inference computation.
-    </span>
+	<label style="font-weight: bold; font-size: 0.95rem; color: #1e40af;">Visualize:</label>
+	<button id="view-toggle-train" onclick="setVisualizationMode('train')" style="padding: 6px 18px; border-radius: 6px; border: 2px solid #3b82f6; background: #3b82f6; color: white; font-weight: bold; cursor: pointer; transition: all 0.15s;">
+		Training Data
+	</button>
+	<button id="view-toggle-inference" onclick="setVisualizationMode('inference')" style="padding: 6px 18px; border-radius: 6px; border: 2px solid #3b82f6; background: white; color: #3b82f6; font-weight: bold; cursor: pointer; transition: all 0.15s;">
+		Inference Data
+	</button>
+	<span style="font-size: 0.78rem; color: #64748b; margin-left: 10px;">
+		Controls which token sequence is shown in all plots. Does not affect training or inference computation.
+	</span>
 </div>
 
 <div class="md">
 ## Tokenization
-The journey of a sentence begins with **Tokenization**, which decomposes raw text into **tokens**. Real LLMs would use **Byte-Pair Encoding** (**BPE**), as this approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language. But since our embedding space and the amount of data browsers can process is too small for **BPE**, we stick with word-wise tokenization. 
+The journey of a sentence begins with **Tokenization**, which decomposes raw text into **tokens**. Real LLMs would use **Byte-Pair Encoding** (**BPE**), as this approach strikes a balance between whole-word vocabularies and character-level models by representing rare or unseen words as compositions of frequent fragments. In doing so, BPE keeps the vocabulary size manageable while maintaining broad coverage of natural language. But since our embedding space and the amount of data browsers can process is too small for **BPE**, we stick with word-wise tokenization.
 </div>
 
 <div id="transformer-viz-bpe" class="viz-container"></div>
@@ -165,19 +163,17 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 
 	<div class="embedding-table-container" id="tled-editor-container" style="margin-top: 20px;"></div>
 
-    <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">
-        Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.
-    </p>
-    <input
-        type="text"
-        id="transformer-vector-math-input"
-        style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1;"
-        placeholder="e.g., king - man + woman"
-        onkeyup="calculate_vector_math()"
-    >
-    <div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: #fff; border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
-        <em style="color: #94a3b8;">Enter an equation and press Enter...</em>
-    </div>
+	<p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
+	<input
+		type="text"
+		id="transformer-vector-math-input"
+		style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1;"
+		placeholder="e.g., king - man + woman"
+		onkeyup="calculate_vector_math()"
+	>
+	<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: #fff; border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
+		<em style="color: #94a3b8;">Enter an equation and press Enter...</em>
+	</div>
 </div>
 
 <div class="md">
@@ -274,7 +270,7 @@ To allow a token to "scout" the rest of the sequence, we derive three distinct r
 These act as the simplest form of a "neural network", one layer, no non-linear activation function. They are used to project the tokens from the Embedding Space into subspaces of the full Embedding Space.
 </div>
 
-<div id="qkv-subspace-projection-viz" 
+<div id="qkv-subspace-projection-viz"
      style="width:100%; min-height:520px; border:2px solid #e2e8f0; border-radius:12px; background:#f8fafc; align-items:center; justify-content:center; margin:20px 0;">
     <div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
         ⏳ Scroll here to load the Q, K, V subspace projection visualization...
