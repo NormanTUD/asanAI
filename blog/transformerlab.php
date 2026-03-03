@@ -18,7 +18,7 @@ https://arxiv.org/html/2505.11611v1
 		<span id="dim-val" style="font-weight: bold; color: #3b82f6;">3</span>
 		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
             <b>Dependency:</b> Must be a multiple of Heads.<br>
-            <b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = d_{\text{model}} / h$) of the vector to perform dot products.
+            <b>Reason:</b> Each head needs an equal integer-sized slice ($d_k = \frac{d_{\text{model}}}{h}$) of the vector to perform dot products.
         </p>
 		<input type="range" id="transformer-dimension-model" min="2" max="16" step="1" value="3"
 			style="width: 100%;" oninput="syncTransformerSettings('dim')">
