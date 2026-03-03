@@ -392,7 +392,7 @@ This is why we have AI that can pass the Bar Exam but we don't have a robot that
 
 ## The Black Box Problem: The Epistemological Gap
 
-In your lab, you can see the weights of a neural network, but you cannot "read" its thoughts. This is the **Black Box Problem**.
+You can see the weights of a neural network, but you cannot "read" its thoughts. This is the **Black Box Problem**.
 
 As models grow to billions of parameters, they become **translucent** at best. We know the math going in (inputs) and the result coming out (outputs), but the "reasoning" that happens in the hidden layers is often a high-dimensional mystery even to the engineers who built it.
 
