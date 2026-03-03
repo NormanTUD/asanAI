@@ -1,4 +1,10 @@
 window.bibData = {
+	"interpretabilityinwild": {
+		title: "Interpretability in the Wild: a Circuit for Indirect Object Identification in GPT-2 small",
+		url: "https://arxiv.org/abs/2211.00593",
+		author: "Kevin Wang, Alexandre Variengien, Arthur Conmy, Buck Shlegeris, Jacob Steinhardt",
+		year: 2022
+	},
 	"blanquerna": {
 		title: "Romanç d'Evast e Blaquerna",
 		year: "ca. 1285",

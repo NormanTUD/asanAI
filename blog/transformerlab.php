@@ -346,11 +346,17 @@ The diagonal reads $\frac{1}{1},\; \frac{1}{2},\; \frac{1}{3},\; \frac{1}{4},\; 
 <div class="md">
 ### What the heads actually react to
 
-In the paper \citealternativetitle{analyzingmultiheads}, the study identified that the most "important" heads often perform three specific, interpretable functions:
+In the paper \citealternativetitle{analyzingmultiheads}, the study identified that the most "important" heads in encoder models often perform three specific, interpretable functions:
 
 * **Positional Heads**: These heads attend to adjacent tokens, usually the previous or the next token in the sequence. They are essential for capturing the local structural order of the sentence.
 * **Syntactic Heads**: These heads align with specific syntactic dependencies. They show a high success rate in identifying grammatical relationships, such as the relation between a verb and its direct object.
 * **Rare Words Heads**: Typically found in the first layer of the encoder, these heads specifically attend to the most infrequent tokens in a sentence, helping the model manage low-frequency vocabulary.
+
+However, research into larger Decoder-only models \cite[Elhage et al., 2021]{elhage2021mathematical} \cite[Olsson et al., 2022]{incontextlearninghead} has revealed more complex mechanisms that drive emergent abilities like In-Context Learning (ICL):
+
+* **Induction Heads**: These specialized heads develop in the middle layers and are responsible for pattern matching. If they see a sequence like [A][B] and later encounter [A], they "induce" that [B] should follow. This is considered the primary mechanism behind a model's ability to follow instructions in a prompt.
+* **Name Mover Heads**: Observed in tasks like Indirect Object Identification \cite[Wang et al., 2022]{interpretabilityinwild}, these heads extract specific entities (like names) from the earlier context and "move" them to the final token position to ensure logical consistency in the output.
+* **S-Inhibition / Delimiter Heads**: These heads act as structural anchors, often attending to punctuation or special tokens. They help the model manage signal-to-noise ratios by providing a "resting place" for attention when no relevant semantic information is found.
 
 ### Attention-Heads and In-Context-Learning
 
