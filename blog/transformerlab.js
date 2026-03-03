@@ -516,10 +516,6 @@ function countAllNumbers(data) {
 	return count;
 }
 
-// ═══════════════════════════════════════════════════════════════
-// Parameter Breakdown — Click-to-expand + Lazy Load
-// ═══════════════════════════════════════════════════════════════
-
 /** Tracks whether the breakdown panel is open */
 window._paramBreakdownOpen = false;
 
@@ -528,132 +524,118 @@ window._paramBreakdownRendered = false;
 
 /** Lazy IntersectionObserver — renders chart only when scrolled into view */
 const paramBreakdownObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting && window._paramBreakdownOpen && !window._paramBreakdownRendered) {
-            _executeParamBreakdownRender();
-        }
-    });
+	entries.forEach(entry => {
+		if (entry.isIntersecting && window._paramBreakdownOpen && !window._paramBreakdownRendered) {
+			_executeParamBreakdownRender();
+		}
+	});
 }, { threshold: 0.05 });
 
 function show_nr_of_params() {
-    const weights = window.currentWeights;
-    const nrDiv = document.getElementById('nr_params');
-    const toggleDiv = document.getElementById('param-breakdown-toggle');
-    const chartDiv = document.getElementById('param-breakdown-chart');
+	const weights = window.currentWeights;
+	const nrDiv = document.getElementById('nr_params');
+	const toggleDiv = document.getElementById('param-breakdown-toggle');
+	const chartDiv = document.getElementById('param-breakdown-chart');
 
-    if (!weights || weights.length === 0) {
-        if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
-        if (toggleDiv) toggleDiv.style.display = 'none';
-        if (chartDiv) chartDiv.style.display = 'none';
+	if (!weights || weights.length === 0) {
+		if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
+		if (toggleDiv) toggleDiv.style.display = 'none';
+		if (chartDiv) chartDiv.style.display = 'none';
 
-        // *** FIX: Reset the toggle state so it doesn't get out of sync ***
-        if (window._paramBreakdownOpen) {
-            window._paramBreakdownOpen = false;
-            window._paramBreakdownRendered = false;
-            const btn = document.getElementById('param-breakdown-btn');
-            if (btn) {
-                btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> Show Parameter Breakdown`;
-            }
-            paramBreakdownObserver.unobserve(chartDiv);
-        }
-        return;
-    }
+		// *** FIX: Reset the toggle state so it doesn't get out of sync ***
+		if (window._paramBreakdownOpen) {
+			window._paramBreakdownOpen = false;
+			window._paramBreakdownRendered = false;
+			const btn = document.getElementById('param-breakdown-btn');
+			if (btn) {
+				btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> Show Parameter Breakdown`;
+			}
+			paramBreakdownObserver.unobserve(chartDiv);
+		}
+		return;
+	}
 
-    // Count internal layer parameters (attention, FFN, LayerNorm)
-    const internalParams = countAllNumbers(weights);
+	// Count internal layer parameters (attention, FFN, LayerNorm)
+	const internalParams = countAllNumbers(weights);
 
-    // Count embedding parameters (vocab_size × d_model) to match the sunburst chart
-    const vocab = window.persistentEmbeddingSpace ? Object.keys(window.persistentEmbeddingSpace) : [];
-    const d_model = window.last_d_model || 0;
-    const embeddingParams = vocab.length * d_model;
+	// Count embedding parameters (vocab_size × d_model) to match the sunburst chart
+	const vocab = window.persistentEmbeddingSpace ? Object.keys(window.persistentEmbeddingSpace) : [];
+	const d_model = window.last_d_model || 0;
+	const embeddingParams = vocab.length * d_model;
 
-    const nr_params = internalParams + embeddingParams;
+	const nr_params = internalParams + embeddingParams;
 
-    if (!nr_params) {
-        if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
-        if (toggleDiv) toggleDiv.style.display = 'none';
-        if (chartDiv) chartDiv.style.display = 'none';
+	if (!nr_params) {
+		if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
+		if (toggleDiv) toggleDiv.style.display = 'none';
+		if (chartDiv) chartDiv.style.display = 'none';
 
-        // *** FIX: Same reset here for the zero-params case ***
-        if (window._paramBreakdownOpen) {
-            window._paramBreakdownOpen = false;
-            window._paramBreakdownRendered = false;
-            const btn = document.getElementById('param-breakdown-btn');
-            if (btn) {
-                btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> Show Parameter Breakdown`;
-            }
-            paramBreakdownObserver.unobserve(chartDiv);
-        }
-        return;
-    }
+		// *** FIX: Same reset here for the zero-params case ***
+		if (window._paramBreakdownOpen) {
+			window._paramBreakdownOpen = false;
+			window._paramBreakdownRendered = false;
+			const btn = document.getElementById('param-breakdown-btn');
+			if (btn) {
+				btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> Show Parameter Breakdown`;
+			}
+			paramBreakdownObserver.unobserve(chartDiv);
+		}
+		return;
+	}
 
-    if (nrDiv) {
-        nrDiv.innerHTML = `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`;
-        nrDiv.style.display = 'block';
-    }
+	if (nrDiv) {
+		nrDiv.innerHTML = `The current network has <b>${nr_params.toLocaleString()}</b> parameters.`;
+		nrDiv.style.display = 'block';
+	}
 
-    if (toggleDiv) toggleDiv.style.display = 'block';
+	if (toggleDiv) toggleDiv.style.display = 'block';
 
-    // If the panel is already open, force an immediate re-render
-    if (window._paramBreakdownOpen) {
-        window._paramBreakdownRendered = false;
-        _executeParamBreakdownRender();
-    }
+	// If the panel is already open, force an immediate re-render
+	if (window._paramBreakdownOpen) {
+		window._paramBreakdownRendered = false;
+		_executeParamBreakdownRender();
+	}
 }
 
-/**
- * Toggle button handler — opens/closes the breakdown panel.
- * On first open, starts observing for lazy load.
- */
 function toggleParamBreakdown() {
-    const chartDiv = document.getElementById('param-breakdown-chart');
-    const btn = document.getElementById('param-breakdown-btn');
-    if (!chartDiv || !btn) return;
+	const chartDiv = document.getElementById('param-breakdown-chart');
+	const btn = document.getElementById('param-breakdown-btn');
+	if (!chartDiv || !btn) return;
 
-    window._paramBreakdownOpen = !window._paramBreakdownOpen;
+	window._paramBreakdownOpen = !window._paramBreakdownOpen;
 
-    if (window._paramBreakdownOpen) {
-        chartDiv.style.display = 'block';
+	if (window._paramBreakdownOpen) {
+		chartDiv.style.display = 'block';
 
-        // Update button text with arrow already rotated via inline style
-        btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(90deg);">▶</span> Hide Parameter Breakdown`;
+		// Update button text with arrow already rotated via inline style
+		btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(90deg);">▶</span> Hide Parameter Breakdown`;
 
-        // Start observing for lazy render
-        paramBreakdownObserver.observe(chartDiv);
+		// Start observing for lazy render
+		paramBreakdownObserver.observe(chartDiv);
 
-        // Always render immediately when opening — don't rely on observer
-        window._paramBreakdownRendered = false;
-        _executeParamBreakdownRender();
-    } else {
-        chartDiv.style.display = 'none';
+		// Always render immediately when opening — don't rely on observer
+		window._paramBreakdownRendered = false;
+		_executeParamBreakdownRender();
+	} else {
+		chartDiv.style.display = 'none';
 
-        // Update button text with arrow in default (collapsed) rotation
-        btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> Show Parameter Breakdown`;
+		// Update button text with arrow in default (collapsed) rotation
+		btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> Show Parameter Breakdown`;
 
-        paramBreakdownObserver.unobserve(chartDiv);
-    }
+		paramBreakdownObserver.unobserve(chartDiv);
+	}
 }
 
-/**
- * The actual heavy render — only called when panel is open AND visible.
- * Guards against redundant renders using the _paramBreakdownRendered flag,
- * but always executes when explicitly called from toggleParamBreakdown or
- * show_nr_of_params (which reset the flag before calling).
- */
 function _executeParamBreakdownRender() {
-    if (window._paramBreakdownRendered) return;
+	if (window._paramBreakdownRendered) return;
 
-    const weights = window.currentWeights;
-    if (!weights || weights.length === 0) return;
+	const weights = window.currentWeights;
+	if (!weights || weights.length === 0) return;
 
-    window._paramBreakdownRendered = true;
-    renderParamBreakdown(weights);
+	window._paramBreakdownRendered = true;
+	renderParamBreakdown(weights);
 }
 
-/**
- * Computes a detailed parameter count breakdown per layer and component,
- * then renders a sunburst chart and a summary table.
- */
 function renderParamBreakdown(weights) {
     const { d_model, n_heads } = getTransformerConfig();
     const d_ff = d_model * 4;
