@@ -7,6 +7,14 @@ const nr_fixed = 4;
 const posEmbedScalar = 1;
 let trainingDebounceTimer;
 const epsilon = 1e-6;
+window.currentTrainingWindows = [];
+const attentionRenderRegistry = new Map();
+const positionalShiftRegistry = new Map();
+const embeddingRenderRegistry = new Map();
+const trajectoryRenderRegistry = new Map();
+const multiLayerAttentionRegistry = new Map();
+const transformerLabVisMigrationDataRegistry = new Map();
+const positionalWavesRegistry = new Map();
 
 window.addEventListener('DOMContentLoaded', (event) => {
 	document.getElementById("ifscalfactornotone").style.display =  posEmbedScalar == 1 ? 'none' : 'block'
@@ -58,20 +66,6 @@ function registerLazyRenderable(containerId, registry, observer, data, renderFn,
 	}
 }
 
-/**
- * Pure-JS multi-head self-attention WITH causal mask.
- * Matches the training path in calculate_tf_loss exactly:
- *   - Q/K/V split into n_heads of dimension d_k = d_model / n_heads
- *   - Scores scaled by √d_k
- *   - Strict upper-triangle positions set to -1e9 before softmax
- *
- * @param {number[][]} normH    - Layer-normed hidden states [seqLen × d_model]
- * @param {object}     weights  - { query, key, value } weight matrices [d_model × d_model]
- * @param {number}     d_model
- * @param {number}     n_heads
- * @returns {object[]} headData - One entry per head, each with
- *          { q, k, v, scores, weights, context }
- */
 function causalMultiHeadAttention(normH, weights, d_model, n_heads) {
 	const seqLen = normH.length;
 	const d_k = d_model / n_heads;
@@ -136,14 +130,6 @@ function causalMultiHeadAttention(normH, weights, d_model, n_heads) {
 	return headData;
 }
 
-/**
- * Locks all architecture-defining controls during training.
- * These parameters define weight matrix shapes — changing them
- * mid-training would destroy all learned weights.
- *
- * Temperature, learning rate, epochs, and optimizer remain unlocked
- * because they don't affect weight shapes.
- */
 function lockArchitectureControls(lock) {
 	const controlIds = [
 		// Architecture (would break weights)
@@ -181,25 +167,10 @@ function lockArchitectureControls(lock) {
 	}
 }
 
-/**
- * Element-wise addition of two matrices of the same shape.
- * Used for residual connections throughout the transformer.
- * @param {number[][]} A - First matrix  [rows × cols]
- * @param {number[][]} B - Second matrix [rows × cols]
- * @returns {number[][]} Result matrix A + B [rows × cols]
- */
 function matAdd(A, B) {
 	return A.map((row, i) => row.map((val, j) => val + B[i][j]));
 }
 
-/**
- * Reads all transformer hyperparameter values from the DOM sliders.
- * Centralizes the repeated getElementById + parseInt/parseFloat pattern
- * from run_and_visualize_network, train_transformer, tlab_get_top_vocab_list,
- * and the training-loop forward-pass display.
- *
- * @returns {{ d_model: number, n_heads: number, n_layers: number, temperature: number }}
- */
 function getTransformerConfig() {
 	return {
 		d_model:     parseInt(document.getElementById('transformer-dimension-model')?.value)  || 3,
@@ -209,18 +180,6 @@ function getTransformerConfig() {
 	};
 }
 
-/**
- * Runs a complete inference forward pass without visualization:
- * embeds tokens with positional encoding, then passes through
- * all transformer layers, returning the final hidden states.
- *
- * @param {string[]}  tokens   - Array of token strings
- * @param {object[]}  weights  - Array of layer weight objects
- * @param {number}    d_model  - Model dimension
- * @param {number}    n_heads  - Number of attention heads
- * @param {number}    [n_layers=weights.length] - Layers to run (defaults to all)
- * @returns {number[][]} Final hidden states [seqLen × d_model]
- */
 function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers) {
 	if (n_layers === undefined) n_layers = weights.length;
 	let h = embedTokensWithPE(tokens, d_model);
@@ -231,15 +190,6 @@ function runSimpleForwardPass(tokens, weights, d_model, n_heads, n_layers) {
 	return h;
 }
 
-/**
- * Looks up embeddings for each token from the persistent embedding space
- * and adds sinusoidal positional encoding.
- *
- * @param {string[]} tokens  - Array of token strings
- * @param {number}   d_model - Embedding dimension
- * @param {object}   [embSpace=window.persistentEmbeddingSpace] - Embedding lookup
- * @returns {number[][]} Matrix [tokens.length × d_model] with PE added
- */
 function embedTokensWithPE(tokens, d_model, embSpace = window.persistentEmbeddingSpace) {
 	return tokens.map((token, pos) => {
 		const emb = (embSpace && embSpace[token]) || new Array(d_model).fill(0);
@@ -247,12 +197,6 @@ function embedTokensWithPE(tokens, d_model, embSpace = window.persistentEmbeddin
 	});
 }
 
-/**
- * Computes softmax probabilities from an array of raw logit values.
- * Uses the max-subtraction trick for numerical stability.
- * @param {number[]} logits - Raw scores
- * @returns {number[]} Probabilities that sum to 1
- */
 function softmax(logits) {
 	const maxLogit = Math.max(...logits);
 	const exps = logits.map(l => Math.exp(l - maxLogit));
@@ -260,12 +204,6 @@ function softmax(logits) {
 	return exps.map(e => e / sumExps);
 }
 
-/**
- * Multiplies a matrix (rows of vectors) by a weight matrix.
- * @param {number[][]} matrix - Input matrix [seqLen × inputDim]
- * @param {number[][]} weights - Weight matrix [inputDim × outputDim]
- * @returns {number[][]} Result matrix [seqLen × outputDim]
- */
 function matMul(matrix, weights, bias = null) {
 	return matrix.map(row =>
 		weights[0].map((_, j) => {
@@ -392,14 +330,6 @@ function dotProduct(a, b) {
 	return sum;
 }
 
-window.currentTrainingWindows = [];
-const attentionRenderRegistry = new Map();
-const positionalShiftRegistry = new Map();
-const embeddingRenderRegistry = new Map();
-const trajectoryRenderRegistry = new Map();
-const multiLayerAttentionRegistry = new Map();
-const transformerLabVisMigrationDataRegistry = new Map();
-
 /**
  * Creates a lazy IntersectionObserver that fires a render callback
  * the first time an element becomes visible, then marks it as rendered.
@@ -462,8 +392,6 @@ const headContentObserver = new IntersectionObserver((entries) => {
 		}
 	});
 }, { threshold: 0 });
-
-const positionalWavesRegistry = new Map();
 
 const positionalWavesObserver = createLazyRenderObserver(positionalWavesRegistry, (id, data) => {
 	_execute_positional_waves_render(data.d_model, data.tokens);
