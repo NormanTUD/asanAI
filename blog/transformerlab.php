@@ -293,7 +293,7 @@ In the paper \citealternativetitle{analyzingmultiheads}, the study identified th
 * **Syntactic Heads**: These heads align with specific syntactic dependencies. They show a high success rate in identifying grammatical relationships, such as the relation between a verb and its direct object.
 * **Rare Words Heads**: Typically found in the first layer of the encoder, these heads specifically attend to the most infrequent tokens in a sentence, helping the model manage low-frequency vocabulary.
 
-However, research into larger Decoder-only models \cite[Elhage et al., 2021]{elhage2021mathematical} \cite[Olsson et al., 2022]{incontextlearninghead} and recent discoveries in mechanistic interpretability have revealed even more specialized mechanisms:
+However, research into larger Decoder-only models from \cite[Elhage et al., 2021]{elhage2021mathematical} and \cite[Olsson et al., 2022]{incontextlearninghead} and recent discoveries in mechanistic interpretability have revealed even more specialized mechanisms:
 
 * **Induction Heads**: These specialized heads develop in the middle layers and are responsible for pattern matching. If they see a sequence like [A][B] and later encounter [A], they "induce" that [B] should follow. This is considered the primary mechanism behind a model's ability to follow instructions in a prompt.
 * **Successor Heads**: Identified as universal circuits across various architectures \cite[Gould et al., 2024]{successorheads}, these heads perform logical incrementation. They map tokens to their ordinal successors, such as "Monday" to "Tuesday", "January" to "February", or "1" to "2".
