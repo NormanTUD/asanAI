@@ -265,7 +265,7 @@ To allow a token to "scout" the rest of the sequence, we derive three distinct r
 * **Key ($K = h_0 W^K$)**: Represents "What information do I contain?"
 * **Value ($V = h_0 W^V$)**: Represents "What is the actual content I offer?"
 
-They are used to project the tokens from the Embedding Space into subspaces of the full Embedding Space.
+They are used to project the tokens from the Embedding Space into subspaces of the full Embedding Space, so they work only on a specific subpart of the information of the Embedding Space.
 </div>
 
 <div id="qkv-subspace-projection-viz"
