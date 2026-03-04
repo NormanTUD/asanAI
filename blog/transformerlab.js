@@ -4,6 +4,7 @@
 If you see stuff jumping around, try setting "overflow-anchor: none" to that element.
 */
 
+window._activeUnifiedLayerIdx = 0;
 window.isTraining = false;
 window._paramBreakdownOpen = false;
 window._paramBreakdownRendered = false;
@@ -6585,13 +6586,15 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 		return;
 	}
 
+	const isActive = (layerIndex === window._activeUnifiedLayerIdx);
+
 	const btn = document.createElement('button');
 	btn.id = `${prefix}-tab-btn`;
 	btn.className = 'unified-layer-tab-btn';
 	btn.textContent = `Layer ${layerIndex + 1}`;
 	btn.style.cssText = `padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-    background:${tabList.children.length === 0 ? '#fff' : '#bfdbfe'};
-    font-weight:${tabList.children.length === 0 ? 'bold' : 'normal'};`;
+    background:${isActive ? '#fff' : '#bfdbfe'};
+    font-weight:${isActive ? 'bold' : 'normal'};`;
 	btn.onclick = () => showUnifiedLayer(layerIndex);
 	tabList.appendChild(btn);
 
@@ -6600,7 +6603,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	contentDiv.className = 'unified-layer-tab-content';
 	contentDiv.dataset.layerIdx = layerIndex;
 	contentDiv.dataset.rendered = 'false';
-	contentDiv.style.display = tabList.children.length === 1 ? 'block' : 'none';
+	contentDiv.style.display = isActive ? 'block' : 'none';
 	contentDiv.style.padding = '15px';
 	contentDiv.style.background = '#f8f9ff';
 	contentDiv.style.overflowAnchor = 'none';
@@ -6624,7 +6627,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
     <!-- ===== FFN SECTION ===== -->
     <div>
 	<p style="color: #f59e0b; margin: 0 0 12px 0; font-size: 0.95rem;">
-	    ⚙ Feed-Forward Network
+	    ‚öô Feed-Forward Network
 	</p>
 
 	<!-- FFN steps -->
@@ -6642,6 +6645,8 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 }
 
 window.showUnifiedLayer = function(layerIdx) {
+	window._activeUnifiedLayerIdx = layerIdx;
+
 	const container = document.getElementById('ffn-equations-container');
 	if (!container) return;
 
@@ -6695,7 +6700,7 @@ window.showUnifiedLayer = function(layerIdx) {
 		}
 	}
 
-	// ── Trigger migration plot rendering for this layer ──
+	// Trigger migration plot rendering for this layer
 	const migrationId = `migration-layer-${layerIdx + 1}`;
 	const migrationData = transformerLabVisMigrationDataRegistry.get(migrationId);
 	if (migrationData && !migrationData.rendered) {
