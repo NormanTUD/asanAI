@@ -2839,40 +2839,116 @@ function assertShape(name, value, expected_rows, expected_cols) {
 }
 
 /**
- * Ensures the three FFN step divs exist for a given layer index.
- * Creates them inside #ffn-equations-container on first call per layer.
+ * Switches the visible FFN layer tab.
+ */
+window.showFFNLayer = function(layerIdx) {
+	const container = document.getElementById('ffn-equations-container');
+	if (!container) return;
+
+	// Hide all FFN content panels and deactivate all buttons
+	container.querySelectorAll('.ffn-layer-tab-content').forEach(div => {
+		div.style.display = 'none';
+	});
+	container.querySelectorAll('.ffn-layer-tab-btn').forEach(btn => {
+		btn.style.background = '#ddd6fe';
+		btn.style.fontWeight = 'normal';
+	});
+
+	// Show the selected layer's content
+	const contentDiv = document.getElementById(`ffn-layer-${layerIdx}-content`);
+	if (contentDiv) {
+		contentDiv.style.display = 'block';
+	}
+
+	// Highlight the selected tab button
+	const activeBtn = document.getElementById(`ffn-layer-${layerIdx}-tab-btn`);
+	if (activeBtn) {
+		activeBtn.style.background = '#fff';
+		activeBtn.style.fontWeight = 'bold';
+	}
+
+	render_temml();
+};
+
+/**
+ * Ensures the tabbed FFN container exists and has a tab for the given layer.
+ * Creates the full tab structure on first call, adds tabs incrementally after.
  */
 function ensureFFNLayerContainers(layerIndex) {
 	const container = document.getElementById('ffn-equations-container');
 	if (!container) return;
 
+	let tabsWrapper = container.querySelector('.ffn-layer-tabs');
+
+	if (!tabsWrapper) {
+		// First time: build the full tab structure
+		tabsWrapper = document.createElement('div');
+		tabsWrapper.className = 'ffn-layer-tabs';
+		tabsWrapper.style.cssText = 'border:1px solid #8b5cf6; border-radius:8px; overflow:hidden; margin-top:20px;';
+
+		const tabList = document.createElement('div');
+		tabList.className = 'ffn-tab-list';
+		tabList.style.cssText = 'background:#ede9fe; display:flex; border-bottom:2px solid #8b5cf6; flex-wrap:wrap;';
+
+		tabsWrapper.appendChild(tabList);
+		container.appendChild(tabsWrapper);
+	}
+
+	const tabList = tabsWrapper.querySelector('.ffn-tab-list');
 	const prefix = `ffn-layer-${layerIndex}`;
-	if (document.getElementById(`${prefix}-step-1`)) return; // already created
 
-	const wrapper = document.createElement('div');
-	wrapper.id = `${prefix}-wrapper`;
-	wrapper.className = 'ffn-layer-equations';
-	wrapper.style.cssText = 'margin-top: 25px; padding: 15px; border: 1px solid #c7d2fe; border-radius: 12px; background: #f8f9ff;';
+	// Check if this layer's tab already exists
+	if (document.getElementById(`${prefix}-tab-btn`)) {
+		return; // Tab already exists
+	}
 
-	wrapper.innerHTML = `
-	<p style="color: #1e40af; margin: 0 0 12px 0; font-size: 1rem;">
-	    Feed-Forward Network — Layer ${layerIndex + 1}
-	</p>
-	<div id="${prefix}-step-1" class="math_transformer"></div>
-	<div id="${prefix}-step-2" class="math_transformer"></div>
-	<div id="${prefix}-step-3" class="math_transformer"></div>
-    `;
+	// Create the tab button
+	const btn = document.createElement('button');
+	btn.id = `${prefix}-tab-btn`;
+	btn.className = 'ffn-layer-tab-btn';
+	btn.textContent = `Layer ${layerIndex + 1}`;
+	btn.style.cssText = `padding:10px 18px; border:none; border-right:1px solid #c4b5fd; cursor:pointer;
+		background:${tabList.children.length === 0 ? '#fff' : '#ddd6fe'}; 
+		font-weight:${tabList.children.length === 0 ? 'bold' : 'normal'};`;
+	btn.onclick = () => showFFNLayer(layerIndex);
+	tabList.appendChild(btn);
 
-	container.appendChild(wrapper);
+	// Create the content panel
+	const contentDiv = document.createElement('div');
+	contentDiv.id = `${prefix}-content`;
+	contentDiv.className = 'ffn-layer-tab-content';
+	contentDiv.dataset.layerIdx = layerIndex;
+	contentDiv.dataset.rendered = 'false';
+	contentDiv.style.display = tabList.children.length === 1 ? 'block' : 'none';
+	contentDiv.style.padding = '15px';
+	contentDiv.style.background = '#f8f9ff';
+
+	contentDiv.innerHTML = `
+		<p style="color: #1e40af; margin: 0 0 12px 0; font-size: 1rem;">
+			Feed-Forward Network — Layer ${layerIndex + 1}
+		</p>
+		<div id="${prefix}-step-1" class="math_transformer"></div>
+		<div id="${prefix}-step-2" class="math_transformer"></div>
+		<div id="${prefix}-step-3" class="math_transformer"></div>
+	`;
+
+	tabsWrapper.appendChild(contentDiv);
 }
 
-/**
- * Removes all dynamically created FFN equation blocks so they
- * can be cleanly recreated on the next forward pass.
- */
 function clearFFNEquationsContainer() {
 	const container = document.getElementById('ffn-equations-container');
-	if (container) container.innerHTML = '';
+	if (!container) return;
+
+	// Preserve the tab structure but mark layers for re-render
+	const existingTabs = container.querySelector('.ffn-layer-tabs');
+	if (existingTabs) {
+		// Just mark all content divs as needing update, don't destroy tabs
+		container.querySelectorAll('.ffn-layer-tab-content').forEach(div => {
+			div.dataset.rendered = 'false';
+		});
+	} else {
+		container.innerHTML = '';
+	}
 }
 
 function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0) {
