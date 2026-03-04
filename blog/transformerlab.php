@@ -466,69 +466,6 @@ $$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
 <div id="ffn-equations-container"></div>
 
 <div class="md">
-### Visualizing the FFN Manifold Deformation
-
-The FFN performs a piecewise-linear deformation of the embedding space (due to ReLU). Each point in space is either expanded, compressed, or folded depending on which neurons activate. The visualization below samples a grid of points around the current token positions, passes each through the FFN, and renders the resulting **deformation vector field** — showing exactly how the FFN warps the manifold at each layer.
-
-- **Grey dots**: Sampled grid points in the original space.
-- **Colored arrows**: The displacement vector $\Delta = \text{FFN}(x) - x$ showing where the FFN pushes each point.
-- **Colored surfaces** (3D): The ReLU activation boundary — the "fold" in the manifold where neurons switch on/off.
-- **Token markers**: Current token positions before and after the FFN.
-
-The **activation pattern** (which ReLU neurons fire) partitions the input space into **linear regions**. Within each region, the FFN acts as a different affine transformation. The boundaries between these regions are the "folds" in the manifold.
-
-$$\text{FFN}(x) = \underbrace{\sigma(x W_1 + b_1)}_{\text{ReLU mask}} W_2 + b_2$$
-
-The Jacobian at each point $x$ is:
-
-$$J(x) = \text{diag}\!\big(\mathbb{1}[W_1^T x + b_1 > 0]\big) \cdot W_1^T \cdot W_2^T$$
-
-The **singular values** of $J$ reveal local stretching/compression, and the **rank** reveals the effective dimensionality of the output manifold at that point.
-</div>
-
-<div id="ffn-manifold-viz-container" style="margin: 20px 0;">
-    <div style="background: #f8f9ff; padding: 15px; border: 1px solid #c7d2fe; border-radius: 12px;">
-        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 12px; flex-wrap: wrap;">
-            <label style="font-weight: bold; color: #1e40af;">FFN Manifold Visualization</label>
-            <div>
-                <label style="font-size: 0.8rem; color: #64748b;">Layer:</label>
-                <select id="ffn-manifold-layer-select" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1;"
-                    onchange="ffnManifold.scheduleUpdate()">
-                </select>
-            </div>
-            <div>
-                <label style="font-size: 0.8rem; color: #64748b;">Grid Resolution:</label>
-                <input type="range" id="ffn-manifold-resolution" min="4" max="20" value="8" style="width: 100px; vertical-align: middle;"
-                    oninput="document.getElementById('ffn-manifold-res-val').textContent=this.value; ffnManifold.scheduleUpdate()">
-                <span id="ffn-manifold-res-val" style="font-size: 0.8rem; font-weight: bold; color: #3b82f6;">8</span>
-            </div>
-            <div>
-                <label style="font-size: 0.8rem; color: #64748b;">Scale:</label>
-                <input type="range" id="ffn-manifold-scale" min="0.5" max="5.0" step="0.1" value="2.0" style="width: 100px; vertical-align: middle;"
-                    oninput="document.getElementById('ffn-manifold-scale-val').textContent=this.value; ffnManifold.scheduleUpdate()">
-                <span id="ffn-manifold-scale-val" style="font-size: 0.8rem; font-weight: bold; color: #3b82f6;">2.0</span>
-            </div>
-            <div style="display: flex; gap: 6px;">
-                <button id="ffn-manifold-mode-field" onclick="ffnManifold.setMode('field')"
-                    style="padding: 5px 12px; border-radius: 6px; border: 2px solid #6366f1; background: #6366f1; color: white; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
-                    Vector Field
-                </button>
-                <button id="ffn-manifold-mode-regions" onclick="ffnManifold.setMode('regions')"
-                    style="padding: 5px 12px; border-radius: 6px; border: 2px solid #6366f1; background: white; color: #6366f1; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
-                    Activation Regions
-                </button>
-                <button id="ffn-manifold-mode-jacobian" onclick="ffnManifold.setMode('jacobian')"
-                    style="padding: 5px 12px; border-radius: 6px; border: 2px solid #6366f1; background: white; color: #6366f1; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
-                    Jacobian Stretch
-                </button>
-            </div>
-        </div>
-        <div id="ffn-manifold-plot" style="width: 100%; height: 600px; background: white; border-radius: 8px; border: 1px solid #e2e8f0;"></div>
-        <div id="ffn-manifold-stats" style="margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; border: 1px dashed #cbd5e1; font-size: 0.82rem; color: #475569;"></div>
-    </div>
-</div>
-
-<div class="md">
 ### Mixture of Experts (MoE)
 
 The Feed-Forward Network (FFN) described above applies the same dense
