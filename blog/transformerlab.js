@@ -2734,6 +2734,13 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
  *
  * NEW SIGNATURE: Added normH0 as second parameter.
  */
+/**
+ * FIX: Updated to display Pre-LN architecture (matching actual computation).
+ * Old version showed Post-LN: h1 = h0 + LayerNorm(MHA_proj)
+ * New version shows Pre-LN:   normH0 = LayerNorm(h0), then h1 = h0 + Attention(normH0) × Wo
+ *
+ * NEW SIGNATURE: Added normH0 as second parameter.
+ */
 function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 	const normContainer = document.getElementById('transformer-h1-layernorm-viz');
 	const finalContainer = document.getElementById('transformer-h1-final-viz');
@@ -2747,8 +2754,34 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 	// h1 = h0 + projected (Pre-LN: no normalization on the sublayer output)
 	const h1 = matAdd(h0, projectedMHA);
 
-	// ── FIX: Display Pre-LN steps instead of Post-LN ──
-	normContainer.innerHTML = `
+	// --- Content hash to skip no-op updates (same pattern as _ffnContentHash) ---
+	const flattenDisplay = (mat) => {
+		if (!mat || !mat.length) return '';
+		return mat.map(row =>
+			Array.isArray(row)
+				? row.map(v => v.toFixed(nr_fixed)).join(',')
+				: row.toFixed(nr_fixed)
+		).join(';');
+	};
+	const hash = [
+		flattenDisplay(h0),
+		flattenDisplay(normH0),
+		flattenDisplay(multiHeadOutput),
+		flattenDisplay(projectedMHA),
+		flattenDisplay(h1),
+		flattenDisplay(gamma),
+		flattenDisplay(beta)
+	].join('|');
+
+	// Skip DOM writes if nothing the user sees has changed
+	if (normContainer._lastHash === hash && finalContainer._lastHash === hash) {
+		return h1;
+	}
+	normContainer._lastHash = hash;
+	finalContainer._lastHash = hash;
+
+	// --- Preserve scroll positions across innerHTML replacement ---
+	const normHtml = `
 	<p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
 
 	<div style="margin-bottom:15px;">
@@ -2769,7 +2802,7 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 	</div>
     `;
 
-	finalContainer.innerHTML = `
+	const finalHtml = `
     <div style="margin-bottom:10px;">
 	<p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
 	$$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
@@ -2778,6 +2811,14 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 	$$ \\underbrace{${matrixToPmatrix(h1)}}_{h_1} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_{\\text{proj}}} $$
     </div>
     `;
+
+	preserveScrollPositions(normContainer, () => {
+		normContainer.innerHTML = normHtml;
+	});
+
+	preserveScrollPositions(finalContainer, () => {
+		finalContainer.innerHTML = finalHtml;
+	});
 
 	render_temml();
 	return h1;
@@ -3052,7 +3093,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	const step3 = document.getElementById(`${prefix}-step-3`);
 	if (!step1 || !step2 || !step3) return;
 
-	step1.innerHTML = `
+	const step1Html = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
 	<p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1${sup}$ before FFN</p>
 	$$ \\text{LayerNorm}(h_1${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_1${sup} - \\underbrace{\\mu}_{\\text{Mean of } h_1${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_1${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
@@ -3071,7 +3112,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     </div>
     `;
 
-	step2.innerHTML = `
+	const step2Html = `
     <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 2: Compression</strong></p>
 
     $$ \\text{out}_{L2}${sup} = \\text{out}_{L1}${sup} \\cdot W_2${sup} + b_2${sup} $$
@@ -3081,7 +3122,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     </div>
     `;
 
-	step3.innerHTML = `
+	const step3Html = `
     <div style="margin-bottom:10px;">
 	<p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
 	$$ h_2${sup} = h_1${sup} + \\text{out}_{L2}${sup} $$
@@ -3090,6 +3131,10 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	$$ \\underbrace{${matrixToPmatrix(h2)}}_{h_2${sup}} = \\underbrace{${matrixToPmatrix(h1)}}_{h_1${sup}} + \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{out}_{L2}${sup}} $$
     </div>
     `;
+
+	preserveScrollPositions(step1, () => { step1.innerHTML = step1Html; });
+	preserveScrollPositions(step2, () => { step2.innerHTML = step2Html; });
+	preserveScrollPositions(step3, () => { step3.innerHTML = step3Html; });
 
 	_renderTemmlOnElements([step1, step2, step3]);
 }
@@ -5628,6 +5673,42 @@ function _renderQKVSubspaceViz(containerId) {
 
 	// Initial render with Q
 	renderProjection('Q');
+}
+
+/**
+ * Saves scrollLeft of all horizontally-scrollable descendants,
+ * executes a DOM-mutating callback, then restores those positions.
+ * Works even when innerHTML replaces the elements, by matching
+ * on child index within the container.
+ *
+ * @param {HTMLElement} container - The parent whose descendants may scroll
+ * @param {Function} mutationFn - The function that changes the DOM
+ */
+function preserveScrollPositions(container, mutationFn) {
+	// 1. Snapshot scrollLeft of every overflow-x child, keyed by
+	//    a stable selector: their index among all [style*="overflow"] elements
+	const scrollable = container.querySelectorAll('[style*="overflow"]');
+	const saved = [];
+	scrollable.forEach((el, idx) => {
+		if (el.scrollLeft > 0) {
+			saved.push({ index: idx, scrollLeft: el.scrollLeft });
+		}
+	});
+
+	// 2. Execute the DOM mutation (innerHTML replacement, etc.)
+	mutationFn();
+
+	// 3. Restore scroll positions on the new elements at the same indices
+	if (saved.length > 0) {
+		requestAnimationFrame(() => {
+			const newScrollable = container.querySelectorAll('[style*="overflow"]');
+			saved.forEach(({ index, scrollLeft }) => {
+				if (newScrollable[index]) {
+					newScrollable[index].scrollLeft = scrollLeft;
+				}
+			});
+		});
+	}
 }
 
 async function loadTransformerModule () {
