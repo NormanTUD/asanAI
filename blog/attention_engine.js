@@ -248,6 +248,11 @@ class AttentionEngine {
 			if (this.container.querySelector('.attention-layer-tabs')) {
 				this.container.innerHTML = '';
 			}
+			if (!this.container.querySelector('.unified-redirect-msg')) {
+				this.container.innerHTML = `<div class="unified-redirect-msg" style="padding:15px; color:#64748b; text-align:center; font-style:italic;">
+				Attention details are shown within each layer tab below ↓
+			</div>`;
+			}
 
 			// Store engine instance globally for APV callbacks
 			if (!window.__apv_instances) window.__apv_instances = {};
