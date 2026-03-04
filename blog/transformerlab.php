@@ -273,7 +273,7 @@ They are used to project the tokens from the Embedding Space into subspaces of t
 <div id="qkv-subspace-projection-viz"
      style="width:100%; min-height:520px; border:2px solid #e2e8f0; border-radius:12px; background:#f8fafc; align-items:center; justify-content:center; margin:20px 0;">
     <div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
-        ⏳ Scroll here to load the Q, K, V subspace projection visualization...
+        ⏳ Wait for the Q, K, V subspace projection visualization to be loaded...
     </div>
 </div>
 
@@ -317,10 +317,6 @@ $$\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)
 The association between *Query* and *Key* and concrete tokens is only true in the first layer, where it is taken from the concrete embeddings. In further layers, it works on the abstract feature space instead.
 
 In this stage, it is already abstracted away from the concrete Embedding Space (for example, by positional encoding), and thus, the numbers do not inherently 'mean' anything anymore.
-</div>
-
-<div id="mha-calculation-details" style="margin-top: 20px;">
-<i>Please wait, while the <b>Multi-Attention-Head</b>-equations are loading...</i>
 </div>
 
 <div class="optional md" data-headline="Why the Diagonal Gets Weaker: It's Just 1/n">
