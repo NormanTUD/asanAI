@@ -1409,116 +1409,6 @@ async function syncTrainingState(weightVars) {
     tled_syncTableFromSpace();
 }
 
-/**
- * Creates the progress bar label element.
- */
-function createProgressLabel() {
-    const span = document.createElement('span');
-    span.id = 'training-progress-label';
-    span.style.cssText = 'white-space: nowrap; min-width: 180px;';
-    span.textContent = 'Starting training...';
-    return span;
-}
-
-/**
- * Creates the progress bar track with fill and percentage overlay.
- */
-function createProgressTrack() {
-    const track = document.createElement('div');
-    track.style.cssText = 'flex-grow: 1; background: #334155; border-radius: 6px; height: 18px; overflow: hidden; position: relative;';
-
-    const fill = document.createElement('div');
-    fill.id = 'training-progress-fill';
-    fill.style.cssText = 'width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #10b981); border-radius: 6px; transition: width 0.15s ease;';
-
-    const percent = document.createElement('span');
-    percent.id = 'training-progress-percent';
-    percent.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); pointer-events: none;';
-    percent.textContent = '0%';
-
-    track.appendChild(fill);
-    track.appendChild(percent);
-    return track;
-}
-
-/**
- * Creates the loss display label.
- */
-function createLossLabel() {
-    const span = document.createElement('span');
-    span.id = 'training-progress-loss';
-    span.style.cssText = 'white-space: nowrap; min-width: 120px; text-align: right; color: #94a3b8;';
-    span.textContent = 'Loss: —';
-    return span;
-}
-
-/**
- * Creates the stop training button.
- */
-function createStopButton() {
-    const btn = document.createElement('button');
-    btn.textContent = '⏹ Stop';
-    btn.style.cssText = 'background: #ef4444; color: white; border: none; margin-right: 50px; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.82rem; white-space: nowrap; transition: background 0.15s;';
-    btn.addEventListener('click', () => { window.isTraining = false; });
-    btn.addEventListener('mouseover', () => { btn.style.background = '#dc2626'; });
-    btn.addEventListener('mouseout', () => { btn.style.background = '#ef4444'; });
-    return btn;
-}
-
-/**
- * Refactored: assembles the progress bar from smaller components.
- */
-function showTrainingProgressBar() {
-    hideTrainingProgressBar();
-
-    const bar = document.createElement('div');
-    bar.id = 'training-progress-bar-container';
-    bar.style.cssText = `
-        position: fixed; bottom: 0; left: 0; width: 100%;
-        background: #1e293b; color: #f8fafc; padding: 10px 20px;
-        display: flex; align-items: center; gap: 15px; z-index: 99999;
-        font-family: 'Inter', sans-serif; font-size: 0.85rem;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.3); transition: opacity 0.3s ease;
-    `;
-
-    bar.appendChild(createProgressLabel());
-    bar.appendChild(createProgressTrack());
-    bar.appendChild(createLossLabel());
-    bar.appendChild(createStopButton());
-
-    document.body.appendChild(bar);
-}
-
-/**
- * Updates the progress bar with current epoch, total epochs, and loss.
- */
-function updateTrainingProgressBar(currentEpoch, totalEpochs, loss) {
-	const fill = document.getElementById('training-progress-fill');
-	const label = document.getElementById('training-progress-label');
-	const percent = document.getElementById('training-progress-percent');
-	const lossLabel = document.getElementById('training-progress-loss');
-
-	if (!fill || !label || !percent || !lossLabel) return;
-
-	const pct = Math.min(100, (currentEpoch / totalEpochs) * 100);
-
-	fill.style.width = pct.toFixed(1) + '%';
-	percent.textContent = pct.toFixed(1) + '%';
-	label.textContent = `Epoch ${currentEpoch} / ${totalEpochs}`;
-	lossLabel.textContent = `Loss: ${loss.toFixed(6)}`;
-}
-
-/**
- * Removes the progress bar from the DOM.
- */
-function hideTrainingProgressBar() {
-	const bar = document.getElementById('training-progress-bar-container');
-	if (bar) {
-		bar.style.opacity = '0';
-		setTimeout(() => bar.remove(), 300);
-	}
-}
-
 function convert_weights_to_tensors(weights) {
 	const vocab = Object.keys(window.persistentEmbeddingSpace);
 	const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
@@ -6833,6 +6723,284 @@ function ensureFFNLayerContainers(layerIndex) {
 	const { n_layers } = getTransformerConfig();
 	ensureUnifiedLayerContainer(layerIndex, n_layers, 'mha-calculation-details');
 }
+
+// ============================================================
+// Unified Sticky Bottom Bar
+// Replaces the old training progress bar. Always visible when
+// #transformer_site is in the viewport. Shows "Start Training"
+// when idle, becomes the full training bar when training.
+// ============================================================
+
+(function () {
+    let barEl = null;
+    let siteIsVisible = false;
+    let miniChartInited = false;
+
+    /** Create the bar once and append to <body> */
+    function createStickyBar() {
+        if (barEl) return barEl;
+
+        barEl = document.createElement('div');
+        barEl.id = 'training-progress-bar-container'; // keep old ID for compat
+        barEl.style.cssText = `
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #1e293b; color: #f8fafc;
+            padding: 10px 20px; display: none; align-items: center;
+            gap: 14px; z-index: 99999;
+            font-family: 'Inter', sans-serif; font-size: 0.85rem;
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            opacity: 0; transform: translateY(100%);
+        `;
+
+        barEl.innerHTML = `
+            <!-- ===== IDLE STATE ===== -->
+            <div id="tlab-bar-idle" style="display:flex; align-items:center; gap:14px; width:100%;">
+                <span style="flex-grow:1; color:#94a3b8; font-size:0.82rem;">
+                    Transformer Lab — ready to train
+                </span>
+                <button id="tlab-bar-train-btn" style="
+                    background: linear-gradient(135deg, #3b82f6, #6366f1);
+                    color: white; border: none; padding: 8px 22px;
+                    border-radius: 8px; cursor: pointer; font-weight: 700;
+                    font-size: 0.85rem; white-space: nowrap;
+                    transition: background 0.15s, transform 0.1s;
+                    box-shadow: 0 2px 8px rgba(99,102,241,0.4);
+                ">▶ Start Training</button>
+            </div>
+
+            <!-- ===== TRAINING STATE ===== -->
+            <div id="tlab-bar-training" style="display:none; align-items:center; gap:14px; width:100%;">
+
+                <!-- Mini loss sparkline -->
+                <div id="tlab-bar-mini-chart" style="
+                    width: 120px; height: 36px; flex-shrink: 0;
+                    background: #334155; border-radius: 6px; overflow: hidden;
+                    position: relative;
+                ">
+                    <canvas id="tlab-bar-mini-canvas" width="120" height="36"
+                        style="width:120px;height:36px;display:block;"></canvas>
+                </div>
+
+                <!-- Epoch label (keeps old ID for compat) -->
+                <span id="training-progress-label" style="white-space:nowrap; min-width:140px;">
+                    Starting training...
+                </span>
+
+                <!-- Progress bar track -->
+                <div style="flex-grow:1; background:#334155; border-radius:6px; height:18px; overflow:hidden; position:relative;">
+                    <div id="training-progress-fill" style="
+                        width:0%; height:100%;
+                        background: linear-gradient(90deg, #3b82f6, #10b981);
+                        border-radius:6px; transition: width 0.15s ease;
+                    "></div>
+                    <span id="training-progress-percent" style="
+                        position:absolute; top:0; left:0; width:100%; height:100%;
+                        display:flex; align-items:center; justify-content:center;
+                        font-size:0.75rem; font-weight:600; color:#fff;
+                        text-shadow:0 1px 2px rgba(0,0,0,0.5); pointer-events:none;
+                    ">0%</span>
+                </div>
+
+                <!-- Loss label (keeps old ID for compat) -->
+                <span id="training-progress-loss" style="
+                    white-space:nowrap; min-width:120px; text-align:right; color:#94a3b8;
+                ">Loss: —</span>
+
+                <!-- Stop button -->
+                <button id="tlab-bar-stop-btn" style="
+                    background: #ef4444; color: white; border: none;
+                    padding: 6px 16px; border-radius: 6px; cursor: pointer;
+                    font-weight: 600; font-size: 0.82rem; white-space: nowrap;
+                    margin-right: 50px; transition: background 0.15s;
+                ">⏹ Stop</button>
+            </div>
+        `;
+
+        document.body.appendChild(barEl);
+
+        // Wire buttons
+        document.getElementById('tlab-bar-train-btn').addEventListener('click', () => {
+            train_transformer();
+        });
+        document.getElementById('tlab-bar-stop-btn').addEventListener('click', () => {
+            window.isTraining = false;
+        });
+
+        // Hover effects — train button
+        const trainBtn = document.getElementById('tlab-bar-train-btn');
+        trainBtn.addEventListener('mouseover', () => { trainBtn.style.transform = 'scale(1.04)'; });
+        trainBtn.addEventListener('mouseout',  () => { trainBtn.style.transform = 'scale(1)'; });
+
+        // Hover effects — stop button
+        const stopBtn = document.getElementById('tlab-bar-stop-btn');
+        stopBtn.addEventListener('mouseover', () => { stopBtn.style.background = '#dc2626'; });
+        stopBtn.addEventListener('mouseout',  () => { stopBtn.style.background = '#ef4444'; });
+
+        return barEl;
+    }
+
+    /** Slide the bar into view */
+    function showBar() {
+        if (!barEl) createStickyBar();
+        barEl.style.display = 'flex';
+        void barEl.offsetHeight; // force reflow
+        barEl.style.opacity = '1';
+        barEl.style.transform = 'translateY(0)';
+    }
+
+    /** Slide the bar out of view */
+    function hideBar() {
+        if (!barEl) return;
+        barEl.style.opacity = '0';
+        barEl.style.transform = 'translateY(100%)';
+        setTimeout(() => {
+            if (barEl && barEl.style.opacity === '0') {
+                barEl.style.display = 'none';
+            }
+        }, 260);
+    }
+
+    /** Switch between idle / training sub-panels */
+    function syncBarMode() {
+        if (!barEl) return;
+
+        const idlePanel     = document.getElementById('tlab-bar-idle');
+        const trainingPanel = document.getElementById('tlab-bar-training');
+        const trainBtn      = document.getElementById('tlab-bar-train-btn');
+
+        if (window.isTraining) {
+            idlePanel.style.display     = 'none';
+            trainingPanel.style.display = 'flex';
+        } else {
+            idlePanel.style.display     = 'flex';
+            trainingPanel.style.display = 'none';
+
+            // Sync disabled state with the main train button
+            const mainBtn = document.querySelector('.train-btn');
+            if (mainBtn && trainBtn) {
+                trainBtn.disabled       = mainBtn.disabled;
+                trainBtn.style.opacity  = mainBtn.disabled ? '0.45' : '1';
+                trainBtn.style.cursor   = mainBtn.disabled ? 'not-allowed' : 'pointer';
+            }
+        }
+    }
+
+    /** Draw a tiny sparkline of the loss history */
+    function drawMiniLossChart() {
+        const canvas = document.getElementById('tlab-bar-mini-canvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+        const history = window.lossHistory;
+
+        ctx.clearRect(0, 0, w, h);
+        if (!history || history.length < 2) return;
+
+        const maxLoss = Math.max(...history);
+        const minLoss = Math.min(...history);
+        const range = maxLoss - minLoss || 1;
+
+        // Filled area
+        ctx.beginPath();
+        ctx.moveTo(0, h);
+        for (let i = 0; i < history.length; i++) {
+            const x = (i / (history.length - 1)) * w;
+            const y = h - ((history[i] - minLoss) / range) * (h - 4) - 2;
+            ctx.lineTo(x, y);
+        }
+        ctx.lineTo(w, h);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.15)';
+        ctx.fill();
+
+        // Line
+        ctx.beginPath();
+        for (let i = 0; i < history.length; i++) {
+            const x = (i / (history.length - 1)) * w;
+            const y = h - ((history[i] - minLoss) / range) * (h - 4) - 2;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+    }
+
+    // ---- Observe #transformer_site visibility ----
+
+    function initSiteObserver() {
+        const site = document.getElementById('transformer_site');
+        if (!site) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                siteIsVisible = entry.isIntersecting;
+                if (siteIsVisible) {
+                    showBar();
+                    syncBarMode();
+                } else {
+                    hideBar();
+                }
+            });
+        }, { threshold: 0 });
+
+        observer.observe(site);
+    }
+
+    // ---- Public API (replaces old functions) ----
+
+    window.showTrainingProgressBar = function () {
+        if (!barEl) createStickyBar();
+        syncBarMode();
+        if (siteIsVisible) showBar();
+    };
+
+    window.updateTrainingProgressBar = function (currentEpoch, totalEpochs, loss) {
+        if (!barEl) createStickyBar();
+
+        // Ensure training panel is showing
+        syncBarMode();
+
+        const fill    = document.getElementById('training-progress-fill');
+        const label   = document.getElementById('training-progress-label');
+        const percent = document.getElementById('training-progress-percent');
+        const lossLbl = document.getElementById('training-progress-loss');
+
+        if (!fill || !label || !percent || !lossLbl) return;
+
+        const pct = Math.min(100, (currentEpoch / totalEpochs) * 100);
+
+        fill.style.width    = pct.toFixed(1) + '%';
+        percent.textContent = pct.toFixed(1) + '%';
+        label.textContent   = `Epoch ${currentEpoch} / ${totalEpochs}`;
+        lossLbl.textContent = `Loss: ${loss.toFixed(6)}`;
+
+        drawMiniLossChart();
+    };
+
+    window.hideTrainingProgressBar = function () {
+        // Don't remove the bar — just switch back to idle mode
+        syncBarMode();
+    };
+
+    // Also patch updateTrainButtonState to keep the bar's button in sync
+    const _origUpdateTrainButtonState = window.updateTrainButtonState;
+    window.updateTrainButtonState = function () {
+        if (typeof _origUpdateTrainButtonState === 'function') {
+            _origUpdateTrainButtonState();
+        }
+        syncBarMode();
+    };
+
+    // ---- Initialize ----
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSiteObserver);
+    } else {
+        initSiteObserver();
+    }
+})();
 
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
