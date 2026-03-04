@@ -2887,12 +2887,15 @@ function ensureFFNLayerContainers(layerIndex) {
 	const container = document.getElementById('ffn-equations-container');
 	if (!container) return;
 
+	// Disable scroll anchoring on the outer container too
+	container.style.overflowAnchor = 'none';
+
 	let tabsWrapper = container.querySelector('.ffn-layer-tabs');
 
 	if (!tabsWrapper) {
 		tabsWrapper = document.createElement('div');
 		tabsWrapper.className = 'ffn-layer-tabs';
-		tabsWrapper.style.cssText = 'border:1px solid #8b5cf6; border-radius:8px; overflow:hidden; margin-top:20px;';
+		tabsWrapper.style.cssText = 'border:1px solid #8b5cf6; border-radius:8px; overflow:hidden; margin-top:20px; overflow-anchor:none;';
 
 		const tabList = document.createElement('div');
 		tabList.className = 'ffn-tab-list';
@@ -2927,18 +2930,15 @@ function ensureFFNLayerContainers(layerIndex) {
 	contentDiv.style.display = tabList.children.length === 1 ? 'block' : 'none';
 	contentDiv.style.padding = '15px';
 	contentDiv.style.background = '#f8f9ff';
-	// *** FIX: contain-intrinsic-size prevents layout shifts during temml re-renders ***
-	contentDiv.style.contentVisibility = 'visible';
-	contentDiv.style.containIntrinsicSize = 'auto 600px';
-	contentDiv.style.contain = 'layout style';
+	contentDiv.style.overflowAnchor = 'none';
 
 	contentDiv.innerHTML = `
 		<p style="color: #1e40af; margin: 0 0 12px 0; font-size: 1rem;">
 			Feed-Forward Network — Layer ${layerIndex + 1}
 		</p>
-		<div id="${prefix}-step-1" class="math_transformer"></div>
-		<div id="${prefix}-step-2" class="math_transformer"></div>
-		<div id="${prefix}-step-3" class="math_transformer"></div>
+		<div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
+		<div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
+		<div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
 	`;
 
 	tabsWrapper.appendChild(contentDiv);
@@ -3048,13 +3048,6 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	const step3 = document.getElementById(`${prefix}-step-3`);
 	if (!step1 || !step2 || !step3) return;
 
-	// Lock the ENTIRE ffn-equations-container height, not just the tab content
-	const outerContainer = document.getElementById('ffn-equations-container');
-	const lockedHeight = outerContainer ? outerContainer.offsetHeight : 0;
-	if (outerContainer && lockedHeight > 0) {
-		outerContainer.style.minHeight = lockedHeight + 'px';
-	}
-
 	step1.innerHTML = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
 	<p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1${sup}$ before FFN</p>
@@ -3081,15 +3074,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     </div>
     `;
 
-	// Render temml IMMEDIATELY on just these three elements
-	// so the DOM never contains unrendered $$ that would cause
-	// a height change when the global render_temml() runs later
 	_renderTemmlOnElements([step1, step2, step3]);
-
-	// Release the height lock after temml has rendered (content is now full height)
-	if (outerContainer) {
-		outerContainer.style.minHeight = '';
-	}
 }
 
 /**
