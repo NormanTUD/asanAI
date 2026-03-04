@@ -606,12 +606,21 @@ class AttentionEngine {
 			}
 			this[hashKey] = weightsHash;
 
-			requestAnimationFrame(() => {
-				// ── Lock scroll for the entire update ──
-				const scrollParent = this._findScrollParent(headDiv);
-				const savedScrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
-				const savedScrollLeft = scrollParent ? scrollParent.scrollLeft : window.scrollX;
+			// ── Lock scroll AND wrapper heights SYNCHRONOUSLY before rAF ──
+			const scrollParent = this._findScrollParent(headDiv);
+			const savedScrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
+			const savedScrollLeft = scrollParent ? scrollParent.scrollLeft : window.scrollX;
 
+			const headviewWrap = document.getElementById(
+				`apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}`
+			);
+			const matrixWrap = document.getElementById(
+				`apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}`
+			);
+			if (headviewWrap) headviewWrap.style.minHeight = headviewWrap.offsetHeight + 'px';
+			if (matrixWrap) matrixWrap.style.minHeight = matrixWrap.offsetHeight + 'px';
+
+			requestAnimationFrame(() => {
 				// ── SVG patches (already smooth — no change needed) ──
 				this._apvDrawSingleHead(layerIdx, headIdx, 'headview');
 				this._apvDrawSingleHead(layerIdx, headIdx, 'matrix');
@@ -655,6 +664,12 @@ class AttentionEngine {
 					window.scrollTo(savedScrollLeft, savedScrollTop);
 				}
 
+				// ── Release height locks after paint ──
+				requestAnimationFrame(() => {
+					if (headviewWrap) headviewWrap.style.minHeight = '';
+					if (matrixWrap) matrixWrap.style.minHeight = '';
+				});
+
 				// Single temml pass after all DOM updates are done
 				if (needsTemml) {
 					render_temml();
@@ -663,7 +678,7 @@ class AttentionEngine {
 
 			return;
 		}
-		
+
 		if (headDiv.dataset.rendered === 'true') return;
 
 		const registry = multiLayerAttentionRegistry.get(this.containerId);
@@ -708,7 +723,7 @@ class AttentionEngine {
 
 <div class="apv-per-head-section" style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
     <div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
-    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
+    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px; overflow-anchor:none; contain:layout style;">
     <svg id="${apvHeadCanvasId}" style="width:100%; min-height:180px;"></svg>
     </div>
 
@@ -719,7 +734,7 @@ class AttentionEngine {
 
 <div style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
     <div id="apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}"
-    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
+    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px; overflow-anchor:none; contain:layout style;">
     <svg id="${apvMatrixCanvasId}" style="width:100%; min-height:180px;"></svg>
     </div>
 </div>
@@ -765,7 +780,6 @@ class AttentionEngine {
 			);
 		});
 	}
-
 
 	_buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens) {
 		const n = displayTokens.length;
@@ -1059,7 +1073,12 @@ class AttentionEngine {
 				this._apvPatchHeadView(svg, layerIdx, headIdx, singleHeadData, displayTokens);
 			}
 		} else {
-			// Full render needed: use DocumentFragment to avoid blank-frame flicker
+			// Full render needed: lock wrapper height, use DocumentFragment, then release
+			const wrapper = svg.parentElement;
+			if (wrapper) {
+				wrapper.style.minHeight = wrapper.offsetHeight + 'px';
+			}
+
 			if (mode === 'matrix') {
 				this._apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, singleHeadData, displayTokens);
 				this._apvAttachMatrixTooltip(svg, layerIdx, [singleHeadData], displayTokens, headIdx);
@@ -1068,8 +1087,15 @@ class AttentionEngine {
 				this._apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, singleHeadData, displayTokens);
 			}
 			svg.dataset.apvTokenCount = displayTokens.length;
+
+			// Note: _apvDrawSingleHeadView and _apvDrawSingleHeadMatrix already lock/release
+			// the wrapper height internally, but when called from here the wrapper lock
+			// from above provides an additional safety net. The inner rAF release will
+			// clear it. If the wrapper was already locked by the draw function, this
+			// outer lock is harmless (minHeight is set to the same or larger value).
 		}
 	}
+
 
 	_apvPatchHeadView(svg, layerIdx, headIdx, headData, tokens) {
 		const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
@@ -2072,9 +2098,22 @@ line-height:1.5;
 			}
 		}
 
+		// ── Lock wrapper height to prevent collapse during replaceChildren ──
+		const wrapper = svg.parentElement;
+		if (wrapper) {
+			wrapper.style.minHeight = wrapper.offsetHeight + 'px';
+		}
+
 		// Atomic swap: replaceChildren removes all old children and appends the fragment in one
 		// synchronous operation — the browser won't paint a blank frame between removal and insertion
 		svg.replaceChildren(frag);
+
+		// ── Release height lock after paint ──
+		if (wrapper) {
+			requestAnimationFrame(() => {
+				wrapper.style.minHeight = '';
+			});
+		}
 	}
 
 	_apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, headData, tokens) {
@@ -2210,7 +2249,20 @@ line-height:1.5;
 			}
 		}
 
+		// ── Lock wrapper height to prevent collapse during replaceChildren ──
+		const wrapper = svg.parentElement;
+		if (wrapper) {
+			wrapper.style.minHeight = wrapper.offsetHeight + 'px';
+		}
+
 		svg.replaceChildren(frag);
+
+		// ── Release height lock after paint ──
+		if (wrapper) {
+			requestAnimationFrame(() => {
+				wrapper.style.minHeight = '';
+			});
+		}
 	}
 
 	_apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, headData, tokens) {
