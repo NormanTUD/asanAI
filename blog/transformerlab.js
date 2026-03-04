@@ -3061,11 +3061,24 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 		<br>
 	</div>
     </div>
-    $$ \\text{out}_{L1}${sup} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1${sup}) \\cdot W_1${sup} + b_1${sup}\\right) = \\underbrace{${matrixToPmatrix(out_L1)}}_{\\text{out}_{L1}${sup}} $$
+
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + ReLU</strong></p>
+
+    $$ \\text{out}_{L1}${sup} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1${sup}) \\cdot W_1${sup} + b_1${sup}\\right) $$
+
+    <div style="overflow-x:auto;">
+    $$ \\underbrace{${matrixToPmatrix(out_L1)}}_{\\text{out}_{L1}${sup}} = \\text{ReLU}\\!\\left( \\underbrace{${matrixToPmatrix(normed_h1)}}_{\\text{Norm}(h_1${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
+    </div>
     `;
 
 	step2.innerHTML = `
-    $$ \\text{out}_{L2}${sup} = \\text{out}_{L1}${sup} \\cdot W_2${sup} + b_2${sup} = \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{Out}_\\text{FFN}${sup}} $$
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 2: Compression</strong></p>
+
+    $$ \\text{out}_{L2}${sup} = \\text{out}_{L1}${sup} \\cdot W_2${sup} + b_2${sup} $$
+
+    <div style="overflow-x:auto;">
+    $$ \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrix(out_L1)}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
+    </div>
     `;
 
 	step3.innerHTML = `
