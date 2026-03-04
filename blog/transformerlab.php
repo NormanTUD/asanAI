@@ -403,6 +403,8 @@ $$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
 
 <div id="ffn-equations-container"></div>
 
+<div id="transformer-migration-plots-container"></div>
+
 <div class="optional md" data-headline="Why the Diagonal Gets Weaker: It's Just 1/n">
 In a causal attention matrix, token $i$ can attend to tokens $0, 1, \dots, i$, exactly $i + 1$ candidates. Since softmax forces each row to sum to 1:
 
@@ -477,12 +479,8 @@ $$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
 3. **Temperature ($T$)**: Modifies the SoftMax: $\sigma(z)_i = \frac{e^{z_i/T}}{\sum e^{z_j/T}}$.
 
 This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
-</div>
 
-<div id="transformer-migration-plots-container"></div>
-
-<div class="md">
-    We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_\text{vocab}$). This effectively asks: "How similar is our current thought vector to every known word vector?"
+We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_\text{vocab}$). This effectively asks: "How similar is our current thought vector to every known word vector?"
 </div>
 
 <div id="transformer-temperature-config" style="margin-top: 20px;"></div>
