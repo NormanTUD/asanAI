@@ -2876,8 +2876,7 @@ window.showFFNLayer = function(layerIdx) {
 		activeBtn.style.fontWeight = 'bold';
 	}
 
-	// Safe to call here — this is user-initiated, not in the training loop
-	render_temml();
+	// No global render_temml() needed — _writeFFNContent already rendered scoped
 };
 
 /**
@@ -3049,10 +3048,11 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	const step3 = document.getElementById(`${prefix}-step-3`);
 	if (!step1 || !step2 || !step3) return;
 
-	// *** FIX: Lock the parent's height before DOM writes to prevent scroll jumps ***
-	const contentDiv = document.getElementById(`${prefix}-content`);
-	if (contentDiv && contentDiv.offsetHeight > 0) {
-		contentDiv.style.minHeight = contentDiv.offsetHeight + 'px';
+	// Lock the ENTIRE ffn-equations-container height, not just the tab content
+	const outerContainer = document.getElementById('ffn-equations-container');
+	const lockedHeight = outerContainer ? outerContainer.offsetHeight : 0;
+	if (outerContainer && lockedHeight > 0) {
+		outerContainer.style.minHeight = lockedHeight + 'px';
 	}
 
 	step1.innerHTML = `
@@ -3081,11 +3081,39 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     </div>
     `;
 
-	// *** FIX: Release the height lock after a frame so temml can render,
-	// then the container settles at its natural height ***
-	requestAnimationFrame(() => {
-		if (contentDiv) {
-			contentDiv.style.minHeight = '';
+	// Render temml IMMEDIATELY on just these three elements
+	// so the DOM never contains unrendered $$ that would cause
+	// a height change when the global render_temml() runs later
+	_renderTemmlOnElements([step1, step2, step3]);
+
+	// Release the height lock after temml has rendered (content is now full height)
+	if (outerContainer) {
+		outerContainer.style.minHeight = '';
+	}
+}
+
+/**
+ * Renders temml math on specific DOM elements only.
+ * This prevents the "raw $$ → rendered math" height jump that causes
+ * scroll anchoring issues when the global render_temml() runs later.
+ */
+function _renderTemmlOnElements(elements) {
+	if (typeof renderMathInElement !== 'function') {
+		// Fallback: if renderMathInElement isn't available, use global
+		render_temml();
+		return;
+	}
+	elements.forEach(el => {
+		try {
+			renderMathInElement(el, {
+				delimiters: [
+					{left: '$$', right: '$$', display: true},
+					{left: '$', right: '$', display: false}
+				],
+				throwOnError: false
+			});
+		} catch(e) {
+			// Silent fallback
 		}
 	});
 }
