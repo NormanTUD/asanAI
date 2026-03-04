@@ -6760,6 +6760,7 @@ function ensureFFNLayerContainers(layerIndex) {
                     Transformer Lab — ready to train
                 </span>
                 <button id="tlab-bar-train-btn" style="
+			margin-right: 35px;
                     background: linear-gradient(135deg, #3b82f6, #6366f1);
                     color: white; border: none; padding: 8px 22px;
                     border-radius: 8px; cursor: pointer; font-weight: 700;
