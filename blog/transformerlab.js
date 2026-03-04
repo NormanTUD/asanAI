@@ -2846,83 +2846,6 @@ window.showFFNLayer = function(layerIdx) {
     showUnifiedLayer(layerIdx);
 };
 
-/**
- * Ensures the tabbed FFN container exists and has a tab for the given layer.
- * Creates the full tab structure on first call, adds tabs incrementally after.
- */
-function ensureFFNLayerContainers(layerIndex) {
-	const container = document.getElementById('ffn-equations-container');
-	if (!container) return;
-
-	container.style.overflowAnchor = 'none';
-
-	let tabsWrapper = container.querySelector('.ffn-layer-tabs');
-
-	if (!tabsWrapper) {
-		tabsWrapper = document.createElement('div');
-		tabsWrapper.className = 'ffn-layer-tabs';
-		tabsWrapper.style.cssText = 'border:1px solid #8b5cf6; border-radius:8px; overflow:hidden; margin-top:20px; overflow-anchor:none;';
-
-		const tabList = document.createElement('div');
-		tabList.className = 'ffn-tab-list';
-		tabList.style.cssText = 'background:#ede9fe; display:flex; border-bottom:2px solid #8b5cf6; flex-wrap:wrap;';
-
-		tabsWrapper.appendChild(tabList);
-		container.appendChild(tabsWrapper);
-	}
-
-	const tabList = tabsWrapper.querySelector('.ffn-tab-list');
-	const prefix = `ffn-layer-${layerIndex}`;
-
-	if (document.getElementById(`${prefix}-tab-btn`)) {
-		return;
-	}
-
-	const btn = document.createElement('button');
-	btn.id = `${prefix}-tab-btn`;
-	btn.className = 'ffn-layer-tab-btn';
-	btn.textContent = `Layer ${layerIndex + 1}`;
-	btn.style.cssText = `padding:10px 18px; border:none; border-right:1px solid #c4b5fd; cursor:pointer;
-	background:${tabList.children.length === 0 ? '#fff' : '#ddd6fe'}; 
-	font-weight:${tabList.children.length === 0 ? 'bold' : 'normal'};`;
-	btn.onclick = () => showFFNLayer(layerIndex);
-	tabList.appendChild(btn);
-
-	const contentDiv = document.createElement('div');
-	contentDiv.id = `${prefix}-content`;
-	contentDiv.className = 'ffn-layer-tab-content';
-	contentDiv.dataset.layerIdx = layerIndex;
-	contentDiv.dataset.rendered = 'false';
-	contentDiv.style.display = tabList.children.length === 1 ? 'block' : 'none';
-	contentDiv.style.padding = '15px';
-	contentDiv.style.background = '#f8f9ff';
-	contentDiv.style.overflowAnchor = 'none';
-
-	contentDiv.innerHTML = `
-    <p style="color: #1e40af; margin: 0 0 12px 0; font-size: 1rem;">
-	Feed-Forward Network — Layer ${layerIndex + 1}
-    </p>
-
-    <!-- 1. Pre-LN: Normalize h0 before attention -->
-    <div id="${prefix}-layernorm-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
-
-    <!-- 2. Concatenation of head outputs -->
-    <div id="${prefix}-concat-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;"></div>
-
-    <!-- 3. Output projection + Residual connection -->
-    <div id="${prefix}-h1-final-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #8b5cf6; border-radius: 12px; background: #f5f3ff; overflow-x: auto;"></div>
-
-    <!-- 4-6. FFN steps -->
-    <div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
-    <div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
-    <div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
-`;
-
-
-
-	tabsWrapper.appendChild(contentDiv);
-}
-
 function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenStrings) {
 	const prefix = `unified-layer-${layerIndex}`;
 	const container = document.getElementById(`${prefix}-concat-viz`);
@@ -3644,156 +3567,7 @@ function render_migration_vector_field(id, layerNum, d_model, tokenStrings) {
  * becomes visible, it renders with the most recent calculation.
  */
 
-function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
-	// The global container is now only used for the trajectory (all-layers) plot
-	const globalContainer = document.getElementById('transformer-migration-plots-container');
-	if (!globalContainer) return;
 
-	if (window._activeMigrationIds) {
-		window._activeMigrationIds.add(id);
-	}
-
-	const displayTokens = (tokenStrings && tokenStrings.length === tokens.length)
-		? tokenStrings
-		: tokens.map((t, i) => {
-			if (typeof t === 'string') return t;
-			return tlab_get_top_word_only(t);
-		});
-
-	const freeze = (data) => JSON.parse(JSON.stringify(data));
-
-	// Trajectory collector logic (unchanged)
-	if (!window.tlab_trajectory_collector) {
-		window.tlab_trajectory_collector = {
-			steps: {},
-			tokens: [...tokens],
-			displayTokens: [...displayTokens],
-			d_model: d_model
-		};
-	}
-
-	if (!window.tlab_trajectory_collector.steps["00_raw"]) {
-		const rawEmbs = displayTokens.map(t => {
-			if (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[t]) {
-				return window.persistentEmbeddingSpace[t];
-			}
-			return new Array(d_model).fill(0);
-		});
-
-		window.tlab_trajectory_collector.steps["00_raw"] = {
-			name: "Original Embedding",
-			data: freeze(rawEmbs)
-		};
-		window.tlab_trajectory_collector.steps["01_pe"] = {
-			name: "Embedding + Position",
-			data: freeze(start_h)
-		};
-	}
-
-	const layerKey = "02_layer_" + String(layerNum).padStart(2, '0');
-	window.tlab_trajectory_collector.steps[layerKey] = {
-		name: `Layer ${layerNum} Output`,
-		data: freeze(end_h)
-	};
-
-	// ── Determine where to place the migration plot ──
-	// Try the unified layer tab first (layerNum is 1-based, layerIndex is 0-based)
-	const layerIndex = layerNum - 1;
-	const unifiedMigrationContainer = document.getElementById(`unified-layer-${layerIndex}-migration-container`);
-
-	let parentContainer;
-	if (unifiedMigrationContainer) {
-		parentContainer = unifiedMigrationContainer;
-	} else {
-		// Fallback: use the global container (shouldn't happen in normal flow)
-		parentContainer = globalContainer;
-	}
-
-	// Ensure DOM element exists
-	let plotDiv = document.getElementById(id);
-	if (!plotDiv) {
-		if (!plotDiv) {
-			const wrapperDiv = document.createElement('div');
-			wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; margin-top: 10px; background: #fff;";
-			wrapperDiv.setAttribute('data-migration-wrapper', id);
-
-			// ── Vector Field Toggle Button ──
-			// ── Vector Field Toggle Button ──
-			const toggleBtn = document.createElement('button');
-			toggleBtn.className = 'migration-vf-toggle';
-			toggleBtn.dataset.mode = 'off';
-			toggleBtn.dataset.migrationId = id;
-			toggleBtn.textContent = '🧭 Show Vector Field';
-			toggleBtn.style.cssText = `
-	margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
-	border: 1px solid #3b82f6; background: #fff; color: #3b82f6;
-	cursor: pointer; font-weight: 600; font-size: 0.82rem;
-	transition: all 0.15s;
-    `;
-			// Hide for d_model >= 4 (ECharts parallel coords, no overlay support)
-			if (d_model >= 4) {
-				toggleBtn.style.display = 'none';
-			}
-			toggleBtn.addEventListener('mouseover', () => {
-				toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#eff6ff' : '#fee2e2';
-			});
-			toggleBtn.addEventListener('mouseout', () => {
-				toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#fff' : '#dbeafe';
-			});
-			toggleBtn.addEventListener('click', () => {
-				const currentMode = toggleBtn.dataset.mode;
-				const migId = toggleBtn.dataset.migrationId;
-				const regData = transformerLabVisMigrationDataRegistry.get(migId);
-				if (!regData) return;
-
-				if (currentMode === 'off') {
-					toggleBtn.dataset.mode = 'on';
-					toggleBtn.textContent = '🧭 Hide Vector Field';
-					toggleBtn.style.background = '#dbeafe';
-					add_vector_field_overlay(migId, regData.layerNum, regData.d_model);
-				} else {
-					toggleBtn.dataset.mode = 'off';
-					toggleBtn.textContent = '🧭 Show Vector Field';
-					toggleBtn.style.background = '#fff';
-					remove_vector_field_overlay(migId);
-				}
-			});
-
-			wrapperDiv.appendChild(toggleBtn);
-
-			plotDiv = document.createElement('div');
-			plotDiv.id = id;
-			plotDiv.style.cssText = "height: 500px; width: 100%; position: relative;";
-
-			wrapperDiv.appendChild(plotDiv);
-			parentContainer.appendChild(wrapperDiv);
-		}
-	} else {
-		// If the plot div exists but is in the wrong container, move it
-		const currentWrapper = plotDiv.closest('[data-migration-wrapper]') || plotDiv.parentNode;
-		if (currentWrapper && currentWrapper.parentNode !== parentContainer) {
-			parentContainer.appendChild(currentWrapper);
-		}
-	}
-
-	const registryData = {
-		tokens: [...tokens],
-		start_h: Array.isArray(start_h) ? start_h.slice() : start_h,
-		end_h: Array.isArray(end_h) ? end_h.slice() : end_h,
-		layerNum,
-		d_model,
-		h_after,
-		tokenStrings: tokenStrings || null,
-	};
-
-	registerLazyRenderable(
-		id,
-		transformerLabVisMigrationDataRegistry,
-		migrationObserver,
-		registryData,
-		() => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings)
-	);
-}
 
 /**
  * Helper: Check if an element is currently visible in the viewport.
@@ -4070,9 +3844,228 @@ function _vf_remove_loading_overlay(overlay) {
 	overlay.remove();
 }
 
-async function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads) {
+function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
+	const globalContainer = document.getElementById('transformer-migration-plots-container');
+	if (!globalContainer) return;
+
+	if (window._activeMigrationIds) {
+		window._activeMigrationIds.add(id);
+	}
+
+	const displayTokens = (tokenStrings && tokenStrings.length === tokens.length)
+		? tokenStrings
+		: tokens.map((t, i) => {
+			if (typeof t === 'string') return t;
+			return tlab_get_top_word_only(t);
+		});
+
+	const freeze = (data) => JSON.parse(JSON.stringify(data));
+
+	if (!window.tlab_trajectory_collector) {
+		window.tlab_trajectory_collector = {
+			steps: {},
+			tokens: [...tokens],
+			displayTokens: [...displayTokens],
+			d_model: d_model
+		};
+	}
+
+	if (!window.tlab_trajectory_collector.steps["00_raw"]) {
+		const rawEmbs = displayTokens.map(t => {
+			if (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[t]) {
+				return window.persistentEmbeddingSpace[t];
+			}
+			return new Array(d_model).fill(0);
+		});
+
+		window.tlab_trajectory_collector.steps["00_raw"] = {
+			name: "Original Embedding",
+			data: freeze(rawEmbs)
+		};
+		window.tlab_trajectory_collector.steps["01_pe"] = {
+			name: "Embedding + Position",
+			data: freeze(start_h)
+		};
+	}
+
+	const layerKey = "02_layer_" + String(layerNum).padStart(2, '0');
+	window.tlab_trajectory_collector.steps[layerKey] = {
+		name: `Layer ${layerNum} Output`,
+		data: freeze(end_h)
+	};
+
+	const layerIndex = layerNum - 1;
+	const unifiedMigrationContainer = document.getElementById(`unified-layer-${layerIndex}-migration-container`);
+
+	let parentContainer;
+	if (unifiedMigrationContainer) {
+		parentContainer = unifiedMigrationContainer;
+	} else {
+		parentContainer = globalContainer;
+	}
+
+	// Preserve existing VF toggle state from the registry before overwriting
+	const existingRegData = transformerLabVisMigrationDataRegistry.get(id);
+	const existingVfEnabled = existingRegData ? !!existingRegData._vfEnabled : false;
+
+	let plotDiv = document.getElementById(id);
+	if (!plotDiv) {
+		const wrapperDiv = document.createElement('div');
+		wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; margin-top: 10px; background: #fff;";
+		wrapperDiv.setAttribute('data-migration-wrapper', id);
+
+		const toggleBtn = document.createElement('button');
+		toggleBtn.className = 'migration-vf-toggle';
+		toggleBtn.dataset.mode = existingVfEnabled ? 'on' : 'off';
+		toggleBtn.dataset.migrationId = id;
+		toggleBtn.textContent = existingVfEnabled ? '🧭 Hide Vector Field' : '🧭 Show Vector Field';
+		toggleBtn.style.cssText = `
+			margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
+			border: 1px solid #3b82f6; background: ${existingVfEnabled ? '#dbeafe' : '#fff'}; color: #3b82f6;
+			cursor: pointer; font-weight: 600; font-size: 0.82rem;
+			transition: all 0.15s;
+		`;
+		if (d_model >= 4) {
+			toggleBtn.style.display = 'none';
+		}
+		toggleBtn.addEventListener('mouseover', () => {
+			toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#eff6ff' : '#fee2e2';
+		});
+		toggleBtn.addEventListener('mouseout', () => {
+			toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#fff' : '#dbeafe';
+		});
+		toggleBtn.addEventListener('click', () => {
+			const currentMode = toggleBtn.dataset.mode;
+			const migId = toggleBtn.dataset.migrationId;
+			const regData = transformerLabVisMigrationDataRegistry.get(migId);
+			if (!regData) return;
+
+			if (currentMode === 'off') {
+				toggleBtn.dataset.mode = 'on';
+				toggleBtn.textContent = '🧭 Hide Vector Field';
+				toggleBtn.style.background = '#dbeafe';
+				regData._vfEnabled = true;
+				render_migration_logic(migId, regData.tokens, regData.start_h, regData.end_h, regData.layerNum, regData.d_model, regData.h_after, regData.tokenStrings);
+			} else {
+				toggleBtn.dataset.mode = 'off';
+				toggleBtn.textContent = '🧭 Show Vector Field';
+				toggleBtn.style.background = '#fff';
+				regData._vfEnabled = false;
+				render_migration_logic(migId, regData.tokens, regData.start_h, regData.end_h, regData.layerNum, regData.d_model, regData.h_after, regData.tokenStrings);
+			}
+		});
+
+		wrapperDiv.appendChild(toggleBtn);
+
+		plotDiv = document.createElement('div');
+		plotDiv.id = id;
+		plotDiv.style.cssText = "height: 500px; width: 100%; position: relative;";
+
+		wrapperDiv.appendChild(plotDiv);
+		parentContainer.appendChild(wrapperDiv);
+	} else {
+		const currentWrapper = plotDiv.closest('[data-migration-wrapper]') || plotDiv.parentNode;
+		if (currentWrapper && currentWrapper.parentNode !== parentContainer) {
+			parentContainer.appendChild(currentWrapper);
+		}
+	}
+
+	const registryData = {
+		tokens: [...tokens],
+		start_h: Array.isArray(start_h) ? start_h.slice() : start_h,
+		end_h: Array.isArray(end_h) ? end_h.slice() : end_h,
+		layerNum,
+		d_model,
+		h_after,
+		tokenStrings: tokenStrings || null,
+		_vfEnabled: existingVfEnabled,
+	};
+
+	registerLazyRenderable(
+		id,
+		transformerLabVisMigrationDataRegistry,
+		migrationObserver,
+		registryData,
+		() => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings)
+	);
+}
+
+function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
+	const plotDiv = document.getElementById(id);
+	if (!plotDiv) return;
+
+	plotDiv.style.width = '100%';
+	plotDiv.style.minHeight = '500px';
+
+	const nextWordIndex = tokens.length - 1;
+	const migrationContainers = document.querySelectorAll('[id^="migration-layer-"]');
+	const totalLayersCount = migrationContainers.length;
+	const isLastInDom = totalLayersCount > 0 && migrationContainers[totalLayersCount - 1].id === id;
+
+	if (d_model <= 3) {
+		const is3D = d_model === 3;
+
+		const baseTraces = [];
+		tokens.forEach((token, i) => {
+			baseTraces.push(...buildMigrationTokenTrace(token, i, start_h, end_h, d_model, is3D, tokens));
+		});
+		baseTraces.push(buildMigrationColorbarTrace(is3D, tokens));
+
+		// Check VF state from REGISTRY (authoritative source of truth)
+		const regData = transformerLabVisMigrationDataRegistry.get(id);
+		const vfEnabled = regData && regData._vfEnabled && d_model < 4;
+
+		// Also sync the DOM button to match (in case it got out of sync)
+		const wrapper = plotDiv.closest('[data-migration-wrapper]');
+		const toggleBtn = wrapper ? wrapper.querySelector('.migration-vf-toggle') : null;
+		if (toggleBtn) {
+			if (vfEnabled) {
+				toggleBtn.dataset.mode = 'on';
+				toggleBtn.textContent = '🧭 Hide Vector Field';
+				toggleBtn.style.background = '#dbeafe';
+			} else {
+				toggleBtn.dataset.mode = 'off';
+				toggleBtn.textContent = '🧭 Show Vector Field';
+				toggleBtn.style.background = '#fff';
+			}
+		}
+
+		let vfTraces = [];
+		if (vfEnabled) {
+			const { n_heads } = getTransformerConfig();
+			if (d_model === 2) {
+				const computed = _compute_vector_field_points_2d(id, layerNum, d_model, n_heads);
+				if (computed) {
+					vfTraces = _build_vector_field_traces_2d(
+						computed.points, computed.maxMag, computed.maxArrowLen,
+						computed.seqLen, computed.substitutePos
+					);
+				}
+			} else if (d_model === 3) {
+				const computed = _compute_vector_field_points_3d(id, layerNum, d_model, n_heads);
+				if (computed) {
+					vfTraces = _build_vector_field_traces_3d(
+						computed.points, computed.maxMag, computed.maxArrowLen,
+						computed.seqLen, computed.substitutePos
+					);
+				}
+			}
+		}
+
+		const allTraces = [...baseTraces, ...vfTraces];
+		const layout = buildMigrationLayout(layerNum, is3D);
+		Plotly.react(id, allTraces, layout, { responsive: true });
+	} else {
+		tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
+	}
+
+	tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model);
+	tlab_render_weight_grid(id, layerNum - 1);
+}
+
+function _compute_vector_field_points_2d(migrationId, layerNum, d_model, n_heads) {
 	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
-	if (!regData) return;
+	if (!regData) return null;
 
 	const realContext = regData.start_h;
 	const seqLen = realContext.length;
@@ -4101,12 +4094,8 @@ async function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_hea
 	const layerWeights = window.currentWeights[layerNum - 1];
 	const totalPoints = (gridRes + 1) * (gridRes + 1);
 
-	const wrapper = document.getElementById(migrationId)?.closest('[data-migration-wrapper]');
-	const loadingOverlay = _vf_show_loading_overlay(wrapper, totalPoints);
-
 	const points = [];
 	let maxMag = 0;
-	let computed = 0;
 
 	for (let i = 0; i <= gridRes; i++) {
 		for (let j = 0; j <= gridRes; j++) {
@@ -4129,14 +4118,6 @@ async function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_hea
 
 			points.push({ x, y, dx, dy, mag });
 			if (mag > maxMag) maxMag = mag;
-
-			computed++;
-			_vf_update_loading_overlay(loadingOverlay, computed, totalPoints);
-
-			// Yield to browser every 10 points so the progress bar repaints
-			if (computed % 10 === 0) {
-				await new Promise(r => setTimeout(r, 0));
-			}
 		}
 	}
 
@@ -4146,6 +4127,10 @@ async function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_hea
 	const cellH = (yMax - yMin) / gridRes;
 	const maxArrowLen = Math.min(cellW, cellH) * 1.2;
 
+	return { points, maxMag, maxArrowLen, seqLen, substitutePos };
+}
+
+function _build_vector_field_traces_2d(points, maxMag, maxArrowLen, seqLen, substitutePos) {
 	const newTraces = [];
 
 	for (let k = 0; k < points.length; k++) {
@@ -4221,13 +4206,105 @@ async function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_hea
 		_isVectorField: true
 	});
 
+	return newTraces;
+}
+
+function _add_vector_field_overlay_2d_sync(migrationId, layerNum, d_model, n_heads) {
+	const computed = _compute_vector_field_points_2d(migrationId, layerNum, d_model, n_heads);
+	if (!computed) return;
+
+	const newTraces = _build_vector_field_traces_2d(
+		computed.points, computed.maxMag, computed.maxArrowLen,
+		computed.seqLen, computed.substitutePos
+	);
+
+	Plotly.addTraces(migrationId, newTraces);
+}
+
+async function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads) {
+	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
+	if (!regData) return;
+
+	const realContext = regData.start_h;
+	const seqLen = realContext.length;
+	const substitutePos = seqLen - 1;
+
+	const allVecs = Object.values(window.persistentEmbeddingSpace);
+	let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
+	allVecs.forEach(v => {
+		if (v[0] < xMin) xMin = v[0];
+		if (v[0] > xMax) xMax = v[0];
+		if (v.length > 1 && v[1] < yMin) yMin = v[1];
+		if (v.length > 1 && v[1] > yMax) yMax = v[1];
+	});
+	realContext.forEach(v => {
+		if (v[0] < xMin) xMin = v[0];
+		if (v[0] > xMax) xMax = v[0];
+		if (v.length > 1 && v[1] < yMin) yMin = v[1];
+		if (v.length > 1 && v[1] > yMax) yMax = v[1];
+	});
+	if (xMin === xMax) { xMin -= 1; xMax += 1; }
+	if (yMin === yMax) { yMin -= 1; yMax += 1; }
+	const pad = 2;
+	xMin -= pad; xMax += pad; yMin -= pad; yMax += pad;
+
+	const gridRes = 12;
+	const layerWeights = window.currentWeights[layerNum - 1];
+	const totalPoints = (gridRes + 1) * (gridRes + 1);
+
+	const wrapper = document.getElementById(migrationId)?.closest('[data-migration-wrapper]');
+	const loadingOverlay = _vf_show_loading_overlay(wrapper, totalPoints);
+
+	const points = [];
+	let maxMag = 0;
+	let computed = 0;
+
+	for (let i = 0; i <= gridRes; i++) {
+		for (let j = 0; j <= gridRes; j++) {
+			const x = xMin + (xMax - xMin) * (i / gridRes);
+			const y = yMin + (yMax - yMin) * (j / gridRes);
+
+			const modifiedContext = realContext.map((row, idx) => {
+				if (idx === substitutePos) {
+					return [x, y];
+				}
+				return [...row];
+			});
+
+			const result = forwardOneLayer(modifiedContext, layerWeights, d_model, n_heads, null, null, null);
+			const h_out = result.h_out[substitutePos];
+
+			const dx = h_out[0] - x;
+			const dy = h_out[1] - y;
+			const mag = Math.sqrt(dx * dx + dy * dy);
+
+			points.push({ x, y, dx, dy, mag });
+			if (mag > maxMag) maxMag = mag;
+
+			computed++;
+			_vf_update_loading_overlay(loadingOverlay, computed, totalPoints);
+
+			if (computed % 10 === 0) {
+				await new Promise(r => setTimeout(r, 0));
+			}
+		}
+	}
+
+	if (maxMag < 1e-8) maxMag = 1e-8;
+
+	const cellW = (xMax - xMin) / gridRes;
+	const cellH = (yMax - yMin) / gridRes;
+	const maxArrowLen = Math.min(cellW, cellH) * 1.2;
+
+	const newTraces = _build_vector_field_traces_2d(points, maxMag, maxArrowLen, seqLen, substitutePos);
+
 	_vf_remove_loading_overlay(loadingOverlay);
 	Plotly.addTraces(migrationId, newTraces);
 }
 
-async function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads) {
+function _compute_vector_field_points_3d(migrationId, layerNum, d_model, n_heads) {
 	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
-	if (!regData) return;
+	if (!regData) return null;
 
 	const realContext = regData.start_h;
 	const seqLen = realContext.length;
@@ -4274,14 +4351,9 @@ async function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_hea
 
 	const gridRes = 6;
 	const layerWeights = window.currentWeights[layerNum - 1];
-	const totalPoints = (gridRes + 1) * (gridRes + 1) * (gridRes + 1);
-
-	const wrapper = document.getElementById(migrationId)?.closest('[data-migration-wrapper]');
-	const loadingOverlay = _vf_show_loading_overlay(wrapper, totalPoints);
 
 	const points = [];
 	let maxMag = 0;
-	let computed = 0;
 
 	for (let i = 0; i <= gridRes; i++) {
 		for (let j = 0; j <= gridRes; j++) {
@@ -4307,14 +4379,6 @@ async function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_hea
 
 				points.push({ x, y, z, dx, dy, dz, mag });
 				if (mag > maxMag) maxMag = mag;
-
-				computed++;
-				_vf_update_loading_overlay(loadingOverlay, computed, totalPoints);
-
-				// Yield to browser every 10 points so the progress bar repaints
-				if (computed % 10 === 0) {
-					await new Promise(r => setTimeout(r, 0));
-				}
 			}
 		}
 	}
@@ -4326,6 +4390,10 @@ async function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_hea
 	const cellZ = (zMax - zMin) / gridRes;
 	const maxArrowLen = Math.min(cellX, cellY, cellZ) * 1.1;
 
+	return { points, maxMag, maxArrowLen, seqLen, substitutePos };
+}
+
+function _build_vector_field_traces_3d(points, maxMag, maxArrowLen, seqLen, substitutePos) {
 	const newTraces = [];
 
 	for (let p = 0; p < points.length; p++) {
@@ -4434,86 +4502,188 @@ async function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_hea
 		_isVectorField: true
 	});
 
-	_vf_remove_loading_overlay(loadingOverlay);
+	return newTraces;
+}
+
+function _add_vector_field_overlay_3d_sync(migrationId, layerNum, d_model, n_heads) {
+	const computed = _compute_vector_field_points_3d(migrationId, layerNum, d_model, n_heads);
+	if (!computed) return;
+
+	const newTraces = _build_vector_field_traces_3d(
+		computed.points, computed.maxMag, computed.maxArrowLen,
+		computed.seqLen, computed.substitutePos
+	);
+
 	Plotly.addTraces(migrationId, newTraces);
 }
 
 function remove_vector_field_overlay(migrationId) {
-	const plotDiv = document.getElementById(migrationId);
-	if (!plotDiv) return;
+	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
+	if (!regData) return;
 
-	// Get current traces and find which ones are vector field traces
-	const currentData = plotDiv.data;
-	if (!currentData) return;
-
-	const indicesToRemove = [];
-	currentData.forEach((trace, idx) => {
-		if (trace._isVectorField) {
-			indicesToRemove.push(idx);
-		}
-	});
-
-	if (indicesToRemove.length > 0) {
-		// Remove from highest index to lowest so indices don't shift
-		Plotly.deleteTraces(migrationId, indicesToRemove.reverse());
-	}
+	// Just re-render the migration plot — since the toggle is already 'off',
+	// render_migration_logic will NOT include VF traces
+	render_migration_logic(
+		migrationId,
+		regData.tokens,
+		regData.start_h,
+		regData.end_h,
+		regData.layerNum,
+		regData.d_model,
+		regData.h_after,
+		regData.tokenStrings
+	);
 }
 
 function add_vector_field_overlay(migrationId, layerNum, d_model) {
-	remove_vector_field_overlay(migrationId);
-
 	const plotDiv = document.getElementById(migrationId);
 	if (!plotDiv || !window.currentWeights) return;
-
-	// No vector field overlay for high-dimensional (ECharts) plots
 	if (d_model >= 4) return;
 
-	const { n_heads } = getTransformerConfig();
+	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
+	if (!regData) return;
 
+	const { n_heads } = getTransformerConfig();
+	const is3D = d_model === 3;
+
+	// Build base traces
+	const baseTraces = [];
+	regData.tokens.forEach((token, i) => {
+		baseTraces.push(...buildMigrationTokenTrace(
+			token, i, regData.start_h, regData.end_h, d_model, is3D, regData.tokens
+		));
+	});
+	baseTraces.push(buildMigrationColorbarTrace(is3D, regData.tokens));
+
+	// Build vector field traces
+	let vfTraces = [];
 	if (d_model === 2) {
-		add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads);
+		const computed = _compute_vector_field_points_2d(migrationId, layerNum, d_model, n_heads);
+		if (computed) {
+			vfTraces = _build_vector_field_traces_2d(
+				computed.points, computed.maxMag, computed.maxArrowLen,
+				computed.seqLen, computed.substitutePos
+			);
+		}
 	} else if (d_model === 3) {
-		add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads);
+		const computed = _compute_vector_field_points_3d(migrationId, layerNum, d_model, n_heads);
+		if (computed) {
+			vfTraces = _build_vector_field_traces_3d(
+				computed.points, computed.maxMag, computed.maxArrowLen,
+				computed.seqLen, computed.substitutePos
+			);
+		}
 	}
+
+	const allTraces = [...baseTraces, ...vfTraces];
+	const layout = buildMigrationLayout(layerNum, is3D);
+	Plotly.react(migrationId, allTraces, layout, { responsive: true });
 }
 
-function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
-	const plotDiv = document.getElementById(id);
-	if (!plotDiv) return;
+async function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads) {
+	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
+	if (!regData) return;
 
-	// Ensure consistent container size
-	plotDiv.style.width = '100%';
-	plotDiv.style.minHeight = '500px'; // Fixed height to prevent layout shifts
+	const realContext = regData.start_h;
+	const seqLen = realContext.length;
+	const substitutePos = seqLen - 1;
 
-	const nextWordIndex = tokens.length - 1;
-	const migrationContainers = document.querySelectorAll('[id^="migration-layer-"]');
-	const totalLayersCount = migrationContainers.length;
-	const isLastInDom = totalLayersCount > 0 && migrationContainers[totalLayersCount - 1].id === id;
+	const allVecs = Object.values(window.persistentEmbeddingSpace);
+	let xMin = Infinity, xMax = -Infinity;
+	let yMin = Infinity, yMax = -Infinity;
+	let zMin = Infinity, zMax = -Infinity;
 
-	if (d_model <= 3) {
-		// Use Plotly.react for smoother updates
-		tlab_render_plotly_react(id, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
-	} else {
-		tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
-	}
+	allVecs.forEach(v => {
+		if (v[0] < xMin) xMin = v[0];
+		if (v[0] > xMax) xMax = v[0];
+		if (v.length > 1) {
+			if (v[1] < yMin) yMin = v[1];
+			if (v[1] > yMax) yMax = v[1];
+		}
+		if (v.length > 2) {
+			if (v[2] < zMin) zMin = v[2];
+			if (v[2] > zMax) zMax = v[2];
+		}
+	});
+	realContext.forEach(v => {
+		if (v[0] < xMin) xMin = v[0];
+		if (v[0] > xMax) xMax = v[0];
+		if (v.length > 1) {
+			if (v[1] < yMin) yMin = v[1];
+			if (v[1] > yMax) yMax = v[1];
+		}
+		if (v.length > 2) {
+			if (v[2] < zMin) zMin = v[2];
+			if (v[2] > zMax) zMax = v[2];
+		}
+	});
 
-	tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model);
-	tlab_render_weight_grid(id, layerNum - 1);
+	if (xMin === xMax) { xMin -= 1; xMax += 1; }
+	if (yMin === yMax) { yMin -= 1; yMax += 1; }
+	if (zMin === zMax) { zMin -= 1; zMax += 1; }
 
-	// ── Re-apply vector field overlay if toggle is currently on ──
-	const wrapper = plotDiv.closest('[data-migration-wrapper]');
-	if (wrapper) {
-		const toggleBtn = wrapper.querySelector('.migration-vf-toggle');
-		if (toggleBtn && toggleBtn.dataset.mode === 'on') {
-			const regData = transformerLabVisMigrationDataRegistry.get(id);
-			if (regData) {
-				// Small delay to let Plotly finish the base plot render
-				requestAnimationFrame(() => {
-					add_vector_field_overlay(id, regData.layerNum, regData.d_model);
+	const pad = 2;
+	xMin -= pad; xMax += pad;
+	yMin -= pad; yMax += pad;
+	zMin -= pad; zMax += pad;
+
+	const gridRes = 6;
+	const layerWeights = window.currentWeights[layerNum - 1];
+	const totalPoints = (gridRes + 1) * (gridRes + 1) * (gridRes + 1);
+
+	const wrapper = document.getElementById(migrationId)?.closest('[data-migration-wrapper]');
+	const loadingOverlay = _vf_show_loading_overlay(wrapper, totalPoints);
+
+	const points = [];
+	let maxMag = 0;
+	let computed = 0;
+
+	for (let i = 0; i <= gridRes; i++) {
+		for (let j = 0; j <= gridRes; j++) {
+			for (let k = 0; k <= gridRes; k++) {
+				const x = xMin + (xMax - xMin) * (i / gridRes);
+				const y = yMin + (yMax - yMin) * (j / gridRes);
+				const z = zMin + (zMax - zMin) * (k / gridRes);
+
+				const modifiedContext = realContext.map((row, idx) => {
+					if (idx === substitutePos) {
+						return [x, y, z];
+					}
+					return [...row];
 				});
+
+				const result = forwardOneLayer(modifiedContext, layerWeights, d_model, n_heads, null, null, null);
+				const h_out = result.h_out[substitutePos];
+
+				const dx = h_out[0] - x;
+				const dy = h_out[1] - y;
+				const dz = h_out[2] - z;
+				const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+				points.push({ x, y, z, dx, dy, dz, mag });
+				if (mag > maxMag) maxMag = mag;
+
+				computed++;
+				_vf_update_loading_overlay(loadingOverlay, computed, totalPoints);
+
+				if (computed % 10 === 0) {
+					await new Promise(r => setTimeout(r, 0));
+				}
 			}
 		}
 	}
+
+	if (maxMag < 1e-8) maxMag = 1e-8;
+
+	const cellX = (xMax - xMin) / gridRes;
+	const cellY = (yMax - yMin) / gridRes;
+	const cellZ = (zMax - zMin) / gridRes;
+	const maxArrowLen = Math.min(cellX, cellY, cellZ) * 1.1;
+
+	const newTraces = _build_vector_field_traces_3d(points, maxMag, maxArrowLen, seqLen, substitutePos);
+
+	_vf_remove_loading_overlay(loadingOverlay);
+	Plotly.addTraces(migrationId, newTraces);
 }
 
 /**
