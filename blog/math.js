@@ -91,20 +91,6 @@ function initHadamard() {
 	runHadamardExperiment();
 }
 
-function runHadamardExperiment() {
-	const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
-
-	const a = [getVal('h-a1'), getVal('h-a2'), getVal('h-a3')];
-	const b = [getVal('h-b1'), getVal('h-b2'), getVal('h-b3')];
-	const res = a.map((val, i) => (val * b[i]).toFixed(2));
-
-	const display = document.getElementById('hadamard-display');
-	display.innerHTML = `$$ \\begin{pmatrix} ${a[0]} \\cdot ${b[0]} \\\\ ${a[1]} \\cdot ${b[1]} \\\\ ${a[2]} \\cdot ${b[2]} \\end{pmatrix} = \\begin{pmatrix} ${res[0]} \\\\ ${res[1]} \\\\ ${res[2]} \\end{pmatrix} $$`;
-
-	refreshMath();
-	render_temml();
-}
-
 // ── Composition Plot ────────────────────────────────────────────────────────
 
 function initCompositionPlot() {
