@@ -20,9 +20,9 @@ class AttentionEngine {
 		};
 
 		// APV state per layer
-		this._apvActiveHeads = new Map();   // layerIdx → Set of active head indices
-		this._apvHoveredToken = new Map();  // layerIdx → { side, index } | null
-		this._apvMode = new Map();          // layerIdx → 'headview' | 'matrix'
+		this._apvActiveHeads = new Map();
+		this._apvHoveredToken = new Map();
+		this._apvMode = new Map();
 		this._apvOptions = Object.assign({
 			arcHeight: 120,
 			minOpacity: 0.02,
@@ -36,6 +36,7 @@ class AttentionEngine {
 			topPadding: 40,
 		}, config.apvOptions || {});
 
+		// Only observe if the container actually exists in the DOM
 		if (this.container) {
 			attentionObserver.observe(this.container);
 		}
@@ -155,7 +156,8 @@ class AttentionEngine {
 			rendered: false
 		});
 
-		if (!this.container && !this.containerId) return;
+		// Only write placeholder if container exists in DOM
+		if (!this.containerId) return;
 		const containerEl = document.getElementById(this.containerId);
 		if (containerEl && !containerEl.innerHTML.trim()) {
 			containerEl.innerHTML = `<div style="padding:20px; color:#64748b;">Wait for Attention Matrix to load...</div>`;
@@ -226,11 +228,14 @@ class AttentionEngine {
 	}
 
 	executeActualRender(headData, tokens) {
-		if (!this.container || !tokens.length) return;
+		if (!tokens.length) return;
 
 		const registry = multiLayerAttentionRegistry.get(this.containerId);
 		if (!registry || registry.layers.length === 0) {
-			this._renderSingleLayer(headData, tokens, 0);
+			// Single-layer fallback requires a real container
+			if (this.container) {
+				this._renderSingleLayer(headData, tokens, 0);
+			}
 			return;
 		}
 
@@ -244,14 +249,16 @@ class AttentionEngine {
 		if (hasUnifiedTabs) {
 			// ── UNIFIED MODE: inject attention heads into each unified layer's attention section ──
 
-			// Replace the old attention container content with a pointer message
-			if (this.container.querySelector('.attention-layer-tabs')) {
-				this.container.innerHTML = '';
-			}
-			if (!this.container.querySelector('.unified-redirect-msg')) {
-				this.container.innerHTML = `<div class="unified-redirect-msg" style="padding:15px; color:#64748b; text-align:center; font-style:italic;">
+			// Replace the old attention container content with a pointer message (only if container exists in DOM)
+			if (this.container) {
+				if (this.container.querySelector('.attention-layer-tabs')) {
+					this.container.innerHTML = '';
+				}
+				if (!this.container.querySelector('.unified-redirect-msg')) {
+					this.container.innerHTML = `<div class="unified-redirect-msg" style="padding:15px; color:#64748b; text-align:center; font-style:italic;">
 				Attention details are shown within each layer tab below ↓
 			</div>`;
+				}
 			}
 
 			// Store engine instance globally for APV callbacks
@@ -274,21 +281,21 @@ class AttentionEngine {
 					html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap; border-radius:8px 8px 0 0;">`;
 					for (let h = 0; h < layerHeadData.length; h++) {
 						html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${l}-${h}"
-						onclick="showHeadInLayer('${this.containerId}', ${l}, ${h}, ${layerHeadData.length})"
-						style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-						background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
-						Head ${h + 1}
-					</button>`;
+					onclick="showHeadInLayer('${this.containerId}', ${l}, ${h}, ${layerHeadData.length})"
+					style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+					background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
+					Head ${h + 1}
+				</button>`;
 					}
 					html += `</div>`;
 
 					for (let h = 0; h < layerHeadData.length; h++) {
 						html += `<div id="head-content-${this.containerId}-${l}-${h}" class="head-tab-in-layer"
-						style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
-						data-head-idx="${h}" data-rendered="false"
-						data-container-id="${this.containerId}" data-layer-idx="${l}" data-head-idx="${h}">
-						<div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
-					</div>`;
+					style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
+					data-head-idx="${h}" data-rendered="false"
+					data-container-id="${this.containerId}" data-layer-idx="${l}" data-head-idx="${h}">
+					<div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
+				</div>`;
 					}
 
 					attnSection.innerHTML = html;
@@ -310,11 +317,11 @@ class AttentionEngine {
 							const headDiv = document.getElementById(`head-content-${this.containerId}-${l}-${h}`);
 							const isActive = headDiv ? headDiv.style.display !== 'none' : h === 0;
 							headTabHtml += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${l}-${h}"
-							onclick="showHeadInLayer('${this.containerId}', ${l}, ${h}, ${layerHeadData.length})"
-							style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-							background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
-							Head ${h + 1}
-						</button>`;
+						onclick="showHeadInLayer('${this.containerId}', ${l}, ${h}, ${layerHeadData.length})"
+						style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+						background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
+						Head ${h + 1}
+					</button>`;
 						}
 						existingHeadTabList.innerHTML = headTabHtml;
 					}
@@ -334,6 +341,9 @@ class AttentionEngine {
 		}
 
 		// ── FALLBACK: original behavior if unified tabs don't exist ──
+		// This path requires a real DOM container
+		if (!this.container) return;
+
 		const existingTabs = this.container.querySelector('.attention-layer-tabs');
 		if (existingTabs) {
 			const tabList = existingTabs.querySelector('.layer-tab-list');
@@ -345,11 +355,11 @@ class AttentionEngine {
 					const contentDiv = document.getElementById(`layer-content-${this.containerId}-${l}`);
 					const isActive = contentDiv ? contentDiv.style.display !== 'none' : l === 0;
 					tabHtml += `<button class="mha-layer-tab-btn" id="layer-tab-btn-${this.containerId}-${l}"
-		onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
-		style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-		background:${isActive ? '#fff' : '#bfdbfe'}; font-weight:${isActive ? 'bold' : 'normal'};">
-		Layer ${l + 1}
-	    </button>`;
+	onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
+	style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+	background:${isActive ? '#fff' : '#bfdbfe'}; font-weight:${isActive ? 'bold' : 'normal'};">
+	Layer ${l + 1}
+    </button>`;
 				}
 				tabList.innerHTML = tabHtml;
 

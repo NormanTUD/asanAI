@@ -1895,18 +1895,21 @@ function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_m
 
 	const headData = causalMultiHeadAttention(normH0, weights[0]["attention"], d_model, n_heads);
 
+	// Use per-layer unified containers for layer 0
+	ensureFFNLayerContainers(0);
+
+	// Register attention engine with a virtual container ID that maps to unified tabs
+	const virtualContainerId = "unified-attention-engine";
 	const engine = new AttentionEngine({
 		d_model, n_heads,
-		containerId: "mha-calculation-details",
+		containerId: virtualContainerId,
 		weights: weights[0]["attention"]
 	});
 	engine.forward(normH0, tokensWithPositional, knownTokens);
 
-	const regEntry = attentionRenderRegistry.get("mha-calculation-details");
+	const regEntry = attentionRenderRegistry.get(virtualContainerId);
 	if (regEntry) { regEntry.headData = headData; regEntry.rendered = false; }
 
-	// Use per-layer containers for layer 0 — now with tokenStrings
-	ensureFFNLayerContainers(0);
 	const multiHeadOutput = updateConcatenationDisplayForLayer(headData, tokensWithPositional, 0, knownTokens);
 
 	// Also still update the old global container for backward compat
@@ -1930,23 +1933,11 @@ function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_m
  * for the MHA calculation details container.
  */
 function renderAttentionDetails() {
-	const mhaContainer = document.getElementById('mha-calculation-details');
-	if (mhaContainer) {
-		const registryEntry = attentionRenderRegistry.get('mha-calculation-details');
-		if (registryEntry) {
-			registryEntry.rendered = false;
-			const engineInstance = registryEntry.instance;
-			engineInstance.executeActualRender(registryEntry.headData, registryEntry.tokens);
-
-			const apvContainer = document.getElementById('attention-path-viz');
-			if (apvContainer) {
-				AttentionPathVisualizer.fromRegistry(
-					'mha-calculation-details',
-					'attention-path-viz',
-					{ mode: 'headview' }
-				);
-			}
-		}
+	const virtualContainerId = "unified-attention-engine";
+	const registryEntry = attentionRenderRegistry.get(virtualContainerId);
+	if (registryEntry && registryEntry.instance) {
+		registryEntry.rendered = false;
+		registryEntry.instance.executeActualRender(registryEntry.headData, registryEntry.tokens);
 	}
 }
 
@@ -3209,7 +3200,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 		const h_before_layer = JSON.parse(JSON.stringify(h_current));
 
 		// tokenStrings is now threaded into forwardOneLayer
-		const result = forwardOneLayer(h_current, this_weights[n], d_model, n_heads, tokenStrings, "mha-calculation-details", n);
+		const result = forwardOneLayer(h_current, this_weights[n], d_model, n_heads, tokenStrings, "unified-attention-engine", n);
 
 		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, result.h_out, n + 1, d_model, result.h_out, tokenStrings);
 		tlab_render_weight_grid(`migration-layer-${n + 1}`, n);
@@ -5899,9 +5890,9 @@ window.showUnifiedLayer = function(layerIdx) {
 	}
 
 	// Trigger attention head rendering for this layer
-	const registryEntry = attentionRenderRegistry.get('mha-calculation-details');
+	const registryEntry = attentionRenderRegistry.get('unified-attention-engine');
 	if (registryEntry && registryEntry.instance) {
-		const mhaRegistry = multiLayerAttentionRegistry.get('mha-calculation-details');
+		const mhaRegistry = multiLayerAttentionRegistry.get('unified-attention-engine');
 		if (mhaRegistry && mhaRegistry.layers[layerIdx]) {
 			// Check if head tabs exist for this layer
 			const attnSection = document.getElementById(`unified-layer-${layerIdx}-attention-heads`);

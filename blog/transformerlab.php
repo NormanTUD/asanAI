@@ -317,13 +317,7 @@ $$\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)
 The association between *Query* and *Key* and concrete tokens is only true in the first layer, where it is taken from the concrete embeddings. In further layers, it works on the abstract feature space instead.
 
 In this stage, it is already abstracted away from the concrete Embedding Space (for example, by positional encoding), and thus, the numbers do not inherently 'mean' anything anymore.
-</div>
 
-<div id="mha-calculation-details" style="margin-top: 20px;">
-<i>Please wait, while the <b>Multi-Attention-Head</b>-equations are loading...</i>
-</div>
-
-<div class="md">
 ### What the heads actually react to
 
 In the paper \citealternativetitle{analyzingmultiheads}, the study identified that the most "important" heads in encoder models often perform three specific, interpretable functions:
