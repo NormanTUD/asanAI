@@ -260,6 +260,13 @@ function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings
 	// 6. Residual connection
 	const h_attn = matAdd(h_current, projected);
 
+	// 6b. Per-layer concat/layernorm/h1 visualization
+	if (ffnLayerIndex !== null) {
+		ensureFFNLayerContainers(ffnLayerIndex);
+		updateConcatenationDisplayForLayer(headData, tokenStrings || h_current, ffnLayerIndex);
+		render_h1_logic_for_layer(h_current, normH, concat, layerWeights.gamma, layerWeights.beta, Wo, ffnLayerIndex);
+	}
+
 	// 7. FFN block — render only when ffnLayerIndex is provided
 	const skipFFNRender = (ffnLayerIndex === null);
 	const h_out = run_ffn_block(h_attn, layerWeights, skipFFNRender, ffnLayerIndex !== null ? ffnLayerIndex : 0);
@@ -1888,43 +1895,40 @@ function prepareMigrationState(needsReinit) {
  * @returns {number[][]} h2 — hidden states after layer 0
  */
 function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads) {
-	multiLayerAttentionRegistry.clear();
+    multiLayerAttentionRegistry.clear();
 
-	const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
+    const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
 
-	const headData = causalMultiHeadAttention(
-		normH0,
-		weights[0]["attention"],
-		d_model,
-		n_heads
-	);
+    const headData = causalMultiHeadAttention(normH0, weights[0]["attention"], d_model, n_heads);
 
-	const engine = new AttentionEngine({
-		d_model: d_model,
-		n_heads: n_heads,
-		containerId: "mha-calculation-details",
-		weights: weights[0]["attention"]
-	});
-	engine.forward(normH0, tokensWithPositional, knownTokens);
+    const engine = new AttentionEngine({
+        d_model, n_heads,
+        containerId: "mha-calculation-details",
+        weights: weights[0]["attention"]
+    });
+    engine.forward(normH0, tokensWithPositional, knownTokens);
 
-	const regEntry = attentionRenderRegistry.get("mha-calculation-details");
-	if (regEntry) {
-		regEntry.headData = headData;
-		regEntry.rendered = false;
-	}
+    const regEntry = attentionRenderRegistry.get("mha-calculation-details");
+    if (regEntry) { regEntry.headData = headData; regEntry.rendered = false; }
 
-	const multiHeadOutput = updateConcatenationDisplay(headData, tokensWithPositional);
+    // Use per-layer containers for layer 0
+    ensureFFNLayerContainers(0);
+    const multiHeadOutput = updateConcatenationDisplayForLayer(headData, tokensWithPositional, 0);
+    
+    // Also still update the old global container for backward compat (optional — remove if you deleted the divs)
+    updateConcatenationDisplay(headData, tokensWithPositional);
 
-	const Wo_layer0 = weights[0]["attention"]["output"];
-	const projected = matMul(multiHeadOutput, Wo_layer0);
+    const Wo_layer0 = weights[0]["attention"]["output"];
+    const projected = matMul(multiHeadOutput, Wo_layer0);
+    const h1 = matAdd(h0, projected);
 
-	const h1 = matAdd(h0, projected);
+    render_h1_logic_for_layer(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], Wo_layer0, 0);
+    
+    // Keep old global render for backward compat (optional)
+    render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], Wo_layer0);
 
-	render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], weights[0]["attention"]["output"]);
-
-	const h2 = run_ffn_block(h1, weights[0]);
-
-	return h2;
+    const h2 = run_ffn_block(h1, weights[0], false, 0);
+    return h2;
 }
 
 /**
@@ -2929,64 +2933,161 @@ window.showFFNLayer = function(layerIdx) {
  * Creates the full tab structure on first call, adds tabs incrementally after.
  */
 function ensureFFNLayerContainers(layerIndex) {
-	const container = document.getElementById('ffn-equations-container');
-	if (!container) return;
+    const container = document.getElementById('ffn-equations-container');
+    if (!container) return;
 
-	// Disable scroll anchoring on the outer container too
-	container.style.overflowAnchor = 'none';
+    container.style.overflowAnchor = 'none';
 
-	let tabsWrapper = container.querySelector('.ffn-layer-tabs');
+    let tabsWrapper = container.querySelector('.ffn-layer-tabs');
 
-	if (!tabsWrapper) {
-		tabsWrapper = document.createElement('div');
-		tabsWrapper.className = 'ffn-layer-tabs';
-		tabsWrapper.style.cssText = 'border:1px solid #8b5cf6; border-radius:8px; overflow:hidden; margin-top:20px; overflow-anchor:none;';
+    if (!tabsWrapper) {
+        tabsWrapper = document.createElement('div');
+        tabsWrapper.className = 'ffn-layer-tabs';
+        tabsWrapper.style.cssText = 'border:1px solid #8b5cf6; border-radius:8px; overflow:hidden; margin-top:20px; overflow-anchor:none;';
 
-		const tabList = document.createElement('div');
-		tabList.className = 'ffn-tab-list';
-		tabList.style.cssText = 'background:#ede9fe; display:flex; border-bottom:2px solid #8b5cf6; flex-wrap:wrap;';
+        const tabList = document.createElement('div');
+        tabList.className = 'ffn-tab-list';
+        tabList.style.cssText = 'background:#ede9fe; display:flex; border-bottom:2px solid #8b5cf6; flex-wrap:wrap;';
 
-		tabsWrapper.appendChild(tabList);
-		container.appendChild(tabsWrapper);
-	}
+        tabsWrapper.appendChild(tabList);
+        container.appendChild(tabsWrapper);
+    }
 
-	const tabList = tabsWrapper.querySelector('.ffn-tab-list');
+    const tabList = tabsWrapper.querySelector('.ffn-tab-list');
+    const prefix = `ffn-layer-${layerIndex}`;
+
+    if (document.getElementById(`${prefix}-tab-btn`)) {
+        return;
+    }
+
+    const btn = document.createElement('button');
+    btn.id = `${prefix}-tab-btn`;
+    btn.className = 'ffn-layer-tab-btn';
+    btn.textContent = `Layer ${layerIndex + 1}`;
+    btn.style.cssText = `padding:10px 18px; border:none; border-right:1px solid #c4b5fd; cursor:pointer;
+        background:${tabList.children.length === 0 ? '#fff' : '#ddd6fe'}; 
+        font-weight:${tabList.children.length === 0 ? 'bold' : 'normal'};`;
+    btn.onclick = () => showFFNLayer(layerIndex);
+    tabList.appendChild(btn);
+
+    const contentDiv = document.createElement('div');
+    contentDiv.id = `${prefix}-content`;
+    contentDiv.className = 'ffn-layer-tab-content';
+    contentDiv.dataset.layerIdx = layerIndex;
+    contentDiv.dataset.rendered = 'false';
+    contentDiv.style.display = tabList.children.length === 1 ? 'block' : 'none';
+    contentDiv.style.padding = '15px';
+    contentDiv.style.background = '#f8f9ff';
+    contentDiv.style.overflowAnchor = 'none';
+
+    contentDiv.innerHTML = `
+        <p style="color: #1e40af; margin: 0 0 12px 0; font-size: 1rem;">
+            Feed-Forward Network — Layer ${layerIndex + 1}
+        </p>
+
+        <!-- Concatenation viz for this layer -->
+        <div id="${prefix}-concat-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;"></div>
+
+        <!-- LayerNorm viz for this layer -->
+        <div id="${prefix}-layernorm-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
+
+        <!-- h1-final viz for this layer -->
+        <div id="${prefix}-h1-final-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #8b5cf6; border-radius: 12px; background: #f5f3ff; overflow-x: auto;"></div>
+
+        <div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
+        <div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
+        <div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
+    `;
+
+    tabsWrapper.appendChild(contentDiv);
+}
+
+function updateConcatenationDisplayForLayer(headData, tokens, layerIndex) {
+    const prefix = `ffn-layer-${layerIndex}`;
+    const container = document.getElementById(`${prefix}-concat-viz`);
+    if (!container || !headData.length) return [];
+
+    const headMatricesLaTeX = headData.map((h, i) => {
+        return `\\underbrace{${matrixToPmatrix(h.context)}}_{\\text{Head } ${i + 1}}`;
+    }).join(', ');
+
+    const fullMatrixData = tokens.map((_, tIdx) => {
+        return [].concat(...headData.map(h => h.context[tIdx]));
+    });
+
+    const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrix(fullMatrixData)}}_{\\text{Total } d_{\\text{model}}}`;
+    container.innerHTML = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
+
+    render_temml();
+    return fullMatrixData;
+}
+
+function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO, layerIndex) {
 	const prefix = `ffn-layer-${layerIndex}`;
+	const normContainer = document.getElementById(`${prefix}-layernorm-viz`);
+	const finalContainer = document.getElementById(`${prefix}-h1-final-viz`);
+	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
 
-	if (document.getElementById(`${prefix}-tab-btn`)) {
-		return;
+	const projectedMHA = multiHeadOutput.map(row =>
+		WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
+	);
+
+	const h1 = matAdd(h0, projectedMHA);
+
+	// Use the same hash/skip logic as the original render_h1_logic
+	const flattenDisplay = (mat) => {
+		if (!mat || !mat.length) return '';
+		return mat.map(row =>
+			Array.isArray(row)
+			? row.map(v => v.toFixed(nr_fixed)).join(',')
+			: row.toFixed(nr_fixed)
+		).join(';');
+	};
+	const hash = [
+		flattenDisplay(h0), flattenDisplay(normH0),
+		flattenDisplay(multiHeadOutput), flattenDisplay(projectedMHA),
+		flattenDisplay(h1), flattenDisplay(gamma), flattenDisplay(beta)
+	].join('|');
+
+	if (normContainer._lastHash === hash && finalContainer._lastHash === hash) {
+		return h1;
 	}
+	normContainer._lastHash = hash;
+	finalContainer._lastHash = hash;
 
-	const btn = document.createElement('button');
-	btn.id = `${prefix}-tab-btn`;
-	btn.className = 'ffn-layer-tab-btn';
-	btn.textContent = `Layer ${layerIndex + 1}`;
-	btn.style.cssText = `padding:10px 18px; border:none; border-right:1px solid #c4b5fd; cursor:pointer;
-		background:${tabList.children.length === 0 ? '#fff' : '#ddd6fe'}; 
-		font-weight:${tabList.children.length === 0 ? 'bold' : 'normal'};`;
-	btn.onclick = () => showFFNLayer(layerIndex);
-	tabList.appendChild(btn);
+	const L = layerIndex + 1;
+	const sup = `^{(${L})}`;
 
-	const contentDiv = document.createElement('div');
-	contentDiv.id = `${prefix}-content`;
-	contentDiv.className = 'ffn-layer-tab-content';
-	contentDiv.dataset.layerIdx = layerIndex;
-	contentDiv.dataset.rendered = 'false';
-	contentDiv.style.display = tabList.children.length === 1 ? 'block' : 'none';
-	contentDiv.style.padding = '15px';
-	contentDiv.style.background = '#f8f9ff';
-	contentDiv.style.overflowAnchor = 'none';
+	const normHtml = `
+    <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization — Layer ${L}</p>
+    <div style="margin-bottom:15px;">
+	<p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0${sup}$ before attention:</p>
+	$$ \\text{LayerNorm}(h_0${sup}) = \\gamma${sup} \\odot \\frac{h_0${sup} - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta${sup} $$
+	<div style="overflow-x:auto; padding-bottom: 10px">
+	    $$ \\underbrace{${matrixToPmatrix(normH0)}}_{\\text{LayerNorm}(h_0${sup})} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h0)}}_{h_0${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+	</div>
+    </div>
+    <div style="margin-bottom:15px;">
+	<p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
+	<div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
+	    $$ \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_\\text{proj}${sup}} = \\underbrace{${matrixToPmatrix(multiHeadOutput)}}_{\\text{Concat}(\\text{Heads})${sup}} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{{W^O}${sup}} $$
+	</div>
+    </div>`;
 
-	contentDiv.innerHTML = `
-		<p style="color: #1e40af; margin: 0 0 12px 0; font-size: 1rem;">
-			Feed-Forward Network — Layer ${layerIndex + 1}
-		</p>
-		<div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
-		<div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
-		<div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
-	`;
+	const finalHtml = `
+    <div style="margin-bottom:10px;">
+	<p style="font-size:0.85rem; color:#1e40af;">3. Residual connection:</p>
+	$$ h_1${sup} = h_0${sup} + \\text{MHA}_{\\text{proj}}${sup} $$
+    </div>
+    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
+	$$ \\underbrace{${matrixToPmatrix(h1)}}_{h_1${sup}} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0${sup}} + \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
+    </div>`;
 
-	tabsWrapper.appendChild(contentDiv);
+	preserveScrollPositions(normContainer, () => { normContainer.innerHTML = normHtml; });
+	preserveScrollPositions(finalContainer, () => { finalContainer.innerHTML = finalHtml; });
+
+	render_temml();
+	return h1;
 }
 
 function clearFFNEquationsContainer() {

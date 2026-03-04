@@ -432,15 +432,6 @@ $$h_{1} = h_{0} + \text{LayerNorm}(\text{MultiHead}(h_{0}))$$
 This Layer Normalization ensures that the values don't 'explode' and get too large, since they are, after being normalized, always in around 0 with a variance of 1. Without it, the values might get bigger and bigger with many layers.
 </div>
 
-<div id="transformer-concat-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;">
-</div>
-
-<div id="transformer-h1-layernorm-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;">
-</div>
-
-<div id="transformer-h1-final-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #8b5cf6; border-radius: 12px; background: #f5f3ff; overflow-x: auto;">
-</div>
-
 <div class="md">
 ## The Feed-Forward Network: Knowledge Retrieval and $h_2$
 While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token’s representation. In this sense, it functions as the model’s primary per-token computational stage, complementing attention’s role in information routing and aggregation.
