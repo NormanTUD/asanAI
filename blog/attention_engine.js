@@ -536,11 +536,15 @@ class AttentionEngine {
 `;
 	}
 
+	_// ============================================================
+// REPLACE _executeHeadRender in AttentionEngine with this version
+// ============================================================
+
 	_executeHeadRender(layerIdx, headIdx) {
 		const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${headIdx}`);
 		if (!headDiv) return;
 
-		// ── If already rendered once, do a PATCH update instead of full rebuild ──
+		// ── PATCH update path (data changed, structure unchanged) ──
 		if (headDiv.dataset.wasRenderedOnce === 'true') {
 			headDiv.dataset.rendered = 'true';
 
@@ -554,20 +558,17 @@ class AttentionEngine {
 					return tlab_get_top_word_only(t);
 				});
 
-			// Compute a simple hash of the weights to detect actual changes
 			const weightsHash = this._apvComputeWeightsHash(hd.this_weights);
 			const hashKey = `_apvLastHash_${layerIdx}_${headIdx}`;
 			if (this[hashKey] === weightsHash) {
-				return; // Nothing changed — skip all re-rendering
+				return;
 			}
 			this[hashKey] = weightsHash;
 
 			requestAnimationFrame(() => {
-				// Patch SVGs in-place (no flicker)
 				this._apvDrawSingleHead(layerIdx, headIdx, 'headview');
 				this._apvDrawSingleHead(layerIdx, headIdx, 'matrix');
 
-				// Update the attention web
 				const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
 				const webCanvasId = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
 				const webStripId = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
@@ -576,12 +577,19 @@ class AttentionEngine {
 					displayTokens, hd.this_weights
 				);
 
-				// Update the equations (W_Q, W_K, W_V)
 				const equationsId = `apv-equations-${this.containerId}-${layerIdx}-${headIdx}`;
 				const equationsContainer = document.getElementById(equationsId);
 				if (equationsContainer) {
 					const layerInstance = layerData.instance;
 					equationsContainer.innerHTML = layerInstance.generateEquationsOnly(hd);
+					render_temml();
+				}
+
+				// Patch the attention result section
+				const resultId = `apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}`;
+				const resultContainer = document.getElementById(resultId);
+				if (resultContainer) {
+					resultContainer.innerHTML = this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens);
 					render_temml();
 				}
 			});
@@ -596,7 +604,6 @@ class AttentionEngine {
 		const hd = layerData.headData[headIdx];
 		const layerTokens = layerData.tokens;
 		const layerInstance = layerData.instance;
-		const escapedTokens = layerTokens.map(t => String(t).replace(/#/g, '\\#'));
 
 		const displayTokens = layerData.tokenStrings
 			? [...layerData.tokenStrings]
@@ -616,36 +623,42 @@ class AttentionEngine {
 
 		headDiv.innerHTML = `
 <div style="margin-bottom:20px;">
-	$$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
+    $$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
 </div>
 <div id="apv-equations-${this.containerId}-${layerIdx}-${headIdx}" style="overflow-x:auto; margin-bottom:20px;">
-	${layerInstance.generateEquationsOnly(hd)}
+    ${layerInstance.generateEquationsOnly(hd)}
 </div>
 
 <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-	Hover over a word to see where it focuses its attention.
+    Hover over a word to see where it focuses its attention.
 </p>
 <div id="${webContainerId}" style="padding-top:20px;position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
-	<canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
-	<div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
+    <canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
+    <div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
 </div>
 
 <div class="apv-per-head-section" style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px;">
-	<div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
-	    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
-	    <svg id="${apvHeadCanvasId}" style="width:100%; min-height:180px;"></svg>
-	</div>
+    <div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
+	style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
+	<svg id="${apvHeadCanvasId}" style="width:100%; min-height:180px;"></svg>
+    </div>
 
-	<div style="font-size:0.75rem; color:#94a3b8; text-align:center;">
-	    Hover over a token to highlight its attention connections. Line thickness = attention weight.
-	</div>
+    <div style="font-size:0.75rem; color:#94a3b8; text-align:center;">
+	Hover over a token to highlight its attention connections. Line thickness = attention weight.
+    </div>
 </div>
 
 <div style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px;">
-	<div id="apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}"
-	    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
-	    <svg id="${apvMatrixCanvasId}" style="width:100%; min-height:180px;"></svg>
-	</div>
+    <div id="apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}"
+	style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
+	<svg id="${apvMatrixCanvasId}" style="width:100%; min-height:180px;"></svg>
+    </div>
+</div>
+
+<!-- ===== NEW: What happens with the attention results ===== -->
+<div id="apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}"
+     style="margin-top:20px; padding:20px; border:1px solid #f59e0b; border-radius:12px; background:#fffbeb; overflow-x:auto;">
+    ${this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens)}
 </div>
 
 <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>`;
@@ -653,7 +666,6 @@ class AttentionEngine {
 		headDiv.dataset.rendered = 'true';
 		headDiv.dataset.wasRenderedOnce = 'true';
 
-		// Store initial weights hash
 		const hashKey = `_apvLastHash_${layerIdx}_${headIdx}`;
 		this[hashKey] = this._apvComputeWeightsHash(hd.this_weights);
 
@@ -670,6 +682,137 @@ class AttentionEngine {
 				displayTokens, hd.this_weights
 			);
 		});
+	}
+
+	_buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens) {
+		const n = displayTokens.length;
+		const weights = hd.this_weights || hd.weights;
+		const Vi = hd.Vi || hd.v;
+		const context = hd.context;
+		const d_k = Vi && Vi[0] ? Vi[0].length : 1;
+		const d_model = hd.d_model || this.d_model;
+		const n_heads = Math.round(d_model / d_k);
+		const L = layerIdx + 1;
+
+		const num = (v) => {
+			if (typeof v === 'number' && isFinite(v)) return v;
+			if (typeof v === 'string') return parseFloat(v) || 0;
+			return 0;
+		};
+
+		const toRowVec = (arr) => {
+			if (!Array.isArray(arr)) return `(?)`;
+			return `\\begin{pmatrix} ${arr.map(v => num(v).toFixed(nr_fixed)).join(' & ')} \\end{pmatrix}`;
+		};
+
+		const toMatrix = (mat) => {
+			if (!Array.isArray(mat) || !Array.isArray(mat[0])) return `(?)`;
+			return `\\begin{pmatrix} ${mat.map(row => row.map(v => num(v).toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+		};
+
+		if (!weights || !Vi || !context || !Array.isArray(Vi[0]) || !Array.isArray(context[0])) {
+			return `<p style="color:#94a3b8;">Attention result data not available for this head.</p>`;
+		}
+
+		let html = '';
+
+		html += `<p style="font-weight:bold; color:#92400e; font-size:0.95rem; margin-bottom:12px;">
+	What Happens with the Attention Weights — Head ${headIdx + 1}, Layer ${L}
+    </p>`;
+
+		// Step 1: Abstract
+		html += `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
+	<p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Step 1 — Weighted Sum of Values (Abstract)</p>
+	<p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">
+	    Each token's <b>context vector</b> is a weighted average of all Value vectors it can see.
+	    The attention weights (from Softmax) determine how much each Value contributes.
+	    Token $i$ can only attend to tokens $0 \\ldots i$ (causal mask).
+	</p>
+	$$ \\text{context}_i = \\sum_{j=0}^{i} \\underbrace{\\alpha_{i,j}}_{\\text{attention weight}} \\cdot \\underbrace{V_j}_{\\text{Value vector}} $$
+	<p style="font-size:0.8rem; color:#64748b;">
+	    This produces one $d_k = ${d_k}$-dimensional context vector per token per head.
+	</p>
+    </div>`;
+
+		// Step 2: Concrete per-token
+		html += `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
+	<p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Step 2 — Concrete Computation</p>`;
+
+		for (let i = 0; i < n; i++) {
+			const safeToken = displayTokens[i].replace(/#/g, '\\#').replace(/_/g, '\\_');
+
+			let sumTerms = [];
+			let sumTermsNumeric = [];
+			for (let j = 0; j <= i; j++) {
+				const w = num(weights[i][j]);
+				if (w < 1e-6) continue;
+				const safeJ = displayTokens[j].replace(/#/g, '\\#').replace(/_/g, '\\_');
+				sumTerms.push(`\\underbrace{${w.toFixed(nr_fixed)}}_{\\alpha_{${i},${j}}} \\cdot \\underbrace{${toRowVec(Vi[j])}}_{V_{\\text{${safeJ}}}}`);
+
+				const product = Vi[j].map(v => (w * num(v)).toFixed(nr_fixed));
+				sumTermsNumeric.push(`${toRowVec(product.map(Number))}`);
+			}
+
+			if (sumTerms.length === 0) {
+				sumTerms.push('0');
+				sumTermsNumeric.push(toRowVec(new Array(d_k).fill(0)));
+			}
+
+			html += `<div style="margin-bottom:12px; padding:8px; border-left:3px solid ${AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length]}; background:#fafbfc;">
+	    <p style="font-size:0.82rem; font-weight:600; color:#334155; margin-bottom:4px;">
+		Token ${i}: "${displayTokens[i]}"
+	    </p>
+	    <div style="overflow-x:auto; padding-bottom:6px;">
+	    $$ \\text{context}_{${i}} = ${sumTerms.join(' + ')} $$
+	    </div>
+	    <div style="overflow-x:auto; padding-bottom:6px;">
+	    $$ = ${sumTermsNumeric.join(' + ')} = ${toRowVec(context[i])} $$
+	    </div>
+	</div>`;
+		}
+
+		html += `</div>`;
+
+		// Step 3: Full context matrix
+		html += `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
+	<p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Step 3 — Context Matrix for Head ${headIdx + 1}</p>
+	<p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">
+	    Stacking all context vectors gives the output of this head — a matrix of shape
+	    $(T \\times d_k) = (${n} \\times ${d_k})$:
+	</p>
+	<div style="overflow-x:auto;">
+	$$ \\underbrace{${toMatrix(context)}}_{\\text{head}_{${headIdx + 1}}\\;(${n} \\times ${d_k})} = \\underbrace{${toMatrix(weights)}}_{\\text{Attention Weights}\\;(${n} \\times ${n})} \\cdot \\underbrace{${toMatrix(Vi)}}_{V_{${headIdx + 1}}\\;(${n} \\times ${d_k})} $$
+	</div>
+    </div>`;
+
+		// Step 4: What happens next
+		html += `<div style="padding:12px; background:#f0fdf4; border:1px solid #10b981; border-radius:8px;">
+	<p style="font-weight:600; color:#065f46; margin-bottom:6px;">What Happens Next</p>
+	<p style="font-size:0.85rem; color:#334155; margin-bottom:6px;">
+	    This head's context matrix is <b>one of ${n_heads} heads</b>. All heads run in parallel, each
+	    capturing different relationships. Their outputs are then:
+	</p>
+	<ol style="font-size:0.85rem; color:#334155; margin:0 0 8px 20px; padding:0;">
+	    <li style="margin-bottom:4px;">
+		<b>Concatenated</b> along the $d_k$ dimension:
+		$\\text{Concat}(\\text{head}_1, \\ldots, \\text{head}_{${n_heads}}) \\in \\mathbb{R}^{${n} \\times ${d_model}}$
+	    </li>
+	    <li style="margin-bottom:4px;">
+		<b>Projected</b> through the output matrix $W^O \\in \\mathbb{R}^{${d_model} \\times ${d_model}}$
+		to mix information across heads:
+		$\\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{heads}) \\cdot W^O$
+	    </li>
+	    <li style="margin-bottom:4px;">
+		<b>Added back</b> to the input via the residual connection:
+		$h_1 = h_0 + \\text{MHA}_{\\text{proj}}$
+	    </li>
+	</ol>
+	<p style="font-size:0.8rem; color:#64748b;">
+	    The concatenation, projection, and residual steps are shown in the sections below this head view.
+	</p>
+    </div>`;
+
+		return html;
 	}
 
 	_apvComputeWeightsHash(weights) {
