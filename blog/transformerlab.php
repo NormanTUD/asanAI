@@ -321,7 +321,9 @@ In this stage, it is already abstracted away from the concrete Embedding Space (
 
 <div id="mha-calculation-details" style="margin-top: 20px;">
 <i>Please wait, while the <b>Multi-Attention-Head</b>-equations are loading...</i>
+</div>
 
+<div class="md">
 ### What the heads actually react to
 
 In the paper \citealternativetitle{analyzingmultiheads}, the study identified that the most "important" heads in encoder models often perform three specific, interpretable functions:
