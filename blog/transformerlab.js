@@ -5572,10 +5572,6 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	contentDiv.style.overflowAnchor = 'none';
 
 	contentDiv.innerHTML = `
-    <p style="color: #1e40af; margin: 0 0 16px 0; font-size: 1.1rem; border-bottom: 2px solid #3b82f6; padding-bottom: 8px;">
-	Layer ${layerIndex + 1}
-    </p>
-
     <!-- ===== ATTENTION SECTION ===== -->
     <div style="margin-bottom: 24px;">
 	<!-- 1. Pre-LN: Normalize h0 before attention -->
