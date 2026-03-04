@@ -8,7 +8,7 @@ window.isTraining = false;
 window._paramBreakdownOpen = false;
 window._paramBreakdownRendered = false;
 const widthEmbeddingInit = 5;
-const nr_fixed = 8;
+const nr_fixed = 4;
 const posEmbedScalar = 1;
 let trainingDebounceTimer;
 const epsilon = 1e-6;
