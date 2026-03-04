@@ -1056,6 +1056,258 @@ function updateAttn2D() {
 	document.getElementById('attn2d-math').innerHTML = html;
 }
 
+/**
+ * Lazy-loaded Q/K/V subspace projection visualization.
+ * Shows how W^Q, W^K, W^V project 3D embeddings onto different 2D planes.
+ * Call initQKVSubspaceViz() once after the DOM is ready.
+ */
+function initQKVSubspaceViz() {
+	const containerId = 'qkv-subspace-projection-viz';
+	const container = document.getElementById(containerId);
+	if (!container) return;
+
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				_renderQKVSubspaceViz(containerId);
+				observer.unobserve(entry.target);
+			}
+		});
+	}, { threshold: 0 });
+
+	observer.observe(container);
+
+	// If already in viewport, render immediately
+	if (typeof isElementInViewport === 'function' && isElementInViewport(container)) {
+		_renderQKVSubspaceViz(containerId);
+		observer.unobserve(container);
+	}
+}
+
+/**
+ * Internal render function — builds the Plotly 3D scene showing
+ * original embeddings and their projections onto three different 2D planes.
+ */
+function _renderQKVSubspaceViz(containerId) {
+	const container = document.getElementById(containerId);
+	if (!container) return;
+	container.innerHTML = '';
+
+	// --- 1. Define sample 3D token embeddings ---
+	const tokens = {
+		'king':   [2.0,  1.5,  0.8],
+		'queen':  [2.1,  1.6, -0.7],
+		'man':    [0.5,  1.8,  1.0],
+		'woman':  [0.6,  1.9, -0.5],
+		'throne': [2.5,  0.3,  0.1],
+		'rules':  [1.8,  0.8,  0.5],
+	};
+
+	const tokenNames = Object.keys(tokens);
+	const tokenColors = [
+		'#ef4444', '#f97316', '#22c55e', '#3b82f6', '#a855f7', '#ec4899'
+	];
+
+	// --- 2. Define three different 2×3 projection matrices (W^Q, W^K, W^V) ---
+	// Each projects from 3D → 2D (simulating d_model=3, d_k=2)
+	// We define them as two 3D basis vectors spanning the target plane.
+	const projections = {
+		Q: {
+			label: 'W^Q plane',
+			color: 'rgba(239,68,68,0.12)',
+			borderColor: '#ef4444',
+			// Plane spanned by these two orthonormal-ish basis vectors
+			u: [0.8, 0.6, 0.0],
+			v: [0.0, 0.0, 1.0]
+		},
+		K: {
+			label: 'W^K plane',
+			color: 'rgba(59,130,246,0.12)',
+			borderColor: '#3b82f6',
+			u: [0.57, -0.57, 0.57],
+			v: [0.71,  0.71, 0.0]
+		},
+		V: {
+			label: 'W^V plane',
+			color: 'rgba(34,197,94,0.12)',
+			borderColor: '#22c55e',
+			u: [1.0, 0.0, 0.0],
+			v: [0.0, 0.57, 0.82]
+		}
+	};
+
+	// Normalize basis vectors
+	function normalize(v) {
+		const mag = Math.sqrt(v.reduce((s, x) => s + x * x, 0));
+		return v.map(x => x / mag);
+	}
+
+	for (const key in projections) {
+		projections[key].u = normalize(projections[key].u);
+		projections[key].v = normalize(projections[key].v);
+	}
+
+	// Project a 3D point onto the plane spanned by u, v
+	function projectOntoPlane(point, u, v) {
+		const dotU = point[0]*u[0] + point[1]*u[1] + point[2]*u[2];
+		const dotV = point[0]*v[0] + point[1]*v[1] + point[2]*v[2];
+		return [
+			dotU * u[0] + dotV * v[0],
+			dotU * u[1] + dotV * v[1],
+			dotU * u[2] + dotV * v[2]
+		];
+	}
+
+	// --- 3. Build tab UI for Q / K / V ---
+	const tabBar = document.createElement('div');
+	tabBar.style.cssText = 'display:flex; gap:8px; padding:10px 15px; background:#fff; border-bottom:1px solid #e2e8f0;';
+
+	const plotDiv = document.createElement('div');
+	plotDiv.id = containerId + '-plot';
+	plotDiv.style.cssText = 'width:100%; height:480px;';
+
+	['Q', 'K', 'V'].forEach((key, idx) => {
+		const btn = document.createElement('button');
+		btn.textContent = `W${key} Projection`;
+		btn.style.cssText = `padding:8px 20px; border-radius:8px; border:2px solid ${projections[key].borderColor};
+	    background:${idx === 0 ? projections[key].borderColor : '#fff'};
+	    color:${idx === 0 ? '#fff' : projections[key].borderColor};
+	    font-weight:bold; cursor:pointer; font-size:0.9rem; transition:all 0.15s;`;
+		btn.addEventListener('click', () => {
+			// Update button styles
+			tabBar.querySelectorAll('button').forEach((b, i) => {
+				const k = ['Q','K','V'][i];
+				b.style.background = '#fff';
+				b.style.color = projections[k].borderColor;
+			});
+			btn.style.background = projections[key].borderColor;
+			btn.style.color = '#fff';
+			// Render the selected projection
+			renderProjection(key);
+		});
+		tabBar.appendChild(btn);
+	});
+
+	container.appendChild(tabBar);
+	container.appendChild(plotDiv);
+
+	function renderProjection(key) {
+		const proj = projections[key];
+		const traces = [];
+
+		// --- Original 3D points (grey) ---
+		traces.push({
+			type: 'scatter3d',
+			x: tokenNames.map(t => tokens[t][0]),
+			y: tokenNames.map(t => tokens[t][1]),
+			z: tokenNames.map(t => tokens[t][2]),
+			mode: 'markers+text',
+			text: tokenNames,
+			textposition: 'top center',
+			textfont: { size: 11, color: '#64748b' },
+			marker: { size: 5, color: '#94a3b8', opacity: 0.6 },
+			name: 'Original (3D)',
+			hovertemplate: '<b>%{text}</b><br>(%{x:.2f}, %{y:.2f}, %{z:.2f})<extra>Original</extra>'
+		});
+
+		// --- Projected points + drop lines ---
+		tokenNames.forEach((token, i) => {
+			const orig = tokens[token];
+			const projected = projectOntoPlane(orig, proj.u, proj.v);
+
+			// Drop line from original to projected
+			traces.push({
+				type: 'scatter3d',
+				x: [orig[0], projected[0]],
+				y: [orig[1], projected[1]],
+				z: [orig[2], projected[2]],
+				mode: 'lines',
+				line: { color: tokenColors[i], width: 2, dash: 'dot' },
+				showlegend: false,
+				hoverinfo: 'skip'
+			});
+
+			// Projected point
+			traces.push({
+				type: 'scatter3d',
+				x: [projected[0]],
+				y: [projected[1]],
+				z: [projected[2]],
+				mode: 'markers+text',
+				text: [token],
+				textposition: 'bottom center',
+				textfont: { size: 12, color: tokenColors[i], family: 'Inter, sans-serif' },
+				marker: { size: 7, color: tokenColors[i], symbol: 'diamond',
+					line: { width: 1, color: '#000' } },
+				name: `${token} (${key})`,
+				hovertemplate: `<b>${token}</b> projected by W<sup>${key}</sup><br>(%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>`
+			});
+		});
+
+		// --- Draw the plane as a mesh surface ---
+		const planeSize = 3.5;
+		const corners = [
+			[ planeSize,  planeSize],
+			[ planeSize, -planeSize],
+			[-planeSize, -planeSize],
+			[-planeSize,  planeSize]
+		];
+		const px = [], py = [], pz = [];
+		corners.forEach(([a, b]) => {
+			px.push(a * proj.u[0] + b * proj.v[0]);
+			py.push(a * proj.u[1] + b * proj.v[1]);
+			pz.push(a * proj.u[2] + b * proj.v[2]);
+		});
+
+		traces.push({
+			type: 'mesh3d',
+			x: px, y: py, z: pz,
+			i: [0, 0], j: [1, 2], k: [2, 3],
+			color: proj.borderColor,
+			opacity: 0.1,
+			name: proj.label,
+			hoverinfo: 'name',
+			flatshading: true
+		});
+
+		// --- Plane border outline ---
+		traces.push({
+			type: 'scatter3d',
+			x: [...px, px[0]],
+			y: [...py, py[0]],
+			z: [...pz, pz[0]],
+			mode: 'lines',
+			line: { color: proj.borderColor, width: 3 },
+			showlegend: false,
+			hoverinfo: 'skip'
+		});
+
+		const layout = {
+			title: {
+				text: `<b>${proj.label}</b>: Projecting 3D embeddings onto a 2D subspace`,
+				font: { size: 14 }
+			},
+			scene: {
+				xaxis: { title: 'Dim 0', range: [-4, 4] },
+				yaxis: { title: 'Dim 1', range: [-4, 4] },
+				zaxis: { title: 'Dim 2', range: [-4, 4] },
+				camera: { eye: { x: 1.8, y: 1.4, z: 1.2 } },
+				aspectmode: 'cube'
+			},
+			margin: { l: 0, r: 0, b: 10, t: 45 },
+			showlegend: true,
+			legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.02, font: { size: 11 } }
+		};
+
+		Plotly.react(plotDiv.id, traces, layout, { responsive: true });
+	}
+
+	// Initial render with Q
+	renderProjection('Q');
+}
+
+
+
 // ─────────────────── INITIALIZATION ───────────────────
 
 async function loadAttentionModule() {
@@ -1065,5 +1317,6 @@ async function loadAttentionModule() {
 	runUniverse();
 	updateAttn1D();
 	updateAttn2D();
+	initQKVSubspaceViz();
 	return Promise.resolve();
 }

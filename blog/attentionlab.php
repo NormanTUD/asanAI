@@ -203,6 +203,36 @@ $$
 
 If the vectors $\mathbf{q}_i$ and $\mathbf{k}_j$ point in a similar direction, the product is large, indicating high relevance.
 
+### The Core Mechanism: Generating Q, K, and V
+To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three learned weight matrices: $W^Q, W^K,$ and $W^V$.
+
+* **Query ($Q = h_0 W^Q$)**: Represents "What am I looking for?"
+* **Key ($K = h_0 W^K$)**: Represents "What information do I contain?"
+* **Value ($V = h_0 W^V$)**: Represents "What is the actual content I offer?"
+
+They are used to project the tokens from the Embedding Space into subspaces of the full Embedding Space, so they work only on a specific subpart of the information of the Embedding Space.
+</div>
+
+<div id="qkv-subspace-projection-viz"
+     style="width:100%; min-height:520px; border:2px solid #e2e8f0; border-radius:12px; background:#f8fafc; align-items:center; justify-content:center; margin:20px 0;">
+    <div style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
+        ⏳ Scroll here to load the Q, K, V subspace projection visualization...
+    </div>
+</div>
+
+<div class="md">
+
+Each word in the vocabulary lives as a **3D vector** in the full embedding space (shown as grey points). The matrices $W^Q$, $W^K$, and $W^V$ are **linear projections**, they take each 3D vector and project it onto a **2D subspace** (a plane through the origin).
+
+Each head has its own set of projection matrices, allowing the model to focus on different linguistic aspects (e.g., syntax vs. logic) simultaneously.
+
+- **Grey points**: Original 3D token embeddings.
+- **Colored points on the plane**: Where each token lands after being multiplied by the weight matrix. The colored lines show the projection "shadow" from 3D down to the plane.
+- **The translucent plane**: The 2D subspace that the weight matrix projects onto. Each of Q, K, V has a *different* plane, meaning each one "sees" the tokens from a different angle.
+
+The same set of token vectors is viewed through three different "lenses" (Q, K, V), each defined by a learned $d_\text{model} \times d_k$ matrix. Because each lens projects onto a different subspace, the same word can appear close to different neighbors depending on whether you're asking "What am I looking for?" (Q), "What do I contain?" (K), or "What do I offer?" (V).
+
+In this demo, we use a **3D → 2D** projection for visual clarity, but in real transformers, the same principle applies in much higher dimensions.
 
 ## The Scaling Factor and Softmax
 As the dimensionality $d_k$ increases, the magnitude of the dot products grows, which can push the Softmax function into regions with extremely small gradients. To counteract this, we scale by $\sqrt{d_k}$:
