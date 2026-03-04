@@ -1976,41 +1976,33 @@ function renderTrajectoryPlot(d_model) {
  * for layers that are no longer active.
  */
 function pruneOrphanedMigrationPlots() {
-	const migrationContainer = document.getElementById('transformer-migration-plots-container');
-	if (!migrationContainer || !window._activeMigrationIds) return;
+    const globalContainer = document.getElementById('transformer-migration-plots-container');
+    if (!window._activeMigrationIds) return;
 
-	const activeIds = window._activeMigrationIds;
+    const activeIds = window._activeMigrationIds;
 
-	const keysToDelete = [];
-	transformerLabVisMigrationDataRegistry.forEach((val, key) => {
-		if (!activeIds.has(key)) {
-			keysToDelete.push(key);
-		}
-	});
-	keysToDelete.forEach(key => {
-		const orphanDiv = document.getElementById(key);
-		if (orphanDiv) {
-			const wrapper = orphanDiv.closest('[data-migration-wrapper]') || orphanDiv.parentNode;
-			if (wrapper && wrapper.parentNode) {
-				wrapper.remove();
-			}
-		}
+    const keysToDelete = [];
+    transformerLabVisMigrationDataRegistry.forEach((val, key) => {
+        if (!activeIds.has(key)) {
+            keysToDelete.push(key);
+        }
+    });
+    keysToDelete.forEach(key => {
+        const orphanDiv = document.getElementById(key);
+        if (orphanDiv) {
+            const wrapper = orphanDiv.closest('[data-migration-wrapper]') || orphanDiv.parentNode;
+            if (wrapper && wrapper.parentNode) {
+                wrapper.remove();
+            }
+        }
 
-		const latexDiv = document.getElementById(key + '-latex-debug');
-		if (latexDiv) latexDiv.remove();
+        const latexDiv = document.getElementById(key + '-latex-debug');
+        if (latexDiv) latexDiv.remove();
 
-		transformerLabVisMigrationDataRegistry.delete(key);
-	});
+        transformerLabVisMigrationDataRegistry.delete(key);
+    });
 }
 
-/**
- * Main orchestrator: runs a complete forward pass through the transformer
- * and renders all visualizations.
- */
-/**
- * Main orchestrator: runs a complete forward pass through the transformer
- * and renders all visualizations.
- */
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
     const config = getTransformerConfig();
     const { d_model, n_heads, temperature, n_layers } = config;
@@ -3218,8 +3210,9 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
  */
 
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
-    const container = document.getElementById('transformer-migration-plots-container');
-    if (!container) return;
+    // The global container is now only used for the trajectory (all-layers) plot
+    const globalContainer = document.getElementById('transformer-migration-plots-container');
+    if (!globalContainer) return;
 
     if (window._activeMigrationIds) {
         window._activeMigrationIds.add(id);
@@ -3268,11 +3261,24 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
         data: freeze(end_h)
     };
 
+    // ── Determine where to place the migration plot ──
+    // Try the unified layer tab first (layerNum is 1-based, layerIndex is 0-based)
+    const layerIndex = layerNum - 1;
+    const unifiedMigrationContainer = document.getElementById(`unified-layer-${layerIndex}-migration-container`);
+
+    let parentContainer;
+    if (unifiedMigrationContainer) {
+        parentContainer = unifiedMigrationContainer;
+    } else {
+        // Fallback: use the global container (shouldn't happen in normal flow)
+        parentContainer = globalContainer;
+    }
+
     // Ensure DOM element exists
     let plotDiv = document.getElementById(id);
     if (!plotDiv) {
         const wrapperDiv = document.createElement('div');
-        wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; margin-top: 30px; background: #fff;";
+        wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; margin-top: 10px; background: #fff;";
         wrapperDiv.setAttribute('data-migration-wrapper', id);
 
         plotDiv = document.createElement('div');
@@ -3280,7 +3286,13 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
         plotDiv.style.cssText = "height: 500px; width: 100%;";
 
         wrapperDiv.appendChild(plotDiv);
-        container.appendChild(wrapperDiv);
+        parentContainer.appendChild(wrapperDiv);
+    } else {
+        // If the plot div exists but is in the wrong container, move it
+        const currentWrapper = plotDiv.closest('[data-migration-wrapper]') || plotDiv.parentNode;
+        if (currentWrapper && currentWrapper.parentNode !== parentContainer) {
+            parentContainer.appendChild(currentWrapper);
+        }
     }
 
     const registryData = {
@@ -5512,87 +5524,94 @@ function matrixToPmatrixLabeled(matrix, tokenStrings) {
  * Each layer tab holds BOTH attention details and FFN computations.
  */
 function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
-    const container = document.getElementById('ffn-equations-container');
-    if (!container) return;
+	const container = document.getElementById('ffn-equations-container');
+	if (!container) return;
 
-    container.style.overflowAnchor = 'none';
+	container.style.overflowAnchor = 'none';
 
-    let tabsWrapper = container.querySelector('.unified-layer-tabs');
+	let tabsWrapper = container.querySelector('.unified-layer-tabs');
 
-    if (!tabsWrapper) {
-        tabsWrapper = document.createElement('div');
-        tabsWrapper.className = 'unified-layer-tabs';
-        tabsWrapper.style.cssText = 'border:1px solid #3b82f6; border-radius:8px; overflow:hidden; margin-top:20px; overflow-anchor:none;';
+	if (!tabsWrapper) {
+		tabsWrapper = document.createElement('div');
+		tabsWrapper.className = 'unified-layer-tabs';
+		tabsWrapper.style.cssText = 'border:1px solid #3b82f6; border-radius:8px; overflow:hidden; margin-top:20px; overflow-anchor:none;';
 
-        const tabList = document.createElement('div');
-        tabList.className = 'unified-tab-list';
-        tabList.style.cssText = 'background:#dbeafe; display:flex; border-bottom:2px solid #3b82f6; flex-wrap:wrap;';
+		const tabList = document.createElement('div');
+		tabList.className = 'unified-tab-list';
+		tabList.style.cssText = 'background:#dbeafe; display:flex; border-bottom:2px solid #3b82f6; flex-wrap:wrap;';
 
-        tabsWrapper.appendChild(tabList);
-        container.appendChild(tabsWrapper);
-    }
+		tabsWrapper.appendChild(tabList);
+		container.appendChild(tabsWrapper);
+	}
 
-    const tabList = tabsWrapper.querySelector('.unified-tab-list');
-    const prefix = `unified-layer-${layerIndex}`;
+	const tabList = tabsWrapper.querySelector('.unified-tab-list');
+	const prefix = `unified-layer-${layerIndex}`;
 
-    if (document.getElementById(`${prefix}-tab-btn`)) {
-        return;
-    }
+	if (document.getElementById(`${prefix}-tab-btn`)) {
+		return;
+	}
 
-    const btn = document.createElement('button');
-    btn.id = `${prefix}-tab-btn`;
-    btn.className = 'unified-layer-tab-btn';
-    btn.textContent = `Layer ${layerIndex + 1}`;
-    btn.style.cssText = `padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+	const btn = document.createElement('button');
+	btn.id = `${prefix}-tab-btn`;
+	btn.className = 'unified-layer-tab-btn';
+	btn.textContent = `Layer ${layerIndex + 1}`;
+	btn.style.cssText = `padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
     background:${tabList.children.length === 0 ? '#fff' : '#bfdbfe'};
     font-weight:${tabList.children.length === 0 ? 'bold' : 'normal'};`;
-    btn.onclick = () => showUnifiedLayer(layerIndex);
-    tabList.appendChild(btn);
+	btn.onclick = () => showUnifiedLayer(layerIndex);
+	tabList.appendChild(btn);
 
-    const contentDiv = document.createElement('div');
-    contentDiv.id = `${prefix}-content`;
-    contentDiv.className = 'unified-layer-tab-content';
-    contentDiv.dataset.layerIdx = layerIndex;
-    contentDiv.dataset.rendered = 'false';
-    contentDiv.style.display = tabList.children.length === 1 ? 'block' : 'none';
-    contentDiv.style.padding = '15px';
-    contentDiv.style.background = '#f8f9ff';
-    contentDiv.style.overflowAnchor = 'none';
+	const contentDiv = document.createElement('div');
+	contentDiv.id = `${prefix}-content`;
+	contentDiv.className = 'unified-layer-tab-content';
+	contentDiv.dataset.layerIdx = layerIndex;
+	contentDiv.dataset.rendered = 'false';
+	contentDiv.style.display = tabList.children.length === 1 ? 'block' : 'none';
+	contentDiv.style.padding = '15px';
+	contentDiv.style.background = '#f8f9ff';
+	contentDiv.style.overflowAnchor = 'none';
 
-    contentDiv.innerHTML = `
+	contentDiv.innerHTML = `
     <p style="color: #1e40af; margin: 0 0 16px 0; font-size: 1.1rem; border-bottom: 2px solid #3b82f6; padding-bottom: 8px;">
-        Layer ${layerIndex + 1}
+	Layer ${layerIndex + 1}
     </p>
 
     <!-- ===== ATTENTION SECTION ===== -->
     <div style="margin-bottom: 24px;">
-        <!-- 1. Pre-LN: Normalize h0 before attention -->
-        <div id="${prefix}-layernorm-viz" style="margin-top: 10px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
+	<!-- 1. Pre-LN: Normalize h0 before attention -->
+	<div id="${prefix}-layernorm-viz" style="margin-top: 10px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
 
-        <!-- 2. Attention heads (will be populated by AttentionEngine) -->
-        <div id="${prefix}-attention-heads" style="margin-top: 16px;"></div>
+	<!-- 2. Attention heads (will be populated by AttentionEngine) -->
+	<div id="${prefix}-attention-heads" style="margin-top: 16px;"></div>
 
-        <!-- 3. Concatenation of head outputs -->
-        <div id="${prefix}-concat-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;"></div>
+	<!-- 3. Concatenation of head outputs -->
+	<div id="${prefix}-concat-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;"></div>
 
-        <!-- 4. Output projection + Residual connection -->
-        <div id="${prefix}-h1-final-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #8b5cf6; border-radius: 12px; background: #f5f3ff; overflow-x: auto;"></div>
+	<!-- 4. Output projection + Residual connection -->
+	<div id="${prefix}-h1-final-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #8b5cf6; border-radius: 12px; background: #f5f3ff; overflow-x: auto;"></div>
     </div>
 
     <!-- ===== FFN SECTION ===== -->
     <div>
-        <p style="color: #f59e0b; margin: 0 0 12px 0; font-size: 0.95rem;">
-            ⚡ Feed-Forward Network
-        </p>
+	<p style="color: #f59e0b; margin: 0 0 12px 0; font-size: 0.95rem;">
+	    ⚙ Feed-Forward Network
+	</p>
 
-        <!-- FFN steps -->
-        <div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
-        <div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
-        <div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
+	<!-- FFN steps -->
+	<div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
+	<div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
+	<div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
+    </div>
+
+    <!-- ===== MIGRATION PLOT (per-layer) ===== -->
+    <div id="${prefix}-migration-container" style="margin-top: 24px;">
+	<p style="color: #64748b; margin: 0 0 12px 0; font-size: 0.95rem; font-weight: 600;">
+	    📊 Feature Space Migration — Layer ${layerIndex + 1}
+	</p>
     </div>
     `;
 
-    tabsWrapper.appendChild(contentDiv);
+	tabsWrapper.appendChild(contentDiv);
 }
 
 window.showUnifiedLayer = function(layerIdx) {
@@ -5640,15 +5659,32 @@ window.showUnifiedLayer = function(layerIdx) {
 	if (registryEntry && registryEntry.instance) {
 		const mhaRegistry = multiLayerAttentionRegistry.get('unified-attention-engine');
 		if (mhaRegistry && mhaRegistry.layers[layerIdx]) {
-			// Check if head tabs exist for this layer
 			const attnSection = document.getElementById(`unified-layer-${layerIdx}-attention-heads`);
 			if (attnSection && !attnSection.querySelector('.head-tab-list')) {
-				// Need to build head tabs — call executeActualRender which handles unified mode
 				registryEntry.instance.executeActualRender(registryEntry.headData, registryEntry.tokens);
 			} else {
-				// Head tabs exist — just render the visible head
 				registryEntry.instance._renderLayerContent(layerIdx);
 			}
+		}
+	}
+
+	// ── Trigger migration plot rendering for this layer ──
+	const migrationId = `migration-layer-${layerIdx + 1}`;
+	const migrationData = transformerLabVisMigrationDataRegistry.get(migrationId);
+	if (migrationData && !migrationData.rendered) {
+		const plotDiv = document.getElementById(migrationId);
+		if (plotDiv) {
+			render_migration_logic(
+				migrationId,
+				migrationData.tokens,
+				migrationData.start_h,
+				migrationData.end_h,
+				migrationData.layerNum,
+				migrationData.d_model,
+				migrationData.h_after,
+				migrationData.tokenStrings
+			);
+			migrationData.rendered = true;
 		}
 	}
 
