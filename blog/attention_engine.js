@@ -562,22 +562,34 @@ class AttentionEngine {
 		const offscreen = document.createElement('div');
 		offscreen.innerHTML = newHtml;
 
+		// FIX: Lock the container height to prevent layout shift
+		const previousHeight = container.offsetHeight;
+		if (previousHeight > 0) {
+			container.style.minHeight = previousHeight + 'px';
+		}
+
 		// Save scroll position of nearest scrollable ancestor
 		const scrollParent = this._findScrollParent(container);
 		const savedScrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
+		const savedScrollLeft = scrollParent ? scrollParent.scrollLeft : window.scrollX;
 
-		// Atomic swap: replaceChildren moves all nodes in one synchronous operation.
-		// The browser composites the old frame until the next paint, so there's no
-		// blank intermediate frame — the old content is replaced by new content
-		// in a single rendering pass.
+		// Atomic swap
 		container.replaceChildren(...offscreen.childNodes);
 
 		// Restore scroll position before the browser paints
 		if (scrollParent) {
 			scrollParent.scrollTop = savedScrollTop;
+			scrollParent.scrollLeft = savedScrollLeft;
 		} else {
-			window.scrollTo(window.scrollX, savedScrollTop);
+			window.scrollTo(savedScrollLeft, savedScrollTop);
 		}
+
+		// FIX: Release height lock after the browser has painted the new content
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				container.style.minHeight = '';
+			});
+		});
 
 		return true; // content was updated
 	}

@@ -2631,7 +2631,6 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStri
 	normContainer._lastHash = hash;
 	finalContainer._lastHash = hash;
 
-	// Use labeled matrices for token-indexed data, plain for weights/params
 	const ts = tokenStrings || null;
 
 	const normHtml = `
@@ -2665,15 +2664,12 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStri
     </div>
     `;
 
-	preserveScrollPositions(normContainer, () => {
-		normContainer.innerHTML = normHtml;
-	});
+	// FIX: Use _heightLockedUpdate instead of preserveScrollPositions + innerHTML
+	_heightLockedUpdate(normContainer, normHtml);
+	_heightLockedUpdate(finalContainer, finalHtml);
 
-	preserveScrollPositions(finalContainer, () => {
-		finalContainer.innerHTML = finalHtml;
-	});
-
-	render_temml();
+	// FIX: Use targeted temml rendering
+	_renderTemmlOnElements([normContainer, finalContainer]);
 	return h1;
 }
 
@@ -2692,9 +2688,12 @@ function updateConcatenationDisplay(headData, tokens, tokenStrings) {
 	});
 
 	const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts)}}_{\\text{Total } d_{\\text{model}}}`;
-	container.innerHTML = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
+	const newHtml = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
 
-	render_temml();
+	// FIX: Use _heightLockedUpdate instead of raw innerHTML
+	_heightLockedUpdate(container, newHtml);
+
+	_renderTemmlOnElements([container]);
 	return fullMatrixData;
 }
 
@@ -2737,6 +2736,30 @@ window.showFFNLayer = function(layerIdx) {
     showUnifiedLayer(layerIdx);
 };
 
+function updateConcatenationDisplay(headData, tokens, tokenStrings) {
+	const container = document.getElementById('transformer-concat-viz');
+	if (!container || !headData.length) return [];
+
+	const ts = tokenStrings || null;
+
+	const headMatricesLaTeX = headData.map((h, i) => {
+		return `\\underbrace{${matrixToPmatrixLabeled(h.context, ts)}}_{\\text{Head } ${i + 1}}`;
+	}).join(', ');
+
+	const fullMatrixData = tokens.map((_, tIdx) => {
+		return [].concat(...headData.map(h => h.context[tIdx]));
+	});
+
+	const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts)}}_{\\text{Total } d_{\\text{model}}}`;
+	const newHtml = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
+
+	// FIX: Use _heightLockedUpdate instead of raw innerHTML
+	_heightLockedUpdate(container, newHtml);
+
+	_renderTemmlOnElements([container]);
+	return fullMatrixData;
+}
+
 function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenStrings) {
 	const prefix = `unified-layer-${layerIndex}`;
 	const container = document.getElementById(`${prefix}-concat-viz`);
@@ -2753,9 +2776,12 @@ function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenS
 	});
 
 	const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts)}}_{\\text{Total } d_{\\text{model}}}`;
-	container.innerHTML = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
+	const newHtml = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
 
-	render_temml();
+	// FIX: Use _heightLockedUpdate instead of raw innerHTML
+	_heightLockedUpdate(container, newHtml);
+
+	_renderTemmlOnElements([container]);
 	return fullMatrixData;
 }
 
@@ -2823,20 +2849,35 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
     $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{${h1name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{${h0name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
     </div>`;
 
-	preserveScrollPositions(normContainer, () => { normContainer.innerHTML = normHtml; });
-	preserveScrollPositions(finalContainer, () => { finalContainer.innerHTML = finalHtml; });
+	// FIX: Use _heightLockedUpdate instead of preserveScrollPositions + innerHTML
+	_heightLockedUpdate(normContainer, normHtml);
+	_heightLockedUpdate(finalContainer, finalHtml);
 
-	render_temml();
+	// FIX: Use targeted temml rendering
+	_renderTemmlOnElements([normContainer, finalContainer]);
 	return h1;
 }
 
 function clearFFNEquationsContainer() {
-    const container = document.getElementById('ffn-equations-container');
-    if (!container) return;
+	const container = document.getElementById('ffn-equations-container');
+	if (!container) return;
 
-    // Always do a full clear so unified tabs get rebuilt fresh
-    // This prevents stale layer tabs from previous config
-    container.innerHTML = '';
+	// FIX: During training, do NOT destroy the unified tabs.
+	// Only do a full clear when the architecture config has changed
+	// (detected by comparing the number of existing layer tabs to n_layers).
+	const { n_layers } = getTransformerConfig();
+	const existingTabs = container.querySelectorAll('.unified-layer-tab-btn');
+
+	if (existingTabs.length === n_layers) {
+		// FIX: Tabs already exist with correct count — keep them, just mark FFN as needing update
+		container.querySelectorAll('.unified-layer-tab-content').forEach(div => {
+			div.dataset.ffnRendered = 'false';
+		});
+		return;
+	}
+
+	// Architecture changed — full clear so unified tabs get rebuilt fresh
+	container.innerHTML = '';
 }
 
 function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, tokenStrings = null) {
@@ -2913,10 +2954,69 @@ function _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta) {
 	].join('|');
 }
 
+/**
+ * Updates an element's innerHTML while locking its height to prevent
+ * layout shift. Preserves both vertical page scroll and horizontal
+ * scroll of overflow children.
+ *
+ * @param {HTMLElement} el - The element to update
+ * @param {string} newHtml - The new innerHTML content
+ */
+function _heightLockedUpdate(el, newHtml) {
+	if (!el) return;
+
+	// FIX: Skip update if content is identical (avoids unnecessary reflow)
+	if (el.innerHTML === newHtml) return;
+
+	// FIX: Save all scroll state
+	const savedPageScrollY = window.scrollY;
+	const savedPageScrollX = window.scrollX;
+
+	// FIX: Lock height to prevent collapse
+	const previousHeight = el.offsetHeight;
+	if (previousHeight > 0) {
+		el.style.minHeight = previousHeight + 'px';
+	}
+
+	// Save horizontal scroll of overflow children
+	const scrollable = el.querySelectorAll('[style*="overflow"]');
+	const savedScrolls = [];
+	scrollable.forEach((child, idx) => {
+		if (child.scrollLeft > 0 || child.scrollTop > 0) {
+			savedScrolls.push({ index: idx, scrollLeft: child.scrollLeft, scrollTop: child.scrollTop });
+		}
+	});
+
+	// Perform the DOM mutation
+	el.innerHTML = newHtml;
+
+	// FIX: Immediately restore page scroll (synchronous, before paint)
+	window.scrollTo(savedPageScrollX, savedPageScrollY);
+
+	// Restore child scroll positions after reflow
+	if (savedScrolls.length > 0) {
+		requestAnimationFrame(() => {
+			const newScrollable = el.querySelectorAll('[style*="overflow"]');
+			savedScrolls.forEach(({ index, scrollLeft, scrollTop }) => {
+				if (newScrollable[index]) {
+					newScrollable[index].scrollLeft = scrollLeft;
+					newScrollable[index].scrollTop = scrollTop;
+				}
+			});
+		});
+	}
+
+	// FIX: Release height lock after browser has painted new content
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
+			el.style.minHeight = '';
+		});
+	});
+}
+
 function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
 	const L = layerIndex + 1;
 	const sup = `^{(${L})}`;
-	// Each layer produces 2 new h values; input shares subscript with previous layer's output
 	const base = layerIndex * 2;
 	const h1name = `h_{${base + 1}}`;
 	const h2name = `h_{${base + 2}}`;
@@ -2966,10 +3066,12 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     </div>
     `;
 
-	preserveScrollPositions(step1, () => { step1.innerHTML = step1Html; });
-	preserveScrollPositions(step2, () => { step2.innerHTML = step2Html; });
-	preserveScrollPositions(step3, () => { step3.innerHTML = step3Html; });
+	// FIX: Use _heightLockedUpdate instead of preserveScrollPositions + innerHTML
+	_heightLockedUpdate(step1, step1Html);
+	_heightLockedUpdate(step2, step2Html);
+	_heightLockedUpdate(step3, step3Html);
 
+	// FIX: Use targeted temml rendering instead of global render_temml()
 	_renderTemmlOnElements([step1, step2, step3]);
 }
 
@@ -6528,40 +6630,51 @@ function setVisualizationMode(mode) {
 	run_transformer_demo();
 }
 
-/**
- * Saves scrollLeft of all horizontally-scrollable descendants,
- * executes a DOM-mutating callback, then restores those positions.
- * Works even when innerHTML replaces the elements, by matching
- * on child index within the container.
- *
- * @param {HTMLElement} container - The parent whose descendants may scroll
- * @param {Function} mutationFn - The function that changes the DOM
- */
 function preserveScrollPositions(container, mutationFn) {
-	// 1. Snapshot scrollLeft of every overflow-x child, keyed by
-	//    a stable selector: their index among all [style*="overflow"] elements
+	// FIX: Save the global vertical scroll position
+	const savedPageScrollY = window.scrollY;
+	const savedPageScrollX = window.scrollX;
+
+	// FIX: Lock the container height to prevent layout collapse during mutation
+	const previousHeight = container.offsetHeight;
+	if (previousHeight > 0) {
+		container.style.minHeight = previousHeight + 'px';
+	}
+
+	// 1. Snapshot scrollLeft of every overflow-x child
 	const scrollable = container.querySelectorAll('[style*="overflow"]');
 	const saved = [];
 	scrollable.forEach((el, idx) => {
-		if (el.scrollLeft > 0) {
-			saved.push({ index: idx, scrollLeft: el.scrollLeft });
+		if (el.scrollLeft > 0 || el.scrollTop > 0) {
+			saved.push({ index: idx, scrollLeft: el.scrollLeft, scrollTop: el.scrollTop });
 		}
 	});
 
 	// 2. Execute the DOM mutation (innerHTML replacement, etc.)
 	mutationFn();
 
+	// FIX: Immediately restore page scroll (before browser paints)
+	window.scrollTo(savedPageScrollX, savedPageScrollY);
+
 	// 3. Restore scroll positions on the new elements at the same indices
 	if (saved.length > 0) {
 		requestAnimationFrame(() => {
 			const newScrollable = container.querySelectorAll('[style*="overflow"]');
-			saved.forEach(({ index, scrollLeft }) => {
+			saved.forEach(({ index, scrollLeft, scrollTop }) => {
 				if (newScrollable[index]) {
 					newScrollable[index].scrollLeft = scrollLeft;
+					newScrollable[index].scrollTop = scrollTop;
 				}
 			});
 		});
 	}
+
+	// FIX: Release height lock after paint
+	requestAnimationFrame(() => {
+		requestAnimationFrame(() => {
+			container.style.minHeight = '';
+		});
+	});
 }
 
 function matrixToPmatrixLabeled(matrix, tokenStrings) {
@@ -6590,10 +6703,6 @@ function matrixToPmatrixLabeled(matrix, tokenStrings) {
 	return `\\left(\\begin{array}{${colSpec}} ${rows} \\end{array}\\right)`;
 }
 
-/**
- * Ensures a unified layer tab container exists with a tab for the given layer.
- * Each layer tab holds BOTH attention details and FFN computations.
- */
 function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	const container = document.getElementById('ffn-equations-container');
 	if (!container) return;
@@ -6618,6 +6727,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	const tabList = tabsWrapper.querySelector('.unified-tab-list');
 	const prefix = `unified-layer-${layerIndex}`;
 
+	// FIX: If the tab button already exists, don't recreate it
 	if (document.getElementById(`${prefix}-tab-btn`)) {
 		return;
 	}
@@ -6647,16 +6757,9 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	contentDiv.innerHTML = `
     <!-- ===== ATTENTION SECTION ===== -->
     <div style="margin-bottom: 24px;">
-	<!-- 1. Pre-LN: Normalize h0 before attention -->
 	<div id="${prefix}-layernorm-viz" style="margin-top: 10px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
-
-	<!-- 2. Attention heads (will be populated by AttentionEngine) -->
 	<div id="${prefix}-attention-heads" style="margin-top: 16px;"></div>
-
-	<!-- 3. Concatenation of head outputs -->
 	<div id="${prefix}-concat-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;"></div>
-
-	<!-- 4. Output projection + Residual connection -->
 	<div id="${prefix}-h1-final-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #8b5cf6; border-radius: 12px; background: #f5f3ff; overflow-x: auto;"></div>
     </div>
 
@@ -6665,8 +6768,6 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 	<p style="color: #f59e0b; margin: 0 0 12px 0; font-size: 0.95rem;">
 	    Feed-Forward Network:
 	</p>
-
-	<!-- FFN steps -->
 	<div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
 	<div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
 	<div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
