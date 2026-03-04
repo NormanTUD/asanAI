@@ -6663,7 +6663,7 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
     <!-- ===== FFN SECTION ===== -->
     <div>
 	<p style="color: #f59e0b; margin: 0 0 12px 0; font-size: 0.95rem;">
-	    ‚öô Feed-Forward Network
+	    Feed-Forward Network:
 	</p>
 
 	<!-- FFN steps -->

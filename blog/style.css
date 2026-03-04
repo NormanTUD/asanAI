@@ -954,3 +954,8 @@ pre, code, .status-console, .matrix-input {
 	border-radius: 0px 0px 10px 10px;
 	background-color: #c7d5f0;
 }
+
+.unified-layer-tab-content {
+	contain: content;
+	overflow-anchor: none;
+}
