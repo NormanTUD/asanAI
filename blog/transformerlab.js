@@ -939,7 +939,7 @@ function renderPositionalInjectionHtml(tokens, injectedEncodings, d_model) {
 	const resultsContainer = document.getElementById('transformer-pe-integration-results');
 	if (!resultsContainer) return;
 
-	let html = `<h3>Vector Injection (Inference Sequence)</h3><div class='transformer_positional_embeddings'>`;
+	let html = `<div class='transformer_positional_embeddings'>`;
 
 	tokens.forEach((token, pos) => {
 		const semanticVec = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[token])
