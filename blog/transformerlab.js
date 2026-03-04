@@ -3028,15 +3028,19 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
 
 	const L = layerIndex + 1;
 	const sup = `^{(${L})}`;
+	// Each layer produces 2 new h values; input shares subscript with previous layer's output
+	const base = layerIndex * 2;
+	const h0name = `h_{${base}}`;
+	const h1name = `h_{${base + 1}}`;
 	const ts = tokenStrings || null;
 
 	const normHtml = `
     <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization — Layer ${L}</p>
     <div style="margin-bottom:15px;">
-    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0${sup}$ before attention:</p>
-    $$ \\text{LayerNorm}(h_0${sup}) = \\gamma${sup} \\odot \\frac{h_0${sup} - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta${sup} $$
+    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $${h0name}${sup}$ before attention:</p>
+    $$ \\text{LayerNorm}(${h0name}${sup}) = \\gamma${sup} \\odot \\frac{${h0name}${sup} - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta${sup} $$
     <div style="overflow-x:auto; padding-bottom: 10px">
-	$$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts)}}_{\\text{LayerNorm}(h_0${sup})} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+	$$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts)}}_{\\text{LayerNorm}(${h0name}${sup})} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{${h0name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
     </div>
     </div>`;
 
@@ -3049,10 +3053,10 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
     </div>
     <div style="margin-bottom:10px;">
     <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection:</p>
-    $$ h_1${sup} = h_0${sup} + \\text{MHA}_{\\text{proj}}${sup} $$
+    $$ ${h1name}${sup} = ${h0name}${sup} + \\text{MHA}_{\\text{proj}}${sup} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{${h1name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{${h0name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
     </div>`;
 
 	preserveScrollPositions(normContainer, () => { normContainer.innerHTML = normHtml; });
@@ -3155,6 +3159,10 @@ function _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta) {
 function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
 	const L = layerIndex + 1;
 	const sup = `^{(${L})}`;
+	// Each layer produces 2 new h values; input shares subscript with previous layer's output
+	const base = layerIndex * 2;
+	const h1name = `h_{${base + 1}}`;
+	const h2name = `h_{${base + 2}}`;
 	const ts = tokenStrings || null;
 
 	const step1 = document.getElementById(`${prefix}-step-1`);
@@ -3162,23 +3170,22 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	const step3 = document.getElementById(`${prefix}-step-3`);
 	if (!step1 || !step2 || !step3) return;
 
-	// Token-indexed matrices use labeled version; weight matrices use plain
 	const step1Html = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
-    <p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1${sup}$ before FFN</p>
-    $$ \\text{LayerNorm}(h_1${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_1${sup} - \\underbrace{\\mu}_{\\text{Mean of } h_1${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_1${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
+    <p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $${h1name}${sup}$ before FFN</p>
+    $$ \\text{LayerNorm}(${h1name}${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{${h1name}${sup} - \\underbrace{\\mu}_{\\text{Mean of } ${h1name}${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } ${h1name}${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
     <div style="overflow-x:auto;">
-	$$ \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts)}}_{\\text{Norm}\\left(h_1${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
+	$$ \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts)}}_{\\text{Norm}\\left(${h1name}${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{${h1name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
 	<br>
     </div>
     </div>
 
     <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + ReLU</strong></p>
 
-    $$ \\text{out}_{L1}${sup} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1${sup}) \\cdot W_1${sup} + b_1${sup}\\right) $$
+    $$ \\text{out}_{L1}${sup} = \\text{ReLU}\\!\\left(\\text{Norm}(${h1name}${sup}) \\cdot W_1${sup} + b_1${sup}\\right) $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts)}}_{\\text{out}_{L1}${sup}} = \\text{ReLU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts)}}_{\\text{Norm}(h_1${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts)}}_{\\text{out}_{L1}${sup}} = \\text{ReLU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts)}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
     </div>
     `;
 
@@ -3195,10 +3202,10 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	const step3Html = `
     <div style="margin-bottom:10px;">
     <p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
-    $$ h_2${sup} = h_1${sup} + \\text{out}_{L2}${sup} $$
+    $$ ${h2name}${sup} = ${h1name}${sup} + \\text{out}_{L2}${sup} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h2, ts)}}_{h_2${sup}} = \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1${sup}} + \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts)}}_{\\text{out}_{L2}${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(h2, ts)}}_{${h2name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{${h1name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts)}}_{\\text{out}_{L2}${sup}} $$
     </div>
     `;
 
