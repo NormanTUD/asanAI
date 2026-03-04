@@ -830,60 +830,9 @@ class AttentionEngine {
 	</p>
     </div>`;
 
-		// ── Step 2: Concrete per-token with colors ──
+		// ── Step 2: Full context matrix with labeled rows AND column headers ──
 		html += `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
-	<p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Step 2 — Concrete Computation</p>
-	<p style="font-size:0.82rem; color:#64748b; margin-bottom:10px;">
-	    Colors indicate token position: each token's values are shown in its position color.
-	    The attention weight $\\alpha_{i,j}$ scales how much of $V_j$ flows into $\\text{context}_i$.
-	</p>`;
-
-		for (let i = 0; i < n; i++) {
-			const iColor = posColor(i);
-			const headColor = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
-
-			let sumTerms = [];
-			let sumTermsNumeric = [];
-			for (let j = 0; j <= i; j++) {
-				const w = num(weights[i][j]);
-				if (w < 1e-6) continue;
-				const jColor = posColor(j);
-
-				// α colored by query (i), V colored by key (j) with word_pos label
-				sumTerms.push(
-					`\\underbrace{${iColor} ${w.toFixed(nr_fixed)}}_{\\alpha_{${i},${j}}} \\cdot \\underbrace{${toRowVecColored(Vi[j], j)}}_{V_{${colorLabel(j)}}}`
-				);
-
-				const product = Vi[j].map(v => (w * num(v)).toFixed(nr_fixed));
-				sumTermsNumeric.push(`${toRowVec(product.map(Number))}`);
-			}
-
-			if (sumTerms.length === 0) {
-				sumTerms.push('0');
-				sumTermsNumeric.push(toRowVec(new Array(d_k).fill(0)));
-			}
-
-			html += `<div style="margin-bottom:12px; padding:8px; border-left:3px solid ${headColor}; background:#fafbfc;">
-	    <p style="font-size:0.82rem; font-weight:600; color:#334155; margin-bottom:4px;">
-		Token ${i}: <span style="color:${getPositionColor(i, n)}">"${displayTokens[i]}"</span>
-		<span style="font-weight:normal; color:#94a3b8; font-size:0.75rem; margin-left:6px;">
-		    (attends to tokens $0 \\ldots ${i}$, i.e. ${i + 1} token${i > 0 ? 's' : ''})
-		</span>
-	    </p>
-	    <div class="logit_calc">
-	    $$ ${iColor} \\text{context}_{\\underbrace{${i}}_{${colorLabel(i)}}} = ${sumTerms.join(' + ')} $$
-	    </div>
-	    <div class="logit_calc">
-	    $$ = ${sumTermsNumeric.join(' + ')} = ${toRowVecColored(context[i], i)} $$
-	    </div>
-	</div>`;
-		}
-
-		html += `</div>`;
-
-		// ── Step 3: Full context matrix with labeled rows AND column headers ──
-		html += `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
-	<p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Step 3 — Context Matrix for Head ${headIdx + 1}</p>
+	<p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Step 2 — Context Matrix for Head ${headIdx + 1}</p>
 	<p style="font-size:0.85rem; color:#334155; margin-bottom:4px;">
 	    Stacking all context vectors gives the output of this head — a matrix of shape
 	    $(T \\times d_k) = (${n} \\times ${d_k})$.
