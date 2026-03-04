@@ -2787,7 +2787,7 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 	<div style="margin-bottom:15px;">
 	    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
 	    $$ \\text{LayerNorm}(h_0) = \\underbrace{\\gamma}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
-	    <div style="overflow-x:auto;">
+	    <div style="overflow-x:auto; padding-bottom: 10px">
 		$$ \\underbrace{${matrixToPmatrix(normH0)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h0)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
 		<br>
 	    </div>
@@ -2796,7 +2796,7 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 	<div style="margin-bottom:15px;">
 	    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
 	    $$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
-	    <div style="overflow-x:auto; overflow-y: hidden;">
+	    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
 		$$ \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrix(multiHeadOutput)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O} $$
 	    </div>
 	</div>
@@ -2807,7 +2807,7 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 	<p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
 	$$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
     </div>
-    <div style="overflow-x:auto; overflow-y: hidden">
+    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
 	$$ \\underbrace{${matrixToPmatrix(h1)}}_{h_1} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_{\\text{proj}}} $$
     </div>
     `;
