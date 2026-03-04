@@ -3203,6 +3203,441 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 	return h_current;
 }
 
+function render_vector_field_2d(plotDiv, id, layerNum, d_model, n_heads) {
+    const allVecs = Object.values(window.persistentEmbeddingSpace);
+    let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
+    allVecs.forEach(v => {
+        if (v[0] < xMin) xMin = v[0];
+        if (v[0] > xMax) xMax = v[0];
+        if (v.length > 1 && v[1] < yMin) yMin = v[1];
+        if (v.length > 1 && v[1] > yMax) yMax = v[1];
+    });
+    if (xMin === xMax) { xMin -= 1; xMax += 1; }
+    if (yMin === yMax) { yMin -= 1; yMax += 1; }
+    const pad = 2;
+    xMin -= pad; xMax += pad; yMin -= pad; yMax += pad;
+
+    const gridRes = 12;
+    const layerWeights = window.currentWeights[layerNum - 1];
+
+    // First pass: collect all grid points and displacements to find maxMag
+    const points = [];
+    let maxMag = 0;
+
+    for (let i = 0; i <= gridRes; i++) {
+        for (let j = 0; j <= gridRes; j++) {
+            const x = xMin + (xMax - xMin) * (i / gridRes);
+            const y = yMin + (yMax - yMin) * (j / gridRes);
+
+            const h_in = [[x, y]];
+            const result = forwardOneLayer(h_in, layerWeights, d_model, n_heads, null, null, null);
+            const h_out = result.h_out[0];
+
+            const dx = h_out[0] - x;
+            const dy = h_out[1] - y;
+            const mag = Math.sqrt(dx * dx + dy * dy);
+
+            points.push({ x, y, dx, dy, mag });
+            if (mag > maxMag) maxMag = mag;
+        }
+    }
+
+    if (maxMag < 1e-8) maxMag = 1e-8;
+
+    // Determine a good maximum visual arrow length relative to grid spacing
+    const cellW = (xMax - xMin) / gridRes;
+    const cellH = (yMax - yMin) / gridRes;
+    const maxArrowLen = Math.min(cellW, cellH) * 1.2;
+
+    const traces = [];
+
+    // Second pass: draw each arrow as a line (tail) + arrowhead marker
+    for (let k = 0; k < points.length; k++) {
+        const p = points[k];
+        const normMag = p.mag / maxMag;
+
+        // Color: blue (low) → red (high)
+        const r = Math.round(normMag * 239 + (1 - normMag) * 59);
+        const g = Math.round(normMag * 68 + (1 - normMag) * 130);
+        const b = Math.round(normMag * 68 + (1 - normMag) * 246);
+        const color = `rgb(${r},${g},${b})`;
+
+        // Scale arrow length proportionally to magnitude
+        // Minimum visible length so even tiny forces show a stub
+        const arrowLen = Math.max(maxArrowLen * 0.08, maxArrowLen * normMag);
+
+        // Unit direction (handle zero-magnitude gracefully)
+        let ux = 0, uy = 0;
+        if (p.mag > 1e-10) {
+            ux = p.dx / p.mag;
+            uy = p.dy / p.mag;
+        }
+
+        const endX = p.x + ux * arrowLen;
+        const endY = p.y + uy * arrowLen;
+
+        // Line width also scales with magnitude for extra visual weight
+        const lineWidth = 1.5 + normMag * 3.5;
+
+        // Tail line
+        traces.push({
+            type: 'scatter',
+            x: [p.x, endX],
+            y: [p.y, endY],
+            mode: 'lines',
+            line: { width: lineWidth, color: color },
+            showlegend: false,
+            hoverinfo: 'skip'
+        });
+
+        // Arrowhead at the tip — size also scales with magnitude
+        const headSize = Math.max(5, 6 + normMag * 10);
+        traces.push({
+            type: 'scatter',
+            x: [p.x, endX],
+            y: [p.y, endY],
+            mode: 'markers',
+            marker: {
+                size: [0, headSize],
+                symbol: 'arrow',
+                angleref: 'previous',
+                color: color
+            },
+            showlegend: false,
+            hovertemplate:
+                `Point: (${p.x.toFixed(2)}, ${p.y.toFixed(2)})<br>` +
+                `Δ: (${p.dx.toFixed(3)}, ${p.dy.toFixed(3)})<br>` +
+                `Magnitude: ${p.mag.toFixed(4)}<extra></extra>`
+        });
+    }
+
+    // Vocab embedding landmarks
+    Object.entries(window.persistentEmbeddingSpace).forEach(([word, vec]) => {
+        traces.push({
+            type: 'scatter',
+            x: [vec[0]], y: [vec[1] || 0],
+            mode: 'markers+text',
+            text: [word],
+            textposition: 'top center',
+            marker: { size: 10, symbol: 'diamond', color: '#475569',
+                      line: { width: 1, color: '#000' } },
+            showlegend: false,
+            hovertemplate: `<b>${word}</b><extra></extra>`
+        });
+    });
+
+    // Invisible trace for colorbar
+    traces.push({
+        type: 'scatter',
+        x: [null], y: [null],
+        mode: 'markers',
+        marker: {
+            colorscale: [[0, 'rgb(59,130,246)'], [1, 'rgb(239,68,68)']],
+            cmin: 0, cmax: maxMag,
+            color: [0, maxMag],
+            showscale: true,
+            colorbar: { title: '|Δh|', thickness: 15, len: 0.7 }
+        },
+        showlegend: false,
+        hoverinfo: 'none'
+    });
+
+    const layout = {
+        title: `Layer ${layerNum}: Vector Field (where would a point move?)`,
+        xaxis: { title: 'Dim 0' },
+        yaxis: { title: 'Dim 1' },
+        hovermode: 'closest',
+        margin: { t: 50, b: 40, l: 40, r: 80 }
+    };
+
+    Plotly.react(id, traces, layout, { responsive: true });
+}
+
+function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
+    // 1. Determine bounding box from the current embedding space
+    const allVecs = Object.values(window.persistentEmbeddingSpace);
+    let xMin = Infinity, xMax = -Infinity;
+    let yMin = Infinity, yMax = -Infinity;
+    let zMin = Infinity, zMax = -Infinity;
+
+    allVecs.forEach(v => {
+        if (v[0] < xMin) xMin = v[0];
+        if (v[0] > xMax) xMax = v[0];
+        if (v.length > 1) {
+            if (v[1] < yMin) yMin = v[1];
+            if (v[1] > yMax) yMax = v[1];
+        }
+        if (v.length > 2) {
+            if (v[2] < zMin) zMin = v[2];
+            if (v[2] > zMax) zMax = v[2];
+        }
+    });
+
+    if (xMin === xMax) { xMin -= 1; xMax += 1; }
+    if (yMin === yMax) { yMin -= 1; yMax += 1; }
+    if (zMin === zMax) { zMin -= 1; zMax += 1; }
+
+    const pad = 2;
+    xMin -= pad; xMax += pad;
+    yMin -= pad; yMax += pad;
+    zMin -= pad; zMax += pad;
+
+    // 2. Sample a grid of points in 3D space
+    const gridRes = 6;
+    const layerWeights = window.currentWeights[layerNum - 1];
+
+    // First pass: collect all points and find maxMag
+    const points = [];
+    let maxMag = 0;
+
+    for (let i = 0; i <= gridRes; i++) {
+        for (let j = 0; j <= gridRes; j++) {
+            for (let k = 0; k <= gridRes; k++) {
+                const x = xMin + (xMax - xMin) * (i / gridRes);
+                const y = yMin + (yMax - yMin) * (j / gridRes);
+                const z = zMin + (zMax - zMin) * (k / gridRes);
+
+                const h_in = [[x, y, z]];
+                const result = forwardOneLayer(h_in, layerWeights, d_model, n_heads, null, null, null);
+                const h_out = result.h_out[0];
+
+                const dx = h_out[0] - x;
+                const dy = h_out[1] - y;
+                const dz = h_out[2] - z;
+                const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+                points.push({ x, y, z, dx, dy, dz, mag });
+                if (mag > maxMag) maxMag = mag;
+            }
+        }
+    }
+
+    if (maxMag < 1e-8) maxMag = 1e-8;
+
+    // Determine maximum visual arrow length relative to grid cell size
+    const cellX = (xMax - xMin) / gridRes;
+    const cellY = (yMax - yMin) / gridRes;
+    const cellZ = (zMax - zMin) / gridRes;
+    const maxArrowLen = Math.min(cellX, cellY, cellZ) * 1.1;
+
+    // 3. Build traces: each arrow = scatter3d line (tail) + cone (head)
+    const traces = [];
+
+    for (let p = 0; p < points.length; p++) {
+        const pt = points[p];
+        const normMag = pt.mag / maxMag;
+
+        // Color: blue (low) → purple (mid) → red (high)
+        let r, g, b;
+        if (normMag < 0.5) {
+            const t = normMag * 2; // 0..1 within first half
+            r = Math.round(59 + (168 - 59) * t);
+            g = Math.round(130 + (85 - 130) * t);
+            b = Math.round(246 + (247 - 246) * t);
+        } else {
+            const t = (normMag - 0.5) * 2; // 0..1 within second half
+            r = Math.round(168 + (239 - 168) * t);
+            g = Math.round(85 + (68 - 85) * t);
+            b = Math.round(247 + (68 - 247) * t);
+        }
+        const color = `rgb(${r},${g},${b})`;
+
+        // Scale arrow length proportionally to magnitude
+        const arrowLen = Math.max(maxArrowLen * 0.06, maxArrowLen * normMag);
+
+        // Unit direction
+        let ux = 0, uy = 0, uz = 0;
+        if (pt.mag > 1e-10) {
+            ux = pt.dx / pt.mag;
+            uy = pt.dy / pt.mag;
+            uz = pt.dz / pt.mag;
+        }
+
+        // The tail runs from the grid point to (headFraction * arrowLen) along the direction.
+        // The cone head occupies the last portion.
+        const headFraction = 0.3; // 30% of arrow length is the cone head
+        const tailLen = arrowLen * (1 - headFraction);
+        const headLen = arrowLen * headFraction;
+
+        const tailEndX = pt.x + ux * tailLen;
+        const tailEndY = pt.y + uy * tailLen;
+        const tailEndZ = pt.z + uz * tailLen;
+
+        const tipX = pt.x + ux * arrowLen;
+        const tipY = pt.y + uy * arrowLen;
+        const tipZ = pt.z + uz * arrowLen;
+
+        // Line width scales with magnitude
+        const lineWidth = 2 + normMag * 6;
+
+        // Tail line (scatter3d)
+        traces.push({
+            type: 'scatter3d',
+            x: [pt.x, tailEndX],
+            y: [pt.y, tailEndY],
+            z: [pt.z, tailEndZ],
+            mode: 'lines',
+            line: { width: lineWidth, color: color },
+            showlegend: false,
+            hoverinfo: 'skip'
+        });
+
+        // Cone head at the tip — sizeref scales with magnitude
+        // The cone u/v/w gives direction; sizeref controls visual size
+        const coneSize = Math.max(0.05, headLen);
+        traces.push({
+            type: 'cone',
+            x: [tipX],
+            y: [tipY],
+            z: [tipZ],
+            u: [ux],
+            v: [uy],
+            w: [uz],
+            sizemode: 'absolute',
+            sizeref: coneSize,
+            anchor: 'tip',
+            colorscale: [[0, color], [1, color]],
+            showscale: false,
+            showlegend: false,
+            hovertemplate:
+                `Point: (${pt.x.toFixed(2)}, ${pt.y.toFixed(2)}, ${pt.z.toFixed(2)})<br>` +
+                `Δ: (${pt.dx.toFixed(3)}, ${pt.dy.toFixed(3)}, ${pt.dz.toFixed(3)})<br>` +
+                `Magnitude: ${pt.mag.toFixed(4)}<extra></extra>`
+        });
+    }
+
+    // 4. Vocabulary embedding landmarks — diamond markers with labels
+    const vocabX = [], vocabY = [], vocabZ = [], vocabText = [];
+    Object.entries(window.persistentEmbeddingSpace).forEach(([word, vec]) => {
+        vocabX.push(vec[0]);
+        vocabY.push(vec.length > 1 ? vec[1] : 0);
+        vocabZ.push(vec.length > 2 ? vec[2] : 0);
+        vocabText.push(word);
+    });
+
+    traces.push({
+        type: 'scatter3d',
+        x: vocabX,
+        y: vocabY,
+        z: vocabZ,
+        mode: 'markers',
+        marker: {
+            size: 6,
+            symbol: 'diamond',
+            color: 'rgba(71, 85, 105, 0.9)',
+            line: { width: 1, color: '#000' }
+        },
+        text: vocabText,
+        hovertemplate: '<b>%{text}</b><br>(%{x:.3f}, %{y:.3f}, %{z:.3f})<extra></extra>',
+        name: 'Vocab Embeddings',
+        showlegend: true
+    });
+
+    traces.push({
+        type: 'scatter3d',
+        x: vocabX,
+        y: vocabY,
+        z: vocabZ.map(z => z + (zMax - zMin) * 0.03),
+        mode: 'text',
+        text: vocabText,
+        textposition: 'top center',
+        textfont: {
+            size: 11,
+            color: '#1e293b',
+            family: 'Inter, sans-serif'
+        },
+        hoverinfo: 'skip',
+        showlegend: false
+    });
+
+    // 5. Invisible trace for the global colorbar
+    traces.push({
+        type: 'scatter3d',
+        x: [null], y: [null], z: [null],
+        mode: 'markers',
+        marker: {
+            colorscale: [
+                [0, 'rgb(59,130,246)'],
+                [0.5, 'rgb(168,85,247)'],
+                [1, 'rgb(239,68,68)']
+            ],
+            cmin: 0,
+            cmax: maxMag,
+            color: [0, maxMag],
+            showscale: true,
+            colorbar: {
+                title: '|Δh|',
+                thickness: 15,
+                len: 0.7,
+                x: 1.02
+            }
+        },
+        showlegend: false,
+        hoverinfo: 'none'
+    });
+
+    // 6. Layout
+    const layout = {
+        title: {
+            text: `Layer ${layerNum}: 3D Vector Field`,
+            font: { size: 15, color: '#1e293b' }
+        },
+        scene: {
+            xaxis: {
+                title: 'Dim 0',
+                backgroundcolor: '#f9fafb',
+                showgrid: true,
+                gridcolor: '#e2e8f0'
+            },
+            yaxis: {
+                title: 'Dim 1',
+                backgroundcolor: '#f9fafb',
+                showgrid: true,
+                gridcolor: '#e2e8f0'
+            },
+            zaxis: {
+                title: 'Dim 2',
+                backgroundcolor: '#f9fafb',
+                showgrid: true,
+                gridcolor: '#e2e8f0'
+            },
+            camera: {
+                eye: { x: 1.6, y: 1.6, z: 1.2 }
+            },
+            aspectmode: 'cube'
+        },
+        margin: { t: 50, b: 10, l: 10, r: 80 },
+        showlegend: true,
+        legend: {
+            x: 0.01,
+            y: 0.99,
+            bgcolor: 'rgba(255,255,255,0.8)',
+            bordercolor: '#e2e8f0',
+            borderwidth: 1,
+            font: { size: 11 }
+        },
+        hovermode: 'closest'
+    };
+
+    // 7. Render
+    Plotly.react(id, traces, layout, { responsive: true });
+}
+
+function render_migration_vector_field(id, layerNum, d_model, tokenStrings) {
+    const plotDiv = document.getElementById(id);
+    if (!plotDiv || !window.currentWeights) return;
+
+    const { n_heads } = getTransformerConfig();
+
+    if (d_model === 2) {
+        render_vector_field_2d(plotDiv, id, layerNum, d_model, n_heads);
+    } else if (d_model === 3) {
+        render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads);
+    } else {
+        render_vector_field_high_dim(plotDiv, id, layerNum, d_model, n_heads);
+    }
+}
+
 /**
  * Global Registry for Deferred Rendering
  * Stores the latest data for each plot ID to ensure that when it
@@ -3210,108 +3645,149 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
  */
 
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
-    // The global container is now only used for the trajectory (all-layers) plot
-    const globalContainer = document.getElementById('transformer-migration-plots-container');
-    if (!globalContainer) return;
+	// The global container is now only used for the trajectory (all-layers) plot
+	const globalContainer = document.getElementById('transformer-migration-plots-container');
+	if (!globalContainer) return;
 
-    if (window._activeMigrationIds) {
-        window._activeMigrationIds.add(id);
-    }
+	if (window._activeMigrationIds) {
+		window._activeMigrationIds.add(id);
+	}
 
-    const displayTokens = (tokenStrings && tokenStrings.length === tokens.length)
-        ? tokenStrings
-        : tokens.map((t, i) => {
-            if (typeof t === 'string') return t;
-            return tlab_get_top_word_only(t);
-        });
+	const displayTokens = (tokenStrings && tokenStrings.length === tokens.length)
+		? tokenStrings
+		: tokens.map((t, i) => {
+			if (typeof t === 'string') return t;
+			return tlab_get_top_word_only(t);
+		});
 
-    const freeze = (data) => JSON.parse(JSON.stringify(data));
+	const freeze = (data) => JSON.parse(JSON.stringify(data));
 
-    // Trajectory collector logic (unchanged)
-    if (!window.tlab_trajectory_collector) {
-        window.tlab_trajectory_collector = {
-            steps: {},
-            tokens: [...tokens],
-            displayTokens: [...displayTokens],
-            d_model: d_model
-        };
-    }
+	// Trajectory collector logic (unchanged)
+	if (!window.tlab_trajectory_collector) {
+		window.tlab_trajectory_collector = {
+			steps: {},
+			tokens: [...tokens],
+			displayTokens: [...displayTokens],
+			d_model: d_model
+		};
+	}
 
-    if (!window.tlab_trajectory_collector.steps["00_raw"]) {
-        const rawEmbs = displayTokens.map(t => {
-            if (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[t]) {
-                return window.persistentEmbeddingSpace[t];
-            }
-            return new Array(d_model).fill(0);
-        });
+	if (!window.tlab_trajectory_collector.steps["00_raw"]) {
+		const rawEmbs = displayTokens.map(t => {
+			if (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[t]) {
+				return window.persistentEmbeddingSpace[t];
+			}
+			return new Array(d_model).fill(0);
+		});
 
-        window.tlab_trajectory_collector.steps["00_raw"] = {
-            name: "Original Embedding",
-            data: freeze(rawEmbs)
-        };
-        window.tlab_trajectory_collector.steps["01_pe"] = {
-            name: "Embedding + Position",
-            data: freeze(start_h)
-        };
-    }
+		window.tlab_trajectory_collector.steps["00_raw"] = {
+			name: "Original Embedding",
+			data: freeze(rawEmbs)
+		};
+		window.tlab_trajectory_collector.steps["01_pe"] = {
+			name: "Embedding + Position",
+			data: freeze(start_h)
+		};
+	}
 
-    const layerKey = "02_layer_" + String(layerNum).padStart(2, '0');
-    window.tlab_trajectory_collector.steps[layerKey] = {
-        name: `Layer ${layerNum} Output`,
-        data: freeze(end_h)
-    };
+	const layerKey = "02_layer_" + String(layerNum).padStart(2, '0');
+	window.tlab_trajectory_collector.steps[layerKey] = {
+		name: `Layer ${layerNum} Output`,
+		data: freeze(end_h)
+	};
 
-    // ── Determine where to place the migration plot ──
-    // Try the unified layer tab first (layerNum is 1-based, layerIndex is 0-based)
-    const layerIndex = layerNum - 1;
-    const unifiedMigrationContainer = document.getElementById(`unified-layer-${layerIndex}-migration-container`);
+	// ── Determine where to place the migration plot ──
+	// Try the unified layer tab first (layerNum is 1-based, layerIndex is 0-based)
+	const layerIndex = layerNum - 1;
+	const unifiedMigrationContainer = document.getElementById(`unified-layer-${layerIndex}-migration-container`);
 
-    let parentContainer;
-    if (unifiedMigrationContainer) {
-        parentContainer = unifiedMigrationContainer;
-    } else {
-        // Fallback: use the global container (shouldn't happen in normal flow)
-        parentContainer = globalContainer;
-    }
+	let parentContainer;
+	if (unifiedMigrationContainer) {
+		parentContainer = unifiedMigrationContainer;
+	} else {
+		// Fallback: use the global container (shouldn't happen in normal flow)
+		parentContainer = globalContainer;
+	}
 
-    // Ensure DOM element exists
-    let plotDiv = document.getElementById(id);
-    if (!plotDiv) {
-        const wrapperDiv = document.createElement('div');
-        wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; margin-top: 10px; background: #fff;";
-        wrapperDiv.setAttribute('data-migration-wrapper', id);
+	// Ensure DOM element exists
+	let plotDiv = document.getElementById(id);
+	if (!plotDiv) {
+		if (!plotDiv) {
+			const wrapperDiv = document.createElement('div');
+			wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; margin-top: 10px; background: #fff;";
+			wrapperDiv.setAttribute('data-migration-wrapper', id);
 
-        plotDiv = document.createElement('div');
-        plotDiv.id = id;
-        plotDiv.style.cssText = "height: 500px; width: 100%;";
+			// ── Vector Field Toggle Button ──
+			const toggleBtn = document.createElement('button');
+			toggleBtn.className = 'migration-vf-toggle';
+			toggleBtn.dataset.mode = 'off';
+			toggleBtn.dataset.migrationId = id;
+			toggleBtn.textContent = '🧭 Show Vector Field';
+			toggleBtn.style.cssText = `
+	margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
+	border: 1px solid #3b82f6; background: #fff; color: #3b82f6;
+	cursor: pointer; font-weight: 600; font-size: 0.82rem;
+	transition: all 0.15s;
+    `;
+			toggleBtn.addEventListener('mouseover', () => {
+				toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#eff6ff' : '#fee2e2';
+			});
+			toggleBtn.addEventListener('mouseout', () => {
+				toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#fff' : '#dbeafe';
+			});
+			toggleBtn.addEventListener('click', () => {
+				const currentMode = toggleBtn.dataset.mode;
+				const migId = toggleBtn.dataset.migrationId;
+				const regData = transformerLabVisMigrationDataRegistry.get(migId);
+				if (!regData) return;
 
-        wrapperDiv.appendChild(plotDiv);
-        parentContainer.appendChild(wrapperDiv);
-    } else {
-        // If the plot div exists but is in the wrong container, move it
-        const currentWrapper = plotDiv.closest('[data-migration-wrapper]') || plotDiv.parentNode;
-        if (currentWrapper && currentWrapper.parentNode !== parentContainer) {
-            parentContainer.appendChild(currentWrapper);
-        }
-    }
+				if (currentMode === 'off') {
+					toggleBtn.dataset.mode = 'on';
+					toggleBtn.textContent = '🧭 Hide Vector Field';
+					toggleBtn.style.background = '#dbeafe';
+					add_vector_field_overlay(migId, regData.layerNum, regData.d_model);
+				} else {
+					toggleBtn.dataset.mode = 'off';
+					toggleBtn.textContent = '🧭 Show Vector Field';
+					toggleBtn.style.background = '#fff';
+					remove_vector_field_overlay(migId);
+				}
+			});
 
-    const registryData = {
-        tokens: [...tokens],
-        start_h: Array.isArray(start_h) ? start_h.slice() : start_h,
-        end_h: Array.isArray(end_h) ? end_h.slice() : end_h,
-        layerNum,
-        d_model,
-        h_after,
-        tokenStrings: tokenStrings || null,
-    };
+			wrapperDiv.appendChild(toggleBtn);
 
-    registerLazyRenderable(
-        id,
-        transformerLabVisMigrationDataRegistry,
-        migrationObserver,
-        registryData,
-        () => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings)
-    );
+			plotDiv = document.createElement('div');
+			plotDiv.id = id;
+			plotDiv.style.cssText = "height: 500px; width: 100%; position: relative;";
+
+			wrapperDiv.appendChild(plotDiv);
+			parentContainer.appendChild(wrapperDiv);
+		}
+	} else {
+		// If the plot div exists but is in the wrong container, move it
+		const currentWrapper = plotDiv.closest('[data-migration-wrapper]') || plotDiv.parentNode;
+		if (currentWrapper && currentWrapper.parentNode !== parentContainer) {
+			parentContainer.appendChild(currentWrapper);
+		}
+	}
+
+	const registryData = {
+		tokens: [...tokens],
+		start_h: Array.isArray(start_h) ? start_h.slice() : start_h,
+		end_h: Array.isArray(end_h) ? end_h.slice() : end_h,
+		layerNum,
+		d_model,
+		h_after,
+		tokenStrings: tokenStrings || null,
+	};
+
+	registerLazyRenderable(
+		id,
+		transformerLabVisMigrationDataRegistry,
+		migrationObserver,
+		registryData,
+		() => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings)
+	);
 }
 
 /**
@@ -3518,6 +3994,481 @@ if (!window.tlab_trajectory_data) {
 	window.tlab_trajectory_data = { tokens: [], steps: [] };
 }
 
+/**
+ * Creates and shows a loading overlay on top of the migration plot wrapper.
+ * Returns the overlay element so it can be updated and removed later.
+ */
+function _vf_show_loading_overlay(wrapperEl, totalPoints) {
+	if (!wrapperEl) return null;
+
+	const overlay = document.createElement('div');
+	overlay.className = 'vf-loading-overlay';
+	overlay.style.cssText = `
+	position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+	background: rgba(255, 255, 255, 0.92);
+	display: flex; flex-direction: column; align-items: center; justify-content: center;
+	z-index: 100; border-radius: 12px;
+	font-family: 'Inter', sans-serif;
+    `;
+
+	overlay.innerHTML = `
+	<div style="text-align: center;">
+	    <div style="font-size: 1.1rem; font-weight: 600; color: #1e40af; margin-bottom: 12px;">
+		🧭 Calculating Vector Field
+	    </div>
+	    <div style="width: 280px; height: 18px; background: #e2e8f0; border-radius: 9px; overflow: hidden; margin-bottom: 8px;">
+		<div class="vf-loading-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #8b5cf6); border-radius: 9px; transition: width 0.1s ease;"></div>
+	    </div>
+	    <div class="vf-loading-text" style="font-size: 0.85rem; color: #64748b;">
+		0 of ${totalPoints} done (0%)
+	    </div>
+	</div>
+    `;
+
+	// Ensure wrapper has relative positioning for the absolute overlay
+	const originalPosition = wrapperEl.style.position;
+	if (!originalPosition || originalPosition === 'static') {
+		wrapperEl.style.position = 'relative';
+	}
+	wrapperEl._vfOriginalPosition = originalPosition;
+
+	wrapperEl.appendChild(overlay);
+	return overlay;
+}
+
+/**
+ * Updates the loading overlay with current progress.
+ */
+function _vf_update_loading_overlay(overlay, computed, total) {
+    if (!overlay) return;
+
+    const pct = Math.min(100, (computed / total) * 100);
+    const fill = overlay.querySelector('.vf-loading-fill');
+    const text = overlay.querySelector('.vf-loading-text');
+
+    if (fill) fill.style.width = pct.toFixed(1) + '%';
+    if (text) text.textContent = `${computed} of ${total} done (${pct.toFixed(0)}%)`;
+}
+
+/**
+ * Removes the loading overlay and restores the wrapper's original positioning.
+ */
+function _vf_remove_loading_overlay(overlay) {
+	if (!overlay) return;
+
+	const wrapper = overlay.parentElement;
+	if (wrapper && wrapper._vfOriginalPosition !== undefined) {
+		wrapper.style.position = wrapper._vfOriginalPosition || '';
+		delete wrapper._vfOriginalPosition;
+	}
+
+	overlay.remove();
+}
+
+function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads) {
+	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
+	if (!regData) return;
+
+	const realContext = regData.start_h;
+	const seqLen = realContext.length;
+	const substitutePos = seqLen - 1;
+
+	const allVecs = Object.values(window.persistentEmbeddingSpace);
+	let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
+	allVecs.forEach(v => {
+		if (v[0] < xMin) xMin = v[0];
+		if (v[0] > xMax) xMax = v[0];
+		if (v.length > 1 && v[1] < yMin) yMin = v[1];
+		if (v.length > 1 && v[1] > yMax) yMax = v[1];
+	});
+	realContext.forEach(v => {
+		if (v[0] < xMin) xMin = v[0];
+		if (v[0] > xMax) xMax = v[0];
+		if (v.length > 1 && v[1] < yMin) yMin = v[1];
+		if (v.length > 1 && v[1] > yMax) yMax = v[1];
+	});
+	if (xMin === xMax) { xMin -= 1; xMax += 1; }
+	if (yMin === yMax) { yMin -= 1; yMax += 1; }
+	const pad = 2;
+	xMin -= pad; xMax += pad; yMin -= pad; yMax += pad;
+
+	const gridRes = 12;
+	const layerWeights = window.currentWeights[layerNum - 1];
+	const totalPoints = (gridRes + 1) * (gridRes + 1);
+
+	// Show loading overlay
+	const wrapper = document.getElementById(migrationId)?.closest('[data-migration-wrapper]');
+	const loadingOverlay = _vf_show_loading_overlay(wrapper, totalPoints);
+
+	const points = [];
+	let maxMag = 0;
+	let computed = 0;
+
+	for (let i = 0; i <= gridRes; i++) {
+		for (let j = 0; j <= gridRes; j++) {
+			const x = xMin + (xMax - xMin) * (i / gridRes);
+			const y = yMin + (yMax - yMin) * (j / gridRes);
+
+			const modifiedContext = realContext.map((row, idx) => {
+				if (idx === substitutePos) {
+					return [x, y];
+				}
+				return [...row];
+			});
+
+			const result = forwardOneLayer(modifiedContext, layerWeights, d_model, n_heads, null, null, null);
+			const h_out = result.h_out[substitutePos];
+
+			const dx = h_out[0] - x;
+			const dy = h_out[1] - y;
+			const mag = Math.sqrt(dx * dx + dy * dy);
+
+			points.push({ x, y, dx, dy, mag });
+			if (mag > maxMag) maxMag = mag;
+
+			computed++;
+			_vf_update_loading_overlay(loadingOverlay, computed, totalPoints);
+		}
+	}
+
+	if (maxMag < 1e-8) maxMag = 1e-8;
+
+	const cellW = (xMax - xMin) / gridRes;
+	const cellH = (yMax - yMin) / gridRes;
+	const maxArrowLen = Math.min(cellW, cellH) * 1.2;
+
+	const newTraces = [];
+
+	for (let k = 0; k < points.length; k++) {
+		const p = points[k];
+		const normMag = p.mag / maxMag;
+
+		const r = Math.round(normMag * 239 + (1 - normMag) * 59);
+		const g = Math.round(normMag * 68 + (1 - normMag) * 130);
+		const b = Math.round(normMag * 68 + (1 - normMag) * 246);
+		const color = `rgb(${r},${g},${b})`;
+
+		const arrowLen = Math.max(maxArrowLen * 0.08, maxArrowLen * normMag);
+
+		let ux = 0, uy = 0;
+		if (p.mag > 1e-10) {
+			ux = p.dx / p.mag;
+			uy = p.dy / p.mag;
+		}
+
+		const endX = p.x + ux * arrowLen;
+		const endY = p.y + uy * arrowLen;
+
+		const lineWidth = 1.5 + normMag * 3.5;
+
+		// Tail line — opacity at trace level
+		newTraces.push({
+			type: 'scatter',
+			x: [p.x, endX],
+			y: [p.y, endY],
+			mode: 'lines',
+			line: { width: lineWidth, color: color },
+			opacity: 0.2,
+			showlegend: false,
+			hoverinfo: 'skip',
+			_isVectorField: true
+		});
+
+		// Arrowhead — opacity at trace level
+		const headSize = Math.max(5, 6 + normMag * 10);
+		newTraces.push({
+			type: 'scatter',
+			x: [p.x, endX],
+			y: [p.y, endY],
+			mode: 'markers',
+			marker: {
+				size: [0, headSize],
+				symbol: 'arrow',
+				angleref: 'previous',
+				color: color
+			},
+			opacity: 0.2,
+			showlegend: false,
+			hovertemplate:
+			`Point: (${p.x.toFixed(2)}, ${p.y.toFixed(2)})<br>` +
+			`Δ: (${p.dx.toFixed(3)}, ${p.dy.toFixed(3)})<br>` +
+			`Magnitude: ${p.mag.toFixed(4)}<br>` +
+			`Context: ${seqLen} tokens, substituted at pos ${substitutePos}<extra></extra>`,
+			_isVectorField: true
+		});
+	}
+
+	// Colorbar — keep fully visible so the legend is readable
+	newTraces.push({
+		type: 'scatter',
+		x: [null], y: [null],
+		mode: 'markers',
+		marker: {
+			colorscale: [[0, 'rgb(59,130,246)'], [1, 'rgb(239,68,68)']],
+			cmin: 0, cmax: maxMag,
+			color: [0, maxMag],
+			showscale: true,
+			colorbar: { title: '|Δh|', thickness: 15, len: 0.5, x: 1.08, y: 0.5 }
+		},
+		showlegend: false,
+		hoverinfo: 'none',
+		_isVectorField: true
+	});
+
+	_vf_remove_loading_overlay(loadingOverlay);
+	Plotly.addTraces(migrationId, newTraces);
+}
+
+function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads) {
+	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
+	if (!regData) return;
+
+	const realContext = regData.start_h;
+	const seqLen = realContext.length;
+	const substitutePos = seqLen - 1;
+
+	const allVecs = Object.values(window.persistentEmbeddingSpace);
+	let xMin = Infinity, xMax = -Infinity;
+	let yMin = Infinity, yMax = -Infinity;
+	let zMin = Infinity, zMax = -Infinity;
+
+	allVecs.forEach(v => {
+		if (v[0] < xMin) xMin = v[0];
+		if (v[0] > xMax) xMax = v[0];
+		if (v.length > 1) {
+			if (v[1] < yMin) yMin = v[1];
+			if (v[1] > yMax) yMax = v[1];
+		}
+		if (v.length > 2) {
+			if (v[2] < zMin) zMin = v[2];
+			if (v[2] > zMax) zMax = v[2];
+		}
+	});
+	realContext.forEach(v => {
+		if (v[0] < xMin) xMin = v[0];
+		if (v[0] > xMax) xMax = v[0];
+		if (v.length > 1) {
+			if (v[1] < yMin) yMin = v[1];
+			if (v[1] > yMax) yMax = v[1];
+		}
+		if (v.length > 2) {
+			if (v[2] < zMin) zMin = v[2];
+			if (v[2] > zMax) zMax = v[2];
+		}
+	});
+
+	if (xMin === xMax) { xMin -= 1; xMax += 1; }
+	if (yMin === yMax) { yMin -= 1; yMax += 1; }
+	if (zMin === zMax) { zMin -= 1; zMax += 1; }
+
+	const pad = 2;
+	xMin -= pad; xMax += pad;
+	yMin -= pad; yMax += pad;
+	zMin -= pad; zMax += pad;
+
+	const gridRes = 6;
+	const layerWeights = window.currentWeights[layerNum - 1];
+	const totalPoints = (gridRes + 1) * (gridRes + 1) * (gridRes + 1);
+
+	// Show loading overlay
+	const wrapper = document.getElementById(migrationId)?.closest('[data-migration-wrapper]');
+	const loadingOverlay = _vf_show_loading_overlay(wrapper, totalPoints);
+
+	const points = [];
+	let maxMag = 0;
+	let computed = 0;
+
+	for (let i = 0; i <= gridRes; i++) {
+		for (let j = 0; j <= gridRes; j++) {
+			for (let k = 0; k <= gridRes; k++) {
+				const x = xMin + (xMax - xMin) * (i / gridRes);
+				const y = yMin + (yMax - yMin) * (j / gridRes);
+				const z = zMin + (zMax - zMin) * (k / gridRes);
+
+				const modifiedContext = realContext.map((row, idx) => {
+					if (idx === substitutePos) {
+						return [x, y, z];
+					}
+					return [...row];
+				});
+
+				const result = forwardOneLayer(modifiedContext, layerWeights, d_model, n_heads, null, null, null);
+				const h_out = result.h_out[substitutePos];
+
+				const dx = h_out[0] - x;
+				const dy = h_out[1] - y;
+				const dz = h_out[2] - z;
+				const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+				points.push({ x, y, z, dx, dy, dz, mag });
+				if (mag > maxMag) maxMag = mag;
+
+				computed++;
+				_vf_update_loading_overlay(loadingOverlay, computed, totalPoints);
+			}
+		}
+	}
+
+	if (maxMag < 1e-8) maxMag = 1e-8;
+
+	const cellX = (xMax - xMin) / gridRes;
+	const cellY = (yMax - yMin) / gridRes;
+	const cellZ = (zMax - zMin) / gridRes;
+	const maxArrowLen = Math.min(cellX, cellY, cellZ) * 1.1;
+
+	const newTraces = [];
+
+	for (let p = 0; p < points.length; p++) {
+		const pt = points[p];
+		const normMag = pt.mag / maxMag;
+
+		let r, g, b;
+		if (normMag < 0.5) {
+			const t = normMag * 2;
+			r = Math.round(59 + (168 - 59) * t);
+			g = Math.round(130 + (85 - 130) * t);
+			b = Math.round(246 + (247 - 246) * t);
+		} else {
+			const t = (normMag - 0.5) * 2;
+			r = Math.round(168 + (239 - 168) * t);
+			g = Math.round(85 + (68 - 85) * t);
+			b = Math.round(247 + (68 - 247) * t);
+		}
+		const color = `rgb(${r},${g},${b})`;
+
+		const arrowLen = Math.max(maxArrowLen * 0.06, maxArrowLen * normMag);
+
+		let ux = 0, uy = 0, uz = 0;
+		if (pt.mag > 1e-10) {
+			ux = pt.dx / pt.mag;
+			uy = pt.dy / pt.mag;
+			uz = pt.dz / pt.mag;
+		}
+
+		const headFraction = 0.3;
+		const tailLen = arrowLen * (1 - headFraction);
+		const headLen = arrowLen * headFraction;
+
+		const tailEndX = pt.x + ux * tailLen;
+		const tailEndY = pt.y + uy * tailLen;
+		const tailEndZ = pt.z + uz * tailLen;
+
+		const tipX = pt.x + ux * arrowLen;
+		const tipY = pt.y + uy * arrowLen;
+		const tipZ = pt.z + uz * arrowLen;
+
+		const lineWidth = 2 + normMag * 6;
+
+		// Tail line — opacity at trace level
+		newTraces.push({
+			type: 'scatter3d',
+			x: [pt.x, tailEndX],
+			y: [pt.y, tailEndY],
+			z: [pt.z, tailEndZ],
+			mode: 'lines',
+			line: { width: lineWidth, color: color },
+			opacity: 0.2,
+			showlegend: false,
+			hoverinfo: 'skip',
+			_isVectorField: true
+		});
+
+		// Cone head — opacity at trace level
+		const coneSize = Math.max(0.05, headLen);
+		newTraces.push({
+			type: 'cone',
+			x: [tipX],
+			y: [tipY],
+			z: [tipZ],
+			u: [ux],
+			v: [uy],
+			w: [uz],
+			sizemode: 'absolute',
+			sizeref: coneSize,
+			anchor: 'tip',
+			colorscale: [[0, color], [1, color]],
+			showscale: false,
+			showlegend: false,
+			opacity: 0.2,
+			hovertemplate:
+			`Point: (${pt.x.toFixed(2)}, ${pt.y.toFixed(2)}, ${pt.z.toFixed(2)})<br>` +
+			`Δ: (${pt.dx.toFixed(3)}, ${pt.dy.toFixed(3)}, ${pt.dz.toFixed(3)})<br>` +
+			`Magnitude: ${pt.mag.toFixed(4)}<br>` +
+			`Context: ${seqLen} tokens, substituted at pos ${substitutePos}<extra></extra>`,
+			_isVectorField: true
+		});
+	}
+
+	// Colorbar — keep fully visible
+	newTraces.push({
+		type: 'scatter3d',
+		x: [null], y: [null], z: [null],
+		mode: 'markers',
+		marker: {
+			colorscale: [
+				[0, 'rgb(59,130,246)'],
+				[0.5, 'rgb(168,85,247)'],
+				[1, 'rgb(239,68,68)']
+			],
+			cmin: 0,
+			cmax: maxMag,
+			color: [0, maxMag],
+			showscale: true,
+			colorbar: {
+				title: '|Δh|',
+				thickness: 15,
+				len: 0.5,
+				x: 1.08,
+				y: 0.5
+			}
+		},
+		showlegend: false,
+		hoverinfo: 'none',
+		_isVectorField: true
+	});
+
+	_vf_remove_loading_overlay(loadingOverlay);
+	Plotly.addTraces(migrationId, newTraces);
+}
+
+function remove_vector_field_overlay(migrationId) {
+	const plotDiv = document.getElementById(migrationId);
+	if (!plotDiv) return;
+
+	// Get current traces and find which ones are vector field traces
+	const currentData = plotDiv.data;
+	if (!currentData) return;
+
+	const indicesToRemove = [];
+	currentData.forEach((trace, idx) => {
+		if (trace._isVectorField) {
+			indicesToRemove.push(idx);
+		}
+	});
+
+	if (indicesToRemove.length > 0) {
+		// Remove from highest index to lowest so indices don't shift
+		Plotly.deleteTraces(migrationId, indicesToRemove.reverse());
+	}
+}
+
+function add_vector_field_overlay(migrationId, layerNum, d_model) {
+	// First remove any existing overlay to avoid duplicates
+	remove_vector_field_overlay(migrationId);
+
+	const plotDiv = document.getElementById(migrationId);
+	if (!plotDiv || !window.currentWeights) return;
+
+	const { n_heads } = getTransformerConfig();
+
+	if (d_model === 2) {
+		add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads);
+	} else if (d_model === 3) {
+		add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads);
+	}
+	// For d_model >= 4, the migration plot uses ECharts, so we skip vector field overlay
+}
+
 function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
 	const plotDiv = document.getElementById(id);
 	if (!plotDiv) return;
@@ -3540,6 +4491,21 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 
 	tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model);
 	tlab_render_weight_grid(id, layerNum - 1);
+
+	// ── Re-apply vector field overlay if toggle is currently on ──
+	const wrapper = plotDiv.closest('[data-migration-wrapper]');
+	if (wrapper) {
+		const toggleBtn = wrapper.querySelector('.migration-vf-toggle');
+		if (toggleBtn && toggleBtn.dataset.mode === 'on') {
+			const regData = transformerLabVisMigrationDataRegistry.get(id);
+			if (regData) {
+				// Small delay to let Plotly finish the base plot render
+				requestAnimationFrame(() => {
+					add_vector_field_overlay(id, regData.layerNum, regData.d_model);
+				});
+			}
+		}
+	}
 }
 
 /**
