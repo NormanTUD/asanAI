@@ -258,7 +258,9 @@ This is also important for **prompt engineering**:
 * **Position matters:** Token position acts as a form of informational privilege.
 * **Context accumulation:** Placing critical instructions at the *end* of a prompt ensures they are built from the full preceding context, whereas instructions at the *beginning* can only be passively attended to (and potentially diluted) by later tokens.
 
-## The Core Mechanism: Generating Q, K, and V
+## Attention
+
+### The Core Mechanism: Generating Q, K, and V
 To allow a token to "scout" the rest of the sequence, we derive three distinct representations from the hidden state $h_0$ by multiplying it by three learned weight matrices: $W^Q, W^K,$ and $W^V$.
 
 * **Query ($Q = h_0 W^Q$)**: Represents "What am I looking for?"
@@ -295,7 +297,7 @@ The job of of a Single Attention Head is to find some form of relation between a
 
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) \cdot V$$
 
-## Multi-Head Attention: Lateral Parallelism
+### Multi-Head Attention: Lateral Parallelism
 Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different "heads." Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different linguistic aspects (e.g., syntax vs. logic, but also very abstract features, for which human language doesn't have any names) simultaneously.
 
 * $B = \text{Batch Size}$ (The number of independent sequences processed in a single forward pass)
