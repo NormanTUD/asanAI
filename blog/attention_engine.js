@@ -860,10 +860,10 @@ class AttentionEngine {
 		    (attends to tokens $0 \\ldots ${i}$, i.e. ${i + 1} token${i > 0 ? 's' : ''})
 		</span>
 	    </p>
-	    <div style="overflow-x:auto; padding-bottom:6px;">
+	    <div class="logit_calc">
 	    $$ ${iColor} \\text{context}_{\\underbrace{${i}}_{${colorLabel(i)}}} = ${sumTerms.join(' + ')} $$
 	    </div>
-	    <div style="overflow-x:auto; padding-bottom:6px;">
+	    <div class="logit_calc">
 	    $$ = ${sumTermsNumeric.join(' + ')} = ${toRowVecColored(context[i], i)} $$
 	    </div>
 	</div>`;
