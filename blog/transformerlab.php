@@ -467,9 +467,7 @@ $$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
 
 <div id="ffn-equations-container"></div>
 
-<div class="md">
-### Mixture of Experts (MoE)
-
+<div class="optional md" data-headline="Mixture of Experts (MoE)">
 The Feed-Forward Network (FFN) described above applies the same dense
 transformation to every token: $\text{FFN}(x) = \sigma(xW_1 + b_1)W_2 + b_2$.
 This example uses exactly that standard, dense FFN. However, modern
@@ -491,7 +489,9 @@ $\sum_{i \in \text{TopK}} G(x)_i \cdot \text{FFN}_i(x)$ over just the
 chosen experts. This allows models to scale to trillions of total
 parameters while keeping per-token compute roughly constant, since only
 a small fraction of parameters are active for any given input.
+</div>
 
+<div class="md">
 ## The $N$-Layer Recurrence
 In practice, a Transformer is not just two steps; it is a stack of $N$ structurally identical but independently weighted blocks, each moving the representation further through the Feature Space to refine meaning.
 
