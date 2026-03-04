@@ -7,7 +7,7 @@ https://nlp.seas.harvard.edu/2018/04/03/attention.html
 
 https://arxiv.org/html/2505.11611v1
 -->
-
+<div id="transformer_site">
 <div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 54">
 	The hidden harmony is better than the obvious one
 </div>
@@ -503,4 +503,5 @@ At no point does the model manipulate symbols or rules, like non-connectionist A
 - non-linear transformation.
 
 Meaning emerges not from words themselves, but from how vectors **move, align, and combine** in space.
+</div>
 </div>
