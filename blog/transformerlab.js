@@ -3718,6 +3718,7 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 			wrapperDiv.setAttribute('data-migration-wrapper', id);
 
 			// ── Vector Field Toggle Button ──
+			// ── Vector Field Toggle Button ──
 			const toggleBtn = document.createElement('button');
 			toggleBtn.className = 'migration-vf-toggle';
 			toggleBtn.dataset.mode = 'off';
@@ -3729,6 +3730,10 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 	cursor: pointer; font-weight: 600; font-size: 0.82rem;
 	transition: all 0.15s;
     `;
+			// Hide for d_model >= 4 (ECharts parallel coords, no overlay support)
+			if (d_model >= 4) {
+				toggleBtn.style.display = 'none';
+			}
 			toggleBtn.addEventListener('mouseover', () => {
 				toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#eff6ff' : '#fee2e2';
 			});
@@ -4065,7 +4070,7 @@ function _vf_remove_loading_overlay(overlay) {
 	overlay.remove();
 }
 
-function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads) {
+async function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads) {
 	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
 	if (!regData) return;
 
@@ -4096,7 +4101,6 @@ function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads) {
 	const layerWeights = window.currentWeights[layerNum - 1];
 	const totalPoints = (gridRes + 1) * (gridRes + 1);
 
-	// Show loading overlay
 	const wrapper = document.getElementById(migrationId)?.closest('[data-migration-wrapper]');
 	const loadingOverlay = _vf_show_loading_overlay(wrapper, totalPoints);
 
@@ -4128,6 +4132,11 @@ function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads) {
 
 			computed++;
 			_vf_update_loading_overlay(loadingOverlay, computed, totalPoints);
+
+			// Yield to browser every 10 points so the progress bar repaints
+			if (computed % 10 === 0) {
+				await new Promise(r => setTimeout(r, 0));
+			}
 		}
 	}
 
@@ -4161,7 +4170,6 @@ function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads) {
 
 		const lineWidth = 1.5 + normMag * 3.5;
 
-		// Tail line — opacity at trace level
 		newTraces.push({
 			type: 'scatter',
 			x: [p.x, endX],
@@ -4174,7 +4182,6 @@ function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads) {
 			_isVectorField: true
 		});
 
-		// Arrowhead — opacity at trace level
 		const headSize = Math.max(5, 6 + normMag * 10);
 		newTraces.push({
 			type: 'scatter',
@@ -4190,15 +4197,14 @@ function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads) {
 			opacity: 0.2,
 			showlegend: false,
 			hovertemplate:
-			`Point: (${p.x.toFixed(2)}, ${p.y.toFixed(2)})<br>` +
-			`Δ: (${p.dx.toFixed(3)}, ${p.dy.toFixed(3)})<br>` +
-			`Magnitude: ${p.mag.toFixed(4)}<br>` +
-			`Context: ${seqLen} tokens, substituted at pos ${substitutePos}<extra></extra>`,
+				`Point: (${p.x.toFixed(2)}, ${p.y.toFixed(2)})<br>` +
+				`Δ: (${p.dx.toFixed(3)}, ${p.dy.toFixed(3)})<br>` +
+				`Magnitude: ${p.mag.toFixed(4)}<br>` +
+				`Context: ${seqLen} tokens, substituted at pos ${substitutePos}<extra></extra>`,
 			_isVectorField: true
 		});
 	}
 
-	// Colorbar — keep fully visible so the legend is readable
 	newTraces.push({
 		type: 'scatter',
 		x: [null], y: [null],
@@ -4219,7 +4225,7 @@ function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_heads) {
 	Plotly.addTraces(migrationId, newTraces);
 }
 
-function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads) {
+async function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads) {
 	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
 	if (!regData) return;
 
@@ -4270,7 +4276,6 @@ function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads) {
 	const layerWeights = window.currentWeights[layerNum - 1];
 	const totalPoints = (gridRes + 1) * (gridRes + 1) * (gridRes + 1);
 
-	// Show loading overlay
 	const wrapper = document.getElementById(migrationId)?.closest('[data-migration-wrapper]');
 	const loadingOverlay = _vf_show_loading_overlay(wrapper, totalPoints);
 
@@ -4305,6 +4310,11 @@ function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads) {
 
 				computed++;
 				_vf_update_loading_overlay(loadingOverlay, computed, totalPoints);
+
+				// Yield to browser every 10 points so the progress bar repaints
+				if (computed % 10 === 0) {
+					await new Promise(r => setTimeout(r, 0));
+				}
 			}
 		}
 	}
@@ -4359,7 +4369,6 @@ function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads) {
 
 		const lineWidth = 2 + normMag * 6;
 
-		// Tail line — opacity at trace level
 		newTraces.push({
 			type: 'scatter3d',
 			x: [pt.x, tailEndX],
@@ -4373,7 +4382,6 @@ function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads) {
 			_isVectorField: true
 		});
 
-		// Cone head — opacity at trace level
 		const coneSize = Math.max(0.05, headLen);
 		newTraces.push({
 			type: 'cone',
@@ -4391,15 +4399,14 @@ function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads) {
 			showlegend: false,
 			opacity: 0.2,
 			hovertemplate:
-			`Point: (${pt.x.toFixed(2)}, ${pt.y.toFixed(2)}, ${pt.z.toFixed(2)})<br>` +
-			`Δ: (${pt.dx.toFixed(3)}, ${pt.dy.toFixed(3)}, ${pt.dz.toFixed(3)})<br>` +
-			`Magnitude: ${pt.mag.toFixed(4)}<br>` +
-			`Context: ${seqLen} tokens, substituted at pos ${substitutePos}<extra></extra>`,
+				`Point: (${pt.x.toFixed(2)}, ${pt.y.toFixed(2)}, ${pt.z.toFixed(2)})<br>` +
+				`Δ: (${pt.dx.toFixed(3)}, ${pt.dy.toFixed(3)}, ${pt.dz.toFixed(3)})<br>` +
+				`Magnitude: ${pt.mag.toFixed(4)}<br>` +
+				`Context: ${seqLen} tokens, substituted at pos ${substitutePos}<extra></extra>`,
 			_isVectorField: true
 		});
 	}
 
-	// Colorbar — keep fully visible
 	newTraces.push({
 		type: 'scatter3d',
 		x: [null], y: [null], z: [null],
@@ -4453,11 +4460,13 @@ function remove_vector_field_overlay(migrationId) {
 }
 
 function add_vector_field_overlay(migrationId, layerNum, d_model) {
-	// First remove any existing overlay to avoid duplicates
 	remove_vector_field_overlay(migrationId);
 
 	const plotDiv = document.getElementById(migrationId);
 	if (!plotDiv || !window.currentWeights) return;
+
+	// No vector field overlay for high-dimensional (ECharts) plots
+	if (d_model >= 4) return;
 
 	const { n_heads } = getTransformerConfig();
 
@@ -4466,7 +4475,6 @@ function add_vector_field_overlay(migrationId, layerNum, d_model) {
 	} else if (d_model === 3) {
 		add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads);
 	}
-	// For d_model >= 4, the migration plot uses ECharts, so we skip vector field overlay
 }
 
 function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
