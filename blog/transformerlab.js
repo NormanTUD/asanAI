@@ -5825,9 +5825,9 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 
     <!-- ===== ATTENTION SECTION ===== -->
     <div style="margin-bottom: 24px;">
-        <h4 style="color: #1e40af; margin: 0 0 12px 0; font-size: 0.95rem;">
+        <p style="color: #1e40af; margin: 0 0 12px 0; font-size: 0.95rem;">
             🔵 Multi-Head Attention
-        </h4>
+        </p>
 
         <!-- 1. Pre-LN: Normalize h0 before attention -->
         <div id="${prefix}-layernorm-viz" style="margin-top: 10px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
@@ -5844,9 +5844,9 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 
     <!-- ===== FFN SECTION ===== -->
     <div>
-        <h4 style="color: #f59e0b; margin: 0 0 12px 0; font-size: 0.95rem;">
+        <p style="color: #f59e0b; margin: 0 0 12px 0; font-size: 0.95rem;">
             ⚡ Feed-Forward Network
-        </h4>
+        </p>
 
         <!-- FFN steps -->
         <div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
