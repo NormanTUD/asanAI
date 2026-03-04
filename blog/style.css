@@ -942,3 +942,9 @@ pre, code, .status-console, .matrix-input {
 	from { opacity: 0; transform: translateY(-5px); }
 	to { opacity: 1; transform: translateY(0); }
 }
+
+.logit_calc {
+	overflow-y: hidden;
+	overflow-x: scroll;
+	padding-bottom: 10px;
+}

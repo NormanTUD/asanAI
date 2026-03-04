@@ -2210,14 +2210,14 @@ Remember that the $n$ is the number of tokens in the <b>Inference</b>-sequence, 
 
 This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. When the model is, for example, $d_{\\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage, their influence is already baked into that last vector.
 
-    <p style="margin-bottom: 10px; overflow-y: hidden; overflow-x: scroll;">Current $h_\\text{last} = [${h_last.map(v => v.toFixed(nr_fixed)).join(', ')}]$</p>
+    <p class="logit_calc">Current $h_\\text{last} = [${h_last.map(v => v.toFixed(nr_fixed)).join(', ')}]$</p>
 `;
 
     logits.forEach(({ word, val, w_row }) => {
         const terms = h_last.map((h_val, dim) =>
             `(${h_val.toFixed(nr_fixed)} \\cdot ${w_row[dim].toFixed(nr_fixed)})`
         );
-        html += `<div style="margin-bottom: 10px; overflow-y: hidden; overflow-x: scroll;">
+        html += `<div class="logit_calc">
     $$\\text{logit}_{\\text{${word}}} = ${terms.join(' + ')} = \\boxed{${val.toFixed(nr_fixed)}}$$
         </div>`;
     });
