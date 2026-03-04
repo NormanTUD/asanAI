@@ -1590,7 +1590,7 @@ z-index:9999; display:none; white-space:normal;
 box-shadow: 0 4px 16px rgba(0,0,0,0.25);
 max-width:90vw; max-height:80vh; overflow-y:auto;
 line-height:1.5;
-	`;
+    `;
 		document.body.appendChild(tooltip);
 
 		const self = this;
@@ -1694,6 +1694,7 @@ line-height:1.5;
 				// Get vectors
 				const q_i = hd.Qi[qi];
 				const k_j = hd.Ki[ki];
+				const v_j = hd.Vi[ki];
 				const h0_qi = hd.h0[qi];
 				const h0_kj = hd.h0[ki];
 
@@ -1733,20 +1734,27 @@ line-height:1.5;
 				html += `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_k_int}}} = ${rawScore.toFixed(nr_fixed)}$`;
 				html += `</div>`;
 
-				// Row 2: Full numerical equation with underbraces, including token word labels
+				// Row 2: Q projection
 				html += `<div style="margin-bottom:6px;">`;
 				html += `$Q_{${qi}} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_qi)}}_{\\substack{${hLabel}[${qi}] \\\\ \\text{"${liveTokens[qi]}"}}} = ${toColVec(q_i)}$`;
 				html += `</div>`;
 
+				// Row 3: K projection
 				html += `<div style="margin-bottom:6px;">`;
 				html += `$K_{${ki}} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_kj)}}_{\\substack{${hLabel}[${ki}] \\\\ \\text{"${liveTokens[ki]}"}}} = ${toColVec(k_j)}$`;
 				html += `</div>`;
 
+				// Row 4: V projection (NEW — was missing)
+				html += `<div style="margin-bottom:6px;">`;
+				html += `$V_{${ki}} = \\underbrace{${toMatrix(hd.WV)}}_{W_V}^T \\cdot \\underbrace{${toColVec(h0_kj)}}_{\\substack{${hLabel}[${ki}] \\\\ \\text{"${liveTokens[ki]}"}}} = ${toColVec(v_j)}$`;
+				html += `</div>`;
+
+				// Row 5: Dot product
 				html += `<div style="margin-bottom:6px;">`;
 				html += `$\\frac{\\underbrace{${toRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${liveTokens[qi]}"})} \\cdot \\underbrace{${toColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${liveTokens[ki]}"})}}{\\sqrt{${d_k_int}}} = \\frac{${dotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(d_k).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
 				html += `</div>`;
 
-				// Row 3: Softmax over the full row, highlighting current cell
+				// Row 6: Softmax over the full row, highlighting current cell
 				html += `<div style="margin-bottom:4px;">`;
 				let softmaxNumer = `e^{${ki > qi ? '-\\infty' : rawScoresRow[ki].toFixed(nr_fixed)}}`;
 				let denomParts = [];
@@ -1775,6 +1783,12 @@ line-height:1.5;
 				}
 				html += parts.join(',\\;');
 				html += `\\Big)$`;
+				html += `</div>`;
+
+				// Row 7: Weighted V contribution (NEW — shows what this cell actually contributes)
+				html += `<div style="margin-top:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">`;
+				const weightedV = v_j.map(v => w * v);
+				html += `$\\alpha_{${qi},${ki}} \\cdot V_{${ki}} = ${w.toFixed(nr_fixed)} \\cdot ${toColVec(v_j)} = ${toColVec(weightedV)}$`;
 				html += `</div>`;
 
 				tooltip.innerHTML = html;
