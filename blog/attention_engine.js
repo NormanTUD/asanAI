@@ -606,75 +606,67 @@ class AttentionEngine {
 			}
 			this[hashKey] = weightsHash;
 
-			// ── Lock scroll AND wrapper heights SYNCHRONOUSLY before rAF ──
+			// ── Lock the ENTIRE headDiv height to prevent any layout shift ──
 			const scrollParent = this._findScrollParent(headDiv);
 			const savedScrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
 			const savedScrollLeft = scrollParent ? scrollParent.scrollLeft : window.scrollX;
 
-			const headviewWrap = document.getElementById(
-				`apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}`
-			);
-			const matrixWrap = document.getElementById(
-				`apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}`
-			);
-			if (headviewWrap) headviewWrap.style.minHeight = headviewWrap.offsetHeight + 'px';
-			if (matrixWrap) matrixWrap.style.minHeight = matrixWrap.offsetHeight + 'px';
+			headDiv.style.minHeight = headDiv.offsetHeight + 'px';
 
+			// ── All updates happen synchronously — no rAF nesting ──
+			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'headview');
+			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'matrix');
+
+			// ── Attention web ──
+			const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
+			const webCanvasId = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
+			const webStripId = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
+			renderDynamicAttentionWeb(
+				webContainerId, webCanvasId, webStripId,
+				displayTokens, hd.this_weights
+			);
+
+			// ── Equations: morph instead of innerHTML to avoid flicker ──
+			const equationsId = `apv-equations-${this.containerId}-${layerIdx}-${headIdx}`;
+			const equationsContainer = document.getElementById(equationsId);
+			let needsTemml = false;
+			if (equationsContainer) {
+				const layerInstance = layerData.instance;
+				const newEquationsHtml = layerInstance.generateEquationsOnly(hd);
+				if (this._morphHtml(equationsContainer, newEquationsHtml)) {
+					needsTemml = true;
+				}
+			}
+
+			// ── Attention result: morph instead of innerHTML to avoid flicker ──
+			const resultId = `apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}`;
+			const resultContainer = document.getElementById(resultId);
+			if (resultContainer) {
+				const newResultHtml = this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens);
+				if (this._morphHtml(resultContainer, newResultHtml)) {
+					needsTemml = true;
+				}
+			}
+
+			// ── Restore scroll synchronously ──
+			if (scrollParent) {
+				scrollParent.scrollTop = savedScrollTop;
+				scrollParent.scrollLeft = savedScrollLeft;
+			} else {
+				window.scrollTo(savedScrollLeft, savedScrollTop);
+			}
+
+			// ── Release height lock after the browser has painted the new content ──
 			requestAnimationFrame(() => {
-				// ── SVG patches (already smooth — no change needed) ──
-				this._apvDrawSingleHead(layerIdx, headIdx, 'headview');
-				this._apvDrawSingleHead(layerIdx, headIdx, 'matrix');
-
-				// ── Attention web (now patches in-place) ──
-				const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
-				const webCanvasId = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
-				const webStripId = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
-				renderDynamicAttentionWeb(
-					webContainerId, webCanvasId, webStripId,
-					displayTokens, hd.this_weights
-				);
-
-				// ── Equations: morph instead of innerHTML to avoid flicker ──
-				const equationsId = `apv-equations-${this.containerId}-${layerIdx}-${headIdx}`;
-				const equationsContainer = document.getElementById(equationsId);
-				let needsTemml = false;
-				if (equationsContainer) {
-					const layerInstance = layerData.instance;
-					const newEquationsHtml = layerInstance.generateEquationsOnly(hd);
-					if (this._morphHtml(equationsContainer, newEquationsHtml)) {
-						needsTemml = true;
-					}
-				}
-
-				// ── Attention result: morph instead of innerHTML to avoid flicker ──
-				const resultId = `apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}`;
-				const resultContainer = document.getElementById(resultId);
-				if (resultContainer) {
-					const newResultHtml = this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens);
-					if (this._morphHtml(resultContainer, newResultHtml)) {
-						needsTemml = true;
-					}
-				}
-
-				// ── Restore scroll AFTER all DOM mutations ──
-				if (scrollParent) {
-					scrollParent.scrollTop = savedScrollTop;
-					scrollParent.scrollLeft = savedScrollLeft;
-				} else {
-					window.scrollTo(savedScrollLeft, savedScrollTop);
-				}
-
-				// ── Release height locks after paint ──
 				requestAnimationFrame(() => {
-					if (headviewWrap) headviewWrap.style.minHeight = '';
-					if (matrixWrap) matrixWrap.style.minHeight = '';
+					headDiv.style.minHeight = '';
 				});
-
-				// Single temml pass after all DOM updates are done
-				if (needsTemml) {
-					render_temml();
-				}
 			});
+
+			// Single temml pass after all DOM updates are done
+			if (needsTemml) {
+				render_temml();
+			}
 
 			return;
 		}
@@ -707,41 +699,41 @@ class AttentionEngine {
 		const offscreen = document.createElement('div');
 		offscreen.innerHTML = `
 <div style="margin-bottom:20px;">
-    $$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
+$$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
 </div>
 <div id="apv-equations-${this.containerId}-${layerIdx}-${headIdx}" style="overflow-x:auto; margin-bottom:20px; overflow-anchor:none;">
-    ${layerInstance.generateEquationsOnly(hd)}
+			${layerInstance.generateEquationsOnly(hd)}
 </div>
 
 <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
-    Hover over a word to see where it focuses its attention.
+Hover over a word to see where it focuses its attention.
 </p>
 <div id="${webContainerId}" style="padding-top:20px;position:relative; height:200px; margin-bottom:20px; background:#fcfdfe; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">
-    <canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
-    <div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
+<canvas id="${webCanvasId}" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>
+<div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
 </div>
 
 <div class="apv-per-head-section" style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
-    <div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
-    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px; overflow-anchor:none; contain:layout style;">
-    <svg id="${apvHeadCanvasId}" style="width:100%; min-height:180px;"></svg>
-    </div>
+<div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
+style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px; overflow-anchor:none; contain:layout style;">
+<svg id="${apvHeadCanvasId}" style="width:100%; min-height:180px;"></svg>
+</div>
 
-    <div style="font-size:0.75rem; color:#94a3b8; text-align:center;">
-    Hover over a token to highlight its attention connections. Line thickness = attention weight.
-    </div>
+<div style="font-size:0.75rem; color:#94a3b8; text-align:center;">
+Hover over a token to highlight its attention connections. Line thickness = attention weight.
+</div>
 </div>
 
 <div style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
-    <div id="apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}"
-    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px; overflow-anchor:none; contain:layout style;">
-    <svg id="${apvMatrixCanvasId}" style="width:100%; min-height:180px;"></svg>
-    </div>
+<div id="apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}"
+style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px; overflow-anchor:none; contain:layout style;">
+<svg id="${apvMatrixCanvasId}" style="width:100%; min-height:180px;"></svg>
+</div>
 </div>
 
 <div id="apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}"
-     style="margin-top:20px; padding:20px; border:1px solid #f59e0b; border-radius:12px; background:#fffbeb; overflow-x:auto; overflow-anchor:none;">
-    ${this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens)}
+ style="margin-top:20px; padding:20px; border:1px solid #f59e0b; border-radius:12px; background:#fffbeb; overflow-x:auto; overflow-anchor:none;">
+			${this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens)}
 </div>
 
 <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>`;
@@ -771,14 +763,274 @@ class AttentionEngine {
 		render_temml();
 
 		requestAnimationFrame(() => {
-			this._apvDrawSingleHead(layerIdx, headIdx, 'headview');
-			this._apvDrawSingleHead(layerIdx, headIdx, 'matrix');
+			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'headview');
+			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'matrix');
 
 			renderDynamicAttentionWeb(
 				webContainerId, webCanvasId, webStripId,
 				displayTokens, hd.this_weights
 			);
 		});
+	}
+
+	_apvDrawSingleHeadSync(layerIdx, headIdx, mode) {
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		if (!registry) return;
+		const layerData = registry.layers[layerIdx];
+		if (!layerData) return;
+
+		const headDataArray = layerData.headData;
+		const displayTokens = this._apvResolveTokenLabels(layerData.tokenStrings, headDataArray);
+		const singleHeadData = headDataArray[headIdx];
+
+		const canvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-${mode}`;
+		const svg = document.getElementById(canvasId);
+		if (!svg) return;
+
+		const prevTokenCount = parseInt(svg.dataset.apvTokenCount || '0');
+		const tokenCountChanged = prevTokenCount !== displayTokens.length;
+
+		if (svg.hasChildNodes() && !tokenCountChanged) {
+			// Patch in-place — no DOM rebuild, no flicker
+			if (mode === 'matrix') {
+				this._apvPatchMatrix(svg, layerIdx, headIdx, singleHeadData, displayTokens);
+			} else {
+				this._apvPatchHeadView(svg, layerIdx, headIdx, singleHeadData, displayTokens);
+			}
+		} else {
+			// Full render — wrapper height is already locked by _executeHeadRender
+			if (mode === 'matrix') {
+				this._apvDrawSingleHeadMatrixSync(svg, layerIdx, headIdx, singleHeadData, displayTokens);
+				this._apvAttachMatrixTooltip(svg, layerIdx, [singleHeadData], displayTokens, headIdx);
+			} else {
+				this._apvDrawSingleHeadViewSync(svg, layerIdx, headIdx, singleHeadData, displayTokens);
+				this._apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, singleHeadData, displayTokens);
+			}
+			svg.dataset.apvTokenCount = displayTokens.length;
+		}
+	}
+
+	_apvDrawSingleHeadMatrixSync(svg, layerIdx, headIdx, headData, tokens) {
+		const n = tokens.length;
+		const cellSize = Math.max(18, Math.min(40, 300 / n));
+		const matrixSize = n * cellSize;
+		const padding = 80;
+		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+		const weights = headData.this_weights;
+
+		const totalWidth = matrixSize + padding;
+		const totalHeight = matrixSize + padding;
+
+		svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
+		svg.style.minHeight = totalHeight + 'px';
+
+		const frag = document.createDocumentFragment();
+
+		const makeSvgEl = (tag, attrs, content) => {
+			const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+			for (const [k, v] of Object.entries(attrs)) {
+				if (k === 'style') el.style.cssText = v;
+				else el.setAttribute(k, v);
+			}
+			if (content !== undefined) el.textContent = content;
+			return el;
+		};
+
+		const offsetX = padding / 2;
+		const offsetY = padding / 2;
+
+		frag.appendChild(makeSvgEl('text', {
+			x: String(offsetX + matrixSize / 2), y: String(offsetY - 30),
+			'font-size': '12', fill: color, 'font-weight': '700', 'text-anchor': 'middle'
+		}, `Head ${headIdx + 1}`));
+
+		for (let i = 0; i < n; i++) {
+			frag.appendChild(makeSvgEl('text', {
+				x: String(offsetX - 4),
+				y: String(offsetY + i * cellSize + cellSize / 2 + 4),
+				'font-size': '9', fill: '#64748b', 'text-anchor': 'end',
+				'data-apv-token-side': 'row',
+				'data-apv-token-idx': String(i),
+				style: 'cursor:pointer;'
+			}, tokens[i]));
+		}
+
+		for (let j = 0; j < n; j++) {
+			const cx = offsetX + j * cellSize + cellSize / 2;
+			const cy = offsetY - 6;
+			frag.appendChild(makeSvgEl('text', {
+				x: String(cx), y: String(cy),
+				'font-size': '9', fill: '#64748b', 'text-anchor': 'start',
+				transform: `rotate(-45, ${cx}, ${cy})`,
+				'data-apv-token-side': 'col',
+				'data-apv-token-idx': String(j),
+				style: 'cursor:pointer;'
+			}, tokens[j]));
+		}
+
+		for (let qi = 0; qi < n; qi++) {
+			for (let ki = qi + 1; ki < n; ki++) {
+				const x = offsetX + ki * cellSize;
+				const y = offsetY + qi * cellSize;
+				frag.appendChild(makeSvgEl('rect', {
+					x: String(x), y: String(y),
+					width: String(cellSize), height: String(cellSize),
+					fill: '#94a3b8', 'fill-opacity': '0.12',
+					'pointer-events': 'none'
+				}));
+			}
+		}
+
+		if (n > 1) {
+			let pathD = '';
+			for (let i = 0; i < n; i++) {
+				const x1 = offsetX + (i + 1) * cellSize;
+				const y1 = offsetY + i * cellSize;
+				const y2 = offsetY + (i + 1) * cellSize;
+				if (i === 0) {
+					pathD += `M ${x1} ${y1}`;
+				} else {
+					pathD += ` L ${x1} ${y1}`;
+				}
+				pathD += ` L ${x1} ${y2}`;
+			}
+			frag.appendChild(makeSvgEl('path', {
+				d: pathD,
+				fill: 'none',
+				stroke: '#64748b',
+				'stroke-width': '1.5',
+				'stroke-dasharray': '4,3',
+				'pointer-events': 'none',
+				'opacity': '0.6'
+			}));
+
+			frag.appendChild(makeSvgEl('text', {
+				x: String(offsetX + matrixSize - 2),
+				y: String(offsetY + 12),
+				'font-size': '7', fill: '#94a3b8', 'text-anchor': 'end',
+				'pointer-events': 'none', 'font-style': 'italic'
+			}, 'causal mask'));
+		}
+
+		for (let qi = 0; qi < n; qi++) {
+			for (let ki = 0; ki < n; ki++) {
+				const w = weights[qi][ki];
+				const x = offsetX + ki * cellSize;
+				const y = offsetY + qi * cellSize;
+				const alpha = Math.max(0.05, w);
+
+				frag.appendChild(makeSvgEl('rect', {
+					x: String(x), y: String(y),
+					width: String(cellSize), height: String(cellSize),
+					fill: color, 'fill-opacity': alpha.toFixed(3),
+					stroke: '#e2e8f0', 'stroke-width': '0.5',
+					'data-apv-head': '0', 'data-apv-qi': String(qi), 'data-apv-ki': String(ki),
+					style: 'cursor:crosshair;'
+				}));
+
+				if (cellSize >= 28 && w > 0.05) {
+					frag.appendChild(makeSvgEl('text', {
+						x: String(x + cellSize / 2), y: String(y + cellSize / 2 + 3),
+						'font-size': '8', fill: w > 0.5 ? '#fff' : '#334155',
+						'text-anchor': 'middle', 'pointer-events': 'none'
+					}, (w * 100).toFixed(0)));
+				}
+			}
+		}
+
+		// No wrapper height locking here — caller is responsible
+		svg.replaceChildren(frag);
+	}
+
+
+	_apvDrawSingleHeadViewSync(svg, layerIdx, headIdx, headData, tokens) {
+		const n = tokens.length;
+		const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
+		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+
+		const svgHeight = topPadding + n * rowHeight + 40;
+		const svgWidth = rightColumnX + 120;
+
+		svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
+		svg.style.minHeight = svgHeight + 'px';
+
+		const frag = document.createDocumentFragment();
+
+		const makeText = (attrs, content) => {
+			const el = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+			for (const [k, v] of Object.entries(attrs)) {
+				if (k === 'style') el.style.cssText = v;
+				else el.setAttribute(k, v);
+			}
+			el.textContent = content;
+			return el;
+		};
+
+		const makePath = (attrs) => {
+			const el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+			for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+			return el;
+		};
+
+		frag.appendChild(makeText({
+			x: String(leftColumnX), y: '18', 'font-size': '11', fill: '#64748b',
+			'font-weight': '600', 'text-anchor': 'middle'
+		}, 'Query (attending)'));
+
+		frag.appendChild(makeText({
+			x: String(rightColumnX), y: '18', 'font-size': '11', fill: '#64748b',
+			'font-weight': '600', 'text-anchor': 'middle'
+		}, 'Key (attended to)'));
+
+		const hoverKey = `${layerIdx}-${headIdx}`;
+		const hovered = this._apvHoveredToken.get(hoverKey) || null;
+
+		for (let i = 0; i < n; i++) {
+			const y = topPadding + i * rowHeight;
+			const isHoveredLeft = hovered && hovered.side === 'left' && hovered.index === i;
+			const isHoveredRight = hovered && hovered.side === 'right' && hovered.index === i;
+
+			frag.appendChild(makeText({
+				x: String(leftColumnX), y: String(y + 4),
+				'font-size': '12', fill: isHoveredLeft ? '#1e40af' : '#334155',
+				'font-weight': isHoveredLeft ? '700' : '500', 'text-anchor': 'end',
+				style: 'cursor:pointer;',
+				'data-apv-side': 'left', 'data-apv-idx': String(i)
+			}, tokens[i]));
+
+			frag.appendChild(makeText({
+				x: String(rightColumnX), y: String(y + 4),
+				'font-size': '12', fill: isHoveredRight ? '#1e40af' : '#334155',
+				'font-weight': isHoveredRight ? '700' : '500', 'text-anchor': 'start',
+				style: 'cursor:pointer;',
+				'data-apv-side': 'right', 'data-apv-idx': String(i)
+			}, tokens[i]));
+		}
+
+		const weights = headData.this_weights;
+		for (let qi = 0; qi < n; qi++) {
+			for (let ki = 0; ki < n; ki++) {
+				const w = weights[qi][ki];
+				if (w < minOpacity) continue;
+
+				const y1 = topPadding + qi * rowHeight;
+				const y2 = topPadding + ki * rowHeight;
+				const x1 = leftColumnX + 6;
+				const x2 = rightColumnX - 6;
+				const cpx = (x1 + x2) / 2;
+
+				frag.appendChild(makePath({
+					d: `M ${x1} ${y1} C ${cpx} ${y1}, ${cpx} ${y2}, ${x2} ${y2}`,
+					fill: 'none', stroke: color,
+					'stroke-width': (1 + w * 5).toFixed(1),
+					'stroke-opacity': w.toFixed(3),
+					'data-apv-qi': String(qi), 'data-apv-ki': String(ki)
+				}));
+			}
+		}
+
+		// No wrapper height locking here — caller is responsible
+		svg.replaceChildren(frag);
 	}
 
 	_buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens) {
@@ -1061,41 +1313,41 @@ class AttentionEngine {
 		const svg = document.getElementById(canvasId);
 		if (!svg) return;
 
-		// Always try to patch first if SVG has children, regardless of token count change
 		const prevTokenCount = parseInt(svg.dataset.apvTokenCount || '0');
 		const tokenCountChanged = prevTokenCount !== displayTokens.length;
 
 		if (svg.hasChildNodes() && !tokenCountChanged) {
-			// Patch: update existing DOM elements in-place — no flicker
+			// Patch in-place — no flicker
 			if (mode === 'matrix') {
 				this._apvPatchMatrix(svg, layerIdx, headIdx, singleHeadData, displayTokens);
 			} else {
 				this._apvPatchHeadView(svg, layerIdx, headIdx, singleHeadData, displayTokens);
 			}
 		} else {
-			// Full render needed: lock wrapper height, use DocumentFragment, then release
+			// Full render — lock wrapper, draw, schedule unlock
 			const wrapper = svg.parentElement;
 			if (wrapper) {
 				wrapper.style.minHeight = wrapper.offsetHeight + 'px';
 			}
 
 			if (mode === 'matrix') {
-				this._apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, singleHeadData, displayTokens);
+				this._apvDrawSingleHeadMatrixSync(svg, layerIdx, headIdx, singleHeadData, displayTokens);
 				this._apvAttachMatrixTooltip(svg, layerIdx, [singleHeadData], displayTokens, headIdx);
 			} else {
-				this._apvDrawSingleHeadView(svg, layerIdx, headIdx, singleHeadData, displayTokens);
+				this._apvDrawSingleHeadViewSync(svg, layerIdx, headIdx, singleHeadData, displayTokens);
 				this._apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, singleHeadData, displayTokens);
 			}
 			svg.dataset.apvTokenCount = displayTokens.length;
 
-			// Note: _apvDrawSingleHeadView and _apvDrawSingleHeadMatrix already lock/release
-			// the wrapper height internally, but when called from here the wrapper lock
-			// from above provides an additional safety net. The inner rAF release will
-			// clear it. If the wrapper was already locked by the draw function, this
-			// outer lock is harmless (minHeight is set to the same or larger value).
+			if (wrapper) {
+				requestAnimationFrame(() => {
+					requestAnimationFrame(() => {
+						wrapper.style.minHeight = '';
+					});
+				});
+			}
 		}
 	}
-
 
 	_apvPatchHeadView(svg, layerIdx, headIdx, headData, tokens) {
 		const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
@@ -2012,255 +2264,35 @@ line-height:1.5;
 	}
 
 	_apvDrawSingleHeadView(svg, layerIdx, headIdx, headData, tokens) {
-		const n = tokens.length;
-		const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
-		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
-
-		const svgHeight = topPadding + n * rowHeight + 40;
-		const svgWidth = rightColumnX + 120;
-
-		svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
-		svg.style.minHeight = svgHeight + 'px';
-
-		// Build into a DocumentFragment to avoid blank-frame flicker
-		const frag = document.createDocumentFragment();
-
-		const makeText = (attrs, content) => {
-			const el = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-			for (const [k, v] of Object.entries(attrs)) {
-				if (k === 'style') el.style.cssText = v;
-				else el.setAttribute(k, v);
-			}
-			el.textContent = content;
-			return el;
-		};
-
-		const makePath = (attrs) => {
-			const el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-			for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
-			return el;
-		};
-
-		frag.appendChild(makeText({
-			x: String(leftColumnX), y: '18', 'font-size': '11', fill: '#64748b',
-			'font-weight': '600', 'text-anchor': 'middle'
-		}, 'Query (attending)'));
-
-		frag.appendChild(makeText({
-			x: String(rightColumnX), y: '18', 'font-size': '11', fill: '#64748b',
-			'font-weight': '600', 'text-anchor': 'middle'
-		}, 'Key (attended to)'));
-
-		const hoverKey = `${layerIdx}-${headIdx}`;
-		const hovered = this._apvHoveredToken.get(hoverKey) || null;
-
-		for (let i = 0; i < n; i++) {
-			const y = topPadding + i * rowHeight;
-			const isHoveredLeft = hovered && hovered.side === 'left' && hovered.index === i;
-			const isHoveredRight = hovered && hovered.side === 'right' && hovered.index === i;
-
-			frag.appendChild(makeText({
-				x: String(leftColumnX), y: String(y + 4),
-				'font-size': '12', fill: isHoveredLeft ? '#1e40af' : '#334155',
-				'font-weight': isHoveredLeft ? '700' : '500', 'text-anchor': 'end',
-				style: 'cursor:pointer;',
-				'data-apv-side': 'left', 'data-apv-idx': String(i)
-			}, tokens[i]));
-
-			frag.appendChild(makeText({
-				x: String(rightColumnX), y: String(y + 4),
-				'font-size': '12', fill: isHoveredRight ? '#1e40af' : '#334155',
-				'font-weight': isHoveredRight ? '700' : '500', 'text-anchor': 'start',
-				style: 'cursor:pointer;',
-				'data-apv-side': 'right', 'data-apv-idx': String(i)
-			}, tokens[i]));
-		}
-
-		const weights = headData.this_weights;
-		for (let qi = 0; qi < n; qi++) {
-			for (let ki = 0; ki < n; ki++) {
-				const w = weights[qi][ki];
-				if (w < minOpacity) continue;
-
-				const y1 = topPadding + qi * rowHeight;
-				const y2 = topPadding + ki * rowHeight;
-				const x1 = leftColumnX + 6;
-				const x2 = rightColumnX - 6;
-				const cpx = (x1 + x2) / 2;
-
-				frag.appendChild(makePath({
-					d: `M ${x1} ${y1} C ${cpx} ${y1}, ${cpx} ${y2}, ${x2} ${y2}`,
-					fill: 'none', stroke: color,
-					'stroke-width': (1 + w * 5).toFixed(1),
-					'stroke-opacity': w.toFixed(3),
-					'data-apv-qi': String(qi), 'data-apv-ki': String(ki)
-				}));
-			}
-		}
-
-		// ── Lock wrapper height to prevent collapse during replaceChildren ──
 		const wrapper = svg.parentElement;
 		if (wrapper) {
 			wrapper.style.minHeight = wrapper.offsetHeight + 'px';
 		}
 
-		// Atomic swap: replaceChildren removes all old children and appends the fragment in one
-		// synchronous operation — the browser won't paint a blank frame between removal and insertion
-		svg.replaceChildren(frag);
+		this._apvDrawSingleHeadViewSync(svg, layerIdx, headIdx, headData, tokens);
 
-		// ── Release height lock after paint ──
 		if (wrapper) {
 			requestAnimationFrame(() => {
-				wrapper.style.minHeight = '';
+				requestAnimationFrame(() => {
+					wrapper.style.minHeight = '';
+				});
 			});
 		}
 	}
 
 	_apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, headData, tokens) {
-		const n = tokens.length;
-		const cellSize = Math.max(18, Math.min(40, 300 / n));
-		const matrixSize = n * cellSize;
-		const padding = 80;
-		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
-		const weights = headData.this_weights;
-
-		const totalWidth = matrixSize + padding;
-		const totalHeight = matrixSize + padding;
-
-		svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
-		svg.style.minHeight = totalHeight + 'px';
-
-		const frag = document.createDocumentFragment();
-
-		const makeSvgEl = (tag, attrs, content) => {
-			const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-			for (const [k, v] of Object.entries(attrs)) {
-				if (k === 'style') el.style.cssText = v;
-				else el.setAttribute(k, v);
-			}
-			if (content !== undefined) el.textContent = content;
-			return el;
-		};
-
-		const offsetX = padding / 2;
-		const offsetY = padding / 2;
-
-		frag.appendChild(makeSvgEl('text', {
-			x: String(offsetX + matrixSize / 2), y: String(offsetY - 30),
-			'font-size': '12', fill: color, 'font-weight': '700', 'text-anchor': 'middle'
-		}, `Head ${headIdx + 1}`));
-
-		// Row labels (query side) — with data attributes for hover
-		for (let i = 0; i < n; i++) {
-			frag.appendChild(makeSvgEl('text', {
-				x: String(offsetX - 4),
-				y: String(offsetY + i * cellSize + cellSize / 2 + 4),
-				'font-size': '9', fill: '#64748b', 'text-anchor': 'end',
-				'data-apv-token-side': 'row',
-				'data-apv-token-idx': String(i),
-				style: 'cursor:pointer;'
-			}, tokens[i]));
-		}
-
-		// Column labels (key side) — with data attributes for hover
-		for (let j = 0; j < n; j++) {
-			const cx = offsetX + j * cellSize + cellSize / 2;
-			const cy = offsetY - 6;
-			frag.appendChild(makeSvgEl('text', {
-				x: String(cx), y: String(cy),
-				'font-size': '9', fill: '#64748b', 'text-anchor': 'start',
-				transform: `rotate(-45, ${cx}, ${cy})`,
-				'data-apv-token-side': 'col',
-				'data-apv-token-idx': String(j),
-				style: 'cursor:pointer;'
-			}, tokens[j]));
-		}
-
-		// ── Causal mask diagonal: shade upper-triangle cells and draw boundary ──
-		for (let qi = 0; qi < n; qi++) {
-			for (let ki = qi + 1; ki < n; ki++) {
-				const x = offsetX + ki * cellSize;
-				const y = offsetY + qi * cellSize;
-				frag.appendChild(makeSvgEl('rect', {
-					x: String(x), y: String(y),
-					width: String(cellSize), height: String(cellSize),
-					fill: '#94a3b8', 'fill-opacity': '0.12',
-					'pointer-events': 'none'
-				}));
-			}
-		}
-
-		// Draw the causal mask diagonal boundary line
-		if (n > 1) {
-			let pathD = '';
-			for (let i = 0; i < n; i++) {
-				const x1 = offsetX + (i + 1) * cellSize;
-				const y1 = offsetY + i * cellSize;
-				const y2 = offsetY + (i + 1) * cellSize;
-				if (i === 0) {
-					pathD += `M ${x1} ${y1}`;
-				} else {
-					pathD += ` L ${x1} ${y1}`;
-				}
-				pathD += ` L ${x1} ${y2}`;
-			}
-			frag.appendChild(makeSvgEl('path', {
-				d: pathD,
-				fill: 'none',
-				stroke: '#64748b',
-				'stroke-width': '1.5',
-				'stroke-dasharray': '4,3',
-				'pointer-events': 'none',
-				'opacity': '0.6'
-			}));
-
-			frag.appendChild(makeSvgEl('text', {
-				x: String(offsetX + matrixSize - 2),
-				y: String(offsetY + 12),
-				'font-size': '7', fill: '#94a3b8', 'text-anchor': 'end',
-				'pointer-events': 'none', 'font-style': 'italic'
-			}, 'causal mask'));
-		}
-
-		// ── Attention weight cells ──
-		for (let qi = 0; qi < n; qi++) {
-			for (let ki = 0; ki < n; ki++) {
-				const w = weights[qi][ki];
-				const x = offsetX + ki * cellSize;
-				const y = offsetY + qi * cellSize;
-				const alpha = Math.max(0.05, w);
-
-				frag.appendChild(makeSvgEl('rect', {
-					x: String(x), y: String(y),
-					width: String(cellSize), height: String(cellSize),
-					fill: color, 'fill-opacity': alpha.toFixed(3),
-					stroke: '#e2e8f0', 'stroke-width': '0.5',
-					'data-apv-head': '0', 'data-apv-qi': String(qi), 'data-apv-ki': String(ki),
-					style: 'cursor:crosshair;'
-				}));
-
-				if (cellSize >= 28 && w > 0.05) {
-					frag.appendChild(makeSvgEl('text', {
-						x: String(x + cellSize / 2), y: String(y + cellSize / 2 + 3),
-						'font-size': '8', fill: w > 0.5 ? '#fff' : '#334155',
-						'text-anchor': 'middle', 'pointer-events': 'none'
-					}, (w * 100).toFixed(0)));
-				}
-			}
-		}
-
-		// ── Lock wrapper height to prevent collapse during replaceChildren ──
 		const wrapper = svg.parentElement;
 		if (wrapper) {
 			wrapper.style.minHeight = wrapper.offsetHeight + 'px';
 		}
 
-		svg.replaceChildren(frag);
+		this._apvDrawSingleHeadMatrixSync(svg, layerIdx, headIdx, headData, tokens);
 
-		// ── Release height lock after paint ──
 		if (wrapper) {
 			requestAnimationFrame(() => {
-				wrapper.style.minHeight = '';
+				requestAnimationFrame(() => {
+					wrapper.style.minHeight = '';
+				});
 			});
 		}
 	}
