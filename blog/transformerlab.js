@@ -5566,10 +5566,6 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 
     <!-- ===== ATTENTION SECTION ===== -->
     <div style="margin-bottom: 24px;">
-        <p style="color: #1e40af; margin: 0 0 12px 0; font-size: 0.95rem;">
-            🔵 Multi-Head Attention
-        </p>
-
         <!-- 1. Pre-LN: Normalize h0 before attention -->
         <div id="${prefix}-layernorm-viz" style="margin-top: 10px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
 
