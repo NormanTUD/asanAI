@@ -3107,7 +3107,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 
     $$ \\text{out}_{L1}${sup} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1${sup}) \\cdot W_1${sup} + b_1${sup}\\right) $$
 
-    <div style="overflow-x:auto;">
+    <div style="overflow-x:auto; padding-bottom: 10px;">
     $$ \\underbrace{${matrixToPmatrix(out_L1)}}_{\\text{out}_{L1}${sup}} = \\text{ReLU}\\!\\left( \\underbrace{${matrixToPmatrix(normed_h1)}}_{\\text{Norm}(h_1${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
     </div>
     `;
@@ -3117,7 +3117,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 
     $$ \\text{out}_{L2}${sup} = \\text{out}_{L1}${sup} \\cdot W_2${sup} + b_2${sup} $$
 
-    <div style="overflow-x:auto;">
+    <div style="overflow-x:auto; padding-bottom: 10px;">
     $$ \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrix(out_L1)}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
     </div>
     `;
@@ -3127,7 +3127,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	<p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
 	$$ h_2${sup} = h_1${sup} + \\text{out}_{L2}${sup} $$
     </div>
-    <div style="overflow-x:auto; overflow-y: hidden">
+    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px;">
 	$$ \\underbrace{${matrixToPmatrix(h2)}}_{h_2${sup}} = \\underbrace{${matrixToPmatrix(h1)}}_{h_1${sup}} + \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{out}_{L2}${sup}} $$
     </div>
     `;
