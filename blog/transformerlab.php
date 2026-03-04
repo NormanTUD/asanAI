@@ -461,6 +461,7 @@ Where:
 While attention decides *what to look at*, the FFN decides *what to do with it*.
 
 The final state of this block, **$h_2$**, is formed by another residual connection:
+
 $$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
 </div>
 
