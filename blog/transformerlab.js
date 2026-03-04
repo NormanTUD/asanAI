@@ -2859,9 +2859,11 @@ window.showFFNLayer = function(layerIdx) {
 	if (contentDiv) {
 		contentDiv.style.display = 'block';
 
-		// If this tab has deferred data that hasn't been rendered, render it now
+		// Render deferred content if needed
 		if (contentDiv.dataset.rendered === 'false' && contentDiv._deferredData) {
 			const d = contentDiv._deferredData;
+			const hash = _ffnContentHash(d.h1, d.normed_h1, d.out_L1, d.out_FFN, d.h2, d.gamma, d.beta);
+			contentDiv._lastHash = hash;
 			_writeFFNContent(
 				`ffn-layer-${layerIdx}`,
 				d.h1, d.normed_h1, d.W1, d.b1, d.out_L1,
@@ -2952,10 +2954,10 @@ function clearFFNEquationsContainer() {
 
 	const existingTabs = container.querySelector('.ffn-layer-tabs');
 	if (existingTabs) {
-		// Preserve tab structure, mark for re-render, clear stale deferred data
 		container.querySelectorAll('.ffn-layer-tab-content').forEach(div => {
 			div.dataset.rendered = 'false';
 			div._deferredData = null;
+			div._lastHash = null;
 		});
 	} else {
 		container.innerHTML = '';
@@ -2994,20 +2996,51 @@ function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, b
 	ensureFFNLayerContainers(layerIndex);
 	const prefix = `ffn-layer-${layerIndex}`;
 
-	// Only render if this layer's tab is currently visible
 	const contentDiv = document.getElementById(`${prefix}-content`);
 	if (!contentDiv) return;
 
-	// Skip DOM writes if the tab is hidden — prevents layout thrashing during training
+	// Always store latest data for deferred rendering
+	contentDiv._deferredData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex };
+
+	// Skip DOM writes if the tab is hidden
 	if (contentDiv.style.display === 'none') {
-		// Store data for deferred rendering when the tab is clicked
 		contentDiv.dataset.rendered = 'false';
-		contentDiv._deferredData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex };
 		return;
 	}
 
+	// Generate a lightweight hash of the numeric data to detect actual changes
+	const hash = _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta);
+
+	// Skip DOM writes if the content hasn't changed (prevents scroll jumps during training)
+	if (contentDiv.dataset.rendered === 'true' && contentDiv._lastHash === hash) {
+		return;
+	}
+
+	contentDiv._lastHash = hash;
 	_writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex);
 	contentDiv.dataset.rendered = 'true';
+}
+
+function _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta) {
+	// Sample a few values from each matrix to create a fast fingerprint
+	// This avoids JSON.stringify on large matrices while still detecting changes
+	let hash = '';
+	const sample = (mat) => {
+		if (!mat || !mat.length) return '';
+		const first = Array.isArray(mat[0]) ? mat[0][0] : mat[0];
+		const last = Array.isArray(mat[mat.length - 1])
+			? mat[mat.length - 1][mat[mat.length - 1].length - 1]
+			: mat[mat.length - 1];
+		return `${first.toFixed(6)}_${last.toFixed(6)}`;
+	};
+	hash += sample(h1) + '|';
+	hash += sample(normed_h1) + '|';
+	hash += sample(out_L1) + '|';
+	hash += sample(out_FFN) + '|';
+	hash += sample(h2) + '|';
+	hash += sample(gamma) + '|';
+	hash += sample(beta);
+	return hash;
 }
 
 function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex) {
