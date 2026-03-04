@@ -818,7 +818,7 @@ class AttentionEngine {
 
 		// ── Step 1: Abstract ──
 		html += `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
-	<p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Step 1 — Weighted Sum of Values (Abstract)</p>
+	<p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Step 1: Weighted Sum of Values (Abstract)</p>
 	<p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">
 	    Each token's <b>context vector</b> is a weighted average of all Value vectors it can see.
 	    The attention weights (from Softmax) determine how much each Value contributes.
@@ -832,7 +832,7 @@ class AttentionEngine {
 
 		// ── Step 2: Full context matrix with labeled rows AND column headers ──
 		html += `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
-	<p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Step 2 — Context Matrix for Head ${headIdx + 1}</p>
+	<p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Step 2: Context Matrix for Head ${headIdx + 1}</p>
 	<p style="font-size:0.85rem; color:#334155; margin-bottom:4px;">
 	    Stacking all context vectors gives the output of this head — a matrix of shape
 	    $(T \\times d_k) = (${n} \\times ${d_k})$.
