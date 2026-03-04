@@ -2859,40 +2859,8 @@ function assertShape(name, value, expected_rows, expected_cols) {
 }
 
 window.showFFNLayer = function(layerIdx) {
-	const container = document.getElementById('ffn-equations-container');
-	if (!container) return;
-
-	container.querySelectorAll('.ffn-layer-tab-content').forEach(div => {
-		div.style.display = 'none';
-	});
-	container.querySelectorAll('.ffn-layer-tab-btn').forEach(btn => {
-		btn.style.background = '#ddd6fe';
-		btn.style.fontWeight = 'normal';
-	});
-
-	const contentDiv = document.getElementById(`ffn-layer-${layerIdx}-content`);
-	if (contentDiv) {
-		contentDiv.style.display = 'block';
-
-		if (contentDiv.dataset.rendered === 'false' && contentDiv._deferredData) {
-			const d = contentDiv._deferredData;
-			const hash = _ffnContentHash(d.h1, d.normed_h1, d.out_L1, d.out_FFN, d.h2, d.gamma, d.beta);
-			contentDiv._lastHash = hash;
-			_writeFFNContent(
-				`ffn-layer-${layerIdx}`,
-				d.h1, d.normed_h1, d.W1, d.b1, d.out_L1,
-				d.W2, d.b2, d.out_FFN, d.h2, d.gamma, d.beta, d.layerIndex,
-				d.tokenStrings  // <-- now passed through
-			);
-			contentDiv.dataset.rendered = 'true';
-		}
-	}
-
-	const activeBtn = document.getElementById(`ffn-layer-${layerIdx}-tab-btn`);
-	if (activeBtn) {
-		activeBtn.style.background = '#fff';
-		activeBtn.style.fontWeight = 'bold';
-	}
+    // Redirect to the unified layer system
+    showUnifiedLayer(layerIdx);
 };
 
 /**
@@ -2973,7 +2941,7 @@ function ensureFFNLayerContainers(layerIndex) {
 }
 
 function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenStrings) {
-	const prefix = `ffn-layer-${layerIndex}`;
+	const prefix = `unified-layer-${layerIndex}`;
 	const container = document.getElementById(`${prefix}-concat-viz`);
 	if (!container || !headData.length) return [];
 
@@ -2995,7 +2963,7 @@ function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenS
 }
 
 function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO, layerIndex, tokenStrings) {
-	const prefix = `ffn-layer-${layerIndex}`;
+	const prefix = `unified-layer-${layerIndex}`;
 	const normContainer = document.getElementById(`${prefix}-layernorm-viz`);
 	const finalContainer = document.getElementById(`${prefix}-h1-final-viz`);
 	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
@@ -3028,7 +2996,6 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
 
 	const L = layerIndex + 1;
 	const sup = `^{(${L})}`;
-	// Each layer produces 2 new h values; input shares subscript with previous layer's output
 	const base = layerIndex * 2;
 	const h0name = `h_{${base}}`;
 	const h1name = `h_{${base + 1}}`;
@@ -3067,19 +3034,12 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
 }
 
 function clearFFNEquationsContainer() {
-	const container = document.getElementById('ffn-equations-container');
-	if (!container) return;
+    const container = document.getElementById('ffn-equations-container');
+    if (!container) return;
 
-	const existingTabs = container.querySelector('.ffn-layer-tabs');
-	if (existingTabs) {
-		container.querySelectorAll('.ffn-layer-tab-content').forEach(div => {
-			div.dataset.rendered = 'false';
-			div._deferredData = null;
-			div._lastHash = null;
-		});
-	} else {
-		container.innerHTML = '';
-	}
+    // Always do a full clear so unified tabs get rebuilt fresh
+    // This prevents stale layer tabs from previous config
+    container.innerHTML = '';
 }
 
 function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, tokenStrings = null) {
@@ -3109,29 +3069,29 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, toke
 }
 
 function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
-	ensureFFNLayerContainers(layerIndex);
-	const prefix = `ffn-layer-${layerIndex}`;
+    ensureFFNLayerContainers(layerIndex);
+    const prefix = `unified-layer-${layerIndex}`;
 
-	const contentDiv = document.getElementById(`${prefix}-content`);
-	if (!contentDiv) return;
+    const contentDiv = document.getElementById(`${prefix}-content`);
+    if (!contentDiv) return;
 
-	// Always store latest data for deferred rendering — now includes tokenStrings
-	contentDiv._deferredData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings };
+    // Store latest data for deferred rendering
+    contentDiv._deferredFFNData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings };
 
-	if (contentDiv.style.display === 'none') {
-		contentDiv.dataset.rendered = 'false';
-		return;
-	}
+    if (contentDiv.style.display === 'none') {
+        contentDiv.dataset.ffnRendered = 'false';
+        return;
+    }
 
-	const hash = _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta);
+    const hash = _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta);
 
-	if (contentDiv.dataset.rendered === 'true' && contentDiv._lastHash === hash) {
-		return;
-	}
+    if (contentDiv.dataset.ffnRendered === 'true' && contentDiv._lastFFNHash === hash) {
+        return;
+    }
 
-	contentDiv._lastHash = hash;
-	_writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings);
-	contentDiv.dataset.rendered = 'true';
+    contentDiv._lastFFNHash = hash;
+    _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings);
+    contentDiv.dataset.ffnRendered = 'true';
 }
 
 function _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta) {
@@ -5804,6 +5764,164 @@ function matrixToPmatrixLabeled(matrix, tokenStrings) {
 	}).join(' \\\\ ');
 
 	return `\\left(\\begin{array}{${colSpec}} ${rows} \\end{array}\\right)`;
+}
+
+/**
+ * Ensures a unified layer tab container exists with a tab for the given layer.
+ * Each layer tab holds BOTH attention details and FFN computations.
+ */
+function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
+    const container = document.getElementById('ffn-equations-container');
+    if (!container) return;
+
+    container.style.overflowAnchor = 'none';
+
+    let tabsWrapper = container.querySelector('.unified-layer-tabs');
+
+    if (!tabsWrapper) {
+        tabsWrapper = document.createElement('div');
+        tabsWrapper.className = 'unified-layer-tabs';
+        tabsWrapper.style.cssText = 'border:1px solid #3b82f6; border-radius:8px; overflow:hidden; margin-top:20px; overflow-anchor:none;';
+
+        const tabList = document.createElement('div');
+        tabList.className = 'unified-tab-list';
+        tabList.style.cssText = 'background:#dbeafe; display:flex; border-bottom:2px solid #3b82f6; flex-wrap:wrap;';
+
+        tabsWrapper.appendChild(tabList);
+        container.appendChild(tabsWrapper);
+    }
+
+    const tabList = tabsWrapper.querySelector('.unified-tab-list');
+    const prefix = `unified-layer-${layerIndex}`;
+
+    if (document.getElementById(`${prefix}-tab-btn`)) {
+        return;
+    }
+
+    const btn = document.createElement('button');
+    btn.id = `${prefix}-tab-btn`;
+    btn.className = 'unified-layer-tab-btn';
+    btn.textContent = `Layer ${layerIndex + 1}`;
+    btn.style.cssText = `padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+    background:${tabList.children.length === 0 ? '#fff' : '#bfdbfe'};
+    font-weight:${tabList.children.length === 0 ? 'bold' : 'normal'};`;
+    btn.onclick = () => showUnifiedLayer(layerIndex);
+    tabList.appendChild(btn);
+
+    const contentDiv = document.createElement('div');
+    contentDiv.id = `${prefix}-content`;
+    contentDiv.className = 'unified-layer-tab-content';
+    contentDiv.dataset.layerIdx = layerIndex;
+    contentDiv.dataset.rendered = 'false';
+    contentDiv.style.display = tabList.children.length === 1 ? 'block' : 'none';
+    contentDiv.style.padding = '15px';
+    contentDiv.style.background = '#f8f9ff';
+    contentDiv.style.overflowAnchor = 'none';
+
+    contentDiv.innerHTML = `
+    <h3 style="color: #1e40af; margin: 0 0 16px 0; font-size: 1.1rem; border-bottom: 2px solid #3b82f6; padding-bottom: 8px;">
+        Layer ${layerIndex + 1}
+    </h3>
+
+    <!-- ===== ATTENTION SECTION ===== -->
+    <div style="margin-bottom: 24px;">
+        <h4 style="color: #1e40af; margin: 0 0 12px 0; font-size: 0.95rem;">
+            🔵 Multi-Head Attention
+        </h4>
+
+        <!-- 1. Pre-LN: Normalize h0 before attention -->
+        <div id="${prefix}-layernorm-viz" style="margin-top: 10px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
+
+        <!-- 2. Attention heads (will be populated by AttentionEngine) -->
+        <div id="${prefix}-attention-heads" style="margin-top: 16px;"></div>
+
+        <!-- 3. Concatenation of head outputs -->
+        <div id="${prefix}-concat-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;"></div>
+
+        <!-- 4. Output projection + Residual connection -->
+        <div id="${prefix}-h1-final-viz" style="margin-top: 16px; padding: 20px; border: 1px solid #8b5cf6; border-radius: 12px; background: #f5f3ff; overflow-x: auto;"></div>
+    </div>
+
+    <!-- ===== FFN SECTION ===== -->
+    <div>
+        <h4 style="color: #f59e0b; margin: 0 0 12px 0; font-size: 0.95rem;">
+            ⚡ Feed-Forward Network
+        </h4>
+
+        <!-- FFN steps -->
+        <div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
+        <div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
+        <div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
+    </div>
+    `;
+
+    tabsWrapper.appendChild(contentDiv);
+}
+
+window.showUnifiedLayer = function(layerIdx) {
+	const container = document.getElementById('ffn-equations-container');
+	if (!container) return;
+
+	// Hide all layer contents
+	container.querySelectorAll('.unified-layer-tab-content').forEach(div => {
+		div.style.display = 'none';
+	});
+	container.querySelectorAll('.unified-layer-tab-btn').forEach(btn => {
+		btn.style.background = '#bfdbfe';
+		btn.style.fontWeight = 'normal';
+	});
+
+	// Show selected layer
+	const contentDiv = document.getElementById(`unified-layer-${layerIdx}-content`);
+	if (contentDiv) {
+		contentDiv.style.display = 'block';
+
+		// Deferred FFN rendering
+		if (contentDiv.dataset.ffnRendered === 'false' && contentDiv._deferredFFNData) {
+			const d = contentDiv._deferredFFNData;
+			const hash = _ffnContentHash(d.h1, d.normed_h1, d.out_L1, d.out_FFN, d.h2, d.gamma, d.beta);
+			contentDiv._lastFFNHash = hash;
+			_writeFFNContent(
+				`unified-layer-${layerIdx}`,
+				d.h1, d.normed_h1, d.W1, d.b1, d.out_L1,
+				d.W2, d.b2, d.out_FFN, d.h2, d.gamma, d.beta, d.layerIndex,
+				d.tokenStrings
+			);
+			contentDiv.dataset.ffnRendered = 'true';
+		}
+	}
+
+	// Highlight active tab button
+	const activeBtn = document.getElementById(`unified-layer-${layerIdx}-tab-btn`);
+	if (activeBtn) {
+		activeBtn.style.background = '#fff';
+		activeBtn.style.fontWeight = 'bold';
+	}
+
+	// Trigger attention head rendering for this layer
+	const registryEntry = attentionRenderRegistry.get('mha-calculation-details');
+	if (registryEntry && registryEntry.instance) {
+		const mhaRegistry = multiLayerAttentionRegistry.get('mha-calculation-details');
+		if (mhaRegistry && mhaRegistry.layers[layerIdx]) {
+			// Check if head tabs exist for this layer
+			const attnSection = document.getElementById(`unified-layer-${layerIdx}-attention-heads`);
+			if (attnSection && !attnSection.querySelector('.head-tab-list')) {
+				// Need to build head tabs — call executeActualRender which handles unified mode
+				registryEntry.instance.executeActualRender(registryEntry.headData, registryEntry.tokens);
+			} else {
+				// Head tabs exist — just render the visible head
+				registryEntry.instance._renderLayerContent(layerIdx);
+			}
+		}
+	}
+
+	render_temml();
+};
+
+function ensureFFNLayerContainers(layerIndex) {
+	// Delegate to the unified layer container system
+	const { n_layers } = getTransformerConfig();
+	ensureUnifiedLayerContainer(layerIndex, n_layers, 'mha-calculation-details');
 }
 
 async function loadTransformerModule () {

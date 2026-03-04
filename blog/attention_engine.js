@@ -184,7 +184,13 @@ class AttentionEngine {
 	}
 
 	_updateLayerContent(layerIdx) {
-		const contentDiv = document.getElementById(`layer-content-${this.containerId}-${layerIdx}`);
+		// Try unified mode first
+		let contentDiv = document.getElementById(`unified-layer-${layerIdx}-attention-heads`);
+
+		// Fall back to old mode
+		if (!contentDiv) {
+			contentDiv = document.getElementById(`layer-content-${this.containerId}-${layerIdx}`);
+		}
 		if (!contentDiv) return;
 
 		const registry = multiLayerAttentionRegistry.get(this.containerId);
@@ -200,11 +206,11 @@ class AttentionEngine {
 				const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${h}`);
 				const isActive = headDiv ? headDiv.style.display !== 'none' : h === 0;
 				headTabHtml += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
-		onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-		style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-		background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
-		Head ${h + 1}
-	    </button>`;
+	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
+	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+	background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
+	Head ${h + 1}
+    </button>`;
 			}
 			headTabList.innerHTML = headTabHtml;
 		}
@@ -231,6 +237,103 @@ class AttentionEngine {
 		const layers = registry.layers;
 		const numLayers = layers.length;
 
+		// ── Check if unified layer containers exist ──
+		const ffnContainer = document.getElementById('ffn-equations-container');
+		const hasUnifiedTabs = ffnContainer && ffnContainer.querySelector('.unified-layer-tabs');
+
+		if (hasUnifiedTabs) {
+			// ── UNIFIED MODE: inject attention heads into each unified layer's attention section ──
+
+			// Replace the old attention container content with a pointer message
+			if (this.container.querySelector('.attention-layer-tabs')) {
+				this.container.innerHTML = '';
+			}
+			if (!this.container.querySelector('.unified-redirect-msg')) {
+				this.container.innerHTML = `<div class="unified-redirect-msg" style="padding:15px; color:#64748b; text-align:center; font-style:italic;">
+				Attention details are shown within each layer tab below ↓
+			</div>`;
+			}
+
+			// Store engine instance globally for APV callbacks
+			if (!window.__apv_instances) window.__apv_instances = {};
+			window.__apv_instances[this.containerId] = this;
+
+			for (let l = 0; l < numLayers; l++) {
+				const attnSection = document.getElementById(`unified-layer-${l}-attention-heads`);
+				if (!attnSection) continue;
+
+				const layerData = layers[l];
+				const layerHeadData = layerData.headData;
+
+				// Check if head tabs already exist for this layer
+				const existingHeadTabList = attnSection.querySelector('.head-tab-list');
+
+				if (!existingHeadTabList) {
+					// ── First-time build: create head tabs inside the unified layer ──
+					let html = '';
+					html += `<div class="head-tab-list" style="background:#f0f4f8; display:flex; border-bottom:1px solid #3b82f6; flex-wrap:wrap; border-radius:8px 8px 0 0;">`;
+					for (let h = 0; h < layerHeadData.length; h++) {
+						html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${l}-${h}"
+						onclick="showHeadInLayer('${this.containerId}', ${l}, ${h}, ${layerHeadData.length})"
+						style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+						background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
+						Head ${h + 1}
+					</button>`;
+					}
+					html += `</div>`;
+
+					for (let h = 0; h < layerHeadData.length; h++) {
+						html += `<div id="head-content-${this.containerId}-${l}-${h}" class="head-tab-in-layer"
+						style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
+						data-head-idx="${h}" data-rendered="false"
+						data-container-id="${this.containerId}" data-layer-idx="${l}" data-head-idx="${h}">
+						<div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
+					</div>`;
+					}
+
+					attnSection.innerHTML = html;
+
+					// Initialize APV state for this layer
+					if (!this._apvHoveredToken.has(l)) {
+						this._apvHoveredToken.set(l, null);
+					}
+
+					// Render first head immediately
+					this._renderHeadContent(l, 0);
+				} else {
+					// ── Update existing heads (data changed, e.g. after training) ──
+					// Update head tab count if needed
+					const existingBtnCount = existingHeadTabList.querySelectorAll('.mha-head-tab-btn').length;
+					if (existingBtnCount !== layerHeadData.length) {
+						let headTabHtml = '';
+						for (let h = 0; h < layerHeadData.length; h++) {
+							const headDiv = document.getElementById(`head-content-${this.containerId}-${l}-${h}`);
+							const isActive = headDiv ? headDiv.style.display !== 'none' : h === 0;
+							headTabHtml += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${l}-${h}"
+							onclick="showHeadInLayer('${this.containerId}', ${l}, ${h}, ${layerHeadData.length})"
+							style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+							background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
+							Head ${h + 1}
+						</button>`;
+						}
+						existingHeadTabList.innerHTML = headTabHtml;
+					}
+
+					// Re-render heads that were already rendered (patch update)
+					for (let h = 0; h < layerHeadData.length; h++) {
+						const headDiv = document.getElementById(`head-content-${this.containerId}-${l}-${h}`);
+						if (headDiv && headDiv.dataset.wasRenderedOnce === 'true') {
+							headDiv.dataset.rendered = 'false';
+							this._executeHeadRender(l, h);
+						}
+					}
+				}
+			}
+
+			return;
+		}
+
+		// ── FALLBACK: original behavior if unified tabs don't exist ──
 		const existingTabs = this.container.querySelector('.attention-layer-tabs');
 		if (existingTabs) {
 			const tabList = existingTabs.querySelector('.layer-tab-list');
@@ -242,11 +345,11 @@ class AttentionEngine {
 					const contentDiv = document.getElementById(`layer-content-${this.containerId}-${l}`);
 					const isActive = contentDiv ? contentDiv.style.display !== 'none' : l === 0;
 					tabHtml += `<button class="mha-layer-tab-btn" id="layer-tab-btn-${this.containerId}-${l}"
-			onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
-			style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-			background:${isActive ? '#fff' : '#bfdbfe'}; font-weight:${isActive ? 'bold' : 'normal'};">
-			Layer ${l + 1}
-		    </button>`;
+		onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
+		style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+		background:${isActive ? '#fff' : '#bfdbfe'}; font-weight:${isActive ? 'bold' : 'normal'};">
+		Layer ${l + 1}
+	    </button>`;
 				}
 				tabList.innerHTML = tabHtml;
 
@@ -274,7 +377,7 @@ class AttentionEngine {
 			return;
 		}
 
-		// ── First-time build: restore persisted layer ──
+		// ── First-time build (fallback): restore persisted layer ──
 		const saved = this._apvLoadState();
 		let startLayer = 0;
 		if (saved && typeof saved.activeLayer === 'number' &&
@@ -287,20 +390,20 @@ class AttentionEngine {
 		html += `<div class="layer-tab-list" style="background:#dbeafe; display:flex; border-bottom:2px solid #3b82f6; flex-wrap:wrap;">`;
 		for (let l = 0; l < numLayers; l++) {
 			html += `<button class="mha-layer-tab-btn" id="layer-tab-btn-${this.containerId}-${l}"
-		onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
-		style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
-		background:${l === startLayer ? '#fff' : '#bfdbfe'}; font-weight:${l === startLayer ? 'bold' : 'normal'};">
-		Layer ${l + 1}
-	    </button>`;
+	onclick="showLayer('${this.containerId}', ${l}, ${numLayers})"
+	style="padding:10px 18px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+	background:${l === startLayer ? '#fff' : '#bfdbfe'}; font-weight:${l === startLayer ? 'bold' : 'normal'};">
+	Layer ${l + 1}
+    </button>`;
 		}
 		html += `</div>`;
 
 		for (let l = 0; l < numLayers; l++) {
 			html += `<div id="layer-content-${this.containerId}-${l}" class="layer-tab-content"
-		style="display:${l === startLayer ? 'block' : 'none'};"
-		data-layer-idx="${l}" data-rendered="false">
-		<div style="padding:20px; color:#64748b;">Loading Layer ${l + 1}...</div>
-	    </div>`;
+	style="display:${l === startLayer ? 'block' : 'none'};"
+	data-layer-idx="${l}" data-rendered="false">
+	<div style="padding:20px; color:#64748b;">Loading Layer ${l + 1}...</div>
+    </div>`;
 		}
 
 		html += `</div>`;
@@ -314,6 +417,41 @@ class AttentionEngine {
 	}
 
 	_renderLayerContent(layerIdx) {
+		// ── Try unified mode first ──
+		const unifiedAttnSection = document.getElementById(`unified-layer-${layerIdx}-attention-heads`);
+		if (unifiedAttnSection) {
+			// In unified mode, head content divs live inside the unified container
+			const registry = multiLayerAttentionRegistry.get(this.containerId);
+			if (!registry || !registry.layers[layerIdx]) return;
+
+			const layerData = registry.layers[layerIdx];
+			const layerHeadData = layerData.headData;
+
+			// Check if head tabs exist; if not, executeActualRender will create them
+			const headTabList = unifiedAttnSection.querySelector('.head-tab-list');
+			if (!headTabList) {
+				// Force executeActualRender to build the head tabs
+				this.executeActualRender(layerData.headData, layerData.tokens);
+				return;
+			}
+
+			// Initialize APV state for this layer
+			if (!this._apvHoveredToken.has(layerIdx)) {
+				this._apvHoveredToken.set(layerIdx, null);
+			}
+
+			// Find which head is currently visible and render it
+			for (let h = 0; h < layerHeadData.length; h++) {
+				const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${h}`);
+				if (headDiv && headDiv.style.display !== 'none') {
+					this._renderHeadContent(layerIdx, h);
+					break;
+				}
+			}
+			return;
+		}
+
+		// ── Fallback: original layer-content-* mode ──
 		const contentDiv = document.getElementById(`layer-content-${this.containerId}-${layerIdx}`);
 		if (!contentDiv) return;
 
