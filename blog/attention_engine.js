@@ -289,7 +289,7 @@ class AttentionEngine {
 
 					for (let h = 0; h < layerHeadData.length; h++) {
 						html += `<div id="head-content-${this.containerId}-${l}-${h}" class="head-tab-in-layer"
-					style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
+					style="contain:layout; overflow-anchor:none; padding:20px; display:${h === 0 ? 'block' : 'none'}"
 					data-head-idx="${h}" data-rendered="false"
 					data-container-id="${this.containerId}" data-layer-idx="${l}" data-head-idx="${h}">
 					<div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
@@ -328,6 +328,12 @@ class AttentionEngine {
 					for (let h = 0; h < layerHeadData.length; h++) {
 						const headDiv = document.getElementById(`head-content-${this.containerId}-${l}-${h}`);
 						if (headDiv && headDiv.dataset.wasRenderedOnce === 'true') {
+							// Skip hidden heads — they'll render when switched to
+							if (headDiv.style.display === 'none') continue;
+							// Skip heads in hidden layers
+							const layerContent = document.getElementById(`unified-layer-${l}-content`);
+							if (layerContent && layerContent.style.display === 'none') continue;
+
 							headDiv.dataset.rendered = 'false';
 							this._executeHeadRender(l, h);
 						}
@@ -494,7 +500,7 @@ class AttentionEngine {
 		// ── Head content panels ──
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<div id="head-content-${this.containerId}-${layerIdx}-${h}" class="head-tab-in-layer"
-	style="padding:20px; display:${h === 0 ? 'block' : 'none'}"
+	style="contain:layout;padding:20px; display:${h === 0 ? 'block' : 'none'}"
 	data-head-idx="${h}" data-rendered="false">
 	<div style="color:#94a3b8;">Loading Head ${h + 1}...</div>
     </div>`;
@@ -519,16 +525,8 @@ class AttentionEngine {
 		headDiv.dataset.layerIdx = layerIdx;
 		headDiv.dataset.headIdx = headIdx;
 
-		// If this head was already rendered once, skip the placeholder entirely
-		// and render directly (synchronous update, no observer needed)
-		if (headDiv.dataset.wasRenderedOnce === 'true') {
-			this._executeHeadRender(layerIdx, headIdx);
-			return;
-		}
-
-		// First time: show placeholder and use lazy observer
-		headDiv.innerHTML = `<div style="padding:20px; color:#94a3b8;">Loading Head ${headIdx + 1}...</div>`;
-		headContentObserver.observe(headDiv);
+		// Always render directly — no placeholder text, no observer delay
+		this._executeHeadRender(layerIdx, headIdx);
 	}
 
 	generateEquationsOnly(head) {
@@ -544,15 +542,50 @@ class AttentionEngine {
 `;
 	}
 
-	_// ============================================================
-// REPLACE _executeHeadRender in AttentionEngine with this version
-// ============================================================
+	_findScrollParent(el) {
+		let node = el.parentElement;
+		while (node) {
+			const style = getComputedStyle(node);
+			if (/(auto|scroll)/.test(style.overflow + style.overflowY)) {
+				return node;
+			}
+			node = node.parentElement;
+		}
+		return null; // falls back to window
+	}
+
+	_morphHtml(container, newHtml) {
+		// Quick check: if identical, do nothing
+		if (container.innerHTML === newHtml) return false;
+
+		// Parse new HTML into an offscreen element
+		const offscreen = document.createElement('div');
+		offscreen.innerHTML = newHtml;
+
+		// Save scroll position of nearest scrollable ancestor
+		const scrollParent = this._findScrollParent(container);
+		const savedScrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
+
+		// Atomic swap: replaceChildren moves all nodes in one synchronous operation.
+		// The browser composites the old frame until the next paint, so there's no
+		// blank intermediate frame — the old content is replaced by new content
+		// in a single rendering pass.
+		container.replaceChildren(...offscreen.childNodes);
+
+		// Restore scroll position before the browser paints
+		if (scrollParent) {
+			scrollParent.scrollTop = savedScrollTop;
+		} else {
+			window.scrollTo(window.scrollX, savedScrollTop);
+		}
+
+		return true; // content was updated
+	}
 
 	_executeHeadRender(layerIdx, headIdx) {
 		const headDiv = document.getElementById(`head-content-${this.containerId}-${layerIdx}-${headIdx}`);
 		if (!headDiv) return;
 
-		// ── PATCH update path (data changed, structure unchanged) ──
 		if (headDiv.dataset.wasRenderedOnce === 'true') {
 			headDiv.dataset.rendered = 'true';
 
@@ -574,9 +607,16 @@ class AttentionEngine {
 			this[hashKey] = weightsHash;
 
 			requestAnimationFrame(() => {
+				// ── Lock scroll for the entire update ──
+				const scrollParent = this._findScrollParent(headDiv);
+				const savedScrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
+				const savedScrollLeft = scrollParent ? scrollParent.scrollLeft : window.scrollX;
+
+				// ── SVG patches (already smooth — no change needed) ──
 				this._apvDrawSingleHead(layerIdx, headIdx, 'headview');
 				this._apvDrawSingleHead(layerIdx, headIdx, 'matrix');
 
+				// ── Attention web (now patches in-place) ──
 				const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
 				const webCanvasId = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
 				const webStripId = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
@@ -585,26 +625,45 @@ class AttentionEngine {
 					displayTokens, hd.this_weights
 				);
 
+				// ── Equations: morph instead of innerHTML to avoid flicker ──
 				const equationsId = `apv-equations-${this.containerId}-${layerIdx}-${headIdx}`;
 				const equationsContainer = document.getElementById(equationsId);
+				let needsTemml = false;
 				if (equationsContainer) {
 					const layerInstance = layerData.instance;
-					equationsContainer.innerHTML = layerInstance.generateEquationsOnly(hd);
-					render_temml();
+					const newEquationsHtml = layerInstance.generateEquationsOnly(hd);
+					if (this._morphHtml(equationsContainer, newEquationsHtml)) {
+						needsTemml = true;
+					}
 				}
 
-				// Patch the attention result section
+				// ── Attention result: morph instead of innerHTML to avoid flicker ──
 				const resultId = `apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}`;
 				const resultContainer = document.getElementById(resultId);
 				if (resultContainer) {
-					resultContainer.innerHTML = this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens);
+					const newResultHtml = this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens);
+					if (this._morphHtml(resultContainer, newResultHtml)) {
+						needsTemml = true;
+					}
+				}
+
+				// ── Restore scroll AFTER all DOM mutations ──
+				if (scrollParent) {
+					scrollParent.scrollTop = savedScrollTop;
+					scrollParent.scrollLeft = savedScrollLeft;
+				} else {
+					window.scrollTo(savedScrollLeft, savedScrollTop);
+				}
+
+				// Single temml pass after all DOM updates are done
+				if (needsTemml) {
 					render_temml();
 				}
 			});
 
 			return;
 		}
-
+		
 		if (headDiv.dataset.rendered === 'true') return;
 
 		const registry = multiLayerAttentionRegistry.get(this.containerId);
@@ -629,11 +688,13 @@ class AttentionEngine {
 		const apvHeadCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-headview`;
 		const apvMatrixCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-matrix`;
 
-		headDiv.innerHTML = `
+		// ── Build content in a detached container (offscreen) ──
+		const offscreen = document.createElement('div');
+		offscreen.innerHTML = `
 <div style="margin-bottom:20px;">
     $$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
 </div>
-<div id="apv-equations-${this.containerId}-${layerIdx}-${headIdx}" style="overflow-x:auto; margin-bottom:20px;">
+<div id="apv-equations-${this.containerId}-${layerIdx}-${headIdx}" style="overflow-x:auto; margin-bottom:20px; overflow-anchor:none;">
     ${layerInstance.generateEquationsOnly(hd)}
 </div>
 
@@ -645,31 +706,44 @@ class AttentionEngine {
     <div id="${webStripId}" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:40px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>
 </div>
 
-<div class="apv-per-head-section" style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px;">
+<div class="apv-per-head-section" style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
     <div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
-	style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
-	<svg id="${apvHeadCanvasId}" style="width:100%; min-height:180px;"></svg>
+    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
+    <svg id="${apvHeadCanvasId}" style="width:100%; min-height:180px;"></svg>
     </div>
 
     <div style="font-size:0.75rem; color:#94a3b8; text-align:center;">
-	Hover over a token to highlight its attention connections. Line thickness = attention weight.
+    Hover over a token to highlight its attention connections. Line thickness = attention weight.
     </div>
 </div>
 
-<div style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px;">
+<div style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
     <div id="apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}"
-	style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
-	<svg id="${apvMatrixCanvasId}" style="width:100%; min-height:180px;"></svg>
+    style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px;">
+    <svg id="${apvMatrixCanvasId}" style="width:100%; min-height:180px;"></svg>
     </div>
 </div>
 
-<!-- ===== NEW: What happens with the attention results ===== -->
 <div id="apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}"
-     style="margin-top:20px; padding:20px; border:1px solid #f59e0b; border-radius:12px; background:#fffbeb; overflow-x:auto;">
+     style="margin-top:20px; padding:20px; border:1px solid #f59e0b; border-radius:12px; background:#fffbeb; overflow-x:auto; overflow-anchor:none;">
     ${this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens)}
 </div>
 
 <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>`;
+
+		// ── Atomic swap: save scroll, replace children, restore scroll ──
+		const scrollParent = this._findScrollParent(headDiv);
+		const savedScrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
+
+		// Move all children from offscreen into headDiv in one operation
+		headDiv.replaceChildren(...offscreen.childNodes);
+
+		// Restore scroll position immediately (before browser paints)
+		if (scrollParent) {
+			scrollParent.scrollTop = savedScrollTop;
+		} else {
+			window.scrollTo(window.scrollX, savedScrollTop);
+		}
 
 		headDiv.dataset.rendered = 'true';
 		headDiv.dataset.wasRenderedOnce = 'true';
@@ -691,6 +765,7 @@ class AttentionEngine {
 			);
 		});
 	}
+
 
 	_buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens) {
 		const n = displayTokens.length;

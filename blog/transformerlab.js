@@ -6037,38 +6037,25 @@ function updateTrainButtonState() {
 }
 
 /**
- * Dynamic Attention Web Renderer
- * Draws bezier arcs between tokens weighted by a real attention matrix.
- * Mirrors the visual style of SelfAttentionLab.drawWeb() but works
- * with any tokens[] and weights[][] passed in dynamically.
- *
- * The token strip is horizontally scrollable so that long sequences
- * don't stack vertically, and the canvas is sized to the full
- * scrollable width so arcs connect correctly.
- */
-function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weights) {
-    const container = document.getElementById(containerId);
-    const canvas    = document.getElementById(canvasId);
-    const strip     = document.getElementById(stripId);
-    if (!container || !canvas || !strip) return;
-
-    const chips = buildTokenChipStrip(strip, tokens);
-    let hoverIndex = null;
-
-    const drawArcs = () => drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex);
-
-    attachChipHoverEvents(chips, (idx) => { hoverIndex = idx; drawArcs(); }, () => { hoverIndex = null; drawArcs(); });
-    container.addEventListener('scroll', drawArcs);
-
-    drawArcs();
-
-    attachResizeHandler(containerId, drawArcs);
-}
-
-/**
- * Builds the token chip HTML strip and returns the chip elements.
+ * Builds the token chip HTML strip. If chips already exist and token count
+ * matches, patches labels in-place to avoid DOM destruction (flicker).
+ * Returns the chip elements.
  */
 function buildTokenChipStrip(strip, tokens) {
+    const existingChips = strip.querySelectorAll('.sa-token-block');
+
+    // If same number of chips, patch in-place — no DOM rebuild
+    if (existingChips.length === tokens.length) {
+        existingChips.forEach((chip, i) => {
+            const displayWord = (typeof tokens[i] === 'string') ? tokens[i] : tlab_get_top_word_only(tokens[i]);
+            if (chip.textContent.trim() !== displayWord) {
+                chip.textContent = displayWord;
+            }
+        });
+        return existingChips;
+    }
+
+    // Different count — full rebuild
     strip.innerHTML = tokens.map((word, i) => {
         const displayWord = (typeof word === 'string') ? word : tlab_get_top_word_only(word);
         return `<div class="sa-token-block" style="
@@ -6084,6 +6071,55 @@ function buildTokenChipStrip(strip, tokens) {
     }).join('');
 
     return strip.querySelectorAll('.sa-token-block');
+}
+
+/**
+ * Only re-attaches hover events if the chips were rebuilt (not patched).
+ */
+function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weights) {
+    const container = document.getElementById(containerId);
+    const canvas    = document.getElementById(canvasId);
+    const strip     = document.getElementById(stripId);
+    if (!container || !canvas || !strip) return;
+
+    const prevChipCount = strip.querySelectorAll('.sa-token-block').length;
+    const chips = buildTokenChipStrip(strip, tokens);
+    const chipsRebuilt = (prevChipCount !== tokens.length);
+
+    // Store latest weights on the container so drawArcs always reads fresh data
+    container._attnWebWeights = weights;
+    container._attnWebTokens = tokens;
+
+    let hoverIndex = container._attnWebHoverIndex ?? null;
+
+    const drawArcs = () => drawAttentionArcs(
+        container, canvas, chips, 
+        container._attnWebTokens, 
+        container._attnWebWeights, 
+        container._attnWebHoverIndex ?? null
+    );
+
+    // Only re-attach events if chips were rebuilt or first time
+    if (chipsRebuilt || !container._attnWebInitialized) {
+        container._attnWebHoverIndex = null;
+
+        attachChipHoverEvents(chips, (idx) => {
+            container._attnWebHoverIndex = idx;
+            drawArcs();
+        }, () => {
+            container._attnWebHoverIndex = null;
+            drawArcs();
+        });
+
+        // Only attach scroll listener once
+        if (!container._attnWebInitialized) {
+            container.addEventListener('scroll', drawArcs);
+            attachResizeHandler(containerId, drawArcs);
+        }
+        container._attnWebInitialized = true;
+    }
+
+    drawArcs();
 }
 
 /**
