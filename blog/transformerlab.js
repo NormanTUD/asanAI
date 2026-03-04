@@ -2845,7 +2845,6 @@ window.showFFNLayer = function(layerIdx) {
 	const container = document.getElementById('ffn-equations-container');
 	if (!container) return;
 
-	// Hide all FFN content panels and deactivate all buttons
 	container.querySelectorAll('.ffn-layer-tab-content').forEach(div => {
 		div.style.display = 'none';
 	});
@@ -2854,12 +2853,10 @@ window.showFFNLayer = function(layerIdx) {
 		btn.style.fontWeight = 'normal';
 	});
 
-	// Show the selected layer's content
 	const contentDiv = document.getElementById(`ffn-layer-${layerIdx}-content`);
 	if (contentDiv) {
 		contentDiv.style.display = 'block';
 
-		// Render deferred content if needed
 		if (contentDiv.dataset.rendered === 'false' && contentDiv._deferredData) {
 			const d = contentDiv._deferredData;
 			const hash = _ffnContentHash(d.h1, d.normed_h1, d.out_L1, d.out_FFN, d.h2, d.gamma, d.beta);
@@ -2873,13 +2870,13 @@ window.showFFNLayer = function(layerIdx) {
 		}
 	}
 
-	// Highlight the selected tab button
 	const activeBtn = document.getElementById(`ffn-layer-${layerIdx}-tab-btn`);
 	if (activeBtn) {
 		activeBtn.style.background = '#fff';
 		activeBtn.style.fontWeight = 'bold';
 	}
 
+	// Safe to call here — this is user-initiated, not in the training loop
 	render_temml();
 };
 
@@ -2894,7 +2891,6 @@ function ensureFFNLayerContainers(layerIndex) {
 	let tabsWrapper = container.querySelector('.ffn-layer-tabs');
 
 	if (!tabsWrapper) {
-		// First time: build the full tab structure
 		tabsWrapper = document.createElement('div');
 		tabsWrapper.className = 'ffn-layer-tabs';
 		tabsWrapper.style.cssText = 'border:1px solid #8b5cf6; border-radius:8px; overflow:hidden; margin-top:20px;';
@@ -2910,12 +2906,10 @@ function ensureFFNLayerContainers(layerIndex) {
 	const tabList = tabsWrapper.querySelector('.ffn-tab-list');
 	const prefix = `ffn-layer-${layerIndex}`;
 
-	// Check if this layer's tab already exists
 	if (document.getElementById(`${prefix}-tab-btn`)) {
-		return; // Tab already exists
+		return;
 	}
 
-	// Create the tab button
 	const btn = document.createElement('button');
 	btn.id = `${prefix}-tab-btn`;
 	btn.className = 'ffn-layer-tab-btn';
@@ -2926,7 +2920,6 @@ function ensureFFNLayerContainers(layerIndex) {
 	btn.onclick = () => showFFNLayer(layerIndex);
 	tabList.appendChild(btn);
 
-	// Create the content panel
 	const contentDiv = document.createElement('div');
 	contentDiv.id = `${prefix}-content`;
 	contentDiv.className = 'ffn-layer-tab-content';
@@ -2935,6 +2928,10 @@ function ensureFFNLayerContainers(layerIndex) {
 	contentDiv.style.display = tabList.children.length === 1 ? 'block' : 'none';
 	contentDiv.style.padding = '15px';
 	contentDiv.style.background = '#f8f9ff';
+	// *** FIX: contain-intrinsic-size prevents layout shifts during temml re-renders ***
+	contentDiv.style.contentVisibility = 'visible';
+	contentDiv.style.containIntrinsicSize = 'auto 600px';
+	contentDiv.style.contain = 'layout style';
 
 	contentDiv.innerHTML = `
 		<p style="color: #1e40af; margin: 0 0 12px 0; font-size: 1rem;">
@@ -3022,25 +3019,25 @@ function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, b
 }
 
 function _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta) {
-	// Sample a few values from each matrix to create a fast fingerprint
-	// This avoids JSON.stringify on large matrices while still detecting changes
-	let hash = '';
-	const sample = (mat) => {
+	// Hash the DISPLAYED values (toFixed(nr_fixed)) so we only re-render
+	// when what the user actually sees would change
+	const flattenDisplay = (mat) => {
 		if (!mat || !mat.length) return '';
-		const first = Array.isArray(mat[0]) ? mat[0][0] : mat[0];
-		const last = Array.isArray(mat[mat.length - 1])
-			? mat[mat.length - 1][mat[mat.length - 1].length - 1]
-			: mat[mat.length - 1];
-		return `${first.toFixed(6)}_${last.toFixed(6)}`;
+		return mat.map(row => 
+			Array.isArray(row) 
+				? row.map(v => v.toFixed(nr_fixed)).join(',')
+				: row.toFixed(nr_fixed)
+		).join(';');
 	};
-	hash += sample(h1) + '|';
-	hash += sample(normed_h1) + '|';
-	hash += sample(out_L1) + '|';
-	hash += sample(out_FFN) + '|';
-	hash += sample(h2) + '|';
-	hash += sample(gamma) + '|';
-	hash += sample(beta);
-	return hash;
+	return [
+		flattenDisplay(h1),
+		flattenDisplay(normed_h1),
+		flattenDisplay(out_L1),
+		flattenDisplay(out_FFN),
+		flattenDisplay(h2),
+		flattenDisplay(gamma),
+		flattenDisplay(beta)
+	].join('|');
 }
 
 function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex) {
@@ -3051,6 +3048,12 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	const step2 = document.getElementById(`${prefix}-step-2`);
 	const step3 = document.getElementById(`${prefix}-step-3`);
 	if (!step1 || !step2 || !step3) return;
+
+	// *** FIX: Lock the parent's height before DOM writes to prevent scroll jumps ***
+	const contentDiv = document.getElementById(`${prefix}-content`);
+	if (contentDiv && contentDiv.offsetHeight > 0) {
+		contentDiv.style.minHeight = contentDiv.offsetHeight + 'px';
+	}
 
 	step1.innerHTML = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
@@ -3078,7 +3081,13 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     </div>
     `;
 
-	render_temml();
+	// *** FIX: Release the height lock after a frame so temml can render,
+	// then the container settles at its natural height ***
+	requestAnimationFrame(() => {
+		if (contentDiv) {
+			contentDiv.style.minHeight = '';
+		}
+	});
 }
 
 /**
