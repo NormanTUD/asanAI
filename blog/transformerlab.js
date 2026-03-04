@@ -2079,7 +2079,7 @@ function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, w
 		return;
 	}
 
-	clearFFNEquationsContainer();   // ← ADD THIS LINE
+	clearFFNEquationsContainer();
 
 	const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
 
