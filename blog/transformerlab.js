@@ -2858,6 +2858,17 @@ window.showFFNLayer = function(layerIdx) {
 	const contentDiv = document.getElementById(`ffn-layer-${layerIdx}-content`);
 	if (contentDiv) {
 		contentDiv.style.display = 'block';
+
+		// If this tab has deferred data that hasn't been rendered, render it now
+		if (contentDiv.dataset.rendered === 'false' && contentDiv._deferredData) {
+			const d = contentDiv._deferredData;
+			_writeFFNContent(
+				`ffn-layer-${layerIdx}`,
+				d.h1, d.normed_h1, d.W1, d.b1, d.out_L1,
+				d.W2, d.b2, d.out_FFN, d.h2, d.gamma, d.beta, d.layerIndex
+			);
+			contentDiv.dataset.rendered = 'true';
+		}
 	}
 
 	// Highlight the selected tab button
@@ -2939,12 +2950,12 @@ function clearFFNEquationsContainer() {
 	const container = document.getElementById('ffn-equations-container');
 	if (!container) return;
 
-	// Preserve the tab structure but mark layers for re-render
 	const existingTabs = container.querySelector('.ffn-layer-tabs');
 	if (existingTabs) {
-		// Just mark all content divs as needing update, don't destroy tabs
+		// Preserve tab structure, mark for re-render, clear stale deferred data
 		container.querySelectorAll('.ffn-layer-tab-content').forEach(div => {
 			div.dataset.rendered = 'false';
+			div._deferredData = null;
 		});
 	} else {
 		container.innerHTML = '';
@@ -2982,10 +2993,33 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0) {
 function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex = 0) {
 	ensureFFNLayerContainers(layerIndex);
 	const prefix = `ffn-layer-${layerIndex}`;
+
+	// Only render if this layer's tab is currently visible
+	const contentDiv = document.getElementById(`${prefix}-content`);
+	if (!contentDiv) return;
+
+	// Skip DOM writes if the tab is hidden — prevents layout thrashing during training
+	if (contentDiv.style.display === 'none') {
+		// Store data for deferred rendering when the tab is clicked
+		contentDiv.dataset.rendered = 'false';
+		contentDiv._deferredData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex };
+		return;
+	}
+
+	_writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex);
+	contentDiv.dataset.rendered = 'true';
+}
+
+function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex) {
 	const L = layerIndex + 1;
 	const sup = `^{(${L})}`;
 
-	document.getElementById(`${prefix}-step-1`).innerHTML = `
+	const step1 = document.getElementById(`${prefix}-step-1`);
+	const step2 = document.getElementById(`${prefix}-step-2`);
+	const step3 = document.getElementById(`${prefix}-step-3`);
+	if (!step1 || !step2 || !step3) return;
+
+	step1.innerHTML = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
 	<p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1${sup}$ before FFN</p>
 	$$ \\text{LayerNorm}(h_1${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_1${sup} - \\underbrace{\\mu}_{\\text{Mean of } h_1${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_1${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
@@ -2997,11 +3031,11 @@ function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, b
     $$ \\text{out}_{L1}${sup} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1${sup}) \\cdot W_1${sup} + b_1${sup}\\right) = \\underbrace{${matrixToPmatrix(out_L1)}}_{\\text{out}_{L1}${sup}} $$
     `;
 
-	document.getElementById(`${prefix}-step-2`).innerHTML = `
+	step2.innerHTML = `
     $$ \\text{out}_{L2}${sup} = \\text{out}_{L1}${sup} \\cdot W_2${sup} + b_2${sup} = \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{Out}_\\text{FFN}${sup}} $$
     `;
 
-	document.getElementById(`${prefix}-step-3`).innerHTML = `
+	step3.innerHTML = `
     <div style="margin-bottom:10px;">
 	<p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
 	$$ h_2${sup} = h_1${sup} + \\text{out}_{L2}${sup} $$
