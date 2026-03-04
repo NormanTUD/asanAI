@@ -766,7 +766,7 @@ class AttentionEngine {
 			const colSpec = 'r|' + 'r'.repeat(numCols);
 
 			// Column headers: dimension indices
-			const colHeaders = mat[0].map((_, d) => `d_{${d}}`).join(' & ');
+			const colHeaders = mat[0].map((_, d) => ` `).join(' & ');
 
 			const rows = mat.map((row, tIdx) => {
 				const color = posColor(tIdx);
@@ -784,7 +784,7 @@ class AttentionEngine {
 			const numCols = mat[0].length;
 			const colSpec = 'r|' + 'r'.repeat(numCols);
 
-			const colHeaders = mat[0].map((_, d) => `d_{${d}}`).join(' & ');
+			const colHeaders = mat[0].map((_, d) => ` `).join(' & ');
 
 			const rows = mat.map((row, tIdx) => {
 				const color = posColor(tIdx);
