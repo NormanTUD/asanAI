@@ -1,5 +1,9 @@
 "use strict";
 
+/*
+If you see stuff jumping around, try setting "overflow-anchor: none" to that element.
+*/
+
 window.isTraining = false;
 window._paramBreakdownOpen = false;
 window._paramBreakdownRendered = false;
