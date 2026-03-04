@@ -231,7 +231,7 @@ function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings
 		n_heads
 	);
 
-	// 3. Visualization setup (unchanged)
+	// 3. Visualization setup
 	if (containerId) {
 		const engine = new AttentionEngine({
 			d_model,
@@ -260,16 +260,16 @@ function forwardOneLayer(h_current, layerWeights, d_model, n_heads, tokenStrings
 	// 6. Residual connection
 	const h_attn = matAdd(h_current, projected);
 
-	// 6b. Per-layer concat/layernorm/h1 visualization
+	// 6b. Per-layer concat/layernorm/h1 visualization — now with tokenStrings
 	if (ffnLayerIndex !== null) {
 		ensureFFNLayerContainers(ffnLayerIndex);
-		updateConcatenationDisplayForLayer(headData, tokenStrings || h_current, ffnLayerIndex);
-		render_h1_logic_for_layer(h_current, normH, concat, layerWeights.gamma, layerWeights.beta, Wo, ffnLayerIndex);
+		updateConcatenationDisplayForLayer(headData, tokenStrings || h_current, ffnLayerIndex, tokenStrings);
+		render_h1_logic_for_layer(h_current, normH, concat, layerWeights.gamma, layerWeights.beta, Wo, ffnLayerIndex, tokenStrings);
 	}
 
-	// 7. FFN block — render only when ffnLayerIndex is provided
+	// 7. FFN block — now with tokenStrings
 	const skipFFNRender = (ffnLayerIndex === null);
-	const h_out = run_ffn_block(h_attn, layerWeights, skipFFNRender, ffnLayerIndex !== null ? ffnLayerIndex : 0);
+	const h_out = run_ffn_block(h_attn, layerWeights, skipFFNRender, ffnLayerIndex !== null ? ffnLayerIndex : 0, tokenStrings);
 
 	return { h_out, headData, concat, projected, normH, h_attn };
 }
@@ -1888,47 +1888,41 @@ function prepareMigrationState(needsReinit) {
 	}
 }
 
-/**
- * Runs the detailed Layer-0 forward pass with full visualization:
- * layer norm, multi-head attention, concatenation, projection,
- * residual connection, and FFN block.
- * @returns {number[][]} h2 — hidden states after layer 0
- */
 function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads) {
-    multiLayerAttentionRegistry.clear();
+	multiLayerAttentionRegistry.clear();
 
-    const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
+	const normH0 = calculateLayerNorm(h0, weights[0]["gamma"], weights[0]["beta"]);
 
-    const headData = causalMultiHeadAttention(normH0, weights[0]["attention"], d_model, n_heads);
+	const headData = causalMultiHeadAttention(normH0, weights[0]["attention"], d_model, n_heads);
 
-    const engine = new AttentionEngine({
-        d_model, n_heads,
-        containerId: "mha-calculation-details",
-        weights: weights[0]["attention"]
-    });
-    engine.forward(normH0, tokensWithPositional, knownTokens);
+	const engine = new AttentionEngine({
+		d_model, n_heads,
+		containerId: "mha-calculation-details",
+		weights: weights[0]["attention"]
+	});
+	engine.forward(normH0, tokensWithPositional, knownTokens);
 
-    const regEntry = attentionRenderRegistry.get("mha-calculation-details");
-    if (regEntry) { regEntry.headData = headData; regEntry.rendered = false; }
+	const regEntry = attentionRenderRegistry.get("mha-calculation-details");
+	if (regEntry) { regEntry.headData = headData; regEntry.rendered = false; }
 
-    // Use per-layer containers for layer 0
-    ensureFFNLayerContainers(0);
-    const multiHeadOutput = updateConcatenationDisplayForLayer(headData, tokensWithPositional, 0);
-    
-    // Also still update the old global container for backward compat (optional — remove if you deleted the divs)
-    updateConcatenationDisplay(headData, tokensWithPositional);
+	// Use per-layer containers for layer 0 — now with tokenStrings
+	ensureFFNLayerContainers(0);
+	const multiHeadOutput = updateConcatenationDisplayForLayer(headData, tokensWithPositional, 0, knownTokens);
 
-    const Wo_layer0 = weights[0]["attention"]["output"];
-    const projected = matMul(multiHeadOutput, Wo_layer0);
-    const h1 = matAdd(h0, projected);
+	// Also still update the old global container for backward compat
+	updateConcatenationDisplay(headData, tokensWithPositional, knownTokens);
 
-    render_h1_logic_for_layer(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], Wo_layer0, 0);
-    
-    // Keep old global render for backward compat (optional)
-    render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], Wo_layer0);
+	const Wo_layer0 = weights[0]["attention"]["output"];
+	const projected = matMul(multiHeadOutput, Wo_layer0);
+	const h1 = matAdd(h0, projected);
 
-    const h2 = run_ffn_block(h1, weights[0], false, 0);
-    return h2;
+	render_h1_logic_for_layer(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], Wo_layer0, 0, knownTokens);
+
+	// Keep old global render for backward compat
+	render_h1_logic(h0, normH0, multiHeadOutput, weights[0]["gamma"], weights[0]["beta"], Wo_layer0, knownTokens);
+
+	const h2 = run_ffn_block(h1, weights[0], false, 0, knownTokens);
+	return h2;
 }
 
 /**
@@ -2077,10 +2071,6 @@ function validateModelDimensions(d_model, n_heads) {
     return true;
 }
 
-/**
- * Runs the forward pass with visualization if tokens exist,
- * otherwise shows a placeholder message.
- */
 function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers) {
 	if (tokensWithPositional.length === 0) {
 		showEmptyInputMessage();
@@ -2093,6 +2083,7 @@ function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, w
 
 	create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
 
+	// knownTokens is already passed as the last arg here
 	run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
 
 	renderAttentionDetails();
@@ -2731,7 +2722,7 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
     return tokens;
 }
 
-function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
+function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings) {
 	const normContainer = document.getElementById('transformer-h1-layernorm-viz');
 	const finalContainer = document.getElementById('transformer-h1-final-viz');
 	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
@@ -2746,8 +2737,8 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 		if (!mat || !mat.length) return '';
 		return mat.map(row =>
 			Array.isArray(row)
-				? row.map(v => v.toFixed(nr_fixed)).join(',')
-				: row.toFixed(nr_fixed)
+			? row.map(v => v.toFixed(nr_fixed)).join(',')
+			: row.toFixed(nr_fixed)
 		).join(';');
 	};
 	const hash = [
@@ -2766,36 +2757,37 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 	normContainer._lastHash = hash;
 	finalContainer._lastHash = hash;
 
-	// normContainer: ONLY Pre-LN
-	const normHtml = `
-	<p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
+	// Use labeled matrices for token-indexed data, plain for weights/params
+	const ts = tokenStrings || null;
 
-	<div style="margin-bottom:15px;">
-	    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
-	    $$ \\text{LayerNorm}(h_0) = \\underbrace{\\gamma}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
-	    <div style="overflow-x:auto; padding-bottom: 10px">
-		$$ \\underbrace{${matrixToPmatrix(normH0)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h0)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
-		<br>
-	    </div>
+	const normHtml = `
+    <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
+
+    <div style="margin-bottom:15px;">
+	<p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
+	$$ \\text{LayerNorm}(h_0) = \\underbrace{\\gamma}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
+	<div style="overflow-x:auto; padding-bottom: 10px">
+	$$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+	<br>
 	</div>
+    </div>
     `;
 
-	// finalContainer: Output projection + Residual
 	const finalHtml = `
-	<div style="margin-bottom:15px;">
-	    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
-	    $$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
-	    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-		$$ \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrix(multiHeadOutput)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O} $$
-	    </div>
+    <div style="margin-bottom:15px;">
+	<p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
+	$$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
+	<div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
+	$$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O} $$
 	</div>
+    </div>
 
     <div style="margin-bottom:10px;">
-	<p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
-	$$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
+    <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
+    $$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-	$$ \\underbrace{${matrixToPmatrix(h1)}}_{h_1} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0} + \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_{\\text{proj}}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}} $$
     </div>
     `;
 
@@ -2811,29 +2803,25 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 	return h1;
 }
 
-/**
- * Algorithm: Block Matrix Concatenation
- * Returns: Array (Matrix of Tokens x d_model)
- */
-function updateConcatenationDisplay(headData, tokens) {
+function updateConcatenationDisplay(headData, tokens, tokenStrings) {
 	const container = document.getElementById('transformer-concat-viz');
 	if (!container || !headData.length) return [];
 
+	const ts = tokenStrings || null;
+
 	const headMatricesLaTeX = headData.map((h, i) => {
-		return `\\underbrace{${matrixToPmatrix(h.context)}}_{\\text{Head } ${i + 1}}`;
+		return `\\underbrace{${matrixToPmatrixLabeled(h.context, ts)}}_{\\text{Head } ${i + 1}}`;
 	}).join(', ');
 
-	// Perform the actual numerical concatenation
 	const fullMatrixData = tokens.map((_, tIdx) => {
 		return [].concat(...headData.map(h => h.context[tIdx]));
 	});
 
-	const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrix(fullMatrixData)}}_{\\text{Total } d_{\\text{model}}}`;
+	const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts)}}_{\\text{Total } d_{\\text{model}}}`;
 	container.innerHTML = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
 
 	render_temml();
-
-	return fullMatrixData; // Now returns the calculated value
+	return fullMatrixData;
 }
 
 function calculateLayerNorm(matrix, gamma, beta) {
@@ -2870,9 +2858,6 @@ function assertShape(name, value, expected_rows, expected_cols) {
         }
 }
 
-/**
- * Switches the visible FFN layer tab.
- */
 window.showFFNLayer = function(layerIdx) {
 	const container = document.getElementById('ffn-equations-container');
 	if (!container) return;
@@ -2896,7 +2881,8 @@ window.showFFNLayer = function(layerIdx) {
 			_writeFFNContent(
 				`ffn-layer-${layerIdx}`,
 				d.h1, d.normed_h1, d.W1, d.b1, d.out_L1,
-				d.W2, d.b2, d.out_FFN, d.h2, d.gamma, d.beta, d.layerIndex
+				d.W2, d.b2, d.out_FFN, d.h2, d.gamma, d.beta, d.layerIndex,
+				d.tokenStrings  // <-- now passed through
 			);
 			contentDiv.dataset.rendered = 'true';
 		}
@@ -2907,8 +2893,6 @@ window.showFFNLayer = function(layerIdx) {
 		activeBtn.style.background = '#fff';
 		activeBtn.style.fontWeight = 'bold';
 	}
-
-	// No global render_temml() needed — _writeFFNContent already rendered scoped
 };
 
 /**
@@ -2988,27 +2972,29 @@ function ensureFFNLayerContainers(layerIndex) {
 	tabsWrapper.appendChild(contentDiv);
 }
 
-function updateConcatenationDisplayForLayer(headData, tokens, layerIndex) {
-    const prefix = `ffn-layer-${layerIndex}`;
-    const container = document.getElementById(`${prefix}-concat-viz`);
-    if (!container || !headData.length) return [];
+function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenStrings) {
+	const prefix = `ffn-layer-${layerIndex}`;
+	const container = document.getElementById(`${prefix}-concat-viz`);
+	if (!container || !headData.length) return [];
 
-    const headMatricesLaTeX = headData.map((h, i) => {
-        return `\\underbrace{${matrixToPmatrix(h.context)}}_{\\text{Head } ${i + 1}}`;
-    }).join(', ');
+	const ts = tokenStrings || null;
 
-    const fullMatrixData = tokens.map((_, tIdx) => {
-        return [].concat(...headData.map(h => h.context[tIdx]));
-    });
+	const headMatricesLaTeX = headData.map((h, i) => {
+		return `\\underbrace{${matrixToPmatrixLabeled(h.context, ts)}}_{\\text{Head } ${i + 1}}`;
+	}).join(', ');
 
-    const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrix(fullMatrixData)}}_{\\text{Total } d_{\\text{model}}}`;
-    container.innerHTML = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
+	const fullMatrixData = tokens.map((_, tIdx) => {
+		return [].concat(...headData.map(h => h.context[tIdx]));
+	});
 
-    render_temml();
-    return fullMatrixData;
+	const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts)}}_{\\text{Total } d_{\\text{model}}}`;
+	container.innerHTML = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
+
+	render_temml();
+	return fullMatrixData;
 }
 
-function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO, layerIndex) {
+function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO, layerIndex, tokenStrings) {
 	const prefix = `ffn-layer-${layerIndex}`;
 	const normContainer = document.getElementById(`${prefix}-layernorm-viz`);
 	const finalContainer = document.getElementById(`${prefix}-h1-final-viz`);
@@ -3042,32 +3028,31 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
 
 	const L = layerIndex + 1;
 	const sup = `^{(${L})}`;
+	const ts = tokenStrings || null;
 
-	// normContainer: ONLY Pre-LN normalization
 	const normHtml = `
     <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization — Layer ${L}</p>
     <div style="margin-bottom:15px;">
-	<p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0${sup}$ before attention:</p>
-	$$ \\text{LayerNorm}(h_0${sup}) = \\gamma${sup} \\odot \\frac{h_0${sup} - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta${sup} $$
-	<div style="overflow-x:auto; padding-bottom: 10px">
-	    $$ \\underbrace{${matrixToPmatrix(normH0)}}_{\\text{LayerNorm}(h_0${sup})} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h0)}}_{h_0${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
-	</div>
+    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0${sup}$ before attention:</p>
+    $$ \\text{LayerNorm}(h_0${sup}) = \\gamma${sup} \\odot \\frac{h_0${sup} - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta${sup} $$
+    <div style="overflow-x:auto; padding-bottom: 10px">
+	$$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts)}}_{\\text{LayerNorm}(h_0${sup})} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+    </div>
     </div>`;
 
-	// finalContainer: Output projection + Residual connection
 	const finalHtml = `
     <div style="margin-bottom:15px;">
-	<p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
-	<div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-	    $$ \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_\\text{proj}${sup}} = \\underbrace{${matrixToPmatrix(multiHeadOutput)}}_{\\text{Concat}(\\text{Heads})${sup}} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{{W^O}${sup}} $$
-	</div>
+    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
+    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
+	$$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_\\text{proj}${sup}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts)}}_{\\text{Concat}(\\text{Heads})${sup}} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{{W^O}${sup}} $$
+    </div>
     </div>
     <div style="margin-bottom:10px;">
-	<p style="font-size:0.85rem; color:#1e40af;">3. Residual connection:</p>
-	$$ h_1${sup} = h_0${sup} + \\text{MHA}_{\\text{proj}}${sup} $$
+    <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection:</p>
+    $$ h_1${sup} = h_0${sup} + \\text{MHA}_{\\text{proj}}${sup} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-	$$ \\underbrace{${matrixToPmatrix(h1)}}_{h_1${sup}} = \\underbrace{${matrixToPmatrix(h0)}}_{h_0${sup}} + \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
     </div>`;
 
 	preserveScrollPositions(normContainer, () => { normContainer.innerHTML = normHtml; });
@@ -3093,7 +3078,7 @@ function clearFFNEquationsContainer() {
 	}
 }
 
-function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0) {
+function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, tokenStrings = null) {
 	const d_model = h1[0].length;
 	const d_ff = d_model * 4;
 
@@ -3104,49 +3089,44 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0) {
 	let gamma2 = params.gamma2 || new Array(d_model).fill(1.0);
 	let beta2 = params.beta2 || new Array(d_model).fill(0.0);
 
-	// Pre-LN: normalize h1 BEFORE FFN
 	const normed_h1 = calculateLayerNorm(h1, gamma2, beta2);
 
 	const out_L1 = matMul(normed_h1, W1, b1).map(row => row.map(v => Math.max(0, v)));
 
 	const out_FFN = matMul(out_L1, W2, b2);
 
-	// Residual: h2 = h1 + FFN(normed_h1), no post-norm
 	const h2 = matAdd(h1, out_FFN);
 
 	if (!skipRender) {
-		render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2, layerIndex);
+		render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma2, beta2, layerIndex, tokenStrings);
 	}
 
 	return h2;
 }
 
-function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex = 0) {
+function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
 	ensureFFNLayerContainers(layerIndex);
 	const prefix = `ffn-layer-${layerIndex}`;
 
 	const contentDiv = document.getElementById(`${prefix}-content`);
 	if (!contentDiv) return;
 
-	// Always store latest data for deferred rendering
-	contentDiv._deferredData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex };
+	// Always store latest data for deferred rendering — now includes tokenStrings
+	contentDiv._deferredData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings };
 
-	// Skip DOM writes if the tab is hidden
 	if (contentDiv.style.display === 'none') {
 		contentDiv.dataset.rendered = 'false';
 		return;
 	}
 
-	// Generate a lightweight hash of the numeric data to detect actual changes
 	const hash = _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta);
 
-	// Skip DOM writes if the content hasn't changed (prevents scroll jumps during training)
 	if (contentDiv.dataset.rendered === 'true' && contentDiv._lastHash === hash) {
 		return;
 	}
 
 	contentDiv._lastHash = hash;
-	_writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex);
+	_writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings);
 	contentDiv.dataset.rendered = 'true';
 }
 
@@ -3172,23 +3152,25 @@ function _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta) {
 	].join('|');
 }
 
-function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex) {
+function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
 	const L = layerIndex + 1;
 	const sup = `^{(${L})}`;
+	const ts = tokenStrings || null;
 
 	const step1 = document.getElementById(`${prefix}-step-1`);
 	const step2 = document.getElementById(`${prefix}-step-2`);
 	const step3 = document.getElementById(`${prefix}-step-3`);
 	if (!step1 || !step2 || !step3) return;
 
+	// Token-indexed matrices use labeled version; weight matrices use plain
 	const step1Html = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
-	<p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1${sup}$ before FFN</p>
-	$$ \\text{LayerNorm}(h_1${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_1${sup} - \\underbrace{\\mu}_{\\text{Mean of } h_1${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_1${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
-	<div style="overflow-x:auto;">
-	    $$ \\underbrace{${matrixToPmatrix(normed_h1)}}_{\\text{Norm}\\left(h_1${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h1)}}_{h_1${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
-		<br>
-	</div>
+    <p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $h_1${sup}$ before FFN</p>
+    $$ \\text{LayerNorm}(h_1${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_1${sup} - \\underbrace{\\mu}_{\\text{Mean of } h_1${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_1${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
+    <div style="overflow-x:auto;">
+	$$ \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts)}}_{\\text{Norm}\\left(h_1${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
+	<br>
+    </div>
     </div>
 
     <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + ReLU</strong></p>
@@ -3196,7 +3178,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     $$ \\text{out}_{L1}${sup} = \\text{ReLU}\\!\\left(\\text{Norm}(h_1${sup}) \\cdot W_1${sup} + b_1${sup}\\right) $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrix(out_L1)}}_{\\text{out}_{L1}${sup}} = \\text{ReLU}\\!\\left( \\underbrace{${matrixToPmatrix(normed_h1)}}_{\\text{Norm}(h_1${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts)}}_{\\text{out}_{L1}${sup}} = \\text{ReLU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts)}}_{\\text{Norm}(h_1${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
     </div>
     `;
 
@@ -3206,17 +3188,17 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     $$ \\text{out}_{L2}${sup} = \\text{out}_{L1}${sup} \\cdot W_2${sup} + b_2${sup} $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrix(out_L1)}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts)}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrixLabeled(out_L1, ts)}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
     </div>
     `;
 
 	const step3Html = `
     <div style="margin-bottom:10px;">
-	<p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
-	$$ h_2${sup} = h_1${sup} + \\text{out}_{L2}${sup} $$
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
+    $$ h_2${sup} = h_1${sup} + \\text{out}_{L2}${sup} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px;">
-	$$ \\underbrace{${matrixToPmatrix(h2)}}_{h_2${sup}} = \\underbrace{${matrixToPmatrix(h1)}}_{h_1${sup}} + \\underbrace{${matrixToPmatrix(out_FFN)}}_{\\text{out}_{L2}${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(h2, ts)}}_{h_2${sup}} = \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1${sup}} + \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts)}}_{\\text{out}_{L2}${sup}} $$
     </div>
     `;
 
@@ -3253,21 +3235,13 @@ function _renderTemmlOnElements(elements) {
 	});
 }
 
-/**
- * Goal: Unified N-Layer Trajectory Plotting
- * Logic: Every iteration i maps to Layer i+1 Plot
- */
-/**
- * Goal: Unified N-Layer Trajectory Plotting
- * Logic: Every iteration i maps to Layer i+1 Plot
- * @param {string[]} [tokenStrings] - Human-readable token strings for labeling
- */
 function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights, startLayer = 0, tokenStrings = null) {
 	let h_current = h_initial;
 
 	for (let n = startLayer; n < total_depth; n++) {
 		const h_before_layer = JSON.parse(JSON.stringify(h_current));
 
+		// tokenStrings is now threaded into forwardOneLayer
 		const result = forwardOneLayer(h_current, this_weights[n], d_model, n_heads, tokenStrings, "mha-calculation-details", n);
 
 		create_migration_plot(`migration-layer-${n + 1}`, tokens, h_before_layer, result.h_out, n + 1, d_model, result.h_out, tokenStrings);
@@ -5797,6 +5771,32 @@ function preserveScrollPositions(container, mutationFn) {
 			});
 		});
 	}
+}
+
+function matrixToPmatrixLabeled(matrix, tokenStrings) {
+	if (!tokenStrings || tokenStrings.length !== matrix.length) {
+		return matrixToPmatrix(matrix); // fallback to unlabeled
+	}
+
+	const total = matrix.length;
+	const numCols = matrix[0].length;
+
+	// Build an array environment: label column | value columns
+	const colSpec = 'r|' + 'r'.repeat(numCols);
+
+	const rows = matrix.map((row, tIdx) => {
+		const colorCmd = getPositionColor(tIdx, total, 'temml');
+		// Escape special LaTeX characters in token strings
+		const safeLabel = tokenStrings[tIdx]
+			.replace(/#/g, '\\#')
+			.replace(/_/g, '\\_')
+			.replace(/&/g, '\\&');
+		const label = `${colorCmd} \\text{${safeLabel}}_{${tIdx}}`;
+		const vals = row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
+		return `${label} & ${vals}`;
+	}).join(' \\\\ ');
+
+	return `\\left(\\begin{array}{${colSpec}} ${rows} \\end{array}\\right)`;
 }
 
 async function loadTransformerModule () {
