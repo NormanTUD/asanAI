@@ -2731,34 +2731,17 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
     return tokens;
 }
 
-/**
- * FIX: Updated to display Pre-LN architecture (matching actual computation).
- * Old version showed Post-LN: h1 = h0 + LayerNorm(MHA_proj)
- * New version shows Pre-LN:   normH0 = LayerNorm(h0), then h1 = h0 + Attention(normH0) × Wo
- *
- * NEW SIGNATURE: Added normH0 as second parameter.
- */
-/**
- * FIX: Updated to display Pre-LN architecture (matching actual computation).
- * Old version showed Post-LN: h1 = h0 + LayerNorm(MHA_proj)
- * New version shows Pre-LN:   normH0 = LayerNorm(h0), then h1 = h0 + Attention(normH0) × Wo
- *
- * NEW SIGNATURE: Added normH0 as second parameter.
- */
 function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 	const normContainer = document.getElementById('transformer-h1-layernorm-viz');
 	const finalContainer = document.getElementById('transformer-h1-final-viz');
 	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
 
-	// Project the Multi-Head Output using WO
 	const projectedMHA = multiHeadOutput.map(row =>
 		WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
 	);
 
-	// h1 = h0 + projected (Pre-LN: no normalization on the sublayer output)
 	const h1 = matAdd(h0, projectedMHA);
 
-	// --- Content hash to skip no-op updates (same pattern as _ffnContentHash) ---
 	const flattenDisplay = (mat) => {
 		if (!mat || !mat.length) return '';
 		return mat.map(row =>
@@ -2777,14 +2760,13 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 		flattenDisplay(beta)
 	].join('|');
 
-	// Skip DOM writes if nothing the user sees has changed
 	if (normContainer._lastHash === hash && finalContainer._lastHash === hash) {
 		return h1;
 	}
 	normContainer._lastHash = hash;
 	finalContainer._lastHash = hash;
 
-	// --- Preserve scroll positions across innerHTML replacement ---
+	// normContainer: ONLY Pre-LN
 	const normHtml = `
 	<p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
 
@@ -2796,7 +2778,10 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 		<br>
 	    </div>
 	</div>
+    `;
 
+	// finalContainer: Output projection + Residual
+	const finalHtml = `
 	<div style="margin-bottom:15px;">
 	    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
 	    $$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
@@ -2804,9 +2789,7 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO) {
 		$$ \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrix(multiHeadOutput)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O} $$
 	    </div>
 	</div>
-    `;
 
-	const finalHtml = `
     <div style="margin-bottom:10px;">
 	<p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
 	$$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
@@ -2933,73 +2916,76 @@ window.showFFNLayer = function(layerIdx) {
  * Creates the full tab structure on first call, adds tabs incrementally after.
  */
 function ensureFFNLayerContainers(layerIndex) {
-    const container = document.getElementById('ffn-equations-container');
-    if (!container) return;
+	const container = document.getElementById('ffn-equations-container');
+	if (!container) return;
 
-    container.style.overflowAnchor = 'none';
+	container.style.overflowAnchor = 'none';
 
-    let tabsWrapper = container.querySelector('.ffn-layer-tabs');
+	let tabsWrapper = container.querySelector('.ffn-layer-tabs');
 
-    if (!tabsWrapper) {
-        tabsWrapper = document.createElement('div');
-        tabsWrapper.className = 'ffn-layer-tabs';
-        tabsWrapper.style.cssText = 'border:1px solid #8b5cf6; border-radius:8px; overflow:hidden; margin-top:20px; overflow-anchor:none;';
+	if (!tabsWrapper) {
+		tabsWrapper = document.createElement('div');
+		tabsWrapper.className = 'ffn-layer-tabs';
+		tabsWrapper.style.cssText = 'border:1px solid #8b5cf6; border-radius:8px; overflow:hidden; margin-top:20px; overflow-anchor:none;';
 
-        const tabList = document.createElement('div');
-        tabList.className = 'ffn-tab-list';
-        tabList.style.cssText = 'background:#ede9fe; display:flex; border-bottom:2px solid #8b5cf6; flex-wrap:wrap;';
+		const tabList = document.createElement('div');
+		tabList.className = 'ffn-tab-list';
+		tabList.style.cssText = 'background:#ede9fe; display:flex; border-bottom:2px solid #8b5cf6; flex-wrap:wrap;';
 
-        tabsWrapper.appendChild(tabList);
-        container.appendChild(tabsWrapper);
-    }
+		tabsWrapper.appendChild(tabList);
+		container.appendChild(tabsWrapper);
+	}
 
-    const tabList = tabsWrapper.querySelector('.ffn-tab-list');
-    const prefix = `ffn-layer-${layerIndex}`;
+	const tabList = tabsWrapper.querySelector('.ffn-tab-list');
+	const prefix = `ffn-layer-${layerIndex}`;
 
-    if (document.getElementById(`${prefix}-tab-btn`)) {
-        return;
-    }
+	if (document.getElementById(`${prefix}-tab-btn`)) {
+		return;
+	}
 
-    const btn = document.createElement('button');
-    btn.id = `${prefix}-tab-btn`;
-    btn.className = 'ffn-layer-tab-btn';
-    btn.textContent = `Layer ${layerIndex + 1}`;
-    btn.style.cssText = `padding:10px 18px; border:none; border-right:1px solid #c4b5fd; cursor:pointer;
-        background:${tabList.children.length === 0 ? '#fff' : '#ddd6fe'}; 
-        font-weight:${tabList.children.length === 0 ? 'bold' : 'normal'};`;
-    btn.onclick = () => showFFNLayer(layerIndex);
-    tabList.appendChild(btn);
+	const btn = document.createElement('button');
+	btn.id = `${prefix}-tab-btn`;
+	btn.className = 'ffn-layer-tab-btn';
+	btn.textContent = `Layer ${layerIndex + 1}`;
+	btn.style.cssText = `padding:10px 18px; border:none; border-right:1px solid #c4b5fd; cursor:pointer;
+	background:${tabList.children.length === 0 ? '#fff' : '#ddd6fe'}; 
+	font-weight:${tabList.children.length === 0 ? 'bold' : 'normal'};`;
+	btn.onclick = () => showFFNLayer(layerIndex);
+	tabList.appendChild(btn);
 
-    const contentDiv = document.createElement('div');
-    contentDiv.id = `${prefix}-content`;
-    contentDiv.className = 'ffn-layer-tab-content';
-    contentDiv.dataset.layerIdx = layerIndex;
-    contentDiv.dataset.rendered = 'false';
-    contentDiv.style.display = tabList.children.length === 1 ? 'block' : 'none';
-    contentDiv.style.padding = '15px';
-    contentDiv.style.background = '#f8f9ff';
-    contentDiv.style.overflowAnchor = 'none';
+	const contentDiv = document.createElement('div');
+	contentDiv.id = `${prefix}-content`;
+	contentDiv.className = 'ffn-layer-tab-content';
+	contentDiv.dataset.layerIdx = layerIndex;
+	contentDiv.dataset.rendered = 'false';
+	contentDiv.style.display = tabList.children.length === 1 ? 'block' : 'none';
+	contentDiv.style.padding = '15px';
+	contentDiv.style.background = '#f8f9ff';
+	contentDiv.style.overflowAnchor = 'none';
 
-    contentDiv.innerHTML = `
-        <p style="color: #1e40af; margin: 0 0 12px 0; font-size: 1rem;">
-            Feed-Forward Network — Layer ${layerIndex + 1}
-        </p>
+	contentDiv.innerHTML = `
+    <p style="color: #1e40af; margin: 0 0 12px 0; font-size: 1rem;">
+	Feed-Forward Network — Layer ${layerIndex + 1}
+    </p>
 
-        <!-- Concatenation viz for this layer -->
-        <div id="${prefix}-concat-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;"></div>
+    <!-- 1. Pre-LN: Normalize h0 before attention -->
+    <div id="${prefix}-layernorm-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
 
-        <!-- LayerNorm viz for this layer -->
-        <div id="${prefix}-layernorm-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #10b981; border-radius: 12px; background: #ecfdf5; overflow-x: auto;"></div>
+    <!-- 2. Concatenation of head outputs -->
+    <div id="${prefix}-concat-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #3b82f6; border-radius: 12px; background: #f0f4f8; overflow: auto;"></div>
 
-        <!-- h1-final viz for this layer -->
-        <div id="${prefix}-h1-final-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #8b5cf6; border-radius: 12px; background: #f5f3ff; overflow-x: auto;"></div>
+    <!-- 3. Output projection + Residual connection -->
+    <div id="${prefix}-h1-final-viz" style="margin-top: 20px; padding: 20px; border: 1px solid #8b5cf6; border-radius: 12px; background: #f5f3ff; overflow-x: auto;"></div>
 
-        <div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
-        <div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
-        <div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
-    `;
+    <!-- 4-6. FFN steps -->
+    <div id="${prefix}-step-1" class="math_transformer" style="overflow-anchor:none;"></div>
+    <div id="${prefix}-step-2" class="math_transformer" style="overflow-anchor:none;"></div>
+    <div id="${prefix}-step-3" class="math_transformer" style="overflow-anchor:none;"></div>
+`;
 
-    tabsWrapper.appendChild(contentDiv);
+
+
+	tabsWrapper.appendChild(contentDiv);
 }
 
 function updateConcatenationDisplayForLayer(headData, tokens, layerIndex) {
@@ -3034,7 +3020,6 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
 
 	const h1 = matAdd(h0, projectedMHA);
 
-	// Use the same hash/skip logic as the original render_h1_logic
 	const flattenDisplay = (mat) => {
 		if (!mat || !mat.length) return '';
 		return mat.map(row =>
@@ -3058,6 +3043,7 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
 	const L = layerIndex + 1;
 	const sup = `^{(${L})}`;
 
+	// normContainer: ONLY Pre-LN normalization
 	const normHtml = `
     <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization — Layer ${L}</p>
     <div style="margin-bottom:15px;">
@@ -3066,15 +3052,16 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
 	<div style="overflow-x:auto; padding-bottom: 10px">
 	    $$ \\underbrace{${matrixToPmatrix(normH0)}}_{\\text{LayerNorm}(h_0${sup})} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrix(h0)}}_{h_0${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
 	</div>
-    </div>
+    </div>`;
+
+	// finalContainer: Output projection + Residual connection
+	const finalHtml = `
     <div style="margin-bottom:15px;">
 	<p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
 	<div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
 	    $$ \\underbrace{${matrixToPmatrix(projectedMHA)}}_{\\text{MHA}_\\text{proj}${sup}} = \\underbrace{${matrixToPmatrix(multiHeadOutput)}}_{\\text{Concat}(\\text{Heads})${sup}} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{{W^O}${sup}} $$
 	</div>
-    </div>`;
-
-	const finalHtml = `
+    </div>
     <div style="margin-bottom:10px;">
 	<p style="font-size:0.85rem; color:#1e40af;">3. Residual connection:</p>
 	$$ h_1${sup} = h_0${sup} + \\text{MHA}_{\\text{proj}}${sup} $$
