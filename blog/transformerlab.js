@@ -5605,9 +5605,6 @@ function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
 
     <!-- ===== MIGRATION PLOT (per-layer) ===== -->
     <div id="${prefix}-migration-container" style="margin-top: 24px;">
-	<p style="color: #64748b; margin: 0 0 12px 0; font-size: 0.95rem; font-weight: 600;">
-	    📊 Feature Space Migration — Layer ${layerIndex + 1}
-	</p>
     </div>
     `;
 
