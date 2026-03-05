@@ -242,7 +242,20 @@ const TrainLab = {
 	_contourTrace: function (gridX, gridY, preds) {
 		return {
 			x: gridX, y: gridY, z: Array.from(preds),
-			type: 'contour', colorscale: 'RdBu', showscale: false, opacity: 0.4, reversescale: true
+			type: 'contour',
+			colorscale: [
+				[0, '#dc2626'],
+				[0.2, '#f87171'],
+				[0.4, '#fca5a5'],
+				[0.5, '#f5f5f5'],
+				[0.6, '#93c5fd'],
+				[0.8, '#60a5fa'],
+				[1, '#2563eb']
+			],
+			showscale: false,
+			opacity: 0.85,
+			contours: { coloring: 'heatmap' },
+			reversescale: false
 		};
 	},
 
@@ -253,14 +266,23 @@ const TrainLab = {
 			mode: 'markers',
 			marker: {
 				color: c.data.map(r => r[2] === 0 ? '#ef4444' : '#3b82f6'),
-				size: 12,
-				line: { width: 2, color: 'white' }
+				size: 14,
+				line: { width: 2.5, color: 'white' },
+				opacity: 0.9
 			}
 		};
 	},
 
 	_boundaryLayout: function () {
-		return { margin: { t: 10, b: 30, l: 30, r: 10 }, height: 250 };
+		return {
+			margin: { t: 10, b: 30, l: 30, r: 10 },
+			height: 250,
+			paper_bgcolor: 'transparent',
+			plot_bgcolor: '#fafbfc',
+			font: { family: '-apple-system, BlinkMacSystemFont, sans-serif', size: 11, color: '#64748b' },
+			xaxis: { gridcolor: '#f1f5f9', zerolinecolor: '#e2e8f0' },
+			yaxis: { gridcolor: '#f1f5f9', zerolinecolor: '#e2e8f0' }
+		};
 	},
 
 	// --- Visualization: Loss History ---
@@ -274,14 +296,20 @@ const TrainLab = {
 			y: [...c.loss],
 			type: 'scatter',
 			fill: 'tozeroy',
-			line: { color: '#ef4444' }
+			fillcolor: 'rgba(239,68,68,0.08)',
+			line: { color: '#ef4444', width: 2, shape: 'spline' }
 		};
 	},
 
 	_lossLayout: function () {
 		return {
-			margin: { t: 10, b: 30, l: 40, r: 10 }, height: 180,
-			yaxis: { type: 'log', title: 'Error' }, xaxis: { title: 'Epochs' }
+			margin: { t: 10, b: 30, l: 40, r: 10 },
+			height: 180,
+			paper_bgcolor: 'transparent',
+			plot_bgcolor: '#fafbfc',
+			font: { family: '-apple-system, BlinkMacSystemFont, sans-serif', size: 11, color: '#64748b' },
+			yaxis: { type: 'log', title: 'Error', gridcolor: '#f1f5f9', zerolinecolor: '#e2e8f0' },
+			xaxis: { title: 'Epochs', gridcolor: '#f1f5f9', zerolinecolor: '#e2e8f0' }
 		};
 	},
 
@@ -309,8 +337,14 @@ const TrainLab = {
 
 		if (predCell && errCell) {
 			predCell.innerText = predVal.toFixed(3);
+			predCell.style.fontFamily = "'SF Mono', 'Fira Code', monospace";
+			predCell.style.fontSize = "0.9em";
 			errCell.innerText = error.toFixed(3);
-			errCell.style.color = error > 0.2 ? '#ef4444' : '#22c55e';
+			errCell.style.fontFamily = "'SF Mono', 'Fira Code', monospace";
+			errCell.style.fontSize = "0.9em";
+			errCell.style.fontWeight = "600";
+			errCell.style.transition = "color 0.3s ease";
+			errCell.style.color = error > 0.3 ? '#ef4444' : error > 0.1 ? '#f59e0b' : '#22c55e';
 		}
 	},
 
@@ -429,7 +463,7 @@ const TrainLab = {
 		const delCell = tr.insertCell();
 		const delBtn = document.createElement('button');
 		delBtn.innerHTML = "×";
-		delBtn.style = "color:#ef4444; border:none; background:none; cursor:pointer; font-weight:bold;";
+		delBtn.className = "btn-delete";
 		delBtn.onclick = () => this.removeRow(id, ri);
 		delCell.appendChild(delBtn);
 	},
@@ -438,9 +472,27 @@ const TrainLab = {
 
 	updateButtonState: function (id, text) {
 		const btn = document.getElementById(`${id}-train-btn`);
+		const dashboard = document.querySelector('.lab-dashboard');
 		if (btn) {
-			btn.innerText = text;
-			btn.style.background = text === "STOP" ? "#ef4444" : "#22c55e";
+			if (text === "STOP") {
+				btn.innerHTML = '<span class="btn-icon">⏸</span> STOP';
+				btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+				btn.style.boxShadow = '0 2px 8px rgba(239,68,68,0.3)';
+				btn.className = 'btn btn-start';
+				if (dashboard) dashboard.classList.add('is-training');
+			} else if (text === "CONTINUE") {
+				btn.innerHTML = '<span class="btn-icon">▶</span> CONTINUE';
+				btn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+				btn.style.boxShadow = '0 2px 8px rgba(245,158,11,0.3)';
+				btn.className = 'btn btn-start';
+				if (dashboard) dashboard.classList.remove('is-training');
+			} else {
+				btn.innerHTML = '<span class="btn-icon">▶</span> START';
+				btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+				btn.style.boxShadow = '0 2px 8px rgba(34,197,94,0.3)';
+				btn.className = 'btn btn-start';
+				if (dashboard) dashboard.classList.remove('is-training');
+			}
 		}
 	},
 
