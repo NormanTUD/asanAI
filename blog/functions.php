@@ -262,6 +262,20 @@ function load_base_js () {
 		    });
 		}
 
+		// ─── Shared post-load initialization ───
+		// Called by both index.php and standalone subpages to avoid duplication.
+		function sharedPostLoadInit() {
+			addCopyButtons();
+			smartquote();
+			initOptionalBlocks();
+			toc();
+			addReadingProgress();
+			addCuriosityScore();
+			//addReturnVisitorWarmth();
+			addKonamiEgg();
+			addConsoleEasterEggs();
+		}
+
 		document.addEventListener("DOMContentLoaded", function() {
 			render_temml();
 			observeAndRenderMath(document.body);
@@ -281,10 +295,6 @@ function load_base_js () {
 			childList: true,
 				subtree: true
 			});
-
-			toc();
-
-			addCopyButtons();
 		});
 
 		function sendHeight() {
@@ -520,15 +530,10 @@ if(!server_php_self_ends_with_index_php()) {
 				bibtexify();
 				parseCategories();
 				renderMarkdown();
-				smartquote();
-				initOptionalBlocks();
 				make_external_a_href_target_blank();
-				toc();
-				addReadingProgress();
-				addCuriosityScore();
-				//addReturnVisitorWarmth();
-				addKonamiEgg();
-				addConsoleEasterEggs();
+
+				// ─── Single call for all shared UI features ───
+				sharedPostLoadInit();
 			});
 		</script>
 	</head>

@@ -57,27 +57,13 @@
 <script>
 	window.addEventListener('load', async () => {
 		try {
-			// 1. Start sequence
-			//updateLoadingStatus("Rendering Glossary...");
-			//await renderGlossary();
-
 			updateLoadingStatus("Processing Citations...");
 			await bibtexify();
 
 			updateLoadingStatus("Parsing Categories...");
 			await parseCategories();
 
-			updateLoadingStatus("Initializing Attention Labs...");
-			// Call the functions from your other files here
-			if (typeof SelfAttentionLab !== 'undefined') {
-				SelfAttentionLab.init();
-				initShiftExamples();
-				runAttention();
-				runUniverse();
-			}
-
 			updateLoadingStatus("Building Table of Contents...");
-			await toc();
 
 			// 2. Finalize
 			$("#contents").show();
@@ -93,10 +79,9 @@
 
 			sendHeight();
 
-			smartquote();
-			initOptionalBlocks();
+			// ─── Single call replaces all duplicates ───
+			sharedPostLoadInit();
 
-			addCopyButtons();
 		} catch (error) {
 			console.error("Initialization failed:", error);
 			updateLoadingStatus(`Error loading course. Please refresh. ${error}`);
@@ -120,12 +105,6 @@
 			// Fallback für alte Browser
 			setInterval(sendHeight, 1000);
 		}
-
-		addReadingProgress();
-		addCuriosityScore();
-		//addReturnVisitorWarmth();
-		addKonamiEgg();
-		addConsoleEasterEggs();
 	})();
 	</script>
 </body>
