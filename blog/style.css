@@ -2047,3 +2047,73 @@ input[type="reset"]:active {
 .quote-text-inner {
 	display: inline;
 }
+
+/* --- Image Reveal: Pure CSS --- */
+
+.md img,
+.rendered-quote img,
+figure img {
+	animation: imgReveal 0.7s ease both;
+	animation-timeline: view();
+	animation-range: entry 0% entry 40%;
+}
+
+/* Fallback for browsers without scroll-driven animations */
+@supports not (animation-timeline: view()) {
+	.md img,
+	.rendered-quote img,
+	figure img {
+		animation: imgRevealOnLoad 0.8s ease both;
+		animation-delay: 0.15s;
+	}
+}
+
+@keyframes imgReveal {
+	from {
+		opacity: 0;
+		filter: blur(8px) saturate(0.3);
+		transform: scale(0.97) translateY(10px);
+		clip-path: inset(8% 8% 8% 8% round 6px);
+	}
+	to {
+		opacity: 1;
+		filter: blur(0) saturate(1);
+		transform: scale(1) translateY(0);
+		clip-path: inset(0% 0% 0% 0% round 0px);
+	}
+}
+
+@keyframes imgRevealOnLoad {
+	0% {
+		opacity: 0;
+		filter: blur(10px) saturate(0.2);
+		transform: scale(0.96) translateY(12px);
+		clip-path: inset(10% 10% 10% 10% round 8px);
+	}
+	60% {
+		opacity: 1;
+		filter: blur(2px) saturate(0.8);
+		transform: scale(0.995) translateY(2px);
+		clip-path: inset(1% 1% 1% 1% round 2px);
+	}
+	100% {
+		opacity: 1;
+		filter: blur(0) saturate(1);
+		transform: scale(1) translateY(0);
+		clip-path: inset(0% 0% 0% 0% round 0px);
+	}
+}
+
+/* --- Subtle hover lift (ongoing delight) --- */
+.md img,
+figure img {
+	transition: transform 0.4s ease, box-shadow 0.4s ease, filter 0.3s ease;
+	border-radius: 3px;
+}
+
+.md img:hover,
+figure img:hover {
+	transform: translateY(-3px) scale(1.008);
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.12);
+	filter: saturate(1.1) contrast(1.03);
+}
