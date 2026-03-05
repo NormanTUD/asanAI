@@ -160,7 +160,11 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
 <div class="statlab-interactive-zone" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; background: #fff; display: flex; flex-direction: column; gap: 20px;">
     
     <div id="plot-clt" style="width:100%; height:380px;"></div>
-    
+
+    <div id="dice-container" style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 50px; padding: 15px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px;">
+	<span style="color: #94a3b8; font-style: italic;">Roll the dice to see individual results here...</span>
+    </div>
+
     <div class="statlab-controls" style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
         <div style="margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 8px;">
@@ -172,10 +176,6 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
                 We are tracking the <strong>average</strong> of these $n$ dice. Current samples in chart: <span id="clt-count" style="font-weight: bold; color: #1e293b;">0</span>
             </p>
         </div>
-
-	    <div id="dice-container" style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 50px; padding: 15px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px;">
-		<span style="color: #94a3b8; font-style: italic;">Roll the dice to see individual results here...</span>
-	    </div>
         
         <div style="display: flex; gap: 10px;">
             <button onclick="rollCLT()" style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 2; transition: background 0.2s;">Roll Dice & Add to Plot</button>
