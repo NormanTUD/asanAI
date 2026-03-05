@@ -511,8 +511,7 @@ Since the network weights are randomly initialized, you may need to **reset** th
     letter-spacing: 0.04em;
 }
 
-/* ── Plot containers ── */
-.plot-container {
+.lab-dashboard .plot-container {
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid #f1f5f9;
