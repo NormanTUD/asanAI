@@ -8,8 +8,6 @@ Automatic differentiation is neither symbolic differentiation (manipulating alge
 </div>
 
 <div class="optional md" data-headline="Historical Origins">
-## Historical Origins
-
 The earliest work on what we now call automatic differentiation dates to \citeauthor{wengert1964} in \citeyear{wengert1964}. In his paper \citetitle{wengert1964}, Wengert described a procedure for the automatic evaluation of total and partial derivatives of arbitrary algebraic functions by decomposing them into sequences of elementary expressions, without ever developing symbolic derivative formulas. This forward-mode technique laid the conceptual groundwork for all later AD systems.
 
 The critical extension to **reverse mode** was made by \citeauthor{linnainmaa1976} in his \citeyear{linnainmaa1976} \cite[master's thesis]{linnainmaa1976}. Linnainmaa's original motivation was not neural networks at all, he sought an efficient way to track how rounding errors accumulate through long chains of floating-point computations. His key insight was that by recording each elementary operation and then traversing that record in reverse, one could compute the partial derivatives of the final result with respect to *every* intermediate variable in a single backward pass. Where Wengert's forward mode required one pass per input variable, Linnainmaa's reverse mode required only one pass per *output*, an asymmetry that would prove decisive for training neural networks with millions of parameters and a single scalar loss.
