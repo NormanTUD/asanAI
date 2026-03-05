@@ -908,50 +908,83 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>`;
 	}
 
+	/**
+	 * Generates all the DOM element IDs needed for a head's first render.
+	 */
+	_buildHeadElementIds(layerIdx, headIdx) {
+		const base = `${this.containerId}-${layerIdx}-${headIdx}`;
+		return {
+			webContainerId:    `attn-web-container-${base}`,
+			webCanvasId:       `attn-web-canvas-${base}`,
+			webStripId:        `attn-web-strip-${base}`,
+			apvHeadCanvasId:   `apv-head-canvas-${base}-headview`,
+			apvMatrixCanvasId: `apv-head-canvas-${base}-matrix`,
+		};
+	}
+
+	/**
+	 * Atomically swaps the content of a head div with new HTML,
+	 * preserving the user's scroll position.
+	 */
+	_swapHeadDivContent(headDiv, html) {
+		const offscreen = document.createElement('div');
+		offscreen.innerHTML = html;
+
+		const savedScroll = this._saveScroll(headDiv);
+		headDiv.replaceChildren(...offscreen.childNodes);
+		this._restoreScroll(savedScroll);
+	}
+
+	/**
+	 * Marks a head div as fully rendered and records the current
+	 * weights hash so future patch updates can detect changes.
+	 */
+	_markHeadRendered(headDiv, layerIdx, headIdx, weights) {
+		headDiv.dataset.rendered = 'true';
+		headDiv.dataset.wasRenderedOnce = 'true';
+
+		const hashKey = `_apvLastHash_${layerIdx}_${headIdx}`;
+		this[hashKey] = this._apvComputeWeightsHash(weights);
+	}
+
+	/**
+	 * Schedules the post-swap async rendering work: SVG head/matrix
+	 * views and the interactive attention web. Called once after the
+	 * DOM has been populated and Temml has processed math.
+	 */
+	_schedulePostRenderDrawing(layerIdx, headIdx, displayTokens, weights) {
+		requestAnimationFrame(() => {
+			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'headview');
+			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'matrix');
+			this._renderAttentionWebForHead(layerIdx, headIdx, displayTokens, weights);
+		});
+	}
+
+	/**
+	 * Performs the complete first-time render of a single attention head
+	 * into its container div. Orchestrates data resolution, HTML generation,
+	 * DOM swap, state bookkeeping, and async drawing.
+	 */
 	_executeHeadFirstRender(headDiv, layerIdx, headIdx) {
 		const resolved = this._resolveHeadRenderData(layerIdx, headIdx);
 		if (!resolved) return;
 		const { layerData, hd, displayTokens } = resolved;
 
-		const layerInstance = layerData.instance;
-		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+		const ids = this._buildHeadElementIds(layerIdx, headIdx);
 
-		const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
-		const webCanvasId    = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
-		const webStripId     = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
-		const apvHeadCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-headview`;
-		const apvMatrixCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-matrix`;
-
-		// Build content offscreen
-		const offscreen = document.createElement('div');
-		offscreen.innerHTML = this._buildFirstRenderHtml(
-			layerIdx, headIdx, hd, displayTokens, layerInstance,
-			webContainerId, webCanvasId, webStripId,
-			apvHeadCanvasId, apvMatrixCanvasId
+		const html = this._buildFirstRenderHtml(
+			layerIdx, headIdx, hd, displayTokens, layerData.instance,
+			ids.webContainerId, ids.webCanvasId, ids.webStripId,
+			ids.apvHeadCanvasId, ids.apvMatrixCanvasId
 		);
 
-		// Atomic swap with scroll preservation
-		const savedScroll = this._saveScroll(headDiv);
-		headDiv.replaceChildren(...offscreen.childNodes);
-		this._restoreScroll(savedScroll);
-
-		// Mark as rendered
-		headDiv.dataset.rendered = 'true';
-		headDiv.dataset.wasRenderedOnce = 'true';
-
-		const hashKey = `_apvLastHash_${layerIdx}_${headIdx}`;
-		this[hashKey] = this._apvComputeWeightsHash(hd.this_weights);
+		this._swapHeadDivContent(headDiv, html);
+		this._markHeadRendered(headDiv, layerIdx, headIdx, hd.this_weights);
 
 		headContentObserver.unobserve(headDiv);
-
 		render_temml();
 
-		requestAnimationFrame(() => {
-			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'headview');
-			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'matrix');
-
-			this._renderAttentionWebForHead(layerIdx, headIdx, displayTokens, hd.this_weights);
-		});
+		this._schedulePostRenderDrawing(layerIdx, headIdx, displayTokens, hd.this_weights);
 	}
 
 	_executeHeadPatchUpdate(headDiv, layerIdx, headIdx) {
