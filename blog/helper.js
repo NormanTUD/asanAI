@@ -838,57 +838,82 @@ function source_bibliography() {
 
 function addCopyButtons() {
     document.querySelectorAll('pre[class*="language-"]').forEach((pre) => {
-        if (pre.parentNode.classList?.contains('code-copy-wrapper')) return;
+        if (pre.querySelector('.code-copy-btn')) return;
 
-        // Wrapper: relative positioning context
-        const wrapper = document.createElement('div');
-        wrapper.classList.add('code-copy-wrapper');
-        wrapper.style.cssText = 'position: relative;';
-        pre.parentNode.insertBefore(wrapper, pre);
-        wrapper.appendChild(pre);
-
-        // Make the <pre> handle its own scrolling
-        // (it likely already does via overflow:auto, but ensure it)
+        // Pre braucht relative Positionierung und Scroll-Verhalten
+        pre.style.position = 'relative';
         pre.style.overflow = 'auto';
 
-        // Copy-Button — positioned on the WRAPPER, not inside <pre>
+        // Button-Container: sticky innerhalb des pre
+        const btnContainer = document.createElement('div');
+        btnContainer.style.cssText = `
+            position: sticky;
+            top: 0;
+            float: right;
+            z-index: 10;
+            pointer-events: none;
+        `;
+
         const btn = document.createElement('button');
         btn.textContent = 'Copy';
         btn.className = 'code-copy-btn';
+
+        // Konsistente Farbkonstanten
+        const defaultBg = 'rgba(255,255,255,0.08)';
+        const defaultColor = '#aaa';
+        const hoverBg = 'rgba(255,255,255,0.18)';
+        const hoverColor = '#fff';
+        const successColor = '#6f6';
+
         btn.style.cssText = `
-		position: absolute; top: 6px; right: 6px;
-		background: rgba(255,255,255,0.08);
-		color: #aaa; border: 1px solid rgba(255,255,255,0.15);
-		border-radius: 6px; padding: 4px 12px;
-		cursor: pointer; font-size: 12px; z-index: 10;
-		backdrop-filter: blur(6px);
-		transition: all 0.2s ease;
-	`;
+            display: block;
+            margin-left: auto;
+            pointer-events: auto;
+            background: ${defaultBg};
+            color: ${defaultColor};
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            backdrop-filter: blur(6px);
+            transition: all 0.2s ease;
+        `;
 
-
-        // NO scroll listener needed anymore
+        let isCopied = false;
 
         btn.addEventListener('mouseenter', () => {
-            btn.style.background = '#444';
-            btn.style.color = '#fff';
+            btn.style.background = hoverBg;
+            if (!isCopied) btn.style.color = hoverColor;
         });
+
         btn.addEventListener('mouseleave', () => {
-            btn.style.background = '#2d2d2d';
-            btn.style.color = '#ccc';
+            btn.style.background = defaultBg;
+            if (!isCopied) btn.style.color = defaultColor;
         });
 
         btn.addEventListener('click', () => {
             const code = pre.querySelector('code');
             const text = code ? code.innerText : pre.innerText;
 
-            navigator.clipboard.writeText(text).then(() => {
+            const onSuccess = () => {
+                isCopied = true;
                 btn.textContent = '✓ Copied!';
-                btn.style.color = '#6f6';
+                btn.style.color = successColor;
                 setTimeout(() => {
+                    isCopied = false;
                     btn.textContent = 'Copy';
-                    btn.style.color = '#ccc';
+                    if (btn.matches(':hover')) {
+                        btn.style.color = hoverColor;
+                        btn.style.background = hoverBg;
+                    } else {
+                        btn.style.color = defaultColor;
+                        btn.style.background = defaultBg;
+                    }
                 }, 2000);
-            }).catch(() => {
+            };
+
+            navigator.clipboard.writeText(text).then(onSuccess).catch(() => {
                 const ta = document.createElement('textarea');
                 ta.value = text;
                 ta.style.position = 'fixed';
@@ -897,12 +922,13 @@ function addCopyButtons() {
                 ta.select();
                 document.execCommand('copy');
                 document.body.removeChild(ta);
-                btn.textContent = '✓ Copied!';
-                setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+                onSuccess();
             });
         });
 
-        wrapper.appendChild(btn);
+        btnContainer.appendChild(btn);
+        // Als erstes Kind in pre einfügen, damit er oben sticky bleibt
+        pre.insertBefore(btnContainer, pre.firstChild);
     });
 }
 
