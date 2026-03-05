@@ -2165,69 +2165,116 @@ _tooltipDotVec(a, b) {
  * Returns null if the head data is missing.
  */
 _buildCellTooltipHtml(liveData, hIdx, qi, ki) {
-	const { headDataArray, tokens, layerIdx, headDisplayOffset } = liveData;
-	if (!headDataArray[hIdx]) return null;
+    const { headDataArray, tokens, layerIdx, headDisplayOffset } = liveData;
+    if (!headDataArray[hIdx]) return null;
 
-	const hd = headDataArray[hIdx];
-	const w = hd.this_weights[qi][ki];
-	const displayHeadNum = hIdx + headDisplayOffset + 1;
-	const d_k = hd.Qi[0].length;
-	const d_k_int = Math.round(d_k);
-	const d_model = hd.d_model || this.d_model;
-	const d_model_int = Math.round(d_model);
-	const n_heads = Math.round(d_model / d_k);
-	const n = tokens.length;
-	const hLabel = `h_{${layerIdx}}`;
+    const hd = headDataArray[hIdx];
+    const ctx = this._buildCellTooltipContext(hd, qi, ki, tokens, layerIdx, headDisplayOffset);
 
-	const q_i = hd.Qi[qi];
-	const k_j = hd.Ki[ki];
-	const v_j = hd.Vi[ki];
-	const h0_qi = hd.h0[qi];
-	const h0_kj = hd.h0[ki];
+    let html = '';
+    html += this._buildCellTooltipHeader(ctx);
+    html += this._buildCellTooltipDkDerivation(ctx);
+    html += this._buildCellTooltipAbstractScore(ctx);
+    html += this._buildProjectionHtml('Q', qi, hd.WQ, ctx.h0_qi, ctx.q_i, tokens[qi], ctx.hLabel, layerIdx);
+    html += this._buildProjectionHtml('K', ki, hd.WK, ctx.h0_kj, ctx.k_j, tokens[ki], ctx.hLabel, layerIdx);
+    html += this._buildProjectionHtml('V', ki, hd.WV, ctx.h0_kj, ctx.v_j, tokens[ki], ctx.hLabel, layerIdx);
+    html += this._buildCellTooltipDotProduct(ctx);
+    html += this._buildSoftmaxHtml(ctx.rawScoresRow, ctx.softmaxRow, qi, ki, ctx.n, tokens);
+    html += this._buildCellTooltipWeightedV(ctx);
 
-	const rawScore = this._tooltipDotVec(q_i, k_j) / Math.sqrt(d_k);
+    return html;
+}
 
-	// All raw scores for this query row (for softmax display)
-	const rawScoresRow = this._computeRawScoresRow(hd, qi, n, d_k);
-	const softmaxRow = this._computeSoftmaxRow(rawScoresRow);
+/**
+ * Precomputes all derived values needed by the cell tooltip sub-builders.
+ * Returns a context object shared across all tooltip section builders.
+ */
+_buildCellTooltipContext(hd, qi, ki, tokens, layerIdx, headDisplayOffset) {
+    const d_k = hd.Qi[0].length;
+    const d_k_int = Math.round(d_k);
+    const d_model = hd.d_model || this.d_model;
+    const d_model_int = Math.round(d_model);
+    const n_heads = Math.round(d_model / d_k);
+    const n = tokens.length;
+    const w = hd.this_weights[qi][ki];
+    const displayHeadNum = (headDisplayOffset || 0) + 1;
+    const hLabel = `h_{${layerIdx}}`;
 
-	let html = '';
+    const q_i = hd.Qi[qi];
+    const k_j = hd.Ki[ki];
+    const v_j = hd.Vi[ki];
+    const h0_qi = hd.h0[qi];
+    const h0_kj = hd.h0[ki];
 
-	// Header
-	html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
-	html += `Head ${displayHeadNum}: "${tokens[qi]}" → "${tokens[ki]}" = ${(w * 100).toFixed(1)}%`;
-	html += `</div>`;
+    const rawScore = this._tooltipDotVec(q_i, k_j) / Math.sqrt(d_k);
+    const rawScoresRow = this._computeRawScoresRow(hd, qi, n, d_k);
+    const softmaxRow = this._computeSoftmaxRow(rawScoresRow);
 
-	// d_k derivation
-	html += `<div style="margin-bottom:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">`;
-	html += `$d_k = \\frac{d_{\\text{model}}}{n_{\\text{heads}}} = \\frac{${d_model_int}}{${n_heads}} = ${d_k_int}$`;
-	html += `</div>`;
+    return {
+        d_k, d_k_int, d_model, d_model_int, n_heads, n, w,
+        displayHeadNum, hLabel,
+        q_i, k_j, v_j, h0_qi, h0_kj,
+        rawScore, rawScoresRow, softmaxRow,
+        qi, ki, tokens
+    };
+}
 
-	// Abstract score equation
-	html += `<div style="margin-bottom:6px;">`;
-	html += `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_k_int}}} = ${rawScore.toFixed(nr_fixed)}$`;
-	html += `</div>`;
+/**
+ * Builds the tooltip header line showing head number, token pair, and weight percentage.
+ */
+_buildCellTooltipHeader(ctx) {
+    const { displayHeadNum, tokens, qi, ki, w } = ctx;
+    return `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">` +
+        `Head ${displayHeadNum}: "${tokens[qi]}" → "${tokens[ki]}" = ${(w * 100).toFixed(1)}%` +
+        `</div>`;
+}
 
-	// Q, K, V projections
-	html += this._buildProjectionHtml('Q', qi, hd.WQ, h0_qi, q_i, tokens[qi], hLabel, layerIdx);
-	html += this._buildProjectionHtml('K', ki, hd.WK, h0_kj, k_j, tokens[ki], hLabel, layerIdx);
-	html += this._buildProjectionHtml('V', ki, hd.WV, h0_kj, v_j, tokens[ki], hLabel, layerIdx);
+/**
+ * Builds the d_k = d_model / n_heads derivation line.
+ */
+_buildCellTooltipDkDerivation(ctx) {
+    const { d_model_int, n_heads, d_k_int } = ctx;
+    return `<div style="margin-bottom:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">` +
+        `$d_k = \\frac{d_{\\text{model}}}{n_{\\text{heads}}} = \\frac{${d_model_int}}{${n_heads}} = ${d_k_int}$` +
+        `</div>`;
+}
 
-	// Dot product expansion
-	html += `<div style="margin-bottom:6px;">`;
-	html += `$\\frac{\\underbrace{${this._tooltipRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${tokens[qi]}"})} \\cdot \\underbrace{${this._tooltipColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${tokens[ki]}"})}}{\\sqrt{${d_k_int}}} = \\frac{${this._tooltipDotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(d_k).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
-	html += `</div>`;
 
-	// Softmax breakdown
-	html += this._buildSoftmaxHtml(rawScoresRow, softmaxRow, qi, ki, n, tokens);
+/**
+ * Builds the abstract attention score equation: score(Q_i, K_j) = Q^T·K / sqrt(d_k).
+ */
+_buildCellTooltipAbstractScore(ctx) {
+    const { qi, ki, d_k_int, rawScore } = ctx;
+    return `<div style="margin-bottom:6px;">` +
+        `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = ` +
+        `\\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_k_int}}} = ${rawScore.toFixed(nr_fixed)}$` +
+        `</div>`;
+}
 
-	// Weighted V contribution
-	html += `<div style="margin-top:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">`;
-	const weightedV = v_j.map(v => w * v);
-	html += `$\\alpha_{${qi},${ki}} \\cdot V_{${ki}} = ${w.toFixed(nr_fixed)} \\cdot ${this._tooltipColVec(v_j)} = ${this._tooltipColVec(weightedV)}$`;
-	html += `</div>`;
+/**
+ * Builds the expanded dot product showing the actual Q and K vectors,
+ * their element-wise product, and the scaled result.
+ */
+_buildCellTooltipDotProduct(ctx) {
+    const { q_i, k_j, qi, ki, d_k, d_k_int, rawScore, tokens } = ctx;
+    const dotProduct = this._tooltipDotVec(q_i, k_j);
+    return `<div style="margin-bottom:6px;">` +
+        `$\\frac{\\underbrace{${this._tooltipRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${tokens[qi]}"})} \\cdot ` +
+        `\\underbrace{${this._tooltipColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${tokens[ki]}"})}}{\\sqrt{${d_k_int}}} = ` +
+        `\\frac{${dotProduct.toFixed(nr_fixed)}}{${Math.sqrt(d_k).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$` +
+        `</div>`;
+}
 
-	return html;
+/**
+ * Builds the weighted value contribution line: α_{i,j} · V_j = result vector.
+ */
+_buildCellTooltipWeightedV(ctx) {
+    const { w, v_j, qi, ki } = ctx;
+    const weightedV = v_j.map(v => w * v);
+    return `<div style="margin-top:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">` +
+        `$\\alpha_{${qi},${ki}} \\cdot V_{${ki}} = ${w.toFixed(nr_fixed)} \\cdot ` +
+        `${this._tooltipColVec(v_j)} = ${this._tooltipColVec(weightedV)}$` +
+        `</div>`;
 }
 
 /**
