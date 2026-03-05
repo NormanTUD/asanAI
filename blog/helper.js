@@ -597,77 +597,78 @@ function source_bibliography() {
 }
 
 function addCopyButtons() {
-	document.querySelectorAll('pre[class*="language-"]').forEach((pre) => {
-		// Duplikat-Check: Wenn schon ein Button da ist, überspringen
-		if (pre.parentNode.classList?.contains('code-copy-wrapper')) return;
+    document.querySelectorAll('pre[class*="language-"]').forEach((pre) => {
+        if (pre.parentNode.classList?.contains('code-copy-wrapper')) return;
 
-		// Wrapper erstellen
-		const wrapper = document.createElement('div');
-		wrapper.classList.add('code-copy-wrapper');
-		wrapper.style.cssText = 'position: relative;';
-		pre.parentNode.insertBefore(wrapper, pre);
-		wrapper.appendChild(pre);
+        // Wrapper: relative positioning context
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('code-copy-wrapper');
+        wrapper.style.cssText = 'position: relative;';
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(pre);
 
-		// Copy-Button
-		const btn = document.createElement('button');
-		btn.textContent = 'Copy';
-		btn.className = 'code-copy-btn';
-		btn.style.cssText = `
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      background: #2d2d2d;
-      color: #ccc;
-      border: 1px solid #555;
-      border-radius: 4px;
-      padding: 4px 10px;
-      cursor: pointer;
-      font-size: 12px;
-      z-index: 10;
-      transition: background 0.2s, color 0.2s;
-    `;
+        // Make the <pre> handle its own scrolling
+        // (it likely already does via overflow:auto, but ensure it)
+        pre.style.overflow = 'auto';
 
-		// Button bleibt sichtbar beim Scrollen innerhalb des <pre>
-		pre.addEventListener('scroll', () => {
-			btn.style.top = (pre.scrollTop + 6) + 'px';
-			btn.style.right = (-pre.scrollLeft + 6) + 'px';
-		});
+        // Copy-Button — positioned on the WRAPPER, not inside <pre>
+        const btn = document.createElement('button');
+        btn.textContent = 'Copy';
+        btn.className = 'code-copy-btn';
+        btn.style.cssText = `
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: #2d2d2d;
+            color: #ccc;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            z-index: 10;
+            transition: background 0.2s, color 0.2s;
+            pointer-events: auto;
+        `;
 
-		btn.addEventListener('mouseenter', () => {
-			btn.style.background = '#444';
-			btn.style.color = '#fff';
-		});
-		btn.addEventListener('mouseleave', () => {
-			btn.style.background = '#2d2d2d';
-			btn.style.color = '#ccc';
-		});
+        // NO scroll listener needed anymore
 
-		// Klick: Code kopieren
-		btn.addEventListener('click', () => {
-			const code = pre.querySelector('code');
-			const text = code ? code.innerText : pre.innerText;
+        btn.addEventListener('mouseenter', () => {
+            btn.style.background = '#444';
+            btn.style.color = '#fff';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.background = '#2d2d2d';
+            btn.style.color = '#ccc';
+        });
 
-			navigator.clipboard.writeText(text).then(() => {
-				btn.textContent = '✓ Copied!';
-				btn.style.color = '#6f6';
-				setTimeout(() => {
-					btn.textContent = 'Copy';
-					btn.style.color = '#ccc';
-				}, 2000);
-			}).catch(() => {
-				const ta = document.createElement('textarea');
-				ta.value = text;
-				document.body.appendChild(ta);
-				ta.select();
-				document.execCommand('copy');
-				document.body.removeChild(ta);
-				btn.textContent = '✓ Copied!';
-				setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
-			});
-		});
+        btn.addEventListener('click', () => {
+            const code = pre.querySelector('code');
+            const text = code ? code.innerText : pre.innerText;
 
-		wrapper.appendChild(btn);
-	});
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = '✓ Copied!';
+                btn.style.color = '#6f6';
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.style.color = '#ccc';
+                }, 2000);
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.left = '-9999px';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                btn.textContent = '✓ Copied!';
+                setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+            });
+        });
+
+        wrapper.appendChild(btn);
+    });
 }
 
 function lazyInit(sectionId, initFn) {
