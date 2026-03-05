@@ -1098,3 +1098,65 @@ function initOptionalBlocks() {
 		};
 	});
 }
+
+function addKonamiEgg() {
+	const code = [38,38,40,40,37,39,37,39,66,65];
+	let pos = 0;
+
+	document.addEventListener('keydown', (e) => {
+		if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+		if (e.keyCode === code[pos]) {
+			pos++;
+			if (pos === code.length) {
+				pos = 0;
+				showKonamiReward();
+			}
+		} else {
+			pos = 0;
+		}
+	});
+
+	function showKonamiReward() {
+		const msgs = [
+			"You found the secret. Turing would be proud.",
+			"Achievement unlocked: Knows the Konami Code AND backpropagation.",
+			"Hidden layer discovered. You ARE the neural network now.",
+			"sudo grant-diploma --field='AI' --effort='konami'",
+			"Error 418: I'm a teapot. But you're a scholar.",
+			"Gradient descent complete. You've reached the global minimum of easter eggs.",
+		];
+
+		const msg = msgs[Math.floor(Math.random() * msgs.length)];
+
+		const el = document.createElement('div');
+		el.style.cssText = `
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background: rgba(10, 10, 20, 0.95); color: #4ade80;
+      padding: 30px 40px; border-radius: 12px;
+      font-family: monospace; font-size: 15px;
+      text-align: center; max-width: 420px;
+      border: 1px solid rgba(74,222,128,0.2);
+      box-shadow: 0 0 80px rgba(74,222,128,0.08);
+      z-index: 999999; opacity: 0;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    `;
+		el.innerHTML = `
+      <div style="font-size: 28px; margin-bottom: 12px;">🎮</div>
+      <div style="margin-bottom: 8px;">↑↑↓↓←→←→BA</div>
+      <div style="color: #aaa; font-size: 13px; line-height: 1.6;">${msg}</div>
+    `;
+		document.body.appendChild(el);
+
+		requestAnimationFrame(() => {
+			el.style.opacity = '1';
+			el.style.transform = 'translate(-50%, -50%) scale(1)';
+		});
+
+		setTimeout(() => {
+			el.style.opacity = '0';
+			setTimeout(() => el.remove(), 600);
+		}, 5000);
+	}
+}

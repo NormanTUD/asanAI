@@ -124,6 +124,7 @@
 		addReadingProgress();
 		addCuriosityScore();
 		//addReturnVisitorWarmth();
+		addKonamiEgg();
 	})();
 	</script>
 </body>
