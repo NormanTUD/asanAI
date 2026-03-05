@@ -885,7 +885,7 @@ Hover over a word to see where it focuses its attention.
 <div class="apv-per-head-section" style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
 <div id="apv-headview-wrap-${this.containerId}-${layerIdx}-${headIdx}"
 style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px; overflow-anchor:none; contain:layout style;">
-<svg id="${apvHeadCanvasId}" style="width:100%; min-height:180px;"></svg>
+<svg id="${apvHeadCanvasId}" style="max-width: 800px; width:100%; min-height:180px;"></svg>
 </div>
 
 <div style="font-size:0.75rem; color:#94a3b8; text-align:center;">
@@ -896,7 +896,7 @@ Hover over a token to highlight its attention connections. Line thickness = atte
 <div style="margin-bottom:20px; padding:16px; background:#fafbfc; border:1px solid #e2e8f0; border-radius:8px; overflow-anchor:none">
 <div id="apv-matrix-wrap-${this.containerId}-${layerIdx}-${headIdx}"
 style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden; min-height:180px; margin-bottom:8px; overflow-anchor:none; contain:layout style;">
-<svg id="${apvMatrixCanvasId}" style="width:100%; min-height:180px;"></svg>
+<svg id="${apvMatrixCanvasId}" style="max-width: 800px; width:100%; min-height:180px;"></svg>
 </div>
 </div>
 
