@@ -123,19 +123,6 @@ Since the network weights are randomly initialized, you may need to **reset** th
     box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
 }
 
-/* Responsive: stack on smaller screens */
-@media (max-width: 768px) {
-    .lab-dashboard {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-            "header"
-            "main"
-            "side"
-            "equations"
-            "inference";
-    }
-}
-
 /* ── Header / Config Bar ── */
 .header-full {
     display: flex;
