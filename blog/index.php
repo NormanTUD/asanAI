@@ -31,7 +31,7 @@
 	incl('Differentiation', "differentiation");
 	incl('Automatic Differentiation: How Machines Learn', "autodiff");
 	incl("Backpropagation: How a Neural Network Learns From Its Mistakes", "backproplab");
-	incl("Optimizer", "optimizerlab");
+	incl("The Optimizer: Navigating the Loss Landscape", "optimizerlab");
 	incl("Smallest possible neural network", "minimalneuron");
 	incl("Activation Functions: The Neural Decision Makers", "activationlab");
 	incl("Live Training of a Neural Network", "traininglab");
