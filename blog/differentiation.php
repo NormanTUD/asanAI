@@ -58,7 +58,7 @@ You can explore this visually below. Drag the slider to move the second point cl
         <span id="disp-deriv-h" style="font-family:monospace; font-weight:bold; color:#2563eb;">2.00</span>
     </div>
 
-    <div id="deriv-secant-formula" style="text-align:center; font-size:1.1em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:50px;"></div>
+    <div id="deriv-secant-formula" style="text-align:center; font-size:1.1em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:50px; font-size: 0.8em;"></div>
 
     <div id="plot-secant-tangent" class="plot-container" style="width:100%; height:400px;"></div>
 </div>
