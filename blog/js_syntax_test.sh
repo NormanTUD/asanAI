@@ -7,4 +7,5 @@ for file in $(find . -name "*.js"); do
         exit 1
     fi
 done
-echo "✅ All files passed syntax check."
+
+exit 0
