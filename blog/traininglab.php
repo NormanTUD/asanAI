@@ -54,7 +54,6 @@ Since the network weights are randomly initialized, you may need to **reset** th
 
         <p class="panel-title">Decision Boundary</p>
         <div id="traininglab-data-chart" class="plot-container"></div>
-        <div id="train-math-monitor" class="math-tex"></div>
 
         <p class="panel-title">Loss History</p>
         <div id="master-loss-landscape" class="plot-container"></div>
@@ -67,6 +66,12 @@ Since the network weights are randomly initialized, you may need to **reset** th
         <p class="panel-title">Activation Heatmaps</p>
         <div id="traininglab-tensor-viz"></div>
     </div>
+
+	<!-- Row 3: Full-width math monitor -->
+	<div class="panel" style="grid-area:equations;">
+	    <div id="traininglab-math-monitor" class="math-monitor-container"></div>
+	</div>
+
 
     <!-- Row 3: Full-width inference -->
     <div class="math-panel full-width-panel panel" style="grid-area:inference;">
@@ -95,9 +100,10 @@ Since the network weights are randomly initialized, you may need to **reset** th
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
-        "header    header"
-        "main      side"
-        "inference inference";
+        "header     header"
+        "main       side"
+        "equations   equations"
+        "inference  inference";
     gap: 16px;
     width: 100%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -125,9 +131,11 @@ Since the network weights are randomly initialized, you may need to **reset** th
             "header"
             "main"
             "side"
+            "equations"
             "inference";
     }
 }
+
 /* ── Header / Config Bar ── */
 .header-full {
     display: flex;
@@ -550,5 +558,44 @@ Since the network weights are randomly initialized, you may need to **reset** th
 
 .lab-dashboard.is-training > .panel {
     animation: pulse-border 2s ease-in-out infinite;
+}
+
+/* ── Math Monitor ── */
+.math-monitor-container {
+    padding: 14px;
+    background: #f8fafc;
+    border: 1px solid #e8ecf0;
+    border-radius: 10px;
+    overflow-x: auto;
+    margin: 10px 0;
+}
+
+.math-monitor-container .formula-block {
+    margin: 12px 0;
+    padding: 14px 16px;
+    background: #ffffff;
+    border-left: 3px solid #3b82f6;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.88em;
+    overflow-x: auto;
+    line-height: 2.2;
+}
+
+.math-monitor-container .formula-block.full-eq {
+    border-left-color: #8b5cf6;
+    background: linear-gradient(135deg, #faf5ff, #f5f3ff);
+}
+
+.math-monitor-container .formula-section-title {
+    font-size: 0.72em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94a3b8;
+    margin: 16px 0 6px 0;
+}
+
+.math-monitor-container .formula-section-title:first-child {
+    margin-top: 0;
 }
 </style>

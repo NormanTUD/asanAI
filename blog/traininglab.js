@@ -393,18 +393,138 @@ const TrainLab = {
 
 	// --- Visualization: Math Monitor ---
 
+	_buildFullNetworkEquation: function (layers) {
+		// Collect all layer params
+		const params = [];
+		layers.forEach((l, idx) => {
+			const weights = l.getWeights();
+			if (weights.length < 2) return;
+			const W = weights[0].arraySync();
+			const B = weights[1].arraySync();
+			const isOutput = idx === layers.length - 1;
+			params.push({ W, B, idx, isOutput });
+		});
+
+		if (params.length === 0) return '';
+
+		// Build inside-out: start from the innermost layer
+		// For a 2-layer net (1 hidden + 1 output):
+		//   ŷ = σ( ReLU( X · W1 + b1 ) · W2 + b2 )
+
+		let expr = '\\mathbf{X}';
+
+		params.forEach((p) => {
+			const layerNum = p.idx + 1;
+			const actName = p.isOutput ? '\\sigma' : '\\operatorname{ReLU}';
+
+			const texW = this._matrixToTex(p.W);
+			const texB = this._biasToTex(p.B);
+
+			const wBrace = `\\underbrace{${texW}}_{\\mathbf{W}_{${layerNum}}}`;
+			const bBrace = `\\underbrace{${texB}}_{\\mathbf{b}_{${layerNum}}}`;
+
+			expr = `${actName}\\!\\left(\\; ${expr} \\;\\cdot\\; ${wBrace} \\;+\\; ${bBrace} \\;\\right)`;
+		});
+
+		return `<div class="formula-block full-eq">
+	<b>Complete Forward Pass:</b><br>
+	$\\hat{y} \\;=\\; ${expr}$
+    </div>`;
+	},
+
+	/**
+	 * Converts a 2D weight array to a LaTeX pmatrix with truncated decimals.
+	 */
+	_matrixToTex: function (W) {
+		if (!Array.isArray(W[0])) {
+			// 1D case (single row)
+			const row = W.map(v => this._fmtNum(v)).join(' & ');
+			return '\\begin{pmatrix} ' + row + ' \\end{pmatrix}';
+		}
+		const rows = W.map(r => r.map(v => this._fmtNum(v)).join(' & ')).join(' \\\\ ');
+		return '\\begin{pmatrix} ' + rows + ' \\end{pmatrix}';
+	},
+
+	/**
+	 * Converts a bias array to a LaTeX row vector.
+	 */
+	_biasToTex: function (B) {
+		const vals = Array.isArray(B) ? B : [B];
+		const inner = vals.map(v => this._fmtNum(v)).join(' & ');
+		return '\\begin{pmatrix} ' + inner + ' \\end{pmatrix}';
+	},
+
+	/**
+	 * Formats a number for display in the equation.
+	 * Color-codes: negative = red, positive = blue.
+	 */
+	_fmtNum: function (v) {
+		const s = v.toFixed(3);
+		if (v < 0) return `{\\color{#dc2626}{${s}}}`;
+		return `{\\color{#2563eb}{${s}}}`;
+	},
+
+	_buildLayerDefinition: function (layer, idx, totalLayers) {
+		const [W, B] = [layer.getWeights()[0].arraySync(), layer.getWeights()[1].arraySync()];
+		const isOutput = idx === totalLayers - 1;
+		const actName = isOutput ? 'σ' : 'ReLU';
+		const actLabel = isOutput ? 'Sigmoid' : 'ReLU';
+		const layerNum = idx + 1;
+
+		// Symbolic input name
+		const inputSym = idx === 0
+			? '\\mathbf{X}'
+			: '\\mathbf{h}_{' + idx + '}';
+
+		// Symbolic output name
+		const outputSym = isOutput
+			? '\\hat{y}'
+			: '\\mathbf{h}_{' + layerNum + '}';
+
+		// Build the weight matrix TeX with underbrace
+		const texW = this._matrixToTex(W);
+		const wUnderbrace = `\\underbrace{${texW}}_{\\mathbf{W}_{${layerNum}}}`;
+
+		// Build the bias vector TeX with underbrace
+		const texB = this._biasToTex(B);
+		const bUnderbrace = `\\underbrace{${texB}}_{\\mathbf{b}_{${layerNum}}}`;
+
+		// Activation underbrace
+		const actUnderbrace = `\\underbrace{\\text{${actLabel}}}_{\\text{activation}}`;
+
+		return `<div class="formula-block">
+	<b>Layer ${layerNum}:</b><br>
+	$${outputSym} = ${actUnderbrace}\\!\\left(\\;
+	    ${inputSym} \\;\\cdot\\; ${wUnderbrace}
+	    \\;+\\; ${bUnderbrace}
+	\\;\\right)$
+    </div>`;
+	},
+
 	_renderMathMonitor: function (id, c) {
 		const mon = document.getElementById(id + '-math-monitor');
 		if (!mon) return;
 
-		let h = "";
-		c.model.layers.forEach((l, idx) => {
+		const layers = c.model.layers;
+		let html = '';
+
+		// ── Section 1: Per-layer definitions with underbraces ──
+		html += '<div class="formula-section-title">Layer Definitions</div>';
+
+		layers.forEach((l, idx) => {
 			const weights = l.getWeights();
 			if (weights.length < 2) return;
-			h += this._buildLayerFormula(l, idx, c.model.layers.length);
+			html += this._buildLayerDefinition(l, idx, layers.length);
 		});
-		mon.innerHTML = h;
-		render_temml();
+
+		// ── Section 2: Full composed network equation ──
+		html += '<div class="formula-section-title">Full Network (Composed)</div>';
+		html += this._buildFullNetworkEquation(layers);
+
+		mon.innerHTML = html;
+
+		// Trigger your math renderer (Temml / KaTeX / MathJax)
+		if (typeof render_temml === 'function') render_temml();
 	},
 
 	_buildLayerFormula: function (layer, idx, totalLayers) {
