@@ -312,8 +312,9 @@ A logarithm is the inverse operation of exponentiation. It asks the opposite que
 For example, if we ask "To what power must we raise 2 to get 8?" ($\log_2(8) = ?$), the answer is 3.
 
 Abstractly, a logarithm transforms a scale of growth (multiplicative) into a scale of steps (additive). It tells you the "size" or "order of magnitude" of a number rather than just its value.
+</div>
 
-### The Historical Problem: Calculation Fatigue
+<div class="optional md" data-headline="The Historical Problem: Calculation Fatigue">
 Logarithms were introduced to the world in \citeyear{napier1614} by the Scottish mathematician \citeauthor{napier1614} in his landmark work \citealternativetitle{napier1614}.
 
 **The Practical Problem:** During the Renaissance, scientists, especially astronomers like Johannes Kepler, were drowning in data. To calculate the orbits of planets, they had to multiply and divide massive numbers with many decimal places. For example, calculating the position of Mars required multiplying long sines and cosines of angles. Doing this by hand took months and a single tiny error could ruin the calculations.
@@ -323,12 +324,15 @@ Napier's breakthrough allowed researchers to perform **multiplication by simply 
 $$\log(A \times B) = \log(A) + \log(B)$$
 
 By using "Log Tables," an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding "anti-logarithm" to get the product. This revolutionary efficiency led the mathematician \citeauthor{laplace1821} to say in \citeyear{laplace1821}: *"Logarithms, by shortening the labors, doubled the life of the astronomer"* (p. 96).
+</div>
 
-### How are they calculated today?
+<div class="optional md" data-headline="How is the Logarithm calculated today?">
 Modern computers calculate logarithms using infinite series. One of the most fundamental is the \citealternativetitle{mercator1668} (p. 32f) for the natural logarithm ($\ln$):
 
 $$\ln(1+x) = \sum_{n=1}^{\infty} (-1)^{n+1} \frac{x^n}{n} = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4} + \dots$$
+</div>
 
+<div class="md">
 #### The Change of Base
 In practice, most mathematical libraries only "know" how to calculate the natural logarithm (base $e \approx 2.718$). To find the logarithm for any other base $a$, we use the **Change of Base Formula**:
 $$\log_a(x) = \frac{\ln(x)}{\ln(a)}$$
