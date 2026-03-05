@@ -1,8 +1,6 @@
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import numpy as np
 
 # --- THE DATA ---
 # PyTorch uses Tensors. We convert NumPy arrays to torch.float32 tensors.
