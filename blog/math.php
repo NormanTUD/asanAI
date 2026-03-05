@@ -651,7 +651,9 @@ Example:
     $$A = \begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{pmatrix}
     \quad \Longrightarrow \quad
     A^T = \begin{pmatrix} 1 & 4 \\ 2 & 5 \\ 3 & 6 \end{pmatrix}$$
+</div>
 
+<div class="optional md" data-headline="History of Matrix Transposition">
 The idea of matrix transposition was introduced in 1858 by the British
 mathematician \citeauthor{caleymemoirmatrices} in his paper \citetitle{caleymemoirmatrices}.
 It arose from the study of bilinear and quadratic forms, where swapping rows and columns was needed
