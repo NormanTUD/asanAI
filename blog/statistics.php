@@ -260,7 +260,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
     </div>
     <div class="statlab-interactive-zone">
         <label>Rate of Occurrence ($\lambda$):</label>
-        <input type="range" id="poisson-lambda" min="0.1" max="100" step="0.1" value="4" oninput="renderPoissonLab()">
+        <input type="range" id="poisson-lambda" min="0.1" max="50" step="0.1" value="4" oninput="renderPoissonLab()">
         <span id="poisson-lambda-val">4.0</span>
         <div id="poisson-chart"></div>
     </div>
