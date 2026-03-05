@@ -378,7 +378,7 @@ This Layer Normalization ensures that the values don't 'explode' and get too lar
 </div>
 
 <div class="md">
-## The Feed-Forward Network: Knowledge Retrieval and $h_2$
+## The Feed-Forward Network
 While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token’s representation. In this sense, it functions as the model’s primary per-token computational stage, complementing attention’s role in information routing and aggregation.
 
 \cite[Empirical studies]{keyvalmem} suggest that FFN layers are a major locus of memorized associations and factual patterns, although such knowledge is distributed across the network rather than localized to a single component.
