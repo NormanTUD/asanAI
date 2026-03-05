@@ -204,7 +204,7 @@ You can explore the tangent line interactively below. Move the point along the c
         <span id="disp-tangent-x" style="font-family:monospace; font-weight:bold; color:#2563eb;">1.50</span>
     </div>
 
-    <div id="tangent-info" style="text-align:center; font-size:1.1em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:50px;"></div>
+    <div id="tangent-info" style="text-align:center; font-size:1.1em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:50px; font-size: 0.8em;"></div>
 
     <div id="plot-tangent-line" class="plot-container" style="width:100%; height:400px;"></div>
 </div>
