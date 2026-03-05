@@ -135,6 +135,7 @@ function load_base_js () {
 	<?php css("Temml-Local.min"); ?>
 
 	<script>
+		const rootMargin = "800px";
 		const subUnits = [
 			// --- Deutsch (Häufige Endungen & Wortbestandteile) ---
 			"ung", "heit", "keit", "schaft", "chen", "lein", "isch", "erl", "end", "est",
@@ -228,7 +229,7 @@ function load_base_js () {
 		    });
 		}, {
 		    threshold: 0,
-		    rootMargin: '300px 0px'   // pre-render 300px before scrolling into view
+		    rootMargin: rootMargin
 		});
 
 		function render_temml() {

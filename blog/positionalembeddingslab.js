@@ -533,7 +533,7 @@ async function loadPositionalEmbeddingsModule() {
 					obs.unobserve(starburstTarget);
 				}
 			});
-		}, { rootMargin: '200px' });
+		}, { rootMargin: rootMargin });
 		starburstObserver.observe(starburstTarget);
 	}
 
@@ -553,7 +553,7 @@ async function loadPositionalEmbeddingsModule() {
 		}, {
 			// rootMargin lets you trigger *before* the element is fully in view.
 			// '200px' means "fire when the element is within 200px of the viewport"
-			rootMargin: '200px'
+			rootMargin: rootMargin
 		});
 		observer.observe(helixTarget);
 	}
@@ -570,7 +570,7 @@ async function loadPositionalEmbeddingsModule() {
 					obs.unobserve(groupTarget);
 				}
 			});
-		}, { rootMargin: '200px' });
+		}, { rootMargin: rootMargin });
 		groupObserver.observe(groupTarget);
 	}
 

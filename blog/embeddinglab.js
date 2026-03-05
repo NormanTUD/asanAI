@@ -4485,9 +4485,7 @@ function loadEmbeddingModule () {
 			}
 		});
 	}, { 
-		// Reduced margin so we don't pre-render heavy 3D scenes 
-		// that are too far down the page.
-		rootMargin: '50px' 
+		rootMargin: rootMargin
 	});
 
 	function executeTask(task, config) {
@@ -4553,7 +4551,7 @@ function loadEmbeddingModule () {
 				}
 			});
 		}, {
-			rootMargin: '200px'   // start rendering when ~200px away from viewport
+			rootMargin: rootMargin
 		});
 
 		dualObserver.observe(dualPlotDiv);

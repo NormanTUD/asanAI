@@ -18,7 +18,7 @@ const _sectionInitObserver = new IntersectionObserver(
 			}
 		});
 	},
-	{ rootMargin: '500px', threshold: 0 }   // 300px lookahead
+	{ rootMargin: rootMargin, threshold: 0 }
 );
 
 const categoryConfig = {

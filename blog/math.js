@@ -24,7 +24,7 @@ const _plotVisibilityObserver = new IntersectionObserver(
 			}
 		});
 	},
-	{ rootMargin: '500px', threshold: 0 }
+	{ rootMargin: rootMargin, threshold: 0 }
 );
 
 /**
@@ -505,7 +505,7 @@ function renderELI5Math() {
 				}
 			});
 		},
-		{ rootMargin: '500px', threshold: 0 }
+		{ rootMargin: rootMargin, threshold: 0 }
 	);
 
 	// Observe 2-D one-shot plots
