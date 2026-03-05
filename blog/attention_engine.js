@@ -40,6 +40,148 @@ class AttentionEngine {
 		}
 	}
 
+	_buildWhatHappensNextSection(n, d_k, d_model, n_heads) {
+		return `<div style="padding:12px; background:#f0fdf4; border:1px solid #10b981; border-radius:8px;">
+    <p style="font-weight:600; color:#065f46; margin-bottom:6px;">What Happens Next</p>
+    <p style="font-size:0.85rem; color:#334155; margin-bottom:6px;">
+	This head's context matrix is <b>one of ${n_heads} heads</b>. All heads run in parallel, each
+	capturing different relationships. Their outputs are then:
+    </p>
+    <ol style="font-size:0.85rem; color:#334155; margin:0 0 8px 20px; padding:0;">
+	<li style="margin-bottom:4px;">
+	    <b>Concatenated</b> along the $d_k$ dimension:
+	    $\\text{Concat}(\\text{head}_1, \\ldots, \\text{head}_{${n_heads}}) \\in \\mathbb{R}^{${n} \\times ${d_model}}$
+	</li>
+	<li style="margin-bottom:4px;">
+	    <b>Output projection</b> $W^O \\in \\mathbb{R}^{${d_model} \\times ${d_model}}$
+	    mixes head outputs:
+	    $\\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{heads}) \\cdot W^O$
+	</li>
+	<li style="margin-bottom:4px;">
+	    <b>Added back</b> to the input via the residual connection:
+	    $h_1 = h_0 + \\text{MHA}_{\\text{proj}}$
+	</li>
+    </ol>
+    <p style="font-size:0.8rem; color:#64748b;">
+	The concatenation, projection, and residual steps are shown in the sections below this head view.
+    </p>
+</div>`;
+	}
+
+	_buildContextMatrixSection(headIdx, layerNum, n, d_k, weights, Vi, context, displayTokens) {
+		const weightMatrixTex = this._attnWeightMatrixLabeled(weights, displayTokens, n);
+		const vMatrixTex = this._attnRowLabeledMatrix(Vi, displayTokens, n);
+		const contextMatrixTex = this._attnRowLabeledMatrix(context, displayTokens, n);
+
+		return `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
+    <p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Context Matrix for Head ${headIdx + 1}</p>
+    <p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">
+	Each token's <b>context vector</b> is a weighted average of all Value vectors it can see.
+	The attention weights (from Softmax) determine how much each Value contributes.
+	Token $i$ can only attend to tokens $0 \\ldots i$ (causal mask).
+    </p>
+    $$ \\text{context}_i = \\sum_{j=0}^{i} \\underbrace{\\alpha_{i,j}}_{\\substack{\\text{attention} \\\\ \\text{weight}}} \\cdot \\underbrace{V_j}_{\\substack{\\text{Value vector} \\\\ \\text{of token } j}} $$
+    <p style="font-size:0.8rem; color:#64748b;">
+	This produces one $d_k = ${d_k}$-dimensional context vector per token per head.
+    </p>
+    <p style="font-size:0.85rem; color:#334155; margin-bottom:4px;">
+	Stacking all context vectors gives the output of this head — a matrix of shape
+	$(T \\times d_k) = (${n} \\times ${d_k})$.
+    </p>
+    <p style="font-size:0.82rem; color:#64748b; margin-bottom:10px;">
+	In the <b>Attention Weights</b> matrix: rows are <b>query</b> tokens (who is looking),
+	columns are <b>key</b> tokens (who is being looked at).
+	Each row sums to 1 (softmax). The column headers show which token each column corresponds to.
+    </p>
+    <div style="overflow-x:auto;">
+    $$ \\underbrace{${contextMatrixTex}}_{\\text{head}_{${headIdx + 1}}\\;(${n} \\times ${d_k})} = \\underbrace{${weightMatrixTex}}_{\\substack{\\text{Attention Weights}\\;(${n} \\times ${n}) \\\\ \\text{rows}=\\text{query},\\; \\text{cols}=\\text{key}}} \\cdot \\underbrace{${vMatrixTex}}_{V_{${headIdx + 1}}\\;(${n} \\times ${d_k})} $$
+    </div>
+</div>`;
+	}
+
+
+	/**
+	 * Returns a Temml \color command string for a given token position.
+	 */
+	_attnPosColor(tIdx, n) {
+		return getPositionColor(tIdx, n, 'temml');
+	}
+
+	/**
+	 * Returns a LaTeX-safe token string (escapes #, _, &).
+	 */
+	_attnSafeTok(displayTokens, tIdx) {
+		return displayTokens[tIdx]
+			.replace(/#/g, '\\#')
+			.replace(/_/g, '\\_')
+			.replace(/&/g, '\\&');
+	}
+
+	/**
+	 * Returns a colored \text{word}_{pos} LaTeX label for a token.
+	 */
+	_attnColorLabel(displayTokens, tIdx, n) {
+		const color = this._attnPosColor(tIdx, n);
+		const safe = this._attnSafeTok(displayTokens, tIdx);
+		return `${color} \\text{${safe}}_{${tIdx}}`;
+	}
+
+	/**
+	 * Formats a numeric value safely, returning 0 for non-finite inputs.
+	 */
+	_attnNum(v) {
+		if (typeof v === 'number' && isFinite(v)) return v;
+		if (typeof v === 'string') return parseFloat(v) || 0;
+		return 0;
+	}
+
+	/**
+	 * Builds a LaTeX matrix with colored row labels (\text{word}_{pos})
+	 * and values colored by the row's position color.
+	 */
+	_attnWeightMatrixLabeled(mat, displayTokens, n) {
+		if (!Array.isArray(mat) || !Array.isArray(mat[0])) return `(?)`;
+		const numCols = mat[0].length;
+		const colSpec = 'r|' + 'r'.repeat(numCols);
+
+		const colHeaders = mat[0].map((_, j) => {
+			return `${this._attnPosColor(j, n)} \\text{${this._attnSafeTok(displayTokens, j)}}_{${j}}`;
+		}).join(' & ');
+
+		const rows = mat.map((row, i) => {
+			const rowLabel = `${this._attnPosColor(i, n)} \\text{${this._attnSafeTok(displayTokens, i)}}_{${i}}`;
+			const vals = row.map((v, j) => {
+				return `${this._attnPosColor(j, n)} ${this._attnNum(v).toFixed(nr_fixed)}`;
+			}).join(' & ');
+			return `${rowLabel} & ${vals}`;
+		}).join(' \\\\ ');
+
+		return `\\left(\\begin{array}{${colSpec}} & ${colHeaders} \\\\ \\hline ${rows} \\end{array}\\right)`;
+	}
+
+	/**
+	 * Builds a LaTeX matrix with colored row labels and values colored
+	 * by the row's position. Column headers are blank spaces.
+	 * Used for V matrices and context matrices.
+	 */
+	_attnRowLabeledMatrix(mat, displayTokens, n) {
+		if (!Array.isArray(mat) || !Array.isArray(mat[0])) return `(?)`;
+		const numCols = mat[0].length;
+		const colSpec = 'r|' + 'r'.repeat(numCols);
+
+		const colHeaders = mat[0].map(() => ` `).join(' & ');
+
+		const rows = mat.map((row, tIdx) => {
+			const color = this._attnPosColor(tIdx, n);
+			const label = `${color} \\text{${this._attnSafeTok(displayTokens, tIdx)}}_{${tIdx}}`;
+			const vals = row.map(v => `${color} ${this._attnNum(v).toFixed(nr_fixed)}`).join(' & ');
+			return `${label} & ${vals}`;
+		}).join(' \\\\ ');
+
+		return `\\left(\\begin{array}{${colSpec}} & ${colHeaders} \\\\ \\hline ${rows} \\end{array}\\right)`;
+	}
+
+
 	dot(A, B) {
 		if (!Array.isArray(A) || !Array.isArray(B) || A.length === 0 || B.length === 0) {
 			throw new Error(`Matrix multiplication error: Invalid input dimensions. A: ${A?.length}, B: ${B?.length}`);
@@ -1178,174 +1320,27 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const n_heads = Math.round(d_model / d_k);
 		const L = layerIdx + 1;
 
-		const num = (v) => {
-			if (typeof v === 'number' && isFinite(v)) return v;
-			if (typeof v === 'string') return parseFloat(v) || 0;
-			return 0;
-		};
-
-		// ── Color helper: returns a Temml \color command for position tIdx ──
-		const posColor = (tIdx) => getPositionColor(tIdx, n, 'temml');
-
-		// ── Safe LaTeX-escaped token name ──
-		const safeTok = (tIdx) => displayTokens[tIdx].replace(/#/g, '\\#').replace(/_/g, '\\_').replace(/&/g, '\\&');
-
-		// ── Colored \text{word}_{pos} label ──
-		const colorLabel = (tIdx) => `${posColor(tIdx)} \\text{${safeTok(tIdx)}}_{${tIdx}}`;
-
-		// ── Row vector with all values colored by the token's position ──
-		const toRowVecColored = (arr, tIdx) => {
-			if (!Array.isArray(arr)) return `(?)`;
-			const color = posColor(tIdx);
-			return `\\begin{pmatrix} ${arr.map(v => `${color} ${num(v).toFixed(nr_fixed)}`).join(' & ')} \\end{pmatrix}`;
-		};
-
-		// ── Plain row vector (no color) ──
-		const toRowVec = (arr) => {
-			if (!Array.isArray(arr)) return `(?)`;
-			return `\\begin{pmatrix} ${arr.map(v => num(v).toFixed(nr_fixed)).join(' & ')} \\end{pmatrix}`;
-		};
-
-		// ── Matrix with colored \text{word}_{pos} row labels ──
-		const toMatrixLabeled = (mat) => {
-			if (!Array.isArray(mat) || !Array.isArray(mat[0])) return `(?)`;
-			const numCols = mat[0].length;
-			const colSpec = 'r|' + 'r'.repeat(numCols);
-			const rows = mat.map((row, tIdx) => {
-				const color = posColor(tIdx);
-				const label = `${color} \\text{${safeTok(tIdx)}}_{${tIdx}}`;
-				const vals = row.map(v => `${color} ${num(v).toFixed(nr_fixed)}`).join(' & ');
-				return `${label} & ${vals}`;
-			}).join(' \\\\ ');
-			return `\\left(\\begin{array}{${colSpec}} ${rows} \\end{array}\\right)`;
-		};
-
-		// ── Attention weight matrix with BOTH row labels (query) and column headers (key) ──
-		const toWeightMatrixLabeled = (mat) => {
-			if (!Array.isArray(mat) || !Array.isArray(mat[0])) return `(?)`;
-			const numCols = mat[0].length;
-			const colSpec = 'r|' + 'r'.repeat(numCols);
-
-			// Column header row: empty cell for the label column, then each key token
-			const colHeaders = mat[0].map((_, j) => {
-				return `${posColor(j)} \\text{${safeTok(j)}}_{${j}}`;
-			}).join(' & ');
-
-			// Data rows: row label (query token) then values colored by KEY (column) token
-			const rows = mat.map((row, i) => {
-				const rowLabel = `${posColor(i)} \\text{${safeTok(i)}}_{${i}}`;
-				const vals = row.map((v, j) => {
-					return `${posColor(j)} ${num(v).toFixed(nr_fixed)}`;
-				}).join(' & ');
-				return `${rowLabel} & ${vals}`;
-			}).join(' \\\\ ');
-
-			return `\\left(\\begin{array}{${colSpec}} & ${colHeaders} \\\\ \\hline ${rows} \\end{array}\\right)`;
-		};
-
-		// ── V matrix with column dimension headers (d_0, d_1, ...) and row token labels ──
-		const toVMatrixLabeled = (mat) => {
-			if (!Array.isArray(mat) || !Array.isArray(mat[0])) return `(?)`;
-			const numCols = mat[0].length;
-			const colSpec = 'r|' + 'r'.repeat(numCols);
-
-			// Column headers: dimension indices
-			const colHeaders = mat[0].map((_, d) => ` `).join(' & ');
-
-			const rows = mat.map((row, tIdx) => {
-				const color = posColor(tIdx);
-				const label = `${color} \\text{${safeTok(tIdx)}}_{${tIdx}}`;
-				const vals = row.map(v => `${color} ${num(v).toFixed(nr_fixed)}`).join(' & ');
-				return `${label} & ${vals}`;
-			}).join(' \\\\ ');
-
-			return `\\left(\\begin{array}{${colSpec}} & ${colHeaders} \\\\ \\hline ${rows} \\end{array}\\right)`;
-		};
-
-		// ── Context matrix with column dimension headers and row token labels ──
-		const toContextMatrixLabeled = (mat) => {
-			if (!Array.isArray(mat) || !Array.isArray(mat[0])) return `(?)`;
-			const numCols = mat[0].length;
-			const colSpec = 'r|' + 'r'.repeat(numCols);
-
-			const colHeaders = mat[0].map((_, d) => ` `).join(' & ');
-
-			const rows = mat.map((row, tIdx) => {
-				const color = posColor(tIdx);
-				const label = `${color} \\text{${safeTok(tIdx)}}_{${tIdx}}`;
-				const vals = row.map(v => `${color} ${num(v).toFixed(nr_fixed)}`).join(' & ');
-				return `${label} & ${vals}`;
-			}).join(' \\\\ ');
-
-			return `\\left(\\begin{array}{${colSpec}} & ${colHeaders} \\\\ \\hline ${rows} \\end{array}\\right)`;
-		};
-
 		if (!weights || !Vi || !context || !Array.isArray(Vi[0]) || !Array.isArray(context[0])) {
 			return `<p style="color:#94a3b8;">Attention result data not available for this head.</p>`;
 		}
 
 		let html = '';
 
+		// Header
 		html += `<p style="font-weight:bold; color:#92400e; font-size:0.95rem; margin-bottom:12px;">
 	What Happens with the Attention Weights — Head ${headIdx + 1}, Layer ${L}
     </p>`;
 
-		// ── Step 1: Abstract ──
-		html += `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
-	<p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Context Matrix for Head ${headIdx + 1}</p>
-	<p style="font-size:0.85rem; color:#334155; margin-bottom:8px;">
-	    Each token's <b>context vector</b> is a weighted average of all Value vectors it can see.
-	    The attention weights (from Softmax) determine how much each Value contributes.
-	    Token $i$ can only attend to tokens $0 \\ldots i$ (causal mask).
-	</p>
-	$$ \\text{context}_i = \\sum_{j=0}^{i} \\underbrace{\\alpha_{i,j}}_{\\substack{\\text{attention} \\\\ \\text{weight}}} \\cdot \\underbrace{V_j}_{\\substack{\\text{Value vector} \\\\ \\text{of token } j}} $$
-	<p style="font-size:0.8rem; color:#64748b;">
-	    This produces one $d_k = ${d_k}$-dimensional context vector per token per head.
-	</p>
-	<p style="font-size:0.85rem; color:#334155; margin-bottom:4px;">
-	    Stacking all context vectors gives the output of this head — a matrix of shape
-	    $(T \\times d_k) = (${n} \\times ${d_k})$.
-	</p>
-	<p style="font-size:0.82rem; color:#64748b; margin-bottom:10px;">
-	    In the <b>Attention Weights</b> matrix: rows are <b>query</b> tokens (who is looking),
-	    columns are <b>key</b> tokens (who is being looked at).
-	    Each row sums to 1 (softmax). The column headers show which token each column corresponds to.
-	</p>
-	<div style="overflow-x:auto;">
-	$$ \\underbrace{${toContextMatrixLabeled(context)}}_{\\text{head}_{${headIdx + 1}}\\;(${n} \\times ${d_k})} = \\underbrace{${toWeightMatrixLabeled(weights)}}_{\\substack{\\text{Attention Weights}\\;(${n} \\times ${n}) \\\\ \\text{rows}=\\text{query},\\; \\text{cols}=\\text{key}}} \\cdot \\underbrace{${toVMatrixLabeled(Vi)}}_{V_{${headIdx + 1}}\\;(${n} \\times ${d_k})} $$
-	</div>
-    </div>`;
+		// Step 1: Context matrix equation with labeled matrices
+		html += this._buildContextMatrixSection(
+			headIdx, L, n, d_k, weights, Vi, context, displayTokens
+		);
 
-		// ── Step 4: What happens next ──
-		html += `<div style="padding:12px; background:#f0fdf4; border:1px solid #10b981; border-radius:8px;">
-	<p style="font-weight:600; color:#065f46; margin-bottom:6px;">What Happens Next</p>
-	<p style="font-size:0.85rem; color:#334155; margin-bottom:6px;">
-	    This head's context matrix is <b>one of ${n_heads} heads</b>. All heads run in parallel, each
-	    capturing different relationships. Their outputs are then:
-	</p>
-	<ol style="font-size:0.85rem; color:#334155; margin:0 0 8px 20px; padding:0;">
-	    <li style="margin-bottom:4px;">
-		<b>Concatenated</b> along the $d_k$ dimension:
-		$\\text{Concat}(\\text{head}_1, \\ldots, \\text{head}_{${n_heads}}) \\in \\mathbb{R}^{${n} \\times ${d_model}}$
-	    </li>
-	    <li style="margin-bottom:4px;">
-		<b>Output projection</b> $W^O \\in \\mathbb{R}^{${d_model} \\times ${d_model}}$
-		mixes head outputs:
-		$\\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{heads}) \\cdot W^O$
-	    </li>
-	    <li style="margin-bottom:4px;">
-		<b>Added back</b> to the input via the residual connection:
-		$h_1 = h_0 + \\text{MHA}_{\\text{proj}}$
-	    </li>
-	</ol>
-	<p style="font-size:0.8rem; color:#64748b;">
-	    The concatenation, projection, and residual steps are shown in the sections below this head view.
-	</p>
-    </div>`;
+		// Step 2: What happens next (concat, projection, residual)
+		html += this._buildWhatHappensNextSection(n, d_k, d_model, n_heads);
 
 		return html;
 	}
-
 
 	_apvComputeWeightsHash(weights) {
 		// Fast hash: sample a few values and combine them
