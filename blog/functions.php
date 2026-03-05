@@ -489,6 +489,18 @@ function get_ai_course_labels($indexFile = 'index.php') {
 	return $labelsMap;
 }
 
+function get_string_of_file_or_die($file) {
+	if(!file_exists($file)) {
+		die(">$file< does not exist.");
+	}
+
+	if(!is_readable($file)) {
+		die(">$file< is not readable");
+	}
+
+	return file_get_contents($file);
+}
+
 if(!server_php_self_ends_with_index_php()) {
 ?>
 <!DOCTYPE html>
