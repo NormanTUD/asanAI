@@ -11,4 +11,6 @@ python3 -m py_compile py/**/*.py
 
 python3 py/qos.py py
 
+bash php_syntax_check.sh
+
 bash js_syntax_test.sh
