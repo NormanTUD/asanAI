@@ -289,13 +289,31 @@ function bindIframeSafeLinks() {
 				targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
 				// Highlight effect
-				targetEl.style.backgroundColor = 'rgba(255, 255, 0, 0.3)';
+				targetEl.style.transition = 'background-color 0.3s ease';
+				targetEl.style.backgroundColor = 'rgba(255, 200, 50, 0.35)';
 				setTimeout(() => { targetEl.style.backgroundColor = 'transparent'; }, 2000);
 			});
 		} else {
 			console.warn(`Target element #${targetId} not found.`);
 		}
 	};
+}
+
+function addReadingProgress() {
+	const bar = document.createElement('div');
+	bar.id = 'reading-progress';
+	bar.style.cssText = `
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, #4fc3f7, #ab47bc);
+    width: 0%; z-index: 9999; transition: width 0.1s linear;
+  `;
+	document.body.appendChild(bar);
+
+	window.addEventListener('scroll', () => {
+		const h = document.documentElement;
+		const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+		bar.style.width = pct + '%';
+	});
 }
 
 /**
@@ -833,20 +851,15 @@ function addCopyButtons() {
         btn.textContent = 'Copy';
         btn.className = 'code-copy-btn';
         btn.style.cssText = `
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            background: #cccccc;
-            color: #000;
-            border: 1px solid #555;
-            border-radius: 4px;
-            padding: 4px 10px;
-            cursor: pointer;
-            font-size: 12px;
-            z-index: 10;
-            transition: background 0.2s, color 0.2s;
-            pointer-events: auto;
-        `;
+		position: absolute; top: 6px; right: 6px;
+		background: rgba(255,255,255,0.08);
+		color: #aaa; border: 1px solid rgba(255,255,255,0.15);
+		border-radius: 6px; padding: 4px 12px;
+		cursor: pointer; font-size: 12px; z-index: 10;
+		backdrop-filter: blur(6px);
+		transition: all 0.2s ease;
+	`;
+
 
         // NO scroll listener needed anymore
 

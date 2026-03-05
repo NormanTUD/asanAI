@@ -120,6 +120,8 @@
 			// Fallback für alte Browser
 			setInterval(sendHeight, 1000);
 		}
+
+		addReadingProgress();
 	})();
 	</script>
 </body>
