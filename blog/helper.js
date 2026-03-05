@@ -713,8 +713,8 @@ function addCopyButtons() {
             position: absolute;
             top: 6px;
             right: 6px;
-            background: #2d2d2d;
-            color: #ccc;
+            background: #cccccc;
+            color: #000;
             border: 1px solid #555;
             border-radius: 4px;
             padding: 4px 10px;
