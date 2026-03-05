@@ -361,7 +361,7 @@ While logarithms were born from the needs of 17th-century astronomers, they are 
 </div>
 
 <div class="md">
-## The Mathematical Concept: The Role of Infinity ($\infty$)
+## The Mathematical Concept: The Role of $\infty$
 
 While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool. It allows systems to handle "impossible" states or "hidden" information without crashing the underlying logic. The use of the symbol $\infty$ for the concept of infinity dates back to \citeyear{wallis1655}, according to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 214).
 
