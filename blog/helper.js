@@ -246,7 +246,12 @@ function revealContent() {
 	const content = document.getElementById('all');
 
 	if (loader) loader.style.display = 'none';
-	if (content) content.style.display = 'block';
+	if (content) {
+		content.style.opacity = '0';
+		content.style.display = 'block';
+		content.style.transition = 'opacity 0.5s ease';
+		requestAnimationFrame(() => { content.style.opacity = '1'; });
+	}
 }
 
 function make_external_a_href_target_blank() {
