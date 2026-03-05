@@ -656,166 +656,80 @@ class AttentionEngine {
 		if (!headDiv) return;
 
 		if (headDiv.dataset.wasRenderedOnce === 'true') {
-			headDiv.dataset.rendered = 'true';
-
-			const registry = multiLayerAttentionRegistry.get(this.containerId);
-			const layerData = registry.layers[layerIdx];
-			const hd = layerData.headData[headIdx];
-			const displayTokens = layerData.tokenStrings
-				? [...layerData.tokenStrings]
-				: layerData.tokens.map(t => {
-					if (typeof t === 'string') return t;
-					return tlab_get_top_word_only(t);
-				});
-
-			const weightsHash = this._apvComputeWeightsHash(hd.this_weights);
-			const hashKey = `_apvLastHash_${layerIdx}_${headIdx}`;
-			if (this[hashKey] === weightsHash) {
-				return;
-			}
-			this[hashKey] = weightsHash;
-
-			// ── Save scroll position BEFORE any DOM changes ──
-			const scrollParent = this._findScrollParent(headDiv);
-			const savedScrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
-			const savedScrollLeft = scrollParent ? scrollParent.scrollLeft : window.scrollX;
-
-			// ── Cancel any pending height unlock from a previous render cycle ──
-			if (headDiv._heightUnlockRafId) {
-				cancelAnimationFrame(headDiv._heightUnlockRafId);
-				headDiv._heightUnlockRafId = null;
-			}
-
-			// ── Lock the ENTIRE headDiv height to prevent any layout shift ──
-			const lockedHeight = headDiv.offsetHeight;
-			headDiv.style.minHeight = lockedHeight + 'px';
-			headDiv.style.maxHeight = lockedHeight + 'px';
-			headDiv.style.overflow = 'hidden';
-
-			// ── All updates happen synchronously — no rAF nesting ──
-			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'headview');
-			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'matrix');
-
-			// ── Attention web ──
-			const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
-			const webCanvasId = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
-			const webStripId = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
-			renderDynamicAttentionWeb(
-				webContainerId, webCanvasId, webStripId,
-				displayTokens, hd.this_weights
-			);
-
-			// ── Equations: morph instead of innerHTML to avoid flicker ──
-			const equationsId = `apv-equations-${this.containerId}-${layerIdx}-${headIdx}`;
-			const equationsContainer = document.getElementById(equationsId);
-			let needsTemml = false;
-			if (equationsContainer) {
-				const layerInstance = layerData.instance;
-				const newEquationsHtml = layerInstance.generateEquationsOnly(hd);
-				if (this._morphHtml(equationsContainer, newEquationsHtml)) {
-					needsTemml = true;
-				}
-			}
-
-			// ── Attention result: morph instead of innerHTML to avoid flicker ──
-			const resultId = `apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}`;
-			const resultContainer = document.getElementById(resultId);
-			if (resultContainer) {
-				const newResultHtml = this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens);
-				if (this._morphHtml(resultContainer, newResultHtml)) {
-					needsTemml = true;
-				}
-			}
-
-			// ── Restore scroll synchronously ──
-			if (scrollParent) {
-				scrollParent.scrollTop = savedScrollTop;
-				scrollParent.scrollLeft = savedScrollLeft;
-			} else {
-				window.scrollTo(savedScrollLeft, savedScrollTop);
-			}
-
-			// ── Single temml pass after all DOM updates are done ──
-			if (needsTemml) {
-				render_temml();
-			}
-
-			// ── FIX: Release height locks on morphed containers AFTER temml ──
-			if (equationsContainer) {
-				equationsContainer.style.minHeight = '';
-				equationsContainer.style.maxHeight = '';
-				equationsContainer.style.overflow = '';
-			}
-			if (resultContainer) {
-				resultContainer.style.minHeight = '';
-				resultContainer.style.maxHeight = '';
-				resultContainer.style.overflow = '';
-			}
-
-			// ── FIX: Snap headDiv to its NEW natural height synchronously,
-			//    then release the lock in a single rAF so the user never
-			//    sees the old→new jump. ──
-			// After temml rendering + child lock release, the headDiv's
-			// scrollHeight reflects the TRUE final content height.
-			const newNaturalHeight = headDiv.scrollHeight;
-
-			// Snap to the new height RIGHT NOW (same JS frame, before paint)
-			headDiv.style.minHeight = newNaturalHeight + 'px';
-			headDiv.style.maxHeight = newNaturalHeight + 'px';
-
-			// Restore scroll again after the snap (the height change may shift)
-			if (scrollParent) {
-				scrollParent.scrollTop = savedScrollTop;
-				scrollParent.scrollLeft = savedScrollLeft;
-			} else {
-				window.scrollTo(savedScrollLeft, savedScrollTop);
-			}
-
-			// Release the lock in a single rAF — the browser has already
-			// painted at newNaturalHeight, so removing the constraints
-			// causes zero visual change.
-			headDiv._heightUnlockRafId = requestAnimationFrame(() => {
-				headDiv._heightUnlockRafId = null;
-				headDiv.style.minHeight = '';
-				headDiv.style.maxHeight = '';
-				headDiv.style.overflow = '';
-			});
-
+			this._executeHeadPatchUpdate(headDiv, layerIdx, headIdx);
 			return;
 		}
 
 		if (headDiv.dataset.rendered === 'true') return;
 
-		const registry = multiLayerAttentionRegistry.get(this.containerId);
-		const layerData = registry.layers[layerIdx];
-		const hd = layerData.headData[headIdx];
-		const layerTokens = layerData.tokens;
-		const layerInstance = layerData.instance;
+		this._executeHeadFirstRender(headDiv, layerIdx, headIdx);
+	}
 
+	_resolveHeadRenderData(layerIdx, headIdx) {
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		if (!registry) return null;
+		const layerData = registry.layers[layerIdx];
+		if (!layerData) return null;
+
+		const hd = layerData.headData[headIdx];
 		const displayTokens = layerData.tokenStrings
 			? [...layerData.tokenStrings]
-			: layerTokens.map(t => {
+			: layerData.tokens.map(t => {
 				if (typeof t === 'string') return t;
 				return tlab_get_top_word_only(t);
 			});
 
-		const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
-		const webCanvasId    = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
-		const webStripId     = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
+		return { layerData, hd, displayTokens };
+	}
 
-		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+	_saveScroll(referenceEl) {
+		const scrollParent = this._findScrollParent(referenceEl);
+		return {
+			scrollParent,
+			scrollTop: scrollParent ? scrollParent.scrollTop : window.scrollY,
+			scrollLeft: scrollParent ? scrollParent.scrollLeft : window.scrollX
+		};
+	}
 
-		const apvHeadCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-headview`;
-		const apvMatrixCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-matrix`;
+	_restoreScroll(saved) {
+		if (saved.scrollParent) {
+			saved.scrollParent.scrollTop = saved.scrollTop;
+			saved.scrollParent.scrollLeft = saved.scrollLeft;
+		} else {
+			window.scrollTo(saved.scrollLeft, saved.scrollTop);
+		}
+	}
 
-		// ── Build content in a detached container (offscreen) ──
-		const offscreen = document.createElement('div');
-		offscreen.innerHTML = `
+	_lockHeight(el) {
+		if (el._heightUnlockRafId) {
+			cancelAnimationFrame(el._heightUnlockRafId);
+			el._heightUnlockRafId = null;
+		}
+		const lockedHeight = el.offsetHeight;
+		if (lockedHeight > 0) {
+			el.style.minHeight = lockedHeight + 'px';
+			el.style.maxHeight = lockedHeight + 'px';
+			el.style.overflow = 'hidden';
+		}
+	}
+
+	_unlockHeightImmediate(el) {
+		el.style.minHeight = '';
+		el.style.maxHeight = '';
+		el.style.overflow = '';
+	}
+
+	_buildFirstRenderHtml(
+		layerIdx, headIdx, hd, displayTokens, layerInstance,
+		webContainerId, webCanvasId, webStripId,
+		apvHeadCanvasId, apvMatrixCanvasId
+	) {
+		return `
 <div style="margin-bottom:20px;">
 $$ \\text{Layer}_{${layerIdx + 1}},\\; \\text{Head}_{${headIdx + 1}} = \\text{Softmax} \\left( \\frac{Q_{${headIdx + 1}} K_{${headIdx + 1}}^T}{\\sqrt{d_k}} \\right) \\cdot V_{${headIdx + 1}} $$
 </div>
 <div id="apv-equations-${this.containerId}-${layerIdx}-${headIdx}" style="overflow-x:auto; margin-bottom:20px; overflow-anchor:none;">
-			${layerInstance.generateEquationsOnly(hd)}
+    ${layerInstance.generateEquationsOnly(hd)}
 </div>
 
 <p style="font-size:0.8rem; color:#64748b; margin-bottom:8px;">
@@ -846,25 +760,40 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 
 <div id="apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}"
  style="margin-top:20px; padding:20px; border:1px solid #f59e0b; border-radius:12px; background:#fffbeb; overflow-x:auto; overflow-anchor:none;">
-			${this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens)}
+    ${this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens)}
 </div>
 
 <div id="attn-heatmap-${this.containerId}-${layerIdx}-${headIdx}" style="width:100%; margin-bottom:20px;"></div>`;
+	}
 
-		// ── Atomic swap: save scroll, replace children, restore scroll ──
-		const scrollParent = this._findScrollParent(headDiv);
-		const savedScrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
+	_executeHeadFirstRender(headDiv, layerIdx, headIdx) {
+		const resolved = this._resolveHeadRenderData(layerIdx, headIdx);
+		if (!resolved) return;
+		const { layerData, hd, displayTokens } = resolved;
 
-		// Move all children from offscreen into headDiv in one operation
+		const layerInstance = layerData.instance;
+		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+
+		const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
+		const webCanvasId    = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
+		const webStripId     = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
+		const apvHeadCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-headview`;
+		const apvMatrixCanvasId = `apv-head-canvas-${this.containerId}-${layerIdx}-${headIdx}-matrix`;
+
+		// Build content offscreen
+		const offscreen = document.createElement('div');
+		offscreen.innerHTML = this._buildFirstRenderHtml(
+			layerIdx, headIdx, hd, displayTokens, layerInstance,
+			webContainerId, webCanvasId, webStripId,
+			apvHeadCanvasId, apvMatrixCanvasId
+		);
+
+		// Atomic swap with scroll preservation
+		const savedScroll = this._saveScroll(headDiv);
 		headDiv.replaceChildren(...offscreen.childNodes);
+		this._restoreScroll(savedScroll);
 
-		// Restore scroll position immediately (before browser paints)
-		if (scrollParent) {
-			scrollParent.scrollTop = savedScrollTop;
-		} else {
-			window.scrollTo(window.scrollX, savedScrollTop);
-		}
-
+		// Mark as rendered
 		headDiv.dataset.rendered = 'true';
 		headDiv.dataset.wasRenderedOnce = 'true';
 
@@ -879,10 +808,103 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'headview');
 			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'matrix');
 
-			renderDynamicAttentionWeb(
-				webContainerId, webCanvasId, webStripId,
-				displayTokens, hd.this_weights
-			);
+			this._renderAttentionWebForHead(layerIdx, headIdx, displayTokens, hd.this_weights);
+		});
+	}
+
+	_executeHeadPatchUpdate(headDiv, layerIdx, headIdx) {
+		headDiv.dataset.rendered = 'true';
+
+		const resolved = this._resolveHeadRenderData(layerIdx, headIdx);
+		if (!resolved) return;
+		const { layerData, hd, displayTokens } = resolved;
+
+		// Skip if weights haven't changed
+		const weightsHash = this._apvComputeWeightsHash(hd.this_weights);
+		const hashKey = `_apvLastHash_${layerIdx}_${headIdx}`;
+		if (this[hashKey] === weightsHash) return;
+		this[hashKey] = weightsHash;
+
+		// Save scroll & lock height
+		const savedScroll = this._saveScroll(headDiv);
+		this._lockHeight(headDiv);
+
+		// Patch SVGs in-place
+		this._apvDrawSingleHeadSync(layerIdx, headIdx, 'headview');
+		this._apvDrawSingleHeadSync(layerIdx, headIdx, 'matrix');
+
+		// Re-render attention web
+		this._renderAttentionWebForHead(layerIdx, headIdx, displayTokens, hd.this_weights);
+
+		// Morph equations & result HTML
+		const { needsTemml, equationsContainer, resultContainer } =
+			this._morphEquationsAndResult(layerIdx, headIdx, hd, displayTokens, layerData);
+
+		// Restore scroll
+		this._restoreScroll(savedScroll);
+
+		// Re-render math if needed
+		if (needsTemml) {
+			render_temml();
+		}
+
+		// Release height locks on morphed containers
+		if (equationsContainer) this._unlockHeightImmediate(equationsContainer);
+		if (resultContainer) this._unlockHeightImmediate(resultContainer);
+
+		// Snap headDiv to new natural height, then schedule lock release
+		this._snapAndScheduleHeightUnlock(headDiv, savedScroll);
+	}
+
+	_morphEquationsAndResult(layerIdx, headIdx, hd, displayTokens, layerData) {
+		let needsTemml = false;
+
+		// Equations
+		const equationsId = `apv-equations-${this.containerId}-${layerIdx}-${headIdx}`;
+		const equationsContainer = document.getElementById(equationsId);
+		if (equationsContainer) {
+			const layerInstance = layerData.instance;
+			const newEquationsHtml = layerInstance.generateEquationsOnly(hd);
+			if (this._morphHtml(equationsContainer, newEquationsHtml)) {
+				needsTemml = true;
+			}
+		}
+
+		// Attention result
+		const resultId = `apv-attn-result-${this.containerId}-${layerIdx}-${headIdx}`;
+		const resultContainer = document.getElementById(resultId);
+		if (resultContainer) {
+			const newResultHtml = this._buildAttentionResultHtml(layerIdx, headIdx, hd, displayTokens);
+			if (this._morphHtml(resultContainer, newResultHtml)) {
+				needsTemml = true;
+			}
+		}
+
+		return { needsTemml, equationsContainer, resultContainer };
+	}
+
+	_renderAttentionWebForHead(layerIdx, headIdx, displayTokens, weights) {
+		const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
+		const webCanvasId = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
+		const webStripId = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
+		renderDynamicAttentionWeb(
+			webContainerId, webCanvasId, webStripId,
+			displayTokens, weights
+		);
+	}
+
+	_snapAndScheduleHeightUnlock(el, savedScroll) {
+		const newNaturalHeight = el.scrollHeight;
+		el.style.minHeight = newNaturalHeight + 'px';
+		el.style.maxHeight = newNaturalHeight + 'px';
+
+		this._restoreScroll(savedScroll);
+
+		el._heightUnlockRafId = requestAnimationFrame(() => {
+			el._heightUnlockRafId = null;
+			el.style.minHeight = '';
+			el.style.maxHeight = '';
+			el.style.overflow = '';
 		});
 	}
 
