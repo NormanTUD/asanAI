@@ -1716,15 +1716,45 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 		reset_graph();
 		calculate_vector_math();
 
+		// Clear the global migration container
 		const migrationContainer = document.getElementById('transformer-migration-plots-container');
 		if (migrationContainer) {
+			// Dispose any ECharts instances inside before clearing
+			migrationContainer.querySelectorAll('[id^="migration-layer-"]').forEach(el => {
+				const chart = echarts.getInstanceByDom(el);
+				if (chart) chart.dispose();
+			});
 			migrationContainer.innerHTML = '';
 			transformerLabVisMigrationDataRegistry.clear();
 		}
 
+		// Also clear per-layer migration containers inside unified tabs
+		const ffnContainer = document.getElementById('ffn-equations-container');
+		if (ffnContainer) {
+			ffnContainer.querySelectorAll('[id$="-migration-container"]').forEach(el => {
+				// Dispose ECharts on any plot divs inside
+				el.querySelectorAll('[id^="migration-layer-"]').forEach(plotEl => {
+					const chart = echarts.getInstanceByDom(plotEl);
+					if (chart) chart.dispose();
+				});
+				el.innerHTML = '';
+			});
+			// Force full rebuild of unified tabs since d_model changed
+			ffnContainer.innerHTML = '';
+		}
+
+		// Clear multi-layer attention registry so stale layer data doesn't persist
+		multiLayerAttentionRegistry.clear();
+
 		window.tlab_trajectory_collector = null;
 		const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
-		if (oldTrajDiv) oldTrajDiv.remove();
+		if (oldTrajDiv) {
+			// Dispose any ECharts or Plotly on the trajectory div
+			const trajChart = echarts.getInstanceByDom(oldTrajDiv);
+			if (trajChart) trajChart.dispose();
+			Plotly.purge(oldTrajDiv);
+			oldTrajDiv.remove();
+		}
 		trajectoryRenderRegistry.delete('transformer-trajectory-full-path');
 	}
 
@@ -3908,13 +3938,39 @@ function getTrajectoryPlotHeight(d_model) {
 	if (d_model <= 3) {
 		return 850;
 	}
-	// For high-dimensional: heading + grid of 2D slices
-	// Number of pairs = d_model*(d_model-1)/2, each 400px, in auto-fill columns
+
 	const nPairs = (d_model * (d_model - 1)) / 2;
-	const cols = Math.max(1, Math.floor(800 / 400)); // rough estimate of columns
+
+	// Measure the actual container width to match the CSS grid layout:
+	// grid-template-columns: repeat(auto-fill, minmax(400px, 1fr))
+	const migrationContainer = document.getElementById('transformer-migration-plots-container');
+	const containerWidth = migrationContainer
+		? migrationContainer.getBoundingClientRect().width
+		: 800; // fallback
+
+	// Subtract padding (the grid has padding:10px on each side)
+	const availableWidth = Math.max(400, containerWidth - 20);
+
+	// auto-fill with minmax(400px, 1fr): how many 400px columns fit?
+	const cols = Math.max(1, Math.floor(availableWidth / 400));
 	const rows = Math.ceil(nPairs / cols);
-	return 60 + rows * 420; // heading + rows * (plot + gap)
+
+	// Each slice div is 400px tall + 15px gap between rows
+	// Plus the heading (~60px) and container padding
+	return 60 + rows * 400 + Math.max(0, rows - 1) * 15 + 20;
 }
+
+window.addEventListener('resize', debounce(() => {
+	const trajDiv = document.getElementById('transformer-trajectory-full-path');
+	if (!trajDiv) return;
+
+	const d_model = parseInt(trajDiv.getAttribute('data-d-model') || '0');
+	if (d_model < 4) return; // only high-dim uses the grid
+
+	const newHeight = getTrajectoryPlotHeight(d_model);
+	trajDiv.style.height = newHeight + 'px';
+	trajDiv.style.minHeight = newHeight + 'px';
+}, 300));
 
 function buildMigrationRegistryData(tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings, existingVfEnabled) {
 	return {
@@ -5309,6 +5365,13 @@ function tlab_render_trajectory_plot(d_model) {
 
 	if (d_model >= 4) {
 		_traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
+
+		// After rendering, measure actual content height and update
+		requestAnimationFrame(() => {
+			const actualHeight = trajDiv.scrollHeight;
+			trajDiv.style.height = actualHeight + 'px';
+			trajDiv.style.minHeight = actualHeight + 'px';
+		});
 	} else {
 		_traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
 	}
