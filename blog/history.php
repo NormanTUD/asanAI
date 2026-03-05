@@ -462,7 +462,7 @@ In the era of Symbolic AI, before machines played chess at a master level, they 
 
 Unlike modern LLMs which calculate probabilities, ELIZA relied on simple pattern matching and substitution scripts. If a user typed "My mother hates me," ELIZA might use a decomposition rule to transform "My X Y me" into "Who else in your family Y you?"
 
-Despite having no understanding of the world, users, including Weizenbaum's own secretary, attributed genuine human emotions and wisdom to the machine. Weizenbaum was so disturbed by this tendency of humans to project humanity onto code that he wrote \citetitle{weizenbaum1976computer} to warn against the reliance on "deciding" machines over "choosing" humans.
+Despite having no understanding of the world, users, including Weizenbaum's own secretary, attributed genuine human emotions and wisdom to the machine. Weizenbaum was so disturbed by this tendency of humans to project humanity onto code that he wrote \citealternativetitle{weizenbaum1976computer} to warn against the reliance on "deciding" machines over "choosing" humans.
 
 ## The Triumph of Symbolic AI
 
