@@ -200,7 +200,7 @@ In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">
 
 <div id="transformer-pe-wave-plot" style="width: 100%; height: 300px; margin-top: 20px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
 
-<div id="transformer-pe-shift-plot" style="width: 100%; height: 300px; margin-top: 20px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+<div id="transformer-pe-shift-plot" style="width: 100%; height: 600px; margin-top: 20px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
 
 <div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
 
