@@ -1798,3 +1798,210 @@ select {
     background-size 0.4s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.2s ease;
 }
+
+
+/* ============================================
+   BASE BUTTON — Applied to ALL buttons
+   ============================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.6em 1.4em;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  line-height: 1.4;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.12);
+}
+
+.btn:active {
+  transform: translateY(0px) scale(0.97);
+  filter: brightness(0.95);
+}
+
+.btn:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Subtle inner glow / shine effect */
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+}
+
+.btn:hover::after {
+  opacity: 1;
+}
+
+/* ============================================
+   COLOR VARIANTS
+   ============================================ */
+
+/* --- Train / Green (your "Start Training" button) --- */
+.btn-train,
+.btn-green {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
+}
+.btn-train:hover,
+.btn-green:hover {
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.55);
+}
+
+/* --- Stop / Red --- */
+.btn-stop,
+.btn-red {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+}
+.btn-stop:hover,
+.btn-red:hover {
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.55);
+}
+
+/* --- Blue / Primary --- */
+.btn-blue,
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+}
+.btn-blue:hover,
+.btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.55);
+}
+
+/* --- Orange / Warning --- */
+.btn-orange,
+.btn-warning {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.4);
+}
+.btn-orange:hover,
+.btn-warning:hover {
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.55);
+}
+
+/* --- Yellow --- */
+.btn-yellow {
+  background: linear-gradient(135deg, #eab308, #ca8a04);
+  box-shadow: 0 4px 14px rgba(234, 179, 8, 0.4);
+  color: #1a1a1a; /* dark text for contrast */
+}
+.btn-yellow:hover {
+  box-shadow: 0 6px 20px rgba(234, 179, 8, 0.55);
+}
+
+/* --- Purple --- */
+.btn-purple {
+  background: linear-gradient(135deg, #a855f7, #9333ea);
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.4);
+}
+.btn-purple:hover {
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.55);
+}
+
+/* --- Pink --- */
+.btn-pink {
+  background: linear-gradient(135deg, #ec4899, #db2777);
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.4);
+}
+.btn-pink:hover {
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.55);
+}
+
+/* --- Teal / Cyan --- */
+.btn-teal {
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  box-shadow: 0 4px 14px rgba(20, 184, 166, 0.4);
+}
+.btn-teal:hover {
+  box-shadow: 0 6px 20px rgba(20, 184, 166, 0.55);
+}
+
+/* --- Reset / Neutral / Gray --- */
+.btn-reset,
+.btn-neutral {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  box-shadow: 0 4px 14px rgba(107, 114, 128, 0.35);
+}
+.btn-reset:hover,
+.btn-neutral:hover {
+  box-shadow: 0 6px 20px rgba(107, 114, 128, 0.5);
+}
+
+/* --- Dark / Black --- */
+.btn-dark {
+  background: linear-gradient(135deg, #374151, #1f2937);
+  box-shadow: 0 4px 14px rgba(31, 41, 55, 0.5);
+}
+.btn-dark:hover {
+  box-shadow: 0 6px 20px rgba(31, 41, 55, 0.65);
+}
+
+/* ============================================
+   OPTIONAL: Apply base style to ALL buttons
+   on the page automatically (no class needed)
+   ============================================ */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.6em 1.4em;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  line-height: 1.4;
+  user-select: none;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+}
+
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.12);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.55);
+}
+
+button:active,
+input[type="button"]:active,
+input[type="submit"]:active,
+input[type="reset"]:active {
+  transform: translateY(0px) scale(0.97);
+  filter: brightness(0.95);
+}
