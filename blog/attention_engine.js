@@ -349,7 +349,7 @@ class AttentionEngine {
 				const isActive = headDiv ? headDiv.style.display !== 'none' : h === 0;
 				headTabHtml += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
 	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer; border-radius: 10px 10px 0px 0px;
 	background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
 	Head ${h + 1}
     </button>`;
@@ -585,7 +585,7 @@ class AttentionEngine {
 	_buildHeadTabButtonHtml(layerIdx, headIdx, isActive) {
 		return `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${headIdx}"
 	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${headIdx}, ${this._getLayerHeadCount(layerIdx)})"
-	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer; border-radius: 10px 10px 0px 0px;
 	background:${isActive ? '#fff' : '#e2e8f0'}; font-weight:${isActive ? 'bold' : 'normal'}; font-size:0.85rem;">
 	Head ${headIdx + 1}
     </button>`;
@@ -684,7 +684,7 @@ class AttentionEngine {
 		for (let h = 0; h < layerHeadData.length; h++) {
 			html += `<button class="mha-head-tab-btn" id="head-tab-btn-${this.containerId}-${layerIdx}-${h}"
 	onclick="showHeadInLayer('${this.containerId}', ${layerIdx}, ${h}, ${layerHeadData.length})"
-	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer;
+	style="padding:8px 16px; border:none; border-right:1px solid #93c5fd; cursor:pointer; border-radius: 10px 10px 0px 0px;
 	background:${h === 0 ? '#fff' : '#e2e8f0'}; font-weight:${h === 0 ? 'bold' : 'normal'}; font-size:0.85rem;">
 	Head ${h + 1}
     </button>`;
