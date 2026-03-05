@@ -593,9 +593,8 @@ class AttentionEngine {
 		}
 
 		// NOTE: Height lock is NOT released here.
-		// The caller is responsible for calling _releaseHeightLock() on this
-		// container AFTER any post-processing (e.g. render_temml()) is complete.
-		// This prevents the 1228→1270px jump observed during training.
+		// The caller is responsible for releasing after post-processing
+		// (e.g. render_temml()) is complete.
 
 		return true; // content was updated
 	}
@@ -624,19 +623,21 @@ class AttentionEngine {
 			}
 			this[hashKey] = weightsHash;
 
-			// ── Lock the ENTIRE headDiv height to prevent any layout shift ──
+			// ── Save scroll position BEFORE any DOM changes ──
 			const scrollParent = this._findScrollParent(headDiv);
 			const savedScrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
 			const savedScrollLeft = scrollParent ? scrollParent.scrollLeft : window.scrollX;
 
-			// Cancel any pending height unlock from a previous render cycle
+			// ── Cancel any pending height unlock from a previous render cycle ──
 			if (headDiv._heightUnlockRafId) {
 				cancelAnimationFrame(headDiv._heightUnlockRafId);
 				headDiv._heightUnlockRafId = null;
 			}
 
-			headDiv.style.minHeight = headDiv.offsetHeight + 'px';
-			headDiv.style.maxHeight = headDiv.offsetHeight + 'px';
+			// ── Lock the ENTIRE headDiv height to prevent any layout shift ──
+			const lockedHeight = headDiv.offsetHeight;
+			headDiv.style.minHeight = lockedHeight + 'px';
+			headDiv.style.maxHeight = lockedHeight + 'px';
 			headDiv.style.overflow = 'hidden';
 
 			// ── All updates happen synchronously — no rAF nesting ──
@@ -687,9 +688,7 @@ class AttentionEngine {
 				render_temml();
 			}
 
-			// ── FIX: Release height locks on morphed containers AFTER temml has rendered ──
-			// This ensures the containers snap to their final rendered height in one step,
-			// preventing the 1228px → 1270px jump observed during training.
+			// ── FIX: Release height locks on morphed containers AFTER temml ──
 			if (equationsContainer) {
 				equationsContainer.style.minHeight = '';
 				equationsContainer.style.maxHeight = '';
@@ -701,14 +700,33 @@ class AttentionEngine {
 				resultContainer.style.overflow = '';
 			}
 
-			// ── Release headDiv height lock after browser has painted the final content ──
+			// ── FIX: Snap headDiv to its NEW natural height synchronously,
+			//    then release the lock in a single rAF so the user never
+			//    sees the old→new jump. ──
+			// After temml rendering + child lock release, the headDiv's
+			// scrollHeight reflects the TRUE final content height.
+			const newNaturalHeight = headDiv.scrollHeight;
+
+			// Snap to the new height RIGHT NOW (same JS frame, before paint)
+			headDiv.style.minHeight = newNaturalHeight + 'px';
+			headDiv.style.maxHeight = newNaturalHeight + 'px';
+
+			// Restore scroll again after the snap (the height change may shift)
+			if (scrollParent) {
+				scrollParent.scrollTop = savedScrollTop;
+				scrollParent.scrollLeft = savedScrollLeft;
+			} else {
+				window.scrollTo(savedScrollLeft, savedScrollTop);
+			}
+
+			// Release the lock in a single rAF — the browser has already
+			// painted at newNaturalHeight, so removing the constraints
+			// causes zero visual change.
 			headDiv._heightUnlockRafId = requestAnimationFrame(() => {
-				headDiv._heightUnlockRafId = requestAnimationFrame(() => {
-					headDiv._heightUnlockRafId = null;
-					headDiv.style.minHeight = '';
-					headDiv.style.maxHeight = '';
-					headDiv.style.overflow = '';
-				});
+				headDiv._heightUnlockRafId = null;
+				headDiv.style.minHeight = '';
+				headDiv.style.maxHeight = '';
+				headDiv.style.overflow = '';
 			});
 
 			return;
@@ -815,7 +833,6 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			);
 		});
 	}
-
 
 	_apvDrawSingleHeadSync(layerIdx, headIdx, mode) {
 		const registry = multiLayerAttentionRegistry.get(this.containerId);

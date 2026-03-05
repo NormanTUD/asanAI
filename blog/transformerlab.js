@@ -2942,6 +2942,7 @@ function _heightLockedUpdate(el, newHtml) {
 	if (!el) return false;
 	if (el.innerHTML === newHtml) return false;
 
+	// Cancel any pending unlock from a previous update cycle
 	if (el._heightUnlockRafId) {
 		cancelAnimationFrame(el._heightUnlockRafId);
 		el._heightUnlockRafId = null;
@@ -2982,6 +2983,12 @@ function _heightLockedUpdate(el, newHtml) {
 		});
 	}
 
+	// NOTE: Height lock is NOT released here.
+	// The caller MUST call _releaseHeightLocks([el]) after any
+	// post-processing (render_temml, etc.) is complete.
+	// This is the key fix: previously the lock was released via
+	// double-rAF BEFORE temml rendered, causing the height jump.
+
 	return true;
 }
 
@@ -2995,19 +3002,36 @@ function _releaseHeightLocks(elements) {
 	elements.forEach(el => {
 		if (!el) return;
 
+		// Cancel any pending rAF-based unlock
 		if (el._heightUnlockRafId) {
 			cancelAnimationFrame(el._heightUnlockRafId);
 			el._heightUnlockRafId = null;
 		}
 
-		// Release immediately — content is already at final height
-		// after temml rendering. No rAF delay.
-		el.style.minHeight = '';
-		el.style.maxHeight = '';
-		el.style.overflow = '';
+		// FIX: Snap to the NEW natural height synchronously BEFORE
+		// removing the lock. This prevents the visible jump.
+		// scrollHeight gives the true content height even when
+		// maxHeight is constraining the element.
+		const newNaturalHeight = el.scrollHeight;
+
+		if (newNaturalHeight > 0) {
+			// Snap to new height in the same JS frame (before paint)
+			el.style.minHeight = newNaturalHeight + 'px';
+			el.style.maxHeight = newNaturalHeight + 'px';
+		}
+
+		// Now release in a single rAF — the browser already painted
+		// at newNaturalHeight, so removing constraints causes zero
+		// visual change.
+		el._heightUnlockRafId = requestAnimationFrame(() => {
+			el._heightUnlockRafId = null;
+			el.style.minHeight = '';
+			el.style.maxHeight = '';
+			el.style.overflow = '';
+		});
 	});
 
-	// Restore scroll position in case the height change caused a shift
+	// Restore scroll position
 	window.scrollTo(savedPageScrollX, savedPageScrollY);
 }
 
