@@ -1161,6 +1161,43 @@ function addKonamiEgg() {
 	}
 }
 
+function addTabTitleFun() {
+	const originalTitle = document.title;
+	let awayTimeout = null;
+
+	const awayMessages = [
+		"📉 Your loss is increasing...",
+		"🧠 The neurons miss you",
+		"⏸️ Training paused",
+		"👀 Come back, the gradients are lonely",
+		"💤 Model idle...",
+	];
+
+	const returnMessages = [
+		"📈 Training resumed!",
+		"🔥 Welcome back, scholar",
+		"⚡ Weights restored",
+		"🧠 Context window: refreshed",
+	];
+
+	document.addEventListener('visibilitychange', () => {
+		if (document.hidden) {
+			clearTimeout(awayTimeout);
+			awayTimeout = setTimeout(() => {
+				document.title = awayMessages[Math.floor(Math.random() * awayMessages.length)];
+			}, 5000); // Wait 10s before changing
+		} else {
+			clearTimeout(awayTimeout);
+			const returnMsg = returnMessages[Math.floor(Math.random() * returnMessages.length)];
+			document.title = returnMsg;
+
+			setTimeout(() => {
+				document.title = originalTitle;
+			}, 3000);
+		}
+	});
+}
+
 function addConsoleEasterEggs() {
 	const styles = 'color: #4fc3f7; font-size: 14px; font-weight: bold;';
 	const sub = 'color: #888; font-size: 11px;';

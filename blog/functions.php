@@ -528,6 +528,7 @@ if(!server_php_self_ends_with_index_php()) {
 				addCuriosityScore();
 				//addReturnVisitorWarmth();
 				addKonamiEgg();
+				addTabTitleFun();
 				addConsoleEasterEggs();
 			});
 		</script>
