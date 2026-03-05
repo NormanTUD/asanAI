@@ -68,14 +68,15 @@ Different optimizers use different strategies for step 2:
             <label style="margin-top: 8px; display: block;"><b>Steps (Epochs):</b></label>
             <input type="number" id="opt-epochs" value="50" min="1" max="500" class="btn" style="background: white; color: black; border: 1px solid #ccc; width: 100%;">
 
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button id="btn-run-opt" class="btn btn-train" style="flex: 2;" onclick="toggleOptimizer()">
-                    ▶ Start Simulation
-                </button>
-                <button id="btn-restart-opt" class="btn" style="flex: 1; display: none; background: #94a3b8; color: white;" onclick="resetOptimizer()">
-                    ↺ Restart
-                </button>
-            </div>
+		<div style="display: flex; gap: 10px; margin-top: 15px;">
+		    <button id="btn-run-opt" class="btn btn-train" style="flex: 2;" onclick="toggleOptimizer()">
+			▶ Start Simulation
+		    </button>
+		    <button id="btn-restart-opt" class="btn" style="flex: 1; visibility: hidden; background: #94a3b8; color: white;" onclick="resetOptimizer()">
+			↺ Restart
+		    </button>
+		</div>
+
         </div>
     </div>
 
