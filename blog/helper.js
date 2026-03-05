@@ -1012,6 +1012,55 @@ function addCuriosityScore() {
 	});
 }
 
+function addReturnVisitorWarmth() {
+	const key = 'site_visit_count';
+	const lastKey = 'site_last_visit';
+
+	const count = parseInt(localStorage.getItem(key) || '0') + 1;
+	const lastVisit = localStorage.getItem(lastKey);
+	localStorage.setItem(key, count);
+	localStorage.setItem(lastKey, new Date().toISOString());
+
+	if (count < 2) return; // First visit — no toast
+
+	const toast = document.createElement('div');
+	toast.style.cssText = `
+    position: fixed; top: 20px; left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(25, 25, 35, 0.9); color: #999;
+    padding: 10px 22px; border-radius: 24px;
+    font-size: 13px; font-family: system-ui, sans-serif;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.06);
+    opacity: 0; z-index: 99999;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  `;
+
+	let msg = '';
+	if (count === 2) msg = 'Welcome back 👋';
+	else if (count <= 5) msg = `Good to see you again · Visit #${count}`;
+	else if (count <= 15) msg = `You're becoming a regular · Visit #${count}`;
+	else if (count <= 50) msg = `One of the faithful · Visit #${count} ✨`;
+	else msg = `A true scholar · Visit #${count} 🏛️`;
+
+	toast.textContent = msg;
+	document.body.appendChild(toast);
+
+	// Animate in
+	requestAnimationFrame(() => {
+		toast.style.opacity = '1';
+		toast.style.transform = 'translateX(-50%) translateY(0)';
+	});
+
+	// Fade out
+	setTimeout(() => {
+		toast.style.opacity = '0';
+		toast.style.transform = 'translateX(-50%) translateY(-10px)';
+		setTimeout(() => toast.remove(), 700);
+	}, 3500);
+}
+
 function initOptionalBlocks() {
 	document.querySelectorAll('div.optional').forEach(block => {
 		// Prevent double initialization

@@ -526,6 +526,7 @@ if(!server_php_self_ends_with_index_php()) {
 				toc();
 				addReadingProgress();
 				addCuriosityScore();
+				//addReturnVisitorWarmth();
 			});
 		</script>
 	</head>

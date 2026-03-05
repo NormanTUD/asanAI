@@ -123,6 +123,7 @@
 
 		addReadingProgress();
 		addCuriosityScore();
+		//addReturnVisitorWarmth();
 	})();
 	</script>
 </body>
