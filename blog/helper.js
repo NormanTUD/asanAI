@@ -261,7 +261,6 @@ function make_external_a_href_target_blank() {
 }
 
 function bindIframeSafeLinks() {
-	// We use delegation on the body/document so we don't have to re-bind constantly
 	document.body.onclick = (e) => {
 		const link = e.target.closest('.iframe-safe-link');
 		if (!link) return;
@@ -273,22 +272,117 @@ function bindIframeSafeLinks() {
 		const targetEl = document.getElementById(targetId);
 
 		if (targetEl) {
-			// Log for debugging inside iframe
-			console.log(`Scrolling to: ${targetId}`);
+			// --- 1. Reveal any ancestor optional blocks ---
+			revealAncestorOptionalBlocks(targetEl);
 
-			// Method 1: Standard Scroll
-			targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			// --- 2. Reveal any ancestor category blocks that were toggled off ---
+			revealAncestorCategoryBlocks(targetEl);
 
-			// Method 2: Fallback for restrictive iframes
-			// window.scrollTo(0, targetEl.offsetTop);
+			// --- 3. Force-run any lazy-init section that contains the target ---
+			forceInitLazySections(targetEl);
 
-			// Highlight effect to show it worked
-			targetEl.style.backgroundColor = 'rgba(255, 255, 0, 0.3)';
-			setTimeout(() => { targetEl.style.backgroundColor = 'transparent'; }, 2000);
+			// --- 4. Expand any collapsed toggleable-quote ancestor ---
+			revealAncestorToggleableQuotes(targetEl);
+
+			// Small delay to let DOM reflow after reveals
+			requestAnimationFrame(() => {
+				targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+				// Highlight effect
+				targetEl.style.backgroundColor = 'rgba(255, 255, 0, 0.3)';
+				setTimeout(() => { targetEl.style.backgroundColor = 'transparent'; }, 2000);
+			});
 		} else {
 			console.warn(`Target element #${targetId} not found.`);
 		}
 	};
+}
+
+/**
+ * Walk up from `el` and open every collapsed .optional block along the way.
+ */
+function revealAncestorOptionalBlocks(el) {
+	let node = el.closest('.optional');
+	while (node) {
+		const contentWrapper = node.querySelector('.optional-content');
+		const header = node.querySelector('.optional-header');
+		if (contentWrapper && contentWrapper.style.display === 'none') {
+			contentWrapper.style.display = 'block';
+			if (header) {
+				const icon = header.querySelector('.optional-icon');
+				if (icon) icon.innerHTML = '▼';
+				header.classList.add('active');
+			}
+		}
+		// Walk further up in case optional blocks are nested
+		node = node.parentElement ? node.parentElement.closest('.optional') : null;
+	}
+}
+
+/**
+ * Walk up from `el` and re-show any category block that was hidden by the filter UI.
+ */
+function revealAncestorCategoryBlocks(el) {
+	let node = el.closest('.category-block');
+	while (node) {
+		if (node.style.display === 'none') {
+			node.style.setProperty('display', 'block', 'important');
+
+			// Also sync the filter button state so the UI isn't contradictory
+			const classes = [...node.classList].filter(c => c.startsWith('cat-'));
+			classes.forEach(cls => {
+				const key = cls.replace('cat-', '');
+				const btn = document.querySelector(`#category-filter-bar button[data-active="false"]`);
+				// More precise: find the button whose click toggles this category
+				const allBtns = document.querySelectorAll('#category-filter-bar button');
+				allBtns.forEach(b => {
+					// Re-check by toggling logic — match by category key
+					if (b.textContent === (categoryConfig[key] || '')) {
+						const color = getCategoryColor(key);
+						b.dataset.active = "true";
+						b.style.background = color;
+						b.style.color = "white";
+					}
+				});
+			});
+		}
+		node = node.parentElement ? node.parentElement.closest('.category-block') : null;
+	}
+}
+
+/**
+ * If `el` lives inside a section that is registered for lazy init but hasn't
+ * fired yet, force-run its init function immediately.
+ */
+function forceInitLazySections(el) {
+	for (const [sectionId, fn] of _sectionInitFns.entries()) {
+		const section = document.getElementById(sectionId);
+		if (section && section.contains(el)) {
+			_initializedSections.add(sectionId);
+			fn();
+			_sectionInitObserver.unobserve(section);
+			_sectionInitFns.delete(sectionId);
+		}
+	}
+}
+
+/**
+ * If `el` is inside a toggleable-quote that's in "short" state, expand it.
+ */
+function revealAncestorToggleableQuotes(el) {
+	let node = el.closest('.toggleable-quote, .rendered-quote');
+	while (node) {
+		const p = node.classList.contains('toggleable-quote')
+			? node
+			: node.querySelector('.toggleable-quote');
+		if (p && p.getAttribute('data-state') === 'short') {
+			// Simulate click to expand
+			p.click();
+		}
+		node = node.parentElement
+			? node.parentElement.closest('.toggleable-quote, .rendered-quote')
+			: null;
+	}
 }
 
 function smartquote() {
