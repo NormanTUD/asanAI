@@ -2150,402 +2150,400 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		tooltip.style.top = top + 'px';
 	}
 
-// ── LaTeX formatting helpers for tooltips ──
-
-_tooltipColVec(arr) {
-	return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' \\\\ ')} \\end{pmatrix}`;
-}
-
-_tooltipRowVec(arr) {
-	return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' & ')} \\end{pmatrix}`;
-}
-
-_tooltipMatrix(mat) {
-	return `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
-}
-
-_tooltipDotVec(a, b) {
-	return a.reduce((s, v, i) => s + v * b[i], 0);
-}
-
-/**
- * Builds tooltip HTML when hovering a grid cell (rect) in the attention matrix.
- * Returns null if the head data is missing.
- */
-_buildCellTooltipHtml(liveData, hIdx, qi, ki) {
-	const { headDataArray, tokens, layerIdx, headDisplayOffset } = liveData;
-	if (!headDataArray[hIdx]) return null;
-
-	const hd = headDataArray[hIdx];
-	const ctx = this._buildCellTooltipContext(hd, qi, ki, tokens, layerIdx, headDisplayOffset);
-
-	let html = '';
-	html += this._buildCellTooltipHeader(ctx);
-	html += this._buildCellTooltipDkDerivation(ctx);
-	html += this._buildCellTooltipAbstractScore(ctx);
-	html += this._buildProjectionHtml('Q', qi, hd.WQ, ctx.h0_qi, ctx.q_i, tokens[qi], ctx.hLabel, layerIdx);
-	html += this._buildProjectionHtml('K', ki, hd.WK, ctx.h0_kj, ctx.k_j, tokens[ki], ctx.hLabel, layerIdx);
-	html += this._buildProjectionHtml('V', ki, hd.WV, ctx.h0_kj, ctx.v_j, tokens[ki], ctx.hLabel, layerIdx);
-	html += this._buildCellTooltipDotProduct(ctx);
-	html += this._buildSoftmaxHtml(ctx.rawScoresRow, ctx.softmaxRow, qi, ki, ctx.n, tokens);
-	html += this._buildCellTooltipWeightedV(ctx);
-
-	return html;
-}
-
-/**
- * Precomputes all derived values needed by the cell tooltip sub-builders.
- * Returns a context object shared across all tooltip section builders.
- */
-_buildCellTooltipContext(hd, qi, ki, tokens, layerIdx, headDisplayOffset) {
-	const d_k = hd.Qi[0].length;
-	const d_k_int = Math.round(d_k);
-	const d_model = hd.d_model || this.d_model;
-	const d_model_int = Math.round(d_model);
-	const n_heads = Math.round(d_model / d_k);
-	const n = tokens.length;
-	const w = hd.this_weights[qi][ki];
-	const displayHeadNum = (headDisplayOffset || 0) + 1;
-	const hLabel = `h_{${layerIdx}}`;
-
-	const q_i = hd.Qi[qi];
-	const k_j = hd.Ki[ki];
-	const v_j = hd.Vi[ki];
-	const h0_qi = hd.h0[qi];
-	const h0_kj = hd.h0[ki];
-
-	const rawScore = this._tooltipDotVec(q_i, k_j) / Math.sqrt(d_k);
-	const rawScoresRow = this._computeRawScoresRow(hd, qi, n, d_k);
-	const softmaxRow = this._computeSoftmaxRow(rawScoresRow);
-
-	return {
-		d_k, d_k_int, d_model, d_model_int, n_heads, n, w,
-		displayHeadNum, hLabel,
-		q_i, k_j, v_j, h0_qi, h0_kj,
-		rawScore, rawScoresRow, softmaxRow,
-		qi, ki, tokens
-	};
-}
-
-/**
- * Builds the tooltip header line showing head number, token pair, and weight percentage.
- */
-_buildCellTooltipHeader(ctx) {
-	const { displayHeadNum, tokens, qi, ki, w } = ctx;
-	return `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">` +
-		`Head ${displayHeadNum}: "${tokens[qi]}" → "${tokens[ki]}" = ${(w * 100).toFixed(1)}%` +
-		`</div>`;
-}
-
-/**
- * Builds the d_k = d_model / n_heads derivation line.
- */
-_buildCellTooltipDkDerivation(ctx) {
-	const { d_model_int, n_heads, d_k_int } = ctx;
-	return `<div style="margin-bottom:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">` +
-		`$d_k = \\frac{d_{\\text{model}}}{n_{\\text{heads}}} = \\frac{${d_model_int}}{${n_heads}} = ${d_k_int}$` +
-		`</div>`;
-}
-
-
-/**
- * Builds the abstract attention score equation: score(Q_i, K_j) = Q^T·K / sqrt(d_k).
- */
-_buildCellTooltipAbstractScore(ctx) {
-	const { qi, ki, d_k_int, rawScore } = ctx;
-	return `<div style="margin-bottom:6px;">` +
-		`$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = ` +
-		`\\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_k_int}}} = ${rawScore.toFixed(nr_fixed)}$` +
-		`</div>`;
-}
-
-/**
- * Builds the expanded dot product showing the actual Q and K vectors,
- * their element-wise product, and the scaled result.
- */
-_buildCellTooltipDotProduct(ctx) {
-	const { q_i, k_j, qi, ki, d_k, d_k_int, rawScore, tokens } = ctx;
-	const dotProduct = this._tooltipDotVec(q_i, k_j);
-	return `<div style="margin-bottom:6px;">` +
-		`$\\frac{\\underbrace{${this._tooltipRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${tokens[qi]}"})} \\cdot ` +
-		`\\underbrace{${this._tooltipColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${tokens[ki]}"})}}{\\sqrt{${d_k_int}}} = ` +
-		`\\frac{${dotProduct.toFixed(nr_fixed)}}{${Math.sqrt(d_k).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$` +
-		`</div>`;
-}
-
-/**
- * Builds the weighted value contribution line: α_{i,j} · V_j = result vector.
- */
-_buildCellTooltipWeightedV(ctx) {
-	const { w, v_j, qi, ki } = ctx;
-	const weightedV = v_j.map(v => w * v);
-	return `<div style="margin-top:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">` +
-		`$\\alpha_{${qi},${ki}} \\cdot V_{${ki}} = ${w.toFixed(nr_fixed)} \\cdot ` +
-		`${this._tooltipColVec(v_j)} = ${this._tooltipColVec(weightedV)}$` +
-		`</div>`;
-}
-
-/**
- * Builds tooltip HTML when hovering a row or column token label.
- * Returns null if head data is missing.
- */
-_buildLabelTooltipHtml(liveData, idx) {
-	const { headDataArray, tokens, layerIdx, headDisplayOffset } = liveData;
-	const hd = headDataArray[0];
-	if (!hd) return null;
-
-	const hLabel = `h_{${layerIdx}}`;
-	const displayHeadNum = headDisplayOffset + 1;
-	const h0_vec = hd.h0[idx];
-
-	let html = '';
-	html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
-	html += `Token "${tokens[idx]}" (index ${idx}) — Head ${displayHeadNum}, Layer ${layerIdx + 1}`;
-	html += `</div>`;
-
-	// Input embedding
-	html += `<div style="margin-bottom:6px;">`;
-	html += `$\\underbrace{${this._tooltipColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokens[idx]}"}}}$`;
-	html += `</div>`;
-
-	// Q, K, V projections
-	html += this._buildProjectionHtml('Q', idx, hd.WQ, h0_vec, hd.Qi[idx], tokens[idx], hLabel, layerIdx);
-	html += this._buildProjectionHtml('K', idx, hd.WK, h0_vec, hd.Ki[idx], tokens[idx], hLabel, layerIdx);
-	html += this._buildProjectionHtml('V', idx, hd.WV, h0_vec, hd.Vi[idx], tokens[idx], hLabel, layerIdx);
-
-	return html;
-}
-
-/**
- * Builds a single projection equation line (Q, K, or V).
- */
-_buildProjectionHtml(label, idx, weightMatrix, inputVec, resultVec, tokenStr, hLabel, layerIdx) {
-	return `<div style="margin-bottom:6px;">` +
-		`$\\underbrace{${label}_{${idx}}}_{\\text{"${tokenStr}"}} = ` +
-		`\\underbrace{${this._tooltipMatrix(weightMatrix)}}_{W_${label}}^T \\cdot ` +
-		`\\underbrace{${this._tooltipColVec(inputVec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokenStr}"}}} = ` +
-		`${this._tooltipColVec(resultVec)}$` +
-		`</div>`;
-}
-
-/**
- * Computes the raw (pre-softmax) attention scores for a single query row,
- * applying the causal mask (−1e9 for future positions).
- */
-_computeRawScoresRow(hd, qi, n, d_k) {
-	const rawScoresRow = [];
-	for (let c = 0; c < n; c++) {
-		let s = this._tooltipDotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(d_k);
-		if (c > qi) s = -1e9;
-		rawScoresRow.push(s);
+	_tooltipColVec(arr) {
+		return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' \\\\ ')} \\end{pmatrix}`;
 	}
-	return rawScoresRow;
-}
 
-/**
- * Computes the softmax of a row of raw scores.
- */
-_computeSoftmaxRow(rawScoresRow) {
-	const maxVal = Math.max(...rawScoresRow);
-	const exps = rawScoresRow.map(v => Math.exp(v - maxVal));
-	const sumExp = exps.reduce((a, b) => a + b, 0);
-	return exps.map(v => v / sumExp);
-}
+	_tooltipRowVec(arr) {
+		return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' & ')} \\end{pmatrix}`;
+	}
 
-/**
- * Builds the softmax breakdown HTML: the fraction and the full result row
- * with the current cell boxed.
- */
-_buildSoftmaxHtml(rawScoresRow, softmaxRow, qi, ki, n, tokens) {
-	let html = '';
+	_tooltipMatrix(mat) {
+		return `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+	}
 
-	// Softmax fraction
-	html += `<div style="margin-bottom:4px;">`;
-	const softmaxNumer = `e^{${ki > qi ? '-\\infty' : rawScoresRow[ki].toFixed(nr_fixed)}}`;
-	const denomParts = [];
-	for (let c = 0; c < n; c++) {
-		if (c > qi) {
-			denomParts.push(`e^{-\\infty}`);
-		} else {
-			denomParts.push(`e^{${rawScoresRow[c].toFixed(nr_fixed)}}`);
+	_tooltipDotVec(a, b) {
+		return a.reduce((s, v, i) => s + v * b[i], 0);
+	}
+
+	/**
+	 * Builds tooltip HTML when hovering a grid cell (rect) in the attention matrix.
+	 * Returns null if the head data is missing.
+	 */
+	_buildCellTooltipHtml(liveData, hIdx, qi, ki) {
+		const { headDataArray, tokens, layerIdx, headDisplayOffset } = liveData;
+		if (!headDataArray[hIdx]) return null;
+
+		const hd = headDataArray[hIdx];
+		const ctx = this._buildCellTooltipContext(hd, qi, ki, tokens, layerIdx, headDisplayOffset);
+
+		let html = '';
+		html += this._buildCellTooltipHeader(ctx);
+		html += this._buildCellTooltipDkDerivation(ctx);
+		html += this._buildCellTooltipAbstractScore(ctx);
+		html += this._buildProjectionHtml('Q', qi, hd.WQ, ctx.h0_qi, ctx.q_i, tokens[qi], ctx.hLabel, layerIdx);
+		html += this._buildProjectionHtml('K', ki, hd.WK, ctx.h0_kj, ctx.k_j, tokens[ki], ctx.hLabel, layerIdx);
+		html += this._buildProjectionHtml('V', ki, hd.WV, ctx.h0_kj, ctx.v_j, tokens[ki], ctx.hLabel, layerIdx);
+		html += this._buildCellTooltipDotProduct(ctx);
+		html += this._buildSoftmaxHtml(ctx.rawScoresRow, ctx.softmaxRow, qi, ki, ctx.n, tokens);
+		html += this._buildCellTooltipWeightedV(ctx);
+
+		return html;
+	}
+
+	/**
+	 * Precomputes all derived values needed by the cell tooltip sub-builders.
+	 * Returns a context object shared across all tooltip section builders.
+	 */
+	_buildCellTooltipContext(hd, qi, ki, tokens, layerIdx, headDisplayOffset) {
+		const d_k = hd.Qi[0].length;
+		const d_k_int = Math.round(d_k);
+		const d_model = hd.d_model || this.d_model;
+		const d_model_int = Math.round(d_model);
+		const n_heads = Math.round(d_model / d_k);
+		const n = tokens.length;
+		const w = hd.this_weights[qi][ki];
+		const displayHeadNum = (headDisplayOffset || 0) + 1;
+		const hLabel = `h_{${layerIdx}}`;
+
+		const q_i = hd.Qi[qi];
+		const k_j = hd.Ki[ki];
+		const v_j = hd.Vi[ki];
+		const h0_qi = hd.h0[qi];
+		const h0_kj = hd.h0[ki];
+
+		const rawScore = this._tooltipDotVec(q_i, k_j) / Math.sqrt(d_k);
+		const rawScoresRow = this._computeRawScoresRow(hd, qi, n, d_k);
+		const softmaxRow = this._computeSoftmaxRow(rawScoresRow);
+
+		return {
+			d_k, d_k_int, d_model, d_model_int, n_heads, n, w,
+			displayHeadNum, hLabel,
+			q_i, k_j, v_j, h0_qi, h0_kj,
+			rawScore, rawScoresRow, softmaxRow,
+			qi, ki, tokens
+		};
+	}
+
+	/**
+	 * Builds the tooltip header line showing head number, token pair, and weight percentage.
+	 */
+	_buildCellTooltipHeader(ctx) {
+		const { displayHeadNum, tokens, qi, ki, w } = ctx;
+		return `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">` +
+			`Head ${displayHeadNum}: "${tokens[qi]}" → "${tokens[ki]}" = ${(w * 100).toFixed(1)}%` +
+			`</div>`;
+	}
+
+	/**
+	 * Builds the d_k = d_model / n_heads derivation line.
+	 */
+	_buildCellTooltipDkDerivation(ctx) {
+		const { d_model_int, n_heads, d_k_int } = ctx;
+		return `<div style="margin-bottom:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">` +
+			`$d_k = \\frac{d_{\\text{model}}}{n_{\\text{heads}}} = \\frac{${d_model_int}}{${n_heads}} = ${d_k_int}$` +
+			`</div>`;
+	}
+
+
+	/**
+	 * Builds the abstract attention score equation: score(Q_i, K_j) = Q^T·K / sqrt(d_k).
+	 */
+	_buildCellTooltipAbstractScore(ctx) {
+		const { qi, ki, d_k_int, rawScore } = ctx;
+		return `<div style="margin-bottom:6px;">` +
+			`$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = ` +
+			`\\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_k_int}}} = ${rawScore.toFixed(nr_fixed)}$` +
+			`</div>`;
+	}
+
+	/**
+	 * Builds the expanded dot product showing the actual Q and K vectors,
+	 * their element-wise product, and the scaled result.
+	 */
+	_buildCellTooltipDotProduct(ctx) {
+		const { q_i, k_j, qi, ki, d_k, d_k_int, rawScore, tokens } = ctx;
+		const dotProduct = this._tooltipDotVec(q_i, k_j);
+		return `<div style="margin-bottom:6px;">` +
+			`$\\frac{\\underbrace{${this._tooltipRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${tokens[qi]}"})} \\cdot ` +
+			`\\underbrace{${this._tooltipColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${tokens[ki]}"})}}{\\sqrt{${d_k_int}}} = ` +
+			`\\frac{${dotProduct.toFixed(nr_fixed)}}{${Math.sqrt(d_k).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$` +
+			`</div>`;
+	}
+
+	/**
+	 * Builds the weighted value contribution line: α_{i,j} · V_j = result vector.
+	 */
+	_buildCellTooltipWeightedV(ctx) {
+		const { w, v_j, qi, ki } = ctx;
+		const weightedV = v_j.map(v => w * v);
+		return `<div style="margin-top:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">` +
+			`$\\alpha_{${qi},${ki}} \\cdot V_{${ki}} = ${w.toFixed(nr_fixed)} \\cdot ` +
+			`${this._tooltipColVec(v_j)} = ${this._tooltipColVec(weightedV)}$` +
+			`</div>`;
+	}
+
+	/**
+	 * Builds tooltip HTML when hovering a row or column token label.
+	 * Returns null if head data is missing.
+	 */
+	_buildLabelTooltipHtml(liveData, idx) {
+		const { headDataArray, tokens, layerIdx, headDisplayOffset } = liveData;
+		const hd = headDataArray[0];
+		if (!hd) return null;
+
+		const hLabel = `h_{${layerIdx}}`;
+		const displayHeadNum = headDisplayOffset + 1;
+		const h0_vec = hd.h0[idx];
+
+		let html = '';
+		html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
+		html += `Token "${tokens[idx]}" (index ${idx}) — Head ${displayHeadNum}, Layer ${layerIdx + 1}`;
+		html += `</div>`;
+
+		// Input embedding
+		html += `<div style="margin-bottom:6px;">`;
+		html += `$\\underbrace{${this._tooltipColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokens[idx]}"}}}$`;
+		html += `</div>`;
+
+		// Q, K, V projections
+		html += this._buildProjectionHtml('Q', idx, hd.WQ, h0_vec, hd.Qi[idx], tokens[idx], hLabel, layerIdx);
+		html += this._buildProjectionHtml('K', idx, hd.WK, h0_vec, hd.Ki[idx], tokens[idx], hLabel, layerIdx);
+		html += this._buildProjectionHtml('V', idx, hd.WV, h0_vec, hd.Vi[idx], tokens[idx], hLabel, layerIdx);
+
+		return html;
+	}
+
+	/**
+	 * Builds a single projection equation line (Q, K, or V).
+	 */
+	_buildProjectionHtml(label, idx, weightMatrix, inputVec, resultVec, tokenStr, hLabel, layerIdx) {
+		return `<div style="margin-bottom:6px;">` +
+			`$\\underbrace{${label}_{${idx}}}_{\\text{"${tokenStr}"}} = ` +
+			`\\underbrace{${this._tooltipMatrix(weightMatrix)}}_{W_${label}}^T \\cdot ` +
+			`\\underbrace{${this._tooltipColVec(inputVec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokenStr}"}}} = ` +
+			`${this._tooltipColVec(resultVec)}$` +
+			`</div>`;
+	}
+
+	/**
+	 * Computes the raw (pre-softmax) attention scores for a single query row,
+	 * applying the causal mask (−1e9 for future positions).
+	 */
+	_computeRawScoresRow(hd, qi, n, d_k) {
+		const rawScoresRow = [];
+		for (let c = 0; c < n; c++) {
+			let s = this._tooltipDotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(d_k);
+			if (c > qi) s = -1e9;
+			rawScoresRow.push(s);
 		}
+		return rawScoresRow;
 	}
-	html += `$\\text{softmax}_{${ki}} = \\frac{${softmaxNumer}}{${denomParts.join(' + ')}}$`;
-	html += `</div>`;
 
-	// Full softmax result row
-	html += `<div style="margin-bottom:2px;">`;
-	html += `$= \\Big(`;
-	const parts = [];
-	for (let c = 0; c < n; c++) {
-		const val = (softmaxRow[c] * 100).toFixed(1) + '\\%';
-		if (c === ki) {
-			parts.push(`\\boxed{\\underbrace{${val}}_{\\text{${tokens[c]}}}}`);
-		} else {
-			parts.push(`\\underbrace{${val}}_{\\text{${tokens[c]}}}`);
-		}
+	/**
+	 * Computes the softmax of a row of raw scores.
+	 */
+	_computeSoftmaxRow(rawScoresRow) {
+		const maxVal = Math.max(...rawScoresRow);
+		const exps = rawScoresRow.map(v => Math.exp(v - maxVal));
+		const sumExp = exps.reduce((a, b) => a + b, 0);
+		return exps.map(v => v / sumExp);
 	}
-	html += parts.join(',\\;');
-	html += `\\Big)$`;
-	html += `</div>`;
 
-	return html;
-}
+	/**
+	 * Builds the softmax breakdown HTML: the fraction and the full result row
+	 * with the current cell boxed.
+	 */
+	_buildSoftmaxHtml(rawScoresRow, softmaxRow, qi, ki, n, tokens) {
+		let html = '';
 
-_apvLoadState() {
-	try {
-		const raw = localStorage.getItem(this._apvGetStorageKey());
-		if (raw) return JSON.parse(raw);
-	} catch (e) {
-		// Corrupted or unavailable — fall through to defaults
-	}
-	return null;
-}
-
-_apvSaveState() {
-	try {
-		const layerStates = {};
-		this._apvActiveHeads.forEach((heads, layerIdx) => {
-			layerStates[layerIdx] = {
-				activeHeads: [...heads],
-				mode: this._apvMode.get(layerIdx) || 'headview'
-			};
-		});
-
-		// Determine active layer from visible tab
-		let activeLayer = 0;
-		const registry = multiLayerAttentionRegistry.get(this.containerId);
-		if (registry) {
-			for (let l = 0; l < registry.layers.length; l++) {
-				const contentDiv = document.getElementById(`layer-content-${this.containerId}-${l}`);
-				if (contentDiv && contentDiv.style.display !== 'none') {
-					activeLayer = l;
-					break;
-				}
+		// Softmax fraction
+		html += `<div style="margin-bottom:4px;">`;
+		const softmaxNumer = `e^{${ki > qi ? '-\\infty' : rawScoresRow[ki].toFixed(nr_fixed)}}`;
+		const denomParts = [];
+		for (let c = 0; c < n; c++) {
+			if (c > qi) {
+				denomParts.push(`e^{-\\infty}`);
+			} else {
+				denomParts.push(`e^{${rawScoresRow[c].toFixed(nr_fixed)}}`);
 			}
 		}
+		html += `$\\text{softmax}_{${ki}} = \\frac{${softmaxNumer}}{${denomParts.join(' + ')}}$`;
+		html += `</div>`;
 
-		const state = {
-			activeLayer,
-			layerStates
-		};
-		localStorage.setItem(this._apvGetStorageKey(), JSON.stringify(state));
-	} catch (e) {
-		// localStorage might be full or unavailable — fail silently
-	}
-}
-
-_apvGetStorageKey() {
-	return `apv-state-${this.containerId}`;
-}
-
-apvToggleHead(layerIdx, headIdx, isActive) {
-	const heads = this._apvActiveHeads.get(layerIdx);
-	if (!heads) return;
-	if (isActive) {
-		heads.add(headIdx);
-	} else {
-		heads.delete(headIdx);
-	}
-	this._apvDraw(layerIdx);
-	this._apvSaveState();
-}
-
-apvSetMode(layerIdx, mode) {
-	this._apvMode.set(layerIdx, mode);
-
-	// Update button styling without full rebuild
-	const contentDiv = document.getElementById(`layer-content-${this.containerId}-${layerIdx}`);
-	if (contentDiv) {
-		const buttons = contentDiv.querySelectorAll('.apv-mode-btn');
-		buttons.forEach(btn => {
-			const isHead = btn.textContent.trim() === 'Head View' && mode === 'headview';
-			const isMatrix = btn.textContent.trim() === 'Matrix View' && mode === 'matrix';
-			const active = isHead || isMatrix;
-			btn.style.background = active ? '#3b82f6' : '#fff';
-			btn.style.color = active ? '#fff' : '#334155';
-		});
-	}
-
-	this._apvDraw(layerIdx);
-	this._apvSaveState();
-}
-
-_apvDrawSingleHeadView(svg, layerIdx, headIdx, headData, tokens) {
-	const wrapper = svg.parentElement;
-	if (wrapper) {
-		wrapper.style.minHeight = wrapper.offsetHeight + 'px';
-	}
-
-	this._apvDrawSingleHeadViewSync(svg, layerIdx, headIdx, headData, tokens);
-
-	if (wrapper) {
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				wrapper.style.minHeight = '';
-			});
-		});
-	}
-}
-
-_apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, headData, tokens) {
-	const wrapper = svg.parentElement;
-	if (wrapper) {
-		wrapper.style.minHeight = wrapper.offsetHeight + 'px';
-	}
-
-	this._apvDrawSingleHeadMatrixSync(svg, layerIdx, headIdx, headData, tokens);
-
-	if (wrapper) {
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				wrapper.style.minHeight = '';
-			});
-		});
-	}
-}
-
-_apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, headData, tokens) {
-	const self = this;
-	const hoverKey = `${layerIdx}-${headIdx}`;
-	const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
-	const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
-	let currentHover = null;
-
-	svg.addEventListener('mouseover', (e) => {
-		const el = e.target.closest('[data-apv-side]');
-		if (el) {
-			const side = el.getAttribute('data-apv-side');
-			const index = parseInt(el.getAttribute('data-apv-idx'));
-			const key = `${side}-${index}`;
-			if (currentHover === key) return;
-			currentHover = key;
-			self._apvHoveredToken.set(hoverKey, { side, index });
-			updateHover();
+		// Full softmax result row
+		html += `<div style="margin-bottom:2px;">`;
+		html += `$= \\Big(`;
+		const parts = [];
+		for (let c = 0; c < n; c++) {
+			const val = (softmaxRow[c] * 100).toFixed(1) + '\\%';
+			if (c === ki) {
+				parts.push(`\\boxed{\\underbrace{${val}}_{\\text{${tokens[c]}}}}`);
+			} else {
+				parts.push(`\\underbrace{${val}}_{\\text{${tokens[c]}}}`);
+			}
 		}
-	});
+		html += parts.join(',\\;');
+		html += `\\Big)$`;
+		html += `</div>`;
 
-	svg.addEventListener('mouseout', (e) => {
-		const el = e.target.closest('[data-apv-side]');
-		if (el) {
-			const related = e.relatedTarget?.closest?.('[data-apv-side]');
-			if (related) return;
-			currentHover = null;
-			self._apvHoveredToken.set(hoverKey, null);
-			updateHover();
+		return html;
+	}
+
+	_apvLoadState() {
+		try {
+			const raw = localStorage.getItem(this._apvGetStorageKey());
+			if (raw) return JSON.parse(raw);
+		} catch (e) {
+			// Corrupted or unavailable — fall through to defaults
 		}
-	});
+		return null;
+	}
 
-	function updateHover() {
-		const hovered = self._apvHoveredToken.get(hoverKey);
-		const weights = headData.this_weights;
-		const n = tokens.length;
+	_apvSaveState() {
+		try {
+			const layerStates = {};
+			this._apvActiveHeads.forEach((heads, layerIdx) => {
+				layerStates[layerIdx] = {
+					activeHeads: [...heads],
+					mode: this._apvMode.get(layerIdx) || 'headview'
+				};
+			});
 
-		// Update paths
-		const paths = svg.querySelectorAll('path[data-apv-qi]');
-		paths.forEach(path => {
-			const qi = parseInt(path.getAttribute('data-apv-qi'));
-			const ki = parseInt(path.getAttribute('data-apv-ki'));
+			// Determine active layer from visible tab
+			let activeLayer = 0;
+			const registry = multiLayerAttentionRegistry.get(this.containerId);
+			if (registry) {
+				for (let l = 0; l < registry.layers.length; l++) {
+					const contentDiv = document.getElementById(`layer-content-${this.containerId}-${l}`);
+					if (contentDiv && contentDiv.style.display !== 'none') {
+						activeLayer = l;
+						break;
+					}
+				}
+			}
+
+			const state = {
+				activeLayer,
+				layerStates
+			};
+			localStorage.setItem(this._apvGetStorageKey(), JSON.stringify(state));
+		} catch (e) {
+			// localStorage might be full or unavailable — fail silently
+		}
+	}
+
+	_apvGetStorageKey() {
+		return `apv-state-${this.containerId}`;
+	}
+
+	apvToggleHead(layerIdx, headIdx, isActive) {
+		const heads = this._apvActiveHeads.get(layerIdx);
+		if (!heads) return;
+		if (isActive) {
+			heads.add(headIdx);
+		} else {
+			heads.delete(headIdx);
+		}
+		this._apvDraw(layerIdx);
+		this._apvSaveState();
+	}
+
+	apvSetMode(layerIdx, mode) {
+		this._apvMode.set(layerIdx, mode);
+
+		// Update button styling without full rebuild
+		const contentDiv = document.getElementById(`layer-content-${this.containerId}-${layerIdx}`);
+		if (contentDiv) {
+			const buttons = contentDiv.querySelectorAll('.apv-mode-btn');
+			buttons.forEach(btn => {
+				const isHead = btn.textContent.trim() === 'Head View' && mode === 'headview';
+				const isMatrix = btn.textContent.trim() === 'Matrix View' && mode === 'matrix';
+				const active = isHead || isMatrix;
+				btn.style.background = active ? '#3b82f6' : '#fff';
+				btn.style.color = active ? '#fff' : '#334155';
+			});
+		}
+
+		this._apvDraw(layerIdx);
+		this._apvSaveState();
+	}
+
+	_apvDrawSingleHeadView(svg, layerIdx, headIdx, headData, tokens) {
+		const wrapper = svg.parentElement;
+		if (wrapper) {
+			wrapper.style.minHeight = wrapper.offsetHeight + 'px';
+		}
+
+		this._apvDrawSingleHeadViewSync(svg, layerIdx, headIdx, headData, tokens);
+
+		if (wrapper) {
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					wrapper.style.minHeight = '';
+				});
+			});
+		}
+	}
+
+	_apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, headData, tokens) {
+		const wrapper = svg.parentElement;
+		if (wrapper) {
+			wrapper.style.minHeight = wrapper.offsetHeight + 'px';
+		}
+
+		this._apvDrawSingleHeadMatrixSync(svg, layerIdx, headIdx, headData, tokens);
+
+		if (wrapper) {
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					wrapper.style.minHeight = '';
+				});
+			});
+		}
+	}
+
+	_apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, headData, tokens) {
+		const self = this;
+		const hoverKey = `${layerIdx}-${headIdx}`;
+		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+		const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
+		let currentHover = null;
+
+		svg.addEventListener('mouseover', (e) => {
+			const el = e.target.closest('[data-apv-side]');
+			if (el) {
+				const side = el.getAttribute('data-apv-side');
+				const index = parseInt(el.getAttribute('data-apv-idx'));
+				const key = `${side}-${index}`;
+				if (currentHover === key) return;
+				currentHover = key;
+				self._apvHoveredToken.set(hoverKey, { side, index });
+				updateHover();
+			}
+		});
+
+		svg.addEventListener('mouseout', (e) => {
+			const el = e.target.closest('[data-apv-side]');
+			if (el) {
+				const related = e.relatedTarget?.closest?.('[data-apv-side]');
+				if (related) return;
+				currentHover = null;
+				self._apvHoveredToken.set(hoverKey, null);
+				updateHover();
+			}
+		});
+
+		function updateHover() {
+			const hovered = self._apvHoveredToken.get(hoverKey);
+			const weights = headData.this_weights;
+			const n = tokens.length;
+
+			// Update paths
+			const paths = svg.querySelectorAll('path[data-apv-qi]');
+			paths.forEach(path => {
+				const qi = parseInt(path.getAttribute('data-apv-qi'));
+				const ki = parseInt(path.getAttribute('data-apv-ki'));
 				const w = weights[qi][ki];
 
 				if (!hovered) {
