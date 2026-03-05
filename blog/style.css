@@ -2195,3 +2195,7 @@ blockquote,
 .optional-header.active .optional-icon {
 	transform: rotate(90deg);
 }
+
+.code-copy-btn:hover {
+	color: black !important;
+}
