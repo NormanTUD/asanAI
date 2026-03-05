@@ -472,7 +472,7 @@ Inference, the act of generating a single prediction or response, is cheap indiv
 
 ### Structural Impacts
 
-These costs create a barrier to entry, ensuring that only the most capital-rich entities can participate in the "AI revolution." This concentration of power mirrors the concerns raised by Crawford in \citealternativetitle{crawford2021atlas} and O'Neil in \citetitle{oneil2016weapons}, where opaque, resource-heavy algorithms reinforce existing social and economic inequalities.
+These costs create a barrier to entry, ensuring that only the most capital-rich entities can participate in the "AI revolution." This concentration of power mirrors the concerns raised by Crawford in \citealternativetitle{crawford2021atlas} and O'Neil in \cite[Weapons of Math Destruction]{oneil2016weapons}, where opaque, resource-heavy algorithms reinforce existing social and economic inequalities.
 
 ## The Societal Impact: \citetitle{truthdecay} and the "Liar's Dividend"
 
