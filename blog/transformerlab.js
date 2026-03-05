@@ -1759,6 +1759,11 @@ function renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, 
 function prepareMigrationState(needsReinit) {
 	const migrationContainer = document.getElementById('transformer-migration-plots-container');
 	if (migrationContainer && !needsReinit) {
+		// Mark all migration entries as needing re-render.
+		// NOTE: The IntersectionObserver will handle entries that scroll INTO
+		// view later. For entries already in the viewport, the caller
+		// (renderForwardPassOrPlaceholder) must explicitly check and re-render
+		// them after the forward pass completes.
 		transformerLabVisMigrationDataRegistry.forEach((val, key) => {
 			val.rendered = false;
 		});
@@ -1957,12 +1962,38 @@ function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, w
 
 	create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
 
-	// knownTokens is already passed as the last arg here
 	run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
 
 	renderAttentionDetails();
 	renderTrajectoryPlot(d_model);
 	pruneOrphanedMigrationPlots();
+
+	// FIX: Force re-render migration plots that are already in the viewport.
+	// The IntersectionObserver only fires on visibility *transitions*, so
+	// plots that were already visible when rendered=false was set in
+	// prepareMigrationState() would never get re-rendered during training.
+	transformerLabVisMigrationDataRegistry.forEach((data, id) => {
+		if (!data.rendered) {
+			const el = document.getElementById(id);
+			if (el && isElementInViewport(el)) {
+				render_migration_logic(id, data.tokens, data.start_h, data.end_h, data.layerNum, data.d_model, data.h_after, data.tokenStrings);
+				data.rendered = true;
+			}
+		}
+	});
+
+	// FIX: Same for the trajectory plot — its rendered flag was reset in
+	// prepareMigrationState() but trajectoryObserver won't re-fire for
+	// an already-visible element.
+	const trajId = 'transformer-trajectory-full-path';
+	const trajEntry = trajectoryRenderRegistry.get(trajId);
+	if (trajEntry && !trajEntry.rendered) {
+		const trajEl = document.getElementById(trajId);
+		if (trajEl && isElementInViewport(trajEl)) {
+			tlab_render_trajectory_plot(d_model);
+			trajEntry.rendered = true;
+		}
+	}
 }
 
 /**
@@ -2761,87 +2792,6 @@ window.showFFNLayer = function(layerIdx) {
     showUnifiedLayer(layerIdx);
 };
 
-
-
-function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings) {
-	const normContainer = document.getElementById('transformer-h1-layernorm-viz');
-	const finalContainer = document.getElementById('transformer-h1-final-viz');
-	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
-
-	const projectedMHA = multiHeadOutput.map(row =>
-		WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
-	);
-
-	const h1 = matAdd(h0, projectedMHA);
-
-	const flattenDisplay = (mat) => {
-		if (!mat || !mat.length) return '';
-		return mat.map(row =>
-			Array.isArray(row)
-			? row.map(v => v.toFixed(nr_fixed)).join(',')
-			: row.toFixed(nr_fixed)
-		).join(';');
-	};
-	const hash = [
-		flattenDisplay(h0),
-		flattenDisplay(normH0),
-		flattenDisplay(multiHeadOutput),
-		flattenDisplay(projectedMHA),
-		flattenDisplay(h1),
-		flattenDisplay(gamma),
-		flattenDisplay(beta)
-	].join('|');
-
-	if (normContainer._lastHash === hash && finalContainer._lastHash === hash) {
-		return h1;
-	}
-	normContainer._lastHash = hash;
-	finalContainer._lastHash = hash;
-
-	const ts = tokenStrings || null;
-
-	const normHtml = `
-    <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
-
-    <div style="margin-bottom:15px;">
-	<p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
-	$$ \\text{LayerNorm}(h_0) = \\underbrace{\\gamma}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
-	<div style="overflow-x:auto; padding-bottom: 10px">
-	$$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
-	<br>
-	</div>
-    </div>
-    `;
-
-	const finalHtml = `
-    <div style="margin-bottom:15px;">
-	<p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
-	$$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
-	<div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-	$$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O} $$
-	</div>
-    </div>
-
-    <div style="margin-bottom:10px;">
-    <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
-    $$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
-    </div>
-    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}} $$
-    </div>
-    `;
-
-	// Use _heightLockedUpdate (which now cancels pending rAFs)
-	_heightLockedUpdate(normContainer, normHtml);
-	_heightLockedUpdate(finalContainer, finalHtml);
-
-	// FIX: Render temml synchronously so content reaches final height
-	// before the minHeight lock is released
-	_renderTemmlOnElements([normContainer, finalContainer]);
-
-	return h1;
-}
-
 function clearFFNEquationsContainer() {
 	const container = document.getElementById('ffn-equations-container');
 	if (!container) return;
@@ -3574,14 +3524,6 @@ function render_migration_vector_field(id, layerNum, d_model, tokenStrings) {
         render_vector_field_high_dim(plotDiv, id, layerNum, d_model, n_heads);
     }
 }
-
-/**
- * Global Registry for Deferred Rendering
- * Stores the latest data for each plot ID to ensure that when it
- * becomes visible, it renders with the most recent calculation.
- */
-
-
 
 /**
  * Helper: Check if an element is currently visible in the viewport.
@@ -5307,7 +5249,6 @@ function _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVo
     return { traces, annotations };
 }
 
-
 // ─── Helper: Render the low-dimensional (d_model 2 or 3) single trajectory plot ───
 function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab) {
 	trajDiv.style.height = '850px';
@@ -6121,7 +6062,6 @@ function buildVectorMathResultHtml(result, nearest, d_model) {
         </div>
     `;
 }
-
 
 function debounced_run_transformer_demo(activeId) {
 	updateTrainButtonState();
@@ -7319,7 +7259,6 @@ function ensureFFNLayerContainers(layerIndex) {
 
 		drawMiniLossChart();
 	};
-
 
 	window.hideTrainingProgressBar = function () {
 		window._trainingBarStartTime = null;
