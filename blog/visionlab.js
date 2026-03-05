@@ -1,6 +1,6 @@
 // ============================================================
 // VISIONLAB.JS — Interactive Convolution & Feature Map Explorer
-// Refactored for readability, maintainability, and performance.
+// Refactored for maximum DRY, readability, and debuggability.
 // ============================================================
 
 // --- Configuration Constants ---
@@ -17,24 +17,37 @@ const CONFIG = {
 // --- Cached DOM References ---
 const DOM = {};
 
+const DOM_ID_MAP = {
+	srcCanvas:   'conv-src-display',
+	resCanvas:   'conv-res',
+	kSize:       'k-size',
+	kernelTable: 'kernel-table',
+	focus:       'conv-focus',
+	cross:       'conv-crosshair',
+	mathStep:    'conv-math-step',
+	pixelInfo:   'pixel-info',
+	kernelViz:   'kernel-viz',
+	srcHidden:   'conv-src-hidden',
+	featSrc:     'feat-src',
+	filterGrid:  'filter-grid',
+	heatmapRes:  'heatmap-res',
+};
+
 function cacheDOMRefs() {
-	DOM.srcCanvas    = document.getElementById('conv-src-display');
-	DOM.resCanvas    = document.getElementById('conv-res');
-	DOM.kSize        = document.getElementById('k-size');
-	DOM.kernelTable  = document.getElementById('kernel-table');
-	DOM.focus        = document.getElementById('conv-focus');
-	DOM.cross        = document.getElementById('conv-crosshair');
-	DOM.mathStep     = document.getElementById('conv-math-step');
-	DOM.pixelInfo    = document.getElementById('pixel-info');
-	DOM.kernelViz    = document.getElementById('kernel-viz');
-	DOM.srcHidden    = document.getElementById('conv-src-hidden');
-	DOM.featSrc      = document.getElementById('feat-src');
-	DOM.filterGrid   = document.getElementById('filter-grid');
-	DOM.heatmapRes   = document.getElementById('heatmap-res');
+	console.debug('[visionlab] Caching DOM references...');
+	for (const [key, id] of Object.entries(DOM_ID_MAP)) {
+		DOM[key] = document.getElementById(id);
+		if (!DOM[key]) {
+			console.warn(`[visionlab] DOM element not found: #${id} (key: ${key}). It may be created later.`);
+		}
+	}
+	console.debug('[visionlab] DOM cache complete:', Object.keys(DOM).filter(k => DOM[k]).length, 'elements found');
 }
 
-// --- Utility: Debounce to prevent excessive recomputation ---
+// --- Utility: Debounce ---
 function debounce(fn, ms) {
+	console.assert(typeof fn === 'function', '[visionlab] debounce: fn must be a function, got:', typeof fn);
+	console.assert(typeof ms === 'number' && ms > 0, '[visionlab] debounce: ms must be a positive number, got:', ms);
 	let timer;
 	return (...args) => {
 		clearTimeout(timer);
@@ -42,86 +55,285 @@ function debounce(fn, ms) {
 	};
 }
 
-// --- Shared Helpers (DRY) ---
+// --- Shared Helpers ---
 function getKernelSize() {
-	return parseInt(DOM.kSize.value) || CONFIG.DEFAULT_KERNEL_SIZE;
+	if (!DOM.kSize) {
+		console.error('[visionlab] getKernelSize: DOM.kSize is null. Was cacheDOMRefs() called?');
+		return CONFIG.DEFAULT_KERNEL_SIZE;
+	}
+	const size = parseInt(DOM.kSize.value) || CONFIG.DEFAULT_KERNEL_SIZE;
+	if (size < CONFIG.MIN_KERNEL_SIZE || size > CONFIG.MAX_KERNEL_SIZE) {
+		console.warn(`[visionlab] getKernelSize: size ${size} is outside valid range [${CONFIG.MIN_KERNEL_SIZE}, ${CONFIG.MAX_KERNEL_SIZE}]. Clamping.`);
+		return Math.max(CONFIG.MIN_KERNEL_SIZE, Math.min(CONFIG.MAX_KERNEL_SIZE, size));
+	}
+	if (size % 2 === 0) {
+		console.warn(`[visionlab] getKernelSize: even kernel size ${size} may cause alignment issues.`);
+	}
+	return size;
+}
+
+function getInputValues(selector) {
+	const inputs = document.querySelectorAll(selector);
+	if (inputs.length === 0) {
+		console.warn(`[visionlab] getInputValues: no inputs found for selector "${selector}"`);
+	}
+	return Array.from(inputs).map(i => parseFloat(i.value) || 0);
 }
 
 function getKernelValues() {
-	return Array.from(document.querySelectorAll('.k-inp'))
-		.map(i => parseFloat(i.value) || 0);
+	return getInputValues('.k-inp');
 }
 
 function clamp(v) {
 	return Math.max(0, Math.min(255, Math.round(v)));
 }
 
-// --- Convolution Runner (optimized with error guard) ---
+// --- Generic Canvas Helpers ---
+function getCanvasCtx(canvas, label) {
+	console.assert(canvas instanceof HTMLCanvasElement, `[visionlab] getCanvasCtx(${label || '?'}): expected HTMLCanvasElement, got:`, canvas);
+	return canvas.getContext('2d', { willReadFrequently: true });
+}
+
+function drawImageToCanvas(canvas, image, width, height, label) {
+	console.assert(canvas instanceof HTMLCanvasElement, `[visionlab] drawImageToCanvas(${label || '?'}): canvas is not an HTMLCanvasElement`);
+	console.assert(width > 0 && height > 0, `[visionlab] drawImageToCanvas(${label || '?'}): invalid dimensions ${width}x${height}`);
+	getCanvasCtx(canvas, label).drawImage(image, 0, 0, width, height);
+	console.debug(`[visionlab] drawImageToCanvas(${label || '?'}): drew ${width}x${height}`);
+}
+
+function loadImageOntoCanvas(canvas, imageSource, width, height, callback, label) {
+	console.assert(canvas instanceof HTMLCanvasElement, `[visionlab] loadImageOntoCanvas(${label || '?'}): canvas is not an HTMLCanvasElement`);
+	const doSetup = () => {
+		drawImageToCanvas(canvas, imageSource, width, height, label);
+		console.debug(`[visionlab] loadImageOntoCanvas(${label || '?'}): image loaded and drawn`);
+		if (callback) callback();
+	};
+	if (imageSource.complete && imageSource.naturalWidth > 0) {
+		doSetup();
+	} else {
+		console.debug(`[visionlab] loadImageOntoCanvas(${label || '?'}): waiting for image to load...`);
+		imageSource.onload = doSetup;
+		imageSource.onerror = () => {
+			console.error(`[visionlab] loadImageOntoCanvas(${label || '?'}): image failed to load. src="${imageSource.src}"`);
+		};
+	}
+}
+
+function getPixelAt(canvas, x, y, label) {
+	console.assert(canvas instanceof HTMLCanvasElement, `[visionlab] getPixelAt(${label || '?'}): expected HTMLCanvasElement`);
+	console.assert(
+		x >= 0 && x < canvas.width && y >= 0 && y < canvas.height,
+		`[visionlab] getPixelAt(${label || '?'}): coords (${x},${y}) out of bounds for ${canvas.width}x${canvas.height}`
+	);
+	return getCanvasCtx(canvas, label).getImageData(x, y, 1, 1).data;
+}
+
+// --- Generic Overlay Positioning ---
+function positionOverlay(el, { display = 'block', left, top, width, height } = {}) {
+	if (!el) {
+		console.warn('[visionlab] positionOverlay: element is null/undefined, skipping.');
+		return;
+	}
+	el.style.display = display;
+	if (left !== undefined) el.style.left = left + 'px';
+	if (top !== undefined) el.style.top = top + 'px';
+	if (width !== undefined) el.style.width = width + 'px';
+	if (height !== undefined) el.style.height = height + 'px';
+}
+
+function hideOverlays(...elements) {
+	elements.forEach(el => {
+		if (el) el.style.display = 'none';
+	});
+}
+
+// --- Mouse Coordinate Helper ---
+function canvasMouseCoords(e, canvas, logicalSize) {
+	console.assert(canvas instanceof HTMLCanvasElement, '[visionlab] canvasMouseCoords: expected HTMLCanvasElement');
+	const rect = canvas.getBoundingClientRect();
+	const scale = rect.width / logicalSize;
+	console.assert(scale > 0, `[visionlab] canvasMouseCoords: invalid scale ${scale} (rect.width=${rect.width}, logicalSize=${logicalSize})`);
+	return {
+		x: Math.floor((e.clientX - rect.left) / scale),
+		y: Math.floor((e.clientY - rect.top) / scale),
+		scale,
+	};
+}
+
+// --- TF.js Tensor Shape Assertions ---
+function assertTensorRank(tensor, expectedRank, label) {
+	console.assert(
+		tensor.rank === expectedRank,
+		`[visionlab] ${label}: expected rank ${expectedRank}, got rank ${tensor.rank} with shape [${tensor.shape}]`
+	);
+}
+
+function assertTensorShape(tensor, expectedShape, label) {
+	const match = tensor.shape.length === expectedShape.length &&
+		tensor.shape.every((dim, i) => expectedShape[i] === null || dim === expectedShape[i]);
+	console.assert(
+		match,
+		`[visionlab] ${label}: expected shape [${expectedShape.map(d => d === null ? '?' : d)}], got [${tensor.shape}]`
+	);
+}
+
+// --- Generic TF.js Convolution ---
+// inputTensor4D MUST be [batch, height, width, channels] — always rank 4
+function applyConv2D(inputTensor4D, kernelData, kernelSize, flipKernel = false) {
+	assertTensorRank(inputTensor4D, 4, 'applyConv2D/input');
+	const inChannels = inputTensor4D.shape[3];
+	console.assert(
+		inChannels === 1,
+		`[visionlab] applyConv2D: input depth must be 1 for single-channel conv, got ${inChannels}. Shape: [${inputTensor4D.shape}]`
+	);
+	console.assert(
+		kernelData.length === kernelSize * kernelSize,
+		`[visionlab] applyConv2D: kernelData length ${kernelData.length} does not match kernelSize ${kernelSize}x${kernelSize}=${kernelSize * kernelSize}`
+	);
+
+	let ker = tf.tensor2d(kernelData, [kernelSize, kernelSize]);
+	if (flipKernel) {
+		ker = ker.reverse(0).reverse(1);
+	}
+	ker = ker.expandDims(-1).expandDims(-1);
+	// ker shape: [kernelSize, kernelSize, 1, 1]
+	assertTensorShape(ker, [kernelSize, kernelSize, 1, 1], 'applyConv2D/kernel');
+
+	const result = tf.conv2d(inputTensor4D, ker, 1, 'same').squeeze();
+	console.debug(`[visionlab] applyConv2D: input [${inputTensor4D.shape}] * kernel [${ker.shape}] => output [${result.shape}]`);
+	return result;
+}
+
+function applyMultiChannelConv(sourceCanvas, kernelData, kernelSize) {
+	console.assert(sourceCanvas instanceof HTMLCanvasElement, '[visionlab] applyMultiChannelConv: sourceCanvas is not an HTMLCanvasElement');
+	const t = tf.browser.fromPixels(sourceCanvas).toFloat();
+	assertTensorRank(t, 3, 'applyMultiChannelConv/fromPixels');
+	console.debug(`[visionlab] applyMultiChannelConv: source tensor shape [${t.shape}]`);
+
+	const channels = tf.split(t, 3, 2);
+	console.assert(channels.length === 3, `[visionlab] applyMultiChannelConv: expected 3 channels, got ${channels.length}`);
+
+	const processed = channels.map((ch, i) => {
+		// ch shape: [H, W, 1] — need [1, H, W, 1]
+		const ch4D = ch.expandDims(0);
+		assertTensorShape(ch4D, [1, null, null, 1], `applyMultiChannelConv/channel${i}`);
+		return applyConv2D(ch4D, kernelData, kernelSize, true);
+	});
+
+	return tf.stack(processed, 2).clipByValue(0, 255).cast('int32');
+}
+
+function applyGrayscaleConv(input4D, kernelData) {
+	assertTensorRank(input4D, 4, 'applyGrayscaleConv/input');
+	assertTensorShape(input4D, [1, null, null, 1], 'applyGrayscaleConv/input');
+	console.assert(
+		kernelData.length === 9,
+		`[visionlab] applyGrayscaleConv: expected 9 kernel values (3x3), got ${kernelData.length}`
+	);
+	return applyConv2D(input4D, kernelData, 3, false).abs();
+}
+
+// --- Normalization Helper ---
+function normalizeTensor(tensor, label) {
+	const maxVal = tensor.max();
+	const maxScalar = maxVal.dataSync()[0];
+	if (maxScalar < CONFIG.EPSILON) {
+		console.warn(`[visionlab] normalizeTensor(${label || '?'}): max value is near zero (${maxScalar}). Output will be all black.`);
+	}
+	return tensor.div(maxVal.add(CONFIG.EPSILON));
+}
+
+// --- Kernel Heatmap Visualization ---
+function kernelValueToColor(norm) {
+	console.assert(
+		norm >= -1 && norm <= 1,
+		`[visionlab] kernelValueToColor: norm ${norm} is outside [-1, 1]`
+	);
+	if (norm >= 0) {
+		const inv = Math.round(255 * (1 - norm));
+		return { r: inv, g: inv, b: 255 };
+	} else {
+		const inv = Math.round(255 * (1 + norm));
+		return { r: 255, g: inv, b: inv };
+	}
+}
+
+function updateKernelViz(kValues, size) {
+	if (!DOM.kernelViz) {
+		console.warn('[visionlab] updateKernelViz: DOM.kernelViz is null, skipping.');
+		return;
+	}
+	console.assert(
+		kValues.length === size * size,
+		`[visionlab] updateKernelViz: kValues length ${kValues.length} != size*size ${size * size}`
+	);
+
+	DOM.kernelViz.width = size;
+	DOM.kernelViz.height = size;
+	const ctx = DOM.kernelViz.getContext('2d');
+	const maxAbs = Math.max(...kValues.map(Math.abs), CONFIG.EPSILON);
+
+	for (let i = 0; i < kValues.length; i++) {
+		const { r, g, b } = kernelValueToColor(kValues[i] / maxAbs);
+		ctx.fillStyle = `rgb(${r},${g},${b})`;
+		ctx.fillRect(i % size, Math.floor(i / size), 1, 1);
+	}
+}
+
+// --- Convolution Runner ---
 async function runConv() {
-	if (!DOM.srcCanvas || DOM.srcCanvas.width === 0 || !DOM.resCanvas) return;
+	if (!DOM.srcCanvas || DOM.srcCanvas.width === 0) {
+		console.warn('[visionlab] runConv: srcCanvas not ready, skipping.');
+		return;
+	}
+	if (!DOM.resCanvas) {
+		console.error('[visionlab] runConv: resCanvas is null. Cannot render output.');
+		return;
+	}
 
 	const size = getKernelSize();
 	const kValues = getKernelValues();
 
+	if (kValues.length !== size * size) {
+		console.error(`[visionlab] runConv: kernel values count ${kValues.length} does not match expected ${size}x${size}=${size * size}. Aborting.`);
+		return;
+	}
+
 	try {
 		tf.tidy(() => {
-			const t = tf.browser.fromPixels(DOM.srcCanvas).toFloat();
-			const ker = tf.tensor2d(kValues, [size, size])
-				.reverse(0).reverse(1)
-				.expandDims(-1).expandDims(-1);
-
-			const channels = tf.split(t, 3, 2);
-			const processed = channels.map(ch =>
-				tf.conv2d(ch.expandDims(0), ker, 1, 'same').squeeze()
-			);
-
-			const combined = tf.stack(processed, 2).clipByValue(0, 255).cast('int32');
+			const combined = applyMultiChannelConv(DOM.srcCanvas, kValues, size);
 			tf.browser.toPixels(combined, DOM.resCanvas);
 		});
 		updateKernelViz(kValues, size);
+		console.debug(`[visionlab] runConv: completed successfully with ${size}x${size} kernel`);
 	} catch (err) {
-		warn('visionlab', `TFJS not ready yet: ${err}`);
+		console.error('[visionlab] runConv: TF.js error:', err.message, err.stack);
 	}
 }
 
 // --- Kernel Preset Setter ---
 function setKernel(matrix) {
+	console.assert(Array.isArray(matrix) && matrix.length > 0, '[visionlab] setKernel: matrix must be a non-empty array');
+	console.assert(
+		matrix.every(row => Array.isArray(row) && row.length === matrix.length),
+		'[visionlab] setKernel: matrix must be square'
+	);
+
 	DOM.kSize.value = matrix.length;
 	initVisionLab();
 	const inps = document.querySelectorAll('.k-inp');
-	matrix.flat().forEach((val, i) => {
-		if (inps[i]) inps[i].value = parseFloat(val.toFixed(4));
+
+	const flat = matrix.flat();
+	if (inps.length !== flat.length) {
+		console.error(`[visionlab] setKernel: input count ${inps.length} does not match matrix size ${flat.length}`);
+		return;
+	}
+
+	flat.forEach((val, i) => {
+		inps[i].value = parseFloat(val.toFixed(4));
 	});
 	runConv();
-}
-
-// --- Kernel Heatmap Visualization ---
-function updateKernelViz(kValues, size) {
-	if (!DOM.kernelViz) return;
-	DOM.kernelViz.width = size;
-	DOM.kernelViz.height = size;
-	const ctx = DOM.kernelViz.getContext('2d');
-
-	const maxAbs = Math.max(...kValues.map(Math.abs), CONFIG.EPSILON);
-
-	for (let i = 0; i < kValues.length; i++) {
-		const x = i % size;
-		const y = Math.floor(i / size);
-		const norm = kValues[i] / maxAbs; // -1 to 1
-
-		let r, g, b;
-		if (norm >= 0) {
-			r = Math.round(255 * (1 - norm));
-			g = Math.round(255 * (1 - norm));
-			b = 255;
-		} else {
-			r = 255;
-			g = Math.round(255 * (1 + norm));
-			b = Math.round(255 * (1 + norm));
-		}
-		ctx.fillStyle = `rgb(${r},${g},${b})`;
-		ctx.fillRect(x, y, 1, 1);
-	}
+	console.info(`[visionlab] setKernel: applied ${matrix.length}x${matrix.length} kernel preset`);
 }
 
 // --- Convolution Math Display ---
@@ -129,9 +341,7 @@ let mathRafId = null;
 
 function updateConvMath(x, y, size) {
 	if (mathRafId) cancelAnimationFrame(mathRafId);
-	mathRafId = requestAnimationFrame(() => {
-		_updateConvMathInner(x, y, size);
-	});
+	mathRafId = requestAnimationFrame(() => _updateConvMathInner(x, y, size));
 }
 
 function extractPatchData(ctx, x, y, size) {
@@ -139,13 +349,23 @@ function extractPatchData(ctx, x, y, size) {
 	const imgData = ctx.getImageData(x - offset, y - offset, size, size).data;
 	const kValues = getKernelValues();
 
+	console.assert(
+		imgData.length === size * size * 4,
+		`[visionlab] extractPatchData: expected ${size * size * 4} bytes, got ${imgData.length}`
+	);
+	console.assert(
+		kValues.length === size * size,
+		`[visionlab] extractPatchData: kernel values count ${kValues.length} != ${size * size}`
+	);
+
 	const pixels = [];
 	const sums = { r: 0, g: 0, b: 0 };
 
 	for (let i = 0; i < kValues.length; i++) {
-		const r = imgData[i * 4];
-		const g = imgData[i * 4 + 1];
-		const b = imgData[i * 4 + 2];
+		const base = i * 4;
+		const r = imgData[base];
+		const g = imgData[base + 1];
+		const b = imgData[base + 2];
 		const weight = kValues[i];
 
 		sums.r += r * weight;
@@ -175,87 +395,106 @@ function buildConvLatex(x, y, pixels, sums) {
 }
 
 function _updateConvMathInner(x, y, size) {
-	const ctx = DOM.srcCanvas.getContext('2d', { willReadFrequently: true });
+	if (!DOM.srcCanvas || !DOM.mathStep) {
+		console.warn('[visionlab] _updateConvMathInner: required DOM elements missing.');
+		return;
+	}
+	const ctx = getCanvasCtx(DOM.srcCanvas, 'mathInner');
 	const { pixels, sums } = extractPatchData(ctx, x, y, size);
-	const formula = buildConvLatex(x, y, pixels, sums);
-
-	DOM.mathStep.innerHTML = `$$ ${formula} $$`;
+	DOM.mathStep.innerHTML = `$$ ${buildConvLatex(x, y, pixels, sums)} $$`;
 	render_temml();
 }
 
 // --- Pixel Info Tooltip ---
 function showPixelInfo(x, y, srcCanvas) {
-	const ctx = srcCanvas.getContext('2d', { willReadFrequently: true });
-	const px = ctx.getImageData(x, y, 1, 1).data;
-	if (!DOM.pixelInfo) return;
+	if (!DOM.pixelInfo) {
+		console.warn('[visionlab] showPixelInfo: DOM.pixelInfo is null, skipping.');
+		return;
+	}
+	const px = getPixelAt(srcCanvas, x, y, 'pixelInfo');
 	DOM.pixelInfo.style.display = 'block';
-	DOM.pixelInfo.innerHTML = `
-		<span style="color:#ef4444">R:${px[0]}</span>
-		<span style="color:#22c55e">G:${px[1]}</span>
-		<span style="color:#3b82f6">B:${px[2]}</span>
-		<span style="color:#94a3b8">(${x}, ${y})</span>
-	`;
+	DOM.pixelInfo.innerHTML = [
+		{ color: '#ef4444', label: 'R', val: px[0] },
+		{ color: '#22c55e', label: 'G', val: px[1] },
+		{ color: '#3b82f6', label: 'B', val: px[2] },
+		{ color: '#94a3b8', label: null, val: `(${x}, ${y})` },
+	].map(c => `<span style="color:${c.color}">${c.label ? c.label + ':' : ''}${c.val}</span>`).join('');
 }
 
-// --- Main Init ---
-function initVisionLab() {
-	cacheDOMRefs();
-
-	const size = getKernelSize();
+// --- Kernel Table Builder ---
+function buildKernelTable(size) {
+	if (!DOM.kernelTable) {
+		console.error('[visionlab] buildKernelTable: DOM.kernelTable is null.');
+		return;
+	}
+	console.debug(`[visionlab] buildKernelTable: building ${size}x${size} table`);
 	DOM.kernelTable.innerHTML = "";
+	const center = Math.floor(size / 2);
 
 	for (let i = 0; i < size; i++) {
-		let tr = DOM.kernelTable.insertRow();
+		const tr = DOM.kernelTable.insertRow();
 		for (let j = 0; j < size; j++) {
-			let td = tr.insertCell();
-			let inp = document.createElement('input');
-			inp.type = "number";
-			inp.className = "k-inp";
-			inp.style.width = "48px";
-			inp.style.textAlign = "center";
-			inp.step = "0.1";
-			inp.value = (i === Math.floor(size / 2) && j === Math.floor(size / 2)) ? 1 : 0;
+			const td = tr.insertCell();
+			const inp = document.createElement('input');
+			Object.assign(inp, {
+				type: "number",
+				className: "k-inp",
+				step: "0.1",
+				value: (i === center && j === center) ? 1 : 0,
+			});
+			inp.style.cssText = "width:48px; text-align:center;";
 			inp.oninput = debounce(runConv, CONFIG.DEBOUNCE_MS);
 			td.appendChild(inp);
 		}
 	}
+}
 
-	const setupCanvas = () => {
-		const ctx = DOM.srcCanvas.getContext('2d', { willReadFrequently: true });
-		ctx.drawImage(DOM.srcHidden, 0, 0, CONFIG.SRC_SIZE, CONFIG.SRC_SIZE);
+// --- Main Init ---
+function initVisionLab() {
+	console.info('[visionlab] initVisionLab: initializing...');
+	cacheDOMRefs();
+
+	if (!DOM.srcCanvas) {
+		console.error('[visionlab] initVisionLab: srcCanvas (#conv-src-display) not found. Aborting.');
+		return;
+	}
+	if (!DOM.srcHidden) {
+		console.error('[visionlab] initVisionLab: srcHidden (#conv-src-hidden) not found. Aborting.');
+		return;
+	}
+
+	const size = getKernelSize();
+	buildKernelTable(size);
+
+	loadImageOntoCanvas(DOM.srcCanvas, DOM.srcHidden, CONFIG.SRC_SIZE, CONFIG.SRC_SIZE, () => {
 		setTimeout(runConv, 100);
-	};
-
-	if (DOM.srcHidden.complete) setupCanvas();
-	else DOM.srcHidden.onload = setupCanvas;
+	}, 'srcCanvas');
 
 	DOM.srcCanvas.onmousemove = (e) => {
-		const rect = DOM.srcCanvas.getBoundingClientRect();
-		const scale = rect.width / CONFIG.SRC_SIZE;
-
-		const x = Math.floor((e.clientX - rect.left) / scale);
-		const y = Math.floor((e.clientY - rect.top) / scale);
+		const { x, y, scale } = canvasMouseCoords(e, DOM.srcCanvas, CONFIG.SRC_SIZE);
 		const offset = Math.floor(size / 2);
 
-		DOM.focus.style.display = 'block';
-		DOM.focus.style.width = (size * scale) + "px";
-		DOM.focus.style.height = (size * scale) + "px";
-		DOM.focus.style.left = ((x - offset) * scale) + "px";
-		DOM.focus.style.top = (DOM.srcCanvas.offsetTop + (y - offset) * scale) + "px";
+		positionOverlay(DOM.focus, {
+			left: (x - offset) * scale,
+			top: DOM.srcCanvas.offsetTop + (y - offset) * scale,
+			width: size * scale,
+			height: size * scale,
+		});
 
-		DOM.cross.style.display = 'block';
-		DOM.cross.style.left = (x * scale + scale / 2) + "px";
-		DOM.cross.style.top = (DOM.resCanvas.offsetTop + y * scale + scale / 2) + "px";
+		positionOverlay(DOM.cross, {
+			left: x * scale + scale / 2,
+			top: DOM.resCanvas.offsetTop + y * scale + scale / 2,
+		});
 
 		showPixelInfo(x, y, DOM.srcCanvas);
 		updateConvMath(x, y, size);
 	};
 
 	DOM.srcCanvas.onmouseleave = () => {
-		DOM.focus.style.display = 'none';
-		DOM.cross.style.display = 'none';
-		if (DOM.pixelInfo) DOM.pixelInfo.style.display = 'none';
+		hideOverlays(DOM.focus, DOM.cross, DOM.pixelInfo);
 	};
+
+	console.info('[visionlab] initVisionLab: complete.');
 }
 
 // ============================================================
@@ -286,18 +525,36 @@ window.FeatureLab = {
 	],
 
 	init: function () {
+		console.info('[FeatureLab] init: starting...');
+
+		if (!DOM.featSrc) {
+			console.error('[FeatureLab] init: DOM.featSrc (#feat-src) not found. Aborting.');
+			return;
+		}
+		if (!DOM.filterGrid) {
+			console.error('[FeatureLab] init: DOM.filterGrid (#filter-grid) not found. Aborting.');
+			return;
+		}
+
 		this.renderInterface();
+
 		const img = new Image();
 		img.crossOrigin = "anonymous";
 		img.src = "stop_sign.jpg";
-		img.onload = () => {
-			const ctx = DOM.featSrc.getContext('2d');
-			ctx.drawImage(img, 0, 0, CONFIG.FEAT_SIZE, CONFIG.FEAT_SIZE);
+
+		loadImageOntoCanvas(DOM.featSrc, img, CONFIG.FEAT_SIZE, CONFIG.FEAT_SIZE, () => {
+			console.info('[FeatureLab] init: source image loaded, running filters...');
 			this.runAll();
-		};
+		}, 'featSrc');
 	},
 
 	createFilterCard: function (filter, index) {
+		console.assert(filter && filter.type, `[FeatureLab] createFilterCard: invalid filter at index ${index}`);
+		console.assert(
+			this.presets[filter.type],
+			`[FeatureLab] createFilterCard: no preset found for type "${filter.type}"`
+		);
+
 		const desc = this.presetDescriptions[filter.type] || "";
 		const kernelInputs = this.presets[filter.type].flat()
 			.map(v => `<input type="number" value="${v}" step="0.1" 
@@ -343,6 +600,11 @@ window.FeatureLab = {
 	},
 
 	renderInterface: function () {
+		if (!DOM.filterGrid) {
+			console.error('[FeatureLab] renderInterface: DOM.filterGrid is null. Aborting.');
+			return;
+		}
+		console.debug('[FeatureLab] renderInterface: building UI...');
 		DOM.filterGrid.innerHTML = "";
 		DOM.filterGrid.style.gridTemplateColumns = "repeat(2, 1fr)";
 
@@ -352,58 +614,96 @@ window.FeatureLab = {
 
 		DOM.filterGrid.appendChild(this.createHeatmapSection());
 
-		// Re-cache heatmap canvas after it's been created
+		// Re-cache heatmap canvas after it's been dynamically created
 		DOM.heatmapRes = document.getElementById('heatmap-res');
+		if (!DOM.heatmapRes) {
+			console.error('[FeatureLab] renderInterface: heatmap-res canvas was not created.');
+		}
+		console.debug('[FeatureLab] renderInterface: complete.');
 	},
 
 	getFilterKernelValues: function (index) {
-		const inputs = document.querySelectorAll(`#matrix-${index} input`);
-		return Array.from(inputs).map(inp => parseFloat(inp.value) || 0);
+		return getInputValues(`#matrix-${index} input`);
 	},
 
 	runAll: async function () {
-		if (!DOM.featSrc) return;
+		if (!DOM.featSrc) {
+			console.error('[FeatureLab] runAll: DOM.featSrc is null. Was init() called?');
+			return;
+		}
+		if (!DOM.heatmapRes) {
+			console.error('[FeatureLab] runAll: DOM.heatmapRes is null. Was renderInterface() called?');
+			return;
+		}
 
-		tf.tidy(() => {
-			const input = tf.browser.fromPixels(DOM.featSrc)
-				.mean(2).expandDims(-1).expandDims(0).toFloat();
-			let combinedActivations = tf.zeros([CONFIG.FEAT_SIZE, CONFIG.FEAT_SIZE, 1]);
+		console.debug('[FeatureLab] runAll: starting filter pass...');
+		const filterCount = this.activeFilters.length;
 
-			for (let i = 0; i < this.activeFilters.length; i++) {
-				const resCanvas = document.getElementById(`res-${i}`);
-				const statsDiv = document.getElementById(`stats-${i}`);
-				const kData = this.getFilterKernelValues(i);
-				const kernel = tf.tensor2d(kData, [3, 3]).expandDims(-1).expandDims(-1);
+		try {
+			tf.tidy(() => {
+				const raw = tf.browser.fromPixels(DOM.featSrc);
+				assertTensorRank(raw, 3, 'FeatureLab.runAll/fromPixels');
 
-				let conv = tf.conv2d(input, kernel, 1, 'same').abs().squeeze();
+				// Convert to grayscale: [H, W, 3] -> [1, H, W, 1]
+				const input = raw.mean(2).expandDims(-1).expandDims(0).toFloat();
+				assertTensorShape(input, [1, CONFIG.FEAT_SIZE, CONFIG.FEAT_SIZE, 1], 'FeatureLab.runAll/input');
 
-				combinedActivations = combinedActivations.add(conv.expandDims(-1));
+				let combinedActivations = tf.zeros([CONFIG.FEAT_SIZE, CONFIG.FEAT_SIZE, 1]);
 
-				// Stats
-				const maxVal = conv.max().dataSync()[0];
-				const meanVal = conv.mean().dataSync()[0];
-				if (statsDiv) {
-					statsDiv.textContent = `max: ${maxVal.toFixed(1)} | mean: ${meanVal.toFixed(1)}`;
+				for (let i = 0; i < filterCount; i++) {
+					const resCanvas = document.getElementById(`res-${i}`);
+					const statsDiv = document.getElementById(`stats-${i}`);
+
+					if (!resCanvas) {
+						console.error(`[FeatureLab] runAll: canvas #res-${i} not found. Skipping filter ${i}.`);
+						continue;
+					}
+
+					const kData = this.getFilterKernelValues(i);
+					if (kData.length !== 9) {
+						console.error(`[FeatureLab] runAll: filter ${i} has ${kData.length} kernel values, expected 9. Skipping.`);
+						continue;
+					}
+
+					const conv = applyGrayscaleConv(input, kData);
+					assertTensorRank(conv, 2, `FeatureLab.runAll/conv[${i}]`);
+
+					combinedActivations = combinedActivations.add(conv.expandDims(-1));
+
+					// Stats
+					const maxVal = conv.max().dataSync()[0];
+					const meanVal = conv.mean().dataSync()[0];
+					if (statsDiv) {
+						statsDiv.textContent = `max: ${maxVal.toFixed(1)} | mean: ${meanVal.toFixed(1)}`;
+					}
+					console.debug(`[FeatureLab] filter ${i}: max=${maxVal.toFixed(1)}, mean=${meanVal.toFixed(1)}`);
+
+					const norm = normalizeTensor(conv, `filter-${i}`);
+					tf.browser.toPixels(norm, resCanvas);
 				}
 
-				const norm = conv.div(conv.max().add(CONFIG.EPSILON));
-				tf.browser.toPixels(norm, resCanvas);
-			}
+				// --- Heatmap: combine all activations ---
+				const heatData = combinedActivations.squeeze().pow(2);
+				assertTensorRank(heatData, 2, 'FeatureLab.runAll/heatData');
 
-			// Heatmap
-			const heatCanvas = DOM.heatmapRes;
-			const heatData = combinedActivations.squeeze().pow(2);
-			const heatNorm = heatData.div(heatData.max().add(CONFIG.EPSILON));
+				const heatNorm = normalizeTensor(heatData, 'heatmap');
 
-			// Improved colormap: dark → orange → bright yellow
-			const yellowHeat = tf.stack([
-				heatNorm,
-				heatNorm.mul(0.75),
-				heatNorm.mul(0.15)
-			], 2);
+				// Colormap: dark → orange → bright yellow
+				const yellowHeat = tf.stack([
+					heatNorm,
+					heatNorm.mul(0.75),
+					heatNorm.mul(0.15)
+				], 2);
+				assertTensorRank(yellowHeat, 3, 'FeatureLab.runAll/yellowHeat');
 
-			tf.browser.toPixels(yellowHeat, heatCanvas);
-		});
+				tf.browser.toPixels(yellowHeat, DOM.heatmapRes);
+				console.debug('[FeatureLab] runAll: heatmap rendered.');
+			});
+
+			console.info(`[FeatureLab] runAll: completed ${filterCount} filters + heatmap.`);
+		} catch (err) {
+			console.error('[FeatureLab] runAll: TF.js error:', err.message, err.stack);
+		}
 	}
 };
 
@@ -411,9 +711,18 @@ window.FeatureLab = {
 // MODULE LOADER
 // ============================================================
 async function loadVisionModule() {
+	console.info('[visionlab] loadVisionModule: starting...');
 	updateLoadingStatus("Loading section about Computer Vision...");
 	cacheDOMRefs();
+
+	const missingCritical = ['srcCanvas', 'resCanvas', 'featSrc', 'filterGrid', 'kernelTable', 'kSize']
+		.filter(key => !DOM[key]);
+	if (missingCritical.length > 0) {
+		console.error(`[visionlab] loadVisionModule: missing critical DOM elements: ${missingCritical.join(', ')}. Some features may not work.`);
+	}
+
 	FeatureLab.init();
 	initVisionLab();
+	console.info('[visionlab] loadVisionModule: complete.');
 	return Promise.resolve();
 }
