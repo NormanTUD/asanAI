@@ -2,6 +2,46 @@ html {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-size: clamp(1rem, 0.92rem + 0.4vw, 1.125rem);
+	color-scheme: light only;
+	--mn-bg: #ffffff;
+	--mn-bg-subtle: #f8fafc;
+	--mn-bg-warm: #fffbf5;
+	--mn-bg-glass: rgba(255, 255, 255, 0.72);
+	--mn-surface: #ffffff;
+	--mn-surface-raised: #f1f5f9;
+	--mn-border: #e2e8f0;
+	--mn-border-light: #f1f5f9;
+	--mn-text: #1e293b;
+	--mn-text-secondary: #475569;
+	--mn-text-muted: #94a3b8;
+	--mn-heading: #0f172a;
+
+	/* Accent palette — warm coral to deep indigo */
+	--mn-accent: #6366f1;
+	--mn-accent-light: #e0e7ff;
+	--mn-accent-lighter: #eef2ff;
+	--mn-accent-dark: #4338ca;
+	--mn-coral: #f97316;
+	--mn-coral-light: #fff7ed;
+	--mn-rose: #e11d48;
+	--mn-emerald: #059669;
+	--mn-emerald-light: #ecfdf5;
+	--mn-sky: #0ea5e9;
+	--mn-sky-light: #f0f9ff;
+
+	/* Spacing */
+	--mn-radius-sm: 8px;
+	--mn-radius-md: 12px;
+	--mn-radius-lg: 16px;
+	--mn-radius-xl: 24px;
+
+	/* Shadows */
+	--mn-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+	--mn-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+	--mn-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+	--mn-shadow-xl: 0 20px 50px -12px rgba(0, 0, 0, 0.1);
+	--mn-shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
+	--mn-shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 #contents, #loading-overlay {
@@ -979,48 +1019,6 @@ pre, code, .status-console, .matrix-input {
    ============================================ */
 
 /* Force light color scheme for this page */
-.minimalneuron-page {
-  color-scheme: light only;
-  --mn-bg: #ffffff;
-  --mn-bg-subtle: #f8fafc;
-  --mn-bg-warm: #fffbf5;
-  --mn-bg-glass: rgba(255, 255, 255, 0.72);
-  --mn-surface: #ffffff;
-  --mn-surface-raised: #f1f5f9;
-  --mn-border: #e2e8f0;
-  --mn-border-light: #f1f5f9;
-  --mn-text: #1e293b;
-  --mn-text-secondary: #475569;
-  --mn-text-muted: #94a3b8;
-  --mn-heading: #0f172a;
-
-  /* Accent palette — warm coral to deep indigo */
-  --mn-accent: #6366f1;
-  --mn-accent-light: #e0e7ff;
-  --mn-accent-lighter: #eef2ff;
-  --mn-accent-dark: #4338ca;
-  --mn-coral: #f97316;
-  --mn-coral-light: #fff7ed;
-  --mn-rose: #e11d48;
-  --mn-emerald: #059669;
-  --mn-emerald-light: #ecfdf5;
-  --mn-sky: #0ea5e9;
-  --mn-sky-light: #f0f9ff;
-
-  /* Spacing */
-  --mn-radius-sm: 8px;
-  --mn-radius-md: 12px;
-  --mn-radius-lg: 16px;
-  --mn-radius-xl: 24px;
-
-  /* Shadows */
-  --mn-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
-  --mn-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --mn-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-  --mn-shadow-xl: 0 20px 50px -12px rgba(0, 0, 0, 0.1);
-  --mn-shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
-  --mn-shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.04);
-}
 
 /* ---- Base Container ---- */
 
@@ -1075,30 +1073,6 @@ pre, code, .status-console, .matrix-input {
   color: var(--mn-heading);
   margin: 2.25rem 0 0.75rem;
   letter-spacing: -0.015em;
-}
-
-/* ---- Lists ---- */
-.minimalneuron-page .md ul,
-.minimalneuron-page .md ol {
-  padding-left: 0;
-  margin: 1.25em 0;
-  list-style: none;
-}
-
-.minimalneuron-page .md ul li {
-  position: relative;
-  padding-left: 1.75em;
-  margin-bottom: 0.6em;
-}
-
-.minimalneuron-page .md ul li::before {
-  content: '';
-  position: absolute;
-  left: 0.25em;
-  top: 0.7em;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
 }
 
 /* ---- Math Blocks ---- */
