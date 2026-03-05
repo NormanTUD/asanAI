@@ -958,3 +958,15 @@ pre, code, .status-console, .matrix-input {
 	contain: style;
 	overflow-anchor: none;
 }
+
+.statlab-btn {
+	background: #2563eb;
+	color: white;
+	border: none;
+	padding: 12px 24px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 600;
+	flex: 2;
+	transition: background 0.2s;
+}
