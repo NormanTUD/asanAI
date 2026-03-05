@@ -2117,3 +2117,81 @@ figure img:hover {
 	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.12);
 	filter: saturate(1.1) contrast(1.03);
 }
+
+
+blockquote,
+.rendered-quote {
+	animation: quoteReveal 0.6s ease both;
+	animation-timeline: view();
+	animation-range: entry 0% entry 35%;
+}
+
+@supports not (animation-timeline: view()) {
+	blockquote,
+	.rendered-quote {
+		animation: quoteRevealFallback 0.7s ease both;
+		animation-delay: 0.1s;
+	}
+}
+
+@keyframes quoteReveal {
+	from {
+		opacity: 0;
+		filter: blur(6px);
+		transform: translateY(8px) scale(0.98);
+		border-color: transparent;
+		box-shadow: none;
+	}
+	to {
+		opacity: 1;
+		filter: blur(0);
+		transform: translateY(0) scale(1);
+		border-color: var(--mn-accent-light);
+		box-shadow: var(--mn-shadow-sm);
+	}
+}
+
+@keyframes quoteRevealFallback {
+	0% {
+		opacity: 0;
+		transform: translateY(8px) scale(0.98);
+		border-color: transparent;
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+		border-color: var(--mn-accent-light);
+	}
+}
+
+.optional-content {
+	padding: 15px;
+	animation: optionalExpand 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes optionalExpand {
+	from {
+		opacity: 0;
+		filter: blur(4px);
+		transform: translateY(-8px);
+		max-height: 0;
+	}
+	to {
+		opacity: 1;
+		filter: blur(0);
+		transform: translateY(0);
+		max-height: 2000px;
+	}
+}
+
+/* The toggle icon gets a smooth rotation */
+.optional-icon {
+	font-size: 0.8em;
+	width: 15px;
+	display: inline-block;
+	transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.optional-header.active .optional-icon {
+	transform: rotate(90deg);
+}
