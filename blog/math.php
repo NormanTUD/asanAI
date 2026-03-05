@@ -321,7 +321,7 @@ Abstractly, a logarithm transforms a scale of growth (multiplicative) into a sca
 </div>
 
 <div class="optional md" data-headline="The Historical Problem: Calculation Fatigue">
-Logarithms were introduced in \citeyear{napier1614} by the Scottish mathematician John Napier in his influental landmark work \citealternativetitle{napier1614}.
+Logarithms were introduced in \citeyear{napier1614} by the Scottish mathematician John Napier in his landmark work \citealternativetitle{napier1614}.
 
 **The Practical Problem:** During the Renaissance, scientists, especially astronomers like Johannes Kepler, were drowning in data. To calculate the orbits of planets, they had to multiply and divide massive numbers with many decimal places. For example, calculating the position of Mars required multiplying long sines and cosines of angles. Doing this by hand took months and a single tiny error could ruin the calculations.
 
