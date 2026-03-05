@@ -1783,11 +1783,118 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const layerData = registry.layers[layerIdx];
 		const headDataArray = layerData.headData;
 		const displayTokens = this._apvResolveTokenLabels(layerData.tokenStrings, headDataArray);
-		const { minOpacity } = this._apvOptions;
 		const hovered = this._apvHoveredToken.get(layerIdx);
 		const activeHeads = this._apvActiveHeads.get(layerIdx) || new Set();
 
-		// Update paths
+		this._apvUpdatePathOpacities(svg, headDataArray, activeHeads, hovered);
+		this._apvUpdateTokenTextStyles(svg, hovered);
+		this._apvReplaceWeightLabels(svg, layerIdx, headDataArray, displayTokens, activeHeads, hovered);
+	}
+
+	_apvAppendWeightLabel(svg, x, y, color, text, textAnchor) {
+		const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+		label.setAttribute('x', x.toFixed(1));
+		label.setAttribute('y', y.toFixed(1));
+		label.setAttribute('font-size', '9');
+		label.setAttribute('fill', color);
+		label.setAttribute('font-weight', '700');
+		label.setAttribute('text-anchor', textAnchor);
+		label.setAttribute('class', 'apv-weight-label');
+		label.setAttribute('stroke', '#fff');
+		label.setAttribute('stroke-width', '2.5');
+		label.setAttribute('paint-order', 'stroke');
+		label.textContent = text;
+		svg.appendChild(label);
+	}
+
+	_apvRenderLabelGroups(svg, groups, hovered) {
+		const { rowHeight, leftColumnX, rightColumnX, topPadding } = this._apvOptions;
+		const arcX1 = leftColumnX + 6;
+		const arcX2 = rightColumnX - 6;
+		const labelGap = 30;
+
+		groups.forEach((group, targetIdx) => {
+			const y = topPadding + targetIdx * rowHeight + 4;
+
+			if (hovered.side === 'left') {
+				const anchorX = arcX2 - 4;
+				group.forEach((lbl, i) => {
+					this._apvAppendWeightLabel(svg, anchorX - i * labelGap, y, lbl.color, lbl.text, 'end');
+				});
+			} else {
+				const anchorX = arcX1 + 4;
+				group.forEach((lbl, i) => {
+					this._apvAppendWeightLabel(svg, anchorX + i * labelGap, y, lbl.color, lbl.text, 'start');
+				});
+			}
+		});
+	}
+
+	_apvGroupLabelsByTarget(candidates) {
+		const groups = new Map();
+		candidates.forEach(lbl => {
+			if (!groups.has(lbl.targetIdx)) groups.set(lbl.targetIdx, []);
+			groups.get(lbl.targetIdx).push(lbl);
+		});
+		// Sort each group by head index for consistent ordering
+		groups.forEach(group => group.sort((a, b) => a.hIdx - b.hIdx));
+		return groups;
+	}
+
+	_apvCollectLabelCandidates(headDataArray, displayTokens, activeHeads, hovered) {
+		const candidates = [];
+		const n = displayTokens.length;
+
+		headDataArray.forEach((head, hIdx) => {
+			if (!activeHeads.has(hIdx)) return;
+
+			const color = AttentionEngine.HEAD_COLORS[hIdx % AttentionEngine.HEAD_COLORS.length];
+			const weights = head.this_weights;
+
+			for (let qi = 0; qi < n; qi++) {
+				for (let ki = 0; ki < n; ki++) {
+					const w = weights[qi][ki];
+					if (w < 0.05) continue;
+
+					const { side, index } = hovered;
+					const isRelevant =
+						(side === 'left' && index === qi) ||
+						(side === 'right' && index === ki);
+					if (!isRelevant) continue;
+
+					const targetIdx = (side === 'left') ? ki : qi;
+					candidates.push({ targetIdx, color, text: `${(w * 100).toFixed(0)}%`, hIdx });
+				}
+			}
+		});
+
+		return candidates;
+	}
+
+	_apvReplaceWeightLabels(svg, layerIdx, headDataArray, displayTokens, activeHeads, hovered) {
+		svg.querySelectorAll('.apv-weight-label').forEach(el => el.remove());
+
+		if (!hovered) return;
+
+		const labelCandidates = this._apvCollectLabelCandidates(
+			headDataArray, displayTokens, activeHeads, hovered
+		);
+		const groups = this._apvGroupLabelsByTarget(labelCandidates);
+		this._apvRenderLabelGroups(svg, groups, hovered);
+	}
+
+	_apvUpdateTokenTextStyles(svg, hovered) {
+		const texts = svg.querySelectorAll('text[data-apv-side]');
+		texts.forEach(text => {
+			const side = text.getAttribute('data-apv-side');
+			const idx = parseInt(text.getAttribute('data-apv-idx'));
+			const isHovered = hovered && hovered.side === side && hovered.index === idx;
+			text.setAttribute('fill', isHovered ? '#1e40af' : '#334155');
+			text.setAttribute('font-weight', isHovered ? '700' : '500');
+		});
+	}
+
+	_apvUpdatePathOpacities(svg, headDataArray, activeHeads, hovered) {
 		const paths = svg.querySelectorAll('path[data-apv-qi]');
 		paths.forEach(path => {
 			const hIdx = parseInt(path.getAttribute('data-apv-head'));
@@ -1806,118 +1913,19 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 				path.setAttribute('stroke-width', (1 + w * 5).toFixed(1));
 			} else {
 				const { side, index } = hovered;
-				if ((side === 'left' && index === qi) || (side === 'right' && index === ki)) {
-					const opacity = 0.3 + w * 0.7;
-					const strokeWidth = 2 + w * 8;
-					path.setAttribute('stroke-opacity', opacity.toFixed(3));
-					path.setAttribute('stroke-width', strokeWidth.toFixed(1));
+				const isHighlighted =
+					(side === 'left' && index === qi) ||
+					(side === 'right' && index === ki);
+
+				if (isHighlighted) {
+					path.setAttribute('stroke-opacity', (0.3 + w * 0.7).toFixed(3));
+					path.setAttribute('stroke-width', (2 + w * 8).toFixed(1));
 				} else {
 					path.setAttribute('stroke-opacity', '0.04');
 					path.setAttribute('stroke-width', '0.5');
 				}
 			}
 		});
-
-		// ── Update token text styling ──
-		const texts = svg.querySelectorAll('text[data-apv-side]');
-		texts.forEach(text => {
-			const side = text.getAttribute('data-apv-side');
-			const idx = parseInt(text.getAttribute('data-apv-idx'));
-
-			const isHovered = hovered && hovered.side === side && hovered.index === idx;
-			text.setAttribute('fill', isHovered ? '#1e40af' : '#334155');
-			text.setAttribute('font-weight', isHovered ? '700' : '500');
-		});
-
-		// ── Update percentage labels ──
-		svg.querySelectorAll('.apv-weight-label').forEach(el => el.remove());
-
-		if (hovered) {
-			const { rowHeight, leftColumnX, rightColumnX, topPadding } = this._apvOptions;
-			const arcX1 = leftColumnX + 6;
-			const arcX2 = rightColumnX - 6;
-
-			const labelCandidates = [];
-
-			headDataArray.forEach((head, hIdx) => {
-				if (!activeHeads.has(hIdx)) return;
-				const color = AttentionEngine.HEAD_COLORS[hIdx % AttentionEngine.HEAD_COLORS.length];
-				const weights = head.this_weights;
-				const n = displayTokens.length;
-
-				for (let qi = 0; qi < n; qi++) {
-					for (let ki = 0; ki < n; ki++) {
-						const w = weights[qi][ki];
-						if (w < 0.05) continue;
-
-						const { side, index } = hovered;
-						const isRelevant = (side === 'left' && index === qi) ||
-							(side === 'right' && index === ki);
-						if (!isRelevant) continue;
-
-						const targetIdx = (side === 'left') ? ki : qi;
-
-						labelCandidates.push({
-							targetIdx,
-							color,
-							text: `${(w * 100).toFixed(0)}%`,
-							hIdx
-						});
-					}
-				}
-			});
-
-			const groups = new Map();
-			labelCandidates.forEach(lbl => {
-				if (!groups.has(lbl.targetIdx)) groups.set(lbl.targetIdx, []);
-				groups.get(lbl.targetIdx).push(lbl);
-			});
-
-			const labelGap = 30;
-
-			groups.forEach((group, targetIdx) => {
-				const y = topPadding + targetIdx * rowHeight + 4;
-				group.sort((a, b) => a.hIdx - b.hIdx);
-
-				if (hovered.side === 'left') {
-					const anchorX = arcX2 - 4;
-					group.forEach((lbl, i) => {
-						const lx = anchorX - i * labelGap;
-						const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-						label.setAttribute('x', lx.toFixed(1));
-						label.setAttribute('y', y.toFixed(1));
-						label.setAttribute('font-size', '9');
-						label.setAttribute('fill', lbl.color);
-						label.setAttribute('font-weight', '700');
-						label.setAttribute('text-anchor', 'end');
-						label.setAttribute('class', 'apv-weight-label');
-						label.setAttribute('stroke', '#fff');
-						label.setAttribute('stroke-width', '2.5');
-						label.setAttribute('paint-order', 'stroke');
-						label.textContent = lbl.text;
-						svg.appendChild(label);
-					});
-				} else {
-					const anchorX = arcX1 + 4;
-					group.forEach((lbl, i) => {
-						const lx = anchorX + i * labelGap;
-						const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-						label.setAttribute('x', lx.toFixed(1));
-						label.setAttribute('y', y.toFixed(1));
-						label.setAttribute('font-size', '9');
-						label.setAttribute('fill', lbl.color);
-						label.setAttribute('font-weight', '700');
-						label.setAttribute('text-anchor', 'start');
-						label.setAttribute('class', 'apv-weight-label');
-						label.setAttribute('stroke', '#fff');
-						label.setAttribute('stroke-width', '2.5');
-						label.setAttribute('paint-order', 'stroke');
-						label.textContent = lbl.text;
-						svg.appendChild(label);
-					});
-				}
-			});
-		}
 	}
 
 	_apvDrawMatrixView(svg, layerIdx, headDataArray, tokens) {
