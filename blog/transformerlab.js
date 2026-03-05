@@ -3808,15 +3808,45 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 		window._activeMigrationIds.add(id);
 	}
 
-	const displayTokens = (tokenStrings && tokenStrings.length === tokens.length)
-		? tokenStrings
-		: tokens.map((t, i) => {
-			if (typeof t === 'string') return t;
-			return tlab_get_top_word_only(t);
-		});
+	const displayTokens = getMigrationDisplayTokens(tokens, tokenStrings);
 
-	const freeze = (data) => JSON.parse(JSON.stringify(data));
+	// Initialize/update trajectory collector
+	initTrajectoryCollector(tokens, displayTokens, d_model, start_h);
+	recordTrajectoryLayerOutput(layerNum, end_h);
 
+	// Determine parent container
+	const parentContainer = getMigrationParentContainer(layerNum, globalContainer);
+
+	// Preserve existing VF toggle state
+	const existingRegData = transformerLabVisMigrationDataRegistry.get(id);
+	const existingVfEnabled = existingRegData ? !!existingRegData._vfEnabled : false;
+
+	// Ensure DOM elements exist
+	ensureMigrationPlotDiv(id, d_model, existingVfEnabled, parentContainer);
+
+	// Build registry data and register for lazy rendering
+	const registryData = buildMigrationRegistryData(tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings, existingVfEnabled);
+
+	registerLazyRenderable(
+		id,
+		transformerLabVisMigrationDataRegistry,
+		migrationObserver,
+		registryData,
+		() => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings)
+	);
+}
+
+function getMigrationDisplayTokens(tokens, tokenStrings) {
+	if (tokenStrings && tokenStrings.length === tokens.length) {
+		return tokenStrings;
+	}
+	return tokens.map((t, i) => {
+		if (typeof t === 'string') return t;
+		return tlab_get_top_word_only(t);
+	});
+}
+
+function initTrajectoryCollector(tokens, displayTokens, d_model, start_h) {
 	if (!window.tlab_trajectory_collector) {
 		window.tlab_trajectory_collector = {
 			steps: {},
@@ -3834,6 +3864,8 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 			return new Array(d_model).fill(0);
 		});
 
+		const freeze = (data) => JSON.parse(JSON.stringify(data));
+
 		window.tlab_trajectory_collector.steps["00_raw"] = {
 			name: "Original Embedding",
 			data: freeze(rawEmbs)
@@ -3843,90 +3875,102 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 			data: freeze(start_h)
 		};
 	}
+}
 
+function recordTrajectoryLayerOutput(layerNum, end_h) {
+	const freeze = (data) => JSON.parse(JSON.stringify(data));
 	const layerKey = "02_layer_" + String(layerNum).padStart(2, '0');
 	window.tlab_trajectory_collector.steps[layerKey] = {
 		name: `Layer ${layerNum} Output`,
 		data: freeze(end_h)
 	};
+}
 
+function getMigrationParentContainer(layerNum, globalContainer) {
 	const layerIndex = layerNum - 1;
 	const unifiedMigrationContainer = document.getElementById(`unified-layer-${layerIndex}-migration-container`);
+	return unifiedMigrationContainer || globalContainer;
+}
 
-	let parentContainer;
-	if (unifiedMigrationContainer) {
-		parentContainer = unifiedMigrationContainer;
-	} else {
-		parentContainer = globalContainer;
+function createVFToggleButton(id, d_model, existingVfEnabled) {
+	const toggleBtn = document.createElement('button');
+	toggleBtn.className = 'migration-vf-toggle';
+	toggleBtn.dataset.mode = existingVfEnabled ? 'on' : 'off';
+	toggleBtn.dataset.migrationId = id;
+	toggleBtn.textContent = existingVfEnabled ? '🧭 Hide Vector Field' : '🧭 Show Vector Field';
+	toggleBtn.style.cssText = `
+	margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
+	border: 1px solid #3b82f6; background: ${existingVfEnabled ? '#dbeafe' : '#fff'}; color: #3b82f6;
+	cursor: pointer; font-weight: 600; font-size: 0.82rem;
+	transition: all 0.15s;
+    `;
+	if (d_model >= 4) {
+		toggleBtn.style.display = 'none';
 	}
 
-	// Preserve existing VF toggle state from the registry before overwriting
-	const existingRegData = transformerLabVisMigrationDataRegistry.get(id);
-	const existingVfEnabled = existingRegData ? !!existingRegData._vfEnabled : false;
+	toggleBtn.addEventListener('mouseover', () => {
+		toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#eff6ff' : '#fee2e2';
+	});
+	toggleBtn.addEventListener('mouseout', () => {
+		toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#fff' : '#dbeafe';
+	});
+	toggleBtn.addEventListener('click', () => {
+		const currentMode = toggleBtn.dataset.mode;
+		const migId = toggleBtn.dataset.migrationId;
+		const regData = transformerLabVisMigrationDataRegistry.get(migId);
+		if (!regData) return;
 
+		if (currentMode === 'off') {
+			toggleBtn.dataset.mode = 'on';
+			toggleBtn.textContent = '🧭 Hide Vector Field';
+			toggleBtn.style.background = '#dbeafe';
+			regData._vfEnabled = true;
+			render_migration_logic(migId, regData.tokens, regData.start_h, regData.end_h, regData.layerNum, regData.d_model, regData.h_after, regData.tokenStrings);
+		} else {
+			toggleBtn.dataset.mode = 'off';
+			toggleBtn.textContent = '🧭 Show Vector Field';
+			toggleBtn.style.background = '#fff';
+			regData._vfEnabled = false;
+			render_migration_logic(migId, regData.tokens, regData.start_h, regData.end_h, regData.layerNum, regData.d_model, regData.h_after, regData.tokenStrings);
+		}
+	});
+
+	return toggleBtn;
+}
+
+function createMigrationPlotDOM(id, d_model, existingVfEnabled, parentContainer) {
+	const wrapperDiv = document.createElement('div');
+	wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; margin-top: 10px; background: #fff;";
+	wrapperDiv.setAttribute('data-migration-wrapper', id);
+
+	const toggleBtn = createVFToggleButton(id, d_model, existingVfEnabled);
+	wrapperDiv.appendChild(toggleBtn);
+
+	const plotDiv = document.createElement('div');
+	plotDiv.id = id;
+	plotDiv.style.cssText = "height: 500px; width: 100%; position: relative;";
+
+	wrapperDiv.appendChild(plotDiv);
+	parentContainer.appendChild(wrapperDiv);
+
+	return plotDiv;
+}
+
+function ensureMigrationPlotDiv(id, d_model, existingVfEnabled, parentContainer) {
 	let plotDiv = document.getElementById(id);
 	if (!plotDiv) {
-		const wrapperDiv = document.createElement('div');
-		wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; margin-top: 10px; background: #fff;";
-		wrapperDiv.setAttribute('data-migration-wrapper', id);
-
-		const toggleBtn = document.createElement('button');
-		toggleBtn.className = 'migration-vf-toggle';
-		toggleBtn.dataset.mode = existingVfEnabled ? 'on' : 'off';
-		toggleBtn.dataset.migrationId = id;
-		toggleBtn.textContent = existingVfEnabled ? '🧭 Hide Vector Field' : '🧭 Show Vector Field';
-		toggleBtn.style.cssText = `
-			margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
-			border: 1px solid #3b82f6; background: ${existingVfEnabled ? '#dbeafe' : '#fff'}; color: #3b82f6;
-			cursor: pointer; font-weight: 600; font-size: 0.82rem;
-			transition: all 0.15s;
-		`;
-		if (d_model >= 4) {
-			toggleBtn.style.display = 'none';
-		}
-		toggleBtn.addEventListener('mouseover', () => {
-			toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#eff6ff' : '#fee2e2';
-		});
-		toggleBtn.addEventListener('mouseout', () => {
-			toggleBtn.style.background = toggleBtn.dataset.mode === 'off' ? '#fff' : '#dbeafe';
-		});
-		toggleBtn.addEventListener('click', () => {
-			const currentMode = toggleBtn.dataset.mode;
-			const migId = toggleBtn.dataset.migrationId;
-			const regData = transformerLabVisMigrationDataRegistry.get(migId);
-			if (!regData) return;
-
-			if (currentMode === 'off') {
-				toggleBtn.dataset.mode = 'on';
-				toggleBtn.textContent = '🧭 Hide Vector Field';
-				toggleBtn.style.background = '#dbeafe';
-				regData._vfEnabled = true;
-				render_migration_logic(migId, regData.tokens, regData.start_h, regData.end_h, regData.layerNum, regData.d_model, regData.h_after, regData.tokenStrings);
-			} else {
-				toggleBtn.dataset.mode = 'off';
-				toggleBtn.textContent = '🧭 Show Vector Field';
-				toggleBtn.style.background = '#fff';
-				regData._vfEnabled = false;
-				render_migration_logic(migId, regData.tokens, regData.start_h, regData.end_h, regData.layerNum, regData.d_model, regData.h_after, regData.tokenStrings);
-			}
-		});
-
-		wrapperDiv.appendChild(toggleBtn);
-
-		plotDiv = document.createElement('div');
-		plotDiv.id = id;
-		plotDiv.style.cssText = "height: 500px; width: 100%; position: relative;";
-
-		wrapperDiv.appendChild(plotDiv);
-		parentContainer.appendChild(wrapperDiv);
+		plotDiv = createMigrationPlotDOM(id, d_model, existingVfEnabled, parentContainer);
 	} else {
 		const currentWrapper = plotDiv.closest('[data-migration-wrapper]') || plotDiv.parentNode;
 		if (currentWrapper && currentWrapper.parentNode !== parentContainer) {
 			parentContainer.appendChild(currentWrapper);
 		}
 	}
+	return plotDiv;
+}
 
-	const registryData = {
+function buildMigrationRegistryData(tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings, existingVfEnabled) {
+	return {
 		tokens: [...tokens],
 		start_h: Array.isArray(start_h) ? start_h.slice() : start_h,
 		end_h: Array.isArray(end_h) ? end_h.slice() : end_h,
@@ -3936,14 +3980,6 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 		tokenStrings: tokenStrings || null,
 		_vfEnabled: existingVfEnabled,
 	};
-
-	registerLazyRenderable(
-		id,
-		transformerLabVisMigrationDataRegistry,
-		migrationObserver,
-		registryData,
-		() => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings)
-	);
 }
 
 function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
