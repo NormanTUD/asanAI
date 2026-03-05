@@ -19,7 +19,6 @@ In the same way, the **silicon architectures** designed for the fleeting light o
 
 As Whitehead observed, the world is a **constantly changing, interwoven pattern**. The breakthroughs of the present are not a final destination; they are **momentary patterns** in a much larger, inseparable reality. Just as a river never stands still, the ideas captured in this document will eventually be pulled apart and woven into **new and unrecognizable forms**. We trace this specific lineage of the LLM not as a finished monument, but as a testament to a world that is constantly being repurposed by its own changing needs.
 
-\category{history,philosophy}
 ## The Abstraction of Labor: From Wheels to Thought
 
 <div class="smart-quote" data-cite="wheelerindirection">
@@ -31,7 +30,6 @@ The history of machines is fundamentally a history of **abstraction**, where hum
 
 This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction". Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine. Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
 
-\category{history,archaeology}
 ## Early Math
 
 ### Prehistoric Math
@@ -57,7 +55,6 @@ Researchers have long debated whether the artifact served as a simple tally, a *
 
 Ultimately, the Ishango bone represents the most significant archaeological indicator of prehistoric mathematical reasoning, and thus is a *very* early precursor to modern computers and AI systems.
 
-\category{history,hardware}
 ### The Salamis Tablet and the Abacus
 
 <div class="image-row">
@@ -81,7 +78,6 @@ The **Salamis Tablet** (c. 300 BC), discovered in 1846 and preserved at the **Ep
 
 As noted by \citeauthor{salminictablesource} (\citetitle{salminictablesource}, 1899, p. 393f), this device confirms that modern computation began by reducing thought to a formal calculus executed via a physical interface.
 
-\category{philosophy}
 ## The Roots of Formal Logic
 
 <figure>
@@ -128,9 +124,6 @@ The \citealternativetitle{antikytherasciam} is an ancient Greek hand-powered orr
 * **Technical Sophistication:** It contained at least 30 meshing bronze gears housed in a wooden case covered in inscriptions. These inscriptions acted as a user manual, explaining the cycles of the sun, moon, and at least five planets.
 * **Significance:** It proves that the "Computer Era" has roots in mechanical simulation. While Zuse and Aiken used gears or relays for abstract math, the Antikythera mechanism used them to model the physical universe through mechanical ratios.
 
-
-
-\category{hardware,history,philosophy}
 ## The idea that logical thought can be mechanically calculated
 
 ### The earliest attempt: \citeauthor{arsmagna}
@@ -154,7 +147,6 @@ A complete guide on how to use the Llullian **Volvette** as intended by Llull ca
 
 The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In his \citeyear{leibniz1685calculus} work \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
-\category{hardware,philosophy}
 ### Gottfried Wilhelm Leibniz 
 
 <div class="smart-quote" data-cite="leibniz1685calculus">
@@ -163,8 +155,6 @@ The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with
     </div>
     <div class="short-quote">Let us calculate! (Calculemus!)</div>
 </div>
-
-\category{hardware}
 
 <figure>
     <img style="width: 100%" src="Leibnizrechenmaschine.jpg" alt="Rechenmaschine by Leibniz" />
@@ -199,7 +189,6 @@ Lovelace authored what is recognized as the first complex algorithm intended for
 
 Lovelace's genius lay in her understanding of the "Science of Operations." She saw that the hardware was merely a vessel for the logic, famously stating that the Analytical Engine "weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves" (\citetitle{lovelacequote}).
 
-\category{philosophy,mathematics}
 ### The Algebra of Reason: George Boole's Binary Breakthrough
 
 If the wheel abstracted physical labor, the philosopher \citeauthor{bool1854} provided the ultimate abstraction for the cognitive process itself. In his seminal work, \citetitle{bool1854}, Boole achieved what Leibniz had only dreamed of: a formal calculus of the mind. By reducing Aristotelian logic to a series of algebraic equations, he demonstrated that reasoning could be treated as a mathematical operation where "truth" and "falsity" are binary variables. This transformation of logic into a system of 0s and 1s remains the invisible foundation of the modern computing; he is the reason why the `true`/`false` types are still called **booleans**. Every high-level linguistic inference made by an LLM is, at its deepest layer, a cascading series of Boole's logical gates, proving that even the most complex human discourse can be decomposed into the simple, cold precision of binary math.
@@ -248,7 +237,6 @@ With \citeauthor{uebersinnundbedeutung} and his work \citetitle{uebersinnundbede
 
 This "Symbolic AI" dominated the field for nearly forty years. It was believed that if we provided the machine with enough "if-then" rules and logical predicates, intelligence would emerge. LLMs are the radical antithesis to this dream: they prove that "sense" (in \citeauthor{uebersinnundbedeutung}'s Meaning) can be simulated through statistical association without ever explicitly defining a single logical rule.
 
-\category{history}
 ## The earliest roots of modern AI
 
 <div class="image-row">
@@ -272,7 +260,6 @@ This breakthrough allowed the brain to be viewed not just as a mysterious organ,
 
 This was the conceptual shift from "calculating machines" to the idea that cognition itself might be formalized (see the work of \citeauthor{piccini} for more details).
 
-\category{history,hardware}
 ### The SNARC: The First Physical Neural Network (1951)
 </div>
 
@@ -286,7 +273,6 @@ Built by **Marvin Minsky** and **Dean Edmonds** in 1951, the **SNARC** (Stochast
 
 Rather than relying on explicit programming, the machine learned via mechanical reinforcement. When the network made a random but "correct" move, a reinforcement signal engaged the clutches to turn potentiometers, physically altering the electrical resistance of the active connections. This increased the probability that those specific, successful pathways would fire again. By mechanically formalizing trial-and-error learning, concepts Minsky later detailed in his Princeton dissertation, *\citetitle{minsky1954}* (\citeyear{minsky1954}), the SNARC proved that a decentralized network of McCulloch-Pitts cells could autonomously calculate behavioral adaptation.
 
-\category{hardware,history,computer_science}
 ## Further developments of Computer Hardware and Computing Theory
 
 ### Howard Aiken & The Harvard Mark I (1944)
@@ -309,7 +295,6 @@ His **Big Idea:** Data and instructions are stored in the same memory. This allo
 * **Turing Machine (1936):** A theoretical model showing that a simple machine reading symbols on a tape could simulate any algorithmic logic.
 * **ACE & Enigma:** Beyond theory, he designed the Automatic Computing Engine (ACE) and led the cryptanalysis at Bletchley Park using the "Bombe."
 
-\category{hardware,history}
 ### The Imitation Game
 
 Before the term "Artificial Intelligence" even existed, **Alan Turing** laid the philosophical groundwork in \citeyear{turing1950computing} with his paper *\citetitle{turing1950computing}*.
@@ -319,12 +304,10 @@ I propose to consider the question, 'Can machines think?'
 
 Turing argued that defining "thinking" was too ambiguous. Instead, he proposed the **Imitation Game** (now known as the Turing Test), a practical standard where a computer is considered intelligent if it can converse indistinguishably from a human. This shifted the goal of AI from replicating biological mechanics to replicating observable behavior.
 
-\category{history}
 ## The term "Artificial Intelligence"
 
 The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificialintelligence} when **John McCarthy**, along with Marvin Minsky, Nathaniel Rochester, and Claude Shannon, submitted a proposal for the \citealternativetitle{darthmouthartificialintelligence}. The workshop was founded on the conjecture that "every aspect of learning or any other feature of intelligence can in principle be so precisely described that a machine can be made to simulate it," marking the official birth of the field.
 
-\category{history,hardware,psychology}
 ## The Beginning of Modern Artificial Neural Networks
 
 <figure>
@@ -347,7 +330,6 @@ Based on the \citealternativetitle{hebb1949organizationofbehaviour}, idea of the
 </figure>
 
 This project was funded by the *Office of Naval Research*, under the codename *Project Para*, first written about by \citeauthor{rosenblattperceptron} in \citeyear{rosenblattperceptron}.
-
 
 <div class="image-row">
 	<figure>
@@ -373,17 +355,14 @@ While this system shared the structural logic of a modern neural network, it fun
 
 These early neural networks were extremely limited by today's standards, but they introduced the core idea of learning from data rather than hard-coded rules. This is called *connectionist approach*, instead of the *symbolic approach*. In the *symbol approach*, like the *Rechenmaschine* by Leibniz, the rules are all set from the beginning on. In connectionist approaches, the rules are not set by humans, but trained on by data. Modern LLMs are connectionist rather than symbolic.
 
-\category{history}
 ### The Perceptron and the First AI Winter
 
-\category{history}
 #### The Hype (1958)
 
 When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans, and even translate languages into another. All of Rosenblatts predictions were astoundly accurate.
 
 Between the invention of the Perceptron in 1958 and the release of chatGPT, were 64 years of development, until all Rosenblatt envisioned became true. As such, this is a case of a \citealternativetitle{sleepingbeauty} invention.
 
-\category{history}
 #### The Critique (1969)
 Marvin Minsky and Seymour Papert published their book \citetitle{minskyperceptrons}, which provided a mathematical proof of the architecture's limitations. They demonstrated that a single-layer perceptron could not solve the **XOR (Exclusive OR)** problem because it was not "linearly separable."
 
@@ -414,7 +393,6 @@ Even though Minsky realized that having a Multi-Layer-Perceptron with non-linear
 
 The XOR problem was the ultimate litmus test for **non-linear complexity**. Since early Perceptrons could only classify data separable by a single straight line, they were mathematically incapable of solving XOR, where "True" results sit diagonally across from "False" results. This failure, it was thought, proved that connectionist AI could not handle basic binary addition or complex logic, leading to the **First AI Winter**. It wasn't until the 1980s that multi-layer networks and **Backpropagation** provided the "curved" mathematical logic needed to break through this linear wall.
 
-\category{history}
 #### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
 
 <div class="smart-quote" data-cite="lighthillreport" data-page=8>
@@ -433,14 +411,12 @@ The realization that simple neural networks couldn't handle basic logic gates, c
 
 The field only recovered in the 1980s with the popularization of \citealternativetitle{rumelhart1986}, which allowed multi-layer networks to finally solve the XOR problem.
 
-\category{history,software}
 ### The Architectural Precursors: Neocognitron and Backprop
 
 Before LeCun perfected the CNN, the architectural blueprints were drawn by **Kunihiko Fukushima** (who, in turn, based his work in the work of \citeauthorlastnameand{hubelwiesel}, who researched the cat's visual cortex), in \citeyear{neocognitron}, he developed the **\citealternativetitle{neocognitron}**, a hierarchical network inspired by the visual cortex. It introduced the two key layers of modern vision AI: "S-cells" (simple) for feature extraction and "C-cells" (complex) for pooling, which allowed the machine to recognize objects even if they were shifted in position.
 
 However, these deep structures were difficult to train until the popularization of **Backpropagation** by \citeauthor{rumelhart1986} in \citeyear{rumelhart1986}. This mathematical technique allowed the "error" of a network to be sent backward through the layers, adjusting the weights with precision. The combination of Fukushima's architecture and Rumelhart's training algorithm set the stage for the deep learning revolution.
 
-\category{hardware,history}
 ## The Silicon Engine: Moore's Law
 
 While AI research suffered through funding winters, the physical substrate of computing was undergoing an explosion. \citealternativetitle{mooreslaw} describes the observation made by Gordon Moore that the number of transistors in a dense integrated circuit doubles about every two years.
@@ -450,8 +426,6 @@ This relentless exponential growth meant that while algorithms remained largely 
 ## Automatic differentiation (1976)
 While the popularization of backpropagation is often credited to the 1980s, its mathematical genesis lies in the 1976 master's thesis of \citeauthor{linnainmaa1976}. He developed the "automatic differentiation" method, specifically the *reverse mode*, originally to efficiently manage rounding errors in complex computer calculations. Without explicitly intending it for neural networks, Linnainmaa created the hochefficient algorithm required to calculate gradients in nested functions. This work serves as the invisible mathematical backbone of modern Deep Learning, allowing error signals to be propagated backward through billions of parameters with minimal computational overhead.
 
-
-\category{history,software,psychology}
 ## The Illusion of Empathy: The ELIZA-Effect
 
 <div class="smart-quote" data-cite="weizenbaum1976computer" data-page=7>
@@ -512,7 +486,6 @@ LSTMs were the "workhorse" of AI for two decades (approx. 1997–2017).
 ### Significance
 Without the LSTM, the "AI Winter" for natural language processing likely would have lasted much longer. It proved that connectionist models could handle the sequential, complex nature of human speech by mimicking a form of persistent memory.
 
-\category{history,software}
 ## Convolutional Neural Networks and LeNet-5 (1989-1998)
 
 While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, an architecture specifically designed to recognize handwritten digits for the US Postal Service. Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration, mimicking the visual cortex, could solve complex pattern recognition tasks that traditional logic-based AI could not.
@@ -561,12 +534,10 @@ Nature loves to hide herself.
 
 If the models that mirror our own cognitive processes only achieve peak generalization once they become too complex to decode, then we've hit a biological version of an event horizon. We turned to AI as a mirror to understand ourselves, yet the "Bitter Lesson" suggests that the more accurate the reflection becomes, the more it retreats into a shroud of uninterpretable complexity. It's as if nature has placed a cosmic limit on self-observation: just as there is a visual boundary to the observable universe or a point in quantum scales where looking closer inherently blurs the view, the architecture of thought seems to veil itself the moment it becomes functional. In our attempt to build ourselves, we've discovered that intelligence is most "human" only when it remains an enigma, proving that the closer we get to the source, the more nature insists on its right to hide.
 
-\category{data}
 ## Scaling Laws: From Encyclopedias to the Digital Ocean
 
 The breakthrough of modern AI was predicated on a shift in data philosophy: moving from "quality" (hand-curated expert knowledge) to "quantity" (the total sum of digital footprints). Early AI failed because the world was not yet sufficiently digitized. The current era of 2020s AI only became possible once the internet provided a large enough corpus, petabytes of text, code, and images, to allow models to internalize the latent structures of human logic. In this context, data is the "terrain" that the machine's "wheels" must traverse; without a world-scale digital ocean, the abstraction of thought would have had nothing to grip.
 
-\category{alignment,ethics}
 ### Taming the Stochastic Parrot: The Alignment Era
 
 The final layer of abstraction in the history of LLMs is not mathematical, but teleological. As explored in \citetitle{ouyang2022instructgpt}, the raw statistical power of a base model often results in "hallucinations" or unhelpful outputs because the machine is merely predicting the next likely word, not the user's intent. By introducing **Reinforcement Learning from Human Feedback (RLHF)**, researchers moved beyond the "Black Box" of raw data ingestion into the realm of social alignment. This process essentially acts as a cultural filter, rewarding the model for being helpful, honest, and harmless. This represents the moment where the machine ceased to be a mere calculator of probabilities and began to function as a conversational agent, transitioning from a mirror of the internet's chaos to a tool that respects the subjective constraints of human interaction.
@@ -576,7 +547,6 @@ For decades, it was considered an axiom that language possesses an inherent hier
 
 This represents a pivotal moment in the intellectual history of LLMs: the eventual departure from the idea that we must impose human syntax on the machine. The Transformer did not prevail because it possessed "better" linguistics, but because it ignored rigid structure in favor of patterns learned implicitly through massive scaling.
 
-\category{hardware}
 ## From CPU to GPU: The Realization of the "Bitter Lesson"
 
 The shift from the Central Processing Unit (CPU) to the Graphics Processing Unit (GPU) represents the most significant hardware pivot in AI history. While the CPU is designed for deep, sequential logic, a direct descendant of the von Neumann architecture, the GPU utilizes thousands of simple cores to perform matrix multiplications simultaneously. This hardware shift validates the core thesis of \citetitle{sutton2019bitter}: that methods leveraging massive computation eventually outcompete those relying on human-centric heuristics. By abstracting away complex conditional logic in favor of "brute-force" parallel math, the GPU provided the raw power necessary to turn neural networks from theoretical models into dominant technologies.
@@ -584,7 +554,6 @@ The shift from the Central Processing Unit (CPU) to the Graphics Processing Unit
 ## The Deep Learning Revolution (\citeyear{krizhevsky2012imagenet})
 After the second AI winter, the field shifted back to connectionism. In \citeyear{krizhevsky2012imagenet}, the \citealternativetitle{krizhevsky2012imagenet} paper demonstrated that deep convolutional neural networks, when powered by **GPUs** and massive datasets like ImageNet, could outperform all traditional methods. This validated the \citealternativetitle{sutton2019bitter}: scale and computation ultimately triumph over hand-coded human intuition.
 
-\category{hardware,history}
 ## The Hardware Lottery: How Gamers Saved AI
 
 We tend to view the progress of AI as a purely mathematical evolution. However, \citeauthor{hooker2020} reminds us of a grounded reality in \citetitle{hooker2020}: the success of an algorithm is often dictated by available hardware rather than intellectual superiority.
@@ -594,7 +563,6 @@ Ideas win when they are "hardware-friendly." Because GPUs were optimized for par
 While the theoretical foundations of deep learning were laid in the 1980s, the field remained dormant largely due to a lack of computing power. The solution came from an unlikely source: the video game industry.
 
 In the mid-2000s, researchers began to realize that the mathematical operations required to render 3D video games, specifically, the manipulation of massive matrices of pixels, were mathematically identical to the operations required to train neural networks.
-
 
 ### The "Why": SIMD vs. MIMD
 The fundamental difference lies in architecture. A **CPU** (Central Processing Unit) is designed for **latency**: it has a few powerful cores optimized to do complex, sequential logic (MIMD: Multiple Instruction, Multiple Data). It is like a professor who can solve difficult calculus problems one by one.
@@ -635,7 +603,6 @@ Today, the focus has shifted to **Large Language Models (LLMs)** like GPT (first
 
 What changed since the early days was not the basic ideas, but the availability of data, computing power, and practical training techniques.
 
-\category{history,philosophy,hardware}
 ## The Great Convergence: From Syllogisms to Silicon
 
 The emergence of ChatGPT represents the "Great Convergence" of a multi-millennial effort to decouple human thought from biology and translate it into formal abstraction. This journey began with **Aristotle's** syllogisms and was radicalized by **Llull's** mechanical knowledge wheels and **Leibniz's** binary alphabet, the idea that all reasoning could be reduced to a series of calculations. From **Babbage and Lovelace's** "algebraic patterns" to **McCulloch and Pitts'** mathematical neurons, the lineage of AI has always sought to treat thought as a formal calculus.

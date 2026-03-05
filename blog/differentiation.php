@@ -1,7 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-\category{math,calculus}
 ## Derivatives: The Mathematics of Change
 
 The concept of a **derivative** is one of the most important ideas in all of mathematics. It answers a deceptively simple question: *How fast is something changing at this exact moment?*
@@ -10,7 +9,6 @@ If you drive a car and your speedometer reads 60 km/h, that number is a derivati
 
 This question puzzled mathematicians for centuries, and its resolution gave birth to an entire branch of mathematics: **Calculus**.
 
-\category{history,math}
 ### A Brief History: Who Invented Derivatives?
 
 The development of calculus is one of the most famous (and contentious) stories in the history of science. Two towering figures independently developed the core ideas in the late 17th century.
@@ -23,7 +21,6 @@ The bitter priority dispute between Newton and Leibniz, fueled by nationalistic 
 
 Before both of them, \citeauthor{oevresdeformat} had already explored the idea of finding tangent lines to curves using algebraic methods in the 1630s (see \citetitle{oevresdeformat}), and the concept of infinitesimals was discussed by mathematicians like Bonaventura Cavalieri and John Wallis (\citetitle{wallis1655}, \citeyear{wallis1655}). But it was Newton and Leibniz who unified these scattered ideas into a coherent, general framework.
 
-\category{math,calculus}
 ### The Limit Definition of the Derivative
 
 The derivative is built on the concept of a **limit**, which we introduced earlier. The key idea is to start with something we *can* compute, the average rate of change over an interval, and then shrink that interval to zero.
@@ -80,7 +77,6 @@ $$= \lim_{h \to 0} (2x + h) = 2x$$
 
 So the derivative of $x^2$ is $2x$. At $x = 3$, the slope of the tangent line is $2 \cdot 3 = 6$. This means that at $x = 3$, the function is increasing at a rate of 6 units of $y$ per unit of $x$.
 
-\category{math,calculus}
 ### Derivative Rules
 
 Computing derivatives from the limit definition every time would be tedious. Fortunately, mathematicians have derived a set of **rules** that let us differentiate most functions quickly. These rules were developed by Newton, Leibniz, and their successors (notably \citeauthor{euler1755} in \citetitle{euler1755}, \citeyear{euler1755}, who systematized much of the notation and theory).
@@ -181,7 +177,6 @@ Some derivatives appear so frequently in AI and science that they are worth memo
 
 The fact that $e^x$ is its own derivative is not a coincidence, it is essentially the *definition* of $e$. The number $e$ is the unique base for which the exponential function has this self-replicating property.
 
-\category{math,calculus}
 ### The Geometric Meaning: Tangent Lines
 
 The derivative $f'(a)$ gives the **slope of the tangent line** to the graph of $f$ at the point $x = a$. The equation of this tangent line is:
@@ -210,7 +205,6 @@ You can explore the tangent line interactively below. Move the point along the c
 </div>
 
 <div class="md">
-\category{math,calculus}
 ### The Chain Rule Visualized
 
 The chain rule is so important for AI that it deserves its own interactive demonstration. When we compose two functions $f(g(x))$, the chain rule tells us:
@@ -243,7 +237,6 @@ This is exactly what **backpropagation** computes, the chain rule applied layer 
 </div>
 
 <div class="md">
-\category{math,calculus}
 ### Why Derivatives Matter for AI
 
 Derivatives are not just an abstract mathematical concept, they are the **engine** that drives all of modern machine learning. Here is why:
@@ -300,7 +293,6 @@ The symbol $\partial$ for partial derivatives was introduced by \citeauthor{lege
 </div>
 
 <div class="md">
-\category{math,calculus}
 ### Summary
 
 | Concept | Notation | Meaning |
