@@ -1429,7 +1429,6 @@ input[type="range"] {
   appearance: none;
   background: transparent;
   cursor: pointer;
-  width: 100%;
   height: 40px;
   padding: 0;
   margin: 10px 0;
