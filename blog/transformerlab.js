@@ -2023,50 +2023,61 @@ window.select_suggested_word = (word) => {
 	run_transformer_demo('transformer-master-token-input');
 };
 
-/**
- * Computes logits and sorted predictions from the final hidden state.
- * Pure computation — no DOM access.
- */
 function computeFinalPredictions(h_last, vocabulary, d_model, temperature) {
-    const W_vocab = vocabulary.map(word =>
-        window.persistentEmbeddingSpace[word] || new Array(d_model).fill(0)
-    );
+	const W_vocab = vocabulary.map(word =>
+		window.persistentEmbeddingSpace[word] || new Array(d_model).fill(0)
+	);
 
-    const logits = vocabulary.map((word, i) => {
-        const w_row = W_vocab[i];
-        let sum = 0;
-        h_last.forEach((h_val, dim) => { sum += h_val * w_row[dim]; });
-        return { word, val: sum, w_row };
-    });
+	const logits = vocabulary.map((word, i) => {
+		const w_row = W_vocab[i];
+		let sum = 0;
+		h_last.forEach((h_val, dim) => { sum += h_val * w_row[dim]; });
+		return { word, val: sum, w_row };
+	});
 
-    const scaledLogits = logits.map(item => item.val / temperature);
-    const probs = softmax(scaledLogits);
+	// Original probabilities (T=1.0)
+	const originalLogits = logits.map(item => item.val);
+	const originalProbs = softmax(originalLogits);
 
-    const predictions = logits.map((item, i) => ({
-        word: item.word, prob: probs[i], logit: item.val
-    })).sort((a, b) => b.prob - a.prob);
+	// Temperature-scaled probabilities
+	const scaledLogits = logits.map(item => item.val / temperature);
+	const probs = softmax(scaledLogits);
 
-    return { logits, predictions };
+	const predictions = logits.map((item, i) => ({
+		word: item.word,
+		prob: probs[i],
+		originalProb: originalProbs[i],
+		logit: item.val
+	})).sort((a, b) => b.prob - a.prob);
+
+	return { logits, predictions };
 }
 
-/**
- * Builds the clickable prediction chip HTML.
- */
-function buildPredictionChipsHtml(predictions) {
-    let html = `<b>Final Probabilities (Click to Generate)</b>`;
-    html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">`;
+function buildPredictionChipsHtml(predictions, temperature) {
+	let html = `<b>Final Probabilities (Click to Generate)</b>`;
+	html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">`;
 
-    predictions.forEach(p => {
-        const intensity = Math.min(1, p.prob * 5);
-        const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        html += `<button class="predict-chip" onclick="select_suggested_word('${safeWord}')"
-            style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}">
-            <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
-        </button>`;
-    });
+	predictions.forEach(p => {
+		const intensity = Math.min(1, p.prob * 5);
+		const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
-    html += `</div>`;
-    return html;
+		// Show temperature info only when T ≠ 1.0
+		const tempInfo = (Math.abs(temperature - 1.0) > 0.01)
+			? `<span style="font-size:0.7rem; opacity:0.85; display:block; margin-top:2px;">
+		 Original: ${(p.originalProb * 100).toFixed(1)}%<br>
+		 T=${temperature}: ${(p.prob * 100).toFixed(1)}%
+	       </span>`
+			: '';
+
+		html += `<button class="predict-chip" onclick="select_suggested_word('${safeWord}')"
+	    style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}; text-align:center;">
+	    <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
+	    ${tempInfo}
+	</button>`;
+	});
+
+	html += `</div>`;
+	return html;
 }
 
 /**
@@ -2124,50 +2135,43 @@ This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. Whe
     return html;
 }
 
-/**
- * Ensures the stable sub-containers exist inside the projection container.
- * Returns { chipsDiv, detailsDiv }.
- */
 function ensureProjectionSubContainers(container) {
-    let chipsDiv = document.getElementById('tlab-final-chips');
-    let detailsDiv = document.getElementById('tlab-final-details');
+	let chipsDiv = document.getElementById('tlab-final-chips');
+	let detailsDiv = document.getElementById('tlab-final-details');
 
-    if (!chipsDiv || !detailsDiv) {
-        container.innerHTML = `
-            <div id="tlab-final-chips" style="position: sticky; top: 0; z-index: 10; background: #fff; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;"></div>
-            <div id="tlab-final-details"></div>
-        `;
-        chipsDiv = document.getElementById('tlab-final-chips');
-        detailsDiv = document.getElementById('tlab-final-details');
-    }
+	if (!chipsDiv || !detailsDiv) {
+		container.innerHTML = `
+	    <div id="tlab-final-chips" style="position: sticky; top: 0; z-index: 10; background: #fff; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;"></div>
+	    <div id="tlab-final-details"></div>
+	`;
+		chipsDiv = document.getElementById('tlab-final-chips');
+		detailsDiv = document.getElementById('tlab-final-details');
+	}
 
-    return { chipsDiv, detailsDiv };
+	return { chipsDiv, detailsDiv };
 }
 
-/**
- * Renders the final output projection — now a clean orchestrator.
- */
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
-    const container = document.getElementById('transformer-output-projection');
-    if (!container) return;
+	const container = document.getElementById('transformer-output-projection');
+	if (!container) return;
 
-    const h_last = h_final[h_final.length - 1];
+	const h_last = h_final[h_final.length - 1];
 
-    // 1. Pure computation
-    const { logits, predictions } = computeFinalPredictions(h_last, vocabulary, d_model, temperature);
+	// 1. Pure computation
+	const { logits, predictions } = computeFinalPredictions(h_last, vocabulary, d_model, temperature);
 
-    // 2. Ensure DOM structure
-    const { chipsDiv, detailsDiv } = ensureProjectionSubContainers(container);
+	// 2. Ensure DOM structure
+	const { chipsDiv, detailsDiv } = ensureProjectionSubContainers(container);
 
-    // 3. Always update chips
-    chipsDiv.innerHTML = buildPredictionChipsHtml(predictions);
+	// 3. Always update chips
+	chipsDiv.innerHTML = buildPredictionChipsHtml(predictions, temperature);
 
-    // 4. Conditionally update details (avoid layout shifts during training)
-    if (!window.isTraining || isElementInViewport(detailsDiv)) {
-        detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
-    }
+	// 4. Conditionally update details (avoid layout shifts during training)
+	if (!window.isTraining || isElementInViewport(detailsDiv)) {
+		detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
+	}
 
-    render_temml();
+	render_temml();
 }
 
 window.appendToken = (token) => {
