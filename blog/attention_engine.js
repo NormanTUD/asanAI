@@ -994,41 +994,45 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		if (!resolved) return;
 		const { layerData, hd, displayTokens } = resolved;
 
-		// Skip if weights haven't changed
-		const weightsHash = this._apvComputeWeightsHash(hd.this_weights);
-		const hashKey = `_apvLastHash_${layerIdx}_${headIdx}`;
-		if (this[hashKey] === weightsHash) return;
-		this[hashKey] = weightsHash;
+		if (!this._hasWeightsChanged(layerIdx, headIdx, hd.this_weights)) return;
 
-		// Save scroll & lock height
 		const savedScroll = this._saveScroll(headDiv);
 		this._lockHeight(headDiv);
 
-		// Patch SVGs in-place
-		this._apvDrawSingleHeadSync(layerIdx, headIdx, 'headview');
-		this._apvDrawSingleHeadSync(layerIdx, headIdx, 'matrix');
-
-		// Re-render attention web
+		this._patchSvgViews(layerIdx, headIdx);
 		this._renderAttentionWebForHead(layerIdx, headIdx, displayTokens, hd.this_weights);
 
-		// Morph equations & result HTML
 		const { needsTemml, equationsContainer, resultContainer } =
 			this._morphEquationsAndResult(layerIdx, headIdx, hd, displayTokens, layerData);
 
-		// Restore scroll
 		this._restoreScroll(savedScroll);
 
-		// Re-render math if needed
 		if (needsTemml) {
 			render_temml();
 		}
 
-		// Release height locks on morphed containers
+		this._unlockMorphedContainers(equationsContainer, resultContainer);
+		this._snapAndScheduleHeightUnlock(headDiv, savedScroll);
+	}
+
+	_unlockMorphedContainers(equationsContainer, resultContainer) {
 		if (equationsContainer) this._unlockHeightImmediate(equationsContainer);
 		if (resultContainer) this._unlockHeightImmediate(resultContainer);
+	}
 
-		// Snap headDiv to new natural height, then schedule lock release
-		this._snapAndScheduleHeightUnlock(headDiv, savedScroll);
+	_patchSvgViews(layerIdx, headIdx) {
+		this._apvDrawSingleHeadSync(layerIdx, headIdx, 'headview');
+		this._apvDrawSingleHeadSync(layerIdx, headIdx, 'matrix');
+	}
+
+	_hasWeightsChanged(layerIdx, headIdx, weights) {
+		const weightsHash = this._apvComputeWeightsHash(weights);
+		const hashKey = `_apvLastHash_${layerIdx}_${headIdx}`;
+
+		if (this[hashKey] === weightsHash) return false;
+
+		this[hashKey] = weightsHash;
+		return true;
 	}
 
 	_morphEquationsAndResult(layerIdx, headIdx, hd, displayTokens, layerData) {
