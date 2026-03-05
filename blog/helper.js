@@ -1206,10 +1206,16 @@ function addConsoleEasterEggs() {
 	console.log('%cThat means you\'re curious. We like curious.', sub);
 
 	const tips = [
-		"Fun fact: The backpropagation algorithm was independently discovered at least 3 times.",
-		"The attention mechanism was inspired by how humans read — skipping boring parts, just like you're doing right now.",
-		"GPT-3 has 175 billion parameters. This course has... fewer.",
-		"If you can read this, you're overqualified for most AI discussions on Twitter.",
+		"The backpropagation algorithm was independently discovered at least 3 times before it became famous.",
+		"The word 'embedding' comes from topology — mapping one space into another while preserving structure.",
+		"Attention Is All You Need was rejected from ICML before being accepted at NeurIPS.",
+		"GPT-3 has 175 billion parameters. A fruit fly brain has ~100,000 neurons. Draw your own conclusions.",
+		"The 'temperature' in sampling is borrowed from thermodynamics. Boltzmann would be proud.",
+		"The Transformer was originally designed for translation. Nobody expected it to write poetry.",
+		"Layer normalization was invented because batch normalization doesn't work well with sequences.",
+		"The 'residual' in ResNet was inspired by the idea that learning nothing should be easy.",
+		"Tokenizers don't understand language. They understand byte frequencies. That's somehow enough.",
+		"The softmax function is just a Boltzmann distribution wearing a trench coat.",
 	];
 
 	console.log(`%c💡 ${tips[Math.floor(Math.random() * tips.length)]}`, sub);
