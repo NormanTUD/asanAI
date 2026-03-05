@@ -30,8 +30,6 @@ Different optimizers use different strategies for step 2:
 | **Learning Rate** | The size of each step. Controls how aggressively the optimizer moves. | Convergence is painfully slow; may stall. | The optimizer "overshoots" and bounces around the minimum, or even diverges. |
 | **Epochs (Steps)** | How many update steps the optimizer is allowed to take. | May stop before reaching the minimum. | Wastes computation if the minimum was already found. |
 | **Start Position** | Where on the x-axis the optimizer begins its journey. | — | — |
-
-**💡 Try this:** Set the learning rate to 0.5 with SGD and watch the optimizer overshoot wildly. Then lower it to 0.05 and see how it stabilizes but slows down. Finding the right learning rate is one of the most important skills in machine learning.
 </div>
 
 <div style="display: flex; flex-direction: column; gap: 20px; background: #f1f5f9; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1;">
