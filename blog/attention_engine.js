@@ -1995,22 +1995,19 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	}
 
 	_apvAttachMatrixTooltip(svg, layerIdx, headDataArray, tokens, headDisplayOffset = 0) {
-		const tooltipId = `apv-tooltip-${this.containerId}-${layerIdx}-${headDisplayOffset}`;
-
-		// ── Store live-updating data reference on the SVG element itself ──
+		// Store live-updating data reference on the SVG element itself
 		svg._apvTooltipData = {
-			headDataArray: headDataArray,
-			tokens: tokens,
-			layerIdx: layerIdx,
-			headDisplayOffset: headDisplayOffset
+			headDataArray,
+			tokens,
+			layerIdx,
+			headDisplayOffset
 		};
 
-		// ── Only create tooltip div and attach listeners ONCE per SVG ──
+		// If already attached, just invalidate cache and force rebuild
 		if (svg._apvTooltipAttached) {
 			if (svg._apvTooltipCache) {
 				svg._apvTooltipCache.lastKey = null;
 			}
-			// Force rebuild if tooltip is currently visible
 			if (svg._apvTooltipRebuild) {
 				svg._apvTooltipRebuild();
 			}
@@ -2018,286 +2015,68 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		}
 		svg._apvTooltipAttached = true;
 
-		let tooltip = document.getElementById(tooltipId);
-		if (tooltip) tooltip.remove();
-
-		tooltip = document.createElement('div');
-		tooltip.id = tooltipId;
-		tooltip.style.cssText = `
-position:fixed; padding:10px 14px; background:#1e293b; color:#fff;
-border-radius:8px; font-size:0.8rem; pointer-events:none;
-z-index:9999; display:none; white-space:normal;
-box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-max-width:90vw; max-height:80vh; overflow-y:auto;
-line-height:1.5;
-    `;
-		document.body.appendChild(tooltip);
-
-		const self = this;
-
-		// ── Tooltip caching object stored on SVG for external invalidation ──
+		const tooltip = this._createTooltipElement(layerIdx, headDisplayOffset);
 		const cache = { lastKey: null };
 		svg._apvTooltipCache = cache;
 
-		// ── Track last mouse event so we can rebuild without a new mousemove ──
 		let lastMouseEvent = null;
+		const self = this;
 
-		// Helper: format a vector as a column pmatrix
-		const toColVec = (arr) => {
-			return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' \\\\ ')} \\end{pmatrix}`;
-		};
-
-		// Helper: format a matrix as pmatrix
-		const toMatrix = (mat) => {
-			return `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
-		};
-
-		// Helper: format a row vector as a row pmatrix
-		const toRowVec = (arr) => {
-			return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' & ')} \\end{pmatrix}`;
-		};
-
-		// Helper: compute dot product of two arrays
-		const dotVec = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
-
-		const positionTooltip = (e) => {
-			tooltip.style.display = 'block';
-			const tw = tooltip.offsetWidth;
-			const th = tooltip.offsetHeight;
-			let left = e.clientX + 16;
-			let top = e.clientY - 20;
-
-			// ── Right edge: flip to left side of cursor ──
-			if (left + tw > window.innerWidth - 10) {
-				left = e.clientX - tw - 16;
-			}
-
-			// ── Left edge: clamp so tooltip never goes behind the left side ──
-			if (left < 10) {
-				left = 10;
-			}
-
-			// ── Bottom edge: push up ──
-			if (top + th > window.innerHeight - 10) {
-				top = window.innerHeight - th - 10;
-			}
-
-			// ── Top edge: clamp ──
-			if (top < 10) {
-				top = 10;
-			}
-
-			tooltip.style.left = left + 'px';
-			tooltip.style.top = top + 'px';
-		};
-
-		// ── Core tooltip build logic, extracted so it can be called from mousemove OR forced rebuild ──
-		function buildTooltip(e) {
-			// ── Read LIVE data from the SVG element ──
+		const buildTooltip = (e) => {
 			const liveData = svg._apvTooltipData;
 			if (!liveData) return;
-			const liveHeadDataArray = liveData.headDataArray;
-			const liveTokens = liveData.tokens;
-			const liveLayerIdx = liveData.layerIdx;
-			const liveHeadDisplayOffset = liveData.headDisplayOffset;
-			const hLabel = `h_{${liveLayerIdx}}`;
 
-			// ── Case 1: Hovering a grid cell (rect) ──
+			// Try grid cell first
 			const rect = e.target.closest('rect[data-apv-qi]');
 			if (rect) {
 				const hIdx = parseInt(rect.getAttribute('data-apv-head'));
 				const qi = parseInt(rect.getAttribute('data-apv-qi'));
 				const ki = parseInt(rect.getAttribute('data-apv-ki'));
-
-				// ── Cache check: skip rebuild if same cell AND data hasn't been invalidated ──
 				const tooltipKey = `rect-${hIdx}-${qi}-${ki}`;
 				if (tooltipKey === cache.lastKey) {
-					positionTooltip(e);
+					self._positionTooltip(tooltip, e);
 					return;
 				}
 				cache.lastKey = tooltipKey;
 
-				if (!liveHeadDataArray[hIdx]) {
+				const html = self._buildCellTooltipHtml(liveData, hIdx, qi, ki);
+				if (!html) {
 					tooltip.style.display = 'none';
 					return;
 				}
-
-				const hd = liveHeadDataArray[hIdx];
-				const w = hd.this_weights[qi][ki];
-				const displayHeadNum = hIdx + liveHeadDisplayOffset + 1;
-				const d_k = hd.Qi[0].length;
-				const d_k_int = Math.round(d_k);
-				const d_model = hd.d_model || self.d_model;
-				const d_model_int = Math.round(d_model);
-				const n_heads = Math.round(d_model / d_k);
-
-				// Get vectors
-				const q_i = hd.Qi[qi];
-				const k_j = hd.Ki[ki];
-				const v_j = hd.Vi[ki];
-				const h0_qi = hd.h0[qi];
-				const h0_kj = hd.h0[ki];
-
-				// Raw score (before softmax) — scale by √d_k
-				const rawScore = dotVec(q_i, k_j) / Math.sqrt(d_k);
-
-				// All raw scores for this row (for softmax display)
-				const n = liveTokens.length;
-				const rawScoresRow = [];
-				for (let c = 0; c < n; c++) {
-					let s = dotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(d_k);
-					if (c > qi) s = -1e9;
-					rawScoresRow.push(s);
-				}
-
-				// Softmax computation
-				const maxVal = Math.max(...rawScoresRow);
-				const exps = rawScoresRow.map(v => Math.exp(v - maxVal));
-				const sumExp = exps.reduce((a, b) => a + b, 0);
-				const softmaxRow = exps.map(v => v / sumExp);
-
-				// ── Build HTML ──
-				let html = '';
-
-				// Line 1: Header
-				html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
-				html += `Head ${displayHeadNum}: "${liveTokens[qi]}" → "${liveTokens[ki]}" = ${(w * 100).toFixed(1)}%`;
-				html += `</div>`;
-
-				// Row 0: Explain d_k derivation from d_model and n_heads
-				html += `<div style="margin-bottom:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">`;
-				html += `$d_k = \\frac{d_{\\text{model}}}{n_{\\text{heads}}} = \\frac{${d_model_int}}{${n_heads}} = ${d_k_int}$`;
-				html += `</div>`;
-
-				// Row 1: Abstract equation
-				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_k_int}}} = ${rawScore.toFixed(nr_fixed)}$`;
-				html += `</div>`;
-
-				// Row 2: Q projection
-				html += `<div style="margin-bottom:6px;">`;
-				html += `$Q_{${qi}} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_qi)}}_{\\substack{${hLabel}[${qi}] \\\\ \\text{"${liveTokens[qi]}"}}} = ${toColVec(q_i)}$`;
-				html += `</div>`;
-
-				// Row 3: K projection
-				html += `<div style="margin-bottom:6px;">`;
-				html += `$K_{${ki}} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_kj)}}_{\\substack{${hLabel}[${ki}] \\\\ \\text{"${liveTokens[ki]}"}}} = ${toColVec(k_j)}$`;
-				html += `</div>`;
-
-				// Row 4: V projection (NEW — was missing)
-				html += `<div style="margin-bottom:6px;">`;
-				html += `$V_{${ki}} = \\underbrace{${toMatrix(hd.WV)}}_{W_V}^T \\cdot \\underbrace{${toColVec(h0_kj)}}_{\\substack{${hLabel}[${ki}] \\\\ \\text{"${liveTokens[ki]}"}}} = ${toColVec(v_j)}$`;
-				html += `</div>`;
-
-				// Row 5: Dot product
-				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\frac{\\underbrace{${toRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${liveTokens[qi]}"})} \\cdot \\underbrace{${toColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${liveTokens[ki]}"})}}{\\sqrt{${d_k_int}}} = \\frac{${dotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(d_k).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
-				html += `</div>`;
-
-				// Row 6: Softmax over the full row, highlighting current cell
-				html += `<div style="margin-bottom:4px;">`;
-				let softmaxNumer = `e^{${ki > qi ? '-\\infty' : rawScoresRow[ki].toFixed(nr_fixed)}}`;
-				let denomParts = [];
-				for (let c = 0; c < n; c++) {
-					if (c > qi) {
-						denomParts.push(`e^{-\\infty}`);
-					} else {
-						denomParts.push(`e^{${rawScoresRow[c].toFixed(nr_fixed)}}`);
-					}
-				}
-				let softmaxDenom = denomParts.join(' + ');
-				html += `$\\text{softmax}_{${ki}} = \\frac{${softmaxNumer}}{${softmaxDenom}}$`;
-				html += `</div>`;
-
-				// Full softmax result row with current cell highlighted
-				html += `<div style="margin-bottom:2px;">`;
-				html += `$= \\Big(`;
-				let parts = [];
-				for (let c = 0; c < n; c++) {
-					const val = (softmaxRow[c] * 100).toFixed(1) + '\\%';
-					if (c === ki) {
-						parts.push(`\\boxed{\\underbrace{${val}}_{\\text{${liveTokens[c]}}}}`);
-					} else {
-						parts.push(`\\underbrace{${val}}_{\\text{${liveTokens[c]}}}`);
-					}
-				}
-				html += parts.join(',\\;');
-				html += `\\Big)$`;
-				html += `</div>`;
-
-				// Row 7: Weighted V contribution (NEW — shows what this cell actually contributes)
-				html += `<div style="margin-top:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">`;
-				const weightedV = v_j.map(v => w * v);
-				html += `$\\alpha_{${qi},${ki}} \\cdot V_{${ki}} = ${w.toFixed(nr_fixed)} \\cdot ${toColVec(v_j)} = ${toColVec(weightedV)}$`;
-				html += `</div>`;
-
 				tooltip.innerHTML = html;
 				render_temml();
-				positionTooltip(e);
+				self._positionTooltip(tooltip, e);
 				return;
 			}
 
-			// ── Case 2: Hovering a border word (row or column label) ──
+			// Try row/column label
 			const textEl = e.target.closest('text[data-apv-token-side]');
 			if (textEl) {
 				const side = textEl.getAttribute('data-apv-token-side');
 				const idx = parseInt(textEl.getAttribute('data-apv-token-idx'));
-
-				// ── Cache check: skip rebuild if same label ──
 				const tooltipKey = `label-${side}-${idx}`;
 				if (tooltipKey === cache.lastKey) {
-					positionTooltip(e);
+					self._positionTooltip(tooltip, e);
 					return;
 				}
 				cache.lastKey = tooltipKey;
 
-				const hd = liveHeadDataArray[0];
-				if (!hd) {
+				const html = self._buildLabelTooltipHtml(liveData, idx);
+				if (!html) {
 					tooltip.style.display = 'none';
 					return;
 				}
-
-				const h0_vec = hd.h0[idx];
-				const q_vec = hd.Qi[idx];
-				const k_vec = hd.Ki[idx];
-				const v_vec = hd.Vi[idx];
-				const displayHeadNum = liveHeadDisplayOffset + 1;
-
-				let html = '';
-				html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
-				html += `Token "${liveTokens[idx]}" (index ${idx}) — Head ${displayHeadNum}, Layer ${liveLayerIdx + 1}`;
-				html += `</div>`;
-
-				// Input embedding with token word label
-				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${liveTokens[idx]}"}}}$`;
-				html += `</div>`;
-
-				// Q projection with token word label
-				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\underbrace{Q_{${idx}}}_{\\text{"${liveTokens[idx]}"}} = \\underbrace{${toMatrix(hd.WQ)}}_{W_Q}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${liveTokens[idx]}"}}} = ${toColVec(q_vec)}$`;
-				html += `</div>`;
-
-				// K projection with token word label
-				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\underbrace{K_{${idx}}}_{\\text{"${liveTokens[idx]}"}} = \\underbrace{${toMatrix(hd.WK)}}_{W_K}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${liveTokens[idx]}"}}} = ${toColVec(k_vec)}$`;
-				html += `</div>`;
-
-				// V projection with token word label
-				html += `<div style="margin-bottom:6px;">`;
-				html += `$\\underbrace{V_{${idx}}}_{\\text{"${liveTokens[idx]}"}} = \\underbrace{${toMatrix(hd.WV)}}_{W_V}^T \\cdot \\underbrace{${toColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${liveTokens[idx]}"}}} = ${toColVec(v_vec)}$`;
-				html += `</div>`;
-
 				tooltip.innerHTML = html;
 				render_temml();
-				positionTooltip(e);
+				self._positionTooltip(tooltip, e);
 				return;
 			}
 
-			// ── Case 3: Not hovering anything relevant ──
+			// Nothing relevant
 			tooltip.style.display = 'none';
 			cache.lastKey = null;
-		}
+		};
 
 		svg.addEventListener('mousemove', (e) => {
 			lastMouseEvent = e;
@@ -2310,14 +2089,258 @@ line-height:1.5;
 			cache.lastKey = null;
 		});
 
-		// ── Expose a rebuild function so _apvPatchMatrix can force a refresh ──
 		svg._apvTooltipRebuild = () => {
 			if (lastMouseEvent && tooltip.style.display !== 'none') {
-				cache.lastKey = null; // force rebuild
+				cache.lastKey = null;
 				buildTooltip(lastMouseEvent);
 			}
 		};
 	}
+
+/**
+ * Creates and appends the tooltip DOM element, removing any prior one with the same ID.
+ */
+_createTooltipElement(layerIdx, headDisplayOffset) {
+	const tooltipId = `apv-tooltip-${this.containerId}-${layerIdx}-${headDisplayOffset}`;
+
+	let tooltip = document.getElementById(tooltipId);
+	if (tooltip) tooltip.remove();
+
+	tooltip = document.createElement('div');
+	tooltip.id = tooltipId;
+	tooltip.style.cssText = `
+	position:fixed; padding:10px 14px; background:#1e293b; color:#fff;
+	border-radius:8px; font-size:0.8rem; pointer-events:none;
+	z-index:9999; display:none; white-space:normal;
+	box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+	max-width:90vw; max-height:80vh; overflow-y:auto;
+	line-height:1.5;
+    `;
+	document.body.appendChild(tooltip);
+	return tooltip;
+}
+
+/**
+ * Positions the tooltip near the cursor, clamping to viewport edges.
+ */
+_positionTooltip(tooltip, e) {
+	tooltip.style.display = 'block';
+	const tw = tooltip.offsetWidth;
+	const th = tooltip.offsetHeight;
+	let left = e.clientX + 16;
+	let top = e.clientY - 20;
+
+	if (left + tw > window.innerWidth - 10) {
+		left = e.clientX - tw - 16;
+	}
+	if (left < 10) {
+		left = 10;
+	}
+	if (top + th > window.innerHeight - 10) {
+		top = window.innerHeight - th - 10;
+	}
+	if (top < 10) {
+		top = 10;
+	}
+
+	tooltip.style.left = left + 'px';
+	tooltip.style.top = top + 'px';
+}
+
+// ── LaTeX formatting helpers for tooltips ──
+
+_tooltipColVec(arr) {
+	return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' \\\\ ')} \\end{pmatrix}`;
+}
+
+_tooltipRowVec(arr) {
+	return `\\begin{pmatrix} ${arr.map(v => typeof v === 'number' ? v.toFixed(nr_fixed) : v).join(' & ')} \\end{pmatrix}`;
+}
+
+_tooltipMatrix(mat) {
+	return `\\begin{pmatrix} ${mat.map(row => row.map(v => v.toFixed(nr_fixed)).join(' & ')).join(' \\\\ ')} \\end{pmatrix}`;
+}
+
+_tooltipDotVec(a, b) {
+	return a.reduce((s, v, i) => s + v * b[i], 0);
+}
+
+/**
+ * Builds tooltip HTML when hovering a grid cell (rect) in the attention matrix.
+ * Returns null if the head data is missing.
+ */
+_buildCellTooltipHtml(liveData, hIdx, qi, ki) {
+	const { headDataArray, tokens, layerIdx, headDisplayOffset } = liveData;
+	if (!headDataArray[hIdx]) return null;
+
+	const hd = headDataArray[hIdx];
+	const w = hd.this_weights[qi][ki];
+	const displayHeadNum = hIdx + headDisplayOffset + 1;
+	const d_k = hd.Qi[0].length;
+	const d_k_int = Math.round(d_k);
+	const d_model = hd.d_model || this.d_model;
+	const d_model_int = Math.round(d_model);
+	const n_heads = Math.round(d_model / d_k);
+	const n = tokens.length;
+	const hLabel = `h_{${layerIdx}}`;
+
+	const q_i = hd.Qi[qi];
+	const k_j = hd.Ki[ki];
+	const v_j = hd.Vi[ki];
+	const h0_qi = hd.h0[qi];
+	const h0_kj = hd.h0[ki];
+
+	const rawScore = this._tooltipDotVec(q_i, k_j) / Math.sqrt(d_k);
+
+	// All raw scores for this query row (for softmax display)
+	const rawScoresRow = this._computeRawScoresRow(hd, qi, n, d_k);
+	const softmaxRow = this._computeSoftmaxRow(rawScoresRow);
+
+	let html = '';
+
+	// Header
+	html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
+	html += `Head ${displayHeadNum}: "${tokens[qi]}" → "${tokens[ki]}" = ${(w * 100).toFixed(1)}%`;
+	html += `</div>`;
+
+	// d_k derivation
+	html += `<div style="margin-bottom:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">`;
+	html += `$d_k = \\frac{d_{\\text{model}}}{n_{\\text{heads}}} = \\frac{${d_model_int}}{${n_heads}} = ${d_k_int}$`;
+	html += `</div>`;
+
+	// Abstract score equation
+	html += `<div style="margin-bottom:6px;">`;
+	html += `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_k_int}}} = ${rawScore.toFixed(nr_fixed)}$`;
+	html += `</div>`;
+
+	// Q, K, V projections
+	html += this._buildProjectionHtml('Q', qi, hd.WQ, h0_qi, q_i, tokens[qi], hLabel, layerIdx);
+	html += this._buildProjectionHtml('K', ki, hd.WK, h0_kj, k_j, tokens[ki], hLabel, layerIdx);
+	html += this._buildProjectionHtml('V', ki, hd.WV, h0_kj, v_j, tokens[ki], hLabel, layerIdx);
+
+	// Dot product expansion
+	html += `<div style="margin-bottom:6px;">`;
+	html += `$\\frac{\\underbrace{${this._tooltipRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${tokens[qi]}"})} \\cdot \\underbrace{${this._tooltipColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${tokens[ki]}"})}}{\\sqrt{${d_k_int}}} = \\frac{${this._tooltipDotVec(q_i, k_j).toFixed(nr_fixed)}}{${Math.sqrt(d_k).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$`;
+	html += `</div>`;
+
+	// Softmax breakdown
+	html += this._buildSoftmaxHtml(rawScoresRow, softmaxRow, qi, ki, n, tokens);
+
+	// Weighted V contribution
+	html += `<div style="margin-top:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">`;
+	const weightedV = v_j.map(v => w * v);
+	html += `$\\alpha_{${qi},${ki}} \\cdot V_{${ki}} = ${w.toFixed(nr_fixed)} \\cdot ${this._tooltipColVec(v_j)} = ${this._tooltipColVec(weightedV)}$`;
+	html += `</div>`;
+
+	return html;
+}
+
+/**
+ * Builds tooltip HTML when hovering a row or column token label.
+ * Returns null if head data is missing.
+ */
+_buildLabelTooltipHtml(liveData, idx) {
+	const { headDataArray, tokens, layerIdx, headDisplayOffset } = liveData;
+	const hd = headDataArray[0];
+	if (!hd) return null;
+
+	const hLabel = `h_{${layerIdx}}`;
+	const displayHeadNum = headDisplayOffset + 1;
+	const h0_vec = hd.h0[idx];
+
+	let html = '';
+	html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
+	html += `Token "${tokens[idx]}" (index ${idx}) — Head ${displayHeadNum}, Layer ${layerIdx + 1}`;
+	html += `</div>`;
+
+	// Input embedding
+	html += `<div style="margin-bottom:6px;">`;
+	html += `$\\underbrace{${this._tooltipColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokens[idx]}"}}}$`;
+	html += `</div>`;
+
+	// Q, K, V projections
+	html += this._buildProjectionHtml('Q', idx, hd.WQ, h0_vec, hd.Qi[idx], tokens[idx], hLabel, layerIdx);
+	html += this._buildProjectionHtml('K', idx, hd.WK, h0_vec, hd.Ki[idx], tokens[idx], hLabel, layerIdx);
+	html += this._buildProjectionHtml('V', idx, hd.WV, h0_vec, hd.Vi[idx], tokens[idx], hLabel, layerIdx);
+
+	return html;
+}
+
+/**
+ * Builds a single projection equation line (Q, K, or V).
+ */
+_buildProjectionHtml(label, idx, weightMatrix, inputVec, resultVec, tokenStr, hLabel, layerIdx) {
+	return `<div style="margin-bottom:6px;">` +
+		`$\\underbrace{${label}_{${idx}}}_{\\text{"${tokenStr}"}} = ` +
+		`\\underbrace{${this._tooltipMatrix(weightMatrix)}}_{W_${label}}^T \\cdot ` +
+		`\\underbrace{${this._tooltipColVec(inputVec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokenStr}"}}} = ` +
+		`${this._tooltipColVec(resultVec)}$` +
+		`</div>`;
+}
+
+/**
+ * Computes the raw (pre-softmax) attention scores for a single query row,
+ * applying the causal mask (−1e9 for future positions).
+ */
+_computeRawScoresRow(hd, qi, n, d_k) {
+	const rawScoresRow = [];
+	for (let c = 0; c < n; c++) {
+		let s = this._tooltipDotVec(hd.Qi[qi], hd.Ki[c]) / Math.sqrt(d_k);
+		if (c > qi) s = -1e9;
+		rawScoresRow.push(s);
+	}
+	return rawScoresRow;
+}
+
+/**
+ * Computes the softmax of a row of raw scores.
+ */
+_computeSoftmaxRow(rawScoresRow) {
+	const maxVal = Math.max(...rawScoresRow);
+	const exps = rawScoresRow.map(v => Math.exp(v - maxVal));
+	const sumExp = exps.reduce((a, b) => a + b, 0);
+	return exps.map(v => v / sumExp);
+}
+
+/**
+ * Builds the softmax breakdown HTML: the fraction and the full result row
+ * with the current cell boxed.
+ */
+_buildSoftmaxHtml(rawScoresRow, softmaxRow, qi, ki, n, tokens) {
+	let html = '';
+
+	// Softmax fraction
+	html += `<div style="margin-bottom:4px;">`;
+	const softmaxNumer = `e^{${ki > qi ? '-\\infty' : rawScoresRow[ki].toFixed(nr_fixed)}}`;
+	const denomParts = [];
+	for (let c = 0; c < n; c++) {
+		if (c > qi) {
+			denomParts.push(`e^{-\\infty}`);
+		} else {
+			denomParts.push(`e^{${rawScoresRow[c].toFixed(nr_fixed)}}`);
+		}
+	}
+	html += `$\\text{softmax}_{${ki}} = \\frac{${softmaxNumer}}{${denomParts.join(' + ')}}$`;
+	html += `</div>`;
+
+	// Full softmax result row
+	html += `<div style="margin-bottom:2px;">`;
+	html += `$= \\Big(`;
+	const parts = [];
+	for (let c = 0; c < n; c++) {
+		const val = (softmaxRow[c] * 100).toFixed(1) + '\\%';
+		if (c === ki) {
+			parts.push(`\\boxed{\\underbrace{${val}}_{\\text{${tokens[c]}}}}`);
+		} else {
+			parts.push(`\\underbrace{${val}}_{\\text{${tokens[c]}}}`);
+		}
+	}
+	html += parts.join(',\\;');
+	html += `\\Big)$`;
+	html += `</div>`;
+
+	return html;
+}
 
 	_apvLoadState() {
 		try {
