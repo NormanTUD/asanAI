@@ -562,10 +562,18 @@ class AttentionEngine {
 		const offscreen = document.createElement('div');
 		offscreen.innerHTML = newHtml;
 
-		// FIX: Lock the container height to prevent layout shift
+		// FIX: Cancel any pending height unlock from a previous call
+		if (container._heightUnlockRafId) {
+			cancelAnimationFrame(container._heightUnlockRafId);
+			container._heightUnlockRafId = null;
+		}
+
+		// FIX: Lock the container height to prevent BOTH shrink AND grow
 		const previousHeight = container.offsetHeight;
 		if (previousHeight > 0) {
 			container.style.minHeight = previousHeight + 'px';
+			container.style.maxHeight = previousHeight + 'px';
+			container.style.overflow = 'hidden';
 		}
 
 		// Save scroll position of nearest scrollable ancestor
@@ -584,12 +592,10 @@ class AttentionEngine {
 			window.scrollTo(savedScrollLeft, savedScrollTop);
 		}
 
-		// FIX: Release height lock after the browser has painted the new content
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				container.style.minHeight = '';
-			});
-		});
+		// NOTE: Height lock is NOT released here.
+		// The caller is responsible for calling _releaseHeightLock() on this
+		// container AFTER any post-processing (e.g. render_temml()) is complete.
+		// This prevents the 1228→1270px jump observed during training.
 
 		return true; // content was updated
 	}
@@ -623,7 +629,15 @@ class AttentionEngine {
 			const savedScrollTop = scrollParent ? scrollParent.scrollTop : window.scrollY;
 			const savedScrollLeft = scrollParent ? scrollParent.scrollLeft : window.scrollX;
 
+			// Cancel any pending height unlock from a previous render cycle
+			if (headDiv._heightUnlockRafId) {
+				cancelAnimationFrame(headDiv._heightUnlockRafId);
+				headDiv._heightUnlockRafId = null;
+			}
+
 			headDiv.style.minHeight = headDiv.offsetHeight + 'px';
+			headDiv.style.maxHeight = headDiv.offsetHeight + 'px';
+			headDiv.style.overflow = 'hidden';
 
 			// ── All updates happen synchronously — no rAF nesting ──
 			this._apvDrawSingleHeadSync(layerIdx, headIdx, 'headview');
@@ -668,17 +682,34 @@ class AttentionEngine {
 				window.scrollTo(savedScrollLeft, savedScrollTop);
 			}
 
-			// ── Release height lock after the browser has painted the new content ──
-			requestAnimationFrame(() => {
-				requestAnimationFrame(() => {
-					headDiv.style.minHeight = '';
-				});
-			});
-
-			// Single temml pass after all DOM updates are done
+			// ── Single temml pass after all DOM updates are done ──
 			if (needsTemml) {
 				render_temml();
 			}
+
+			// ── FIX: Release height locks on morphed containers AFTER temml has rendered ──
+			// This ensures the containers snap to their final rendered height in one step,
+			// preventing the 1228px → 1270px jump observed during training.
+			if (equationsContainer) {
+				equationsContainer.style.minHeight = '';
+				equationsContainer.style.maxHeight = '';
+				equationsContainer.style.overflow = '';
+			}
+			if (resultContainer) {
+				resultContainer.style.minHeight = '';
+				resultContainer.style.maxHeight = '';
+				resultContainer.style.overflow = '';
+			}
+
+			// ── Release headDiv height lock after browser has painted the final content ──
+			headDiv._heightUnlockRafId = requestAnimationFrame(() => {
+				headDiv._heightUnlockRafId = requestAnimationFrame(() => {
+					headDiv._heightUnlockRafId = null;
+					headDiv.style.minHeight = '';
+					headDiv.style.maxHeight = '';
+					headDiv.style.overflow = '';
+				});
+			});
 
 			return;
 		}
@@ -784,6 +815,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			);
 		});
 	}
+
 
 	_apvDrawSingleHeadSync(layerIdx, headIdx, mode) {
 		const registry = multiLayerAttentionRegistry.get(this.containerId);
