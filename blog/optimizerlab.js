@@ -77,7 +77,9 @@ function startOptimizer() {
 	let stepsTaken = 0;
 	isRunning = true;
 	mainBtn.innerHTML = "⏸ Pause Training";
-	restartBtn.style.display = "block";
+	mainBtn.style.background = "#dc2626";
+	mainBtn.style.color = "#ffffff";
+	restartBtn.style.visibility = "visible";
 
 	// Disable parameter controls while running
 	document.getElementById('opt-type').disabled = true;
@@ -149,7 +151,12 @@ function startOptimizer() {
 function pauseOptimizer(msg = "⏸ Paused — click 'Continue Training' to resume.") {
 	clearInterval(optInterval);
 	isRunning = false;
-	document.getElementById('btn-run-opt').innerHTML = "▶ Continue Training";
+
+	const mainBtn = document.getElementById('btn-run-opt');
+	mainBtn.innerHTML = "▶ Continue Training";
+	mainBtn.style.background = "";
+	mainBtn.style.color = "";
+
 	document.getElementById('opt-console').innerHTML = `<div>${msg}</div>` + document.getElementById('opt-console').innerHTML;
 
 	// Re-enable controls
@@ -172,8 +179,12 @@ function resetOptimizer() {
 	document.getElementById('opt-type').disabled = false;
 	document.getElementById('opt-start-x').disabled = false;
 
-	document.getElementById('btn-run-opt').innerHTML = "▶ Start Simulation";
-	document.getElementById('btn-restart-opt').style.display = "none";
+	const mainBtn = document.getElementById('btn-run-opt');
+	mainBtn.innerHTML = "▶ Start Simulation";
+	mainBtn.style.background = "";
+	mainBtn.style.color = "";
+
+	document.getElementById('btn-restart-opt').style.visibility = "hidden";
 	document.getElementById('opt-console').innerHTML = "Reset to starting position. Adjust parameters and click <b>'Start Simulation'</b>.<br>";
 
 	updateStats(currentX, f(currentX), df(currentX), 0);
