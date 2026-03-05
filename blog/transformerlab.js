@@ -1845,12 +1845,23 @@ function renderTrajectoryPlot(d_model) {
     const containerId = 'transformer-trajectory-full-path';
     let trajDiv = document.getElementById(containerId);
 
+    const targetHeight = getTrajectoryPlotHeight(d_model);
+
     if (!trajDiv) {
         trajDiv = document.createElement('div');
         trajDiv.id = containerId;
         document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
 
-        trajDiv.style.cssText = "width:100%; min-height:250px; border: 2px solid rgb(203, 213, 225); border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;";
+        trajDiv.style.cssText = `width:100%; height:${targetHeight}px; min-height:${targetHeight}px; border: 2px solid rgb(203, 213, 225); border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;`;
+        trajDiv.setAttribute('data-d-model', d_model);
+    } else {
+        // Update height if d_model changed
+        const prevDModel = parseInt(trajDiv.getAttribute('data-d-model') || '0');
+        if (prevDModel !== d_model) {
+            trajDiv.setAttribute('data-d-model', d_model);
+            trajDiv.style.height = targetHeight + 'px';
+            trajDiv.style.minHeight = targetHeight + 'px';
+        }
     }
 
     registerLazyRenderable(
@@ -3845,17 +3856,25 @@ function createVFToggleButton(id, d_model, existingVfEnabled) {
 	return toggleBtn;
 }
 
+function getMigrationPlotHeight(d_model) {
+	// d_model <= 3: Plotly 2D/3D scatter — 500px is appropriate
+	// d_model >= 4: ECharts parallel coordinates — 500px is also fine
+	return 500;
+}
+
 function createMigrationPlotDOM(id, d_model, existingVfEnabled, parentContainer) {
 	const wrapperDiv = document.createElement('div');
 	wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; margin-top: 10px; background: #fff;";
 	wrapperDiv.setAttribute('data-migration-wrapper', id);
+	wrapperDiv.setAttribute('data-d-model', d_model); // track d_model
 
 	const toggleBtn = createVFToggleButton(id, d_model, existingVfEnabled);
 	wrapperDiv.appendChild(toggleBtn);
 
 	const plotDiv = document.createElement('div');
 	plotDiv.id = id;
-	plotDiv.style.cssText = "height: 500px; width: 100%; position: relative;";
+	const migrationHeight = getMigrationPlotHeight(d_model);
+	plotDiv.style.cssText = `height: ${migrationHeight}px; width: 100%; position: relative;`;
 
 	wrapperDiv.appendChild(plotDiv);
 	parentContainer.appendChild(wrapperDiv);
@@ -3868,12 +3887,33 @@ function ensureMigrationPlotDiv(id, d_model, existingVfEnabled, parentContainer)
 	if (!plotDiv) {
 		plotDiv = createMigrationPlotDOM(id, d_model, existingVfEnabled, parentContainer);
 	} else {
-		const currentWrapper = plotDiv.closest('[data-migration-wrapper]') || plotDiv.parentNode;
-		if (currentWrapper && currentWrapper.parentNode !== parentContainer) {
-			parentContainer.appendChild(currentWrapper);
+		// If d_model changed, update the height
+		const wrapper = plotDiv.closest('[data-migration-wrapper]');
+		if (wrapper) {
+			const prevDModel = parseInt(wrapper.getAttribute('data-d-model') || '0');
+			if (prevDModel !== d_model) {
+				wrapper.setAttribute('data-d-model', d_model);
+				const migrationHeight = getMigrationPlotHeight(d_model);
+				plotDiv.style.height = migrationHeight + 'px';
+			}
+			if (wrapper.parentNode !== parentContainer) {
+				parentContainer.appendChild(wrapper);
+			}
 		}
 	}
 	return plotDiv;
+}
+
+function getTrajectoryPlotHeight(d_model) {
+	if (d_model <= 3) {
+		return 850;
+	}
+	// For high-dimensional: heading + grid of 2D slices
+	// Number of pairs = d_model*(d_model-1)/2, each 400px, in auto-fill columns
+	const nPairs = (d_model * (d_model - 1)) / 2;
+	const cols = Math.max(1, Math.floor(800 / 400)); // rough estimate of columns
+	const rows = Math.ceil(nPairs / cols);
+	return 60 + rows * 420; // heading + rows * (plot + gap)
 }
 
 function buildMigrationRegistryData(tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings, existingVfEnabled) {
@@ -3894,7 +3934,6 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 	if (!plotDiv) return;
 
 	plotDiv.style.width = '100%';
-	plotDiv.style.minHeight = '500px';
 
 	const nextWordIndex = tokens.length - 1;
 	const migrationContainers = document.querySelectorAll('[id^="migration-layer-"]');
@@ -5194,8 +5233,6 @@ function _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVo
 
 // ─── Helper: Render the low-dimensional (d_model 2 or 3) single trajectory plot ───
 function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab) {
-	trajDiv.style.height = '850px';
-
 	let traces, annotations;
 
 	if (d_model === 3) {
