@@ -908,6 +908,22 @@ pre, code, .status-console, .matrix-input {
 	font-variant-numeric: tabular-nums slashed-zero;
 }
 
+pre {
+	background: #fafbfc !important;
+	border: 1px solid var(--mn-border) !important;
+	border-radius: var(--mn-radius-md) !important;
+	padding: 1.25rem 1.5rem !important;
+	overflow-x: auto !important;
+	box-shadow: var(--mn-shadow-sm) !important;
+}
+
+pre code {
+	font-family: var(--mn-font-mono) !important;
+	font-size: 0.88rem !important;
+	line-height: 1.7 !important;
+	color: var(--mn-text) !important;
+}
+
 #contents ::marker {
 	font-variant-numeric: oldstyle-nums; /* If numbered lists */
 }
@@ -1381,22 +1397,6 @@ pre, code, .status-console, .matrix-input {
 }
 
 /* ---- Code Blocks ---- */
-.minimalneuron-page pre {
-  background: #fafbfc;
-  border: 1px solid var(--mn-border);
-  border-radius: var(--mn-radius-md);
-  padding: 1.25rem 1.5rem;
-  overflow-x: auto;
-  box-shadow: var(--mn-shadow-sm);
-}
-
-.minimalneuron-page pre code {
-  font-family: var(--mn-font-mono);
-  font-size: 0.88rem;
-  line-height: 1.7;
-  color: var(--mn-text);
-}
-
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
   .minimalneuron-page .md {
