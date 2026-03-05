@@ -2126,88 +2126,117 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	}
 
 	_apvAttachMatrixTooltip(svg, layerIdx, headDataArray, tokens, headDisplayOffset = 0) {
-		// Store live-updating data reference on the SVG element itself
-		svg._apvTooltipData = {
-			headDataArray,
-			tokens,
-			layerIdx,
-			headDisplayOffset
-		};
+		this._apvStoreLiveTooltipData(svg, headDataArray, tokens, layerIdx, headDisplayOffset);
 
-		// If already attached, just invalidate cache and force rebuild
-		if (svg._apvTooltipAttached) {
-			if (svg._apvTooltipCache) {
-				svg._apvTooltipCache.lastKey = null;
-			}
-			if (svg._apvTooltipRebuild) {
-				svg._apvTooltipRebuild();
-			}
+		if (this._apvTryReuseExistingTooltip(svg)) {
 			return;
 		}
+
 		svg._apvTooltipAttached = true;
 
 		const tooltip = this._createTooltipElement(layerIdx, headDisplayOffset);
 		const cache = { lastKey: null };
 		svg._apvTooltipCache = cache;
 
-		let lastMouseEvent = null;
+		const buildTooltip = this._createTooltipBuilder(svg, tooltip, cache);
+		this._apvBindTooltipMouseEvents(svg, tooltip, cache, buildTooltip);
+	}
+
+	_apvStoreLiveTooltipData(svg, headDataArray, tokens, layerIdx, headDisplayOffset) {
+		svg._apvTooltipData = {
+			headDataArray,
+			tokens,
+			layerIdx,
+			headDisplayOffset
+		};
+	}
+
+	_apvTryReuseExistingTooltip(svg) {
+		if (!svg._apvTooltipAttached) return false;
+
+		if (svg._apvTooltipCache) {
+			svg._apvTooltipCache.lastKey = null;
+		}
+		if (svg._apvTooltipRebuild) {
+			svg._apvTooltipRebuild();
+		}
+		return true;
+	}
+
+	_createTooltipBuilder(svg, tooltip, cache) {
 		const self = this;
 
-		const buildTooltip = (e) => {
+		return function buildTooltip(e) {
 			const liveData = svg._apvTooltipData;
 			if (!liveData) return;
 
 			// Try grid cell first
 			const rect = e.target.closest('rect[data-apv-qi]');
 			if (rect) {
-				const hIdx = parseInt(rect.getAttribute('data-apv-head'));
-				const qi = parseInt(rect.getAttribute('data-apv-qi'));
-				const ki = parseInt(rect.getAttribute('data-apv-ki'));
-				const tooltipKey = `rect-${hIdx}-${qi}-${ki}`;
-				if (tooltipKey === cache.lastKey) {
-					self._positionTooltip(tooltip, e);
-					return;
-				}
-				cache.lastKey = tooltipKey;
-
-				const html = self._buildCellTooltipHtml(liveData, hIdx, qi, ki);
-				if (!html) {
-					tooltip.style.display = 'none';
-					return;
-				}
-				tooltip.innerHTML = html;
-				render_temml();
-				self._positionTooltip(tooltip, e);
+				self._handleCellHover(rect, liveData, tooltip, cache, e);
 				return;
 			}
 
 			// Try row/column label
 			const textEl = e.target.closest('text[data-apv-token-side]');
 			if (textEl) {
-				const side = textEl.getAttribute('data-apv-token-side');
-				const idx = parseInt(textEl.getAttribute('data-apv-token-idx'));
-				const tooltipKey = `label-${side}-${idx}`;
-				if (tooltipKey === cache.lastKey) {
-					self._positionTooltip(tooltip, e);
-					return;
-				}
-				cache.lastKey = tooltipKey;
-
-				const html = self._buildLabelTooltipHtml(liveData, idx);
-				if (!html) {
-					tooltip.style.display = 'none';
-					return;
-				}
-				tooltip.innerHTML = html;
-				render_temml();
-				self._positionTooltip(tooltip, e);
+				self._handleLabelHover(textEl, liveData, tooltip, cache, e);
 				return;
 			}
 
-			// Nothing relevant
+			// Nothing relevant hovered
 			tooltip.style.display = 'none';
 			cache.lastKey = null;
 		};
+	}
+
+	_handleCellHover(rect, liveData, tooltip, cache, e) {
+		const hIdx = parseInt(rect.getAttribute('data-apv-head'));
+		const qi = parseInt(rect.getAttribute('data-apv-qi'));
+		const ki = parseInt(rect.getAttribute('data-apv-ki'));
+		const tooltipKey = `rect-${hIdx}-${qi}-${ki}`;
+
+		if (tooltipKey === cache.lastKey) {
+			this._positionTooltip(tooltip, e);
+			return;
+		}
+		cache.lastKey = tooltipKey;
+
+		const html = this._buildCellTooltipHtml(liveData, hIdx, qi, ki);
+		if (!html) {
+			tooltip.style.display = 'none';
+			return;
+		}
+
+		tooltip.innerHTML = html;
+		render_temml();
+		this._positionTooltip(tooltip, e);
+	}
+
+	_handleLabelHover(textEl, liveData, tooltip, cache, e) {
+		const side = textEl.getAttribute('data-apv-token-side');
+		const idx = parseInt(textEl.getAttribute('data-apv-token-idx'));
+		const tooltipKey = `label-${side}-${idx}`;
+
+		if (tooltipKey === cache.lastKey) {
+			this._positionTooltip(tooltip, e);
+			return;
+		}
+		cache.lastKey = tooltipKey;
+
+		const html = this._buildLabelTooltipHtml(liveData, idx);
+		if (!html) {
+			tooltip.style.display = 'none';
+			return;
+		}
+
+		tooltip.innerHTML = html;
+		render_temml();
+		this._positionTooltip(tooltip, e);
+	}
+
+	_apvBindTooltipMouseEvents(svg, tooltip, cache, buildTooltip) {
+		let lastMouseEvent = null;
 
 		svg.addEventListener('mousemove', (e) => {
 			lastMouseEvent = e;
