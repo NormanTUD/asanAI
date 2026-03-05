@@ -1,4 +1,6 @@
 html {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 	font-size: clamp(1rem, 0.92rem + 0.4vw, 1.125rem);
 }
 
@@ -970,3 +972,514 @@ pre, code, .status-console, .matrix-input {
 	flex: 2;
 	transition: background 0.2s;
 }
+
+/* ============================================
+   MINIMAL NEURON PAGE — Scoped Styles
+   Light mode only. No dark mode.
+   ============================================ */
+
+/* Force light color scheme for this page */
+.minimalneuron-page {
+  color-scheme: light only;
+  --mn-bg: #ffffff;
+  --mn-bg-subtle: #f8fafc;
+  --mn-bg-warm: #fffbf5;
+  --mn-bg-glass: rgba(255, 255, 255, 0.72);
+  --mn-surface: #ffffff;
+  --mn-surface-raised: #f1f5f9;
+  --mn-border: #e2e8f0;
+  --mn-border-light: #f1f5f9;
+  --mn-text: #1e293b;
+  --mn-text-secondary: #475569;
+  --mn-text-muted: #94a3b8;
+  --mn-heading: #0f172a;
+
+  /* Accent palette — warm coral to deep indigo */
+  --mn-accent: #6366f1;
+  --mn-accent-light: #e0e7ff;
+  --mn-accent-lighter: #eef2ff;
+  --mn-accent-dark: #4338ca;
+  --mn-coral: #f97316;
+  --mn-coral-light: #fff7ed;
+  --mn-rose: #e11d48;
+  --mn-emerald: #059669;
+  --mn-emerald-light: #ecfdf5;
+  --mn-sky: #0ea5e9;
+  --mn-sky-light: #f0f9ff;
+
+  /* Spacing */
+  --mn-radius-sm: 8px;
+  --mn-radius-md: 12px;
+  --mn-radius-lg: 16px;
+  --mn-radius-xl: 24px;
+
+  /* Shadows */
+  --mn-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --mn-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --mn-shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --mn-shadow-xl: 0 20px 50px -12px rgba(0, 0, 0, 0.1);
+  --mn-shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
+  --mn-shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* ---- Base Container ---- */
+
+/* ---- Markdown / Prose Content ---- */
+.minimalneuron-page .md {
+  margin: 0 auto;
+  color: var(--mn-text);
+}
+
+.minimalneuron-page .md p {
+  margin-bottom: 1.25em;
+}
+
+.minimalneuron-page .md strong {
+  color: var(--mn-heading);
+  font-weight: 650;
+}
+
+.minimalneuron-page .md em {
+  color: var(--mn-accent-dark);
+  font-style: italic;
+}
+
+/* ---- Headings ---- */
+.minimalneuron-page .md h2 {
+  font-family: var(--mn-font-heading);
+  font-size: 1.75rem;
+  font-weight: 750;
+  color: var(--mn-heading);
+  margin: 3rem 0 1.25rem;
+  padding-bottom: 0.6rem;
+  letter-spacing: -0.025em;
+  position: relative;
+  border: none;
+}
+
+.minimalneuron-page .md h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 48px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--mn-accent), var(--mn-coral));
+  border-radius: 3px;
+}
+
+.minimalneuron-page .md h3 {
+  font-family: var(--mn-font-heading);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--mn-heading);
+  margin: 2.25rem 0 0.75rem;
+  letter-spacing: -0.015em;
+}
+
+/* ---- Lists ---- */
+.minimalneuron-page .md ul,
+.minimalneuron-page .md ol {
+  padding-left: 0;
+  margin: 1.25em 0;
+  list-style: none;
+}
+
+.minimalneuron-page .md ul li {
+  position: relative;
+  padding-left: 1.75em;
+  margin-bottom: 0.6em;
+}
+
+.minimalneuron-page .md ul li::before {
+  content: '';
+  position: absolute;
+  left: 0.25em;
+  top: 0.7em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+/* ---- Math Blocks ---- */
+.minimalneuron-page .md .math-display,
+.minimalneuron-page .md mjx-container[display="true"],
+.minimalneuron-page .md .MathJax_Display,
+.minimalneuron-page .md .temml-display {
+  background: var(--mn-bg-subtle);
+  border: 1px solid var(--mn-border-light);
+  border-left: 3px solid var(--mn-accent);
+  border-radius: var(--mn-radius-md);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  box-shadow: var(--mn-shadow-sm);
+}
+
+/* ---- Smart Quote / Blockquote ---- */
+.minimalneuron-page .smart-quote {
+  position: relative;
+  background: linear-gradient(135deg, var(--mn-accent-lighter), var(--mn-sky-light));
+  border: 1px solid var(--mn-accent-light);
+  border-radius: var(--mn-radius-lg);
+  padding: 1.75rem 2rem 1.75rem 3.5rem;
+  margin: 2rem 0;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--mn-accent-dark);
+  box-shadow: var(--mn-shadow-sm);
+}
+
+.minimalneuron-page .smart-quote::before {
+  content: '\201C';
+  position: absolute;
+  left: 0.75rem;
+  top: 0.5rem;
+  font-size: 3.5rem;
+  font-family: Georgia, serif;
+  color: var(--mn-accent);
+  opacity: 0.35;
+  line-height: 1;
+}
+
+/* ---- Interactive Controls Area ---- */
+.minimalneuron-page .controls-bar {
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.minimalneuron-page .control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.minimalneuron-page .control-group label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mn-text-muted);
+}
+
+.minimalneuron-page input[type="number"] {
+  font-family: var(--mn-font-mono);
+  font-size: 0.95rem;
+  padding: 0.6rem 0.85rem;
+  border: 1.5px solid var(--mn-border);
+  border-radius: var(--mn-radius-sm);
+  background: var(--mn-surface);
+  color: var(--mn-text);
+  width: 140px;
+  transition: all 0.2s ease;
+  box-shadow: var(--mn-shadow-inner);
+  outline: none;
+}
+
+.minimalneuron-page input[type="number"]:focus {
+  border-color: var(--mn-accent);
+  box-shadow: var(--mn-shadow-inner), 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+/* ---- Buttons ---- */
+.minimalneuron-page .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--mn-font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: var(--mn-radius-md);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
+}
+
+.minimalneuron-page .btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.minimalneuron-page .btn-train {
+  background: linear-gradient(135deg, var(--mn-accent), var(--mn-accent-dark));
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+}
+
+.minimalneuron-page .btn-train:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+}
+
+.minimalneuron-page .btn-train:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.minimalneuron-page .btn-stop {
+  background: linear-gradient(135deg, var(--mn-rose), #be123c);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
+}
+
+.minimalneuron-page .btn-stop:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(225, 29, 72, 0.45);
+}
+
+.minimalneuron-page .btn-reset {
+  background: var(--mn-surface-raised);
+  color: var(--mn-text-secondary);
+  border: 1.5px solid var(--mn-border);
+  box-shadow: var(--mn-shadow-sm);
+}
+
+.minimalneuron-page .btn-reset:hover {
+  background: var(--mn-border-light);
+  border-color: var(--mn-text-muted);
+  transform: translateY(-1px);
+  box-shadow: var(--mn-shadow-md);
+}
+
+/* ---- Action Row ---- */
+.minimalneuron-page .action-row {
+  margin: 1.25rem auto 0;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.minimalneuron-page .action-row .btn {
+  width: 100%;
+}
+
+/* ---- Equation Display Cards ---- */
+.minimalneuron-page .equation-card {
+  margin: 1.25rem auto;
+  padding: 0 2rem;
+}
+
+.minimalneuron-page .equation-card-inner {
+  background: linear-gradient(135deg, var(--mn-bg-warm), var(--mn-coral-light));
+  border: 1px solid #fde68a;
+  border-radius: var(--mn-radius-lg);
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  font-size: 1.15em;
+  box-shadow: var(--mn-shadow-sm);
+}
+
+.minimalneuron-page .equation-card-inner .card-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mn-coral);
+  margin-bottom: 0.5rem;
+}
+
+/* ---- Math Monitor ---- */
+.minimalneuron-page #lin-math-monitor {
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.minimalneuron-page #lin-math-monitor > div {
+  background: linear-gradient(135deg, var(--mn-accent-lighter), #f5f3ff);
+  border: 1px solid var(--mn-accent-light);
+  border-radius: var(--mn-radius-lg);
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  font-size: 1.15em;
+  box-shadow: var(--mn-shadow-sm);
+  transition: all 0.3s ease;
+}
+
+/* ---- Plot Containers ---- */
+.minimalneuron-page .plot-container {
+  margin: 1rem auto;
+  padding: 0 2rem;
+}
+
+.minimalneuron-page .plot-container .js-plotly-plot {
+  border-radius: var(--mn-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--mn-shadow-md);
+  border: 1px solid var(--mn-border-light);
+}
+
+/* ---- Status Console ---- */
+.minimalneuron-page .status-console {
+  margin: 1rem auto;
+  padding: 0 2rem;
+}
+
+.minimalneuron-page .status-console,
+.minimalneuron-page #lin-console {
+  font-family: var(--mn-font-mono);
+  font-size: 0.85rem;
+  background: var(--mn-surface-raised);
+  color: var(--mn-text-secondary);
+  border: 1px solid var(--mn-border);
+  border-radius: var(--mn-radius-md);
+  padding: 0.85rem 1.25rem;
+  box-shadow: var(--mn-shadow-inner);
+  position: relative;
+}
+
+.minimalneuron-page #lin-console::before {
+  content: '●';
+  color: var(--mn-emerald);
+  margin-right: 0.5rem;
+  font-size: 0.7rem;
+  animation: mn-pulse 2s ease-in-out infinite;
+}
+
+@keyframes mn-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ---- Code Tabs ---- */
+.minimalneuron-page .gem-tabs {
+  margin: 1.5rem auto;
+  padding: 0 2rem;
+}
+
+.minimalneuron-page .gem-tabs .tab-buttons {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--mn-border);
+  margin-bottom: 0;
+}
+
+.minimalneuron-page .gem-tabs .tab-buttons button {
+  font-family: var(--mn-font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.65rem 1.25rem;
+  border: none;
+  background: transparent;
+  color: var(--mn-text-muted);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.minimalneuron-page .gem-tabs .tab-buttons button:hover {
+  color: var(--mn-text);
+}
+
+.minimalneuron-page .gem-tabs .tab-buttons button.active {
+  color: var(--mn-accent);
+}
+
+.minimalneuron-page .gem-tabs .tab-buttons button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--mn-accent);
+  border-radius: 2px 2px 0 0;
+}
+
+.minimalneuron-page .gem-tabs pre {
+  margin: 0;
+  border-radius: 0 0 var(--mn-radius-md) var(--mn-radius-md);
+  border: 1px solid var(--mn-border);
+  border-top: none;
+}
+
+/* ---- Code Blocks ---- */
+.minimalneuron-page pre {
+  background: #fafbfc;
+  border: 1px solid var(--mn-border);
+  border-radius: var(--mn-radius-md);
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  box-shadow: var(--mn-shadow-sm);
+}
+
+.minimalneuron-page pre code {
+  font-family: var(--mn-font-mono);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--mn-text);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .minimalneuron-page .md {
+    padding: 1.5rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  .minimalneuron-page .controls-bar {
+    padding: 0 1.25rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .minimalneuron-page input[type="number"] {
+    width: 100%;
+  }
+
+  .minimalneuron-page .action-row {
+    padding: 0 1.25rem;
+    grid-template-columns: 1fr;
+  }
+
+  .minimalneuron-page .md h2 {
+    font-size: 1.45rem;
+  }
+
+  .minimalneuron-page .equation-card,
+  .minimalneuron-page #lin-math-monitor,
+  .minimalneuron-page .plot-container,
+  .minimalneuron-page .gem-tabs {
+    padding: 0 1.25rem;
+  }
+}
+
+/* ---- Subtle entrance animations ---- */
+.minimalneuron-page .md,
+.minimalneuron-page .equation-card-inner,
+.minimalneuron-page .plot-container,
+.minimalneuron-page #lin-console {
+  animation: mn-fadeUp 0.5s ease-out both;
+}
+
+@keyframes mn-fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger the animations */
+.minimalneuron-page .md:nth-child(1) { animation-delay: 0s; }
+.minimalneuron-page .md:nth-child(2) { animation-delay: 0.05s; }
+.minimalneuron-page .md:nth-child(3) { animation-delay: 0.1s; }
+.minimalneuron-page .equation-card-inner { animation-delay: 0.15s; }
+.minimalneuron-page .plot-container:nth-of-type(1) { animation-delay: 0.2s; }
+.minimalneuron-page .plot-container:nth-of-type(2) { animation-delay: 0.25s; }

@@ -1,5 +1,7 @@
 <?php include_once("functions.php"); ?>
 
+<div class="minimalneuron-page">
+
 <div class="md">
 The simplest AI is actually a very simple mathematical model called a **Neuron**. At its core, it is just a linear function:
 
@@ -18,6 +20,7 @@ In AI terminology, we give these parameters specific names:
 Instead of us moving the sliders to find $a$ and $b$, the computer will search for these values itself.
 
 To help the computer find the right values, we provide a **Dataset** (a set of "correct" pairs):
+
 * **Input $(x) \rightarrow$ Output $(y)$**
 * $1 \rightarrow 2$
 * $2 \rightarrow 4$
@@ -42,17 +45,34 @@ A single neuron can only learn a straight line. However, complex AI systems grou
 The statistical framework of linear regression was famously formalized by \citeauthor{galton} in \citeyear{galton}. He applied this mathematical framework to heredity, demonstrating that children of exceptionally tall or exceptionally short parents tend to have heights closer to the population average than their parents did. By proving that these extreme traits "regress" toward mediocrity, Galton established the statistical foundation for predicting a dependent variable from an independent one, effectively creating the first functional application of the linear model that serves as the basis for modern neurons.
 </div>
 
-Learning Rate: <input type="number" id="lin-lr" value="0.001" step="0.01" style="width: 200px">
-Epochs: <input type="number" id="lin-epochs" value="1000" style="width: 200px">
-<div>
-	<button id="btn-lin-train" class="btn btn-train" onclick="toggleTraining('lin')">🚀 Start Training</button>
-	<button class="btn" style="background:#64748b; color:white; width:100%" onclick="initBlock('lin')">🔄 Reset Model</button>
-	<div style="padding:15px; margin-top:10px;"><div style="text-align:center; font-size:1.2em;">$$\text{Real equation}: y = f(x) = 2x + 0$$</div></div>
-	<div id="lin-math-monitor" style="padding:15px; margin-top:10px;"></div><br>
-	<div id="lin-data-chart" class="plot-container"></div>
-	<div id="lin-loss-chart" class="plot-container"></div>
-	<div id="lin-console" class="status-console">Click 'Start Training'</div>
+<div class="controls-bar">
+	<div class="control-group">
+		<label for="lin-lr">Learning Rate</label>
+		<input type="number" id="lin-lr" value="0.001" step="0.01">
+	</div>
+	<div class="control-group">
+		<label for="lin-epochs">Epochs</label>
+		<input type="number" id="lin-epochs" value="1000">
+	</div>
 </div>
+
+<div class="action-row">
+	<button id="btn-lin-train" class="btn btn-train" onclick="toggleTraining('lin')">🚀 Start Training</button>
+	<button class="btn btn-reset" onclick="initBlock('lin')">🔄 Reset Model</button>
+</div>
+
+<div class="equation-card">
+	<div class="equation-card-inner">
+		<span class="card-label">Target Equation</span>
+		$$\text{Real equation}: y = f(x) = 2x + 0$$
+	</div>
+</div>
+
+<div id="lin-math-monitor"></div>
+
+<div id="lin-data-chart" class="plot-container"></div>
+<div id="lin-loss-chart" class="plot-container"></div>
+<div id="lin-console" class="status-console">Click 'Start Training'</div>
 
 <div class="md">
 ## The Genesis of Space: Weights and Initializers
@@ -120,9 +140,7 @@ The rule of "matching the data" extends to every domain:
 If the output layer's dimensions do not match the target data's dimensions, the **Loss Function** will be unable to compare the prediction to the reality, and the "loop" of learning will break.
 
 **The Golden Rule:** Your model's output layer must be a mirror of your data's constraints. If the data cannot be negative, your activation function must prevent negative numbers. If the data is categorical, your loss function must be probabilistic (i.e., softmax).
-</div>
 
-<div class="md">
 ## The Statistical Nature of Learning
 
 We often think of Neural Networks as "learning" in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.
