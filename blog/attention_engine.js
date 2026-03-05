@@ -2165,24 +2165,24 @@ _tooltipDotVec(a, b) {
  * Returns null if the head data is missing.
  */
 _buildCellTooltipHtml(liveData, hIdx, qi, ki) {
-    const { headDataArray, tokens, layerIdx, headDisplayOffset } = liveData;
-    if (!headDataArray[hIdx]) return null;
+	const { headDataArray, tokens, layerIdx, headDisplayOffset } = liveData;
+	if (!headDataArray[hIdx]) return null;
 
-    const hd = headDataArray[hIdx];
-    const ctx = this._buildCellTooltipContext(hd, qi, ki, tokens, layerIdx, headDisplayOffset);
+	const hd = headDataArray[hIdx];
+	const ctx = this._buildCellTooltipContext(hd, qi, ki, tokens, layerIdx, headDisplayOffset);
 
-    let html = '';
-    html += this._buildCellTooltipHeader(ctx);
-    html += this._buildCellTooltipDkDerivation(ctx);
-    html += this._buildCellTooltipAbstractScore(ctx);
-    html += this._buildProjectionHtml('Q', qi, hd.WQ, ctx.h0_qi, ctx.q_i, tokens[qi], ctx.hLabel, layerIdx);
-    html += this._buildProjectionHtml('K', ki, hd.WK, ctx.h0_kj, ctx.k_j, tokens[ki], ctx.hLabel, layerIdx);
-    html += this._buildProjectionHtml('V', ki, hd.WV, ctx.h0_kj, ctx.v_j, tokens[ki], ctx.hLabel, layerIdx);
-    html += this._buildCellTooltipDotProduct(ctx);
-    html += this._buildSoftmaxHtml(ctx.rawScoresRow, ctx.softmaxRow, qi, ki, ctx.n, tokens);
-    html += this._buildCellTooltipWeightedV(ctx);
+	let html = '';
+	html += this._buildCellTooltipHeader(ctx);
+	html += this._buildCellTooltipDkDerivation(ctx);
+	html += this._buildCellTooltipAbstractScore(ctx);
+	html += this._buildProjectionHtml('Q', qi, hd.WQ, ctx.h0_qi, ctx.q_i, tokens[qi], ctx.hLabel, layerIdx);
+	html += this._buildProjectionHtml('K', ki, hd.WK, ctx.h0_kj, ctx.k_j, tokens[ki], ctx.hLabel, layerIdx);
+	html += this._buildProjectionHtml('V', ki, hd.WV, ctx.h0_kj, ctx.v_j, tokens[ki], ctx.hLabel, layerIdx);
+	html += this._buildCellTooltipDotProduct(ctx);
+	html += this._buildSoftmaxHtml(ctx.rawScoresRow, ctx.softmaxRow, qi, ki, ctx.n, tokens);
+	html += this._buildCellTooltipWeightedV(ctx);
 
-    return html;
+	return html;
 }
 
 /**
@@ -2190,53 +2190,53 @@ _buildCellTooltipHtml(liveData, hIdx, qi, ki) {
  * Returns a context object shared across all tooltip section builders.
  */
 _buildCellTooltipContext(hd, qi, ki, tokens, layerIdx, headDisplayOffset) {
-    const d_k = hd.Qi[0].length;
-    const d_k_int = Math.round(d_k);
-    const d_model = hd.d_model || this.d_model;
-    const d_model_int = Math.round(d_model);
-    const n_heads = Math.round(d_model / d_k);
-    const n = tokens.length;
-    const w = hd.this_weights[qi][ki];
-    const displayHeadNum = (headDisplayOffset || 0) + 1;
-    const hLabel = `h_{${layerIdx}}`;
+	const d_k = hd.Qi[0].length;
+	const d_k_int = Math.round(d_k);
+	const d_model = hd.d_model || this.d_model;
+	const d_model_int = Math.round(d_model);
+	const n_heads = Math.round(d_model / d_k);
+	const n = tokens.length;
+	const w = hd.this_weights[qi][ki];
+	const displayHeadNum = (headDisplayOffset || 0) + 1;
+	const hLabel = `h_{${layerIdx}}`;
 
-    const q_i = hd.Qi[qi];
-    const k_j = hd.Ki[ki];
-    const v_j = hd.Vi[ki];
-    const h0_qi = hd.h0[qi];
-    const h0_kj = hd.h0[ki];
+	const q_i = hd.Qi[qi];
+	const k_j = hd.Ki[ki];
+	const v_j = hd.Vi[ki];
+	const h0_qi = hd.h0[qi];
+	const h0_kj = hd.h0[ki];
 
-    const rawScore = this._tooltipDotVec(q_i, k_j) / Math.sqrt(d_k);
-    const rawScoresRow = this._computeRawScoresRow(hd, qi, n, d_k);
-    const softmaxRow = this._computeSoftmaxRow(rawScoresRow);
+	const rawScore = this._tooltipDotVec(q_i, k_j) / Math.sqrt(d_k);
+	const rawScoresRow = this._computeRawScoresRow(hd, qi, n, d_k);
+	const softmaxRow = this._computeSoftmaxRow(rawScoresRow);
 
-    return {
-        d_k, d_k_int, d_model, d_model_int, n_heads, n, w,
-        displayHeadNum, hLabel,
-        q_i, k_j, v_j, h0_qi, h0_kj,
-        rawScore, rawScoresRow, softmaxRow,
-        qi, ki, tokens
-    };
+	return {
+		d_k, d_k_int, d_model, d_model_int, n_heads, n, w,
+		displayHeadNum, hLabel,
+		q_i, k_j, v_j, h0_qi, h0_kj,
+		rawScore, rawScoresRow, softmaxRow,
+		qi, ki, tokens
+	};
 }
 
 /**
  * Builds the tooltip header line showing head number, token pair, and weight percentage.
  */
 _buildCellTooltipHeader(ctx) {
-    const { displayHeadNum, tokens, qi, ki, w } = ctx;
-    return `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">` +
-        `Head ${displayHeadNum}: "${tokens[qi]}" → "${tokens[ki]}" = ${(w * 100).toFixed(1)}%` +
-        `</div>`;
+	const { displayHeadNum, tokens, qi, ki, w } = ctx;
+	return `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">` +
+		`Head ${displayHeadNum}: "${tokens[qi]}" → "${tokens[ki]}" = ${(w * 100).toFixed(1)}%` +
+		`</div>`;
 }
 
 /**
  * Builds the d_k = d_model / n_heads derivation line.
  */
 _buildCellTooltipDkDerivation(ctx) {
-    const { d_model_int, n_heads, d_k_int } = ctx;
-    return `<div style="margin-bottom:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">` +
-        `$d_k = \\frac{d_{\\text{model}}}{n_{\\text{heads}}} = \\frac{${d_model_int}}{${n_heads}} = ${d_k_int}$` +
-        `</div>`;
+	const { d_model_int, n_heads, d_k_int } = ctx;
+	return `<div style="margin-bottom:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">` +
+		`$d_k = \\frac{d_{\\text{model}}}{n_{\\text{heads}}} = \\frac{${d_model_int}}{${n_heads}} = ${d_k_int}$` +
+		`</div>`;
 }
 
 
@@ -2244,11 +2244,11 @@ _buildCellTooltipDkDerivation(ctx) {
  * Builds the abstract attention score equation: score(Q_i, K_j) = Q^T·K / sqrt(d_k).
  */
 _buildCellTooltipAbstractScore(ctx) {
-    const { qi, ki, d_k_int, rawScore } = ctx;
-    return `<div style="margin-bottom:6px;">` +
-        `$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = ` +
-        `\\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_k_int}}} = ${rawScore.toFixed(nr_fixed)}$` +
-        `</div>`;
+	const { qi, ki, d_k_int, rawScore } = ctx;
+	return `<div style="margin-bottom:6px;">` +
+		`$\\text{score}(Q_{${qi}}, K_{${ki}}) = \\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{d_k}} = ` +
+		`\\frac{Q_{${qi}}^T \\cdot K_{${ki}}}{\\sqrt{${d_k_int}}} = ${rawScore.toFixed(nr_fixed)}$` +
+		`</div>`;
 }
 
 /**
@@ -2256,25 +2256,25 @@ _buildCellTooltipAbstractScore(ctx) {
  * their element-wise product, and the scaled result.
  */
 _buildCellTooltipDotProduct(ctx) {
-    const { q_i, k_j, qi, ki, d_k, d_k_int, rawScore, tokens } = ctx;
-    const dotProduct = this._tooltipDotVec(q_i, k_j);
-    return `<div style="margin-bottom:6px;">` +
-        `$\\frac{\\underbrace{${this._tooltipRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${tokens[qi]}"})} \\cdot ` +
-        `\\underbrace{${this._tooltipColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${tokens[ki]}"})}}{\\sqrt{${d_k_int}}} = ` +
-        `\\frac{${dotProduct.toFixed(nr_fixed)}}{${Math.sqrt(d_k).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$` +
-        `</div>`;
+	const { q_i, k_j, qi, ki, d_k, d_k_int, rawScore, tokens } = ctx;
+	const dotProduct = this._tooltipDotVec(q_i, k_j);
+	return `<div style="margin-bottom:6px;">` +
+		`$\\frac{\\underbrace{${this._tooltipRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${tokens[qi]}"})} \\cdot ` +
+		`\\underbrace{${this._tooltipColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${tokens[ki]}"})}}{\\sqrt{${d_k_int}}} = ` +
+		`\\frac{${dotProduct.toFixed(nr_fixed)}}{${Math.sqrt(d_k).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$` +
+		`</div>`;
 }
 
 /**
  * Builds the weighted value contribution line: α_{i,j} · V_j = result vector.
  */
 _buildCellTooltipWeightedV(ctx) {
-    const { w, v_j, qi, ki } = ctx;
-    const weightedV = v_j.map(v => w * v);
-    return `<div style="margin-top:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">` +
-        `$\\alpha_{${qi},${ki}} \\cdot V_{${ki}} = ${w.toFixed(nr_fixed)} \\cdot ` +
-        `${this._tooltipColVec(v_j)} = ${this._tooltipColVec(weightedV)}$` +
-        `</div>`;
+	const { w, v_j, qi, ki } = ctx;
+	const weightedV = v_j.map(v => w * v);
+	return `<div style="margin-top:6px; padding:4px 8px; background:rgba(255,255,255,0.08); border-radius:4px; font-size:0.75rem;">` +
+		`$\\alpha_{${qi},${ki}} \\cdot V_{${ki}} = ${w.toFixed(nr_fixed)} \\cdot ` +
+		`${this._tooltipColVec(v_j)} = ${this._tooltipColVec(weightedV)}$` +
+		`</div>`;
 }
 
 /**
@@ -2384,44 +2384,44 @@ _buildSoftmaxHtml(rawScoresRow, softmaxRow, qi, ki, n, tokens) {
 	return html;
 }
 
-	_apvLoadState() {
-		try {
-			const raw = localStorage.getItem(this._apvGetStorageKey());
-			if (raw) return JSON.parse(raw);
-		} catch (e) {
-			// Corrupted or unavailable — fall through to defaults
-		}
-		return null;
+_apvLoadState() {
+	try {
+		const raw = localStorage.getItem(this._apvGetStorageKey());
+		if (raw) return JSON.parse(raw);
+	} catch (e) {
+		// Corrupted or unavailable — fall through to defaults
 	}
+	return null;
+}
 
-	_apvSaveState() {
-		try {
-			const layerStates = {};
-			this._apvActiveHeads.forEach((heads, layerIdx) => {
-				layerStates[layerIdx] = {
-					activeHeads: [...heads],
-					mode: this._apvMode.get(layerIdx) || 'headview'
-				};
-			});
+_apvSaveState() {
+	try {
+		const layerStates = {};
+		this._apvActiveHeads.forEach((heads, layerIdx) => {
+			layerStates[layerIdx] = {
+				activeHeads: [...heads],
+				mode: this._apvMode.get(layerIdx) || 'headview'
+			};
+		});
 
-			// Determine active layer from visible tab
-			let activeLayer = 0;
-			const registry = multiLayerAttentionRegistry.get(this.containerId);
-			if (registry) {
-				for (let l = 0; l < registry.layers.length; l++) {
-					const contentDiv = document.getElementById(`layer-content-${this.containerId}-${l}`);
-					if (contentDiv && contentDiv.style.display !== 'none') {
-						activeLayer = l;
-						break;
-					}
+		// Determine active layer from visible tab
+		let activeLayer = 0;
+		const registry = multiLayerAttentionRegistry.get(this.containerId);
+		if (registry) {
+			for (let l = 0; l < registry.layers.length; l++) {
+				const contentDiv = document.getElementById(`layer-content-${this.containerId}-${l}`);
+				if (contentDiv && contentDiv.style.display !== 'none') {
+					activeLayer = l;
+					break;
 				}
 			}
+		}
 
-			const state = {
-				activeLayer,
-				layerStates
-			};
-			localStorage.setItem(this._apvGetStorageKey(), JSON.stringify(state));
+		const state = {
+			activeLayer,
+			layerStates
+		};
+		localStorage.setItem(this._apvGetStorageKey(), JSON.stringify(state));
 		} catch (e) {
 			// localStorage might be full or unavailable — fail silently
 		}
