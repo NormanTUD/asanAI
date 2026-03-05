@@ -1746,8 +1746,6 @@ function renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, 
 
 	const h0 = render_positional_shift_plot(knownTokens, d_model);
 
-	render_architecture_stats(d_model, n_heads, n_layers, temperature);
-
 	return h0;
 }
 
@@ -2185,24 +2183,6 @@ window.appendToken = (token) => {
 	// Trigger update
 	run_transformer_demo();
 };
-
-function render_architecture_stats(d, h, n, t) {
-	const statsContainerName = 'transformer-temperature-config';
-	const statsContainer = document.getElementById(statsContainerName);
-	if (!statsContainer) {
-		console.error(`render_architecture_stats: ${statsContainerName} not found`);
-		return;
-	}
-
-	const dv = (d / h).toFixed(nr_fixed);
-	const infoHtml = `
-	<div style="background: #e0f2fe; padding: 10px; border-radius: 8px; margin-top: 10px;">
-	    <strong>Configuration:</strong> $d_{v} = ${dv}$, $N = ${n}$, $T = ${t}$ <br>
-	    <em>Note: $T > 1.0$ increases randomness (flattens SoftMax), $T < 1.0$ makes predictions more confident.</em>
-	</div>
-    `;
-	statsContainer.innerHTML = infoHtml;
-}
 
 function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
     const containerId = 'transformer-plotly-space';

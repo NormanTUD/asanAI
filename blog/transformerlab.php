@@ -43,15 +43,6 @@ https://arxiv.org/html/2505.11611v1
 			style="width: 100%;" oninput="document.getElementById('depth-val').innerText = this.value; debounced_run_transformer_demo();">
 	</div>
 
-	<div>
-		<label style="font-weight: bold;">Temperature ($T$): <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span></label>
-		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-		    <b>Effect:</b> Controls the "sharpness" of the probability distribution.<br>
-		    <b>Reason:</b> Low values ($T < 1$) force the model to be deterministic; high values ($T > 1$) increase diversity by making unlikely words more probable.
-		</p>
-		<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 100%; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; debounced_run_transformer_demo();">
-	</div>
-
 	<div style="margin-bottom: 15px;">
 	    <label style="font-weight: bold;">Context Size: </label>
 	    <span id="context-val" style="font-weight: bold; color: #3b82f6;">64</span>
@@ -483,7 +474,14 @@ This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bit
 We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_\text{vocab}$). This effectively asks: "How similar is our current thought vector to every known word vector?"
 </div>
 
-<div id="transformer-temperature-config" style="margin-top: 20px;"></div>
+<div>
+	<label style="font-weight: bold;">Temperature ($T$): <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span></label>
+	<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
+	    <b>Effect:</b> Controls the "sharpness" of the probability distribution.<br>
+	    <b>Reason:</b> Low values ($T < 1$) force the model to be deterministic; high values ($T > 1$) increase diversity by making unlikely words more probable.
+	</p>
+	<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 100%; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; debounced_run_transformer_demo();">
+</div>
 
 <div id="transformer-output-projection" style="background: #fff; padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
 
