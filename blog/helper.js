@@ -943,6 +943,75 @@ function lazyInit(sectionId, initFn) {
 	_sectionInitObserver.observe(el);
 }
 
+function addCuriosityScore() {
+	const optionals = document.querySelectorAll('div.optional');
+	if (optionals.length < 2) return;
+
+	const opened = new Set();
+
+	const badge = document.createElement('div');
+	badge.id = 'curiosity-score';
+	badge.style.cssText = `
+    position: fixed; top: 14px; left: 20px; z-index: 9998;
+    background: rgba(20, 20, 30, 0.85);
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 11px; font-family: system-ui, sans-serif;
+    color: #666; backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.06);
+    opacity: 0; transition: opacity 0.2s ease; /* Reduced transition duration */
+    pointer-events: none;
+  `;
+	document.body.appendChild(badge);
+
+	optionals.forEach((block, i) => {
+		const header = block.querySelector('.optional-header');
+		if (!header) return;
+
+		const origClick = header.onclick;
+		header.onclick = (e) => {
+			if (origClick) origClick(e);
+
+			if (!opened.has(i)) {
+				opened.add(i);
+				const total = optionals.length;
+				const count = opened.size;
+				const pct = Math.round((count / total) * 100);
+
+				badge.style.opacity = '1';
+
+				// Curiosity labels
+				let label = 'Curious';
+				let emoji = '🔎';
+				if (pct >= 100) { label = 'Insatiably Curious'; emoji = '⭐'; } // Changed emoji
+				else if (pct >= 75) { label = 'Very Curious'; emoji = '🔬'; }
+				else if (pct >= 50) { label = 'Curious'; emoji = '🔎'; }
+				else if (pct >= 25) { label = 'Getting Curious'; emoji = '👀'; }
+
+				badge.innerHTML = `${emoji} <span style="color:#ddd">${label}</span> <span style="color:#555">(${count}/${total})</span>`;
+
+				// Pulse
+				badge.style.transform = 'scale(1.06)';
+				badge.style.borderColor = 'rgba(171,71,188,0.3)';
+				setTimeout(() => {
+					badge.style.transform = 'scale(1)';
+					badge.style.borderColor = 'rgba(255,255,255,0.06)';
+				}, 700);
+
+				// Full completion
+				if (count === total) {
+					badge.style.color = '#ce93d8';
+					badge.style.borderColor = 'rgba(171,71,188,0.3)';
+				}
+
+				// Make badge disappear faster after a delay
+				setTimeout(() => {
+					badge.style.opacity = '0';
+				}, 1500); // Badge disappears after 1.5 seconds
+			}
+		};
+	});
+}
+
 function initOptionalBlocks() {
 	document.querySelectorAll('div.optional').forEach(block => {
 		// Prevent double initialization

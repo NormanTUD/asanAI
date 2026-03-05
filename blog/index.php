@@ -122,6 +122,7 @@
 		}
 
 		addReadingProgress();
+		addCuriosityScore();
 	})();
 	</script>
 </body>
