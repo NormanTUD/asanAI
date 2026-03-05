@@ -956,6 +956,5 @@ pre, code, .status-console, .matrix-input {
 }
 
 .unified-layer-tab-content {
-	contain: content;
 	overflow-anchor: none;
 }
