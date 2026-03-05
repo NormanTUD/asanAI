@@ -60,9 +60,6 @@
 			updateLoadingStatus("Processing Citations...");
 			await bibtexify();
 
-			updateLoadingStatus("Parsing Categories...");
-			await parseCategories();
-
 			updateLoadingStatus("Building Table of Contents...");
 
 			// 2. Finalize

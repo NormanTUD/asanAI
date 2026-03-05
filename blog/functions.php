@@ -530,9 +530,6 @@ if(!server_php_self_ends_with_index_php()) {
 					updateLoadingStatus("Processing Citations...");
 					await bibtexify();
 
-					updateLoadingStatus("Parsing Categories...");
-					await parseCategories();
-
 					renderMarkdown();
 					make_external_a_href_target_blank();
 
