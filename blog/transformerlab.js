@@ -2674,27 +2674,52 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStri
 }
 
 function updateConcatenationDisplay(headData, tokens, tokenStrings) {
-	const container = document.getElementById('transformer-concat-viz');
-	if (!container || !headData.length) return [];
+    const container = document.getElementById('transformer-concat-viz');
+    if (!container || !headData.length) return [];
 
-	const ts = tokenStrings || null;
+    const ts = tokenStrings || null;
 
-	const headMatricesLaTeX = headData.map((h, i) => {
-		return `\\underbrace{${matrixToPmatrixLabeled(h.context, ts)}}_{\\text{Head } ${i + 1}}`;
-	}).join(', ');
+    const headMatricesLaTeX = headData.map((h, i) => {
+        return `\\underbrace{${matrixToPmatrixLabeled(h.context, ts)}}_{\\text{Head } ${i + 1}}`;
+    }).join(', ');
 
-	const fullMatrixData = tokens.map((_, tIdx) => {
-		return [].concat(...headData.map(h => h.context[tIdx]));
-	});
+    const fullMatrixData = tokens.map((_, tIdx) => {
+        return [].concat(...headData.map(h => h.context[tIdx]));
+    });
 
-	const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts)}}_{\\text{Total } d_{\\text{model}}}`;
-	const newHtml = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
+    const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts)}}_{\\text{Total } d_{\\text{model}}}`;
+    const newHtml = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
 
-	// FIX: Use _heightLockedUpdate instead of raw innerHTML
-	_heightLockedUpdate(container, newHtml);
+    _heightLockedUpdate(container, newHtml);
+    _renderTemmlOnElements([container]);
+    _releaseHeightLocks([container]);
 
-	_renderTemmlOnElements([container]);
-	return fullMatrixData;
+    return fullMatrixData;
+}
+
+function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenStrings) {
+    const prefix = `unified-layer-${layerIndex}`;
+    const container = document.getElementById(`${prefix}-concat-viz`);
+    if (!container || !headData.length) return [];
+
+    const ts = tokenStrings || null;
+
+    const headMatricesLaTeX = headData.map((h, i) => {
+        return `\\underbrace{${matrixToPmatrixLabeled(h.context, ts)}}_{\\text{Head } ${i + 1}}`;
+    }).join(', ');
+
+    const fullMatrixData = tokens.map((_, tIdx) => {
+        return [].concat(...headData.map(h => h.context[tIdx]));
+    });
+
+    const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts)}}_{\\text{Total } d_{\\text{model}}}`;
+    const newHtml = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
+
+    _heightLockedUpdate(container, newHtml);
+    _renderTemmlOnElements([container]);
+    _releaseHeightLocks([container]);
+
+    return fullMatrixData;
 }
 
 function calculateLayerNorm(matrix, gamma, beta) {
@@ -2736,59 +2761,11 @@ window.showFFNLayer = function(layerIdx) {
     showUnifiedLayer(layerIdx);
 };
 
-function updateConcatenationDisplay(headData, tokens, tokenStrings) {
-	const container = document.getElementById('transformer-concat-viz');
-	if (!container || !headData.length) return [];
 
-	const ts = tokenStrings || null;
 
-	const headMatricesLaTeX = headData.map((h, i) => {
-		return `\\underbrace{${matrixToPmatrixLabeled(h.context, ts)}}_{\\text{Head } ${i + 1}}`;
-	}).join(', ');
-
-	const fullMatrixData = tokens.map((_, tIdx) => {
-		return [].concat(...headData.map(h => h.context[tIdx]));
-	});
-
-	const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts)}}_{\\text{Total } d_{\\text{model}}}`;
-	const newHtml = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
-
-	// FIX: Use _heightLockedUpdate instead of raw innerHTML
-	_heightLockedUpdate(container, newHtml);
-
-	_renderTemmlOnElements([container]);
-	return fullMatrixData;
-}
-
-function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenStrings) {
-	const prefix = `unified-layer-${layerIndex}`;
-	const container = document.getElementById(`${prefix}-concat-viz`);
-	if (!container || !headData.length) return [];
-
-	const ts = tokenStrings || null;
-
-	const headMatricesLaTeX = headData.map((h, i) => {
-		return `\\underbrace{${matrixToPmatrixLabeled(h.context, ts)}}_{\\text{Head } ${i + 1}}`;
-	}).join(', ');
-
-	const fullMatrixData = tokens.map((_, tIdx) => {
-		return [].concat(...headData.map(h => h.context[tIdx]));
-	});
-
-	const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts)}}_{\\text{Total } d_{\\text{model}}}`;
-	const newHtml = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
-
-	// FIX: Use _heightLockedUpdate instead of raw innerHTML
-	_heightLockedUpdate(container, newHtml);
-
-	_renderTemmlOnElements([container]);
-	return fullMatrixData;
-}
-
-function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO, layerIndex, tokenStrings) {
-	const prefix = `unified-layer-${layerIndex}`;
-	const normContainer = document.getElementById(`${prefix}-layernorm-viz`);
-	const finalContainer = document.getElementById(`${prefix}-h1-final-viz`);
+function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings) {
+	const normContainer = document.getElementById('transformer-h1-layernorm-viz');
+	const finalContainer = document.getElementById('transformer-h1-final-viz');
 	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
 
 	const projectedMHA = multiHeadOutput.map(row =>
@@ -2806,9 +2783,13 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
 		).join(';');
 	};
 	const hash = [
-		flattenDisplay(h0), flattenDisplay(normH0),
-		flattenDisplay(multiHeadOutput), flattenDisplay(projectedMHA),
-		flattenDisplay(h1), flattenDisplay(gamma), flattenDisplay(beta)
+		flattenDisplay(h0),
+		flattenDisplay(normH0),
+		flattenDisplay(multiHeadOutput),
+		flattenDisplay(projectedMHA),
+		flattenDisplay(h1),
+		flattenDisplay(gamma),
+		flattenDisplay(beta)
 	].join('|');
 
 	if (normContainer._lastHash === hash && finalContainer._lastHash === hash) {
@@ -2817,44 +2798,47 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
 	normContainer._lastHash = hash;
 	finalContainer._lastHash = hash;
 
-	const L = layerIndex + 1;
-	const sup = `^{(${L})}`;
-	const base = layerIndex * 2;
-	const h0name = `h_{${base}}`;
-	const h1name = `h_{${base + 1}}`;
 	const ts = tokenStrings || null;
 
 	const normHtml = `
-    <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization — Layer ${L}</p>
+    <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
+
     <div style="margin-bottom:15px;">
-    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $${h0name}${sup}$ before attention:</p>
-    $$ \\text{LayerNorm}(${h0name}${sup}) = \\gamma${sup} \\odot \\frac{${h0name}${sup} - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta${sup} $$
-    <div style="overflow-x:auto; padding-bottom: 10px">
-	$$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts)}}_{\\text{LayerNorm}(${h0name}${sup})} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{${h0name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+	<p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
+	$$ \\text{LayerNorm}(h_0) = \\underbrace{\\gamma}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
+	<div style="overflow-x:auto; padding-bottom: 10px">
+	$$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+	<br>
+	</div>
     </div>
-    </div>`;
+    `;
 
 	const finalHtml = `
     <div style="margin-bottom:15px;">
-    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
-    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-	$$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_\\text{proj}${sup}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts)}}_{\\text{Concat}(\\text{Heads})${sup}} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{{W^O}${sup}} $$
+	<p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
+	$$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
+	<div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
+	$$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O} $$
+	</div>
     </div>
-    </div>
-    <div style="margin-bottom:10px;">
-    <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection:</p>
-    $$ ${h1name}${sup} = ${h0name}${sup} + \\text{MHA}_{\\text{proj}}${sup} $$
-    </div>
-    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{${h1name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{${h0name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
-    </div>`;
 
-	// FIX: Use _heightLockedUpdate instead of preserveScrollPositions + innerHTML
+    <div style="margin-bottom:10px;">
+    <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
+    $$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
+    </div>
+    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
+    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}} $$
+    </div>
+    `;
+
+	// Use _heightLockedUpdate (which now cancels pending rAFs)
 	_heightLockedUpdate(normContainer, normHtml);
 	_heightLockedUpdate(finalContainer, finalHtml);
 
-	// FIX: Use targeted temml rendering
+	// FIX: Render temml synchronously so content reaches final height
+	// before the minHeight lock is released
 	_renderTemmlOnElements([normContainer, finalContainer]);
+
 	return h1;
 }
 
@@ -2954,31 +2938,26 @@ function _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta) {
 	].join('|');
 }
 
-/**
- * Updates an element's innerHTML while locking its height to prevent
- * layout shift. Preserves both vertical page scroll and horizontal
- * scroll of overflow children.
- *
- * @param {HTMLElement} el - The element to update
- * @param {string} newHtml - The new innerHTML content
- */
 function _heightLockedUpdate(el, newHtml) {
-	if (!el) return;
+	if (!el) return false;
+	if (el.innerHTML === newHtml) return false;
 
-	// FIX: Skip update if content is identical (avoids unnecessary reflow)
-	if (el.innerHTML === newHtml) return;
+	if (el._heightUnlockRafId) {
+		cancelAnimationFrame(el._heightUnlockRafId);
+		el._heightUnlockRafId = null;
+	}
 
-	// FIX: Save all scroll state
 	const savedPageScrollY = window.scrollY;
 	const savedPageScrollX = window.scrollX;
 
-	// FIX: Lock height to prevent collapse
+	// Lock to exact current height — prevent BOTH shrink and grow
 	const previousHeight = el.offsetHeight;
 	if (previousHeight > 0) {
 		el.style.minHeight = previousHeight + 'px';
+		el.style.maxHeight = previousHeight + 'px';
+		el.style.overflow = 'hidden';
 	}
 
-	// Save horizontal scroll of overflow children
 	const scrollable = el.querySelectorAll('[style*="overflow"]');
 	const savedScrolls = [];
 	scrollable.forEach((child, idx) => {
@@ -2987,13 +2966,10 @@ function _heightLockedUpdate(el, newHtml) {
 		}
 	});
 
-	// Perform the DOM mutation
 	el.innerHTML = newHtml;
 
-	// FIX: Immediately restore page scroll (synchronous, before paint)
 	window.scrollTo(savedPageScrollX, savedPageScrollY);
 
-	// Restore child scroll positions after reflow
 	if (savedScrolls.length > 0) {
 		requestAnimationFrame(() => {
 			const newScrollable = el.querySelectorAll('[style*="overflow"]');
@@ -3006,34 +2982,55 @@ function _heightLockedUpdate(el, newHtml) {
 		});
 	}
 
-	// FIX: Release height lock after browser has painted new content
-	requestAnimationFrame(() => {
-		requestAnimationFrame(() => {
-			el.style.minHeight = '';
-		});
+	return true;
+}
+
+function _releaseHeightLocks(elements) {
+	if (!elements || elements.length === 0) return;
+
+	// Save scroll position before releasing locks
+	const savedPageScrollY = window.scrollY;
+	const savedPageScrollX = window.scrollX;
+
+	elements.forEach(el => {
+		if (!el) return;
+
+		if (el._heightUnlockRafId) {
+			cancelAnimationFrame(el._heightUnlockRafId);
+			el._heightUnlockRafId = null;
+		}
+
+		// Release immediately — content is already at final height
+		// after temml rendering. No rAF delay.
+		el.style.minHeight = '';
+		el.style.maxHeight = '';
+		el.style.overflow = '';
 	});
+
+	// Restore scroll position in case the height change caused a shift
+	window.scrollTo(savedPageScrollX, savedPageScrollY);
 }
 
 function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
-	const L = layerIndex + 1;
-	const sup = `^{(${L})}`;
-	const base = layerIndex * 2;
-	const h1name = `h_{${base + 1}}`;
-	const h2name = `h_{${base + 2}}`;
-	const ts = tokenStrings || null;
+    const L = layerIndex + 1;
+    const sup = `^{(${L})}`;
+    const base = layerIndex * 2;
+    const h1name = `h_{${base + 1}}`;
+    const h2name = `h_{${base + 2}}`;
+    const ts = tokenStrings || null;
 
-	const step1 = document.getElementById(`${prefix}-step-1`);
-	const step2 = document.getElementById(`${prefix}-step-2`);
-	const step3 = document.getElementById(`${prefix}-step-3`);
-	if (!step1 || !step2 || !step3) return;
+    const step1 = document.getElementById(`${prefix}-step-1`);
+    const step2 = document.getElementById(`${prefix}-step-2`);
+    const step3 = document.getElementById(`${prefix}-step-3`);
+    if (!step1 || !step2 || !step3) return;
 
-	const step1Html = `
+    const step1Html = `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
     <p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $${h1name}${sup}$ before FFN</p>
     $$ \\text{LayerNorm}(${h1name}${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{${h1name}${sup} - \\underbrace{\\mu}_{\\text{Mean of } ${h1name}${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } ${h1name}${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
     <div style="overflow-x:auto;">
-	$$ \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts)}}_{\\text{Norm}\\left(${h1name}${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{${h1name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
-	<br>
+    $$ \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts)}}_{\\text{Norm}\\left(${h1name}${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{${h1name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
+    <br>
     </div>
     </div>
 
@@ -3046,7 +3043,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     </div>
     `;
 
-	const step2Html = `
+    const step2Html = `
     <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 2: Compression</strong></p>
 
     $$ \\text{out}_{L2}${sup} = \\text{out}_{L1}${sup} \\cdot W_2${sup} + b_2${sup} $$
@@ -3056,7 +3053,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     </div>
     `;
 
-	const step3Html = `
+    const step3Html = `
     <div style="margin-bottom:10px;">
     <p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
     $$ ${h2name}${sup} = ${h1name}${sup} + \\text{out}_{L2}${sup} $$
@@ -3066,13 +3063,13 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     </div>
     `;
 
-	// FIX: Use _heightLockedUpdate instead of preserveScrollPositions + innerHTML
-	_heightLockedUpdate(step1, step1Html);
-	_heightLockedUpdate(step2, step2Html);
-	_heightLockedUpdate(step3, step3Html);
+    _heightLockedUpdate(step1, step1Html);
+    _heightLockedUpdate(step2, step2Html);
+    _heightLockedUpdate(step3, step3Html);
 
-	// FIX: Use targeted temml rendering instead of global render_temml()
-	_renderTemmlOnElements([step1, step2, step3]);
+    _renderTemmlOnElements([step1, step2, step3]);
+
+    _releaseHeightLocks([step1, step2, step3]);
 }
 
 /**
@@ -6630,12 +6627,173 @@ function setVisualizationMode(mode) {
 	run_transformer_demo();
 }
 
+function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings) {
+	const normContainer = document.getElementById('transformer-h1-layernorm-viz');
+	const finalContainer = document.getElementById('transformer-h1-final-viz');
+	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
+
+	const projectedMHA = multiHeadOutput.map(row =>
+		WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
+	);
+
+	const h1 = matAdd(h0, projectedMHA);
+
+	const flattenDisplay = (mat) => {
+		if (!mat || !mat.length) return '';
+		return mat.map(row =>
+			Array.isArray(row)
+			? row.map(v => v.toFixed(nr_fixed)).join(',')
+			: row.toFixed(nr_fixed)
+		).join(';');
+	};
+	const hash = [
+		flattenDisplay(h0),
+		flattenDisplay(normH0),
+		flattenDisplay(multiHeadOutput),
+		flattenDisplay(projectedMHA),
+		flattenDisplay(h1),
+		flattenDisplay(gamma),
+		flattenDisplay(beta)
+	].join('|');
+
+	if (normContainer._lastHash === hash && finalContainer._lastHash === hash) {
+		return h1;
+	}
+	normContainer._lastHash = hash;
+	finalContainer._lastHash = hash;
+
+	const ts = tokenStrings || null;
+
+	const normHtml = `
+    <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
+
+    <div style="margin-bottom:15px;">
+    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
+    $$ \\text{LayerNorm}(h_0) = \\underbrace{\\gamma}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
+    <div style="overflow-x:auto; padding-bottom: 10px">
+    $$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+    <br>
+    </div>
+    </div>
+    `;
+
+	const finalHtml = `
+    <div style="margin-bottom:15px;">
+    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
+    $$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
+    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
+    $$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O} $$
+    </div>
+    </div>
+
+    <div style="margin-bottom:10px;">
+    <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
+    $$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
+    </div>
+    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
+    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}} $$
+    </div>
+    `;
+
+	_heightLockedUpdate(normContainer, normHtml);
+	_heightLockedUpdate(finalContainer, finalHtml);
+
+	_renderTemmlOnElements([normContainer, finalContainer]);
+
+	_releaseHeightLocks([normContainer, finalContainer]);
+
+	return h1;
+}
+
+function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO, layerIndex, tokenStrings) {
+	const prefix = `unified-layer-${layerIndex}`;
+	const normContainer = document.getElementById(`${prefix}-layernorm-viz`);
+	const finalContainer = document.getElementById(`${prefix}-h1-final-viz`);
+	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
+
+	const projectedMHA = multiHeadOutput.map(row =>
+		WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
+	);
+
+	const h1 = matAdd(h0, projectedMHA);
+
+	const flattenDisplay = (mat) => {
+		if (!mat || !mat.length) return '';
+		return mat.map(row =>
+			Array.isArray(row)
+			? row.map(v => v.toFixed(nr_fixed)).join(',')
+			: row.toFixed(nr_fixed)
+		).join(';');
+	};
+	const hash = [
+		flattenDisplay(h0), flattenDisplay(normH0),
+		flattenDisplay(multiHeadOutput), flattenDisplay(projectedMHA),
+		flattenDisplay(h1), flattenDisplay(gamma), flattenDisplay(beta)
+	].join('|');
+
+	if (normContainer._lastHash === hash && finalContainer._lastHash === hash) {
+		return h1;
+	}
+	normContainer._lastHash = hash;
+	finalContainer._lastHash = hash;
+
+	const L = layerIndex + 1;
+	const sup = `^{(${L})}`;
+	const base = layerIndex * 2;
+	const h0name = `h_{${base}}`;
+	const h1name = `h_{${base + 1}}`;
+	const ts = tokenStrings || null;
+
+	const normHtml = `
+    <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization — Layer ${L}</p>
+    <div style="margin-bottom:15px;">
+    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $${h0name}${sup}$ before attention:</p>
+    $$ \\text{LayerNorm}(${h0name}${sup}) = \\gamma${sup} \\odot \\frac{${h0name}${sup} - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta${sup} $$
+    <div style="overflow-x:auto; padding-bottom: 10px">
+    $$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts)}}_{\\text{LayerNorm}(${h0name}${sup})} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{${h0name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+    </div>
+    </div>`;
+
+	const finalHtml = `
+    <div style="margin-bottom:15px;">
+    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
+    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
+    $$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_\\text{proj}${sup}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts)}}_{\\text{Concat}(\\text{Heads})${sup}} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{{W^O}${sup}} $$
+    </div>
+    </div>
+    <div style="margin-bottom:10px;">
+    <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection:</p>
+    $$ ${h1name}${sup} = ${h0name}${sup} + \\text{MHA}_{\\text{proj}}${sup} $$
+    </div>
+    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
+    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{${h1name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{${h0name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
+    </div>`;
+
+	// Step 1: Lock height and swap HTML (frozen at old height)
+	_heightLockedUpdate(normContainer, normHtml);
+	_heightLockedUpdate(finalContainer, finalHtml);
+
+	// Step 2: Render temml (content reaches final height, but container is frozen)
+	_renderTemmlOnElements([normContainer, finalContainer]);
+
+	// Step 3: Release locks (container snaps to new natural height)
+	_releaseHeightLocks([normContainer, finalContainer]);
+
+	return h1;
+}
+
 function preserveScrollPositions(container, mutationFn) {
-	// FIX: Save the global vertical scroll position
+	// Save the global vertical scroll position
 	const savedPageScrollY = window.scrollY;
 	const savedPageScrollX = window.scrollX;
 
-	// FIX: Lock the container height to prevent layout collapse during mutation
+	// Cancel any pending minHeight release from a previous call
+	if (container._heightUnlockRafId) {
+		cancelAnimationFrame(container._heightUnlockRafId);
+		container._heightUnlockRafId = null;
+	}
+
+	// Lock the container height to prevent layout collapse during mutation
 	const previousHeight = container.offsetHeight;
 	if (previousHeight > 0) {
 		container.style.minHeight = previousHeight + 'px';
@@ -6653,7 +6811,7 @@ function preserveScrollPositions(container, mutationFn) {
 	// 2. Execute the DOM mutation (innerHTML replacement, etc.)
 	mutationFn();
 
-	// FIX: Immediately restore page scroll (before browser paints)
+	// Immediately restore page scroll (before browser paints)
 	window.scrollTo(savedPageScrollX, savedPageScrollY);
 
 	// 3. Restore scroll positions on the new elements at the same indices
@@ -6669,12 +6827,8 @@ function preserveScrollPositions(container, mutationFn) {
 		});
 	}
 
-	// FIX: Release height lock after paint
-	requestAnimationFrame(() => {
-		requestAnimationFrame(() => {
-			container.style.minHeight = '';
-		});
-	});
+	// NOTE: minHeight is NOT released here.
+	// The caller must call _releaseHeightLocks([container]) after post-processing.
 }
 
 function matrixToPmatrixLabeled(matrix, tokenStrings) {
