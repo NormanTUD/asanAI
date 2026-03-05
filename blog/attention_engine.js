@@ -2100,9 +2100,6 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		};
 	}
 
-	/**
-	 * Creates and appends the tooltip DOM element, removing any prior one with the same ID.
-	 */
 	_createTooltipElement(layerIdx, headDisplayOffset) {
 		const tooltipId = `apv-tooltip-${this.containerId}-${layerIdx}-${headDisplayOffset}`;
 

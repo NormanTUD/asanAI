@@ -7006,7 +7006,7 @@ function ensureFFNLayerContainers(layerIndex) {
 	    position: fixed; bottom: 0; left: 0; width: 100%;
 	    background: #1e293b; color: #f8fafc;
 	    padding: 10px 20px; display: none; align-items: center;
-	    gap: 14px; z-index: 99999;
+	    gap: 14px; z-index: 999;
 	    font-family: 'Inter', sans-serif; font-size: 0.85rem;
 	    box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
 	    transition: opacity 0.25s ease, transform 0.25s ease;
