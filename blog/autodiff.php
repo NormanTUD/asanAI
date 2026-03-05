@@ -10,7 +10,7 @@ Automatic differentiation is neither symbolic differentiation (manipulating alge
 
 The earliest work on what we now call automatic differentiation dates to \citeauthor{wengert1964} in \citeyear{wengert1964}. In his paper \citetitle{wengert1964}, Wengert described a procedure for the automatic evaluation of total and partial derivatives of arbitrary algebraic functions by decomposing them into sequences of elementary expressions, without ever developing symbolic derivative formulas. This forward-mode technique laid the conceptual groundwork for all later AD systems.
 
-The critical extension to **reverse mode** was made by \citeauthor{linnainmaa1976} in his \citeyear{linnainmaa1976} master's thesis, \citealternativetitle{linnainmaa1976}. Linnainmaa's original motivation was not neural networks at all, he sought an efficient way to track how rounding errors accumulate through long chains of floating-point computations. His key insight was that by recording each elementary operation and then traversing that record in reverse, one could compute the partial derivatives of the final result with respect to *every* intermediate variable in a single backward pass. Where Wengert's forward mode required one pass per input variable, Linnainmaa's reverse mode required only one pass per *output*, an asymmetry that would prove decisive for training neural networks with millions of parameters and a single scalar loss.
+The critical extension to **reverse mode** was made by \citeauthor{linnainmaa1976} in his \citeyear{linnainmaa1976} \cite[master's thesis]{linnainmaa1976}. Linnainmaa's original motivation was not neural networks at all, he sought an efficient way to track how rounding errors accumulate through long chains of floating-point computations. His key insight was that by recording each elementary operation and then traversing that record in reverse, one could compute the partial derivatives of the final result with respect to *every* intermediate variable in a single backward pass. Where Wengert's forward mode required one pass per input variable, Linnainmaa's reverse mode required only one pass per *output*, an asymmetry that would prove decisive for training neural networks with millions of parameters and a single scalar loss.
 
 This technique was later independently rediscovered and applied to neural network training by \citeauthor{werbos1974} in his \citeyear{werbos1974} doctoral thesis \citetitle{werbos1974}, where he proposed using reverse-mode AD to compute gradients for multi-layer networks. However, it was the landmark \citeyear{rumelhart1986} paper by \citeauthor{rumelhart1986}, \citetitle{rumelhart1986}, that popularized the method under the name **backpropagation** and demonstrated its practical effectiveness, reigniting interest in connectionist models after the first AI winter.
 
@@ -330,70 +330,7 @@ Both frameworks produce mathematically identical gradients. The choice is primar
 To truly understand tape-based Autodifferentiation, it helps to build one from scratch. The following is a minimal but complete implementation of a reverse-mode autograd engine in pure Python. It supports addition, multiplication, and the sine function, enough to differentiate our example $f(x, y) = (x + y) \cdot \sin(x)$.
 </div>
 
-<pre><code class="language-python">import math
-
-class Var:
-    """A node in the computational graph."""
-    def __init__(self, value, children=(), op=''):
-        self.value = value
-        self.grad = 0.0          # adjoint: df/d(self)
-        self._backward = lambda: None  # closure to propagate gradient
-        self._children = children
-        self._op = op
-
-    def __add__(self, other):
-        other = other if isinstance(other, Var) else Var(other)
-        out = Var(self.value + other.value, (self, other), '+')
-        def _backward():
-            # d(a+b)/da = 1, d(a+b)/db = 1
-            self.grad  += 1.0 * out.grad
-            other.grad += 1.0 * out.grad
-        out._backward = _backward
-        return out
-
-    def __mul__(self, other):
-        other = other if isinstance(other, Var) else Var(other)
-        out = Var(self.value * other.value, (self, other), '*')
-        def _backward():
-            # d(a*b)/da = b, d(a*b)/db = a
-            self.grad  += other.value * out.grad
-            other.grad += self.value  * out.grad
-        out._backward = _backward
-        return out
-
-    def sin(self):
-        out = Var(math.sin(self.value), (self,), 'sin')
-        def _backward():
-            # d(sin(a))/da = cos(a)
-            self.grad += math.cos(self.value) * out.grad
-        out._backward = _backward
-        return out
-
-    def backward(self):
-        """Topological sort + reverse traversal."""
-        topo, visited = [], set()
-        def build(v):
-            if v not in visited:
-                visited.add(v)
-                for c in v._children:
-                    build(c)
-                topo.append(v)
-        build(self)
-        self.grad = 1.0  # seed
-        for node in reversed(topo):
-            node._backward()
-
-# ── Usage ──
-x = Var(math.pi / 2)
-y = Var(1.0)
-
-f = (x + y) * x.sin()   # f(x,y) = (x+y) * sin(x)
-f.backward()
-
-print(f"f  = {f.value:.4f}")
-print(f"df/dx = {x.grad:.4f}")   # sin(x) + (x+y)*cos(x)
-print(f"df/dy = {y.grad:.4f}")   # sin(x)
-</code></pre>
+<pre><code class="language-python"><?php print get_string_of_file_or_die("py/autodiff/custom.py"); ?></code></pre>
 
 <div class="md">
 This minimal engine implements the exact same algorithm that PyTorch and TensorFlow use internally, just without the GPU acceleration, operator overloading for hundreds of operations, and memory optimizations.
