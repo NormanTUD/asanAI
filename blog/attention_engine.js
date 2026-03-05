@@ -1126,105 +1126,190 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 
 	_apvDrawSingleHeadMatrixSync(svg, layerIdx, headIdx, headData, tokens) {
 		const n = tokens.length;
-		const cellSize = Math.max(18, Math.min(40, 300 / n));
-		const matrixSize = n * cellSize;
-		const padding = 80;
-		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
-		const weights = headData.this_weights;
-
-		const totalWidth = matrixSize + padding;
-		const totalHeight = matrixSize + padding;
+		const layout = this._matrixComputeLayout(n, headIdx);
+		const { totalWidth, totalHeight } = layout;
 
 		svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
 		svg.style.minHeight = totalHeight + 'px';
 
 		const frag = document.createDocumentFragment();
 
-		const makeSvgEl = (tag, attrs, content) => {
-			const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-			for (const [k, v] of Object.entries(attrs)) {
-				if (k === 'style') el.style.cssText = v;
-				else el.setAttribute(k, v);
-			}
-			if (content !== undefined) el.textContent = content;
-			return el;
-		};
+		this._matrixAppendTitle(frag, layout);
+		this._matrixAppendRowLabels(frag, layout, tokens);
+		this._matrixAppendColLabels(frag, layout, tokens);
+		this._matrixAppendCausalMaskOverlay(frag, layout, n);
+		this._matrixAppendCausalMaskBorder(frag, layout, n);
+		this._matrixAppendWeightCells(frag, layout, headData.this_weights, n);
 
+		svg.replaceChildren(frag);
+	}
+
+	/**
+	 * Computes all layout constants for the matrix SVG given the token count
+	 * and head index. Returns a plain object reused by all sub-builders.
+	 */
+	_matrixComputeLayout(n, headIdx) {
+		const cellSize = Math.max(18, Math.min(40, 300 / n));
+		const matrixSize = n * cellSize;
+		const padding = 80;
 		const offsetX = padding / 2;
 		const offsetY = padding / 2;
+		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
 
-		frag.appendChild(makeSvgEl('text', {
-			x: String(offsetX + matrixSize / 2), y: String(offsetY - 30),
-			'font-size': '12', fill: color, 'font-weight': '700', 'text-anchor': 'middle'
+		return {
+			n,
+			cellSize,
+			matrixSize,
+			padding,
+			offsetX,
+			offsetY,
+			color,
+			headIdx,
+			totalWidth: matrixSize + padding,
+			totalHeight: matrixSize + padding,
+		};
+	}
+
+	/**
+	 * Creates a namespaced SVG element with the given attributes and optional text content.
+	 */
+	_matrixMakeSvgEl(tag, attrs, content) {
+		const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+		for (const [k, v] of Object.entries(attrs)) {
+			if (k === 'style') el.style.cssText = v;
+			else el.setAttribute(k, v);
+		}
+		if (content !== undefined) el.textContent = content;
+		return el;
+	}
+
+	/**
+	 * Appends the "Head N" title text centered above the matrix.
+	 */
+	_matrixAppendTitle(frag, layout) {
+		const { offsetX, matrixSize, offsetY, color, headIdx } = layout;
+		frag.appendChild(this._matrixMakeSvgEl('text', {
+			x: String(offsetX + matrixSize / 2),
+			y: String(offsetY - 30),
+			'font-size': '12',
+			fill: color,
+			'font-weight': '700',
+			'text-anchor': 'middle'
 		}, `Head ${headIdx + 1}`));
+	}
 
+	/**
+	 * Appends the row (query) token labels along the left edge of the matrix.
+	 */
+	_matrixAppendRowLabels(frag, layout, tokens) {
+		const { n, offsetX, offsetY, cellSize } = layout;
 		for (let i = 0; i < n; i++) {
-			frag.appendChild(makeSvgEl('text', {
+			frag.appendChild(this._matrixMakeSvgEl('text', {
 				x: String(offsetX - 4),
 				y: String(offsetY + i * cellSize + cellSize / 2 + 4),
-				'font-size': '9', fill: '#64748b', 'text-anchor': 'end',
+				'font-size': '9',
+				fill: '#64748b',
+				'text-anchor': 'end',
 				'data-apv-token-side': 'row',
 				'data-apv-token-idx': String(i),
 				style: 'cursor:pointer;'
 			}, tokens[i]));
 		}
+	}
 
+	/**
+	 * Appends the column (key) token labels along the top edge, rotated −45°.
+	 */
+	_matrixAppendColLabels(frag, layout, tokens) {
+		const { n, offsetX, offsetY, cellSize } = layout;
 		for (let j = 0; j < n; j++) {
 			const cx = offsetX + j * cellSize + cellSize / 2;
 			const cy = offsetY - 6;
-			frag.appendChild(makeSvgEl('text', {
-				x: String(cx), y: String(cy),
-				'font-size': '9', fill: '#64748b', 'text-anchor': 'start',
+			frag.appendChild(this._matrixMakeSvgEl('text', {
+				x: String(cx),
+				y: String(cy),
+				'font-size': '9',
+				fill: '#64748b',
+				'text-anchor': 'start',
 				transform: `rotate(-45, ${cx}, ${cy})`,
 				'data-apv-token-side': 'col',
 				'data-apv-token-idx': String(j),
 				style: 'cursor:pointer;'
 			}, tokens[j]));
 		}
+	}
 
+	/**
+	 * Appends translucent rectangles over the upper-right triangle
+	 * (future positions masked by the causal mask).
+	 */
+	_matrixAppendCausalMaskOverlay(frag, layout, n) {
+		const { offsetX, offsetY, cellSize } = layout;
 		for (let qi = 0; qi < n; qi++) {
 			for (let ki = qi + 1; ki < n; ki++) {
-				const x = offsetX + ki * cellSize;
-				const y = offsetY + qi * cellSize;
-				frag.appendChild(makeSvgEl('rect', {
-					x: String(x), y: String(y),
-					width: String(cellSize), height: String(cellSize),
-					fill: '#94a3b8', 'fill-opacity': '0.12',
+				frag.appendChild(this._matrixMakeSvgEl('rect', {
+					x: String(offsetX + ki * cellSize),
+					y: String(offsetY + qi * cellSize),
+					width: String(cellSize),
+					height: String(cellSize),
+					fill: '#94a3b8',
+					'fill-opacity': '0.12',
 					'pointer-events': 'none'
 				}));
 			}
 		}
+	}
 
-		if (n > 1) {
-			let pathD = '';
-			for (let i = 0; i < n; i++) {
-				const x1 = offsetX + (i + 1) * cellSize;
-				const y1 = offsetY + i * cellSize;
-				const y2 = offsetY + (i + 1) * cellSize;
-				if (i === 0) {
-					pathD += `M ${x1} ${y1}`;
-				} else {
-					pathD += ` L ${x1} ${y1}`;
-				}
-				pathD += ` L ${x1} ${y2}`;
+	/**
+	 * Appends the dashed staircase border and "causal mask" label that
+	 * visually separates the allowed region from the masked region.
+	 * Only drawn when there are at least 2 tokens.
+	 */
+	_matrixAppendCausalMaskBorder(frag, layout, n) {
+		if (n <= 1) return;
+
+		const { offsetX, offsetY, cellSize, matrixSize } = layout;
+		let pathD = '';
+		for (let i = 0; i < n; i++) {
+			const x1 = offsetX + (i + 1) * cellSize;
+			const y1 = offsetY + i * cellSize;
+			const y2 = offsetY + (i + 1) * cellSize;
+			if (i === 0) {
+				pathD += `M ${x1} ${y1}`;
+			} else {
+				pathD += ` L ${x1} ${y1}`;
 			}
-			frag.appendChild(makeSvgEl('path', {
-				d: pathD,
-				fill: 'none',
-				stroke: '#64748b',
-				'stroke-width': '1.5',
-				'stroke-dasharray': '4,3',
-				'pointer-events': 'none',
-				'opacity': '0.6'
-			}));
-
-			frag.appendChild(makeSvgEl('text', {
-				x: String(offsetX + matrixSize - 2),
-				y: String(offsetY + 12),
-				'font-size': '7', fill: '#94a3b8', 'text-anchor': 'end',
-				'pointer-events': 'none', 'font-style': 'italic'
-			}, 'causal mask'));
+			pathD += ` L ${x1} ${y2}`;
 		}
+
+		frag.appendChild(this._matrixMakeSvgEl('path', {
+			d: pathD,
+			fill: 'none',
+			stroke: '#64748b',
+			'stroke-width': '1.5',
+			'stroke-dasharray': '4,3',
+			'pointer-events': 'none',
+			'opacity': '0.6'
+		}));
+
+		frag.appendChild(this._matrixMakeSvgEl('text', {
+			x: String(offsetX + matrixSize - 2),
+			y: String(offsetY + 12),
+			'font-size': '7',
+			fill: '#94a3b8',
+			'text-anchor': 'end',
+			'pointer-events': 'none',
+			'font-style': 'italic'
+		}, 'causal mask'));
+	}
+
+	/**
+	 * Appends the colored attention-weight rectangles (and optional
+	 * percentage text labels when cells are large enough) for every
+	 * query–key pair.
+	 */
+	_matrixAppendWeightCells(frag, layout, weights, n) {
+		const { offsetX, offsetY, cellSize, color } = layout;
 
 		for (let qi = 0; qi < n; qi++) {
 			for (let ki = 0; ki < n; ki++) {
@@ -1233,27 +1318,33 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 				const y = offsetY + qi * cellSize;
 				const alpha = Math.max(0.05, w);
 
-				frag.appendChild(makeSvgEl('rect', {
-					x: String(x), y: String(y),
-					width: String(cellSize), height: String(cellSize),
-					fill: color, 'fill-opacity': alpha.toFixed(3),
-					stroke: '#e2e8f0', 'stroke-width': '0.5',
-					'data-apv-head': '0', 'data-apv-qi': String(qi), 'data-apv-ki': String(ki),
+				frag.appendChild(this._matrixMakeSvgEl('rect', {
+					x: String(x),
+					y: String(y),
+					width: String(cellSize),
+					height: String(cellSize),
+					fill: color,
+					'fill-opacity': alpha.toFixed(3),
+					stroke: '#e2e8f0',
+					'stroke-width': '0.5',
+					'data-apv-head': '0',
+					'data-apv-qi': String(qi),
+					'data-apv-ki': String(ki),
 					style: 'cursor:crosshair;'
 				}));
 
 				if (cellSize >= 28 && w > 0.05) {
-					frag.appendChild(makeSvgEl('text', {
-						x: String(x + cellSize / 2), y: String(y + cellSize / 2 + 3),
-						'font-size': '8', fill: w > 0.5 ? '#fff' : '#334155',
-						'text-anchor': 'middle', 'pointer-events': 'none'
+					frag.appendChild(this._matrixMakeSvgEl('text', {
+						x: String(x + cellSize / 2),
+						y: String(y + cellSize / 2 + 3),
+						'font-size': '8',
+						fill: w > 0.5 ? '#fff' : '#334155',
+						'text-anchor': 'middle',
+						'pointer-events': 'none'
 					}, (w * 100).toFixed(0)));
 				}
 			}
 		}
-
-		// No wrapper height locking here — caller is responsible
-		svg.replaceChildren(frag);
 	}
 
 
