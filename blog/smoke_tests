@@ -8,3 +8,5 @@ cd "$SCRIPT_DIR"
 bash find_double_defined_js.sh
 
 python3 -m py_compile py/**/*.py
+
+python3 py/qos.py py
