@@ -291,3 +291,35 @@ function initOptimizerLab() {
 		}
 	};
 
+	// Live update for learning rate slider with warning threshold
+	lrInput.oninput = (e) => {
+		const val = parseFloat(e.target.value);
+		if (lrValLabel) lrValLabel.innerText = `LR = ${val}`;
+
+		// Show warning when learning rate is dangerously high
+		if (lrWarning) {
+			if (val >= 0.35) {
+				lrWarning.style.display = 'block';
+			} else {
+				lrWarning.style.display = 'none';
+			}
+		}
+	};
+
+	// Prevent epoch input from going below 1 or above 500
+	const epochsInput = document.getElementById('opt-epochs');
+	if (epochsInput) {
+		epochsInput.onchange = (e) => {
+			let val = parseInt(e.target.value);
+			if (isNaN(val) || val < 1) val = 1;
+			if (val > 500) val = 500;
+			e.target.value = val;
+		};
+	}
+}
+
+async function loadOptimizerModule() {
+	updateLoadingStatus("Loading section about Optimizers...");
+	initOptimizerLab();
+	return Promise.resolve();
+}
