@@ -64,7 +64,7 @@ The math uses a logarithm ($-\ln(P)$), which creates a steep "wall" as confidenc
 			<span id="loss-bird" style="font-family: monospace; color: #ef4444;">-</span>
 		</div>
 
-		<div style="background: #1e293b; color: #38bdf8; padding: 15px; border-radius: 8px; font-family: monospace; min-width: 180px;">
+		<div style="background: #1e293b; color: #38bdf8; padding: 15px; border-radius: 8px; font-family: monospace; min-width: 180px; font-size: 0.8em;">
 			<div style="color: #94a3b8; margin-bottom: 5px; font-size: 0.8em;">Output Vector $\hat{y}$</div>
 			[ <span id="vec-dog">0.00</span>, <span id="vec-cat" style="color: #fbbf24; font-weight: bold;">0.00</span>, <span id="vec-bird">0.00</span> ]
 			<div style="margin-top: 10px; color: #94a3b8; font-size: 0.8em;">Target Vector $y$</div>
