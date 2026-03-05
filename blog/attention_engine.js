@@ -2100,55 +2100,55 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		};
 	}
 
-/**
- * Creates and appends the tooltip DOM element, removing any prior one with the same ID.
- */
-_createTooltipElement(layerIdx, headDisplayOffset) {
-	const tooltipId = `apv-tooltip-${this.containerId}-${layerIdx}-${headDisplayOffset}`;
+	/**
+	 * Creates and appends the tooltip DOM element, removing any prior one with the same ID.
+	 */
+	_createTooltipElement(layerIdx, headDisplayOffset) {
+		const tooltipId = `apv-tooltip-${this.containerId}-${layerIdx}-${headDisplayOffset}`;
 
-	let tooltip = document.getElementById(tooltipId);
-	if (tooltip) tooltip.remove();
+		let tooltip = document.getElementById(tooltipId);
+		if (tooltip) tooltip.remove();
 
-	tooltip = document.createElement('div');
-	tooltip.id = tooltipId;
-	tooltip.style.cssText = `
-	position:fixed; padding:10px 14px; background:#1e293b; color:#fff;
-	border-radius:8px; font-size:0.8rem; pointer-events:none;
-	z-index:9999; display:none; white-space:normal;
-	box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-	max-width:90vw; max-height:80vh; overflow-y:auto;
-	line-height:1.5;
-    `;
-	document.body.appendChild(tooltip);
-	return tooltip;
-}
-
-/**
- * Positions the tooltip near the cursor, clamping to viewport edges.
- */
-_positionTooltip(tooltip, e) {
-	tooltip.style.display = 'block';
-	const tw = tooltip.offsetWidth;
-	const th = tooltip.offsetHeight;
-	let left = e.clientX + 16;
-	let top = e.clientY - 20;
-
-	if (left + tw > window.innerWidth - 10) {
-		left = e.clientX - tw - 16;
-	}
-	if (left < 10) {
-		left = 10;
-	}
-	if (top + th > window.innerHeight - 10) {
-		top = window.innerHeight - th - 10;
-	}
-	if (top < 10) {
-		top = 10;
+		tooltip = document.createElement('div');
+		tooltip.id = tooltipId;
+		tooltip.style.cssText = `
+		position:fixed; padding:10px 14px; background:#1e293b; color:#fff;
+		border-radius:8px; font-size:0.8rem; pointer-events:none;
+		z-index:9999; display:none; white-space:normal;
+		box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+		max-width:90vw; max-height:80vh; overflow-y:auto;
+		line-height:1.5;
+	    `;
+		document.body.appendChild(tooltip);
+		return tooltip;
 	}
 
-	tooltip.style.left = left + 'px';
-	tooltip.style.top = top + 'px';
-}
+	/**
+	 * Positions the tooltip near the cursor, clamping to viewport edges.
+	 */
+	_positionTooltip(tooltip, e) {
+		tooltip.style.display = 'block';
+		const tw = tooltip.offsetWidth;
+		const th = tooltip.offsetHeight;
+		let left = e.clientX + 16;
+		let top = e.clientY - 20;
+
+		if (left + tw > window.innerWidth - 10) {
+			left = e.clientX - tw - 16;
+		}
+		if (left < 10) {
+			left = 10;
+		}
+		if (top + th > window.innerHeight - 10) {
+			top = window.innerHeight - th - 10;
+		}
+		if (top < 10) {
+			top = 10;
+		}
+
+		tooltip.style.left = left + 'px';
+		tooltip.style.top = top + 'px';
+	}
 
 // ── LaTeX formatting helpers for tooltips ──
 
@@ -2430,122 +2430,122 @@ _apvSaveState() {
 			layerStates
 		};
 		localStorage.setItem(this._apvGetStorageKey(), JSON.stringify(state));
-		} catch (e) {
-			// localStorage might be full or unavailable — fail silently
-		}
+	} catch (e) {
+		// localStorage might be full or unavailable — fail silently
 	}
+}
 
-	_apvGetStorageKey() {
-		return `apv-state-${this.containerId}`;
+_apvGetStorageKey() {
+	return `apv-state-${this.containerId}`;
+}
+
+apvToggleHead(layerIdx, headIdx, isActive) {
+	const heads = this._apvActiveHeads.get(layerIdx);
+	if (!heads) return;
+	if (isActive) {
+		heads.add(headIdx);
+	} else {
+		heads.delete(headIdx);
 	}
+	this._apvDraw(layerIdx);
+	this._apvSaveState();
+}
 
-	apvToggleHead(layerIdx, headIdx, isActive) {
-		const heads = this._apvActiveHeads.get(layerIdx);
-		if (!heads) return;
-		if (isActive) {
-			heads.add(headIdx);
-		} else {
-			heads.delete(headIdx);
-		}
-		this._apvDraw(layerIdx);
-		this._apvSaveState();
-	}
+apvSetMode(layerIdx, mode) {
+	this._apvMode.set(layerIdx, mode);
 
-	apvSetMode(layerIdx, mode) {
-		this._apvMode.set(layerIdx, mode);
-
-		// Update button styling without full rebuild
-		const contentDiv = document.getElementById(`layer-content-${this.containerId}-${layerIdx}`);
-		if (contentDiv) {
-			const buttons = contentDiv.querySelectorAll('.apv-mode-btn');
-			buttons.forEach(btn => {
-				const isHead = btn.textContent.trim() === 'Head View' && mode === 'headview';
-				const isMatrix = btn.textContent.trim() === 'Matrix View' && mode === 'matrix';
-				const active = isHead || isMatrix;
-				btn.style.background = active ? '#3b82f6' : '#fff';
-				btn.style.color = active ? '#fff' : '#334155';
-			});
-		}
-
-		this._apvDraw(layerIdx);
-		this._apvSaveState();
-	}
-
-	_apvDrawSingleHeadView(svg, layerIdx, headIdx, headData, tokens) {
-		const wrapper = svg.parentElement;
-		if (wrapper) {
-			wrapper.style.minHeight = wrapper.offsetHeight + 'px';
-		}
-
-		this._apvDrawSingleHeadViewSync(svg, layerIdx, headIdx, headData, tokens);
-
-		if (wrapper) {
-			requestAnimationFrame(() => {
-				requestAnimationFrame(() => {
-					wrapper.style.minHeight = '';
-				});
-			});
-		}
-	}
-
-	_apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, headData, tokens) {
-		const wrapper = svg.parentElement;
-		if (wrapper) {
-			wrapper.style.minHeight = wrapper.offsetHeight + 'px';
-		}
-
-		this._apvDrawSingleHeadMatrixSync(svg, layerIdx, headIdx, headData, tokens);
-
-		if (wrapper) {
-			requestAnimationFrame(() => {
-				requestAnimationFrame(() => {
-					wrapper.style.minHeight = '';
-				});
-			});
-		}
-	}
-
-	_apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, headData, tokens) {
-		const self = this;
-		const hoverKey = `${layerIdx}-${headIdx}`;
-		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
-		const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
-		let currentHover = null;
-
-		svg.addEventListener('mouseover', (e) => {
-			const el = e.target.closest('[data-apv-side]');
-			if (el) {
-				const side = el.getAttribute('data-apv-side');
-				const index = parseInt(el.getAttribute('data-apv-idx'));
-				const key = `${side}-${index}`;
-				if (currentHover === key) return;
-				currentHover = key;
-				self._apvHoveredToken.set(hoverKey, { side, index });
-				updateHover();
-			}
+	// Update button styling without full rebuild
+	const contentDiv = document.getElementById(`layer-content-${this.containerId}-${layerIdx}`);
+	if (contentDiv) {
+		const buttons = contentDiv.querySelectorAll('.apv-mode-btn');
+		buttons.forEach(btn => {
+			const isHead = btn.textContent.trim() === 'Head View' && mode === 'headview';
+			const isMatrix = btn.textContent.trim() === 'Matrix View' && mode === 'matrix';
+			const active = isHead || isMatrix;
+			btn.style.background = active ? '#3b82f6' : '#fff';
+			btn.style.color = active ? '#fff' : '#334155';
 		});
+	}
 
-		svg.addEventListener('mouseout', (e) => {
-			const el = e.target.closest('[data-apv-side]');
-			if (el) {
-				const related = e.relatedTarget?.closest?.('[data-apv-side]');
-				if (related) return;
-				currentHover = null;
-				self._apvHoveredToken.set(hoverKey, null);
-				updateHover();
-			}
+	this._apvDraw(layerIdx);
+	this._apvSaveState();
+}
+
+_apvDrawSingleHeadView(svg, layerIdx, headIdx, headData, tokens) {
+	const wrapper = svg.parentElement;
+	if (wrapper) {
+		wrapper.style.minHeight = wrapper.offsetHeight + 'px';
+	}
+
+	this._apvDrawSingleHeadViewSync(svg, layerIdx, headIdx, headData, tokens);
+
+	if (wrapper) {
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				wrapper.style.minHeight = '';
+			});
 		});
+	}
+}
 
-		function updateHover() {
-			const hovered = self._apvHoveredToken.get(hoverKey);
-			const weights = headData.this_weights;
-			const n = tokens.length;
+_apvDrawSingleHeadMatrix(svg, layerIdx, headIdx, headData, tokens) {
+	const wrapper = svg.parentElement;
+	if (wrapper) {
+		wrapper.style.minHeight = wrapper.offsetHeight + 'px';
+	}
 
-			// Update paths
-			const paths = svg.querySelectorAll('path[data-apv-qi]');
-			paths.forEach(path => {
-				const qi = parseInt(path.getAttribute('data-apv-qi'));
-				const ki = parseInt(path.getAttribute('data-apv-ki'));
+	this._apvDrawSingleHeadMatrixSync(svg, layerIdx, headIdx, headData, tokens);
+
+	if (wrapper) {
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				wrapper.style.minHeight = '';
+			});
+		});
+	}
+}
+
+_apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, headData, tokens) {
+	const self = this;
+	const hoverKey = `${layerIdx}-${headIdx}`;
+	const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+	const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
+	let currentHover = null;
+
+	svg.addEventListener('mouseover', (e) => {
+		const el = e.target.closest('[data-apv-side]');
+		if (el) {
+			const side = el.getAttribute('data-apv-side');
+			const index = parseInt(el.getAttribute('data-apv-idx'));
+			const key = `${side}-${index}`;
+			if (currentHover === key) return;
+			currentHover = key;
+			self._apvHoveredToken.set(hoverKey, { side, index });
+			updateHover();
+		}
+	});
+
+	svg.addEventListener('mouseout', (e) => {
+		const el = e.target.closest('[data-apv-side]');
+		if (el) {
+			const related = e.relatedTarget?.closest?.('[data-apv-side]');
+			if (related) return;
+			currentHover = null;
+			self._apvHoveredToken.set(hoverKey, null);
+			updateHover();
+		}
+	});
+
+	function updateHover() {
+		const hovered = self._apvHoveredToken.get(hoverKey);
+		const weights = headData.this_weights;
+		const n = tokens.length;
+
+		// Update paths
+		const paths = svg.querySelectorAll('path[data-apv-qi]');
+		paths.forEach(path => {
+			const qi = parseInt(path.getAttribute('data-apv-qi'));
+			const ki = parseInt(path.getAttribute('data-apv-ki'));
 				const w = weights[qi][ki];
 
 				if (!hovered) {
