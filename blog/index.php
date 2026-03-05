@@ -125,6 +125,7 @@
 		addCuriosityScore();
 		//addReturnVisitorWarmth();
 		addKonamiEgg();
+		addConsoleEasterEggs();
 	})();
 	</script>
 </body>

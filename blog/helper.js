@@ -1160,3 +1160,33 @@ function addKonamiEgg() {
 		}, 5000);
 	}
 }
+
+function addConsoleEasterEggs() {
+	const styles = 'color: #4fc3f7; font-size: 14px; font-weight: bold;';
+	const sub = 'color: #888; font-size: 11px;';
+
+	console.log('%c🤓 Hey, you opened DevTools.', styles);
+	console.log('%cThat means you\'re curious. We like curious.', sub);
+
+	const tips = [
+		"Fun fact: The backpropagation algorithm was independently discovered at least 3 times.",
+		"The attention mechanism was inspired by how humans read — skipping boring parts, just like you're doing right now.",
+		"GPT-3 has 175 billion parameters. This course has... fewer.",
+		"If you can read this, you're overqualified for most AI discussions on Twitter.",
+	];
+
+	console.log(`%c💡 ${tips[Math.floor(Math.random() * tips.length)]}`, sub);
+
+	window.lol = () => {
+		const jokes = [
+			"Why do neural networks never get lonely? They have lots of connections.",
+			"A QA engineer walks into a bar. Orders 1 beer. Orders 0 beers. Orders 99999999 beers. Orders -1 beers. Orders a lizard.",
+			"Machine learning is just statistics wearing a leather jacket.",
+			"Roses are red, violets are blue, unexpected '{' on line 32.",
+			"There are only 10 types of people: those who understand binary and those who've completed this course.",
+		];
+		const joke = jokes[Math.floor(Math.random() * jokes.length)];
+		console.log(`%c😂 ${joke}`, 'color: #ffd54f; font-size: 12px;');
+		return '😂';
+	};
+}
