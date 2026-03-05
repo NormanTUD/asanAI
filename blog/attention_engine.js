@@ -2536,8 +2536,6 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	_apvAttachSingleHeadHoverEvents(svg, layerIdx, headIdx, headData, tokens) {
 		const self = this;
 		const hoverKey = `${layerIdx}-${headIdx}`;
-		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
-		const { rowHeight, leftColumnX, rightColumnX, topPadding, minOpacity } = this._apvOptions;
 		let currentHover = null;
 
 		svg.addEventListener('mouseover', (e) => {
@@ -2549,7 +2547,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 				if (currentHover === key) return;
 				currentHover = key;
 				self._apvHoveredToken.set(hoverKey, { side, index });
-				updateHover();
+				self._apvUpdateSingleHeadHoverState(svg, layerIdx, headIdx, headData, tokens);
 			}
 		});
 
@@ -2560,86 +2558,76 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 				if (related) return;
 				currentHover = null;
 				self._apvHoveredToken.set(hoverKey, null);
-				updateHover();
+				self._apvUpdateSingleHeadHoverState(svg, layerIdx, headIdx, headData, tokens);
 			}
 		});
+	}
 
-		function updateHover() {
-			const hovered = self._apvHoveredToken.get(hoverKey);
-			const weights = headData.this_weights;
-			const n = tokens.length;
+	_apvUpdateSingleHeadHoverState(svg, layerIdx, headIdx, headData, tokens) {
+		const hoverKey = `${layerIdx}-${headIdx}`;
+		const hovered = this._apvHoveredToken.get(hoverKey);
+		const weights = headData.this_weights;
+		const n = tokens.length;
 
-			// Update paths
-			const paths = svg.querySelectorAll('path[data-apv-qi]');
-			paths.forEach(path => {
-				const qi = parseInt(path.getAttribute('data-apv-qi'));
-				const ki = parseInt(path.getAttribute('data-apv-ki'));
-				const w = weights[qi][ki];
+		this._apvUpdateSingleHeadPathOpacities(svg, weights, n, hovered);
+		this._apvUpdateTokenTextStyles(svg, hovered);
+		this._apvReplaceSingleHeadWeightLabels(svg, layerIdx, headIdx, weights, n, hovered, tokens);
+	}
 
-				if (!hovered) {
-					path.setAttribute('stroke-opacity', w.toFixed(3));
-					path.setAttribute('stroke-width', (1 + w * 5).toFixed(1));
+	_apvUpdateSingleHeadPathOpacities(svg, weights, n, hovered) {
+		const paths = svg.querySelectorAll('path[data-apv-qi]');
+		paths.forEach(path => {
+			const qi = parseInt(path.getAttribute('data-apv-qi'));
+			const ki = parseInt(path.getAttribute('data-apv-ki'));
+			const w = weights[qi][ki];
+
+			if (!hovered) {
+				path.setAttribute('stroke-opacity', w.toFixed(3));
+				path.setAttribute('stroke-width', (1 + w * 5).toFixed(1));
+			} else {
+				const { side, index } = hovered;
+				const isHighlighted =
+					(side === 'left' && index === qi) ||
+					(side === 'right' && index === ki);
+
+				if (isHighlighted) {
+					path.setAttribute('stroke-opacity', (0.3 + w * 0.7).toFixed(3));
+					path.setAttribute('stroke-width', (2 + w * 8).toFixed(1));
 				} else {
-					const { side, index } = hovered;
-					if ((side === 'left' && index === qi) || (side === 'right' && index === ki)) {
-						const opacity = 0.3 + w * 0.7;
-						const strokeWidth = 2 + w * 8;
-						path.setAttribute('stroke-opacity', opacity.toFixed(3));
-						path.setAttribute('stroke-width', strokeWidth.toFixed(1));
-					} else {
-						path.setAttribute('stroke-opacity', '0.04');
-						path.setAttribute('stroke-width', '0.5');
-					}
+					path.setAttribute('stroke-opacity', '0.04');
+					path.setAttribute('stroke-width', '0.5');
 				}
-			});
+			}
+		});
+	}
 
-			// Update token text styling
-			const texts = svg.querySelectorAll('text[data-apv-side]');
-			texts.forEach(text => {
-				const side = text.getAttribute('data-apv-side');
-				const idx = parseInt(text.getAttribute('data-apv-idx'));
-				const isHovered = hovered && hovered.side === side && hovered.index === idx;
-				text.setAttribute('fill', isHovered ? '#1e40af' : '#334155');
-				text.setAttribute('font-weight', isHovered ? '700' : '500');
-			});
+	_apvReplaceSingleHeadWeightLabels(svg, layerIdx, headIdx, weights, n, hovered, tokens) {
+		svg.querySelectorAll('.apv-weight-label').forEach(el => el.remove());
 
-			// Update percentage labels
-			svg.querySelectorAll('.apv-weight-label').forEach(el => el.remove());
+		if (!hovered) return;
 
-			if (hovered) {
-				const arcX1 = leftColumnX + 6;
-				const arcX2 = rightColumnX - 6;
+		const color = AttentionEngine.HEAD_COLORS[headIdx % AttentionEngine.HEAD_COLORS.length];
+		const { rowHeight, leftColumnX, rightColumnX, topPadding } = this._apvOptions;
+		const arcX1 = leftColumnX + 6;
+		const arcX2 = rightColumnX - 6;
 
-				for (let qi = 0; qi < n; qi++) {
-					for (let ki = 0; ki < n; ki++) {
-						const w = weights[qi][ki];
-						if (w < 0.05) continue;
+		for (let qi = 0; qi < n; qi++) {
+			for (let ki = 0; ki < n; ki++) {
+				const w = weights[qi][ki];
+				if (w < 0.05) continue;
 
-						const { side, index } = hovered;
-						const isRelevant = (side === 'left' && index === qi) ||
-							(side === 'right' && index === ki);
-						if (!isRelevant) continue;
+				const { side, index } = hovered;
+				const isRelevant =
+					(side === 'left' && index === qi) ||
+					(side === 'right' && index === ki);
+				if (!isRelevant) continue;
 
-						const targetIdx = (side === 'left') ? ki : qi;
-						const y = topPadding + targetIdx * rowHeight + 4;
-						const anchorX = (side === 'left') ? arcX2 - 4 : arcX1 + 4;
-						const textAnchor = (side === 'left') ? 'end' : 'start';
+				const targetIdx = (side === 'left') ? ki : qi;
+				const y = topPadding + targetIdx * rowHeight + 4;
+				const anchorX = (side === 'left') ? arcX2 - 4 : arcX1 + 4;
+				const textAnchor = (side === 'left') ? 'end' : 'start';
 
-						const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-						label.setAttribute('x', anchorX.toFixed(1));
-						label.setAttribute('y', y.toFixed(1));
-						label.setAttribute('font-size', '9');
-						label.setAttribute('fill', color);
-						label.setAttribute('font-weight', '700');
-						label.setAttribute('text-anchor', textAnchor);
-						label.setAttribute('class', 'apv-weight-label');
-						label.setAttribute('stroke', '#fff');
-						label.setAttribute('stroke-width', '2.5');
-						label.setAttribute('paint-order', 'stroke');
-						label.textContent = `${(w * 100).toFixed(0)}%`;
-						svg.appendChild(label);
-					}
-				}
+				this._apvAppendWeightLabel(svg, anchorX, y, color, `${(w * 100).toFixed(0)}%`, textAnchor);
 			}
 		}
 	}
