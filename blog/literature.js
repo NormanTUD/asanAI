@@ -465,7 +465,8 @@ window.bibData = {
 		year: 2007,
 		title: "Os d'Ishango, Institut Royal des Sciences naturelles de Belgique, Bruxelles",
 		alternativetitle: "Ishango-Bone",
-		author: "Ben2"
+		author: "Ben2",
+		license: "GNU"
 	},
 	"ishangobone": {
 		author: "Jean de Heinzelin de Braucourt",
