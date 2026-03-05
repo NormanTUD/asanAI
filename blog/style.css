@@ -357,7 +357,6 @@ blockquote footer {
 	display: grid;
 	grid-template-rows: auto;
 	gap: 12px;
-	width: 750px;
 	margin: 0 auto;
 	padding: 10px;
 }

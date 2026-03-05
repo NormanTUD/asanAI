@@ -14,7 +14,8 @@ Since the network weights are randomly initialized, you may need to **reset** th
 </div>
 
 <div class="lab-dashboard">
-    <div class="header-full panel" style="flex-direction:row; justify-content:space-between; align-items:center;">
+    <!-- Row 1: Full-width header -->
+    <div class="header-full panel" style="grid-area:header; flex-direction:row; justify-content:space-between; align-items:center;">
         <div class="config-bar" style="display:flex; gap:20px; align-items:center;">
             <label class="config-label">
                 <span class="config-label-text">Learning Rate</span>
@@ -38,7 +39,8 @@ Since the network weights are randomly initialized, you may need to **reset** th
         </div>
     </div>
 
-    <div class="panel">
+    <!-- Row 2 Left: Training Data + Decision Boundary + Loss -->
+    <div class="panel" style="grid-area:main;">
         <p class="panel-title">Training Data</p>
         <div class="table-wrapper">
             <table id="traininglab-train-table" class="training-table">
@@ -58,14 +60,16 @@ Since the network weights are randomly initialized, you may need to **reset** th
         <div id="master-loss-landscape" class="plot-container"></div>
     </div>
 
-    <div class="panel">
+    <!-- Row 2 Right: Weights + Heatmaps -->
+    <div class="panel" style="grid-area:side;">
         <p class="panel-title">Weight Controls</p>
         <div id="manual-weight-sliders"></div>
         <p class="panel-title">Activation Heatmaps</p>
         <div id="traininglab-tensor-viz"></div>
     </div>
 
-    <div class="math-panel full-width-panel panel">
+    <!-- Row 3: Full-width inference -->
+    <div class="math-panel full-width-panel panel" style="grid-area:inference;">
         <div class="predict-box">
             <p class="panel-title" style="margin-bottom:12px;">Live Inference</p>
             <div class="predict-inputs">
@@ -89,7 +93,13 @@ Since the network weights are randomly initialized, you may need to **reset** th
 /* ── Dashboard Layout ── */
 .lab-dashboard {
     display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "header    header"
+        "main      side"
+        "inference inference";
     gap: 16px;
+    width: 100%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -100,27 +110,24 @@ Since the network weights are randomly initialized, you may need to **reset** th
     padding: 20px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
     transition: box-shadow 0.25s ease;
+    min-width: 0; /* prevents grid blowout from inner content */
 }
 
 .lab-dashboard .panel:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
 }
 
-.panel-title {
-    font-size: 0.82em;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #64748b;
-    margin: 18px 0 10px 0;
-    padding-bottom: 6px;
-    border-bottom: 2px solid #f1f5f9;
+/* Responsive: stack on smaller screens */
+@media (max-width: 768px) {
+    .lab-dashboard {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "header"
+            "main"
+            "side"
+            "inference";
+    }
 }
-
-.panel-title:first-child {
-    margin-top: 0;
-}
-
 /* ── Header / Config Bar ── */
 .header-full {
     display: flex;
