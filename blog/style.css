@@ -1550,3 +1550,115 @@ input[type="range"]:focus-visible::-moz-range-thumb {
     0 2px 6px rgba(118, 75, 162, 0.5),
     0 0 0 4px rgba(102, 126, 234, 0.4);
 }
+
+/* ===== Stunning Text Input Styles ===== */
+
+input[type="text"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.08));
+  border: 2px solid rgba(118, 75, 162, 0.3);
+  border-radius: 12px;
+  color: #2d2040;
+  font-family: inherit;
+  caret-color: #764ba2;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease,
+    transform 0.2s ease;
+}
+
+/* ===== Placeholder ===== */
+
+input[type="text"]::placeholder {
+  color: rgba(118, 75, 162, 0.45);
+  font-style: italic;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+input[type="text"]:focus::placeholder {
+  opacity: 0.3;
+  transform: translateX(6px);
+}
+
+/* ===== Hover State ===== */
+
+input[type="text"]:hover {
+  border-color: rgba(118, 75, 162, 0.55);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.12));
+  box-shadow:
+    0 2px 12px rgba(118, 75, 162, 0.12),
+    0 0 0 0 rgba(118, 75, 162, 0);
+}
+
+/* ===== Focus State ===== */
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: #764ba2;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.06), rgba(240, 147, 251, 0.08));
+  box-shadow:
+    0 0 0 4px rgba(118, 75, 162, 0.15),
+    0 4px 20px rgba(102, 126, 234, 0.2),
+    inset 0 1px 3px rgba(118, 75, 162, 0.06);
+  transform: translateY(-1px);
+}
+
+/* ===== Active / Typing State ===== */
+
+input[type="text"]:focus:not(:placeholder-shown) {
+  border-color: #667eea;
+  box-shadow:
+    0 0 0 4px rgba(102, 126, 234, 0.15),
+    0 4px 20px rgba(102, 126, 234, 0.18),
+    inset 0 1px 3px rgba(102, 126, 234, 0.06);
+}
+
+/* ===== Bottom Accent Bar (Animated Gradient Underline) ===== */
+
+input[type="text"] {
+  background-image:
+    linear-gradient(90deg, #667eea, #764ba2, #f093fb),
+    linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.08));
+  background-size: 0% 3px, 100% 100%;
+  background-position: bottom center, center;
+  background-repeat: no-repeat;
+  padding-bottom: calc(10px + 3px); /* original padding + accent bar height */
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background-size 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.2s ease;
+}
+
+input[type="text"]:focus {
+  background-size: 100% 3px, 100% 100%;
+}
+
+/* ===== Focus-Visible for Accessibility ===== */
+
+input[type="text"]:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 4px rgba(102, 126, 234, 0.3),
+    0 4px 20px rgba(102, 126, 234, 0.2),
+    inset 0 1px 3px rgba(118, 75, 162, 0.06);
+}
+
+/* ===== Selection Highlight ===== */
+
+input[type="text"]::selection {
+  background: rgba(118, 75, 162, 0.25);
+  color: #2d2040;
+}
+
+/* ===== Disabled State ===== */
+
+input[type="text"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: rgba(118, 75, 162, 0.15);
+  background: rgba(118, 75, 162, 0.04);
+  box-shadow: none;
+}
