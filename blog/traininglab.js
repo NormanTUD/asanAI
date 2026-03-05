@@ -394,7 +394,6 @@ const TrainLab = {
 	// --- Visualization: Math Monitor ---
 
 	_buildFullNetworkEquation: function (layers) {
-		// Collect all layer params
 		const params = [];
 		layers.forEach((l, idx) => {
 			const weights = l.getWeights();
@@ -407,28 +406,23 @@ const TrainLab = {
 
 		if (params.length === 0) return '';
 
-		// Build inside-out: start from the innermost layer
-		// For a 2-layer net (1 hidden + 1 output):
-		//   ŷ = σ( ReLU( X · W1 + b1 ) · W2 + b2 )
-
-		let expr = '\\mathbf{X}';
+		let expr = '(x_1,\\, x_2)';
 
 		params.forEach((p) => {
 			const layerNum = p.idx + 1;
-			const actName = p.isOutput ? '\\sigma' : '\\operatorname{ReLU}';
+			const actName = p.isOutput
+				? '\\operatorname{sigmoid}'
+				: '\\operatorname{ReLU}';
 
-			const texW = this._matrixToTex(p.W);
-			const texB = this._biasToTex(p.B);
+			const wLabel = `\\mathbf{W}_{${layerNum}}`;
+			const bLabel = `\\mathbf{b}_{${layerNum}}`;
 
-			const wBrace = `\\underbrace{${texW}}_{\\mathbf{W}_{${layerNum}}}`;
-			const bBrace = `\\underbrace{${texB}}_{\\mathbf{b}_{${layerNum}}}`;
-
-			expr = `${actName}\\!\\left(\\; ${expr} \\;\\cdot\\; ${wBrace} \\;+\\; ${bBrace} \\;\\right)`;
+			expr = `${actName}\\!\\left(${expr} \\cdot ${wLabel} + ${bLabel}\\right)`;
 		});
 
 		return `<div class="formula-block full-eq">
-	<b>Complete Forward Pass:</b><br>
-	$\\hat{y} \\;=\\; ${expr}$
+    <b>Complete Forward Pass:</b><br>
+    $\\small \\hat{y} \\;=\\; ${expr}$
     </div>`;
 	},
 
@@ -467,13 +461,13 @@ const TrainLab = {
 	_buildLayerDefinition: function (layer, idx, totalLayers) {
 		const [W, B] = [layer.getWeights()[0].arraySync(), layer.getWeights()[1].arraySync()];
 		const isOutput = idx === totalLayers - 1;
-		const actName = isOutput ? 'σ' : 'ReLU';
-		const actLabel = isOutput ? 'Sigmoid' : 'ReLU';
+		const actName = isOutput ? 'sigmoid' : 'ReLU';
+		const actLabel = isOutput ? 'sigmoid' : 'ReLU';
 		const layerNum = idx + 1;
 
 		// Symbolic input name
 		const inputSym = idx === 0
-			? '\\mathbf{X}'
+			? '(x_1,\\, x_2)'
 			: '\\mathbf{h}_{' + idx + '}';
 
 		// Symbolic output name
@@ -493,14 +487,14 @@ const TrainLab = {
 		const actUnderbrace = `\\underbrace{\\text{${actLabel}}}_{\\text{activation}}`;
 
 		return `<div class="formula-block">
-	<b>Layer ${layerNum}:</b><br>
-	$${outputSym} = ${actUnderbrace}\\!\\left(\\;
-	    ${inputSym} \\;\\cdot\\; ${wUnderbrace}
-	    \\;+\\; ${bUnderbrace}
-	\\;\\right)$
+    <b>Layer ${layerNum}:</b><br>
+    $\\small ${outputSym} = ${actUnderbrace}\\!\\left(\\;
+	${inputSym} \\;\\cdot\\; ${wUnderbrace}
+	\\;+\\; ${bUnderbrace}
+    \\;\\right)$
     </div>`;
 	},
-
+	
 	_renderMathMonitor: function (id, c) {
 		const mon = document.getElementById(id + '-math-monitor');
 		if (!mon) return;

@@ -576,9 +576,9 @@ Since the network weights are randomly initialized, you may need to **reset** th
     background: #ffffff;
     border-left: 3px solid #3b82f6;
     border-radius: 0 8px 8px 0;
-    font-size: 0.88em;
+    font-size: 0.78em;
     overflow-x: auto;
-    line-height: 2.2;
+    line-height: 2.0;
 }
 
 .math-monitor-container .formula-block.full-eq {
