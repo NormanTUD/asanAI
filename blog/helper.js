@@ -409,8 +409,8 @@ function smartquote() {
 			author = bib.author || author;
 			title = bib.title || "";
 			year = bib.year || "";
-			if(page != "") page = `, p. ${page}`;
-			if(after != "") after = `, ${after}`;
+			if (page != "") page = `, p. ${page}`;
+			if (after != "") after = `, ${after}`;
 			url = bib.url || url;
 
 			const instanceId = `ref-${citeKey}-${Math.random().toString(36).substr(2, 5)}`;
@@ -418,31 +418,154 @@ function smartquote() {
 			if (!window.citationMap[citeKey]) window.citationMap[citeKey] = [];
 			window.citationMap[citeKey].push(instanceId);
 
-			const info = `${author}: ${title}${year ? ' ('+year+')' : ''}`;
+			const info = `${author}: ${title}${year ? ' (' + year + ')' : ''}`;
 			const author_display = title !== "" ? `${author} (${title})` : author;
 
 			const quoteBox = document.createElement('blockquote');
 			quoteBox.className = el.className.replace('smart-quote', 'rendered-quote');
 
 			const p = document.createElement('p');
+
 			if (fullEl && shortEl) {
 				p.className = 'toggleable-quote';
 				const shortHtml = shortEl.innerHTML.trim().replace(/^["»]|["«]$/g, '');
 				const fullHtml = fullEl.innerHTML.trim().replace(/^["»]|["«]$/g, '');
+
 				p.setAttribute('data-state', 'short');
-				p.innerHTML = `»${shortHtml}« <span class="quote-expand-hint">[<i>click to show full quote</i>]</span>`;
-				p.onclick = () => {
-					const isShort = p.getAttribute('data-state') === 'short';
-					p.innerHTML = isShort ? `»${fullHtml}«` : `»${shortHtml}« <span class="quote-expand-hint">[<i>click to show full quote</i>]</span>`;
-					p.setAttribute('data-state', isShort ? 'full' : 'short');
+
+				// --- Staggered character reveal ---
+				const animateTextIn = (container, html, onComplete) => {
+					// Parse HTML into a temporary element to get text + tags
+					const temp = document.createElement('span');
+					temp.innerHTML = html;
+					container.innerHTML = '';
+					container.appendChild(temp);
+
+					// Get all text nodes
+					const walker = document.createTreeWalker(temp, NodeFilter.SHOW_TEXT, null, false);
+					const textNodes = [];
+					while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+					// Wrap each character in a span
+					textNodes.forEach(node => {
+						const text = node.textContent;
+						const frag = document.createDocumentFragment();
+						for (let i = 0; i < text.length; i++) {
+							const charSpan = document.createElement('span');
+							charSpan.className = 'quote-char';
+							charSpan.textContent = text[i];
+							charSpan.style.opacity = '0';
+							charSpan.style.filter = 'blur(4px)';
+							charSpan.style.transform = 'translateY(4px)';
+							charSpan.style.display = 'inline-block';
+							charSpan.style.transition = 'opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease';
+							// Preserve whitespace width
+							if (text[i] === ' ') charSpan.style.width = '0.3em';
+							frag.appendChild(charSpan);
+						}
+						node.parentNode.replaceChild(frag, node);
+					});
+
+					// Stagger the reveal
+					const allChars = temp.querySelectorAll('.quote-char');
+					const totalChars = allChars.length;
+					// Dynamic speed: faster for longer quotes, minimum 4ms per char
+					const perChar = Math.max(4, Math.min(18, 600 / totalChars));
+
+					allChars.forEach((ch, i) => {
+						setTimeout(() => {
+							ch.style.opacity = '1';
+							ch.style.filter = 'blur(0)';
+							ch.style.transform = 'translateY(0)';
+						}, i * perChar);
+					});
+
+					// Callback after all characters revealed
+					if (onComplete) {
+						setTimeout(onComplete, totalChars * perChar + 300);
+					}
 				};
+
+				// --- Render a state ---
+				const renderState = (isShort, animate = false) => {
+					const text = isShort ? shortHtml : fullHtml;
+					p.setAttribute('data-state', isShort ? 'short' : 'full');
+
+					// Build the hint
+					const hintText = isShort ? 'expand' : 'collapse';
+					const hintEl = `<span class="quote-expand-hint"><span class="quote-hint-dot">·</span> <i>${hintText}</i></span>`;
+
+					if (!animate) {
+						p.innerHTML = `<span class="quote-guillemet quote-guillemet-open">»</span><span class="quote-text-inner">${text}</span><span class="quote-guillemet quote-guillemet-close">«</span>&nbsp;${hintEl}`;
+						return;
+					}
+
+					// Animated version
+					p.innerHTML = `<span class="quote-guillemet quote-guillemet-open glow-pulse">»</span><span class="quote-text-inner"></span><span class="quote-guillemet quote-guillemet-close" style="opacity:0">«</span>&nbsp;${hintEl}`;
+
+					const textContainer = p.querySelector('.quote-text-inner');
+					const closeGuill = p.querySelector('.quote-guillemet-close');
+
+					animateTextIn(textContainer, text, () => {
+						// Fade in closing guillemet after text is done
+						closeGuill.style.transition = 'opacity 0.4s ease';
+						closeGuill.style.opacity = '1';
+
+						// Remove glow pulse from opening guillemet
+						setTimeout(() => {
+							p.querySelector('.quote-guillemet-open')?.classList.remove('glow-pulse');
+						}, 400);
+					});
+				};
+
+				// --- Initial render (no animation) ---
+				renderState(true, false);
+
+				// --- Click handler ---
+				let isAnimating = false;
+
+				p.addEventListener('click', () => {
+					if (isAnimating) return;
+					isAnimating = true;
+
+					const isCurrentlyShort = p.getAttribute('data-state') === 'short';
+
+					// Border glow flash
+					quoteBox.classList.add('quote-flash');
+					setTimeout(() => quoteBox.classList.remove('quote-flash'), 800);
+
+					// Phase 1: Dissolve out current text
+					const currentChars = p.querySelectorAll('.quote-text-inner, .quote-text-inner *');
+					p.querySelector('.quote-guillemet-close').style.transition = 'opacity 0.2s ease';
+					p.querySelector('.quote-guillemet-close').style.opacity = '0';
+
+					// Fade out the text container
+					const textInner = p.querySelector('.quote-text-inner');
+					if (textInner) {
+						textInner.style.transition = 'opacity 0.25s ease, filter 0.25s ease';
+						textInner.style.opacity = '0';
+						textInner.style.filter = 'blur(3px)';
+					}
+
+					// Phase 2: After dissolve, swap and animate in
+					setTimeout(() => {
+						renderState(!isCurrentlyShort, true);
+						// Unlock after animation completes
+						const newText = p.querySelector('.quote-text-inner');
+						const charCount = newText ? newText.textContent.length : 50;
+						const perChar = Math.max(4, Math.min(18, 600 / charCount));
+						setTimeout(() => {
+							isAnimating = false;
+						}, charCount * perChar + 400);
+					}, 280);
+				});
+
 			} else {
 				p.innerHTML = `»${el.innerHTML.trim().replace(/^["»]|["«]$/g, '')}«`;
 			}
 
 			const footer = document.createElement('footer');
 			const citeLink = document.createElement('a');
-			// CHANGED: Iframe safe link for smartquote footer
 			citeLink.id = instanceId;
 			citeLink.className = "cite-stealth iframe-safe-link";
 			citeLink.setAttribute('data-target', `bib-${citeKey}`);
@@ -458,7 +581,7 @@ function smartquote() {
 		}
 	});
 
-	bindIframeSafeLinks(); // Initialize links for smartquotes
+	bindIframeSafeLinks();
 	if (typeof source_bibliography === "function") source_bibliography();
 }
 
