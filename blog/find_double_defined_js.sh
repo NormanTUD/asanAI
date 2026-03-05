@@ -1,5 +1,7 @@
 #!/bin/bash
 
+err=0
+
 # Loop through all .js files recursively
 find . -type f -name "*.js" | while read -r file; do
     # Extract function names, sort them, and find duplicates
@@ -9,5 +11,8 @@ find . -type f -name "*.js" | while read -r file; do
         echo "------------------------------------------"
         echo "DUPLICATES FOUND IN: $file"
         echo "$duplicates"
+	err=1
     fi
 done
+
+exit $err
