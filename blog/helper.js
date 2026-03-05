@@ -1222,12 +1222,23 @@ function addConsoleEasterEggs() {
 
 	window.lol = () => {
 		const jokes = [
-			"Why do neural networks never get lonely? They have lots of connections.",
-			"A QA engineer walks into a bar. Orders 1 beer. Orders 0 beers. Orders 99999999 beers. Orders -1 beers. Orders a lizard.",
+			"Why do neural networks never get lonely?\nThey have lots of connections.",
+			"A QA engineer walks into a bar.\nOrders 1 beer. Orders 0 beers. Orders 99999999 beers.\nOrders -1 beers. Orders a lizard. Orders NULL beers.",
 			"Machine learning is just statistics wearing a leather jacket.",
-			"Roses are red, violets are blue, unexpected '{' on line 32.",
-			"There are only 10 types of people: those who understand binary and those who've completed this course.",
+			"Roses are red, violets are blue,\nunexpected '{' on line 32.",
+			"There are only 10 types of people:\nthose who understand binary and those who've completed this course.",
+			"Why did the neural network go to therapy?\nIt had too many deep issues.",
+			"What's a transformer's favorite band?\nThe Attention Heads.",
+			"My neural network told me a joke about vanishing gradients.\nBut I couldn't get it.",
+			"How does a neural network apologize?\n'Sorry, that was a local minimum of judgment.'",
+			"Why don't transformers use RNNs?\nBecause they don't have the attention span. Wait—",
+			"Overfitting is when you memorize the exam.\nUnderfitting is when you didn't even buy the textbook.",
+			"A dropout layer walks into a bar.\nHalf the neurons don't show up.",
+			"What did the loss function say to the optimizer?\n'You're going the wrong way.' 'No, I'm just exploring.'",
+			"Why was the embedding space so peaceful?\nBecause similar things stayed close together.",
+			"I asked GPT to write a joke about backpropagation.\nIt blamed the previous layer.",
 		];
+
 		const joke = jokes[Math.floor(Math.random() * jokes.length)];
 		console.log(`%c😂 ${joke}`, 'color: #ffd54f; font-size: 12px;');
 		return '😂';
