@@ -1421,3 +1421,132 @@ h2::after {
 .minimalneuron-page .equation-card-inner { animation-delay: 0.15s; }
 .minimalneuron-page .plot-container:nth-of-type(1) { animation-delay: 0.2s; }
 .minimalneuron-page .plot-container:nth-of-type(2) { animation-delay: 0.25s; }
+
+/* ===== Stunning Range Slider Styles ===== */
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+  height: 40px;
+  padding: 0;
+  margin: 10px 0;
+}
+
+/* Remove default focus outline */
+input[type="range"]:focus {
+  outline: none;
+}
+
+/* ===== Track Styles ===== */
+
+/* Chrome, Safari, Edge Chromium */
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 50px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  box-shadow:
+    0 2px 8px rgba(102, 126, 234, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  transition: box-shadow 0.3s ease;
+}
+
+input[type="range"]:hover::-webkit-slider-runnable-track {
+  box-shadow:
+    0 4px 16px rgba(102, 126, 234, 0.6),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-track {
+  height: 8px;
+  border-radius: 50px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  box-shadow:
+    0 2px 8px rgba(102, 126, 234, 0.4),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  border: none;
+  transition: box-shadow 0.3s ease;
+}
+
+input[type="range"]:hover::-moz-range-track {
+  box-shadow:
+    0 4px 16px rgba(102, 126, 234, 0.6),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+}
+
+/* ===== Thumb Styles ===== */
+
+/* Chrome, Safari, Edge Chromium */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff, #e0d4f7);
+  border: 3px solid #764ba2;
+  margin-top: -8px; /* Centers thumb on track */
+  box-shadow:
+    0 2px 6px rgba(118, 75, 162, 0.5),
+    0 0 0 0 rgba(118, 75, 162, 0);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  border-color: #667eea;
+  box-shadow:
+    0 4px 12px rgba(118, 75, 162, 0.6),
+    0 0 0 6px rgba(118, 75, 162, 0.15);
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+  transform: scale(1.05);
+  box-shadow:
+    0 2px 8px rgba(118, 75, 162, 0.7),
+    0 0 0 10px rgba(118, 75, 162, 0.1);
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff, #e0d4f7);
+  border: 3px solid #764ba2;
+  box-shadow:
+    0 2px 6px rgba(118, 75, 162, 0.5),
+    0 0 0 0 rgba(118, 75, 162, 0);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  border-color: #667eea;
+  box-shadow:
+    0 4px 12px rgba(118, 75, 162, 0.6),
+    0 0 0 6px rgba(118, 75, 162, 0.15);
+}
+
+input[type="range"]:active::-moz-range-thumb {
+  transform: scale(1.05);
+  box-shadow:
+    0 2px 8px rgba(118, 75, 162, 0.7),
+    0 0 0 10px rgba(118, 75, 162, 0.1);
+}
+
+/* ===== Focus Ring for Accessibility ===== */
+input[type="range"]:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    0 2px 6px rgba(118, 75, 162, 0.5),
+    0 0 0 4px rgba(102, 126, 234, 0.4);
+}
+
+input[type="range"]:focus-visible::-moz-range-thumb {
+  box-shadow:
+    0 2px 6px rgba(118, 75, 162, 0.5),
+    0 0 0 4px rgba(102, 126, 234, 0.4);
+}
