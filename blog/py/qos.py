@@ -69,8 +69,6 @@ def run_smoke_test(directory):
                         file_failed = True
                         for issue in checker.issues:
                             print(f"  [FAIL] {issue}")
-                    else:
-                        print("  [PASS] Code structure looks good")
 
                 except SyntaxError as e:
                     print(f"  [CRITICAL] Syntax Error: {e}")
