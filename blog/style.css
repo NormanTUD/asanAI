@@ -1059,7 +1059,7 @@ pre code {
 }
 
 /* ---- Headings ---- */
-.minimalneuron-page .md h2 {
+.md h2 {
   font-family: var(--mn-font-heading);
   font-size: 1.75rem;
   font-weight: 750;
@@ -1071,7 +1071,7 @@ pre code {
   border: none;
 }
 
-.minimalneuron-page .md h2::after {
+h2::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -1082,7 +1082,7 @@ pre code {
   border-radius: 3px;
 }
 
-.minimalneuron-page .md h3 {
+.md h3 {
   font-family: var(--mn-font-heading);
   font-size: 1.3rem;
   font-weight: 700;
@@ -1394,41 +1394,6 @@ pre code {
   border-radius: 0 0 var(--mn-radius-md) var(--mn-radius-md);
   border: 1px solid var(--mn-border);
   border-top: none;
-}
-
-/* ---- Code Blocks ---- */
-/* ---- Responsive ---- */
-@media (max-width: 768px) {
-  .minimalneuron-page .md {
-    padding: 1.5rem 1.25rem;
-    font-size: 1rem;
-  }
-
-  .minimalneuron-page .controls-bar {
-    padding: 0 1.25rem;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .minimalneuron-page input[type="number"] {
-    width: 100%;
-  }
-
-  .minimalneuron-page .action-row {
-    padding: 0 1.25rem;
-    grid-template-columns: 1fr;
-  }
-
-  .minimalneuron-page .md h2 {
-    font-size: 1.45rem;
-  }
-
-  .minimalneuron-page .equation-card,
-  .minimalneuron-page #lin-math-monitor,
-  .minimalneuron-page .plot-container,
-  .minimalneuron-page .gem-tabs {
-    padding: 0 1.25rem;
-  }
 }
 
 /* ---- Subtle entrance animations ---- */
