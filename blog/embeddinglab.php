@@ -682,3 +682,68 @@ The visualization below gives you an intuition for this. In 2D, points can sprea
         illustrating why most of a 768-dimensional space is a semantic desert.
     </div>
 </section>
+
+<div class="md">
+## Semantic Folding & Fractal Self-Similarity
+
+How does a model that operates in a fixed-size vector space manage to encode hierarchies that are, in principle, arbitrarily deep? The answer appears to involve a form of **geometric folding**: the model reuses the same spatial logic at every level of abstraction, nesting finer distinctions inside coarser ones like a fractal.
+
+### The Geometry of the Niche
+
+Consider the concept "Dog." In the embedding space, "Dog" occupies a region — a neighborhood of vectors that all relate to dog-ness. But zoom into that region and you find it is not a featureless blob. Inside it, the vectors for "Dachshund," "Shepherd," and "Poodle" are arranged relative to each other using the same geometric principles that organize the level above. The axis that separates "domestic" from "wild" at the Animal level reappears, at a smaller scale, to separate "lap dog" from "working dog" at the Breed level. The axis that separates "large" from "small" among Mammals reappears to separate "Great Dane" from "Chihuahua" among Dogs.
+
+### Self-Similarity
+
+This is **self-similarity** — the hallmark of fractal structure. The model applies the same set of learned distinction directions (size, danger, domestication, function) at every hierarchical level, each time at a smaller spatial scale. The result is a space that is "folded" in on itself: what looks like a single point at a coarse zoom level unfolds, upon magnification, into a rich sub-structure that mirrors the parent geometry.
+
+$$ \text{Structure}(\text{Breeds within Dog}) \;\approx\; \alpha \cdot \text{Structure}(\text{Species within Animal}) $$
+
+where $\alpha < 1$ is a spatial scaling factor — the sub-structure is a shrunken copy of the super-structure.
+
+This has practical consequences:
+* **Few-shot generalization**: Because the same geometric logic repeats at every level, a model that has learned to distinguish "domestic vs. wild" at the Animal level can immediately apply that distinction at the Breed level, even for breeds it has rarely seen.
+* **Compositionality**: Hierarchical concepts can be navigated by composing coarse and fine direction vectors — move to "Dog" first (coarse), then move along the "small + domestic" direction within that region (fine).
+* **Compression**: A fractal structure is extraordinarily efficient. Instead of learning a unique geometry for every sub-category, the model reuses a small set of distinction templates, scaled and translated, at every depth.
+
+Below, you can explore this fractal folding interactively. The visualization shows a three-level hierarchy: **Animals → Species → Breeds**. At **Zoom Level 1**, you see the coarse structure — clusters of Animals. Zoom in to Level 2 and the "Dog" cluster unfolds into individual species. Zoom to Level 3 and individual breeds appear inside each species — arranged in a geometry that mirrors the level above. The **distinction axes** (size, domestication) are drawn at each level to show how they repeat at smaller scales.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-fractal-folding" style="height: 540px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+
+    <!-- Zoom slider -->
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Zoom Level:</b>
+            <input type="range" id="fractal-zoom-slider" min="1" max="3" step="0.01" value="1" style="width: 260px; vertical-align: middle;">
+            <span id="fractal-zoom-val" style="font-weight: bold; color: #8b5cf6;">Level 1 — Animals</span>
+        </label>
+    </div>
+
+    <!-- Toggle -->
+    <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="fractal-show-axes" checked onchange="renderFractalFolding()"> Show distinction axes
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="fractal-show-hulls" checked onchange="renderFractalFolding()"> Show cluster boundaries
+        </label>
+    </div>
+
+    <!-- Stats -->
+    <div id="fractal-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; max-width: 700px; margin: 0 auto 15px auto;"></div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> At <b>Level 1</b>, you see the coarse animal kingdom —
+        <span style="color:#ef4444; font-weight:bold;">Mammals</span>,
+        <span style="color:#3b82f6; font-weight:bold;">Birds</span>, and
+        <span style="color:#10b981; font-weight:bold;">Reptiles</span> as clusters.
+        As you zoom in (slide right), each cluster <b>unfolds</b> to reveal its internal species,
+        and then each species unfolds further into individual breeds or variants.
+        The <span style="color:#8b5cf6; font-weight:bold;">purple dashed axes</span> show the
+        <b>same distinction directions</b> (size ↔ small, wild ↔ domestic) repeating at every level,
+        each time at a smaller spatial scale. This is <b>fractal self-similarity</b>:
+        the geometry of the whole is mirrored in every part.
+    </div>
+</section>

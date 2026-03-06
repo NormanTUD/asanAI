@@ -4721,6 +4721,433 @@ function renderTopologyCones() {
     }
 }
 
+// ============================================================
+// SEMANTIC FOLDING & FRACTAL SELF-SIMILARITY
+// ============================================================
+
+const fractalFoldingState = {
+    zoom: 1.0,
+    showAxes: true,
+    showHulls: true
+};
+
+/*
+ * Data: a 3-level hierarchy.
+ * Level 1 (coarse): Animal classes      — Mammal, Bird, Reptile
+ * Level 2 (mid):    Species within class — Dog, Cat, Lion, Eagle, …
+ * Level 3 (fine):   Breeds / variants    — Poodle, Retriever, Tabby, …
+ *
+ * Each node stores a "coarse" position (where it appears when collapsed)
+ * and an "unfolded" offset (where it drifts to when its level is revealed).
+ * The key insight: the offset pattern at Level 3 mirrors Level 2,
+ * which mirrors Level 1 — scaled down each time.
+ */
+
+const fractalTree = {
+    // ── Level 1 clusters ──
+    classes: [
+        {
+            name: 'Mammal', color: '#ef4444', pos: [-4, 2],
+            // Distinction axes at this level (drawn as arrows from the cluster center)
+            axes: [
+                { label: 'Size', dir: [1.8, 0] },
+                { label: 'Domestic', dir: [0, 1.5] }
+            ],
+            species: [
+                {
+                    name: 'Dog', pos: [-1.5, 1.2], color: '#f97316',
+                    axes: [
+                        { label: 'size', dir: [0.7, 0] },
+                        { label: 'domestic', dir: [0, 0.55] }
+                    ],
+                    breeds: [
+                        { name: 'Poodle',    offset: [-0.4,  0.35] },
+                        { name: 'Retriever', offset: [ 0.45, 0.25] },
+                        { name: 'Wolf-dog',  offset: [ 0.3, -0.4]  },
+                        { name: 'Chihuahua', offset: [-0.5, 0.1]   },
+                    ]
+                },
+                {
+                    name: 'Cat', pos: [-0.5, -0.8], color: '#fb923c',
+                    axes: [
+                        { label: 'size', dir: [0.6, 0] },
+                        { label: 'domestic', dir: [0, 0.5] }
+                    ],
+                    breeds: [
+                        { name: 'Tabby',   offset: [-0.25,  0.3] },
+                        { name: 'Siamese', offset: [ 0.3,   0.25] },
+                        { name: 'Persian', offset: [-0.35, -0.15] },
+                    ]
+                },
+                {
+                    name: 'Lion', pos: [1.8, -0.3], color: '#dc2626',
+                    axes: [
+                        { label: 'size', dir: [0.5, 0] },
+                        { label: 'wild', dir: [0, -0.45] }
+                    ],
+                    breeds: [
+                        { name: 'Asiatic',     offset: [-0.3, -0.2] },
+                        { name: 'African',     offset: [ 0.35, -0.15] },
+                        { name: 'Barbary',     offset: [ 0.0,   0.3] },
+                    ]
+                },
+            ]
+        },
+        {
+            name: 'Bird', color: '#3b82f6', pos: [5, 3],
+            axes: [
+                { label: 'Size', dir: [1.5, 0] },
+                { label: 'Flight', dir: [0, 1.3] }
+            ],
+            species: [
+                {
+                    name: 'Eagle', pos: [1.2, 0.8], color: '#2563eb',
+                    axes: [
+                        { label: 'size', dir: [0.55, 0] },
+                        { label: 'range', dir: [0, 0.45] }
+                    ],
+                    breeds: [
+                        { name: 'Bald',   offset: [ 0.3,  0.2] },
+                        { name: 'Golden', offset: [-0.25, 0.25] },
+                        { name: 'Harpy',  offset: [ 0.1, -0.35] },
+                    ]
+                },
+                {
+                    name: 'Sparrow', pos: [-1.0, -0.5], color: '#60a5fa',
+                    axes: [
+                        { label: 'size', dir: [0.45, 0] },
+                        { label: 'habitat', dir: [0, 0.4] }
+                    ],
+                    breeds: [
+                        { name: 'House',  offset: [-0.2,  0.25] },
+                        { name: 'Tree',   offset: [ 0.25, 0.15] },
+                        { name: 'Song',   offset: [ 0.0, -0.3]  },
+                    ]
+                },
+            ]
+        },
+        {
+            name: 'Reptile', color: '#10b981', pos: [0, -5],
+            axes: [
+                { label: 'Size', dir: [1.6, 0] },
+                { label: 'Venom', dir: [0, -1.3] }
+            ],
+            species: [
+                {
+                    name: 'Snake', pos: [-1.0, -0.6], color: '#059669',
+                    axes: [
+                        { label: 'size', dir: [0.5, 0] },
+                        { label: 'venom', dir: [0, -0.45] }
+                    ],
+                    breeds: [
+                        { name: 'Cobra',  offset: [ 0.1, -0.35] },
+                        { name: 'Python', offset: [ 0.35, 0.2] },
+                        { name: 'Garter', offset: [-0.3,  0.2] },
+                    ]
+                },
+                {
+                    name: 'Lizard', pos: [1.2, 0.4], color: '#34d399',
+                    axes: [
+                        { label: 'size', dir: [0.5, 0] },
+                        { label: 'habitat', dir: [0, 0.4] }
+                    ],
+                    breeds: [
+                        { name: 'Gecko',   offset: [-0.25, 0.2] },
+                        { name: 'Komodo',  offset: [ 0.35, -0.15] },
+                        { name: 'Iguana',  offset: [ 0.0,  0.3] },
+                    ]
+                },
+            ]
+        }
+    ]
+};
+
+function renderFractalFolding() {
+    const plotDiv = document.getElementById('plot-fractal-folding');
+    if (!plotDiv) return;
+
+    const slider = document.getElementById('fractal-zoom-slider');
+    const valEl = document.getElementById('fractal-zoom-val');
+    const statsDiv = document.getElementById('fractal-stats');
+    const showAxesCb = document.getElementById('fractal-show-axes');
+    const showHullsCb = document.getElementById('fractal-show-hulls');
+
+    const zoom = parseFloat(slider.value);
+    fractalFoldingState.zoom = zoom;
+    fractalFoldingState.showAxes = showAxesCb ? showAxesCb.checked : true;
+    fractalFoldingState.showHulls = showHullsCb ? showHullsCb.checked : true;
+
+    // Zoom phases:
+    //   1.0 → 2.0 : Level 1 → Level 2 (species unfold from class centers)
+    //   2.0 → 3.0 : Level 2 → Level 3 (breeds unfold from species centers)
+    const t12 = Math.max(0, Math.min(1, zoom - 1));  // 0 at zoom=1, 1 at zoom=2
+    const t23 = Math.max(0, Math.min(1, zoom - 2));  // 0 at zoom=2, 1 at zoom=3
+
+    // Label
+    if (zoom < 1.5) valEl.textContent = 'Level 1 — Animal Classes';
+    else if (zoom < 2.5) valEl.textContent = 'Level 2 — Species';
+    else valEl.textContent = 'Level 3 — Breeds / Variants';
+
+    const traces = [];
+    const annotations = [];
+
+    // Easing
+    function ease(t) {
+        return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    }
+
+    const et12 = ease(t12);
+    const et23 = ease(t23);
+
+    // Collect all rendered points for auto-ranging
+    const allX = [], allY = [];
+
+    // Scale factor: as we zoom in, the camera "magnifies" — we keep coordinates
+    // but the visual effect is that sub-structures spread apart.
+    // We achieve this by scaling the species/breed offsets by the zoom factor.
+    const speciesScale = 1.0 + et12 * 2.5;  // species spread out
+    const breedScale = 1.0 + et23 * 2.0;    // breeds spread out
+
+    let totalNodes = 0;
+    let visibleLevels = 1;
+    if (t12 > 0.05) visibleLevels = 2;
+    if (t23 > 0.05) visibleLevels = 3;
+
+    fractalTree.classes.forEach(cls => {
+        const cx = cls.pos[0];
+        const cy = cls.pos[1];
+
+        // ── Level 1: Class nodes ──
+        const classOpacity = 1.0 - et12 * 0.4; // fade slightly as species appear
+        const classSize = 18 - et12 * 6;
+
+        traces.push({
+            x: [cx], y: [cy],
+            mode: 'markers+text',
+            text: [cls.name],
+            textposition: 'top center',
+            textfont: { size: 14 - et12 * 2, color: cls.color, weight: 'bold' },
+            marker: {
+                size: classSize, color: cls.color,
+                opacity: classOpacity,
+                line: { width: 2, color: '#fff' }
+            },
+            showlegend: false,
+            hovertemplate: `<b>${cls.name}</b><br>Level 1 — Class<extra></extra>`
+        });
+        allX.push(cx); allY.push(cy);
+        totalNodes++;
+
+        // ── Class-level distinction axes ──
+        if (fractalFoldingState.showAxes && et12 < 0.8) {
+            const axisOpacity = Math.max(0, 1 - et12 * 1.5);
+            cls.axes.forEach(ax => {
+                annotations.push({
+                    ax: cx - ax.dir[0], ay: cy - ax.dir[1],
+                    x: cx + ax.dir[0], y: cy + ax.dir[1],
+                    axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+                    showarrow: true,
+                    arrowhead: 2, arrowsize: 1, arrowwidth: 2,
+                    arrowcolor: `rgba(139,92,246,${(axisOpacity * 0.5).toFixed(2)})`,
+                    opacity: axisOpacity
+                });
+                annotations.push({
+                    x: cx + ax.dir[0] * 1.15,
+                    y: cy + ax.dir[1] * 1.15,
+                    text: `<i>${ax.label}</i>`,
+                    showarrow: false,
+                    font: { size: 9, color: `rgba(139,92,246,${(axisOpacity * 0.7).toFixed(2)})` },
+                    opacity: axisOpacity
+                });
+            });
+        }
+
+        // ── Class-level hull ──
+        if (fractalFoldingState.showHulls && et12 > 0.1) {
+            const hullR = 2.5 * speciesScale * 0.45;
+            const hullSteps = 40;
+            const hX = [], hY = [];
+            for (let i = 0; i <= hullSteps; i++) {
+                const a = (i / hullSteps) * 2 * Math.PI;
+                hX.push(cx + hullR * Math.cos(a));
+                hY.push(cy + hullR * 0.8 * Math.sin(a));
+            }
+            traces.push({
+                x: hX, y: hY,
+                mode: 'lines', fill: 'toself',
+                fillcolor: cls.color + '08',
+                line: { color: cls.color + '25', width: 1.5, dash: 'dot' },
+                showlegend: false, hoverinfo: 'skip'
+            });
+        }
+
+        // ── Level 2: Species ──
+        if (et12 > 0.01) {
+            cls.species.forEach(sp => {
+                const sx = cx + sp.pos[0] * speciesScale * 0.6;
+                const sy = cy + sp.pos[1] * speciesScale * 0.6;
+
+                const spOpacity = et12 * (1 - et23 * 0.3);
+                const spSize = 6 + et12 * 6 - et23 * 2;
+
+                // Line from class center to species
+                traces.push({
+                    x: [cx, sx], y: [cy, sy],
+                    mode: 'lines',
+                    line: { color: cls.color + '30', width: 1.5 },
+                    showlegend: false, hoverinfo: 'skip'
+                });
+
+                traces.push({
+                    x: [sx], y: [sy],
+                    mode: 'markers+text',
+                    text: [sp.name],
+                    textposition: 'top center',
+                    textfont: { size: 11, color: sp.color, weight: 'bold' },
+                    marker: {
+                        size: spSize, color: sp.color,
+                        opacity: spOpacity,
+                        line: { width: 1, color: '#fff' }
+                    },
+                    showlegend: false,
+                    hovertemplate: `<b>${sp.name}</b><br>Level 2 — Species<br>Parent: ${cls.name}<extra></extra>`
+                });
+                allX.push(sx); allY.push(sy);
+                totalNodes++;
+
+                // ── Species-level distinction axes (smaller copies!) ──
+                if (fractalFoldingState.showAxes && et12 > 0.3 && et23 < 0.8) {
+                    const axisOpacity2 = Math.min(1, (et12 - 0.3) / 0.5) * Math.max(0, 1 - et23 * 1.5);
+                    sp.axes.forEach(ax => {
+                        const scaledDir = [ax.dir[0] * speciesScale * 0.5, ax.dir[1] * speciesScale * 0.5];
+                        annotations.push({
+                            ax: sx - scaledDir[0], ay: sy - scaledDir[1],
+                            x: sx + scaledDir[0], y: sy + scaledDir[1],
+                            axref: 'x', ayref: 'y', xref: 'x', yref: 'y',
+                            showarrow: true,
+                            arrowhead: 2, arrowsize: 1, arrowwidth: 1.5,
+                            arrowcolor: `rgba(139,92,246,${(axisOpacity2 * 0.4).toFixed(2)})`,
+                            opacity: axisOpacity2
+                        });
+                        annotations.push({
+                            x: sx + scaledDir[0] * 1.2,
+                            y: sy + scaledDir[1] * 1.2,
+                            text: `<i>${ax.label}</i>`,
+                            showarrow: false,
+                            font: { size: 8, color: `rgba(139,92,246,${(axisOpacity2 * 0.6).toFixed(2)})` },
+                            opacity: axisOpacity2
+                        });
+                    });
+                }
+
+                // ── Species-level hull ──
+                if (fractalFoldingState.showHulls && et23 > 0.1) {
+                    const hullR2 = 1.2 * breedScale * 0.4;
+                    const hX2 = [], hY2 = [];
+                    for (let i = 0; i <= 30; i++) {
+                        const a = (i / 30) * 2 * Math.PI;
+                        hX2.push(sx + hullR2 * Math.cos(a));
+                        hY2.push(sy + hullR2 * 0.8 * Math.sin(a));
+                    }
+                    traces.push({
+                        x: hX2, y: hY2,
+                        mode: 'lines', fill: 'toself',
+                        fillcolor: sp.color + '08',
+                        line: { color: sp.color + '20', width: 1, dash: 'dot' },
+                        showlegend: false, hoverinfo: 'skip'
+                    });
+                }
+
+                // ── Level 3: Breeds ──
+                if (et23 > 0.01) {
+                    sp.breeds.forEach(br => {
+                        const bx = sx + br.offset[0] * breedScale;
+                        const by = sy + br.offset[1] * breedScale;
+
+                        const brOpacity = et23;
+                        const brSize = 3 + et23 * 5;
+
+                        // Line from species to breed
+                        traces.push({
+                            x: [sx, bx], y: [sy, by],
+                            mode: 'lines',
+                            line: { color: sp.color + '25', width: 1 },
+                            showlegend: false, hoverinfo: 'skip'
+                        });
+
+                        traces.push({
+                            x: [bx], y: [by],
+                            mode: 'markers+text',
+                            text: [br.name],
+                            textposition: 'bottom center',
+                            textfont: { size: 9, color: sp.color },
+                            marker: {
+                                size: brSize, color: sp.color,
+                                opacity: brOpacity,
+                                symbol: 'diamond',
+                                line: { width: 1, color: '#fff' }
+                            },
+                            showlegend: false,
+                            hovertemplate: `<b>${br.name}</b><br>Level 3 — Breed/Variant<br>Parent: ${sp.name}<extra></extra>`
+                        });
+                        allX.push(bx); allY.push(by);
+                        totalNodes++;
+                    });
+                }
+            });
+        }
+    });
+
+    // ── Auto-range with padding ──
+    const padFrac = 0.15;
+    let xMin = Math.min(...allX), xMax = Math.max(...allX);
+    let yMin = Math.min(...allY), yMax = Math.max(...allY);
+    const xPad = (xMax - xMin) * padFrac + 1;
+    const yPad = (yMax - yMin) * padFrac + 1;
+
+    const layout = {
+        margin: { l: 30, r: 30, b: 30, t: 10 },
+        showlegend: false,
+        xaxis: {
+            range: [xMin - xPad, xMax + xPad],
+            zeroline: false, showgrid: true, gridcolor: '#f1f5f9',
+            showticklabels: false, scaleanchor: 'y'
+        },
+        yaxis: {
+            range: [yMin - yPad, yMax + yPad],
+            zeroline: false, showgrid: true, gridcolor: '#f1f5f9',
+            showticklabels: false
+        },
+        annotations: annotations,
+        plot_bgcolor: '#fff'
+    };
+
+    Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+
+    // ── Stats ──
+    if (statsDiv) {
+        const scaleLabel = zoom < 1.5 ? '1.0× (full view)' :
+                           zoom < 2.5 ? `${speciesScale.toFixed(1)}× (species)` :
+                                        `${(speciesScale * breedScale * 0.5).toFixed(1)}× (breeds)`;
+        statsDiv.innerHTML = `
+            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+                <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Visible Levels</div>
+                <div style="font-size:1.5em; font-weight:bold; color:#8b5cf6;">${visibleLevels} / 3</div>
+                <div style="font-size:0.75em; color:#94a3b8;">hierarchy depth</div>
+            </div>
+            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+                <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Visible Nodes</div>
+                <div style="font-size:1.5em; font-weight:bold; color:#3b82f6;">${totalNodes}</div>
+                <div style="font-size:0.75em; color:#94a3b8;">concepts rendered</div>
+            </div>
+            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+                <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Spatial Scale</div>
+                <div style="font-size:1.5em; font-weight:bold; color:#10b981;">${scaleLabel}</div>
+                <div style="font-size:0.75em; color:#94a3b8;">magnification</div>
+            </div>
+        `;
+    }
+}
 
 function loadEmbeddingModule() {
     const fastConfig = {
@@ -4885,6 +5312,15 @@ function loadEmbeddingModule() {
         const topoSlider = document.getElementById('topology-dim-slider');
         if (topoSlider) {
             topoSlider.addEventListener('input', renderTopologyCones);
+        }
+    });
+
+    // 18. Semantic Folding — Fractal Self-Similarity
+    _embLazyRegister('plot-fractal-folding', () => {
+        renderFractalFolding();
+        const fractalSlider = document.getElementById('fractal-zoom-slider');
+        if (fractalSlider) {
+            fractalSlider.addEventListener('input', renderFractalFolding);
         }
     });
 
