@@ -795,99 +795,155 @@ function source_bibliography() {
 }
 
 function addCopyButtons() {
-    document.querySelectorAll('pre[class*="language-"]').forEach((pre) => {
-        if (pre.querySelector('.code-copy-btn')) return;
+	document.querySelectorAll('pre[class*="language-"]').forEach((pre) => {
+		if (pre.querySelector('.code-copy-btn')) return;
 
-        // Pre braucht relative Positionierung und Scroll-Verhalten
-        pre.style.position = 'relative';
-        pre.style.overflow = 'auto';
+		pre.style.position = 'relative';
+		pre.style.overflow = 'auto';
 
-        // Button-Container: sticky innerhalb des pre
-        const btnContainer = document.createElement('div');
-        btnContainer.style.cssText = `
-            position: sticky;
-            top: 0;
-            float: right;
-            z-index: 10;
-            pointer-events: none;
-        `;
+		const btnContainer = document.createElement('div');
+		btnContainer.style.cssText = `
+			position: sticky;
+			top: 0;
+			float: right;
+			z-index: 10;
+			pointer-events: none;
+		`;
 
-        const btn = document.createElement('button');
-        btn.textContent = 'Copy';
-        btn.className = 'code-copy-btn';
+		const btn = document.createElement('button');
+		btn.className = 'code-copy-btn';
 
-        // Konsistente Farbkonstanten
-        const defaultBg = 'rgba(255,255,255,0.08)';
-        const defaultColor = '#aaa';
-        const hoverBg = 'rgba(255,255,255,0.18)';
-        const hoverColor = '#fff';
-        const successColor = '#6f6';
+		const defaultBg = 'rgba(255,255,255,0.08)';
+		const defaultColor = '#aaa';
+		const hoverBg = 'rgba(255,255,255,0.18)';
+		const hoverColor = '#fff';
+		const successColor = '#6f6';
 
-        btn.style.cssText = `
-            display: block;
-            margin-left: auto;
-            pointer-events: auto;
-            background: ${defaultBg};
-            color: ${defaultColor};
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 6px;
-            padding: 4px 12px;
-            cursor: pointer;
-            font-size: 12px;
-            backdrop-filter: blur(6px);
-            transition: all 0.2s ease;
-        `;
+		btn.style.cssText = `
+			display: block;
+			margin-left: auto;
+			pointer-events: auto;
+			background: ${defaultBg};
+			color: ${defaultColor};
+			border: 1px solid rgba(255,255,255,0.15);
+			border-radius: 6px;
+			padding: 4px 12px;
+			cursor: pointer;
+			font-size: 12px;
+			backdrop-filter: blur(6px);
+			transition: all 0.2s ease;
+			overflow: hidden;
+			position: relative;
+		`;
 
-        let isCopied = false;
+		let isCopied = false;
+		let isSwapping = false;
 
-        btn.addEventListener('mouseenter', () => {
-            btn.style.background = hoverBg;
-            if (!isCopied) btn.style.color = hoverColor;
-        });
+		// --- Build internal text container for dissolve-swap ---
+		const textWrap = document.createElement('span');
+		textWrap.style.cssText = 'display: inline-block; transition: opacity 0.15s ease, filter 0.15s ease, transform 0.15s ease;';
+		textWrap.textContent = 'Copy';
+		btn.appendChild(textWrap);
 
-        btn.addEventListener('mouseleave', () => {
-            btn.style.background = defaultBg;
-            if (!isCopied) btn.style.color = defaultColor;
-        });
+		// --- Dissolve-swap function ---
+		const swapText = (newText, newColor, callback) => {
+			if (isSwapping) return;
+			isSwapping = true;
 
-        btn.addEventListener('click', () => {
-            const code = pre.querySelector('code');
-            const text = code ? code.innerText : pre.innerText;
+			// Phase 1: Dissolve out
+			textWrap.style.opacity = '0';
+			textWrap.style.filter = 'blur(3px)';
+			textWrap.style.transform = 'translateY(-2px)';
 
-            const onSuccess = () => {
-                isCopied = true;
-                btn.textContent = '✓ Copied!';
-                btn.style.color = successColor;
-                setTimeout(() => {
-                    isCopied = false;
-                    btn.textContent = 'Copy';
-                    if (btn.matches(':hover')) {
-                        btn.style.color = hoverColor;
-                        btn.style.background = hoverBg;
-                    } else {
-                        btn.style.color = defaultColor;
-                        btn.style.background = defaultBg;
-                    }
-                }, 2000);
-            };
+			setTimeout(() => {
+				// Phase 2: Swap and materialize
+				textWrap.innerHTML = '';
+				btn.style.color = newColor;
 
-            navigator.clipboard.writeText(text).then(onSuccess).catch(() => {
-                const ta = document.createElement('textarea');
-                ta.value = text;
-                ta.style.position = 'fixed';
-                ta.style.left = '-9999px';
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                onSuccess();
-            });
-        });
+				// Staggered character reveal
+				const perChar = Math.max(12, Math.min(25, 200 / newText.length));
 
-        btnContainer.appendChild(btn);
-        // Als erstes Kind in pre einfügen, damit er oben sticky bleibt
-        pre.insertBefore(btnContainer, pre.firstChild);
-    });
+				for (let i = 0; i < newText.length; i++) {
+					const ch = document.createElement('span');
+					ch.textContent = newText[i];
+					ch.style.cssText = `
+						display: inline-block;
+						opacity: 0;
+						filter: blur(3px);
+						transform: translateY(2px);
+						transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease;
+					`;
+					if (newText[i] === ' ') ch.style.width = '0.25em';
+					textWrap.appendChild(ch);
+
+					setTimeout(() => {
+						ch.style.opacity = '1';
+						ch.style.filter = 'blur(0)';
+						ch.style.transform = 'translateY(0)';
+					}, 20 + (i * perChar));
+				}
+
+				// Reset wrapper visibility
+				textWrap.style.opacity = '1';
+				textWrap.style.filter = 'blur(0)';
+				textWrap.style.transform = 'translateY(0)';
+
+				// Button border flash
+				btn.style.boxShadow = `0 0 8px rgba(111, 255, 111, 0.15)`;
+				setTimeout(() => { btn.style.boxShadow = 'none'; }, 600);
+
+				setTimeout(() => {
+					isSwapping = false;
+					if (callback) callback();
+				}, newText.length * perChar + 250);
+			}, 170);
+		};
+
+		btn.addEventListener('mouseenter', () => {
+			btn.style.background = hoverBg;
+			if (!isCopied) btn.style.color = hoverColor;
+		});
+
+		btn.addEventListener('mouseleave', () => {
+			btn.style.background = defaultBg;
+			if (!isCopied) btn.style.color = defaultColor;
+		});
+
+		btn.addEventListener('click', () => {
+			if (isCopied || isSwapping) return;
+
+			const code = pre.querySelector('code');
+			const text = code ? code.innerText : pre.innerText;
+
+			const onSuccess = () => {
+				isCopied = true;
+
+				swapText('✓ Copied!', successColor, () => {
+					setTimeout(() => {
+						// Swap back to "Copy" with dissolve
+						swapText('Copy', btn.matches(':hover') ? hoverColor : defaultColor, () => {
+							isCopied = false;
+						});
+					}, 1600);
+				});
+			};
+
+			navigator.clipboard.writeText(text).then(onSuccess).catch(() => {
+				const ta = document.createElement('textarea');
+				ta.value = text;
+				ta.style.position = 'fixed';
+				ta.style.left = '-9999px';
+				document.body.appendChild(ta);
+				ta.select();
+				document.execCommand('copy');
+				document.body.removeChild(ta);
+				onSuccess();
+			});
+		});
+
+		btnContainer.appendChild(btn);
+		pre.insertBefore(btnContainer, pre.firstChild);
+	});
 }
 
 function lazyInit(sectionId, initFn) {
