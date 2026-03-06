@@ -1245,3 +1245,96 @@ Below, you can explore this interactively. Two conceptual categories are represe
         The <b>overlap area</b> is a direct geometric measure of how much ambiguity exists between the two categories.
     </div>
 </section>
+
+<div class="md">
+## Vector Rotations as Grammar Operators
+
+One of the most surprising geometric discoveries in embedding spaces is that grammatical transformations — like changing a verb from present tense to past tense — are not **translations** (shifting a vector in a direction) but **rotations** (spinning a vector around an axis). Grammar is not a push; it is a turn.
+
+### The Carousel of Tense
+
+Take a cloud of present-tense verb vectors: "run," "eat," "write," "speak," "build." They form a cluster in the embedding space. Now take their past-tense counterparts: "ran," "ate," "wrote," "spoke," "built." These form a second cluster. The relationship between the two clusters is not a simple offset vector (like the famous "king − man + woman = queen" analogy). Instead, the entire cloud has been **rotated** by a consistent angle around a fixed axis in the high-dimensional space.
+
+$$ \mathbf{v}_{\text{past}} \approx \mathbf{R}_{\text{tense}} \cdot \mathbf{v}_{\text{present}} $$
+
+where $\mathbf{R}_{\text{tense}}$ is a **rotation matrix** — the same matrix applied to every verb. The model has discovered that tense is a **rotational symmetry** of language.
+
+### Why Rotation, Not Translation?
+
+This makes deep geometric sense:
+
+* **Tense is cyclical:** Languages often treat time as having a cyclical quality — past patterns repeat, future expectations echo past experiences. A rotation naturally encodes cyclical structure, while a translation implies a one-way shift.
+* **Meaning preservation:** A rotation preserves the **magnitude** (length) of a vector — the "importance" or "activation strength" of the concept doesn't change when you change its tense. Only its **direction** changes. "Run" and "ran" are equally "verb-like"; they just point in slightly different directions.
+* **Composability:** Rotations compose cleanly. Applying the tense rotation twice doesn't send you to nonsense — it might approximate another grammatical form (e.g., past → pluperfect). Translations, by contrast, would drift further and further from meaningful regions.
+
+This generalizes beyond tense. Other grammatical operations that behave as rotations include:
+
+* **Singular → Plural** (nouns rotate by a consistent angle)
+* **Active → Passive** voice
+* **Positive → Comparative → Superlative** (adjectives)
+* **Nominalization** (verb → noun: "discover" → "discovery")
+
+The embedding space is, in a sense, a **grammar carousel**: each grammatical transformation is a specific rotation, and the model has learned these rotations purely from statistical co-occurrence — nobody programmed the rotation matrices.
+
+Below, you can explore this interactively. A cloud of verbs is shown in their present-tense positions. Apply the **tense rotation** to watch the entire cloud spin to its past-tense configuration. Adjust the **rotation angle** to see how the transformation works, and toggle between different grammatical operations to see that each one is a distinct rotation around a different axis.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; margin-bottom: 15px;">
+        <canvas id="canvas-grammar-rotation" style="width: 100%; height: 560px; background: #0f172a; border-radius: 8px; border: 1px solid #1e293b;"></canvas>
+        <div id="grammar-rot-panel" style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 560px; overflow-y: auto;">
+            <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">🎠 Grammar Carousel</div>
+            <div id="grammar-rot-info">
+                Watch how grammatical transformations rotate entire word clouds around fixed axes in the embedding space. Each transformation is a consistent angular displacement.
+            </div>
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 10px 0;">
+            <div style="font-weight: bold; font-size: 0.9em; color: #1e293b; margin-bottom: 6px;">📋 Word Pairs</div>
+            <div id="grammar-rot-pairs"></div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Rotation Progress:</b>
+            <input type="range" id="grammar-rot-angle" min="0" max="1" step="0.005" value="0" style="width: 260px; vertical-align: middle;">
+            <span id="grammar-rot-angle-val" style="font-weight: bold; color: #8b5cf6;">0%</span>
+        </label>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <span style="font-family: sans-serif; font-size: 0.9em; color: #475569; font-weight: bold;">Operation:</span>
+        <button onclick="loadGrammarOp('tense')" class="grammar-op-btn" id="go-tense" style="background: #8b5cf6; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">⏰ Present → Past</button>
+        <button onclick="loadGrammarOp('plural')" class="grammar-op-btn" id="go-plural" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">📦 Singular → Plural</button>
+        <button onclick="loadGrammarOp('comparative')" class="grammar-op-btn" id="go-comparative" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">📏 Positive → Comparative</button>
+        <button onclick="loadGrammarOp('nominalize')" class="grammar-op-btn" id="go-nominalize" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">🔄 Verb → Noun</button>
+    </div>
+
+    <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="grammar-show-arcs" checked onchange="renderGrammarRotation()"> Show rotation arcs
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="grammar-show-axis" checked onchange="renderGrammarRotation()"> Show rotation axis
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="grammar-show-trails" checked onchange="renderGrammarRotation()"> Show trails
+        </label>
+        <button onclick="animateGrammarRotation()" id="grammar-animate-btn" style="background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">▶ Animate</button>
+    </div>
+
+    <!-- Stats -->
+    <div id="grammar-rot-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; max-width: 800px; margin: 0 auto 15px auto;"></div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> Each <span style="color:#60a5fa; font-weight:bold;">blue dot</span> is a word in its <b>base form</b> (e.g., present tense).
+        As you drag the <b>Rotation Progress</b> slider, the entire cloud rotates around a
+        <span style="color:#f59e0b; font-weight:bold;">golden axis</span>, and each word smoothly transforms into its
+        <span style="color:#f472b6; font-weight:bold;">pink target form</span> (e.g., past tense).
+        The <span style="color:rgba(139,92,246,0.4); font-weight:bold;">purple arcs</span> trace the rotation path of each word.
+        Notice that <b>all words rotate by the same angle</b> — the grammatical transformation is a single, consistent rotation applied uniformly.
+        The <b>vector magnitudes are preserved</b> (dots stay the same distance from the origin) — only the direction changes.
+        This is why grammar is a <b>carousel</b>, not a conveyor belt.
+    </div>
+</section>

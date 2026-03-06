@@ -53,18 +53,7 @@ Wenn ein Modell einen Satz vervollständigt, „fällt“ der Vektor durch den R
 
     Mind-Blow: Man kann visuell zeigen, wie Halluzinationen entstehen, wenn zwei Täler zu nah beieinander liegen und der Vektor in das falsche Loch „rutscht“. Das sieht aus wie eine Murmelbahn im Hyperraum.
 
-
-3. Vektor-Rotationen als Grammatik-Operatoren
-
-Man hat entdeckt, dass bestimmte Operationen, wie das Ändern von Zeitformen (Präsens zu Präteritum), keine Verschiebungen sind, sondern Rotationen.
-
-    Die Visualisierung: Wenn man alle Verben eines Textes nimmt, bilden sie eine Wolke. Ändert man die Zeitform, rotiert die gesamte Wolke um einen fixen Winkel im Raum.
-
-    Erkenntnis: Grammatik ist im Embedding-Raum wie ein Karussell. Das Modell „weiß“, dass Zeit eine zyklische oder rotative Eigenschaft ist, keine lineare Distanz.
-
-
-
-    4. Semantic Density Clouds (Bedeutungsdichte)
+4. Semantic Density Clouds (Bedeutungsdichte)
 
 Man kann die „Dichte“ des Wissens visualisieren.
 
