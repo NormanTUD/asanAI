@@ -982,7 +982,7 @@ The embedding space is not a solid block of uniformly packed vectors. It is more
 
 ### What Is Persistent Homology?
 
-Persistent Homology is an algebraic method for detecting topological features — connected components, loops, cavities — in discrete point cloud data [[1]]. The core idea is beautifully simple:
+Persistent Homology is an algebraic method for detecting topological features — connected components, loops, cavities — in discrete point cloud data. The core idea is beautifully simple:
 
 1. **Start with your data points** (token vectors in the embedding space).
 2. **Grow a ball** around each point, starting at radius $r = 0$.
