@@ -1160,3 +1160,88 @@ Below, you can explore this. A set of historical years and events are plotted in
         <b>Drag</b> to rotate the 3D view. <span style="color:#f59e0b; font-weight:bold;">Gold markers</span> highlight major historical events.
     </div>
 </section>
+
+<div class="md">
+## Polytope Hulls: The Boundaries of the Conceivable
+
+In geometry, a **polytope** is the high-dimensional generalization of a polygon. In 2D, it's a polygon; in 3D, a polyhedron; in 768 dimensions, it's a shape with thousands of facets that no human can visualize directly. Formally, a polytope can be defined as the **convex hull** of a finite set of points — the smallest convex body that encloses all of them [[1]] [[2]].
+
+Now apply this to the embedding space. Take every concept the model associates with "morally good" — kindness, honesty, generosity, courage, compassion — and compute their convex hull. You get a polytope: the **geometric territory of moral goodness** in the embedding space. Do the same for "morally bad" — cruelty, deception, greed, cowardice — and you get a second polytope.
+
+### Where Polytopes Overlap: The Geometry of Dilemmas
+
+The fascinating part is what happens **between** these polytopes:
+
+* **Wide separation:** Where the "good" and "bad" hulls are far apart, the model is **morally decisive**. "Kindness" is unambiguously inside the good hull and far from the bad one. No dilemma here.
+* **Overlap zone:** Where the hulls **interpenetrate**, you find concepts that the model cannot cleanly classify — **moral dilemmas**. "Mercy killing," "white lies," "civil disobedience," "necessary violence" — these concepts live in the geometric intersection of good and bad. The overlap *is* the dilemma, rendered as geometry.
+* **Boundary zone:** Concepts near the surface of a hull but not deep inside it are **borderline cases** — the model is uncertain. The distance from a point to the hull surface is a geometric measure of moral confidence.
+
+This generalizes far beyond morality. You can compute polytope hulls for any pair of categories:
+* **"Science" vs. "Pseudoscience"** — the overlap contains contested concepts like certain alternative medicine claims.
+* **"Formal" vs. "Informal" language** — the overlap contains registers that shift depending on context.
+* **"Alive" vs. "Dead"** — the overlap contains viruses, dormant seeds, philosophical zombies.
+
+$$ \text{Dilemma}(A, B) = \text{Hull}(A) \cap \text{Hull}(B) $$
+
+The volume of the intersection is a **geometric measure of conceptual ambiguity** between two categories.
+
+Below, you can explore this interactively. Two conceptual categories are represented as polytope hulls (convex envelopes) in 2D. **Drag individual concept points** to reshape the hulls. Watch the **overlap zone** — the geometric dilemma — grow and shrink in real time. Switch between different category pairs to see how the model's "moral geometry" differs from its "linguistic geometry" or its "ontological geometry."
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; margin-bottom: 15px;">
+        <canvas id="canvas-polytope" style="width: 100%; height: 560px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; cursor: crosshair;"></canvas>
+        <div id="polytope-info-panel" style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 560px; overflow-y: auto;">
+            <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">⬡ Polytope Explorer</div>
+            <div id="polytope-click-info">
+                Click anywhere in the space to measure its distance to each hull and see whether it falls inside, outside, or in the <b>overlap zone</b>.
+            </div>
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 10px 0;">
+            <div style="font-weight: bold; font-size: 0.9em; color: #1e293b; margin-bottom: 6px;">🏷️ Legend</div>
+            <div id="polytope-legend"></div>
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 10px 0;">
+            <div style="font-weight: bold; font-size: 0.9em; color: #1e293b; margin-bottom: 6px;">⚡ Dilemma Concepts</div>
+            <div id="polytope-dilemma-list" style="font-size: 0.85em;"></div>
+        </div>
+    </div>
+
+    <!-- Preset selector -->
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <span style="font-family: sans-serif; font-size: 0.9em; color: #475569; font-weight: bold;">Category Pair:</span>
+        <button onclick="loadPolytopePreset('moral')" class="polytope-preset-btn" id="pp-moral" style="background: #8b5cf6; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">⚖️ Good vs. Evil</button>
+        <button onclick="loadPolytopePreset('science')" class="polytope-preset-btn" id="pp-science" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">🔬 Science vs. Pseudo</button>
+        <button onclick="loadPolytopePreset('alive')" class="polytope-preset-btn" id="pp-alive" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">🧬 Alive vs. Dead</button>
+        <button onclick="loadPolytopePreset('formal')" class="polytope-preset-btn" id="pp-formal" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">📝 Formal vs. Casual</button>
+    </div>
+
+    <!-- Toggles -->
+    <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="polytope-show-hulls" checked onchange="renderPolytope()"> Show hulls
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="polytope-show-overlap" checked onchange="renderPolytope()"> Highlight overlap
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="polytope-show-labels" checked onchange="renderPolytope()"> Labels
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="polytope-show-dilemma-points" checked onchange="renderPolytope()"> Dilemma markers
+        </label>
+    </div>
+
+    <!-- Stats -->
+    <div id="polytope-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; max-width: 800px; margin: 0 auto 15px auto;"></div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> Two <b>convex hulls</b> (polytopes) represent the geometric territories of two conceptual categories.
+        The <span style="color:#3b82f6; font-weight:bold;">blue hull</span> encloses one category;
+        the <span style="color:#ef4444; font-weight:bold;">red hull</span> encloses the other.
+        Where they <span style="color:#a855f7; font-weight:bold;">overlap (purple zone)</span>, the model cannot cleanly separate the categories — this is the <b>geometric dilemma</b>.
+        <span style="color:#f59e0b; font-weight:bold;">Gold diamond markers</span> are concepts that live in or near the overlap — the ambiguous, contested, or paradoxical ideas.
+        <b>Drag any concept point</b> to reshape the hulls in real time.
+        <b>Click empty space</b> to probe which hull(s) contain that point.
+        The <b>overlap area</b> is a direct geometric measure of how much ambiguity exists between the two categories.
+    </div>
+</section>

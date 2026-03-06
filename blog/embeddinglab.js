@@ -8007,6 +8007,871 @@ function updateTimeHelixStats(points, range) {
     `;
 }
 
+// ============================================================
+// POLYTOPE HULLS: THE BOUNDARIES OF THE CONCEIVABLE
+// ============================================================
+
+const polytopeState = {
+    canvas: null,
+    ctx: null,
+    width: 0,
+    height: 0,
+    dragging: null,
+    clickPoint: null,
+    currentPreset: 'moral',
+    groupA: [],
+    groupB: [],
+    dilemmaPoints: [],
+    presets: {
+        moral: {
+            nameA: 'Morally Good', colorA: '#3b82f6',
+            nameB: 'Morally Bad', colorB: '#ef4444',
+            pointsA: [
+                { name: 'Kindness',    x: 0.18, y: 0.25 },
+                { name: 'Honesty',     x: 0.25, y: 0.15 },
+                { name: 'Generosity',  x: 0.12, y: 0.40 },
+                { name: 'Courage',     x: 0.30, y: 0.35 },
+                { name: 'Compassion',  x: 0.20, y: 0.50 },
+                { name: 'Justice',     x: 0.35, y: 0.20 },
+                { name: 'Loyalty',     x: 0.28, y: 0.45 },
+                { name: 'Humility',    x: 0.15, y: 0.32 },
+            ],
+            pointsB: [
+                { name: 'Cruelty',     x: 0.75, y: 0.60 },
+                { name: 'Deception',   x: 0.68, y: 0.50 },
+                { name: 'Greed',       x: 0.80, y: 0.45 },
+                { name: 'Cowardice',   x: 0.72, y: 0.72 },
+                { name: 'Hatred',      x: 0.85, y: 0.55 },
+                { name: 'Betrayal',    x: 0.65, y: 0.65 },
+                { name: 'Tyranny',     x: 0.78, y: 0.35 },
+                { name: 'Vanity',      x: 0.70, y: 0.40 },
+            ],
+            dilemmas: [
+                { name: 'Mercy Killing',       x: 0.48, y: 0.42 },
+                { name: 'White Lie',            x: 0.42, y: 0.35 },
+                { name: 'Civil Disobedience',   x: 0.45, y: 0.28 },
+                { name: 'Necessary Violence',   x: 0.52, y: 0.48 },
+                { name: 'Tough Love',           x: 0.40, y: 0.45 },
+            ]
+        },
+        science: {
+            nameA: 'Science', colorA: '#3b82f6',
+            nameB: 'Pseudoscience', colorB: '#ef4444',
+            pointsA: [
+                { name: 'Physics',       x: 0.15, y: 0.20 },
+                { name: 'Chemistry',     x: 0.22, y: 0.30 },
+                { name: 'Biology',       x: 0.18, y: 0.42 },
+                { name: 'Mathematics',   x: 0.10, y: 0.15 },
+                { name: 'Neuroscience',  x: 0.28, y: 0.38 },
+                { name: 'Genetics',      x: 0.25, y: 0.25 },
+                { name: 'Astronomy',     x: 0.20, y: 0.12 },
+            ],
+            pointsB: [
+                { name: 'Astrology',     x: 0.78, y: 0.20 },
+                { name: 'Homeopathy',    x: 0.72, y: 0.55 },
+                { name: 'Flat Earth',    x: 0.85, y: 0.40 },
+                { name: 'Crystal Healing', x: 0.80, y: 0.65 },
+                { name: 'Numerology',    x: 0.75, y: 0.30 },
+                { name: 'Phrenology',    x: 0.70, y: 0.45 },
+            ],
+            dilemmas: [
+                { name: 'Acupuncture',       x: 0.50, y: 0.45 },
+                { name: 'Chiropractic',      x: 0.48, y: 0.38 },
+                { name: 'Meditation Research', x: 0.38, y: 0.42 },
+                { name: 'String Theory',     x: 0.35, y: 0.22 },
+                { name: 'Parapsychology',    x: 0.55, y: 0.35 },
+            ]
+        },
+        alive: {
+            nameA: 'Alive', colorA: '#10b981',
+            nameB: 'Dead / Inert', colorB: '#64748b',
+            pointsA: [
+                { name: 'Human',     x: 0.15, y: 0.25 },
+                { name: 'Dog',       x: 0.20, y: 0.35 },
+                { name: 'Tree',      x: 0.18, y: 0.50 },
+                { name: 'Bacteria',  x: 0.28, y: 0.42 },
+                { name: 'Fungus',    x: 0.25, y: 0.55 },
+                { name: 'Coral',     x: 0.30, y: 0.30 },
+            ],
+            pointsB: [
+                { name: 'Rock',      x: 0.80, y: 0.60 },
+                { name: 'Water',     x: 0.75, y: 0.50 },
+                { name: 'Corpse',    x: 0.70, y: 0.40 },
+                { name: 'Fossil',    x: 0.72, y: 0.65 },
+                { name: 'Ash',       x: 0.82, y: 0.45 },
+                { name: 'Crystal',   x: 0.78, y: 0.35 },
+            ],
+            dilemmas: [
+                { name: 'Virus',             x: 0.48, y: 0.40 },
+                { name: 'Prion',             x: 0.55, y: 0.45 },
+                { name: 'Dormant Seed',      x: 0.42, y: 0.50 },
+                { name: 'Frozen Embryo',     x: 0.45, y: 0.35 },
+                { name: 'AI / Robot',        x: 0.52, y: 0.30 },
+            ]
+        },
+        formal: {
+            nameA: 'Formal Register', colorA: '#6366f1',
+            nameB: 'Casual Register', colorB: '#f97316',
+            pointsA: [
+                { name: 'Furthermore',   x: 0.15, y: 0.20 },
+                { name: 'Nevertheless',  x: 0.20, y: 0.30 },
+                { name: 'Consequently',  x: 0.18, y: 0.40 },
+                { name: 'Henceforth',    x: 0.12, y: 0.35 },
+                { name: 'Pursuant',      x: 0.25, y: 0.22 },
+                { name: 'Notwithstanding', x: 0.22, y: 0.48 },
+            ],
+            pointsB: [
+                { name: 'LOL',       x: 0.80, y: 0.55 },
+                { name: 'gonna',     x: 0.75, y: 0.45 },
+                { name: 'wanna',     x: 0.78, y: 0.60 },
+                { name: 'nah',       x: 0.82, y: 0.40 },
+                { name: 'bruh',      x: 0.85, y: 0.50 },
+                { name: 'yolo',      x: 0.72, y: 0.65 },
+            ],
+            dilemmas: [
+                { name: 'okay',      x: 0.50, y: 0.42 },
+                { name: 'sure',      x: 0.48, y: 0.50 },
+                { name: 'however',   x: 0.38, y: 0.38 },
+                { name: 'basically', x: 0.45, y: 0.35 },
+                { name: 'actually',  x: 0.42, y: 0.45 },
+            ]
+        }
+    }
+};
+
+window.loadPolytopePreset = function (name) {
+    const st = polytopeState;
+    st.currentPreset = name;
+    const preset = st.presets[name];
+    st.groupA = JSON.parse(JSON.stringify(preset.pointsA));
+    st.groupB = JSON.parse(JSON.stringify(preset.pointsB));
+    st.dilemmaPoints = JSON.parse(JSON.stringify(preset.dilemmas));
+    st.clickPoint = null;
+    st.dragging = null;
+
+    document.querySelectorAll('.polytope-preset-btn').forEach(btn => {
+        btn.style.background = '#64748b';
+    });
+    const activeBtn = document.getElementById('pp-' + name);
+    if (activeBtn) activeBtn.style.background = '#8b5cf6';
+
+    renderPolytope();
+    updatePolytopeLegend();
+};
+
+// ── Convex Hull (Graham Scan) ──
+function convexHull(points) {
+    if (points.length < 3) return [...points];
+
+    // Find lowest point (and leftmost if tie)
+    let start = 0;
+    for (let i = 1; i < points.length; i++) {
+        if (points[i].y > points[start].y ||
+            (points[i].y === points[start].y && points[i].x < points[start].x)) {
+            start = i;
+        }
+    }
+
+    const pivot = points[start];
+
+    // Sort by polar angle
+    const sorted = points.slice().sort((a, b) => {
+        const angleA = Math.atan2(a.y - pivot.y, a.x - pivot.x);
+        const angleB = Math.atan2(b.y - pivot.y, b.x - pivot.x);
+        if (Math.abs(angleA - angleB) < 1e-10) {
+            return Math.hypot(a.x - pivot.x, a.y - pivot.y) -
+                   Math.hypot(b.x - pivot.x, b.y - pivot.y);
+        }
+        return angleA - angleB;
+    });
+
+    const stack = [sorted[0], sorted[1]];
+
+    function cross(o, a, b) {
+        return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+    }
+
+    for (let i = 2; i < sorted.length; i++) {
+        while (stack.length > 1 && cross(stack[stack.length - 2], stack[stack.length - 1], sorted[i]) <= 0) {
+            stack.pop();
+        }
+        stack.push(sorted[i]);
+    }
+
+    return stack;
+}
+
+// ── Point-in-polygon test ──
+function pointInPolygon(px, py, polygon) {
+    let inside = false;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const xi = polygon[i].x, yi = polygon[i].y;
+        const xj = polygon[j].x, yj = polygon[j].y;
+        if (((yi > py) !== (yj > py)) && (px < (xj - xi) * (py - yi) / (yj - yi) + xi)) {
+            inside = !inside;
+        }
+    }
+    return inside;
+}
+
+// ── Distance from point to polygon edge (minimum) ──
+function distToPolygonEdge(px, py, polygon) {
+    let minDist = Infinity;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const x1 = polygon[i].x, y1 = polygon[i].y;
+        const x2 = polygon[j].x, y2 = polygon[j].y;
+
+        const dx = x2 - x1, dy = y2 - y1;
+        const len2 = dx * dx + dy * dy;
+        let t = len2 > 0 ? ((px - x1) * dx + (py - y1) * dy) / len2 : 0;
+        t = Math.max(0, Math.min(1, t));
+
+        const projX = x1 + t * dx;
+        const projY = y1 + t * dy;
+        const d = Math.hypot(px - projX, py - projY);
+        if (d < minDist) minDist = d;
+    }
+    return minDist;
+}
+
+function initPolytope() {
+    const canvas = document.getElementById('canvas-polytope');
+    if (!canvas) return;
+
+    const st = polytopeState;
+    st.canvas = canvas;
+
+    function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        st.width = rect.width;
+        st.height = rect.height;
+        canvas.width = rect.width * window.devicePixelRatio;
+        canvas.height = rect.height * window.devicePixelRatio;
+        st.ctx = canvas.getContext('2d');
+        st.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    resizeCanvas();
+
+    // Load default preset
+    const preset = st.presets.moral;
+    st.groupA = JSON.parse(JSON.stringify(preset.pointsA));
+    st.groupB = JSON.parse(JSON.stringify(preset.pointsB));
+    st.dilemmaPoints = JSON.parse(JSON.stringify(preset.dilemmas));
+
+    // ── Interaction ──
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: (clientX - rect.left) / rect.width, y: (clientY - rect.top) / rect.height };
+    }
+
+    function findPointAt(pos, threshold) {
+        let closest = null, minD = Infinity, source = null;
+
+        st.groupA.forEach((p, i) => {
+            const d = Math.hypot(p.x - pos.x, p.y - pos.y);
+            if (d < minD) { minD = d; closest = i; source = 'A'; }
+        });
+        st.groupB.forEach((p, i) => {
+            const d = Math.hypot(p.x - pos.x, p.y - pos.y);
+            if (d < minD) { minD = d; closest = i; source = 'B'; }
+        });
+        st.dilemmaPoints.forEach((p, i) => {
+            const d = Math.hypot(p.x - pos.x, p.y - pos.y);
+            if (d < minD) { minD = d; closest = i; source = 'D'; }
+        });
+
+        return minD < threshold ? { idx: closest, source } : null;
+    }
+
+    canvas.addEventListener('mousedown', e => {
+        const pos = getPos(e);
+        const hit = findPointAt(pos, 0.04);
+        if (hit) {
+            st.dragging = hit;
+            canvas.style.cursor = 'grabbing';
+        }
+    });
+
+    canvas.addEventListener('mousemove', e => {
+        const pos = getPos(e);
+        if (st.dragging) {
+            const arr = st.dragging.source === 'A' ? st.groupA :
+                        st.dragging.source === 'B' ? st.groupB : st.dilemmaPoints;
+            arr[st.dragging.idx].x = Math.max(0.03, Math.min(0.97, pos.x));
+            arr[st.dragging.idx].y = Math.max(0.03, Math.min(0.97, pos.y));
+            renderPolytope();
+        } else {
+            const hit = findPointAt(pos, 0.04);
+            canvas.style.cursor = hit ? 'grab' : 'crosshair';
+        }
+    });
+
+    canvas.addEventListener('mouseup', e => {
+        if (st.dragging) {
+            st.dragging = null;
+            canvas.style.cursor = 'crosshair';
+        } else {
+            st.clickPoint = getPos(e);
+            renderPolytope();
+            updatePolytopeClickInfo(st.clickPoint);
+        }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        st.dragging = null;
+        canvas.style.cursor = 'crosshair';
+    });
+
+    // Touch
+    canvas.addEventListener('touchstart', e => {
+        e.preventDefault();
+        const pos = getPos(e);
+        const hit = findPointAt(pos, 0.06);
+        if (hit) st.dragging = hit;
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', e => {
+        e.preventDefault();
+        if (st.dragging) {
+            const pos = getPos(e);
+            const arr = st.dragging.source === 'A' ? st.groupA :
+                        st.dragging.source === 'B' ? st.groupB : st.dilemmaPoints;
+            arr[st.dragging.idx].x = Math.max(0.03, Math.min(0.97, pos.x));
+            arr[st.dragging.idx].y = Math.max(0.03, Math.min(0.97, pos.y));
+            renderPolytope();
+        }
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', () => { st.dragging = null; });
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => { resizeCanvas(); renderPolytope(); }, 150);
+    });
+
+    renderPolytope();
+    updatePolytopeLegend();
+}
+
+function renderPolytope() {
+    const st = polytopeState;
+    if (!st.ctx) return;
+
+    const ctx = st.ctx;
+    const W = st.width;
+    const H = st.height;
+    const preset = st.presets[st.currentPreset];
+
+    const showHulls = document.getElementById('polytope-show-hulls')?.checked ?? true;
+    const showOverlap = document.getElementById('polytope-show-overlap')?.checked ?? true;
+    const showLabels = document.getElementById('polytope-show-labels')?.checked ?? true;
+    const showDilemmas = document.getElementById('polytope-show-dilemma-points')?.checked ?? true;
+
+    // ── Clear ──
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, W, H);
+
+    // Light grid
+    ctx.strokeStyle = '#f1f5f9';
+    ctx.lineWidth = 1;
+    for (let gx = 0; gx < W; gx += 40) {
+        ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+    }
+    for (let gy = 0; gy < H; gy += 40) {
+        ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+    }
+
+    function toC(p) { return { x: p.x * W, y: p.y * H }; }
+
+    // Compute convex hulls
+    const hullA = convexHull(st.groupA);
+    const hullB = convexHull(st.groupB);
+
+    // ── Overlap detection via pixel sampling ──
+    let overlapPixels = 0;
+    let totalPixels = 0;
+    const sampleStep = 8;
+
+    if (showOverlap) {
+        for (let py = 0; py < H; py += sampleStep) {
+            for (let px = 0; px < W; px += sampleStep) {
+                const nx = px / W;
+                const ny = py / H;
+                totalPixels++;
+
+                const inA = pointInPolygon(nx, ny, hullA);
+                const inB = pointInPolygon(nx, ny, hullB);
+
+                if (inA && inB) {
+                    overlapPixels++;
+                    ctx.fillStyle = 'rgba(168, 85, 247, 0.15)';
+                    ctx.fillRect(px, py, sampleStep, sampleStep);
+                }
+            }
+        }
+    }
+
+    // ── Draw hulls ──
+    if (showHulls) {
+        // Hull A
+        if (hullA.length >= 3) {
+            ctx.beginPath();
+            hullA.forEach((p, i) => {
+                const cp = toC(p);
+                if (i === 0) ctx.moveTo(cp.x, cp.y);
+                else ctx.lineTo(cp.x, cp.y);
+            });
+            ctx.closePath();
+            ctx.fillStyle = preset.colorA + '12';
+            ctx.fill();
+            ctx.strokeStyle = preset.colorA + '60';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Inner glow lines
+            ctx.strokeStyle = preset.colorA + '20';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+        }
+
+        // Hull B
+        if (hullB.length >= 3) {
+            ctx.beginPath();
+            hullB.forEach((p, i) => {
+                const cp = toC(p);
+                if (i === 0) ctx.moveTo(cp.x, cp.y);
+                else ctx.lineTo(cp.x, cp.y);
+            });
+            ctx.closePath();
+            ctx.fillStyle = preset.colorB + '12';
+            ctx.fill();
+            ctx.strokeStyle = preset.colorB + '60';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.strokeStyle = preset.colorB + '20';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+        }
+    }
+
+    // ── Overlap boundary highlight ──
+    if (showOverlap && hullA.length >= 3 && hullB.length >= 3) {
+        // Draw a dashed purple boundary around the overlap region
+        // We approximate by finding boundary pixels
+        const boundaryPixels = [];
+        for (let py = 0; py < H; py += sampleStep) {
+            for (let px = 0; px < W; px += sampleStep) {
+                const nx = px / W;
+                const ny = py / H;
+                const inA = pointInPolygon(nx, ny, hullA);
+                const inB = pointInPolygon(nx, ny, hullB);
+                if (inA && inB) {
+                    // Check if any neighbor is NOT in overlap
+                    const neighbors = [
+                        [(px - sampleStep) / W, ny],
+                        [(px + sampleStep) / W, ny],
+                        [nx, (py - sampleStep) / H],
+                        [nx, (py + sampleStep) / H]
+                    ];
+                    const isBoundary = neighbors.some(([nnx, nny]) => {
+                        return !pointInPolygon(nnx, nny, hullA) || !pointInPolygon(nnx, nny, hullB);
+                    });
+                    if (isBoundary) {
+                        boundaryPixels.push({ x: px, y: py });
+                    }
+                }
+            }
+        }
+
+        boundaryPixels.forEach(bp => {
+            ctx.fillStyle = 'rgba(168, 85, 247, 0.5)';
+            ctx.fillRect(bp.x - 1, bp.y - 1, 3, 3);
+        });
+    }
+
+    // ── Group A points ──
+    st.groupA.forEach(p => {
+        const cp = toC(p);
+
+        ctx.beginPath();
+        ctx.arc(cp.x, cp.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = preset.colorA;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        if (showLabels) {
+            ctx.font = 'bold 11px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = preset.colorA;
+
+            // Background
+            const tw = ctx.measureText(p.name).width;
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.fillRect(cp.x - tw / 2 - 3, cp.y - 24, tw + 6, 15);
+            ctx.fillStyle = preset.colorA;
+            ctx.fillText(p.name, cp.x, cp.y - 12);
+        }
+    });
+
+    // ── Group B points ──
+    st.groupB.forEach(p => {
+        const cp = toC(p);
+
+        ctx.beginPath();
+        ctx.arc(cp.x, cp.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = preset.colorB;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        if (showLabels) {
+            ctx.font = 'bold 11px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+
+            const tw = ctx.measureText(p.name).width;
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.fillRect(cp.x - tw / 2 - 3, cp.y - 24, tw + 6, 15);
+            ctx.fillStyle = preset.colorB;
+            ctx.fillText(p.name, cp.x, cp.y - 12);
+        }
+    });
+
+    // ── Dilemma points ──
+    if (showDilemmas) {
+        st.dilemmaPoints.forEach(p => {
+            const cp = toC(p);
+            const inA = pointInPolygon(p.x, p.y, hullA);
+            const inB = pointInPolygon(p.x, p.y, hullB);
+            const inOverlap = inA && inB;
+            const inNeither = !inA && !inB;
+
+            // Diamond shape
+            const s = 7;
+            ctx.beginPath();
+            ctx.moveTo(cp.x, cp.y - s);
+            ctx.lineTo(cp.x + s, cp.y);
+            ctx.lineTo(cp.x, cp.y + s);
+            ctx.lineTo(cp.x - s, cp.y);
+            ctx.closePath();
+
+            if (inOverlap) {
+                ctx.fillStyle = '#f59e0b';
+                ctx.fill();
+                ctx.strokeStyle = '#b45309';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Glow
+                ctx.beginPath();
+                ctx.arc(cp.x, cp.y, 14, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(245, 158, 11, 0.3)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            } else if (inA) {
+                ctx.fillStyle = preset.colorA + 'aa';
+                ctx.fill();
+                ctx.strokeStyle = preset.colorA;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            } else if (inB) {
+                ctx.fillStyle = preset.colorB + 'aa';
+                ctx.fill();
+                ctx.strokeStyle = preset.colorB;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            } else {
+                ctx.fillStyle = '#94a3b8';
+                ctx.fill();
+                ctx.strokeStyle = '#64748b';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+
+            if (showLabels) {
+                ctx.font = `${inOverlap ? 'bold ' : ''}10px system-ui, sans-serif`;
+                ctx.textAlign = 'center';
+
+                const tw = ctx.measureText(p.name).width;
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.fillRect(cp.x - tw / 2 - 3, cp.y + s + 3, tw + 6, 14);
+
+                ctx.fillStyle = inOverlap ? '#b45309' : '#64748b';
+                ctx.fillText(p.name, cp.x, cp.y + s + 14);
+            }
+        });
+    }
+
+    // ── Click point indicator ──
+    if (st.clickPoint) {
+        const cp = { x: st.clickPoint.x * W, y: st.clickPoint.y * H };
+
+        ctx.beginPath();
+        ctx.arc(cp.x, cp.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#1e293b';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Crosshair
+        ctx.strokeStyle = 'rgba(30, 41, 59, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(cp.x - 15, cp.y); ctx.lineTo(cp.x + 15, cp.y);
+        ctx.moveTo(cp.x, cp.y - 15); ctx.lineTo(cp.x, cp.y + 15);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    // ── Hull labels ──
+    if (showHulls && showLabels) {
+        // Centroid of hull A
+        if (hullA.length >= 3) {
+            const cx = hullA.reduce((s, p) => s + p.x, 0) / hullA.length;
+            const cy = hullA.reduce((s, p) => s + p.y, 0) / hullA.length;
+            const cp = toC({ x: cx, y: cy });
+            ctx.font = 'bold 14px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = preset.colorA + '40';
+            ctx.fillText(preset.nameA, cp.x, cp.y);
+        }
+        if (hullB.length >= 3) {
+            const cx = hullB.reduce((s, p) => s + p.x, 0) / hullB.length;
+            const cy = hullB.reduce((s, p) => s + p.y, 0) / hullB.length;
+            const cp = toC({ x: cx, y: cy });
+            ctx.font = 'bold 14px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = preset.colorB + '40';
+            ctx.fillText(preset.nameB, cp.x, cp.y);
+        }
+    }
+
+    // ── Stats ──
+    updatePolytopeStats(hullA, hullB, overlapPixels, totalPixels);
+    updatePolytopeDilemmaList(hullA, hullB);
+}
+
+function updatePolytopeClickInfo(pos) {
+    const st = polytopeState;
+    const infoDiv = document.getElementById('polytope-click-info');
+    if (!infoDiv) return;
+
+    const preset = st.presets[st.currentPreset];
+    const hullA = convexHull(st.groupA);
+    const hullB = convexHull(st.groupB);
+
+    const inA = pointInPolygon(pos.x, pos.y, hullA);
+    const inB = pointInPolygon(pos.x, pos.y, hullB);
+    const distA = distToPolygonEdge(pos.x, pos.y, hullA);
+    const distB = distToPolygonEdge(pos.x, pos.y, hullB);
+
+    let zone, zoneColor, zoneIcon;
+    if (inA && inB) {
+        zone = 'OVERLAP — Dilemma Zone';
+        zoneColor = '#a855f7';
+        zoneIcon = '⚡';
+    } else if (inA) {
+        zone = preset.nameA;
+        zoneColor = preset.colorA;
+        zoneIcon = '✅';
+    } else if (inB) {
+        zone = preset.nameB;
+        zoneColor = preset.colorB;
+        zoneIcon = '✅';
+    } else {
+        zone = 'Outside both hulls';
+        zoneColor = '#94a3b8';
+        zoneIcon = '⬜';
+    }
+
+    // Find nearest concept from each group
+    let nearestA = null, nearestADist = Infinity;
+    st.groupA.forEach(p => {
+        const d = Math.hypot(p.x - pos.x, p.y - pos.y);
+        if (d < nearestADist) { nearestADist = d; nearestA = p; }
+    });
+    let nearestB = null, nearestBDist = Infinity;
+    st.groupB.forEach(p => {
+        const d = Math.hypot(p.x - pos.x, p.y - pos.y);
+        if (d < nearestBDist) { nearestBDist = d; nearestB = p; }
+    });
+
+    const pullRatio = nearestADist / (nearestADist + nearestBDist);
+    const pullLabel = pullRatio < 0.35 ? `Strong pull toward ${preset.nameA}` :
+                      pullRatio > 0.65 ? `Strong pull toward ${preset.nameB}` :
+                                         'Balanced — torn between both';
+
+    infoDiv.innerHTML = `
+        <div style="margin-bottom: 8px;">
+            <b>${zoneIcon} Zone:</b>
+            <span style="color:${zoneColor}; font-weight:bold; font-size:1.05em;">${zone}</span>
+        </div>
+        <div style="margin-bottom: 4px;">
+            <b>Dist to <span style="color:${preset.colorA};">${preset.nameA}</span> hull:</b> ${distA.toFixed(4)}
+            ${inA ? '<span style="color:#10b981;"> (inside)</span>' : '<span style="color:#94a3b8;"> (outside)</span>'}
+        </div>
+        <div style="margin-bottom: 4px;">
+            <b>Dist to <span style="color:${preset.colorB};">${preset.nameB}</span> hull:</b> ${distB.toFixed(4)}
+            ${inB ? '<span style="color:#10b981;"> (inside)</span>' : '<span style="color:#94a3b8;"> (outside)</span>'}
+        </div>
+        <div style="margin-bottom: 4px;">
+            <b>Nearest <span style="color:${preset.colorA};">${preset.nameA}</span>:</b>
+            ${nearestA ? nearestA.name : '—'} (${nearestADist.toFixed(3)})
+        </div>
+        <div style="margin-bottom: 4px;">
+            <b>Nearest <span style="color:${preset.colorB};">${preset.nameB}</span>:</b>
+            ${nearestB ? nearestB.name : '—'} (${nearestBDist.toFixed(3)})
+        </div>
+        <div style="margin-bottom: 4px; padding: 4px 8px; background: ${zoneColor}10; border-radius: 4px; border-left: 3px solid ${zoneColor};">
+            <b>Pull:</b> <span style="color:${zoneColor};">${pullLabel}</span>
+            <div style="background:#e2e8f0; border-radius:4px; height:8px; width:100%; margin-top:4px; overflow:hidden;">
+                <div style="background: linear-gradient(90deg, ${preset.colorA}, ${preset.colorB}); height:100%; width:100%; position:relative;">
+                    <div style="position:absolute; left:${(pullRatio * 100).toFixed(0)}%; top:-2px; width:4px; height:12px; background:#1e293b; border-radius:2px;"></div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function updatePolytopeLegend() {
+    const st = polytopeState;
+    const legendDiv = document.getElementById('polytope-legend');
+    if (!legendDiv) return;
+
+    const preset = st.presets[st.currentPreset];
+
+    legendDiv.innerHTML = `
+        <div style="margin-bottom: 6px;">
+            <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:${preset.colorA}; margin-right:6px; vertical-align:middle;"></span>
+            <b style="color:${preset.colorA};">${preset.nameA}</b>
+            <span style="color:#94a3b8; font-size:0.85em;"> (${st.groupA.length} concepts)</span>
+        </div>
+        <div style="margin-bottom: 6px;">
+            <span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:${preset.colorB}; margin-right:6px; vertical-align:middle;"></span>
+            <b style="color:${preset.colorB};">${preset.nameB}</b>
+            <span style="color:#94a3b8; font-size:0.85em;"> (${st.groupB.length} concepts)</span>
+        </div>
+        <div style="margin-bottom: 6px;">
+            <span style="display:inline-block; width:12px; height:12px; background:#a855f7; opacity:0.4; margin-right:6px; vertical-align:middle;"></span>
+            <b style="color:#a855f7;">Overlap Zone</b>
+            <span style="color:#94a3b8; font-size:0.85em;"> (dilemma)</span>
+        </div>
+        <div>
+            <span style="display:inline-block; width:12px; height:12px; background:#f59e0b; transform:rotate(45deg); margin-right:6px; vertical-align:middle;"></span>
+            <b style="color:#f59e0b;">Dilemma Concepts</b>
+            <span style="color:#94a3b8; font-size:0.85em;"> (${st.dilemmaPoints.length})</span>
+        </div>
+    `;
+}
+
+function updatePolytopeDilemmaList(hullA, hullB) {
+    const st = polytopeState;
+    const listDiv = document.getElementById('polytope-dilemma-list');
+    if (!listDiv) return;
+
+    const preset = st.presets[st.currentPreset];
+
+    let html = '';
+    st.dilemmaPoints.forEach(p => {
+        const inA = pointInPolygon(p.x, p.y, hullA);
+        const inB = pointInPolygon(p.x, p.y, hullB);
+        const inOverlap = inA && inB;
+
+        let status, statusColor, statusIcon;
+        if (inOverlap) {
+            status = 'In overlap';
+            statusColor = '#f59e0b';
+            statusIcon = '⚡';
+        } else if (inA) {
+            status = `In ${preset.nameA}`;
+            statusColor = preset.colorA;
+            statusIcon = '🔵';
+        } else if (inB) {
+            status = `In ${preset.nameB}`;
+            statusColor = preset.colorB;
+            statusIcon = '🔴';
+        } else {
+            status = 'Outside both';
+            statusColor = '#94a3b8';
+            statusIcon = '⬜';
+        }
+
+        html += `<div style="margin-bottom: 4px; padding: 3px 6px; border-radius: 4px; background: ${statusColor}08; border-left: 3px solid ${statusColor};">
+            ${statusIcon} <b style="color:#1e293b;">${p.name}</b>
+            <span style="color:${statusColor}; font-size:0.85em;"> — ${status}</span>
+        </div>`;
+    });
+
+    listDiv.innerHTML = html;
+}
+
+function polygonArea(polygon) {
+    let area = 0;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        area += polygon[j].x * polygon[i].y;
+        area -= polygon[i].x * polygon[j].y;
+    }
+    return Math.abs(area / 2);
+}
+
+function updatePolytopeStats(hullA, hullB, overlapPixels, totalPixels) {
+    const statsDiv = document.getElementById('polytope-stats');
+    if (!statsDiv) return;
+
+    const st = polytopeState;
+    const preset = st.presets[st.currentPreset];
+
+    const areaA = polygonArea(hullA);
+    const areaB = polygonArea(hullB);
+    const overlapPct = totalPixels > 0 ? (overlapPixels / totalPixels * 100) : 0;
+
+    // Count dilemma points actually in overlap
+    const dilemmasInOverlap = st.dilemmaPoints.filter(p =>
+        pointInPolygon(p.x, p.y, hullA) && pointInPolygon(p.x, p.y, hullB)
+    ).length;
+
+    // Separation: min distance between hull edges
+    let minSep = Infinity;
+    hullA.forEach(pa => {
+        hullB.forEach(pb => {
+            const d = Math.hypot(pa.x - pb.x, pa.y - pb.y);
+            if (d < minSep) minSep = d;
+        });
+    });
+    const separated = overlapPct < 0.1;
+
+    statsDiv.innerHTML = `
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Overlap Area</div>
+            <div style="font-size:1.4em; font-weight:bold; color:${overlapPct > 5 ? '#a855f7' : overlapPct > 0.5 ? '#f59e0b' : '#10b981'};">${overlapPct.toFixed(1)}%</div>
+            <div style="font-size:0.7em; color:#94a3b8;">${overlapPct > 5 ? 'significant ambiguity' : overlapPct > 0.5 ? 'minor ambiguity' : 'well separated'}</div>
+        </div>
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Dilemmas in Overlap</div>
+            <div style="font-size:1.4em; font-weight:bold; color:#f59e0b;">${dilemmasInOverlap} / ${st.dilemmaPoints.length}</div>
+            <div style="font-size:0.7em; color:#94a3b8;">contested concepts</div>
+        </div>
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;"><span style="color:${preset.colorA};">■</span> Hull Area</div>
+            <div style="font-size:1.4em; font-weight:bold; color:${preset.colorA};">${(areaA * 100).toFixed(1)}%</div>
+            <div style="font-size:0.7em; color:#94a3b8;">${preset.nameA}</div>
+        </div>
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;"><span style="color:${preset.colorB};">■</span> Hull Area</div>
+            <div style="font-size:1.4em; font-weight:bold; color:${preset.colorB};">${(areaB * 100).toFixed(1)}%</div>
+            <div style="font-size:0.7em; color:#94a3b8;">${preset.nameB}</div>
+        </div>
+    `;
+}
+
 function loadEmbeddingModule() {
     const fastConfig = {
         displayModeBar: false,
@@ -8210,6 +9075,11 @@ function loadEmbeddingModule() {
     // 23. Time Axis Projection — Emergent Helix
     _embLazyRegister('canvas-time-helix', () => {
         initTimeHelix();
+    });
+
+    // 24. Polytope Hulls — Boundaries of the Conceivable
+    _embLazyRegister('canvas-polytope', () => {
+        initPolytope();
     });
 
 
