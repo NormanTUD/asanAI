@@ -328,4 +328,6 @@ But the context window is more than a technical parameter, it maps onto a powerf
 Mathematically, the "contextualized" word is just a weighted average of the information (Values) around it:
 $$\mathbf{z}_{i} = \sum_{j} \alpha_{i,j} \mathbf{v}_j$$
 The diamond you see in the plot is the result of this physics, a word finding its true north by listening to its neighbors.
+
+TODO: Attention doesnt only do it for words that mean different things, it does it for all words and all kinds of relationships.
 </div>
