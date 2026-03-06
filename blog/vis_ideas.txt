@@ -74,3 +74,25 @@ Man kann die „Dichte“ des Wissens visualisieren.
 
 
 
+1. Das „Interferenz-Muster“ der Layer (Wave-Geometry)
+
+Man kann visualisieren, wie Information durch das Modell „pulsiert“.
+
+    Die Visualisierung: Man stellt die Aktivierung über alle Layer hinweg als eine Art Wellenfront dar.
+
+    Das krasse Ergebnis: Man sieht, dass LLMs oft in Zyklen arbeiten. In den frühen Schichten wird der Vektor „breit“ und unpräzise (Expansion), in den mittleren Schichten zieht er sich extrem scharf zusammen (Kompression/Logik-Check) und am Ende fächert er sich wieder auf, um das nächste Token zu wählen. Es sieht aus wie ein schlagendes mechanisches Herz aus Daten.
+
+
+
+
+2. „Polytope-Hulls“ (Die Grenzen des Vorstellbaren)
+
+In der Geometrie ist ein Polytop die hochdimensionale Entsprechung eines Vielecks.
+
+    Die Visualisierung: Man berechnet die „konvexe Hülle“ (den kleinstmöglichen umschließenden Körper) für alle Konzepte, die das Modell für „moralisch gut“ hält, und eine für „moralisch schlecht“.
+
+    Der Mind-Blow: Man kann visuell zeigen, wo sich diese Körper überschneiden. Diese Schnittmenge ist die geometrische Darstellung von moralischen Dilemmata. Wo die Hüllen weit auseinander liegen, ist das Modell „entschieden“; wo sie sich durchdringen, herrscht geometrisches Chaos.
+
+
+
+
