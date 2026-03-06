@@ -977,7 +977,6 @@ function addReturnVisitorWarmth() {
 
 function initOptionalBlocks() {
 	document.querySelectorAll('div.optional').forEach(block => {
-		// Prevent double initialization
 		if (block.classList.contains('optional-initialized')) return;
 		block.classList.add('optional-initialized');
 
@@ -990,25 +989,148 @@ function initOptionalBlocks() {
 		header.className = 'optional-header';
 		header.style.cursor = 'pointer';
 		header.innerHTML = `
-			<span class="optional-icon">▶</span>
+			<span class="optional-icon" style="display:inline-block; transition: transform 0.3s ease;">▶</span>
 			<span class="optional-title">${headline}</span>
 		`;
 
 		// Create Content Wrapper (initially hidden)
 		const contentWrapper = document.createElement('div');
-		contentWrapper.className = 'optional-content md'; // Keep md class for your renderer
+		contentWrapper.className = 'optional-content md';
 		contentWrapper.style.display = 'none';
+		contentWrapper.style.overflow = 'hidden';
 		contentWrapper.innerHTML = contentHtml;
 
 		block.appendChild(header);
 		block.appendChild(contentWrapper);
 
+		let isAnimating = false;
+
+		// --- Staggered paragraph reveal ---
+		const animateContentIn = (wrapper, onComplete) => {
+			// Gather direct block-level children for staggered reveal
+			const children = wrapper.querySelectorAll(':scope > p, :scope > ul, :scope > ol, :scope > pre, :scope > blockquote, :scope > div, :scope > table, :scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > h5, :scope > h6');
+
+			if (children.length === 0) {
+				// Fallback: animate the whole wrapper as one block
+				wrapper.style.opacity = '0';
+				wrapper.style.filter = 'blur(3px)';
+				wrapper.style.transform = 'translateY(6px)';
+				wrapper.style.transition = 'opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease';
+				requestAnimationFrame(() => {
+					wrapper.style.opacity = '1';
+					wrapper.style.filter = 'blur(0)';
+					wrapper.style.transform = 'translateY(0)';
+				});
+				if (onComplete) setTimeout(onComplete, 400);
+				return;
+			}
+
+			// Adaptive pacing: fewer children = slower, more luxurious cascade
+			const perChild = Math.max(30, Math.min(100, 500 / children.length));
+
+			children.forEach((child, i) => {
+				child.style.opacity = '0';
+				child.style.filter = 'blur(4px)';
+				child.style.transform = 'translateY(8px)';
+				child.style.transition = 'opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease';
+
+				setTimeout(() => {
+					child.style.opacity = '1';
+					child.style.filter = 'blur(0)';
+					child.style.transform = 'translateY(0)';
+				}, i * perChild);
+			});
+
+			if (onComplete) {
+				setTimeout(onComplete, children.length * perChild + 380);
+			}
+		};
+
+		// --- Dissolve out content ---
+		const animateContentOut = (wrapper, onComplete) => {
+			const children = wrapper.querySelectorAll(':scope > p, :scope > ul, :scope > ol, :scope > pre, :scope > blockquote, :scope > div, :scope > table, :scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > h5, :scope > h6');
+
+			if (children.length === 0) {
+				wrapper.style.transition = 'opacity 0.25s ease, filter 0.25s ease';
+				wrapper.style.opacity = '0';
+				wrapper.style.filter = 'blur(3px)';
+				if (onComplete) setTimeout(onComplete, 280);
+				return;
+			}
+
+			// Reverse stagger: last child fades first (bottom-to-top reabsorption)
+			const perChild = Math.max(15, Math.min(50, 250 / children.length));
+			const reversed = [...children].reverse();
+
+			reversed.forEach((child, i) => {
+				child.style.transition = 'opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease';
+				setTimeout(() => {
+					child.style.opacity = '0';
+					child.style.filter = 'blur(3px)';
+					child.style.transform = 'translateY(-4px)';
+				}, i * perChild);
+			});
+
+			if (onComplete) {
+				setTimeout(onComplete, reversed.length * perChild + 230);
+			}
+		};
+
 		// Toggle Logic
 		header.onclick = () => {
+			if (isAnimating) return;
+
+			const icon = header.querySelector('.optional-icon');
 			const isHidden = contentWrapper.style.display === 'none';
-			contentWrapper.style.display = isHidden ? 'block' : 'none';
-			header.querySelector('.optional-icon').innerHTML = isHidden ? '▼' : '▶';
-			header.classList.toggle('active', isHidden);
+
+			if (isHidden) {
+				// --- EXPAND ---
+				isAnimating = true;
+
+				// Rotate icon
+				icon.style.transform = 'rotate(90deg)';
+				icon.innerHTML = '▼';
+				header.classList.add('active');
+
+				// Flash the block border
+				block.style.transition = 'box-shadow 0.4s ease';
+				block.style.boxShadow = '0 0 12px rgba(171,71,188,0.15)';
+				setTimeout(() => { block.style.boxShadow = 'none'; }, 800);
+
+				// Show wrapper, then animate children in
+				contentWrapper.style.display = 'block';
+
+				// Small delay to let display:block take effect
+				requestAnimationFrame(() => {
+					animateContentIn(contentWrapper, () => {
+						isAnimating = false;
+					});
+				});
+
+			} else {
+				// --- COLLAPSE: dissolve out, then hide ---
+				isAnimating = true;
+
+				animateContentOut(contentWrapper, () => {
+					contentWrapper.style.display = 'none';
+
+					// Reset children styles for next expand
+					const children = contentWrapper.querySelectorAll(':scope > p, :scope > ul, :scope > ol, :scope > pre, :scope > blockquote, :scope > div, :scope > table, :scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > h5, :scope > h6');
+					children.forEach(child => {
+						child.style.opacity = '';
+						child.style.filter = '';
+						child.style.transform = '';
+						child.style.transition = '';
+					});
+
+					// Rotate icon back
+					icon.style.transform = 'rotate(0deg)';
+					icon.innerHTML = '▶';
+					header.classList.remove('active');
+
+					isAnimating = false;
+				});
+			}
 		};
 	});
 }
