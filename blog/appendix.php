@@ -129,7 +129,7 @@ Researchers have observed that transformer layers tend to organize into three br
 
 This expansion-compression-expansion cycle is strikingly similar to a **heartbeat**: diastole (expansion, filling with possibilities), systole (compression, pumping a decision), diastole again (expansion, distributing the result). When visualized as a waveform across layers, it literally looks like a cardiac rhythm — a **mechanical heart made of data**.
 
-The wave pattern is not a single pulse. In deep models (96+ layers), you often see **multiple cycles** — the model performs several rounds of expansion and compression, like a heart beating multiple times per inference. Each cycle refines the representation further, and the interference between cycles creates complex patterns reminiscent of wave interference in physics [[3]] [[4]].
+The wave pattern is not a single pulse. In deep models (96+ layers), you often see **multiple cycles** — the model performs several rounds of expansion and compression, like a heart beating multiple times per inference. Each cycle refines the representation further, and the interference between cycles creates complex patterns reminiscent of wave interference in physics.
 
 $$ \text{Activation Width}(l) \approx A_0 + \sum_{k=1}^{K} A_k \cdot \cos\left(\frac{2\pi k \cdot l}{L} + \phi_k\right) $$
 
