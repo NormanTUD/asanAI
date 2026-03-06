@@ -280,9 +280,7 @@ The deeper theoretical reason the path-finding framing works is the **\cite[Mani
 ## Attention as Metric Tensor
 
 There is an even more geometric way to think about attention. In differential geometry, a **metric tensor** defines how distances are measured locally on a manifold, it tells you the "shape" of space at each point. The attention matrix in a Transformer does something analogous: it dynamically redefines which tokens are "close" to which other tokens at each layer, effectively warping the local geometry of the embedding space as the representation is processed. This is not merely a metaphor, the connections between attention mechanisms and geometric structures on manifolds have been formalized in the \cite[framework of Geometric Deep Learning]{bronstein2021geometric}.
-</div>
 
-<div class="md">
 ## The Residual Stream as Geodesic
 
 Building on \cite[the mechanistic analysis of Transformer circuits]{elhage2021mathematical}, there is an elegant way to think about the **residual stream**. Each layer of the Transformer adds a small update to the residual, it does not replace the representation, it *nudges* it. This is structurally identical to how a **geodesic**, the shortest path on a curved surface, is computed: you take small steps, each determined by the local curvature. The residual stream, then, traces something like a geodesic through meaning-space, with each attention head and MLP layer contributing a local correction based on the geometry it perceives. The Transformer does not jump from input to output. It *walks* there, one careful step at a time, along the surface of the manifold.
