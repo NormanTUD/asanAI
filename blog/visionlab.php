@@ -1,8 +1,6 @@
 <?php include_once("functions.php"); ?>
 <div class="md">
-## Convolutions: How a Computer Learns to See
-
-### Historical Context
+## Historical Context
 
 The idea of hierarchical visual feature detection was first introduced by \citeauthor{neocognitron} in \citeyear{neocognitron} in his landmark paper about the \cite[Neocognitron]{neocognitron}, which was directly inspired by \citeauthorlastnameand{hubelwiesel}'s Nobel Prize–winning research on the mammalian visual cortex. Years later, in \citeyear{lecun1989backpropagation}, LeCun et al. made the concept practical by combining convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service, the first commercially deployed convolutional neural network.
 
@@ -12,7 +10,7 @@ The idea of hierarchical visual feature detection was first introduced by \citea
 * **Feature Hierarchy:** Simple features (edges) are combined to form complex features.
 * **Pooling/Invariance:** The concept of complex cells corresponds to "Max-Pooling" in modern architectures, achieving translation invariance.
 
-### What is a Convolution?
+## What is a Convolution?
 
 A **convolution** is a mathematical operation that slides a small grid of numbers (the **kernel** or **filter**) across an image, computing a weighted sum at every position. This single operation is the fundamental building block of **Convolutional Neural Networks (CNNs)**, the technology behind facial recognition, autonomous vehicles, medical imaging, and satellite analysis.
 
@@ -22,7 +20,7 @@ $$
 
 Where $\mathbf{I}$ is the input image, $\mathbf{K}$ is the kernel, and $(x, y)$ is the output pixel coordinate. This is computed independently for each color channel (Red, Green, Blue).
 
-### Why Does This Matter for AI?
+## Why Does This Matter for AI?
 
 In traditional computer vision, engineers **manually designed** kernels (like Sobel, Gaussian, or Laplacian filters) to detect edges, blur noise, or sharpen details. These hand-crafted filters work well for specific tasks but cannot generalize.
 
@@ -32,7 +30,7 @@ In **Deep Learning**, the paradigm shifts completely:
 * **Feature Extraction:** Through backpropagation, the network learns to detect simple edges in early layers and progressively more complex shapes (eyes, wheels, letters) in deeper layers, all without human intervention.
 * **The Convolution Operation:** The math you see when hovering, multiplying a window of pixels by a matrix of weights, is exactly what happens billions of times inside a GPU when an AI processes an image.
 
-### Understanding the Preset Filters
+## Understanding the Preset Filters
 
 * **Sharpen:** Amplifies the difference between a pixel and its neighbors, enhancing fine detail and high-frequency information.
 * **Edge Detection:** Highlights boundaries where pixel intensity changes abruptly. The result is a map of the image's structural skeleton.
@@ -98,11 +96,11 @@ In **Deep Learning**, the paradigm shifts completely:
 
 <div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px">
 <div class="md">
-### The Power of Hierarchy: Building Complexity from Simplicity
+## The Power of Hierarchy: Building Complexity from Simplicity
 
 A deep learning model doesn't identify a "stop sign" in a single leap. Instead, it constructs an understanding through a **layered hierarchy of abstraction**, where each successive layer examines the output of the previous one to discover increasingly complex patterns. This mirrors the architecture of the human visual cortex, where neurons in area V1 respond to simple oriented edges, while neurons in higher areas respond to faces and objects.
 
-#### Layer 1: Primitive Edge Detection
+### Layer 1: Primitive Edge Detection
 
 The first convolutional layer acts like a microscopic scanner. Each kernel examines a tiny local window of pixels (e.g., $3 \times 3$) to detect basic **primitives**: horizontal lines, vertical lines, diagonal edges, and color gradients.
 
@@ -110,7 +108,7 @@ At this stage, the network has no concept of a "sign", it only knows that there 
 
 The four feature maps below show exactly this: each filter responds to edges at a different orientation.
 
-#### Layer 2: Pattern Composition, Finding Corners and Curves
+### Layer 2: Pattern Composition, Finding Corners and Curves
 
 The second convolutional layer doesn't look at the original image at all. Instead, it looks at the **feature maps** produced by Layer 1.
 
@@ -118,7 +116,7 @@ The second convolutional layer doesn't look at the original image at all. Instea
 * **Expanding the Receptive Field:** Because each layer's kernel covers a region of the *previous* layer's output, deeper layers effectively "see" a much larger area of the original image. A $3 \times 3$ kernel in Layer 2, applied to Layer 1's output, actually represents a $5 \times 5$ region of the raw input.
 * **The Heatmap Below:** The combined heatmap squares the activations to amplify regions where multiple filters fire simultaneously, these are the corners and junctions of the octagonal stop sign.
 
-#### Deeper Layers: From Parts to Objects
+### Deeper Layers: From Parts to Objects
 
 In a full-scale network (e.g., ResNet-50 with 50 layers, or VGG-16 with 16 layers), this process repeats:
 

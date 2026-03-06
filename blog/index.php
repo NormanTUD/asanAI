@@ -36,7 +36,7 @@
 	incl("Smallest possible neural network", "minimalneuron");
 	incl("Activation Functions: The Neural Decision Makers", "activationlab");
 	incl("Live Training of a Neural Network", "traininglab");
-	incl("Computer Vision", "visionlab");
+	incl("Convolutions: How a Computer Learns to See", "visionlab");
 	incl("Deep Learning", "deeplearninglab");
 	incl("Over- and underfitting", "overandunderfittinglab");
 	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
