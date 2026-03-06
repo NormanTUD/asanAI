@@ -138,8 +138,59 @@ window.initBlock = (id) => {
 	if (id === 'lin') MinimalLab.init();
 };
 
+// ============================================================
+// LAZY LOADING FOR MINIMAL NEURON MODULE
+// ============================================================
+
+const _mnLazyRegistry = [];
+let _mnLazyObserver = null;
+
+function _mnLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _mnLazyRegistry.push({ el, initFn, initialized: false });
+}
+
+function _mnLazyCreateObserver() {
+    if (_mnLazyObserver) return;
+
+    _mnLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _mnLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _mnLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin // uses the already-defined global const
+    });
+
+    _mnLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _mnLazyObserver.observe(r.el);
+        }
+    });
+}
+
+// ============================================================
+// REPLACEMENT: loadMinimalNeuronModule (drop-in replacement)
+// ============================================================
+
 async function loadMinimalNeuronModule() {
-	updateLoadingStatus("Loading section about minimal neurons...");
-	MinimalLab.init();
-	return Promise.resolve();
+    updateLoadingStatus("Loading section about minimal neurons...");
+
+    // Register the data chart container — when it comes into view,
+    // initialize the entire MinimalLab (model + visuals)
+    _mnLazyRegister('lin-data-chart', () => {
+        MinimalLab.init();
+    });
+
+    // Start observing
+    _mnLazyCreateObserver();
+
+    return Promise.resolve();
 }
