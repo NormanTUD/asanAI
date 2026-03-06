@@ -110,7 +110,7 @@ This is the exact situation the LLM is in when you pass a text to it. First, it 
   </div>
 
   <!-- Room visual frame -->
-  <div id="cr-room" style="border:3px solid #555; border-radius:12px; background:#1a1a2e; color:#eee; padding:1.5em; position:relative; min-height:340px; overflow:hidden;">
+  <div id="cr-room" style="border:3px solid #ccc; border-radius:12px; background:#ffffff; color:#333; padding:1.5em; position:relative; min-height:340px; overflow:hidden;">
 
     <!-- Round indicator -->
     <div id="cr-round-indicator" style="text-align:center; font-size:0.85em; color:#888; margin-bottom:1em;">
@@ -120,13 +120,13 @@ This is the exact situation the LLM is in when you pass a text to it. First, it 
     <!-- Incoming message area -->
     <div id="cr-incoming-area" style="text-align:center; margin-bottom:1.2em;">
       <div style="font-size:0.8em; color:#aaa; margin-bottom:0.3em;">📩 A note slides under the door:</div>
-      <div id="cr-incoming-msg" style="font-size:2.4em; letter-spacing:0.15em; min-height:1.5em; transition: opacity 0.5s, transform 0.5s; font-weight: bold; color:#f0e68c;">
+      <div id="cr-incoming-msg" style="font-size:2.4em; letter-spacing:0.15em; min-height:1.5em; transition: opacity 0.5s, transform 0.5s; font-weight: bold">
         <!-- Inuktitut input appears here -->
       </div>
     </div>
 
     <!-- Rulebook -->
-    <div id="cr-rulebook" style="background:#16213e; border:1px solid #444; border-radius:8px; padding:1em; margin-bottom:1.2em;">
+    <div id="cr-rulebook" style="background:white; border:1px solid #444; border-radius:8px; padding:1em; margin-bottom:1.2em;">
       <div style="font-size:0.8em; color:#aaa; margin-bottom:0.6em;">📖 Your Rulebook says:</div>
       <table id="cr-rulebook-table" style="width:100%; border-collapse:collapse; font-size:1.05em;">
         <thead>

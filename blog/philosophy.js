@@ -155,20 +155,21 @@ const CRSim = (() => {
     options.forEach(opt => {
       const btn = document.createElement('button');
       btn.textContent = opt;
-      btn.style.cssText = `
-        padding: 0.6em 1.2em;
-        font-size: 1.2em;
-        letter-spacing: 0.08em;
-        border: 2px solid #555;
-        border-radius: 8px;
-        background: #0f3460;
-        color: #eee;
-        cursor: pointer;
-        transition: background 0.2s, border-color 0.2s, transform 0.1s;
-        min-width: 120px;
-      `;
-      btn.addEventListener('mouseenter', () => { btn.style.background = '#1a5276'; btn.style.borderColor = '#81d4fa'; });
-      btn.addEventListener('mouseleave', () => { btn.style.background = '#0f3460'; btn.style.borderColor = '#555'; });
+	btn.style.cssText = `
+    padding: 0.6em 1.2em;
+    font-size: 1.2em;
+    letter-spacing: 0.08em;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.1s;
+    min-width: 120px;
+`;
+
+      btn.addEventListener('mouseenter', () => { btn.style.background = '#fff'; btn.style.borderColor = '#eee'; });
+      btn.addEventListener('mouseleave', () => { btn.style.background = '#eee'; btn.style.borderColor = '#555'; });
       btn.addEventListener('click', () => handleChoice(opt, btn));
       optContainer.appendChild(btn);
     });
