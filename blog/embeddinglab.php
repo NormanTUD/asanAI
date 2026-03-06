@@ -1069,3 +1069,94 @@ The visualization below lets you explore this. A 2D point cloud represents token
         shows the current radius $r$ — features below it have been born, features to its left have died.
     </div>
 </section>
+
+<div class="md">
+## The Time Axis: How Models Discover History's Arrow
+
+One of the most elegant emergent properties of embedding spaces is how they encode **time**. Nobody tells the model that 1950 comes before 1951, or that the Renaissance preceded the Industrial Revolution. Yet when you extract the embedding vectors for historical dates and events and project them into lower dimensions, something remarkable appears: they form a **near-perfect helix** — a spiral curve winding through the space, with time flowing smoothly along its length.
+
+### The Emergent Timeline
+
+The model discovers the linearity of time not because anyone labeled a "time axis," but because the **statistical neighborhoods** of temporal tokens are geometrically constrained:
+
+* "1950" appears in similar contexts to "1949" and "1951" — so their vectors are close.
+* "1950" appears in very different contexts from "1066" — so their vectors are far apart.
+* The chain of nearest-neighbor relationships (1949 → 1950 → 1951 → 1952 → …) traces out a **continuous curve** through the space.
+
+But why a **helix** rather than a straight line? Because time has both **linear** and **cyclical** structure. Years progress forward (linear), but seasons, decades, and cultural periods repeat patterns (cyclical). The helix captures both: forward motion along the helix axis encodes linear progression, while the rotation around the axis encodes cyclical recurrence — the "feel" of a decade, the rhythm of centuries.
+
+$$ \mathbf{v}(t) \approx \mathbf{a} \cdot t + r \cdot \cos(\omega t) \cdot \hat{e}_1 + r \cdot \sin(\omega t) \cdot \hat{e}_2 $$
+
+where $\mathbf{a}$ is the linear time direction, $r$ is the helix radius (strength of cyclical patterns), and $\omega$ controls how tightly the helix winds.
+
+### Why This Is Mind-Blowing
+
+The model has **no concept of time**. It has never experienced duration, never watched a clock, never read a calendar with understanding. It has only observed that certain tokens tend to appear near certain other tokens. And from this purely statistical signal, it has reconstructed a geometric structure that mirrors the actual topology of time — linear, directional, and subtly cyclical. The arrow of time is not programmed; it **emerges** from the geometry of language.
+
+This generalizes beyond dates. Any ordered or sequential concept — sizes ("tiny" → "small" → "medium" → "large" → "huge"), temperatures, emotional intensities — tends to form smooth curves in the embedding space. The model discovers **ordinality** from co-occurrence statistics alone.
+
+Below, you can explore this. A set of historical years and events are plotted in a simulated 3D embedding space. The **helix structure** emerges as you watch the points arrange themselves. You can rotate the view, toggle between different time ranges, and switch between the helical (3D) and flattened (2D) projections to see how the cyclical component appears and disappears.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 260px; gap: 20px; align-items: start; margin-bottom: 15px;">
+        <canvas id="canvas-time-helix" style="width: 100%; height: 560px; background: #0f172a; border-radius: 8px; border: 1px solid #1e293b; cursor: grab;"></canvas>
+        <div id="time-helix-panel" style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 560px; overflow-y: auto;">
+            <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">🕰️ Time Helix Explorer</div>
+            <div id="time-helix-info">
+                Hover over any point to see the year and associated historical event. The helix structure emerges from statistical co-occurrence alone — no one told the model about time.
+            </div>
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 10px 0;">
+            <div style="font-weight: bold; font-size: 0.9em; color: #1e293b; margin-bottom: 6px;">📊 Helix Properties</div>
+            <div id="time-helix-properties"></div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Helix Tightness (ω):</b>
+            <input type="range" id="time-helix-omega" min="0" max="6" step="0.1" value="2.5" style="width: 180px; vertical-align: middle;">
+            <span id="time-helix-omega-val" style="font-weight: bold; color: #8b5cf6;">2.5</span>
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Cyclical Strength (r):</b>
+            <input type="range" id="time-helix-radius" min="0" max="1" step="0.01" value="0.6" style="width: 180px; vertical-align: middle;">
+            <span id="time-helix-radius-val" style="font-weight: bold; color: #f59e0b;">0.60</span>
+        </label>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <span style="font-family: sans-serif; font-size: 0.9em; color: #475569; font-weight: bold;">Era:</span>
+        <button onclick="loadTimeRange('modern')" class="time-preset-btn" id="tp-modern" style="background: #8b5cf6; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">🏙️ Modern (1900–2025)</button>
+        <button onclick="loadTimeRange('centuries')" class="time-preset-btn" id="tp-centuries" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">🏰 Centuries (1000–2000)</button>
+        <button onclick="loadTimeRange('deep')" class="time-preset-btn" id="tp-deep" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">🏛️ Deep History (500 BC–2000)</button>
+    </div>
+
+    <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="time-show-connections" checked onchange="renderTimeHelix()"> Show timeline thread
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="time-show-events" checked onchange="renderTimeHelix()"> Show event labels
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="time-show-shadow" checked onchange="renderTimeHelix()"> Show 2D shadow
+        </label>
+    </div>
+
+    <!-- Stats -->
+    <div id="time-helix-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; max-width: 800px; margin: 0 auto 15px auto;"></div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> Each <b>dot</b> is a year's embedding vector, projected into 3D.
+        The <span style="color:#60a5fa; font-weight:bold;">blue thread</span> connects consecutive years, revealing the <b>helix structure</b>.
+        The <b>forward axis</b> (left → right) encodes <b>linear time progression</b>.
+        The <b>rotation</b> around this axis encodes <b>cyclical patterns</b> — decades, centuries, cultural periods.
+        The <span style="color:rgba(148,163,184,0.3); font-weight:bold;">gray shadow</span> on the floor is the <b>2D projection</b> — what you'd see if you collapsed the cyclical dimension.
+        Use <b>Cyclical Strength</b> to flatten the helix into a line (r=0) or amplify the spiral (r=1).
+        Use <b>Helix Tightness</b> to control how many "loops per century" the spiral makes.
+        <b>Drag</b> to rotate the 3D view. <span style="color:#f59e0b; font-weight:bold;">Gold markers</span> highlight major historical events.
+    </div>
+</section>

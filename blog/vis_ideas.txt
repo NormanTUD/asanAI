@@ -95,4 +95,10 @@ In der Geometrie ist ein Polytop die hochdimensionale Entsprechung eines Vieleck
 
 
 
+2. "Linear Relational Embeddings" (LRE)
 
+Wissenschaftler haben untersucht, wie Fakten wie "Subjekt X hat die Eigenschaft Y" gespeichert sind.
+
+    Die Visualisierung: Wenn man die Beziehung "Hauptstadt von" über hunderte Länderpaare plottet, sieht man, dass all diese Verbindungsvektoren parallel zueinander verlaufen.
+
+    Der Clou: Man kann eine "Relation-Matrix" visualisieren. Wenn man diese auf einen beliebigen Punkt im Raum projiziert, sieht man, wie sich der Vektor wie von Geisterhand in Richtung der korrekten Antwort dreht. Es ist die geometrische Darstellung von Wissen als Verschiebungsvektor.
