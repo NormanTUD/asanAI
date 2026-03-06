@@ -136,7 +136,7 @@ html {
 .heatmap-canvas { width: 100px; height: 100px; image-rendering: pixelated; border: 1px solid #94a3b8; margin-bottom: 5px; margin-right: 5px; }
 
 
-table { border-collapse: collapse; font-size: 11px; width: 100%; }
+table { border-collapse: collapse; width: 100%; }
 td, th { padding: 6px; text-align: center; }
 .in-col { background: #dcfce7 !important; }
 .out-col { background: #f3e8ff !important; }
