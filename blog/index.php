@@ -53,44 +53,5 @@
 	incl("Appendix", "appendix");
 ?>
 </div>
-
-<script>
-	window.addEventListener('load', async () => {
-		try {
-			updateLoadingStatus("Processing Citations...");
-			await bibtexify();
-
-			revealContent();
-			
-			sendHeight();
-
-			// ─── Single call replaces all duplicates ───
-			postLoadInit();
-
-		} catch (error) {
-			console.error("Initialization failed:", error);
-			updateLoadingStatus(`Error loading course. Please refresh. ${error}`);
-		}
-	});
-
-	(function() {
-		// 1. Sofort beim Laden
-		window.addEventListener('load', sendHeight);
-
-		// 2. Bei Fensteränderung
-		window.addEventListener('resize', sendHeight);
-
-		// 3. Dynamische Überwachung (wichtig für WordPress-Inhalte)
-		if (window.ResizeObserver) {
-			var ro = new ResizeObserver(function() {
-				sendHeight();
-			});
-			ro.observe(document.body);
-		} else {
-			// Fallback für alte Browser
-			setInterval(sendHeight, 1000);
-		}
-	})();
-	</script>
 </body>
 </html>

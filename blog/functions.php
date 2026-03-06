@@ -345,6 +345,52 @@ function load_base_js () {
 			js("modules/$name");
 		}
 	}
+?>
+	<script>
+		window.addEventListener('load', sendHeight);
+		window.addEventListener('resize', sendHeight);
+
+		window.addEventListener('load', async (event) => {
+			try {
+				updateLoadingStatus("Processing Citations...");
+				await bibtexify();
+				renderMarkdown();
+				make_external_a_href_target_blank();
+				postLoadInit();
+				revealContent();
+				sendHeight();
+			} catch (error) {
+				console.error("Initialization failed:", error);
+				updateLoadingStatus(`Error loading page. Please refresh. ${error}`);
+			}
+		});
+
+		(function() {
+			const startObserving = () => {
+				// Ensure the body exists before we try to use it
+				if (!document.body) return;
+
+				if (window.ResizeObserver) {
+					const ro = new ResizeObserver(() => {
+					sendHeight();
+				});
+					ro.observe(document.body);
+				} else {
+					// Fallback for old browsers
+					setInterval(sendHeight, 1000);
+				}
+			};
+
+			// Check if the DOM is already loaded; if not, wait for it
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', startObserving);
+			} else {
+				startObserving();
+			}
+		})();
+	</script>
+
+<?php
 }
 
 function server_php_self_ends_with_index_php() {
@@ -523,24 +569,6 @@ if(!server_php_self_ends_with_index_php()) {
 		load_base_js();
 		call_js_if_matching_file_exists();
 ?>
-		<script>
-			window.addEventListener('load', async (event) => {
-				try {
-					updateLoadingStatus("Processing Citations...");
-					await bibtexify();
-
-					renderMarkdown();
-					make_external_a_href_target_blank();
-
-					revealContent();
-
-					postLoadInit();
-				} catch (error) {
-					console.error("Initialization failed:", error);
-					updateLoadingStatus("Error loading page. Please refresh. " + error);
-				}
-			});
-		</script>
 	</head>
 	<body>
 
