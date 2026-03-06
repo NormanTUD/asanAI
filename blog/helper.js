@@ -207,10 +207,54 @@ function bindIframeSafeLinks() {
 			requestAnimationFrame(() => {
 				targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-				// Highlight effect
-				targetEl.style.transition = 'background-color 0.3s ease';
-				targetEl.style.backgroundColor = 'rgba(255, 200, 50, 0.35)';
-				setTimeout(() => { targetEl.style.backgroundColor = 'transparent'; }, 2000);
+				// --- Cinematic highlight effect ---
+
+				// Phase 1: Border glow materializes (like quote-flash)
+				targetEl.style.transition = 'box-shadow 0.3s ease, background-color 0.3s ease';
+				targetEl.style.boxShadow = '0 0 16px rgba(255, 200, 50, 0.25), inset 0 0 8px rgba(255, 200, 50, 0.08)';
+				targetEl.style.backgroundColor = 'rgba(255, 200, 50, 0.12)';
+
+				// Phase 2: Brief blur-to-sharp pulse on the text (crystallization)
+				// Only apply to elements that contain text directly
+				const textChildren = targetEl.querySelectorAll('p, li, span, code, td, th, h1, h2, h3, h4, h5, h6');
+				const pulseTargets = textChildren.length > 0 ? textChildren : [targetEl];
+
+				pulseTargets.forEach(child => {
+					child.style.transition = 'filter 0.2s ease';
+					child.style.filter = 'blur(1.5px)';
+				});
+
+				// Phase 3: Sharpen after brief blur (the "focus snap")
+				setTimeout(() => {
+					pulseTargets.forEach(child => {
+						child.style.transition = 'filter 0.3s ease';
+						child.style.filter = 'blur(0)';
+					});
+				}, 200);
+
+				// Phase 4: Glow intensifies slightly, then fades
+				setTimeout(() => {
+					targetEl.style.boxShadow = '0 0 20px rgba(255, 200, 50, 0.35), inset 0 0 12px rgba(255, 200, 50, 0.1)';
+					targetEl.style.backgroundColor = 'rgba(255, 200, 50, 0.18)';
+				}, 300);
+
+				// Phase 5: Everything dissolves away gracefully
+				setTimeout(() => {
+					targetEl.style.transition = 'box-shadow 0.8s ease, background-color 0.8s ease';
+					targetEl.style.boxShadow = 'none';
+					targetEl.style.backgroundColor = 'transparent';
+
+					// Clean up inline styles after transition completes
+					setTimeout(() => {
+						targetEl.style.removeProperty('box-shadow');
+						targetEl.style.removeProperty('background-color');
+						targetEl.style.removeProperty('transition');
+						pulseTargets.forEach(child => {
+							child.style.removeProperty('filter');
+							child.style.removeProperty('transition');
+						});
+					}, 850);
+				}, 1800);
 			});
 		} else {
 			console.warn(`Target element #${targetId} not found.`);
