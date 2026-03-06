@@ -1641,6 +1641,76 @@ function escapeHtml(str) {
     return div.innerHTML;
 }
 
+function toggleDarkMode() {
+	const darkStyleId = 'dark-mode-style';
+	const existing = document.getElementById(darkStyleId);
+
+	if (existing) {
+		existing.remove();
+		return;
+	}
+
+	const style = document.createElement('style');
+	style.id = darkStyleId;
+	style.textContent = `
+    /* === ALLES INVERTIEREN === */
+    html {
+      filter: invert(1) hue-rotate(180deg) !important;
+      background-color: #fff !important;
+    }
+
+    /* === BILDER ZURÜCK-INVERTIEREN (doppelt = original) === */
+    img,
+    picture,
+    video,
+    canvas,
+    iframe {
+      filter: invert(1) hue-rotate(180deg) !important;
+    }
+
+    /* === BEREITS DUNKLE UI ZURÜCK-INVERTIEREN === */
+    #training-progress-bar-container,
+    #tlab-bar-idle,
+    #tlab-bar-training,
+    #tlab-bar-done {
+      filter: invert(1) hue-rotate(180deg) !important;
+    }
+
+    /* === PLOTLY: nur die SVG-Hintergründe fixen === */
+    .js-plotly-plot .main-svg {
+      background: transparent !important;
+    }
+    .js-plotly-plot .main-svg rect.bg {
+      fill: transparent !important;
+    }
+  `;
+	document.head.appendChild(style);
+
+	// Plotly SVG rects einmalig patchen (kein Observer!)
+	function patchPlotlyOnce() {
+		document.querySelectorAll('.js-plotly-plot').forEach(plot => {
+			// Alle weißen rect-Fills transparent machen
+			// → die globale Invertierung macht den Hintergrund dann dunkel
+			plot.querySelectorAll('rect').forEach(rect => {
+				const fill = (rect.getAttribute('fill') || '').toLowerCase();
+				if (fill === '#fff' || fill === '#ffffff' || fill === 'white' || fill === 'rgb(255, 255, 255)' || fill === 'rgb(255,255,255)') {
+					rect.setAttribute('fill', 'transparent');
+				}
+			});
+			// Inline background-color auf dem Container entfernen
+			const mainSvgs = plot.querySelectorAll('.main-svg');
+			mainSvgs.forEach(svg => {
+				svg.style.background = 'transparent';
+			});
+		});
+	}
+
+	// Einmalig + verzögert (für async Plotly renders)
+	patchPlotlyOnce();
+	setTimeout(patchPlotlyOnce, 200);
+	setTimeout(patchPlotlyOnce, 800);
+}
+
 function addConsoleEasterEggs() {
 	const styles = 'color: #4fc3f7; font-size: 14px; font-weight: bold;';
 	const sub = 'color: #888; font-size: 11px;';
