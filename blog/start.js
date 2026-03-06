@@ -192,7 +192,6 @@ function render_temml() {
 // ─── Shared post-load initialization ───
 // Called by both index.php and standalone subpages to avoid duplication.
 function postLoadInit() {
-	addCopyButtons();
 	smartquote();
 	initOptionalBlocks();
 	toc();
