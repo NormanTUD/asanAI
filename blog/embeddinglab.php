@@ -321,6 +321,8 @@ The analogy to Plato's theory of Forms is deliberate. Just as Plato argued that 
 This would explain why cross-lingual alignment works (as we saw above): not just because human languages share syntactic structure, but because **the world they describe has a fixed geometry**. French and English converge not merely because both are human languages, but because both are attempting to model the same underlying reality, and that reality has a unique optimal embedding. As models grow more powerful and see more data, they are all climbing the same mountain from different sides, converging toward the summit: the platonic representation.
 
 Below, three independently trained models, a **Language model** (●), a **Vision model** (◆), and an **Audio model** (■), have each learned to embed the same real-world concepts. Each model lives in its own rotated coordinate frame. But the **internal geometry**, which concepts are near which, what clusters form, what distances separate them, is identical across all three. Click **Align** to watch all three modalities converge onto a single shared structure, revealing the "platonic" geometry underneath.
+
+This hypothesis allows so-called **Brain-Swapping**: since models learn similiar representation when trained on data about the same real world, their embedding spaces have similiar manifolds in them, and can be changed after being rotated without too big of an impact on the validity of the results.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
