@@ -89,8 +89,9 @@ A simple percentage calculation fails if you have negative scores (e.g., -2.0 an
 
 #### Why is this the standard for AI?
 Because $e$ represents the "most natural" way to describe growth, the function $e^x$ is uniquely simple to work with in calculus. In SoftMax, we are essentially saying: *"Let's treat the scores (logits) as continuous growth rates."* By using $e$, the math of learning (calculus) becomes as smooth and efficient as possible, because the derivative of $e^x$ is just $e^x$. This "cleanliness" is what allows us to train massive AI models without the math becoming a tangled mess.
+</div>
 
-#### Why is $e$ the "Perfect" choice for SoftMax?
+<div class="optional md" data-headline="Why is $e$ the perfect choice for SoftMax?">
 Neural networks don't use $e$ just because it's famous; they use it because of **Calculus**.
 
 * **The Derivative Property:** $e^x$ is the only function where the derivative is the function itself: $\frac{d}{dx}e^x = e^x$.
@@ -102,7 +103,9 @@ Neural networks don't use $e$ just because it's famous; they use it because of *
     If we have Logits $x_1=2$ and $x_2=4$, the difference is only 2 units (linear).
     But $e^4 \approx 54.6$ and $e^2 \approx 7.4$.
     The exponential transformation increases the ratio from $2:1$ to roughly $7:1$. This forces the network to pick a "winner," making the classification decision much more distinct.
+</div>
 
+<div class="md">
 #### The Motivation in SoftMax
 The SoftMax formula $\sigma(z)_i = \frac{e^{z_i}}{\sum e^{z_j}}$ is essentially a **normalization of growth**.
 
