@@ -1,3 +1,7 @@
+https://seeing-theory.brown.edu/index.html#secondPage/chapter6
+
+
+
 6. LayerNorm als geometrische Normalisierung
 Idee: LayerNorm projiziert Vektoren auf eine Einheitskugel (nach Zentrierung). Das lässt sich direkt in 3D zeigen:
     Zeige die Original-Vektoren als Punkte im 3D-Raum
