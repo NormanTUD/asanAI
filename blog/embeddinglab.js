@@ -6685,6 +6685,778 @@ function updateIsoStats(sent, step, temp) {
     `;
 }
 
+// ============================================================
+// HIGH-DIMENSIONAL HOLES — PERSISTENT HOMOLOGY EXPLORER
+// ============================================================
+
+const homologyState = {
+    spaceCanvas: null,
+    persCanvas: null,
+    spaceCtx: null,
+    persCtx: null,
+    width: 0,
+    height: 0,
+    persWidth: 0,
+    persHeight: 0,
+    points: [],
+    radius: 0,
+    currentPreset: 'swiss',
+    animating: false,
+    animFrame: null,
+    // Precomputed holes (simplified persistent homology)
+    holes: []
+};
+
+function generateHomologyPoints(preset) {
+    const pts = [];
+    const rand = () => Math.random();
+    const randGauss = () => {
+        let u = 0, v = 0;
+        while (u === 0) u = rand();
+        while (v === 0) v = rand();
+        return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    };
+
+    if (preset === 'swiss') {
+        // Points arranged with deliberate holes (Swiss cheese)
+        // Outer scatter
+        for (let i = 0; i < 80; i++) {
+            const x = 0.1 + rand() * 0.8;
+            const y = 0.1 + rand() * 0.8;
+            // Reject points inside the "holes"
+            const holes = [
+                { cx: 0.35, cy: 0.40, r: 0.10 },
+                { cx: 0.65, cy: 0.55, r: 0.08 },
+                { cx: 0.50, cy: 0.70, r: 0.07 },
+                { cx: 0.25, cy: 0.65, r: 0.06 },
+            ];
+            let inHole = false;
+            for (const h of holes) {
+                if (Math.hypot(x - h.cx, y - h.cy) < h.r + 0.02) { inHole = true; break; }
+            }
+            if (!inHole) pts.push({ x, y });
+        }
+        // Add some extra points around hole edges for clearer detection
+        const holes = [
+            { cx: 0.35, cy: 0.40, r: 0.10 },
+            { cx: 0.65, cy: 0.55, r: 0.08 },
+            { cx: 0.50, cy: 0.70, r: 0.07 },
+            { cx: 0.25, cy: 0.65, r: 0.06 },
+        ];
+        holes.forEach(h => {
+            const n = Math.round(12 + h.r * 80);
+            for (let i = 0; i < n; i++) {
+                const a = (i / n) * 2 * Math.PI + (rand() - 0.5) * 0.3;
+                const r = h.r + 0.02 + rand() * 0.04;
+                pts.push({ x: h.cx + r * Math.cos(a), y: h.cy + r * Math.sin(a) });
+            }
+        });
+    } else if (preset === 'ring') {
+        // Single ring with a big central hole
+        for (let i = 0; i < 60; i++) {
+            const a = (i / 60) * 2 * Math.PI + (rand() - 0.5) * 0.15;
+            const r = 0.28 + (rand() - 0.5) * 0.05;
+            pts.push({ x: 0.5 + r * Math.cos(a), y: 0.5 + r * Math.sin(a) });
+        }
+        // Some scattered outer points
+        for (let i = 0; i < 15; i++) {
+            const a = rand() * 2 * Math.PI;
+            const r = 0.38 + rand() * 0.08;
+            pts.push({ x: 0.5 + r * Math.cos(a), y: 0.5 + r * Math.sin(a) });
+        }
+    } else if (preset === 'clusters') {
+        // Three clusters with a void in the center
+        const centers = [
+            { cx: 0.25, cy: 0.30 },
+            { cx: 0.70, cy: 0.30 },
+            { cx: 0.50, cy: 0.75 },
+        ];
+        centers.forEach(c => {
+            for (let i = 0; i < 30; i++) {
+                pts.push({
+                    x: c.cx + randGauss() * 0.06,
+                    y: c.cy + randGauss() * 0.06
+                });
+            }
+        });
+        // Bridge points (sparse) to connect clusters
+        for (let i = 0; i < 8; i++) {
+            const t = rand();
+            pts.push({
+                x: centers[0].cx * (1 - t) + centers[1].cx * t + randGauss() * 0.02,
+                y: centers[0].cy * (1 - t) + centers[1].cy * t + randGauss() * 0.02
+            });
+        }
+        for (let i = 0; i < 8; i++) {
+            const t = rand();
+            pts.push({
+                x: centers[1].cx * (1 - t) + centers[2].cx * t + randGauss() * 0.02,
+                y: centers[1].cy * (1 - t) + centers[2].cy * t + randGauss() * 0.02
+            });
+        }
+        for (let i = 0; i < 8; i++) {
+            const t = rand();
+            pts.push({
+                x: centers[2].cx * (1 - t) + centers[0].cx * t + randGauss() * 0.02,
+                y: centers[2].cy * (1 - t) + centers[0].cy * t + randGauss() * 0.02
+            });
+        }
+    } else if (preset === 'figure8') {
+        // Two interlocking loops
+        for (let i = 0; i < 45; i++) {
+            const a = (i / 45) * 2 * Math.PI + (rand() - 0.5) * 0.15;
+            const r = 0.16 + (rand() - 0.5) * 0.04;
+            pts.push({ x: 0.35 + r * Math.cos(a), y: 0.50 + r * Math.sin(a) });
+        }
+        for (let i = 0; i < 45; i++) {
+            const a = (i / 45) * 2 * Math.PI + (rand() - 0.5) * 0.15;
+            const r = 0.16 + (rand() - 0.5) * 0.04;
+            pts.push({ x: 0.65 + r * Math.cos(a), y: 0.50 + r * Math.sin(a) });
+        }
+    }
+
+    // Clamp
+    return pts.map(p => ({
+        x: Math.max(0.03, Math.min(0.97, p.x)),
+        y: Math.max(0.03, Math.min(0.97, p.y))
+    }));
+}
+
+// Simplified hole detection: find minimal cycles in the edge graph
+// that enclose empty regions (no filled triangle inside).
+// This is a heuristic approximation of H1 persistent homology.
+function computeHoles(points, maxRadius) {
+    const N = points.length;
+    const holes = [];
+
+    // Precompute all pairwise distances
+    const dist = [];
+    for (let i = 0; i < N; i++) {
+        dist[i] = [];
+        for (let j = 0; j < N; j++) {
+            dist[i][j] = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+        }
+    }
+
+    // Find triangles (3-cliques) and their circumradii
+    // A hole "is born" when a cycle forms but the interior isn't filled,
+    // and "dies" when the interior gets filled.
+
+    // Heuristic: find all 3-cycles and 4-cycles.
+    // A 3-cycle forms a hole if the three edges exist but the triangle fill radius
+    // (max edge / 2) hasn't been reached yet.
+
+    // For simplicity, detect "holes" as regions where:
+    // - Points form a ring (cycle of edges)
+    // - The interior is empty (no points inside the convex hull of the cycle)
+
+    // We'll use a grid-based void detection approach:
+    const gridRes = 30;
+    const voidCells = [];
+
+    for (let gx = 0; gx < gridRes; gx++) {
+        for (let gy = 0; gy < gridRes; gy++) {
+            const cx = (gx + 0.5) / gridRes;
+            const cy = (gy + 0.5) / gridRes;
+
+            // Find distance to nearest point
+            let minDist = Infinity;
+            for (let i = 0; i < N; i++) {
+                const d = Math.hypot(points[i].x - cx, points[i].y - cy);
+                if (d < minDist) minDist = d;
+            }
+
+            if (minDist > 0.04) { // This cell is "empty"
+                voidCells.push({ x: cx, y: cy, dist: minDist });
+            }
+        }
+    }
+
+    // Cluster void cells into distinct holes
+    const visited = new Set();
+    const cellKey = (gx, gy) => `${gx},${gy}`;
+
+    // Build grid of void cells
+    const voidGrid = new Set();
+    for (let gx = 0; gx < gridRes; gx++) {
+        for (let gy = 0; gy < gridRes; gy++) {
+            const cx = (gx + 0.5) / gridRes;
+            const cy = (gy + 0.5) / gridRes;
+            let minDist = Infinity;
+            for (let i = 0; i < N; i++) {
+                const d = Math.hypot(points[i].x - cx, points[i].y - cy);
+                if (d < minDist) minDist = d;
+            }
+            if (minDist > 0.04) {
+                voidGrid.add(cellKey(gx, gy));
+            }
+        }
+    }
+
+    // Flood-fill to find connected void regions
+    const allVisited = new Set();
+    for (let gx = 0; gx < gridRes; gx++) {
+        for (let gy = 0; gy < gridRes; gy++) {
+            const key = cellKey(gx, gy);
+            if (!voidGrid.has(key) || allVisited.has(key)) continue;
+
+            // BFS flood fill
+            const region = [];
+            const queue = [[gx, gy]];
+            allVisited.add(key);
+
+            while (queue.length > 0) {
+                const [cx, cy] = queue.shift();
+                region.push({ x: (cx + 0.5) / gridRes, y: (cy + 0.5) / gridRes });
+
+                const neighbors = [[cx-1,cy],[cx+1,cy],[cx,cy-1],[cx,cy+1]];
+                for (const [nx, ny] of neighbors) {
+                    const nk = cellKey(nx, ny);
+                    if (nx >= 0 && nx < gridRes && ny >= 0 && ny < gridRes &&
+                        voidGrid.has(nk) && !allVisited.has(nk)) {
+                        allVisited.add(nk);
+                        queue.push([nx, ny]);
+                    }
+                }
+            }
+
+            // Only count as a hole if it's not touching the boundary
+            // (boundary voids are just the edge of the space, not real holes)
+            const touchesBoundary = region.some(c => {
+                const gx2 = Math.round(c.x * gridRes - 0.5);
+                const gy2 = Math.round(c.y * gridRes - 0.5);
+                return gx2 <= 0 || gx2 >= gridRes - 1 || gy2 <= 0 || gy2 >= gridRes - 1;
+            });
+
+            if (!touchesBoundary && region.length >= 2) {
+                // Compute hole properties
+                const avgX = region.reduce((s, c) => s + c.x, 0) / region.length;
+                const avgY = region.reduce((s, c) => s + c.y, 0) / region.length;
+
+                // Birth: radius at which surrounding points first connect around this void
+                // (approximate: distance from center to nearest point)
+                let nearestDist = Infinity;
+                for (let i = 0; i < N; i++) {
+                    const d = Math.hypot(points[i].x - avgX, points[i].y - avgY);
+                    if (d < nearestDist) nearestDist = d;
+                }
+
+                // Death: radius at which the void gets "filled" (approximate: half the void diameter)
+                let maxVoidDist = 0;
+                region.forEach(c => {
+                    const d = Math.hypot(c.x - avgX, c.y - avgY);
+                    if (d > maxVoidDist) maxVoidDist = d;
+                });
+
+                const birth = nearestDist * 0.5;
+                const death = nearestDist * 0.5 + maxVoidDist + 0.02;
+                const persistence = death - birth;
+
+                holes.push({
+                    center: { x: avgX, y: avgY },
+                    region: region,
+                    birth: birth,
+                    death: death,
+                    persistence: persistence,
+                    size: region.length
+                });
+            }
+        }
+    }
+
+    // Sort by persistence (most persistent first)
+    holes.sort((a, b) => b.persistence - a.persistence);
+
+    return holes;
+}
+
+window.loadHomologyPreset = function (name) {
+    const st = homologyState;
+    st.currentPreset = name;
+    st.points = generateHomologyPoints(name);
+    st.holes = computeHoles(st.points, 0.5);
+    st.radius = 0;
+
+    const slider = document.getElementById('homology-radius');
+    if (slider) slider.value = 0;
+
+    document.querySelectorAll('.homology-preset-btn').forEach(btn => {
+        btn.style.background = '#64748b';
+    });
+    const activeBtn = document.getElementById('hp-' + name);
+    if (activeBtn) activeBtn.style.background = '#8b5cf6';
+
+    renderHomology();
+};
+
+window.animateHomologyRadius = function () {
+    const st = homologyState;
+    const btn = document.getElementById('homology-animate-btn');
+
+    if (st.animating) {
+        st.animating = false;
+        if (st.animFrame) cancelAnimationFrame(st.animFrame);
+        if (btn) { btn.textContent = '▶ Animate'; btn.style.background = '#10b981'; }
+        return;
+    }
+
+    st.animating = true;
+    if (btn) { btn.textContent = '⏸ Pause'; btn.style.background = '#f59e0b'; }
+
+    st.radius = 0;
+    const slider = document.getElementById('homology-radius');
+
+    function step() {
+        if (!st.animating) return;
+        st.radius += 0.002;
+        if (st.radius > 0.5) {
+            st.animating = false;
+            if (btn) { btn.textContent = '▶ Animate'; btn.style.background = '#10b981'; }
+            return;
+        }
+        if (slider) slider.value = st.radius;
+        renderHomology();
+        st.animFrame = requestAnimationFrame(step);
+    }
+    st.animFrame = requestAnimationFrame(step);
+};
+
+function initHomology() {
+    const spaceCanvas = document.getElementById('canvas-homology-space');
+    const persCanvas = document.getElementById('canvas-homology-persistence');
+    if (!spaceCanvas || !persCanvas) return;
+
+    const st = homologyState;
+
+    function resizeCanvas(canvas, prop) {
+        const rect = canvas.getBoundingClientRect();
+        st[prop + 'Width'] = rect.width;
+        st[prop + 'Height'] = rect.height;
+        canvas.width = rect.width * window.devicePixelRatio;
+        canvas.height = rect.height * window.devicePixelRatio;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        return ctx;
+    }
+
+    function resize() {
+        const rect1 = spaceCanvas.getBoundingClientRect();
+        st.width = rect1.width;
+        st.height = rect1.height;
+        st.spaceCtx = resizeCanvas(spaceCanvas, 'space');
+        // Persistence canvas
+        const rect2 = persCanvas.getBoundingClientRect();
+        st.persWidth = rect2.width;
+        st.persHeight = rect2.height;
+        st.persCtx = resizeCanvas(persCanvas, 'pers');
+    }
+
+    // Fix: use correct property names
+    resize();
+    st.spaceCanvas = spaceCanvas;
+    st.persCanvas = persCanvas;
+
+    // Generate initial points
+    st.points = generateHomologyPoints('swiss');
+    st.holes = computeHoles(st.points, 0.5);
+
+    const slider = document.getElementById('homology-radius');
+    if (slider) {
+        slider.addEventListener('input', () => {
+            st.radius = parseFloat(slider.value);
+            renderHomology();
+        });
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => { resize(); renderHomology(); }, 150);
+    });
+
+    renderHomology();
+}
+
+function renderHomology() {
+    const st = homologyState;
+    if (!st.spaceCtx || !st.persCtx) return;
+
+    const r = st.radius;
+    const points = st.points;
+    const N = points.length;
+    const W = st.width;
+    const H = st.height;
+
+    const showBalls = document.getElementById('homology-show-balls')?.checked ?? true;
+    const showTriangles = document.getElementById('homology-show-triangles')?.checked ?? true;
+    const showHoles = document.getElementById('homology-show-holes')?.checked ?? true;
+
+    // Update label
+    const valEl = document.getElementById('homology-radius-val');
+    if (valEl) valEl.textContent = r.toFixed(3);
+
+    const ctx = st.spaceCtx;
+
+    // ── Clear space canvas ──
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(51,65,85,0.2)';
+    ctx.lineWidth = 0.5;
+    for (let gx = 0; gx < W; gx += 40) {
+        ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+    }
+    for (let gy = 0; gy < H; gy += 40) {
+        ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+    }
+
+    function toC(p) { return { x: p.x * W, y: p.y * H }; }
+
+    // Precompute distances
+    const dist = [];
+    for (let i = 0; i < N; i++) {
+        dist[i] = [];
+        for (let j = 0; j < N; j++) {
+            dist[i][j] = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+        }
+    }
+
+    // ── Radius balls ──
+    if (showBalls && r > 0) {
+        points.forEach(p => {
+            const cp = toC(p);
+            const ballR = r * Math.min(W, H);
+            ctx.beginPath();
+            ctx.arc(cp.x, cp.y, ballR, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(96, 165, 250, 0.06)';
+            ctx.fill();
+        });
+    }
+
+    // ── Filled triangles (2-simplices) ──
+    if (showTriangles && r > 0) {
+        for (let i = 0; i < N; i++) {
+            for (let j = i + 1; j < N; j++) {
+                if (dist[i][j] > r * 2) continue;
+                for (let k = j + 1; k < N; k++) {
+                    if (dist[i][k] > r * 2 || dist[j][k] > r * 2) continue;
+                    const pi = toC(points[i]);
+                    const pj = toC(points[j]);
+                    const pk = toC(points[k]);
+
+                    ctx.beginPath();
+                    ctx.moveTo(pi.x, pi.y);
+                    ctx.lineTo(pj.x, pj.y);
+                    ctx.lineTo(pk.x, pk.y);
+                    ctx.closePath();
+                    ctx.fillStyle = 'rgba(139, 92, 246, 0.07)';
+                    ctx.fill();
+                }
+            }
+        }
+    }
+
+    // ── Edges (1-simplices) ──
+    if (r > 0) {
+        ctx.strokeStyle = 'rgba(96, 165, 250, 0.3)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < N; i++) {
+            for (let j = i + 1; j < N; j++) {
+                if (dist[i][j] <= r * 2) {
+                    const pi = toC(points[i]);
+                    const pj = toC(points[j]);
+                    ctx.beginPath();
+                    ctx.moveTo(pi.x, pi.y);
+                    ctx.lineTo(pj.x, pj.y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    // ── Highlight detected holes ──
+    if (showHoles) {
+        st.holes.forEach((hole, hIdx) => {
+            // Only show holes that have been "born" but not yet "died"
+            if (r >= hole.birth && r < hole.death) {
+                // Draw hole region cells
+                hole.region.forEach(cell => {
+                    const cx = cell.x * W;
+                    const cy = cell.y * H;
+                    const cellSize = W / 30; // matches gridRes
+
+                    ctx.fillStyle = `rgba(245, 158, 11, ${0.08 + hole.persistence * 0.4})`;
+                    ctx.fillRect(cx - cellSize / 2, cy - cellSize / 2, cellSize, cellSize);
+                });
+
+                // Draw hole boundary glow
+                const hc = toC(hole.center);
+                const glowR = Math.sqrt(hole.size) * (W / 30) * 0.6;
+
+                // Pulsing glow
+                const pulse = 0.6 + 0.4 * Math.sin(Date.now() * 0.003 + hIdx);
+
+                ctx.beginPath();
+                ctx.arc(hc.x, hc.y, glowR, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(245, 158, 11, ${0.4 * pulse})`;
+                ctx.lineWidth = 2.5;
+                ctx.setLineDash([4, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Outer glow
+                ctx.beginPath();
+                ctx.arc(hc.x, hc.y, glowR + 6, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(245, 158, 11, ${0.15 * pulse})`;
+                ctx.lineWidth = 6;
+                ctx.stroke();
+
+                // Label
+                ctx.font = 'bold 11px system-ui, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = `rgba(245, 158, 11, ${0.8 * pulse})`;
+                ctx.fillText(`H${hIdx + 1}`, hc.x, hc.y - glowR - 8);
+
+                // Persistence bar
+                ctx.fillStyle = `rgba(245, 158, 11, ${0.5 * pulse})`;
+                const barW = Math.min(40, hole.persistence * 300);
+                ctx.fillRect(hc.x - barW / 2, hc.y + glowR + 6, barW, 3);
+            }
+        });
+
+        // Request animation frame for pulsing if holes are visible
+        const anyVisible = st.holes.some(h => r >= h.birth && r < h.death);
+        if (anyVisible && !st.animating) {
+            requestAnimationFrame(() => {
+                if (!st.animating) renderHomology();
+            });
+        }
+    }
+
+    // ── Points (0-simplices) ──
+    points.forEach(p => {
+        const cp = toC(p);
+        ctx.beginPath();
+        ctx.arc(cp.x, cp.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cp.x, cp.y, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#60a5fa';
+        ctx.fill();
+    });
+
+    // ══════════════════════════════════════════════
+    // PERSISTENCE DIAGRAM (right canvas)
+    // ══════════════════════════════════════════════
+
+    const pCtx = st.persCtx;
+    const pW = st.persWidth;
+    const pH = st.persHeight;
+
+    pCtx.fillStyle = '#fff';
+    pCtx.fillRect(0, 0, pW, pH);
+
+    const margin = { l: 50, r: 20, t: 20, b: 50 };
+    const plotW = pW - margin.l - margin.r;
+    const plotH = pH - margin.t - margin.b;
+
+    // Axis range
+    const maxVal = 0.35;
+
+    function toPersX(v) { return margin.l + (v / maxVal) * plotW; }
+    function toPersY(v) { return margin.t + plotH - (v / maxVal) * plotH; }
+
+    // Grid
+    pCtx.strokeStyle = '#f1f5f9';
+    pCtx.lineWidth = 1;
+    for (let v = 0; v <= maxVal; v += 0.05) {
+        // Horizontal
+        pCtx.beginPath();
+        pCtx.moveTo(margin.l, toPersY(v));
+        pCtx.lineTo(pW - margin.r, toPersY(v));
+        pCtx.stroke();
+        // Vertical
+        pCtx.beginPath();
+        pCtx.moveTo(toPersX(v), margin.t);
+        pCtx.lineTo(toPersX(v), margin.t + plotH);
+        pCtx.stroke();
+    }
+
+    // Diagonal (birth = death line)
+    pCtx.beginPath();
+    pCtx.moveTo(toPersX(0), toPersY(0));
+    pCtx.lineTo(toPersX(maxVal), toPersY(maxVal));
+    pCtx.strokeStyle = '#94a3b8';
+    pCtx.lineWidth = 1.5;
+    pCtx.setLineDash([6, 4]);
+    pCtx.stroke();
+    pCtx.setLineDash([]);
+
+    // Diagonal label
+    pCtx.font = '9px system-ui, sans-serif';
+    pCtx.textAlign = 'center';
+    pCtx.fillStyle = '#94a3b8';
+    pCtx.save();
+    pCtx.translate(toPersX(maxVal * 0.75) + 12, toPersY(maxVal * 0.75) + 12);
+    pCtx.rotate(-Math.PI / 4);
+    pCtx.fillText('birth = death (noise)', 0, 0);
+    pCtx.restore();
+
+    // Current radius line (vertical)
+    if (r > 0) {
+        const rx = toPersX(r);
+        pCtx.beginPath();
+        pCtx.moveTo(rx, margin.t);
+        pCtx.lineTo(rx, margin.t + plotH);
+        pCtx.strokeStyle = '#ef4444';
+        pCtx.lineWidth = 1.5;
+        pCtx.setLineDash([4, 3]);
+        pCtx.stroke();
+        pCtx.setLineDash([]);
+
+        pCtx.font = 'bold 10px system-ui, sans-serif';
+        pCtx.textAlign = 'center';
+        pCtx.fillStyle = '#ef4444';
+        pCtx.fillText(`r = ${r.toFixed(3)}`, rx, margin.t - 6);
+    }
+
+    // Plot hole points
+    st.holes.forEach((hole, hIdx) => {
+        const bx = toPersX(hole.birth);
+        const by = toPersY(hole.death);
+        const isAlive = r >= hole.birth && r < hole.death;
+        const isBorn = r >= hole.birth;
+
+        const dotR = 4 + hole.persistence * 30;
+
+        // Persistence line (vertical from diagonal to point)
+        if (isBorn) {
+            pCtx.beginPath();
+            pCtx.moveTo(bx, toPersY(hole.birth)); // on diagonal
+            pCtx.lineTo(bx, by);
+            pCtx.strokeStyle = isAlive ? 'rgba(245, 158, 11, 0.5)' : 'rgba(148, 163, 184, 0.3)';
+            pCtx.lineWidth = 2;
+            pCtx.stroke();
+        }
+
+        // Dot
+        pCtx.beginPath();
+        pCtx.arc(bx, by, dotR, 0, Math.PI * 2);
+
+        if (isAlive) {
+            pCtx.fillStyle = '#f59e0b';
+            pCtx.fill();
+            pCtx.strokeStyle = '#d97706';
+            pCtx.lineWidth = 2;
+            pCtx.stroke();
+
+            // Label
+            pCtx.font = 'bold 10px system-ui, sans-serif';
+            pCtx.textAlign = 'left';
+            pCtx.fillStyle = '#92400e';
+            pCtx.fillText(`H${hIdx + 1}`, bx + dotR + 4, by + 4);
+        } else if (isBorn) {
+            // Dead — gray
+            pCtx.fillStyle = '#cbd5e1';
+            pCtx.fill();
+            pCtx.strokeStyle = '#94a3b8';
+            pCtx.lineWidth = 1;
+            pCtx.stroke();
+        } else {
+            // Not yet born — very faint
+            pCtx.fillStyle = 'rgba(226, 232, 240, 0.4)';
+            pCtx.fill();
+            pCtx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+            pCtx.lineWidth = 1;
+            pCtx.stroke();
+        }
+    });
+
+    // Axes labels
+    pCtx.font = '11px system-ui, sans-serif';
+    pCtx.textAlign = 'center';
+    pCtx.fillStyle = '#475569';
+    pCtx.fillText('Birth Radius', margin.l + plotW / 2, pH - 8);
+
+    pCtx.save();
+    pCtx.translate(14, margin.t + plotH / 2);
+    pCtx.rotate(-Math.PI / 2);
+    pCtx.fillText('Death Radius', 0, 0);
+    pCtx.restore();
+
+    // Tick labels
+    pCtx.font = '9px system-ui, sans-serif';
+    pCtx.fillStyle = '#94a3b8';
+    pCtx.textAlign = 'center';
+    for (let v = 0; v <= maxVal; v += 0.1) {
+        pCtx.fillText(v.toFixed(1), toPersX(v), margin.t + plotH + 16);
+    }
+    pCtx.textAlign = 'right';
+    for (let v = 0; v <= maxVal; v += 0.1) {
+        pCtx.fillText(v.toFixed(1), margin.l - 8, toPersY(v) + 4);
+    }
+
+    // ── Stats ──
+    updateHomologyStats(r);
+}
+
+function updateHomologyStats(r) {
+    const statsDiv = document.getElementById('homology-stats');
+    if (!statsDiv) return;
+
+    const st = homologyState;
+    const holes = st.holes;
+
+    const aliveHoles = holes.filter(h => r >= h.birth && r < h.death);
+    const bornHoles = holes.filter(h => r >= h.birth);
+    const totalHoles = holes.length;
+
+    // Most persistent hole
+    let maxPersistence = 0;
+    let maxPersLabel = '—';
+    holes.forEach((h, i) => {
+        if (h.persistence > maxPersistence) {
+            maxPersistence = h.persistence;
+            maxPersLabel = `H${i + 1} (${h.persistence.toFixed(3)})`;
+        }
+    });
+
+    // Edges count
+    const N = st.points.length;
+    let edgeCount = 0;
+    for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+            const d = Math.hypot(st.points[i].x - st.points[j].x, st.points[i].y - st.points[j].y);
+            if (d <= r * 2) edgeCount++;
+        }
+    }
+
+    statsDiv.innerHTML = `
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Active Holes</div>
+            <div style="font-size:1.4em; font-weight:bold; color:${aliveHoles.length > 0 ? '#f59e0b' : '#94a3b8'};">${aliveHoles.length}</div>
+            <div style="font-size:0.7em; color:#94a3b8;">of ${totalHoles} detected</div>
+        </div>
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Edges Formed</div>
+            <div style="font-size:1.4em; font-weight:bold; color:#60a5fa;">${edgeCount}</div>
+            <div style="font-size:0.7em; color:#94a3b8;">connections at r=${r.toFixed(3)}</div>
+        </div>
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Most Persistent</div>
+            <div style="font-size:1.0em; font-weight:bold; color:#8b5cf6;">${maxPersLabel}</div>
+            <div style="font-size:0.7em; color:#94a3b8;">longest-lived void</div>
+        </div>
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Points</div>
+            <div style="font-size:1.4em; font-weight:bold; color:#10b981;">${st.points.length}</div>
+            <div style="font-size:0.7em; color:#94a3b8;">token vectors</div>
+        </div>
+    `;
+}
+
 function loadEmbeddingModule() {
     const fastConfig = {
         displayModeBar: false,
@@ -6878,6 +7650,11 @@ function loadEmbeddingModule() {
     // 21. Isosurfaces of Probability — Truth Tunnels
     _embLazyRegister('canvas-isosurface', () => {
         initIsosurface();
+    });
+
+    // 22. High-Dimensional Holes — Persistent Homology
+    _embLazyRegister('canvas-homology-space', () => {
+        initHomology();
     });
 
 

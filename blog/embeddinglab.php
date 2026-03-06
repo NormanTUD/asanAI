@@ -974,3 +974,98 @@ Below, you can explore this interactively. A simulated sentence unfolds step by 
         Use the <b>Step slider</b> to advance the sentence one token at a time and watch the tunnel evolve.
     </div>
 </section>
+
+<div class="md">
+## High-Dimensional Holes: The Swiss Cheese of Meaning
+
+The embedding space is not a solid block of uniformly packed vectors. It is more like **Swiss cheese** — riddled with holes, voids, and cavities where no token ever lives. These are not random gaps; they are structurally meaningful absences. Researchers use a technique from algebraic topology called **Persistent Homology** to detect and measure these holes systematically.
+
+### What Is Persistent Homology?
+
+Persistent Homology is an algebraic method for detecting topological features — connected components, loops, cavities — in discrete point cloud data [[1]]. The core idea is beautifully simple:
+
+1. **Start with your data points** (token vectors in the embedding space).
+2. **Grow a ball** around each point, starting at radius $r = 0$.
+3. **As $r$ increases**, balls begin to overlap, forming connections. At some radius, a loop appears — a ring of connected points surrounding an empty region. At a larger radius, the loop might fill in and disappear.
+4. **Track the birth and death** of each topological feature. Features that persist across a wide range of radii are "real" structure; features that flicker in and out are noise.
+
+The result is a **persistence diagram**: a scatter plot where each point represents a topological feature (a hole), with its birth radius on one axis and death radius on the other. Points far from the diagonal represent **robust, persistent holes** — genuine voids in the data.
+
+$$ \text{Persistence}(h) = r_{\text{death}}(h) - r_{\text{birth}}(h) $$
+
+A feature with high persistence is a real structural void, not an artifact of sparse sampling.
+
+### What the Holes Mean
+
+The holes in the embedding space are not just geometric curiosities. They mark regions where **no coherent concept exists** — logical impossibilities, semantic contradictions, or ideas that human language simply never expresses:
+
+* **Semantic voids:** There is no concept that is simultaneously "very large" and "microscopic," or "definitely true" and "definitely false." The space between these contradictory directions is empty — a topological hole.
+* **The negative image of knowledge:** If the filled regions of the space represent everything the model *can* express, the holes represent everything it *cannot*. They are the **negative imprint of our world-understanding** — the shape of the unsayable.
+* **Forbidden interpolations:** These holes explain why you can't smoothly interpolate between certain concepts. The path from "alive" to "dead" doesn't pass through a smooth gradient — it passes through a void, because there is no coherent concept "half-alive-half-dead" (at least not in the way the model has learned to organize meaning).
+* **Structural constraints:** Some holes reflect grammatical or logical constraints. There is no token that functions simultaneously as a noun, verb, adjective, and preposition — that region of the space is necessarily empty.
+
+The visualization below lets you explore this. A 2D point cloud represents token vectors. As you increase the **radius parameter $r$**, connections form between nearby points, loops appear around empty regions, and the persistent homology algorithm detects and highlights the **holes** — the voids that persist across a wide range of radii. The **persistence diagram** on the right separates real structure from noise.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; margin-bottom: 15px;">
+        <div>
+            <div style="font-family: sans-serif; font-size: 0.8em; color: #64748b; text-align: center; margin-bottom: 4px; font-weight: bold;">Embedding Space — Simplicial Complex</div>
+            <canvas id="canvas-homology-space" style="width: 100%; height: 500px; background: #0f172a; border-radius: 8px; border: 1px solid #1e293b;"></canvas>
+        </div>
+        <div>
+            <div style="font-family: sans-serif; font-size: 0.8em; color: #64748b; text-align: center; margin-bottom: 4px; font-weight: bold;">Persistence Diagram</div>
+            <canvas id="canvas-homology-persistence" style="width: 100%; height: 500px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;"></canvas>
+        </div>
+    </div>
+
+    <!-- Radius slider -->
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Connection Radius (r):</b>
+            <input type="range" id="homology-radius" min="0" max="1" step="0.005" value="0" style="width: 280px; vertical-align: middle;">
+            <span id="homology-radius-val" style="font-weight: bold; color: #8b5cf6;">0.000</span>
+        </label>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <span style="font-family: sans-serif; font-size: 0.9em; color: #475569; font-weight: bold;">Layout:</span>
+        <button onclick="loadHomologyPreset('swiss')" class="homology-preset-btn" id="hp-swiss" style="background: #8b5cf6; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">🧀 Swiss Cheese</button>
+        <button onclick="loadHomologyPreset('ring')" class="homology-preset-btn" id="hp-ring" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">⭕ Ring</button>
+        <button onclick="loadHomologyPreset('clusters')" class="homology-preset-btn" id="hp-clusters" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">🔵 Clusters + Void</button>
+        <button onclick="loadHomologyPreset('figure8')" class="homology-preset-btn" id="hp-figure8" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">♾️ Figure-8</button>
+    </div>
+
+    <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="homology-show-balls" checked onchange="renderHomology()"> Show radius balls
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="homology-show-triangles" checked onchange="renderHomology()"> Show filled triangles
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="homology-show-holes" checked onchange="renderHomology()"> Highlight holes
+        </label>
+        <button onclick="animateHomologyRadius()" id="homology-animate-btn" style="background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">▶ Animate</button>
+    </div>
+
+    <!-- Stats -->
+    <div id="homology-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; max-width: 800px; margin: 0 auto 15px auto;"></div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> The <b>left panel</b> shows token vectors as points in a 2D embedding space.
+        As you increase the <b>radius $r$</b>, each point grows a
+        <span style="color:rgba(96,165,250,0.4); font-weight:bold;">blue ball</span>.
+        When two balls overlap, an <span style="color:#60a5fa; font-weight:bold;">edge</span> connects them.
+        When three mutually connected points form a triangle, it is
+        <span style="color:rgba(139,92,246,0.2); font-weight:bold;">filled in purple</span>.
+        <span style="color:#f59e0b; font-weight:bold;">Yellow highlighted loops</span> mark detected <b>topological holes</b> —
+        regions enclosed by edges but <b>not filled</b> by triangles. These are the voids.
+        The <b>right panel</b> is the <b>persistence diagram</b>: each dot is a hole,
+        plotted by its birth radius (x) and death radius (y).
+        Dots far from the <span style="color:#94a3b8;">diagonal</span> are <b>persistent, real holes</b>;
+        dots near the diagonal are noise. The <span style="color:#ef4444; font-weight:bold;">red dashed line</span>
+        shows the current radius $r$ — features below it have been born, features to its left have died.
+    </div>
+</section>
