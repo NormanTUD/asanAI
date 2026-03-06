@@ -120,8 +120,56 @@ const ResNetLab = {
 	}
 };
 
+// ============================================================
+// LAZY LOADING FOR RESNET MODULE
+// ============================================================
+
+const _resLazyRegistry = [];
+let _resLazyObserver = null;
+
+function _resLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _resLazyRegistry.push({ el, initFn, initialized: false });
+}
+
+function _resLazyCreateObserver() {
+    if (_resLazyObserver) return;
+
+    _resLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _resLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _resLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin
+    });
+
+    _resLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _resLazyObserver.observe(r.el);
+        }
+    });
+}
+
+// ============================================================
+// REPLACEMENT: loadResnetModule (drop-in replacement)
+// ============================================================
+
 async function loadResnetModule() {
-	updateLoadingStatus("Loading section about ResNet...");
-	ResNetLab.compare();
-	return Promise.resolve();
+    updateLoadingStatus("Loading section about ResNet...");
+
+    _resLazyRegister('gradient-plot', () => {
+        ResNetLab.compare();
+    });
+
+    _resLazyCreateObserver();
+
+    return Promise.resolve();
 }

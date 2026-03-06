@@ -161,7 +161,54 @@ const FittingLab = {
 	}
 };
 
+// ============================================================
+// LAZY LOADING FOR OVER AND UNDERFITTING MODULE
+// ============================================================
+
+const _oufLazyRegistry = [];
+let _oufLazyObserver = null;
+
+function _oufLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _oufLazyRegistry.push({ el, initFn, initialized: false });
+}
+
+function _oufLazyCreateObserver() {
+    if (_oufLazyObserver) return;
+
+    _oufLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _oufLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _oufLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin // uses the already-defined global const
+    });
+
+    _oufLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _oufLazyObserver.observe(r.el);
+        }
+    });
+}
+
+// ============================================================
+// REPLACEMENT: loadOverAndUnderFittingModule (drop-in replacement)
+// ============================================================
+
 async function loadOverAndUnderFittingModule() {
-	FittingLab.init();
-	return Promise.resolve();
+    _oufLazyRegister('fitting-plot', () => {
+        FittingLab.init();
+    });
+
+    _oufLazyCreateObserver();
+
+    return Promise.resolve();
 }

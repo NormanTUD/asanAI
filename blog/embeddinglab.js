@@ -4450,148 +4450,204 @@ function renderHyperbolicStats(statsDiv, nodes, curvature, chainEdges, depthColo
 	}
 }
 
-function loadEmbeddingModule () {
-	const tasks = [
-		...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
-		{ type: 'comparison', id: 'plot-comparison' },
-		{ type: 'comparison3d', id: 'plot-comparison-3d' }
-	];
+// ============================================================
+// LAZY LOADING FOR EMBEDDING MODULE
+// ============================================================
 
-	// Global Plotly config to reduce overhead
-	const fastConfig = {
-		displayModeBar: false, // Hides the heavy floating menu
-		responsive: true,
-		staticPlot: false,
-		// This hint tells Plotly to prioritize frame rate
-		glProto: 'webgl' 
-	};
+const _embLazyRegistry = [];
+let _embLazyObserver = null;
 
-	const observer = new IntersectionObserver((entries) => {
-		entries.forEach((entry) => {
-			if (entry.isIntersecting) {
-				const task = tasks.find(t => t.id === entry.target.id);
-				if (task) {
-					// Use a slight delay based on the element's position
-					// to ensure they don't all fire in the same millisecond
-					const delay = entry.boundingClientRect.top < 500 ? 50 : 200;
+function _embLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _embLazyRegistry.push({ el, initFn, initialized: false });
+}
 
-					setTimeout(() => {
-						requestAnimationFrame(() => {
-							executeTask(task, fastConfig);
-						});
-					}, delay);
-				}
-				observer.unobserve(entry.target);
-			}
-		});
-	}, { 
-		rootMargin: rootMargin
-	});
+function _embLazyCreateObserver() {
+    if (_embLazyObserver) return;
 
-	function executeTask(task, config) {
-		if (task.type === 'space') {
-			// Passing config to the existing renderSpace call
-			renderSpace(task.key, null, [], config);
-		} else if (task.type === 'comparison3d') {
-			renderComparison3D(config);
-		}
-	}
+    _embLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
 
-	tasks.forEach(task => {
-		const el = document.getElementById(task.id);
-		if (el) {
-			// Inject a loading placeholder if the div is empty
-			if (!el.hasChildNodes()) {
-				el.innerHTML = `
-		<div class="plot-loading">
-		    <div class="spinner"></div>
-		    <span>Loading 3D plot…</span>
-		</div>`;
-			}
-			observer.observe(el);
-		}
-	});
+            const match = _embLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _embLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin
+    });
 
-	initEmbeddingEditor();
+    _embLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _embLazyObserver.observe(r.el);
+        }
+    });
+}
 
-	renderDotProductLab();
+// ============================================================
+// REPLACEMENT: loadEmbeddingModule (drop-in replacement)
+// ============================================================
 
-	renderRotationalInvariance();
+function loadEmbeddingModule() {
+    const fastConfig = {
+        displayModeBar: false,
+        responsive: true,
+        staticPlot: false,
+        glProto: 'webgl'
+    };
 
-	renderManifoldVisualization();
+    // 1. Embedding space plots (1d, 2d, 3d) — keep existing internal observer logic
+    const spaceTasks = [
+        ...Object.keys(evoSpaces).map(key => ({ type: 'space', id: `plot-${key}`, key: key })),
+        { type: 'comparison3d', id: 'plot-comparison-3d' }
+    ];
 
-	renderCrossLingualFrame();
+    const _embSpaceObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                const task = spaceTasks.find(t => t.id === entry.target.id);
+                if (task) {
+                    const delay = entry.boundingClientRect.top < 500 ? 50 : 200;
+                    setTimeout(() => {
+                        requestAnimationFrame(() => {
+                            if (task.type === 'space') {
+                                renderSpace(task.key, null, [], fastConfig);
+                            } else if (task.type === 'comparison3d') {
+                                renderComparison3D(fastConfig);
+                            }
+                        });
+                    }, delay);
+                }
+                _embSpaceObserver.unobserve(entry.target);
+            }
+        });
+    }, { rootMargin: rootMargin });
 
-	renderMetricTensor();
+    spaceTasks.forEach(task => {
+        const el = document.getElementById(task.id);
+        if (el) {
+            if (!el.hasChildNodes()) {
+                el.innerHTML = `
+                <div class="plot-loading">
+                    <div class="spinner"></div>
+                    <span>Loading 3D plot…</span>
+                </div>`;
+            }
+            _embSpaceObserver.observe(el);
+        }
+    });
 
-	setParallelogramConcept('royalty');
+    // 2. Embedding editor tables (lightweight, keep eager)
+    initEmbeddingEditor();
 
-	// ── Lazy-load Dual Manifolds ──
-	const dualPlotDiv = document.getElementById('plot-dual-manifolds');
-	if (dualPlotDiv) {
-		// Show a spinner placeholder until the section scrolls into view
-		if (!dualPlotDiv.hasChildNodes() || !dualManifoldState.rendered) {
-			dualPlotDiv.innerHTML = `
-	    <div class="plot-loading" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; min-height:350px; gap:14px;">
-		<div class="spinner"></div>
-		<span style="color:#64748b; font-size:0.95em;">Please wait while it's rendering…</span>
-	    </div>`;
-		}
+    // 3. Dot Product Lab
+    _embLazyRegister('dot-product-plot', () => {
+        renderDotProductLab();
+    });
 
-		const dualObserver = new IntersectionObserver((entries) => {
-			entries.forEach((entry) => {
-				if (entry.isIntersecting) {
-					// Small delay so the browser finishes layout/paint first
-					setTimeout(() => {
-						requestAnimationFrame(() => {
-							renderDualManifolds();
-						});
-					}, 100);
-					dualObserver.unobserve(entry.target);
-				}
-			});
-		}, {
-			rootMargin: rootMargin
-		});
+    // 4. Rotational Invariance
+    _embLazyRegister('plot-rotational-invariance', () => {
+        renderRotationalInvariance();
+    });
 
-		dualObserver.observe(dualPlotDiv);
-	}
+    // 5. Manifold Visualization
+    _embLazyRegister('plot-manifold', () => {
+        renderManifoldVisualization();
+    });
 
-	renderPlatonicHypothesis();
+    // 6. Cross-Lingual Alignment (2D)
+    _embLazyRegister('plot-crosslingual-align', () => {
+        renderCrossLingualFrame();
+    });
 
-	const slider = document.getElementById('scale-magnitude');
-	renderScaleInvariance();
-	if (slider) {
-		slider.addEventListener('input', renderScaleInvariance);
-	}
+    // 7. Metric Tensor / Attention Warping
+    _embLazyRegister('plot-metric-tensor', () => {
+        renderMetricTensor();
+    });
 
-	initAnisotropy();
-	renderAnisotropy();
-	const anisotropySlider = document.getElementById('anisotropy-slider');
-	if (anisotropySlider) {
-		anisotropySlider.addEventListener('input', renderAnisotropy);
-	}
+    // 8. Parallelogram Law
+    _embLazyRegister('plot-parallelogram', () => {
+        setParallelogramConcept('royalty');
+    });
 
-	// Superposition visualization
-	renderSuperposition();
-	const spSlider = document.getElementById('superposition-n');
-	if (spSlider) {
-		spSlider.addEventListener('input', renderSuperposition);
-	}
+    // 9. Dual Manifolds (3D translation surfaces)
+    _embLazyRegister('plot-dual-manifolds', () => {
+        const dualPlotDiv = document.getElementById('plot-dual-manifolds');
+        if (dualPlotDiv && (!dualPlotDiv.hasChildNodes() || !dualManifoldState.rendered)) {
+            dualPlotDiv.innerHTML = `
+            <div class="plot-loading" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; min-height:350px; gap:14px;">
+                <div class="spinner"></div>
+                <span style="color:#64748b; font-size:0.95em;">Please wait while it's rendering…</span>
+            </div>`;
+        }
+        setTimeout(() => {
+            requestAnimationFrame(() => {
+                renderDualManifolds();
+            });
+        }, 100);
+    });
 
-	renderNegation();
+    // 10. Platonic Representation Hypothesis
+    _embLazyRegister('plot-platonic', () => {
+        renderPlatonicHypothesis();
+    });
 
-	initICL();
+    // 11. Scale Invariance
+    _embLazyRegister('plot-scale-invariance', () => {
+        renderScaleInvariance();
+        const slider = document.getElementById('scale-magnitude');
+        if (slider) {
+            slider.addEventListener('input', renderScaleInvariance);
+        }
+    });
 
-	// ── Hyperbolic Embeddings — Poincaré Disk ──
-	try {
-		hyperbolicState.tree = buildHyperbolicTree();
-		renderHyperbolicEmbedding();
-		var poincareSlider = document.getElementById('poincare-curvature');
-		if (poincareSlider) {
-			poincareSlider.addEventListener('input', renderHyperbolicEmbedding);
-		}
-	} catch(e) {
-		console.error('Hyperbolic init failed:', e);
-	}
+    // 12. Anisotropy
+    _embLazyRegister('plot-anisotropy-scatter', () => {
+        initAnisotropy();
+        renderAnisotropy();
+        const anisotropySlider = document.getElementById('anisotropy-slider');
+        if (anisotropySlider) {
+            anisotropySlider.addEventListener('input', renderAnisotropy);
+        }
+    });
+
+    // 13. Superposition & Polysemanticity
+    _embLazyRegister('plot-superposition', () => {
+        renderSuperposition();
+        const spSlider = document.getElementById('superposition-n');
+        if (spSlider) {
+            spSlider.addEventListener('input', renderSuperposition);
+        }
+    });
+
+    // 14. Negation
+    _embLazyRegister('plot-negation', () => {
+        renderNegation();
+    });
+
+    // 15. In-Context Learning
+    _embLazyRegister('plot-icl-task-vector', () => {
+        initICL();
+    });
+
+    // 16. Hyperbolic Embeddings — Poincaré Disk
+    _embLazyRegister('plot-poincare-disk', () => {
+        try {
+            hyperbolicState.tree = buildHyperbolicTree();
+            renderHyperbolicEmbedding();
+            var poincareSlider = document.getElementById('poincare-curvature');
+            if (poincareSlider) {
+                poincareSlider.addEventListener('input', renderHyperbolicEmbedding);
+            }
+        } catch(e) {
+            console.error('Hyperbolic init failed:', e);
+        }
+    });
+
+    // Start observing all registered sections
+    _embLazyCreateObserver();
 }

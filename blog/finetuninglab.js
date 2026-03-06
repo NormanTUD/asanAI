@@ -60,8 +60,56 @@ const TrainingLab = {
 	}
 };
 
+// ============================================================
+// LAZY LOADING FOR FINETUNING MODULE
+// ============================================================
+
+const _ftLazyRegistry = [];
+let _ftLazyObserver = null;
+
+function _ftLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _ftLazyRegistry.push({ el, initFn, initialized: false });
+}
+
+function _ftLazyCreateObserver() {
+    if (_ftLazyObserver) return;
+
+    _ftLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _ftLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _ftLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin
+    });
+
+    _ftLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _ftLazyObserver.observe(r.el);
+        }
+    });
+}
+
+// ============================================================
+// REPLACEMENT: loadFinetuningModule (drop-in replacement)
+// ============================================================
+
 async function loadFinetuningModule() {
-	updateLoadingStatus("Loading section about Fine Tuning...");
-	TrainingLab.init()
-	return Promise.resolve();
+    updateLoadingStatus("Loading section about Fine Tuning...");
+
+    _ftLazyRegister('base-output', () => {
+        TrainingLab.init();
+    });
+
+    _ftLazyCreateObserver();
+
+    return Promise.resolve();
 }

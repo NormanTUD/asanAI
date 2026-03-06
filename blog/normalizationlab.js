@@ -148,8 +148,56 @@ const NormLab = {
 	}
 };
 
+// ============================================================
+// LAZY LOADING FOR NORMALIZATION MODULE
+// ============================================================
+
+const _normLazyRegistry = [];
+let _normLazyObserver = null;
+
+function _normLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _normLazyRegistry.push({ el, initFn, initialized: false });
+}
+
+function _normLazyCreateObserver() {
+    if (_normLazyObserver) return;
+
+    _normLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _normLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _normLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin
+    });
+
+    _normLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _normLazyObserver.observe(r.el);
+        }
+    });
+}
+
+// ============================================================
+// REPLACEMENT: loadNormalizationModule (drop-in replacement)
+// ============================================================
+
 async function loadNormalizationModule() {
-	updateLoadingStatus("Loading section about normalization...");
-	NormLab.init()
-	return Promise.resolve();
+    updateLoadingStatus("Loading section about normalization...");
+
+    _normLazyRegister('input-table', () => {
+        NormLab.init();
+    });
+
+    _normLazyCreateObserver();
+
+    return Promise.resolve();
 }

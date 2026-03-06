@@ -517,64 +517,78 @@ function initHelixManifoldDemo() {
 	Plotly.newPlot('helix-manifold', traces, layout, { responsive: true });
 }
 
+// ============================================================
+// LAZY LOADING FOR POSITIONAL EMBEDDINGS MODULE
+// ============================================================
+
+const _peLazyRegistry = [];
+let _peLazyObserver = null;
+
+function _peLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _peLazyRegistry.push({ el, initFn, initialized: false });
+}
+
+function _peLazyCreateObserver() {
+    if (_peLazyObserver) return;
+
+    _peLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _peLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _peLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin
+    });
+
+    _peLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _peLazyObserver.observe(r.el);
+        }
+    });
+}
+
+// ============================================================
+// REPLACEMENT: loadPositionalEmbeddingsModule (drop-in replacement)
+// ============================================================
+
 async function loadPositionalEmbeddingsModule() {
-	updateLoadingStatus("Loading section about positional embeddings...");
-	PositionalLab.update(1);
+    updateLoadingStatus("Loading section about positional embeddings...");
 
-	// Lazy-load the repetition starburst demo
-	const starburstTarget = document.getElementById('repetition-starburst');
-	if (starburstTarget) {
-		let starburstLoaded = false;
-		const starburstObserver = new IntersectionObserver((entries, obs) => {
-			entries.forEach(entry => {
-				if (entry.isIntersecting && !starburstLoaded) {
-					starburstLoaded = true;
-					initRepetitionStarburstDemo();
-					obs.unobserve(starburstTarget);
-				}
-			});
-		}, { rootMargin: rootMargin });
-		starburstObserver.observe(starburstTarget);
-	}
+    // 1. Unit Circle + Sine/Cosine Waves
+    _peLazyRegister('plot-unit-circle', () => {
+        initSineCosine();
+    });
 
+    // 2. Positional Lab (table + wave chart)
+    _peLazyRegister('pe-chart', () => {
+        PositionalLab.update(1);
+    });
 
-	// Lazy-load the helix manifold demo only when it's near the viewport
-	const helixTarget = document.getElementById('helix-manifold');
-	if (helixTarget) {
-		let helixLoaded = false;
-		const observer = new IntersectionObserver((entries, obs) => {
-			entries.forEach(entry => {
-				if (entry.isIntersecting && !helixLoaded) {
-					helixLoaded = true;
-					initHelixManifoldDemo();
-					obs.unobserve(helixTarget); // Stop observing once loaded
-				}
-			});
-		}, {
-			// rootMargin lets you trigger *before* the element is fully in view.
-			// '200px' means "fire when the element is within 200px of the viewport"
-			rootMargin: rootMargin
-		});
-		observer.observe(helixTarget);
-	}
+    // 3. Repetition Starburst
+    _peLazyRegister('repetition-starburst', () => {
+        initRepetitionStarburstDemo();
+    });
 
-	// Lazy-load the group structure demo
-	var groupTarget = document.getElementById('group-axioms-chart');
-	if (groupTarget) {
-		var groupLoaded = false;
-		var groupObserver = new IntersectionObserver(function(entries, obs) {
-			entries.forEach(function(entry) {
-				if (entry.isIntersecting && !groupLoaded) {
-					groupLoaded = true;
-					initGroupStructureDemo();
-					obs.unobserve(groupTarget);
-				}
-			});
-		}, { rootMargin: rootMargin });
-		groupObserver.observe(groupTarget);
-	}
+    // 4. Helix Manifold
+    _peLazyRegister('helix-manifold', () => {
+        initHelixManifoldDemo();
+    });
 
-	lazyInit('plot-unit-circle', initSineCosine);
+    // 5. Group Structure Demo (if present on this page too)
+    _peLazyRegister('group-axioms-chart', () => {
+        initGroupStructureDemo();
+    });
 
-	return Promise.resolve();
+    // Start observing
+    _peLazyCreateObserver();
+
+    return Promise.resolve();
 }

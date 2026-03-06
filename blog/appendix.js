@@ -215,7 +215,60 @@ function initGroupStructureDemo() {
 	});
 }
 
+// ============================================================
+// LAZY LOADING FOR APPENDIX MODULE
+// ============================================================
+
+const _appLazyRegistry = [];
+let _appLazyObserver = null;
+
+function _appLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _appLazyRegistry.push({ el, initFn, initialized: false });
+}
+
+function _appLazyCreateObserver() {
+    if (_appLazyObserver) return;
+
+    _appLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _appLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _appLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin
+    });
+
+    _appLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _appLazyObserver.observe(r.el);
+        }
+    });
+}
+
+// ============================================================
+// REPLACEMENT: loadAppendixModule (drop-in replacement)
+// ============================================================
+
 async function loadAppendixModule() {
-	initTaylorSeries();
-	initGroupStructureDemo();
+    // 1. Taylor Series
+    _appLazyRegister('plot-taylor', () => {
+        initTaylorSeries();
+    });
+
+    // 2. Group Structure Demo (Cayley table + clock)
+    _appLazyRegister('group-axioms-chart', () => {
+        initGroupStructureDemo();
+    });
+
+    _appLazyCreateObserver();
+
+    return Promise.resolve();
 }
