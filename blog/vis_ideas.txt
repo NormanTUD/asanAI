@@ -63,15 +63,6 @@ Man kann die „Dichte“ des Wissens visualisieren.
 
 
 
-1. Das „Interferenz-Muster“ der Layer (Wave-Geometry)
-
-Man kann visualisieren, wie Information durch das Modell „pulsiert“.
-
-    Die Visualisierung: Man stellt die Aktivierung über alle Layer hinweg als eine Art Wellenfront dar.
-
-    Das krasse Ergebnis: Man sieht, dass LLMs oft in Zyklen arbeiten. In den frühen Schichten wird der Vektor „breit“ und unpräzise (Expansion), in den mittleren Schichten zieht er sich extrem scharf zusammen (Kompression/Logik-Check) und am Ende fächert er sich wieder auf, um das nächste Token zu wählen. Es sieht aus wie ein schlagendes mechanisches Herz aus Daten.
-
-
 2. "Linear Relational Embeddings" (LRE)
 
 Wissenschaftler haben untersucht, wie Fakten wie "Subjekt X hat die Eigenschaft Y" gespeichert sind.
