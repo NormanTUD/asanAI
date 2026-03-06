@@ -153,8 +153,8 @@ function load_base_js () {
 	js("literature");
 	js("citation_graph");
 	js("jquery-3.7.1.min");
-	js("plotly-2.24.1.min", null, true);
-	js("tf.min", null, true);
+	js("plotly-2.24.1.min");
+	js("tf.min");
 	js("marked.min");
 	js("toc");
 	js("fcnn_visualization");
