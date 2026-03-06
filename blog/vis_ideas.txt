@@ -1,3 +1,14 @@
+4. Polysemantische "Manifold-Intersections" (The Knot Theory of Meaning)
+
+Wir denken oft, Konzepte seien separate Wolken. In Wahrheit sind sie verschlungene Ringe (Knoten).
+
+    Die Erkenntnis: Das Konzept "Zeit" ist kein Ort, sondern eine Schleife, die durch "Raum", "Geld", "Liebe" und "Physik" hindurchführt. Mathematisch sind das eingebettete Untermannigfaltigkeiten (Sub-Manifolds).
+
+    Die Visualisierung: Anstatt Punkte zu plotten, visualisiert man topologische Bänder. Das Konzept "Zeit" ist ein rotes Band, das sich verknotet. Wo es das blaue Band "Geld" schneidet, entsteht das Token "Zinsen". Man sieht die Architektur der Sprache als ein komplexes Geflecht aus makroskopischen Schläuchen.
+
+    Der Aha-Effekt: "Ein Wort ist nur der Schnittpunkt zweier gigantischer Schläuche. Wir sehen nur den Punkt, aber das Modell sieht die gesamte Röhre."
+
+
 1. Das „Voronoi-Gespenst“ (Super-Resolution of Boundaries)
 
 Normalerweise visualisiert man Voronoi-Zellen als statische Grenzen zwischen Wörtern. Geht man 20 Schritte tiefer, erkennt man: Die Grenzen sind nicht fix, sondern frequenzabhängig.
