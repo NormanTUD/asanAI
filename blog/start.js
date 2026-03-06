@@ -41,6 +41,9 @@ const _loaderSections = [];
 let _loaderChecklistBuilt = false;
 
 function registerLoaderSections(names) {
+	if(names.length < 2) {
+		return;
+	}
 	const container = document.getElementById('loader-checklist');
 	if (!container) return;
 
