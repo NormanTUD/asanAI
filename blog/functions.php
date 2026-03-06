@@ -408,11 +408,12 @@ if(!server_php_self_ends_with_index_php()) {
 ?>
 	</head>
 	<body>
-		<div id="loader">
-			<div class="spinner"></div>
+		<div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
+			<div class="spinner" aria-hidden="true"></div>
 			<p id="loader-status">Initializing AI Course...</p>
-			<div id="loader-checklist"></div>
+			<div id="loader-checklist" aria-hidden="true"></div>
 		</div>
+
 
 		<div id="contents" style="display: none">
 <?php
