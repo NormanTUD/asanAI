@@ -625,12 +625,71 @@ const VGDemo = {
 // MODULE LOADER
 // ============================================================
 
+// ============================================================
+// LAZY LOADING FOR AUTODIFF MODULE
+// ============================================================
+
+const _adLazyRegistry = [];
+let _adLazyObserver = null;
+
+function _adLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _adLazyRegistry.push({ el, initFn, initialized: false });
+}
+
+function _adLazyCreateObserver() {
+    if (_adLazyObserver) return;
+
+    _adLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _adLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _adLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin // uses the already-defined global const
+    });
+
+    _adLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _adLazyObserver.observe(r.el);
+        }
+    });
+}
+
+// ============================================================
+// REPLACEMENT: loadAutodiffModule (drop-in replacement)
+// ============================================================
+
 async function loadAutodiffModule() {
-    // Initialize all four interactive demos
-    ADTape.init();
-    ADGraph.init();
-    GDDemo.init();
-    VGDemo.init();
+    // 1. Tape-Based Reverse-Mode AD Demo
+    _adLazyRegister('ad-tape-display', () => {
+        ADTape.init();
+    });
+
+    // 2. Computational Graph Visualization
+    _adLazyRegister('ad-graph-svg', () => {
+        ADGraph.init();
+    });
+
+    // 3. Gradient Descent on Loss Landscape
+    _adLazyRegister('plot-gd-landscape', () => {
+        GDDemo.init();
+    });
+
+    // 4. Vanishing / Exploding Gradient Demo
+    _adLazyRegister('plot-vg-gradient', () => {
+        VGDemo.init();
+    });
+
+    // Start observing
+    _adLazyCreateObserver();
 
     return Promise.resolve();
 }
