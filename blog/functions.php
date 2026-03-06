@@ -50,7 +50,7 @@ function render_gem_tabs($tabs, $groupId = 'tabgroup') {
 <?php
 }
 
-function js($file, $loaderLabel = null) {
+function js($file, $loaderLabel = null, $defer = false) {
 	// 1. Normalize file extension
 	if (!str_ends_with($file, '.js') && !str_starts_with($file, 'http')) {
 		$file .= ".js";
@@ -66,7 +66,8 @@ function js($file, $loaderLabel = null) {
 		}
 
 		if ($should_load) {
-			print("<script src='$file'></script>\n");
+			$deferAttr = $defer ? " defer" : "";
+			print("<script src='$file'$deferAttr></script>\n");
 			$GLOBALS["loaded_js"][] = $file;
 
 			// 3. Check for module loader function pattern
@@ -92,9 +93,9 @@ function js($file, $loaderLabel = null) {
 
 					print("<script>
 						if (!window.__moduleLoaderQueue) window.__moduleLoaderQueue = [];
-						if (!window.__moduleLoaderNames) window.__moduleLoaderNames = [];
-						window.__moduleLoaderQueue.push($functionName);
-						window.__moduleLoaderNames.push('$safeSectionLabel');
+					if (!window.__moduleLoaderNames) window.__moduleLoaderNames = [];
+					window.__moduleLoaderQueue.push($functionName);
+					window.__moduleLoaderNames.push('$safeSectionLabel');
 					</script>\n");
 				}
 			}
@@ -152,8 +153,8 @@ function load_base_js () {
 	js("literature");
 	js("citation_graph");
 	js("jquery-3.7.1.min");
-	js("plotly-2.24.1.min");
-	js("tf.min");
+	js("plotly-2.24.1.min", null, true);
+	js("tf.min", null, true);
 	js("marked.min");
 	js("toc");
 	js("fcnn_visualization");
