@@ -5149,6 +5149,343 @@ function renderFractalFolding() {
     }
 }
 
+// ============================================================
+// HOLOGRAPHIC INFORMATION STORAGE
+// ============================================================
+
+const holographicState = {
+    numDims: 64,       // simulated embedding dimensionality
+    damage: 0,         // fraction of dimensions zeroed out
+    showGhost: true,
+    damageMask: null,   // boolean array: true = surviving, false = zeroed
+    concepts: [],       // will be populated in init
+    initialized: false
+};
+
+function initHolographic() {
+    const st = holographicState;
+    if (st.initialized) return;
+
+    const D = st.numDims;
+
+    // Define concepts with semantic groups.
+    // Each concept gets a random-ish vector, but concepts in the same group
+    // share a "group direction" component so they cluster together.
+    const conceptDefs = [
+        { name: 'Dog',       group: 'animal',     color: '#ef4444' },
+        { name: 'Cat',       group: 'animal',     color: '#ef4444' },
+        { name: 'Wolf',      group: 'animal',     color: '#ef4444' },
+        { name: 'Eagle',     group: 'animal',     color: '#ef4444' },
+        { name: 'Car',       group: 'machine',    color: '#6366f1' },
+        { name: 'Plane',     group: 'machine',    color: '#6366f1' },
+        { name: 'Robot',     group: 'machine',    color: '#6366f1' },
+        { name: 'Guitar',    group: 'music',      color: '#ec4899' },
+        { name: 'Piano',     group: 'music',      color: '#ec4899' },
+        { name: 'Drum',      group: 'music',      color: '#ec4899' },
+        { name: 'River',     group: 'nature',     color: '#14b8a6' },
+        { name: 'Mountain',  group: 'nature',     color: '#14b8a6' },
+        { name: 'Ocean',     group: 'nature',     color: '#14b8a6' },
+    ];
+
+    // Generate group direction vectors (random unit-ish vectors)
+    const groups = {};
+    const uniqueGroups = [...new Set(conceptDefs.map(c => c.group))];
+    uniqueGroups.forEach(g => {
+        const v = [];
+        for (let i = 0; i < D; i++) v.push((Math.random() - 0.5) * 2);
+        // Normalize
+        const mag = Math.sqrt(v.reduce((s, x) => s + x * x, 0));
+        groups[g] = v.map(x => x / mag);
+    });
+
+    // Each concept = groupDirection * groupWeight + noise
+    st.concepts = conceptDefs.map(def => {
+        const groupDir = groups[def.group];
+        const groupWeight = 3.0;
+        const noiseWeight = 1.0;
+        const vec = [];
+        for (let i = 0; i < D; i++) {
+            vec.push(groupDir[i] * groupWeight + (Math.random() - 0.5) * noiseWeight);
+        }
+        return { name: def.name, group: def.group, color: def.color, vec };
+    });
+
+    // Initialize damage mask (all surviving)
+    st.damageMask = new Array(D).fill(true);
+    st.initialized = true;
+}
+
+function generateDamageMask(damageFraction) {
+    const st = holographicState;
+    const D = st.numDims;
+    const numDamaged = Math.round(damageFraction * D);
+
+    // Create array of indices, shuffle, pick first numDamaged to zero out
+    const indices = Array.from({ length: D }, (_, i) => i);
+    // Fisher-Yates shuffle
+    for (let i = D - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+
+    const mask = new Array(D).fill(true);
+    for (let i = 0; i < numDamaged; i++) {
+        mask[indices[i]] = false;
+    }
+    st.damageMask = mask;
+}
+
+function applyDamage(vec, mask) {
+    return vec.map((v, i) => mask[i] ? v : 0);
+}
+
+function cosineSim(a, b) {
+    let dot = 0, ma = 0, mb = 0;
+    for (let i = 0; i < a.length; i++) {
+        dot += a[i] * b[i];
+        ma += a[i] * a[i];
+        mb += b[i] * b[i];
+    }
+    ma = Math.sqrt(ma);
+    mb = Math.sqrt(mb);
+    if (ma < 1e-10 || mb < 1e-10) return 0;
+    return dot / (ma * mb);
+}
+
+// Simple 2D projection via the first two principal-ish axes
+// (we use the first two group directions as projection axes for stability)
+function project2D(vec, axis1, axis2) {
+    let x = 0, y = 0;
+    for (let i = 0; i < vec.length; i++) {
+        x += vec[i] * axis1[i];
+        y += vec[i] * axis2[i];
+    }
+    return [x, y];
+}
+
+window.rerollHolographicDamage = function () {
+    const st = holographicState;
+    generateDamageMask(st.damage);
+    renderHolographic();
+};
+
+function renderHolographic() {
+    const scatterDiv = document.getElementById('plot-holographic-scatter');
+    const matrixDiv = document.getElementById('plot-holographic-matrix');
+    const statsDiv = document.getElementById('holographic-stats');
+    if (!scatterDiv || !matrixDiv) return;
+
+    const st = holographicState;
+    const slider = document.getElementById('holographic-damage');
+    const valEl = document.getElementById('holographic-damage-val');
+    const ghostCb = document.getElementById('holographic-show-ghost');
+
+    st.damage = parseFloat(slider.value);
+    st.showGhost = ghostCb ? ghostCb.checked : true;
+
+    const pct = Math.round(st.damage * 100);
+    let tag = `${pct}%`;
+    if (pct === 0) tag += ' (intact)';
+    else if (pct < 25) tag += ' (minor)';
+    else if (pct < 50) tag += ' (moderate)';
+    else if (pct < 75) tag += ' (severe)';
+    else tag += ' (catastrophic)';
+    valEl.textContent = tag;
+
+    // Regenerate damage mask if damage level changed
+    generateDamageMask(st.damage);
+
+    const concepts = st.concepts;
+    const mask = st.damageMask;
+    const D = st.numDims;
+
+    // Compute damaged vectors
+    const damagedVecs = concepts.map(c => applyDamage(c.vec, mask));
+
+    // Projection axes: use first two unique group directions
+    // (recompute from the concept data for stability)
+    const groups = {};
+    concepts.forEach(c => {
+        if (!groups[c.group]) groups[c.group] = [];
+        groups[c.group].push(c.vec);
+    });
+    const groupNames = Object.keys(groups);
+    // Average vector per group as axis
+    function avgVec(vecs) {
+        const avg = new Array(D).fill(0);
+        vecs.forEach(v => v.forEach((x, i) => avg[i] += x));
+        const n = vecs.length;
+        const mag = Math.sqrt(avg.reduce((s, x) => s + (x / n) * (x / n), 0));
+        return avg.map(x => x / (n * mag));
+    }
+    const axis1 = avgVec(groups[groupNames[0]]);
+    const axis2 = avgVec(groups[groupNames[1]]);
+
+    // ── LEFT: Scatter plot ──
+    const scatterTraces = [];
+
+    // Ghost (original) positions
+    if (st.showGhost && st.damage > 0.01) {
+        const gx = [], gy = [], gt = [], gc = [];
+        concepts.forEach(c => {
+            const [px, py] = project2D(c.vec, axis1, axis2);
+            gx.push(px); gy.push(py); gt.push(c.name); gc.push(c.color);
+        });
+        scatterTraces.push({
+            x: gx, y: gy, mode: 'markers+text',
+            text: gt, textposition: 'top center',
+            textfont: { size: 9, color: 'rgba(148,163,184,0.4)' },
+            marker: { size: 8, color: gc, opacity: 0.15 },
+            showlegend: false, hoverinfo: 'skip'
+        });
+
+        // Drift lines from ghost to damaged
+        concepts.forEach((c, i) => {
+            const [ox, oy] = project2D(c.vec, axis1, axis2);
+            const [dx, dy] = project2D(damagedVecs[i], axis1, axis2);
+            scatterTraces.push({
+                x: [ox, dx], y: [oy, dy], mode: 'lines',
+                line: { color: 'rgba(148,163,184,0.25)', width: 1, dash: 'dot' },
+                showlegend: false, hoverinfo: 'skip'
+            });
+        });
+    }
+
+    // Damaged positions
+    const groupTraces = {};
+    concepts.forEach((c, i) => {
+        if (!groupTraces[c.group]) {
+            groupTraces[c.group] = { x: [], y: [], text: [], color: c.color, name: c.group };
+        }
+        const [px, py] = project2D(damagedVecs[i], axis1, axis2);
+        groupTraces[c.group].x.push(px);
+        groupTraces[c.group].y.push(py);
+        groupTraces[c.group].text.push(c.name);
+    });
+
+    const groupEmoji = { animal: '🐾', machine: '⚙️', music: '🎵', nature: '🌿' };
+    Object.values(groupTraces).forEach(g => {
+        scatterTraces.push({
+            x: g.x, y: g.y, mode: 'markers+text',
+            text: g.text, textposition: 'top center',
+            textfont: { size: 11, color: g.color, weight: 'bold' },
+            marker: { size: 11, color: g.color, opacity: 0.9, line: { width: 1, color: '#fff' } },
+            name: (groupEmoji[g.name] || '') + ' ' + g.name.charAt(0).toUpperCase() + g.name.slice(1),
+            hovertemplate: '<b>%{text}</b><br>Group: ' + g.name + '<extra></extra>'
+        });
+    });
+
+    Plotly.react(scatterDiv, scatterTraces, {
+        margin: { l: 25, r: 25, b: 25, t: 35 },
+        showlegend: true,
+        legend: { x: 0.01, y: 0.99, bgcolor: 'rgba(255,255,255,0.9)', bordercolor: '#e2e8f0', borderwidth: 1, font: { size: 10 } },
+        xaxis: { zeroline: false, showgrid: true, gridcolor: '#f1f5f9', showticklabels: false },
+        yaxis: { zeroline: false, showgrid: true, gridcolor: '#f1f5f9', showticklabels: false, scaleanchor: 'x' },
+        plot_bgcolor: '#fff',
+        title: { text: 'Concept Positions (2D projection)', font: { size: 12, color: '#64748b' } }
+    }, { displayModeBar: false, responsive: true });
+
+    // ── RIGHT: Similarity matrix (heatmap) ──
+    const N = concepts.length;
+    const simMatrix = [];
+    const labels = concepts.map(c => c.name);
+
+    for (let i = 0; i < N; i++) {
+        const row = [];
+        for (let j = 0; j < N; j++) {
+            row.push(cosineSim(damagedVecs[i], damagedVecs[j]));
+        }
+        simMatrix.push(row);
+    }
+
+    // Also compute original similarity matrix for comparison
+    const origMatrix = [];
+    for (let i = 0; i < N; i++) {
+        const row = [];
+        for (let j = 0; j < N; j++) {
+            row.push(cosineSim(concepts[i].vec, concepts[j].vec));
+        }
+        origMatrix.push(row);
+    }
+
+    // Compute matrix correlation (Pearson between flattened upper triangles)
+    const origFlat = [], damFlat = [];
+    for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+            origFlat.push(origMatrix[i][j]);
+            damFlat.push(simMatrix[i][j]);
+        }
+    }
+    const meanO = origFlat.reduce((a, b) => a + b, 0) / origFlat.length;
+    const meanD = damFlat.reduce((a, b) => a + b, 0) / damFlat.length;
+    let num = 0, denO = 0, denD = 0;
+    for (let i = 0; i < origFlat.length; i++) {
+        const dO = origFlat[i] - meanO;
+        const dD = damFlat[i] - meanD;
+        num += dO * dD;
+        denO += dO * dO;
+        denD += dD * dD;
+    }
+    const matrixCorrelation = (denO > 0 && denD > 0) ? num / (Math.sqrt(denO) * Math.sqrt(denD)) : 1;
+
+    Plotly.react(matrixDiv, [{
+        z: simMatrix,
+        x: labels, y: labels,
+        type: 'heatmap',
+        colorscale: [
+            [0, '#1e3a5f'],
+            [0.3, '#3b82f6'],
+            [0.5, '#93c5fd'],
+            [0.7, '#fbbf24'],
+            [1, '#ef4444']
+        ],
+        zmin: -0.3, zmax: 1.0,
+        hovertemplate: '<b>%{y} ↔ %{x}</b><br>Cosine Sim: %{z:.3f}<extra></extra>'
+    }], {
+        margin: { l: 70, r: 20, b: 70, t: 35 },
+        xaxis: { tickangle: -45, tickfont: { size: 9 } },
+        yaxis: { tickfont: { size: 9 }, autorange: 'reversed' },
+        plot_bgcolor: '#fff',
+        title: { text: 'Pairwise Cosine Similarity', font: { size: 12, color: '#64748b' } }
+    }, { displayModeBar: false, responsive: true });
+
+    // ── Stats ──
+    if (statsDiv) {
+        const surviving = mask.filter(m => m).length;
+        const theoreticalSignal = Math.sqrt(surviving / D);
+        const corrColor = matrixCorrelation > 0.9 ? '#10b981' :
+            matrixCorrelation > 0.7 ? '#f59e0b' : '#ef4444';
+
+        statsDiv.innerHTML = `
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+                <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Surviving Dims</div>
+                <div style="font-size:1.4em; font-weight:bold; color:#3b82f6;">${surviving} / ${D}</div>
+                <div style="font-size:0.7em; color:#94a3b8;">${(surviving / D * 100).toFixed(0)}% intact</div>
+            </div>
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+                <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Signal Quality</div>
+                <div style="font-size:1.4em; font-weight:bold; color:${theoreticalSignal > 0.7 ? '#10b981' : theoreticalSignal > 0.4 ? '#f59e0b' : '#ef4444'};">${(theoreticalSignal * 100).toFixed(1)}%</div>
+                <div style="font-size:0.7em; color:#94a3b8;">√(k/d) theoretical</div>
+            </div>
+            <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+                <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Structure Preserved</div>
+                <div style="font-size:1.4em; font-weight:bold; color:${corrColor};">${(matrixCorrelation * 100).toFixed(1)}%</div>
+                <div style="font-size:0.7em; color:#94a3b8;">matrix correlation</div>
+            </div>
+            <div style="padding:10px; background:#fff; border-radius:8px; border:${matrixCorrelation > 0.85 ? '1px solid #bbf7d0' : '2px solid #fecaca'}; text-align:center;">
+                <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Verdict</div>
+                <div style="font-size:1.0em; font-weight:bold; color:${matrixCorrelation > 0.85 ? '#10b981' : matrixCorrelation > 0.6 ? '#f59e0b' : '#ef4444'};">${
+                    matrixCorrelation > 0.95 ? '✅ Intact' :
+                    matrixCorrelation > 0.85 ? '✅ Degraded' :
+                    matrixCorrelation > 0.6  ? '⚠️ Noisy' :
+                                               '❌ Broken'
+                }</div>
+                <div style="font-size:0.7em; color:#94a3b8;">holographic resilience</div>
+            </div>
+        `;
+    }
+}
+
 function loadEmbeddingModule() {
     const fastConfig = {
         displayModeBar: false,
@@ -5323,6 +5660,17 @@ function loadEmbeddingModule() {
             fractalSlider.addEventListener('input', renderFractalFolding);
         }
     });
+
+    // 19. Holographic Information Storage
+    _embLazyRegister('plot-holographic-scatter', () => {
+        initHolographic();
+        renderHolographic();
+        const holoSlider = document.getElementById('holographic-damage');
+        if (holoSlider) {
+            holoSlider.addEventListener('input', renderHolographic);
+        }
+    });
+
 
     // Start observing all registered sections
     _embLazyCreateObserver();

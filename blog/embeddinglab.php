@@ -747,3 +747,69 @@ Below, you can explore this fractal folding interactively. The visualization sho
         the geometry of the whole is mirrored in every part.
     </div>
 </section>
+
+<div class="md">
+## Holographic Information Storage
+
+There is a deep analogy between how LLMs store information in their embedding spaces and how **holograms** store images. In a photograph, each pixel records a single point of the scene — scratch the photo and you lose that point forever. In a hologram, every part of the recording medium stores information about the **entire scene** from a slightly different angle. Cut a hologram in half and you don't lose half the image — you lose half the *resolution*. Both halves still contain the full picture, just blurrier.
+
+### Distributed, Not Localized
+
+Neural network embeddings work the same way. The concept "Dog" is not stored in dimension 42, or in any single neuron. It is stored as a **pattern across all dimensions simultaneously** — a direction in the full 768-dimensional space. Every dimension participates in encoding every concept, just as every point on a holographic plate participates in encoding every part of the scene. This is why you can't point to a single weight and say "this is where the model knows about dogs." The knowledge is *everywhere and nowhere* — distributed holographically across the entire vector.
+
+### Graceful Degradation
+
+This has a remarkable consequence: **graceful degradation**. If you zero out a random subset of dimensions in an embedding vector, the concept doesn't vanish — it gets noisier, like a scratched hologram. The remaining dimensions still carry partial information about the full pattern. This is fundamentally different from a lookup table, where deleting an entry destroys the information completely.
+
+The fraction of information retained scales smoothly with the fraction of dimensions preserved:
+
+$$ \text{Signal Quality} \approx \sqrt{\frac{k}{d}} $$
+
+where $k$ is the number of surviving dimensions and $d$ is the total dimensionality. Even with half the dimensions zeroed out, you retain roughly $\sqrt{0.5} \approx 71\%$ of the signal — enough to still identify the concept.
+
+### Interference as the Price of Compression
+
+The flip side of holographic storage is **interference**. Because every concept is spread across every dimension, concepts inevitably overlap. The dot product between "Dog" and "Cat" is not zero — their patterns share components, just as two holograms recorded on the same plate create ghost images of each other. This is the same superposition phenomenon we explored earlier, but seen from the holographic perspective: the embedding space is a shared recording medium, and every concept is written across its entire volume.
+
+Below, you can explore this holographic property directly. A set of concept vectors are embedded in a simulated space. Use the **Damage slider** to randomly zero out increasing fractions of the dimensions. Watch how the **pairwise similarity structure** — which concepts are near which — degrades gracefully rather than catastrophically. The **similarity matrix** on the right preserves its overall pattern even under severe damage, just as a scratched hologram preserves the full scene at lower resolution.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; margin-bottom: 15px;">
+        <div id="plot-holographic-scatter" style="height: 480px; background: #fff; border-radius: 8px; width: 100%;"></div>
+        <div id="plot-holographic-matrix" style="height: 480px; background: #fff; border-radius: 8px; width: 100%;"></div>
+    </div>
+
+    <!-- Damage slider -->
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Dimension Damage:</b>
+            <input type="range" id="holographic-damage" min="0" max="0.95" step="0.01" value="0" style="width: 280px; vertical-align: middle;">
+            <span id="holographic-damage-val" style="font-weight: bold; color: #3b82f6;">0% (intact)</span>
+        </label>
+    </div>
+
+    <!-- Toggle -->
+    <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="holographic-show-ghost" checked onchange="renderHolographic()"> Show ghost vectors (original)
+        </label>
+        <button onclick="rerollHolographicDamage()" style="background: #64748b; color: white; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85em;">🎲 Re-roll damage pattern</button>
+    </div>
+
+    <!-- Stats -->
+    <div id="holographic-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; max-width: 800px; margin: 0 auto 15px auto;"></div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> The <b>left panel</b> shows concept vectors projected into 2D.
+        <span style="color:rgba(148,163,184,0.5);">Faded circles</span> are the <b>original</b> (undamaged) positions;
+        <b>solid markers</b> are the positions after randomly zeroing out dimensions.
+        The <b>right panel</b> is the pairwise cosine similarity matrix — the "fingerprint" of the space's relational structure.
+        As you increase damage, individual vectors drift (like a scratched hologram losing sharpness),
+        but the <b>overall pattern of the matrix is preserved</b> — similar concepts stay similar, dissimilar ones stay dissimilar.
+        This is <b>holographic graceful degradation</b>: information is distributed across all dimensions,
+        so partial destruction reduces resolution without erasing content.
+        Compare this to a <b>lookup table</b>, where deleting an entry destroys the information completely.
+    </div>
+</section>
