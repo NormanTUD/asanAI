@@ -8,9 +8,9 @@ The concept of a **derivative** is one of the most important ideas in all of mat
 If you drive a car and your speedometer reads 60 km/h, that number is a derivative, it tells you the instantaneous rate of change of your position with respect to time. But how do we define "instantaneous" mathematically, when an instant has zero duration?
 
 This question puzzled mathematicians for centuries, and its resolution gave birth to an entire branch of mathematics: **Calculus**.
+</div>
 
-### A Brief History: Who Invented Derivatives?
-
+<div class="optional md" data-headline="A Brief History: Who Invented Derivatives?">
 The development of calculus is one of the most famous (and contentious) stories in the history of science. Two towering figures independently developed the core ideas in the late 17th century.
 
 **Isaac Newton** (1642–1727) developed his "method of fluxions" around 1665–1666, motivated by problems in physics, he needed a way to describe the motion of planets and falling objects. He thought of quantities as "flowing" and their rates of change as "fluxions." Newton's approach was deeply rooted in the physical world: velocity is the fluxion of position, and acceleration is the fluxion of velocity. However, Newton was notoriously secretive and did not publish his methods until decades later.
@@ -20,7 +20,9 @@ The development of calculus is one of the most famous (and contentious) stories 
 The bitter priority dispute between Newton and Leibniz, fueled by nationalistic pride between England and continental Europe, overshadowed the fact that both men made monumental contributions. Today, historians recognize that both arrived at the fundamental ideas independently. We use Leibniz's notation ($\frac{dy}{dx}$, $\int$) almost universally, while Newton's physical intuition shaped the application of calculus to science.
 
 Before both of them, \citeauthor{oevresdeformat} had already explored the idea of finding tangent lines to curves using algebraic methods in the 1630s (see \citetitle{oevresdeformat}), and the concept of infinitesimals was discussed by mathematicians like Bonaventura Cavalieri and John Wallis (\citetitle{wallis1655}, \citeyear{wallis1655}). But it was Newton and Leibniz who unified these scattered ideas into a coherent, general framework.
+</div>
 
+<div class="md">
 ### The Limit Definition of the Derivative
 
 The derivative is built on the concept of a **limit**, which we introduced earlier. The key idea is to start with something we *can* compute, the average rate of change over an interval, and then shrink that interval to zero.
