@@ -174,13 +174,15 @@ It is tempting to label specific axes as "Gender," "Power," or "Temperature," bu
 While we can find "directions" in the vector space that correlate with human concepts, most of the 768+ dimensions do not have a name in any human language.
 * **Meaning is Simulated:** The computer does not "understand" what a King is; it only understands that the token "King" consistently appears in specific geometric relationships with other tokens.
 * **No Inherent Soul:** The coordinates are products of linear algebra, not internal experience. Meaning is a human concept we project onto the model's output; the machine is simply navigating a continuous geometric manifold.
+</div>
 
-## The Outliers of Geometry: Hapax Legomena and Glitch Tokens
-
+<div class="optional md" data-headline="The Outliers of Geometry: Hapax Legomena and Glitch Tokens">
 While the semantic manifold relies on "use" to define meaning, the system falters when a word lacks a statistical history. [**Hapax legomena**](https://en.wikipedia.org/wiki/Hapax_legomenon), terms that appear only once in an entire corpus, present a unique challenge for embedding spaces. Because a token's identity is defined entirely by its context, a single occurrence provides insufficient data points to anchor it. In a high-dimensional space, these words become "homeless"; the model cannot triangulate their coordinates through repeated relationships. Without the "gravity" of multiple linguistic environments to pull them into a meaningful neighborhood, their vectors often reside in noisy, semi-random locations, rendering them mathematically isolated from the manifold of human knowledge.
 
 Even more disruptive are **Glitch Tokens** (described by Yuxi Li et al. in \citeyear{glitchtokens}), which reveal the cracks in the machine's geometric logic. These often arise from anomalies like the Reddit username `SolidGoldMagikarp`, a bot that appeared in thousands of entries within a specific counting thread. Because these strings appeared frequently enough to be assigned a dedicated token but lacked varied, human-semantic context, they do not possess a stable "positional relationship" in the space. When an LLM encounters these tokens, it often suffers a "hallucination of meaning" or total logic failure. In the geometry of meaning, these tokens act like "voids" or "gravity wells", they are products of statistical co-occurrence that do not correlate with any human concept.
+</div>
 
+<div class="md">
 ## Rotational Invariance and Translation as Path-Finding
 
 A critical property of embedding spaces is their **rotational invariance**. If you take an entire embedding space and rotate it, spinning every single vector by the same angle, nothing changes semantically. "King" is still near "Queen," "Cat" is still far from "Democracy." This is because meaning in these spaces is not encoded in absolute coordinates, but in the **\cite[relational geometry]{smith2017orthogonal}** between points: their distances, angles, and cluster structures.
