@@ -2372,3 +2372,209 @@ blockquote,
 	from { transform: rotate(0deg); }
 	to   { transform: rotate(360deg); }
 }
+
+
+/* ============================================================
+   STATISTICS MODULE — Gorgeous Additions
+   ============================================================ */
+
+/* Pulse animation for updated values */
+@keyframes statPulseKf {
+    0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(99, 102, 241, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+}
+
+.stat-pulse {
+    animation: statPulseKf 0.6s ease-out;
+}
+
+/* Suggestion chips for Markov predictions */
+.stat-suggestion-chip {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: statChipIn 0.35s ease-out both;
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+@keyframes statChipIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.stat-suggestion-chip:hover {
+    border-color: #6366f1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+
+.stat-suggestion-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.08), rgba(99, 102, 241, 0.03));
+    border-radius: 10px 0 0 10px;
+    pointer-events: none;
+    transition: width 0.3s ease;
+}
+
+.stat-suggestion-word {
+    font-weight: 700;
+    color: #1e293b;
+    position: relative;
+    z-index: 1;
+}
+
+.stat-suggestion-prob {
+    font-size: 0.78rem;
+    color: #6366f1;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+    margin-left: 12px;
+    white-space: nowrap;
+}
+
+/* Empty state */
+.stat-empty-state {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #94a3b8;
+    font-size: 0.88rem;
+    padding: 12px;
+}
+
+.stat-empty-icon {
+    font-size: 1.4rem;
+}
+
+/* Dice tower grid */
+.stat-dice-tower-grid {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0;
+    overflow-x: auto;
+    padding: 20px 0;
+}
+
+.stat-dice-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    flex: 1;
+    animation: statDiceColIn 0.4s ease-out both;
+}
+
+@keyframes statDiceColIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-dice-pair {
+    display: flex;
+    gap: 2px;
+    padding: 4px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-dice-pair:hover {
+    transform: scale(1.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.stat-dice-label {
+    margin-top: 10px;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+}
+
+.stat-dice-sum {
+    display: block;
+    font-weight: 700;
+    color: #6366f1;
+    font-size: 0.95rem;
+}
+
+.stat-dice-count {
+    display: block;
+    font-size: 0.72rem;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+/* Hint text styles */
+.stat-hint {
+    font-size: 0.82em;
+    color: #64748b;
+    text-align: center;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+.stat-hint-warm {
+    font-size: 0.88em;
+    color: #92400e;
+    margin-top: 8px;
+}
+
+/* Interpretation card for Z-scores */
+.stat-interpretation-card {
+    margin-top: 20px;
+    padding: 15px 18px;
+    background: #f8fafc;
+    border-left: 4px solid #6366f1;
+    border-radius: 0 8px 8px 0;
+    transition: all 0.3s ease;
+}
+
+.stat-interpretation-card.stat-interpretation-outlier {
+    border-left-color: #e11d48;
+    background: #fff1f2;
+}
+
+.stat-interpretation-title {
+    margin: 0 0 4px;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+
+.stat-interpretation-body {
+    margin: 0;
+    color: #475569;
+    font-size: 0.92em;
+    line-height: 1.5;
+}
+
