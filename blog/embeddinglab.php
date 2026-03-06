@@ -1164,7 +1164,7 @@ Below, you can explore this. A set of historical years and events are plotted in
 <div class="md">
 ## Polytope Hulls: The Boundaries of the Conceivable
 
-In geometry, a **polytope** is the high-dimensional generalization of a polygon. In 2D, it's a polygon; in 3D, a polyhedron; in 768 dimensions, it's a shape with thousands of facets that no human can visualize directly. Formally, a polytope can be defined as the **convex hull** of a finite set of points — the smallest convex body that encloses all of them [[1]] [[2]].
+In geometry, a **polytope** is the high-dimensional generalization of a polygon. In 2D, it's a polygon; in 3D, a polyhedron; in 768 dimensions, it's a shape with thousands of facets that no human can visualize directly. Formally, a polytope can be defined as the **convex hull** of a finite set of points — the smallest convex body that encloses all of them.
 
 Now apply this to the embedding space. Take every concept the model associates with "morally good" — kindness, honesty, generosity, courage, compassion — and compute their convex hull. You get a polytope: the **geometric territory of moral goodness** in the embedding space. Do the same for "morally bad" — cruelty, deception, greed, cowardice — and you get a second polytope.
 
