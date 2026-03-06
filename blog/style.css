@@ -2289,15 +2289,19 @@ blockquote,
 	text-align: left;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 	font-size: 12px;
-	columns: 2;
-	column-gap: 32px;
 	max-width: 600px;
 	width: 90%;
+
+	/* Replace columns with flexbox for proper centering */
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 4px 32px;
 }
 
 @media (max-width: 500px) {
-	#loader-checklist {
-		columns: 1;
+	.loader-section-row {
+		width: 100%;
 	}
 }
 
@@ -2308,6 +2312,10 @@ blockquote,
 	gap: 6px;
 	break-inside: avoid;
 	transition: opacity 0.3s ease, color 0.3s ease;
+	/* Give each row a fixed width so two-column layout forms naturally */
+	width: calc(50% - 16px);
+	min-width: 180px;
+	box-sizing: border-box;
 }
 
 .loader-section-row .loader-icon {

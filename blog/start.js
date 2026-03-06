@@ -44,6 +44,9 @@ function registerLoaderSections(names) {
 	const container = document.getElementById('loader-checklist');
 	if (!container) return;
 
+	// Clear any existing content first
+	container.innerHTML = '';
+
 	names.forEach((name, i) => {
 		const id = `loader-section-${i}`;
 		_loaderSections.push({ id, name, status: 'pending' });
@@ -56,6 +59,12 @@ function registerLoaderSections(names) {
 	});
 
 	_loaderChecklistBuilt = true;
+
+	// Update status to reflect we're about to start
+	const statusText = document.getElementById('loader-status');
+	if (statusText) {
+		statusText.textContent = `Loading sections... (0/${names.length})`;
+	}
 }
 
 function markLoaderSection(index, status) {
@@ -94,8 +103,21 @@ function markLoaderSection(index, status) {
 function updateLoadingStatus(message) {
 	console.info(message);
 	const statusText = document.getElementById('loader-status');
-	if (statusText && !_loaderChecklistBuilt) {
+	if (!statusText) return;
+
+	if (!_loaderChecklistBuilt) {
+		// Before checklist exists, use the main status line
 		statusText.textContent = message;
+	} else {
+		// After checklist exists, show as a secondary detail line
+		let subStatus = document.getElementById('loader-substatus');
+		if (!subStatus) {
+			subStatus = document.createElement('p');
+			subStatus.id = 'loader-substatus';
+			subStatus.style.cssText = 'color: #94a3b8; font-size: 11px; margin-top: 2px; font-style: italic; transition: opacity 0.2s ease;';
+			statusText.parentNode.insertBefore(subStatus, statusText.nextSibling);
+		}
+		subStatus.textContent = message;
 	}
 }
 
