@@ -287,7 +287,7 @@ Building on \cite[the mechanistic analysis of Transformer circuits]{elhage2021ma
 
 ## Translation Invariance: The Parallelogram Law
 
-Rotational invariance tells us that spinning the entire space preserves meaning. But there's a second, equally profound invariance: **translation invariance of relational offsets**. The vector from "Man" to "King", the "royalty direction", is approximately the same as the vector from "Woman" to "Queen." This isn't a coincidence; it's a geometric regularity that emerges from training on co-occurrence statistics (\cite{mikolov2013word2vec}).
+Rotational invariance tells us that spinning the entire space preserves meaning. But there's a second, equally profound invariance: **translation invariance of relational offsets**. The vector from "Man" to "King", the "royalty direction", is approximately the same as the vector from "Woman" to "Queen." This isn't a coincidence; it's a geometric regularity that \cite[emerges from training on co-occurrence statistics]{mikolov2013word2vec}).
 
 This means concepts like "royalty," "gender," or "youth" aren't points in the space, they're **directions**. And those directions are consistent everywhere. You can pick up the "royalty" vector from one pair and transplant it onto another. This is the **parallelogram law** of analogies, and it's what makes vector arithmetic on words possible at all.
 
