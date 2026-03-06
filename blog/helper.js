@@ -203,9 +203,18 @@ function bindIframeSafeLinks() {
 			// --- 4. Expand any collapsed toggleable-quote ancestor ---
 			revealAncestorToggleableQuotes(targetEl);
 
+			// --- 5. Determine the best scroll target ---
+			// If the target is a citation link inside a rendered-quote,
+			// scroll to the parent blockquote so the full quote is visible
+			let scrollTarget = targetEl;
+			const ancestorQuote = targetEl.closest('.rendered-quote');
+			if (ancestorQuote) {
+				scrollTarget = ancestorQuote;
+			}
+
 			// Small delay to let DOM reflow after reveals
 			requestAnimationFrame(() => {
-				targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
 				// --- Cinematic highlight effect ---
 
@@ -215,7 +224,6 @@ function bindIframeSafeLinks() {
 				targetEl.style.backgroundColor = 'rgba(255, 200, 50, 0.12)';
 
 				// Phase 2: Brief blur-to-sharp pulse on the text (crystallization)
-				// Only apply to elements that contain text directly
 				const textChildren = targetEl.querySelectorAll('p, li, span, code, td, th, h1, h2, h3, h4, h5, h6');
 				const pulseTargets = textChildren.length > 0 ? textChildren : [targetEl];
 
@@ -244,7 +252,6 @@ function bindIframeSafeLinks() {
 					targetEl.style.boxShadow = 'none';
 					targetEl.style.backgroundColor = 'transparent';
 
-					// Clean up inline styles after transition completes
 					setTimeout(() => {
 						targetEl.style.removeProperty('box-shadow');
 						targetEl.style.removeProperty('background-color');
