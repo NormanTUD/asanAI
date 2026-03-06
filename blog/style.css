@@ -2878,3 +2878,15 @@ blockquote,
 	text-align: center;
 	width: 100%;
 }
+
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+
+	.spinner {
+		animation: spin 3s linear infinite !important; /* keep spinner, just slower */
+	}
+}
