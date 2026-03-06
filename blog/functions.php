@@ -133,7 +133,6 @@ function load_base_js () {
 	<?php js("temml.min"); ?>
 	<?php js("bpe"); ?>
 	<?php css("Temml-Local.min"); ?>
-
 	<script>
 		const rootMargin = "800px";
 		const subUnits = [
@@ -315,10 +314,7 @@ function load_base_js () {
 				}, '*');
 			}
 		}
-
-
 	</script>
-
 <?php
 	css("prism-tomorrow.min.css");
 	css("style");
