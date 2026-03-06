@@ -7457,6 +7457,556 @@ function updateHomologyStats(r) {
     `;
 }
 
+// ============================================================
+// TIME AXIS PROJECTION — EMERGENT HELIX
+// ============================================================
+
+const timeHelixState = {
+    canvas: null,
+    ctx: null,
+    width: 0,
+    height: 0,
+    omega: 2.5,
+    radius: 0.6,
+    rotX: -0.3,
+    rotY: 0.5,
+    dragging: false,
+    lastMouse: null,
+    hovered: null,
+    currentRange: 'modern',
+    ranges: {
+        modern: {
+            start: 1900, end: 2025, step: 1,
+            events: [
+                { year: 1903, label: 'First Flight' },
+                { year: 1914, label: 'WWI Begins' },
+                { year: 1918, label: 'WWI Ends' },
+                { year: 1929, label: 'Wall St. Crash' },
+                { year: 1939, label: 'WWII Begins' },
+                { year: 1945, label: 'WWII Ends' },
+                { year: 1957, label: 'Sputnik' },
+                { year: 1969, label: 'Moon Landing' },
+                { year: 1989, label: 'Berlin Wall Falls' },
+                { year: 1991, label: 'USSR Dissolves' },
+                { year: 2001, label: '9/11' },
+                { year: 2007, label: 'iPhone' },
+                { year: 2020, label: 'COVID-19' },
+                { year: 2022, label: 'ChatGPT' },
+            ]
+        },
+        centuries: {
+            start: 1000, end: 2000, step: 5,
+            events: [
+                { year: 1066, label: 'Norman Conquest' },
+                { year: 1215, label: 'Magna Carta' },
+                { year: 1347, label: 'Black Death' },
+                { year: 1440, label: 'Printing Press' },
+                { year: 1492, label: 'Columbus' },
+                { year: 1517, label: 'Reformation' },
+                { year: 1687, label: 'Newton\'s Principia' },
+                { year: 1776, label: 'US Independence' },
+                { year: 1789, label: 'French Revolution' },
+                { year: 1859, label: 'Origin of Species' },
+                { year: 1903, label: 'First Flight' },
+                { year: 1945, label: 'Atomic Bomb' },
+                { year: 1969, label: 'Moon Landing' },
+            ]
+        },
+        deep: {
+            start: -500, end: 2000, step: 10,
+            events: [
+                { year: -500, label: 'Classical Athens' },
+                { year: -44, label: 'Caesar Assassinated' },
+                { year: 0, label: 'Year Zero' },
+                { year: 476, label: 'Fall of Rome' },
+                { year: 632, label: 'Rise of Islam' },
+                { year: 1066, label: 'Norman Conquest' },
+                { year: 1347, label: 'Black Death' },
+                { year: 1492, label: 'Columbus' },
+                { year: 1776, label: 'US Independence' },
+                { year: 1945, label: 'WWII Ends' },
+                { year: 2000, label: 'Millennium' },
+            ]
+        }
+    }
+};
+
+window.loadTimeRange = function (name) {
+    timeHelixState.currentRange = name;
+
+    document.querySelectorAll('.time-preset-btn').forEach(btn => {
+        btn.style.background = '#64748b';
+    });
+    const activeBtn = document.getElementById('tp-' + name);
+    if (activeBtn) activeBtn.style.background = '#8b5cf6';
+
+    renderTimeHelix();
+};
+
+function initTimeHelix() {
+    const canvas = document.getElementById('canvas-time-helix');
+    if (!canvas) return;
+
+    const st = timeHelixState;
+    st.canvas = canvas;
+
+    function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        st.width = rect.width;
+        st.height = rect.height;
+        canvas.width = rect.width * window.devicePixelRatio;
+        canvas.height = rect.height * window.devicePixelRatio;
+        st.ctx = canvas.getContext('2d');
+        st.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    resizeCanvas();
+
+    // Drag to rotate
+    canvas.addEventListener('mousedown', e => {
+        st.dragging = true;
+        st.lastMouse = { x: e.clientX, y: e.clientY };
+        canvas.style.cursor = 'grabbing';
+    });
+
+    canvas.addEventListener('mousemove', e => {
+        if (st.dragging && st.lastMouse) {
+            const dx = e.clientX - st.lastMouse.x;
+            const dy = e.clientY - st.lastMouse.y;
+            st.rotY += dx * 0.005;
+            st.rotX += dy * 0.005;
+            st.rotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, st.rotX));
+            st.lastMouse = { x: e.clientX, y: e.clientY };
+            renderTimeHelix();
+        } else {
+            // Hover detection
+            const rect = canvas.getBoundingClientRect();
+            const mx = (e.clientX - rect.left);
+            const my = (e.clientY - rect.top);
+            st.hovered = findHoveredPoint(mx, my);
+            renderTimeHelix();
+        }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        st.dragging = false;
+        canvas.style.cursor = 'grab';
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        st.dragging = false;
+        st.hovered = null;
+        canvas.style.cursor = 'grab';
+    });
+
+    // Touch support
+    canvas.addEventListener('touchstart', e => {
+        e.preventDefault();
+        st.dragging = true;
+        st.lastMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', e => {
+        e.preventDefault();
+        if (st.dragging && st.lastMouse) {
+            const dx = e.touches[0].clientX - st.lastMouse.x;
+            const dy = e.touches[0].clientY - st.lastMouse.y;
+            st.rotY += dx * 0.005;
+            st.rotX += dy * 0.005;
+            st.rotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, st.rotX));
+            st.lastMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            renderTimeHelix();
+        }
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', () => { st.dragging = false; });
+
+    // Sliders
+    const omegaSlider = document.getElementById('time-helix-omega');
+    const radiusSlider = document.getElementById('time-helix-radius');
+
+    if (omegaSlider) {
+        omegaSlider.addEventListener('input', () => {
+            st.omega = parseFloat(omegaSlider.value);
+            document.getElementById('time-helix-omega-val').textContent = st.omega.toFixed(1);
+            renderTimeHelix();
+        });
+    }
+    if (radiusSlider) {
+        radiusSlider.addEventListener('input', () => {
+            st.radius = parseFloat(radiusSlider.value);
+            document.getElementById('time-helix-radius-val').textContent = st.radius.toFixed(2);
+            renderTimeHelix();
+        });
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => { resizeCanvas(); renderTimeHelix(); }, 150);
+    });
+
+    renderTimeHelix();
+}
+
+function generateHelixPoints(range, omega, radius) {
+    const points = [];
+    const totalYears = range.end - range.start;
+
+    for (let year = range.start; year <= range.end; year += range.step) {
+        const t = (year - range.start) / totalYears; // 0 to 1
+
+        // Linear component (forward axis)
+        const z = t * 2 - 1; // -1 to 1
+
+        // Cyclical component (helix)
+        const angle = t * omega * Math.PI * 2;
+        const x = radius * Math.cos(angle);
+        const y = radius * Math.sin(angle);
+
+        // Add small noise for realism
+        const noise = 0.02;
+        const nx = x + (Math.sin(year * 0.7) * noise);
+        const ny = y + (Math.cos(year * 1.1) * noise);
+
+        // Check if this year has an event
+        const event = range.events.find(e => e.year === year);
+
+        points.push({
+            year, t, x: nx, y: ny, z,
+            isEvent: !!event,
+            eventLabel: event ? event.label : null,
+            screenX: 0, screenY: 0 // will be computed during render
+        });
+    }
+
+    return points;
+}
+
+function project3D(x, y, z, rotX, rotY, W, H) {
+    // Rotate around Y axis
+    let x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
+    let z1 = x * Math.sin(rotY) + z * Math.cos(rotY);
+    let y1 = y;
+
+    // Rotate around X axis
+    let y2 = y1 * Math.cos(rotX) - z1 * Math.sin(rotX);
+    let z2 = y1 * Math.sin(rotX) + z1 * Math.cos(rotX);
+    let x2 = x1;
+
+    // Perspective projection
+    const fov = 2.5;
+    const scale = fov / (fov + z2 + 2);
+
+    return {
+        sx: W / 2 + x2 * scale * W * 0.35,
+        sy: H / 2 - y2 * scale * H * 0.35,
+        depth: z2,
+        scale: scale
+    };
+}
+
+function findHoveredPoint(mx, my) {
+    const st = timeHelixState;
+    const range = st.ranges[st.currentRange];
+    const points = generateHelixPoints(range, st.omega, st.radius);
+
+    let closest = null;
+    let minDist = 20; // pixel threshold
+
+    points.forEach(p => {
+        const proj = project3D(p.x, p.y, p.z, st.rotX, st.rotY, st.width, st.height);
+        const d = Math.hypot(proj.sx - mx, proj.sy - my);
+        if (d < minDist) {
+            minDist = d;
+            closest = p;
+        }
+    });
+
+    return closest;
+}
+
+function renderTimeHelix() {
+    const st = timeHelixState;
+    if (!st.ctx) return;
+
+    const ctx = st.ctx;
+    const W = st.width;
+    const H = st.height;
+    const range = st.ranges[st.currentRange];
+    const points = generateHelixPoints(range, st.omega, st.radius);
+
+    const showConnections = document.getElementById('time-show-connections')?.checked ?? true;
+    const showEvents = document.getElementById('time-show-events')?.checked ?? true;
+    const showShadow = document.getElementById('time-show-shadow')?.checked ?? true;
+
+    // ── Clear ──
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, W, H);
+
+    // ── Grid floor ──
+    ctx.strokeStyle = 'rgba(51, 65, 85, 0.15)';
+    ctx.lineWidth = 0.5;
+    for (let i = -10; i <= 10; i++) {
+        const p1 = project3D(i * 0.2, -1, -1, st.rotX, st.rotY, W, H);
+        const p2 = project3D(i * 0.2, -1, 1, st.rotX, st.rotY, W, H);
+        ctx.beginPath(); ctx.moveTo(p1.sx, p1.sy); ctx.lineTo(p2.sx, p2.sy); ctx.stroke();
+
+        const p3 = project3D(-1, -1, i * 0.2, st.rotX, st.rotY, W, H);
+        const p4 = project3D(1, -1, i * 0.2, st.rotX, st.rotY, W, H);
+        ctx.beginPath(); ctx.moveTo(p3.sx, p3.sy); ctx.lineTo(p4.sx, p4.sy); ctx.stroke();
+    }
+
+    // Project all points
+    const projected = points.map(p => {
+        const proj = project3D(p.x, p.y, p.z, st.rotX, st.rotY, W, H);
+        return { ...p, sx: proj.sx, sy: proj.sy, depth: proj.depth, scale: proj.scale };
+    });
+
+    // Sort by depth (back to front)
+    const sorted = [...projected].sort((a, b) => a.depth - b.depth);
+
+    // ── 2D Shadow (floor projection) ──
+    if (showShadow) {
+        // Project with y=0 (flatten cyclical component)
+        const shadowPoints = points.map(p => {
+            const proj = project3D(p.x * 0.3, -0.9, p.z, st.rotX, st.rotY, W, H);
+            return { sx: proj.sx, sy: proj.sy };
+        });
+
+        if (shadowPoints.length > 1) {
+            ctx.beginPath();
+            shadowPoints.forEach((sp, i) => {
+                if (i === 0) ctx.moveTo(sp.sx, sp.sy);
+                else ctx.lineTo(sp.sx, sp.sy);
+            });
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.12)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+
+        // Shadow dots
+        shadowPoints.forEach(sp => {
+            ctx.beginPath();
+            ctx.arc(sp.sx, sp.sy, 1.5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.1)';
+            ctx.fill();
+        });
+    }
+
+    // ── Timeline thread ──
+    if (showConnections && projected.length > 1) {
+        // Draw segments colored by era
+        for (let i = 0; i < projected.length - 1; i++) {
+            const p1 = projected[i];
+            const p2 = projected[i + 1];
+
+            // Color by time: blue (past) → purple (mid) → cyan (recent)
+            const t = p1.t;
+            const hue = 200 + t * 160; // 200 (blue) → 360/0 (red-ish)
+            const alpha = 0.3 + p1.scale * 0.3;
+
+            ctx.beginPath();
+            ctx.moveTo(p1.sx, p1.sy);
+            ctx.lineTo(p2.sx, p2.sy);
+            ctx.strokeStyle = `hsla(${hue % 360}, 70%, 60%, ${alpha})`;
+            ctx.lineWidth = 1.5 * p1.scale * 2;
+            ctx.stroke();
+        }
+
+        // Glow pass
+        for (let i = 0; i < projected.length - 1; i++) {
+            const p1 = projected[i];
+            const p2 = projected[i + 1];
+            const t = p1.t;
+            const hue = 200 + t * 160;
+
+            ctx.beginPath();
+            ctx.moveTo(p1.sx, p1.sy);
+            ctx.lineTo(p2.sx, p2.sy);
+            ctx.strokeStyle = `hsla(${hue % 360}, 70%, 60%, 0.08)`;
+            ctx.lineWidth = 6 * p1.scale * 2;
+            ctx.stroke();
+        }
+    }
+
+    // ── Points (sorted back to front) ──
+    sorted.forEach(p => {
+        const dotR = p.isEvent ? 5 * p.scale * 2 : 2.5 * p.scale * 2;
+        const isHovered = st.hovered && st.hovered.year === p.year;
+
+        if (p.isEvent) {
+            // Event marker: gold
+            ctx.beginPath();
+            ctx.arc(p.sx, p.sy, dotR + 4, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(245, 158, 11, ${0.15 * p.scale * 2})`;
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(p.sx, p.sy, dotR, 0, Math.PI * 2);
+            ctx.fillStyle = '#f59e0b';
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Event label
+            if (showEvents) {
+                ctx.font = `bold ${Math.round(10 * p.scale * 1.5)}px system-ui, sans-serif`;
+                ctx.textAlign = 'left';
+                ctx.fillStyle = `rgba(245, 158, 11, ${0.6 + p.scale * 0.4})`;
+                ctx.fillText(`${p.year}: ${p.eventLabel}`, p.sx + dotR + 6, p.sy + 4);
+            }
+        } else {
+            // Regular year dot
+            const t = p.t;
+            const hue = 200 + t * 160;
+
+            ctx.beginPath();
+            ctx.arc(p.sx, p.sy, dotR, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${hue % 360}, 70%, 65%, ${0.4 + p.scale * 0.4})`;
+            ctx.fill();
+        }
+
+        // Hover highlight
+        if (isHovered) {
+            ctx.beginPath();
+            ctx.arc(p.sx, p.sy, dotR + 8, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.font = 'bold 13px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#fff';
+            ctx.fillText(p.year.toString(), p.sx, p.sy - dotR - 12);
+
+            if (p.eventLabel) {
+                ctx.font = '11px system-ui, sans-serif';
+                ctx.fillStyle = '#fbbf24';
+                ctx.fillText(p.eventLabel, p.sx, p.sy - dotR - 26);
+            }
+        }
+    });
+
+    // ── Axis labels ──
+    const pastProj = project3D(0, 0, -1, st.rotX, st.rotY, W, H);
+    const futureProj = project3D(0, 0, 1, st.rotX, st.rotY, W, H);
+
+    ctx.font = 'bold 12px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.5)';
+    ctx.fillText(`← ${range.start}`, pastProj.sx, pastProj.sy + 20);
+    ctx.fillText(`${range.end} →`, futureProj.sx, futureProj.sy + 20);
+
+    // ── Info panel update ──
+    updateTimeHelixInfo();
+    updateTimeHelixStats(points, range);
+}
+
+function updateTimeHelixInfo() {
+    const st = timeHelixState;
+    const infoDiv = document.getElementById('time-helix-info');
+    const propsDiv = document.getElementById('time-helix-properties');
+    if (!infoDiv || !propsDiv) return;
+
+    if (st.hovered) {
+        const p = st.hovered;
+        infoDiv.innerHTML = `
+            <div style="margin-bottom: 6px;">
+                <b style="font-size: 1.2em; color: #1e293b;">${p.year}</b>
+                ${p.eventLabel ? `<br><span style="color: #f59e0b; font-weight: bold;">${p.eventLabel}</span>` : ''}
+            </div>
+            <div style="font-size: 0.85em; color: #94a3b8;">
+                <b>Position:</b> t = ${p.t.toFixed(3)}<br>
+                <b>Helix X:</b> ${p.x.toFixed(3)}<br>
+                <b>Helix Y:</b> ${p.y.toFixed(3)}<br>
+                <b>Linear Z:</b> ${p.z.toFixed(3)}
+            </div>
+        `;
+    } else {
+        infoDiv.innerHTML = `
+            <span style="color: #94a3b8;">Hover over any point to see the year and associated historical event.
+            The helix structure emerges from statistical co-occurrence alone — no one told the model about time.</span>
+        `;
+    }
+
+    // Properties panel
+    const st2 = timeHelixState;
+    const rLabel = st2.radius < 0.1 ? 'Nearly flat (line)' :
+                   st2.radius < 0.3 ? 'Subtle spiral' :
+                   st2.radius < 0.6 ? 'Moderate helix' :
+                                      'Strong helix';
+    const oLabel = st2.omega < 1 ? 'Very loose (few loops)' :
+                   st2.omega < 3 ? 'Moderate winding' :
+                                   'Tight winding (many loops)';
+
+    propsDiv.innerHTML = `
+        <div style="margin-bottom: 6px;">
+            <b>Cyclical Strength (r):</b> ${st2.radius.toFixed(2)}<br>
+            <span style="color: #94a3b8; font-size: 0.85em;">${rLabel}</span>
+        </div>
+        <div style="margin-bottom: 6px;">
+            <b>Tightness (ω):</b> ${st2.omega.toFixed(1)}<br>
+            <span style="color: #94a3b8; font-size: 0.85em;">${oLabel}</span>
+        </div>
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 8px 0;">
+        <div style="font-size: 0.8em; color: #94a3b8;">
+            <b>Interpretation:</b><br>
+            At <b>r = 0</b>, the helix collapses to a straight line — pure linear time, no cyclical patterns.
+            As <b>r</b> increases, the cyclical component (decades, centuries) becomes visible.
+            <b>ω</b> controls how many "loops per era" — higher values mean the model distinguishes finer cyclical patterns.
+        </div>
+    `;
+}
+
+function updateTimeHelixStats(points, range) {
+    const statsDiv = document.getElementById('time-helix-stats');
+    if (!statsDiv) return;
+
+    const st = timeHelixState;
+    const totalYears = range.end - range.start;
+    const numPoints = points.length;
+    const numEvents = points.filter(p => p.isEvent).length;
+    const loopsCount = (st.omega * totalYears / (range.end - range.start)).toFixed(1);
+
+    // Compute average nearest-neighbor distance (temporal coherence metric)
+    let totalNNDist = 0;
+    for (let i = 1; i < points.length; i++) {
+        const dx = points[i].x - points[i - 1].x;
+        const dy = points[i].y - points[i - 1].y;
+        const dz = points[i].z - points[i - 1].z;
+        totalNNDist += Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+    const avgNNDist = totalNNDist / (points.length - 1);
+
+    // Linearity score: how well does a straight line fit vs the helix?
+    // At r=0, linearity = 1.0; at high r, linearity drops
+    const linearity = Math.max(0, 1 - st.radius * 1.2);
+
+    statsDiv.innerHTML = `
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Time Span</div>
+            <div style="font-size:1.2em; font-weight:bold; color:#3b82f6;">${range.start < 0 ? Math.abs(range.start) + ' BC' : range.start} – ${range.end}</div>
+            <div style="font-size:0.7em; color:#94a3b8;">${totalYears} years</div>
+        </div>
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Helix Loops</div>
+            <div style="font-size:1.4em; font-weight:bold; color:#8b5cf6;">${loopsCount}</div>
+            <div style="font-size:0.7em; color:#94a3b8;">full rotations</div>
+        </div>
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Linearity</div>
+            <div style="font-size:1.4em; font-weight:bold; color:${linearity > 0.7 ? '#10b981' : linearity > 0.3 ? '#f59e0b' : '#ef4444'};">${(linearity * 100).toFixed(0)}%</div>
+            <div style="font-size:0.7em; color:#94a3b8;">line vs. helix</div>
+        </div>
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Key Events</div>
+            <div style="font-size:1.4em; font-weight:bold; color:#f59e0b;">${numEvents}</div>
+            <div style="font-size:0.7em; color:#94a3b8;">of ${numPoints} points</div>
+        </div>
+    `;
+}
+
 function loadEmbeddingModule() {
     const fastConfig = {
         displayModeBar: false,
@@ -7655,6 +8205,11 @@ function loadEmbeddingModule() {
     // 22. High-Dimensional Holes — Persistent Homology
     _embLazyRegister('canvas-homology-space', () => {
         initHomology();
+    });
+
+    // 23. Time Axis Projection — Emergent Helix
+    _embLazyRegister('canvas-time-helix', () => {
+        initTimeHelix();
     });
 
 
