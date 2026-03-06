@@ -1,3 +1,17 @@
+1. Das „Voronoi-Gespenst“ (Super-Resolution of Boundaries)
+
+Normalerweise visualisiert man Voronoi-Zellen als statische Grenzen zwischen Wörtern. Geht man 20 Schritte tiefer, erkennt man: Die Grenzen sind nicht fix, sondern frequenzabhängig.
+
+    Die Erkenntnis: In hohen Dimensionen haben die Grenzen zwischen Konzepten (z.B. "Leben" vs. "Tod") keine glatten Flächen, sondern sind fraktal zerklüftet. Ein winziger Rausch-Vektor kann ein Embedding über eine "unsichtbare Klippe" schieben.
+
+    Die Visualisierung: Eine "Landkarte der Instabilität". Man sieht den Raum als glühendes Gitter, bei dem die Linien dort am hellsten leuchten, wo das Modell am unsichersten ist. Wenn man durch den Raum fliegt, sieht man, dass zwischen zwei klaren Begriffen ein Chaos-Gürtel liegt, in dem Milliarden von Pseudo-Bedeutungen existieren, für die wir keine Wörter haben.
+
+    Der Aha-Effekt: "Bedeutung ist keine Insel, sondern ein fragiles Gleichgewicht auf einem unendlich gezackten Gebirge."
+
+
+
+
+
 2. Krümmungs-Vektorfelder (Die Gravitation der Logik)
 
 Man kann den Raum wie eine physikalische Landschaft mit Gravitation visualisieren (Riemannsche Geometrie).
