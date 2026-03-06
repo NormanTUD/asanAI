@@ -173,7 +173,7 @@ Some derivatives appear so frequently in AI and science that they are worth memo
 | $\ln(x)$ | $\frac{1}{x}$ | Natural logarithm |
 | $\sin(x)$ | $\cos(x)$ | |
 | $\cos(x)$ | $-\sin(x)$ | |
-| $\sigma(x) = \frac{1}{1+e^{-x}}$ | $\sigma(x)(1-\sigma(x))$ | The sigmoid, crucial for neural networks |
+| $\sigma(x) = \frac{1}{1+e^{-x}}$ | $\sigma(x)(1-\sigma(x))$ | The sigmoid, crucial activation function for neural networks |
 
 The fact that $e^x$ is its own derivative is not a coincidence, but it is essentially the *definition* of $e$: the number $e$ is the unique base for which the exponential function has this self-replicating property.
 
