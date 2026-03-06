@@ -2872,3 +2872,9 @@ blockquote,
 	transition: .4s;
 	border-radius: 50%;
 }
+
+.loader-section-row:last-child:nth-child(odd) {
+	justify-content: center;
+	text-align: center;
+	width: 100%;
+}
