@@ -910,16 +910,143 @@ function addCuriosityScore() {
 	const badge = document.createElement('div');
 	badge.id = 'curiosity-score';
 	badge.style.cssText = `
-    position: fixed; top: 14px; left: 20px; z-index: 9998;
-    background: rgba(20, 20, 30, 0.85);
-    padding: 6px 14px; border-radius: 20px;
-    font-size: 11px; font-family: system-ui, sans-serif;
-    color: #666; backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.06);
-    opacity: 0; transition: opacity 0.2s ease; /* Reduced transition duration */
-    pointer-events: none;
-  `;
+		position: fixed; top: 14px; left: 20px; z-index: 9998;
+		background: rgba(20, 20, 30, 0.85);
+		padding: 6px 14px; border-radius: 20px;
+		font-size: 11px; font-family: system-ui, sans-serif;
+		color: #666; backdrop-filter: blur(10px);
+		border: 1px solid rgba(255,255,255,0.06);
+		opacity: 0; transition: opacity 0.2s ease;
+		pointer-events: none;
+		overflow: hidden;
+	`;
 	document.body.appendChild(badge);
+
+	// Internal structure for animated content
+	const badgeContent = document.createElement('span');
+	badgeContent.className = 'curiosity-content';
+	badgeContent.style.cssText = 'display: inline-block; white-space: nowrap;';
+	badge.appendChild(badgeContent);
+
+	let currentLabel = '';
+	let isSwapping = false;
+
+	// --- Animated badge update ---
+	const updateBadge = (emoji, label, count, total, isComplete) => {
+		const newText = `${emoji} ${label} (${count}/${total})`;
+
+		// If badge isn't visible yet or same label, just update without dissolve
+		if (badge.style.opacity === '0' || !currentLabel) {
+			badge.style.opacity = '1';
+			renderBadgeContent(emoji, label, count, total, isComplete, true);
+			currentLabel = label;
+			return;
+		}
+
+		// If label changed, do a dissolve-swap
+		if (label !== currentLabel && !isSwapping) {
+			isSwapping = true;
+
+			// Phase 1: Dissolve out current content
+			badgeContent.style.transition = 'opacity 0.2s ease, filter 0.2s ease';
+			badgeContent.style.opacity = '0';
+			badgeContent.style.filter = 'blur(3px)';
+
+			setTimeout(() => {
+				// Phase 2: Swap content and animate in
+				renderBadgeContent(emoji, label, count, total, isComplete, true);
+				currentLabel = label;
+
+				setTimeout(() => { isSwapping = false; }, 500);
+			}, 220);
+		} else {
+			// Same label, just update the counter with a quick flip
+			animateCounterUpdate(count, total);
+		}
+	};
+
+	// --- Render badge with optional character stagger ---
+	const renderBadgeContent = (emoji, label, count, total, isComplete, animate) => {
+		badgeContent.innerHTML = '';
+		badgeContent.style.opacity = '1';
+		badgeContent.style.filter = 'blur(0)';
+
+		// Emoji with glow pulse
+		const emojiSpan = document.createElement('span');
+		emojiSpan.className = 'curiosity-emoji';
+		emojiSpan.textContent = emoji + ' ';
+		if (animate) {
+			emojiSpan.style.cssText = 'display:inline-block; opacity:0; filter:blur(4px); transform:scale(0.7); transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);';
+			setTimeout(() => {
+				emojiSpan.style.opacity = '1';
+				emojiSpan.style.filter = 'blur(0)';
+				emojiSpan.style.transform = 'scale(1)';
+			}, 30);
+		}
+		badgeContent.appendChild(emojiSpan);
+
+		// Label text — staggered character reveal
+		const labelSpan = document.createElement('span');
+		labelSpan.style.color = '#ddd';
+
+		if (animate) {
+			const perChar = Math.max(10, Math.min(25, 400 / label.length));
+			for (let i = 0; i < label.length; i++) {
+				const ch = document.createElement('span');
+				ch.textContent = label[i];
+				ch.style.cssText = `display:inline-block; opacity:0; filter:blur(3px); transform:translateY(2px); transition: opacity 0.25s ease, filter 0.25s ease, transform 0.25s ease;`;
+				if (label[i] === ' ') ch.style.width = '0.25em';
+				labelSpan.appendChild(ch);
+
+				setTimeout(() => {
+					ch.style.opacity = '1';
+					ch.style.filter = 'blur(0)';
+					ch.style.transform = 'translateY(0)';
+				}, 80 + (i * perChar)); // 80ms offset to let emoji pop first
+			}
+		} else {
+			labelSpan.textContent = label;
+		}
+		badgeContent.appendChild(labelSpan);
+
+		// Counter
+		const counterSpan = document.createElement('span');
+		counterSpan.className = 'curiosity-counter';
+		counterSpan.style.color = '#555';
+		counterSpan.textContent = ` (${count}/${total})`;
+
+		if (animate) {
+			counterSpan.style.cssText += '; opacity:0; filter:blur(3px); transition: opacity 0.3s ease, filter 0.3s ease;';
+			const counterDelay = 80 + (label.length * Math.max(10, Math.min(25, 400 / label.length))) + 100;
+			setTimeout(() => {
+				counterSpan.style.opacity = '1';
+				counterSpan.style.filter = 'blur(0)';
+			}, counterDelay);
+		}
+		badgeContent.appendChild(counterSpan);
+
+		// Completion glow
+		if (isComplete) {
+			badge.style.color = '#ce93d8';
+			badge.style.borderColor = 'rgba(171,71,188,0.3)';
+		}
+	};
+
+	// --- Quick counter flip for same-label updates ---
+	const animateCounterUpdate = (count, total) => {
+		const counter = badgeContent.querySelector('.curiosity-counter');
+		if (!counter) return;
+
+		counter.style.transition = 'opacity 0.15s ease, filter 0.15s ease';
+		counter.style.opacity = '0';
+		counter.style.filter = 'blur(3px)';
+
+		setTimeout(() => {
+			counter.textContent = ` (${count}/${total})`;
+			counter.style.opacity = '1';
+			counter.style.filter = 'blur(0)';
+		}, 160);
+	};
 
 	optionals.forEach((block, i) => {
 		const header = block.querySelector('.optional-header');
@@ -935,17 +1062,14 @@ function addCuriosityScore() {
 				const count = opened.size;
 				const pct = Math.round((count / total) * 100);
 
-				badge.style.opacity = '1';
-
-				// Curiosity labels
 				let label = 'Curious';
 				let emoji = '🔎';
-				if (pct >= 100) { label = 'Insatiably Curious'; emoji = '⭐'; } // Changed emoji
+				if (pct >= 100) { label = 'Insatiably Curious'; emoji = '⭐'; }
 				else if (pct >= 75) { label = 'Very Curious'; emoji = '🔬'; }
 				else if (pct >= 50) { label = 'Curious'; emoji = '🔎'; }
 				else if (pct >= 25) { label = 'Getting Curious'; emoji = '👀'; }
 
-				badge.innerHTML = `${emoji} <span style="color:#ddd">${label}</span> <span style="color:#555">(${count}/${total})</span>`;
+				updateBadge(emoji, label, count, total, count === total);
 
 				// Pulse
 				badge.style.transform = 'scale(1.06)';
@@ -955,16 +1079,10 @@ function addCuriosityScore() {
 					badge.style.borderColor = 'rgba(255,255,255,0.06)';
 				}, 700);
 
-				// Full completion
-				if (count === total) {
-					badge.style.color = '#ce93d8';
-					badge.style.borderColor = 'rgba(171,71,188,0.3)';
-				}
-
-				// Make badge disappear faster after a delay
+				// Fade out after delay
 				setTimeout(() => {
 					badge.style.opacity = '0';
-				}, 1500); // Badge disappears after 1.5 seconds
+				}, 2500);
 			}
 		};
 	});
