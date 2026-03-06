@@ -8,7 +8,7 @@
     <?php load_base_js(); ?>
 </head>
 
-<div id="loading-overlay">
+<div id="loader">
 	<div class="spinner"></div>
 	<p>Initializing AI Course...</p>
 </div>
@@ -60,20 +60,8 @@
 			updateLoadingStatus("Processing Citations...");
 			await bibtexify();
 
-			updateLoadingStatus("Building Table of Contents...");
-
-			// 2. Finalize
-			$("#contents").show();
-
-			// 3. Hide Overlay
-			const overlay = document.getElementById('loading-overlay');
-			if (overlay) {
-				overlay.style.opacity = '0';
-				setTimeout(() => {
-				overlay.style.display = 'none';
-				}, 1000);
-			}
-
+			revealContent();
+			
 			sendHeight();
 
 			// ─── Single call replaces all duplicates ───

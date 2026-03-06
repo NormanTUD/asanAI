@@ -1,4 +1,6 @@
 function toc() {
+	updateLoadingStatus("Building Table of Contents...");
+
 	var tocDiv = document.getElementById("toc");
 	var contents = document.getElementById("contents");
 	if (!contents) {

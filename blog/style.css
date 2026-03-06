@@ -44,7 +44,7 @@ html {
 	--mn-shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
-#contents, #loading-overlay {
+#contents, #loader {
 	font-family: sans-serif;
 	margin: 0px;
 	cursor: default;
@@ -301,7 +301,7 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 .assistant-frame pre { margin-top: 15px !important; }
 .stage-footer { margin-bottom: 15px; font-size: 0.7rem; color: #94a3b8; font-style: italic; text-align: center; }
 
-#loading-overlay {
+#loader {
 	position: fixed;
 	top: 0;
 	left: 0;

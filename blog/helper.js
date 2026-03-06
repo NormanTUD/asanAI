@@ -110,14 +110,61 @@ function renderMarkdown() {
 
 function revealContent() {
 	const loader = document.getElementById('loader');
-	const content = document.getElementById('all');
+	const content = document.getElementById('contents');
 
 	if (loader) loader.style.display = 'none';
-	if (content) {
-		content.style.opacity = '0';
-		content.style.display = 'block';
-		content.style.transition = 'opacity 0.5s ease';
-		requestAnimationFrame(() => { content.style.opacity = '1'; });
+	if (!content) {
+		console.error("#contents not found");
+		return;
+	}
+
+	$(loader).remove();
+
+	content.style.display = 'block';
+	content.style.opacity = '0';
+
+	// Phase 1: Reading progress bar materializes first
+	const progressBar = document.getElementById('reading-progress');
+	if (progressBar) {
+		progressBar.style.opacity = '0';
+		progressBar.style.filter = 'blur(4px)';
+		progressBar.style.transition = 'opacity 0.4s ease, filter 0.4s ease';
+		requestAnimationFrame(() => {
+			progressBar.style.opacity = '1';
+			progressBar.style.filter = 'blur(0)';
+		});
+	}
+
+	// Phase 2: Container fades in with blur-to-sharp
+	requestAnimationFrame(() => {
+		content.style.filter = 'blur(3px)';
+		content.style.transform = 'translateY(6px)';
+		content.style.transition = 'opacity 0.5s ease, filter 0.6s ease, transform 0.6s ease';
+
+		requestAnimationFrame(() => {
+			content.style.opacity = '1';
+			content.style.filter = 'blur(0)';
+			content.style.transform = 'translateY(0)';
+		});
+	});
+
+	// Phase 3: Staggered section cascade — each top-level section drifts in
+	const sections = content.querySelectorAll(':scope > section, :scope > .category-block, :scope > h1, :scope > h2');
+	if (sections.length > 0) {
+		const perSection = Math.max(40, Math.min(120, 800 / sections.length));
+
+		sections.forEach((section, i) => {
+			section.style.opacity = '0';
+			section.style.filter = 'blur(3px)';
+			section.style.transform = 'translateY(8px)';
+			section.style.transition = 'opacity 0.45s ease, filter 0.45s ease, transform 0.45s ease';
+
+			setTimeout(() => {
+				section.style.opacity = '1';
+				section.style.filter = 'blur(0)';
+				section.style.transform = 'translateY(0)';
+			}, 300 + (i * perSection)); // 300ms offset to let container start first
+		});
 	}
 }
 

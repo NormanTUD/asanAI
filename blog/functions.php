@@ -177,7 +177,7 @@ function load_base_js () {
 
 		function updateLoadingStatus(message) {
 			console.info(message);
-			const statusText = document.querySelector('#loading-overlay p');
+			const statusText = document.querySelector('#loader p');
 			if (statusText) statusText.textContent = message;
 		}
 
@@ -533,21 +533,9 @@ if(!server_php_self_ends_with_index_php()) {
 					renderMarkdown();
 					make_external_a_href_target_blank();
 
-					// Show content
-					$("#contents").show();
+					revealContent();
 
-					// Fade out overlay
-					const overlay = document.getElementById('loading-overlay');
-					if (overlay) {
-						overlay.style.opacity = '0';
-						setTimeout(() => {
-							overlay.style.display = 'none';
-						}, 1000);
-					}
-
-					// Single call for all shared UI features
 					sharedPostLoadInit();
-
 				} catch (error) {
 					console.error("Initialization failed:", error);
 					updateLoadingStatus("Error loading page. Please refresh. " + error);
@@ -557,7 +545,7 @@ if(!server_php_self_ends_with_index_php()) {
 	</head>
 	<body>
 
-		<div id="loading-overlay">
+		<div id="loader">
 			<div class="spinner"></div>
 			<p>Initializing...</p>
 		</div>
