@@ -271,7 +271,6 @@ function load_base_js () {
 			toc();
 			addReadingProgress();
 			addCuriosityScore();
-			//addReturnVisitorWarmth();
 			addKonamiEgg();
 			addConsoleEasterEggs();
 		}
