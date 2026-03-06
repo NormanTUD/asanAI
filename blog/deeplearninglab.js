@@ -327,10 +327,65 @@ const DeepLab = {
 	}
 };
 
+// ============================================================
+// LAZY LOADING FOR DEEP LEARNING MODULE
+// ============================================================
+
+const _dlLazyRegistry = [];
+let _dlLazyObserver = null;
+
+function _dlLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _dlLazyRegistry.push({ el, initFn, initialized: false });
+}
+
+function _dlLazyCreateObserver() {
+    if (_dlLazyObserver) return;
+
+    _dlLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _dlLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _dlLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin // uses the already-defined global const
+    });
+
+    _dlLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _dlLazyObserver.observe(r.el);
+        }
+    });
+}
+
+// ============================================================
+// REPLACEMENT: loadDeepLearningModule (drop-in replacement)
+// ============================================================
+
 async function loadDeepLearningModule() {
-	updateLoadingStatus("Loading section about deep learning...");
-	DeepLab.init('lin');
-	DeepLab.init('deep');
-	DeepLab.setupObservers();
-	return Promise.resolve();
+    updateLoadingStatus("Loading section about deep learning...");
+
+    // 1. Linear regression block
+    _dlLazyRegister('lin-loss-chart', () => {
+        DeepLab.init('lin');
+        DeepLab.setupObservers();
+    });
+
+    // 2. Deep network block (XOR / AND)
+    _dlLazyRegister('deep-loss-chart', () => {
+        DeepLab.init('deep');
+        DeepLab.setupObservers();
+    });
+
+    // Start observing
+    _dlLazyCreateObserver();
+
+    return Promise.resolve();
 }

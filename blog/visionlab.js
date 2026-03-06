@@ -710,19 +710,70 @@ window.FeatureLab = {
 // ============================================================
 // MODULE LOADER
 // ============================================================
-async function loadVisionModule() {
-	console.info('[visionlab] loadVisionModule: starting...');
-	updateLoadingStatus("Loading section about Computer Vision...");
-	cacheDOMRefs();
+// ============================================================
+// LAZY LOADING FOR VISION MODULE
+// ============================================================
 
-	const missingCritical = ['srcCanvas', 'resCanvas', 'featSrc', 'filterGrid', 'kernelTable', 'kSize']
-		.filter(key => !DOM[key]);
-	if (missingCritical.length > 0) {
-		console.error(`[visionlab] loadVisionModule: missing critical DOM elements: ${missingCritical.join(', ')}. Some features may not work.`);
-	}
+const _visLazyRegistry = [];
+let _visLazyObserver = null;
 
-	FeatureLab.init();
-	initVisionLab();
-	console.info('[visionlab] loadVisionModule: complete.');
-	return Promise.resolve();
+function _visLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _visLazyRegistry.push({ el, initFn, initialized: false });
 }
+
+function _visLazyCreateObserver() {
+    if (_visLazyObserver) return;
+
+    _visLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _visLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _visLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin // uses the already-defined global const
+    });
+
+    _visLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _visLazyObserver.observe(r.el);
+        }
+    });
+}
+
+// ============================================================
+// REPLACEMENT: loadVisionModule (drop-in replacement)
+// ============================================================
+
+async function loadVisionModule() {
+    console.info('[visionlab] loadVisionModule: registering lazy sections...');
+    updateLoadingStatus("Loading section about Computer Vision...");
+
+    // 1. Convolution Explorer (kernel table + source/result canvases)
+    _visLazyRegister('conv-src-display', () => {
+        console.info('[visionlab] lazy: initializing convolution explorer');
+        cacheDOMRefs();
+        initVisionLab();
+    });
+
+    // 2. Feature Lab (filter grid + heatmap)
+    _visLazyRegister('filter-grid', () => {
+        console.info('[visionlab] lazy: initializing FeatureLab');
+        cacheDOMRefs();
+        FeatureLab.init();
+    });
+
+    // Start observing
+    _visLazyCreateObserver();
+
+    console.info('[visionlab] loadVisionModule: lazy registration complete.');
+    return Promise.resolve();
+}
+

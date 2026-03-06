@@ -1661,8 +1661,192 @@ async function renderPoissonLab() {
 	Plotly.newPlot('poisson-chart', data, layout);
 }
 
+// ============================================================
+// LAZY LOADING FOR STATISTICS MODULE
+// ============================================================
+
+const _statLazyRegistry = [];
+let _statLazyObserver = null;
+let _statZarathustraInitialized = false;
+
+function _statLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _statLazyRegistry.push({ el, initFn, initialized: false });
+}
+
+function _statLazyCreateObserver() {
+    if (_statLazyObserver) return;
+
+    _statLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _statLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _statLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin // uses the already-defined global const
+    });
+
+    _statLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _statLazyObserver.observe(r.el);
+        }
+    });
+}
+
+// Helper: ensures ZarathustraLab.init() is called only once,
+// shared by convergence, markov, and zipf sections
+async function _statEnsureZarathustra() {
+    if (_statZarathustraInitialized) return;
+    _statZarathustraInitialized = true;
+    await ZarathustraLab.init();
+}
+
+// ============================================================
+// REPLACEMENT: loadStatisticsModule (drop-in replacement)
+// ============================================================
+
 async function loadStatisticsModule() {
-	updateLoadingStatus("Loading section about statistics...");
-	await initStatistics();
-	return Promise.resolve();
+    updateLoadingStatus("Loading section about statistics...");
+
+    // 1. Bernoulli Distribution
+    _statLazyRegister('bernoulli-chart', () => {
+        renderExtremeLab();
+    });
+
+    // 2. Dice Distribution (Binomial)
+    _statLazyRegister('dice-matrix-container', () => {
+        renderDiceDistribution();
+    });
+
+    // 3. Ceres Astronomy (Normal Dist origin)
+    _statLazyRegister('plot-astro', () => {
+        renderCeresAstronomy();
+    });
+
+    // 4. Normal Distribution (Gaussian)
+    _statLazyRegister('plot-gaussian', () => {
+        renderNormalDistribution();
+    });
+
+    // 5. Central Limit Theorem
+    _statLazyRegister('plot-clt', () => {
+        rollCLT();
+    });
+
+    // 6. Gauss-Legendre (Least Squares)
+    _statLazyRegister('plot-gauss-legendre', () => {
+        renderGaussLegendreComplex();
+    });
+
+    // 7. Gumbel Distribution (shares renderExtremeLab with Bernoulli,
+    //    but renderExtremeLab inits both — if Bernoulli already triggered it, this is a no-op)
+    _statLazyRegister('gumbel-chart', () => {
+        // renderExtremeLab handles both bernoulli + gumbel,
+        // but if it was already called by bernoulli-chart, the plots exist.
+        // Re-call is safe since it uses Plotly.newPlot.
+        renderExtremeLab();
+    });
+
+    // 8. Poisson Distribution
+    _statLazyRegister('poisson-chart', () => {
+        renderPoissonLab();
+    });
+
+    // 9. Correlation Playground (Pearson)
+    _statLazyRegister('plot-correlation', () => {
+        renderCorrelationPlayground();
+    });
+
+    // 10. Bayesian Updating
+    _statLazyRegister('plot-bayesian-migration', () => {
+        renderBayesianComplex();
+    });
+
+    // 11. Bayesian Language Lab
+    _statLazyRegister('plot-bayesian-languages', () => {
+        renderBayesianLanguageLab();
+    });
+
+    // 12. Entropy
+    _statLazyRegister('plot-entropy', () => {
+        renderEntropy();
+    });
+
+    // 13. Standardization (Z-Scores)
+    _statLazyRegister('z-math', () => {
+        renderStandardScaler();
+    });
+
+    // 14. Zipf's Law (needs Zarathustra text)
+    _statLazyRegister('plot-zipf-zarathustra', async () => {
+        await _statEnsureZarathustra();
+        // renderZipf is already called inside ZarathustraLab.init(),
+        // but if convergence triggered init first, Zipf is already rendered.
+        // Safe to call again.
+        ZarathustraLab.renderZipf();
+    });
+
+    // 15. Dirichlet Distribution
+    _statLazyRegister('plot-dirichlet-simplex', () => {
+        renderDirichletLab();
+    });
+
+    // 16. GMM Context Lab (Latent Variables)
+    _statLazyRegister('plot-gmm-clusters', () => {
+        renderGMMContextLab();
+    });
+
+    // 17. Law of Large Numbers — Zarathustra Convergence (needs Zarathustra text)
+    _statLazyRegister('plot-zarathustra-convergence', async () => {
+        await _statEnsureZarathustra();
+        ZarathustraLab.render();
+    });
+
+    // 18. Markov Transitions (needs Zarathustra text)
+    _statLazyRegister('plot-markov-transitions', async () => {
+        await _statEnsureZarathustra();
+        ZarathustraLab.renderMarkovLab();
+    });
+
+    // 19. Markov Model (corpus textarea)
+    _statLazyRegister('markov-corpus', () => {
+        trainMarkovModel();
+    });
+
+    // 20. Boltzmann Distribution
+    _statLazyRegister('boltz-plot', () => {
+        LLMStatsLab.renderBoltzmann();
+    });
+
+    // 21. MLE (Fisherian Fit)
+    _statLazyRegister('mle-plot', () => {
+        LLMStatsLab.renderMLE();
+    });
+
+    // 22. Chain Rule (Kolmogorov)
+    _statLazyRegister('cr-plot', () => {
+        LLMStatsLab.renderChainRule();
+    });
+
+    // 23. KL Divergence
+    _statLazyRegister('kl-plot', () => {
+        LLMStatsLab.renderKL();
+    });
+
+    // 24. Bag of Words
+    _statLazyRegister('bow-plot', () => {
+        renderBoW();
+    });
+
+    // Start observing
+    _statLazyCreateObserver();
+
+    return Promise.resolve();
 }
