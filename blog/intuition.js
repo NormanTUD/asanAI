@@ -1749,17 +1749,137 @@ const FFNViz = {
     }
 };
 
-async function loadIntuitionModule() {
-	// Add CSS animation for token appearance
-	const intuitionStyle = document.createElement('style');
-	intuitionStyle.textContent = `
-	    @keyframes tokenAppear {
-		from { opacity: 0; transform: translateY(10px) scale(0.8); }
-		to { opacity: 1; transform: translateY(0) scale(1); }
-	    }
-	`;
-	document.head.appendChild(intuitionStyle);
-	runAttention();
+// ============================================================
+// LAZY LOADING VIA INTERSECTION OBSERVER
+// ============================================================
 
-	FFNViz.setScenario('apple_fruit');
+const _lazyInitRegistry = [];
+let _lazyObserver = null;
+
+function _lazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _lazyInitRegistry.push({ el, initFn, initialized: false });
+}
+
+function _lazyCreateObserver() {
+    if (_lazyObserver) return;
+
+    _lazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _lazyInitRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _lazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin
+    });
+
+    _lazyInitRegistry.forEach(r => {
+        if (!r.initialized) {
+            _lazyObserver.observe(r.el);
+        }
+    });
+}
+
+// ============================================================
+// REPLACEMENT INITIALIZATION — call this instead of the old ones
+// ============================================================
+
+function loadIntuitionModule() {
+    // CSS animation (same as before, still eager — it's just a style tag)
+    const intuitionStyle = document.createElement('style');
+    intuitionStyle.textContent = `
+        @keyframes tokenAppear {
+            from { opacity: 0; transform: translateY(10px) scale(0.8); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    `;
+    document.head.appendChild(intuitionStyle);
+
+    // --- Register each section for lazy init ---
+
+    // Autoregressive loop
+    _lazyRegister('autoregressive-viz', () => {
+        AutoregressiveViz.render();
+    });
+
+    // Step 1: Tokenizer
+    _lazyRegister('tokenizer-output', () => {
+        const tokInput = document.getElementById('tokenizer-input');
+        if (tokInput) {
+            tokInput.addEventListener('input', () => TokenizerViz.render());
+        }
+        TokenizerViz.render();
+    });
+
+    // Step 2: Embedding
+    _lazyRegister('embedding-viz-plot', () => {
+        const embInput = document.getElementById('embedding-viz-input');
+        if (embInput) {
+            embInput.addEventListener('input', () => EmbeddingViz.render());
+        }
+        const embArithInput = document.getElementById('embedding-arithmetic-input');
+        if (embArithInput) {
+            embArithInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') EmbeddingViz.doArithmetic();
+            });
+        }
+        EmbeddingViz.render();
+        EmbeddingViz.doArithmetic();
+    });
+
+    // Step 3: Positional Encoding
+    _lazyRegister('positional-encoding-plot', () => {
+        const peSlider = document.getElementById('pe-num-dims');
+        if (peSlider) {
+            peSlider.addEventListener('input', () => PositionalEncodingViz.render());
+        }
+        PositionalEncodingViz.render();
+        PositionalEncodingViz.renderAdditionDemo();
+
+        ['pe-demo-word', 'pe-demo-pos1', 'pe-demo-pos2'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', () => PositionalEncodingViz.renderAdditionDemo());
+        });
+    });
+
+    // Step 4a: Attention (bank/river/money plot)
+    _lazyRegister('transformer-plot', () => {
+        runAttention();
+    });
+
+    // Step 4b: FFN
+    _lazyRegister('ffn-viz-container', () => {
+        FFNViz.setScenario('apple_fruit');
+    });
+
+    // Step 4c: Residual Stream
+    _lazyRegister('residual-stream-plot', () => {
+        ResidualStreamViz.init();
+        ResidualStreamViz.render();
+        const layerSlider = document.getElementById('residual-stream-layer');
+        if (layerSlider) {
+            layerSlider.addEventListener('input', function () {
+                ResidualStreamViz.setLayer(parseInt(this.value));
+            });
+        }
+    });
+
+    // Step 5: Prediction
+    _lazyRegister('prediction-plot', () => {
+        const tempSlider = document.getElementById('prediction-temperature');
+        if (tempSlider) {
+            tempSlider.addEventListener('input', () => PredictionViz.render());
+        }
+        PredictionViz.render();
+    });
+
+    // Start observing everything
+    _lazyCreateObserver();
 }
