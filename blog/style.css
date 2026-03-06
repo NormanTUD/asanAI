@@ -2827,25 +2827,3 @@ blockquote,
     font-size: 0.9rem;
     padding: 12px 0;
 }
-
-/* ── Dark mode support (if applicable) ── */
-@media (prefers-color-scheme: dark) {
-    #sticky-input-wrapper {
-        background: rgba(30, 41, 59, 0.75);
-        border-color: rgba(59, 130, 246, 0.25);
-    }
-
-    #master-token-input {
-        background: rgba(15, 23, 42, 0.6);
-        color: #e2e8f0;
-        border-color: rgba(59, 130, 246, 0.3);
-    }
-
-    .tokenizer-method-card {
-        border-color: rgba(255, 255, 255, 0.06);
-    }
-
-    .sticky-input-hint {
-        color: #64748b;
-    }
-}
