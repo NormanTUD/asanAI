@@ -154,7 +154,11 @@ function _mnLazyRegister(elementId, initFn) {
 function _mnLazyCreateObserver() {
     if (_mnLazyObserver) return;
 
+    let ready = false;
+
     _mnLazyObserver = new IntersectionObserver((entries) => {
+        if (!ready) return; // skip the initial "already visible" batch
+
         entries.forEach(entry => {
             if (!entry.isIntersecting) return;
 
@@ -166,13 +170,18 @@ function _mnLazyCreateObserver() {
             }
         });
     }, {
-        rootMargin: rootMargin // uses the already-defined global const
+        rootMargin: rootMargin
     });
 
     _mnLazyRegistry.forEach(r => {
         if (!r.initialized) {
             _mnLazyObserver.observe(r.el);
         }
+    });
+
+    // Allow callbacks only after the initial synchronous intersection reports
+    requestAnimationFrame(() => {
+        ready = true;
     });
 }
 
