@@ -1,0 +1,76 @@
+2. Krümmungs-Vektorfelder (Die Gravitation der Logik)
+
+Man kann den Raum wie eine physikalische Landschaft mit Gravitation visualisieren (Riemannsche Geometrie).
+
+Die Visualisierung: Man zeichnet Pfeile (Vektorfelder), die angeben, in welche Richtung sich ein Punkt verändern würde, wenn man ihn "logischer" oder "abstrakter" machen will.
+
+Der Mind-Blow: Man sieht regelrechte Strömungen. Es gibt Regionen, die wie "Senken" wirken (Attraktoren), in die das Modell immer wieder zurückfällt (z.B. Klischees oder häufige Phrasen). Man kann visualisieren, wie der Raum um ein kontroverses Thema "verbogen" ist – kleine Schritte in der Eingabe führen dort zu gewaltigen Sprüngen im Output.
+
+
+1. Das "Hubness"-Phänomen (Gravitationszentren)
+
+In hochdimensionalen Räumen passiert etwas Seltsames: Manche Punkte werden zu "Hubs".
+
+Die Erkenntnis: Bestimmte Vektoren liegen rein mathematisch gesehen plötzlich in der Nachbarschaft von fast allen anderen Punkten.
+
+Visualisierung: Wenn man die Verbindungen zeichnet, sieht es aus wie ein riesiges kosmisches Netz, in dem einige wenige Knoten (oft abstrakte Wörter wie "sein", "machen" oder "Zustand") als massive Schwerkraftzentren fungieren, die den gesamten Raum krümmen.
+
+Bedeutung: Diese Hubs sind die "Gelenke" der Sprache. Ohne sie würde die Geometrie in isolierte Cluster zerfallen.
+
+3. Der "Manifold-Knick" bei Phasenübergängen
+
+Wenn ein Modell während des Trainings plötzlich eine neue Fähigkeit lernt (z.B. modulare Arithmetik), passiert geometrisch etwas Spektakuläres.
+
+Visualisierung: Die Datenpunkte, die vorher wie ein chaotischer Haufen aussahen, ordnen sich schlagartig auf einem perfekten Kreis oder Torus (Donut) an.
+
+Erkenntnis: Logik ist oft eine Frage von Symmetrie. Wenn das Modell versteht, wie Zahlen funktionieren, "rastet" die Geometrie in eine symmetrische Form ein. Man kann diesen Moment als plötzliche Glättung einer vorher zerknitterten Fläche sehen.
+
+4. Low-Rank Subspaces (Die "Unter-Welten")
+
+Obwohl der Raum 4096 Dimensionen hat, spielt sich die "Action" für bestimmte Themen oft in winzigen Unterräumen ab.
+
+Visualisierung: Man kann zeigen, dass alle Informationen über "Programmierung" in einem flachen 20-dimensionalen "Blatt" innerhalb des riesigen Raums liegen.
+
+Der Effekt: Wenn man einen Vektor senkrecht aus diesem Blatt herausbewegt, verliert das Wort sofort jede technische Bedeutung und wird zu Alltagssprache. Es ist, als gäbe es innerhalb des großen Universums flache "Galaxien", die nur für spezifische Wissensgebiete zuständig sind.
+
+
+5. Das "Antipoden-Paar" (Symmetrie der Gegenteile)
+
+In gut trainierten Räumen liegen perfekte Gegenteile oft exakt gegenüber, aber mit einem Twist.
+
+Die Geometrie: "Heiß" und "Kalt" oder "Gut" und "Böse" bilden oft eine Linie, die fast genau durch den Nullpunkt des Raums geht.
+
+Mind-Blow: Man kann visualisieren, dass die Achse für "Moral" fast orthogonal (im 90° Winkel) zur Achse für "Intelligenz" steht. Das bedeutet, das Modell hat gelernt, dass diese Eigenschaften statistisch unabhängig sind. Die Winkel zwischen diesen großen Achsen verraten uns die "Weltanschauung" der KI.
+
+
+2. Attraktor-Netzwerke (Die „logischen Trichtern“)
+
+Wenn ein Modell einen Satz vervollständigt, „fällt“ der Vektor durch den Raum.
+
+    Die Visualisierung: Man zeichnet die Wahrscheinlichkeitslandschaft als 3D-Gelände.
+
+    Der Effekt: Logische Sätze bilden tiefe Täler (Attraktoren). Wenn du schreibst „Der Himmel ist...“, erzeugt das ein tiefes Loch bei „blau“.
+
+    Mind-Blow: Man kann visuell zeigen, wie Halluzinationen entstehen, wenn zwei Täler zu nah beieinander liegen und der Vektor in das falsche Loch „rutscht“. Das sieht aus wie eine Murmelbahn im Hyperraum.
+
+
+3. Vektor-Rotationen als Grammatik-Operatoren
+
+Man hat entdeckt, dass bestimmte Operationen, wie das Ändern von Zeitformen (Präsens zu Präteritum), keine Verschiebungen sind, sondern Rotationen.
+
+    Die Visualisierung: Wenn man alle Verben eines Textes nimmt, bilden sie eine Wolke. Ändert man die Zeitform, rotiert die gesamte Wolke um einen fixen Winkel im Raum.
+
+    Erkenntnis: Grammatik ist im Embedding-Raum wie ein Karussell. Das Modell „weiß“, dass Zeit eine zyklische oder rotative Eigenschaft ist, keine lineare Distanz.
+
+
+
+    4. Semantic Density Clouds (Bedeutungsdichte)
+
+Man kann die „Dichte“ des Wissens visualisieren.
+
+    Was man sieht: In Bereichen wie „Popkultur“ oder „Alltagssprache“ sind die Punkte extrem dicht gedrängt (fast wie ein Festkörper). In Bereichen wie „Quantengravitation“ oder „altnordische Dialekte“ ist der Raum „gasförmig“ – die Punkte sind weit verstreut.
+
+    Nutzen: Das zeigt uns visuell die „Ignoranz“ des Modells. Wo der Raum dünn besiedelt ist, neigt das Modell eher zu Fehlern, weil die geometrische Auflösung fehlt.
+
+
+
