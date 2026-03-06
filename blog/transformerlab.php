@@ -275,9 +275,9 @@ $$\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)
 The association between *Query* and *Key* and concrete tokens is only true in the first layer, where it is taken from the concrete embeddings. In further layers, it works on the abstract feature space instead.
 
 In this stage, it is already abstracted away from the concrete Embedding Space (for example, by positional encoding), and thus, the numbers do not inherently 'mean' anything anymore.
+</div>
 
-### What the heads actually react to
-
+<div class="optional md" data-headline="What the heads actually react to">
 In the paper \citealternativetitle{analyzingmultiheads}, the study identified that the most "important" heads in encoder models often perform three specific, interpretable functions:
 
 * **Positional Heads**: These heads attend to adjacent tokens, usually the previous or the next token in the sequence. They are essential for capturing the local structural order of the sentence.
@@ -292,9 +292,9 @@ However, research into larger Decoder-only models from \cite[Elhage et al., 2021
 * **Negative / Copy Suppression Heads**: These heads, identified by \cite[McDougall et al., 2023]{copysuppression}, actively suppress tokens that are over-predicted by other circuits. They act as a corrective mechanism to prevent the model from repeating itself or making common probabilistic errors.
 * **Safety / Refusal Heads**: Recent research by \cite[Zhou et al.]{safetyheads} suggests that specific heads act as "gatekeepers" for safety alignment. When these heads are ablated, models may lose their ability to refuse harmful prompts, indicating they are key feature extractors for safety boundaries.
 * **S-Inhibition / Delimiter Heads**: These heads act as structural anchors, often attending to punctuation or special tokens. They help the model manage signal-to-noise ratios by providing a "resting place" for attention when no relevant semantic information is found.
+</div>
 
-### Attention-Heads and In-Context-Learning
-
+<div class="optional md" data-headline="Attention-Heads and In-Context-Learning">
 Induction heads represent a specialized evolutionary step beyond the "Positional Heads"
 described in Voita et al. (\citeyear{incontextlearninghead}). While a standard positional head might only look at
 the token immediately before it, the Induction Head circuit uses that information
@@ -314,9 +314,9 @@ In a sequence like "Harry Potter ... Harry", the process unfolds as follows:
 This discovery is significant because it shows that models don't just learn
 static "Syntactic" rules; they learn to build dynamic "search engines" that
 allow them to learn new patterns in real-time during a single prompt.
+</div>
 
-### Layer-Depth Progression and Abstraction in Transformers
-
+<div class="optional md" data-headline="Layer-Depth Progression and Abstraction in Transformers">
 The progression of data through the layers of a Transformer follows a systematic evolution that mirrors the hierarchical structure of Convolutional Neural Networks. In a CNN, the initial layers focus on raw pixels while subsequent layers analyze the output of those earlier stages to form abstract concepts. Similarly, Transformer attention heads in the first layer look at the concrete sentence data itself. As information moves deeper, each layer processes the results of the previous one, gradually abstracting away from the specific training and inference data toward higher-level representations.
 
 This systematic change in attention patterns can be categorized as follows:
@@ -326,9 +326,9 @@ This systematic change in attention patterns can be categorized as follows:
 - **Late Layers:** Focus becomes diffuse or highly task-specific. These layers concentrate on tokens relevant to the final prediction, representing a high level of abstraction that is far removed from the concrete input values.
 
 By switching between layers in a visualization, you can observe this transition from raw data processing to complex, abstracted analysis.
+</div>
 
-### Why calculating the Query-Key-Values is not as expensive as it looks like
-
+<div class="optional md" data-headline="Why calculating the Query-Key-Values is not as expensive as it looks like">
 The **KV-Cache** (**Key-Value-Cache**) is an optimization that prevents $\mathcal{O}(T^2)$ redundancy during generation. This would happen because every token needs to look at every other tokens, but it can be prevented:
 Since the Transformer is autoregressive, the hidden states of past tokens remain static once computed. Instead of re-processing the entire sequence for every new word, we store the Key ($K$) and Value ($V$) vectors in a dedicated cache.
 
@@ -342,7 +342,9 @@ During each step of inference:
 
 This reduces the computational complexity of the projection phase from
 linear to constant time relative to sequence length.
+</div>
 
+<div class="md">
 ## Mathematical Assembly: Concatenation and $h_1$
 
 ### Concatenation Definition
