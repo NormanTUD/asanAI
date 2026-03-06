@@ -273,16 +273,86 @@ function addReadingProgress() {
 	const bar = document.createElement('div');
 	bar.id = 'reading-progress';
 	bar.style.cssText = `
-    position: fixed; top: 0; left: 0; height: 3px;
-    background: linear-gradient(90deg, #4fc3f7, #ab47bc);
-    width: 0%; z-index: 9999; transition: width 0.1s linear;
-  `;
+		position: fixed; top: 0; left: 0; height: 3px;
+		background: linear-gradient(90deg, #4fc3f7, #ab47bc);
+		width: 0%; z-index: 9999; transition: width 0.15s ease-out;
+		box-shadow: none;
+	`;
 	document.body.appendChild(bar);
+
+	// Glow element that pulses at the leading edge
+	const glow = document.createElement('div');
+	glow.style.cssText = `
+		position: absolute; right: -1px; top: -2px;
+		width: 8px; height: 7px; border-radius: 50%;
+		background: rgba(171, 71, 188, 0.6);
+		box-shadow: 0 0 12px rgba(171, 71, 188, 0.4), 0 0 4px rgba(79, 195, 247, 0.3);
+		opacity: 0;
+		transition: opacity 0.3s ease;
+		pointer-events: none;
+	`;
+	bar.appendChild(glow);
+
+	let lastPct = 0;
+	let scrollTimeout;
+	let milestonesFired = new Set();
 
 	window.addEventListener('scroll', () => {
 		const h = document.documentElement;
 		const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
 		bar.style.width = pct + '%';
+
+		// Show leading-edge glow while actively scrolling
+		glow.style.opacity = '1';
+		clearTimeout(scrollTimeout);
+		scrollTimeout = setTimeout(() => {
+			glow.style.opacity = '0';
+		}, 400);
+
+		// Shift gradient hue as you progress — the bar "warms up"
+		const hueShift = pct * 0.6; // 0 at top, ~60 at bottom
+		bar.style.background = `linear-gradient(90deg, hsl(${195 + hueShift * 0.3}, 80%, 60%), hsl(${285 + hueShift * 0.2}, 60%, 55%))`;
+
+		// Milestone pulses at 25%, 50%, 75%, 100%
+		[25, 50, 75, 100].forEach(milestone => {
+			if (pct >= milestone && lastPct < milestone && !milestonesFired.has(milestone)) {
+				milestonesFired.add(milestone);
+
+				// Bar does a brief height pulse
+				bar.style.transition = 'width 0.15s ease-out, height 0.2s ease, box-shadow 0.3s ease';
+				bar.style.height = '5px';
+				bar.style.boxShadow = `0 0 15px rgba(171, 71, 188, 0.3)`;
+
+				setTimeout(() => {
+					bar.style.height = '3px';
+					bar.style.boxShadow = 'none';
+					bar.style.transition = 'width 0.15s ease-out';
+				}, 500);
+
+				// At 100%: special completion shimmer
+				if (milestone === 100) {
+					bar.style.background = 'linear-gradient(90deg, #4ade80, #4fc3f7, #ab47bc, #f472b6)';
+					bar.style.backgroundSize = '200% 100%';
+					bar.style.animation = 'progress-shimmer 2s ease infinite';
+
+					// Inject shimmer keyframes if not already present
+					if (!document.getElementById('progress-shimmer-style')) {
+						const style = document.createElement('style');
+						style.id = 'progress-shimmer-style';
+						style.textContent = `
+							@keyframes progress-shimmer {
+								0% { background-position: 0% 50%; }
+								50% { background-position: 100% 50%; }
+								100% { background-position: 0% 50%; }
+							}
+						`;
+						document.head.appendChild(style);
+					}
+				}
+			}
+		});
+
+		lastPct = pct;
 	});
 }
 
