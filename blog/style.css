@@ -1073,7 +1073,6 @@ h2::after {
 	left: 0.75rem;
 	top: 0.5rem;
 	font-size: 3.5rem;
-	font-family: Georgia, serif;
 	color: var(--mn-accent);
 	opacity: 0.35;
 	line-height: 1;
@@ -2245,7 +2244,6 @@ blockquote,
 /* Specific alignment for Math and Notes */
 #contents tbody td:first-child,
 #contents tbody td:nth-child(2) {
-    font-family: serif; /* Better for math symbols if not using MathJax */
     color: var(--mn-text);
 }
 
