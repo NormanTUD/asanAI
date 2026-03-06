@@ -2199,3 +2199,64 @@ blockquote,
 .code-copy-btn:hover {
 	color: black !important;
 }
+
+
+/* Subtle Math Table Design */
+#contents table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 2rem 0;
+    border: 1px solid var(--mn-border-light);
+    border-radius: var(--mn-radius-md);
+    overflow: hidden; /* Clips the inner corners to the radius */
+    box-shadow: var(--mn-shadow-sm);
+}
+
+#contents thead th {
+    background-color: var(--mn-bg-subtle);
+    color: var(--mn-heading);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--mn-border);
+    text-align: left;
+}
+
+#contents tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--mn-border-light);
+    color: var(--mn-text-secondary);
+    vertical-align: middle;
+}
+
+/* Zebra Striping */
+#contents tbody tr:nth-child(even) {
+    background-color: rgba(248, 250, 252, 0.5); /* Very faint grey */
+}
+
+/* Remove border from last row */
+#contents tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Specific alignment for Math and Notes */
+#contents tbody td:first-child,
+#contents tbody td:nth-child(2) {
+    font-family: serif; /* Better for math symbols if not using MathJax */
+    color: var(--mn-text);
+}
+
+/* Subtle Hover Effect */
+#contents tbody tr:hover {
+    background-color: var(--mn-accent-lighter);
+    transition: background-color 0.2s ease;
+}
+
+/* Ensure math displays don't break layout */
+#contents td span math {
+    display: inline-block;
+    vertical-align: middle;
+}
