@@ -4489,8 +4489,238 @@ function _embLazyCreateObserver() {
 }
 
 // ============================================================
-// REPLACEMENT: loadEmbeddingModule (drop-in replacement)
+// TOPOLOGY: CLUMPS AND BRANCHES — NARROW CONES VISUALIZATION
 // ============================================================
+
+const topologyConesState = {
+    numPoints: 120,
+    numCones: 5,
+    level: 0,
+    basePoints: [],
+    coneAngles: []
+};
+
+function initTopologyCones() {
+    const st = topologyConesState;
+    st.basePoints = [];
+
+    // Define cone center angles (evenly-ish spaced around the upper half)
+    st.coneAngles = [];
+    for (let i = 0; i < st.numCones; i++) {
+        st.coneAngles.push((i / st.numCones) * 2 * Math.PI + 0.3);
+    }
+
+    // Assign each point to a random cone, with a random offset and magnitude
+    for (let i = 0; i < st.numPoints; i++) {
+        const coneIdx = Math.floor(Math.random() * st.numCones);
+        st.basePoints.push({
+            coneIdx: coneIdx,
+            offsetAngle: (Math.random() - 0.5) * 2 * Math.PI, // full spread at level 0
+            magnitude: 0.3 + Math.random() * 0.7
+        });
+    }
+}
+
+function getTopologyPoints(level) {
+    const st = topologyConesState;
+    const points = [];
+
+    for (let i = 0; i < st.numPoints; i++) {
+        const bp = st.basePoints[i];
+        const coneCenter = st.coneAngles[bp.coneIdx];
+
+        // At level 0: offset is the full random angle (uniform spread)
+        // At level 1: offset is compressed tightly around the cone center
+        const maxSpread = Math.PI; // full semicircle at level 0
+        const compressedSpread = 0.08; // very narrow at level 1
+        const currentSpread = maxSpread * (1 - level) + compressedSpread * level;
+
+        // Normalize the offset to [-1, 1] range, then scale by current spread
+        const normalizedOffset = bp.offsetAngle / (2 * Math.PI); // ~ [-0.5, 0.5]
+        const finalAngle = coneCenter + normalizedOffset * currentSpread * 2;
+
+        const x = bp.magnitude * Math.cos(finalAngle);
+        const y = bp.magnitude * Math.sin(finalAngle);
+
+        points.push({ x, y, angle: finalAngle, mag: bp.magnitude, cone: bp.coneIdx });
+    }
+    return points;
+}
+
+function renderTopologyCones() {
+    const plotDiv = document.getElementById('plot-topology-cones');
+    if (!plotDiv) return;
+
+    const st = topologyConesState;
+    const slider = document.getElementById('topology-dim-slider');
+    const valEl = document.getElementById('topology-dim-val');
+    const statsDiv = document.getElementById('topology-stats');
+
+    st.level = parseFloat(slider.value);
+    const pct = Math.round(st.level * 100);
+
+    let tag;
+    if (pct < 15) tag = 'Low (2D-like)';
+    else if (pct < 40) tag = 'Moderate';
+    else if (pct < 70) tag = 'High';
+    else tag = 'Very High (768D-like)';
+    valEl.textContent = tag;
+
+    const points = getTopologyPoints(st.level);
+    const traces = [];
+
+    // --- 1. Unit circle reference ---
+    const cX = [], cY = [];
+    for (let i = 0; i <= 80; i++) {
+        const a = (i / 80) * 2 * Math.PI;
+        cX.push(Math.cos(a));
+        cY.push(Math.sin(a));
+    }
+    traces.push({
+        x: cX, y: cY, mode: 'lines',
+        line: { color: 'rgba(203,213,225,0.3)', width: 1.5 },
+        showlegend: false, hoverinfo: 'skip'
+    });
+
+    // --- 2. Empty void wedges (between cones, visible at higher levels) ---
+    if (st.level > 0.15) {
+        const maxSpread = Math.PI;
+        const compressedSpread = 0.08;
+        const currentSpread = maxSpread * (1 - st.level) + compressedSpread * st.level;
+        const halfCone = currentSpread * 0.5;
+
+        // Sort cone angles
+        const sorted = [...st.coneAngles].sort((a, b) => a - b);
+
+        for (let i = 0; i < sorted.length; i++) {
+            const coneEnd = sorted[i] + halfCone;
+            const nextConeStart = sorted[(i + 1) % sorted.length] - halfCone +
+                (i === sorted.length - 1 ? 2 * Math.PI : 0);
+
+            if (nextConeStart - coneEnd > 0.05) {
+                const wX = [0], wY = [0];
+                const steps = 30;
+                for (let s = 0; s <= steps; s++) {
+                    const a = coneEnd + (s / steps) * (nextConeStart - coneEnd);
+                    wX.push(1.15 * Math.cos(a));
+                    wY.push(1.15 * Math.sin(a));
+                }
+                wX.push(0); wY.push(0);
+                traces.push({
+                    x: wX, y: wY, mode: 'lines', fill: 'toself',
+                    fillcolor: `rgba(148,163,184,${Math.min(st.level * 0.15, 0.12)})`,
+                    line: { color: `rgba(148,163,184,${Math.min(st.level * 0.3, 0.25)})`, width: 1 },
+                    showlegend: false, hoverinfo: 'skip'
+                });
+            }
+        }
+    }
+
+    // --- 3. Cone highlight wedges ---
+    if (st.level > 0.2) {
+        const maxSpread = Math.PI;
+        const compressedSpread = 0.08;
+        const currentSpread = maxSpread * (1 - st.level) + compressedSpread * st.level;
+        const coneColors = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+
+        st.coneAngles.forEach((center, idx) => {
+            const half = currentSpread * 0.5;
+            const wX = [0], wY = [0];
+            for (let s = 0; s <= 20; s++) {
+                const a = center - half + (s / 20) * 2 * half;
+                wX.push(1.1 * Math.cos(a));
+                wY.push(1.1 * Math.sin(a));
+            }
+            wX.push(0); wY.push(0);
+            traces.push({
+                x: wX, y: wY, mode: 'lines', fill: 'toself',
+                fillcolor: coneColors[idx] + '10',
+                line: { color: coneColors[idx] + '30', width: 1.5 },
+                showlegend: false, hoverinfo: 'skip'
+            });
+        });
+    }
+
+    // --- 4. Point lines from origin + endpoints ---
+    const coneColors = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+
+    points.forEach(p => {
+        traces.push({
+            x: [0, p.x], y: [0, p.y], mode: 'lines',
+            line: { color: `rgba(148,163,184,${0.15 + st.level * 0.2})`, width: 0.8 },
+            showlegend: false, hoverinfo: 'skip'
+        });
+    });
+
+    // Endpoints colored by cone
+    const coneGroups = {};
+    points.forEach(p => {
+        if (!coneGroups[p.cone]) coneGroups[p.cone] = { x: [], y: [] };
+        coneGroups[p.cone].x.push(p.x);
+        coneGroups[p.cone].y.push(p.y);
+    });
+
+    Object.entries(coneGroups).forEach(([cone, data]) => {
+        const color = coneColors[parseInt(cone) % coneColors.length];
+        traces.push({
+            x: data.x, y: data.y, mode: 'markers',
+            marker: { size: 5, color: color, opacity: 0.8 },
+            showlegend: false,
+            hovertemplate: `Cone ${parseInt(cone) + 1}<extra></extra>`
+        });
+    });
+
+    // --- 5. Origin ---
+    traces.push({
+        x: [0], y: [0], mode: 'markers',
+        marker: { size: 6, color: '#1e293b' },
+        showlegend: false, hoverinfo: 'skip'
+    });
+
+    Plotly.react(plotDiv, traces, {
+        margin: { l: 30, r: 30, b: 30, t: 10 },
+        showlegend: false,
+        xaxis: {
+            range: [-1.35, 1.35], zeroline: true, zerolinecolor: '#e2e8f0',
+            showgrid: false, scaleanchor: 'y', showticklabels: false
+        },
+        yaxis: {
+            range: [-1.35, 1.35], zeroline: true, zerolinecolor: '#e2e8f0',
+            showgrid: false, showticklabels: false
+        },
+        plot_bgcolor: '#fff'
+    }, { displayModeBar: false, responsive: true });
+
+    // --- Stats ---
+    if (statsDiv) {
+        // Compute angular spread
+        const angles = points.map(p => p.angle);
+        const maxSpread = Math.PI;
+        const compressedSpread = 0.08;
+        const currentSpread = maxSpread * (1 - st.level) + compressedSpread * st.level;
+        const occupiedFraction = Math.min(1, (st.numCones * currentSpread) / (2 * Math.PI));
+        const voidFraction = 1 - occupiedFraction;
+
+        statsDiv.innerHTML = `
+            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+                <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Occupied Fraction</div>
+                <div style="font-size:1.5em; font-weight:bold; color:${occupiedFraction < 0.3 ? '#ef4444' : occupiedFraction < 0.7 ? '#f59e0b' : '#10b981'};">${(occupiedFraction * 100).toFixed(1)}%</div>
+                <div style="font-size:0.75em; color:#94a3b8;">of angular space used</div>
+            </div>
+            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+                <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Void Fraction</div>
+                <div style="font-size:1.5em; font-weight:bold; color:${voidFraction > 0.7 ? '#ef4444' : voidFraction > 0.3 ? '#f59e0b' : '#10b981'};">${(voidFraction * 100).toFixed(1)}%</div>
+                <div style="font-size:0.75em; color:#94a3b8;">semantic desert</div>
+            </div>
+            <div style="padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+                <div style="font-size:0.8em; color:#64748b; margin-bottom:4px;">Cone Width</div>
+                <div style="font-size:1.5em; font-weight:bold; color:#8b5cf6;">${(currentSpread * 180 / Math.PI).toFixed(1)}°</div>
+                <div style="font-size:0.75em; color:#94a3b8;">per cluster</div>
+            </div>
+        `;
+    }
+}
+
 
 function loadEmbeddingModule() {
     const fastConfig = {
@@ -4645,6 +4875,16 @@ function loadEmbeddingModule() {
             }
         } catch(e) {
             console.error('Hyperbolic init failed:', e);
+        }
+    });
+
+    // 17. Topology: Narrow Cones
+    _embLazyRegister('plot-topology-cones', () => {
+        initTopologyCones();
+        renderTopologyCones();
+        const topoSlider = document.getElementById('topology-dim-slider');
+        if (topoSlider) {
+            topoSlider.addEventListener('input', renderTopologyCones);
         }
     });
 

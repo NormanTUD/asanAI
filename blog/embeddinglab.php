@@ -636,3 +636,49 @@ Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chai
         Drag the <b>curvature slider</b> to 0 (Euclidean) and watch the depth rings become evenly spaced and the edges straighten; slide to 1 (Hyperbolic) and the outer rings compress toward the boundary while geodesics curve inward, exponential room for exponentially many leaves.
     </div>
 </section>
+
+<div class="md">
+## Topology: Clumps and Branches
+
+So far, we've treated the embedding space as a smooth, continuous manifold where words drift through a uniform fog of dimensions. But the actual *topology* of the feature space tells a different story. It is not a uniform fog at all — it is **highly structured**, full of empty voids and narrow corridors.
+
+### High-Dimensional Narrow Cones
+
+In a 768-dimensional space, you might expect data points to spread out evenly in all directions. They don't. Empirically, the data concentrates in **narrow cones** — thin, elongated regions that radiate outward from the origin like the spines of a sea urchin. The vast majority of the theoretical volume is *empty*. No token lives there. No sentence ever visits it.
+
+This is a direct consequence of the **concentration of measure** phenomenon in high-dimensional geometry: in $n$ dimensions, almost all the volume of a hypersphere is concentrated in a thin shell near the surface, and almost all pairs of random vectors are nearly orthogonal. The result is that meaningful data doesn't fill the space — it clings to a sparse skeleton of low-dimensional structures threading through the void.
+
+This has practical consequences:
+* **Nearest-neighbor search** is harder than it looks, because "nearest" in 768 dimensions doesn't mean what your 3D intuition suggests. Most of the space between any two points is empty.
+* **Clustering** reveals that the space is not a single blob but a network of **filaments and clumps** — dense knots of semantically related tokens connected by thin bridges, surrounded by vast uninhabited regions.
+* **Interpolation** between two tokens (e.g., averaging their vectors) can land you in one of these empty voids, producing a vector that corresponds to *no* meaningful concept — a "semantic vacuum."
+
+The visualization below gives you an intuition for this. In 2D, points can spread out uniformly. But as you increase the effective dimensionality (simulated here by compressing the angular distribution), the points collapse into narrow cones, and the fraction of "occupied" space shrinks dramatically. The **gray region** represents the empty void — the space where no data lives.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div id="plot-topology-cones" style="height: 480px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+
+    <!-- Slider -->
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Effective Dimensionality:</b>
+            <input type="range" id="topology-dim-slider" min="0" max="1" step="0.01" value="0" style="width: 240px; vertical-align: middle;">
+            <span id="topology-dim-val" style="font-weight: bold; color: #8b5cf6;">Low (2D-like)</span>
+        </label>
+    </div>
+
+    <!-- Stats -->
+    <div id="topology-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; max-width: 700px; margin: 0 auto 15px auto;"></div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> Each <b>dot</b> is a token vector emanating from the origin.
+        At low effective dimensionality (slider left), vectors spread uniformly — the space is well-utilized.
+        As you increase the slider, vectors collapse into <span style="color:#8b5cf6; font-weight:bold;">narrow cones</span>,
+        simulating how high-dimensional concentration of measure forces data into thin corridors.
+        The <span style="color:rgba(148,163,184,0.4); font-weight:bold;">gray wedges</span> mark the <b>empty void</b> — regions of the space where no data lives.
+        The <span style="color:#ef4444; font-weight:bold;">occupied fraction</span> shrinks dramatically,
+        illustrating why most of a 768-dimensional space is a semantic desert.
+    </div>
+</section>
