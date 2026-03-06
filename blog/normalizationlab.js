@@ -1,151 +1,405 @@
 const NormLab = {
-	data: [
-		[10, 2, 8, 5],   
-		[40, 10, 32, 25], 
-		[15, 25, 5, 12]   
-	],
+    data: [
+        [10, 2, 8, 5],
+        [40, 10, 32, 25],
+        [15, 25, 5, 12]
+    ],
 
-	init: function() {
-		this.renderTable('input-table', this.data);
-		this.process(); 
+    // Color palette
+    palette: {
+        indigo:  '#6366f1',
+        emerald: '#10b981',
+        amber:   '#f59e0b',
+        rose:    '#f43f5e',
+        violet:  '#8b5cf6',
+        sky:     '#0ea5e9',
+    },
 
-		// Listen for live edits in the table
-		document.getElementById('input-table').addEventListener('input', () => {
-			this.syncData();
-			this.process();
-		});
+    init: function () {
+        this.renderTable('input-table', this.data);
+        this.process();
 
-		// NEW: Listen for changes in Gamma and Beta inputs
-		document.getElementById('gamma-input').addEventListener('input', () => this.process());
-		document.getElementById('beta-input').addEventListener('input', () => this.process());
-	},
+        document.getElementById('input-table').addEventListener('input', () => {
+            this.syncData();
+            this.process();
+        });
 
-	syncData: function() {
-		const rows = document.querySelectorAll('#input-table tr:not(:first-child)');
-		this.data = Array.from(rows).map(row => {
-			const cells = Array.from(row.querySelectorAll('td[contenteditable]'));
-			return cells.map(td => {
-				const val = parseFloat(td.innerText);
-				return isNaN(val) ? 0 : val; // Sanitize invalid input to 0
-			});
-		});
-	},
+        document.getElementById('gamma-input').addEventListener('input', () => this.process());
+        document.getElementById('beta-input').addEventListener('input', () => this.process());
+    },
 
-	process: function() {
-		const container = document.getElementById('math-display');
-		const epsilon = 1e-5;
-		const gamma = parseFloat(document.getElementById('gamma-input').value) || 0;
-		const beta = parseFloat(document.getElementById('beta-input').value) || 0;
+    syncData: function () {
+        const rows = document.querySelectorAll('#input-table tr:not(:first-child)');
+        this.data = Array.from(rows).map(row => {
+            const cells = Array.from(row.querySelectorAll('td[contenteditable]'));
+            return cells.map(td => {
+                const val = parseFloat(td.innerText);
+                return isNaN(val) ? 0 : val;
+            });
+        });
+    },
 
-		let html = ``;
+    // ─── Animated number counter ────────────────────────────────
+    animateValue: function (el, start, end, duration) {
+        const range = end - start;
+        const startTime = performance.now();
+        const step = (now) => {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+            el.textContent = (start + range * eased).toFixed(2);
+            if (progress < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+    },
 
-		const results = this.data.map((row, i) => {
-			const sum = row.reduce((a, b) => a + b, 0);
-			const mean = sum / row.length;
-			const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
-			const stdDev = Math.sqrt(variance + epsilon);
+    // ─── Core processing ────────────────────────────────────────
+    process: function () {
+        const container = document.getElementById('math-display');
+        const epsilon = 1e-5;
+        const gamma = parseFloat(document.getElementById('gamma-input').value) || 0;
+        const beta  = parseFloat(document.getElementById('beta-input').value)  || 0;
 
-			const normalizedRow = row.map(x => (gamma * ((x - mean) / stdDev)) + beta);
+        let html = '';
 
-			html += `
-	<div style="background: #ffffff; border: 2px solid #e2e8f0; border-radius: 15px; padding: 25px; margin-bottom: 40px; font-family: 'Segoe UI', system-ui, sans-serif;">
-	    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px;">
-		<span style="font-size: 1.25rem; font-weight: bold; color: #6366f1;">Row Group #${i + 1}</span>
-		<div style="text-align: right;">
-		    <div style="font-size: 0.8rem; color: #64748b; font-weight: bold; text-transform: uppercase;">Row Stats</div>
-		    <div style="font-size: 1rem; color: #1e293b;">
-			$\\mu = ${mean.toFixed(2)}$ | $\\sigma = ${stdDev.toFixed(2)}$
-		    </div>
-		</div>
-	    </div>
+        const results = this.data.map((row, i) => {
+            const sum      = row.reduce((a, b) => a + b, 0);
+            const mean     = sum / row.length;
+            const variance = row.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / row.length;
+            const stdDev   = Math.sqrt(variance + epsilon);
+            const normalizedRow = row.map(x => (gamma * ((x - mean) / stdDev)) + beta);
 
-	    <div style="display: flex; flex-direction: column; gap: 20px;">
-		${row.map((val, idx) => {
-			const diff = val - mean;
-			const standardized = diff / stdDev;
-			const final = (gamma * standardized) + beta;
+            // Row accent colors cycle
+            const accents = ['#6366f1', '#8b5cf6', '#0ea5e9'];
+            const accent  = accents[i % accents.length];
 
-			return `
-		    <div style="display: grid; grid-template-columns: 120px 1fr 120px; align-items: center; background: #f8fafc; border-radius: 12px; padding: 15px; border: 1px solid #e2e8f0; position: relative; overflow: hidden;">
-			<div style="text-align: center; z-index: 1;">
-			    <div style="font-size: 0.7rem; color: #64748b; font-weight: bold;">INPUT $x_{${idx+1}}$</div>
-			    <div style="font-size: 1.6rem; font-weight: bold; color: #1e293b;">${val}</div>
-			</div>
+            html += `
+            <div class="norm-row-group" style="
+                position: relative;
+                background: #ffffff;
+                border-radius: 20px;
+                padding: 28px;
+                margin-bottom: 32px;
+                border: 1px solid rgba(99,102,241,0.08);
+                box-shadow:
+                    0 8px 32px -8px rgba(99,102,241,0.07),
+                    0 1px 4px rgba(0,0,0,0.03);
+                overflow: hidden;
+                animation: normFadeUp 0.45s ${i * 0.08}s both cubic-bezier(0.22, 1, 0.36, 1);
+            ">
+                <!-- Top accent bar -->
+                <div style="
+                    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+                    background: linear-gradient(90deg, ${accent}, ${accent}88, transparent);
+                "></div>
 
-			<div style="padding: 0 30px; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">
-			    <div style="margin-bottom: 10px;">
-				<span style="font-size: 0.85rem; font-weight: bold; color: #be185d;">Step 1: Distance from Average</span>
-				<div style="font-size: 1.1rem; padding: 4px 0;">$${val} - ${mean.toFixed(2)} = ${diff.toFixed(2)}$</div>
-			    </div>
+                <!-- Header -->
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 22px;
+                    padding-bottom: 16px;
+                    border-bottom: 1px solid #f1f5f9;
+                ">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div style="
+                            width: 36px; height: 36px;
+                            background: linear-gradient(135deg, ${accent}18, ${accent}08);
+                            border: 2px solid ${accent}30;
+                            border-radius: 10px;
+                            display: flex; align-items: center; justify-content: center;
+                            font-weight: 800; font-size: 0.85rem; color: ${accent};
+                        ">${i + 1}</div>
+                        <span style="font-size: 1.1rem; font-weight: 700; color: #1e293b;">Row Group #${i + 1}</span>
+                    </div>
+                    <div style="
+                        display: flex; gap: 12px; align-items: center;
+                    ">
+                        <div style="
+                            padding: 6px 14px;
+                            background: linear-gradient(135deg, #6366f108, #6366f104);
+                            border: 1px solid #6366f118;
+                            border-radius: 10px;
+                            font-size: 0.85rem; color: #475569;
+                        ">$\\mu = ${mean.toFixed(2)}$</div>
+                        <div style="
+                            padding: 6px 14px;
+                            background: linear-gradient(135deg, #8b5cf608, #8b5cf604);
+                            border: 1px solid #8b5cf618;
+                            border-radius: 10px;
+                            font-size: 0.85rem; color: #475569;
+                        ">$\\sigma = ${stdDev.toFixed(2)}$</div>
+                    </div>
+                </div>
 
-			    <div style="margin-bottom: 10px;">
-				<span style="font-size: 0.85rem; font-weight: bold; color: #2563eb;">Step 2: The "Squish" (Standardize)</span>
-				<div style="font-size: 1.1rem; padding: 4px 0;">$\\frac{${diff.toFixed(2)}}{${stdDev.toFixed(2)}} = ${standardized.toFixed(3)}$</div>
-			    </div>
+                <!-- Feature rows -->
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    ${row.map((val, idx) => {
+                        const diff         = val - mean;
+                        const standardized = diff / stdDev;
+                        const final_val    = (gamma * standardized) + beta;
 
-				<div>
-				    <span style="font-size: 0.85rem; font-weight: bold; color: #059669;">Step 3: Gain & Bias adjustment</span>
-				    <div style="font-size: 1.1rem; padding: 4px 0;">
-					$\\underbrace{(${gamma.toFixed(1)})}_{\\gamma} \\times ${standardized.toFixed(3)} + \\underbrace{${beta.toFixed(1)}}_{\\beta} = ${final.toFixed(2)}$
-				    </div>
-				</div>
-			</div>
+                        const featureColors = ['#6366f1', '#10b981', '#f59e0b', '#f43f5e'];
+                        const fc = featureColors[idx % featureColors.length];
 
-			<div style="text-align: center; z-index: 1;">
-			    <div style="font-size: 0.7rem; color: #64748b; font-weight: bold;">OUTPUT $y_{${idx+1}}$</div>
-			    <div style="font-size: 1.6rem; font-weight: bold; color: #10b981;">${final.toFixed(2)}</div>
-			</div>
+                        return `
+                        <div style="
+                            display: grid;
+                            grid-template-columns: 100px 1fr 100px;
+                            align-items: center;
+                            background: linear-gradient(135deg, ${fc}04, transparent);
+                            border-radius: 16px;
+                            padding: 18px;
+                            border: 1px solid ${fc}12;
+                            position: relative;
+                            overflow: hidden;
+                            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        " onmouseover="this.style.borderColor='${fc}30'; this.style.boxShadow='0 4px 20px -4px ${fc}15'"
+                           onmouseout="this.style.borderColor='${fc}12'; this.style.boxShadow='none'">
 
-			<div style="position: absolute; right: -10px; bottom: -10px; font-size: 4rem; opacity: 0.03; font-weight: 900; pointer-events: none;">
-			    FEAT ${idx+1}
-			</div>
-		    </div>`;
-		}).join('')}
-	    </div>
-	</div>`;
+                            <!-- Left: Input -->
+                            <div style="text-align: center;">
+                                <div style="
+                                    font-size: 0.62rem;
+                                    font-weight: 700;
+                                    letter-spacing: 0.08em;
+                                    text-transform: uppercase;
+                                    color: #94a3b8;
+                                    margin-bottom: 4px;
+                                ">Input $x_{${idx + 1}}$</div>
+                                <div style="
+                                    font-size: 1.5rem;
+                                    font-weight: 800;
+                                    color: #1e293b;
+                                    font-variant-numeric: tabular-nums;
+                                ">${val}</div>
+                            </div>
 
-			return normalizedRow;
-		});
+                            <!-- Center: Steps -->
+                            <div style="
+                                padding: 0 24px;
+                                border-left: 1px solid #f1f5f9;
+                                border-right: 1px solid #f1f5f9;
+                            ">
+                                <!-- Step 1 -->
+                                <div style="margin-bottom: 10px;">
+                                    <div style="display:flex; align-items:center; gap:6px; margin-bottom: 3px;">
+                                        <span style="
+                                            display: inline-block;
+                                            width: 18px; height: 18px;
+                                            background: linear-gradient(135deg, #be185d, #e11d48);
+                                            border-radius: 5px;
+                                            font-size: 0.6rem; font-weight: 800; color: white;
+                                            text-align: center; line-height: 18px;
+                                        ">1</span>
+                                        <span style="font-size: 0.78rem; font-weight: 700; color: #be185d;">Center</span>
+                                    </div>
+                                    <div style="font-size: 1rem; padding: 2px 0 2px 24px; color: #334155;">
+                                        $${val} - ${mean.toFixed(2)} = ${diff.toFixed(2)}$
+                                    </div>
+                                </div>
 
-			container.innerHTML = html;
-			this.renderPlot('input-plot', this.data, 'Raw Magnitudes');
-			this.renderPlot('output-plot', results, `Layer Normalized (γ=${gamma}, β=${beta})`);
-			render_temml();
-		},
+                                <!-- Step 2 -->
+                                <div style="margin-bottom: 10px;">
+                                    <div style="display:flex; align-items:center; gap:6px; margin-bottom: 3px;">
+                                        <span style="
+                                            display: inline-block;
+                                            width: 18px; height: 18px;
+                                            background: linear-gradient(135deg, #2563eb, #3b82f6);
+                                            border-radius: 5px;
+                                            font-size: 0.6rem; font-weight: 800; color: white;
+                                            text-align: center; line-height: 18px;
+                                        ">2</span>
+                                        <span style="font-size: 0.78rem; font-weight: 700; color: #2563eb;">Standardize</span>
+                                    </div>
+                                    <div style="font-size: 1rem; padding: 2px 0 2px 24px; color: #334155;">
+                                        $\\frac{${diff.toFixed(2)}}{${stdDev.toFixed(2)}} = ${standardized.toFixed(3)}$
+                                    </div>
+                                </div>
 
-	renderTable: function(id, data) {
-		let h = `<tr style="background:#f1f5f9"><th>#</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th></tr>`;
-		data.forEach((r, i) => {
-			h += `<tr><td style="padding:8px; border:1px solid #e2e8f0; font-weight:bold;">${i+1}</td>`;
-			r.forEach(val => h += `<td contenteditable="true" style="padding:8px; border:1px solid #e2e8f0; background: white; outline: #10b981;">${val}</td>`);
-			h += `</tr>`;
-		});
-		document.getElementById(id).innerHTML = h;
-	},
+                                <!-- Step 3 -->
+                                <div>
+                                    <div style="display:flex; align-items:center; gap:6px; margin-bottom: 3px;">
+                                        <span style="
+                                            display: inline-block;
+                                            width: 18px; height: 18px;
+                                            background: linear-gradient(135deg, #059669, #10b981);
+                                            border-radius: 5px;
+                                            font-size: 0.6rem; font-weight: 800; color: white;
+                                            text-align: center; line-height: 18px;
+                                        ">3</span>
+                                        <span style="font-size: 0.78rem; font-weight: 700; color: #059669;">Scale & Shift</span>
+                                    </div>
+                                    <div style="font-size: 1rem; padding: 2px 0 2px 24px; color: #334155;">
+                                        $\\underbrace{(${gamma.toFixed(1)})}_{\\gamma} \\times ${standardized.toFixed(3)} + \\underbrace{${beta.toFixed(1)}}_{\\beta} = ${final_val.toFixed(2)}$
+                                    </div>
+                                </div>
+                            </div>
 
-	renderPlot: function(id, data, title) {
-		const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
-		const traces = [];
-		for (let f = 0; f < (data[0] ? data[0].length : 0); f++) {
-			traces.push({
-				x: data.map((_, i) => `S${i+1}`),
-				y: data.map(row => row[f]),
-				name: `Feat ${f+1}`,
-				type: 'bar',
-				marker: { color: colors[f], line: { color: '#1e293b', width: 1 } }
-			});
-		}
-		const layout = { 
-			title: title, barmode: 'group', margin: { t: 50, b: 30, l: 40, r: 10 },
-			legend: { orientation: 'h', y: -0.2 },
-			yaxis: {
-				// Adjusting range for standardized output (usually within -3 to 3)
-				range: id === 'output-plot' ? [-2.5, 2.5] : null,
-				zeroline: true, zerolinecolor: '#475569', gridcolor: '#e2e8f0'
-			}
-		};
-		Plotly.newPlot(id, traces, layout);
-	}
+                            <!-- Right: Output -->
+                            <div style="text-align: center;">
+                                <div style="
+                                    font-size: 0.62rem;
+                                    font-weight: 700;
+                                    letter-spacing: 0.08em;
+                                    text-transform: uppercase;
+                                    color: #94a3b8;
+                                    margin-bottom: 4px;
+                                ">Output $y_{${idx + 1}}$</div>
+                                <div style="
+                                    font-size: 1.5rem;
+                                    font-weight: 800;
+                                    color: #10b981;
+                                    font-variant-numeric: tabular-nums;
+                                ">${final_val.toFixed(2)}</div>
+                            </div>
+
+                            <!-- Watermark -->
+                            <div style="
+                                position: absolute;
+                                right: -5px; bottom: -8px;
+                                font-size: 3.5rem;
+                                opacity: 0.025;
+                                font-weight: 900;
+                                pointer-events: none;
+                                color: ${fc};
+                                letter-spacing: -0.04em;
+                            ">F${idx + 1}</div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>`;
+
+            return normalizedRow;
+        });
+
+        // Inject keyframe animation once
+        if (!document.getElementById('norm-animations')) {
+            const styleEl = document.createElement('style');
+            styleEl.id = 'norm-animations';
+            styleEl.textContent = `
+                @keyframes normFadeUp {
+                    from { opacity: 0; transform: translateY(16px); }
+                    to   { opacity: 1; transform: translateY(0); }
+                }
+            `;
+            document.head.appendChild(styleEl);
+        }
+
+        container.innerHTML = html;
+        this.renderPlot('input-plot', this.data, 'Raw Magnitudes');
+        this.renderPlot('output-plot', results, `Layer Normalized (γ=${gamma}, β=${beta})`);
+        render_temml();
+    },
+
+    // ─── Table rendering ────────────────────────────────────────
+    renderTable: function (id, data) {
+        let h = `<tr style="background: linear-gradient(135deg, #f1f5f9, #eef2ff);">
+            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#6366f1; border-bottom:2px solid #e2e8f0;">#</th>
+            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#6366f1; border-bottom:2px solid #e2e8f0;">F1</th>
+            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#10b981; border-bottom:2px solid #e2e8f0;">F2</th>
+            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#f59e0b; border-bottom:2px solid #e2e8f0;">F3</th>
+            <th style="padding:10px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#f43f5e; border-bottom:2px solid #e2e8f0;">F4</th>
+        </tr>`;
+
+        data.forEach((r, i) => {
+            h += `<tr style="transition: background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                <td style="
+                    padding: 10px 12px;
+                    border-bottom: 1px solid #f1f5f9;
+                    font-weight: 800;
+                    font-size: 0.82rem;
+                    color: #6366f1;
+                ">${i + 1}</td>`;
+            const featureColors = ['#6366f1', '#10b981', '#f59e0b', '#f43f5e'];
+            
+            r.forEach((val, j) => {
+                const fc = featureColors[j % featureColors.length];
+                h += `<td contenteditable="true" style="
+                    padding: 10px 12px;
+                    border-bottom: 1px solid #f1f5f9;
+                    font-size: 1.05rem;
+                    font-weight: 600;
+                    color: #1e293b;
+                    outline: none;
+                    cursor: text;
+                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                    position: relative;
+                    font-variant-numeric: tabular-nums;
+                " onfocus="this.style.background='${fc}08'; this.style.boxShadow='inset 0 -2px 0 ${fc}'"
+                   onblur="this.style.background='white'; this.style.boxShadow='none'"
+                >${val}</td>`;
+            });
+            h += `</tr>`;
+        });
+        document.getElementById(id).innerHTML = h;
+    },
+
+    // ─── Plot rendering ─────────────────────────────────────────
+    renderPlot: function (id, data, title) {
+        const colors = [
+            ['#6366f1', '#818cf8'],
+            ['#10b981', '#34d399'],
+            ['#f59e0b', '#fbbf24'],
+            ['#f43f5e', '#fb7185'],
+        ];
+
+        const traces = [];
+        for (let f = 0; f < (data[0] ? data[0].length : 0); f++) {
+            traces.push({
+                x: data.map((_, i) => `Sample ${i + 1}`),
+                y: data.map(row => row[f]),
+                name: `Feature ${f + 1}`,
+                type: 'bar',
+                marker: {
+                    color: colors[f][0],
+                    line: { color: colors[f][1], width: 1.5 },
+                    opacity: 0.88,
+                },
+                hovertemplate: '<b>%{x}</b><br>Feature ' + (f + 1) + ': %{y:.3f}<extra></extra>',
+            });
+        }
+
+        const layout = {
+            title: {
+                text: title,
+                font: { size: 13, color: '#64748b', family: 'system-ui, sans-serif', weight: 700 },
+                x: 0.01,
+                xanchor: 'left',
+            },
+            barmode: 'group',
+            bargap: 0.25,
+            bargroupgap: 0.08,
+            margin: { t: 44, b: 36, l: 44, r: 16 },
+            legend: {
+                orientation: 'h',
+                y: -0.22,
+                font: { size: 11, color: '#64748b' },
+            },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            yaxis: {
+                range: id === 'output-plot' ? [-2.5, 2.5] : null,
+                zeroline: true,
+                zerolinecolor: '#94a3b8',
+                zerolinewidth: 1.5,
+                gridcolor: '#f1f5f9',
+                gridwidth: 1,
+                tickfont: { size: 11, color: '#94a3b8' },
+            },
+            xaxis: {
+                tickfont: { size: 11, color: '#64748b', weight: 600 },
+            },
+        };
+
+        const config = {
+            displayModeBar: false,
+            responsive: true,
+        };
+
+        Plotly.newPlot(id, traces, layout, config);
+    },
 };
 
 // ============================================================
@@ -201,3 +455,4 @@ async function loadNormalizationModule() {
 
     return Promise.resolve();
 }
+
