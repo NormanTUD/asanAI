@@ -434,8 +434,9 @@ function revealAncestorToggleableQuotes(el) {
 			? node
 			: node.querySelector('.toggleable-quote');
 		if (p && p.getAttribute('data-state') === 'short') {
-			// Simulate click to expand
-			p.click();
+			requestAnimationFrame(() => {
+				p.click();
+			});
 		}
 		node = node.parentElement
 			? node.parentElement.closest('.toggleable-quote, .rendered-quote')
@@ -493,18 +494,15 @@ function smartquote() {
 
 				// --- Staggered character reveal ---
 				const animateTextIn = (container, html, onComplete) => {
-					// Parse HTML into a temporary element to get text + tags
 					const temp = document.createElement('span');
 					temp.innerHTML = html;
 					container.innerHTML = '';
 					container.appendChild(temp);
 
-					// Get all text nodes
 					const walker = document.createTreeWalker(temp, NodeFilter.SHOW_TEXT, null, false);
 					const textNodes = [];
 					while (walker.nextNode()) textNodes.push(walker.currentNode);
 
-					// Wrap each character in a span
 					textNodes.forEach(node => {
 						const text = node.textContent;
 						const frag = document.createDocumentFragment();
@@ -517,17 +515,14 @@ function smartquote() {
 							charSpan.style.transform = 'translateY(4px)';
 							charSpan.style.display = 'inline-block';
 							charSpan.style.transition = 'opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease';
-							// Preserve whitespace width
 							if (text[i] === ' ') charSpan.style.width = '0.3em';
 							frag.appendChild(charSpan);
 						}
 						node.parentNode.replaceChild(frag, node);
 					});
 
-					// Stagger the reveal
 					const allChars = temp.querySelectorAll('.quote-char');
 					const totalChars = allChars.length;
-					// Dynamic speed: faster for longer quotes, minimum 4ms per char
 					const perChar = Math.max(4, Math.min(18, 600 / totalChars));
 
 					allChars.forEach((ch, i) => {
@@ -538,7 +533,6 @@ function smartquote() {
 						}, i * perChar);
 					});
 
-					// Callback after all characters revealed
 					if (onComplete) {
 						setTimeout(onComplete, totalChars * perChar + 300);
 					}
@@ -549,7 +543,6 @@ function smartquote() {
 					const text = isShort ? shortHtml : fullHtml;
 					p.setAttribute('data-state', isShort ? 'short' : 'full');
 
-					// Build the hint
 					const hintText = isShort ? 'expand' : 'collapse';
 					const hintEl = `<span class="quote-expand-hint"><span class="quote-hint-dot">·</span> <i>${hintText}</i></span>`;
 
@@ -558,18 +551,15 @@ function smartquote() {
 						return;
 					}
 
-					// Animated version
 					p.innerHTML = `<span class="quote-guillemet quote-guillemet-open glow-pulse">»</span><span class="quote-text-inner"></span><span class="quote-guillemet quote-guillemet-close" style="opacity:0">«</span>&nbsp;${hintEl}`;
 
 					const textContainer = p.querySelector('.quote-text-inner');
 					const closeGuill = p.querySelector('.quote-guillemet-close');
 
 					animateTextIn(textContainer, text, () => {
-						// Fade in closing guillemet after text is done
 						closeGuill.style.transition = 'opacity 0.4s ease';
 						closeGuill.style.opacity = '1';
 
-						// Remove glow pulse from opening guillemet
 						setTimeout(() => {
 							p.querySelector('.quote-guillemet-open')?.classList.remove('glow-pulse');
 						}, 400);
@@ -592,12 +582,16 @@ function smartquote() {
 					quoteBox.classList.add('quote-flash');
 					setTimeout(() => quoteBox.classList.remove('quote-flash'), 800);
 
-					// Phase 1: Dissolve out current text
-					const currentChars = p.querySelectorAll('.quote-text-inner, .quote-text-inner *');
-					p.querySelector('.quote-guillemet-close').style.transition = 'opacity 0.2s ease';
-					p.querySelector('.quote-guillemet-close').style.opacity = '0';
+					// --- Step 1: Capture current height of <p> ---
+					const pStartHeight = p.offsetHeight;
 
-					// Fade out the text container
+					// Phase 1: Dissolve out current text
+					const closeGuill = p.querySelector('.quote-guillemet-close');
+					if (closeGuill) {
+						closeGuill.style.transition = 'opacity 0.2s ease';
+						closeGuill.style.opacity = '0';
+					}
+
 					const textInner = p.querySelector('.quote-text-inner');
 					if (textInner) {
 						textInner.style.transition = 'opacity 0.25s ease, filter 0.25s ease';
@@ -605,10 +599,74 @@ function smartquote() {
 						textInner.style.filter = 'blur(3px)';
 					}
 
-					// Phase 2: After dissolve, swap and animate in
+					// Phase 2: After dissolve, measure target, then animate
 					setTimeout(() => {
+						// --- Step 2: Measure the END height of <p> using an off-screen clone ---
+						const clone = quoteBox.cloneNode(true);
+						clone.style.cssText = `
+							position: absolute;
+							visibility: hidden;
+							height: auto;
+							overflow: visible;
+							pointer-events: none;
+							width: ${quoteBox.offsetWidth}px;
+						`;
+						const computedStyle = window.getComputedStyle(quoteBox);
+						clone.style.padding = computedStyle.padding;
+						clone.style.borderWidth = computedStyle.borderWidth;
+						clone.style.borderStyle = computedStyle.borderStyle;
+						clone.style.boxSizing = computedStyle.boxSizing;
+						clone.style.font = computedStyle.font;
+						clone.style.lineHeight = computedStyle.lineHeight;
+
+						quoteBox.parentNode.insertBefore(clone, quoteBox.nextSibling);
+
+						const cloneP = clone.querySelector('.toggleable-quote');
+						if (cloneP) {
+							const targetText = !isCurrentlyShort ? shortHtml : fullHtml;
+							const hintText = !isCurrentlyShort ? 'expand' : 'collapse';
+							const hintEl = `<span class="quote-expand-hint"><span class="quote-hint-dot">·</span> <i>${hintText}</i></span>`;
+							cloneP.innerHTML = `<span class="quote-guillemet quote-guillemet-open">»</span><span class="quote-text-inner">${targetText}</span><span class="quote-guillemet quote-guillemet-close">«</span>&nbsp;${hintEl}`;
+						}
+
+						const pEndHeight = cloneP ? cloneP.offsetHeight : pStartHeight;
+						clone.remove();
+
+						// --- Step 3: Lock <p> at its current height ---
+						p.style.transition = 'none';
+						p.style.height = pStartHeight + 'px';
+						p.style.overflow = 'hidden';
+
+						// --- Step 4: Render new content WITH animation ---
 						renderState(!isCurrentlyShort, true);
-						// Unlock after animation completes
+
+						// Force reflow
+						void p.offsetHeight;
+
+						// --- Step 5: Animate <p> height from start → end ---
+						// The footer sits below <p> in normal flow, so as <p>
+						// smoothly grows/shrinks, the footer glides with it.
+						p.style.transition = 'height 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+						p.style.height = pEndHeight + 'px';
+
+						// --- Step 6: Clean up after transition ---
+						const cleanup = () => {
+							p.style.removeProperty('height');
+							p.style.removeProperty('overflow');
+							p.style.removeProperty('transition');
+						};
+
+						const fallbackTimer = setTimeout(cleanup, 600);
+
+						p.addEventListener('transitionend', function handler(e) {
+							if (e.target === p && e.propertyName === 'height') {
+								clearTimeout(fallbackTimer);
+								cleanup();
+								p.removeEventListener('transitionend', handler);
+							}
+						});
+
+						// Unlock isAnimating after text stagger completes
 						const newText = p.querySelector('.quote-text-inner');
 						const charCount = newText ? newText.textContent.length : 50;
 						const perChar = Math.max(4, Math.min(18, 600 / charCount));
