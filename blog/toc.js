@@ -108,4 +108,5 @@ function toc() {
 			ul.remove();
 		}
 	});
+	updateLoadingStatus("Build Table of Contents.");
 }

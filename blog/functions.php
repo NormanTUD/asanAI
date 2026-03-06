@@ -166,7 +166,6 @@ function load_base_js () {
 
 		window.addEventListener('load', async (event) => {
 			try {
-				updateLoadingStatus("Processing Citations...");
 				await bibtexify();
 				renderMarkdown();
 				make_external_a_href_target_blank();

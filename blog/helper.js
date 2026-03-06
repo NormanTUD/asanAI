@@ -68,6 +68,7 @@ function warn(id, msg) {
 }
 
 function renderMarkdown() {
+	updateLoadingStatus("Rendering Markdown...");
 	document.querySelectorAll('.md').forEach(container => {
 		// 1. Inhalt holen und Einrückungen fixen
 		let rawContent = container.innerHTML.replace(/^[ \t]+/gm, '');
@@ -96,6 +97,7 @@ function renderMarkdown() {
 		// 3. Erst jetzt das Markdown (mit den bereits fertigen Spans) parsen
 		container.innerHTML = marked.parse(rawContent);
 	});
+	updateLoadingStatus("Rendered Markdown.");
 
 	const fnContainer = document.getElementById('footnotes');
 	if (fnContainer) {
@@ -169,6 +171,7 @@ function revealContent() {
 }
 
 function make_external_a_href_target_blank() {
+	updateLoadingStatus("Processing external links...");
 	const links = document.querySelectorAll('a[href]');
 
 	links.forEach(link => {
@@ -177,6 +180,7 @@ function make_external_a_href_target_blank() {
 			link.rel = 'noopener noreferrer';
 		}
 	});
+	updateLoadingStatus("Processed external links.");
 }
 
 function bindIframeSafeLinks() {
@@ -270,6 +274,7 @@ function bindIframeSafeLinks() {
 }
 
 function addReadingProgress() {
+	updateLoadingStatus("Adding Reading Progress bar...");
 	const bar = document.createElement('div');
 	bar.id = 'reading-progress';
 	bar.style.cssText = `
@@ -354,6 +359,7 @@ function addReadingProgress() {
 
 		lastPct = pct;
 	});
+	updateLoadingStatus("Added Reading Progress bar.");
 }
 
 /**
@@ -445,6 +451,7 @@ function revealAncestorToggleableQuotes(el) {
 }
 
 function smartquote() {
+	updateLoadingStatus("Processing Quotes...");
 	if (!window.usedCitations) window.usedCitations = [];
 	if (!window.citationMap) window.citationMap = {};
 
@@ -699,9 +706,12 @@ function smartquote() {
 
 	bindIframeSafeLinks();
 	if (typeof source_bibliography === "function") source_bibliography();
+	updateLoadingStatus("Processed Quotes.");
 }
 
 function bibtexify() {
+	updateLoadingStatus("Processing Citations...");
+
 	const containers = document.querySelectorAll('.md');
 	const mainContent = document.getElementById('contents');
 	let footnotesDiv = document.getElementById('footnotes');
@@ -877,6 +887,7 @@ function bibtexify() {
 
 	bindIframeSafeLinks();
 	if (typeof source_bibliography === "function") source_bibliography();
+	updateLoadingStatus("Processed Citations.");
 }
 
 function source_bibliography() {
@@ -930,6 +941,7 @@ function source_bibliography() {
 }
 
 function addCopyButtons() {
+	updateLoadingStatus("Adding Copy buttons to Code Blocks...");
 	document.querySelectorAll('pre[class*="language-"]').forEach((pre) => {
 		if (pre.querySelector('.code-copy-btn')) return;
 
@@ -1079,6 +1091,7 @@ function addCopyButtons() {
 		btnContainer.appendChild(btn);
 		pre.insertBefore(btnContainer, pre.firstChild);
 	});
+	updateLoadingStatus("Added Copy buttons to Code Blocks.");
 }
 
 function lazyInit(sectionId, initFn) {
@@ -1280,6 +1293,7 @@ function addCuriosityScore() {
 }
 
 function initOptionalBlocks() {
+	updateLoadingStatus("Processing Optional Blocks...");
 	document.querySelectorAll('div.optional').forEach(block => {
 		if (block.classList.contains('optional-initialized')) return;
 		block.classList.add('optional-initialized');
@@ -1437,6 +1451,7 @@ function initOptionalBlocks() {
 			}
 		};
 	});
+	updateLoadingStatus("Processed Optional Blocks.");
 }
 
 function addKonamiEgg() {
