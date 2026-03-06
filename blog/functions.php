@@ -264,7 +264,7 @@ function load_base_js () {
 
 		// ─── Shared post-load initialization ───
 		// Called by both index.php and standalone subpages to avoid duplication.
-		function sharedPostLoadInit() {
+		function postLoadInit() {
 			addCopyButtons();
 			smartquote();
 			initOptionalBlocks();
@@ -534,7 +534,7 @@ if(!server_php_self_ends_with_index_php()) {
 
 					revealContent();
 
-					sharedPostLoadInit();
+					postLoadInit();
 				} catch (error) {
 					console.error("Initialization failed:", error);
 					updateLoadingStatus("Error loading page. Please refresh. " + error);

@@ -65,7 +65,7 @@
 			sendHeight();
 
 			// ─── Single call replaces all duplicates ───
-			sharedPostLoadInit();
+			postLoadInit();
 
 		} catch (error) {
 			console.error("Initialization failed:", error);
