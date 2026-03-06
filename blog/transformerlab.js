@@ -2622,19 +2622,34 @@ function getTokenHue(token) {
 
 /**
  * Renders token chips into a container element.
+ * Uses the same token-badge styling as the tokenizer lab.
  */
 function renderTokenChips(container, tokens) {
-    if (!container) return;
+	if (!container) return;
 
-    container.innerHTML = tokens.map(t => {
-        const hue = getTokenHue(t);
-        const id = Math.abs(t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0)) % 1000;
-        return `
-        <div style="background: hsl(${hue}, 65%, 40%); color: white; padding: 5px 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center;">
-            ${t}
-            <span style="font-size: 0.6rem; opacity: 0.8; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; text-align: center;">ID: ${id}</span>
-        </div>`;
-    }).join('');
+	container.innerHTML = '';
+
+	tokens.forEach((t, i) => {
+		const c = tokenColor(t);
+		const displayToken = (t === ' ') ? '␣' : t;
+
+		const badge = document.createElement('div');
+		badge.className = 'token-badge token-enter';
+		badge.style.cssText = `
+	    --token-bg: ${c.bg};
+	    --token-glow: ${c.glow};
+	    --token-border: ${c.border};
+	    animation-delay: ${i * 18}ms;
+	`;
+
+		badge.innerHTML = `
+	    <span class="token-text">${escapeHtml(displayToken)}</span>
+	    <span class="token-id">${c.id}</span>
+	`;
+
+		badge.setAttribute('title', `"${t}" → ID ${c.id}`);
+		container.appendChild(badge);
+	});
 }
 
 /**

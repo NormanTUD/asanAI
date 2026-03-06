@@ -25,27 +25,6 @@ function syncAndTokenize(val) {
 }
 
 /**
- * Attempt to generate a beautiful, unique but deterministic palette from a string.
- * Returns an object with hue, a gradient, and a glow color.
- */
-function tokenColor(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = ((hash << 7) - hash) + str.charCodeAt(i);
-        hash |= 0;
-    }
-    const hue = Math.abs(hash) % 360;
-    const hue2 = (hue + 30) % 360;
-    return {
-        hue,
-        id: Math.abs(hash) % 10000,
-        bg: `linear-gradient(135deg, hsl(${hue}, 70%, 42%), hsl(${hue2}, 80%, 32%))`,
-        glow: `hsla(${hue}, 80%, 50%, 0.35)`,
-        border: `hsla(${hue}, 60%, 70%, 0.25)`
-    };
-}
-
-/**
  * Erstellt die Token-Badges für eine spezifische Methode
  */
 function renderTokens(type, text) {
@@ -127,12 +106,6 @@ function renderTokens(type, text) {
             countEl.textContent = tokens.length + ' token' + (tokens.length !== 1 ? 's' : '');
         }
     }, delay);
-}
-
-function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML;
 }
 
 /**
