@@ -402,8 +402,78 @@ function initGradientSurface() {
 
 // ── Module loader ───────────────────────────────────────────────────────────
 
+// ============================================================
+// LAZY LOADING FOR DIFFERENTIATION MODULE
+// ============================================================
+
+const _diffLazyRegistry = [];
+let _diffLazyObserver = null;
+
+function _diffLazyRegister(elementId, initFn) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    _diffLazyRegistry.push({ el, initFn, initialized: false });
+}
+
+function _diffLazyCreateObserver() {
+    if (_diffLazyObserver) return;
+
+    _diffLazyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+
+            const match = _diffLazyRegistry.find(r => r.el === entry.target);
+            if (match && !match.initialized) {
+                match.initialized = true;
+                _diffLazyObserver.unobserve(match.el);
+                match.initFn();
+            }
+        });
+    }, {
+        rootMargin: rootMargin // uses the already-defined global const
+    });
+
+    _diffLazyRegistry.forEach(r => {
+        if (!r.initialized) {
+            _diffLazyObserver.observe(r.el);
+        }
+    });
+}
+
+// ============================================================
+// REPLACEMENT: loadDerivativesModule (drop-in replacement)
+// ============================================================
+
 async function loadDerivativesModule() {
     updateLoadingStatus('Loading section about Derivatives...');
-    initDerivatives();
+
+    // 1. Secant → Tangent
+    _diffLazyRegister('plot-secant-tangent', () => {
+        initSecantTangent();
+    });
+
+    // 2. Derivative Rules Explorer
+    _diffLazyRegister('plot-deriv-rules', () => {
+        initDerivRulesExplorer();
+    });
+
+    // 3. Tangent Line Explorer
+    _diffLazyRegister('plot-tangent-line', () => {
+        initTangentLineExplorer();
+    });
+
+    // 4. Chain Rule Demo
+    _diffLazyRegister('plot-chain-rule', () => {
+        initChainRuleDemo();
+    });
+
+    // 5. Gradient Surface
+    _diffLazyRegister('plot-gradient-surface', () => {
+        initGradientSurface();
+    });
+
+    // Start observing
+    _diffLazyCreateObserver();
+
     return Promise.resolve();
 }
