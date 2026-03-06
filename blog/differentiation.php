@@ -175,7 +175,7 @@ Some derivatives appear so frequently in AI and science that they are worth memo
 | $\cos(x)$ | $-\sin(x)$ | |
 | $\sigma(x) = \frac{1}{1+e^{-x}}$ | $\sigma(x)(1-\sigma(x))$ | The sigmoid, crucial for neural networks |
 
-The fact that $e^x$ is its own derivative is not a coincidence, it is essentially the *definition* of $e$. The number $e$ is the unique base for which the exponential function has this self-replicating property.
+The fact that $e^x$ is its own derivative is not a coincidence, but it is essentially the *definition* of $e$: the number $e$ is the unique base for which the exponential function has this self-replicating property.
 
 ### The Geometric Meaning: Tangent Lines
 
