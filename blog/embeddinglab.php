@@ -815,3 +815,83 @@ Below, you can explore this holographic property directly. A set of concept vect
         Compare this to a <b>lookup table</b>, where deleting an entry destroys the information completely.
     </div>
 </section>
+
+<div class="md">
+## Voronoi Cells: The Territories of Meaning
+
+Imagine the embedding space as a vast, empty continent. Each token the model knows — every word, subword, and symbol — plants a flag at its vector position. Now ask: **for every possible point in the space, which token's flag is closest?** The answer carves the entire space into territories — one per token — where every point inside a territory is closer to that territory's token than to any other. These territories are called **Voronoi cells**.
+
+### What Is a Voronoi Diagram?
+
+Formally, given a set of seed points $S = \{s_1, s_2, \ldots, s_n\}$, the Voronoi cell for seed $s_i$ is the set of all points closer to $s_i$ than to any other seed:
+
+$$ V(s_i) = \{ \mathbf{x} \in \mathbb{R}^d \mid \| \mathbf{x} - s_i \| \leq \| \mathbf{x} - s_j \| \;\; \forall j \neq i \} $$
+
+The boundaries between cells are **equidistant surfaces** — the set of points exactly halfway between two neighboring seeds. In 2D, these boundaries are line segments; in 768 dimensions, they are high-dimensional hyperplanes.
+
+This is not just a mathematical curiosity. The Voronoi tessellation is **mathematically equivalent to the decision boundary of a nearest-neighbor classifier**: any new point that lands in a cell gets assigned to that cell's token. When an LLM's decoder maps a hidden state back to a token, it is essentially asking "which token's Voronoi cell does this vector fall into?"
+
+### Why This Matters for LLMs
+
+* **Decoding as territory lookup:** The final layer of a language model computes a score for each token in the vocabulary. The token with the highest score wins. Geometrically, this is equivalent to finding which Voronoi cell the output vector falls into — the cell boundaries *are* the decision boundaries.
+* **Cell size encodes frequency:** Common words like "the" or "is" tend to have **large Voronoi cells** — they occupy more of the space, making them easier to "land in." Rare words like "defenestration" have tiny cells, requiring the model to aim precisely.
+* **Neighbors reveal semantics:** The tokens whose Voronoi cells share a boundary are **semantic or functional neighbors**. "Dog" and "Cat" share a long boundary; "Dog" and "Quantum" do not.
+* **Interpolation risks:** When you average two token vectors (e.g., for smoothing or mixing), the result might land in a *third* token's Voronoi cell entirely — a concept that is neither of the two you intended. The Voronoi structure explains why naive interpolation in embedding space can produce surprising results.
+
+Below, you can explore a 2D Voronoi diagram that simulates how an embedding space is partitioned into token territories. **Drag tokens** to see how the boundaries shift in real time. **Click anywhere** in empty space to see which token "owns" that point and how far it is from the boundary. Toggle between different example configurations to see how the geometry changes for different semantic neighborhoods.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; margin-bottom: 15px;">
+        <div>
+            <canvas id="canvas-voronoi" style="width: 100%; height: 540px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; cursor: crosshair;"></canvas>
+        </div>
+        <div id="voronoi-info-panel" style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7;">
+            <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">📍 Click anywhere on the map</div>
+            <div id="voronoi-click-info">
+                Click a point in the space to see which token "owns" it, how far it is from the nearest boundary, and who the neighboring territories are.
+            </div>
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 12px 0;">
+            <div style="font-weight: bold; font-size: 0.9em; color: #1e293b; margin-bottom: 6px;">🏷️ Token Legend</div>
+            <div id="voronoi-legend"></div>
+        </div>
+    </div>
+
+    <!-- Preset selector -->
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <span style="font-family: sans-serif; font-size: 0.9em; color: #475569; font-weight: bold;">Preset:</span>
+        <button onclick="loadVoronoiPreset('animals')" class="voronoi-preset-btn" id="vp-animals" style="background: #8b5cf6; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">🐾 Animals</button>
+        <button onclick="loadVoronoiPreset('emotions')" class="voronoi-preset-btn" id="vp-emotions" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">😊 Emotions</button>
+        <button onclick="loadVoronoiPreset('code')" class="voronoi-preset-btn" id="vp-code" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">💻 Code Tokens</button>
+        <button onclick="loadVoronoiPreset('mixed')" class="voronoi-preset-btn" id="vp-mixed" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: bold;">🌀 Mixed</button>
+    </div>
+
+    <!-- Toggles -->
+    <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="voronoi-show-gradient" checked onchange="renderVoronoi()"> Distance gradient
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="voronoi-show-boundaries" checked onchange="renderVoronoi()"> Cell boundaries
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="voronoi-show-labels" checked onchange="renderVoronoi()"> Labels
+        </label>
+    </div>
+
+    <!-- Stats -->
+    <div id="voronoi-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; max-width: 800px; margin: 0 auto 15px auto;"></div>
+
+    <!-- Description -->
+    <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
+        <b>What you're seeing:</b> Each <b>colored region</b> is a <b>Voronoi cell</b> — the territory of a single token.
+        Every point inside a cell is closer to that cell's token than to any other.
+        The <b>color gradient</b> shows distance from the cell's seed: darker near the center (confident),
+        lighter near the edges (ambiguous — close to a decision boundary).
+        <b>White lines</b> are the cell boundaries — the exact points equidistant between two tokens.
+        <b>Drag any token</b> to see how the entire partition restructures in real time.
+        <b>Click empty space</b> to query which token owns that point.
+        Notice how <b>semantically similar tokens</b> (e.g., "Dog" and "Cat") share long boundaries,
+        while dissimilar ones (e.g., "Dog" and "Quantum") may not share a boundary at all.
+    </div>
+</section>

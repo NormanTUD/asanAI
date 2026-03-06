@@ -5486,6 +5486,554 @@ function renderHolographic() {
     }
 }
 
+// ============================================================
+// VORONOI CELLS: THE TERRITORIES OF MEANING
+// ============================================================
+
+const voronoiState = {
+    canvas: null,
+    ctx: null,
+    width: 0,
+    height: 0,
+    seeds: [],
+    dragging: null,
+    clickPoint: null,
+    presets: {
+        animals: [
+            { name: 'Dog',    x: 0.30, y: 0.35, color: '#ef4444', group: 'pet' },
+            { name: 'Cat',    x: 0.38, y: 0.28, color: '#f97316', group: 'pet' },
+            { name: 'Fish',   x: 0.45, y: 0.50, color: '#06b6d4', group: 'pet' },
+            { name: 'Wolf',   x: 0.22, y: 0.42, color: '#dc2626', group: 'wild' },
+            { name: 'Lion',   x: 0.18, y: 0.55, color: '#b91c1c', group: 'wild' },
+            { name: 'Eagle',  x: 0.55, y: 0.20, color: '#8b5cf6', group: 'bird' },
+            { name: 'Parrot', x: 0.62, y: 0.30, color: '#a78bfa', group: 'bird' },
+            { name: 'Snake',  x: 0.70, y: 0.60, color: '#10b981', group: 'reptile' },
+            { name: 'Lizard', x: 0.75, y: 0.50, color: '#34d399', group: 'reptile' },
+            { name: 'Whale',  x: 0.50, y: 0.72, color: '#3b82f6', group: 'marine' },
+            { name: 'Shark',  x: 0.58, y: 0.78, color: '#2563eb', group: 'marine' },
+        ],
+        emotions: [
+            { name: 'Happy',      x: 0.30, y: 0.25, color: '#facc15', group: 'positive' },
+            { name: 'Joyful',     x: 0.35, y: 0.20, color: '#fbbf24', group: 'positive' },
+            { name: 'Excited',    x: 0.25, y: 0.30, color: '#f59e0b', group: 'positive' },
+            { name: 'Content',    x: 0.40, y: 0.30, color: '#eab308', group: 'positive' },
+            { name: 'Sad',        x: 0.65, y: 0.70, color: '#3b82f6', group: 'negative' },
+            { name: 'Melancholy', x: 0.70, y: 0.65, color: '#6366f1', group: 'negative' },
+            { name: 'Angry',      x: 0.75, y: 0.30, color: '#ef4444', group: 'intense' },
+            { name: 'Furious',    x: 0.80, y: 0.25, color: '#dc2626', group: 'intense' },
+            { name: 'Calm',       x: 0.45, y: 0.55, color: '#10b981', group: 'neutral' },
+            { name: 'Neutral',    x: 0.50, y: 0.50, color: '#64748b', group: 'neutral' },
+            { name: 'Fearful',    x: 0.60, y: 0.40, color: '#8b5cf6', group: 'negative' },
+        ],
+        code: [
+            { name: 'function', x: 0.25, y: 0.30, color: '#3b82f6', group: 'keyword' },
+            { name: 'return',   x: 0.30, y: 0.38, color: '#6366f1', group: 'keyword' },
+            { name: 'const',    x: 0.20, y: 0.25, color: '#2563eb', group: 'keyword' },
+            { name: 'if',       x: 0.35, y: 0.22, color: '#8b5cf6', group: 'control' },
+            { name: 'else',     x: 0.40, y: 0.28, color: '#a78bfa', group: 'control' },
+            { name: 'for',      x: 0.42, y: 0.18, color: '#7c3aed', group: 'control' },
+            { name: 'while',    x: 0.48, y: 0.22, color: '#9333ea', group: 'control' },
+            { name: '(',        x: 0.60, y: 0.55, color: '#f59e0b', group: 'syntax' },
+            { name: ')',        x: 0.65, y: 0.55, color: '#eab308', group: 'syntax' },
+            { name: '{',        x: 0.60, y: 0.65, color: '#f97316', group: 'syntax' },
+            { name: '}',        x: 0.65, y: 0.65, color: '#ea580c', group: 'syntax' },
+            { name: 'Array',    x: 0.75, y: 0.35, color: '#10b981', group: 'type' },
+            { name: 'String',   x: 0.78, y: 0.45, color: '#14b8a6', group: 'type' },
+        ],
+        mixed: [
+            { name: 'Dog',      x: 0.15, y: 0.20, color: '#ef4444', group: 'animal' },
+            { name: 'Cat',      x: 0.22, y: 0.25, color: '#f97316', group: 'animal' },
+            { name: 'Piano',    x: 0.50, y: 0.18, color: '#ec4899', group: 'music' },
+            { name: 'Guitar',   x: 0.55, y: 0.25, color: '#f472b6', group: 'music' },
+            { name: 'River',    x: 0.80, y: 0.30, color: '#06b6d4', group: 'nature' },
+            { name: 'Mountain', x: 0.78, y: 0.40, color: '#14b8a6', group: 'nature' },
+            { name: 'Quantum',  x: 0.35, y: 0.75, color: '#8b5cf6', group: 'science' },
+            { name: 'Electron', x: 0.42, y: 0.70, color: '#a78bfa', group: 'science' },
+            { name: 'the',      x: 0.50, y: 0.50, color: '#64748b', group: 'function' },
+            { name: 'is',       x: 0.55, y: 0.48, color: '#94a3b8', group: 'function' },
+            { name: 'Happy',    x: 0.70, y: 0.70, color: '#facc15', group: 'emotion' },
+            { name: 'Sad',      x: 0.72, y: 0.78, color: '#3b82f6', group: 'emotion' },
+        ]
+    },
+    currentPreset: 'animals'
+};
+
+window.loadVoronoiPreset = function (name) {
+    const st = voronoiState;
+    st.currentPreset = name;
+    st.seeds = JSON.parse(JSON.stringify(st.presets[name]));
+    st.clickPoint = null;
+    st.dragging = null;
+
+    // Update button styles
+    document.querySelectorAll('.voronoi-preset-btn').forEach(btn => {
+        btn.style.background = '#64748b';
+    });
+    const activeBtn = document.getElementById('vp-' + name);
+    if (activeBtn) activeBtn.style.background = '#8b5cf6';
+
+    renderVoronoi();
+    updateVoronoiLegend();
+};
+
+function initVoronoi() {
+    const canvas = document.getElementById('canvas-voronoi');
+    if (!canvas) return;
+
+    const st = voronoiState;
+    st.canvas = canvas;
+
+    // Set canvas resolution
+    function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        st.width = rect.width;
+        st.height = rect.height;
+        canvas.width = rect.width * window.devicePixelRatio;
+        canvas.height = rect.height * window.devicePixelRatio;
+        st.ctx = canvas.getContext('2d');
+        st.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    resizeCanvas();
+
+    // Load default preset
+    st.seeds = JSON.parse(JSON.stringify(st.presets.animals));
+
+    // ── Mouse / touch interaction ──
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: (clientX - rect.left) / rect.width,
+            y: (clientY - rect.top) / rect.height
+        };
+    }
+
+    function findSeedAt(pos, threshold) {
+        let closest = null, minD = Infinity;
+        st.seeds.forEach((s, i) => {
+            const d = Math.hypot(s.x - pos.x, s.y - pos.y);
+            if (d < minD) { minD = d; closest = i; }
+        });
+        return (minD < threshold) ? closest : null;
+    }
+
+    canvas.addEventListener('mousedown', e => {
+        const pos = getPos(e);
+        const idx = findSeedAt(pos, 0.04);
+        if (idx !== null) {
+            st.dragging = idx;
+            canvas.style.cursor = 'grabbing';
+        }
+    });
+
+    canvas.addEventListener('mousemove', e => {
+        const pos = getPos(e);
+        if (st.dragging !== null) {
+            st.seeds[st.dragging].x = Math.max(0.02, Math.min(0.98, pos.x));
+            st.seeds[st.dragging].y = Math.max(0.02, Math.min(0.98, pos.y));
+            renderVoronoi();
+        } else {
+            const idx = findSeedAt(pos, 0.04);
+            canvas.style.cursor = idx !== null ? 'grab' : 'crosshair';
+        }
+    });
+
+    canvas.addEventListener('mouseup', e => {
+        if (st.dragging !== null) {
+            st.dragging = null;
+            canvas.style.cursor = 'crosshair';
+        } else {
+            // Click to query
+            const pos = getPos(e);
+            st.clickPoint = pos;
+            renderVoronoi();
+            updateVoronoiClickInfo(pos);
+        }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        st.dragging = null;
+        canvas.style.cursor = 'crosshair';
+    });
+
+    // Touch support
+    canvas.addEventListener('touchstart', e => {
+        e.preventDefault();
+        const pos = getPos(e);
+        const idx = findSeedAt(pos, 0.06);
+        if (idx !== null) st.dragging = idx;
+    }, { passive: false });
+
+    canvas.addEventListener('touchmove', e => {
+        e.preventDefault();
+        if (st.dragging !== null) {
+            const pos = getPos(e);
+            st.seeds[st.dragging].x = Math.max(0.02, Math.min(0.98, pos.x));
+            st.seeds[st.dragging].y = Math.max(0.02, Math.min(0.98, pos.y));
+            renderVoronoi();
+        }
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', e => {
+        st.dragging = null;
+    });
+
+    // Resize handler
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => { resizeCanvas(); renderVoronoi(); }, 150);
+    });
+
+    renderVoronoi();
+    updateVoronoiLegend();
+}
+
+function renderVoronoi() {
+    const st = voronoiState;
+    if (!st.ctx) return;
+
+    const ctx = st.ctx;
+    const W = st.width;
+    const H = st.height;
+    const seeds = st.seeds;
+
+    const showGradient = document.getElementById('voronoi-show-gradient')?.checked ?? true;
+    const showBoundaries = document.getElementById('voronoi-show-boundaries')?.checked ?? true;
+    const showLabels = document.getElementById('voronoi-show-labels')?.checked ?? true;
+
+    // ── Step 1: Render Voronoi cells via pixel sampling ──
+    // Use an offscreen approach at lower resolution for performance
+    const res = 3; // pixel step size (lower = higher quality, slower)
+    const cellOwner = []; // flat array: which seed owns each sampled pixel
+    const cellDist = [];  // distance to nearest seed
+    const cellDist2 = []; // distance to second-nearest seed
+
+    for (let py = 0; py < H; py += res) {
+        for (let px = 0; px < W; px += res) {
+            const nx = px / W;
+            const ny = py / H;
+
+            let minD = Infinity, minI = 0;
+            let min2D = Infinity;
+
+            for (let i = 0; i < seeds.length; i++) {
+                const d = Math.hypot(seeds[i].x - nx, seeds[i].y - ny);
+                if (d < minD) {
+                    min2D = minD;
+                    minD = d;
+                    minI = i;
+                } else if (d < min2D) {
+                    min2D = d;
+                }
+            }
+
+            cellOwner.push(minI);
+            cellDist.push(minD);
+            cellDist2.push(min2D);
+        }
+    }
+
+    // ── Step 2: Draw cells ──
+    ctx.clearRect(0, 0, W, H);
+
+    const cols = Math.ceil(W / res);
+    let idx = 0;
+
+    for (let py = 0; py < H; py += res) {
+        for (let px = 0; px < W; px += res) {
+            const owner = cellOwner[idx];
+            const d1 = cellDist[idx];
+            const d2 = cellDist2[idx];
+            const seed = seeds[owner];
+
+            if (showGradient) {
+                // Distance-based shading: darker near seed, lighter near boundary
+                const boundaryProximity = 1 - (d2 - d1) / (d2 + d1 + 0.001);
+                // boundaryProximity: 0 = far from boundary (center), 1 = on boundary
+                const alpha = 0.15 + (1 - boundaryProximity) * 0.35;
+                ctx.fillStyle = hexToRgba(seed.color, alpha);
+            } else {
+                ctx.fillStyle = hexToRgba(seed.color, 0.25);
+            }
+
+            ctx.fillRect(px, py, res, res);
+
+            // Boundary detection: if the next pixel (right or down) has a different owner, draw boundary
+            if (showBoundaries) {
+                const rightIdx = idx + 1;
+                const downIdx = idx + cols;
+                const isRightBoundary = (px + res < W) && rightIdx < cellOwner.length && cellOwner[rightIdx] !== owner;
+                const isDownBoundary = (py + res < H) && downIdx < cellOwner.length && cellOwner[downIdx] !== owner;
+
+                if (isRightBoundary || isDownBoundary) {
+                    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                    ctx.fillRect(px, py, res + 1, res + 1);
+                }
+            }
+
+            idx++;
+        }
+    }
+
+    // ── Step 3: Draw seeds and labels ──
+    seeds.forEach((s, i) => {
+        const sx = s.x * W;
+        const sy = s.y * H;
+
+        // Seed dot
+        ctx.beginPath();
+        ctx.arc(sx, sy, 7, 0, Math.PI * 2);
+        ctx.fillStyle = s.color;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Inner dot
+        ctx.beginPath();
+        ctx.arc(sx, sy, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+
+        // Label
+        if (showLabels) {
+            ctx.font = 'bold 12px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+
+            // Background for readability
+            const textWidth = ctx.measureText(s.name).width;
+            ctx.fillStyle = 'rgba(255,255,255,0.85)';
+            ctx.fillRect(sx - textWidth / 2 - 3, sy - 24, textWidth + 6, 16);
+
+            ctx.fillStyle = s.color;
+            ctx.fillText(s.name, sx, sy - 10);
+        }
+    });
+
+    // ── Step 4: Click point indicator ──
+    if (st.clickPoint) {
+        const cp = st.clickPoint;
+        const cpx = cp.x * W;
+        const cpy = cp.y * H;
+
+        // Find owner
+        let minD = Infinity, minI = 0;
+        seeds.forEach((s, i) => {
+            const d = Math.hypot(s.x - cp.x, s.y - cp.y);
+            if (d < minD) { minD = d; minI = i; }
+        });
+
+        // Line to owner
+        ctx.beginPath();
+        ctx.moveTo(cpx, cpy);
+        ctx.lineTo(seeds[minI].x * W, seeds[minI].y * H);
+        ctx.strokeStyle = 'rgba(30,41,59,0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Click marker
+        ctx.beginPath();
+        ctx.arc(cpx, cpy, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#1e293b';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Crosshair
+        ctx.strokeStyle = 'rgba(30,41,59,0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(cpx - 12, cpy); ctx.lineTo(cpx + 12, cpy);
+        ctx.moveTo(cpx, cpy - 12); ctx.lineTo(cpx, cpy + 12);
+        ctx.stroke();
+    }
+
+    // ── Step 5: Stats ──
+    updateVoronoiStats(cellOwner, cellDist, cellDist2);
+}
+
+function updateVoronoiClickInfo(pos) {
+    const st = voronoiState;
+    const infoDiv = document.getElementById('voronoi-click-info');
+    if (!infoDiv) return;
+
+    const seeds = st.seeds;
+
+    // Find distances to all seeds, sorted
+    const dists = seeds.map((s, i) => ({
+        idx: i, name: s.name, color: s.color, group: s.group,
+        dist: Math.hypot(s.x - pos.x, s.y - pos.y)
+    })).sort((a, b) => a.dist - b.dist);
+
+    const owner = dists[0];
+    const runner = dists[1];
+    const boundaryDist = (runner.dist - owner.dist).toFixed(4);
+    const confidence = ((runner.dist - owner.dist) / (runner.dist + owner.dist + 0.001) * 100).toFixed(1);
+
+    infoDiv.innerHTML = `
+        <div style="margin-bottom: 8px;">
+            <b>Owner:</b> <span style="color:${owner.color}; font-weight:bold; font-size:1.1em;">${owner.name}</span>
+            <span style="color:#94a3b8; font-size:0.85em;">(${owner.group})</span>
+        </div>
+        <div style="margin-bottom: 4px;">
+            <b>Distance to ${owner.name}:</b> ${owner.dist.toFixed(4)}
+        </div>
+        <div style="margin-bottom: 4px;">
+            <b>Runner-up:</b> <span style="color:${runner.color};">${runner.name}</span> (${runner.dist.toFixed(4)})
+        </div>
+        <div style="margin-bottom: 4px;">
+            <b>Boundary margin:</b> ${boundaryDist}
+        </div>
+        <div style="margin-bottom: 8px;">
+            <b>Confidence:</b>
+            <span style="color:${parseFloat(confidence) > 30 ? '#10b981' : parseFloat(confidence) > 10 ? '#f59e0b' : '#ef4444'}; font-weight:bold;">
+                ${confidence}%
+            </span>
+            ${parseFloat(confidence) < 10 ? '<span style="color:#ef4444; font-size:0.8em;"> ⚠️ near boundary!</span>' : ''}
+        </div>
+        <div style="font-size: 0.8em; color: #94a3b8;">
+            <b>Nearest 5:</b><br>
+            ${dists.slice(0, 5).map((d, i) =>
+                `<span style="color:${d.color};">${i === 0 ? '→' : '&nbsp;&nbsp;'} ${d.name}</span> <span style="color:#cbd5e1;">(${d.dist.toFixed(3)})</span>`
+            ).join('<br>')}
+        </div>
+    `;
+}
+
+function updateVoronoiLegend() {
+    const st = voronoiState;
+    const legendDiv = document.getElementById('voronoi-legend');
+    if (!legendDiv) return;
+
+    // Group seeds by group
+    const groups = {};
+    st.seeds.forEach(s => {
+        if (!groups[s.group]) groups[s.group] = [];
+        groups[s.group].push(s);
+    });
+
+    let html = '';
+    Object.entries(groups).forEach(([group, members]) => {
+        html += `<div style="margin-bottom: 6px;">
+            <span style="font-weight:bold; color:#1e293b; font-size:0.85em; text-transform:capitalize;">${group}</span><br>`;
+        members.forEach(m => {
+            html += `<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:${m.color}; margin-right:4px; vertical-align:middle;"></span>
+                <span style="font-size:0.8em; color:${m.color};">${m.name}</span>&nbsp;&nbsp;`;
+        });
+        html += `</div>`;
+    });
+
+    legendDiv.innerHTML = html;
+}
+
+function updateVoronoiStats(cellOwner, cellDist, cellDist2) {
+    const statsDiv = document.getElementById('voronoi-stats');
+    if (!statsDiv) return;
+
+    const st = voronoiState;
+    const seeds = st.seeds;
+    const N = seeds.length;
+
+    // Count pixels per cell (approximate cell area)
+    const cellCounts = new Array(N).fill(0);
+    cellOwner.forEach(o => cellCounts[o]++);
+    const totalPixels = cellOwner.length;
+
+    // Find largest and smallest cells
+    let maxIdx = 0, minIdx = 0;
+    cellCounts.forEach((c, i) => {
+        if (c > cellCounts[maxIdx]) maxIdx = i;
+        if (c < cellCounts[minIdx]) minIdx = i;
+    });
+
+    const largestPct = (cellCounts[maxIdx] / totalPixels * 100).toFixed(1);
+    const smallestPct = (cellCounts[minIdx] / totalPixels * 100).toFixed(1);
+
+    // Average boundary proximity (how much of the space is "ambiguous")
+    let boundaryPixels = 0;
+    for (let i = 0; i < cellDist.length; i++) {
+        const margin = cellDist2[i] - cellDist[i];
+        if (margin < 0.02) boundaryPixels++;
+    }
+    const ambiguousPct = (boundaryPixels / totalPixels * 100).toFixed(1);
+
+    // Find which pairs share the longest boundaries
+    // (approximate: count boundary pixels between each pair)
+    const pairBoundary = {};
+    const cols = Math.ceil(st.width / 3); // res = 3
+
+    for (let i = 0; i < cellOwner.length; i++) {
+        const owner = cellOwner[i];
+        const rightIdx = i + 1;
+        const downIdx = i + cols;
+
+        if (rightIdx < cellOwner.length && cellOwner[rightIdx] !== owner) {
+            const key = [Math.min(owner, cellOwner[rightIdx]), Math.max(owner, cellOwner[rightIdx])].join('-');
+            pairBoundary[key] = (pairBoundary[key] || 0) + 1;
+        }
+        if (downIdx < cellOwner.length && cellOwner[downIdx] !== owner) {
+            const key = [Math.min(owner, cellOwner[downIdx]), Math.max(owner, cellOwner[downIdx])].join('-');
+            pairBoundary[key] = (pairBoundary[key] || 0) + 1;
+        }
+    }
+
+    // Top neighbor pair
+    let topPairKey = null, topPairCount = 0;
+    Object.entries(pairBoundary).forEach(([key, count]) => {
+        if (count > topPairCount) { topPairKey = key; topPairCount = count; }
+    });
+
+    let topPairLabel = '—';
+    if (topPairKey) {
+        const [a, b] = topPairKey.split('-').map(Number);
+        topPairLabel = `${seeds[a].name} ↔ ${seeds[b].name}`;
+    }
+
+    statsDiv.innerHTML = `
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Largest Cell</div>
+            <div style="font-size:1.1em; font-weight:bold; color:${seeds[maxIdx].color};">${seeds[maxIdx].name}</div>
+            <div style="font-size:0.85em; color:#94a3b8;">${largestPct}% of space</div>
+        </div>
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Smallest Cell</div>
+            <div style="font-size:1.1em; font-weight:bold; color:${seeds[minIdx].color};">${seeds[minIdx].name}</div>
+            <div style="font-size:0.85em; color:#94a3b8;">${smallestPct}% of space</div>
+        </div>
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Longest Boundary</div>
+            <div style="font-size:0.9em; font-weight:bold; color:#8b5cf6;">${topPairLabel}</div>
+            <div style="font-size:0.75em; color:#94a3b8;">closest neighbors</div>
+        </div>
+        <div style="padding:10px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; text-align:center;">
+            <div style="font-size:0.75em; color:#64748b; margin-bottom:3px;">Ambiguous Zone</div>
+            <div style="font-size:1.2em; font-weight:bold; color:${parseFloat(ambiguousPct) > 20 ? '#f59e0b' : '#10b981'};">${ambiguousPct}%</div>
+            <div style="font-size:0.75em; color:#94a3b8;">near boundaries</div>
+        </div>
+    `;
+}
+
+function hexToRgba(hex, alpha) {
+    // Handle shorthand and full hex
+    let r = 0, g = 0, b = 0;
+    if (hex.length === 4) {
+        r = parseInt(hex[1] + hex[1], 16);
+        g = parseInt(hex[2] + hex[2], 16);
+        b = parseInt(hex[3] + hex[3], 16);
+    } else if (hex.length === 7) {
+        r = parseInt(hex.substring(1, 3), 16);
+        g = parseInt(hex.substring(3, 5), 16);
+        b = parseInt(hex.substring(5, 7), 16);
+    }
+    return `rgba(${r},${g},${b},${alpha})`;
+}
+
 function loadEmbeddingModule() {
     const fastConfig = {
         displayModeBar: false,
@@ -5671,6 +6219,10 @@ function loadEmbeddingModule() {
         }
     });
 
+    // 20. Voronoi Cells
+    _embLazyRegister('canvas-voronoi', () => {
+        initVoronoi();
+    });
 
     // Start observing all registered sections
     _embLazyCreateObserver();
