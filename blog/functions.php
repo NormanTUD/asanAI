@@ -160,6 +160,7 @@ function load_base_js () {
 	js("init");
 	js("helper");
 	js("master_vis");
+	js("loader");
 
 	$files = glob("modules/*.js");
 
@@ -171,78 +172,39 @@ function load_base_js () {
 	}
 ?>
 	<script>
-	    const labelMap = <?php echo json_encode(get_ai_course_labels()); ?>;
-	    window.addEventListener('load', sendHeight);
-	    window.addEventListener('resize', sendHeight);
+		const labelMap = <?php echo json_encode(get_ai_course_labels()); ?>;
+		window.addEventListener('load', sendHeight);
+		window.addEventListener('resize', sendHeight);
 
-	    // Coordination flags
-	    let _modulesLoaded = false;
-	    let _windowLoaded = false;
-	    let _postLoadDone = false;
+		// Coordination flags
+		let _modulesLoaded = false;
+		let _windowLoaded = false;
+		let _postLoadDone = false;
 
-	    async function runPostLoad() {
-		// Only run when BOTH conditions are met, and only once
-		if (!_modulesLoaded || !_windowLoaded || _postLoadDone) return;
-		_postLoadDone = true;
+		async function runPostLoad() {
+			// Only run when BOTH conditions are met, and only once
+			if (!_modulesLoaded || !_windowLoaded || _postLoadDone) return;
+			_postLoadDone = true;
 
-		try {
-		    await bibtexify();
-		    renderMarkdown();
-		    make_external_a_href_target_blank();
-		    postLoadInit();
-		    revealContent();
-		    sendHeight();
-		} catch (error) {
-		    console.error("Initialization failed:", error);
-		    updateLoadingStatus(`Error loading page. Please refresh. ${error}`);
-		}
-	    }
-
-window.addEventListener('DOMContentLoaded', async () => {
-		try {
-			const loaders = window.__moduleLoaderQueue || [];
-			const names = window.__moduleLoaderNames || [];
-
-			// Build the checklist UI FIRST — this shows all items immediately
-			registerLoaderSections(names);
-
-			// Force a paint so the user sees the pending checklist
-			await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-			// Run loaders sequentially with micro-yields so the UI updates between each
-			for (let i = 0; i < loaders.length; i++) {
-				const loader = loaders[i];
-				if (typeof loader !== 'function') continue;
-
-				markLoaderSection(i, 'loading');
-
-				// Yield to let the browser paint the "loading" state
-				await new Promise(r => setTimeout(r, 0));
-
-				try {
-					const result = loader();
-					if (result && typeof result.then === 'function') {
-						await result;
-					}
-				} catch (err) {
-					console.error(`Module loader ${i} failed:`, err);
-				}
-
-				markLoaderSection(i, 'done');
+			try {
+				await bibtexify();
+				renderMarkdown();
+				make_external_a_href_target_blank();
+				postLoadInit();
+				revealContent();
+				sendHeight();
+			} catch (error) {
+				console.error("Initialization failed:", error);
+				updateLoadingStatus(`Error loading page. Please refresh. ${error}`);
 			}
-
-			finalizeLoaderChecklist();
-
-		} catch (error) {
-			console.error("Module loading failed:", error);
-			updateLoadingStatus(`Error loading modules. ${error}`);
 		}
-	});
 
-	    window.addEventListener('load', async (event) => {
-		_windowLoaded = true;
-		runPostLoad();
-	    });
+		window.addEventListener('DOMContentLoaded', loader_fn);
+
+		window.addEventListener('load', async (event) => {
+			_windowLoaded = true;
+			runPostLoad();
+		});
 
 		(function() {
 			const startObserving = () => {
