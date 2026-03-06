@@ -7,7 +7,7 @@
 	<title>From 1 + 1 = 2 to ChatGPT</title>
 	<?php load_base_js(); ?>
 </head>
-
+<body>
 <div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 	<div class="spinner" aria-hidden="true"></div>
 	<p id="loader-status">Initializing AI Course...</p>
