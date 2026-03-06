@@ -1336,33 +1336,131 @@ function addKonamiEgg() {
 
 		const el = document.createElement('div');
 		el.style.cssText = `
-      position: fixed; top: 50%; left: 50%;
-      transform: translate(-50%, -50%) scale(0.9);
-      background: rgba(10, 10, 20, 0.95); color: #4ade80;
-      padding: 30px 40px; border-radius: 12px;
-      font-family: monospace; font-size: 15px;
-      text-align: center; max-width: 420px;
-      border: 1px solid rgba(74,222,128,0.2);
-      box-shadow: 0 0 80px rgba(74,222,128,0.08);
-      z-index: 999999; opacity: 0;
-      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    `;
-		el.innerHTML = `
-      <div style="font-size: 28px; margin-bottom: 12px;">🎮</div>
-      <div style="margin-bottom: 8px;">↑↑↓↓←→←→BA</div>
-      <div style="color: #aaa; font-size: 13px; line-height: 1.6;">${msg}</div>
-    `;
+			position: fixed; top: 50%; left: 50%;
+			transform: translate(-50%, -50%) scale(0.9);
+			background: rgba(10, 10, 20, 0.95); color: #4ade80;
+			padding: 30px 40px; border-radius: 12px;
+			font-family: monospace; font-size: 15px;
+			text-align: center; max-width: 420px;
+			border: 1px solid rgba(74,222,128,0.2);
+			box-shadow: 0 0 80px rgba(74,222,128,0.08);
+			z-index: 999999; opacity: 0;
+			transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+		`;
+
+		// --- Build internal structure for phased animation ---
+		const emojiDiv = document.createElement('div');
+		emojiDiv.style.cssText = 'font-size: 28px; margin-bottom: 12px; opacity: 0; filter: blur(6px); transform: scale(0.6); transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);';
+		emojiDiv.textContent = '🎮';
+
+		const codeDiv = document.createElement('div');
+		codeDiv.style.cssText = 'margin-bottom: 8px; min-height: 1.2em;';
+
+		const msgDiv = document.createElement('div');
+		msgDiv.style.cssText = 'color: #aaa; font-size: 13px; line-height: 1.6; min-height: 2em;';
+
+		el.appendChild(emojiDiv);
+		el.appendChild(codeDiv);
+		el.appendChild(msgDiv);
 		document.body.appendChild(el);
 
+		// --- Staggered character reveal helper ---
+		const staggerReveal = (container, text, perChar, startDelay, onComplete) => {
+			container.innerHTML = '';
+			for (let i = 0; i < text.length; i++) {
+				const ch = document.createElement('span');
+				ch.textContent = text[i];
+				ch.style.cssText = `
+					display: inline-block;
+					opacity: 0;
+					filter: blur(4px);
+					transform: translateY(4px);
+					transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+				`;
+				if (text[i] === ' ') ch.style.width = '0.35em';
+				container.appendChild(ch);
+
+				setTimeout(() => {
+					ch.style.opacity = '1';
+					ch.style.filter = 'blur(0)';
+					ch.style.transform = 'translateY(0)';
+				}, startDelay + (i * perChar));
+			}
+			if (onComplete) {
+				setTimeout(onComplete, startDelay + (text.length * perChar) + 300);
+			}
+		};
+
+		// Phase 1: Container scales in
 		requestAnimationFrame(() => {
 			el.style.opacity = '1';
 			el.style.transform = 'translate(-50%, -50%) scale(1)';
-		});
 
-		setTimeout(() => {
-			el.style.opacity = '0';
-			setTimeout(() => el.remove(), 600);
-		}, 5000);
+			// Phase 2: Emoji materializes with glow pulse (200ms)
+			setTimeout(() => {
+				emojiDiv.style.opacity = '1';
+				emojiDiv.style.filter = 'blur(0)';
+				emojiDiv.style.transform = 'scale(1)';
+
+				// Border glow flash
+				el.style.boxShadow = '0 0 120px rgba(74,222,128,0.15)';
+				setTimeout(() => {
+					el.style.boxShadow = '0 0 80px rgba(74,222,128,0.08)';
+				}, 600);
+			}, 200);
+
+			// Phase 3: Konami code types out character by character (500ms)
+			// Each arrow/letter appears like it's being typed back
+			const konamiText = '↑↑↓↓←→←→BA';
+			staggerReveal(codeDiv, konamiText, 65, 500);
+
+			// Phase 4: Message text cascades in (after code finishes)
+			const codeFinish = 500 + (konamiText.length * 65) + 200;
+			const msgPerChar = Math.max(8, Math.min(20, 500 / msg.length));
+			staggerReveal(msgDiv, msg, msgPerChar, codeFinish);
+
+			// Phase 5: Dismissal — full dissolve
+			const totalAnimTime = codeFinish + (msg.length * msgPerChar) + 800;
+			const dismissTime = Math.max(5000, totalAnimTime + 1000);
+
+			setTimeout(() => {
+				// Dissolve text in reverse: message first, then code, then emoji
+				const msgChars = [...msgDiv.querySelectorAll('span')].reverse();
+				const codeChars = [...codeDiv.querySelectorAll('span')].reverse();
+
+				const msgPerOut = Math.max(3, Math.min(8, 150 / msgChars.length));
+				msgChars.forEach((ch, i) => {
+					setTimeout(() => {
+						ch.style.opacity = '0';
+						ch.style.filter = 'blur(3px)';
+						ch.style.transform = 'translateY(-3px)';
+					}, i * msgPerOut);
+				});
+
+				const codeOutStart = msgChars.length * msgPerOut + 100;
+				codeChars.forEach((ch, i) => {
+					setTimeout(() => {
+						ch.style.opacity = '0';
+						ch.style.filter = 'blur(3px)';
+						ch.style.transform = 'translateY(-3px)';
+					}, codeOutStart + (i * 30));
+				});
+
+				const emojiOutStart = codeOutStart + (codeChars.length * 30) + 100;
+				setTimeout(() => {
+					emojiDiv.style.opacity = '0';
+					emojiDiv.style.filter = 'blur(6px)';
+					emojiDiv.style.transform = 'scale(0.6)';
+				}, emojiOutStart);
+
+				// Container fades last
+				setTimeout(() => {
+					el.style.opacity = '0';
+					el.style.transform = 'translate(-50%, -50%) scale(0.95)';
+					setTimeout(() => el.remove(), 600);
+				}, emojiOutStart + 400);
+			}, dismissTime);
+		});
 	}
 }
 
