@@ -2258,3 +2258,109 @@ blockquote,
     display: inline-block;
     vertical-align: middle;
 }
+
+
+/* ── Loader Checklist ──────────────────────────────────── */
+
+#loader {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+	transition: opacity 0.5s ease;
+}
+
+#loader-status {
+	color: #64748b;
+	font-size: 14px;
+	margin-top: 16px;
+	margin-bottom: 4px;
+}
+
+#loader-checklist {
+	margin-top: 12px;
+	text-align: left;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+	font-size: 12px;
+	columns: 2;
+	column-gap: 32px;
+	max-width: 600px;
+	width: 90%;
+}
+
+@media (max-width: 500px) {
+	#loader-checklist {
+		columns: 1;
+	}
+}
+
+.loader-section-row {
+	padding: 3px 0;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	break-inside: avoid;
+	transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.loader-section-row .loader-icon {
+	display: inline-block;
+	width: 16px;
+	text-align: center;
+	font-size: 13px;
+	flex-shrink: 0;
+	transition: transform 0.3s ease;
+}
+
+.loader-section-row .loader-label {
+	transition: color 0.3s ease;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Pending: dimmed */
+.loader-section-row.pending {
+	color: #aaa;
+}
+
+.loader-section-row.pending .loader-icon {
+	color: #ccc;
+}
+
+/* Loading: highlighted with spinning icon */
+.loader-section-row.loading {
+	color: #334155;
+	font-weight: 500;
+}
+
+.loader-section-row.loading .loader-icon {
+	color: #3b82f6;
+	animation: loader-spin 0.8s linear infinite;
+}
+
+/* Done: green checkmark */
+.loader-section-row.done {
+	color: #64748b;
+}
+
+.loader-section-row.done .loader-icon {
+	color: #22c55e;
+	animation: none;
+}
+
+.loader-section-row.done .loader-label {
+	color: #94a3b8;
+}
+
+@keyframes loader-spin {
+	from { transform: rotate(0deg); }
+	to   { transform: rotate(360deg); }
+}

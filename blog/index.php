@@ -10,7 +10,8 @@
 
 <div id="loader">
 	<div class="spinner"></div>
-	<p>Initializing AI Course...</p>
+	<p id="loader-status">Initializing AI Course...</p>
+	<div id="loader-checklist"></div>
 </div>
 
 <!--

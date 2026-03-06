@@ -50,7 +50,7 @@ function render_gem_tabs($tabs, $groupId = 'tabgroup') {
 <?php
 }
 
-function js($file) {
+function js($file, $loaderLabel = null) {
 	// 1. Normalize file extension
 	if (!str_ends_with($file, '.js') && !str_starts_with($file, 'http')) {
 		$file .= ".js";
@@ -66,30 +66,42 @@ function js($file) {
 		}
 
 		if ($should_load) {
-			// Print the main script include
 			print("<script src='$file'></script>\n");
 			$GLOBALS["loaded_js"][] = $file;
 
-			// 3. Check for specific module loader function pattern
+			// 3. Check for module loader function pattern
 			if (!$is_proxy && file_exists($file)) {
 				$content = file_get_contents($file);
-				// Regex: match optional 'async', 'function', and capture 'load...Module'
-				// Handles: function loadXModule, async function loadXModule
 				if (preg_match('/(?:async\s+)?function\s+(load\w+Module)\s*\(/', $content, $matches)) {
 					$functionName = $matches[1];
+
+					// Use the headline passed from incl(), or extract from JS, or fallback to function name
+					if ($loaderLabel === null) {
+						if (preg_match('/updateLoadingStatus\s*\(\s*["\']Loading section about (.+?)\.\.\.["\']/', $content, $labelMatch)) {
+							$loaderLabel = $labelMatch[1];
+						} else {
+							$loaderLabel = $functionName;
+						}
+					}
+
+					// Strip any LaTeX ($...$) from the label for clean display
+					$cleanLabel = preg_replace('/\$[^$]*\$/', '', $loaderLabel);
+					$cleanLabel = trim($cleanLabel);
+
+					$safeSectionLabel = htmlspecialchars(addslashes($cleanLabel), ENT_QUOTES);
+
 					print("<script>
-						window.addEventListener('DOMContentLoaded', () => {
-						if (typeof $functionName === 'function') {
-							$functionName();
+						if (!window.__moduleLoaderQueue) window.__moduleLoaderQueue = [];
+						if (!window.__moduleLoaderNames) window.__moduleLoaderNames = [];
+						window.__moduleLoaderQueue.push($functionName);
+						window.__moduleLoaderNames.push('$safeSectionLabel');
+					</script>\n");
 				}
-				});
-		    </script>\n");
+			}
+		} elseif ($GLOBALS["debug_mode"]) {
+			echo "\n";
 		}
-	    }
-	} elseif ($GLOBALS["debug_mode"]) {
-	    echo "\n";
 	}
-    }
 }
 
 function css($file) {
@@ -108,13 +120,12 @@ function css($file) {
 }
 
 function incl($headline, $base_name) {
-	// Dateinamen automatisch generieren
 	$js_file  = $base_name . ".js";
 	$php_file = $base_name . ".php";
 
-	js($js_file);
+	// Pass the headline so js() can use it as the loader label
+	js($js_file, $headline);
 
-	// PHP-Logik: Muss vorhanden sein, sonst stirbt das Skript (da Content-kritisch)
 	if (!file_exists($php_file)) {
 		die("Kritischer Fehler: PHP-Datei '$php_file' für Sektion '$headline' fehlt!");
 	}
@@ -164,6 +175,43 @@ function load_base_js () {
 		window.addEventListener('load', sendHeight);
 		window.addEventListener('resize', sendHeight);
 
+		window.addEventListener('DOMContentLoaded', async () => {
+			try {
+				const loaders = window.__moduleLoaderQueue || [];
+				const names = window.__moduleLoaderNames || [];
+
+				// Build the checklist UI before any loaders run
+				registerLoaderSections(names);
+
+				// Run all loaders in parallel, each one updates the checklist when done
+				const promises = loaders.map((loader, i) => {
+					if (typeof loader !== 'function') return Promise.resolve();
+
+					// Mark as loading
+					markLoaderSection(i, 'loading');
+
+					const result = loader();
+					const p = (result && typeof result.then === 'function') ? result : Promise.resolve(result);
+
+					return p.then(() => {
+						markLoaderSection(i, 'done');
+					}).catch(err => {
+						console.error(`Module loader ${i} failed:`, err);
+						markLoaderSection(i, 'done');
+					});
+				});
+
+				await Promise.all(promises);
+
+				// Mark anything remaining as done
+				finalizeLoaderChecklist();
+
+			} catch (error) {
+				console.error("Module loading failed:", error);
+				updateLoadingStatus(`Error loading modules. ${error}`);
+			}
+		});
+
 		window.addEventListener('load', async (event) => {
 			try {
 				await bibtexify();
@@ -180,21 +228,18 @@ function load_base_js () {
 
 		(function() {
 			const startObserving = () => {
-				// Ensure the body exists before we try to use it
 				if (!document.body) return;
 
 				if (window.ResizeObserver) {
 					const ro = new ResizeObserver(() => {
-					sendHeight();
-				});
+						sendHeight();
+					});
 					ro.observe(document.body);
 				} else {
-					// Fallback for old browsers
 					setInterval(sendHeight, 1000);
 				}
 			};
 
-			// Check if the DOM is already loaded; if not, wait for it
 			if (document.readyState === 'loading') {
 				document.addEventListener('DOMContentLoaded', startObserving);
 			} else {
@@ -202,7 +247,6 @@ function load_base_js () {
 			}
 		})();
 	</script>
-
 <?php
 }
 
@@ -384,10 +428,10 @@ if(!server_php_self_ends_with_index_php()) {
 ?>
 	</head>
 	<body>
-
 		<div id="loader">
 			<div class="spinner"></div>
-			<p>Initializing...</p>
+			<p id="loader-status">Initializing AI Course...</p>
+			<div id="loader-checklist"></div>
 		</div>
 
 		<div id="contents" style="display: none">

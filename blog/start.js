@@ -37,11 +37,76 @@ const subUnits = [
 
 const isIndexPage = window.location.pathname.endsWith('index.php') || window.location.pathname === '/';
 
+const _loaderSections = [];
+let _loaderChecklistBuilt = false;
+
+function registerLoaderSections(names) {
+	const container = document.getElementById('loader-checklist');
+	if (!container) return;
+
+	names.forEach((name, i) => {
+		const id = `loader-section-${i}`;
+		_loaderSections.push({ id, name, status: 'pending' });
+
+		const row = document.createElement('div');
+		row.id = id;
+		row.className = 'loader-section-row pending';
+		row.innerHTML = `<span class="loader-icon">○</span> <span class="loader-label">${name}</span>`;
+		container.appendChild(row);
+	});
+
+	_loaderChecklistBuilt = true;
+}
+
+function markLoaderSection(index, status) {
+	if (!_loaderChecklistBuilt) return;
+	const s = _loaderSections[index];
+	if (!s) return;
+
+	const row = document.getElementById(s.id);
+	if (!row) return;
+
+	s.status = status;
+	row.className = `loader-section-row ${status}`;
+
+	const icon = row.querySelector('.loader-icon');
+	if (status === 'loading') {
+		icon.textContent = '⟳';
+	} else if (status === 'done') {
+		icon.textContent = '✓';
+	}
+
+	// Update the top status text with the current state
+	const loadingCount = _loaderSections.filter(s => s.status === 'loading').length;
+	const doneCount = _loaderSections.filter(s => s.status === 'done').length;
+	const total = _loaderSections.length;
+
+	const statusText = document.getElementById('loader-status');
+	if (statusText) {
+		if (doneCount === total) {
+			statusText.textContent = 'Finalizing...';
+		} else {
+			statusText.textContent = `Loading sections... (${doneCount}/${total})`;
+		}
+	}
+}
+
 function updateLoadingStatus(message) {
 	console.info(message);
-	const statusText = document.querySelector('#loader p');
-	if (statusText) statusText.textContent = message;
+	const statusText = document.getElementById('loader-status');
+	if (statusText && !_loaderChecklistBuilt) {
+		statusText.textContent = message;
+	}
 }
+
+function finalizeLoaderChecklist() {
+	_loaderSections.forEach((s, i) => {
+		if (s.status !== 'done') {
+			markLoaderSection(i, 'done');
+		}
+	});
+}
+
 
 function observeAndRenderMath(targetNode = document.body) {
 	if (!targetNode) {
