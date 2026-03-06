@@ -2,158 +2,229 @@
  * Synchronisiert alle Visualisierungen basierend auf dem Master-Input
  */
 function syncAndTokenize(val) {
-	const masterInput = document.getElementById('master-token-input');
+    const masterInput = document.getElementById('master-token-input');
+    if (!masterInput) return;
 
-	// Falls das Eingabefeld nicht existiert (andere Seite), Funktion abbrechen
-	if (!masterInput) return;
+    const text = (val !== undefined) ? val : masterInput.value;
+    const methods = ['spaces', 'trigrams', 'bpe', 'wordpiece', 'chars'];
 
-	const text = (val !== undefined) ? val : masterInput.value;
-	const methods = ['spaces', 'trigrams', 'bpe', 'wordpiece', 'chars'];
+    methods.forEach(type => {
+        renderTokens(type, text);
+    });
 
-	methods.forEach(type => {
-		renderTokens(type, text);
-	});
+    // Update live token count
+    const counter = document.getElementById('live-token-count');
+    if (counter) {
+        const total = document.querySelectorAll('.viz-container .token-badge');
+        // We update after render, so use a microtask
+        requestAnimationFrame(() => {
+            const allBadges = document.querySelectorAll('.viz-container .token-badge');
+            counter.textContent = allBadges.length;
+        });
+    }
+}
+
+/**
+ * Attempt to generate a beautiful, unique but deterministic palette from a string.
+ * Returns an object with hue, a gradient, and a glow color.
+ */
+function tokenColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 7) - hash) + str.charCodeAt(i);
+        hash |= 0;
+    }
+    const hue = Math.abs(hash) % 360;
+    const hue2 = (hue + 30) % 360;
+    return {
+        hue,
+        id: Math.abs(hash) % 10000,
+        bg: `linear-gradient(135deg, hsl(${hue}, 70%, 42%), hsl(${hue2}, 80%, 32%))`,
+        glow: `hsla(${hue}, 80%, 50%, 0.35)`,
+        border: `hsla(${hue}, 60%, 70%, 0.25)`
+    };
 }
 
 /**
  * Erstellt die Token-Badges für eine spezifische Methode
  */
 function renderTokens(type, text) {
-	const container = document.getElementById(`viz-${type}`);
-	// Falls der spezifische Container nicht existiert, überspringen
-	if (!container) return;
+    const container = document.getElementById(`viz-${type}`);
+    if (!container) return;
 
-	let tokens = [];
+    let tokens = [];
 
-	if (type === 'spaces') {
-		tokens = text.split(/\s+/).filter(t => t.length > 0);
-	} 
-	else if (type === 'trigrams') {
-		const nInput = document.getElementById('ngram-size');
-		const n = nInput ? parseInt(nInput.value) : 3;
-		const cleanText = text.replace(/\s+/g, '_');
-		for (let i = 0; i < cleanText.length; i += n) {
-			tokens.push(cleanText.substring(i, i + n));
-		}
-	} 
-	else if (type === 'bpe') {
-		const tokenizer = new BPETokenizer();
-		tokenizer.train(text, 15);
-		tokens = tokenizer.tokenize(text);
-	}
-	else if (type === 'chars') {
-		tokens = text.split('');
-	}
-	else if (type === 'wordpiece') {
-		const words = text.split(/\s+/).filter(t => t.length > 0);
-		words.forEach(word => {
-			tokens.push(...wordpieceTokenize(word));
-		});
-	}
+    if (type === 'spaces') {
+        tokens = text.split(/\s+/).filter(t => t.length > 0);
+    }
+    else if (type === 'trigrams') {
+        const nInput = document.getElementById('ngram-size');
+        const n = nInput ? parseInt(nInput.value) : 3;
+        const cleanText = text.replace(/\s+/g, '_');
+        for (let i = 0; i < cleanText.length; i += n) {
+            tokens.push(cleanText.substring(i, i + n));
+        }
+    }
+    else if (type === 'bpe') {
+        const tokenizer = new BPETokenizer();
+        tokenizer.train(text, 15);
+        tokens = tokenizer.tokenize(text);
+    }
+    else if (type === 'chars') {
+        tokens = text.split('');
+    }
+    else if (type === 'wordpiece') {
+        const words = text.split(/\s+/).filter(t => t.length > 0);
+        words.forEach(word => {
+            tokens.push(...wordpieceTokenize(word));
+        });
+    }
 
-	// HTML Rendering mit konsistentem Hashing für Farben
-	container.innerHTML = tokens.map(t => {
-		const hash = t.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-		const hue = Math.abs(hash) % 360;
-		const displayToken = (t === ' ') ? '␣' : t; 
+    // Animate out old tokens, then render new ones
+    const existing = container.querySelectorAll('.token-badge');
+    if (existing.length > 0) {
+        existing.forEach(el => el.classList.add('token-exit'));
+    }
 
-		return `
-	    <div style="background: hsl(${hue}, 65%, 40%); color: white; padding: 5px 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85rem; display: flex; flex-direction: column; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-		${displayToken}
-		<span style="font-size: 0.6rem; opacity: 0.8; margin-top: 3px; border-top: 1px solid rgba(255,255,255,0.2); width: 100%; text-align: center;">
-		    ID: ${Math.abs(hash) % 1000}
-		</span>
-	    </div>
-	`;
-	}).join('');
+    // Small delay so exit animation can play, but keep it snappy
+    const delay = existing.length > 0 ? 80 : 0;
+
+    setTimeout(() => {
+        container.innerHTML = '';
+
+        if (tokens.length === 0) {
+            container.innerHTML = `<div class="token-empty">Type something above to see tokens appear…</div>`;
+            return;
+        }
+
+        tokens.forEach((t, i) => {
+            const c = tokenColor(t);
+            const displayToken = (t === ' ') ? '␣' : t;
+
+            const badge = document.createElement('div');
+            badge.className = 'token-badge token-enter';
+            badge.style.cssText = `
+                --token-bg: ${c.bg};
+                --token-glow: ${c.glow};
+                --token-border: ${c.border};
+                animation-delay: ${i * 18}ms;
+            `;
+
+            badge.innerHTML = `
+                <span class="token-text">${escapeHtml(displayToken)}</span>
+                <span class="token-id">${c.id}</span>
+            `;
+
+            // Hover: show a tooltip with full info
+            badge.setAttribute('title', `"${t}" → ID ${c.id}`);
+
+            container.appendChild(badge);
+        });
+
+        // Update section token count
+        const countEl = container.parentElement.querySelector('.section-token-count');
+        if (countEl) {
+            countEl.textContent = tokens.length + ' token' + (tokens.length !== 1 ? 's' : '');
+        }
+    }, delay);
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
 }
 
 /**
  * A small simulated WordPiece vocabulary.
- * In real BERT, this would be ~30,000 entries learned from data.
- * We simulate the behavior: known whole words stay whole,
- * unknown words get split into the longest matching subwords.
  */
 const wordpieceVocab = [
-	// Whole words
-	"the", "king", "is", "a", "an", "brave", "act", "quick", "slow",
-	"token", "deep", "learn", "model", "train", "data", "word",
-	"un", "re", "pre", "dis",
-	// Subword suffixes (## prefix = continuation)
-	"##ing", "##ly", "##ed", "##er", "##est", "##tion", "##ation",
-	"##ment", "##ness", "##ize", "##iza", "##able", "##ful",
-	"##al", "##ous", "##ive", "##less", "##s", "##en", "##it", "##id",
-	"##e", "##y", "##o", "##i", "##u",
-	// Single characters as fallback (always in WordPiece vocab)
-	"a","b","c","d","e","f","g","h","i","j","k","l","m",
-	"n","o","p","q","r","s","t","u","v","w","x","y","z"
+    "the", "king", "is", "a", "an", "brave", "act", "quick", "slow",
+    "token", "deep", "learn", "model", "train", "data", "word",
+    "un", "re", "pre", "dis",
+    "##ing", "##ly", "##ed", "##er", "##est", "##tion", "##ation",
+    "##ment", "##ness", "##ize", "##iza", "##able", "##ful",
+    "##al", "##ous", "##ive", "##less", "##s", "##en", "##it", "##id",
+    "##e", "##y", "##o", "##i", "##u",
+    "a","b","c","d","e","f","g","h","i","j","k","l","m",
+    "n","o","p","q","r","s","t","u","v","w","x","y","z"
 ];
 
 /**
  * Tokenizes a single word using a greedy longest-match-first WordPiece algorithm.
- * This mirrors the real BERT tokenizer logic.
  */
 function wordpieceTokenize(word) {
-	word = word.toLowerCase();
-	// Check if the whole word is in the vocabulary
-	if (wordpieceVocab.includes(word)) return [word];
+    word = word.toLowerCase();
+    if (wordpieceVocab.includes(word)) return [word];
 
-	const tokens = [];
-	let start = 0;
-	let isFirst = true;
+    const tokens = [];
+    let start = 0;
+    let isFirst = true;
 
-	while (start < word.length) {
-		let end = word.length;
-		let found = false;
+    while (start < word.length) {
+        let end = word.length;
+        let found = false;
 
-		// Greedy: try the longest possible substring first
-		while (start < end) {
-			let substr = word.substring(start, end);
-			if (!isFirst) {
-				substr = "##" + substr;
-			}
-			if (wordpieceVocab.includes(substr)) {
-				tokens.push(substr);
-				found = true;
-				break;
-			}
-			end--;
-		}
+        while (start < end) {
+            let substr = word.substring(start, end);
+            if (!isFirst) {
+                substr = "##" + substr;
+            }
+            if (wordpieceVocab.includes(substr)) {
+                tokens.push(substr);
+                found = true;
+                break;
+            }
+            end--;
+        }
 
-		if (!found) {
-			// Fallback: single character (with ## prefix if not first)
-			const ch = word[start];
-			tokens.push(isFirst ? ch : "##" + ch);
-			start++;
-		} else {
-			start = end;
-		}
-		isFirst = false;
-	}
+        if (!found) {
+            const ch = word[start];
+            tokens.push(isFirst ? ch : "##" + ch);
+            start++;
+        } else {
+            start = end;
+        }
+        isFirst = false;
+    }
 
-	return tokens;
+    return tokens;
 }
 
 async function loadTokenizerModule() {
-	updateLoadingStatus("Loading section about Tokenizer...");
+    updateLoadingStatus("Loading section about Tokenizer...");
 
-	// Detect when the input bar becomes sticky
-	const stickyEl = document.getElementById('sticky-input-wrapper');
-	if (stickyEl) {
-		const observer = new IntersectionObserver(
-			([entry]) => {
-				stickyEl.classList.toggle('is-stuck', !entry.isIntersecting);
-			},
-			{ threshold: 1.0, rootMargin: '-1px 0px 0px 0px' }
-		);
-		// Create a sentinel element right above the sticky bar
-		const sentinel = document.createElement('div');
-		sentinel.style.height = '1px';
-		sentinel.style.visibility = 'hidden';
-		stickyEl.parentElement.insertBefore(sentinel, stickyEl);
-		observer.observe(sentinel);
-	}
+    // Detect when the input bar becomes sticky
+    const stickyEl = document.getElementById('sticky-input-wrapper');
+    if (stickyEl) {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                stickyEl.classList.toggle('is-stuck', !entry.isIntersecting);
+            },
+            { threshold: 1.0, rootMargin: '-1px 0px 0px 0px' }
+        );
+        const sentinel = document.createElement('div');
+        sentinel.style.height = '1px';
+        sentinel.style.visibility = 'hidden';
+        stickyEl.parentElement.insertBefore(sentinel, stickyEl);
+        observer.observe(sentinel);
+    }
 
-	syncAndTokenize();
-	return Promise.resolve();
+    // Animate sections on scroll
+    const sectionCards = document.querySelectorAll('.tokenizer-method-card');
+    if (sectionCards.length > 0 && 'IntersectionObserver' in window) {
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        sectionCards.forEach(card => revealObserver.observe(card));
+    }
+
+    syncAndTokenize();
+    return Promise.resolve();
 }

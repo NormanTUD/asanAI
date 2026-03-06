@@ -2578,3 +2578,274 @@ blockquote,
     line-height: 1.5;
 }
 
+/* ═══════════════════════════════════════════════════
+   TOKENIZER LAB — Visual Polish
+   ═══════════════════════════════════════════════════ */
+
+/* ── Sticky Input Bar ── */
+#sticky-input-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0;
+    margin: 24px 0;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    box-shadow: 0 4px 24px rgba(59, 130, 246, 0.08);
+    transition: box-shadow 0.4s ease, border-color 0.4s ease, transform 0.3s ease;
+}
+
+#sticky-input-wrapper.is-stuck {
+    box-shadow: 0 8px 40px rgba(59, 130, 246, 0.18), 0 1.5px 0 rgba(59, 130, 246, 0.10);
+    border-color: rgba(59, 130, 246, 0.35);
+}
+
+.sticky-input-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    flex-wrap: wrap;
+}
+
+.sticky-input-icon {
+    color: #3b82f6;
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+#master-token-input {
+    flex: 1;
+    min-width: 200px;
+    font-size: 1.1rem;
+    padding: 10px 16px;
+    border: 1.5px solid rgba(59, 130, 246, 0.2);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.85);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    outline: none;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+#master-token-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.sticky-input-hint {
+    width: 100%;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    padding-left: 32px;
+    margin-top: -4px;
+}
+
+/* ── Method Cards ── */
+.tokenizer-method-card {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 20px;
+    padding: 32px 28px 28px;
+    margin: 28px 0;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.3s ease;
+}
+
+.tokenizer-method-card.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.tokenizer-method-card:hover {
+    box-shadow: 0 6px 32px rgba(0, 0, 0, 0.07);
+}
+
+.method-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.method-icon {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+}
+
+.method-title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.method-subtitle {
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-left: 6px;
+}
+
+.section-token-count {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.08);
+    padding: 4px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+/* ── N-Gram Slider ── */
+.ngram-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+.ngram-controls input[type="range"] {
+    flex: 1;
+    max-width: 200px;
+    accent-color: #3b82f6;
+    cursor: pointer;
+}
+
+.ngram-value {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #3b82f6;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+/* ── Viz Container ── */
+.viz-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px 0 4px;
+    min-height: 48px;
+}
+
+/* ── Token Badges ── */
+.token-badge {
+    background: var(--token-bg);
+    color: #fff;
+    padding: 7px 14px 10px;
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    font-size: 0.85rem;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    box-shadow: 0 2px 8px var(--token-glow), inset 0 1px 0 var(--token-border);
+    position: relative;
+    cursor: default;
+    user-select: none;
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.2s ease;
+}
+
+.token-badge:hover {
+    transform: translateY(-3px) scale(1.06);
+    box-shadow: 0 6px 20px var(--token-glow), inset 0 1px 0 var(--token-border);
+    z-index: 2;
+}
+
+.token-text {
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.token-id {
+    font-size: 0.58rem;
+    opacity: 0.7;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    width: 100%;
+    text-align: center;
+    padding-top: 3px;
+    margin-top: 1px;
+    letter-spacing: 0.05em;
+}
+
+/* ── Token Animations ── */
+.token-enter {
+    animation: tokenAppear 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.token-exit {
+    animation: tokenDisappear 0.15s ease forwards;
+}
+
+@keyframes tokenAppear {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes tokenDisappear {
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+/* ── Empty State ── */
+.token-empty {
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 0.9rem;
+    padding: 12px 0;
+}
+
+/* ── Dark mode support (if applicable) ── */
+@media (prefers-color-scheme: dark) {
+    #sticky-input-wrapper {
+        background: rgba(30, 41, 59, 0.75);
+        border-color: rgba(59, 130, 246, 0.25);
+    }
+
+    #master-token-input {
+        background: rgba(15, 23, 42, 0.6);
+        color: #e2e8f0;
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .tokenizer-method-card {
+        border-color: rgba(255, 255, 255, 0.06);
+    }
+
+    .sticky-input-hint {
+        color: #64748b;
+    }
+}
