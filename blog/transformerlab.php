@@ -454,14 +454,7 @@ h_{n+1} &= z_n + \text{LayerNorm}(\text{FeedForward}(z_n))
 $$
 
 As $h$ progresses from $h_0$ to $h_{96}$, the vector for "apple" might move from being near "fruit" to being near "tech company" based on the contextual "nudges" received in the Feature Space during each Attention and FFN cycle.
-</div>
 
-<div class="md">
-### Feature Space Migration
-The following plots visualize how each layer "nudges" the token vectors. Each arrow represents the transition from $h_n$ (start) to $h_{n+1}$ (head).
-</div>
-
-<div class="md">
 ## From Hidden States to Probabilities
 
 After passing through $N$ layers, we reach the final hidden state, **$h_{\text{final}}$**. To turn this into a word, we project it against the entire vocabulary:
