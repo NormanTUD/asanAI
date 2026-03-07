@@ -1216,7 +1216,7 @@ function addCuriosityScore() {
 		// Counter
 		const counterSpan = document.createElement('span');
 		counterSpan.className = 'curiosity-counter';
-		counterSpan.style.color = '#555';
+		counterSpan.style.color = '#fff';
 		counterSpan.textContent = ` (${count}/${total})`;
 
 		if (animate) {
