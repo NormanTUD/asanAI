@@ -110,6 +110,31 @@ WordPiece is a subword method closely related to BPE, but instead of merging the
 Modern AIs use **BPE (Byte-Pair Encoding)**. It keeps common words whole but splits rare words into known building blocks like `##ing` or `##ly`.
 
 The history of BPE is a classic case of an algorithm being repurposed for a new era. Originally, \citeauthor{gage1994bpe} (\citeyear{gage1994bpe}) developed the technique strictly for data compression, using iterative byte-pair replacement to shrink files. It remained a niche compression tool until \citeauthor{sennrich2016subword} (\citeyear{sennrich2016subword}) adapted the logic into a subword tokenization strategy. This shift allowed modern models to handle rare words by breaking them into frequent fragments, effectively solving the "Out-of-Vocabulary" problem that had previously limited word-level neural networks.
+
+
+	<div class="optional md" data-headline="The BPE-Algorithm">
+		<ol>
+		  <li>
+		    <strong>Initialize the vocabulary</strong> with every individual character (or byte) that appears in the training corpus.
+		  </li>
+		  <li>
+		    <strong>Count all adjacent symbol pairs</strong> across the corpus.<br>
+		    <em>For example, in a corpus containing "car" (5×) and "cable" (3×), the pair <b>c a</b> appears 8 times total.</em>
+		  </li>
+		  <li>
+		    <strong>Merge the most frequent pair</strong> into a single new symbol and add it to the vocabulary.<br>
+		    This is the core step — BPE always picks the pair with the <strong>highest frequency</strong>.
+		  </li>
+		  <li>
+		    <strong>Repeat</strong> steps 2–3 for a fixed number of merge operations (a hyperparameter).<br>
+		    Each round creates a slightly larger subword unit.
+		  </li>
+		  <li>
+		    <strong>Tokenize new text</strong> by applying the learned merge rules in order.<br>
+		    Common words end up as single tokens; rare words get split into known subword fragments (e.g., <code>bravely</code> → <code>brave</code> + <code>ly</code>), effectively solving the Out-of-Vocabulary problem.
+		  </li>
+		</ol>
+	</div>
         </div>
         <div id="viz-bpe" class="viz-container"></div>
     </div>
