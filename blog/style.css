@@ -42,6 +42,9 @@ html {
 	--mn-shadow-xl: 0 20px 50px -12px rgba(0, 0, 0, 0.1);
 	--mn-shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
 	--mn-shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+
+	-webkit-hyphens: auto; /* Safari */
+	lang: "en"; /* wichtig: Sprache muss gesetzt sein */
 }
 
 #contents, #loader {
