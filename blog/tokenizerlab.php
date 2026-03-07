@@ -22,9 +22,6 @@ Before an AI can "calculate" a word, it must chop the text into pieces. This pro
                    placeholder="Type or paste any text here…"
                    autocomplete="off"
                    spellcheck="false">
-            <div class="sticky-input-hint">
-                Edit this text — every section below updates live
-            </div>
         </div>
     </div>
 
