@@ -184,7 +184,7 @@ These functions were chosen because they create unique, continuous patterns for 
 
 The key to how the FFN learns from positional encodings lies in the mathematical properties of sine and cosine. For any fixed offset $k$, the positional encoding at position $\text{pos} + k$ can be expressed as a linear transformation of the encoding at position $\text{pos}$. This linearity allows the FFN to infer relative positions by learning simple transformations that map positional relationships to meaningful patterns. Over multiple layers, the FFN entangles positional and semantic information, enabling the model to reason about sequence structure and relationships effectively. This process ensures that the model can generalize to unseen sequences and maintain positional understanding even when tokens are shifted or reordered.
 
-This is required because the network looks at all words simultaneously, instead of after another.
+This is required because the network looks at all words simultaneously, instead of after another. Since the matrix can be permutated and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.
 </div>
 
 <div class="md" id="ifscalfactornotone" style="display: none">
