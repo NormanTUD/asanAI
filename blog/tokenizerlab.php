@@ -34,7 +34,7 @@ Before an AI can "calculate" a word, it must chop the text into pieces. This pro
             <span class="section-token-count"></span>
         </div>
         <div class="md">
-The most intuitive way: Every time there is a space, we create a new token.
+The most intuitive way: Every time there is a space, comma, dot etc., we create a new token.
 
 Before modern subword methods, word-level splitting was the default for systems like the original **IBM Alignment Models** in the early 1990s. While \citeauthor{zipf1949human} (\citeyear{zipf1949human}) formalized the distribution problem, it was these early translation models that hit the "Out-of-Vocabulary" (OOV) wall, leading researchers to realize that treating "brave" and "bravely" as two completely unrelated IDs was inefficient.
 
