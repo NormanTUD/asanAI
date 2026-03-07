@@ -2890,3 +2890,7 @@ blockquote,
 		animation: spin 3s linear infinite !important; /* keep spinner, just slower */
 	}
 }
+
+.viz-container {
+	overflow: auto;
+}
