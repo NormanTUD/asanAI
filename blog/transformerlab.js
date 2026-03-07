@@ -4073,7 +4073,7 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 		tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
 	}
 
-	tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model);
+	tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model, tokenStrings);
 	tlab_render_weight_grid(id, layerNum - 1);
 }
 
@@ -5456,13 +5456,26 @@ function ensureLatexDebugDiv(id, plotDiv) {
 /**
  * Refactored: now a clean orchestrator.
  */
-function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model) {
-    const vocabRows = buildVocabTransitionRows(tokens, start_h, end_h, d_model);
-    const latexString = `$$h_\\text{after} = ${toColoredPMatrix(h_after)}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model, tokenStrings) {
+	const vocabRows = buildVocabTransitionRows(tokens, start_h, end_h, d_model);
 
-    const latexDiv = ensureLatexDebugDiv(id, plotDiv);
-    latexDiv.innerHTML = latexString;
-    render_temml();
+	const ts = tokenStrings || null;
+
+	// Determine the stage label from the id: "migration-layer-N" → layer N
+	let stageLabel = 'layer output';
+	const layerMatch = id.match(/migration-layer-(\d+)/);
+	if (layerMatch) {
+		const layerNum = parseInt(layerMatch[1]);
+		stageLabel = `out layer ${layerNum}`;
+	}
+
+	const hAfterMatrix = matrixToPmatrixLabeled(h_after, ts, stageLabel);
+
+	const latexString = `$$h_\\text{after} = ${hAfterMatrix}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+
+	const latexDiv = ensureLatexDebugDiv(id, plotDiv);
+	latexDiv.innerHTML = latexString;
+	render_temml();
 }
 
 /**
