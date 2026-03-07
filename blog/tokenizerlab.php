@@ -95,6 +95,30 @@ The concept of viewing text as a sequence of raw characters dates back to \citea
         <div class="md">
 WordPiece is a subword method closely related to BPE, but instead of merging the most *frequent* pair, it merges the pair that most improves the **likelihood of the training data**. It was introduced by \citeauthor{schuster2012wordpiece} (\citeyear{schuster2012wordpiece}) to handle the massive character sets of Japanese and Korean, and later became famous as the tokenizer behind Google's **BERT**. Continuation fragments are marked with `##` (e.g., "tokenization" → `token`, `##iza`, `##tion`). GPT-style models use BPE instead because byte-level BPE is simpler to train at scale and guarantees coverage of any input without needing an unknown-token fallback.
         </div>
+
+	<div class="optional md" data-headline="The WordPiece-Algorithm">
+		<ol>
+		  <li>
+		    <strong>Initialize the vocabulary</strong> with every character present in the training data — identical to BPE's starting point.
+		  </li>
+		  <li>
+		    <strong>Score every candidate pair</strong> — but instead of raw frequency, WordPiece computes which merge would most improve the <strong>likelihood of the training data</strong>. The scoring formula is typically:
+		    <p align="center">
+		      $$\text{score}(a, b) = \frac{\text{freq}(ab)}{\text{freq}(a) \times \text{freq}(b)}$$
+		    </p>
+		    This favors merging pairs whose co-occurrence is high <em>relative to</em> how often each piece appears independently.
+		  </li>
+		  <li>
+		    <strong>Merge the highest-scoring pair</strong> and add the new symbol to the vocabulary.
+		  </li>
+		  <li>
+		    <strong>Repeat</strong> until the desired vocabulary size is reached.
+		  </li>
+		  <li>
+		    <strong>Tokenize new text</strong> using a <strong>greedy longest-match-first</strong> approach: scan from the beginning of each word, find the longest substring that exists in the vocabulary, emit it, then continue with the remainder. Continuation fragments are prefixed with <code>##</code> (e.g., <code>tokenization</code> &rarr; <code>token</code>, <code>##iza</code>, <code>##tion</code>).
+		  </li>
+		</ol>
+        </div>
         <div id="viz-wordpiece" class="viz-container"></div>
     </div>
 
@@ -110,6 +134,7 @@ WordPiece is a subword method closely related to BPE, but instead of merging the
 Modern AIs use **BPE (Byte-Pair Encoding)**. It keeps common words whole but splits rare words into known building blocks like `##ing` or `##ly`.
 
 The history of BPE is a classic case of an algorithm being repurposed for a new era. Originally, \citeauthor{gage1994bpe} (\citeyear{gage1994bpe}) developed the technique strictly for data compression, using iterative byte-pair replacement to shrink files. It remained a niche compression tool until \citeauthor{sennrich2016subword} (\citeyear{sennrich2016subword}) adapted the logic into a subword tokenization strategy. This shift allowed modern models to handle rare words by breaking them into frequent fragments, effectively solving the "Out-of-Vocabulary" problem that had previously limited word-level neural networks.
+        </div>
 
 
 	<div class="optional md" data-headline="The BPE-Algorithm">
@@ -134,7 +159,6 @@ The history of BPE is a classic case of an algorithm being repurposed for a new 
 		    Common words end up as single tokens; rare words get split into known subword fragments (e.g., <code>bravely</code> → <code>brave</code> + <code>ly</code>), effectively solving the Out-of-Vocabulary problem.
 		  </li>
 		</ol>
-	</div>
         </div>
         <div id="viz-bpe" class="viz-container"></div>
     </div>
