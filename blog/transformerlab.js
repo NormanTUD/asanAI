@@ -2706,7 +2706,7 @@ function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenS
     });
 
     const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts, 'after concat')}}_{\\text{Total } d_{\\text{model}}}`;
-    const newHtml = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
+    const newHtml = `<div style='overflow-x: auto; overflow-y: hidden; max-width: 100%;'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
 
     _heightLockedUpdate(container, newHtml);
     _renderTemmlOnElements([container]);
