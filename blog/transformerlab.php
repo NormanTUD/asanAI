@@ -367,7 +367,7 @@ The output width is simply the sum of the input widths.
 After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. We then create the next stage, **$h_1$**, using a **Residual Connection** and **Normalization**:
 
 $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
-$$h_{1} = h_{0} + \text{LayerNorm}(\text{MultiHead}(h_{0}))$$
+$$h_{1} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0})) \cdot W^O$$
 
 This Layer Normalization ensures that the values don't 'explode' and get too large, since they are, after being normalized, always in around 0 with a variance of 1. Without it, the values might get bigger and bigger with many layers.
 </div>
@@ -393,7 +393,7 @@ While attention decides *what to look at*, the FFN decides *what to do with it*.
 
 The final state of this block, **$h_2$**, is formed by another residual connection:
 
-$$h_{2} = h_{1} + \text{LayerNorm}(\text{FFN}(h_1))$$
+$$h_{2} = h_{1} + \text{FFN}(\text{LayerNorm}(h_1))$$
 </div>
 
 <div id="ffn-equations-container"></div>
