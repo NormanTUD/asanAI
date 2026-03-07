@@ -2698,14 +2698,14 @@ function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenS
     const ts = tokenStrings || null;
 
     const headMatricesLaTeX = headData.map((h, i) => {
-        return `\\underbrace{${matrixToPmatrixLabeled(h.context, ts)}}_{\\text{Head } ${i + 1}}`;
+        return `\\underbrace{${matrixToPmatrixLabeled(h.context, ts, `head ${i+1} ctx`)}}_{\\text{Head } ${i + 1}}`;
     }).join(', ');
 
     const fullMatrixData = tokens.map((_, tIdx) => {
         return [].concat(...headData.map(h => h.context[tIdx]));
     });
 
-    const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts)}}_{\\text{Total } d_{\\text{model}}}`;
+    const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts, 'after concat')}}_{\\text{Total } d_{\\text{model}}}`;
     const newHtml = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
 
     _heightLockedUpdate(container, newHtml);
@@ -2955,6 +2955,13 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     const h2name = `h_{${base + 2}}`;
     const ts = tokenStrings || null;
 
+    // Determine the stage label for h1 input
+    // Layer 0's h1 = h0 + MHA_proj (i.e., after attention residual)
+    // Layer N's h1 = previous layer's h2 (output of layer N-1)
+    const h1Stage = layerIndex === 0 
+        ? 'after attn residual' 
+        : `out layer ${layerIndex}`;
+
     const step1 = document.getElementById(`${prefix}-step-1`);
     const step2 = document.getElementById(`${prefix}-step-2`);
     const step3 = document.getElementById(`${prefix}-step-3`);
@@ -2965,7 +2972,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     <p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $${h1name}${sup}$ before FFN</p>
     $$ \\text{LayerNorm}(${h1name}${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{${h1name}${sup} - \\underbrace{\\mu}_{\\text{Mean of } ${h1name}${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } ${h1name}${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
     <div style="overflow-x:auto;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts)}}_{\\text{Norm}\\left(${h1name}${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{${h1name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}\\left(${h1name}${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h1, ts, h1Stage)}}_{${h1name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
     <br>
     </div>
     </div>
@@ -2975,7 +2982,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     $$ \\text{out}_{L1}${sup} = \\text{ReLU}\\!\\left(\\text{Norm}(${h1name}${sup}) \\cdot W_1${sup} + b_1${sup}\\right) $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts)}}_{\\text{out}_{L1}${sup}} = \\text{ReLU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts)}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ReLU')}}_{\\text{out}_{L1}${sup}} = \\text{ReLU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
     </div>
     `;
 
@@ -2985,7 +2992,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     $$ \\text{out}_{L2}${sup} = \\text{out}_{L1}${sup} \\cdot W_2${sup} + b_2${sup} $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts)}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrixLabeled(out_L1, ts)}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ReLU')}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
     </div>
     `;
 
@@ -2995,7 +3002,7 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     $$ ${h2name}${sup} = ${h1name}${sup} + \\text{out}_{L2}${sup} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h2, ts)}}_{${h2name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{${h1name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts)}}_{\\text{out}_{L2}${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(h2, ts, 'layer output')}}_{${h2name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h1, ts, h1Stage)}}_{${h1name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{out}_{L2}${sup}} $$
     </div>
     `;
 
@@ -3004,7 +3011,6 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
     _heightLockedUpdate(step3, step3Html);
 
     _renderTemmlOnElements([step1, step2, step3]);
-
     _releaseHeightLocks([step1, step2, step3]);
 }
 
@@ -6758,6 +6764,7 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
 	normContainer._lastHash = hash;
 	finalContainer._lastHash = hash;
 
+
 	const L = layerIndex + 1;
 	const sup = `^{(${L})}`;
 	const base = layerIndex * 2;
@@ -6765,13 +6772,18 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
 	const h1name = `h_{${base + 1}}`;
 	const ts = tokenStrings || null;
 
+	// Stage labels
+	const h0Stage = layerIndex === 0 
+		? 'emb + PE' 
+		: `out layer ${layerIndex}`;
+
 	const normHtml = `
     <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization — Layer ${L}</p>
     <div style="margin-bottom:15px;">
     <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $${h0name}${sup}$ before attention:</p>
     $$ \\text{LayerNorm}(${h0name}${sup}) = \\gamma${sup} \\odot \\frac{${h0name}${sup} - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta${sup} $$
     <div style="overflow-x:auto; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts)}}_{\\text{LayerNorm}(${h0name}${sup})} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{${h0name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts, 'after LN₁')}}_{\\text{LayerNorm}(${h0name}${sup})} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts, h0Stage)}}_{${h0name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
     </div>
     </div>`;
 
@@ -6779,7 +6791,7 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
     <div style="margin-bottom:15px;">
     <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_\\text{proj}${sup}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts)}}_{\\text{Concat}(\\text{Heads})${sup}} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{{W^O}${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after W^O proj')}}_{\\text{MHA}_\\text{proj}${sup}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts, 'after concat')}}_{\\text{Concat}(\\text{Heads})${sup}} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{{W^O}${sup}} $$
     </div>
     </div>
     <div style="margin-bottom:10px;">
@@ -6787,7 +6799,7 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
     $$ ${h1name}${sup} = ${h0name}${sup} + \\text{MHA}_{\\text{proj}}${sup} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{${h1name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{${h0name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts, 'after attn residual')}}_{${h1name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts, h0Stage)}}_{${h0name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after W^O proj')}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
     </div>`;
 
 	// Step 1: Lock height and swap HTML (frozen at old height)
@@ -6852,7 +6864,7 @@ function preserveScrollPositions(container, mutationFn) {
 	// The caller must call _releaseHeightLocks([container]) after post-processing.
 }
 
-function matrixToPmatrixLabeled(matrix, tokenStrings) {
+function matrixToPmatrixLabeled(matrix, tokenStrings, stageLabel) {
 	if (!tokenStrings || tokenStrings.length !== matrix.length) {
 		return matrixToPmatrix(matrix); // fallback to unlabeled
 	}
@@ -6860,17 +6872,30 @@ function matrixToPmatrixLabeled(matrix, tokenStrings) {
 	const total = matrix.length;
 	const numCols = matrix[0].length;
 
-	// Build an array environment: label column | value columns
 	const colSpec = 'r|' + 'r'.repeat(numCols);
 
 	const rows = matrix.map((row, tIdx) => {
 		const colorCmd = getPositionColor(tIdx, total, 'temml');
-		// Escape special LaTeX characters in token strings
 		const safeLabel = tokenStrings[tIdx]
 			.replace(/#/g, '\\#')
 			.replace(/_/g, '\\_')
 			.replace(/&/g, '\\&');
-		const label = `${colorCmd} \\text{${safeLabel}}_{${tIdx}}`;
+		
+		// Build the subscript: token index + optional stage label
+		let subscript;
+		if (stageLabel) {
+			// Escape special LaTeX chars in the stage label too
+			const safeStage = stageLabel
+				.replace(/#/g, '\\#')
+				.replace(/_/g, '\\_')
+				.replace(/&/g, '\\&')
+				.replace(/\^/g, '\\textasciicircum ');
+			subscript = `_{${tIdx},\\,\\text{${safeStage}}}`;
+		} else {
+			subscript = `_{${tIdx}}`;
+		}
+		
+		const label = `${colorCmd} \\text{${safeLabel}}${subscript}`;
 		const vals = row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
 		return `${label} & ${vals}`;
 	}).join(' \\\\ ');

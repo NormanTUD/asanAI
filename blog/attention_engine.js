@@ -70,8 +70,8 @@ class AttentionEngine {
 
 	_buildContextMatrixSection(headIdx, layerNum, n, d_k, weights, Vi, context, displayTokens) {
 		const weightMatrixTex = this._attnWeightMatrixLabeled(weights, displayTokens, n);
-		const vMatrixTex = this._attnRowLabeledMatrix(Vi, displayTokens, n);
-		const contextMatrixTex = this._attnRowLabeledMatrix(context, displayTokens, n);
+		const vMatrixTex = this._attnRowLabeledMatrix(Vi, displayTokens, n, 'V proj');
+		const contextMatrixTex = this._attnRowLabeledMatrix(context, displayTokens, n, 'head ctx');
 
 		return `<div style="margin-bottom:16px; padding:12px; background:#fff; border:1px solid #e2e8f0; border-radius:8px;">
     <p style="font-weight:600; color:#1e40af; margin-bottom:6px;">Context Matrix for Head ${headIdx + 1}</p>
@@ -164,7 +164,7 @@ class AttentionEngine {
 	 * by the row's position. Column headers are blank spaces.
 	 * Used for V matrices and context matrices.
 	 */
-	_attnRowLabeledMatrix(mat, displayTokens, n) {
+	_attnRowLabeledMatrix(mat, displayTokens, n, stageLabel) {
 		if (!Array.isArray(mat) || !Array.isArray(mat[0])) return `(?)`;
 		const numCols = mat[0].length;
 		const colSpec = 'r|' + 'r'.repeat(numCols);
@@ -173,7 +173,14 @@ class AttentionEngine {
 
 		const rows = mat.map((row, tIdx) => {
 			const color = this._attnPosColor(tIdx, n);
-			const label = `${color} \\text{${this._attnSafeTok(displayTokens, tIdx)}}_{${tIdx}}`;
+			const safe = this._attnSafeTok(displayTokens, tIdx);
+			let subscript;
+			if (stageLabel) {
+				subscript = `_{${tIdx},\\,\\text{${stageLabel}}}`;
+			} else {
+				subscript = `_{${tIdx}}`;
+			}
+			const label = `${color} \\text{${safe}}${subscript}`;
 			const vals = row.map(v => `${color} ${this._attnNum(v).toFixed(nr_fixed)}`).join(' & ');
 			return `${label} & ${vals}`;
 		}).join(' \\\\ ');
