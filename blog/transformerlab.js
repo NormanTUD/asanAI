@@ -6884,12 +6884,16 @@ function matrixToPmatrixLabeled(matrix, tokenStrings, stageLabel) {
 		// Build the subscript: token index + optional stage label
 		let subscript;
 		if (stageLabel) {
-			// Escape special LaTeX chars in the stage label too
+			// Convert stage label to LaTeX-safe form.
+			// Handle "^X" patterns by breaking out of \text{}, 
+			// rendering as math superscript, then re-entering \text{}.
+			// e.g. "after W^O proj" → "\text{after W}^{O}\text{ proj}"
 			const safeStage = stageLabel
 				.replace(/#/g, '\\#')
 				.replace(/_/g, '\\_')
 				.replace(/&/g, '\\&')
-				.replace(/\^/g, '\\textasciicircum ');
+				// Split around ^X patterns: close \text{}, do ^{X}, reopen \text{}
+				.replace(/\^(\w+)/g, '}^{$1}\\text{');
 			subscript = `_{${tIdx},\\,\\text{${safeStage}}}`;
 		} else {
 			subscript = `_{${tIdx}}`;
