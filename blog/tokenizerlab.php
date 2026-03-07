@@ -99,10 +99,10 @@ WordPiece is a subword method closely related to BPE, but instead of merging the
 	<div class="optional md" data-headline="The WordPiece-Algorithm">
 		<ol>
 		  <li>
-		    <strong>Initialize the vocabulary</strong> with every character present in the training data — identical to BPE's starting point.
+		    <strong>Initialize the vocabulary</strong> with every character present in the training data.
 		  </li>
 		  <li>
-		    <strong>Score every candidate pair</strong> — but instead of raw frequency, WordPiece computes which merge would most improve the <strong>likelihood of the training data</strong>. The scoring formula is typically:
+		    <strong>Score every candidate pair</strong>, but instead of raw frequency, WordPiece computes which merge would most improve the <strong>likelihood of the training data</strong>. The scoring formula is typically:
 		    <p align="center">
 		      $$\text{score}(a, b) = \frac{\text{freq}(ab)}{\text{freq}(a) \times \text{freq}(b)}$$
 		    </p>
@@ -148,7 +148,7 @@ The history of BPE is a classic case of an algorithm being repurposed for a new 
 		  </li>
 		  <li>
 		    <strong>Merge the most frequent pair</strong> into a single new symbol and add it to the vocabulary.<br>
-		    This is the core step — BPE always picks the pair with the <strong>highest frequency</strong>.
+		    This is the core step: BPE always picks the pair with the <strong>highest frequency</strong>.
 		  </li>
 		  <li>
 		    <strong>Repeat</strong> steps 2–3 for a fixed number of merge operations (a hyperparameter).<br>
