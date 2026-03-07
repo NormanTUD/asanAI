@@ -343,7 +343,7 @@ During each step of inference:
    hidden state without re-calculating the past.
 
 This reduces the computational complexity of the projection phase from
-linear to constant time relative to sequence length.
+linear to $\mathcal{O}(T)$ relative to sequence length $T$.
 </div>
 
 <div class="md">
@@ -448,7 +448,7 @@ For any layer $n$, the transition to the next hidden state $h_{n+1}$ can be gene
 
 $$
 \begin{aligned}
-z_n &= h_n + \text{LayerNorm}(\text{MultiHeadAttention}(h_n)) \\
+z_n &= h_n + \text{MultiHeadAttention}(\text{LayerNorm}(h_n)) \\
 h_{n+1} &= z_n + \text{LayerNorm}(\text{FeedForward}(z_n))
 \end{aligned}
 $$
