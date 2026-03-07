@@ -91,7 +91,6 @@ function renderTokens(type, text) {
 
             badge.innerHTML = `
                 <span class="token-text">${escapeHtml(displayToken)}</span>
-                <span class="token-id">${c.id}</span>
             `;
 
             // Hover: show a tooltip with full info

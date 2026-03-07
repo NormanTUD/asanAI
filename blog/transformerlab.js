@@ -2644,7 +2644,6 @@ function renderTokenChips(container, tokens) {
 
 		badge.innerHTML = `
 	    <span class="token-text">${escapeHtml(displayToken)}</span>
-	    <span class="token-id">${c.id}</span>
 	`;
 
 		badge.setAttribute('title', `"${t}" → ID ${c.id}`);
