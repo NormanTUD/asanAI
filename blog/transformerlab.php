@@ -394,6 +394,22 @@ While attention decides *what to look at*, the FFN decides *what to do with it*.
 The final state of this block, **$h_2$**, is formed by another residual connection:
 
 $$h_{2} = h_{1} + \text{FFN}(\text{LayerNorm}(h_1))$$
+
+## The $N$-Layer Recurrence
+In practice, a Transformer is not just two steps; it is a stack of $N$ structurally identical but independently weighted blocks, each moving the representation further through the Feature Space to refine meaning.
+
+For any layer $n$, the transition to the next hidden state $h_{n+1}$ can be generalized as:
+
+$$
+\begin{aligned}
+z_n &= h_n + \text{MultiHeadAttention}(\text{LayerNorm}(h_n)) \\
+h_{n+1} &= z_n + \text{LayerNorm}(\text{FeedForward}(z_n))
+\end{aligned}
+$$
+
+As $h$ progresses from $h_0$ to $h_{96}$, the vector for "apple" might move from being near "fruit" to being near "tech company" based on the contextual "nudges" received in the Feature Space during each Attention and FFN cycle.
+
+
 </div>
 
 <div id="ffn-equations-container"></div>
@@ -441,20 +457,6 @@ a small fraction of parameters are active for any given input.
 </div>
 
 <div class="md">
-## The $N$-Layer Recurrence
-In practice, a Transformer is not just two steps; it is a stack of $N$ structurally identical but independently weighted blocks, each moving the representation further through the Feature Space to refine meaning.
-
-For any layer $n$, the transition to the next hidden state $h_{n+1}$ can be generalized as:
-
-$$
-\begin{aligned}
-z_n &= h_n + \text{MultiHeadAttention}(\text{LayerNorm}(h_n)) \\
-h_{n+1} &= z_n + \text{LayerNorm}(\text{FeedForward}(z_n))
-\end{aligned}
-$$
-
-As $h$ progresses from $h_0$ to $h_{96}$, the vector for "apple" might move from being near "fruit" to being near "tech company" based on the contextual "nudges" received in the Feature Space during each Attention and FFN cycle.
-
 ## From Hidden States to Probabilities
 
 After passing through $N$ layers, we reach the final hidden state, **$h_{\text{final}}$**. To turn this into a word, we project it against the entire vocabulary:
