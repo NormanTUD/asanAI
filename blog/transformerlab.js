@@ -6287,9 +6287,12 @@ function drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex
 
     const containerRect = container.getBoundingClientRect();
 
-    for (let i = 0; i < tokens.length; i++) {
-        for (let j = 0; j < tokens.length; j++) {
+    const n = Math.min(tokens.length, chips.length, weights.length);  // ← ADD THIS
+
+    for (let i = 0; i < n; i++) {                                     // ← USE n
+        for (let j = 0; j < n; j++) {                                 // ← USE n
             if (i === j) continue;
+            if (!weights[i] || weights[i].length <= j) continue;      // ← SAFETY CHECK
             const strength = weights[i][j];
             if (strength < 0.01) continue;
 
