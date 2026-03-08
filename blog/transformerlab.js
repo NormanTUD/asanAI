@@ -2125,13 +2125,13 @@ function buildPredictionChipsHtml(predictions, temperature) {
  * Builds the step-by-step logit calculation LaTeX HTML.
  */
 function buildLogitDetailsHtml(h_last, logits) {
-    let html = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+	let html = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
     <strong>Step-by-Step Logit Calculation</strong>
     <p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_\\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure</p>
 
 	<p>
 	The hidden state vector $\\mathbf{h}_{\\text{last}}$ (represented by <code>h[pos]</code>) is dotted against each row $\\mathbf{e}_w$ of the unembedding matrix $W_{\\text{vocab}}$ to produce the logit for word $w$:
-	$$\\text{logit}_w = \\mathbf{h}_{\\text{last}} \\cdot \\mathbf{e}_w = \\sum_{k=1}^{d} h_k e_{w,k}$$
+	$$\\text{logit}_w = \\mathbf{h}_{\\text{last}} \\cdot \\mathbf{e}_w = \\sum_{k=0}^{d-1} h_k \\cdot e_{w,k}$$
 	</p>
 
 	<p>
@@ -2160,20 +2160,23 @@ Remember that the $n$ is the number of tokens in the <b>Inference</b>-sequence, 
 
 This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. When the model is, for example, $d_{\\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage, their influence is already baked into that last vector.
 
-    <p class="logit_calc">Current $h_\\text{last} = [${h_last.map(v => v.toFixed(nr_fixed)).join(', ')}]$</p>
+    <p class="logit_calc">Current $h_\\text{last} = [${h_last.map((v, dim) => 
+        `\\underbrace{${v.toFixed(nr_fixed)}}_{\\substack{h_{${dim}} \\\\ \\text{hidden dim ${dim}}}}`
+    ).join(', ')}]$</p>
 `;
 
-    logits.forEach(({ word, val, w_row }) => {
-        const terms = h_last.map((h_val, dim) =>
-            `(${h_val.toFixed(nr_fixed)} \\cdot ${w_row[dim].toFixed(nr_fixed)})`
-        );
-        html += `<div class="logit_calc">
-    $$\\text{logit}_{\\text{${word}}} = \\boxed{${val.toFixed(nr_fixed)}} = ${terms.join(' + ')}$$
-        </div>`;
-    });
+	logits.forEach(({ word, val, w_row }) => {
+		const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+		const terms = h_last.map((h_val, dim) =>
+			`(\\underbrace{${h_val.toFixed(nr_fixed)}}_{\\text{hidden dim ${dim}}} \\cdot \\underbrace{${w_row[dim].toFixed(nr_fixed)}}_{\\text{emb "${safeWord}" dim ${dim}}})`
+		);
+		html += `<div class="logit_calc">
+    $$\\text{logit}_{\\text{${safeWord}}} = \\boxed{${val.toFixed(nr_fixed)}} = ${terms.join(' + ')}$$
+	</div>`;
+	});
 
-    html += `</div>`;
-    return html;
+	html += `</div>`;
+	return html;
 }
 
 function ensureProjectionSubContainers(container) {
