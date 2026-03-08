@@ -2249,7 +2249,6 @@ $$
     <p style="font-size:0.85rem; color:#854d0e;">
     <strong>Why subtract $m$?</strong> Without this trick, $e^{\\text{logit}}$ can overflow to <code>Infinity</code> for large logits. 
     Subtracting $m$ ensures the largest exponent is $e^0 = 1$, keeping all values in a safe numerical range. 
-    The result is mathematically identical: $\\text{softmax}(\\mathbf{x}) = \\text{softmax}(\\mathbf{x} - c)$ for any constant $c$.
     </p>
 </div>
 `;
