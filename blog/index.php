@@ -20,6 +20,7 @@
 
 <div id="contents" style="display: none">
 <?php
+	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformerlab");
 	incl("From $ 1 + 1 = 2 $ to ChatGPT: Beyond the Black Box", "intro");
 	incl("An Intuition of how Large Language Models (LLMs) work", "intuition");
 	incl("Brief History of AI", "history");
@@ -46,7 +47,6 @@
 	incl("The Semantic Tug-of-War: How Transformers 'Think'", "attentionlab");
 	incl("Positional Embeddings", "positionalembeddingslab");
 	incl("Top-\$k\$-Sampling: Temperature & Top-\$k\$ Explorer", "samplinglab");
-	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformerlab");
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
 	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
