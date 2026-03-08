@@ -2182,7 +2182,7 @@ $$
 		const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
 		const color = getPositionColor(i, logits.length, 'temml');
 		const pct = (probs[i] * 100).toFixed(2);
-		return `${color} \\text{${safeWord}} & ${color} ${probs[i].toFixed(nr_fixed)} & \\boxed{${color} ${pct}\\%}`;
+		return `${color} \\text{${safeWord}} & ${color} ${pct}\\%`;
 	}).join(' \\\\ ');
 
 	html += `
@@ -2190,7 +2190,7 @@ $$
 $$
 \\underbrace{
     \\left(\\begin{array}{l|r|r}
-    \\text{word} & P(w) & \\% \\\\
+    \\text{word} & \\% \\\\
     \\hline
     ${probRows}
     \\end{array}\\right)
