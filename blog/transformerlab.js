@@ -2161,19 +2161,55 @@ Remember that the $n$ is the number of tokens in the <b>Inference</b>-sequence, 
 This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. When the model is, for example, $d_{\\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage, their influence is already baked into that last vector.
 
     <p class="logit_calc">Current $h_\\text{last} = [${h_last.map((v, dim) => 
-        `\\underbrace{${v.toFixed(nr_fixed)}}_{\\substack{h_{${dim}} \\\\ \\text{hidden dim ${dim}}}}`
+	    `\\underbrace{${v.toFixed(nr_fixed)}}_{\\substack{h_{${dim}} \\\\ \\text{hidden dim ${dim}}}}`
     ).join(', ')}]$</p>
 `;
 
-	logits.forEach(({ word, val, w_row }) => {
+	// Build the W_vocab matrix (each row = one word's embedding)
+	const vocabWords = logits.map(l => l.word);
+	const W_vocab = logits.map(l => l.w_row);
+	const logitValues = logits.map(l => l.val);
+
+	// h_last as a column vector with colored dimensions
+	const hLastCol = h_last.map(v => [v]);
+	const dimLabels = h_last.map((_, d) => `d${d}`);
+
+	// W_vocab as a labeled matrix: rows = words, cols = dims
+	const vocabMatrixRows = W_vocab.map((row, wIdx) => {
+		const safeWord = vocabWords[wIdx].replace(/#/g, '\\#').replace(/_/g, '\\_');
+		const vals = row.map(v => v.toFixed(nr_fixed)).join(' & ');
+		return `\\color{#6366f1}{\\text{${safeWord}}} & ${vals}`;
+	}).join(' \\\\ ');
+
+	const vocabColSpec = 'r|' + 'r'.repeat(h_last.length);
+
+	// h_last as a colored column vector
+	const hLastRows = h_last.map((v, dim) => {
+		const color = getPositionColor(dim, h_last.length, 'temml');
+		return `${color} ${v.toFixed(nr_fixed)}`;
+	}).join(' \\\\ ');
+
+	// Result logit vector
+	const logitRows = logits.map(({ word, val }) => {
 		const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
-		const terms = h_last.map((h_val, dim) =>
-			`(\\underbrace{${h_val.toFixed(nr_fixed)}}_{\\text{hidden dim ${dim}}} \\cdot \\underbrace{${w_row[dim].toFixed(nr_fixed)}}_{\\text{emb "${safeWord}" dim ${dim}}})`
-		);
-		html += `<div class="logit_calc">
-    $$\\text{logit}_{\\text{${safeWord}}} = \\boxed{${val.toFixed(nr_fixed)}} = ${terms.join(' + ')}$$
-	</div>`;
-	});
+		return `\\color{#6366f1}{\\text{${safeWord}}} & ${val.toFixed(nr_fixed)}`;
+	}).join(' \\\\ ');
+
+	html += `<div style="overflow-x:auto; padding:10px 0;">
+$$
+\\underbrace{
+    \\left(\\begin{array}{${vocabColSpec}} ${vocabMatrixRows} \\end{array}\\right)
+}_{W_{\\text{vocab}}\\;(\\text{${vocabWords.length} words} \\times d_{\\text{model}})}
+\\cdot
+\\underbrace{
+    \\begin{pmatrix} ${hLastRows} \\end{pmatrix}
+}_{h_{\\text{last}}}
+=
+\\underbrace{
+    \\left(\\begin{array}{r|r} ${logitRows} \\end{array}\\right)
+}_{\\text{logits}}
+$$
+</div>`;
 
 	html += `</div>`;
 	return html;
