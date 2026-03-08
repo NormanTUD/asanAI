@@ -2126,40 +2126,7 @@ function buildPredictionChipsHtml(predictions, temperature) {
  */
 function buildLogitDetailsHtml(h_last, logits) {
 	let html = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
-    <strong>Step-by-Step Logit Calculation</strong>
-    <p>To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\\text{last}$ and the word's learned embedding row $w_\\text{row}$ from the Unembedding Matrix $W_\\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure</p>
-
-	<p>
-	The hidden state vector $\\mathbf{h}_{\\text{last}}$ (represented by <code>h[pos]</code>) is dotted against each row $\\mathbf{e}_w$ of the unembedding matrix $W_{\\text{vocab}}$ to produce the logit for word $w$:
-	$$\\text{logit}_w = \\mathbf{h}_{\\text{last}} \\cdot \\mathbf{e}_w = \\sum_{k=0}^{d-1} h_k \\cdot e_{w,k}$$
-	</p>
-
-	<p>
-	This operation computes the entire logit vector $\\mathbf{L}$ simultaneously. If $W_{\\text{vocab}}$ is a matrix where each row is a word embedding, the operation is a matrix-vector multiplication:
-	$$\\mathbf{L} = W_{\\text{vocab}} \\mathbf{h}_{\\text{last}}$$
-	This essentially iterates through the rows of $W_{\\text{vocab}}$, calculating the similarity of each word to the model's final internal state.
-	</p>
-
     <span class="md">
-To get from the long matrix to the single vector, the model performs a <strong>Terminal Selection</strong>.<br>
-
-If we represent the output of the last transformer block as a matrix $H$:
-$$H = \\begin{pmatrix}
-h_0 \\\\
-h_1 \\\\
-\\vdots \\\\
-h_{n-1}
-\\end{pmatrix} \\in \\mathbb{R}^{n \\times d_{\\text{model}}}$$
-
-The "Migration Map" prints the entire flattened matrix because it wants to show the path of every word. However, the final projection is only interested in the <b>prediction</b>:
-
-$$h_{\\text{last}} = H[n-1]$$
-
-Remember that the $n$ is the number of tokens in the <b>Inference</b>-sequence, not in the training sequence, even though the $h_\\text{after}$ may be from the training data.
-</span>
-
-This single row $h_{\\text{last}}$ is a vector in $d_{\\text{model}}$ space. When the model is, for example, $d_{\\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage, their influence is already baked into that last vector.
-
     <p class="logit_calc">Current $h_\\text{last} = [${h_last.map((v, dim) => 
 	    `\\underbrace{${v.toFixed(nr_fixed)}}_{\\substack{h_{${dim}} \\\\ \\text{hidden dim ${dim}}}}`
     ).join(', ')}]$</p>
