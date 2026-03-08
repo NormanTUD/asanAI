@@ -754,12 +754,24 @@ const Deep = (() => {
   // ==========================================================
   // Full-Screen Topic Navigation
   // ==========================================================
-  async function openTopic(topicId, portalElement) {
+    async function openTopic(topicId, portalElement) {
     const topic = topics[topicId];
     if (!topic) return;
 
+    // Toggle: if already on top, go back
     if (openStack.length > 0 && openStack[openStack.length - 1] === topicId) {
       goBack(); return;
+    }
+
+    // VIM-STYLE: if this topic is already in the stack, pop back to it
+    // instead of creating a cycle
+    const existingIdx = openStack.indexOf(topicId);
+    if (existingIdx !== -1) {
+      // Pop everything above it
+      while (openStack.length > existingIdx + 1) {
+        goBack();
+      }
+      return;
     }
 
     if (!topic.loaded) await loadTopic(topicId);
@@ -770,11 +782,7 @@ const Deep = (() => {
       currentView.dataset.scrollY = window.scrollY || document.documentElement.scrollTop;
     }
 
-    // Mark the portal as visited (subtle)
-    if (portalElement) {
-      portalElement.classList.add('visited');
-    }
-    // Also mark all portals pointing to this topic across all views
+    // Mark visited — subtle
     rootEl().querySelectorAll(`.deep-portal[data-topic="${topicId}"]`).forEach(p => {
       p.classList.add('visited');
     });
@@ -790,7 +798,6 @@ const Deep = (() => {
         ? (topics[openStack[openStack.length - 2]]?.title || 'Back')
         : 'Overview';
 
-      // Find related topics from relations graph
       const relatedHtml = buildRelatedSection(topicId);
 
       view = document.createElement('div');
@@ -816,6 +823,7 @@ const Deep = (() => {
       bindPortals(view);
       bindRelatedItems(view);
     } else {
+      // Update header for re-visited view
       const backLabel = openStack.length > 1
         ? (topics[openStack[openStack.length - 2]]?.title || 'Back')
         : 'Overview';
@@ -825,7 +833,7 @@ const Deep = (() => {
       if (depthBadge) depthBadge.textContent = openStack.length;
     }
 
-    // Rebind back button
+    // Rebind back button (clean)
     const backBtn = view.querySelector('.deep-back-btn');
     const newBackBtn = backBtn.cloneNode(true);
     backBtn.parentNode.replaceChild(newBackBtn, backBtn);
@@ -875,7 +883,6 @@ const Deep = (() => {
     if (currentView) {
       currentView.classList.add('exiting-back');
       currentView.classList.remove('active');
-      // Don't remove! Just hide after animation
       setTimeout(() => {
         currentView.style.display = 'none';
         currentView.classList.remove('exiting-back');
@@ -895,6 +902,60 @@ const Deep = (() => {
     }
 
     updateBreadcrumb();
+  }
+
+  // ==========================================================
+  // Related Topics (must be inside IIFE for access to relations/topics)
+  // ==========================================================
+  function buildRelatedSection(topicId) {
+    const related = [];
+
+    relations.forEach(r => {
+      if (r.from === topicId && topics[r.to]) {
+        related.push({ id: r.to, title: topics[r.to].title, type: r.type, dir: 'out' });
+      }
+      if (r.to === topicId && topics[r.from]) {
+        related.push({ id: r.from, title: topics[r.from].title, type: r.type, dir: 'in' });
+      }
+    });
+
+    Object.keys(topics).forEach(id => {
+      if (id === topicId) return;
+      const t = topics[id];
+      if (t.content && t.content.includes(`\\deep{${topicId}}`)) {
+        if (!related.find(r => r.id === id)) {
+          related.push({ id, title: t.title, type: 'referenced by', dir: 'in' });
+        }
+      }
+    });
+
+    if (related.length === 0) return '';
+
+    const items = related.map(r => {
+      const typeLabel = r.dir === 'in' ? `← ${r.type}` : `→ ${r.type}`;
+      return `<span class="deep-related-item" data-topic="${r.id}">
+        ${r.title}
+        <span class="deep-related-type">${typeLabel}</span>
+      </span>`;
+    }).join('');
+
+    return `
+      <div class="deep-related">
+        <div class="deep-related-label">Connected Topics</div>
+        <div class="deep-related-list">${items}</div>
+      </div>
+    `;
+  }
+
+  function bindRelatedItems(container) {
+    container.querySelectorAll('.deep-related-item').forEach(item => {
+      if (item.dataset.bound) return;
+      item.dataset.bound = 'true';
+      item.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        openTopic(item.dataset.topic, item);
+      });
+    });
   }
 
   // ==========================================================
@@ -988,10 +1049,7 @@ const Deep = (() => {
     if (!bc) return;
     bc.innerHTML = '';
 
-    const allVisited = [...rootEl().querySelectorAll('.deep-view[data-topic]')]
-      .map(v => v.dataset.topic)
-      .filter(t => t !== '__root__');
-
+    // Root crumb
     const rootCrumb = document.createElement('span');
     rootCrumb.className = 'crumb' + (openStack.length === 0 ? ' active' : '');
     rootCrumb.textContent = '⌂';
@@ -999,6 +1057,7 @@ const Deep = (() => {
     rootCrumb.addEventListener('click', () => { while (openStack.length > 0) goBack(); });
     bc.appendChild(rootCrumb);
 
+    // Current path
     openStack.forEach((id, i) => {
       const sep = document.createElement('span');
       sep.className = 'sep';
@@ -1015,30 +1074,32 @@ const Deep = (() => {
       bc.appendChild(crumb);
     });
 
-    // Visited pills — only show if there are some, very subtle
+    // Visited but not in current path — shown as subtle dots
+    const allVisited = [...rootEl().querySelectorAll('.deep-view[data-topic]')]
+      .map(v => v.dataset.topic)
+      .filter(t => t !== '__root__');
     const stackSet = new Set(openStack);
     const visitedOther = allVisited.filter(t => !stackSet.has(t));
+
     if (visitedOther.length > 0) {
       const spacer = document.createElement('span');
       spacer.className = 'crumb-spacer';
       bc.appendChild(spacer);
 
-      visitedOther.slice(0, 5).forEach(id => { // max 5 to avoid clutter
+      visitedOther.slice(0, 4).forEach(id => {
         const pill = document.createElement('span');
         pill.className = 'crumb visited';
         pill.textContent = topics[id]?.title || id;
-        pill.title = topics[id]?.title || id;
-        pill.addEventListener('click', () => {
-          openTopic(id, null);
-        });
+        pill.title = `Jump to ${topics[id]?.title || id}`;
+        pill.addEventListener('click', () => openTopic(id, null));
         bc.appendChild(pill);
       });
 
-      if (visitedOther.length > 5) {
+      if (visitedOther.length > 4) {
         const more = document.createElement('span');
         more.className = 'crumb visited';
-        more.textContent = `+${visitedOther.length - 5}`;
-        more.title = 'Open graph to see all (G)';
+        more.textContent = `+${visitedOther.length - 4}`;
+        more.title = 'Open graph (G)';
         more.addEventListener('click', toggleGraph);
         bc.appendChild(more);
       }

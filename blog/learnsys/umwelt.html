@@ -3,48 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <title>Umwelten – Uexküll meets AI</title>
+<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.2.0/dist/aframe-extras.min.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0a1628; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; }
-  canvas { display: block; }
-  #info-panel {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: rgba(5,10,20,0.9); border: 1px solid rgba(255,255,255,0.12);
-    color: #d0d8e8; padding: 18px 28px; border-radius: 14px;
-    max-width: 680px; text-align: center; z-index: 20;
-    font-size: 13.5px; line-height: 1.75;
-    backdrop-filter: blur(16px); box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{overflow:hidden;font-family:'Segoe UI',Arial,sans-serif}
+
+  #ui-overlay{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    pointer-events:none;z-index:10;
   }
-  #info-panel em { color: #88bbff; }
-  #info-panel strong { color: #fff; }
-  #scene-label {
-    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
-    color: #fff; font-size: 20px; z-index: 20; letter-spacing: 3px; font-weight: 300;
-    text-shadow: 0 2px 15px rgba(0,0,0,0.8);
-    background: rgba(0,0,0,0.35); padding: 8px 28px; border-radius: 10px;
-    backdrop-filter: blur(10px);
+
+  #scene-label{
+    position:fixed;top:16px;left:50%;transform:translateX(-50%);
+    color:#fff;font-size:20px;z-index:20;letter-spacing:3px;font-weight:300;
+    text-shadow:0 2px 15px rgba(0,0,0,0.8);
+    background:rgba(0,0,0,0.4);padding:8px 28px;border-radius:10px;
+    backdrop-filter:blur(10px);pointer-events:none;
   }
-  #nav-buttons {
-    position: fixed; top: 62px; left: 50%; transform: translateX(-50%);
-    z-index: 20; display: flex; gap: 6px;
+
+  #nav-buttons{
+    position:fixed;top:62px;left:50%;transform:translateX(-50%);
+    z-index:20;display:flex;gap:6px;pointer-events:all;
   }
-  #nav-buttons button {
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
-    color: #bbb; padding: 7px 18px; cursor: pointer;
-    font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px;
-    border-radius: 22px; transition: all 0.35s; backdrop-filter: blur(6px);
+  #nav-buttons button{
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);
+    color:#ccc;padding:8px 20px;cursor:pointer;font-size:13px;
+    border-radius:22px;transition:all 0.35s;backdrop-filter:blur(6px);
+    font-family:'Segoe UI',Arial,sans-serif;
   }
-  #nav-buttons button:hover { background: rgba(255,255,255,0.18); color: #fff; }
-  #nav-buttons button.active { background: rgba(100,180,255,0.2); border-color: rgba(100,180,255,0.45); color: #fff; }
-  #sound-toggle {
-    position: fixed; top: 16px; right: 16px; z-index: 25;
-    background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);
-    color: #aaa; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 12px;
+  #nav-buttons button:hover{background:rgba(255,255,255,0.2);color:#fff}
+  #nav-buttons button.active{background:rgba(100,180,255,0.25);border-color:rgba(100,180,255,0.5);color:#fff}
+
+  #info-panel{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:rgba(5,10,20,0.9);border:1px solid rgba(255,255,255,0.12);
+    color:#d0d8e8;padding:18px 28px;border-radius:14px;
+    max-width:700px;text-align:center;z-index:20;
+    font-size:13.5px;line-height:1.75;
+    backdrop-filter:blur(16px);box-shadow:0 8px 40px rgba(0,0,0,0.6);
+    pointer-events:none;transition:opacity 0.5s;
   }
-  #sound-toggle:hover { color: #fff; }
+  #info-panel em{color:#88bbff}
+  #info-panel strong{color:#fff}
+
+  #sound-toggle{
+    position:fixed;top:16px;right:16px;z-index:25;
+    background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.15);
+    color:#aaa;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12px;
+    pointer-events:all;
+  }
+  #sound-toggle:hover{color:#fff}
+
+  .dog-vision .a-canvas{
+    filter:saturate(0.25) sepia(0.15) hue-rotate(-15deg) brightness(1.05);
+    transition:filter 1.2s ease;
+  }
+  .normal-vision .a-canvas{
+    filter:none;
+    transition:filter 1.2s ease;
+  }
 </style>
 </head>
-<body>
+<body class="normal-vision">
+
 <div id="scene-label">UMWELTEN</div>
 <div id="nav-buttons">
   <button onclick="switchScene('human')">👤 Mensch</button>
@@ -58,595 +80,722 @@
   Jedes Wesen lebt in seiner eigenen <strong>Umwelt</strong> – seiner subjektiven Blase.
 </div>
 
-<script type="importmap">
-{ "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-} }
-</script>
-<script type="module">
-import * as THREE from 'three';
+<!-- ============================================================ -->
+<!-- A-FRAME SCENE -->
+<!-- ============================================================ -->
+<a-scene
+  renderer="antialias:true; colorManagement:true; toneMapping:ACESFilmic; toneMappingExposure:1.2"
+  fog="type:linear; color:#87CEEB; near:40; far:90"
+  vr-mode-ui="enabled:false"
+  device-orientation-permission-ui="enabled:false"
+>
 
-/* ===== AUDIO ===== */
-let audioCtx=null, soundEnabled=false, masterGain=null, birdInterval=null, birdVolume=0.05, waveSource=null, waveGainNode=null;
-function initAudio(){if(audioCtx)return;audioCtx=new(window.AudioContext||window.webkitAudioContext)();masterGain=audioCtx.createGain();masterGain.gain.value=0.3;masterGain.connect(audioCtx.destination);}
-function playChirp(freq,st,vol){if(!audioCtx||!soundEnabled)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.setValueAtTime(freq,st);o.frequency.linearRampToValueAtTime(freq*1.3,st+0.04);o.frequency.linearRampToValueAtTime(freq*0.9,st+0.08);g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(vol,st+0.01);g.gain.linearRampToValueAtTime(0,st+0.1);o.connect(g);g.connect(masterGain);o.start(st);o.stop(st+0.12);}
-function startBirds(v){birdVolume=v;if(birdInterval)return;birdInterval=setInterval(()=>{if(!audioCtx||!soundEnabled)return;const n=audioCtx.currentTime,f=2000+Math.random()*2000,c=2+Math.floor(Math.random()*3);for(let i=0;i<c;i++)playChirp(f+Math.random()*500,n+i*0.12,birdVolume);},1500+Math.random()*2000);}
-function stopBirds(){if(birdInterval){clearInterval(birdInterval);birdInterval=null;}}
-function startWaves(v){if(!audioCtx||waveSource)return;const bs=audioCtx.sampleRate*2,buf=audioCtx.createBuffer(1,bs,audioCtx.sampleRate),d=buf.getChannelData(0);let l=0;for(let i=0;i<bs;i++){l=(l+0.02*(Math.random()*2-1))/1.02;d[i]=l*3.5;}waveSource=audioCtx.createBufferSource();waveSource.buffer=buf;waveSource.loop=true;waveGainNode=audioCtx.createGain();waveGainNode.gain.value=v;const f=audioCtx.createBiquadFilter();f.type='lowpass';f.frequency.value=200;waveSource.connect(f);f.connect(waveGainNode);waveGainNode.connect(masterGain);waveSource.start();}
-function stopWaves(){if(waveSource){waveSource.stop();waveSource=null;}}
-function updateAudioForScene(n){if(!audioCtx||!soundEnabled)return;stopBirds();const t=audioCtx.currentTime;switch(n){case'human':startBirds(0.03);if(waveGainNode)waveGainNode.gain.linearRampToValueAtTime(0.06,t+0.5);break;case'dog':startBirds(0.12);if(waveGainNode)waveGainNode.gain.linearRampToValueAtTime(0.1,t+0.5);break;case'butterfly':startBirds(0.01);if(waveGainNode)waveGainNode.gain.linearRampToValueAtTime(0.02,t+0.5);break;case'ai':if(waveGainNode)waveGainNode.gain.linearRampToValueAtTime(0,t+0.8);break;}}
-window.toggleSound=function(){const b=document.getElementById('sound-toggle');if(!soundEnabled){initAudio();soundEnabled=true;b.textContent='🔊 Sound';startWaves(0.06);updateAudioForScene(currentSceneName);}else{soundEnabled=false;b.textContent='🔇 Sound';stopBirds();stopWaves();}};
+  <!-- ===== ASSETS ===== -->
+  <a-assets timeout="30000">
+    <!-- Free low-poly models from various CC0/CC-BY sources -->
+    <!-- Using basic primitives as fallback; replace URLs with your own .glb files -->
+  </a-assets>
 
-/* ===== THREE.JS SCENE ===== */
-const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x87CEEB);
-scene.fog=new THREE.Fog(0x87CEEB,50,100);
-const camera=new THREE.PerspectiveCamera(50,window.innerWidth/window.innerHeight,0.1,500);
-camera.position.set(0,3.5,14);
-const renderer=new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(window.innerWidth,window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-renderer.shadowMap.enabled=true;
-renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=1.2;
-document.body.appendChild(renderer.domElement);
+  <!-- ===== CAMERA ===== -->
+  <a-entity id="camera-rig" position="0 3.5 14">
+    <a-camera id="main-camera" look-controls="enabled:false" wasd-controls="enabled:false" fov="50">
+    </a-camera>
+  </a-entity>
 
-/* Post-processing for dog vision */
-const renderTarget=new THREE.WebGLRenderTarget(window.innerWidth,window.innerHeight);
-const desatScene=new THREE.Scene();
-const desatCamera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
-const desatMaterial=new THREE.ShaderMaterial({
-  uniforms:{tDiffuse:{value:null},dogVision:{value:0.0}},
-  vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position,1.0);}`,
-  fragmentShader:`uniform sampler2D tDiffuse;uniform float dogVision;varying vec2 vUv;void main(){vec4 c=texture2D(tDiffuse,vUv);vec3 dg=vec3(c.r*0.5+c.g*0.5,c.r*0.5+c.g*0.5,c.b);dg=mix(dg,vec3(dg.r*1.1,dg.g*1.05,dg.b*0.7),0.3);gl_FragColor=vec4(mix(c.rgb,dg,dogVision),1.0);}`
-});
-desatScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),desatMaterial));
+  <!-- ===== SKY ===== -->
+  <a-gradient-sky id="sky-entity" material="shader:flat; color:#87CEEB; opacity:1"></a-gradient-sky>
+  <!-- Simple sky with color; we'll add a gradient via a large sphere -->
+  <a-sky id="sky-bg" color="#87CEEB"></a-sky>
 
-/* Lighting */
-scene.add(new THREE.AmbientLight(0x8899bb,0.5));
-const sun=new THREE.DirectionalLight(0xffeedd,1.6);
-sun.position.set(20,25,15);sun.castShadow=true;
-sun.shadow.mapSize.set(2048,2048);
-sun.shadow.camera.left=-30;sun.shadow.camera.right=30;
-sun.shadow.camera.top=30;sun.shadow.camera.bottom=-30;
-scene.add(sun);
-scene.add(new THREE.HemisphereLight(0x87CEEB,0x445522,0.35));
+  <!-- ===== LIGHTING ===== -->
+  <a-light type="ambient" color="#8899bb" intensity="0.5"></a-light>
+  <a-light type="directional" color="#ffeedd" intensity="1.6" position="20 25 15"
+    light="castShadow:true; shadowMapWidth:2048; shadowMapHeight:2048"></a-light>
+  <a-light type="hemisphere" color="#87CEEB" groundColor="#445522" intensity="0.35"></a-light>
 
-/* Materials */
-const skinMat=new THREE.MeshStandardMaterial({color:0xd4a574,roughness:0.7});
-const shirtMat=new THREE.MeshStandardMaterial({color:0x2255aa,roughness:0.75});
-const shortsMat=new THREE.MeshStandardMaterial({color:0x1a1a2a,roughness:0.8});
-const hairMat=new THREE.MeshStandardMaterial({color:0x3a2a1a,roughness:0.9});
-const shoeMat=new THREE.MeshStandardMaterial({color:0xee4422,roughness:0.6});
-const dogFurMat=new THREE.MeshStandardMaterial({color:0xc4883a,roughness:0.9});
+  <!-- ===== SUN DISC ===== -->
+  <a-circle color="#ffeecc" radius="3" position="40 30 -60"
+    material="shader:flat" look-at="[camera]"></a-circle>
 
-/* Sky */
-const skyMat=new THREE.ShaderMaterial({side:THREE.BackSide,
-  uniforms:{topColor:{value:new THREE.Color(0x3366aa)},bottomColor:{value:new THREE.Color(0xffccaa)}},
-  vertexShader:`varying vec3 vWP;void main(){vWP=(modelMatrix*vec4(position,1.0)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
-  fragmentShader:`uniform vec3 topColor;uniform vec3 bottomColor;varying vec3 vWP;void main(){float h=normalize(vWP+20.0).y;gl_FragColor=vec4(mix(bottomColor,topColor,max(pow(max(h,0.0),0.4),0.0)),1.0);}`
-});
-scene.add(new THREE.Mesh(new THREE.SphereGeometry(200,32,32),skyMat));
+  <!-- ===== BEACH: SAND ===== -->
+  <a-plane id="sand" color="#d4b896" width="80" height="30"
+    rotation="-90 0 0" position="0 0 5"
+    material="roughness:0.95" shadow="receive:true"></a-plane>
 
-/* Beach */
-const sandGeo=new THREE.PlaneGeometry(80,30,40,15);
-const sv=sandGeo.attributes.position;
-for(let i=0;i<sv.count;i++)sv.setZ(i,Math.sin(sv.getX(i)*0.3)*0.12+Math.random()*0.02);
-sandGeo.computeVertexNormals();
-const sand=new THREE.Mesh(sandGeo,new THREE.MeshStandardMaterial({color:0xd4b896,roughness:0.95}));
-sand.rotation.x=-Math.PI/2;sand.position.set(0,0,5);sand.receiveShadow=true;scene.add(sand);
+  <!-- ===== WET SAND ===== -->
+  <a-plane color="#9a8060" width="80" height="4"
+    rotation="-90 0 0" position="0 0.01 -6"
+    material="roughness:0.6" shadow="receive:true"></a-plane>
 
-const wetSand=new THREE.Mesh(new THREE.PlaneGeometry(80,4),new THREE.MeshStandardMaterial({color:0x9a8060,roughness:0.6}));
-wetSand.rotation.x=-Math.PI/2;wetSand.position.set(0,0.01,-6);wetSand.receiveShadow=true;scene.add(wetSand);
+  <!-- ===== WATER ===== -->
+  <a-plane id="water" color="#2266aa" width="80" height="40"
+    rotation="-90 0 0" position="0 -0.15 -28"
+    material="roughness:0.15; opacity:0.75; transparent:true"
+    animation="property:material.opacity; from:0.7; to:0.8; dur:3000; dir:alternate; loop:true; easing:easeInOutSine">
+  </a-plane>
 
-const waterGeo=new THREE.PlaneGeometry(80,40,30,15);
-const waterMesh=new THREE.Mesh(waterGeo,new THREE.MeshStandardMaterial({color:0x2266aa,roughness:0.15,transparent:true,opacity:0.75}));
-waterMesh.rotation.x=-Math.PI/2;waterMesh.position.set(0,-0.15,-28);scene.add(waterMesh);
+  <!-- ===== DUNES ===== -->
+  <a-sphere color="#c4a878" radius="3" scale="1.5 0.35 1" position="-15 0 17" material="roughness:1"></a-sphere>
+  <a-sphere color="#c4a878" radius="4" scale="1.5 0.3 1" position="-5 0 18" material="roughness:1"></a-sphere>
+  <a-sphere color="#c4a878" radius="3.5" scale="1.5 0.35 1" position="5 0 16" material="roughness:1"></a-sphere>
+  <a-sphere color="#c4a878" radius="3" scale="1.5 0.4 1" position="15 0 19" material="roughness:1"></a-sphere>
+  <a-sphere color="#c4a878" radius="4.5" scale="1.5 0.3 1" position="25 0 17" material="roughness:1"></a-sphere>
 
-for(let i=0;i<5;i++){const d=new THREE.Mesh(new THREE.SphereGeometry(2.5+Math.random()*3,10,8,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0xc4a878,roughness:1}));d.position.set(-20+i*10,0,16+Math.random()*4);d.scale.set(1.5,0.35,1);scene.add(d);}
-for(let i=0;i<20;i++){const g=new THREE.Group();for(let j=0;j<6;j++){const b=new THREE.Mesh(new THREE.PlaneGeometry(0.04,0.25+Math.random()*0.25),new THREE.MeshStandardMaterial({color:0x6a8a3a,side:THREE.DoubleSide}));b.position.set((Math.random()-0.5)*0.15,0.12,(Math.random()-0.5)*0.15);b.rotation.y=Math.random()*Math.PI;g.add(b);}g.position.set((Math.random()-0.5)*50,0,10+Math.random()*8);scene.add(g);}
-for(let i=0;i<15;i++){const f=new THREE.Group();const st=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.25,4),new THREE.MeshStandardMaterial({color:0x3a6a2a}));st.position.y=0.12;f.add(st);const p=new THREE.Mesh(new THREE.SphereGeometry(0.05,6,6),new THREE.MeshStandardMaterial({color:[0xff6688,0xffaa44,0xffff66,0xaa66ff][Math.floor(Math.random()*4)]}));p.position.y=0.26;p.scale.y=0.5;f.add(p);f.position.set((Math.random()-0.5)*40,0,8+Math.random()*10);scene.add(f);}
+  <!-- ===== BEACH GRASS (simple planes) ===== -->
+  <a-entity id="grass-container"></a-entity>
 
-const sunDisc=new THREE.Mesh(new THREE.CircleGeometry(3,32),new THREE.MeshBasicMaterial({color:0xffeecc}));
-sunDisc.position.set(40,30,-60);sunDisc.lookAt(0,0,0);scene.add(sunDisc);
+  <!-- ===== FLOWERS ===== -->
+  <a-entity id="flower-container"></a-entity>
 
-/* ===== JOGGER ===== */
-function createJogger(){
-  const g=new THREE.Group();
-  const head=new THREE.Mesh(new THREE.SphereGeometry(0.2,14,12),skinMat);head.position.y=1.68;head.castShadow=true;g.add(head);
-  const hair=new THREE.Mesh(new THREE.SphereGeometry(0.22,14,10,0,Math.PI*2,0,Math.PI*0.5),hairMat);hair.position.y=1.72;g.add(hair);
-  const torso=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.13,0.5,10),shirtMat);torso.position.y=1.15;torso.castShadow=true;g.add(torso);
-  [-1,1].forEach(s=>{const eb=new THREE.Mesh(new THREE.SphereGeometry(0.022,6,6),new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.3}));eb.position.set(s*0.17,1.65,0.05);g.add(eb);});
-  const phone=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.08,0.005),new THREE.MeshStandardMaterial({color:0x111111,metalness:0.5}));phone.position.set(0.3,0.95,0.12);g.add(phone);
-  const screen=new THREE.Mesh(new THREE.PlaneGeometry(0.035,0.065),new THREE.MeshBasicMaterial({color:0x4488ff}));screen.position.set(0.3,0.95,0.125);g.add(screen);
-  const hips=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.12,0.16,10),shortsMat);hips.position.y=0.82;g.add(hips);
-  [-1,1].forEach(side=>{
-    const ap=new THREE.Group();ap.position.set(side*0.2,1.32,0);
-    ap.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.035,0.28,8),shirtMat),{position:new THREE.Vector3(0,-0.14,0)}));
-    ap.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.028,0.25,8),skinMat),{position:new THREE.Vector3(0,-0.32,0.05)}));
-    ap.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.03,6,6),skinMat),{position:new THREE.Vector3(0,-0.42,0.08)}));
-    ap.userData={type:'joggerArm',side};g.add(ap);
-  });
-  [-1,1].forEach(side=>{
-    const lp=new THREE.Group();lp.position.set(side*0.07,0.75,0);
-    const ul=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.048,0.36,8),shortsMat);ul.position.y=-0.18;ul.castShadow=true;lp.add(ul);
-    const ll=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.035,0.34,8),skinMat);ll.position.y=-0.42;lp.add(ll);
-    const sh=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.045,0.13),shoeMat);sh.position.set(0,-0.6,0.02);sh.castShadow=true;lp.add(sh);
-    lp.userData={type:'joggerLeg',side};g.add(lp);
-  });
-  return g;
-}
+  <!-- ===== JOGGER (built from primitives) ===== -->
+  <a-entity id="jogger" position="-25 0 -2" rotation="0 90 0">
+    <!-- Head -->
+    <a-sphere color="#d4a574" radius="0.2" position="0 1.68 0" material="roughness:0.7"></a-sphere>
+    <!-- Hair -->
+    <a-sphere color="#3a2a1a" radius="0.22" theta-start="0" theta-length="90" position="0 1.72 0" material="roughness:0.9"></a-sphere>
+    <!-- Torso -->
+    <a-cylinder color="#2255aa" radius="0.15" height="0.5" position="0 1.15 0" material="roughness:0.75"></a-cylinder>
+    <!-- Earbuds -->
+    <a-sphere color="#ffffff" radius="0.022" position="0.17 1.65 0.05" material="roughness:0.3"></a-sphere>
+    <a-sphere color="#ffffff" radius="0.022" position="-0.17 1.65 0.05" material="roughness:0.3"></a-sphere>
+    <!-- Phone -->
+    <a-box color="#111111" width="0.04" height="0.08" depth="0.005" position="0.3 0.95 0.12" material="metalness:0.5"></a-box>
+    <!-- Hips -->
+    <a-cylinder color="#1a1a2a" radius="0.13" height="0.16" position="0 0.82 0"></a-cylinder>
+    <!-- Left leg pivot -->
+    <a-entity id="jogger-leg-l" position="-0.07 0.75 0">
+      <a-cylinder color="#1a1a2a" radius="0.055" height="0.36" position="0 -0.18 0"></a-cylinder>
+      <a-cylinder color="#d4a574" radius="0.042" height="0.34" position="0 -0.42 0"></a-cylinder>
+      <a-box color="#ee4422" width="0.07" height="0.045" depth="0.13" position="0 -0.6 0.02"></a-box>
+    </a-entity>
+    <!-- Right leg pivot -->
+    <a-entity id="jogger-leg-r" position="0.07 0.75 0">
+      <a-cylinder color="#1a1a2a" radius="0.055" height="0.36" position="0 -0.18 0"></a-cylinder>
+      <a-cylinder color="#d4a574" radius="0.042" height="0.34" position="0 -0.42 0"></a-cylinder>
+      <a-box color="#ee4422" width="0.07" height="0.045" depth="0.13" position="0 -0.6 0.02"></a-box>
+    </a-entity>
+    <!-- Left arm pivot -->
+    <a-entity id="jogger-arm-l" position="-0.2 1.32 0">
+      <a-cylinder color="#2255aa" radius="0.04" height="0.28" position="0 -0.14 0"></a-cylinder>
+      <a-cylinder color="#d4a574" radius="0.032" height="0.25" position="0 -0.32 0.05"></a-cylinder>
+    </a-entity>
+    <!-- Right arm pivot -->
+    <a-entity id="jogger-arm-r" position="0.2 1.32 0">
+      <a-cylinder color="#2255aa" radius="0.04" height="0.28" position="0 -0.14 0"></a-cylinder>
+      <a-cylinder color="#d4a574" radius="0.032" height="0.25" position="0 -0.32 0.05"></a-cylinder>
+    </a-entity>
+  </a-entity>
 
-/* ===== DOG ===== */
-function createDog(){
-  const g=new THREE.Group();
-  const body=new THREE.Mesh(new THREE.CapsuleGeometry(0.17,0.42,8,12),dogFurMat);body.rotation.z=Math.PI/2;body.position.set(0,0.42,0);body.castShadow=true;g.add(body);
-  g.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.19,10,8),dogFurMat),{position:new THREE.Vector3(0.2,0.44,0)}));
-  const head=new THREE.Mesh(new THREE.SphereGeometry(0.14,12,10),dogFurMat);head.position.set(0.4,0.54,0);head.castShadow=true;g.add(head);
-  const snout=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.06,0.11,8),dogFurMat);snout.rotation.z=Math.PI/2;snout.position.set(0.52,0.51,0);g.add(snout);
-  g.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.02,6,6),new THREE.MeshStandardMaterial({color:0x1a1a1a})),{position:new THREE.Vector3(0.58,0.52,0)}));
-  [-1,1].forEach(s=>{
-    const ear=new THREE.Mesh(new THREE.SphereGeometry(0.06,8,6),dogFurMat);ear.scale.set(0.4,1,0.6);ear.position.set(0.34,0.6,s*0.11);g.add(ear);
-    g.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.02,6,6),new THREE.MeshStandardMaterial({color:0x2a1a0a})),{position:new THREE.Vector3(0.48,0.57,s*0.065)}));
-  });
-  const tongue=new THREE.Mesh(new THREE.PlaneGeometry(0.025,0.04),new THREE.MeshStandardMaterial({color:0xff6688,side:THREE.DoubleSide}));tongue.position.set(0.55,0.46,0);tongue.rotation.y=Math.PI/2;g.add(tongue);
-  const tc=new THREE.QuadraticBezierCurve3(new THREE.Vector3(-0.3,0.42,0),new THREE.Vector3(-0.45,0.7,0),new THREE.Vector3(-0.38,0.8,0));
-  const tail=new THREE.Mesh(new THREE.TubeGeometry(tc,8,0.02,6,false),dogFurMat);tail.userData={type:'dogTail'};g.add(tail);
-  [{x:0.17,z:0.09,l:'FL'},{x:0.17,z:-0.09,l:'FR'},{x:-0.17,z:0.09,l:'BL'},{x:-0.17,z:-0.09,l:'BR'}].forEach(ld=>{
-    const p=new THREE.Group();p.position.set(ld.x,0.32,ld.z);
-    p.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.03,0.2,8),dogFurMat),{position:new THREE.Vector3(0,-0.1,0)}));
-    p.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.024,0.15,8),dogFurMat),{position:new THREE.Vector3(0,-0.22,0)}));
-    const pw=new THREE.Mesh(new THREE.SphereGeometry(0.03,6,6),dogFurMat);pw.scale.y=0.45;pw.position.y=-0.3;p.add(pw);
-    p.userData={type:'dogLeg',label:ld.l};g.add(p);
-  });
-  return g;
-}
+  <!-- ===== DOG ===== -->
+  <a-entity id="dog" position="-22 0 -3" rotation="0 70 0">
+    <!-- Body -->
+    <a-cylinder color="#c4883a" radius="0.17" height="0.7" position="0 0.42 0" rotation="0 0 90" material="roughness:0.9"></a-cylinder>
+    <!-- Chest -->
+    <a-sphere color="#c4883a" radius="0.19" position="0.2 0.44 0" material="roughness:0.9"></a-sphere>
+    <!-- Head -->
+    <a-sphere color="#c4883a" radius="0.14" position="0.4 0.54 0" material="roughness:0.9"></a-sphere>
+    <!-- Snout -->
+    <a-cylinder color="#c4883a" radius="0.05" height="0.11" position="0.52 0.51 0" rotation="0 0 90" material="roughness:0.9"></a-cylinder>
+    <!-- Nose -->
+    <a-sphere color="#1a1a1a" radius="0.02" position="0.58 0.52 0"></a-sphere>
+    <!-- Ears -->
+    <a-sphere color="#c4883a" radius="0.06" scale="0.4 1 0.6" position="0.34 0.6 0.11"></a-sphere>
+    <a-sphere color="#c4883a" radius="0.06" scale="0.4 1 0.6" position="0.34 0.6 -0.11"></a-sphere>
+    <!-- Eyes -->
+    <a-sphere color="#2a1a0a" radius="0.02" position="0.48 0.57 0.065"></a-sphere>
+    <a-sphere color="#2a1a0a" radius="0.02" position="0.48 0.57 -0.065"></a-sphere>
+    <!-- Tongue -->
+    <a-plane color="#ff6688" width="0.025" height="0.04" position="0.55 0.46 0" rotation="0 90 0" material="side:double"></a-plane>
+    <!-- Legs -->
+    <a-entity id="dog-leg-fl" position="0.17 0.32 0.09">
+      <a-cylinder color="#c4883a" radius="0.035" height="0.2" position="0 -0.1 0"></a-cylinder>
+      <a-cylinder color="#c4883a" radius="0.028" height="0.15" position="0 -0.22 0"></a-cylinder>
+    </a-entity>
+    <a-entity id="dog-leg-fr" position="0.17 0.32 -0.09">
+      <a-cylinder color="#c4883a" radius="0.035" height="0.2" position="0 -0.1 0"></a-cylinder>
+      <a-cylinder color="#c4883a" radius="0.028" height="0.15" position="0 -0.22 0"></a-cylinder>
+    </a-entity>
+    <a-entity id="dog-leg-bl" position="-0.17 0.32 0.09">
+      <a-cylinder color="#c4883a" radius="0.035" height="0.2" position="0 -0.1 0"></a-cylinder>
+      <a-cylinder color="#c4883a" radius="0.028" height="0.15" position="0 -0.22 0"></a-cylinder>
+    </a-entity>
+    <a-entity id="dog-leg-br" position="-0.17 0.32 -0.09">
+      <a-cylinder color="#c4883a" radius="0.035" height="0.2" position="0 -0.1 0"></a-cylinder>
+      <a-cylinder color="#c4883a" radius="0.028" height="0.15" position="0 -0.22 0"></a-cylinder>
+    </a-entity>
+  </a-entity>
 
-/* ===== BUTTERFLY ===== */
-function createButterfly(){
-  const g=new THREE.Group();
-  const bm=new THREE.MeshStandardMaterial({color:0x1a1a1a,roughness:0.6});
-  const wm1=new THREE.MeshStandardMaterial({color:0xff6600,roughness:0.5,side:THREE.DoubleSide,transparent:true,opacity:0.85});
-  const wm2=new THREE.MeshStandardMaterial({color:0xffaa22,roughness:0.5,side:THREE.DoubleSide,transparent:true,opacity:0.8});
-  g.add(new THREE.Mesh(new THREE.CapsuleGeometry(0.025,0.12,6,8),bm));
-  const hd=new THREE.Mesh(new THREE.SphereGeometry(0.03,6,6),bm);hd.position.y=0.09;g.add(hd);
-  [-1,1].forEach(s=>{
-    const cv=new THREE.QuadraticBezierCurve3(new THREE.Vector3(0,0.09,0),new THREE.Vector3(s*0.04,0.16,0.02),new THREE.Vector3(s*0.06,0.18,0));
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(cv,6,0.003,4,false),bm));
-    const tp=new THREE.Mesh(new THREE.SphereGeometry(0.006,4,4),bm);tp.position.set(s*0.06,0.18,0);g.add(tp);
-  });
-  const us=new THREE.Shape();us.moveTo(0,0);us.bezierCurveTo(0.04,0.08,0.12,0.1,0.14,0.06);us.bezierCurveTo(0.16,0.02,0.12,-0.04,0.06,-0.02);us.lineTo(0,0);
-  const ug=new THREE.ShapeGeometry(us);
-  [-1,1].forEach(s=>{const w=new THREE.Mesh(ug,wm1);w.scale.set(s*1.4,1.4,1);w.position.set(0,0.02,0);w.rotation.x=Math.PI/2;w.userData={type:'butterflyWing',side:s,wingType:'upper'};g.add(w);});
-  const ls=new THREE.Shape();ls.moveTo(0,0);ls.bezierCurveTo(0.03,0.04,0.08,0.05,0.09,0.02);ls.bezierCurveTo(0.08,-0.02,0.04,-0.03,0,0);
-  const lg=new THREE.ShapeGeometry(ls);
-  [-1,1].forEach(s=>{const w=new THREE.Mesh(lg,wm2);w.scale.set(s*1.4,1.4,1);w.position.set(0,-0.04,0);w.rotation.x=Math.PI/2;w.userData={type:'butterflyWing',side:s,wingType:'lower'};g.add(w);});
-  return g;
-}
+  <!-- ===== BUTTERFLY ===== -->
+  <a-entity id="butterfly" position="25 2 -1" rotation="0 -90 0" scale="2 2 2">
+    <!-- Body -->
+    <a-cylinder color="#1a1a1a" radius="0.02" height="0.12" position="0 0 0"></a-cylinder>
+    <!-- Head -->
+    <a-sphere color="#1a1a1a" radius="0.025" position="0 0.08 0"></a-sphere>
+    <!-- Wings (will be animated) -->
+    <a-entity id="wing-l" position="0 0.02 0">
+      <a-triangle color="#ff6600" vertex-a="0 0 0" vertex-b="-0.12 0.08 0" vertex-c="-0.08 -0.04 0"
+        material="side:double; opacity:0.85; transparent:true"></a-triangle>
+    </a-entity>
+    <a-entity id="wing-r" position="0 0.02 0">
+      <a-triangle color="#ff6600" vertex-a="0 0 0" vertex-b="0.12 0.08 0" vertex-c="0.08 -0.04 0"
+        material="side:double; opacity:0.85; transparent:true"></a-triangle>
+    </a-entity>
+  </a-entity>
 
-/* ===== AI MONOLITH ===== */
-function createAIMonolith(){
-  const g=new THREE.Group();
-  const b=new THREE.Mesh(new THREE.BoxGeometry(0.9,2.0,0.5),new THREE.MeshStandardMaterial({color:0x0a0a14,roughness:0.15,metalness:0.85}));
-  b.position.y=1.0;b.castShadow=true;g.add(b);
-  for(let i=0;i<10;i++){const ln=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.006,0.01),new THREE.MeshBasicMaterial({color:0x0066cc,transparent:true,opacity:0.6}));ln.position.set(0,0.15+i*0.18,0.26);ln.userData={type:'serverLine',phase:i*0.4};g.add(ln);}
-  const eye=new THREE.Mesh(new THREE.CircleGeometry(0.05,16),new THREE.MeshBasicMaterial({color:0x00aaff}));eye.position.set(0,1.7,0.26);eye.userData={type:'aiEye'};g.add(eye);
-  const eg=new THREE.Mesh(new THREE.CircleGeometry(0.1,16),new THREE.MeshBasicMaterial({color:0x0066ff,transparent:true,opacity:0.2}));eg.position.set(0,1.7,0.255);eg.userData={type:'aiEyeGlow'};g.add(eg);
-  return g;
-}
+  <!-- ===== UMWELT BUBBLES (hidden by default, toggled per scene) ===== -->
+  <a-sphere id="bubble-human" color="#4488ff" radius="7" position="0 2.5 -2"
+    material="opacity:0.035; transparent:true; side:double; depthWrite:false"
+    visible="false">
+  </a-sphere>
+  <a-sphere id="bubble-human-inner" color="#ffffff" radius="2.2" position="0 1.2 -2"
+    material="opacity:0.025; transparent:true; side:double; depthWrite:false"
+    visible="false">
+  </a-sphere>
 
-/* Helpers */
-function createBubble(r,c,o){return new THREE.Mesh(new THREE.SphereGeometry(r,48,36),new THREE.MeshPhysicalMaterial({color:c,transparent:true,opacity:o,side:THREE.DoubleSide,depthWrite:false,roughness:0.05,transmission:0.5,thickness:0.3,clearcoat:1.0}));}
-function createTextSprite(text,color,fs,mw){
-  const cv=document.createElement('canvas');cv.width=512;cv.height=128;
-  const cx=cv.getContext('2d');
-  cx.font=`bold ${fs||32}px Segoe UI,Arial,sans-serif`;
-  cx.fillStyle=color||'#ffffff';
-  cx.textAlign='center';cx.textBaseline='middle';
-  cx.shadowColor='rgba(0,0,0,0.7)';cx.shadowBlur=8;
-  cx.fillText(text,256,64);
-  const tx=new THREE.CanvasTexture(cv);tx.minFilter=THREE.LinearFilter;
-  const mt=new THREE.SpriteMaterial({map:tx,transparent:true,depthTest:false});
-  const sp=new THREE.Sprite(mt);sp.scale.set(mw||2,0.5,1);return sp;
-}
+  <a-sphere id="bubble-dog" color="#cc8833" radius="3.2" position="0 0.8 -3"
+    material="opacity:0.045; transparent:true; side:double; depthWrite:false"
+    visible="false">
+  </a-sphere>
 
-/* ===== PLACE CHARACTERS ===== */
-const jogger=createJogger();
-jogger.position.set(-25,0,-2);
-jogger.rotation.y=Math.PI*0.5;
-scene.add(jogger);
+  <a-sphere id="bubble-butterfly" color="#ff6600" radius="0.7" position="0 2 -1"
+    material="opacity:0.06; transparent:true; side:double; depthWrite:false"
+    visible="false">
+  </a-sphere>
 
-const dog=createDog();
-dog.position.set(-22,0,-3);
-dog.rotation.y=Math.PI*0.4;
-scene.add(dog);
+  <!-- ===== PARTICLE CONTAINERS (filled dynamically) ===== -->
+  <a-entity id="human-particles" visible="false"></a-entity>
+  <a-entity id="dog-particles" visible="false"></a-entity>
+  <a-entity id="butterfly-particles" visible="false"></a-entity>
+  <a-entity id="knowledge-labels" visible="false"></a-entity>
 
-const butterfly=createButterfly();
-butterfly.position.set(25,2.0,-1);
-butterfly.rotation.y=-Math.PI*0.5;
-scene.add(butterfly);
+  <!-- ===== AI SCENE (hidden by default) ===== -->
+  <a-entity id="ai-scene" visible="false">
+    <!-- Dark void -->
+    <a-sphere color="#020208" radius="50" material="shader:flat; side:back" position="0 0 0"></a-sphere>
+    <!-- Cold light -->
+    <a-light type="point" color="#2244aa" intensity="0.8" distance="20" position="0 5 3"></a-light>
+    <!-- Server monolith -->
+    <a-box color="#0a0a14" width="0.9" height="2" depth="0.5" position="0 1 0"
+      material="roughness:0.15; metalness:0.85"></a-box>
+    <!-- Server lines -->
+    <a-box color="#0066cc" width="0.7" height="0.006" depth="0.01" position="0 0.3 0.26" material="shader:flat; opacity:0.6"></a-box>
+    <a-box color="#0066cc" width="0.7" height="0.006" depth="0.01" position="0 0.5 0.26" material="shader:flat; opacity:0.6"></a-box>
+    <a-box color="#0066cc" width="0.7" height="0.006" depth="0.01" position="0 0.7 0.26" material="shader:flat; opacity:0.6"></a-box>
+    <a-box color="#0066cc" width="0.7" height="0.006" depth="0.01" position="0 0.9 0.26" material="shader:flat; opacity:0.6"></a-box>
+    <a-box color="#0066cc" width="0.7" height="0.006" depth="0.01" position="0 1.1 0.26" material="shader:flat; opacity:0.6"></a-box>
+    <a-box color="#0066cc" width="0.7" height="0.006" depth="0.01" position="0 1.3 0.26" material="shader:flat; opacity:0.6"></a-box>
+    <a-box color="#0066cc" width="0.7" height="0.006" depth="0.01" position="0 1.5 0.26" material="shader:flat; opacity:0.6"></a-box>
+    <!-- AI eye -->
+    <a-circle color="#00aaff" radius="0.05" position="0 1.7 0.26" material="shader:flat"></a-circle>
+    <!-- Vector tokens -->
+    <a-entity id="ai-tokens"></a-entity>
+  </a-entity>
 
-/* ===== MOVEMENT ===== */
-const WALK_SPEED=1.8, WALK_LEFT=-25, WALK_RIGHT=25;
-const BF_SPEED=0.6, BF_LEFT=-30, BF_RIGHT=30;
-let joggerX=WALK_LEFT, dogX=joggerX+3, butterflyX=BF_RIGHT, moveTime=0;
+</a-scene>
 
-function updateMovement(dt){
-  moveTime+=dt;
+<!-- ============================================================ -->
+<!-- LOGIC -->
+<!-- ============================================================ -->
+<script>
+// Wait for A-Frame to be ready
+document.querySelector('a-scene').addEventListener('loaded', function(){
 
-  // Jogger left to right, loop
-  joggerX+=WALK_SPEED*dt;
-  if(joggerX>WALK_RIGHT) joggerX=WALK_LEFT;
-  jogger.position.x=joggerX;
-  jogger.position.y=Math.abs(Math.sin(moveTime*4.5))*0.06;
+  const jogger = document.getElementById('jogger');
+  const dogEl = document.getElementById('dog');
+  const butterflyEl = document.getElementById('butterfly');
+  const cameraRig = document.getElementById('camera-rig');
 
-  // Animate jogger legs + arms
-  jogger.children.forEach(c=>{
-    if(!c.userData)return;
-    if(c.userData.type==='joggerLeg'){
-      const ph=c.userData.side===1?0:Math.PI;
-      c.rotation.x=Math.sin(moveTime*9+ph)*0.6;
+  const bubbleHuman = document.getElementById('bubble-human');
+  const bubbleHumanInner = document.getElementById('bubble-human-inner');
+  const bubbleDog = document.getElementById('bubble-dog');
+  const bubbleButterfly = document.getElementById('bubble-butterfly');
+
+  const humanParticles = document.getElementById('human-particles');
+  const dogParticles = document.getElementById('dog-particles');
+  const butterflyParticles = document.getElementById('butterfly-particles');
+  const knowledgeLabels = document.getElementById('knowledge-labels');
+  const aiScene = document.getElementById('ai-scene');
+
+  let currentScene = 'human';
+  let time = 0;
+  let joggerX = -25;
+  let dogX = -22;
+  let butterflyX = 25;
+
+  const WALK_SPEED = 1.8;
+  const BF_SPEED = 0.6;
+
+  // ===== Generate beach grass =====
+  const grassContainer = document.getElementById('grass-container');
+  for(let i=0;i<25;i++){
+    const x = (Math.random()-0.5)*50;
+    const z = 10+Math.random()*8;
+    for(let j=0;j<4;j++){
+      const blade = document.createElement('a-plane');
+      blade.setAttribute('color','#6a8a3a');
+      blade.setAttribute('width','0.04');
+      blade.setAttribute('height', String(0.2+Math.random()*0.25));
+      blade.setAttribute('position',`${x+(Math.random()-0.5)*0.15} 0.12 ${z+(Math.random()-0.5)*0.15}`);
+      blade.setAttribute('rotation',`0 ${Math.random()*180} 0`);
+      blade.setAttribute('material','side:double');
+      grassContainer.appendChild(blade);
     }
-    if(c.userData.type==='joggerArm'){
-      const ph=c.userData.side===1?Math.PI:0;
-      c.rotation.x=Math.sin(moveTime*9+ph)*0.4;
-    }
+  }
+
+  // ===== Generate flowers =====
+  const flowerContainer = document.getElementById('flower-container');
+  const flowerColors = ['#ff6688','#ffaa44','#ffff66','#aa66ff'];
+  for(let i=0;i<15;i++){
+    const x = (Math.random()-0.5)*40;
+    const z = 8+Math.random()*10;
+    const stem = document.createElement('a-cylinder');
+    stem.setAttribute('color','#3a6a2a');
+    stem.setAttribute('radius','0.015');
+    stem.setAttribute('height','0.25');
+    stem.setAttribute('position',`${x} 0.12 ${z}`);
+    flowerContainer.appendChild(stem);
+    const petal = document.createElement('a-sphere');
+    petal.setAttribute('color', flowerColors[Math.floor(Math.random()*4)]);
+    petal.setAttribute('radius','0.05');
+    petal.setAttribute('scale','1 0.5 1');
+    petal.setAttribute('position',`${x} 0.26 ${z}`);
+    flowerContainer.appendChild(petal);
+  }
+
+  // ===== Generate human sensory particles =====
+  const senseColors = ['#ff6688','#66aaff','#ffcc44','#66ff88','#ff66ff','#ffffff'];
+  for(let i=0;i<60;i++){
+    const p = document.createElement('a-sphere');
+    const sz = 0.02+Math.random()*0.03;
+    p.setAttribute('radius', String(sz));
+    p.setAttribute('color', senseColors[Math.floor(Math.random()*senseColors.length)]);
+    p.setAttribute('material',`shader:flat; opacity:${0.2+Math.random()*0.3}; transparent:true`);
+    const a = Math.random()*Math.PI*2;
+    const r = 0.5+Math.random()*6;
+    p.setAttribute('position',`${Math.cos(a)*r} ${0.3+Math.random()*4.5} ${Math.sin(a)*r}`);
+    p.dataset.angle = a;
+    p.dataset.radius = r;
+    p.dataset.speed = 0.002+Math.random()*0.005;
+    p.dataset.baseY = 0.3+Math.random()*4.5;
+    p.dataset.bobSpeed = 0.8+Math.random()*1.2;
+    humanParticles.appendChild(p);
+  }
+
+  // ===== Generate knowledge labels =====
+  const knowledgeItems = ['Andromeda ✦','New York','Quantenphysik','Erinnerungen','Musik ♪','Geschichte'];
+  knowledgeItems.forEach((item,i)=>{
+    const el = document.createElement('a-text');
+    el.setAttribute('value', item);
+    el.setAttribute('color','rgba(150,180,255,0.6)');
+    el.setAttribute('align','center');
+    el.setAttribute('width','4');
+    const a = (i/6)*Math.PI*2;
+    el.setAttribute('position',`${Math.cos(a)*5.5} ${3.5+Math.sin(i)*1.2} ${Math.sin(a)*5.5}`);
+    el.setAttribute('look-at','[camera]');
+    el.dataset.angle = a;
+    el.dataset.radius = 5.5;
+    el.dataset.offsetY = 3.5+Math.sin(i)*1.2;
+    knowledgeLabels.appendChild(el);
   });
 
-  // Dog ahead of jogger, slight weave
-  const dogTargetX=joggerX+3;
-  dogX+=(dogTargetX-dogX)*0.05;
-  if(dogX>WALK_RIGHT+3) dogX=WALK_LEFT+3;
-  dog.position.x=dogX;
-  dog.position.z=-3+Math.sin(moveTime*0.8)*1.0;
-  dog.position.y=Math.abs(Math.sin(moveTime*5))*0.03;
+  // ===== Generate dog smell particles =====
+  const smellColors = ['#ffaa00','#ff6600','#ffcc33','#ee8833','#ddaa22'];
+  for(let i=0;i<150;i++){
+    const p = document.createElement('a-sphere');
+    const sz = 0.01+Math.random()*0.03;
+    p.setAttribute('radius', String(sz));
+    p.setAttribute('color', smellColors[Math.floor(Math.random()*smellColors.length)]);
+    p.setAttribute('material',`shader:flat; opacity:${0.15+Math.random()*0.4}; transparent:true`);
+    const a = Math.random()*Math.PI*2;
+    const r = Math.random()*2.8;
+    p.setAttribute('position',`${Math.cos(a)*r} ${0.05+Math.random()*1.0} ${Math.sin(a)*r}`);
+    p.dataset.angle = a;
+    p.dataset.radius = r;
+    p.dataset.speed = 0.003+Math.random()*0.01;
+    p.dataset.baseY = 0.05+Math.random()*1.0;
+    p.dataset.bobSpeed = 0.4+Math.random()*1.0;
+    dogParticles.appendChild(p);
+  }
 
-  const dogDz=Math.cos(moveTime*0.8)*1.0;
-  dog.rotation.y=Math.atan2(WALK_SPEED,dogDz)*0.3+Math.PI*0.3;
+  // ===== Generate butterfly UV particles =====
+  const uvColors = ['#aa00ff','#cc44ff','#8800cc','#ff00ff'];
+  for(let i=0;i<15;i++){
+    const p = document.createElement('a-sphere');
+    const sz = 0.005+Math.random()*0.01;
+    p.setAttribute('radius', String(sz));
+    p.setAttribute('color', uvColors[Math.floor(Math.random()*uvColors.length)]);
+    p.setAttribute('material',`shader:flat; opacity:${0.3+Math.random()*0.5}; transparent:true`);
+    const a = Math.random()*Math.PI*2;
+    const r = Math.random()*0.4;
+    p.setAttribute('position',`${Math.cos(a)*r} ${Math.sin(a)*r*0.5} ${(Math.random()-0.5)*0.3}`);
+    p.dataset.angle = a;
+    p.dataset.radius = r;
+    p.dataset.speed = 0.003+Math.random()*0.006;
+    butterflyParticles.appendChild(p);
+  }
 
-  // Dog legs + tail
-  dog.children.forEach(c=>{
-    if(!c.userData)return;
-    if(c.userData.type==='dogLeg'){
-      const isL=c.userData.label.includes('L'), isF=c.userData.label.includes('F');
-      const ph=(isL?0:Math.PI)+(isF?0:Math.PI*0.5);
-      c.rotation.x=Math.sin(moveTime*8+ph)*0.35;
-    }
-    if(c.userData.type==='dogTail') c.rotation.y=Math.sin(moveTime*8)*0.4;
+  // ===== Generate AI vector tokens =====
+  const aiTokensEl = document.getElementById('ai-tokens');
+  const tokens = [
+    {label:'Strand',pos:'2.5 2.0 0.5',color:'#ddaa44'},
+    {label:'Sand',pos:'2.8 2.3 0.8',color:'#ddaa44'},
+    {label:'Meer',pos:'2.2 1.7 -0.2
+  // ===== Generate AI vector tokens =====
+  const aiTokensEl = document.getElementById('ai-tokens');
+  const tokens = [
+    {label:'Strand',pos:'2.5 2.0 0.5',color:'#ddaa44'},
+    {label:'Sand',pos:'2.8 2.3 0.8',color:'#ddaa44'},
+    {label:'Meer',pos:'2.2 1.7 -0.2',color:'#4488cc'},
+    {label:'Urlaub',pos:'3.0 2.5 0.2',color:'#ddaa44'},
+    {label:'Baum',pos:'-2.0 3.0 1.0',color:'#44aa44'},
+    {label:'grün',pos:'-1.7 3.3 1.3',color:'#44aa44'},
+    {label:'Natur',pos:'-2.3 2.8 0.7',color:'#44aa44'},
+    {label:'Schmerz',pos:'-3.0 0.8 -1.0',color:'#ff4444'},
+    {label:'unangenehm',pos:'-2.6 1.1 -0.7',color:'#ff6666'},
+    {label:'Verletzung',pos:'-3.3 0.5 -1.3',color:'#ff6666'},
+    {label:'Hund',pos:'0.5 1.5 -2.0',color:'#cc8833'},
+    {label:'bellen',pos:'0.3 1.2 -2.3',color:'#cc8833'},
+    {label:'Freude',pos:'1.5 4.0 -0.5',color:'#44aaff'},
+    {label:'Sonne',pos:'3.5 4.5 1.0',color:'#ffff44'},
+    {label:'warm',pos:'3.2 4.2 1.3',color:'#ffff44'}
+  ];
+
+  tokens.forEach(t => {
+    // Token sphere
+    const sp = document.createElement('a-sphere');
+    sp.setAttribute('radius','0.07');
+    sp.setAttribute('color', t.color);
+    sp.setAttribute('position', t.pos);
+    sp.setAttribute('material','shader:flat');
+    aiTokensEl.appendChild(sp);
+
+    // Glow
+    const gl = document.createElement('a-sphere');
+    gl.setAttribute('radius','0.16');
+    gl.setAttribute('color', t.color);
+    gl.setAttribute('position', t.pos);
+    gl.setAttribute('material',`shader:flat; opacity:0.08; transparent:true`);
+    aiTokensEl.appendChild(gl);
+
+    // Label
+    const lbl = document.createElement('a-text');
+    lbl.setAttribute('value', t.label);
+    lbl.setAttribute('color', t.color);
+    lbl.setAttribute('align','center');
+    lbl.setAttribute('width','3');
+    const pp = t.pos.split(' ').map(Number);
+    lbl.setAttribute('position',`${pp[0]} ${pp[1]+0.3} ${pp[2]}`);
+    lbl.setAttribute('look-at','[camera]');
+    aiTokensEl.appendChild(lbl);
   });
 
-  // Butterfly right to left, much slower
-  butterflyX-=BF_SPEED*dt;
-  if(butterflyX<BF_LEFT) butterflyX=BF_RIGHT;
-  butterfly.position.x=butterflyX;
-  butterfly.position.y=1.8+Math.sin(moveTime*0.5)*0.4+Math.sin(moveTime*0.2)*0.2;
-  butterfly.position.z=-1+Math.sin(moveTime*0.3)*1.5;
-
-  // Wing flap
-  butterfly.children.forEach(c=>{
-    if(c.userData&&c.userData.type==='butterflyWing'){
-      const amt=c.userData.wingType==='upper'?0.7:0.5;
-      c.rotation.y=c.userData.side*(Math.sin(moveTime*8)*amt+0.15);
-    }
-  });
-}
-
-/* ===== OVERLAY SYSTEM ===== */
-let overlayObjects=[], currentSceneName='human', targetDogVision=0;
-
-function clearOverlays(){overlayObjects.forEach(o=>scene.remove(o));overlayObjects=[];}
-function setActiveButton(n){
-  document.querySelectorAll('#nav-buttons button').forEach(b=>b.classList.remove('active'));
-  const idx=['human','dog','butterfly','ai'].indexOf(n);
-  const btns=document.querySelectorAll('#nav-buttons button');
-  if(idx>=0&&btns[idx])btns[idx].classList.add('active');
-}
-
-/* Camera target (almost stable) */
-let camTargetPos=new THREE.Vector3(0,3.5,14);
-let camTargetLookAt=new THREE.Vector3(0,1.2,0);
-function setCameraTarget(p,l){camTargetPos=new THREE.Vector3(...p);camTargetLookAt=new THREE.Vector3(...l);}
-
-/* ===== SCENE SWITCHING ===== */
-window.switchScene=function(name){
-  clearOverlays();
-  currentSceneName=name;
-  setActiveButton(name);
-  targetDogVision=0;
-
-  const label=document.getElementById('scene-label');
-  const info=document.getElementById('info-panel');
-
-  jogger.visible=true; dog.visible=true; butterfly.visible=true;
-  scene.background=new THREE.Color(0x87CEEB);
-  scene.fog=new THREE.Fog(0x87CEEB,50,100);
-
-  switch(name){
-
-    case 'human':{
-      label.textContent='👤 UMWELT: MENSCH';
-      info.innerHTML=`Die Bubble des <strong>Menschen</strong>: Er sieht den Strand, das Meer, den Himmel.<br>
-        Er weiß von anderen Städten, fernen Planeten, der Geschichte der Erde.<br>
-        Er hört Musik über Kopfhörer, riecht das Salzwasser, fühlt den Wind.<br>
-        <em>Aber auch er lebt nur in seiner Bubble – seiner subjektiven Umwelt.</em>`;
-
-      const hb=createBubble(7,0x4488ff,0.035);
-      hb.userData={type:'followJogger',offsetY:2.5};
-      scene.add(hb);overlayObjects.push(hb);
-
-      const ib=createBubble(2.2,0xffffff,0.025);
-      ib.userData={type:'followJogger',offsetY:1.2};
-      scene.add(ib);overlayObjects.push(ib);
-
-      const cols=[0xff6688,0x66aaff,0xffcc44,0x66ff88,0xff66ff,0xffffff];
-      for(let i=0;i<80;i++){
-        const sz=0.02+Math.random()*0.035;
-        const p=new THREE.Mesh(new THREE.SphereGeometry(sz,5,5),new THREE.MeshBasicMaterial({color:cols[Math.floor(Math.random()*cols.length)],transparent:true,opacity:0.2+Math.random()*0.3}));
-        const a=Math.random()*Math.PI*2, r=0.5+Math.random()*6;
-        p.position.set(Math.cos(a)*r,0.3+Math.random()*4.5,Math.sin(a)*r);
-        p.userData={type:'orbitParticle',follow:'jogger',angle:a,radius:r,speed:0.002+Math.random()*0.005,baseY:p.position.y,bobSpeed:0.8+Math.random()*1.2,bobAmt:0.02+Math.random()*0.03};
-        scene.add(p);overlayObjects.push(p);
-      }
-
-      ['Andromeda ✦','New York','Quantenphysik','Erinnerungen','Musik ♪','Geschichte'].forEach((item,i)=>{
-        const a=(i/6)*Math.PI*2;
-        const lbl=createTextSprite(item,'rgba(150,180,255,0.45)',16,1.8);
-        lbl.userData={type:'knowledgeOrbit',angle:a,radius:5.5,offsetY:3.5+Math.sin(i)*1.2};
-        scene.add(lbl);overlayObjects.push(lbl);
-      });
-
-      setCameraTarget([0,3.5,14],[0,1.2,0]);
-      break;
-    }
-
-    case 'dog':{
-      label.textContent='🐕 UMWELT: HUND';
-      info.innerHTML=`Die Bubble des <strong>Hundes</strong>: Kleiner als die des Menschen.<br>
-        Kein Wissen über ferne Planeten. Mehr <strong>im Jetzt</strong>.<br>
-        Aber die Geruchswelt <strong>explodiert</strong>: 200 Mio. Riechzellen.<br>
-        Farben verblassen (Dichromat). Geräusche werden <strong>lauter und detaillierter</strong>.`;
-
-      targetDogVision=1.0;
-
-      const db=createBubble(3.2,0xcc8833,0.045);
-      db.userData={type:'followDog',offsetY:0.8};
-      scene.add(db);overlayObjects.push(db);
-
-      const sc=[0xffaa00,0xff6600,0xffcc33,0xee8833,0xddaa22];
-      for(let i=0;i<220;i++){
-        const sz=0.01+Math.random()*0.035;
-        const p=new THREE.Mesh(new THREE.SphereGeometry(sz,4,4),new THREE.MeshBasicMaterial({color:sc[Math.floor(Math.random()*sc.length)],transparent:true,opacity:0.15+Math.random()*0.4}));
-        const a=Math.random()*Math.PI*2, r=Math.random()*2.8;
-        p.position.set(Math.cos(a)*r,0.05+Math.random()*1.0,Math.sin(a)*r);
-        p.userData={type:'orbitParticle',follow:'dog',angle:a,radius:r,speed:0.003+Math.random()*0.01,baseY:p.position.y,bobSpeed:0.4+Math.random()*1.0,bobAmt:0.006+Math.random()*0.015};
-        scene.add(p);overlayObjects.push(p);
-      }
-
-      for(let i=0;i<5;i++){
-        const rn=new THREE.Mesh(new THREE.TorusGeometry(0.7+i*0.45,0.01,8,32),new THREE.MeshBasicMaterial({color:0xffdd88,transparent:true,opacity:0.1}));
-        rn.rotation.x=Math.PI/2;
-        rn.userData={type:'dogSound',phase:i*0.7};
-        scene.add(rn);overlayObjects.push(rn);
-      }
-
-      for(let t=0;t<5;t++){
-        const pts=[];let tx=(Math.random()-0.5)*8,tz=-3+(Math.random()-0.5)*4;
-        for(let p=0;p<12;p++){pts.push(new THREE.Vector3(tx,0.03,tz));tx+=(Math.random()-0.5)*0.6;tz+=(Math.random()-0.5)*0.6;}
-        const trail=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0xffaa33,transparent:true,opacity:0.2}));
-        scene.add(trail);overlayObjects.push(trail);
-      }
-
-      setCameraTarget([0,2.5,10],[0,0.5,-2]);
-      break;
-    }
-
-    case 'butterfly':{
-      label.textContent='🦋 UMWELT: SCHMETTERLING';
-      info.innerHTML=`Die Bubble des <strong>Schmetterlings</strong>: Winzig. Radikal im <strong>Hier und Jetzt</strong>.<br>
-        Kein Strand als Konzept. Kein Jogger. Kein Meer.<br>
-        Nur: <strong>UV-Muster</strong>, <strong>Windrichtung</strong>, <strong>Pheromone</strong>, <strong>Licht/Dunkel</strong>.<br>
-        <em>Er sieht Farben die wir nicht sehen (UV) – aber kennt kein "Morgen".</em>`;
-
-      const bb=createBubble(0.7,0xff6600,0.06);
-      bb.userData={type:'followButterfly',offsetY:0};
-      scene.add(bb);overlayObjects.push(bb);
-
-      const uvc=[0xaa00ff,0xcc44ff,0x8800cc,0xff00ff];
-      for(let i=0;i<18;i++){
-        const sz=0.005+Math.random()*0.012;
-        const p=new THREE.Mesh(new THREE.SphereGeometry(sz,4,4),new THREE.MeshBasicMaterial({color:uvc[Math.floor(Math.random()*uvc.length)],transparent:true,opacity:0.3+Math.random()*0.5}));
-        const a=Math.random()*Math.PI*2, r=Math.random()*0.5;
-        p.position.set(Math.cos(a)*r,Math.sin(a)*r*0.5,(Math.random()-0.5)*0.4);
-        p.userData={type:'orbitParticle',follow:'butterfly',angle:a,radius:r,speed:0.003+Math.random()*0.006,baseY:0,bobSpeed:1.5+Math.random()*2,bobAmt:0.003+Math.random()*0.006};
-        scene.add(p);overlayObjects.push(p);
-      }
-
-      for(let i=0;i<3;i++){
-        const ar=new THREE.Mesh(new THREE.ConeGeometry(0.008,0.03,4),new THREE.MeshBasicMaterial({color:0xaaddff,transparent:true,opacity:0.4}));
-        ar.rotation.z=-Math.PI/2;
-        ar.userData={type:'followButterfly',offsetX:0.25+i*0.12,offsetY:0};
-        scene.add(ar);overlayObjects.push(ar);
-      }
-
-      setCameraTarget([0,3,12],[0,1.8,-1]);
-      break;
-    }
-
-    case 'ai':{
-      label.textContent='🤖 UMWELT: KI';
-      info.innerHTML=`<strong>Überleitung:</strong> Der Jogger hört über Kopfhörer einen Podcast –<br>
-        eine KI übersetzt ihn simultan. Aber <strong>was ist die Welt dieser KI?</strong><br><br>
-        Sie kennt "Strand" – aber nur als Punkt im Vektorraum, nahe "Sand", "Meer", "Urlaub".<br>
-        <strong>Kein Sand unter den Füßen.</strong><br>
-        Ein "Baum" ist kein Ding mit harter Rinde, das man verbrennen kann –<br>
-        sondern ein <strong>Begriff, der oft mit "grün" und "Natur" in Texten vorkommt</strong>.<br><br>
-        <em>Die KI hat keine Umwelt. Sie hat einen Vektorraum. Und der ist dunkel.</em>`;
-
-      jogger.visible=false; dog.visible=false; butterfly.visible=false;
-      scene.background=new THREE.Color(0x020208);
-      scene.fog=new THREE.Fog(0x020208,10,40);
-
-      const vs=new THREE.Mesh(new THREE.SphereGeometry(55,24,24),new THREE.MeshBasicMaterial({color:0x020208,side:THREE.BackSide}));
-      scene.add(vs);overlayObjects.push(vs);
-
-      const cl=new THREE.PointLight(0x2244aa,0.8,20);cl.position.set(0,5,3);
-      scene.add(cl);overlayObjects.push(cl);
-
-      const ai=createAIMonolith();ai.position.set(0,0,0);
-      scene.add(ai);overlayObjects.push(ai);
-
-      const tokens=[
-        {label:'Strand',pos:[2.5,2.0,0.5],color:0xddaa44},
-        {label:'Sand',pos:[2.8,2.3,0.8],color:0xddaa44},
-        {label:'Meer',pos:[2.2,1.7,-0.2],color:0x4488cc},
-        {label:'Urlaub',pos:[3.0,2.5,0.2],color:0xddaa44},
-        {label:'Baum',pos:[-2.0,3.0,1.0],color:0x44aa44},
-        {label:'grün',pos:[-1.7,3.3,1.3],color:0x44aa44},
-        {label:'Natur',pos:[-2.3,2.8,0.7],color:0x44aa44},
-        {label:'Schmerz',pos:[-3.0,0.8,-1.0],color:0xff4444},
-        {label:'unangenehm',pos:[-2.6,1.1,-0.7],color:0xff6666},
-        {label:'Verletzung',pos:[-3.3,0.5,-1.3],color:0xff6666},
-        {label:'Hund',pos:[0.5,1.5,-2.0],color:0xcc8833},
-        {label:'bellen',pos:[0.3,1.2,-2.3],color:0xcc8833},
-        {label:'Freude',pos:[1.5,4.0,-0.5],color:0x44aaff},
-        {label:'Sonne',pos:[3.5,4.5,1.0],color:0xffff44},
-        {label:'warm',pos:[3.2,4.2,1.3],color:0xffff44}
-      ];
-
-      tokens.forEach(t=>{
-        const sp=new THREE.Mesh(new THREE.SphereGeometry(0.07,10,10),new THREE.MeshBasicMaterial({color:t.color}));
-        sp.position.set(...t.pos);scene.add(sp);overlayObjects.push(sp);
-
-        const gl=new THREE.Mesh(new THREE.SphereGeometry(0.16,8,8),new THREE.MeshBasicMaterial({color:t.color,transparent:true,opacity:0.08}));
-        gl.position.set(...t.pos);gl.userData={type:'tokenGlow'};
-        scene.add(gl);overlayObjects.push(gl);
-
-        const lb=createTextSprite(t.label,'#'+t.color.toString(16).padStart(6,'0'),22,1.2);
-        lb.position.set(t.pos[0],t.pos[1]+0.25,t.pos[2]);
-        scene.add(lb);overlayObjects.push(lb);
-      });
-
-      const lm=new THREE.LineBasicMaterial({color:0x223344,transparent:true,opacity:0.25});
-      for(let i=0;i<tokens.length;i++){
-        for(let j=i+1;j<tokens.length;j++){
-          const dx=tokens[i].pos[0]-tokens[j].pos[0],dy=tokens[i].pos[1]-tokens[j].pos[1],dz=tokens[i].pos[2]-tokens[j].pos[2];
-          if(Math.sqrt(dx*dx+dy*dy+dz*dz)<1.8){
-            const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...tokens[i].pos),new THREE.Vector3(...tokens[j].pos)]);
-            const ln=new THREE.Line(g,lm);scene.add(ln);overlayObjects.push(ln);
-          }
+  // Connection lines between nearby AI tokens
+  for(let i=0;i<tokens.length;i++){
+    for(let j=i+1;j<tokens.length;j++){
+      const a=tokens[i].pos.split(' ').map(Number);
+      const b=tokens[j].pos.split(' ').map(Number);
+      const dist=Math.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2);
+      if(dist<1.8){
+        const line=document.createElement('a-entity');
+        // Use a thin cylinder as a line
+        const mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2, mz=(a[2]+b[2])/2;
+        const dx=b[0]-a[0], dy=b[1]-a[1], dz=b[2]-a[2];
+        const len=Math.sqrt(dx*dx+dy*dy+dz*dz);
+        line.setAttribute('geometry',`primitive:cylinder; radius:0.005; height:${len}`);
+        line.setAttribute('material','color:#223344; opacity:0.25; transparent:true; shader:flat');
+        line.setAttribute('position',`${mx} ${my} ${mz}`);
+        // Rotate cylinder to point from a to b
+        const ux=dx/len, uy=dy/len, uz=dz/len;
+        const ax2=Math.acos(uy);
+        const cross_x=-uz, cross_z=ux;
+        const cross_len=Math.sqrt(cross_x*cross_x+cross_z*cross_z);
+        if(cross_len>0.001){
+          line.setAttribute('rotation',`${THREE.MathUtils.radToDeg(Math.atan2(-dz,dx))} 0 ${THREE.MathUtils.radToDeg(ax2-Math.PI/2)}`);
         }
+        // Simpler approach: use look-at trick
+        line.object3D.position.set(mx,my,mz);
+        aiTokensEl.appendChild(line);
       }
-
-      const am=new THREE.LineBasicMaterial({color:0x222233,transparent:true,opacity:0.15});
-      [[[-5,0,0],[5,0,0]],[[0,-1,0],[0,6,0]],[[0,0,-4],[0,0,4]]].forEach(([a,b])=>{
-        const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...a),new THREE.Vector3(...b)]);
-        const ax=new THREE.Line(g,am);scene.add(ax);overlayObjects.push(ax);
-      });
-
-      for(let i=0;i<70;i++){
-        const cb=new THREE.Mesh(new THREE.BoxGeometry(0.025,0.025,0.025),new THREE.MeshBasicMaterial({color:0x1a1a2a,transparent:true,opacity:0.2}));
-        cb.position.set((Math.random()-0.5)*12,Math.random()*6,(Math.random()-0.5)*8);
-        cb.userData={type:'dataFloat',baseY:cb.position.y,floatSpeed:0.001+Math.random()*0.004};
-        scene.add(cb);overlayObjects.push(cb);
-      }
-
-      const a1=createTextSprite('"Baum" = nahe "grün", "Natur" — kein echter Baum','#556666',16,4);
-      a1.position.set(-2,4.0,1);scene.add(a1);overlayObjects.push(a1);
-      const a2=createTextSprite('"Strand" = nahe "Sand", "Meer" — kein Sand unter den Füßen','#556666',16,4);
-      a2.position.set(2.5,3.2,0.5);scene.add(a2);overlayObjects.push(a2);
-      const a3=createTextSprite('v_schmerz = [0.12, -0.54, 0.87, ...] — bedeutungslos','#664444',16,4);
-      a3.position.set(-3,-0.2,-1);scene.add(a3);overlayObjects.push(a3);
-      const a4=createTextSprite('← Kopfhörer → Übersetzungs-KI → Vektorraum','#445566',16,4.5);
-      a4.position.set(0,5.5,0);scene.add(a4);overlayObjects.push(a4);
-
-      setCameraTarget([0,3,10],[0,2.5,0]);
-      break;
     }
   }
 
-  updateAudioForScene(name);
-};
-
-/* ===== ANIMATION LOOP ===== */
-let time=0, lastTime=performance.now();
-
-function animate(){
-  requestAnimationFrame(animate);
-  const now=performance.now(), dt=(now-lastTime)/1000;
-  lastTime=now; time+=dt;
-
-  updateMovement(dt);
-
-  // Smooth camera with very gentle sway
-  camera.position.lerp(camTargetPos,0.02);
-  const look=camTargetLookAt.clone();
-  look.x+=Math.sin(time*0.15)*0.08;
-  look.y+=Math.cos(time*0.1)*0.03;
-  camera.lookAt(look);
-
-  // Dog vision transition
-  desatMaterial.uniforms.dogVision.value+=(targetDogVision-desatMaterial.uniforms.dogVision.value)*0.03;
-
-  // Update overlays
-  overlayObjects.forEach(o=>{
-    if(!o.userData)return;
-
-    if(o.userData.type==='followJogger'){o.position.x=jogger.position.x;o.position.z=jogger.position.z;if(o.userData.offsetY!==undefined)o.position.y=o.userData.offsetY;}
-    if(o.userData.type==='followDog'){o.position.x=dog.position.x;o.position.z=dog.position.z;if(o.userData.offsetY!==undefined)o.position.y=o.userData.offsetY;}
-    if(o.userData.type==='followButterfly'){o.position.x=butterfly.position.x+(o.userData.offsetX||0);o.position.y=butterfly.position.y+(o.userData.offsetY||0);o.position.z=butterfly.position.z;}
-
-    if(o.userData.type==='orbitParticle'){
-      o.userData.angle+=o.userData.speed;
-      let cx=0,cz=0;
-      if(o.userData.follow==='jogger'){cx=jogger.position.x;cz=jogger.position.z;}
-      else if(o.userData.follow==='dog'){cx=dog.position.x;cz=dog.position.z;}
-      else if(o.userData.follow==='butterfly'){cx=butterfly.position.x;cz=butterfly.position.z;}
-      o.position.x=cx+Math.cos(o.userData.angle)*o.userData.radius;
-      o.position.z=cz+Math.sin(o.userData.angle)*o.userData.radius;
-      if(o.userData.follow==='butterfly'){o.position.y=butterfly.position.y+Math.sin(time*o.userData.bobSpeed+o.userData.angle)*o.userData.bobAmt;}
-      else{o.position.y=o.userData.baseY+Math.sin(time*o.userData.bobSpeed+o.userData.angle)*o.userData.bobAmt;}
-    }
-
-    if(o.userData.type==='knowledgeOrbit'){o.userData.angle+=0.0015;o.position.x=jogger.position.x+Math.cos(o.userData.angle)*o.userData.radius;o.position.z=jogger.position.z+Math.sin(o.userData.angle)*o.userData.radius;o.position.y=o.userData.offsetY;}
-    if(o.userData.type==='dogSound'){o.position.x=dog.position.x;o.position.z=dog.position.z;o.position.y=0.6;const p=1+Math.sin(time*1.8+o.userData.phase)*0.2;o.scale.set(p,p,p);o.material.opacity=0.05+Math.sin(time*1.8+o.userData.phase)*0.05;}
-    if(o.userData.type==='tokenGlow'){o.material.opacity=0.05+Math.sin(time*2+o.position.x*3)*0.04;}
-    if(o.userData.type==='dataFloat'){o.position.y=o.userData.baseY+Math.sin(time*1.2+o.position.x*2)*0.25;o.rotation.x+=0.006;o.rotation.y+=0.009;}
-    if(o.userData.type==='serverLine'){o.material.opacity=0.3+Math.sin(time*3+o.userData.phase)*0.3;}
-    if(o.userData.type==='aiEye'){o.material.color.setHSL(0.55+Math.sin(time*0.5)*0.05,0.8,0.5);}
-    if(o.userData.type==='aiEyeGlow'){o.material.opacity=0.1+Math.sin(time*1.5)*0.1;}
+  // AI annotations
+  const annotations = [
+    {text:'"Baum" = nahe "grün", "Natur" — kein echter Baum', pos:'-2 4.2 1', color:'#556666'},
+    {text:'"Strand" = nahe "Sand", "Meer" — kein Sand unter den Füßen', pos:'2.5 3.4 0.5', color:'#556666'},
+    {text:'v_schmerz = [0.12, -0.54, 0.87, ...] — bedeutungslos', pos:'-3 -0.2 -1', color:'#664444'},
+    {text:'← Kopfhörer → Übersetzungs-KI → Vektorraum', pos:'0 5.5 0', color:'#445566'}
+  ];
+  annotations.forEach(a => {
+    const el = document.createElement('a-text');
+    el.setAttribute('value', a.text);
+    el.setAttribute('color', a.color);
+    el.setAttribute('align','center');
+    el.setAttribute('width','6');
+    el.setAttribute('position', a.pos);
+    el.setAttribute('look-at','[camera]');
+    aiTokensEl.appendChild(el);
   });
 
-  // Water animation
-  const wv=waterMesh.geometry.attributes.position;
-  for(let i=0;i<wv.count;i++){wv.setZ(i,Math.sin(wv.getX(i)*0.25+time*0.6)*0.12+Math.sin(wv.getY(i)*0.3+time*0.4)*0.08);}
-  wv.needsUpdate=true;waterMesh.geometry.computeVertexNormals();
-
-  // Render
-  if(desatMaterial.uniforms.dogVision.value>0.01){
-    renderer.setRenderTarget(renderTarget);
-    renderer.render(scene,camera);
-    renderer.setRenderTarget(null);
-    desatMaterial.uniforms.tDiffuse.value=renderTarget.texture;
-    renderer.render(desatScene,desatCamera);
-  }else{
-    renderer.render(scene,camera);
+  // Floating data cubes in AI scene
+  for(let i=0;i<50;i++){
+    const cb = document.createElement('a-box');
+    cb.setAttribute('width','0.025');cb.setAttribute('height','0.025');cb.setAttribute('depth','0.025');
+    cb.setAttribute('color','#1a1a2a');
+    cb.setAttribute('material','shader:flat; opacity:0.2; transparent:true');
+    const x=(Math.random()-0.5)*12, y=Math.random()*6, z=(Math.random()-0.5)*8;
+    cb.setAttribute('position',`${x} ${y} ${z}`);
+    cb.dataset.baseY = y;
+    cb.dataset.type = 'dataFloat';
+    aiTokensEl.appendChild(cb);
   }
-}
-animate();
 
-/* Resize */
-window.addEventListener('resize',()=>{
-  camera.aspect=window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth,window.innerHeight);
-  renderTarget.setSize(window.innerWidth,window.innerHeight);
-});
+  // ===== AUDIO =====
+  let audioCtx=null, soundEnabled=false, masterGain=null, birdInterval=null, waveSource=null, waveGainNode=null;
+  function initAudio(){
+    if(audioCtx)return;
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    masterGain=audioCtx.createGain();masterGain.gain.value=0.3;
+    masterGain.connect(audioCtx.destination);
+  }
+  function playChirp(freq,st,vol){
+    if(!audioCtx||!soundEnabled)return;
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type='sine';o.frequency.setValueAtTime(freq,st);
+    o.frequency.linearRampToValueAtTime(freq*1.3,st+0.04);
+    o.frequency.linearRampToValueAtTime(freq*0.9,st+0.08);
+    g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(vol,st+0.01);
+    g.gain.linearRampToValueAtTime(0,st+0.1);
+    o.connect(g);g.connect(masterGain);o.start(st);o.stop(st+0.12);
+  }
+  function startBirds(v){
+    if(birdInterval)return;
+    birdInterval=setInterval(()=>{
+      if(!audioCtx||!soundEnabled)return;
+      const n=audioCtx.currentTime,f=2000+Math.random()*2000;
+      const c=2+Math.floor(Math.random()*3);
+      for(let i=0;i<c;i++)playChirp(f+Math.random()*500,n+i*0.12,v);
+    },1500+Math.random()*2000);
+  }
+  function stopBirds(){if(birdInterval){clearInterval(birdInterval);birdInterval=null;}}
+  function startWaves(v){
+    if(!audioCtx||waveSource)return;
+    const bs=audioCtx.sampleRate*2,buf=audioCtx.createBuffer(1,bs,audioCtx.sampleRate),d=buf.getChannelData(0);
+    let l=0;for(let i=0;i<bs;i++){l=(l+0.02*(Math.random()*2-1))/1.02;d[i]=l*3.5;}
+    waveSource=audioCtx.createBufferSource();waveSource.buffer=buf;waveSource.loop=true;
+    waveGainNode=audioCtx.createGain();waveGainNode.gain.value=v;
+    const f=audioCtx.createBiquadFilter();f.type='lowpass';f.frequency.value=200;
+    waveSource.connect(f);f.connect(waveGainNode);waveGainNode.connect(masterGain);waveSource.start();
+  }
+  function stopWaves(){if(waveSource){waveSource.stop();waveSource=null;}}
 
-/* Start */
-window.switchScene('human');
+  window.toggleSound=function(){
+    const b=document.getElementById('sound-toggle');
+    if(!soundEnabled){initAudio();soundEnabled=true;b.textContent='🔊 Sound';startWaves(0.06);updateAudioForScene(currentScene);}
+    else{soundEnabled=false;b.textContent='🔇 Sound';stopBirds();stopWaves();}
+  };
 
+  function updateAudioForScene(n){
+    if(!audioCtx||!soundEnabled)return;stopBirds();const t=audioCtx.currentTime;
+    if(n==='human'){startBirds(0.03);if(waveGainNode)waveGainNode.gain.linearRampToValueAtTime(0.06,t+0.5);}
+    else if(n==='dog'){startBirds(0.12);if(waveGainNode)waveGainNode.gain.linearRampToValueAtTime(0.1,t+0.5);}
+    else if(n==='butterfly'){startBirds(0.01);if(waveGainNode)waveGainNode.gain.linearRampToValueAtTime(0.02,t+0.5);}
+    else if(n==='ai'){if(waveGainNode)waveGainNode.gain.linearRampToValueAtTime(0,t+0.8);}
+  }
+
+  // ===== SCENE SWITCHING =====
+  window.switchScene = function(name){
+    currentScene = name;
+    const label=document.getElementById('scene-label');
+    const info=document.getElementById('info-panel');
+
+    // Reset
+    document.body.className='normal-vision';
+    jogger.setAttribute('visible','true');
+    dogEl.setAttribute('visible','true');
+    butterflyEl.setAttribute('visible','true');
+    bubbleHuman.setAttribute('visible','false');
+    bubbleHumanInner.setAttribute('visible','false');
+    bubbleDog.setAttribute('visible','false');
+    bubbleButterfly.setAttribute('visible','false');
+    humanParticles.setAttribute('visible','false');
+    dogParticles.setAttribute('visible','false');
+    butterflyParticles.setAttribute('visible','false');
+    knowledgeLabels.setAttribute('visible','false');
+    aiScene.setAttribute('visible','false');
+    document.querySelector('a-sky').setAttribute('visible','true');
+
+    // Active button
+    document.querySelectorAll('#nav-buttons button').forEach(b=>b.classList.remove('active'));
+    const idx=['human','dog','butterfly','ai'].indexOf(name);
+    const btns=document.querySelectorAll('#nav-buttons button');
+    if(idx>=0&&btns[idx])btns[idx].classList.add('active');
+
+    switch(name){
+      case 'human':
+        label.textContent='👤 UMWELT: MENSCH';
+        info.innerHTML=`Die Bubble des <strong>Menschen</strong>: Er sieht den Strand, das Meer, den Himmel.<br>
+          Er weiß von anderen Städten, fernen Planeten, der Geschichte der Erde.<br>
+          Er hört Musik über Kopfhörer, riecht das Salzwasser, fühlt den Wind.<br>
+          <em>Aber auch er lebt nur in seiner Bubble – seiner subjektiven Umwelt.</em>`;
+        bubbleHuman.setAttribute('visible','true');
+        bubbleHumanInner.setAttribute('visible','true');
+        humanParticles.setAttribute('visible','true');
+        knowledgeLabels.setAttribute('visible','true');
+        cameraRig.setAttribute('position','0 3.5 14');
+        break;
+
+      case 'dog':
+        label.textContent='🐕 UMWELT: HUND';
+        info.innerHTML=`Die Bubble des <strong>Hundes</strong>: Kleiner als die des Menschen.<br>
+          Kein Wissen über ferne Planeten. Mehr <strong>im Jetzt</strong>.<br>
+          Aber die Geruchswelt <strong>explodiert</strong>: 200 Mio. Riechzellen.<br>
+          Farben verblassen (Dichromat). Geräusche werden <strong>lauter und detaillierter</strong>.`;
+        document.body.className='dog-vision';
+        bubbleDog.setAttribute('visible','true');
+        dogParticles.setAttribute('visible','true');
+        cameraRig.setAttribute('position','0 2.5 10');
+        break;
+
+      case 'butterfly':
+        label.textContent='🦋 UMWELT: SCHMETTERLING';
+        info.innerHTML=`Die Bubble des <strong>Schmetterlings</strong>: Winzig. Radikal im <strong>Hier und Jetzt</strong>.<br>
+          Kein Strand als Konzept. Kein Jogger. Kein Meer.<br>
+          Nur: <strong>UV-Muster</strong>, <strong>Windrichtung</strong>, <strong>Pheromone</strong>, <strong>Licht/Dunkel</strong>.<br>
+          <em>Er sieht Farben die wir nicht sehen (UV) – aber kennt kein "Morgen".</em>`;
+        bubbleButterfly.setAttribute('visible','true');
+        butterflyParticles.setAttribute('visible','true');
+        cameraRig.setAttribute('position','0 3 12');
+        break;
+
+      case 'ai':
+        label.textContent='🤖 UMWELT: KI';
+        info.innerHTML=`<strong>Überleitung:</strong> Der Jogger hört über Kopfhörer einen Podcast –<br>
+          eine KI übersetzt ihn simultan. Aber <strong>was ist die Welt dieser KI?</strong><br><br>
+          Sie kennt "Strand" – aber nur als Punkt im Vektorraum, nahe "Sand", "Meer", "Urlaub".<br>
+          <strong>Kein Sand unter den Füßen.</strong><br>
+          Ein "Baum" ist kein Ding mit harter Rinde, das man verbrennen kann –<br>
+          sondern ein <strong>Begriff, der oft mit "grün" und "Natur" in Texten vorkommt</strong>.<br><br>
+          <em>Die KI hat keine Umwelt. Sie hat einen Vektorraum. Und der ist dunkel.</em>`;
+        jogger.setAttribute('visible','false');
+        dogEl.setAttribute('visible','false');
+        butterflyEl.setAttribute('visible','false');
+        document.querySelector('a-sky').setAttribute('visible','false');
+        aiScene.setAttribute('visible','true');
+        cameraRig.setAttribute('position','0 3 10');
+        break;
+    }
+
+    updateAudioForScene(name);
+  };
+
+  // ===== ANIMATION TICK =====
+  const legL = document.getElementById('jogger-leg-l');
+  const legR = document.getElementById('jogger-leg-r');
+  const armL = document.getElementById('jogger-arm-l');
+  const armR = document.getElementById('jogger-arm-r');
+  const dogLegFL = document.getElementById('dog-leg-fl');
+  const dogLegFR = document.getElementById('dog-leg-fr');
+  const dogLegBL = document.getElementById('dog-leg-bl');
+  const dogLegBR = document.getElementById('dog-leg-br');
+  const wingL = document.getElementById('wing-l');
+  const wingR = document.getElementById('wing-r');
+
+  const WALK_SPEED = 1.8;
+  const BF_SPEED = 0.6;
+
+  document.querySelector('a-scene').setAttribute('tick', '');
+
+  // Use requestAnimationFrame for the tick
+  function tick(){
+    requestAnimationFrame(tick);
+    const dt = 0.016;
+    time += dt;
+
+    // Jogger movement: left to right, loop
+    joggerX += WALK_SPEED * dt;
+    if(joggerX > 25) joggerX = -25;
+    jogger.setAttribute('position', `${joggerX} ${Math.abs(Math.sin(time*4.5))*0.06} -2`);
+
+    // Jogger leg animation
+    const legAngle = Math.sin(time*9)*35;
+    legL.setAttribute('rotation',`${legAngle} 0 0`);
+    legR.setAttribute('rotation',`${-legAngle} 0 0`);
+    armL.setAttribute('rotation',`${-legAngle*0.7} 0 0`);
+    armR.setAttribute('rotation',`${legAngle*0.7} 0 0`);
+
+    // Dog follows jogger
+    const dogTargetX = joggerX + 3;
+    dogX += (dogTargetX - dogX) * 0.05;
+    if(dogX > 28) dogX = -22;
+    const dogZ = -3 + Math.sin(time*0.8)*1.0;
+    dogEl.setAttribute('position',`${dogX} ${Math.abs(Math.sin(time*5))*0.03} ${dogZ}`);
+
+    // Dog leg animation
+    const dLeg = Math.sin(time*8)*20;
+    dogLegFL.setAttribute('rotation',`${dLeg} 0 0`);
+    dogLegFR.setAttribute('rotation',`${-dLeg} 0 0`);
+    dogLegBL.setAttribute('rotation',`${-dLeg*0.8} 0 0`);
+    dogLegBR.setAttribute('rotation',`${dLeg*0.8} 0 0`);
+
+    // Butterfly: right to left, slow
+    butterflyX -= BF_SPEED * dt;
+    if(butterflyX < -30) butterflyX = 30;
+    const bfY = 1.8 + Math.sin(time*0.5)*0.4 + Math.sin(time*0.2)*0.2;
+    const bfZ = -1 + Math.sin(time*0.3)*1.5;
+    butterflyEl.setAttribute('position',`${butterflyX} ${bfY} ${bfZ}`);
+
+    // Wing flap
+    const flapAngle = Math.sin(time*8)*50;
+    wingL.setAttribute('rotation',`0 ${-flapAngle} 0`);
+    wingR.setAttribute('rotation',`0 ${flapAngle} 0`);
+
+    // Update bubble positions to follow characters
+    if(bubbleHuman.getAttribute('visible')==='true'){
+      bubbleHuman.setAttribute('position',`${joggerX} 2.5 -2`);
+      bubbleHumanInner.setAttribute('position',`${joggerX} 1.2 -2`);
+    }
+    if(bubbleDog.getAttribute('visible')==='true'){
+      bubbleDog.setAttribute('position',`${dogX} 0.8 ${dogZ}`);
+    }
+    if(bubbleButterfly.getAttribute('visible')==='true'){
+      bubbleButterfly.setAttribute('position',`${butterflyX} ${bfY} ${bfZ}`);
+    }
+
+    // Update particle container positions
+    humanParticles.setAttribute('position',`${joggerX} 0 -2`);
+    dogParticles.setAttribute('position',`${dogX} 0 ${dogZ}`);
+    butterflyParticles.setAttribute('position',`${butterflyX} ${bfY} ${bfZ}`);
+    knowledgeLabels.setAttribute('position',`${joggerX} 0 -2`);
+
+    // Animate AI data cubes
+    if(aiScene.getAttribute('visible')==='true'){
+      aiTokensEl.querySelectorAll('a-box').forEach(cb=>{
+        if(cb.dataset.type==='dataFloat'){
+          const by=parseFloat(cb.dataset.baseY);
+          const p=cb.getAttribute('position');
+          const px=parseFloat(p.x)||0;
+          cb.setAttribute('position',`${px} ${by+Math.sin(time*1.2+px*2)*0.25} ${p.z||0}`);
+          const r=cb.getAttribute('rotation')||{x:0,y:0,z:0};
+          cb.setAttribute('rotation',`${(parseFloat(r.x)||0)+0.3} ${(parseFloat(r.y)||0)+0.5} 0`);
+        }
+      });
+    }
+
+    // Gentle camera sway
+    const camPos = cameraRig.getAttribute('position');
+    const swayX = Math.sin(time*0.15)*0.05;
+    const swayY = Math.cos(time*0.1)*0.02;
+    cameraRig.object3D.position.x = parseFloat(camPos.x||0) + swayX;
+    cameraRig.object3D.position.y = parseFloat(camPos.y||0) + swayY;
+  }
+
+  tick();
+
+  // Start with human scene
+  window.switchScene('human');
+
+}); // end a-scene loaded
 </script>
 </body>
 </html>
