@@ -5,1398 +5,647 @@
 <title>Umwelten – Uexküll meets AI</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #1a2a1a; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; }
+  body { background: #0a1628; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; }
   canvas { display: block; }
-
   #info-panel {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: rgba(10, 10, 10, 0.88); border: 1px solid rgba(255,255,255,0.15);
-    color: #e0e0e0; padding: 18px 28px; border-radius: 12px;
-    max-width: 640px; text-align: center; z-index: 20;
-    font-size: 14px; line-height: 1.7;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    background: rgba(5,10,20,0.9); border: 1px solid rgba(255,255,255,0.12);
+    color: #d0d8e8; padding: 18px 28px; border-radius: 14px;
+    max-width: 680px; text-align: center; z-index: 20;
+    font-size: 13.5px; line-height: 1.75;
+    backdrop-filter: blur(16px); box-shadow: 0 8px 40px rgba(0,0,0,0.6);
   }
-  #info-panel em { color: #a0cfff; }
+  #info-panel em { color: #88bbff; }
   #info-panel strong { color: #fff; }
-
   #scene-label {
-    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-    color: #fff; font-size: 22px; z-index: 20;
-    letter-spacing: 3px; font-weight: 300;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.7);
-    background: rgba(0,0,0,0.4); padding: 8px 24px; border-radius: 8px;
-    backdrop-filter: blur(8px);
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    color: #fff; font-size: 20px; z-index: 20; letter-spacing: 3px; font-weight: 300;
+    text-shadow: 0 2px 15px rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.35); padding: 8px 28px; border-radius: 10px;
+    backdrop-filter: blur(10px);
   }
-
   #nav-buttons {
-    position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
-    z-index: 20; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    position: fixed; top: 62px; left: 50%; transform: translateX(-50%);
+    z-index: 20; display: flex; gap: 6px;
   }
-
   #nav-buttons button {
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
-    color: #ddd; padding: 8px 18px; cursor: pointer;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+    color: #bbb; padding: 7px 18px; cursor: pointer;
     font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px;
-    border-radius: 20px; transition: all 0.3s;
-    backdrop-filter: blur(6px);
+    border-radius: 22px; transition: all 0.35s; backdrop-filter: blur(6px);
   }
-  #nav-buttons button:hover {
-    background: rgba(255,255,255,0.2);
-    color: #fff;
-    box-shadow: 0 0 15px rgba(255,255,255,0.15);
+  #nav-buttons button:hover { background: rgba(255,255,255,0.18); color: #fff; }
+  #nav-buttons button.active { background: rgba(100,180,255,0.2); border-color: rgba(100,180,255,0.45); color: #fff; }
+  #sound-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 25;
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);
+    color: #aaa; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 12px;
   }
-  #nav-buttons button.active {
-    background: rgba(100,180,255,0.25);
-    border-color: rgba(100,180,255,0.5);
-    color: #fff;
-  }
+  #sound-toggle:hover { color: #fff; }
 </style>
 </head>
 <body>
-
 <div id="scene-label">UMWELTEN</div>
-
 <div id="nav-buttons">
-  <button onclick="switchScene('overview')">🌳 Park-Übersicht</button>
   <button onclick="switchScene('human')">👤 Mensch</button>
   <button onclick="switchScene('dog')">🐕 Hund</button>
-  <button onclick="switchScene('beetle')">🪲 Käfer</button>
+  <button onclick="switchScene('butterfly')">🦋 Schmetterling</button>
   <button onclick="switchScene('ai')">🤖 KI</button>
-  <button onclick="switchScene('pain')">⚡ Schmerz-Vergleich</button>
 </div>
-
+<button id="sound-toggle" onclick="toggleSound()">🔇 Sound</button>
 <div id="info-panel">
-  Willkommen. Du siehst einen Park – einen Menschen, der mit seinem Hund spielt,<br>
-  und einen kleinen Käfer am Boden. Klicke auf die Buttons, um ihre <strong>Umwelten</strong> zu sehen.
+  Ein Jogger am Strand mit seinem Hund. Ein Schmetterling fliegt vorbei.<br>
+  Jedes Wesen lebt in seiner eigenen <strong>Umwelt</strong> – seiner subjektiven Blase.
 </div>
 
 <script type="importmap">
-{
-  "imports": {
+{ "imports": {
     "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
     "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-  }
-}
+} }
 </script>
-
 <script type="module">
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-// ============================================================
-// SCENE SETUP
-// ============================================================
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x87CEEB);
-scene.fog = new THREE.Fog(0x87CEEB, 40, 80);
+/* ===== AUDIO ===== */
+let audioCtx=null, soundEnabled=false, masterGain=null, birdInterval=null, birdVolume=0.05, waveSource=null, waveGainNode=null;
+function initAudio(){if(audioCtx)return;audioCtx=new(window.AudioContext||window.webkitAudioContext)();masterGain=audioCtx.createGain();masterGain.gain.value=0.3;masterGain.connect(audioCtx.destination);}
+function playChirp(freq,st,vol){if(!audioCtx||!soundEnabled)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.setValueAtTime(freq,st);o.frequency.linearRampToValueAtTime(freq*1.3,st+0.04);o.frequency.linearRampToValueAtTime(freq*0.9,st+0.08);g.gain.setValueAtTime(0,st);g.gain.linearRampToValueAtTime(vol,st+0.01);g.gain.linearRampToValueAtTime(0,st+0.1);o.connect(g);g.connect(masterGain);o.start(st);o.stop(st+0.12);}
+function startBirds(v){birdVolume=v;if(birdInterval)return;birdInterval=setInterval(()=>{if(!audioCtx||!soundEnabled)return;const n=audioCtx.currentTime,f=2000+Math.random()*2000,c=2+Math.floor(Math.random()*3);for(let i=0;i<c;i++)playChirp(f+Math.random()*500,n+i*0.12,birdVolume);},1500+Math.random()*2000);}
+function stopBirds(){if(birdInterval){clearInterval(birdInterval);birdInterval=null;}}
+function startWaves(v){if(!audioCtx||waveSource)return;const bs=audioCtx.sampleRate*2,buf=audioCtx.createBuffer(1,bs,audioCtx.sampleRate),d=buf.getChannelData(0);let l=0;for(let i=0;i<bs;i++){l=(l+0.02*(Math.random()*2-1))/1.02;d[i]=l*3.5;}waveSource=audioCtx.createBufferSource();waveSource.buffer=buf;waveSource.loop=true;waveGainNode=audioCtx.createGain();waveGainNode.gain.value=v;const f=audioCtx.createBiquadFilter();f.type='lowpass';f.frequency.value=200;waveSource.connect(f);f.connect(waveGainNode);waveGainNode.connect(masterGain);waveSource.start();}
+function stopWaves(){if(waveSource){waveSource.stop();waveSource=null;}}
+function updateAudioForScene(n){if(!audioCtx||!soundEnabled)return;stopBirds();const t=audioCtx.currentTime;switch(n){case'human':startBirds(0.03);if(waveGainNode)waveGainNode.gain.linearRampToValueAtTime(0.06,t+0.5);break;case'dog':startBirds(0.12);if(waveGainNode)waveGainNode.gain.linearRampToValueAtTime(0.1,t+0.5);break;case'butterfly':startBirds(0.01);if(waveGainNode)waveGainNode.gain.linearRampToValueAtTime(0.02,t+0.5);break;case'ai':if(waveGainNode)waveGainNode.gain.linearRampToValueAtTime(0,t+0.8);break;}}
+window.toggleSound=function(){const b=document.getElementById('sound-toggle');if(!soundEnabled){initAudio();soundEnabled=true;b.textContent='🔊 Sound';startWaves(0.06);updateAudioForScene(currentSceneName);}else{soundEnabled=false;b.textContent='🔇 Sound';stopBirds();stopWaves();}};
 
-const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
-camera.position.set(8, 5, 12);
-
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.1;
+/* ===== THREE.JS SCENE ===== */
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x87CEEB);
+scene.fog=new THREE.Fog(0x87CEEB,50,100);
+const camera=new THREE.PerspectiveCamera(50,window.innerWidth/window.innerHeight,0.1,500);
+camera.position.set(0,3.5,14);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.2;
 document.body.appendChild(renderer.domElement);
 
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.maxPolarAngle = Math.PI / 2.1;
-controls.minDistance = 3;
-controls.maxDistance = 40;
-
-// ============================================================
-// LIGHTING – warm sunlight
-// ============================================================
-const ambientLight = new THREE.AmbientLight(0x6688aa, 0.5);
-scene.add(ambientLight);
-
-const sunLight = new THREE.DirectionalLight(0xfff4e0, 1.8);
-sunLight.position.set(15, 20, 10);
-sunLight.castShadow = true;
-sunLight.shadow.mapSize.set(2048, 2048);
-sunLight.shadow.camera.near = 0.5;
-sunLight.shadow.camera.far = 60;
-sunLight.shadow.camera.left = -20;
-sunLight.shadow.camera.right = 20;
-sunLight.shadow.camera.top = 20;
-sunLight.shadow.camera.bottom = -20;
-scene.add(sunLight);
-
-const hemiLight = new THREE.HemisphereLight(0x87CEEB, 0x3a5f0b, 0.4);
-scene.add(hemiLight);
-
-// ============================================================
-// MATERIALS
-// ============================================================
-const skinMat = new THREE.MeshStandardMaterial({ color: 0xd4a574, roughness: 0.7, metalness: 0.0 });
-const shirtMat = new THREE.MeshStandardMaterial({ color: 0x3366aa, roughness: 0.8 });
-const pantsMat = new THREE.MeshStandardMaterial({ color: 0x2a2a3a, roughness: 0.8 });
-const hairMat = new THREE.MeshStandardMaterial({ color: 0x3a2a1a, roughness: 0.9 });
-const dogFurMat = new THREE.MeshStandardMaterial({ color: 0xc4883a, roughness: 0.9 });
-const dogNoseMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.5 });
-const beetleMat = new THREE.MeshStandardMaterial({ color: 0x1a3a1a, roughness: 0.4, metalness: 0.3 });
-const beetleShellMat = new THREE.MeshStandardMaterial({ color: 0x2a5a2a, roughness: 0.3, metalness: 0.4 });
-const grassMat = new THREE.MeshStandardMaterial({ color: 0x4a8a2a, roughness: 1.0 });
-const dirtMat = new THREE.MeshStandardMaterial({ color: 0x5a4a3a, roughness: 1.0 });
-const treeTrunkMat = new THREE.MeshStandardMaterial({ color: 0x5a3a2a, roughness: 0.95 });
-const leavesMat = new THREE.MeshStandardMaterial({ color: 0x3a7a2a, roughness: 0.9 });
-const benchMat = new THREE.MeshStandardMaterial({ color: 0x6a4a2a, roughness: 0.8 });
-const pathMat = new THREE.MeshStandardMaterial({ color: 0x8a7a6a, roughness: 0.95 });
-const bubbleMat = (color, opacity) => new THREE.MeshPhysicalMaterial({
-  color: color, transparent: true, opacity: opacity,
-  side: THREE.DoubleSide, depthWrite: false,
-  roughness: 0.1, metalness: 0.0, transmission: 0.6,
-  thickness: 0.5, clearcoat: 1.0
+/* Post-processing for dog vision */
+const renderTarget=new THREE.WebGLRenderTarget(window.innerWidth,window.innerHeight);
+const desatScene=new THREE.Scene();
+const desatCamera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+const desatMaterial=new THREE.ShaderMaterial({
+  uniforms:{tDiffuse:{value:null},dogVision:{value:0.0}},
+  vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position,1.0);}`,
+  fragmentShader:`uniform sampler2D tDiffuse;uniform float dogVision;varying vec2 vUv;void main(){vec4 c=texture2D(tDiffuse,vUv);vec3 dg=vec3(c.r*0.5+c.g*0.5,c.r*0.5+c.g*0.5,c.b);dg=mix(dg,vec3(dg.r*1.1,dg.g*1.05,dg.b*0.7),0.3);gl_FragColor=vec4(mix(c.rgb,dg,dogVision),1.0);}`
 });
+desatScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),desatMaterial));
 
-// ============================================================
-// PARK ENVIRONMENT
-// ============================================================
+/* Lighting */
+scene.add(new THREE.AmbientLight(0x8899bb,0.5));
+const sun=new THREE.DirectionalLight(0xffeedd,1.6);
+sun.position.set(20,25,15);sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-30;sun.shadow.camera.right=30;
+sun.shadow.camera.top=30;sun.shadow.camera.bottom=-30;
+scene.add(sun);
+scene.add(new THREE.HemisphereLight(0x87CEEB,0x445522,0.35));
 
-// Ground
-const groundGeo = new THREE.PlaneGeometry(60, 60);
-const ground = new THREE.Mesh(groundGeo, grassMat);
-ground.rotation.x = -Math.PI / 2;
-ground.receiveShadow = true;
-scene.add(ground);
+/* Materials */
+const skinMat=new THREE.MeshStandardMaterial({color:0xd4a574,roughness:0.7});
+const shirtMat=new THREE.MeshStandardMaterial({color:0x2255aa,roughness:0.75});
+const shortsMat=new THREE.MeshStandardMaterial({color:0x1a1a2a,roughness:0.8});
+const hairMat=new THREE.MeshStandardMaterial({color:0x3a2a1a,roughness:0.9});
+const shoeMat=new THREE.MeshStandardMaterial({color:0xee4422,roughness:0.6});
+const dogFurMat=new THREE.MeshStandardMaterial({color:0xc4883a,roughness:0.9});
 
-// Path
-const pathShape = new THREE.Shape();
-pathShape.moveTo(-30, -1);
-pathShape.lineTo(30, -1);
-pathShape.lineTo(30, 1);
-pathShape.lineTo(-30, 1);
-const pathGeo = new THREE.PlaneGeometry(60, 2.5);
-const path = new THREE.Mesh(pathGeo, pathMat);
-path.rotation.x = -Math.PI / 2;
-path.position.set(0, 0.01, 4);
-path.receiveShadow = true;
-scene.add(path);
+/* Sky */
+const skyMat=new THREE.ShaderMaterial({side:THREE.BackSide,
+  uniforms:{topColor:{value:new THREE.Color(0x3366aa)},bottomColor:{value:new THREE.Color(0xffccaa)}},
+  vertexShader:`varying vec3 vWP;void main(){vWP=(modelMatrix*vec4(position,1.0)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+  fragmentShader:`uniform vec3 topColor;uniform vec3 bottomColor;varying vec3 vWP;void main(){float h=normalize(vWP+20.0).y;gl_FragColor=vec4(mix(bottomColor,topColor,max(pow(max(h,0.0),0.4),0.0)),1.0);}`
+});
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(200,32,32),skyMat));
 
-// Tree creator
-function createTree(x, z, height, crownRadius) {
-  const group = new THREE.Group();
-  
-  // Trunk
-  const trunk = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.2, 0.35, height, 8),
-    treeTrunkMat
-  );
-  trunk.position.y = height / 2;
-  trunk.castShadow = true;
-  group.add(trunk);
-  
-  // Crown (multiple spheres for organic look)
-  const crownPositions = [
-    [0, height + crownRadius * 0.5, 0],
-    [crownRadius * 0.4, height + crownRadius * 0.2, crownRadius * 0.3],
-    [-crownRadius * 0.3, height + crownRadius * 0.3, -crownRadius * 0.4],
-    [crownRadius * 0.2, height + crownRadius * 0.7, -crownRadius * 0.2],
-  ];
-  crownPositions.forEach(([cx, cy, cz]) => {
-    const crown = new THREE.Mesh(
-      new THREE.SphereGeometry(crownRadius * (0.6 + Math.random() * 0.4), 12, 10),
-      leavesMat.clone()
-    );
-    crown.material.color.setHex(0x2a6a1a + Math.floor(Math.random() * 0x002a10));
-    crown.position.set(cx, cy, cz);
-    crown.castShadow = true;
-    group.add(crown);
+/* Beach */
+const sandGeo=new THREE.PlaneGeometry(80,30,40,15);
+const sv=sandGeo.attributes.position;
+for(let i=0;i<sv.count;i++)sv.setZ(i,Math.sin(sv.getX(i)*0.3)*0.12+Math.random()*0.02);
+sandGeo.computeVertexNormals();
+const sand=new THREE.Mesh(sandGeo,new THREE.MeshStandardMaterial({color:0xd4b896,roughness:0.95}));
+sand.rotation.x=-Math.PI/2;sand.position.set(0,0,5);sand.receiveShadow=true;scene.add(sand);
+
+const wetSand=new THREE.Mesh(new THREE.PlaneGeometry(80,4),new THREE.MeshStandardMaterial({color:0x9a8060,roughness:0.6}));
+wetSand.rotation.x=-Math.PI/2;wetSand.position.set(0,0.01,-6);wetSand.receiveShadow=true;scene.add(wetSand);
+
+const waterGeo=new THREE.PlaneGeometry(80,40,30,15);
+const waterMesh=new THREE.Mesh(waterGeo,new THREE.MeshStandardMaterial({color:0x2266aa,roughness:0.15,transparent:true,opacity:0.75}));
+waterMesh.rotation.x=-Math.PI/2;waterMesh.position.set(0,-0.15,-28);scene.add(waterMesh);
+
+for(let i=0;i<5;i++){const d=new THREE.Mesh(new THREE.SphereGeometry(2.5+Math.random()*3,10,8,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0xc4a878,roughness:1}));d.position.set(-20+i*10,0,16+Math.random()*4);d.scale.set(1.5,0.35,1);scene.add(d);}
+for(let i=0;i<20;i++){const g=new THREE.Group();for(let j=0;j<6;j++){const b=new THREE.Mesh(new THREE.PlaneGeometry(0.04,0.25+Math.random()*0.25),new THREE.MeshStandardMaterial({color:0x6a8a3a,side:THREE.DoubleSide}));b.position.set((Math.random()-0.5)*0.15,0.12,(Math.random()-0.5)*0.15);b.rotation.y=Math.random()*Math.PI;g.add(b);}g.position.set((Math.random()-0.5)*50,0,10+Math.random()*8);scene.add(g);}
+for(let i=0;i<15;i++){const f=new THREE.Group();const st=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.25,4),new THREE.MeshStandardMaterial({color:0x3a6a2a}));st.position.y=0.12;f.add(st);const p=new THREE.Mesh(new THREE.SphereGeometry(0.05,6,6),new THREE.MeshStandardMaterial({color:[0xff6688,0xffaa44,0xffff66,0xaa66ff][Math.floor(Math.random()*4)]}));p.position.y=0.26;p.scale.y=0.5;f.add(p);f.position.set((Math.random()-0.5)*40,0,8+Math.random()*10);scene.add(f);}
+
+const sunDisc=new THREE.Mesh(new THREE.CircleGeometry(3,32),new THREE.MeshBasicMaterial({color:0xffeecc}));
+sunDisc.position.set(40,30,-60);sunDisc.lookAt(0,0,0);scene.add(sunDisc);
+
+/* ===== JOGGER ===== */
+function createJogger(){
+  const g=new THREE.Group();
+  const head=new THREE.Mesh(new THREE.SphereGeometry(0.2,14,12),skinMat);head.position.y=1.68;head.castShadow=true;g.add(head);
+  const hair=new THREE.Mesh(new THREE.SphereGeometry(0.22,14,10,0,Math.PI*2,0,Math.PI*0.5),hairMat);hair.position.y=1.72;g.add(hair);
+  const torso=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.13,0.5,10),shirtMat);torso.position.y=1.15;torso.castShadow=true;g.add(torso);
+  [-1,1].forEach(s=>{const eb=new THREE.Mesh(new THREE.SphereGeometry(0.022,6,6),new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.3}));eb.position.set(s*0.17,1.65,0.05);g.add(eb);});
+  const phone=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.08,0.005),new THREE.MeshStandardMaterial({color:0x111111,metalness:0.5}));phone.position.set(0.3,0.95,0.12);g.add(phone);
+  const screen=new THREE.Mesh(new THREE.PlaneGeometry(0.035,0.065),new THREE.MeshBasicMaterial({color:0x4488ff}));screen.position.set(0.3,0.95,0.125);g.add(screen);
+  const hips=new THREE.Mesh(new THREE.CylinderGeometry(0.13,0.12,0.16,10),shortsMat);hips.position.y=0.82;g.add(hips);
+  [-1,1].forEach(side=>{
+    const ap=new THREE.Group();ap.position.set(side*0.2,1.32,0);
+    ap.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.035,0.28,8),shirtMat),{position:new THREE.Vector3(0,-0.14,0)}));
+    ap.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(0.032,0.028,0.25,8),skinMat),{position:new THREE.Vector3(0,-0.32,0.05)}));
+    ap.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.03,6,6),skinMat),{position:new THREE.Vector3(0,-0.42,0.08)}));
+    ap.userData={type:'joggerArm',side};g.add(ap);
   });
-  
-  group.position.set(x, 0, z);
-  return group;
-}
-
-// Place trees
-const trees = [
-  createTree(-8, -5, 4, 2.5),
-  createTree(-12, 2, 5, 3),
-  createTree(10, -8, 4.5, 2.8),
-  createTree(14, 1, 3.5, 2.2),
-  createTree(-5, -12, 5.5, 3.2),
-  createTree(8, 8, 4, 2.5),
-  createTree(-15, -10, 4.5, 2.8),
-  createTree(18, -5, 5, 3),
-];
-trees.forEach(t => scene.add(t));
-
-// Park bench
-function createBench(x, z, rotY) {
-  const group = new THREE.Group();
-  // Seat
-  const seat = new THREE.Mesh(new THREE.BoxGeometry(2, 0.08, 0.5), benchMat);
-  seat.position.y = 0.5;
-  seat.castShadow = true;
-  group.add(seat);
-  // Back
-  const back = new THREE.Mesh(new THREE.BoxGeometry(2, 0.6, 0.06), benchMat);
-  back.position.set(0, 0.8, -0.22);
-  back.castShadow = true;
-  group.add(back);
-  // Legs
-  [[-0.8, 0], [0.8, 0]].forEach(([lx, lz]) => {
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.5, 0.4), benchMat);
-    leg.position.set(lx, 0.25, lz);
-    group.add(leg);
+  [-1,1].forEach(side=>{
+    const lp=new THREE.Group();lp.position.set(side*0.07,0.75,0);
+    const ul=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.048,0.36,8),shortsMat);ul.position.y=-0.18;ul.castShadow=true;lp.add(ul);
+    const ll=new THREE.Mesh(new THREE.CylinderGeometry(0.042,0.035,0.34,8),skinMat);ll.position.y=-0.42;lp.add(ll);
+    const sh=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.045,0.13),shoeMat);sh.position.set(0,-0.6,0.02);sh.castShadow=true;lp.add(sh);
+    lp.userData={type:'joggerLeg',side};g.add(lp);
   });
-  group.position.set(x, 0, z);
-  group.rotation.y = rotY || 0;
-  return group;
-}
-scene.add(createBench(-3, 6, 0));
-scene.add(createBench(12, 5.5, Math.PI * 0.1));
-
-// Flowers scattered
-function createFlower(x, z) {
-  const group = new THREE.Group();
-  const stem = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.02, 0.02, 0.3, 4),
-    new THREE.MeshStandardMaterial({ color: 0x3a6a2a })
-  );
-  stem.position.y = 0.15;
-  group.add(stem);
-  
-  const petalColor = [0xff6688, 0xffaa44, 0xffff66, 0xaa66ff, 0xff4466][Math.floor(Math.random() * 5)];
-  const petal = new THREE.Mesh(
-    new THREE.SphereGeometry(0.06, 6, 6),
-    new THREE.MeshStandardMaterial({ color: petalColor })
-  );
-  petal.position.y = 0.32;
-  petal.scale.set(1, 0.5, 1);
-  group.add(petal);
-  
-  group.position.set(x, 0, z);
-  return group;
-}
-for (let i = 0; i < 40; i++) {
-  const fx = (Math.random() - 0.5) * 30;
-  const fz = (Math.random() - 0.5) * 30;
-  if (Math.abs(fz - 4) > 2) { // not on path
-    scene.add(createFlower(fx, fz));
-  }
+  return g;
 }
 
-// ============================================================
-// HUMAN FIGURE (stylized but recognizable)
-// ============================================================
-function createHuman() {
-  const group = new THREE.Group();
-  
-  // Head
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 14), skinMat);
-  head.position.y = 1.72;
-  head.castShadow = true;
-  group.add(head);
-  
-  // Hair
-  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.55), hairMat);
-  hair.position.y = 1.76;
-  group.add(hair);
-  
-  // Neck
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.08, 0.12, 8), skinMat);
-  neck.position.y = 1.48;
-  group.add(neck);
-  
-  // Torso
-  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.15, 0.55, 10), shirtMat);
-  torso.position.y = 1.15;
-  torso.castShadow = true;
-  group.add(torso);
-  
-  // Arms
-  [-1, 1].forEach(side => {
-    // Upper arm
-    const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.045, 0.35, 8), shirtMat);
-    upperArm.position.set(side * 0.25, 1.25, 0);
-    upperArm.rotation.z = side * 0.3;
-    group.add(upperArm);
-    // Lower arm
-    const lowerArm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.3, 8), skinMat);
-    lowerArm.position.set(side * 0.35, 1.0, side === 1 ? 0.1 : 0);
-    lowerArm.rotation.z = side * 0.5;
-    group.add(lowerArm);
-    // Hand
-    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), skinMat);
-    hand.position.set(side * 0.42, 0.85, side === 1 ? 0.15 : 0);
-    group.add(hand);
+/* ===== DOG ===== */
+function createDog(){
+  const g=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.CapsuleGeometry(0.17,0.42,8,12),dogFurMat);body.rotation.z=Math.PI/2;body.position.set(0,0.42,0);body.castShadow=true;g.add(body);
+  g.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.19,10,8),dogFurMat),{position:new THREE.Vector3(0.2,0.44,0)}));
+  const head=new THREE.Mesh(new THREE.SphereGeometry(0.14,12,10),dogFurMat);head.position.set(0.4,0.54,0);head.castShadow=true;g.add(head);
+  const snout=new THREE.Mesh(new THREE.CylinderGeometry(0.04,0.06,0.11,8),dogFurMat);snout.rotation.z=Math.PI/2;snout.position.set(0.52,0.51,0);g.add(snout);
+  g.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.02,6,6),new THREE.MeshStandardMaterial({color:0x1a1a1a})),{position:new THREE.Vector3(0.58,0.52,0)}));
+  [-1,1].forEach(s=>{
+    const ear=new THREE.Mesh(new THREE.SphereGeometry(0.06,8,6),dogFurMat);ear.scale.set(0.4,1,0.6);ear.position.set(0.34,0.6,s*0.11);g.add(ear);
+    g.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.02,6,6),new THREE.MeshStandardMaterial({color:0x2a1a0a})),{position:new THREE.Vector3(0.48,0.57,s*0.065)}));
   });
-  
-  // Hips/Pants
-  const hips = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.14, 0.2, 10), pantsMat);
-  hips.position.y = 0.8;
-  group.add(hips);
-  
-  // Legs
-  [-1, 1].forEach(side => {
-    const upperLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.4, 8), pantsMat);
-    upperLeg.position.set(side * 0.08, 0.52, 0);
-    upperLeg.castShadow = true;
-    group.add(upperLeg);
-    const lowerLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.04, 0.38, 8), pantsMat);
-    lowerLeg.position.set(side * 0.08, 0.2, 0);
-    group.add(lowerLeg);
-    // Shoe
-    const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 0.14), new THREE.MeshStandardMaterial({ color: 0x2a2a2a }));
-    shoe.position.set(side * 0.08, 0.02, 0.02);
-    group.add(shoe);
+  const tongue=new THREE.Mesh(new THREE.PlaneGeometry(0.025,0.04),new THREE.MeshStandardMaterial({color:0xff6688,side:THREE.DoubleSide}));tongue.position.set(0.55,0.46,0);tongue.rotation.y=Math.PI/2;g.add(tongue);
+  const tc=new THREE.QuadraticBezierCurve3(new THREE.Vector3(-0.3,0.42,0),new THREE.Vector3(-0.45,0.7,0),new THREE.Vector3(-0.38,0.8,0));
+  const tail=new THREE.Mesh(new THREE.TubeGeometry(tc,8,0.02,6,false),dogFurMat);tail.userData={type:'dogTail'};g.add(tail);
+  [{x:0.17,z:0.09,l:'FL'},{x:0.17,z:-0.09,l:'FR'},{x:-0.17,z:0.09,l:'BL'},{x:-0.17,z:-0.09,l:'BR'}].forEach(ld=>{
+    const p=new THREE.Group();p.position.set(ld.x,0.32,ld.z);
+    p.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.03,0.2,8),dogFurMat),{position:new THREE.Vector3(0,-0.1,0)}));
+    p.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(0.028,0.024,0.15,8),dogFurMat),{position:new THREE.Vector3(0,-0.22,0)}));
+    const pw=new THREE.Mesh(new THREE.SphereGeometry(0.03,6,6),dogFurMat);pw.scale.y=0.45;pw.position.y=-0.3;p.add(pw);
+    p.userData={type:'dogLeg',label:ld.l};g.add(p);
   });
-  
-  return group;
+  return g;
 }
 
-// ============================================================
-// DOG FIGURE (golden retriever style)
-// ============================================================
-function createDog() {
-  const group = new THREE.Group();
-  
-  // Body
-  const body = new THREE.Mesh(
-    new THREE.CapsuleGeometry(0.2, 0.5, 8, 12),
-    dogFurMat
-  );
-  body.rotation.z = Math.PI / 2;
-  body.position.set(0, 0.45, 0);
-  body.castShadow = true;
-  group.add(body);
-  
-  // Head
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 10), dogFurMat);
-  head.position.set(0.45, 0.55, 0);
-  head.castShadow = true;
-  group.add(head);
-  
-  // Snout
-  const snout = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.12, 8), dogFurMat);
-  snout.rotation.z = Math.PI / 2;
-  snout.position.set(0.58, 0.52, 0);
-  group.add(snout);
-  
-  // Nose
-  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.025, 6, 6), dogNoseMat);
-  nose.position.set(0.64, 0.53, 0);
-  group.add(nose);
-  
-  // Ears
-  [-1, 1].forEach(side => {
-    const ear = new THREE.Mesh(
-      new THREE.SphereGeometry(0.07, 8, 6),
-      dogFurMat
-    );
-    ear.scale.set(0.5, 1, 0.7);
-    ear.position.set(0.38, 0.62, side * 0.12);
-    group.add(ear);
+/* ===== BUTTERFLY ===== */
+function createButterfly(){
+  const g=new THREE.Group();
+  const bm=new THREE.MeshStandardMaterial({color:0x1a1a1a,roughness:0.6});
+  const wm1=new THREE.MeshStandardMaterial({color:0xff6600,roughness:0.5,side:THREE.DoubleSide,transparent:true,opacity:0.85});
+  const wm2=new THREE.MeshStandardMaterial({color:0xffaa22,roughness:0.5,side:THREE.DoubleSide,transparent:true,opacity:0.8});
+  g.add(new THREE.Mesh(new THREE.CapsuleGeometry(0.025,0.12,6,8),bm));
+  const hd=new THREE.Mesh(new THREE.SphereGeometry(0.03,6,6),bm);hd.position.y=0.09;g.add(hd);
+  [-1,1].forEach(s=>{
+    const cv=new THREE.QuadraticBezierCurve3(new THREE.Vector3(0,0.09,0),new THREE.Vector3(s*0.04,0.16,0.02),new THREE.Vector3(s*0.06,0.18,0));
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(cv,6,0.003,4,false),bm));
+    const tp=new THREE.Mesh(new THREE.SphereGeometry(0.006,4,4),bm);tp.position.set(s*0.06,0.18,0);g.add(tp);
   });
-  
-  // Eyes
-  [-1, 1].forEach(side => {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.025, 6, 6), new THREE.MeshStandardMaterial({ color: 0x2a1a0a }));
-    eye.position.set(0.52, 0.58, side * 0.08);
-    group.add(eye);
-  });
-  
-  // Legs
-  [[0.2, 0.12], [0.2, -0.12], [-0.2, 0.12], [-0.2, -0.12]].forEach(([lx, lz]) => {
-    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.35, 8), dogFurMat);
-    leg.position.set(lx, 0.17, lz);
-    leg.castShadow = true;
-    group.add(leg);
-    // Paw
-    const paw = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 6), dogFurMat);
-    paw.scale.y = 0.5;
-    paw.position.set(lx, 0.02, lz);
-    group.add(paw);
-  });
-  
-  // Tail (curved up)
-  const tailCurve = new THREE.QuadraticBezierCurve3(
-    new THREE.Vector3(-0.35, 0.45, 0),
-    new THREE.Vector3(-0.5, 0.75, 0),
-    new THREE.Vector3(-0.42, 0.85, 0)
-  );
-  const tailGeo = new THREE.TubeGeometry(tailCurve, 8, 0.025, 6, false);
-  const tail = new THREE.Mesh(tailGeo, dogFurMat);
-  group.add(tail);
-  
-  return group;
+  const us=new THREE.Shape();us.moveTo(0,0);us.bezierCurveTo(0.04,0.08,0.12,0.1,0.14,0.06);us.bezierCurveTo(0.16,0.02,0.12,-0.04,0.06,-0.02);us.lineTo(0,0);
+  const ug=new THREE.ShapeGeometry(us);
+  [-1,1].forEach(s=>{const w=new THREE.Mesh(ug,wm1);w.scale.set(s*1.4,1.4,1);w.position.set(0,0.02,0);w.rotation.x=Math.PI/2;w.userData={type:'butterflyWing',side:s,wingType:'upper'};g.add(w);});
+  const ls=new THREE.Shape();ls.moveTo(0,0);ls.bezierCurveTo(0.03,0.04,0.08,0.05,0.09,0.02);ls.bezierCurveTo(0.08,-0.02,0.04,-0.03,0,0);
+  const lg=new THREE.ShapeGeometry(ls);
+  [-1,1].forEach(s=>{const w=new THREE.Mesh(lg,wm2);w.scale.set(s*1.4,1.4,1);w.position.set(0,-0.04,0);w.rotation.x=Math.PI/2;w.userData={type:'butterflyWing',side:s,wingType:'lower'};g.add(w);});
+  return g;
 }
 
-// ============================================================
-// BEETLE FIGURE
-// ============================================================
-function createBeetle() {
-  const group = new THREE.Group();
-  
-  // Abdomen
-  const abdomen = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), beetleShellMat);
-  abdomen.scale.set(1, 0.6, 1.3);
-  abdomen.position.set(0, 0.05, -0.03);
-  group.add(abdomen);
-  
-  // Thorax
-  const thorax = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 6), beetleMat);
-  thorax.position.set(0, 0.04, 0.06);
-  group.add(thorax);
-  
-  // Head
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), beetleMat);
-  head.position.set(0, 0.04, 0.1);
-  group.add(head);
-  
-  // Antennae
-  [-1, 1].forEach(side => {
-    const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.003, 0.002, 0.06, 4), beetleMat);
-    antenna.position.set(side * 0.015, 0.07, 0.12);
-    antenna.rotation.x = -0.5;
-    antenna.rotation.z = side * 0.4;
-    group.add(antenna);
-  });
-  
-  // Legs (6)
-  for (let i = 0; i < 3; i++) {
-    [-1, 1].forEach(side => {
-      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.003, 0.05, 4), beetleMat);
-      leg.position.set(side * 0.04, 0.01, 0.04 - i * 0.035);
-      leg.rotation.z = side * 1.2;
-      group.add(leg);
-    });
-  }
-  
-  // Shell line (division on back)
-  const shellLine = new THREE.Mesh(
-    new THREE.BoxGeometry(0.002, 0.001, 0.1),
-    new THREE.MeshStandardMaterial({ color: 0x0a2a0a })
-  );
-  shellLine.position.set(0, 0.09, -0.03);
-  group.add(shellLine);
-  
-  return group;
+/* ===== AI MONOLITH ===== */
+function createAIMonolith(){
+  const g=new THREE.Group();
+  const b=new THREE.Mesh(new THREE.BoxGeometry(0.9,2.0,0.5),new THREE.MeshStandardMaterial({color:0x0a0a14,roughness:0.15,metalness:0.85}));
+  b.position.y=1.0;b.castShadow=true;g.add(b);
+  for(let i=0;i<10;i++){const ln=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.006,0.01),new THREE.MeshBasicMaterial({color:0x0066cc,transparent:true,opacity:0.6}));ln.position.set(0,0.15+i*0.18,0.26);ln.userData={type:'serverLine',phase:i*0.4};g.add(ln);}
+  const eye=new THREE.Mesh(new THREE.CircleGeometry(0.05,16),new THREE.MeshBasicMaterial({color:0x00aaff}));eye.position.set(0,1.7,0.26);eye.userData={type:'aiEye'};g.add(eye);
+  const eg=new THREE.Mesh(new THREE.CircleGeometry(0.1,16),new THREE.MeshBasicMaterial({color:0x0066ff,transparent:true,opacity:0.2}));eg.position.set(0,1.7,0.255);eg.userData={type:'aiEyeGlow'};g.add(eg);
+  return g;
 }
 
-// ============================================================
-// AI REPRESENTATION (server/monolith)
-// ============================================================
-function createAIMonolith() {
-  const group = new THREE.Group();
-  
-  const monolith = new THREE.Mesh(
-    new THREE.BoxGeometry(0.8, 1.8, 0.4),
-    new THREE.MeshStandardMaterial({ color: 0x1a1a2a, roughness: 0.2, metalness: 0.8 })
-  );
-  monolith.position.y = 0.9;
-  monolith.castShadow = true;
-  group.add(monolith);
-  
-  // Glowing lines on surface
-  for (let i = 0; i < 8; i++) {
-    const line = new THREE.Mesh(
-      new THREE.BoxGeometry(0.6, 0.008, 0.01),
-      new THREE.MeshBasicMaterial({ color: 0x00aaff })
-    );
-    line.position.set(0, 0.2 + i * 0.2, 0.21);
-    group.add(line);
-  }
-  
-  // "Eye" / indicator
-  const eye = new THREE.Mesh(
-    new THREE.CircleGeometry(0.06, 16),
-    new THREE.MeshBasicMaterial({ color: 0x00ccff })
-  );
-  eye.position.set(0, 1.5, 0.21);
-  group.add(eye);
-  
-  return group;
+/* Helpers */
+function createBubble(r,c,o){return new THREE.Mesh(new THREE.SphereGeometry(r,48,36),new THREE.MeshPhysicalMaterial({color:c,transparent:true,opacity:o,side:THREE.DoubleSide,depthWrite:false,roughness:0.05,transmission:0.5,thickness:0.3,clearcoat:1.0}));}
+function createTextSprite(text,color,fs,mw){
+  const cv=document.createElement('canvas');cv.width=512;cv.height=128;
+  const cx=cv.getContext('2d');
+  cx.font=`bold ${fs||32}px Segoe UI,Arial,sans-serif`;
+  cx.fillStyle=color||'#ffffff';
+  cx.textAlign='center';cx.textBaseline='middle';
+  cx.shadowColor='rgba(0,0,0,0.7)';cx.shadowBlur=8;
+  cx.fillText(text,256,64);
+  const tx=new THREE.CanvasTexture(cv);tx.minFilter=THREE.LinearFilter;
+  const mt=new THREE.SpriteMaterial({map:tx,transparent:true,depthTest:false});
+  const sp=new THREE.Sprite(mt);sp.scale.set(mw||2,0.5,1);return sp;
 }
 
-// ============================================================
-// BUBBLE CREATOR
-// ============================================================
-function createBubble(radius, color, opacity) {
-  const geo = new THREE.SphereGeometry(radius, 48, 36);
-  const mat = bubbleMat(color, opacity);
-  const mesh = new THREE.Mesh(geo, mat);
-  return mesh;
-}
+/* ===== PLACE CHARACTERS ===== */
+const jogger=createJogger();
+jogger.position.set(-25,0,-2);
+jogger.rotation.y=Math.PI*0.5;
+scene.add(jogger);
 
-// ============================================================
-// TEXT SPRITE CREATOR
-// ============================================================
-function createTextSprite(text, color, fontSize) {
-  const canvas = document.createElement('canvas');
-  canvas.width = 512;
-  canvas.height = 128;
-  const ctx = canvas.getContext('2d');
-  ctx.font = `bold ${fontSize || 36}px Segoe UI, Arial, sans-serif`;
-  ctx.fillStyle = color || '#ffffff';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(text, 256, 64);
-  
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.minFilter = THREE.LinearFilter;
-  const mat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
-  const sprite = new THREE.Sprite(mat);
-  sprite.scale.set(2, 0.5, 1);
-  return sprite;
-}
-
-// ============================================================
-// PLACE CHARACTERS IN PARK
-// ============================================================
-const human = createHuman();
-human.position.set(1, 0, 3);
-human.rotation.y = -0.3;
-scene.add(human);
-
-const dog = createDog();
-dog.position.set(3, 0, 2.5);
-dog.rotation.y = -0.8;
+const dog=createDog();
+dog.position.set(-22,0,-3);
+dog.rotation.y=Math.PI*0.4;
 scene.add(dog);
 
-const beetle = createBeetle();
-beetle.position.set(2, 0, 4.5);
-beetle.rotation.y = 1.2;
-scene.add(beetle);
+const butterfly=createButterfly();
+butterfly.position.set(25,2.0,-1);
+butterfly.rotation.y=-Math.PI*0.5;
+scene.add(butterfly);
 
-// ============================================================
-// OVERLAY OBJECTS (bubbles, particles, etc.)
-// ============================================================
-let overlayObjects = [];
+/* ===== MOVEMENT ===== */
+const WALK_SPEED=1.8, WALK_LEFT=-25, WALK_RIGHT=25;
+const BF_SPEED=0.6, BF_LEFT=-30, BF_RIGHT=30;
+let joggerX=WALK_LEFT, dogX=joggerX+3, butterflyX=BF_RIGHT, moveTime=0;
 
-function clearOverlays() {
-  overlayObjects.forEach(obj => scene.remove(obj));
-  overlayObjects = [];
-}
+function updateMovement(dt){
+  moveTime+=dt;
 
-// ============================================================
-// SCENE SWITCHING
-// ============================================================
-let currentSceneName = 'overview';
-let animationCallbacks = [];
+  // Jogger left to right, loop
+  joggerX+=WALK_SPEED*dt;
+  if(joggerX>WALK_RIGHT) joggerX=WALK_LEFT;
+  jogger.position.x=joggerX;
+  jogger.position.y=Math.abs(Math.sin(moveTime*4.5))*0.06;
 
-function setActiveButton(name) {
-  document.querySelectorAll('#nav-buttons button').forEach(btn => btn.classList.remove('active'));
-  const buttons = document.querySelectorAll('#nav-buttons button');
-  const names = ['overview', 'human', 'dog', 'beetle', 'ai', 'pain'];
-  const idx = names.indexOf(name);
-  if (idx >= 0 && buttons[idx]) buttons[idx].classList.add('active');
-}
-
-function smoothCameraMove(targetPos, targetLookAt, duration) {
-  const startPos = camera.position.clone();
-  const startTarget = controls.target.clone();
-  const endPos = new THREE.Vector3(...targetPos);
-  const endTarget = new THREE.Vector3(...targetLookAt);
-  const startTime = performance.now();
-  
-  return new Promise(resolve => {
-    function update() {
-      const elapsed = (performance.now() - startTime) / 1000;
-      const t = Math.min(elapsed / duration, 1);
-      const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-      
-      camera.position.lerpVectors(startPos, endPos, ease);
-      controls.target.lerpVectors(startTarget, endTarget, ease);
-      
-      if (t < 1) {
-        requestAnimationFrame(update);
-      } else {
-        resolve();
-      }
+  // Animate jogger legs + arms
+  jogger.children.forEach(c=>{
+    if(!c.userData)return;
+    if(c.userData.type==='joggerLeg'){
+      const ph=c.userData.side===1?0:Math.PI;
+      c.rotation.x=Math.sin(moveTime*9+ph)*0.6;
     }
-    update();
+    if(c.userData.type==='joggerArm'){
+      const ph=c.userData.side===1?Math.PI:0;
+      c.rotation.x=Math.sin(moveTime*9+ph)*0.4;
+    }
+  });
+
+  // Dog ahead of jogger, slight weave
+  const dogTargetX=joggerX+3;
+  dogX+=(dogTargetX-dogX)*0.05;
+  if(dogX>WALK_RIGHT+3) dogX=WALK_LEFT+3;
+  dog.position.x=dogX;
+  dog.position.z=-3+Math.sin(moveTime*0.8)*1.0;
+  dog.position.y=Math.abs(Math.sin(moveTime*5))*0.03;
+
+  const dogDz=Math.cos(moveTime*0.8)*1.0;
+  dog.rotation.y=Math.atan2(WALK_SPEED,dogDz)*0.3+Math.PI*0.3;
+
+  // Dog legs + tail
+  dog.children.forEach(c=>{
+    if(!c.userData)return;
+    if(c.userData.type==='dogLeg'){
+      const isL=c.userData.label.includes('L'), isF=c.userData.label.includes('F');
+      const ph=(isL?0:Math.PI)+(isF?0:Math.PI*0.5);
+      c.rotation.x=Math.sin(moveTime*8+ph)*0.35;
+    }
+    if(c.userData.type==='dogTail') c.rotation.y=Math.sin(moveTime*8)*0.4;
+  });
+
+  // Butterfly right to left, much slower
+  butterflyX-=BF_SPEED*dt;
+  if(butterflyX<BF_LEFT) butterflyX=BF_RIGHT;
+  butterfly.position.x=butterflyX;
+  butterfly.position.y=1.8+Math.sin(moveTime*0.5)*0.4+Math.sin(moveTime*0.2)*0.2;
+  butterfly.position.z=-1+Math.sin(moveTime*0.3)*1.5;
+
+  // Wing flap
+  butterfly.children.forEach(c=>{
+    if(c.userData&&c.userData.type==='butterflyWing'){
+      const amt=c.userData.wingType==='upper'?0.7:0.5;
+      c.rotation.y=c.userData.side*(Math.sin(moveTime*8)*amt+0.15);
+    }
   });
 }
 
-window.switchScene = function(name) {
+/* ===== OVERLAY SYSTEM ===== */
+let overlayObjects=[], currentSceneName='human', targetDogVision=0;
+
+function clearOverlays(){overlayObjects.forEach(o=>scene.remove(o));overlayObjects=[];}
+function setActiveButton(n){
+  document.querySelectorAll('#nav-buttons button').forEach(b=>b.classList.remove('active'));
+  const idx=['human','dog','butterfly','ai'].indexOf(n);
+  const btns=document.querySelectorAll('#nav-buttons button');
+  if(idx>=0&&btns[idx])btns[idx].classList.add('active');
+}
+
+/* Camera target (almost stable) */
+let camTargetPos=new THREE.Vector3(0,3.5,14);
+let camTargetLookAt=new THREE.Vector3(0,1.2,0);
+function setCameraTarget(p,l){camTargetPos=new THREE.Vector3(...p);camTargetLookAt=new THREE.Vector3(...l);}
+
+/* ===== SCENE SWITCHING ===== */
+window.switchScene=function(name){
   clearOverlays();
-  currentSceneName = name;
-  animationCallbacks = [];
+  currentSceneName=name;
   setActiveButton(name);
+  targetDogVision=0;
 
-  const label = document.getElementById('scene-label');
-  const info = document.getElementById('info-panel');
+  const label=document.getElementById('scene-label');
+  const info=document.getElementById('info-panel');
 
-  // Show/hide characters based on scene
-  human.visible = true;
-  dog.visible = true;
-  beetle.visible = true;
+  jogger.visible=true; dog.visible=true; butterfly.visible=true;
+  scene.background=new THREE.Color(0x87CEEB);
+  scene.fog=new THREE.Fog(0x87CEEB,50,100);
 
-  switch(name) {
-    // ============================================================
-    // OVERVIEW: Full park, all characters, no bubbles
-    // ============================================================
-    case 'overview': {
-      label.textContent = 'UMWELTEN';
-      info.innerHTML = `Willkommen. Du siehst einen Park – einen Menschen, der mit seinem Hund spielt,<br>
-        und einen kleinen Käfer am Boden. Klicke auf die Buttons, um ihre <strong>Umwelten</strong> zu sehen.<br>
-        <em>"We begin such a stroll on a sunny day before a flowering meadow<br>
-        and we make a bubble around each of the animals living in the meadow."</em> — Uexküll`;
+  switch(name){
 
-      smoothCameraMove([8, 5, 12], [2, 1, 3], 1.5);
-      break;
-    }
+    case 'human':{
+      label.textContent='👤 UMWELT: MENSCH';
+      info.innerHTML=`Die Bubble des <strong>Menschen</strong>: Er sieht den Strand, das Meer, den Himmel.<br>
+        Er weiß von anderen Städten, fernen Planeten, der Geschichte der Erde.<br>
+        Er hört Musik über Kopfhörer, riecht das Salzwasser, fühlt den Wind.<br>
+        <em>Aber auch er lebt nur in seiner Bubble – seiner subjektiven Umwelt.</em>`;
 
-    // ============================================================
-    // HUMAN UMWELT: Rich sensory world
-    // ============================================================
-    case 'human': {
-      label.textContent = '👤 UMWELT: MENSCH';
-      info.innerHTML = `Die Bubble des <strong>Menschen</strong>: Eine reiche, multimodale Welt.<br>
-        Farben, Gerüche, Geräusche, Wärme der Sonne, Emotionen beim Spielen mit dem Hund.<br>
-        <em>"A new world arises in each bubble."</em> — Uexküll<br>
-        <span style="color:#a0cfff">Der Mensch sieht die Wiese, den Himmel, hört Vögel, riecht Blumen.</span>`;
+      const hb=createBubble(7,0x4488ff,0.035);
+      hb.userData={type:'followJogger',offsetY:2.5};
+      scene.add(hb);overlayObjects.push(hb);
 
-      // Large bubble around human
-      const humanBubble = createBubble(5, 0x4488ff, 0.06);
-      humanBubble.position.copy(human.position);
-      humanBubble.position.y = 2;
-      scene.add(humanBubble);
-      overlayObjects.push(humanBubble);
+      const ib=createBubble(2.2,0xffffff,0.025);
+      ib.userData={type:'followJogger',offsetY:1.2};
+      scene.add(ib);overlayObjects.push(ib);
 
-      // Sensory particles: colors, sounds, smells – rich world
-      const senseColors = [0xff6688, 0x66aaff, 0xffcc44, 0x66ff88, 0xff66ff, 0xffffff];
-      for (let i = 0; i < 120; i++) {
-        const size = 0.02 + Math.random() * 0.04;
-        const particle = new THREE.Mesh(
-          new THREE.SphereGeometry(size, 6, 6),
-          new THREE.MeshBasicMaterial({
-            color: senseColors[Math.floor(Math.random() * senseColors.length)],
-            transparent: true,
-            opacity: 0.3 + Math.random() * 0.4
-          })
-        );
-        const angle = Math.random() * Math.PI * 2;
-        const r = Math.random() * 4.5;
-        const hx = human.position.x;
-        const hz = human.position.z;
-        particle.position.set(
-          hx + Math.cos(angle) * r,
-          0.5 + Math.random() * 4,
-          hz + Math.sin(angle) * r
-        );
-        particle.userData = {
-          type: 'sense',
-          angle: angle,
-          radius: r,
-          speed: 0.003 + Math.random() * 0.008,
-          baseY: particle.position.y,
-          centerX: hx,
-          centerZ: hz,
-          bobSpeed: 1 + Math.random() * 2,
-          bobAmount: 0.02 + Math.random() * 0.05
-        };
-        scene.add(particle);
-        overlayObjects.push(particle);
+      const cols=[0xff6688,0x66aaff,0xffcc44,0x66ff88,0xff66ff,0xffffff];
+      for(let i=0;i<80;i++){
+        const sz=0.02+Math.random()*0.035;
+        const p=new THREE.Mesh(new THREE.SphereGeometry(sz,5,5),new THREE.MeshBasicMaterial({color:cols[Math.floor(Math.random()*cols.length)],transparent:true,opacity:0.2+Math.random()*0.3}));
+        const a=Math.random()*Math.PI*2, r=0.5+Math.random()*6;
+        p.position.set(Math.cos(a)*r,0.3+Math.random()*4.5,Math.sin(a)*r);
+        p.userData={type:'orbitParticle',follow:'jogger',angle:a,radius:r,speed:0.002+Math.random()*0.005,baseY:p.position.y,bobSpeed:0.8+Math.random()*1.2,bobAmt:0.02+Math.random()*0.03};
+        scene.add(p);overlayObjects.push(p);
       }
 
-      // Sound wave rings (hearing)
-      for (let i = 0; i < 3; i++) {
-        const ring = new THREE.Mesh(
-          new THREE.TorusGeometry(1.5 + i * 0.8, 0.01, 8, 48),
-          new THREE.MeshBasicMaterial({ color: 0x66aaff, transparent: true, opacity: 0.15 })
-        );
-        ring.position.set(human.position.x, 2.5, human.position.z);
-        ring.rotation.x = Math.PI / 2;
-        ring.userData = { type: 'soundwave', phase: i * 1.0 };
-        scene.add(ring);
-        overlayObjects.push(ring);
-      }
-
-      // Warmth rays from above (sun perception)
-      for (let i = 0; i < 8; i++) {
-        const ray = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.005, 0.005, 3, 4),
-          new THREE.MeshBasicMaterial({ color: 0xffdd66, transparent: true, opacity: 0.12 })
-        );
-        const angle = (i / 8) * Math.PI * 2;
-        ray.position.set(
-          human.position.x + Math.cos(angle) * 2,
-          4,
-          human.position.z + Math.sin(angle) * 2
-        );
-        ray.userData = { type: 'sunray', phase: i };
-        scene.add(ray);
-        overlayObjects.push(ray);
-      }
-
-      // Label
-      const humanLabel = createTextSprite('Umwelt: Mensch', '#ffffff', 32);
-      humanLabel.position.set(human.position.x, 5.5, human.position.z);
-      scene.add(humanLabel);
-      overlayObjects.push(humanLabel);
-
-      smoothCameraMove([1, 5, 10], [1, 1.5, 3], 1.5);
-      break;
-    }
-
-    // ============================================================
-    // DOG UMWELT: Smell-dominated, desaturated colors
-    // ============================================================
-    case 'dog': {
-      label.textContent = '🐕 UMWELT: HUND';
-      info.innerHTML = `Die Bubble des <strong>Hundes</strong>: Farben verblassen (Dichromat-Sicht),<br>
-        aber die Geruchswelt <strong>explodiert</strong> in Intensität und Komplexität.<br>
-        <em>Jeder Grashalm hat einen Duft. Jede Spur erzählt eine Geschichte.</em><br>
-        <span style="color:#ffaa44">200 Millionen Riechzellen vs. 5 Millionen beim Menschen.</span>`;
-
-      // Bubble around dog
-      const dogBubble = createBubble(3.5, 0xcc8833, 0.06);
-      dogBubble.position.copy(dog.position);
-      dogBubble.position.y = 1;
-      scene.add(dogBubble);
-      overlayObjects.push(dogBubble);
-
-      // Smell particles – MANY, intense, warm colors
-      for (let i = 0; i < 250; i++) {
-        const size = 0.015 + Math.random() * 0.05;
-        const smellColors = [0xffaa00, 0xff6600, 0xffcc33, 0xee8833, 0xddaa22, 0xff8844];
-        const particle = new THREE.Mesh(
-          new THREE.SphereGeometry(size, 5, 5),
-          new THREE.MeshBasicMaterial({
-            color: smellColors[Math.floor(Math.random() * smellColors.length)],
-            transparent: true,
-            opacity: 0.2 + Math.random() * 0.5
-          })
-        );
-        const angle = Math.random() * Math.PI * 2;
-        const r = Math.random() * 3;
-        const dx = dog.position.x;
-        const dz = dog.position.z;
-        particle.position.set(
-          dx + Math.cos(angle) * r,
-          0.1 + Math.random() * 1.8,
-          dz + Math.sin(angle) * r
-        );
-        particle.userData = {
-          type: 'smell',
-          angle: angle,
-          radius: r,
-          speed: 0.005 + Math.random() * 0.015,
-          baseY: particle.position.y,
-          centerX: dx,
-          centerZ: dz,
-          bobSpeed: 0.5 + Math.random() * 1.5,
-          bobAmount: 0.01 + Math.random() * 0.03
-        };
-        scene.add(particle);
-        overlayObjects.push(particle);
-      }
-
-      // Scent trails on ground (lines showing smell paths)
-      for (let t = 0; t < 5; t++) {
-        const trailPoints = [];
-        let tx = dog.position.x + (Math.random() - 0.5) * 4;
-        let tz = dog.position.z + (Math.random() - 0.5) * 4;
-        for (let p = 0; p < 12; p++) {
-          trailPoints.push(new THREE.Vector3(tx, 0.05, tz));
-          tx += (Math.random() - 0.5) * 0.8;
-          tz += (Math.random() - 0.5) * 0.8;
-        }
-        const trailGeo = new THREE.BufferGeometry().setFromPoints(trailPoints);
-        const trail = new THREE.Line(trailGeo, new THREE.LineBasicMaterial({
-          color: 0xffaa33, transparent: true, opacity: 0.25
-        }));
-        scene.add(trail);
-        overlayObjects.push(trail);
-      }
-
-      // Desaturation overlay hint (dim sphere to suggest muted colors)
-      const desatOverlay = createBubble(3.5, 0x888877, 0.04);
-      desatOverlay.position.copy(dog.position);
-      desatOverlay.position.y = 1;
-      scene.add(desatOverlay);
-      overlayObjects.push(desatOverlay);
-
-      const dogLabel = createTextSprite('Umwelt: Hund', '#ffaa44', 32);
-      dogLabel.position.set(dog.position.x, 3.5, dog.position.z);
-      scene.add(dogLabel);
-      overlayObjects.push(dogLabel);
-
-      smoothCameraMove([3, 2.5, 7], [3, 0.5, 2.5], 1.5);
-      break;
-    }
-
-    // ============================================================
-    // BEETLE UMWELT: Tiny, almost empty
-    // ============================================================
-    case 'beetle': {
-      label.textContent = '🪲 UMWELT: KÄFER';
-      info.innerHTML = `Die Bubble des <strong>Käfers</strong>: Winzig. Fast leer.<br>
-        Kein Park, kein Himmel, kein Mensch mit Hund.<br>
-        Nur: <strong>Bodenbeschaffenheit</strong>, <strong>chemische Gradienten</strong>, <strong>Vibration</strong>.<br>
-        <em>"For the beetle, the 'park' as a scenic landscape does not exist."</em>`;
-
-      // Tiny bubble around beetle
-      const beetleBubble = createBubble(0.5, 0x336633, 0.1);
-      beetleBubble.position.copy(beetle.position);
-      beetleBubble.position.y = 0.15;
-      scene.add(beetleBubble);
-      overlayObjects.push(beetleBubble);
-
-      // Chemical gradient particles (very few, very close)
-      const chemColors = [0x44aa44, 0x338833, 0x55cc55, 0x227722];
-      for (let i = 0; i < 20; i++) {
-        const particle = new THREE.Mesh(
-          new THREE.SphereGeometry(0.008 + Math.random() * 0.012, 4, 4),
-          new THREE.MeshBasicMaterial({
-            color: chemColors[Math.floor(Math.random() * chemColors.length)],
-            transparent: true,
-            opacity: 0.4 + Math.random() * 0.4
-          })
-        );
-        const angle = Math.random() * Math.PI * 2;
-        const r = Math.random() * 0.4;
-        particle.position.set(
-          beetle.position.x + Math.cos(angle) * r,
-          0.02 + Math.random() * 0.2,
-          beetle.position.z + Math.sin(angle) * r
-        );
-        particle.userData = {
-          type: 'chem',
-          angle: angle,
-          radius: r,
-          speed: 0.002 + Math.random() * 0.005,
-          baseY: particle.position.y,
-          centerX: beetle.position.x,
-          centerZ: beetle.position.z,
-          bobSpeed: 1 + Math.random(),
-          bobAmount: 0.005
-        };
-        scene.add(particle);
-        overlayObjects.push(particle);
-      }
-
-      // Vibration rings on ground
-      for (let i = 0; i < 3; i++) {
-        const ring = new THREE.Mesh(
-          new THREE.TorusGeometry(0.1 + i * 0.1, 0.003, 6, 24),
-          new THREE.MeshBasicMaterial({ color: 0x558855, transparent: true, opacity: 0.2 })
-        );
-        ring.position.set(beetle.position.x, 0.02, beetle.position.z);
-        ring.rotation.x = Math.PI / 2;
-        ring.userData = { type: 'vibration', phase: i * 0.8 };
-        scene.add(ring);
-        overlayObjects.push(ring);
-      }
-
-      // Pressure arrows (ground texture sensing)
-      for (let i = 0; i < 4; i++) {
-        const arrow = new THREE.Mesh(
-          new THREE.ConeGeometry(0.01, 0.04, 4),
-          new THREE.MeshBasicMaterial({ color: 0x88cc88, transparent: true, opacity: 0.5 })
-        );
-        const angle = (i / 4) * Math.PI * 2;
-        arrow.position.set(
-          beetle.position.x + Math.cos(angle) * 0.12,
-          0.03,
-          beetle.position.z + Math.sin(angle) * 0.12
-        );
-        arrow.rotation.z = -Math.PI / 2;
-        arrow.rotation.y = angle;
-        scene.add(arrow);
-        overlayObjects.push(arrow);
-      }
-
-      const beetleLabel = createTextSprite('Umwelt: Käfer', '#88cc88', 28);
-      beetleLabel.position.set(beetle.position.x, 0.8, beetle.position.z);
-      beetleLabel.scale.set(1, 0.25, 1);
-      scene.add(beetleLabel);
-      overlayObjects.push(beetleLabel);
-
-      smoothCameraMove(
-        [beetle.position.x + 0.5, 0.5, beetle.position.z + 1.2],
-        [beetle.position.x, 0.1, beetle.position.z],
-        1.5
-      );
-      break;
-    }
-
-    // ============================================================
-    // AI UMWELT: Abstract vector space, no grounding
-    // ============================================================
-    case 'ai': {
-      label.textContent = '🤖 UMWELT: KI';
-      info.innerHTML = `Die Bubble der <strong>KI</strong>: Kein Park. Kein Licht. Kein Geruch. Keine Wärme.<br>
-        Nur <strong>statistische Beziehungen zwischen Tokens</strong> im hochdimensionalen Vektorraum.<br>
-        <em>"The AI's bubble is filled exclusively with statistical relationships between tokens."</em><br>
-        <span style="color:#66ccff">v_schmerz = [0.12, -0.54, 0.87, ...] — bedeutungslose Koordinaten.</span>`;
-
-      // Hide park characters
-      human.visible = false;
-      dog.visible = false;
-      beetle.visible = false;
-
-      // Darken the scene
-      const darkOverlay = new THREE.Mesh(
-        new THREE.SphereGeometry(50, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 0x000011, side: THREE.BackSide, transparent: true, opacity: 0.85 })
-      );
-      scene.add(darkOverlay);
-      overlayObjects.push(darkOverlay);
-
-      // AI Monolith
-      const aiMono = createAIMonolith();
-      aiMono.position.set(0, 0, 0);
-      scene.add(aiMono);
-      overlayObjects.push(aiMono);
-
-      // AI Bubble
-      const aiBubble = createBubble(6, 0x112244, 0.05);
-      aiBubble.position.y = 2;
-      scene.add(aiBubble);
-      overlayObjects.push(aiBubble);
-
-      // Vector space tokens
-      const tokens = [
-        { label: 'Blume', pos: [2, 3.5, 0.5], color: 0x44ff44 },
-        { label: 'Blütenblatt', pos: [2.5, 3.8, 0.8], color: 0x44ff44 },
-        { label: 'Duft', pos: [1.8, 3.2, -0.3], color: 0x44ff44 },
-        { label: 'Schmerz', pos: [-2.5, 1.5, 1], color: 0xff4444 },
-        { label: 'unangenehm', pos: [-2.0, 1.8, 1.4], color: 0xff6666 },
-        { label: 'Verletzung', pos: [-2.8, 1.2, 0.6], color: 0xff6666 },
-        { label: 'Leid', pos: [-2.2, 2.0, 0.9], color: 0xff6666 },
-        { label: 'Sonne', pos: [3, 4.5, -1.5], color: 0xffff44 },
-        { label: 'Wärme', pos: [3.3, 4.2, -1.0], color: 0xffff44 },
-        { label: 'Wiese', pos: [0.5, 2.5, 2], color: 0x44ff44 },
-        { label: 'Gras', pos: [0.8, 2.2, 2.4], color: 0x44ff44 },
-        { label: 'Hund', pos: [-0.5, 3, -1.5], color: 0x44aaff },
-        { label: 'Freude', pos: [1, 4, -2], color: 0x44aaff },
-        { label: 'Park', pos: [0, 2.8, 1], color: 0x44ff44 },
-      ];
-
-      tokens.forEach(t => {
-        // Token sphere
-        const sphere = new THREE.Mesh(
-          new THREE.SphereGeometry(0.08, 10, 10),
-          new THREE.MeshBasicMaterial({ color: t.color })
-        );
-        sphere.position.set(...t.pos);
-        scene.add(sphere);
-        overlayObjects.push(sphere);
-
-        // Glow
-        const glow = new THREE.Mesh(
-          new THREE.SphereGeometry(0.18, 8, 8),
-          new THREE.MeshBasicMaterial({ color: t.color, transparent: true, opacity: 0.1 })
-        );
-        glow.position.set(...t.pos);
-        glow.userData = { type: 'tokenGlow' };
-        scene.add(glow);
-        overlayObjects.push(glow);
-
-        // Label
-        const lbl = createTextSprite(t.label, '#' + t.color.toString(16).padStart(6, '0'), 24);
-        lbl.position.set(t.pos[0], t.pos[1] + 0.3, t.pos[2]);
-        lbl.scale.set(1.2, 0.3, 1);
-        scene.add(lbl);
-        overlayObjects.push(lbl);
+      ['Andromeda ✦','New York','Quantenphysik','Erinnerungen','Musik ♪','Geschichte'].forEach((item,i)=>{
+        const a=(i/6)*Math.PI*2;
+        const lbl=createTextSprite(item,'rgba(150,180,255,0.45)',16,1.8);
+        lbl.userData={type:'knowledgeOrbit',angle:a,radius:5.5,offsetY:3.5+Math.sin(i)*1.2};
+        scene.add(lbl);overlayObjects.push(lbl);
       });
 
-      // Connection lines
-      const lineMat = new THREE.LineBasicMaterial({ color: 0x224466, transparent: true, opacity: 0.3 });
-      for (let i = 0; i < tokens.length; i++) {
-        for (let j = i + 1; j < tokens.length; j++) {
-          const dx = tokens[i].pos[0] - tokens[j].pos[0];
-          const dy = tokens[i].pos[1] - tokens[j].pos[1];
-          const dz = tokens[i].pos[2] - tokens[j].pos[2];
-          const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-          if (dist < 2.0) {
-            const geo = new THREE.BufferGeometry().setFromPoints([
-              new THREE.Vector3(...tokens[i].pos),
-              new THREE.Vector3(...tokens[j].pos)
-            ]);
-            const line = new THREE.Line(geo, lineMat);
-            scene.add(line);
-            overlayObjects.push(line);
+      setCameraTarget([0,3.5,14],[0,1.2,0]);
+      break;
+    }
+
+    case 'dog':{
+      label.textContent='🐕 UMWELT: HUND';
+      info.innerHTML=`Die Bubble des <strong>Hundes</strong>: Kleiner als die des Menschen.<br>
+        Kein Wissen über ferne Planeten. Mehr <strong>im Jetzt</strong>.<br>
+        Aber die Geruchswelt <strong>explodiert</strong>: 200 Mio. Riechzellen.<br>
+        Farben verblassen (Dichromat). Geräusche werden <strong>lauter und detaillierter</strong>.`;
+
+      targetDogVision=1.0;
+
+      const db=createBubble(3.2,0xcc8833,0.045);
+      db.userData={type:'followDog',offsetY:0.8};
+      scene.add(db);overlayObjects.push(db);
+
+      const sc=[0xffaa00,0xff6600,0xffcc33,0xee8833,0xddaa22];
+      for(let i=0;i<220;i++){
+        const sz=0.01+Math.random()*0.035;
+        const p=new THREE.Mesh(new THREE.SphereGeometry(sz,4,4),new THREE.MeshBasicMaterial({color:sc[Math.floor(Math.random()*sc.length)],transparent:true,opacity:0.15+Math.random()*0.4}));
+        const a=Math.random()*Math.PI*2, r=Math.random()*2.8;
+        p.position.set(Math.cos(a)*r,0.05+Math.random()*1.0,Math.sin(a)*r);
+        p.userData={type:'orbitParticle',follow:'dog',angle:a,radius:r,speed:0.003+Math.random()*0.01,baseY:p.position.y,bobSpeed:0.4+Math.random()*1.0,bobAmt:0.006+Math.random()*0.015};
+        scene.add(p);overlayObjects.push(p);
+      }
+
+      for(let i=0;i<5;i++){
+        const rn=new THREE.Mesh(new THREE.TorusGeometry(0.7+i*0.45,0.01,8,32),new THREE.MeshBasicMaterial({color:0xffdd88,transparent:true,opacity:0.1}));
+        rn.rotation.x=Math.PI/2;
+        rn.userData={type:'dogSound',phase:i*0.7};
+        scene.add(rn);overlayObjects.push(rn);
+      }
+
+      for(let t=0;t<5;t++){
+        const pts=[];let tx=(Math.random()-0.5)*8,tz=-3+(Math.random()-0.5)*4;
+        for(let p=0;p<12;p++){pts.push(new THREE.Vector3(tx,0.03,tz));tx+=(Math.random()-0.5)*0.6;tz+=(Math.random()-0.5)*0.6;}
+        const trail=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:0xffaa33,transparent:true,opacity:0.2}));
+        scene.add(trail);overlayObjects.push(trail);
+      }
+
+      setCameraTarget([0,2.5,10],[0,0.5,-2]);
+      break;
+    }
+
+    case 'butterfly':{
+      label.textContent='🦋 UMWELT: SCHMETTERLING';
+      info.innerHTML=`Die Bubble des <strong>Schmetterlings</strong>: Winzig. Radikal im <strong>Hier und Jetzt</strong>.<br>
+        Kein Strand als Konzept. Kein Jogger. Kein Meer.<br>
+        Nur: <strong>UV-Muster</strong>, <strong>Windrichtung</strong>, <strong>Pheromone</strong>, <strong>Licht/Dunkel</strong>.<br>
+        <em>Er sieht Farben die wir nicht sehen (UV) – aber kennt kein "Morgen".</em>`;
+
+      const bb=createBubble(0.7,0xff6600,0.06);
+      bb.userData={type:'followButterfly',offsetY:0};
+      scene.add(bb);overlayObjects.push(bb);
+
+      const uvc=[0xaa00ff,0xcc44ff,0x8800cc,0xff00ff];
+      for(let i=0;i<18;i++){
+        const sz=0.005+Math.random()*0.012;
+        const p=new THREE.Mesh(new THREE.SphereGeometry(sz,4,4),new THREE.MeshBasicMaterial({color:uvc[Math.floor(Math.random()*uvc.length)],transparent:true,opacity:0.3+Math.random()*0.5}));
+        const a=Math.random()*Math.PI*2, r=Math.random()*0.5;
+        p.position.set(Math.cos(a)*r,Math.sin(a)*r*0.5,(Math.random()-0.5)*0.4);
+        p.userData={type:'orbitParticle',follow:'butterfly',angle:a,radius:r,speed:0.003+Math.random()*0.006,baseY:0,bobSpeed:1.5+Math.random()*2,bobAmt:0.003+Math.random()*0.006};
+        scene.add(p);overlayObjects.push(p);
+      }
+
+      for(let i=0;i<3;i++){
+        const ar=new THREE.Mesh(new THREE.ConeGeometry(0.008,0.03,4),new THREE.MeshBasicMaterial({color:0xaaddff,transparent:true,opacity:0.4}));
+        ar.rotation.z=-Math.PI/2;
+        ar.userData={type:'followButterfly',offsetX:0.25+i*0.12,offsetY:0};
+        scene.add(ar);overlayObjects.push(ar);
+      }
+
+      setCameraTarget([0,3,12],[0,1.8,-1]);
+      break;
+    }
+
+    case 'ai':{
+      label.textContent='🤖 UMWELT: KI';
+      info.innerHTML=`<strong>Überleitung:</strong> Der Jogger hört über Kopfhörer einen Podcast –<br>
+        eine KI übersetzt ihn simultan. Aber <strong>was ist die Welt dieser KI?</strong><br><br>
+        Sie kennt "Strand" – aber nur als Punkt im Vektorraum, nahe "Sand", "Meer", "Urlaub".<br>
+        <strong>Kein Sand unter den Füßen.</strong><br>
+        Ein "Baum" ist kein Ding mit harter Rinde, das man verbrennen kann –<br>
+        sondern ein <strong>Begriff, der oft mit "grün" und "Natur" in Texten vorkommt</strong>.<br><br>
+        <em>Die KI hat keine Umwelt. Sie hat einen Vektorraum. Und der ist dunkel.</em>`;
+
+      jogger.visible=false; dog.visible=false; butterfly.visible=false;
+      scene.background=new THREE.Color(0x020208);
+      scene.fog=new THREE.Fog(0x020208,10,40);
+
+      const vs=new THREE.Mesh(new THREE.SphereGeometry(55,24,24),new THREE.MeshBasicMaterial({color:0x020208,side:THREE.BackSide}));
+      scene.add(vs);overlayObjects.push(vs);
+
+      const cl=new THREE.PointLight(0x2244aa,0.8,20);cl.position.set(0,5,3);
+      scene.add(cl);overlayObjects.push(cl);
+
+      const ai=createAIMonolith();ai.position.set(0,0,0);
+      scene.add(ai);overlayObjects.push(ai);
+
+      const tokens=[
+        {label:'Strand',pos:[2.5,2.0,0.5],color:0xddaa44},
+        {label:'Sand',pos:[2.8,2.3,0.8],color:0xddaa44},
+        {label:'Meer',pos:[2.2,1.7,-0.2],color:0x4488cc},
+        {label:'Urlaub',pos:[3.0,2.5,0.2],color:0xddaa44},
+        {label:'Baum',pos:[-2.0,3.0,1.0],color:0x44aa44},
+        {label:'grün',pos:[-1.7,3.3,1.3],color:0x44aa44},
+        {label:'Natur',pos:[-2.3,2.8,0.7],color:0x44aa44},
+        {label:'Schmerz',pos:[-3.0,0.8,-1.0],color:0xff4444},
+        {label:'unangenehm',pos:[-2.6,1.1,-0.7],color:0xff6666},
+        {label:'Verletzung',pos:[-3.3,0.5,-1.3],color:0xff6666},
+        {label:'Hund',pos:[0.5,1.5,-2.0],color:0xcc8833},
+        {label:'bellen',pos:[0.3,1.2,-2.3],color:0xcc8833},
+        {label:'Freude',pos:[1.5,4.0,-0.5],color:0x44aaff},
+        {label:'Sonne',pos:[3.5,4.5,1.0],color:0xffff44},
+        {label:'warm',pos:[3.2,4.2,1.3],color:0xffff44}
+      ];
+
+      tokens.forEach(t=>{
+        const sp=new THREE.Mesh(new THREE.SphereGeometry(0.07,10,10),new THREE.MeshBasicMaterial({color:t.color}));
+        sp.position.set(...t.pos);scene.add(sp);overlayObjects.push(sp);
+
+        const gl=new THREE.Mesh(new THREE.SphereGeometry(0.16,8,8),new THREE.MeshBasicMaterial({color:t.color,transparent:true,opacity:0.08}));
+        gl.position.set(...t.pos);gl.userData={type:'tokenGlow'};
+        scene.add(gl);overlayObjects.push(gl);
+
+        const lb=createTextSprite(t.label,'#'+t.color.toString(16).padStart(6,'0'),22,1.2);
+        lb.position.set(t.pos[0],t.pos[1]+0.25,t.pos[2]);
+        scene.add(lb);overlayObjects.push(lb);
+      });
+
+      const lm=new THREE.LineBasicMaterial({color:0x223344,transparent:true,opacity:0.25});
+      for(let i=0;i<tokens.length;i++){
+        for(let j=i+1;j<tokens.length;j++){
+          const dx=tokens[i].pos[0]-tokens[j].pos[0],dy=tokens[i].pos[1]-tokens[j].pos[1],dz=tokens[i].pos[2]-tokens[j].pos[2];
+          if(Math.sqrt(dx*dx+dy*dy+dz*dz)<1.8){
+            const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...tokens[i].pos),new THREE.Vector3(...tokens[j].pos)]);
+            const ln=new THREE.Line(g,lm);scene.add(ln);overlayObjects.push(ln);
           }
         }
       }
 
-      // Coordinate axes
-      const axisMat = new THREE.LineBasicMaterial({ color: 0x334455, transparent: true, opacity: 0.2 });
-      [[[-5,0,0],[5,0,0]], [[0,-1,0],[0,6,0]], [[0,0,-4],[0,0,4]]].forEach(([a, b]) => {
-        const geo = new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(...a), new THREE.Vector3(...b)
-        ]);
-        const axis = new THREE.Line(geo, axisMat);
-        scene.add(axis);
-        overlayObjects.push(axis);
+      const am=new THREE.LineBasicMaterial({color:0x222233,transparent:true,opacity:0.15});
+      [[[-5,0,0],[5,0,0]],[[0,-1,0],[0,6,0]],[[0,0,-4],[0,0,4]]].forEach(([a,b])=>{
+        const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...a),new THREE.Vector3(...b)]);
+        const ax=new THREE.Line(g,am);scene.add(ax);overlayObjects.push(ax);
       });
 
-      // Floating data fragments
-      for (let i = 0; i < 60; i++) {
-        const cube = new THREE.Mesh(
-          new THREE.BoxGeometry(0.03, 0.03, 0.03),
-          new THREE.MeshBasicMaterial({ color: 0x223344, transparent: true, opacity: 0.25 })
-        );
-        cube.position.set(
-          (Math.random() - 0.5) * 10,
-          Math.random() * 6,
-          (Math.random() - 0.5) * 8
-        );
-        cube.userData = { type: 'dataFloat', baseY: cube.position.y, floatSpeed: 0.002 + Math.random() * 0.005 };
-        scene.add(cube);
-        overlayObjects.push(cube);
+      for(let i=0;i<70;i++){
+        const cb=new THREE.Mesh(new THREE.BoxGeometry(0.025,0.025,0.025),new THREE.MeshBasicMaterial({color:0x1a1a2a,transparent:true,opacity:0.2}));
+        cb.position.set((Math.random()-0.5)*12,Math.random()*6,(Math.random()-0.5)*8);
+        cb.userData={type:'dataFloat',baseY:cb.position.y,floatSpeed:0.001+Math.random()*0.004};
+        scene.add(cb);overlayObjects.push(cb);
       }
 
-      // Distance annotation between Schmerz and unangenehm
-      const distGeo = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(-2.5, 1.5, 1),
-        new THREE.Vector3(-2.0, 1.8, 1.4)
-      ]);
-      const distLine = new THREE.Line(distGeo, new THREE.LineBasicMaterial({ color: 0xff8888, transparent: true, opacity: 0.7 }));
-      scene.add(distLine);
-      overlayObjects.push(distLine);
+      const a1=createTextSprite('"Baum" = nahe "grün", "Natur" — kein echter Baum','#556666',16,4);
+      a1.position.set(-2,4.0,1);scene.add(a1);overlayObjects.push(a1);
+      const a2=createTextSprite('"Strand" = nahe "Sand", "Meer" — kein Sand unter den Füßen','#556666',16,4);
+      a2.position.set(2.5,3.2,0.5);scene.add(a2);overlayObjects.push(a2);
+      const a3=createTextSprite('v_schmerz = [0.12, -0.54, 0.87, ...] — bedeutungslos','#664444',16,4);
+      a3.position.set(-3,-0.2,-1);scene.add(a3);overlayObjects.push(a3);
+      const a4=createTextSprite('← Kopfhörer → Übersetzungs-KI → Vektorraum','#445566',16,4.5);
+      a4.position.set(0,5.5,0);scene.add(a4);overlayObjects.push(a4);
 
-      const distLabel = createTextSprite('dist: 0.12', '#ff8888', 20);
-      distLabel.position.set(-2.25, 1.85, 1.2);
-      distLabel.scale.set(0.8, 0.2, 1);
-      scene.add(distLabel);
-      overlayObjects.push(distLabel);
-
-      smoothCameraMove([0, 3.5, 9], [0, 2.5, 0], 1.5);
-      break;
-    }
-
-    // ============================================================
-    // PAIN COMPARISON: Lived experience vs. vector distance
-    // ============================================================
-    case 'pain': {
-      label.textContent = '⚡ SCHMERZ: ERLEBEN vs. BERECHNEN';
-      info.innerHTML = `<strong style="color:#ff6666">Links:</strong> Der Mensch stößt sich – Schmerzwellen durchfluten den Körper.<br>
-        Adrenalin, Herzrasen, verzerrtes Gesicht. <strong>Qualia.</strong> Echtes Leid.<br>
-        <strong style="color:#66ccff">Rechts:</strong> Die KI registriert: v_schmerz liegt nahe v_unangenehm (cos_sim: 0.89).<br>
-        <em>"The vector space can simulate the structure but cannot capture the essence."</em><br>
-        <span style="color:#ff8888; font-size:16px">Echtes Leid ≠ statistische Nähe.</span>`;
-
-      // Hide beetle for clarity
-      beetle.visible = false;
-
-      // Move human to left
-      human.position.set(-4, 0, 3);
-      dog.position.set(-2.5, 0, 2.5);
-      dog.rotation.y = -1.5;
-
-      // Human pain bubble (warm, red-tinted)
-      const painBubble = createBubble(3, 0xff3333, 0.06);
-      painBubble.position.set(-4, 1.5, 3);
-      scene.add(painBubble);
-      overlayObjects.push(painBubble);
-
-      // Pain waves radiating from human
-      for (let i = 0; i < 6; i++) {
-        const ring = new THREE.Mesh(
-          new THREE.TorusGeometry(0.4 + i * 0.35, 0.015, 8, 36),
-          new THREE.MeshBasicMaterial({ color: 0xff2222, transparent: true, opacity: 0.5 - i * 0.07 })
-        );
-        ring.position.set(-4, 1.5, 3);
-        ring.userData = { type: 'painPulse', phase: i * 0.6 };
-        scene.add(ring);
-        overlayObjects.push(ring);
-      }
-
-      // Heartbeat line
-      const heartPoints = [];
-      for (let x = -2; x <= 0; x += 0.03) {
-        const y = Math.sin(x * 10) * Math.exp(-x * x * 1.5) * 0.25;
-        heartPoints.push(new THREE.Vector3(x - 3, y + 3.2, 3));
-      }
-      const heartGeo = new THREE.BufferGeometry().setFromPoints(heartPoints);
-      const heartLine = new THREE.Line(heartGeo, new THREE.LineBasicMaterial({ color: 0xff4444 }));
-      heartLine.userData = { type: 'heartbeat' };
-      scene.add(heartLine);
-      overlayObjects.push(heartLine);
-
-      // Adrenaline particles swirling around human
-      for (let i = 0; i < 40; i++) {
-        const particle = new THREE.Mesh(
-          new THREE.SphereGeometry(0.03, 4, 4),
-          new THREE.MeshBasicMaterial({ color: 0xff6633, transparent: true, opacity: 0.6 })
-        );
-        const angle = Math.random() * Math.PI * 2;
-        const r = 0.3 + Math.random() * 1.5;
-        particle.position.set(
-          -4 + Math.cos(angle) * r,
-          0.5 + Math.random() * 2.5,
-          3 + Math.sin(angle) * r
-        );
-        particle.userData = {
-          type: 'adrenaline',
-          angle: angle,
-          radius: r,
-          speed: 0.02 + Math.random() * 0.03,
-          centerX: -4,
-          centerZ: 3,
-          baseY: particle.position.y,
-          bobSpeed: 2 + Math.random() * 3,
-          bobAmount: 0.03
-        };
-        scene.add(particle);
-        overlayObjects.push(particle);
-      }
-
-      const painLabel = createTextSprite('ECHTES LEID', '#ff4444', 28);
-      painLabel.position.set(-4, 4.2, 3);
-      scene.add(painLabel);
-      overlayObjects.push(painLabel);
-
-      // === DIVIDER ===
-      const dividerGeo = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(0, 0, 3),
-        new THREE.Vector3(0, 5, 3)
-      ]);
-      const divider = new THREE.Line(dividerGeo, new THREE.LineBasicMaterial({
-        color: 0x666666, transparent: true, opacity: 0.3
-      }));
-      scene.add(divider);
-      overlayObjects.push(divider);
-
-      // === RIGHT SIDE: AI processing pain ===
-      const aiMono = createAIMonolith();
-      aiMono.position.set(4, 0, 3);
-      aiMono.scale.set(0.7, 0.7, 0.7);
-      scene.add(aiMono);
-      overlayObjects.push(aiMono);
-
-      const aiBubble = createBubble(3, 0x112244, 0.05);
-      aiBubble.position.set(4, 1.5, 3);
-      scene.add(aiBubble);
-      overlayObjects.push(aiBubble);
-
-      // Pain tokens in vector space (cold, geometric)
-      const painTokens = [
-        { label: 'Schmerz', pos: [3.2, 2.2, 3], color: 0xff4444 },
-        { label: 'unangenehm', pos: [3.6, 2.5, 3.3], color: 0xff6666 },
-        { label: 'Verletzung', pos: [3.0, 1.9, 2.7], color: 0xff6666 },
-        { label: 'Leid', pos: [3.5, 2.7, 2.8], color: 0xff6666 },
-        { label: 'Freude', pos: [5.0, 3.5, 3.5], color: 0x44ff44 },
-        { label: 'Glück', pos: [5.2, 3.3, 3.2], color: 0x44ff44 },
-        { label: 'Angst', pos: [3.8, 1.6, 3.5], color: 0xff8844 },
-        { label: 'Angst', pos: [3.8, 1.6, 3.5], color: 0xff8844 },
-      ];
-      
-      painTokens.forEach(t => {
-        const sphere = new THREE.Mesh(
-          new THREE.SphereGeometry(0.08, 10, 10),
-          new THREE.MeshBasicMaterial({ color: t.color })
-        );
-        sphere.position.set(...t.pos);
-        scene.add(sphere);
-        overlayObjects.push(sphere);
-        
-        // Glow
-        const glow = new THREE.Mesh(
-          new THREE.SphereGeometry(0.18, 8, 8),
-          new THREE.MeshBasicMaterial({ color: t.color, transparent: true, opacity: 0.1 })
-        );
-        glow.position.set(...t.pos);
-        glow.userData = { type: 'tokenGlow' };
-        scene.add(glow);
-        overlayObjects.push(glow);
-        
-        // Label
-        const lbl = createTextSprite(t.label, '#' + t.color.toString(16).padStart(6, '0'), 22);
-        lbl.position.set(t.pos[0], t.pos[1] + 0.25, t.pos[2]);
-        lbl.scale.set(1, 0.25, 1);
-        scene.add(lbl);
-        overlayObjects.push(lbl);
-      });
-      
-      // Connection lines between pain tokens (cold, geometric)
-      const painLineMat = new THREE.LineBasicMaterial({ color: 0x442222, transparent: true, opacity: 0.4 });
-      for (let i = 0; i < painTokens.length; i++) {
-        for (let j = i + 1; j < painTokens.length; j++) {
-          const dx = painTokens[i].pos[0] - painTokens[j].pos[0];
-          const dy = painTokens[i].pos[1] - painTokens[j].pos[1];
-          const dz = painTokens[i].pos[2] - painTokens[j].pos[2];
-          const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-          if (dist < 1.5) {
-            const geo = new THREE.BufferGeometry().setFromPoints([
-              new THREE.Vector3(...painTokens[i].pos),
-              new THREE.Vector3(...painTokens[j].pos)
-            ]);
-            const line = new THREE.Line(geo, painLineMat);
-            scene.add(line);
-            overlayObjects.push(line);
-          }
-        }
-      }
-      
-      // Distance annotation: Schmerz <-> unangenehm
-      const distGeo = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(3.2, 2.2, 3),
-        new THREE.Vector3(3.6, 2.5, 3.3)
-      ]);
-      const distLine = new THREE.Line(distGeo, new THREE.LineBasicMaterial({ color: 0x66ccff, transparent: true, opacity: 0.8 }));
-      scene.add(distLine);
-      overlayObjects.push(distLine);
-      
-      const distLabel = createTextSprite('cos_sim: 0.89', '#66ccff', 18);
-      distLabel.position.set(3.4, 2.55, 3.15);
-      distLabel.scale.set(1, 0.25, 1);
-      scene.add(distLabel);
-      overlayObjects.push(distLabel);
-      
-      // Vector notation floating near AI
-      const vecLabel = createTextSprite('v_schmerz = [0.12, -0.54, 0.87, ...]', '#66ccff', 18);
-      vecLabel.position.set(4, 0.3, 3);
-      vecLabel.scale.set(2.5, 0.35, 1);
-      scene.add(vecLabel);
-      overlayObjects.push(vecLabel);
-      
-      // Floating data cubes on AI side (cold, sterile)
-      for (let i = 0; i < 30; i++) {
-        const cube = new THREE.Mesh(
-          new THREE.BoxGeometry(0.025, 0.025, 0.025),
-          new THREE.MeshBasicMaterial({ color: 0x223344, transparent: true, opacity: 0.2 })
-        );
-        cube.position.set(
-          3 + Math.random() * 3,
-          0.5 + Math.random() * 3.5,
-          2 + Math.random() * 2
-        );
-        cube.userData = { type: 'dataFloat', baseY: cube.position.y, floatSpeed: 0.002 + Math.random() * 0.004 };
-        scene.add(cube);
-        overlayObjects.push(cube);
-      }
-      
-      smoothCameraMove([0, 4, 12], [0, 1.5, 3], 1.5);
+      setCameraTarget([0,3,10],[0,2.5,0]);
       break;
     }
   }
+
+  updateAudioForScene(name);
 };
 
-// Start with overview
-window.switchScene('overview');
+/* ===== ANIMATION LOOP ===== */
+let time=0, lastTime=performance.now();
 
-// ============================================================
-// ANIMATION LOOP
-// ============================================================
-let time = 0;
-
-function animate() {
+function animate(){
   requestAnimationFrame(animate);
-  time += 0.016;
-  
-  controls.update();
-  
-  overlayObjects.forEach(obj => {
-    if (!obj.userData) return;
-    
-    // Sensory / smell / chem / adrenaline particles – orbit and bob
-    if (['sense', 'smell', 'chem', 'adrenaline'].includes(obj.userData.type)) {
-      obj.userData.angle += obj.userData.speed;
-      const cx = obj.userData.centerX || 0;
-      const cz = obj.userData.centerZ || 0;
-      obj.position.x = cx + Math.cos(obj.userData.angle) * obj.userData.radius;
-      obj.position.z = cz + Math.sin(obj.userData.angle) * obj.userData.radius;
-      obj.position.y = obj.userData.baseY + Math.sin(time * obj.userData.bobSpeed + obj.userData.angle) * obj.userData.bobAmount;
-    }
-    
-    // Sound wave rings – pulse
-    if (obj.userData.type === 'soundwave') {
-      const pulse = 1 + Math.sin(time * 1.5 + obj.userData.phase) * 0.15;
-      obj.scale.set(pulse, pulse, pulse);
-      obj.material.opacity = 0.08 + Math.sin(time * 1.5 + obj.userData.phase) * 0.07;
-    }
-    
-    // Sun rays – gentle shimmer
-    if (obj.userData.type === 'sunray') {
-      obj.material.opacity = 0.06 + Math.sin(time * 0.8 + obj.userData.phase) * 0.06;
-    }
-    
-    // Vibration rings (beetle)
-    if (obj.userData.type === 'vibration') {
-      const pulse = 1 + Math.sin(time * 2.5 + obj.userData.phase) * 0.3;
-      obj.scale.set(pulse, pulse, pulse);
-      obj.material.opacity = 0.12 + Math.sin(time * 2.5 + obj.userData.phase) * 0.08;
-    }
-    
-    // Pain pulse rings
-    if (obj.userData.type === 'painPulse') {
-      const pulse = 1 + Math.sin(time * 3 + obj.userData.phase) * 0.25;
-      obj.scale.set(pulse, pulse, pulse);
-      obj.material.opacity = 0.3 + Math.sin(time * 3 + obj.userData.phase) * 0.2;
-    }
-    
-    // Token glow – gentle pulse
-    if (obj.userData.type === 'tokenGlow') {
-      obj.material.opacity = 0.06 + Math.sin(time * 2 + obj.position.x * 3) * 0.04;
-    }
-    
-    // Floating data cubes (AI scene)
-    if (obj.userData.type === 'dataFloat') {
-      obj.position.y = obj.userData.baseY + Math.sin(time * 1.5 + obj.position.x * 2) * 0.2;
-      obj.rotation.x += 0.008;
-      obj.rotation.y += 0.012;
-    }
-    
-    // Heartbeat line shimmer
-    if (obj.userData.type === 'heartbeat') {
-      obj.material.opacity = 0.6 + Math.sin(time * 5) * 0.4;
-    }
-  });
-  
-  // Bubble breathing for all bubbles in overlay
-  overlayObjects.forEach(obj => {
-    if (obj.geometry && obj.geometry.type === 'SphereGeometry' &&
-        obj.material.transparent && obj.material.opacity < 0.15 && obj.material.opacity > 0.01 &&
-        !obj.userData.type) {
-      const breathe = 1 + Math.sin(time * 0.6) * 0.02;
-      obj.scale.set(breathe, breathe, breathe);
-    }
-  });
-  
-  // Animate dog tail wag
-  if (dog.visible) {
-    const tailMesh = dog.children.find(c => c.geometry && c.geometry.type === 'TubeGeometry');
-    if (tailMesh) {
-      tailMesh.rotation.y = Math.sin(time * 6) * 0.4;
-    }
-  }
-  
-  renderer.render(scene, camera);
-}
+  const now=performance.now(), dt=(now-lastTime)/1000;
+  lastTime=now; time+=dt;
 
+  updateMovement(dt);
+
+  // Smooth camera with very gentle sway
+  camera.position.lerp(camTargetPos,0.02);
+  const look=camTargetLookAt.clone();
+  look.x+=Math.sin(time*0.15)*0.08;
+  look.y+=Math.cos(time*0.1)*0.03;
+  camera.lookAt(look);
+
+  // Dog vision transition
+  desatMaterial.uniforms.dogVision.value+=(targetDogVision-desatMaterial.uniforms.dogVision.value)*0.03;
+
+  // Update overlays
+  overlayObjects.forEach(o=>{
+    if(!o.userData)return;
+
+    if(o.userData.type==='followJogger'){o.position.x=jogger.position.x;o.position.z=jogger.position.z;if(o.userData.offsetY!==undefined)o.position.y=o.userData.offsetY;}
+    if(o.userData.type==='followDog'){o.position.x=dog.position.x;o.position.z=dog.position.z;if(o.userData.offsetY!==undefined)o.position.y=o.userData.offsetY;}
+    if(o.userData.type==='followButterfly'){o.position.x=butterfly.position.x+(o.userData.offsetX||0);o.position.y=butterfly.position.y+(o.userData.offsetY||0);o.position.z=butterfly.position.z;}
+
+    if(o.userData.type==='orbitParticle'){
+      o.userData.angle+=o.userData.speed;
+      let cx=0,cz=0;
+      if(o.userData.follow==='jogger'){cx=jogger.position.x;cz=jogger.position.z;}
+      else if(o.userData.follow==='dog'){cx=dog.position.x;cz=dog.position.z;}
+      else if(o.userData.follow==='butterfly'){cx=butterfly.position.x;cz=butterfly.position.z;}
+      o.position.x=cx+Math.cos(o.userData.angle)*o.userData.radius;
+      o.position.z=cz+Math.sin(o.userData.angle)*o.userData.radius;
+      if(o.userData.follow==='butterfly'){o.position.y=butterfly.position.y+Math.sin(time*o.userData.bobSpeed+o.userData.angle)*o.userData.bobAmt;}
+      else{o.position.y=o.userData.baseY+Math.sin(time*o.userData.bobSpeed+o.userData.angle)*o.userData.bobAmt;}
+    }
+
+    if(o.userData.type==='knowledgeOrbit'){o.userData.angle+=0.0015;o.position.x=jogger.position.x+Math.cos(o.userData.angle)*o.userData.radius;o.position.z=jogger.position.z+Math.sin(o.userData.angle)*o.userData.radius;o.position.y=o.userData.offsetY;}
+    if(o.userData.type==='dogSound'){o.position.x=dog.position.x;o.position.z=dog.position.z;o.position.y=0.6;const p=1+Math.sin(time*1.8+o.userData.phase)*0.2;o.scale.set(p,p,p);o.material.opacity=0.05+Math.sin(time*1.8+o.userData.phase)*0.05;}
+    if(o.userData.type==='tokenGlow'){o.material.opacity=0.05+Math.sin(time*2+o.position.x*3)*0.04;}
+    if(o.userData.type==='dataFloat'){o.position.y=o.userData.baseY+Math.sin(time*1.2+o.position.x*2)*0.25;o.rotation.x+=0.006;o.rotation.y+=0.009;}
+    if(o.userData.type==='serverLine'){o.material.opacity=0.3+Math.sin(time*3+o.userData.phase)*0.3;}
+    if(o.userData.type==='aiEye'){o.material.color.setHSL(0.55+Math.sin(time*0.5)*0.05,0.8,0.5);}
+    if(o.userData.type==='aiEyeGlow'){o.material.opacity=0.1+Math.sin(time*1.5)*0.1;}
+  });
+
+  // Water animation
+  const wv=waterMesh.geometry.attributes.position;
+  for(let i=0;i<wv.count;i++){wv.setZ(i,Math.sin(wv.getX(i)*0.25+time*0.6)*0.12+Math.sin(wv.getY(i)*0.3+time*0.4)*0.08);}
+  wv.needsUpdate=true;waterMesh.geometry.computeVertexNormals();
+
+  // Render
+  if(desatMaterial.uniforms.dogVision.value>0.01){
+    renderer.setRenderTarget(renderTarget);
+    renderer.render(scene,camera);
+    renderer.setRenderTarget(null);
+    desatMaterial.uniforms.tDiffuse.value=renderTarget.texture;
+    renderer.render(desatScene,desatCamera);
+  }else{
+    renderer.render(scene,camera);
+  }
+}
 animate();
 
-// ============================================================
-// WINDOW RESIZE
-// ============================================================
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
+/* Resize */
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  renderTarget.setSize(window.innerWidth,window.innerHeight);
 });
 
-// ============================================================
-// RESET CHARACTER POSITIONS WHEN LEAVING PAIN SCENE
-// ============================================================
-const originalHumanPos = { x: 1, z: 3 };
-const originalDogPos = { x: 3, z: 2.5 };
-const originalDogRotY = -0.8;
-
-const _origSwitchScene = window.switchScene;
-window.switchScene = function(name) {
-  // Reset positions before switching
-  if (currentSceneName === 'pain' && name !== 'pain') {
-    human.position.set(originalHumanPos.x, 0, originalHumanPos.z);
-    human.rotation.y = -0.3;
-    dog.position.set(originalDogPos.x, 0, originalDogPos.z);
-    dog.rotation.y = originalDogRotY;
-    beetle.visible = true;
-  }
-  _origSwitchScene(name);
-};
+/* Start */
+window.switchScene('human');
 
 </script>
 </body>

@@ -11,6 +11,55 @@
 
 <style>
 /* ============================================================
+   HISTORY PILLS — visited topics shown in breadcrumb
+   ============================================================ */
+.crumb-spacer {
+  flex: 1;
+  min-width: 20px;
+}
+
+#deep-breadcrumb .crumb.visited {
+  color: var(--text-dim);
+  font-weight: 400;
+  font-size: 0.75rem;
+  padding: 3px 9px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  opacity: 0.6;
+  transition: all 0.2s;
+  margin-left: 4px;
+}
+
+#deep-breadcrumb .crumb.visited:hover {
+  opacity: 1;
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+/* ---- Breadcrumb always visible when there's history ---- */
+#deep-breadcrumb.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ---- Subtle indicator on views that are "in memory" ---- */
+.deep-view[style*="display: none"] {
+  /* These exist in DOM but are hidden — that's the vim buffer */
+}
+
+/* ---- Keyboard shortcut hints ---- */
+#deep-breadcrumb::after {
+  content: 'Esc ← · G graph';
+  position: absolute;
+  right: 28px;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  opacity: 0.4;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================
    THEME TOKENS — single source of truth
    ============================================================ */
 :root {
@@ -271,33 +320,161 @@ blockquote {
 /* ============================================================
    DEEP PORTAL — the clickable inline links
    ============================================================ */
+/* ============================================================
+   DEEP PORTAL — subtle, woven into text naturally
+   ============================================================ */
 .deep-portal {
   display: inline;
   position: relative;
   cursor: pointer;
   color: var(--accent);
-  font-weight: 600;
-  border-bottom: 2px solid var(--accent);
-  transition: all 0.2s;
-  padding-bottom: 1px;
+  font-weight: inherit; /* NOT bold — blends with text */
+  text-decoration: none;
+  border-bottom: 1px dotted color-mix(in srgb, var(--accent) 40%, transparent);
+  transition: border-color 0.3s, color 0.2s;
+  padding-bottom: 0px;
 }
 
 .deep-portal .deep-arrow {
-  display: inline-block;
-  margin-left: 4px;
-  font-size: 0.8em;
-  transition: transform 0.2s;
-  vertical-align: middle;
+  display: none; /* remove the arrow — too obtrusive */
 }
 
+/* Hover: subtle underline solidifies */
 .deep-portal:hover {
-  background: var(--accent-subtle);
-  border-radius: 3px 3px 0 0;
+  border-bottom: 1.5px solid var(--accent);
+  color: var(--accent);
 }
 
-.deep-portal:hover .deep-arrow {
-  transform: translateX(3px);
+/* Visited: barely different, just a tiny opacity shift */
+.deep-portal.visited {
+  color: color-mix(in srgb, var(--accent) 70%, var(--text));
+  border-bottom-style: solid;
+  border-bottom-color: color-mix(in srgb, var(--accent) 20%, transparent);
 }
+
+.deep-portal.visited:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ============================================================
+   RELATED TOPICS — shown at bottom of each deep view
+   ============================================================ */
+.deep-related {
+  margin-top: 3em;
+  padding-top: 1.5em;
+  border-top: 1px solid var(--border);
+}
+
+.deep-related-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.deep-related-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.deep-related-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deep-related-item:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.deep-related-type {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* ============================================================
+   VISITED PILLS in breadcrumb — much more subtle
+   ============================================================ */
+#deep-breadcrumb .crumb.visited {
+  color: var(--text-dim);
+  font-weight: 400;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border: none;
+  border-radius: 4px;
+  opacity: 0.4;
+  transition: all 0.2s;
+  margin-left: 2px;
+  background: transparent;
+}
+
+#deep-breadcrumb .crumb.visited:hover {
+  opacity: 0.8;
+  color: var(--text);
+  background: var(--accent-subtle);
+}
+
+/* ============================================================
+   VIEW HEADER — cleaner, less boxy
+   ============================================================ */
+.deep-view-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border); /* was 2px solid accent — too loud */
+}
+
+.deep-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px 7px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border); /* was accent — too loud */
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+  font-family: inherit;
+  transition: all 0.2s;
+  box-shadow: none;
+}
+
+.deep-back-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+  transform: translateX(-2px);
+}
+
+.deep-view-depth {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: transparent;
+  font-weight: 400;
+  opacity: 0.5;
+}
+
 
 /* ============================================================
    TEMML / LATEX
@@ -483,29 +660,24 @@ const Deep = (() => {
   // ==========================================================
   // Content Processing
   // ==========================================================
-    function processContent(html) {
-    // \rel{}{}{} → extract to graph, remove from visible content
+  function processContent(html) {
     html = html.replace(/\\rel\{([^}]+)\}\{([^}]+)\}\{([^}]*)\}/g, (_, from, to, type) => {
       relate(from.trim(), to.trim(), (type || 'related').trim());
       return '';
     });
 
-    // \deep{id}{text} → portal
     html = html.replace(/\\deep\{([^}]+)\}\{([^}]*)\}/g, (_, id, text) => {
       const safeId = id.trim();
       const label = text.trim() || safeId.replace(/_/g, ' ');
       if (!topics[safeId]) {
         topics[safeId] = { title: label, content: null, loaded: false, element: null };
       }
-      return `<span class="deep-portal" data-topic="${safeId}">${label}<span class="deep-arrow">→</span></span>`;
+      return `<span class="deep-portal" data-topic="${safeId}">${label}</span>`;
     });
 
-    // All LaTeX processing (balanced braces, $$, $)
     html = renderLatexCommands(html);
-
     return html;
   }
-
 
   function renderLatexCommands(html) {
     // Process \latexblock{...} with nested braces
@@ -598,70 +770,96 @@ const Deep = (() => {
       currentView.dataset.scrollY = window.scrollY || document.documentElement.scrollTop;
     }
 
-    // Brief flash on the portal to show what was clicked
+    // Mark the portal as visited (subtle)
     if (portalElement) {
-      portalElement.style.transition = 'all 0.15s';
-      portalElement.style.background = 'var(--accent)';
-      portalElement.style.color = '#fff';
-      portalElement.style.borderRadius = '4px';
-      portalElement.style.padding = '0 4px';
+      portalElement.classList.add('visited');
     }
-
-    openStack.push(topicId);
-    const processedContent = processContent(topic.content);
-
-    const backLabel = openStack.length > 1
-      ? (topics[openStack[openStack.length - 2]]?.title || 'Back')
-      : 'Overview';
-
-    const view = document.createElement('div');
-    view.className = 'deep-view';
-    view.dataset.topic = topicId;
-    view.innerHTML = `
-      <div class="deep-view-header">
-        <button class="deep-back-btn" aria-label="Go back">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span>${backLabel}</span>
-        </button>
-        <span class="deep-view-title">${topic.title}</span>
-        <span class="deep-view-depth">Depth ${openStack.length}</span>
-      </div>
-      <div class="deep-view-body">${processedContent}</div>
-    `;
-
-    rootEl().appendChild(view);
-
-    view.querySelector('.deep-back-btn').addEventListener('click', (e) => {
-      e.preventDefault(); goBack();
+    // Also mark all portals pointing to this topic across all views
+    rootEl().querySelectorAll(`.deep-portal[data-topic="${topicId}"]`).forEach(p => {
+      p.classList.add('visited');
     });
 
-    // Slightly delayed transition for a more cinematic feel
-    await new Promise(r => setTimeout(r, 120));
+    openStack.push(topicId);
+
+    let view = rootEl().querySelector(`.deep-view[data-topic="${topicId}"]`);
+    let isExisting = !!view;
+
+    if (!view) {
+      const processedContent = processContent(topic.content);
+      const backLabel = openStack.length > 1
+        ? (topics[openStack[openStack.length - 2]]?.title || 'Back')
+        : 'Overview';
+
+      // Find related topics from relations graph
+      const relatedHtml = buildRelatedSection(topicId);
+
+      view = document.createElement('div');
+      view.className = 'deep-view';
+      view.dataset.topic = topicId;
+      view.innerHTML = `
+        <div class="deep-view-header">
+          <button class="deep-back-btn" aria-label="Go back">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>${backLabel}</span>
+          </button>
+          <span class="deep-view-title">${topic.title}</span>
+          <span class="deep-view-depth">${openStack.length}</span>
+        </div>
+        <div class="deep-view-body">
+          ${processedContent}
+          ${relatedHtml}
+        </div>
+      `;
+      rootEl().appendChild(view);
+      bindPortals(view);
+      bindRelatedItems(view);
+    } else {
+      const backLabel = openStack.length > 1
+        ? (topics[openStack[openStack.length - 2]]?.title || 'Back')
+        : 'Overview';
+      const backBtnSpan = view.querySelector('.deep-back-btn span');
+      if (backBtnSpan) backBtnSpan.textContent = backLabel;
+      const depthBadge = view.querySelector('.deep-view-depth');
+      if (depthBadge) depthBadge.textContent = openStack.length;
+    }
+
+    // Rebind back button
+    const backBtn = view.querySelector('.deep-back-btn');
+    const newBackBtn = backBtn.cloneNode(true);
+    backBtn.parentNode.replaceChild(newBackBtn, backBtn);
+    newBackBtn.addEventListener('click', (e) => { e.preventDefault(); goBack(); });
+
+    await new Promise(r => setTimeout(r, 80));
 
     requestAnimationFrame(() => {
       if (currentView) {
         currentView.classList.add('exiting');
         currentView.classList.remove('active');
+        setTimeout(() => {
+          currentView.style.display = 'none';
+          currentView.classList.remove('exiting');
+        }, 600);
       }
+
+      view.style.display = '';
       requestAnimationFrame(() => {
+        view.classList.remove('exiting-back', 'exiting');
         view.classList.add('active');
-        // Smooth scroll to top with a slight ease
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (isExisting) {
+          const saved = parseInt(view.dataset.scrollY || '0');
+          window.scrollTo({ top: saved, behavior: 'smooth' });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
       });
     });
 
-    if (currentView) {
-      setTimeout(() => {
-        currentView.style.display = 'none';
-        currentView.classList.remove('exiting');
-      }, 600);
-    }
-
     updateBreadcrumb();
-    bindPortals(view);
   }
+
+
 
   function goBack() {
     if (openStack.length === 0) return;
@@ -677,17 +875,17 @@ const Deep = (() => {
     if (currentView) {
       currentView.classList.add('exiting-back');
       currentView.classList.remove('active');
+      // Don't remove! Just hide after animation
+      setTimeout(() => {
+        currentView.style.display = 'none';
+        currentView.classList.remove('exiting-back');
+      }, 600);
     }
 
     if (prevView) {
       prevView.style.display = '';
-      // Re-trigger stagger animations by briefly removing and re-adding class
       const body = prevView.querySelector('.deep-view-body');
-      if (body) {
-        body.style.animation = 'none';
-        body.offsetHeight; // force reflow
-        body.style.animation = '';
-      }
+      if (body) { body.style.animation = 'none'; body.offsetHeight; body.style.animation = ''; }
       requestAnimationFrame(() => {
         prevView.classList.remove('exiting');
         prevView.classList.add('active');
@@ -696,11 +894,62 @@ const Deep = (() => {
       });
     }
 
-    if (currentView) {
-      setTimeout(() => currentView.remove(), 600);
-    }
-
     updateBreadcrumb();
+  }
+
+  // ==========================================================
+  // Related Topics
+  // ==========================================================
+  function buildRelatedSection(topicId) {
+    const related = [];
+
+    relations.forEach(r => {
+      if (r.from === topicId && topics[r.to]) {
+        related.push({ id: r.to, title: topics[r.to].title, type: r.type, dir: 'out' });
+      }
+      if (r.to === topicId && topics[r.from]) {
+        related.push({ id: r.from, title: topics[r.from].title, type: r.type, dir: 'in' });
+      }
+    });
+
+    Object.keys(topics).forEach(id => {
+      if (id === topicId) return;
+      const t = topics[id];
+      if (t.content && t.content.includes(`\\deep{${topicId}}`)) {
+        if (!related.find(r => r.id === id)) {
+          related.push({ id, title: t.title, type: 'referenced by', dir: 'in' });
+        }
+      }
+    });
+
+    if (related.length === 0) return '';
+
+    const items = related.map(r => {
+      const typeLabel = r.dir === 'in' ? `← ${r.type}` : `→ ${r.type}`;
+      return `<span class="deep-related-item" data-topic="${r.id}">
+        ${r.title}
+        <span class="deep-related-type">${typeLabel}</span>
+      </span>`;
+    }).join('');
+
+    return `
+      <div class="deep-related">
+        <div class="deep-related-label">Connected Topics</div>
+        <div class="deep-related-list">${items}</div>
+      </div>
+    `;
+  }
+
+  function bindRelatedItems(container) {
+    container.querySelectorAll('.deep-related-item').forEach(item => {
+      if (item.dataset.bound) return;
+      item.dataset.bound = 'true';
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openTopic(item.dataset.topic, item);
+      });
+    });
   }
 
   // ==========================================================
@@ -739,9 +988,14 @@ const Deep = (() => {
     if (!bc) return;
     bc.innerHTML = '';
 
+    const allVisited = [...rootEl().querySelectorAll('.deep-view[data-topic]')]
+      .map(v => v.dataset.topic)
+      .filter(t => t !== '__root__');
+
     const rootCrumb = document.createElement('span');
     rootCrumb.className = 'crumb' + (openStack.length === 0 ? ' active' : '');
-    rootCrumb.textContent = '⌂ Overview';
+    rootCrumb.textContent = '⌂';
+    rootCrumb.title = 'Back to overview';
     rootCrumb.addEventListener('click', () => { while (openStack.length > 0) goBack(); });
     bc.appendChild(rootCrumb);
 
@@ -755,13 +1009,44 @@ const Deep = (() => {
       crumb.className = 'crumb' + (i === openStack.length - 1 ? ' active' : '');
       crumb.textContent = topics[id]?.title || id;
       crumb.addEventListener('click', () => {
+        if (i === openStack.length - 1) return;
         while (openStack.length > i + 1) goBack();
       });
       bc.appendChild(crumb);
     });
 
+    // Visited pills — only show if there are some, very subtle
+    const stackSet = new Set(openStack);
+    const visitedOther = allVisited.filter(t => !stackSet.has(t));
+    if (visitedOther.length > 0) {
+      const spacer = document.createElement('span');
+      spacer.className = 'crumb-spacer';
+      bc.appendChild(spacer);
+
+      visitedOther.slice(0, 5).forEach(id => { // max 5 to avoid clutter
+        const pill = document.createElement('span');
+        pill.className = 'crumb visited';
+        pill.textContent = topics[id]?.title || id;
+        pill.title = topics[id]?.title || id;
+        pill.addEventListener('click', () => {
+          openTopic(id, null);
+        });
+        bc.appendChild(pill);
+      });
+
+      if (visitedOther.length > 5) {
+        const more = document.createElement('span');
+        more.className = 'crumb visited';
+        more.textContent = `+${visitedOther.length - 5}`;
+        more.title = 'Open graph to see all (G)';
+        more.addEventListener('click', toggleGraph);
+        bc.appendChild(more);
+      }
+    }
+
     bc.classList.toggle('visible', openStack.length > 0);
   }
+
 
   // ==========================================================
   // Bind Portals
@@ -1134,6 +1419,69 @@ Deep.register('4e_cognition', '4E Cognition',
     <li><strong>Extended:</strong> Where AI currently lives — as cognitive prosthesis, tool not peer.</li>
   </ul>`
 );
+
+  /**
+   * Build the "Related Topics" section for a given topic.
+   * Pulls from the relations graph — shows all connections in both directions.
+   */
+  function buildRelatedSection(topicId) {
+    const related = [];
+
+    relations.forEach(r => {
+      if (r.from === topicId && topics[r.to]) {
+        related.push({ id: r.to, title: topics[r.to].title, type: r.type, dir: 'out' });
+      }
+      if (r.to === topicId && topics[r.from]) {
+        related.push({ id: r.from, title: topics[r.from].title, type: r.type, dir: 'in' });
+      }
+    });
+
+    // Also find topics that reference this one via \deep{} in their content
+    // (implicit relations from the text itself)
+    Object.keys(topics).forEach(id => {
+      if (id === topicId) return;
+      const t = topics[id];
+      if (t.content && t.content.includes(`\\deep{${topicId}}`)) {
+        if (!related.find(r => r.id === id)) {
+          related.push({ id, title: t.title, type: 'referenced by', dir: 'in' });
+        }
+      }
+    });
+
+    if (related.length === 0) return '';
+
+    const items = related.map(r => {
+      const typeLabel = r.dir === 'in'
+        ? `← ${r.type}`
+        : `→ ${r.type}`;
+      return `<span class="deep-related-item" data-topic="${r.id}">
+        ${r.title}
+        <span class="deep-related-type">${typeLabel}</span>
+      </span>`;
+    }).join('');
+
+    return `
+      <div class="deep-related">
+        <div class="deep-related-label">Connected Topics</div>
+        <div class="deep-related-list">${items}</div>
+      </div>
+    `;
+  }
+
+  /**
+   * Bind click handlers on related-topic items.
+   */
+  function bindRelatedItems(container) {
+    container.querySelectorAll('.deep-related-item').forEach(item => {
+      if (item.dataset.bound) return;
+      item.dataset.bound = 'true';
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openTopic(item.dataset.topic, item);
+      });
+    });
+  }
 
 
 // ============================================================
