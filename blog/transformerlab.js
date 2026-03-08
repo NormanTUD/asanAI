@@ -2225,7 +2225,7 @@ $$
 		const prob = probs[i];
 		const pct = (prob * 100).toFixed(2);
 
-		return `${color} \\text{${safeWord}} & ${color} ${val.toFixed(nr_fixed)} & ${color} ${(val - maxLogit).toFixed(nr_fixed)} & ${color} ${expVal.toFixed(nr_fixed)} & ${color} \\frac{${expVal.toFixed(nr_fixed)}}{${sumExps.toFixed(nr_fixed)}} & ${color} ${prob.toFixed(nr_fixed)} & ${color} ${pct}\\%`;
+		return `${color} \\text{${safeWord}} & ${color} ${val.toFixed(nr_fixed)} & ${color} ${(val - maxLogit).toFixed(nr_fixed)} & ${color} ${expVal.toFixed(nr_fixed)} & ${color} ${prob.toFixed(nr_fixed)} & \\boxed{${color} ${pct}\\%}`;
 	}).join(' \\\\ ');
 
 	html += `
@@ -2240,7 +2240,7 @@ $$
 
     <div style="overflow-x:auto;">
     $$\\begin{array}{l|r|r|r|r|r|r}
-    \\text{word} & \\text{logit} & \\text{logit} - m & e^{\\text{logit} - m} & \\frac{e^{\\cdot}}{\\sum e^{\\cdot}} & P(w) & \\% \\\\
+    \\text{word} & \\text{logit} & \\text{logit} - m & e^{\\text{logit} - m} &  P(w) & \\% \\\\
     \\hline
     ${softmaxRows}
     \\end{array}$$
