@@ -2126,7 +2126,7 @@ function buildLogitDetailsHtml(h_last, logits) {
     <span class="md">
     <p class="logit_calc">Current $h_\\text{last} = [${h_last.map((v, dim) => 
 	    `\\underbrace{${v.toFixed(nr_fixed)}}_{\\substack{h_{${dim}} \\\\ \\text{hidden dim ${dim}}}}`
-    ).join(', ')}]$ (the last layers' output matrix last line)</p>
+    ).join(', ')}]$ (the last layers' output matrix last line of the <i>inference</i>-data)</p>
 `;
 
 	// Build the W_vocab matrix (each row = one word's embedding)
