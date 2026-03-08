@@ -2203,6 +2203,73 @@ $$
 $$
 </div>`;
 
+	// ===== TEMPERATURE SECTION (equations only — prose is in the PHP) =====
+	const temperature = parseFloat(document.getElementById('transformer-temperature')?.value) || 1.0;
+
+	const scaledLogitValues = logitValues.map(v => v / temperature);
+	const maxScaledLogit = Math.max(...scaledLogitValues);
+	const scaledExps = scaledLogitValues.map(v => Math.exp(v - maxScaledLogit));
+	const scaledSumExps = scaledExps.reduce((a, b) => a + b, 0);
+	const scaledProbs = scaledExps.map(e => e / scaledSumExps);
+
+	// Scaled logit table rows
+	const scaledLogitRows = logits.map(({ word, val }, i) => {
+		const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+		return `\\color{#6366f1}{\\text{${safeWord}}} & ${val.toFixed(nr_fixed)} & ${scaledLogitValues[i].toFixed(nr_fixed)}`;
+	}).join(' \\\\ ');
+
+	// Probability comparison rows
+	const scaledProbRows = logits.map(({ word }, i) => {
+		const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+		const color = getPositionColor(i, logits.length, 'temml');
+		const origPct = (probs[i] * 100).toFixed(2);
+		const scaledPct = (scaledProbs[i] * 100).toFixed(2);
+		const diff = (scaledProbs[i] - probs[i]) * 100;
+		const diffSign = diff >= 0 ? '+' : '';
+		return `${color} \\text{${safeWord}} & ${color} ${origPct}\\% & ${color} ${scaledPct}\\% & ${color} ${diffSign}${diff.toFixed(2)}\\%`;
+	}).join(' \\\\ ');
+
+	// Entropy
+	const entropyOrig = -probs.reduce((sum, p) => sum + (p > 1e-12 ? p * Math.log2(p) : 0), 0);
+	const entropyScaled = -scaledProbs.reduce((sum, p) => sum + (p > 1e-12 ? p * Math.log2(p) : 0), 0);
+	const maxEntropy = Math.log2(logits.length);
+
+	html += `
+<div style="margin-top: 20px; padding: 15px; background: #fffbeb; border: 1px solid #f59e0b; border-radius: 8px;">
+<p style="font-weight: bold; color: #92400e; font-size: 1rem; margin-bottom: 10px;">🌡️ Temperature Scaling ($T = ${temperature.toFixed(1)}$)</p>
+
+<div style="overflow-x:auto; padding:10px 0;">
+$$
+\\frac{\\text{logit}_w}{T} \\;:\\quad
+\\left(\\begin{array}{r|r|r}
+\\text{word} & \\text{logit}_w & \\text{logit}_w / ${temperature.toFixed(1)} \\\\
+\\hline
+	${scaledLogitRows}
+\\end{array}\\right)
+$$
+</div>
+
+<div style="overflow-x:auto; padding:10px 0;">
+$$
+\\text{softmax}\\!\\left(\\frac{\\mathbf{z}}{T}\\right) \\;:\\quad
+\\left(\\begin{array}{l|r|r|r}
+\\text{word} & P_{T=1} & P_{T=${temperature.toFixed(1)}} & \\Delta \\\\
+\\hline
+	${scaledProbRows}
+\\end{array}\\right)
+$$
+</div>
+
+<div style="overflow-x:auto; padding:10px 0;">
+$$
+H_{T=1} = ${entropyOrig.toFixed(4)} \\text{ bits}, \\quad
+H_{T=${temperature.toFixed(1)}} = ${entropyScaled.toFixed(4)} \\text{ bits}, \\quad
+H_{\\max} = \\log_2(${logits.length}) = ${maxEntropy.toFixed(4)} \\text{ bits}
+$$
+</div>
+
+</div>`;
+
 	html += `</span></div>`;
 	return html;
 }

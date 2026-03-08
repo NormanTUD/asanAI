@@ -513,8 +513,26 @@ The softmax function converts raw logits into a probability distribution. It use
 $$P(w) = \text{softmax}(\text{logit}_w) = \frac{e^{\text{logit}_w - m}}{\displaystyle\sum_{w'} e^{\text{logit}_{w'} - m}}$$
 
 **Why subtract $m$?** Without this trick, $e^{\text{logit}}$ can overflow to `Infinity` for large logits. Subtracting $m$ ensures the largest exponent is $e^0 = 1$, keeping all values in a safe numerical range.
+</div>
 
+<div class="md">
+## Temperature Scaling
 
+Temperature controls the **sharpness** of the probability distribution by scaling the logits *before* the softmax. The modified softmax with temperature is:
+
+$$P(w) = \text{softmax}\!\left(\frac{\text{logit}_w}{T}\right) = \frac{e^{\,\text{logit}_w \,/\, T}}{\displaystyle\sum_{w'} e^{\,\text{logit}_{w'} \,/\, T}}$$
+
+Dividing by $T$ rescales the logit differences. When $T < 1$, the differences are *amplified*, making the distribution sharper (more deterministic). When $T > 1$, the differences are *compressed*, making the distribution flatter (more random). At $T = 1$, the standard softmax is recovered unchanged.
+
+**Three regimes:**
+
+| Regime | Effect on $\frac{z_i}{T}$ | Behavior |
+|---|---|---|
+| $T \to 0^+$ (Greedy) | $\frac{z_i}{T} \to \pm\infty$ | All probability mass on the argmax. Deterministic output. |
+| $T = 1$ (Standard) | $\frac{z_i}{T} = z_i$ | Unmodified softmax. The model's learned distribution. |
+| $T \to \infty$ (Uniform) | $\frac{z_i}{T} \to 0$ | All logits collapse to 0. Approaches uniform $\frac{1}{|V|}$. |
+
+The **Shannon entropy** $H = -\sum_w P(w) \log_2 P(w)$ measures the "randomness" of the distribution. Lower temperature decreases entropy (more confident), higher temperature increases it (more exploratory). Maximum entropy $H_{\max} = \log_2(|V|)$ corresponds to a perfectly uniform distribution.
 </div>
 
 <div>
