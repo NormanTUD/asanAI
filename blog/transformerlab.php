@@ -530,7 +530,7 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 |---|---|---|
 | $T \to 0^+$ (Greedy) | $\frac{z_i}{T} \to \pm\infty$ | All probability mass on the argmax. Deterministic output. |
 | $T = 1$ (Standard) | $\frac{z_i}{T} = z_i$ | Unmodified softmax. The model's learned distribution. |
-| $T \to \infty$ (Uniform) | $\frac{z_i}{T} \to 0$ | All logits collapse to 0. Approaches uniform $\frac{1}{|V|}$. |
+| $T \to \infty$ (Uniform) | $\frac{z_i}{T} \to 0$ | All logits, except the maximal one, collapse to 0. |
 
 The **Shannon entropy** $H = -\sum_w P(w) \log_2 P(w)$ measures the "randomness" of the distribution. Lower temperature decreases entropy (more confident), higher temperature increases it (more exploratory). Maximum entropy $H_{\max} = \log_2(|V|)$ corresponds to a perfectly uniform distribution.
 </div>
