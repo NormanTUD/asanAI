@@ -2196,7 +2196,7 @@ $$
 	}).join(' \\\\ ');
 
 	html += `
-<div class="md optional" data-headline="Step-by-Step Softmax Calculation" style="margin-top: 25px; padding: 15px; background: #fefce8; border-radius: 8px; border: 1px dashed #eab308;">
+<div class="md optional" data-headline="Step-by-Step Softmax Calculation">
 	<p>The softmax function converts raw logits into a probability distribution. It uses the <strong>numerically stable</strong> version by first subtracting the maximum logit $m = \\max(\\mathbf{L})$ to prevent overflow:</p>
 
 	$$P(w) = \\text{softmax}(\\text{logit}_w) = \\frac{e^{\\text{logit}_w - m}}{\\displaystyle\\sum_{w'} e^{\\text{logit}_{w'} - m}}$$
