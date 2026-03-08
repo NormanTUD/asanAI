@@ -505,9 +505,9 @@ Remember that the $n$ is the number of tokens in the **Inference**-sequence, not
 </span>
 
 This single row $h_{\text{last}}$ is a vector in $d_{\text{model}}$ space. When the model is, for example, $d_{\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage, their influence is already baked into that last vector.
+</div>
 
-### From Logits to Probabilities: A numerically stable Softmax
-
+<div class="optional md" data-headline="From Logits to Probabilities: A numerically stable Softmax">
 The softmax function converts raw logits into a probability distribution. It uses the **numerically stable** version by first subtracting the maximum logit $m = \max(\mathbf{L})$ to prevent overflow:
 
 $$P(w) = \text{softmax}(\text{logit}_w) = \frac{e^{\text{logit}_w - m}}{\displaystyle\sum_{w'} e^{\text{logit}_{w'} - m}}$$
