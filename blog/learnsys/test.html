@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep — Adaptive Learning Interface</title>
+
+<!-- Temml for LaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.min.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+
+<style>
+/* ============================================================
+   THEME TOKENS — single source of truth
+   ============================================================ */
+:root {
+  /* Light mode (default) */
+  --bg: #f8f7f4;
+  --bg-surface: #ffffff;
+  --bg-elevated: #eeeee8;
+  --text: #3a3a42;
+  --text-dim: #8a8a9a;
+  --text-bright: #111118;
+  --accent: #5b4cd4;
+  --accent-glow: rgba(91,76,212,0.18);
+  --accent-subtle: rgba(91,76,212,0.06);
+  --border: rgba(0,0,0,0.08);
+  --radius: 10px;
+  --transition-smooth: 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+[data-theme="dark"] {
+  --bg: #0a0a10;
+  --bg-surface: #12121a;
+  --bg-elevated: #1a1a25;
+  --text: #c8c8d0;
+  --text-dim: #666680;
+  --text-bright: #e8e8f0;
+  --accent: #7c6cf0;
+  --accent-glow: rgba(124,108,240,0.25);
+  --accent-subtle: rgba(124,108,240,0.08);
+  --border: rgba(255,255,255,0.06);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 17px; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background 0.4s, color 0.4s;
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+#deep-app { min-height: 100vh; }
+
+#deep-narrative {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 80px 28px 120px;
+}
+
+#deep-root { position: relative; }
+
+/* ============================================================
+   FULL-SCREEN VIEWS (replaces inline boxes)
+   Each topic takes over the entire narrative area.
+   ============================================================ */
+.deep-view {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  min-height: 60vh;
+}
+
+.deep-view.active {
+  position: relative;
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.deep-view.exiting {
+  opacity: 0;
+  transform: translateX(-60px);
+  pointer-events: none;
+}
+
+.deep-view.exiting-back {
+  opacity: 0;
+  transform: translateX(60px);
+  pointer-events: none;
+}
+
+/* ---- Back button bar at top of each deep view ---- */
+.deep-view-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 36px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--accent);
+}
+
+.deep-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--accent);
+  background: var(--bg-surface);
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+.deep-back-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: translateX(-3px);
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+.deep-back-btn svg { flex-shrink: 0; }
+
+.deep-view-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  flex: 1;
+}
+
+.deep-view-depth {
+  font-size: 0.72rem;
+  color: var(--accent);
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--accent-subtle);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* ============================================================
+   BREADCRUMB — fixed top bar, always clear
+   ============================================================ */
+#deep-breadcrumb {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: var(--bg-surface);
+  border-bottom: 2px solid var(--accent);
+  padding: 0 28px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.85rem;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform var(--transition-smooth), opacity var(--transition-smooth);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+#deep-breadcrumb.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+#deep-breadcrumb .crumb {
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  white-space: nowrap;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+#deep-breadcrumb .crumb:hover {
+  color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+#deep-breadcrumb .crumb.active {
+  color: var(--accent);
+  font-weight: 700;
+  background: var(--accent-subtle);
+}
+
+#deep-breadcrumb .sep {
+  color: var(--accent);
+  opacity: 0.4;
+  font-size: 0.8em;
+  user-select: none;
+  padding: 0 2px;
+}
+
+/* ============================================================
+   LOADING
+   ============================================================ */
+#deep-loader {
+  position: fixed;
+  top: 60px; right: 24px;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+#deep-loader.active { opacity: 1; }
+#deep-loader .spinner {
+  width: 14px; height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1, h2, h3, h4 { color: var(--text-bright); font-weight: 650; letter-spacing: -0.025em; }
+h1 { font-size: 2.1rem; margin: 0 0 0.6em; line-height: 1.2; }
+h2 { font-size: 1.45rem; margin: 2.2em 0 0.5em; }
+h3 { font-size: 1.15rem; margin: 1.5em 0 0.4em; }
+p { margin: 0 0 1.15em; }
+strong { color: var(--text-bright); font-weight: 600; }
+ul, ol { margin: 0.8em 0 1.2em 1.5em; }
+li { margin-bottom: 0.4em; }
+
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.88em;
+  background: var(--bg-elevated);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 0.7em 1.1em;
+  margin: 1.3em 0;
+  background: var(--accent-subtle);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-style: italic;
+}
+
+/* ============================================================
+   DEEP PORTAL — the clickable inline links
+   ============================================================ */
+.deep-portal {
+  display: inline;
+  position: relative;
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
+  border-bottom: 2px solid var(--accent);
+  transition: all 0.2s;
+  padding-bottom: 1px;
+}
+
+.deep-portal .deep-arrow {
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 0.8em;
+  transition: transform 0.2s;
+  vertical-align: middle;
+}
+
+.deep-portal:hover {
+  background: var(--accent-subtle);
+  border-radius: 3px 3px 0 0;
+}
+
+.deep-portal:hover .deep-arrow {
+  transform: translateX(3px);
+}
+
+/* ============================================================
+   TEMML / LATEX
+   ============================================================ */
+.temml-block {
+  display: block;
+  text-align: center;
+  margin: 1.2em 0;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
+/* Fix red Temml errors — hide error color, show code fallback */
+.temml .temml-error { color: var(--text) !important; }
+
+/* ============================================================
+   TOOLBAR (bottom-right: graph + theme toggle)
+   ============================================================ */
+#deep-toolbar {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#deep-toolbar button {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border);
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.25s;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+#deep-toolbar button:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 4px 20px var(--accent-glow);
+  transform: scale(1.1);
+}
+
+/* ============================================================
+   GRAPH OVERLAY
+   ============================================================ */
+#deep-graph-overlay {
+  position: fixed; inset: 0;
+  z-index: 998;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+#deep-graph-overlay.visible { opacity: 1; pointer-events: auto; }
+#deep-graph-canvas { width: 90vw; height: 80vh; max-width: 1200px; }
+
+/* ============================================================
+   PLACEHOLDER
+   ============================================================ */
+.deep-placeholder {
+  color: var(--text-dim);
+  font-style: italic;
+  padding: 24px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius);
+  border: 1px dashed var(--border);
+}
+
+/* ============================================================
+   SCROLLBAR & SELECTION
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
+::selection { background: var(--accent-glow); color: var(--text-bright); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 700px) {
+  #deep-narrative { padding: 70px 16px 80px; }
+  h1 { font-size: 1.6rem; }
+  .deep-back-btn { padding: 8px 14px 8px 10px; font-size: 0.82rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Breadcrumb -->
+<nav id="deep-breadcrumb">
+  <span class="crumb active" data-topic="root">Overview</span>
+</nav>
+
+<!-- Loading -->
+<div id="deep-loader">
+  <div class="spinner"></div>
+  <span id="deep-loader-text">Loading...</span>
+</div>
+
+<!-- Main -->
+<div id="deep-app">
+  <article id="deep-narrative">
+    <div id="deep-root"></div>
+  </article>
+</div>
+
+<!-- Toolbar -->
+<div id="deep-toolbar">
+  <button id="deep-theme-toggle" title="Toggle dark/light mode">☾</button>
+  <button id="deep-graph-toggle" title="Knowledge graph (G)">⬡</button>
+</div>
+
+<!-- Graph Overlay -->
+<div id="deep-graph-overlay">
+  <canvas id="deep-graph-canvas"></canvas>
+</div>
+
+<script>
+const Deep = (() => {
+
+  const topics = {};
+  const relations = [];
+  const openStack = [];
+  let graphVisible = false;
+  let graphAnimFrame = null;
+
+  const rootEl = () => document.getElementById('deep-root');
+  const breadcrumb = () => document.getElementById('deep-breadcrumb');
+  const loader = () => document.getElementById('deep-loader');
+  const loaderText = () => document.getElementById('deep-loader-text');
+
+  // ==========================================================
+  // Theme
+  // ==========================================================
+  let darkMode = false;
+
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    const btn = document.getElementById('deep-theme-toggle');
+    if (btn) btn.textContent = darkMode ? '☀' : '☾';
+    try { localStorage.setItem('deep-theme', darkMode ? 'dark' : 'light'); } catch(e) {}
+  }
+
+  function toggleTheme() {
+    darkMode = !darkMode;
+    applyTheme();
+  }
+
+  function initTheme() {
+    try {
+      const saved = localStorage.getItem('deep-theme');
+      if (saved === 'dark') darkMode = true;
+    } catch(e) {}
+    applyTheme();
+  }
+
+  // ==========================================================
+  // Registration
+  // ==========================================================
+  function register(id, title, content) {
+    topics[id] = { title: title || id.replace(/_/g, ' '), content, loaded: true, element: null };
+  }
+
+  function relate(from, to, type = 'related') {
+    if (!relations.find(r => r.from === from && r.to === to && r.type === type)) {
+      relations.push({ from, to, type });
+    }
+  }
+
+  // ==========================================================
+  // Content Processing
+  // ==========================================================
+  function processContent(html) {
+    // \rel{}{}{} → extract to graph
+    html = html.replace(/\\rel\{([^}]+)\}\{([^}]+)\}\{([^}]*)\}/g, (_, from, to, type) => {
+      relate(from.trim(), to.trim(), (type || 'related').trim());
+      return '';
+    });
+
+    // \deep{id}{text} → portal
+    html = html.replace(/\\deep\{([^}]+)\}\{([^}]*)\}/g, (_, id, text) => {
+      const safeId = id.trim();
+      const label = text.trim() || safeId.replace(/_/g, ' ');
+      if (!topics[safeId]) {
+        topics[safeId] = { title: label, content: null, loaded: false, element: null };
+      }
+      return `<span class="deep-portal" data-topic="${safeId}">${label}<span class="deep-arrow">→</span></span>`;
+    });
+
+    // \latexblock{...} — use balanced brace matching
+    html = html.replace(/\\latexblock\{/g, (_, offset) => {
+      return '%%LATEXBLOCK_START%%';
+    });
+    // Better approach: manual brace-balanced extraction
+    html = extractAndRender(html, '%%LATEXBLOCK_START%%', true);
+
+    // Actually, let's do it properly with a function:
+    html = renderLatexCommands(html);
+
+    return html;
+  }
+
+  function renderLatexCommands(html) {
+    // Process \latexblock{...} with nested braces
+    html = replaceBalanced(html, '\\latexblock{', '}', (tex) => {
+      try {
+        return `<div class="temml-block">${temml.renderToString(tex, { displayMode: true })}</div>`;
+      } catch(e) {
+        return `<div class="temml-block"><code style="color:var(--text-dim)">${escHtml(tex)}</code></div>`;
+      }
+    });
+
+    // Process \latex{...} with nested braces
+    html = replaceBalanced(html, '\\latex{', '}', (tex) => {
+      try {
+        return temml.renderToString(tex, { displayMode: false });
+      } catch(e) {
+        return `<code style="color:var(--text-dim)">${escHtml(tex)}</code>`;
+      }
+    });
+
+    // $$...$$ block math
+    html = html.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex) => {
+      try {
+        return `<div class="temml-block">${temml.renderToString(tex.trim(), { displayMode: true })}</div>`;
+      } catch(e) {
+        return `<div class="temml-block"><code>${escHtml(tex)}</code></div>`;
+      }
+    });
+
+    // $...$ inline math (not $$)
+    html = html.replace(/(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)/g, (_, tex) => {
+      try {
+        return temml.renderToString(tex.trim(), { displayMode: false });
+      } catch(e) {
+        return `<code>${escHtml(tex)}</code>`;
+      }
+    });
+
+    return html;
+  }
+
+  /**
+   * Replace \command{...} handling nested braces correctly.
+   */
+  function replaceBalanced(str, open, close, fn) {
+    let result = '';
+    let i = 0;
+    while (i < str.length) {
+      const idx = str.indexOf(open, i);
+      if (idx === -1) {
+        result += str.slice(i);
+        break;
+      }
+      result += str.slice(i, idx);
+      // Find matching close brace
+      let depth = 1;
+      let j = idx + open.length;
+      while (j < str.length && depth > 0) {
+        if (str[j] === '{') depth++;
+        else if (str[j] === '}') depth--;
+        if (depth > 0) j++;
+      }
+      const inner = str.slice(idx + open.length, j);
+      result += fn(inner);
+      i = j + 1;
+    }
+    return result;
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ==========================================================
+  // Full-Screen Topic Navigation
+  // ==========================================================
+  async function openTopic(topicId, portalElement) {
+    const topic = topics[topicId];
+    if (!topic) return;
+
+    if (openStack.length > 0 && openStack[openStack.length - 1] === topicId) {
+      goBack();
+      return;
+    }
+
+    if (!topic.loaded) await loadTopic(topicId);
+    if (!topic.content) return;
+
+    // Save scroll of current view
+    const currentView = rootEl().querySelector('.deep-view.active');
+    if (currentView) {
+      currentView.dataset.scrollY = window.scrollY || document.documentElement.scrollTop;
+    }
+
+    openStack.push(topicId);
+
+    const processedContent = processContent(topic.content);
+
+    const backLabel = openStack.length > 1
+      ? (topics[openStack[openStack.length - 2]]?.title || 'Back')
+      : 'Overview';
+
+    const view = document.createElement('div');
+    view.className = 'deep-view';
+    view.dataset.topic = topicId;
+    view.innerHTML = `
+      <div class="deep-view-header">
+        <button class="deep-back-btn" aria-label="Go back">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>${backLabel}</span>
+        </button>
+        <span class="deep-view-title">${topic.title}</span>
+        <span class="deep-view-depth">Depth ${openStack.length}</span>
+      </div>
+      <div class="deep-view-body">${processedContent}</div>
+    `;
+
+    rootEl().appendChild(view);
+
+    view.querySelector('.deep-back-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      goBack();
+    });
+
+    requestAnimationFrame(() => {
+      if (currentView) {
+        currentView.classList.add('exiting');
+        currentView.classList.remove('active');
+      }
+      requestAnimationFrame(() => {
+        view.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      });
+    });
+
+    if (currentView) {
+      setTimeout(() => {
+        currentView.style.display = 'none';
+        currentView.classList.remove('exiting');
+      }, 500);
+    }
+
+    updateBreadcrumb();
+    bindPortals(view);
+  }
+
+  function goBack() {
+    if (openStack.length === 0) return;
+
+    const currentTopicId = openStack.pop();
+    const currentView = rootEl().querySelector(`.deep-view[data-topic="${currentTopicId}"]`);
+
+    const prevTopicId = openStack.length > 0 ? openStack[openStack.length - 1] : null;
+    const prevView = prevTopicId
+      ? rootEl().querySelector(`.deep-view[data-topic="${prevTopicId}"]`)
+      : rootEl().querySelector('.deep-view[data-topic="__root__"]');
+
+    if (currentView) {
+      currentView.classList.add('exiting-back');
+      currentView.classList.remove('active');
+    }
+
+    if (prevView) {
+      prevView.style.display = '';
+      requestAnimationFrame(() => {
+        prevView.classList.remove('exiting');
+        prevView.classList.add('active');
+        const savedScroll = parseInt(prevView.dataset.scrollY || '0');
+        setTimeout(() => window.scrollTo({ top: savedScroll, behavior: 'instant' }), 50);
+      });
+    }
+
+    if (currentView) {
+      setTimeout(() => currentView.remove(), 500);
+    }
+
+    updateBreadcrumb();
+  }
+
+  // ==========================================================
+  // Loading
+  // ==========================================================
+  async function loadTopic(topicId) {
+    const topic = topics[topicId];
+    if (!topic) return;
+    showLoader(`Loading ${topic.title}...`);
+
+    const paths = [`./texts/${topicId}/index.html`, `./texts/${topicId}.html`];
+    for (const path of paths) {
+      try {
+        const resp = await fetch(path);
+        if (resp.ok) { topic.content = await resp.text(); topic.loaded = true; hideLoader(); return; }
+      } catch(e) {}
+    }
+
+    topic.content = `<p class="deep-placeholder">Content for <strong>${topic.title}</strong> not yet available.<br><small>Expected: ./texts/${topicId}/index.html</small></p>`;
+    topic.loaded = true;
+    hideLoader();
+  }
+
+  function showLoader(text) {
+    const l = loader(); const t = loaderText();
+    if (t) t.textContent = text || 'Loading...';
+    if (l) l.classList.add('active');
+  }
+  function hideLoader() { const l = loader(); if (l) l.classList.remove('active'); }
+
+  // ==========================================================
+  // Breadcrumb
+  // ==========================================================
+  function updateBreadcrumb() {
+    const bc = breadcrumb();
+    if (!bc) return;
+    bc.innerHTML = '';
+
+    const rootCrumb = document.createElement('span');
+    rootCrumb.className = 'crumb' + (openStack.length === 0 ? ' active' : '');
+    rootCrumb.textContent = '⌂ Overview';
+    rootCrumb.addEventListener('click', () => { while (openStack.length > 0) goBack(); });
+    bc.appendChild(rootCrumb);
+
+    openStack.forEach((id, i) => {
+      const sep = document.createElement('span');
+      sep.className = 'sep';
+      sep.textContent = '›';
+      bc.appendChild(sep);
+
+      const crumb = document.createElement('span');
+      crumb.className = 'crumb' + (i === openStack.length - 1 ? ' active' : '');
+      crumb.textContent = topics[id]?.title || id;
+      crumb.addEventListener('click', () => {
+        while (openStack.length > i + 1) goBack();
+      });
+      bc.appendChild(crumb);
+    });
+
+    bc.classList.toggle('visible', openStack.length > 0);
+  }
+
+  // ==========================================================
+  // Bind Portals
+  // ==========================================================
+  function bindPortals(container) {
+    container.querySelectorAll('.deep-portal').forEach(portal => {
+      if (portal.dataset.bound) return;
+      portal.dataset.bound = 'true';
+      portal.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        openTopic(portal.dataset.topic, portal);
+      });
+    });
+  }
+
+  // ==========================================================
+  // Graph
+  // ==========================================================
+  function toggleGraph() {
+    const overlay = document.getElementById('deep-graph-overlay');
+    if (!overlay) return;
+    graphVisible = !graphVisible;
+    if (graphVisible) { overlay.classList.add('visible'); renderGraph(); }
+    else { overlay.classList.remove('visible'); if (graphAnimFrame) cancelAnimationFrame(graphAnimFrame); }
+  }
+
+  function renderGraph() {
+    const canvas = document.getElementById('deep-graph-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = canvas.clientWidth * dpr;
+    canvas.height = canvas.clientHeight * dpr;
+    ctx.scale(dpr, dpr);
+
+    const W = canvas.clientWidth;
+    const H = canvas.clientHeight;
+
+    const nodeIds = Object.keys(topics);
+    if (nodeIds.length === 0) {
+      ctx.fillStyle = '#888';
+      ctx.font = '14px Inter, system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('No topics registered yet.', W / 2, H / 2);
+      return;
+    }
+
+    const nodes = nodeIds.map((id, i) => {
+      const angle = (2 * Math.PI * i) / nodeIds.length;
+      const r = Math.min(W, H) * 0.3;
+      return {
+        id, title: topics[id].title || id.replace(/_/g, ' '),
+        x: W/2 + Math.cos(angle)*r + (Math.random()-0.5)*40,
+        y: H/2 + Math.sin(angle)*r + (Math.random()-0.5)*40,
+        vx: 0, vy: 0, radius: 24,
+      };
+    });
+
+    const nodeMap = {};
+    nodes.forEach(n => { nodeMap[n.id] = n; });
+
+    const edges = relations
+      .filter(r => nodeMap[r.from] && nodeMap[r.to])
+      .map(r => ({ source: nodeMap[r.from], target: nodeMap[r.to], type: r.type }));
+
+    let hoveredNode = null, draggedNode = null, mouseX = 0, mouseY = 0;
+
+    const getMousePos = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left; mouseY = e.clientY - rect.top;
+    };
+
+    canvas.onmousemove = (e) => {
+      getMousePos(e);
+      if (draggedNode) { draggedNode.x = mouseX; draggedNode.y = mouseY; draggedNode.vx = 0; draggedNode.vy = 0; return; }
+      hoveredNode = null;
+      for (const n of nodes) {
+        if (Math.hypot(mouseX - n.x, mouseY - n.y) < n.radius + 8) { hoveredNode = n; canvas.style.cursor = 'pointer'; return; }
+      }
+      canvas.style.cursor = 'default';
+    };
+
+    canvas.onmousedown = (e) => {
+      getMousePos(e);
+      for (const n of nodes) {
+        if (Math.hypot(mouseX - n.x, mouseY - n.y) < n.radius + 8) { draggedNode = n; return; }
+      }
+    };
+
+    canvas.onmouseup = () => { draggedNode = null; };
+
+    canvas.ondblclick = (e) => {
+      getMousePos(e);
+      for (const n of nodes) {
+        if (Math.hypot(mouseX - n.x, mouseY - n.y) < n.radius + 8) {
+          toggleGraph();
+          const portal = document.querySelector(`.deep-portal[data-topic="${n.id}"]`);
+          if (portal) openTopic(n.id, portal);
+          return;
+        }
+      }
+    };
+
+    const REPULSION = 8000, ATTRACTION = 0.005, DAMPING = 0.88, CENTER_GRAVITY = 0.01, REST_LENGTH = 160;
+
+    function tick() {
+      if (!graphVisible) return;
+      ctx.clearRect(0, 0, W, H);
+
+      // Repulsion
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i], b = nodes[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          const f = REPULSION / (dist * dist);
+          const fx = (dx / dist) * f, fy = (dy / dist) * f;
+          a.vx += fx; a.vy += fy; b.vx -= fx; b.vy -= fy;
+        }
+      }
+
+      // Attraction along edges
+      edges.forEach(e => {
+        const dx = e.target.x - e.source.x, dy = e.target.y - e.source.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const f = (dist - REST_LENGTH) * ATTRACTION;
+        const fx = (dx / dist) * f, fy = (dy / dist) * f;
+        e.source.vx += fx; e.source.vy += fy;
+        e.target.vx -= fx; e.target.vy -= fy;
+      });
+
+      // Integrate
+      nodes.forEach(n => {
+        n.vx += (W / 2 - n.x) * CENTER_GRAVITY;
+        n.vy += (H / 2 - n.y) * CENTER_GRAVITY;
+        if (n !== draggedNode) {
+          n.vx *= DAMPING; n.vy *= DAMPING;
+          n.x += n.vx; n.y += n.vy;
+          n.x = Math.max(n.radius, Math.min(W - n.radius, n.x));
+          n.y = Math.max(n.radius, Math.min(H - n.radius, n.y));
+        }
+      });
+
+      // Draw edges
+      edges.forEach(e => {
+        const hl = hoveredNode && (e.source === hoveredNode || e.target === hoveredNode);
+        ctx.beginPath();
+        ctx.moveTo(e.source.x, e.source.y);
+        ctx.lineTo(e.target.x, e.target.y);
+        ctx.strokeStyle = hl ? 'rgba(124,108,240,0.6)' : 'rgba(200,200,220,0.2)';
+        ctx.lineWidth = hl ? 2 : 1;
+        ctx.stroke();
+        if (e.type && e.type !== 'related') {
+          const mx = (e.source.x + e.target.x) / 2, my = (e.source.y + e.target.y) / 2;
+          ctx.font = '10px Inter, system-ui, sans-serif';
+          ctx.fillStyle = hl ? 'rgba(124,108,240,0.9)' : 'rgba(200,200,220,0.3)';
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(e.type, mx, my - 8);
+        }
+      });
+
+      // Draw nodes
+      nodes.forEach(n => {
+        const isHovered = n === hoveredNode;
+        const isOpen = openStack.includes(n.id);
+
+        if (isHovered || isOpen) {
+          const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius * 2.5);
+          g.addColorStop(0, 'rgba(124,108,240,0.15)');
+          g.addColorStop(1, 'rgba(124,108,240,0)');
+          ctx.beginPath(); ctx.arc(n.x, n.y, n.radius * 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = g; ctx.fill();
+        }
+
+        ctx.beginPath(); ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+        ctx.fillStyle = isOpen ? '#7c6cf0' : (isHovered ? '#2a2a3a' : '#1a1a25');
+        ctx.fill();
+        ctx.strokeStyle = isHovered ? 'rgba(124,108,240,0.8)' : (isOpen ? 'rgba(124,108,240,0.5)' : 'rgba(255,255,255,0.1)');
+        ctx.lineWidth = isHovered ? 2 : 1;
+        ctx.stroke();
+
+        ctx.font = `${isHovered ? '600' : '400'} 11px Inter, system-ui, sans-serif`;
+        ctx.fillStyle = isHovered ? '#fff' : (isOpen ? '#c8b8ff' : '#999');
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        let label = n.title;
+        if (label.length > 18) label = label.substring(0, 16) + '…';
+        ctx.fillText(label, n.x, n.y + n.radius + 16);
+      });
+
+      ctx.font = '11px Inter, system-ui, sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText(`${nodes.length} topics · ${edges.length} relations`, 16, 16);
+      ctx.fillText('Double-click to open · Drag to rearrange · Esc to close', 16, 32);
+
+      graphAnimFrame = requestAnimationFrame(tick);
+    }
+
+    tick();
+  }
+
+  // ==========================================================
+  // Main Render
+  // ==========================================================
+  function render(html) {
+    const r = rootEl();
+    if (!r) return;
+    const processed = processContent(html);
+    const view = document.createElement('div');
+    view.className = 'deep-view active';
+    view.dataset.topic = '__root__';
+    view.innerHTML = `<div class="deep-view-body">${processed}</div>`;
+    r.innerHTML = '';
+    r.appendChild(view);
+    bindPortals(view);
+  }
+
+  // ==========================================================
+  // Init
+  // ==========================================================
+  function init() {
+    initTheme();
+    document.getElementById('deep-graph-toggle')?.addEventListener('click', toggleGraph);
+    document.getElementById('deep-theme-toggle')?.addEventListener('click', toggleTheme);
+
+    const overlay = document.getElementById('deep-graph-overlay');
+    if (overlay) overlay.addEventListener('click', (e) => { if (e.target === overlay) toggleGraph(); });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'g' && !e.ctrlKey && !e.metaKey) toggleGraph();
+      if (e.key === 'Escape') {
+        if (graphVisible) toggleGraph();
+        else if (openStack.length > 0) goBack();
+      }
+      if (e.key === 'Backspace' && openStack.length > 0 && e.target === document.body) { e.preventDefault(); goBack(); }
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+
+  return {
+    register, relate, render, openTopic, goBack, toggleGraph, toggleTheme,
+    get topics() { return topics; },
+    get relations() { return relations; },
+    get openStack() { return [...openStack]; },
+  };
+
+})();
+
+
+// ============================================================
+// DEMO CONTENT
+// ============================================================
+
+Deep.register('positional_encoding', 'Positional Encoding',
+  `<h3>Why Position Matters</h3>
+  <p>A Transformer processes all tokens <strong>simultaneously</strong> — unlike an RNN, which reads left-to-right.
+  Without explicit position information, "the cat sat on the mat" and "mat the on sat cat the" produce
+  <em>identical</em> representations.</p>
+
+  <p>The fix: inject a <strong>positional encoding</strong> — a unique signal added to each token embedding:</p>
+
+  \\latexblock{PE_{(pos, 2i)} = \\sin\\!\\left(\\frac{pos}{10000^{2i/d}}\\right)}
+
+  \\latexblock{PE_{(pos, 2i+1)} = \\cos\\!\\left(\\frac{pos}{10000^{2i/d}}\\right)}
+
+  <p>These sinusoidal functions create a unique fingerprint per position. The model can learn
+  relative positions because \\latex{PE_{pos+k}} is a linear function of \\latex{PE_{pos}}.</p>
+
+  <p>\\deep{attention_mechanism}{Attention} uses these position-aware embeddings to determine
+  which tokens should attend to which.</p>
+
+  \\rel{positional_encoding}{attention_mechanism}{enables}
+  \\rel{positional_encoding}{token_embeddings}{extends}`
+);
+
+Deep.register('attention_mechanism', 'Attention Mechanism',
+  `<h3>Attention Is All You Need</h3>
+  <p>Attention computes a weighted sum over all positions, where weights come from
+  query-key compatibility:</p>
+
+  \\latexblock{\\text{Attention}(Q, K, V) = \\text{softmax}\\!\\left(\\frac{QK^{\\top}}{\\sqrt{d_k}}\\right)V}
+
+  <p>Think of it as a <em>soft lookup table</em>: instead of one exact match,
+  the model retrieves a blend of all values weighted by relevance.</p>
+
+  <p>The \\latex{\\sqrt{d_k}} scaling prevents dot products from growing too large,
+  which would push softmax into vanishing-gradient regions.</p>
+
+  <p>In practice, Transformers use \\deep{multi_head_attention}{Multi-Head Attention} —
+  several attention ops in parallel, each learning different relationship types.</p>
+
+  \\rel{attention_mechanism}{multi_head_attention}{generalizes to}
+  \\rel{attention_mechanism}{softmax_bottleneck}{limited by}`
+);
+
+Deep.register('token_embeddings', 'Token Embeddings',
+  `<h3>From Words to Vectors</h3>
+  <p>Each token is mapped to a dense vector via an embedding matrix
+  \\latex{W_E \\in \\mathbb{R}^{|V| \\times d}}. In this space,
+  <strong>semantic similarity = geometric proximity</strong>.</p>
+
+  <p>These vectors are <em>learned</em> during training — the model discovers that
+  "king" and "queen" should be close, while "king" and "carburetor" should be far apart.</p>
+
+  <p>This is where the \\deep{grounding_problem}{Grounding Problem} becomes visible:
+  the vector for "apple" captures linguistic relationships perfectly but has no connection
+  to the taste, color, or weight of an actual apple.</p>
+
+  \\rel{token_embeddings}{positional_encoding}{combined with}
+  \\rel{token_embeddings}{grounding_problem}{illustrates}`
+);
+
+Deep.register('grounding_problem', 'The Grounding Problem',
+  `<h3>Symbols Without Senses</h3>
+  <p>The <strong>Grounding Problem</strong> asks: how can digital symbols acquire <em>meaning</em>?
+  For humans, "hot" is grounded in burnt fingers and sun on skin. For an LLM, "hot" is a vector
+  near "warm" and "temperature" — defined entirely by relationships to other symbols.</p>
+
+  <blockquote>How can the semantic interpretation of a formal symbol system be made intrinsic
+  to the system, rather than just parasitic on the meanings in our heads?
+  — Stevan Harnad, 1990</blockquote>
+
+  <p>The \\deep{chinese_room}{Chinese Room Argument} makes this concrete,
+  and \\deep{4e_cognition}{4E Cognition} explains why embodiment may be necessary.</p>
+
+  \\rel{grounding_problem}{chinese_room}{formalized by}
+  \\rel{grounding_problem}{4e_cognition}{addressed by}`
+);
+
+Deep.register('multi_head_attention', 'Multi-Head Attention',
+  `<h3>Parallel Perspectives</h3>
+  <p>Instead of one attention function, Multi-Head runs \\latex{h} in parallel:</p>
+
+  \\latexblock{\\text{MultiHead}(Q,K,V) = \\text{Concat}(\\text{head}_1, \\ldots, \\text{head}_h)\\,W^O}
+
+  <p>Each head specializes: syntax, coreference, positional patterns.
+  Computationally efficient because each head uses reduced dimensionality:
+  \\latex{d_k = d_{\\text{model}} / h}.</p>`
+);
+
+Deep.register('softmax_bottleneck', 'The Softmax Bottleneck',
+  `<h3>A Mathematical Ceiling</h3>
+  <p>The softmax output layer constrains the log-probability matrix:</p>
+
+  \\latexblock{\\text{rank}(\\log P_\\theta) \\leq d \\ll |V|}
+
+  <p>There exist valid probability distributions the model <strong>cannot represent</strong>,
+  no matter how much training. The model's "perceptual bubble" has a precise dimensionality.</p>`
+);
+
+Deep.register('chinese_room', 'The Chinese Room',
+  `<h3>Searle's Thought Experiment</h3>
+  <p>A person who speaks only English is locked in a room with a rulebook.
+  Chinese characters come in; the person follows rules and slides perfect Chinese answers out.</p>
+
+  <p>Outside: it looks like understanding. Inside: pure symbol manipulation —
+  <strong>syntax without semantics</strong>. This is exactly the LLM situation.</p>`
+);
+
+Deep.register('4e_cognition', '4E Cognition',
+  `<h3>Mind Beyond the Brain</h3>
+  <p><strong>4E Cognition</strong> posits four dimensions biological cognition requires:</p>
+  <ul>
+    <li><strong>Embodied:</strong> Thoughts shaped by having a body. AI "knows" <em>pain</em> but can't feel it.</li>
+    <li><strong>Embedded:</strong> Thinking within physical/social context. AI is ontologically isolated.</li>
+    <li><strong>Enacted:</strong> Knowledge through action. A child learns gravity by dropping toys.</li>
+    <li><strong>Extended:</strong> Where AI currently lives — as cognitive prosthesis, tool not peer.</li>
+  </ul>`
+);
+
+
+// ============================================================
+// RENDER ROOT NARRATIVE
+// ============================================================
+
+Deep.render(`
+  <h1>How Machines Learn to Speak</h1>
+
+  <p>A Large Language Model sees text not as words with meaning, but as sequences of
+  <strong>tokens</strong> — numerical IDs mapped to \\deep{token_embeddings}{dense vector representations}
+  in a high-dimensional space. In this space, meaning is geometry: similar concepts cluster together,
+  and relationships become directions you can travel.</p>
+
+  <p>But there's a problem. Because the Transformer processes all tokens simultaneously,
+  \\deep{positional_encoding}{every word looks the same regardless of its position}.
+  "Dog bites man" and "man bites dog" would produce identical representations without a clever fix.</p>
+
+  <p>Once tokens know <em>where</em> they are, the \\deep{attention_mechanism}{attention mechanism}
+  lets each token decide which others are relevant — creating dynamic, context-dependent
+  representations that capture full sentence meaning.</p>
+
+  <p>Yet for all this sophistication, these models remain fundamentally
+  \\deep{grounding_problem}{ungrounded} — they manipulate symbols with extraordinary fluency
+  but have never touched, seen, or felt the world those symbols describe.
+  They have mastered the <strong>map</strong> but never set foot in the <strong>territory</strong>.</p>
+
+  <h2>The Architecture of Understanding</h2>
+
+  <p>The Transformer achieves its power through a deceptively simple idea:
+  instead of processing text sequentially, it lets every token attend to every other
+  <em>simultaneously</em>. This, combined with \\deep{positional_encoding}{positional encodings} and
+  \\deep{multi_head_attention}{multi-head attention}, captures long-range dependencies
+  that sequential models struggle with.</p>
+
+  <p>However, this power has a mathematical ceiling: the
+  \\deep{softmax_bottleneck}{softmax bottleneck} proves there are valid distributions
+  over language the model <em>cannot express</em>, no matter how much data or compute.</p>
+
+  <h2>The Philosophical Horizon</h2>
+
+  <p>The deeper you look, the more a fundamental question emerges: is fluency the same
+  as understanding? The \\deep{chinese_room}{Chinese Room argument} suggests not.
+  And \\deep{4e_cognition}{4E Cognition} explains why no amount of scaling may bridge
+  the gap — because true comprehension may require a body, a world, and the experience
+  of being wrong.</p>
+`);
+</script>
+
+</body>
+</html>

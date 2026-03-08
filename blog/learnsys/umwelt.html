@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Umwelten – Uexküll meets AI</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a2a1a; overflow: hidden; font-family: 'Segoe UI', Arial, sans-serif; }
+  canvas { display: block; }
+
+  #info-panel {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: rgba(10, 10, 10, 0.88); border: 1px solid rgba(255,255,255,0.15);
+    color: #e0e0e0; padding: 18px 28px; border-radius: 12px;
+    max-width: 640px; text-align: center; z-index: 20;
+    font-size: 14px; line-height: 1.7;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  #info-panel em { color: #a0cfff; }
+  #info-panel strong { color: #fff; }
+
+  #scene-label {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    color: #fff; font-size: 22px; z-index: 20;
+    letter-spacing: 3px; font-weight: 300;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.4); padding: 8px 24px; border-radius: 8px;
+    backdrop-filter: blur(8px);
+  }
+
+  #nav-buttons {
+    position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+    z-index: 20; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  }
+
+  #nav-buttons button {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
+    color: #ddd; padding: 8px 18px; cursor: pointer;
+    font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px;
+    border-radius: 20px; transition: all 0.3s;
+    backdrop-filter: blur(6px);
+  }
+  #nav-buttons button:hover {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255,255,255,0.15);
+  }
+  #nav-buttons button.active {
+    background: rgba(100,180,255,0.25);
+    border-color: rgba(100,180,255,0.5);
+    color: #fff;
+  }
+</style>
+</head>
+<body>
+
+<div id="scene-label">UMWELTEN</div>
+
+<div id="nav-buttons">
+  <button onclick="switchScene('overview')">🌳 Park-Übersicht</button>
+  <button onclick="switchScene('human')">👤 Mensch</button>
+  <button onclick="switchScene('dog')">🐕 Hund</button>
+  <button onclick="switchScene('beetle')">🪲 Käfer</button>
+  <button onclick="switchScene('ai')">🤖 KI</button>
+  <button onclick="switchScene('pain')">⚡ Schmerz-Vergleich</button>
+</div>
+
+<div id="info-panel">
+  Willkommen. Du siehst einen Park – einen Menschen, der mit seinem Hund spielt,<br>
+  und einen kleinen Käfer am Boden. Klicke auf die Buttons, um ihre <strong>Umwelten</strong> zu sehen.
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ============================================================
+// SCENE SETUP
+// ============================================================
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87CEEB);
+scene.fog = new THREE.Fog(0x87CEEB, 40, 80);
+
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(8, 5, 12);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+document.body.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.maxPolarAngle = Math.PI / 2.1;
+controls.minDistance = 3;
+controls.maxDistance = 40;
+
+// ============================================================
+// LIGHTING – warm sunlight
+// ============================================================
+const ambientLight = new THREE.AmbientLight(0x6688aa, 0.5);
+scene.add(ambientLight);
+
+const sunLight = new THREE.DirectionalLight(0xfff4e0, 1.8);
+sunLight.position.set(15, 20, 10);
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.set(2048, 2048);
+sunLight.shadow.camera.near = 0.5;
+sunLight.shadow.camera.far = 60;
+sunLight.shadow.camera.left = -20;
+sunLight.shadow.camera.right = 20;
+sunLight.shadow.camera.top = 20;
+sunLight.shadow.camera.bottom = -20;
+scene.add(sunLight);
+
+const hemiLight = new THREE.HemisphereLight(0x87CEEB, 0x3a5f0b, 0.4);
+scene.add(hemiLight);
+
+// ============================================================
+// MATERIALS
+// ============================================================
+const skinMat = new THREE.MeshStandardMaterial({ color: 0xd4a574, roughness: 0.7, metalness: 0.0 });
+const shirtMat = new THREE.MeshStandardMaterial({ color: 0x3366aa, roughness: 0.8 });
+const pantsMat = new THREE.MeshStandardMaterial({ color: 0x2a2a3a, roughness: 0.8 });
+const hairMat = new THREE.MeshStandardMaterial({ color: 0x3a2a1a, roughness: 0.9 });
+const dogFurMat = new THREE.MeshStandardMaterial({ color: 0xc4883a, roughness: 0.9 });
+const dogNoseMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.5 });
+const beetleMat = new THREE.MeshStandardMaterial({ color: 0x1a3a1a, roughness: 0.4, metalness: 0.3 });
+const beetleShellMat = new THREE.MeshStandardMaterial({ color: 0x2a5a2a, roughness: 0.3, metalness: 0.4 });
+const grassMat = new THREE.MeshStandardMaterial({ color: 0x4a8a2a, roughness: 1.0 });
+const dirtMat = new THREE.MeshStandardMaterial({ color: 0x5a4a3a, roughness: 1.0 });
+const treeTrunkMat = new THREE.MeshStandardMaterial({ color: 0x5a3a2a, roughness: 0.95 });
+const leavesMat = new THREE.MeshStandardMaterial({ color: 0x3a7a2a, roughness: 0.9 });
+const benchMat = new THREE.MeshStandardMaterial({ color: 0x6a4a2a, roughness: 0.8 });
+const pathMat = new THREE.MeshStandardMaterial({ color: 0x8a7a6a, roughness: 0.95 });
+const bubbleMat = (color, opacity) => new THREE.MeshPhysicalMaterial({
+  color: color, transparent: true, opacity: opacity,
+  side: THREE.DoubleSide, depthWrite: false,
+  roughness: 0.1, metalness: 0.0, transmission: 0.6,
+  thickness: 0.5, clearcoat: 1.0
+});
+
+// ============================================================
+// PARK ENVIRONMENT
+// ============================================================
+
+// Ground
+const groundGeo = new THREE.PlaneGeometry(60, 60);
+const ground = new THREE.Mesh(groundGeo, grassMat);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+// Path
+const pathShape = new THREE.Shape();
+pathShape.moveTo(-30, -1);
+pathShape.lineTo(30, -1);
+pathShape.lineTo(30, 1);
+pathShape.lineTo(-30, 1);
+const pathGeo = new THREE.PlaneGeometry(60, 2.5);
+const path = new THREE.Mesh(pathGeo, pathMat);
+path.rotation.x = -Math.PI / 2;
+path.position.set(0, 0.01, 4);
+path.receiveShadow = true;
+scene.add(path);
+
+// Tree creator
+function createTree(x, z, height, crownRadius) {
+  const group = new THREE.Group();
+  
+  // Trunk
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.2, 0.35, height, 8),
+    treeTrunkMat
+  );
+  trunk.position.y = height / 2;
+  trunk.castShadow = true;
+  group.add(trunk);
+  
+  // Crown (multiple spheres for organic look)
+  const crownPositions = [
+    [0, height + crownRadius * 0.5, 0],
+    [crownRadius * 0.4, height + crownRadius * 0.2, crownRadius * 0.3],
+    [-crownRadius * 0.3, height + crownRadius * 0.3, -crownRadius * 0.4],
+    [crownRadius * 0.2, height + crownRadius * 0.7, -crownRadius * 0.2],
+  ];
+  crownPositions.forEach(([cx, cy, cz]) => {
+    const crown = new THREE.Mesh(
+      new THREE.SphereGeometry(crownRadius * (0.6 + Math.random() * 0.4), 12, 10),
+      leavesMat.clone()
+    );
+    crown.material.color.setHex(0x2a6a1a + Math.floor(Math.random() * 0x002a10));
+    crown.position.set(cx, cy, cz);
+    crown.castShadow = true;
+    group.add(crown);
+  });
+  
+  group.position.set(x, 0, z);
+  return group;
+}
+
+// Place trees
+const trees = [
+  createTree(-8, -5, 4, 2.5),
+  createTree(-12, 2, 5, 3),
+  createTree(10, -8, 4.5, 2.8),
+  createTree(14, 1, 3.5, 2.2),
+  createTree(-5, -12, 5.5, 3.2),
+  createTree(8, 8, 4, 2.5),
+  createTree(-15, -10, 4.5, 2.8),
+  createTree(18, -5, 5, 3),
+];
+trees.forEach(t => scene.add(t));
+
+// Park bench
+function createBench(x, z, rotY) {
+  const group = new THREE.Group();
+  // Seat
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(2, 0.08, 0.5), benchMat);
+  seat.position.y = 0.5;
+  seat.castShadow = true;
+  group.add(seat);
+  // Back
+  const back = new THREE.Mesh(new THREE.BoxGeometry(2, 0.6, 0.06), benchMat);
+  back.position.set(0, 0.8, -0.22);
+  back.castShadow = true;
+  group.add(back);
+  // Legs
+  [[-0.8, 0], [0.8, 0]].forEach(([lx, lz]) => {
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.5, 0.4), benchMat);
+    leg.position.set(lx, 0.25, lz);
+    group.add(leg);
+  });
+  group.position.set(x, 0, z);
+  group.rotation.y = rotY || 0;
+  return group;
+}
+scene.add(createBench(-3, 6, 0));
+scene.add(createBench(12, 5.5, Math.PI * 0.1));
+
+// Flowers scattered
+function createFlower(x, z) {
+  const group = new THREE.Group();
+  const stem = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.02, 0.02, 0.3, 4),
+    new THREE.MeshStandardMaterial({ color: 0x3a6a2a })
+  );
+  stem.position.y = 0.15;
+  group.add(stem);
+  
+  const petalColor = [0xff6688, 0xffaa44, 0xffff66, 0xaa66ff, 0xff4466][Math.floor(Math.random() * 5)];
+  const petal = new THREE.Mesh(
+    new THREE.SphereGeometry(0.06, 6, 6),
+    new THREE.MeshStandardMaterial({ color: petalColor })
+  );
+  petal.position.y = 0.32;
+  petal.scale.set(1, 0.5, 1);
+  group.add(petal);
+  
+  group.position.set(x, 0, z);
+  return group;
+}
+for (let i = 0; i < 40; i++) {
+  const fx = (Math.random() - 0.5) * 30;
+  const fz = (Math.random() - 0.5) * 30;
+  if (Math.abs(fz - 4) > 2) { // not on path
+    scene.add(createFlower(fx, fz));
+  }
+}
+
+// ============================================================
+// HUMAN FIGURE (stylized but recognizable)
+// ============================================================
+function createHuman() {
+  const group = new THREE.Group();
+  
+  // Head
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 14), skinMat);
+  head.position.y = 1.72;
+  head.castShadow = true;
+  group.add(head);
+  
+  // Hair
+  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.55), hairMat);
+  hair.position.y = 1.76;
+  group.add(hair);
+  
+  // Neck
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.08, 0.12, 8), skinMat);
+  neck.position.y = 1.48;
+  group.add(neck);
+  
+  // Torso
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.15, 0.55, 10), shirtMat);
+  torso.position.y = 1.15;
+  torso.castShadow = true;
+  group.add(torso);
+  
+  // Arms
+  [-1, 1].forEach(side => {
+    // Upper arm
+    const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.045, 0.35, 8), shirtMat);
+    upperArm.position.set(side * 0.25, 1.25, 0);
+    upperArm.rotation.z = side * 0.3;
+    group.add(upperArm);
+    // Lower arm
+    const lowerArm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.3, 8), skinMat);
+    lowerArm.position.set(side * 0.35, 1.0, side === 1 ? 0.1 : 0);
+    lowerArm.rotation.z = side * 0.5;
+    group.add(lowerArm);
+    // Hand
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), skinMat);
+    hand.position.set(side * 0.42, 0.85, side === 1 ? 0.15 : 0);
+    group.add(hand);
+  });
+  
+  // Hips/Pants
+  const hips = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.14, 0.2, 10), pantsMat);
+  hips.position.y = 0.8;
+  group.add(hips);
+  
+  // Legs
+  [-1, 1].forEach(side => {
+    const upperLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.4, 8), pantsMat);
+    upperLeg.position.set(side * 0.08, 0.52, 0);
+    upperLeg.castShadow = true;
+    group.add(upperLeg);
+    const lowerLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.04, 0.38, 8), pantsMat);
+    lowerLeg.position.set(side * 0.08, 0.2, 0);
+    group.add(lowerLeg);
+    // Shoe
+    const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 0.14), new THREE.MeshStandardMaterial({ color: 0x2a2a2a }));
+    shoe.position.set(side * 0.08, 0.02, 0.02);
+    group.add(shoe);
+  });
+  
+  return group;
+}
+
+// ============================================================
+// DOG FIGURE (golden retriever style)
+// ============================================================
+function createDog() {
+  const group = new THREE.Group();
+  
+  // Body
+  const body = new THREE.Mesh(
+    new THREE.CapsuleGeometry(0.2, 0.5, 8, 12),
+    dogFurMat
+  );
+  body.rotation.z = Math.PI / 2;
+  body.position.set(0, 0.45, 0);
+  body.castShadow = true;
+  group.add(body);
+  
+  // Head
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 10), dogFurMat);
+  head.position.set(0.45, 0.55, 0);
+  head.castShadow = true;
+  group.add(head);
+  
+  // Snout
+  const snout = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.12, 8), dogFurMat);
+  snout.rotation.z = Math.PI / 2;
+  snout.position.set(0.58, 0.52, 0);
+  group.add(snout);
+  
+  // Nose
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.025, 6, 6), dogNoseMat);
+  nose.position.set(0.64, 0.53, 0);
+  group.add(nose);
+  
+  // Ears
+  [-1, 1].forEach(side => {
+    const ear = new THREE.Mesh(
+      new THREE.SphereGeometry(0.07, 8, 6),
+      dogFurMat
+    );
+    ear.scale.set(0.5, 1, 0.7);
+    ear.position.set(0.38, 0.62, side * 0.12);
+    group.add(ear);
+  });
+  
+  // Eyes
+  [-1, 1].forEach(side => {
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.025, 6, 6), new THREE.MeshStandardMaterial({ color: 0x2a1a0a }));
+    eye.position.set(0.52, 0.58, side * 0.08);
+    group.add(eye);
+  });
+  
+  // Legs
+  [[0.2, 0.12], [0.2, -0.12], [-0.2, 0.12], [-0.2, -0.12]].forEach(([lx, lz]) => {
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.35, 8), dogFurMat);
+    leg.position.set(lx, 0.17, lz);
+    leg.castShadow = true;
+    group.add(leg);
+    // Paw
+    const paw = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 6), dogFurMat);
+    paw.scale.y = 0.5;
+    paw.position.set(lx, 0.02, lz);
+    group.add(paw);
+  });
+  
+  // Tail (curved up)
+  const tailCurve = new THREE.QuadraticBezierCurve3(
+    new THREE.Vector3(-0.35, 0.45, 0),
+    new THREE.Vector3(-0.5, 0.75, 0),
+    new THREE.Vector3(-0.42, 0.85, 0)
+  );
+  const tailGeo = new THREE.TubeGeometry(tailCurve, 8, 0.025, 6, false);
+  const tail = new THREE.Mesh(tailGeo, dogFurMat);
+  group.add(tail);
+  
+  return group;
+}
+
+// ============================================================
+// BEETLE FIGURE
+// ============================================================
+function createBeetle() {
+  const group = new THREE.Group();
+  
+  // Abdomen
+  const abdomen = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), beetleShellMat);
+  abdomen.scale.set(1, 0.6, 1.3);
+  abdomen.position.set(0, 0.05, -0.03);
+  group.add(abdomen);
+  
+  // Thorax
+  const thorax = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 6), beetleMat);
+  thorax.position.set(0, 0.04, 0.06);
+  group.add(thorax);
+  
+  // Head
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 6), beetleMat);
+  head.position.set(0, 0.04, 0.1);
+  group.add(head);
+  
+  // Antennae
+  [-1, 1].forEach(side => {
+    const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.003, 0.002, 0.06, 4), beetleMat);
+    antenna.position.set(side * 0.015, 0.07, 0.12);
+    antenna.rotation.x = -0.5;
+    antenna.rotation.z = side * 0.4;
+    group.add(antenna);
+  });
+  
+  // Legs (6)
+  for (let i = 0; i < 3; i++) {
+    [-1, 1].forEach(side => {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.003, 0.05, 4), beetleMat);
+      leg.position.set(side * 0.04, 0.01, 0.04 - i * 0.035);
+      leg.rotation.z = side * 1.2;
+      group.add(leg);
+    });
+  }
+  
+  // Shell line (division on back)
+  const shellLine = new THREE.Mesh(
+    new THREE.BoxGeometry(0.002, 0.001, 0.1),
+    new THREE.MeshStandardMaterial({ color: 0x0a2a0a })
+  );
+  shellLine.position.set(0, 0.09, -0.03);
+  group.add(shellLine);
+  
+  return group;
+}
+
+// ============================================================
+// AI REPRESENTATION (server/monolith)
+// ============================================================
+function createAIMonolith() {
+  const group = new THREE.Group();
+  
+  const monolith = new THREE.Mesh(
+    new THREE.BoxGeometry(0.8, 1.8, 0.4),
+    new THREE.MeshStandardMaterial({ color: 0x1a1a2a, roughness: 0.2, metalness: 0.8 })
+  );
+  monolith.position.y = 0.9;
+  monolith.castShadow = true;
+  group.add(monolith);
+  
+  // Glowing lines on surface
+  for (let i = 0; i < 8; i++) {
+    const line = new THREE.Mesh(
+      new THREE.BoxGeometry(0.6, 0.008, 0.01),
+      new THREE.MeshBasicMaterial({ color: 0x00aaff })
+    );
+    line.position.set(0, 0.2 + i * 0.2, 0.21);
+    group.add(line);
+  }
+  
+  // "Eye" / indicator
+  const eye = new THREE.Mesh(
+    new THREE.CircleGeometry(0.06, 16),
+    new THREE.MeshBasicMaterial({ color: 0x00ccff })
+  );
+  eye.position.set(0, 1.5, 0.21);
+  group.add(eye);
+  
+  return group;
+}
+
+// ============================================================
+// BUBBLE CREATOR
+// ============================================================
+function createBubble(radius, color, opacity) {
+  const geo = new THREE.SphereGeometry(radius, 48, 36);
+  const mat = bubbleMat(color, opacity);
+  const mesh = new THREE.Mesh(geo, mat);
+  return mesh;
+}
+
+// ============================================================
+// TEXT SPRITE CREATOR
+// ============================================================
+function createTextSprite(text, color, fontSize) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+  ctx.font = `bold ${fontSize || 36}px Segoe UI, Arial, sans-serif`;
+  ctx.fillStyle = color || '#ffffff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, 256, 64);
+  
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  const mat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(2, 0.5, 1);
+  return sprite;
+}
+
+// ============================================================
+// PLACE CHARACTERS IN PARK
+// ============================================================
+const human = createHuman();
+human.position.set(1, 0, 3);
+human.rotation.y = -0.3;
+scene.add(human);
+
+const dog = createDog();
+dog.position.set(3, 0, 2.5);
+dog.rotation.y = -0.8;
+scene.add(dog);
+
+const beetle = createBeetle();
+beetle.position.set(2, 0, 4.5);
+beetle.rotation.y = 1.2;
+scene.add(beetle);
+
+// ============================================================
+// OVERLAY OBJECTS (bubbles, particles, etc.)
+// ============================================================
+let overlayObjects = [];
+
+function clearOverlays() {
+  overlayObjects.forEach(obj => scene.remove(obj));
+  overlayObjects = [];
+}
+
+// ============================================================
+// SCENE SWITCHING
+// ============================================================
+let currentSceneName = 'overview';
+let animationCallbacks = [];
+
+function setActiveButton(name) {
+  document.querySelectorAll('#nav-buttons button').forEach(btn => btn.classList.remove('active'));
+  const buttons = document.querySelectorAll('#nav-buttons button');
+  const names = ['overview', 'human', 'dog', 'beetle', 'ai', 'pain'];
+  const idx = names.indexOf(name);
+  if (idx >= 0 && buttons[idx]) buttons[idx].classList.add('active');
+}
+
+function smoothCameraMove(targetPos, targetLookAt, duration) {
+  const startPos = camera.position.clone();
+  const startTarget = controls.target.clone();
+  const endPos = new THREE.Vector3(...targetPos);
+  const endTarget = new THREE.Vector3(...targetLookAt);
+  const startTime = performance.now();
+  
+  return new Promise(resolve => {
+    function update() {
+      const elapsed = (performance.now() - startTime) / 1000;
+      const t = Math.min(elapsed / duration, 1);
+      const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      
+      camera.position.lerpVectors(startPos, endPos, ease);
+      controls.target.lerpVectors(startTarget, endTarget, ease);
+      
+      if (t < 1) {
+        requestAnimationFrame(update);
+      } else {
+        resolve();
+      }
+    }
+    update();
+  });
+}
+
+window.switchScene = function(name) {
+  clearOverlays();
+  currentSceneName = name;
+  animationCallbacks = [];
+  setActiveButton(name);
+
+  const label = document.getElementById('scene-label');
+  const info = document.getElementById('info-panel');
+
+  // Show/hide characters based on scene
+  human.visible = true;
+  dog.visible = true;
+  beetle.visible = true;
+
+  switch(name) {
+    // ============================================================
+    // OVERVIEW: Full park, all characters, no bubbles
+    // ============================================================
+    case 'overview': {
+      label.textContent = 'UMWELTEN';
+      info.innerHTML = `Willkommen. Du siehst einen Park – einen Menschen, der mit seinem Hund spielt,<br>
+        und einen kleinen Käfer am Boden. Klicke auf die Buttons, um ihre <strong>Umwelten</strong> zu sehen.<br>
+        <em>"We begin such a stroll on a sunny day before a flowering meadow<br>
+        and we make a bubble around each of the animals living in the meadow."</em> — Uexküll`;
+
+      smoothCameraMove([8, 5, 12], [2, 1, 3], 1.5);
+      break;
+    }
+
+    // ============================================================
+    // HUMAN UMWELT: Rich sensory world
+    // ============================================================
+    case 'human': {
+      label.textContent = '👤 UMWELT: MENSCH';
+      info.innerHTML = `Die Bubble des <strong>Menschen</strong>: Eine reiche, multimodale Welt.<br>
+        Farben, Gerüche, Geräusche, Wärme der Sonne, Emotionen beim Spielen mit dem Hund.<br>
+        <em>"A new world arises in each bubble."</em> — Uexküll<br>
+        <span style="color:#a0cfff">Der Mensch sieht die Wiese, den Himmel, hört Vögel, riecht Blumen.</span>`;
+
+      // Large bubble around human
+      const humanBubble = createBubble(5, 0x4488ff, 0.06);
+      humanBubble.position.copy(human.position);
+      humanBubble.position.y = 2;
+      scene.add(humanBubble);
+      overlayObjects.push(humanBubble);
+
+      // Sensory particles: colors, sounds, smells – rich world
+      const senseColors = [0xff6688, 0x66aaff, 0xffcc44, 0x66ff88, 0xff66ff, 0xffffff];
+      for (let i = 0; i < 120; i++) {
+        const size = 0.02 + Math.random() * 0.04;
+        const particle = new THREE.Mesh(
+          new THREE.SphereGeometry(size, 6, 6),
+          new THREE.MeshBasicMaterial({
+            color: senseColors[Math.floor(Math.random() * senseColors.length)],
+            transparent: true,
+            opacity: 0.3 + Math.random() * 0.4
+          })
+        );
+        const angle = Math.random() * Math.PI * 2;
+        const r = Math.random() * 4.5;
+        const hx = human.position.x;
+        const hz = human.position.z;
+        particle.position.set(
+          hx + Math.cos(angle) * r,
+          0.5 + Math.random() * 4,
+          hz + Math.sin(angle) * r
+        );
+        particle.userData = {
+          type: 'sense',
+          angle: angle,
+          radius: r,
+          speed: 0.003 + Math.random() * 0.008,
+          baseY: particle.position.y,
+          centerX: hx,
+          centerZ: hz,
+          bobSpeed: 1 + Math.random() * 2,
+          bobAmount: 0.02 + Math.random() * 0.05
+        };
+        scene.add(particle);
+        overlayObjects.push(particle);
+      }
+
+      // Sound wave rings (hearing)
+      for (let i = 0; i < 3; i++) {
+        const ring = new THREE.Mesh(
+          new THREE.TorusGeometry(1.5 + i * 0.8, 0.01, 8, 48),
+          new THREE.MeshBasicMaterial({ color: 0x66aaff, transparent: true, opacity: 0.15 })
+        );
+        ring.position.set(human.position.x, 2.5, human.position.z);
+        ring.rotation.x = Math.PI / 2;
+        ring.userData = { type: 'soundwave', phase: i * 1.0 };
+        scene.add(ring);
+        overlayObjects.push(ring);
+      }
+
+      // Warmth rays from above (sun perception)
+      for (let i = 0; i < 8; i++) {
+        const ray = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.005, 0.005, 3, 4),
+          new THREE.MeshBasicMaterial({ color: 0xffdd66, transparent: true, opacity: 0.12 })
+        );
+        const angle = (i / 8) * Math.PI * 2;
+        ray.position.set(
+          human.position.x + Math.cos(angle) * 2,
+          4,
+          human.position.z + Math.sin(angle) * 2
+        );
+        ray.userData = { type: 'sunray', phase: i };
+        scene.add(ray);
+        overlayObjects.push(ray);
+      }
+
+      // Label
+      const humanLabel = createTextSprite('Umwelt: Mensch', '#ffffff', 32);
+      humanLabel.position.set(human.position.x, 5.5, human.position.z);
+      scene.add(humanLabel);
+      overlayObjects.push(humanLabel);
+
+      smoothCameraMove([1, 5, 10], [1, 1.5, 3], 1.5);
+      break;
+    }
+
+    // ============================================================
+    // DOG UMWELT: Smell-dominated, desaturated colors
+    // ============================================================
+    case 'dog': {
+      label.textContent = '🐕 UMWELT: HUND';
+      info.innerHTML = `Die Bubble des <strong>Hundes</strong>: Farben verblassen (Dichromat-Sicht),<br>
+        aber die Geruchswelt <strong>explodiert</strong> in Intensität und Komplexität.<br>
+        <em>Jeder Grashalm hat einen Duft. Jede Spur erzählt eine Geschichte.</em><br>
+        <span style="color:#ffaa44">200 Millionen Riechzellen vs. 5 Millionen beim Menschen.</span>`;
+
+      // Bubble around dog
+      const dogBubble = createBubble(3.5, 0xcc8833, 0.06);
+      dogBubble.position.copy(dog.position);
+      dogBubble.position.y = 1;
+      scene.add(dogBubble);
+      overlayObjects.push(dogBubble);
+
+      // Smell particles – MANY, intense, warm colors
+      for (let i = 0; i < 250; i++) {
+        const size = 0.015 + Math.random() * 0.05;
+        const smellColors = [0xffaa00, 0xff6600, 0xffcc33, 0xee8833, 0xddaa22, 0xff8844];
+        const particle = new THREE.Mesh(
+          new THREE.SphereGeometry(size, 5, 5),
+          new THREE.MeshBasicMaterial({
+            color: smellColors[Math.floor(Math.random() * smellColors.length)],
+            transparent: true,
+            opacity: 0.2 + Math.random() * 0.5
+          })
+        );
+        const angle = Math.random() * Math.PI * 2;
+        const r = Math.random() * 3;
+        const dx = dog.position.x;
+        const dz = dog.position.z;
+        particle.position.set(
+          dx + Math.cos(angle) * r,
+          0.1 + Math.random() * 1.8,
+          dz + Math.sin(angle) * r
+        );
+        particle.userData = {
+          type: 'smell',
+          angle: angle,
+          radius: r,
+          speed: 0.005 + Math.random() * 0.015,
+          baseY: particle.position.y,
+          centerX: dx,
+          centerZ: dz,
+          bobSpeed: 0.5 + Math.random() * 1.5,
+          bobAmount: 0.01 + Math.random() * 0.03
+        };
+        scene.add(particle);
+        overlayObjects.push(particle);
+      }
+
+      // Scent trails on ground (lines showing smell paths)
+      for (let t = 0; t < 5; t++) {
+        const trailPoints = [];
+        let tx = dog.position.x + (Math.random() - 0.5) * 4;
+        let tz = dog.position.z + (Math.random() - 0.5) * 4;
+        for (let p = 0; p < 12; p++) {
+          trailPoints.push(new THREE.Vector3(tx, 0.05, tz));
+          tx += (Math.random() - 0.5) * 0.8;
+          tz += (Math.random() - 0.5) * 0.8;
+        }
+        const trailGeo = new THREE.BufferGeometry().setFromPoints(trailPoints);
+        const trail = new THREE.Line(trailGeo, new THREE.LineBasicMaterial({
+          color: 0xffaa33, transparent: true, opacity: 0.25
+        }));
+        scene.add(trail);
+        overlayObjects.push(trail);
+      }
+
+      // Desaturation overlay hint (dim sphere to suggest muted colors)
+      const desatOverlay = createBubble(3.5, 0x888877, 0.04);
+      desatOverlay.position.copy(dog.position);
+      desatOverlay.position.y = 1;
+      scene.add(desatOverlay);
+      overlayObjects.push(desatOverlay);
+
+      const dogLabel = createTextSprite('Umwelt: Hund', '#ffaa44', 32);
+      dogLabel.position.set(dog.position.x, 3.5, dog.position.z);
+      scene.add(dogLabel);
+      overlayObjects.push(dogLabel);
+
+      smoothCameraMove([3, 2.5, 7], [3, 0.5, 2.5], 1.5);
+      break;
+    }
+
+    // ============================================================
+    // BEETLE UMWELT: Tiny, almost empty
+    // ============================================================
+    case 'beetle': {
+      label.textContent = '🪲 UMWELT: KÄFER';
+      info.innerHTML = `Die Bubble des <strong>Käfers</strong>: Winzig. Fast leer.<br>
+        Kein Park, kein Himmel, kein Mensch mit Hund.<br>
+        Nur: <strong>Bodenbeschaffenheit</strong>, <strong>chemische Gradienten</strong>, <strong>Vibration</strong>.<br>
+        <em>"For the beetle, the 'park' as a scenic landscape does not exist."</em>`;
+
+      // Tiny bubble around beetle
+      const beetleBubble = createBubble(0.5, 0x336633, 0.1);
+      beetleBubble.position.copy(beetle.position);
+      beetleBubble.position.y = 0.15;
+      scene.add(beetleBubble);
+      overlayObjects.push(beetleBubble);
+
+      // Chemical gradient particles (very few, very close)
+      const chemColors = [0x44aa44, 0x338833, 0x55cc55, 0x227722];
+      for (let i = 0; i < 20; i++) {
+        const particle = new THREE.Mesh(
+          new THREE.SphereGeometry(0.008 + Math.random() * 0.012, 4, 4),
+          new THREE.MeshBasicMaterial({
+            color: chemColors[Math.floor(Math.random() * chemColors.length)],
+            transparent: true,
+            opacity: 0.4 + Math.random() * 0.4
+          })
+        );
+        const angle = Math.random() * Math.PI * 2;
+        const r = Math.random() * 0.4;
+        particle.position.set(
+          beetle.position.x + Math.cos(angle) * r,
+          0.02 + Math.random() * 0.2,
+          beetle.position.z + Math.sin(angle) * r
+        );
+        particle.userData = {
+          type: 'chem',
+          angle: angle,
+          radius: r,
+          speed: 0.002 + Math.random() * 0.005,
+          baseY: particle.position.y,
+          centerX: beetle.position.x,
+          centerZ: beetle.position.z,
+          bobSpeed: 1 + Math.random(),
+          bobAmount: 0.005
+        };
+        scene.add(particle);
+        overlayObjects.push(particle);
+      }
+
+      // Vibration rings on ground
+      for (let i = 0; i < 3; i++) {
+        const ring = new THREE.Mesh(
+          new THREE.TorusGeometry(0.1 + i * 0.1, 0.003, 6, 24),
+          new THREE.MeshBasicMaterial({ color: 0x558855, transparent: true, opacity: 0.2 })
+        );
+        ring.position.set(beetle.position.x, 0.02, beetle.position.z);
+        ring.rotation.x = Math.PI / 2;
+        ring.userData = { type: 'vibration', phase: i * 0.8 };
+        scene.add(ring);
+        overlayObjects.push(ring);
+      }
+
+      // Pressure arrows (ground texture sensing)
+      for (let i = 0; i < 4; i++) {
+        const arrow = new THREE.Mesh(
+          new THREE.ConeGeometry(0.01, 0.04, 4),
+          new THREE.MeshBasicMaterial({ color: 0x88cc88, transparent: true, opacity: 0.5 })
+        );
+        const angle = (i / 4) * Math.PI * 2;
+        arrow.position.set(
+          beetle.position.x + Math.cos(angle) * 0.12,
+          0.03,
+          beetle.position.z + Math.sin(angle) * 0.12
+        );
+        arrow.rotation.z = -Math.PI / 2;
+        arrow.rotation.y = angle;
+        scene.add(arrow);
+        overlayObjects.push(arrow);
+      }
+
+      const beetleLabel = createTextSprite('Umwelt: Käfer', '#88cc88', 28);
+      beetleLabel.position.set(beetle.position.x, 0.8, beetle.position.z);
+      beetleLabel.scale.set(1, 0.25, 1);
+      scene.add(beetleLabel);
+      overlayObjects.push(beetleLabel);
+
+      smoothCameraMove(
+        [beetle.position.x + 0.5, 0.5, beetle.position.z + 1.2],
+        [beetle.position.x, 0.1, beetle.position.z],
+        1.5
+      );
+      break;
+    }
+
+    // ============================================================
+    // AI UMWELT: Abstract vector space, no grounding
+    // ============================================================
+    case 'ai': {
+      label.textContent = '🤖 UMWELT: KI';
+      info.innerHTML = `Die Bubble der <strong>KI</strong>: Kein Park. Kein Licht. Kein Geruch. Keine Wärme.<br>
+        Nur <strong>statistische Beziehungen zwischen Tokens</strong> im hochdimensionalen Vektorraum.<br>
+        <em>"The AI's bubble is filled exclusively with statistical relationships between tokens."</em><br>
+        <span style="color:#66ccff">v_schmerz = [0.12, -0.54, 0.87, ...] — bedeutungslose Koordinaten.</span>`;
+
+      // Hide park characters
+      human.visible = false;
+      dog.visible = false;
+      beetle.visible = false;
+
+      // Darken the scene
+      const darkOverlay = new THREE.Mesh(
+        new THREE.SphereGeometry(50, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0x000011, side: THREE.BackSide, transparent: true, opacity: 0.85 })
+      );
+      scene.add(darkOverlay);
+      overlayObjects.push(darkOverlay);
+
+      // AI Monolith
+      const aiMono = createAIMonolith();
+      aiMono.position.set(0, 0, 0);
+      scene.add(aiMono);
+      overlayObjects.push(aiMono);
+
+      // AI Bubble
+      const aiBubble = createBubble(6, 0x112244, 0.05);
+      aiBubble.position.y = 2;
+      scene.add(aiBubble);
+      overlayObjects.push(aiBubble);
+
+      // Vector space tokens
+      const tokens = [
+        { label: 'Blume', pos: [2, 3.5, 0.5], color: 0x44ff44 },
+        { label: 'Blütenblatt', pos: [2.5, 3.8, 0.8], color: 0x44ff44 },
+        { label: 'Duft', pos: [1.8, 3.2, -0.3], color: 0x44ff44 },
+        { label: 'Schmerz', pos: [-2.5, 1.5, 1], color: 0xff4444 },
+        { label: 'unangenehm', pos: [-2.0, 1.8, 1.4], color: 0xff6666 },
+        { label: 'Verletzung', pos: [-2.8, 1.2, 0.6], color: 0xff6666 },
+        { label: 'Leid', pos: [-2.2, 2.0, 0.9], color: 0xff6666 },
+        { label: 'Sonne', pos: [3, 4.5, -1.5], color: 0xffff44 },
+        { label: 'Wärme', pos: [3.3, 4.2, -1.0], color: 0xffff44 },
+        { label: 'Wiese', pos: [0.5, 2.5, 2], color: 0x44ff44 },
+        { label: 'Gras', pos: [0.8, 2.2, 2.4], color: 0x44ff44 },
+        { label: 'Hund', pos: [-0.5, 3, -1.5], color: 0x44aaff },
+        { label: 'Freude', pos: [1, 4, -2], color: 0x44aaff },
+        { label: 'Park', pos: [0, 2.8, 1], color: 0x44ff44 },
+      ];
+
+      tokens.forEach(t => {
+        // Token sphere
+        const sphere = new THREE.Mesh(
+          new THREE.SphereGeometry(0.08, 10, 10),
+          new THREE.MeshBasicMaterial({ color: t.color })
+        );
+        sphere.position.set(...t.pos);
+        scene.add(sphere);
+        overlayObjects.push(sphere);
+
+        // Glow
+        const glow = new THREE.Mesh(
+          new THREE.SphereGeometry(0.18, 8, 8),
+          new THREE.MeshBasicMaterial({ color: t.color, transparent: true, opacity: 0.1 })
+        );
+        glow.position.set(...t.pos);
+        glow.userData = { type: 'tokenGlow' };
+        scene.add(glow);
+        overlayObjects.push(glow);
+
+        // Label
+        const lbl = createTextSprite(t.label, '#' + t.color.toString(16).padStart(6, '0'), 24);
+        lbl.position.set(t.pos[0], t.pos[1] + 0.3, t.pos[2]);
+        lbl.scale.set(1.2, 0.3, 1);
+        scene.add(lbl);
+        overlayObjects.push(lbl);
+      });
+
+      // Connection lines
+      const lineMat = new THREE.LineBasicMaterial({ color: 0x224466, transparent: true, opacity: 0.3 });
+      for (let i = 0; i < tokens.length; i++) {
+        for (let j = i + 1; j < tokens.length; j++) {
+          const dx = tokens[i].pos[0] - tokens[j].pos[0];
+          const dy = tokens[i].pos[1] - tokens[j].pos[1];
+          const dz = tokens[i].pos[2] - tokens[j].pos[2];
+          const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+          if (dist < 2.0) {
+            const geo = new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(...tokens[i].pos),
+              new THREE.Vector3(...tokens[j].pos)
+            ]);
+            const line = new THREE.Line(geo, lineMat);
+            scene.add(line);
+            overlayObjects.push(line);
+          }
+        }
+      }
+
+      // Coordinate axes
+      const axisMat = new THREE.LineBasicMaterial({ color: 0x334455, transparent: true, opacity: 0.2 });
+      [[[-5,0,0],[5,0,0]], [[0,-1,0],[0,6,0]], [[0,0,-4],[0,0,4]]].forEach(([a, b]) => {
+        const geo = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(...a), new THREE.Vector3(...b)
+        ]);
+        const axis = new THREE.Line(geo, axisMat);
+        scene.add(axis);
+        overlayObjects.push(axis);
+      });
+
+      // Floating data fragments
+      for (let i = 0; i < 60; i++) {
+        const cube = new THREE.Mesh(
+          new THREE.BoxGeometry(0.03, 0.03, 0.03),
+          new THREE.MeshBasicMaterial({ color: 0x223344, transparent: true, opacity: 0.25 })
+        );
+        cube.position.set(
+          (Math.random() - 0.5) * 10,
+          Math.random() * 6,
+          (Math.random() - 0.5) * 8
+        );
+        cube.userData = { type: 'dataFloat', baseY: cube.position.y, floatSpeed: 0.002 + Math.random() * 0.005 };
+        scene.add(cube);
+        overlayObjects.push(cube);
+      }
+
+      // Distance annotation between Schmerz and unangenehm
+      const distGeo = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(-2.5, 1.5, 1),
+        new THREE.Vector3(-2.0, 1.8, 1.4)
+      ]);
+      const distLine = new THREE.Line(distGeo, new THREE.LineBasicMaterial({ color: 0xff8888, transparent: true, opacity: 0.7 }));
+      scene.add(distLine);
+      overlayObjects.push(distLine);
+
+      const distLabel = createTextSprite('dist: 0.12', '#ff8888', 20);
+      distLabel.position.set(-2.25, 1.85, 1.2);
+      distLabel.scale.set(0.8, 0.2, 1);
+      scene.add(distLabel);
+      overlayObjects.push(distLabel);
+
+      smoothCameraMove([0, 3.5, 9], [0, 2.5, 0], 1.5);
+      break;
+    }
+
+    // ============================================================
+    // PAIN COMPARISON: Lived experience vs. vector distance
+    // ============================================================
+    case 'pain': {
+      label.textContent = '⚡ SCHMERZ: ERLEBEN vs. BERECHNEN';
+      info.innerHTML = `<strong style="color:#ff6666">Links:</strong> Der Mensch stößt sich – Schmerzwellen durchfluten den Körper.<br>
+        Adrenalin, Herzrasen, verzerrtes Gesicht. <strong>Qualia.</strong> Echtes Leid.<br>
+        <strong style="color:#66ccff">Rechts:</strong> Die KI registriert: v_schmerz liegt nahe v_unangenehm (cos_sim: 0.89).<br>
+        <em>"The vector space can simulate the structure but cannot capture the essence."</em><br>
+        <span style="color:#ff8888; font-size:16px">Echtes Leid ≠ statistische Nähe.</span>`;
+
+      // Hide beetle for clarity
+      beetle.visible = false;
+
+      // Move human to left
+      human.position.set(-4, 0, 3);
+      dog.position.set(-2.5, 0, 2.5);
+      dog.rotation.y = -1.5;
+
+      // Human pain bubble (warm, red-tinted)
+      const painBubble = createBubble(3, 0xff3333, 0.06);
+      painBubble.position.set(-4, 1.5, 3);
+      scene.add(painBubble);
+      overlayObjects.push(painBubble);
+
+      // Pain waves radiating from human
+      for (let i = 0; i < 6; i++) {
+        const ring = new THREE.Mesh(
+          new THREE.TorusGeometry(0.4 + i * 0.35, 0.015, 8, 36),
+          new THREE.MeshBasicMaterial({ color: 0xff2222, transparent: true, opacity: 0.5 - i * 0.07 })
+        );
+        ring.position.set(-4, 1.5, 3);
+        ring.userData = { type: 'painPulse', phase: i * 0.6 };
+        scene.add(ring);
+        overlayObjects.push(ring);
+      }
+
+      // Heartbeat line
+      const heartPoints = [];
+      for (let x = -2; x <= 0; x += 0.03) {
+        const y = Math.sin(x * 10) * Math.exp(-x * x * 1.5) * 0.25;
+        heartPoints.push(new THREE.Vector3(x - 3, y + 3.2, 3));
+      }
+      const heartGeo = new THREE.BufferGeometry().setFromPoints(heartPoints);
+      const heartLine = new THREE.Line(heartGeo, new THREE.LineBasicMaterial({ color: 0xff4444 }));
+      heartLine.userData = { type: 'heartbeat' };
+      scene.add(heartLine);
+      overlayObjects.push(heartLine);
+
+      // Adrenaline particles swirling around human
+      for (let i = 0; i < 40; i++) {
+        const particle = new THREE.Mesh(
+          new THREE.SphereGeometry(0.03, 4, 4),
+          new THREE.MeshBasicMaterial({ color: 0xff6633, transparent: true, opacity: 0.6 })
+        );
+        const angle = Math.random() * Math.PI * 2;
+        const r = 0.3 + Math.random() * 1.5;
+        particle.position.set(
+          -4 + Math.cos(angle) * r,
+          0.5 + Math.random() * 2.5,
+          3 + Math.sin(angle) * r
+        );
+        particle.userData = {
+          type: 'adrenaline',
+          angle: angle,
+          radius: r,
+          speed: 0.02 + Math.random() * 0.03,
+          centerX: -4,
+          centerZ: 3,
+          baseY: particle.position.y,
+          bobSpeed: 2 + Math.random() * 3,
+          bobAmount: 0.03
+        };
+        scene.add(particle);
+        overlayObjects.push(particle);
+      }
+
+      const painLabel = createTextSprite('ECHTES LEID', '#ff4444', 28);
+      painLabel.position.set(-4, 4.2, 3);
+      scene.add(painLabel);
+      overlayObjects.push(painLabel);
+
+      // === DIVIDER ===
+      const dividerGeo = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0, 0, 3),
+        new THREE.Vector3(0, 5, 3)
+      ]);
+      const divider = new THREE.Line(dividerGeo, new THREE.LineBasicMaterial({
+        color: 0x666666, transparent: true, opacity: 0.3
+      }));
+      scene.add(divider);
+      overlayObjects.push(divider);
+
+      // === RIGHT SIDE: AI processing pain ===
+      const aiMono = createAIMonolith();
+      aiMono.position.set(4, 0, 3);
+      aiMono.scale.set(0.7, 0.7, 0.7);
+      scene.add(aiMono);
+      overlayObjects.push(aiMono);
+
+      const aiBubble = createBubble(3, 0x112244, 0.05);
+      aiBubble.position.set(4, 1.5, 3);
+      scene.add(aiBubble);
+      overlayObjects.push(aiBubble);
+
+      // Pain tokens in vector space (cold, geometric)
+      const painTokens = [
+        { label: 'Schmerz', pos: [3.2, 2.2, 3], color: 0xff4444 },
+        { label: 'unangenehm', pos: [3.6, 2.5, 3.3], color: 0xff6666 },
+        { label: 'Verletzung', pos: [3.0, 1.9, 2.7], color: 0xff6666 },
+        { label: 'Leid', pos: [3.5, 2.7, 2.8], color: 0xff6666 },
+        { label: 'Freude', pos: [5.0, 3.5, 3.5], color: 0x44ff44 },
+        { label: 'Glück', pos: [5.2, 3.3, 3.2], color: 0x44ff44 },
+        { label: 'Angst', pos: [3.8, 1.6, 3.5], color: 0xff8844 },
+        { label: 'Angst', pos: [3.8, 1.6, 3.5], color: 0xff8844 },
+      ];
+      
+      painTokens.forEach(t => {
+        const sphere = new THREE.Mesh(
+          new THREE.SphereGeometry(0.08, 10, 10),
+          new THREE.MeshBasicMaterial({ color: t.color })
+        );
+        sphere.position.set(...t.pos);
+        scene.add(sphere);
+        overlayObjects.push(sphere);
+        
+        // Glow
+        const glow = new THREE.Mesh(
+          new THREE.SphereGeometry(0.18, 8, 8),
+          new THREE.MeshBasicMaterial({ color: t.color, transparent: true, opacity: 0.1 })
+        );
+        glow.position.set(...t.pos);
+        glow.userData = { type: 'tokenGlow' };
+        scene.add(glow);
+        overlayObjects.push(glow);
+        
+        // Label
+        const lbl = createTextSprite(t.label, '#' + t.color.toString(16).padStart(6, '0'), 22);
+        lbl.position.set(t.pos[0], t.pos[1] + 0.25, t.pos[2]);
+        lbl.scale.set(1, 0.25, 1);
+        scene.add(lbl);
+        overlayObjects.push(lbl);
+      });
+      
+      // Connection lines between pain tokens (cold, geometric)
+      const painLineMat = new THREE.LineBasicMaterial({ color: 0x442222, transparent: true, opacity: 0.4 });
+      for (let i = 0; i < painTokens.length; i++) {
+        for (let j = i + 1; j < painTokens.length; j++) {
+          const dx = painTokens[i].pos[0] - painTokens[j].pos[0];
+          const dy = painTokens[i].pos[1] - painTokens[j].pos[1];
+          const dz = painTokens[i].pos[2] - painTokens[j].pos[2];
+          const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+          if (dist < 1.5) {
+            const geo = new THREE.BufferGeometry().setFromPoints([
+              new THREE.Vector3(...painTokens[i].pos),
+              new THREE.Vector3(...painTokens[j].pos)
+            ]);
+            const line = new THREE.Line(geo, painLineMat);
+            scene.add(line);
+            overlayObjects.push(line);
+          }
+        }
+      }
+      
+      // Distance annotation: Schmerz <-> unangenehm
+      const distGeo = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(3.2, 2.2, 3),
+        new THREE.Vector3(3.6, 2.5, 3.3)
+      ]);
+      const distLine = new THREE.Line(distGeo, new THREE.LineBasicMaterial({ color: 0x66ccff, transparent: true, opacity: 0.8 }));
+      scene.add(distLine);
+      overlayObjects.push(distLine);
+      
+      const distLabel = createTextSprite('cos_sim: 0.89', '#66ccff', 18);
+      distLabel.position.set(3.4, 2.55, 3.15);
+      distLabel.scale.set(1, 0.25, 1);
+      scene.add(distLabel);
+      overlayObjects.push(distLabel);
+      
+      // Vector notation floating near AI
+      const vecLabel = createTextSprite('v_schmerz = [0.12, -0.54, 0.87, ...]', '#66ccff', 18);
+      vecLabel.position.set(4, 0.3, 3);
+      vecLabel.scale.set(2.5, 0.35, 1);
+      scene.add(vecLabel);
+      overlayObjects.push(vecLabel);
+      
+      // Floating data cubes on AI side (cold, sterile)
+      for (let i = 0; i < 30; i++) {
+        const cube = new THREE.Mesh(
+          new THREE.BoxGeometry(0.025, 0.025, 0.025),
+          new THREE.MeshBasicMaterial({ color: 0x223344, transparent: true, opacity: 0.2 })
+        );
+        cube.position.set(
+          3 + Math.random() * 3,
+          0.5 + Math.random() * 3.5,
+          2 + Math.random() * 2
+        );
+        cube.userData = { type: 'dataFloat', baseY: cube.position.y, floatSpeed: 0.002 + Math.random() * 0.004 };
+        scene.add(cube);
+        overlayObjects.push(cube);
+      }
+      
+      smoothCameraMove([0, 4, 12], [0, 1.5, 3], 1.5);
+      break;
+    }
+  }
+};
+
+// Start with overview
+window.switchScene('overview');
+
+// ============================================================
+// ANIMATION LOOP
+// ============================================================
+let time = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  time += 0.016;
+  
+  controls.update();
+  
+  overlayObjects.forEach(obj => {
+    if (!obj.userData) return;
+    
+    // Sensory / smell / chem / adrenaline particles – orbit and bob
+    if (['sense', 'smell', 'chem', 'adrenaline'].includes(obj.userData.type)) {
+      obj.userData.angle += obj.userData.speed;
+      const cx = obj.userData.centerX || 0;
+      const cz = obj.userData.centerZ || 0;
+      obj.position.x = cx + Math.cos(obj.userData.angle) * obj.userData.radius;
+      obj.position.z = cz + Math.sin(obj.userData.angle) * obj.userData.radius;
+      obj.position.y = obj.userData.baseY + Math.sin(time * obj.userData.bobSpeed + obj.userData.angle) * obj.userData.bobAmount;
+    }
+    
+    // Sound wave rings – pulse
+    if (obj.userData.type === 'soundwave') {
+      const pulse = 1 + Math.sin(time * 1.5 + obj.userData.phase) * 0.15;
+      obj.scale.set(pulse, pulse, pulse);
+      obj.material.opacity = 0.08 + Math.sin(time * 1.5 + obj.userData.phase) * 0.07;
+    }
+    
+    // Sun rays – gentle shimmer
+    if (obj.userData.type === 'sunray') {
+      obj.material.opacity = 0.06 + Math.sin(time * 0.8 + obj.userData.phase) * 0.06;
+    }
+    
+    // Vibration rings (beetle)
+    if (obj.userData.type === 'vibration') {
+      const pulse = 1 + Math.sin(time * 2.5 + obj.userData.phase) * 0.3;
+      obj.scale.set(pulse, pulse, pulse);
+      obj.material.opacity = 0.12 + Math.sin(time * 2.5 + obj.userData.phase) * 0.08;
+    }
+    
+    // Pain pulse rings
+    if (obj.userData.type === 'painPulse') {
+      const pulse = 1 + Math.sin(time * 3 + obj.userData.phase) * 0.25;
+      obj.scale.set(pulse, pulse, pulse);
+      obj.material.opacity = 0.3 + Math.sin(time * 3 + obj.userData.phase) * 0.2;
+    }
+    
+    // Token glow – gentle pulse
+    if (obj.userData.type === 'tokenGlow') {
+      obj.material.opacity = 0.06 + Math.sin(time * 2 + obj.position.x * 3) * 0.04;
+    }
+    
+    // Floating data cubes (AI scene)
+    if (obj.userData.type === 'dataFloat') {
+      obj.position.y = obj.userData.baseY + Math.sin(time * 1.5 + obj.position.x * 2) * 0.2;
+      obj.rotation.x += 0.008;
+      obj.rotation.y += 0.012;
+    }
+    
+    // Heartbeat line shimmer
+    if (obj.userData.type === 'heartbeat') {
+      obj.material.opacity = 0.6 + Math.sin(time * 5) * 0.4;
+    }
+  });
+  
+  // Bubble breathing for all bubbles in overlay
+  overlayObjects.forEach(obj => {
+    if (obj.geometry && obj.geometry.type === 'SphereGeometry' &&
+        obj.material.transparent && obj.material.opacity < 0.15 && obj.material.opacity > 0.01 &&
+        !obj.userData.type) {
+      const breathe = 1 + Math.sin(time * 0.6) * 0.02;
+      obj.scale.set(breathe, breathe, breathe);
+    }
+  });
+  
+  // Animate dog tail wag
+  if (dog.visible) {
+    const tailMesh = dog.children.find(c => c.geometry && c.geometry.type === 'TubeGeometry');
+    if (tailMesh) {
+      tailMesh.rotation.y = Math.sin(time * 6) * 0.4;
+    }
+  }
+  
+  renderer.render(scene, camera);
+}
+
+animate();
+
+// ============================================================
+// WINDOW RESIZE
+// ============================================================
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ============================================================
+// RESET CHARACTER POSITIONS WHEN LEAVING PAIN SCENE
+// ============================================================
+const originalHumanPos = { x: 1, z: 3 };
+const originalDogPos = { x: 3, z: 2.5 };
+const originalDogRotY = -0.8;
+
+const _origSwitchScene = window.switchScene;
+window.switchScene = function(name) {
+  // Reset positions before switching
+  if (currentSceneName === 'pain' && name !== 'pain') {
+    human.position.set(originalHumanPos.x, 0, originalHumanPos.z);
+    human.rotation.y = -0.3;
+    dog.position.set(originalDogPos.x, 0, originalDogPos.z);
+    dog.rotation.y = originalDogRotY;
+    beetle.visible = true;
+  }
+  _origSwitchScene(name);
+};
+
+</script>
+</body>
+</html>
