@@ -2189,7 +2189,7 @@ $$
 <div style="overflow-x:auto; padding:10px 0;">
 $$
 \\underbrace{
-    \\left(\\begin{array}{l|r|r}
+    \\left(\\begin{array}{l|r}
     \\text{word} & \\% \\\\
     \\hline
     ${probRows}
