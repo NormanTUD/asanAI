@@ -322,9 +322,6 @@ document.querySelector('a-scene').addEventListener('loaded', function(){
   let dogX = -22;
   let butterflyX = 25;
 
-  const WALK_SPEED = 1.8;
-  const BF_SPEED = 0.6;
-
   // ===== Generate beach grass =====
   const grassContainer = document.getElementById('grass-container');
   for(let i=0;i<25;i++){
@@ -434,12 +431,6 @@ document.querySelector('a-scene').addEventListener('loaded', function(){
     butterflyParticles.appendChild(p);
   }
 
-  // ===== Generate AI vector tokens =====
-  const aiTokensEl = document.getElementById('ai-tokens');
-  const tokens = [
-    {label:'Strand',pos:'2.5 2.0 0.5',color:'#ddaa44'},
-    {label:'Sand',pos:'2.8 2.3 0.8',color:'#ddaa44'},
-    {label:'Meer',pos:'2.2 1.7 -0.2
   // ===== Generate AI vector tokens =====
   const aiTokensEl = document.getElementById('ai-tokens');
   const tokens = [

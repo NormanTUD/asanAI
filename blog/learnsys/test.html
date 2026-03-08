@@ -572,9 +572,208 @@ blockquote {
   h1 { font-size: 1.6rem; }
   .deep-back-btn { padding: 8px 14px 8px 10px; font-size: 0.82rem; }
 }
+/* ============================================================
+   SMOOTHNESS & MICRO-INTERACTIONS
+   ============================================================ */
+
+/* ---- Staggered content entrance ---- */
+.deep-view.active .deep-view-body > * {
+  animation: contentIn 0.45s ease both;
+}
+.deep-view.active .deep-view-body > *:nth-child(1) { animation-delay: 0.03s; }
+.deep-view.active .deep-view-body > *:nth-child(2) { animation-delay: 0.06s; }
+.deep-view.active .deep-view-body > *:nth-child(3) { animation-delay: 0.09s; }
+.deep-view.active .deep-view-body > *:nth-child(4) { animation-delay: 0.12s; }
+.deep-view.active .deep-view-body > *:nth-child(5) { animation-delay: 0.15s; }
+.deep-view.active .deep-view-body > *:nth-child(6) { animation-delay: 0.18s; }
+.deep-view.active .deep-view-body > *:nth-child(n+7) { animation-delay: 0.21s; }
+
+@keyframes contentIn {
+  from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+
+/* ---- Portal: tooltip preview on hover ---- */
+.deep-portal {
+  position: relative;
+}
+
+.deep-portal-preview {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  width: max-content;
+  max-width: 320px;
+  padding: 10px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 100;
+}
+
+.deep-portal-preview::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--bg-surface);
+}
+
+.deep-portal:hover .deep-portal-preview {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.deep-portal-preview-title {
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.deep-portal-preview-connections {
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid var(--border);
+}
+
+/* ---- Reading progress bar ---- */
+#deep-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--accent);
+  z-index: 1001;
+  width: 0%;
+  transition: width 0.15s ease-out;
+  opacity: 0.6;
+}
+
+#deep-breadcrumb.visible ~ #deep-progress,
+#deep-breadcrumb.visible + * + * + #deep-progress {
+  top: 52px;
+}
+
+/* ---- Math blocks: subtle entrance ---- */
+.temml-block {
+  animation: mathIn 0.5s ease both;
+  animation-delay: 0.15s;
+}
+
+@keyframes mathIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ---- Blockquote border grow ---- */
+blockquote {
+  border-left-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+blockquote::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  animation: borderGrow 0.5s ease 0.2s both;
+}
+
+@keyframes borderGrow { to { transform: scaleY(1); } }
+
+/* ---- Heading entrance ---- */
+.deep-view.active h1,
+.deep-view.active h2,
+.deep-view.active h3 {
+  animation: headIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes headIn {
+  from { opacity: 0; letter-spacing: 0.03em; transform: translateY(6px); }
+  to   { opacity: 1; letter-spacing: -0.025em; transform: translateY(0); }
+}
+
+/* ---- Related section: fade in from bottom ---- */
+.deep-related {
+  animation: relatedIn 0.4s ease 0.3s both;
+}
+
+@keyframes relatedIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Smooth GPU-accelerated views ---- */
+.deep-view {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* ---- Breadcrumb crumb slide ---- */
+#deep-breadcrumb .crumb,
+#deep-breadcrumb .sep {
+  animation: crumbIn 0.25s ease both;
+}
+#deep-breadcrumb .crumb:nth-child(1) { animation-delay: 0s; }
+#deep-breadcrumb .crumb:nth-child(2) { animation-delay: 0.02s; }
+#deep-breadcrumb .crumb:nth-child(3) { animation-delay: 0.04s; }
+#deep-breadcrumb .crumb:nth-child(4) { animation-delay: 0.06s; }
+#deep-breadcrumb .crumb:nth-child(5) { animation-delay: 0.08s; }
+
+@keyframes crumbIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- Toolbar idle float ---- */
+#deep-toolbar button {
+  animation: toolFloat 4s ease-in-out infinite;
+}
+#deep-toolbar button:nth-child(2) { animation-delay: -2s; }
+
+@keyframes toolFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+#deep-toolbar button:hover { animation: none; }
+
+/* ---- Graph overlay entrance ---- */
+#deep-graph-overlay.visible {
+  animation: glassIn 0.4s ease both;
+}
+
+@keyframes glassIn {
+  from { backdrop-filter: blur(0); background: rgba(0,0,0,0); }
+  to   { backdrop-filter: blur(20px); background: rgba(0,0,0,0.85); }
+}
+
+/* ---- Keyboard shortcut hint: only show when breadcrumb visible ---- */
+#deep-breadcrumb::after {
+  transition: opacity 0.3s;
+}
 </style>
 </head>
 <body>
+<div id="deep-progress"></div>
 
 <!-- Breadcrumb -->
 <nav id="deep-breadcrumb">
@@ -1116,12 +1315,88 @@ const Deep = (() => {
     container.querySelectorAll('.deep-portal').forEach(portal => {
       if (portal.dataset.bound) return;
       portal.dataset.bound = 'true';
+
       portal.addEventListener('click', (e) => {
         e.preventDefault(); e.stopPropagation();
         openTopic(portal.dataset.topic, portal);
       });
+
+      // Hover preview tooltip
+      const topicId = portal.dataset.topic;
+      const topic = topics[topicId];
+      if (topic) {
+        const preview = document.createElement('div');
+        preview.className = 'deep-portal-preview';
+
+        // Title
+        let previewHtml = `<div class="deep-portal-preview-title">${topic.title || topicId.replace(/_/g, ' ')}</div>`;
+
+        // First sentence of content (strip HTML)
+        if (topic.content) {
+          const tmp = document.createElement('div');
+          tmp.innerHTML = topic.content;
+          const text = tmp.textContent || '';
+          const firstSentence = text.replace(/\s+/g, ' ').trim().split(/\.\s/)[0];
+          if (firstSentence && firstSentence.length > 10) {
+            previewHtml += `<div>${firstSentence.substring(0, 140)}${firstSentence.length > 140 ? '…' : '.'}</div>`;
+          }
+        }
+
+        // Connection count
+        const connCount = relations.filter(r => r.from === topicId || r.to === topicId).length;
+        if (connCount > 0) {
+          previewHtml += `<div class="deep-portal-preview-connections">${connCount} connection${connCount > 1 ? 's' : ''}</div>`;
+        }
+
+        preview.innerHTML = previewHtml;
+        portal.appendChild(preview);
+      }
     });
   }
+
+// ==========================================================
+// Reading Progress Bar
+  // ==========================================================
+  function initProgress() {
+    const bar = document.getElementById('deep-progress');
+    if (!bar) return;
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollTop = window.scrollY || document.documentElement.scrollTop;
+          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+          bar.style.width = progress + '%';
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  }
+
+  function init() {
+    initTheme();
+    document.getElementById('deep-graph-toggle')?.addEventListener('click', toggleGraph);
+    document.getElementById('deep-theme-toggle')?.addEventListener('click', toggleTheme);
+
+    const overlay = document.getElementById('deep-graph-overlay');
+    if (overlay) overlay.addEventListener('click', (e) => { if (e.target === overlay) toggleGraph(); });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'g' && !e.ctrlKey && !e.metaKey) toggleGraph();
+      if (e.key === 'Escape') {
+        if (graphVisible) toggleGraph();
+        else if (openStack.length > 0) goBack();
+      }
+      if (e.key === 'Backspace' && openStack.length > 0 && e.target === document.body) { e.preventDefault(); goBack(); }
+    });
+
+    initProgress(); // ← add this
+  }
+
 
   // ==========================================================
   // Graph
