@@ -2196,27 +2196,25 @@ $$
 	}).join(' \\\\ ');
 
 	html += `
-<div style="margin-top: 25px; padding: 15px; background: #fefce8; border-radius: 8px; border: 1px dashed #eab308;">
-    <strong>Step-by-Step Softmax Calculation</strong>
+<div class="md optional" data-headline="Step-by-Step Softmax Calculation" style="margin-top: 25px; padding: 15px; background: #fefce8; border-radius: 8px; border: 1px dashed #eab308;">
+	<p>The softmax function converts raw logits into a probability distribution. It uses the <strong>numerically stable</strong> version by first subtracting the maximum logit $m = \\max(\\mathbf{L})$ to prevent overflow:</p>
 
-    <p>The softmax function converts raw logits into a probability distribution. It uses the <strong>numerically stable</strong> version by first subtracting the maximum logit $m = \\max(\\mathbf{L})$ to prevent overflow:</p>
+	$$P(w) = \\text{softmax}(\\text{logit}_w) = \\frac{e^{\\text{logit}_w - m}}{\\displaystyle\\sum_{w'} e^{\\text{logit}_{w'} - m}}$$
 
-    $$P(w) = \\text{softmax}(\\text{logit}_w) = \\frac{e^{\\text{logit}_w - m}}{\\displaystyle\\sum_{w'} e^{\\text{logit}_{w'} - m}}$$
+	<p>Here, $m = ${maxLogit.toFixed(nr_fixed)}$ and $\\displaystyle\\sum e^{\\text{logit} - m} = ${sumExps.toFixed(nr_fixed)}$</p>
 
-    <p>Here, $m = ${maxLogit.toFixed(nr_fixed)}$ and $\\displaystyle\\sum e^{\\text{logit} - m} = ${sumExps.toFixed(nr_fixed)}$</p>
+	<div style="overflow-x:auto;">
+	$$\\begin{array}{l|r|r|r|r|r|r}
+	\\text{word} & \\text{logit} & \\text{logit} - m & e^{\\text{logit} - m} &  P(w) & \\% \\\\
+	\\hline
+	${softmaxRows}
+	\\end{array}$$
+	</div>
 
-    <div style="overflow-x:auto;">
-    $$\\begin{array}{l|r|r|r|r|r|r}
-    \\text{word} & \\text{logit} & \\text{logit} - m & e^{\\text{logit} - m} &  P(w) & \\% \\\\
-    \\hline
-    ${softmaxRows}
-    \\end{array}$$
-    </div>
-
-    <p style="font-size:0.85rem; color:#854d0e;">
-    <strong>Why subtract $m$?</strong> Without this trick, $e^{\\text{logit}}$ can overflow to <code>Infinity</code> for large logits. 
-    Subtracting $m$ ensures the largest exponent is $e^0 = 1$, keeping all values in a safe numerical range. 
-    </p>
+	<p style="font-size:0.85rem; color:#854d0e;">
+	<strong>Why subtract $m$?</strong> Without this trick, $e^{\\text{logit}}$ can overflow to <code>Infinity</code> for large logits. 
+	Subtracting $m$ ensures the largest exponent is $e^0 = 1$, keeping all values in a safe numerical range. 
+	</p>
 </div>
 `;
 
