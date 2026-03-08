@@ -2246,10 +2246,6 @@ $$
     \\end{array}$$
     </div>
 
-    <p style="margin-top:12px; font-size:0.85rem; color:#854d0e;">
-    <strong>Sanity check:</strong> $\\sum P(w) = ${probs.reduce((a, b) => a + b, 0).toFixed(nr_fixed)}$ (should be $\\approx 1.0$)
-    </p>
-
     <p style="font-size:0.85rem; color:#854d0e;">
     <strong>Why subtract $m$?</strong> Without this trick, $e^{\\text{logit}}$ can overflow to <code>Infinity</code> for large logits. 
     Subtracting $m$ ensures the largest exponent is $e^0 = 1$, keeping all values in a safe numerical range. 
