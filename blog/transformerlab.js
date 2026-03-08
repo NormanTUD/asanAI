@@ -2211,6 +2211,53 @@ $$
 $$
 </div>`;
 
+	// ===== SOFTMAX SECTION =====
+	const maxLogit = Math.max(...logitValues);
+	const exps = logitValues.map(v => Math.exp(v - maxLogit));
+	const sumExps = exps.reduce((a, b) => a + b, 0);
+	const probs = exps.map(e => e / sumExps);
+
+	// Build the softmax equation rows
+	const softmaxRows = logits.map(({ word, val }, i) => {
+		const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+		const color = getPositionColor(i, logits.length, 'temml');
+		const expVal = exps[i];
+		const prob = probs[i];
+		const pct = (prob * 100).toFixed(2);
+
+		return `${color} \\text{${safeWord}} & ${color} ${val.toFixed(nr_fixed)} & ${color} ${(val - maxLogit).toFixed(nr_fixed)} & ${color} ${expVal.toFixed(nr_fixed)} & ${color} \\frac{${expVal.toFixed(nr_fixed)}}{${sumExps.toFixed(nr_fixed)}} & ${color} ${prob.toFixed(nr_fixed)} & ${color} ${pct}\\%`;
+	}).join(' \\\\ ');
+
+	html += `
+<div style="margin-top: 25px; padding: 15px; background: #fefce8; border-radius: 8px; border: 1px dashed #eab308;">
+    <strong>Step-by-Step Softmax Calculation</strong>
+
+    <p>The softmax function converts raw logits into a probability distribution. It uses the <strong>numerically stable</strong> version by first subtracting the maximum logit $m = \\max(\\mathbf{L})$ to prevent overflow:</p>
+
+    $$P(w) = \\text{softmax}(\\text{logit}_w) = \\frac{e^{\\text{logit}_w - m}}{\\displaystyle\\sum_{w'} e^{\\text{logit}_{w'} - m}}$$
+
+    <p>Here, $m = ${maxLogit.toFixed(nr_fixed)}$ and $\\displaystyle\\sum e^{\\text{logit} - m} = ${sumExps.toFixed(nr_fixed)}$</p>
+
+    <div style="overflow-x:auto;">
+    $$\\begin{array}{l|r|r|r|r|r|r}
+    \\text{word} & \\text{logit} & \\text{logit} - m & e^{\\text{logit} - m} & \\frac{e^{\\cdot}}{\\sum e^{\\cdot}} & P(w) & \\% \\\\
+    \\hline
+    ${softmaxRows}
+    \\end{array}$$
+    </div>
+
+    <p style="margin-top:12px; font-size:0.85rem; color:#854d0e;">
+    <strong>Sanity check:</strong> $\\sum P(w) = ${probs.reduce((a, b) => a + b, 0).toFixed(nr_fixed)}$ (should be $\\approx 1.0$)
+    </p>
+
+    <p style="font-size:0.85rem; color:#854d0e;">
+    <strong>Why subtract $m$?</strong> Without this trick, $e^{\\text{logit}}$ can overflow to <code>Infinity</code> for large logits. 
+    Subtracting $m$ ensures the largest exponent is $e^0 = 1$, keeping all values in a safe numerical range. 
+    The result is mathematically identical: $\\text{softmax}(\\mathbf{x}) = \\text{softmax}(\\mathbf{x} - c)$ for any constant $c$.
+    </p>
+</div>
+`;
+
 	html += `</div>`;
 	return html;
 }
