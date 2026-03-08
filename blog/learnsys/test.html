@@ -483,8 +483,8 @@ const Deep = (() => {
   // ==========================================================
   // Content Processing
   // ==========================================================
-  function processContent(html) {
-    // \rel{}{}{} → extract to graph
+    function processContent(html) {
+    // \rel{}{}{} → extract to graph, remove from visible content
     html = html.replace(/\\rel\{([^}]+)\}\{([^}]+)\}\{([^}]*)\}/g, (_, from, to, type) => {
       relate(from.trim(), to.trim(), (type || 'related').trim());
       return '';
@@ -500,18 +500,12 @@ const Deep = (() => {
       return `<span class="deep-portal" data-topic="${safeId}">${label}<span class="deep-arrow">→</span></span>`;
     });
 
-    // \latexblock{...} — use balanced brace matching
-    html = html.replace(/\\latexblock\{/g, (_, offset) => {
-      return '%%LATEXBLOCK_START%%';
-    });
-    // Better approach: manual brace-balanced extraction
-    html = extractAndRender(html, '%%LATEXBLOCK_START%%', true);
-
-    // Actually, let's do it properly with a function:
+    // All LaTeX processing (balanced braces, $$, $)
     html = renderLatexCommands(html);
 
     return html;
   }
+
 
   function renderLatexCommands(html) {
     // Process \latexblock{...} with nested braces
