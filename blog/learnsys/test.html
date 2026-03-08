@@ -587,21 +587,27 @@ const Deep = (() => {
     if (!topic) return;
 
     if (openStack.length > 0 && openStack[openStack.length - 1] === topicId) {
-      goBack();
-      return;
+      goBack(); return;
     }
 
     if (!topic.loaded) await loadTopic(topicId);
     if (!topic.content) return;
 
-    // Save scroll of current view
     const currentView = rootEl().querySelector('.deep-view.active');
     if (currentView) {
       currentView.dataset.scrollY = window.scrollY || document.documentElement.scrollTop;
     }
 
-    openStack.push(topicId);
+    // Brief flash on the portal to show what was clicked
+    if (portalElement) {
+      portalElement.style.transition = 'all 0.15s';
+      portalElement.style.background = 'var(--accent)';
+      portalElement.style.color = '#fff';
+      portalElement.style.borderRadius = '4px';
+      portalElement.style.padding = '0 4px';
+    }
 
+    openStack.push(topicId);
     const processedContent = processContent(topic.content);
 
     const backLabel = openStack.length > 1
@@ -628,9 +634,11 @@ const Deep = (() => {
     rootEl().appendChild(view);
 
     view.querySelector('.deep-back-btn').addEventListener('click', (e) => {
-      e.preventDefault();
-      goBack();
+      e.preventDefault(); goBack();
     });
+
+    // Slightly delayed transition for a more cinematic feel
+    await new Promise(r => setTimeout(r, 120));
 
     requestAnimationFrame(() => {
       if (currentView) {
@@ -639,7 +647,8 @@ const Deep = (() => {
       }
       requestAnimationFrame(() => {
         view.classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'instant' });
+        // Smooth scroll to top with a slight ease
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     });
 
@@ -647,7 +656,7 @@ const Deep = (() => {
       setTimeout(() => {
         currentView.style.display = 'none';
         currentView.classList.remove('exiting');
-      }, 500);
+      }, 600);
     }
 
     updateBreadcrumb();
@@ -672,16 +681,23 @@ const Deep = (() => {
 
     if (prevView) {
       prevView.style.display = '';
+      // Re-trigger stagger animations by briefly removing and re-adding class
+      const body = prevView.querySelector('.deep-view-body');
+      if (body) {
+        body.style.animation = 'none';
+        body.offsetHeight; // force reflow
+        body.style.animation = '';
+      }
       requestAnimationFrame(() => {
         prevView.classList.remove('exiting');
         prevView.classList.add('active');
-        const savedScroll = parseInt(prevView.dataset.scrollY || '0');
-        setTimeout(() => window.scrollTo({ top: savedScroll, behavior: 'instant' }), 50);
+        const saved = parseInt(prevView.dataset.scrollY || '0');
+        setTimeout(() => window.scrollTo({ top: saved, behavior: 'smooth' }), 80);
       });
     }
 
     if (currentView) {
-      setTimeout(() => currentView.remove(), 500);
+      setTimeout(() => currentView.remove(), 600);
     }
 
     updateBreadcrumb();
