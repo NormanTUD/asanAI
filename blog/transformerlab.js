@@ -2121,9 +2121,6 @@ function buildPredictionChipsHtml(predictions, temperature) {
 	return html;
 }
 
-/**
- * Builds the step-by-step logit calculation LaTeX HTML.
- */
 function buildLogitDetailsHtml(h_last, logits) {
 	let html = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
     <span class="md">
@@ -2136,10 +2133,6 @@ function buildLogitDetailsHtml(h_last, logits) {
 	const vocabWords = logits.map(l => l.word);
 	const W_vocab = logits.map(l => l.w_row);
 	const logitValues = logits.map(l => l.val);
-
-	// h_last as a column vector with colored dimensions
-	const hLastCol = h_last.map(v => [v]);
-	const dimLabels = h_last.map((_, d) => `d${d}`);
 
 	// W_vocab as a labeled matrix: rows = words, cols = dims
 	const vocabMatrixRows = W_vocab.map((row, wIdx) => {
@@ -2178,47 +2171,39 @@ $$
 $$
 </div>`;
 
-	// ===== SOFTMAX SECTION =====
+	// ===== SOFTMAX: wrap logits matrix inside softmax(...) = probabilities =====
 	const maxLogit = Math.max(...logitValues);
 	const exps = logitValues.map(v => Math.exp(v - maxLogit));
 	const sumExps = exps.reduce((a, b) => a + b, 0);
 	const probs = exps.map(e => e / sumExps);
 
-	// Build the softmax equation rows
-	const softmaxRows = logits.map(({ word, val }, i) => {
+	// Build probability result matrix rows
+	const probRows = logits.map(({ word }, i) => {
 		const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
 		const color = getPositionColor(i, logits.length, 'temml');
-		const expVal = exps[i];
-		const prob = probs[i];
-		const pct = (prob * 100).toFixed(2);
-
-		return `${color} \\text{${safeWord}} & ${color} ${val.toFixed(nr_fixed)} & ${color} ${(val - maxLogit).toFixed(nr_fixed)} & ${color} ${expVal.toFixed(nr_fixed)} & ${color} ${prob.toFixed(nr_fixed)} & \\boxed{${color} ${pct}\\%}`;
+		const pct = (probs[i] * 100).toFixed(2);
+		return `${color} \\text{${safeWord}} & ${color} ${probs[i].toFixed(nr_fixed)} & \\boxed{${color} ${pct}\\%}`;
 	}).join(' \\\\ ');
 
 	html += `
-<div class="md optional" data-headline="Step-by-Step Softmax Calculation">
-	<p>The softmax function converts raw logits into a probability distribution. It uses the <strong>numerically stable</strong> version by first subtracting the maximum logit $m = \\max(\\mathbf{L})$ to prevent overflow:</p>
+<div style="overflow-x:auto; padding:10px 0;">
+$$
+\\underbrace{
+    \\left(\\begin{array}{l|r|r}
+    \\text{word} & P(w) & \\% \\\\
+    \\hline
+    ${probRows}
+    \\end{array}\\right)
+}_{\\text{word probabilities}}
+= \\text{softmax}\\!\\left(
+\\underbrace{
+    \\left(\\begin{array}{r|r} ${logitRows} \\end{array}\\right)
+}_{\\text{logits}}
+\\right)
+$$
+</div>`;
 
-	$$P(w) = \\text{softmax}(\\text{logit}_w) = \\frac{e^{\\text{logit}_w - m}}{\\displaystyle\\sum_{w'} e^{\\text{logit}_{w'} - m}}$$
-
-	<p>Here, $m = ${maxLogit.toFixed(nr_fixed)}$ and $\\displaystyle\\sum e^{\\text{logit} - m} = ${sumExps.toFixed(nr_fixed)}$</p>
-
-	<div style="overflow-x:auto;">
-	$$\\begin{array}{l|r|r|r|r|r|r}
-	\\text{word} & \\text{logit} & \\text{logit} - m & e^{\\text{logit} - m} &  P(w) & \\% \\\\
-	\\hline
-	${softmaxRows}
-	\\end{array}$$
-	</div>
-
-	<p style="font-size:0.85rem; color:#854d0e;">
-	<strong>Why subtract $m$?</strong> Without this trick, $e^{\\text{logit}}$ can overflow to <code>Infinity</code> for large logits. 
-	Subtracting $m$ ensures the largest exponent is $e^0 = 1$, keeping all values in a safe numerical range. 
-	</p>
-</div>
-`;
-
-	html += `</div>`;
+	html += `</span></div>`;
 	return html;
 }
 
