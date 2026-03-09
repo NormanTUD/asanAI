@@ -2136,40 +2136,55 @@ function buildPredictionChipsHtml(predictions, temperature) {
 }
 
 function buildLogitDetailsHtml(h_last, logits) {
-	let html = `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+    const temperature = parseFloat(document.getElementById('transformer-temperature')?.value) || 1.0;
+    const logitValues = logits.map(l => l.val);
+    const vocabWords = logits.map(l => l.word);
+    const W_vocab = logits.map(l => l.w_row);
+
+    let html = buildHLastSection(h_last);
+    html += buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits);
+    html += buildSoftmaxSection(logits, logitValues);
+    html += buildTemperatureSection(logits, logitValues, temperature);
+    html += `</span></div>`;
+    return html;
+}
+
+/**
+ * Builds the opening section showing the current h_last vector.
+ */
+function buildHLastDisplayLatex(h_last) {
+    return h_last.map((v, dim) =>
+        `\\underbrace{${v.toFixed(nr_fixed)}}_{\\substack{h_{${dim}} \\\\ \\text{hidden dim ${dim}}}}`
+    ).join(', ');
+}
+
+function buildHLastSection(h_last) {
+    const hLastLatex = buildHLastDisplayLatex(h_last);
+    return `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
     <span class="md">
-    <p class="logit_calc">Current $h_\\text{last} = [${h_last.map((v, dim) => 
-	    `\\underbrace{${v.toFixed(nr_fixed)}}_{\\substack{h_{${dim}} \\\\ \\text{hidden dim ${dim}}}}`
-    ).join(', ')}]$ (the last layers' output matrix last line of the <i>inference</i>-data)</p>
-`;
+    <p class="logit_calc">Current $h_\\text{last} = [${hLastLatex}]$ (the last layers' output matrix last line of the <i>inference</i>-data)</p>\n`;
+}
 
-	// Build the W_vocab matrix (each row = one word's embedding)
-	const vocabWords = logits.map(l => l.word);
-	const W_vocab = logits.map(l => l.w_row);
-	const logitValues = logits.map(l => l.val);
+/**
+ * Builds the W_vocab × h_last = logits matrix multiplication LaTeX section.
+ */
+function buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits) {
+    const vocabMatrixRows = W_vocab.map((row, wIdx) => {
+        const safeWord = vocabWords[wIdx].replace(/#/g, '\\#').replace(/_/g, '\\_');
+        const vals = row.map(v => v.toFixed(nr_fixed)).join(' & ');
+        return `\\color{#6366f1}{\\text{${safeWord}}} & ${vals}`;
+    }).join(' \\\\ ');
 
-	// W_vocab as a labeled matrix: rows = words, cols = dims
-	const vocabMatrixRows = W_vocab.map((row, wIdx) => {
-		const safeWord = vocabWords[wIdx].replace(/#/g, '\\#').replace(/_/g, '\\_');
-		const vals = row.map(v => v.toFixed(nr_fixed)).join(' & ');
-		return `\\color{#6366f1}{\\text{${safeWord}}} & ${vals}`;
-	}).join(' \\\\ ');
+    const vocabColSpec = 'r|' + 'r'.repeat(h_last.length);
 
-	const vocabColSpec = 'r|' + 'r'.repeat(h_last.length);
+    const hLastRows = h_last.map((v, dim) => {
+        const color = getPositionColor(dim, h_last.length, 'temml');
+        return `${color} ${v.toFixed(nr_fixed)}`;
+    }).join(' \\\\ ');
 
-	// h_last as a colored column vector
-	const hLastRows = h_last.map((v, dim) => {
-		const color = getPositionColor(dim, h_last.length, 'temml');
-		return `${color} ${v.toFixed(nr_fixed)}`;
-	}).join(' \\\\ ');
+    const logitRows = buildLogitLatexRows(logits);
 
-	// Result logit vector
-	const logitRows = logits.map(({ word, val }) => {
-		const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
-		return `\\color{#6366f1}{\\text{${safeWord}}} & ${val.toFixed(nr_fixed)}`;
-	}).join(' \\\\ ');
-
-	html += `<div style="overflow-x:auto; padding:10px 0;">
+    return `<div style="overflow-x:auto; padding:10px 0;">
 $$
 \\underbrace{
     \\left(\\begin{array}{${vocabColSpec}} ${vocabMatrixRows} \\end{array}\\right)
@@ -2184,22 +2199,43 @@ $$
 }_{\\text{logits}}
 $$
 </div>`;
+}
 
-	// ===== SOFTMAX: wrap logits matrix inside softmax(...) = probabilities =====
-	const maxLogit = Math.max(...logitValues);
-	const exps = logitValues.map(v => Math.exp(v - maxLogit));
-	const sumExps = exps.reduce((a, b) => a + b, 0);
-	const probs = exps.map(e => e / sumExps);
+/**
+ * Builds the LaTeX rows for the logit vector display.
+ */
+function buildLogitLatexRows(logits) {
+    return logits.map(({ word, val }) => {
+        const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+        return `\\color{#6366f1}{\\text{${safeWord}}} & ${val.toFixed(nr_fixed)}`;
+    }).join(' \\\\ ');
+}
 
-	// Build probability result matrix rows
-	const probRows = logits.map(({ word }, i) => {
-		const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
-		const color = getPositionColor(i, logits.length, 'temml');
-		const pct = (probs[i] * 100).toFixed(2);
-		return `${color} \\text{${safeWord}} & ${color} ${pct}\\%`;
-	}).join(' \\\\ ');
+/**
+ * Computes softmax probabilities from raw logit values.
+ */
+function computeSoftmaxFromLogits(logitValues) {
+    const maxLogit = Math.max(...logitValues);
+    const exps = logitValues.map(v => Math.exp(v - maxLogit));
+    const sumExps = exps.reduce((a, b) => a + b, 0);
+    return exps.map(e => e / sumExps);
+}
 
-	html += `
+/**
+ * Builds the softmax(logits) = probabilities LaTeX section.
+ */
+function buildSoftmaxSection(logits, logitValues) {
+    const probs = computeSoftmaxFromLogits(logitValues);
+    const logitRows = buildLogitLatexRows(logits);
+
+    const probRows = logits.map(({ word }, i) => {
+        const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+        const color = getPositionColor(i, logits.length, 'temml');
+        const pct = (probs[i] * 100).toFixed(2);
+        return `${color} \\text{${safeWord}} & ${color} ${pct}\\%`;
+    }).join(' \\\\ ');
+
+    return `
 <div style="overflow-x:auto; padding:10px 0;">
 $$
 \\underbrace{
@@ -2216,60 +2252,72 @@ $$
 \\right)
 $$
 </div>`;
+}
 
-	// ===== TEMPERATURE SECTION (equations only — prose is in the PHP) =====
-	const temperature = parseFloat(document.getElementById('transformer-temperature')?.value) || 1.0;
+/**
+ * Computes entropy in bits from a probability distribution.
+ */
+function computeEntropyBits(probs) {
+    return -probs.reduce((sum, p) => sum + (p > 1e-12 ? p * Math.log2(p) : 0), 0);
+}
 
-	const scaledLogitValues = logitValues.map(v => v / temperature);
-	const maxScaledLogit = Math.max(...scaledLogitValues);
-	const scaledExps = scaledLogitValues.map(v => Math.exp(v - maxScaledLogit));
-	const scaledSumExps = scaledExps.reduce((a, b) => a + b, 0);
-	const scaledProbs = scaledExps.map(e => e / scaledSumExps);
+/**
+ * Builds the temperature-scaling comparison LaTeX section.
+ */
+function buildTemperatureSection(logits, logitValues, temperature) {
+    const probs = computeSoftmaxFromLogits(logitValues);
 
-	// Scaled logit table rows
-	const scaledLogitRows = logits.map(({ word, val }, i) => {
-		const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
-		return `\\color{#6366f1}{\\text{${safeWord}}} & ${val.toFixed(nr_fixed)} & ${scaledLogitValues[i].toFixed(nr_fixed)}`;
-	}).join(' \\\\ ');
+    const scaledLogitValues = logitValues.map(v => v / temperature);
+    const scaledProbs = computeSoftmaxFromLogits(scaledLogitValues);
 
-	// Probability comparison rows
-	const scaledProbRows = logits.map(({ word }, i) => {
-		const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
-		const color = getPositionColor(i, logits.length, 'temml');
-		const origPct = (probs[i] * 100).toFixed(2);
-		const scaledPct = (scaledProbs[i] * 100).toFixed(2);
-		const diff = (scaledProbs[i] - probs[i]) * 100;
-		const diffSign = diff >= 0 ? '+' : '';
-		return `${color} \\text{${safeWord}} & ${color} ${origPct}\\% & ${color} ${scaledPct}\\% & ${color} ${diffSign}${diff.toFixed(2)}\\%`;
-	}).join(' \\\\ ');
+    const scaledProbRows = buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature);
+    const entropySection = buildEntropyLatex(probs, scaledProbs, logits.length, temperature);
 
-	// Entropy
-	const entropyOrig = -probs.reduce((sum, p) => sum + (p > 1e-12 ? p * Math.log2(p) : 0), 0);
-	const entropyScaled = -scaledProbs.reduce((sum, p) => sum + (p > 1e-12 ? p * Math.log2(p) : 0), 0);
-	const maxEntropy = Math.log2(logits.length);
-
-	html += `
+    return `
 <div style="overflow-x:auto; padding:10px 0;">
 $$
 \\text{softmax}\\!\\left(\\frac{\\text{logit}_w}{\\underbrace{${temperature.toFixed(1)}}_{\\text{Temperature}}}\\right) =
 \\left(\\begin{array}{l|r|r|r}
 \\text{word} & P_{T=1} & P_{T=${temperature.toFixed(1)}} & \\Delta \\\\
 \\hline
-	${scaledProbRows}
+    ${scaledProbRows}
 \\end{array}\\right)
 $$
 </div>
 
-<div style="overflow-x:auto; padding:10px 0;">
+${entropySection}`;
+}
+
+/**
+ * Builds the per-word probability comparison rows for the temperature table.
+ */
+function buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature) {
+    return logits.map(({ word }, i) => {
+        const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+        const color = getPositionColor(i, logits.length, 'temml');
+        const origPct = (probs[i] * 100).toFixed(2);
+        const scaledPct = (scaledProbs[i] * 100).toFixed(2);
+        const diff = (scaledProbs[i] - probs[i]) * 100;
+        const diffSign = diff >= 0 ? '+' : '';
+        return `${color} \\text{${safeWord}} & ${color} ${origPct}\\% & ${color} ${scaledPct}\\% & ${color} ${diffSign}${diff.toFixed(2)}\\%`;
+    }).join(' \\\\ ');
+}
+
+/**
+ * Builds the entropy comparison LaTeX display.
+ */
+function buildEntropyLatex(probs, scaledProbs, vocabSize, temperature) {
+    const entropyOrig = computeEntropyBits(probs);
+    const entropyScaled = computeEntropyBits(scaledProbs);
+    const maxEntropy = Math.log2(vocabSize);
+
+    return `<div style="overflow-x:auto; padding:10px 0;">
 $$
 H_{T=1} = ${entropyOrig.toFixed(4)} \\text{ bits}, \\quad
 H_{T=${temperature.toFixed(1)}} = ${entropyScaled.toFixed(4)} \\text{ bits}, \\quad
-H_{\\max} = \\log_2(${logits.length}) = ${maxEntropy.toFixed(4)} \\text{ bits}
+H_{\\max} = \\log_2(${vocabSize}) = ${maxEntropy.toFixed(4)} \\text{ bits}
 $$
 </div>`;
-
-	html += `</span></div>`;
-	return html;
 }
 
 function ensureProjectionSubContainers(container) {
