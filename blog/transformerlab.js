@@ -4,6 +4,7 @@
 If you see stuff jumping around, try setting "overflow-anchor: none" to that element.
 */
 
+window._cachedFinalProjection = null;
 window._activeUnifiedLayerIdx = 0;
 window.isTraining = false;
 window._paramBreakdownOpen = false;
@@ -1713,6 +1714,8 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 		window.currentWeights = get_init_weights(n_layers, d_model);
 		window.last_d_model = d_model;
 		window.last_n_heads = n_heads;
+		window._cachedFinalProjection = null;
+
 		reset_graph();
 		calculate_vector_math();
 
@@ -2048,11 +2051,22 @@ function showEmptyInputMessage() {
 /**
  * Renders final prediction probabilities from the master token input.
  */
+/**
+ * Renders final prediction probabilities from the master token input.
+ */
 function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature) {
     const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
     if (knownMasterTokens.length === 0) return;
 
     const h_final = runSimpleForwardPass(knownMasterTokens, weights, d_model, n_heads, n_layers);
+
+    // *** NEU: Cache für Temperature-only Re-Rendering ***
+    window._cachedFinalProjection = {
+        h_final: h_final,
+        vocabulary: vocabulary,
+        d_model: d_model
+    };
+
     render_final_projection(h_final, vocabulary, d_model, temperature);
 }
 
@@ -7467,6 +7481,31 @@ function ensureFFNLayerContainers(layerIndex) {
 		initSiteObserver();
 	}
 })();
+
+/**
+ * Re-renders ONLY the final softmax/probability display when temperature changes.
+ * Skips the entire forward pass since temperature only affects the
+ * softmax(logits / T) step — the logits themselves don't change.
+ */
+function rerender_temperature_only() {
+    const cached = window._cachedFinalProjection;
+    if (!cached) {
+        // Kein Cache vorhanden (z.B. erster Aufruf) → voller Durchlauf
+        debounced_run_transformer_demo();
+        return;
+    }
+
+    const temperature = parseFloat(
+        document.getElementById('transformer-temperature')?.value
+    ) || 1.0;
+
+    render_final_projection(
+        cached.h_final,
+        cached.vocabulary,
+        cached.d_model,
+        temperature
+    );
+}
 
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");

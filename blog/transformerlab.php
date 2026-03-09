@@ -541,7 +541,7 @@ The **Shannon entropy** $H = -\sum_w P(w) \log_2 P(w)$ measures the "randomness"
 	    <b>Effect:</b> Controls the "sharpness" of the probability distribution.<br>
 	    <b>Reason:</b> Low values ($T < 1$) force the model to be deterministic; high values ($T > 1$) increase diversity by making unlikely words more probable.
 	</p>
-	<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 100%; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; debounced_run_transformer_demo();">
+	<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 100%; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; rerender_temperature_only();">
 </div>
 
 <div id="transformer-output-projection" style="background: #fff; padding: 20px; border: 1px solid #cbd5e1; border-radius: 12px; margin-top: 20px;"></div>
