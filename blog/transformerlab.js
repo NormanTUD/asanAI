@@ -4179,75 +4179,113 @@ function buildMigrationRegistryData(tokens, start_h, end_h, layerNum, d_model, h
 }
 
 function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
-	const plotDiv = document.getElementById(id);
-	if (!plotDiv) return;
+    const plotDiv = document.getElementById(id);
+    if (!plotDiv) return;
 
-	plotDiv.style.width = '100%';
+    plotDiv.style.width = '100%';
 
-	const nextWordIndex = tokens.length - 1;
-	const migrationContainers = document.querySelectorAll('[id^="migration-layer-"]');
-	const totalLayersCount = migrationContainers.length;
-	const isLastInDom = totalLayersCount > 0 && migrationContainers[totalLayersCount - 1].id === id;
+    const regData = transformerLabVisMigrationDataRegistry.get(id);
+    const vfEnabled = regData && regData._vfEnabled && d_model < 4;
 
-	if (d_model <= 3) {
-		const is3D = d_model === 3;
+    if (d_model <= 3) {
+        renderMigrationLowDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model, vfEnabled);
+    } else {
+        renderMigrationHighDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model);
+    }
 
-		const baseTraces = [];
-		tokens.forEach((token, i) => {
-			baseTraces.push(...buildMigrationTokenTrace(token, i, start_h, end_h, d_model, is3D, tokens));
-		});
-		baseTraces.push(buildMigrationColorbarTrace(is3D, tokens));
+    syncVFToggleButtonState(id, plotDiv, vfEnabled);
+    tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model, tokenStrings);
+    tlab_render_weight_grid(id, layerNum - 1);
+}
 
-		// Check VF state from REGISTRY (authoritative source of truth)
-		const regData = transformerLabVisMigrationDataRegistry.get(id);
-		const vfEnabled = regData && regData._vfEnabled && d_model < 4;
+/**
+ * Renders migration plot for d_model <= 3 using Plotly scatter (2D or 3D).
+ * Optionally overlays vector field traces if the toggle is enabled.
+ */
+function renderMigrationLowDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
+    const is3D = d_model === 3;
 
-		// Also sync the DOM button to match (in case it got out of sync)
-		const wrapper = plotDiv.closest('[data-migration-wrapper]');
-		const toggleBtn = wrapper ? wrapper.querySelector('.migration-vf-toggle') : null;
-		if (toggleBtn) {
-			if (vfEnabled) {
-				toggleBtn.dataset.mode = 'on';
-				toggleBtn.textContent = '🧭 Hide Vector Field';
-				toggleBtn.style.background = '#dbeafe';
-			} else {
-				toggleBtn.dataset.mode = 'off';
-				toggleBtn.textContent = '🧭 Show Vector Field';
-				toggleBtn.style.background = '#fff';
-			}
-		}
+    const baseTraces = buildAllMigrationTokenTraces(tokens, start_h, end_h, d_model, is3D);
+    baseTraces.push(buildMigrationColorbarTrace(is3D, tokens));
 
-		let vfTraces = [];
-		if (vfEnabled) {
-			const { n_heads } = getTransformerConfig();
-			if (d_model === 2) {
-				const computed = _compute_vector_field_points_2d(id, layerNum, d_model, n_heads);
-				if (computed) {
-					vfTraces = _build_vector_field_traces_2d(
-						computed.points, computed.maxMag, computed.maxArrowLen,
-						computed.seqLen, computed.substitutePos
-					);
-				}
-			} else if (d_model === 3) {
-				const computed = _compute_vector_field_points_3d(id, layerNum, d_model, n_heads);
-				if (computed) {
-					vfTraces = _build_vector_field_traces_3d(
-						computed.points, computed.maxMag, computed.maxArrowLen,
-						computed.seqLen, computed.substitutePos
-					);
-				}
-			}
-		}
+    const vfTraces = vfEnabled
+        ? computeVectorFieldTraces(id, layerNum, d_model)
+        : [];
 
-		const allTraces = [...baseTraces, ...vfTraces];
-		const layout = buildMigrationLayout(layerNum, is3D);
-		Plotly.react(id, allTraces, layout, { responsive: true });
-	} else {
-		tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
-	}
+    const allTraces = [...baseTraces, ...vfTraces];
+    const layout = buildMigrationLayout(layerNum, is3D);
+    Plotly.react(id, allTraces, layout, { responsive: true });
+}
 
-	tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model, tokenStrings);
-	tlab_render_weight_grid(id, layerNum - 1);
+/**
+ * Renders migration plot for d_model >= 4 using ECharts parallel coordinates.
+ */
+function renderMigrationHighDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model) {
+    const migrationContainers = document.querySelectorAll('[id^="migration-layer-"]');
+    const totalLayersCount = migrationContainers.length;
+    const isLastInDom = totalLayersCount > 0 && migrationContainers[totalLayersCount - 1].id === id;
+    const nextWordIndex = tokens.length - 1;
+
+    tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
+}
+
+/**
+ * Builds base Plotly traces for all tokens in a migration plot.
+ */
+function buildAllMigrationTokenTraces(tokens, start_h, end_h, d_model, is3D) {
+    const traces = [];
+    tokens.forEach((token, i) => {
+        traces.push(...buildMigrationTokenTrace(token, i, start_h, end_h, d_model, is3D, tokens));
+    });
+    return traces;
+}
+
+/**
+ * Dispatches vector field computation and trace building for 2D or 3D.
+ * Returns an array of Plotly traces (empty if nothing could be computed).
+ */
+function computeVectorFieldTraces(id, layerNum, d_model) {
+    const { n_heads } = getTransformerConfig();
+
+    if (d_model === 2) {
+        const computed = _compute_vector_field_points_2d(id, layerNum, d_model, n_heads);
+        if (computed) {
+            return _build_vector_field_traces_2d(
+                computed.points, computed.maxMag, computed.maxArrowLen,
+                computed.seqLen, computed.substitutePos
+            );
+        }
+    } else if (d_model === 3) {
+        const computed = _compute_vector_field_points_3d(id, layerNum, d_model, n_heads);
+        if (computed) {
+            return _build_vector_field_traces_3d(
+                computed.points, computed.maxMag, computed.maxArrowLen,
+                computed.seqLen, computed.substitutePos
+            );
+        }
+    }
+
+    return [];
+}
+
+/**
+ * Synchronizes the vector field toggle button's DOM state
+ * to match the authoritative registry value.
+ */
+function syncVFToggleButtonState(id, plotDiv, vfEnabled) {
+    const wrapper = plotDiv.closest('[data-migration-wrapper]');
+    const toggleBtn = wrapper ? wrapper.querySelector('.migration-vf-toggle') : null;
+    if (!toggleBtn) return;
+
+    if (vfEnabled) {
+        toggleBtn.dataset.mode = 'on';
+        toggleBtn.textContent = '🧭 Hide Vector Field';
+        toggleBtn.style.background = '#dbeafe';
+    } else {
+        toggleBtn.dataset.mode = 'off';
+        toggleBtn.textContent = '🧭 Show Vector Field';
+        toggleBtn.style.background = '#fff';
+    }
 }
 
 function _compute_vector_field_points_2d(migrationId, layerNum, d_model, n_heads) {
