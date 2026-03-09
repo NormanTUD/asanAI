@@ -2614,239 +2614,248 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 }
 
 function _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, steps) {
-    const series = [];
+	const series = [];
 
-    // ── 1. Vocabulary token scatter ──
-    const vocabData = tokens.map(token => {
-        const vec = window.persistentEmbeddingSpace[token];
-        return {
-            value: [vec[0], vec.length >= 2 ? vec[1] : 0],
-            name: token
-        };
-    });
+	// ── 1. Vocabulary token scatter ──
+	const vocabData = tokens.map(token => {
+		const vec = window.persistentEmbeddingSpace[token];
+		return {
+			value: [vec[0], vec.length >= 2 ? vec[1] : 0],
+			name: token,
+			itemStyle: {                                          // ← ADD THIS
+				color: `hsl(${getHueFromToken(token)}, 75%, 50%)` // ← per-token color
+			}
+		};
+	});
 
-    series.push({
-        type: 'scatter',
-        name: 'Vocabulary',
-        data: vocabData,
-        symbolSize: 8,
-        itemStyle: { opacity: 0.85 },
-        label: {
-            show: true,
-            position: 'top',
-            formatter: p => p.name,
-            fontSize: 11,
-            color: '#1e293b'
-        },
-        tooltip: {
-            formatter: p => `<b>${p.name}</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
-        },
-        z: 5
-    });
+	series.push({
+		type: 'scatter',
+		name: 'Vocabulary',
+		data: vocabData,
+		symbolSize: 8,
+		itemStyle: { opacity: 0.85 },
+		label: {
+			show: true,
+			position: 'top',
+			formatter: p => p.name,
+			fontSize: 11,
+			color: '#1e293b'
+		},
+		tooltip: {
+			formatter: p => `<b>${p.name}</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
+		},
+		z: 5
+	});
 
-    // ── 2. Calculation-step arrows (reuses existing _ec2d_render_arrow) ──
-    if (steps && steps.length > 0) {
-        const arrowColor = '#3b82f6';
-        const arrowData = steps.map(step => ({
-            value: [
-                step.from[0],
-                dimensions >= 2 ? step.from[1] : 0,
-                step.to[0],
-                dimensions >= 2 ? step.to[1] : 0
-            ],
-            _label: step.label
-        }));
+	// ── 2. Calculation-step arrows (reuses existing _ec2d_render_arrow) ──
+	if (steps && steps.length > 0) {
+		const arrowColor = '#3b82f6';
+		const arrowData = steps.map(step => ({
+			value: [
+				step.from[0],
+				dimensions >= 2 ? step.from[1] : 0,
+				step.to[0],
+				dimensions >= 2 ? step.to[1] : 0
+			],
+			_label: step.label
+		}));
 
-        series.push({
-            type: 'custom',
-            name: 'Steps',
-            renderItem: function (params, api) {
-                const sPx = api.coord([api.value(0), api.value(1)]);
-                const ePx = api.coord([api.value(2), api.value(3)]);
-                return _ec2d_render_arrow(sPx, ePx, arrowColor, 3);
-            },
-            encode: { x: [0, 2], y: [1, 3] },
-            data: arrowData,
-            tooltip: { formatter: p => `<b>${p.data._label}</b>` },
-            z: 10
-        });
-    }
+		series.push({
+			type: 'custom',
+			name: 'Steps',
+			renderItem: function (params, api) {
+				const sPx = api.coord([api.value(0), api.value(1)]);
+				const ePx = api.coord([api.value(2), api.value(3)]);
+				return _ec2d_render_arrow(sPx, ePx, arrowColor, 3);
+			},
+			encode: { x: [0, 2], y: [1, 3] },
+			data: arrowData,
+			tooltip: { formatter: p => `<b>${p.data._label}</b>` },
+			z: 10
+		});
+	}
 
-    // ── 3. Result diamond highlight ──
-    if (highlightPos) {
-        series.push({
-            type: 'scatter',
-            name: 'Result',
-            data: [{
-                value: [highlightPos[0], dimensions >= 2 ? highlightPos[1] : 0]
-            }],
-            symbol: 'diamond',
-            symbolSize: 14,
-            itemStyle: { color: '#ef4444' },
-            tooltip: {
-                formatter: p =>
-                    `<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
-            },
-            z: 15
-        });
-    }
+	// ── 3. Result diamond highlight ──
+	if (highlightPos) {
+		series.push({
+			type: 'scatter',
+			name: 'Result',
+			data: [{
+				value: [highlightPos[0], dimensions >= 2 ? highlightPos[1] : 0]
+			}],
+			symbol: 'diamond',
+			symbolSize: 14,
+			itemStyle: { color: '#ef4444' },
+			tooltip: {
+				formatter: p =>
+				`<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
+			},
+			z: 15
+		});
+	}
 
-    chart.setOption({
-        title: {
-            text: 'Embedding Space', left: 'center',
-            textStyle: { fontSize: 14, color: '#1e293b' }
-        },
-        tooltip: { show: true, trigger: 'item', confine: true },
-        legend: { show: false },
-        xAxis: {
-            type: 'value', name: 'Dim 0',
-            nameLocation: 'center', nameGap: 25,
-            splitLine: { lineStyle: { color: '#f0f0f0' } }
-        },
-        yAxis: {
-            type: 'value',
-            name: dimensions >= 2 ? 'Dim 1' : '',
-            nameLocation: 'center', nameGap: 35,
-            splitLine: { lineStyle: { color: '#f0f0f0' } }
-        },
-        grid: { top: 50, bottom: 50, left: 55, right: 30 },
-        series: series,
-        animation: false
-    }, true);
+	chart.setOption({
+		title: {
+			text: 'Embedding Space', left: 'center',
+			textStyle: { fontSize: 14, color: '#1e293b' }
+		},
+		tooltip: { show: true, trigger: 'item', confine: true },
+		legend: { show: false },
+		xAxis: {
+			type: 'value', name: 'Dim 0',
+			nameLocation: 'center', nameGap: 25,
+			splitLine: { lineStyle: { color: '#f0f0f0' } }
+		},
+		yAxis: {
+			type: 'value',
+			name: dimensions >= 2 ? 'Dim 1' : '',
+			nameLocation: 'center', nameGap: 35,
+			splitLine: { lineStyle: { color: '#f0f0f0' } }
+		},
+		grid: { top: 50, bottom: 50, left: 55, right: 30 },
+		series: series,
+		animation: false
+	}, true);
 }
 
 function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
-    const series = [];
-    const arrowColor = '#3b82f6';
+	const series = [];
+	const arrowColor = '#3b82f6';
 
-    // ── 1. Vocabulary token scatter3D ──
-    series.push({
-        name: 'Vocabulary',
-        type: 'scatter3D',
-        data: tokens.map(token => {
-            const vec = window.persistentEmbeddingSpace[token];
-            return { name: token, value: [vec[0], vec[1] || 0, vec[2] || 0] };
-        }),
-        symbolSize: 6,
-        itemStyle: { opacity: 0.85 },
-        label: {
-            show: true, position: 'top', distance: 5,
-            formatter: p => p.name,
-            textStyle: { fontSize: 10, color: '#1e293b' }
-        }
-    });
+	// ── 1. Vocabulary token scatter3D ──
+	series.push({
+		name: 'Vocabulary',
+		type: 'scatter3D',
+		data: tokens.map(token => {
+			const vec = window.persistentEmbeddingSpace[token];
+			return {
+				name: token,
+				value: [vec[0], vec[1] || 0, vec[2] || 0],
+				itemStyle: {                                          // ← ADD THIS
+					color: `hsl(${getHueFromToken(token)}, 75%, 50%)` // ← per-token color
+				}
+			};
+		}),
+		symbolSize: 6,
+		itemStyle: { opacity: 0.85 },
+		label: {
+			show: true, position: 'top', distance: 5,
+			formatter: p => p.name,
+			textStyle: { fontSize: 10, color: '#1e293b' }
+		}
+	});
 
-    // ── 2. Calculation-step 3D arrows ──
-    if (steps && steps.length > 0) {
-        steps.forEach((step, idx) => {
-            const from3 = step.from.slice(0, 3);
-            const to3   = step.to.slice(0, 3);
+	// ── 2. Calculation-step 3D arrows ──
+	if (steps && steps.length > 0) {
+		steps.forEach((step, idx) => {
+			const from3 = step.from.slice(0, 3);
+			const to3   = step.to.slice(0, 3);
 
-            // Arrow shaft
-            series.push({
-                type: 'line3D',
-                data: [from3, to3],
-                lineStyle: { width: 5, color: arrowColor, opacity: 0.85 },
-                silent: true
-            });
+			// Arrow shaft
+			series.push({
+				type: 'line3D',
+				data: [from3, to3],
+				lineStyle: { width: 5, color: arrowColor, opacity: 0.85 },
+				silent: true
+			});
 
-            // Arrowhead (line3D petals — same technique as _vf_ec3d_series)
-            const dx = to3[0] - from3[0];
-            const dy = to3[1] - from3[1];
-            const dz = to3[2] - from3[2];
-            const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+			// Arrowhead (line3D petals — same technique as _vf_ec3d_series)
+			const dx = to3[0] - from3[0];
+			const dy = to3[1] - from3[1];
+			const dz = to3[2] - from3[2];
+			const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-            if (mag > 1e-10) {
-                const nx = dx / mag, ny = dy / mag, nz = dz / mag;
-                const headLen = Math.min(mag * 0.25, 0.5);
-                const { perp1, perp2 } = computePerpendicularVectors(nx, ny, nz);
-                const bx = to3[0] - nx * headLen;
-                const by = to3[1] - ny * headLen;
-                const bz = to3[2] - nz * headLen;
-                const spread = headLen * 0.4;
-                const nPetals = 3;
+			if (mag > 1e-10) {
+				const nx = dx / mag, ny = dy / mag, nz = dz / mag;
+				const headLen = Math.min(mag * 0.25, 0.5);
+				const { perp1, perp2 } = computePerpendicularVectors(nx, ny, nz);
+				const bx = to3[0] - nx * headLen;
+				const by = to3[1] - ny * headLen;
+				const bz = to3[2] - nz * headLen;
+				const spread = headLen * 0.4;
+				const nPetals = 3;
 
-                for (let i = 0; i < nPetals; i++) {
-                    const angle  = (2 * Math.PI * i) / nPetals;
-                    const cos1 = Math.cos(angle), sin1 = Math.sin(angle);
-                    const px = bx + spread * (cos1 * perp1.x + sin1 * perp2.x);
-                    const py = by + spread * (cos1 * perp1.y + sin1 * perp2.y);
-                    const pz = bz + spread * (cos1 * perp1.z + sin1 * perp2.z);
+				for (let i = 0; i < nPetals; i++) {
+					const angle  = (2 * Math.PI * i) / nPetals;
+					const cos1 = Math.cos(angle), sin1 = Math.sin(angle);
+					const px = bx + spread * (cos1 * perp1.x + sin1 * perp2.x);
+					const py = by + spread * (cos1 * perp1.y + sin1 * perp2.y);
+					const pz = bz + spread * (cos1 * perp1.z + sin1 * perp2.z);
 
-                    // Petal → tip
-                    series.push({
-                        type: 'line3D', data: [[px, py, pz], to3],
-                        lineStyle: { width: 6, color: arrowColor }, silent: true
-                    });
+					// Petal → tip
+					series.push({
+						type: 'line3D', data: [[px, py, pz], to3],
+						lineStyle: { width: 6, color: arrowColor }, silent: true
+					});
 
-                    // Base ring segment
-                    const j = (i + 1) % nPetals;
-                    const angle2 = (2 * Math.PI * j) / nPetals;
-                    const cos2 = Math.cos(angle2), sin2 = Math.sin(angle2);
-                    const qx = bx + spread * (cos2 * perp1.x + sin2 * perp2.x);
-                    const qy = by + spread * (cos2 * perp1.y + sin2 * perp2.y);
-                    const qz = bz + spread * (cos2 * perp1.z + sin2 * perp2.z);
+					// Base ring segment
+					const j = (i + 1) % nPetals;
+					const angle2 = (2 * Math.PI * j) / nPetals;
+					const cos2 = Math.cos(angle2), sin2 = Math.sin(angle2);
+					const qx = bx + spread * (cos2 * perp1.x + sin2 * perp2.x);
+					const qy = by + spread * (cos2 * perp1.y + sin2 * perp2.y);
+					const qz = bz + spread * (cos2 * perp1.z + sin2 * perp2.z);
 
-                    series.push({
-                        type: 'line3D', data: [[px, py, pz], [qx, qy, qz]],
-                        lineStyle: { width: 6, color: arrowColor }, silent: true
-                    });
-                }
-            }
+					series.push({
+						type: 'line3D', data: [[px, py, pz], [qx, qy, qz]],
+						lineStyle: { width: 6, color: arrowColor }, silent: true
+					});
+				}
+			}
 
-            // Midpoint hover label
-            series.push({
-                type: 'scatter3D',
-                data: [{
-                    value: [(from3[0]+to3[0])/2, (from3[1]+to3[1])/2, (from3[2]+to3[2])/2],
-                    _hover: step.label
-                }],
-                symbolSize: 4,
-                itemStyle: { color: 'rgba(59,130,246,0.01)' },
-                tooltip: { formatter: p => `<b>${p.data._hover}</b>` }
-            });
-        });
-    }
+			// Midpoint hover label
+			series.push({
+				type: 'scatter3D',
+				data: [{
+					value: [(from3[0]+to3[0])/2, (from3[1]+to3[1])/2, (from3[2]+to3[2])/2],
+					_hover: step.label
+				}],
+				symbolSize: 4,
+				itemStyle: { color: 'rgba(59,130,246,0.01)' },
+				tooltip: { formatter: p => `<b>${p.data._hover}</b>` }
+			});
+		});
+	}
 
-    // ── 3. Result diamond highlight ──
-    if (highlightPos) {
-        series.push({
-            name: 'Result',
-            type: 'scatter3D',
-            data: [{ value: highlightPos.slice(0, 3) }],
-            symbol: 'diamond', symbolSize: 10,
-            itemStyle: { color: '#ef4444' },
-            tooltip: {
-                formatter: p =>
-                    `<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)}, ${p.value[2].toFixed(4)})`
-            }
-        });
-    }
+	// ── 3. Result diamond highlight ──
+	if (highlightPos) {
+		series.push({
+			name: 'Result',
+			type: 'scatter3D',
+			data: [{ value: highlightPos.slice(0, 3) }],
+			symbol: 'diamond', symbolSize: 10,
+			itemStyle: { color: '#ef4444' },
+			tooltip: {
+				formatter: p =>
+				`<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)}, ${p.value[2].toFixed(4)})`
+			}
+		});
+	}
 
-    chart.setOption({
-        title: {
-            text: 'Embedding Space', left: 'center',
-            textStyle: { fontSize: 14, color: '#1e293b' }
-        },
-        tooltip: { show: true, trigger: 'item', confine: true },
-        xAxis3D: { type: 'value', name: 'Dim 0' },
-        yAxis3D: { type: 'value', name: 'Dim 1' },
-        zAxis3D: { type: 'value', name: 'Dim 2' },
-        grid3D: {
-            viewControl: {
-                projection: 'perspective', alpha: 30, beta: 40,
-                distance: 200, autoRotate: false, damping: 0.9
-            },
-            light: {
-                main: { intensity: 1.2, shadow: false },
-                ambient: { intensity: 0.3 }
-            },
-            environment: '#f9fafb',
-            boxWidth: 100, boxHeight: 100, boxDepth: 100
-        },
-        series: series,
-        animation: false
-    }, true);
+	chart.setOption({
+		title: {
+			text: 'Embedding Space', left: 'center',
+			textStyle: { fontSize: 14, color: '#1e293b' }
+		},
+		tooltip: { show: true, trigger: 'item', confine: true },
+		xAxis3D: { type: 'value', name: 'Dim 0' },
+		yAxis3D: { type: 'value', name: 'Dim 1' },
+		zAxis3D: { type: 'value', name: 'Dim 2' },
+		grid3D: {
+			viewControl: {
+				projection: 'perspective', alpha: 30, beta: 40,
+				distance: 200, autoRotate: false, damping: 0.9
+			},
+			light: {
+				main: { intensity: 1.2, shadow: false },
+				ambient: { intensity: 0.3 }
+			},
+			environment: '#f9fafb',
+			boxWidth: 100, boxHeight: 100, boxDepth: 100
+		},
+		series: series,
+		animation: false
+	}, true);
 }
 
 /**
