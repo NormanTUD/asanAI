@@ -45,6 +45,22 @@ window.tlab_trajectory_data = {
 	steps: []
 };
 
+function _defaultGrid3DConfig(overrides = {}) {
+	return {
+		viewControl: {
+			projection: 'perspective', alpha: 30, beta: 40,
+			distance: 200, autoRotate: false, damping: 0.9
+		},
+		light: {
+			main: { intensity: 1.2, shadow: false },
+			ambient: { intensity: 0.3 }
+		},
+		environment: '#f9fafb',
+		boxWidth: 100, boxHeight: 100, boxDepth: 100,
+		...overrides
+	};
+}
+
 function _resetParamBreakdownState(nrDiv, toggleDiv, chartDiv) {
 	if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
 	if (toggleDiv) toggleDiv.style.display = 'none';
@@ -2746,18 +2762,7 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 		xAxis3D: { type: 'value', name: 'Dim 0' },
 		yAxis3D: { type: 'value', name: 'Dim 1' },
 		zAxis3D: { type: 'value', name: 'Dim 2' },
-		grid3D: {
-			viewControl: {
-				projection: 'perspective', alpha: 30, beta: 40,
-				distance: 200, autoRotate: false, damping: 0.9
-			},
-			light: {
-				main: { intensity: 1.2, shadow: false },
-				ambient: { intensity: 0.3 }
-			},
-			environment: '#f9fafb',
-			boxWidth: 100, boxHeight: 100, boxDepth: 100
-		},
+		grid3D: _defaultGrid3DConfig(),
 		series: series,
 		animation: false
 	}, true);
@@ -4110,14 +4115,7 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 		xAxis3D: { type: 'value', name: 'Dim 0' },
 		yAxis3D: { type: 'value', name: 'Dim 1' },
 		zAxis3D: { type: 'value', name: 'Dim 2' },
-		grid3D: {
-			viewControl: { projection: 'perspective', alpha: 30, beta: 40,
-				distance: 200, autoRotate: false, damping: 0.9 },
-			light: { main: { intensity: 1.2, shadow: false },
-				ambient: { intensity: 0.3 } },
-			environment: '#f9fafb',
-			boxWidth: 100, boxHeight: 100, boxDepth: 100
-		},
+		grid3D: _defaultGrid3DConfig(),
 		series: series,
 		animation: false
 	}, true);
@@ -4817,24 +4815,10 @@ function _traj_ec3d_option(series, legendData) {
         xAxis3D: { type: 'value', name: 'Dim 0' },
         yAxis3D: { type: 'value', name: 'Dim 1' },
         zAxis3D: { type: 'value', name: 'Dim 2' },
-        grid3D: {
-            viewControl: {
-                projection: 'perspective',
-                alpha: 30,      // vertical angle (matches old camera.eye.z)
-                beta: 40,       // horizontal angle
-                distance: 200,
-                autoRotate: false,
-                damping: 0.9
-            },
-            light: {
-                main:    { intensity: 1.2, shadow: false },
-                ambient: { intensity: 0.3 }
-            },
-            environment: '#f9fafb',
+        grid3D:_defaultGrid3DConfig({
             axisLine:    { lineStyle: { color: '#cbd5e1' } },
-            axisPointer: { show: false },
-            boxWidth: 100, boxHeight: 100, boxDepth: 100
-        },
+            axisPointer: { show: false }
+        }),
         series: series
     };
 }
