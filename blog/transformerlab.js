@@ -92,7 +92,9 @@ function registerLazyRenderable(containerId, registry, observer, data, renderFn,
 
 	observer.observe(container);
 
-	if (isElementInViewport(container)) {
+	// During training, skip the immediate render — forceRerender*
+	// will handle it AFTER all forward-pass data is finalized.
+	if (!window.isTraining && isElementInViewport(container)) {
 		renderFn();
 		const entry = registry.get(containerId);
 		if (entry) entry.rendered = true;
@@ -2122,44 +2124,36 @@ function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, w
     forceRerenderVisibleThemeRiver(d_model); // ← NEU
 }
 
-/**
- * Forces re-render of migration plots that are already in the viewport.
- * The IntersectionObserver only fires on visibility *transitions*, so
- * plots that were already visible when rendered=false was set in
- * prepareMigrationState() would never get re-rendered during training.
- */
 function forceRerenderVisibleMigrationPlots() {
-    transformerLabVisMigrationDataRegistry.forEach((data, id) => {
-        if (!data.rendered) {
-            const el = document.getElementById(id);
-            if (el && isElementInViewport(el)) {
-                render_migration_logic(id, data.tokens, data.start_h, data.end_h, data.layerNum, data.d_model, data.h_after, data.tokenStrings);
-                data.rendered = true;
-            }
-        }
-    });
+	transformerLabVisMigrationDataRegistry.forEach((data, id) => {
+		// During training, always re-render visible plots
+		// regardless of the rendered flag
+		if (!data.rendered || window.isTraining) {
+			const el = document.getElementById(id);
+			if (el && isElementInViewport(el)) {
+				render_migration_logic(
+					id, data.tokens, data.start_h, data.end_h,
+					data.layerNum, data.d_model, data.h_after,
+					data.tokenStrings
+				);
+				data.rendered = true;
+			}
+		}
+	});
 }
 
-/**
- * Forces re-render of the trajectory plot if it is already visible.
- * Its rendered flag was reset in prepareMigrationState() but
- * trajectoryObserver won't re-fire for an already-visible element.
- */
 function forceRerenderVisibleTrajectoryPlot(d_model) {
-    const trajId = 'transformer-trajectory-full-path';
-    const trajEntry = trajectoryRenderRegistry.get(trajId);
-    if (trajEntry && !trajEntry.rendered) {
-        const trajEl = document.getElementById(trajId);
-        if (trajEl && isElementInViewport(trajEl)) {
-            tlab_render_trajectory_plot(d_model);
-            trajEntry.rendered = true;
-        }
-    }
+	const trajId = 'transformer-trajectory-full-path';
+	const trajEntry = trajectoryRenderRegistry.get(trajId);
+	if (trajEntry && (!trajEntry.rendered || window.isTraining)) {
+		const trajEl = document.getElementById(trajId);
+		if (trajEl && isElementInViewport(trajEl)) {
+			tlab_render_trajectory_plot(d_model);
+			trajEntry.rendered = true;
+		}
+	}
 }
 
-/**
- * Shows a message when no input tokens match the training vocabulary.
- */
 function showEmptyInputMessage() {
     document.getElementById('transformer-output-projection').innerHTML =
         `<div style="padding:20px; color: #64748b; text-align:center;">
@@ -2167,26 +2161,20 @@ function showEmptyInputMessage() {
         </div>`;
 }
 
-/**
- * Renders final prediction probabilities from the master token input.
- */
-/**
- * Renders final prediction probabilities from the master token input.
- */
 function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature) {
-    const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
-    if (knownMasterTokens.length === 0) return;
+	const knownMasterTokens = masterTokens.filter(token => vocabulary.includes(token));
+	if (knownMasterTokens.length === 0) return;
 
-    const h_final = runSimpleForwardPass(knownMasterTokens, weights, d_model, n_heads, n_layers);
+	const h_final = runSimpleForwardPass(knownMasterTokens, weights, d_model, n_heads, n_layers);
 
-    // *** NEU: Cache für Temperature-only Re-Rendering ***
-    window._cachedFinalProjection = {
-        h_final: h_final,
-        vocabulary: vocabulary,
-        d_model: d_model
-    };
+	// *** NEU: Cache für Temperature-only Re-Rendering ***
+	window._cachedFinalProjection = {
+		h_final: h_final,
+		vocabulary: vocabulary,
+		d_model: d_model
+	};
 
-    render_final_projection(h_final, vocabulary, d_model, temperature);
+	render_final_projection(h_final, vocabulary, d_model, temperature);
 }
 
 window.select_suggested_word = (word) => {
