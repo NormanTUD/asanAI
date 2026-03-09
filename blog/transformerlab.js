@@ -3052,11 +3052,6 @@ function assertShape(name, value, expected_rows, expected_cols) {
         }
 }
 
-window.showFFNLayer = function(layerIdx) {
-    // Redirect to the unified layer system
-    showUnifiedLayer(layerIdx);
-};
-
 function clearFFNEquationsContainer() {
 	const container = document.getElementById('ffn-equations-container');
 	if (!container) return;
