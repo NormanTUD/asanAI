@@ -626,125 +626,201 @@ function renderParamBreakdown(weights) {
 }
 
 function renderParamSunburst(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff) {
-	const ids = [], labels = [], parents = [], values = [], hoverTexts = [], colors = [];
+    const sunburstData = buildSunburstData(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff);
+    const trace = buildSunburstTrace(sunburstData);
+    const layout = buildSunburstLayout();
 
-	const embColor = '#6366f1';
-	const attnColor = '#3b82f6';
-	const ffnColor = '#f59e0b';
-	const normColor = '#10b981';
+    Plotly.react('param-breakdown-plotly', [trace], layout, { responsive: true });
+}
 
-	ids.push('total');
-	labels.push(`Total: ${grandTotal.toLocaleString()}`);
-	parents.push('');
-	values.push(grandTotal);
-	hoverTexts.push(`Total parameters: ${grandTotal.toLocaleString()}`);
-	colors.push('#1e293b');
+// ─── Sunburst data assembly ─────────────────────────────────────────
 
-	ids.push('embeddings');
-	labels.push('Embeddings');
-	parents.push('total');
-	values.push(embeddingParams);
-	hoverTexts.push(`Embedding table: ${embeddingParams.toLocaleString()} params<br>vocab × d_model`);
-	colors.push(embColor);
+/**
+ * Assembles all parallel arrays (ids, labels, parents, values, hoverTexts, colors)
+ * needed by the Plotly sunburst trace.
+ */
+function buildSunburstData(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff) {
+    const data = createEmptySunburstArrays();
 
-	layerBreakdowns.forEach((lb) => {
-		const layerId = `layer-${lb.layer}`;
+    appendSunburstRoot(data, grandTotal);
+    appendSunburstEmbeddings(data, embeddingParams);
 
-		ids.push(layerId);
-		labels.push(`Layer ${lb.layer}`);
-		parents.push('total');
-		values.push(lb.total);
-		hoverTexts.push(`Layer ${lb.layer}: ${lb.total.toLocaleString()} params`);
-		colors.push('#475569');
+    layerBreakdowns.forEach(lb => {
+        appendSunburstLayer(data, lb, d_model, d_ff);
+    });
 
-		// Attention
-		const attnId = `${layerId}-attn`;
-		ids.push(attnId);
-		labels.push('Attention');
-		parents.push(layerId);
-		values.push(lb.attention.total);
-		hoverTexts.push(`Attention: ${lb.attention.total.toLocaleString()} params<br>Q + K + V + O projections`);
-		colors.push(attnColor);
+    return data;
+}
 
-		[
-			{ key: 'q', label: 'W_Q', desc: `Query: ${d_model}×${d_model}` },
-			{ key: 'k', label: 'W_K', desc: `Key: ${d_model}×${d_model}` },
-			{ key: 'v', label: 'W_V', desc: `Value: ${d_model}×${d_model}` },
-			{ key: 'o', label: 'W_O', desc: `Output: ${d_model}×${d_model}` }
-		].forEach(({ key, label, desc }) => {
-			ids.push(`${attnId}-${key}`);
-			labels.push(label);
-			parents.push(attnId);
-			values.push(lb.attention[key]);
-			hoverTexts.push(`${label}: ${lb.attention[key].toLocaleString()} params<br>${desc}`);
-			colors.push(attnColor);
-		});
+/**
+ * Creates the empty accumulator object for sunburst arrays.
+ */
+function createEmptySunburstArrays() {
+    return {
+        ids: [], labels: [], parents: [], values: [], hoverTexts: [], colors: [],
+        // Color constants
+        embColor: '#6366f1',
+        attnColor: '#3b82f6',
+        ffnColor: '#f59e0b',
+        normColor: '#10b981'
+    };
+}
 
-		// FFN
-		const ffnId = `${layerId}-ffn`;
-		ids.push(ffnId);
-		labels.push('FFN');
-		parents.push(layerId);
-		values.push(lb.ffn.total);
-		hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} params<br>W1 + b1 + W2 + b2`);
-		colors.push(ffnColor);
+/**
+ * Appends the root "Total" node.
+ */
+function appendSunburstRoot(data, grandTotal) {
+    data.ids.push('total');
+    data.labels.push(`Total: ${grandTotal.toLocaleString()}`);
+    data.parents.push('');
+    data.values.push(grandTotal);
+    data.hoverTexts.push(`Total parameters: ${grandTotal.toLocaleString()}`);
+    data.colors.push('#1e293b');
+}
 
-		[
-			{ key: 'w1', label: 'W₁', desc: `Expansion: ${d_model}×${d_ff}` },
-			{ key: 'b1', label: 'b₁', desc: `Bias: ${d_ff}` },
-			{ key: 'w2', label: 'W₂', desc: `Compression: ${d_ff}×${d_model}` },
-			{ key: 'b2', label: 'b₂', desc: `Bias: ${d_model}` }
-		].forEach(({ key, label, desc }) => {
-			ids.push(`${ffnId}-${key}`);
-			labels.push(label);
-			parents.push(ffnId);
-			values.push(lb.ffn[key]);
-			hoverTexts.push(`${label}: ${lb.ffn[key].toLocaleString()} params<br>${desc}`);
-			colors.push(ffnColor);
-		});
+/**
+ * Appends the "Embeddings" node under root.
+ */
+function appendSunburstEmbeddings(data, embeddingParams) {
+    data.ids.push('embeddings');
+    data.labels.push('Embeddings');
+    data.parents.push('total');
+    data.values.push(embeddingParams);
+    data.hoverTexts.push(`Embedding table: ${embeddingParams.toLocaleString()} params<br>vocab × d_model`);
+    data.colors.push(data.embColor);
+}
 
-		// LayerNorm
-		const normId = `${layerId}-norm`;
-		ids.push(normId);
-		labels.push('LayerNorm');
-		parents.push(layerId);
-		values.push(lb.norm.total);
-		hoverTexts.push(`LayerNorm: ${lb.norm.total.toLocaleString()} params<br>γ + β (pre-attn & pre-FFN)`);
-		colors.push(normColor);
+/**
+ * Appends a full layer node (attention + FFN + LayerNorm) with all children.
+ */
+function appendSunburstLayer(data, lb, d_model, d_ff) {
+    const layerId = `layer-${lb.layer}`;
 
-		ids.push(`${normId}-pre-attn`);
-		labels.push('Pre-Attn');
-		parents.push(normId);
-		values.push(lb.norm.pre_attn);
-		hoverTexts.push(`Pre-Attention Norm: ${lb.norm.pre_attn.toLocaleString()} params<br>γ (${d_model}) + β (${d_model})`);
-		colors.push(normColor);
+    // Layer parent node
+    data.ids.push(layerId);
+    data.labels.push(`Layer ${lb.layer}`);
+    data.parents.push('total');
+    data.values.push(lb.total);
+    data.hoverTexts.push(`Layer ${lb.layer}: ${lb.total.toLocaleString()} params`);
+    data.colors.push('#475569');
 
-		ids.push(`${normId}-pre-ffn`);
-		labels.push('Pre-FFN');
-		parents.push(normId);
-		values.push(lb.norm.pre_ffn);
-		hoverTexts.push(`Pre-FFN Norm: ${lb.norm.pre_ffn.toLocaleString()} params<br>γ₂ (${d_model}) + β₂ (${d_model})`);
-		colors.push(normColor);
-	});
+    appendSunburstAttention(data, layerId, lb, d_model);
+    appendSunburstFFN(data, layerId, lb, d_model, d_ff);
+    appendSunburstNorm(data, layerId, lb, d_model);
+}
 
-	const trace = {
-		type: 'sunburst',
-		ids, labels, parents, values,
-		hovertext: hoverTexts,
-		hoverinfo: 'text',
-		branchvalues: 'total',
-		marker: { colors, line: { width: 1, color: '#fff' } },
-		textinfo: 'label+percent parent',
-		insidetextorientation: 'radial',
-		maxdepth: 3
-	};
+/**
+ * Appends the Attention sub-tree for a layer.
+ */
+function appendSunburstAttention(data, layerId, lb, d_model) {
+    const attnId = `${layerId}-attn`;
 
-	const layout = {
-		title: { text: 'Parameter Distribution', font: { size: 14, color: '#1e293b' } },
-		margin: { t: 40, b: 10, l: 10, r: 10 }
-	};
+    data.ids.push(attnId);
+    data.labels.push('Attention');
+    data.parents.push(layerId);
+    data.values.push(lb.attention.total);
+    data.hoverTexts.push(`Attention: ${lb.attention.total.toLocaleString()} params<br>Q + K + V + O projections`);
+    data.colors.push(data.attnColor);
 
-	Plotly.react('param-breakdown-plotly', [trace], layout, { responsive: true });
+    const attnChildren = [
+        { key: 'q', label: 'W_Q', desc: `Query: ${d_model}×${d_model}` },
+        { key: 'k', label: 'W_K', desc: `Key: ${d_model}×${d_model}` },
+        { key: 'v', label: 'W_V', desc: `Value: ${d_model}×${d_model}` },
+        { key: 'o', label: 'W_O', desc: `Output: ${d_model}×${d_model}` }
+    ];
+
+    attnChildren.forEach(({ key, label, desc }) => {
+        appendSunburstLeaf(data, `${attnId}-${key}`, label, attnId, lb.attention[key], desc, data.attnColor);
+    });
+}
+
+/**
+ * Appends the FFN sub-tree for a layer.
+ */
+function appendSunburstFFN(data, layerId, lb, d_model, d_ff) {
+    const ffnId = `${layerId}-ffn`;
+
+    data.ids.push(ffnId);
+    data.labels.push('FFN');
+    data.parents.push(layerId);
+    data.values.push(lb.ffn.total);
+    data.hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} params<br>W1 + b1 + W2 + b2`);
+    data.colors.push(data.ffnColor);
+
+    const ffnChildren = [
+        { key: 'w1', label: 'W₁', desc: `Expansion: ${d_model}×${d_ff}` },
+        { key: 'b1', label: 'b₁', desc: `Bias: ${d_ff}` },
+        { key: 'w2', label: 'W₂', desc: `Compression: ${d_ff}×${d_model}` },
+        { key: 'b2', label: 'b₂', desc: `Bias: ${d_model}` }
+    ];
+
+    ffnChildren.forEach(({ key, label, desc }) => {
+        appendSunburstLeaf(data, `${ffnId}-${key}`, label, ffnId, lb.ffn[key], desc, data.ffnColor);
+    });
+}
+
+/**
+ * Appends the LayerNorm sub-tree for a layer.
+ */
+function appendSunburstNorm(data, layerId, lb, d_model) {
+    const normId = `${layerId}-norm`;
+
+    data.ids.push(normId);
+    data.labels.push('LayerNorm');
+    data.parents.push(layerId);
+    data.values.push(lb.norm.total);
+    data.hoverTexts.push(`LayerNorm: ${lb.norm.total.toLocaleString()} params<br>γ + β (pre-attn & pre-FFN)`);
+    data.colors.push(data.normColor);
+
+    appendSunburstLeaf(data, `${normId}-pre-attn`, 'Pre-Attn', normId, lb.norm.pre_attn,
+        `Pre-Attention Norm: ${lb.norm.pre_attn.toLocaleString()} params<br>γ (${d_model}) + β (${d_model})`, data.normColor);
+
+    appendSunburstLeaf(data, `${normId}-pre-ffn`, 'Pre-FFN', normId, lb.norm.pre_ffn,
+        `Pre-FFN Norm: ${lb.norm.pre_ffn.toLocaleString()} params<br>γ₂ (${d_model}) + β₂ (${d_model})`, data.normColor);
+}
+
+/**
+ * Appends a single leaf node to the sunburst arrays.
+ */
+function appendSunburstLeaf(data, id, label, parentId, value, hoverDesc, color) {
+    data.ids.push(id);
+    data.labels.push(label);
+    data.parents.push(parentId);
+    data.values.push(value);
+    data.hoverTexts.push(`${label}: ${value.toLocaleString()} params<br>${hoverDesc}`);
+    data.colors.push(color);
+}
+
+// ─── Plotly trace & layout construction ─────────────────────────────
+
+/**
+ * Builds the Plotly sunburst trace object from assembled data arrays.
+ */
+function buildSunburstTrace(data) {
+    return {
+        type: 'sunburst',
+        ids: data.ids,
+        labels: data.labels,
+        parents: data.parents,
+        values: data.values,
+        hovertext: data.hoverTexts,
+        hoverinfo: 'text',
+        branchvalues: 'total',
+        marker: { colors: data.colors, line: { width: 1, color: '#fff' } },
+        textinfo: 'label+percent parent',
+        insidetextorientation: 'radial',
+        maxdepth: 3
+    };
+}
+
+/**
+ * Builds the Plotly layout for the sunburst chart.
+ */
+function buildSunburstLayout() {
+    return {
+        title: { text: 'Parameter Distribution', font: { size: 14, color: '#1e293b' } },
+        margin: { t: 40, b: 10, l: 10, r: 10 }
+    };
 }
 
 /**
