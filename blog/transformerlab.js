@@ -2235,23 +2235,9 @@ $$
 	const maxEntropy = Math.log2(logits.length);
 
 	html += `
-<div style="margin-top: 20px; padding: 15px; background: #fffbeb; border: 1px solid #f59e0b; border-radius: 8px;">
-<p style="font-weight: bold; color: #92400e; font-size: 1rem; margin-bottom: 10px;">🌡️ Temperature Scaling ($T = ${temperature.toFixed(1)}$)</p>
-
 <div style="overflow-x:auto; padding:10px 0;">
 $$
-\\frac{\\text{logit}_w}{T} \\;:\\quad
-\\left(\\begin{array}{r|r|r}
-\\text{word} & \\text{logit}_w & \\text{logit}_w / ${temperature.toFixed(1)} \\\\
-\\hline
-	${scaledLogitRows}
-\\end{array}\\right)
-$$
-</div>
-
-<div style="overflow-x:auto; padding:10px 0;">
-$$
-\\text{softmax}\\!\\left(\\frac{\\mathbf{z}}{T}\\right) \\;:\\quad
+\\text{softmax}\\!\\left(\\frac{\\text{logit}_w}{\\underbrace{${temperature.toFixed(1)}}_{\\text{Temperature}}}\\right) =
 \\left(\\begin{array}{l|r|r|r}
 \\text{word} & P_{T=1} & P_{T=${temperature.toFixed(1)}} & \\Delta \\\\
 \\hline
@@ -2266,8 +2252,6 @@ H_{T=1} = ${entropyOrig.toFixed(4)} \\text{ bits}, \\quad
 H_{T=${temperature.toFixed(1)}} = ${entropyScaled.toFixed(4)} \\text{ bits}, \\quad
 H_{\\max} = \\log_2(${logits.length}) = ${maxEntropy.toFixed(4)} \\text{ bits}
 $$
-</div>
-
 </div>`;
 
 	html += `</span></div>`;
