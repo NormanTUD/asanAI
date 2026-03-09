@@ -637,10 +637,6 @@ function renderParamSunburst(layerBreakdowns, embeddingParams, grandTotal, d_mod
 
 // ─── Sunburst data assembly ─────────────────────────────────────────
 
-/**
- * Assembles all parallel arrays (ids, labels, parents, values, hoverTexts, colors)
- * needed by the Plotly sunburst trace.
- */
 function buildSunburstData(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff) {
     const data = createEmptySunburstArrays();
 
@@ -654,9 +650,6 @@ function buildSunburstData(layerBreakdowns, embeddingParams, grandTotal, d_model
     return data;
 }
 
-/**
- * Creates the empty accumulator object for sunburst arrays.
- */
 function createEmptySunburstArrays() {
     return {
         ids: [], labels: [], parents: [], values: [], hoverTexts: [], colors: [],
@@ -668,9 +661,6 @@ function createEmptySunburstArrays() {
     };
 }
 
-/**
- * Appends the root "Total" node.
- */
 function appendSunburstRoot(data, grandTotal) {
     data.ids.push('total');
     data.labels.push(`Total: ${grandTotal.toLocaleString()}`);
@@ -680,9 +670,6 @@ function appendSunburstRoot(data, grandTotal) {
     data.colors.push('#1e293b');
 }
 
-/**
- * Appends the "Embeddings" node under root.
- */
 function appendSunburstEmbeddings(data, embeddingParams) {
     data.ids.push('embeddings');
     data.labels.push('Embeddings');
@@ -692,9 +679,6 @@ function appendSunburstEmbeddings(data, embeddingParams) {
     data.colors.push(data.embColor);
 }
 
-/**
- * Appends a full layer node (attention + FFN + LayerNorm) with all children.
- */
 function appendSunburstLayer(data, lb, d_model, d_ff) {
     const layerId = `layer-${lb.layer}`;
 
@@ -711,9 +695,6 @@ function appendSunburstLayer(data, lb, d_model, d_ff) {
     appendSunburstNorm(data, layerId, lb, d_model);
 }
 
-/**
- * Appends the Attention sub-tree for a layer.
- */
 function appendSunburstAttention(data, layerId, lb, d_model) {
     const attnId = `${layerId}-attn`;
 
@@ -736,9 +717,6 @@ function appendSunburstAttention(data, layerId, lb, d_model) {
     });
 }
 
-/**
- * Appends the FFN sub-tree for a layer.
- */
 function appendSunburstFFN(data, layerId, lb, d_model, d_ff) {
     const ffnId = `${layerId}-ffn`;
 
@@ -761,9 +739,6 @@ function appendSunburstFFN(data, layerId, lb, d_model, d_ff) {
     });
 }
 
-/**
- * Appends the LayerNorm sub-tree for a layer.
- */
 function appendSunburstNorm(data, layerId, lb, d_model) {
     const normId = `${layerId}-norm`;
 
@@ -781,9 +756,6 @@ function appendSunburstNorm(data, layerId, lb, d_model) {
         `Pre-FFN Norm: ${lb.norm.pre_ffn.toLocaleString()} params<br>γ₂ (${d_model}) + β₂ (${d_model})`, data.normColor);
 }
 
-/**
- * Appends a single leaf node to the sunburst arrays.
- */
 function appendSunburstLeaf(data, id, label, parentId, value, hoverDesc, color) {
     data.ids.push(id);
     data.labels.push(label);
@@ -795,9 +767,6 @@ function appendSunburstLeaf(data, id, label, parentId, value, hoverDesc, color) 
 
 // ─── Plotly trace & layout construction ─────────────────────────────
 
-/**
- * Builds the Plotly sunburst trace object from assembled data arrays.
- */
 function buildSunburstTrace(data) {
     return {
         type: 'sunburst',
@@ -815,9 +784,6 @@ function buildSunburstTrace(data) {
     };
 }
 
-/**
- * Builds the Plotly layout for the sunburst chart.
- */
 function buildSunburstLayout() {
     return {
         title: { text: 'Parameter Distribution', font: { size: 14, color: '#1e293b' } },
@@ -825,9 +791,6 @@ function buildSunburstLayout() {
     };
 }
 
-/**
- * Renders a compact HTML summary table of parameter counts.
- */
 function renderParamTable(layerBreakdowns, embeddingParams, grandTotal) {
     const tableDiv = document.getElementById('param-breakdown-table');
     if (!tableDiv) return;
@@ -848,9 +811,6 @@ function renderParamTable(layerBreakdowns, embeddingParams, grandTotal) {
     tableDiv.innerHTML = html;
 }
 
-/**
- * Sums attention, FFN, and norm parameter counts across all layers.
- */
 function aggregateLayerTotals(layerBreakdowns) {
     let totalAttn = 0, totalFFN = 0, totalNorm = 0;
     layerBreakdowns.forEach(lb => {
@@ -861,16 +821,10 @@ function aggregateLayerTotals(layerBreakdowns) {
     return { totalAttn, totalFFN, totalNorm };
 }
 
-/**
- * Infers d_model from the first layer's pre-attention norm param count.
- */
 function inferDModelFromBreakdowns(layerBreakdowns) {
     return layerBreakdowns.length > 0 ? (layerBreakdowns[0].norm.pre_attn / 2) : 0;
 }
 
-/**
- * Builds the <table> opening tag and <thead> for the parameter breakdown table.
- */
 function buildParamTableHeader() {
     return `<table style="width:100%; border-collapse:collapse; font-family:'Inter',sans-serif; font-size:0.8rem;">
     <thead>
@@ -884,9 +838,6 @@ function buildParamTableHeader() {
     <tbody>`;
 }
 
-/**
- * Builds the embedding row HTML.
- */
 function buildEmbeddingRow(embeddingParams, vocabSize, d_model, fmt, pct) {
     return `<tr style="background:#eef2ff; border-bottom:1px solid #e2e8f0;">
     <td style="padding:6px 10px; font-weight:600; color:#6366f1;">Embeddings</td>
@@ -896,16 +847,10 @@ function buildEmbeddingRow(embeddingParams, vocabSize, d_model, fmt, pct) {
     </tr>`;
 }
 
-/**
- * Builds all per-layer rows (header + attention + FFN + norm sub-rows).
- */
 function buildAllLayerRows(layerBreakdowns, fmt, pct) {
     return layerBreakdowns.map(lb => buildSingleLayerRows(lb, fmt, pct)).join('');
 }
 
-/**
- * Builds the rows for a single layer: a header row plus three detail sub-rows.
- */
 function buildSingleLayerRows(lb, fmt, pct) {
     let html = `<tr style="background:#f8fafc; border-bottom:1px solid #f1f5f9;">
         <td style="padding:6px 10px; font-weight:600;" colspan="4">Layer ${lb.layer} — ${fmt(lb.total)} params (${pct(lb.total)}%)</td>
@@ -918,9 +863,6 @@ function buildSingleLayerRows(lb, fmt, pct) {
     return html;
 }
 
-/**
- * Builds a single indented sub-row for a layer component (attention, FFN, or norm).
- */
 function buildLayerSubRow(label, color, total, shape, fmt, pct, extraStyle = 'border-bottom:1px solid #f1f5f9;') {
     return `<tr style="${extraStyle}">
         <td style="padding:4px 10px 4px 30px; color:${color};">${label}</td>
@@ -930,9 +872,6 @@ function buildLayerSubRow(label, color, total, shape, fmt, pct, extraStyle = 'bo
     </tr>`;
 }
 
-/**
- * Builds the grand-total summary row at the bottom of the table.
- */
 function buildTotalRow(grandTotal, totalAttn, totalFFN, fmt, pct) {
     const attnVsFFN = totalAttn > 0 ? (totalFFN / totalAttn).toFixed(1) : '—';
     return `<tr style="background:#f0fdf4; border-top:2px solid #10b981; font-weight:700;">
@@ -1025,10 +964,6 @@ function calculate_positional_injection(tokens, d_model) {
 	return injectedEncodings;
 }
 
-/**
- * Computes the combined embedding + PE vector for each token.
- * Pure computation — no DOM access.
- */
 function computeInjectedEncodings(tokens, d_model) {
 	const roundedSpace = {};
 	tokens.forEach(t => {
@@ -1040,9 +975,6 @@ function computeInjectedEncodings(tokens, d_model) {
 	return embedTokensWithPE(tokens, d_model, roundedSpace);
 }
 
-/**
- * Renders the positional injection table into the DOM.
- */
 function renderPositionalInjectionHtml(tokens, injectedEncodings, d_model) {
 	const resultsContainer = document.getElementById('transformer-pe-integration-results');
 	if (!resultsContainer) return;
@@ -1065,9 +997,6 @@ function renderPositionalInjectionHtml(tokens, injectedEncodings, d_model) {
 	resultsContainer.innerHTML = html;
 }
 
-/**
- * Builds the HTML for a single token's injection row.
- */
 function buildInjectionRowHtml(token, pos, semanticVec, peVec, combined) {
     const displaySemantic = semanticVec.map(v => v.toFixed(nr_fixed));
     const displayPE = peVec.map(v => v.toFixed(nr_fixed));
@@ -1244,19 +1173,12 @@ function initTrainingSession(btn, status) {
 	};
 }
 
-/**
- * Instantiates the TensorFlow.js optimizer based on user selection.
- */
 function createOptimizer(optType, lr) {
 	if (optType === 'adam')    return tf.train.adam(lr);
 	if (optType === 'rmsprop') return tf.train.rmsprop(lr);
 	return tf.train.sgd(lr);
 }
 
-/**
- * Constructs sliding-window input/target pairs for the current epoch.
- * Mutates window.currentTrainingWindows.
- */
 function buildTrainingWindows(tokens, contextSize) {
 	window.currentTrainingWindows = [];
 	for (let startIdx = 0; startIdx < tokens.length - contextSize; startIdx++) {
@@ -1266,10 +1188,6 @@ function buildTrainingWindows(tokens, contextSize) {
 	}
 }
 
-/**
- * Runs one gradient step: computes loss, clips gradients, applies them.
- * Returns the loss tensor (caller must dispose).
- */
 function computeAndApplyGradients(tokens, weightVars, d_model, n_layers, n_heads, allVars, optimizer, clipValue) {
 	const { value: cost, grads } = tf.variableGrads(
 		() => tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers, n_heads)),
@@ -1296,63 +1214,52 @@ Without this, a single pathological training example could produce a gradient so
 	return cost;
 }
 
-/**
- * Generates HTML showing expected vs. predicted tokens for each
- * training window, and injects it into the DOM.
- */
 function renderTrainingWindowPredictions(d_model, n_layers) {
-    const sentenceSpan = document.getElementById('current_training_sentence');
-    if (!sentenceSpan || window.currentTrainingWindows.length === 0) return;
+	const sentenceSpan = document.getElementById('current_training_sentence');
+	if (!sentenceSpan || window.currentTrainingWindows.length === 0) return;
 
-    const vocab     = Object.keys(window.persistentEmbeddingSpace);
-    const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
-    const { n_heads: n_heads_local } = getTransformerConfig();
+	const vocab     = Object.keys(window.persistentEmbeddingSpace);
+	const embMatrix = vocab.map(word => window.persistentEmbeddingSpace[word]);
+	const { n_heads: n_heads_local } = getTransformerConfig();
 
-    const maxWordLen = Math.max(
-        ...window.currentTrainingWindows.flatMap(w => w.target.map(t => t.length)),
-        ...vocab.map(v => v.length),
-        1
-    );
-    const chipMinWidth = Math.max(250, maxWordLen * 9 + 70) + 'px';
+	const maxWordLen = Math.max(
+		...window.currentTrainingWindows.flatMap(w => w.target.map(t => t.length)),
+		...vocab.map(v => v.length),
+		1
+	);
+	const chipMinWidth = Math.max(250, maxWordLen * 9 + 70) + 'px';
 
-    const windowsHtml = window.currentTrainingWindows.map((w, idx) => {
-        const predictions = getPredictionsForWindow(w, vocab, embMatrix, d_model, n_heads_local, n_layers);
-        return renderSingleWindowHtml(w, predictions, idx, chipMinWidth);
-    }).join('');
+	const windowsHtml = window.currentTrainingWindows.map((w, idx) => {
+		const predictions = getPredictionsForWindow(w, vocab, embMatrix, d_model, n_heads_local, n_layers);
+		return renderSingleWindowHtml(w, predictions, idx, chipMinWidth);
+	}).join('');
 
-    sentenceSpan.innerHTML = windowsHtml;
-    $("#show_training_sentences").show();
+	sentenceSpan.innerHTML = windowsHtml;
+	$("#show_training_sentences").show();
 }
 
-/**
- * Runs a forward pass for a single training window and returns
- * top-1 predictions at each position.
- */
 function getPredictionsForWindow(w, vocab, embMatrix, d_model, n_heads, n_layers) {
-    const predictions = [];
-    try {
-        const h = runSimpleForwardPass(w.input, window.currentWeights, d_model, n_heads, n_layers);
+	const predictions = [];
+	try {
+		const h = runSimpleForwardPass(w.input, window.currentWeights, d_model, n_heads, n_layers);
 
-        for (let pos = 0; pos < h.length; pos++) {
-            const logits = embMatrix.map(embRow =>
-                h[pos].reduce((sum, val, k) => sum + val * embRow[k], 0));
-            const probs = softmax(logits);
+		for (let pos = 0; pos < h.length; pos++) {
+			const logits = embMatrix.map(embRow =>
+				h[pos].reduce((sum, val, k) => sum + val * embRow[k], 0));
+			const probs = softmax(logits);
 
-            let bestIdx = 0;
-            for (let j = 1; j < probs.length; j++) {
-                if (probs[j] > probs[bestIdx]) bestIdx = j;
-            }
-            predictions.push({ word: vocab[bestIdx], prob: probs[bestIdx] });
-        }
-    } catch (e) {
-        w.target.forEach(() => predictions.push({ word: '?', prob: 0 }));
-    }
-    return predictions;
+			let bestIdx = 0;
+			for (let j = 1; j < probs.length; j++) {
+				if (probs[j] > probs[bestIdx]) bestIdx = j;
+			}
+			predictions.push({ word: vocab[bestIdx], prob: probs[bestIdx] });
+		}
+	} catch (e) {
+		w.target.forEach(() => predictions.push({ word: '?', prob: 0 }));
+	}
+	return predictions;
 }
 
-/**
- * Builds the HTML chip display for a single training window.
- */
 function renderSingleWindowHtml(w, predictions, idx, chipMinWidth) {
 	const targetHtml = w.target.map((targetWord, pos) => {
 		const pred      = predictions[pos] || { word: '?', prob: 0 };
@@ -1376,9 +1283,6 @@ function renderSingleWindowHtml(w, predictions, idx, chipMinWidth) {
     </div>`;
 }
 
-/**
- * Formats a duration in milliseconds as HH:MM:SS.
- */
 function formatETA(ms) {
 	if (isNaN(ms) || ms < 0) return "Calculating...";
 	let seconds = Math.floor(ms / 1000);
@@ -1391,9 +1295,6 @@ function formatETA(ms) {
 		.join(":");
 }
 
-/**
- * Resets UI elements after training completes or is stopped.
- */
 function finalizeTrainingSession(btn, status, completedAll) {
 	window.isTraining = false;
 	lockArchitectureControls(false);  // ← ADD THIS LINE
@@ -1432,17 +1333,11 @@ async function train_transformer() {
     finalizeTrainingSession(btn, status, completedAll);
 }
 
-/**
- * Tokenizes the training data from the DOM input.
- */
 function getTrainingTokens() {
     const trainingData = document.getElementById('transformer-training-data').value;
     return transformer_tokenize_render(trainingData, null);
 }
 
-/**
- * Ensures weights and embeddings are initialized for the current config.
- */
 function ensureWeightsAndEmbeddings(tokens, n_layers, d_model) {
     if (!window.currentWeights) {
         window.currentWeights = get_init_weights(n_layers, d_model);
@@ -1450,9 +1345,6 @@ function ensureWeightsAndEmbeddings(tokens, n_layers, d_model) {
     get_or_init_embeddings(tokens, d_model);
 }
 
-/**
- * Runs a single training epoch: gradient step, predictions, progress update, state sync.
- */
 async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime) {
     const clipValue = 1.0;
     const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
@@ -1478,9 +1370,6 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
     cost.dispose();
 }
 
-/**
- * Updates the progress bar and status text for the current epoch.
- */
 function updateEpochProgress(epochIdx, totalEpochs, loss, startTime, status) {
     updateTrainingProgressBar(epochIdx + 1, totalEpochs, loss);
 
@@ -1490,9 +1379,6 @@ function updateEpochProgress(epochIdx, totalEpochs, loss, startTime, status) {
     status.innerText = `Epoch ${epochIdx + 1}: Loss = ${loss.toFixed(6)} | ETA: ${formatETA(etaMs)}`;
 }
 
-/**
- * Syncs tensor weights back to JS, re-renders the demo, and yields to the browser.
- */
 async function syncTrainingState(weightVars) {
     renderLossGraph();
     window.currentWeights = await convert_tensors_to_weights(weightVars);
@@ -1554,9 +1440,6 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
     return tf.addN(losses).div(tf.scalar(losses.length));
 }
 
-/**
- * Builds the upper-triangle causal mask tensor.
- */
 function buildCausalMask(contextSize) {
     return tf.tidy(() => {
         const ones = tf.ones([contextSize, contextSize]);
@@ -1566,9 +1449,6 @@ function buildCausalMask(contextSize) {
     });
 }
 
-/**
- * Collects cross-entropy losses for all sliding windows.
- */
 function collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, contextSize, mask) {
 	const losses = [];
 
@@ -1592,17 +1472,11 @@ function collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, cont
 	return losses;
 }
 
-/**
- * Maps a slice of tokens to vocabulary indices.
- */
 function mapTokensToIds(tokens, startIdx, contextSize, vocabMap) {
     return tokens.slice(startIdx, startIdx + contextSize)
         .map(t => vocabMap.indexOf(t));
 }
 
-/**
- * Gathers embeddings and adds sinusoidal positional encoding (TF tensors).
- */
 function embedAndEncodePositions(inputIds, embeddingsTensor, d_model) {
     let x = tf.gather(embeddingsTensor, tf.tensor1d(inputIds, 'int32'));
 
@@ -1624,9 +1498,6 @@ function embedAndEncodePositions(inputIds, embeddingsTensor, d_model) {
     return tf.add(x, peTensor);
 }
 
-/**
- * Applies all transformer layers (Pre-LN) to the input tensor.
- */
 function applyTransformerLayers(x, layers, n_layers, n_heads, d_k, contextSize, d_model, mask) {
     for (let i = 0; i < n_layers; i++) {
         x = applySingleTransformerLayer(x, layers[i], n_heads, d_k, contextSize, d_model, mask);
@@ -1634,9 +1505,6 @@ function applyTransformerLayers(x, layers, n_layers, n_heads, d_k, contextSize, 
     return x;
 }
 
-/**
- * Applies a single Pre-LN transformer layer: attention + FFN.
- */
 function applySingleTransformerLayer(x, layer, n_heads, d_k, contextSize, d_model, mask) {
     // Pre-LN + Multi-Head Attention
     const normX = tf_layer_norm(x, layer.gamma, layer.beta);
@@ -1650,9 +1518,6 @@ function applySingleTransformerLayer(x, layer, n_heads, d_k, contextSize, d_mode
     return tf.add(x, ffn);
 }
 
-/**
- * Computes multi-head attention with causal masking in TensorFlow.js.
- */
 function computeTfMultiHeadAttention(normX, layer, n_heads, d_k, contextSize, d_model, mask) {
     const q = tf.matMul(normX, layer.wq);
     const k = tf.matMul(normX, layer.wk);
@@ -1739,11 +1604,6 @@ function renderLossGraph() {
 	Plotly.newPlot('training-loss-plot', [trace], layout);
 }
 
-/**
- * Checks if weights need reinitialization due to config changes,
- * and performs the reinit if necessary.
- * @returns {boolean} Whether a reinit was performed
- */
 function handleWeightReinit(d_model, n_heads, n_layers) {
 	const needsReinit = !window.currentWeights ||
 		window.currentWeights.length !== n_layers ||
@@ -1812,11 +1672,6 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 	return needsReinit;
 }
 
-/**
- * Renders all pre-attention visualizations: embedding space, positional
- * injection, positional waves, shift plot, and architecture stats.
- * @returns {number[][]} h0 — the positional-shift embeddings
- */
 function renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature) {
 	window.persistentEmbeddingSpace = get_or_init_embeddings(trainingTokens, d_model);
 	render_embedding_plot(d_model);
@@ -1830,11 +1685,6 @@ function renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, 
 	return h0;
 }
 
-/**
- * Prepares migration and trajectory state for a new forward pass.
- * Resets trajectory steps, marks migration entries for re-render,
- * and initializes the active migration ID set.
- */
 function prepareMigrationState(needsReinit) {
 	const migrationContainer = document.getElementById('transformer-migration-plots-container');
 	if (migrationContainer && !needsReinit) {
@@ -1905,9 +1755,6 @@ function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_m
 	return h2;
 }
 
-/**
- * Derives LaTeX naming conventions for the h1 display of a given layer.
- */
 function _h1NamingForLayer(layerIndex) {
     const L = layerIndex + 1;
     const sup = `^{(${L})}`;
@@ -1920,9 +1767,6 @@ function _h1NamingForLayer(layerIndex) {
     return { L, sup, hInName, hOutName, hInStage };
 }
 
-/**
- * Builds the Pre-Layer Normalization HTML for a specific layer's h1 section.
- */
 function buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming) {
     const { sup, hInName, hInStage } = naming;
 
@@ -1940,9 +1784,6 @@ function buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming) {
     `;
 }
 
-/**
- * Builds the output projection + residual connection HTML for a specific layer's h1 section.
- */
 function buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts, naming) {
     const { sup, hInName, hOutName, hInStage } = naming;
 
@@ -1965,10 +1806,6 @@ function buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts,
     `;
 }
 
-/**
- * Triggers the detailed attention rendering and path visualization
- * for the MHA calculation details container.
- */
 function renderAttentionDetails() {
 	const virtualContainerId = "unified-attention-engine";
 	const registryEntry = attentionRenderRegistry.get(virtualContainerId);
@@ -1978,10 +1815,6 @@ function renderAttentionDetails() {
 	}
 }
 
-/**
- * Creates or updates the trajectory plot div, registers it for
- * lazy rendering, and renders immediately if already in viewport.
- */
 function renderTrajectoryPlot(d_model) {
     if (!window.tlab_trajectory_collector) return;
 
@@ -2019,10 +1852,6 @@ function renderTrajectoryPlot(d_model) {
     );
 }
 
-/**
- * Removes migration plot DOM elements and registry entries
- * for layers that are no longer active.
- */
 function pruneOrphanedMigrationPlots() {
     const globalContainer = document.getElementById('transformer-migration-plots-container');
     if (!window._activeMigrationIds) return;
@@ -2078,19 +1907,12 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
     renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
 }
 
-/**
- * Determines which tokens to visualize based on the current toggle mode.
- */
 function getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary) {
     const vizMode = window.tlabVisualizationMode || 'train';
     const vizSourceTokens = (vizMode === 'inference') ? masterTokens : inputTokens;
     return vizSourceTokens.filter(token => vocabulary.includes(token));
 }
 
-/**
- * Validates that d_model is divisible by n_heads. Shows error if not.
- * @returns {boolean} true if valid
- */
 function validateModelDimensions(d_model, n_heads) {
     if (d_model % n_heads !== 0) {
         const container = document.getElementById('transformer-output-projection');
@@ -2251,9 +2073,6 @@ function buildLogitDetailsHtml(h_last, logits) {
     return html;
 }
 
-/**
- * Builds the opening section showing the current h_last vector.
- */
 function buildHLastDisplayLatex(h_last) {
     return h_last.map((v, dim) =>
         `\\underbrace{${v.toFixed(nr_fixed)}}_{\\substack{h_{${dim}} \\\\ \\text{hidden dim ${dim}}}}`
@@ -2267,9 +2086,6 @@ function buildHLastSection(h_last) {
     <p class="logit_calc">Current $h_\\text{last} = [${hLastLatex}]$ (the last layers' output matrix last line of the <i>inference</i>-data)</p>\n`;
 }
 
-/**
- * Builds the W_vocab × h_last = logits matrix multiplication LaTeX section.
- */
 function buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits) {
     const vocabMatrixRows = W_vocab.map((row, wIdx) => {
         const safeWord = vocabWords[wIdx].replace(/#/g, '\\#').replace(/_/g, '\\_');
@@ -2303,9 +2119,6 @@ $$
 </div>`;
 }
 
-/**
- * Builds the LaTeX rows for the logit vector display.
- */
 function buildLogitLatexRows(logits) {
     return logits.map(({ word, val }) => {
         const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
@@ -2313,9 +2126,6 @@ function buildLogitLatexRows(logits) {
     }).join(' \\\\ ');
 }
 
-/**
- * Builds the softmax(logits) = probabilities LaTeX section.
- */
 function buildSoftmaxSection(logits, logitValues) {
     const probs = softmax(logitValues);
     const logitRows = buildLogitLatexRows(logits);
@@ -2346,16 +2156,10 @@ $$
 </div>`;
 }
 
-/**
- * Computes entropy in bits from a probability distribution.
- */
 function computeEntropyBits(probs) {
     return -probs.reduce((sum, p) => sum + (p > 1e-12 ? p * Math.log2(p) : 0), 0);
 }
 
-/**
- * Builds the temperature-scaling comparison LaTeX section.
- */
 function buildTemperatureSection(logits, logitValues, temperature) {
     const probs = softmax(logitValues);
 
@@ -2380,9 +2184,6 @@ $$
 ${entropySection}`;
 }
 
-/**
- * Builds the per-word probability comparison rows for the temperature table.
- */
 function buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature) {
     return logits.map(({ word }, i) => {
         const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
@@ -2395,9 +2196,6 @@ function buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature)
     }).join(' \\\\ ');
 }
 
-/**
- * Builds the entropy comparison LaTeX display.
- */
 function buildEntropyLatex(probs, scaledProbs, vocabSize, temperature) {
     const entropyOrig = computeEntropyBits(probs);
     const entropyScaled = computeEntropyBits(scaledProbs);
@@ -2478,9 +2276,6 @@ function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
 
 // ── 3D Arrowhead geometry (extracted from _execute_embedding_render) ──
 
-/**
- * Finds two vectors perpendicular to a given normalized direction.
- */
 function computePerpendicularVectors(nx, ny, nz) {
     let ax, ay, az;
     if (Math.abs(nx) < 0.9) {
@@ -2720,9 +2515,6 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 	}, true);
 }
 
-/**
- * Renders the embedding space for d_model >= 4 using ECharts parallel coordinates.
- */
 function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
     const myChart = echarts.init(container);
     const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({
@@ -2768,10 +2560,7 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 }
 
 // Updated Tokenizer to allow different containers
-/**
- * Tokenizes text based on the selected tokenizer type.
- * Pure computation — no DOM access.
- */
+
 function tokenizeText(text, type) {
     if (type === 'bpe') {
         const words = text.match(/\S+|\s+/g) || [];
@@ -2785,10 +2574,6 @@ function tokenizeText(text, type) {
     return text.match(/[\w]+|[^\w\s]/g) || [];
 }
 
-/**
- * Renders token chips into a container element.
- * Uses the same token-badge styling as the tokenizer lab.
- */
 function renderTokenChips(container, tokens) {
 	if (!container) return;
 
@@ -2816,9 +2601,6 @@ function renderTokenChips(container, tokens) {
 	});
 }
 
-/**
- * Refactored: tokenizes and optionally renders.
- */
 function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") {
 	const typeElement = document.getElementById('transformer-tokenizer-type');
 	const type = typeElement ? typeElement.value : 'regex';
@@ -3115,9 +2897,6 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	heightLockedMathUpdate([step1, step2, step3], [step1Html, step2Html, step3Html]);
 }
 
-/**
- * Derives LaTeX naming conventions for a given layer index.
- */
 function _ffnNaming(layerIndex) {
     const L = layerIndex + 1;
     const sup = `^{(${L})}`;
@@ -3130,9 +2909,6 @@ function _ffnNaming(layerIndex) {
     return { L, sup, h1name, h2name, h1Stage };
 }
 
-/**
- * Builds the HTML for FFN Step 1: Pre-LN normalization + Expansion + ReLU.
- */
 function _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts) {
     const { sup, h1name, h1Stage } = naming;
 
@@ -3142,9 +2918,6 @@ function _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, 
     return preLNHtml + expansionHtml;
 }
 
-/**
- * Builds the Pre-LayerNorm sub-section of Step 1.
- */
 function _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta, ts) {
     return `
     <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
@@ -3157,9 +2930,6 @@ function _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta,
     </div>`;
 }
 
-/**
- * Builds the Expansion + ReLU sub-section of Step 1.
- */
 function _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts) {
     return `
     <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + ReLU</strong></p>
@@ -3171,9 +2941,6 @@ function _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts) {
     </div>`;
 }
 
-/**
- * Builds the HTML for FFN Step 2: Compression.
- */
 function _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts) {
     const { sup } = naming;
 
@@ -3187,9 +2954,6 @@ function _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts) {
     </div>`;
 }
 
-/**
- * Builds the HTML for FFN Step 3: Residual connection.
- */
 function _buildFFNStep3Html(naming, h1, out_FFN, h2, ts) {
     const { sup, h1name, h2name, h1Stage } = naming;
 
@@ -3203,11 +2967,6 @@ function _buildFFNStep3Html(naming, h1, out_FFN, h2, ts) {
     </div>`;
 }
 
-/**
- * Renders temml math on specific DOM elements only.
- * This prevents the "raw $$ → rendered math" height jump that causes
- * scroll anchoring issues when the global render_temml() runs later.
- */
 function _renderTemmlOnElements(elements) {
 	if (typeof renderMathInElement !== 'function') {
 		// Fallback: if renderMathInElement isn't available, use global
@@ -3249,11 +3008,6 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 
 // ─── Sub-functions ───────────────────────────────────────────
 
-/**
- * Interpolates a color from blue → red based on normalized magnitude.
- * @param {number} normMag - Value in [0, 1]
- * @returns {string} CSS rgb() color string
- */
 function _vf2d_magnitude_color(normMag) {
     const r = Math.round(normMag * 239 + (1 - normMag) * 59);
     const g = Math.round(normMag * 68 + (1 - normMag) * 130);
@@ -3261,10 +3015,6 @@ function _vf2d_magnitude_color(normMag) {
     return `rgb(${r},${g},${b})`;
 }
 
-/**
- * Computes the unit direction and scaled arrow length for a single grid point.
- * @returns {{ ux, uy, arrowLen, lineWidth }}
- */
 function _vf2d_arrow_geometry(p, maxMag, maxArrowLen) {
     const normMag = p.mag / maxMag;
     const arrowLen = Math.max(maxArrowLen * 0.08, maxArrowLen * normMag);
@@ -3279,11 +3029,6 @@ function _vf2d_arrow_geometry(p, maxMag, maxArrowLen) {
     return { ux, uy, arrowLen, lineWidth, normMag };
 }
 
-/**
- * Interpolates a color from blue → purple → red based on normalized magnitude.
- * @param {number} normMag - Value in [0, 1]
- * @returns {string} CSS rgb() color string
- */
 function _vf3d_magnitude_color(normMag) {
     let r, g, b;
     if (normMag < 0.5) {
@@ -3300,10 +3045,6 @@ function _vf3d_magnitude_color(normMag) {
     return `rgb(${r},${g},${b})`;
 }
 
-/**
- * Helper: Check if an element is currently visible in the viewport.
- * Used to decide whether to render immediately or defer to the observer.
- */
 function isElementInViewport(el) {
     const rect = el.getBoundingClientRect();
     return (
@@ -3314,10 +3055,6 @@ function isElementInViewport(el) {
     );
 }
 
-/**
- * Maps a weight value to a colorblind-friendly scale (Blue to Yellow).
- * Low/Negative = Blue, Neutral = Teal, High/Positive = Yellow.
- */
 function tlab_get_colorblind_pixel(val) {
 	// Clamp value between -1 and 1
 	const t = Math.max(0, Math.min(1, (val + 1) / 2));
@@ -3332,9 +3069,6 @@ function tlab_get_colorblind_pixel(val) {
 	return `rgb(${r}, ${g}, ${b})`;
 }
 
-/**
- * Renders weight matrices side-by-side, stretching them to fill the full width.
- */
 function tlab_render_weight_grid(id, layerNum) {
     requestAnimationFrame(() => {
         const plotDiv = document.getElementById(id);
@@ -3352,10 +3086,6 @@ function tlab_render_weight_grid(id, layerNum) {
     });
 }
 
-/**
- * Ensures the weight grid container and row exist, creating them if needed.
- * @returns {HTMLElement} The grid row element
- */
 function ensureWeightGridContainer(plotDiv) {
     let weightContainer = plotDiv.nextElementSibling;
     if (!weightContainer || !weightContainer.classList.contains('weight-grid-viz')) {
@@ -3376,9 +3106,6 @@ function ensureWeightGridContainer(plotDiv) {
     return gridBox;
 }
 
-/**
- * Extracts the weight matrices to visualize for a given layer.
- */
 function getWeightTargets(layerNum) {
     const weights = window.currentWeights[layerNum];
     return [
@@ -3390,9 +3117,6 @@ function getWeightTargets(layerNum) {
     ].filter(t => t.data && t.data.length);
 }
 
-/**
- * Renders (or updates) a single weight matrix as a pixel canvas.
- */
 function renderSingleWeightCanvas(gridBox, target) {
     const rows = target.data.length;
     const cols = Array.isArray(target.data[0]) ? target.data[0].length : 1;
@@ -3422,9 +3146,6 @@ function renderSingleWeightCanvas(gridBox, target) {
     paintWeightPixels(canvas, target.data, rows, cols);
 }
 
-/**
- * Paints weight values as colored pixels onto a canvas.
- */
 function paintWeightPixels(canvas, data, rows, cols) {
     const ctx = canvas.getContext('2d');
     for (let r = 0; r < rows; r++) {
@@ -3436,9 +3157,6 @@ function paintWeightPixels(canvas, data, rows, cols) {
     }
 }
 
-/**
- * Removes weight wrapper elements that no longer correspond to active matrices.
- */
 function removeOrphanedWeightWrappers(gridBox, targets) {
     const activeNames = new Set(targets.map(t => t.name));
     gridBox.querySelectorAll('[data-weight-name]').forEach(el => {
@@ -4088,10 +3806,6 @@ function renderMigrationHighDim(id, plotDiv, tokens, start_h, end_h, layerNum, d
     tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
 }
 
-/**
- * Synchronizes the vector field toggle button's DOM state
- * to match the authoritative registry value.
- */
 function syncVFToggleButtonState(id, plotDiv, vfEnabled) {
     const wrapper = plotDiv.closest('[data-migration-wrapper]');
     const toggleBtn = wrapper ? wrapper.querySelector('.migration-vf-toggle') : null;
@@ -4276,9 +3990,6 @@ function _vf3d_compute_max_arrow_length(bounds, gridRes) {
     return Math.min(cellX, cellY, cellZ) * 1.1;
 }
 
-/**
- * Creates a copy of the real context with one position substituted by [x, y, z].
- */
 function _vf_substitute_context_3d(realContext, substitutePos, x, y, z) {
     return realContext.map((row, idx) => {
         if (idx === substitutePos) return [x, y, z];
@@ -4623,7 +4334,6 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 		));
 	});
 
-
 	// 3. Render (true = full replace, not merge — safe when series count changes)
 	chart.setOption(_traj_ec3d_option(series, legendData), true);
 
@@ -4773,9 +4483,6 @@ function tlab_render_trajectory_plot(d_model) {
 	}
 }
 
-/**
- * Builds the vocabulary probability transition rows for the LaTeX display.
- */
 function buildVocabTransitionRows(tokens, start_h, end_h, d_model) {
     return tokens.map((_, tIdx) => {
         const fromList = tlab_get_top_vocab_list(start_h[tIdx], d_model);
@@ -4794,10 +4501,6 @@ function buildVocabTransitionRows(tokens, start_h, end_h, d_model) {
     }).join(' \\\\ ');
 }
 
-/**
- * Ensures the LaTeX debug div exists in the DOM, creating it if needed.
- * @returns {HTMLElement}
- */
 function ensureLatexDebugDiv(id, plotDiv) {
     let latexDiv = document.getElementById(id + '-latex-debug');
     if (!latexDiv) {
@@ -4840,9 +4543,6 @@ function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, 
 	heightLockedMathUpdate([latexDiv], [latexString]);
 }
 
-/**
- * Core Helpers
- */
 function tlab_get_top_word_only(h_vec) {
 	if (!window.persistentEmbeddingSpace) return "???";
 	const vocabulary = Object.keys(window.persistentEmbeddingSpace);
@@ -5095,9 +4795,6 @@ function _wireEChartsResize(container, key) {
     }
 }
 
-/**
- * Derives a stable hue from a token string for consistent coloring.
- */
 function getHueFromToken(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -5106,9 +4803,6 @@ function getHueFromToken(str) {
     return Math.abs(hash) % 360;
 }
 
-/**
- * Builds a single ECharts parallel-coordinates data entry for high-dimensional shifts.
- */
 function buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor) {
     return {
         value: semanticBase.flatMap((val, i) => [val, combined[i]]),
@@ -5117,9 +4811,6 @@ function buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor) 
     };
 }
 
-/**
- * Renders the positional shift plot using ECharts parallel coordinates (d_model > 3).
- */
 function renderShiftECharts(container, echartsData, d_model) {
     const myChart = echarts.init(container);
     const axes = [];
@@ -5263,9 +4954,6 @@ function updateArchitectureValidityUI() {
 	render_temml();
 }
 
-/**
- * Returns all valid head counts (within the slider range) for a given d_model.
- */
 function getValidHeads(d_model) {
 	const maxHeads = parseInt(document.getElementById('transformer-heads').max) || 8;
 	const valid = [];
@@ -5275,9 +4963,6 @@ function getValidHeads(d_model) {
 	return valid;
 }
 
-/**
- * Returns all valid d_model values (within the slider range) for a given head count.
- */
 function getValidDimensions(h) {
 	const minDim = parseInt(document.getElementById('transformer-dimension-model').min) || 2;
 	const maxDim = parseInt(document.getElementById('transformer-dimension-model').max) || 16;
@@ -5288,19 +4973,11 @@ function getValidDimensions(h) {
 	return valid;
 }
 
-/**
- * Utility: sets a colored outline on a slider to indicate validity.
- */
 function setSliderOutline(sliderId, outline) {
 	const el = document.getElementById(sliderId);
 	if (el) el.style.outline = outline;
 }
 
-/**
- * A standard debounce function.
- * Credits: This pattern is a staple of web optimization,
- * popularized by libraries like Underscore.js and Lodash.
- */
 function debounce(func, wait) {
 	let timeout;
 	return function(...args) {
@@ -5327,13 +5004,6 @@ window.calculate_vector_math = function() {
 	}
 };
 
-/**
- * The actual heavy computation + rendering logic.
- * Extracted from the old calculate_vector_math so it can be called lazily.
- */
-/**
- * The actual heavy computation + rendering logic for vector math.
- */
 function _execute_vector_math() {
 	const inputVal = document.getElementById('transformer-vector-math-input').value;
 	const resDiv   = document.getElementById('transformer-vector-math-result');
@@ -5368,24 +5038,14 @@ function _execute_vector_math() {
 	}
 }
 
-/**
- * Checks if the embedding space is initialized and non-empty.
- */
 function hasValidEmbeddingSpace(space) {
     return space && Object.keys(space).length > 0;
 }
 
-/**
- * Tokenizes the vector math input string into operators and operands.
- */
 function tokenizeVectorMathInput(inputVal) {
     return inputVal.match(/[a-zA-ZäöüÄÖÜ0-9_#]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
 }
 
-/**
- * Evaluates a vector math expression and returns the result + intermediate steps.
- * Uses a recursive descent parser.
- */
 function evaluateVectorExpression(tokens, space, vocabKeys, d_model) {
     const lowerVocab = buildLowerCaseVocabMap(space, vocabKeys);
     let pos = 0;
@@ -5449,9 +5109,6 @@ function evaluateVectorExpression(tokens, space, vocabKeys, d_model) {
     return { result, steps };
 }
 
-/**
- * Builds a lowercase → { vec, original } lookup map from the embedding space.
- */
 function buildLowerCaseVocabMap(space, vocabKeys) {
     return vocabKeys.reduce((acc, word) => {
         acc[word.toLowerCase()] = { vec: space[word], original: word };
@@ -5459,24 +5116,15 @@ function buildLowerCaseVocabMap(space, vocabKeys) {
     }, {});
 }
 
-/**
- * Checks if a token is a numeric literal (not a vocabulary word).
- */
 function isNumericLiteral(token, lowerVocab) {
     return !isNaN(token) && !lowerVocab[token.toLowerCase()];
 }
 
-/**
- * Parses a numeric scalar into a vector-math operand.
- */
 function parseScalar(token, d_model) {
     const s = parseFloat(token);
     return { val: Array(d_model).fill(s), tex: `${s}`, isScalar: true, label: `${s}` };
 }
 
-/**
- * Parses a word token into its embedding vector operand.
- */
 function parseWordVector(token, lowerVocab, d_model, toVecTex) {
     const entry = lowerVocab[token.toLowerCase()];
     const vec = entry ? [...entry.vec] : Array(d_model).fill(0);
@@ -5491,9 +5139,6 @@ function parseWordVector(token, lowerVocab, d_model, toVecTex) {
     };
 }
 
-/**
- * Applies * or / between two vector-math operands.
- */
 function applyMultiplicativeOp(left, right, op) {
 	const opTex = op === '*' ? '\\cdot' : '\\div';
 
@@ -5513,9 +5158,6 @@ function applyMultiplicativeOp(left, right, op) {
 	return left;
 }
 
-/**
- * Finds the nearest vocabulary word to a result vector by Euclidean distance.
- */
 function findNearestEmbedding(resultVec, space, vocabKeys) {
     let nearest = "None";
     let nearestVec = Array(resultVec.length).fill(0);
@@ -5534,9 +5176,6 @@ function findNearestEmbedding(resultVec, space, vocabKeys) {
     return { word: nearest, vec: nearestVec, distance: minDist };
 }
 
-/**
- * Builds the LaTeX HTML for the vector math result display.
- */
 function buildVectorMathResultHtml(result, nearest, d_model) {
     const toVecTex = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
 
@@ -5589,11 +5228,6 @@ function updateTrainButtonState() {
 	}
 }
 
-/**
- * Builds the token chip HTML strip. If chips already exist and token count
- * matches, patches labels in-place to avoid DOM destruction (flicker).
- * Returns the chip elements.
- */
 function buildTokenChipStrip(strip, tokens) {
     const existingChips = strip.querySelectorAll('.sa-token-block');
 
@@ -5626,9 +5260,6 @@ function buildTokenChipStrip(strip, tokens) {
     return strip.querySelectorAll('.sa-token-block');
 }
 
-/**
- * Only re-attaches hover events if the chips were rebuilt (not patched).
- */
 function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weights) {
     const container = document.getElementById(containerId);
     const canvas    = document.getElementById(canvasId);
@@ -5675,9 +5306,6 @@ function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weigh
     drawArcs();
 }
 
-/**
- * Attaches mouseover/mouseout events to each chip.
- */
 function attachChipHoverEvents(chips, onHover, onLeave) {
     chips.forEach((chip, idx) => {
         chip.addEventListener('mouseover', () => onHover(idx));
@@ -5685,9 +5313,6 @@ function attachChipHoverEvents(chips, onHover, onLeave) {
     });
 }
 
-/**
- * Draws bezier attention arcs on the canvas.
- */
 function drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex) {
     const scrollW = container.scrollWidth;
     const scrollH = container.scrollHeight;
@@ -5717,9 +5342,6 @@ function drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex
     highlightHoveredChip(chips, hoverIndex);
 }
 
-/**
- * Draws a single bezier arc between two chips.
- */
 function drawSingleArc(ctx, container, containerRect, chip1El, chip2El, strength, isSource) {
     const chip1 = chip1El.getBoundingClientRect();
     const chip2 = chip2El.getBoundingClientRect();
@@ -5754,18 +5376,12 @@ function drawSingleArc(ctx, container, containerRect, chip1El, chip2El, strength
     }
 }
 
-/**
- * Highlights the hovered chip with a border.
- */
 function highlightHoveredChip(chips, hoverIndex) {
     chips.forEach((chip, idx) => {
         chip.style.borderColor = (idx === hoverIndex) ? '#2563eb' : 'transparent';
     });
 }
 
-/**
- * Attaches a window resize handler, cleaning up any previous one.
- */
 function attachResizeHandler(containerId, drawFn) {
     const resizeKey = `_resizeHandler_${containerId}`;
     if (window[resizeKey]) window.removeEventListener('resize', window[resizeKey]);
@@ -5773,22 +5389,6 @@ function attachResizeHandler(containerId, drawFn) {
     window.addEventListener('resize', drawFn);
 }
 
-/**
- * Transformer Lab — Embedding Editor
- * Adapted from embeddinglab.js's interactive table system.
- * All functions prefixed with `tled_` to avoid namespace collisions
- * with the Embedding Lab's own functions (e.g., addTokenToSpace, removeTokenFromSpace, etc.).
- *
- * Supports N-dimensional embeddings (not just 1D/2D/3D).
- */
-
-/**
- * Initializes (or re-initializes) the editable embedding table
- * for the Transformer Lab's persistentEmbeddingSpace.
- *
- * Call this after every run_transformer_demo() so the table
- * reflects the latest vocabulary and vectors.
- */
 function tled_initEditor() {
     const container = document.getElementById('tled-editor-container');
     if (!container) return;
@@ -5840,10 +5440,6 @@ function tled_initEditor() {
     container.innerHTML = html;
 }
 
-/**
- * Generates a single table row for a token.
- * Each dimension gets its own numeric input.
- */
 function tled_generateRowHtml(word, vec, d_model) {
 	// Escape word for use in HTML attributes (handle quotes, etc.)
 	const safeWord = word.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -5872,10 +5468,6 @@ function tled_generateRowHtml(word, vec, d_model) {
     </tr>`;
 		}
 
-/**
- * Called when a user edits a single dimension value in the table.
- * Updates persistentEmbeddingSpace and refreshes the transformer visualization.
- */
 function tled_updateEmbedding(inputEl) {
 	const word = inputEl.getAttribute('data-tled-word');
 	const dim = parseInt(inputEl.getAttribute('data-tled-dim'));
@@ -5906,12 +5498,6 @@ const gaussianRandom = (min, max) => {
 	// If no range is provided, return standard distribution
 	if (min === undefined || max === undefined) return num;
 
-	/**
-	 * Scaling the value:
-	 * 1. Divide by 10 to narrow the spread (mostly within -1.0 to 1.0).
-	 * 2. Shift by 0.5 to center it.
-	 * 3. Scale by the range (max - min).
-	 */
 	num = num / 10.0 + 0.5; // Translate to 0 -> 1
 
 	// Clamp to [0, 1] if the value falls in the far tails
@@ -5922,10 +5508,6 @@ const gaussianRandom = (min, max) => {
 	return num * (max - min) + min;
 };
 
-/**
- * Adds a new token to the transformer's embedding space
- * with Gaussian-random initialization
- */
 function tled_addToken() {
 	const nameInput = document.getElementById('tled-new-token-input');
 	if (!nameInput) return;
@@ -5973,15 +5555,6 @@ function tled_addToken() {
 	calculate_vector_math();
 }
 
-/**
- * Synchronizes the table to reflect the current state of
- * persistentEmbeddingSpace. Call this after training steps
- * update the embeddings so the table shows the trained values.
- *
- * Strategy: Instead of rebuilding the entire table (which would
- * lose focus/scroll position), we update existing input values
- * in-place and add/remove rows as needed.
- */
 function tled_syncTableFromSpace() {
 	const container = document.getElementById('tled-editor-container');
 	if (!container) return;
@@ -6056,10 +5629,6 @@ function tled_syncTableFromSpace() {
 // ── Visualization mode: 'train' (default) or 'inference' ──
 window.tlabVisualizationMode = 'train';
 
-/**
- * Switches which data (training tokens or inference tokens) is shown
- * in all plots and visualizations. Does NOT affect any computation.
- */
 function setVisualizationMode(mode) {
 	window.tlabVisualizationMode = mode;
 
@@ -6127,10 +5696,6 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
     );
 }
 
-/**
- * Computes a display-level hash of all matrices involved in h1 rendering.
- * Only triggers re-render when visible output would actually change.
- */
 function computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, beta) {
 	return [
 		flattenDisplay(h0),
@@ -6349,11 +5914,6 @@ function ensureFFNLayerContainers(layerIndex) {
 	ensureUnifiedLayerContainer(layerIndex, n_layers, 'mha-calculation-details');
 }
 
-/**
- * Re-renders ONLY the final softmax/probability display when temperature changes.
- * Skips the entire forward pass since temperature only affects the
- * softmax(logits / T) step — the logits themselves don't change.
- */
 function rerender_temperature_only() {
 	const cached = window._cachedFinalProjection;
 	if (!cached) {
@@ -6374,11 +5934,6 @@ function rerender_temperature_only() {
 	);
 }
 
-/**
- * Adds a clean 3D arrowhead using two thick V-chevron polylines
- * in perpendicular planes. Orients correctly in 3D space.
- * Only 2 line3D series — no wireframe base ring, no billboard issues.
- */
 function _add3DArrowheadSeries(series, from3, to3, color, options = {}) {
 	const lineWidth   = options.lineWidth   || 7;
 	const maxHeadLen  = options.maxHeadLen  || 0.5;
@@ -6436,25 +5991,15 @@ function _computeArrowheadBase(from3, to3, maxHeadLen) {
 	return [to3[0] - nx * headLen, to3[1] - ny * headLen, to3[2] - nz * headLen];
 }
 
-// ============================================================
-// ThemeRiver: Vocabulary Probability Flow Through Layers
-// Shows how the predicted probability distribution evolves
-// as the hidden state passes through each transformer stage.
-// ============================================================
-
 const themeRiverRegistry = new Map();
 const themeRiverObserver = createLazyRenderObserver(themeRiverRegistry, (id, data) => {
 	_execute_themeriver_render(data.d_model);
 });
 
-/**
- * Called from the toolbar dropdowns.
- */
 window._themeriver_on_change = function () {
 	const entry = themeRiverRegistry.get('transformer-themeriver-plot');
 	if (entry) _execute_themeriver_render(entry.d_model);
 };
-
 
 async function loadTransformerModule () {
 	updateLoadingStatus("Loading section about transformers...");
