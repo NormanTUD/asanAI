@@ -1,5 +1,6 @@
 <?php include_once("functions.php"); ?>
 
+<script src="llm_river.js"></script>
 <script src="attention_engine.js"></script>
 
 <!--
