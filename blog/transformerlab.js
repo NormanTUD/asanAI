@@ -887,7 +887,7 @@ function buildParamTableHeader() {
  */
 function buildEmbeddingRow(embeddingParams, vocabSize, d_model, fmt, pct) {
     return `<tr style="background:#eef2ff; border-bottom:1px solid #e2e8f0;">
-    <td style="padding:6px 10px; font-weight:600; color:#6366f1;">üì¶ Embeddings</td>
+    <td style="padding:6px 10px; font-weight:600; color:#6366f1;">Embeddings</td>
     <td style="padding:6px 10px; text-align:right; font-weight:600;">${fmt(embeddingParams)}</td>
     <td style="padding:6px 10px; text-align:right;">${pct(embeddingParams)}%</td>
     <td style="padding:6px 10px; color:#64748b;">${vocabSize} × ${d_model || '?'}</td>
@@ -906,7 +906,7 @@ function buildAllLayerRows(layerBreakdowns, fmt, pct) {
  */
 function buildSingleLayerRows(lb, fmt, pct) {
     let html = `<tr style="background:#f8fafc; border-bottom:1px solid #f1f5f9;">
-        <td style="padding:6px 10px; font-weight:600;" colspan="4">üîÅ Layer ${lb.layer} — ${fmt(lb.total)} params (${pct(lb.total)}%)</td>
+        <td style="padding:6px 10px; font-weight:600;" colspan="4">Layer ${lb.layer} — ${fmt(lb.total)} params (${pct(lb.total)}%)</td>
     </tr>`;
 
     html += buildLayerSubRow('Attention (Q+K+V+O)', '#3b82f6', lb.attention.total, '4 × (d×d)', fmt, pct);
