@@ -4713,25 +4713,7 @@ async function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_hea
 	const seqLen = realContext.length;
 	const substitutePos = seqLen - 1;
 
-	const allVecs = Object.values(window.persistentEmbeddingSpace);
-	let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
-	allVecs.forEach(v => {
-		if (v[0] < xMin) xMin = v[0];
-		if (v[0] > xMax) xMax = v[0];
-		if (v.length > 1 && v[1] < yMin) yMin = v[1];
-		if (v.length > 1 && v[1] > yMax) yMax = v[1];
-	});
-	realContext.forEach(v => {
-		if (v[0] < xMin) xMin = v[0];
-		if (v[0] > xMax) xMax = v[0];
-		if (v.length > 1 && v[1] < yMin) yMin = v[1];
-		if (v.length > 1 && v[1] > yMax) yMax = v[1];
-	});
-	if (xMin === xMax) { xMin -= 1; xMax += 1; }
-	if (yMin === yMax) { yMin -= 1; yMax += 1; }
-	const pad = 2;
-	xMin -= pad; xMax += pad; yMin -= pad; yMax += pad;
-
+	const bounds = _vf2d_overlay_compute_bounds(realContext);
 	const gridRes = 12;
 	const layerWeights = window.currentWeights[layerNum - 1];
 	const totalPoints = (gridRes + 1) * (gridRes + 1);
@@ -4739,6 +4721,54 @@ async function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_hea
 	const wrapper = document.getElementById(migrationId)?.closest('[data-migration-wrapper]');
 	const loadingOverlay = _vf_show_loading_overlay(wrapper, totalPoints);
 
+	const { points, maxMag } = await _vf2d_overlay_sample_grid_async(
+		bounds, gridRes, layerWeights, d_model, n_heads,
+		realContext, substitutePos, loadingOverlay, totalPoints
+	);
+
+	const maxArrowLen = _vf2d_overlay_max_arrow_length(bounds, gridRes);
+	const newTraces = _build_vector_field_traces_2d(points, maxMag, maxArrowLen, seqLen, substitutePos);
+
+	_vf_remove_loading_overlay(loadingOverlay);
+	Plotly.addTraces(migrationId, newTraces);
+}
+
+/**
+ * Computes the 2D bounding box from both embedding space and the real context vectors.
+ * Includes padding.
+ * @returns {{ xMin, xMax, yMin, yMax }}
+ */
+function _vf2d_overlay_compute_bounds(realContext) {
+	const allVecs = Object.values(window.persistentEmbeddingSpace);
+	let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
+
+	const updateBounds = (v) => {
+		if (v[0] < xMin) xMin = v[0];
+		if (v[0] > xMax) xMax = v[0];
+		if (v.length > 1 && v[1] < yMin) yMin = v[1];
+		if (v.length > 1 && v[1] > yMax) yMax = v[1];
+	};
+
+	allVecs.forEach(updateBounds);
+	realContext.forEach(updateBounds);
+
+	if (xMin === xMax) { xMin -= 1; xMax += 1; }
+	if (yMin === yMax) { yMin -= 1; yMax += 1; }
+
+	const pad = 2;
+	return {
+		xMin: xMin - pad, xMax: xMax + pad,
+		yMin: yMin - pad, yMax: yMax + pad
+	};
+}
+
+/**
+ * Asynchronously samples a 2D grid, running a forward pass at each point.
+ * Yields to the browser every 10 points and updates the loading overlay.
+ * @returns {Promise<{ points: object[], maxMag: number }>}
+ */
+async function _vf2d_overlay_sample_grid_async(bounds, gridRes, layerWeights, d_model, n_heads, realContext, substitutePos, loadingOverlay, totalPoints) {
+	const { xMin, xMax, yMin, yMax } = bounds;
 	const points = [];
 	let maxMag = 0;
 	let computed = 0;
@@ -4748,12 +4778,7 @@ async function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_hea
 			const x = xMin + (xMax - xMin) * (i / gridRes);
 			const y = yMin + (yMax - yMin) * (j / gridRes);
 
-			const modifiedContext = realContext.map((row, idx) => {
-				if (idx === substitutePos) {
-					return [x, y];
-				}
-				return [...row];
-			});
+			const modifiedContext = _vf_substitute_context_2d(realContext, substitutePos, x, y);
 
 			const result = forwardOneLayer(modifiedContext, layerWeights, d_model, n_heads, null, null, null);
 			const h_out = result.h_out[substitutePos];
@@ -4775,15 +4800,26 @@ async function add_vector_field_overlay_2d(migrationId, layerNum, d_model, n_hea
 	}
 
 	if (maxMag < 1e-8) maxMag = 1e-8;
+	return { points, maxMag };
+}
 
-	const cellW = (xMax - xMin) / gridRes;
-	const cellH = (yMax - yMin) / gridRes;
-	const maxArrowLen = Math.min(cellW, cellH) * 1.2;
+/**
+ * Creates a copy of the real context with one position substituted by [x, y].
+ */
+function _vf_substitute_context_2d(realContext, substitutePos, x, y) {
+	return realContext.map((row, idx) => {
+		if (idx === substitutePos) return [x, y];
+		return [...row];
+	});
+}
 
-	const newTraces = _build_vector_field_traces_2d(points, maxMag, maxArrowLen, seqLen, substitutePos);
-
-	_vf_remove_loading_overlay(loadingOverlay);
-	Plotly.addTraces(migrationId, newTraces);
+/**
+ * Computes the maximum visual arrow length from the 2D grid cell size.
+ */
+function _vf2d_overlay_max_arrow_length(bounds, gridRes) {
+	const cellW = (bounds.xMax - bounds.xMin) / gridRes;
+	const cellH = (bounds.yMax - bounds.yMin) / gridRes;
+	return Math.min(cellW, cellH) * 1.2;
 }
 
 function _compute_vector_field_points_3d(migrationId, layerNum, d_model, n_heads) {
