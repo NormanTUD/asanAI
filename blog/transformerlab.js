@@ -3474,31 +3474,38 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 }
 
 function render_vector_field_2d(plotDiv, id, layerNum, d_model, n_heads) {
-    // 1. Compute bounding box from embeddings + padding
-    const bounds = _vf2d_compute_bounds();
+    Plotly.purge(plotDiv);
+    let chart = echarts.getInstanceByDom(plotDiv);
+    if (!chart) chart = echarts.init(plotDiv);
 
-    // 2. Sample grid and run forward passes to get displacement vectors
+    const bounds = _vf2d_compute_bounds();
     const gridRes = 12;
     const layerWeights = window.currentWeights[layerNum - 1];
     const { points, maxMag } = _vf2d_sample_grid(bounds, gridRes, layerWeights, d_model, n_heads);
-
-    // 3. Compute maximum visual arrow length from grid cell size
     const maxArrowLen = _vf2d_max_arrow_length(bounds, gridRes);
 
-    // 4. Build arrow traces (line tails + arrowhead markers + hover)
-    const arrowTraces = _vf2d_build_arrow_traces(points, maxMag, maxArrowLen);
+    const series = [
+        _vf_ec2d_custom_series({ points, maxMag, maxArrowLen }),
+        _mig_ec2d_vocab_series()
+    ];
 
-    // 5. Build vocabulary embedding landmark traces
-    const vocabTraces = _vf2d_build_vocab_landmarks();
+    chart.setOption({
+        title: { text: `Layer ${layerNum}: Vector Field (where would a point move?)`, left: 'center', textStyle: { fontSize: 14, color: '#1e293b' } },
+        tooltip: { show: true, trigger: 'item', confine: true },
+        xAxis: { type: 'value', name: 'Dim 0', nameLocation: 'center', nameGap: 25, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+        yAxis: { type: 'value', name: 'Dim 1', nameLocation: 'center', nameGap: 35, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+        grid: { top: 60, bottom: 50, left: 55, right: 80 },
+        series: series,
+        animation: false
+    }, true);
 
-    // 6. Build invisible colorbar reference trace
-    const colorbarTrace = _vf2d_build_colorbar_trace(maxMag);
-
-    // 7. Assemble and render
-    const traces = [...arrowTraces, ...vocabTraces, colorbarTrace];
-    const layout = _vf2d_build_layout(layerNum);
-
-    Plotly.react(id, traces, layout, { responsive: true });
+    if (!plotDiv._ecVfResize) {
+        plotDiv._ecVfResize = () => {
+            const c = echarts.getInstanceByDom(plotDiv);
+            if (c) c.resize();
+        };
+        window.addEventListener('resize', plotDiv._ecVfResize);
+    }
 }
 
 // ─── Sub-functions ───────────────────────────────────────────
@@ -3713,34 +3720,44 @@ function _vf2d_build_layout(layerNum) {
 }
 
 function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
-    // 1. Compute bounding box from embeddings
-    const bounds = _vf3d_compute_bounds();
+    Plotly.purge(plotDiv);
+    let chart = echarts.getInstanceByDom(plotDiv);
+    if (!chart) chart = echarts.init(plotDiv);
 
-    // 2. Sample grid points and run forward passes
+    const bounds = _vf3d_compute_bounds();
     const gridRes = 6;
     const layerWeights = window.currentWeights[layerNum - 1];
     const { points, maxMag } = _vf3d_sample_grid(bounds, gridRes, layerWeights, d_model, n_heads);
-
-    // 3. Compute maximum visual arrow length
     const maxArrowLen = _vf3d_max_arrow_length(bounds, gridRes);
 
-    // 4. Build arrow traces (line tails + cone heads)
-    const arrowTraces = _vf3d_build_arrow_traces(points, maxMag, maxArrowLen);
+    const series = [
+        _mig_ec3d_vocab_series(),
+        ..._vf_ec3d_series({ points, maxMag, maxArrowLen })
+    ];
 
-    // 5. Build vocabulary landmark traces
-    const vocabTraces = _vf3d_build_vocab_landmarks();
+    chart.setOption({
+        title: { text: `Layer ${layerNum}: 3D Vector Field`, left: 'center', textStyle: { fontSize: 14, color: '#1e293b' } },
+        tooltip: { show: true, trigger: 'item', confine: true },
+        xAxis3D: { type: 'value', name: 'Dim 0' },
+        yAxis3D: { type: 'value', name: 'Dim 1' },
+        zAxis3D: { type: 'value', name: 'Dim 2' },
+        grid3D: {
+            viewControl: { projection: 'perspective', alpha: 30, beta: 40, distance: 200, autoRotate: false, damping: 0.9 },
+            light: { main: { intensity: 1.2, shadow: false }, ambient: { intensity: 0.3 } },
+            environment: '#f9fafb', boxWidth: 100, boxHeight: 100, boxDepth: 100
+        },
+        legend: { show: true, bottom: 5, left: 'center', textStyle: { fontSize: 11 } },
+        series: series,
+        animation: false
+    }, true);
 
-    // 6. Build invisible colorbar reference trace
-    const colorbarTrace = _vf3d_build_colorbar_trace(maxMag);
-
-    // 7. Assemble all traces
-    const traces = [...arrowTraces, ...vocabTraces, colorbarTrace];
-
-    // 8. Build layout
-    const layout = _vf3d_build_layout(layerNum);
-
-    // 9. Render
-    Plotly.react(id, traces, layout, { responsive: true });
+    if (!plotDiv._ecVfResize) {
+        plotDiv._ecVfResize = () => {
+            const c = echarts.getInstanceByDom(plotDiv);
+            if (c) c.resize();
+        };
+        window.addEventListener('resize', plotDiv._ecVfResize);
+    }
 }
 
 /**
@@ -4174,55 +4191,50 @@ function removeOrphanedWeightWrappers(gridBox, targets) {
     });
 }
 
-/**
- * Sub-function: ECharts with Position Visual Map
- * Cite: Based on Apache ECharts visualMap and parallel coordinates
- */
 function tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex) {
-	const myChart = echarts.init(plotDiv);
+    let myChart = echarts.getInstanceByDom(plotDiv);
+    if (!myChart) myChart = echarts.init(plotDiv);
 
-	const axes = Array.from({ length: d_model }, (_, i) => ({
-		dim: i, name: `Dim ${i}`
-	}));
+    const axes = Array.from({ length: d_model }, (_, i) => ({
+        dim: i, name: `Dim ${i}`
+    }));
 
-	// Prepare data with position index as the last dimension for visualMap
-	const data = tokens.map((token, i) => {
-		const sourceWord = tlab_get_top_word_only(start_h[i]);
-		const destWord = tlab_get_top_word_only(end_h[i]);
-		return {
-			value: [...end_h[i], i + 1], // Attach position as an extra dimension
-			name: token,
-			source: sourceWord,
-			destination: destWord,
-			pos: i + 1
-		};
-	});
+    const data = tokens.map((token, i) => {
+        const sourceWord = tlab_get_top_word_only(start_h[i]);
+        const destWord = tlab_get_top_word_only(end_h[i]);
+        return {
+            value: [...end_h[i], i + 1],
+            name: token,
+            source: sourceWord,
+            destination: destWord,
+            pos: i + 1
+        };
+    });
 
-	myChart.setOption({
-		title: { text: `Layer ${layerNum} Migration`, left: 'center' },
-		tooltip: {
-			trigger: 'item',
-			formatter: p => `From '${p.data.source}' to '${p.data.destination}', position ${p.data.pos}`
-		},
-		// 4. Color -> Position Gradient Legend
-		visualMap: {
-			type: 'continuous',
-			min: 1,
-			max: tokens.length,
-			dimension: d_model, // Use the position dimension we attached above
-			orient: 'horizontal',
-			bottom: 10,
-			left: 'center',
-			text: ['End Position', 'Start Position'],
-			inRange: { color: ['rgb(59, 130, 246)', 'rgb(16, 185, 129)'] }
-		},
-		parallelAxis: axes,
-		series: [{
-			type: 'parallel',
-			data: data,
-			lineStyle: { width: 2, opacity: 0.7 }
-		}]
-	});
+    myChart.setOption({
+        title: { text: `Layer ${layerNum} Migration`, left: 'center' },
+        tooltip: {
+            trigger: 'item',
+            formatter: p => `From '${p.data.source}' to '${p.data.destination}', position ${p.data.pos}`
+        },
+        visualMap: {
+            type: 'continuous',
+            min: 1,
+            max: tokens.length,
+            dimension: d_model,
+            orient: 'horizontal',
+            bottom: 10,
+            left: 'center',
+            text: ['End Position', 'Start Position'],
+            inRange: { color: ['rgb(59, 130, 246)', 'rgb(16, 185, 129)'] }
+        },
+        parallelAxis: axes,
+        series: [{
+            type: 'parallel',
+            data: data,
+            lineStyle: { width: 2, opacity: 0.7 }
+        }]
+    }, true);
 }
 
 // Ensure this exists at the top level of your script
@@ -4558,34 +4570,306 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
     tlab_render_weight_grid(id, layerNum - 1);
 }
 
-/**
- * Renders migration plot for d_model <= 3 using Plotly scatter (2D or 3D).
- * Optionally overlays vector field traces if the toggle is enabled.
- */
-function renderMigrationLowDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
-    const is3D = d_model === 3;
-
-    const baseTraces = buildAllMigrationTokenTraces(tokens, start_h, end_h, d_model, is3D);
-    baseTraces.push(buildMigrationColorbarTrace(is3D, tokens));
-
-    const vfTraces = vfEnabled
-        ? computeVectorFieldTraces(id, layerNum, d_model)
-        : [];
-
-    const allTraces = [...baseTraces, ...vfTraces];
-    const layout = buildMigrationLayout(layerNum, is3D);
-    Plotly.react(id, allTraces, layout, { responsive: true });
+function _mig_ec2d_vocab_series() {
+    const data = [];
+    Object.entries(window.persistentEmbeddingSpace).forEach(([word, vec]) => {
+        data.push({ value: [vec[0], vec[1] || 0], name: word });
+    });
+    return {
+        type: 'scatter', name: 'Vocab', data: data,
+        symbol: 'diamond', symbolSize: 10,
+        itemStyle: { color: 'rgba(71,85,105,0.9)', borderWidth: 1, borderColor: '#000' },
+        label: { show: true, position: 'top', formatter: p => p.name, fontSize: 10, color: '#1e293b' },
+        tooltip: { formatter: p => `<b>${p.name}</b>` },
+        z: 5
+    };
 }
 
-/**
- * Renders migration plot for d_model >= 4 using ECharts parallel coordinates.
- */
+function _ec2d_render_arrow(startPx, endPx, color, lineW) {
+    const dx = endPx[0] - startPx[0];
+    const dy = endPx[1] - startPx[1];
+    const len = Math.sqrt(dx * dx + dy * dy);
+
+    if (len < 1) {
+        return { type: 'circle', shape: { cx: startPx[0], cy: startPx[1], r: 3 }, style: { fill: color } };
+    }
+
+    const ux = dx / len, uy = dy / len;
+    const headLen = Math.min(12, len * 0.3);
+    const headW = Math.max(3, lineW * 2.5);
+    const px = -uy, py = ux;
+    const bx = endPx[0] - ux * headLen;
+    const by = endPx[1] - uy * headLen;
+
+    return {
+        type: 'group',
+        children: [
+            { type: 'line', shape: { x1: startPx[0], y1: startPx[1], x2: bx, y2: by }, style: { stroke: color, lineWidth: lineW } },
+            { type: 'polygon', shape: { points: [[endPx[0], endPx[1]], [bx + px * headW, by + py * headW], [bx - px * headW, by - py * headW]] }, style: { fill: color } },
+            { type: 'circle', shape: { cx: startPx[0], cy: startPx[1], r: Math.max(2, lineW) }, style: { fill: color, stroke: '#fff', lineWidth: 1 } }
+        ]
+    };
+}
+
+function _mig_ec2d_arrow_series(tokens, start_h, end_h, d_model, nTokens) {
+    const data = tokens.map((token, i) => ({
+        value: [
+            start_h[i][0], d_model >= 2 ? start_h[i][1] : 0,
+            end_h[i][0], d_model >= 2 ? end_h[i][1] : 0,
+            i
+        ],
+        _src: tlab_get_top_word_only(start_h[i]),
+        _dst: tlab_get_top_word_only(end_h[i]),
+        _pos: i + 1
+    }));
+
+    return {
+        type: 'custom',
+        name: 'Migration',
+        renderItem: function (params, api) {
+            const sPx = api.coord([api.value(0), api.value(1)]);
+            const ePx = api.coord([api.value(2), api.value(3)]);
+            const color = getPositionColor(api.value(4), nTokens);
+            return _ec2d_render_arrow(sPx, ePx, color, 2);
+        },
+        encode: { x: [0, 2], y: [1, 3] },
+        data: data,
+        tooltip: { formatter: p => `From '${p.data._src}' to '${p.data._dst}', position ${p.data._pos}` },
+        z: 10
+    };
+}
+
+function _vf_ec3d_series(computed) {
+    const { points, maxMag, maxArrowLen } = computed;
+    const series = [];
+    const tipData = [];
+
+    points.forEach(pt => {
+        const normMag = pt.mag / maxMag;
+        const color = _vf3d_magnitude_color(normMag);
+        const arrowLen = Math.max(maxArrowLen * 0.06, maxArrowLen * normMag);
+
+        let ux = 0, uy = 0, uz = 0;
+        if (pt.mag > 1e-10) { ux = pt.dx / pt.mag; uy = pt.dy / pt.mag; uz = pt.dz / pt.mag; }
+
+        const endX = pt.x + ux * arrowLen;
+        const endY = pt.y + uy * arrowLen;
+        const endZ = pt.z + uz * arrowLen;
+
+        series.push({
+            name: 'VF', type: 'line3D',
+            data: [[pt.x, pt.y, pt.z], [endX, endY, endZ]],
+            lineStyle: { width: 1 + normMag * 4, color: color, opacity: 0.2 },
+            silent: true
+        });
+
+        tipData.push({
+            value: [endX, endY, endZ],
+            itemStyle: { color: color, opacity: 0.3 },
+            symbolSize: Math.max(3, 3 + normMag * 8),
+            _hover: `(${pt.x.toFixed(2)}, ${pt.y.toFixed(2)}, ${pt.z.toFixed(2)})<br>|Δh|: ${pt.mag.toFixed(4)}`
+        });
+    });
+
+    series.push({
+        name: 'VF Tips', type: 'scatter3D',
+        data: tipData, symbol: 'triangle',
+        tooltip: { formatter: p => p.data._hover }
+    });
+
+    return series;
+}
+
+function _vf_ec2d_custom_series(computed) {
+    const { points, maxMag, maxArrowLen } = computed;
+
+    const data = points.map(p => {
+        const { ux, uy, arrowLen, normMag } = _vf2d_arrow_geometry(p, maxMag, maxArrowLen);
+        return {
+            value: [p.x, p.y, p.x + ux * arrowLen, p.y + uy * arrowLen, normMag],
+            _mag: p.mag, _dx: p.dx, _dy: p.dy
+        };
+    });
+
+    return {
+        type: 'custom', name: 'Vector Field',
+        renderItem: function (params, api) {
+            const sPx = api.coord([api.value(0), api.value(1)]);
+            const ePx = api.coord([api.value(2), api.value(3)]);
+            const normMag = api.value(4);
+            const color = _vf2d_magnitude_color(normMag);
+            const lineW = 1 + normMag * 3;
+
+            const dx = ePx[0] - sPx[0], dy = ePx[1] - sPx[1];
+            const len = Math.sqrt(dx * dx + dy * dy);
+            if (len < 0.5) return { type: 'circle', shape: { cx: sPx[0], cy: sPx[1], r: 1 }, style: { fill: color, opacity: 0.2 } };
+
+            const ux2 = dx / len, uy2 = dy / len;
+            const headLen = Math.min(8, len * 0.35);
+            const headW = Math.max(2, lineW * 1.5);
+            const px = -uy2, py = ux2;
+            const bx = ePx[0] - ux2 * headLen, by = ePx[1] - uy2 * headLen;
+
+            return {
+                type: 'group', children: [
+                    { type: 'line', shape: { x1: sPx[0], y1: sPx[1], x2: bx, y2: by }, style: { stroke: color, lineWidth: lineW, opacity: 0.25 } },
+                    { type: 'polygon', shape: { points: [[ePx[0], ePx[1]], [bx + px * headW, by + py * headW], [bx - px * headW, by - py * headW]] }, style: { fill: color, opacity: 0.25 } }
+                ]
+            };
+        },
+        encode: { x: [0, 2], y: [1, 3] },
+        data: data,
+        tooltip: {
+            formatter: p => `Point: (${p.data.value[0].toFixed(2)}, ${p.data.value[1].toFixed(2)})<br>Δ: (${p.data._dx.toFixed(3)}, ${p.data._dy.toFixed(3)})<br>|Δh|: ${p.data._mag.toFixed(4)}`
+        },
+        z: 1
+    };
+}
+
+function _migration_render_2d_echarts(chart, migId, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
+    const series = [];
+    const nTokens = tokens.length;
+
+    series.push(_mig_ec2d_vocab_series());
+    series.push(_mig_ec2d_arrow_series(tokens, start_h, end_h, d_model, nTokens));
+
+    if (vfEnabled) {
+        const { n_heads } = getTransformerConfig();
+        const computed = _compute_vector_field_points_2d(migId, layerNum, d_model, n_heads);
+        if (computed) {
+            series.push(_vf_ec2d_custom_series(computed));
+        }
+    }
+
+    chart.setOption({
+        title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center', textStyle: { fontSize: 14, color: '#1e293b' } },
+        tooltip: { show: true, trigger: 'item', confine: true },
+        xAxis: { type: 'value', name: 'Dim 0', nameLocation: 'center', nameGap: 25, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+        yAxis: { type: 'value', name: 'Dim 1', nameLocation: 'center', nameGap: 35, splitLine: { lineStyle: { color: '#f0f0f0' } } },
+        grid: { top: 60, bottom: 50, left: 55, right: 80 },
+        graphic: _mig_ec_position_legend(nTokens),
+        series: series,
+        animation: false
+    }, true);
+}
+
+function _mig_ec_position_legend(nTokens) {
+    if (nTokens < 2) return [];
+
+    const stops = [];
+    for (let i = 0; i <= 10; i++) {
+        const t = i / 10;
+        const idx = Math.round(t * (nTokens - 1));
+        const { r, g, b } = getPositionColor(idx, nTokens, 'object');
+        stops.push({ offset: t, color: `rgb(${r},${g},${b})` });
+    }
+
+    return [{
+        type: 'group', right: 15, top: '15%',
+        children: [
+            { type: 'text', style: { text: 'Position', fill: '#64748b', fontSize: 10, textAlign: 'center' }, left: -2, top: -18 },
+            { type: 'text', style: { text: String(nTokens), fill: '#64748b', fontSize: 9, textAlign: 'center' }, left: 2, top: -4 },
+            { type: 'rect', shape: { width: 14, height: 140 }, top: 8, style: { fill: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: stops } } },
+            { type: 'text', style: { text: '1', fill: '#64748b', fontSize: 9, textAlign: 'center' }, left: 3, top: 152 }
+        ]
+    }];
+}
+
+function _mig_ec3d_vocab_series() {
+    const data = [];
+    Object.entries(window.persistentEmbeddingSpace).forEach(([word, vec]) => {
+        data.push({ name: word, value: [vec[0], vec[1] || 0, vec[2] || 0] });
+    });
+    return {
+        name: 'Vocab Embeddings', type: 'scatter3D', data: data,
+        symbol: 'diamond', symbolSize: 8,
+        itemStyle: { color: 'rgba(100,116,139,0.8)', borderWidth: 1, borderColor: '#334155' },
+        label: { show: true, position: 'top', distance: 5, formatter: p => p.name, textStyle: { fontSize: 10, color: '#475569' } }
+    };
+}
+
+function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
+    const series = [];
+    const legendData = ['Vocab Embeddings'];
+    const nTokens = tokens.length;
+
+    series.push(_mig_ec3d_vocab_series());
+
+    tokens.forEach((token, i) => {
+        const color = getPositionColor(i, nTokens);
+        const src = tlab_get_top_word_only(start_h[i]);
+        const dst = tlab_get_top_word_only(end_h[i]);
+        const label = `${src}→${dst} (${i + 1})`;
+        legendData.push(label);
+
+        series.push({
+            name: label, type: 'line3D',
+            data: [start_h[i].slice(0, 3), end_h[i].slice(0, 3)],
+            lineStyle: { width: 4, color: color, opacity: 0.85 }
+        });
+
+        series.push({
+            name: label, type: 'scatter3D',
+            data: [
+                { value: start_h[i].slice(0, 3), symbolSize: 8, itemStyle: { color: color, borderWidth: 2, borderColor: '#000' }, _hover: `Start: '${src}' pos ${i + 1}` },
+                { value: end_h[i].slice(0, 3), symbolSize: 14, itemStyle: { color: color, borderWidth: 2, borderColor: '#fff' }, _hover: `End: '${dst}' pos ${i + 1}` }
+            ],
+            symbol: 'circle',
+            tooltip: { formatter: p => p.data._hover }
+        });
+    });
+
+    if (vfEnabled) {
+        const { n_heads } = getTransformerConfig();
+        const computed = _compute_vector_field_points_3d(migId, layerNum, d_model, n_heads);
+        if (computed) series.push(..._vf_ec3d_series(computed));
+    }
+
+    chart.setOption({
+        title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center', textStyle: { fontSize: 14, color: '#1e293b' } },
+        tooltip: { show: true, trigger: 'item', confine: true },
+        legend: { data: legendData, orient: 'horizontal', bottom: 5, left: 'center', textStyle: { fontSize: 11 } },
+        xAxis3D: { type: 'value', name: 'Dim 0' },
+        yAxis3D: { type: 'value', name: 'Dim 1' },
+        zAxis3D: { type: 'value', name: 'Dim 2' },
+        grid3D: {
+            viewControl: { projection: 'perspective', alpha: 30, beta: 40, distance: 200, autoRotate: false, damping: 0.9 },
+            light: { main: { intensity: 1.2, shadow: false }, ambient: { intensity: 0.3 } },
+            environment: '#f9fafb', boxWidth: 100, boxHeight: 100, boxDepth: 100
+        },
+        series: series,
+        animation: false
+    }, true);
+}
+
+function renderMigrationLowDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
+    // Purge any old Plotly chart on this div
+    Plotly.purge(plotDiv);
+
+    let chart = echarts.getInstanceByDom(plotDiv);
+    if (!chart) chart = echarts.init(plotDiv);
+
+    if (d_model === 3) {
+        _migration_render_3d_echarts(chart, id, tokens, start_h, end_h, layerNum, d_model, vfEnabled);
+    } else {
+        _migration_render_2d_echarts(chart, id, tokens, start_h, end_h, layerNum, d_model, vfEnabled);
+    }
+
+    if (!plotDiv._ecMigResize) {
+        plotDiv._ecMigResize = () => {
+            const c = echarts.getInstanceByDom(plotDiv);
+            if (c) c.resize();
+        };
+        window.addEventListener('resize', plotDiv._ecMigResize);
+    }
+}
+
 function renderMigrationHighDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model) {
+    Plotly.purge(plotDiv);
     const migrationContainers = document.querySelectorAll('[id^="migration-layer-"]');
     const totalLayersCount = migrationContainers.length;
     const isLastInDom = totalLayersCount > 0 && migrationContainers[totalLayersCount - 1].id === id;
     const nextWordIndex = tokens.length - 1;
-
     tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
 }
 
