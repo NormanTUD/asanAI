@@ -3993,7 +3993,7 @@ function _mig_ec2d_arrow_series(tokens, start_h, end_h, d_model, nTokens) {
     const data = tokens.map((token, i) => ({
         value: [
             start_h[i][0], d_model >= 2 ? start_h[i][1] : 0,
-            end_h[i][0], d_model >= 2 ? end_h[i][1] : 0,
+            end_h[i][0],   d_model >= 2 ? end_h[i][1] : 0,
             i
         ],
         _src: tlab_get_top_word_only(start_h[i]),
@@ -4008,11 +4008,12 @@ function _mig_ec2d_arrow_series(tokens, start_h, end_h, d_model, nTokens) {
             const sPx = api.coord([api.value(0), api.value(1)]);
             const ePx = api.coord([api.value(2), api.value(3)]);
             const color = getPositionColor(api.value(4), nTokens);
-            return _ec2d_render_arrow(sPx, ePx, color, 2);
+            return _ec2d_render_arrow(sPx, ePx, color, 3);   // ← was 2
         },
         encode: { x: [0, 2], y: [1, 3] },
         data: data,
-        tooltip: { formatter: p => `From '${p.data._src}' to '${p.data._dst}', position ${p.data._pos}` },
+        tooltip: { formatter: p =>
+            `From '${p.data._src}' to '${p.data._dst}', position ${p.data._pos}` },
         z: 10
     };
 }
@@ -4180,17 +4181,31 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
         const label = `${src}→${dst} (${i + 1})`;
         legendData.push(label);
 
+        const from3 = start_h[i].slice(0, 3);
+        const to3   = end_h[i].slice(0, 3);
+
+        // Arrow shaft
         series.push({
             name: label, type: 'line3D',
-            data: [start_h[i].slice(0, 3), end_h[i].slice(0, 3)],
+            data: [from3, to3],
             lineStyle: { width: 4, color: color, opacity: 0.85 }
         });
 
+        // ★ NEW: Arrowhead at destination
+        _add3DArrowheadSeries(series, from3, to3, color, {
+            lineWidth: 5, maxHeadLen: 0.5, spreadRatio: 0.4
+        });
+
+        // Start / end markers
         series.push({
             name: label, type: 'scatter3D',
             data: [
-                { value: start_h[i].slice(0, 3), symbolSize: 8, itemStyle: { color: color, borderWidth: 2, borderColor: '#000' }, _hover: `Start: '${src}' pos ${i + 1}` },
-                { value: end_h[i].slice(0, 3), symbolSize: 14, itemStyle: { color: color, borderWidth: 2, borderColor: '#fff' }, _hover: `End: '${dst}' pos ${i + 1}` }
+                { value: from3, symbolSize: 8,
+                  itemStyle: { color: color, borderWidth: 2, borderColor: '#000' },
+                  _hover: `Start: '${src}' pos ${i + 1}` },
+                { value: to3, symbolSize: 14,
+                  itemStyle: { color: color, borderWidth: 2, borderColor: '#fff' },
+                  _hover: `End: '${dst}' pos ${i + 1}` }
             ],
             symbol: 'circle',
             tooltip: { formatter: p => p.data._hover }
@@ -4204,16 +4219,21 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
     }
 
     chart.setOption({
-        title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center', textStyle: { fontSize: 14, color: '#1e293b' } },
+        title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center',
+                 textStyle: { fontSize: 14, color: '#1e293b' } },
         tooltip: { show: true, trigger: 'item', confine: true },
-        legend: { data: legendData, orient: 'horizontal', bottom: 5, left: 'center', textStyle: { fontSize: 11 } },
+        legend: { data: legendData, orient: 'horizontal', bottom: 5,
+                  left: 'center', textStyle: { fontSize: 11 } },
         xAxis3D: { type: 'value', name: 'Dim 0' },
         yAxis3D: { type: 'value', name: 'Dim 1' },
         zAxis3D: { type: 'value', name: 'Dim 2' },
         grid3D: {
-            viewControl: { projection: 'perspective', alpha: 30, beta: 40, distance: 200, autoRotate: false, damping: 0.9 },
-            light: { main: { intensity: 1.2, shadow: false }, ambient: { intensity: 0.3 } },
-            environment: '#f9fafb', boxWidth: 100, boxHeight: 100, boxDepth: 100
+            viewControl: { projection: 'perspective', alpha: 30, beta: 40,
+                           distance: 200, autoRotate: false, damping: 0.9 },
+            light: { main: { intensity: 1.2, shadow: false },
+                     ambient: { intensity: 0.3 } },
+            environment: '#f9fafb',
+            boxWidth: 100, boxHeight: 100, boxDepth: 100
         },
         series: series,
         animation: false
@@ -7113,6 +7133,60 @@ function rerender_temperature_only() {
         cached.d_model,
         temperature
     );
+}
+
+/**
+ * Adds 3D arrowhead petal series to a series array.
+ * Creates line3D segments that form a cone-like arrowhead pointing
+ * in the direction from `from3` to `to3`.
+ */
+function _add3DArrowheadSeries(series, from3, to3, color, options = {}) {
+    const lineWidth   = options.lineWidth   || 6;
+    const maxHeadLen  = options.maxHeadLen  || 0.5;
+    const spreadRatio = options.spreadRatio || 0.4;
+    const nPetals     = options.nPetals     || 3;
+
+    const dx = to3[0] - from3[0];
+    const dy = to3[1] - from3[1];
+    const dz = to3[2] - from3[2];
+    const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+    if (mag < 1e-10) return;
+
+    const nx = dx / mag, ny = dy / mag, nz = dz / mag;
+    const headLen = Math.min(mag * 0.25, maxHeadLen);
+    const { perp1, perp2 } = computePerpendicularVectors(nx, ny, nz);
+    const bx = to3[0] - nx * headLen;
+    const by = to3[1] - ny * headLen;
+    const bz = to3[2] - nz * headLen;
+    const spread = headLen * spreadRatio;
+
+    for (let i = 0; i < nPetals; i++) {
+        const angle  = (2 * Math.PI * i) / nPetals;
+        const cos1 = Math.cos(angle), sin1 = Math.sin(angle);
+        const px = bx + spread * (cos1 * perp1.x + sin1 * perp2.x);
+        const py = by + spread * (cos1 * perp1.y + sin1 * perp2.y);
+        const pz = bz + spread * (cos1 * perp1.z + sin1 * perp2.z);
+
+        // Petal → tip
+        series.push({
+            type: 'line3D', data: [[px, py, pz], to3],
+            lineStyle: { width: lineWidth, color: color }, silent: true
+        });
+
+        // Base ring segment
+        const j = (i + 1) % nPetals;
+        const angle2 = (2 * Math.PI * j) / nPetals;
+        const cos2 = Math.cos(angle2), sin2 = Math.sin(angle2);
+        const qx = bx + spread * (cos2 * perp1.x + sin2 * perp2.x);
+        const qy = by + spread * (cos2 * perp1.y + sin2 * perp2.y);
+        const qz = bz + spread * (cos2 * perp1.z + sin2 * perp2.z);
+
+        series.push({
+            type: 'line3D', data: [[px, py, pz], [qx, qy, qz]],
+            lineStyle: { width: lineWidth, color: color }, silent: true
+        });
+    }
 }
 
 async function loadTransformerModule () {
