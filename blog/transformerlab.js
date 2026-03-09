@@ -3039,6 +3039,19 @@ function _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta) {
 	].join('|');
 }
 
+function heightLockedMathUpdate(elements, htmlArray) {
+	// elements and htmlArray must be same length
+	const updated = [];
+	elements.forEach((el, i) => {
+		if (el && htmlArray[i] !== undefined) {
+			_heightLockedUpdate(el, htmlArray[i]);
+			updated.push(el);
+		}
+	});
+	_renderTemmlOnElements(updated);
+	_releaseHeightLocks(updated);
+}
+
 function _heightLockedUpdate(el, newHtml) {
 	if (!el) return false;
 	if (el.innerHTML === newHtml) return false;
@@ -4917,28 +4930,26 @@ function ensureLatexDebugDiv(id, plotDiv) {
 }
 
 function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model, tokenStrings) {
-    const vocabRows = buildVocabTransitionRows(tokens, start_h, end_h, d_model);
-    const ts = tokenStrings || null;
+	const vocabRows = buildVocabTransitionRows(tokens, start_h, end_h, d_model);
+	const ts = tokenStrings || null;
 
-    let stageLabel = 'layer output';
-    const layerMatch = id.match(/migration-layer-(\d+)/);
-    if (layerMatch) {
-        stageLabel = `out layer ${parseInt(layerMatch[1])}`;
-    }
+	let stageLabel = 'layer output';
+	const layerMatch = id.match(/migration-layer-(\d+)/);
+	if (layerMatch) {
+		stageLabel = `out layer ${parseInt(layerMatch[1])}`;
+	}
 
-    const hAfterMatrix = matrixToPmatrixLabeled(h_after, ts, stageLabel);
-    const latexString = `$$h_\\text{after} = ${hAfterMatrix}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+	const hAfterMatrix = matrixToPmatrixLabeled(h_after, ts, stageLabel);
+	const latexString = `$$h_\\text{after} = ${hAfterMatrix}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
 
-    const latexDiv = ensureLatexDebugDiv(id, plotDiv);
+	const latexDiv = ensureLatexDebugDiv(id, plotDiv);
 
-    // ★ Hash-Check: nicht neu rendern wenn sich nichts geändert hat
-    if (latexDiv._lastLatexHash === latexString) return;
-    latexDiv._lastLatexHash = latexString;
+	// ★ Hash-Check: nicht neu rendern wenn sich nichts geändert hat
+	if (latexDiv._lastLatexHash === latexString) return;
+	latexDiv._lastLatexHash = latexString;
 
-    // ★ Gleiches Pattern wie FFN/h1: heightLock → gezieltes Temml → unlock
-    _heightLockedUpdate(latexDiv, latexString);
-    _renderTemmlOnElements([latexDiv]);
-    _releaseHeightLocks([latexDiv]);
+	// ★ Gleiches Pattern wie FFN/h1: heightLock → gezieltes Temml → unlock
+	heightLockedMathUpdate([latexDiv], [latexString]);
 }
 
 /**
@@ -6197,28 +6208,29 @@ function setVisualizationMode(mode) {
 }
 
 function _render_h1_logic_core(containerIds, h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings, naming) {
-    const normContainer = document.getElementById(containerIds.norm);
-    const finalContainer = document.getElementById(containerIds.final);
-    if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
+	const normContainer = document.getElementById(containerIds.norm);
+	const finalContainer = document.getElementById(containerIds.final);
+	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
 
-    const projectedMHA = projectMHAOutput(multiHeadOutput, WO);
-    const h1 = matAdd(h0, projectedMHA);
+	const projectedMHA = projectMHAOutput(multiHeadOutput, WO);
+	const h1 = matAdd(h0, projectedMHA);
 
-    const hash = computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, beta);
-    if (normContainer._lastHash === hash && finalContainer._lastHash === hash) return h1;
-    normContainer._lastHash = hash;
-    finalContainer._lastHash = hash;
+	const hash = computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, beta);
+	if (normContainer._lastHash === hash && finalContainer._lastHash === hash) return h1;
+	normContainer._lastHash = hash;
+	finalContainer._lastHash = hash;
 
-    const ts = tokenStrings || null;
-    // Use the *ForLayer builders — they already accept a naming object
-    const normHtml = buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming);
-    const finalHtml = buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts, naming);
+	const ts = tokenStrings || null;
+	// Use the *ForLayer builders — they already accept a naming object
+	const normHtml = buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming);
+	const finalHtml = buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts, naming);
 
-    _heightLockedUpdate(normContainer, normHtml);
-    _heightLockedUpdate(finalContainer, finalHtml);
-    _renderTemmlOnElements([normContainer, finalContainer]);
-    _releaseHeightLocks([normContainer, finalContainer]);
-    return h1;
+	heightLockedMathUpdate(
+		[normContainer, finalContainer],
+		[normHtml, finalHtml]
+	);
+
+	return h1;
 }
 
 function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings) {
