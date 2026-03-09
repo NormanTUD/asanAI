@@ -2746,62 +2746,25 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 	});
 
 	// ── 2. Calculation-step 3D arrows ──
+	// ── 2. Calculation-step 3D arrows ──
 	if (steps && steps.length > 0) {
 		steps.forEach((step, idx) => {
 			const from3 = step.from.slice(0, 3);
 			const to3   = step.to.slice(0, 3);
 
-			// Arrow shaft
+			// Shaft (shortened to cone base)
+			const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
 			series.push({
 				type: 'line3D',
-				data: [from3, to3],
+				data: [from3, shaftEnd],
 				lineStyle: { width: 5, color: arrowColor, opacity: 0.85 },
 				silent: true
 			});
 
-			// Arrowhead (line3D petals — same technique as _vf_ec3d_series)
-			const dx = to3[0] - from3[0];
-			const dy = to3[1] - from3[1];
-			const dz = to3[2] - from3[2];
-			const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-			if (mag > 1e-10) {
-				const nx = dx / mag, ny = dy / mag, nz = dz / mag;
-				const headLen = Math.min(mag * 0.25, 0.5);
-				const { perp1, perp2 } = computePerpendicularVectors(nx, ny, nz);
-				const bx = to3[0] - nx * headLen;
-				const by = to3[1] - ny * headLen;
-				const bz = to3[2] - nz * headLen;
-				const spread = headLen * 0.4;
-				const nPetals = 3;
-
-				for (let i = 0; i < nPetals; i++) {
-					const angle  = (2 * Math.PI * i) / nPetals;
-					const cos1 = Math.cos(angle), sin1 = Math.sin(angle);
-					const px = bx + spread * (cos1 * perp1.x + sin1 * perp2.x);
-					const py = by + spread * (cos1 * perp1.y + sin1 * perp2.y);
-					const pz = bz + spread * (cos1 * perp1.z + sin1 * perp2.z);
-
-					// Petal → tip
-					series.push({
-						type: 'line3D', data: [[px, py, pz], to3],
-						lineStyle: { width: 6, color: arrowColor }, silent: true
-					});
-
-					// Base ring segment
-					const j = (i + 1) % nPetals;
-					const angle2 = (2 * Math.PI * j) / nPetals;
-					const cos2 = Math.cos(angle2), sin2 = Math.sin(angle2);
-					const qx = bx + spread * (cos2 * perp1.x + sin2 * perp2.x);
-					const qy = by + spread * (cos2 * perp1.y + sin2 * perp2.y);
-					const qz = bz + spread * (cos2 * perp1.z + sin2 * perp2.z);
-
-					series.push({
-						type: 'line3D', data: [[px, py, pz], [qx, qy, qz]],
-						lineStyle: { width: 6, color: arrowColor }, silent: true
-					});
-				}
-			}
+			// Solid cone arrowhead
+			_add3DArrowheadSeries(series, from3, to3, arrowColor, {
+				maxHeadLen: 0.5, spreadRatio: 0.4
+			});
 
 			// Midpoint hover label
 			series.push({
@@ -4184,19 +4147,20 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 		const from3 = start_h[i].slice(0, 3);
 		const to3   = end_h[i].slice(0, 3);
 
-		// Arrow shaft
+		// Shaft (shortened to stop at cone base)
+		const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
 		series.push({
 			name: label, type: 'line3D',
-			data: [from3, to3],
+			data: [from3, shaftEnd],
 			lineStyle: { width: 4, color: color, opacity: 0.85 }
 		});
 
 		// Solid cone arrowhead at destination
 		_add3DArrowheadSeries(series, from3, to3, color, {
-			lineWidth: 3, maxHeadLen: 0.5, spreadRatio: 0.35, nPetals: 12
+			maxHeadLen: 0.5, spreadRatio: 0.35
 		});
 
-		// ★ Start marker ONLY — no end dot (arrowhead replaces it)
+		// Start marker only — cone replaces end dot
 		series.push({
 			name: label, type: 'scatter3D',
 			data: [
@@ -4208,7 +4172,6 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 			tooltip: { formatter: p => p.data._hover }
 		});
 	});
-
 
 	if (vfEnabled) {
 		const { n_heads } = getTransformerConfig();
@@ -4238,6 +4201,10 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 	}, true);
 }
 
+/**
+ * Builds per-segment line3D series with solid cone arrowheads
+ * at each layer step. Shafts are shortened to the cone base.
+ */
 function _traj_ec3d_line_series_with_arrows(tokenLabel, color, dataPoints, tIdx) {
     const seriesArr = [];
     const pts = dataPoints.map(p => p.data[tIdx].slice(0, 3));
@@ -4246,17 +4213,18 @@ function _traj_ec3d_line_series_with_arrows(tokenLabel, color, dataPoints, tIdx)
         const from3 = pts[i];
         const to3   = pts[i + 1];
 
-        // Line segment
+        // Shaft (shortened to cone base)
+        const shaftEnd = _computeArrowheadBase(from3, to3, 0.4);
         seriesArr.push({
             name: tokenLabel,
             type: 'line3D',
-            data: [from3, to3],
+            data: [from3, shaftEnd],
             lineStyle: { width: 4, color: color, opacity: 0.85 }
         });
 
-        // Solid cone arrowhead at end of each segment
+        // Solid cone arrowhead
         _add3DArrowheadSeries(seriesArr, from3, to3, color, {
-            lineWidth: 3, maxHeadLen: 0.4, spreadRatio: 0.3, nPetals: 12
+            maxHeadLen: 0.4, spreadRatio: 0.3
         });
     }
 
@@ -4948,8 +4916,6 @@ function _traj_ec3d_line_series(tokenLabel, color, dataPoints, tIdx) {
 // ─── Step markers (hover, start/end emphasis) for one token ──
 
 function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, embSnap, snapVocab) {
-    const nSteps = dataPoints.length;
-
     const data = dataPoints.map((p, pIdx) => {
         const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
         const hoverHtml = buildTrajectoryHoverText(
@@ -4961,13 +4927,12 @@ function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, e
 
         return {
             value: p.data[tIdx].slice(0, 3),
-            // Start: visible dot; all others: tiny hover-only targets
-            symbolSize: isStart ? 10 : 3,
+            symbolSize: isStart ? 10 : 4,
             itemStyle: {
                 color: color,
                 borderWidth: isStart ? 2 : 0,
                 borderColor: '#000',
-                opacity: isStart ? 1 : 0.4
+                opacity: isStart ? 1 : 0.01   // ← invisible but still hoverable
             },
             _hover: hoverHtml
         };
@@ -4978,10 +4943,7 @@ function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, e
         type: 'scatter3D',
         data: data,
         symbol: 'circle',
-        symbolSize: 6,
-        tooltip: {
-            formatter: params => params.data._hover
-        }
+        tooltip: { formatter: params => params.data._hover }
     };
 }
 
@@ -7160,48 +7122,98 @@ function rerender_temperature_only() {
 }
 
 /**
- * Adds a solid-looking 3D cone arrowhead to a series array.
- * Uses 12 radial petals converging at the tip — no base ring.
- * The high petal count creates the visual impression of a filled cone.
+ * Adds a solid-looking 3D cone arrowhead using scatter3D point clusters.
+ * Concentric rings of overlapping opaque circles taper from base to tip,
+ * creating a filled cone appearance without requiring the 'surface' component.
  */
 function _add3DArrowheadSeries(series, from3, to3, color, options = {}) {
-    const lineWidth   = options.lineWidth   || 3;
     const maxHeadLen  = options.maxHeadLen  || 0.5;
     const spreadRatio = options.spreadRatio || 0.35;
-    const nPetals     = options.nPetals     || 12;
+    const baseSize    = options.baseSize    || 10;
 
     const dx = to3[0] - from3[0];
     const dy = to3[1] - from3[1];
     const dz = to3[2] - from3[2];
     const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
     if (mag < 1e-10) return;
 
     const nx = dx / mag, ny = dy / mag, nz = dz / mag;
-    const headLen = Math.min(mag * 0.25, maxHeadLen);
+    const hl = Math.min(mag * 0.25, maxHeadLen);
     const { perp1, perp2 } = computePerpendicularVectors(nx, ny, nz);
+    const sp = hl * spreadRatio;
 
-    // Base center of the cone (pulled back from tip along direction)
-    const bx = to3[0] - nx * headLen;
-    const by = to3[1] - ny * headLen;
-    const bz = to3[2] - nz * headLen;
-    const spread = headLen * spreadRatio;
+    // Base center of cone (pulled back from tip along direction)
+    const bx = to3[0] - nx * hl;
+    const by = to3[1] - ny * hl;
+    const bz = to3[2] - nz * hl;
 
-    for (let i = 0; i < nPetals; i++) {
-        const angle = (2 * Math.PI * i) / nPetals;
-        const cosA = Math.cos(angle), sinA = Math.sin(angle);
-        const px = bx + spread * (cosA * perp1.x + sinA * perp2.x);
-        const py = by + spread * (cosA * perp1.y + sinA * perp2.y);
-        const pz = bz + spread * (cosA * perp1.z + sinA * perp2.z);
+    // Build cone from scatter3D points in concentric rings.
+    // Each ring is a cross-section of the cone at a given height.
+    // Overlapping opaque circles create the visual impression of a solid shape.
+    const data = [];
+    const nRings = 5;
+    const ptsPerRing = 8;
 
-        // Each petal: base-ring point → tip (NO base ring segments)
-        series.push({
-            type: 'line3D',
-            data: [[px, py, pz], to3],
-            lineStyle: { width: lineWidth, color: color },
-            silent: true
+    for (let r = 0; r <= nRings; r++) {
+        const t = r / nRings;                               // 0 = base, 1 = tip
+        const radius = sp * (1 - t);                         // shrinks to 0 at tip
+        const symSize = Math.max(2, baseSize * (1 - t * 0.8));
+
+        // Position along the cone axis
+        const cx = bx + t * nx * hl;
+        const cy = by + t * ny * hl;
+        const cz = bz + t * nz * hl;
+
+        // Center point of this ring (fills gaps between perimeter points)
+        data.push({
+            value: [cx, cy, cz],
+            symbolSize: symSize + 2,
+            itemStyle: { color: color, opacity: 1 }
         });
+
+        // Perimeter points around the ring
+        if (radius > 0.005) {
+            const nPts = Math.max(4, ptsPerRing - r);
+            for (let p = 0; p < nPts; p++) {
+                // Offset each ring's rotation so points don't stack vertically
+                const angle = (2 * Math.PI * p) / nPts + (r * Math.PI / ptsPerRing);
+                const cosA = Math.cos(angle), sinA = Math.sin(angle);
+                data.push({
+                    value: [
+                        cx + radius * (cosA * perp1.x + sinA * perp2.x),
+                        cy + radius * (cosA * perp1.y + sinA * perp2.y),
+                        cz + radius * (cosA * perp1.z + sinA * perp2.z)
+                    ],
+                    symbolSize: symSize,
+                    itemStyle: { color: color, opacity: 1 }
+                });
+            }
+        }
     }
+
+    series.push({
+        type: 'scatter3D',
+        data: data,
+        symbol: 'circle',
+        silent: true,
+        label: { show: false },
+        tooltip: { show: false }
+    });
+}
+
+/**
+ * Returns the 3D point where the arrowhead cone begins (the base center).
+ * Callers use this to shorten the shaft line so it doesn't poke through.
+ */
+function _computeArrowheadBase(from3, to3, maxHeadLen) {
+    const dx = to3[0] - from3[0];
+    const dy = to3[1] - from3[1];
+    const dz = to3[2] - from3[2];
+    const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    if (mag < 1e-10) return [...to3];
+    const headLen = Math.min(mag * 0.25, maxHeadLen || 0.5);
+    const nx = dx / mag, ny = dy / mag, nz = dz / mag;
+    return [to3[0] - nx * headLen, to3[1] - ny * headLen, to3[2] - nz * headLen];
 }
 
 async function loadTransformerModule () {
