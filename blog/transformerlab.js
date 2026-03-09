@@ -3220,63 +3220,17 @@ function _releaseHeightLocks(elements) {
 }
 
 function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
-    const L = layerIndex + 1;
-    const sup = `^{(${L})}`;
-    const base = layerIndex * 2;
-    const h1name = `h_{${base + 1}}`;
-    const h2name = `h_{${base + 2}}`;
+    const naming = _ffnNaming(layerIndex);
     const ts = tokenStrings || null;
-
-    // Determine the stage label for h1 input
-    // Layer 0's h1 = h0 + MHA_proj (i.e., after attention residual)
-    // Layer N's h1 = previous layer's h2 (output of layer N-1)
-    const h1Stage = layerIndex === 0 
-        ? 'after attn residual' 
-        : `out layer ${layerIndex}`;
 
     const step1 = document.getElementById(`${prefix}-step-1`);
     const step2 = document.getElementById(`${prefix}-step-2`);
     const step3 = document.getElementById(`${prefix}-step-3`);
     if (!step1 || !step2 || !step3) return;
 
-    const step1Html = `
-    <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
-    <p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $${h1name}${sup}$ before FFN</p>
-    $$ \\text{LayerNorm}(${h1name}${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{${h1name}${sup} - \\underbrace{\\mu}_{\\text{Mean of } ${h1name}${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } ${h1name}${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
-    <div style="overflow-x:auto;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}\\left(${h1name}${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h1, ts, h1Stage)}}_{${h1name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
-    <br>
-    </div>
-    </div>
-
-    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + ReLU</strong></p>
-
-    $$ \\text{out}_{L1}${sup} = \\text{ReLU}\\!\\left(\\text{Norm}(${h1name}${sup}) \\cdot W_1${sup} + b_1${sup}\\right) $$
-
-    <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ReLU')}}_{\\text{out}_{L1}${sup}} = \\text{ReLU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
-    </div>
-    `;
-
-    const step2Html = `
-    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 2: Compression</strong></p>
-
-    $$ \\text{out}_{L2}${sup} = \\text{out}_{L1}${sup} \\cdot W_2${sup} + b_2${sup} $$
-
-    <div style="overflow-x:auto; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ReLU')}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
-    </div>
-    `;
-
-    const step3Html = `
-    <div style="margin-bottom:10px;">
-    <p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
-    $$ ${h2name}${sup} = ${h1name}${sup} + \\text{out}_{L2}${sup} $$
-    </div>
-    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px;">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h2, ts, 'layer output')}}_{${h2name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h1, ts, h1Stage)}}_{${h1name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{out}_{L2}${sup}} $$
-    </div>
-    `;
+    const step1Html = _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts);
+    const step2Html = _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts);
+    const step3Html = _buildFFNStep3Html(naming, h1, out_FFN, h2, ts);
 
     _heightLockedUpdate(step1, step1Html);
     _heightLockedUpdate(step2, step2Html);
@@ -3284,6 +3238,94 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 
     _renderTemmlOnElements([step1, step2, step3]);
     _releaseHeightLocks([step1, step2, step3]);
+}
+
+/**
+ * Derives LaTeX naming conventions for a given layer index.
+ */
+function _ffnNaming(layerIndex) {
+    const L = layerIndex + 1;
+    const sup = `^{(${L})}`;
+    const base = layerIndex * 2;
+    const h1name = `h_{${base + 1}}`;
+    const h2name = `h_{${base + 2}}`;
+    const h1Stage = layerIndex === 0
+        ? 'after attn residual'
+        : `out layer ${layerIndex}`;
+    return { L, sup, h1name, h2name, h1Stage };
+}
+
+/**
+ * Builds the HTML for FFN Step 1: Pre-LN normalization + Expansion + ReLU.
+ */
+function _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts) {
+    const { sup, h1name, h1Stage } = naming;
+
+    const preLNHtml = _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta, ts);
+    const expansionHtml = _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts);
+
+    return preLNHtml + expansionHtml;
+}
+
+/**
+ * Builds the Pre-LayerNorm sub-section of Step 1.
+ */
+function _buildFFNPreLNSection(sup, h1name, h1Stage, h1, normed_h1, gamma, beta, ts) {
+    return `
+    <div style="margin-bottom:15px; padding:10px; border:1px solid #10b981; border-radius:8px; background:#ecfdf5;">
+    <p style="font-size:0.85rem; color:#065f46;"><strong>Pre-LN:</strong> Normalize $${h1name}${sup}$ before FFN</p>
+    $$ \\text{LayerNorm}(${h1name}${sup}) = \\underbrace{\\gamma_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{${h1name}${sup} - \\underbrace{\\mu}_{\\text{Mean of } ${h1name}${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } ${h1name}${sup}} + \\underbrace{${epsilon}}_\\epsilon}} + \\underbrace{\\beta_{\\text{ffn}}${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
+    <div style="overflow-x:auto;">
+    $$ \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}\\left(${h1name}${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h1, ts, h1Stage)}}_{${h1name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
+    <br>
+    </div>
+    </div>`;
+}
+
+/**
+ * Builds the Expansion + ReLU sub-section of Step 1.
+ */
+function _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts) {
+    return `
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + ReLU</strong></p>
+
+    $$ \\text{out}_{L1}${sup} = \\text{ReLU}\\!\\left(\\text{Norm}(${h1name}${sup}) \\cdot W_1${sup} + b_1${sup}\\right) $$
+
+    <div style="overflow-x:auto; padding-bottom: 10px;">
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ReLU')}}_{\\text{out}_{L1}${sup}} = \\text{ReLU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
+    </div>`;
+}
+
+/**
+ * Builds the HTML for FFN Step 2: Compression.
+ */
+function _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts) {
+    const { sup } = naming;
+
+    return `
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 2: Compression</strong></p>
+
+    $$ \\text{out}_{L2}${sup} = \\text{out}_{L1}${sup} \\cdot W_2${sup} + b_2${sup} $$
+
+    <div style="overflow-x:auto; padding-bottom: 10px;">
+    $$ \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ReLU')}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
+    </div>`;
+}
+
+/**
+ * Builds the HTML for FFN Step 3: Residual connection.
+ */
+function _buildFFNStep3Html(naming, h1, out_FFN, h2, ts) {
+    const { sup, h1name, h2name, h1Stage } = naming;
+
+    return `
+    <div style="margin-bottom:10px;">
+    <p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
+    $$ ${h2name}${sup} = ${h1name}${sup} + \\text{out}_{L2}${sup} $$
+    </div>
+    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px;">
+    $$ \\underbrace{${matrixToPmatrixLabeled(h2, ts, 'layer output')}}_{${h2name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h1, ts, h1Stage)}}_{${h1name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{out}_{L2}${sup}} $$
+    </div>`;
 }
 
 /**
