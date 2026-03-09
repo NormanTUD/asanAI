@@ -1821,7 +1821,6 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 			// Dispose any ECharts or Plotly on the trajectory div
 			const trajChart = echarts.getInstanceByDom(oldTrajDiv);
 			if (trajChart) trajChart.dispose();
-			Plotly.purge(oldTrajDiv);
 			oldTrajDiv.remove();
 		}
 		trajectoryRenderRegistry.delete('transformer-trajectory-full-path');
@@ -2567,42 +2566,6 @@ function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
 // ── 3D Arrowhead geometry (extracted from _execute_embedding_render) ──
 
 /**
- * Creates 3D arrowhead line traces forming a triangular cone at `tip`.
- * @param {number[]} from - Arrow origin [x, y, z]
- * @param {number[]} tip  - Arrow destination [x, y, z]
- * @param {string}   color
- * @param {number}   headLength
- * @returns {object[]} Array of Plotly scatter3d traces
- */
-function make3DArrowhead(from, tip, color, headLength) {
-    const dx = tip[0] - from[0];
-    const dy = tip[1] - from[1];
-    const dz = tip[2] - from[2];
-    const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-    if (mag < 1e-10) return [];
-
-    const nx = dx / mag;
-    const ny = dy / mag;
-    const nz = dz / mag;
-
-    const { perp1, perp2 } = computePerpendicularVectors(nx, ny, nz);
-
-    const bx = tip[0] - nx * headLength;
-    const by = tip[1] - ny * headLength;
-    const bz = tip[2] - nz * headLength;
-
-    const spread = headLength * 0.4;
-    const nPetals = 3;
-    const basePoints = computeArrowBasePoints(bx, by, bz, perp1, perp2, spread, nPetals);
-
-    return [
-        ...buildPetalToTipTraces(basePoints, tip, color, nPetals),
-        ...buildBaseRingTraces(basePoints, color, nPetals)
-    ];
-}
-
-/**
  * Finds two vectors perpendicular to a given normalized direction.
  */
 function computePerpendicularVectors(nx, ny, nz) {
@@ -2631,196 +2594,6 @@ function computePerpendicularVectors(nx, ny, nz) {
         perp1: { x: p1x, y: p1y, z: p1z },
         perp2: { x: p2x, y: p2y, z: p2z }
     };
-}
-
-/**
- * Computes points around the base of an arrowhead cone.
- */
-function computeArrowBasePoints(bx, by, bz, perp1, perp2, spread, nPetals) {
-    const pts = [];
-    for (let i = 0; i < nPetals; i++) {
-        const angle = (2 * Math.PI * i) / nPetals;
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
-        pts.push([
-            bx + spread * (cos * perp1.x + sin * perp2.x),
-            by + spread * (cos * perp1.y + sin * perp2.y),
-            bz + spread * (cos * perp1.z + sin * perp2.z)
-        ]);
-    }
-    return pts;
-}
-
-/**
- * Builds scatter3d line traces from each base point to the tip.
- */
-function buildPetalToTipTraces(basePoints, tip, color, nPetals) {
-    const traces = [];
-    for (let i = 0; i < nPetals; i++) {
-        traces.push({
-            type: 'scatter3d',
-            x: [basePoints[i][0], tip[0]],
-            y: [basePoints[i][1], tip[1]],
-            z: [basePoints[i][2], tip[2]],
-            mode: 'lines',
-            line: { color, width: 6 },
-            hoverinfo: 'skip',
-            showlegend: false
-        });
-    }
-    return traces;
-}
-
-/**
- * Connects adjacent base points to form the triangular ring.
- */
-function buildBaseRingTraces(basePoints, color, nPetals) {
-    const traces = [];
-    for (let i = 0; i < nPetals; i++) {
-        const j = (i + 1) % nPetals;
-        traces.push({
-            type: 'scatter3d',
-            x: [basePoints[i][0], basePoints[j][0]],
-            y: [basePoints[i][1], basePoints[j][1]],
-            z: [basePoints[i][2], basePoints[j][2]],
-            mode: 'lines',
-            line: { color, width: 6 },
-            hoverinfo: 'skip',
-            showlegend: false
-        });
-    }
-    return traces;
-}
-
-/**
- * Builds Plotly traces for vocabulary token points.
- * Works for 1D, 2D, and 3D.
- */
-function buildVocabPointTraces(tokens, is3D) {
-    return tokens.map(token => {
-        const vec = window.persistentEmbeddingSpace[token];
-        const trace = {
-            x: [vec[0]],
-            y: [vec.length >= 2 ? vec[1] : 0],
-            mode: 'markers+text',
-            text: [token],
-            textposition: 'top center',
-            name: token,
-            marker: { size: is3D ? 6 : 8, opacity: 0.85 },
-            cliponaxis: false,
-            type: is3D ? 'scatter3d' : 'scatter'
-        };
-        if (is3D) trace.z = [vec[2]];
-        return trace;
-    });
-}
-
-/**
- * Builds Plotly traces and annotations for calculation step arrows.
- */
-function buildStepArrowTraces(steps, dimensions, is3D) {
-    const traces = [];
-    const annotations = [];
-    const arrowColor = '#3b82f6';
-
-    steps.forEach(step => {
-        if (is3D) {
-            traces.push(...build3DArrowTraces(step, arrowColor));
-        } else {
-            annotations.push(build2DAnnotationArrow(step, dimensions, arrowColor));
-            traces.push(build2DHoverMarker(step, dimensions, arrowColor));
-        }
-    });
-
-    return { traces, annotations };
-}
-
-function build3DArrowTraces(step, arrowColor) {
-    const traces = [];
-
-    // Line shaft
-    traces.push({
-        type: 'scatter3d',
-        x: [step.from[0], step.to[0]],
-        y: [step.from[1], step.to[1]],
-        z: [step.from[2], step.to[2]],
-        mode: 'lines',
-        line: { color: arrowColor, width: 5 },
-        hoverinfo: 'text',
-        text: [step.label, step.label],
-        showlegend: false
-    });
-
-    // Arrowhead
-    const dx = step.to[0] - step.from[0];
-    const dy = step.to[1] - step.from[1];
-    const dz = step.to[2] - step.from[2];
-    const arrowLen = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    const headLen = Math.min(arrowLen * 0.25, 0.5);
-    traces.push(...make3DArrowhead(step.from, step.to, arrowColor, headLen));
-
-    // Midpoint hover label
-    traces.push({
-        type: 'scatter3d',
-        x: [(step.from[0] + step.to[0]) / 2],
-        y: [(step.from[1] + step.to[1]) / 2],
-        z: [(step.from[2] + step.to[2]) / 2],
-        mode: 'markers',
-        marker: { size: 4, color: 'rgba(59,130,246,0.01)' },
-        text: [step.label],
-        hovertemplate: '<b>%{text}</b><extra></extra>',
-        showlegend: false
-    });
-
-    return traces;
-}
-
-function build2DAnnotationArrow(step, dimensions, arrowColor) {
-    return {
-        ax: step.from[0],
-        ay: dimensions >= 2 ? step.from[1] : 0,
-        axref: 'x', ayref: 'y',
-        x: step.to[0],
-        y: dimensions >= 2 ? step.to[1] : 0,
-        xref: 'x', yref: 'y',
-        showarrow: true,
-        arrowhead: 2, arrowsize: 1.5,
-        arrowwidth: 3, arrowcolor: arrowColor
-    };
-}
-
-function build2DHoverMarker(step, dimensions, arrowColor) {
-    return {
-        type: 'scatter',
-        x: [(step.from[0] + step.to[0]) / 2],
-        y: [((dimensions >= 2 ? step.from[1] : 0) + (dimensions >= 2 ? step.to[1] : 0)) / 2],
-        mode: 'markers',
-        marker: { size: 12, color: 'rgba(59,130,246,0.01)' },
-        text: [step.label],
-        hovertemplate: '<b>%{text}</b><extra></extra>',
-        showlegend: false,
-        cliponaxis: false
-    };
-}
-
-/**
- * Builds the red diamond highlight trace for a result position.
- */
-function buildResultHighlightTrace(highlightPos, dimensions, is3D) {
-    const trace = {
-        x: [highlightPos[0]],
-        y: [dimensions >= 2 ? highlightPos[1] : 0],
-        mode: 'markers',
-        marker: { size: is3D ? 10 : 14, color: '#ef4444', symbol: 'diamond' },
-        name: 'Result',
-        showlegend: false,
-        type: is3D ? 'scatter3d' : 'scatter',
-        hovertemplate: is3D
-            ? '<b>Result</b><br>(%{x:.4f}, %{y:.4f}, %{z:.4f})<extra></extra>'
-            : '<b>Result</b><br>(%{x:.4f}, %{y:.4f})<extra></extra>'
-    };
-    if (is3D) trace.z = [highlightPos[2]];
-    return trace;
 }
 
 function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, steps) {
@@ -4441,7 +4214,6 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 
 function renderMigrationLowDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
     // Purge any old Plotly chart on this div
-    Plotly.purge(plotDiv);
 
     let chart = echarts.getInstanceByDom(plotDiv);
     if (!chart) chart = echarts.init(plotDiv);
@@ -4462,7 +4234,6 @@ function renderMigrationLowDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_
 }
 
 function renderMigrationHighDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model) {
-    Plotly.purge(plotDiv);
     const migrationContainers = document.querySelectorAll('[id^="migration-layer-"]');
     const totalLayersCount = migrationContainers.length;
     const isLastInDom = totalLayersCount > 0 && migrationContainers[totalLayersCount - 1].id === id;
@@ -5046,7 +4817,6 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 
 function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab) {
     // Clean up whichever renderer was used previously
-    Plotly.purge(trajDiv);
     let chart = echarts.getInstanceByDom(trajDiv);
     if (!chart) chart = echarts.init(trajDiv);
 
@@ -5589,16 +5359,6 @@ function _wireEChartsResize(container, key) {
 }
 
 /**
- * Tears down any previous Plotly or ECharts instance on the container.
- */
-function purgeExistingCharts(container) {
-    Plotly.purge(container);
-    const existingChart = echarts.getInstanceByDom(container);
-    if (existingChart) existingChart.dispose();
-    container.innerHTML = '';
-}
-
-/**
  * Derives a stable hue from a token string for consistent coloring.
  */
 function getHueFromToken(str) {
@@ -5610,87 +5370,6 @@ function getHueFromToken(str) {
 }
 
 /**
- * Builds all Plotly traces (for d_model <= 3) and ECharts data (for d_model > 3)
- * representing the positional shift arrows from base embedding to PE-injected embedding.
- *
- * @returns {{ plotlyTraces: object[], echartsData: object[] }}
- */
-function buildShiftTraceData(tokenStrings, d_model, injectedEmbeddings) {
-    const plotlyTraces = [];
-    const echartsData = [];
-
-    tokenStrings.forEach((token, pos) => {
-        const semanticBase = window.persistentEmbeddingSpace[token];
-        if (!semanticBase) return;
-
-        const combined = injectedEmbeddings[pos];
-        if (!combined) return;
-
-        const peVec = combined.map((val, i) => val - semanticBase[i]);
-        const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
-
-        if (d_model <= 3) {
-            plotlyTraces.push(
-                ...buildShiftPlotlyTraces(token, pos, semanticBase, combined, peVec, tokenColor, d_model)
-            );
-        } else {
-            echartsData.push(buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor));
-        }
-    });
-
-    return { plotlyTraces, echartsData };
-}
-
-/**
- * Builds Plotly traces for a single token's positional shift (2D or 3D).
- */
-function buildShiftPlotlyTraces(token, pos, semanticBase, combined, peVec, tokenColor, d_model) {
-    const traces = [];
-    const x = [semanticBase[0], combined[0]];
-    const y = d_model >= 2 ? [semanticBase[1], combined[1]] : [0, 0];
-
-    if (d_model === 3) {
-        const z = [semanticBase[2], combined[2]];
-
-        traces.push({
-            type: 'scatter3d',
-            x, y, z,
-            mode: 'lines',
-            line: { width: 6, color: tokenColor },
-            name: `${token} (pos ${pos})`,
-            legendgroup: token,
-            hoverinfo: 'text',
-            text: `Token: ${token}<br>Pos: ${pos}`
-        });
-
-        traces.push({
-            type: 'cone',
-            x: [combined[0]], y: [combined[1]], z: [combined[2]],
-            u: [peVec[0]], v: [peVec[1]], w: [peVec[2]],
-            sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-            colorscale: [[0, tokenColor], [1, tokenColor]],
-            showscale: false,
-            legendgroup: token,
-            showlegend: false,
-            hoverinfo: 'skip'
-        });
-    } else {
-        traces.push({
-            type: 'scatter', x, y,
-            mode: 'lines+markers',
-            line: { width: 3, color: tokenColor },
-            name: `${token} (pos ${pos})`,
-            legendgroup: token,
-            marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: tokenColor },
-            hoverinfo: 'text',
-            text: `Token: ${token}<br>Pos: ${pos}`
-        });
-    }
-
-    return traces;
-}
-
-/**
  * Builds a single ECharts parallel-coordinates data entry for high-dimensional shifts.
  */
 function buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor) {
@@ -5699,31 +5378,6 @@ function buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor) 
         name: `${token} (pos ${pos})`,
         lineStyle: { color: tokenColor }
     };
-}
-
-/**
- * Renders the positional shift plot using Plotly (d_model <= 3).
- */
-function renderShiftPlotly(container, traces, d_model) {
-    const layout = {
-        title: "Semantic Vector → + Positional Shift",
-        margin: { l: 40, r: 40, b: 40, t: 40 },
-        showlegend: true
-    };
-
-    if (d_model === 3) {
-        layout.scene = {
-            xaxis: { title: 'Dim 0' },
-            yaxis: { title: 'Dim 1' },
-            zaxis: { title: 'Dim 2' }
-        };
-        layout.margin = { l: 0, r: 0, b: 0, t: 40 };
-    } else {
-        layout.xaxis = { title: 'Dim 0' };
-        layout.yaxis = { title: d_model === 2 ? 'Dim 1' : '' };
-    }
-
-    Plotly.newPlot(container, traces, layout);
 }
 
 /**
