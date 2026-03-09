@@ -28,7 +28,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	document.getElementById("posEmbedScaleFactor").innerHTML = posEmbedScalar;
 });
 
-window.lastActiveInputId = 'transformer-training-data';
 window.persistentEmbeddingSpace = null;
 window.currentWeights = null;
 window.lossHistory = [];
@@ -38,11 +37,6 @@ const vectorMathRenderRegistry = {
 	lastRendered: false,
 	needsUpdate: false,
 	isInViewport: false
-};
-
-window.tlab_trajectory_data = {
-	tokens: [],
-	steps: []
 };
 
 function _defaultGrid3DConfig(overrides = {}) {
@@ -1023,30 +1017,6 @@ window.showHeadInLayer = (containerId, layerIdx, headIdx, numHeads) => {
 	render_temml();
 };
 
-// Keep backward compatibility — old showHead still works for any legacy calls
-window.showHead = (idx) => {
-	document.querySelectorAll('.head-tab').forEach(el => el.style.display = 'none');
-	const activeTab = document.getElementById(`head-content-${idx}`);
-	if (activeTab) activeTab.style.display = 'block';
-
-	document.querySelectorAll('.mha-tab-btn').forEach(btn => {
-		btn.style.background = '#e2e8f0';
-		btn.style.fontWeight = 'normal';
-	});
-	const btn = document.getElementById(`tab-btn-${idx}`);
-	if (btn) {
-		btn.style.background = '#fff';
-		btn.style.fontWeight = 'bold';
-	}
-
-	const heatmapDiv = activeTab?.querySelector('[id^="attn-heatmap-"]');
-	if (heatmapDiv) {
-		try { Plotly.Plots.resize(heatmapDiv); } catch(e) {}
-	}
-
-	render_temml();
-};
-
 function calculate_positional_injection(tokens, d_model) {
 	const injectedEncodings = computeInjectedEncodings(tokens, d_model);
 	renderPositionalInjectionHtml(tokens, injectedEncodings, d_model);
@@ -1184,30 +1154,26 @@ function _execute_positional_waves_render(d_model, tokens) {
 }
 
 function run_transformer_demo(activeId = null) {
-    if (activeId) {
-        window.lastActiveInputId = activeId;
-    }
+	const trainingInput = document.getElementById('transformer-training-data');
+	const masterInput = document.getElementById('transformer-master-token-input');
 
-    const trainingInput = document.getElementById('transformer-training-data');
-    const masterInput = document.getElementById('transformer-master-token-input');
+	if (!trainingInput || !masterInput) return;
 
-    if (!trainingInput || !masterInput) return;
+	// 1. Tokenize both for logic
+	const trainingTokens = transformer_tokenize_render(trainingInput.value, null);
+	const masterTokens = transformer_tokenize_render(masterInput.value, null);
 
-    // 1. Tokenize both for logic
-    const trainingTokens = transformer_tokenize_render(trainingInput.value, null);
-    const masterTokens = transformer_tokenize_render(masterInput.value, null);
+	// 2. BPE visualization: respect the toggle mode
+	const vizMode = window.tlabVisualizationMode || 'train';
+	const vizSourceValue = (vizMode === 'inference')
+		? masterInput.value
+		: trainingInput.value;
+	const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe");
 
-    // 2. BPE visualization: respect the toggle mode
-    const vizMode = window.tlabVisualizationMode || 'train';
-    const vizSourceValue = (vizMode === 'inference')
-        ? masterInput.value
-        : trainingInput.value;
-    const vizTokens = transformer_tokenize_render(vizSourceValue, "transformer-viz-bpe");
+	// 3. Run the network
+	run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
 
-    // 3. Run the network
-    run_and_visualize_network(vizTokens, trainingTokens, masterTokens);
-
-    show_nr_of_params();
+	show_nr_of_params();
 }
 
 function get_init_weights(n_layers, d_model) {
@@ -3159,9 +3125,6 @@ function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN
 	const step3Html = _buildFFNStep3Html(naming, h1, out_FFN, h2, ts);
 
 	heightLockedMathUpdate([step1, step2, step3], [step1Html, step2Html, step3Html]);
-
-	_renderTemmlOnElements([step1, step2, step3]);
-	_releaseHeightLocks([step1, step2, step3]);
 }
 
 /**
@@ -3326,41 +3289,6 @@ function _vf2d_arrow_geometry(p, maxMag, maxArrowLen) {
     }
 
     return { ux, uy, arrowLen, lineWidth, normMag };
-}
-
-/**
- * Samples a 3D grid of points, runs a forward pass at each, and records displacement.
- * @returns {{ points: object[], maxMag: number }}
- */
-function _vf3d_sample_grid(bounds, gridRes, layerWeights, d_model, n_heads) {
-    const { xMin, xMax, yMin, yMax, zMin, zMax } = bounds;
-    const points = [];
-    let maxMag = 0;
-
-    for (let i = 0; i <= gridRes; i++) {
-        for (let j = 0; j <= gridRes; j++) {
-            for (let k = 0; k <= gridRes; k++) {
-                const x = xMin + (xMax - xMin) * (i / gridRes);
-                const y = yMin + (yMax - yMin) * (j / gridRes);
-                const z = zMin + (zMax - zMin) * (k / gridRes);
-
-                const h_in = [[x, y, z]];
-                const result = forwardOneLayer(h_in, layerWeights, d_model, n_heads, null, null, null);
-                const h_out = result.h_out[0];
-
-                const dx = h_out[0] - x;
-                const dy = h_out[1] - y;
-                const dz = h_out[2] - z;
-                const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-                points.push({ x, y, z, dx, dy, dz, mag });
-                if (mag > maxMag) maxMag = mag;
-            }
-        }
-    }
-
-    if (maxMag < 1e-8) maxMag = 1e-8;
-    return { points, maxMag };
 }
 
 /**
@@ -3578,11 +3506,6 @@ function tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model,
     }, true);
 }
 
-// Ensure this exists at the top level of your script
-if (!window.tlab_trajectory_data) {
-	window.tlab_trajectory_data = { tokens: [], steps: [] };
-}
-
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
 	const globalContainer = document.getElementById('transformer-migration-plots-container');
 	if (!globalContainer) return;
@@ -3726,12 +3649,6 @@ function createVFToggleButton(id, d_model, existingVfEnabled) {
 	return toggleBtn;
 }
 
-function getMigrationPlotHeight(d_model) {
-	// d_model <= 3: Plotly 2D/3D scatter — 500px is appropriate
-	// d_model >= 4: ECharts parallel coordinates — 500px is also fine
-	return 500;
-}
-
 function createMigrationPlotDOM(id, d_model, existingVfEnabled, parentContainer) {
 	const wrapperDiv = document.createElement('div');
 	wrapperDiv.style.cssText = "border: 2px solid #cbd5e1; border-radius: 12px; margin-top: 10px; background: #fff;";
@@ -3743,7 +3660,7 @@ function createMigrationPlotDOM(id, d_model, existingVfEnabled, parentContainer)
 
 	const plotDiv = document.createElement('div');
 	plotDiv.id = id;
-	const migrationHeight = getMigrationPlotHeight(d_model);
+	const migrationHeight = 500;
 	plotDiv.style.cssText = `height: ${migrationHeight}px; width: 100%; position: relative;`;
 
 	wrapperDiv.appendChild(plotDiv);
@@ -3763,7 +3680,7 @@ function ensureMigrationPlotDiv(id, d_model, existingVfEnabled, parentContainer)
 			const prevDModel = parseInt(wrapper.getAttribute('data-d-model') || '0');
 			if (prevDModel !== d_model) {
 				wrapper.setAttribute('data-d-model', d_model);
-				const migrationHeight = getMigrationPlotHeight(d_model);
+				const migrationHeight = 500;
 				plotDiv.style.height = migrationHeight + 'px';
 			}
 			if (wrapper.parentNode !== parentContainer) {
