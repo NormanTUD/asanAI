@@ -2069,49 +2069,60 @@ function validateModelDimensions(d_model, n_heads) {
 }
 
 function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers) {
-	if (tokensWithPositional.length === 0) {
-		showEmptyInputMessage();
-		return;
-	}
+    if (tokensWithPositional.length === 0) {
+        showEmptyInputMessage();
+        return;
+    }
 
-	clearFFNEquationsContainer();
+    clearFFNEquationsContainer();
 
-	const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
+    const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
 
-	create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
+    create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
 
-	run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
+    run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
 
-	renderAttentionDetails();
-	renderTrajectoryPlot(d_model);
-	pruneOrphanedMigrationPlots();
+    renderAttentionDetails();
+    renderTrajectoryPlot(d_model);
+    pruneOrphanedMigrationPlots();
 
-	// FIX: Force re-render migration plots that are already in the viewport.
-	// The IntersectionObserver only fires on visibility *transitions*, so
-	// plots that were already visible when rendered=false was set in
-	// prepareMigrationState() would never get re-rendered during training.
-	transformerLabVisMigrationDataRegistry.forEach((data, id) => {
-		if (!data.rendered) {
-			const el = document.getElementById(id);
-			if (el && isElementInViewport(el)) {
-				render_migration_logic(id, data.tokens, data.start_h, data.end_h, data.layerNum, data.d_model, data.h_after, data.tokenStrings);
-				data.rendered = true;
-			}
-		}
-	});
+    forceRerenderVisibleMigrationPlots();
+    forceRerenderVisibleTrajectoryPlot(d_model);
+}
 
-	// FIX: Same for the trajectory plot — its rendered flag was reset in
-	// prepareMigrationState() but trajectoryObserver won't re-fire for
-	// an already-visible element.
-	const trajId = 'transformer-trajectory-full-path';
-	const trajEntry = trajectoryRenderRegistry.get(trajId);
-	if (trajEntry && !trajEntry.rendered) {
-		const trajEl = document.getElementById(trajId);
-		if (trajEl && isElementInViewport(trajEl)) {
-			tlab_render_trajectory_plot(d_model);
-			trajEntry.rendered = true;
-		}
-	}
+/**
+ * Forces re-render of migration plots that are already in the viewport.
+ * The IntersectionObserver only fires on visibility *transitions*, so
+ * plots that were already visible when rendered=false was set in
+ * prepareMigrationState() would never get re-rendered during training.
+ */
+function forceRerenderVisibleMigrationPlots() {
+    transformerLabVisMigrationDataRegistry.forEach((data, id) => {
+        if (!data.rendered) {
+            const el = document.getElementById(id);
+            if (el && isElementInViewport(el)) {
+                render_migration_logic(id, data.tokens, data.start_h, data.end_h, data.layerNum, data.d_model, data.h_after, data.tokenStrings);
+                data.rendered = true;
+            }
+        }
+    });
+}
+
+/**
+ * Forces re-render of the trajectory plot if it is already visible.
+ * Its rendered flag was reset in prepareMigrationState() but
+ * trajectoryObserver won't re-fire for an already-visible element.
+ */
+function forceRerenderVisibleTrajectoryPlot(d_model) {
+    const trajId = 'transformer-trajectory-full-path';
+    const trajEntry = trajectoryRenderRegistry.get(trajId);
+    if (trajEntry && !trajEntry.rendered) {
+        const trajEl = document.getElementById(trajId);
+        if (trajEl && isElementInViewport(trajEl)) {
+            tlab_render_trajectory_plot(d_model);
+            trajEntry.rendered = true;
+        }
+    }
 }
 
 /**
