@@ -3473,104 +3473,7 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 	return h_current;
 }
 
-function render_vector_field_2d(plotDiv, id, layerNum, d_model, n_heads) {
-    Plotly.purge(plotDiv);
-    let chart = echarts.getInstanceByDom(plotDiv);
-    if (!chart) chart = echarts.init(plotDiv);
-
-    const bounds = _vf2d_compute_bounds();
-    const gridRes = 12;
-    const layerWeights = window.currentWeights[layerNum - 1];
-    const { points, maxMag } = _vf2d_sample_grid(bounds, gridRes, layerWeights, d_model, n_heads);
-    const maxArrowLen = _vf2d_max_arrow_length(bounds, gridRes);
-
-    const series = [
-        _vf_ec2d_custom_series({ points, maxMag, maxArrowLen }),
-        _mig_ec2d_vocab_series()
-    ];
-
-    chart.setOption({
-        title: { text: `Layer ${layerNum}: Vector Field (where would a point move?)`, left: 'center', textStyle: { fontSize: 14, color: '#1e293b' } },
-        tooltip: { show: true, trigger: 'item', confine: true },
-        xAxis: { type: 'value', name: 'Dim 0', nameLocation: 'center', nameGap: 25, splitLine: { lineStyle: { color: '#f0f0f0' } } },
-        yAxis: { type: 'value', name: 'Dim 1', nameLocation: 'center', nameGap: 35, splitLine: { lineStyle: { color: '#f0f0f0' } } },
-        grid: { top: 60, bottom: 50, left: 55, right: 80 },
-        series: series,
-        animation: false
-    }, true);
-
-    if (!plotDiv._ecVfResize) {
-        plotDiv._ecVfResize = () => {
-            const c = echarts.getInstanceByDom(plotDiv);
-            if (c) c.resize();
-        };
-        window.addEventListener('resize', plotDiv._ecVfResize);
-    }
-}
-
 // ─── Sub-functions ───────────────────────────────────────────
-
-/**
- * Computes the 2D bounding box from the current embedding space, with padding.
- * @returns {{ xMin, xMax, yMin, yMax }}
- */
-function _vf2d_compute_bounds() {
-    const allVecs = Object.values(window.persistentEmbeddingSpace);
-    let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
-    allVecs.forEach(v => {
-        if (v[0] < xMin) xMin = v[0];
-        if (v[0] > xMax) xMax = v[0];
-        if (v.length > 1 && v[1] < yMin) yMin = v[1];
-        if (v.length > 1 && v[1] > yMax) yMax = v[1];
-    });
-    if (xMin === xMax) { xMin -= 1; xMax += 1; }
-    if (yMin === yMax) { yMin -= 1; yMax += 1; }
-    const pad = 2;
-    return {
-        xMin: xMin - pad, xMax: xMax + pad,
-        yMin: yMin - pad, yMax: yMax + pad
-    };
-}
-
-/**
- * Samples a 2D grid of points, runs a forward pass at each, and records displacement.
- * @returns {{ points: object[], maxMag: number }}
- */
-function _vf2d_sample_grid(bounds, gridRes, layerWeights, d_model, n_heads) {
-    const { xMin, xMax, yMin, yMax } = bounds;
-    const points = [];
-    let maxMag = 0;
-
-    for (let i = 0; i <= gridRes; i++) {
-        for (let j = 0; j <= gridRes; j++) {
-            const x = xMin + (xMax - xMin) * (i / gridRes);
-            const y = yMin + (yMax - yMin) * (j / gridRes);
-
-            const h_in = [[x, y]];
-            const result = forwardOneLayer(h_in, layerWeights, d_model, n_heads, null, null, null);
-            const h_out = result.h_out[0];
-
-            const dx = h_out[0] - x;
-            const dy = h_out[1] - y;
-            const mag = Math.sqrt(dx * dx + dy * dy);
-
-            points.push({ x, y, dx, dy, mag });
-            if (mag > maxMag) maxMag = mag;
-        }
-    }
-
-    if (maxMag < 1e-8) maxMag = 1e-8;
-    return { points, maxMag };
-}
-
-/**
- * Computes the maximum visual arrow length based on grid cell size.
- */
-function _vf2d_max_arrow_length(bounds, gridRes) {
-    const cellW = (bounds.xMax - bounds.xMin) / gridRes;
-    const cellH = (bounds.yMax - bounds.yMin) / gridRes;
-    return Math.min(cellW, cellH) * 1.2;
-}
 
 /**
  * Interpolates a color from blue → red based on normalized magnitude.
@@ -3716,82 +3619,6 @@ function _vf2d_build_layout(layerNum) {
         yaxis: { title: 'Dim 1' },
         hovermode: 'closest',
         margin: { t: 50, b: 40, l: 40, r: 80 }
-    };
-}
-
-function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
-    Plotly.purge(plotDiv);
-    let chart = echarts.getInstanceByDom(plotDiv);
-    if (!chart) chart = echarts.init(plotDiv);
-
-    const bounds = _vf3d_compute_bounds();
-    const gridRes = 6;
-    const layerWeights = window.currentWeights[layerNum - 1];
-    const { points, maxMag } = _vf3d_sample_grid(bounds, gridRes, layerWeights, d_model, n_heads);
-    const maxArrowLen = _vf3d_max_arrow_length(bounds, gridRes);
-
-    const series = [
-        _mig_ec3d_vocab_series(),
-        ..._vf_ec3d_series({ points, maxMag, maxArrowLen })
-    ];
-
-    chart.setOption({
-        title: { text: `Layer ${layerNum}: 3D Vector Field`, left: 'center', textStyle: { fontSize: 14, color: '#1e293b' } },
-        tooltip: { show: true, trigger: 'item', confine: true },
-        xAxis3D: { type: 'value', name: 'Dim 0' },
-        yAxis3D: { type: 'value', name: 'Dim 1' },
-        zAxis3D: { type: 'value', name: 'Dim 2' },
-        grid3D: {
-            viewControl: { projection: 'perspective', alpha: 30, beta: 40, distance: 200, autoRotate: false, damping: 0.9 },
-            light: { main: { intensity: 1.2, shadow: false }, ambient: { intensity: 0.3 } },
-            environment: '#f9fafb', boxWidth: 100, boxHeight: 100, boxDepth: 100
-        },
-        legend: { show: true, bottom: 5, left: 'center', textStyle: { fontSize: 11 } },
-        series: series,
-        animation: false
-    }, true);
-
-    if (!plotDiv._ecVfResize) {
-        plotDiv._ecVfResize = () => {
-            const c = echarts.getInstanceByDom(plotDiv);
-            if (c) c.resize();
-        };
-        window.addEventListener('resize', plotDiv._ecVfResize);
-    }
-}
-
-/**
- * Computes the 3D bounding box from the current embedding space, with padding.
- * @returns {{ xMin, xMax, yMin, yMax, zMin, zMax }}
- */
-function _vf3d_compute_bounds() {
-    const allVecs = Object.values(window.persistentEmbeddingSpace);
-    let xMin = Infinity, xMax = -Infinity;
-    let yMin = Infinity, yMax = -Infinity;
-    let zMin = Infinity, zMax = -Infinity;
-
-    allVecs.forEach(v => {
-        if (v[0] < xMin) xMin = v[0];
-        if (v[0] > xMax) xMax = v[0];
-        if (v.length > 1) {
-            if (v[1] < yMin) yMin = v[1];
-            if (v[1] > yMax) yMax = v[1];
-        }
-        if (v.length > 2) {
-            if (v[2] < zMin) zMin = v[2];
-            if (v[2] > zMax) zMax = v[2];
-        }
-    });
-
-    if (xMin === xMax) { xMin -= 1; xMax += 1; }
-    if (yMin === yMax) { yMin -= 1; yMax += 1; }
-    if (zMin === zMax) { zMin -= 1; zMax += 1; }
-
-    const pad = 2;
-    return {
-        xMin: xMin - pad, xMax: xMax + pad,
-        yMin: yMin - pad, yMax: yMax + pad,
-        zMin: zMin - pad, zMax: zMax + pad
     };
 }
 
@@ -4026,21 +3853,6 @@ function _vf3d_build_layout(layerNum) {
         },
         hovermode: 'closest'
     };
-}
-
-function render_migration_vector_field(id, layerNum, d_model, tokenStrings) {
-    const plotDiv = document.getElementById(id);
-    if (!plotDiv || !window.currentWeights) return;
-
-    const { n_heads } = getTransformerConfig();
-
-    if (d_model === 2) {
-        render_vector_field_2d(plotDiv, id, layerNum, d_model, n_heads);
-    } else if (d_model === 3) {
-        render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads);
-    } else {
-        render_vector_field_high_dim(plotDiv, id, layerNum, d_model, n_heads);
-    }
 }
 
 /**
