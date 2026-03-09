@@ -625,7 +625,7 @@ function renderParamBreakdown(weights) {
 		});
 	}
 
-	const grandTotal = embeddingParams + totalAttention + totalFFN + totalNorm;
+const grandTotal = embeddingParams + totalAttention + totalFFN + totalNorm;
 
 	renderParamSunburst(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff);
 	renderParamTable(layerBreakdowns, embeddingParams, grandTotal);
@@ -5132,80 +5132,69 @@ function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbe
 }
 
 function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
-    const chart = echarts.init(container);
-    const series = [];
-    const legendData = [];
+	const chart = echarts.init(container);
+	const series = [];
+	const legendData = [];
 
-    tokenStrings.forEach((token, pos) => {
-        const semanticBase = window.persistentEmbeddingSpace[token];
-        if (!semanticBase) return;
-        const combined = injectedEmbeddings[pos];
-        if (!combined) return;
+	tokenStrings.forEach((token, pos) => {
+		const semanticBase = window.persistentEmbeddingSpace[token];
+		if (!semanticBase) return;
+		const combined = injectedEmbeddings[pos];
+		if (!combined) return;
 
-        const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
-        const name = `${token} (pos ${pos})`;
-        legendData.push(name);
+		const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
+		const name = `${token} (pos ${pos})`;
+		legendData.push(name);
 
-        const from3 = [semanticBase[0], semanticBase[1], semanticBase[2]];
-        const to3   = [combined[0], combined[1], combined[2]];
+		const from3 = [semanticBase[0], semanticBase[1], semanticBase[2]];
+		const to3   = [combined[0], combined[1], combined[2]];
 
-        // Arrow shaft
-        series.push({
-            name: name, type: 'line3D',
-            data: [from3, to3],
-            lineStyle: { width: 6, color: tokenColor, opacity: 0.85 }
-        });
+		// Arrow shaft
+		series.push({
+			name: name, type: 'line3D',
+			data: [from3, to3],
+			lineStyle: { width: 6, color: tokenColor, opacity: 0.85 }
+		});
 
-        // Start / end markers
-        series.push({
-            name: name, type: 'scatter3D',
-            data: [
-                {
-                    value: from3, symbolSize: 8,
-                    itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#000' },
-                    _hover: `${token} base (pos ${pos})`
-                },
-                {
-                    value: to3, symbolSize: 13,
-                    itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#fff' },
-                    _hover: `${token} + PE (pos ${pos})`
-                }
-            ],
-            symbol: 'circle',
-            tooltip: { formatter: p => p.data._hover }
-        });
-    });
+		// Start / end markers
+		series.push({
+			name: name, type: 'scatter3D',
+			data: [
+				{
+					value: from3, symbolSize: 8,
+					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#000' },
+					_hover: `${token} base (pos ${pos})`
+				},
+				{
+					value: to3, symbolSize: 13,
+					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#fff' },
+					_hover: `${token} + PE (pos ${pos})`
+				}
+			],
+			symbol: 'circle',
+			tooltip: { formatter: p => p.data._hover }
+		});
+	});
 
-    chart.setOption({
-        title: {
-            text: 'Semantic Vector → + Positional Shift', left: 'center',
-            textStyle: { fontSize: 14, color: '#1e293b' }
-        },
-        tooltip: { show: true, trigger: 'item', confine: true },
-        legend: {
-            data: legendData, orient: 'horizontal',
-            bottom: 5, left: 'center', textStyle: { fontSize: 11 }
-        },
-        xAxis3D: { type: 'value', name: 'Dim 0' },
-        yAxis3D: { type: 'value', name: 'Dim 1' },
-        zAxis3D: { type: 'value', name: 'Dim 2' },
-        grid3D: {
-            viewControl: {
-                projection: 'perspective', alpha: 30, beta: 40,
-                distance: 200, autoRotate: false, damping: 0.9
-            },
-            light: {
-                main: { intensity: 1.2, shadow: false },
-                ambient: { intensity: 0.3 }
-            },
-            environment: '#f9fafb',
-            boxWidth: 100, boxHeight: 100, boxDepth: 100
-        },
-        series: series,
-        animation: false
-    }, true);
+	chart.setOption({
+		title: {
+			text: 'Semantic Vector → + Positional Shift', left: 'center',
+			textStyle: { fontSize: 14, color: '#1e293b' }
+		},
+		tooltip: { show: true, trigger: 'item', confine: true },
+		legend: {
+			data: legendData, orient: 'horizontal',
+			bottom: 5, left: 'center', textStyle: { fontSize: 11 }
+		},
+		xAxis3D: { type: 'value', name: 'Dim 0' },
+		yAxis3D: { type: 'value', name: 'Dim 1' },
+		zAxis3D: { type: 'value', name: 'Dim 2' },
+		grid3D: _defaultGrid3DConfig(),
+		series: series,
+		animation: false
+	}, true);
 
-    _wireEChartsResize(container, '_ecShiftResize');
+	_wireEChartsResize(container, '_ecShiftResize');
 }
 
 function _wireEChartsResize(container, key) {
