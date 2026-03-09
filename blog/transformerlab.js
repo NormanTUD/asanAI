@@ -1932,50 +1932,6 @@ function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_m
 }
 
 /**
- * Per-layer version of render_h1_logic.
- * Renders the LayerNorm + output projection + residual connection
- * into the unified layer tab containers instead of the global ones.
- *
- * @param {number[][]} h0             - Input to this sub-block (pre-attention hidden state)
- * @param {number[][]} normH0         - LayerNorm(h0)
- * @param {number[][]} multiHeadOutput - Concatenated head contexts
- * @param {number[]}   gamma          - LayerNorm scale parameter
- * @param {number[]}   beta           - LayerNorm shift parameter
- * @param {number[][]} WO             - Output projection matrix
- * @param {number}     layerIndex     - Zero-based layer index
- * @param {string[]}   tokenStrings   - Token labels for matrix row annotations
- */
-function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO, layerIndex, tokenStrings) {
-    const prefix = `unified-layer-${layerIndex}`;
-    const normContainer = document.getElementById(`${prefix}-layernorm-viz`);
-    const finalContainer = document.getElementById(`${prefix}-h1-final-viz`);
-    if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
-
-    const projectedMHA = projectMHAOutput(multiHeadOutput, WO);
-    const h1 = matAdd(h0, projectedMHA);
-
-    const hash = computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, beta);
-    if (normContainer._lastHash === hash && finalContainer._lastHash === hash) {
-        return h1;
-    }
-    normContainer._lastHash = hash;
-    finalContainer._lastHash = hash;
-
-    const ts = tokenStrings || null;
-    const naming = _h1NamingForLayer(layerIndex);
-
-    const normHtml = buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming);
-    const finalHtml = buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts, naming);
-
-    _heightLockedUpdate(normContainer, normHtml);
-    _heightLockedUpdate(finalContainer, finalHtml);
-    _renderTemmlOnElements([normContainer, finalContainer]);
-    _releaseHeightLocks([normContainer, finalContainer]);
-
-    return h1;
-}
-
-/**
  * Derives LaTeX naming conventions for the h1 display of a given layer.
  */
 function _h1NamingForLayer(layerIndex) {
@@ -2400,20 +2356,10 @@ function buildLogitLatexRows(logits) {
 }
 
 /**
- * Computes softmax probabilities from raw logit values.
- */
-function computeSoftmaxFromLogits(logitValues) {
-    const maxLogit = Math.max(...logitValues);
-    const exps = logitValues.map(v => Math.exp(v - maxLogit));
-    const sumExps = exps.reduce((a, b) => a + b, 0);
-    return exps.map(e => e / sumExps);
-}
-
-/**
  * Builds the softmax(logits) = probabilities LaTeX section.
  */
 function buildSoftmaxSection(logits, logitValues) {
-    const probs = computeSoftmaxFromLogits(logitValues);
+    const probs = softmax(logitValues);
     const logitRows = buildLogitLatexRows(logits);
 
     const probRows = logits.map(({ word }, i) => {
@@ -2453,10 +2399,10 @@ function computeEntropyBits(probs) {
  * Builds the temperature-scaling comparison LaTeX section.
  */
 function buildTemperatureSection(logits, logitValues, temperature) {
-    const probs = computeSoftmaxFromLogits(logitValues);
+    const probs = softmax(logitValues);
 
     const scaledLogitValues = logitValues.map(v => v / temperature);
-    const scaledProbs = computeSoftmaxFromLogits(scaledLogitValues);
+    const scaledProbs = softmax(scaledLogitValues);
 
     const scaledProbRows = buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature);
     const entropySection = buildEntropyLatex(probs, scaledProbs, logits.length, temperature);
@@ -4593,36 +4539,26 @@ function _traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts) {
     };
 }
 
-// ─── 7. Build the start marker trace for one token ───
-function _traj_build_start_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab) {
-    const startLogit = _traj_get_logit_word(dataPoints[0].data[tIdx], embSnap, snapVocab);
+function _traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, isStart) {
+    const pIdx = isStart ? 0 : dataPoints.length - 1;
+    const logitWord = _traj_get_logit_word(dataPoints[pIdx].data[tIdx], embSnap, snapVocab);
+    const label = isStart ? 'Start' : 'End';
     return {
         type: 'scatter',
-        x: [x[0]], y: [y[0]],
+        x: [isStart ? x[0] : x[x.length - 1]],
+        y: [isStart ? y[0] : y[y.length - 1]],
         mode: 'markers',
-        marker: { size: 10, symbol: 0, color: tColor, line: { width: 2, color: '#000' } },
+        marker: {
+            size: isStart ? 10 : 14,
+            symbol: isStart ? 0 : 17,
+            color: tColor,
+            line: { width: isStart ? 2 : 1.5, color: '#000' }
+        },
         legendgroup: tokenLabel,
         showlegend: false,
         hoverinfo: 'text',
         hovertemplate: '%{text}<extra></extra>',
-        text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
-    };
-}
-
-// ─── 8. Build the end marker trace for one token ───
-function _traj_build_end_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab) {
-    const endIdx = dataPoints.length - 1;
-    const endLogit = _traj_get_logit_word(dataPoints[endIdx].data[tIdx], embSnap, snapVocab);
-    return {
-        type: 'scatter',
-        x: [x[x.length - 1]], y: [y[y.length - 1]],
-        mode: 'markers',
-        marker: { size: 14, symbol: 17, color: tColor, line: { width: 1.5, color: '#000' } },
-        legendgroup: tokenLabel,
-        showlegend: false,
-        hoverinfo: 'text',
-        hovertemplate: '%{text}<extra></extra>',
-        text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b>`]
+        text: [`Token: ${labels[tIdx]} — ${label}<br>Stage: ${dataPoints[pIdx].name}<br>Nearest logit: <b>${logitWord}</b>`]
     };
 }
 
@@ -4658,8 +4594,8 @@ function _traj_build_slice_traces(tokens, labels, dataPoints, dimA, dimB, embSna
         const hoverTexts = _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab);
 
         traces.push(_traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts));
-        traces.push(_traj_build_start_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab));
-        traces.push(_traj_build_end_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab));
+        traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 1));
+        traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 0));
 
         // Stage annotations only for the first token to avoid clutter
         if (tIdx === 0) {
@@ -4719,8 +4655,8 @@ function _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVo
         const hoverTexts = _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab);
 
         traces.push(_traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts));
-        traces.push(_traj_build_start_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab));
-        traces.push(_traj_build_end_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab));
+        traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 1));
+        traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 0));
 
         if (tIdx === 0) {
             annotations.push(..._traj_build_stage_annotations(x, y, dataPoints));
@@ -6286,32 +6222,46 @@ function setVisualizationMode(mode) {
 	run_transformer_demo();
 }
 
-function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings) {
-    const normContainer = document.getElementById('transformer-h1-layernorm-viz');
-    const finalContainer = document.getElementById('transformer-h1-final-viz');
+function _render_h1_logic_core(containerIds, h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings, naming) {
+    const normContainer = document.getElementById(containerIds.norm);
+    const finalContainer = document.getElementById(containerIds.final);
     if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
 
     const projectedMHA = projectMHAOutput(multiHeadOutput, WO);
     const h1 = matAdd(h0, projectedMHA);
 
     const hash = computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, beta);
-    if (normContainer._lastHash === hash && finalContainer._lastHash === hash) {
-        return h1;
-    }
+    if (normContainer._lastHash === hash && finalContainer._lastHash === hash) return h1;
     normContainer._lastHash = hash;
     finalContainer._lastHash = hash;
 
     const ts = tokenStrings || null;
-
-    const normHtml = buildH1NormHtml(h0, normH0, gamma, beta, ts);
-    const finalHtml = buildH1FinalHtml(h0, projectedMHA, multiHeadOutput, h1, WO, ts);
+    // Use the *ForLayer builders — they already accept a naming object
+    const normHtml = buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming);
+    const finalHtml = buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts, naming);
 
     _heightLockedUpdate(normContainer, normHtml);
     _heightLockedUpdate(finalContainer, finalHtml);
     _renderTemmlOnElements([normContainer, finalContainer]);
     _releaseHeightLocks([normContainer, finalContainer]);
-
     return h1;
+}
+
+function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings) {
+    const naming = { L: 1, sup: '', hInName: 'h_0', hOutName: 'h_1', hInStage: 'embedding + PE' };
+    return _render_h1_logic_core(
+        { norm: 'transformer-h1-layernorm-viz', final: 'transformer-h1-final-viz' },
+        h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings, naming
+    );
+}
+
+function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO, layerIndex, tokenStrings) {
+    const naming = _h1NamingForLayer(layerIndex);
+    const prefix = `unified-layer-${layerIndex}`;
+    return _render_h1_logic_core(
+        { norm: `${prefix}-layernorm-viz`, final: `${prefix}-h1-final-viz` },
+        h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings, naming
+    );
 }
 
 /**
