@@ -2938,53 +2938,33 @@ function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") 
     return tokens;
 }
 
-function updateConcatenationDisplay(headData, tokens, tokenStrings) {
-    const container = document.getElementById('transformer-concat-viz');
+function _renderConcatCore(container, headData, tokens, tokenStrings, stageLabel) {
     if (!container || !headData.length) return [];
-
     const ts = tokenStrings || null;
 
-    const headMatricesLaTeX = headData.map((h, i) => {
-        return `\\underbrace{${matrixToPmatrixLabeled(h.context, ts)}}_{\\text{Head } ${i + 1}}`;
-    }).join(', ');
+    const headMatricesLaTeX = headData.map((h, i) =>
+        `\\underbrace{${matrixToPmatrixLabeled(h.context, ts, stageLabel ? `head ${i+1} ctx` : undefined)}}_{\\text{Head } ${i + 1}}`
+    ).join(', ');
 
-    const fullMatrixData = tokens.map((_, tIdx) => {
-        return [].concat(...headData.map(h => h.context[tIdx]));
-    });
+    const fullMatrixData = tokens.map((_, tIdx) =>
+        [].concat(...headData.map(h => h.context[tIdx]))
+    );
 
-    const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts)}}_{\\text{Total } d_{\\text{model}}}`;
-    const newHtml = `<span style='overflow-x: auto; overflow-y: hidden'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
+    const finalLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts, stageLabel || undefined)}}_{\\text{Total } d_{\\text{model}}}`;
+    const newHtml = `<div style='overflow-x: auto; overflow-y: hidden; max-width: 100%;'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalLaTeX} $$</div>`;
 
     _heightLockedUpdate(container, newHtml);
     _renderTemmlOnElements([container]);
     _releaseHeightLocks([container]);
-
     return fullMatrixData;
 }
 
+function updateConcatenationDisplay(headData, tokens, tokenStrings) {
+    return _renderConcatCore(document.getElementById('transformer-concat-viz'), headData, tokens, tokenStrings, null);
+}
+
 function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenStrings) {
-    const prefix = `unified-layer-${layerIndex}`;
-    const container = document.getElementById(`${prefix}-concat-viz`);
-    if (!container || !headData.length) return [];
-
-    const ts = tokenStrings || null;
-
-    const headMatricesLaTeX = headData.map((h, i) => {
-        return `\\underbrace{${matrixToPmatrixLabeled(h.context, ts, `head ${i+1} ctx`)}}_{\\text{Head } ${i + 1}}`;
-    }).join(', ');
-
-    const fullMatrixData = tokens.map((_, tIdx) => {
-        return [].concat(...headData.map(h => h.context[tIdx]));
-    });
-
-    const finalMatrixLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts, 'after concat')}}_{\\text{Total } d_{\\text{model}}}`;
-    const newHtml = `<div style='overflow-x: auto; overflow-y: hidden; max-width: 100%;'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalMatrixLaTeX} $$</span>`;
-
-    _heightLockedUpdate(container, newHtml);
-    _renderTemmlOnElements([container]);
-    _releaseHeightLocks([container]);
-
-    return fullMatrixData;
+    return _renderConcatCore(document.getElementById(`unified-layer-${layerIndex}-concat-viz`), headData, tokens, tokenStrings, 'after concat');
 }
 
 function calculateLayerNorm(matrix, gamma, beta) {
@@ -4730,78 +4710,20 @@ function _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVo
     traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, 0, 1));
 
     tokens.forEach((token, tIdx) => {
-        const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
-        if (!hasDataInAllSteps) return;
+        if (!dataPoints.every(p => p.data && p.data[tIdx])) return;
 
         const x = dataPoints.map(p => p.data[tIdx][0]);
         const y = dataPoints.map(p => p.data[tIdx][1]);
         const tColor = getPositionColor(tIdx, tokens.length);
         const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+        const hoverTexts = _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab);
 
-        // ← Uses extracted function
-        const hoverTexts = dataPoints.map((p, pIdx) => {
-            const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
-            return buildTrajectoryHoverText(labels[tIdx], tIdx, fromStage, p.name, p.data[tIdx], embSnap, snapVocab);
-        });
-
-        traces.push({
-            type: 'scatter',
-            x, y,
-            mode: 'lines+markers',
-            name: tokenLabel,
-            legendgroup: tokenLabel,
-            line: { width: 2, color: tColor },
-            marker: {
-                size: x.map((_, i) => i === 0 ? 0 : 10),
-                symbol: 'arrow',
-                angleref: 'previous',
-                color: tColor
-            },
-            hoverinfo: 'text',
-            hovertemplate: '%{text}<extra></extra>',
-            text: hoverTexts
-        });
-
-        const startLogit = _traj_get_logit_word(dataPoints[0].data[tIdx], embSnap, snapVocab);
-        traces.push({
-            type: 'scatter',
-            x: [x[0]], y: [y[0]],
-            mode: 'markers',
-            marker: { size: 10, symbol: 0, color: tColor,
-                line: { width: 2, color: '#000' } },
-            legendgroup: tokenLabel,
-            showlegend: false,
-            hoverinfo: 'text',
-            hovertemplate: '%{text}<extra></extra>',
-            text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
-        });
-
-        const endIdx = dataPoints.length - 1;
-        const endLogit = _traj_get_logit_word(dataPoints[endIdx].data[tIdx], embSnap, snapVocab);
-        traces.push({
-            type: 'scatter',
-            x: [x[x.length - 1]], y: [y[y.length - 1]],
-            mode: 'markers',
-            marker: { size: 14, symbol: 17, color: tColor,
-                line: { width: 1.5, color: '#000' } },
-            legendgroup: tokenLabel,
-            showlegend: false,
-            hoverinfo: 'text',
-            hovertemplate: '%{text}<extra></extra>',
-            text: [`Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b>`]
-        });
+        traces.push(_traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts));
+        traces.push(_traj_build_start_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab));
+        traces.push(_traj_build_end_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab));
 
         if (tIdx === 0) {
-            dataPoints.forEach((p, pIdx) => {
-                annotations.push({
-                    x: x[pIdx], y: y[pIdx],
-                    xref: 'x', yref: 'y',
-                    text: p.name,
-                    showarrow: false,
-                    font: { size: 9, color: '#64748b' },
-                    yshift: 12
-                });
-            });
+            annotations.push(..._traj_build_stage_annotations(x, y, dataPoints));
         }
     });
 
