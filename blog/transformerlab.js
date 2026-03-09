@@ -3720,6 +3720,11 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 		registryData,
 		() => render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings)
 	);
+
+	const plotDiv = document.getElementById(id);
+	if (plotDiv) {
+		tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model, tokenStrings);
+	}
 }
 
 function getMigrationDisplayTokens(tokens, tokenStrings) {
@@ -5070,29 +5075,29 @@ function ensureLatexDebugDiv(id, plotDiv) {
     return latexDiv;
 }
 
-/**
- * Refactored: now a clean orchestrator.
- */
 function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model, tokenStrings) {
-	const vocabRows = buildVocabTransitionRows(tokens, start_h, end_h, d_model);
+    const vocabRows = buildVocabTransitionRows(tokens, start_h, end_h, d_model);
+    const ts = tokenStrings || null;
 
-	const ts = tokenStrings || null;
+    let stageLabel = 'layer output';
+    const layerMatch = id.match(/migration-layer-(\d+)/);
+    if (layerMatch) {
+        stageLabel = `out layer ${parseInt(layerMatch[1])}`;
+    }
 
-	// Determine the stage label from the id: "migration-layer-N" → layer N
-	let stageLabel = 'layer output';
-	const layerMatch = id.match(/migration-layer-(\d+)/);
-	if (layerMatch) {
-		const layerNum = parseInt(layerMatch[1]);
-		stageLabel = `out layer ${layerNum}`;
-	}
+    const hAfterMatrix = matrixToPmatrixLabeled(h_after, ts, stageLabel);
+    const latexString = `$$h_\\text{after} = ${hAfterMatrix}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
 
-	const hAfterMatrix = matrixToPmatrixLabeled(h_after, ts, stageLabel);
+    const latexDiv = ensureLatexDebugDiv(id, plotDiv);
 
-	const latexString = `$$h_\\text{after} = ${hAfterMatrix}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+    // ★ Hash-Check: nicht neu rendern wenn sich nichts geändert hat
+    if (latexDiv._lastLatexHash === latexString) return;
+    latexDiv._lastLatexHash = latexString;
 
-	const latexDiv = ensureLatexDebugDiv(id, plotDiv);
-	latexDiv.innerHTML = latexString;
-	render_temml();
+    // ★ Gleiches Pattern wie FFN/h1: heightLock → gezieltes Temml → unlock
+    _heightLockedUpdate(latexDiv, latexString);
+    _renderTemmlOnElements([latexDiv]);
+    _releaseHeightLocks([latexDiv]);
 }
 
 /**
