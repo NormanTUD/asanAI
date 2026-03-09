@@ -98,6 +98,8 @@ function registerLazyRenderable(containerId, registry, observer, data, renderFn,
 		renderFn();
 		const entry = registry.get(containerId);
 		if (entry) entry.rendered = true;
+	//} else {
+	//	console.log(`window.isTraining: ${window.isTraining}, containerIsInView: ${containerIsInView}, container: ${containerId}`);
 	}
 }
 
@@ -1601,7 +1603,7 @@ function renderLossGraph() {
 
 	document.getElementById('training-loss-plot').style.display = 'block';
 
-	Plotly.newPlot('training-loss-plot', [trace], layout);
+	Plotly.react('training-loss-plot', [trace], layout);
 }
 
 function handleWeightReinit(d_model, n_heads, n_layers) {

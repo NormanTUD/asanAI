@@ -2897,3 +2897,15 @@ blockquote,
 .viz-container {
 	overflow: auto;
 }
+
+#current_training_sentence,
+#training-loss-plot,
+#nr_params,
+#param-breakdown-toggle,
+#tled-editor-container,
+#transformer-output-projection,
+#transformer-migration-plots-container,
+.unified-layer-tab-content,
+.math_transformer {
+	overflow-anchor: none;
+}
