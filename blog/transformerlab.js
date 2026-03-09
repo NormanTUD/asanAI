@@ -2746,25 +2746,21 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 	});
 
 	// ── 2. Calculation-step 3D arrows ──
-	// ── 2. Calculation-step 3D arrows ──
 	if (steps && steps.length > 0) {
 		steps.forEach((step, idx) => {
 			const from3 = step.from.slice(0, 3);
 			const to3   = step.to.slice(0, 3);
 
-			// Shaft (shortened to cone base)
-			const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
+			// Shaft
 			series.push({
 				type: 'line3D',
-				data: [from3, shaftEnd],
+				data: [from3, to3],
 				lineStyle: { width: 5, color: arrowColor, opacity: 0.85 },
 				silent: true
 			});
 
-			// Solid cone arrowhead
-			_add3DArrowheadSeries(series, from3, to3, arrowColor, {
-				maxHeadLen: 0.5, spreadRatio: 0.4
-			});
+			// Triangle arrowhead
+			_add3DArrowheadSeries(series, from3, to3, arrowColor, { symbolSize: 20 });
 
 			// Midpoint hover label
 			series.push({
@@ -4147,27 +4143,24 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 		const from3 = start_h[i].slice(0, 3);
 		const to3   = end_h[i].slice(0, 3);
 
-		// Shaft (shortened to stop at cone base)
-		const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
+		// Shaft — full length, no shortening needed
 		series.push({
 			name: label, type: 'line3D',
-			data: [from3, shaftEnd],
+			data: [from3, to3],
 			lineStyle: { width: 4, color: color, opacity: 0.85 }
 		});
 
-		// Solid cone arrowhead at destination
-		_add3DArrowheadSeries(series, from3, to3, color, {
-			maxHeadLen: 0.5, spreadRatio: 0.35
-		});
+		// Clean triangle arrowhead at destination
+		_add3DArrowheadSeries(series, from3, to3, color, { symbolSize: 18 });
 
-		// Start marker only — cone replaces end dot
+		// Start marker only — triangle replaces end dot
 		series.push({
 			name: label, type: 'scatter3D',
-			data: [
-				{ value: from3, symbolSize: 8,
-					itemStyle: { color: color, borderWidth: 2, borderColor: '#000' },
-					_hover: `Start: '${src}' pos ${i + 1}` }
-			],
+			data: [{
+				value: from3, symbolSize: 8,
+				itemStyle: { color: color, borderWidth: 2, borderColor: '#000' },
+				_hover: `Start: '${src}' pos ${i + 1}`
+			}],
 			symbol: 'circle',
 			tooltip: { formatter: p => p.data._hover }
 		});
@@ -4201,34 +4194,27 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 	}, true);
 }
 
-/**
- * Builds per-segment line3D series with solid cone arrowheads
- * at each layer step. Shafts are shortened to the cone base.
- */
 function _traj_ec3d_line_series_with_arrows(tokenLabel, color, dataPoints, tIdx) {
-    const seriesArr = [];
-    const pts = dataPoints.map(p => p.data[tIdx].slice(0, 3));
+	const seriesArr = [];
+	const pts = dataPoints.map(p => p.data[tIdx].slice(0, 3));
 
-    for (let i = 0; i < pts.length - 1; i++) {
-        const from3 = pts[i];
-        const to3   = pts[i + 1];
+	for (let i = 0; i < pts.length - 1; i++) {
+		const from3 = pts[i];
+		const to3   = pts[i + 1];
 
-        // Shaft (shortened to cone base)
-        const shaftEnd = _computeArrowheadBase(from3, to3, 0.4);
-        seriesArr.push({
-            name: tokenLabel,
-            type: 'line3D',
-            data: [from3, shaftEnd],
-            lineStyle: { width: 4, color: color, opacity: 0.85 }
-        });
+		// Shaft — full length
+		seriesArr.push({
+			name: tokenLabel,
+			type: 'line3D',
+			data: [from3, to3],
+			lineStyle: { width: 4, color: color, opacity: 0.85 }
+		});
 
-        // Solid cone arrowhead
-        _add3DArrowheadSeries(seriesArr, from3, to3, color, {
-            maxHeadLen: 0.4, spreadRatio: 0.3
-        });
-    }
+		// Clean triangle arrowhead at each layer step
+		_add3DArrowheadSeries(seriesArr, from3, to3, color, { symbolSize: 14 });
+	}
 
-    return seriesArr;
+	return seriesArr;
 }
 
 function renderMigrationLowDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
@@ -4855,13 +4841,14 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 		legendData.push(tokenLabel);
 
-		// ★ CHANGED: per-segment lines with arrowheads at every layer step
+		// ★ Per-segment lines with triangle arrowheads at every layer step
 		series.push(..._traj_ec3d_line_series_with_arrows(tokenLabel, tColor, dataPoints, tIdx));
 
 		series.push(_traj_ec3d_marker_series(
 			tokenLabel, tColor, dataPoints, tIdx, labels, embSnap, snapVocab
 		));
 	});
+
 
 	// 3. Render (true = full replace, not merge — safe when series count changes)
 	chart.setOption(_traj_ec3d_option(series, legendData), true);
@@ -7122,79 +7109,26 @@ function rerender_temperature_only() {
 }
 
 /**
- * Adds a solid-looking 3D cone arrowhead using scatter3D point clusters.
- * Concentric rings of overlapping opaque circles taper from base to tip,
- * creating a filled cone appearance without requiring the 'surface' component.
+ * Adds a clean 3D arrowhead using a single scatter3D billboard symbol.
+ * ECharts GL has no filled 3D geometry (without 'surface'), so a
+ * billboard triangle is the cleanest available option.
  */
 function _add3DArrowheadSeries(series, from3, to3, color, options = {}) {
-    const maxHeadLen  = options.maxHeadLen  || 0.5;
-    const spreadRatio = options.spreadRatio || 0.35;
-    const baseSize    = options.baseSize    || 10;
-
-    const dx = to3[0] - from3[0];
-    const dy = to3[1] - from3[1];
-    const dz = to3[2] - from3[2];
-    const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    if (mag < 1e-10) return;
-
-    const nx = dx / mag, ny = dy / mag, nz = dz / mag;
-    const hl = Math.min(mag * 0.25, maxHeadLen);
-    const { perp1, perp2 } = computePerpendicularVectors(nx, ny, nz);
-    const sp = hl * spreadRatio;
-
-    // Base center of cone (pulled back from tip along direction)
-    const bx = to3[0] - nx * hl;
-    const by = to3[1] - ny * hl;
-    const bz = to3[2] - nz * hl;
-
-    // Build cone from scatter3D points in concentric rings.
-    // Each ring is a cross-section of the cone at a given height.
-    // Overlapping opaque circles create the visual impression of a solid shape.
-    const data = [];
-    const nRings = 5;
-    const ptsPerRing = 8;
-
-    for (let r = 0; r <= nRings; r++) {
-        const t = r / nRings;                               // 0 = base, 1 = tip
-        const radius = sp * (1 - t);                         // shrinks to 0 at tip
-        const symSize = Math.max(2, baseSize * (1 - t * 0.8));
-
-        // Position along the cone axis
-        const cx = bx + t * nx * hl;
-        const cy = by + t * ny * hl;
-        const cz = bz + t * nz * hl;
-
-        // Center point of this ring (fills gaps between perimeter points)
-        data.push({
-            value: [cx, cy, cz],
-            symbolSize: symSize + 2,
-            itemStyle: { color: color, opacity: 1 }
-        });
-
-        // Perimeter points around the ring
-        if (radius > 0.005) {
-            const nPts = Math.max(4, ptsPerRing - r);
-            for (let p = 0; p < nPts; p++) {
-                // Offset each ring's rotation so points don't stack vertically
-                const angle = (2 * Math.PI * p) / nPts + (r * Math.PI / ptsPerRing);
-                const cosA = Math.cos(angle), sinA = Math.sin(angle);
-                data.push({
-                    value: [
-                        cx + radius * (cosA * perp1.x + sinA * perp2.x),
-                        cy + radius * (cosA * perp1.y + sinA * perp2.y),
-                        cz + radius * (cosA * perp1.z + sinA * perp2.z)
-                    ],
-                    symbolSize: symSize,
-                    itemStyle: { color: color, opacity: 1 }
-                });
-            }
-        }
-    }
+    const size = options.symbolSize || 18;
 
     series.push({
         type: 'scatter3D',
-        data: data,
-        symbol: 'circle',
+        symbol: 'triangle',
+        symbolSize: size,
+        data: [{
+            value: to3,
+            itemStyle: {
+                color: color,
+                opacity: 1,
+                borderWidth: 1.5,
+                borderColor: 'rgba(0,0,0,0.25)'
+            }
+        }],
         silent: true,
         label: { show: false },
         tooltip: { show: false }
