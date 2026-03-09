@@ -1,3 +1,19 @@
+const _ec3dCache = {};
+
+function _getEC3D(divId) {
+    if (_ec3dCache[divId]) return _ec3dCache[divId];
+    const el = document.getElementById(divId);
+    if (!el) return null;
+    try { Plotly.purge(el); } catch (e) {}
+    const loader = el.querySelector('.plot-loading');
+    if (loader) loader.remove();
+    el.innerHTML = '';
+    const chart = echarts.init(el);
+    _ec3dCache[divId] = chart;
+    new ResizeObserver(() => chart.resize()).observe(el);
+    return chart;
+}
+
 const evoSpaces = {
 	'1d': {
 		vocab: { 
@@ -457,124 +473,157 @@ window.resetDualManifold = function() {
 };
 
 function renderSpace(key, highlightPos = null, steps = []) {
-	const divId = `plot-${key}`;
-	const plotDiv = document.getElementById(divId);
-	if (!plotDiv) return;
+    const divId = `plot-${key}`;
+    const plotDiv = document.getElementById(divId);
+    if (!plotDiv) return;
 
-	const space = evoSpaces[key];
-	const is3D = (space.dims === 3);
-	const rangeX = space.rangeX || [-30, 30];
-	let traces = [];
-	let annotations = [];
+    const space = evoSpaces[key];
+    const is3D = (space.dims === 3);
+    const rangeX = space.rangeX || [-30, 30];
 
-	// Render Vocabulary Points
-	Object.keys(space.vocab).forEach(word => {
-		const v = space.vocab[word];
-		let trace = {
-			x: [v[0]], y: [v[1]],
-			mode: 'markers+text',
-			name: word, text: [word], textposition: 'top center',
-			marker: { size: 6, opacity: 0.5, color: '#94a3b8' },
-			cliponaxis: false
-		};
-		if (is3D) { trace.type = 'scatter3d'; trace.z = [v[2]]; }
-		else { trace.type = 'scatter'; }
-		traces.push(trace);
-	});
+    // ═══════ 3D → ECharts GL ═══════
+    if (is3D) {
+        const chart = _getEC3D(divId);
+        if (!chart) return;
 
-	// Render Calculation Steps (Paths)
-	steps.forEach(step => {
-		if (is3D) {
-			// 3D Path: Line trace WITH hover on every point of the line
-			const midX = (step.from[0] + step.to[0]) / 2;
-			const midY = (step.from[1] + step.to[1]) / 2;
-			const midZ = (step.from[2] + step.to[2]) / 2;
+        const series = [];
 
-			traces.push({
-				type: 'scatter3d',
-				x: [step.from[0], midX, step.to[0]],
-				y: [step.from[1], midY, step.to[1]],
-				z: [step.from[2], midZ, step.to[2]],
-				mode: 'lines',
-				line: { color: '#3b82f6', width: 4 },
-				text: [step.label, step.label, step.label],
-				hoverinfo: 'text',
-				showlegend: false
-			});
-			traces.push({
-				type: 'cone',
-				x: [step.to[0]], y: [step.to[1]], z: [step.to[2]],
-				u: [step.to[0] - step.from[0]],
-				v: [step.to[1] - step.from[1]],
-				w: [step.to[2] - step.from[2]],
-				sizemode: 'absolute', sizeref: 2, showscale: false,
-				colorscale: [[0, '#3b82f6'], [1, '#3b82f6']],
-				hoverinfo: 'skip'
-			});
-		} else {
-			// 1D/2D Path logic using Annotations (Arrows)
-			annotations.push({
-				ax: step.from[0],
-				ay: step.from[1],
-				axref: 'x',
-				ayref: 'y',
-				x: step.to[0],
-				y: step.to[1],
-				xref: 'x',
-				yref: 'y',
-				showarrow: true,
-				arrowhead: 2,
-				arrowsize: 1.5,
-				arrowwidth: 3,
-				arrowcolor: '#3b82f6'
-			});
+        // Vocabulary scatter points with labels
+        series.push({
+            type: 'scatter3D',
+            name: 'Vocabulary',
+            data: Object.keys(space.vocab).map(w => ({
+                value: [...space.vocab[w]],
+                name: w
+            })),
+            symbolSize: 8,
+            itemStyle: { color: '#94a3b8', opacity: 0.6, borderColor: '#fff', borderWidth: 1 },
+            label: {
+                show: true,
+                formatter: '{b}',
+                distance: 8,
+                textStyle: { fontSize: 11, color: '#475569' }
+            },
+            emphasis: {
+                itemStyle: { color: '#64748b', borderWidth: 2 },
+                label: { fontSize: 13, fontWeight: 'bold' }
+            }
+        });
 
-			// 2D Arrow Hover Label: invisible marker at midpoint
-			traces.push({
-				type: 'scatter',
-				x: [(step.from[0] + step.to[0]) / 2],
-				y: [(step.from[1] + step.to[1]) / 2],
-				mode: 'markers',
-				marker: { size: 12, color: 'rgba(59,130,246,0.01)' },
-				text: [step.label],
-				hovertemplate: '<b>%{text}</b><extra></extra>',
-				showlegend: false,
-				cliponaxis: false
-			});
-		}
-	});
+        // Calculation step lines + arrowhead markers
+        steps.forEach(step => {
+            series.push({
+                type: 'line3D',
+                data: [[...step.from], [...step.to]],
+                lineStyle: { color: '#3b82f6', width: 4, opacity: 0.85 },
+                silent: true
+            });
+            series.push({
+                type: 'scatter3D',
+                data: [{ value: [...step.to], name: step.label }],
+                symbolSize: 10,
+                symbol: 'triangle',
+                itemStyle: { color: '#3b82f6' },
+                label: { show: false }
+            });
+        });
 
-	// Render Result Highlight
-	if (highlightPos) {
-		let res = {
-			x: [highlightPos[0]], y: [highlightPos[1]],
-			mode: 'markers', marker: { size: 12, color: '#ef4444', symbol: 'diamond' }
-		};
-		if (is3D) { res.type = 'scatter3d'; res.z = [highlightPos[2]]; }
-		else { res.type = 'scatter'; }
-		traces.push(res);
-	}
+        // Result highlight diamond
+        if (highlightPos) {
+            series.push({
+                type: 'scatter3D',
+                name: 'Result',
+                data: [{ value: [...highlightPos] }],
+                symbolSize: 16,
+                symbol: 'diamond',
+                itemStyle: { color: '#ef4444' },
+                label: { show: false }
+            });
+        }
 
-	const layout = {
-		margin: { l: 40, r: 40, b: 40, t: 20 },
-		showlegend: false,
-		xaxis: { range: rangeX, title: space.axes.x },
-		yaxis: { range: [-30, 30], title: space.axes.y || '', visible: space.dims > 1 },
-		annotations: annotations
-	};
+        chart.setOption({
+            tooltip: { show: true },
+            grid3D: {
+                boxWidth: 100, boxHeight: 100, boxDepth: 100,
+                viewControl: {
+                    autoRotate: false,
+                    damping: 0.85,
+                    rotateSensitivity: 2,
+                    zoomSensitivity: 1.2
+                },
+                light: {
+                    main: { intensity: 1.2, shadow: false },
+                    ambient: { intensity: 0.4 }
+                },
+                axisLine:  { lineStyle: { color: '#cbd5e1' } },
+                axisLabel: { textStyle: { color: '#94a3b8' } },
+                splitLine: { lineStyle: { color: '#f1f5f9' } }
+            },
+            xAxis3D: { name: space.axes.x, type: 'value', min: rangeX[0], max: rangeX[1] },
+            yAxis3D: { name: space.axes.y, type: 'value', min: -30, max: 30 },
+            zAxis3D: { name: space.axes.z, type: 'value', min: -30, max: 30 },
+            series
+        }, true);
 
-	if (is3D) {
-		layout.scene = {
-			xaxis: { title: space.axes.x, range: rangeX },
-			yaxis: { title: space.axes.y, range: [-30, 30] },
-			zaxis: { title: space.axes.z, range: [-30, 30] }
-		};
-	}
+        return;
+    }
 
-	Plotly.react(divId, traces, layout).then(() => {
-		const loader = plotDiv.querySelector('.plot-loading');
-		if (loader) loader.remove();
-	});
+    // ═══════ 1D / 2D → Plotly (unchanged) ═══════
+    let traces = [];
+    let annotations = [];
+
+    Object.keys(space.vocab).forEach(word => {
+        const v = space.vocab[word];
+        traces.push({
+            type: 'scatter',
+            x: [v[0]], y: [v[1]],
+            mode: 'markers+text',
+            name: word, text: [word], textposition: 'top center',
+            marker: { size: 6, opacity: 0.5, color: '#94a3b8' },
+            cliponaxis: false
+        });
+    });
+
+    steps.forEach(step => {
+        annotations.push({
+            ax: step.from[0], ay: step.from[1],
+            axref: 'x', ayref: 'y',
+            x: step.to[0], y: step.to[1],
+            xref: 'x', yref: 'y',
+            showarrow: true, arrowhead: 2, arrowsize: 1.5,
+            arrowwidth: 3, arrowcolor: '#3b82f6'
+        });
+        traces.push({
+            type: 'scatter',
+            x: [(step.from[0] + step.to[0]) / 2],
+            y: [(step.from[1] + step.to[1]) / 2],
+            mode: 'markers',
+            marker: { size: 12, color: 'rgba(59,130,246,0.01)' },
+            text: [step.label],
+            hovertemplate: '<b>%{text}</b><extra></extra>',
+            showlegend: false, cliponaxis: false
+        });
+    });
+
+    if (highlightPos) {
+        traces.push({
+            type: 'scatter',
+            x: [highlightPos[0]], y: [highlightPos[1]],
+            mode: 'markers',
+            marker: { size: 12, color: '#ef4444', symbol: 'diamond' }
+        });
+    }
+
+    Plotly.react(divId, traces, {
+        margin: { l: 40, r: 40, b: 40, t: 20 },
+        showlegend: false,
+        xaxis: { range: rangeX, title: space.axes.x },
+        yaxis: { range: [-30, 30], title: space.axes.y || '', visible: space.dims > 1 },
+        annotations
+    }).then(() => {
+        const loader = plotDiv.querySelector('.plot-loading');
+        if (loader) loader.remove();
+    });
 }
 
 function calcEvo(key) {
@@ -714,110 +763,118 @@ function calcEvo(key) {
 }
 
 function renderComparison3D(config) {
-	const divId = 'plot-comparison-3d';
-	const statsId = 'comparison-stats-3d';
+    const divId = 'plot-comparison-3d';
+    const statsId = 'comparison-stats-3d';
 
-	const Man = [0, -10, 0];
-	const King = [20, -10, 0];
-	const Lion = [18, -10, -20];
+    const chart = _getEC3D(divId);
+    if (!chart) return;
 
-	const getMetrics3D = (v1, v2) => {
-		const dot = v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
-		const mag1 = Math.sqrt(v1[0]**2 + v1[1]**2 + v1[2]**2);
-		const mag2 = Math.sqrt(v2[0]**2 + v2[1]**2 + v2[2]**2);
-		const cos = dot / (mag1 * mag2);
-		const angle = Math.acos(Math.min(1, Math.max(-1, cos)));
-		return { 
-			dist: Math.sqrt(v1.reduce((s,x,i)=>s+(x-v2[i])**2,0)).toFixed(1), 
-			cos: cos.toFixed(3), 
-			angle, 
-			deg: (angle*180/Math.PI).toFixed(1) 
-		};
-	};
+    const Man  = [0, -10, 0];
+    const King = [20, -10, 0];
+    const Lion = [18, -10, -20];
 
-	const mk = getMetrics3D(Man, King);
-	const ml = getMetrics3D(Man, Lion);
+    const getMetrics3D = (v1, v2) => {
+        const dot  = v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
+        const mag1 = Math.sqrt(v1[0]**2 + v1[1]**2 + v1[2]**2);
+        const mag2 = Math.sqrt(v2[0]**2 + v2[1]**2 + v2[2]**2);
+        const cos  = dot / (mag1 * mag2);
+        const angle = Math.acos(Math.min(1, Math.max(-1, cos)));
+        return {
+            dist: Math.sqrt(v1.reduce((s, x, i) => s + (x - v2[i])**2, 0)).toFixed(1),
+            cos: cos.toFixed(3), angle,
+            deg: (angle * 180 / Math.PI).toFixed(1)
+        };
+    };
 
-	function getArcPoints(v1, v2, angle, radius) {
-		const pts = {x:[], y:[], z:[]};
-		const steps = 30; // Increased steps for a smoother arc
-		const norm1 = v1.map(x => x / (Math.sqrt(v1.reduce((s,a)=>s+a**2,0)) || 1));
+    const mk = getMetrics3D(Man, King);
+    const ml = getMetrics3D(Man, Lion);
 
-		// Find the component of v2 perpendicular to v1 to create the plane for the arc
-		const dot = v2[0]*norm1[0] + v2[1]*norm1[1] + v2[2]*norm1[2];
-		let w = v2.map((x,i) => x - dot*norm1[i]);
-		const magW = Math.sqrt(w.reduce((s,a)=>s+a**2,0)) || 1;
-		w = w.map(x => x/magW);
+    function arcPoints(v1, v2, angle, radius) {
+        const pts = [];
+        const steps = 40;
+        const mag1 = Math.sqrt(v1.reduce((s, a) => s + a**2, 0)) || 1;
+        const norm1 = v1.map(x => x / mag1);
+        const dot = v2[0]*norm1[0] + v2[1]*norm1[1] + v2[2]*norm1[2];
+        let w = v2.map((x, i) => x - dot * norm1[i]);
+        const magW = Math.sqrt(w.reduce((s, a) => s + a**2, 0)) || 1;
+        w = w.map(x => x / magW);
+        for (let i = 0; i <= steps; i++) {
+            const t = (i / steps) * angle;
+            pts.push([
+                radius * (Math.cos(t) * norm1[0] + Math.sin(t) * w[0]),
+                radius * (Math.cos(t) * norm1[1] + Math.sin(t) * w[1]),
+                radius * (Math.cos(t) * norm1[2] + Math.sin(t) * w[2])
+            ]);
+        }
+        return pts;
+    }
 
-		for(let i=0; i<=steps; i++) {
-			const t = (i/steps) * angle;
-			pts.x.push(radius * (Math.cos(t)*norm1[0] + Math.sin(t)*w[0]));
-			pts.y.push(radius * (Math.cos(t)*norm1[1] + Math.sin(t)*w[1]));
-			pts.z.push(radius * (Math.cos(t)*norm1[2] + Math.sin(t)*w[2]));
-		}
-		return pts;
-	}
+    const series = [
+        // Vector lines from origin
+        { type: 'line3D', data: [[0,0,0], Man],  lineStyle: { color: '#64748b', width: 6 } },
+        { type: 'line3D', data: [[0,0,0], King], lineStyle: { color: '#10b981', width: 6 } },
+        { type: 'line3D', data: [[0,0,0], Lion], lineStyle: { color: '#ef4444', width: 6 } },
 
-	const arcMK = getArcPoints(Man, King, mk.angle, 6);
-	const arcML = getArcPoints(Man, Lion, ml.angle, 8);
+        // Endpoint labels
+        { type: 'scatter3D',
+          data: [{ value: Man, name: 'Man' }],
+          symbolSize: 14, itemStyle: { color: '#64748b' },
+          label: { show: true, formatter: '{b}', distance: 6,
+                   textStyle: { fontSize: 12, color: '#64748b', fontWeight: 'bold' } }
+        },
+        { type: 'scatter3D',
+          data: [{ value: King, name: 'King' }],
+          symbolSize: 14, itemStyle: { color: '#10b981' },
+          label: { show: true, formatter: '{b}', distance: 6,
+                   textStyle: { fontSize: 12, color: '#10b981', fontWeight: 'bold' } }
+        },
+        { type: 'scatter3D',
+          data: [{ value: Lion, name: 'Lion' }],
+          symbolSize: 14, itemStyle: { color: '#ef4444' },
+          label: { show: true, formatter: '{b}', distance: 6,
+                   textStyle: { fontSize: 12, color: '#ef4444', fontWeight: 'bold' } }
+        },
 
-	const traces = [
-		// Vector: Man
-		{ 
-			type:'scatter3d', x:[0,Man[0]], y:[0,Man[1]], z:[0,Man[2]], 
-			name:'Man', mode:'lines+markers+text', text:['','Man'], 
-			marker: { size: [0, 10], color: '#64748b' }, line:{width:6, color:'#64748b'} 
-		},
-		// Vector: King
-		{ 
-			type:'scatter3d', x:[0,King[0]], y:[0,King[1]], z:[0,King[2]], 
-			name:'King', mode:'lines+markers+text', text:['','King'], 
-			marker: { size: [0, 10], color: '#10b981' }, line:{width:6, color:'#10b981'} 
-		},
-		// Vector: Lion
-		{ 
-			type:'scatter3d', x:[0,Lion[0]], y:[0,Lion[1]], z:[0,Lion[2]], 
-			name:'Lion', mode:'lines+markers+text', text:['','Lion'], 
-			marker: { size: [0, 10], color: '#ef4444' }, line:{width:6, color:'#ef4444'} 
-		},
-		// Arc: Man -> King
-		{
-			type: 'scatter3d', x: arcMK.x, y: arcMK.y, z: arcMK.z,
-			mode: 'lines', line: { width: 5, color: '#10b981', dash: 'dot' },
-			name: 'Angle (King)'
-		},
-		// Arc: Man -> Lion
-		{
-			type: 'scatter3d', x: arcML.x, y: arcML.y, z: arcML.z,
-			mode: 'lines', line: { width: 5, color: '#ef4444', dash: 'dot' },
-			name: 'Angle (Lion)'
-		}
-	];
+        // Angle arcs
+        { type: 'line3D', data: arcPoints(Man, King, mk.angle, 6),
+          lineStyle: { color: '#10b981', width: 3, opacity: 0.55 } },
+        { type: 'line3D', data: arcPoints(Man, Lion, ml.angle, 8),
+          lineStyle: { color: '#ef4444', width: 3, opacity: 0.55 } },
 
-	const layout = { 
-		margin:{l:0,r:0,b:0,t:0}, 
-		showlegend:false, 
-		scene:{ 
-			xaxis:{title:'Power', range: [-25, 25]}, 
-			yaxis:{title:'Gender', range: [-25, 25]}, 
-			zaxis:{title:'Species', range: [-25, 25]} 
-		} 
-	};
+        // Origin marker
+        { type: 'scatter3D',
+          data: [{ value: [0,0,0], name: 'Origin' }],
+          symbolSize: 5, itemStyle: { color: '#1e293b' },
+          label: { show: false } }
+    ];
 
-	Plotly.react(divId, traces, layout, config).then(() => {
-		const loader = document.getElementById(divId)?.querySelector('.plot-loading');
-		if (loader) loader.remove();
-	});
+    chart.setOption({
+        tooltip: { show: true },
+        grid3D: {
+            boxWidth: 100, boxHeight: 100, boxDepth: 100,
+            viewControl: { autoRotate: false, damping: 0.85 },
+            light: {
+                main: { intensity: 1.2, shadow: false },
+                ambient: { intensity: 0.4 }
+            },
+            axisLine:  { lineStyle: { color: '#cbd5e1' } },
+            axisLabel: { textStyle: { color: '#94a3b8' } },
+            splitLine: { lineStyle: { color: '#f1f5f9' } }
+        },
+        xAxis3D: { name: 'Power',   type: 'value', min: -25, max: 25 },
+        yAxis3D: { name: 'Gender',  type: 'value', min: -25, max: 25 },
+        zAxis3D: { name: 'Species', type: 'value', min: -25, max: 25 },
+        series
+    }, true);
 
-
-	document.getElementById(statsId).innerHTML = `
-	<div style="font-family: sans-serif; font-size: 0.85em; padding:15px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
-	    <p style="margin: 0 0 8px 0;"><b style="color:#10b981">Man → King:</b><br>
-	       <span style="font-size: 1.2em;">θ = ${mk.deg}°</span> | Dist: ${mk.dist}</p>
-	    <p style="margin: 0;"><b style="color:#ef4444">Man → Lion:</b><br>
-	       <span style="font-size: 1.2em;">θ = ${ml.deg}°</span> | Dist: ${ml.dist}</p>
-	</div>
-    `;
+    // Stats panel (unchanged)
+    document.getElementById(statsId).innerHTML = `
+    <div style="font-family: sans-serif; font-size: 0.85em; padding:15px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+        <p style="margin: 0 0 8px 0;"><b style="color:#10b981">Man → King:</b><br>
+           <span style="font-size: 1.2em;">θ = ${mk.deg}°</span> | Dist: ${mk.dist}</p>
+        <p style="margin: 0;"><b style="color:#ef4444">Man → Lion:</b><br>
+           <span style="font-size: 1.2em;">θ = ${ml.deg}°</span> | Dist: ${ml.dist}</p>
+    </div>`;
 }
 
 /**
