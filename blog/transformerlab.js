@@ -4168,76 +4168,99 @@ function _mig_ec3d_vocab_series() {
 }
 
 function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
-    const series = [];
-    const legendData = ['Vocab Embeddings'];
-    const nTokens = tokens.length;
+	const series = [];
+	const legendData = ['Vocab Embeddings'];
+	const nTokens = tokens.length;
 
-    series.push(_mig_ec3d_vocab_series());
+	series.push(_mig_ec3d_vocab_series());
 
-    tokens.forEach((token, i) => {
-        const color = getPositionColor(i, nTokens);
-        const src = tlab_get_top_word_only(start_h[i]);
-        const dst = tlab_get_top_word_only(end_h[i]);
-        const label = `${src}→${dst} (${i + 1})`;
-        legendData.push(label);
+	tokens.forEach((token, i) => {
+		const color = getPositionColor(i, nTokens);
+		const src = tlab_get_top_word_only(start_h[i]);
+		const dst = tlab_get_top_word_only(end_h[i]);
+		const label = `${src}→${dst} (${i + 1})`;
+		legendData.push(label);
 
-        const from3 = start_h[i].slice(0, 3);
-        const to3   = end_h[i].slice(0, 3);
+		const from3 = start_h[i].slice(0, 3);
+		const to3   = end_h[i].slice(0, 3);
 
-        // Arrow shaft
-        series.push({
-            name: label, type: 'line3D',
+		// Arrow shaft
+		series.push({
+			name: label, type: 'line3D',
+			data: [from3, to3],
+			lineStyle: { width: 4, color: color, opacity: 0.85 }
+		});
+
+		// Solid cone arrowhead at destination
+		_add3DArrowheadSeries(series, from3, to3, color, {
+			lineWidth: 3, maxHeadLen: 0.5, spreadRatio: 0.35, nPetals: 12
+		});
+
+		// ★ Start marker ONLY — no end dot (arrowhead replaces it)
+		series.push({
+			name: label, type: 'scatter3D',
+			data: [
+				{ value: from3, symbolSize: 8,
+					itemStyle: { color: color, borderWidth: 2, borderColor: '#000' },
+					_hover: `Start: '${src}' pos ${i + 1}` }
+			],
+			symbol: 'circle',
+			tooltip: { formatter: p => p.data._hover }
+		});
+	});
+
+
+	if (vfEnabled) {
+		const { n_heads } = getTransformerConfig();
+		const computed = _compute_vector_field_points_3d(migId, layerNum, d_model, n_heads);
+		if (computed) series.push(..._vf_ec3d_series(computed));
+	}
+
+	chart.setOption({
+		title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center',
+			textStyle: { fontSize: 14, color: '#1e293b' } },
+		tooltip: { show: true, trigger: 'item', confine: true },
+		legend: { data: legendData, orient: 'horizontal', bottom: 5,
+			left: 'center', textStyle: { fontSize: 11 } },
+		xAxis3D: { type: 'value', name: 'Dim 0' },
+		yAxis3D: { type: 'value', name: 'Dim 1' },
+		zAxis3D: { type: 'value', name: 'Dim 2' },
+		grid3D: {
+			viewControl: { projection: 'perspective', alpha: 30, beta: 40,
+				distance: 200, autoRotate: false, damping: 0.9 },
+			light: { main: { intensity: 1.2, shadow: false },
+				ambient: { intensity: 0.3 } },
+			environment: '#f9fafb',
+			boxWidth: 100, boxHeight: 100, boxDepth: 100
+		},
+		series: series,
+		animation: false
+	}, true);
+}
+
+function _traj_ec3d_line_series_with_arrows(tokenLabel, color, dataPoints, tIdx) {
+    const seriesArr = [];
+    const pts = dataPoints.map(p => p.data[tIdx].slice(0, 3));
+
+    for (let i = 0; i < pts.length - 1; i++) {
+        const from3 = pts[i];
+        const to3   = pts[i + 1];
+
+        // Line segment
+        seriesArr.push({
+            name: tokenLabel,
+            type: 'line3D',
             data: [from3, to3],
             lineStyle: { width: 4, color: color, opacity: 0.85 }
         });
 
-        // ★ NEW: Arrowhead at destination
-        _add3DArrowheadSeries(series, from3, to3, color, {
-            lineWidth: 5, maxHeadLen: 0.5, spreadRatio: 0.4
+        // Solid cone arrowhead at end of each segment
+        _add3DArrowheadSeries(seriesArr, from3, to3, color, {
+            lineWidth: 3, maxHeadLen: 0.4, spreadRatio: 0.3, nPetals: 12
         });
-
-        // Start / end markers
-        series.push({
-            name: label, type: 'scatter3D',
-            data: [
-                { value: from3, symbolSize: 8,
-                  itemStyle: { color: color, borderWidth: 2, borderColor: '#000' },
-                  _hover: `Start: '${src}' pos ${i + 1}` },
-                { value: to3, symbolSize: 14,
-                  itemStyle: { color: color, borderWidth: 2, borderColor: '#fff' },
-                  _hover: `End: '${dst}' pos ${i + 1}` }
-            ],
-            symbol: 'circle',
-            tooltip: { formatter: p => p.data._hover }
-        });
-    });
-
-    if (vfEnabled) {
-        const { n_heads } = getTransformerConfig();
-        const computed = _compute_vector_field_points_3d(migId, layerNum, d_model, n_heads);
-        if (computed) series.push(..._vf_ec3d_series(computed));
     }
 
-    chart.setOption({
-        title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center',
-                 textStyle: { fontSize: 14, color: '#1e293b' } },
-        tooltip: { show: true, trigger: 'item', confine: true },
-        legend: { data: legendData, orient: 'horizontal', bottom: 5,
-                  left: 'center', textStyle: { fontSize: 11 } },
-        xAxis3D: { type: 'value', name: 'Dim 0' },
-        yAxis3D: { type: 'value', name: 'Dim 1' },
-        zAxis3D: { type: 'value', name: 'Dim 2' },
-        grid3D: {
-            viewControl: { projection: 'perspective', alpha: 30, beta: 40,
-                           distance: 200, autoRotate: false, damping: 0.9 },
-            light: { main: { intensity: 1.2, shadow: false },
-                     ambient: { intensity: 0.3 } },
-            environment: '#f9fafb',
-            boxWidth: 100, boxHeight: 100, boxDepth: 100
-        },
-        series: series,
-        animation: false
-    }, true);
+    return seriesArr;
 }
 
 function renderMigrationLowDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
@@ -4844,42 +4867,44 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 // ─── Main 3D ECharts renderer ───────────────────────────────
 
 function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab) {
-    // Clean up whichever renderer was used previously
-    let chart = echarts.getInstanceByDom(trajDiv);
-    if (!chart) chart = echarts.init(trajDiv);
+	// Clean up whichever renderer was used previously
+	let chart = echarts.getInstanceByDom(trajDiv);
+	if (!chart) chart = echarts.init(trajDiv);
 
-    const series = [];
-    const legendData = [];
+	const series = [];
+	const legendData = [];
 
-    // 1. Vocabulary embedding landmarks
-    series.push(_traj_ec3d_landmark_series(embSnap, snapVocab));
-    legendData.push('Vocab Embeddings');
+	// 1. Vocabulary embedding landmarks
+	series.push(_traj_ec3d_landmark_series(embSnap, snapVocab));
+	legendData.push('Vocab Embeddings');
 
-    // 2. Per-token: one line3D + one scatter3D (same name → shared legend entry)
-    tokens.forEach((token, tIdx) => {
-        const hasData = dataPoints.every(p => p.data && p.data[tIdx]);
-        if (!hasData) return;
+	// 2. Per-token: one line3D + one scatter3D (same name → shared legend entry)
+	tokens.forEach((token, tIdx) => {
+		const hasData = dataPoints.every(p => p.data && p.data[tIdx]);
+		if (!hasData) return;
 
-        const tColor = getPositionColor(tIdx, tokens.length);
-        const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
-        legendData.push(tokenLabel);
+		const tColor = getPositionColor(tIdx, tokens.length);
+		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+		legendData.push(tokenLabel);
 
-        series.push(_traj_ec3d_line_series(tokenLabel, tColor, dataPoints, tIdx));
-        series.push(_traj_ec3d_marker_series(
-            tokenLabel, tColor, dataPoints, tIdx, labels, embSnap, snapVocab
-        ));
-    });
+		// ★ CHANGED: per-segment lines with arrowheads at every layer step
+		series.push(..._traj_ec3d_line_series_with_arrows(tokenLabel, tColor, dataPoints, tIdx));
 
-    // 3. Render (true = full replace, not merge — safe when series count changes)
-    chart.setOption(_traj_ec3d_option(series, legendData), true);
+		series.push(_traj_ec3d_marker_series(
+			tokenLabel, tColor, dataPoints, tIdx, labels, embSnap, snapVocab
+		));
+	});
 
-    // 4. Wire resize
-    if (trajDiv._ecResizeTraj) window.removeEventListener('resize', trajDiv._ecResizeTraj);
-    trajDiv._ecResizeTraj = () => {
-        const c = echarts.getInstanceByDom(trajDiv);
-        if (c) c.resize();
-    };
-    window.addEventListener('resize', trajDiv._ecResizeTraj);
+	// 3. Render (true = full replace, not merge — safe when series count changes)
+	chart.setOption(_traj_ec3d_option(series, legendData), true);
+
+	// 4. Wire resize
+	if (trajDiv._ecResizeTraj) window.removeEventListener('resize', trajDiv._ecResizeTraj);
+	trajDiv._ecResizeTraj = () => {
+		const c = echarts.getInstanceByDom(trajDiv);
+		if (c) c.resize();
+	};
+	window.addEventListener('resize', trajDiv._ecResizeTraj);
 }
 
 // ─── Embedding landmark diamonds ─────────────────────────────
@@ -4933,17 +4958,16 @@ function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, e
         );
 
         const isStart = pIdx === 0;
-        const isEnd   = pIdx === nSteps - 1;
 
         return {
             value: p.data[tIdx].slice(0, 3),
-            // Per-item symbolSize: end 14, start 10, mid 6
-            symbolSize: isEnd ? 14 : (isStart ? 10 : 6),
+            // Start: visible dot; all others: tiny hover-only targets
+            symbolSize: isStart ? 10 : 3,
             itemStyle: {
                 color: color,
-                borderWidth: (isStart || isEnd) ? 2 : 0,
+                borderWidth: isStart ? 2 : 0,
                 borderColor: '#000',
-                opacity: isStart || isEnd ? 1 : 0.7
+                opacity: isStart ? 1 : 0.4
             },
             _hover: hoverHtml
         };
@@ -4954,7 +4978,7 @@ function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, e
         type: 'scatter3D',
         data: data,
         symbol: 'circle',
-        symbolSize: 6,    // fallback if per-item symbolSize is ignored
+        symbolSize: 6,
         tooltip: {
             formatter: params => params.data._hover
         }
@@ -7136,15 +7160,15 @@ function rerender_temperature_only() {
 }
 
 /**
- * Adds 3D arrowhead petal series to a series array.
- * Creates line3D segments that form a cone-like arrowhead pointing
- * in the direction from `from3` to `to3`.
+ * Adds a solid-looking 3D cone arrowhead to a series array.
+ * Uses 12 radial petals converging at the tip — no base ring.
+ * The high petal count creates the visual impression of a filled cone.
  */
 function _add3DArrowheadSeries(series, from3, to3, color, options = {}) {
-    const lineWidth   = options.lineWidth   || 6;
+    const lineWidth   = options.lineWidth   || 3;
     const maxHeadLen  = options.maxHeadLen  || 0.5;
-    const spreadRatio = options.spreadRatio || 0.4;
-    const nPetals     = options.nPetals     || 3;
+    const spreadRatio = options.spreadRatio || 0.35;
+    const nPetals     = options.nPetals     || 12;
 
     const dx = to3[0] - from3[0];
     const dy = to3[1] - from3[1];
@@ -7156,35 +7180,26 @@ function _add3DArrowheadSeries(series, from3, to3, color, options = {}) {
     const nx = dx / mag, ny = dy / mag, nz = dz / mag;
     const headLen = Math.min(mag * 0.25, maxHeadLen);
     const { perp1, perp2 } = computePerpendicularVectors(nx, ny, nz);
+
+    // Base center of the cone (pulled back from tip along direction)
     const bx = to3[0] - nx * headLen;
     const by = to3[1] - ny * headLen;
     const bz = to3[2] - nz * headLen;
     const spread = headLen * spreadRatio;
 
     for (let i = 0; i < nPetals; i++) {
-        const angle  = (2 * Math.PI * i) / nPetals;
-        const cos1 = Math.cos(angle), sin1 = Math.sin(angle);
-        const px = bx + spread * (cos1 * perp1.x + sin1 * perp2.x);
-        const py = by + spread * (cos1 * perp1.y + sin1 * perp2.y);
-        const pz = bz + spread * (cos1 * perp1.z + sin1 * perp2.z);
+        const angle = (2 * Math.PI * i) / nPetals;
+        const cosA = Math.cos(angle), sinA = Math.sin(angle);
+        const px = bx + spread * (cosA * perp1.x + sinA * perp2.x);
+        const py = by + spread * (cosA * perp1.y + sinA * perp2.y);
+        const pz = bz + spread * (cosA * perp1.z + sinA * perp2.z);
 
-        // Petal → tip
+        // Each petal: base-ring point → tip (NO base ring segments)
         series.push({
-            type: 'line3D', data: [[px, py, pz], to3],
-            lineStyle: { width: lineWidth, color: color }, silent: true
-        });
-
-        // Base ring segment
-        const j = (i + 1) % nPetals;
-        const angle2 = (2 * Math.PI * j) / nPetals;
-        const cos2 = Math.cos(angle2), sin2 = Math.sin(angle2);
-        const qx = bx + spread * (cos2 * perp1.x + sin2 * perp2.x);
-        const qy = by + spread * (cos2 * perp1.y + sin2 * perp2.y);
-        const qz = bz + spread * (cos2 * perp1.z + sin2 * perp2.z);
-
-        series.push({
-            type: 'line3D', data: [[px, py, pz], [qx, qy, qz]],
-            lineStyle: { width: lineWidth, color: color }, silent: true
+            type: 'line3D',
+            data: [[px, py, pz], to3],
+            lineStyle: { width: lineWidth, color: color },
+            silent: true
         });
     }
 }
