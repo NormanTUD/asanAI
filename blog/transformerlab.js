@@ -2745,24 +2745,23 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
 		}
 	});
 
-	// ── 2. Calculation-step 3D arrows ──
 	if (steps && steps.length > 0) {
 		steps.forEach((step, idx) => {
 			const from3 = step.from.slice(0, 3);
 			const to3   = step.to.slice(0, 3);
 
-			// Shaft
+			const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
 			series.push({
 				type: 'line3D',
-				data: [from3, to3],
+				data: [from3, shaftEnd],
 				lineStyle: { width: 5, color: arrowColor, opacity: 0.85 },
 				silent: true
 			});
 
-			// Triangle arrowhead
-			_add3DArrowheadSeries(series, from3, to3, arrowColor, { symbolSize: 20 });
+			_add3DArrowheadSeries(series, from3, to3, arrowColor, {
+				lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4
+			});
 
-			// Midpoint hover label
 			series.push({
 				type: 'scatter3D',
 				data: [{
@@ -4143,17 +4142,20 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 		const from3 = start_h[i].slice(0, 3);
 		const to3   = end_h[i].slice(0, 3);
 
-		// Shaft — full length, no shortening needed
+		// Shaft shortened to arrowhead base
+		const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
 		series.push({
 			name: label, type: 'line3D',
-			data: [from3, to3],
+			data: [from3, shaftEnd],
 			lineStyle: { width: 4, color: color, opacity: 0.85 }
 		});
 
-		// Clean triangle arrowhead at destination
-		_add3DArrowheadSeries(series, from3, to3, color, { symbolSize: 18 });
+		// Oriented V-chevron arrowhead
+		_add3DArrowheadSeries(series, from3, to3, color, {
+			lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4
+		});
 
-		// Start marker only — triangle replaces end dot
+		// Start marker only
 		series.push({
 			name: label, type: 'scatter3D',
 			data: [{
@@ -4195,26 +4197,29 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 }
 
 function _traj_ec3d_line_series_with_arrows(tokenLabel, color, dataPoints, tIdx) {
-	const seriesArr = [];
-	const pts = dataPoints.map(p => p.data[tIdx].slice(0, 3));
+    const seriesArr = [];
+    const pts = dataPoints.map(p => p.data[tIdx].slice(0, 3));
 
-	for (let i = 0; i < pts.length - 1; i++) {
-		const from3 = pts[i];
-		const to3   = pts[i + 1];
+    for (let i = 0; i < pts.length - 1; i++) {
+        const from3 = pts[i];
+        const to3   = pts[i + 1];
 
-		// Shaft — full length
-		seriesArr.push({
-			name: tokenLabel,
-			type: 'line3D',
-			data: [from3, to3],
-			lineStyle: { width: 4, color: color, opacity: 0.85 }
-		});
+        // Shaft shortened to arrowhead base
+        const shaftEnd = _computeArrowheadBase(from3, to3, 0.4);
+        seriesArr.push({
+            name: tokenLabel,
+            type: 'line3D',
+            data: [from3, shaftEnd],
+            lineStyle: { width: 4, color: color, opacity: 0.85 }
+        });
 
-		// Clean triangle arrowhead at each layer step
-		_add3DArrowheadSeries(seriesArr, from3, to3, color, { symbolSize: 14 });
-	}
+        // Oriented V-chevron arrowhead
+        _add3DArrowheadSeries(seriesArr, from3, to3, color, {
+            lineWidth: 6, maxHeadLen: 0.4, spreadRatio: 0.35
+        });
+    }
 
-	return seriesArr;
+    return seriesArr;
 }
 
 function renderMigrationLowDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
@@ -7109,43 +7114,63 @@ function rerender_temperature_only() {
 }
 
 /**
- * Adds a clean 3D arrowhead using a single scatter3D billboard symbol.
- * ECharts GL has no filled 3D geometry (without 'surface'), so a
- * billboard triangle is the cleanest available option.
+ * Adds a clean 3D arrowhead using two thick V-chevron polylines
+ * in perpendicular planes. Orients correctly in 3D space.
+ * Only 2 line3D series — no wireframe base ring, no billboard issues.
  */
 function _add3DArrowheadSeries(series, from3, to3, color, options = {}) {
-    const size = options.symbolSize || 18;
+    const lineWidth   = options.lineWidth   || 7;
+    const maxHeadLen  = options.maxHeadLen  || 0.5;
+    const spreadRatio = options.spreadRatio || 0.4;
 
+    const dx = to3[0] - from3[0];
+    const dy = to3[1] - from3[1];
+    const dz = to3[2] - from3[2];
+    const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    if (mag < 1e-10) return;
+
+    const nx = dx / mag, ny = dy / mag, nz = dz / mag;
+    const headLen = Math.min(mag * 0.3, maxHeadLen);
+    const { perp1, perp2 } = computePerpendicularVectors(nx, ny, nz);
+    const spread = headLen * spreadRatio;
+
+    // Base center (pulled back from tip along shaft direction)
+    const bx = to3[0] - nx * headLen;
+    const by = to3[1] - ny * headLen;
+    const bz = to3[2] - nz * headLen;
+
+    // Wing points in perp1 plane
+    const w1a = [bx + spread * perp1.x, by + spread * perp1.y, bz + spread * perp1.z];
+    const w1b = [bx - spread * perp1.x, by - spread * perp1.y, bz - spread * perp1.z];
+
+    // Wing points in perp2 plane
+    const w2a = [bx + spread * perp2.x, by + spread * perp2.y, bz + spread * perp2.z];
+    const w2b = [bx - spread * perp2.x, by - spread * perp2.y, bz - spread * perp2.z];
+
+    // V-chevron 1: wing → tip → wing (one continuous polyline = clean V shape)
     series.push({
-        type: 'scatter3D',
-        symbol: 'triangle',
-        symbolSize: size,
-        data: [{
-            value: to3,
-            itemStyle: {
-                color: color,
-                opacity: 1,
-                borderWidth: 1.5,
-                borderColor: 'rgba(0,0,0,0.25)'
-            }
-        }],
-        silent: true,
-        label: { show: false },
-        tooltip: { show: false }
+        type: 'line3D',
+        data: [w1a, to3, w1b],
+        lineStyle: { width: lineWidth, color: color },
+        silent: true
+    });
+
+    // V-chevron 2: perpendicular plane
+    series.push({
+        type: 'line3D',
+        data: [w2a, to3, w2b],
+        lineStyle: { width: lineWidth, color: color },
+        silent: true
     });
 }
 
-/**
- * Returns the 3D point where the arrowhead cone begins (the base center).
- * Callers use this to shorten the shaft line so it doesn't poke through.
- */
 function _computeArrowheadBase(from3, to3, maxHeadLen) {
     const dx = to3[0] - from3[0];
     const dy = to3[1] - from3[1];
     const dz = to3[2] - from3[2];
     const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
     if (mag < 1e-10) return [...to3];
-    const headLen = Math.min(mag * 0.25, maxHeadLen || 0.5);
+    const headLen = Math.min(mag * 0.3, maxHeadLen || 0.5);
     const nx = dx / mag, ny = dy / mag, nz = dz / mag;
     return [to3[0] - nx * headLen, to3[1] - ny * headLen, to3[2] - nz * headLen];
 }
