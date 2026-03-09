@@ -3203,6 +3203,40 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 }
 
 function render_vector_field_2d(plotDiv, id, layerNum, d_model, n_heads) {
+    // 1. Compute bounding box from embeddings + padding
+    const bounds = _vf2d_compute_bounds();
+
+    // 2. Sample grid and run forward passes to get displacement vectors
+    const gridRes = 12;
+    const layerWeights = window.currentWeights[layerNum - 1];
+    const { points, maxMag } = _vf2d_sample_grid(bounds, gridRes, layerWeights, d_model, n_heads);
+
+    // 3. Compute maximum visual arrow length from grid cell size
+    const maxArrowLen = _vf2d_max_arrow_length(bounds, gridRes);
+
+    // 4. Build arrow traces (line tails + arrowhead markers + hover)
+    const arrowTraces = _vf2d_build_arrow_traces(points, maxMag, maxArrowLen);
+
+    // 5. Build vocabulary embedding landmark traces
+    const vocabTraces = _vf2d_build_vocab_landmarks();
+
+    // 6. Build invisible colorbar reference trace
+    const colorbarTrace = _vf2d_build_colorbar_trace(maxMag);
+
+    // 7. Assemble and render
+    const traces = [...arrowTraces, ...vocabTraces, colorbarTrace];
+    const layout = _vf2d_build_layout(layerNum);
+
+    Plotly.react(id, traces, layout, { responsive: true });
+}
+
+// ─── Sub-functions ───────────────────────────────────────────
+
+/**
+ * Computes the 2D bounding box from the current embedding space, with padding.
+ * @returns {{ xMin, xMax, yMin, yMax }}
+ */
+function _vf2d_compute_bounds() {
     const allVecs = Object.values(window.persistentEmbeddingSpace);
     let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
     allVecs.forEach(v => {
@@ -3214,12 +3248,18 @@ function render_vector_field_2d(plotDiv, id, layerNum, d_model, n_heads) {
     if (xMin === xMax) { xMin -= 1; xMax += 1; }
     if (yMin === yMax) { yMin -= 1; yMax += 1; }
     const pad = 2;
-    xMin -= pad; xMax += pad; yMin -= pad; yMax += pad;
+    return {
+        xMin: xMin - pad, xMax: xMax + pad,
+        yMin: yMin - pad, yMax: yMax + pad
+    };
+}
 
-    const gridRes = 12;
-    const layerWeights = window.currentWeights[layerNum - 1];
-
-    // First pass: collect all grid points and displacements to find maxMag
+/**
+ * Samples a 2D grid of points, runs a forward pass at each, and records displacement.
+ * @returns {{ points: object[], maxMag: number }}
+ */
+function _vf2d_sample_grid(bounds, gridRes, layerWeights, d_model, n_heads) {
+    const { xMin, xMax, yMin, yMax } = bounds;
     const points = [];
     let maxMag = 0;
 
@@ -3242,75 +3282,114 @@ function render_vector_field_2d(plotDiv, id, layerNum, d_model, n_heads) {
     }
 
     if (maxMag < 1e-8) maxMag = 1e-8;
+    return { points, maxMag };
+}
 
-    // Determine a good maximum visual arrow length relative to grid spacing
-    const cellW = (xMax - xMin) / gridRes;
-    const cellH = (yMax - yMin) / gridRes;
-    const maxArrowLen = Math.min(cellW, cellH) * 1.2;
+/**
+ * Computes the maximum visual arrow length based on grid cell size.
+ */
+function _vf2d_max_arrow_length(bounds, gridRes) {
+    const cellW = (bounds.xMax - bounds.xMin) / gridRes;
+    const cellH = (bounds.yMax - bounds.yMin) / gridRes;
+    return Math.min(cellW, cellH) * 1.2;
+}
 
+/**
+ * Interpolates a color from blue → red based on normalized magnitude.
+ * @param {number} normMag - Value in [0, 1]
+ * @returns {string} CSS rgb() color string
+ */
+function _vf2d_magnitude_color(normMag) {
+    const r = Math.round(normMag * 239 + (1 - normMag) * 59);
+    const g = Math.round(normMag * 68 + (1 - normMag) * 130);
+    const b = Math.round(normMag * 68 + (1 - normMag) * 246);
+    return `rgb(${r},${g},${b})`;
+}
+
+/**
+ * Computes the unit direction and scaled arrow length for a single grid point.
+ * @returns {{ ux, uy, arrowLen, lineWidth }}
+ */
+function _vf2d_arrow_geometry(p, maxMag, maxArrowLen) {
+    const normMag = p.mag / maxMag;
+    const arrowLen = Math.max(maxArrowLen * 0.08, maxArrowLen * normMag);
+    const lineWidth = 1.5 + normMag * 3.5;
+
+    let ux = 0, uy = 0;
+    if (p.mag > 1e-10) {
+        ux = p.dx / p.mag;
+        uy = p.dy / p.mag;
+    }
+
+    return { ux, uy, arrowLen, lineWidth, normMag };
+}
+
+/**
+ * Builds a single arrow's tail line trace.
+ */
+function _vf2d_build_tail_trace(p, endX, endY, color, lineWidth) {
+    return {
+        type: 'scatter',
+        x: [p.x, endX],
+        y: [p.y, endY],
+        mode: 'lines',
+        line: { width: lineWidth, color: color },
+        showlegend: false,
+        hoverinfo: 'skip'
+    };
+}
+
+/**
+ * Builds a single arrow's head marker trace.
+ */
+function _vf2d_build_head_trace(p, endX, endY, color, headSize) {
+    return {
+        type: 'scatter',
+        x: [p.x, endX],
+        y: [p.y, endY],
+        mode: 'markers',
+        marker: {
+            size: [0, headSize],
+            symbol: 'arrow',
+            angleref: 'previous',
+            color: color
+        },
+        showlegend: false,
+        hovertemplate:
+            `Point: (${p.x.toFixed(2)}, ${p.y.toFixed(2)})<br>` +
+            `Δ: (${p.dx.toFixed(3)}, ${p.dy.toFixed(3)})<br>` +
+            `Magnitude: ${p.mag.toFixed(4)}<extra></extra>`
+    };
+}
+
+/**
+ * Builds all arrow traces (tail lines + arrowhead markers) for every grid point.
+ */
+function _vf2d_build_arrow_traces(points, maxMag, maxArrowLen) {
     const traces = [];
 
-    // Second pass: draw each arrow as a line (tail) + arrowhead marker
     for (let k = 0; k < points.length; k++) {
         const p = points[k];
-        const normMag = p.mag / maxMag;
-
-        // Color: blue (low) → red (high)
-        const r = Math.round(normMag * 239 + (1 - normMag) * 59);
-        const g = Math.round(normMag * 68 + (1 - normMag) * 130);
-        const b = Math.round(normMag * 68 + (1 - normMag) * 246);
-        const color = `rgb(${r},${g},${b})`;
-
-        // Scale arrow length proportionally to magnitude
-        // Minimum visible length so even tiny forces show a stub
-        const arrowLen = Math.max(maxArrowLen * 0.08, maxArrowLen * normMag);
-
-        // Unit direction (handle zero-magnitude gracefully)
-        let ux = 0, uy = 0;
-        if (p.mag > 1e-10) {
-            ux = p.dx / p.mag;
-            uy = p.dy / p.mag;
-        }
+        const { ux, uy, arrowLen, lineWidth, normMag } = _vf2d_arrow_geometry(p, maxMag, maxArrowLen);
+        const color = _vf2d_magnitude_color(normMag);
 
         const endX = p.x + ux * arrowLen;
         const endY = p.y + uy * arrowLen;
 
-        // Line width also scales with magnitude for extra visual weight
-        const lineWidth = 1.5 + normMag * 3.5;
+        traces.push(_vf2d_build_tail_trace(p, endX, endY, color, lineWidth));
 
-        // Tail line
-        traces.push({
-            type: 'scatter',
-            x: [p.x, endX],
-            y: [p.y, endY],
-            mode: 'lines',
-            line: { width: lineWidth, color: color },
-            showlegend: false,
-            hoverinfo: 'skip'
-        });
-
-        // Arrowhead at the tip — size also scales with magnitude
         const headSize = Math.max(5, 6 + normMag * 10);
-        traces.push({
-            type: 'scatter',
-            x: [p.x, endX],
-            y: [p.y, endY],
-            mode: 'markers',
-            marker: {
-                size: [0, headSize],
-                symbol: 'arrow',
-                angleref: 'previous',
-                color: color
-            },
-            showlegend: false,
-            hovertemplate:
-                `Point: (${p.x.toFixed(2)}, ${p.y.toFixed(2)})<br>` +
-                `Δ: (${p.dx.toFixed(3)}, ${p.dy.toFixed(3)})<br>` +
-                `Magnitude: ${p.mag.toFixed(4)}<extra></extra>`
-        });
+        traces.push(_vf2d_build_head_trace(p, endX, endY, color, headSize));
     }
 
-    // Vocab embedding landmarks
+    return traces;
+}
+
+/**
+ * Builds scatter traces for vocabulary embedding landmarks.
+ */
+function _vf2d_build_vocab_landmarks() {
+    const traces = [];
     Object.entries(window.persistentEmbeddingSpace).forEach(([word, vec]) => {
         traces.push({
             type: 'scatter',
@@ -3318,15 +3397,22 @@ function render_vector_field_2d(plotDiv, id, layerNum, d_model, n_heads) {
             mode: 'markers+text',
             text: [word],
             textposition: 'top center',
-            marker: { size: 10, symbol: 'diamond', color: '#475569',
-                      line: { width: 1, color: '#000' } },
+            marker: {
+                size: 10, symbol: 'diamond', color: '#475569',
+                line: { width: 1, color: '#000' }
+            },
             showlegend: false,
             hovertemplate: `<b>${word}</b><extra></extra>`
         });
     });
+    return traces;
+}
 
-    // Invisible trace for colorbar
-    traces.push({
+/**
+ * Builds the invisible trace that provides the global colorbar.
+ */
+function _vf2d_build_colorbar_trace(maxMag) {
+    return {
         type: 'scatter',
         x: [null], y: [null],
         mode: 'markers',
@@ -3339,17 +3425,20 @@ function render_vector_field_2d(plotDiv, id, layerNum, d_model, n_heads) {
         },
         showlegend: false,
         hoverinfo: 'none'
-    });
+    };
+}
 
-    const layout = {
+/**
+ * Builds the Plotly layout for the 2D vector field.
+ */
+function _vf2d_build_layout(layerNum) {
+    return {
         title: `Layer ${layerNum}: Vector Field (where would a point move?)`,
         xaxis: { title: 'Dim 0' },
         yaxis: { title: 'Dim 1' },
         hovermode: 'closest',
         margin: { t: 50, b: 40, l: 40, r: 80 }
     };
-
-    Plotly.react(id, traces, layout, { responsive: true });
 }
 
 function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
