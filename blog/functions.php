@@ -148,6 +148,7 @@ function load_base_js () {
 	css("prism-tomorrow.min.css");
 	css("style");
 	js("echarts.min");
+	js("echarts-gl.min.js");
 	js("prism.min");
 	js("prism-python.min");
 	js("literature");

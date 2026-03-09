@@ -5956,45 +5956,192 @@ function _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVo
     return { traces, annotations };
 }
 
-// ─── Helper: Render the low-dimensional (d_model 2 or 3) single trajectory plot ───
 function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab) {
-	let traces, annotations;
+    if (d_model === 3) {
+        _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab);
+        return;
+    }
 
-	if (d_model === 3) {
-		traces = _traj_build_3d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
-		annotations = [];
-	} else {
-		const result = _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
-		traces = result.traces;
-		annotations = result.annotations;
-	}
+    // ── 2D: unchanged Plotly path ──
+    const result = _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
 
-	const axisTemplate = {
-		showticklabels: false,
-		showgrid: true,
-		zeroline: false,
-		title: { text: "" },
-		backgroundcolor: "#f9fafb"
-	};
+    const axisTemplate = {
+        showticklabels: false, showgrid: true, zeroline: false,
+        title: { text: "" }, backgroundcolor: "#f9fafb"
+    };
 
-	const layout = {
-		title: `<b>Token Trajectory from Embedding → Embedding + Position through the Layers</b>`,
-		scene: {
-			xaxis: axisTemplate, yaxis: axisTemplate, zaxis: axisTemplate,
-			camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
-		},
-		xaxis: axisTemplate,
-		yaxis: axisTemplate,
-		annotations: d_model !== 3 ? annotations : [],
-		margin: { l: 10, r: 10, b: 50, t: 80 },
-		showlegend: true,
-		legend: {
-			orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1,
-			font: { size: 14 }
-		}
-	};
+    const layout = {
+        title: '<b>Token Trajectory from Embedding → Embedding + Position through the Layers</b>',
+        xaxis: axisTemplate, yaxis: axisTemplate,
+        annotations: result.annotations,
+        margin: { l: 10, r: 10, b: 50, t: 80 },
+        showlegend: true,
+        legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1, font: { size: 14 } }
+    };
 
-	Plotly.react(trajDiv.id, traces, layout);
+    Plotly.react(trajDiv.id, result.traces, layout);
+}
+
+// ─── Main 3D ECharts renderer ───────────────────────────────
+
+function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab) {
+    // Clean up whichever renderer was used previously
+    Plotly.purge(trajDiv);
+    let chart = echarts.getInstanceByDom(trajDiv);
+    if (!chart) chart = echarts.init(trajDiv);
+
+    const series = [];
+    const legendData = [];
+
+    // 1. Vocabulary embedding landmarks
+    series.push(_traj_ec3d_landmark_series(embSnap, snapVocab));
+    legendData.push('Vocab Embeddings');
+
+    // 2. Per-token: one line3D + one scatter3D (same name → shared legend entry)
+    tokens.forEach((token, tIdx) => {
+        const hasData = dataPoints.every(p => p.data && p.data[tIdx]);
+        if (!hasData) return;
+
+        const tColor = getPositionColor(tIdx, tokens.length);
+        const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+        legendData.push(tokenLabel);
+
+        series.push(_traj_ec3d_line_series(tokenLabel, tColor, dataPoints, tIdx));
+        series.push(_traj_ec3d_marker_series(
+            tokenLabel, tColor, dataPoints, tIdx, labels, embSnap, snapVocab
+        ));
+    });
+
+    // 3. Render (true = full replace, not merge — safe when series count changes)
+    chart.setOption(_traj_ec3d_option(series, legendData), true);
+
+    // 4. Wire resize
+    if (trajDiv._ecResizeTraj) window.removeEventListener('resize', trajDiv._ecResizeTraj);
+    trajDiv._ecResizeTraj = () => {
+        const c = echarts.getInstanceByDom(trajDiv);
+        if (c) c.resize();
+    };
+    window.addEventListener('resize', trajDiv._ecResizeTraj);
+}
+
+// ─── Embedding landmark diamonds ─────────────────────────────
+
+function _traj_ec3d_landmark_series(embSnap, snapVocab) {
+    return {
+        name: 'Vocab Embeddings',
+        type: 'scatter3D',
+        data: snapVocab.map(word => {
+            const v = embSnap[word];
+            return { name: word, value: [v[0], v[1] || 0, v[2] || 0] };
+        }),
+        symbol: 'diamond',
+        symbolSize: 8,
+        itemStyle: {
+            color: 'rgba(100,116,139,0.8)',
+            borderWidth: 1,
+            borderColor: '#334155'
+        },
+        label: {
+            show: true,
+            position: 'top',
+            distance: 5,
+            formatter: p => p.name,
+            textStyle: { fontSize: 10, color: '#475569', fontFamily: 'Inter, sans-serif' }
+        }
+    };
+}
+
+// ─── Trajectory line for one token ───────────────────────────
+
+function _traj_ec3d_line_series(tokenLabel, color, dataPoints, tIdx) {
+    return {
+        name: tokenLabel,
+        type: 'line3D',
+        data: dataPoints.map(p => p.data[tIdx].slice(0, 3)),
+        lineStyle: { width: 4, color: color, opacity: 0.85 }
+    };
+}
+
+// ─── Step markers (hover, start/end emphasis) for one token ──
+
+function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, embSnap, snapVocab) {
+    const nSteps = dataPoints.length;
+
+    const data = dataPoints.map((p, pIdx) => {
+        const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
+        const hoverHtml = buildTrajectoryHoverText(
+            labels[tIdx], tIdx, fromStage, p.name,
+            p.data[tIdx], embSnap, snapVocab
+        );
+
+        const isStart = pIdx === 0;
+        const isEnd   = pIdx === nSteps - 1;
+
+        return {
+            value: p.data[tIdx].slice(0, 3),
+            // Per-item symbolSize: end 14, start 10, mid 6
+            symbolSize: isEnd ? 14 : (isStart ? 10 : 6),
+            itemStyle: {
+                color: color,
+                borderWidth: (isStart || isEnd) ? 2 : 0,
+                borderColor: '#000',
+                opacity: isStart || isEnd ? 1 : 0.7
+            },
+            _hover: hoverHtml
+        };
+    });
+
+    return {
+        name: tokenLabel,
+        type: 'scatter3D',
+        data: data,
+        symbol: 'circle',
+        symbolSize: 6,    // fallback if per-item symbolSize is ignored
+        tooltip: {
+            formatter: params => params.data._hover
+        }
+    };
+}
+
+// ─── Full chart option ───────────────────────────────────────
+
+function _traj_ec3d_option(series, legendData) {
+    return {
+        title: {
+            text: 'Token Trajectory: Embedding → +Position → Layer Outputs',
+            left: 'center', top: 10,
+            textStyle: { fontSize: 14, fontWeight: 'bold', color: '#1e293b' }
+        },
+        tooltip: { show: true, trigger: 'item', confine: true },
+        legend: {
+            data: legendData,
+            orient: 'horizontal',
+            bottom: 5, left: 'center',
+            textStyle: { fontSize: 12 }
+        },
+        xAxis3D: { type: 'value', name: 'Dim 0' },
+        yAxis3D: { type: 'value', name: 'Dim 1' },
+        zAxis3D: { type: 'value', name: 'Dim 2' },
+        grid3D: {
+            viewControl: {
+                projection: 'perspective',
+                alpha: 30,      // vertical angle (matches old camera.eye.z)
+                beta: 40,       // horizontal angle
+                distance: 200,
+                autoRotate: false,
+                damping: 0.9
+            },
+            light: {
+                main:    { intensity: 1.2, shadow: false },
+                ambient: { intensity: 0.3 }
+            },
+            environment: '#f9fafb',
+            axisLine:    { lineStyle: { color: '#cbd5e1' } },
+            axisPointer: { show: false },
+            boxWidth: 100, boxHeight: 100, boxDepth: 100
+        },
+        series: series
+    };
 }
 
 // ─── Main function: now a clean orchestrator ───
