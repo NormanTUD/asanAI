@@ -2348,13 +2348,10 @@ function buildPredictionChipsHtml(predictions, temperature) {
 		const intensity = Math.min(1, p.prob * 5);
 		const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
-		// Show temperature info only when T ≠ 1.0
-		const tempInfo = (Math.abs(temperature - 1.0) > 0.01)
-			? `<span style="font-size:0.7rem; opacity:0.85; display:block; margin-top:2px;">
-		 Original: ${(p.originalProb * 100).toFixed(1)}%<br>
-		 T=${temperature}: ${(p.prob * 100).toFixed(1)}%
-	       </span>`
-			: '';
+		const tempInfo = `<span style="font-size:0.7rem; opacity:0.85; display:block; margin-top:2px; visibility:${Math.abs(temperature - 1.0) < 0.01 ? 'hidden' : 'visible'};">
+    Original: ${(p.originalProb * 100).toFixed(1)}%<br>
+    T=${temperature}: ${(p.prob * 100).toFixed(1)}%
+</span>`;
 
 		html += `<button class="predict-chip" onclick="select_suggested_word('${safeWord}')"
 	    style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}; text-align:center;">
