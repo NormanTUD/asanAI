@@ -1010,8 +1010,6 @@ $$ \mathbf{v}(t) \approx \mathbf{a} \cdot t + r \cdot \cos(\omega t) \cdot \hat{
 
 where $\mathbf{a}$ is the linear time direction, $r$ is the helix radius (strength of cyclical patterns), and $\omega$ controls how tightly the helix winds.
 
-### Why This Is Mind-Blowing
-
 The model has **no concept of time**. It has never experienced duration, never watched a clock, never read a calendar with understanding. It has only observed that certain tokens tend to appear near certain other tokens. And from this purely statistical signal, it has reconstructed a geometric structure that mirrors the actual topology of time — linear, directional, and subtly cyclical. The arrow of time is not programmed; it **emerges** from the geometry of language.
 
 This generalizes beyond dates. Any ordered or sequential concept — sizes ("tiny" → "small" → "medium" → "large" → "huge"), temperatures, emotional intensities — tends to form smooth curves in the embedding space. The model discovers **ordinality** from co-occurrence statistics alone.
