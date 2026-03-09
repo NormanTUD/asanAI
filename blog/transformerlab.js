@@ -6268,9 +6268,9 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
  * Projects the concatenated multi-head output through W^O.
  */
 function projectMHAOutput(multiHeadOutput, WO) {
-    return multiHeadOutput.map(row =>
-        WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
-    );
+	return multiHeadOutput.map(row =>
+		WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
+	);
 }
 
 /**
@@ -6278,22 +6278,22 @@ function projectMHAOutput(multiHeadOutput, WO) {
  * Only triggers re-render when visible output would actually change.
  */
 function computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, beta) {
-    return [
-        flattenDisplay(h0),
-        flattenDisplay(normH0),
-        flattenDisplay(multiHeadOutput),
-        flattenDisplay(projectedMHA),
-        flattenDisplay(h1),
-        flattenDisplay(gamma),
-        flattenDisplay(beta)
-    ].join('|');
+	return [
+		flattenDisplay(h0),
+		flattenDisplay(normH0),
+		flattenDisplay(multiHeadOutput),
+		flattenDisplay(projectedMHA),
+		flattenDisplay(h1),
+		flattenDisplay(gamma),
+		flattenDisplay(beta)
+	].join('|');
 }
 
 /**
  * Builds the HTML for the Pre-Layer Normalization section of h1.
  */
 function buildH1NormHtml(h0, normH0, gamma, beta, ts) {
-    return `
+	return `
     <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
 
     <div style="margin-bottom:15px;">
@@ -6311,7 +6311,7 @@ function buildH1NormHtml(h0, normH0, gamma, beta, ts) {
  * Builds the HTML for the output projection + residual connection section of h1.
  */
 function buildH1FinalHtml(h0, projectedMHA, multiHeadOutput, h1, WO, ts) {
-    return `
+	return `
     <div style="margin-bottom:15px;">
     <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
     $$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
@@ -6542,23 +6542,23 @@ function ensureFFNLayerContainers(layerIndex) {
  * softmax(logits / T) step — the logits themselves don't change.
  */
 function rerender_temperature_only() {
-    const cached = window._cachedFinalProjection;
-    if (!cached) {
-        // Kein Cache vorhanden (z.B. erster Aufruf) → voller Durchlauf
-        debounced_run_transformer_demo();
-        return;
-    }
+	const cached = window._cachedFinalProjection;
+	if (!cached) {
+		// Kein Cache vorhanden (z.B. erster Aufruf) → voller Durchlauf
+		debounced_run_transformer_demo();
+		return;
+	}
 
-    const temperature = parseFloat(
-        document.getElementById('transformer-temperature')?.value
-    ) || 1.0;
+	const temperature = parseFloat(
+		document.getElementById('transformer-temperature')?.value
+	) || 1.0;
 
-    render_final_projection(
-        cached.h_final,
-        cached.vocabulary,
-        cached.d_model,
-        temperature
-    );
+	render_final_projection(
+		cached.h_final,
+		cached.vocabulary,
+		cached.d_model,
+		temperature
+	);
 }
 
 /**
@@ -6567,60 +6567,60 @@ function rerender_temperature_only() {
  * Only 2 line3D series — no wireframe base ring, no billboard issues.
  */
 function _add3DArrowheadSeries(series, from3, to3, color, options = {}) {
-    const lineWidth   = options.lineWidth   || 7;
-    const maxHeadLen  = options.maxHeadLen  || 0.5;
-    const spreadRatio = options.spreadRatio || 0.4;
+	const lineWidth   = options.lineWidth   || 7;
+	const maxHeadLen  = options.maxHeadLen  || 0.5;
+	const spreadRatio = options.spreadRatio || 0.4;
 
-    const dx = to3[0] - from3[0];
-    const dy = to3[1] - from3[1];
-    const dz = to3[2] - from3[2];
-    const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    if (mag < 1e-10) return;
+	const dx = to3[0] - from3[0];
+	const dy = to3[1] - from3[1];
+	const dz = to3[2] - from3[2];
+	const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+	if (mag < 1e-10) return;
 
-    const nx = dx / mag, ny = dy / mag, nz = dz / mag;
-    const headLen = Math.min(mag * 0.3, maxHeadLen);
-    const { perp1, perp2 } = computePerpendicularVectors(nx, ny, nz);
-    const spread = headLen * spreadRatio;
+	const nx = dx / mag, ny = dy / mag, nz = dz / mag;
+	const headLen = Math.min(mag * 0.3, maxHeadLen);
+	const { perp1, perp2 } = computePerpendicularVectors(nx, ny, nz);
+	const spread = headLen * spreadRatio;
 
-    // Base center (pulled back from tip along shaft direction)
-    const bx = to3[0] - nx * headLen;
-    const by = to3[1] - ny * headLen;
-    const bz = to3[2] - nz * headLen;
+	// Base center (pulled back from tip along shaft direction)
+	const bx = to3[0] - nx * headLen;
+	const by = to3[1] - ny * headLen;
+	const bz = to3[2] - nz * headLen;
 
-    // Wing points in perp1 plane
-    const w1a = [bx + spread * perp1.x, by + spread * perp1.y, bz + spread * perp1.z];
-    const w1b = [bx - spread * perp1.x, by - spread * perp1.y, bz - spread * perp1.z];
+	// Wing points in perp1 plane
+	const w1a = [bx + spread * perp1.x, by + spread * perp1.y, bz + spread * perp1.z];
+	const w1b = [bx - spread * perp1.x, by - spread * perp1.y, bz - spread * perp1.z];
 
-    // Wing points in perp2 plane
-    const w2a = [bx + spread * perp2.x, by + spread * perp2.y, bz + spread * perp2.z];
-    const w2b = [bx - spread * perp2.x, by - spread * perp2.y, bz - spread * perp2.z];
+	// Wing points in perp2 plane
+	const w2a = [bx + spread * perp2.x, by + spread * perp2.y, bz + spread * perp2.z];
+	const w2b = [bx - spread * perp2.x, by - spread * perp2.y, bz - spread * perp2.z];
 
-    // V-chevron 1: wing → tip → wing (one continuous polyline = clean V shape)
-    series.push({
-        type: 'line3D',
-        data: [w1a, to3, w1b],
-        lineStyle: { width: lineWidth, color: color },
-        silent: true
-    });
+	// V-chevron 1: wing → tip → wing (one continuous polyline = clean V shape)
+	series.push({
+		type: 'line3D',
+		data: [w1a, to3, w1b],
+		lineStyle: { width: lineWidth, color: color },
+		silent: true
+	});
 
-    // V-chevron 2: perpendicular plane
-    series.push({
-        type: 'line3D',
-        data: [w2a, to3, w2b],
-        lineStyle: { width: lineWidth, color: color },
-        silent: true
-    });
+	// V-chevron 2: perpendicular plane
+	series.push({
+		type: 'line3D',
+		data: [w2a, to3, w2b],
+		lineStyle: { width: lineWidth, color: color },
+		silent: true
+	});
 }
 
 function _computeArrowheadBase(from3, to3, maxHeadLen) {
-    const dx = to3[0] - from3[0];
-    const dy = to3[1] - from3[1];
-    const dz = to3[2] - from3[2];
-    const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    if (mag < 1e-10) return [...to3];
-    const headLen = Math.min(mag * 0.3, maxHeadLen || 0.5);
-    const nx = dx / mag, ny = dy / mag, nz = dz / mag;
-    return [to3[0] - nx * headLen, to3[1] - ny * headLen, to3[2] - nz * headLen];
+	const dx = to3[0] - from3[0];
+	const dy = to3[1] - from3[1];
+	const dz = to3[2] - from3[2];
+	const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+	if (mag < 1e-10) return [...to3];
+	const headLen = Math.min(mag * 0.3, maxHeadLen || 0.5);
+	const nx = dx / mag, ny = dy / mag, nz = dz / mag;
+	return [to3[0] - nx * headLen, to3[1] - ny * headLen, to3[2] - nz * headLen];
 }
 
 // ============================================================
@@ -6631,15 +6631,15 @@ function _computeArrowheadBase(from3, to3, maxHeadLen) {
 
 const themeRiverRegistry = new Map();
 const themeRiverObserver = createLazyRenderObserver(themeRiverRegistry, (id, data) => {
-    _execute_themeriver_render(data.d_model);
+	_execute_themeriver_render(data.d_model);
 });
 
 /**
  * Called from the toolbar dropdowns.
  */
 window._themeriver_on_change = function () {
-    const entry = themeRiverRegistry.get('transformer-themeriver-plot');
-    if (entry) _execute_themeriver_render(entry.d_model);
+	const entry = themeRiverRegistry.get('transformer-themeriver-plot');
+	if (entry) _execute_themeriver_render(entry.d_model);
 };
 
 
