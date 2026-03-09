@@ -1058,14 +1058,14 @@ function calculate_positional_injection(tokens, d_model) {
  * Pure computation — no DOM access.
  */
 function computeInjectedEncodings(tokens, d_model) {
-	return tokens.map((token, pos) => {
-		const semanticVec = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[token])
-			? window.persistentEmbeddingSpace[token].map(v => parseFloat(v.toFixed(nr_fixed)))
-			: Array.from({ length: d_model }, () => 0);
-
-		const peVec = computePositionalEncoding(pos, d_model, posEmbedScalar);
-		return semanticVec.map((val, i) => val + peVec[i]);
+	const roundedSpace = {};
+	tokens.forEach(t => {
+		const vec = window.persistentEmbeddingSpace?.[t];
+		roundedSpace[t] = vec
+			? vec.map(v => parseFloat(v.toFixed(nr_fixed)))
+			: new Array(d_model).fill(0);
 	});
+	return embedTokensWithPE(tokens, d_model, roundedSpace);
 }
 
 /**
@@ -2238,9 +2238,7 @@ function computeFinalPredictions(h_last, vocabulary, d_model, temperature) {
 
 	const logits = vocabulary.map((word, i) => {
 		const w_row = W_vocab[i];
-		let sum = 0;
-		h_last.forEach((h_val, dim) => { sum += h_val * w_row[dim]; });
-		return { word, val: sum, w_row };
+		return { word, val: dotProduct(h_last, w_row), w_row };
 	});
 
 	// Original probabilities (T=1.0)
@@ -2868,36 +2866,34 @@ function renderTokenChips(container, tokens) {
  * Refactored: tokenizes and optionally renders.
  */
 function transformer_tokenize_render(text, containerId = "transformer-viz-bpe") {
-    const typeElement = document.getElementById('transformer-tokenizer-type');
-    const type = typeElement ? typeElement.value : 'regex';
+	const typeElement = document.getElementById('transformer-tokenizer-type');
+	const type = typeElement ? typeElement.value : 'regex';
 
-    const tokens = tokenizeText(text, type);
+	const tokens = tokenizeText(text, type);
 
-    const container = document.getElementById(containerId);
-    renderTokenChips(container, tokens);
+	const container = document.getElementById(containerId);
+	renderTokenChips(container, tokens);
 
-    return tokens;
+	return tokens;
 }
 
 function _renderConcatCore(container, headData, tokens, tokenStrings, stageLabel) {
-    if (!container || !headData.length) return [];
-    const ts = tokenStrings || null;
+	if (!container || !headData.length) return [];
+	const ts = tokenStrings || null;
 
-    const headMatricesLaTeX = headData.map((h, i) =>
-        `\\underbrace{${matrixToPmatrixLabeled(h.context, ts, stageLabel ? `head ${i+1} ctx` : undefined)}}_{\\text{Head } ${i + 1}}`
-    ).join(', ');
+	const headMatricesLaTeX = headData.map((h, i) =>
+		`\\underbrace{${matrixToPmatrixLabeled(h.context, ts, stageLabel ? `head ${i+1} ctx` : undefined)}}_{\\text{Head } ${i + 1}}`
+	).join(', ');
 
-    const fullMatrixData = tokens.map((_, tIdx) =>
-        [].concat(...headData.map(h => h.context[tIdx]))
-    );
+	const fullMatrixData = tokens.map((_, tIdx) =>
+		[].concat(...headData.map(h => h.context[tIdx]))
+	);
 
-    const finalLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts, stageLabel || undefined)}}_{\\text{Total } d_{\\text{model}}}`;
-    const newHtml = `<div style='overflow-x: auto; overflow-y: hidden; max-width: 100%;'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalLaTeX} $$</div>`;
+	const finalLaTeX = `\\underbrace{${matrixToPmatrixLabeled(fullMatrixData, ts, stageLabel || undefined)}}_{\\text{Total } d_{\\text{model}}}`;
+	const newHtml = `<div style='overflow-x: auto; overflow-y: hidden; max-width: 100%;'>$$ \\text{Concat} \\left( \\left[ ${headMatricesLaTeX} \\right] \\right) = ${finalLaTeX} $$</div>`;
 
-    _heightLockedUpdate(container, newHtml);
-    _renderTemmlOnElements([container]);
-    _releaseHeightLocks([container]);
-    return fullMatrixData;
+	heightLockedMathUpdate([container], [newHtml]);
+	return fullMatrixData;
 }
 
 function updateConcatenationDisplay(headData, tokens, tokenStrings) {
@@ -3150,24 +3146,22 @@ function _releaseHeightLocks(elements) {
 }
 
 function _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
-    const naming = _ffnNaming(layerIndex);
-    const ts = tokenStrings || null;
+	const naming = _ffnNaming(layerIndex);
+	const ts = tokenStrings || null;
 
-    const step1 = document.getElementById(`${prefix}-step-1`);
-    const step2 = document.getElementById(`${prefix}-step-2`);
-    const step3 = document.getElementById(`${prefix}-step-3`);
-    if (!step1 || !step2 || !step3) return;
+	const step1 = document.getElementById(`${prefix}-step-1`);
+	const step2 = document.getElementById(`${prefix}-step-2`);
+	const step3 = document.getElementById(`${prefix}-step-3`);
+	if (!step1 || !step2 || !step3) return;
 
-    const step1Html = _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts);
-    const step2Html = _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts);
-    const step3Html = _buildFFNStep3Html(naming, h1, out_FFN, h2, ts);
+	const step1Html = _buildFFNStep1Html(naming, h1, normed_h1, W1, b1, out_L1, gamma, beta, ts);
+	const step2Html = _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts);
+	const step3Html = _buildFFNStep3Html(naming, h1, out_FFN, h2, ts);
 
-    _heightLockedUpdate(step1, step1Html);
-    _heightLockedUpdate(step2, step2Html);
-    _heightLockedUpdate(step3, step3Html);
+	heightLockedMathUpdate([step1, step2, step3], [step1Html, step2Html, step3Html]);
 
-    _renderTemmlOnElements([step1, step2, step3]);
-    _releaseHeightLocks([step1, step2, step3]);
+	_renderTemmlOnElements([step1, step2, step3]);
+	_releaseHeightLocks([step1, step2, step3]);
 }
 
 /**
@@ -4764,17 +4758,6 @@ function _traj_ec3d_landmark_series(embSnap, snapVocab) {
     };
 }
 
-// ─── Trajectory line for one token ───────────────────────────
-
-function _traj_ec3d_line_series(tokenLabel, color, dataPoints, tIdx) {
-    return {
-        name: tokenLabel,
-        type: 'line3D',
-        data: dataPoints.map(p => p.data[tIdx].slice(0, 3)),
-        lineStyle: { width: 4, color: color, opacity: 0.85 }
-    };
-}
-
 // ─── Step markers (hover, start/end emphasis) for one token ──
 
 function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, embSnap, snapVocab) {
@@ -6201,7 +6184,7 @@ function _render_h1_logic_core(containerIds, h0, normH0, multiHeadOutput, gamma,
 	const finalContainer = document.getElementById(containerIds.final);
 	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
 
-	const projectedMHA = projectMHAOutput(multiHeadOutput, WO);
+	const projectedMHA = matMul(multiHeadOutput, WO);
 	const h1 = matAdd(h0, projectedMHA);
 
 	const hash = computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, beta);
@@ -6240,15 +6223,6 @@ function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO,
 }
 
 /**
- * Projects the concatenated multi-head output through W^O.
- */
-function projectMHAOutput(multiHeadOutput, WO) {
-	return multiHeadOutput.map(row =>
-		WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
-	);
-}
-
-/**
  * Computes a display-level hash of all matrices involved in h1 rendering.
  * Only triggers re-render when visible output would actually change.
  */
@@ -6262,47 +6236,6 @@ function computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, bet
 		flattenDisplay(gamma),
 		flattenDisplay(beta)
 	].join('|');
-}
-
-/**
- * Builds the HTML for the Pre-Layer Normalization section of h1.
- */
-function buildH1NormHtml(h0, normH0, gamma, beta, ts) {
-	return `
-    <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
-
-    <div style="margin-bottom:15px;">
-    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
-    $$ \\text{LayerNorm}(h_0) = \\underbrace{\\gamma}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
-    <div style="overflow-x:auto; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
-    <br>
-    </div>
-    </div>
-    `;
-}
-
-/**
- * Builds the HTML for the output projection + residual connection section of h1.
- */
-function buildH1FinalHtml(h0, projectedMHA, multiHeadOutput, h1, WO, ts) {
-	return `
-    <div style="margin-bottom:15px;">
-    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
-    $$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
-    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O} $$
-    </div>
-    </div>
-
-    <div style="margin-bottom:10px;">
-    <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
-    $$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
-    </div>
-    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}} $$
-    </div>
-    `;
 }
 
 function matrixToPmatrixLabeled(matrix, tokenStrings, stageLabel) {
