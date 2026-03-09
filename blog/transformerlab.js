@@ -3305,7 +3305,41 @@ function render_vector_field_2d(plotDiv, id, layerNum, d_model, n_heads) {
 }
 
 function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
-    // 1. Determine bounding box from the current embedding space
+    // 1. Compute bounding box from embeddings
+    const bounds = _vf3d_compute_bounds();
+
+    // 2. Sample grid points and run forward passes
+    const gridRes = 6;
+    const layerWeights = window.currentWeights[layerNum - 1];
+    const { points, maxMag } = _vf3d_sample_grid(bounds, gridRes, layerWeights, d_model, n_heads);
+
+    // 3. Compute maximum visual arrow length
+    const maxArrowLen = _vf3d_max_arrow_length(bounds, gridRes);
+
+    // 4. Build arrow traces (line tails + cone heads)
+    const arrowTraces = _vf3d_build_arrow_traces(points, maxMag, maxArrowLen);
+
+    // 5. Build vocabulary landmark traces
+    const vocabTraces = _vf3d_build_vocab_landmarks();
+
+    // 6. Build invisible colorbar reference trace
+    const colorbarTrace = _vf3d_build_colorbar_trace(maxMag);
+
+    // 7. Assemble all traces
+    const traces = [...arrowTraces, ...vocabTraces, colorbarTrace];
+
+    // 8. Build layout
+    const layout = _vf3d_build_layout(layerNum);
+
+    // 9. Render
+    Plotly.react(id, traces, layout, { responsive: true });
+}
+
+/**
+ * Computes the 3D bounding box from the current embedding space, with padding.
+ * @returns {{ xMin, xMax, yMin, yMax, zMin, zMax }}
+ */
+function _vf3d_compute_bounds() {
     const allVecs = Object.values(window.persistentEmbeddingSpace);
     let xMin = Infinity, xMax = -Infinity;
     let yMin = Infinity, yMax = -Infinity;
@@ -3329,15 +3363,19 @@ function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
     if (zMin === zMax) { zMin -= 1; zMax += 1; }
 
     const pad = 2;
-    xMin -= pad; xMax += pad;
-    yMin -= pad; yMax += pad;
-    zMin -= pad; zMax += pad;
+    return {
+        xMin: xMin - pad, xMax: xMax + pad,
+        yMin: yMin - pad, yMax: yMax + pad,
+        zMin: zMin - pad, zMax: zMax + pad
+    };
+}
 
-    // 2. Sample a grid of points in 3D space
-    const gridRes = 6;
-    const layerWeights = window.currentWeights[layerNum - 1];
-
-    // First pass: collect all points and find maxMag
+/**
+ * Samples a 3D grid of points, runs a forward pass at each, and records displacement.
+ * @returns {{ points: object[], maxMag: number }}
+ */
+function _vf3d_sample_grid(bounds, gridRes, layerWeights, d_model, n_heads) {
+    const { xMin, xMax, yMin, yMax, zMin, zMax } = bounds;
     const points = [];
     let maxMag = 0;
 
@@ -3364,39 +3402,53 @@ function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
     }
 
     if (maxMag < 1e-8) maxMag = 1e-8;
+    return { points, maxMag };
+}
 
-    // Determine maximum visual arrow length relative to grid cell size
-    const cellX = (xMax - xMin) / gridRes;
-    const cellY = (yMax - yMin) / gridRes;
-    const cellZ = (zMax - zMin) / gridRes;
-    const maxArrowLen = Math.min(cellX, cellY, cellZ) * 1.1;
+/**
+ * Computes the maximum visual arrow length based on grid cell size.
+ */
+function _vf3d_max_arrow_length(bounds, gridRes) {
+    const cellX = (bounds.xMax - bounds.xMin) / gridRes;
+    const cellY = (bounds.yMax - bounds.yMin) / gridRes;
+    const cellZ = (bounds.zMax - bounds.zMin) / gridRes;
+    return Math.min(cellX, cellY, cellZ) * 1.1;
+}
 
-    // 3. Build traces: each arrow = scatter3d line (tail) + cone (head)
+/**
+ * Interpolates a color from blue → purple → red based on normalized magnitude.
+ * @param {number} normMag - Value in [0, 1]
+ * @returns {string} CSS rgb() color string
+ */
+function _vf3d_magnitude_color(normMag) {
+    let r, g, b;
+    if (normMag < 0.5) {
+        const t = normMag * 2;
+        r = Math.round(59 + (168 - 59) * t);
+        g = Math.round(130 + (85 - 130) * t);
+        b = Math.round(246 + (247 - 246) * t);
+    } else {
+        const t = (normMag - 0.5) * 2;
+        r = Math.round(168 + (239 - 168) * t);
+        g = Math.round(85 + (68 - 85) * t);
+        b = Math.round(247 + (68 - 247) * t);
+    }
+    return `rgb(${r},${g},${b})`;
+}
+
+/**
+ * Builds scatter3d line + cone traces for all grid-point arrows.
+ */
+function _vf3d_build_arrow_traces(points, maxMag, maxArrowLen) {
     const traces = [];
 
     for (let p = 0; p < points.length; p++) {
         const pt = points[p];
         const normMag = pt.mag / maxMag;
+        const color = _vf3d_magnitude_color(normMag);
 
-        // Color: blue (low) → purple (mid) → red (high)
-        let r, g, b;
-        if (normMag < 0.5) {
-            const t = normMag * 2; // 0..1 within first half
-            r = Math.round(59 + (168 - 59) * t);
-            g = Math.round(130 + (85 - 130) * t);
-            b = Math.round(246 + (247 - 246) * t);
-        } else {
-            const t = (normMag - 0.5) * 2; // 0..1 within second half
-            r = Math.round(168 + (239 - 168) * t);
-            g = Math.round(85 + (68 - 85) * t);
-            b = Math.round(247 + (68 - 247) * t);
-        }
-        const color = `rgb(${r},${g},${b})`;
-
-        // Scale arrow length proportionally to magnitude
         const arrowLen = Math.max(maxArrowLen * 0.06, maxArrowLen * normMag);
 
-        // Unit direction
         let ux = 0, uy = 0, uz = 0;
         if (pt.mag > 1e-10) {
             ux = pt.dx / pt.mag;
@@ -3404,9 +3456,7 @@ function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
             uz = pt.dz / pt.mag;
         }
 
-        // The tail runs from the grid point to (headFraction * arrowLen) along the direction.
-        // The cone head occupies the last portion.
-        const headFraction = 0.3; // 30% of arrow length is the cone head
+        const headFraction = 0.3;
         const tailLen = arrowLen * (1 - headFraction);
         const headLen = arrowLen * headFraction;
 
@@ -3418,10 +3468,9 @@ function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
         const tipY = pt.y + uy * arrowLen;
         const tipZ = pt.z + uz * arrowLen;
 
-        // Line width scales with magnitude
         const lineWidth = 2 + normMag * 6;
 
-        // Tail line (scatter3d)
+        // Tail line
         traces.push({
             type: 'scatter3d',
             x: [pt.x, tailEndX],
@@ -3433,17 +3482,12 @@ function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
             hoverinfo: 'skip'
         });
 
-        // Cone head at the tip — sizeref scales with magnitude
-        // The cone u/v/w gives direction; sizeref controls visual size
+        // Cone head
         const coneSize = Math.max(0.05, headLen);
         traces.push({
             type: 'cone',
-            x: [tipX],
-            y: [tipY],
-            z: [tipZ],
-            u: [ux],
-            v: [uy],
-            w: [uz],
+            x: [tipX], y: [tipY], z: [tipZ],
+            u: [ux], v: [uy], w: [uz],
             sizemode: 'absolute',
             sizeref: coneSize,
             anchor: 'tip',
@@ -3457,7 +3501,13 @@ function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
         });
     }
 
-    // 4. Vocabulary embedding landmarks — diamond markers with labels
+    return traces;
+}
+
+/**
+ * Builds scatter3d marker + text traces for vocabulary embedding landmarks.
+ */
+function _vf3d_build_vocab_landmarks() {
     const vocabX = [], vocabY = [], vocabZ = [], vocabText = [];
     Object.entries(window.persistentEmbeddingSpace).forEach(([word, vec]) => {
         vocabX.push(vec[0]);
@@ -3466,43 +3516,40 @@ function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
         vocabText.push(word);
     });
 
-    traces.push({
-        type: 'scatter3d',
-        x: vocabX,
-        y: vocabY,
-        z: vocabZ,
-        mode: 'markers',
-        marker: {
-            size: 6,
-            symbol: 'diamond',
-            color: 'rgba(71, 85, 105, 0.9)',
-            line: { width: 1, color: '#000' }
+    return [
+        {
+            type: 'scatter3d',
+            x: vocabX, y: vocabY, z: vocabZ,
+            mode: 'markers',
+            marker: {
+                size: 6, symbol: 'diamond',
+                color: 'rgba(71, 85, 105, 0.9)',
+                line: { width: 1, color: '#000' }
+            },
+            text: vocabText,
+            hovertemplate: '<b>%{text}</b><br>(%{x:.3f}, %{y:.3f}, %{z:.3f})<extra></extra>',
+            name: 'Vocab Embeddings',
+            showlegend: true
         },
-        text: vocabText,
-        hovertemplate: '<b>%{text}</b><br>(%{x:.3f}, %{y:.3f}, %{z:.3f})<extra></extra>',
-        name: 'Vocab Embeddings',
-        showlegend: true
-    });
+        {
+            type: 'scatter3d',
+            x: vocabX, y: vocabY,
+            z: vocabZ.map(z => z + 0.03 * (Math.max(...vocabZ) - Math.min(...vocabZ) || 1)),
+            mode: 'text',
+            text: vocabText,
+            textposition: 'top center',
+            textfont: { size: 11, color: '#1e293b', family: 'Inter, sans-serif' },
+            hoverinfo: 'skip',
+            showlegend: false
+        }
+    ];
+}
 
-    traces.push({
-        type: 'scatter3d',
-        x: vocabX,
-        y: vocabY,
-        z: vocabZ.map(z => z + (zMax - zMin) * 0.03),
-        mode: 'text',
-        text: vocabText,
-        textposition: 'top center',
-        textfont: {
-            size: 11,
-            color: '#1e293b',
-            family: 'Inter, sans-serif'
-        },
-        hoverinfo: 'skip',
-        showlegend: false
-    });
-
-    // 5. Invisible trace for the global colorbar
-    traces.push({
+/**
+ * Builds the invisible scatter3d trace that provides the global colorbar.
+ */
+function _vf3d_build_colorbar_trace(maxMag) {
+    return {
         type: 'scatter3d',
         x: [null], y: [null], z: [null],
         mode: 'markers',
@@ -3512,66 +3559,48 @@ function render_vector_field_3d(plotDiv, id, layerNum, d_model, n_heads) {
                 [0.5, 'rgb(168,85,247)'],
                 [1, 'rgb(239,68,68)']
             ],
-            cmin: 0,
-            cmax: maxMag,
+            cmin: 0, cmax: maxMag,
             color: [0, maxMag],
             showscale: true,
-            colorbar: {
-                title: '|Δh|',
-                thickness: 15,
-                len: 0.7,
-                x: 1.02
-            }
+            colorbar: { title: '|Δh|', thickness: 15, len: 0.7, x: 1.02 }
         },
         showlegend: false,
         hoverinfo: 'none'
-    });
+    };
+}
 
-    // 6. Layout
-    const layout = {
+/**
+ * Builds the Plotly layout for the 3D vector field.
+ */
+function _vf3d_build_layout(layerNum) {
+    const axisStyle = {
+        backgroundcolor: '#f9fafb',
+        showgrid: true,
+        gridcolor: '#e2e8f0'
+    };
+
+    return {
         title: {
             text: `Layer ${layerNum}: 3D Vector Field`,
             font: { size: 15, color: '#1e293b' }
         },
         scene: {
-            xaxis: {
-                title: 'Dim 0',
-                backgroundcolor: '#f9fafb',
-                showgrid: true,
-                gridcolor: '#e2e8f0'
-            },
-            yaxis: {
-                title: 'Dim 1',
-                backgroundcolor: '#f9fafb',
-                showgrid: true,
-                gridcolor: '#e2e8f0'
-            },
-            zaxis: {
-                title: 'Dim 2',
-                backgroundcolor: '#f9fafb',
-                showgrid: true,
-                gridcolor: '#e2e8f0'
-            },
-            camera: {
-                eye: { x: 1.6, y: 1.6, z: 1.2 }
-            },
+            xaxis: { title: 'Dim 0', ...axisStyle },
+            yaxis: { title: 'Dim 1', ...axisStyle },
+            zaxis: { title: 'Dim 2', ...axisStyle },
+            camera: { eye: { x: 1.6, y: 1.6, z: 1.2 } },
             aspectmode: 'cube'
         },
         margin: { t: 50, b: 10, l: 10, r: 80 },
         showlegend: true,
         legend: {
-            x: 0.01,
-            y: 0.99,
+            x: 0.01, y: 0.99,
             bgcolor: 'rgba(255,255,255,0.8)',
-            bordercolor: '#e2e8f0',
-            borderwidth: 1,
+            bordercolor: '#e2e8f0', borderwidth: 1,
             font: { size: 11 }
         },
         hovermode: 'closest'
     };
-
-    // 7. Render
-    Plotly.react(id, traces, layout, { responsive: true });
 }
 
 function render_migration_vector_field(id, layerNum, d_model, tokenStrings) {
