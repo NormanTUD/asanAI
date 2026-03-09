@@ -45,6 +45,22 @@ window.tlab_trajectory_data = {
 	steps: []
 };
 
+function _resetParamBreakdownState(nrDiv, toggleDiv, chartDiv) {
+	if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
+	if (toggleDiv) toggleDiv.style.display = 'none';
+	if (chartDiv) chartDiv.style.display = 'none';
+
+	if (window._paramBreakdownOpen) {
+		window._paramBreakdownOpen = false;
+		window._paramBreakdownRendered = false;
+		const btn = document.getElementById('param-breakdown-btn');
+		if (btn) {
+			btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> Show Parameter Breakdown`;
+		}
+		paramBreakdownObserver.unobserve(chartDiv);
+	}
+}
+
 function buildTrajectoryHoverText(tokenLabel, tIdx, fromStage, toStage, hVec, embSnap, snapVocab) {
 	const logitWord = _traj_get_logit_word(hVec, embSnap, snapVocab);
 	return `Token: ${tokenLabel} (pos ${tIdx + 1})<br>` +
@@ -474,20 +490,7 @@ function show_nr_of_params() {
 	const chartDiv = document.getElementById('param-breakdown-chart');
 
 	if (!weights || weights.length === 0) {
-		if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
-		if (toggleDiv) toggleDiv.style.display = 'none';
-		if (chartDiv) chartDiv.style.display = 'none';
-
-		// *** FIX: Reset the toggle state so it doesn't get out of sync ***
-		if (window._paramBreakdownOpen) {
-			window._paramBreakdownOpen = false;
-			window._paramBreakdownRendered = false;
-			const btn = document.getElementById('param-breakdown-btn');
-			if (btn) {
-				btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> Show Parameter Breakdown`;
-			}
-			paramBreakdownObserver.unobserve(chartDiv);
-		}
+		_resetParamBreakdownState(nrDiv, toggleDiv, chartDiv);
 		return;
 	}
 
@@ -502,20 +505,7 @@ function show_nr_of_params() {
 	const nr_params = internalParams + embeddingParams;
 
 	if (!nr_params) {
-		if (nrDiv) { nrDiv.innerHTML = ''; nrDiv.style.display = 'none'; }
-		if (toggleDiv) toggleDiv.style.display = 'none';
-		if (chartDiv) chartDiv.style.display = 'none';
-
-		// *** FIX: Same reset here for the zero-params case ***
-		if (window._paramBreakdownOpen) {
-			window._paramBreakdownOpen = false;
-			window._paramBreakdownRendered = false;
-			const btn = document.getElementById('param-breakdown-btn');
-			if (btn) {
-				btn.innerHTML = `<span id="param-breakdown-arrow" style="transition: transform 0.2s; transform: rotate(0deg);">▶</span> Show Parameter Breakdown`;
-			}
-			paramBreakdownObserver.unobserve(chartDiv);
-		}
+		_resetParamBreakdownState(nrDiv, toggleDiv, chartDiv);
 		return;
 	}
 
