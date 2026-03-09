@@ -1743,57 +1743,6 @@ async function convert_tensors_to_weights(vars) {
 	return newWeights;
 }
 
-function calculate_corpus_loss(tokens, weights, d_model, n_layers) {
-	const maxStart = Math.max(1, tokens.length - getContextSize());
-	const startIdx = Math.floor(Math.random() * maxStart);
-	const endIdx = Math.min(startIdx + getContextSize(), tokens.length - 1);
-
-	const contextTokens = tokens.slice(startIdx, endIdx);
-	const targetToken = tokens[endIdx]; // The token coming AFTER the context
-
-	const { n_heads: n_heads_local } = getTransformerConfig();
-	let h = runSimpleForwardPass(contextTokens, weights, d_model, n_heads_local, n_layers);
-
-	const h_final = h[h.length - 1]; // Last token's hidden state
-
-	// 2. Project to Vocabulary (Logits)
-	const vocab = [...new Set(tokens)];
-
-	// ✅ FIX: Use the actual learned embeddings (weight tying) instead of
-	// hash-based fake projection weights. This matches how calculate_tf_loss
-	// computes logits:
-	//     logits = tf.matMul(x, vars.embeddings.transpose())
-	// and how render_final_projection does it:
-	//     W_vocab = vocabulary.map(word => persistentEmbeddingSpace[word])
-	let maxLogit = -Infinity;
-	const logits = vocab.map(word => {
-		const w_row = (window.persistentEmbeddingSpace && window.persistentEmbeddingSpace[word])
-			? window.persistentEmbeddingSpace[word]
-			: new Array(d_model).fill(0);
-
-		const val = h_final.reduce((sum, v, i) => sum + v * w_row[i], 0);
-		if (val > maxLogit) maxLogit = val;
-		return { word, val };
-	});
-
-	// 3. Softmax & Loss
-	// P(target) = exp(target_logit) / sum(exp(logits))
-	// Loss = -log(P(target)) = -target_logit + log(sum(exp(logits)))
-
-	const targetLogitObj = logits.find(x => x.word === targetToken);
-	if (!targetLogitObj) return 10; // High loss if something broke
-
-	let sumExp = 0;
-	logits.forEach(l => {
-		sumExp += Math.exp(l.val - maxLogit); // stability shift
-	});
-
-	const logSumExp = maxLogit + Math.log(sumExp);
-	const loss = -targetLogitObj.val + logSumExp;
-
-	return Math.max(0, loss); // ensure non-negative
-}
-
 function renderLossGraph() {
 	const trace = {
 		x: Array.from({length: window.lossHistory.length}, (_, i) => i),
@@ -2983,14 +2932,6 @@ function tokenizeText(text, type) {
         });
     }
     return text.match(/[\w]+|[^\w\s]/g) || [];
-}
-
-/**
- * Generates a stable hash-based hue for a token string.
- */
-function getTokenHue(token) {
-    const hash = token.split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
-    return Math.abs(hash) % 360;
 }
 
 /**
@@ -4321,34 +4262,6 @@ function renderMigrationHighDim(id, plotDiv, tokens, start_h, end_h, layerNum, d
 }
 
 /**
- * Dispatches vector field computation and trace building for 2D or 3D.
- * Returns an array of Plotly traces (empty if nothing could be computed).
- */
-function computeVectorFieldTraces(id, layerNum, d_model) {
-    const { n_heads } = getTransformerConfig();
-
-    if (d_model === 2) {
-        const computed = _compute_vector_field_points_2d(id, layerNum, d_model, n_heads);
-        if (computed) {
-            return _build_vector_field_traces_2d(
-                computed.points, computed.maxMag, computed.maxArrowLen,
-                computed.seqLen, computed.substitutePos
-            );
-        }
-    } else if (d_model === 3) {
-        const computed = _compute_vector_field_points_3d(id, layerNum, d_model, n_heads);
-        if (computed) {
-            return _build_vector_field_traces_3d(
-                computed.points, computed.maxMag, computed.maxArrowLen,
-                computed.seqLen, computed.substitutePos
-            );
-        }
-    }
-
-    return [];
-}
-
-/**
  * Synchronizes the vector field toggle button's DOM state
  * to match the authoritative registry value.
  */
@@ -4546,116 +4459,6 @@ function _vf_substitute_context_3d(realContext, substitutePos, x, y, z) {
     });
 }
 
-/**
- * Builds a single token's migration traces (line + arrowhead).
- */
-function buildMigrationTokenTrace(token, i, start_h, end_h, d_model, is3D, tokens) {
-    const posColor = getPositionColor(i, tokens.length);
-    const sourceWord = tlab_get_top_word_only(start_h[i]);
-    const destWord = tlab_get_top_word_only(end_h[i]);
-    const hoverLabel = `From '${sourceWord}' to '${destWord}', position ${i + 1}`;
-
-    const x = [start_h[i][0], end_h[i][0]];
-    const y = d_model >= 2 ? [start_h[i][1], end_h[i][1]] : [0, 0];
-
-    if (is3D) {
-        return buildMigration3DTraces(x, y, start_h[i], end_h[i], posColor, hoverLabel);
-    } else {
-        return buildMigration2DTraces(x, y, posColor, hoverLabel);
-    }
-}
-
-function buildMigration3DTraces(x, y, startVec, endVec, posColor, hoverLabel) {
-    const z = [startVec[2], endVec[2]];
-    return [
-        {
-            type: 'scatter3d',
-            x, y, z,
-            mode: 'lines',
-            line: { width: 4, color: posColor },
-            showlegend: false,
-            hovertemplate: `${hoverLabel}<extra></extra>`
-        },
-        {
-            type: 'cone',
-            x: [x[1]], y: [y[1]], z: [z[1]],
-            u: [x[1] - x[0]], v: [y[1] - y[0]], w: [z[1] - z[0]],
-            sizemode: 'absolute',
-            sizeref: 0.15,
-            anchor: 'tip',
-            colorscale: [[0, posColor], [1, posColor]],
-            showscale: false,
-            hoverinfo: 'skip',
-            showlegend: false
-        }
-    ];
-}
-
-function buildMigration2DTraces(x, y, posColor, hoverLabel) {
-    return [
-        {
-            type: 'scatter',
-            x, y,
-            mode: 'lines+markers',
-            line: { width: 2, color: posColor },
-            marker: { size: [0, 12], symbol: 'arrow', angleref: 'previous', color: posColor },
-            showlegend: false,
-            hovertemplate: `${hoverLabel}<extra></extra>`
-        }
-    ];
-}
-
-/**
- * Builds the invisible colorbar reference trace.
- */
-function buildMigrationColorbarTrace(is3D, tokens) {
-    const trace = {
-        type: is3D ? 'scatter3d' : 'scatter',
-        x: [null], y: [null],
-        mode: 'markers',
-        showlegend: false,
-        marker: {
-            colorscale: [[0, 'rgb(59, 130, 246)'], [1, 'rgb(16, 185, 129)']],
-            cmin: 1,
-            cmax: tokens.length,
-            color: [1, tokens.length],
-            showscale: true,
-            colorbar: { title: 'Position', thickness: 15, len: 0.7 }
-        },
-        hoverinfo: 'none'
-    };
-    if (is3D) trace.z = [null];
-    return trace;
-}
-
-/**
- * Builds the Plotly layout for migration plots.
- */
-function buildMigrationLayout(layerNum, is3D) {
-    const commonLayout = {
-        title: `Layer ${layerNum}: Feature Migration`,
-        autosize: true,
-        hovermode: 'closest',
-        margin: { t: 50, b: 20, l: 20, r: 80 }
-    };
-
-    if (is3D) {
-        return {
-            ...commonLayout,
-            scene: {
-                xaxis: { title: 'Dim 0' },
-                yaxis: { title: 'Dim 1' },
-                zaxis: { title: 'Dim 2' }
-            }
-        };
-    }
-    return {
-        ...commonLayout,
-        xaxis: { title: 'Dim 0' },
-        yaxis: { title: 'Dim 1' }
-    };
-}
-
 // ─── Helper: Snapshot embedding space and build vocabulary lookup ───
 function _traj_snapshot_embeddings() {
 	const embSnap = {};
@@ -4693,48 +4496,6 @@ function _traj_get_logit_word(hVec, embSnap, snapVocab) {
 		}
 	}
 	return bestWord;
-}
-
-// ─── Helper: Build 3D embedding landmark traces ───
-function _traj_build_embedding_landmarks_3D(embSnap, snapVocab) {
-	const xs = [], ys = [], zs = [], texts = [];
-	for (const word of snapVocab) {
-		const v = embSnap[word];
-		xs.push(v[0]);
-		ys.push(v[1] || 0);
-		zs.push(v[2] || 0);
-		texts.push(word);
-	}
-	return [
-		{
-			type: 'scatter3d',
-			x: xs, y: ys, z: zs,
-			mode: 'markers',
-			marker: {
-				size: 5,
-				symbol: 'diamond',
-				color: 'rgba(100, 116, 139, 0.8)',
-				line: { width: 1, color: '#334155' }
-			},
-			text: texts,
-			hovertemplate: '<b>Embedding: %{text}</b><extra></extra>',
-			name: 'Vocab Embeddings',
-			legendgroup: 'vocab_emb',
-			showlegend: true
-		},
-		{
-			type: 'scatter3d',
-			x: xs, y: ys, z: zs,
-			mode: 'text',
-			text: texts,
-			textposition: 'top center',
-			textfont: { size: 10, color: '#475569', family: 'Inter, sans-serif' },
-			hoverinfo: 'skip',
-			name: 'Vocab Labels',
-			legendgroup: 'vocab_emb',
-			showlegend: false
-		}
-	];
 }
 
 // ─── Helper: Build 2D embedding landmark trace ───
@@ -4959,95 +4720,6 @@ function _traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_mo
     pairs.forEach(([dimA, dimB]) => {
         _traj_render_single_slice(grid, tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab);
     });
-}
-
-function _traj_build_3d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab) {
-    const traces = [];
-
-    _traj_build_embedding_landmarks_3D(embSnap, snapVocab).forEach(t => traces.push(t));
-
-    tokens.forEach((token, tIdx) => {
-        const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
-        if (!hasDataInAllSteps) return;
-
-        const x = dataPoints.map(p => p.data[tIdx][0]);
-        const y = dataPoints.map(p => p.data[tIdx][1]);
-        const z = dataPoints.map(p => p.data[tIdx][2]);
-        const tColor = getPositionColor(tIdx, tokens.length);
-        const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
-
-        // ← Uses extracted function
-        const hoverTexts = dataPoints.map((p, pIdx) => {
-            const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
-            return buildTrajectoryHoverText(labels[tIdx], tIdx, fromStage, p.name, p.data[tIdx], embSnap, snapVocab);
-        });
-
-        traces.push({
-            type: 'scatter3d',
-            x, y, z,
-            mode: 'lines',
-            name: tokenLabel,
-            legendgroup: tokenLabel,
-            line: { width: 5, color: tColor },
-            hoverinfo: 'text',
-            hovertemplate: '%{text}<extra></extra>',
-            text: hoverTexts
-        });
-
-        for (let i = 0; i < x.length - 1; i++) {
-            // ← Uses extracted function
-            const coneHoverText = buildTrajectoryHoverText(
-                labels[tIdx], tIdx, dataPoints[i].name, dataPoints[i + 1].name,
-                dataPoints[i + 1].data[tIdx], embSnap, snapVocab
-            );
-
-            traces.push({
-                type: 'cone',
-                x: [x[i + 1]], y: [y[i + 1]], z: [z[i + 1]],
-                u: [x[i + 1] - x[i]], v: [y[i + 1] - y[i]], w: [z[i + 1] - z[i]],
-                sizemode: 'absolute', sizeref: 0.15, anchor: 'tip',
-                colorscale: [[0, tColor], [1, tColor]], showscale: false,
-                hoverinfo: 'text',
-                text: [coneHoverText],
-                hovertemplate: '%{text}<extra></extra>',
-                legendgroup: tokenLabel,
-                showlegend: false
-            });
-        }
-
-        // Start marker
-        const startLogit = _traj_get_logit_word(dataPoints[0].data[tIdx], embSnap, snapVocab);
-        traces.push({
-            type: 'scatter3d',
-            x: [x[0]], y: [y[0]], z: [z[0]],
-            mode: 'markers',
-            marker: { size: 6, symbol: 'circle', color: tColor,
-                line: { width: 1, color: '#000' } },
-            legendgroup: tokenLabel,
-            showlegend: false,
-            hoverinfo: 'text',
-            hovertemplate: '%{text}<extra></extra>',
-            text: [`Token: ${labels[tIdx]} — Start<br>Stage: ${dataPoints[0].name}<br>Nearest logit: <b>${startLogit}</b>`]
-        });
-
-        // End marker
-        const endIdx = dataPoints.length - 1;
-        const endLogit = _traj_get_logit_word(dataPoints[endIdx].data[tIdx], embSnap, snapVocab);
-        traces.push({
-            type: 'scatter3d',
-            x: [x[x.length - 1]], y: [y[y.length - 1]], z: [z[z.length - 1]],
-            mode: 'text',
-            text: ['☖'],
-            textposition: 'middle center',
-            textfont: { size: 18, color: tColor, family: 'Arial, sans-serif' },
-            legendgroup: tokenLabel,
-            showlegend: false,
-            hoverinfo: 'text',
-            hovertemplate: `Token: ${labels[tIdx]} — End<br>Stage: ${dataPoints[endIdx].name}<br>Nearest logit: <b>${endLogit}</b><extra></extra>`
-        });
-    });
-
-    return traces;
 }
 
 function _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab) {
@@ -5373,18 +5045,6 @@ function tlab_render_trajectory_plot(d_model) {
 }
 
 /**
- * Builds a colored pmatrix LaTeX string from a numeric matrix.
- */
-function toColoredPMatrix(matrix) {
-    if (!Array.isArray(matrix) || !matrix.length) return '';
-    const rows = matrix.map((row, tIdx) => {
-        const colorCmd = getPositionColor(tIdx, matrix.length, 'temml');
-        return row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
-    }).join(' \\\\ ');
-    return `\\begin{pmatrix} ${rows} \\end{pmatrix}`;
-}
-
-/**
  * Builds the vocabulary probability transition rows for the LaTeX display.
  */
 function buildVocabTransitionRows(tokens, start_h, end_h, d_model) {
@@ -5691,14 +5351,6 @@ function renderShiftECharts(container, echartsData, d_model) {
         }]
     });
     myChart.resize();
-}
-
-function calculate_batched_loss(tokens, weights, d_model, n_layers, batchSize = 5) {
-	let totalLoss = 0;
-	for(let i = 0; i < batchSize; i++) {
-		totalLoss += calculate_corpus_loss(tokens, weights, d_model, n_layers);
-	}
-	return totalLoss / batchSize;
 }
 
 function tf_layer_norm(x, gamma, beta) {
@@ -6823,55 +6475,6 @@ function buildH1FinalHtml(h0, projectedMHA, multiHeadOutput, h1, WO, ts) {
     $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}} $$
     </div>
     `;
-}
-
-function preserveScrollPositions(container, mutationFn) {
-	// Save the global vertical scroll position
-	const savedPageScrollY = window.scrollY;
-	const savedPageScrollX = window.scrollX;
-
-	// Cancel any pending minHeight release from a previous call
-	if (container._heightUnlockRafId) {
-		cancelAnimationFrame(container._heightUnlockRafId);
-		container._heightUnlockRafId = null;
-	}
-
-	// Lock the container height to prevent layout collapse during mutation
-	const previousHeight = container.offsetHeight;
-	if (previousHeight > 0) {
-		container.style.minHeight = previousHeight + 'px';
-	}
-
-	// 1. Snapshot scrollLeft of every overflow-x child
-	const scrollable = container.querySelectorAll('[style*="overflow"]');
-	const saved = [];
-	scrollable.forEach((el, idx) => {
-		if (el.scrollLeft > 0 || el.scrollTop > 0) {
-			saved.push({ index: idx, scrollLeft: el.scrollLeft, scrollTop: el.scrollTop });
-		}
-	});
-
-	// 2. Execute the DOM mutation (innerHTML replacement, etc.)
-	mutationFn();
-
-	// Immediately restore page scroll (before browser paints)
-	window.scrollTo(savedPageScrollX, savedPageScrollY);
-
-	// 3. Restore scroll positions on the new elements at the same indices
-	if (saved.length > 0) {
-		requestAnimationFrame(() => {
-			const newScrollable = container.querySelectorAll('[style*="overflow"]');
-			saved.forEach(({ index, scrollLeft, scrollTop }) => {
-				if (newScrollable[index]) {
-					newScrollable[index].scrollLeft = scrollLeft;
-					newScrollable[index].scrollTop = scrollTop;
-				}
-			});
-		});
-	}
-
-	// NOTE: minHeight is NOT released here.
-	// The caller must call _releaseHeightLocks([container]) after post-processing.
 }
 
 function matrixToPmatrixLabeled(matrix, tokenStrings, stageLabel) {
