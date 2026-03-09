@@ -1973,6 +1973,110 @@ function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_m
 }
 
 /**
+ * Per-layer version of render_h1_logic.
+ * Renders the LayerNorm + output projection + residual connection
+ * into the unified layer tab containers instead of the global ones.
+ *
+ * @param {number[][]} h0             - Input to this sub-block (pre-attention hidden state)
+ * @param {number[][]} normH0         - LayerNorm(h0)
+ * @param {number[][]} multiHeadOutput - Concatenated head contexts
+ * @param {number[]}   gamma          - LayerNorm scale parameter
+ * @param {number[]}   beta           - LayerNorm shift parameter
+ * @param {number[][]} WO             - Output projection matrix
+ * @param {number}     layerIndex     - Zero-based layer index
+ * @param {string[]}   tokenStrings   - Token labels for matrix row annotations
+ */
+function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO, layerIndex, tokenStrings) {
+    const prefix = `unified-layer-${layerIndex}`;
+    const normContainer = document.getElementById(`${prefix}-layernorm-viz`);
+    const finalContainer = document.getElementById(`${prefix}-h1-final-viz`);
+    if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
+
+    const projectedMHA = projectMHAOutput(multiHeadOutput, WO);
+    const h1 = matAdd(h0, projectedMHA);
+
+    const hash = computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, beta);
+    if (normContainer._lastHash === hash && finalContainer._lastHash === hash) {
+        return h1;
+    }
+    normContainer._lastHash = hash;
+    finalContainer._lastHash = hash;
+
+    const ts = tokenStrings || null;
+    const naming = _h1NamingForLayer(layerIndex);
+
+    const normHtml = buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming);
+    const finalHtml = buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts, naming);
+
+    _heightLockedUpdate(normContainer, normHtml);
+    _heightLockedUpdate(finalContainer, finalHtml);
+    _renderTemmlOnElements([normContainer, finalContainer]);
+    _releaseHeightLocks([normContainer, finalContainer]);
+
+    return h1;
+}
+
+/**
+ * Derives LaTeX naming conventions for the h1 display of a given layer.
+ */
+function _h1NamingForLayer(layerIndex) {
+    const L = layerIndex + 1;
+    const sup = `^{(${L})}`;
+    const base = layerIndex * 2;
+    const hInName = `h_{${base}}`;
+    const hOutName = `h_{${base + 1}}`;
+    const hInStage = layerIndex === 0
+        ? 'embedding + PE'
+        : `out layer ${layerIndex}`;
+    return { L, sup, hInName, hOutName, hInStage };
+}
+
+/**
+ * Builds the Pre-Layer Normalization HTML for a specific layer's h1 section.
+ */
+function buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming) {
+    const { sup, hInName, hInStage } = naming;
+
+    return `
+    <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
+
+    <div style="margin-bottom:15px;">
+    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $${hInName}${sup}$ before attention:</p>
+    $$ \\text{LayerNorm}(${hInName}${sup}) = \\underbrace{\\gamma${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{${hInName}${sup} - \\underbrace{\\mu}_{\\text{Mean of } ${hInName}${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } ${hInName}${sup}}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
+    <div style="overflow-x:auto; padding-bottom: 10px">
+    $$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts, 'after LN')}}_{\\text{LayerNorm}\\left(${hInName}${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts, hInStage)}}_{${hInName}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
+    <br>
+    </div>
+    </div>
+    `;
+}
+
+/**
+ * Builds the output projection + residual connection HTML for a specific layer's h1 section.
+ */
+function buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts, naming) {
+    const { sup, hInName, hOutName, hInStage } = naming;
+
+    return `
+    <div style="margin-bottom:15px;">
+    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O{${sup}}$ mixes head outputs:</p>
+    $$ \\text{MHA}_{\\text{proj}}${sup} = \\text{Concat}(\\text{Heads}) \\cdot W^O{${sup}} $$
+    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
+    $$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after W^O proj')}}_{\\text{MHA}_\\text{proj}${sup}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts, 'concat heads')}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O{${sup}}} $$
+    </div>
+    </div>
+
+    <div style="margin-bottom:10px;">
+    <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
+    $$ ${hOutName}${sup} = ${hInName}${sup} + \\text{MHA}_{\\text{proj}}${sup} $$
+    </div>
+    <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
+    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts, 'after attn residual')}}_{${hOutName}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts, hInStage)}}_{${hInName}${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after W^O proj')}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
+    </div>
+    `;
+}
+
+/**
  * Triggers the detailed attention rendering and path visualization
  * for the MHA calculation details container.
  */
@@ -7286,87 +7390,106 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStri
 	return h1;
 }
 
-function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO, layerIndex, tokenStrings) {
-	const prefix = `unified-layer-${layerIndex}`;
-	const normContainer = document.getElementById(`${prefix}-layernorm-viz`);
-	const finalContainer = document.getElementById(`${prefix}-h1-final-viz`);
-	if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
+function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings) {
+    const normContainer = document.getElementById('transformer-h1-layernorm-viz');
+    const finalContainer = document.getElementById('transformer-h1-final-viz');
+    if (!normContainer || !finalContainer || !gamma || !beta || !WO) return;
 
-	const projectedMHA = multiHeadOutput.map(row =>
-		WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
-	);
+    const projectedMHA = projectMHAOutput(multiHeadOutput, WO);
+    const h1 = matAdd(h0, projectedMHA);
 
-	const h1 = matAdd(h0, projectedMHA);
+    const hash = computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, beta);
+    if (normContainer._lastHash === hash && finalContainer._lastHash === hash) {
+        return h1;
+    }
+    normContainer._lastHash = hash;
+    finalContainer._lastHash = hash;
 
-	const flattenDisplay = (mat) => {
-		if (!mat || !mat.length) return '';
-		return mat.map(row =>
-			Array.isArray(row)
-			? row.map(v => v.toFixed(nr_fixed)).join(',')
-			: row.toFixed(nr_fixed)
-		).join(';');
-	};
-	const hash = [
-		flattenDisplay(h0), flattenDisplay(normH0),
-		flattenDisplay(multiHeadOutput), flattenDisplay(projectedMHA),
-		flattenDisplay(h1), flattenDisplay(gamma), flattenDisplay(beta)
-	].join('|');
+    const ts = tokenStrings || null;
 
-	if (normContainer._lastHash === hash && finalContainer._lastHash === hash) {
-		return h1;
-	}
-	normContainer._lastHash = hash;
-	finalContainer._lastHash = hash;
+    const normHtml = buildH1NormHtml(h0, normH0, gamma, beta, ts);
+    const finalHtml = buildH1FinalHtml(h0, projectedMHA, multiHeadOutput, h1, WO, ts);
 
+    _heightLockedUpdate(normContainer, normHtml);
+    _heightLockedUpdate(finalContainer, finalHtml);
+    _renderTemmlOnElements([normContainer, finalContainer]);
+    _releaseHeightLocks([normContainer, finalContainer]);
 
-	const L = layerIndex + 1;
-	const sup = `^{(${L})}`;
-	const base = layerIndex * 2;
-	const h0name = `h_{${base}}`;
-	const h1name = `h_{${base + 1}}`;
-	const ts = tokenStrings || null;
+    return h1;
+}
 
-	// Stage labels
-	const h0Stage = layerIndex === 0 
-		? 'emb + PE' 
-		: `out layer ${layerIndex}`;
+/**
+ * Projects the concatenated multi-head output through W^O.
+ */
+function projectMHAOutput(multiHeadOutput, WO) {
+    return multiHeadOutput.map(row =>
+        WO[0].map((_, i) => row.reduce((acc, _, j) => acc + row[j] * WO[j][i], 0))
+    );
+}
 
-	const normHtml = `
-    <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization — Layer ${L}</p>
+/**
+ * Computes a display-level hash of all matrices involved in h1 rendering.
+ * Only triggers re-render when visible output would actually change.
+ */
+function computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, beta) {
+    const flattenDisplay = (mat) => {
+        if (!mat || !mat.length) return '';
+        return mat.map(row =>
+            Array.isArray(row)
+                ? row.map(v => v.toFixed(nr_fixed)).join(',')
+                : row.toFixed(nr_fixed)
+        ).join(';');
+    };
+    return [
+        flattenDisplay(h0),
+        flattenDisplay(normH0),
+        flattenDisplay(multiHeadOutput),
+        flattenDisplay(projectedMHA),
+        flattenDisplay(h1),
+        flattenDisplay(gamma),
+        flattenDisplay(beta)
+    ].join('|');
+}
+
+/**
+ * Builds the HTML for the Pre-Layer Normalization section of h1.
+ */
+function buildH1NormHtml(h0, normH0, gamma, beta, ts) {
+    return `
+    <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
+
     <div style="margin-bottom:15px;">
-    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $${h0name}${sup}$ before attention:</p>
-    $$ \\text{LayerNorm}(${h0name}${sup}) = \\gamma${sup} \\odot \\frac{${h0name}${sup} - \\mu}{\\sqrt{\\sigma^2 + \\epsilon}} + \\beta${sup} $$
+    <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $h_0$ before attention:</p>
+    $$ \\text{LayerNorm}(h_0) = \\underbrace{\\gamma}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{h_0 - \\underbrace{\\mu}_{\\text{Mean of } h_0}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } h_0}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
     <div style="overflow-x:auto; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts, 'after LN₁')}}_{\\text{LayerNorm}(${h0name}${sup})} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts, h0Stage)}}_{${h0name}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts)}}_{\\text{LayerNorm}\\left(h_0\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0},\\; \\underbrace{${vecToPmatrix(gamma)}}_\\gamma,\\; \\underbrace{${vecToPmatrix(beta)}}_\\beta\\right) $$
+    <br>
     </div>
-    </div>`;
+    </div>
+    `;
+}
 
-	const finalHtml = `
+/**
+ * Builds the HTML for the output projection + residual connection section of h1.
+ */
+function buildH1FinalHtml(h0, projectedMHA, multiHeadOutput, h1, WO, ts) {
+    return `
     <div style="margin-bottom:15px;">
     <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O$ mixes head outputs:</p>
+    $$ \\text{MHA}_{\\text{proj}} = \\text{Concat}(\\text{Heads}) \\cdot W^O $$
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after W^O proj')}}_{\\text{MHA}_\\text{proj}${sup}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts, 'after concat')}}_{\\text{Concat}(\\text{Heads})${sup}} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{{W^O}${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_\\text{proj}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts)}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O} $$
     </div>
     </div>
+
     <div style="margin-bottom:10px;">
-    <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection:</p>
-    $$ ${h1name}${sup} = ${h0name}${sup} + \\text{MHA}_{\\text{proj}}${sup} $$
+    <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
+    $$ h_1 = h_0 + \\text{MHA}_{\\text{proj}} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts, 'after attn residual')}}_{${h1name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts, h0Stage)}}_{${h0name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after W^O proj')}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
-    </div>`;
-
-	// Step 1: Lock height and swap HTML (frozen at old height)
-	_heightLockedUpdate(normContainer, normHtml);
-	_heightLockedUpdate(finalContainer, finalHtml);
-
-	// Step 2: Render temml (content reaches final height, but container is frozen)
-	_renderTemmlOnElements([normContainer, finalContainer]);
-
-	// Step 3: Release locks (container snaps to new natural height)
-	_releaseHeightLocks([normContainer, finalContainer]);
-
-	return h1;
+    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts)}}_{h_1} = \\underbrace{${matrixToPmatrixLabeled(h0, ts)}}_{h_0} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts)}}_{\\text{MHA}_{\\text{proj}}} $$
+    </div>
+    `;
 }
 
 function preserveScrollPositions(container, mutationFn) {
