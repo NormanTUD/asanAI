@@ -5064,110 +5064,142 @@ function add_vector_field_overlay(migrationId, layerNum, d_model) {
 	Plotly.react(migrationId, allTraces, layout, { responsive: true });
 }
 
+/**
+ * Async version of the 3D vector field overlay with loading progress UI.
+ * The original synchronous helpers (_compute_vector_field_points_3d,
+ * _build_vector_field_traces_3d) handle the math; this function adds
+ * chunked async execution with a progress overlay.
+ */
 async function add_vector_field_overlay_3d(migrationId, layerNum, d_model, n_heads) {
-	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
-	if (!regData) return;
+    const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
+    if (!regData) return;
 
-	const realContext = regData.start_h;
-	const seqLen = realContext.length;
-	const substitutePos = seqLen - 1;
+    const realContext = regData.start_h;
+    const seqLen = realContext.length;
+    const substitutePos = seqLen - 1;
 
-	const allVecs = Object.values(window.persistentEmbeddingSpace);
-	let xMin = Infinity, xMax = -Infinity;
-	let yMin = Infinity, yMax = -Infinity;
-	let zMin = Infinity, zMax = -Infinity;
+    const bounds = _vf3d_overlay_compute_bounds(realContext);
+    const gridRes = 6;
+    const layerWeights = window.currentWeights[layerNum - 1];
+    const totalPoints = (gridRes + 1) ** 3;
 
-	allVecs.forEach(v => {
-		if (v[0] < xMin) xMin = v[0];
-		if (v[0] > xMax) xMax = v[0];
-		if (v.length > 1) {
-			if (v[1] < yMin) yMin = v[1];
-			if (v[1] > yMax) yMax = v[1];
-		}
-		if (v.length > 2) {
-			if (v[2] < zMin) zMin = v[2];
-			if (v[2] > zMax) zMax = v[2];
-		}
-	});
-	realContext.forEach(v => {
-		if (v[0] < xMin) xMin = v[0];
-		if (v[0] > xMax) xMax = v[0];
-		if (v.length > 1) {
-			if (v[1] < yMin) yMin = v[1];
-			if (v[1] > yMax) yMax = v[1];
-		}
-		if (v.length > 2) {
-			if (v[2] < zMin) zMin = v[2];
-			if (v[2] > zMax) zMax = v[2];
-		}
-	});
+    const wrapper = document.getElementById(migrationId)?.closest('[data-migration-wrapper]');
+    const loadingOverlay = _vf_show_loading_overlay(wrapper, totalPoints);
 
-	if (xMin === xMax) { xMin -= 1; xMax += 1; }
-	if (yMin === yMax) { yMin -= 1; yMax += 1; }
-	if (zMin === zMax) { zMin -= 1; zMax += 1; }
+    const { points, maxMag } = await _vf3d_overlay_sample_grid_async(
+        bounds, gridRes, layerWeights, d_model, n_heads,
+        realContext, substitutePos, loadingOverlay, totalPoints
+    );
 
-	const pad = 2;
-	xMin -= pad; xMax += pad;
-	yMin -= pad; yMax += pad;
-	zMin -= pad; zMax += pad;
+    const maxArrowLen = _vf3d_overlay_max_arrow_length(bounds, gridRes);
+    const newTraces = _build_vector_field_traces_3d(points, maxMag, maxArrowLen, seqLen, substitutePos);
 
-	const gridRes = 6;
-	const layerWeights = window.currentWeights[layerNum - 1];
-	const totalPoints = (gridRes + 1) * (gridRes + 1) * (gridRes + 1);
+    _vf_remove_loading_overlay(loadingOverlay);
+    Plotly.addTraces(migrationId, newTraces);
+}
 
-	const wrapper = document.getElementById(migrationId)?.closest('[data-migration-wrapper]');
-	const loadingOverlay = _vf_show_loading_overlay(wrapper, totalPoints);
+/**
+ * Computes the 3D bounding box from both embedding space and the real context vectors.
+ * Includes padding.
+ * @returns {{ xMin, xMax, yMin, yMax, zMin, zMax }}
+ */
+function _vf3d_overlay_compute_bounds(realContext) {
+    const allVecs = Object.values(window.persistentEmbeddingSpace);
+    let xMin = Infinity, xMax = -Infinity;
+    let yMin = Infinity, yMax = -Infinity;
+    let zMin = Infinity, zMax = -Infinity;
 
-	const points = [];
-	let maxMag = 0;
-	let computed = 0;
+    const updateBounds = (v) => {
+        if (v[0] < xMin) xMin = v[0];
+        if (v[0] > xMax) xMax = v[0];
+        if (v.length > 1) {
+            if (v[1] < yMin) yMin = v[1];
+            if (v[1] > yMax) yMax = v[1];
+        }
+        if (v.length > 2) {
+            if (v[2] < zMin) zMin = v[2];
+            if (v[2] > zMax) zMax = v[2];
+        }
+    };
 
-	for (let i = 0; i <= gridRes; i++) {
-		for (let j = 0; j <= gridRes; j++) {
-			for (let k = 0; k <= gridRes; k++) {
-				const x = xMin + (xMax - xMin) * (i / gridRes);
-				const y = yMin + (yMax - yMin) * (j / gridRes);
-				const z = zMin + (zMax - zMin) * (k / gridRes);
+    allVecs.forEach(updateBounds);
+    realContext.forEach(updateBounds);
 
-				const modifiedContext = realContext.map((row, idx) => {
-					if (idx === substitutePos) {
-						return [x, y, z];
-					}
-					return [...row];
-				});
+    if (xMin === xMax) { xMin -= 1; xMax += 1; }
+    if (yMin === yMax) { yMin -= 1; yMax += 1; }
+    if (zMin === zMax) { zMin -= 1; zMax += 1; }
 
-				const result = forwardOneLayer(modifiedContext, layerWeights, d_model, n_heads, null, null, null);
-				const h_out = result.h_out[substitutePos];
+    const pad = 2;
+    return {
+        xMin: xMin - pad, xMax: xMax + pad,
+        yMin: yMin - pad, yMax: yMax + pad,
+        zMin: zMin - pad, zMax: zMax + pad
+    };
+}
 
-				const dx = h_out[0] - x;
-				const dy = h_out[1] - y;
-				const dz = h_out[2] - z;
-				const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+/**
+ * Asynchronously samples a 3D grid, running a forward pass at each point.
+ * Yields to the browser every 10 points and updates the loading overlay.
+ * @returns {Promise<{ points: object[], maxMag: number }>}
+ */
+async function _vf3d_overlay_sample_grid_async(bounds, gridRes, layerWeights, d_model, n_heads, realContext, substitutePos, loadingOverlay, totalPoints) {
+    const { xMin, xMax, yMin, yMax, zMin, zMax } = bounds;
+    const points = [];
+    let maxMag = 0;
+    let computed = 0;
 
-				points.push({ x, y, z, dx, dy, dz, mag });
-				if (mag > maxMag) maxMag = mag;
+    for (let i = 0; i <= gridRes; i++) {
+        for (let j = 0; j <= gridRes; j++) {
+            for (let k = 0; k <= gridRes; k++) {
+                const x = xMin + (xMax - xMin) * (i / gridRes);
+                const y = yMin + (yMax - yMin) * (j / gridRes);
+                const z = zMin + (zMax - zMin) * (k / gridRes);
 
-				computed++;
-				_vf_update_loading_overlay(loadingOverlay, computed, totalPoints);
+                const modifiedContext = _vf_substitute_context_3d(realContext, substitutePos, x, y, z);
 
-				if (computed % 10 === 0) {
-					await new Promise(r => setTimeout(r, 0));
-				}
-			}
-		}
-	}
+                const result = forwardOneLayer(modifiedContext, layerWeights, d_model, n_heads, null, null, null);
+                const h_out = result.h_out[substitutePos];
 
-	if (maxMag < 1e-8) maxMag = 1e-8;
+                const dx = h_out[0] - x;
+                const dy = h_out[1] - y;
+                const dz = h_out[2] - z;
+                const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-	const cellX = (xMax - xMin) / gridRes;
-	const cellY = (yMax - yMin) / gridRes;
-	const cellZ = (zMax - zMin) / gridRes;
-	const maxArrowLen = Math.min(cellX, cellY, cellZ) * 1.1;
+                points.push({ x, y, z, dx, dy, dz, mag });
+                if (mag > maxMag) maxMag = mag;
 
-	const newTraces = _build_vector_field_traces_3d(points, maxMag, maxArrowLen, seqLen, substitutePos);
+                computed++;
+                _vf_update_loading_overlay(loadingOverlay, computed, totalPoints);
 
-	_vf_remove_loading_overlay(loadingOverlay);
-	Plotly.addTraces(migrationId, newTraces);
+                if (computed % 10 === 0) {
+                    await new Promise(r => setTimeout(r, 0));
+                }
+            }
+        }
+    }
+
+    if (maxMag < 1e-8) maxMag = 1e-8;
+    return { points, maxMag };
+}
+
+/**
+ * Creates a copy of the real context with one position substituted by [x, y, z].
+ */
+function _vf_substitute_context_3d(realContext, substitutePos, x, y, z) {
+    return realContext.map((row, idx) => {
+        if (idx === substitutePos) return [x, y, z];
+        return [...row];
+    });
+}
+
+/**
+ * Computes the maximum visual arrow length from the 3D grid cell size.
+ */
+function _vf3d_overlay_max_arrow_length(bounds, gridRes) {
+    const cellX = (bounds.xMax - bounds.xMin) / gridRes;
+    const cellY = (bounds.yMax - bounds.yMin) / gridRes;
+    const cellZ = (bounds.zMax - bounds.zMin) / gridRes;
+    return Math.min(cellX, cellY, cellZ) * 1.1;
 }
 
 /**
