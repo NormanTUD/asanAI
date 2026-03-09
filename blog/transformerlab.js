@@ -827,79 +827,120 @@ function buildSunburstLayout() {
  * Renders a compact HTML summary table of parameter counts.
  */
 function renderParamTable(layerBreakdowns, embeddingParams, grandTotal) {
-	const tableDiv = document.getElementById('param-breakdown-table');
-	if (!tableDiv) return;
+    const tableDiv = document.getElementById('param-breakdown-table');
+    if (!tableDiv) return;
 
-	const pct = (n) => ((n / grandTotal) * 100).toFixed(1);
-	const fmt = (n) => n.toLocaleString();
+    const fmt = (n) => n.toLocaleString();
+    const pct = (n) => ((n / grandTotal) * 100).toFixed(1);
 
-	let totalAttn = 0, totalFFN = 0, totalNorm = 0;
-	layerBreakdowns.forEach(lb => {
-		totalAttn += lb.attention.total;
-		totalFFN += lb.ffn.total;
-		totalNorm += lb.norm.total;
-	});
+    const { totalAttn, totalFFN, totalNorm } = aggregateLayerTotals(layerBreakdowns);
+    const d_model = inferDModelFromBreakdowns(layerBreakdowns);
+    const vocab = window.persistentEmbeddingSpace ? Object.keys(window.persistentEmbeddingSpace) : [];
 
-	const vocab = window.persistentEmbeddingSpace ? Object.keys(window.persistentEmbeddingSpace) : [];
-	const d_model = layerBreakdowns.length > 0 ? (layerBreakdowns[0].norm.pre_attn / 2) : 0;
+    let html = buildParamTableHeader();
+    html += buildEmbeddingRow(embeddingParams, vocab.length, d_model, fmt, pct);
+    html += buildAllLayerRows(layerBreakdowns, fmt, pct);
+    html += buildTotalRow(grandTotal, totalAttn, totalFFN, fmt, pct);
+    html += `</tbody></table>`;
 
-	let html = `<table style="width:100%; border-collapse:collapse; font-family:'Inter',sans-serif; font-size:0.8rem;">
+    tableDiv.innerHTML = html;
+}
+
+/**
+ * Sums attention, FFN, and norm parameter counts across all layers.
+ */
+function aggregateLayerTotals(layerBreakdowns) {
+    let totalAttn = 0, totalFFN = 0, totalNorm = 0;
+    layerBreakdowns.forEach(lb => {
+        totalAttn += lb.attention.total;
+        totalFFN += lb.ffn.total;
+        totalNorm += lb.norm.total;
+    });
+    return { totalAttn, totalFFN, totalNorm };
+}
+
+/**
+ * Infers d_model from the first layer's pre-attention norm param count.
+ */
+function inferDModelFromBreakdowns(layerBreakdowns) {
+    return layerBreakdowns.length > 0 ? (layerBreakdowns[0].norm.pre_attn / 2) : 0;
+}
+
+/**
+ * Builds the <table> opening tag and <thead> for the parameter breakdown table.
+ */
+function buildParamTableHeader() {
+    return `<table style="width:100%; border-collapse:collapse; font-family:'Inter',sans-serif; font-size:0.8rem;">
     <thead>
-	<tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
-	    <th style="padding:6px 10px; text-align:left;">Component</th>
-	    <th style="padding:6px 10px; text-align:right;">Parameters</th>
-	    <th style="padding:6px 10px; text-align:right;">% of Total</th>
-	    <th style="padding:6px 10px; text-align:left;">Shape</th>
-	</tr>
+    <tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
+        <th style="padding:6px 10px; text-align:left;">Component</th>
+        <th style="padding:6px 10px; text-align:right;">Parameters</th>
+        <th style="padding:6px 10px; text-align:right;">% of Total</th>
+        <th style="padding:6px 10px; text-align:left;">Shape</th>
+    </tr>
     </thead>
     <tbody>`;
+}
 
-	html += `<tr style="background:#eef2ff; border-bottom:1px solid #e2e8f0;">
-	<td style="padding:6px 10px; font-weight:600; color:#6366f1;">📦 Embeddings</td>
-	<td style="padding:6px 10px; text-align:right; font-weight:600;">${fmt(embeddingParams)}</td>
-	<td style="padding:6px 10px; text-align:right;">${pct(embeddingParams)}%</td>
-	<td style="padding:6px 10px; color:#64748b;">${vocab.length} × ${d_model || '?'}</td>
+/**
+ * Builds the embedding row HTML.
+ */
+function buildEmbeddingRow(embeddingParams, vocabSize, d_model, fmt, pct) {
+    return `<tr style="background:#eef2ff; border-bottom:1px solid #e2e8f0;">
+    <td style="padding:6px 10px; font-weight:600; color:#6366f1;">üì¶ Embeddings</td>
+    <td style="padding:6px 10px; text-align:right; font-weight:600;">${fmt(embeddingParams)}</td>
+    <td style="padding:6px 10px; text-align:right;">${pct(embeddingParams)}%</td>
+    <td style="padding:6px 10px; color:#64748b;">${vocabSize} × ${d_model || '?'}</td>
+    </tr>`;
+}
+
+/**
+ * Builds all per-layer rows (header + attention + FFN + norm sub-rows).
+ */
+function buildAllLayerRows(layerBreakdowns, fmt, pct) {
+    return layerBreakdowns.map(lb => buildSingleLayerRows(lb, fmt, pct)).join('');
+}
+
+/**
+ * Builds the rows for a single layer: a header row plus three detail sub-rows.
+ */
+function buildSingleLayerRows(lb, fmt, pct) {
+    let html = `<tr style="background:#f8fafc; border-bottom:1px solid #f1f5f9;">
+        <td style="padding:6px 10px; font-weight:600;" colspan="4">üîÅ Layer ${lb.layer} — ${fmt(lb.total)} params (${pct(lb.total)}%)</td>
     </tr>`;
 
-	layerBreakdowns.forEach(lb => {
-		html += `<tr style="background:#f8fafc; border-bottom:1px solid #f1f5f9;">
-	    <td style="padding:6px 10px; font-weight:600;" colspan="4">🔁 Layer ${lb.layer} — ${fmt(lb.total)} params (${pct(lb.total)}%)</td>
-	</tr>`;
+    html += buildLayerSubRow('Attention (Q+K+V+O)', '#3b82f6', lb.attention.total, '4 × (d×d)', fmt, pct);
+    html += buildLayerSubRow('FFN (W₁+b₁+W₂+b₂)', '#f59e0b', lb.ffn.total, 'd×4d + 4d + 4d×d + d', fmt, pct);
+    html += buildLayerSubRow('LayerNorm (γ+β ×2)', '#10b981', lb.norm.total, '4 × d', fmt, pct, 'border-bottom:1px solid #e2e8f0;');
 
-		html += `<tr style="border-bottom:1px solid #f1f5f9;">
-	    <td style="padding:4px 10px 4px 30px; color:#3b82f6;">🔍 Attention (Q+K+V+O)</td>
-	    <td style="padding:4px 10px; text-align:right;">${fmt(lb.attention.total)}</td>
-	    <td style="padding:4px 10px; text-align:right;">${pct(lb.attention.total)}%</td>
-	    <td style="padding:4px 10px; color:#64748b;">4 × (d×d)</td>
-	</tr>`;
+    return html;
+}
 
-		html += `<tr style="border-bottom:1px solid #f1f5f9;">
-	    <td style="padding:4px 10px 4px 30px; color:#f59e0b;">⚡ FFN (W₁+b₁+W₂+b₂)</td>
-	    <td style="padding:4px 10px; text-align:right;">${fmt(lb.ffn.total)}</td>
-	    <td style="padding:4px 10px; text-align:right;">${pct(lb.ffn.total)}%</td>
-	    <td style="padding:4px 10px; color:#64748b;">d×4d + 4d + 4d×d + d</td>
-	</tr>`;
-
-		html += `<tr style="border-bottom:1px solid #e2e8f0;">
-	    <td style="padding:4px 10px 4px 30px; color:#10b981;">📏 LayerNorm (γ+β ×2)</td>
-	    <td style="padding:4px 10px; text-align:right;">${fmt(lb.norm.total)}</td>
-	    <td style="padding:4px 10px; text-align:right;">${pct(lb.norm.total)}%</td>
-	    <td style="padding:4px 10px; color:#64748b;">4 × d</td>
-	</tr>`;
-	});
-
-	const attnVsFFN = totalAttn > 0 ? (totalFFN / totalAttn).toFixed(1) : '—';
-	html += `<tr style="background:#f0fdf4; border-top:2px solid #10b981; font-weight:700;">
-	<td style="padding:8px 10px;">Total</td>
-	<td style="padding:8px 10px; text-align:right;">${fmt(grandTotal)}</td>
-	<td style="padding:8px 10px; text-align:right;">100%</td>
-	<td style="padding:8px 10px; color:#064e3b; font-weight:normal; font-size:0.75rem;">
-	    FFN is ${attnVsFFN}× the size of Attention
-	</td>
+/**
+ * Builds a single indented sub-row for a layer component (attention, FFN, or norm).
+ */
+function buildLayerSubRow(label, color, total, shape, fmt, pct, extraStyle = 'border-bottom:1px solid #f1f5f9;') {
+    return `<tr style="${extraStyle}">
+        <td style="padding:4px 10px 4px 30px; color:${color};">${label}</td>
+        <td style="padding:4px 10px; text-align:right;">${fmt(total)}</td>
+        <td style="padding:4px 10px; text-align:right;">${pct(total)}%</td>
+        <td style="padding:4px 10px; color:#64748b;">${shape}</td>
     </tr>`;
+}
 
-	html += `</tbody></table>`;
-	tableDiv.innerHTML = html;
+/**
+ * Builds the grand-total summary row at the bottom of the table.
+ */
+function buildTotalRow(grandTotal, totalAttn, totalFFN, fmt, pct) {
+    const attnVsFFN = totalAttn > 0 ? (totalFFN / totalAttn).toFixed(1) : '—';
+    return `<tr style="background:#f0fdf4; border-top:2px solid #10b981; font-weight:700;">
+    <td style="padding:8px 10px;">Total</td>
+    <td style="padding:8px 10px; text-align:right;">${fmt(grandTotal)}</td>
+    <td style="padding:8px 10px; text-align:right;">100%</td>
+    <td style="padding:8px 10px; color:#064e3b; font-weight:normal; font-size:0.75rem;">
+        FFN is ${attnVsFFN}× the size of Attention
+    </td>
+    </tr>`;
 }
 
 function get_or_init_embeddings(tokens, d_model) {
