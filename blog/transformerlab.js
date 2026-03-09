@@ -2528,10 +2528,8 @@ function render_final_projection(h_final, vocabulary, d_model, temperature) {
 	// 3. Always update chips
 	chipsDiv.innerHTML = buildPredictionChipsHtml(predictions, temperature);
 
-	// 4. Conditionally update details (avoid layout shifts during training)
-	if (!window.isTraining || isElementInViewport(detailsDiv)) {
-		detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
-	}
+	// 4. Update details
+	detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
 
 	render_temml();
 }
@@ -3124,17 +3122,18 @@ function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, b
     contentDiv.dataset.ffnRendered = 'true';
 }
 
+const flattenDisplay = (mat) => {
+	if (!mat || !mat.length) return '';
+	return mat.map(row => 
+		Array.isArray(row) 
+		? row.map(v => v.toFixed(nr_fixed)).join(',')
+		: row.toFixed(nr_fixed)
+	).join(';');
+};
+
 function _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta) {
 	// Hash the DISPLAYED values (toFixed(nr_fixed)) so we only re-render
 	// when what the user actually sees would change
-	const flattenDisplay = (mat) => {
-		if (!mat || !mat.length) return '';
-		return mat.map(row => 
-			Array.isArray(row) 
-				? row.map(v => v.toFixed(nr_fixed)).join(',')
-				: row.toFixed(nr_fixed)
-		).join(';');
-	};
 	return [
 		flattenDisplay(h1),
 		flattenDisplay(normed_h1),
@@ -6358,14 +6357,6 @@ function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStri
 
 	const h1 = matAdd(h0, projectedMHA);
 
-	const flattenDisplay = (mat) => {
-		if (!mat || !mat.length) return '';
-		return mat.map(row =>
-			Array.isArray(row)
-			? row.map(v => v.toFixed(nr_fixed)).join(',')
-			: row.toFixed(nr_fixed)
-		).join(';');
-	};
 	const hash = [
 		flattenDisplay(h0),
 		flattenDisplay(normH0),
@@ -6467,14 +6458,6 @@ function projectMHAOutput(multiHeadOutput, WO) {
  * Only triggers re-render when visible output would actually change.
  */
 function computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, beta) {
-    const flattenDisplay = (mat) => {
-        if (!mat || !mat.length) return '';
-        return mat.map(row =>
-            Array.isArray(row)
-                ? row.map(v => v.toFixed(nr_fixed)).join(',')
-                : row.toFixed(nr_fixed)
-        ).join(';');
-    };
     return [
         flattenDisplay(h0),
         flattenDisplay(normH0),
