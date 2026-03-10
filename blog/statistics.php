@@ -57,7 +57,6 @@ While people have rolled dice for millennia, the math of *sums* was long misunde
 </div>
 
 <div class="optional md" data-headline="The History of the Binomial Distribution">
-
 ##### The Medieval Insight (c. 1250)
 The earliest known mention of the differing frequencies of dice sums appears in a Latin poem called \citetitle{devetula} (p. 32), whose author is not certain. The author correctly identified that there are only 16 ways to get sums with three dice that result in a specific value, noting for the first time that some totals occur more often than others.
 
