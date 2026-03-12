@@ -4,6 +4,15 @@
   The meaning of a word is its use in the language.
 </div>
 
+
+
+<div class="optional md" data-headline="Friedrich Nietzsche and Ferdinand de Saussure: The earliest precursors to ideas related to Embedding">
+The theoretical foundation for modern word embeddings was laid as early as 1916 in \citetitle{saussure1916}. \citeauthor{saussure1916} recognized that the linguistic sign is arbitrary, there is no natural connection between the word "tree" (the signifier) and the concept of a tree (the signified). This idea was already implied by Nietzsches '\citetitle{ueberwahrheitundluege}' in \citeyear{ueberwahrheitundluege}, but widely ignored at the time.
+
+More importantly, he defined language as a system of differences. A word derives its meaning only because it is *not* any other word in the system. When we state today that the meaning of a word is determined by its position in a high-dimensional vector space, we are simply fulfilling Saussure’s vision of a purely relational semantics.
+</div>
+
+
 <div class="md">
 In the architecture of a Transformer, a word possesses no intrinsic "soul" or static dictionary definition. Instead, its identity is defined entirely by its context, its **use**. This philosophical principle is operationalized through a high-dimensional **Embedding Space**, where semantic concepts are mapped as coordinates in a continuous geometric manifold.
 
