@@ -54,8 +54,9 @@ Furthermore, these distributions are the backbone of the "scaling laws" that dri
 #### The Binomial Distribution
 
 While people have rolled dice for millennia, the math of *sums* was long misunderstood. For centuries, gamblers thought all sums were equally likely.
+</div>
 
-
+<div class="optional md" data-headline="The History of the Binomial Distribution">
 ##### The Medieval Insight (c. 1250)
 The earliest known mention of the differing frequencies of dice sums appears in a Latin poem called \citetitle{devetula} (p. 32), whose author is not certain. The author correctly identified that there are only 16 ways to get sums with three dice that result in a specific value, noting for the first time that some totals occur more often than others.
 
@@ -68,6 +69,7 @@ The first truly scientific treatment came from **Gerolamo Cardano**, who also in
 The context that solidified this into modern science was the **"Problem of Points."** The **Chevalier de Méré** asked **Blaise Pascal** how to fairly split a prize pot if a game of dice is interrupted.
 
 Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considered the founding moment of probability theory. They moved beyond mere counting and began using the **Binomial Coefficients** (Pascal's Triangle) to predict outcomes for any number of dice (\cite{oevresdeformat}, p. 288ff).
+</div>
 </div>
 
     <div class="statlab-interactive-zone" style="display: block !important">

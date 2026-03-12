@@ -994,6 +994,8 @@ The visualization below lets you explore this. A 2D point cloud represents token
 <div class="md">
 ## The Time Axis: How Models Discover History's Arrow
 
+https://www.preprints.org/manuscript/202507.0722 TODO
+
 One of the most elegant emergent properties of embedding spaces is how they encode **time**. Nobody tells the model that 1950 comes before 1951, or that the Renaissance preceded the Industrial Revolution. Yet when you extract the embedding vectors for historical dates and events and project them into lower dimensions, something remarkable appears: they form a **near-perfect helix** — a spiral curve winding through the space, with time flowing smoothly along its length.
 
 ### The Emergent Timeline
