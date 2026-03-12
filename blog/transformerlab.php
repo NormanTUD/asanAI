@@ -410,8 +410,6 @@ h_{n+1} &= z_n + \text{LayerNorm}(\text{FeedForward}(z_n))
 $$
 
 As $h$ progresses from $h_0$ to $h_{96}$, the vector for "apple" might move from being near "fruit" to being near "tech company" based on the contextual "nudges" received in the Feature Space during each Attention and FFN cycle.
-
-
 </div>
 
 <div id="ffn-equations-container"></div>
