@@ -176,7 +176,9 @@ To address the lack of sequence order in transformers, a "position signal" is ad
 
 $$h_{0} = \underbrace{\text{Embedding}(\text{Token})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} + \underbrace{\text{PositionalEncoding}(\text{pos})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}}$$
 
-The positional encoding is calculated using sine and cosine functions, which provide smooth, periodic patterns for each position. For each dimension $i$ in a vector of size $d_\text{model}$, the encoding is defined as:
+The positional encoding is calculated using sine and cosine functions, which provide smooth, periodic patterns for each position.
+
+For each dimension $i$ in a vector of size $d_\text{model}$, the encoding is defined as:
 
 $$PE_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
 
