@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holographic Storage — Interactive Explorer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.7;padding:30px 20px;max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;text-align:center;margin-bottom:6px;color:#f8fafc}
+.subtitle{text-align:center;color:#94a3b8;margin-bottom:25px;font-size:0.95em}
+h2{font-size:1.2em;margin-bottom:12px;color:#93c5fd;border-bottom:1px solid #1e3a5f;padding-bottom:6px}
+.section{background:#1e293b;border-radius:14px;padding:22px;margin-bottom:24px;border:1px solid #334155}
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:18px}
+.panel{text-align:center}
+.panel h3{font-size:1.1em;margin-bottom:4px}
+.badge{font-size:0.7em;padding:2px 8px;border-radius:10px;vertical-align:middle}
+.badge.local{background:#7f1d1d;color:#fca5a5}
+.badge.distributed{background:#064e3b;color:#6ee7b7}
+.caption{font-size:0.8em;color:#64748b;margin-bottom:10px;min-height:2.4em}
+.label{font-size:0.75em;color:#475569;margin:8px 0 4px;text-transform:uppercase;letter-spacing:1px}
+canvas{border-radius:6px;display:block;margin:0 auto;image-rendering:pixelated;cursor:pointer}
+.stats{display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.stat-card{background:#0f172a;border-radius:8px;padding:8px 14px;text-align:center;min-width:100px;border:1px solid #334155}
+.stat-label{font-size:0.7em;color:#64748b;margin-bottom:2px}
+.stat-value{font-size:1.3em;font-weight:bold}
+.controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+button{background:#3b82f6;color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:0.85em;transition:background 0.2s}
+button:hover{background:#2563eb}
+button.danger{background:#ef4444}
+button.danger:hover{background:#dc2626}
+button.secondary{background:#475569}
+button.secondary:hover{background:#64748b}
+.sync-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;font-size:0.85em;color:#94a3b8}
+.sync-row input{accent-color:#8b5cf6}
+.insight{background:linear-gradient(135deg,#1e3a5f,#1e293b);border-left:4px solid #3b82f6;padding:18px 22px;border-radius:0 12px 12px 0;margin-top:20px}
+.insight p{margin-bottom:10px;color:#cbd5e1}
+.insight b{color:#93c5fd}
+.formula{font-family:'Courier New',monospace;background:#0f172a;padding:6px 14px;border-radius:6px;display:inline-block;color:#fbbf24;font-size:0.95em;margin:4px 0}
+@media(max-width:768px){.comparison{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<h1>🌈 How Holograms Store Data</h1>
+<p class="subtitle">Click tiles to "scratch" them. Watch what happens to each image.</p>
+
+<div class="section">
+ <div class="comparison">
+  <div class="panel">
+   <h3>📸 Photograph <span class="badge local">Localized</span></h3>
+   <p class="caption">Each tile stores only its own corner's pixels.<br>Scratch it → that corner is gone forever.</p>
+   <canvas id="pg" title="Click to scratch"></canvas>
+   <div class="label">↓ reconstructed image ↓</div>
+   <canvas id="pi"></canvas>
+   <div class="stats" id="ps"></div>
+  </div>
+  <div class="panel">
+   <h3>🌈 Hologram <span class="badge distributed">Distributed</span></h3>
+   <p class="caption">Each tile stores a whole-image wave pattern (basis function).<br>Scratch it → entire image blurs, but nothing is erased.</p>
+   <canvas id="hg" title="Click to scratch"></canvas>
+   <div class="label">↓ reconstructed image ↓</div>
+   <canvas id="hi"></canvas>
+   <div class="stats" id="hs"></div>
+  </div>
+ </div>
+
+ <div class="sync-row">
+  <input type="checkbox" id="sync" checked>
+  <label for="sync">🔗 Synchronize damage (scratch same tile on both sides)</label>
+ </div>
+
+ <div class="controls">
+  <button onclick="resetAll()">🔄 Reset</button>
+  <button onclick="rng(0.25)" class="danger">💥 25%</button>
+  <button onclick="rng(0.50)" class="danger">💥 50%</button>
+  <button onclick="rng(0.75)" class="danger">💥 75%</button>
+  <button onclick="switchImg()" class="secondary">🔀 Switch Image</button>
+ </div>
+</div>
+
+<div class="section">
+ <h2>🧠 Why This Matters for LLMs</h2>
+ <div class="insight">
+  <p>In a Transformer, the concept <b>"dog"</b> is NOT stored in dimension #42. It's stored as a <b>pattern across all 768+ dimensions</b> — exactly like a hologram stores a scene across its entire plate.</p>
+  <p><b>Zero out random dimensions → the concept gets noisier, but never fully disappears.</b> This is holographic graceful degradation.</p>
+  <p>The signal quality follows: <span class="formula">Quality ≈ √(k / d)</span> where <b>k</b> = surviving dimensions, <b>d</b> = total. Even at <b>50% damage</b>, you retain ~<b>71%</b> of the signal — enough to still identify any concept.</p>
+  <p>This is why LLMs are so robust: knowledge is distributed holographically across every weight and dimension, not stored in fragile individual neurons.</p>
+ </div>
+</div>
+
+<script>
+const N=16,Z=4,ZS=4,CP=65,G=3,IS=16,dpr=window.devicePixelRatio||1;
+
+// === IMAGES ===
+const IMGS=[
+ // Smiley
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,
+  0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
+  0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,
+  0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
+  0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,
+  0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,
+  0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+  0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+  0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+  0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,
+  0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,
+  0,0,1,1,0,0,1,1,1,1,0,0,1,1,0,0,
+  0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,
+  0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
+  0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
+ // Heart
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,
+  0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0,
+  0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,
+  0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+  0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+  0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+  0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
+  0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,
+  0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
+  0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,
+  0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+];
+let imgIdx=0;
+let ORI=[...IMGS[0]];
+
+// === DCT MATRIX (orthonormal) ===
+const C=[];
+for(let k=0;k<N;k++){C[k]=[];const a=k===0?Math.sqrt(1/N):Math.sqrt(2/N);for(let n=0;n<N;n++)C[k][n]=a*Math.cos(Math.PI*(2*n+1)*k/(2*N))}
+
+function dct1(x){const X=new Float64Array(N);for(let k=0;k<N;k++){let s=0;for(let n=0;n<N;n++)s+=x[n]*C[k][n];X[k]=s}return X}
+function idct1(X){const x=new Float64Array(N);for(let n=0;n<N;n++){let s=0;for(let k=0;k<N;k++)s+=X[k]*C[k][n];x[n]=s}return x}
+function dct2(im){
+ const t=new Float64Array(N*N);
+ for(let i=0;i<N;i++){const r=new Float64Array(N);for(let j=0;j<N;j++)r[j]=im[i*N+j];const d=dct1(r);for(let j=0;j<N;j++)t[i*N+j]=d[j]}
+ const o=new Float64Array(N*N);
+ for(let j=0;j<N;j++){const c=new Float64Array(N);for(let i=0;i<N;i++)c[i]=t[i*N+j];const d=dct1(c);for(let i=0;i<N;i++)o[i*N+j]=d[i]}
+ return o}
+function idct2(co){
+ const t=new Float64Array(N*N);
+ for(let j=0;j<N;j++){const c=new Float64Array(N);for(let i=0;i<N;i++)c[i]=co[i*N+j];const d=idct1(c);for(let i=0;i<N;i++)t[i*N+j]=d[i]}
+ const o=new Float64Array(N*N);
+ for(let i=0;i<N;i++){const r=new Float64Array(N);for(let j=0;j<N;j++)r[j]=t[i*N+j];const d=idct1(r);for(let j=0;j<N;j++)o[i*N+j]=d[j]}
+ return o}
+
+let DC=dct2(ORI);
+const pS=new Array(Z*Z).fill(false);
+const hS=new Array(Z*Z).fill(false);
+let basis=[];
+
+function computeBasis(){
+ basis=[];
+ for(let z=0;z<Z*Z;z++){
+  const zr=Math.floor(z/Z),zc=z%Z;
+  const co=new Float64Array(N*N);
+  for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++)co[i*N+j]=DC[i*N+j];
+  basis.push(idct2(co));
+ }
+}
+computeBasis();
+
+function reloadImage(){ORI=[...IMGS[imgIdx]];DC=dct2(ORI);computeBasis();for(let i=0;i<Z*Z;i++){pS[i]=false;hS[i]=false}render()}
+
+// === CANVAS SETUP ===
+function sc(id,w,h){const c=document.getElementById(id);c.width=w*dpr;c.height=h*dpr;c.style.width=w+'px';c.style.height=h+'px';const x=c.getContext('2d');x.scale(dpr,dpr);return{c,x,w,h}}
+const GW=Z*CP+(Z-1)*G, IW=N*IS;
+const pg=sc('pg',GW,GW),hg=sc('hg',GW,GW),pi=sc('pi',IW,IW),hi=sc('hi',IW,IW);
+
+// === DRAW ===
+function drawImg(ctx,img,s){
+ for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+  const v=Math.max(0,Math.min(1,img[i*N+j]));
+  const r=Math.round(40+v*210),g=Math.round(30+v*185),b=Math.round(15+v*80);
+  ctx.fillStyle=`rgb(${r},${g},${b})`;
+  ctx.fillRect(j*s,i*s,s,s);
+ }
+}
+
+function drawGrid(ctx,w,scratched,isHolo){
+ ctx.clearRect(0,0,w,w);
+ ctx.fillStyle='#0f172a';ctx.fillRect(0,0,w,w);
+ for(let zr=0;zr<Z;zr++)for(let zc=0;zc<Z;zc++){
+  const z=zr*Z+zc,x=zc*(CP+G),y=zr*(CP+G);
+  if(scratched[z]){
+   ctx.fillStyle='#1a1a2e';ctx.fillRect(x,y,CP,CP);
+   // Scratch marks
+   ctx.strokeStyle='#ef4444';ctx.lineWidth=2.5;ctx.lineCap='round';
+   ctx.beginPath();ctx.moveTo(x+10,y+10);ctx.lineTo(x+CP-10,y+CP-10);ctx.stroke();
+   ctx.beginPath();ctx.moveTo(x+CP-10,y+10);ctx.lineTo(x+10,y+CP-10);ctx.stroke();
+   ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.fillStyle='#ef4444';
+   ctx.fillText('LOST',x+CP/2,y+CP/2+4);
+  } else {
+   if(isHolo){
+    const b=basis[z];let mx=0;for(let i=0;i<N*N;i++)if(Math.abs(b[i])>mx)mx=Math.abs(b[i]);
+    const sc=mx>0?1/mx:1,ps=CP/N;
+    for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+     const v=b[i*N+j]*sc;
+     if(v>=0){ctx.fillStyle=`rgb(${Math.round(50+v*200)},${Math.round(30+v*120)},${Math.round(90+v*80)})`}
+     else{const a=-v;ctx.fillStyle=`rgb(${Math.round(20+a*30)},${Math.round(30+a*120)},${Math.round(80+a*175)})`}
+     ctx.fillRect(x+j*ps,y+i*ps,ps+1,ps+1);
+    }
+   } else {
+    // Photo: just show the raw pixel block
+    const ps=CP/ZS;
+    for(let i=0;i<ZS;i++)for(let j=0;j<ZS;j++){
+     const gi=zr*ZS+i,gj=zc*ZS+j;
+     const v=ORI[gi*N+gj];
+     const r=Math.round(40+v*210),g=Math.round(30+v*185),b=Math.round(15+v*80);
+     ctx.fillStyle=`rgb(${r},${g},${b})`;
+     ctx.fillRect(x+j*ps,y+i*ps,ps+1,ps+1);
+    }
+   }
+   // Border
+   ctx.strokeStyle='#334155';ctx.lineWidth=1;ctx.strokeRect(x,y,CP,CP);
+  }
+ }
+}
+
+function reconstruct(scratched,isHolo){
+ if(isHolo){
+  const co=new Float64Array(N*N);
+  for(let z=0;z<Z*Z;z++){
+   if(scratched[z])continue;
+   const zr=Math.floor(z/Z),zc=z%Z;
+   for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++)co[i*N+j]=DC[i*N+j];
+  }
+  return idct2(co);
+ } else {
+  const out=new Float64Array(N*N);
+  for(let z=0;z<Z*Z;z++){
+   if(scratched[z])continue;
+   const zr=Math.floor(z/Z),zc=z%Z;
+   for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++)out[i*N+j]=ORI[i*N+j];
+  }
+  return out;
+ }
+}
+
+function mse(a,b){let s=0;for(let i=0;i<a.length;i++)s+=(a[i]-b[i])**2;return s/a.length}
+function psnr(m){return m===0?Infinity:(10*Math.log10(1/m)).toFixed(1)}
+
+function updateStats(id,scratched,img){
+ const el=document.getElementById(id);
+ const alive=scratched.filter(x=>!x).length;
+ const total=Z*Z;
+ const pct=Math.round(100*alive/total);
+ const m=mse(ORI,img);
+ const q=m===0?100:Math.max(0,Math.round(100*(1-Math.sqrt(m))));
+ el.innerHTML=`
+  <div class="stat-card"><div class="stat-label">Tiles Alive</div><div class="stat-value" style="color:${pct>50?'#4ade80':'#f87171'}">${alive}/${total}</div></div>
+  <div class="stat-card"><div class="stat-label">Survival %</div><div class="stat-value" style="color:${pct>50?'#4ade80':'#f87171'}">${pct}%</div></div>
+  <div class="stat-card"><div class="stat-label">Image Quality</div><div class="stat-value" style="color:${q>50?'#4ade80':'#f87171'}">${q}%</div></div>
+ `;
+}
+
+function render(){
+ drawGrid(pg.x,pg.w,pS,false);
+ drawGrid(hg.x,hg.w,hS,true);
+ const pImg=reconstruct(pS,false);
+ const hImg=reconstruct(hS,true);
+ drawImg(pi.x,pImg,IS);
+ drawImg(hi.x,hImg,IS);
+ updateStats('ps',pS,pImg);
+ updateStats('hs',hS,hImg);
+}
+
+function tileFromClick(e,canvas,w){
+ const rect=canvas.getBoundingClientRect();
+ const mx=(e.clientX-rect.left),my=(e.clientY-rect.top);
+ for(let zr=0;zr<Z;zr++)for(let zc=0;zc<Z;zc++){
+  const x=zc*(CP+G),y=zr*(CP+G);
+  if(mx>=x&&mx<x+CP&&my>=y&&my<y+CP)return zr*Z+zc;
+ }
+ return -1;
+}
+
+pg.c.addEventListener('click',e=>{
+ const z=tileFromClick(e,pg.c,pg.w);
+ if(z<0)return;
+ pS[z]=!pS[z];
+ if(document.getElementById('sync').checked)hS[z]=pS[z];
+ render();
+});
+hg.c.addEventListener('click',e=>{
+ const z=tileFromClick(e,hg.c,hg.w);
+ if(z<0)return;
+ hS[z]=!hS[z];
+ if(document.getElementById('sync').checked)pS[z]=hS[z];
+ render();
+});
+
+function resetAll(){for(let i=0;i<Z*Z;i++){pS[i]=false;hS[i]=false}render()}
+
+function rng(frac){
+ resetAll();
+ const indices=[...Array(Z*Z).keys()];
+ // Shuffle
+ for(let i=indices.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[indices[i],indices[j]]=[indices[j],indices[i]]}
+ const k=Math.round(frac*Z*Z);
+ for(let i=0;i<k;i++){pS[indices[i]]=true;hS[indices[i]]=true}
+ render();
+}
+
+function switchImg(){imgIdx=(imgIdx+1)%IMGS.length;reloadImage()}
+
+render();
+</script>
+</body>
+</html>
+
