@@ -3,14 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Holographic Storage — Interactive Explorer</title>
+<title>Holographic Storage – Visual Explorer</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.7;padding:30px 20px;max-width:1100px;margin:0 auto}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.7;padding:30px 20px;max-width:1200px;margin:0 auto}
 h1{font-size:1.8em;text-align:center;margin-bottom:6px;color:#f8fafc}
 .subtitle{text-align:center;color:#94a3b8;margin-bottom:25px;font-size:0.95em}
 h2{font-size:1.2em;margin-bottom:12px;color:#93c5fd;border-bottom:1px solid #1e3a5f;padding-bottom:6px}
 .section{background:#1e293b;border-radius:14px;padding:22px;margin-bottom:24px;border:1px solid #334155}
+.enc-flow{display:flex;align-items:flex-start;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.enc-step{text-align:center}
+.enc-arrow{color:#64748b;font-size:1.6em;text-align:center;padding:40px 2px 0}
+.enc-arrow small{font-size:0.45em;display:block;white-space:nowrap}
+.basis-area{text-align:center;margin-top:16px;padding:16px;background:#0f172a;border-radius:10px;border:1px dashed #334155}
+.basis-area .annotation{color:#fbbf24;font-size:0.85em;margin-top:8px}
 .comparison{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:18px}
 .panel{text-align:center}
 .panel h3{font-size:1.1em;margin-bottom:4px}
@@ -19,300 +25,770 @@ h2{font-size:1.2em;margin-bottom:12px;color:#93c5fd;border-bottom:1px solid #1e3
 .badge.distributed{background:#064e3b;color:#6ee7b7}
 .caption{font-size:0.8em;color:#64748b;margin-bottom:10px;min-height:2.4em}
 .label{font-size:0.75em;color:#475569;margin:8px 0 4px;text-transform:uppercase;letter-spacing:1px}
-canvas{border-radius:6px;display:block;margin:0 auto;image-rendering:pixelated;cursor:pointer}
+.label-lg{font-size:0.85em;color:#94a3b8;margin:10px 0 6px}
+.plus-sign{font-size:1.5em;color:#64748b;margin:4px 0}
+canvas{border-radius:6px;display:block;margin:0 auto;image-rendering:pixelated}
+canvas.clickable{cursor:pointer}
 .stats{display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap}
 .stat-card{background:#0f172a;border-radius:8px;padding:8px 14px;text-align:center;min-width:100px;border:1px solid #334155}
 .stat-label{font-size:0.7em;color:#64748b;margin-bottom:2px}
 .stat-value{font-size:1.3em;font-weight:bold}
-.controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
 button{background:#3b82f6;color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:0.85em;transition:background 0.2s}
 button:hover{background:#2563eb}
 button.danger{background:#ef4444}
 button.danger:hover{background:#dc2626}
 button.secondary{background:#475569}
 button.secondary:hover{background:#64748b}
+button.success{background:#059669}
+button.success:hover{background:#047857}
+.progress-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.progress-bar{width:200px;height:8px;background:#334155;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);border-radius:4px;transition:width 0.3s}
+.step-label{font-size:1em;color:#e2e8f0;font-weight:bold;min-width:100px;text-align:center}
+.tile-status{display:inline-grid;grid-template-columns:repeat(4,24px);gap:3px;vertical-align:middle}
+.tile-cell{width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.6em;font-weight:bold;border:2px solid transparent;transition:all 0.3s}
+.tile-cell.pending{background:#1e293b;color:#475569;border-color:#334155}
+.tile-cell.done{background:#064e3b;color:#6ee7b7;border-color:#059669}
+.tile-cell.current{background:#7c3aed;color:#e9d5ff;border-color:#a78bfa;transform:scale(1.15);box-shadow:0 0 10px #7c3aed80}
+.anim-pair{display:flex;flex-direction:column;align-items:center;gap:6px}
+.contrib-label{font-size:0.75em;color:#fbbf24;text-transform:uppercase;letter-spacing:1px}
+.result-label{font-size:0.75em;color:#4ade80;text-transform:uppercase;letter-spacing:1px}
 .sync-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;font-size:0.85em;color:#94a3b8}
 .sync-row input{accent-color:#8b5cf6}
-.insight{background:linear-gradient(135deg,#1e3a5f,#1e293b);border-left:4px solid #3b82f6;padding:18px 22px;border-radius:0 12px 12px 0;margin-top:20px}
+.insight{background:linear-gradient(135deg,#1e3a5f,#1e293b);border-left:4px solid #3b82f6;padding:18px 22px;border-radius:0 12px 12px 0;margin-top:16px;min-height:60px;transition:all 0.3s}
 .insight p{margin-bottom:10px;color:#cbd5e1}
 .insight b{color:#93c5fd}
 .formula{font-family:'Courier New',monospace;background:#0f172a;padding:6px 14px;border-radius:6px;display:inline-block;color:#fbbf24;font-size:0.95em;margin:4px 0}
-@media(max-width:768px){.comparison{grid-template-columns:1fr}}
+.speed-control{display:flex;align-items:center;gap:8px;font-size:0.85em;color:#94a3b8}
+.speed-control input{width:80px;accent-color:#8b5cf6}
+@media(max-width:768px){.comparison{grid-template-columns:1fr}.enc-flow{flex-direction:column}.enc-arrow{transform:rotate(90deg);padding:4px 0}}
 </style>
 </head>
 <body>
 
-<h1>🌈 How Holograms Store Data</h1>
-<p class="subtitle">Click tiles to "scratch" them. Watch what happens to each image.</p>
+<h1>🌈 How Holograms Store Data – Visual Explorer</h1>
+<p class="subtitle">See exactly how encoding and decoding works, step by step.</p>
 
+<!-- ===== SECTION 1: HOW ENCODING WORKS ===== -->
 <div class="section">
- <div class="comparison">
-  <div class="panel">
-   <h3>📸 Photograph <span class="badge local">Localized</span></h3>
-   <p class="caption">Each tile stores only its own corner's pixels.<br>Scratch it → that corner is gone forever.</p>
-   <canvas id="pg" title="Click to scratch"></canvas>
-   <div class="label">↓ reconstructed image ↓</div>
-   <canvas id="pi"></canvas>
-   <div class="stats" id="ps"></div>
+  <h2>🔬 Step 1: How the Image Is Encoded</h2>
+  <p style="color:#94a3b8;margin-bottom:16px;font-size:0.9em">The original image is transformed from pixels into frequency patterns using a <b style="color:#93c5fd">2D DCT</b> (Discrete Cosine Transform) — the same math behind JPEG.</p>
+  <div class="enc-flow">
+    <div class="enc-step">
+      <div class="label">Original Image</div>
+      <canvas id="encOri"></canvas>
+    </div>
+    <div class="enc-arrow">→<br><small>2D DCT</small></div>
+    <div class="enc-step">
+      <div class="label">Frequency Coefficients</div>
+      <canvas id="encDCT"></canvas>
+      <div style="font-size:0.7em;color:#64748b;margin-top:4px">🟠 positive &nbsp; 🔵 negative</div>
+    </div>
+    <div class="enc-arrow">→<br><small>Split into 16 tiles</small></div>
+    <div class="enc-step">
+      <div class="label">16 Basis Tiles (click any)</div>
+      <canvas id="encTiles" class="clickable"></canvas>
+    </div>
   </div>
-  <div class="panel">
-   <h3>🌈 Hologram <span class="badge distributed">Distributed</span></h3>
-   <p class="caption">Each tile stores a whole-image wave pattern (basis function).<br>Scratch it → entire image blurs, but nothing is erased.</p>
-   <canvas id="hg" title="Click to scratch"></canvas>
-   <div class="label">↓ reconstructed image ↓</div>
-   <canvas id="hi"></canvas>
-   <div class="stats" id="hs"></div>
+  <div class="basis-area" id="basisArea">
+    <div class="label-lg" id="basisLabel">👆 Click a tile above to see what wave pattern it stores</div>
+    <canvas id="encBasis"></canvas>
+    <div class="annotation" id="basisAnnotation"></div>
   </div>
- </div>
-
- <div class="sync-row">
-  <input type="checkbox" id="sync" checked>
-  <label for="sync">🔗 Synchronize damage (scratch same tile on both sides)</label>
- </div>
-
- <div class="controls">
-  <button onclick="resetAll()">🔄 Reset</button>
-  <button onclick="rng(0.25)" class="danger">💥 25%</button>
-  <button onclick="rng(0.50)" class="danger">💥 50%</button>
-  <button onclick="rng(0.75)" class="danger">💥 75%</button>
-  <button onclick="switchImg()" class="secondary">🔀 Switch Image</button>
- </div>
+  <div class="controls" style="margin-top:16px">
+    <button onclick="switchImg()" class="secondary">🔀 Switch Image</button>
+  </div>
 </div>
 
+<!-- ===== SECTION 2: WATCH RECONSTRUCTION ===== -->
 <div class="section">
- <h2>🧠 Why This Matters for LLMs</h2>
- <div class="insight">
-  <p>In a Transformer, the concept <b>"dog"</b> is NOT stored in dimension #42. It's stored as a <b>pattern across all 768+ dimensions</b> — exactly like a hologram stores a scene across its entire plate.</p>
-  <p><b>Zero out random dimensions → the concept gets noisier, but never fully disappears.</b> This is holographic graceful degradation.</p>
-  <p>The signal quality follows: <span class="formula">Quality ≈ √(k / d)</span> where <b>k</b> = surviving dimensions, <b>d</b> = total. Even at <b>50% damage</b>, you retain ~<b>71%</b> of the signal — enough to still identify any concept.</p>
-  <p>This is why LLMs are so robust: knowledge is distributed holographically across every weight and dimension, not stored in fragile individual neurons.</p>
- </div>
+  <h2>🎬 Step 2: Watch Reconstruction (Decoding) — Tile by Tile</h2>
+  <p style="color:#94a3b8;margin-bottom:16px;font-size:0.9em">Watch tiles being added one by one. The photograph fills in corners. The hologram adds whole-image waves.</p>
+  <div class="controls">
+    <button onclick="animPlay()" class="success" id="btnPlay">▶ Play</button>
+    <button onclick="animPause()" class="secondary" id="btnPause">⏸ Pause</button>
+    <button onclick="animPrev()">⏮ Prev</button>
+    <button onclick="animNext()">⏭ Next</button>
+    <button onclick="animReset()">🔄 Reset</button>
+    <div class="speed-control">
+      <label>Speed:</label>
+      <input type="range" id="animSpeed" min="1" max="10" value="4">
+    </div>
+  </div>
+  <div class="progress-row">
+    <div class="step-label">Step <span id="animStepNum">0</span> / 16</div>
+    <div class="progress-bar"><div id="animProgressBar" class="progress-fill" style="width:0%"></div></div>
+    <div class="tile-status" id="tileStatus"></div>
+  </div>
+  <div class="comparison">
+    <div class="panel">
+      <h3>📸 Photograph <span class="badge local">Localized</span></h3>
+      <div class="anim-pair">
+        <div class="contrib-label" id="pcLabel">This tile adds:</div>
+        <canvas id="animPC"></canvas>
+        <div class="plus-sign">↓ +</div>
+        <div class="result-label">Result so far:</div>
+        <canvas id="animPR"></canvas>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>🌈 Hologram <span class="badge distributed">Distributed</span></h3>
+      <div class="anim-pair">
+        <div class="contrib-label" id="hcLabel">This tile adds:</div>
+        <canvas id="animHC"></canvas>
+        <div class="plus-sign">↓ +</div>
+        <div class="result-label">Result so far:</div>
+        <canvas id="animHR"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="insight" id="animInsight">
+    <p>Press <b>▶ Play</b> or <b>⏭ Next</b> to start building the image tile by tile...</p>
+  </div>
+</div>
+
+<!-- ===== SECTION 3: INTERACTIVE SCRATCH DEMO ===== -->
+<div class="section">
+  <h2>🧪 Step 3: Try It Yourself — Scratch Tiles</h2>
+  <p style="color:#94a3b8;margin-bottom:16px;font-size:0.9em">Click tiles to "scratch" (destroy) them. See how each storage method handles damage.</p>
+  <div class="comparison">
+    <div class="panel">
+      <h3>📸 Photograph <span class="badge local">Localized</span></h3>
+      <p class="caption">Scratch a tile → that corner is gone forever.</p>
+      <canvas id="pg" class="clickable" title="Click to scratch"></canvas>
+      <div class="label">↓ reconstructed image ↓</div>
+      <canvas id="pi"></canvas>
+      <div class="stats" id="ps"></div>
+    </div>
+    <div class="panel">
+      <h3>🌈 Hologram <span class="badge distributed">Distributed</span></h3>
+      <p class="caption">Scratch a tile → entire image blurs, nothing is erased.</p>
+      <canvas id="hg" class="clickable" title="Click to scratch"></canvas>
+      <div class="label">↓ reconstructed image ↓</div>
+      <canvas id="hi"></canvas>
+      <div class="stats" id="hs"></div>
+    </div>
+  </div>
+  <div class="sync-row">
+    <input type="checkbox" id="sync" checked>
+    <label for="sync">🔗 Synchronize damage</label>
+  </div>
+  <div class="controls">
+    <button onclick="resetAll()">🔄 Reset</button>
+    <button onclick="rng(0.25)" class="danger">💥 25%</button>
+    <button onclick="rng(0.50)" class="danger">💥 50%</button>
+    <button onclick="rng(0.75)" class="danger">💥 75%</button>
+    <button onclick="switchImg()" class="secondary">🔀 Switch Image</button>
+  </div>
+</div>
+
+<!-- ===== SECTION 4: LLM INSIGHT ===== -->
+<div class="section">
+  <h2>🧠 Why This Matters for LLMs</h2>
+  <div class="insight">
+    <p>In a Transformer, the concept <b>"dog"</b> is NOT stored in dimension #42. It's stored as a <b>pattern across all 768+ dimensions</b> — exactly like a hologram stores a scene across its entire plate.</p>
+    <p><b>Zero out random dimensions → the concept gets noisier, but never fully disappears.</b> This is holographic graceful degradation.</p>
+    <p>The signal quality follows: <span class="formula">Quality ≈ √(k / d)</span> where <b>k</b> = surviving dimensions, <b>d</b> = total. Even at <b>50% damage</b>, you retain ~<b>71%</b> of the signal — enough to still identify any concept.</p>
+    <p>This is why LLMs are so robust: knowledge is distributed holographically across every weight and dimension, not stored in fragile individual neurons.</p>
+  </div>
 </div>
 
 <script>
-const N=16,Z=4,ZS=4,CP=65,G=3,IS=16,dpr=window.devicePixelRatio||1;
+// ============================================
+// SHARED: Constants, Image Data, DCT
+// ============================================
+const N=16,Z=4,ZS=4,dpr=window.devicePixelRatio||1;
 
-// === IMAGES ===
 const IMGS=[
- // Smiley
- [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,
-  0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
-  0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,
-  0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
-  0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,
-  0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,
-  0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-  0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-  0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-  0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,
-  0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,
-  0,0,1,1,0,0,1,1,1,1,0,0,1,1,0,0,
-  0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,
-  0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
-  0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
- // Heart
- [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,
-  0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0,
-  0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,
-  0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-  0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-  0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
-  0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
-  0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,
-  0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
-  0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,
-  0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+   0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,
+   0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
+   0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,
+   0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
+   0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,
+   0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,
+   0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+   0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+   0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+   0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,
+   0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,
+   0,0,1,1,0,0,1,1,1,1,0,0,1,1,0,0,
+   0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,
+   0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
+   0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+   0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,
+   0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0,
+   0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,
+   0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+   0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+   0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+   0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
+   0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,
+   0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
+   0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,
+   0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,
+   0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,
+   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ];
 let imgIdx=0;
 let ORI=[...IMGS[0]];
 
-// === DCT MATRIX (orthonormal) ===
-const C=[];
-for(let k=0;k<N;k++){C[k]=[];const a=k===0?Math.sqrt(1/N):Math.sqrt(2/N);for(let n=0;n<N;n++)C[k][n]=a*Math.cos(Math.PI*(2*n+1)*k/(2*N))}
+const CM=[];
+for(let k=0;k<N;k++){CM[k]=[];const a=k===0?Math.sqrt(1/N):Math.sqrt(2/N);for(let n=0;n<N;n++)CM[k][n]=a*Math.cos(Math.PI*(2*n+1)*k/(2*N))}
 
-function dct1(x){const X=new Float64Array(N);for(let k=0;k<N;k++){let s=0;for(let n=0;n<N;n++)s+=x[n]*C[k][n];X[k]=s}return X}
-function idct1(X){const x=new Float64Array(N);for(let n=0;n<N;n++){let s=0;for(let k=0;k<N;k++)s+=X[k]*C[k][n];x[n]=s}return x}
+function dct1(x){const X=new Float64Array(N);for(let k=0;k<N;k++){let s=0;for(let n=0;n<N;n++)s+=x[n]*CM[k][n];X[k]=s}return X}
+function idct1(X){const x=new Float64Array(N);for(let n=0;n<N;n++){let s=0;for(let k=0;k<N;k++)s+=X[k]*CM[k][n];x[n]=s}return x}
 function dct2(im){
- const t=new Float64Array(N*N);
- for(let i=0;i<N;i++){const r=new Float64Array(N);for(let j=0;j<N;j++)r[j]=im[i*N+j];const d=dct1(r);for(let j=0;j<N;j++)t[i*N+j]=d[j]}
- const o=new Float64Array(N*N);
- for(let j=0;j<N;j++){const c=new Float64Array(N);for(let i=0;i<N;i++)c[i]=t[i*N+j];const d=dct1(c);for(let i=0;i<N;i++)o[i*N+j]=d[i]}
- return o}
+  const t=new Float64Array(N*N);
+  for(let i=0;i<N;i++){const r=new Float64Array(N);for(let j=0;j<N;j++)r[j]=im[i*N+j];const d=dct1(r);for(let j=0;j<N;j++)t[i*N+j]=d[j]}
+  const o=new Float64Array(N*N);
+  for(let j=0;j<N;j++){const c=new Float64Array(N);for(let i=0;i<N;i++)c[i]=t[i*N+j];const d=dct1(c);for(let i=0;i<N;i++)o[i*N+j]=d[i]}
+  return o}
 function idct2(co){
- const t=new Float64Array(N*N);
- for(let j=0;j<N;j++){const c=new Float64Array(N);for(let i=0;i<N;i++)c[i]=co[i*N+j];const d=idct1(c);for(let i=0;i<N;i++)t[i*N+j]=d[i]}
- const o=new Float64Array(N*N);
- for(let i=0;i<N;i++){const r=new Float64Array(N);for(let j=0;j<N;j++)r[j]=t[i*N+j];const d=idct1(r);for(let j=0;j<N;j++)o[i*N+j]=d[j]}
- return o}
+  const t=new Float64Array(N*N);
+  for(let j=0;j<N;j++){const c=new Float64Array(N);for(let i=0;i<N;i++)c[i]=co[i*N+j];const d=idct1(c);for(let i=0;i<N;i++)t[i*N+j]=d[i]}
+  const o=new Float64Array(N*N);
+  for(let i=0;i<N;i++){const r=new Float64Array(N);for(let j=0;j<N;j++)r[j]=t[i*N+j];const d=idct1(r);for(let j=0;j<N;j++)o[i*N+j]=d[j]}
+  return o}
 
 let DC=dct2(ORI);
-const pS=new Array(Z*Z).fill(false);
-const hS=new Array(Z*Z).fill(false);
 let basis=[];
-
 function computeBasis(){
- basis=[];
- for(let z=0;z<Z*Z;z++){
-  const zr=Math.floor(z/Z),zc=z%Z;
-  const co=new Float64Array(N*N);
-  for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++)co[i*N+j]=DC[i*N+j];
-  basis.push(idct2(co));
- }
+  basis=[];
+  for(let z=0;z<Z*Z;z++){
+    const zr=Math.floor(z/Z),zc=z%Z;
+    const co=new Float64Array(N*N);
+    for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++)co[i*N+j]=DC[i*N+j];
+    basis.push(idct2(co));
+  }
 }
 computeBasis();
 
-function reloadImage(){ORI=[...IMGS[imgIdx]];DC=dct2(ORI);computeBasis();for(let i=0;i<Z*Z;i++){pS[i]=false;hS[i]=false}render()}
-
-// === CANVAS SETUP ===
-function sc(id,w,h){const c=document.getElementById(id);c.width=w*dpr;c.height=h*dpr;c.style.width=w+'px';c.style.height=h+'px';const x=c.getContext('2d');x.scale(dpr,dpr);return{c,x,w,h}}
-const GW=Z*CP+(Z-1)*G, IW=N*IS;
-const pg=sc('pg',GW,GW),hg=sc('hg',GW,GW),pi=sc('pi',IW,IW),hi=sc('hi',IW,IW);
-
-// === DRAW ===
-function drawImg(ctx,img,s){
- for(let i=0;i<N;i++)for(let j=0;j<N;j++){
-  const v=Math.max(0,Math.min(1,img[i*N+j]));
-  const r=Math.round(40+v*210),g=Math.round(30+v*185),b=Math.round(15+v*80);
-  ctx.fillStyle=`rgb(${r},${g},${b})`;
-  ctx.fillRect(j*s,i*s,s,s);
- }
+function setupCanvas(id,w,h){
+  const c=document.getElementById(id);
+  c.width=w*dpr;c.height=h*dpr;
+  c.style.width=w+'px';c.style.height=h+'px';
+  const x=c.getContext('2d');x.scale(dpr,dpr);
+  return{c,x,w,h}
 }
 
-function drawGrid(ctx,w,scratched,isHolo){
- ctx.clearRect(0,0,w,w);
- ctx.fillStyle='#0f172a';ctx.fillRect(0,0,w,w);
- for(let zr=0;zr<Z;zr++)for(let zc=0;zc<Z;zc++){
-  const z=zr*Z+zc,x=zc*(CP+G),y=zr*(CP+G);
-  if(scratched[z]){
-   ctx.fillStyle='#1a1a2e';ctx.fillRect(x,y,CP,CP);
-   // Scratch marks
-   ctx.strokeStyle='#ef4444';ctx.lineWidth=2.5;ctx.lineCap='round';
-   ctx.beginPath();ctx.moveTo(x+10,y+10);ctx.lineTo(x+CP-10,y+CP-10);ctx.stroke();
-   ctx.beginPath();ctx.moveTo(x+CP-10,y+10);ctx.lineTo(x+10,y+CP-10);ctx.stroke();
-   ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.fillStyle='#ef4444';
-   ctx.fillText('LOST',x+CP/2,y+CP/2+4);
-  } else {
-   if(isHolo){
-    const b=basis[z];let mx=0;for(let i=0;i<N*N;i++)if(Math.abs(b[i])>mx)mx=Math.abs(b[i]);
-    const sc=mx>0?1/mx:1,ps=CP/N;
-    for(let i=0;i<N;i++)for(let j=0;j<N;j++){
-     const v=b[i*N+j]*sc;
-     if(v>=0){ctx.fillStyle=`rgb(${Math.round(50+v*200)},${Math.round(30+v*120)},${Math.round(90+v*80)})`}
-     else{const a=-v;ctx.fillStyle=`rgb(${Math.round(20+a*30)},${Math.round(30+a*120)},${Math.round(80+a*175)})`}
-     ctx.fillRect(x+j*ps,y+i*ps,ps+1,ps+1);
-    }
-   } else {
-    // Photo: just show the raw pixel block
-    const ps=CP/ZS;
-    for(let i=0;i<ZS;i++)for(let j=0;j<ZS;j++){
-     const gi=zr*ZS+i,gj=zc*ZS+j;
-     const v=ORI[gi*N+gj];
-     const r=Math.round(40+v*210),g=Math.round(30+v*185),b=Math.round(15+v*80);
-     ctx.fillStyle=`rgb(${r},${g},${b})`;
-     ctx.fillRect(x+j*ps,y+i*ps,ps+1,ps+1);
-    }
-   }
-   // Border
-   ctx.strokeStyle='#334155';ctx.lineWidth=1;ctx.strokeRect(x,y,CP,CP);
+function drawImg(ctx,img,s){
+  for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+    const v=Math.max(0,Math.min(1,img[i*N+j]));
+    const r=Math.round(40+v*210),g=Math.round(30+v*185),b=Math.round(15+v*80);
+    ctx.fillStyle=`rgb(${r},${g},${b})`;
+    ctx.fillRect(j*s,i*s,s,s);
   }
- }
+}
+
+function drawDCTCoeffs(ctx,coeffs,size){
+  let mx=0;
+  for(let i=0;i<N*N;i++) if(Math.abs(coeffs[i])>mx) mx=Math.abs(coeffs[i]);
+  const sc=mx>0?1/mx:1, ps=size/N;
+  for(let i=0;i<N;i++) for(let j=0;j<N;j++){
+    const v=coeffs[i*N+j]*sc;
+    if(v>=0){
+      ctx.fillStyle=`rgb(${Math.round(30+v*225)},${Math.round(80+v*120)},${Math.round(20+v*40)})`;
+    } else {
+      const a=-v;
+      ctx.fillStyle=`rgb(${Math.round(20+a*30)},${Math.round(40+a*100)},${Math.round(80+a*175)})`;
+    }
+    ctx.fillRect(j*ps,i*ps,ps+1,ps+1);
+  }
+}
+
+function drawBasisWave(ctx,basisImg,size){
+  let mx=0;
+  for(let i=0;i<N*N;i++) if(Math.abs(basisImg[i])>mx) mx=Math.abs(basisImg[i]);
+  const sc=mx>0?1/mx:1, ps=size/N;
+  for(let i=0;i<N;i++) for(let j=0;j<N;j++){
+    const v=basisImg[i*N+j]*sc;
+    if(v>=0){
+      ctx.fillStyle=`rgb(${Math.round(50+v*200)},${Math.round(30+v*120)},${Math.round(90+v*80)})`;
+    } else {
+      const a=-v;
+      ctx.fillStyle=`rgb(${Math.round(20+a*30)},${Math.round(30+a*120)},${Math.round(80+a*175)})`;
+    }
+    ctx.fillRect(j*ps,i*ps,ps+1,ps+1);
+  }
+}
+
+// ============================================
+// SECTION 1: ENCODING VISUALIZER
+// ============================================
+const ENC_SZ=160, ENC_TILE_SZ=160, ENC_BASIS_SZ=200;
+const ENC_TILE_CP=36, ENC_TILE_G=3;
+const encOri=setupCanvas('encOri',ENC_SZ,ENC_SZ);
+const encDCT=setupCanvas('encDCT',ENC_SZ,ENC_SZ);
+const encTiles=setupCanvas('encTiles',ENC_TILE_SZ,ENC_TILE_SZ);
+const encBasis=setupCanvas('encBasis',ENC_BASIS_SZ,ENC_BASIS_SZ);
+
+let selectedTile=-1;
+
+function drawEncoding(){
+  // Original image
+  drawImg(encOri.x, ORI, ENC_SZ/N);
+
+  // DCT coefficients heatmap
+  drawDCTCoeffs(encDCT.x, DC, ENC_SZ);
+
+  // Draw the 4x4 tile grid
+  const tw=ENC_TILE_SZ, cp=Math.floor((tw-(Z-1)*ENC_TILE_G)/Z);
+  encTiles.x.clearRect(0,0,tw,tw);
+  encTiles.x.fillStyle='#0f172a';
+  encTiles.x.fillRect(0,0,tw,tw);
+
+  for(let zr=0;zr<Z;zr++) for(let zc=0;zc<Z;zc++){
+    const z=zr*Z+zc;
+    const x=zc*(cp+ENC_TILE_G), y=zr*(cp+ENC_TILE_G);
+    const b=basis[z];
+    let mx=0;
+    for(let i=0;i<N*N;i++) if(Math.abs(b[i])>mx) mx=Math.abs(b[i]);
+    const sc2=mx>0?1/mx:1, ps=cp/N;
+    for(let i=0;i<N;i++) for(let j=0;j<N;j++){
+      const v=b[i*N+j]*sc2;
+      if(v>=0){
+        encTiles.x.fillStyle=`rgb(${Math.round(50+v*200)},${Math.round(30+v*120)},${Math.round(90+v*80)})`;
+      } else {
+        const a=-v;
+        encTiles.x.fillStyle=`rgb(${Math.round(20+a*30)},${Math.round(30+a*120)},${Math.round(80+a*175)})`;
+      }
+      encTiles.x.fillRect(x+j*ps, y+i*ps, ps+1, ps+1);
+    }
+    if(z===selectedTile){
+      encTiles.x.strokeStyle='#fbbf24';
+      encTiles.x.lineWidth=3;
+      encTiles.x.strokeRect(x-1,y-1,cp+2,cp+2);
+    } else {
+      encTiles.x.strokeStyle='#334155';
+      encTiles.x.lineWidth=1;
+      encTiles.x.strokeRect(x,y,cp,cp);
+    }
+  }
+}
+
+function showBasis(z){
+  selectedTile=z;
+  drawEncoding();
+  const zr=Math.floor(z/Z), zc=z%Z;
+  const label=document.getElementById('basisLabel');
+  const annot=document.getElementById('basisAnnotation');
+  label.innerHTML=`Tile [${zr},${zc}] — This wave pattern spans the <b style="color:#fbbf24">ENTIRE image</b>:`;
+  drawBasisWave(encBasis.x, basis[z], ENC_BASIS_SZ);
+
+  // Draw grid overlay on the basis to show it covers everything
+  encBasis.x.strokeStyle='rgba(255,255,255,0.15)';
+  encBasis.x.lineWidth=1;
+  const bps=ENC_BASIS_SZ/Z;
+  for(let i=1;i<Z;i++){
+    encBasis.x.beginPath();encBasis.x.moveTo(i*bps,0);encBasis.x.lineTo(i*bps,ENC_BASIS_SZ);encBasis.x.stroke();
+    encBasis.x.beginPath();encBasis.x.moveTo(0,i*bps);encBasis.x.lineTo(ENC_BASIS_SZ,i*bps);encBasis.x.stroke();
+  }
+
+  // Highlight which frequency block this corresponds to
+  encBasis.x.strokeStyle='#fbbf24';
+  encBasis.x.lineWidth=2;
+  encBasis.x.setLineDash([4,3]);
+  encBasis.x.strokeRect(zc*bps,zr*bps,bps,bps);
+  encBasis.x.setLineDash([]);
+
+  const freqDesc = (zr===0&&zc===0) ? 'DC (average brightness — the most important!)' :
+    (zr+zc<=2) ? 'Low frequency — broad shapes' :
+    (zr+zc<=4) ? 'Mid frequency — medium detail' : 'High frequency — fine edges/detail';
+  annot.innerHTML=`Frequency: row=${zr}, col=${zc} → <b>${freqDesc}</b><br>
+    Notice: this single tile's wave pattern touches <b>every pixel</b> of the 16×16 image. That's "distributed"!`;
+}
+
+encTiles.c.addEventListener('click', e=>{
+  const rect=encTiles.c.getBoundingClientRect();
+  const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  const cp=Math.floor((ENC_TILE_SZ-(Z-1)*ENC_TILE_G)/Z);
+  for(let zr=0;zr<Z;zr++) for(let zc=0;zc<Z;zc++){
+    const x=zc*(cp+ENC_TILE_G), y=zr*(cp+ENC_TILE_G);
+    if(mx>=x && mx<x+cp && my>=y && my<y+cp){
+      showBasis(zr*Z+zc);
+      return;
+    }
+  }
+});
+
+// ============================================
+// SECTION 2: STEP-BY-STEP ANIMATION
+// ============================================
+const ANIM_SZ=200;
+const animPC=setupCanvas('animPC',ANIM_SZ,ANIM_SZ);
+const animPR=setupCanvas('animPR',ANIM_SZ,ANIM_SZ);
+const animHC=setupCanvas('animHC',ANIM_SZ,ANIM_SZ);
+const animHR=setupCanvas('animHR',ANIM_SZ,ANIM_SZ);
+
+let animStep=0;
+let animTimer=null;
+// Tile order: diagonal zigzag (low freq first)
+const tileOrder=[];
+{
+  for(let s=0;s<Z*2-1;s++){
+    for(let r=0;r<Z;r++){
+      const c=s-r;
+      if(c>=0&&c<Z) tileOrder.push(r*Z+c);
+    }
+  }
+}
+
+function buildTileStatus(){
+  const el=document.getElementById('tileStatus');
+  let html='';
+  for(let i=0;i<Z*Z;i++){
+    const z=tileOrder[i];
+    const zr=Math.floor(z/Z),zc=z%Z;
+    html+=`<div class="tile-cell pending" id="ts${i}" title="Tile [${zr},${zc}]">${i+1}</div>`;
+  }
+  el.innerHTML=html;
+}
+buildTileStatus();
+
+function renderAnimFrame(){
+  const step=animStep;
+  document.getElementById('animStepNum').textContent=step;
+  document.getElementById('animProgressBar').style.width=`${(step/16)*100}%`;
+
+  // Update tile status indicators
+  for(let i=0;i<Z*Z;i++){
+    const el=document.getElementById('ts'+i);
+    if(i<step-1) el.className='tile-cell done';
+    else if(i===step-1) el.className='tile-cell current';
+    else el.className='tile-cell pending';
+  }
+
+  const ps=ANIM_SZ/N;
+
+  // Build Photo result and contribution
+  const photoResult=new Float64Array(N*N);
+  for(let t=0;t<step;t++){
+    const z=tileOrder[t];
+    const zr=Math.floor(z/Z),zc=z%Z;
+    for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++)
+      photoResult[i*N+j]=ORI[i*N+j];
+  }
+
+  // Photo contribution (what this tile adds)
+  const photoContrib=new Float64Array(N*N);
+  if(step>0){
+    const z=tileOrder[step-1];
+    const zr=Math.floor(z/Z),zc=z%Z;
+    for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++)
+      photoContrib[i*N+j]=ORI[i*N+j];
+  }
+
+  // Build Hologram result and contribution
+  const holoCo=new Float64Array(N*N);
+  for(let t=0;t<step;t++){
+    const z=tileOrder[t];
+    const zr=Math.floor(z/Z),zc=z%Z;
+    for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++)
+      holoCo[i*N+j]=DC[i*N+j];
+  }
+  const holoResult=idct2(holoCo);
+
+  // Hologram contribution (what this tile's wave looks like)
+  const holoContrib=step>0 ? basis[tileOrder[step-1]] : new Float64Array(N*N);
+
+  // Draw Photo contribution
+  animPC.x.fillStyle='#0f172a';
+  animPC.x.fillRect(0,0,ANIM_SZ,ANIM_SZ);
+  if(step>0){
+    // Draw dimmed full grid
+    for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+      animPC.x.fillStyle='rgba(30,41,59,1)';
+      animPC.x.fillRect(j*ps,i*ps,ps,ps);
+    }
+    // Highlight the contributed region
+    const z=tileOrder[step-1];
+    const zr=Math.floor(z/Z),zc=z%Z;
+    for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++){
+      const v=ORI[i*N+j];
+      const r=Math.round(40+v*210),g=Math.round(30+v*185),b=Math.round(15+v*80);
+      animPC.x.fillStyle=`rgb(${r},${g},${b})`;
+      animPC.x.fillRect(j*ps,i*ps,ps,ps);
+    }
+    // Draw border around contributed region
+    animPC.x.strokeStyle='#fbbf24';
+    animPC.x.lineWidth=2;
+    animPC.x.strokeRect(zc*ZS*ps,zr*ZS*ps,ZS*ps,ZS*ps);
+  }
+  // Grid overlay
+  animPC.x.strokeStyle='rgba(255,255,255,0.08)';
+  animPC.x.lineWidth=1;
+  for(let i=1;i<Z;i++){
+    animPC.x.beginPath();animPC.x.moveTo(i*ZS*ps,0);animPC.x.lineTo(i*ZS*ps,ANIM_SZ);animPC.x.stroke();
+    animPC.x.beginPath();animPC.x.moveTo(0,i*ZS*ps);animPC.x.lineTo(ANIM_SZ,i*ZS*ps);animPC.x.stroke();
+  }
+
+  // Draw Hologram contribution (the wave pattern)
+  animHC.x.fillStyle='#0f172a';
+  animHC.x.fillRect(0,0,ANIM_SZ,ANIM_SZ);
+  if(step>0){
+    drawBasisWave(animHC.x, holoContrib, ANIM_SZ);
+    // Grid overlay
+    animHC.x.strokeStyle='rgba(255,255,255,0.1)';
+    animHC.x.lineWidth=1;
+    for(let i=1;i<Z;i++){
+      animHC.x.beginPath();animHC.x.moveTo(i*ZS*ps,0);animHC.x.lineTo(i*ZS*ps,ANIM_SZ);animHC.x.stroke();
+      animHC.x.beginPath();animHC.x.moveTo(0,i*ZS*ps);animHC.x.lineTo(ANIM_SZ,i*ZS*ps);animHC.x.stroke();
+    }
+  }
+
+  // Draw Photo result
+  animPR.x.fillStyle='#0f172a';
+  animPR.x.fillRect(0,0,ANIM_SZ,ANIM_SZ);
+  drawImg(animPR.x, photoResult, ps);
+  animPR.x.strokeStyle='rgba(255,255,255,0.06)';
+  animPR.x.lineWidth=1;
+  for(let i=1;i<Z;i++){
+    animPR.x.beginPath();animPR.x.moveTo(i*ZS*ps,0);animPR.x.lineTo(i*ZS*ps,ANIM_SZ);animPR.x.stroke();
+    animPR.x.beginPath();animPR.x.moveTo(0,i*ZS*ps);animPR.x.lineTo(ANIM_SZ,i*ZS*ps);animPR.x.stroke();
+  }
+
+  // Draw Hologram result
+  animHR.x.fillStyle='#0f172a';
+  animHR.x.fillRect(0,0,ANIM_SZ,ANIM_SZ);
+  drawImg(animHR.x, holoResult, ps);
+  animHR.x.strokeStyle='rgba(255,255,255,0.06)';
+  animHR.x.lineWidth=1;
+  for(let i=1;i<Z;i++){
+    animHR.x.beginPath();animHR.x.moveTo(i*ZS*ps,0);animHR.x.lineTo(i*ZS*ps,ANIM_SZ);animHR.x.stroke();
+    animHR.x.beginPath();animHR.x.moveTo(0,i*ZS*ps);animHR.x.lineTo(ANIM_SZ,i*ZS*ps);animHR.x.stroke();
+  }
+
+  // Update labels
+  if(step===0){
+    document.getElementById('pcLabel').textContent='Nothing yet';
+    document.getElementById('hcLabel').textContent='Nothing yet';
+  } else {
+    const z=tileOrder[step-1];
+    const zr=Math.floor(z/Z),zc=z%Z;
+    document.getElementById('pcLabel').innerHTML=`Tile ${step}: copies pixels from region [${zr},${zc}]`;
+    document.getElementById('hcLabel').innerHTML=`Tile ${step}: adds wave [${zr},${zc}] across <b>entire</b> image`;
+  }
+
+  // Update insight
+  const insight=document.getElementById('animInsight');
+  if(step===0){
+    insight.innerHTML='<p>Press <b>▶ Play</b> or <b>⏭ Next</b> to start building the image tile by tile...</p>';
+  } else if(step===1){
+    const z=tileOrder[0],zr=Math.floor(z/Z),zc=z%Z;
+    insight.innerHTML=`<p><b>Step 1:</b> The first tile added is [${zr},${zc}] — the lowest frequency.</p>
+      <p>📸 <b>Photo:</b> Only one 4×4 corner lights up. The rest is black.</p>
+      <p>🌈 <b>Hologram:</b> The entire image gets a rough approximation! This single wave already defines the overall brightness.</p>`;
+  } else if(step<=4){
+    insight.innerHTML=`<p><b>Step ${step}:</b> Low-frequency tiles are being added.</p>
+      <p>📸 <b>Photo:</b> ${step} out of 16 corners now have pixels. Still mostly black.</p>
+      <p>🌈 <b>Hologram:</b> The whole image is already recognizable! Each wave refines the shape everywhere at once.</p>`;
+  } else if(step<=10){
+    insight.innerHTML=`<p><b>Step ${step}:</b> Mid-frequency tiles are adding detail.</p>
+      <p>📸 <b>Photo:</b> More corners filling in, but gaps remain.</p>
+      <p>🌈 <b>Hologram:</b> Getting sharper across the entire image. Details like eyes and mouth are emerging everywhere simultaneously.</p>`;
+  } else if(step<16){
+    insight.innerHTML=`<p><b>Step ${step}:</b> High-frequency tiles add the fine edges.</p>
+      <p>📸 <b>Photo:</b> Almost complete, but the last corners are still missing.</p>
+      <p>🌈 <b>Hologram:</b> Getting crisp! These high-frequency waves clean up the pixel boundaries.</p>`;
+  } else {
+    insight.innerHTML=`<p><b>✅ Complete!</b> All 16 tiles used. Both images are perfect.</p>
+      <p>Key insight: At <b>any intermediate step</b>, the hologram showed the <b>whole image</b> (blurry), while the photo only showed <b>some corners</b> (sharp but incomplete).</p>
+      <p>This is exactly how LLM embeddings work: every dimension contributes to <b>every concept</b>, so partial information gives you a blurry-but-complete picture, not a few sharp fragments.</p>`;
+  }
+}
+
+function animNext(){
+  if(animStep<Z*Z){animStep++;renderAnimFrame()}
+}
+function animPrev(){
+  if(animStep>0){animStep--;renderAnimFrame()}
+}
+function animReset(){
+  animPause();animStep=0;renderAnimFrame();
+}
+function animPlay(){
+  animPause();
+  if(animStep>=Z*Z) animStep=0;
+  const speed=parseInt(document.getElementById('animSpeed').value);
+  const ms=1200-speed*100;
+  animTimer=setInterval(()=>{
+    if(animStep>=Z*Z){animPause();return}
+    animStep++;renderAnimFrame();
+  },ms);
+}
+function animPause(){
+  if(animTimer){clearInterval(animTimer);animTimer=null}
+}
+
+// ============================================
+// SECTION 3: SCRATCH DEMO
+// ============================================
+const CP=65,G=3,IS=16;
+const GW=Z*CP+(Z-1)*G, IW=N*IS;
+const pS=new Array(Z*Z).fill(false);
+const hS=new Array(Z*Z).fill(false);
+
+const pg=setupCanvas('pg',GW,GW);
+const hg=setupCanvas('hg',GW,GW);
+const pi=setupCanvas('pi',IW,IW);
+const hi=setupCanvas('hi',IW,IW);
+
+function drawGrid(ctx,w,scratched,isHolo){
+  ctx.clearRect(0,0,w,w);
+  ctx.fillStyle='#0f172a';ctx.fillRect(0,0,w,w);
+  for(let zr=0;zr<Z;zr++)for(let zc=0;zc<Z;zc++){
+    const z=zr*Z+zc, x=zc*(CP+G), y=zr*(CP+G);
+    if(scratched[z]){
+      ctx.fillStyle='#1a1a2e';ctx.fillRect(x,y,CP,CP);
+      ctx.strokeStyle='#ef4444';ctx.lineWidth=2.5;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(x+10,y+10);ctx.lineTo(x+CP-10,y+CP-10);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+CP-10,y+10);ctx.lineTo(x+10,y+CP-10);ctx.stroke();
+      ctx.font='bold 10px sans-serif';ctx.textAlign='center';ctx.fillStyle='#ef4444';
+      ctx.fillText('LOST',x+CP/2,y+CP/2+4);
+    } else {
+      if(isHolo){
+        const b=basis[z];let mx=0;for(let i=0;i<N*N;i++) if(Math.abs(b[i])>mx) mx=Math.abs(b[i]);
+        const sc2=mx>0?1/mx:1, ps2=CP/N;
+        for(let i=0;i<N;i++) for(let j=0;j<N;j++){
+          const v=b[i*N+j]*sc2;
+          if(v>=0) ctx.fillStyle=`rgb(${Math.round(50+v*200)},${Math.round(30+v*120)},${Math.round(90+v*80)})`;
+          else{const a=-v;ctx.fillStyle=`rgb(${Math.round(20+a*30)},${Math.round(30+a*120)},${Math.round(80+a*175)})`}
+          ctx.fillRect(x+j*ps2,y+i*ps2,ps2+1,ps2+1);
+        }
+      } else {
+        const ps2=CP/ZS;
+        for(let i=0;i<ZS;i++) for(let j=0;j<ZS;j++){
+          const gi=zr*ZS+i,gj=zc*ZS+j;
+          const v=ORI[gi*N+gj];
+          const r=Math.round(40+v*210),g=Math.round(30+v*185),b=Math.round(15+v*80);
+          ctx.fillStyle=`rgb(${r},${g},${b})`;
+          ctx.fillRect(x+j*ps2,y+i*ps2,ps2+1,ps2+1);
+        }
+      }
+      ctx.strokeStyle='#334155';ctx.lineWidth=1;ctx.strokeRect(x,y,CP,CP);
+    }
+  }
 }
 
 function reconstruct(scratched,isHolo){
- if(isHolo){
-  const co=new Float64Array(N*N);
-  for(let z=0;z<Z*Z;z++){
-   if(scratched[z])continue;
-   const zr=Math.floor(z/Z),zc=z%Z;
-   for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++)co[i*N+j]=DC[i*N+j];
+  if(isHolo){
+    const co=new Float64Array(N*N);
+    for(let z=0;z<Z*Z;z++){
+      if(scratched[z]) continue;
+      const zr=Math.floor(z/Z),zc=z%Z;
+      for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++) co[i*N+j]=DC[i*N+j];
+    }
+    return idct2(co);
+  } else {
+    const out=new Float64Array(N*N);
+    for(let z=0;z<Z*Z;z++){
+      if(scratched[z]) continue;
+      const zr=Math.floor(z/Z),zc=z%Z;
+      for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++) out[i*N+j]=ORI[i*N+j];
+    }
+    return out;
   }
-  return idct2(co);
- } else {
-  const out=new Float64Array(N*N);
-  for(let z=0;z<Z*Z;z++){
-   if(scratched[z])continue;
-   const zr=Math.floor(z/Z),zc=z%Z;
-   for(let i=zr*ZS;i<(zr+1)*ZS;i++)for(let j=zc*ZS;j<(zc+1)*ZS;j++)out[i*N+j]=ORI[i*N+j];
-  }
-  return out;
- }
 }
 
-function mse(a,b){let s=0;for(let i=0;i<a.length;i++)s+=(a[i]-b[i])**2;return s/a.length}
-function psnr(m){return m===0?Infinity:(10*Math.log10(1/m)).toFixed(1)}
+function mse(a,b){let s=0;for(let i=0;i<a.length;i++) s+=(a[i]-b[i])**2;return s/a.length}
 
 function updateStats(id,scratched,img){
- const el=document.getElementById(id);
- const alive=scratched.filter(x=>!x).length;
- const total=Z*Z;
- const pct=Math.round(100*alive/total);
- const m=mse(ORI,img);
- const q=m===0?100:Math.max(0,Math.round(100*(1-Math.sqrt(m))));
- el.innerHTML=`
-  <div class="stat-card"><div class="stat-label">Tiles Alive</div><div class="stat-value" style="color:${pct>50?'#4ade80':'#f87171'}">${alive}/${total}</div></div>
-  <div class="stat-card"><div class="stat-label">Survival %</div><div class="stat-value" style="color:${pct>50?'#4ade80':'#f87171'}">${pct}%</div></div>
-  <div class="stat-card"><div class="stat-label">Image Quality</div><div class="stat-value" style="color:${q>50?'#4ade80':'#f87171'}">${q}%</div></div>
- `;
+  const el=document.getElementById(id);
+  const alive=scratched.filter(x=>!x).length;
+  const total=Z*Z;
+  const pct=Math.round(100*alive/total);
+  const m=mse(ORI,img);
+  const q=m===0?100:Math.max(0,Math.round(100*(1-Math.sqrt(m))));
+  el.innerHTML=`
+    <div class="stat-card"><div class="stat-label">Tiles Alive</div><div class="stat-value" style="color:${pct>50?'#4ade80':'#f87171'}">${alive}/${total}</div></div>
+    <div class="stat-card"><div class="stat-label">Survival %</div><div class="stat-value" style="color:${pct>50?'#4ade80':'#f87171'}">${pct}%</div></div>
+    <div class="stat-card"><div class="stat-label">Image Quality</div><div class="stat-value" style="color:${q>50?'#4ade80':'#f87171'}">${q}%</div></div>
+  `;
 }
 
-function render(){
- drawGrid(pg.x,pg.w,pS,false);
- drawGrid(hg.x,hg.w,hS,true);
- const pImg=reconstruct(pS,false);
- const hImg=reconstruct(hS,true);
- drawImg(pi.x,pImg,IS);
- drawImg(hi.x,hImg,IS);
- updateStats('ps',pS,pImg);
- updateStats('hs',hS,hImg);
+function renderScratch(){
+  drawGrid(pg.x,pg.w,pS,false);
+  drawGrid(hg.x,hg.w,hS,true);
+  const pImg=reconstruct(pS,false);
+  const hImg=reconstruct(hS,true);
+  drawImg(pi.x,pImg,IS);
+  drawImg(hi.x,hImg,IS);
+  updateStats('ps',pS,pImg);
+  updateStats('hs',hS,hImg);
 }
 
-function tileFromClick(e,canvas,w){
- const rect=canvas.getBoundingClientRect();
- const mx=(e.clientX-rect.left),my=(e.clientY-rect.top);
- for(let zr=0;zr<Z;zr++)for(let zc=0;zc<Z;zc++){
-  const x=zc*(CP+G),y=zr*(CP+G);
-  if(mx>=x&&mx<x+CP&&my>=y&&my<y+CP)return zr*Z+zc;
- }
- return -1;
+function tileFromClick(e,canvas){
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  for(let zr=0;zr<Z;zr++) for(let zc=0;zc<Z;zc++){
+    const x=zc*(CP+G),y=zr*(CP+G);
+    if(mx>=x&&mx<x+CP&&my>=y&&my<y+CP) return zr*Z+zc;
+  }
+  return -1;
 }
 
 pg.c.addEventListener('click',e=>{
- const z=tileFromClick(e,pg.c,pg.w);
- if(z<0)return;
- pS[z]=!pS[z];
- if(document.getElementById('sync').checked)hS[z]=pS[z];
- render();
+  const z=tileFromClick(e,pg.c);
+  if(z<0)return;
+  pS[z]=!pS[z];
+  if(document.getElementById('sync').checked) hS[z]=pS[z];
+  renderScratch();
 });
 hg.c.addEventListener('click',e=>{
- const z=tileFromClick(e,hg.c,hg.w);
- if(z<0)return;
- hS[z]=!hS[z];
- if(document.getElementById('sync').checked)pS[z]=hS[z];
- render();
+  const z=tileFromClick(e,hg.c);
+  if(z<0)return;
+  hS[z]=!hS[z];
+  if(document.getElementById('sync').checked) pS[z]=hS[z];
+  renderScratch();
 });
 
-function resetAll(){for(let i=0;i<Z*Z;i++){pS[i]=false;hS[i]=false}render()}
-
-function rng(frac){
- resetAll();
- const indices=[...Array(Z*Z).keys()];
- // Shuffle
- for(let i=indices.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[indices[i],indices[j]]=[indices[j],indices[i]]}
- const k=Math.round(frac*Z*Z);
- for(let i=0;i<k;i++){pS[indices[i]]=true;hS[indices[i]]=true}
- render();
+function resetAll(){
+  for(let i=0;i<Z*Z;i++){pS[i]=false;hS[i]=false}
+  renderScratch();
 }
 
-function switchImg(){imgIdx=(imgIdx+1)%IMGS.length;reloadImage()}
+function rng(frac){
+  resetAll();
+  const indices=[...Array(Z*Z).keys()];
+  for(let i=indices.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [indices[i],indices[j]]=[indices[j],indices[i]];
+  }
+  const k=Math.round(frac*Z*Z);
+  for(let i=0;i<k;i++){pS[indices[i]]=true;hS[indices[i]]=true}
+  renderScratch();
+}
 
-render();
+// ============================================
+// SHARED: Switch image & initial render
+// ============================================
+function switchImg(){
+  imgIdx=(imgIdx+1)%IMGS.length;
+  ORI=[...IMGS[imgIdx]];
+  DC=dct2(ORI);
+  computeBasis();
+  for(let i=0;i<Z*Z;i++){pS[i]=false;hS[i]=false}
+  selectedTile=-1;
+  animStep=0;
+  animPause();
+  drawEncoding();
+  renderAnimFrame();
+  renderScratch();
+  // Clear basis area
+  encBasis.x.clearRect(0,0,ENC_BASIS_SZ,ENC_BASIS_SZ);
+  document.getElementById('basisLabel').innerHTML='👆 Click a tile above to see what wave pattern it stores';
+  document.getElementById('basisAnnotation').innerHTML='';
+}
+
+// Initial render
+drawEncoding();
+renderAnimFrame();
+renderScratch();
 </script>
 </body>
 </html>
-
