@@ -20,8 +20,8 @@
 
 <div id="contents" style="display: none">
 <?php
-	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformerlab");
 	incl("From $ 1 + 1 = 2 $ to ChatGPT: Beyond the Black Box", "intro");
+	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformerlab");
 	incl("An Intuition of how Large Language Models (LLMs) work", "intuition");
 	incl("Brief History of AI", "history");
 	incl("Basic math concepts", "math");
