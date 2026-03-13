@@ -2909,3 +2909,21 @@ blockquote,
 .math_transformer {
 	overflow-anchor: none;
 }
+
+.slider-container {
+    display: flex;
+    align-items: center; /* Vertikale Zentrierung */
+    gap: 10px;           /* Abstand zwischen Text und Slider */
+    margin: 10px 0;      /* Etwas Platz nach oben/unten */
+}
+
+.label-left, .label-right {
+    font-size: 0.85em;
+    color: #666;
+    font-style: italic;
+}
+
+/* Optional: Damit der Slider eine feste Breite hat */
+#astro-sigma {
+    width: 200px;
+}
