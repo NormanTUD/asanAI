@@ -1617,7 +1617,6 @@ async function renderExtremeLab() {
 
     const updateBernoulli = () => {
         const p = parseFloat(bernPInput.value);
-        document.getElementById('bern-p-val').innerText = p.toFixed(2);
 
         Plotly.newPlot('bernoulli-chart', [{
             x: ['Failure (0)', 'Success (1)'],

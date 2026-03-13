@@ -44,7 +44,6 @@ Furthermore, these distributions are the backbone of the "scaling laws" that dri
     <div class="statlab-interactive-zone">
         <label>Probability of Success ($p$):</label>
         <input type="range" id="bern-p" min="0" max="1" step="0.01" value="0.7">
-        <span id="bern-p-val">0.70</span>
         <div id="bernoulli-chart"></div>
     </div>
 </div>
