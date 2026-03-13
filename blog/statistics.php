@@ -187,11 +187,11 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
 
 </div>
 
-<div class="md">
-#### Least Squares: The Gauß-Legendre Rivalry
-
+<div class="optional md" data-headline="Least Squares: The Gauß-Legendre Rivalry">
 **Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauß** \citeyear{gauss1809} proved why it worked by inventing the **Normal Distribution**.
+</div>
 
+<div class="md">
 #### The Principle of Least Squares
 When we have "noisy" data points, we find the best-fitting line by minimizing the area of the squares formed by the distance between the data and the line.
 
@@ -200,8 +200,6 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 * **The Residual:** The distance between the "Truth" and the "Observation."
 * **Squaring the Error:** This ensures that large errors are punished more severely than small ones (a core principle of modern Loss Functions).
 * **The Normal Link:** Gauß proved that if your errors are distributed as $\mathcal{N}(0, \sigma^2)$, then the line that minimizes these squares is the **Maximum Likelihood Estimate**.
-
-
 </div>
 
 <div class="statlab-interactive-zone">
@@ -795,7 +793,7 @@ Thus began Zarathustra's down-going.
     <div class="md">
         ## Maximum Likelihood Estimation (MLE): The Fisherian Fit
 
-        Popularized by **Sir \citeauthor{fisher1922}** in \citetitle{fisher1922}, MLE was created to solve the problem of **Parameter Estimation**. If you see 10 tall people, what is the "most likely" average height of the whole population?
+        Popularized by **Sir \citeauthor{fisher1922}**, MLE was created to solve the problem of **Parameter Estimation**. If you see 10 tall people, what is the "most likely" average height of the whole population?
 
         LLMs use this to find the best weights ($\theta$) for the model.
         - **The Graph:** The red dots are your "observed data." The blue curve is your model.
