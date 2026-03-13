@@ -112,7 +112,7 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
     <div id="plot-astro" style="width:100%; height:500px;"></div>
     
     <div class="statlab-controls">
-        <strong>Telescope Precision (σ):</strong>
+        <strong>Telescope Imprecision:</strong>
         <input type="range" id="astro-sigma" min="0.1" max="2.0" step="0.1" value="2">
         <p>Lower σ = Better Telescope. The points cluster tighter to the "Truth".</p>
     </div>
