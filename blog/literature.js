@@ -1,4 +1,10 @@
 window.bibData = {
+	"kelley": {
+		year: 1960,
+		url: "https://perceptrondemo.com/assets/1960-kelley-07dff188.pdf",
+		title: "Gradient Theory of Optimal Flight Paths",
+		author: "Henry J. Kelley"
+	},
 	"successorheads": {
 		year: 2023,
 		title: "Successor Heads: Recurring, Interpretable Attention Heads In The Wild",

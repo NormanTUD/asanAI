@@ -411,7 +411,27 @@ The field only recovered in the 1980s with the popularization of \citealternativ
 Before LeCun perfected the CNN, the architectural blueprints were drawn by **Kunihiko Fukushima** (who, in turn, based his work in the work of \citeauthorlastnameand{hubelwiesel}, who researched the cat's visual cortex), in \citeyear{neocognitron}, he developed the **\citealternativetitle{neocognitron}**, a hierarchical network inspired by the visual cortex. It introduced the two key layers of modern vision AI: "S-cells" (simple) for feature extraction and "C-cells" (complex) for pooling, which allowed the machine to recognize objects even if they were shifted in position.
 
 However, these deep structures were difficult to train until the popularization of **Backpropagation** by \citeauthor{rumelhart1986} in \citeyear{rumelhart1986}. This mathematical technique allowed the "error" of a network to be sent backward through the layers, adjusting the weights with precision. The combination of Fukushima's architecture and Rumelhart's training algorithm set the stage for the deep learning revolution.
+</div>
 
+<div class="optional md" data-headline="How calculating Flight Paths helped to pave the way to modern AI systems">
+### The Problem
+Traditional methods for finding optimal flight paths relied on complex differential equations (**Euler-Lagrange**) that were nearly impossible to solve for real-world missions. They often failed to satisfy "two-point boundary conditions", meaning you couldn't easily force the math to start at Point A and end exactly at Point B.
+
+### The Solution: Method of Gradients
+\citeauthor{kelley} proposed a **"Direct Method"** (Steepest Descent):
+1. **Start with a guess:** Pick any flight path that hits the start and end points.
+2. **Find the Gradient:** Calculate the direction of steepest improvement (e.g., less time/fuel).
+3. **Stepwise Update:** Shift the path slightly in that direction.
+4. **Iterate:** Repeat until the path converges to the mathematical optimum.
+
+### Relation to Modern AI (Neural Networks)
+This paper is a foundational application of **Gradient Descent**, the engine of modern AI:
+* **Loss Minimization:** In the paper, the "Error" is extra flight time; in NNs, "Loss" is the prediction error.
+* **Weight Updates:** Just as Kelley adjusted flight parameters (thrust/angle) in small steps, NNs adjust their weights using the same "steepest descent" logic.
+* **Learning Rate:** The paper’s "step size" ($\Delta\sigma$) is exactly what we now call the **Learning Rate** in deep learning.
+</div>
+
+<div class="md">
 ## The Silicon Engine: Moore's Law
 
 While AI research suffered through funding winters, the physical substrate of computing was undergoing an explosion. \citealternativetitle{mooreslaw} describes the observation made by Gordon Moore that the number of transistors in a dense integrated circuit doubles about every two years.
