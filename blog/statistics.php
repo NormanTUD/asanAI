@@ -113,9 +113,9 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
     
 	<div class="statlab-controls">
 	    <div class="slider-container">
-		<span class="label-left">Better Telescopes</span>
-		<input type="range" id="astro-sigma" min="0.1" max="2.0" step="0.1" value="2">
-		<span class="label-right">Worse Telescopes</span>
+		<span class="label-left">Better&nbsp;Telescopes</span>
+		<input type="range" id="astro-sigma" min="0.1" max="2.0" step="0.1" value="2" style="width: 100%;">
+		<span class="label-right">Worse&nbsp;Telescopes</span>
 	    </div>
 	</div>
 </div>
