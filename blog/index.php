@@ -46,7 +46,7 @@
 	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("The Semantic Tug-of-War: How Transformers 'Think'", "attentionlab");
 	incl("Positional Embeddings", "positionalembeddingslab");
-	incl("Top-\$k\$-Sampling: Temperature & Top-\$k\$ Explorer", "samplinglab");
+	incl("Temperature & Sampling", "samplinglab");
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
 	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
