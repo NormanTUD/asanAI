@@ -1,4 +1,10 @@
 window.bibData = {
+	"aizenberg2000": {
+		url: "https://dl.acm.org/doi/10.5555/646226.683499",
+		title: "Multi-valued and Universal Binary Neurons: New Applications in Intelligent Image Processing",
+		year: 2001,
+		author: "Igor N. Aizenberg"
+	},
 	"deeplearningfirstuse": {
 		title: "Learning while searching in constraint-satisfaction-problems",
 		url: "https://dl.acm.org/doi/10.5555/2887770.2887799",
