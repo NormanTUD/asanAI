@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-In natural language, there are often many ways to express the same thing, and different humans (or even the same human when asked repeatedly) may answer differently each time. 
+In natural language, there are often many ways to express the same thing, and different humans (or even the same human when asked repeatedly) may answer differently each time. The ideas here were first described in \citeyear{boltzmannlearning}.
 
 To make the interaction feel more humane, there's something called Top-$k$-Sampling. Since you get a probability distribution of most probable words instead of just the most probable one (the probability being the cosine angle to the vector position the calculation points to), you can choose out of a selection of different words that are probable next. This used to not only select the most probable next word, but random chose any of the top $n$ most probable words and it's why an LLM may reply with differents words to the same question, even on the same model. 
 

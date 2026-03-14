@@ -1,4 +1,10 @@
 window.bibData = {
+	"boltzmannlearning": {
+		url: "https://www.cs.toronto.edu/~fritz/absps/cogscibm.pdf",
+		year: 1985,
+		author: "David H. Ackley, Geoffrey E. Hinton, Terrence J. Sejnowski",
+		title: "A Learning Algorithm for Boltzmann Machines"
+	},
 	"kelley": {
 		year: 1960,
 		url: "https://perceptrondemo.com/assets/1960-kelley-07dff188.pdf",
