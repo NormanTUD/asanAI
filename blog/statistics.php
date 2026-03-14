@@ -52,6 +52,8 @@ Furthermore, these distributions are the backbone of the "scaling laws" that dri
 
 #### The Binomial Distribution
 
+TODO: PASCAL PYRAMID
+
 While people have rolled dice for millennia, the math of *sums* was long misunderstood. For centuries, gamblers thought all sums were equally likely.
 </div>
 
