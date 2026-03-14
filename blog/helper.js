@@ -1295,7 +1295,10 @@ function addCuriosityScore() {
 function initOptionalBlocks() {
 	updateLoadingStatus("Processing Optional Blocks...");
 	document.querySelectorAll('div.optional').forEach(block => {
-		if (block.classList.contains('optional-initialized')) return;
+		if (block.classList.contains('optional-initialized')) {
+			console.info("Leaving optional block click early");
+			return;
+		}
 		block.classList.add('optional-initialized');
 
 		const headline = block.getAttribute('data-headline') || "More Information";
@@ -1396,7 +1399,10 @@ function initOptionalBlocks() {
 
 		// Toggle Logic
 		header.onclick = () => {
-			if (isAnimating) return;
+			if (isAnimating) {
+				console.info("isAnimating: leaving early");
+				return;
+			}
 
 			const icon = header.querySelector('.optional-icon');
 			const isHidden = contentWrapper.style.display === 'none';
