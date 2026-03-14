@@ -36,7 +36,26 @@ Or, as a commuting diagram:
 	include("layer_commutating_diagram.html");
 ?>
 </center>
+</div>
 
+<div class="optional md" data-headline="The Universal Approximation Theorem">
+The **Universal Approximation Theorem** (proven by \citeauthor{hornik}) establishes that the power of neural networks is derived from their multilayer feedforward architecture rather than any specific activation function. \citeauthor{hornik} demonstrated that a single hidden layer is sufficient to approximate any function to an arbitrary degree of accuracy, provided there are enough hidden units. A network with $n$ hidden units implements functions of the form:
+
+$$h(x) = \sum_{j=1}^{n} \beta_j \psi(a_j^T x - \theta_j)$$
+
+The variables are defined as:
+* $x \in \mathbb{R}^k$: The input vector.
+* $\psi$: The activation function, which must be **bounded and non-constant**.
+* $a_j$: Weight vectors for the input-to-hidden connections ($a_j^T$ is the transpose for the dot product).
+* $\beta_j$: Coefficients (weights) for the linear output layer.
+* $\theta_j$: Thresholds or biases for each hidden unit.
+
+This proves that networks are "universal learning machines" regardless of whether the activation function is sigmoidal or not, as long as it is not constant.
+
+This theorem is foundational because it shifts the focus of neural network efficacy away from the specific choice of activation function to the capacity of the architecture itself, proving that even simple models can represent incredibly complex patterns.
+</div>
+
+<div class="md">
 ### The Role of Non-Linearity
 The activation function $\sigma$ (such as **ReLU** or **Sigmoid**) is the "glue" that makes stacking work. If we didn't use $\sigma$ between layers, the entire stack would mathematically collapse into a single linear function, because a "linear function of a linear function" is still just a linear function.
 
