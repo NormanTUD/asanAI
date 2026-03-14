@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Projektions-Demonstrator: Punkt-zu-Linie</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: #e0e0e0; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        canvas { background: #1a1a1a; border: 1px solid #444; cursor: crosshair; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .controls { max-width: 800px; margin: 20px; padding: 15px; background: #252525; border-radius: 8px; border-left: 5px solid #ffcc00; }
+        b { color: #00ffcc; }
+        .legend { display: flex; gap: 10px; margin-top: 10px; font-size: 0.9em; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+    </style>
+</head>
+<body>
+
+    <h2>Klarheit durch Farb-Projektion</h2>
+    <div class="controls">
+        Jeder <b>farbige Punkt</b> im Raum wird auf die 1D-Wand projiziert. <br>
+        Durch die Farben siehst du genau, welcher Punkt im 2D-Raum welche Position auf der 1D-Linie einnimmt.
+    </div>
+
+    <canvas id="demoCanvas" width="800" height="500"></canvas>
+
+    <script>
+        const canvas = document.getElementById('demoCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const wallX = 750;
+        let light = { x: 50, y: 250 };
+        
+        // Vier markante Punkte mit unterschiedlichen Farben
+        const points = [
+            { x: 300, y: 150, color: '#ff4444', label: 'A' }, // Rot
+            { x: 500, y: 200, color: '#44ff44', label: 'B' }, // Grün
+            { x: 350, y: 350, color: '#4444ff', label: 'C' }, // Blau
+            { x: 550, y: 400, color: '#ff44ff', label: 'D' }  // Magenta
+        ];
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            // Wir fixieren die Lichtquelle auf der X-Achse links, 
+            // damit die Strahlen immer schön nach rechts zeigen.
+            light.y = e.clientY - rect.top;
+            draw();
+        });
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. Die Wand (Ziel-Dimension)
+            ctx.strokeStyle = "#333";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(wallX, 0);
+            ctx.lineTo(wallX, canvas.height);
+            ctx.stroke();
+
+            points.forEach((p) => {
+                // Projektionsberechnung
+                const t = (wallX - light.x) / (p.x - light.x);
+                const shadowY = light.y + (p.y - light.y) * t;
+
+                // 2. Projektionsstrahl (in der Farbe des Punktes, aber transparent)
+                ctx.strokeStyle = p.color;
+                ctx.globalAlpha = 0.3;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(light.x, light.y);
+                ctx.lineTo(wallX, shadowY);
+                ctx.stroke();
+                ctx.globalAlpha = 1.0;
+
+                // 3. Projizierter Punkt auf der Wand (Das 1D-Abbild)
+                ctx.fillStyle = p.color;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = p.color;
+                ctx.beginPath();
+                ctx.arc(wallX, shadowY, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // 4. Der Original-Punkt (Das 2D-Objekt)
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Label
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 14px Arial";
+                ctx.fillText(p.label, p.x - 5, p.y - 18);
+                ctx.fillText(p.label + "'", wallX + 10, shadowY + 5);
+            });
+
+            // 5. Lichtquelle (Projektionszentrum)
+            ctx.fillStyle = "#ffcc00";
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = "#ffcc00";
+            ctx.beginPath();
+            ctx.arc(light.x, light.y, 15, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            
+            // Hilfslinie für die Licht-Schiene
+            ctx.strokeStyle = "rgba(255,204,0,0.2)";
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(light.x - 20, 0, 40, canvas.height);
+            ctx.setLineDash([]);
+        }
+
+        draw();
+    </script>
+</body>
+</html>
