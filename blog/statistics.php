@@ -52,7 +52,7 @@ Furthermore, these distributions are the backbone of the "scaling laws" that dri
 
 #### The Binomial Distribution
 
-While people have rolled dice for millennia, the math of *sums* was long misunderstood. For centuries, gamblers thought all sums were equally likely.
+While people have rolled dice for millennia, the math of *sums* was long misunderstood. For centuries, gamblers thought all sums were equally likely, but they are not. There is only one way to get the sum 2 ($1+1$), but there are $2$ ways to get the sum $3$ ($1+2$ and $2+1$), and 3 ways to get 4 ($1+3$, $2+2$, $3+1$) and so on.
 </div>
 
 <div class="optional md" data-headline="The History of the Binomial Distribution">
