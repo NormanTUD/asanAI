@@ -113,27 +113,27 @@ The heatmap shows every possible composition $M_i \cdot M_j = M_{(i+j)\bmod 12}$
 <div class="md">
 ## The Interference Pattern of Layers: Wave Geometry
 
-Information doesn't flow through a transformer in a smooth, monotonic stream. It **pulses**. If you track the activation patterns of a hidden state as it passes through all layers of a model — from layer 0 to layer 96 — you see something that looks less like a pipeline and more like a **wave**: expansion, compression, expansion, compression, in a rhythmic cycle that resembles a beating mechanical heart.
+Information doesn't flow through a transformer in a smooth, monotonic stream. It **pulses**. If you track the activation patterns of a hidden state as it passes through all layers of a model, from layer 0 to layer 96, you see something that looks less like a pipeline and more like a **wave**: expansion, compression, expansion, compression, in a rhythmic cycle that resembles a beating mechanical heart.
 
 ### The Three Phases
 
 Researchers have observed that transformer layers tend to organize into three broad phases:
 
-1. **Expansion (Early Layers):** The input embedding is "opened up." The model broadens the representation, activating many dimensions, exploring many possible interpretations of the input. The activation vector becomes **wide and diffuse** — high entropy, low certainty. This is the model asking: "What could this input mean?"
+1. **Expansion (Early Layers):** The input embedding is "opened up." The model broadens the representation, activating many dimensions, exploring many possible interpretations of the input. The activation vector becomes **wide and diffuse**, high entropy, low certainty. This is the model asking: "What could this input mean?"
 
-2. **Compression (Middle Layers):** The representation suddenly **contracts**. The model narrows down, suppressing irrelevant dimensions, sharpening the signal. This is the "logic check" — the phase where the model commits to an interpretation, resolves ambiguities, and performs the core reasoning. The activation vector becomes **tight and focused** — low entropy, high certainty.
+2. **Compression (Middle Layers):** The representation suddenly **contracts**. The model narrows down, suppressing irrelevant dimensions, sharpening the signal. This is the "logic check", the phase where the model commits to an interpretation, resolves ambiguities, and performs the core reasoning. The activation vector becomes **tight and focused**, low entropy, high certainty.
 
-3. **Re-expansion (Late Layers):** The representation opens up again, but differently. Now the model is preparing to **generate output** — it needs to fan out from a single sharp interpretation into a probability distribution over the entire vocabulary. The vector broadens again, but this time in a structured way that maps onto token probabilities.
+3. **Re-expansion (Late Layers):** The representation opens up again, but differently. Now the model is preparing to **generate output**, it needs to fan out from a single sharp interpretation into a probability distribution over the entire vocabulary. The vector broadens again, but this time in a structured way that maps onto token probabilities.
 
 ### The Heartbeat Analogy
 
-This expansion-compression-expansion cycle is strikingly similar to a **heartbeat**: diastole (expansion, filling with possibilities), systole (compression, pumping a decision), diastole again (expansion, distributing the result). When visualized as a waveform across layers, it literally looks like a cardiac rhythm — a **mechanical heart made of data**.
+This expansion-compression-expansion cycle is strikingly similar to a **heartbeat**: diastole (expansion, filling with possibilities), systole (compression, pumping a decision), diastole again (expansion, distributing the result). When visualized as a waveform across layers, it literally looks like a cardiac rhythm, a **mechanical heart made of data**.
 
-The wave pattern is not a single pulse. In deep models (96+ layers), you often see **multiple cycles** — the model performs several rounds of expansion and compression, like a heart beating multiple times per inference. Each cycle refines the representation further, and the interference between cycles creates complex patterns reminiscent of wave interference in physics.
+The wave pattern is not a single pulse. In deep models (96+ layers), you often see **multiple cycles**, the model performs several rounds of expansion and compression, like a heart beating multiple times per inference. Each cycle refines the representation further, and the interference between cycles creates complex patterns reminiscent of wave interference in physics.
 
 $$ \text{Activation Width}(l) \approx A_0 + \sum_{k=1}^{K} A_k \cdot \cos\left(\frac{2\pi k \cdot l}{L} + \phi_k\right) $$
 
-where $l$ is the layer index, $L$ is the total number of layers, and $K$ is the number of harmonic cycles. The activation width oscillates as a superposition of harmonics — literally a wave equation applied to neural network depth.
+where $l$ is the layer index, $L$ is the total number of layers, and $K$ is the number of harmonic cycles. The activation width oscillates as a superposition of harmonics, literally a wave equation applied to neural network depth.
 
 Below, you can explore this interactively. A simulated transformer processes a token through all its layers. The **wave visualization** shows the activation width (number of strongly active dimensions) at each layer. Watch the heartbeat pattern emerge. Adjust the **model depth**, **number of cycles**, and **input complexity** to see how the wave pattern changes.
 </div>
@@ -147,7 +147,7 @@ Below, you can explore this interactively. A simulated transformer processes a t
         <div id="wave-info-panel" style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 520px; overflow-y: auto;">
             <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">💓 Layer Heartbeat</div>
             <div id="wave-phase-info">
-                The activation pattern pulses through expansion, compression, and re-expansion phases — like a beating heart made of data.
+                The activation pattern pulses through expansion, compression, and re-expansion phases, like a beating heart made of data.
             </div>
             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 10px 0;">
             <div style="font-weight: bold; font-size: 0.9em; color: #1e293b; margin-bottom: 6px;">📊 Current Layer</div>
@@ -208,7 +208,7 @@ Below, you can explore this interactively. A simulated transformer processes a t
 
     <!-- Description -->
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
-        <b>What you're seeing:</b> The <b>top section</b> shows a <b>dimension heatmap</b> — each column is a layer,
+        <b>What you're seeing:</b> The <b>top section</b> shows a <b>dimension heatmap</b>, each column is a layer,
         each row is a dimension of the hidden state. Bright pixels = strongly active dimensions.
         The <b>wave curve</b> below it traces the <b>activation width</b> (how many dimensions are strongly active) at each layer.
         <span style="color:#3b82f6;">Blue regions</span> = <b>expansion</b> (broad, exploratory).
@@ -222,27 +222,27 @@ Below, you can explore this interactively. A simulated transformer processes a t
 <div class="md">
 ## Isosurfaces of Probability: Truth Tunnels
 
-Imagine wrapping a "shell" around every region of the embedding space where the model considers a token or sequence **plausible**. These shells are **isosurfaces** — surfaces of equal probability, like the isobars on a weather map that connect points of equal atmospheric pressure. Inside the shell: plausible continuations. Outside: nonsense.
+Imagine wrapping a "shell" around every region of the embedding space where the model considers a token or sequence **plausible**. These shells are **isosurfaces**, surfaces of equal probability, like the isobars on a weather map that connect points of equal atmospheric pressure. Inside the shell: plausible continuations. Outside: nonsense.
 
 ### From Weather Maps to Thought Corridors
 
 In meteorology, high-pressure zones are broad, stable regions; low-pressure zones are tight, intense. The embedding space works the same way:
 
-* **Open fields:** At the start of a conversation, the probability isosurface is a wide, blob-like region — almost anything could come next. "The" could be followed by thousands of plausible tokens. The isosurface is fat and round.
-* **Narrow tunnels:** As the context grows and the argument tightens, the isosurface **collapses into a narrow corridor** — a "truth tunnel." After "The capital of France is," the plausible region shrinks to a tiny pocket around "Paris." The isosurface is now a tight tube.
-* **Branching points:** At moments of ambiguity ("The bank of the ___"), the tunnel **forks** — one branch leads toward "river" (geography), another toward "account" (finance). The isosurface develops a bifurcation, like a blood vessel splitting in two.
+* **Open fields:** At the start of a conversation, the probability isosurface is a wide, blob-like region, almost anything could come next. "The" could be followed by thousands of plausible tokens. The isosurface is fat and round.
+* **Narrow tunnels:** As the context grows and the argument tightens, the isosurface **collapses into a narrow corridor**, a "truth tunnel." After "The capital of France is," the plausible region shrinks to a tiny pocket around "Paris." The isosurface is now a tight tube.
+* **Branching points:** At moments of ambiguity ("The bank of the ___"), the tunnel **forks**, one branch leads toward "river" (geography), another toward "account" (finance). The isosurface develops a bifurcation, like a blood vessel splitting in two.
 
 ### The Tube System in Hyperspace
 
-If you could visualize the path of a full conversation through the embedding space, you would see something like a **branching tube system**: wide at the start, narrowing as context accumulates, occasionally forking at ambiguous decision points, and sometimes opening back up when the topic shifts. The walls of the tube are the isosurface — the boundary between "the model considers this plausible" and "the model considers this nonsense."
+If you could visualize the path of a full conversation through the embedding space, you would see something like a **branching tube system**: wide at the start, narrowing as context accumulates, occasionally forking at ambiguous decision points, and sometimes opening back up when the topic shifts. The walls of the tube are the isosurface, the boundary between "the model considers this plausible" and "the model considers this nonsense."
 
 $$ \mathcal{S}_\tau = \{ \mathbf{x} \in \mathbb{R}^d \mid P(\mathbf{x} \mid \text{context}) = \tau \} $$
 
 where $\tau$ is the probability threshold. A high $\tau$ gives a tight tube (only the most likely continuations); a low $\tau$ gives a wider tube (including less likely but still plausible options).
 
 This is directly related to **temperature** in LLM sampling:
-* **Low temperature** ($T \to 0$): The tube collapses to a thin wire — only the single most likely token survives. Deterministic, but rigid.
-* **High temperature** ($T \to \infty$): The tube inflates to fill the space — everything becomes equally plausible. Creative, but incoherent.
+* **Low temperature** ($T \to 0$): The tube collapses to a thin wire, only the single most likely token survives. Deterministic, but rigid.
+* **High temperature** ($T \to \infty$): The tube inflates to fill the space, everything becomes equally plausible. Creative, but incoherent.
 * **The sweet spot** ($T \approx 0.7\text{–}1.0$): The tube is wide enough for variety but narrow enough for coherence. This is where interesting text lives.
 
 Below, you can explore this interactively. A simulated sentence unfolds step by step through the embedding space. At each step, the **probability isosurface** is drawn as a glowing envelope around the trajectory. Watch how the tunnel **narrows** as context constrains the possibilities, **forks** at ambiguous tokens, and responds to the **temperature slider** in real time.
@@ -289,7 +289,7 @@ Below, you can explore this interactively. A simulated sentence unfolds step by 
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
         <b>What you're seeing:</b> The dark canvas represents the embedding space.
         The <span style="color:#60a5fa; font-weight:bold;">blue trajectory</span> is the path of the hidden state as the sentence unfolds token by token.
-        The <span style="color:rgba(139,92,246,0.5); font-weight:bold;">glowing envelope</span> around the path is the <b>probability isosurface</b> — the region of plausible next tokens at each step.
+        The <span style="color:rgba(139,92,246,0.5); font-weight:bold;">glowing envelope</span> around the path is the <b>probability isosurface</b>, the region of plausible next tokens at each step.
         <b>Wide envelopes</b> = many plausible continuations (high entropy).
         <b>Narrow envelopes</b> = few plausible continuations (low entropy, high certainty).
         <b>Forks</b> appear at ambiguous decision points.
