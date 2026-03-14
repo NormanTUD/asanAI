@@ -1,4 +1,10 @@
 window.bibData = {
+	"relufirst": {
+		title: "Visual Feature Extraction by a Multilayered Network of Analog Threshold Elements",
+		author: "Kunihiko Fukushima",
+		url: "https://ieeexplore.ieee.org/document/4082265",
+		year: 1969
+	},
 	"aizenberg2000": {
 		url: "https://dl.acm.org/doi/10.5555/646226.683499",
 		title: "Multi-valued and Universal Binary Neurons: New Applications in Intelligent Image Processing",
