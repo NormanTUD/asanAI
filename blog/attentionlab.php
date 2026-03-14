@@ -17,7 +17,7 @@ The **Self-Attention mechanism** acts as a semantic GPS. It looks at the surroun
 * **The Vector Shift:** If the word "river" is nearby, it exerts a gravitational force on "bank," dragging its coordinates away from finance and toward nature.
 * **The Resulting Embedding:** The final position (represented by the **blue diamond** in the plot below) is the "contextualized" version of the word, informed by its neighbors.
 
-## Geometric Intuition Lab: Why *That* Equation?
+## Geometric Intuition: Why *That* Equation?
 
 The attention equation looks deceptively simple:
 
