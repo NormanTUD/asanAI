@@ -1,4 +1,10 @@
 window.bibData = {
+	"deeplearningfirstuse": {
+		title: "Learning while searching in constraint-satisfaction-problems",
+		url: "https://dl.acm.org/doi/10.5555/2887770.2887799",
+		author: "Rina Dechter",
+		year: 1986
+	},
 	"boltzmannlearning": {
 		url: "https://www.cs.toronto.edu/~fritz/absps/cogscibm.pdf",
 		year: 1985,

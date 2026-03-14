@@ -3,7 +3,7 @@
 <div class="md">
 ## From Linear Units to Deep Architectures
 
-As we saw in the discussion on the **Minimal Neuron**, a single unit performs a linear transformation followed by an activation. However, the true power of Modern AI, what we call **Deep Learning** (first named as such by \citeauthorlastnameand{hinton2006} in \citeyear{hinton2006}), emerges when we stack these neurons into multiple successive layers.
+As we saw in the discussion on the **Minimal Neuron**, a single unit performs a linear transformation followed by an activation. However, the true power of Modern AI, what we call **Deep Learning** (first named as such by \citeauthor{deeplearningfirstuse}), emerges when we stack these neurons into multiple successive layers.
 
 ### The Hidden Layer
 In a simple model, we go directly from input to output. In a Deep Network, we introduce "Hidden Layers." These are intermediate steps where the data is transformed into abstract representations. Instead of just a single weight $a$, we now use a **Weight Tensor** $W$ to handle multiple signals simultaneously.
