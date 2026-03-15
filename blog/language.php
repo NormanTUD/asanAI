@@ -31,7 +31,7 @@ The evolution of language represents a fundamental transition from **indexical s
 
 ### From Hardware to Software: The Mechanical Era
 
-The dream of replicating human speech transitioned from biology to mechanics in the 18th century. **\cite[Wolfgang von Kempelen]{kempelen_speaking_machine}** (1791) constructed a "Speaking Machine" using bellows and reeds that an operator would manipulate like a mouth. It was the first "Text-to-Speech" device, capable of saying whole phrases like *"Mama"* or *"Astronomie"*. Later, **\cite[John Wilkins]{wilkins_real_character}** (1668) attempted to create a universal language where the very shape of a word's symbols described its biological or physical properties.
+The dream of replicating human speech transitioned from biology to mechanics in the 18th century. **\cite[Wolfgang von Kempelen]{kempelen_speaking_machine}** (1791) constructed a "Speaking Machine" using bellows and reeds that an operator would manipulate like a mouth. It was the first "Text-to-Speech" device, capable of saying whole phrases like *"Mama"* or *"Astronomie"*. Later, **\cite[John Wilkins]{wilkins_real_character}** (1668) attempted to create a universal language where the very shape of a word's symbols described its biological or physical properties. While he failed, he laid the philosophical groundwork for **Taxonomies**, the idea that every concept has a "coordinate" in the tree of human knowledge.
 
 ### The Modern Synthesis: Meaning as Geometry
 
