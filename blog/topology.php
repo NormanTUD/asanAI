@@ -367,7 +367,7 @@ The Transformer doesn't just process sequences of tokens, it navigates a topolog
 <div class="md">
 ## The Torus: When Two Cycles Meet
 
-A **torus** is the product of two circles: $T^2 = S^1 \times S^1$. Imagine taking a circle and sweeping it around another circle — you get a donut shape. But the real power of the torus is what it *represents*: any system with **two independent cyclic variables**.
+A **torus** is the product of two circles: $T^2 = S^1 \times S^1$. Imagine taking a circle and sweeping it around another circle, you get a donut shape. But the real power of the torus is what it *represents*: any system with **two independent cyclic variables**.
 
 ### Why This Matters for Understanding
 
@@ -377,7 +377,7 @@ Many real-world concepts are governed by two independent cycles:
 - **Monthly budget cycle** × **Weekly spending cycle** = a torus of financial behavior
 - **Verb tense** × **Grammatical aspect** = a torus of temporal expression
 
-When an LLM encodes "Sunday morning" vs. "Wednesday midnight," it's placing points on a toroidal manifold. The key insight is that on a torus, you can have paths that **wrap around in both directions simultaneously** — a diagonal path that goes around the donut *and* through the hole at the same time.
+When an LLM encodes "Sunday morning" vs. "Wednesday midnight," it's placing points on a toroidal manifold. The key insight is that on a torus, you can have paths that **wrap around in both directions simultaneously**, a diagonal path that goes around the donut *and* through the hole at the same time.
 
 ### The Flat Torus Representation
 
@@ -385,14 +385,14 @@ A torus can be represented as a **flat square with opposite edges identified**:
 
 $$T^2 = [0,1]^2 / \sim$$
 
-where $(x, 0) \sim (x, 1)$ and $(0, y) \sim (1, y)$. This means if you walk off the right edge, you reappear on the left. Walk off the top, you reappear at the bottom. This is exactly how many video games work — and it's exactly how cyclic embeddings behave in neural networks.
+where $(x, 0) \sim (x, 1)$ and $(0, y) \sim (1, y)$. This means if you walk off the right edge, you reappear on the left. Walk off the top, you reappear at the bottom. This is exactly how many video games work, and it's exactly how cyclic embeddings behave in neural networks.
 
 ### Betti Numbers of the Torus
 
 $$\beta_0 = 1, \quad \beta_1 = 2, \quad \beta_2 = 1$$
 
 - $\beta_0 = 1$: The torus is one connected piece
-- $\beta_1 = 2$: There are **two independent loops** that can't be shrunk to a point — one going "around the donut" and one going "through the hole"
+- $\beta_1 = 2$: There are **two independent loops** that can't be shrunk to a point, one going "around the donut" and one going "through the hole"
 - $\beta_2 = 1$: The torus encloses one void (the hollow interior)
 
 The Euler characteristic is:
@@ -401,11 +401,11 @@ $$\chi = \beta_0 - \beta_1 + \beta_2 = 1 - 2 + 1 = 0$$
 
 ### Connection to LLM Embeddings
 
-When a language model learns that "saving money" peaks on certain days and follows a monthly cycle, it's effectively learning a function $f: T^2 \to \mathbb{R}$ — a scalar field on a torus. The two fundamental loops of the torus ($\beta_1 = 2$) correspond to the two independent periodicities the model must capture. Attention heads that specialize in temporal reasoning are, in a topological sense, learning the **fundamental group** of this torus:
+When a language model learns that "saving money" peaks on certain days and follows a monthly cycle, it's effectively learning a function $f: T^2 \to \mathbb{R}$, a scalar field on a torus. The two fundamental loops of the torus ($\beta_1 = 2$) correspond to the two independent periodicities the model must capture. Attention heads that specialize in temporal reasoning are, in a topological sense, learning the **fundamental group** of this torus:
 
 $$\pi_1(T^2) = \mathbb{Z} \times \mathbb{Z}$$
 
-Two independent integer-valued winding numbers — one for each cycle.
+Two independent integer-valued winding numbers, one for each cycle.
 </div>
 
 <div id="torus-viz"></div>
