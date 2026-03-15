@@ -1,11 +1,9 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## Topology and the Geometry of Thought
-
 In an LLM, words and concepts are mapped to high-dimensional vectors. However, these vectors don't fill the space uniformly. They tend to lie on a **Manifold** — a lower-dimensional surface embedded in the high-dimensional space. Understanding the *shape* of this manifold — its holes, its twists, its branches — is the domain of **topology**.
 
-### What Is Topology?
+## What Is Topology?
 
 Topology is the branch of mathematics that studies properties of shapes that are preserved under continuous deformation — stretching, bending, twisting — but **not** tearing or gluing. A coffee mug and a donut are topologically identical (both have exactly one hole); a sphere and a donut are not. While geometry asks *"how far apart are these two points?"*, topology asks *"are these two regions connected? Is there a hole between them? Can I smoothly deform one structure into the other?"*
 
@@ -13,7 +11,7 @@ Formally, two spaces are **homeomorphic** (topologically equivalent) if there ex
 
 $$ X \cong Y \iff \exists\, f: X \to Y \text{ continuous, bijective, with } f^{-1} \text{ continuous} $$
 
-### Why Does Topology Matter for AI?
+## Why Does Topology Matter for AI?
 
 The reason topology matters for understanding LLMs is that the **semantic manifold** — the surface on which meaningful token representations live — has rich topological structure. This structure directly affects what the model can and cannot represent:
 
@@ -25,7 +23,7 @@ The reason topology matters for understanding LLMs is that the **semantic manifo
 
 4. **Feature Extraction via Persistent Homology:** By computing the \cite[persistent homology]{persistenthomology} of activation patterns, researchers can determine whether a model has learned genuine topological structure (robust loops, clusters, cavities) or is merely memorizing surface-level correlations. Features with high **persistence** — topological signatures that survive across a wide range of scales — correspond to robust, generalizable knowledge.
 
-### Topological Invariants in Practice
+## Topological Invariants in Practice
 
 The key topological invariants used in AI research are the **Betti numbers** $\beta_0, \beta_1, \beta_2, \ldots$:
 
