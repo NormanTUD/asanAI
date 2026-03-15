@@ -3650,6 +3650,470 @@ function fiber_bundles() {
     draw();
 }
 
+// ============================================================
+// WINDING NUMBER VISUALIZATION — Circular reasoning detection
+// ============================================================
+function winding_number () {
+    const container = document.getElementById('winding-viz');
+    if (!container) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 700;
+    canvas.height = 520;
+    canvas.style.display = 'block';
+    canvas.style.margin = '0 auto';
+    canvas.style.borderRadius = '12px';
+    canvas.style.background = '#0a0a2e';
+    canvas.style.cursor = 'crosshair';
+    container.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    const controlsDiv = document.createElement('div');
+    controlsDiv.style.cssText = 'text-align:center; margin:15px 0; font-family:"Inter",sans-serif;';
+    controlsDiv.innerHTML = `
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc;">Mode: </label>
+            <select id="winding-mode" style="padding:5px 12px; border-radius:6px; background:#1a1a3e; color:#fff; border:1px solid #444; font-size:14px;">
+                <option value="draw">✏️ Draw your own path</option>
+                <option value="preset-0">Preset: Non sequitur (n=0)</option>
+                <option value="preset-1">Preset: Sound argument (n=1)</option>
+                <option value="preset-2">Preset: Circular reasoning (n=2)</option>
+                <option value="preset-neg">Preset: Self-defeating (n=−1)</option>
+            </select>
+            <button id="winding-clear" style="margin-left:15px; padding:6px 16px; background:#ff5252; border:none; border-radius:6px; cursor:pointer; font-weight:600; color:#fff;">Clear</button>
+        </div>
+        <div style="margin-bottom:8px;">
+            <span style="color:#aaa;">Click and drag on the canvas to draw a closed curve around the </span>
+            <span style="color:#ffd54f; font-weight:700;">★ thesis</span>
+            <span style="color:#aaa;">. Release to close the path.</span>
+        </div>
+        <div id="winding-result" style="font-size:20px; min-height:35px; color:#fff; font-weight:700;"></div>
+        <div id="winding-interpretation" style="font-size:14px; min-height:20px; color:#aaa;"></div>
+    `;
+    container.appendChild(controlsDiv);
+
+    // State
+    let path = [];
+    let isDrawing = false;
+    let closedPath = [];
+    const centerX = 300;
+    const centerY = 260;
+
+    // Preset paths
+    const presets = {
+        'preset-0': function() {
+            // Winding number 0: path that doesn't encircle center
+            const pts = [];
+            for (let i = 0; i <= 100; i++) {
+                const t = (i / 100) * Math.PI * 2;
+                pts.push({
+                    x: centerX + 200 + 80 * Math.cos(t),
+                    y: centerY + 60 * Math.sin(t)
+                });
+            }
+            return pts;
+        },
+        'preset-1': function() {
+            // Winding number 1: single loop around center
+            const pts = [];
+            for (let i = 0; i <= 100; i++) {
+                const t = (i / 100) * Math.PI * 2;
+                const r = 120 + 30 * Math.sin(3 * t);
+                pts.push({
+                    x: centerX + r * Math.cos(t),
+                    y: centerY + r * Math.sin(t)
+                });
+            }
+            return pts;
+        },
+        'preset-2': function() {
+            // Winding number 2: double loop
+            const pts = [];
+            for (let i = 0; i <= 200; i++) {
+                const t = (i / 100) * Math.PI * 2;
+                const r = 110 + 25 * Math.sin(5 * t);
+                pts.push({
+                    x: centerX + r * Math.cos(t),
+                    y: centerY + r * Math.sin(t)
+                });
+            }
+            return pts;
+        },
+        'preset-neg': function() {
+            // Winding number -1: clockwise loop
+            const pts = [];
+            for (let i = 0; i <= 100; i++) {
+                const t = -(i / 100) * Math.PI * 2;
+                const r = 120 + 20 * Math.cos(4 * t);
+                pts.push({
+                    x: centerX + r * Math.cos(t),
+                    y: centerY + r * Math.sin(t)
+                });
+            }
+            return pts;
+        }
+    };
+
+    function computeWindingNumber(pts, px, py) {
+        if (pts.length < 3) return 0;
+
+        let totalAngle = 0;
+        for (let i = 0; i < pts.length - 1; i++) {
+            const ax = pts[i].x - px;
+            const ay = pts[i].y - py;
+            const bx = pts[i + 1].x - px;
+            const by = pts[i + 1].y - py;
+
+            // Angle between consecutive vectors
+            const cross = ax * by - ay * bx;
+            const dot = ax * bx + ay * by;
+            let angle = Math.atan2(cross, dot);
+            totalAngle += angle;
+        }
+
+        return totalAngle / (2 * Math.PI);
+    }
+
+    function getInterpretation(n) {
+        const rounded = Math.round(n);
+        if (Math.abs(n) < 0.3) {
+            return {
+                text: `Winding number ≈ 0`,
+                interp: 'NON SEQUITUR — The argument never engages with the thesis. It wanders without addressing the central claim.',
+                color: '#888'
+            };
+        } else if (Math.abs(rounded) === 1 && rounded > 0) {
+            return {
+                text: `Winding number ≈ +1`,
+                interp: 'SOUND ARGUMENT — One complete, coherent circuit around the thesis. Engages from all angles.',
+                color: '#4caf50'
+            };
+        } else if (Math.abs(rounded) === 1 && rounded < 0) {
+            return {
+                text: `Winding number ≈ −1`,
+                interp: 'SELF-DEFEATING — The argument circles the thesis in reverse, undermining its own conclusion.',
+                color: '#ff9800'
+            };
+        } else if (Math.abs(rounded) >= 2) {
+            return {
+                text: `Winding number ≈ ${rounded}`,
+                interp: `CIRCULAR REASONING — The argument passes through the same premises ${Math.abs(rounded)} times, assuming what it tries to prove.`,
+                color: '#ff5252'
+            };
+        } else {
+            return {
+                text: `Winding number ≈ ${n.toFixed(2)}`,
+                interp: 'Path not yet closed. Keep drawing to complete the argument.',
+                color: '#4fc3f7'
+            };
+        }
+    }
+
+    function drawAngleVisualization(pts) {
+        // Draw angle accumulation arc near center
+        if (pts.length < 3) return;
+
+        const wn = computeWindingNumber(pts, centerX, centerY);
+        const totalAngle = wn * Math.PI * 2;
+
+        // Draw accumulated angle as a spiral arc
+        ctx.strokeStyle = 'rgba(255,213,79,0.5)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        const arcR = 25;
+        const arcSteps = Math.abs(Math.round(totalAngle / 0.05));
+        for (let i = 0; i <= arcSteps; i++) {
+            const a = (i / arcSteps) * totalAngle;
+            const r = arcR + (i / arcSteps) * 8;
+            const ax = centerX + r * Math.cos(a - Math.PI / 2);
+            const ay = centerY + r * Math.sin(a - Math.PI / 2);
+            if (i === 0) ctx.moveTo(ax, ay);
+            else ctx.lineTo(ax, ay);
+        }
+        ctx.stroke();
+
+        // Angle label
+        ctx.fillStyle = '#ffd54f';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Σθ = ${(wn * 360).toFixed(0)}°`, centerX, centerY + 45);
+        ctx.fillText(`= ${wn.toFixed(2)} × 2π`, centerX, centerY + 60);
+        ctx.textAlign = 'left';
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Background grid
+        ctx.strokeStyle = 'rgba(100,140,255,0.06)';
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i < canvas.width; i += 40) {
+            ctx.beginPath();
+            ctx.moveTo(i, 0);
+            ctx.lineTo(i, canvas.height);
+            ctx.stroke();
+        }
+        for (let i = 0; i < canvas.height; i += 40) {
+            ctx.beginPath();
+            ctx.moveTo(0, i);
+            ctx.lineTo(canvas.width, i);
+            ctx.stroke();
+        }
+
+        // Concentric guide circles
+        [60, 120, 180].forEach(r => {
+            ctx.strokeStyle = 'rgba(100,140,255,0.08)';
+            ctx.lineWidth = 0.5;
+            ctx.setLineDash([4, 8]);
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        });
+
+        // Central thesis point
+        ctx.fillStyle = '#ffd54f';
+        ctx.shadowColor = '#ffd54f';
+        ctx.shadowBlur = 20;
+        ctx.font = '24px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('★', centerX, centerY + 8);
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = '#ffd54f';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.fillText('THESIS', centerX, centerY - 18);
+        ctx.textAlign = 'left';
+
+        // Draw the path
+        const activePath = closedPath.length > 0 ? closedPath : path;
+
+        if (activePath.length > 1) {
+            // Draw path with gradient coloring
+            for (let i = 0; i < activePath.length - 1; i++) {
+                const progress = i / activePath.length;
+                const hue = progress * 280; // purple to red
+
+                ctx.strokeStyle = `hsla(${hue}, 80%, 60%, 0.85)`;
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.beginPath();
+                ctx.moveTo(activePath[i].x, activePath[i].y);
+                ctx.lineTo(activePath[i + 1].x, activePath[i + 1].y);
+                ctx.stroke();
+            }
+
+            // Start point
+            ctx.fillStyle = '#4caf50';
+            ctx.shadowColor = '#4caf50';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.arc(activePath[0].x, activePath[0].y, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px Inter, sans-serif';
+            ctx.fillText('START', activePath[0].x + 10, activePath[0].y - 8);
+
+            // End point
+            const last = activePath[activePath.length - 1];
+            ctx.fillStyle = '#ff5252';
+            ctx.shadowColor = '#ff5252';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.arc(last.x, last.y, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Draw connecting lines from path to center (angle visualization)
+            if (activePath.length > 5) {
+                const step = Math.max(1, Math.floor(activePath.length / 30));
+                for (let i = 0; i < activePath.length; i += step) {
+                    ctx.strokeStyle = 'rgba(255,213,79,0.08)';
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(activePath[i].x, activePath[i].y);
+                    ctx.stroke();
+                }
+            }
+
+            // Angle accumulation visualization
+            drawAngleVisualization(activePath);
+
+            // Compute and display winding number
+            const wn = computeWindingNumber(activePath, centerX, centerY);
+            const result = getInterpretation(wn);
+
+            document.getElementById('winding-result').style.color = result.color;
+            document.getElementById('winding-result').textContent = result.text;
+            document.getElementById('winding-interpretation').textContent = result.interp;
+        } else {
+            document.getElementById('winding-result').textContent = '';
+            document.getElementById('winding-interpretation').textContent = 'Draw a closed curve or select a preset.';
+        }
+
+        // === RIGHT PANEL: Formula ===
+        const panelX = 480;
+        ctx.fillStyle = 'rgba(20,20,60,0.9)';
+        ctx.beginPath();
+        ctx.roundRect(panelX, 30, 205, 200, 10);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(100,140,255,0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(panelX, 30, 205, 200, 10);
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 13px Inter, sans-serif';
+        ctx.fillText('Winding Number', panelX + 15, 55);
+
+        const formulaLines = [
+            { text: 'n(γ,p) = (1/2π) ∮ dθ', color: '#4fc3f7' },
+            { text: '', color: '#aaa' },
+            { text: 'n = 0  → Non sequitur', color: '#888' },
+            { text: 'n = 1  → Sound argument', color: '#4caf50' },
+            { text: 'n = −1 → Self-defeating', color: '#ff9800' },
+            { text: 'n ≥ 2  → Circular reasoning', color: '#ff5252' },
+            { text: '', color: '#aaa' },
+            { text: 'π₁(ℝ²\\{p}) ≅ ℤ', color: '#aaa' },
+            { text: 'Winding # is the complete', color: '#aaa' },
+            { text: 'invariant of this group.', color: '#aaa' },
+        ];
+        formulaLines.forEach((line, i) => {
+            ctx.fillStyle = line.color;
+            ctx.font = line.text.includes('π₁') || line.text.includes('∮') ? '12px "Courier New", monospace' : '11px Inter, sans-serif';
+            ctx.fillText(line.text, panelX + 15, 75 + i * 15);
+        });
+    }
+
+    // Mouse drawing
+    canvas.addEventListener('mousedown', function(e) {
+        const mode = document.getElementById('winding-mode').value;
+        if (mode !== 'draw') return;
+
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        isDrawing = true;
+        path = [{ x, y }];
+        closedPath = [];
+        drawScene();
+    });
+
+    canvas.addEventListener('mousemove', function(e) {
+        if (!isDrawing) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Only add point if moved enough
+        const last = path[path.length - 1];
+        const dx = x - last.x;
+        const dy = y - last.y;
+        if (dx * dx + dy * dy > 16) {
+            path.push({ x, y });
+            drawScene();
+        }
+    });
+
+    canvas.addEventListener('mouseup', function() {
+        if (!isDrawing) return;
+        isDrawing = false;
+
+        // Close the path
+        if (path.length > 5) {
+            closedPath = [...path, path[0]];
+        }
+        drawScene();
+    });
+
+    canvas.addEventListener('mouseleave', function() {
+        if (isDrawing) {
+            isDrawing = false;
+            if (path.length > 5) {
+                closedPath = [...path, path[0]];
+            }
+            drawScene();
+        }
+    });
+
+    // Touch support
+    canvas.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        const mode = document.getElementById('winding-mode').value;
+        if (mode !== 'draw') return;
+
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+
+        isDrawing = true;
+        path = [{ x, y }];
+        closedPath = [];
+        drawScene();
+    });
+
+    canvas.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+        if (!isDrawing) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+
+        const last = path[path.length - 1];
+        const dx = x - last.x;
+        const dy = y - last.y;
+        if (dx * dx + dy * dy > 16) {
+            path.push({ x, y });
+            drawScene();
+        }
+    });
+
+    canvas.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        if (!isDrawing) return;
+        isDrawing = false;
+        if (path.length > 5) {
+            closedPath = [...path, path[0]];
+        }
+        drawScene();
+    });
+
+    // Mode change
+    document.getElementById('winding-mode').addEventListener('change', function() {
+        const mode = this.value;
+        if (mode === 'draw') {
+            path = [];
+            closedPath = [];
+            canvas.style.cursor = 'crosshair';
+        } else if (presets[mode]) {
+            closedPath = presets[mode]();
+            path = [];
+            canvas.style.cursor = 'default';
+        }
+        drawScene();
+    });
+
+    // Clear
+    document.getElementById('winding-clear').addEventListener('click', function() {
+        path = [];
+        closedPath = [];
+        document.getElementById('winding-mode').value = 'draw';
+        canvas.style.cursor = 'crosshair';
+        drawScene();
+    });
+
+    drawScene();
+}
 
 // ============================================================
 // MODULE LOADER
@@ -3689,4 +4153,6 @@ async function loadTopologyModule() {
 	projective_plane();
 
 	fiber_bundles();
+
+	winding_number();
 }

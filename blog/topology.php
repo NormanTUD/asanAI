@@ -611,3 +611,57 @@ This is why the same word in the same final context can mean different things de
 </div>
 
 <div id="fiber-viz"></div>
+
+<div class="md">
+## Winding Numbers: Detecting Circular Reasoning
+
+The **winding number** of a closed curve $\gamma$ around a point $p$ counts how many times the curve wraps around that point. It's one of the most fundamental invariants in topology.
+
+### Formal Definition
+
+For a closed curve $\gamma: [0,1] \to \mathbb{R}^2 \setminus \{p\}$, the winding number is:
+
+$$n(\gamma, p) = \frac{1}{2\pi} \oint_\gamma d\theta = \frac{1}{2\pi i} \oint_\gamma \frac{dz}{z - p}$$
+
+where $\theta$ is the angle from $p$ to the curve. The winding number is always an **integer** — this is a topological fact. It's invariant under continuous deformations of the curve (as long as the curve doesn't cross $p$).
+
+### Properties
+
+- $n = 0$: The curve doesn't encircle the point. It can be continuously shrunk to a point without crossing $p$.
+- $n = 1$: The curve goes around once counterclockwise.
+- $n = -1$: The curve goes around once clockwise.
+- $|n| > 1$: The curve wraps around multiple times.
+
+The winding number is a **homomorphism** from the fundamental group of the punctured plane to the integers:
+
+$$n: \pi_1(\mathbb{R}^2 \setminus \{p\}) \to \mathbb{Z}$$
+
+In fact, this is an **isomorphism**: $\pi_1(\mathbb{R}^2 \setminus \{p\}) \cong \mathbb{Z}$, and the winding number is the complete invariant.
+
+### Circular Reasoning as Winding
+
+Consider an argument as a path through "claim space." The central point $p$ is the **thesis** — the claim being argued for. The path represents the chain of reasoning.
+
+- **Winding number 0**: The argument never actually engages with the thesis. It wanders around but doesn't address the central claim. This is a **non sequitur**.
+- **Winding number 1**: The argument makes one complete circuit around the thesis, engaging with it from all sides. This is a **sound argument**.
+- **Winding number > 1**: The argument circles back to the same assumptions multiple times. This is **circular reasoning** — the argument passes through the same premises repeatedly, each time assuming what it's trying to prove.
+- **Winding number −1**: The argument engages with the thesis but in the "wrong direction" — it actually argues against its own conclusion. This is a **self-defeating argument**.
+
+### Connection to LLM Reasoning
+
+When an LLM generates a chain-of-thought, we can (conceptually) plot the trajectory of its hidden states in embedding space. If the trajectory has:
+
+- **Low winding number** around the answer: The model is exploring but not converging. It may give a wrong or irrelevant answer.
+- **Winding number ≈ 1**: The model is building a coherent argument that addresses the question from multiple angles.
+- **High winding number**: The model is going in circles — repeating the same reasoning steps, a known failure mode of autoregressive generation.
+
+### The Argument Principle
+
+In complex analysis, the **argument principle** states that for a meromorphic function $f$:
+
+$$\frac{1}{2\pi i} \oint_\gamma \frac{f'(z)}{f(z)} dz = Z - P$$
+
+where $Z$ is the number of zeros and $P$ the number of poles of $f$ inside $\gamma$. This connects winding numbers to the **structure of solutions** — how many times an argument "resolves" (zeros) vs. "blows up" (poles) inside the region of discourse.
+</div>
+
+<div id="winding-viz"></div>
