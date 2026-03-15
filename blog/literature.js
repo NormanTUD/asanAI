@@ -1,4 +1,46 @@
 window.bibData = {
+	"alcmaeon": {
+		title: "Testimonia and Fragments",
+		author: "Alcmaeon of Croton",
+		year: "ca. 500 BCE",
+		url: "https://plato.stanford.edu/entries/alcmaeon/"
+	},
+	"davinci_anatomical": {
+		title: "The Anatomical Manuscripts of Leonardo da Vinci",
+		author: "Leonardo da Vinci",
+		year: "ca. 1510",
+		url: "https://archive.org/details/LeonardodaVinciAnatomicalDrawingsfromtheRoyalLibraryWindsorCastle"
+	},
+	"panini_ashtadhyayi": {
+		title: "Ashtadhyayi (अष्टाध्यायी)",
+		author: "Pāṇini",
+		year: "ca. 4th Century BCE",
+		url: "https://ia801807.us.archive.org/1/items/AshtadhyayiBhashyaCollection/019%20Ashtadhyayi%20Bhashyam-1-Dayananda_text.pdf"
+	},
+	"aristotle_categories": {
+		title: "Categories (Κατηγορίαι)",
+		author: "Aristotle",
+		year: "ca. 350 BCE",
+		url: "https://archive.org/details/aristotle-categories-and-de-interpretatione"
+	},
+	"kempelen_speaking_machine": {
+		title: "Mechanismus der menschlichen Sprache nebst der Beschreibung seiner sprechenden Maschine",
+		author: "Wolfgang von Kempelen",
+		year: 1791,
+		url: "https://www.deutschestextarchiv.de/book/show/kempelen_maschine_1791"
+	},
+	"wilkins_real_character": {
+		title: "An Essay Towards a Real Character, and a Philosophical Language",
+		author: "John Wilkins",
+		year: 1668,
+		url: "https://archive.org/details/AnEssayTowardsARealCharacterAndAPhilosophicalLanguage/?view=theater"
+	},
+	"firth_context": {
+		title: "Papers in Linguistics 1934–1951",
+		author: "J.R. Firth",
+		year: 1957,
+		url: "https://archive.org/details/papersinlinguist0000firt"
+	},
 	"emergenceofmodernhumanbehaviour": {
 		url: "https://pubmed.ncbi.nlm.nih.gov/11786608/",
 		title: "Emergence of modern human behavior: Middle Stone Age engravings from South Africa",
