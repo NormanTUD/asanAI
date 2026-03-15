@@ -11,14 +11,14 @@ Before language could be abstracted into data, it required a radical "hardware" 
 
 * **Earliest Signs:** Genomic evidence suggests that the unique human capacity for language was present at least **\cite[135,000 years ago]{earlylanguage}**, likely entering widespread social use by **100,000 years ago**. This "Cognitive Ignition" coincides with the archaeological appearance of symbolic art and complex tools.
 * **The Descended Larynx:** In most mammals, the larynx (voice box) sits high in the throat, allowing for simultaneous breathing and swallowing. In humans, the larynx descended during evolution, creating a large pharyngeal cavity, an acoustic chamber that allows the tongue to move both vertically and horizontally to produce a vast range of resonant frequencies.
-* **The First Anatomists:** While ancient Indian texts like the \cite[Sushruta Samhita]{sushruta} (c. 300 BCE) mentioned the throat as the source of voice, **Alcmaeon of Croton** (c. 500 BCE) was the first Greek scientist known to practice animal dissections, identifying "channels" (poroi) that connected the senses to the brain.
-* **The Renaissance Map:** The most precise early mapping of this "vocal machine" came from **Leonardo da Vinci** (c. 1510). He treated the larynx as an acoustic instrument, sketching the tongue's muscles and performing experiments, such as squeezing the lungs of a dead goose, to show how the larynx produced tone.
+* **The First Anatomists:** While ancient Indian texts like the **\cite[Sushruta Samhita]{sushruta}** (c. 300 BCE) mentioned the throat as the source of voice, **\cite[Alcmaeon of Croton]{alcmaeon}** (c. 500 BCE) was the first Greek scientist known to practice animal dissections, identifying "channels" (poroi) that connected the senses to the brain.
+* **The Renaissance Map:** The most precise early mapping of this "vocal machine" came from **\cite[Leonardo da Vinci]{davinci_anatomical}** (c. 1510). He treated the larynx as an acoustic instrument, sketching the tongue's muscles and performing experiments, such as squeezing the lungs of a dead goose, to show how the larynx produced tone.
 
 ## The Shift to Displacement: Escaping the "Here and Now"
 
-The most profound "Aha!" moment in human evolution was the transition from **indexical signaling** to **displacement**. Early primate communication was largely tied to immediate stimuli, a specific scream for a predator that is currently visible or a grunt for food that is physically present. The breakthrough toward true language occurred when our ancestors began using sounds to refer to things absent in time or space. This required a massive expansion in working memory and the cognitive ability to maintain "mental representations." Suddenly, a sound wasn't just a reaction to a snake; it was a tool to discuss a snake seen yesterday or a plan to hunt in the valley tomorrow. This leap enabled **symbolic thought**, where a sound represents a concept rather than a physical object, laying the groundwork for the first abstract stories and myths.
+The most profound "Aha!" moment in human evolution was the transition from **indexical signaling** to **displacement**. Early primate communication was largely tied to immediate stimuli. The breakthrough toward true language occurred when our ancestors began using sounds to refer to things absent in time or space. This required a massive expansion in working memory and the cognitive ability to maintain "mental representations."
 
-As these symbolic tools became more refined, language transitioned from a survival utility into a formal system of logic. Once humans could decouple a "number" from a physical pile of stones, they could perform operations on the concept of quantity itself. This "mathematization" of thought, treating words as variables in a logical equation, is what allowed **Pāṇini** to formalize Sanskrit and **Aristotle** to categorize the "atoms" of thought. By the time we reached the 20th century, we realized that if language is just a system of abstract symbols and their relationships, it could be mapped into the high-dimensional geometry of a computer. We moved from screaming about a predator to calculating the trajectory of stars, and finally, to LLMs that simulate the entire spectrum of human knowledge by measuring the statistical distance between those very same abstract symbols.
+As these symbolic tools became more refined, language transitioned from a survival utility into a formal system of logic. Once humans could decouple a "number" from a physical pile of stones, they could perform operations on the concept of quantity itself. This "mathematization" of thought, treating words as variables in a logical equation, is what allowed **\cite[Pāṇini]{panini_ashtadhyayi}** to formalize Sanskrit and **\cite[Aristotle]{aristotle_categories}** to categorize the "atoms" of thought. By the time we reached the 20th century, we realized that if language is just a system of abstract symbols and their relationships, it could be mapped into the high-dimensional geometry of a computer.
 
 ## The Cognitive Ignition: Symbolic Displacement
 
@@ -27,53 +27,17 @@ As these symbolic tools became more refined, language transitioned from a surviv
     <figcaption>\citetitle{blombosochre}</figcaption>
 </figure>
 
-The evolution of language represents a fundamental transition from **indexical signaling** to **symbolic displacement**. While early primates used specific calls to react to immediate stimuli, such as a specific scream for a predator currently in view, true human language allows us to discuss things that are absent in time or space.
+The evolution of language represents a fundamental transition from **indexical signaling** to **symbolic displacement**. While early primates used specific calls to signal immediate threats, humans began using symbols to represent concepts independent of the "here and now." Evidence of this symbolic transition is found in artifacts like the **\cite[Blombos Cave ochre]{blombosochre}** and later mathematical tools like the **\cite[Lebombo Bone]{lebombobone}**.
 
-* **Escaping the "Here and Now":** This leap required the cognitive ability to maintain "mental representations." A sound was no longer just a reaction; it became a tool to discuss a hunt from yesterday or a plan for tomorrow. This decoupling of sound from immediate physical reality is the prerequisite for all abstract thought, from mythology to complex mathematics.
-* **The Archaeological Evidence:** This transition is visible in the "Cognitive Ignition" occurring roughly **100,000 years ago**. The most striking evidence of this shift comes from the **Blombos Cave** in South Africa.
-* **The Blombos Ochre (c. 75,000–100,000 BP):** Researchers discovered pieces of \cite[ochre engraved]{emergenceofmodernhumanbehaviour} with distinct, cross-hatched geometric patterns. These are not accidental marks from scraping; they are deliberate, standardized symbolic notations.
-* **The First Pigments:** Evidence at Blombos also shows a "processing workshop" where early humans used fire to heat silcrete and mixed ochre with bone marrow and charcoal to create paint.
-* **The "Aha" Moment:** This indicates that language had moved beyond survival grunts into a system capable of managing complex, multi-stage technical processes and social symbolism. Once humans could store meaning in an external object (like an engraving), they had created the first "external memory," the distant ancestor of the written word and the digital database.
+### From Hardware to Software: The Mechanical Era
 
-### Sources:
-* **Henshilwood, C. S., et al. (2011).** "A 100,000-Year-Old Ochre-Processing Workshop at Blombos Cave, South Africa." *Science*, 334(6053), 219-222.
-* **Miyagawa, S., et al. (2025).** "Linguistic capacity was present in the Homo sapiens population 135 thousand years ago." *Frontiers in Psychology*.
-
-### Pāṇini and the Generative Algorithm (c. 4th Century BCE)
-
-If evolution provided the hardware, the Indian grammarian **Pāṇini** provided the first "operating system." His work, the *Aṣṭādhyāyī*, treated the Sanskrit language as a formal, deterministic machine rather than a mere collection of words.
-
-* **The Algebraic Word:** Pāṇini viewed words as the result of a calculation. He broke language down into **Roots** ($\text{dhātu}$) and **Suffixes** ($\text{pratyaya}$), using 3,959 rules (sutras) to transform them.
-* **Example of Generative Logic:** To build the word *Kāraka* ("The Doer"), the system applies rules to the root *kṛ* ("to do").
-  $$
-  \underbrace{\text{kṛ}}_{\text{Root}} + \underbrace{\text{ṇvul}}_{\text{Agent Suffix}} \xrightarrow{\text{Rule 7.1.1}} \text{kṛ} + \text{aka} \xrightarrow{\text{Rule 7.2.115}} \underbrace{\text{kāraka}}_{\text{"The Doer"}}
-  $$
-* **Meta-Language and Tags:** He used "marker" sounds (like the **'ṇ'** in *ṇvul*) as **tags**, metadata that does not appear in the final word but instructs the system to strengthen the root's vowel.
-* **Recursion:** Pāṇini was the first to realize that language is recursive. By feeding the output of one rule back into the system, one can generate an infinite variety of valid expressions from a finite set of rules, the exact premise of generative AI.
-
-### The European Awakening: From Labels to Logic
-
-While Pāṇini was formalizing Sanskrit, European thinkers were attempting to find the underlying logic of Greek.
-
-* **Aristotle (4th Century BCE):** In his *Poetics* and *Categories*, Aristotle provided the first Western "Aha!" moment by categorizing speech into **Onoma** (names/subjects) and **Rhema** (predicates/actions). He established that meaning is **conventional** (arbitrary) rather than natural.
-* **Dionysius Thrax (c. 100 BCE):** He is credited with the *Tékhnē Grammatikē*, the first surviving grammar of a European language. He defined the "Eight Parts of Speech" (Noun, Verb, Participle, etc.) that remained the standard for Western linguistics for nearly 2,000 years.
-* **The Structuralist Shift:** By 1916, **Ferdinand de Saussure** revolutionized the field by arguing that words have no inherent "soul" or meaning in isolation. Meaning is **relational**: a word is defined by its position in a network of differences.
-  $$\text{Meaning}(\text{Tree}) = \text{Not}(\text{Bush}) \cap \text{Not}(\text{Grass})$$
-* **The Neighborhood Rule:** In 1957, **J.R. Firth** provided the final insight required for LLMs: *"You shall know a word by the company it keeps"*. This **Distributional Hypothesis** moved us from teaching machines rigid rules to letting them observe the statistical "neighborhoods" of words.
-
-### Honourable Mentions: The Mechanical Mimics
-
-Before we had neural networks, we had mechanical bellows. These inventors proved that language was an acoustic physics problem that could be solved by a machine.
-
-* **Kratzenstein’s Resonators (1779):** Christian Kratzenstein won a prize from the St. Petersburg Academy for building five pipes that could produce the five main vowel sounds (/a/, /e/, /i/, /o/, /u/). He proved that "speech" was just a specific arrangement of physical resonances.
-* **Wolfgang von Kempelen (1791):** He built a "Speaking Machine" using a bellows (lungs), a vibrating reed (vocal cords), and a leather funnel that the operator would manipulate like a mouth. It was the first "Text-to-Speech" device, capable of saying whole phrases like *"Mama"* or *"Astronomie"*.
-* **John Wilkins’ Real Character (1668):** Wilkins attempted to create a universal language where the very shape of a word's symbols described its biological or physical properties. While he failed, he laid the philosophical groundwork for **Taxonomies**, the idea that every concept has a "coordinate" in the tree of human knowledge.
+The dream of replicating human speech transitioned from biology to mechanics in the 18th century. **\cite[Wolfgang von Kempelen]{kempelen_speaking_machine}** (1791) constructed a "Speaking Machine" using bellows and reeds that an operator would manipulate like a mouth. It was the first "Text-to-Speech" device, capable of saying whole phrases like *"Mama"* or *"Astronomie"*. Later, **\cite[John Wilkins]{wilkins_real_character}** (1668) attempted to create a universal language where the very shape of a word's symbols described its biological or physical properties.
 
 ### The Modern Synthesis: Meaning as Geometry
 
-Today’s LLMs represent the convergence of these histories. We no longer manually code Pāṇini’s rules or Aristotle’s categories into the machine. Instead, we use massive computation to map the **statistical relationships** observed by Firth into a high-dimensional **vector space**.
+Today’s LLMs represent the convergence of these histories. We no longer manually code rules or categories into the machine. Instead, we use massive computation to map the **statistical relationships** observed by **\cite[J.R. Firth]{firth_context}** into a high-dimensional **vector space**.
 
 In this space, "meaning" is represented by coordinates. By observing trillions of token sequences, the model performs a form of "linguistic algebra" first dreamed of by the early grammarians:
-$$\underbrace{\text{Vector}(\text{King})}_{\text{A point in space}} \approx \underbrace{\text{Vector}(\text{Man}) + (\text{Vector}(\text{Queen}) - \text{Vector}(\text{Woman}))}_{\text{The Geometry of Thought}}$$
+$$\underbrace{\text{Vector}(\text{King})}_{\text{A point in space}} \approx \underbrace{\text{Vector}(\text{Man}) + (1\text{Vector}(\text{Queen}) - \text{Vector}(\text{Woman}))}_{\text{The Geometry of Thought}}$$
 This is the ultimate evolution: we have moved from the biological vibrations of the **larynx**, through the deterministic **logic of Pāṇini**, and finally into a **statistical geometry** where the machine "understands" the world by measuring the distance between human ideas.
 </div>
