@@ -665,3 +665,53 @@ where $Z$ is the number of zeros and $P$ the number of poles of $f$ inside $\gam
 </div>
 
 <div id="winding-viz"></div>
+
+<div class="md">
+## Token Embedding Topology: The Shape of a Vocabulary
+
+When an LLM maps tokens into its embedding space $\mathbb{R}^d$ (typically $d = 768$ to $12288$), the resulting point cloud has **topological structure**. This isn't random — it reflects the linguistic relationships the model has learned.
+
+### The Embedding Manifold Hypothesis
+
+The **manifold hypothesis** states that high-dimensional data (like token embeddings) actually lies on or near a much lower-dimensional manifold $\mathcal{M} \subset \mathbb{R}^d$:
+
+$$\dim(\mathcal{M}) \ll d$$
+
+For a typical LLM with $d = 4096$ and vocabulary size $V \approx 50{,}000$, the effective dimensionality of the token embedding manifold is often estimated at $50$–$200$. The topology of this manifold encodes the **global structure of language**.
+
+### What Topology Reveals
+
+Recent work has shown that one can probe the topology of an LLM's token space using structured prompts, revealing that the topology of an LLM's token subspace has a strong link to the LLM's behavior. Specifically:
+
+- **$\beta_0$ (connected components)**: Semantic clusters. Tokens for numbers, punctuation, code, and natural language often form distinct components at small scales.
+- **$\beta_1$ (loops)**: Cyclic relationships. Days of the week, months, verb conjugation cycles, and number modular arithmetic create 1-dimensional holes.
+- **$\beta_2$ (voids)**: Higher-order structure. Semantic "bubbles" where a category of meaning is represented on the surface of a sphere-like manifold rather than filling a solid ball.
+
+### The Cramming Problem
+
+As noted in research on embedding spaces, since LLMs cram $V \approx 50{,}000$ tokens into a vector space of dimension $d = 768$, the embedding must be highly structured — there isn't room for tokens to be placed randomly. This compression forces topological organization:
+
+$$\text{packing efficiency} = \frac{V}{2^d} \approx 0 \quad \text{(extremely sparse)}$$
+
+Yet the tokens aren't uniformly distributed — they cluster on low-dimensional submanifolds, creating rich topology.
+
+### Persistent Homology of Token Embeddings
+
+By computing the Vietoris-Rips complex of token embeddings at increasing scales $\epsilon$, we can track how topological features appear and disappear:
+
+$$VR_\epsilon(X) = \{\sigma \subseteq X : \text{diam}(\sigma) \leq \epsilon\}$$
+
+Features that **persist** across a wide range of $\epsilon$ values represent genuine topological structure, while short-lived features are noise. The persistence diagram $\text{Dgm}(X)$ plots birth vs. death of each feature, and points far from the diagonal represent robust topology.
+
+### Mapper Algorithm for LLM Embeddings
+
+The **Mapper algorithm** constructs a topological summary of high-dimensional data by:
+1. Applying a filter function $f: X \to \mathbb{R}$ (e.g., first principal component)
+2. Covering the range of $f$ with overlapping intervals
+3. Clustering within each interval
+4. Connecting clusters that share points
+
+Applied to LLM embeddings, Mapper reveals the graph structure of the embedding space, where each node represents a topological neighborhood containing a cluster of embeddings, and edges connect overlapping neighborhoods. This has been used to uncover encoded linguistic properties in LLM representations.
+</div>
+
+<div id="token-topology-viz"></div>

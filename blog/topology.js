@@ -4116,6 +4116,513 @@ function winding_number () {
 }
 
 // ============================================================
+// TOKEN EMBEDDING TOPOLOGY — Vietoris-Rips on simulated embeddings
+// ============================================================
+function embedding_topology() {
+    const container = document.getElementById('token-topology-viz');
+    if (!container) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 700;
+    canvas.height = 520;
+    canvas.style.display = 'block';
+    canvas.style.margin = '0 auto';
+    canvas.style.borderRadius = '12px';
+    canvas.style.background = '#0a0a2e';
+    container.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    // Barcode canvas
+    const barcodeCanvas = document.createElement('canvas');
+    barcodeCanvas.width = 700;
+    barcodeCanvas.height = 180;
+    barcodeCanvas.style.display = 'block';
+    barcodeCanvas.style.margin = '10px auto 0';
+    barcodeCanvas.style.borderRadius = '8px';
+    barcodeCanvas.style.background = '#0d0d30';
+    container.appendChild(barcodeCanvas);
+
+    const bctx = barcodeCanvas.getContext('2d');
+
+    const controlsDiv = document.createElement('div');
+    controlsDiv.style.cssText = 'text-align:center; margin:15px 0; font-family:"Inter",sans-serif;';
+    controlsDiv.innerHTML = `
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc;">Scale ε: </label>
+            <input type="range" id="vr-epsilon" min="0" max="200" value="0" style="width:280px; vertical-align:middle;">
+            <span id="vr-epsilon-val" style="color:#4fc3f7; margin-left:8px; font-weight:600;">ε = 0.00</span>
+        </div>
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc;">Token set: </label>
+            <select id="vr-dataset" style="padding:5px 12px; border-radius:6px; background:#1a1a3e; color:#fff; border:1px solid #444; font-size:14px;">
+                <option value="days">Days of the week (cyclic → β₁=1)</option>
+                <option value="numbers">Numbers 0-9 (line → β₁=0)</option>
+                <option value="emotions">Emotion words (cluster structure)</option>
+                <option value="code">Code tokens vs. English (two components)</option>
+            </select>
+            <button id="vr-animate-btn" style="margin-left:12px; padding:6px 16px; background:#4fc3f7; border:none; border-radius:6px; cursor:pointer; font-weight:600;">▶ Sweep ε</button>
+        </div>
+        <div style="display:flex; justify-content:center; gap:30px; margin-top:5px;">
+            <span id="vr-b0" style="color:#4fc3f7; font-weight:700; font-size:16px;">β₀ = 0</span>
+            <span id="vr-b1" style="color:#ff8a65; font-weight:700; font-size:16px;">β₁ = 0</span>
+            <span id="vr-b2" style="color:#ce93d8; font-weight:700; font-size:16px;">β₂ = 0</span>
+        </div>
+    `;
+    container.appendChild(controlsDiv);
+
+    // Simulated 2D projections of token embeddings
+    const datasets = {
+        days: {
+            points: (function() {
+                const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+                const pts = [];
+                for (let i = 0; i < 7; i++) {
+                    const angle = (i / 7) * Math.PI * 2 - Math.PI / 2;
+                    const r = 110 + (Math.random() - 0.5) * 15;
+                    pts.push({
+                        x: 280 + r * Math.cos(angle),
+                        y: 250 + r * Math.sin(angle),
+                        label: days[i],
+                        color: `hsl(${(i/7)*360}, 70%, 60%)`
+                    });
+                }
+                return pts;
+            })(),
+            description: 'Days form a cycle in embedding space'
+        },
+        numbers: {
+            points: (function() {
+                const pts = [];
+                for (let i = 0; i <= 9; i++) {
+                    pts.push({
+                        x: 120 + i * 38 + (Math.random() - 0.5) * 10,
+                        y: 250 + (Math.random() - 0.5) * 25 + Math.sin(i * 0.5) * 20,
+                        label: String(i),
+                        color: `hsl(${(i/10)*120 + 200}, 70%, 60%)`
+                    });
+                }
+                return pts;
+            })(),
+            description: 'Numbers form a roughly linear manifold'
+        },
+        emotions: {
+            points: (function() {
+                const clusters = [
+                    { words: ['happy','joyful','elated','cheerful'], cx: 150, cy: 160, color: '#4caf50' },
+                    { words: ['sad','gloomy','depressed','melancholy'], cx: 380, cy: 160, color: '#2196f3' },
+                    { words: ['angry','furious','enraged','irate'], cx: 150, cy: 350, color: '#f44336' },
+                    { words: ['calm','serene','peaceful','tranquil'], cx: 380, cy: 350, color: '#9c27b0' },
+                ];
+                const pts = [];
+                clusters.forEach(cl => {
+                    cl.words.forEach((w, i) => {
+                        const angle = (i / cl.words.length) * Math.PI * 2;
+                        const r = 25 + Math.random() * 15;
+                        pts.push({
+                            x: cl.cx + r * Math.cos(angle),
+                            y: cl.cy + r * Math.sin(angle),
+                            label: w,
+                            color: cl.color
+                        });
+                    });
+                });
+                return pts;
+            })(),
+            description: 'Emotions cluster by valence and arousal'
+        },
+        code: {
+            points: (function() {
+                const pts = [];
+                // English cluster
+                const eng = ['the','and','but','with','from','that','this','have'];
+                eng.forEach((w, i) => {
+                    const angle = (i / eng.length) * Math.PI * 2;
+                    const r = 40 + Math.random() * 20;
+                    pts.push({
+                        x: 180 + r * Math.cos(angle),
+                        y: 250 + r * Math.sin(angle),
+                        label: w,
+                        color: '#4fc3f7'
+                    });
+                });
+                // Code cluster
+                const code = ['def','class','import','return','if','for','while','print'];
+                code.forEach((w, i) => {
+                    const angle = (i / code.length) * Math.PI * 2;
+                    const r = 40 + Math.random() * 20;
+                    pts.push({
+                        x: 420 + r * Math.cos(angle),
+                        y: 250 + r * Math.sin(angle),
+                        label: w,
+                        color: '#ff8a65'
+                    });
+                });
+                return pts;
+            })(),
+            description: 'Code and English tokens form separate components'
+        }
+    };
+
+    let animating = false;
+    let persistenceData = []; // { dim, birth, death }
+
+    function dist(a, b) {
+        return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+    }
+
+    function computeTopology(points, epsilon) {
+        const n = points.length;
+
+        // Build adjacency (edges within epsilon)
+        let edges = [];
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+                if (dist(points[i], points[j]) <= epsilon) {
+                    edges.push([i, j]);
+                }
+            }
+        }
+
+        // Build triangles (3-cliques)
+        let triangles = [];
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+                if (dist(points[i], points[j]) > epsilon) continue;
+                for (let k = j + 1; k < n; k++) {
+                    if (dist(points[i], points[k]) <= epsilon && dist(points[j], points[k]) <= epsilon) {
+                        triangles.push([i, j, k]);
+                    }
+                }
+            }
+        }
+
+        // β₀: connected components via union-find
+        let parent = Array.from({ length: n }, (_, i) => i);
+        function find(x) {
+            while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }
+            return x;
+        }
+        function union(a, b) {
+            const ra = find(a), rb = find(b);
+            if (ra !== rb) parent[ra] = rb;
+        }
+        edges.forEach(([a, b]) => union(a, b));
+        const components = new Set();
+        for (let i = 0; i < n; i++) components.add(find(i));
+        const beta0 = components.size;
+
+        // β₁ ≈ E - V + C - T (Euler characteristic approximation)
+        // For simplicial complex: χ = V - E + F, and χ = β₀ - β₁ + β₂
+        // Approximate β₁ = edges.length - (n - beta0) - triangles.length
+        // (n - beta0) = edges in spanning forest
+        const beta1 = Math.max(0, edges.length - (n - beta0) - triangles.length);
+
+        // β₂ approximation (very rough — count enclosed tetrahedra)
+        let tetra = 0;
+        for (let i = 0; i < n; i++) {
+            for (let j = i+1; j < n; j++) {
+                if (dist(points[i],points[j]) > epsilon) continue;
+                for (let k = j+1; k < n; k++) {
+                    if (dist(points[i],points[k]) > epsilon || dist(points[j],points[k]) > epsilon) continue;
+                    for (let l = k+1; l < n; l++) {
+                        if (dist(points[i],points[l]) <= epsilon && dist(points[j],points[l]) <= epsilon && dist(points[k],points[l]) <= epsilon) {
+                            tetra++;
+                        }
+                    }
+                }
+            }
+        }
+        const beta2 = Math.max(0, triangles.length - 3 * tetra - edges.length + (n - beta0) + beta1);
+
+        return { beta0, beta1, beta2: Math.max(0, Math.min(beta2, 3)), edges, triangles };
+    }
+
+    function computePersistence(points) {
+        // Sweep epsilon and record birth/death of features
+        const maxDist = 400;
+        const steps = 100;
+        const data = [];
+
+        let prevBetti = { beta0: points.length, beta1: 0, beta2: 0 };
+
+        // Track β₀ deaths (component merges)
+        let b0Births = Array.from({ length: points.length }, () => 0);
+        let b0Active = points.length;
+
+        // Track β₁
+        let b1Features = [];
+
+        for (let s = 0; s <= steps; s++) {
+            const eps = (s / steps) * maxDist;
+            const topo = computeTopology(points, eps);
+
+            // β₀ deaths
+            if (topo.beta0 < prevBetti.beta0) {
+                const deaths = prevBetti.beta0 - topo.beta0;
+                for (let d = 0; d < deaths; d++) {
+                    data.push({ dim: 0, birth: 0, death: eps });
+                }
+            }
+
+            // β₁ births/deaths
+            if (topo.beta1 > prevBetti.beta1) {
+                const births = topo.beta1 - prevBetti.beta1;
+                for (let b = 0; b < births; b++) {
+                    b1Features.push({ birth: eps });
+                }
+            } else if (topo.beta1 < prevBetti.beta1) {
+                const deaths = prevBetti.beta1 - topo.beta1;
+                for (let d = 0; d < deaths && b1Features.length > 0; d++) {
+                    const feat = b1Features.pop();
+                    data.push({ dim: 1, birth: feat.birth, death: eps });
+                }
+            }
+
+            prevBetti = topo;
+        }
+
+        // Add surviving features
+        b1Features.forEach(f => {
+            data.push({ dim: 1, birth: f.birth, death: maxDist });
+        });
+
+        // Add one β₀ feature that survives (the last component)
+        data.push({ dim: 0, birth: 0, death: maxDist });
+
+        return data;
+    }
+
+    function drawBarcode(epsilon, maxDist) {
+        bctx.clearRect(0, 0, 700, 180);
+
+        const pad = { left: 80, right: 20, top: 30, bottom: 20 };
+        const w = 700 - pad.left - pad.right;
+        const h = 180 - pad.top - pad.bottom;
+
+        // Title
+        bctx.fillStyle = '#fff';
+        bctx.font = 'bold 12px Inter, sans-serif';
+        bctx.fillText('Persistence Barcode', pad.left, 18);
+
+        // Axis
+        bctx.strokeStyle = 'rgba(255,255,255,0.3)';
+        bctx.lineWidth = 1;
+        bctx.beginPath();
+        bctx.moveTo(pad.left, pad.top);
+        bctx.lineTo(pad.left, pad.top + h);
+        bctx.lineTo(pad.left + w, pad.top + h);
+        bctx.stroke();
+
+        // Epsilon marker
+        const epsX = pad.left + (epsilon / maxDist) * w;
+        bctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        bctx.setLineDash([4, 4]);
+        bctx.beginPath();
+        bctx.moveTo(epsX, pad.top);
+        bctx.lineTo(epsX, pad.top + h);
+        bctx.stroke();
+        bctx.setLineDash([]);
+        bctx.fillStyle = '#fff';
+        bctx.font = '10px Inter, sans-serif';
+        bctx.textAlign = 'center';
+        bctx.fillText('current ε', epsX, pad.top - 5);
+        bctx.textAlign = 'left';
+
+        // Axis labels
+        bctx.fillStyle = '#888';
+        bctx.font = '10px Inter, sans-serif';
+        for (let i = 0; i <= 5; i++) {
+            const x = pad.left + (i / 5) * w;
+            const val = (i / 5) * maxDist;
+            bctx.textAlign = 'center';
+            bctx.fillText(val.toFixed(0), x, pad.top + h + 14);
+            bctx.textAlign = 'left';
+        }
+        bctx.fillStyle = '#aaa';
+        bctx.font = '10px Inter, sans-serif';
+        bctx.textAlign = 'center';
+        bctx.fillText('ε (scale)', pad.left + w / 2, pad.top + h + 28);
+        bctx.textAlign = 'left';
+
+        // Draw bars
+        const dim0 = persistenceData.filter(d => d.dim === 0);
+        const dim1 = persistenceData.filter(d => d.dim === 1);
+
+        const barH = 4;
+        const gap = 2;
+        let yOff = pad.top + 5;
+
+        // Labels
+        bctx.fillStyle = '#4fc3f7';
+        bctx.font = '10px Inter, sans-serif';
+        bctx.fillText('H₀', pad.left - 22, yOff + dim0.length * (barH + gap) / 2 + 3);
+
+        dim0.forEach((bar, i) => {
+            const x1 = pad.left + (bar.birth / maxDist) * w;
+            const x2 = pad.left + (Math.min(bar.death, maxDist) / maxDist) * w;
+            const y = yOff + i * (barH + gap);
+
+            const alive = epsilon >= bar.birth && epsilon < bar.death;
+            bctx.fillStyle = alive ? '#4fc3f7' : 'rgba(79,195,247,0.25)';
+            bctx.fillRect(x1, y, Math.max(2, x2 - x1), barH);
+        });
+
+        yOff += dim0.length * (barH + gap) + 10;
+
+        bctx.fillStyle = '#ff8a65';
+        bctx.font = '10px Inter, sans-serif';
+        bctx.fillText('H₁', pad.left - 22, yOff + dim1.length * (barH + gap) / 2 + 3);
+
+        dim1.forEach((bar, i) => {
+            const x1 = pad.left + (bar.birth / maxDist) * w;
+            const x2 = pad.left + (Math.min(bar.death, maxDist) / maxDist) * w;
+            const y = yOff + i * (barH + gap);
+
+            const alive = epsilon >= bar.birth && epsilon < bar.death;
+            bctx.fillStyle = alive ? '#ff8a65' : 'rgba(255,138,101,0.25)';
+            bctx.fillRect(x1, y, Math.max(2, x2 - x1), barH);
+        });
+    }
+
+    function draw() {
+        const epsilon = parseFloat(document.getElementById('vr-epsilon').value) * 2;
+        const datasetKey = document.getElementById('vr-dataset').value;
+        const dataset = datasets[datasetKey];
+        const points = dataset.points;
+
+        document.getElementById('vr-epsilon-val').textContent = `ε = ${epsilon.toFixed(0)}`;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Compute topology
+        const topo = computeTopology(points, epsilon);
+
+        // Update Betti displays
+        document.getElementById('vr-b0').textContent = `β₀ = ${topo.beta0}`;
+        document.getElementById('vr-b1').textContent = `β₁ = ${topo.beta1}`;
+        document.getElementById('vr-b2').textContent = `β₂ = ${topo.beta2}`;
+
+        // Draw epsilon balls (faded)
+        points.forEach(p => {
+            const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, epsilon / 2);
+            gradient.addColorStop(0, 'rgba(79,195,247,0.06)');
+            gradient.addColorStop(1, 'rgba(79,195,247,0)');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, epsilon / 2, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // Draw triangles (filled)
+        topo.triangles.forEach(([i, j, k]) => {
+            ctx.fillStyle = 'rgba(206,147,216,0.15)';
+            ctx.strokeStyle = 'rgba(206,147,216,0.3)';
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(points[i].x, points[i].y);
+            ctx.lineTo(points[j].x, points[j].y);
+            ctx.lineTo(points[k].x, points[k].y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        });
+
+        // Draw edges
+        topo.edges.forEach(([i, j]) => {
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(points[i].x, points[i].y);
+            ctx.lineTo(points[j].x, points[j].y);
+            ctx.stroke();
+        });
+
+        // Draw points
+        points.forEach(p => {
+            ctx.fillStyle = p.color;
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(p.label, p.x, p.y - 10);
+        });
+        ctx.textAlign = 'left';
+
+        // Info panel
+        ctx.fillStyle = 'rgba(20,20,60,0.9)';
+        ctx.beginPath();
+        ctx.roundRect(500, 20, 185, 160, 10);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(100,140,255,0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(500, 20, 185, 160, 10);
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.fillText('Vietoris-Rips Complex', 515, 40);
+
+        ctx.fillStyle = '#aaa';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillText(`Vertices: ${points.length}`, 515, 60);
+        ctx.fillText(`Edges: ${topo.edges.length}`, 515, 76);
+        ctx.fillText(`Triangles: ${topo.triangles.length}`, 515, 92);
+
+        ctx.fillStyle = '#4fc3f7';
+        ctx.fillText(`χ = ${points.length} − ${topo.edges.length} + ${topo.triangles.length}`, 515, 115);
+        ctx.fillText(`  = ${points.length - topo.edges.length + topo.triangles.length}`, 515, 130);
+
+        ctx.fillStyle = '#ffd54f';
+        ctx.font = '10px Inter, sans-serif';
+        ctx.fillText(dataset.description, 515, 155);
+
+        // Draw barcode
+        drawBarcode(epsilon, 400);
+    }
+
+    // Recompute persistence when dataset changes
+    function recomputePersistence() {
+        const datasetKey = document.getElementById('vr-dataset').value;
+        persistenceData = computePersistence(datasets[datasetKey].points);
+        draw();
+    }
+
+    document.getElementById('vr-epsilon').addEventListener('input', draw);
+    document.getElementById('vr-dataset').addEventListener('change', recomputePersistence);
+
+    // Animate sweep
+    document.getElementById('vr-animate-btn').addEventListener('click', function() {
+        if (animating) { animating = false; this.textContent = '▶ Sweep ε'; return; }
+        animating = true;
+        this.textContent = '⏸ Pause';
+        let val = 0;
+
+        function step() {
+            if (!animating || val > 200) {
+                animating = false;
+                document.getElementById('vr-animate-btn').textContent = '▶ Sweep ε';
+                return;
+            }
+            document.getElementById('vr-epsilon').value = val;
+            draw();
+            val += 1;
+            requestAnimationFrame(step);
+        }
+        step();
+    });
+
+    recomputePersistence();
+}
+
+// ============================================================
 // MODULE LOADER
 // ============================================================
 
@@ -4155,4 +4662,6 @@ async function loadTopologyModule() {
 	fiber_bundles();
 
 	winding_number();
+
+	embedding_topology();
 }
