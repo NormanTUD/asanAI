@@ -1,4 +1,10 @@
 window.bibData = {
+	"emergenceofmodernhumanbehaviour": {
+		url: "https://pubmed.ncbi.nlm.nih.gov/11786608/",
+		title: "Emergence of modern human behavior: Middle Stone Age engravings from South Africa",
+		author: "Christopher S Henshilwood, Francesco d'Errico, Royden Yates, Zenobia Jacobs, Chantal Tribolo, Geoff A T Duller, Norbert Mercier, Judith C Sealy, Helene Valladas, Ian Watts, Ann G Wintle",
+		year: 2002
+	},
 	"blombosochre": {
 		url: "https://www.donsmaps.com/blombos.html",
 		license: "CC-BY-2.5",

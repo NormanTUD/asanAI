@@ -31,12 +31,11 @@ The evolution of language represents a fundamental transition from **indexical s
 
 * **Escaping the "Here and Now":** This leap required the cognitive ability to maintain "mental representations." A sound was no longer just a reaction; it became a tool to discuss a hunt from yesterday or a plan for tomorrow. This decoupling of sound from immediate physical reality is the prerequisite for all abstract thought, from mythology to complex mathematics.
 * **The Archaeological Evidence:** This transition is visible in the "Cognitive Ignition" occurring roughly **100,000 years ago**. The most striking evidence of this shift comes from the **Blombos Cave** in South Africa.
-* **The Blombos Ochre (c. 75,000–100,000 BP):** Researchers discovered pieces of ochre engraved with distinct, cross-hatched geometric patterns. These are not accidental marks from scraping; they are deliberate, standardized symbolic notations.
+* **The Blombos Ochre (c. 75,000–100,000 BP):** Researchers discovered pieces of \cite[ochre engraved]{emergenceofmodernhumanbehaviour} with distinct, cross-hatched geometric patterns. These are not accidental marks from scraping; they are deliberate, standardized symbolic notations.
 * **The First Pigments:** Evidence at Blombos also shows a "processing workshop" where early humans used fire to heat silcrete and mixed ochre with bone marrow and charcoal to create paint.
 * **The "Aha" Moment:** This indicates that language had moved beyond survival grunts into a system capable of managing complex, multi-stage technical processes and social symbolism. Once humans could store meaning in an external object (like an engraving), they had created the first "external memory," the distant ancestor of the written word and the digital database.
 
 ### Sources:
-* **Henshilwood, C. S., et al. (2002).** "Emergence of Modern Human Behavior: Middle Stone Age Engravings from South Africa." *Science*, 295(5558), 1278-1280.
 * **Henshilwood, C. S., et al. (2011).** "A 100,000-Year-Old Ochre-Processing Workshop at Blombos Cave, South Africa." *Science*, 334(6053), 219-222.
 * **Miyagawa, S., et al. (2025).** "Linguistic capacity was present in the Homo sapiens population 135 thousand years ago." *Frontiers in Psychology*.
 
