@@ -1,4 +1,10 @@
 window.bibData = {
+	"rebusprinciple": {
+		url: "https://web.archive.org/web/20091015073859/http://www.fask.uni-mainz.de/inst/iaspk/Linguistik/Phonetik/Schriftentwicklung.html",
+		title: "Entwicklung der Schrift",
+		author: "Dora Warth",
+		year: 1999
+	},
 	"alcmaeon": {
 		title: "Testimonia and Fragments",
 		author: "Alcmaeon of Croton",

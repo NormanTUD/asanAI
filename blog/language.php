@@ -60,7 +60,7 @@ In the Near East (ca. 8000 BCE), the transition to agriculture required better a
 
 ### Proto-Writing and the Rebus Principle
 Around 3500 BCE, tokens were replaced by flat clay tablets with incised **pictograms**. At this stage, a symbol of an ox head simply meant "ox."
-* **The Rebus Principle:** A revolutionary shift occurred when symbols began to represent *sounds* (phonemes) rather than just objects. For example, a picture of a "bee" and a "leaf" could be combined to "write" the word *belief*. This allowed for the recording of abstract concepts and proper names.
+* **The \cite[Rebus Principle]{rebusprinciple}:** A revolutionary shift occurred when symbols began to represent *sounds* (phonemes) rather than just objects. For example, a picture of a "bee" and a "leaf" could be combined to "write" the word *belief*. This allowed for the recording of abstract concepts and proper names.
 
 ### Cuneiform and Formal Grammar
 By 3200 BCE in Mesopotamia, pictograms evolved into **Cuneiform**, characterized by wedge-shaped marks made with a reed stylus in soft clay.
