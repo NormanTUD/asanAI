@@ -47,7 +47,7 @@
 		{ year: "1971", label: "SHRDLU (Terry Winograd)", desc: "An early NLP program that could 'understand' and move objects in a virtual blocks world using logic and syntax.", color: "#2ecc71" },
 		{ year: "1986", label: "Backpropagation & Connectionism", desc: "The revival of neural networks — the idea that 'intelligence' could emerge from layers of simple processing units learning patterns.", color: "#d35400" },
 		{ year: "1989", label: "World Wide Web (Tim Berners-Lee)", desc: "The global hypertext — language becomes a non-linear, interconnected web of data, providing the training set for modern AI.", color: "#16a085" },
-		{ year: "2010", label: "The Emoji (Unicode Standard)", desc: "The return of the logogram — a standardized, global visual language that transcends phonetic boundaries.", color: "#f1c40f" }
+		{ year: "2010", label: "The Emoji (Unicode Standard)", desc: "The return of the logogram — a standardized, global visual language that transcends phonetic boundaries.", color: "#f1c40f" },
 		{ year: "2017",          label: "Transformer Architecture",          desc: "Attention mechanisms allow models to weigh context dynamically — Firth's hypothesis made computational.", color: "#2980b9" },
 		{ year: "2018", label: "BERT (Bidirectional Transformers)", desc: "Models begin reading 'both ways' at once, allowing them to understand the deep context of a word based on everything around it.", color: "#3498db" }
 	];
