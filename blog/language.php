@@ -38,6 +38,6 @@ The dream of replicating human speech transitioned from biology to mechanics in 
 Today’s LLMs represent the convergence of these histories. We no longer manually code rules or categories into the machine. Instead, we use massive computation to map the **statistical relationships** observed by **\cite[J.R. Firth]{firth_context}** into a high-dimensional **vector space**.
 
 In this space, "meaning" is represented by coordinates. By observing trillions of token sequences, the model performs a form of "linguistic algebra" first dreamed of by the early grammarians:
-$$\underbrace{\text{Vector}(\text{King})}_{\text{A point in space}} \approx \underbrace{\text{Vector}(\text{Man}) + (1\text{Vector}(\text{Queen}) - \text{Vector}(\text{Woman}))}_{\text{The Geometry of Thought}}$$
+$$\underbrace{\text{Vector}(\text{King})}_{\text{A point in space}} \approx \underbrace{\text{Vector}(\text{Man}) + (\text{Vector}(\text{Queen}) - \text{Vector}(\text{Woman}))}_{\text{The Geometry of Thought}}$$
 This is the ultimate evolution: we have moved from the biological vibrations of the **larynx**, through the deterministic **logic of Pāṇini**, and finally into a **statistical geometry** where the machine "understands" the world by measuring the distance between human ideas.
 </div>
