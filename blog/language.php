@@ -24,7 +24,7 @@ As these symbolic tools became more refined, language transitioned from a surviv
 
 <figure>
     <img style="width: 100%" src="blombosochre.jpg" alt="Blombos Cave ochre and artifacts" />
-    <figcaption>\citetitle{blombosochre}</figcaption>
+    <figcaption class="md">\citetitle{blombosochre}</figcaption>
 </figure>
 
 The evolution of language represents a fundamental transition from **indexical signaling** to **symbolic displacement**. While early primates used specific calls to signal immediate threats, humans began using symbols to represent concepts independent of the "here and now." Evidence of this symbolic transition is found in artifacts like the **\cite[Blombos Cave ochre]{blombosochre}** and later mathematical tools like the **\cite[Lebombo Bone]{lebombobone}**.
@@ -63,6 +63,14 @@ Around 3500 BCE, tokens were replaced by flat clay tablets with incised **pictog
 * **The \cite[Rebus Principle]{rebusprinciple}:** A revolutionary shift occurred when symbols began to represent *sounds* (phonemes) rather than just objects. For example, a picture of a "bee" and a "leaf" could be combined to "write" the word *belief*. This allowed for the recording of abstract concepts and proper names.
 
 ### Cuneiform and Formal Grammar
+</div>
+
+<figure style="float: right; width: 45%; max-width: 300px; margin: 0 0 1em 1em;">
+    <img style="width: 100%; height: auto; display: block;" src="cuneiform.jpg" alt="Clay tablet mentioning the name of Eannatum, prince of Lagash. From Iraq, c. 2470 BCE. Iraq Museum" />
+    <figcaption class="md">\citealternativetitle{cuneiform}</figcaption>
+</figure>
+
+<div class="md">
 By 3200 BCE in Mesopotamia, pictograms evolved into **Cuneiform**, characterized by wedge-shaped marks made with a reed stylus in soft clay.
 * **Standardization:** Writing shifted from accounting lists to complex legal codes, literature, and religious texts.
 * **Mathematical Formalization:** Later, scholars like Pāṇini (ca. 4th Century BCE) developed the *Ashtadhyayi*, a set of formal rules for Sanskrit that functioned like a generative logic for language, mirroring the structured way we treat language in modern computing.

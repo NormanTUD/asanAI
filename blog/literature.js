@@ -1,4 +1,11 @@
 window.bibData = {
+	"cuneiform": {
+		url: "https://commons.wikimedia.org/wiki/File:Clay_tablet_mentioning_the_name_of_Eannatum,_prince_of_Lagash._From_Iraq,_c._2470_BCE._Iraq_Museum.jpg",
+		author: "Osama Shukir Muhammed Amin",
+		title: "Clay tablet mentioning the name of Eannatum, prince of Lagash. From Iraq, c. 2470 BCE. Iraq Museum",
+		alternativetitle: "Early Cuneiform Writing",
+		year: "c. 2470 BCE"
+	},
 	"rebusprinciple": {
 		url: "https://web.archive.org/web/20091015073859/http://www.fask.uni-mainz.de/inst/iaspk/Linguistik/Phonetik/Schriftentwicklung.html",
 		title: "Entwicklung der Schrift",
