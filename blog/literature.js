@@ -1,4 +1,10 @@
 window.bibData = {
+	"blombosochre": {
+		url: "https://www.donsmaps.com/blombos.html",
+		license: "CC-BY-2.5",
+		author: "Chris Henshilwood",
+		title: "Blombos Cave ochre and artefacts"
+	},
 	"sushruta": {
 		title: "सुश्रुतसंहिता (Sushruta Samhita)",
 		author: "सुश्रुत (Sushruta)",

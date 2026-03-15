@@ -22,6 +22,11 @@ As these symbolic tools became more refined, language transitioned from a surviv
 
 ## The Cognitive Ignition: Symbolic Displacement
 
+<figure>
+    <img style="width: 100%" src="blombosochre.jpg" alt="Blombos Cave ochre and artifacts" />
+    <figcaption>\citetitle{blombosochre}</figcaption>
+</figure>
+
 The evolution of language represents a fundamental transition from **indexical signaling** to **symbolic displacement**. While early primates used specific calls to react to immediate stimuli—such as a specific scream for a predator currently in view—true human language allows us to discuss things that are absent in time or space.
 
 * **Escaping the "Here and Now":** This leap required the cognitive ability to maintain "mental representations." A sound was no longer just a reaction; it became a tool to discuss a hunt from yesterday or a plan for tomorrow. This decoupling of sound from immediate physical reality is the prerequisite for all abstract thought, from mythology to complex mathematics.
