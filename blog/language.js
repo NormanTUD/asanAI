@@ -224,34 +224,11 @@
 	}
 
 	/* ====================================================================
-	 * 3. COLLAPSIBLE CHEVRONS
-	 * ==================================================================== */
-	function initCollapsibles() {
-		var allDetails = document.querySelectorAll("details.deep-dive");
-		for (var i = 0; i < allDetails.length; i++) {
-			(function (el) {
-				var summary = el.querySelector("summary");
-				if (!summary) return;
-
-				var chevron = document.createElement("span");
-				chevron.className = "chevron";
-				chevron.textContent = " ▸";
-				summary.appendChild(chevron);
-
-				el.addEventListener("toggle", function () {
-					chevron.textContent = el.open ? " ▾" : " ▸";
-				});
-			})(allDetails[i]);
-		}
-	}
-
-	/* ====================================================================
 	 * 5. INIT
 	 * ==================================================================== */
 	function init() {
 		injectStyles();
 		buildTimeline();
-		initCollapsibles();
 	}
 
 	if (document.readyState === "loading") {
