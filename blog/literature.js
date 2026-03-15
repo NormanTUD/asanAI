@@ -1,4 +1,10 @@
 window.bibData = {
+	"sushruta": {
+		title: "सुश्रुतसंहिता (Sushruta Samhita)",
+		author: "सुश्रुत (Sushruta)",
+		year: "ca. 300 BCE",
+		url: "https://archive.org/details/sushrutasamhita"
+	},
 	"earlylanguage": {
 		url: "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1503900/full",
 		title: "Linguistic capacity was present in the Homo sapiens population 135 thousand years ago",
