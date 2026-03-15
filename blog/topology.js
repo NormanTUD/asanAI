@@ -3296,6 +3296,360 @@ function projective_plane() {
     draw();
 }
 
+// ============================================================
+// FIBER BUNDLE VISUALIZATION — Context twists meaning
+// ============================================================
+function fiber_bundles() {
+    const container = document.getElementById('fiber-viz');
+    if (!container) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 700;
+    canvas.height = 520;
+    canvas.style.display = 'block';
+    canvas.style.margin = '0 auto';
+    canvas.style.borderRadius = '12px';
+    canvas.style.background = '#0a0a2e';
+    container.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    const controlsDiv = document.createElement('div');
+    controlsDiv.style.cssText = 'text-align:center; margin:15px 0; font-family:"Inter",sans-serif;';
+    controlsDiv.innerHTML = `
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc;">Context position (base S¹): </label>
+            <input type="range" id="fiber-context" min="0" max="628" value="0" style="width:250px; vertical-align:middle;">
+            <span id="fiber-context-val" style="color:#4fc3f7; margin-left:8px; font-weight:600;"></span>
+        </div>
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc;">Twist amount: </label>
+            <input type="range" id="fiber-twist" min="0" max="100" value="0" style="width:180px; vertical-align:middle;">
+            <span id="fiber-twist-label" style="color:#ff8a65; margin-left:8px;">Trivial (Cylinder)</span>
+            <label style="color:#ccc; margin-left:20px;">Meaning position on fiber: </label>
+            <input type="range" id="fiber-meaning" min="0" max="100" value="50" style="width:120px; vertical-align:middle;">
+        </div>
+        <div style="margin-bottom:10px;">
+            <button id="fiber-transport-btn" style="padding:6px 16px; background:#4fc3f7; border:none; border-radius:6px; cursor:pointer; font-weight:600;">▶ Parallel Transport</button>
+            <button id="fiber-reset-btn" style="margin-left:8px; padding:6px 16px; background:#ff5252; border:none; border-radius:6px; cursor:pointer; font-weight:600; color:#fff;">Reset</button>
+        </div>
+        <div style="color:#888; font-size:13px;">Twist the bundle from <span style="color:#4fc3f7;">cylinder</span> (trivial) to <span style="color:#ff8a65;">Möbius strip</span> (non-trivial). Watch meaning <strong>flip</strong> after parallel transport around the loop.</div>
+    `;
+    container.appendChild(controlsDiv);
+
+    const cxBase = 200;
+    const cyBase = 280;
+    const baseR = 120;
+    const fiberLen = 70;
+
+    const contexts = [
+        { angle: 0, label: '🏃 Sports', color: '#4caf50' },
+        { angle: Math.PI / 2, label: '💻 Computing', color: '#2196f3' },
+        { angle: Math.PI, label: '🧵 Fabric', color: '#e91e63' },
+        { angle: 3 * Math.PI / 2, label: '🎭 Theater', color: '#ff9800' },
+    ];
+
+    let transportPath = [];
+    let isTransporting = false;
+    let transportT = 0;
+
+    function fiberEndpoints(angle, twist, viewTilt) {
+        // Base point on circle
+        const bx = cxBase + baseR * Math.cos(angle);
+        const by = cyBase + baseR * Math.sin(angle) * Math.cos(viewTilt);
+
+        // Fiber direction (perpendicular to base circle, twisted)
+        const twistAngle = angle * twist / 2; // 0 = no twist, 1 = half twist (Möbius)
+        const fiberDx = -Math.sin(angle) * Math.sin(twistAngle) * fiberLen;
+        const fiberDy = Math.cos(twistAngle) * fiberLen;
+
+        // Apply view tilt to fiber
+        const fiberDyTilted = fiberDy * 0.7;
+
+        return {
+            baseX: bx,
+            baseY: by,
+            topX: bx + fiberDx * 0.3,
+            topY: by - fiberDyTilted,
+            botX: bx - fiberDx * 0.3,
+            botY: by + fiberDyTilted,
+            twistAngle: twistAngle
+        };
+    }
+
+    function draw() {
+        const contextAngle = parseFloat(document.getElementById('fiber-context').value) / 100;
+        const twist = parseFloat(document.getElementById('fiber-twist').value) / 100;
+        const meaningPos = parseFloat(document.getElementById('fiber-meaning').value) / 100;
+        const viewTilt = 0.35;
+
+        // Update labels
+        let closestCtx = contexts[0];
+        let minDist = 999;
+        contexts.forEach(c => {
+            const d = Math.min(
+                Math.abs(contextAngle - c.angle),
+                Math.abs(contextAngle - c.angle + Math.PI * 2),
+                Math.abs(contextAngle - c.angle - Math.PI * 2)
+            );
+            if (d < minDist) { minDist = d; closestCtx = c; }
+        });
+        document.getElementById('fiber-context-val').textContent = closestCtx.label;
+        document.getElementById('fiber-context-val').style.color = closestCtx.color;
+
+        const twistLabel = document.getElementById('fiber-twist-label');
+        if (twist < 0.1) twistLabel.textContent = 'Trivial (Cylinder)';
+        else if (twist > 0.9) twistLabel.textContent = 'Möbius (Half-twist)';
+        else twistLabel.textContent = `Twist: ${Math.round(twist * 180)}°`;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the fiber bundle as a strip around the circle
+        const steps = 80;
+
+        // Collect strip quads
+        let quads = [];
+        for (let i = 0; i < steps; i++) {
+            const a1 = (i / steps) * Math.PI * 2;
+            const a2 = ((i + 1) / steps) * Math.PI * 2;
+
+            const f1 = fiberEndpoints(a1, twist, viewTilt);
+            const f2 = fiberEndpoints(a2, twist, viewTilt);
+
+            const midZ = Math.sin(a1) + Math.sin(a2);
+
+            quads.push({
+                points: [
+                    { x: f1.topX, y: f1.topY },
+                    { x: f2.topX, y: f2.topY },
+                    { x: f2.botX, y: f2.botY },
+                    { x: f1.botX, y: f1.botY }
+                ],
+                z: midZ,
+                angle: a1,
+                twistAngle: f1.twistAngle
+            });
+        }
+
+        // Sort by depth
+        quads.sort((a, b) => a.z - b.z);
+
+        // Draw quads
+        quads.forEach(q => {
+            const brightness = 0.25 + 0.35 * ((q.z + 2) / 4);
+            const hue = (q.angle / (Math.PI * 2)) * 360;
+
+            // Color based on twist — show the "side" via color
+            const sideVal = Math.cos(q.twistAngle);
+            let r, g, b;
+            if (sideVal >= 0) {
+                r = 40 + 60 * brightness;
+                g = 80 + 100 * brightness;
+                b = 180 + 60 * brightness;
+            } else {
+                r = 180 + 60 * brightness;
+                g = 60 + 60 * brightness;
+                b = 40 + 60 * brightness;
+            }
+
+            ctx.fillStyle = `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+            ctx.strokeStyle = `rgba(255,255,255,${0.05 + brightness * 0.1})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(q.points[0].x, q.points[0].y);
+            ctx.lineTo(q.points[1].x, q.points[1].y);
+            ctx.lineTo(q.points[2].x, q.points[2].y);
+            ctx.lineTo(q.points[3].x, q.points[3].y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        });
+
+        // Draw base circle
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i <= 80; i++) {
+            const a = (i / 80) * Math.PI * 2;
+            const bx = cxBase + baseR * Math.cos(a);
+            const by = cyBase + baseR * Math.sin(a) * Math.cos(viewTilt);
+            if (i === 0) ctx.moveTo(bx, by);
+            else ctx.lineTo(bx, by);
+        }
+        ctx.stroke();
+
+        // Draw context labels
+        contexts.forEach(c => {
+            const bx = cxBase + (baseR + 25) * Math.cos(c.angle);
+            const by = cyBase + (baseR + 25) * Math.sin(c.angle) * Math.cos(viewTilt);
+            ctx.fillStyle = c.color;
+            ctx.font = '12px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(c.label, bx, by);
+        });
+        ctx.textAlign = 'left';
+
+        // Draw current fiber (highlighted)
+        const cf = fiberEndpoints(contextAngle, twist, viewTilt);
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(cf.topX, cf.topY);
+        ctx.lineTo(cf.botX, cf.botY);
+        ctx.stroke();
+
+        // Meaning dot on fiber
+        const mx = cf.topX + (cf.botX - cf.topX) * meaningPos;
+        const my = cf.topY + (cf.botY - cf.topY) * meaningPos;
+        ctx.fillStyle = '#ffd54f';
+        ctx.shadowColor = '#ffd54f';
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(mx, my, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Fiber labels
+        ctx.fillStyle = '#aaa';
+        ctx.font = '10px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('meaning +', cf.topX, cf.topY - 8);
+        ctx.fillText('meaning −', cf.botX, cf.botY + 14);
+        ctx.textAlign = 'left';
+
+        // Draw transport path
+        if (transportPath.length > 1) {
+            ctx.strokeStyle = 'rgba(76,175,80,0.8)';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(transportPath[0].x, transportPath[0].y);
+            for (let i = 1; i < transportPath.length; i++) {
+                ctx.lineTo(transportPath[i].x, transportPath[i].y);
+            }
+            ctx.stroke();
+
+            // Start and end dots
+            const start = transportPath[0];
+            const end = transportPath[transportPath.length - 1];
+
+            ctx.fillStyle = '#4caf50';
+            ctx.beginPath();
+            ctx.arc(start.x, start.y, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = twist > 0.5 ? '#ff5252' : '#4caf50';
+            ctx.beginPath();
+            ctx.arc(end.x, end.y, 5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // === RIGHT PANEL ===
+        const panelX = 430;
+        ctx.fillStyle = 'rgba(20,20,60,0.85)';
+        ctx.beginPath();
+        ctx.roundRect(panelX, 30, 250, 240, 10);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(100,140,255,0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(panelX, 30, 250, 240, 10);
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 13px Inter, sans-serif';
+        ctx.fillText('Fiber Bundle E → B', panelX + 15, 55);
+
+        ctx.fillStyle = '#aaa';
+        ctx.font = '11px Inter, sans-serif';
+        const panelLines = [
+            { text: 'Base B = S¹ (context space)', color: '#aaa' },
+            { text: 'Fiber F = [−1,1] (meaning)', color: '#aaa' },
+            { text: '', color: '#aaa' },
+            { text: `Twist = ${Math.round(twist * 180)}°`, color: '#ff8a65' },
+            { text: twist < 0.1 ? 'Bundle: TRIVIAL (cylinder)' : twist > 0.9 ? 'Bundle: NON-TRIVIAL (Möbius)' : 'Bundle: partially twisted', color: twist < 0.1 ? '#4caf50' : '#ff8a65' },
+            { text: '', color: '#aaa' },
+            { text: 'Structure group:', color: '#aaa' },
+            { text: twist < 0.1 ? '  G = {e} (trivial)' : '  G = ℤ₂ = {+1, −1}', color: '#4fc3f7' },
+            { text: '', color: '#aaa' },
+            { text: 'Parallel transport around S¹:', color: '#aaa' },
+            { text: twist > 0.5 ? '  Holonomy = −1 (FLIP!)' : '  Holonomy = +1 (no flip)', color: twist > 0.5 ? '#ff5252' : '#4caf50' },
+            { text: '', color: '#aaa' },
+            { text: 'Meaning depends on path', color: '#ffd54f' },
+            { text: 'through context, not just', color: '#ffd54f' },
+            { text: 'the endpoint.', color: '#ffd54f' },
+        ];
+        panelLines.forEach((line, i) => {
+            ctx.fillStyle = line.color;
+            ctx.font = line.text.includes('TRIVIAL') || line.text.includes('NON-TRIVIAL') || line.text.includes('FLIP') ? 'bold 11px Inter, sans-serif' : '11px Inter, sans-serif';
+            ctx.fillText(line.text, panelX + 15, 75 + i * 14);
+        });
+
+        // Bottom info
+        ctx.fillStyle = '#4fc3f7';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText('π: E → B    |    Transition functions g_ij: U_i ∩ U_j → G', 15, canvas.height - 15);
+    }
+
+    // Parallel transport animation
+    document.getElementById('fiber-transport-btn').addEventListener('click', function() {
+        if (isTransporting) return;
+        isTransporting = true;
+        transportPath = [];
+        transportT = 0;
+
+        const twist = parseFloat(document.getElementById('fiber-twist').value) / 100;
+        const startMeaning = parseFloat(document.getElementById('fiber-meaning').value) / 100;
+        const viewTilt = 0.35;
+
+        function transportStep() {
+            if (transportT > Math.PI * 2 + 0.05) {
+                isTransporting = false;
+
+                // Show result: if twisted, meaning flipped
+                if (twist > 0.5) {
+                    document.getElementById('fiber-meaning').value = Math.round((1 - startMeaning) * 100);
+                }
+                draw();
+                return;
+            }
+
+            const angle = transportT;
+            const cf = fiberEndpoints(angle, twist, viewTilt);
+
+            // Parallel transport: meaning position evolves with twist
+            const transportedMeaning = startMeaning;
+            // The visual position on the fiber accounts for the twist
+            const effectiveMeaning = transportedMeaning;
+            const mx = cf.topX + (cf.botX - cf.topX) * effectiveMeaning;
+            const my = cf.topY + (cf.botY - cf.topY) * effectiveMeaning;
+
+            transportPath.push({ x: mx, y: my });
+
+            document.getElementById('fiber-context').value = Math.round(angle * 100);
+            draw();
+
+            transportT += 0.04;
+            requestAnimationFrame(transportStep);
+        }
+        transportStep();
+    });
+
+    document.getElementById('fiber-reset-btn').addEventListener('click', function() {
+        transportPath = [];
+        isTransporting = false;
+        document.getElementById('fiber-context').value = 0;
+        document.getElementById('fiber-meaning').value = 50;
+        draw();
+    });
+
+    document.getElementById('fiber-context').addEventListener('input', draw);
+    document.getElementById('fiber-twist').addEventListener('input', draw);
+    document.getElementById('fiber-meaning').addEventListener('input', draw);
+
+    draw();
+}
+
 
 // ============================================================
 // MODULE LOADER
@@ -3333,4 +3687,6 @@ async function loadTopologyModule() {
 	covering_vis();
 
 	projective_plane();
+
+	fiber_bundles();
 }

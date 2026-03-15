@@ -552,3 +552,62 @@ This is unusual — most familiar surfaces have $\chi \leq 2$. The projective pl
 </div>
 
 <div id="projective-viz"></div>
+
+<div class="md">
+## Fiber Bundles: How Context Twists Meaning
+
+A **fiber bundle** is a space $E$ (the total space) that locally looks like a product $B \times F$ of a **base space** $B$ and a **fiber** $F$, but globally may be twisted. Formally, there is a projection $\pi: E \to B$ such that every point $b \in B$ has a neighborhood $U$ where $\pi^{-1}(U) \cong U \times F$.
+
+### The Simplest Examples
+
+- **Cylinder** $= S^1 \times [0,1]$: A fiber bundle over the circle with fiber $[0,1]$. It's **trivial** — the product structure is global, not just local.
+- **Möbius strip**: Also a fiber bundle over $S^1$ with fiber $[0,1]$, but **non-trivial** — the fiber gets flipped as you go around the base.
+
+The key question is always: **is the bundle trivial (a simple product) or twisted?**
+
+### Meaning as a Fiber Bundle
+
+Consider the word **"run"** in different contexts:
+
+| Context (Base $B = S^1$) | Meaning (Fiber $F$) |
+|---|---|
+| "I **run** every morning" | Physical locomotion |
+| "**Run** the program" | Execute software |
+| "A **run** in her stockings" | A tear/defect |
+| "The **run** of the show" | Duration/sequence |
+| "**Run** for office" | Campaign/compete |
+
+The base space is the **context** — it varies continuously as you read through different texts. The fiber at each point is the **space of possible meanings**. Locally, in any given paragraph, "run" has a stable meaning (the bundle looks like a product). But globally, as you traverse all possible contexts, the meaning fiber **twists**.
+
+### The Structure Group
+
+The **structure group** $G$ of a fiber bundle describes the symmetries that relate fibers at different points. For a trivial bundle, $G$ acts trivially. For a Möbius strip, $G = \mathbb{Z}_2$ (the fiber can be flipped or not).
+
+For word meaning:
+- If a word has $n$ discrete meanings, the structure group is (a subgroup of) the **symmetric group** $S_n$ — permutations of meanings.
+- If meaning varies continuously, the structure group is a **Lie group** acting on the meaning space.
+
+### Attention Heads as Local Trivializations
+
+A **local trivialization** is a choice of coordinates that makes the bundle look like a product in some neighborhood. Different trivializations are related by **transition functions** $g_{ij}: U_i \cap U_j \to G$.
+
+Each attention head provides a **local trivialization** of the meaning bundle:
+- Head 1 might trivialized "run" in sports contexts (physical meaning is the "zero section")
+- Head 2 might trivialize "run" in computing contexts (execution meaning is the "zero section")
+
+The transition functions between these trivializations encode how meaning shifts when context changes — and these are precisely the **attention patterns** that the Transformer learns.
+
+### The Connection (Parallel Transport)
+
+A **connection** on a fiber bundle tells you how to "parallel transport" a fiber element along a path in the base. In our analogy:
+
+$$\text{Connection} = \text{how meaning evolves as context changes}$$
+
+If you start with "run" meaning "jog" and slowly shift the context from sports to computing, the connection tells you the trajectory through meaning space. The **curvature** of the connection measures how much meaning changes when you take different contextual paths to the same endpoint — this is the **holonomy**, and it's non-trivial precisely when the bundle is non-trivial.
+
+$$\text{Holonomy} \neq 0 \iff \text{meaning depends on the path through context, not just the endpoint}$$
+
+This is why the same word in the same final context can mean different things depending on what came before — the bundle has non-trivial holonomy.
+</div>
+
+<div id="fiber-viz"></div>
