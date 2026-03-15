@@ -1,11 +1,11 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-In an LLM, words and concepts are mapped to high-dimensional vectors. However, these vectors don't fill the space uniformly. They tend to lie on a **Manifold** — a lower-dimensional surface embedded in the high-dimensional space. Understanding the *shape* of this manifold — its holes, its twists, its branches — is the domain of **topology**.
+In an LLM, words and concepts are mapped to high-dimensional vectors. However, these vectors don't fill the space uniformly. They tend to lie on a **Manifold**, a lower-dimensional surface embedded in the high-dimensional space. Understanding the *shape* of this manifold, its holes, its twists, its branches, is the domain of **topology**.
 
 ## What Is Topology?
 
-Topology is the branch of mathematics that studies properties of shapes that are preserved under continuous deformation — stretching, bending, twisting — but **not** tearing or gluing. A coffee mug and a donut are topologically identical (both have exactly one hole); a sphere and a donut are not. While geometry asks *"how far apart are these two points?"*, topology asks *"are these two regions connected? Is there a hole between them? Can I smoothly deform one structure into the other?"*
+Topology is the branch of mathematics that studies properties of shapes that are preserved under continuous deformation, stretching, bending, twisting, but **not** tearing or gluing. A coffee mug and a donut are topologically identical (both have exactly one hole); a sphere and a donut are not. While geometry asks *"how far apart are these two points?"*, topology asks *"are these two regions connected? Is there a hole between them? Can I smoothly deform one structure into the other?"*
 
 Formally, two spaces are **homeomorphic** (topologically equivalent) if there exists a continuous bijection between them whose inverse is also continuous. This means:
 
@@ -13,15 +13,15 @@ $$ X \cong Y \iff \exists\, f: X \to Y \text{ continuous, bijective, with } f^{-
 
 ## Why Does Topology Matter for AI?
 
-The reason topology matters for understanding LLMs is that the **semantic manifold** — the surface on which meaningful token representations live — has rich topological structure. This structure directly affects what the model can and cannot represent:
+The reason topology matters for understanding LLMs is that the **semantic manifold**, the surface on which meaningful token representations live, has rich topological structure. This structure directly affects what the model can and cannot represent:
 
 1. **Connectivity and Clustering:** Topology tells us whether two concept regions are connected (reachable from each other via smooth interpolation) or separated by a void. If "science" and "pseudoscience" live on disconnected components of the manifold, the model treats them as categorically different; if they're connected, there's a smooth gradient between them.
 
-2. **Holes as Impossibilities:** As explored in the \cite[Persistent Homology]{persistenthomology} section of the embedding space, topological holes represent regions where **no coherent concept exists** — logical contradictions, semantic voids, the "unsayable." These holes are not bugs; they are the negative imprint of the model's world-knowledge.
+2. **Holes as Impossibilities:** As explored in the \cite[Persistent Homology]{persistenthomology} section of the embedding space, topological holes represent regions where **no coherent concept exists**, logical contradictions, semantic voids, the "unsayable." These holes are not bugs; they are the negative imprint of the model's world-knowledge.
 
-3. **Attention as Navigation:** The \cite[attention mechanism]{vaswani2017attention} can be understood as a tool for navigating the manifold's topology — finding which regions are "nearby" in the model's learned geometry, even if they appear distant in raw Euclidean space.
+3. **Attention as Navigation:** The \cite[attention mechanism]{vaswani2017attention} can be understood as a tool for navigating the manifold's topology, finding which regions are "nearby" in the model's learned geometry, even if they appear distant in raw Euclidean space.
 
-4. **Feature Extraction via Persistent Homology:** By computing the \cite[persistent homology]{persistenthomology} of activation patterns, researchers can determine whether a model has learned genuine topological structure (robust loops, clusters, cavities) or is merely memorizing surface-level correlations. Features with high **persistence** — topological signatures that survive across a wide range of scales — correspond to robust, generalizable knowledge.
+4. **Feature Extraction via Persistent Homology:** By computing the \cite[persistent homology]{persistenthomology} of activation patterns, researchers can determine whether a model has learned genuine topological structure (robust loops, clusters, cavities) or is merely memorizing surface-level correlations. Features with high **persistence**, topological signatures that survive across a wide range of scales, correspond to robust, generalizable knowledge.
 
 ## Topological Invariants in Practice
 
@@ -31,7 +31,7 @@ The key topological invariants used in AI research are the **Betti numbers** $\b
 - $\beta_1$: the number of **1-dimensional holes** (loops)
 - $\beta_2$: the number of **2-dimensional voids** (cavities)
 
-These numbers are invariant under homeomorphism — they don't change when you stretch or bend the space, only when you tear it or fill in a hole. This makes them powerful tools for comparing the *structure* of different models' learned representations, independent of the arbitrary coordinate frames those models use.
+These numbers are invariant under homeomorphism, they don't change when you stretch or bend the space, only when you tear it or fill in a hole. This makes them powerful tools for comparing the *structure* of different models' learned representations, independent of the arbitrary coordinate frames those models use.
 
 $$\text{Persistence}(h) = r_{\text{death}}(h) - r_{\text{birth}}(h)$$
 
@@ -45,7 +45,7 @@ A topological feature with high persistence is a real structural property of the
 <div style="margin-bottom: 10px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
     <strong>Latent Space Manifold:</strong><br>
     Adjust the <b>Warp Factor</b> to see how the manifold deforms while maintaining its underlying topological connectivity.
-    The surface can stretch and ripple, but its fundamental structure — the number of peaks, valleys, and the way regions connect — is preserved under smooth deformation. This is topology in action.
+    The surface can stretch and ripple, but its fundamental structure, the number of peaks, valleys, and the way regions connect, is preserved under smooth deformation. This is topology in action.
     The <b>persistence barcode</b> below the surface shows which topological features (components, loops, voids) survive across scales.
     <br><br>
     <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
@@ -70,13 +70,13 @@ A topological feature with high persistence is a real structural property of the
 </div>
 
 <!-- ═══════════════════════════════════════════════════════ -->
-<!-- SECTION 2: Draw Your Own Manifold — Live Betti Numbers -->
+<!-- SECTION 2: Draw Your Own Manifold, Live Betti Numbers -->
 <!-- ═══════════════════════════════════════════════════════ -->
 
 <div class="md">
 ## Draw Your Own Manifold
 
-Experience topology hands-on. **Draw a shape** on the canvas below and watch its Betti numbers computed in real time. Draw a circle — you'll see $\beta_1 = 1$ (one loop). Draw two separate blobs — $\beta_0 = 2$ (two components). Draw a figure-eight — $\beta_1 = 2$ (two loops). Can you draw a shape with $\beta_0 = 3$?
+Experience topology hands-on. **Draw a shape** on the canvas below and watch its Betti numbers computed in real time. Draw a circle, you'll see $\beta_1 = 1$ (one loop). Draw two separate blobs, $\beta_0 = 2$ (two components). Draw a figure-eight, $\beta_1 = 2$ (two loops). Can you draw a shape with $\beta_0 = 3$?
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -100,11 +100,11 @@ Experience topology hands-on. **Draw a shape** on the canvas below and watch its
             <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 12px;">🔢 Live Betti Numbers</div>
             <div id="betti-display" style="text-align: center;">
                 <div style="margin-bottom: 16px;">
-                    <div style="font-size: 0.75em; color: #64748b;">β₀ — Connected Components</div>
+                    <div style="font-size: 0.75em; color: #64748b;">β₀, Connected Components</div>
                     <div id="betti-0" style="font-size: 2.5em; font-weight: bold; color: #3b82f6;">0</div>
                 </div>
                 <div style="margin-bottom: 16px;">
-                    <div style="font-size: 0.75em; color: #64748b;">β₁ — Loops (Holes)</div>
+                    <div style="font-size: 0.75em; color: #64748b;">β₁, Loops (Holes)</div>
                     <div id="betti-1" style="font-size: 2.5em; font-weight: bold; color: #10b981;">0</div>
                 </div>
                 <div style="margin-bottom: 16px;">
@@ -142,8 +142,8 @@ Test your topological intuition! For each pair, decide: **are they homeomorphic?
     </div>
     <div id="quiz-question" style="text-align: center; font-family: sans-serif; font-size: 1em; color: #334155; margin-bottom: 12px;"></div>
     <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 12px;">
-        <button onclick="answerQuiz(true)" id="quiz-yes-btn" style="background: #10b981; color: white; border: none; padding: 12px 32px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.05em;">✅ Yes — Homeomorphic</button>
-        <button onclick="answerQuiz(false)" id="quiz-no-btn" style="background: #ef4444; color: white; border: none; padding: 12px 32px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.05em;">❌ No — Different</button>
+        <button onclick="answerQuiz(true)" id="quiz-yes-btn" style="background: #10b981; color: white; border: none; padding: 12px 32px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.05em;">✅ Yes, Homeomorphic</button>
+        <button onclick="answerQuiz(false)" id="quiz-no-btn" style="background: #ef4444; color: white; border: none; padding: 12px 32px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.05em;">❌ No, Different</button>
     </div>
     <div id="quiz-feedback" style="text-align: center; font-family: sans-serif; font-size: 0.95em; color: #64748b; min-height: 60px; padding: 10px;"></div>
     <div style="display: flex; justify-content: center; gap: 20px; margin-top: 8px;">
@@ -161,11 +161,11 @@ A **Feature Space** is a specific slice of the manifold. For example, a model mi
 
 ## Helices, Attention Heads, and Turing Machines
 
-One of the most profound connections between topology and computation in LLMs involves **helical structure**. As explored in the embedding lab's section on the emergent time axis, ordered or sequential concepts — dates, sizes, intensities — tend to form **helices** in the embedding space:
+One of the most profound connections between topology and computation in LLMs involves **helical structure**. As explored in the embedding lab's section on the emergent time axis, ordered or sequential concepts, dates, sizes, intensities, tend to form **helices** in the embedding space:
 
 $$ \mathbf{v}(t) \approx \mathbf{a} \cdot t + r \cdot \cos(\omega t) \cdot \hat{e}_1 + r \cdot \sin(\omega t) \cdot \hat{e}_2 $$
 
-where $\mathbf{a}$ is the linear progression direction, $r$ is the helix radius (strength of cyclical patterns), and $\omega$ controls the winding frequency. This structure emerges purely from statistical co-occurrence — nobody programs it.
+where $\mathbf{a}$ is the linear progression direction, $r$ is the helix radius (strength of cyclical patterns), and $\omega$ controls the winding frequency. This structure emerges purely from statistical co-occurrence, nobody programs it.
 
 ### Why Helices?
 
@@ -174,7 +174,7 @@ A helix is a topologically elegant structure because it encodes **two kinds of i
 1. **Linear progression** along the helix axis (e.g., time moving forward, size increasing)
 2. **Cyclical recurrence** via the rotation around the axis (e.g., decades repeating patterns, seasons cycling)
 
-This dual encoding is not merely a curiosity — it is computationally powerful. A helix is essentially a **one-dimensional manifold embedded in three or more dimensions**, and its winding number (how many times it loops per unit of linear progression) is a topological invariant.
+This dual encoding is not merely a curiosity, it is computationally powerful. A helix is essentially a **one-dimensional manifold embedded in three or more dimensions**, and its winding number (how many times it loops per unit of linear progression) is a topological invariant.
 
 ### Attention Heads Discover Helices
 
@@ -182,7 +182,7 @@ Individual attention heads in a Transformer have been shown to specialize in det
 
 $$ \text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right) V $$
 
-naturally computes **angular similarity** between query and key vectors. When tokens are arranged along a helix, the dot product between a query token and a key token depends on both their **linear separation** (how far apart they are in the sequence) and their **phase relationship** (where they fall in the cyclical pattern). This allows a single attention head to implement a form of **periodic gating** — attending strongly to tokens that are a fixed number of "cycles" away.
+naturally computes **angular similarity** between query and key vectors. When tokens are arranged along a helix, the dot product between a query token and a key token depends on both their **linear separation** (how far apart they are in the sequence) and their **phase relationship** (where they fall in the cyclical pattern). This allows a single attention head to implement a form of **periodic gating**, attending strongly to tokens that are a fixed number of "cycles" away.
 
 ### The Connection to Turing Machines
 
@@ -195,7 +195,7 @@ A \cite[Turing machine]{turing1937} is defined by:
 The key insight is that a helix can **encode the state-transition graph** of a Turing machine. Each point on the helix represents a (state, symbol) pair. The linear axis encodes the **tape position** (where the head is), and the angular position encodes the **internal state**. A transition $\delta(q_i, a) = (q_j, b, R)$ corresponds to:
 
 1. **Reading**: The attention head attends to the current position on the helix (state $q_i$, symbol $a$)
-2. **State transition**: The activation rotates around the helix axis from the angular position of $q_i$ to that of $q_j$ — a **rotation** in the embedding space
+2. **State transition**: The activation rotates around the helix axis from the angular position of $q_i$ to that of $q_j$, a **rotation** in the embedding space
 3. **Writing**: The residual stream update modifies the token representation at the current position (changing $a$ to $b$)
 4. **Moving**: The linear component shifts along the helix axis (moving the head right)
 
@@ -209,11 +209,11 @@ The attention mechanism identifies which (state, symbol) pair is currently activ
 
 This helical picture reveals a deep connection between **topology** and **computational capacity**:
 
-- **Winding number as memory**: The number of distinct states a helix can encode depends on its winding number — how many distinguishable angular positions exist per unit of linear progression. More winding = more states = more computational power. This is a topological invariant.
+- **Winding number as memory**: The number of distinct states a helix can encode depends on its winding number, how many distinguishable angular positions exist per unit of linear progression. More winding = more states = more computational power. This is a topological invariant.
 
 - **Helix radius as precision**: The radius $r$ determines how well-separated different states are in the embedding space. Larger radius means cleaner state discrimination, but requires more dimensions. This connects to the well-known result that Transformer computational power scales with embedding dimension.
 
-- **Continuity constraints**: Because the Transformer operates via continuous functions (softmax, matrix multiplication), it cannot implement arbitrary discrete jumps between states. The transitions must be **topologically continuous** — you can't "tear" the helix. This is why Transformers sometimes struggle with tasks requiring sharp discrete transitions (e.g., exact counting, parity checking) unless given sufficient depth to approximate the discontinuity.
+- **Continuity constraints**: Because the Transformer operates via continuous functions (softmax, matrix multiplication), it cannot implement arbitrary discrete jumps between states. The transitions must be **topologically continuous**, you can't "tear" the helix. This is why Transformers sometimes struggle with tasks requiring sharp discrete transitions (e.g., exact counting, parity checking) unless given sufficient depth to approximate the discontinuity.
 
 Below, you can explore this connection interactively. The visualization shows a helix encoding Turing machine states. Adjust the **number of states** to see how the helix winds tighter to accommodate more states. Toggle the **transition arrows** to see how the attention mechanism routes between states. The **tape display** shows the simulated Turing machine execution, with each step corresponding to one "rotation + translation" along the helix.
 </div>
@@ -267,7 +267,7 @@ Below, you can explore this connection interactively. The visualization shows a 
         <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
             <input type="checkbox" id="helix-sound-enabled" checked> 🔊 Sound
         </label>
-        <span id="helix-turing-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready — click Step or Run.</span>
+        <span id="helix-turing-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready, click Step or Run.</span>
     </div>
 
     <div style="display: flex; gap: 16px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
@@ -291,11 +291,11 @@ Below, you can explore this connection interactively. The visualization shows a 
         The <b>linear axis</b> (left → right) represents <b>tape position</b>.
         The <b>angular position</b> around the axis represents the <b>internal state</b> ($q_0, q_1, \ldots$).
         Each <span style="color:#f59e0b; font-weight:bold;">gold marker</span> is a (state, symbol) configuration.
-        <span style="color:#ef4444; font-weight:bold;">Red arrows</span> show the <b>transition function</b> $\delta$ — the path the activation takes when the attention head "reads" the current state and the MLP "writes" the new one.
+        <span style="color:#ef4444; font-weight:bold;">Red arrows</span> show the <b>transition function</b> $\delta$, the path the activation takes when the attention head "reads" the current state and the MLP "writes" the new one.
         The <span style="color:#10b981; font-weight:bold;">green highlight</span> marks the <b>current configuration</b>.
         Click <b>Step</b> to execute one transition, or <b>Run</b> to animate.
-        🔊 <b>Sound</b>: each state maps to a pentatonic tone — listen to the computation!
-        Notice how each step is a <b>rotation</b> (state change) + <b>translation</b> (head movement) along the helix — the same geometric operations the Transformer performs in its residual stream.
+        🔊 <b>Sound</b>: each state maps to a pentatonic tone, listen to the computation!
+        Notice how each step is a <b>rotation</b> (state change) + <b>translation</b> (head movement) along the helix, the same geometric operations the Transformer performs in its residual stream.
     </div>
 </section>
 
@@ -361,5 +361,5 @@ Topology provides the deepest level of structural analysis for understanding how
 | Manifold dimension | Intrinsic complexity of the data |
 | Homeomorphism | Cross-lingual / cross-modal alignment |
 
-The Transformer doesn't just process sequences of tokens — it navigates a topological landscape, and the shape of that landscape *is* the model's understanding of the world.
+The Transformer doesn't just process sequences of tokens, it navigates a topological landscape, and the shape of that landscape *is* the model's understanding of the world.
 </div>
