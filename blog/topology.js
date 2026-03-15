@@ -2080,31 +2080,467 @@ function initSoundCheckbox() {
 }
 
 // ============================================================
+// TORUS VISUALIZATION — Two independent cycles on a donut
+// ============================================================
+function visualize_torus() {
+    const container = document.getElementById('torus-viz');
+    if (!container) return;
+
+    // Create canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = 700;
+    canvas.height = 500;
+    canvas.style.display = 'block';
+    canvas.style.margin = '0 auto';
+    canvas.style.borderRadius = '12px';
+    canvas.style.background = '#0a0a2e';
+    container.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    // Controls
+    const controlsDiv = document.createElement('div');
+    controlsDiv.style.cssText = 'text-align:center; margin:15px 0; font-family: "Inter", sans-serif;';
+    controlsDiv.innerHTML = `
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc; margin-right:10px;">Cycle A (Day of Week): </label>
+            <input type="range" id="torus-theta" min="0" max="628" value="0" style="width:200px; vertical-align:middle;">
+            <span id="torus-theta-val" style="color:#4fc3f7; margin-left:8px;">Sunday</span>
+        </div>
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc; margin-right:10px;">Cycle B (Time of Day): </label>
+            <input type="range" id="torus-phi" min="0" max="628" value="0" style="width:200px; vertical-align:middle;">
+            <span id="torus-phi-val" style="color:#ff8a65; margin-left:8px;">00:00</span>
+        </div>
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc; margin-right:10px;">View Angle: </label>
+            <input type="range" id="torus-view" min="0" max="628" value="80" style="width:150px; vertical-align:middle;">
+            <button id="torus-trace-btn" style="margin-left:20px; padding:6px 16px; background:#4fc3f7; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Trace Diagonal Path</button>
+            <button id="torus-clear-btn" style="margin-left:8px; padding:6px 16px; background:#ff5252; border:none; border-radius:6px; cursor:pointer; font-weight:600; color:#fff;">Clear</button>
+        </div>
+        <div style="color:#888; font-size:13px;">The <span style="color:#4fc3f7;">blue loop</span> and <span style="color:#ff8a65;">orange loop</span> are the two generators of $\\pi_1(T^2) = \\mathbb{Z} \\times \\mathbb{Z}$</div>
+    `;
+    container.appendChild(controlsDiv);
+
+    // Flat torus canvas
+    const flatCanvas = document.createElement('canvas');
+    flatCanvas.width = 300;
+    flatCanvas.height = 300;
+    flatCanvas.style.display = 'inline-block';
+    flatCanvas.style.borderRadius = '8px';
+    flatCanvas.style.background = '#111133';
+    flatCanvas.style.border = '1px solid #333';
+    flatCanvas.style.margin = '0 10px';
+
+    const flatLabel = document.createElement('div');
+    flatLabel.style.cssText = 'text-align:center; margin:10px 0; font-family:"Inter",sans-serif;';
+    flatLabel.innerHTML = `
+        <div style="display:inline-flex; align-items:flex-start; gap:30px;">
+            <div>
+                <div style="color:#aaa; font-size:13px; margin-bottom:5px;">3D Torus (above) ↔ Flat Torus (below)</div>
+            </div>
+        </div>
+    `;
+    container.appendChild(flatLabel);
+
+    const flatWrap = document.createElement('div');
+    flatWrap.style.textAlign = 'center';
+    flatWrap.appendChild(flatCanvas);
+    container.appendChild(flatWrap);
+
+    const flatCtx = flatCanvas.getContext('2d');
+
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    // Torus parameters
+    const R = 130; // major radius
+    const r = 55;  // minor radius
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2 - 10;
+
+    let tracePoints = [];
+    let isTracing = false;
+    let traceT = 0;
+
+    function torusPoint(theta, phi, viewAngle) {
+        const x3 = (R + r * Math.cos(phi)) * Math.cos(theta);
+        const y3 = (R + r * Math.cos(phi)) * Math.sin(theta);
+        const z3 = r * Math.sin(phi);
+
+        // Rotate around X axis for view
+        const cosV = Math.cos(viewAngle);
+        const sinV = Math.sin(viewAngle);
+        const y3r = y3 * cosV - z3 * sinV;
+        const z3r = y3 * sinV + z3 * cosV;
+
+        return { x: x3 + cx, y: y3r + cy, z: z3r };
+    }
+
+    function drawTorus(theta, phi, viewAngle) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw background grid on torus
+        const steps = 40;
+        const lineSteps = 80;
+
+        // Collect all line segments with depth for sorting
+        let segments = [];
+
+        // Draw theta lines (around the donut)
+        for (let i = 0; i <= 16; i++) {
+            const th = (i / 16) * Math.PI * 2;
+            for (let j = 0; j < lineSteps; j++) {
+                const ph1 = (j / lineSteps) * Math.PI * 2;
+                const ph2 = ((j + 1) / lineSteps) * Math.PI * 2;
+                const p1 = torusPoint(th, ph1, viewAngle);
+                const p2 = torusPoint(th, ph2, viewAngle);
+                segments.push({
+                    x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y,
+                    z: (p1.z + p2.z) / 2,
+                    color: 'grid'
+                });
+            }
+        }
+
+        // Draw phi lines (through the hole)
+        for (let j = 0; j <= 16; j++) {
+            const ph = (j / 16) * Math.PI * 2;
+            for (let i = 0; i < lineSteps; i++) {
+                const th1 = (i / lineSteps) * Math.PI * 2;
+                const th2 = ((i + 1) / lineSteps) * Math.PI * 2;
+                const p1 = torusPoint(th1, ph, viewAngle);
+                const p2 = torusPoint(th2, ph, viewAngle);
+                segments.push({
+                    x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y,
+                    z: (p1.z + p2.z) / 2,
+                    color: 'grid'
+                });
+            }
+        }
+
+        // Blue loop (theta varies, phi = 0) — "around the donut"
+        for (let i = 0; i < lineSteps; i++) {
+            const th1 = (i / lineSteps) * Math.PI * 2;
+            const th2 = ((i + 1) / lineSteps) * Math.PI * 2;
+            const p1 = torusPoint(th1, 0, viewAngle);
+            const p2 = torusPoint(th2, 0, viewAngle);
+            segments.push({
+                x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y,
+                z: (p1.z + p2.z) / 2,
+                color: 'blue', width: 3
+            });
+        }
+
+        // Orange loop (theta = 0, phi varies) — "through the hole"
+        for (let j = 0; j < lineSteps; j++) {
+            const ph1 = (j / lineSteps) * Math.PI * 2;
+            const ph2 = ((j + 1) / lineSteps) * Math.PI * 2;
+            const p1 = torusPoint(0, ph1, viewAngle);
+            const p2 = torusPoint(0, ph2, viewAngle);
+            segments.push({
+                x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y,
+                z: (p1.z + p2.z) / 2,
+                color: 'orange', width: 3
+            });
+        }
+
+        // Trace path
+        for (let i = 1; i < tracePoints.length; i++) {
+            const p1 = torusPoint(tracePoints[i - 1].theta, tracePoints[i - 1].phi, viewAngle);
+            const p2 = torusPoint(tracePoints[i].theta, tracePoints[i].phi, viewAngle);
+            segments.push({
+                x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y,
+                z: (p1.z + p2.z) / 2,
+                color: 'trace', width: 2.5
+            });
+        }
+
+        // Current point
+        const currentP = torusPoint(theta, phi, viewAngle);
+        segments.push({
+            x1: currentP.x, y1: currentP.y, x2: currentP.x, y2: currentP.y,
+            z: currentP.z,
+            color: 'point'
+        });
+
+        // Sort by depth
+        segments.sort((a, b) => a.z - b.z);
+
+        // Draw
+        segments.forEach(seg => {
+            if (seg.color === 'grid') {
+                const alpha = 0.08 + 0.12 * ((seg.z + r + R) / (2 * (r + R)));
+                ctx.strokeStyle = `rgba(100, 140, 255, ${alpha})`;
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(seg.x1, seg.y1);
+                ctx.lineTo(seg.x2, seg.y2);
+                ctx.stroke();
+            } else if (seg.color === 'blue') {
+                const alpha = 0.3 + 0.7 * ((seg.z + r + R) / (2 * (r + R)));
+                ctx.strokeStyle = `rgba(79, 195, 247, ${alpha})`;
+                ctx.lineWidth = seg.width;
+                ctx.beginPath();
+                ctx.moveTo(seg.x1, seg.y1);
+                ctx.lineTo(seg.x2, seg.y2);
+                ctx.stroke();
+            } else if (seg.color === 'orange') {
+                const alpha = 0.3 + 0.7 * ((seg.z + r + R) / (2 * (r + R)));
+                ctx.strokeStyle = `rgba(255, 138, 101, ${alpha})`;
+                ctx.lineWidth = seg.width;
+                ctx.beginPath();
+                ctx.moveTo(seg.x1, seg.y1);
+                ctx.lineTo(seg.x2, seg.y2);
+                ctx.stroke();
+            } else if (seg.color === 'trace') {
+                const alpha = 0.4 + 0.6 * ((seg.z + r + R) / (2 * (r + R)));
+                ctx.strokeStyle = `rgba(76, 175, 80, ${alpha})`;
+                ctx.lineWidth = seg.width;
+                ctx.beginPath();
+                ctx.moveTo(seg.x1, seg.y1);
+                ctx.lineTo(seg.x2, seg.y2);
+                ctx.stroke();
+            } else if (seg.color === 'point') {
+                ctx.fillStyle = '#fff';
+                ctx.shadowColor = '#fff';
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(seg.x1, seg.y1, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        });
+
+        // Labels
+        ctx.fillStyle = '#4fc3f7';
+        ctx.font = '13px Inter, sans-serif';
+        ctx.fillText('β₀=1  β₁=2  β₂=1  χ=0', 15, 25);
+
+        ctx.fillStyle = '#aaa';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText('π₁(T²) = ℤ × ℤ', 15, 45);
+    }
+
+    function drawFlatTorus(theta, phi) {
+        flatCtx.clearRect(0, 0, 300, 300);
+
+        const pad = 20;
+        const w = 300 - 2 * pad;
+        const h = 300 - 2 * pad;
+
+        // Background
+        flatCtx.fillStyle = '#111133';
+        flatCtx.fillRect(0, 0, 300, 300);
+
+        // Grid
+        flatCtx.strokeStyle = 'rgba(100,140,255,0.15)';
+        flatCtx.lineWidth = 0.5;
+        for (let i = 0; i <= 8; i++) {
+            flatCtx.beginPath();
+            flatCtx.moveTo(pad + (i / 8) * w, pad);
+            flatCtx.lineTo(pad + (i / 8) * w, pad + h);
+            flatCtx.stroke();
+            flatCtx.beginPath();
+            flatCtx.moveTo(pad, pad + (i / 8) * h);
+            flatCtx.lineTo(pad + w, pad + (i / 8) * h);
+            flatCtx.stroke();
+        }
+
+        // Boundary with identification arrows
+        // Left/Right edges (identified) — blue
+        flatCtx.strokeStyle = '#4fc3f7';
+        flatCtx.lineWidth = 3;
+        flatCtx.setLineDash([]);
+        // Left edge
+        flatCtx.beginPath();
+        flatCtx.moveTo(pad, pad);
+        flatCtx.lineTo(pad, pad + h);
+        flatCtx.stroke();
+        // Arrow on left
+        flatCtx.fillStyle = '#4fc3f7';
+        flatCtx.beginPath();
+        flatCtx.moveTo(pad, pad + h / 2 - 8);
+        flatCtx.lineTo(pad - 5, pad + h / 2);
+        flatCtx.lineTo(pad + 5, pad + h / 2);
+        flatCtx.fill();
+        // Right edge
+        flatCtx.beginPath();
+        flatCtx.moveTo(pad + w, pad);
+        flatCtx.lineTo(pad + w, pad + h);
+        flatCtx.stroke();
+        // Arrow on right
+        flatCtx.beginPath();
+        flatCtx.moveTo(pad + w, pad + h / 2 - 8);
+        flatCtx.lineTo(pad + w - 5, pad + h / 2);
+        flatCtx.lineTo(pad + w + 5, pad + h / 2);
+        flatCtx.fill();
+
+        // Top/Bottom edges (identified) — orange
+        flatCtx.strokeStyle = '#ff8a65';
+        flatCtx.lineWidth = 3;
+        // Top
+        flatCtx.beginPath();
+        flatCtx.moveTo(pad, pad);
+        flatCtx.lineTo(pad + w, pad);
+        flatCtx.stroke();
+        // Arrow on top
+        flatCtx.fillStyle = '#ff8a65';
+        flatCtx.beginPath();
+        flatCtx.moveTo(pad + w / 2 + 8, pad);
+        flatCtx.lineTo(pad + w / 2, pad - 5);
+        flatCtx.lineTo(pad + w / 2, pad + 5);
+        flatCtx.fill();
+        // Bottom
+        flatCtx.beginPath();
+        flatCtx.moveTo(pad, pad + h);
+        flatCtx.lineTo(pad + w, pad + h);
+        flatCtx.stroke();
+        // Arrow on bottom
+        flatCtx.beginPath();
+        flatCtx.moveTo(pad + w / 2 + 8, pad + h);
+        flatCtx.lineTo(pad + w / 2, pad + h - 5);
+        flatCtx.lineTo(pad + w / 2, pad + h + 5);
+        flatCtx.fill();
+
+        // Trace on flat torus
+        if (tracePoints.length > 1) {
+            flatCtx.strokeStyle = 'rgba(76,175,80,0.8)';
+            flatCtx.lineWidth = 2;
+            for (let i = 1; i < tracePoints.length; i++) {
+                const x1 = pad + (tracePoints[i - 1].theta / (Math.PI * 2)) * w;
+                const y1 = pad + (tracePoints[i - 1].phi / (Math.PI * 2)) * h;
+                const x2 = pad + (tracePoints[i].theta / (Math.PI * 2)) * w;
+                const y2 = pad + (tracePoints[i].phi / (Math.PI * 2)) * h;
+
+                // Check for wrapping
+                const dth = Math.abs(tracePoints[i].theta - tracePoints[i - 1].theta);
+                const dph = Math.abs(tracePoints[i].phi - tracePoints[i - 1].phi);
+                if (dth < 0.5 && dph < 0.5) {
+                    flatCtx.beginPath();
+                    flatCtx.moveTo(x1, y1);
+                    flatCtx.lineTo(x2, y2);
+                    flatCtx.stroke();
+                }
+            }
+        }
+
+        // Current point on flat torus
+        const fx = pad + (theta / (Math.PI * 2)) * w;
+        const fy = pad + (phi / (Math.PI * 2)) * h;
+        flatCtx.fillStyle = '#fff';
+        flatCtx.shadowColor = '#fff';
+        flatCtx.shadowBlur = 10;
+        flatCtx.beginPath();
+        flatCtx.arc(fx, fy, 5, 0, Math.PI * 2);
+        flatCtx.fill();
+        flatCtx.shadowBlur = 0;
+
+        // Labels
+        flatCtx.fillStyle = '#4fc3f7';
+        flatCtx.font = '11px Inter, sans-serif';
+        flatCtx.fillText('θ (Day of Week) →', pad + w / 2 - 50, pad + h + 17);
+        flatCtx.save();
+        flatCtx.translate(pad - 8, pad + h / 2 + 40);
+        flatCtx.rotate(-Math.PI / 2);
+        flatCtx.fillStyle = '#ff8a65';
+        flatCtx.fillText('φ (Time of Day) →', 0, 0);
+        flatCtx.restore();
+
+        flatCtx.fillStyle = '#aaa';
+        flatCtx.font = '11px Inter, sans-serif';
+        flatCtx.fillText('Flat Torus [0,1]² / ~', pad + w / 2 - 50, 14);
+    }
+
+    const thetaSlider = document.getElementById('torus-theta');
+    const phiSlider = document.getElementById('torus-phi');
+    const viewSlider = document.getElementById('torus-view');
+    const thetaVal = document.getElementById('torus-theta-val');
+    const phiVal = document.getElementById('torus-phi-val');
+    const traceBtn = document.getElementById('torus-trace-btn');
+    const clearBtn = document.getElementById('torus-clear-btn');
+
+    function update() {
+        const theta = parseFloat(thetaSlider.value) / 100;
+        const phi = parseFloat(phiSlider.value) / 100;
+        const view = parseFloat(viewSlider.value) / 100;
+
+        const dayIndex = Math.floor((theta / (Math.PI * 2)) * 7) % 7;
+        thetaVal.textContent = days[dayIndex];
+
+        const hour = Math.floor((phi / (Math.PI * 2)) * 24) % 24;
+        const min = Math.floor(((phi / (Math.PI * 2)) * 24 - hour) * 60);
+        phiVal.textContent = `${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+
+        drawTorus(theta, phi, view);
+        drawFlatTorus(theta, phi);
+    }
+
+    thetaSlider.addEventListener('input', update);
+    phiSlider.addEventListener('input', update);
+    viewSlider.addEventListener('input', update);
+
+    traceBtn.addEventListener('click', function() {
+        if (isTracing) return;
+        isTracing = true;
+        tracePoints = [];
+        traceT = 0;
+
+        function traceStep() {
+            if (traceT > Math.PI * 6) {
+                isTracing = false;
+                return;
+            }
+            const theta = (traceT * 1.0) % (Math.PI * 2);
+            const phi = (traceT * 1.618) % (Math.PI * 2); // golden ratio for nice diagonal
+            tracePoints.push({ theta, phi });
+
+            thetaSlider.value = Math.round(theta * 100);
+            phiSlider.value = Math.round(phi * 100);
+            update();
+
+            traceT += 0.05;
+            requestAnimationFrame(traceStep);
+        }
+        traceStep();
+    });
+
+    clearBtn.addEventListener('click', function() {
+        tracePoints = [];
+        isTracing = false;
+        update();
+    });
+
+    update();
+}
+
+// ============================================================
 // MODULE LOADER
 // ============================================================
 
 async function loadTopologyModule() {
-    // 1. Latent space manifold (Plotly surface + persistence barcode)
-    initTopologyVisualization();
+	// 1. Latent space manifold (Plotly surface + persistence barcode)
+	initTopologyVisualization();
 
-    // 2. Draw Your Own Manifold
-    _topologyLazyRegister('canvas-draw-manifold', function() {
-        initDrawManifold();
-    });
+	// 2. Draw Your Own Manifold
+	_topologyLazyRegister('canvas-draw-manifold', function() {
+		initDrawManifold();
+	});
 
-    // 3. Topology Quiz
-    _topologyLazyRegister('canvas-quiz', function() {
-        initTopologyQuiz();
-    });
+	// 3. Topology Quiz
+	_topologyLazyRegister('canvas-quiz', function() {
+		initTopologyQuiz();
+	});
 
-    // 4. Helix–Turing Machine (Canvas)
-    _topologyLazyRegister('canvas-helix-turing', function() {
-        initHelixTuring();
-        initSpeedSlider();
-        initCustomTMControls();
-        initSoundCheckbox();
-    });
+	// 4. Helix–Turing Machine (Canvas)
+	_topologyLazyRegister('canvas-helix-turing', function() {
+		initHelixTuring();
+		initSpeedSlider();
+		initCustomTMControls();
+		initSoundCheckbox();
+	});
 
-    // Start observing
-    _topologyLazyCreateObserver();
+	// Start observing
+	_topologyLazyCreateObserver();
+
+	visualize_torus();
 }
