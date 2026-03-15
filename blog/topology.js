@@ -2514,6 +2514,268 @@ function visualize_torus() {
 }
 
 // ============================================================
+// MÖBIUS STRIP VISUALIZATION — Non-orientability & meaning reversal
+// ============================================================
+function draw_moebius() {
+    const container = document.getElementById('mobius-viz');
+    if (!container) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 700;
+    canvas.height = 480;
+    canvas.style.display = 'block';
+    canvas.style.margin = '0 auto';
+    canvas.style.borderRadius = '12px';
+    canvas.style.background = '#0a0a2e';
+    container.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    const controlsDiv = document.createElement('div');
+    controlsDiv.style.cssText = 'text-align:center; margin:15px 0; font-family:"Inter",sans-serif;';
+    controlsDiv.innerHTML = `
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc;">Walk along the strip: </label>
+            <input type="range" id="mobius-walk" min="0" max="1000" value="0" style="width:300px; vertical-align:middle;">
+            <span id="mobius-walk-val" style="color:#4fc3f7; margin-left:8px; font-weight:600;">0%</span>
+        </div>
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc;">View tilt: </label>
+            <input type="range" id="mobius-tilt" min="20" max="120" value="65" style="width:150px; vertical-align:middle;">
+            <label style="color:#ccc; margin-left:20px;">Rotation: </label>
+            <input type="range" id="mobius-rot" min="0" max="628" value="0" style="width:150px; vertical-align:middle;">
+        </div>
+        <div id="mobius-meaning" style="font-size:22px; margin:10px 0; min-height:40px; color:#fff; font-weight:700; transition: color 0.3s;"></div>
+        <div style="color:#888; font-size:13px;">Walk 100% around — the arrow <span style="color:#ff5252;">flips direction</span>. Walk 200% to return to original orientation.</div>
+    `;
+    container.appendChild(controlsDiv);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const R = 140; // radius of central circle
+    const halfW = 45; // half-width of strip
+
+    function mobiusPoint(u, v, tilt, rot) {
+        // u in [0, 2π], v in [-1, 1]
+        const halfTwist = u / 2; // half twist
+        const x3 = (R + v * halfW * Math.cos(halfTwist)) * Math.cos(u);
+        const y3 = (R + v * halfW * Math.cos(halfTwist)) * Math.sin(u);
+        const z3 = v * halfW * Math.sin(halfTwist);
+
+        // Rotate for view
+        const cosT = Math.cos(tilt);
+        const sinT = Math.sin(tilt);
+        const cosR = Math.cos(rot);
+        const sinR = Math.sin(rot);
+
+        // Tilt around X
+        const y3t = y3 * cosT - z3 * sinT;
+        const z3t = y3 * sinT + z3 * cosT;
+
+        // Rotate around Y
+        const x3r = x3 * cosR - z3t * sinR;
+        const z3r = x3 * sinR + z3t * cosR;
+
+        return { x: x3r + cx, y: y3t + cy, z: z3r };
+    }
+
+    // Semantic meaning along the strip
+    function getMeaning(t) {
+        // t in [0, 2]: 0..1 is first pass, 1..2 is second pass (flipped)
+        const phrases = [
+            { pos: 0.0, text: '"That\'s great!"', sincere: true },
+            { pos: 0.15, text: '"Really great."', sincere: true },
+            { pos: 0.3, text: '"Great. Sure."', sincere: null },
+            { pos: 0.45, text: '"Oh, great..."', sincere: false },
+            { pos: 0.6, text: '"How great."', sincere: false },
+            { pos: 0.75, text: '"Truly great." 🙄', sincere: false },
+            { pos: 0.9, text: '"That\'s just great."', sincere: false },
+        ];
+
+        const norm = t % 1;
+        const flipped = t >= 1;
+
+        let closest = phrases[0];
+        let minDist = 999;
+        for (const p of phrases) {
+            const d = Math.abs(p.pos - norm);
+            if (d < minDist) { minDist = d; closest = p; }
+        }
+
+        let sincere = closest.sincere;
+        if (flipped && sincere !== null) sincere = !sincere;
+
+        return {
+            text: closest.text,
+            sincere: sincere,
+            flipped: flipped
+        };
+    }
+
+    function draw() {
+        const walkVal = parseFloat(document.getElementById('mobius-walk').value) / 1000;
+        const tilt = parseFloat(document.getElementById('mobius-tilt').value) / 100 * Math.PI;
+        const rot = parseFloat(document.getElementById('mobius-rot').value) / 100;
+
+        document.getElementById('mobius-walk-val').textContent = Math.round(walkVal * 200) + '%';
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const uSteps = 120;
+        const vSteps = 12;
+
+        // Collect quads for depth sorting
+        let quads = [];
+
+        for (let i = 0; i < uSteps; i++) {
+            for (let j = -vSteps; j < vSteps; j++) {
+                const u1 = (i / uSteps) * Math.PI * 2;
+                const u2 = ((i + 1) / uSteps) * Math.PI * 2;
+                const v1 = j / vSteps;
+                const v2 = (j + 1) / vSteps;
+
+                const p1 = mobiusPoint(u1, v1, tilt, rot);
+                const p2 = mobiusPoint(u2, v1, tilt, rot);
+                const p3 = mobiusPoint(u2, v2, tilt, rot);
+                const p4 = mobiusPoint(u1, v2, tilt, rot);
+
+                const avgZ = (p1.z + p2.z + p3.z + p4.z) / 4;
+
+                // Color based on "side" — but there's only one side!
+                // Use v * cos(u/2) sign to show the twist
+                const sideVal = v1 * Math.cos(u1 / 2);
+                let r, g, b;
+                if (sideVal >= 0) {
+                    r = 60; g = 100; b = 200;
+                } else {
+                    r = 200; g = 80; b = 60;
+                }
+
+                // Highlight the walker's position
+                const walkerU = walkVal * Math.PI * 2 * 2; // 200% = full double loop
+                const uMid = (u1 + u2) / 2;
+                const uDist = Math.min(
+                    Math.abs(uMid - (walkerU % (Math.PI * 2))),
+                    Math.abs(uMid - (walkerU % (Math.PI * 2)) + Math.PI * 2),
+                    Math.abs(uMid - (walkerU % (Math.PI * 2)) - Math.PI * 2)
+                );
+                if (uDist < 0.3) {
+                    r = Math.min(255, r + 100);
+                    g = Math.min(255, g + 100);
+                    b = Math.min(255, b + 100);
+                }
+
+                const brightness = 0.4 + 0.6 * ((avgZ + R + halfW) / (2 * (R + halfW)));
+
+                quads.push({
+                    points: [p1, p2, p3, p4],
+                    z: avgZ,
+                    r: Math.round(r * brightness),
+                    g: Math.round(g * brightness),
+                    b: Math.round(b * brightness)
+                });
+            }
+        }
+
+        // Sort by depth
+        quads.sort((a, b) => a.z - b.z);
+
+        // Draw quads
+        quads.forEach(q => {
+            ctx.fillStyle = `rgb(${q.r},${q.g},${q.b})`;
+            ctx.strokeStyle = `rgba(${q.r + 30},${q.g + 30},${q.b + 30},0.3)`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(q.points[0].x, q.points[0].y);
+            ctx.lineTo(q.points[1].x, q.points[1].y);
+            ctx.lineTo(q.points[2].x, q.points[2].y);
+            ctx.lineTo(q.points[3].x, q.points[3].y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        });
+
+        // Draw walker arrow on the strip
+        const walkerU = walkVal * Math.PI * 2 * 2;
+        const walkerP = mobiusPoint(walkerU % (Math.PI * 2), 0, tilt, rot);
+
+        // Arrow direction (normal to strip at walker position)
+        const walkerSide = mobiusPoint(walkerU % (Math.PI * 2), 0.5, tilt, rot);
+        const arrowDx = walkerSide.x - walkerP.x;
+        const arrowDy = walkerSide.y - walkerP.y;
+        const arrowLen = Math.sqrt(arrowDx * arrowDx + arrowDy * arrowDy);
+        const nx = (arrowDx / arrowLen) * 25;
+        const ny = (arrowDy / arrowLen) * 25;
+
+        // Arrow color: green if original orientation, red if flipped
+        const isFlipped = walkVal > 0.5;
+        const arrowColor = isFlipped ? '#ff5252' : '#4caf50';
+
+        ctx.strokeStyle = arrowColor;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(walkerP.x - nx * 0.5, walkerP.y - ny * 0.5);
+        ctx.lineTo(walkerP.x + nx, walkerP.y + ny);
+        ctx.stroke();
+
+        // Arrowhead
+        ctx.fillStyle = arrowColor;
+        const angle = Math.atan2(ny, nx);
+        ctx.beginPath();
+        ctx.moveTo(walkerP.x + nx, walkerP.y + ny);
+        ctx.lineTo(walkerP.x + nx - 10 * Math.cos(angle - 0.4), walkerP.y + ny - 10 * Math.sin(angle - 0.4));
+        ctx.lineTo(walkerP.x + nx - 10 * Math.cos(angle + 0.4), walkerP.y + ny - 10 * Math.sin(angle + 0.4));
+        ctx.closePath();
+        ctx.fill();
+
+        // Walker dot
+        ctx.fillStyle = '#fff';
+        ctx.shadowColor = '#fff';
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(walkerP.x, walkerP.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Update meaning display
+        const meaning = getMeaning(walkVal * 2);
+        const meaningDiv = document.getElementById('mobius-meaning');
+        if (meaning.sincere === true) {
+            meaningDiv.style.color = '#4caf50';
+            meaningDiv.textContent = meaning.text + '  → Sincere ✓';
+        } else if (meaning.sincere === false) {
+            meaningDiv.style.color = '#ff5252';
+            meaningDiv.textContent = meaning.text + '  → Sarcastic ✗';
+        } else {
+            meaningDiv.style.color = '#ffd54f';
+            meaningDiv.textContent = meaning.text + '  → Ambiguous ?';
+        }
+
+        if (meaning.flipped) {
+            meaningDiv.textContent += '  [ORIENTATION FLIPPED]';
+        }
+
+        // Labels
+        ctx.fillStyle = '#4fc3f7';
+        ctx.font = '13px Inter, sans-serif';
+        ctx.fillText('β₀=1  β₁=1  (same as cylinder!)', 15, 25);
+        ctx.fillStyle = '#ff8a65';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText('But non-orientable: w₁ ≠ 0', 15, 45);
+
+        ctx.fillStyle = '#aaa';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.fillText('Blue/Red coloring shows the twist — colors swap after one loop', 15, canvas.height - 15);
+    }
+
+    document.getElementById('mobius-walk').addEventListener('input', draw);
+    document.getElementById('mobius-tilt').addEventListener('input', draw);
+    document.getElementById('mobius-rot').addEventListener('input', draw);
+
+    draw();
+}
+
+// ============================================================
 // MODULE LOADER
 // ============================================================
 
@@ -2543,4 +2805,6 @@ async function loadTopologyModule() {
 	_topologyLazyCreateObserver();
 
 	visualize_torus();
+
+	draw_moebius();
 }
