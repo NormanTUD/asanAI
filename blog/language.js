@@ -23,8 +23,12 @@
 		{ year: "1668",          label: "Wilkins' Real Character",           desc: "An attempt at a universal language — a precursor to taxonomies and modern embeddings.", color: "#2c3e50" },
 		{ year: "1791",          label: "Kempelen's Speaking Machine",       desc: "The first mechanical text-to-speech device, using bellows and reeds to simulate the vocal tract.", color: "#34495e" },
 		{ year: "1873", label: "Nietzsche — On Truth and Lies", desc: "Language as a 'mobile army of metaphors' — arguing that words are arbitrary social conventions, not mirrors of reality.", color: "#c0392b" },
+		{ year: "1879", label: "Frege's Begriffsschrift", desc: "The birth of modern logic — a formal 'concept-script' that paved the way for mathematical linguistics.", color: "#27ae60" },
+		{ year: "1916", label: "Saussure — Course in General Linguistics", desc: "Defined the 'Sign' (Signifier/Signified) and established language as a formal system of differences.", color: "#d35400" },
+		{ year: "1950", label: "The Turing Test", desc: "Shifting the goal from 'thinking' to 'simulating human linguistic behavior' as the benchmark for AI.", color: "#2980b9" },
 		{ year: "1953",          label: "Wittgenstein — Philosophical Investigations",  desc: "\"The meaning of a word is its use in the language.\" The idea that a words meaning is determined by how it's used.", color: "#16a085" },
 		{ year: "1957",          label: "Firth — Distributional Semantics",  desc: "\"You shall know a word by the company it keeps.\" The statistical foundation of modern NLP.", color: "#16a085" },
+		{ year: "1957", label: "Chomsky — Syntactic Structures", desc: "The 'Universal Grammar' hypothesis — the idea that humans have an innate, rule-based mental organ for language.", color: "#8e44ad" },
 		{ year: "2017",          label: "Transformer Architecture",          desc: "Attention mechanisms allow models to weigh context dynamically — Firth's hypothesis made computational.", color: "#2980b9" }
 	];
 

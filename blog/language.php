@@ -1,9 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-
-## The Deep Ancestry of Language: From Biological Hardware to Generative Logic
-
 The intelligence of a modern Large Language Model (LLM) is the digital climax of a multi-million-year trajectory. To understand how a machine "speaks," we must trace the path from the biological re-engineering of the primate throat to the ancient mathematical formalization of grammar.
 
 ### The Biological Engine: The Human Pipe
