@@ -1,4 +1,10 @@
 window.bibData = {
+	"earlylanguage": {
+		url: "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1503900/full",
+		title: "Linguistic capacity was present in the Homo sapiens population 135 thousand years ago",
+		year: 2025,
+		author: "Shigeru Miyagawa, Rob DeSalle, Vitor Augusto Nóbrega, Remo Nitschke, Mercedes Okumura, Ian Tattersall"
+	},
 	"relufirst": {
 		title: "Visual Feature Extraction by a Multilayered Network of Analog Threshold Elements",
 		author: "Kunihiko Fukushima",
