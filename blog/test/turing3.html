@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Topological Slice: 3D to 2D Logic</title>
+    <style>
+        body { margin: 0; background: #08080a; color: #eee; font-family: 'Inter', sans-serif; display: flex; height: 100vh; overflow: hidden; }
+        .pane { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #222; }
+        #slice-view { background: #000; border-left: 2px solid #00ffcc; }
+        
+        .label-overlay { position: absolute; top: 20px; left: 20px; pointer-events: none; }
+        h2 { margin: 0; font-size: 1rem; color: #00ffcc; text-transform: uppercase; letter-spacing: 2px; }
+        p { font-size: 0.8rem; color: #888; max-width: 250px; }
+
+        /* The 2D Slice Visuals */
+        #tape-viz { width: 300px; height: 300px; border: 2px dashed #333; position: relative; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+        #crosshair { position: absolute; width: 100%; height: 1px; background: rgba(0,255,204,0.2); }
+        #crosshair-v { position: absolute; height: 100%; width: 1px; background: rgba(0,255,204,0.2); }
+        #bit-output { font-family: 'Courier New'; font-size: 4rem; font-weight: bold; color: #00ffcc; text-shadow: 0 0 20px #00ffcc; }
+        
+        .binary-stream { position: absolute; bottom: 40px; font-family: 'Courier New'; color: #444; font-size: 1.2rem; letter-spacing: 5px; }
+        .highlight { color: #00ffcc; }
+    </style>
+</head>
+<body>
+
+    <div class="pane" id="canvas-container">
+        <div class="label-overlay">
+            <h2>3D Embedding Space</h2>
+            <p>The "Spiral" is the hidden state. The white ring is the <b>Feature Plane</b> (the slice).</p>
+        </div>
+    </div>
+
+    <div class="pane" id="slice-view">
+        <div class="label-overlay">
+            <h2>2D Feature Detector</h2>
+            <p>This is what the Attention Head "sees." It only cares if the spiral is inside this specific circle.</p>
+        </div>
+
+        <div id="tape-viz">
+            <div id="crosshair"></div>
+            <div id="crosshair-v"></div>
+            <div id="bit-output">0</div>
+            <div id="dot" style="position:absolute; width:15px; height:15px; background:#00ffcc; border-radius:50%; box-shadow:0 0 15px #00ffcc;"></div>
+        </div>
+
+        <div class="binary-stream" id="stream">0000000000000000</div>
+        
+        <div style="margin-top: 40px; text-align: center;">
+            <div style="font-size: 0.7rem; color: #00ffcc;">TURING HEAD STATE:</div>
+            <div id="turing-status" style="font-size: 1rem; font-weight: bold;">IDLE</div>
+        </div>
+    </div>
+
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- 3D SCENE SETUP ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+
+        // The Spiral
+        const points = [];
+        for (let i = 0; i < 200; i++) {
+            const t = i * 0.1;
+            points.push(new THREE.Vector3(Math.cos(t) * (t*0.2), t - 10, Math.sin(t) * (t*0.2)));
+        }
+        const spiralGeo = new THREE.BufferGeometry().setFromPoints(points);
+        const spiralMat = new THREE.LineBasicMaterial({ color: 0x4444ff });
+        const spiral = new THREE.Line(spiralGeo, spiralMat);
+        scene.add(spiral);
+
+        // The Feature Plane (The Slice)
+        const ringGeo = new THREE.TorusGeometry(2, 0.02, 16, 100);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        scene.add(ring);
+
+        camera.position.set(12, 8, 12);
+        camera.lookAt(0, 0, 0);
+
+        // --- 2D UI ELEMENTS ---
+        const dot = document.getElementById('dot');
+        const bitOut = document.getElementById('bit-output');
+        const stream = document.getElementById('stream');
+        const status = document.getElementById('turing-status');
+        let binaryData = "0000000000000000";
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = Date.now() * 0.001;
+
+            // Rotate and move spiral through the ring
+            spiral.position.y = (Math.sin(time * 0.5) * 10);
+            spiral.rotation.y += 0.02;
+
+            // Calculate "Intersection" for the 2D Slice
+            // We take the X and Z of the spiral at Y=0
+            const scale = Math.abs(spiral.position.y) * 0.2;
+            const x = Math.cos(time + spiral.rotation.y) * scale;
+            const z = Math.sin(time + spiral.rotation.y) * scale;
+
+            // Update 2D Dot
+            dot.style.left = `calc(50% + ${x * 50}px - 7px)`;
+            dot.style.top = `calc(50% + ${z * 50}px - 7px)`;
+
+            // LOGIC: Is the dot inside the "Feature Zone"?
+            const distance = Math.sqrt(x*x + z*z);
+            const isHit = distance > 1.8 && distance < 2.2; // Matching the ring radius
+
+            if(isHit) {
+                bitOut.innerText = "1";
+                bitOut.style.color = "#ff3300";
+                status.innerText = "BIT WRITE: ACTIVE";
+                if(Math.random() > 0.9) {
+                    binaryData = "1" + binaryData.slice(0, -1);
+                }
+            } else {
+                bitOut.innerText = "0";
+                bitOut.style.color = "#00ffcc";
+                status.innerText = "SCANNING TAPE...";
+                if(Math.random() > 0.9) {
+                    binaryData = "0" + binaryData.slice(0, -1);
+                }
+            }
+            
+            stream.innerText = binaryData;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
