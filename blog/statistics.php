@@ -143,7 +143,7 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
 <div class="md">
 #### The Mathematical Foundation: The Law of Errors
 
-Gauß solved the mystery of Ceres by treating every measurement as a composite of a "True Path" and random error. He realized that the problem was "more than determined" ($n > v$); when you have more observations than variables, a perfect fit is impossible because human observation is never free from error.
+Gauß solved the probable position of Ceres by treating every measurement as a composite of a "True Path" and random error. He realized that the problem was "more than determined" ($n > v$); when you have more observations than variables, a perfect fit is impossible because human observation is never free from error.
 
 To bridge the gap between discovery and mathematical permanence, he developed the **Method of Least Squares**. He sought the "Most Probable" path, not a line that touched every noisy data point, but one that minimized the sum of the squares of the errors.
 </div>
@@ -214,6 +214,20 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
 </div>
 
 <div class="md">
+The Normal Distribution, or Bell Curve, emerges from the **Central Limit Theorem**, which acts as the mathematical bridge between individual randomness and collective order. While a single event might be unpredictable, the average of many independent trials inevitably clusters around a central mean, forming the iconic symmetrical shape. Historically, this was used by **Carl Friedrich Gauß** to filter "noise" from astronomical data and by **Laplace** to turn statistical uncertainty into scientific certainty. In modern AI, this distribution is foundational; it allows machines to distinguish meaningful "signals" from background noise and serves as the primary method for initializing the neural networks that power large language models.
+
+$$
+\begin{array}{c}
+    n=2: & 1 \quad 2 \quad 1 \\
+    n=10: & \dots \text{ (Starts to curve)} \dots \\
+    n \to \infty: & \text{The Bell Curve}
+\end{array}
+$$
+
+$$f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2}$$
+
+**Example:** If you roll a single die, the results are flat (Uniform Distribution), but as you increase the number of dice ($n$) and track their average, the distribution tightens and transforms into a smooth Bell Curve centered at 3.5.
+
 #### The Principle of Least Squares
 When we have "noisy" data points, we find the best-fitting line by minimizing the area of the squares formed by the distance between the data and the line.
 
