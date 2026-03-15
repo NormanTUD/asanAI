@@ -40,15 +40,121 @@ $$\text{Persistence}(h) = r_{\text{death}}(h) - r_{\text{birth}}(h)$$
 A topological feature with high persistence is a real structural property of the data; one with low persistence is noise.
 </div>
 
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 1: Latent Space Manifold with Persistence Barcode -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
 <div style="margin-bottom: 10px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
     <strong>Latent Space Manifold:</strong><br>
     Adjust the <b>Warp Factor</b> to see how the manifold deforms while maintaining its underlying topological connectivity.
     The surface can stretch and ripple, but its fundamental structure — the number of peaks, valleys, and the way regions connect — is preserved under smooth deformation. This is topology in action.
+    The <b>persistence barcode</b> below the surface shows which topological features (components, loops, voids) survive across scales.
     <br><br>
-    Warp Factor: <input type="range" id="topo-warp" min="0" max="1" step="0.05" value="0.3">
+    <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+        Warp Factor:
+        <input type="range" id="topo-warp" min="0" max="1" step="0.05" value="0.3" style="width: 240px; vertical-align: middle;">
+        <span id="topo-warp-val" style="font-weight: bold; color: #8b5cf6;">0.30</span>
+    </label>
 </div>
 
-<div id="topology-plot" class="plot-container" style="height: 500px; margin-bottom: 40px;"></div>
+<div id="topology-plot" class="plot-container" style="height: 500px; margin-bottom: 10px;"></div>
+
+<!-- Persistence Barcode -->
+<div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 40px;">
+    <div style="font-weight: bold; font-size: 0.95em; color: #1e293b; margin-bottom: 8px;">📊 Persistence Barcode</div>
+    <div style="font-size: 0.8em; color: #64748b; margin-bottom: 10px;">
+        Each bar represents a topological feature. Longer bars = more persistent = more "real." Short bars are noise.
+        Colors: <span style="color:#3b82f6; font-weight:bold;">β₀ (components)</span>,
+        <span style="color:#10b981; font-weight:bold;">β₁ (loops)</span>,
+        <span style="color:#f59e0b; font-weight:bold;">β₂ (voids)</span>
+    </div>
+    <canvas id="canvas-persistence-barcode" style="width: 100%; height: 160px; border-radius: 8px; background: #f8fafc;"></canvas>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 2: Draw Your Own Manifold — Live Betti Numbers -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="md">
+## Draw Your Own Manifold
+
+Experience topology hands-on. **Draw a shape** on the canvas below and watch its Betti numbers computed in real time. Draw a circle — you'll see $\beta_1 = 1$ (one loop). Draw two separate blobs — $\beta_0 = 2$ (two components). Draw a figure-eight — $\beta_1 = 2$ (two loops). Can you draw a shape with $\beta_0 = 3$?
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div style="display: grid; grid-template-columns: 1fr 260px; gap: 20px; align-items: start;">
+        <div>
+            <canvas id="canvas-draw-manifold" style="width: 100%; height: 400px; background: #fff; border-radius: 8px; border: 2px solid #e2e8f0; cursor: crosshair;"></canvas>
+            <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="clearDrawManifold()" style="background: #ef4444; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">🗑 Clear</button>
+                <button onclick="undoDrawManifold()" style="background: #f59e0b; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">↩ Undo</button>
+                <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; display: flex; align-items: center; gap: 6px;">
+                    Brush:
+                    <input type="range" id="draw-brush-size" min="2" max="20" step="1" value="6" style="width: 80px;">
+                    <span id="draw-brush-size-val">6</span>px
+                </label>
+                <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; display: flex; align-items: center; gap: 6px;">
+                    <input type="checkbox" id="draw-eraser-mode"> Eraser
+                </label>
+            </div>
+        </div>
+        <div id="betti-panel" style="background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif;">
+            <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 12px;">🔢 Live Betti Numbers</div>
+            <div id="betti-display" style="text-align: center;">
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 0.75em; color: #64748b;">β₀ — Connected Components</div>
+                    <div id="betti-0" style="font-size: 2.5em; font-weight: bold; color: #3b82f6;">0</div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 0.75em; color: #64748b;">β₁ — Loops (Holes)</div>
+                    <div id="betti-1" style="font-size: 2.5em; font-weight: bold; color: #10b981;">0</div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 0.75em; color: #64748b;">Euler Characteristic χ</div>
+                    <div id="euler-char" style="font-size: 2.5em; font-weight: bold; color: #8b5cf6;">0</div>
+                    <div style="font-size: 0.7em; color: #94a3b8;">χ = β₀ − β₁</div>
+                </div>
+            </div>
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 12px 0;">
+            <div style="font-size: 0.8em; color: #94a3b8; line-height: 1.5;">
+                <b>Try drawing:</b><br>
+                • A circle → β₁ = 1<br>
+                • Two separate dots → β₀ = 2<br>
+                • A figure-8 → β₁ = 2<br>
+                • A filled disk → β₁ = 0<br>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 3: Topology Quiz -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="md">
+## Topology Challenge
+
+Test your topological intuition! For each pair, decide: **are they homeomorphic?** (Can you smoothly deform one into the other without tearing or gluing?)
+</div>
+
+<section id="topology-quiz-section" style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div style="font-weight: bold; font-size: 1.1em; color: #1e293b; margin-bottom: 12px; font-family: sans-serif;">🧩 Are These Homeomorphic?</div>
+    <div id="quiz-container" style="text-align: center; margin-bottom: 16px;">
+        <canvas id="canvas-quiz" style="width: 100%; max-width: 600px; height: 220px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0;"></canvas>
+    </div>
+    <div id="quiz-question" style="text-align: center; font-family: sans-serif; font-size: 1em; color: #334155; margin-bottom: 12px;"></div>
+    <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 12px;">
+        <button onclick="answerQuiz(true)" id="quiz-yes-btn" style="background: #10b981; color: white; border: none; padding: 12px 32px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.05em;">✅ Yes — Homeomorphic</button>
+        <button onclick="answerQuiz(false)" id="quiz-no-btn" style="background: #ef4444; color: white; border: none; padding: 12px 32px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.05em;">❌ No — Different</button>
+    </div>
+    <div id="quiz-feedback" style="text-align: center; font-family: sans-serif; font-size: 0.95em; color: #64748b; min-height: 60px; padding: 10px;"></div>
+    <div style="display: flex; justify-content: center; gap: 20px; margin-top: 8px;">
+        <div style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            Score: <span id="quiz-score" style="font-weight: bold; color: #10b981;">0</span> / <span id="quiz-total" style="font-weight: bold;">0</span>
+        </div>
+        <button onclick="nextQuizQuestion()" id="quiz-next-btn" style="background: #3b82f6; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; display: none;">Next →</button>
+    </div>
+</section>
 
 <div class="md">
 ## Feature Spaces and Topological Curves
@@ -114,21 +220,25 @@ This helical picture reveals a deep connection between **topology** and **comput
 Below, you can explore this connection interactively. The visualization shows a helix encoding Turing machine states. Adjust the **number of states** to see how the helix winds tighter to accommodate more states. Toggle the **transition arrows** to see how the attention mechanism routes between states. The **tape display** shows the simulated Turing machine execution, with each step corresponding to one "rotation + translation" along the helix.
 </div>
 
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 4: Helix-Turing Machine Explorer (Enhanced) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div style="display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; margin-bottom: 15px;">
         <canvas id="canvas-helix-turing" style="width: 100%; height: 560px; background: #0f172a; border-radius: 8px; border: 1px solid #1e293b; cursor: grab;"></canvas>
         <div id="helix-turing-panel" style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 560px; overflow-y: auto;">
-            <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">🌀 Helix–Turing Explorer</div>
+            <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">🧬 Helix–Turing Explorer</div>
             <div id="helix-turing-info">
                 Each point on the helix encodes a (state, symbol) pair. The linear axis is the tape position; the angular position is the internal state. Watch how attention "reads" the current state and the MLP "writes" the transition.
             </div>
             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 10px 0;">
-            <div style="font-weight: bold; font-size: 0.9em; color: #1e293b; margin-bottom: 6px;">📼 Tape</div>
+            <div style="font-weight: bold; font-size: 0.9em; color: #1e293b; margin-bottom: 6px;">🔧 Tape</div>
             <div id="helix-tape-display" style="font-family: monospace; font-size: 1.1em; letter-spacing: 2px; padding: 8px; background: #f1f5f9; border-radius: 6px; text-align: center; overflow-x: auto; white-space: nowrap;">
                 ...0 0 1 1 0 1 0 0...
             </div>
             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 10px 0;">
-            <div style="font-weight: bold; font-size: 0.9em; color: #1e293b; margin-bottom: 6px;">📊 State Info</div>
+            <div style="font-weight: bold; font-size: 0.9em; color: #1e293b; margin-bottom: 6px;">🔬 State Info</div>
             <div id="helix-state-info"></div>
         </div>
     </div>
@@ -145,12 +255,20 @@ Below, you can explore this connection interactively. The visualization shows a 
             <input type="range" id="helix-tm-radius" min="0.1" max="1.0" step="0.05" value="0.6" style="width: 160px; vertical-align: middle;">
             <span id="helix-tm-radius-val" style="font-weight: bold; color: #f59e0b;">0.60</span>
         </label>
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>Speed:</b>
+            <input type="range" id="helix-anim-speed" min="50" max="800" step="50" value="300" style="width: 120px; vertical-align: middle;">
+            <span id="helix-anim-speed-val" style="font-weight: bold; color: #64748b;">300</span>ms
+        </label>
     </div>
 
     <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 12px;">
-        <button onclick="stepHelixTuring()" id="helix-step-btn" style="background: #3b82f6; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">⏭ Step</button>
+        <button onclick="stepHelixTuring()" id="helix-step-btn" style="background: #3b82f6; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">⏩ Step</button>
         <button onclick="runHelixTuring()" id="helix-run-btn" style="background: #10b981; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">▶ Run</button>
-        <button onclick="resetHelixTuring()" style="background: #64748b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">↺ Reset</button>
+        <button onclick="resetHelixTuring()" style="background: #64748b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1em;">⟲ Reset</button>
+        <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
+            <input type="checkbox" id="helix-sound-enabled" checked> 🔊 Sound
+        </label>
         <span id="helix-turing-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready — click Step or Run.</span>
     </div>
 
@@ -178,9 +296,58 @@ Below, you can explore this connection interactively. The visualization shows a 
         <span style="color:#ef4444; font-weight:bold;">Red arrows</span> show the <b>transition function</b> $\delta$ — the path the activation takes when the attention head "reads" the current state and the MLP "writes" the new one.
         The <span style="color:#10b981; font-weight:bold;">green highlight</span> marks the <b>current configuration</b>.
         Click <b>Step</b> to execute one transition, or <b>Run</b> to animate.
+        🔊 <b>Sound</b>: each state maps to a pentatonic tone — listen to the computation!
         Notice how each step is a <b>rotation</b> (state change) + <b>translation</b> (head movement) along the helix — the same geometric operations the Transformer performs in its residual stream.
     </div>
 </section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 5: Design Your Own Turing Machine -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="md">
+## Design Your Own Turing Machine
+
+Define a custom transition table and watch it execute on the helix. Can you build a machine that writes all 1s? One that oscillates forever? One that halts in exactly 5 steps?
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div style="font-weight: bold; font-size: 1.05em; color: #1e293b; margin-bottom: 12px; font-family: sans-serif;">🎮 Custom Turing Machine Designer</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; margin-bottom: 16px;">
+        <div>
+            <div style="font-size: 0.85em; color: #64748b; margin-bottom: 8px; font-family: sans-serif;">
+                Edit the transition table below. Format: <code>newState, writeSymbol, direction (L/R)</code>. Leave blank for HALT.
+            </div>
+            <div id="custom-tm-table" style="font-family: monospace; font-size: 0.85em;"></div>
+        </div>
+        <div>
+            <div style="font-size: 0.85em; color: #64748b; margin-bottom: 8px; font-family: sans-serif;">
+                Initial tape (comma-separated 0s and 1s):
+            </div>
+            <input type="text" id="custom-tm-tape" value="0,0,1,1,0,1,0,0,0,0,0" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: monospace; font-size: 0.9em; margin-bottom: 10px;">
+            <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; display: block; margin-bottom: 8px;">
+                Number of states:
+                <select id="custom-tm-num-states" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.9em;">
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </label>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button onclick="applyCustomTM()" style="background: #8b5cf6; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">🚀 Load Machine</button>
+                <button onclick="loadPresetTM('binary-increment')" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.85em;">📦 Binary Increment</button>
+                <button onclick="loadPresetTM('busy-beaver-3')" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.85em;">🦫 Busy Beaver (3)</button>
+                <button onclick="loadPresetTM('oscillator')" style="background: #f59e0b; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.85em;">🔄 Oscillator</button>
+            </div>
+        </div>
+    </div>
+    <div id="custom-tm-feedback" style="text-align: center; font-family: sans-serif; font-size: 0.9em; color: #64748b; min-height: 30px; padding: 8px;"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SECTION 6: Summary Table -->
+<!-- ═══════════════════════════════════════════════════════ -->
 
 <div class="md">
 ## Summary: Topology as the Grammar of Geometry
