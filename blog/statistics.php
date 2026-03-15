@@ -54,7 +54,7 @@ Furthermore, these distributions are the backbone of the "scaling laws" that dri
 
 While people have rolled dice for millennia, the math of *sums* was long misunderstood. For centuries, gamblers thought all sums were equally likely, but they are not. There is only one way to get the sum 2 ($1+1$), but there are $2$ ways to get the sum $3$ ($1+2$ and $2+1$), and 3 ways to get 4 ($1+3$, $2+2$, $3+1$) and so on.
 
-Binomial coefficients, written as $\binom{n}{k}$, represent the number of ways to pick $k$ successes from $n$ independent trials. In Pascal's Triangle, every number is the sum of the two values directly above it, which mimics how different paths of "success" and "failure" combine to form a specific outcome.
+Binomial coefficients, written as $\binom{n}{k}$, represent the number of ways to choose $k$ successes from $n$ independent trials. In Pascal's Triangle, each value is the sum of the two directly above it, reflecting how independent "Bernoulli trials" (simple pass/fail events) combine into more complex patterns.
 
 $$
 \begin{array}{c}
@@ -63,16 +63,18 @@ $$
     n=2: & 1 \quad 2 \quad 1 \\
     n=3: & 1 \quad 3 \quad 3 \quad 1 \\
     n=4: & 1 \quad 4 \quad 6 \quad 4 \quad 1 \\
+    n=5: & 1 \quad 5 \quad 10 \quad 10 \quad 5 \quad 1 \\
 \end{array}
 $$
 
-To calculate the probability of a specific outcome $k$ in $n$ trials, we use the Binomial Distribution formula:
+The probability of achieving exactly $k$ successes is calculated using the Binomial Distribution formula, where the coefficient acts as a multiplier for the probability of a specific sequence:
 
 $$P(X=k) = \binom{n}{k} p^k (1-p)^{n-k}$$
 
 $$\binom{n}{k} = \frac{n!}{k!(n-k)!}$$
 
-**Example:** If you flip a coin 4 times ($n=4$) and want to know the ways to get exactly 2 heads ($k=2$), look at the row for $n=4$. The coefficient is **6**, meaning there are 6 distinct sequences (like HHTT, HTHT, etc.) that result in exactly 2 heads.
+**The "Problem of Points" Example:**
+If two players are in a game where the first to 4 points wins, but the game is interrupted when the score is 2 to 1, Pascal and Fermat used these coefficients to determine fair prize splits. By looking at the triangle, they could calculate how many future "paths" (combinations of wins/losses) led to each player winning the overall pot, moving probability theory from simple dice counting to a rigorous science.
 </div>
 
 <div class="optional md" data-headline="The History of the Binomial Distribution">
