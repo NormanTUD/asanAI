@@ -3,7 +3,7 @@
 <div class="md">
 The intelligence of a modern Large Language Model (LLM) is the digital climax of a multi-million-year trajectory. To understand how a machine "speaks," we must trace the path from the biological re-engineering of the primate throat to the ancient mathematical formalization of grammar.
 
-### The Biological Engine: The Human Pipe
+## The Biological Engine: The Human Pipe
 
 Before language could be abstracted into data, it required a radical "hardware" upgrade. Humans possess a vocal tract configuration that is unique among primates.
 
@@ -12,7 +12,7 @@ Before language could be abstracted into data, it required a radical "hardware" 
 * **The First Anatomists:** While ancient Indian texts like the **\cite[Sushruta Samhita]{sushruta}** (c. 300 BCE) mentioned the throat as the source of voice, **\cite[Alcmaeon of Croton]{alcmaeon}** (c. 500 BCE) was the first Greek scientist known to practice animal dissections, identifying "channels" (*poroi*) that connected the senses to the brain.
 * **The Renaissance Map:** The most precise early mapping of this "vocal machine" came from **\cite[Leonardo da Vinci]{davinci_anatomical}** (c. 1510). He treated the larynx as an acoustic instrument, sketching the tongue's muscles and performing experiments — such as squeezing the lungs of a dead goose — to show how the larynx produced tone.
 
-### The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement
+## The Cognitive Ignition: From Indexical Signaling to Symbolic Displacement
 
 <figure>
     <img style="width: 100%" src="blombosochre.jpg" alt="Blombos Cave ochre and artifacts">
@@ -32,7 +32,7 @@ Once humans could decouple a "number" from a physical pile of stones, they could
 </div>
 </details>
 
-### From Hardware to Software: The Mechanical and Philosophical Era
+## From Hardware to Software: The Mechanical and Philosophical Era
 
 The dream of replicating and systematizing human language evolved through two parallel tracks — one philosophical, one mechanical — that eventually converged.
 
@@ -41,23 +41,23 @@ The dream of replicating and systematizing human language evolved through two pa
 
 Together, they represent the twin ambitions that define modern NLP: understanding what language *means* (semantics) and reproducing how language *sounds* (generation).
 
-### The Modern Synthesis: Meaning as Geometry
+## The Modern Synthesis: Meaning as Geometry
 
 Today's LLMs represent the convergence of all these histories. We no longer manually code rules or categories into the machine. Instead, we use massive computation to map the **statistical relationships** observed by **\cite[J.R. Firth]{firth_context}** ("You shall know a word by the company it keeps") into a high-dimensional **vector space**.
 
-#### Tokenization: The Digital Rebus Principle
+### Tokenization: The Digital Rebus Principle
 
 Just as Sumerian scribes decomposed words into reusable phonetic signs (the Rebus Principle), modern LLMs decompose text into **tokens** — subword units that balance vocabulary size against expressiveness. The word *"unbelievable"* might be split into `["un", "believ", "able"]`, each mapped to a numerical ID. This is the ancient insight reborn: meaning can be assembled from smaller, reusable parts.
 
-#### Embeddings: Wilkins' Dream Realized
+### Embeddings: Wilkins' Dream Realized
 
 Each token is then mapped to a point in a high-dimensional **embedding space** — a coordinate system with hundreds or thousands of axes. In this space, words with similar meanings cluster together, and relationships between concepts are encoded as geometric directions. **\cite[John Wilkins]{wilkins_real_character}**' 17th-century dream of a universal coordinate system for concepts has been realized — not through philosophical design, but through statistical learning over trillions of words.
 
-#### Attention: Context as Structure
+### Attention: Context as Structure
 
 The **Transformer architecture** (2017) introduced the **attention mechanism**, which allows the model to dynamically weigh the relevance of every other token when processing a given token. This is Firth's distributional hypothesis made computational: the model literally measures how much "company" each word keeps with every other word in a passage, building a rich, context-sensitive representation of meaning.
 
-#### Linguistic Algebra
+### Linguistic Algebra
 
 The result is a form of "linguistic algebra" first dreamed of by the early grammarians:
 
