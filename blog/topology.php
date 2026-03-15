@@ -413,7 +413,7 @@ Two independent integer-valued winding numbers, one for each cycle.
 <div class="md">
 ## The Möbius Strip: Non-Orientability and Meaning Reversal
 
-Take a strip of paper, give it a **half-twist**, and glue the ends together. You've just created a **Möbius strip** — one of the most famous objects in topology. It has only **one side** and **one edge**. If you start painting one side and keep going, you'll paint the "other side" too without ever lifting your brush.
+Take a strip of paper, give it a **half-twist**, and glue the ends together. You've just created a **Möbius strip**, one of the most famous objects in topology. It has only **one side** and **one edge**. If you start painting one side and keep going, you'll paint the "other side" too without ever lifting your brush.
 
 ### Non-Orientability
 
@@ -423,7 +423,7 @@ Formally, the Möbius strip is the quotient:
 
 $$M = [0,1] \times [0,1] \;/\; (0, y) \sim (1, 1-y)$$
 
-Notice the **flip** in the $y$-coordinate — that's the half-twist.
+Notice the **flip** in the $y$-coordinate, that's the half-twist.
 
 ### Betti Numbers
 
@@ -441,13 +441,13 @@ Some semantic dimensions are non-orientable. Consider the word **"great"**:
 - "That's great!" (sincere) → positive meaning
 - "Oh, that's *great*." (sarcastic) → negative meaning
 
-As you traverse the "tone" manifold from sincere through deadpan to sarcastic and back, the **meaning flips** — just like orientation flips on a Möbius strip. The words are identical, but their semantic content has been reversed by the journey through context space.
+As you traverse the "tone" manifold from sincere through deadpan to sarcastic and back, the **meaning flips**, just like orientation flips on a Möbius strip. The words are identical, but their semantic content has been reversed by the journey through context space.
 
-This is not just a metaphor. If you plot the embedding vectors of sarcastic vs. sincere uses of the same phrase, the manifold they trace out is genuinely non-orientable — there's no continuous way to assign a consistent "positive/negative" label as you move through the space of tonal contexts.
+This is not just a metaphor. If you plot the embedding vectors of sarcastic vs. sincere uses of the same phrase, the manifold they trace out is genuinely non-orientable, there's no continuous way to assign a consistent "positive/negative" label as you move through the space of tonal contexts.
 
 ### Why LLMs Struggle with Sarcasm
 
-An LLM that models tone as a **cylinder** (orientable) will always be able to separate "positive" from "negative." But if the true manifold is a **Möbius strip** (non-orientable), then any classifier that tries to draw a consistent boundary will fail somewhere — there will always be a context where the boundary is on the wrong side. This is a topological obstruction to sarcasm detection, not just a data problem.
+An LLM that models tone as a **cylinder** (orientable) will always be able to separate "positive" from "negative." But if the true manifold is a **Möbius strip** (non-orientable), then any classifier that tries to draw a consistent boundary will fail somewhere, there will always be a context where the boundary is on the wrong side. This is a topological obstruction to sarcasm detection, not just a data problem.
 </div>
 
 <div id="mobius-viz"></div>
