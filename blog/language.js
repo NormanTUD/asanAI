@@ -23,17 +23,25 @@
 		{ year: "c. 1510",       label: "Da Vinci's Anatomical Studies",     desc: "Precise sketches of the larynx and tongue — treating the voice as an acoustic instrument.", color: "#7f8c8d" },
 		{ year: "1666", label: "Leibniz — Characteristica Universalis", desc: "The dream of a 'universal characteristic' — an alphabet of human thought where reasoning is replaced by calculation.", color: "#27ae60" },
 		{ year: "1668",          label: "Wilkins' Real Character",           desc: "An attempt at a universal language — a precursor to taxonomies and modern embeddings.", color: "#2c3e50" },
+		{ year: "1755", label: "Johnson’s Dictionary", desc: "A massive effort to stabilize and 'standardize' the English vocabulary — essentially defining the first formal vector space for the language.", color: "#7f8c8d" },
 		{ year: "1791",          label: "Kempelen's Speaking Machine",       desc: "The first mechanical text-to-speech device, using bellows and reeds to simulate the vocal tract.", color: "#34495e" },
+		{ year: "1843", label: "Ada Lovelace — Note G", desc: "The realization that a machine (the Analytical Engine) could manipulate symbols according to rules, not just numbers.", color: "#8e44ad" },
 		{ year: "1854", label: "Boole — The Laws of Thought", desc: "The algebraic formalization of logic ($1$ and $0$) — the binary foundation for all future linguistic processing.", color: "#2980b9" },
 		{ year: "1873", label: "Nietzsche — On Truth and Lies", desc: "Language as a 'mobile army of metaphors' — arguing that words are arbitrary social conventions, not mirrors of reality.", color: "#c0392b" },
 		{ year: "1879", label: "Frege's Begriffsschrift", desc: "The birth of modern logic — a formal 'concept-script' that paved the way for mathematical linguistics.", color: "#27ae60" },
 		{ year: "1913", label: "Markov Chains", desc: "Andrey Markov's statistical analysis of *Eugene Onegin* — the first 'n-gram' model predicting the next letter in a sequence.", color: "#16a085" },
 		{ year: "1916", label: "Saussure — Course in General Linguistics", desc: "Defined the 'Sign' (Signifier/Signified) and established language as a formal system of differences.", color: "#d35400" },
+		{ year: "1939", label: "The Voder", desc: "Bell Labs' electronic speech synthesizer — the first to use vacuum tubes and filters to electronically model the human voice.", color: "#34495e" },
+		{ year: "1945", label: "Memex (Vannevar Bush)", desc: "A conceptual proto-hypertext system that modeled human memory as a web of 'associative trails' rather than a linear list.", color: "#16a085" },
 		{ year: "1950", label: "The Turing Test", desc: "Shifting the goal from 'thinking' to 'simulating human linguistic behavior' as the benchmark for AI.", color: "#2980b9" },
 		{ year: "1953",          label: "Wittgenstein — Philosophical Investigations",  desc: "\"The meaning of a word is its use in the language.\" The idea that a words meaning is determined by how it's used.", color: "#16a085" },
 		{ year: "1957",          label: "Firth — Distributional Semantics",  desc: "\"You shall know a word by the company it keeps.\" The statistical foundation of modern NLP.", color: "#16a085" },
 		{ year: "1957", label: "Chomsky — Syntactic Structures", desc: "The 'Universal Grammar' hypothesis — the idea that humans have an innate, rule-based mental organ for language.", color: "#8e44ad" },
-		{ year: "2017",          label: "Transformer Architecture",          desc: "Attention mechanisms allow models to weigh context dynamically — Firth's hypothesis made computational.", color: "#2980b9" }
+		{ year: "1966", label: "ELIZA (Weizenbaum)", desc: "The first chatbot — a simple script that simulated a psychotherapist, exposing how easily humans anthropomorphize linguistic patterns.", color: "#e67e22" },
+		{ year: "1971", label: "SHRDLU (Terry Winograd)", desc: "An early NLP program that could 'understand' and move objects in a virtual blocks world using logic and syntax.", color: "#2ecc71" },
+		{ year: "1986", label: "Backpropagation & Connectionism", desc: "The revival of neural networks — the idea that 'intelligence' could emerge from layers of simple processing units learning patterns.", color: "#d35400" },
+		{ year: "2017",          label: "Transformer Architecture",          desc: "Attention mechanisms allow models to weigh context dynamically — Firth's hypothesis made computational.", color: "#2980b9" },
+		{ year: "2018", label: "BERT (Bidirectional Transformers)", desc: "Models begin reading 'both ways' at once, allowing them to understand the deep context of a word based on everything around it.", color: "#3498db" }
 	];
 
 	/* ====================================================================
