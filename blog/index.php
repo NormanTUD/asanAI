@@ -25,6 +25,7 @@
 	incl("An Intuition of how Large Language Models (LLMs) work", "intuition");
 	incl("Brief History of AI", "history");
 	incl("Basic math concepts", "math");
+	incl("The History of Language: From Sanskrit to LLMs", "language");
 	incl("Statistics: The Language of AI", "statistics");
 	incl("Loss: Teaching through Failure", "losslab");
 	/*
