@@ -3024,6 +3024,278 @@ function covering_vis() {
     draw();
 }
 
+// ============================================================
+// PROJECTIVE PLANE VISUALIZATION — Unsigned concepts
+// ============================================================
+function projective_plane() {
+    const container = document.getElementById('projective-viz');
+    if (!container) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 700;
+    canvas.height = 500;
+    canvas.style.display = 'block';
+    canvas.style.margin = '0 auto';
+    canvas.style.borderRadius = '12px';
+    canvas.style.background = '#0a0a2e';
+    container.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    const controlsDiv = document.createElement('div');
+    controlsDiv.style.cssText = 'text-align:center; margin:15px 0; font-family:"Inter",sans-serif;';
+    controlsDiv.innerHTML = `
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc;">Rotate view: </label>
+            <input type="range" id="proj-rotX" min="0" max="314" value="50" style="width:150px; vertical-align:middle;">
+            <input type="range" id="proj-rotY" min="0" max="628" value="0" style="width:150px; vertical-align:middle;">
+        </div>
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc;">Concept mode: </label>
+            <select id="proj-mode" style="padding:5px 12px; border-radius:6px; background:#1a1a3e; color:#fff; border:1px solid #444; font-size:14px;">
+                <option value="emotions">Emotions (intensity is projective)</option>
+                <option value="formality">Formality axis</option>
+                <option value="tense">Tense axis</option>
+            </select>
+            <label style="color:#ccc; margin-left:15px;">Show antipodal ID: </label>
+            <input type="checkbox" id="proj-antipodal" checked style="vertical-align:middle;">
+        </div>
+        <div style="color:#888; font-size:13px;">Antipodal points (connected by <span style="color:#ff8a65;">orange lines</span>) are <strong>identified</strong> — they represent the same projective point. Intensity has no sign.</div>
+    `;
+    container.appendChild(controlsDiv);
+
+    const cx = 250;
+    const cy = 250;
+    const radius = 170;
+
+    // Concept data
+    const conceptSets = {
+        emotions: [
+            { label: 'Ecstatic 😄', theta: 0.3, phi: 0.3, color: '#4caf50' },
+            { label: 'Devastated 😢', theta: Math.PI + 0.3, phi: Math.PI - 0.3, color: '#4caf50' },
+            { label: 'Furious 😡', theta: 1.2, phi: 0.8, color: '#f44336' },
+            { label: 'Terrified 😨', theta: Math.PI + 1.2, phi: Math.PI - 0.8, color: '#f44336' },
+            { label: 'Serene 😌', theta: 2.5, phi: 0.5, color: '#2196f3' },
+            { label: 'Numb 😶', theta: Math.PI + 2.5, phi: Math.PI - 0.5, color: '#2196f3' },
+            { label: 'VERY (intensity)', theta: 0, phi: 0, color: '#ffd54f', isAxis: true },
+            { label: 'mild', theta: Math.PI, phi: Math.PI, color: '#ffd54f', isAxis: true },
+        ],
+        formality: [
+            { label: 'Exceedingly', theta: 0.4, phi: 0.4, color: '#9c27b0' },
+            { label: 'Super', theta: Math.PI + 0.4, phi: Math.PI - 0.4, color: '#9c27b0' },
+            { label: 'Perchance', theta: 1.5, phi: 0.6, color: '#e91e63' },
+            { label: 'Maybe', theta: Math.PI + 1.5, phi: Math.PI - 0.6, color: '#e91e63' },
+            { label: 'Commence', theta: 2.8, phi: 0.3, color: '#00bcd4' },
+            { label: 'Start', theta: Math.PI + 2.8, phi: Math.PI - 0.3, color: '#00bcd4' },
+            { label: 'FORMAL axis', theta: 0, phi: 0, color: '#ffd54f', isAxis: true },
+            { label: 'casual axis', theta: Math.PI, phi: Math.PI, color: '#ffd54f', isAxis: true },
+        ],
+        tense: [
+            { label: 'Walked', theta: 0.5, phi: 0.5, color: '#ff9800' },
+            { label: 'Will walk', theta: Math.PI + 0.5, phi: Math.PI - 0.5, color: '#ff9800' },
+            { label: 'Had eaten', theta: 1.8, phi: 0.7, color: '#8bc34a' },
+            { label: 'Will have eaten', theta: Math.PI + 1.8, phi: Math.PI - 0.7, color: '#8bc34a' },
+            { label: 'Was running', theta: 2.6, phi: 0.4, color: '#03a9f4' },
+            { label: 'Will be running', theta: Math.PI + 2.6, phi: Math.PI - 0.4, color: '#03a9f4' },
+            { label: 'PAST axis', theta: 0, phi: 0, color: '#ffd54f', isAxis: true },
+            { label: 'FUTURE axis', theta: Math.PI, phi: Math.PI, color: '#ffd54f', isAxis: true },
+        ]
+    };
+
+    function project3D(theta, phi, rotX, rotY) {
+        // Spherical to Cartesian
+        let x = radius * Math.sin(phi) * Math.cos(theta);
+        let y = radius * Math.sin(phi) * Math.sin(theta);
+        let z = radius * Math.cos(phi);
+
+        // Rotate around X
+        let y1 = y * Math.cos(rotX) - z * Math.sin(rotX);
+        let z1 = y * Math.sin(rotX) + z * Math.cos(rotX);
+
+        // Rotate around Y
+        let x1 = x * Math.cos(rotY) - z1 * Math.sin(rotY);
+        let z2 = x * Math.sin(rotY) + z1 * Math.cos(rotY);
+
+        return { x: x1 + cx, y: y1 + cy, z: z2 };
+    }
+
+    function draw() {
+        const rotX = parseFloat(document.getElementById('proj-rotX').value) / 100;
+        const rotY = parseFloat(document.getElementById('proj-rotY').value) / 100;
+        const mode = document.getElementById('proj-mode').value;
+        const showAntipodal = document.getElementById('proj-antipodal').checked;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw hemisphere wireframe
+        ctx.strokeStyle = 'rgba(100,140,255,0.12)';
+        ctx.lineWidth = 0.5;
+
+        // Latitude lines
+        for (let lat = 1; lat <= 6; lat++) {
+            const phi = (lat / 7) * Math.PI / 2;
+            ctx.beginPath();
+            for (let i = 0; i <= 80; i++) {
+                const theta = (i / 80) * Math.PI * 2;
+                const p = project3D(theta, phi, rotX, rotY);
+                if (i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.stroke();
+        }
+
+        // Longitude lines
+        for (let lon = 0; lon < 12; lon++) {
+            const theta = (lon / 12) * Math.PI * 2;
+            ctx.beginPath();
+            for (let i = 0; i <= 40; i++) {
+                const phi = (i / 40) * Math.PI / 2;
+                const p = project3D(theta, phi, rotX, rotY);
+                if (i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.stroke();
+        }
+
+        // Equator (thicker — this is where identification happens)
+        ctx.strokeStyle = 'rgba(255,138,101,0.5)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        for (let i = 0; i <= 80; i++) {
+            const theta = (i / 80) * Math.PI * 2;
+            const p = project3D(theta, Math.PI / 2, rotX, rotY);
+            if (i === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Draw concept points
+        const concepts = conceptSets[mode];
+
+        // Collect for depth sorting
+        let points = [];
+        for (let i = 0; i < concepts.length; i++) {
+            const c = concepts[i];
+            const p = project3D(c.theta, c.phi, rotX, rotY);
+            points.push({ ...c, px: p.x, py: p.y, pz: p.z, idx: i });
+        }
+
+        // Draw antipodal connections first
+        if (showAntipodal) {
+            for (let i = 0; i < concepts.length; i += 2) {
+                if (i + 1 >= concepts.length) break;
+                const p1 = project3D(concepts[i].theta, concepts[i].phi, rotX, rotY);
+                const p2 = project3D(concepts[i + 1].theta, concepts[i + 1].phi, rotX, rotY);
+
+                // Dashed line through center
+                ctx.strokeStyle = 'rgba(255,138,101,0.4)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // "≡" symbol at midpoint
+                const mx = (p1.x + p2.x) / 2;
+                const my = (p1.y + p2.y) / 2;
+                ctx.fillStyle = 'rgba(255,138,101,0.6)';
+                ctx.font = 'bold 14px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('≡', mx, my + 5);
+                ctx.textAlign = 'left';
+            }
+        }
+
+        // Sort by depth
+        points.sort((a, b) => a.pz - b.pz);
+
+        // Draw points
+        points.forEach(p => {
+            const alpha = 0.4 + 0.6 * ((p.pz + radius) / (2 * radius));
+            const size = p.isAxis ? 10 : 7;
+
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = p.color;
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = p.isAxis ? 15 : 8;
+            ctx.beginPath();
+            ctx.arc(p.px, p.py, size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Label
+            ctx.font = `${p.isAxis ? 'bold 13' : '12'}px Inter, sans-serif`;
+            ctx.fillStyle = p.color;
+            ctx.fillText(p.label, p.px + size + 5, p.py + 4);
+            ctx.globalAlpha = 1;
+        });
+
+        // === RIGHT SIDE: Explanation panel ===
+        const panelX = 470;
+        const panelY = 40;
+
+        ctx.fillStyle = 'rgba(20,20,60,0.85)';
+        ctx.beginPath();
+        ctx.roundRect(panelX, panelY, 215, 200, 10);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(100,140,255,0.3)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(panelX, panelY, 215, 200, 10);
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 13px Inter, sans-serif';
+        ctx.fillText('ℝP² = S² / (x ~ -x)', panelX + 15, panelY + 25);
+
+        ctx.fillStyle = '#aaa';
+        ctx.font = '11px Inter, sans-serif';
+        const lines = [
+            'Antipodal points are the',
+            'SAME point in projective space.',
+            '',
+            '"Very happy" and "very sad"',
+            'share the same INTENSITY.',
+            '',
+            'The direction v and -v',
+            'represent the same axis.',
+            '',
+            'Betti (ℤ₂): β₀=1 β₁=1 β₂=1',
+            'Betti (ℤ):  β₀=1 β₁=0 β₂=0',
+            'χ(ℝP²) = 1'
+        ];
+        lines.forEach((line, i) => {
+            if (line.includes('β') || line.includes('χ')) {
+                ctx.fillStyle = '#4fc3f7';
+                ctx.font = '11px "Courier New", monospace';
+            } else if (line.includes('SAME') || line.includes('INTENSITY')) {
+                ctx.fillStyle = '#ffd54f';
+                ctx.font = 'bold 11px Inter, sans-serif';
+            } else {
+                ctx.fillStyle = '#aaa';
+                ctx.font = '11px Inter, sans-serif';
+            }
+            ctx.fillText(line, panelX + 15, panelY + 45 + i * 14);
+        });
+
+        // Bottom label
+        ctx.fillStyle = '#ff8a65';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText('Dashed equator: antipodal points identified here', 15, canvas.height - 15);
+    }
+
+    document.getElementById('proj-rotX').addEventListener('input', draw);
+    document.getElementById('proj-rotY').addEventListener('input', draw);
+    document.getElementById('proj-mode').addEventListener('change', draw);
+    document.getElementById('proj-antipodal').addEventListener('change', draw);
+
+    draw();
+}
+
 
 // ============================================================
 // MODULE LOADER
@@ -3059,4 +3331,6 @@ async function loadTopologyModule() {
 	draw_moebius();
 
 	covering_vis();
+
+	projective_plane();
 }

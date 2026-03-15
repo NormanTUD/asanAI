@@ -502,3 +502,53 @@ The number of meanings of a polysemous word equals the index of the image of the
 </div>
 
 <div id="covering-viz"></div>
+
+<div class="md">
+## The Real Projective Plane: Concepts Without Direction
+
+The **real projective plane** $\mathbb{R}P^2$ is the space of all lines through the origin in $\mathbb{R}^3$. Equivalently, it's a sphere with **antipodal points identified**:
+
+$$\mathbb{R}P^2 = S^2 / (x \sim -x)$$
+
+Every point on the northern hemisphere is glued to its mirror point on the southern hemisphere. This means a direction and its opposite are the **same point** in $\mathbb{R}P^2$.
+
+### Why Directions Without Signs Matter
+
+Many concepts are inherently **unsigned** — they have magnitude but no natural positive/negative orientation:
+
+- **Emotional intensity**: "very happy" and "very sad" are both *very*. The intensity axis doesn't care about valence.
+- **Formality level**: "exceedingly" and "super" differ in formality, not in some signed direction.
+- **Semantic similarity**: the similarity between "cat" and "dog" is the same as between "dog" and "cat" — it's an unsigned quantity.
+
+In linear algebra terms, if we care about the **direction** of a vector but not its **sign**, we're working in projective space. The vector $v$ and $-v$ represent the same concept.
+
+### Connection to Attention Heads
+
+When a Transformer attention head computes:
+
+$$\text{attention}(Q, K) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)$$
+
+the dot product $QK^T$ measures **alignment** between query and key vectors. But alignment is almost projective — $q \cdot k$ and $(-q) \cdot (-k)$ give the same score. The attention mechanism is, in a sense, operating on a projective space of directions.
+
+Some research has shown that attention heads learn to represent **axes of variation** (like tense, number, formality) as directions in embedding space. These axes are inherently projective — the "tense axis" doesn't have a natural positive end. Whether "past" is positive and "future" is negative, or vice versa, is an arbitrary convention.
+
+### Betti Numbers of $\mathbb{R}P^2$
+
+Over $\mathbb{Z}_2$ coefficients (which is natural for non-orientable spaces):
+
+$$\beta_0 = 1, \quad \beta_1 = 1, \quad \beta_2 = 1 \quad (\text{with } \mathbb{Z}_2 \text{ coefficients})$$
+
+Over $\mathbb{Z}$ coefficients:
+
+$$\beta_0 = 1, \quad \beta_1 = 0, \quad \beta_2 = 0$$
+
+The discrepancy between $\mathbb{Z}$ and $\mathbb{Z}_2$ Betti numbers is itself informative — it signals **torsion** in the homology, which is the algebraic signature of non-orientability.
+
+### Euler Characteristic
+
+$$\chi(\mathbb{R}P^2) = 1$$
+
+This is unusual — most familiar surfaces have $\chi \leq 2$. The projective plane is the simplest **non-orientable closed surface**.
+</div>
+
+<div id="projective-viz"></div>
