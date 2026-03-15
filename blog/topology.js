@@ -2267,49 +2267,49 @@ function visualize_torus() {
         segments.sort((a, b) => a.z - b.z);
 
         // Draw
-        segments.forEach(seg => {
-            if (seg.color === 'grid') {
-                const alpha = 0.08 + 0.12 * ((seg.z + r + R) / (2 * (r + R)));
-                ctx.strokeStyle = `rgba(100, 140, 255, ${alpha})`;
-                ctx.lineWidth = 0.5;
-                ctx.beginPath();
-                ctx.moveTo(seg.x1, seg.y1);
-                ctx.lineTo(seg.x2, seg.y2);
-                ctx.stroke();
-            } else if (seg.color === 'blue') {
-                const alpha = 0.3 + 0.7 * ((seg.z + r + R) / (2 * (r + R)));
-                ctx.strokeStyle = `rgba(79, 195, 247, ${alpha})`;
-                ctx.lineWidth = seg.width;
-                ctx.beginPath();
-                ctx.moveTo(seg.x1, seg.y1);
-                ctx.lineTo(seg.x2, seg.y2);
-                ctx.stroke();
-            } else if (seg.color === 'orange') {
-                const alpha = 0.3 + 0.7 * ((seg.z + r + R) / (2 * (r + R)));
-                ctx.strokeStyle = `rgba(255, 138, 101, ${alpha})`;
-                ctx.lineWidth = seg.width;
-                ctx.beginPath();
-                ctx.moveTo(seg.x1, seg.y1);
-                ctx.lineTo(seg.x2, seg.y2);
-                ctx.stroke();
-            } else if (seg.color === 'trace') {
-                const alpha = 0.4 + 0.6 * ((seg.z + r + R) / (2 * (r + R)));
-                ctx.strokeStyle = `rgba(76, 175, 80, ${alpha})`;
-                ctx.lineWidth = seg.width;
-                ctx.beginPath();
-                ctx.moveTo(seg.x1, seg.y1);
-                ctx.lineTo(seg.x2, seg.y2);
-                ctx.stroke();
-            } else if (seg.color === 'point') {
-                ctx.fillStyle = '#fff';
-                ctx.shadowColor = '#fff';
-                ctx.shadowBlur = 15;
-                ctx.beginPath();
-                ctx.arc(seg.x1, seg.y1, 6, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.shadowBlur = 0;
-            }
-        });
+	    segments.forEach(seg => {
+		    if (seg.color === 'grid') {
+			    const alpha = 0.08 + 0.12 * ((seg.z + r + R) / (2 * (r + R)));
+			    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+			    ctx.lineWidth = 0.5;
+			    ctx.beginPath();
+			    ctx.moveTo(seg.x1, seg.y1);
+			    ctx.lineTo(seg.x2, seg.y2);
+			    ctx.stroke();
+		    } else if (seg.color === 'blue') {
+			    const alpha = 0.3 + 0.7 * ((seg.z + r + R) / (2 * (r + R)));
+			    ctx.strokeStyle = `rgba(79, 195, 247, ${alpha})`;
+			    ctx.lineWidth = seg.width;
+			    ctx.beginPath();
+			    ctx.moveTo(seg.x1, seg.y1);
+			    ctx.lineTo(seg.x2, seg.y2);
+			    ctx.stroke();
+		    } else if (seg.color === 'orange') {
+			    const alpha = 0.3 + 0.7 * ((seg.z + r + R) / (2 * (r + R)));
+			    ctx.strokeStyle = `rgba(255, 138, 101, ${alpha})`;
+			    ctx.lineWidth = seg.width;
+			    ctx.beginPath();
+			    ctx.moveTo(seg.x1, seg.y1);
+			    ctx.lineTo(seg.x2, seg.y2);
+			    ctx.stroke();
+		    } else if (seg.color === 'trace') {
+			    const alpha = 0.4 + 0.6 * ((seg.z + r + R) / (2 * (r + R)));
+			    ctx.strokeStyle = `rgba(76, 175, 80, ${alpha})`;
+			    ctx.lineWidth = seg.width;
+			    ctx.beginPath();
+			    ctx.moveTo(seg.x1, seg.y1);
+			    ctx.lineTo(seg.x2, seg.y2);
+			    ctx.stroke();
+		    } else if (seg.color === 'point') {
+			    ctx.fillStyle = '#fff';
+			    ctx.shadowColor = '#fff';
+			    ctx.shadowBlur = 15;
+			    ctx.beginPath();
+			    ctx.arc(seg.x1, seg.y1, 6, 0, Math.PI * 2);
+			    ctx.fill();
+			    ctx.shadowBlur = 0;
+		    }
+	    });
 
         // Labels
         ctx.fillStyle = '#4fc3f7';
