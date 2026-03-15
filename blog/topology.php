@@ -451,3 +451,54 @@ An LLM that models tone as a **cylinder** (orientable) will always be able to se
 </div>
 
 <div id="mobius-viz"></div>
+
+<div class="md">
+## Covering Spaces: Unwinding Ambiguity
+
+A **covering space** is a topological space $\hat{X}$ that maps onto a base space $X$ via a map $p: \hat{X} \to X$ such that every point in $X$ has a neighborhood that is "evenly covered", its preimage consists of disjoint copies stacked above it.
+
+### The Classic Example
+
+The simplest covering space is the **real line covering the circle**:
+
+$$p: \mathbb{R} \to S^1, \quad p(t) = e^{2\pi i t}$$
+
+The circle $S^1$ has a loop that can't be shrunk. But when you "lift" that loop to $\mathbb{R}$, it becomes a path from $0$ to $1$, no longer a loop! The covering space **unwinds** the topology of the base.
+
+The fundamental group of the circle is $\pi_1(S^1) = \mathbb{Z}$, but the fundamental group of the real line is $\pi_1(\mathbb{R}) = 0$ (trivial). The covering map "kills" the loops.
+
+### Polysemy as a Topological Loop
+
+Consider the word **"bank"**. It has multiple meanings:
+- 🏦 Financial institution
+- 🌊 River bank
+- ✈️ Banking (turning) of an aircraft
+- 🎰 Bank (in gambling)
+
+In a simple embedding space, these meanings live on a **loop**, as you move through different contexts, "bank" cycles through its meanings. This loop is non-trivial in $\pi_1$ of the embedding manifold.
+
+### Transformer Layers as Covering Maps
+
+Here's the key insight: each layer of a Transformer acts like a **partial covering map**. The input embedding lives on the base space (ambiguous, with loops). As the signal passes through attention layers, the representation is **lifted** to a covering space where the loops are unwound:
+
+$$\text{Layer } 0: \quad \text{"bank"} \in S^1 \quad (\text{ambiguous, loopy})$$
+$$\text{Layer } 6: \quad \text{"bank"} \in \mathbb{R} \quad (\text{meanings separated})$$
+
+The attention mechanism computes the **lift** by using context to determine which sheet of the covering space the current meaning lives on. "I went to the bank to deposit money" lifts to the financial sheet. "I sat on the bank of the river" lifts to the geographical sheet.
+
+### The Deck Transformation Group
+
+The **deck transformations** of a covering space are the symmetries that permute the sheets while preserving the covering map. For the universal cover $\mathbb{R} \to S^1$, the deck group is $\mathbb{Z}$, integer translations.
+
+For polysemy, the deck transformations correspond to **meaning shifts**: operations that swap one meaning of "bank" for another while preserving the syntactic structure. The sentence "I went to the ___ to deposit money" has a deck transformation that replaces "bank" with... well, there's no other word that fits, which is why the covering space successfully disambiguates.
+
+### Formal Statement
+
+If $X$ is the manifold of contextual word embeddings and $\hat{X}$ is the manifold of disambiguated representations, then:
+
+$$|\text{sheets}| = |\pi_1(X) / p_*(\pi_1(\hat{X}))| = \text{number of distinct meanings}$$
+
+The number of meanings of a polysemous word equals the index of the image of the covering space's fundamental group in the base space's fundamental group.
+</div>
+
+<div id="covering-viz"></div>

@@ -2776,6 +2776,256 @@ function draw_moebius() {
 }
 
 // ============================================================
+// COVERING SPACE VISUALIZATION — Unwinding polysemy
+// ============================================================
+function covering_vis() {
+    const container = document.getElementById('covering-viz');
+    if (!container) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 700;
+    canvas.height = 520;
+    canvas.style.display = 'block';
+    canvas.style.margin = '0 auto';
+    canvas.style.borderRadius = '12px';
+    canvas.style.background = '#0a0a2e';
+    container.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    const controlsDiv = document.createElement('div');
+    controlsDiv.style.cssText = 'text-align:center; margin:15px 0; font-family:"Inter",sans-serif;';
+    controlsDiv.innerHTML = `
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc;">Transformer Depth (Layer): </label>
+            <input type="range" id="cover-depth" min="0" max="100" value="0" style="width:280px; vertical-align:middle;">
+            <span id="cover-depth-val" style="color:#4fc3f7; margin-left:8px; font-weight:600;">Layer 0 (Input)</span>
+        </div>
+        <div style="margin-bottom:10px;">
+            <label style="color:#ccc;">Context sentence: </label>
+            <select id="cover-context" style="padding:5px 12px; border-radius:6px; background:#1a1a3e; color:#fff; border:1px solid #444; font-size:14px;">
+                <option value="0">I went to the bank to deposit money 🏦</option>
+                <option value="1">I sat on the bank of the river 🌊</option>
+                <option value="2">The pilot banked the aircraft sharply ✈️</option>
+                <option value="3">Don't bank on it happening 🎲</option>
+            </select>
+        </div>
+        <div style="color:#888; font-size:13px;">Increase depth to watch the circle <strong>unwind</strong> into separated meaning sheets</div>
+    `;
+    container.appendChild(controlsDiv);
+
+    const meanings = [
+        { label: '🏦 Financial', color: '#4fc3f7', angle: 0 },
+        { label: '🌊 River', color: '#66bb6a', angle: Math.PI / 2 },
+        { label: '✈️ Aircraft', color: '#ffa726', angle: Math.PI },
+        { label: '🎲 Rely on', color: '#ef5350', angle: 3 * Math.PI / 2 }
+    ];
+
+    function draw() {
+        const depth = parseFloat(document.getElementById('cover-depth').value) / 100;
+        const contextIdx = parseInt(document.getElementById('cover-context').value);
+
+        const layerNum = Math.round(depth * 12);
+        const depthLabel = document.getElementById('cover-depth-val');
+        if (layerNum === 0) depthLabel.textContent = 'Layer 0 (Input)';
+        else if (layerNum === 12) depthLabel.textContent = 'Layer 12 (Output)';
+        else depthLabel.textContent = `Layer ${layerNum}`;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Layout: left side = circle/unwound, right side = sheets diagram
+        const leftCx = 200;
+        const leftCy = 260;
+        const rightX = 450;
+
+        // === LEFT SIDE: Circle unwinding into line ===
+
+        // The circle radius shrinks as depth increases, and it unwinds
+        const circleR = 120 * (1 - depth * 0.85);
+        const unwindFactor = depth;
+
+        // Draw the base circle (faded)
+        ctx.strokeStyle = 'rgba(100,140,255,0.2)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.arc(leftCx, leftCy, 120, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Draw the unwinding path
+        const pathSteps = 200;
+        ctx.lineWidth = 3;
+
+        for (let i = 0; i < pathSteps - 1; i++) {
+            const t1 = (i / pathSteps) * Math.PI * 2;
+            const t2 = ((i + 1) / pathSteps) * Math.PI * 2;
+
+            // Interpolate between circle and vertical line
+            // Circle position
+            const cx1 = leftCx + circleR * Math.cos(t1);
+            const cy1 = leftCy + circleR * Math.sin(t1);
+            const cx2 = leftCx + circleR * Math.cos(t2);
+            const cy2 = leftCy + circleR * Math.sin(t2);
+
+            // Unwound (vertical line) position
+            const lx1 = leftCx;
+            const ly1 = leftCy - 150 + (t1 / (Math.PI * 2)) * 300;
+            const lx2 = leftCx;
+            const ly2 = leftCy - 150 + (t2 / (Math.PI * 2)) * 300;
+
+            // Interpolate
+            const x1 = cx1 * (1 - unwindFactor) + lx1 * unwindFactor;
+            const y1 = cy1 * (1 - unwindFactor) + ly1 * unwindFactor;
+            const x2 = cx2 * (1 - unwindFactor) + lx2 * unwindFactor;
+            const y2 = cy2 * (1 - unwindFactor) + ly2 * unwindFactor;
+
+            // Color gradient
+            const hue = (t1 / (Math.PI * 2)) * 360;
+            ctx.strokeStyle = `hsla(${hue}, 70%, 60%, 0.8)`;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+
+        // Draw meaning points on the path
+        meanings.forEach((m, idx) => {
+            const t = m.angle;
+            const cx1 = leftCx + circleR * Math.cos(t);
+            const cy1 = leftCy + circleR * Math.sin(t);
+            const lx1 = leftCx;
+            const ly1 = leftCy - 150 + (t / (Math.PI * 2)) * 300;
+
+            const x = cx1 * (1 - unwindFactor) + lx1 * unwindFactor;
+            const y = cy1 * (1 - unwindFactor) + ly1 * unwindFactor;
+
+            // Separate horizontally as depth increases
+            const separation = unwindFactor * 60 * (idx % 2 === 0 ? 1 : -1) * (1 + idx * 0.3);
+            const finalX = x + separation;
+
+            // Glow for selected context
+            if (idx === contextIdx) {
+                ctx.shadowColor = m.color;
+                ctx.shadowBlur = 20 + depth * 20;
+            }
+
+            ctx.fillStyle = m.color;
+            ctx.beginPath();
+            ctx.arc(finalX, y, 8 + depth * 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Label
+            ctx.fillStyle = m.color;
+            ctx.font = `${11 + depth * 3}px Inter, sans-serif`;
+            const labelX = finalX + (separation >= 0 ? 15 : -ctx.measureText(m.label).width - 15);
+            ctx.globalAlpha = 0.3 + depth * 0.7;
+            ctx.fillText(m.label, labelX, y + 4);
+            ctx.globalAlpha = 1;
+        });
+
+        // "bank" label at center
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 18px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        if (depth < 0.3) {
+            ctx.fillText('"bank"', leftCx, leftCy - circleR - 20);
+            ctx.font = '12px Inter, sans-serif';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('(all meanings overlapping)', leftCx, leftCy - circleR - 5);
+        } else {
+            ctx.fillText('"bank"', leftCx, leftCy - 170);
+            ctx.font = '12px Inter, sans-serif';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('(meanings separating...)', leftCx, leftCy - 155);
+        }
+        ctx.textAlign = 'left';
+
+        // === RIGHT SIDE: Covering space diagram ===
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px Inter, sans-serif';
+        ctx.fillText('Covering Space Sheets', rightX, 30);
+
+        // Draw sheets as horizontal lines
+        const sheetY = [120, 210, 300, 390];
+        const sheetWidth = 180;
+
+        meanings.forEach((m, idx) => {
+            const y = sheetY[idx];
+            const alpha = 0.2 + depth * 0.8;
+
+            ctx.globalAlpha = alpha;
+            ctx.strokeStyle = m.color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(rightX, y);
+            ctx.lineTo(rightX + sheetWidth, y);
+            ctx.stroke();
+
+            ctx.fillStyle = m.color;
+            ctx.font = '13px Inter, sans-serif';
+            ctx.fillText(m.label, rightX + sheetWidth + 8, y + 4);
+
+            // Show projection lines down to base
+            if (depth > 0.3) {
+                ctx.strokeStyle = `rgba(255,255,255,${0.1 * depth})`;
+                ctx.lineWidth = 0.5;
+                ctx.setLineDash([3, 5]);
+                ctx.beginPath();
+                ctx.moveTo(rightX + sheetWidth / 2, y + 5);
+                ctx.lineTo(rightX + sheetWidth / 2, 460);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Highlight selected sheet
+            if (idx === contextIdx) {
+                ctx.fillStyle = m.color;
+                ctx.shadowColor = m.color;
+                ctx.shadowBlur = 15;
+                const dotX = rightX + 20 + depth * (sheetWidth - 40);
+                ctx.beginPath();
+                ctx.arc(dotX, y, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Arrow pointing to this sheet
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 12px Inter, sans-serif';
+                ctx.fillText('← context selects this sheet', dotX + 12, y - 12);
+            }
+
+            ctx.globalAlpha = 1;
+        });
+
+        // Base space (circle) at bottom right
+        ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(rightX + sheetWidth / 2, 470, 20, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = '#aaa';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Base S¹', rightX + sheetWidth / 2, 500);
+        ctx.fillText('p: ℝ → S¹', rightX + sheetWidth / 2, 514);
+        ctx.textAlign = 'left';
+
+        // Formula
+        ctx.fillStyle = '#4fc3f7';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText('|sheets| = |π₁(S¹) / p*(π₁(ℝ))| = |ℤ / 0| = 4 meanings', 15, canvas.height - 15);
+    }
+
+    document.getElementById('cover-depth').addEventListener('input', draw);
+    document.getElementById('cover-context').addEventListener('change', draw);
+
+    draw();
+}
+
+
+// ============================================================
 // MODULE LOADER
 // ============================================================
 
@@ -2807,4 +3057,6 @@ async function loadTopologyModule() {
 	visualize_torus();
 
 	draw_moebius();
+
+	covering_vis();
 }
