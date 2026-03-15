@@ -36,6 +36,14 @@ While Pāṇini was formalizing Sanskrit, European thinkers were attempting to f
   $$\text{Meaning}(\text{Tree}) = \text{Not}(\text{Bush}) \cap \text{Not}(\text{Grass})$$
 * **The Neighborhood Rule:** In 1957, **J.R. Firth** provided the final insight required for LLMs: *"You shall know a word by the company it keeps"*. This **Distributional Hypothesis** moved us from teaching machines rigid rules to letting them observe the statistical "neighborhoods" of words.
 
+### Honourable Mentions: The Mechanical Mimics
+
+Before we had neural networks, we had mechanical bellows. These inventors proved that language was an acoustic physics problem that could be solved by a machine.
+
+* **Kratzenstein’s Resonators (1779):** Christian Kratzenstein won a prize from the St. Petersburg Academy for building five pipes that could produce the five main vowel sounds (/a/, /e/, /i/, /o/, /u/). He proved that "speech" was just a specific arrangement of physical resonances.
+* **Wolfgang von Kempelen (1791):** He built a "Speaking Machine" using a bellows (lungs), a vibrating reed (vocal cords), and a leather funnel that the operator would manipulate like a mouth. It was the first "Text-to-Speech" device, capable of saying whole phrases like *"Mama"* or *"Astronomie"*.
+* **John Wilkins’ Real Character (1668):** Wilkins attempted to create a universal language where the very shape of a word's symbols described its biological or physical properties. While he failed, he laid the philosophical groundwork for **Taxonomies**—the idea that every concept has a "coordinate" in the tree of human knowledge.
+
 ### The Modern Synthesis: Meaning as Geometry
 
 Today’s LLMs represent the convergence of these histories. We no longer manually code Pāṇini’s rules or Aristotle’s categories into the machine. Instead, we use massive computation to map the **statistical relationships** observed by Firth into a high-dimensional **vector space**.
