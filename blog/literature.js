@@ -1,4 +1,16 @@
 window.bibData = {
+	"persistenthomology": {
+		url: "https://pub.ista.ac.at/~edels/Papers/2002-04-TopologicalPersistence.pdf",
+		year: 2002,
+		title: "Topological Persistence and Simplification",
+		author: "Herbert Edelsbrunner, David Letscher, Afra Zomorodian"
+	},
+	"perez2021attention": {
+		title: " Attention is Turing-Complete ",
+		author: "Jorge Pérez, Pablo Barceló, Javier Marinkovic",
+		year: 2021,
+		url: "https://jmlr.org/papers/volume22/20-302/20-302.pdf"
+	},
 	"cuneiform": {
 		url: "https://commons.wikimedia.org/wiki/File:Clay_tablet_mentioning_the_name_of_Eannatum,_prince_of_Lagash._From_Iraq,_c._2470_BCE._Iraq_Museum.jpg",
 		author: "Osama Shukir Muhammed Amin",
