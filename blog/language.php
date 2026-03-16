@@ -29,7 +29,7 @@ As these symbolic tools became more refined, language transitioned from a surviv
 Once humans could decouple a "number" from a physical pile of stones, they could perform operations on the concept of quantity itself. This is the cognitive leap that separates human language from all animal communication systems. It enabled mathematics, religion, law, and eventually, the encoding of language into machines.
 </div>
 
-## 10. Oral Tradition and the Technology of Memory
+## Oral Tradition and the Technology of Memory
 
 Between the emergence of symbolic displacement (c. 100,000 years ago) and the invention of writing (c. 3200 BCE), there stretches an immense span of roughly 97,000 years during which all human knowledge, laws, histories, genealogies, cosmologies, medical remedies, was stored, transmitted, and refined entirely within living human memory. This was not a passive or unreliable process. As scholars like Milman Parry and Albert Lord demonstrated through their study of Homeric epic and Yugoslav oral poetry, oral traditions developed sophisticated **mnemonic technologies**: formulaic phrases ("rosy-fingered dawn," "wine-dark sea"), strict metrical patterns, rhyme, parallelism, and narrative structures that made vast bodies of knowledge memorable and reproducible across generations.
 
