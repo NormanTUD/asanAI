@@ -1,4 +1,10 @@
 window.bibData = {
+	"dualitypattern": {
+		title: "Éléments de linguistique générale",
+		year: 1960,
+		author: "André Martinet",
+		url: "https://dn721508.ca.archive.org/0/items/ElmentsDeLinguistiqueGGnraleAndrnMartinet/El%C3%A9ments%20de%20linguistique%20g%C3%A9n%C3%A9rale%20-%20Andr%C3%A9%20Martinet.pdf"
+	},
 	"persistenthomology": {
 		url: "https://pub.ista.ac.at/~edels/Papers/2002-04-TopologicalPersistence.pdf",
 		year: 2002,

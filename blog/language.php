@@ -100,7 +100,18 @@ This trajectory from biological vibrations to physical tokens, and finally to ab
 ## The Acrophonic Principle
 
 This is how the alphabet was actually derived. The Phoenician letter aleph (𐤀) originally depicted an ox head (the word for ox was ʾalp). Over time, the picture was stripped of its meaning and retained only the first phoneme, /ʔ/ (a glottal stop). Similarly, bet (𐤁) was a house (bayt), reduced to /b/. The Greek adaptation turned aleph into alpha (Α) and bet into beta (Β), giving us the word "alphabet" itself.Where the Rebus Principle says "use the whole sound of a word," the Acrophonic Principle says "use only the first sound." It's a further compression, and it's the specific mechanism by which the Phoenician abjad was created from earlier pictographic systems.
+</div>
 
+<div class="optional md" data-headline="The Principle of Duality of Patterning">
+First descirbed by \citeauthor{dualitypattern} in \citeyear{dualitypattern}, human language operates on two levels:
+
+- First articulation: Meaningful units (morphemes/words) combine into sentences. ("un" + "believe" + "able")
+- Second articulation: Meaningless units (phonemes/letters) combine into meaningful units. (b + e + l + i + e + f → "belief")
+
+No animal communication system has this. A vervet monkey's eagle alarm call is a single, indivisible unit, you can't rearrange its "phonemes" to make a new call. But in human language, the same ~40 phonemes can generate an infinite vocabulary.
+</div>
+
+<div class="md">
 ## Conclusion: 135,000 Years in a Single Thread
 </div>
 
