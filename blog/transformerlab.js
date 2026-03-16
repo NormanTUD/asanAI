@@ -4,6 +4,7 @@
 If you see stuff jumping around, try setting "overflow-anchor: none" to that element.
 */
 
+window.tlabVisualizationMode = 'train';
 window._cachedFinalProjection = null;
 window._activeUnifiedLayerIdx = 0;
 window.isTraining = false;
@@ -5628,32 +5629,38 @@ function tled_syncTableFromSpace() {
     });
 }
 
-// ── Visualization mode: 'train' (default) or 'inference' ──
-window.tlabVisualizationMode = 'train';
-
 function setVisualizationMode(mode) {
-	window.tlabVisualizationMode = mode;
+    const savedScrollY = window.scrollY;
+    const savedScrollX = window.scrollX;
 
-	const trainBtn = document.getElementById('view-toggle-train');
-	const inferBtn = document.getElementById('view-toggle-inference');
+    window.tlabVisualizationMode = mode;
 
-	if (trainBtn && inferBtn) {
-		const isTrain = mode === 'train';
+    const trainBtn = document.getElementById('view-toggle-train');
+    const inferBtn = document.getElementById('view-toggle-inference');
 
-		// Train Button logic
-		trainBtn.style.background = isTrain ? '#3b82f6' : '#1f2937';
-		trainBtn.style.color      = isTrain ? '#ffffff' : '#9ca3af';
+    if (trainBtn && inferBtn) {
+        const isTrain = mode === 'train';
+        trainBtn.style.background = isTrain ? '#3b82f6' : '#1f2937';
+        trainBtn.style.color      = isTrain ? '#ffffff' : '#9ca3af';
+        inferBtn.style.background = isTrain ? '#1f2937' : '#3b82f6';
+        inferBtn.style.color      = isTrain ? '#9ca3af' : '#ffffff';
+        trainBtn.style.border = isTrain ? '1px solid #3b82f6' : '1px solid #374151';
+        inferBtn.style.border = isTrain ? '1px solid #374151' : '1px solid #3b82f6';
+    }
 
-		// Inference Button logic
-		inferBtn.style.background = isTrain ? '#1f2937' : '#3b82f6';
-		inferBtn.style.color      = isTrain ? '#9ca3af' : '#ffffff';
+    run_transformer_demo();
 
-		// Optional: add a border to the inactive button to make it pop against black
-		trainBtn.style.border = isTrain ? '1px solid #3b82f6' : '1px solid #374151';
-		inferBtn.style.border = isTrain ? '1px solid #374151' : '1px solid #3b82f6';
-	}
+    // Restore immediately after synchronous DOM mutations
+    window.scrollTo(savedScrollX, savedScrollY);
 
-	run_transformer_demo();
+    // Restore again after first paint (Plotly/ECharts async renders)
+    requestAnimationFrame(() => {
+        window.scrollTo(savedScrollX, savedScrollY);
+        // And once more after layout stabilizes from deferred renders
+        requestAnimationFrame(() => {
+            window.scrollTo(savedScrollX, savedScrollY);
+        });
+    });
 }
 
 function _render_h1_logic_core(containerIds, h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings, naming) {
