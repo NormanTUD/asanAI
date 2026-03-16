@@ -6,15 +6,6 @@ We are giving an Artificial Intelligence, specifically, a single-layer neural ne
 
 By adjusting the controls below you will witness, in real time, why AI models sometimes *hallucinate* or collapse when they encounter something new.
 
-## What You're Seeing
-
-| Element | Meaning |
-|---------|---------|
-| **Dotted grey line**, *Universal Truth* | A perfect sine wave, $y = \sin(x)$. This is the true underlying pattern we want the AI to learn. |
-| **Blue-shaded region**, *Training Window* | The slice of reality the model is allowed to observe. In practice we never have *all* the data, only a small, noisy sample. |
-| **Black dots**, *Noisy Observations* | The specific data points the AI can "see." Notice they scatter around the true curve; real-world measurements are never perfect. |
-| **Red line**, *AI's Hypothesis* | The model's current best guess. It tries to draw a curve that passes as close to the black dots as possible. |
-
 ## The Maths: How the Model "Thinks"
 
 We construct a function $f(x)$ of the form
@@ -112,6 +103,14 @@ $$
      ANALYSIS
      ═══════════════════════════════════════════════════════════ -->
 <div class="md">
+## What You're Seeing
+
+| Element | Meaning |
+|---------|---------|
+| **Dotted grey line**, *Universal Truth* | A perfect sine wave, $y = \sin(x)$. This is the true underlying pattern we want the AI to learn. |
+| **Blue-shaded region**, *Training Window* | The slice of reality the model is allowed to observe. In practice we never have *all* the data, only a small, noisy sample. |
+| **Black dots**, *Noisy Observations* | The specific data points the AI can "see." Notice they scatter around the true curve; real-world measurements are never perfect. |
+| **Red line**, *AI's Hypothesis* | The model's current best guess. It tries to draw a curve that passes as close to the black dots as possible. |
 
 ## Understanding the Results
 
