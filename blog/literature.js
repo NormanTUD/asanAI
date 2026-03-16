@@ -1,4 +1,125 @@
 window.bibData = {
+	"acrophonic": {
+		author: "Alan Gardiner",
+		year: 1916,
+		title: "The Egyptian Origin of the Semitic Alphabet",
+		url: "https://www.jstor.org/stable/3853586"
+	},
+	"dualitypattern": {
+		title: "Éléments de linguistique générale",
+		year: 1960,
+		author: "André Martinet",
+		url: "https://dn721508.ca.archive.org/0/items/ElmentsDeLinguistiqueGGnraleAndrnMartinet/El%C3%A9ments%20de%20linguistique%20g%C3%A9n%C3%A9rale%20-%20Andr%C3%A9%20Martinet.pdf"
+	},
+	"persistenthomology": {
+		url: "https://pub.ista.ac.at/~edels/Papers/2002-04-TopologicalPersistence.pdf",
+		year: 2002,
+		title: "Topological Persistence and Simplification",
+		author: "Herbert Edelsbrunner, David Letscher, Afra Zomorodian"
+	},
+	"perez2021attention": {
+		title: " Attention is Turing-Complete ",
+		author: "Jorge Pérez, Pablo Barceló, Javier Marinkovic",
+		year: 2021,
+		url: "https://jmlr.org/papers/volume22/20-302/20-302.pdf"
+	},
+	"cuneiform": {
+		url: "https://commons.wikimedia.org/wiki/File:Clay_tablet_mentioning_the_name_of_Eannatum,_prince_of_Lagash._From_Iraq,_c._2470_BCE._Iraq_Museum.jpg",
+		author: "Osama Shukir Muhammed Amin",
+		title: "Clay tablet mentioning the name of Eannatum, prince of Lagash. From Iraq, c. 2470 BCE. Iraq Museum",
+		alternativetitle: "Early Cuneiform Writing",
+		year: "c. 2470 BCE"
+	},
+	"rebusprinciple": {
+		url: "https://web.archive.org/web/20091015073859/http://www.fask.uni-mainz.de/inst/iaspk/Linguistik/Phonetik/Schriftentwicklung.html",
+		title: "Entwicklung der Schrift",
+		author: "Dora Warth",
+		year: 1999
+	},
+	"alcmaeon": {
+		title: "Testimonia and Fragments",
+		author: "Alcmaeon of Croton",
+		year: "ca. 500 BCE",
+		url: "https://plato.stanford.edu/entries/alcmaeon/"
+	},
+	"davinci_anatomical": {
+		title: "The Anatomical Manuscripts of Leonardo da Vinci",
+		author: "Leonardo da Vinci",
+		year: "ca. 1510",
+		url: "https://archive.org/details/LeonardodaVinciAnatomicalDrawingsfromtheRoyalLibraryWindsorCastle"
+	},
+	"panini_ashtadhyayi": {
+		title: "Ashtadhyayi (अष्टाध्यायी)",
+		author: "Pāṇini",
+		year: "ca. 4th Century BCE",
+		url: "https://ia801807.us.archive.org/1/items/AshtadhyayiBhashyaCollection/019%20Ashtadhyayi%20Bhashyam-1-Dayananda_text.pdf"
+	},
+	"aristotle_categories": {
+		title: "Categories (Κατηγορίαι)",
+		author: "Aristotle",
+		year: "ca. 350 BCE",
+		url: "https://archive.org/details/aristotle-categories-and-de-interpretatione"
+	},
+	"kempelen_speaking_machine": {
+		title: "Mechanismus der menschlichen Sprache nebst der Beschreibung seiner sprechenden Maschine",
+		author: "Wolfgang von Kempelen",
+		year: 1791,
+		url: "https://www.deutschestextarchiv.de/book/show/kempelen_maschine_1791"
+	},
+	"wilkins_real_character": {
+		title: "An Essay Towards a Real Character, and a Philosophical Language",
+		author: "John Wilkins",
+		year: 1668,
+		url: "https://archive.org/details/AnEssayTowardsARealCharacterAndAPhilosophicalLanguage/?view=theater"
+	},
+	"firth_context": {
+		title: "Papers in Linguistics 1934–1951",
+		author: "J.R. Firth",
+		year: 1957,
+		url: "https://archive.org/details/papersinlinguist0000firt"
+	},
+	"emergenceofmodernhumanbehaviour": {
+		url: "https://pubmed.ncbi.nlm.nih.gov/11786608/",
+		title: "Emergence of modern human behavior: Middle Stone Age engravings from South Africa",
+		author: "Christopher S Henshilwood, Francesco d'Errico, Royden Yates, Zenobia Jacobs, Chantal Tribolo, Geoff A T Duller, Norbert Mercier, Judith C Sealy, Helene Valladas, Ian Watts, Ann G Wintle",
+		year: 2002
+	},
+	"blombosochre": {
+		url: "https://www.donsmaps.com/blombos.html",
+		license: "CC-BY-2.5",
+		author: "Chris Henshilwood",
+		title: "Blombos Cave ochre and artefacts"
+	},
+	"sushruta": {
+		title: "सुश्रुतसंहिता (Sushruta Samhita)",
+		author: "सुश्रुत (Sushruta)",
+		year: "ca. 300 BCE",
+		url: "https://archive.org/details/sushrutasamhita"
+	},
+	"earlylanguage": {
+		url: "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2025.1503900/full",
+		title: "Linguistic capacity was present in the Homo sapiens population 135 thousand years ago",
+		year: 2025,
+		author: "Shigeru Miyagawa, Rob DeSalle, Vitor Augusto Nóbrega, Remo Nitschke, Mercedes Okumura, Ian Tattersall"
+	},
+	"relufirst": {
+		title: "Visual Feature Extraction by a Multilayered Network of Analog Threshold Elements",
+		author: "Kunihiko Fukushima",
+		url: "https://ieeexplore.ieee.org/document/4082265",
+		year: 1969
+	},
+	"aizenberg2000": {
+		url: "https://dl.acm.org/doi/10.5555/646226.683499",
+		title: "Multi-valued and Universal Binary Neurons: New Applications in Intelligent Image Processing",
+		year: 2001,
+		author: "Igor N. Aizenberg"
+	},
+	"deeplearningfirstuse": {
+		title: "Learning while searching in constraint-satisfaction-problems",
+		url: "https://dl.acm.org/doi/10.5555/2887770.2887799",
+		author: "Rina Dechter",
+		year: 1986
+	},
 	"boltzmannlearning": {
 		url: "https://www.cs.toronto.edu/~fritz/absps/cogscibm.pdf",
 		year: 1985,

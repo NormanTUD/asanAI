@@ -1,6 +1,6 @@
 <?php include_once("functions.php"); ?>
-<div class="md">
 
+<div class="md">
 ## The Necessity of Activation Functions
 
 Activation functions serve as the mathematical **"gates"** of a neural network. Without them, a network would be nothing more than a series of linear transformations, essentially collapsing into one giant linear equation.
@@ -29,7 +29,7 @@ $$y = (W_2W_1)x + (W_2b_1 + b_2)$$
 
 See? We end up with another linear transformation like $Wx + b$, where $ W = W_2W_1 $ and $b = (W_2b_1 + b_2)$. This way, adding more layers, doesn't add more functionality to the neural network. This is where activation functions come into play.
 
-Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the remaining term is just a new bias vector, the multi-layer network behaves exactly like a **single-layer** model. Without non-linear activation functions (like **ReLU** (introduced by \citeauthorlastnameand{relupaper} in \citetitle{relupaper}), **Sigmoid**, or **Tanh**), stacking layers adds no extra "intelligence" or power to the model.
+Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the remaining term is just a new bias vector, the multi-layer network behaves exactly like a **single-layer** model. Without non-linear activation functions (like **ReLU** (introduced by \citeauthorlastnameand{relupaper} in \citetitle{relupaper}, albeit being described by \citeauthor{relufirst} in \citeyear{relufirst} in principle already), **Sigmoid**, or **Tanh**), stacking layers adds no extra "intelligence" or power to the model.
 </div>
 
 <div class="activation-lab-container" style="background: #f0fdf4; padding: 20px; border-radius: 12px; border: 1px solid #dcfce7; margin-top: 20px;">
@@ -63,7 +63,7 @@ Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the r
 While ReLU and Sigmoid deal with individual neurons, **SoftMax** (introduced in \citeyear{bridle1989probabilistic} by \citeauthor{bridle1989probabilistic}) is a team player. It is used when you want to have percentages instead of absolute numbers, especially in the **output layer** of a neural network designed for multi-class classification (e.g., identifying if an image is a cat, dog, or bird, or at the end of a Transformer module, which returns a list of words with a given probability).
 
 ### Why the name "Soft" Max?
-* **Hard Max:** A standard "Maximum" function (like `argmax`) is "hard." It returns 1 for the largest value and 0 for everything else. It is not differentiable, which means we can't train a network with it.
+* **Hard Max:** A standard "Maximum" function (like `argmax`) is "hard." It returns 1 for the largest value and 0 for everything else. It is not differentiable, which means we can't train a network with it with Backpropagation.
 * **Soft Max:** This is a "softened" version. It turns the largest value into the highest probability, but it still assigns smaller probabilities to the "losers." This allows the network to express **uncertainty**.
 
 ### The Math
@@ -89,9 +89,8 @@ A simple percentage calculation fails if you have negative scores (e.g., -2.0 an
 
 #### Why is this the standard for AI?
 Because $e$ represents the "most natural" way to describe growth, the function $e^x$ is uniquely simple to work with in calculus. In SoftMax, we are essentially saying: *"Let's treat the scores (logits) as continuous growth rates."* By using $e$, the math of learning (calculus) becomes as smooth and efficient as possible, because the derivative of $e^x$ is just $e^x$. This "cleanliness" is what allows us to train massive AI models without the math becoming a tangled mess.
-</div>
 
-<div class="optional md" data-headline="Why is $e$ the perfect choice for SoftMax?">
+#### Why is $e$ the perfect choice for SoftMax?
 Neural networks don't use $e$ just because it's famous; they use it because of **Calculus**.
 
 * **The Derivative Property:** $e^x$ is the only function where the derivative is the function itself: $\frac{d}{dx}e^x = e^x$.
@@ -103,9 +102,7 @@ Neural networks don't use $e$ just because it's famous; they use it because of *
     If we have Logits $x_1=2$ and $x_2=4$, the difference is only 2 units (linear).
     But $e^4 \approx 54.6$ and $e^2 \approx 7.4$.
     The exponential transformation increases the ratio from $2:1$ to roughly $7:1$. This forces the network to pick a "winner," making the classification decision much more distinct.
-</div>
 
-<div class="md">
 #### The Motivation in SoftMax
 The SoftMax formula $\sigma(z)_i = \frac{e^{z_i}}{\sum e^{z_j}}$ is essentially a **normalization of growth**.
 

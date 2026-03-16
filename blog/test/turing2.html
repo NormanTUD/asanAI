@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LLM: Spiral to Turing Machine</title>
+    <style>
+        body { margin: 0; background: #0a0a0c; color: #e0e0e0; font-family: 'Courier New', monospace; display: flex; height: 100vh; overflow: hidden; }
+        #canvas-container { flex: 1; position: relative; border-right: 1px solid #333; }
+        #tape-container { width: 350px; padding: 20px; background: #111; display: flex; flex-direction: column; }
+        .label { color: #00ffcc; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
+        .tape-row { display: flex; gap: 5px; margin-bottom: 20px; align-items: center; }
+        .cell { width: 30px; height: 30px; border: 1px solid #444; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: all 0.2s; }
+        .cell.active { background: #ff3300; color: white; border-color: #ff3300; box-shadow: 0 0 10px #ff3300; }
+        .description { font-size: 0.85rem; line-height: 1.5; color: #888; }
+        #pointer { color: #ff3300; font-weight: bold; }
+        h2 { font-size: 1.1rem; color: #fff; margin-top: 0; }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container">
+        <div style="position:absolute; top:10px; left:10px; pointer-events:none;">
+            <h2>Topological View</h2>
+            <p style="font-size:0.8rem; color:#666;">High-dimensional residual stream (Spiral)<br>intersecting the Attention Plane.</p>
+        </div>
+    </div>
+
+    <div id="tape-container">
+        <h2>The "Slice" View</h2>
+        <p class="description">When we "slice" the spiral at a specific angle, the complex geometry collapses into discrete bits.</p>
+        
+        <div class="label" style="margin-top:20px;">Binary Feature Tape</div>
+        <div id="tape" class="tape-row"></div>
+
+        <div class="label">Turing State</div>
+        <div id="state-display" class="description" style="color:#00ffcc; margin-bottom: 20px;">State: SEARCHING_OPEN_BRACKET</div>
+
+        <div class="label">Mechanistic Logic</div>
+        <p class="description">
+            1. <b>Read:</b> Attention head scans the "Slice".<br>
+            2. <b>Match:</b> If bit is 1 (Spiral hits plane), update internal vector.<br>
+            3. <b>Write:</b> Move to next layer (Next turn of spiral).
+        </p>
+    </div>
+
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- THREE.JS SCENE (THE TOPOLOGY) ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+
+        // The Spiral (Hidden States)
+        const curvePoints = [];
+        for (let i = 0; i < 60; i++) {
+            const t = i * 0.2;
+            curvePoints.push(new THREE.Vector3(Math.cos(t) * 2, t - 6, Math.sin(t) * 2));
+        }
+        const curve = new THREE.CatmullRomCurve3(curvePoints);
+        const spiralGeom = new THREE.TubeGeometry(curve, 100, 0.04, 8, false);
+        const spiralMat = new THREE.MeshBasicMaterial({ color: 0x2244ff, transparent: true, opacity: 0.4 });
+        const spiral = new THREE.Mesh(spiralGeom, spiralMat);
+        scene.add(spiral);
+
+        // The Slice Plane (The "Algorithm" Filter)
+        const plane = new THREE.Mesh(
+            new THREE.PlaneGeometry(6, 6),
+            new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.1 })
+        );
+        plane.rotation.x = Math.PI / 2;
+        scene.add(plane);
+
+        camera.position.set(5, 2, 5);
+        camera.lookAt(0, 0, 0);
+
+        // --- TAPE LOGIC (THE TURING MACHINE) ---
+        const tapeEl = document.getElementById('tape');
+        const stateEl = document.getElementById('state-display');
+        const cells = [];
+        for(let i=0; i<8; i++) {
+            const div = document.createElement('div');
+            div.className = 'cell';
+            div.innerText = '0';
+            tapeEl.appendChild(div);
+            cells.push(div);
+        }
+
+        let step = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = Date.now() * 0.002;
+            
+            // Move spiral and plane
+            plane.position.y = Math.sin(time) * 4;
+            spiral.rotation.y += 0.01;
+
+            // Simulate the "Slicing" into bits
+            cells.forEach((cell, i) => {
+                // A mathematical "hit" condition: 
+                // Does the spiral's y-position match the plane?
+                const isHit = Math.abs(plane.position.y - (i - 4)) < 0.3;
+                if(isHit) {
+                    cell.innerText = '1';
+                    cell.classList.add('active');
+                } else {
+                    cell.innerText = '0';
+                    cell.classList.remove('active');
+                }
+            });
+
+            // Update State based on "Tape"
+            if (cells[3].classList.contains('active')) {
+                stateEl.innerText = "State: FOUND_PATTERN_MATCH";
+                stateEl.style.color = "#ff3300";
+            } else {
+                stateEl.innerText = "State: SCANNING_EMBEDDINGS...";
+                stateEl.style.color = "#00ffcc";
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Topological Spiral Visualization</title>
+    <style>
+        body { margin: 0; background: #050505; color: #fff; font-family: sans-serif; overflow: hidden; }
+        #ui { position: absolute; top: 20px; left: 20px; width: 300px; z-index: 10; pointer-events: none; }
+        .label { background: rgba(0,0,0,0.8); padding: 10px; border-radius: 5px; border: 1px solid #444; margin-bottom: 10px; }
+        h1 { font-size: 1.2rem; margin: 0 0 10px 0; color: #00ffcc; }
+        p { font-size: 0.85rem; line-height: 1.4; margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <div class="label">
+            <h1>The Topological Slice</h1>
+            <p>The <b>Spiral</b> represents the residual stream evolving through layers.</p>
+        </div>
+        <div class="label">
+            <p>The <b>White Plane</b> is the Attention "Slice." Note how it only captures 1D intersections (the red dots) of the higher-dimensional spiral.</p>
+        </div>
+        <div class="label">
+            <p><b>Red Dots:</b> These are the discrete bits (0/1) extracted by the model to perform algorithmic logic.</p>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // Scene Setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 1. Create the Spiral (The Hidden State Journey)
+        const curvePoints = [];
+        for (let i = 0; i < 100; i++) {
+            const t = i / 10;
+            curvePoints.push(new THREE.Vector3(
+                Math.cos(t) * (t * 0.5), 
+                t - 5, 
+                Math.sin(t) * (t * 0.5)
+            ));
+        }
+        const curve = new THREE.CatmullRomCurve3(curvePoints);
+        const geometry = new THREE.TubeGeometry(curve, 128, 0.05, 8, false);
+        const material = new THREE.MeshPhongMaterial({ color: 0x0088ff, transparent: true, opacity: 0.6 });
+        const spiral = new THREE.Mesh(geometry, material);
+        scene.add(spiral);
+
+        // 2. The Slicing Plane (The Attention Head's Context Window)
+        const planeGeom = new THREE.PlaneGeometry(10, 10);
+        const planeMat = new THREE.MeshPhongMaterial({ 
+            color: 0xffffff, 
+            side: THREE.DoubleSide, 
+            transparent: true, 
+            opacity: 0.15 
+        });
+        const slicePlane = new THREE.Mesh(planeGeom, planeMat);
+        slicePlane.rotation.x = Math.PI / 2;
+        scene.add(slicePlane);
+
+        // 3. Intersection Markers (The "Lines" or "Bits")
+        const bitGeom = new THREE.SphereGeometry(0.12);
+        const bitMat = new THREE.MeshBasicMaterial({ color: 0xff3300 });
+        const bits = [];
+        for(let i = 0; i < 5; i++) {
+            const bit = new THREE.Mesh(bitGeom, bitMat);
+            scene.add(bit);
+            bits.push(bit);
+        }
+
+        // Lighting
+        const light = new THREE.PointLight(0xffffff, 50);
+        light.position.set(5, 5, 5);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x404040));
+
+        camera.position.set(8, 5, 8);
+        camera.lookAt(0, 0, 0);
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Move the plane up and down to simulate different "slices"
+            const time = Date.now() * 0.001;
+            slicePlane.position.y = Math.sin(time) * 3;
+
+            // Update "Bit" positions based on where spiral hits the plane
+            // (Conceptual approximation for the visual)
+            bits.forEach((bit, index) => {
+                const angleOffset = index * 1.5;
+                const radius = (slicePlane.position.y + 5) * 0.4;
+                bit.position.x = Math.cos(time + angleOffset) * radius;
+                bit.position.y = slicePlane.position.y;
+                bit.position.z = Math.sin(time + angleOffset) * radius;
+                
+                // Pulsate visibility to represent 0/1 state
+                bit.scale.setScalar(Math.sin(time * 5 + index) > 0 ? 1 : 0);
+            });
+
+            spiral.rotation.y += 0.005;
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>

@@ -25,6 +25,7 @@
 	incl("An Intuition of how Large Language Models (LLMs) work", "intuition");
 	incl("Brief History of AI", "history");
 	incl("Basic math concepts", "math");
+	incl("The History of Language: From Sanskrit to LLMs", "language");
 	incl("Statistics: The Language of AI", "statistics");
 	incl("Loss: Teaching through Failure", "losslab");
 	/*
@@ -46,6 +47,7 @@
 	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("The Semantic Tug-of-War: How Transformers 'Think'", "attentionlab");
 	incl("Positional Embeddings", "positionalembeddingslab");
+	incl("Topology and the Geometry of Thought", "topology");
 	incl("Temperature & Sampling", "samplinglab");
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
 	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
