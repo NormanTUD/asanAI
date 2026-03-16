@@ -1,4 +1,10 @@
 window.bibData = {
+	"tononi2004iit": {
+		url: "https://pubmed.ncbi.nlm.nih.gov/15522121/",
+		title: "An information integration theory of consciousness",
+		year: 2004,
+		author: "Giulio Tononi"
+	},
 	"earlyl2": {
 		url: "https://cs.uwaterloo.ca/~y328yu/classics/Tikhonov43.pdf",
 		author: "Andrej Nikolaevič Tichonov",
