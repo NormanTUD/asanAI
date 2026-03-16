@@ -267,6 +267,7 @@ Below, you can explore this connection interactively. The visualization shows a 
         <label style="font-family: sans-serif; font-size: 0.85em; color: #475569; cursor: pointer;">
             <input type="checkbox" id="helix-sound-enabled" checked> 🔊 Sound
         </label>
+	<br>
         <span id="helix-turing-status" style="font-size: 0.85em; color: #64748b; font-family: sans-serif;">Ready, click Step or Run.</span>
     </div>
 
