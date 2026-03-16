@@ -1753,7 +1753,6 @@ function addConsoleEasterEggs() {
 	const tips = [
 		"The backpropagation algorithm was independently discovered at least 3 times before it became famous.",
 		"The word 'embedding' comes from topology — mapping one space into another while preserving structure.",
-		"Attention Is All You Need was rejected from ICML before being accepted at NeurIPS.",
 		"GPT-3 has 175 billion parameters. A fruit fly brain has ~100,000 neurons. Draw your own conclusions.",
 		"The 'temperature' in sampling is borrowed from thermodynamics. Boltzmann would be proud.",
 		"The Transformer was originally designed for translation. Nobody expected it to write poetry.",
