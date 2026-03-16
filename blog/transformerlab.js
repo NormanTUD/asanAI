@@ -5630,37 +5630,37 @@ function tled_syncTableFromSpace() {
 }
 
 function setVisualizationMode(mode) {
-    const savedScrollY = window.scrollY;
-    const savedScrollX = window.scrollX;
+	const savedScrollY = window.scrollY;
+	const savedScrollX = window.scrollX;
 
-    window.tlabVisualizationMode = mode;
+	window.tlabVisualizationMode = mode;
 
-    const trainBtn = document.getElementById('view-toggle-train');
-    const inferBtn = document.getElementById('view-toggle-inference');
+	const trainBtn = document.getElementById('view-toggle-train');
+	const inferBtn = document.getElementById('view-toggle-inference');
 
-    if (trainBtn && inferBtn) {
-        const isTrain = mode === 'train';
-        trainBtn.style.background = isTrain ? '#3b82f6' : '#1f2937';
-        trainBtn.style.color      = isTrain ? '#ffffff' : '#9ca3af';
-        inferBtn.style.background = isTrain ? '#1f2937' : '#3b82f6';
-        inferBtn.style.color      = isTrain ? '#9ca3af' : '#ffffff';
-        trainBtn.style.border = isTrain ? '1px solid #3b82f6' : '1px solid #374151';
-        inferBtn.style.border = isTrain ? '1px solid #374151' : '1px solid #3b82f6';
-    }
+	if (trainBtn && inferBtn) {
+		const isTrain = mode === 'train';
+		trainBtn.style.background = isTrain ? '#3b82f6' : '#1f2937';
+		trainBtn.style.color      = isTrain ? '#ffffff' : '#9ca3af';
+		inferBtn.style.background = isTrain ? '#1f2937' : '#3b82f6';
+		inferBtn.style.color      = isTrain ? '#9ca3af' : '#ffffff';
+		trainBtn.style.border = isTrain ? '1px solid #3b82f6' : '1px solid #374151';
+		inferBtn.style.border = isTrain ? '1px solid #374151' : '1px solid #3b82f6';
+	}
 
-    run_transformer_demo();
+	run_transformer_demo();
 
-    // Restore immediately after synchronous DOM mutations
-    window.scrollTo(savedScrollX, savedScrollY);
+	// Restore immediately after synchronous DOM mutations
+	window.scrollTo(savedScrollX, savedScrollY);
 
-    // Restore again after first paint (Plotly/ECharts async renders)
-    requestAnimationFrame(() => {
-        window.scrollTo(savedScrollX, savedScrollY);
-        // And once more after layout stabilizes from deferred renders
-        requestAnimationFrame(() => {
-            window.scrollTo(savedScrollX, savedScrollY);
-        });
-    });
+	// Restore again after first paint (Plotly/ECharts async renders)
+	requestAnimationFrame(() => {
+		window.scrollTo(savedScrollX, savedScrollY);
+		// And once more after layout stabilizes from deferred renders
+		requestAnimationFrame(() => {
+			window.scrollTo(savedScrollX, savedScrollY);
+		});
+	});
 }
 
 function _render_h1_logic_core(containerIds, h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings, naming) {
