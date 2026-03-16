@@ -130,7 +130,7 @@ Look at how the **Red Line** behaves *outside* the **Blue Training Zone**:
 | **Reasonable fit** | 4 – 8 | Acceptable inside the training window; still diverges outside it. |
 | **Overfitting** (High Variance) | 9 – 10+ | The curve contorts wildly to pass through every noisy dot, destroying generalisation. |
 
-> **Key insight:** *No matter the degree*, the polynomial only approximates $\sin(x)$ well within the region it has seen. This principle extends to all neural-network-based AI, including Large Language Models, which perform well on tasks similar to their training data but can produce plausible-sounding nonsense ("hallucinations") on topics outside that distribution.
+**Key insight:** *No matter the degree*, the polynomial only approximates $\sin(x)$ well within the region it has seen. This principle extends to all neural-network-based AI, including Large Language Models, which perform well on tasks similar to their training data but can produce plausible-sounding nonsense ("hallucinations") on topics outside that distribution.
 
 ### Runge's Phenomenon
 
