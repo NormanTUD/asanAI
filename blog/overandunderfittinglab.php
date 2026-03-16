@@ -6,7 +6,7 @@ Now, we are tasking an Artificial Intelligence (a neural network) with a seeming
 ## What You're Seeing
 * **The Dotted Line (Universal Truth):** This is a perfect sine wave ($y = \sin(x)$). It represents the true underlying pattern of the universe that we want our AI to understand.
 * **The Grey Box (The Training Window):** This represents the "known world." In reality, we never have all the data. We only have a small sample.
-* **The Black Dots (Noisy Observations):** These are the specific data points the AI is allowed to "see." Notice they don't sit perfectly on the line; they include **Noise** to simulate real-world measurement errors.
+* **The Black Dots (Noisy Observations):** These are the specific data points the AI is allowed to "see." Notice they don't sit perfectly on the line.
 * **The Red Line (The AI's Guess):** This is the model's current theory. It tries to draw a line that passes as close to the black dots as possible.
 
 ## The Math: How the Model "Thinks"
@@ -78,7 +78,7 @@ Note how the **Red Line** behaves outside the **Grey Training Zone**.
 
 * **Low Degree (1-3):** The model is too "stiff." It can't bend enough to follow the sine wave even inside the box. This is **High Bias**.
 * **OK degree (4-8):** The model is OK in the area it has seen, but still terribly outside
-* **High Degree (10+):** The model is too "wiggly." It starts chasing the **Noise** (the random scattering of dots) rather than the underlying sine wave. This is **High Variance**.
+* **High Degree (10+):** The model is too "wiggly".
 * **Note:** In *all* models, no matter how many parameters, the model can only predict what it has seen before well; most outside of the area it has seen during training is not a good model of the $\sin$-function. This applies to all Neural-Network-based AI solutions, including LLMs, which also have a certain range of tasks they are good at, but outside of what it has been trained it spews out stuff that looks kind of plausible, but mustn't be *true*.
 
 ### Runge's Phenomenon
