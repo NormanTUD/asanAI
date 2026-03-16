@@ -4,7 +4,7 @@
 
 ## The Challenge
 
-We are giving an Artificial Intelligence — specifically, a single-layer neural network — one deceptively simple task: **"Learn the pattern of a sine wave."**
+We are giving an Artificial Intelligence, specifically, a single-layer neural network, one deceptively simple task: **"Learn the pattern of a sine wave."**
 
 By adjusting the controls below you will witness, in real time, why AI models sometimes *hallucinate* or collapse when they encounter something new.
 
@@ -12,10 +12,10 @@ By adjusting the controls below you will witness, in real time, why AI models so
 
 | Element | Meaning |
 |---------|---------|
-| **Dotted grey line** — *Universal Truth* | A perfect sine wave, $y = \sin(x)$. This is the true underlying pattern we want the AI to learn. |
-| **Blue-shaded region** — *Training Window* | The slice of reality the model is allowed to observe. In practice we never have *all* the data — only a small, noisy sample. |
-| **Black dots** — *Noisy Observations* | The specific data points the AI can "see." Notice they scatter around the true curve; real-world measurements are never perfect. |
-| **Red line** — *AI's Hypothesis* | The model's current best guess. It tries to draw a curve that passes as close to the black dots as possible. |
+| **Dotted grey line**, *Universal Truth* | A perfect sine wave, $y = \sin(x)$. This is the true underlying pattern we want the AI to learn. |
+| **Blue-shaded region**, *Training Window* | The slice of reality the model is allowed to observe. In practice we never have *all* the data, only a small, noisy sample. |
+| **Black dots**, *Noisy Observations* | The specific data points the AI can "see." Notice they scatter around the true curve; real-world measurements are never perfect. |
+| **Red line**, *AI's Hypothesis* | The model's current best guess. It tries to draw a curve that passes as close to the black dots as possible. |
 
 ## The Maths: How the Model "Thinks"
 
@@ -30,9 +30,9 @@ This is **Polynomial Regression**. Rather than "knowing" the answer is a sine wa
 
 | Symbol | Role |
 |--------|------|
-| $n$ — **Polynomial Degree** | Controlled by the *Complexity* slider. Degree 1 → straight line ($w_1 x + b$). Degree 10 → a curve that can bend up to 9 times. |
-| $w_i$ — **Weights** | Coefficients the AI adjusts during training to reshape the curve. |
-| $b$ — **Bias** | A constant that shifts the entire curve up or down. |
+| $n$, **Polynomial Degree** | Controlled by the *Complexity* slider. Degree 1 → straight line ($w_1 x + b$). Degree 10 → a curve that can bend up to 9 times. |
+| $w_i$, **Weights** | Coefficients the AI adjusts during training to reshape the curve. |
+| $b$, **Bias** | A constant that shifts the entire curve up or down. |
 
 ### The Loss Function
 
@@ -47,7 +47,7 @@ $$
 
 ## Try It Yourself
 
-1. **Underfitting (High Bias):** Set the **Degree** to **1** or **2** and train. The red line is too rigid to follow the wave — even inside the training window.
+1. **Underfitting (High Bias):** Set the **Degree** to **1** or **2** and train. The red line is too rigid to follow the wave, even inside the training window.
 2. **Overfitting (High Variance):** Set the **Degree** to **10**, crank the **Noise** up, and train. Watch the red line contort itself to touch every noisy dot.
 3. **The Extrapolation Trap:** No matter how good the fit looks *inside* the blue box, observe what happens *outside* it. The red line almost always rockets toward $\pm\infty$.
 
@@ -122,7 +122,7 @@ $$
 Look at how the **Red Line** behaves *outside* the **Blue Training Zone**:
 
 * **The AI's logic:** *"I found a polynomial that perfectly matches the dots I was given."*
-* **The reality:** The AI has no concept of *periodicity* — it doesn't know the wave repeats. It assumes the local polynomial trend continues, which inevitably sends $f(x) \to \pm\infty$.
+* **The reality:** The AI has no concept of *periodicity*, it doesn't know the wave repeats. It assumes the local polynomial trend continues, which inevitably sends $f(x) \to \pm\infty$.
 * **Lesson:** Machine-learning models are typically strong **interpolators** (they guess well *between* known points) but poor **extrapolators** (they guess badly *outside* the range of training data).
 
 ### Underfitting vs. Overfitting
@@ -133,7 +133,7 @@ Look at how the **Red Line** behaves *outside* the **Blue Training Zone**:
 | **Reasonable fit** | 4 – 8 | Acceptable inside the training window; still diverges outside it. |
 | **Overfitting** (High Variance) | 9 – 10+ | The curve contorts wildly to pass through every noisy dot, destroying generalisation. |
 
-> **Key insight:** *No matter the degree*, the polynomial only approximates $\sin(x)$ well within the region it has seen. This principle extends to all neural-network-based AI — including Large Language Models — which perform well on tasks similar to their training data but can produce plausible-sounding nonsense ("hallucinations") on topics outside that distribution.
+> **Key insight:** *No matter the degree*, the polynomial only approximates $\sin(x)$ well within the region it has seen. This principle extends to all neural-network-based AI, including Large Language Models, which perform well on tasks similar to their training data but can produce plausible-sounding nonsense ("hallucinations") on topics outside that distribution.
 
 ### Runge's Phenomenon
 
@@ -149,8 +149,8 @@ Without constraints, the weight vector $\mathbf{w}$ can explode to enormous valu
 
 | Method | Penalty | Effect |
 |--------|---------|--------|
-| **L1 — Lasso** (first described by \citeauthor{tibshirani1996lasso} in \citeyear{tibshirani1996lasso}) | $\lambda \displaystyle\sum_{j} \lvert w_j \rvert$ | Drives unimportant weights to **exactly zero** → automatic feature selection. |
-| **L2 — Ridge** (first described by \citeauthor{hoerl1970ridge} in \citeyear{hoerl1970ridge}) | $\lambda \displaystyle\sum_{j} w_j^{2}$ | Shrinks all weights toward zero → produces a **smoother** curve. |
+| **L1, Lasso** (first described by \citeauthor{tibshirani1996lasso} in \citeyear{tibshirani1996lasso}) | $\lambda \displaystyle\sum_{j} \lvert w_j \rvert$ | Drives unimportant weights to **exactly zero** → automatic feature selection. |
+| **L2, Ridge** (first described by \citeauthor{hoerl1970ridge} in \citeyear{hoerl1970ridge}) | $\lambda \displaystyle\sum_{j} w_j^{2}$ | Shrinks all weights toward zero → produces a **smoother** curve. |
 
 The regularised losses therefore become:
 
@@ -164,7 +164,7 @@ $$
 
 Introduced in \citeyear{srivastava2014dropout} by Nitish Srivastava et al. in \citetitle{srivastava2014dropout}, **Dropout** randomly zeroes out a fraction of the layer's inputs during each training step, forcing the network to learn redundant representations rather than relying on any single feature.
 
-**Concrete example — 50 % Dropout:**
+**Concrete example, 50 % Dropout:**
 
 $$
 \text{Original inputs} = \begin{pmatrix} 2.0 & 4.0 & 8.0 & 16.0 \end{pmatrix}
@@ -172,7 +172,7 @@ $$
 \begin{pmatrix} 2.0 & \mathbf{0} & \mathbf{0} & 16.0 \end{pmatrix}
 $$
 
-Because the model must learn the pattern with only *partial* information at every step, the resulting approximation is far more robust — and far less likely to "freak out" when it leaves the training window. The trade-off: dropout requires **more training data** and **longer training** to converge.
+Because the model must learn the pattern with only *partial* information at every step, the resulting approximation is far more robust, and far less likely to "freak out" when it leaves the training window. The trade-off: dropout requires **more training data** and **longer training** to converge.
 
 ### Over- and Underfitting in LLMs & Modern AI
 
@@ -181,11 +181,11 @@ The curve's behaviour outside the blue box mirrors a core challenge of modern AI
 **Symptoms:**
 * Within familiar patterns (*interpolation*), LLMs appear brilliant.
 * On novel logic puzzles or niche topics (*extrapolation*), they *hallucinate*: much like the red line, they invent facts that fit the statistical pattern but have no basis in reality.
-* The root cause is identical — the model has no concept of the underlying "periodicity" or universal truth; it only sees the local trend of its training window.
+* The root cause is identical, the model has no concept of the underlying "periodicity" or universal truth; it only sees the local trend of its training window.
 
 **Technical mitigation:**
 * **Regularisation** (L1 / L2) penalises overly complex internal representations, keeping the model's "curve" smoother in uncharted territory.
 * **Dropout** prevents co-adaptation of features, improving robustness to distribution shift.
-* Together, they ensure the model does not "chase the noise" (high variance), which is precisely what makes high-degree polynomials — and over-parameterised neural networks — so erratic at the edges.
+* Together, they ensure the model does not "chase the noise" (high variance), which is precisely what makes high-degree polynomials, and over-parameterised neural networks, so erratic at the edges.
 
 </div>
