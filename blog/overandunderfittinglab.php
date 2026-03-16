@@ -159,7 +159,7 @@ $$
 
 ### Dropout
 
-**Dropout**, as introduced by *Nitish Srivastava et al.* \citeyear{srivastava2014dropout} in \citetitle{srivastava2014dropout}, randomly zeroes out a fraction of the layer's inputs during each training step, forcing the network to learn redundant representations rather than relying on any single feature.
+**Dropout**, as introduced by *Nitish Srivastava et al.* in \citeyear{srivastava2014dropout} in their work \citetitle{srivastava2014dropout}, randomly zeroes out a fraction of the layer's inputs during each training step, forcing the network to learn redundant representations rather than relying on any single feature.
 
 **Concrete example, 50 % Dropout:**
 
