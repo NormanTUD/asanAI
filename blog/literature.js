@@ -1,4 +1,10 @@
 window.bibData = {
+	"hornik1989universal": {
+		url: "https://www.cs.cmu.edu/~epxing/Class/10715/reading/Kornick_et_al.pdf",
+		title: "Multilayer Feedforward Networks are Universal Approximators",
+		year: 1989,
+		author: "Kurt Hornik"
+	},
 	"statisticsofextremes": {
 		year: 1958,
 		url: "https://archive.org/details/statisticsofextr0000gumb",

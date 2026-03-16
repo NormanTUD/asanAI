@@ -1,13 +1,15 @@
 const FittingLab = {
     // ── Configuration ──────────────────────────────────────────
     trainRange: [0, 6],
-    viewRange: [-4, 10],
-    numPoints: 40,
-    noiseStdDev: 0.15,          // NEW: visible noise so dots don't sit on the curve
+    viewRange:  [-4, 10],
+    numPoints:  40,
+    numTestPoints: 25,
+    noiseStdDev: 0.15,
+    lambda: 0.0,                // L2 regularisation strength
     isTraining: false,
     model: null,
-    epochCount: 0,              // NEW: running epoch counter
-    data: { xTrain: [], yTrain: [], xTrue: [], yTrue: [] },
+    epochCount: 0,
+    data: { xTrain: [], yTrain: [], xTest: [], yTest: [], xTrue: [], yTrue: [] },
 
     // ── Bootstrap ──────────────────────────────────────────────
     init: function () {
@@ -32,7 +34,7 @@ const FittingLab = {
             rebuild();
         };
 
-        // Noise slider (NEW)
+        // Noise slider
         const noiseSlider = document.getElementById('slider-noise');
         if (noiseSlider) {
             noiseSlider.oninput = (e) => {
@@ -43,21 +45,36 @@ const FittingLab = {
             };
         }
 
+        // Lambda slider (L2 regularisation)
+        const lambdaSlider = document.getElementById('slider-lambda');
+        if (lambdaSlider) {
+            lambdaSlider.oninput = (e) => {
+                this.lambda = parseFloat(e.target.value);
+                document.getElementById('label-lambda').innerText =
+                    this.lambda.toFixed(3);
+                // Rebuild model with new lambda (recompile needed)
+                this.epochCount = 0;
+                this.updateEpochDisplay();
+                if (this.isTraining) this.trainLoop();
+                else this.updateModelAndPlot();
+            };
+        }
+
         // Train / Stop button
         const btn = document.getElementById('btn-toggle-train');
         btn.onclick = () => {
             this.isTraining = !this.isTraining;
-            btn.innerText  = this.isTraining ? '🛑 Stop Training' : '🚀 Start Training';
+            btn.innerText      = this.isTraining ? '🛑 Stop Training' : '🚀 Start Training';
             btn.style.background = this.isTraining ? '#ef4444' : '#22c55e';
             if (this.isTraining) this.trainLoop();
         };
 
-        // Reset button (NEW)
+        // Reset button
         const resetBtn = document.getElementById('btn-reset');
         if (resetBtn) {
             resetBtn.onclick = () => {
                 this.isTraining = false;
-                btn.innerText = '🚀 Start Training';
+                btn.innerText      = '🚀 Start Training';
                 btn.style.background = '#22c55e';
                 this.epochCount = 0;
                 this.updateEpochDisplay();
@@ -68,7 +85,7 @@ const FittingLab = {
 
     // ── Data Generation ────────────────────────────────────────
     generateData: function () {
-        this.data = { xTrain: [], yTrain: [], xTrue: [], yTrue: [] };
+        this.data = { xTrain: [], yTrain: [], xTest: [], yTest: [], xTrue: [], yTrue: [] };
 
         // Dense ground-truth curve across the full view
         for (let x = this.viewRange[0]; x <= this.viewRange[1]; x += 0.1) {
@@ -83,6 +100,15 @@ const FittingLab = {
             const noise = this.noiseStdDev * this._randn();
             this.data.xTrain.push(x);
             this.data.yTrain.push(Math.sin(x) + noise);
+        }
+
+        // Held-out test samples inside the training window (never used for training)
+        for (let i = 0; i < this.numTestPoints; i++) {
+            const x = this.trainRange[0] +
+                      Math.random() * (this.trainRange[1] - this.trainRange[0]);
+            const noise = this.noiseStdDev * this._randn();
+            this.data.xTest.push(x);
+            this.data.yTest.push(Math.sin(x) + noise);
         }
     },
 
@@ -105,6 +131,19 @@ const FittingLab = {
         });
     },
 
+    // ── Custom L2 Loss ─────────────────────────────────────────
+    _makeL2Loss: function () {
+        const self = this;
+        return (yTrue, yPred) => {
+            const mse = tf.losses.meanSquaredError(yTrue, yPred);
+            if (self.lambda <= 0) return mse;
+            // Sum of squared weights
+            const kernel = self.model.layers[0].getWeights()[0];
+            const l2     = kernel.square().sum().mul(tf.scalar(self.lambda));
+            return mse.add(l2);
+        };
+    },
+
     // ── Model (Re-)Initialisation + First Plot ────────────────
     updateModelAndPlot: async function () {
         const degree = parseInt(document.getElementById('slider-degree').value);
@@ -118,22 +157,36 @@ const FittingLab = {
         }));
         this.model.compile({
             optimizer: tf.train.adam(0.01),
-            loss: 'meanSquaredError',
+            loss: this._makeL2Loss(),
         });
 
-        // Compute initial loss
-        tf.tidy(() => {
-            const xt     = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
-            const yt     = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
-            const inputs = this.expand(xt, degree);
-            const preds  = this.model.predict(inputs);
-            const mse    = tf.losses.meanSquaredError(yt, preds);
-            document.getElementById('loss-train').innerText =
-                mse.dataSync()[0].toFixed(6);
-        });
-
+        // Compute initial losses
+        this._updateLossDisplays(degree);
         this.updateEquation(degree);
         await this.visualize();
+    },
+
+    // ── Loss Display Helper ────────────────────────────────────
+    _updateLossDisplays: function (degree) {
+        tf.tidy(() => {
+            // Training loss
+            const xt      = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
+            const yt      = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
+            const inputs  = this.expand(xt, degree);
+            const preds   = this.model.predict(inputs);
+            const mseTr   = tf.losses.meanSquaredError(yt, preds);
+            document.getElementById('loss-train').innerText =
+                mseTr.dataSync()[0].toFixed(6);
+
+            // Test loss (pure MSE, no regularisation penalty)
+            const xte     = tf.tensor2d(this.data.xTest, [this.data.xTest.length, 1]);
+            const yte     = tf.tensor2d(this.data.yTest, [this.data.yTest.length, 1]);
+            const tInputs = this.expand(xte, degree);
+            const tPreds  = this.model.predict(tInputs);
+            const mseTe   = tf.losses.meanSquaredError(yte, tPreds);
+            document.getElementById('loss-test').innerText =
+                mseTe.dataSync()[0].toFixed(6);
+        });
     },
 
     // ── Training Loop ──────────────────────────────────────────
@@ -141,6 +194,12 @@ const FittingLab = {
         if (!this.isTraining) return;
 
         const degree = parseInt(document.getElementById('slider-degree').value);
+
+        // Rebuild model if lambda changed (need fresh compile)
+        if (this.epochCount === 0) {
+            await this.updateModelAndPlot();
+        }
+
         const xt     = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
         const yt     = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
         const inputs = this.expand(xt, degree);
@@ -148,16 +207,14 @@ const FittingLab = {
         const BATCH_EPOCHS = 15;
 
         while (this.isTraining) {
-            const h = await this.model.fit(inputs, yt, {
+            await this.model.fit(inputs, yt, {
                 epochs: BATCH_EPOCHS,
                 verbose: 0,
             });
             this.epochCount += BATCH_EPOCHS;
             this.updateEpochDisplay();
 
-            document.getElementById('loss-train').innerText =
-                h.history.loss[h.history.loss.length - 1].toFixed(6);
-
+            this._updateLossDisplays(degree);
             this.updateEquation(degree);
             await this.visualize();
             await tf.nextFrame();
@@ -169,9 +226,9 @@ const FittingLab = {
     // ── Visualisation ──────────────────────────────────────────
     visualize: async function () {
         const degree = parseInt(document.getElementById('slider-degree').value);
-        const xT    = tf.tensor2d(this.data.xTrue, [this.data.xTrue.length, 1]);
-        const feats = this.expand(xT, degree);
-        const yPred = this.model.predict(feats).dataSync();
+        const xT     = tf.tensor2d(this.data.xTrue, [this.data.xTrue.length, 1]);
+        const feats  = this.expand(xT, degree);
+        const yPred  = this.model.predict(feats).dataSync();
         this.renderPlot(Array.from(yPred));
         tf.dispose([xT, feats]);
     },
@@ -202,7 +259,7 @@ const FittingLab = {
         if (window.refreshMath) refreshMath('#equation-monitor');
     },
 
-    // ── Epoch Counter (NEW) ────────────────────────────────────
+    // ── Epoch Counter ──────────────────────────────────────────
     updateEpochDisplay: function () {
         const el = document.getElementById('epoch-count');
         if (el) el.innerText = this.epochCount;
@@ -218,6 +275,14 @@ const FittingLab = {
                 mode: 'markers',
                 name: 'Training Data (Noisy)',
                 marker: { color: '#1e293b', size: 5, opacity: 0.7 },
+            },
+            // Test data scatter (held-out, never trained on)
+            {
+                x: this.data.xTest,
+                y: this.data.yTest,
+                mode: 'markers',
+                name: 'Test Data (Held Out)',
+                marker: { color: '#22c55e', size: 6, opacity: 0.6, symbol: 'diamond' },
             },
             // Ground truth
             {
@@ -295,7 +360,7 @@ function _oufLazyCreateObserver() {
                 }
             });
         },
-        { rootMargin: rootMargin }, // uses the already-defined global const
+        { rootMargin: rootMargin },
     );
 
     _oufLazyRegistry.forEach((r) => {
@@ -304,7 +369,7 @@ function _oufLazyCreateObserver() {
 }
 
 // ============================================================
-//  PUBLIC ENTRY POINT (drop-in replacement)
+//  PUBLIC ENTRY POINT
 // ============================================================
 
 async function loadOverAndUnderFittingModule() {
