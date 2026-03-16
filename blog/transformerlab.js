@@ -5629,38 +5629,249 @@ function tled_syncTableFromSpace() {
     });
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   setVisualizationMode — gorgeous edition
+   ═══════════════════════════════════════════════════════════════════════ */
 function setVisualizationMode(mode) {
-	const savedScrollY = window.scrollY;
-	const savedScrollX = window.scrollX;
+  const savedScrollY = window.scrollY;
+  const savedScrollX = window.scrollX;
 
-	window.tlabVisualizationMode = mode;
+  window.tlabVisualizationMode = mode;
 
-	const trainBtn = document.getElementById('view-toggle-train');
-	const inferBtn = document.getElementById('view-toggle-inference');
+  const trainBtn = document.getElementById('view-toggle-train');
+  const inferBtn = document.getElementById('view-toggle-inference');
 
-	if (trainBtn && inferBtn) {
-		const isTrain = mode === 'train';
-		trainBtn.style.background = isTrain ? '#3b82f6' : '#1f2937';
-		trainBtn.style.color      = isTrain ? '#ffffff' : '#9ca3af';
-		inferBtn.style.background = isTrain ? '#1f2937' : '#3b82f6';
-		inferBtn.style.color      = isTrain ? '#9ca3af' : '#ffffff';
-		trainBtn.style.border = isTrain ? '1px solid #3b82f6' : '1px solid #374151';
-		inferBtn.style.border = isTrain ? '1px solid #374151' : '1px solid #3b82f6';
-	}
+  if (trainBtn && inferBtn) {
+    const t = mode === 'train';
+    trainBtn.style.background = t ? '#3b82f6' : '#1f2937';
+    trainBtn.style.color      = t ? '#ffffff' : '#9ca3af';
+    inferBtn.style.background = t ? '#1f2937' : '#3b82f6';
+    inferBtn.style.color      = t ? '#9ca3af' : '#ffffff';
+    trainBtn.style.border     = t ? '1px solid #3b82f6' : '1px solid #374151';
+    inferBtn.style.border     = t ? '1px solid #374151' : '1px solid #3b82f6';
+  }
 
-	run_transformer_demo();
+  _gracefulModeTransition(
+    () => {
+      run_transformer_demo();
+      window.scrollTo(savedScrollX, savedScrollY);
+    },
+    () => window.scrollTo(savedScrollX, savedScrollY)
+  );
+}
 
-	// Restore immediately after synchronous DOM mutations
-	window.scrollTo(savedScrollX, savedScrollY);
 
-	// Restore again after first paint (Plotly/ECharts async renders)
-	requestAnimationFrame(() => {
-		window.scrollTo(savedScrollX, savedScrollY);
-		// And once more after layout stabilizes from deferred renders
-		requestAnimationFrame(() => {
-			window.scrollTo(savedScrollX, savedScrollY);
-		});
-	});
+/* ═══════════════════════════════════════════════════════════════════════
+   Choreographer:  fade-in  →  work while opaque  →  fade-out + reveal
+   ═══════════════════════════════════════════════════════════════════════ */
+function _gracefulModeTransition(heavyWork, afterSettle) {
+  let executed = false;
+
+  // Kill stale overlay from rapid clicks
+  const stale = document.getElementById('tlab-mode-overlay');
+  if (stale) stale.remove();
+
+  // ── Build overlay ────────────────────────────────────────────
+  const ov = document.createElement('div');
+  ov.id = 'tlab-mode-overlay';
+  ov.style.cssText = `
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
+  `;
+
+  ov.innerHTML = `
+    <div class="tlab-ob" style="
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%,
+          rgba(30, 58, 138, 0.25) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 80% at 70% 60%,
+          rgba(99, 102, 241, 0.12) 0%, transparent 60%),
+        linear-gradient(160deg,
+          rgba(15, 23, 42, 0.92) 0%,
+          rgba(15, 23, 42, 0.97) 100%);
+      backdrop-filter: blur(16px) saturate(1.5);
+      -webkit-backdrop-filter: blur(16px) saturate(1.5);
+    "></div>
+    <div class="tlab-oc" style="
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      transform: translateY(8px) scale(0.96);
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s,
+                  opacity  0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s;
+    ">
+      <div class="tlab-orb-wrap" style="
+        position: relative; width: 56px; height: 56px; margin: 0 auto 20px;
+      ">
+        <div class="tlab-orb-ring" style="
+          position: absolute; inset: 0; border-radius: 50%;
+          border: 1.5px solid rgba(96, 165, 250, 0.25);
+          animation: tlab-ripple 2.8s ease-out infinite;
+        "></div>
+        <div class="tlab-orb-ring" style="
+          position: absolute; inset: 0; border-radius: 50%;
+          border: 1.5px solid rgba(96, 165, 250, 0.25);
+          animation: tlab-ripple 2.8s ease-out infinite 0.7s;
+        "></div>
+        <div class="tlab-orb-ring" style="
+          position: absolute; inset: 0; border-radius: 50%;
+          border: 1.5px solid rgba(96, 165, 250, 0.25);
+          animation: tlab-ripple 2.8s ease-out infinite 1.4s;
+        "></div>
+        <div class="tlab-orb-core" style="
+          position: absolute; inset: 12px; border-radius: 50%;
+          background: radial-gradient(circle at 38% 32%,
+            rgba(147, 197, 253, 0.95),
+            rgba(59, 130, 246, 0.7) 55%,
+            rgba(37, 99, 235, 0.35) 100%);
+          box-shadow:
+            0 0 24px 4px rgba(59, 130, 246, 0.35),
+            0 0 80px 8px rgba(59, 130, 246, 0.10),
+            inset 0 -3px 6px rgba(30, 64, 175, 0.3);
+          animation: tlab-breathe 2.4s ease-in-out infinite;
+        "></div>
+      </div>
+      <div class="tlab-ol" style="
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(148, 163, 184, 0.9);
+      ">Updating view</div>
+    </div>`;
+
+  document.body.appendChild(ov);
+
+  // ── Inject keyframes if missing ──────────────────────────────
+  if (!document.getElementById('tlab-kf')) {
+    const kf = document.createElement('style');
+    kf.id = 'tlab-kf';
+    kf.textContent = `
+      @keyframes tlab-ripple {
+        0%   { transform: scale(0.5); opacity: 0.9; }
+        100% { transform: scale(2.6); opacity: 0;   }
+      }
+      @keyframes tlab-breathe {
+        0%, 100% { transform: scale(1);    opacity: 0.85; }
+        50%      { transform: scale(1.12); opacity: 1;    }
+      }
+      @keyframes tlab-shimmer {
+        0%   { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+    `;
+    document.head.appendChild(kf);
+  }
+
+  // ── Phase 1 — Fade IN ────────────────────────────────────────
+  // Force reflow so browser registers opacity:0 BEFORE we set 1
+  void ov.offsetHeight;
+
+  ov.style.opacity = '1';
+
+  // Animate inner card up
+  const card = ov.querySelector('.tlab-oc');
+  if (card) {
+    card.style.transform = 'translateY(0) scale(1)';
+    card.style.opacity = '1';
+  }
+
+  // ── Phase 2 — Execute work when fully opaque ─────────────────
+  const run = () => {
+    if (executed) return;
+    executed = true;
+
+    // Do the heavy DOM work — user can't see it behind the overlay
+    heavyWork();
+
+    // Tag content sections for stagger reveal
+    const sections = _getRevealTargets();
+    sections.forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(16px)';
+      el.style.transition = 'none';
+    });
+
+    // ── Phase 3 — Fade OUT + stagger reveal ──────────────────
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (afterSettle) afterSettle();
+
+        // Fade out overlay
+        ov.style.opacity = '0';
+        if (card) {
+          card.style.transform = 'translateY(-8px) scale(0.98)';
+          card.style.opacity = '0';
+        }
+
+        // Stagger reveal each section
+        sections.forEach((el, i) => {
+          setTimeout(() => {
+            el.style.transition =
+              'opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), ' +
+              'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+
+            // Clean up inline styles after animation
+            const cleanup = () => {
+              el.style.removeProperty('opacity');
+              el.style.removeProperty('transform');
+              el.style.removeProperty('transition');
+            };
+            el.addEventListener('transitionend', cleanup, { once: true });
+            setTimeout(cleanup, 600);
+          }, i * 60);
+        });
+
+        // Remove overlay after fade
+        const removeOverlay = () => { if (ov.parentNode) ov.remove(); };
+        ov.addEventListener('transitionend', (e) => {
+          if (e.target === ov) removeOverlay();
+        }, { once: true });
+        setTimeout(removeOverlay, 1000);
+      });
+    });
+  };
+
+  // Fire when fade-in transition ends
+  ov.addEventListener('transitionend', (e) => {
+    if (e.target === ov && e.propertyName === 'opacity') run();
+  }, { once: true });
+
+  // Safety net
+  setTimeout(run, 500);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Gather content sections to stagger-reveal
+   — Adjust selectors to match your layout
+   ═══════════════════════════════════════════════════════════════════════ */
+function _getRevealTargets() {
+  const candidates = document.querySelectorAll([
+    '.transformer-container > *',
+    '.transformer-section',
+    '.plot-container',
+    '.equation-block',
+    '.equation-container',
+    '[id$="-plot"]',
+    '[id$="-equations"]'
+  ].join(','));
+
+  return Array.from(candidates).slice(0, 20);
 }
 
 function _render_h1_logic_core(containerIds, h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings, naming) {
