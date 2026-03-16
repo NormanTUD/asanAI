@@ -91,7 +91,7 @@ $$
     </div>
 </div>
 
-<div id="equation-monitor" style="margin-bottom:12px;">
+<div id="equation-monitor" style="margin-bottom:12px; width: 100%; overflow: auto; padding-bottom: 14px;">
     $$\dots$$
 </div>
 
