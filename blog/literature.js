@@ -1,9 +1,21 @@
 window.bibData = {
+	"hume1739treatise": {
+		author: "David Hume",
+		year: 1739,
+		url: "https://davidhume.org/texts/t/",
+		title: "A Treatise of Human Nature"
+	},
 	"tononi2004iit": {
 		url: "https://pubmed.ncbi.nlm.nih.gov/15522121/",
 		title: "An information integration theory of consciousness",
 		year: 2004,
 		author: "Giulio Tononi"
+	},
+	"rosenthal2005hot": {
+		url: "https://www.davidrosenthal.org/DR-Vienna.pdf",
+		author: "David M. Rosenthal",
+		year: 2005,
+		title: "Consciousness, Interpretation, and Higher-Order-Thought"
 	},
 	"earlyl2": {
 		url: "https://cs.uwaterloo.ca/~y328yu/classics/Tikhonov43.pdf",
