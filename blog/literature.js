@@ -1,4 +1,10 @@
 window.bibData = {
+	"earlyl2": {
+		url: "https://cs.uwaterloo.ca/~y328yu/classics/Tikhonov43.pdf",
+		author: "Andrej Nikolaevič Tichonov",
+		title: "On the Stability of Inverse Problems",
+		year: 1943
+	},
 	"hornik1989universal": {
 		url: "https://www.cs.cmu.edu/~epxing/Class/10715/reading/Kornick_et_al.pdf",
 		title: "Multilayer Feedforward Networks are Universal Approximators",

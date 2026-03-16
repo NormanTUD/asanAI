@@ -245,7 +245,7 @@ $$
 
 <div class="optional md" data-headline="The History of Regularisation">
 
-The idea of penalising solution complexity predates machine learning by decades. **Andrey Tikhonov** (1943) independently developed what we now call L2 regularisation in the context of solving ill-posed integral equations, problems where small perturbations in the input cause enormous changes in the output. In statistics, \citeauthor{hoerl1970ridge} and Kennard reintroduced the technique in \citeyear{hoerl1970ridge} as **Ridge Regression**. \citeauthor{tibshirani1996lasso}'s **LASSO** (\citeyear{tibshirani1996lasso}) added the L1 variant, whose key innovation was producing *sparse* solutions, models that automatically ignore irrelevant features by setting their weights to exactly zero.
+The idea of penalising solution complexity predates machine learning by decades. **\citeauthor{earlyl2}** (\citeyear{earlyl2}) independently developed what we now call L2 regularisation in the context of solving ill-posed integral equations, problems where small perturbations in the input cause enormous changes in the output. In statistics, \citeauthor{hoerl1970ridge} and Kennard reintroduced the technique in \citeyear{hoerl1970ridge} as **Ridge Regression**. \citeauthor{tibshirani1996lasso}'s **LASSO** (\citeyear{tibshirani1996lasso}) added the L1 variant, whose key innovation was producing *sparse* solutions, models that automatically ignore irrelevant features by setting their weights to exactly zero.
 
 </div>
 
