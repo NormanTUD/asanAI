@@ -1,4 +1,10 @@
 window.bibData = {
+	"acrophonic": {
+		author: "Alan Gardiner",
+		year: 1916,
+		title: "The Egyptian Origin of the Semitic Alphabet",
+		url: "https://www.jstor.org/stable/3853586"
+	},
 	"dualitypattern": {
 		title: "Éléments de linguistique générale",
 		year: 1960,

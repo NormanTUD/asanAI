@@ -96,10 +96,12 @@ By 3200 BCE in Mesopotamia, pictograms evolved into **Cuneiform**, characterized
 * **Mathematical Formalization:** Later, scholars like Pāṇini (ca. 4th Century BCE) developed the *Ashtadhyayi*, a set of formal rules for Sanskrit that functioned like a generative logic for language, mirroring the structured way we treat language in modern computing.
 
 This trajectory from biological vibrations to physical tokens, and finally to abstract geometry, forms the foundation for how modern systems now process meaning.
+</div>
 
-## The Acrophonic Principle
+<div class="optional md" data-headline="The Acrophonic Principle">
+First described by \citeauthor{acrophonic} in \citeyear{acrophonic}, this is how the alphabet was actually derived. The Phoenician letter *aleph* (𐤀) originally depicted an *ox* head (the word for *ox* was *ʾalp*).
 
-This is how the alphabet was actually derived. The Phoenician letter aleph (𐤀) originally depicted an ox head (the word for ox was ʾalp). Over time, the picture was stripped of its meaning and retained only the first phoneme, /ʔ/ (a glottal stop). Similarly, bet (𐤁) was a house (bayt), reduced to /b/. The Greek adaptation turned aleph into alpha (Α) and bet into beta (Β), giving us the word "alphabet" itself.Where the Rebus Principle says "use the whole sound of a word," the Acrophonic Principle says "use only the first sound." It's a further compression, and it's the specific mechanism by which the Phoenician abjad was created from earlier pictographic systems.
+Over time, the picture was stripped of its meaning and retained only the first phoneme, /ʔ/ (a glottal stop). Similarly, bet (𐤁) was a *house* (*bayt*), reduced to /b/. The Greek adaptation turned *aleph* into *alpha* (Α) and bet into beta (Β), giving us the word "alphabet" itself. Where the Rebus Principle says "use the whole sound of a word," the Acrophonic Principle says "use only the first sound." It's a further compression, and it's the specific mechanism by which the Phoenician abjad was created from earlier pictographic systems.
 </div>
 
 <div class="optional md" data-headline="The Principle of Duality of Patterning">
