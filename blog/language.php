@@ -113,6 +113,24 @@ First descirbed by \citeauthor{dualitypattern} in \citeyear{dualitypattern}, hum
 No animal communication system has this. A vervet monkey's eagle alarm call is a single, indivisible unit, you can't rearrange its "phonemes" to make a new call. But in human language, the same ~40 phonemes can generate an infinite vocabulary.
 </div>
 
+<div class="optional md" data-headline="The Principle of Arbitrariness">
+First formalized by \citeauthor{saussure1916} in \citeyear{saussure1916}, the Principle of Arbitrariness states that there is no natural, intrinsic connection between a word and its meaning. The word "dog" does not look, sound, or feel like a dog — the link between the *signifier* (the sound-image "dog") and the *signified* (the concept of a dog) is a pure social convention. Saussure called this the "arbitrariness of the sign," and it applies at every level: the phonemes that make up a word, the morphemes that compose it, and the syntactic rules that govern its use are all products of historical accident and communal agreement, not physical necessity.
+
+This principle is the theoretical reason that embeddings work at all. If words had fixed, intrinsic meanings anchored to their sounds or shapes, we could deduce semantics from phonetics alone. But precisely *because* the relationship between form and meaning is arbitrary, meaning can only be recovered from *patterns of use* — which is exactly what Firth's distributional hypothesis proposes and what a Transformer's attention mechanism computes. Arbitrariness is the problem; statistical learning over context is the solution.
+</div>
+
+<div class="optional md" data-headline="The Principle of Economy (Zipf's Law)">
+First described by \citeauthor{zipf1949human} in \citeyear{zipf1949human}, the Principle of Economy observes that in any natural language corpus, the frequency of a word is inversely proportional to its rank. The most common word ("the") appears roughly twice as often as the second most common ("of"), three times as often as the third ("and"), and so on. This is not a coincidence — it reflects a deep optimization pressure: speakers minimize articulatory effort by assigning the shortest, most accessible forms to the most frequent meanings, while rare concepts are expressed with longer, more complex words.
+
+This principle operates at every scale of the history of writing. Cuneiform signs for common words were simplified more aggressively than rare ones. The Phoenician alphabet itself is an act of economy — 22 signs instead of hundreds. And modern Byte-Pair Encoding tokenization is Zipf's Law made algorithmic: frequent subwords like "the" or "ing" earn their own token IDs, while rare strings are decomposed into smaller pieces. When we say that a tokenizer balances "vocabulary size against expressiveness," we are describing Zipf's tradeoff between effort and precision — a tradeoff that human languages have been optimizing for millennia.
+</div>
+
+<div class="optional md" data-headline="The Principle of Iconicity">
+While Saussure emphasized arbitrariness, writing systems almost always begin at the opposite pole: **iconicity**, the principle that a symbol's form *resembles* its referent. The earliest Sumerian sign for "ox" was a recognizable sketch of an ox head; the sign for "water" depicted wavy lines. Even the Phoenician alphabet, as the Acrophonic Principle describes, began with iconic pictograms — *aleph* looked like an ox, *bet* looked like a house — before those pictures were stripped down to abstract letterforms.
+
+This trajectory from iconic to arbitrary is not a single historical event but a recurring, universal pattern. Chinese characters began as oracle bone pictographs and gradually became the abstract strokes of modern *hanzi*. Egyptian hieroglyphs started as vivid animal and object drawings and ended as the cursive shorthand of Demotic script. In every case, the driving force is the same: as a writing system is used more frequently and by more people, speed and economy overwhelm fidelity to appearance. Iconicity is the *starting condition* of every writing system; arbitrariness is the *attractor state* it evolves toward. Understanding this arc — from picture to abstraction, from resemblance to convention — is essential for understanding why modern embeddings, which encode meaning as directions in a featureless vector space, represent the logical endpoint of a process that began with a Sumerian farmer scratching an ox into wet clay.
+</div>
+
 <div class="md">
 ## Conclusion: 135,000 Years in a Single Thread
 </div>
