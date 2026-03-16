@@ -1748,6 +1748,7 @@ function addConsoleEasterEggs() {
 
 	console.log('%c🤓 Hey, you opened DevTools.', styles);
 	console.log('%cThat means you\'re curious. We like curious.', sub);
+	console.log('%cThe full source code is available at https://github.com/NormanTUD/asanAI/tree/master/blog', sub);
 
 	const tips = [
 		"The backpropagation algorithm was independently discovered at least 3 times before it became famous.",
