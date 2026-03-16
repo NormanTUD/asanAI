@@ -43,6 +43,8 @@ This trajectory eventually crossed from the physical to the cognitive. As identi
 
 The Lebombo bone, a baboon fibula discovered by \citeauthor{lebomboboneoriginal} in \citeyear{lebomboboneoriginal} in the Lebombo Mountains of Eswatini and dated to approximately 35,000-40,000 BCE, represents the earliest known instance of "outsourcing mathematical thought to physical objects". Featuring 29 distinct notches, the artifact is widely interpreted as a tally stick or lunar calendar used to track the moon's phases or menstrual cycles. As a foundational example of "spatial abstraction," it serves as a prehistoric precursor to modern computation by mapping abstract numbers onto a physical medium.
 
+It can be thought of as the earliest surviving external memory of early humans.
+
 #### The Ishango Bone
 <figure style="float: right; width: 30%; max-width: 200px; margin: 0 0 1em 1em;">
     <img style="width: 100%; height: auto; display: block;" src="ishango.jpg" alt="Ishango Bone" />
