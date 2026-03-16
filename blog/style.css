@@ -2928,3 +2928,138 @@ blockquote,
 #astro-sigma {
     width: 200px;
 }
+
+/* ── Overlay root ─────────────────────────────────────────────── */
+#tlab-mode-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+	will-change: opacity;
+}
+
+/* ── Backdrop ─────────────────────────────────────────────────── */
+#tlab-mode-overlay .tlab-ob {
+	position: absolute;
+	inset: 0;
+	background:
+	radial-gradient(ellipse 80% 60% at 50% 40%,
+	rgba(30, 58, 138, 0.25) 0%,
+	transparent 70%),
+	radial-gradient(ellipse 60% 80% at 70% 60%,
+	rgba(99, 102, 241, 0.12) 0%,
+	transparent 60%),
+	linear-gradient(
+	160deg,
+	rgba(15, 23, 42, 0.92) 0%,
+	rgba(15, 23, 42, 0.97) 100%);
+	backdrop-filter: blur(16px) saturate(1.5);
+	-webkit-backdrop-filter: blur(16px) saturate(1.5);
+}
+
+/* Subtle animated shimmer across the backdrop */
+#tlab-mode-overlay .tlab-ob::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+	120deg,
+	transparent 0%,
+	rgba(59, 130, 246, 0.04) 40%,
+	rgba(139, 92, 246, 0.04) 60%,
+	transparent 100%);
+	background-size: 200% 100%;
+	animation: tlab-shimmer 3s ease-in-out infinite;
+}
+@keyframes tlab-shimmer {
+	0%   { background-position: 200% 0; }
+	100% { background-position: -200% 0; }
+}
+
+/* ── Center content card ──────────────────────────────────────── */
+#tlab-mode-overlay .tlab-oc {
+	position: relative;
+	z-index: 1;
+	text-align: center;
+	transform: translateY(8px) scale(0.96);
+	opacity: 0;
+	transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s,
+	opacity  0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s;
+}
+#tlab-mode-overlay.tlab-visible .tlab-oc {
+	transform: translateY(0) scale(1);
+	opacity: 1;
+}
+
+/* ── Glowing orb ──────────────────────────────────────────────── */
+.tlab-orb-wrap {
+	position: relative;
+	width: 56px;
+	height: 56px;
+	margin: 0 auto 20px;
+}
+.tlab-orb-core {
+	position: absolute;
+	inset: 12px;
+	border-radius: 50%;
+	background: radial-gradient(circle at 38% 32%,
+	rgba(147, 197, 253, 0.95),
+	rgba(59, 130, 246, 0.7) 55%,
+	rgba(37, 99, 235, 0.35) 100%);
+	box-shadow:
+	0 0 24px 4px  rgba(59, 130, 246, 0.35),
+	0 0 80px 8px  rgba(59, 130, 246, 0.10),
+	inset 0 -3px 6px rgba(30, 64, 175, 0.3);
+	animation: tlab-breathe 2.4s ease-in-out infinite;
+}
+@keyframes tlab-breathe {
+	0%, 100% { transform: scale(1);    opacity: 0.85; }
+	50%      { transform: scale(1.12); opacity: 1;    }
+}
+
+/* Concentric ripple rings */
+.tlab-orb-ring {
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	border: 1.5px solid rgba(96, 165, 250, 0.2);
+	animation: tlab-ripple 2.8s ease-out infinite;
+}
+.tlab-orb-ring:nth-child(2) { animation-delay: 0.7s; }
+.tlab-orb-ring:nth-child(3) { animation-delay: 1.4s; }
+@keyframes tlab-ripple {
+	0%   { transform: scale(0.5); opacity: 0.9; }
+	100% { transform: scale(2.6); opacity: 0;   }
+}
+
+/* ── Label ────────────────────────────────────────────────────── */
+.tlab-ol {
+	font-family: 'Inter', system-ui, -apple-system, sans-serif;
+	font-size: 0.68rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	background: linear-gradient(135deg,
+	rgba(148, 163, 184, 0.9),
+	rgba(191, 219, 254, 0.7));
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+/* ── Content stagger reveal (applied after overlay lifts) ───── */
+.tlab-sr {
+	opacity: 0;
+	transform: translateY(16px);
+	transition: opacity   0.5s cubic-bezier(0.16, 1, 0.3, 1),
+	transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.tlab-sr.tlab-srd {
+	opacity: 1;
+	transform: translateY(0);
+}
