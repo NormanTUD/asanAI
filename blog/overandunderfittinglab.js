@@ -1,167 +1,278 @@
 const FittingLab = {
-	trainRange: [0, 6],     
-	viewRange: [-4, 10],    
-	numPoints: 40,
-	isTraining: false,
-	model: null,
-	data: { xTrain: [], yTrain: [], xTrue: [], yTrue: [] },
+    // ── Configuration ──────────────────────────────────────────
+    trainRange: [0, 6],
+    viewRange: [-4, 10],
+    numPoints: 40,
+    noiseStdDev: 0.15,          // NEW: visible noise so dots don't sit on the curve
+    isTraining: false,
+    model: null,
+    epochCount: 0,              // NEW: running epoch counter
+    data: { xTrain: [], yTrain: [], xTrue: [], yTrue: [] },
 
-	init: function() {
-		this.generateData();
-		this.setupListeners();
-		this.updateModelAndPlot();
-	},
+    // ── Bootstrap ──────────────────────────────────────────────
+    init: function () {
+        this.generateData();
+        this.setupListeners();
+        this.updateModelAndPlot();
+    },
 
-	setupListeners: function() {
-		const update = () => {
-			this.generateData();
-			if (this.isTraining) this.trainLoop();
-			else this.updateModelAndPlot();
-		};
+    // ── UI Wiring ──────────────────────────────────────────────
+    setupListeners: function () {
+        const rebuild = () => {
+            this.epochCount = 0;
+            this.updateEpochDisplay();
+            this.generateData();
+            if (this.isTraining) this.trainLoop();
+            else this.updateModelAndPlot();
+        };
 
-		document.getElementById('slider-degree').oninput = (e) => {
-			document.getElementById('label-degree').innerText = e.target.value;
-			update();
-		};
+        // Degree slider
+        document.getElementById('slider-degree').oninput = (e) => {
+            document.getElementById('label-degree').innerText = e.target.value;
+            rebuild();
+        };
 
-		const btn = document.getElementById('btn-toggle-train');
-		btn.onclick = () => {
-			this.isTraining = !this.isTraining;
-			btn.innerText = this.isTraining ? "🛑 Stop Training" : "🚀 Start Training";
-			btn.style.background = this.isTraining ? "#ef4444" : "#22c55e";
-			if (this.isTraining) this.trainLoop();
-		};
-	},
+        // Noise slider (NEW)
+        const noiseSlider = document.getElementById('slider-noise');
+        if (noiseSlider) {
+            noiseSlider.oninput = (e) => {
+                this.noiseStdDev = parseFloat(e.target.value);
+                document.getElementById('label-noise').innerText =
+                    this.noiseStdDev.toFixed(2);
+                rebuild();
+            };
+        }
 
-	generateData: function() {
-		this.data.xTrain = [];
-		this.data.yTrain = [];
-		this.data.xTrue = [];
-		this.data.yTrue = [];
+        // Train / Stop button
+        const btn = document.getElementById('btn-toggle-train');
+        btn.onclick = () => {
+            this.isTraining = !this.isTraining;
+            btn.innerText  = this.isTraining ? '🛑 Stop Training' : '🚀 Start Training';
+            btn.style.background = this.isTraining ? '#ef4444' : '#22c55e';
+            if (this.isTraining) this.trainLoop();
+        };
 
-		for (let x = this.viewRange[0]; x <= this.viewRange[1]; x += 0.1) {
-			this.data.xTrue.push(x);
-			this.data.yTrue.push(Math.sin(x));
-		}
+        // Reset button (NEW)
+        const resetBtn = document.getElementById('btn-reset');
+        if (resetBtn) {
+            resetBtn.onclick = () => {
+                this.isTraining = false;
+                btn.innerText = '🚀 Start Training';
+                btn.style.background = '#22c55e';
+                this.epochCount = 0;
+                this.updateEpochDisplay();
+                rebuild();
+            };
+        }
+    },
 
-		for (let i = 0; i < this.numPoints; i++) {
-			const x = this.trainRange[0] + Math.random() * (this.trainRange[1] - this.trainRange[0]);
-			const y = Math.sin(x); 
-			this.data.xTrain.push(x);
-			this.data.yTrain.push(y);
-		}
-	},
+    // ── Data Generation ────────────────────────────────────────
+    generateData: function () {
+        this.data = { xTrain: [], yTrain: [], xTrue: [], yTrue: [] };
 
-	expand: function(t, degree) {
-		return tf.tidy(() => {
-			let res = t;
-			for (let i = 2; i <= degree; i++) {
-				res = tf.concat([res, t.pow(tf.scalar(i))], 1);
-			}
-			return res;
-		});
-	},
+        // Dense ground-truth curve across the full view
+        for (let x = this.viewRange[0]; x <= this.viewRange[1]; x += 0.1) {
+            this.data.xTrue.push(x);
+            this.data.yTrue.push(Math.sin(x));
+        }
 
-	updateModelAndPlot: async function() {
-		const degree = parseInt(document.getElementById('slider-degree').value);
-		if (this.model) this.model.dispose();
+        // Noisy training samples inside the training window
+        for (let i = 0; i < this.numPoints; i++) {
+            const x = this.trainRange[0] +
+                      Math.random() * (this.trainRange[1] - this.trainRange[0]);
+            const noise = this.noiseStdDev * this._randn();
+            this.data.xTrain.push(x);
+            this.data.yTrain.push(Math.sin(x) + noise);
+        }
+    },
 
-		this.model = tf.sequential();
-		this.model.add(tf.layers.dense({ 
-			units: 1, 
-			inputShape: [degree],
-			kernelInitializer: 'zeros' 
-		}));
-		this.model.compile({ optimizer: tf.train.adam(0.01), loss: 'meanSquaredError' });
+    /** Box–Muller transform for Gaussian noise */
+    _randn: function () {
+        let u = 0, v = 0;
+        while (u === 0) u = Math.random();
+        while (v === 0) v = Math.random();
+        return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    },
 
-		tf.tidy(() => {
-			const xt = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
-			const yt = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
-			const inputs = this.expand(xt, degree);
-			const preds = this.model.predict(inputs);
-			const mse = tf.losses.meanSquaredError(yt, preds);
-			document.getElementById('loss-train').innerText = mse.dataSync()[0].toFixed(6);
-		});
+    // ── Feature Expansion ──────────────────────────────────────
+    expand: function (t, degree) {
+        return tf.tidy(() => {
+            let cols = [t];
+            for (let i = 2; i <= degree; i++) {
+                cols.push(t.pow(tf.scalar(i)));
+            }
+            return tf.concat(cols, 1);
+        });
+    },
 
-		this.updateEquation(degree); 
-		await this.visualize();
-	},
+    // ── Model (Re-)Initialisation + First Plot ────────────────
+    updateModelAndPlot: async function () {
+        const degree = parseInt(document.getElementById('slider-degree').value);
+        if (this.model) this.model.dispose();
 
-	trainLoop: async function() {
-		if (!this.isTraining) return;
-		const degree = parseInt(document.getElementById('slider-degree').value);
-		const xt = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
-		const yt = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
-		const inputs = this.expand(xt, degree);
+        this.model = tf.sequential();
+        this.model.add(tf.layers.dense({
+            units: 1,
+            inputShape: [degree],
+            kernelInitializer: 'zeros',
+        }));
+        this.model.compile({
+            optimizer: tf.train.adam(0.01),
+            loss: 'meanSquaredError',
+        });
 
-		while (this.isTraining) {
-			const h = await this.model.fit(inputs, yt, { epochs: 15, verbose: 0 });
-			document.getElementById('loss-train').innerText = h.history.loss[0].toFixed(6);
-			await this.visualize();
-			this.updateEquation(degree);
-			await tf.nextFrame();
-		}
-		tf.dispose([xt, yt, inputs]);
-	},
+        // Compute initial loss
+        tf.tidy(() => {
+            const xt     = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
+            const yt     = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
+            const inputs = this.expand(xt, degree);
+            const preds  = this.model.predict(inputs);
+            const mse    = tf.losses.meanSquaredError(yt, preds);
+            document.getElementById('loss-train').innerText =
+                mse.dataSync()[0].toFixed(6);
+        });
 
-	visualize: async function() {
-		const degree = parseInt(document.getElementById('slider-degree').value);
-		const xT = tf.tensor2d(this.data.xTrue, [this.data.xTrue.length, 1]);
-		const feats = this.expand(xT, degree);
-		const yPred = this.model.predict(feats).dataSync();
-		this.renderPlot(Array.from(yPred));
-		tf.dispose([xT, feats]);
-	},
+        this.updateEquation(degree);
+        await this.visualize();
+    },
 
-	updateEquation: function(degree) {
-		const weights = this.model.layers[0].getWeights()[0].dataSync();
-		const bias = this.model.layers[0].getWeights()[1].dataSync()[0];
-		let terms = [];
-		for (let i = degree - 1; i >= 0; i--) {
-			const w = weights[i].toFixed(3);
-			terms.push(`${w}x^{${i + 1}}`);
-		}
-		let eq = `\\text{Model-Equation: } f(x) = ` + (terms.length > 0 ? terms.join(' + ') : '0') + ` + ${bias.toFixed(3)}`;
-		document.getElementById('equation-monitor').innerHTML = `$$ ${eq.replace(/\+ -/g, '- ')} $$`;
-		if (window.refreshMath) refreshMath('#equation-monitor');
-	},
+    // ── Training Loop ──────────────────────────────────────────
+    trainLoop: async function () {
+        if (!this.isTraining) return;
 
-	renderPlot: function(yPred) {
-		const traces = [
-			{
-				x: this.data.xTrue, y: this.data.yTrue,
-				mode: 'lines', name: 'Original Function (Truth)',
-				line: { dash: 'dot', color: '#94a3b8', width: 2 }
-			},
-			{
-				x: this.data.xTrue, y: yPred,
-				mode: 'lines', name: 'AI Approximation',
-				line: { color: '#ef4444', width: 3 }
-			}
-		];
+        const degree = parseInt(document.getElementById('slider-degree').value);
+        const xt     = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
+        const yt     = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
+        const inputs = this.expand(xt, degree);
 
-		const layout = {
-			shapes: [{
-				type: 'rect', xref: 'x', yref: 'paper',
-				x0: this.trainRange[0], x1: this.trainRange[1],
-				y0: 0, y1: 1, fillcolor: '#3b82f6', opacity: 0.07, line: {width: 0}
-			}],
-			xaxis: { range: this.viewRange, title: 'Input Area (The Grey Zone is what the model sees while Training)' },
-			yaxis: { range: [-2.5, 2.5], title: 'Value' },
-			margin: { t: 20, b: 50, l: 50, r: 20 },
-			legend: { orientation: 'h', y: -0.2 }
-		};
+        const BATCH_EPOCHS = 15;
 
-		Plotly.react('fitting-plot', traces, layout);
-	}
+        while (this.isTraining) {
+            const h = await this.model.fit(inputs, yt, {
+                epochs: BATCH_EPOCHS,
+                verbose: 0,
+            });
+            this.epochCount += BATCH_EPOCHS;
+            this.updateEpochDisplay();
+
+            document.getElementById('loss-train').innerText =
+                h.history.loss[h.history.loss.length - 1].toFixed(6);
+
+            this.updateEquation(degree);
+            await this.visualize();
+            await tf.nextFrame();
+        }
+
+        tf.dispose([xt, yt, inputs]);
+    },
+
+    // ── Visualisation ──────────────────────────────────────────
+    visualize: async function () {
+        const degree = parseInt(document.getElementById('slider-degree').value);
+        const xT    = tf.tensor2d(this.data.xTrue, [this.data.xTrue.length, 1]);
+        const feats = this.expand(xT, degree);
+        const yPred = this.model.predict(feats).dataSync();
+        this.renderPlot(Array.from(yPred));
+        tf.dispose([xT, feats]);
+    },
+
+    // ── Equation Monitor ───────────────────────────────────────
+    updateEquation: function (degree) {
+        const weights = this.model.layers[0].getWeights()[0].dataSync();
+        const bias    = this.model.layers[0].getWeights()[1].dataSync()[0];
+
+        let terms = [];
+        for (let i = degree - 1; i >= 0; i--) {
+            const w = weights[i].toFixed(3);
+            const power = i + 1;
+            const exponent = power === 1 ? 'x' : `x^{${power}}`;
+            terms.push(`${w}${exponent}`);
+        }
+
+        let eq =
+            `\\text{Model: }\\; f(x) = ` +
+            (terms.length ? terms.join(' + ') : '0') +
+            ` + ${bias.toFixed(3)}`;
+
+        // Clean up double-signs like "+ -"
+        eq = eq.replace(/\+ -/g, '- ');
+
+        const container = document.getElementById('equation-monitor');
+        container.innerHTML = `$$ ${eq} $$`;
+        if (window.refreshMath) refreshMath('#equation-monitor');
+    },
+
+    // ── Epoch Counter (NEW) ────────────────────────────────────
+    updateEpochDisplay: function () {
+        const el = document.getElementById('epoch-count');
+        if (el) el.innerText = this.epochCount;
+    },
+
+    // ── Plotly Rendering ───────────────────────────────────────
+    renderPlot: function (yPred) {
+        const traces = [
+            // Training data scatter
+            {
+                x: this.data.xTrain,
+                y: this.data.yTrain,
+                mode: 'markers',
+                name: 'Training Data (Noisy)',
+                marker: { color: '#1e293b', size: 5, opacity: 0.7 },
+            },
+            // Ground truth
+            {
+                x: this.data.xTrue,
+                y: this.data.yTrue,
+                mode: 'lines',
+                name: 'True Function  y = sin(x)',
+                line: { dash: 'dot', color: '#94a3b8', width: 2 },
+            },
+            // Model prediction
+            {
+                x: this.data.xTrue,
+                y: yPred,
+                mode: 'lines',
+                name: 'AI Approximation',
+                line: { color: '#ef4444', width: 3 },
+            },
+        ];
+
+        const layout = {
+            shapes: [
+                {
+                    type: 'rect', xref: 'x', yref: 'paper',
+                    x0: this.trainRange[0], x1: this.trainRange[1],
+                    y0: 0, y1: 1,
+                    fillcolor: '#3b82f6', opacity: 0.07,
+                    line: { width: 0 },
+                },
+            ],
+            xaxis: {
+                range: this.viewRange,
+                title: 'x  —  the shaded region is the training window',
+                gridcolor: '#f1f5f9',
+            },
+            yaxis: {
+                range: [-2.5, 2.5],
+                title: 'y',
+                gridcolor: '#f1f5f9',
+            },
+            plot_bgcolor: '#ffffff',
+            paper_bgcolor: '#ffffff',
+            margin: { t: 20, b: 55, l: 55, r: 20 },
+            legend: { orientation: 'h', y: -0.22 },
+        };
+
+        Plotly.react('fitting-plot', traces, layout, { responsive: true });
+    },
 };
 
 // ============================================================
-// LAZY LOADING FOR OVER AND UNDERFITTING MODULE
+//  LAZY LOADING FOR OVER- AND UNDERFITTING MODULE
 // ============================================================
 
 const _oufLazyRegistry = [];
-let _oufLazyObserver = null;
+let   _oufLazyObserver  = null;
 
 function _oufLazyRegister(elementId, initFn) {
     const el = document.getElementById(elementId);
@@ -172,38 +283,32 @@ function _oufLazyRegister(elementId, initFn) {
 function _oufLazyCreateObserver() {
     if (_oufLazyObserver) return;
 
-    _oufLazyObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
+    _oufLazyObserver = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                const match = _oufLazyRegistry.find((r) => r.el === entry.target);
+                if (match && !match.initialized) {
+                    match.initialized = true;
+                    _oufLazyObserver.unobserve(match.el);
+                    match.initFn();
+                }
+            });
+        },
+        { rootMargin: rootMargin }, // uses the already-defined global const
+    );
 
-            const match = _oufLazyRegistry.find(r => r.el === entry.target);
-            if (match && !match.initialized) {
-                match.initialized = true;
-                _oufLazyObserver.unobserve(match.el);
-                match.initFn();
-            }
-        });
-    }, {
-        rootMargin: rootMargin // uses the already-defined global const
-    });
-
-    _oufLazyRegistry.forEach(r => {
-        if (!r.initialized) {
-            _oufLazyObserver.observe(r.el);
-        }
+    _oufLazyRegistry.forEach((r) => {
+        if (!r.initialized) _oufLazyObserver.observe(r.el);
     });
 }
 
 // ============================================================
-// REPLACEMENT: loadOverAndUnderFittingModule (drop-in replacement)
+//  PUBLIC ENTRY POINT (drop-in replacement)
 // ============================================================
 
 async function loadOverAndUnderFittingModule() {
-    _oufLazyRegister('fitting-plot', () => {
-        FittingLab.init();
-    });
-
+    _oufLazyRegister('fitting-plot', () => FittingLab.init());
     _oufLazyCreateObserver();
-
     return Promise.resolve();
 }
