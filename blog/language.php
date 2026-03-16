@@ -29,6 +29,12 @@ As these symbolic tools became more refined, language transitioned from a surviv
 Once humans could decouple a "number" from a physical pile of stones, they could perform operations on the concept of quantity itself. This is the cognitive leap that separates human language from all animal communication systems. It enabled mathematics, religion, law, and eventually, the encoding of language into machines.
 </div>
 
+## 10. Oral Tradition and the Technology of Memory
+
+Between the emergence of symbolic displacement (c. 100,000 years ago) and the invention of writing (c. 3200 BCE), there stretches an immense span of roughly 97,000 years during which all human knowledge, laws, histories, genealogies, cosmologies, medical remedies, was stored, transmitted, and refined entirely within living human memory. This was not a passive or unreliable process. As scholars like Milman Parry and Albert Lord demonstrated through their study of Homeric epic and Yugoslav oral poetry, oral traditions developed sophisticated **mnemonic technologies**: formulaic phrases ("rosy-fingered dawn," "wine-dark sea"), strict metrical patterns, rhyme, parallelism, and narrative structures that made vast bodies of knowledge memorable and reproducible across generations.
+
+These were, in effect, the "compression algorithms" and "error-correction protocols" of the biological era, the software that ran on the hardware of the descended larynx and expanded working memory that your piece so eloquently describes. Including this era would fill the enormous gap in your narrative between the Blombos Cave ochre and the invention of clay tokens, and it would underscore a crucial point: long before writing externalized memory, humans had already engineered language itself into a storage medium, optimizing its structure for faithful transmission, a design pressure whose echoes can still be heard in Zipf's Law, in the redundancy patterns that Shannon would later quantify, and in the very distributional regularities that modern Transformers learn to exploit.
+
 ## From Hardware to Software: The Mechanical and Philosophical Era
 
 The dream of replicating and systematizing human language evolved through two parallel tracks, one philosophical, one mechanical, that eventually converged.
