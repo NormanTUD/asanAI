@@ -938,7 +938,8 @@ pre code {
 }
 
 .transformer_positional_embeddings {
-	max-height: 600px;
+	max-height: 250px;
+	height: 250px;
 	overflow: scroll;
 }
 
