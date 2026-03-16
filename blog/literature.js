@@ -1,4 +1,10 @@
 window.bibData = {
+	"generalizedlinearmodels": {
+		url: "https://jhanley.biostat.mcgill.ca/bios601/Likelihood/NelderWedderburn1972.pdf",
+		author: "John Ashworth Nelder and Robert William Maclagan Wedderburn",
+		year: 1972,
+		title: "Generalized Linear Model"
+	},
 	"logitorigin": {
 		author: "Joseph Berkson",
 		url: "https://www.jstor.org/stable/2280041",

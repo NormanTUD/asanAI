@@ -513,22 +513,13 @@ inverse of the standard normal cumulative distribution function $\phi^{-1}\left(
 function, was developed earlier by \citeauthor{probitorigin} in his \citeyear{probitorigin} paper "\citetitle{probitorigin}".
 
 Beyond logits and probits, several other link functions serve similar purposes in
-**generalized linear models (GLMs)**, a framework formalized by John Nelder and Robert
-Wedderburn in their seminal 1972 paper "Generalized Linear Models" (*Journal of the
-Royal Statistical Society, Series A*, 135(3), 370–384). The **complementary log-log
+**generalized linear models (GLMs)**, a framework formalized by \citeauthorlastnameand{generalizedlinearmodels}
+in their seminal \citeyear{generalizedlinearmodels} paper "\citetitle{generalizedlinearmodels}". The **complementary log-log
 ($\text{cloglog}$)** link, defined as $\log\left(−\log\left(1 − p\right)\right)$, is useful for modeling asymmetric
 binary outcomes and is closely tied to extreme value distributions. The **cauchit**
 link uses the inverse of the Cauchy CDF and is more robust to outliers in the latent
 variable. Additionally, the **log-log link**, defined as $-\log\left(-\log\left(p\right)\right)$, mirrors the
 $\text{cloglog}$ for the opposite tail of the distribution.
-
-### Key References
-
-- Gaddum, J. H. (1933). Reports on biological standards III: Methods of biological assay
-  depending on a quantal response. *Medical Research Council Special Report Series*, No. 183.
-- Nelder, J. A., & Wedderburn, R. W. M. (1972). Generalized linear models. *JRSS Series A*,
-  135(3), 370–384.
-- McCullagh, P., & Nelder, J. A. (1989). *Generalized Linear Models* (2nd ed.). Chapman & Hall.
 </div>
 
 <div class="md">
