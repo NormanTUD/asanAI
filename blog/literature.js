@@ -1,4 +1,16 @@
 window.bibData = {
+	"nagel1974bat": {
+		url: "https://courses.grainger.illinois.edu/PHYS419/sp2021/Nagel1974bat.pdf",
+		year: 1974,
+		author: "Thomas Nagel",
+		title: "What Is It Like to Be a Bat?"
+	},
+	"chalmers1995hard": {
+		url: "https://consc.net/papers/facing.pdf",
+		author: "David J. Chalmers",
+		title: "Facing Up the Problem of Consciousness",
+		year: 1995
+	},
 	"hume1739treatise": {
 		author: "David Hume",
 		year: 1739,
