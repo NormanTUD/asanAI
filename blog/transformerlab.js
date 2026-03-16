@@ -5634,24 +5634,25 @@ window.tlabVisualizationMode = 'train';
 function setVisualizationMode(mode) {
 	window.tlabVisualizationMode = mode;
 
-	// Update button styles
 	const trainBtn = document.getElementById('view-toggle-train');
 	const inferBtn = document.getElementById('view-toggle-inference');
+
 	if (trainBtn && inferBtn) {
-		if (mode === 'train') {
-			trainBtn.style.background = '#3b82f6';
-			trainBtn.style.color = 'white';
-			inferBtn.style.background = 'white';
-			inferBtn.style.color = '#3b82f6';
-		} else {
-			inferBtn.style.background = '#3b82f6';
-			inferBtn.style.color = 'white';
-			trainBtn.style.background = 'white';
-			trainBtn.style.color = '#3b82f6';
-		}
+		const isTrain = mode === 'train';
+
+		// Train Button logic
+		trainBtn.style.background = isTrain ? '#3b82f6' : '#1f2937';
+		trainBtn.style.color      = isTrain ? '#ffffff' : '#9ca3af';
+
+		// Inference Button logic
+		inferBtn.style.background = isTrain ? '#1f2937' : '#3b82f6';
+		inferBtn.style.color      = isTrain ? '#9ca3af' : '#ffffff';
+
+		// Optional: add a border to the inactive button to make it pop against black
+		trainBtn.style.border = isTrain ? '1px solid #3b82f6' : '1px solid #374151';
+		inferBtn.style.border = isTrain ? '1px solid #374151' : '1px solid #3b82f6';
 	}
 
-	// Re-run visualization with the new mode (no retraining)
 	run_transformer_demo();
 }
 

@@ -51,6 +51,20 @@
 	/** Returns the HTML for the idle-state sub-panel. */
 	function buildIdlePanelHtml() {
 		return `
+	<div id="data-view-toggle" style="border: 1px solid #374151; border-radius: 8px; display: flex; align-items: center; gap: 0px; background: #1f2937; overflow: hidden; width: 300px;">
+	    <button id="view-toggle-train" 
+		onclick="setVisualizationMode('train')" 
+		style="padding: 8px 18px; border: 1px solid #3b82f6; border-radius: 6px 0 0 6px; background: #3b82f6; color: white; font-weight: bold; cursor: pointer; transition: all 0.15s; flex: 1;">
+		Training
+	    </button>
+	    
+	    <button id="view-toggle-inference" 
+		onclick="setVisualizationMode('inference')" 
+		style="padding: 8px 18px; border: 1px solid #374151; border-radius: 0 6px 6px 0; background: #1f2937; color: #9ca3af; font-weight: bold; cursor: pointer; transition: all 0.15s; flex: 1;">
+		Inference
+	    </button>
+	</div>
+
 	<div id="tlab-bar-idle" style="display:flex; align-items:center; gap:14px; width:100%;">
 	    <span style="flex-grow:1; color:#94a3b8; font-size:0.82rem;">
 		Transformer Lab — ready to train
