@@ -1,4 +1,16 @@
 window.bibData = {
+	"chalmers1996conscious": {
+		author: "David J. Chalmers",
+		title: "The Conscious Mind",
+		year: 1996,
+		url: "https://personal.lse.ac.uk/ROBERT49/teaching/ph103/pdf/Chalmers_The_Conscious_Mind.pdf"
+	},
+	"putnam1967functionalism": {
+		url: "https://web.stanford.edu/~paulsko/papers/PutnamNMS.pdf",
+		year: 1967,
+		author: "Hilary Putnam",
+		title: "The Nature of Mental States Hilary Putnam"
+	},
 	"nagel1974bat": {
 		url: "https://courses.grainger.illinois.edu/PHYS419/sp2021/Nagel1974bat.pdf",
 		year: 1974,
