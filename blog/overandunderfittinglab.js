@@ -24,8 +24,6 @@ const FittingLab = {
 			update();
 		};
 
-		// Noise slider listener removed
-
 		const btn = document.getElementById('btn-toggle-train');
 		btn.onclick = () => {
 			this.isTraining = !this.isTraining;
@@ -36,7 +34,6 @@ const FittingLab = {
 	},
 
 	generateData: function() {
-		// Noise is now hardcoded to 0
 		this.data.xTrain = [];
 		this.data.yTrain = [];
 		this.data.xTrue = [];
@@ -49,7 +46,6 @@ const FittingLab = {
 
 		for (let i = 0; i < this.numPoints; i++) {
 			const x = this.trainRange[0] + Math.random() * (this.trainRange[1] - this.trainRange[0]);
-			// Removed noise calculation
 			const y = Math.sin(x); 
 			this.data.xTrain.push(x);
 			this.data.yTrain.push(y);
@@ -137,7 +133,6 @@ const FittingLab = {
 				mode: 'lines', name: 'Original Function (Truth)',
 				line: { dash: 'dot', color: '#94a3b8', width: 2 }
 			},
-			// Observations (Noisy) trace removed
 			{
 				x: this.data.xTrue, y: yPred,
 				mode: 'lines', name: 'AI Approximation',
