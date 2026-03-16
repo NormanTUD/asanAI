@@ -110,6 +110,39 @@ function renderMarkdown() {
 	}
 }
 
+function sonarPing(targetEl) {
+    const rect = targetEl.getBoundingClientRect();
+    const ripple = document.createElement('div');
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2 + window.scrollY;
+
+    ripple.style.cssText = `
+        position: absolute;
+        left: ${cx}px; top: ${cy}px;
+        width: 0; height: 0;
+        border: 2px solid rgba(255, 200, 50, 0.4);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 9000;
+        transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                    height 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+                    opacity 0.8s ease,
+                    border-color 0.8s ease;
+    `;
+    document.body.appendChild(ripple);
+
+    requestAnimationFrame(() => {
+        const size = Math.max(rect.width, rect.height) * 2.5;
+        ripple.style.width = size + 'px';
+        ripple.style.height = size + 'px';
+        ripple.style.opacity = '0';
+        ripple.style.borderColor = 'rgba(255, 200, 50, 0)';
+    });
+
+    setTimeout(() => ripple.remove(), 900);
+}
+
 function revealContent() {
     const loader = document.getElementById('loader');
     const content = document.getElementById('contents');
@@ -209,6 +242,8 @@ function bindIframeSafeLinks() {
 			// Small delay to let DOM reflow after reveals
 			requestAnimationFrame(() => {
 				scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+				sonarPing(targetEl);
 
 				// --- Cinematic highlight effect ---
 
