@@ -111,63 +111,53 @@ function renderMarkdown() {
 }
 
 function revealContent() {
-	const loader = document.getElementById('loader');
-	const content = document.getElementById('contents');
+    const loader = document.getElementById('loader');
+    const content = document.getElementById('contents');
+    if (loader) loader.style.display = 'none';
+    if (!content) return;
+    $(loader).remove();
 
-	if (loader) loader.style.display = 'none';
-	if (!content) {
-		console.error("#contents not found");
-		return;
-	}
+    // Inject a frosted overlay that dissolves
+    const frost = document.createElement('div');
+    frost.style.cssText = `
+        position: fixed; inset: 0; z-index: 9990;
+        backdrop-filter: blur(20px) saturate(0.5);
+        -webkit-backdrop-filter: blur(20px) saturate(0.5);
+        background: rgba(10, 10, 18, 0.4);
+        transition: backdrop-filter 0.8s ease, opacity 0.8s ease, background 0.8s ease;
+        pointer-events: none;
+    `;
+    document.body.appendChild(frost);
 
-	$(loader).remove();
+    content.style.display = 'block';
+    content.style.opacity = '1';
 
-	content.style.display = 'block';
-	content.style.opacity = '0';
+    // Thaw the frost
+    requestAnimationFrame(() => {
+        frost.style.backdropFilter = 'blur(0px) saturate(1)';
+        frost.style.webkitBackdropFilter = 'blur(0px) saturate(1)';
+        frost.style.background = 'rgba(10, 10, 18, 0)';
+        frost.style.opacity = '0';
+        setTimeout(() => frost.remove(), 900);
+    });
 
-	// Phase 1: Reading progress bar materializes first
-	const progressBar = document.getElementById('reading-progress');
-	if (progressBar) {
-		progressBar.style.opacity = '0';
-		progressBar.style.filter = 'blur(4px)';
-		progressBar.style.transition = 'opacity 0.4s ease, filter 0.4s ease';
-		requestAnimationFrame(() => {
-			progressBar.style.opacity = '1';
-			progressBar.style.filter = 'blur(0)';
-		});
-	}
+    // Staggered section cascade (keep your existing logic)
+    const sections = content.querySelectorAll(':scope > section, :scope > .category-block, :scope > h1, :scope > h2');
+    const perSection = Math.max(40, Math.min(120, 800 / sections.length));
 
-	// Phase 2: Container fades in with blur-to-sharp
-	requestAnimationFrame(() => {
-		content.style.filter = 'blur(3px)';
-		content.style.transform = 'translateY(6px)';
-		content.style.transition = 'opacity 0.5s ease, filter 0.6s ease, transform 0.6s ease';
-
-		requestAnimationFrame(() => {
-			content.style.opacity = '1';
-			content.style.filter = 'blur(0)';
-			content.style.transform = 'translateY(0)';
-		});
-	});
-
-	// Phase 3: Staggered section cascade — each top-level section drifts in
-	const sections = content.querySelectorAll(':scope > section, :scope > .category-block, :scope > h1, :scope > h2');
-	if (sections.length > 0) {
-		const perSection = Math.max(40, Math.min(120, 800 / sections.length));
-
-		sections.forEach((section, i) => {
-			section.style.opacity = '0';
-			section.style.filter = 'blur(3px)';
-			section.style.transform = 'translateY(8px)';
-			section.style.transition = 'opacity 0.45s ease, filter 0.45s ease, transform 0.45s ease';
-
-			setTimeout(() => {
-				section.style.opacity = '1';
-				section.style.filter = 'blur(0)';
-				section.style.transform = 'translateY(0)';
-			}, 300 + (i * perSection)); // 300ms offset to let container start first
-		});
-	}
+    sections.forEach((section, i) => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(10px)';
+        section.style.filter = 'blur(4px)';
+        section.style.transition = `opacity 0.5s ease ${i * perSection}ms,
+                                     transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) ${i * perSection}ms,
+                                     filter 0.5s ease ${i * perSection}ms`;
+        requestAnimationFrame(() => {
+            section.style.opacity = '1';
+            section.style.transform = 'translateY(0)';
+            section.style.filter = 'blur(0)';
+        });
+    });
 }
 
 function make_external_a_href_target_blank() {
