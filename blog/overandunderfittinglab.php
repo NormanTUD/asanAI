@@ -2,8 +2,6 @@
 
 <div class="md">
 
-## The Challenge
-
 We are giving an Artificial Intelligence, specifically, a single-layer neural network, one deceptively simple task: **"Learn the pattern of a sine wave."**
 
 By adjusting the controls below you will witness, in real time, why AI models sometimes *hallucinate* or collapse when they encounter something new.
