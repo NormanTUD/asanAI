@@ -2791,7 +2791,6 @@ function _heightLockedUpdate(el, newHtml) {
 	if (!el) return false;
 	if (el.innerHTML === newHtml) return false;
 
-	// Cancel any pending unlock from a previous update cycle
 	if (el._heightUnlockRafId) {
 		cancelAnimationFrame(el._heightUnlockRafId);
 		el._heightUnlockRafId = null;
@@ -2800,11 +2799,13 @@ function _heightLockedUpdate(el, newHtml) {
 	const savedPageScrollY = window.scrollY;
 	const savedPageScrollX = window.scrollX;
 
-	// Lock to exact current height — prevent BOTH shrink and grow
 	const previousHeight = el.offsetHeight;
 	if (previousHeight > 0) {
 		el.style.minHeight = previousHeight + 'px';
 		el.style.maxHeight = previousHeight + 'px';
+		// ── Save original overflow before overriding ──
+		el._savedOverflowX = el.style.overflowX;
+		el._savedOverflowY = el.style.overflowY;
 		el.style.overflow = 'hidden';
 	}
 
@@ -2844,43 +2845,39 @@ function _heightLockedUpdate(el, newHtml) {
 function _releaseHeightLocks(elements) {
 	if (!elements || elements.length === 0) return;
 
-	// Save scroll position before releasing locks
 	const savedPageScrollY = window.scrollY;
 	const savedPageScrollX = window.scrollX;
 
 	elements.forEach(el => {
 		if (!el) return;
 
-		// Cancel any pending rAF-based unlock
 		if (el._heightUnlockRafId) {
 			cancelAnimationFrame(el._heightUnlockRafId);
 			el._heightUnlockRafId = null;
 		}
 
-		// FIX: Snap to the NEW natural height synchronously BEFORE
-		// removing the lock. This prevents the visible jump.
-		// scrollHeight gives the true content height even when
-		// maxHeight is constraining the element.
 		const newNaturalHeight = el.scrollHeight;
 
 		if (newNaturalHeight > 0) {
-			// Snap to new height in the same JS frame (before paint)
 			el.style.minHeight = newNaturalHeight + 'px';
 			el.style.maxHeight = newNaturalHeight + 'px';
 		}
 
-		// Now release in a single rAF — the browser already painted
-		// at newNaturalHeight, so removing constraints causes zero
-		// visual change.
 		el._heightUnlockRafId = requestAnimationFrame(() => {
 			el._heightUnlockRafId = null;
 			el.style.minHeight = '';
 			el.style.maxHeight = '';
+			// Restore original overflow instead of clearing blindly
 			el.style.overflow = '';
+			if (el._savedOverflowX) {
+				el.style.overflowX = el._savedOverflowX;
+			}
+			if (el._savedOverflowY) {
+				el.style.overflowY = el._savedOverflowY;
+			}
 		});
 	});
 
-	// Restore scroll position
 	window.scrollTo(savedPageScrollX, savedPageScrollY);
 }
 
@@ -4509,9 +4506,7 @@ function ensureLatexDebugDiv(id, plotDiv) {
     if (!latexDiv) {
         latexDiv = document.createElement('div');
         latexDiv.id = id + '-latex-debug';
-        latexDiv.style.marginTop = '20px';
-        latexDiv.style.overflowX = 'auto';
-        latexDiv.style.fontSize = '0.8rem';
+        latexDiv.style.cssText = 'margin-top: 20px; overflow-x: auto; font-size: 0.8rem; max-width: 100%; box-sizing: border-box;';
 
         const weightGrid = plotDiv.nextElementSibling;
         if (weightGrid && weightGrid.classList.contains('weight-grid-viz')) {
@@ -4534,15 +4529,13 @@ function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, 
 	}
 
 	const hAfterMatrix = matrixToPmatrixLabeled(h_after, ts, stageLabel);
-	const latexString = `$$h_\\text{after} = ${hAfterMatrix}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$`;
+	const latexString = `<div style="overflow-x: auto; overflow-y: hidden; max-width: 100%; padding-bottom: 10px;">$$h_\\text{after} = ${hAfterMatrix}, \\quad h_\\text{after} \\cdot W_\\text{vocab} = \\begin{pmatrix} ${vocabRows} \\end{pmatrix}$$</div>`;
 
 	const latexDiv = ensureLatexDebugDiv(id, plotDiv);
 
-	// ★ Hash-Check: nicht neu rendern wenn sich nichts geändert hat
 	if (latexDiv._lastLatexHash === latexString) return;
 	latexDiv._lastLatexHash = latexString;
 
-	// ★ Gleiches Pattern wie FFN/h1: heightLock → gezieltes Temml → unlock
 	heightLockedMathUpdate([latexDiv], [latexString]);
 }
 
