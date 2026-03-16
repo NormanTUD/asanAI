@@ -31,7 +31,7 @@
 	/*
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
 	 */
-	incl('Differentiation', "differentiation");
+	incl('Differentiation: The Mathematics of Change', "differentiation");
 	incl('Automatic Differentiation: How Machines Learn', "autodiff");
 	incl("Backpropagation: How a Neural Network Learns From Its Mistakes", "backproplab");
 	incl("The Optimizer: Navigating the Loss Landscape", "optimizerlab");
