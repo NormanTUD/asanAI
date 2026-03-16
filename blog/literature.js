@@ -1,4 +1,16 @@
 window.bibData = {
+	"logitorigin": {
+		author: "Joseph Berkson",
+		url: "https://www.jstor.org/stable/2280041",
+		year: 1944,
+		title: "Application of the Logistic Function to Bio-Assay"
+	},
+	"probitorigin": {
+		url: "https://www.jhanley.biostat.mcgill.ca/anniversaries/ByTopic/Bliss1934.pdf",
+		title: "The Method of Probits",
+		year: 1934,
+		author: "Chester Ittner Bliss"
+	},
 	"acrophonic": {
 		author: "Alan Gardiner",
 		year: 1916,

@@ -473,7 +473,7 @@ This operation computes the entire logit vector $\mathbf{L}$ simultaneously. If 
 
 $$\mathbf{L} = W_{\text{vocab}} \mathbf{h}_{\text{last}}$$
 
-This essentially iterates through the rows of $W_{\text{vocab}}$, calculating the similarity of each word to the model's final internal state.
+This essentially iterates through the rows of $W_{\text{vocab}}$, calculating the similarity of each word to the models final internal state.
 
 To get from the long matrix to the single vector, the model performs a **Terminal Selection**
 
@@ -501,6 +501,34 @@ The softmax function converts raw logits into a probability distribution. It use
 $$P(w) = \text{softmax}(\text{logit}_w) = \frac{e^{\text{logit}_w - m}}{\displaystyle\sum_{w'} e^{\text{logit}_{w'} - m}}$$
 
 **Why subtract $m$?** Without this trick, $e^{\text{logit}}$ can overflow to `Infinity` for large logits. Subtracting $m$ ensures the largest exponent is $e^0 = 1$, keeping all values in a safe numerical range.
+</div>
+
+<div class="optional md" data-headline="Logits, Probits, and Related Link Functions">
+The **logit** and **probit** models are foundational tools in statistical modeling for
+binary and categorical outcomes. The **logit function**, defined as
+$\log\left(\frac{p}{1 - p}\right)$, was first introduced by \citeauthor{logitorigin} in his \citeyear{logitorigin} paper
+"\citetitle{logitorigin}". Berkson coined the term "logit" as an
+analogy to the already-established "probit." The **probit model**, which uses the
+inverse of the standard normal cumulative distribution function $\phi^{-1}\left(p\right)$ as its link
+function, was developed earlier by \citeauthor{probitorigin} in his \citeyear{probitorigin} paper "\citetitle{probitorigin}".
+
+Beyond logits and probits, several other link functions serve similar purposes in
+**generalized linear models (GLMs)**, a framework formalized by John Nelder and Robert
+Wedderburn in their seminal 1972 paper "Generalized Linear Models" (*Journal of the
+Royal Statistical Society, Series A*, 135(3), 370–384). The **complementary log-log
+($\text{cloglog}$)** link, defined as $\log\left(−\log\left(1 − p\right)\right)$, is useful for modeling asymmetric
+binary outcomes and is closely tied to extreme value distributions. The **cauchit**
+link uses the inverse of the Cauchy CDF and is more robust to outliers in the latent
+variable. Additionally, the **log-log link**, defined as $-\log\left(-\log\left(p\right)\right)$, mirrors the
+$\text{cloglog}$ for the opposite tail of the distribution.
+
+### Key References
+
+- Gaddum, J. H. (1933). Reports on biological standards III: Methods of biological assay
+  depending on a quantal response. *Medical Research Council Special Report Series*, No. 183.
+- Nelder, J. A., & Wedderburn, R. W. M. (1972). Generalized linear models. *JRSS Series A*,
+  135(3), 370–384.
+- McCullagh, P., & Nelder, J. A. (1989). *Generalized Linear Models* (2nd ed.). Chapman & Hall.
 </div>
 
 <div class="md">
