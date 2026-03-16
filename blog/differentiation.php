@@ -1,8 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## Derivatives: The Mathematics of Change
-
 The concept of a **derivative** is one of the most important ideas in all of mathematics. It answers a deceptively simple question: *How fast is something changing at this exact moment?*
 
 If you drive a car and your speedometer reads 60 km/h, that number is a derivative, it tells you the instantaneous rate of change of your position with respect to time. But how do we define "instantaneous" mathematically, when an instant has zero duration?
@@ -23,11 +21,11 @@ Before both of them, \citeauthor{oevresdeformat} had already explored the idea o
 </div>
 
 <div class="md">
-### The Limit Definition of the Derivative
+## The Limit Definition of the Derivative
 
 The derivative is built on the concept of a **limit**, which we introduced earlier. The key idea is to start with something we *can* compute, the average rate of change over an interval, and then shrink that interval to zero.
 
-#### The Average Rate of Change (The Secant Line)
+### The Average Rate of Change (The Secant Line)
 
 Given a function $f(x)$, the **average rate of change** between two points $x$ and $x + h$ is:
 
@@ -35,7 +33,7 @@ $$\frac{f(x + h) - f(x)}{h}$$
 
 Geometrically, this is the slope of the **secant line** connecting the two points $(x, f(x))$ and $(x+h, f(x+h))$ on the graph of $f$.
 
-#### The Instantaneous Rate of Change (The Tangent Line)
+### The Instantaneous Rate of Change (The Tangent Line)
 
 The **derivative** is what happens when we let $h$ approach zero. The secant line becomes a **tangent line**, touching the curve at exactly one point:
 
@@ -63,7 +61,7 @@ You can explore this visually below. Drag the slider to move the second point cl
 </div>
 
 <div class="md">
-#### A Concrete Example: Deriving $f(x) = x^2$ from First Principles
+### A Concrete Example: Deriving $f(x) = x^2$ from First Principles
 
 Let's apply the limit definition to $f(x) = x^2$ step by step:
 
@@ -79,17 +77,17 @@ $$= \lim_{h \to 0} (2x + h) = 2x$$
 
 So the derivative of $x^2$ is $2x$. At $x = 3$, the slope of the tangent line is $2 \cdot 3 = 6$. This means that at $x = 3$, the function is increasing at a rate of 6 units of $y$ per unit of $x$.
 
-### Derivative Rules
+## Derivative Rules
 
 Computing derivatives from the limit definition every time would be tedious. Fortunately, mathematicians have derived a set of **rules** that let us differentiate most functions quickly. These rules were developed by Newton, Leibniz, and their successors (notably \citeauthor{euler1755} in \citetitle{euler1755}, \citeyear{euler1755}, who systematized much of the notation and theory).
 
-#### The Constant Rule
+### The Constant Rule
 
 The derivative of a constant is zero. A constant doesn't change, so its rate of change is zero:
 
 $$\frac{d}{dx}[c] = 0$$
 
-#### The Power Rule
+### The Power Rule
 
 For any real number $n$:
 
@@ -100,29 +98,29 @@ This is the workhorse of differentiation. For example:
 - $\frac{d}{dx}[x^{-1}] = -x^{-2} = -\frac{1}{x^2}$
 - $\frac{d}{dx}[\sqrt{x}] = \frac{d}{dx}[x^{1/2}] = \frac{1}{2}x^{-1/2} = \frac{1}{2\sqrt{x}}$
 
-#### The Constant Multiple Rule
+### The Constant Multiple Rule
 
 $$\frac{d}{dx}[c \cdot f(x)] = c \cdot f'(x)$$
 
 You can "pull out" constants. For example: $\frac{d}{dx}[5x^3] = 5 \cdot 3x^2 = 15x^2$.
 
-#### The Sum Rule
+### The Sum Rule
 
 $$\frac{d}{dx}[f(x) + g(x)] = f'(x) + g'(x)$$
 
 The derivative of a sum is the sum of the derivatives.
 
-#### The Product Rule
+### The Product Rule
 
 When two functions are multiplied, the derivative is not simply the product of the derivatives. Instead:
 
 $$\frac{d}{dx}[f(x) \cdot g(x)] = f'(x) \cdot g(x) + f(x) \cdot g'(x)$$
 
-#### The Quotient Rule
+### The Quotient Rule
 
 $$\frac{d}{dx}\left[\frac{f(x)}{g(x)}\right] = \frac{f'(x) \cdot g(x) - f(x) \cdot g'(x)}{[g(x)]^2}$$
 
-#### The Chain Rule
+### The Chain Rule
 
 The **Chain Rule** is arguably the most important rule for AI and deep learning. It tells us how to differentiate **composed functions**, functions inside functions:
 
