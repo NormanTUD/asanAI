@@ -525,8 +525,7 @@ variable, as discussed by \citeauthorlastnameand{parametriclinks} in their
 \citeyear{parametriclinks} paper "\citetitle{parametriclinks}".
 Additionally, the **log-log link**, defined as $-\log\left(-\log\left(p\right)\right)$, mirrors the
 $\text{cloglog}$ for the opposite tail of the distribution, as detailed by
-\citeauthorlastnameand{glmsecondedition} in "\citetitle{glmsecondedition}"
-(\citeyear{glmsecondedition}).
+\citeauthorlastnameand{glmsecondedition} in \citeyear{glmsecondedition} in "\citetitle{glmsecondedition}".
 </div>
 
 <div class="md">
