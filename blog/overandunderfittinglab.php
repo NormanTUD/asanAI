@@ -230,7 +230,7 @@ Without constraints, the weight vector $\mathbf{w}$ can explode to enormous valu
 
 | Method | Penalty | Effect |
 |--------|---------|--------|
-| **L1, Lasso** (first described by \citeauthor{tibshirani1996lasso} in \citeyear{tibshirani1996lasso}) | $\lambda \displaystyle\sum_{j} \lvert w_j \rvert$ | Drives unimportant weights to **exactly zero** → automatic feature selection. |
+| **L1, Lasso** (\citeauthor{tibshirani1996lasso}, \citeyear{tibshirani1996lasso}) | $\lambda \sum_{j} \| w_j \|$ | Drives unimportant weights to **exactly zero** → automatic feature selection. |
 | **L2, Ridge** (first described by \citeauthor{hoerl1970ridge} in \citeyear{hoerl1970ridge}) | $\lambda \displaystyle\sum_{j} w_j^{2}$ | Shrinks all weights toward zero → produces a **smoother** curve. |
 
 The regularised losses therefore become:
