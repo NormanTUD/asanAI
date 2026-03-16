@@ -208,7 +208,7 @@ When you use high-degree polynomials to fit data, you often see violent oscillat
 
 <div class="optional md" data-headline="Runge's Original Example (1901)">
 
-Carl Runge demonstrated the phenomenon using the innocent-looking function
+\citeauthor{rungesphenomenon} demonstrated the phenomenon using the innocent-looking function
 
 $$
 f(x) = \frac{1}{1 + 25x^2}
