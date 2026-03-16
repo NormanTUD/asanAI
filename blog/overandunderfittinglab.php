@@ -52,7 +52,7 @@ $$
 w_i \;\leftarrow\; w_i \;-\; \eta \,\frac{\partial\,\text{MSE}}{\partial\, w_i}
 $$
 
-The scalar $\eta$ is the **learning rate**, it controls how large each step is. Too large and the model overshoots; too small and training takes forever. In this lab we use the **Adam** optimiser (a popular variant of gradient descent that adapts the learning rate automatically) with $\eta = 0.01$.
+The scalar $\eta$ is the **learning rate**, it controls how large each step is. Too large and the model overshoots; too small and training takes forever. We use the **Adam** optimiser (a popular variant of gradient descent that adapts the learning rate automatically) with $\eta = 0.01$.
 
 One complete pass through the entire training dataset is called an **epoch**. The epoch counter in the control panel shows how many full passes the model has completed.
 
@@ -75,11 +75,11 @@ $$
 \text{Total Error} \;=\; \text{Bias}^2 \;+\; \text{Variance} \;+\; \text{Irreducible Noise}
 $$
 
-As model complexity increases, bias falls but variance rises. The sweet spot, the lowest total error, lies somewhere in between. The entire purpose of this lab is to let you *see* that tradeoff in action.
+As model complexity increases, bias falls but variance rises. The sweet spot, the lowest total error, lies somewhere in between. The idea here is to let you *see* that tradeoff in action.
 
 <div class="optional md" data-headline="Why Can't We Just Measure This Directly?">
 
-In practice, we never know the true function (here we do, it's $\sin(x)$, but that's the luxury of a lab). Instead, practitioners split their data into a **training set** (used to fit the model) and a **test set** (held back, never seen during training). The test-set error is an unbiased estimate of how the model will perform on new data. More sophisticated approaches like **$k$-fold cross-validation** repeat this split $k$ times and average the results. In this lab we skip the train/test split to keep things visual, but every real-world ML pipeline relies on it.
+In practice, we never know the true function (here we do, it's $\sin(x)$). Instead, practitioners split their data into a **training set** (used to fit the model) and a **test set** (held back, never seen during training). The test-set error is an unbiased estimate of how the model will perform on new data. More sophisticated approaches like **$k$-fold cross-validation** repeat this split $k$ times and average the results. We skip the train/test split to keep things visual, but every real-world ML pipeline relies on it.
 
 </div>
 
@@ -196,7 +196,7 @@ Look at how the **Red Line** behaves *outside* the **Blue Training Zone**:
 
 ### From Polynomial Regression to Neural Networks
 
-This lab uses polynomial regression, but the lessons apply directly to neural networks. Here's why:
+We use polynomial regression, but the lessons apply directly to neural networks. Here's why:
 
 A single-layer neural network with $n$ neurons computes a weighted sum of *learned features*, conceptually identical to our weighted sum of polynomial terms. Adding more neurons (or more layers) is analogous to raising the polynomial degree: it increases the model's **capacity** to represent complex functions. The \citetitle{hornik1989universal} (\citeauthor{hornik1989universal}, \citeyear{hornik1989universal}) proves that a sufficiently wide neural network can approximate *any* continuous function, just as a sufficiently high-degree polynomial can. But "can approximate anything" is precisely the problem: with enough capacity, the model will fit the noise, not just the signal.
 
@@ -287,7 +287,7 @@ When models become *extremely* overparameterised, far past the point where they 
 
 The intuition: once a model has vastly more parameters than data points, there are many possible perfect-fit solutions, and gradient descent tends to find the "simplest" one (in a minimum-norm sense), which generalises well. This challenges the simple "more parameters = more overfitting" narrative and is an active area of research.
 
-For this lab, double descent is not visible because our polynomial degrees stay low. But it explains why modern LLMs with billions of parameters can generalise well despite being massively overparameterised, provided they are trained with enough data and appropriate regularisation.
+Here, double descent is not visible because our polynomial degrees stay low. But it explains why modern LLMs with billions of parameters can generalise well despite being massively overparameterised, provided they are trained with enough data and appropriate regularisation.
 
 </div>
 
