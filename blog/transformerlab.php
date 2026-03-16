@@ -516,10 +516,17 @@ Beyond logits and probits, several other link functions serve similar purposes i
 **generalized linear models (GLMs)**, a framework formalized by \citeauthorlastnameand{generalizedlinearmodels}
 in their seminal \citeyear{generalizedlinearmodels} paper "\citetitle{generalizedlinearmodels}". The **complementary log-log
 ($\text{cloglog}$)** link, defined as $\log\left(−\log\left(1 − p\right)\right)$, is useful for modeling asymmetric
-binary outcomes and is closely tied to extreme value distributions. The **cauchit**
-link uses the inverse of the Cauchy CDF and is more robust to outliers in the latent
-variable. Additionally, the **log-log link**, defined as $-\log\left(-\log\left(p\right)\right)$, mirrors the
-$\text{cloglog}$ for the opposite tail of the distribution.
+binary outcomes and is closely tied to extreme value distributions, as explored by
+\citeauthor{statisticsofextremes} in his \citeyear{statisticsofextremes} work
+"\citetitle{statisticsofextremes}".
+
+The **cauchit** link uses the inverse of the Cauchy CDF and is more robust to outliers in the latent
+variable, as discussed by \citeauthorlastnameand{parametriclinks} in their
+\citeyear{parametriclinks} paper "\citetitle{parametriclinks}".
+Additionally, the **log-log link**, defined as $-\log\left(-\log\left(p\right)\right)$, mirrors the
+$\text{cloglog}$ for the opposite tail of the distribution, as detailed by
+\citeauthorlastnameand{glmsecondedition} in "\citetitle{glmsecondedition}"
+(\citeyear{glmsecondedition}).
 </div>
 
 <div class="md">

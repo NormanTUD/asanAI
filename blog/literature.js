@@ -1,4 +1,21 @@
 window.bibData = {
+	"statisticsofextremes": {
+		year: 1958,
+		url: "https://archive.org/details/statisticsofextr0000gumb",
+		title: "Statistics of extremes",
+		author: "Emil Julius Gumbel"
+	},
+	"parametriclinks": {
+		url: "http://www.econ.uiuc.edu/~roger/research/links/links.pdf",
+		title: "Parametric Links for Binary Choice Models: A Fisherian-Bayesian Colloquy",
+		author: "Roger Koenker, Jungmo Yoon",
+		year: 2009
+	},
+	"glmsecondedition": {
+		author: "Peter McCullagh, John Ashworth Nelder",
+		title: "Generalized Linear Models (2nd. ed.)",
+		year: 1989
+	},
 	"generalizedlinearmodels": {
 		url: "https://jhanley.biostat.mcgill.ca/bios601/Likelihood/NelderWedderburn1972.pdf",
 		author: "John Ashworth Nelder and Robert William Maclagan Wedderburn",
