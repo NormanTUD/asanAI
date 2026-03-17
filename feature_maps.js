@@ -1122,67 +1122,119 @@ async function handle_input_gradient_descent_error(e, recursion, layer_idx, neur
 	}
 }
 
+// ============================================================================
+// deprocess_image — refactored into focused helpers
+// ============================================================================
+
+/**
+ * Clips each channel of a tensor to mean ± 2*std to remove outliers.
+ */
+function _clip_channels_by_std(x, numChannels) {
+	return tidy(() => {
+		var channels = tf.split(x, numChannels, -1);
+		var clippedChannels = channels.map(function(ch) {
+			var moments = tf.moments(ch);
+			var chMean = moments.mean;
+			var chStd = tf.sqrt(tf.add(moments.variance, tf.scalar(1e-5)));
+			var lo = tf.sub(chMean, tf.mul(chStd, tf.scalar(2.0)));
+			var hi = tf.add(chMean, tf.mul(chStd, tf.scalar(2.0)));
+			return clipByValue(ch, lo.dataSync()[0], hi.dataSync()[0]);
+		});
+		return tf.concat(clippedChannels, -1);
+	});
+}
+
+/**
+ * Applies per-channel min-max normalization, mapping each channel to [0, 1].
+ */
+function _normalize_channels_min_max(x, numChannels) {
+	return tidy(() => {
+		var channels = tf.split(x, numChannels, -1);
+		var normalizedChannels = channels.map(function(ch) {
+			var chMin = ch.min();
+			var chMax = ch.max();
+			var chRange = tf.add(tf.sub(chMax, chMin), tf.scalar(1e-5));
+			return tf.div(tf.sub(ch, chMin), chRange);
+		});
+		return tf.concat(normalizedChannels, -1);
+	});
+}
+
+/**
+ * Applies mild contrast enhancement (1.2x around 0.5 center) and clamps to [0, 1].
+ */
+function _apply_contrast_boost(normalized, factor) {
+	return tidy(() => {
+		var centered = tf.sub(normalized, tf.scalar(0.5));
+		var boosted = tf.mul(centered, tf.scalar(factor));
+		var result = tf.add(boosted, tf.scalar(0.5));
+		return clipByValue(result, 0, 1);
+	});
+}
+
+/**
+ * Converts a [0, 1] float tensor to a [0, 255] int32 tensor.
+ */
+function _to_uint8_range(normalized) {
+	return tidy(() => {
+		return clipByValue(tf.mul(normalized, tf.scalar(255)), 0, 255).asType("int32");
+	});
+}
+
+/**
+ * Full multi-channel deprocessing pipeline:
+ *   1. Clip outliers per channel at mean ± 2*std
+ *   2. Per-channel min-max normalization to [0, 1]
+ *   3. Mild contrast enhancement (1.2x)
+ *   4. Scale to [0, 255] int32
+ */
+function _deprocess_multichannel(x, numChannels) {
+	return tidy(() => {
+		var clipped = _clip_channels_by_std(x, numChannels);
+		var normalized = _normalize_channels_min_max(clipped, numChannels);
+		var boosted = _apply_contrast_boost(normalized, 1.2);
+		return _to_uint8_range(boosted);
+	});
+}
+
+/**
+ * Single-channel (or generic) deprocessing: global min-max normalization to [0, 255].
+ */
+function _deprocess_singlechannel(x) {
+	return tidy(() => {
+		var xMin = x.min();
+		var xMax = x.max();
+		var range = tf_add(tf_sub(xMax, xMin), tf_constant_shape(get_epsilon(), xMin));
+		var normalized = tf_div(tf_sub(x, xMin), range);
+		normalized = tf_mul(normalized, tf_constant_shape(255, normalized));
+		return clipByValue(normalized, 0, 255).asType("int32");
+	});
+}
+
+/**
+ * Deprocesses a raw activation tensor into a displayable [0, 255] int32 image.
+ * Dispatches to multi-channel or single-channel pipeline based on shape.
+ */
 function deprocess_image(x) {
 	assert(Object.keys("isDisposedInternal"), "x for deprocess image is not a tensor but " + typeof(x));
 
-	var res = tidy(() => {
+	return tidy(() => {
 		try {
 			var numChannels = x.shape[x.shape.length - 1];
 
 			if (numChannels && numChannels > 1) {
-				// Per-channel normalization to bring out what each channel learned
-				// Step 1: Clip outliers at mean ± 2*std per channel
-				var channels = tf.split(x, numChannels, -1);
-				var clippedChannels = channels.map(function(ch) {
-					var moments = tf.moments(ch);
-					var chMean = moments.mean;
-					var chStd = tf.sqrt(tf.add(moments.variance, tf.scalar(1e-5)));
-					var lo = tf.sub(chMean, tf.mul(chStd, tf.scalar(2.0)));
-					var hi = tf.add(chMean, tf.mul(chStd, tf.scalar(2.0)));
-					return clipByValue(ch, lo.dataSync()[0], hi.dataSync()[0]);
-				});
-				var clipped = tf.concat(clippedChannels, -1);
-
-				// Step 2: Per-channel min-max normalization
-				channels = tf.split(clipped, numChannels, -1);
-				var normalizedChannels = channels.map(function(ch) {
-					var chMin = ch.min();
-					var chMax = ch.max();
-					var chRange = tf.add(tf.sub(chMax, chMin), tf.scalar(1e-5));
-					return tf.div(tf.sub(ch, chMin), chRange);
-				});
-				var normalized = tf.concat(normalizedChannels, -1);
-
-				// Step 3: Mild contrast enhancement (1.2x, not 1.5x)
-				var centered = tf.sub(normalized, tf.scalar(0.5));
-				var boosted = tf.mul(centered, tf.scalar(1.2));
-				normalized = tf.add(boosted, tf.scalar(0.5));
-				normalized = clipByValue(normalized, 0, 1);
-
-				return clipByValue(
-					tf.mul(normalized, tf.scalar(255)),
-					0, 255
-				).asType("int32");
+				return _deprocess_multichannel(x, numChannels);
 			} else {
-				var xMin = x.min();
-				var xMax = x.max();
-				var range = tf_add(tf_sub(xMax, xMin), tf_constant_shape(get_epsilon(), xMin));
-				var normalized = tf_div(tf_sub(x, xMin), range);
-				normalized = tf_mul(normalized, tf_constant_shape(255, normalized));
-				return clipByValue(normalized, 0, 255).asType("int32");
+				return _deprocess_singlechannel(x);
 			}
 		} catch (e) {
 			if (Object.keys(e).includes("message")) {
 				e = e.message;
 			}
-
 			err("" + e);
-
 			return null;
 		}
 	});
-
-	return res;
 }
 
 function get_scale() {
