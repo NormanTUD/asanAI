@@ -524,7 +524,7 @@ Temperature controls the **sharpness** of the probability distribution by scalin
 
 $$P(w) = \text{softmax}\!\left(\frac{\text{logit}_w}{T}\right) = \frac{e^{\,\text{logit}_w \,/\, T}}{\displaystyle\sum_{w'} e^{\,\text{logit}_{w'} \,/\, T}}$$
 
-Dividing by $T$ rescales the logit differences. When $T < 1$, the differences are *amplified*, making the distribution sharper (more deterministic). When $T > 1$, the differences are *compressed*, making the distribution flatter (more random). At $T = 1$, the standard softmax is recovered unchanged.
+Dividing by $T$ rescales the logit differences. When $T < 1$, the differences are *amplified*, making the distribution sharper (more deterministic). When $T > 1$, the differences are *compressed*, making the distribution flatter (more random). At $T = 1$, is behaves as the standard SoftMax.
 
 | Temperature | Effect | Behavior |
 |---|---|---|
