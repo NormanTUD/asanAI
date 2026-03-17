@@ -526,9 +526,7 @@ $$P(w) = \text{softmax}\!\left(\frac{\text{logit}_w}{T}\right) = \frac{e^{\,\tex
 
 Dividing by $T$ rescales the logit differences. When $T < 1$, the differences are *amplified*, making the distribution sharper (more deterministic). When $T > 1$, the differences are *compressed*, making the distribution flatter (more random). At $T = 1$, the standard softmax is recovered unchanged.
 
-**Three regimes:**
-
-| Regime | Effect on $\frac{z_i}{T}$ | Behavior |
+| Regime | Effect | Behavior |
 |---|---|---|
 | $T \to 0^+$ (Greedy) | $\frac{z_i}{T} \to \pm\infty$ | All probability mass on the argmax. Deterministic output. |
 | $T = 1$ (Standard) | $\frac{z_i}{T} = z_i$ | Unmodified softmax. The model's learned distribution. |
