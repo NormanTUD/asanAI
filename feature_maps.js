@@ -561,16 +561,294 @@ function _create_init_image(shape) {
 }
 
 // ============================================================================
-// Core gradient ascent — clean, robust, no shape changes
-// All tensors stay at full model input resolution at all times.
-//
-// Improvements applied:
-//   #1: Coarse-to-fine via progressive blur reduction (not resize)
-//   #2: TV regularization (replaces Gaussian blur)
-//   #3: REMOVED color decorrelation (too aggressive for small/custom datasets;
-//       instead we use proper per-channel normalization in deprocess_image)
-//   #4: Transform jitter only for images >= 64px
-//   #5: Adaptive initialization based on image size
+// Configuration builder — extracts all the setup logic from the main loop
+// ============================================================================
+function _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape) {
+	var imageSize = Math.min(fullH, fullW);
+	var numChannels = new_input_shape[new_input_shape.length - 1];
+
+	var jitterMax = Math.max(1, Math.floor(imageSize / 16));
+	var useTransformJitter = _should_use_transform_jitter(fullH, fullW);
+
+	var decayRate = 0.995;
+	var decayInterval = 4;
+
+	var isLastLayer = (layer_idx === model.layers.length - 1);
+	var defaultLR = isLastLayer ? 0.5 : 0.15;
+	var learningRate = parse_float($("#max_activation_lr").val()) || defaultLR;
+
+	var tvWeight = 0.0003;
+	var tvInterval = 3;
+
+	var blurPhases = [];
+	if (imageSize >= 16 && iterations >= 12) {
+		var phase1End = Math.floor(iterations * 0.33);
+		var phase2End = Math.floor(iterations * 0.66);
+		blurPhases = [
+			{ until: phase1End, factor: Math.max(2, Math.floor(imageSize / 8)) },
+			{ until: phase2End, factor: Math.max(2, Math.floor(imageSize / 16)) },
+			{ until: iterations, factor: 0 }
+		];
+	} else {
+		blurPhases = [{ until: iterations, factor: 0 }];
+	}
+
+	return {
+		imageSize, numChannels, jitterMax, useTransformJitter,
+		decayRate, decayInterval, learningRate,
+		tvWeight, tvInterval, blurPhases, fullH, fullW
+	};
+}
+
+// ============================================================================
+// Determine the current blur factor from the phase schedule
+// ============================================================================
+function _get_current_blur_factor(blurPhases, iteration_idx) {
+	for (var p = 0; p < blurPhases.length; p++) {
+		if (iteration_idx < blurPhases[p].until) {
+			return blurPhases[p].factor;
+		}
+	}
+	return 0;
+}
+
+// ============================================================================
+// Apply spatial translation jitter (shift image by random offset)
+// ============================================================================
+function _apply_spatial_jitter(data, ox, oy) {
+	return tidy(() => {
+		var h = data.shape[1];
+		var w = data.shape[2];
+		var padded = tf.pad(data, [
+			[0, 0],
+			[Math.max(ox, 0), Math.max(-ox, 0)],
+			[Math.max(oy, 0), Math.max(-oy, 0)],
+			[0, 0]
+		]);
+		return tf.slice(padded,
+			[0, Math.max(-ox, 0), Math.max(-oy, 0), 0],
+			[data.shape[0], h, w, data.shape[3]]
+		);
+	});
+}
+
+// ============================================================================
+// Undo spatial translation jitter (reverse the shift)
+// ============================================================================
+function _undo_spatial_jitter(data, ox, oy) {
+	return tidy(() => {
+		var h = data.shape[1];
+		var w = data.shape[2];
+		var padded = tf.pad(data, [
+			[0, 0],
+			[Math.max(-ox, 0), Math.max(ox, 0)],
+			[Math.max(-oy, 0), Math.max(oy, 0)],
+			[0, 0]
+		]);
+		return tf.slice(padded,
+			[0, Math.max(ox, 0), Math.max(oy, 0), 0],
+			[data.shape[0], h, w, data.shape[3]]
+		);
+	});
+}
+
+// ============================================================================
+// Apply and undo transform jitter (rotation + scale, large images only)
+// ============================================================================
+async function _apply_transform_jitter_forward(data, rotAngle, scaleJitter, fullH, fullW) {
+	var rotated = _apply_rotation_jitter(data, rotAngle);
+	await dispose(data);
+	var scaled = _apply_scale_jitter(rotated, scaleJitter, fullH, fullW);
+	await dispose(rotated);
+	return scaled;
+}
+
+async function _undo_transform_jitter(data, rotAngle, scaleJitter, fullH, fullW) {
+	var unRotated = _apply_rotation_jitter(data, -rotAngle);
+	await dispose(data);
+	var unScaled = _apply_scale_jitter(unRotated, 1.0 / scaleJitter, fullH, fullW);
+	await dispose(unRotated);
+	return unScaled;
+}
+
+// ============================================================================
+// Compute blurred version of data for coarse-to-fine gradient computation
+// ============================================================================
+function _compute_blurred_data_for_grad(data, currentBlurFactor, fullH, fullW) {
+	if (currentBlurFactor < 2) {
+		return { dataForGrad: data, needDispose: false };
+	}
+	var blurH = Math.max(2, Math.round(fullH / currentBlurFactor));
+	var blurW = Math.max(2, Math.round(fullW / currentBlurFactor));
+	var dataForGrad = tidy(() => {
+		var down = tf.image.resizeBilinear(data, [blurH, blurW]);
+		return tf.image.resizeBilinear(down, [fullH, fullW]);
+	});
+	return { dataForGrad: dataForGrad, needDispose: true };
+}
+
+// ============================================================================
+// Compute normalized (RMS-scaled) gradients
+// ============================================================================
+function _compute_scaled_gradients(grad_function, dataForGrad) {
+	try {
+		return tidy(() => {
+			var grads = grad_function(dataForGrad);
+			var grads_sq = tf_square(grads);
+			var grads_sq_mean = tf_mean(grads_sq);
+			var rms = sqrt(grads_sq_mean);
+			var eps = get_epsilon();
+			var norm = tf_add(rms, tf_constant_shape(eps, rms));
+			return tf_div(grads, norm);
+		});
+	} catch (e) {
+		handle_scaled_grads_error(e);
+		return null;
+	}
+}
+
+// ============================================================================
+// Apply gradient step, L2 decay, and TV regularization
+// ============================================================================
+async function _apply_gradient_update(data, scaledGrads, learningRate, iteration_idx, config) {
+	// Gradient step
+	var updated = tidy(() => {
+		var step = tf_mul(scaledGrads, tf_constant_shape(learningRate, scaledGrads));
+		return tf_add(data, step);
+	});
+	await dispose(scaledGrads);
+	await dispose(data);
+	data = updated;
+
+	// L2 decay
+	if (iteration_idx % config.decayInterval === 0) {
+		var decayed = tidy(() => tf_mul(data, tf_constant_shape(config.decayRate, data)));
+		await dispose(data);
+		data = decayed;
+	}
+
+	// TV regularization
+	if (iteration_idx % config.tvInterval === 0 && iteration_idx > 0) {
+		var tvGrad = _compute_tv_gradients(data, config.tvWeight);
+		var tvRegularized = tidy(() => tf.sub(data, tvGrad));
+		await dispose(tvGrad);
+		await dispose(data);
+		data = tvRegularized;
+	}
+
+	return data;
+}
+
+// ============================================================================
+// Ensure tensor dimensions haven't drifted from expected shape
+// ============================================================================
+async function _ensure_correct_dimensions(data, fullH, fullW) {
+	if (data.shape[1] !== fullH || data.shape[2] !== fullW) {
+		var resizedBack = tidy(() => tf.image.resizeBilinear(data, [fullH, fullW]));
+		await dispose(data);
+		return resizedBack;
+	}
+	return data;
+}
+
+// ============================================================================
+// Single iteration of gradient ascent
+// ============================================================================
+async function _run_single_iteration(data, iteration_idx, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval) {
+	log(`Layer ${layer_idx}, neuron ${neuron + 1}/${max_neurons}, iteration ${iteration_idx + 1}/${iterations}`);
+
+	if (stop_generating_images) return { data: data, worked: false };
+
+	var currentBlurFactor = _get_current_blur_factor(config.blurPhases, iteration_idx);
+
+	// 1. Spatial translation jitter
+	var ox = Math.floor(Math.random() * (config.jitterMax * 2 + 1)) - config.jitterMax;
+	var oy = Math.floor(Math.random() * (config.jitterMax * 2 + 1)) - config.jitterMax;
+
+	var jittered = _apply_spatial_jitter(data, ox, oy);
+	await dispose(data);
+	data = jittered;
+
+	// 2. Transform jitter (large images only)
+	var rotAngle = 0;
+	var scaleJitter = 1.0;
+	if (config.useTransformJitter) {
+		rotAngle = (Math.random() - 0.5) * 4.0;
+		scaleJitter = 1.0 + (Math.random() - 0.5) * 0.06;
+		data = await _apply_transform_jitter_forward(data, rotAngle, scaleJitter, config.fullH, config.fullW);
+	}
+
+	// 3. Coarse-to-fine blur for gradient computation
+	var { dataForGrad, needDispose: needDisposeBlurred } = _compute_blurred_data_for_grad(data, currentBlurFactor, config.fullH, config.fullW);
+
+	// 4. Compute gradients
+	var scaledGrads = _compute_scaled_gradients(grad_function, dataForGrad);
+
+	if (needDisposeBlurred) {
+		await dispose(dataForGrad);
+	}
+
+	if (!scaledGrads) {
+		return { data: data, worked: false };
+	}
+
+	// 5–7. Gradient step, L2 decay, TV regularization
+	data = await _apply_gradient_update(data, scaledGrads, config.learningRate, iteration_idx, config);
+
+	// 8. Undo spatial jitter
+	var unJittered = _undo_spatial_jitter(data, ox, oy);
+	await dispose(data);
+	data = unJittered;
+
+	// 9. Undo transform jitter
+	if (config.useTransformJitter) {
+		data = await _undo_transform_jitter(data, rotAngle, scaleJitter, config.fullH, config.fullW);
+	}
+
+	// 10. Safety: ensure dimensions haven't drifted
+	data = await _ensure_correct_dimensions(data, config.fullH, config.fullW);
+
+	// 11. Live preview
+	if (previewCanvas && (iteration_idx % previewInterval === 0 || iteration_idx === iterations - 1)) {
+		_render_preview_to_canvas(previewCanvas, data, layer_idx, neuron);
+		await nextFrame();
+	}
+
+	return { data: data, worked: true };
+}
+
+// ============================================================================
+// Post-process generated data into image or raw tensor output
+// ============================================================================
+function _postprocess_generated_data(generated_data, full_data) {
+	if (model?.input?.shape.length == 4 && model?.input?.shape[3] == 3) {
+		try {
+			full_data["image"] = tidy(() => {
+				return array_sync(tidy(() => {
+					var dp = deprocess_image(generated_data);
+					if (!dp) {
+						err(language[lang]["deprocess_image_returned_empty_image"]);
+						full_data["worked"] = 0;
+					}
+					return dp;
+				}));
+			});
+		} catch (e) {
+			if (Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+			console.log("generated_data: ", generated_data);
+			err("" + e);
+			full_data["worked"] = 0;
+		}
+	} else {
+		full_data["data"] = array_sync(generated_data);
+	}
+	return full_data;
+}
+
+// ============================================================================
+// Core gradient ascent — now a clean orchestrator
 // ============================================================================
 async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons, recursion, previewCanvas) {
 	if (typeof recursion === "undefined") recursion = 0;
@@ -589,6 +867,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 	var aux_model = null;
 
 	try {
+		// Build auxiliary model and gradient function
 		const layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
 		aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
 
@@ -600,10 +879,11 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 
 		var fullH = new_input_shape[0];
 		var fullW = new_input_shape[1];
-		var numChannels = new_input_shape[new_input_shape.length - 1];
-		var imageSize = Math.min(fullH, fullW);
 
-		// --- Initialize image ---
+		// Build configuration
+		var config = _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape);
+
+		// Initialize image
 		var data;
 		if (typeof(start_image) != "undefined") {
 			data = start_image;
@@ -611,200 +891,15 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			data = _create_init_image(new_input_shape);
 		}
 
-		// --- Configuration ---
-		var jitterMax = Math.max(1, Math.floor(imageSize / 16));
-		var useTransformJitter = _should_use_transform_jitter(fullH, fullW);
-
-		var decayRate = 0.995;
-		var decayInterval = 4;
-
-		var isLastLayer = (layer_idx === model.layers.length - 1);
-		var defaultLR = isLastLayer ? 0.5 : 0.15;
-		var learningRate = parse_float($("#max_activation_lr").val()) || defaultLR;
-
-		// TV regularization — gentle
-		var tvWeight = 0.0003;
-		var tvInterval = 3;
-
-		// IMPROVEMENT #1: Coarse-to-fine via blur
-		// We define blur "phases" — early iterations use stronger blur
-		// to build large-scale structure, later iterations use no blur for detail.
-		// This is safe because tensor shape never changes.
-		var blurPhases = [];
-		if (imageSize >= 16 && iterations >= 12) {
-			// 3 phases: strong blur, light blur, no blur
-			var phase1End = Math.floor(iterations * 0.33);
-			var phase2End = Math.floor(iterations * 0.66);
-			blurPhases = [
-				{ until: phase1End, factor: Math.max(2, Math.floor(imageSize / 8)) },
-				{ until: phase2End, factor: Math.max(2, Math.floor(imageSize / 16)) },
-				{ until: iterations,  factor: 0 } // 0 = no blur
-			];
-		} else {
-			blurPhases = [{ until: iterations, factor: 0 }];
-		}
-
+		// Main iteration loop
 		for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
-			log(`Layer ${layer_idx}, neuron ${neuron + 1}/${max_neurons}, iteration ${iteration_idx + 1}/${iterations}`);
-
-			if (stop_generating_images) continue;
-
-			// Determine current blur factor from phase
-			var currentBlurFactor = 0;
-			for (var p = 0; p < blurPhases.length; p++) {
-				if (iteration_idx < blurPhases[p].until) {
-					currentBlurFactor = blurPhases[p].factor;
-					break;
-				}
-			}
-
-			// --- 1. Spatial translation jitter ---
-			var ox = Math.floor(Math.random() * (jitterMax * 2 + 1)) - jitterMax;
-			var oy = Math.floor(Math.random() * (jitterMax * 2 + 1)) - jitterMax;
-
-			var jittered = tidy(() => {
-				var h = data.shape[1];
-				var w = data.shape[2];
-				var padded = tf.pad(data, [
-					[0, 0],
-					[Math.max(ox, 0), Math.max(-ox, 0)],
-					[Math.max(oy, 0), Math.max(-oy, 0)],
-					[0, 0]
-				]);
-				return tf.slice(padded,
-					[0, Math.max(-ox, 0), Math.max(-oy, 0), 0],
-					[data.shape[0], h, w, data.shape[3]]
-				);
-			});
-			await dispose(data);
-			data = jittered;
-
-			// --- 2. Transform jitter (only for large images) ---
-			var rotAngle = 0;
-			var scaleJitter = 1.0;
-			if (useTransformJitter) {
-				rotAngle = (Math.random() - 0.5) * 4.0; // ±2 degrees (conservative)
-				scaleJitter = 1.0 + (Math.random() - 0.5) * 0.06; // ±3%
-
-				var rotated = _apply_rotation_jitter(data, rotAngle);
-				await dispose(data);
-				data = rotated;
-
-				var scaled = _apply_scale_jitter(data, scaleJitter, fullH, fullW);
-				await dispose(data);
-				data = scaled;
-			}
-
-			// --- 3. Apply coarse-to-fine blur for gradient computation ---
-			var dataForGrad = data;
-			var needDisposeBlurred = false;
-			if (currentBlurFactor >= 2) {
-				var blurH = Math.max(2, Math.round(fullH / currentBlurFactor));
-				var blurW = Math.max(2, Math.round(fullW / currentBlurFactor));
-				dataForGrad = tidy(() => {
-					var down = tf.image.resizeBilinear(data, [blurH, blurW]);
-					return tf.image.resizeBilinear(down, [fullH, fullW]);
-				});
-				needDisposeBlurred = true;
-			}
-
-			// --- 4. Compute gradients ---
-			var scaledGrads = null;
-			try {
-				scaledGrads = tidy(() => {
-					var grads = grad_function(dataForGrad);
-
-					var grads_sq = tf_square(grads);
-					var grads_sq_mean = tf_mean(grads_sq);
-					var rms = sqrt(grads_sq_mean);
-					var eps = get_epsilon();
-					var norm = tf_add(rms, tf_constant_shape(eps, rms));
-
-					return tf_div(grads, norm);
-				});
-			} catch (e) {
-				handle_scaled_grads_error(e);
-				scaledGrads = null;
-			}
-
-			if (needDisposeBlurred) {
-				await dispose(dataForGrad);
-			}
-
-			// If gradient computation failed, skip this iteration
-			if (!scaledGrads) {
-				continue;
-			}
-
-			// --- 5. Gradient step ---
-			var updated = tidy(() => {
-				var step = tf_mul(scaledGrads, tf_constant_shape(learningRate, scaledGrads));
-				return tf_add(data, step);
-			});
-			await dispose(scaledGrads);
-			await dispose(data);
-			data = updated;
-
-			// --- 6. L2 decay ---
-			if (iteration_idx % decayInterval === 0) {
-				var decayed = tidy(() => tf_mul(data, tf_constant_shape(decayRate, data)));
-				await dispose(data);
-				data = decayed;
-			}
-
-			// --- 7. TV regularization (IMPROVEMENT #2) ---
-			if (iteration_idx % tvInterval === 0 && iteration_idx > 0) {
-				var tvGrad = _compute_tv_gradients(data, tvWeight);
-				var tvRegularized = tidy(() => tf.sub(data, tvGrad));
-				await dispose(tvGrad);
-				await dispose(data);
-				data = tvRegularized;
-			}
-
-			// --- 8. Undo spatial jitter ---
-			var unJittered = tidy(() => {
-				var h = data.shape[1];
-				var w = data.shape[2];
-				var padded = tf.pad(data, [
-					[0, 0],
-					[Math.max(-ox, 0), Math.max(ox, 0)],
-					[Math.max(-oy, 0), Math.max(oy, 0)],
-					[0, 0]
-				]);
-				return tf.slice(padded,
-					[0, Math.max(ox, 0), Math.max(oy, 0), 0],
-					[data.shape[0], h, w, data.shape[3]]
-				);
-			});
-			await dispose(data);
-			data = unJittered;
-
-			// --- 9. Undo transform jitter (only for large images) ---
-			if (useTransformJitter) {
-				var unRotated = _apply_rotation_jitter(data, -rotAngle);
-				await dispose(data);
-				data = unRotated;
-
-				var unScaled = _apply_scale_jitter(data, 1.0 / scaleJitter, fullH, fullW);
-				await dispose(data);
-				data = unScaled;
-			}
-
-			// --- 10. Safety: ensure dimensions haven't drifted ---
-			if (data.shape[1] !== fullH || data.shape[2] !== fullW) {
-				var resizedBack = tidy(() => tf.image.resizeBilinear(data, [fullH, fullW]));
-				await dispose(data);
-				data = resizedBack;
-			}
-
-			// --- 11. Live preview ---
-			if (previewCanvas && (iteration_idx % previewInterval === 0 || iteration_idx === iterations - 1)) {
-				_render_preview_to_canvas(previewCanvas, data, layer_idx, neuron);
-				await nextFrame();
-			}
-
-			worked = 1;
-		} // end iteration loop
+			var result = await _run_single_iteration(
+				data, iteration_idx, iterations, config, grad_function,
+				layer_idx, neuron, max_neurons, previewCanvas, previewInterval
+			);
+			data = result.data;
+			if (result.worked) worked = 1;
+		}
 
 		var generated_data = data;
 
@@ -812,35 +907,9 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 		return await handle_input_gradient_descent_error(e, recursion, layer_idx, neuron, iterations, start_image);
 	}
 
-	if (model?.input?.shape.length == 4 && model?.input?.shape[3] == 3) {
-		try {
-			full_data["image"] = tidy(() => {
-				return array_sync(tidy(() => {
-					var dp = deprocess_image(generated_data);
-
-					if (!dp) {
-						err(language[lang]["deprocess_image_returned_empty_image"]);
-						full_data["worked"] = 0;
-					}
-
-					return dp;
-				}));
-			});
-		} catch (e) {
-			if (Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-
-			console.log("generated_data: ", generated_data);
-			err("" + e);
-			full_data["worked"] = 0;
-		}
-	} else {
-		full_data["data"] = array_sync(generated_data);
-	}
-
+	// Post-process output
+	full_data = _postprocess_generated_data(generated_data, full_data);
 	await dispose(generated_data);
-
 	full_data["worked"] = worked;
 
 	return full_data;
