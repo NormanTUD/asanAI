@@ -39,7 +39,6 @@ async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
 	var original_disable_layer_debuggers = disable_layer_debuggers;
 	disable_layer_debuggers = 1;
 
-	// --- Create a preview canvas upfront and attach it to the DOM ---
 	var previewCanvas = null;
 	var container = document.getElementById("maximally_activated_content");
 	var isImageModel = (model?.input?.shape.length == 4 && model?.input?.shape[3] == 3);
@@ -52,17 +51,20 @@ async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
 
 	try {
 		var start_image = undefined;
-		var iterations = parse_int($("#max_activation_iterations").val()) || 30;
-		if (!iterations) log(`Iterations was set to ${iterations} in the GUI, using 30 instead`);
+
+		// FIX #7: More iterations for deeper layers (last layer needs more work)
+		var isLastLayer = (layer_idx >= model.layers.length - 2);
+		var defaultIterations = isLastLayer ? 200 : 30;
+		var iterations = parse_int($("#max_activation_iterations").val()) || defaultIterations;
+		if (!iterations) log(`Iterations was set to ${iterations} in the GUI, using ${defaultIterations} instead`);
 
 		var full_data = await input_gradient_ascent(
 			layer_idx, neuron, iterations, start_image, max_neurons, 0,
-			previewCanvas  // <-- pass the preview canvas
+			previewCanvas
 		);
 
 		disable_layer_debuggers = original_disable_layer_debuggers;
 
-		// --- Remove the working animation, add done class ---
 		if (previewCanvas) {
 			previewCanvas.classList.remove("feature-map-working");
 			previewCanvas.classList.add("feature-map-done");
@@ -90,7 +92,6 @@ async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
 				if (container) container.appendChild(fragment);
 
 			} else if (full_data.image) {
-				// Final high-quality render onto the same preview canvas
 				var data = full_data.image[0];
 				var data_hash = {
 					layer: layer_idx,
@@ -103,7 +104,6 @@ async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
 					draw_grid(previewCanvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
 					canvasses.push(previewCanvas);
 				} else {
-					// Fallback if no preview canvas was created
 					var canvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
 					draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
 					fragment.appendChild(canvas);
@@ -115,7 +115,6 @@ async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
 			show_tab_label("maximally_activated_label", 1);
 		}
 	} catch (e) {
-		// Clean up the working indicator on error
 		if (previewCanvas) {
 			previewCanvas.classList.remove("feature-map-working");
 			previewCanvas.classList.add("feature-map-done");
@@ -456,14 +455,14 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 
 	// How often to update the preview (every N iterations)
 	var previewInterval = Math.max(1, Math.floor(iterations / 20));
-	// For short runs, update every step; for long runs, ~20 updates total
 	if (iterations <= 20) previewInterval = 1;
 
 	try {
 		const layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
 		const aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
 
-		const lossFunction = (input) => aux_model.apply(input, {training: true}).gather([neuron], -1);
+		// FIX #10: Use .mean() to ensure scalar loss
+		const lossFunction = (input) => aux_model.apply(input, {training: true}).gather([neuron], -1).mean();
 		const grad_function = grad(lossFunction);
 
 		var new_input_shape = get_input_shape_with_batch_size();
@@ -472,13 +471,30 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 		if (typeof(start_image) != "undefined") {
 			data = start_image;
 		} else {
-			data = tidy(() => randomUniform([1, ...new_input_shape], 0.4, 0.6));
+			// FIX #5: Wider initialization range + Gaussian noise option
+			data = tidy(() => {
+				var noise = tf.randomNormal([1, ...new_input_shape], 0.5, 0.15);
+				return clipByValue(noise, 0, 1);
+			});
 		}
 
 		// --- Configuration for regularization ---
-		const blurInterval = 4;
-		const decayRate = 0.98;
-		const learningRate = parse_float($("#max_activation_lr").val()) || 0.05;
+
+		// FIX #8: Scale jitter to image size
+		const imageSize = Math.min(new_input_shape[0], new_input_shape[1]);
+		const jitterMax = Math.max(1, Math.floor(imageSize / 16));
+
+		// FIX #2: Increase blur interval, skip for small images
+		const blurInterval = (imageSize < 64) ? 999999 : Math.max(8, Math.floor(iterations / 4));
+
+		// FIX #1: Reduce L2 decay rate
+		const decayRate = 0.995;
+		const decayInterval = 3; // Apply decay only every 3 iterations
+
+		// FIX #6: Higher learning rate for last layer
+		const isLastLayer = (layer_idx === model.layers.length - 1);
+		const defaultLR = isLastLayer ? 0.5 : 0.05;
+		const learningRate = parse_float($("#max_activation_lr").val()) || defaultLR;
 
 		const gaussianWeights = [1, 2, 1, 2, 4, 2, 1, 2, 1].map(v => v / 16);
 		const blurKernel = tf.tensor4d(gaussianWeights, [3, 3, 1, 1]);
@@ -489,8 +505,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 				continue;
 			}
 
-			// --- 1. Spatial jitter using pad + slice ---
-			const jitterMax = 4;
+			// --- 1. Spatial jitter using pad + slice (FIX #8: scaled jitter) ---
 			const ox = Math.floor(Math.random() * (jitterMax * 2 + 1)) - jitterMax;
 			const oy = Math.floor(Math.random() * (jitterMax * 2 + 1)) - jitterMax;
 
@@ -509,7 +524,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			await dispose(data);
 			data = jittered;
 
-			// --- 2. Compute normalized gradients and apply update ---
+			// --- 2. Compute gradients with hybrid normalization (FIX #9) ---
 			const scaledGrads = tidy(() => {
 				try {
 					const grads = grad_function(data);
@@ -519,7 +534,14 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 					const _epsilon = get_epsilon();
 					const _constant_shape = tf_constant_shape(_epsilon, _is);
 					const norm = tf_add(_is, _constant_shape);
-					return tf_div(grads, norm);
+
+					// FIX #9: Blend 70% normalized + 30% raw magnitude
+					const fullyNormed = tf_div(grads, norm);
+					const blend = tf_add(
+						tf_mul(fullyNormed, tf_constant_shape(0.7, fullyNormed)),
+						tf_mul(grads, tf_constant_shape(0.3, grads))
+					);
+					return blend;
 				} catch (e) {
 					handle_scaled_grads_error(e);
 				}
@@ -533,10 +555,12 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			await dispose(data);
 			data = updated;
 
-			// --- 3. L2 decay ---
-			var decayed = tidy(() => tf_mul(data, tf_constant_shape(decayRate, data)));
-			await dispose(data);
-			data = decayed;
+			// --- 3. L2 decay (FIX #1: less aggressive, applied less frequently) ---
+			if (iteration_idx % decayInterval === 0) {
+				var decayed = tidy(() => tf_mul(data, tf_constant_shape(decayRate, data)));
+				await dispose(data);
+				data = decayed;
+			}
 
 			// --- 4. Undo spatial jitter ---
 			var unJittered = tidy(() => {
@@ -554,7 +578,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			await dispose(data);
 			data = unJittered;
 
-			// --- 5. Gaussian blur regularization ---
+			// --- 5. Gaussian blur regularization (FIX #2: less frequent, skipped for small images) ---
 			if (iteration_idx % blurInterval === 0 && iteration_idx > 0) {
 				var blurred = tidy(() => {
 					var numChannels = data.shape[3];
@@ -568,10 +592,9 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 				data = blurred;
 			}
 
-			// --- 6. Live preview: render current state to the canvas ---
+			// --- 6. Live preview ---
 			if (previewCanvas && (iteration_idx % previewInterval === 0 || iteration_idx === iterations - 1)) {
 				_render_preview_to_canvas(previewCanvas, data, layer_idx, neuron);
-				// Yield to the browser so it can repaint the canvas
 				await nextFrame();
 			}
 
@@ -642,23 +665,23 @@ function deprocess_image(x) {
 			var numChannels = x.shape[x.shape.length - 1];
 
 			if (numChannels && numChannels > 1) {
-				var channels = tf.split(x, numChannels, -1);
-				var normalizedChannels = channels.map(function(ch) {
-					return tidy(() => {
-						var chMin = ch.min();
-						var chMax = ch.max();
-						var range = tf_add(tf_sub(chMax, chMin), tf_constant_shape(get_epsilon(), chMin));
-						var normalized = tf_div(tf_sub(ch, chMin), range);
-						var centered = tf_sub(normalized, tf_constant_shape(0.5, normalized));
-						var boosted = tf_mul(centered, tf_constant_shape(1.4, centered));
-						normalized = tf_add(tf_constant_shape(0.5, boosted), boosted);
-						normalized = clipByValue(normalized, 0, 1);
-						return tf_mul(normalized, tf_constant_shape(255, normalized));
-					});
-				});
+				// FIX #3: GLOBAL normalization instead of per-channel
+				// This prevents blue tint caused by independent channel scaling
+				var xMin = x.min();
+				var xMax = x.max();
+				var range = tf_add(tf_sub(xMax, xMin), tf_constant_shape(get_epsilon(), xMin));
+				var normalized = tf_div(tf_sub(x, xMin), range);
 
-				var combined = tf.concat(normalizedChannels, -1);
-				return clipByValue(combined, 0, 255).asType("int32");
+				// FIX #4: Mild contrast boost (1.1 instead of 1.4) applied globally
+				var centered = tf_sub(normalized, tf_constant_shape(0.5, normalized));
+				var boosted = tf_mul(centered, tf_constant_shape(1.1, centered));
+				normalized = tf_add(tf_constant_shape(0.5, boosted), boosted);
+				normalized = clipByValue(normalized, 0, 1);
+
+				return clipByValue(
+					tf_mul(normalized, tf_constant_shape(255, normalized)),
+					0, 255
+				).asType("int32");
 			} else {
 				var xMin = x.min();
 				var xMax = x.max();
