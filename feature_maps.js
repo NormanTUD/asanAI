@@ -1237,8 +1237,7 @@ function _initialize_image(start_image, new_input_shape, useColorDecorrelation) 
 // Compute preview interval from iteration count
 // ============================================================================
 function _compute_preview_interval(iterations) {
-	if (iterations <= 20) return 1;
-	return Math.max(1, Math.floor(iterations / 20));
+	return 1;
 }
 
 // ============================================================================
