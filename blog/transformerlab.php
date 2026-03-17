@@ -247,8 +247,29 @@ The job of of a Single Attention Head is to find some form of relation between a
 
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) \cdot V$$
 
-### Multi-Head Attention: Lateral Parallelism
+#### Concatenation Definition
 Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different "heads." Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different linguistic aspects (e.g., syntax vs. logic, but also very abstract features, for which human language doesn't have any names) simultaneously.
+
+For $h$ heads, where each head has dimension $d_v$:
+
+$$\text{Concat}(\text{head}_1, \dots, \text{head}_h) = [ \text{head}_1, \text{head}_2, \dots, \text{head}_h ]$$
+
+If $d_\text{model} = 512$ and we have $h = 8$ heads:
+* **Each head:** $d_v = \frac{512}{8} = 64$
+* **Shapes:** $\underbrace{(B, T, 64)}_{\text{head}_1} + \dots + \underbrace{(B, T, 64)}_{\text{head}_8} \xrightarrow{\text{Concat}} \underbrace{(B, T, 512)}_{\text{Full Tensor}}$
+
+If $h_1 = [1, 2]$ and $h_2 = [3, 4]$:
+$$\text{Concat}(h_1, h_2) = [1, 2, 3, 4]$$
+The output width is simply the sum of the input widths.
+
+#### Multi-Head Attention: Lateral Parallelism
+
+After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. We then create the next stage, **$h_1$**, using a **Residual Connection** and **Normalization**:
+
+$$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
+$$h_{1} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0})) \cdot W^O$$
+
+This Layer Normalization ensures that the values don't 'explode' and get too large, since they are, after being normalized, always in around 0 with a variance of 1. Without it, the values might get bigger and bigger with many layers.
 
 * $B = \text{Batch Size}$ (The number of independent sequences processed in a single forward pass)
 * $T = \text{Sequence Length}$ (The number of tokens/words in each sequence)
@@ -259,10 +280,6 @@ For a single head, we say:
 $$\underbrace{\text{head}_{i+1}}_{(B, T, d_v)} = \text{Attention}(\underbrace{h_i W_i^Q}_{Q}, \underbrace{h_i W_i^K}_{K}, \underbrace{h_i W_i^V}_{V})$$
 
 Which transforms the input in the shape of $(B, T, h \cdot d_v)$ to $(B, T, d_{\text{model}})$.
-
-The multi-head is then just running different heads simultaneously and concatenating their results.
-
-$$\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)W^O$$
 
 The association between *Query* and *Key* and concrete tokens is only true in the first layer, where it is taken from the concrete embeddings. In further layers, it works on the abstract feature space instead.
 
@@ -334,35 +351,7 @@ During each step of inference:
 
 This reduces the computational complexity of the projection phase from
 linear to $\mathcal{O}(T)$ relative to sequence length $T$.
-</div>
 
-<div class="md">
-## Mathematical Assembly: Concatenation and $h_1$
-
-### Concatenation Definition
-For $h$ heads, where each head has dimension $d_v$:
-
-$$\text{Concat}(\text{head}_1, \dots, \text{head}_h) = [ \text{head}_1, \text{head}_2, \dots, \text{head}_h ]$$
-
-If $d_\text{model} = 512$ and we have $h = 8$ heads:
-* **Each head:** $d_v = \frac{512}{8} = 64$
-* **Shapes:** $\underbrace{(B, T, 64)}_{\text{head}_1} + \dots + \underbrace{(B, T, 64)}_{\text{head}_8} \xrightarrow{\text{Concat}} \underbrace{(B, T, 512)}_{\text{Full Tensor}}$
-
-If $h_1 = [1, 2]$ and $h_2 = [3, 4]$:
-$$\text{Concat}(h_1, h_2) = [1, 2, 3, 4]$$
-The output width is simply the sum of the input widths.
-
-### The Multi-Attention-Head
-
-After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. We then create the next stage, **$h_1$**, using a **Residual Connection** and **Normalization**:
-
-$$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
-$$h_{1} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0})) \cdot W^O$$
-
-This Layer Normalization ensures that the values don't 'explode' and get too large, since they are, after being normalized, always in around 0 with a variance of 1. Without it, the values might get bigger and bigger with many layers.
-</div>
-
-<div class="md">
 ## The Feed-Forward Network
 While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token’s representation. In this sense, it functions as the model’s primary per-token computational stage, complementing attention’s role in information routing and aggregation.
 
