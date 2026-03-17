@@ -965,6 +965,104 @@ function _postprocess_generated_data(generated_data, full_data) {
 }
 
 // ============================================================================
+// Model & gradient function setup
+// ============================================================================
+function _build_aux_model_and_grad(layer_idx, neuron) {
+	var layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
+	var aux_model = tf_model({ inputs: model.inputs, outputs: layer_output });
+
+	var lossFunction = function(input) {
+		return aux_model.apply(input, { training: true }).gather([neuron], -1).mean();
+	};
+	var grad_function = grad(lossFunction);
+
+	return { aux_model: aux_model, grad_function: grad_function };
+}
+
+// ============================================================================
+// Initialize or accept a starting image
+// ============================================================================
+function _initialize_image(start_image, new_input_shape) {
+	if (typeof start_image !== "undefined") {
+		return start_image;
+	}
+	return _create_init_image(new_input_shape);
+}
+
+// ============================================================================
+// Compute preview interval from iteration count
+// ============================================================================
+function _compute_preview_interval(iterations) {
+	if (iterations <= 20) return 1;
+	return Math.max(1, Math.floor(iterations / 20));
+}
+
+// ============================================================================
+// Run the main gradient ascent loop over all iterations
+// ============================================================================
+async function _run_ascent_loop(data, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval) {
+	var worked = 0;
+
+	for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
+		var result = await _run_single_iteration(
+			data, iteration_idx, iterations, config, grad_function,
+			layer_idx, neuron, max_neurons, previewCanvas, previewInterval
+		);
+		data = result.data;
+		if (result.worked) worked = 1;
+	}
+
+	return { data: data, worked: worked };
+}
+
+// ============================================================================
+// Post-process generated data into image or raw tensor output
+// ============================================================================
+function _postprocess_generated_data(generated_data, full_data) {
+	if (model?.input?.shape.length == 4 && model?.input?.shape[3] == 3) {
+		try {
+			full_data["image"] = tidy(() => {
+				return array_sync(tidy(() => {
+					var dp = deprocess_image(generated_data);
+					if (!dp) {
+						err(language[lang]["deprocess_image_returned_empty_image"]);
+						full_data["worked"] = 0;
+					}
+					return dp;
+				}));
+			});
+		} catch (e) {
+			if (Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+			console.log("generated_data: ", generated_data);
+			err("" + e);
+			full_data["worked"] = 0;
+		}
+	} else {
+		full_data["data"] = array_sync(generated_data);
+	}
+	return full_data;
+}
+
+// ============================================================================
+// Handle errors during gradient ascent (retry on disposed tensors)
+// ============================================================================
+async function _handle_ascent_error(e, recursion, layer_idx, neuron, iterations, start_image) {
+	if (("" + e).includes("is already disposed")) {
+		await compile_model();
+		if (recursion < 20) {
+			await delay(recursion * 1000);
+			return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, undefined, recursion + 1);
+		} else {
+			throw new Error("Too many retries for input_gradient_ascent");
+		}
+	} else {
+		throw new Error("Error 12: " + e);
+	}
+}
+
+// ============================================================================
 // Core gradient ascent — now a clean orchestrator
 // ============================================================================
 async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons, recursion, previewCanvas) {
@@ -975,56 +1073,37 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 	typeassert(iterations, int, "iterations");
 	typeassert(recursion, int, "recursion");
 
-	var worked = 0;
 	var full_data = {};
-
-	var previewInterval = Math.max(1, Math.floor(iterations / 20));
-	if (iterations <= 20) previewInterval = 1;
-
-	var aux_model = null;
+	var previewInterval = _compute_preview_interval(iterations);
 
 	try {
-		// Build auxiliary model and gradient function
-		const layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
-		aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
+		// Step 1: Build auxiliary model and gradient function
+		var { aux_model, grad_function } = _build_aux_model_and_grad(layer_idx, neuron);
 
-		const lossFunction = (input) => aux_model.apply(input, {training: true}).gather([neuron], -1).mean();
-		const grad_function = grad(lossFunction);
-
+		// Step 2: Determine input shape and build config
 		var new_input_shape = get_input_shape_with_batch_size();
 		new_input_shape.shift();
-
 		var fullH = new_input_shape[0];
 		var fullW = new_input_shape[1];
-
-		// Build configuration
 		var config = _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape);
 
-		// Initialize image
-		var data;
-		if (typeof(start_image) != "undefined") {
-			data = start_image;
-		} else {
-			data = _create_init_image(new_input_shape);
-		}
+		// Step 3: Initialize starting image
+		var data = _initialize_image(start_image, new_input_shape);
 
-		// Main iteration loop
-		for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
-			var result = await _run_single_iteration(
-				data, iteration_idx, iterations, config, grad_function,
-				layer_idx, neuron, max_neurons, previewCanvas, previewInterval
-			);
-			data = result.data;
-			if (result.worked) worked = 1;
-		}
+		// Step 4: Run the iteration loop
+		var loopResult = await _run_ascent_loop(
+			data, iterations, config, grad_function,
+			layer_idx, neuron, max_neurons, previewCanvas, previewInterval
+		);
 
-		var generated_data = data;
+		var generated_data = loopResult.data;
+		var worked = loopResult.worked;
 
 	} catch (e) {
-		return await handle_input_gradient_descent_error(e, recursion, layer_idx, neuron, iterations, start_image);
+		return await _handle_ascent_error(e, recursion, layer_idx, neuron, iterations, start_image);
 	}
 
-	// Post-process output
+	// Step 5: Post-process and return
 	full_data = _postprocess_generated_data(generated_data, full_data);
 	await dispose(generated_data);
 	full_data["worked"] = worked;
