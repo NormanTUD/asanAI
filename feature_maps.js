@@ -210,33 +210,80 @@ async function draw_maximally_activated_neuron_with_retries(base_msg, layer_idx,
 	}
 }
 
-async function handle_draw_maximally_activated_neuron_multiple_times_error(e, is_recursive, tries_left, canvasses, layer_idx, type) {
+// ============================================================================
+// Error handling helpers for draw_maximally_activated_neuron retries
+// ============================================================================
+
+/**
+ * Returns true if the error message indicates a disposed-tensor problem
+ * that is potentially recoverable by retrying.
+ */
+function _is_disposed_tensor_error(e) {
+	var msg = "" + e;
+	return (
+		msg.includes("already disposed") ||
+		msg.includes("is disposed") ||
+		msg.includes("Tensor or TensorLike, but got 'null'")
+	);
+}
+
+/**
+ * Attempts a single retry of draw_maximally_activated_layer.
+ * Returns true if the retry succeeded, false if it hit a disposed-tensor
+ * error again (and should keep retrying), or throws on unexpected errors.
+ */
+async function _attempt_single_retry(canvasses, layer_idx, type) {
+	await delay(200);
+	try {
+		l(`${language[lang]["failed_try_again"]}...`);
+		canvasses.push(await draw_maximally_activated_layer(layer_idx, type, 1));
+		return true;
+	} catch (retryError) {
+		if (_is_disposed_tensor_error(retryError)) {
+			err("" + retryError);
+			return false;
+		}
+		throw new Error(retryError);
+	}
+}
+
+/**
+ * Runs up to `tries_left` retries when a disposed-tensor error occurs
+ * during non-recursive generation.
+ */
+async function _retry_disposed_tensor(tries_left, canvasses, layer_idx, type) {
+	while (tries_left > 0) {
+		var succeeded = await _attempt_single_retry(canvasses, layer_idx, type);
+		tries_left--;
+		if (succeeded) break;
+	}
+	return tries_left;
+}
+
+/**
+ * Top-level error handler for draw_maximally_activated_neuron_with_retries.
+ *
+ * - Disposed-tensor errors in non-recursive calls trigger up to `tries_left`
+ *   retries of the whole layer.
+ * - Disposed-tensor errors in recursive calls are logged and ignored to
+ *   prevent infinite retry chains.
+ * - All other errors are re-thrown.
+ */
+async function handle_draw_maximally_activated_neuron_multiple_times_error(
+	e, is_recursive, tries_left, canvasses, layer_idx, type
+) {
 	currently_generating_images = false;
 
-	if (("" + e).includes("already disposed") || ("" + e).includes("is disposed") || ("" + e).includes("Tensor or TensorLike, but got 'null'")) {
-		if (!is_recursive) {
-			while (tries_left) {
-				await delay(200);
-				try {
-					l(`${language[lang]["failed_try_again"]}...`);
-					canvasses.push(await draw_maximally_activated_layer(layer_idx, type, 1));
-				} catch (e) {
-					if (("" + e).includes("already disposed") || ("" + e).includes("is disposed")) {
-						err("" + e);
-					} else {
-						throw new Error(e);
-					}
-				}
-				tries_left--;
-			}
-		} else {
-			log(language[lang]["already_disposed_in_draw_maximally_activated_neuron_recursive_ignore"]);
-		}
-	} else {
+	if (!_is_disposed_tensor_error(e)) {
 		throw new Error(e);
 	}
 
-	return tries_left;
+	if (is_recursive) {
+		log(language[lang]["already_disposed_in_draw_maximally_activated_neuron_recursive_ignore"]);
+		return tries_left;
+	}
+
+	return await _retry_disposed_tensor(tries_left, canvasses, layer_idx, type);
 }
 
 function _get_neurons_last_layer(layer_idx, type) {
