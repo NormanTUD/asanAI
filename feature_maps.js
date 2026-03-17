@@ -979,36 +979,6 @@ async function _run_single_iteration(data, iteration_idx, iterations, config, gr
 }
 
 // ============================================================================
-// Post-process generated data into image or raw tensor output
-// ============================================================================
-function _postprocess_generated_data(generated_data, full_data) {
-	if (model?.input?.shape.length == 4 && model?.input?.shape[3] == 3) {
-		try {
-			full_data["image"] = tidy(() => {
-				return array_sync(tidy(() => {
-					var dp = deprocess_image(generated_data);
-					if (!dp) {
-						err(language[lang]["deprocess_image_returned_empty_image"]);
-						full_data["worked"] = 0;
-					}
-					return dp;
-				}));
-			});
-		} catch (e) {
-			if (Object.keys(e).includes("message")) {
-				e = e.message;
-			}
-			console.log("generated_data: ", generated_data);
-			err("" + e);
-			full_data["worked"] = 0;
-		}
-	} else {
-		full_data["data"] = array_sync(generated_data);
-	}
-	return full_data;
-}
-
-// ============================================================================
 // Model & gradient function setup
 // ============================================================================
 function _build_aux_model_and_grad(layer_idx, neuron) {
