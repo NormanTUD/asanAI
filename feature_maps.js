@@ -31,92 +31,140 @@ function _render_preview_to_canvas(canvas, tensorData, layer_idx, neuron) {
 	}
 }
 
-async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
-	var current_input_shape = get_input_shape();
-	var canvasses = [];
+// ============================================================================
+// Helpers extracted from draw_maximally_activated_neuron
+// ============================================================================
 
+/**
+ * Sets up the preview canvas for image models, attaching it to the container.
+ * Returns null if the model isn't an image model or the container is missing.
+ */
+function _setup_preview_canvas(layer_idx, container) {
+	var isImageModel = (model?.input?.shape.length == 4 && model?.input?.shape[3] == 3);
+	if (!isImageModel || !container) return null;
+
+	var previewCanvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
+	previewCanvas.classList.add("feature-map-working");
+	container.appendChild(previewCanvas);
+	return previewCanvas;
+}
+
+/**
+ * Resolves the iteration count from the GUI or falls back to a sensible default.
+ */
+function _resolve_iterations(layer_idx) {
+	var isLastLayer = (layer_idx >= model.layers.length - 2);
+	var defaultIterations = isLastLayer ? 200 : 30;
+	var iterations = parse_int($("#max_activation_iterations").val()) || defaultIterations;
+	if (!iterations) {
+		log(`Iterations was set to ${iterations} in the GUI, using ${defaultIterations} instead`);
+		iterations = defaultIterations;
+	}
+	return iterations;
+}
+
+/**
+ * Marks the preview canvas as done (removes working state).
+ */
+function _finalize_preview_canvas(previewCanvas) {
+	if (!previewCanvas) return;
+	previewCanvas.classList.remove("feature-map-working");
+	previewCanvas.classList.add("feature-map-done");
+}
+
+/**
+ * Handles the tensor (non-image) branch of successful gradient ascent results.
+ * Appends an input label and a <pre> block with the LaTeX-formatted tensor.
+ */
+async function _render_tensor_result(full_data, layer_idx, neuron, container) {
+	var fragment = document.createDocumentFragment();
+	var _tensor = tensor(full_data.data);
+	var t_str = `<span class="temml_me">${array_to_latex_matrix(array_sync(_tensor))}</span>`;
+	log(language[lang]["maximally_activated_tensor"] + ":", t_str);
+
+	var inputElem = document.createElement("input");
+	inputElem.style.width = "100%";
+	inputElem.value = `Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:`;
+	fragment.appendChild(inputElem);
+
+	var pre = document.createElement("pre");
+	pre.innerHTML = t_str;
+	fragment.appendChild(pre);
+
+	await dispose(_tensor);
+
+	if (container) container.appendChild(fragment);
+}
+
+/**
+ * Handles the image branch of successful gradient ascent results.
+ * Draws the result onto either the existing preview canvas or a new one.
+ * Returns the canvas that was drawn to.
+ */
+async function _render_image_result(full_data, layer_idx, neuron, previewCanvas, container) {
+	var data = full_data.image[0];
+	var data_hash = {
+		layer: layer_idx,
+		neuron: neuron,
+		model_hash: await get_model_config_hash()
+	};
+	scaleNestedArray(data);
+
+	if (previewCanvas) {
+		draw_grid(previewCanvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
+		return previewCanvas;
+	} else {
+		var fragment = document.createDocumentFragment();
+		var canvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
+		draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
+		fragment.appendChild(canvas);
+		if (container) container.appendChild(fragment);
+		return canvas;
+	}
+}
+
+/**
+ * Processes a successful gradient ascent result — dispatches to the tensor
+ * or image renderer and collects canvasses.
+ */
+async function _handle_successful_ascent(full_data, layer_idx, neuron, previewCanvas, container, canvasses) {
+	if (full_data.data) {
+		await _render_tensor_result(full_data, layer_idx, neuron, container);
+	} else if (full_data.image) {
+		var canvas = await _render_image_result(full_data, layer_idx, neuron, previewCanvas, container);
+		canvasses.push(canvas);
+	}
+	show_tab_label("maximally_activated_label", 1);
+}
+
+// ============================================================================
+// Refactored main function — now a slim orchestrator
+// ============================================================================
+
+async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
+	var canvasses = [];
 	var original_disable_layer_debuggers = disable_layer_debuggers;
 	disable_layer_debuggers = 1;
 
-	var previewCanvas = null;
 	var container = document.getElementById("maximally_activated_content");
-	var isImageModel = (model?.input?.shape.length == 4 && model?.input?.shape[3] == 3);
-
-	if (isImageModel && container) {
-		previewCanvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
-		previewCanvas.classList.add("feature-map-working");
-		container.appendChild(previewCanvas);
-	}
+	var previewCanvas = _setup_preview_canvas(layer_idx, container);
 
 	try {
-		var start_image = undefined;
-
-		var isLastLayer = (layer_idx >= model.layers.length - 2);
-		var defaultIterations = isLastLayer ? 200 : 30;
-		var iterations = parse_int($("#max_activation_iterations").val()) || defaultIterations;
-		if (!iterations) log(`Iterations was set to ${iterations} in the GUI, using ${defaultIterations} instead`);
+		var iterations = _resolve_iterations(layer_idx);
 
 		var full_data = await input_gradient_ascent(
-			layer_idx, neuron, iterations, start_image, max_neurons, 0,
+			layer_idx, neuron, iterations, undefined, max_neurons, 0,
 			previewCanvas
 		);
 
 		disable_layer_debuggers = original_disable_layer_debuggers;
-
-		if (previewCanvas) {
-			previewCanvas.classList.remove("feature-map-working");
-			previewCanvas.classList.add("feature-map-done");
-		}
+		_finalize_preview_canvas(previewCanvas);
 
 		if (full_data["worked"]) {
-			var fragment = document.createDocumentFragment();
-
-			if (full_data.data) {
-				var _tensor = tensor(full_data.data);
-				var t_str = `<span class="temml_me">${array_to_latex_matrix(array_sync(_tensor))}</span>`;
-				log(language[lang]["maximally_activated_tensor"] + ":", t_str);
-
-				var inputElem = document.createElement("input");
-				inputElem.style.width = "100%";
-				inputElem.value = `Maximally activated tensors for Layer ${layer_idx}, Neuron ${neuron}:`;
-				fragment.appendChild(inputElem);
-
-				var pre = document.createElement("pre");
-				pre.innerHTML = t_str;
-				fragment.appendChild(pre);
-
-				await dispose(_tensor);
-
-				if (container) container.appendChild(fragment);
-
-			} else if (full_data.image) {
-				var data = full_data.image[0];
-				var data_hash = {
-					layer: layer_idx,
-					neuron: neuron,
-					model_hash: await get_model_config_hash()
-				};
-				scaleNestedArray(data);
-
-				if (previewCanvas) {
-					draw_grid(previewCanvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
-					canvasses.push(previewCanvas);
-				} else {
-					var canvas = get_canvas_in_class(layer_idx, "maximally_activated_class", 0, 1);
-					draw_grid(canvas, 1, data, 1, 0, "predict_maximally_activated(this, 'image')", null, data_hash, "layer_image");
-					fragment.appendChild(canvas);
-					canvasses.push(canvas);
-					if (container) container.appendChild(fragment);
-				}
-			}
-
-			show_tab_label("maximally_activated_label", 1);
+			await _handle_successful_ascent(full_data, layer_idx, neuron, previewCanvas, container, canvasses);
 		}
 	} catch (e) {
-		if (previewCanvas) {
-			previewCanvas.classList.remove("feature-map-working");
-			previewCanvas.classList.add("feature-map-done");
-		}
+		_finalize_preview_canvas(previewCanvas);
 		await write_error(e, null, null);
 		show_tab_label("visualization_tab", 1);
 		show_tab_label("fcnn_tab_label", 1);
