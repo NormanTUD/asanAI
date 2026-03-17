@@ -830,16 +830,9 @@ async function _ensure_correct_dimensions(data, fullH, fullW) {
 }
 
 // ============================================================================
-// Single iteration of gradient ascent
+// Step 1–2: Apply all forward jitter (spatial + transform)
 // ============================================================================
-async function _run_single_iteration(data, iteration_idx, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval) {
-	log(`Layer ${layer_idx}, neuron ${neuron + 1}/${max_neurons}, iteration ${iteration_idx + 1}/${iterations}`);
-
-	if (stop_generating_images) return { data: data, worked: false };
-
-	var currentBlurFactor = _get_current_blur_factor(config.blurPhases, iteration_idx);
-
-	// 1. Spatial translation jitter
+async function _apply_forward_jitter(data, config) {
 	var ox = Math.floor(Math.random() * (config.jitterMax * 2 + 1)) - config.jitterMax;
 	var oy = Math.floor(Math.random() * (config.jitterMax * 2 + 1)) - config.jitterMax;
 
@@ -847,50 +840,96 @@ async function _run_single_iteration(data, iteration_idx, iterations, config, gr
 	await dispose(data);
 	data = jittered;
 
-	// 2. Transform jitter (large images only)
 	var rotAngle = 0;
 	var scaleJitter = 1.0;
+
 	if (config.useTransformJitter) {
 		rotAngle = (Math.random() - 0.5) * 4.0;
 		scaleJitter = 1.0 + (Math.random() - 0.5) * 0.06;
 		data = await _apply_transform_jitter_forward(data, rotAngle, scaleJitter, config.fullH, config.fullW);
 	}
 
-	// 3. Coarse-to-fine blur for gradient computation
-	var { dataForGrad, needDispose: needDisposeBlurred } = _compute_blurred_data_for_grad(data, currentBlurFactor, config.fullH, config.fullW);
+	return { data, ox, oy, rotAngle, scaleJitter };
+}
 
-	// 4. Compute gradients
+// ============================================================================
+// Steps 3–4: Compute gradients (with optional coarse-to-fine blur)
+// ============================================================================
+async function _compute_gradients_for_iteration(data, config, grad_function, iteration_idx) {
+	var currentBlurFactor = _get_current_blur_factor(config.blurPhases, iteration_idx);
+	var { dataForGrad, needDispose: needDisposeBlurred } = _compute_blurred_data_for_grad(
+		data, currentBlurFactor, config.fullH, config.fullW
+	);
+
 	var scaledGrads = _compute_scaled_gradients(grad_function, dataForGrad);
 
 	if (needDisposeBlurred) {
 		await dispose(dataForGrad);
 	}
 
-	if (!scaledGrads) {
-		return { data: data, worked: false };
-	}
+	return scaledGrads;
+}
 
-	// 5–7. Gradient step, L2 decay, TV regularization
-	data = await _apply_gradient_update(data, scaledGrads, config.learningRate, iteration_idx, config);
-
-	// 8. Undo spatial jitter
+// ============================================================================
+// Steps 8–10: Undo all jitter and ensure correct dimensions
+// ============================================================================
+async function _undo_jitter_and_stabilize(data, ox, oy, rotAngle, scaleJitter, config) {
+	// Undo spatial jitter
 	var unJittered = _undo_spatial_jitter(data, ox, oy);
 	await dispose(data);
 	data = unJittered;
 
-	// 9. Undo transform jitter
+	// Undo transform jitter
 	if (config.useTransformJitter) {
 		data = await _undo_transform_jitter(data, rotAngle, scaleJitter, config.fullH, config.fullW);
 	}
 
-	// 10. Safety: ensure dimensions haven't drifted
+	// Safety: ensure dimensions haven't drifted
 	data = await _ensure_correct_dimensions(data, config.fullH, config.fullW);
 
-	// 11. Live preview
+	return data;
+}
+
+// ============================================================================
+// Step 11: Render live preview if due
+// ============================================================================
+async function _maybe_render_preview(data, iteration_idx, iterations, previewInterval, previewCanvas, layer_idx, neuron) {
 	if (previewCanvas && (iteration_idx % previewInterval === 0 || iteration_idx === iterations - 1)) {
 		_render_preview_to_canvas(previewCanvas, data, layer_idx, neuron);
 		await nextFrame();
 	}
+}
+
+// ============================================================================
+// Single iteration of gradient ascent — now a slim orchestrator
+// ============================================================================
+async function _run_single_iteration(data, iteration_idx, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval) {
+	log(`Layer ${layer_idx}, neuron ${neuron + 1}/${max_neurons}, iteration ${iteration_idx + 1}/${iterations}`);
+
+	if (stop_generating_images) return { data: data, worked: false };
+
+	// Steps 1–2: Apply forward jitter
+	var jitterState = await _apply_forward_jitter(data, config);
+	data = jitterState.data;
+
+	// Steps 3–4: Compute gradients
+	var scaledGrads = await _compute_gradients_for_iteration(data, config, grad_function, iteration_idx);
+
+	if (!scaledGrads) {
+		return { data: data, worked: false };
+	}
+
+	// Steps 5–7: Gradient step, L2 decay, TV regularization
+	data = await _apply_gradient_update(data, scaledGrads, config.learningRate, iteration_idx, config);
+
+	// Steps 8–10: Undo jitter and stabilize dimensions
+	data = await _undo_jitter_and_stabilize(
+		data, jitterState.ox, jitterState.oy,
+		jitterState.rotAngle, jitterState.scaleJitter, config
+	);
+
+	// Step 11: Live preview
+	await _maybe_render_preview(data, iteration_idx, iterations, previewInterval, previewCanvas, layer_idx, neuron);
 
 	return { data: data, worked: true };
 }
