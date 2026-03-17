@@ -833,36 +833,52 @@ function _compute_scaled_gradients(grad_function, dataForGrad) {
 }
 
 // ============================================================================
-// Apply gradient step, L2 decay, and TV regularization
+// Gradient step: move data in the direction of the gradient
 // ============================================================================
-async function _apply_gradient_update(data, scaledGrads, learningRate, iteration_idx, config) {
-	// Gradient step
+async function _apply_gradient_step(data, scaledGrads, learningRate) {
 	var updated = tidy(() => {
 		var step = tf_mul(scaledGrads, tf_constant_shape(learningRate, scaledGrads));
 		return tf_add(data, step);
 	});
 	await dispose(scaledGrads);
 	await dispose(data);
-	data = updated;
+	return updated;
+}
 
-	// L2 decay
-	if (iteration_idx % config.decayInterval === 0) {
-		var decayed = tidy(() => tf_mul(data, tf_constant_shape(config.decayRate, data)));
-		await dispose(data);
-		data = decayed;
-	}
+// ============================================================================
+// L2 weight decay: gently shrink activations to prevent runaway values
+// ============================================================================
+async function _apply_l2_decay(data, iteration_idx, decayRate, decayInterval) {
+	if (iteration_idx % decayInterval !== 0) return data;
 
-	// TV regularization
-	if (iteration_idx % config.tvInterval === 0 && iteration_idx > 0) {
-		var tvGrad = _compute_tv_gradients(data, config.tvWeight);
-		var tvRegularized = tidy(() => tf.sub(data, tvGrad));
-		await dispose(tvGrad);
-		await dispose(data);
-		data = tvRegularized;
-	}
+	var decayed = tidy(() => tf_mul(data, tf_constant_shape(decayRate, data)));
+	await dispose(data);
+	return decayed;
+}
 
+// ============================================================================
+// Total Variation regularization step: suppress high-frequency noise
+// ============================================================================
+async function _apply_tv_regularization(data, iteration_idx, tvWeight, tvInterval) {
+	if (iteration_idx % tvInterval !== 0 || iteration_idx === 0) return data;
+
+	var tvGrad = _compute_tv_gradients(data, tvWeight);
+	var tvRegularized = tidy(() => tf.sub(data, tvGrad));
+	await dispose(tvGrad);
+	await dispose(data);
+	return tvRegularized;
+}
+
+// ============================================================================
+// Apply gradient step, L2 decay, and TV regularization (orchestrator)
+// ============================================================================
+async function _apply_gradient_update(data, scaledGrads, learningRate, iteration_idx, config) {
+	data = await _apply_gradient_step(data, scaledGrads, learningRate);
+	data = await _apply_l2_decay(data, iteration_idx, config.decayRate, config.decayInterval);
+	data = await _apply_tv_regularization(data, iteration_idx, config.tvWeight, config.tvInterval);
 	return data;
 }
+
 
 // ============================================================================
 // Ensure tensor dimensions haven't drifted from expected shape
