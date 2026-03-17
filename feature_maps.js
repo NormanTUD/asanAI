@@ -27,7 +27,6 @@ function _render_preview_to_canvas(canvas, tensorData, layer_idx, neuron) {
 
 		draw_grid(canvas, 1, data, 1, 0, null, null, data_hash, "layer_image");
 	} catch (e) {
-		// Preview rendering is best-effort; don't break the main loop
 		console.warn("Preview render failed:", e);
 	}
 }
@@ -52,7 +51,6 @@ async function draw_maximally_activated_neuron(layer_idx, neuron, max_neurons) {
 	try {
 		var start_image = undefined;
 
-		// FIX #7: More iterations for deeper layers (last layer needs more work)
 		var isLastLayer = (layer_idx >= model.layers.length - 2);
 		var defaultIterations = isLastLayer ? 200 : 30;
 		var iterations = parse_int($("#max_activation_iterations").val()) || defaultIterations;
@@ -167,7 +165,7 @@ async function draw_maximally_activated_neuron_with_retries(base_msg, layer_idx,
 async function handle_draw_maximally_activated_neuron_multiple_times_error(e, is_recursive, tries_left, canvasses, layer_idx, type) {
 	currently_generating_images = false;
 
-	if (("" + e).includes("already disposed") || ("" + e).includes("Tensor or TensorLike, but got 'null'")) {
+	if (("" + e).includes("already disposed") || ("" + e).includes("is disposed") || ("" + e).includes("Tensor or TensorLike, but got 'null'")) {
 		if (!is_recursive) {
 			while (tries_left) {
 				await delay(200);
@@ -175,7 +173,7 @@ async function handle_draw_maximally_activated_neuron_multiple_times_error(e, is
 					l(`${language[lang]["failed_try_again"]}...`);
 					canvasses.push(await draw_maximally_activated_layer(layer_idx, type, 1));
 				} catch (e) {
-					if (("" + e).includes("already disposed")) {
+					if (("" + e).includes("already disposed") || ("" + e).includes("is disposed")) {
 						err("" + e);
 					} else {
 						throw new Error(e);
@@ -442,6 +440,138 @@ function handle_scaled_grads_error(e) {
 	err(`${language[lang]["inside_scaled_grads_creation_error"]}: ${e}`);
 }
 
+// ============================================================================
+// IMPROVEMENT #2: Total Variation regularization
+// Penalizes high-frequency pixel differences to suppress checkerboard noise
+// while preserving meaningful edges.
+// ============================================================================
+function _compute_tv_gradients(data, tvWeight) {
+	return tidy(() => {
+		var h = data.shape[1];
+		var w = data.shape[2];
+
+		if (h < 3 || w < 3) {
+			return tf.zerosLike(data);
+		}
+
+		var dx = tf.sub(
+			data.slice([0, 0, 1, 0], [-1, -1, w - 1, -1]),
+			data.slice([0, 0, 0, 0], [-1, -1, w - 1, -1])
+		);
+		var dy = tf.sub(
+			data.slice([0, 1, 0, 0], [-1, h - 1, -1, -1]),
+			data.slice([0, 0, 0, 0], [-1, h - 1, -1, -1])
+		);
+
+		var dxSign = tf.sign(dx);
+		var dySign = tf.sign(dy);
+
+		var dxPadded = tf.pad(dxSign, [[0,0],[0,0],[1,0],[0,0]]);
+		var dxPaddedShift = tf.pad(dxSign, [[0,0],[0,0],[0,1],[0,0]]);
+		var tvGradX = tf.sub(dxPadded, dxPaddedShift);
+
+		var dyPadded = tf.pad(dySign, [[0,0],[1,0],[0,0],[0,0]]);
+		var dyPaddedShift = tf.pad(dySign, [[0,0],[0,1],[0,0],[0,0]]);
+		var tvGradY = tf.sub(dyPadded, dyPaddedShift);
+
+		var tvGrad = tf.add(tvGradX, tvGradY);
+		return tf.mul(tvGrad, tf.scalar(tvWeight));
+	});
+}
+
+// ============================================================================
+// Lightweight spatial jitter helpers (translation only — safe for all sizes)
+// Rotation and scale jitter are DISABLED for small images (<64px) because
+// repeated bilinear interpolation destroys them.
+// ============================================================================
+function _should_use_transform_jitter(h, w) {
+	return (h >= 64 && w >= 64);
+}
+
+function _apply_rotation_jitter(data, angleDeg) {
+	return tidy(() => {
+		var angleRad = angleDeg * Math.PI / 180.0;
+		if (tf.image && tf.image.rotateWithOffset) {
+			return tf.image.rotateWithOffset(data, angleRad, 0, 0.5);
+		}
+		return tf.clone(data);
+	});
+}
+
+function _apply_scale_jitter(data, scaleFactor, origH, origW) {
+	return tidy(() => {
+		if (Math.abs(scaleFactor - 1.0) < 0.001) return tf.clone(data);
+		var h = data.shape[1];
+		var w = data.shape[2];
+		var newH = Math.max(2, Math.round(h * scaleFactor));
+		var newW = Math.max(2, Math.round(w * scaleFactor));
+
+		var resized = tf.image.resizeBilinear(data, [newH, newW]);
+
+		if (newH >= origH && newW >= origW) {
+			var startH = Math.floor((newH - origH) / 2);
+			var startW = Math.floor((newW - origW) / 2);
+			return resized.slice([0, startH, startW, 0], [data.shape[0], origH, origW, data.shape[3]]);
+		} else {
+			var padTop = Math.floor((origH - newH) / 2);
+			var padBottom = origH - newH - padTop;
+			var padLeft = Math.floor((origW - newW) / 2);
+			var padRight = origW - newW - padLeft;
+			return tf.pad(resized, [[0,0],[padTop, padBottom],[padLeft, padRight],[0,0]]);
+		}
+	});
+}
+
+// ============================================================================
+// IMPROVEMENT #5: Better initialization
+// For small images: slightly noisy gray. For larger: low-freq upscaled noise.
+// ============================================================================
+function _create_init_image(shape) {
+	return tidy(() => {
+		var h = shape[0];
+		var w = shape[1];
+		var c = shape[2];
+
+		if (h <= 32 || w <= 32) {
+			// Small images: start with gray + small noise
+			// This avoids the blob artifacts from upscaling tiny noise
+			return clipByValue(
+				tf.add(
+					tf.fill([1, h, w, c], 0.5),
+					tf.randomNormal([1, h, w, c], 0.0, 0.01)
+				),
+				0, 1
+			);
+		} else {
+			// Larger images: low-frequency noise for coherent starting point
+			var smallH = Math.max(4, Math.floor(h / 4));
+			var smallW = Math.max(4, Math.floor(w / 4));
+			var smallNoise = tf.randomNormal([1, smallH, smallW, c], 0.0, 1.0);
+			var upscaled = tf.image.resizeBilinear(smallNoise, [h, w]);
+			var mean = upscaled.mean();
+			var variance = tf.moments(upscaled).variance;
+			var std = tf.sqrt(tf.add(variance, tf.scalar(1e-5)));
+			var normalized = tf.div(tf.sub(upscaled, mean), std);
+			return clipByValue(
+				tf.add(tf.mul(normalized, tf.scalar(0.1)), tf.scalar(0.5)),
+				0, 1
+			);
+		}
+	});
+}
+
+// ============================================================================
+// Core gradient ascent — clean, robust, no shape changes
+// All tensors stay at full model input resolution at all times.
+//
+// Improvements applied:
+//   #1: Coarse-to-fine via progressive blur reduction (not resize)
+//   #2: TV regularization (replaces Gaussian blur)
+//   #3: REMOVED color decorrelation (too aggressive for small/custom datasets;
+//       instead we use proper per-channel normalization in deprocess_image)
+//   #4: Transform jitter only for images >= 64px
+//   #5: Adaptive initialization based on image size
+// ============================================================================
 async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons, recursion, previewCanvas) {
 	if (typeof recursion === "undefined") recursion = 0;
 
@@ -453,155 +583,228 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 	var worked = 0;
 	var full_data = {};
 
-	// How often to update the preview (every N iterations)
 	var previewInterval = Math.max(1, Math.floor(iterations / 20));
 	if (iterations <= 20) previewInterval = 1;
 
+	var aux_model = null;
+
 	try {
 		const layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
-		const aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
+		aux_model = tf_model({inputs: model.inputs, outputs: layer_output});
 
-		// FIX #10: Use .mean() to ensure scalar loss
 		const lossFunction = (input) => aux_model.apply(input, {training: true}).gather([neuron], -1).mean();
 		const grad_function = grad(lossFunction);
 
 		var new_input_shape = get_input_shape_with_batch_size();
 		new_input_shape.shift();
+
+		var fullH = new_input_shape[0];
+		var fullW = new_input_shape[1];
+		var numChannels = new_input_shape[new_input_shape.length - 1];
+		var imageSize = Math.min(fullH, fullW);
+
+		// --- Initialize image ---
 		var data;
 		if (typeof(start_image) != "undefined") {
 			data = start_image;
 		} else {
-			// FIX #5 REVISED: Wider initialization range (std 0.25 instead of 0.15)
-			data = tidy(() => {
-				var noise = tf.randomNormal([1, ...new_input_shape], 0.5, 0.25);
-				return clipByValue(noise, 0, 1);
-			});
+			data = _create_init_image(new_input_shape);
 		}
 
-		// --- Configuration for regularization ---
+		// --- Configuration ---
+		var jitterMax = Math.max(1, Math.floor(imageSize / 16));
+		var useTransformJitter = _should_use_transform_jitter(fullH, fullW);
 
-		// FIX #8: Scale jitter to image size
-		const imageSize = Math.min(new_input_shape[0], new_input_shape[1]);
-		const jitterMax = Math.max(1, Math.floor(imageSize / 16));
+		var decayRate = 0.995;
+		var decayInterval = 4;
 
-		// FIX #2: Increase blur interval, skip for small images
-		const blurInterval = (imageSize < 64) ? 999999 : Math.max(8, Math.floor(iterations / 4));
+		var isLastLayer = (layer_idx === model.layers.length - 1);
+		var defaultLR = isLastLayer ? 0.5 : 0.15;
+		var learningRate = parse_float($("#max_activation_lr").val()) || defaultLR;
 
-		// FIX #1 REVISED: Less aggressive decay (0.998 instead of 0.995, interval 5 instead of 3)
-		const decayRate = 0.998;
-		const decayInterval = 5;
+		// TV regularization — gentle
+		var tvWeight = 0.0003;
+		var tvInterval = 3;
 
-		// FIX #6 REVISED: Higher learning rates (0.12 for non-last, 0.5 for last)
-		const isLastLayer = (layer_idx === model.layers.length - 1);
-		const defaultLR = isLastLayer ? 0.5 : 0.12;
-		const learningRate = parse_float($("#max_activation_lr").val()) || defaultLR;
-
-		const gaussianWeights = [1, 2, 1, 2, 4, 2, 1, 2, 1].map(v => v / 16);
-		const blurKernel = tf.tensor4d(gaussianWeights, [3, 3, 1, 1]);
+		// IMPROVEMENT #1: Coarse-to-fine via blur
+		// We define blur "phases" — early iterations use stronger blur
+		// to build large-scale structure, later iterations use no blur for detail.
+		// This is safe because tensor shape never changes.
+		var blurPhases = [];
+		if (imageSize >= 16 && iterations >= 12) {
+			// 3 phases: strong blur, light blur, no blur
+			var phase1End = Math.floor(iterations * 0.33);
+			var phase2End = Math.floor(iterations * 0.66);
+			blurPhases = [
+				{ until: phase1End, factor: Math.max(2, Math.floor(imageSize / 8)) },
+				{ until: phase2End, factor: Math.max(2, Math.floor(imageSize / 16)) },
+				{ until: iterations,  factor: 0 } // 0 = no blur
+			];
+		} else {
+			blurPhases = [{ until: iterations, factor: 0 }];
+		}
 
 		for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
 			log(`Layer ${layer_idx}, neuron ${neuron + 1}/${max_neurons}, iteration ${iteration_idx + 1}/${iterations}`);
-			if (stop_generating_images) {
-				continue;
+
+			if (stop_generating_images) continue;
+
+			// Determine current blur factor from phase
+			var currentBlurFactor = 0;
+			for (var p = 0; p < blurPhases.length; p++) {
+				if (iteration_idx < blurPhases[p].until) {
+					currentBlurFactor = blurPhases[p].factor;
+					break;
+				}
 			}
 
-			// --- 1. Spatial jitter using pad + slice (FIX #8: scaled jitter) ---
-			const ox = Math.floor(Math.random() * (jitterMax * 2 + 1)) - jitterMax;
-			const oy = Math.floor(Math.random() * (jitterMax * 2 + 1)) - jitterMax;
+			// --- 1. Spatial translation jitter ---
+			var ox = Math.floor(Math.random() * (jitterMax * 2 + 1)) - jitterMax;
+			var oy = Math.floor(Math.random() * (jitterMax * 2 + 1)) - jitterMax;
 
 			var jittered = tidy(() => {
 				var h = data.shape[1];
 				var w = data.shape[2];
-				var padTop = Math.max(ox, 0);
-				var padBottom = Math.max(-ox, 0);
-				var padLeft = Math.max(oy, 0);
-				var padRight = Math.max(-oy, 0);
-				var padded = tf.pad(data, [[0, 0], [padTop, padBottom], [padLeft, padRight], [0, 0]]);
-				var sliceTop = Math.max(-ox, 0);
-				var sliceLeft = Math.max(-oy, 0);
-				return tf.slice(padded, [0, sliceTop, sliceLeft, 0], [data.shape[0], h, w, data.shape[3]]);
+				var padded = tf.pad(data, [
+					[0, 0],
+					[Math.max(ox, 0), Math.max(-ox, 0)],
+					[Math.max(oy, 0), Math.max(-oy, 0)],
+					[0, 0]
+				]);
+				return tf.slice(padded,
+					[0, Math.max(-ox, 0), Math.max(-oy, 0), 0],
+					[data.shape[0], h, w, data.shape[3]]
+				);
 			});
 			await dispose(data);
 			data = jittered;
 
-			// --- 2. Compute gradients with hybrid normalization (FIX #9 REVISED: 50/50 blend) ---
-			const scaledGrads = tidy(() => {
-				try {
-					const grads = grad_function(data);
-					const grads_sq = tf_square(grads);
-					const grads_sq_mean = tf_mean(grads_sq);
-					const _is = sqrt(grads_sq_mean);
-					const _epsilon = get_epsilon();
-					const _constant_shape = tf_constant_shape(_epsilon, _is);
-					const norm = tf_add(_is, _constant_shape);
+			// --- 2. Transform jitter (only for large images) ---
+			var rotAngle = 0;
+			var scaleJitter = 1.0;
+			if (useTransformJitter) {
+				rotAngle = (Math.random() - 0.5) * 4.0; // ±2 degrees (conservative)
+				scaleJitter = 1.0 + (Math.random() - 0.5) * 0.06; // ±3%
 
-					// FIX #9 REVISED: 50% normalized + 50% raw for stronger feature signal
-					const fullyNormed = tf_div(grads, norm);
-					const blend = tf_add(
-						tf_mul(fullyNormed, tf_constant_shape(0.5, fullyNormed)),
-						tf_mul(grads, tf_constant_shape(0.5, grads))
-					);
-					return blend;
-				} catch (e) {
-					handle_scaled_grads_error(e);
-				}
-			});
+				var rotated = _apply_rotation_jitter(data, rotAngle);
+				await dispose(data);
+				data = rotated;
 
+				var scaled = _apply_scale_jitter(data, scaleJitter, fullH, fullW);
+				await dispose(data);
+				data = scaled;
+			}
+
+			// --- 3. Apply coarse-to-fine blur for gradient computation ---
+			var dataForGrad = data;
+			var needDisposeBlurred = false;
+			if (currentBlurFactor >= 2) {
+				var blurH = Math.max(2, Math.round(fullH / currentBlurFactor));
+				var blurW = Math.max(2, Math.round(fullW / currentBlurFactor));
+				dataForGrad = tidy(() => {
+					var down = tf.image.resizeBilinear(data, [blurH, blurW]);
+					return tf.image.resizeBilinear(down, [fullH, fullW]);
+				});
+				needDisposeBlurred = true;
+			}
+
+			// --- 4. Compute gradients ---
+			var scaledGrads = null;
+			try {
+				scaledGrads = tidy(() => {
+					var grads = grad_function(dataForGrad);
+
+					var grads_sq = tf_square(grads);
+					var grads_sq_mean = tf_mean(grads_sq);
+					var rms = sqrt(grads_sq_mean);
+					var eps = get_epsilon();
+					var norm = tf_add(rms, tf_constant_shape(eps, rms));
+
+					return tf_div(grads, norm);
+				});
+			} catch (e) {
+				handle_scaled_grads_error(e);
+				scaledGrads = null;
+			}
+
+			if (needDisposeBlurred) {
+				await dispose(dataForGrad);
+			}
+
+			// If gradient computation failed, skip this iteration
+			if (!scaledGrads) {
+				continue;
+			}
+
+			// --- 5. Gradient step ---
 			var updated = tidy(() => {
-				const step = tf_mul(scaledGrads, tf_constant_shape(learningRate, scaledGrads));
+				var step = tf_mul(scaledGrads, tf_constant_shape(learningRate, scaledGrads));
 				return tf_add(data, step);
 			});
 			await dispose(scaledGrads);
 			await dispose(data);
 			data = updated;
 
-			// --- 3. L2 decay (FIX #1 REVISED: gentler decay, less frequent) ---
+			// --- 6. L2 decay ---
 			if (iteration_idx % decayInterval === 0) {
 				var decayed = tidy(() => tf_mul(data, tf_constant_shape(decayRate, data)));
 				await dispose(data);
 				data = decayed;
 			}
 
-			// --- 4. Undo spatial jitter ---
+			// --- 7. TV regularization (IMPROVEMENT #2) ---
+			if (iteration_idx % tvInterval === 0 && iteration_idx > 0) {
+				var tvGrad = _compute_tv_gradients(data, tvWeight);
+				var tvRegularized = tidy(() => tf.sub(data, tvGrad));
+				await dispose(tvGrad);
+				await dispose(data);
+				data = tvRegularized;
+			}
+
+			// --- 8. Undo spatial jitter ---
 			var unJittered = tidy(() => {
 				var h = data.shape[1];
 				var w = data.shape[2];
-				var padTop = Math.max(-ox, 0);
-				var padBottom = Math.max(ox, 0);
-				var padLeft = Math.max(-oy, 0);
-				var padRight = Math.max(oy, 0);
-				var padded = tf.pad(data, [[0, 0], [padTop, padBottom], [padLeft, padRight], [0, 0]]);
-				var sliceTop = Math.max(ox, 0);
-				var sliceLeft = Math.max(oy, 0);
-				return tf.slice(padded, [0, sliceTop, sliceLeft, 0], [data.shape[0], h, w, data.shape[3]]);
+				var padded = tf.pad(data, [
+					[0, 0],
+					[Math.max(-ox, 0), Math.max(ox, 0)],
+					[Math.max(-oy, 0), Math.max(oy, 0)],
+					[0, 0]
+				]);
+				return tf.slice(padded,
+					[0, Math.max(ox, 0), Math.max(oy, 0), 0],
+					[data.shape[0], h, w, data.shape[3]]
+				);
 			});
 			await dispose(data);
 			data = unJittered;
 
-			// --- 5. Gaussian blur regularization (FIX #2: less frequent, skipped for small images) ---
-			if (iteration_idx % blurInterval === 0 && iteration_idx > 0) {
-				var blurred = tidy(() => {
-					var numChannels = data.shape[3];
-					var channels = tf.split(data, numChannels, -1);
-					var blurredChannels = channels.map(function(ch) {
-						return tf.conv2d(ch, blurKernel, 1, 'same');
-					});
-					return tf.concat(blurredChannels, -1);
-				});
+			// --- 9. Undo transform jitter (only for large images) ---
+			if (useTransformJitter) {
+				var unRotated = _apply_rotation_jitter(data, -rotAngle);
 				await dispose(data);
-				data = blurred;
+				data = unRotated;
+
+				var unScaled = _apply_scale_jitter(data, 1.0 / scaleJitter, fullH, fullW);
+				await dispose(data);
+				data = unScaled;
 			}
 
-			// --- 6. Live preview ---
+			// --- 10. Safety: ensure dimensions haven't drifted ---
+			if (data.shape[1] !== fullH || data.shape[2] !== fullW) {
+				var resizedBack = tidy(() => tf.image.resizeBilinear(data, [fullH, fullW]));
+				await dispose(data);
+				data = resizedBack;
+			}
+
+			// --- 11. Live preview ---
 			if (previewCanvas && (iteration_idx % previewInterval === 0 || iteration_idx === iterations - 1)) {
 				_render_preview_to_canvas(previewCanvas, data, layer_idx, neuron);
 				await nextFrame();
 			}
 
 			worked = 1;
-		}
-
-		await dispose(blurKernel);
+		} // end iteration loop
 
 		var generated_data = data;
 
@@ -646,9 +849,9 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 async function handle_input_gradient_descent_error(e, recursion, layer_idx, neuron, iterations, start_image) {
 	if (("" + e).includes("is already disposed")) {
 		await compile_model();
-		if (recursion > 20) {
+		if (recursion < 20) {
 			await delay(recursion * 1000);
-			return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, recursion + 1, iterations);
+			return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, undefined, recursion + 1);
 		} else {
 			throw new Error("Too many retries for input_gradient_ascent");
 		}
@@ -665,32 +868,37 @@ function deprocess_image(x) {
 			var numChannels = x.shape[x.shape.length - 1];
 
 			if (numChannels && numChannels > 1) {
-				// FIX #3 REVISED: Per-channel normalization with outlier clipping
-				// Step 1: Clip outliers using mean ± 2*std to prevent one channel from dominating
-				var mean = x.mean();
-				var std = tf.moments(x).variance.sqrt();
-				var clipLow = tf_sub(mean, tf_mul(std, tf_constant_shape(2.0, std)));
-				var clipHigh = tf_add(mean, tf_mul(std, tf_constant_shape(2.0, std)));
-				var clipped = clipByValue(x, clipLow.dataSync()[0], clipHigh.dataSync()[0]);
+				// Per-channel normalization to bring out what each channel learned
+				// Step 1: Clip outliers at mean ± 2*std per channel
+				var channels = tf.split(x, numChannels, -1);
+				var clippedChannels = channels.map(function(ch) {
+					var moments = tf.moments(ch);
+					var chMean = moments.mean;
+					var chStd = tf.sqrt(tf.add(moments.variance, tf.scalar(1e-5)));
+					var lo = tf.sub(chMean, tf.mul(chStd, tf.scalar(2.0)));
+					var hi = tf.add(chMean, tf.mul(chStd, tf.scalar(2.0)));
+					return clipByValue(ch, lo.dataSync()[0], hi.dataSync()[0]);
+				});
+				var clipped = tf.concat(clippedChannels, -1);
 
 				// Step 2: Per-channel min-max normalization
-				var channels = tf.split(clipped, numChannels, -1);
+				channels = tf.split(clipped, numChannels, -1);
 				var normalizedChannels = channels.map(function(ch) {
 					var chMin = ch.min();
 					var chMax = ch.max();
-					var chRange = tf_add(tf_sub(chMax, chMin), tf_constant_shape(get_epsilon(), chMin));
-					return tf_div(tf_sub(ch, chMin), chRange);
+					var chRange = tf.add(tf.sub(chMax, chMin), tf.scalar(1e-5));
+					return tf.div(tf.sub(ch, chMin), chRange);
 				});
 				var normalized = tf.concat(normalizedChannels, -1);
 
-				// FIX #4 REVISED: Stronger contrast boost (1.5 instead of 1.1)
-				var centered = tf_sub(normalized, tf_constant_shape(0.5, normalized));
-				var boosted = tf_mul(centered, tf_constant_shape(1.5, centered));
-				normalized = tf_add(tf_constant_shape(0.5, boosted), boosted);
+				// Step 3: Mild contrast enhancement (1.2x, not 1.5x)
+				var centered = tf.sub(normalized, tf.scalar(0.5));
+				var boosted = tf.mul(centered, tf.scalar(1.2));
+				normalized = tf.add(boosted, tf.scalar(0.5));
 				normalized = clipByValue(normalized, 0, 1);
 
 				return clipByValue(
-					tf_mul(normalized, tf_constant_shape(255, normalized)),
+					tf.mul(normalized, tf.scalar(255)),
 					0, 255
 				).asType("int32");
 			} else {
