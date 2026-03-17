@@ -1,5 +1,130 @@
 "use strict";
 
+// ============================================================================
+// Color Decorrelation: optimize in a decorrelated color space for more
+// vivid, natural-looking feature visualizations.
+// Uses the ImageNet color correlation matrix from Lucid.
+// ============================================================================
+
+/**
+ * The color correlation matrix derived from ImageNet statistics.
+ * Transforms decorrelated space → correlated (RGB) space.
+ * From: https://github.com/tensorflow/lucid
+ */
+var COLOR_CORRELATION_MATRIX = [
+	[0.56282854, 0.58447580, 0.58447580],
+	[0.19482528, 0.00000000, -0.19482528],
+	[0.04329450, -0.10823626, 0.06494176]
+];
+
+var COLOR_CORRELATION_STDS = [0.3, 0.59, 0.11]; // approximate ImageNet channel stds
+var COLOR_CORRELATION_MATRIX_NORMALIZED = null;
+
+var COLOR_CORRELATION_SVD_SQRT = [
+	[0.26, 0.09, 0.02],
+	[0.27, 0.00, -0.05],
+	[0.27, -0.09, 0.03]
+];
+
+function _get_color_correlation_matrix() {
+	if (!COLOR_CORRELATION_MATRIX_NORMALIZED) {
+		// Normalize each column of the SVD sqrt matrix to have unit norm,
+		// then scale by a global factor to keep values in a reasonable range.
+		var m = COLOR_CORRELATION_SVD_SQRT;
+		var result = [
+			[0, 0, 0],
+			[0, 0, 0],
+			[0, 0, 0]
+		];
+
+		for (var col = 0; col < 3; col++) {
+			var norm = Math.sqrt(
+				m[0][col] * m[0][col] +
+				m[1][col] * m[1][col] +
+				m[2][col] * m[2][col]
+			);
+			if (norm < 1e-10) norm = 1;
+			for (var row = 0; row < 3; row++) {
+				result[row][col] = m[row][col] / norm;
+			}
+		}
+
+		COLOR_CORRELATION_MATRIX_NORMALIZED = result;
+	}
+	return COLOR_CORRELATION_MATRIX_NORMALIZED;
+}
+
+/**
+ * Precomputed inverse of COLOR_CORRELATION_MATRIX.
+ * Transforms correlated (RGB) space → decorrelated space.
+ */
+var COLOR_DECORRELATION_MATRIX = null;
+
+/**
+ * Computes the inverse of a 3x3 matrix.
+ */
+function _invert_3x3(m) {
+	var a = m[0][0], b = m[0][1], c = m[0][2];
+	var d = m[1][0], e = m[1][1], f = m[1][2];
+	var g = m[2][0], h = m[2][1], i = m[2][2];
+
+	var det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+	if (Math.abs(det) < 1e-10) {
+		console.warn("Color correlation matrix is singular, falling back to identity");
+		return [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+	}
+
+	var invDet = 1.0 / det;
+	return [
+		[(e * i - f * h) * invDet, (c * h - b * i) * invDet, (b * f - c * e) * invDet],
+		[(f * g - d * i) * invDet, (a * i - c * g) * invDet, (c * d - a * f) * invDet],
+		[(d * h - e * g) * invDet, (b * g - a * h) * invDet, (a * e - b * d) * invDet]
+	];
+}
+
+/**
+ * Returns the decorrelation (inverse) matrix, computing it once on first use.
+ */
+function _get_color_decorrelation_matrix() {
+	if (!COLOR_DECORRELATION_MATRIX) {
+		COLOR_DECORRELATION_MATRIX = _invert_3x3(_get_color_correlation_matrix());
+	}
+	return COLOR_DECORRELATION_MATRIX;
+}
+
+/**
+ * Transforms an image tensor from decorrelated space to RGB space.
+ * Input shape: [batch, H, W, 3], values centered around 0.
+ * Output: correlated RGB tensor suitable for feeding into the model.
+ */
+function _decorrelated_to_rgb(data) {
+	return tidy(() => {
+		var colorMatrix = tf.tensor2d(_get_color_correlation_matrix()); // [3, 3]
+		var shape = data.shape;
+		var flat = tf.reshape(data, [-1, 3]); // [N, 3]
+		var transformed = tf.matMul(flat, colorMatrix, false, true); // [N, 3]
+		var result = tf.reshape(transformed, shape); // [1, H, W, 3]
+		return tf.sigmoid(result);
+	});
+}
+
+/**
+ * Transforms an image tensor from RGB space [0, 1] to decorrelated space.
+ * Used to convert an initial RGB image into the optimization space.
+ */
+function _rgb_to_decorrelated(data) {
+	return tidy(() => {
+		var clamped = clipByValue(data, 0.001, 0.999);
+		var logit = tf.log(tf.div(clamped, tf.sub(tf.scalar(1.0), clamped)));
+
+		var invMatrix = tf.tensor2d(_get_color_decorrelation_matrix()); // [3, 3]
+		var shape = logit.shape;
+		var flat = tf.reshape(logit, [-1, 3]);
+		var transformed = tf.matMul(flat, invMatrix, false, true);
+		return tf.reshape(transformed, shape);
+	});
+}
+
 /**
  * Renders the current intermediate tensor data onto a preview canvas.
  * Called after each gradient ascent iteration for live feedback.
@@ -642,19 +767,44 @@ function _apply_scale_jitter(data, scaleFactor, origH, origW) {
 	});
 }
 
-// ============================================================================
-// IMPROVEMENT #5: Better initialization
-// For small images: slightly noisy gray. For larger: low-freq upscaled noise.
-// ============================================================================
-function _create_init_image(shape) {
+function _create_init_image(shape, useColorDecorrelation) {
 	return tidy(() => {
 		var h = shape[0];
 		var w = shape[1];
 		var c = shape[2];
 
+		if (useColorDecorrelation && c === 3) {
+			if (h <= 32 || w <= 32) {
+				// Small images: uniform noise with enough variance in all channels
+				return tf.randomNormal([1, h, w, c], 0.0, 0.01);
+			} else {
+				var smallH = Math.max(4, Math.floor(h / 4));
+				var smallW = Math.max(4, Math.floor(w / 4));
+
+				// Generate each channel independently with appropriate scale.
+				// Channel 0 (luminance-like) gets smaller init, channels 1-2
+				// (color-like) get comparable variance so they aren't immediately
+				// overwhelmed by the luminance channel during optimization.
+				var ch0 = tf.randomNormal([1, smallH, smallW, 1], 0.0, 0.5);
+				var ch1 = tf.randomNormal([1, smallH, smallW, 1], 0.0, 0.5);
+				var ch2 = tf.randomNormal([1, smallH, smallW, 1], 0.0, 0.5);
+				var smallNoise = tf.concat([ch0, ch1, ch2], -1);
+
+				var upscaled = tf.image.resizeBilinear(smallNoise, [h, w]);
+				// Normalize per-channel to preserve relative color variance
+				var channels = tf.split(upscaled, 3, -1);
+				var normed = channels.map(function(ch) {
+					var moments = tf.moments(ch);
+					var mean = moments.mean;
+					var std = tf.sqrt(tf.add(moments.variance, tf.scalar(1e-5)));
+					return tf.mul(tf.div(tf.sub(ch, mean), std), tf.scalar(0.1));
+				});
+				return tf.concat(normed, -1);
+			}
+		}
+
+		// Original behavior for non-decorrelated or non-3-channel
 		if (h <= 32 || w <= 32) {
-			// Small images: start with gray + small noise
-			// This avoids the blob artifacts from upscaling tiny noise
 			return clipByValue(
 				tf.add(
 					tf.fill([1, h, w, c], 0.5),
@@ -663,7 +813,6 @@ function _create_init_image(shape) {
 				0, 1
 			);
 		} else {
-			// Larger images: low-frequency noise for coherent starting point
 			var smallH = Math.max(4, Math.floor(h / 4));
 			var smallW = Math.max(4, Math.floor(w / 4));
 			var smallNoise = tf.randomNormal([1, smallH, smallW, c], 0.0, 1.0);
@@ -680,9 +829,6 @@ function _create_init_image(shape) {
 	});
 }
 
-// ============================================================================
-// Configuration builder — extracts all the setup logic from the main loop
-// ============================================================================
 function _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape) {
 	var imageSize = Math.min(fullH, fullW);
 	var numChannels = new_input_shape[new_input_shape.length - 1];
@@ -700,6 +846,9 @@ function _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_sha
 	var tvWeight = 0.0003;
 	var tvInterval = 3;
 
+	// Enable color decorrelation for 3-channel (RGB) image models
+	var useColorDecorrelation = (numChannels === 3);
+
 	var blurPhases = [];
 	if (imageSize >= 16 && iterations >= 12) {
 		var phase1End = Math.floor(iterations * 0.33);
@@ -716,7 +865,8 @@ function _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_sha
 	return {
 		imageSize, numChannels, jitterMax, useTransformJitter,
 		decayRate, decayInterval, learningRate,
-		tvWeight, tvInterval, blurPhases, fullH, fullW
+		tvWeight, tvInterval, blurPhases, fullH, fullW,
+		useColorDecorrelation
 	};
 }
 
@@ -810,10 +960,26 @@ function _compute_blurred_data_for_grad(data, currentBlurFactor, fullH, fullW) {
 // ============================================================================
 // Compute normalized (RMS-scaled) gradients
 // ============================================================================
-function _compute_scaled_gradients(grad_function, dataForGrad) {
+function _compute_scaled_gradients(grad_function, dataForGrad, useColorDecorrelation) {
 	try {
 		return tidy(() => {
 			var grads = grad_function(dataForGrad);
+
+			if (useColorDecorrelation && grads.shape[grads.shape.length - 1] === 3) {
+				// Per-channel normalization in decorrelated space.
+				// Even with a properly normalized correlation matrix, the
+				// gradient magnitudes can still differ across decorrelated
+				// channels. Per-channel normalization ensures each axis
+				// gets equal learning signal.
+				var channels = tf.split(grads, 3, -1);
+				var normalizedChannels = channels.map(function(ch) {
+					var rms = tf.sqrt(tf.mean(tf.square(ch)));
+					var eps = tf.scalar(1e-8);
+					return tf.div(ch, tf.add(rms, eps));
+				});
+				return tf.concat(normalizedChannels, -1);
+			}
+
 			var grads_sq = tf_square(grads);
 			var grads_sq_mean = tf_mean(grads_sq);
 			var rms = sqrt(grads_sq_mean);
@@ -843,8 +1009,24 @@ async function _apply_gradient_step(data, scaledGrads, learningRate) {
 // ============================================================================
 // L2 weight decay: gently shrink activations to prevent runaway values
 // ============================================================================
-async function _apply_l2_decay(data, iteration_idx, decayRate, decayInterval) {
+async function _apply_l2_decay(data, iteration_idx, decayRate, decayInterval, useColorDecorrelation) {
 	if (iteration_idx % decayInterval !== 0) return data;
+
+	if (useColorDecorrelation && data.shape[data.shape.length - 1] === 3) {
+		var decayed = tidy(() => {
+			var channels = tf.split(data, 3, -1);
+			// Channel 0 in the normalized decorrelated space is still the
+			// highest-variance (luminance-like) axis. Apply full decay there
+			// and gentler decay on the color-opponent channels.
+			var ch0 = tf.mul(channels[0], tf.scalar(decayRate));
+			var colorDecay = 1.0 - (1.0 - decayRate) * 0.25; // 25% of luminance decay
+			var ch1 = tf.mul(channels[1], tf.scalar(colorDecay));
+			var ch2 = tf.mul(channels[2], tf.scalar(colorDecay));
+			return tf.concat([ch0, ch1, ch2], -1);
+		});
+		await dispose(data);
+		return decayed;
+	}
 
 	var decayed = tidy(() => tf_mul(data, tf_constant_shape(decayRate, data)));
 	await dispose(data);
@@ -854,10 +1036,26 @@ async function _apply_l2_decay(data, iteration_idx, decayRate, decayInterval) {
 // ============================================================================
 // Total Variation regularization step: suppress high-frequency noise
 // ============================================================================
-async function _apply_tv_regularization(data, iteration_idx, tvWeight, tvInterval) {
+async function _apply_tv_regularization(data, iteration_idx, tvWeight, tvInterval, useColorDecorrelation) {
 	if (iteration_idx % tvInterval !== 0 || iteration_idx === 0) return data;
 
 	var tvGrad = _compute_tv_gradients(data, tvWeight);
+
+	if (useColorDecorrelation && data.shape[data.shape.length - 1] === 3) {
+		var scaledTvGrad = tidy(() => {
+			var channels = tf.split(tvGrad, 3, -1);
+			var ch0 = channels[0];                             // full TV on luminance
+			var ch1 = tf.mul(channels[1], tf.scalar(0.25));    // 25% TV on color
+			var ch2 = tf.mul(channels[2], tf.scalar(0.25));    // 25% TV on color
+			return tf.concat([ch0, ch1, ch2], -1);
+		});
+		var tvRegularized = tidy(() => tf.sub(data, scaledTvGrad));
+		await dispose(tvGrad);
+		await dispose(scaledTvGrad);
+		await dispose(data);
+		return tvRegularized;
+	}
+
 	var tvRegularized = tidy(() => tf.sub(data, tvGrad));
 	await dispose(tvGrad);
 	await dispose(data);
@@ -869,11 +1067,10 @@ async function _apply_tv_regularization(data, iteration_idx, tvWeight, tvInterva
 // ============================================================================
 async function _apply_gradient_update(data, scaledGrads, learningRate, iteration_idx, config) {
 	data = await _apply_gradient_step(data, scaledGrads, learningRate);
-	data = await _apply_l2_decay(data, iteration_idx, config.decayRate, config.decayInterval);
-	data = await _apply_tv_regularization(data, iteration_idx, config.tvWeight, config.tvInterval);
+	data = await _apply_l2_decay(data, iteration_idx, config.decayRate, config.decayInterval, config.useColorDecorrelation);
+	data = await _apply_tv_regularization(data, iteration_idx, config.tvWeight, config.tvInterval, config.useColorDecorrelation);
 	return data;
 }
-
 
 // ============================================================================
 // Ensure tensor dimensions haven't drifted from expected shape
@@ -917,7 +1114,7 @@ async function _compute_gradients_for_iteration(data, config, grad_function, ite
 	var currentBlurFactor = _get_current_blur_factor(config.blurPhases, iteration_idx);
 	var { dataForGrad, needDispose: needDisposeBlurred } = _compute_blurred_data_for_grad(data, currentBlurFactor, config.fullH, config.fullW);
 
-	var scaledGrads = _compute_scaled_gradients(grad_function, dataForGrad);
+	var scaledGrads = _compute_scaled_gradients(grad_function, dataForGrad, config.useColorDecorrelation);
 
 	if (needDisposeBlurred) {
 		await dispose(dataForGrad);
@@ -949,9 +1146,16 @@ async function _undo_jitter_and_stabilize(data, ox, oy, rotAngle, scaleJitter, c
 // ============================================================================
 // Step 11: Render live preview if due
 // ============================================================================
-async function _maybe_render_preview(data, iteration_idx, iterations, previewInterval, previewCanvas, layer_idx, neuron) {
+async function _maybe_render_preview(data, iteration_idx, iterations, previewInterval, previewCanvas, layer_idx, neuron, useColorDecorrelation) {
 	if (previewCanvas && (iteration_idx % previewInterval === 0 || iteration_idx === iterations - 1)) {
-		_render_preview_to_canvas(previewCanvas, data, layer_idx, neuron);
+		var displayData = data;
+		if (useColorDecorrelation) {
+			displayData = _decorrelated_to_rgb(data);
+		}
+		_render_preview_to_canvas(previewCanvas, displayData, layer_idx, neuron);
+		if (useColorDecorrelation) {
+			await dispose(displayData);
+		}
 		await nextFrame();
 	}
 }
@@ -981,8 +1185,8 @@ async function _run_single_iteration(data, iteration_idx, iterations, config, gr
 	// Steps 8–10: Undo jitter and stabilize dimensions
 	data = await _undo_jitter_and_stabilize(data, jitterState.ox, jitterState.oy, jitterState.rotAngle, jitterState.scaleJitter, config);
 
-	// Step 11: Live preview
-	await _maybe_render_preview(data, iteration_idx, iterations, previewInterval, previewCanvas, layer_idx, neuron);
+	// Step 11: Live preview (with decorrelation-aware rendering)
+	await _maybe_render_preview(data, iteration_idx, iterations, previewInterval, previewCanvas, layer_idx, neuron, config.useColorDecorrelation);
 
 	return { data: data, worked: true };
 }
@@ -990,13 +1194,26 @@ async function _run_single_iteration(data, iteration_idx, iterations, config, gr
 // ============================================================================
 // Model & gradient function setup
 // ============================================================================
-function _build_aux_model_and_grad(layer_idx, neuron) {
+function _build_aux_model_and_grad(layer_idx, neuron, useColorDecorrelation) {
 	var layer_output = model.getLayer(null, layer_idx).getOutputAt(0);
 	var aux_model = tf_model({ inputs: model.inputs, outputs: layer_output });
 
-	var lossFunction = function(input) {
-		return aux_model.apply(input, { training: true }).gather([neuron], -1).mean();
-	};
+	var lossFunction;
+
+	if (useColorDecorrelation) {
+		// The input to the loss function is in decorrelated space.
+		// We transform to RGB before feeding to the model so gradients
+		// flow through the color transform, encouraging decorrelated updates.
+		lossFunction = function(input) {
+			var rgbInput = _decorrelated_to_rgb(input);
+			return aux_model.apply(rgbInput, { training: true }).gather([neuron], -1).mean();
+		};
+	} else {
+		lossFunction = function(input) {
+			return aux_model.apply(input, { training: true }).gather([neuron], -1).mean();
+		};
+	}
+
 	var grad_function = grad(lossFunction);
 
 	return { aux_model: aux_model, grad_function: grad_function };
@@ -1005,11 +1222,15 @@ function _build_aux_model_and_grad(layer_idx, neuron) {
 // ============================================================================
 // Initialize or accept a starting image
 // ============================================================================
-function _initialize_image(start_image, new_input_shape) {
+function _initialize_image(start_image, new_input_shape, useColorDecorrelation) {
 	if (typeof start_image !== "undefined") {
+		// If a start image is provided in RGB, convert to decorrelated space
+		if (useColorDecorrelation && start_image.shape[start_image.shape.length - 1] === 3) {
+			return _rgb_to_decorrelated(start_image);
+		}
 		return start_image;
 	}
-	return _create_init_image(new_input_shape);
+	return _create_init_image(new_input_shape, useColorDecorrelation);
 }
 
 // ============================================================================
@@ -1091,8 +1312,6 @@ async function _handle_ascent_error(e, recursion, layer_idx, neuron, iterations,
  * Returns all state needed to run the iteration loop.
  */
 function _prepare_ascent(layer_idx, neuron, iterations, start_image) {
-	var { aux_model, grad_function } = _build_aux_model_and_grad(layer_idx, neuron);
-
 	var new_input_shape = get_input_shape_with_batch_size();
 	new_input_shape.shift();
 
@@ -1100,7 +1319,9 @@ function _prepare_ascent(layer_idx, neuron, iterations, start_image) {
 	var fullW = new_input_shape[1];
 	var config = _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape);
 
-	var data = _initialize_image(start_image, new_input_shape);
+	var { aux_model, grad_function } = _build_aux_model_and_grad(layer_idx, neuron, config.useColorDecorrelation);
+
+	var data = _initialize_image(start_image, new_input_shape, config.useColorDecorrelation);
 
 	return { aux_model, grad_function, config, data };
 }
@@ -1120,8 +1341,16 @@ async function _execute_ascent_loop(prepared, iterations, layer_idx, neuron, max
 /**
  * Phase 3: Post-process raw generated data and package into final output.
  */
-async function _finalize_ascent(generated_data, worked) {
+async function _finalize_ascent(generated_data, worked, useColorDecorrelation) {
 	var full_data = {};
+
+	// If we optimized in decorrelated space, convert back to RGB for deprocessing
+	if (useColorDecorrelation) {
+		var rgbData = _decorrelated_to_rgb(generated_data);
+		await dispose(generated_data);
+		generated_data = rgbData;
+	}
+
 	full_data = _postprocess_generated_data(generated_data, full_data);
 	await dispose(generated_data);
 	full_data["worked"] = worked;
@@ -1147,9 +1376,11 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 
 	var generated_data;
 	var worked;
+	var useColorDecorrelation = false;
 
 	try {
 		var prepared = _prepare_ascent(layer_idx, neuron, iterations, start_image);
+		useColorDecorrelation = prepared.config.useColorDecorrelation;
 
 		var loopOutput = await _execute_ascent_loop(prepared, iterations, layer_idx, neuron, max_neurons, previewCanvas, previewInterval);
 
@@ -1159,7 +1390,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 		return await _handle_ascent_error(e, recursion, layer_idx, neuron, iterations, start_image);
 	}
 
-	return await _finalize_ascent(generated_data, worked);
+	return await _finalize_ascent(generated_data, worked, useColorDecorrelation);
 }
 
 async function handle_input_gradient_descent_error(e, recursion, layer_idx, neuron, iterations, start_image) {
