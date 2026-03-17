@@ -221,30 +221,38 @@ function _get_neurons_last_layer(layer_idx, type) {
 	return neurons;
 }
 
-async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0) {
-	var button = $($(".layer_setting")[layer_idx]).find(".visualize_layer_button");
+// ============================================================================
+// UI helpers for draw_maximally_activated_layer
+// ============================================================================
 
+function _find_layer_button(layer_idx) {
+	var button = $($(".layer_setting")[layer_idx]).find(".visualize_layer_button");
 	if (!button.length) {
 		console.error("Button not found for layer_idx:", layer_idx);
 		dbg("Button not found, exiting function");
-		return;
+		return null;
 	}
-
 	dbg("Button found for layer_idx: " + layer_idx);
+	return button;
+}
 
-	if (currently_generating_images) {
-		console.log("Generation is already running, stopping...");
-		dbg("Generation running, setting stop flag");
-		stop_generating_images = 1;
-		(function(btn) {
-			requestAnimationFrame(function() {
-				if (btn && btn.style) btn.style.backgroundColor = "";
-			});
-		})(button[0]);
-		dbg("Button color reset after stopping generation");
-		return;
-	}
+function _set_button_color(button, color) {
+	(function(btn) {
+		requestAnimationFrame(function() {
+			if (btn && btn.style) btn.style.backgroundColor = color;
+		});
+	})(button[0]);
+}
 
+function _stop_running_generation(button) {
+	console.log("Generation is already running, stopping...");
+	dbg("Generation running, setting stop flag");
+	stop_generating_images = 1;
+	_set_button_color(button, "");
+	dbg("Button color reset after stopping generation");
+}
+
+function _prepare_ui_for_generation(button, layer_idx) {
 	(function(btn) {
 		requestAnimationFrame(function() {
 			if (btn) {
@@ -265,47 +273,9 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 	})(button[0]);
 
 	dbg("Starting generation, button set to red and UI prepared");
+}
 
-	await nextFrame();
-	dbg("Next frame awaited");
-
-	await gui_in_training(0);
-	dbg("GUI checked for training mode");
-
-	await wait_for_images_to_be_generated();
-	dbg("Waited for images to be generated");
-
-	currently_generating_images = true;
-	dbg("currently_generating_images set to true");
-
-	var neurons = _get_neurons_last_layer(layer_idx, type);
-	dbg("Neurons obtained from last layer");
-
-	if (typeof neurons == "boolean" && !neurons) {
-		currently_generating_images = false;
-		stop_generating_images = false;
-		(function(btn) {
-			requestAnimationFrame(function() {
-				if (btn) btn.style.backgroundColor = "";
-			});
-		})(button[0]);
-		err("Cannot determine number of neurons in the last layer");
-		dbg("Error: Cannot determine number of neurons, exiting function");
-		return;
-	}
-
-	favicon_spinner();
-	dbg("Favicon spinner started");
-
-	var canvasses;
-	try {
-		canvasses = await draw_single_maximally_activated_neuron(layer_idx, neurons, is_recursive, type);
-		dbg("draw_single_maximally_activated_neuron completed");
-	} catch (err) {
-		console.error("Error while drawing neurons:", err);
-		dbg("Caught error while drawing neurons");
-	}
-
+async function _teardown_ui_after_generation(button) {
 	hide_stuff_after_generating_maximally_activated_neurons();
 	dbg("Hid unnecessary elements after generating neurons");
 
@@ -316,9 +286,9 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 	currently_generating_images = false;
 	dbg("Flags reset: stop_generating_images=false, currently_generating_images=false");
 
+	_set_button_color(button, "");
 	(function(btn) {
 		requestAnimationFrame(function() {
-			if (btn) btn.style.backgroundColor = "";
 			document.body.style.cursor = "default";
 		});
 	})(button[0]);
@@ -339,6 +309,66 @@ async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0)
 		await gui_not_in_training(0);
 		dbg("GUI set to not in training mode");
 	}
+}
+
+async function _resolve_neurons_or_bail(layer_idx, type, button) {
+	var neurons = _get_neurons_last_layer(layer_idx, type);
+	dbg("Neurons obtained from last layer");
+
+	if (typeof neurons == "boolean" && !neurons) {
+		currently_generating_images = false;
+		stop_generating_images = false;
+		_set_button_color(button, "");
+		err("Cannot determine number of neurons in the last layer");
+		dbg("Error: Cannot determine number of neurons, exiting function");
+		return null;
+	}
+
+	return neurons;
+}
+
+// ============================================================================
+// Main orchestrator — now delegates to focused helpers
+// ============================================================================
+async function draw_maximally_activated_layer(layer_idx, type, is_recursive = 0) {
+	var button = _find_layer_button(layer_idx);
+	if (!button) return;
+
+	if (currently_generating_images) {
+		_stop_running_generation(button);
+		return;
+	}
+
+	_prepare_ui_for_generation(button, layer_idx);
+
+	await nextFrame();
+	dbg("Next frame awaited");
+
+	await gui_in_training(0);
+	dbg("GUI checked for training mode");
+
+	await wait_for_images_to_be_generated();
+	dbg("Waited for images to be generated");
+
+	currently_generating_images = true;
+	dbg("currently_generating_images set to true");
+
+	var neurons = await _resolve_neurons_or_bail(layer_idx, type, button);
+	if (neurons === null) return;
+
+	favicon_spinner();
+	dbg("Favicon spinner started");
+
+	var canvasses;
+	try {
+		canvasses = await draw_single_maximally_activated_neuron(layer_idx, neurons, is_recursive, type);
+		dbg("draw_single_maximally_activated_neuron completed");
+	} catch (err) {
+		console.error("Error while drawing neurons:", err);
+		dbg("Caught error while drawing neurons");
+	}
+
+	await _teardown_ui_after_generation(button);
 
 	return canvasses;
 }
