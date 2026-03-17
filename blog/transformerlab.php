@@ -282,6 +282,8 @@ $$\underbrace{\text{head}_{i+1}}_{(B, T, d_v)} = \text{Attention}(\underbrace{h_
 Which transforms the input in the shape of $(B, T, h \cdot d_v)$ to $(B, T, d_{\text{model}})$.
 
 The association between *Query* and *Key* and concrete tokens is only true in the first layer, where it is taken from the concrete embeddings. In further layers, it works on the abstract feature space instead.
+
+In this stage, it is already abstracted away from the concrete Embedding Space (for example, by positional encoding).
 </div>
 
 <div class="optional md" data-headline="What the heads actually react to">
