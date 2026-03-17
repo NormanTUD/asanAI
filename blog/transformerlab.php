@@ -243,7 +243,7 @@ This is also important for **prompt engineering**:
 
 ### The **Single-Head Attention**
 
-The job of of a Single Attention Head is to find some form of relation between all the input tokens after they've been multiplied with the $Q$, $K$ and $V$-matrices. This could be, for example, to detect which part of a sentence is a verb and which object it attends to. Usually, in real transformers, it rarely is that interpretable, though.
+The job of of a Single Attention Head is to find some form of relation between all the input tokens after they've been multiplied with the $Q$, $K$ and $V$-matrices. This could be, for example, to detect which part of a sentence is a verb and which object it attends to. In real transformers, it rarely is *that* interpretable, though.
 
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) \cdot V$$
 
