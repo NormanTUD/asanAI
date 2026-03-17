@@ -923,10 +923,7 @@ async function _run_single_iteration(data, iteration_idx, iterations, config, gr
 	data = await _apply_gradient_update(data, scaledGrads, config.learningRate, iteration_idx, config);
 
 	// Steps 8–10: Undo jitter and stabilize dimensions
-	data = await _undo_jitter_and_stabilize(
-		data, jitterState.ox, jitterState.oy,
-		jitterState.rotAngle, jitterState.scaleJitter, config
-	);
+	data = await _undo_jitter_and_stabilize(data, jitterState.ox, jitterState.oy, jitterState.rotAngle, jitterState.scaleJitter, config);
 
 	// Step 11: Live preview
 	await _maybe_render_preview(data, iteration_idx, iterations, previewInterval, previewCanvas, layer_idx, neuron);
