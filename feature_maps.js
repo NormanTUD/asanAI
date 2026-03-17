@@ -1363,7 +1363,7 @@ async function _finalize_ascent(generated_data, worked, useColorDecorrelation) {
  * Phase 2: _execute_ascent_loop — run all iterations
  * Phase 3: _finalize_ascent     — deprocess and package results
  */
-async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons, recursion, previewCanvas) {
+async function input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons, recursion, previewCanvas = true) {
 	if (typeof recursion === "undefined") recursion = 0;
 
 	typeassert(layer_idx, int, "layer_idx");
