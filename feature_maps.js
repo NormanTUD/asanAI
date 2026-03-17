@@ -471,9 +471,9 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 		if (typeof(start_image) != "undefined") {
 			data = start_image;
 		} else {
-			// FIX #5: Wider initialization range + Gaussian noise option
+			// FIX #5 REVISED: Wider initialization range (std 0.25 instead of 0.15)
 			data = tidy(() => {
-				var noise = tf.randomNormal([1, ...new_input_shape], 0.5, 0.15);
+				var noise = tf.randomNormal([1, ...new_input_shape], 0.5, 0.25);
 				return clipByValue(noise, 0, 1);
 			});
 		}
@@ -487,13 +487,13 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 		// FIX #2: Increase blur interval, skip for small images
 		const blurInterval = (imageSize < 64) ? 999999 : Math.max(8, Math.floor(iterations / 4));
 
-		// FIX #1: Reduce L2 decay rate
-		const decayRate = 0.995;
-		const decayInterval = 3; // Apply decay only every 3 iterations
+		// FIX #1 REVISED: Less aggressive decay (0.998 instead of 0.995, interval 5 instead of 3)
+		const decayRate = 0.998;
+		const decayInterval = 5;
 
-		// FIX #6: Higher learning rate for last layer
+		// FIX #6 REVISED: Higher learning rates (0.12 for non-last, 0.5 for last)
 		const isLastLayer = (layer_idx === model.layers.length - 1);
-		const defaultLR = isLastLayer ? 0.5 : 0.05;
+		const defaultLR = isLastLayer ? 0.5 : 0.12;
 		const learningRate = parse_float($("#max_activation_lr").val()) || defaultLR;
 
 		const gaussianWeights = [1, 2, 1, 2, 4, 2, 1, 2, 1].map(v => v / 16);
@@ -524,7 +524,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			await dispose(data);
 			data = jittered;
 
-			// --- 2. Compute gradients with hybrid normalization (FIX #9) ---
+			// --- 2. Compute gradients with hybrid normalization (FIX #9 REVISED: 50/50 blend) ---
 			const scaledGrads = tidy(() => {
 				try {
 					const grads = grad_function(data);
@@ -535,11 +535,11 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 					const _constant_shape = tf_constant_shape(_epsilon, _is);
 					const norm = tf_add(_is, _constant_shape);
 
-					// FIX #9: Blend 70% normalized + 30% raw magnitude
+					// FIX #9 REVISED: 50% normalized + 50% raw for stronger feature signal
 					const fullyNormed = tf_div(grads, norm);
 					const blend = tf_add(
-						tf_mul(fullyNormed, tf_constant_shape(0.7, fullyNormed)),
-						tf_mul(grads, tf_constant_shape(0.3, grads))
+						tf_mul(fullyNormed, tf_constant_shape(0.5, fullyNormed)),
+						tf_mul(grads, tf_constant_shape(0.5, grads))
 					);
 					return blend;
 				} catch (e) {
@@ -555,7 +555,7 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 			await dispose(data);
 			data = updated;
 
-			// --- 3. L2 decay (FIX #1: less aggressive, applied less frequently) ---
+			// --- 3. L2 decay (FIX #1 REVISED: gentler decay, less frequent) ---
 			if (iteration_idx % decayInterval === 0) {
 				var decayed = tidy(() => tf_mul(data, tf_constant_shape(decayRate, data)));
 				await dispose(data);
@@ -665,16 +665,27 @@ function deprocess_image(x) {
 			var numChannels = x.shape[x.shape.length - 1];
 
 			if (numChannels && numChannels > 1) {
-				// FIX #3: GLOBAL normalization instead of per-channel
-				// This prevents blue tint caused by independent channel scaling
-				var xMin = x.min();
-				var xMax = x.max();
-				var range = tf_add(tf_sub(xMax, xMin), tf_constant_shape(get_epsilon(), xMin));
-				var normalized = tf_div(tf_sub(x, xMin), range);
+				// FIX #3 REVISED: Per-channel normalization with outlier clipping
+				// Step 1: Clip outliers using mean ± 2*std to prevent one channel from dominating
+				var mean = x.mean();
+				var std = tf.moments(x).variance.sqrt();
+				var clipLow = tf_sub(mean, tf_mul(std, tf_constant_shape(2.0, std)));
+				var clipHigh = tf_add(mean, tf_mul(std, tf_constant_shape(2.0, std)));
+				var clipped = clipByValue(x, clipLow.dataSync()[0], clipHigh.dataSync()[0]);
 
-				// FIX #4: Mild contrast boost (1.1 instead of 1.4) applied globally
+				// Step 2: Per-channel min-max normalization
+				var channels = tf.split(clipped, numChannels, -1);
+				var normalizedChannels = channels.map(function(ch) {
+					var chMin = ch.min();
+					var chMax = ch.max();
+					var chRange = tf_add(tf_sub(chMax, chMin), tf_constant_shape(get_epsilon(), chMin));
+					return tf_div(tf_sub(ch, chMin), chRange);
+				});
+				var normalized = tf.concat(normalizedChannels, -1);
+
+				// FIX #4 REVISED: Stronger contrast boost (1.5 instead of 1.1)
 				var centered = tf_sub(normalized, tf_constant_shape(0.5, normalized));
-				var boosted = tf_mul(centered, tf_constant_shape(1.1, centered));
+				var boosted = tf_mul(centered, tf_constant_shape(1.5, centered));
 				normalized = tf_add(tf_constant_shape(0.5, boosted), boosted);
 				normalized = clipByValue(normalized, 0, 1);
 
