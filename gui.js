@@ -1985,7 +1985,7 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	enable_start_training_custom_tensors();
 
-	var wait_for_latex_model = _maybe_write_latex(no_update_initializers);
+	var wait_for_latex_model = await _maybe_write_latex(no_update_initializers);
 
 	await last_shape_layer_warning();
 
@@ -2047,9 +2047,9 @@ function _invalidate_layer_structure_cache() {
 	layer_structure_cache = null;
 }
 
-function _maybe_write_latex(no_update_initializers) {
+async function _maybe_write_latex(no_update_initializers) {
 	if (!no_update_math) {
-		return write_model_to_latex_to_page();
+		return await write_model_to_latex_to_page();
 	}
 	return Promise.resolve(1);
 }
