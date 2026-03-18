@@ -56,6 +56,8 @@ function normalize_to_rgb_min_max (x, min, max) {
 
 	//log("x:", x, "min:", min, "multiplicator:", multiplicator, "divisor:", divisor);
 
+	var val = parse_int(to_be_parsed_as_int);
+
 	if(divisor == 0) {
 		return val;
 	}
@@ -67,8 +69,6 @@ function normalize_to_rgb_min_max (x, min, max) {
 	assert(!isNaN(multiplicator), "multiplicator is NaN");
 
 	var to_be_parsed_as_int = 255 * multiplicator / divisor;
-
-	var val = parse_int(to_be_parsed_as_int);
 
 	if(val > 255) {
 		val = 255;
