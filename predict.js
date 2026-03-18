@@ -382,8 +382,7 @@ async function handle_predict_demo_error(e, tensor_img, tried_again, new_tensor_
 }
 
 async function dispose_predict_demo_tensors(tensor_img, new_tensor_img) {
-	await dispose(tensor_img);
-	await dispose(new_tensor_img);
+	await dispose(tensor_img, new_tensor_img);
 
 	await nextFrame();
 }
@@ -1075,8 +1074,7 @@ async function render_prediction_tab(is_image_prediction, pred_tab, predictions_
 		set_prediction_non_image(latex);
 	}
 
-	await dispose(predict_data);
-	await dispose(predictions_tensor);
+	await dispose(predict_data, predictions_tensor);
 
 	reset_predict_error();
 }
@@ -1320,8 +1318,7 @@ async function _print_predictions_text() {
 			wrn(language[lang]["the_tensor_about_to_be_predicted_was_empty"]);
 		}
 
-		await dispose(_tensor);
-		await dispose(res);
+		await dispose(_tensor, res);
 	}
 
 	if(html_contents) {
@@ -1362,8 +1359,7 @@ async function handle_internal_predict_text_error(e, _tensor, res) {
 		wrn(language[lang]["model_or_layer_was_already_disposed_not_predicting"]);
 	} else {
 		_predict_error(e);
-		await dispose(_tensor);
-		await dispose(res);
+		await dispose(_tensor, res);
 
 		return true;
 	}
@@ -1587,8 +1583,7 @@ async function handle_predict_webcam_error (e, predictions_tensor, predict_data)
 
 	currently_predicting_webcam = false;
 
-	await dispose(predictions_tensor);
-	await dispose(predict_data);
+	await dispose(predictions_tensor, predict_data);
 }
 
 async function predict_webcam () {
@@ -1677,8 +1672,7 @@ async function predict_webcam () {
 			}
 		}
 
-		await dispose(predictions_tensor);
-		await dispose(predict_data);
+		await dispose(predictions_tensor, predict_data);
 
 		await nextFrame();
 
@@ -2004,8 +1998,7 @@ async function _predict_handdrawn_internal () {
 	await draw_heatmap(predictions_tensor, predict_data);
 	await _predict_handdrawn(predictions_tensor);
 	temml_or_wrn();
-	await dispose(predictions_tensor);
-	await dispose(predict_data);
+	await dispose(predictions_tensor, predict_data);
 
 	allow_editable_labels(); // await not useful here
 
@@ -2083,8 +2076,7 @@ async function handle_handdrawn_error(e, predictions_tensor, predict_data) {
 		void(0); dbg("Debugt message 443: " + e);
 	}
 
-	await dispose(predictions_tensor);
-	await dispose(predict_data);
+	await dispose(predictions_tensor, predict_data);
 }
 
 async function _predict_handdrawn(predictions_tensor) {

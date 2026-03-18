@@ -422,32 +422,34 @@ function shuffleCombo (...args) {
 	}
 }
 
-async function dispose (item) { // start_tensors
-	if(enable_dispose_debug) {
-		log("dispose_debug:", item);
-		console.trace();
-	}
-	try {
-		if(item) {
-			var tensor_id = item.id;
-			tf.dispose(item);
+async function dispose (...tensors) { // start_tensors
+	for (const item of tensors) {
+		if(enable_dispose_debug) {
+			log("dispose_debug:", item);
+			console.trace();
+		}
+		try {
+			if(item) {
+				var tensor_id = item.id;
+				tf.dispose(item);
 
-			if(_custom_tensors[tensor_id]) {
-				delete _custom_tensors[tensor_id];
+				if(_custom_tensors[tensor_id]) {
+					delete _custom_tensors[tensor_id];
+				}
+
+				await nextFrame();
 			}
 
-			await nextFrame();
+			//_clean_custom_tensors();
+		} catch (e) {
+			if(Object.keys(e).includes("message")) {
+				e = e.message;
+			}
+
+			err(e);
+
+			return null;
 		}
-
-		//_clean_custom_tensors();
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		err(e);
-
-		return null;
 	}
 }
 
