@@ -1,5 +1,12 @@
 "use strict";
 
+function extract_error_message(e) {
+	if (e && typeof e === "object" && Object.keys(e).includes("message")) {
+		return e.message;
+	}
+	return "" + e;
+}
+
 async function __predict (data, __model = model, recursion = 0) {
 	if(!data) {
 		err("[__predict] data undefined");
@@ -197,11 +204,7 @@ function load_file (event) {
 
 		$output.show();
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
@@ -224,11 +227,7 @@ function _divide_img_tensor (tensor_img) {
 			return divNoNan(tensor_img, divide_by);
 		});
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		_predict_error(e);
+		_predict_error(extract_error_message(e));
 	}
 
 	return tensor_img;
@@ -250,11 +249,7 @@ async function _get_tensor_img(item) {
 	} catch (e) {
 		void(0); log("item:", item, "width:", width, "height:", height, "error:", e);
 
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		_predict_error(e);
+		_predict_error(extract_error_message(e));
 		return null;
 	}
 
@@ -274,10 +269,7 @@ function set_item_natural_width (item) {
 		$item.prop("width", element_vanilla_js.naturalWidth);
 		$item.prop("height", element_vanilla_js.naturalHeight);
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-		_predict_error("" + e);
+		_predict_error("" + extract_error_message(e));
 		return false;
 	}
 
@@ -307,10 +299,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 			await get_label_data();
 		}
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-		_predict_error("" + e);
+		_predict_error("" + extract_error_message(e));
 
 		return;
 	}
@@ -377,9 +366,7 @@ async function predict_demo (item, nr, tried_again = 0) {
 }
 
 async function handle_predict_demo_error(e, tensor_img, tried_again, new_tensor_img, item, nr) {
-	if(Object.keys(e).includes("message")) {
-		e = e.message;
-	}
+	e = extract_error_message(e);
 
 	void(0); err("Error (101): " + e);
 	log("================================= tensor_img:", tensor_img);
@@ -410,11 +397,7 @@ async function _run_predict_and_show (tensor_img, nr) {
 
 		}
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 
 	if(!tensor_shape_matches_model(tensor_img)) {
@@ -524,11 +507,7 @@ async function _predict_image (predictions_tensor, desc) {
 
 		await dispose(predictions_tensor_transposed);
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
@@ -622,11 +601,7 @@ async function _predict_table(predictions_tensor, desc) {
 
 		return fullstr;
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		wrn("" + e);
+		wrn("" + extract_error_message(e));
 	}
 }
 
@@ -697,18 +672,12 @@ function number_of_elements_in_tensor_shape (shape) {
 
 		return required_elements;
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
 async function handle_predict_error (e, predict_data) {
-	if(Object.keys(e).includes("message")) {
-		e = e.message;
-	}
+	e = extract_error_message(e);
 
 	await dispose(predict_data);
 
@@ -1131,9 +1100,7 @@ function set_prediction_non_image(latex) {
 }
 
 async function handle_this_predict_error (e, predict_data, latex) {
-	if(Object.keys(e).includes("message")) {
-		e = e.message;
-	}
+	e = extract_error_message(e);
 
 	await dispose(predict_data);
 	latex = "" + e;
@@ -1250,7 +1217,7 @@ async function safe_execute(label, fn, _throw = true, _warn = true) {
 	try {
 		return await fn();
 	} catch (e) {
-		if ("message" in e) e = e.message;
+		e = extract_error_message(e);
 		if(_warn) {
 			void(0); err(label + ": " + e);
 		}
@@ -1267,11 +1234,7 @@ async function get_example_predict_data_or_error() {
 	try {
 		example_predict_data = await get_cached_json(example_url);
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		err("" + e);
+		err("" + extract_error_message(e));
 	}
 
 	if(!(typeof(example_predict_data) == "object" && example_predict_data.length)) {
@@ -1387,9 +1350,7 @@ async function wait_for_model() {
 }
 
 async function handle_internal_predict_text_error(e, _tensor, res) {
-	if(Object.keys(e).includes("message")) {
-		e = e.message;
-	}
+	e = extract_error_message(e);
 
 	if(("" + e).includes("already disposed")) {
 		dbg("[_print_predictions_text] Tensors were already disposed. Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
@@ -1604,11 +1565,7 @@ function _get_resized_webcam (webcam_image) {
 
 		return res;
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
@@ -1727,9 +1684,7 @@ async function predict_webcam () {
 
 		currently_predicting_webcam = false;
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
+		e = extract_error_message(e);
 
 		log(e);
 		assert(false, e);
@@ -1753,11 +1708,7 @@ function draw_multi_channel (predictions_tensor, webcam_prediction, pxsz) {
 			draw_grid(canvas, pxsz, d, 1, 1, null, null, null);
 		}
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
@@ -1772,11 +1723,7 @@ function draw_rgb (predictions_tensor, predictions, pxsz, webcam_prediction) {
 
 		draw_grid(canvas, pxsz, predictions[0], 1, 0, null, null, null);
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
@@ -1799,11 +1746,7 @@ async function _webcam_predict_text (webcam_prediction, predictions) {
 
 		await _predict_webcam_html(predictions, webcam_prediction, max_i);
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
@@ -1819,11 +1762,7 @@ async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
 
 		webcam_prediction.append(str);
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
@@ -1862,11 +1801,7 @@ function _webcam_prediction_row (predictions_idx, predictions, max_i) {
 
 		return str;
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
@@ -1936,11 +1871,7 @@ function draw_bars_or_numbers (predictions_idx, predictions, max) {
 
 		return html;
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
@@ -2131,9 +2062,7 @@ async function divide_by_if_needed (predict_data) {
 }
 
 async function handle_handdrawn_error(e, predictions_tensor, predict_data) {
-	if(Object.keys(e).includes("message")) {
-		e = e.message;
-	}
+	e = extract_error_message(e)
 
 	if(("" + e).includes("is already disposed")) {
 		dbg("[predict_handdrawn] weights are already disposed. Not predicting handdrawn");
@@ -2180,11 +2109,7 @@ async function _predict_handdrawn(predictions_tensor) {
 
 		return ret;
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
@@ -2216,11 +2141,7 @@ async function _image_output_handdrawn(predictions_tensor) {
 
 		await dispose(predictions_tensor_transposed);
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
@@ -2254,11 +2175,7 @@ async function _classification_handdrawn (predictions_tensor, handdrawn_predicti
 
 		handdrawn_predictions.html(html);
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
+		assert(false, extract_error_message(e));
 	}
 }
 
@@ -2305,11 +2222,7 @@ async function predict_data_img (item, force_category) {
 	try {
 		results = await predict(item, force_category, 1);
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		err(e);
+		err(extract_error_message(e));
 	}
 
 	if(!results) {
