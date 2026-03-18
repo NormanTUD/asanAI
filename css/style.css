@@ -45,7 +45,10 @@ html {
 	z-index: 1;
 	overflow: hidden;
 	border-radius: 4px;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
+
 
 body {
 	margin: 0px;
@@ -93,7 +96,7 @@ body {
 .layer {
 	min-height: 40px;
 	margin-bottom: 5px;
-	transition: opacity 0.3s ease, transform 0.3s ease, margin 0.3s ease;
+	transition: opacity 0.4s var(--ease-physics), transform 0.4s var(--ease-physics), margin 0.4s var(--ease-physics);
 }
 
 .current {
@@ -1197,6 +1200,7 @@ hr {
 
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
 	font-variant-caps: petite-caps;
+	letter-spacing: 0.03em;
 }
 
 ::placeholder {
