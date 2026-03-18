@@ -1,5 +1,15 @@
 "use strict";
 
+function _get_placeholder_prediction_table() {
+	if (labels.length === 0) return "";
+	var html = "<table class='predict_table'><tbody>";
+	for (var i = 0; i < labels.length; i++) {
+		html += "<tr><td class='label_element'>" + labels[i] + "</td><td><span class='bar'><span style='width: 0px'></span></span></td></tr>";
+	}
+	html += "</tbody></table>";
+	return html;
+}
+
 function extract_error_message(e) {
 	if (e && typeof e === "object" && Object.keys(e).includes("message")) {
 		return e.message;
@@ -1410,7 +1420,7 @@ async function _get_example_string_image (examples, count, full_dir) {
 	assert(typeof(full_dir) == "string", "full_dir is not a string");
 
 	// Build a placeholder table so the container is pre-sized
-	var placeholder_table = "";
+	var placeholder_table = _get_placeholder_prediction_table();
 	if (labels.length > 0) {
 		placeholder_table = "<table class='predict_table'><tbody>";
 		for (var lbl_idx = 0; lbl_idx < labels.length; lbl_idx++) {
@@ -1927,6 +1937,12 @@ async function predict_handdrawn() {
 }
 
 async function _predict_handdrawn_internal () {
+	// Pre-populate placeholder so container is correctly sized from the start
+	var $hp = $("#handdrawn_predictions");
+	if ($hp.length && $hp.is(":empty")) {
+		$hp.html(_get_placeholder_prediction_table());
+	}
+
 	if(has_zero_output_shape || !input_shape_is_image() || is_setting_config || !finished_loading) {
 		return;
 	}
@@ -2091,7 +2107,7 @@ async function handle_handdrawn_error(e, predictions_tensor, predict_data) {
 async function _predict_handdrawn(predictions_tensor) {
 	try {
 		var handdrawn_predictions = $("#handdrawn_predictions");
-		handdrawn_predictions.html("");
+		handdrawn_predictions.html(_get_placeholder_prediction_table());
 
 		var ret = null;
 
