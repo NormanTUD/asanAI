@@ -1566,6 +1566,11 @@ async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0)
 }
 
 function _get_resized_webcam (webcam_image) {
+	if(!webcam_image) {
+		wrn("[_get_resized_webcam] webcam_image is null or undefined");
+		return null;
+	}
+
 	try {
 		var res = tidy(() => {
 			var divide_by = parse_float($("#divide_by").val());
@@ -1626,6 +1631,12 @@ async function predict_webcam () {
 
 		var webcam_image = await cam.capture();
 
+		if(!webcam_image) {
+			dbg("[predict_webcam] webcam_image is null or undefined, skipping this frame");
+			currently_predicting_webcam = false;
+			return;
+		}
+
 		var wait = null;
 
 		try {
@@ -1634,10 +1645,17 @@ async function predict_webcam () {
 			});
 		} catch (e) {
 			console.error(e);
+			currently_predicting_webcam = false;
 			return;
 		}
 
 		await dispose(webcam_image);
+
+		if(!predict_data) {
+			dbg("[predict_webcam] predict_data is null after resize, skipping this frame");
+			currently_predicting_webcam = false;
+			return;
+		}
 
 		var predictions_tensor = null;
 		try {
