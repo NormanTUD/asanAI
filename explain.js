@@ -57,7 +57,7 @@ function normalize_to_rgb_min_max (x, min, max) {
 	//log("x:", x, "min:", min, "multiplicator:", multiplicator, "divisor:", divisor);
 
 	if(divisor == 0) {
-		return val;
+		return 0;
 	}
 
 	assert(typeof(multiplicator) == "number", "multiplicator is not a number, but " + typeof(multiplicator));
