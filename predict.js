@@ -1409,6 +1409,16 @@ async function _get_example_string_image (examples, count, full_dir) {
 	assert(typeof(count) == "number", "count is not a number");
 	assert(typeof(full_dir) == "string", "full_dir is not a string");
 
+	// Build a placeholder table so the container is pre-sized
+	var placeholder_table = "";
+	if (labels.length > 0) {
+		placeholder_table = "<table class='predict_table'><tbody>";
+		for (var lbl_idx = 0; lbl_idx < labels.length; lbl_idx++) {
+			placeholder_table += "<tr><td class='label_element'>" + labels[lbl_idx] + "</td><td><span class='bar'><span style='width: 0px'></span></span></td></tr>";
+		}
+		placeholder_table += "</tbody></table>";
+	}
+
 	var str = "";
 	for (var examples_idx = 0; examples_idx < examples.length; examples_idx++) {
 		count++;
@@ -1437,9 +1447,8 @@ async function _get_example_string_image (examples, count, full_dir) {
 						onload='predict_demo(this, ${examples_idx})'
 						onclick='predict_demo(this, ${examples_idx})' />
 					<br>
-					<div class='predict_demo_result'></div>
+					<div class='predict_demo_result'>${placeholder_table}</div>
 				</div>`;
-
 		}
 	}
 
