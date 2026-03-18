@@ -76,7 +76,7 @@ function check_for_nan_in_tensor(res) {
 
 	for (var k = 0; k < res_sync.length; k++) {
 		if(output_contains_nan) {
-			continue;
+			break;
 		}
 
 		if(isNaN(res_sync[k])) {
