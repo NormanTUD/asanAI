@@ -1965,19 +1965,63 @@ function stop_webcam_if_cam() {
 }
 
 var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers) => {
-	if(_has_any_warning()) {
+	if (_has_any_warning()) {
 		return false;
 	}
 
 	rename_tmp_onchange();
 
+	_update_bias_initializer_visibility();
+
+	await _compile_model_or_throw();
+
+	await _update_python_and_restart_graph(no_graph_restart);
+
+	_reset_prev_layer_data();
+
+	await identify_layers_or_error();
+
+	_invalidate_layer_structure_cache();
+
+	enable_start_training_custom_tensors();
+
+	var wait_for_latex_model = _maybe_write_latex(no_update_initializers);
+
+	await last_shape_layer_warning();
+
+	hide_no_conv_stuff();
+
+	_stop_webcam_if_active();
+
+	await _write_descriptions_safe();
+
+	allow_training();
+
+	_maybe_show_prediction(no_prediction);
+
+	await wait_for_latex_model;
+
+	await _maybe_predict_handdrawn();
+
+	show_or_hide_beginner_or_expert_mode_stuff();
+
+	allow_editable_labels(); // await not useful here
+
+	await _maybe_update_initializers(no_update_initializers);
+
+	return true;
+};
+
+function _update_bias_initializer_visibility() {
 	var number_of_layers = get_number_of_layers();
 	show_or_hide_bias_initializer(number_of_layers);
+}
 
+async function _compile_model_or_throw() {
 	try {
 		await compile_model();
 	} catch (e) {
-		if(Object.keys(e).includes("message")) {
+		if (Object.keys(e).includes("message")) {
 			e = e.message;
 		}
 
@@ -1985,53 +2029,55 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 		log(language[lang]["there_was_an_error_compiling_the_model"] + ": " + e);
 		throw new Error(e);
 	}
+}
 
+async function _update_python_and_restart_graph(no_graph_restart) {
 	var redo_graph = await update_python_code(1);
 
 	if (model && redo_graph && !no_graph_restart) {
 		await restart_fcnn(1);
 	}
+}
 
+function _reset_prev_layer_data() {
 	prev_layer_data = [];
+}
 
-	await identify_layers_or_error();
-
+function _invalidate_layer_structure_cache() {
 	layer_structure_cache = null;
+}
 
-	enable_start_training_custom_tensors();
-
-	var wait_for_latex_model = Promise.resolve(1);
-
+function _maybe_write_latex(no_update_initializers) {
 	if (!no_update_math) {
-		wait_for_latex_model = await write_model_to_latex_to_page();
+		return write_model_to_latex_to_page();
 	}
+	return Promise.resolve(1);
+}
 
-	await last_shape_layer_warning();
-
-	hide_no_conv_stuff();
-
-	var current_input_shape = get_input_shape();
+function _stop_webcam_if_active() {
 	stop_webcam_if_cam();
+}
 
+async function _write_descriptions_safe() {
 	try {
 		await write_descriptions();
 	} catch (e) {
 		wrn(e);
 	}
+}
 
-	allow_training();
-
+function _maybe_show_prediction(no_prediction) {
 	if (!no_prediction) {
 		show_prediction(1, 1); // await not desired here
 	}
+}
 
-	await wait_for_latex_model;
-
-	if(atrament_data.sketcher && input_shape_is_image()) {
+async function _maybe_predict_handdrawn() {
+	if (atrament_data.sketcher && input_shape_is_image()) {
 		try {
 			await predict_handdrawn();
 		} catch (e) {
-			if(("" + e).includes("but got array with shape")) {
+			if (("" + e).includes("but got array with shape")) {
 				var _err = "This may have happened when you change the model input size while prediction. In which case, it is a harmless error.";
 				wrn("[updated_page_internal] " + _err);
 				l(_err);
@@ -2040,17 +2086,13 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 			}
 		}
 	}
+}
 
-	show_or_hide_beginner_or_expert_mode_stuff();
-
-	allow_editable_labels(); // await not useful here
-
-	if(!no_update_initializers) {
+async function _maybe_update_initializers(no_update_initializers) {
+	if (!no_update_initializers) {
 		await update_initializers();
 	}
-
-	return true;
-};
+}
 
 async function update_initializers () {
 	await insert_initializer("kernel");
