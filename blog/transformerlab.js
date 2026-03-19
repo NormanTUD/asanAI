@@ -3742,64 +3742,64 @@ function _mig_ec3d_vocab_series() {
 }
 
 function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
-    const series = [];
-    const legendData = ['Vocab Embeddings'];
-    const nTokens = tokens.length;
+	const series = [];
+	const legendData = ['Vocab Embeddings'];
+	const nTokens = tokens.length;
 
-    series.push(_mig_ec3d_vocab_series());
+	series.push(_mig_ec3d_vocab_series());
 
-    tokens.forEach((token, i) => {
-        const color = getPositionColor(i, nTokens);
-        const src = displayToken(tlab_get_top_word_only(start_h[i]));
-        const dst = displayToken(tlab_get_top_word_only(end_h[i]));
-        const label = `${src}→${dst} (${i + 1})`;
-        legendData.push(label);
+	tokens.forEach((token, i) => {
+		const color = getPositionColor(i, nTokens);
+		const src = displayToken(tlab_get_top_word_only(start_h[i]));
+		const dst = displayToken(tlab_get_top_word_only(end_h[i]));
+		const label = `${src}→${dst} (${i + 1})`;
+		legendData.push(label);
 
-        const from3 = start_h[i].slice(0, 3);
-        const to3   = end_h[i].slice(0, 3);
+		const from3 = start_h[i].slice(0, 3);
+		const to3   = end_h[i].slice(0, 3);
 
-        const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
-        series.push({
-            name: label, type: 'line3D',
-            data: [from3, shaftEnd],
-            lineStyle: { width: 4, color: color, opacity: 0.85 }
-        });
+		const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
+		series.push({
+			name: label, type: 'line3D',
+			data: [from3, shaftEnd],
+			lineStyle: { width: 4, color: color, opacity: 0.85 }
+		});
 
-        _add3DArrowheadSeries(series, from3, to3, color, {
-            lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4, name: label
-        });
+		_add3DArrowheadSeries(series, from3, to3, color, {
+			lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4, name: label
+		});
 
-        series.push({
-            name: label, type: 'scatter3D',
-            data: [{
-                value: from3, symbolSize: 8,
-                itemStyle: { color: color, borderWidth: 2, borderColor: '#000' },
-                _hover: `Start: '${src}' pos ${i + 1}`
-            }],
-            symbol: 'circle',
-            tooltip: { formatter: p => p.data._hover }
-        });
-    });
+		series.push({
+			name: label, type: 'scatter3D',
+			data: [{
+				value: from3, symbolSize: 8,
+				itemStyle: { color: color, borderWidth: 2, borderColor: '#000' },
+				_hover: `Start: '${src}' pos ${i + 1}`
+			}],
+			symbol: 'circle',
+			tooltip: { formatter: p => p.data._hover }
+		});
+	});
 
-    if (vfEnabled) {
-        const { n_heads } = getTransformerConfig();
-        const computed = _compute_vector_field_points_3d(migId, layerNum, d_model, n_heads);
-        if (computed) series.push(..._vf_ec3d_series(computed));
-    }
+	if (vfEnabled) {
+		const { n_heads } = getTransformerConfig();
+		const computed = _compute_vector_field_points_3d(migId, layerNum, d_model, n_heads);
+		if (computed) series.push(..._vf_ec3d_series(computed));
+	}
 
-    chart.setOption({
-        title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center',
-            textStyle: { fontSize: 14, color: '#1e293b' } },
-        tooltip: { show: true, trigger: 'item', confine: true },
-        legend: { data: legendData, orient: 'horizontal', bottom: 5,
-            left: 'center', textStyle: { fontSize: 11 } },
-        xAxis3D: { type: 'value', name: 'Dim 0' },
-        yAxis3D: { type: 'value', name: 'Dim 1' },
-        zAxis3D: { type: 'value', name: 'Dim 2' },
-        grid3D: _defaultGrid3DConfig(),
-        series: series,
-        animation: false
-    }, true);
+	chart.setOption({
+		title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center',
+			textStyle: { fontSize: 14, color: '#1e293b' } },
+		tooltip: { show: true, trigger: 'item', confine: true },
+		legend: { data: legendData, orient: 'horizontal', bottom: 5,
+			left: 'center', textStyle: { fontSize: 11 } },
+		xAxis3D: { type: 'value', name: 'Dim 0' },
+		yAxis3D: { type: 'value', name: 'Dim 1' },
+		zAxis3D: { type: 'value', name: 'Dim 2' },
+		grid3D: _defaultGrid3DConfig(),
+		series: series,
+		animation: false
+	}, true);
 }
 
 function _traj_ec3d_line_series_with_arrows(tokenLabel, color, dataPoints, tIdx) {
