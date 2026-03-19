@@ -714,47 +714,47 @@ function appendSunburstLayer(data, lb, d_model, d_ff) {
 }
 
 function appendSunburstAttention(data, layerId, lb, d_model) {
-    const attnId = `${layerId}-attn`;
+	const attnId = `${layerId}-attn`;
 
-    data.ids.push(attnId);
-    data.labels.push('Attention');
-    data.parents.push(layerId);
-    data.values.push(lb.attention.total);
-    data.hoverTexts.push(`Attention: ${lb.attention.total.toLocaleString()} params<br>Q + K + V + O projections`);
-    data.colors.push(data.attnColor);
+	data.ids.push(attnId);
+	data.labels.push('Attention');
+	data.parents.push(layerId);
+	data.values.push(lb.attention.total);
+	data.hoverTexts.push(`Attention: ${lb.attention.total.toLocaleString()} params<br>Q + K + V + O projections`);
+	data.colors.push(data.attnColor);
 
-    const attnChildren = [
-        { key: 'q', label: 'W_Q', desc: `Query: ${d_model}×${d_model}` },
-        { key: 'k', label: 'W_K', desc: `Key: ${d_model}×${d_model}` },
-        { key: 'v', label: 'W_V', desc: `Value: ${d_model}×${d_model}` },
-        { key: 'o', label: 'W_O', desc: `Output: ${d_model}×${d_model}` }
-    ];
+	const attnChildren = [
+		{ key: 'q', label: 'W_Q', desc: `Query: ${d_model}×${d_model}` },
+		{ key: 'k', label: 'W_K', desc: `Key: ${d_model}×${d_model}` },
+		{ key: 'v', label: 'W_V', desc: `Value: ${d_model}×${d_model}` },
+		{ key: 'o', label: 'W_O', desc: `Output: ${d_model}×${d_model}` }
+	];
 
-    attnChildren.forEach(({ key, label, desc }) => {
-        appendSunburstLeaf(data, `${attnId}-${key}`, label, attnId, lb.attention[key], desc, data.attnColor);
-    });
+	attnChildren.forEach(({ key, label, desc }) => {
+		appendSunburstLeaf(data, `${attnId}-${key}`, label, attnId, lb.attention[key], desc, data.attnColor);
+	});
 }
 
 function appendSunburstFFN(data, layerId, lb, d_model, d_ff) {
-    const ffnId = `${layerId}-ffn`;
+	const ffnId = `${layerId}-ffn`;
 
-    data.ids.push(ffnId);
-    data.labels.push('FFN');
-    data.parents.push(layerId);
-    data.values.push(lb.ffn.total);
-    data.hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} params<br>W1 + b1 + W2 + b2`);
-    data.colors.push(data.ffnColor);
+	data.ids.push(ffnId);
+	data.labels.push('FFN');
+	data.parents.push(layerId);
+	data.values.push(lb.ffn.total);
+	data.hoverTexts.push(`FFN: ${lb.ffn.total.toLocaleString()} params<br>W1 + b1 + W2 + b2`);
+	data.colors.push(data.ffnColor);
 
-    const ffnChildren = [
-        { key: 'w1', label: 'W₁', desc: `Expansion: ${d_model}×${d_ff}` },
-        { key: 'b1', label: 'b₁', desc: `Bias: ${d_ff}` },
-        { key: 'w2', label: 'W₂', desc: `Compression: ${d_ff}×${d_model}` },
-        { key: 'b2', label: 'b₂', desc: `Bias: ${d_model}` }
-    ];
+	const ffnChildren = [
+		{ key: 'w1', label: 'W₁', desc: `Expansion: ${d_model}×${d_ff}` },
+		{ key: 'b1', label: 'b₁', desc: `Bias: ${d_ff}` },
+		{ key: 'w2', label: 'W₂', desc: `Compression: ${d_ff}×${d_model}` },
+		{ key: 'b2', label: 'b₂', desc: `Bias: ${d_model}` }
+	];
 
-    ffnChildren.forEach(({ key, label, desc }) => {
-        appendSunburstLeaf(data, `${ffnId}-${key}`, label, ffnId, lb.ffn[key], desc, data.ffnColor);
-    });
+	ffnChildren.forEach(({ key, label, desc }) => {
+		appendSunburstLeaf(data, `${ffnId}-${key}`, label, ffnId, lb.ffn[key], desc, data.ffnColor);
+	});
 }
 
 function appendSunburstNorm(data, layerId, lb, d_model) {
@@ -5975,39 +5975,39 @@ function computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, bet
 }
 
 function matrixToPmatrixLabeled(matrix, tokenStrings, stageLabel) {
-    if (!tokenStrings || tokenStrings.length !== matrix.length) {
-        return matrixToPmatrix(matrix);
-    }
+	if (!tokenStrings || tokenStrings.length !== matrix.length) {
+		return matrixToPmatrix(matrix);
+	}
 
-    const total = matrix.length;
-    const numCols = matrix[0].length;
-    const colSpec = 'r|' + 'r'.repeat(numCols);
+	const total = matrix.length;
+	const numCols = matrix[0].length;
+	const colSpec = 'r|' + 'r'.repeat(numCols);
 
-    const rows = matrix.map((row, tIdx) => {
-        const colorCmd = getPositionColor(tIdx, total, 'temml');
-        const safeLabel = displayToken(tokenStrings[tIdx])
-            .replace(/#/g, '\\#')
-            .replace(/_/g, '\\_')
-            .replace(/&/g, '\\&');
+	const rows = matrix.map((row, tIdx) => {
+		const colorCmd = getPositionColor(tIdx, total, 'temml');
+		const safeLabel = displayToken(tokenStrings[tIdx])
+			.replace(/#/g, '\\#')
+			.replace(/_/g, '\\_')
+			.replace(/&/g, '\\&');
 
-        let subscript;
-        if (stageLabel) {
-            const safeStage = stageLabel
-                .replace(/#/g, '\\#')
-                .replace(/_/g, '\\_')
-                .replace(/&/g, '\\&')
-                .replace(/\^(\w+)/g, '}^{$1}\\text{');
-            subscript = `_{${tIdx},\\,\\text{${safeStage}}}`;
-        } else {
-            subscript = `_{${tIdx}}`;
-        }
+		let subscript;
+		if (stageLabel) {
+			const safeStage = stageLabel
+				.replace(/#/g, '\\#')
+				.replace(/_/g, '\\_')
+				.replace(/&/g, '\\&')
+				.replace(/\^(\w+)/g, '}^{$1}\\text{');
+			subscript = `_{${tIdx},\\,\\text{${safeStage}}}`;
+		} else {
+			subscript = `_{${tIdx}}`;
+		}
 
-        const label = `${colorCmd} \\text{${safeLabel}}${subscript}`;
-        const vals = row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
-        return `${label} & ${vals}`;
-    }).join(' \\\\ ');
+		const label = `${colorCmd} \\text{${safeLabel}}${subscript}`;
+		const vals = row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
+		return `${label} & ${vals}`;
+	}).join(' \\\\ ');
 
-    return `\\left(\\begin{array}{${colSpec}} ${rows} \\end{array}\\right)`;
+	return `\\left(\\begin{array}{${colSpec}} ${rows} \\end{array}\\right)`;
 }
 
 function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
@@ -6281,8 +6281,8 @@ async function loadTransformerModule () {
 }
 
 function displayToken(token) {
-    if (typeof token !== 'string') return String(token);
-    return /^\s+$/.test(token) ? token.replace(/ /g, '␣') : token;
+	if (typeof token !== 'string') return String(token);
+	return /^\s+$/.test(token) ? token.replace(/ /g, '␣') : token;
 }
 
 function createTrajectoryVFToggleButton() {
