@@ -3115,146 +3115,146 @@ function tlab_get_colorblind_pixel(val) {
 }
 
 function tlab_render_weight_grid(id, layerNum) {
-    requestAnimationFrame(() => {
-        const plotDiv = document.getElementById(id);
-        if (!plotDiv || !window.currentWeights || !window.currentWeights[layerNum]) return;
+	requestAnimationFrame(() => {
+		const plotDiv = document.getElementById(id);
+		if (!plotDiv || !window.currentWeights || !window.currentWeights[layerNum]) return;
 
-        if (window._activeMigrationIds) {
-            window._activeMigrationIds.add(id);
-        }
+		if (window._activeMigrationIds) {
+			window._activeMigrationIds.add(id);
+		}
 
-        const gridBox = ensureWeightGridContainer(plotDiv);
-        const targets = getWeightTargets(layerNum);
+		const gridBox = ensureWeightGridContainer(plotDiv);
+		const targets = getWeightTargets(layerNum);
 
-        targets.forEach(target => renderSingleWeightCanvas(gridBox, target));
-        removeOrphanedWeightWrappers(gridBox, targets);
-    });
+		targets.forEach(target => renderSingleWeightCanvas(gridBox, target));
+		removeOrphanedWeightWrappers(gridBox, targets);
+	});
 }
 
 function ensureWeightGridContainer(plotDiv) {
-    let weightContainer = plotDiv.nextElementSibling;
-    if (!weightContainer || !weightContainer.classList.contains('weight-grid-viz')) {
-        weightContainer = document.createElement('div');
-        weightContainer.className = 'weight-grid-viz';
-        weightContainer.style = "display: flex; flex-direction: column; align-items: center; margin: 40px 0; padding: 0; clear: both; width: 100%;";
-        plotDiv.parentNode.insertBefore(weightContainer, plotDiv.nextSibling);
-    }
+	let weightContainer = plotDiv.nextElementSibling;
+	if (!weightContainer || !weightContainer.classList.contains('weight-grid-viz')) {
+		weightContainer = document.createElement('div');
+		weightContainer.className = 'weight-grid-viz';
+		weightContainer.style = "display: flex; flex-direction: column; align-items: center; margin: 40px 0; padding: 0; clear: both; width: 100%;";
+		plotDiv.parentNode.insertBefore(weightContainer, plotDiv.nextSibling);
+	}
 
-    let gridBox = weightContainer.querySelector('.weight-grid-row');
-    if (!gridBox) {
-        gridBox = document.createElement('div');
-        gridBox.className = 'weight-grid-row';
-        gridBox.style = "display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 10px; width: 100%;";
-        weightContainer.appendChild(gridBox);
-    }
+	let gridBox = weightContainer.querySelector('.weight-grid-row');
+	if (!gridBox) {
+		gridBox = document.createElement('div');
+		gridBox.className = 'weight-grid-row';
+		gridBox.style = "display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 10px; width: 100%;";
+		weightContainer.appendChild(gridBox);
+	}
 
-    return gridBox;
+	return gridBox;
 }
 
 function getWeightTargets(layerNum) {
-    const weights = window.currentWeights[layerNum];
-    return [
-        { name: 'W1', data: weights.W1 },
-        { name: 'W2', data: weights.W2 },
-        { name: 'Q',  data: weights.attention?.query },
-        { name: 'K',  data: weights.attention?.key },
-        { name: 'V',  data: weights.attention?.value }
-    ].filter(t => t.data && t.data.length);
+	const weights = window.currentWeights[layerNum];
+	return [
+		{ name: 'W1', data: weights.W1 },
+		{ name: 'W2', data: weights.W2 },
+		{ name: 'Q',  data: weights.attention?.query },
+		{ name: 'K',  data: weights.attention?.key },
+		{ name: 'V',  data: weights.attention?.value }
+	].filter(t => t.data && t.data.length);
 }
 
 function renderSingleWeightCanvas(gridBox, target) {
-    const rows = target.data.length;
-    const cols = Array.isArray(target.data[0]) ? target.data[0].length : 1;
+	const rows = target.data.length;
+	const cols = Array.isArray(target.data[0]) ? target.data[0].length : 1;
 
-    let wrap = gridBox.querySelector(`[data-weight-name="${target.name}"]`);
-    let canvas;
+	let wrap = gridBox.querySelector(`[data-weight-name="${target.name}"]`);
+	let canvas;
 
-    if (!wrap) {
-        wrap = document.createElement('div');
-        wrap.setAttribute('data-weight-name', target.name);
-        wrap.style = "text-align: center; flex: 1 1 0%; display: flex; flex-direction: column; min-width: 0px;";
-        wrap.innerHTML = `<div style="font-size: 10px; font-weight: bold; color: #94a3b8; margin-bottom: 5px; font-family: monospace; white-space: nowrap;">${target.name}</div>`;
+	if (!wrap) {
+		wrap = document.createElement('div');
+		wrap.setAttribute('data-weight-name', target.name);
+		wrap.style = "text-align: center; flex: 1 1 0%; display: flex; flex-direction: column; min-width: 0px;";
+		wrap.innerHTML = `<div style="font-size: 10px; font-weight: bold; color: #94a3b8; margin-bottom: 5px; font-family: monospace; white-space: nowrap;">${target.name}</div>`;
 
-        canvas = document.createElement('canvas');
-        canvas.style.cssText = "width:100%; height:auto; image-rendering:pixelated; display:block; max-height:145px; outline:1px solid #f1f5f9;";
-        wrap.appendChild(canvas);
-        gridBox.appendChild(wrap);
-    } else {
-        canvas = wrap.querySelector('canvas');
-    }
+		canvas = document.createElement('canvas');
+		canvas.style.cssText = "width:100%; height:auto; image-rendering:pixelated; display:block; max-height:145px; outline:1px solid #f1f5f9;";
+		wrap.appendChild(canvas);
+		gridBox.appendChild(wrap);
+	} else {
+		canvas = wrap.querySelector('canvas');
+	}
 
-    if (canvas.width !== cols || canvas.height !== rows) {
-        canvas.width = cols;
-        canvas.height = rows;
-    }
+	if (canvas.width !== cols || canvas.height !== rows) {
+		canvas.width = cols;
+		canvas.height = rows;
+	}
 
-    paintWeightPixels(canvas, target.data, rows, cols);
+	paintWeightPixels(canvas, target.data, rows, cols);
 }
 
 function paintWeightPixels(canvas, data, rows, cols) {
-    const ctx = canvas.getContext('2d');
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-            const val = Array.isArray(data[r]) ? data[r][c] : data[r];
-            ctx.fillStyle = tlab_get_colorblind_pixel(val);
-            ctx.fillRect(c, r, 1, 1);
-        }
-    }
+	const ctx = canvas.getContext('2d');
+	for (let r = 0; r < rows; r++) {
+		for (let c = 0; c < cols; c++) {
+			const val = Array.isArray(data[r]) ? data[r][c] : data[r];
+			ctx.fillStyle = tlab_get_colorblind_pixel(val);
+			ctx.fillRect(c, r, 1, 1);
+		}
+	}
 }
 
 function removeOrphanedWeightWrappers(gridBox, targets) {
-    const activeNames = new Set(targets.map(t => t.name));
-    gridBox.querySelectorAll('[data-weight-name]').forEach(el => {
-        if (!activeNames.has(el.getAttribute('data-weight-name'))) {
-            el.remove();
-        }
-    });
+	const activeNames = new Set(targets.map(t => t.name));
+	gridBox.querySelectorAll('[data-weight-name]').forEach(el => {
+		if (!activeNames.has(el.getAttribute('data-weight-name'))) {
+			el.remove();
+		}
+	});
 }
 
 function tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastLayer, nextWordIndex) {
-    let myChart = echarts.getInstanceByDom(plotDiv);
-    if (!myChart) myChart = echarts.init(plotDiv);
+	let myChart = echarts.getInstanceByDom(plotDiv);
+	if (!myChart) myChart = echarts.init(plotDiv);
 
-    const axes = Array.from({ length: d_model }, (_, i) => ({
-        dim: i, name: `Dim ${i}`
-    }));
+	const axes = Array.from({ length: d_model }, (_, i) => ({
+		dim: i, name: `Dim ${i}`
+	}));
 
-    const data = tokens.map((token, i) => {
-        const sourceWord = displayToken(tlab_get_top_word_only(start_h[i]));
-        const destWord = displayToken(tlab_get_top_word_only(end_h[i]));
-        return {
-            value: [...end_h[i], i + 1],
-            name: token,
-            source: sourceWord,
-            destination: destWord,
-            pos: i + 1
-        };
-    });
+	const data = tokens.map((token, i) => {
+		const sourceWord = displayToken(tlab_get_top_word_only(start_h[i]));
+		const destWord = displayToken(tlab_get_top_word_only(end_h[i]));
+		return {
+			value: [...end_h[i], i + 1],
+			name: token,
+			source: sourceWord,
+			destination: destWord,
+			pos: i + 1
+		};
+	});
 
-    myChart.setOption({
-        title: { text: `Layer ${layerNum} Migration`, left: 'center' },
-        tooltip: {
-            trigger: 'item',
-            formatter: p => `From '${p.data.source}' to '${p.data.destination}', position ${p.data.pos}`
-        },
-        visualMap: {
-            type: 'continuous',
-            min: 1,
-            max: tokens.length,
-            dimension: d_model,
-            orient: 'horizontal',
-            bottom: 10,
-            left: 'center',
-            text: ['End Position', 'Start Position'],
-            inRange: { color: ['rgb(59, 130, 246)', 'rgb(16, 185, 129)'] }
-        },
-        parallelAxis: axes,
-        series: [{
-            type: 'parallel',
-            data: data,
-            lineStyle: { width: 2, opacity: 0.7 }
-        }]
-    }, true);
+	myChart.setOption({
+		title: { text: `Layer ${layerNum} Migration`, left: 'center' },
+		tooltip: {
+			trigger: 'item',
+			formatter: p => `From '${p.data.source}' to '${p.data.destination}', position ${p.data.pos}`
+		},
+		visualMap: {
+			type: 'continuous',
+			min: 1,
+			max: tokens.length,
+			dimension: d_model,
+			orient: 'horizontal',
+			bottom: 10,
+			left: 'center',
+			text: ['End Position', 'Start Position'],
+			inRange: { color: ['rgb(59, 130, 246)', 'rgb(16, 185, 129)'] }
+		},
+		parallelAxis: axes,
+		series: [{
+			type: 'parallel',
+			data: data,
+			lineStyle: { width: 2, opacity: 0.7 }
+		}]
+	}, true);
 }
 
 function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_after, tokenStrings) {
@@ -3299,13 +3299,13 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 }
 
 function getMigrationDisplayTokens(tokens, tokenStrings) {
-    if (tokenStrings && tokenStrings.length === tokens.length) {
-        return tokenStrings.map(t => displayToken(t));
-    }
-    return tokens.map((t, i) => {
-        if (typeof t === 'string') return displayToken(t);
-        return displayToken(tlab_get_top_word_only(t));
-    });
+	if (tokenStrings && tokenStrings.length === tokens.length) {
+		return tokenStrings.map(t => displayToken(t));
+	}
+	return tokens.map((t, i) => {
+		if (typeof t === 'string') return displayToken(t);
+		return displayToken(tlab_get_top_word_only(t));
+	});
 }
 
 function initTrajectoryCollector(tokens, displayTokens, d_model, start_h) {
