@@ -646,71 +646,71 @@ const grandTotal = embeddingParams + totalAttention + totalFFN + totalNorm;
 }
 
 function renderParamSunburst(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff) {
-    const sunburstData = buildSunburstData(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff);
-    const trace = buildSunburstTrace(sunburstData);
-    const layout = buildSunburstLayout();
+	const sunburstData = buildSunburstData(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff);
+	const trace = buildSunburstTrace(sunburstData);
+	const layout = buildSunburstLayout();
 
-    Plotly.react('param-breakdown-plotly', [trace], layout, { responsive: true });
+	Plotly.react('param-breakdown-plotly', [trace], layout, { responsive: true });
 }
 
 // ─── Sunburst data assembly ─────────────────────────────────────────
 
 function buildSunburstData(layerBreakdowns, embeddingParams, grandTotal, d_model, n_heads, d_ff) {
-    const data = createEmptySunburstArrays();
+	const data = createEmptySunburstArrays();
 
-    appendSunburstRoot(data, grandTotal);
-    appendSunburstEmbeddings(data, embeddingParams);
+	appendSunburstRoot(data, grandTotal);
+	appendSunburstEmbeddings(data, embeddingParams);
 
-    layerBreakdowns.forEach(lb => {
-        appendSunburstLayer(data, lb, d_model, d_ff);
-    });
+	layerBreakdowns.forEach(lb => {
+		appendSunburstLayer(data, lb, d_model, d_ff);
+	});
 
-    return data;
+	return data;
 }
 
 function createEmptySunburstArrays() {
-    return {
-        ids: [], labels: [], parents: [], values: [], hoverTexts: [], colors: [],
-        // Color constants
-        embColor: '#6366f1',
-        attnColor: '#3b82f6',
-        ffnColor: '#f59e0b',
-        normColor: '#10b981'
-    };
+	return {
+		ids: [], labels: [], parents: [], values: [], hoverTexts: [], colors: [],
+		// Color constants
+		embColor: '#6366f1',
+		attnColor: '#3b82f6',
+		ffnColor: '#f59e0b',
+		normColor: '#10b981'
+	};
 }
 
 function appendSunburstRoot(data, grandTotal) {
-    data.ids.push('total');
-    data.labels.push(`Total: ${grandTotal.toLocaleString()}`);
-    data.parents.push('');
-    data.values.push(grandTotal);
-    data.hoverTexts.push(`Total parameters: ${grandTotal.toLocaleString()}`);
-    data.colors.push('#1e293b');
+	data.ids.push('total');
+	data.labels.push(`Total: ${grandTotal.toLocaleString()}`);
+	data.parents.push('');
+	data.values.push(grandTotal);
+	data.hoverTexts.push(`Total parameters: ${grandTotal.toLocaleString()}`);
+	data.colors.push('#1e293b');
 }
 
 function appendSunburstEmbeddings(data, embeddingParams) {
-    data.ids.push('embeddings');
-    data.labels.push('Embeddings');
-    data.parents.push('total');
-    data.values.push(embeddingParams);
-    data.hoverTexts.push(`Embedding table: ${embeddingParams.toLocaleString()} params<br>vocab × d_model`);
-    data.colors.push(data.embColor);
+	data.ids.push('embeddings');
+	data.labels.push('Embeddings');
+	data.parents.push('total');
+	data.values.push(embeddingParams);
+	data.hoverTexts.push(`Embedding table: ${embeddingParams.toLocaleString()} params<br>vocab × d_model`);
+	data.colors.push(data.embColor);
 }
 
 function appendSunburstLayer(data, lb, d_model, d_ff) {
-    const layerId = `layer-${lb.layer}`;
+	const layerId = `layer-${lb.layer}`;
 
-    // Layer parent node
-    data.ids.push(layerId);
-    data.labels.push(`Layer ${lb.layer}`);
-    data.parents.push('total');
-    data.values.push(lb.total);
-    data.hoverTexts.push(`Layer ${lb.layer}: ${lb.total.toLocaleString()} params`);
-    data.colors.push('#475569');
+	// Layer parent node
+	data.ids.push(layerId);
+	data.labels.push(`Layer ${lb.layer}`);
+	data.parents.push('total');
+	data.values.push(lb.total);
+	data.hoverTexts.push(`Layer ${lb.layer}: ${lb.total.toLocaleString()} params`);
+	data.colors.push('#475569');
 
-    appendSunburstAttention(data, layerId, lb, d_model);
-    appendSunburstFFN(data, layerId, lb, d_model, d_ff);
-    appendSunburstNorm(data, layerId, lb, d_model);
+	appendSunburstAttention(data, layerId, lb, d_model);
+	appendSunburstFFN(data, layerId, lb, d_model, d_ff);
+	appendSunburstNorm(data, layerId, lb, d_model);
 }
 
 function appendSunburstAttention(data, layerId, lb, d_model) {
@@ -6286,221 +6286,221 @@ function displayToken(token) {
 }
 
 function createTrajectoryVFToggleButton() {
-    const toggleBtn = document.createElement('button');
-    toggleBtn.className = 'trajectory-vf-toggle';
-    toggleBtn.dataset.mode = window._trajectoryVfEnabled ? 'on' : 'off';
-    toggleBtn.textContent = window._trajectoryVfEnabled
-        ? '🧭 Hide Vector Field'
-        : '🧭 Show Vector Field';
-    toggleBtn.style.cssText = `
-        margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
-        border: 1px solid #8b5cf6;
-        background: ${window._trajectoryVfEnabled ? '#ede9fe' : '#fff'};
-        color: #8b5cf6;
-        cursor: pointer; font-weight: 600; font-size: 0.82rem;
-        transition: all 0.15s;
-    `;
+	const toggleBtn = document.createElement('button');
+	toggleBtn.className = 'trajectory-vf-toggle';
+	toggleBtn.dataset.mode = window._trajectoryVfEnabled ? 'on' : 'off';
+	toggleBtn.textContent = window._trajectoryVfEnabled
+		? '🧭 Hide Vector Field'
+		: '🧭 Show Vector Field';
+	toggleBtn.style.cssText = `
+	margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
+	border: 1px solid #8b5cf6;
+	background: ${window._trajectoryVfEnabled ? '#ede9fe' : '#fff'};
+	color: #8b5cf6;
+	cursor: pointer; font-weight: 600; font-size: 0.82rem;
+	transition: all 0.15s;
+	`;
 
-    toggleBtn.addEventListener('mouseover', () => {
-        toggleBtn.style.background =
-            toggleBtn.dataset.mode === 'off' ? '#f5f3ff' : '#fce7f3';
-    });
-    toggleBtn.addEventListener('mouseout', () => {
-        toggleBtn.style.background =
-            toggleBtn.dataset.mode === 'off' ? '#fff' : '#ede9fe';
-    });
+	toggleBtn.addEventListener('mouseover', () => {
+		toggleBtn.style.background =
+			toggleBtn.dataset.mode === 'off' ? '#f5f3ff' : '#fce7f3';
+	});
+	toggleBtn.addEventListener('mouseout', () => {
+		toggleBtn.style.background =
+			toggleBtn.dataset.mode === 'off' ? '#fff' : '#ede9fe';
+	});
 
-    toggleBtn.addEventListener('click', () => {
-        const isOn = toggleBtn.dataset.mode === 'on';
-        window._trajectoryVfEnabled = !isOn;
-        toggleBtn.dataset.mode = isOn ? 'off' : 'on';
-        toggleBtn.textContent = isOn
-            ? '🧭 Show Vector Field'
-            : '🧭 Hide Vector Field';
-        toggleBtn.style.background = isOn ? '#fff' : '#ede9fe';
+	toggleBtn.addEventListener('click', () => {
+		const isOn = toggleBtn.dataset.mode === 'on';
+		window._trajectoryVfEnabled = !isOn;
+		toggleBtn.dataset.mode = isOn ? 'off' : 'on';
+		toggleBtn.textContent = isOn
+			? '🧭 Show Vector Field'
+			: '🧭 Hide Vector Field';
+		toggleBtn.style.background = isOn ? '#fff' : '#ede9fe';
 
-        // Re-render trajectory
-        const trajDiv = document.getElementById('transformer-trajectory-full-path');
-        const d_model = trajDiv
-            ? parseInt(trajDiv.getAttribute('data-d-model') || '0')
-            : 0;
-        if (d_model > 0) {
-            const trajEntry = trajectoryRenderRegistry.get('transformer-trajectory-full-path');
-            if (trajEntry) trajEntry.rendered = false;
-            tlab_render_trajectory_plot(d_model);
-        }
-    });
+		// Re-render trajectory
+		const trajDiv = document.getElementById('transformer-trajectory-full-path');
+		const d_model = trajDiv
+			? parseInt(trajDiv.getAttribute('data-d-model') || '0')
+			: 0;
+		if (d_model > 0) {
+			const trajEntry = trajectoryRenderRegistry.get('transformer-trajectory-full-path');
+			if (trajEntry) trajEntry.rendered = false;
+			tlab_render_trajectory_plot(d_model);
+		}
+	});
 
-    return toggleBtn;
+	return toggleBtn;
 }
 
 function _compute_trajectory_vf_2d(d_model, n_heads, n_layers) {
-    const collector = window.tlab_trajectory_collector;
-    if (!collector || !collector.steps["01_pe"]) return null;
+	const collector = window.tlab_trajectory_collector;
+	if (!collector || !collector.steps["01_pe"]) return null;
 
-    const h0 = collector.steps["01_pe"].data;
-    const seqLen = h0.length;
-    const substitutePos = seqLen - 1;
-    const weights = window.currentWeights;
-    if (!weights || weights.length < n_layers) return null;
+	const h0 = collector.steps["01_pe"].data;
+	const seqLen = h0.length;
+	const substitutePos = seqLen - 1;
+	const weights = window.currentWeights;
+	if (!weights || weights.length < n_layers) return null;
 
-    // ── Bounds from every trajectory stage + vocab embeddings ──
-    let xMin = Infinity, xMax = -Infinity,
-        yMin = Infinity, yMax = -Infinity;
+	// ── Bounds from every trajectory stage + vocab embeddings ──
+	let xMin = Infinity, xMax = -Infinity,
+		yMin = Infinity, yMax = -Infinity;
 
-    const updateBounds2d = (vec) => {
-        if (vec[0] < xMin) xMin = vec[0];
-        if (vec[0] > xMax) xMax = vec[0];
-        if (vec.length > 1) {
-            if (vec[1] < yMin) yMin = vec[1];
-            if (vec[1] > yMax) yMax = vec[1];
-        }
-    };
+	const updateBounds2d = (vec) => {
+		if (vec[0] < xMin) xMin = vec[0];
+		if (vec[0] > xMax) xMax = vec[0];
+		if (vec.length > 1) {
+			if (vec[1] < yMin) yMin = vec[1];
+			if (vec[1] > yMax) yMax = vec[1];
+		}
+	};
 
-    Object.keys(collector.steps).sort().forEach(key => {
-        collector.steps[key].data.forEach(updateBounds2d);
-    });
-    Object.values(window.persistentEmbeddingSpace).forEach(updateBounds2d);
+	Object.keys(collector.steps).sort().forEach(key => {
+		collector.steps[key].data.forEach(updateBounds2d);
+	});
+	Object.values(window.persistentEmbeddingSpace).forEach(updateBounds2d);
 
-    if (xMin === xMax) { xMin -= 1; xMax += 1; }
-    if (yMin === yMax) { yMin -= 1; yMax += 1; }
-    const pad = 2;
-    xMin -= pad; xMax += pad; yMin -= pad; yMax += pad;
+	if (xMin === xMax) { xMin -= 1; xMax += 1; }
+	if (yMin === yMax) { yMin -= 1; yMax += 1; }
+	const pad = 2;
+	xMin -= pad; xMax += pad; yMin -= pad; yMax += pad;
 
-    // ── Sample grid, run ALL layers for each point ──
-    const gridRes = 12;
-    const points = [];
-    let maxMag = 0;
+	// ── Sample grid, run ALL layers for each point ──
+	const gridRes = 12;
+	const points = [];
+	let maxMag = 0;
 
-    for (let i = 0; i <= gridRes; i++) {
-        for (let j = 0; j <= gridRes; j++) {
-            const x = xMin + (xMax - xMin) * (i / gridRes);
-            const y = yMin + (yMax - yMin) * (j / gridRes);
+	for (let i = 0; i <= gridRes; i++) {
+		for (let j = 0; j <= gridRes; j++) {
+			const x = xMin + (xMax - xMin) * (i / gridRes);
+			const y = yMin + (yMax - yMin) * (j / gridRes);
 
-            const modifiedH0 = h0.map((row, idx) =>
-                idx === substitutePos
-                    ? (d_model >= 2 ? [x, y] : [x])
-                    : [...row]
-            );
+			const modifiedH0 = h0.map((row, idx) =>
+				idx === substitutePos
+				? (d_model >= 2 ? [x, y] : [x])
+				: [...row]
+			);
 
-            let h = modifiedH0;
-            for (let l = 0; l < n_layers; l++) {
-                h = forwardOneLayer(h, weights[l], d_model, n_heads, null, null, null).h_out;
-            }
+			let h = modifiedH0;
+			for (let l = 0; l < n_layers; l++) {
+				h = forwardOneLayer(h, weights[l], d_model, n_heads, null, null, null).h_out;
+			}
 
-            const hOut = h[substitutePos];
-            const dx = hOut[0] - x;
-            const dy = (d_model >= 2 ? hOut[1] : 0) - y;
-            const mag = Math.sqrt(dx * dx + dy * dy);
+			const hOut = h[substitutePos];
+			const dx = hOut[0] - x;
+			const dy = (d_model >= 2 ? hOut[1] : 0) - y;
+			const mag = Math.sqrt(dx * dx + dy * dy);
 
-            points.push({ x, y, dx, dy, mag });
-            if (mag > maxMag) maxMag = mag;
-        }
-    }
+			points.push({ x, y, dx, dy, mag });
+			if (mag > maxMag) maxMag = mag;
+		}
+	}
 
-    if (maxMag < 1e-8) maxMag = 1e-8;
-    const cellW = (xMax - xMin) / gridRes;
-    const cellH = (yMax - yMin) / gridRes;
-    return { points, maxMag, maxArrowLen: Math.min(cellW, cellH) * 1.2 };
+	if (maxMag < 1e-8) maxMag = 1e-8;
+	const cellW = (xMax - xMin) / gridRes;
+	const cellH = (yMax - yMin) / gridRes;
+	return { points, maxMag, maxArrowLen: Math.min(cellW, cellH) * 1.2 };
 }
 
 function _compute_trajectory_vf_3d(d_model, n_heads, n_layers) {
-    const collector = window.tlab_trajectory_collector;
-    if (!collector || !collector.steps["01_pe"]) return null;
+	const collector = window.tlab_trajectory_collector;
+	if (!collector || !collector.steps["01_pe"]) return null;
 
-    const h0 = collector.steps["01_pe"].data;
-    const seqLen = h0.length;
-    const substitutePos = seqLen - 1;
-    const weights = window.currentWeights;
-    if (!weights || weights.length < n_layers) return null;
+	const h0 = collector.steps["01_pe"].data;
+	const seqLen = h0.length;
+	const substitutePos = seqLen - 1;
+	const weights = window.currentWeights;
+	if (!weights || weights.length < n_layers) return null;
 
-    let xMin = Infinity, xMax = -Infinity,
-        yMin = Infinity, yMax = -Infinity,
-        zMin = Infinity, zMax = -Infinity;
+	let xMin = Infinity, xMax = -Infinity,
+		yMin = Infinity, yMax = -Infinity,
+		zMin = Infinity, zMax = -Infinity;
 
-    const updateBounds3d = (vec) => {
-        if (vec[0] < xMin) xMin = vec[0];
-        if (vec[0] > xMax) xMax = vec[0];
-        if (vec.length > 1) { if (vec[1] < yMin) yMin = vec[1]; if (vec[1] > yMax) yMax = vec[1]; }
-        if (vec.length > 2) { if (vec[2] < zMin) zMin = vec[2]; if (vec[2] > zMax) zMax = vec[2]; }
-    };
+	const updateBounds3d = (vec) => {
+		if (vec[0] < xMin) xMin = vec[0];
+		if (vec[0] > xMax) xMax = vec[0];
+		if (vec.length > 1) { if (vec[1] < yMin) yMin = vec[1]; if (vec[1] > yMax) yMax = vec[1]; }
+		if (vec.length > 2) { if (vec[2] < zMin) zMin = vec[2]; if (vec[2] > zMax) zMax = vec[2]; }
+	};
 
-    Object.keys(collector.steps).sort().forEach(key => {
-        collector.steps[key].data.forEach(updateBounds3d);
-    });
-    Object.values(window.persistentEmbeddingSpace).forEach(updateBounds3d);
+	Object.keys(collector.steps).sort().forEach(key => {
+		collector.steps[key].data.forEach(updateBounds3d);
+	});
+	Object.values(window.persistentEmbeddingSpace).forEach(updateBounds3d);
 
-    if (xMin === xMax) { xMin -= 1; xMax += 1; }
-    if (yMin === yMax) { yMin -= 1; yMax += 1; }
-    if (zMin === zMax) { zMin -= 1; zMax += 1; }
-    const pad = 2;
-    xMin -= pad; xMax += pad; yMin -= pad; yMax += pad; zMin -= pad; zMax += pad;
+	if (xMin === xMax) { xMin -= 1; xMax += 1; }
+	if (yMin === yMax) { yMin -= 1; yMax += 1; }
+	if (zMin === zMax) { zMin -= 1; zMax += 1; }
+	const pad = 2;
+	xMin -= pad; xMax += pad; yMin -= pad; yMax += pad; zMin -= pad; zMax += pad;
 
-    const gridRes = 6;
-    const points = [];
-    let maxMag = 0;
+	const gridRes = 6;
+	const points = [];
+	let maxMag = 0;
 
-    for (let i = 0; i <= gridRes; i++) {
-        for (let j = 0; j <= gridRes; j++) {
-            for (let k = 0; k <= gridRes; k++) {
-                const x = xMin + (xMax - xMin) * (i / gridRes);
-                const y = yMin + (yMax - yMin) * (j / gridRes);
-                const z = zMin + (zMax - zMin) * (k / gridRes);
+	for (let i = 0; i <= gridRes; i++) {
+		for (let j = 0; j <= gridRes; j++) {
+			for (let k = 0; k <= gridRes; k++) {
+				const x = xMin + (xMax - xMin) * (i / gridRes);
+				const y = yMin + (yMax - yMin) * (j / gridRes);
+				const z = zMin + (zMax - zMin) * (k / gridRes);
 
-                const modifiedH0 = h0.map((row, idx) =>
-                    idx === substitutePos ? [x, y, z] : [...row]
-                );
+				const modifiedH0 = h0.map((row, idx) =>
+					idx === substitutePos ? [x, y, z] : [...row]
+				);
 
-                let h = modifiedH0;
-                for (let l = 0; l < n_layers; l++) {
-                    h = forwardOneLayer(h, weights[l], d_model, n_heads, null, null, null).h_out;
-                }
+				let h = modifiedH0;
+				for (let l = 0; l < n_layers; l++) {
+					h = forwardOneLayer(h, weights[l], d_model, n_heads, null, null, null).h_out;
+				}
 
-                const hOut = h[substitutePos];
-                const dx = hOut[0] - x;
-                const dy = hOut[1] - y;
-                const dz = hOut[2] - z;
-                const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+				const hOut = h[substitutePos];
+				const dx = hOut[0] - x;
+				const dy = hOut[1] - y;
+				const dz = hOut[2] - z;
+				const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-                points.push({ x, y, z, dx, dy, dz, mag });
-                if (mag > maxMag) maxMag = mag;
-            }
-        }
-    }
+				points.push({ x, y, z, dx, dy, dz, mag });
+				if (mag > maxMag) maxMag = mag;
+			}
+		}
+	}
 
-    if (maxMag < 1e-8) maxMag = 1e-8;
-    const cellX = (xMax - xMin) / gridRes;
-    const cellY = (yMax - yMin) / gridRes;
-    const cellZ = (zMax - zMin) / gridRes;
-    return { points, maxMag, maxArrowLen: Math.min(cellX, cellY, cellZ) * 1.1 };
+	if (maxMag < 1e-8) maxMag = 1e-8;
+	const cellX = (xMax - xMin) / gridRes;
+	const cellY = (yMax - yMin) / gridRes;
+	const cellZ = (zMax - zMin) / gridRes;
+	return { points, maxMag, maxArrowLen: Math.min(cellX, cellY, cellZ) * 1.1 };
 }
 
 function _traj_vf_2d_plotly_annotations(computed) {
-    if (!computed) return [];
-    const { points, maxMag, maxArrowLen } = computed;
+	if (!computed) return [];
+	const { points, maxMag, maxArrowLen } = computed;
 
-    return points.map(p => {
-        const { ux, uy, arrowLen, normMag } = _vf2d_arrow_geometry(p, maxMag, maxArrowLen);
-        const r = Math.round(normMag * 239 + (1 - normMag) * 59);
-        const g = Math.round(normMag * 68  + (1 - normMag) * 130);
-        const b = Math.round(normMag * 68  + (1 - normMag) * 246);
-        const color = `rgba(${r},${g},${b},0.25)`;
+	return points.map(p => {
+		const { ux, uy, arrowLen, normMag } = _vf2d_arrow_geometry(p, maxMag, maxArrowLen);
+		const r = Math.round(normMag * 239 + (1 - normMag) * 59);
+		const g = Math.round(normMag * 68  + (1 - normMag) * 130);
+		const b = Math.round(normMag * 68  + (1 - normMag) * 246);
+		const color = `rgba(${r},${g},${b},0.25)`;
 
-        return {
-            x: p.x + ux * arrowLen,
-            y: p.y + uy * arrowLen,
-            ax: p.x, ay: p.y,
-            xref: 'x', yref: 'y',
-            axref: 'x', ayref: 'y',
-            showarrow: true,
-            arrowhead: 2,
-            arrowsize: 1 + normMag,
-            arrowwidth: Math.max(1, 1 + normMag * 3),
-            arrowcolor: color,
-            text: '', standoff: 0
-        };
-    }).filter(a => {
-        const dx = a.x - a.ax, dy = a.y - a.ay;
-        return Math.sqrt(dx * dx + dy * dy) > 1e-6;
-    });
+		return {
+			x: p.x + ux * arrowLen,
+			y: p.y + uy * arrowLen,
+			ax: p.x, ay: p.y,
+			xref: 'x', yref: 'y',
+			axref: 'x', ayref: 'y',
+			showarrow: true,
+			arrowhead: 2,
+			arrowsize: 1 + normMag,
+			arrowwidth: Math.max(1, 1 + normMag * 3),
+			arrowcolor: color,
+			text: '', standoff: 0
+		};
+	}).filter(a => {
+		const dx = a.x - a.ax, dy = a.y - a.ay;
+		return Math.sqrt(dx * dx + dy * dy) > 1e-6;
+	});
 }
