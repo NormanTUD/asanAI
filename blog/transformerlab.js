@@ -2045,12 +2045,18 @@ function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_
 	render_final_projection(h_final, vocabulary, d_model, temperature);
 }
 
-window.select_suggested_word = (word) => {
+window.select_suggested_word = (word) => {                                                                                                                                                                                  
 	const masterInput = document.getElementById('transformer-master-token-input');
-	masterInput.value += word;
 
-	// Set master as active and re-run
-	run_transformer_demo('transformer-master-token-input');
+	// Check if input has content and does NOT end with a space
+	if (masterInput.value.length > 0 && !masterInput.value.endsWith(' ')) {
+		masterInput.value += ' ';
+	}
+
+	masterInput.value += word;                              
+
+	// Set master as active and re-run                      
+	run_transformer_demo('transformer-master-token-input'); 
 };
 
 function computeFinalPredictions(h_last, vocabulary, d_model, temperature) {
