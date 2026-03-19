@@ -1954,42 +1954,42 @@ function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
 }
 
 function getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary) {
-    const vizMode = window.tlabVisualizationMode || 'train';
-    const vizSourceTokens = (vizMode === 'inference') ? masterTokens : inputTokens;
-    return vizSourceTokens.filter(token => vocabulary.includes(token));
+	const vizMode = window.tlabVisualizationMode || 'train';
+	const vizSourceTokens = (vizMode === 'inference') ? masterTokens : inputTokens;
+	return vizSourceTokens.filter(token => vocabulary.includes(token));
 }
 
 function validateModelDimensions(d_model, n_heads) {
-    if (d_model % n_heads !== 0) {
-        const container = document.getElementById('transformer-output-projection');
-        if (container) {
-            container.innerHTML = `<div style="color:red; padding:20px;">Error: d_model (${d_model}) must be divisible by n_heads (${n_heads}).</div>`;
-        }
-        return false;
-    }
-    return true;
+	if (d_model % n_heads !== 0) {
+		const container = document.getElementById('transformer-output-projection');
+		if (container) {
+			container.innerHTML = `<div style="color:red; padding:20px;">Error: d_model (${d_model}) must be divisible by n_heads (${n_heads}).</div>`;
+		}
+		return false;
+	}
+	return true;
 }
 
 function renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers) {
-    if (tokensWithPositional.length === 0) {
-        showEmptyInputMessage();
-        return;
-    }
+	if (tokensWithPositional.length === 0) {
+		showEmptyInputMessage();
+		return;
+	}
 
-    clearFFNEquationsContainer();
+	clearFFNEquationsContainer();
 
-    const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
-    create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
-    run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
+	const h2 = runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_model, n_heads);
+	create_migration_plot('migration-layer-1', tokensWithPositional, h0, h2, 1, d_model, h2, knownTokens);
+	run_deep_layers(h2, tokensWithPositional, n_layers, d_model, n_heads, weights, 1, knownTokens);
 
-    renderAttentionDetails();
-    renderTrajectoryPlot(d_model);
-    tlab_render_themeriver(d_model);        // ← NEU
-    pruneOrphanedMigrationPlots();
+	renderAttentionDetails();
+	renderTrajectoryPlot(d_model);
+	tlab_render_themeriver(d_model);        // ← NEU
+	pruneOrphanedMigrationPlots();
 
-    forceRerenderVisibleMigrationPlots();
-    forceRerenderVisibleTrajectoryPlot(d_model);
-    forceRerenderVisibleThemeRiver(d_model); // ← NEU
+	forceRerenderVisibleMigrationPlots();
+	forceRerenderVisibleTrajectoryPlot(d_model);
+	forceRerenderVisibleThemeRiver(d_model); // ← NEU
 }
 
 function forceRerenderVisibleMigrationPlots() {
@@ -2023,10 +2023,10 @@ function forceRerenderVisibleTrajectoryPlot(d_model) {
 }
 
 function showEmptyInputMessage() {
-    document.getElementById('transformer-output-projection').innerHTML =
-        `<div style="padding:20px; color: #64748b; text-align:center;">
-            Input words not found in Training Data.
-        </div>`;
+	document.getElementById('transformer-output-projection').innerHTML =
+		`<div style="padding:20px; color: #64748b; text-align:center;">
+	    Input words not found in Training Data.
+	</div>`;
 }
 
 function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature) {
