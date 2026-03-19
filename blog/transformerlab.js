@@ -5362,159 +5362,159 @@ function attachChipHoverEvents(chips, onHover, onLeave) {
 }
 
 function drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex) {
-    const scrollW = container.scrollWidth;
-    const scrollH = container.scrollHeight;
-    canvas.width  = scrollW;
-    canvas.height = scrollH;
-    canvas.style.width  = scrollW + 'px';
-    canvas.style.height = scrollH + 'px';
+	const scrollW = container.scrollWidth;
+	const scrollH = container.scrollHeight;
+	canvas.width  = scrollW;
+	canvas.height = scrollH;
+	canvas.style.width  = scrollW + 'px';
+	canvas.style.height = scrollH + 'px';
 
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+	const ctx = canvas.getContext('2d');
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const containerRect = container.getBoundingClientRect();
+	const containerRect = container.getBoundingClientRect();
 
-    const n = Math.min(tokens.length, chips.length, weights.length);  // ← ADD THIS
+	const n = Math.min(tokens.length, chips.length, weights.length);  // ← ADD THIS
 
-    for (let i = 0; i < n; i++) {                                     // ← USE n
-        for (let j = 0; j < n; j++) {                                 // ← USE n
-            if (i === j) continue;
-            if (!weights[i] || weights[i].length <= j) continue;      // ← SAFETY CHECK
-            const strength = weights[i][j];
-            if (strength < 0.01) continue;
+	for (let i = 0; i < n; i++) {                                     // ← USE n
+		for (let j = 0; j < n; j++) {                                 // ← USE n
+			if (i === j) continue;
+			if (!weights[i] || weights[i].length <= j) continue;      // ← SAFETY CHECK
+			const strength = weights[i][j];
+			if (strength < 0.01) continue;
 
-            drawSingleArc(ctx, container, containerRect, chips[i], chips[j], strength, hoverIndex === i);
-        }
-    }
+			drawSingleArc(ctx, container, containerRect, chips[i], chips[j], strength, hoverIndex === i);
+		}
+	}
 
-    highlightHoveredChip(chips, hoverIndex);
+	highlightHoveredChip(chips, hoverIndex);
 }
 
 function drawSingleArc(ctx, container, containerRect, chip1El, chip2El, strength, isSource) {
-    const chip1 = chip1El.getBoundingClientRect();
-    const chip2 = chip2El.getBoundingClientRect();
+	const chip1 = chip1El.getBoundingClientRect();
+	const chip2 = chip2El.getBoundingClientRect();
 
-    const scrollLeft = container.scrollLeft;
-    const scrollTop  = container.scrollTop;
+	const scrollLeft = container.scrollLeft;
+	const scrollTop  = container.scrollTop;
 
-    const x1 = (chip1.left + chip1.width / 2) - containerRect.left + scrollLeft;
-    const x2 = (chip2.left + chip2.width / 2) - containerRect.left + scrollLeft;
-    const baseY = (chip1.top - containerRect.top) + scrollTop;
+	const x1 = (chip1.left + chip1.width / 2) - containerRect.left + scrollLeft;
+	const x2 = (chip2.left + chip2.width / 2) - containerRect.left + scrollLeft;
+	const baseY = (chip1.top - containerRect.top) + scrollTop;
 
-    ctx.beginPath();
-    if (isSource) {
-        ctx.lineWidth   = 2 + strength * 20;
-        ctx.strokeStyle = `rgba(37, 99, 235, ${0.3 + strength * 0.7})`;
-    } else {
-        ctx.lineWidth   = 1;
-        ctx.strokeStyle = `rgba(203, 213, 225, 0.2)`;
-    }
+	ctx.beginPath();
+	if (isSource) {
+		ctx.lineWidth   = 2 + strength * 20;
+		ctx.strokeStyle = `rgba(37, 99, 235, ${0.3 + strength * 0.7})`;
+	} else {
+		ctx.lineWidth   = 1;
+		ctx.strokeStyle = `rgba(203, 213, 225, 0.2)`;
+	}
 
-    const dist = Math.abs(x2 - x1);
-    const h    = Math.min(dist * 0.5, 150);
+	const dist = Math.abs(x2 - x1);
+	const h    = Math.min(dist * 0.5, 150);
 
-    ctx.moveTo(x1, baseY);
-    ctx.bezierCurveTo(x1, baseY - h, x2, baseY - h, x2, baseY);
-    ctx.stroke();
+	ctx.moveTo(x1, baseY);
+	ctx.bezierCurveTo(x1, baseY - h, x2, baseY - h, x2, baseY);
+	ctx.stroke();
 
-    if (isSource && strength > 0.05) {
-        ctx.fillStyle = "#1e40af";
-        ctx.font = "bold 14px Inter, sans-serif";
-        ctx.fillText(Math.round(strength * 100) + "%", (x1 + x2) / 2 - 10, baseY - h / 1.5);
-    }
+	if (isSource && strength > 0.05) {
+		ctx.fillStyle = "#1e40af";
+		ctx.font = "bold 14px Inter, sans-serif";
+		ctx.fillText(Math.round(strength * 100) + "%", (x1 + x2) / 2 - 10, baseY - h / 1.5);
+	}
 }
 
 function highlightHoveredChip(chips, hoverIndex) {
-    chips.forEach((chip, idx) => {
-        chip.style.borderColor = (idx === hoverIndex) ? '#2563eb' : 'transparent';
-    });
+	chips.forEach((chip, idx) => {
+		chip.style.borderColor = (idx === hoverIndex) ? '#2563eb' : 'transparent';
+	});
 }
 
 function attachResizeHandler(containerId, drawFn) {
-    const resizeKey = `_resizeHandler_${containerId}`;
-    if (window[resizeKey]) window.removeEventListener('resize', window[resizeKey]);
-    window[resizeKey] = drawFn;
-    window.addEventListener('resize', drawFn);
+	const resizeKey = `_resizeHandler_${containerId}`;
+	if (window[resizeKey]) window.removeEventListener('resize', window[resizeKey]);
+	window[resizeKey] = drawFn;
+	window.addEventListener('resize', drawFn);
 }
 
 function tled_initEditor() {
-    const container = document.getElementById('tled-editor-container');
-    if (!container) return;
+	const container = document.getElementById('tled-editor-container');
+	if (!container) return;
 
-    const space = window.persistentEmbeddingSpace;
-    if (!space || Object.keys(space).length === 0) {
-        container.innerHTML = `<p style="color:#94a3b8; padding:10px;">No embeddings yet. Enter training data and run the model.</p>`;
-        return;
-    }
+	const space = window.persistentEmbeddingSpace;
+	if (!space || Object.keys(space).length === 0) {
+		container.innerHTML = `<p style="color:#94a3b8; padding:10px;">No embeddings yet. Enter training data and run the model.</p>`;
+		return;
+	}
 
-    const words = Object.keys(space);
-    const d_model = space[words[0]].length;
+	const words = Object.keys(space);
+	const d_model = space[words[0]].length;
 
-    // Build dimension header labels
-    let dimHeaders = '';
-    for (let d = 0; d < d_model; d++) {
-        dimHeaders += `<th style="padding: 10px; text-align: center; white-space: nowrap;">D${d}</th>`;
-    }
+	// Build dimension header labels
+	let dimHeaders = '';
+	for (let d = 0; d < d_model; d++) {
+		dimHeaders += `<th style="padding: 10px; text-align: center; white-space: nowrap;">D${d}</th>`;
+	}
 
-    let html = `
+	let html = `
     <div style="overflow-x: auto; margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
-        <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;" id="tled-table">
-            <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
-                <tr>
-                    <th style="padding: 10px; text-align: left;">Token</th>
-                    ${dimHeaders}
-                </tr>
-            </thead>
-            <tbody>`;
+	<table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;" id="tled-table">
+	    <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+		<tr>
+		    <th style="padding: 10px; text-align: left;">Token</th>
+		    ${dimHeaders}
+		</tr>
+	    </thead>
+	    <tbody>`;
 
-    words.forEach(word => {
-        html += tled_generateRowHtml(word, space[word], d_model);
-    });
+	words.forEach(word => {
+		html += tled_generateRowHtml(word, space[word], d_model);
+	});
 
-    html += `
-            </tbody>
-        </table>
-        <div style="padding: 10px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
-            <input type="text" id="tled-new-token-input" placeholder="New token name..."
-                style="flex-grow: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;"
-                onkeyup="if(event.key==='Enter') tled_addToken()">
-            <button onclick="tled_addToken()"
-                style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                + Add Token
-            </button>
-        </div>
+	html += `
+	    </tbody>
+	</table>
+	<div style="padding: 10px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
+	    <input type="text" id="tled-new-token-input" placeholder="New token name..."
+		style="flex-grow: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;"
+		onkeyup="if(event.key==='Enter') tled_addToken()">
+	    <button onclick="tled_addToken()"
+		style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+		+ Add Token
+	    </button>
+	</div>
     </div>`;
 
-    container.innerHTML = html;
+	container.innerHTML = html;
 }
 
 function tled_generateRowHtml(word, vec, d_model) {
-    const safeWord = word.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    const safeWordAttr = word.replace(/"/g, '&quot;');
-    const dispWord = displayToken(word);
+	const safeWord = word.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+		const safeWordAttr = word.replace(/"/g, '&quot;');
+			const dispWord = displayToken(word);
 
-    let dimCells = '';
-    for (let d = 0; d < d_model; d++) {
-        dimCells += `
+			let dimCells = '';
+			for (let d = 0; d < d_model; d++) {
+				dimCells += `
     <td style="padding: 5px; text-align: center;">
-        <input
-        type="number"
-        value="${vec[d].toFixed(4)}"
-        step="0.1"
-        data-tled-word="${safeWordAttr}"
-        data-tled-dim="${d}"
-        style="width: 70px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 12px;"
-        oninput="tled_updateEmbedding(this)"
-        >
+	<input
+	type="number"
+	value="${vec[d].toFixed(4)}"
+	step="0.1"
+	data-tled-word="${safeWordAttr}"
+	data-tled-dim="${d}"
+	style="width: 70px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 12px;"
+	oninput="tled_updateEmbedding(this)"
+	>
     </td>`;
-    }
+			}
 
-    return `
+			return `
     <tr style="border-bottom: 1px solid #f1f5f9;" id="tled-row-${safeWordAttr}">
     <td style="padding: 8px 10px; font-weight: 500;">${escapeHtml(dispWord)}</td>
     ${dimCells}
     </tr>`;
-}
+		}
 
 function tled_updateEmbedding(inputEl) {
 	const word = inputEl.getAttribute('data-tled-word');
@@ -5639,7 +5639,7 @@ function tled_syncTableFromSpace() {
 		if (wordCell) existingRows.add(wordCell.textContent.trim());
 	});
 
-// Add new tokens that appeared (e.g., from training data change)
+	// Add new tokens that appeared (e.g., from training data change)
 	words.forEach(word => {
 		if (!existingRows.has(word)) {
 			const tbody = table.querySelector('tbody');
@@ -5657,7 +5657,7 @@ function tled_syncTableFromSpace() {
 			const row = document.getElementById(`tled-row-${word}`);
 			if (row) row.remove();
 		}
-});
+	});
 
 	// Update all input values to match current embeddings
 	words.forEach(word => {
@@ -5665,44 +5665,44 @@ function tled_syncTableFromSpace() {
 		for (let d = 0; d < d_model; d++) {
 			const input = table.querySelector(
 `input[data-tled-word="${word}"][data-tled-dim="${d}"]`
-            );
-            if (input && document.activeElement !== input) {
-                // Only update if the user isn't currently editing this cell
-                input.value = vec[d].toFixed(4);
-            }
-        }
-    });
+			);
+			if (input && document.activeElement !== input) {
+				// Only update if the user isn't currently editing this cell
+				input.value = vec[d].toFixed(4);
+			}
+		}
+	});
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
    setVisualizationMode — gorgeous edition
    ═══════════════════════════════════════════════════════════════════════ */
 function setVisualizationMode(mode) {
-  const savedScrollY = window.scrollY;
-  const savedScrollX = window.scrollX;
+	const savedScrollY = window.scrollY;
+	const savedScrollX = window.scrollX;
 
-  window.tlabVisualizationMode = mode;
+	window.tlabVisualizationMode = mode;
 
-  const trainBtn = document.getElementById('view-toggle-train');
-  const inferBtn = document.getElementById('view-toggle-inference');
+	const trainBtn = document.getElementById('view-toggle-train');
+	const inferBtn = document.getElementById('view-toggle-inference');
 
-  if (trainBtn && inferBtn) {
-    const t = mode === 'train';
-    trainBtn.style.background = t ? '#3b82f6' : '#1f2937';
-    trainBtn.style.color      = t ? '#ffffff' : '#9ca3af';
-    inferBtn.style.background = t ? '#1f2937' : '#3b82f6';
-    inferBtn.style.color      = t ? '#9ca3af' : '#ffffff';
-    trainBtn.style.border     = t ? '1px solid #3b82f6' : '1px solid #374151';
-    inferBtn.style.border     = t ? '1px solid #374151' : '1px solid #3b82f6';
-  }
+	if (trainBtn && inferBtn) {
+		const t = mode === 'train';
+		trainBtn.style.background = t ? '#3b82f6' : '#1f2937';
+		trainBtn.style.color      = t ? '#ffffff' : '#9ca3af';
+		inferBtn.style.background = t ? '#1f2937' : '#3b82f6';
+		inferBtn.style.color      = t ? '#9ca3af' : '#ffffff';
+		trainBtn.style.border     = t ? '1px solid #3b82f6' : '1px solid #374151';
+		inferBtn.style.border     = t ? '1px solid #374151' : '1px solid #3b82f6';
+	}
 
-  _gracefulModeTransition(
-    () => {
-      run_transformer_demo();
-      window.scrollTo(savedScrollX, savedScrollY);
-    },
-    () => window.scrollTo(savedScrollX, savedScrollY)
-  );
+	_gracefulModeTransition(
+		() => {
+			run_transformer_demo();
+			window.scrollTo(savedScrollX, savedScrollY);
+		},
+		() => window.scrollTo(savedScrollX, savedScrollY)
+	);
 }
 
 
@@ -5710,16 +5710,16 @@ function setVisualizationMode(mode) {
    Choreographer:  fade-in  →  work while opaque  →  fade-out + reveal
    ═══════════════════════════════════════════════════════════════════════ */
 function _gracefulModeTransition(heavyWork, afterSettle) {
-  let executed = false;
+	let executed = false;
 
-  // Kill stale overlay from rapid clicks
-  const stale = document.getElementById('tlab-mode-overlay');
-  if (stale) stale.remove();
+	// Kill stale overlay from rapid clicks
+	const stale = document.getElementById('tlab-mode-overlay');
+	if (stale) stale.remove();
 
-  // ── Build overlay ────────────────────────────────────────────
-  const ov = document.createElement('div');
-  ov.id = 'tlab-mode-overlay';
-  ov.style.cssText = `
+	// ── Build overlay ────────────────────────────────────────────
+	const ov = document.createElement('div');
+	ov.id = 'tlab-mode-overlay';
+	ov.style.cssText = `
     position: fixed;
     inset: 0;
     z-index: 9999;
@@ -5732,18 +5732,18 @@ function _gracefulModeTransition(heavyWork, afterSettle) {
     will-change: opacity;
   `;
 
-  ov.innerHTML = `
+	ov.innerHTML = `
     <div class="tlab-ob" style="
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 50% 40%,
-          rgba(30, 58, 138, 0.25) 0%, transparent 70%),
-        radial-gradient(ellipse 60% 80% at 70% 60%,
-          rgba(99, 102, 241, 0.12) 0%, transparent 60%),
-        linear-gradient(160deg,
-          rgba(15, 23, 42, 0.92) 0%,
-          rgba(15, 23, 42, 0.97) 100%);
+	radial-gradient(ellipse 80% 60% at 50% 40%,
+	  rgba(30, 58, 138, 0.25) 0%, transparent 70%),
+	radial-gradient(ellipse 60% 80% at 70% 60%,
+	  rgba(99, 102, 241, 0.12) 0%, transparent 60%),
+	linear-gradient(160deg,
+	  rgba(15, 23, 42, 0.92) 0%,
+	  rgba(15, 23, 42, 0.97) 100%);
       backdrop-filter: blur(16px) saturate(1.5);
       -webkit-backdrop-filter: blur(16px) saturate(1.5);
     "></div>
@@ -5754,150 +5754,150 @@ function _gracefulModeTransition(heavyWork, afterSettle) {
       transform: translateY(8px) scale(0.96);
       opacity: 0;
       transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s,
-                  opacity  0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s;
+		  opacity  0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s;
     ">
       <div class="tlab-orb-wrap" style="
-        position: relative; width: 56px; height: 56px; margin: 0 auto 20px;
+	position: relative; width: 56px; height: 56px; margin: 0 auto 20px;
       ">
-        <div class="tlab-orb-ring" style="
-          position: absolute; inset: 0; border-radius: 50%;
-          border: 1.5px solid rgba(96, 165, 250, 0.25);
-          animation: tlab-ripple 2.8s ease-out infinite;
-        "></div>
-        <div class="tlab-orb-ring" style="
-          position: absolute; inset: 0; border-radius: 50%;
-          border: 1.5px solid rgba(96, 165, 250, 0.25);
-          animation: tlab-ripple 2.8s ease-out infinite 0.7s;
-        "></div>
-        <div class="tlab-orb-ring" style="
-          position: absolute; inset: 0; border-radius: 50%;
-          border: 1.5px solid rgba(96, 165, 250, 0.25);
-          animation: tlab-ripple 2.8s ease-out infinite 1.4s;
-        "></div>
-        <div class="tlab-orb-core" style="
-          position: absolute; inset: 12px; border-radius: 50%;
-          background: radial-gradient(circle at 38% 32%,
-            rgba(147, 197, 253, 0.95),
-            rgba(59, 130, 246, 0.7) 55%,
-            rgba(37, 99, 235, 0.35) 100%);
-          box-shadow:
-            0 0 24px 4px rgba(59, 130, 246, 0.35),
-            0 0 80px 8px rgba(59, 130, 246, 0.10),
-            inset 0 -3px 6px rgba(30, 64, 175, 0.3);
-          animation: tlab-breathe 2.4s ease-in-out infinite;
-        "></div>
+	<div class="tlab-orb-ring" style="
+	  position: absolute; inset: 0; border-radius: 50%;
+	  border: 1.5px solid rgba(96, 165, 250, 0.25);
+	  animation: tlab-ripple 2.8s ease-out infinite;
+	"></div>
+	<div class="tlab-orb-ring" style="
+	  position: absolute; inset: 0; border-radius: 50%;
+	  border: 1.5px solid rgba(96, 165, 250, 0.25);
+	  animation: tlab-ripple 2.8s ease-out infinite 0.7s;
+	"></div>
+	<div class="tlab-orb-ring" style="
+	  position: absolute; inset: 0; border-radius: 50%;
+	  border: 1.5px solid rgba(96, 165, 250, 0.25);
+	  animation: tlab-ripple 2.8s ease-out infinite 1.4s;
+	"></div>
+	<div class="tlab-orb-core" style="
+	  position: absolute; inset: 12px; border-radius: 50%;
+	  background: radial-gradient(circle at 38% 32%,
+	    rgba(147, 197, 253, 0.95),
+	    rgba(59, 130, 246, 0.7) 55%,
+	    rgba(37, 99, 235, 0.35) 100%);
+	  box-shadow:
+	    0 0 24px 4px rgba(59, 130, 246, 0.35),
+	    0 0 80px 8px rgba(59, 130, 246, 0.10),
+	    inset 0 -3px 6px rgba(30, 64, 175, 0.3);
+	  animation: tlab-breathe 2.4s ease-in-out infinite;
+	"></div>
       </div>
       <div class="tlab-ol" style="
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        font-size: 0.68rem;
-        font-weight: 600;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: rgba(148, 163, 184, 0.9);
+	font-family: 'Inter', system-ui, -apple-system, sans-serif;
+	font-size: 0.68rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: rgba(148, 163, 184, 0.9);
       ">Updating view</div>
     </div>`;
 
-  document.body.appendChild(ov);
+	document.body.appendChild(ov);
 
-  // ── Inject keyframes if missing ──────────────────────────────
-  if (!document.getElementById('tlab-kf')) {
-    const kf = document.createElement('style');
-    kf.id = 'tlab-kf';
-    kf.textContent = `
+	// ── Inject keyframes if missing ──────────────────────────────
+	if (!document.getElementById('tlab-kf')) {
+		const kf = document.createElement('style');
+		kf.id = 'tlab-kf';
+		kf.textContent = `
       @keyframes tlab-ripple {
-        0%   { transform: scale(0.5); opacity: 0.9; }
-        100% { transform: scale(2.6); opacity: 0;   }
+	0%   { transform: scale(0.5); opacity: 0.9; }
+	100% { transform: scale(2.6); opacity: 0;   }
       }
       @keyframes tlab-breathe {
-        0%, 100% { transform: scale(1);    opacity: 0.85; }
-        50%      { transform: scale(1.12); opacity: 1;    }
+	0%, 100% { transform: scale(1);    opacity: 0.85; }
+	50%      { transform: scale(1.12); opacity: 1;    }
       }
       @keyframes tlab-shimmer {
-        0%   { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
+	0%   { background-position: 200% 0; }
+	100% { background-position: -200% 0; }
       }
     `;
-    document.head.appendChild(kf);
-  }
+		document.head.appendChild(kf);
+	}
 
-  // ── Phase 1 — Fade IN ────────────────────────────────────────
-  // Force reflow so browser registers opacity:0 BEFORE we set 1
-  void ov.offsetHeight;
+	// ── Phase 1 — Fade IN ────────────────────────────────────────
+	// Force reflow so browser registers opacity:0 BEFORE we set 1
+	void ov.offsetHeight;
 
-  ov.style.opacity = '1';
+	ov.style.opacity = '1';
 
-  // Animate inner card up
-  const card = ov.querySelector('.tlab-oc');
-  if (card) {
-    card.style.transform = 'translateY(0) scale(1)';
-    card.style.opacity = '1';
-  }
+	// Animate inner card up
+	const card = ov.querySelector('.tlab-oc');
+	if (card) {
+		card.style.transform = 'translateY(0) scale(1)';
+		card.style.opacity = '1';
+	}
 
-  // ── Phase 2 — Execute work when fully opaque ─────────────────
-  const run = () => {
-    if (executed) return;
-    executed = true;
+	// ── Phase 2 — Execute work when fully opaque ─────────────────
+	const run = () => {
+		if (executed) return;
+		executed = true;
 
-    // Do the heavy DOM work — user can't see it behind the overlay
-    heavyWork();
+		// Do the heavy DOM work — user can't see it behind the overlay
+		heavyWork();
 
-    // Tag content sections for stagger reveal
-    const sections = _getRevealTargets();
-    sections.forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(16px)';
-      el.style.transition = 'none';
-    });
+		// Tag content sections for stagger reveal
+		const sections = _getRevealTargets();
+		sections.forEach(el => {
+			el.style.opacity = '0';
+			el.style.transform = 'translateY(16px)';
+			el.style.transition = 'none';
+		});
 
-    // ── Phase 3 — Fade OUT + stagger reveal ──────────────────
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (afterSettle) afterSettle();
+		// ── Phase 3 — Fade OUT + stagger reveal ──────────────────
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				if (afterSettle) afterSettle();
 
-        // Fade out overlay
-        ov.style.opacity = '0';
-        if (card) {
-          card.style.transform = 'translateY(-8px) scale(0.98)';
-          card.style.opacity = '0';
-        }
+				// Fade out overlay
+				ov.style.opacity = '0';
+				if (card) {
+					card.style.transform = 'translateY(-8px) scale(0.98)';
+					card.style.opacity = '0';
+				}
 
-        // Stagger reveal each section
-        sections.forEach((el, i) => {
-          setTimeout(() => {
-            el.style.transition =
-              'opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), ' +
-              'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
+				// Stagger reveal each section
+				sections.forEach((el, i) => {
+					setTimeout(() => {
+						el.style.transition =
+							'opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), ' +
+							'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+						el.style.opacity = '1';
+						el.style.transform = 'translateY(0)';
 
-            // Clean up inline styles after animation
-            const cleanup = () => {
-              el.style.removeProperty('opacity');
-              el.style.removeProperty('transform');
-              el.style.removeProperty('transition');
-            };
-            el.addEventListener('transitionend', cleanup, { once: true });
-            setTimeout(cleanup, 600);
-          }, i * 60);
-        });
+						// Clean up inline styles after animation
+						const cleanup = () => {
+							el.style.removeProperty('opacity');
+							el.style.removeProperty('transform');
+							el.style.removeProperty('transition');
+						};
+						el.addEventListener('transitionend', cleanup, { once: true });
+						setTimeout(cleanup, 600);
+					}, i * 60);
+				});
 
-        // Remove overlay after fade
-        const removeOverlay = () => { if (ov.parentNode) ov.remove(); };
-        ov.addEventListener('transitionend', (e) => {
-          if (e.target === ov) removeOverlay();
-        }, { once: true });
-        setTimeout(removeOverlay, 1000);
-      });
-    });
-  };
+				// Remove overlay after fade
+				const removeOverlay = () => { if (ov.parentNode) ov.remove(); };
+				ov.addEventListener('transitionend', (e) => {
+					if (e.target === ov) removeOverlay();
+				}, { once: true });
+				setTimeout(removeOverlay, 1000);
+			});
+		});
+	};
 
-  // Fire when fade-in transition ends
-  ov.addEventListener('transitionend', (e) => {
-    if (e.target === ov && e.propertyName === 'opacity') run();
-  }, { once: true });
+	// Fire when fade-in transition ends
+	ov.addEventListener('transitionend', (e) => {
+		if (e.target === ov && e.propertyName === 'opacity') run();
+	}, { once: true });
 
-  // Safety net
-  setTimeout(run, 500);
+	// Safety net
+	setTimeout(run, 500);
 }
 
 
