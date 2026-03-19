@@ -5898,17 +5898,17 @@ function _gracefulModeTransition(heavyWork, afterSettle) {
    — Adjust selectors to match your layout
    ═══════════════════════════════════════════════════════════════════════ */
 function _getRevealTargets() {
-  const candidates = document.querySelectorAll([
-    '.transformer-container > *',
-    '.transformer-section',
-    '.plot-container',
-    '.equation-block',
-    '.equation-container',
-    '[id$="-plot"]',
-    '[id$="-equations"]'
-  ].join(','));
+	const candidates = document.querySelectorAll([
+		'.transformer-container > *',
+		'.transformer-section',
+		'.plot-container',
+		'.equation-block',
+		'.equation-container',
+		'[id$="-plot"]',
+		'[id$="-equations"]'
+	].join(','));
 
-  return Array.from(candidates).slice(0, 20);
+	return Array.from(candidates).slice(0, 20);
 }
 
 function _render_h1_logic_core(containerIds, h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings, naming) {
@@ -5938,20 +5938,20 @@ function _render_h1_logic_core(containerIds, h0, normH0, multiHeadOutput, gamma,
 }
 
 function render_h1_logic(h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings) {
-    const naming = { L: 1, sup: '', hInName: 'h_0', hOutName: 'h_1', hInStage: 'embedding + PE' };
-    return _render_h1_logic_core(
-        { norm: 'transformer-h1-layernorm-viz', final: 'transformer-h1-final-viz' },
-        h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings, naming
-    );
+	const naming = { L: 1, sup: '', hInName: 'h_0', hOutName: 'h_1', hInStage: 'embedding + PE' };
+	return _render_h1_logic_core(
+		{ norm: 'transformer-h1-layernorm-viz', final: 'transformer-h1-final-viz' },
+		h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings, naming
+	);
 }
 
 function render_h1_logic_for_layer(h0, normH0, multiHeadOutput, gamma, beta, WO, layerIndex, tokenStrings) {
-    const naming = _h1NamingForLayer(layerIndex);
-    const prefix = `unified-layer-${layerIndex}`;
-    return _render_h1_logic_core(
-        { norm: `${prefix}-layernorm-viz`, final: `${prefix}-h1-final-viz` },
-        h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings, naming
-    );
+	const naming = _h1NamingForLayer(layerIndex);
+	const prefix = `unified-layer-${layerIndex}`;
+	return _render_h1_logic_core(
+		{ norm: `${prefix}-layernorm-viz`, final: `${prefix}-h1-final-viz` },
+		h0, normH0, multiHeadOutput, gamma, beta, WO, tokenStrings, naming
+	);
 }
 
 function computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, beta) {
