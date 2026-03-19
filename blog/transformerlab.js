@@ -2106,17 +2106,17 @@ function buildPredictionChipsHtml(predictions, temperature) {
 }
 
 function buildLogitDetailsHtml(h_last, logits) {
-    const temperature = parseFloat(document.getElementById('transformer-temperature')?.value) || 1.0;
-    const logitValues = logits.map(l => l.val);
-    const vocabWords = logits.map(l => l.word);
-    const W_vocab = logits.map(l => l.w_row);
+	const temperature = parseFloat(document.getElementById('transformer-temperature')?.value) || 1.0;
+	const logitValues = logits.map(l => l.val);
+	const vocabWords = logits.map(l => l.word);
+	const W_vocab = logits.map(l => l.w_row);
 
-    let html = buildHLastSection(h_last);
-    html += buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits);
-    html += buildSoftmaxSection(logits, logitValues);
-    html += buildTemperatureSection(logits, logitValues, temperature);
-    html += `</span></div>`;
-    return html;
+	let html = buildHLastSection(h_last);
+	html += buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits);
+	html += buildSoftmaxSection(logits, logitValues);
+	html += buildTemperatureSection(logits, logitValues, temperature);
+	html += `</span></div>`;
+	return html;
 }
 
 function buildHLastDisplayLatex(h_last) {
