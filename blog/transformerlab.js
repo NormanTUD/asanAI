@@ -2565,16 +2565,16 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 // Updated Tokenizer to allow different containers
 
 function tokenizeText(text, type) {
-    if (type === 'bpe') {
-        const words = text.match(/\S+|\s+/g) || [];
-        return words.flatMap(word => {
-            if (word.length > 4) {
-                return word.match(/.{1,3}/g);
-            }
-            return word;
-        });
-    }
-    return text.match(/[\w]+|[^\w\s]/g) || [];
+	if (type === 'bpe') {
+		const words = text.match(/\S+|\s+/g) || [];
+		return words.flatMap(word => {
+			if (word.length > 4) {
+				return word.match(/.{1,3}/g);
+			}
+			return word;
+		});
+	}
+	return text.match(/[\w]+|[^\w\s]/g) || [];
 }
 
 function renderTokenChips(container, tokens) {
