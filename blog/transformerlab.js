@@ -2045,6 +2045,7 @@ function buildPredictionChipsHtml(predictions, temperature) {
 	predictions.forEach(p => {
 		const intensity = Math.min(1, p.prob * 5);
 		const safeWord = p.word.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+		const displayWord = /^\s+$/.test(p.word) ? p.word.replace(/ /g, '␣') : p.word;
 
 		const tempInfo = `<span style="font-size:0.7rem; opacity:0.85; display:block; margin-top:2px; visibility:${Math.abs(temperature - 1.0) < 0.01 ? 'hidden' : 'visible'};">
     Original: ${(p.originalProb * 100).toFixed(1)}%<br>
@@ -2053,7 +2054,7 @@ function buildPredictionChipsHtml(predictions, temperature) {
 
 		html += `<button class="predict-chip" onclick="select_suggested_word('${safeWord}')"
 	    style="background:rgba(59, 130, 246, ${intensity}); padding:8px 15px; border-radius:20px; border:1px solid #3b82f6; cursor:pointer; color: ${p.prob > 0.4 ? 'white' : 'black'}; text-align:center;">
-	    <strong>${p.word}</strong> (${(p.prob * 100).toFixed(1)}%)
+	    <strong>${escapeHtml(displayWord)}</strong> (${(p.prob * 100).toFixed(1)}%)
 	    ${tempInfo}
 	</button>`;
 	});
@@ -2091,7 +2092,8 @@ function buildHLastSection(h_last) {
 
 function buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits) {
     const vocabMatrixRows = W_vocab.map((row, wIdx) => {
-        const safeWord = vocabWords[wIdx].replace(/#/g, '\\#').replace(/_/g, '\\_');
+        const displayWord = /^\s+$/.test(vocabWords[wIdx]) ? vocabWords[wIdx].replace(/ /g, '␣') : vocabWords[wIdx];
+        const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
         const vals = row.map(v => v.toFixed(nr_fixed)).join(' & ');
         return `\\color{#6366f1}{\\text{${safeWord}}} & ${vals}`;
     }).join(' \\\\ ');
@@ -2124,7 +2126,8 @@ $$
 
 function buildLogitLatexRows(logits) {
     return logits.map(({ word, val }) => {
-        const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+        const displayWord = /^\s+$/.test(word) ? word.replace(/ /g, '␣') : word;
+        const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
         return `\\color{#6366f1}{\\text{${safeWord}}} & ${val.toFixed(nr_fixed)}`;
     }).join(' \\\\ ');
 }
@@ -2134,7 +2137,8 @@ function buildSoftmaxSection(logits, logitValues) {
     const logitRows = buildLogitLatexRows(logits);
 
     const probRows = logits.map(({ word }, i) => {
-        const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+        const displayWord = /^\s+$/.test(word) ? word.replace(/ /g, '␣') : word;
+        const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
         const color = getPositionColor(i, logits.length, 'temml');
         const pct = (probs[i] * 100).toFixed(2);
         return `${color} \\text{${safeWord}} & ${color} ${pct}\\%`;
@@ -2189,7 +2193,8 @@ ${entropySection}`;
 
 function buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature) {
     return logits.map(({ word }, i) => {
-        const safeWord = word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+        const displayWord = /^\s+$/.test(word) ? word.replace(/ /g, '␣') : word;
+        const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
         const color = getPositionColor(i, logits.length, 'temml');
         const origPct = (probs[i] * 100).toFixed(2);
         const scaledPct = (scaledProbs[i] * 100).toFixed(2);
