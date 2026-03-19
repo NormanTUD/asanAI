@@ -2234,24 +2234,24 @@ $$
 }
 
 function buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature) {
-    return logits.map(({ word }, i) => {
-        const displayWord = /^\s+$/.test(word) ? word.replace(/ /g, '␣') : word;
-        const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
-        const color = getPositionColor(i, logits.length, 'temml');
-        const origPct = (probs[i] * 100).toFixed(2);
-        const scaledPct = (scaledProbs[i] * 100).toFixed(2);
-        const diff = (scaledProbs[i] - probs[i]) * 100;
-        const diffSign = diff >= 0 ? '+' : '';
-        return `${color} \\text{${safeWord}} & ${color} ${origPct}\\% & ${color} ${scaledPct}\\% & ${color} ${diffSign}${diff.toFixed(2)}\\%`;
-    }).join(' \\\\ ');
+	return logits.map(({ word }, i) => {
+		const displayWord = /^\s+$/.test(word) ? word.replace(/ /g, '␣') : word;
+		const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
+		const color = getPositionColor(i, logits.length, 'temml');
+		const origPct = (probs[i] * 100).toFixed(2);
+		const scaledPct = (scaledProbs[i] * 100).toFixed(2);
+		const diff = (scaledProbs[i] - probs[i]) * 100;
+		const diffSign = diff >= 0 ? '+' : '';
+		return `${color} \\text{${safeWord}} & ${color} ${origPct}\\% & ${color} ${scaledPct}\\% & ${color} ${diffSign}${diff.toFixed(2)}\\%`;
+	}).join(' \\\\ ');
 }
 
 function buildEntropyLatex(probs, scaledProbs, vocabSize, temperature) {
-    const entropyOrig = computeEntropyBits(probs);
-    const entropyScaled = computeEntropyBits(scaledProbs);
-    const maxEntropy = Math.log2(vocabSize);
+	const entropyOrig = computeEntropyBits(probs);
+	const entropyScaled = computeEntropyBits(scaledProbs);
+	const maxEntropy = Math.log2(vocabSize);
 
-    return `<div style="overflow-x:auto; padding:10px 0;">
+	return `<div style="overflow-x:auto; padding:10px 0;">
 $$
 H_{T=1} = ${entropyOrig.toFixed(4)} \\text{ bits}, \\quad
 H_{T=${temperature.toFixed(1)}} = ${entropyScaled.toFixed(4)} \\text{ bits}, \\quad
