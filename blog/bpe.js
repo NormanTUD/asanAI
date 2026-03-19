@@ -64,15 +64,23 @@ class BPETokenizer {
      * Tokenize a given text using the trained BPE vocabulary.
      * Produces ## prefixed continuation tokens for subword pieces.
      * Falls back to character-level with ## prefixes for unknown words.
+     * Preserves whitespace runs as their own tokens.
      * @param {string} text - The input text to tokenize.
      * @returns {Array<string>} - The BPE tokens.
      */
     tokenize(text) {
-        const words = text.split(/\s+/).filter(w => w.length > 0);
+        // Split into words AND whitespace runs, keeping both
+        const parts = text.split(/(\s+)/).filter(p => p.length > 0);
         const tokens = [];
 
-        words.forEach(word => {
-            let chars = word.split('');
+        parts.forEach(part => {
+            // If this part is purely whitespace, emit it as its own token
+            if (/^\s+$/.test(part)) {
+                tokens.push(part);
+                return;
+            }
+
+            let chars = part.split('');
 
             // Apply merges in learned order
             for (const merge of this.merges) {
@@ -100,7 +108,7 @@ class BPETokenizer {
 
             // Otherwise, try greedy longest-match from the known token vocab
             // to avoid single-character splits for rare words
-            const subwords = this._greedyTokenize(word);
+            const subwords = this._greedyTokenize(part);
 
             // Add ## prefix to continuation tokens (not the first piece)
             for (let i = 0; i < subwords.length; i++) {
@@ -154,11 +162,13 @@ class BPETokenizer {
 
     /**
      * Initialize the vocabulary with character-level tokens.
+     * Only trains on actual words; whitespace is handled at tokenize-time.
      * @param {string} text - The input text corpus.
      * @returns {Object} - The initial vocabulary with token frequencies.
      */
     _initializeVocab(text) {
         const vocab = {};
+        // Extract only non-whitespace words for training the merge table
         const words = text.split(/\s+/).filter(w => w.length > 0);
 
         words.forEach(word => {
