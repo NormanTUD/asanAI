@@ -2312,296 +2312,294 @@ window.appendToken = (token) => {
 };
 
 function render_embedding_plot(dimensions, highlightPos = null, steps = []) {
-    const containerId = 'transformer-plotly-space';
+	const containerId = 'transformer-plotly-space';
 
-    registerLazyRenderable(
-        containerId,
-        embeddingRenderRegistry,
-        embeddingObserver,
-        { d_model: dimensions, highlightPos, steps },
-        () => _execute_embedding_render(dimensions, highlightPos, steps),
-        `<div style="padding:20px; color:#64748b;">Wait for Embedding Space to load...</div>`
-    );
+	registerLazyRenderable(
+		containerId,
+		embeddingRenderRegistry,
+		embeddingObserver,
+		{ d_model: dimensions, highlightPos, steps },
+		() => _execute_embedding_render(dimensions, highlightPos, steps),
+		`<div style="padding:20px; color:#64748b;">Wait for Embedding Space to load...</div>`
+	);
 }
 
-// ── 3D Arrowhead geometry (extracted from _execute_embedding_render) ──
-
 function computePerpendicularVectors(nx, ny, nz) {
-    let ax, ay, az;
-    if (Math.abs(nx) < 0.9) {
-        ax = 1; ay = 0; az = 0;
-    } else {
-        ax = 0; ay = 1; az = 0;
-    }
+	let ax, ay, az;
+	if (Math.abs(nx) < 0.9) {
+		ax = 1; ay = 0; az = 0;
+	} else {
+		ax = 0; ay = 1; az = 0;
+	}
 
-    // Cross product: perp1 = direction × arbitrary
-    let p1x = ny * az - nz * ay;
-    let p1y = nz * ax - nx * az;
-    let p1z = nx * ay - ny * ax;
-    const p1mag = Math.sqrt(p1x * p1x + p1y * p1y + p1z * p1z);
-    p1x /= p1mag; p1y /= p1mag; p1z /= p1mag;
+	// Cross product: perp1 = direction × arbitrary
+	let p1x = ny * az - nz * ay;
+	let p1y = nz * ax - nx * az;
+	let p1z = nx * ay - ny * ax;
+	const p1mag = Math.sqrt(p1x * p1x + p1y * p1y + p1z * p1z);
+	p1x /= p1mag; p1y /= p1mag; p1z /= p1mag;
 
-    // Cross product: perp2 = direction × perp1
-    let p2x = ny * p1z - nz * p1y;
-    let p2y = nz * p1x - nx * p1z;
-    let p2z = nx * p1y - ny * p1x;
-    const p2mag = Math.sqrt(p2x * p2x + p2y * p2y + p2z * p2z);
-    p2x /= p2mag; p2y /= p2mag; p2z /= p2mag;
+	// Cross product: perp2 = direction × perp1
+	let p2x = ny * p1z - nz * p1y;
+	let p2y = nz * p1x - nx * p1z;
+	let p2z = nx * p1y - ny * p1x;
+	const p2mag = Math.sqrt(p2x * p2x + p2y * p2y + p2z * p2z);
+	p2x /= p2mag; p2y /= p2mag; p2z /= p2mag;
 
-    return {
-        perp1: { x: p1x, y: p1y, z: p1z },
-        perp2: { x: p2x, y: p2y, z: p2z }
-    };
+	return {
+		perp1: { x: p1x, y: p1y, z: p1z },
+		perp2: { x: p2x, y: p2y, z: p2z }
+	};
 }
 
 function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, steps) {
-    let chart = echarts.getInstanceByDom(container);
-    if (!chart) chart = echarts.init(container);
+	let chart = echarts.getInstanceByDom(container);
+	if (!chart) chart = echarts.init(container);
 
-    if (dimensions === 3) {
-        _embedding_render_3d_echarts(chart, tokens, highlightPos, steps);
-    } else {
-        _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, steps);
-    }
+	if (dimensions === 3) {
+		_embedding_render_3d_echarts(chart, tokens, highlightPos, steps);
+	} else {
+		_embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, steps);
+	}
 
-    if (!container._ecEmbResize) {
-        container._ecEmbResize = () => {
-            const c = echarts.getInstanceByDom(container);
-            if (c) c.resize();
-        };
-        window.addEventListener('resize', container._ecEmbResize);
-    }
+	if (!container._ecEmbResize) {
+		container._ecEmbResize = () => {
+			const c = echarts.getInstanceByDom(container);
+			if (c) c.resize();
+		};
+		window.addEventListener('resize', container._ecEmbResize);
+	}
 }
 
 function _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, steps) {
-    const series = [];
+	const series = [];
 
-    const vocabData = tokens.map(token => {
-        const vec = window.persistentEmbeddingSpace[token];
-        return {
-            value: [vec[0], vec.length >= 2 ? vec[1] : 0],
-            name: displayToken(token),
-            itemStyle: {
-                color: `hsl(${getHueFromToken(token)}, 75%, 50%)`
-            }
-        };
-    });
+	const vocabData = tokens.map(token => {
+		const vec = window.persistentEmbeddingSpace[token];
+		return {
+			value: [vec[0], vec.length >= 2 ? vec[1] : 0],
+			name: displayToken(token),
+			itemStyle: {
+				color: `hsl(${getHueFromToken(token)}, 75%, 50%)`
+			}
+		};
+	});
 
-    series.push({
-        type: 'scatter',
-        name: 'Vocabulary',
-        data: vocabData,
-        symbolSize: 8,
-        itemStyle: { opacity: 0.85 },
-        label: {
-            show: true,
-            position: 'top',
-            formatter: p => p.name,
-            fontSize: 11,
-            color: '#1e293b'
-        },
-        tooltip: {
-            formatter: p => `<b>${p.name}</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
-        },
-        z: 5
-    });
+	series.push({
+		type: 'scatter',
+		name: 'Vocabulary',
+		data: vocabData,
+		symbolSize: 8,
+		itemStyle: { opacity: 0.85 },
+		label: {
+			show: true,
+			position: 'top',
+			formatter: p => p.name,
+			fontSize: 11,
+			color: '#1e293b'
+		},
+		tooltip: {
+			formatter: p => `<b>${p.name}</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
+		},
+		z: 5
+	});
 
-    if (steps && steps.length > 0) {
-        const arrowColor = '#3b82f6';
-        const arrowData = steps.map(step => ({
-            value: [
-                step.from[0],
-                dimensions >= 2 ? step.from[1] : 0,
-                step.to[0],
-                dimensions >= 2 ? step.to[1] : 0
-            ],
-            _label: step.label
-        }));
+	if (steps && steps.length > 0) {
+		const arrowColor = '#3b82f6';
+		const arrowData = steps.map(step => ({
+			value: [
+				step.from[0],
+				dimensions >= 2 ? step.from[1] : 0,
+				step.to[0],
+				dimensions >= 2 ? step.to[1] : 0
+			],
+			_label: step.label
+		}));
 
-        series.push({
-            type: 'custom',
-            name: 'Steps',
-            renderItem: function (params, api) {
-                const sPx = api.coord([api.value(0), api.value(1)]);
-                const ePx = api.coord([api.value(2), api.value(3)]);
-                return _ec2d_render_arrow(sPx, ePx, arrowColor, 3);
-            },
-            encode: { x: [0, 2], y: [1, 3] },
-            data: arrowData,
-            tooltip: { formatter: p => `<b>${p.data._label}</b>` },
-            z: 10
-        });
-    }
+		series.push({
+			type: 'custom',
+			name: 'Steps',
+			renderItem: function (params, api) {
+				const sPx = api.coord([api.value(0), api.value(1)]);
+				const ePx = api.coord([api.value(2), api.value(3)]);
+				return _ec2d_render_arrow(sPx, ePx, arrowColor, 3);
+			},
+			encode: { x: [0, 2], y: [1, 3] },
+			data: arrowData,
+			tooltip: { formatter: p => `<b>${p.data._label}</b>` },
+			z: 10
+		});
+	}
 
-    if (highlightPos) {
-        series.push({
-            type: 'scatter',
-            name: 'Result',
-            data: [{
-                value: [highlightPos[0], dimensions >= 2 ? highlightPos[1] : 0]
-            }],
-            symbol: 'diamond',
-            symbolSize: 14,
-            itemStyle: { color: '#ef4444' },
-            tooltip: {
-                formatter: p =>
-                `<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
-            },
-            z: 15
-        });
-    }
+	if (highlightPos) {
+		series.push({
+			type: 'scatter',
+			name: 'Result',
+			data: [{
+				value: [highlightPos[0], dimensions >= 2 ? highlightPos[1] : 0]
+			}],
+			symbol: 'diamond',
+			symbolSize: 14,
+			itemStyle: { color: '#ef4444' },
+			tooltip: {
+				formatter: p =>
+				`<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
+			},
+			z: 15
+		});
+	}
 
-    chart.setOption({
-        title: {
-            text: 'Embedding Space', left: 'center',
-            textStyle: { fontSize: 14, color: '#1e293b' }
-        },
-        tooltip: { show: true, trigger: 'item', confine: true },
-        legend: { show: false, bottom: 0 },
-        xAxis: {
-            type: 'value', name: 'Dim 0',
-            nameLocation: 'center', nameGap: 25,
-            splitLine: { lineStyle: { color: '#f0f0f0' } }
-        },
-        yAxis: {
-            type: 'value',
-            name: dimensions >= 2 ? 'Dim 1' : '',
-            nameLocation: 'center', nameGap: 35,
-            splitLine: { lineStyle: { color: '#f0f0f0' } }
-        },
-        grid: { top: 50, bottom: 50, left: 55, right: 30 },
-        series: series,
-        animation: false
-    }, true);
+	chart.setOption({
+		title: {
+			text: 'Embedding Space', left: 'center',
+			textStyle: { fontSize: 14, color: '#1e293b' }
+		},
+		tooltip: { show: true, trigger: 'item', confine: true },
+		legend: { show: false, bottom: 0 },
+		xAxis: {
+			type: 'value', name: 'Dim 0',
+			nameLocation: 'center', nameGap: 25,
+			splitLine: { lineStyle: { color: '#f0f0f0' } }
+		},
+		yAxis: {
+			type: 'value',
+			name: dimensions >= 2 ? 'Dim 1' : '',
+			nameLocation: 'center', nameGap: 35,
+			splitLine: { lineStyle: { color: '#f0f0f0' } }
+		},
+		grid: { top: 50, bottom: 50, left: 55, right: 30 },
+		series: series,
+		animation: false
+	}, true);
 }
 
 function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
-    const series = [];
-    const arrowColor = '#3b82f6';
+	const series = [];
+	const arrowColor = '#3b82f6';
 
-    series.push({
-        name: 'Vocabulary',
-        type: 'scatter3D',
-        data: tokens.map(token => {
-            const vec = window.persistentEmbeddingSpace[token];
-            return {
-                name: displayToken(token),
-                value: [vec[0], vec[1] || 0, vec[2] || 0],
-                itemStyle: {
-                    color: `hsl(${getHueFromToken(token)}, 75%, 50%)`
-                }
-            };
-        }),
-        symbolSize: 6,
-        itemStyle: { opacity: 0.85 },
-        label: {
-            show: true, position: 'top', distance: 5,
-            formatter: p => p.name,
-            textStyle: { fontSize: 10, color: '#1e293b' }
-        }
-    });
+	series.push({
+		name: 'Vocabulary',
+		type: 'scatter3D',
+		data: tokens.map(token => {
+			const vec = window.persistentEmbeddingSpace[token];
+			return {
+				name: displayToken(token),
+				value: [vec[0], vec[1] || 0, vec[2] || 0],
+				itemStyle: {
+					color: `hsl(${getHueFromToken(token)}, 75%, 50%)`
+				}
+			};
+		}),
+		symbolSize: 6,
+		itemStyle: { opacity: 0.85 },
+		label: {
+			show: true, position: 'top', distance: 5,
+			formatter: p => p.name,
+			textStyle: { fontSize: 10, color: '#1e293b' }
+		}
+	});
 
-    if (steps && steps.length > 0) {
-        steps.forEach((step, idx) => {
-            const from3 = step.from.slice(0, 3);
-            const to3   = step.to.slice(0, 3);
+	if (steps && steps.length > 0) {
+		steps.forEach((step, idx) => {
+			const from3 = step.from.slice(0, 3);
+			const to3   = step.to.slice(0, 3);
 
-            const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
-            series.push({
-                type: 'line3D',
-                data: [from3, shaftEnd],
-                lineStyle: { width: 5, color: arrowColor, opacity: 0.85 },
-                silent: true
-            });
+			const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
+			series.push({
+				type: 'line3D',
+				data: [from3, shaftEnd],
+				lineStyle: { width: 5, color: arrowColor, opacity: 0.85 },
+				silent: true
+			});
 
-            _add3DArrowheadSeries(series, from3, to3, arrowColor, {
-                lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4, name: 'Steps'
-            });
+			_add3DArrowheadSeries(series, from3, to3, arrowColor, {
+				lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4, name: 'Steps'
+			});
 
-            series.push({
-                type: 'scatter3D',
-                data: [{
-                    value: [(from3[0]+to3[0])/2, (from3[1]+to3[1])/2, (from3[2]+to3[2])/2],
-                    _hover: step.label
-                }],
-                symbolSize: 4,
-                itemStyle: { color: 'rgba(59,130,246,0.01)' },
-                tooltip: { formatter: p => `<b>${p.data._hover}</b>` }
-            });
-        });
-    }
+			series.push({
+				type: 'scatter3D',
+				data: [{
+					value: [(from3[0]+to3[0])/2, (from3[1]+to3[1])/2, (from3[2]+to3[2])/2],
+					_hover: step.label
+				}],
+				symbolSize: 4,
+				itemStyle: { color: 'rgba(59,130,246,0.01)' },
+				tooltip: { formatter: p => `<b>${p.data._hover}</b>` }
+			});
+		});
+	}
 
-    if (highlightPos) {
-        series.push({
-            name: 'Result',
-            type: 'scatter3D',
-            data: [{ value: highlightPos.slice(0, 3) }],
-            symbol: 'diamond', symbolSize: 10,
-            itemStyle: { color: '#ef4444' },
-            tooltip: {
-                formatter: p =>
-                `<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)}, ${p.value[2].toFixed(4)})`
-            }
-        });
-    }
+	if (highlightPos) {
+		series.push({
+			name: 'Result',
+			type: 'scatter3D',
+			data: [{ value: highlightPos.slice(0, 3) }],
+			symbol: 'diamond', symbolSize: 10,
+			itemStyle: { color: '#ef4444' },
+			tooltip: {
+				formatter: p =>
+				`<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)}, ${p.value[2].toFixed(4)})`
+			}
+		});
+	}
 
-    chart.setOption({
-        title: {
-            text: 'Embedding Space', left: 'center',
-            textStyle: { fontSize: 14, color: '#1e293b' }
-        },
-        tooltip: { show: true, trigger: 'item', confine: true },
-        xAxis3D: { type: 'value', name: 'Dim 0' },
-        yAxis3D: { type: 'value', name: 'Dim 1' },
-        zAxis3D: { type: 'value', name: 'Dim 2' },
-        grid3D: _defaultGrid3DConfig(),
-        series: series,
-        animation: false
-    }, true);
+	chart.setOption({
+		title: {
+			text: 'Embedding Space', left: 'center',
+			textStyle: { fontSize: 14, color: '#1e293b' }
+		},
+		tooltip: { show: true, trigger: 'item', confine: true },
+		xAxis3D: { type: 'value', name: 'Dim 0' },
+		yAxis3D: { type: 'value', name: 'Dim 1' },
+		zAxis3D: { type: 'value', name: 'Dim 2' },
+		grid3D: _defaultGrid3DConfig(),
+		series: series,
+		animation: false
+	}, true);
 }
 
 function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
-    const myChart = echarts.init(container);
-    const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({
-        dim: i, name: `D${i}`
-    }));
+	const myChart = echarts.init(container);
+	const parallelAxis = Array.from({ length: dimensions }, (_, i) => ({
+		dim: i, name: `D${i}`
+	}));
 
-    const data = tokens.map(token => ({
-        name: token,
-        value: window.persistentEmbeddingSpace[token]
-    }));
+	const data = tokens.map(token => ({
+		name: token,
+		value: window.persistentEmbeddingSpace[token]
+	}));
 
-    myChart.setOption({
-        title: { text: "Embedding Space", left: 'center' },
-        tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
-        parallelAxis,
-        parallel: { left: 40, right: 40, bottom: 20, top: 50 },
-        series: [{
-            type: 'parallel',
-            data,
-            lineStyle: { width: 2, opacity: 0.5, color: '#6366f1' },
-            emphasis: { lineStyle: { width: 6, color: '#f59e0b' } }
-        }]
-    });
+	myChart.setOption({
+		title: { text: "Embedding Space", left: 'center' },
+		tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+		parallelAxis,
+		parallel: { left: 40, right: 40, bottom: 20, top: 50 },
+		series: [{
+			type: 'parallel',
+			data,
+			lineStyle: { width: 2, opacity: 0.5, color: '#6366f1' },
+			emphasis: { lineStyle: { width: 6, color: '#f59e0b' } }
+		}]
+	});
 
-    myChart.resize();
+	myChart.resize();
 }
 
 function _execute_embedding_render(dimensions, highlightPos = null, steps = []) {
-    const container = document.getElementById('transformer-plotly-space');
-    if (!container) return;
+	const container = document.getElementById('transformer-plotly-space');
+	if (!container) return;
 
-    const existingChart = echarts.getInstanceByDom(container);
-    if (existingChart) existingChart.dispose();
-    container.innerHTML = '';
+	const existingChart = echarts.getInstanceByDom(container);
+	if (existingChart) existingChart.dispose();
+	container.innerHTML = '';
 
-    const tokens = Object.keys(window.persistentEmbeddingSpace);
+	const tokens = Object.keys(window.persistentEmbeddingSpace);
 
-    if (dimensions <= 3) {
-        renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, steps);
-    } else {
-        renderHighDimEmbeddingPlot(container, tokens, dimensions);
-    }
+	if (dimensions <= 3) {
+		renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, steps);
+	} else {
+		renderHighDimEmbeddingPlot(container, tokens, dimensions);
+	}
 }
 
 // Updated Tokenizer to allow different containers
@@ -2683,11 +2681,11 @@ function _renderConcatCore(container, headData, tokens, tokenStrings, stageLabel
 }
 
 function updateConcatenationDisplay(headData, tokens, tokenStrings) {
-    return _renderConcatCore(document.getElementById('transformer-concat-viz'), headData, tokens, tokenStrings, null);
+	return _renderConcatCore(document.getElementById('transformer-concat-viz'), headData, tokens, tokenStrings, null);
 }
 
 function updateConcatenationDisplayForLayer(headData, tokens, layerIndex, tokenStrings) {
-    return _renderConcatCore(document.getElementById(`unified-layer-${layerIndex}-concat-viz`), headData, tokens, tokenStrings, 'after concat');
+	return _renderConcatCore(document.getElementById(`unified-layer-${layerIndex}-concat-viz`), headData, tokens, tokenStrings, 'after concat');
 }
 
 function calculateLayerNorm(matrix, gamma, beta) {
