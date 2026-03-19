@@ -5093,73 +5093,73 @@ function tokenizeVectorMathInput(inputVal) {
 }
 
 function evaluateVectorExpression(tokens, space, vocabKeys, d_model) {
-    const lowerVocab = buildLowerCaseVocabMap(space, vocabKeys);
-    let pos = 0;
-    let steps = [];
+	const lowerVocab = buildLowerCaseVocabMap(space, vocabKeys);
+	let pos = 0;
+	let steps = [];
 
-    const toVecTex = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
+	const toVecTex = (arr) => `\\begin{pmatrix} ${arr.map(v => v.toFixed(nr_fixed)).join(' \\\\ ')} \\end{pmatrix}`;
 
-    function peek()    { return tokens[pos]; }
-    function consume() { return tokens[pos++]; }
+	function peek()    { return tokens[pos]; }
+	function consume() { return tokens[pos++]; }
 
-    function parseFactor() {
-        let token = consume();
-        if (!token) throw new Error("Unexpected end of input");
+	function parseFactor() {
+		let token = consume();
+		if (!token) throw new Error("Unexpected end of input");
 
-        if (token === '(') return parseParenthesized();
-        if (token === '-') return parseNegation();
-        if (isNumericLiteral(token, lowerVocab)) return parseScalar(token, d_model);
-        return parseWordVector(token, lowerVocab, d_model, toVecTex);
-    }
+		if (token === '(') return parseParenthesized();
+		if (token === '-') return parseNegation();
+		if (isNumericLiteral(token, lowerVocab)) return parseScalar(token, d_model);
+		return parseWordVector(token, lowerVocab, d_model, toVecTex);
+	}
 
-    function parseParenthesized() {
-        let res = parseExpression();
-        if (peek() === ')') consume();
-        return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
-    }
+	function parseParenthesized() {
+		let res = parseExpression();
+		if (peek() === ')') consume();
+		return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
+	}
 
-    function parseNegation() {
-        let res = parseFactor();
-        return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
-    }
+	function parseNegation() {
+		let res = parseFactor();
+		return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
+	}
 
-    function parseTerm() {
-        let left = parseFactor();
-        while (peek() === '*' || peek() === '/') {
-            let op = consume();
-            let right = parseFactor();
-            left = applyMultiplicativeOp(left, right, op);
-        }
-        return left;
-    }
+	function parseTerm() {
+		let left = parseFactor();
+		while (peek() === '*' || peek() === '/') {
+			let op = consume();
+			let right = parseFactor();
+			left = applyMultiplicativeOp(left, right, op);
+		}
+		return left;
+	}
 
-    function parseExpression() {
-        let left = parseTerm();
-        while (peek() === '+' || peek() === '-') {
-            let op = consume();
-            let right = parseTerm();
-            let prev = [...left.val];
+	function parseExpression() {
+		let left = parseTerm();
+		while (peek() === '+' || peek() === '-') {
+			let op = consume();
+			let right = parseTerm();
+			let prev = [...left.val];
 
-            left.val = (op === '+')
-                ? left.val.map((v, i) => v + right.val[i])
-                : left.val.map((v, i) => v - right.val[i]);
+			left.val = (op === '+')
+				? left.val.map((v, i) => v + right.val[i])
+				: left.val.map((v, i) => v - right.val[i]);
 
-            steps.push({ from: prev, to: [...left.val], label: `${op} ${right.label}` });
-            left.tex   = `${left.tex} ${op} ${right.tex}`;
-            left.label = `${left.label}${op}${right.label}`;
-        }
-        return left;
-    }
+			steps.push({ from: prev, to: [...left.val], label: `${op} ${right.label}` });
+			left.tex   = `${left.tex} ${op} ${right.tex}`;
+			left.label = `${left.label}${op}${right.label}`;
+		}
+		return left;
+	}
 
-    const result = parseExpression();
-    return { result, steps };
+	const result = parseExpression();
+	return { result, steps };
 }
 
 function buildLowerCaseVocabMap(space, vocabKeys) {
-    return vocabKeys.reduce((acc, word) => {
-        acc[word.toLowerCase()] = { vec: space[word], original: word };
-        return acc;
-    }, {});
+	return vocabKeys.reduce((acc, word) => {
+		acc[word.toLowerCase()] = { vec: space[word], original: word };
+		return acc;
+	}, {});
 }
 
 function isNumericLiteral(token, lowerVocab) {
