@@ -1805,9 +1805,9 @@ function buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming) {
 }
 
 function buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts, naming) {
-    const { sup, hInName, hOutName, hInStage } = naming;
+	const { sup, hInName, hOutName, hInStage } = naming;
 
-    return `
+	return `
     <div style="margin-bottom:15px;">
     <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O{${sup}}$ mixes head outputs:</p>
     $$ \\text{MHA}_{\\text{proj}}${sup} = \\text{Concat}(\\text{Heads}) \\cdot W^O{${sup}} $$
@@ -1836,121 +1836,121 @@ function renderAttentionDetails() {
 }
 
 function renderTrajectoryPlot(d_model) {
-    if (!window.tlab_trajectory_collector) return;
+	if (!window.tlab_trajectory_collector) return;
 
-    const containerId = 'transformer-trajectory-full-path';
-    const wrapperId   = containerId + '-wrapper';
-    let trajDiv  = document.getElementById(containerId);
-    let wrapper  = document.getElementById(wrapperId);
+	const containerId = 'transformer-trajectory-full-path';
+	const wrapperId   = containerId + '-wrapper';
+	let trajDiv  = document.getElementById(containerId);
+	let wrapper  = document.getElementById(wrapperId);
 
-    const targetHeight = getTrajectoryPlotHeight(d_model);
+	const targetHeight = getTrajectoryPlotHeight(d_model);
 
-    if (!trajDiv) {
-        // ── Build wrapper (houses toggle + plot) ──
-        wrapper = document.createElement('div');
-        wrapper.id = wrapperId;
-        wrapper.style.cssText =
-            'border:2px solid rgb(203,213,225); border-radius:12px; margin-top:10px; background:#f8fafc;';
-        wrapper.setAttribute('data-d-model', d_model);
+	if (!trajDiv) {
+		// ── Build wrapper (houses toggle + plot) ──
+		wrapper = document.createElement('div');
+		wrapper.id = wrapperId;
+		wrapper.style.cssText =
+			'border:2px solid rgb(203,213,225); border-radius:12px; margin-top:10px; background:#f8fafc;';
+		wrapper.setAttribute('data-d-model', d_model);
 
-        if (d_model <= 3) {
-            wrapper.appendChild(createTrajectoryVFToggleButton());
-        }
+		if (d_model <= 3) {
+			wrapper.appendChild(createTrajectoryVFToggleButton());
+		}
 
-        trajDiv = document.createElement('div');
-        trajDiv.id = containerId;
-        trajDiv.style.cssText =
-            `width:100%; height:${targetHeight}px; min-height:${targetHeight}px;` +
-            `display:flex; align-items:center; justify-content:center;`;
-        trajDiv.setAttribute('data-d-model', d_model);
+		trajDiv = document.createElement('div');
+		trajDiv.id = containerId;
+		trajDiv.style.cssText =
+			`width:100%; height:${targetHeight}px; min-height:${targetHeight}px;` +
+			`display:flex; align-items:center; justify-content:center;`;
+		trajDiv.setAttribute('data-d-model', d_model);
 
-        wrapper.appendChild(trajDiv);
-        document.getElementById('transformer-migration-plots-container').appendChild(wrapper);
-    } else {
-        const prevDModel = parseInt(trajDiv.getAttribute('data-d-model') || '0');
-        if (prevDModel !== d_model) {
-            trajDiv.setAttribute('data-d-model', d_model);
-            trajDiv.style.height    = targetHeight + 'px';
-            trajDiv.style.minHeight = targetHeight + 'px';
+		wrapper.appendChild(trajDiv);
+		document.getElementById('transformer-migration-plots-container').appendChild(wrapper);
+	} else {
+		const prevDModel = parseInt(trajDiv.getAttribute('data-d-model') || '0');
+		if (prevDModel !== d_model) {
+			trajDiv.setAttribute('data-d-model', d_model);
+			trajDiv.style.height    = targetHeight + 'px';
+			trajDiv.style.minHeight = targetHeight + 'px';
 
-            if (wrapper) {
-                wrapper.setAttribute('data-d-model', d_model);
-                const existingBtn = wrapper.querySelector('.trajectory-vf-toggle');
-                if (d_model <= 3 && !existingBtn) {
-                    wrapper.insertBefore(createTrajectoryVFToggleButton(), trajDiv);
-                } else if (d_model > 3 && existingBtn) {
-                    existingBtn.remove();
-                    window._trajectoryVfEnabled = false;
-                }
-            }
-        }
-    }
+			if (wrapper) {
+				wrapper.setAttribute('data-d-model', d_model);
+				const existingBtn = wrapper.querySelector('.trajectory-vf-toggle');
+				if (d_model <= 3 && !existingBtn) {
+					wrapper.insertBefore(createTrajectoryVFToggleButton(), trajDiv);
+				} else if (d_model > 3 && existingBtn) {
+					existingBtn.remove();
+					window._trajectoryVfEnabled = false;
+				}
+			}
+		}
+	}
 
-    registerLazyRenderable(
-        containerId,
-        trajectoryRenderRegistry,
-        trajectoryObserver,
-        { d_model },
-        () => tlab_render_trajectory_plot(d_model),
-        `<div class="traj-loading-placeholder" style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
-            Rendering the Token Trajectory Plot may take a while
-        </div>`
-    );
+	registerLazyRenderable(
+		containerId,
+		trajectoryRenderRegistry,
+		trajectoryObserver,
+		{ d_model },
+		() => tlab_render_trajectory_plot(d_model),
+		`<div class="traj-loading-placeholder" style="color:#94a3b8; font-size:0.95rem; padding:20px; text-align:center;">
+	    Rendering the Token Trajectory Plot may take a while
+	</div>`
+	);
 }
 
 function pruneOrphanedMigrationPlots() {
-    const globalContainer = document.getElementById('transformer-migration-plots-container');
-    if (!window._activeMigrationIds) return;
+	const globalContainer = document.getElementById('transformer-migration-plots-container');
+	if (!window._activeMigrationIds) return;
 
-    const activeIds = window._activeMigrationIds;
+	const activeIds = window._activeMigrationIds;
 
-    const keysToDelete = [];
-    transformerLabVisMigrationDataRegistry.forEach((val, key) => {
-        if (!activeIds.has(key)) {
-            keysToDelete.push(key);
-        }
-    });
-    keysToDelete.forEach(key => {
-        const orphanDiv = document.getElementById(key);
-        if (orphanDiv) {
-            const wrapper = orphanDiv.closest('[data-migration-wrapper]') || orphanDiv.parentNode;
-            if (wrapper && wrapper.parentNode) {
-                wrapper.remove();
-            }
-        }
+	const keysToDelete = [];
+	transformerLabVisMigrationDataRegistry.forEach((val, key) => {
+		if (!activeIds.has(key)) {
+			keysToDelete.push(key);
+		}
+	});
+	keysToDelete.forEach(key => {
+		const orphanDiv = document.getElementById(key);
+		if (orphanDiv) {
+			const wrapper = orphanDiv.closest('[data-migration-wrapper]') || orphanDiv.parentNode;
+			if (wrapper && wrapper.parentNode) {
+				wrapper.remove();
+			}
+		}
 
-        const latexDiv = document.getElementById(key + '-latex-debug');
-        if (latexDiv) latexDiv.remove();
+		const latexDiv = document.getElementById(key + '-latex-debug');
+		if (latexDiv) latexDiv.remove();
 
-        transformerLabVisMigrationDataRegistry.delete(key);
-    });
+		transformerLabVisMigrationDataRegistry.delete(key);
+	});
 }
 
 function run_and_visualize_network(inputTokens, trainingTokens, masterTokens) {
-    const config = getTransformerConfig();
-    const { d_model, n_heads, temperature, n_layers } = config;
+	const config = getTransformerConfig();
+	const { d_model, n_heads, temperature, n_layers } = config;
 
-    const vocabulary = [...new Set(trainingTokens)];
-    const knownTokens = getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary);
+	const vocabulary = [...new Set(trainingTokens)];
+	const knownTokens = getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary);
 
-    if (!validateModelDimensions(d_model, n_heads)) return;
+	if (!validateModelDimensions(d_model, n_heads)) return;
 
-    // 1. Reinitialize weights if config changed
-    const needsReinit = handleWeightReinit(d_model, n_heads, n_layers);
-    const weights = window.currentWeights;
+	// 1. Reinitialize weights if config changed
+	const needsReinit = handleWeightReinit(d_model, n_heads, n_layers);
+	const weights = window.currentWeights;
 
-    // 2. Pre-attention visualizations
-    const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
-    const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
+	// 2. Pre-attention visualizations
+	const h0 = renderPreAttentionVisualizations(knownTokens, trainingTokens, d_model, n_heads, n_layers, temperature);
+	const tokensWithPositional = embedTokensWithPE(knownTokens, d_model);
 
-    // 3. Prepare migration/trajectory state
-    prepareMigrationState(needsReinit);
+	// 3. Prepare migration/trajectory state
+	prepareMigrationState(needsReinit);
 
-    // 4. Core forward pass + visualization
-    renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
+	// 4. Core forward pass + visualization
+	renderForwardPassOrPlaceholder(tokensWithPositional, knownTokens, h0, weights, d_model, n_heads, n_layers);
 
-    // 5. Final probabilities — ALWAYS based on master-token-input
-    renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
+	// 5. Final probabilities — ALWAYS based on master-token-input
+	renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_heads, n_layers, temperature);
 }
 
 function getKnownTokensForVisualization(inputTokens, masterTokens, vocabulary) {
