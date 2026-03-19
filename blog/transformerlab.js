@@ -758,106 +758,106 @@ function appendSunburstFFN(data, layerId, lb, d_model, d_ff) {
 }
 
 function appendSunburstNorm(data, layerId, lb, d_model) {
-    const normId = `${layerId}-norm`;
+	const normId = `${layerId}-norm`;
 
-    data.ids.push(normId);
-    data.labels.push('LayerNorm');
-    data.parents.push(layerId);
-    data.values.push(lb.norm.total);
-    data.hoverTexts.push(`LayerNorm: ${lb.norm.total.toLocaleString()} params<br>γ + β (pre-attn & pre-FFN)`);
-    data.colors.push(data.normColor);
+	data.ids.push(normId);
+	data.labels.push('LayerNorm');
+	data.parents.push(layerId);
+	data.values.push(lb.norm.total);
+	data.hoverTexts.push(`LayerNorm: ${lb.norm.total.toLocaleString()} params<br>γ + β (pre-attn & pre-FFN)`);
+	data.colors.push(data.normColor);
 
-    appendSunburstLeaf(data, `${normId}-pre-attn`, 'Pre-Attn', normId, lb.norm.pre_attn,
-        `Pre-Attention Norm: ${lb.norm.pre_attn.toLocaleString()} params<br>γ (${d_model}) + β (${d_model})`, data.normColor);
+	appendSunburstLeaf(data, `${normId}-pre-attn`, 'Pre-Attn', normId, lb.norm.pre_attn,
+		`Pre-Attention Norm: ${lb.norm.pre_attn.toLocaleString()} params<br>γ (${d_model}) + β (${d_model})`, data.normColor);
 
-    appendSunburstLeaf(data, `${normId}-pre-ffn`, 'Pre-FFN', normId, lb.norm.pre_ffn,
-        `Pre-FFN Norm: ${lb.norm.pre_ffn.toLocaleString()} params<br>γ₂ (${d_model}) + β₂ (${d_model})`, data.normColor);
+	appendSunburstLeaf(data, `${normId}-pre-ffn`, 'Pre-FFN', normId, lb.norm.pre_ffn,
+		`Pre-FFN Norm: ${lb.norm.pre_ffn.toLocaleString()} params<br>γ₂ (${d_model}) + β₂ (${d_model})`, data.normColor);
 }
 
 function appendSunburstLeaf(data, id, label, parentId, value, hoverDesc, color) {
-    data.ids.push(id);
-    data.labels.push(label);
-    data.parents.push(parentId);
-    data.values.push(value);
-    data.hoverTexts.push(`${label}: ${value.toLocaleString()} params<br>${hoverDesc}`);
-    data.colors.push(color);
+	data.ids.push(id);
+	data.labels.push(label);
+	data.parents.push(parentId);
+	data.values.push(value);
+	data.hoverTexts.push(`${label}: ${value.toLocaleString()} params<br>${hoverDesc}`);
+	data.colors.push(color);
 }
 
 // ─── Plotly trace & layout construction ─────────────────────────────
 
 function buildSunburstTrace(data) {
-    return {
-        type: 'sunburst',
-        ids: data.ids,
-        labels: data.labels,
-        parents: data.parents,
-        values: data.values,
-        hovertext: data.hoverTexts,
-        hoverinfo: 'text',
-        branchvalues: 'total',
-        marker: { colors: data.colors, line: { width: 1, color: '#fff' } },
-        textinfo: 'label+percent parent',
-        insidetextorientation: 'radial',
-        maxdepth: 3
-    };
+	return {
+		type: 'sunburst',
+		ids: data.ids,
+		labels: data.labels,
+		parents: data.parents,
+		values: data.values,
+		hovertext: data.hoverTexts,
+		hoverinfo: 'text',
+		branchvalues: 'total',
+		marker: { colors: data.colors, line: { width: 1, color: '#fff' } },
+		textinfo: 'label+percent parent',
+		insidetextorientation: 'radial',
+		maxdepth: 3
+	};
 }
 
 function buildSunburstLayout() {
-    return {
-        title: { text: 'Parameter Distribution', font: { size: 14, color: '#1e293b' } },
-        margin: { t: 40, b: 10, l: 10, r: 10 }
-    };
+	return {
+		title: { text: 'Parameter Distribution', font: { size: 14, color: '#1e293b' } },
+		margin: { t: 40, b: 10, l: 10, r: 10 }
+	};
 }
 
 function renderParamTable(layerBreakdowns, embeddingParams, grandTotal) {
-    const tableDiv = document.getElementById('param-breakdown-table');
-    if (!tableDiv) return;
+	const tableDiv = document.getElementById('param-breakdown-table');
+	if (!tableDiv) return;
 
-    const fmt = (n) => n.toLocaleString();
-    const pct = (n) => ((n / grandTotal) * 100).toFixed(1);
+	const fmt = (n) => n.toLocaleString();
+	const pct = (n) => ((n / grandTotal) * 100).toFixed(1);
 
-    const { totalAttn, totalFFN, totalNorm } = aggregateLayerTotals(layerBreakdowns);
-    const d_model = inferDModelFromBreakdowns(layerBreakdowns);
-    const vocab = window.persistentEmbeddingSpace ? Object.keys(window.persistentEmbeddingSpace) : [];
+	const { totalAttn, totalFFN, totalNorm } = aggregateLayerTotals(layerBreakdowns);
+	const d_model = inferDModelFromBreakdowns(layerBreakdowns);
+	const vocab = window.persistentEmbeddingSpace ? Object.keys(window.persistentEmbeddingSpace) : [];
 
-    let html = buildParamTableHeader();
-    html += buildEmbeddingRow(embeddingParams, vocab.length, d_model, fmt, pct);
-    html += buildAllLayerRows(layerBreakdowns, fmt, pct);
-    html += buildTotalRow(grandTotal, totalAttn, totalFFN, fmt, pct);
-    html += `</tbody></table>`;
+	let html = buildParamTableHeader();
+	html += buildEmbeddingRow(embeddingParams, vocab.length, d_model, fmt, pct);
+	html += buildAllLayerRows(layerBreakdowns, fmt, pct);
+	html += buildTotalRow(grandTotal, totalAttn, totalFFN, fmt, pct);
+	html += `</tbody></table>`;
 
-    tableDiv.innerHTML = html;
+	tableDiv.innerHTML = html;
 }
 
 function aggregateLayerTotals(layerBreakdowns) {
-    let totalAttn = 0, totalFFN = 0, totalNorm = 0;
-    layerBreakdowns.forEach(lb => {
-        totalAttn += lb.attention.total;
-        totalFFN += lb.ffn.total;
-        totalNorm += lb.norm.total;
-    });
-    return { totalAttn, totalFFN, totalNorm };
+	let totalAttn = 0, totalFFN = 0, totalNorm = 0;
+	layerBreakdowns.forEach(lb => {
+		totalAttn += lb.attention.total;
+		totalFFN += lb.ffn.total;
+		totalNorm += lb.norm.total;
+	});
+	return { totalAttn, totalFFN, totalNorm };
 }
 
 function inferDModelFromBreakdowns(layerBreakdowns) {
-    return layerBreakdowns.length > 0 ? (layerBreakdowns[0].norm.pre_attn / 2) : 0;
+	return layerBreakdowns.length > 0 ? (layerBreakdowns[0].norm.pre_attn / 2) : 0;
 }
 
 function buildParamTableHeader() {
-    return `<table style="width:100%; border-collapse:collapse; font-family:'Inter',sans-serif; font-size:0.8rem;">
+	return `<table style="width:100%; border-collapse:collapse; font-family:'Inter',sans-serif; font-size:0.8rem;">
     <thead>
     <tr style="background:#f1f5f9; border-bottom:2px solid #cbd5e1;">
-        <th style="padding:6px 10px; text-align:left;">Component</th>
-        <th style="padding:6px 10px; text-align:right;">Parameters</th>
-        <th style="padding:6px 10px; text-align:right;">% of Total</th>
-        <th style="padding:6px 10px; text-align:left;">Shape</th>
+	<th style="padding:6px 10px; text-align:left;">Component</th>
+	<th style="padding:6px 10px; text-align:right;">Parameters</th>
+	<th style="padding:6px 10px; text-align:right;">% of Total</th>
+	<th style="padding:6px 10px; text-align:left;">Shape</th>
     </tr>
     </thead>
     <tbody>`;
 }
 
 function buildEmbeddingRow(embeddingParams, vocabSize, d_model, fmt, pct) {
-    return `<tr style="background:#eef2ff; border-bottom:1px solid #e2e8f0;">
+	return `<tr style="background:#eef2ff; border-bottom:1px solid #e2e8f0;">
     <td style="padding:6px 10px; font-weight:600; color:#6366f1;">Embeddings</td>
     <td style="padding:6px 10px; text-align:right; font-weight:600;">${fmt(embeddingParams)}</td>
     <td style="padding:6px 10px; text-align:right;">${pct(embeddingParams)}%</td>
@@ -866,38 +866,38 @@ function buildEmbeddingRow(embeddingParams, vocabSize, d_model, fmt, pct) {
 }
 
 function buildAllLayerRows(layerBreakdowns, fmt, pct) {
-    return layerBreakdowns.map(lb => buildSingleLayerRows(lb, fmt, pct)).join('');
+	return layerBreakdowns.map(lb => buildSingleLayerRows(lb, fmt, pct)).join('');
 }
 
 function buildSingleLayerRows(lb, fmt, pct) {
-    let html = `<tr style="background:#f8fafc; border-bottom:1px solid #f1f5f9;">
-        <td style="padding:6px 10px; font-weight:600;" colspan="4">Layer ${lb.layer} — ${fmt(lb.total)} params (${pct(lb.total)}%)</td>
+	let html = `<tr style="background:#f8fafc; border-bottom:1px solid #f1f5f9;">
+	<td style="padding:6px 10px; font-weight:600;" colspan="4">Layer ${lb.layer} — ${fmt(lb.total)} params (${pct(lb.total)}%)</td>
     </tr>`;
 
-    html += buildLayerSubRow('Attention (Q+K+V+O)', '#3b82f6', lb.attention.total, '4 × (d×d)', fmt, pct);
-    html += buildLayerSubRow('FFN (W₁+b₁+W₂+b₂)', '#f59e0b', lb.ffn.total, 'd×4d + 4d + 4d×d + d', fmt, pct);
-    html += buildLayerSubRow('LayerNorm (γ+β ×2)', '#10b981', lb.norm.total, '4 × d', fmt, pct, 'border-bottom:1px solid #e2e8f0;');
+	html += buildLayerSubRow('Attention (Q+K+V+O)', '#3b82f6', lb.attention.total, '4 × (d×d)', fmt, pct);
+	html += buildLayerSubRow('FFN (W₁+b₁+W₂+b₂)', '#f59e0b', lb.ffn.total, 'd×4d + 4d + 4d×d + d', fmt, pct);
+	html += buildLayerSubRow('LayerNorm (γ+β ×2)', '#10b981', lb.norm.total, '4 × d', fmt, pct, 'border-bottom:1px solid #e2e8f0;');
 
-    return html;
+	return html;
 }
 
 function buildLayerSubRow(label, color, total, shape, fmt, pct, extraStyle = 'border-bottom:1px solid #f1f5f9;') {
-    return `<tr style="${extraStyle}">
-        <td style="padding:4px 10px 4px 30px; color:${color};">${label}</td>
-        <td style="padding:4px 10px; text-align:right;">${fmt(total)}</td>
-        <td style="padding:4px 10px; text-align:right;">${pct(total)}%</td>
-        <td style="padding:4px 10px; color:#64748b;">${shape}</td>
+	return `<tr style="${extraStyle}">
+	<td style="padding:4px 10px 4px 30px; color:${color};">${label}</td>
+	<td style="padding:4px 10px; text-align:right;">${fmt(total)}</td>
+	<td style="padding:4px 10px; text-align:right;">${pct(total)}%</td>
+	<td style="padding:4px 10px; color:#64748b;">${shape}</td>
     </tr>`;
 }
 
 function buildTotalRow(grandTotal, totalAttn, totalFFN, fmt, pct) {
-    const attnVsFFN = totalAttn > 0 ? (totalFFN / totalAttn).toFixed(1) : '—';
-    return `<tr style="background:#f0fdf4; border-top:2px solid #10b981; font-weight:700;">
+	const attnVsFFN = totalAttn > 0 ? (totalFFN / totalAttn).toFixed(1) : '—';
+	return `<tr style="background:#f0fdf4; border-top:2px solid #10b981; font-weight:700;">
     <td style="padding:8px 10px;">Total</td>
     <td style="padding:8px 10px; text-align:right;">${fmt(grandTotal)}</td>
     <td style="padding:8px 10px; text-align:right;">100%</td>
     <td style="padding:8px 10px; color:#064e3b; font-weight:normal; font-size:0.75rem;">
-        FFN is ${attnVsFFN}× the size of Attention
+	FFN is ${attnVsFFN}× the size of Attention
     </td>
     </tr>`;
 }
