@@ -3854,19 +3854,19 @@ function renderMigrationHighDim(id, plotDiv, tokens, start_h, end_h, layerNum, d
 }
 
 function syncVFToggleButtonState(id, plotDiv, vfEnabled) {
-    const wrapper = plotDiv.closest('[data-migration-wrapper]');
-    const toggleBtn = wrapper ? wrapper.querySelector('.migration-vf-toggle') : null;
-    if (!toggleBtn) return;
+	const wrapper = plotDiv.closest('[data-migration-wrapper]');
+	const toggleBtn = wrapper ? wrapper.querySelector('.migration-vf-toggle') : null;
+	if (!toggleBtn) return;
 
-    if (vfEnabled) {
-        toggleBtn.dataset.mode = 'on';
-        toggleBtn.textContent = '🧭 Hide Vector Field';
-        toggleBtn.style.background = '#dbeafe';
-    } else {
-        toggleBtn.dataset.mode = 'off';
-        toggleBtn.textContent = '🧭 Show Vector Field';
-        toggleBtn.style.background = '#fff';
-    }
+	if (vfEnabled) {
+		toggleBtn.dataset.mode = 'on';
+		toggleBtn.textContent = '🧭 Hide Vector Field';
+		toggleBtn.style.background = '#dbeafe';
+	} else {
+		toggleBtn.dataset.mode = 'off';
+		toggleBtn.textContent = '🧭 Show Vector Field';
+		toggleBtn.style.background = '#fff';
+	}
 }
 
 function _compute_vector_field_points_2d(migrationId, layerNum, d_model, n_heads) {
@@ -3937,111 +3937,111 @@ function _compute_vector_field_points_2d(migrationId, layerNum, d_model, n_heads
 }
 
 function _compute_vector_field_points_3d(migrationId, layerNum, d_model, n_heads) {
-    const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
-    if (!regData) return null;
+	const regData = transformerLabVisMigrationDataRegistry.get(migrationId);
+	if (!regData) return null;
 
-    const realContext = regData.start_h;
-    const seqLen = realContext.length;
-    const substitutePos = seqLen - 1;
+	const realContext = regData.start_h;
+	const seqLen = realContext.length;
+	const substitutePos = seqLen - 1;
 
-    const bounds = _vf3d_overlay_compute_bounds_from_context_and_embeddings(realContext);
-    const gridRes = 6;
-    const layerWeights = window.currentWeights[layerNum - 1];
+	const bounds = _vf3d_overlay_compute_bounds_from_context_and_embeddings(realContext);
+	const gridRes = 6;
+	const layerWeights = window.currentWeights[layerNum - 1];
 
-    const { points, maxMag } = _vf3d_sample_grid_with_context(
-        bounds, gridRes, layerWeights, d_model, n_heads, realContext, substitutePos
-    );
+	const { points, maxMag } = _vf3d_sample_grid_with_context(
+		bounds, gridRes, layerWeights, d_model, n_heads, realContext, substitutePos
+	);
 
-    const maxArrowLen = _vf3d_compute_max_arrow_length(bounds, gridRes);
+	const maxArrowLen = _vf3d_compute_max_arrow_length(bounds, gridRes);
 
-    return { points, maxMag, maxArrowLen, seqLen, substitutePos };
+	return { points, maxMag, maxArrowLen, seqLen, substitutePos };
 }
 
 function _vf3d_overlay_compute_bounds_from_context_and_embeddings(realContext) {
-    const allVecs = Object.values(window.persistentEmbeddingSpace);
-    let xMin = Infinity, xMax = -Infinity;
-    let yMin = Infinity, yMax = -Infinity;
-    let zMin = Infinity, zMax = -Infinity;
+	const allVecs = Object.values(window.persistentEmbeddingSpace);
+	let xMin = Infinity, xMax = -Infinity;
+	let yMin = Infinity, yMax = -Infinity;
+	let zMin = Infinity, zMax = -Infinity;
 
-    const updateBounds = (v) => {
-        if (v[0] < xMin) xMin = v[0];
-        if (v[0] > xMax) xMax = v[0];
-        if (v.length > 1) {
-            if (v[1] < yMin) yMin = v[1];
-            if (v[1] > yMax) yMax = v[1];
-        }
-        if (v.length > 2) {
-            if (v[2] < zMin) zMin = v[2];
-            if (v[2] > zMax) zMax = v[2];
-        }
-    };
+	const updateBounds = (v) => {
+		if (v[0] < xMin) xMin = v[0];
+		if (v[0] > xMax) xMax = v[0];
+		if (v.length > 1) {
+			if (v[1] < yMin) yMin = v[1];
+			if (v[1] > yMax) yMax = v[1];
+		}
+		if (v.length > 2) {
+			if (v[2] < zMin) zMin = v[2];
+			if (v[2] > zMax) zMax = v[2];
+		}
+	};
 
-    allVecs.forEach(updateBounds);
-    realContext.forEach(updateBounds);
+	allVecs.forEach(updateBounds);
+	realContext.forEach(updateBounds);
 
-    if (xMin === xMax) { xMin -= 1; xMax += 1; }
-    if (yMin === yMax) { yMin -= 1; yMax += 1; }
-    if (zMin === zMax) { zMin -= 1; zMax += 1; }
+	if (xMin === xMax) { xMin -= 1; xMax += 1; }
+	if (yMin === yMax) { yMin -= 1; yMax += 1; }
+	if (zMin === zMax) { zMin -= 1; zMax += 1; }
 
-    const pad = 2;
-    return {
-        xMin: xMin - pad, xMax: xMax + pad,
-        yMin: yMin - pad, yMax: yMax + pad,
-        zMin: zMin - pad, zMax: zMax + pad
-    };
+	const pad = 2;
+	return {
+		xMin: xMin - pad, xMax: xMax + pad,
+		yMin: yMin - pad, yMax: yMax + pad,
+		zMin: zMin - pad, zMax: zMax + pad
+	};
 }
 
 function _vf3d_sample_grid_with_context(bounds, gridRes, layerWeights, d_model, n_heads, realContext, substitutePos) {
-    const { xMin, xMax, yMin, yMax, zMin, zMax } = bounds;
-    const points = [];
-    let maxMag = 0;
+	const { xMin, xMax, yMin, yMax, zMin, zMax } = bounds;
+	const points = [];
+	let maxMag = 0;
 
-    for (let i = 0; i <= gridRes; i++) {
-        for (let j = 0; j <= gridRes; j++) {
-            for (let k = 0; k <= gridRes; k++) {
-                const x = xMin + (xMax - xMin) * (i / gridRes);
-                const y = yMin + (yMax - yMin) * (j / gridRes);
-                const z = zMin + (zMax - zMin) * (k / gridRes);
+	for (let i = 0; i <= gridRes; i++) {
+		for (let j = 0; j <= gridRes; j++) {
+			for (let k = 0; k <= gridRes; k++) {
+				const x = xMin + (xMax - xMin) * (i / gridRes);
+				const y = yMin + (yMax - yMin) * (j / gridRes);
+				const z = zMin + (zMax - zMin) * (k / gridRes);
 
-                const result = _vf3d_evaluate_single_point(
-                    x, y, z, realContext, substitutePos, layerWeights, d_model, n_heads
-                );
+				const result = _vf3d_evaluate_single_point(
+					x, y, z, realContext, substitutePos, layerWeights, d_model, n_heads
+				);
 
-                points.push(result);
-                if (result.mag > maxMag) maxMag = result.mag;
-            }
-        }
-    }
+				points.push(result);
+				if (result.mag > maxMag) maxMag = result.mag;
+			}
+		}
+	}
 
-    if (maxMag < 1e-8) maxMag = 1e-8;
-    return { points, maxMag };
+	if (maxMag < 1e-8) maxMag = 1e-8;
+	return { points, maxMag };
 }
 
 function _vf3d_evaluate_single_point(x, y, z, realContext, substitutePos, layerWeights, d_model, n_heads) {
-    const modifiedContext = _vf_substitute_context_3d(realContext, substitutePos, x, y, z);
-    const result = forwardOneLayer(modifiedContext, layerWeights, d_model, n_heads, null, null, null);
-    const h_out = result.h_out[substitutePos];
+	const modifiedContext = _vf_substitute_context_3d(realContext, substitutePos, x, y, z);
+	const result = forwardOneLayer(modifiedContext, layerWeights, d_model, n_heads, null, null, null);
+	const h_out = result.h_out[substitutePos];
 
-    const dx = h_out[0] - x;
-    const dy = h_out[1] - y;
-    const dz = h_out[2] - z;
-    const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+	const dx = h_out[0] - x;
+	const dy = h_out[1] - y;
+	const dz = h_out[2] - z;
+	const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-    return { x, y, z, dx, dy, dz, mag };
+	return { x, y, z, dx, dy, dz, mag };
 }
 
 function _vf3d_compute_max_arrow_length(bounds, gridRes) {
-    const cellX = (bounds.xMax - bounds.xMin) / gridRes;
-    const cellY = (bounds.yMax - bounds.yMin) / gridRes;
-    const cellZ = (bounds.zMax - bounds.zMin) / gridRes;
-    return Math.min(cellX, cellY, cellZ) * 1.1;
+	const cellX = (bounds.xMax - bounds.xMin) / gridRes;
+	const cellY = (bounds.yMax - bounds.yMin) / gridRes;
+	const cellZ = (bounds.zMax - bounds.zMin) / gridRes;
+	return Math.min(cellX, cellY, cellZ) * 1.1;
 }
 
 function _vf_substitute_context_3d(realContext, substitutePos, x, y, z) {
-    return realContext.map((row, idx) => {
-        if (idx === substitutePos) return [x, y, z];
-        return [...row];
-    });
+	return realContext.map((row, idx) => {
+		if (idx === substitutePos) return [x, y, z];
+		return [...row];
+	});
 }
 
 // ─── Helper: Snapshot embedding space and build vocabulary lookup ───
@@ -4085,183 +4085,183 @@ function _traj_get_logit_word(hVec, embSnap, snapVocab) {
 
 // ─── Helper: Build 2D embedding landmark trace ───
 function _traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB) {
-    const xs = [], ys = [], texts = [];
-    for (const word of snapVocab) {
-        const v = embSnap[word];
-        xs.push(v[dimA] || 0);
-        ys.push(v[dimB] || 0);
-        texts.push(displayToken(word));
-    }
-    return {
-        type: 'scatter',
-        x: xs, y: ys,
-        mode: 'markers+text',
-        text: texts,
-        textposition: 'top center',
-        textfont: { size: 10, color: '#475569' },
-        marker: {
-            size: 8,
-            symbol: 'diamond',
-            color: 'rgba(100, 116, 139, 0.7)',
-            line: { width: 1, color: '#334155' }
-        },
-        name: 'Vocab Embeddings',
-        legendgroup: 'vocab_emb',
-        showlegend: true,
-        hoverinfo: 'text',
-        hovertemplate: '<b>Embedding: %{text}</b><extra></extra>'
-    };
+	const xs = [], ys = [], texts = [];
+	for (const word of snapVocab) {
+		const v = embSnap[word];
+		xs.push(v[dimA] || 0);
+		ys.push(v[dimB] || 0);
+		texts.push(displayToken(word));
+	}
+	return {
+		type: 'scatter',
+		x: xs, y: ys,
+		mode: 'markers+text',
+		text: texts,
+		textposition: 'top center',
+		textfont: { size: 10, color: '#475569' },
+		marker: {
+			size: 8,
+			symbol: 'diamond',
+			color: 'rgba(100, 116, 139, 0.7)',
+			line: { width: 1, color: '#334155' }
+		},
+		name: 'Vocab Embeddings',
+		legendgroup: 'vocab_emb',
+		showlegend: true,
+		hoverinfo: 'text',
+		hovertemplate: '<b>Embedding: %{text}</b><extra></extra>'
+	};
 }
 
 // ─── 1. Generate all unique dimension pairs ───
 function _traj_generate_dimension_pairs(d_model) {
-    const pairs = [];
-    for (let i = 0; i < d_model; i++) {
-        for (let j = i + 1; j < d_model; j++) {
-            pairs.push([i, j]);
-        }
-    }
-    return pairs;
+	const pairs = [];
+	for (let i = 0; i < d_model; i++) {
+		for (let j = i + 1; j < d_model; j++) {
+			pairs.push([i, j]);
+		}
+	}
+	return pairs;
 }
 
 // ─── 2. Ensure the heading element exists and update its text ───
 function _traj_ensure_heading(trajDiv, pairCount) {
-    let heading = trajDiv.querySelector('[data-traj-heading]');
-    if (!heading) {
-        heading = document.createElement('div');
-        heading.setAttribute('data-traj-heading', 'true');
-        heading.style.cssText = "text-align:center; padding:15px 10px 5px; font-size:1rem; color:#1e40af; width:100%;";
-        trajDiv.prepend(heading);  // Use prepend to ensure it's ABOVE the grid
-    }
-    heading.innerHTML = `<b>Token Trajectory — 2D Projections (${pairCount} dimension pairs)</b>`;
-    return heading;
+	let heading = trajDiv.querySelector('[data-traj-heading]');
+	if (!heading) {
+		heading = document.createElement('div');
+		heading.setAttribute('data-traj-heading', 'true');
+		heading.style.cssText = "text-align:center; padding:15px 10px 5px; font-size:1rem; color:#1e40af; width:100%;";
+		trajDiv.prepend(heading);  // Use prepend to ensure it's ABOVE the grid
+	}
+	heading.innerHTML = `<b>Token Trajectory — 2D Projections (${pairCount} dimension pairs)</b>`;
+	return heading;
 }
 
 // ─── 3. Ensure the grid container exists ───
 function _traj_ensure_grid(trajDiv) {
-    let grid = trajDiv.querySelector('[data-traj-grid]');
-    if (!grid) {
-        grid = document.createElement('div');
-        grid.setAttribute('data-traj-grid', 'true');
-        grid.style.cssText = "display:grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap:15px; padding:10px;";
-        trajDiv.appendChild(grid);
-    }
-    return grid;
+	let grid = trajDiv.querySelector('[data-traj-grid]');
+	if (!grid) {
+		grid = document.createElement('div');
+		grid.setAttribute('data-traj-grid', 'true');
+		grid.style.cssText = "display:grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap:15px; padding:10px;";
+		trajDiv.appendChild(grid);
+	}
+	return grid;
 }
 
 // ─── 4. Ensure a slice plot div exists for a given dimension pair ───
 function _traj_ensure_slice_div(grid, dimA, dimB) {
-    const plotId = `traj-slice-${dimA}-${dimB}`;
-    let sliceDiv = document.getElementById(plotId);
-    if (!sliceDiv) {
-        sliceDiv = document.createElement('div');
-        sliceDiv.id = plotId;
-        sliceDiv.style.cssText = "height:400px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;";
-        grid.appendChild(sliceDiv);
-    }
-    return plotId;
+	const plotId = `traj-slice-${dimA}-${dimB}`;
+	let sliceDiv = document.getElementById(plotId);
+	if (!sliceDiv) {
+		sliceDiv = document.createElement('div');
+		sliceDiv.id = plotId;
+		sliceDiv.style.cssText = "height:400px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;";
+		grid.appendChild(sliceDiv);
+	}
+	return plotId;
 }
 
 // ─── 5. Build hover text array for a single token across all stages ───
 function _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab) {
-    return dataPoints.map((p, pIdx) => {
-        const logitWord = _traj_get_logit_word(p.data[tIdx], embSnap, snapVocab);
-        const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
-        const toStage = p.name;
-        return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
-            `From: ${fromStage}<br>` +
-            `To: ${toStage}<br>` +
-            `Nearest logit: <b>${logitWord}</b>`;
-    });
+	return dataPoints.map((p, pIdx) => {
+		const logitWord = _traj_get_logit_word(p.data[tIdx], embSnap, snapVocab);
+		const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
+		const toStage = p.name;
+		return `Token: ${labels[tIdx]} (pos ${tIdx + 1})<br>` +
+			`From: ${fromStage}<br>` +
+			`To: ${toStage}<br>` +
+			`Nearest logit: <b>${logitWord}</b>`;
+	});
 }
 
 // ─── 6. Build the main trajectory line trace for one token in a 2D slice ───
 function _traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts) {
-    return {
-        type: 'scatter',
-        x: x, y: y,
-        mode: 'lines+markers',
-        name: tokenLabel,
-        legendgroup: tokenLabel,
-        line: { width: 2, color: tColor },
-        marker: {
-            size: x.map((_, i) => i === 0 ? 0 : 10),
-            symbol: 'arrow',
-            angleref: 'previous',
-            color: tColor
-        },
-        hoverinfo: 'text',
-        hovertemplate: '%{text}<extra></extra>',
-        text: hoverTexts,
-        showlegend: true
-    };
+	return {
+		type: 'scatter',
+		x: x, y: y,
+		mode: 'lines+markers',
+		name: tokenLabel,
+		legendgroup: tokenLabel,
+		line: { width: 2, color: tColor },
+		marker: {
+			size: x.map((_, i) => i === 0 ? 0 : 10),
+			symbol: 'arrow',
+			angleref: 'previous',
+			color: tColor
+		},
+		hoverinfo: 'text',
+		hovertemplate: '%{text}<extra></extra>',
+		text: hoverTexts,
+		showlegend: true
+	};
 }
 
 function _traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, isStart) {
-    const pIdx = isStart ? 0 : dataPoints.length - 1;
-    const logitWord = _traj_get_logit_word(dataPoints[pIdx].data[tIdx], embSnap, snapVocab);
-    const label = isStart ? 'Start' : 'End';
-    return {
-        type: 'scatter',
-        x: [isStart ? x[0] : x[x.length - 1]],
-        y: [isStart ? y[0] : y[y.length - 1]],
-        mode: 'markers',
-        marker: {
-            size: isStart ? 10 : 14,
-            symbol: isStart ? 0 : 17,
-            color: tColor,
-            line: { width: isStart ? 2 : 1.5, color: '#000' }
-        },
-        legendgroup: tokenLabel,
-        showlegend: false,
-        hoverinfo: 'text',
-        hovertemplate: '%{text}<extra></extra>',
-        text: [`Token: ${labels[tIdx]} — ${label}<br>Stage: ${dataPoints[pIdx].name}<br>Nearest logit: <b>${logitWord}</b>`]
-    };
+	const pIdx = isStart ? 0 : dataPoints.length - 1;
+	const logitWord = _traj_get_logit_word(dataPoints[pIdx].data[tIdx], embSnap, snapVocab);
+	const label = isStart ? 'Start' : 'End';
+	return {
+		type: 'scatter',
+		x: [isStart ? x[0] : x[x.length - 1]],
+		y: [isStart ? y[0] : y[y.length - 1]],
+		mode: 'markers',
+		marker: {
+			size: isStart ? 10 : 14,
+			symbol: isStart ? 0 : 17,
+			color: tColor,
+			line: { width: isStart ? 2 : 1.5, color: '#000' }
+		},
+		legendgroup: tokenLabel,
+		showlegend: false,
+		hoverinfo: 'text',
+		hovertemplate: '%{text}<extra></extra>',
+		text: [`Token: ${labels[tIdx]} — ${label}<br>Stage: ${dataPoints[pIdx].name}<br>Nearest logit: <b>${logitWord}</b>`]
+	};
 }
 
 // ─── 9. Build stage-label annotations (only for the first token) ───
 function _traj_build_stage_annotations(x, y, dataPoints) {
-    return dataPoints.map((p, pIdx) => ({
-        x: x[pIdx], y: y[pIdx],
-        xref: 'x', yref: 'y',
-        text: p.name,
-        showarrow: false,
-        font: { size: 8, color: '#64748b' },
-        yshift: 12
-    }));
+	return dataPoints.map((p, pIdx) => ({
+		x: x[pIdx], y: y[pIdx],
+		xref: 'x', yref: 'y',
+		text: p.name,
+		showarrow: false,
+		font: { size: 8, color: '#64748b' },
+		yshift: 12
+	}));
 }
 
 // ─── 10. Collect all traces and annotations for a single dimension-pair slice ───
 function _traj_build_slice_traces(tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab) {
-    const traces = [];
-    const annotations = [];
+	const traces = [];
+	const annotations = [];
 
-    // Embedding landmark points
-    traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB));
+	// Embedding landmark points
+	traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB));
 
-    tokens.forEach((token, tIdx) => {
-        const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
-        if (!hasDataInAllSteps) return;
+	tokens.forEach((token, tIdx) => {
+		const hasDataInAllSteps = dataPoints.every(p => p.data && p.data[tIdx]);
+		if (!hasDataInAllSteps) return;
 
-        const x = dataPoints.map(p => p.data[tIdx][dimA]);
-        const y = dataPoints.map(p => p.data[tIdx][dimB]);
-        const tColor = getPositionColor(tIdx, tokens.length);
-        const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+		const x = dataPoints.map(p => p.data[tIdx][dimA]);
+		const y = dataPoints.map(p => p.data[tIdx][dimB]);
+		const tColor = getPositionColor(tIdx, tokens.length);
+		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
 
-        const hoverTexts = _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab);
+		const hoverTexts = _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab);
 
-        traces.push(_traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts));
-        traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 1));
-        traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 0));
+		traces.push(_traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts));
+		traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 1));
+		traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 0));
 
-        // Stage annotations only for the first token to avoid clutter
-        if (tIdx === 0) {
-            annotations.push(..._traj_build_stage_annotations(x, y, dataPoints));
-        }
-    });
+		// Stage annotations only for the first token to avoid clutter
+		if (tIdx === 0) {
+			annotations.push(..._traj_build_stage_annotations(x, y, dataPoints));
+		}
+	});
 
-    return { traces, annotations };
+	return { traces, annotations };
 }
 
 // ─── 11. Build the Plotly layout for a single dimension-pair slice ───
