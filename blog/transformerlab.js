@@ -2568,13 +2568,18 @@ function tokenizeText(text, type) {
 	if (type === 'bpe') {
 		const words = text.match(/\S+|\s+/g) || [];
 		return words.flatMap(word => {
+			// Don't sub-split whitespace tokens
+			if (/^\s+$/.test(word)) {
+				return word;  // keep each space run as one token
+			}
 			if (word.length > 4) {
 				return word.match(/.{1,3}/g);
 			}
 			return word;
 		});
 	}
-	return text.match(/[\w]+|[^\w\s]/g) || [];
+	// Regex tokenizer: now also captures whitespace runs
+	return text.match(/[\w]+|[^\w\s]|\s+/g) || [];
 }
 
 function renderTokenChips(container, tokens) {
@@ -2584,7 +2589,7 @@ function renderTokenChips(container, tokens) {
 
 	tokens.forEach((t, i) => {
 		const c = tokenColor(t);
-		const displayToken = (t === ' ') ? '␣' : t;
+		const displayToken = /^\s+$/.test(t) ? t.replace(/ /g, '␣') : t;
 
 		const badge = document.createElement('div');
 		badge.className = 'token-badge token-enter';
