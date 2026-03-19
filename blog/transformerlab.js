@@ -1776,21 +1776,21 @@ function runVisualizedLayer0(h0, tokensWithPositional, knownTokens, weights, d_m
 }
 
 function _h1NamingForLayer(layerIndex) {
-    const L = layerIndex + 1;
-    const sup = `^{(${L})}`;
-    const base = layerIndex * 2;
-    const hInName = `h_{${base}}`;
-    const hOutName = `h_{${base + 1}}`;
-    const hInStage = layerIndex === 0
-        ? 'embedding + PE'
-        : `out layer ${layerIndex}`;
-    return { L, sup, hInName, hOutName, hInStage };
+	const L = layerIndex + 1;
+	const sup = `^{(${L})}`;
+	const base = layerIndex * 2;
+	const hInName = `h_{${base}}`;
+	const hOutName = `h_{${base + 1}}`;
+	const hInStage = layerIndex === 0
+		? 'embedding + PE'
+		: `out layer ${layerIndex}`;
+	return { L, sup, hInName, hOutName, hInStage };
 }
 
 function buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming) {
-    const { sup, hInName, hInStage } = naming;
+	const { sup, hInName, hInStage } = naming;
 
-    return `
+	return `
     <p style="font-weight:bold; color:#065f46;">Pre-Layer Normalization (applied <em>before</em> the sublayer)</p>
 
     <div style="margin-bottom:15px;">
