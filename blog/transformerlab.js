@@ -4266,141 +4266,141 @@ function _traj_build_slice_traces(tokens, labels, dataPoints, dimA, dimB, embSna
 
 // ─── 11. Build the Plotly layout for a single dimension-pair slice ───
 function _traj_build_slice_layout(dimA, dimB, annotations) {
-    return {
-        title: { text: `Dim ${dimA} × Dim ${dimB}`, font: { size: 13 } },
-        xaxis: { title: `Dim ${dimA}`, showgrid: true, zeroline: false },
-        yaxis: { title: `Dim ${dimB}`, showgrid: true, zeroline: false },
-        annotations: annotations,
-        margin: { l: 45, r: 10, b: 45, t: 40 },
-        showlegend: true,
-        legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2, font: { size: 11 } }
-    };
+	return {
+		title: { text: `Dim ${dimA} × Dim ${dimB}`, font: { size: 13 } },
+		xaxis: { title: `Dim ${dimA}`, showgrid: true, zeroline: false },
+		yaxis: { title: `Dim ${dimB}`, showgrid: true, zeroline: false },
+		annotations: annotations,
+		margin: { l: 45, r: 10, b: 45, t: 40 },
+		showlegend: true,
+		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.2, font: { size: 11 } }
+	};
 }
 
 // ─── 12. Render a single dimension-pair slice plot ───
 function _traj_render_single_slice(grid, tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab) {
-    const plotId = _traj_ensure_slice_div(grid, dimA, dimB);
-    const { traces, annotations } = _traj_build_slice_traces(tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab);
-    const layout = _traj_build_slice_layout(dimA, dimB, annotations);
-    Plotly.react(plotId, traces, layout, { responsive: true });
+	const plotId = _traj_ensure_slice_div(grid, dimA, dimB);
+	const { traces, annotations } = _traj_build_slice_traces(tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab);
+	const layout = _traj_build_slice_layout(dimA, dimB, annotations);
+	Plotly.react(plotId, traces, layout, { responsive: true });
 }
 
 // ─── Main function: now a clean orchestrator ───
 function _traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab) {
-    const pairs = _traj_generate_dimension_pairs(d_model);
+	const pairs = _traj_generate_dimension_pairs(d_model);
 
-    _traj_ensure_heading(trajDiv, pairs.length);
-    const grid = _traj_ensure_grid(trajDiv);
+	_traj_ensure_heading(trajDiv, pairs.length);
+	const grid = _traj_ensure_grid(trajDiv);
 
-    pairs.forEach(([dimA, dimB]) => {
-        _traj_render_single_slice(grid, tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab);
-    });
+	pairs.forEach(([dimA, dimB]) => {
+		_traj_render_single_slice(grid, tokens, labels, dataPoints, dimA, dimB, embSnap, snapVocab);
+	});
 }
 
 function _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab) {
-    const traces = [];
-    const annotations = [];
+	const traces = [];
+	const annotations = [];
 
-    traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, 0, 1));
+	traces.push(_traj_build_embedding_landmarks_2D(embSnap, snapVocab, 0, 1));
 
-    tokens.forEach((token, tIdx) => {
-        if (!dataPoints.every(p => p.data && p.data[tIdx])) return;
+	tokens.forEach((token, tIdx) => {
+		if (!dataPoints.every(p => p.data && p.data[tIdx])) return;
 
-        const x = dataPoints.map(p => p.data[tIdx][0]);
-        const y = dataPoints.map(p => p.data[tIdx][1]);
-        const tColor = getPositionColor(tIdx, tokens.length);
-        const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
-        const hoverTexts = _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab);
+		const x = dataPoints.map(p => p.data[tIdx][0]);
+		const y = dataPoints.map(p => p.data[tIdx][1]);
+		const tColor = getPositionColor(tIdx, tokens.length);
+		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+		const hoverTexts = _traj_build_hover_texts(tIdx, labels, dataPoints, embSnap, snapVocab);
 
-        traces.push(_traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts));
-        traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 1));
-        traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 0));
+		traces.push(_traj_build_token_line_trace(x, y, tokenLabel, tColor, hoverTexts));
+		traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 1));
+		traces.push(_traj_build_endpoint_marker(x, y, tColor, tokenLabel, labels, tIdx, dataPoints, embSnap, snapVocab, 0));
 
-        if (tIdx === 0) {
-            annotations.push(..._traj_build_stage_annotations(x, y, dataPoints));
-        }
-    });
+		if (tIdx === 0) {
+			annotations.push(..._traj_build_stage_annotations(x, y, dataPoints));
+		}
+	});
 
-    return { traces, annotations };
+	return { traces, annotations };
 }
 
 function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab, vfEnabled) {
-    if (d_model === 3) {
-        _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab, vfEnabled);
-        return;
-    }
+	if (d_model === 3) {
+		_traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab, vfEnabled);
+		return;
+	}
 
-    // ── 2D: Plotly path ──
-    const result = _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
+	// ── 2D: Plotly path ──
+	const result = _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
 
-    // ── VF overlay (all-layers) ──
-    let vfAnnotations = [];
-    if (vfEnabled) {
-        const { n_heads, n_layers } = getTransformerConfig();
-        const computed = _compute_trajectory_vf_2d(d_model, n_heads, n_layers);
-        if (computed) vfAnnotations = _traj_vf_2d_plotly_annotations(computed);
-    }
+	// ── VF overlay (all-layers) ──
+	let vfAnnotations = [];
+	if (vfEnabled) {
+		const { n_heads, n_layers } = getTransformerConfig();
+		const computed = _compute_trajectory_vf_2d(d_model, n_heads, n_layers);
+		if (computed) vfAnnotations = _traj_vf_2d_plotly_annotations(computed);
+	}
 
-    const axisTemplate = {
-        showticklabels: false, showgrid: true, zeroline: false,
-        title: { text: "" }, backgroundcolor: "#f9fafb"
-    };
+	const axisTemplate = {
+		showticklabels: false, showgrid: true, zeroline: false,
+		title: { text: "" }, backgroundcolor: "#f9fafb"
+	};
 
-    const layout = {
-        title: '<b>Token Trajectory from Embedding → Embedding + Position through the Layers</b>',
-        xaxis: axisTemplate, yaxis: axisTemplate,
-        annotations: [...result.annotations, ...vfAnnotations],
-        margin: { l: 10, r: 10, b: 50, t: 80 },
-        showlegend: true,
-        legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1, font: { size: 14 } }
-    };
+	const layout = {
+		title: '<b>Token Trajectory from Embedding → Embedding + Position through the Layers</b>',
+		xaxis: axisTemplate, yaxis: axisTemplate,
+		annotations: [...result.annotations, ...vfAnnotations],
+		margin: { l: 10, r: 10, b: 50, t: 80 },
+		showlegend: true,
+		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1, font: { size: 14 } }
+	};
 
-    Plotly.react(trajDiv.id, result.traces, layout);
+	Plotly.react(trajDiv.id, result.traces, layout);
 }
 
 // ─── Main 3D ECharts renderer ───────────────────────────────
 
 function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab, vfEnabled) {
-    let chart = echarts.getInstanceByDom(trajDiv);
-    if (!chart) chart = echarts.init(trajDiv);
+	let chart = echarts.getInstanceByDom(trajDiv);
+	if (!chart) chart = echarts.init(trajDiv);
 
-    const series = [];
-    const legendData = [];
+	const series = [];
+	const legendData = [];
 
-    // 1. Vocabulary embedding landmarks
-    series.push(_traj_ec3d_landmark_series(embSnap, snapVocab));
-    legendData.push('Vocab Embeddings');
+	// 1. Vocabulary embedding landmarks
+	series.push(_traj_ec3d_landmark_series(embSnap, snapVocab));
+	legendData.push('Vocab Embeddings');
 
-    // 2. Per-token trajectories
-    tokens.forEach((token, tIdx) => {
-        const hasData = dataPoints.every(p => p.data && p.data[tIdx]);
-        if (!hasData) return;
+	// 2. Per-token trajectories
+	tokens.forEach((token, tIdx) => {
+		const hasData = dataPoints.every(p => p.data && p.data[tIdx]);
+		if (!hasData) return;
 
-        const tColor = getPositionColor(tIdx, tokens.length);
-        const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
-        legendData.push(tokenLabel);
+		const tColor = getPositionColor(tIdx, tokens.length);
+		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+		legendData.push(tokenLabel);
 
-        series.push(..._traj_ec3d_line_series_with_arrows(tokenLabel, tColor, dataPoints, tIdx));
-        series.push(_traj_ec3d_marker_series(
-            tokenLabel, tColor, dataPoints, tIdx, labels, embSnap, snapVocab
-        ));
-    });
+		series.push(..._traj_ec3d_line_series_with_arrows(tokenLabel, tColor, dataPoints, tIdx));
+		series.push(_traj_ec3d_marker_series(
+			tokenLabel, tColor, dataPoints, tIdx, labels, embSnap, snapVocab
+		));
+	});
 
-    // 3. All-layers vector field overlay
-    if (vfEnabled) {
-        const { n_heads, n_layers } = getTransformerConfig();
-        const computed = _compute_trajectory_vf_3d(3, n_heads, n_layers);
-        if (computed) series.push(..._vf_ec3d_series(computed));
-    }
+	// 3. All-layers vector field overlay
+	if (vfEnabled) {
+		const { n_heads, n_layers } = getTransformerConfig();
+		const computed = _compute_trajectory_vf_3d(3, n_heads, n_layers);
+		if (computed) series.push(..._vf_ec3d_series(computed));
+	}
 
-    chart.setOption(_traj_ec3d_option(series, legendData), true);
+	chart.setOption(_traj_ec3d_option(series, legendData), true);
 
-    if (trajDiv._ecResizeTraj) window.removeEventListener('resize', trajDiv._ecResizeTraj);
-    trajDiv._ecResizeTraj = () => {
-        const c = echarts.getInstanceByDom(trajDiv);
-        if (c) c.resize();
-    };
-    window.addEventListener('resize', trajDiv._ecResizeTraj);
+	if (trajDiv._ecResizeTraj) window.removeEventListener('resize', trajDiv._ecResizeTraj);
+	trajDiv._ecResizeTraj = () => {
+		const c = echarts.getInstanceByDom(trajDiv);
+		if (c) c.resize();
+	};
+	window.addEventListener('resize', trajDiv._ecResizeTraj);
 }
 
 // ─── Embedding landmark diamonds ─────────────────────────────
