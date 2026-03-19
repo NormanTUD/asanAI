@@ -4406,169 +4406,169 @@ function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, s
 // ─── Embedding landmark diamonds ─────────────────────────────
 
 function _traj_ec3d_landmark_series(embSnap, snapVocab) {
-    return {
-        name: 'Vocab Embeddings',
-        type: 'scatter3D',
-        data: snapVocab.map(word => {
-            const v = embSnap[word];
-            return { name: displayToken(word), value: [v[0], v[1] || 0, v[2] || 0] };
-        }),
-        symbol: 'diamond',
-        symbolSize: 8,
-        itemStyle: {
-            color: 'rgba(100,116,139,0.8)',
-            borderWidth: 1,
-            borderColor: '#334155'
-        },
-        label: {
-            show: true,
-            position: 'top',
-            distance: 5,
-            formatter: p => p.name,
-            textStyle: { fontSize: 10, color: '#475569', fontFamily: 'Inter, sans-serif' }
-        }
-    };
+	return {
+		name: 'Vocab Embeddings',
+		type: 'scatter3D',
+		data: snapVocab.map(word => {
+			const v = embSnap[word];
+			return { name: displayToken(word), value: [v[0], v[1] || 0, v[2] || 0] };
+		}),
+		symbol: 'diamond',
+		symbolSize: 8,
+		itemStyle: {
+			color: 'rgba(100,116,139,0.8)',
+			borderWidth: 1,
+			borderColor: '#334155'
+		},
+		label: {
+			show: true,
+			position: 'top',
+			distance: 5,
+			formatter: p => p.name,
+			textStyle: { fontSize: 10, color: '#475569', fontFamily: 'Inter, sans-serif' }
+		}
+	};
 }
 
 // ─── Step markers (hover, start/end emphasis) for one token ──
 
 function _traj_ec3d_marker_series(tokenLabel, color, dataPoints, tIdx, labels, embSnap, snapVocab) {
-    const data = dataPoints.map((p, pIdx) => {
-        const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
-        const hoverHtml = buildTrajectoryHoverText(
-            labels[tIdx], tIdx, fromStage, p.name,
-            p.data[tIdx], embSnap, snapVocab
-        );
+	const data = dataPoints.map((p, pIdx) => {
+		const fromStage = pIdx > 0 ? dataPoints[pIdx - 1].name : '(start)';
+		const hoverHtml = buildTrajectoryHoverText(
+			labels[tIdx], tIdx, fromStage, p.name,
+			p.data[tIdx], embSnap, snapVocab
+		);
 
-        const isStart = pIdx === 0;
+		const isStart = pIdx === 0;
 
-        return {
-            value: p.data[tIdx].slice(0, 3),
-            symbolSize: isStart ? 10 : 4,
-            itemStyle: {
-                color: color,
-                borderWidth: isStart ? 2 : 0,
-                borderColor: '#000',
-                opacity: isStart ? 1 : 0.01   // ← invisible but still hoverable
-            },
-            _hover: hoverHtml
-        };
-    });
+		return {
+			value: p.data[tIdx].slice(0, 3),
+			symbolSize: isStart ? 10 : 4,
+			itemStyle: {
+				color: color,
+				borderWidth: isStart ? 2 : 0,
+				borderColor: '#000',
+				opacity: isStart ? 1 : 0.01   // ← invisible but still hoverable
+			},
+			_hover: hoverHtml
+		};
+	});
 
-    return {
-        name: tokenLabel,
-        type: 'scatter3D',
-        data: data,
-        symbol: 'circle',
-        tooltip: { formatter: params => params.data._hover }
-    };
+	return {
+		name: tokenLabel,
+		type: 'scatter3D',
+		data: data,
+		symbol: 'circle',
+		tooltip: { formatter: params => params.data._hover }
+	};
 }
 
 // ─── Full chart option ───────────────────────────────────────
 
 function _traj_ec3d_option(series, legendData) {
-    return {
-        title: {
-            text: 'Token Trajectory: Embedding → +Position → Layer Outputs',
-            left: 'center', top: 10,
-            textStyle: { fontSize: 14, fontWeight: 'bold', color: '#1e293b' }
-        },
-        tooltip: { show: true, trigger: 'item', confine: true },
-        legend: {
-            data: legendData,
-            orient: 'horizontal',
-            bottom: 5, left: 'center',
-            textStyle: { fontSize: 12 }
-        },
-        xAxis3D: { type: 'value', name: 'Dim 0' },
-        yAxis3D: { type: 'value', name: 'Dim 1' },
-        zAxis3D: { type: 'value', name: 'Dim 2' },
-        grid3D:_defaultGrid3DConfig({
-            axisLine:    { lineStyle: { color: '#cbd5e1' } },
-            axisPointer: { show: false }
-        }),
-        series: series
-    };
+	return {
+		title: {
+			text: 'Token Trajectory: Embedding → +Position → Layer Outputs',
+			left: 'center', top: 10,
+			textStyle: { fontSize: 14, fontWeight: 'bold', color: '#1e293b' }
+		},
+		tooltip: { show: true, trigger: 'item', confine: true },
+		legend: {
+			data: legendData,
+			orient: 'horizontal',
+			bottom: 5, left: 'center',
+			textStyle: { fontSize: 12 }
+		},
+		xAxis3D: { type: 'value', name: 'Dim 0' },
+		yAxis3D: { type: 'value', name: 'Dim 1' },
+		zAxis3D: { type: 'value', name: 'Dim 2' },
+		grid3D:_defaultGrid3DConfig({
+			axisLine:    { lineStyle: { color: '#cbd5e1' } },
+			axisPointer: { show: false }
+		}),
+		series: series
+	};
 }
 
 // ─── Main function: now a clean orchestrator ───
 function tlab_render_trajectory_plot(d_model) {
-    const mainContainer = document.getElementById('transformer-migration-plots-container');
-    if (!mainContainer || !window.tlab_trajectory_collector) return;
+	const mainContainer = document.getElementById('transformer-migration-plots-container');
+	if (!mainContainer || !window.tlab_trajectory_collector) return;
 
-    const { tokens, steps, displayTokens } = window.tlab_trajectory_collector;
+	const { tokens, steps, displayTokens } = window.tlab_trajectory_collector;
 
-    const sortedKeys = Object.keys(steps).sort();
-    if (sortedKeys.length < 3) return;
+	const sortedKeys = Object.keys(steps).sort();
+	if (sortedKeys.length < 3) return;
 
-    let trajDiv = document.getElementById('transformer-trajectory-full-path');
-    if (!trajDiv) {
-        trajDiv = document.createElement('div');
-        trajDiv.id = 'transformer-trajectory-full-path';
-        mainContainer.appendChild(trajDiv);
-    }
+	let trajDiv = document.getElementById('transformer-trajectory-full-path');
+	if (!trajDiv) {
+		trajDiv = document.createElement('div');
+		trajDiv.id = 'transformer-trajectory-full-path';
+		mainContainer.appendChild(trajDiv);
+	}
 
-    const placeholder = trajDiv.querySelector('.traj-loading-placeholder');
-    if (placeholder) placeholder.remove();
-    trajDiv.style.display        = 'block';
-    trajDiv.style.alignItems     = '';
-    trajDiv.style.justifyContent = '';
-    trajDiv.style.width          = '100%';
+	const placeholder = trajDiv.querySelector('.traj-loading-placeholder');
+	if (placeholder) placeholder.remove();
+	trajDiv.style.display        = 'block';
+	trajDiv.style.alignItems     = '';
+	trajDiv.style.justifyContent = '';
+	trajDiv.style.width          = '100%';
 
-    const labels = displayTokens || tokens.map((t, i) => {
-        if (typeof t === 'string') return displayToken(t);
-        return displayToken(tlab_get_top_word_only(t));
-    });
+	const labels = displayTokens || tokens.map((t, i) => {
+		if (typeof t === 'string') return displayToken(t);
+		return displayToken(tlab_get_top_word_only(t));
+	});
 
-    const dataPoints = sortedKeys.map(k => steps[k]);
-    const { embSnap, snapVocab } = _traj_snapshot_embeddings();
-    const vfEnabled = window._trajectoryVfEnabled && d_model <= 3;
+	const dataPoints = sortedKeys.map(k => steps[k]);
+	const { embSnap, snapVocab } = _traj_snapshot_embeddings();
+	const vfEnabled = window._trajectoryVfEnabled && d_model <= 3;
 
-    if (d_model >= 4) {
-        _traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
-        requestAnimationFrame(() => {
-            const actualHeight = trajDiv.scrollHeight;
-            trajDiv.style.height    = actualHeight + 'px';
-            trajDiv.style.minHeight = actualHeight + 'px';
-        });
-    } else {
-        _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab, vfEnabled);
-    }
+	if (d_model >= 4) {
+		_traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
+		requestAnimationFrame(() => {
+			const actualHeight = trajDiv.scrollHeight;
+			trajDiv.style.height    = actualHeight + 'px';
+			trajDiv.style.minHeight = actualHeight + 'px';
+		});
+	} else {
+		_traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab, vfEnabled);
+	}
 }
 
 function buildVocabTransitionRows(tokens, start_h, end_h, d_model) {
-    return tokens.map((_, tIdx) => {
-        const fromList = tlab_get_top_vocab_list(start_h[tIdx], d_model);
-        const toList = tlab_get_top_vocab_list(end_h[tIdx], d_model);
-        const colorCmd = getPositionColor(tIdx, tokens.length, 'temml');
+	return tokens.map((_, tIdx) => {
+		const fromList = tlab_get_top_vocab_list(start_h[tIdx], d_model);
+		const toList = tlab_get_top_vocab_list(end_h[tIdx], d_model);
+		const colorCmd = getPositionColor(tIdx, tokens.length, 'temml');
 
-        return fromList.map((fromItem, i) => {
-            const toItem = toList[i] || { word: '???', prob: 0 };
-            const cleanFrom = fromItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
-            const cleanTo = toItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
-            const fromProb = Math.round(fromItem.prob * 100);
-            const toProb = Math.round(toItem.prob * 100);
+		return fromList.map((fromItem, i) => {
+			const toItem = toList[i] || { word: '???', prob: 0 };
+			const cleanFrom = fromItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+			const cleanTo = toItem.word.replace(/#/g, '\\#').replace(/_/g, '\\_');
+			const fromProb = Math.round(fromItem.prob * 100);
+			const toProb = Math.round(toItem.prob * 100);
 
-            return `${colorCmd} \\text{${cleanFrom} } (${fromProb}\\%) \\rightarrow \\text{${cleanTo}} (${toProb}\\%)`;
-        }).join(' & ');
-    }).join(' \\\\ ');
+			return `${colorCmd} \\text{${cleanFrom} } (${fromProb}\\%) \\rightarrow \\text{${cleanTo}} (${toProb}\\%)`;
+		}).join(' & ');
+	}).join(' \\\\ ');
 }
 
 function ensureLatexDebugDiv(id, plotDiv) {
-    let latexDiv = document.getElementById(id + '-latex-debug');
-    if (!latexDiv) {
-        latexDiv = document.createElement('div');
-        latexDiv.id = id + '-latex-debug';
-        latexDiv.style.cssText = 'margin-top: 20px; overflow-x: auto; font-size: 0.8rem; max-width: 100%; box-sizing: border-box;';
+	let latexDiv = document.getElementById(id + '-latex-debug');
+	if (!latexDiv) {
+		latexDiv = document.createElement('div');
+		latexDiv.id = id + '-latex-debug';
+		latexDiv.style.cssText = 'margin-top: 20px; overflow-x: auto; font-size: 0.8rem; max-width: 100%; box-sizing: border-box;';
 
-        const weightGrid = plotDiv.nextElementSibling;
-        if (weightGrid && weightGrid.classList.contains('weight-grid-viz')) {
-            weightGrid.parentNode.insertBefore(latexDiv, weightGrid.nextSibling);
-        } else {
-            plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
-        }
-    }
-    return latexDiv;
+		const weightGrid = plotDiv.nextElementSibling;
+		if (weightGrid && weightGrid.classList.contains('weight-grid-viz')) {
+			weightGrid.parentNode.insertBefore(latexDiv, weightGrid.nextSibling);
+		} else {
+			plotDiv.parentNode.insertBefore(latexDiv, plotDiv.nextSibling);
+		}
+	}
+	return latexDiv;
 }
 
 function tlab_render_latex_matrix(id, plotDiv, tokens, start_h, end_h, h_after, d_model, tokenStrings) {
