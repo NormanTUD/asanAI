@@ -2167,11 +2167,11 @@ $$
 }
 
 function buildLogitLatexRows(logits) {
-    return logits.map(({ word, val }) => {
-        const displayWord = /^\s+$/.test(word) ? word.replace(/ /g, '␣') : word;
-        const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
-        return `\\color{#6366f1}{\\text{${safeWord}}} & ${val.toFixed(nr_fixed)}`;
-    }).join(' \\\\ ');
+	return logits.map(({ word, val }) => {
+		const displayWord = /^\s+$/.test(word) ? word.replace(/ /g, '␣') : word;
+		const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
+		return `\\color{#6366f1}{\\text{${safeWord}}} & ${val.toFixed(nr_fixed)}`;
+	}).join(' \\\\ ');
 }
 
 function buildSoftmaxSection(logits, logitValues) {
