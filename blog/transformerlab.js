@@ -2210,15 +2210,15 @@ function computeEntropyBits(probs) {
 }
 
 function buildTemperatureSection(logits, logitValues, temperature) {
-    const probs = softmax(logitValues);
+	const probs = softmax(logitValues);
 
-    const scaledLogitValues = logitValues.map(v => v / temperature);
-    const scaledProbs = softmax(scaledLogitValues);
+	const scaledLogitValues = logitValues.map(v => v / temperature);
+	const scaledProbs = softmax(scaledLogitValues);
 
-    const scaledProbRows = buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature);
-    const entropySection = buildEntropyLatex(probs, scaledProbs, logits.length, temperature);
+	const scaledProbRows = buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature);
+	const entropySection = buildEntropyLatex(probs, scaledProbs, logits.length, temperature);
 
-    return `
+	return `
 <div style="overflow-x:auto; padding:10px 0;">
 $$
 \\text{softmax}\\!\\left(\\frac{\\text{logit}_w}{\\underbrace{${temperature.toFixed(1)}}_{\\text{Temperature}}}\\right) =
@@ -2230,7 +2230,7 @@ $$
 $$
 </div>
 
-${entropySection}`;
+		${entropySection}`;
 }
 
 function buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature) {
