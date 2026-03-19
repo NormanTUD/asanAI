@@ -3803,50 +3803,50 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 }
 
 function _traj_ec3d_line_series_with_arrows(tokenLabel, color, dataPoints, tIdx) {
-    const seriesArr = [];
-    const pts = dataPoints.map(p => p.data[tIdx].slice(0, 3));
+	const seriesArr = [];
+	const pts = dataPoints.map(p => p.data[tIdx].slice(0, 3));
 
-    for (let i = 0; i < pts.length - 1; i++) {
-        const from3 = pts[i];
-        const to3   = pts[i + 1];
+	for (let i = 0; i < pts.length - 1; i++) {
+		const from3 = pts[i];
+		const to3   = pts[i + 1];
 
-        // Shaft shortened to arrowhead base
-        const shaftEnd = _computeArrowheadBase(from3, to3, 0.4);
-        seriesArr.push({
-            name: tokenLabel,
-            type: 'line3D',
-            data: [from3, shaftEnd],
-            lineStyle: { width: 4, color: color, opacity: 0.85 }
-        });
+		// Shaft shortened to arrowhead base
+		const shaftEnd = _computeArrowheadBase(from3, to3, 0.4);
+		seriesArr.push({
+			name: tokenLabel,
+			type: 'line3D',
+			data: [from3, shaftEnd],
+			lineStyle: { width: 4, color: color, opacity: 0.85 }
+		});
 
-        // Oriented V-chevron arrowhead
-        _add3DArrowheadSeries(seriesArr, from3, to3, color, {
-            lineWidth: 6, maxHeadLen: 0.4, spreadRatio: 0.35, name: tokenLabel
-        });
-    }
+		// Oriented V-chevron arrowhead
+		_add3DArrowheadSeries(seriesArr, from3, to3, color, {
+			lineWidth: 6, maxHeadLen: 0.4, spreadRatio: 0.35, name: tokenLabel
+		});
+	}
 
-    return seriesArr;
+	return seriesArr;
 }
 
 function renderMigrationLowDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
-    // Purge any old Plotly chart on this div
+	// Purge any old Plotly chart on this div
 
-    let chart = echarts.getInstanceByDom(plotDiv);
-    if (!chart) chart = echarts.init(plotDiv);
+	let chart = echarts.getInstanceByDom(plotDiv);
+	if (!chart) chart = echarts.init(plotDiv);
 
-    if (d_model === 3) {
-        _migration_render_3d_echarts(chart, id, tokens, start_h, end_h, layerNum, d_model, vfEnabled);
-    } else {
-        _migration_render_2d_echarts(chart, id, tokens, start_h, end_h, layerNum, d_model, vfEnabled);
-    }
+	if (d_model === 3) {
+		_migration_render_3d_echarts(chart, id, tokens, start_h, end_h, layerNum, d_model, vfEnabled);
+	} else {
+		_migration_render_2d_echarts(chart, id, tokens, start_h, end_h, layerNum, d_model, vfEnabled);
+	}
 
-    if (!plotDiv._ecMigResize) {
-        plotDiv._ecMigResize = () => {
-            const c = echarts.getInstanceByDom(plotDiv);
-            if (c) c.resize();
-        };
-        window.addEventListener('resize', plotDiv._ecMigResize);
-    }
+	if (!plotDiv._ecMigResize) {
+		plotDiv._ecMigResize = () => {
+			const c = echarts.getInstanceByDom(plotDiv);
+			if (c) c.resize();
+		};
+		window.addEventListener('resize', plotDiv._ecMigResize);
+	}
 }
 
 function renderMigrationHighDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model) {
