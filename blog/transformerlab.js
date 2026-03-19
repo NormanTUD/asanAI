@@ -1277,28 +1277,28 @@ function getPredictionsForWindow(w, vocab, embMatrix, d_model, n_heads, n_layers
 }
 
 function renderSingleWindowHtml(w, predictions, idx, chipMinWidth) {
-    const targetHtml = w.target.map((targetWord, pos) => {
-        const pred      = predictions[pos] || { word: '?', prob: 0 };
-        const isCorrect = pred.word === targetWord;
-        const icon      = isCorrect ? '✅' : '❌';
-        const probStr   = (pred.prob * 100).toFixed(1);
-        const bgColor   = isCorrect ? '#dcfce7' : '#fee2e2';
-        const dispTarget = displayToken(targetWord);
-        const dispPred   = displayToken(pred.word);
+	const targetHtml = w.target.map((targetWord, pos) => {
+		const pred      = predictions[pos] || { word: '?', prob: 0 };
+		const isCorrect = pred.word === targetWord;
+		const icon      = isCorrect ? '✅' : '❌';
+		const probStr   = (pred.prob * 100).toFixed(1);
+		const bgColor   = isCorrect ? '#dcfce7' : '#fee2e2';
+		const dispTarget = displayToken(targetWord);
+		const dispPred   = displayToken(pred.word);
 
-        return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem; min-width:${chipMinWidth}; text-align:center; box-sizing:border-box;" title="Target: ${dispTarget} | Predicted: ${dispPred} (${probStr}%)">
-        ${icon} <b>${escapeHtml(dispTarget)}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${escapeHtml(dispPred)}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
+		return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem; min-width:${chipMinWidth}; text-align:center; box-sizing:border-box;" title="Target: ${dispTarget} | Predicted: ${dispPred} (${probStr}%)">
+	${icon} <b>${escapeHtml(dispTarget)}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${escapeHtml(dispPred)}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
     </span>`;
-    }).join('');
+	}).join('');
 
-    const dispInput = w.input.map(t => displayToken(t));
+	const dispInput = w.input.map(t => displayToken(t));
 
-    return `<div style="margin-bottom:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-family:monospace; font-size:0.85rem;">
+	return `<div style="margin-bottom:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-family:monospace; font-size:0.85rem;">
     <strong>Window ${idx + 1}:</strong>
     [${dispInput.join(' ')}] →<br>
     <div style="margin-top:4px; margin-left:10px;">
-        <span style="color:#64748b; font-size:0.75rem;">Expected vs Predicted:</span><br>
-        ${targetHtml}
+	<span style="color:#64748b; font-size:0.75rem;">Expected vs Predicted:</span><br>
+	${targetHtml}
     </div>
     </div>`;
 }
@@ -1325,87 +1325,87 @@ function finalizeTrainingSession(btn, status, completedAll) {
 }
 
 async function train_transformer() {
-    const { d_model, n_layers, n_heads } = getTransformerConfig();
-    const btn    = document.querySelector('.train-btn');
-    const status = document.getElementById('training-status');
+	const { d_model, n_layers, n_heads } = getTransformerConfig();
+	const btn    = document.querySelector('.train-btn');
+	const status = document.getElementById('training-status');
 
-    if (!validateTrainingPreconditions(status)) return;
-    if (window.isTraining) { window.isTraining = false; return; }
+	if (!validateTrainingPreconditions(status)) return;
+	if (window.isTraining) { window.isTraining = false; return; }
 
-    const { lr, epochs, optType } = initTrainingSession(btn, status);
-    const optimizer = createOptimizer(optType, lr);
+	const { lr, epochs, optType } = initTrainingSession(btn, status);
+	const optimizer = createOptimizer(optType, lr);
 
-    const tokens = getTrainingTokens();
-    if (tokens.length === 0) { finalizeTrainingSession(btn, status, false); return; }
+	const tokens = getTrainingTokens();
+	if (tokens.length === 0) { finalizeTrainingSession(btn, status, false); return; }
 
-    ensureWeightsAndEmbeddings(tokens, n_layers, d_model);
+	ensureWeightsAndEmbeddings(tokens, n_layers, d_model);
 
-    const weightVars = convert_weights_to_tensors(window.currentWeights);
-    const allVars    = collectTrainableVars(weightVars);
-    const startTime  = performance.now();
-    let completedAll = true;
+	const weightVars = convert_weights_to_tensors(window.currentWeights);
+	const allVars    = collectTrainableVars(weightVars);
+	const startTime  = performance.now();
+	let completedAll = true;
 
-    for (let i = 0; i < epochs; i++) {
-        if (!window.isTraining) { completedAll = false; break; }
-        await runSingleEpoch(i, epochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime);
-    }
+	for (let i = 0; i < epochs; i++) {
+		if (!window.isTraining) { completedAll = false; break; }
+		await runSingleEpoch(i, epochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime);
+	}
 
-    finalizeTrainingSession(btn, status, completedAll);
+	finalizeTrainingSession(btn, status, completedAll);
 }
 
 function getTrainingTokens() {
-    const trainingData = document.getElementById('transformer-training-data').value;
-    return transformer_tokenize_render(trainingData, null);
+	const trainingData = document.getElementById('transformer-training-data').value;
+	return transformer_tokenize_render(trainingData, null);
 }
 
 function ensureWeightsAndEmbeddings(tokens, n_layers, d_model) {
-    if (!window.currentWeights) {
-        window.currentWeights = get_init_weights(n_layers, d_model);
-    }
-    get_or_init_embeddings(tokens, d_model);
+	if (!window.currentWeights) {
+		window.currentWeights = get_init_weights(n_layers, d_model);
+	}
+	get_or_init_embeddings(tokens, d_model);
 }
 
 async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime) {
-    const clipValue = 1.0;
-    const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
-    buildTrainingWindows(tokens, thisContextSize);
+	const clipValue = 1.0;
+	const thisContextSize = Math.min(getContextSize(), tokens.length - 1);
+	buildTrainingWindows(tokens, thisContextSize);
 
-    // Gradient step
-    const cost = computeAndApplyGradients(
-        tokens, weightVars, d_model, n_layers, n_heads, allVars, optimizer, clipValue
-    );
+	// Gradient step
+	const cost = computeAndApplyGradients(
+		tokens, weightVars, d_model, n_layers, n_heads, allVars, optimizer, clipValue
+	);
 
-    const lossValue = await cost.data();
-    window.lossHistory.push(lossValue[0]);
+	const lossValue = await cost.data();
+	window.lossHistory.push(lossValue[0]);
 
-    // Render predictions
-    renderTrainingWindowPredictions(d_model, n_layers);
+	// Render predictions
+	renderTrainingWindowPredictions(d_model, n_layers);
 
-    // Progress & ETA
-    updateEpochProgress(epochIdx, totalEpochs, lossValue[0], startTime, status);
+	// Progress & ETA
+	updateEpochProgress(epochIdx, totalEpochs, lossValue[0], startTime, status);
 
-    // Sync state
-    await syncTrainingState(weightVars);
+	// Sync state
+	await syncTrainingState(weightVars);
 
-    cost.dispose();
+	cost.dispose();
 }
 
 function updateEpochProgress(epochIdx, totalEpochs, loss, startTime, status) {
-    updateTrainingProgressBar(epochIdx + 1, totalEpochs, loss);
+	updateTrainingProgressBar(epochIdx + 1, totalEpochs, loss);
 
-    const elapsed         = performance.now() - startTime;
-    const avgTimePerEpoch = elapsed / (epochIdx + 1);
-    const etaMs           = (totalEpochs - (epochIdx + 1)) * avgTimePerEpoch;
-    status.innerText = `Epoch ${epochIdx + 1}: Loss = ${loss.toFixed(6)} | ETA: ${formatETA(etaMs)}`;
+	const elapsed         = performance.now() - startTime;
+	const avgTimePerEpoch = elapsed / (epochIdx + 1);
+	const etaMs           = (totalEpochs - (epochIdx + 1)) * avgTimePerEpoch;
+	status.innerText = `Epoch ${epochIdx + 1}: Loss = ${loss.toFixed(6)} | ETA: ${formatETA(etaMs)}`;
 }
 
 async function syncTrainingState(weightVars) {
-    renderLossGraph();
-    window.currentWeights = await convert_tensors_to_weights(weightVars);
-    run_transformer_demo();
-    await tf.nextFrame();
-    calculate_vector_math();
-    tled_syncTableFromSpace();
+	renderLossGraph();
+	window.currentWeights = await convert_tensors_to_weights(weightVars);
+	run_transformer_demo();
+	await tf.nextFrame();
+	calculate_vector_math();
+	tled_syncTableFromSpace();
 }
 
 function convert_weights_to_tensors(weights) {
@@ -1441,32 +1441,32 @@ function convert_weights_to_tensors(weights) {
 }
 
 function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
-    if (n_heads === undefined) n_heads = getTransformerConfig().n_heads;
+	if (n_heads === undefined) n_heads = getTransformerConfig().n_heads;
 
-    const d_k = d_model / n_heads;
-    const thiscontextSize = Math.min(getContextSize(), tokens.length - 1);
+	const d_k = d_model / n_heads;
+	const thiscontextSize = Math.min(getContextSize(), tokens.length - 1);
 
-    if (thiscontextSize < 1) {
-        console.error("Context must have at least 2 elements");
-        return tf.scalar(100);
-    }
+	if (thiscontextSize < 1) {
+		console.error("Context must have at least 2 elements");
+		return tf.scalar(100);
+	}
 
-    const mask = buildCausalMask(thiscontextSize);
-    const losses = collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, thiscontextSize, mask);
+	const mask = buildCausalMask(thiscontextSize);
+	const losses = collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, thiscontextSize, mask);
 
-    mask.dispose();
+	mask.dispose();
 
-    if (losses.length === 0) return tf.scalar(10);
-    return tf.addN(losses).div(tf.scalar(losses.length));
+	if (losses.length === 0) return tf.scalar(10);
+	return tf.addN(losses).div(tf.scalar(losses.length));
 }
 
 function buildCausalMask(contextSize) {
-    return tf.tidy(() => {
-        const ones = tf.ones([contextSize, contextSize]);
-        const upperTriangle = tf.linalg.bandPart(ones, 0, -1);
-        const diagonal = tf.linalg.bandPart(ones, 0, 0);
-        return tf.sub(upperTriangle, diagonal).mul(tf.scalar(1e9));
-    });
+	return tf.tidy(() => {
+		const ones = tf.ones([contextSize, contextSize]);
+		const upperTriangle = tf.linalg.bandPart(ones, 0, -1);
+		const diagonal = tf.linalg.bandPart(ones, 0, 0);
+		return tf.sub(upperTriangle, diagonal).mul(tf.scalar(1e9));
+	});
 }
 
 function collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, contextSize, mask) {
@@ -1493,70 +1493,70 @@ function collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, cont
 }
 
 function mapTokensToIds(tokens, startIdx, contextSize, vocabMap) {
-    return tokens.slice(startIdx, startIdx + contextSize)
-        .map(t => vocabMap.indexOf(t));
+	return tokens.slice(startIdx, startIdx + contextSize)
+		.map(t => vocabMap.indexOf(t));
 }
 
 function embedAndEncodePositions(inputIds, embeddingsTensor, d_model) {
-    let x = tf.gather(embeddingsTensor, tf.tensor1d(inputIds, 'int32'));
+	let x = tf.gather(embeddingsTensor, tf.tensor1d(inputIds, 'int32'));
 
-    const peTensor = tf.tidy(() => {
-        const pos = tf.range(0, inputIds.length, 1).reshape([inputIds.length, 1]);
-        const i = tf.range(0, d_model, 1).reshape([1, d_model]);
-        const divTerm = tf.pow(
-            tf.scalar(10000),
-            i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model))
-        );
-        const args = pos.div(divTerm);
-        return tf.where(
-            i.mod(tf.scalar(2)).equal(tf.scalar(0)),
-            tf.sin(args),
-            tf.cos(args)
-        ).mul(tf.scalar(posEmbedScalar));
-    });
+	const peTensor = tf.tidy(() => {
+		const pos = tf.range(0, inputIds.length, 1).reshape([inputIds.length, 1]);
+		const i = tf.range(0, d_model, 1).reshape([1, d_model]);
+		const divTerm = tf.pow(
+			tf.scalar(10000),
+			i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model))
+		);
+		const args = pos.div(divTerm);
+		return tf.where(
+			i.mod(tf.scalar(2)).equal(tf.scalar(0)),
+			tf.sin(args),
+			tf.cos(args)
+		).mul(tf.scalar(posEmbedScalar));
+	});
 
-    return tf.add(x, peTensor);
+	return tf.add(x, peTensor);
 }
 
 function applyTransformerLayers(x, layers, n_layers, n_heads, d_k, contextSize, d_model, mask) {
-    for (let i = 0; i < n_layers; i++) {
-        x = applySingleTransformerLayer(x, layers[i], n_heads, d_k, contextSize, d_model, mask);
-    }
-    return x;
+	for (let i = 0; i < n_layers; i++) {
+		x = applySingleTransformerLayer(x, layers[i], n_heads, d_k, contextSize, d_model, mask);
+	}
+	return x;
 }
 
 function applySingleTransformerLayer(x, layer, n_heads, d_k, contextSize, d_model, mask) {
-    // Pre-LN + Multi-Head Attention
-    const normX = tf_layer_norm(x, layer.gamma, layer.beta);
-    const attnOutput = computeTfMultiHeadAttention(normX, layer, n_heads, d_k, contextSize, d_model, mask);
-    x = tf.add(x, attnOutput);
+	// Pre-LN + Multi-Head Attention
+	const normX = tf_layer_norm(x, layer.gamma, layer.beta);
+	const attnOutput = computeTfMultiHeadAttention(normX, layer, n_heads, d_k, contextSize, d_model, mask);
+	x = tf.add(x, attnOutput);
 
-    // Pre-LN + FFN
-    const normX2 = tf_layer_norm(x, layer.gamma2, layer.beta2);
-    let ffn = tf.relu(tf.add(tf.matMul(normX2, layer.w1), layer.b1));
-    ffn = tf.add(tf.matMul(ffn, layer.w2), layer.b2);
-    return tf.add(x, ffn);
+	// Pre-LN + FFN
+	const normX2 = tf_layer_norm(x, layer.gamma2, layer.beta2);
+	let ffn = tf.relu(tf.add(tf.matMul(normX2, layer.w1), layer.b1));
+	ffn = tf.add(tf.matMul(ffn, layer.w2), layer.b2);
+	return tf.add(x, ffn);
 }
 
 function computeTfMultiHeadAttention(normX, layer, n_heads, d_k, contextSize, d_model, mask) {
-    const q = tf.matMul(normX, layer.wq);
-    const k = tf.matMul(normX, layer.wk);
-    const v = tf.matMul(normX, layer.wv);
+	const q = tf.matMul(normX, layer.wq);
+	const k = tf.matMul(normX, layer.wk);
+	const v = tf.matMul(normX, layer.wv);
 
-    const qHeads = q.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
-    const kHeads = k.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
-    const vHeads = v.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
+	const qHeads = q.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
+	const kHeads = k.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
+	const vHeads = v.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
 
-    let scores = tf.matMul(qHeads, kHeads.transpose([0, 2, 1]))
-        .div(tf.sqrt(tf.scalar(d_k)));
+	let scores = tf.matMul(qHeads, kHeads.transpose([0, 2, 1]))
+		.div(tf.sqrt(tf.scalar(d_k)));
 
-    scores = tf.sub(scores, mask.expandDims(0));
+	scores = tf.sub(scores, mask.expandDims(0));
 
-    const attnWeights = tf.softmax(scores, -1);
-    const context = tf.matMul(attnWeights, vHeads);
+	const attnWeights = tf.softmax(scores, -1);
+	const context = tf.matMul(attnWeights, vHeads);
 
-    const concat = context.transpose([1, 0, 2]).reshape([contextSize, d_model]);
-    return tf.matMul(concat, layer.wo);
+	const concat = context.transpose([1, 0, 2]).reshape([contextSize, d_model]);
+	return tf.matMul(concat, layer.wo);
 }
 
 function collectTrainableVars(weightVars) {
@@ -2133,23 +2133,23 @@ function buildHLastSection(h_last) {
 }
 
 function buildVocabMatrixMultiplicationSection(h_last, vocabWords, W_vocab, logits) {
-    const vocabMatrixRows = W_vocab.map((row, wIdx) => {
-        const displayWord = /^\s+$/.test(vocabWords[wIdx]) ? vocabWords[wIdx].replace(/ /g, '␣') : vocabWords[wIdx];
-        const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
-        const vals = row.map(v => v.toFixed(nr_fixed)).join(' & ');
-        return `\\color{#6366f1}{\\text{${safeWord}}} & ${vals}`;
-    }).join(' \\\\ ');
+	const vocabMatrixRows = W_vocab.map((row, wIdx) => {
+		const displayWord = /^\s+$/.test(vocabWords[wIdx]) ? vocabWords[wIdx].replace(/ /g, '␣') : vocabWords[wIdx];
+		const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
+		const vals = row.map(v => v.toFixed(nr_fixed)).join(' & ');
+		return `\\color{#6366f1}{\\text{${safeWord}}} & ${vals}`;
+	}).join(' \\\\ ');
 
-    const vocabColSpec = 'r|' + 'r'.repeat(h_last.length);
+	const vocabColSpec = 'r|' + 'r'.repeat(h_last.length);
 
-    const hLastRows = h_last.map((v, dim) => {
-        const color = getPositionColor(dim, h_last.length, 'temml');
-        return `${color} ${v.toFixed(nr_fixed)}`;
-    }).join(' \\\\ ');
+	const hLastRows = h_last.map((v, dim) => {
+		const color = getPositionColor(dim, h_last.length, 'temml');
+		return `${color} ${v.toFixed(nr_fixed)}`;
+	}).join(' \\\\ ');
 
-    const logitRows = buildLogitLatexRows(logits);
+	const logitRows = buildLogitLatexRows(logits);
 
-    return `<div style="overflow-x:auto; padding:10px 0;">
+	return `<div style="overflow-x:auto; padding:10px 0;">
 $$
 \\underbrace{
     \\left(\\begin{array}{${vocabColSpec}} ${vocabMatrixRows} \\end{array}\\right)
@@ -2771,29 +2771,29 @@ function run_ffn_block(h1, params = {}, skipRender = false, layerIndex = 0, toke
 }
 
 function render_ffn(h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings) {
-    ensureFFNLayerContainers(layerIndex);
-    const prefix = `unified-layer-${layerIndex}`;
+	ensureFFNLayerContainers(layerIndex);
+	const prefix = `unified-layer-${layerIndex}`;
 
-    const contentDiv = document.getElementById(`${prefix}-content`);
-    if (!contentDiv) return;
+	const contentDiv = document.getElementById(`${prefix}-content`);
+	if (!contentDiv) return;
 
-    // Store latest data for deferred rendering
-    contentDiv._deferredFFNData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings };
+	// Store latest data for deferred rendering
+	contentDiv._deferredFFNData = { h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings };
 
-    if (contentDiv.style.display === 'none') {
-        contentDiv.dataset.ffnRendered = 'false';
-        return;
-    }
+	if (contentDiv.style.display === 'none') {
+		contentDiv.dataset.ffnRendered = 'false';
+		return;
+	}
 
-    const hash = _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta);
+	const hash = _ffnContentHash(h1, normed_h1, out_L1, out_FFN, h2, gamma, beta);
 
-    if (contentDiv.dataset.ffnRendered === 'true' && contentDiv._lastFFNHash === hash) {
-        return;
-    }
+	if (contentDiv.dataset.ffnRendered === 'true' && contentDiv._lastFFNHash === hash) {
+		return;
+	}
 
-    contentDiv._lastFFNHash = hash;
-    _writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings);
-    contentDiv.dataset.ffnRendered = 'true';
+	contentDiv._lastFFNHash = hash;
+	_writeFFNContent(prefix, h1, normed_h1, W1, b1, out_L1, W2, b2, out_FFN, h2, gamma, beta, layerIndex, tokenStrings);
+	contentDiv.dataset.ffnRendered = 'true';
 }
 
 const flattenDisplay = (mat) => {
@@ -3061,33 +3061,33 @@ function _vf2d_magnitude_color(normMag) {
 }
 
 function _vf2d_arrow_geometry(p, maxMag, maxArrowLen) {
-    const normMag = p.mag / maxMag;
-    const arrowLen = Math.max(maxArrowLen * 0.08, maxArrowLen * normMag);
-    const lineWidth = 1.5 + normMag * 3.5;
+	const normMag = p.mag / maxMag;
+	const arrowLen = Math.max(maxArrowLen * 0.08, maxArrowLen * normMag);
+	const lineWidth = 1.5 + normMag * 3.5;
 
-    let ux = 0, uy = 0;
-    if (p.mag > 1e-10) {
-        ux = p.dx / p.mag;
-        uy = p.dy / p.mag;
-    }
+	let ux = 0, uy = 0;
+	if (p.mag > 1e-10) {
+		ux = p.dx / p.mag;
+		uy = p.dy / p.mag;
+	}
 
-    return { ux, uy, arrowLen, lineWidth, normMag };
+	return { ux, uy, arrowLen, lineWidth, normMag };
 }
 
 function _vf3d_magnitude_color(normMag) {
-    let r, g, b;
-    if (normMag < 0.5) {
-        const t = normMag * 2;
-        r = Math.round(59 + (168 - 59) * t);
-        g = Math.round(130 + (85 - 130) * t);
-        b = Math.round(246 + (247 - 246) * t);
-    } else {
-        const t = (normMag - 0.5) * 2;
-        r = Math.round(168 + (239 - 168) * t);
-        g = Math.round(85 + (68 - 85) * t);
-        b = Math.round(247 + (68 - 247) * t);
-    }
-    return `rgb(${r},${g},${b})`;
+	let r, g, b;
+	if (normMag < 0.5) {
+		const t = normMag * 2;
+		r = Math.round(59 + (168 - 59) * t);
+		g = Math.round(130 + (85 - 130) * t);
+		b = Math.round(246 + (247 - 246) * t);
+	} else {
+		const t = (normMag - 0.5) * 2;
+		r = Math.round(168 + (239 - 168) * t);
+		g = Math.round(85 + (68 - 85) * t);
+		b = Math.round(247 + (68 - 247) * t);
+	}
+	return `rgb(${r},${g},${b})`;
 }
 
 function isElementInViewport(el) {
