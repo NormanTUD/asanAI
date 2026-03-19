@@ -2475,7 +2475,7 @@ function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
             });
 
             _add3DArrowheadSeries(series, from3, to3, arrowColor, {
-                lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4
+                lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4, name: 'Steps'
             });
 
             series.push({
@@ -3719,7 +3719,7 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
         });
 
         _add3DArrowheadSeries(series, from3, to3, color, {
-            lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4
+            lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4, name: label
         });
 
         series.push({
@@ -6143,6 +6143,7 @@ function _add3DArrowheadSeries(series, from3, to3, color, options = {}) {
 	const lineWidth   = options.lineWidth   || 7;
 	const maxHeadLen  = options.maxHeadLen  || 0.5;
 	const spreadRatio = options.spreadRatio || 0.4;
+	const name        = options.name        || undefined;
 
 	const dx = to3[0] - from3[0];
 	const dy = to3[1] - from3[1];
@@ -6171,6 +6172,7 @@ function _add3DArrowheadSeries(series, from3, to3, color, options = {}) {
 	// V-chevron 1: wing → tip → wing (one continuous polyline = clean V shape)
 	series.push({
 		type: 'line3D',
+		name: name,
 		data: [w1a, to3, w1b],
 		lineStyle: { width: lineWidth, color: color },
 		silent: true
@@ -6179,6 +6181,7 @@ function _add3DArrowheadSeries(series, from3, to3, color, options = {}) {
 	// V-chevron 2: perpendicular plane
 	series.push({
 		type: 'line3D',
+		name: name,
 		data: [w2a, to3, w2b],
 		lineStyle: { width: lineWidth, color: color },
 		silent: true
