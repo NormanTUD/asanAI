@@ -5172,17 +5172,17 @@ function parseScalar(token, d_model) {
 }
 
 function parseWordVector(token, lowerVocab, d_model, toVecTex) {
-    const entry = lowerVocab[token.toLowerCase()];
-    const vec = entry ? [...entry.vec] : Array(d_model).fill(0);
-    const displayName = entry ? entry.original : token;
-    const safeName = displayName.replace(/#/g, '\\#').replace(/_/g, '\\_');
+	const entry = lowerVocab[token.toLowerCase()];
+	const vec = entry ? [...entry.vec] : Array(d_model).fill(0);
+	const displayName = entry ? entry.original : token;
+	const safeName = displayName.replace(/#/g, '\\#').replace(/_/g, '\\_');
 
-    return {
-        val: vec,
-        tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${safeName}}}`,
-        isScalar: false,
-        label: safeName
-    };
+	return {
+		val: vec,
+		tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${safeName}}}`,
+		isScalar: false,
+		label: safeName
+	};
 }
 
 function applyMultiplicativeOp(left, right, op) {
@@ -5205,21 +5205,21 @@ function applyMultiplicativeOp(left, right, op) {
 }
 
 function findNearestEmbedding(resultVec, space, vocabKeys) {
-    let nearest = "None";
-    let nearestVec = Array(resultVec.length).fill(0);
-    let minDist = Infinity;
+	let nearest = "None";
+	let nearestVec = Array(resultVec.length).fill(0);
+	let minDist = Infinity;
 
-    vocabKeys.forEach(w => {
-        const v = space[w];
-        const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - resultVec[i], 2), 0));
-        if (d < minDist) {
-            minDist = d;
-            nearest = w;
-            nearestVec = v;
-        }
-    });
+	vocabKeys.forEach(w => {
+		const v = space[w];
+		const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - resultVec[i], 2), 0));
+		if (d < minDist) {
+			minDist = d;
+			nearest = w;
+			nearestVec = v;
+		}
+	});
 
-    return { word: nearest, vec: nearestVec, distance: minDist };
+	return { word: nearest, vec: nearestVec, distance: minDist };
 }
 
 function buildVectorMathResultHtml(result, nearest, d_model) {
@@ -5275,90 +5275,90 @@ function updateTrainButtonState() {
 }
 
 function buildTokenChipStrip(strip, tokens) {
-    const existingChips = strip.querySelectorAll('.sa-token-block');
+	const existingChips = strip.querySelectorAll('.sa-token-block');
 
-    if (existingChips.length === tokens.length) {
-        existingChips.forEach((chip, i) => {
-            const displayWord = displayToken(
-                (typeof tokens[i] === 'string') ? tokens[i] : tlab_get_top_word_only(tokens[i])
-            );
-            if (chip.textContent.trim() !== displayWord) {
-                chip.textContent = displayWord;
-            }
-        });
-        return existingChips;
-    }
+	if (existingChips.length === tokens.length) {
+		existingChips.forEach((chip, i) => {
+			const displayWord = displayToken(
+				(typeof tokens[i] === 'string') ? tokens[i] : tlab_get_top_word_only(tokens[i])
+			);
+			if (chip.textContent.trim() !== displayWord) {
+				chip.textContent = displayWord;
+			}
+		});
+		return existingChips;
+	}
 
-    strip.innerHTML = tokens.map((word, i) => {
-        const displayWord = displayToken(
-            (typeof word === 'string') ? word : tlab_get_top_word_only(word)
-        );
-        return `<div class="sa-token-block" style="
-            display:inline-block; padding:8px 14px; margin:0 6px;
-            background:#e0e7ff; border-radius:8px; cursor:pointer;
-            font-weight:600; font-size:0.95rem; user-select:none;
-            white-space:nowrap; flex-shrink:0; min-width:60px;
-            text-align:center;
-            border:2px solid transparent; transition: border-color 0.15s;"
-            data-token-idx="${i}">
-            ${displayWord}
-        </div>`;
-    }).join('');
+	strip.innerHTML = tokens.map((word, i) => {
+		const displayWord = displayToken(
+			(typeof word === 'string') ? word : tlab_get_top_word_only(word)
+		);
+		return `<div class="sa-token-block" style="
+	    display:inline-block; padding:8px 14px; margin:0 6px;
+	    background:#e0e7ff; border-radius:8px; cursor:pointer;
+	    font-weight:600; font-size:0.95rem; user-select:none;
+	    white-space:nowrap; flex-shrink:0; min-width:60px;
+	    text-align:center;
+	    border:2px solid transparent; transition: border-color 0.15s;"
+	    data-token-idx="${i}">
+	    ${displayWord}
+	</div>`;
+	}).join('');
 
-    return strip.querySelectorAll('.sa-token-block');
+	return strip.querySelectorAll('.sa-token-block');
 }
 
 function renderDynamicAttentionWeb(containerId, canvasId, stripId, tokens, weights) {
-    const container = document.getElementById(containerId);
-    const canvas    = document.getElementById(canvasId);
-    const strip     = document.getElementById(stripId);
-    if (!container || !canvas || !strip) return;
+	const container = document.getElementById(containerId);
+	const canvas    = document.getElementById(canvasId);
+	const strip     = document.getElementById(stripId);
+	if (!container || !canvas || !strip) return;
 
-    const prevChipCount = strip.querySelectorAll('.sa-token-block').length;
-    const chips = buildTokenChipStrip(strip, tokens);
-    const chipsRebuilt = (prevChipCount !== tokens.length);
+	const prevChipCount = strip.querySelectorAll('.sa-token-block').length;
+	const chips = buildTokenChipStrip(strip, tokens);
+	const chipsRebuilt = (prevChipCount !== tokens.length);
 
-    // Store latest weights on the container so drawArcs always reads fresh data
-    container._attnWebWeights = weights;
-    container._attnWebTokens = tokens;
+	// Store latest weights on the container so drawArcs always reads fresh data
+	container._attnWebWeights = weights;
+	container._attnWebTokens = tokens;
 
-    let hoverIndex = container._attnWebHoverIndex ?? null;
+	let hoverIndex = container._attnWebHoverIndex ?? null;
 
-    const drawArcs = () => drawAttentionArcs(
-        container, canvas, chips, 
-        container._attnWebTokens, 
-        container._attnWebWeights, 
-        container._attnWebHoverIndex ?? null
-    );
+	const drawArcs = () => drawAttentionArcs(
+		container, canvas, chips, 
+		container._attnWebTokens, 
+		container._attnWebWeights, 
+		container._attnWebHoverIndex ?? null
+	);
 
-    // Only re-attach events if chips were rebuilt or first time
-    if (chipsRebuilt || !container._attnWebInitialized) {
-        container._attnWebHoverIndex = null;
+	// Only re-attach events if chips were rebuilt or first time
+	if (chipsRebuilt || !container._attnWebInitialized) {
+		container._attnWebHoverIndex = null;
 
-        attachChipHoverEvents(chips, (idx) => {
-            container._attnWebHoverIndex = idx;
-            drawArcs();
-        }, () => {
-            container._attnWebHoverIndex = null;
-            drawArcs();
-        });
+		attachChipHoverEvents(chips, (idx) => {
+			container._attnWebHoverIndex = idx;
+			drawArcs();
+		}, () => {
+			container._attnWebHoverIndex = null;
+			drawArcs();
+		});
 
-        // Only attach scroll listener once
-        if (!container._attnWebInitialized) {
-            container.addEventListener('scroll', drawArcs);
-            attachResizeHandler(containerId, drawArcs);
-        }
-        container._attnWebInitialized = true;
-    }
+		// Only attach scroll listener once
+		if (!container._attnWebInitialized) {
+			container.addEventListener('scroll', drawArcs);
+			attachResizeHandler(containerId, drawArcs);
+		}
+		container._attnWebInitialized = true;
+	}
 
-    drawArcs();
+	drawArcs();
 }
 
 function attachChipHoverEvents(chips, onHover, onLeave) {
-    chips.forEach((chip, idx) => {
-        chip.addEventListener('mouseover', () => onHover(idx));
-        chip.addEventListener('mouseout', onLeave);
-    });
+	chips.forEach((chip, idx) => {
+		chip.addEventListener('mouseover', () => onHover(idx));
+		chip.addEventListener('mouseout', onLeave);
+	});
 }
 
 function drawAttentionArcs(container, canvas, chips, tokens, weights, hoverIndex) {
