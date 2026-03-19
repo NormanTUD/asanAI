@@ -2039,7 +2039,7 @@ function computeFinalPredictions(h_last, vocabulary, d_model, temperature) {
 }
 
 function buildPredictionChipsHtml(predictions, temperature) {
-	let html = `<b>Final Probabilities (Click to Generate)</b>`;
+	let html = `<b>Final Probabilities</b>`;
 	html += `<div class="prediction-chip-container" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 10px;">`;
 
 	predictions.forEach(p => {
