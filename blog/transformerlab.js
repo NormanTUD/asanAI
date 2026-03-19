@@ -5079,7 +5079,7 @@ function _execute_vector_math() {
 		render_temml();
 		_execute_embedding_render(d_model, result.val, steps);
 	} catch (e) {
-		console.error("Vector Math Parse Error:", e);
+		console.warn("Vector Math Parse Error:", e);
 		resDiv.innerHTML = "<span style='color: #ef4444;'>Syntax Error. Please check your equation formatting.</span>";
 	}
 }
