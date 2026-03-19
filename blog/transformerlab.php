@@ -94,7 +94,7 @@ https://arxiv.org/html/2505.11611v1
     <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Epochs:</label>
-            <input type="number" id="train-epochs" value="100" style="width: 60px; padding: 4px;">
+            <input type="number" id="train-epochs" value="200" style="width: 60px; padding: 4px;">
         </div>
         <div>
             <label style="font-weight: bold; font-size: 0.9rem;">Learning Rate:</label>
