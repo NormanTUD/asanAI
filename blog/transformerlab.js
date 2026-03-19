@@ -3320,6 +3320,11 @@ function initTrajectoryCollector(tokens, displayTokens, d_model, start_h) {
 			displayTokens: [...displayTokens],
 			d_model: d_model
 		};
+	} else {
+		// ── FIX: always sync with current input ──
+		window.tlab_trajectory_collector.tokens = [...tokens];
+		window.tlab_trajectory_collector.displayTokens = [...displayTokens];
+		window.tlab_trajectory_collector.d_model = d_model;
 	}
 
 	if (!window.tlab_trajectory_collector.steps["00_raw"]) {
