@@ -2459,7 +2459,7 @@ function _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, s
             textStyle: { fontSize: 14, color: '#1e293b' }
         },
         tooltip: { show: true, trigger: 'item', confine: true },
-        legend: { show: false },
+        legend: { show: false, bottom: 0 },
         xAxis: {
             type: 'value', name: 'Dim 0',
             nameLocation: 'center', nameGap: 25,
@@ -3791,7 +3791,7 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 		title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center',
 			textStyle: { fontSize: 14, color: '#1e293b' } },
 		tooltip: { show: true, trigger: 'item', confine: true },
-		legend: { data: legendData, orient: 'horizontal', bottom: 5,
+		legend: { data: legendData, orient: 'horizontal', bottom: 0,
 			left: 'center', textStyle: { fontSize: 11 } },
 		xAxis3D: { type: 'value', name: 'Dim 0' },
 		yAxis3D: { type: 'value', name: 'Dim 1' },
@@ -4822,7 +4822,7 @@ function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
         tooltip: { show: true, trigger: 'item', confine: true },
         legend: {
             data: legendData, orient: 'horizontal',
-            bottom: 5, left: 'center', textStyle: { fontSize: 11 }
+            bottom: 0, left: 'center', textStyle: { fontSize: 11 }
         },
         xAxis3D: { type: 'value', name: 'Dim 0' },
         yAxis3D: { type: 'value', name: 'Dim 1' },
