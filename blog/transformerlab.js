@@ -5085,11 +5085,11 @@ function _execute_vector_math() {
 }
 
 function hasValidEmbeddingSpace(space) {
-    return space && Object.keys(space).length > 0;
+	return space && Object.keys(space).length > 0;
 }
 
 function tokenizeVectorMathInput(inputVal) {
-    return inputVal.match(/[a-zA-ZäöüÄÖÜ0-9_#]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
+	return inputVal.match(/[a-zA-ZäöüÄÖÜ0-9_#]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
 }
 
 function evaluateVectorExpression(tokens, space, vocabKeys, d_model) {
@@ -5705,10 +5705,6 @@ function setVisualizationMode(mode) {
 	);
 }
 
-
-/* ═══════════════════════════════════════════════════════════════════════
-   Choreographer:  fade-in  →  work while opaque  →  fade-out + reveal
-   ═══════════════════════════════════════════════════════════════════════ */
 function _gracefulModeTransition(heavyWork, afterSettle) {
 	let executed = false;
 
@@ -5899,7 +5895,6 @@ function _gracefulModeTransition(heavyWork, afterSettle) {
 	// Safety net
 	setTimeout(run, 500);
 }
-
 
 /* ═══════════════════════════════════════════════════════════════════════
    Gather content sections to stagger-reveal
