@@ -2429,10 +2429,11 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	_buildCellTooltipDotProduct(ctx) {
 		const { q_i, k_j, qi, ki, d_k, d_k_int, rawScore, tokens } = ctx;
 		const dotProduct = this._tooltipDotVec(q_i, k_j);
+
 		return `<div style="margin-bottom:6px;">` +
-			`$\\frac{\\underbrace{${this._tooltipRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${this._displayToken(tokens[qi])}}}")} \\cdot ` +
-			`\\underbrace{${this._tooltipColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${this._displayToken(tokens[ki])}}}")}}{\\sqrt{${d_k_int}}} = ` +
-			`\\frac{${dotProduct.toFixed(nr_fixed)}}{${Math.sqrt(d_k).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$` +
+			`$\\frac{\\underbrace{${this._tooltipRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${this._displayToken(tokens[qi])}"})} \\cdot ` +
+			`\\underbrace{${this._tooltipColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${this._displayToken(tokens[ki])}"})}}{\\sqrt{${d_k_int}}} = ` +
+			`${(dotProduct / Math.sqrt(d_k)).toFixed(nr_fixed)}$` +
 			`</div>`;
 	}
 
