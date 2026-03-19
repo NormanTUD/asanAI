@@ -5674,9 +5674,6 @@ function tled_syncTableFromSpace() {
 	});
 }
 
-/* ═══════════════════════════════════════════════════════════════════════
-   setVisualizationMode — gorgeous edition
-   ═══════════════════════════════════════════════════════════════════════ */
 function setVisualizationMode(mode) {
 	const savedScrollY = window.scrollY;
 	const savedScrollX = window.scrollX;
