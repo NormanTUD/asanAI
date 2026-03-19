@@ -540,8 +540,8 @@ The **\citeauthorlastnameand{shannon1951communication} entropy** $H = -\sum_w P(
 <div>
 	<label style="font-weight: bold;">Temperature ($T$): <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span></label>
 	<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-	    <b>Effect:</b> Controls the "sharpness" of the probability distribution.<br>
-	    <b>Reason:</b> Low values ($T < 1$) force the model to be deterministic; high values ($T > 1$) increase diversity by making unlikely words more probable.
+		<b>Effect:</b> Controls the "sharpness" of the probability distribution.<br>
+		<b>Reason:</b> Low values ($T < 1$) force the model to be deterministic; high values ($T > 1$) increase diversity by making unlikely words more probable.
 	</p>
 	<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 100%; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; rerender_temperature_only();">
 </div>
