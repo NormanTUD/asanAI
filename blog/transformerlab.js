@@ -4,6 +4,7 @@
 If you see stuff jumping around, try setting "overflow-anchor: none" to that element.
 */
 
+window._trajectoryVfEnabled = false;
 window.tlabVisualizationMode = 'train';
 window._cachedFinalProjection = null;
 window._activeUnifiedLayerIdx = 0;
@@ -23,6 +24,21 @@ const trajectoryRenderRegistry = new Map();
 const multiLayerAttentionRegistry = new Map();
 const transformerLabVisMigrationDataRegistry = new Map();
 const positionalWavesRegistry = new Map();
+window.tlab_trajectory_collector = null;
+window._trajectoryVfEnabled = false;
+
+const oldTrajWrapper = document.getElementById(            // ← NEW
+    'transformer-trajectory-full-path-wrapper');
+const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
+if (oldTrajDiv) {
+    const trajChart = echarts.getInstanceByDom(oldTrajDiv);
+    if (trajChart) trajChart.dispose();
+    if (oldTrajWrapper) {                                  // ← NEW
+        oldTrajWrapper.remove();                           // ← removes wrapper + child plot
+    } else {
+        oldTrajDiv.remove();
+    }
+}
 
 window.addEventListener('DOMContentLoaded', (event) => {
 	document.getElementById("ifscalfactornotone").style.display =  posEmbedScalar == 1 ? 'none' : 'block'
@@ -1824,24 +1840,50 @@ function renderTrajectoryPlot(d_model) {
     if (!window.tlab_trajectory_collector) return;
 
     const containerId = 'transformer-trajectory-full-path';
-    let trajDiv = document.getElementById(containerId);
+    const wrapperId   = containerId + '-wrapper';
+    let trajDiv  = document.getElementById(containerId);
+    let wrapper  = document.getElementById(wrapperId);
 
     const targetHeight = getTrajectoryPlotHeight(d_model);
 
     if (!trajDiv) {
+        // ── Build wrapper (houses toggle + plot) ──
+        wrapper = document.createElement('div');
+        wrapper.id = wrapperId;
+        wrapper.style.cssText =
+            'border:2px solid rgb(203,213,225); border-radius:12px; margin-top:10px; background:#f8fafc;';
+        wrapper.setAttribute('data-d-model', d_model);
+
+        if (d_model <= 3) {
+            wrapper.appendChild(createTrajectoryVFToggleButton());
+        }
+
         trajDiv = document.createElement('div');
         trajDiv.id = containerId;
-        document.getElementById('transformer-migration-plots-container').appendChild(trajDiv);
-
-        trajDiv.style.cssText = `width:100%; height:${targetHeight}px; min-height:${targetHeight}px; border: 2px solid rgb(203, 213, 225); border-radius:12px; background:#f8fafc; display:flex; align-items:center; justify-content:center;`;
+        trajDiv.style.cssText =
+            `width:100%; height:${targetHeight}px; min-height:${targetHeight}px;` +
+            `display:flex; align-items:center; justify-content:center;`;
         trajDiv.setAttribute('data-d-model', d_model);
+
+        wrapper.appendChild(trajDiv);
+        document.getElementById('transformer-migration-plots-container').appendChild(wrapper);
     } else {
-        // Update height if d_model changed
         const prevDModel = parseInt(trajDiv.getAttribute('data-d-model') || '0');
         if (prevDModel !== d_model) {
             trajDiv.setAttribute('data-d-model', d_model);
-            trajDiv.style.height = targetHeight + 'px';
+            trajDiv.style.height    = targetHeight + 'px';
             trajDiv.style.minHeight = targetHeight + 'px';
+
+            if (wrapper) {
+                wrapper.setAttribute('data-d-model', d_model);
+                const existingBtn = wrapper.querySelector('.trajectory-vf-toggle');
+                if (d_model <= 3 && !existingBtn) {
+                    wrapper.insertBefore(createTrajectoryVFToggleButton(), trajDiv);
+                } else if (d_model > 3 && existingBtn) {
+                    existingBtn.remove();
+                    window._trajectoryVfEnabled = false;
+                }
+            }
         }
     }
 
@@ -4281,14 +4323,22 @@ function _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVo
     return { traces, annotations };
 }
 
-function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab) {
+function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab, vfEnabled) {
     if (d_model === 3) {
-        _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab);
+        _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab, vfEnabled);
         return;
     }
 
-    // ── 2D: unchanged Plotly path ──
+    // ── 2D: Plotly path ──
     const result = _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
+
+    // ── VF overlay (all-layers) ──
+    let vfAnnotations = [];
+    if (vfEnabled) {
+        const { n_heads, n_layers } = getTransformerConfig();
+        const computed = _compute_trajectory_vf_2d(d_model, n_heads, n_layers);
+        if (computed) vfAnnotations = _traj_vf_2d_plotly_annotations(computed);
+    }
 
     const axisTemplate = {
         showticklabels: false, showgrid: true, zeroline: false,
@@ -4298,7 +4348,7 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
     const layout = {
         title: '<b>Token Trajectory from Embedding → Embedding + Position through the Layers</b>',
         xaxis: axisTemplate, yaxis: axisTemplate,
-        annotations: result.annotations,
+        annotations: [...result.annotations, ...vfAnnotations],
         margin: { l: 10, r: 10, b: 50, t: 80 },
         showlegend: true,
         legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1, font: { size: 14 } }
@@ -4309,45 +4359,47 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 
 // ─── Main 3D ECharts renderer ───────────────────────────────
 
-function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab) {
-	// Clean up whichever renderer was used previously
-	let chart = echarts.getInstanceByDom(trajDiv);
-	if (!chart) chart = echarts.init(trajDiv);
+function _traj_render_3d_echarts(trajDiv, tokens, labels, dataPoints, embSnap, snapVocab, vfEnabled) {
+    let chart = echarts.getInstanceByDom(trajDiv);
+    if (!chart) chart = echarts.init(trajDiv);
 
-	const series = [];
-	const legendData = [];
+    const series = [];
+    const legendData = [];
 
-	// 1. Vocabulary embedding landmarks
-	series.push(_traj_ec3d_landmark_series(embSnap, snapVocab));
-	legendData.push('Vocab Embeddings');
+    // 1. Vocabulary embedding landmarks
+    series.push(_traj_ec3d_landmark_series(embSnap, snapVocab));
+    legendData.push('Vocab Embeddings');
 
-	// 2. Per-token: one line3D + one scatter3D (same name → shared legend entry)
-	tokens.forEach((token, tIdx) => {
-		const hasData = dataPoints.every(p => p.data && p.data[tIdx]);
-		if (!hasData) return;
+    // 2. Per-token trajectories
+    tokens.forEach((token, tIdx) => {
+        const hasData = dataPoints.every(p => p.data && p.data[tIdx]);
+        if (!hasData) return;
 
-		const tColor = getPositionColor(tIdx, tokens.length);
-		const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
-		legendData.push(tokenLabel);
+        const tColor = getPositionColor(tIdx, tokens.length);
+        const tokenLabel = `${labels[tIdx]} (${tIdx + 1})`;
+        legendData.push(tokenLabel);
 
-		// ★ Per-segment lines with triangle arrowheads at every layer step
-		series.push(..._traj_ec3d_line_series_with_arrows(tokenLabel, tColor, dataPoints, tIdx));
+        series.push(..._traj_ec3d_line_series_with_arrows(tokenLabel, tColor, dataPoints, tIdx));
+        series.push(_traj_ec3d_marker_series(
+            tokenLabel, tColor, dataPoints, tIdx, labels, embSnap, snapVocab
+        ));
+    });
 
-		series.push(_traj_ec3d_marker_series(
-			tokenLabel, tColor, dataPoints, tIdx, labels, embSnap, snapVocab
-		));
-	});
+    // 3. All-layers vector field overlay
+    if (vfEnabled) {
+        const { n_heads, n_layers } = getTransformerConfig();
+        const computed = _compute_trajectory_vf_3d(3, n_heads, n_layers);
+        if (computed) series.push(..._vf_ec3d_series(computed));
+    }
 
-	// 3. Render (true = full replace, not merge — safe when series count changes)
-	chart.setOption(_traj_ec3d_option(series, legendData), true);
+    chart.setOption(_traj_ec3d_option(series, legendData), true);
 
-	// 4. Wire resize
-	if (trajDiv._ecResizeTraj) window.removeEventListener('resize', trajDiv._ecResizeTraj);
-	trajDiv._ecResizeTraj = () => {
-		const c = echarts.getInstanceByDom(trajDiv);
-		if (c) c.resize();
-	};
-	window.addEventListener('resize', trajDiv._ecResizeTraj);
+    if (trajDiv._ecResizeTraj) window.removeEventListener('resize', trajDiv._ecResizeTraj);
+    trajDiv._ecResizeTraj = () => {
+        const c = echarts.getInstanceByDom(trajDiv);
+        if (c) c.resize();
+    };
+    window.addEventListener('resize', trajDiv._ecResizeTraj);
 }
 
 // ─── Embedding landmark diamonds ─────────────────────────────
@@ -4457,10 +4509,10 @@ function tlab_render_trajectory_plot(d_model) {
 
     const placeholder = trajDiv.querySelector('.traj-loading-placeholder');
     if (placeholder) placeholder.remove();
-    trajDiv.style.display = 'block';
-    trajDiv.style.alignItems = '';
+    trajDiv.style.display        = 'block';
+    trajDiv.style.alignItems     = '';
     trajDiv.style.justifyContent = '';
-    trajDiv.style.width = '100%';
+    trajDiv.style.width          = '100%';
 
     const labels = displayTokens || tokens.map((t, i) => {
         if (typeof t === 'string') return displayToken(t);
@@ -4469,16 +4521,17 @@ function tlab_render_trajectory_plot(d_model) {
 
     const dataPoints = sortedKeys.map(k => steps[k]);
     const { embSnap, snapVocab } = _traj_snapshot_embeddings();
+    const vfEnabled = window._trajectoryVfEnabled && d_model <= 3;
 
     if (d_model >= 4) {
         _traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
         requestAnimationFrame(() => {
             const actualHeight = trajDiv.scrollHeight;
-            trajDiv.style.height = actualHeight + 'px';
+            trajDiv.style.height    = actualHeight + 'px';
             trajDiv.style.minHeight = actualHeight + 'px';
         });
     } else {
-        _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
+        _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab, vfEnabled);
     }
 }
 
@@ -6229,4 +6282,224 @@ async function loadTransformerModule () {
 function displayToken(token) {
     if (typeof token !== 'string') return String(token);
     return /^\s+$/.test(token) ? token.replace(/ /g, '␣') : token;
+}
+
+function createTrajectoryVFToggleButton() {
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'trajectory-vf-toggle';
+    toggleBtn.dataset.mode = window._trajectoryVfEnabled ? 'on' : 'off';
+    toggleBtn.textContent = window._trajectoryVfEnabled
+        ? '🧭 Hide Vector Field'
+        : '🧭 Show Vector Field';
+    toggleBtn.style.cssText = `
+        margin: 8px 12px; padding: 6px 16px; border-radius: 6px;
+        border: 1px solid #8b5cf6;
+        background: ${window._trajectoryVfEnabled ? '#ede9fe' : '#fff'};
+        color: #8b5cf6;
+        cursor: pointer; font-weight: 600; font-size: 0.82rem;
+        transition: all 0.15s;
+    `;
+
+    toggleBtn.addEventListener('mouseover', () => {
+        toggleBtn.style.background =
+            toggleBtn.dataset.mode === 'off' ? '#f5f3ff' : '#fce7f3';
+    });
+    toggleBtn.addEventListener('mouseout', () => {
+        toggleBtn.style.background =
+            toggleBtn.dataset.mode === 'off' ? '#fff' : '#ede9fe';
+    });
+
+    toggleBtn.addEventListener('click', () => {
+        const isOn = toggleBtn.dataset.mode === 'on';
+        window._trajectoryVfEnabled = !isOn;
+        toggleBtn.dataset.mode = isOn ? 'off' : 'on';
+        toggleBtn.textContent = isOn
+            ? '🧭 Show Vector Field'
+            : '🧭 Hide Vector Field';
+        toggleBtn.style.background = isOn ? '#fff' : '#ede9fe';
+
+        // Re-render trajectory
+        const trajDiv = document.getElementById('transformer-trajectory-full-path');
+        const d_model = trajDiv
+            ? parseInt(trajDiv.getAttribute('data-d-model') || '0')
+            : 0;
+        if (d_model > 0) {
+            const trajEntry = trajectoryRenderRegistry.get('transformer-trajectory-full-path');
+            if (trajEntry) trajEntry.rendered = false;
+            tlab_render_trajectory_plot(d_model);
+        }
+    });
+
+    return toggleBtn;
+}
+
+function _compute_trajectory_vf_2d(d_model, n_heads, n_layers) {
+    const collector = window.tlab_trajectory_collector;
+    if (!collector || !collector.steps["01_pe"]) return null;
+
+    const h0 = collector.steps["01_pe"].data;
+    const seqLen = h0.length;
+    const substitutePos = seqLen - 1;
+    const weights = window.currentWeights;
+    if (!weights || weights.length < n_layers) return null;
+
+    // ── Bounds from every trajectory stage + vocab embeddings ──
+    let xMin = Infinity, xMax = -Infinity,
+        yMin = Infinity, yMax = -Infinity;
+
+    const updateBounds2d = (vec) => {
+        if (vec[0] < xMin) xMin = vec[0];
+        if (vec[0] > xMax) xMax = vec[0];
+        if (vec.length > 1) {
+            if (vec[1] < yMin) yMin = vec[1];
+            if (vec[1] > yMax) yMax = vec[1];
+        }
+    };
+
+    Object.keys(collector.steps).sort().forEach(key => {
+        collector.steps[key].data.forEach(updateBounds2d);
+    });
+    Object.values(window.persistentEmbeddingSpace).forEach(updateBounds2d);
+
+    if (xMin === xMax) { xMin -= 1; xMax += 1; }
+    if (yMin === yMax) { yMin -= 1; yMax += 1; }
+    const pad = 2;
+    xMin -= pad; xMax += pad; yMin -= pad; yMax += pad;
+
+    // ── Sample grid, run ALL layers for each point ──
+    const gridRes = 12;
+    const points = [];
+    let maxMag = 0;
+
+    for (let i = 0; i <= gridRes; i++) {
+        for (let j = 0; j <= gridRes; j++) {
+            const x = xMin + (xMax - xMin) * (i / gridRes);
+            const y = yMin + (yMax - yMin) * (j / gridRes);
+
+            const modifiedH0 = h0.map((row, idx) =>
+                idx === substitutePos
+                    ? (d_model >= 2 ? [x, y] : [x])
+                    : [...row]
+            );
+
+            let h = modifiedH0;
+            for (let l = 0; l < n_layers; l++) {
+                h = forwardOneLayer(h, weights[l], d_model, n_heads, null, null, null).h_out;
+            }
+
+            const hOut = h[substitutePos];
+            const dx = hOut[0] - x;
+            const dy = (d_model >= 2 ? hOut[1] : 0) - y;
+            const mag = Math.sqrt(dx * dx + dy * dy);
+
+            points.push({ x, y, dx, dy, mag });
+            if (mag > maxMag) maxMag = mag;
+        }
+    }
+
+    if (maxMag < 1e-8) maxMag = 1e-8;
+    const cellW = (xMax - xMin) / gridRes;
+    const cellH = (yMax - yMin) / gridRes;
+    return { points, maxMag, maxArrowLen: Math.min(cellW, cellH) * 1.2 };
+}
+
+function _compute_trajectory_vf_3d(d_model, n_heads, n_layers) {
+    const collector = window.tlab_trajectory_collector;
+    if (!collector || !collector.steps["01_pe"]) return null;
+
+    const h0 = collector.steps["01_pe"].data;
+    const seqLen = h0.length;
+    const substitutePos = seqLen - 1;
+    const weights = window.currentWeights;
+    if (!weights || weights.length < n_layers) return null;
+
+    let xMin = Infinity, xMax = -Infinity,
+        yMin = Infinity, yMax = -Infinity,
+        zMin = Infinity, zMax = -Infinity;
+
+    const updateBounds3d = (vec) => {
+        if (vec[0] < xMin) xMin = vec[0];
+        if (vec[0] > xMax) xMax = vec[0];
+        if (vec.length > 1) { if (vec[1] < yMin) yMin = vec[1]; if (vec[1] > yMax) yMax = vec[1]; }
+        if (vec.length > 2) { if (vec[2] < zMin) zMin = vec[2]; if (vec[2] > zMax) zMax = vec[2]; }
+    };
+
+    Object.keys(collector.steps).sort().forEach(key => {
+        collector.steps[key].data.forEach(updateBounds3d);
+    });
+    Object.values(window.persistentEmbeddingSpace).forEach(updateBounds3d);
+
+    if (xMin === xMax) { xMin -= 1; xMax += 1; }
+    if (yMin === yMax) { yMin -= 1; yMax += 1; }
+    if (zMin === zMax) { zMin -= 1; zMax += 1; }
+    const pad = 2;
+    xMin -= pad; xMax += pad; yMin -= pad; yMax += pad; zMin -= pad; zMax += pad;
+
+    const gridRes = 6;
+    const points = [];
+    let maxMag = 0;
+
+    for (let i = 0; i <= gridRes; i++) {
+        for (let j = 0; j <= gridRes; j++) {
+            for (let k = 0; k <= gridRes; k++) {
+                const x = xMin + (xMax - xMin) * (i / gridRes);
+                const y = yMin + (yMax - yMin) * (j / gridRes);
+                const z = zMin + (zMax - zMin) * (k / gridRes);
+
+                const modifiedH0 = h0.map((row, idx) =>
+                    idx === substitutePos ? [x, y, z] : [...row]
+                );
+
+                let h = modifiedH0;
+                for (let l = 0; l < n_layers; l++) {
+                    h = forwardOneLayer(h, weights[l], d_model, n_heads, null, null, null).h_out;
+                }
+
+                const hOut = h[substitutePos];
+                const dx = hOut[0] - x;
+                const dy = hOut[1] - y;
+                const dz = hOut[2] - z;
+                const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+                points.push({ x, y, z, dx, dy, dz, mag });
+                if (mag > maxMag) maxMag = mag;
+            }
+        }
+    }
+
+    if (maxMag < 1e-8) maxMag = 1e-8;
+    const cellX = (xMax - xMin) / gridRes;
+    const cellY = (yMax - yMin) / gridRes;
+    const cellZ = (zMax - zMin) / gridRes;
+    return { points, maxMag, maxArrowLen: Math.min(cellX, cellY, cellZ) * 1.1 };
+}
+
+function _traj_vf_2d_plotly_annotations(computed) {
+    if (!computed) return [];
+    const { points, maxMag, maxArrowLen } = computed;
+
+    return points.map(p => {
+        const { ux, uy, arrowLen, normMag } = _vf2d_arrow_geometry(p, maxMag, maxArrowLen);
+        const r = Math.round(normMag * 239 + (1 - normMag) * 59);
+        const g = Math.round(normMag * 68  + (1 - normMag) * 130);
+        const b = Math.round(normMag * 68  + (1 - normMag) * 246);
+        const color = `rgba(${r},${g},${b},0.25)`;
+
+        return {
+            x: p.x + ux * arrowLen,
+            y: p.y + uy * arrowLen,
+            ax: p.x, ay: p.y,
+            xref: 'x', yref: 'y',
+            axref: 'x', ayref: 'y',
+            showarrow: true,
+            arrowhead: 2,
+            arrowsize: 1 + normMag,
+            arrowwidth: Math.max(1, 1 + normMag * 3),
+            arrowcolor: color,
+            text: '', standoff: 0
+        };
+    }).filter(a => {
+        const dx = a.x - a.ax, dy = a.y - a.ay;
+        return Math.sqrt(dx * dx + dy * dy) > 1e-6;
+    });
 }
