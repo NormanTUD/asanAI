@@ -2120,14 +2120,14 @@ function buildLogitDetailsHtml(h_last, logits) {
 }
 
 function buildHLastDisplayLatex(h_last) {
-    return h_last.map((v, dim) =>
-        `\\underbrace{${v.toFixed(nr_fixed)}}_{\\substack{h_{${dim}} \\\\ \\text{hidden dim ${dim}}}}`
-    ).join(', ');
+	return h_last.map((v, dim) =>
+		`\\underbrace{${v.toFixed(nr_fixed)}}_{\\substack{h_{${dim}} \\\\ \\text{hidden dim ${dim}}}}`
+	).join(', ');
 }
 
 function buildHLastSection(h_last) {
-    const hLastLatex = buildHLastDisplayLatex(h_last);
-    return `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+	const hLastLatex = buildHLastDisplayLatex(h_last);
+	return `<div style="margin-top: 25px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
     <span class="md">
     <p class="logit_calc">Current $h_\\text{last} = [${hLastLatex}]$ (the last layers' output matrix last line of the <i>inference</i>-data)</p>\n`;
 }
