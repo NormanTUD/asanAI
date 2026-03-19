@@ -27,17 +27,16 @@ const positionalWavesRegistry = new Map();
 window.tlab_trajectory_collector = null;
 window._trajectoryVfEnabled = false;
 
-const oldTrajWrapper = document.getElementById(            // ← NEW
-    'transformer-trajectory-full-path-wrapper');
+const oldTrajWrapper = document.getElementById('transformer-trajectory-full-path-wrapper');
 const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
 if (oldTrajDiv) {
-    const trajChart = echarts.getInstanceByDom(oldTrajDiv);
-    if (trajChart) trajChart.dispose();
-    if (oldTrajWrapper) {                                  // ← NEW
-        oldTrajWrapper.remove();                           // ← removes wrapper + child plot
-    } else {
-        oldTrajDiv.remove();
-    }
+	const trajChart = echarts.getInstanceByDom(oldTrajDiv);
+	if (trajChart) trajChart.dispose();
+	if (oldTrajWrapper) {
+		oldTrajWrapper.remove();
+	} else {
+		oldTrajDiv.remove();
+	}
 }
 
 window.addEventListener('DOMContentLoaded', (event) => {
