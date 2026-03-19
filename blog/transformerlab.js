@@ -3774,7 +3774,7 @@ function _traj_ec3d_line_series_with_arrows(tokenLabel, color, dataPoints, tIdx)
 
         // Oriented V-chevron arrowhead
         _add3DArrowheadSeries(seriesArr, from3, to3, color, {
-            lineWidth: 6, maxHeadLen: 0.4, spreadRatio: 0.35
+            lineWidth: 6, maxHeadLen: 0.4, spreadRatio: 0.35, name: tokenLabel
         });
     }
 
