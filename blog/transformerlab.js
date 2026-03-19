@@ -4609,272 +4609,272 @@ function tlab_get_top_word_only(h_vec) {
 }
 
 function tlab_get_top_vocab_list(h_vec, d_model) {
-    if (!window.persistentEmbeddingSpace) return [];
-    const vocabulary = Object.keys(window.persistentEmbeddingSpace);
-    const { temperature } = getTransformerConfig();
+	if (!window.persistentEmbeddingSpace) return [];
+	const vocabulary = Object.keys(window.persistentEmbeddingSpace);
+	const { temperature } = getTransformerConfig();
 
-    let scores = vocabulary.map(word => {
-        const w_vec = window.persistentEmbeddingSpace[word];
-        const dot = dotProduct(h_vec, w_vec);
-        return { word, score: dot };
-    });
+	let scores = vocabulary.map(word => {
+		const w_vec = window.persistentEmbeddingSpace[word];
+		const dot = dotProduct(h_vec, w_vec);
+		return { word, score: dot };
+	});
 
-    const scaledScores = scores.map(s => s.score / temperature);
-    const probs = softmax(scaledScores);
+	const scaledScores = scores.map(s => s.score / temperature);
+	const probs = softmax(scaledScores);
 
-    return scores.map((s, i) => ({
-        word: displayToken(s.word).replace(/#/g, '\\#').replace(/_/g, '\\_'),
-        prob: probs[i]
-    })).sort((a, b) => b.prob - a.prob).slice(0, d_model);
+	return scores.map((s, i) => ({
+		word: displayToken(s.word).replace(/#/g, '\\#').replace(/_/g, '\\_'),
+		prob: probs[i]
+	})).sort((a, b) => b.prob - a.prob).slice(0, d_model);
 }
 
 function render_positional_shift_plot(tokenStrings, d_model) {
-    const containerId = 'transformer-pe-shift-plot';
+	const containerId = 'transformer-pe-shift-plot';
 
-    if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
-        console.error("Plotting requires an array of string tokens.");
-        return [];
-    }
+	if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
+		console.error("Plotting requires an array of string tokens.");
+		return [];
+	}
 
-    const injectedEmbeddings = embedTokensWithPE(tokenStrings, d_model);
+	const injectedEmbeddings = embedTokensWithPE(tokenStrings, d_model);
 
-    registerLazyRenderable(
-        containerId,
-        positionalShiftRegistry,
-        positionalShiftObserver,
-        { tokenStrings, d_model, injectedEmbeddings },
-        () => _execute_shift_render(tokenStrings, d_model, injectedEmbeddings),
-        `<div style="padding:20px; color:#64748b;">Wait for Positional Shift Plot to load...</div>`
-    );
+	registerLazyRenderable(
+		containerId,
+		positionalShiftRegistry,
+		positionalShiftObserver,
+		{ tokenStrings, d_model, injectedEmbeddings },
+		() => _execute_shift_render(tokenStrings, d_model, injectedEmbeddings),
+		`<div style="padding:20px; color:#64748b;">Wait for Positional Shift Plot to load...</div>`
+	);
 
-    return injectedEmbeddings;
+	return injectedEmbeddings;
 }
 
 function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
-    const container = document.getElementById('transformer-pe-shift-plot');
-    if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
-        console.error("Plotting requires an array of string tokens.");
-        return;
-    }
+	const container = document.getElementById('transformer-pe-shift-plot');
+	if (!Array.isArray(tokenStrings) || typeof tokenStrings[0] !== 'string') {
+		console.error("Plotting requires an array of string tokens.");
+		return;
+	}
 
-    // Unified cleanup: dispose any existing ECharts instance
-    const existingChart = echarts.getInstanceByDom(container);
-    if (existingChart) existingChart.dispose();
-    container.innerHTML = '';
+	// Unified cleanup: dispose any existing ECharts instance
+	const existingChart = echarts.getInstanceByDom(container);
+	if (existingChart) existingChart.dispose();
+	container.innerHTML = '';
 
-    if (d_model === 3) {
-        _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings);
-    } else if (d_model <= 2) {
-        _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbeddings);
-    } else {
-        // d_model >= 4  →  existing ECharts parallel-coordinates path
-        const echartsData = [];
-        tokenStrings.forEach((token, pos) => {
-            const semanticBase = window.persistentEmbeddingSpace[token];
-            if (!semanticBase) return;
-            const combined = injectedEmbeddings[pos];
-            if (!combined) return;
-            const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
-            echartsData.push(
-                buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor)
-            );
-        });
-        renderShiftECharts(container, echartsData, d_model);
-    }
+	if (d_model === 3) {
+		_shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings);
+	} else if (d_model <= 2) {
+		_shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbeddings);
+	} else {
+		// d_model >= 4  →  existing ECharts parallel-coordinates path
+		const echartsData = [];
+		tokenStrings.forEach((token, pos) => {
+			const semanticBase = window.persistentEmbeddingSpace[token];
+			if (!semanticBase) return;
+			const combined = injectedEmbeddings[pos];
+			if (!combined) return;
+			const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
+			echartsData.push(
+				buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor)
+			);
+		});
+		renderShiftECharts(container, echartsData, d_model);
+	}
 }
 
 function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbeddings) {
-    const chart = echarts.init(container);
-    const series = [];
+	const chart = echarts.init(container);
+	const series = [];
 
-    tokenStrings.forEach((token, pos) => {
-        const semanticBase = window.persistentEmbeddingSpace[token];
-        if (!semanticBase) return;
-        const combined = injectedEmbeddings[pos];
-        if (!combined) return;
+	tokenStrings.forEach((token, pos) => {
+		const semanticBase = window.persistentEmbeddingSpace[token];
+		if (!semanticBase) return;
+		const combined = injectedEmbeddings[pos];
+		if (!combined) return;
 
-        const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
-        const dispToken = displayToken(token);
-        const name = `${dispToken} (pos ${pos})`;
+		const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
+		const dispToken = displayToken(token);
+		const name = `${dispToken} (pos ${pos})`;
 
-        const x0 = semanticBase[0];
-        const y0 = d_model >= 2 ? semanticBase[1] : 0;
-        const x1 = combined[0];
-        const y1 = d_model >= 2 ? combined[1] : 0;
+		const x0 = semanticBase[0];
+		const y0 = d_model >= 2 ? semanticBase[1] : 0;
+		const x1 = combined[0];
+		const y1 = d_model >= 2 ? combined[1] : 0;
 
-        series.push({
-            type: 'custom',
-            name: name,
-            renderItem: function (params, api) {
-                const sPx = api.coord([api.value(0), api.value(1)]);
-                const ePx = api.coord([api.value(2), api.value(3)]);
-                return _ec2d_render_arrow(sPx, ePx, tokenColor, 3);
-            },
-            encode: { x: [0, 2], y: [1, 3] },
-            data: [{ value: [x0, y0, x1, y1] }],
-            tooltip: {
-                formatter: () =>
-                    `Token: <b>${dispToken}</b><br>Pos: ${pos}<br>` +
-                    `Base: (${x0.toFixed(3)}, ${y0.toFixed(3)})<br>` +
-                    `+PE:  (${x1.toFixed(3)}, ${y1.toFixed(3)})`
-            },
-            z: 10
-        });
+		series.push({
+			type: 'custom',
+			name: name,
+			renderItem: function (params, api) {
+				const sPx = api.coord([api.value(0), api.value(1)]);
+				const ePx = api.coord([api.value(2), api.value(3)]);
+				return _ec2d_render_arrow(sPx, ePx, tokenColor, 3);
+			},
+			encode: { x: [0, 2], y: [1, 3] },
+			data: [{ value: [x0, y0, x1, y1] }],
+			tooltip: {
+				formatter: () =>
+				`Token: <b>${dispToken}</b><br>Pos: ${pos}<br>` +
+				`Base: (${x0.toFixed(3)}, ${y0.toFixed(3)})<br>` +
+				`+PE:  (${x1.toFixed(3)}, ${y1.toFixed(3)})`
+			},
+			z: 10
+		});
 
-        series.push({
-            type: 'scatter', name: name,
-            data: [{ value: [x0, y0], _hover: `${dispToken} base` }],
-            symbolSize: 7,
-            itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#000' },
-            tooltip: { formatter: p => `<b>${dispToken}</b> base embedding` },
-            z: 12
-        });
+		series.push({
+			type: 'scatter', name: name,
+			data: [{ value: [x0, y0], _hover: `${dispToken} base` }],
+			symbolSize: 7,
+			itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#000' },
+			tooltip: { formatter: p => `<b>${dispToken}</b> base embedding` },
+			z: 12
+		});
 
-        series.push({
-            type: 'scatter', name: name,
-            data: [{ value: [x1, y1], _hover: `${dispToken} +PE` }],
-            symbol: 'triangle', symbolSize: 11,
-            itemStyle: { color: tokenColor, borderWidth: 1, borderColor: '#fff' },
-            tooltip: { formatter: p => `<b>${dispToken}</b> + positional encoding` },
-            z: 12
-        });
-    });
+		series.push({
+			type: 'scatter', name: name,
+			data: [{ value: [x1, y1], _hover: `${dispToken} +PE` }],
+			symbol: 'triangle', symbolSize: 11,
+			itemStyle: { color: tokenColor, borderWidth: 1, borderColor: '#fff' },
+			tooltip: { formatter: p => `<b>${dispToken}</b> + positional encoding` },
+			z: 12
+		});
+	});
 
-    chart.setOption({
-        title: {
-            text: 'Semantic Vector → + Positional Shift', left: 'center',
-            textStyle: { fontSize: 14, color: '#1e293b' }
-        },
-        tooltip: { show: true, trigger: 'item', confine: true },
-        legend: { show: true, bottom: 5, left: 'center', textStyle: { fontSize: 11 } },
-        xAxis: {
-            type: 'value', name: 'Dim 0',
-            nameLocation: 'center', nameGap: 25,
-            splitLine: { lineStyle: { color: '#f0f0f0' } }
-        },
-        yAxis: {
-            type: 'value',
-            name: d_model >= 2 ? 'Dim 1' : '',
-            nameLocation: 'center', nameGap: 35,
-            splitLine: { lineStyle: { color: '#f0f0f0' } }
-        },
-        grid: { top: 50, bottom: 60, left: 55, right: 30 },
-        series: series,
-        animation: false
-    }, true);
+	chart.setOption({
+		title: {
+			text: 'Semantic Vector → + Positional Shift', left: 'center',
+			textStyle: { fontSize: 14, color: '#1e293b' }
+		},
+		tooltip: { show: true, trigger: 'item', confine: true },
+		legend: { show: true, bottom: 5, left: 'center', textStyle: { fontSize: 11 } },
+		xAxis: {
+			type: 'value', name: 'Dim 0',
+			nameLocation: 'center', nameGap: 25,
+			splitLine: { lineStyle: { color: '#f0f0f0' } }
+		},
+		yAxis: {
+			type: 'value',
+			name: d_model >= 2 ? 'Dim 1' : '',
+			nameLocation: 'center', nameGap: 35,
+			splitLine: { lineStyle: { color: '#f0f0f0' } }
+		},
+		grid: { top: 50, bottom: 60, left: 55, right: 30 },
+		series: series,
+		animation: false
+	}, true);
 
-    _wireEChartsResize(container, '_ecShiftResize');
+	_wireEChartsResize(container, '_ecShiftResize');
 }
 
 function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
-    const chart = echarts.init(container);
-    const series = [];
-    const legendData = [];
+	const chart = echarts.init(container);
+	const series = [];
+	const legendData = [];
 
-    tokenStrings.forEach((token, pos) => {
-        const semanticBase = window.persistentEmbeddingSpace[token];
-        if (!semanticBase) return;
-        const combined = injectedEmbeddings[pos];
-        if (!combined) return;
+	tokenStrings.forEach((token, pos) => {
+		const semanticBase = window.persistentEmbeddingSpace[token];
+		if (!semanticBase) return;
+		const combined = injectedEmbeddings[pos];
+		if (!combined) return;
 
-        const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
-        const dispToken = displayToken(token);
-        const name = `${dispToken} (pos ${pos})`;
-        legendData.push(name);
+		const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
+		const dispToken = displayToken(token);
+		const name = `${dispToken} (pos ${pos})`;
+		legendData.push(name);
 
-        const from3 = [semanticBase[0], semanticBase[1], semanticBase[2]];
-        const to3   = [combined[0], combined[1], combined[2]];
+		const from3 = [semanticBase[0], semanticBase[1], semanticBase[2]];
+		const to3   = [combined[0], combined[1], combined[2]];
 
-        series.push({
-            name: name, type: 'line3D',
-            data: [from3, to3],
-            lineStyle: { width: 6, color: tokenColor, opacity: 0.85 }
-        });
+		series.push({
+			name: name, type: 'line3D',
+			data: [from3, to3],
+			lineStyle: { width: 6, color: tokenColor, opacity: 0.85 }
+		});
 
-        series.push({
-            name: name, type: 'scatter3D',
-            data: [
-                {
-                    value: from3, symbolSize: 8,
-                    itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#000' },
-                    _hover: `${dispToken} base (pos ${pos})`
-                },
-                {
-                    value: to3, symbolSize: 13,
-                    itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#fff' },
-                    _hover: `${dispToken} + PE (pos ${pos})`
-                }
-            ],
-            symbol: 'circle',
-            tooltip: { formatter: p => p.data._hover }
-        });
-    });
+		series.push({
+			name: name, type: 'scatter3D',
+			data: [
+				{
+					value: from3, symbolSize: 8,
+					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#000' },
+					_hover: `${dispToken} base (pos ${pos})`
+				},
+				{
+					value: to3, symbolSize: 13,
+					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#fff' },
+					_hover: `${dispToken} + PE (pos ${pos})`
+				}
+			],
+			symbol: 'circle',
+			tooltip: { formatter: p => p.data._hover }
+		});
+	});
 
-    chart.setOption({
-        title: {
-            text: 'Semantic Vector → + Positional Shift', left: 'center',
-            textStyle: { fontSize: 14, color: '#1e293b' }
-        },
-        tooltip: { show: true, trigger: 'item', confine: true },
-        legend: {
-            data: legendData, orient: 'horizontal',
-            bottom: 0, left: 'center', textStyle: { fontSize: 11 }
-        },
-        xAxis3D: { type: 'value', name: 'Dim 0' },
-        yAxis3D: { type: 'value', name: 'Dim 1' },
-        zAxis3D: { type: 'value', name: 'Dim 2' },
-        grid3D: _defaultGrid3DConfig(),
-        series: series,
-        animation: false
-    }, true);
+	chart.setOption({
+		title: {
+			text: 'Semantic Vector → + Positional Shift', left: 'center',
+			textStyle: { fontSize: 14, color: '#1e293b' }
+		},
+		tooltip: { show: true, trigger: 'item', confine: true },
+		legend: {
+			data: legendData, orient: 'horizontal',
+			bottom: 0, left: 'center', textStyle: { fontSize: 11 }
+		},
+		xAxis3D: { type: 'value', name: 'Dim 0' },
+		yAxis3D: { type: 'value', name: 'Dim 1' },
+		zAxis3D: { type: 'value', name: 'Dim 2' },
+		grid3D: _defaultGrid3DConfig(),
+		series: series,
+		animation: false
+	}, true);
 
-    _wireEChartsResize(container, '_ecShiftResize');
+	_wireEChartsResize(container, '_ecShiftResize');
 }
 
 function _wireEChartsResize(container, key) {
-    if (!container[key]) {
-        container[key] = () => {
-            const c = echarts.getInstanceByDom(container);
-            if (c) c.resize();
-        };
-        window.addEventListener('resize', container[key]);
-    }
+	if (!container[key]) {
+		container[key] = () => {
+			const c = echarts.getInstanceByDom(container);
+			if (c) c.resize();
+		};
+		window.addEventListener('resize', container[key]);
+	}
 }
 
 function getHueFromToken(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return Math.abs(hash) % 360;
+	let hash = 0;
+	for (let i = 0; i < str.length; i++) {
+		hash = str.charCodeAt(i) + ((hash << 5) - hash);
+	}
+	return Math.abs(hash) % 360;
 }
 
 function buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor) {
-    return {
-        value: semanticBase.flatMap((val, i) => [val, combined[i]]),
-        name: `${displayToken(token)} (pos ${pos})`,
-        lineStyle: { color: tokenColor }
-    };
+	return {
+		value: semanticBase.flatMap((val, i) => [val, combined[i]]),
+		name: `${displayToken(token)} (pos ${pos})`,
+		lineStyle: { color: tokenColor }
+	};
 }
 
 function renderShiftECharts(container, echartsData, d_model) {
-    const myChart = echarts.init(container);
-    const axes = [];
-    for (let i = 0; i < d_model; i++) {
-        axes.push({ dim: i * 2, name: `D${i} Base` }, { dim: i * 2 + 1, name: `D${i} +PE` });
-    }
+	const myChart = echarts.init(container);
+	const axes = [];
+	for (let i = 0; i < d_model; i++) {
+		axes.push({ dim: i * 2, name: `D${i} Base` }, { dim: i * 2 + 1, name: `D${i} +PE` });
+	}
 
-    myChart.setOption({
-        title: { text: "Semantic Vector → + Positional Shift", left: 'center' },
-        tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
-        parallelAxis: axes,
-        series: [{
-            type: 'parallel', data: echartsData,
-            lineStyle: { width: 2, opacity: 0.6 },
-            emphasis: { lineStyle: { width: 5 } }
-        }]
-    });
-    myChart.resize();
+	myChart.setOption({
+		title: { text: "Semantic Vector → + Positional Shift", left: 'center' },
+		tooltip: { trigger: 'item', formatter: p => `Token: <b>${p.name}</b>` },
+		parallelAxis: axes,
+		series: [{
+			type: 'parallel', data: echartsData,
+			lineStyle: { width: 2, opacity: 0.6 },
+			emphasis: { lineStyle: { width: 5 } }
+		}]
+	});
+	myChart.resize();
 }
 
 function tf_layer_norm(x, gamma, beta) {
