@@ -3846,11 +3846,11 @@ function renderMigrationLowDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_
 }
 
 function renderMigrationHighDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model) {
-    const migrationContainers = document.querySelectorAll('[id^="migration-layer-"]');
-    const totalLayersCount = migrationContainers.length;
-    const isLastInDom = totalLayersCount > 0 && migrationContainers[totalLayersCount - 1].id === id;
-    const nextWordIndex = tokens.length - 1;
-    tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
+	const migrationContainers = document.querySelectorAll('[id^="migration-layer-"]');
+	const totalLayersCount = migrationContainers.length;
+	const isLastInDom = totalLayersCount > 0 && migrationContainers[totalLayersCount - 1].id === id;
+	const nextWordIndex = tokens.length - 1;
+	tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
 }
 
 function syncVFToggleButtonState(id, plotDiv, vfEnabled) {
