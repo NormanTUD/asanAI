@@ -2004,7 +2004,7 @@ function renderFinalProbabilities(masterTokens, vocabulary, weights, d_model, n_
 
 window.select_suggested_word = (word) => {
 	const masterInput = document.getElementById('transformer-master-token-input');
-	masterInput.value += " " + word;
+	masterInput.value += word;
 
 	// Set master as active and re-run
 	run_transformer_demo('transformer-master-token-input');

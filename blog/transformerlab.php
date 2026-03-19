@@ -39,20 +39,20 @@ https://arxiv.org/html/2505.11611v1
 
 	<div style="margin-bottom: 15px;">
 		<label style="font-weight: bold;">Network Depth ($N$ layers): </label>
-		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">3</span>
+		<span id="depth-val" style="font-weight: bold; color: #3b82f6;">4</span>
 		<p style="font-size: 0.8rem; color: #64748b; margin: 4px 0;">How many transformer blocks are stacked. More layers allow more abstract reasoning.</p>
-		<input type="range" id="transformer-depth" min="1" max="12" value="3"
+		<input type="range" id="transformer-depth" min="1" max="12" value="4"
 			style="width: 100%;" oninput="document.getElementById('depth-val').innerText = this.value; debounced_run_transformer_demo();">
 	</div>
 
 	<div style="margin-bottom: 15px;">
 	    <label style="font-weight: bold;">Context Size: </label>
-	    <span id="context-val" style="font-weight: bold; color: #3b82f6;">64</span>
+	    <span id="context-val" style="font-weight: bold; color: #3b82f6;">128</span>
 	    <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
 		<b>Effect:</b> Sets the maximum number of tokens the model can "see" at once during training and inference.<br>
 		<b>Reason:</b> A larger context window allows the model to capture longer-range dependencies between words, but increases memory and computation cost quadratically due to the attention matrix being of size $\text{Context}^2$ (this can be mitigated through the <i>KV-Cache</i>).
 	    </p>
-	    <input type="range" id="transformer-context-size" min="2" max="128" step="1" value="64"
+	    <input type="range" id="transformer-context-size" min="2" max="256" step="1" value="128"
 		style="width: 100%;" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();">
 	</div>
 
