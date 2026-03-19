@@ -1004,10 +1004,11 @@ function buildInjectionRowHtml(token, pos, semanticVec, peVec, combined) {
     const displaySemantic = semanticVec.map(v => v.toFixed(nr_fixed));
     const displayPE = peVec.map(v => v.toFixed(nr_fixed));
     const displayCombined = combined.map(v => v.toFixed(nr_fixed));
+    const dispToken = displayToken(token);
 
     return `
     <div style="margin-bottom: 10px; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff; overflow: auto;">
-        <strong>Pos ${pos}: ${token}</strong>
+        <strong>Pos ${pos}: ${escapeHtml(dispToken)}</strong>
         <table style="width:100%; font-family: monospace; font-size: 11px; margin-top: 5px; border-collapse: collapse;">
             <tr style="color: #64748b;">
                 <td style="padding-right: 10px;">Embedding Vector</td>
@@ -1039,52 +1040,49 @@ function render_positional_waves(d_model, tokens) {
 }
 
 function _execute_positional_waves_render(d_model, tokens) {
-	const containerId = 'transformer-pe-wave-plot';
-	const container = document.getElementById(containerId);
-	if (!container) return;
+    const containerId = 'transformer-pe-wave-plot';
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-	const traces = [];
-	const resolution = 0.1;
-	const seqLen = tokens.length;
-	const maxPos = Math.max(1, seqLen);
+    const traces = [];
+    const resolution = 0.1;
+    const seqLen = tokens.length;
+    const maxPos = Math.max(1, seqLen);
 
-	for (let i = 0; i < d_model; i++) {
-		let x = [], y = [];
-		for (let p = 0; p <= maxPos; p += resolution) {
-			let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-			let val = ((i % 2 === 0)
-				? Math.sin(p / div_term)
-				: Math.cos(p / div_term)) * posEmbedScalar;
-			x.push(p);
-			y.push(val);
-		}
-		traces.push({
-			x: x, y: y, mode: 'lines',
-			name: `Dim ${i} ${i % 2 === 0 ? 'Sin' : 'Cos'}`,
-			line: { shape: 'spline', width: 2 }
-		});
-	}
+    for (let i = 0; i < d_model; i++) {
+        let x = [], y = [];
+        for (let p = 0; p <= maxPos; p += resolution) {
+            let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+            let val = ((i % 2 === 0)
+                ? Math.sin(p / div_term)
+                : Math.cos(p / div_term)) * posEmbedScalar;
+            x.push(p);
+            y.push(val);
+        }
+        traces.push({
+            x: x, y: y, mode: 'lines',
+            name: `Dim ${i} ${i % 2 === 0 ? 'Sin' : 'Cos'}`,
+            line: { shape: 'spline', width: 2 }
+        });
+    }
 
-	// Add markers for actual token positions
-	tokens.forEach((token, pos) => {
-		traces.push({
-			x: [pos], y: [0], mode: 'markers+text',
-			text: [token], textposition: 'top center',
-			marker: { size: 12, color: '#3b82f6' },
-			name: `Pos ${pos}: ${token}`, showlegend: false
-		});
-	});
+    tokens.forEach((token, pos) => {
+        traces.push({
+            x: [pos], y: [0], mode: 'markers+text',
+            text: [displayToken(token)], textposition: 'top center',
+            marker: { size: 12, color: '#3b82f6' },
+            name: `Pos ${pos}: ${displayToken(token)}`, showlegend: false
+        });
+    });
 
-	const layout = {
-		title: 'Sinusoidal Positional Waves',
-		margin: { t: 40, b: 40, l: 40, r: 20 },
-		xaxis: { title: 'Token Position' },
-		yaxis: { title: 'PE Value', range: [-1.1, 1.1] }
-	};
+    const layout = {
+        title: 'Sinusoidal Positional Waves',
+        margin: { t: 40, b: 40, l: 40, r: 20 },
+        xaxis: { title: 'Token Position' },
+        yaxis: { title: 'PE Value', range: [-1.1, 1.1] }
+    };
 
-	// Plotly.react does an efficient diff-and-patch update in place,
-	// unlike newPlot which tears down and rebuilds the entire chart.
-	Plotly.react(containerId, traces, layout);
+    Plotly.react(containerId, traces, layout);
 }
 
 function run_transformer_demo(activeId = null) {
@@ -1264,25 +1262,29 @@ function getPredictionsForWindow(w, vocab, embMatrix, d_model, n_heads, n_layers
 }
 
 function renderSingleWindowHtml(w, predictions, idx, chipMinWidth) {
-	const targetHtml = w.target.map((targetWord, pos) => {
-		const pred      = predictions[pos] || { word: '?', prob: 0 };
-		const isCorrect = pred.word === targetWord;
-		const icon      = isCorrect ? '✅' : '❌';
-		const probStr   = (pred.prob * 100).toFixed(1);
-		const bgColor   = isCorrect ? '#dcfce7' : '#fee2e2';
+    const targetHtml = w.target.map((targetWord, pos) => {
+        const pred      = predictions[pos] || { word: '?', prob: 0 };
+        const isCorrect = pred.word === targetWord;
+        const icon      = isCorrect ? '✅' : '❌';
+        const probStr   = (pred.prob * 100).toFixed(1);
+        const bgColor   = isCorrect ? '#dcfce7' : '#fee2e2';
+        const dispTarget = displayToken(targetWord);
+        const dispPred   = displayToken(pred.word);
 
-		return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem; min-width:${chipMinWidth}; text-align:center; box-sizing:border-box;" title="Target: ${targetWord} | Predicted: ${pred.word} (${probStr}%)">
-	    ${icon} <b>${targetWord}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${pred.word}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
-	</span>`;
-	}).join('');
+        return `<span style="display:inline-block; margin:2px; padding:2px 6px; border-radius:4px; background:${bgColor}; font-size:0.8rem; min-width:${chipMinWidth}; text-align:center; box-sizing:border-box;" title="Target: ${dispTarget} | Predicted: ${dispPred} (${probStr}%)">
+        ${icon} <b>${escapeHtml(dispTarget)}</b>→<span style="color:${isCorrect ? '#16a34a' : '#dc2626'}">${escapeHtml(dispPred)}</span> <span style="opacity:0.6; font-size:0.7rem;">${probStr}%</span>
+    </span>`;
+    }).join('');
 
-	return `<div style="margin-bottom:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-family:monospace; font-size:0.85rem;">
-	<strong>Window ${idx + 1}:</strong>
-	[${w.input.join(' ')}] →<br>
-	<div style="margin-top:4px; margin-left:10px;">
-	    <span style="color:#64748b; font-size:0.75rem;">Expected vs Predicted:</span><br>
-	    ${targetHtml}
-	</div>
+    const dispInput = w.input.map(t => displayToken(t));
+
+    return `<div style="margin-bottom:6px; padding:6px 10px; background:#f1f5f9; border-radius:6px; font-family:monospace; font-size:0.85rem;">
+    <strong>Window ${idx + 1}:</strong>
+    [${dispInput.join(' ')}] →<br>
+    <div style="margin-top:4px; margin-left:10px;">
+        <span style="color:#64748b; font-size:0.75rem;">Expected vs Predicted:</span><br>
+        ${targetHtml}
+    </div>
     </div>`;
 }
 
@@ -2332,195 +2334,190 @@ function renderLowDimEmbeddingPlot(container, tokens, dimensions, highlightPos, 
 }
 
 function _embedding_render_2d_echarts(chart, tokens, dimensions, highlightPos, steps) {
-	const series = [];
+    const series = [];
 
-	// ── 1. Vocabulary token scatter ──
-	const vocabData = tokens.map(token => {
-		const vec = window.persistentEmbeddingSpace[token];
-		return {
-			value: [vec[0], vec.length >= 2 ? vec[1] : 0],
-			name: token,
-			itemStyle: {                                          // ← ADD THIS
-				color: `hsl(${getHueFromToken(token)}, 75%, 50%)` // ← per-token color
-			}
-		};
-	});
+    const vocabData = tokens.map(token => {
+        const vec = window.persistentEmbeddingSpace[token];
+        return {
+            value: [vec[0], vec.length >= 2 ? vec[1] : 0],
+            name: displayToken(token),
+            itemStyle: {
+                color: `hsl(${getHueFromToken(token)}, 75%, 50%)`
+            }
+        };
+    });
 
-	series.push({
-		type: 'scatter',
-		name: 'Vocabulary',
-		data: vocabData,
-		symbolSize: 8,
-		itemStyle: { opacity: 0.85 },
-		label: {
-			show: true,
-			position: 'top',
-			formatter: p => p.name,
-			fontSize: 11,
-			color: '#1e293b'
-		},
-		tooltip: {
-			formatter: p => `<b>${p.name}</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
-		},
-		z: 5
-	});
+    series.push({
+        type: 'scatter',
+        name: 'Vocabulary',
+        data: vocabData,
+        symbolSize: 8,
+        itemStyle: { opacity: 0.85 },
+        label: {
+            show: true,
+            position: 'top',
+            formatter: p => p.name,
+            fontSize: 11,
+            color: '#1e293b'
+        },
+        tooltip: {
+            formatter: p => `<b>${p.name}</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
+        },
+        z: 5
+    });
 
-	// ── 2. Calculation-step arrows (reuses existing _ec2d_render_arrow) ──
-	if (steps && steps.length > 0) {
-		const arrowColor = '#3b82f6';
-		const arrowData = steps.map(step => ({
-			value: [
-				step.from[0],
-				dimensions >= 2 ? step.from[1] : 0,
-				step.to[0],
-				dimensions >= 2 ? step.to[1] : 0
-			],
-			_label: step.label
-		}));
+    if (steps && steps.length > 0) {
+        const arrowColor = '#3b82f6';
+        const arrowData = steps.map(step => ({
+            value: [
+                step.from[0],
+                dimensions >= 2 ? step.from[1] : 0,
+                step.to[0],
+                dimensions >= 2 ? step.to[1] : 0
+            ],
+            _label: step.label
+        }));
 
-		series.push({
-			type: 'custom',
-			name: 'Steps',
-			renderItem: function (params, api) {
-				const sPx = api.coord([api.value(0), api.value(1)]);
-				const ePx = api.coord([api.value(2), api.value(3)]);
-				return _ec2d_render_arrow(sPx, ePx, arrowColor, 3);
-			},
-			encode: { x: [0, 2], y: [1, 3] },
-			data: arrowData,
-			tooltip: { formatter: p => `<b>${p.data._label}</b>` },
-			z: 10
-		});
-	}
+        series.push({
+            type: 'custom',
+            name: 'Steps',
+            renderItem: function (params, api) {
+                const sPx = api.coord([api.value(0), api.value(1)]);
+                const ePx = api.coord([api.value(2), api.value(3)]);
+                return _ec2d_render_arrow(sPx, ePx, arrowColor, 3);
+            },
+            encode: { x: [0, 2], y: [1, 3] },
+            data: arrowData,
+            tooltip: { formatter: p => `<b>${p.data._label}</b>` },
+            z: 10
+        });
+    }
 
-	// ── 3. Result diamond highlight ──
-	if (highlightPos) {
-		series.push({
-			type: 'scatter',
-			name: 'Result',
-			data: [{
-				value: [highlightPos[0], dimensions >= 2 ? highlightPos[1] : 0]
-			}],
-			symbol: 'diamond',
-			symbolSize: 14,
-			itemStyle: { color: '#ef4444' },
-			tooltip: {
-				formatter: p =>
-				`<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
-			},
-			z: 15
-		});
-	}
+    if (highlightPos) {
+        series.push({
+            type: 'scatter',
+            name: 'Result',
+            data: [{
+                value: [highlightPos[0], dimensions >= 2 ? highlightPos[1] : 0]
+            }],
+            symbol: 'diamond',
+            symbolSize: 14,
+            itemStyle: { color: '#ef4444' },
+            tooltip: {
+                formatter: p =>
+                `<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)})`
+            },
+            z: 15
+        });
+    }
 
-	chart.setOption({
-		title: {
-			text: 'Embedding Space', left: 'center',
-			textStyle: { fontSize: 14, color: '#1e293b' }
-		},
-		tooltip: { show: true, trigger: 'item', confine: true },
-		legend: { show: false },
-		xAxis: {
-			type: 'value', name: 'Dim 0',
-			nameLocation: 'center', nameGap: 25,
-			splitLine: { lineStyle: { color: '#f0f0f0' } }
-		},
-		yAxis: {
-			type: 'value',
-			name: dimensions >= 2 ? 'Dim 1' : '',
-			nameLocation: 'center', nameGap: 35,
-			splitLine: { lineStyle: { color: '#f0f0f0' } }
-		},
-		grid: { top: 50, bottom: 50, left: 55, right: 30 },
-		series: series,
-		animation: false
-	}, true);
+    chart.setOption({
+        title: {
+            text: 'Embedding Space', left: 'center',
+            textStyle: { fontSize: 14, color: '#1e293b' }
+        },
+        tooltip: { show: true, trigger: 'item', confine: true },
+        legend: { show: false },
+        xAxis: {
+            type: 'value', name: 'Dim 0',
+            nameLocation: 'center', nameGap: 25,
+            splitLine: { lineStyle: { color: '#f0f0f0' } }
+        },
+        yAxis: {
+            type: 'value',
+            name: dimensions >= 2 ? 'Dim 1' : '',
+            nameLocation: 'center', nameGap: 35,
+            splitLine: { lineStyle: { color: '#f0f0f0' } }
+        },
+        grid: { top: 50, bottom: 50, left: 55, right: 30 },
+        series: series,
+        animation: false
+    }, true);
 }
 
 function _embedding_render_3d_echarts(chart, tokens, highlightPos, steps) {
-	const series = [];
-	const arrowColor = '#3b82f6';
+    const series = [];
+    const arrowColor = '#3b82f6';
 
-	// ── 1. Vocabulary token scatter3D ──
-	series.push({
-		name: 'Vocabulary',
-		type: 'scatter3D',
-		data: tokens.map(token => {
-			const vec = window.persistentEmbeddingSpace[token];
-			return {
-				name: token,
-				value: [vec[0], vec[1] || 0, vec[2] || 0],
-				itemStyle: {                                          // ← ADD THIS
-					color: `hsl(${getHueFromToken(token)}, 75%, 50%)` // ← per-token color
-				}
-			};
-		}),
-		symbolSize: 6,
-		itemStyle: { opacity: 0.85 },
-		label: {
-			show: true, position: 'top', distance: 5,
-			formatter: p => p.name,
-			textStyle: { fontSize: 10, color: '#1e293b' }
-		}
-	});
+    series.push({
+        name: 'Vocabulary',
+        type: 'scatter3D',
+        data: tokens.map(token => {
+            const vec = window.persistentEmbeddingSpace[token];
+            return {
+                name: displayToken(token),
+                value: [vec[0], vec[1] || 0, vec[2] || 0],
+                itemStyle: {
+                    color: `hsl(${getHueFromToken(token)}, 75%, 50%)`
+                }
+            };
+        }),
+        symbolSize: 6,
+        itemStyle: { opacity: 0.85 },
+        label: {
+            show: true, position: 'top', distance: 5,
+            formatter: p => p.name,
+            textStyle: { fontSize: 10, color: '#1e293b' }
+        }
+    });
 
-	if (steps && steps.length > 0) {
-		steps.forEach((step, idx) => {
-			const from3 = step.from.slice(0, 3);
-			const to3   = step.to.slice(0, 3);
+    if (steps && steps.length > 0) {
+        steps.forEach((step, idx) => {
+            const from3 = step.from.slice(0, 3);
+            const to3   = step.to.slice(0, 3);
 
-			const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
-			series.push({
-				type: 'line3D',
-				data: [from3, shaftEnd],
-				lineStyle: { width: 5, color: arrowColor, opacity: 0.85 },
-				silent: true
-			});
+            const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
+            series.push({
+                type: 'line3D',
+                data: [from3, shaftEnd],
+                lineStyle: { width: 5, color: arrowColor, opacity: 0.85 },
+                silent: true
+            });
 
-			_add3DArrowheadSeries(series, from3, to3, arrowColor, {
-				lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4
-			});
+            _add3DArrowheadSeries(series, from3, to3, arrowColor, {
+                lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4
+            });
 
-			series.push({
-				type: 'scatter3D',
-				data: [{
-					value: [(from3[0]+to3[0])/2, (from3[1]+to3[1])/2, (from3[2]+to3[2])/2],
-					_hover: step.label
-				}],
-				symbolSize: 4,
-				itemStyle: { color: 'rgba(59,130,246,0.01)' },
-				tooltip: { formatter: p => `<b>${p.data._hover}</b>` }
-			});
-		});
-	}
+            series.push({
+                type: 'scatter3D',
+                data: [{
+                    value: [(from3[0]+to3[0])/2, (from3[1]+to3[1])/2, (from3[2]+to3[2])/2],
+                    _hover: step.label
+                }],
+                symbolSize: 4,
+                itemStyle: { color: 'rgba(59,130,246,0.01)' },
+                tooltip: { formatter: p => `<b>${p.data._hover}</b>` }
+            });
+        });
+    }
 
-	// ── 3. Result diamond highlight ──
-	if (highlightPos) {
-		series.push({
-			name: 'Result',
-			type: 'scatter3D',
-			data: [{ value: highlightPos.slice(0, 3) }],
-			symbol: 'diamond', symbolSize: 10,
-			itemStyle: { color: '#ef4444' },
-			tooltip: {
-				formatter: p =>
-				`<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)}, ${p.value[2].toFixed(4)})`
-			}
-		});
-	}
+    if (highlightPos) {
+        series.push({
+            name: 'Result',
+            type: 'scatter3D',
+            data: [{ value: highlightPos.slice(0, 3) }],
+            symbol: 'diamond', symbolSize: 10,
+            itemStyle: { color: '#ef4444' },
+            tooltip: {
+                formatter: p =>
+                `<b>Result</b><br>(${p.value[0].toFixed(4)}, ${p.value[1].toFixed(4)}, ${p.value[2].toFixed(4)})`
+            }
+        });
+    }
 
-	chart.setOption({
-		title: {
-			text: 'Embedding Space', left: 'center',
-			textStyle: { fontSize: 14, color: '#1e293b' }
-		},
-		tooltip: { show: true, trigger: 'item', confine: true },
-		xAxis3D: { type: 'value', name: 'Dim 0' },
-		yAxis3D: { type: 'value', name: 'Dim 1' },
-		zAxis3D: { type: 'value', name: 'Dim 2' },
-		grid3D: _defaultGrid3DConfig(),
-		series: series,
-		animation: false
-	}, true);
+    chart.setOption({
+        title: {
+            text: 'Embedding Space', left: 'center',
+            textStyle: { fontSize: 14, color: '#1e293b' }
+        },
+        tooltip: { show: true, trigger: 'item', confine: true },
+        xAxis3D: { type: 'value', name: 'Dim 0' },
+        yAxis3D: { type: 'value', name: 'Dim 1' },
+        zAxis3D: { type: 'value', name: 'Dim 2' },
+        grid3D: _defaultGrid3DConfig(),
+        series: series,
+        animation: false
+    }, true);
 }
 
 function renderHighDimEmbeddingPlot(container, tokens, dimensions) {
@@ -3185,8 +3182,8 @@ function tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model,
     }));
 
     const data = tokens.map((token, i) => {
-        const sourceWord = tlab_get_top_word_only(start_h[i]);
-        const destWord = tlab_get_top_word_only(end_h[i]);
+        const sourceWord = displayToken(tlab_get_top_word_only(start_h[i]));
+        const destWord = displayToken(tlab_get_top_word_only(end_h[i]));
         return {
             value: [...end_h[i], i + 1],
             name: token,
@@ -3264,13 +3261,13 @@ function create_migration_plot(id, tokens, start_h, end_h, layerNum, d_model, h_
 }
 
 function getMigrationDisplayTokens(tokens, tokenStrings) {
-	if (tokenStrings && tokenStrings.length === tokens.length) {
-		return tokenStrings;
-	}
-	return tokens.map((t, i) => {
-		if (typeof t === 'string') return t;
-		return tlab_get_top_word_only(t);
-	});
+    if (tokenStrings && tokenStrings.length === tokens.length) {
+        return tokenStrings.map(t => displayToken(t));
+    }
+    return tokens.map((t, i) => {
+        if (typeof t === 'string') return displayToken(t);
+        return displayToken(tlab_get_top_word_only(t));
+    });
 }
 
 function initTrajectoryCollector(tokens, displayTokens, d_model, start_h) {
@@ -3481,7 +3478,7 @@ function render_migration_logic(id, tokens, start_h, end_h, layerNum, d_model, h
 function _mig_ec2d_vocab_series() {
     const data = [];
     Object.entries(window.persistentEmbeddingSpace).forEach(([word, vec]) => {
-        data.push({ value: [vec[0], vec[1] || 0], name: word });
+        data.push({ value: [vec[0], vec[1] || 0], name: displayToken(word) });
     });
     return {
         type: 'scatter', name: 'Vocab', data: data,
@@ -3526,8 +3523,8 @@ function _mig_ec2d_arrow_series(tokens, start_h, end_h, d_model, nTokens) {
             end_h[i][0],   d_model >= 2 ? end_h[i][1] : 0,
             i
         ],
-        _src: tlab_get_top_word_only(start_h[i]),
-        _dst: tlab_get_top_word_only(end_h[i]),
+        _src: displayToken(tlab_get_top_word_only(start_h[i])),
+        _dst: displayToken(tlab_get_top_word_only(end_h[i])),
         _pos: i + 1
     }));
 
@@ -3538,7 +3535,7 @@ function _mig_ec2d_arrow_series(tokens, start_h, end_h, d_model, nTokens) {
             const sPx = api.coord([api.value(0), api.value(1)]);
             const ePx = api.coord([api.value(2), api.value(3)]);
             const color = getPositionColor(api.value(4), nTokens);
-            return _ec2d_render_arrow(sPx, ePx, color, 3);   // ← was 2
+            return _ec2d_render_arrow(sPx, ePx, color, 3);
         },
         encode: { x: [0, 2], y: [1, 3] },
         data: data,
@@ -3687,7 +3684,7 @@ function _mig_ec_position_legend(nTokens) {
 function _mig_ec3d_vocab_series() {
     const data = [];
     Object.entries(window.persistentEmbeddingSpace).forEach(([word, vec]) => {
-        data.push({ name: word, value: [vec[0], vec[1] || 0, vec[2] || 0] });
+        data.push({ name: displayToken(word), value: [vec[0], vec[1] || 0, vec[2] || 0] });
     });
     return {
         name: 'Vocab Embeddings', type: 'scatter3D', data: data,
@@ -3698,67 +3695,64 @@ function _mig_ec3d_vocab_series() {
 }
 
 function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
-	const series = [];
-	const legendData = ['Vocab Embeddings'];
-	const nTokens = tokens.length;
+    const series = [];
+    const legendData = ['Vocab Embeddings'];
+    const nTokens = tokens.length;
 
-	series.push(_mig_ec3d_vocab_series());
+    series.push(_mig_ec3d_vocab_series());
 
-	tokens.forEach((token, i) => {
-		const color = getPositionColor(i, nTokens);
-		const src = tlab_get_top_word_only(start_h[i]);
-		const dst = tlab_get_top_word_only(end_h[i]);
-		const label = `${src}→${dst} (${i + 1})`;
-		legendData.push(label);
+    tokens.forEach((token, i) => {
+        const color = getPositionColor(i, nTokens);
+        const src = displayToken(tlab_get_top_word_only(start_h[i]));
+        const dst = displayToken(tlab_get_top_word_only(end_h[i]));
+        const label = `${src}→${dst} (${i + 1})`;
+        legendData.push(label);
 
-		const from3 = start_h[i].slice(0, 3);
-		const to3   = end_h[i].slice(0, 3);
+        const from3 = start_h[i].slice(0, 3);
+        const to3   = end_h[i].slice(0, 3);
 
-		// Shaft shortened to arrowhead base
-		const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
-		series.push({
-			name: label, type: 'line3D',
-			data: [from3, shaftEnd],
-			lineStyle: { width: 4, color: color, opacity: 0.85 }
-		});
+        const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
+        series.push({
+            name: label, type: 'line3D',
+            data: [from3, shaftEnd],
+            lineStyle: { width: 4, color: color, opacity: 0.85 }
+        });
 
-		// Oriented V-chevron arrowhead
-		_add3DArrowheadSeries(series, from3, to3, color, {
-			lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4
-		});
+        _add3DArrowheadSeries(series, from3, to3, color, {
+            lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4
+        });
 
-		// Start marker only
-		series.push({
-			name: label, type: 'scatter3D',
-			data: [{
-				value: from3, symbolSize: 8,
-				itemStyle: { color: color, borderWidth: 2, borderColor: '#000' },
-				_hover: `Start: '${src}' pos ${i + 1}`
-			}],
-			symbol: 'circle',
-			tooltip: { formatter: p => p.data._hover }
-		});
-	});
+        series.push({
+            name: label, type: 'scatter3D',
+            data: [{
+                value: from3, symbolSize: 8,
+                itemStyle: { color: color, borderWidth: 2, borderColor: '#000' },
+                _hover: `Start: '${src}' pos ${i + 1}`
+            }],
+            symbol: 'circle',
+            tooltip: { formatter: p => p.data._hover }
+        });
+    });
 
-	if (vfEnabled) {
-		const { n_heads } = getTransformerConfig();
-		const computed = _compute_vector_field_points_3d(migId, layerNum, d_model, n_heads);
-		if (computed) series.push(..._vf_ec3d_series(computed));
-	}
+    if (vfEnabled) {
+        const { n_heads } = getTransformerConfig();
+        const computed = _compute_vector_field_points_3d(migId, layerNum, d_model, n_heads);
+        if (computed) series.push(..._vf_ec3d_series(computed));
+    }
 
-	chart.setOption({
-		title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center',
-			textStyle: { fontSize: 14, color: '#1e293b' } },
-		tooltip: { show: true, trigger: 'item', confine: true },
-		legend: { data: legendData, orient: 'horizontal', bottom: 5,
-			left: 'center', textStyle: { fontSize: 11 } },
-		xAxis3D: { type: 'value', name: 'Dim 0' },
-		yAxis3D: { type: 'value', name: 'Dim 1' },
-		zAxis3D: { type: 'value', name: 'Dim 2' },
-		grid3D: _defaultGrid3DConfig(),
-		series: series,
-		animation: false
-	}, true);
+    chart.setOption({
+        title: { text: `Layer ${layerNum}: Feature Migration`, left: 'center',
+            textStyle: { fontSize: 14, color: '#1e293b' } },
+        tooltip: { show: true, trigger: 'item', confine: true },
+        legend: { data: legendData, orient: 'horizontal', bottom: 5,
+            left: 'center', textStyle: { fontSize: 11 } },
+        xAxis3D: { type: 'value', name: 'Dim 0' },
+        yAxis3D: { type: 'value', name: 'Dim 1' },
+        zAxis3D: { type: 'value', name: 'Dim 2' },
+        grid3D: _defaultGrid3DConfig(),
+        series: series,
+        animation: false
+    }, true);
 }
 
 function _traj_ec3d_line_series_with_arrows(tokenLabel, color, dataPoints, tIdx) {
@@ -4048,32 +4042,32 @@ function _traj_get_logit_word(hVec, embSnap, snapVocab) {
 
 // ─── Helper: Build 2D embedding landmark trace ───
 function _traj_build_embedding_landmarks_2D(embSnap, snapVocab, dimA, dimB) {
-	const xs = [], ys = [], texts = [];
-	for (const word of snapVocab) {
-		const v = embSnap[word];
-		xs.push(v[dimA] || 0);
-		ys.push(v[dimB] || 0);
-		texts.push(word);
-	}
-	return {
-		type: 'scatter',
-		x: xs, y: ys,
-		mode: 'markers+text',
-		text: texts,
-		textposition: 'top center',
-		textfont: { size: 10, color: '#475569' },
-		marker: {
-			size: 8,
-			symbol: 'diamond',
-			color: 'rgba(100, 116, 139, 0.7)',
-			line: { width: 1, color: '#334155' }
-		},
-		name: 'Vocab Embeddings',
-		legendgroup: 'vocab_emb',
-		showlegend: true,
-		hoverinfo: 'text',
-		hovertemplate: '<b>Embedding: %{text}</b><extra></extra>'
-	};
+    const xs = [], ys = [], texts = [];
+    for (const word of snapVocab) {
+        const v = embSnap[word];
+        xs.push(v[dimA] || 0);
+        ys.push(v[dimB] || 0);
+        texts.push(displayToken(word));
+    }
+    return {
+        type: 'scatter',
+        x: xs, y: ys,
+        mode: 'markers+text',
+        text: texts,
+        textposition: 'top center',
+        textfont: { size: 10, color: '#475569' },
+        marker: {
+            size: 8,
+            symbol: 'diamond',
+            color: 'rgba(100, 116, 139, 0.7)',
+            line: { width: 1, color: '#334155' }
+        },
+        name: 'Vocab Embeddings',
+        legendgroup: 'vocab_emb',
+        showlegend: true,
+        hoverinfo: 'text',
+        hovertemplate: '<b>Embedding: %{text}</b><extra></extra>'
+    };
 }
 
 // ─── 1. Generate all unique dimension pairs ───
@@ -4364,7 +4358,7 @@ function _traj_ec3d_landmark_series(embSnap, snapVocab) {
         type: 'scatter3D',
         data: snapVocab.map(word => {
             const v = embSnap[word];
-            return { name: word, value: [v[0], v[1] || 0, v[2] || 0] };
+            return { name: displayToken(word), value: [v[0], v[1] || 0, v[2] || 0] };
         }),
         symbol: 'diamond',
         symbolSize: 8,
@@ -4446,51 +4440,46 @@ function _traj_ec3d_option(series, legendData) {
 
 // ─── Main function: now a clean orchestrator ───
 function tlab_render_trajectory_plot(d_model) {
-	const mainContainer = document.getElementById('transformer-migration-plots-container');
-	if (!mainContainer || !window.tlab_trajectory_collector) return;
+    const mainContainer = document.getElementById('transformer-migration-plots-container');
+    if (!mainContainer || !window.tlab_trajectory_collector) return;
 
-	const { tokens, steps, displayTokens } = window.tlab_trajectory_collector;
+    const { tokens, steps, displayTokens } = window.tlab_trajectory_collector;
 
-	const sortedKeys = Object.keys(steps).sort();
-	if (sortedKeys.length < 3) return;
+    const sortedKeys = Object.keys(steps).sort();
+    if (sortedKeys.length < 3) return;
 
-	let trajDiv = document.getElementById('transformer-trajectory-full-path');
-	if (!trajDiv) {
-		trajDiv = document.createElement('div');
-		trajDiv.id = 'transformer-trajectory-full-path';
-		mainContainer.appendChild(trajDiv);
-	}
+    let trajDiv = document.getElementById('transformer-trajectory-full-path');
+    if (!trajDiv) {
+        trajDiv = document.createElement('div');
+        trajDiv.id = 'transformer-trajectory-full-path';
+        mainContainer.appendChild(trajDiv);
+    }
 
-	// Remove the loading placeholder and reset flex centering styles
-	const placeholder = trajDiv.querySelector('.traj-loading-placeholder');
-	if (placeholder) placeholder.remove();
-	trajDiv.style.display = 'block';
-	trajDiv.style.alignItems = '';
-	trajDiv.style.justifyContent = '';
+    const placeholder = trajDiv.querySelector('.traj-loading-placeholder');
+    if (placeholder) placeholder.remove();
+    trajDiv.style.display = 'block';
+    trajDiv.style.alignItems = '';
+    trajDiv.style.justifyContent = '';
+    trajDiv.style.width = '100%';
 
-	trajDiv.style.width = '100%';
+    const labels = displayTokens || tokens.map((t, i) => {
+        if (typeof t === 'string') return displayToken(t);
+        return displayToken(tlab_get_top_word_only(t));
+    });
 
-	const labels = displayTokens || tokens.map((t, i) => {
-		if (typeof t === 'string') return t;
-		return tlab_get_top_word_only(t);
-	});
+    const dataPoints = sortedKeys.map(k => steps[k]);
+    const { embSnap, snapVocab } = _traj_snapshot_embeddings();
 
-	const dataPoints = sortedKeys.map(k => steps[k]);
-
-	const { embSnap, snapVocab } = _traj_snapshot_embeddings();
-
-	if (d_model >= 4) {
-		_traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
-
-		// After rendering, measure actual content height and update
-		requestAnimationFrame(() => {
-			const actualHeight = trajDiv.scrollHeight;
-			trajDiv.style.height = actualHeight + 'px';
-			trajDiv.style.minHeight = actualHeight + 'px';
-		});
-	} else {
-		_traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
-	}
+    if (d_model >= 4) {
+        _traj_render_high_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
+        requestAnimationFrame(() => {
+            const actualHeight = trajDiv.scrollHeight;
+            trajDiv.style.height = actualHeight + 'px';
+            trajDiv.style.minHeight = actualHeight + 'px';
+        });
+    } else {
+        _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_model, embSnap, snapVocab);
+    }
 }
 
 function buildVocabTransitionRows(tokens, start_h, end_h, d_model) {
@@ -4566,23 +4555,23 @@ function tlab_get_top_word_only(h_vec) {
 }
 
 function tlab_get_top_vocab_list(h_vec, d_model) {
-	if (!window.persistentEmbeddingSpace) return [];
-	const vocabulary = Object.keys(window.persistentEmbeddingSpace);
-	const { temperature } = getTransformerConfig();
+    if (!window.persistentEmbeddingSpace) return [];
+    const vocabulary = Object.keys(window.persistentEmbeddingSpace);
+    const { temperature } = getTransformerConfig();
 
-	let scores = vocabulary.map(word => {
-		const w_vec = window.persistentEmbeddingSpace[word];
-		const dot = dotProduct(h_vec, w_vec);
-		return { word, score: dot };
-	});
+    let scores = vocabulary.map(word => {
+        const w_vec = window.persistentEmbeddingSpace[word];
+        const dot = dotProduct(h_vec, w_vec);
+        return { word, score: dot };
+    });
 
-	const scaledScores = scores.map(s => s.score / temperature);
-	const probs = softmax(scaledScores);
+    const scaledScores = scores.map(s => s.score / temperature);
+    const probs = softmax(scaledScores);
 
-	return scores.map((s, i) => ({
-		word: s.word.replace(/#/g, '\\#').replace(/_/g, '\\_'),
-		prob: probs[i]
-	})).sort((a, b) => b.prob - a.prob).slice(0, d_model);
+    return scores.map((s, i) => ({
+        word: displayToken(s.word).replace(/#/g, '\\#').replace(/_/g, '\\_'),
+        prob: probs[i]
+    })).sort((a, b) => b.prob - a.prob).slice(0, d_model);
 }
 
 function render_positional_shift_plot(tokenStrings, d_model) {
@@ -4651,14 +4640,14 @@ function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbe
         if (!combined) return;
 
         const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
-        const name = `${token} (pos ${pos})`;
+        const dispToken = displayToken(token);
+        const name = `${dispToken} (pos ${pos})`;
 
         const x0 = semanticBase[0];
         const y0 = d_model >= 2 ? semanticBase[1] : 0;
         const x1 = combined[0];
         const y1 = d_model >= 2 ? combined[1] : 0;
 
-        // Arrow from base embedding to PE-shifted embedding
         series.push({
             type: 'custom',
             name: name,
@@ -4671,30 +4660,28 @@ function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbe
             data: [{ value: [x0, y0, x1, y1] }],
             tooltip: {
                 formatter: () =>
-                    `Token: <b>${token}</b><br>Pos: ${pos}<br>` +
+                    `Token: <b>${dispToken}</b><br>Pos: ${pos}<br>` +
                     `Base: (${x0.toFixed(3)}, ${y0.toFixed(3)})<br>` +
                     `+PE:  (${x1.toFixed(3)}, ${y1.toFixed(3)})`
             },
             z: 10
         });
 
-        // Start point marker (semantic base)
         series.push({
             type: 'scatter', name: name,
-            data: [{ value: [x0, y0], _hover: `${token} base` }],
+            data: [{ value: [x0, y0], _hover: `${dispToken} base` }],
             symbolSize: 7,
             itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#000' },
-            tooltip: { formatter: p => `<b>${token}</b> base embedding` },
+            tooltip: { formatter: p => `<b>${dispToken}</b> base embedding` },
             z: 12
         });
 
-        // End point marker (after PE injection)
         series.push({
             type: 'scatter', name: name,
-            data: [{ value: [x1, y1], _hover: `${token} +PE` }],
+            data: [{ value: [x1, y1], _hover: `${dispToken} +PE` }],
             symbol: 'triangle', symbolSize: 11,
             itemStyle: { color: tokenColor, borderWidth: 1, borderColor: '#fff' },
-            tooltip: { formatter: p => `<b>${token}</b> + positional encoding` },
+            tooltip: { formatter: p => `<b>${dispToken}</b> + positional encoding` },
             z: 12
         });
     });
@@ -4726,69 +4713,68 @@ function _shift_render_2d_echarts(container, tokenStrings, d_model, injectedEmbe
 }
 
 function _shift_render_3d_echarts(container, tokenStrings, injectedEmbeddings) {
-	const chart = echarts.init(container);
-	const series = [];
-	const legendData = [];
+    const chart = echarts.init(container);
+    const series = [];
+    const legendData = [];
 
-	tokenStrings.forEach((token, pos) => {
-		const semanticBase = window.persistentEmbeddingSpace[token];
-		if (!semanticBase) return;
-		const combined = injectedEmbeddings[pos];
-		if (!combined) return;
+    tokenStrings.forEach((token, pos) => {
+        const semanticBase = window.persistentEmbeddingSpace[token];
+        if (!semanticBase) return;
+        const combined = injectedEmbeddings[pos];
+        if (!combined) return;
 
-		const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
-		const name = `${token} (pos ${pos})`;
-		legendData.push(name);
+        const tokenColor = `hsl(${getHueFromToken(token)}, 75%, 50%)`;
+        const dispToken = displayToken(token);
+        const name = `${dispToken} (pos ${pos})`;
+        legendData.push(name);
 
-		const from3 = [semanticBase[0], semanticBase[1], semanticBase[2]];
-		const to3   = [combined[0], combined[1], combined[2]];
+        const from3 = [semanticBase[0], semanticBase[1], semanticBase[2]];
+        const to3   = [combined[0], combined[1], combined[2]];
 
-		// Arrow shaft
-		series.push({
-			name: name, type: 'line3D',
-			data: [from3, to3],
-			lineStyle: { width: 6, color: tokenColor, opacity: 0.85 }
-		});
+        series.push({
+            name: name, type: 'line3D',
+            data: [from3, to3],
+            lineStyle: { width: 6, color: tokenColor, opacity: 0.85 }
+        });
 
-		// Start / end markers
-		series.push({
-			name: name, type: 'scatter3D',
-			data: [
-				{
-					value: from3, symbolSize: 8,
-					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#000' },
-					_hover: `${token} base (pos ${pos})`
-				},
-				{
-					value: to3, symbolSize: 13,
-					itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#fff' },
-					_hover: `${token} + PE (pos ${pos})`
-				}
-			],
-			symbol: 'circle',
-			tooltip: { formatter: p => p.data._hover }
-		});
-	});
+        series.push({
+            name: name, type: 'scatter3D',
+            data: [
+                {
+                    value: from3, symbolSize: 8,
+                    itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#000' },
+                    _hover: `${dispToken} base (pos ${pos})`
+                },
+                {
+                    value: to3, symbolSize: 13,
+                    itemStyle: { color: tokenColor, borderWidth: 2, borderColor: '#fff' },
+                    _hover: `${dispToken} + PE (pos ${pos})`
+                }
+            ],
+            symbol: 'circle',
+            tooltip: { formatter: p => p.data._hover }
+        });
+    });
 
-	chart.setOption({
-		title: {
-			text: 'Semantic Vector → + Positional Shift', left: 'center',
-			textStyle: { fontSize: 14, color: '#1e293b' }
-		},
-		tooltip: { show: true, trigger: 'item', confine: true },
-		legend: {
-			data: legendData, orient: 'horizontal',
-			bottom: 5, left: 'center', textStyle: { fontSize: 11 }
-		},
-		xAxis3D: { type: 'value', name: 'Dim 0' },
-		yAxis3D: { type: 'value', name: 'Dim 1' },
-		zAxis3D: { type: 'value', name: 'Dim 2' },
-		grid3D: _defaultGrid3DConfig(),
-		series: series,
-		animation: false
-	}, true);
+    chart.setOption({
+        title: {
+            text: 'Semantic Vector → + Positional Shift', left: 'center',
+            textStyle: { fontSize: 14, color: '#1e293b' }
+        },
+        tooltip: { show: true, trigger: 'item', confine: true },
+        legend: {
+            data: legendData, orient: 'horizontal',
+            bottom: 5, left: 'center', textStyle: { fontSize: 11 }
+        },
+        xAxis3D: { type: 'value', name: 'Dim 0' },
+        yAxis3D: { type: 'value', name: 'Dim 1' },
+        zAxis3D: { type: 'value', name: 'Dim 2' },
+        grid3D: _defaultGrid3DConfig(),
+        series: series,
+        animation: false
+    }, true);
 
-	_wireEChartsResize(container, '_ecShiftResize');
+    _wireEChartsResize(container, '_ecShiftResize');
 }
 
 function _wireEChartsResize(container, key) {
@@ -4812,7 +4798,7 @@ function getHueFromToken(str) {
 function buildShiftEChartsEntry(token, pos, semanticBase, combined, tokenColor) {
     return {
         value: semanticBase.flatMap((val, i) => [val, combined[i]]),
-        name: `${token} (pos ${pos})`,
+        name: `${displayToken(token)} (pos ${pos})`,
         lineStyle: { color: tokenColor }
     };
 }
@@ -5237,10 +5223,11 @@ function updateTrainButtonState() {
 function buildTokenChipStrip(strip, tokens) {
     const existingChips = strip.querySelectorAll('.sa-token-block');
 
-    // If same number of chips, patch in-place — no DOM rebuild
     if (existingChips.length === tokens.length) {
         existingChips.forEach((chip, i) => {
-            const displayWord = (typeof tokens[i] === 'string') ? tokens[i] : tlab_get_top_word_only(tokens[i]);
+            const displayWord = displayToken(
+                (typeof tokens[i] === 'string') ? tokens[i] : tlab_get_top_word_only(tokens[i])
+            );
             if (chip.textContent.trim() !== displayWord) {
                 chip.textContent = displayWord;
             }
@@ -5248,9 +5235,10 @@ function buildTokenChipStrip(strip, tokens) {
         return existingChips;
     }
 
-    // Different count — full rebuild
     strip.innerHTML = tokens.map((word, i) => {
-        const displayWord = (typeof word === 'string') ? word : tlab_get_top_word_only(word);
+        const displayWord = displayToken(
+            (typeof word === 'string') ? word : tlab_get_top_word_only(word)
+        );
         return `<div class="sa-token-block" style="
             display:inline-block; padding:8px 14px; margin:0 6px;
             background:#e0e7ff; border-radius:8px; cursor:pointer;
@@ -5447,32 +5435,32 @@ function tled_initEditor() {
 }
 
 function tled_generateRowHtml(word, vec, d_model) {
-	// Escape word for use in HTML attributes (handle quotes, etc.)
-	const safeWord = word.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-		const safeWordAttr = word.replace(/"/g, '&quot;');
+    const safeWord = word.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const safeWordAttr = word.replace(/"/g, '&quot;');
+    const dispWord = displayToken(word);
 
-			let dimCells = '';
-			for (let d = 0; d < d_model; d++) {
-				dimCells += `
-	<td style="padding: 5px; text-align: center;">
-	    <input
-		type="number"
-		value="${vec[d].toFixed(4)}"
-		step="0.1"
-		data-tled-word="${safeWordAttr}"
-		data-tled-dim="${d}"
-		style="width: 70px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 12px;"
-		oninput="tled_updateEmbedding(this)"
-	    >
-	</td>`;
-			}
+    let dimCells = '';
+    for (let d = 0; d < d_model; d++) {
+        dimCells += `
+    <td style="padding: 5px; text-align: center;">
+        <input
+        type="number"
+        value="${vec[d].toFixed(4)}"
+        step="0.1"
+        data-tled-word="${safeWordAttr}"
+        data-tled-dim="${d}"
+        style="width: 70px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; font-size: 12px;"
+        oninput="tled_updateEmbedding(this)"
+        >
+    </td>`;
+    }
 
-			return `
+    return `
     <tr style="border-bottom: 1px solid #f1f5f9;" id="tled-row-${safeWordAttr}">
-	<td style="padding: 8px 10px; font-weight: 500;">${word}</td>
-	${dimCells}
+    <td style="padding: 8px 10px; font-weight: 500;">${escapeHtml(dispWord)}</td>
+    ${dimCells}
     </tr>`;
-		}
+}
 
 function tled_updateEmbedding(inputEl) {
 	const word = inputEl.getAttribute('data-tled-word');
@@ -5933,46 +5921,39 @@ function computeH1Hash(h0, normH0, multiHeadOutput, projectedMHA, h1, gamma, bet
 }
 
 function matrixToPmatrixLabeled(matrix, tokenStrings, stageLabel) {
-	if (!tokenStrings || tokenStrings.length !== matrix.length) {
-		return matrixToPmatrix(matrix); // fallback to unlabeled
-	}
+    if (!tokenStrings || tokenStrings.length !== matrix.length) {
+        return matrixToPmatrix(matrix);
+    }
 
-	const total = matrix.length;
-	const numCols = matrix[0].length;
+    const total = matrix.length;
+    const numCols = matrix[0].length;
+    const colSpec = 'r|' + 'r'.repeat(numCols);
 
-	const colSpec = 'r|' + 'r'.repeat(numCols);
+    const rows = matrix.map((row, tIdx) => {
+        const colorCmd = getPositionColor(tIdx, total, 'temml');
+        const safeLabel = displayToken(tokenStrings[tIdx])
+            .replace(/#/g, '\\#')
+            .replace(/_/g, '\\_')
+            .replace(/&/g, '\\&');
 
-	const rows = matrix.map((row, tIdx) => {
-		const colorCmd = getPositionColor(tIdx, total, 'temml');
-		const safeLabel = tokenStrings[tIdx]
-			.replace(/#/g, '\\#')
-			.replace(/_/g, '\\_')
-			.replace(/&/g, '\\&');
-		
-		// Build the subscript: token index + optional stage label
-		let subscript;
-		if (stageLabel) {
-			// Convert stage label to LaTeX-safe form.
-			// Handle "^X" patterns by breaking out of \text{}, 
-			// rendering as math superscript, then re-entering \text{}.
-			// e.g. "after W^O proj" → "\text{after W}^{O}\text{ proj}"
-			const safeStage = stageLabel
-				.replace(/#/g, '\\#')
-				.replace(/_/g, '\\_')
-				.replace(/&/g, '\\&')
-				// Split around ^X patterns: close \text{}, do ^{X}, reopen \text{}
-				.replace(/\^(\w+)/g, '}^{$1}\\text{');
-			subscript = `_{${tIdx},\\,\\text{${safeStage}}}`;
-		} else {
-			subscript = `_{${tIdx}}`;
-		}
-		
-		const label = `${colorCmd} \\text{${safeLabel}}${subscript}`;
-		const vals = row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
-		return `${label} & ${vals}`;
-	}).join(' \\\\ ');
+        let subscript;
+        if (stageLabel) {
+            const safeStage = stageLabel
+                .replace(/#/g, '\\#')
+                .replace(/_/g, '\\_')
+                .replace(/&/g, '\\&')
+                .replace(/\^(\w+)/g, '}^{$1}\\text{');
+            subscript = `_{${tIdx},\\,\\text{${safeStage}}}`;
+        } else {
+            subscript = `_{${tIdx}}`;
+        }
 
-	return `\\left(\\begin{array}{${colSpec}} ${rows} \\end{array}\\right)`;
+        const label = `${colorCmd} \\text{${safeLabel}}${subscript}`;
+        const vals = row.map(v => `${colorCmd} ${v.toFixed(nr_fixed)}`).join(' & ');
+        return `${label} & ${vals}`;
+    }).join(' \\\\ ');
+
+    return `\\left(\\begin{array}{${colSpec}} ${rows} \\end{array}\\right)`;
 }
 
 function ensureUnifiedLayerContainer(layerIndex, n_layers, containerId) {
@@ -6240,4 +6221,9 @@ async function loadTransformerModule () {
 	});
 
 	return Promise.resolve();
+}
+
+function displayToken(token) {
+    if (typeof token !== 'string') return String(token);
+    return /^\s+$/.test(token) ? token.replace(/ /g, '␣') : token;
 }

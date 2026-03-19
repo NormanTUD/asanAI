@@ -108,10 +108,19 @@ class AttentionEngine {
 	}
 
 	/**
+	 * Converts invisible whitespace characters to visible symbols for display.
+	 * Spaces become "␣" (U+2423 OPEN BOX).
+	 */
+	_displayToken(str) {
+		if (typeof str !== 'string') return str;
+		return str.replace(/ /g, '␣');
+	}
+
+	/**
 	 * Returns a LaTeX-safe token string (escapes #, _, &).
 	 */
 	_attnSafeTok(displayTokens, tIdx) {
-		return displayTokens[tIdx]
+		return this._displayToken(displayTokens[tIdx])
 			.replace(/#/g, '\\#')
 			.replace(/_/g, '\\_')
 			.replace(/&/g, '\\&');
@@ -1073,9 +1082,10 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const webContainerId = `attn-web-container-${this.containerId}-${layerIdx}-${headIdx}`;
 		const webCanvasId = `attn-web-canvas-${this.containerId}-${layerIdx}-${headIdx}`;
 		const webStripId = `attn-web-strip-${this.containerId}-${layerIdx}-${headIdx}`;
+		const visibleTokens = displayTokens.map(t => this._displayToken(t));  // ← CHANGED
 		renderDynamicAttentionWeb(
 			webContainerId, webCanvasId, webStripId,
-			displayTokens, weights
+			visibleTokens, weights
 		);
 	}
 
@@ -1220,7 +1230,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 				'data-apv-token-side': 'row',
 				'data-apv-token-idx': String(i),
 				style: 'cursor:pointer;'
-			}, tokens[i]));
+			}, this._displayToken(tokens[i])));
 		}
 	}
 
@@ -1242,7 +1252,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 				'data-apv-token-side': 'col',
 				'data-apv-token-idx': String(j),
 				style: 'cursor:pointer;'
-			}, tokens[j]));
+			}, this._displayToken(tokens[j])));
 		}
 	}
 
@@ -1408,7 +1418,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 				'font-weight': isHoveredLeft ? '700' : '500', 'text-anchor': 'end',
 				style: 'cursor:pointer;',
 				'data-apv-side': 'left', 'data-apv-idx': String(i)
-			}, tokens[i]));
+			}, this._displayToken(tokens[i])));       // ← CHANGED
 
 			frag.appendChild(makeText({
 				x: String(rightColumnX), y: String(y + 4),
@@ -1416,7 +1426,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 				'font-weight': isHoveredRight ? '700' : '500', 'text-anchor': 'start',
 				style: 'cursor:pointer;',
 				'data-apv-side': 'right', 'data-apv-idx': String(i)
-			}, tokens[i]));
+			}, this._displayToken(tokens[i])));       // ← CHANGED
 		}
 
 		const weights = headData.this_weights;
@@ -1441,7 +1451,6 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			}
 		}
 
-		// No wrapper height locking here — caller is responsible
 		svg.replaceChildren(frag);
 	}
 
@@ -1625,7 +1634,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		textEls.forEach(el => {
 			const idx = parseInt(el.getAttribute('data-apv-idx'));
 			if (idx < n) {
-				el.textContent = tokens[idx];
+				el.textContent = this._displayToken(tokens[idx]);   // ← CHANGED
 			}
 		});
 
@@ -1645,7 +1654,6 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 				const key = `${qi}-${ki}`;
 
 				if (w < minOpacity) {
-					// Remove if exists
 					const existing = existingPaths.get(key);
 					if (existing) existing.remove();
 					continue;
@@ -1664,13 +1672,11 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 
 				const existing = existingPaths.get(key);
 				if (existing) {
-					// Update in place
 					existing.setAttribute('d', d);
 					existing.setAttribute('stroke-width', sw);
 					existing.setAttribute('stroke-opacity', so);
 					existing.setAttribute('stroke', color);
 				} else {
-					// Create new path
 					const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 					path.setAttribute('d', d);
 					path.setAttribute('fill', 'none');
@@ -1684,7 +1690,6 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			}
 		}
 
-		// Remove paths that are no longer needed
 		existingPaths.forEach((path, key) => {
 			if (!neededPaths.has(key)) path.remove();
 		});
@@ -1699,14 +1704,12 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const offsetX = padding / 2;
 		const offsetY = padding / 2;
 
-		// ── Update live tooltip data so the mousemove handler reads fresh values ──
 		if (svg._apvTooltipData) {
 			svg._apvTooltipData.headDataArray = [headData];
 			svg._apvTooltipData.tokens = tokens;
 			svg._apvTooltipData.layerIdx = layerIdx;
 		}
 
-		// ── Invalidate tooltip cache and force immediate rebuild if visible ──
 		if (svg._apvTooltipCache) {
 			svg._apvTooltipCache.lastKey = null;
 		}
@@ -1718,7 +1721,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		svg.querySelectorAll('text[data-apv-token-side="row"]').forEach(el => {
 			const idx = parseInt(el.getAttribute('data-apv-token-idx'));
 			if (idx < n) {
-				el.textContent = tokens[idx];
+				el.textContent = this._displayToken(tokens[idx]);   // ← CHANGED
 			}
 		});
 
@@ -1726,7 +1729,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		svg.querySelectorAll('text[data-apv-token-side="col"]').forEach(el => {
 			const idx = parseInt(el.getAttribute('data-apv-token-idx'));
 			if (idx < n) {
-				el.textContent = tokens[idx];
+				el.textContent = this._displayToken(tokens[idx]);   // ← CHANGED
 			}
 		});
 
@@ -1826,9 +1829,9 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		let svgContent = '';
 
 		svgContent += `<text x="${leftColumnX}" y="18" font-size="11" fill="#64748b"
-	    font-weight="600" text-anchor="middle">Query (attending)</text>`;
+	font-weight="600" text-anchor="middle">Query (attending)</text>`;
 		svgContent += `<text x="${rightColumnX}" y="18" font-size="11" fill="#64748b"
-	    font-weight="600" text-anchor="middle">Key (attended to)</text>`;
+	font-weight="600" text-anchor="middle">Key (attended to)</text>`;
 
 		const hovered = this._apvHoveredToken.get(layerIdx);
 
@@ -1836,20 +1839,21 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			const y = topPadding + i * rowHeight;
 			const isHoveredLeft = hovered && hovered.side === 'left' && hovered.index === i;
 			const isHoveredRight = hovered && hovered.side === 'right' && hovered.index === i;
+			const displayTok = this._apvEscapeHtml(this._displayToken(tokens[i]));  // ← CHANGED
 
 			svgContent += `<text x="${leftColumnX}" y="${y + 4}"
-		font-size="12" fill="${isHoveredLeft ? '#1e40af' : '#334155'}"
-		font-weight="${isHoveredLeft ? '700' : '500'}" text-anchor="end"
-		style="cursor:pointer;"
-		data-apv-side="left" data-apv-idx="${i}"
-		>${this._apvEscapeHtml(tokens[i])}</text>`;
+	    font-size="12" fill="${isHoveredLeft ? '#1e40af' : '#334155'}"
+	    font-weight="${isHoveredLeft ? '700' : '500'}" text-anchor="end"
+	    style="cursor:pointer;"
+	    data-apv-side="left" data-apv-idx="${i}"
+	    >${displayTok}</text>`;
 
 			svgContent += `<text x="${rightColumnX}" y="${y + 4}"
-		font-size="12" fill="${isHoveredRight ? '#1e40af' : '#334155'}"
-		font-weight="${isHoveredRight ? '700' : '500'}" text-anchor="start"
-		style="cursor:pointer;"
-		data-apv-side="right" data-apv-idx="${i}"
-		>${this._apvEscapeHtml(tokens[i])}</text>`;
+	    font-size="12" fill="${isHoveredRight ? '#1e40af' : '#334155'}"
+	    font-weight="${isHoveredRight ? '700' : '500'}" text-anchor="start"
+	    style="cursor:pointer;"
+	    data-apv-side="right" data-apv-idx="${i}"
+	    >${displayTok}</text>`;
 		}
 
 		headDataArray.forEach((head, hIdx) => {
@@ -1870,11 +1874,11 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 					const cpx = (x1 + x2) / 2;
 
 					svgContent += `<path d="M ${x1} ${y1} C ${cpx} ${y1}, ${cpx} ${y2}, ${x2} ${y2}"
-			fill="none" stroke="${color}"
-			stroke-width="${(1 + w * 5).toFixed(1)}"
-			stroke-opacity="${w.toFixed(3)}"
-			data-apv-head="${hIdx}" data-apv-qi="${qi}" data-apv-ki="${ki}"
-		    />`;
+		    fill="none" stroke="${color}"
+		    stroke-width="${(1 + w * 5).toFixed(1)}"
+		    stroke-opacity="${w.toFixed(3)}"
+		    data-apv-head="${hIdx}" data-apv-qi="${qi}" data-apv-ki="${ki}"
+		/>`;
 				}
 			}
 		});
@@ -2085,22 +2089,22 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 			const weights = headDataArray[hIdx].this_weights;
 
 			svgContent += `<text x="${offsetX + matrixSize / 2}" y="${offsetY - 30}"
-		font-size="12" fill="${color}" font-weight="700" text-anchor="middle"
-		>Head ${hIdx + 1}</text>`;
+		    font-size="12" fill="${color}" font-weight="700" text-anchor="middle"
+		    >Head ${hIdx + 1}</text>`;
 
 			for (let i = 0; i < n; i++) {
 				svgContent += `<text x="${offsetX - 4}" y="${offsetY + i * cellSize + cellSize / 2 + 4}"
-		    font-size="9" fill="#64748b" text-anchor="end"
-		    >${this._apvEscapeHtml(tokens[i])}</text>`;
+			font-size="9" fill="#64748b" text-anchor="end"
+			>${this._apvEscapeHtml(this._displayToken(tokens[i]))}</text>`;  // ← CHANGED
 			}
 
 			for (let j = 0; j < n; j++) {
 				svgContent += `<text
-		    x="${offsetX + j * cellSize + cellSize / 2}"
-		    y="${offsetY - 6}"
-		    font-size="9" fill="#64748b" text-anchor="start"
-		    transform="rotate(-45, ${offsetX + j * cellSize + cellSize / 2}, ${offsetY - 6})"
-		    >${this._apvEscapeHtml(tokens[j])}</text>`;
+			x="${offsetX + j * cellSize + cellSize / 2}"
+			y="${offsetY - 6}"
+			font-size="9" fill="#64748b" text-anchor="start"
+			transform="rotate(-45, ${offsetX + j * cellSize + cellSize / 2}, ${offsetY - 6})"
+			>${this._apvEscapeHtml(this._displayToken(tokens[j]))}</text>`;  // ← CHANGED
 			}
 
 			for (let qi = 0; qi < n; qi++) {
@@ -2111,18 +2115,18 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 					const alpha = Math.max(0.05, w);
 
 					svgContent += `<rect x="${x}" y="${y}"
-			width="${cellSize}" height="${cellSize}"
-			fill="${color}" fill-opacity="${alpha.toFixed(3)}"
-			stroke="#e2e8f0" stroke-width="0.5"
-			data-apv-head="${hIdx}" data-apv-qi="${qi}" data-apv-ki="${ki}"
-			style="cursor:crosshair;"
-		    />`;
+			    width="${cellSize}" height="${cellSize}"
+			    fill="${color}" fill-opacity="${alpha.toFixed(3)}"
+			    stroke="#e2e8f0" stroke-width="0.5"
+			    data-apv-head="${hIdx}" data-apv-qi="${qi}" data-apv-ki="${ki}"
+			    style="cursor:crosshair;"
+			/>`;
 
 					if (cellSize >= 28 && w > 0.05) {
 						svgContent += `<text x="${x + cellSize / 2}" y="${y + cellSize / 2 + 3}"
-			    font-size="8" fill="${w > 0.5 ? '#fff' : '#334155'}"
-			    text-anchor="middle" pointer-events="none"
-			    >${(w * 100).toFixed(0)}</text>`;
+				font-size="8" fill="${w > 0.5 ? '#fff' : '#334155'}"
+				text-anchor="middle" pointer-events="none"
+				>${(w * 100).toFixed(0)}</text>`;
 					}
 				}
 			}
@@ -2392,7 +2396,7 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	_buildCellTooltipHeader(ctx) {
 		const { displayHeadNum, tokens, qi, ki, w } = ctx;
 		return `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">` +
-			`Head ${displayHeadNum}: "${tokens[qi]}" → "${tokens[ki]}" = ${(w * 100).toFixed(1)}%` +
+			`Head ${displayHeadNum}: "${this._displayToken(tokens[qi])}" → "${this._displayToken(tokens[ki])}" = ${(w * 100).toFixed(1)}%` +
 			`</div>`;
 	}
 
@@ -2426,8 +2430,8 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const { q_i, k_j, qi, ki, d_k, d_k_int, rawScore, tokens } = ctx;
 		const dotProduct = this._tooltipDotVec(q_i, k_j);
 		return `<div style="margin-bottom:6px;">` +
-			`$\\frac{\\underbrace{${this._tooltipRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${tokens[qi]}"})} \\cdot ` +
-			`\\underbrace{${this._tooltipColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${tokens[ki]}"})}}{\\sqrt{${d_k_int}}} = ` +
+			`$\\frac{\\underbrace{${this._tooltipRowVec(q_i)}}_{Q_{${qi}}^T\\;(\\text{"${this._displayToken(tokens[qi])}}}")} \\cdot ` +
+			`\\underbrace{${this._tooltipColVec(k_j)}}_{K_{${ki}}\\;(\\text{"${this._displayToken(tokens[ki])}}}")}}{\\sqrt{${d_k_int}}} = ` +
 			`\\frac{${dotProduct.toFixed(nr_fixed)}}{${Math.sqrt(d_k).toFixed(nr_fixed)}} = ${rawScore.toFixed(nr_fixed)}$` +
 			`</div>`;
 	}
@@ -2456,18 +2460,17 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		const hLabel = `h_{${layerIdx}}`;
 		const displayHeadNum = headDisplayOffset + 1;
 		const h0_vec = hd.h0[idx];
+		const displayTok = this._displayToken(tokens[idx]);          // ← CHANGED
 
 		let html = '';
 		html += `<div style="margin-bottom:8px; font-weight:bold; font-size:0.85rem;">`;
-		html += `Token "${tokens[idx]}" (index ${idx}) — Head ${displayHeadNum}, Layer ${layerIdx + 1}`;
+		html += `Token "${displayTok}" (index ${idx}) — Head ${displayHeadNum}, Layer ${layerIdx + 1}`;
 		html += `</div>`;
 
-		// Input embedding
 		html += `<div style="margin-bottom:6px;">`;
-		html += `$\\underbrace{${this._tooltipColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokens[idx]}"}}}$`;
+		html += `$\\underbrace{${this._tooltipColVec(h0_vec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${displayTok}"}}}$`;
 		html += `</div>`;
 
-		// Q, K, V projections
 		html += this._buildProjectionHtml('Q', idx, hd.WQ, h0_vec, hd.Qi[idx], tokens[idx], hLabel, layerIdx);
 		html += this._buildProjectionHtml('K', idx, hd.WK, h0_vec, hd.Ki[idx], tokens[idx], hLabel, layerIdx);
 		html += this._buildProjectionHtml('V', idx, hd.WV, h0_vec, hd.Vi[idx], tokens[idx], hLabel, layerIdx);
@@ -2479,12 +2482,13 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	 * Builds a single projection equation line (Q, K, or V).
 	 */
 	_buildProjectionHtml(label, idx, weightMatrix, inputVec, resultVec, tokenStr, hLabel, layerIdx) {
-		return `<div style="margin-bottom:6px;">` +
-			`$\\underbrace{${label}_{${idx}}}_{\\text{"${tokenStr}"}} = ` +
-			`\\underbrace{${this._tooltipMatrix(weightMatrix)}}_{W_${label}}^T \\cdot ` +
-			`\\underbrace{${this._tooltipColVec(inputVec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${tokenStr}"}}} = ` +
-			`${this._tooltipColVec(resultVec)}$` +
-			`</div>`;
+	    const displayStr = this._displayToken(tokenStr);
+	    return `<div style="margin-bottom:6px;">` +
+		`$\\underbrace{${label}_{${idx}}}_{\\text{"${displayStr}"}} = ` +
+		`\\underbrace{${this._tooltipMatrix(weightMatrix)}}_{W_${label}}^T \\cdot ` +
+		`\\underbrace{${this._tooltipColVec(inputVec)}}_{\\substack{${hLabel}[${idx}] \\\\ \\text{"${displayStr}"}}} = ` +
+		`${this._tooltipColVec(resultVec)}$` +
+		`</div>`;
 	}
 
 	/**
@@ -2518,7 +2522,6 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 	_buildSoftmaxHtml(rawScoresRow, softmaxRow, qi, ki, n, tokens) {
 		let html = '';
 
-		// Softmax fraction
 		html += `<div style="margin-bottom:4px;">`;
 		const softmaxNumer = `e^{${ki > qi ? '-\\infty' : rawScoresRow[ki].toFixed(nr_fixed)}}`;
 		const denomParts = [];
@@ -2532,16 +2535,16 @@ style="display:block; background:#fff; border:1px solid #e2e8f0; border-radius:8
 		html += `$\\text{softmax}_{${ki}} = \\frac{${softmaxNumer}}{${denomParts.join(' + ')}}$`;
 		html += `</div>`;
 
-		// Full softmax result row
 		html += `<div style="margin-bottom:2px;">`;
 		html += `$= \\Big(`;
 		const parts = [];
 		for (let c = 0; c < n; c++) {
 			const val = (softmaxRow[c] * 100).toFixed(1) + '\\%';
+			const displayTok = this._displayToken(tokens[c]);       // ← CHANGED
 			if (c === ki) {
-				parts.push(`\\boxed{\\underbrace{${val}}_{\\text{${tokens[c]}}}}`);
+				parts.push(`\\boxed{\\underbrace{${val}}_{\\text{${displayTok}}}}`);
 			} else {
-				parts.push(`\\underbrace{${val}}_{\\text{${tokens[c]}}}`);
+				parts.push(`\\underbrace{${val}}_{\\text{${displayTok}}}`);
 			}
 		}
 		html += parts.join(',\\;');
