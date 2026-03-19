@@ -2175,18 +2175,18 @@ function buildLogitLatexRows(logits) {
 }
 
 function buildSoftmaxSection(logits, logitValues) {
-    const probs = softmax(logitValues);
-    const logitRows = buildLogitLatexRows(logits);
+	const probs = softmax(logitValues);
+	const logitRows = buildLogitLatexRows(logits);
 
-    const probRows = logits.map(({ word }, i) => {
-        const displayWord = /^\s+$/.test(word) ? word.replace(/ /g, '␣') : word;
-        const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
-        const color = getPositionColor(i, logits.length, 'temml');
-        const pct = (probs[i] * 100).toFixed(2);
-        return `${color} \\text{${safeWord}} & ${color} ${pct}\\%`;
-    }).join(' \\\\ ');
+	const probRows = logits.map(({ word }, i) => {
+		const displayWord = /^\s+$/.test(word) ? word.replace(/ /g, '␣') : word;
+		const safeWord = displayWord.replace(/#/g, '\\#').replace(/_/g, '\\_');
+		const color = getPositionColor(i, logits.length, 'temml');
+		const pct = (probs[i] * 100).toFixed(2);
+		return `${color} \\text{${safeWord}} & ${color} ${pct}\\%`;
+	}).join(' \\\\ ');
 
-    return `
+	return `
 <div style="overflow-x:auto; padding:10px 0;">
 $$
 \\underbrace{
