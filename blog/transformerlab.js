@@ -1055,49 +1055,49 @@ function render_positional_waves(d_model, tokens) {
 }
 
 function _execute_positional_waves_render(d_model, tokens) {
-    const containerId = 'transformer-pe-wave-plot';
-    const container = document.getElementById(containerId);
-    if (!container) return;
+	const containerId = 'transformer-pe-wave-plot';
+	const container = document.getElementById(containerId);
+	if (!container) return;
 
-    const traces = [];
-    const resolution = 0.1;
-    const seqLen = tokens.length;
-    const maxPos = Math.max(1, seqLen);
+	const traces = [];
+	const resolution = 0.1;
+	const seqLen = tokens.length;
+	const maxPos = Math.max(1, seqLen);
 
-    for (let i = 0; i < d_model; i++) {
-        let x = [], y = [];
-        for (let p = 0; p <= maxPos; p += resolution) {
-            let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
-            let val = ((i % 2 === 0)
-                ? Math.sin(p / div_term)
-                : Math.cos(p / div_term)) * posEmbedScalar;
-            x.push(p);
-            y.push(val);
-        }
-        traces.push({
-            x: x, y: y, mode: 'lines',
-            name: `Dim ${i} ${i % 2 === 0 ? 'Sin' : 'Cos'}`,
-            line: { shape: 'spline', width: 2 }
-        });
-    }
+	for (let i = 0; i < d_model; i++) {
+		let x = [], y = [];
+		for (let p = 0; p <= maxPos; p += resolution) {
+			let div_term = Math.pow(10000, (2 * Math.floor(i / 2)) / d_model);
+			let val = ((i % 2 === 0)
+				? Math.sin(p / div_term)
+				: Math.cos(p / div_term)) * posEmbedScalar;
+			x.push(p);
+			y.push(val);
+		}
+		traces.push({
+			x: x, y: y, mode: 'lines',
+			name: `Dim ${i} ${i % 2 === 0 ? 'Sin' : 'Cos'}`,
+			line: { shape: 'spline', width: 2 }
+		});
+	}
 
-    tokens.forEach((token, pos) => {
-        traces.push({
-            x: [pos], y: [0], mode: 'markers+text',
-            text: [displayToken(token)], textposition: 'top center',
-            marker: { size: 12, color: '#3b82f6' },
-            name: `Pos ${pos}: ${displayToken(token)}`, showlegend: false
-        });
-    });
+	tokens.forEach((token, pos) => {
+		traces.push({
+			x: [pos], y: [0], mode: 'markers+text',
+			text: [displayToken(token)], textposition: 'top center',
+			marker: { size: 12, color: '#3b82f6' },
+			name: `Pos ${pos}: ${displayToken(token)}`, showlegend: false
+		});
+	});
 
-    const layout = {
-        title: 'Sinusoidal Positional Waves',
-        margin: { t: 40, b: 40, l: 40, r: 20 },
-        xaxis: { title: 'Token Position' },
-        yaxis: { title: 'PE Value', range: [-1.1, 1.1] }
-    };
+	const layout = {
+		title: 'Sinusoidal Positional Waves',
+		margin: { t: 40, b: 40, l: 40, r: 20 },
+		xaxis: { title: 'Token Position' },
+		yaxis: { title: 'PE Value', range: [-1.1, 1.1] }
+	};
 
-    Plotly.react(containerId, traces, layout);
+	Plotly.react(containerId, traces, layout);
 }
 
 function run_transformer_demo(activeId = null) {
