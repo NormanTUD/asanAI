@@ -167,7 +167,11 @@ function _themeriver_build_option(riverData, stages, tokenLabel, tokenIdx, showO
 			formatter: function (p) {
 				const stageIdx = Math.round(p.data[0]);
 				const stageName = stageNames[stageIdx] || `Stage ${stageIdx}`;
-				return `<b>${p.data[2]}</b><br>` +
+				let strdata = p.data[2];
+				if(/^\s\s*$/.test(strdata)){
+					strdata = "␣";
+				}
+				return `<b>${strdata}</b><br>` +
 					`Stage: ${stageName}<br>` +
 					`Probability: ${(p.data[1] * 100).toFixed(1)}%`;
 			}
