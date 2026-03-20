@@ -3565,7 +3565,144 @@ function _ec2d_render_arrow(startPx, endPx, color, lineW) {
 	};
 }
 
-function _mig_ec2d_arrow_series(tokens, start_h, end_h, d_model, nTokens) {
+function _ec2d_render_dashed_arrow(startPx, endPx, color, lineW) {
+	const dx = endPx[0] - startPx[0];
+	const dy = endPx[1] - startPx[1];
+	const len = Math.sqrt(dx * dx + dy * dy);
+
+	if (len < 1) {
+		return { type: 'circle', shape: { cx: startPx[0], cy: startPx[1], r: 3 }, style: { fill: color } };
+	}
+
+	const ux = dx / len, uy = dy / len;
+	const headLen = Math.min(10, len * 0.3);
+	const headW = Math.max(2.5, lineW * 2);
+	const px = -uy, py = ux;
+	const bx = endPx[0] - ux * headLen;
+	const by = endPx[1] - uy * headLen;
+
+	return {
+		type: 'group',
+		children: [
+			{
+				type: 'line',
+				shape: { x1: startPx[0], y1: startPx[1], x2: bx, y2: by },
+				style: { stroke: color, lineWidth: lineW, lineDash: [6, 4], opacity: 0.7 }
+			},
+			{
+				type: 'polygon',
+				shape: {
+					points: [
+						[endPx[0], endPx[1]],
+						[bx + px * headW, by + py * headW],
+						[bx - px * headW, by - py * headW]
+					]
+				},
+				style: { fill: color, opacity: 0.7 }
+			},
+			{
+				type: 'circle',
+				shape: { cx: startPx[0], cy: startPx[1], r: Math.max(2, lineW) },
+				style: { fill: color, stroke: '#fff', lineWidth: 1 }
+			}
+		]
+	};
+}
+
+function _mig_ec2d_two_segment_arrow_series(tokens, raw_h, pe_h, end_h, d_model, nTokens) {
+	// Segment 1: Raw Embedding → Embedding + PE (dashed style)
+	const seg1Data = tokens.map((token, i) => ({
+		value: [
+			raw_h[i][0], d_model >= 2 ? raw_h[i][1] : 0,
+			pe_h[i][0],  d_model >= 2 ? pe_h[i][1] : 0,
+			i
+		],
+		_src: displayToken(tlab_get_top_word_only(raw_h[i])),
+		_dst: displayToken(tlab_get_top_word_only(pe_h[i])),
+		_pos: i + 1,
+		_stage: 'Raw Emb → +PE'
+	}));
+
+	const seg1 = {
+		type: 'custom',
+		name: 'Embedding → +PE',
+		renderItem: function (params, api) {
+			const sPx = api.coord([api.value(0), api.value(1)]);
+			const ePx = api.coord([api.value(2), api.value(3)]);
+			const color = getPositionColor(api.value(4), nTokens);
+			return _ec2d_render_dashed_arrow(sPx, ePx, color, 2.5);
+		},
+		encode: { x: [0, 2], y: [1, 3] },
+		data: seg1Data,
+		tooltip: { formatter: p =>
+			`${p.data._stage}: '${p.data._src}' → '${p.data._dst}', position ${p.data._pos}` },
+		z: 9
+	};
+
+	// Segment 2: Embedding + PE → Layer 1 Output (solid arrow)
+	const seg2Data = tokens.map((token, i) => ({
+		value: [
+			pe_h[i][0],  d_model >= 2 ? pe_h[i][1] : 0,
+			end_h[i][0], d_model >= 2 ? end_h[i][1] : 0,
+			i
+		],
+		_src: displayToken(tlab_get_top_word_only(pe_h[i])),
+		_dst: displayToken(tlab_get_top_word_only(end_h[i])),
+		_pos: i + 1,
+		_stage: '+PE → Layer 1 Out'
+	}));
+
+	const seg2 = {
+		type: 'custom',
+		name: 'Migration',
+		renderItem: function (params, api) {
+			const sPx = api.coord([api.value(0), api.value(1)]);
+			const ePx = api.coord([api.value(2), api.value(3)]);
+			const color = getPositionColor(api.value(4), nTokens);
+			return _ec2d_render_arrow(sPx, ePx, color, 3);
+		},
+		encode: { x: [0, 2], y: [1, 3] },
+		data: seg2Data,
+		tooltip: { formatter: p =>
+			`${p.data._stage}: '${p.data._src}' → '${p.data._dst}', position ${p.data._pos}` },
+		z: 10
+	};
+
+	// Start markers at raw embedding positions
+	const startMarkers = {
+		type: 'custom',
+		name: 'Raw Embedding',
+		renderItem: function (params, api) {
+			const px = api.coord([api.value(0), api.value(1)]);
+			const color = getPositionColor(api.value(2), nTokens);
+			return {
+				type: 'circle',
+				shape: { cx: px[0], cy: px[1], r: 5 },
+				style: { fill: color, stroke: '#000', lineWidth: 1.5 }
+			};
+		},
+		encode: { x: [0], y: [1] },
+		data: tokens.map((token, i) => ({
+			value: [
+				raw_h[i][0], d_model >= 2 ? raw_h[i][1] : 0,
+				i
+			],
+			_label: `Raw embedding: '${displayToken(tlab_get_top_word_only(raw_h[i]))}' pos ${i + 1}`
+		})),
+		tooltip: { formatter: p => p.data._label },
+		z: 11
+	};
+
+	return [seg1, seg2, startMarkers];
+}
+
+function _mig_ec2d_arrow_series(tokens, start_h, end_h, d_model, nTokens, layerNum, raw_h) {
+	// For layer 1, if raw embeddings are available, draw two-segment arrows
+	if (layerNum === 1 && raw_h) {
+		return _mig_ec2d_two_segment_arrow_series(tokens, raw_h, start_h, end_h, d_model, nTokens);
+	}
+
+	// Original single-segment arrow for layers > 1
 	const data = tokens.map((token, i) => ({
 		value: [
 			start_h[i][0], d_model >= 2 ? start_h[i][1] : 0,
@@ -3686,7 +3823,22 @@ function _migration_render_2d_echarts(chart, migId, tokens, start_h, end_h, laye
 	const nTokens = tokens.length;
 
 	series.push(_mig_ec2d_vocab_series());
-	series.push(_mig_ec2d_arrow_series(tokens, start_h, end_h, d_model, nTokens));
+
+	// For layer 1, retrieve raw embeddings (before PE) from trajectory collector
+	let raw_h = null;
+	if (layerNum === 1 && window.tlab_trajectory_collector &&
+		window.tlab_trajectory_collector.steps["00_raw"]) {
+		raw_h = window.tlab_trajectory_collector.steps["00_raw"].data;
+	}
+
+	const arrowResult = _mig_ec2d_arrow_series(tokens, start_h, end_h, d_model, nTokens, layerNum, raw_h);
+
+	// arrowResult is either a single series object or an array of series (for layer 1)
+	if (Array.isArray(arrowResult)) {
+		arrowResult.forEach(s => series.push(s));
+	} else {
+		series.push(arrowResult);
+	}
 
 	if (vfEnabled) {
 		const { n_heads } = getTransformerConfig();
@@ -3750,6 +3902,13 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 
 	series.push(_mig_ec3d_vocab_series());
 
+	// For layer 1, retrieve raw embeddings
+	let raw_h = null;
+	if (layerNum === 1 && window.tlab_trajectory_collector &&
+		window.tlab_trajectory_collector.steps["00_raw"]) {
+		raw_h = window.tlab_trajectory_collector.steps["00_raw"].data;
+	}
+
 	tokens.forEach((token, i) => {
 		const color = getPositionColor(i, nTokens);
 		const src = displayToken(tlab_get_top_word_only(start_h[i]));
@@ -3757,30 +3916,86 @@ function _migration_render_3d_echarts(chart, migId, tokens, start_h, end_h, laye
 		const label = `${src}→${dst} (${i + 1})`;
 		legendData.push(label);
 
-		const from3 = start_h[i].slice(0, 3);
-		const to3   = end_h[i].slice(0, 3);
+		if (layerNum === 1 && raw_h) {
+			// Two-segment path for layer 1
+			const rawSrc = displayToken(tlab_get_top_word_only(raw_h[i]));
 
-		const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
-		series.push({
-			name: label, type: 'line3D',
-			data: [from3, shaftEnd],
-			lineStyle: { width: 4, color: color, opacity: 0.85 }
-		});
+			// Segment 1: Raw Embedding → Embedding + PE (dashed-style via thinner line)
+			const rawFrom3 = raw_h[i].slice(0, 3);
+			const peFrom3 = start_h[i].slice(0, 3);
 
-		_add3DArrowheadSeries(series, from3, to3, color, {
-			lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4, name: label
-		});
+			const shaftEnd1 = _computeArrowheadBase(rawFrom3, peFrom3, 0.4);
+			series.push({
+				name: label, type: 'line3D',
+				data: [rawFrom3, shaftEnd1],
+				lineStyle: { width: 3, color: color, opacity: 0.6 }
+			});
+			_add3DArrowheadSeries(series, rawFrom3, peFrom3, color, {
+				lineWidth: 5, maxHeadLen: 0.4, spreadRatio: 0.3, name: label
+			});
 
-		series.push({
-			name: label, type: 'scatter3D',
-			data: [{
-				value: from3, symbolSize: 8,
-				itemStyle: { color: color, borderWidth: 2, borderColor: '#000' },
-				_hover: `Start: '${src}' pos ${i + 1}`
-			}],
-			symbol: 'circle',
-			tooltip: { formatter: p => p.data._hover }
-		});
+			// Segment 2: Embedding + PE → Layer Output (solid, thicker)
+			const to3 = end_h[i].slice(0, 3);
+			const shaftEnd2 = _computeArrowheadBase(peFrom3, to3, 0.5);
+			series.push({
+				name: label, type: 'line3D',
+				data: [peFrom3, shaftEnd2],
+				lineStyle: { width: 4, color: color, opacity: 0.85 }
+			});
+			_add3DArrowheadSeries(series, peFrom3, to3, color, {
+				lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4, name: label
+			});
+
+			// Start marker at raw embedding position
+			series.push({
+				name: label, type: 'scatter3D',
+				data: [{
+					value: rawFrom3, symbolSize: 8,
+					itemStyle: { color: color, borderWidth: 2, borderColor: '#000' },
+					_hover: `Raw Embedding: '${rawSrc}' pos ${i + 1}`
+				}],
+				symbol: 'circle',
+				tooltip: { formatter: p => p.data._hover }
+			});
+
+			// Mid marker at PE position (smaller, shows the bend point)
+			series.push({
+				name: label, type: 'scatter3D',
+				data: [{
+					value: peFrom3, symbolSize: 5,
+					itemStyle: { color: color, borderWidth: 1, borderColor: '#fff', opacity: 0.8 },
+					_hover: `+PE: '${src}' pos ${i + 1}`
+				}],
+				symbol: 'circle',
+				tooltip: { formatter: p => p.data._hover }
+			});
+		} else {
+			// Original single-segment arrow for layers > 1
+			const from3 = start_h[i].slice(0, 3);
+			const to3   = end_h[i].slice(0, 3);
+
+			const shaftEnd = _computeArrowheadBase(from3, to3, 0.5);
+			series.push({
+				name: label, type: 'line3D',
+				data: [from3, shaftEnd],
+				lineStyle: { width: 4, color: color, opacity: 0.85 }
+			});
+
+			_add3DArrowheadSeries(series, from3, to3, color, {
+				lineWidth: 7, maxHeadLen: 0.5, spreadRatio: 0.4, name: label
+			});
+
+			series.push({
+				name: label, type: 'scatter3D',
+				data: [{
+					value: from3, symbolSize: 8,
+					itemStyle: { color: color, borderWidth: 2, borderColor: '#000' },
+					_hover: `Start: '${src}' pos ${i + 1}`
+				}],
+				symbol: 'circle',
+				tooltip: { formatter: p => p.data._hover }
+			});
+		}
 	});
 
 	if (vfEnabled) {
@@ -3852,11 +4067,70 @@ function renderMigrationLowDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_
 }
 
 function renderMigrationHighDim(id, plotDiv, tokens, start_h, end_h, layerNum, d_model) {
-	const migrationContainers = document.querySelectorAll('[id^="migration-layer-"]');
-	const totalLayersCount = migrationContainers.length;
-	const isLastInDom = totalLayersCount > 0 && migrationContainers[totalLayersCount - 1].id === id;
-	const nextWordIndex = tokens.length - 1;
-	tlab_render_echarts(plotDiv, tokens, start_h, end_h, layerNum, d_model, isLastInDom, nextWordIndex);
+	let chart = echarts.getInstanceByDom(plotDiv);
+	if (!chart) chart = echarts.init(plotDiv);
+
+	const axes = Array.from({ length: d_model }, (_, i) => ({
+		dim: i, name: `Dim ${i}`
+	}));
+
+	// For layer 1, include raw embeddings as an additional starting point
+	let raw_h = null;
+	if (layerNum === 1 && window.tlab_trajectory_collector &&
+		window.tlab_trajectory_collector.steps["00_raw"]) {
+		raw_h = window.tlab_trajectory_collector.steps["00_raw"].data;
+	}
+
+	const data = [];
+	tokens.forEach((token, i) => {
+		const sourceWord = displayToken(tlab_get_top_word_only(start_h[i]));
+		const destWord = displayToken(tlab_get_top_word_only(end_h[i]));
+
+		if (layerNum === 1 && raw_h) {
+			// Add raw embedding line (will appear as first trace)
+			data.push({
+				value: [...raw_h[i], i + 1],
+				name: token,
+				source: displayToken(tlab_get_top_word_only(raw_h[i])),
+				destination: sourceWord,
+				pos: i + 1,
+				lineStyle: { opacity: 0.4, type: 'dashed' }
+			});
+		}
+
+		data.push({
+			value: [...end_h[i], i + 1],
+			name: token,
+			source: sourceWord,
+			destination: destWord,
+			pos: i + 1
+		});
+	});
+
+	chart.setOption({
+		title: { text: `Layer ${layerNum} Migration`, left: 'center' },
+		tooltip: {
+			trigger: 'item',
+			formatter: p => `From '${p.data.source}' to '${p.data.destination}', position ${p.data.pos}`
+		},
+		visualMap: {
+			type: 'continuous',
+			min: 1,
+			max: tokens.length,
+			dimension: d_model,
+			orient: 'horizontal',
+			bottom: 10,
+			left: 'center',
+			text: ['End Position', 'Start Position'],
+			inRange: { color: ['rgb(59, 130, 246)', 'rgb(16, 185, 129)'] }
+		},
+		parallelAxis: axes,
+		series: [{
+			type: 'parallel',
+			data: data,
+			lineStyle: { width: 2, opacity: 0.7 }
+		}]
+	}, true);
 }
 
 function syncVFToggleButtonState(id, plotDiv, vfEnabled) {
