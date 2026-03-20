@@ -1782,7 +1782,7 @@ function _h1NamingForLayer(layerIndex) {
 	const hInName = `h_{${base}}`;
 	const hOutName = `h_{${base + 1}}`;
 	const hInStage = layerIndex === 0
-		? 'embedding + PE'
+		? 'emb. + PE'
 		: `out layer ${layerIndex}`;
 	return { L, sup, hInName, hOutName, hInStage };
 }
