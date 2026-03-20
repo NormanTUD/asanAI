@@ -195,9 +195,7 @@ When you add "random" values to a vector, you change its location in the multidi
 - **The Risk of Overlapping**: During training, the model learns to set the "scale" of the embeddings much larger than the "scale" of the positional encodings. This ensures the position "nudges" the meaning without overwriting it.
 </div>
 
-<div class="md">
-## The Decoder-Only Architecture
-
+<div class="optional md" data-headline="The Decoder-Only Architecture">
 Here, we do **not** use the original Encoder-Decoder architecture from Vaswani et al. (\citeyear{vaswani2017attention}). Instead, this example implements a **Decoder-only** Transformer with **Pre-Layer Normalization**, the same structural family that powers today's leading LLMs (GPT, Claude, Gemini and so on). The entire model is a stack of identical Decoder (with different weights) blocks, each containing:
 
 1. **Pre-LN**: Layer Normalization is applied *before* each sublayer (attention and FFN), rather than after. This is a more modern convention (see \citetitle{xiong2020}) that improves gradient flow and training stability through deep stacks.
@@ -205,7 +203,9 @@ Here, we do **not** use the original Encoder-Decoder architecture from Vaswani e
 3. **A Feed-Forward Network (FFN)** with ReLU activation and its own Pre-LN and residual connection.
 
 This is the architecture you are interacting with in every visualization here. When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always zero.
+</div>
 
+<div class="md">
 ## The Residual Stream
 
 <div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 12">
