@@ -515,11 +515,11 @@ Every point on the northern hemisphere is glued to its mirror point on the south
 
 ### Why Directions Without Signs Matter
 
-Many concepts are inherently **unsigned** — they have magnitude but no natural positive/negative orientation:
+Many concepts are inherently **unsigned**, they have magnitude but no natural positive/negative orientation:
 
 - **Emotional intensity**: "very happy" and "very sad" are both *very*. The intensity axis doesn't care about valence.
 - **Formality level**: "exceedingly" and "super" differ in formality, not in some signed direction.
-- **Semantic similarity**: the similarity between "cat" and "dog" is the same as between "dog" and "cat" — it's an unsigned quantity.
+- **Semantic similarity**: the similarity between "cat" and "dog" is the same as between "dog" and "cat", it's an unsigned quantity.
 
 In linear algebra terms, if we care about the **direction** of a vector but not its **sign**, we're working in projective space. The vector $v$ and $-v$ represent the same concept.
 
@@ -529,9 +529,9 @@ When a Transformer attention head computes:
 
 $$\text{attention}(Q, K) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)$$
 
-the dot product $QK^T$ measures **alignment** between query and key vectors. But alignment is almost projective — $q \cdot k$ and $(-q) \cdot (-k)$ give the same score. The attention mechanism is, in a sense, operating on a projective space of directions.
+the dot product $QK^T$ measures **alignment** between query and key vectors. But alignment is almost projective, $q \cdot k$ and $(-q) \cdot (-k)$ give the same score. The attention mechanism is, in a sense, operating on a projective space of directions.
 
-Some research has shown that attention heads learn to represent **axes of variation** (like tense, number, formality) as directions in embedding space. These axes are inherently projective — the "tense axis" doesn't have a natural positive end. Whether "past" is positive and "future" is negative, or vice versa, is an arbitrary convention.
+Some research has shown that attention heads learn to represent **axes of variation** (like tense, number, formality) as directions in embedding space. These axes are inherently projective, the "tense axis" doesn't have a natural positive end. Whether "past" is positive and "future" is negative, or vice versa, is an arbitrary convention.
 
 ### Betti Numbers of $\mathbb{R}P^2$
 
@@ -543,13 +543,13 @@ Over $\mathbb{Z}$ coefficients:
 
 $$\beta_0 = 1, \quad \beta_1 = 0, \quad \beta_2 = 0$$
 
-The discrepancy between $\mathbb{Z}$ and $\mathbb{Z}_2$ Betti numbers is itself informative — it signals **torsion** in the homology, which is the algebraic signature of non-orientability.
+The discrepancy between $\mathbb{Z}$ and $\mathbb{Z}_2$ Betti numbers is itself informative, it signals **torsion** in the homology, which is the algebraic signature of non-orientability.
 
 ### Euler Characteristic
 
 $$\chi(\mathbb{R}P^2) = 1$$
 
-This is unusual — most familiar surfaces have $\chi \leq 2$. The projective plane is the simplest **non-orientable closed surface**.
+This is unusual, most familiar surfaces have $\chi \leq 2$. The projective plane is the simplest **non-orientable closed surface**.
 </div>
 
 <div id="projective-viz"></div>
@@ -561,8 +561,8 @@ A **fiber bundle** is a space $E$ (the total space) that locally looks like a pr
 
 ### The Simplest Examples
 
-- **Cylinder** $= S^1 \times [0,1]$: A fiber bundle over the circle with fiber $[0,1]$. It's **trivial** — the product structure is global, not just local.
-- **Möbius strip**: Also a fiber bundle over $S^1$ with fiber $[0,1]$, but **non-trivial** — the fiber gets flipped as you go around the base.
+- **Cylinder** $= S^1 \times [0,1]$: A fiber bundle over the circle with fiber $[0,1]$. It's **trivial**, the product structure is global, not just local.
+- **Möbius strip**: Also a fiber bundle over $S^1$ with fiber $[0,1]$, but **non-trivial**, the fiber gets flipped as you go around the base.
 
 The key question is always: **is the bundle trivial (a simple product) or twisted?**
 
@@ -578,14 +578,14 @@ Consider the word **"run"** in different contexts:
 | "The **run** of the show" | Duration/sequence |
 | "**Run** for office" | Campaign/compete |
 
-The base space is the **context** — it varies continuously as you read through different texts. The fiber at each point is the **space of possible meanings**. Locally, in any given paragraph, "run" has a stable meaning (the bundle looks like a product). But globally, as you traverse all possible contexts, the meaning fiber **twists**.
+The base space is the **context**, it varies continuously as you read through different texts. The fiber at each point is the **space of possible meanings**. Locally, in any given paragraph, "run" has a stable meaning (the bundle looks like a product). But globally, as you traverse all possible contexts, the meaning fiber **twists**.
 
 ### The Structure Group
 
 The **structure group** $G$ of a fiber bundle describes the symmetries that relate fibers at different points. For a trivial bundle, $G$ acts trivially. For a Möbius strip, $G = \mathbb{Z}_2$ (the fiber can be flipped or not).
 
 For word meaning:
-- If a word has $n$ discrete meanings, the structure group is (a subgroup of) the **symmetric group** $S_n$ — permutations of meanings.
+- If a word has $n$ discrete meanings, the structure group is (a subgroup of) the **symmetric group** $S_n$, permutations of meanings.
 - If meaning varies continuously, the structure group is a **Lie group** acting on the meaning space.
 
 ### Attention Heads as Local Trivializations
@@ -596,7 +596,7 @@ Each attention head provides a **local trivialization** of the meaning bundle:
 - Head 1 might trivialized "run" in sports contexts (physical meaning is the "zero section")
 - Head 2 might trivialize "run" in computing contexts (execution meaning is the "zero section")
 
-The transition functions between these trivializations encode how meaning shifts when context changes — and these are precisely the **attention patterns** that the Transformer learns.
+The transition functions between these trivializations encode how meaning shifts when context changes, and these are precisely the **attention patterns** that the Transformer learns.
 
 ### The Connection (Parallel Transport)
 
@@ -604,11 +604,11 @@ A **connection** on a fiber bundle tells you how to "parallel transport" a fiber
 
 $$\text{Connection} = \text{how meaning evolves as context changes}$$
 
-If you start with "run" meaning "jog" and slowly shift the context from sports to computing, the connection tells you the trajectory through meaning space. The **curvature** of the connection measures how much meaning changes when you take different contextual paths to the same endpoint — this is the **holonomy**, and it's non-trivial precisely when the bundle is non-trivial.
+If you start with "run" meaning "jog" and slowly shift the context from sports to computing, the connection tells you the trajectory through meaning space. The **curvature** of the connection measures how much meaning changes when you take different contextual paths to the same endpoint, this is the **holonomy**, and it's non-trivial precisely when the bundle is non-trivial.
 
 $$\text{Holonomy} \neq 0 \iff \text{meaning depends on the path through context, not just the endpoint}$$
 
-This is why the same word in the same final context can mean different things depending on what came before — the bundle has non-trivial holonomy.
+This is why the same word in the same final context can mean different things depending on what came before, the bundle has non-trivial holonomy.
 </div>
 
 <div id="fiber-viz"></div>
@@ -618,25 +618,25 @@ This is why the same word in the same final context can mean different things de
 <div class="md">
 ## The LLM as a Fiber Bundle: The Bristle Brush of Meaning
 
-We've seen how fiber bundles formalize the idea of "context twists meaning." Now let's apply this directly to the architecture of a **Large Language Model**. The claim is not merely metaphorical — an LLM's internal geometry *is* a fiber bundle:
+We've seen how fiber bundles formalize the idea of "context twists meaning." Now let's apply this directly to the architecture of a **Large Language Model**. The claim is not merely metaphorical, an LLM's internal geometry *is* a fiber bundle:
 
 $$(\pi, E, B, F)$$
 
 | Bundle Component | LLM Interpretation |
 |---|---|
-| **Base Space** $B$ | The discrete sequence of token positions $(1, 2, \ldots, k)$ — the "ground" where the sentence lives |
+| **Base Space** $B$ | The discrete sequence of token positions $(1, 2, \ldots, k)$, the "ground" where the sentence lives |
 | **Fiber** $F$ | The high-dimensional vector space $\mathbb{R}^n$ (e.g., $n = 4096$). Every position "grows" its own private universe of potential meanings |
-| **Total Space** $E$ | The collection of all fibers across all positions — the full residual stream. This is the **Bristle Brush** |
-| **Connection** $\omega$ | The **attention mechanism** — it defines how information is parallel-transported from the fiber at position $i$ to the fiber at position $j$ |
-| **Section** $\sigma$ | A specific "slice" through the bundle — e.g., looking at only the "sentiment" coordinate across all token positions |
+| **Total Space** $E$ | The collection of all fibers across all positions, the full residual stream. This is the **Bristle Brush** |
+| **Connection** $\omega$ | The **attention mechanism**, it defines how information is parallel-transported from the fiber at position $i$ to the fiber at position $j$ |
+| **Section** $\sigma$ | A specific "slice" through the bundle, e.g., looking at only the "sentiment" coordinate across all token positions |
 
 ### Why This Framing Matters
 
 In a standard description, an LLM processes a sequence of token embeddings through layers of attention and MLPs. But this description obscures the *geometry*. The fiber bundle perspective reveals:
 
-1. **A word is not a point — it is a location that hosts a space.** The embedding of "bank" at position 3 is not a single vector; it is a point in the base space $B$ with an entire fiber $\mathbb{R}^{4096}$ attached to it, containing all possible meanings "bank" could have in this context.
+1. **A word is not a point, it is a location that hosts a space.** The embedding of "bank" at position 3 is not a single vector; it is a point in the base space $B$ with an entire fiber $\mathbb{R}^{4096}$ attached to it, containing all possible meanings "bank" could have in this context.
 
-2. **Attention is parallel transport, not just weighted averaging.** When the attention mechanism moves information from "money" (position 1) to "bank" (position 3), it doesn't just copy a vector — it *transports* the vector along a path in the bundle, and the **connection** (the learned attention weights) determines how the vector is rotated and transformed during transport. This is why "bank" ends up pointing toward "financial institution" rather than "river bank."
+2. **Attention is parallel transport, not just weighted averaging.** When the attention mechanism moves information from "money" (position 1) to "bank" (position 3), it doesn't just copy a vector, it *transports* the vector along a path in the bundle, and the **connection** (the learned attention weights) determines how the vector is rotated and transformed during transport. This is why "bank" ends up pointing toward "financial institution" rather than "river bank."
 
 3. **The connection has curvature.** If you transport meaning from "money" → "bank" directly, you get one result. If you transport "money" → "deposit" → "bank," you may get a slightly different result. This path-dependence is the **holonomy** of the attention connection, and it's non-trivial precisely when context matters:
 
@@ -662,7 +662,7 @@ This tells us how much of the fiber at position $j$ is "transported" to position
 
 $$\Gamma^{(h)}_{j \to i}(\mathbf{v}) = \alpha^{(h)}_{ij} \cdot W_V^{(h)} \mathbf{v}$$
 
-where $\alpha^{(h)}_{ij}$ is the attention weight and $W_V^{(h)}$ is the value projection — a linear map that "rotates" the vector as it moves between fibers.
+where $\alpha^{(h)}_{ij}$ is the attention weight and $W_V^{(h)}$ is the value projection, a linear map that "rotates" the vector as it moves between fibers.
 
 ### Multi-Head Attention as Multiple Connections
 
@@ -670,7 +670,7 @@ Each attention head defines a **different connection** on the same bundle. Head 
 
 $$\text{MultiHead}(\mathbf{x}) = \text{Concat}(\text{head}_1, \ldots, \text{head}_H) W_O$$
 
-This is analogous to having multiple **gauge fields** on the same bundle — each head is a different "force" that shapes how meaning flows through the sentence.
+This is analogous to having multiple **gauge fields** on the same bundle, each head is a different "force" that shapes how meaning flows through the sentence.
 
 ### Layer Depth as Bundle Morphisms
 
@@ -678,11 +678,11 @@ Each Transformer layer transforms the bundle:
 
 $$E^{(\ell)} \xrightarrow{\text{Attention} + \text{MLP}} E^{(\ell+1)}$$
 
-The fiber at each position is updated, but the base space $B$ remains fixed. This is a **bundle morphism** — a map between fiber bundles that preserves the base. As you go deeper:
+The fiber at each position is updated, but the base space $B$ remains fixed. This is a **bundle morphism**, a map between fiber bundles that preserves the base. As you go deeper:
 
-- **Early layers:** Fibers are "raw" — they contain mostly local, syntactic information. The connection is weak (attention is diffuse).
-- **Middle layers:** Fibers become "entangled" — semantic information has been transported across positions. The connection has developed curvature.
-- **Late layers:** Fibers are "resolved" — each position's fiber has been shaped by the full context. The section corresponding to the model's prediction is well-defined.
+- **Early layers:** Fibers are "raw", they contain mostly local, syntactic information. The connection is weak (attention is diffuse).
+- **Middle layers:** Fibers become "entangled", semantic information has been transported across positions. The connection has developed curvature.
+- **Late layers:** Fibers are "resolved", each position's fiber has been shaped by the full context. The section corresponding to the model's prediction is well-defined.
 
 Explore this structure interactively below. Type a sentence and watch the **Bristle Brush** come to life.
 </div>
@@ -690,7 +690,7 @@ Explore this structure interactively below. Type a sentence and watch the **Bris
 <div style="margin-bottom: 10px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
     <strong>🪥 LLM Fiber Bundle Explorer:</strong><br>
     Type a sentence below. Each word becomes a position in the <b>base space</b>, and a glowing <b>fiber (pillar)</b> rises from it into the high-dimensional meaning space.
-    Click <b>"Process Attention"</b> to see the <b>connection</b> — glowing arcs that transport meaning between fibers, rotating vectors based on context.
+    Click <b>"Process Attention"</b> to see the <b>connection</b>, glowing arcs that transport meaning between fibers, rotating vectors based on context.
     Use the <b>Feature Slice</b> slider to cut a horizontal <b>section</b> through all fibers and see how a single feature (sentiment, tense, etc.) varies across the sentence.
     Scroll through <b>layers</b> to watch the fibers evolve from raw embeddings to resolved meanings.
 </div>
@@ -780,7 +780,7 @@ For a closed curve $\gamma: [0,1] \to \mathbb{R}^2 \setminus \{p\}$, the winding
 
 $$n(\gamma, p) = \frac{1}{2\pi} \oint_\gamma d\theta = \frac{1}{2\pi i} \oint_\gamma \frac{dz}{z - p}$$
 
-where $\theta$ is the angle from $p$ to the curve. The winding number is always an **integer** — this is a topological fact. It's invariant under continuous deformations of the curve (as long as the curve doesn't cross $p$).
+where $\theta$ is the angle from $p$ to the curve. The winding number is always an **integer**, this is a topological fact. It's invariant under continuous deformations of the curve (as long as the curve doesn't cross $p$).
 
 ### Properties
 
@@ -797,12 +797,12 @@ In fact, this is an **isomorphism**: $\pi_1(\mathbb{R}^2 \setminus \{p\}) \cong 
 
 ### Circular Reasoning as Winding
 
-Consider an argument as a path through "claim space." The central point $p$ is the **thesis** — the claim being argued for. The path represents the chain of reasoning.
+Consider an argument as a path through "claim space." The central point $p$ is the **thesis**, the claim being argued for. The path represents the chain of reasoning.
 
 - **Winding number 0**: The argument never actually engages with the thesis. It wanders around but doesn't address the central claim. This is a **non sequitur**.
 - **Winding number 1**: The argument makes one complete circuit around the thesis, engaging with it from all sides. This is a **sound argument**.
-- **Winding number > 1**: The argument circles back to the same assumptions multiple times. This is **circular reasoning** — the argument passes through the same premises repeatedly, each time assuming what it's trying to prove.
-- **Winding number −1**: The argument engages with the thesis but in the "wrong direction" — it actually argues against its own conclusion. This is a **self-defeating argument**.
+- **Winding number > 1**: The argument circles back to the same assumptions multiple times. This is **circular reasoning**, the argument passes through the same premises repeatedly, each time assuming what it's trying to prove.
+- **Winding number −1**: The argument engages with the thesis but in the "wrong direction", it actually argues against its own conclusion. This is a **self-defeating argument**.
 
 ### Connection to LLM Reasoning
 
@@ -810,7 +810,7 @@ When an LLM generates a chain-of-thought, we can (conceptually) plot the traject
 
 - **Low winding number** around the answer: The model is exploring but not converging. It may give a wrong or irrelevant answer.
 - **Winding number ≈ 1**: The model is building a coherent argument that addresses the question from multiple angles.
-- **High winding number**: The model is going in circles — repeating the same reasoning steps, a known failure mode of autoregressive generation.
+- **High winding number**: The model is going in circles, repeating the same reasoning steps, a known failure mode of autoregressive generation.
 
 ### The Argument Principle
 
@@ -818,7 +818,7 @@ In complex analysis, the **argument principle** states that for a meromorphic fu
 
 $$\frac{1}{2\pi i} \oint_\gamma \frac{f'(z)}{f(z)} dz = Z - P$$
 
-where $Z$ is the number of zeros and $P$ the number of poles of $f$ inside $\gamma$. This connects winding numbers to the **structure of solutions** — how many times an argument "resolves" (zeros) vs. "blows up" (poles) inside the region of discourse.
+where $Z$ is the number of zeros and $P$ the number of poles of $f$ inside $\gamma$. This connects winding numbers to the **structure of solutions**, how many times an argument "resolves" (zeros) vs. "blows up" (poles) inside the region of discourse.
 </div>
 
 <div id="winding-viz"></div>
@@ -826,7 +826,7 @@ where $Z$ is the number of zeros and $P$ the number of poles of $f$ inside $\gam
 <div class="md">
 ## Token Embedding Topology: The Shape of a Vocabulary
 
-When an LLM maps tokens into its embedding space $\mathbb{R}^d$ (typically $d = 768$ to $12288$), the resulting point cloud has **topological structure**. This isn't random — it reflects the linguistic relationships the model has learned.
+When an LLM maps tokens into its embedding space $\mathbb{R}^d$ (typically $d = 768$ to $12288$), the resulting point cloud has **topological structure**. This isn't random, it reflects the linguistic relationships the model has learned.
 
 ### The Embedding Manifold Hypothesis
 
@@ -846,11 +846,11 @@ Recent work has shown that one can probe the topology of an LLM's token space us
 
 ### The Cramming Problem
 
-As noted in research on embedding spaces, since LLMs cram $V \approx 50{,}000$ tokens into a vector space of dimension $d = 768$, the embedding must be highly structured — there isn't room for tokens to be placed randomly. This compression forces topological organization:
+As noted in research on embedding spaces, since LLMs cram $V \approx 50{,}000$ tokens into a vector space of dimension $d = 768$, the embedding must be highly structured, there isn't room for tokens to be placed randomly. This compression forces topological organization:
 
 $$\text{packing efficiency} = \frac{V}{2^d} \approx 0 \quad \text{(extremely sparse)}$$
 
-Yet the tokens aren't uniformly distributed — they cluster on low-dimensional submanifolds, creating rich topology.
+Yet the tokens aren't uniformly distributed, they cluster on low-dimensional submanifolds, creating rich topology.
 
 ### Persistent Homology of Token Embeddings
 
