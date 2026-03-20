@@ -274,7 +274,7 @@ function tlab_render_themeriver(d_model) {
         { d_model },
         () => _execute_themeriver_render(d_model),
         `<div style="padding:30px; color:#94a3b8; text-align:center;">
-            Loading Probability Flow (ThemeRiver)…
+            Loading Probability Flow…
         </div>`
     );
 }
@@ -301,7 +301,7 @@ function _themeriver_ensure_dom(containerId) {
         <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;
                     background:#ede9fe; border-bottom:1px solid #c4b5fd; flex-wrap:wrap;">
             <span style="font-weight:700; color:#5b21b6; font-size:0.95rem;">
-                🌊 Probability Flow (ThemeRiver)
+                🌊 Probability Flow
             </span>
             <label style="color:#7c3aed; font-size:0.8rem;">Token position:</label>
             <select id="themeriver-token-select"
