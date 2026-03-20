@@ -5165,7 +5165,7 @@ function renderLLMFiberBundle() {
     ctx.fillStyle = 'rgba(59, 130, 246, 0.6)';
     ctx.font = 'bold 10px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Base Space B = {1, 2, …, ' + n + '}', margin + totalWidth / 2, baseY + 22);
+    ctx.fillText('Base Space B = {1, 2, …, ' + n + '}', margin + totalWidth / 2, baseY + 42);
 
     // ---- Compute pillar positions ----
     for (var i = 0; i < n; i++) {
