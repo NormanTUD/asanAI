@@ -517,9 +517,11 @@ $\text{cloglog}$ for the opposite tail of the distribution, as detailed by
 \citeauthorlastnameand{glmsecondedition} in \citeyear{glmsecondedition} in "\citetitle{glmsecondedition}".
 </div>
 
-<div class="md">
-## Temperature Scaling
+<div class="optional md" data-headline="Temperature and the Shannon-Entropy">
+The **\citeauthorlastnameand{shannon1951communication} entropy** $H = -\sum_w P(w) \log_2 P(w)$ measures the "randomness" of the distribution. Lower temperature decreases entropy (more confident), higher temperature increases it (more exploratory). Maximum entropy $H_{\max} = \log_2(|V|)$ corresponds to a perfectly uniform distribution.
+</div>
 
+<div class="optional md" data-headline="Temperature Scaling">
 Temperature controls the **sharpness** of the probability distribution by scaling the logits *before* the softmax. The modified softmax with temperature is:
 
 $$P(w) = \text{softmax}\!\left(\frac{\text{logit}_w}{T}\right) = \frac{e^{\,\text{logit}_w \,/\, T}}{\displaystyle\sum_{w'} e^{\,\text{logit}_{w'} \,/\, T}}$$
@@ -533,9 +535,6 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 | $T \to \infty$ (Uniform) | $\frac{z_i}{T} \to 0$ | All logits collapse to 0. |
 </div>
 
-<div class="optional md" data-headline="Temperature and the Shannon-Entropy">
-The **\citeauthorlastnameand{shannon1951communication} entropy** $H = -\sum_w P(w) \log_2 P(w)$ measures the "randomness" of the distribution. Lower temperature decreases entropy (more confident), higher temperature increases it (more exploratory). Maximum entropy $H_{\max} = \log_2(|V|)$ corresponds to a perfectly uniform distribution.
-</div>
 
 <div>
 	<label style="font-weight: bold;">Temperature ($T$): <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span></label>
