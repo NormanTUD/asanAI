@@ -4623,6 +4623,798 @@ function embedding_topology() {
 }
 
 // ============================================================
+// LLM FIBER BUNDLE VISUALIZATION — The Bristle Brush of Meaning
+// ============================================================
+
+var _llmFB = {
+    canvas: null,
+    ctx: null,
+    width: 0,
+    height: 0,
+    tokens: [],
+    processed: false,
+    attentionWeights: [],  // [i][j] = weight from j to i
+    layer: 0,
+    featureMode: 'none',
+    sliceHeight: 0.5,
+    hoveredToken: -1,
+    rotY: 0,
+    dragging: false,
+    lastMouseX: 0,
+    // Simulated per-token data
+    tokenData: [],
+    // Animation state
+    processAnim: { active: false, progress: 0, startTime: 0 }
+};
+
+// Simulated feature values for common words
+var _llmFBFeatures = {
+    sentiment: {
+        'the': 0.0, 'a': 0.0, 'an': 0.0, 'is': 0.0, 'was': -0.05, 'by': 0.0,
+        'bank': 0.1, 'river': 0.3, 'money': 0.2, 'closed': -0.4, 'happy': 0.9,
+        'sad': -0.8, 'good': 0.7, 'bad': -0.7, 'love': 0.85, 'hate': -0.85,
+        'beautiful': 0.8, 'ugly': -0.7, 'great': 0.75, 'terrible': -0.8,
+        'deposit': 0.15, 'run': 0.1, 'program': 0.05, 'sat': 0.0,
+        'i': 0.0, 'he': 0.0, 'she': 0.0, 'it': 0.0, 'they': 0.0,
+        'went': 0.0, 'to': 0.0, 'on': 0.0, 'in': 0.0, 'at': 0.0,
+        'morning': 0.2, 'night': -0.1, 'sun': 0.4, 'rain': -0.2,
+        'cat': 0.3, 'dog': 0.3, 'fish': 0.1, 'tree': 0.2
+    },
+    tense: {
+        'the': 0.0, 'a': 0.0, 'an': 0.0, 'is': 0.5, 'was': -0.7, 'by': 0.0,
+        'bank': 0.0, 'river': 0.0, 'money': 0.0, 'closed': -0.6, 'happy': 0.0,
+        'sad': 0.0, 'will': 0.8, 'would': 0.3, 'had': -0.8, 'has': 0.4,
+        'went': -0.7, 'go': 0.5, 'going': 0.6, 'gone': -0.5,
+        'sat': -0.7, 'sit': 0.5, 'sitting': 0.6, 'run': 0.5, 'ran': -0.7,
+        'deposit': 0.3, 'deposited': -0.6, 'program': 0.0,
+        'i': 0.0, 'he': 0.0, 'she': 0.0, 'it': 0.0, 'they': 0.0,
+        'to': 0.0, 'on': 0.0, 'in': 0.0, 'at': 0.0,
+        'morning': 0.0, 'night': 0.0, 'today': 0.5, 'yesterday': -0.7
+    },
+    concreteness: {
+        'the': 0.0, 'a': 0.0, 'an': 0.0, 'is': -0.3, 'was': -0.3, 'by': -0.1,
+        'bank': 0.7, 'river': 0.9, 'money': 0.8, 'closed': 0.3, 'happy': -0.5,
+        'sad': -0.5, 'cat': 0.95, 'dog': 0.95, 'tree': 0.9, 'rock': 0.95,
+        'love': -0.6, 'hate': -0.6, 'idea': -0.8, 'thought': -0.7,
+        'table': 0.95, 'chair': 0.95, 'sun': 0.85, 'rain': 0.7,
+        'run': 0.4, 'program': 0.3, 'deposit': 0.5, 'sat': 0.4,
+        'i': 0.2, 'he': 0.2, 'she': 0.2, 'it': 0.1, 'they': 0.1,
+        'went': 0.3, 'to': -0.1, 'on': 0.0, 'in': 0.0, 'at': 0.0
+    },
+    animacy: {
+        'the': 0.0, 'a': 0.0, 'an': 0.0, 'is': 0.0, 'was': 0.0, 'by': 0.0,
+        'bank': -0.8, 'river': -0.3, 'money': -0.9, 'closed': 0.0,
+        'cat': 0.9, 'dog': 0.9, 'fish': 0.7, 'bird': 0.85, 'tree': -0.5,
+        'person': 0.95, 'man': 0.95, 'woman': 0.95, 'child': 0.95,
+        'i': 0.95, 'he': 0.95, 'she': 0.95, 'it': -0.2, 'they': 0.7,
+        'rock': -0.95, 'table': -0.9, 'chair': -0.9, 'sun': -0.6,
+        'happy': 0.0, 'sad': 0.0, 'run': 0.0, 'program': -0.7,
+        'went': 0.0, 'to': 0.0, 'on': 0.0, 'sat': 0.0, 'deposit': 0.0
+    }
+};
+
+// Semantic similarity groups for attention simulation
+var _llmFBSemanticGroups = {
+    'financial': ['bank', 'money', 'deposit', 'closed', 'account', 'loan', 'credit', 'savings'],
+    'nature': ['river', 'bank', 'tree', 'sun', 'rain', 'fish', 'bird', 'water', 'lake', 'mountain'],
+    'person': ['i', 'he', 'she', 'they', 'person', 'man', 'woman', 'child', 'we', 'you'],
+    'action': ['went', 'sat', 'run', 'go', 'walk', 'deposit', 'closed', 'open'],
+    'animal': ['cat', 'dog', 'fish', 'bird'],
+    'emotion': ['happy', 'sad', 'love', 'hate', 'great', 'terrible', 'beautiful', 'good', 'bad'],
+    'time': ['morning', 'night', 'today', 'yesterday', 'was', 'is', 'will'],
+    'spatial': ['by', 'on', 'in', 'at', 'to', 'from', 'near']
+};
+
+function getSemanticSimilarity(wordA, wordB) {
+    wordA = wordA.toLowerCase();
+    wordB = wordB.toLowerCase();
+    if (wordA === wordB) return 1.0;
+
+    var sharedGroups = 0;
+    var totalGroups = 0;
+    var keys = Object.keys(_llmFBSemanticGroups);
+    for (var k = 0; k < keys.length; k++) {
+        var group = _llmFBSemanticGroups[keys[k]];
+        var hasA = group.indexOf(wordA) >= 0;
+        var hasB = group.indexOf(wordB) >= 0;
+        if (hasA || hasB) totalGroups++;
+        if (hasA && hasB) sharedGroups++;
+    }
+    if (totalGroups === 0) return 0.05;
+    return 0.1 + 0.6 * (sharedGroups / totalGroups);
+}
+
+function getFeatureValue(word, feature) {
+    word = word.toLowerCase();
+    var featureMap = _llmFBFeatures[feature];
+    if (!featureMap) return 0;
+    if (featureMap[word] !== undefined) return featureMap[word];
+    return (Math.sin(word.charCodeAt(0) * 0.7 + word.length * 1.3) * 0.3);
+}
+
+function generateSimulatedEmbedding(word, layer) {
+    // Generate a pseudo-random but deterministic embedding vector (8 visible dims)
+    var dims = 8;
+    var vec = [];
+    var seed = 0;
+    for (var c = 0; c < word.length; c++) seed += word.charCodeAt(c) * (c + 1);
+
+    for (var d = 0; d < dims; d++) {
+        var val = Math.sin(seed * 0.127 + d * 2.367) * 0.5 +
+                  Math.cos(seed * 0.089 + d * 1.789) * 0.3;
+        // Layer evolution: vectors become more structured at deeper layers
+        val += layer * 0.02 * Math.sin(d * 0.5 + seed * 0.03);
+        vec.push(val);
+    }
+    return vec;
+}
+
+function initLLMFiberBundle() {
+    var canvas = document.getElementById('canvas-llm-fiber-bundle');
+    if (!canvas) return;
+
+    var fb = _llmFB;
+    var rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+    fb.canvas = canvas;
+    fb.ctx = canvas.getContext('2d');
+    fb.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    fb.width = rect.width;
+    fb.height = rect.height;
+
+    // Parse initial sentence
+    parseLLMFBSentence();
+
+    // Mouse interaction for hover + drag
+    canvas.addEventListener('mousemove', function(e) {
+        var rect = canvas.getBoundingClientRect();
+        var mx = e.clientX - rect.left;
+        var my = e.clientY - rect.top;
+
+        if (fb.dragging) {
+            var dx = e.clientX - fb.lastMouseX;
+            fb.rotY += dx * 0.005;
+            fb.lastMouseX = e.clientX;
+            renderLLMFiberBundle();
+            return;
+        }
+
+        // Check hover over tokens
+        var hoverDetail = document.getElementById('llm-fb-hover-detail');
+        if (hoverDetail && !hoverDetail.checked) { fb.hoveredToken = -1; renderLLMFiberBundle(); return; }
+
+        var oldHover = fb.hoveredToken;
+        fb.hoveredToken = -1;
+        for (var i = 0; i < fb.tokenData.length; i++) {
+            var td = fb.tokenData[i];
+            if (td && td.pillarX !== undefined) {
+                var dx2 = mx - td.pillarX;
+                var dy2 = my - td.baseY;
+                if (Math.abs(dx2) < td.pillarWidth / 2 + 10 && dy2 < 10 && dy2 > -(td.pillarHeight + 20)) {
+                    fb.hoveredToken = i;
+                    break;
+                }
+            }
+        }
+        if (fb.hoveredToken !== oldHover) renderLLMFiberBundle();
+    });
+
+    canvas.addEventListener('mousedown', function(e) {
+        fb.dragging = true;
+        fb.lastMouseX = e.clientX;
+        canvas.style.cursor = 'grabbing';
+    });
+
+    window.addEventListener('mouseup', function() {
+        fb.dragging = false;
+        if (fb.canvas) fb.canvas.style.cursor = 'grab';
+    });
+
+    canvas.addEventListener('mouseleave', function() {
+        if (fb.hoveredToken !== -1) {
+            fb.hoveredToken = -1;
+            renderLLMFiberBundle();
+        }
+    });
+
+    // Slider: layer
+    var layerSlider = document.getElementById('llm-fb-layer');
+    var layerVal = document.getElementById('llm-fb-layer-val');
+    if (layerSlider) {
+        layerSlider.addEventListener('input', function() {
+            fb.layer = parseInt(layerSlider.value);
+            var labels = ['Layer 0 (Embedding)', 'Layer 1', 'Layer 2', 'Layer 3', 'Layer 4',
+                          'Layer 5', 'Layer 6 (Mid)', 'Layer 7', 'Layer 8', 'Layer 9',
+                          'Layer 10', 'Layer 11', 'Layer 12 (Output)'];
+            if (layerVal) layerVal.textContent = labels[fb.layer] || ('Layer ' + fb.layer);
+            updateLLMFBTokenData();
+            renderLLMFiberBundle();
+        });
+    }
+
+    // Feature selector
+    var featureSelect = document.getElementById('llm-fb-feature');
+    if (featureSelect) {
+        featureSelect.addEventListener('change', function() {
+            fb.featureMode = featureSelect.value;
+            renderLLMFiberBundle();
+        });
+    }
+
+    // Slice height
+    var sliceSlider = document.getElementById('llm-fb-slice-height');
+    var sliceVal = document.getElementById('llm-fb-slice-height-val');
+    if (sliceSlider) {
+        sliceSlider.addEventListener('input', function() {
+            fb.sliceHeight = parseInt(sliceSlider.value) / 100;
+            if (sliceVal) sliceVal.textContent = sliceSlider.value + '%';
+            renderLLMFiberBundle();
+        });
+    }
+
+    // Show attention checkbox
+    var showAttn = document.getElementById('llm-fb-show-attention');
+    if (showAttn) {
+        showAttn.addEventListener('change', function() { renderLLMFiberBundle(); });
+    }
+
+    // Enter key on input
+    var input = document.getElementById('llm-fb-sentence');
+    if (input) {
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') processLLMFiberBundle();
+        });
+        input.addEventListener('input', function() {
+            fb.processed = false;
+            parseLLMFBSentence();
+            renderLLMFiberBundle();
+        });
+    }
+
+    renderLLMFiberBundle();
+}
+
+function parseLLMFBSentence() {
+    var fb = _llmFB;
+    var input = document.getElementById('llm-fb-sentence');
+    if (!input) return;
+
+    var text = input.value.trim();
+    fb.tokens = text.split(/\s+/).filter(function(t) { return t.length > 0; });
+    fb.processed = false;
+    fb.attentionWeights = [];
+    updateLLMFBTokenData();
+}
+
+function updateLLMFBTokenData() {
+    var fb = _llmFB;
+    fb.tokenData = [];
+    for (var i = 0; i < fb.tokens.length; i++) {
+        var word = fb.tokens[i];
+        fb.tokenData.push({
+            word: word,
+            embedding: generateSimulatedEmbedding(word, fb.layer),
+            features: {
+                sentiment: getFeatureValue(word, 'sentiment'),
+                tense: getFeatureValue(word, 'tense'),
+                concreteness: getFeatureValue(word, 'concreteness'),
+                animacy: getFeatureValue(word, 'animacy')
+            },
+            // Layout positions (computed during render)
+            pillarX: 0,
+            baseY: 0,
+            pillarWidth: 0,
+            pillarHeight: 0
+        });
+    }
+}
+
+function processLLMFiberBundle() {
+    var fb = _llmFB;
+    if (fb.tokens.length < 2) return;
+
+    parseLLMFBSentence();
+
+    // Generate simulated attention weights
+    var n = fb.tokens.length;
+    fb.attentionWeights = [];
+    for (var i = 0; i < n; i++) {
+        fb.attentionWeights[i] = [];
+        var totalWeight = 0;
+        for (var j = 0; j < n; j++) {
+            var sim = getSemanticSimilarity(fb.tokens[i], fb.tokens[j]);
+            // Distance penalty — nearby tokens attend more
+            var distPenalty = Math.exp(-Math.abs(i - j) * 0.15);
+            var raw = sim * distPenalty;
+            // Layer effect: deeper layers have sharper attention
+            raw = Math.pow(raw, 1 + fb.layer * 0.15);
+            fb.attentionWeights[i][j] = raw;
+            totalWeight += raw;
+        }
+        // Normalize (softmax-like)
+        for (var j = 0; j < n; j++) {
+            fb.attentionWeights[i][j] /= (totalWeight || 1);
+        }
+    }
+
+    // Simulate the effect of attention on embeddings at this layer
+    if (fb.layer > 0) {
+        for (var i = 0; i < n; i++) {
+            var newEmb = fb.tokenData[i].embedding.slice();
+            for (var j = 0; j < n; j++) {
+                if (i === j) continue;
+                var w = fb.attentionWeights[i][j];
+                if (w < 0.02) continue;
+                var srcEmb = generateSimulatedEmbedding(fb.tokens[j], fb.layer);
+                for (var d = 0; d < newEmb.length; d++) {
+                    newEmb[d] += w * srcEmb[d] * 0.3 * (fb.layer / 12);
+                }
+            }
+            fb.tokenData[i].embedding = newEmb;
+        }
+    }
+
+    fb.processed = true;
+
+    // Animate the processing
+    fb.processAnim.active = true;
+    fb.processAnim.progress = 0;
+    fb.processAnim.startTime = performance.now();
+
+    function animateProcess(now) {
+        var elapsed = now - fb.processAnim.startTime;
+        fb.processAnim.progress = Math.min(1, elapsed / 1200);
+        renderLLMFiberBundle();
+        if (fb.processAnim.progress < 1) {
+            requestAnimationFrame(animateProcess);
+        } else {
+            fb.processAnim.active = false;
+            renderLLMFiberBundle();
+        }
+    }
+    requestAnimationFrame(animateProcess);
+
+    // Update info panel
+    updateLLMFBInfoPanel();
+}
+
+window.processLLMFiberBundle = processLLMFiberBundle;
+
+function resetLLMFiberBundle() {
+    var fb = _llmFB;
+    fb.processed = false;
+    fb.attentionWeights = [];
+    fb.hoveredToken = -1;
+    fb.layer = 0;
+    fb.featureMode = 'none';
+    fb.sliceHeight = 0.5;
+    fb.rotY = 0;
+    fb.processAnim.active = false;
+
+    var layerSlider = document.getElementById('llm-fb-layer');
+    if (layerSlider) layerSlider.value = 0;
+    var layerVal = document.getElementById('llm-fb-layer-val');
+    if (layerVal) layerVal.textContent = 'Layer 0 (Embedding)';
+    var featureSelect = document.getElementById('llm-fb-feature');
+    if (featureSelect) featureSelect.value = 'none';
+    var sliceSlider = document.getElementById('llm-fb-slice-height');
+    if (sliceSlider) sliceSlider.value = 50;
+    var sliceVal = document.getElementById('llm-fb-slice-height-val');
+    if (sliceVal) sliceVal.textContent = '50%';
+
+    parseLLMFBSentence();
+    renderLLMFiberBundle();
+
+    var infoContent = document.getElementById('llm-fb-info-content');
+    if (infoContent) {
+        infoContent.innerHTML = 'Type a sentence and click <b>Process Attention</b> to see the fiber bundle come to life.';
+    }
+}
+
+window.resetLLMFiberBundle = resetLLMFiberBundle;
+
+function updateLLMFBInfoPanel() {
+    var fb = _llmFB;
+    var el = document.getElementById('llm-fb-info-content');
+    if (!el) return;
+
+    var html = '';
+    html += '<div style="margin-bottom:8px;">';
+    html += '<span style="font-size:0.8em; color:#94a3b8;">Base Space B:</span><br>';
+    html += '<b style="color:#3b82f6;">{1, 2, …, ' + fb.tokens.length + '}</b>';
+    html += ' <span style="font-size:0.75em; color:#94a3b8;">(' + fb.tokens.length + ' positions)</span>';
+    html += '</div>';
+
+    html += '<div style="margin-bottom:8px;">';
+    html += '<span style="font-size:0.8em; color:#94a3b8;">Fiber F:</span><br>';
+    html += '<b style="color:#8b5cf6;">ℝ<sup>8</sup></b>';
+    html += ' <span style="font-size:0.75em; color:#94a3b8;">(simulated 8-dim)</span>';
+    html += '</div>';
+
+    html += '<div style="margin-bottom:8px;">';
+    html += '<span style="font-size:0.8em; color:#94a3b8;">Total Space E:</span><br>';
+    html += '<b style="color:#10b981;">⊔<sub>i=1</sub><sup>' + fb.tokens.length + '</sup> F<sub>i</sub></b>';
+    html += '</div>';
+
+    if (fb.processed) {
+        html += '<div style="margin-bottom:8px;">';
+        html += '<span style="font-size:0.8em; color:#94a3b8;">Connection ω (Attention):</span><br>';
+        html += '<b style="color:#f59e0b;">Active</b>';
+        html += ' <span style="font-size:0.75em; color:#94a3b8;">(Layer ' + fb.layer + ')</span>';
+        html += '</div>';
+
+        // Show strongest attention pairs
+        html += '<div style="margin-bottom:8px;">';
+        html += '<span style="font-size:0.8em; color:#94a3b8;">Strongest Connections:</span><br>';
+        var pairs = [];
+        for (var i = 0; i < fb.tokens.length; i++) {
+            for (var j = 0; j < fb.tokens.length; j++) {
+                if (i === j) continue;
+                pairs.push({ from: j, to: i, weight: fb.attentionWeights[i][j] });
+            }
+        }
+        pairs.sort(function(a, b) { return b.weight - a.weight; });
+        for (var p = 0; p < Math.min(4, pairs.length); p++) {
+            var pair = pairs[p];
+            html += '<div style="font-size:0.75em; font-family:monospace; color:#f59e0b;">';
+            html += '"' + fb.tokens[pair.from] + '" → "' + fb.tokens[pair.to] + '"';
+            html += ' <span style="color:#94a3b8;">(' + (pair.weight * 100).toFixed(1) + '%)</span>';
+            html += '</div>';
+        }
+        html += '</div>';
+    }
+
+    if (fb.hoveredToken >= 0 && fb.hoveredToken < fb.tokenData.length) {
+        var td = fb.tokenData[fb.hoveredToken];
+        html += '<hr style="border:none; border-top:1px solid #e2e8f0; margin:8px 0;">';
+        html += '<div style="font-weight:bold; color:#ef4444; margin-bottom:4px;">🔍 "' + td.word + '" (pos ' + (fb.hoveredToken + 1) + ')</div>';
+        html += '<div style="font-size:0.75em; color:#94a3b8; margin-bottom:4px;">Embedding (8-dim):</div>';
+        html += '<div style="font-family:monospace; font-size:0.7em; color:#8b5cf6; word-break:break-all;">[';
+        for (var d = 0; d < td.embedding.length; d++) {
+            html += td.embedding[d].toFixed(2);
+            if (d < td.embedding.length - 1) html += ', ';
+        }
+        html += ']</div>';
+        html += '<div style="font-size:0.75em; color:#94a3b8; margin-top:4px;">Features:</div>';
+        var featureKeys = ['sentiment', 'tense', 'concreteness', 'animacy'];
+        for (var fi = 0; fi < featureKeys.length; fi++) {
+            var fk = featureKeys[fi];
+            var fv = td.features[fk];
+            var barColor = fv >= 0 ? '#10b981' : '#ef4444';
+            html += '<div style="font-size:0.7em; display:flex; align-items:center; gap:4px; margin:2px 0;">';
+            html += '<span style="width:70px; color:#94a3b8;">' + fk + ':</span>';
+            html += '<div style="flex:1; height:6px; background:#1e293b; border-radius:3px; overflow:hidden;">';
+            html += '<div style="width:' + (Math.abs(fv) * 50 + 50) + '%; height:100%; background:' + barColor + '; margin-left:' + (fv < 0 ? (50 + fv * 50) : 50) + '%; border-radius:3px;"></div>';
+            html += '</div>';
+            html += '<span style="width:35px; text-align:right; color:' + barColor + ';">' + fv.toFixed(2) + '</span>';
+            html += '</div>';
+        }
+    }
+
+    el.innerHTML = html;
+}
+
+// ============================================================
+// LLM FIBER BUNDLE — Main Render Function
+// ============================================================
+
+function renderLLMFiberBundle() {
+    var fb = _llmFB;
+    if (!fb.ctx) return;
+
+    var ctx = fb.ctx;
+    var W = fb.width;
+    var H = fb.height;
+
+    // Clear
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle grid
+    ctx.strokeStyle = 'rgba(51, 65, 85, 0.15)';
+    ctx.lineWidth = 0.5;
+    for (var gx = 0; gx < W; gx += 40) {
+        ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+    }
+    for (var gy = 0; gy < H; gy += 40) {
+        ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+    }
+
+    var n = fb.tokens.length;
+    if (n === 0) {
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.5)';
+        ctx.font = '16px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Type a sentence above to visualize the fiber bundle', W / 2, H / 2);
+        ctx.textAlign = 'left';
+        return;
+    }
+
+    // Layout parameters
+    var margin = 60;
+    var baseY = H - 80;
+    var pillarMaxH = H - 180;
+    var totalWidth = W - margin * 2 - 200; // leave room for info panel overlap
+    var tokenSpacing = Math.min(100, totalWidth / n);
+    var startX = margin + (totalWidth - tokenSpacing * (n - 1)) / 2;
+    var pillarW = Math.min(40, tokenSpacing * 0.6);
+
+    // Apply slight 3D rotation
+    var rotOffset = Math.sin(fb.rotY) * 15;
+
+    // Feature slice settings
+    var featureMode = fb.featureMode;
+    var sliceH = fb.sliceHeight;
+    var showAttention = true;
+    var showAttnEl = document.getElementById('llm-fb-show-attention');
+    if (showAttnEl) showAttention = showAttnEl.checked;
+
+    // ---- Draw Base Space (ground plane) ----
+    ctx.fillStyle = 'rgba(59, 130, 246, 0.08)';
+    ctx.fillRect(margin - 10, baseY - 5, totalWidth + 20, 30);
+
+    ctx.strokeStyle = 'rgba(59, 130, 246, 0.4)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(margin - 10, baseY);
+    ctx.lineTo(margin + totalWidth + 10, baseY);
+    ctx.stroke();
+
+    // Base space label
+    ctx.fillStyle = 'rgba(59, 130, 246, 0.6)';
+    ctx.font = 'bold 10px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Base Space B = {1, 2, …, ' + n + '}', margin + totalWidth / 2, baseY + 22);
+
+    // ---- Compute pillar positions ----
+    for (var i = 0; i < n; i++) {
+        var td = fb.tokenData[i];
+        td.pillarX = startX + i * tokenSpacing + rotOffset * (i - n / 2) * 0.02;
+        td.baseY = baseY;
+        td.pillarWidth = pillarW;
+        td.pillarHeight = pillarMaxH;
+    }
+
+    // ---- Draw Attention Arcs (Connection ω) ----
+    if (fb.processed && showAttention) {
+        var animProgress = fb.processAnim.active ? fb.processAnim.progress : 1;
+
+        for (var i = 0; i < n; i++) {
+            for (var j = 0; j < n; j++) {
+                if (i === j) continue;
+                var w = fb.attentionWeights[i][j];
+                if (w < 0.04) continue; // threshold for visibility
+
+                var fromTD = fb.tokenData[j];
+                var toTD = fb.tokenData[i];
+
+                var fromX = fromTD.pillarX;
+                var toX = toTD.pillarX;
+                var fromY = baseY - pillarMaxH * 0.5;
+                var toY = baseY - pillarMaxH * 0.5;
+
+                // Arc height based on distance
+                var dist = Math.abs(i - j);
+                var arcH = 30 + dist * 15 + w * 40;
+
+                // Animate: arcs grow in
+                var arcAlpha = w * 2.5 * animProgress;
+                arcAlpha = Math.min(0.7, arcAlpha);
+
+                // Highlight arcs involving hovered token
+                if (fb.hoveredToken >= 0 && (i === fb.hoveredToken || j === fb.hoveredToken)) {
+                    arcAlpha = Math.min(0.9, arcAlpha * 2.5);
+                } else if (fb.hoveredToken >= 0) {
+                    arcAlpha *= 0.15;
+                }
+
+                var arcWidth = 1 + w * 4;
+
+                ctx.strokeStyle = 'rgba(245, 158, 11, ' + arcAlpha + ')';
+                ctx.lineWidth = arcWidth;
+                ctx.beginPath();
+                var cpX = (fromX + toX) / 2;
+                var cpY = fromY - arcH;
+                ctx.moveTo(fromX, fromY);
+                ctx.quadraticCurveTo(cpX, cpY, toX, toY);
+                ctx.stroke();
+
+                // Arrowhead at destination
+                if (arcAlpha > 0.15) {
+                    var t = 0.95;
+                    var ax = (1 - t) * (1 - t) * fromX + 2 * (1 - t) * t * cpX + t * t * toX;
+                    var ay = (1 - t) * (1 - t) * fromY + 2 * (1 - t) * t * cpY + t * t * toY;
+                    var angle = Math.atan2(toY - ay, toX - ax);
+                    var headLen = 5 + w * 6;
+                    ctx.fillStyle = 'rgba(245, 158, 11, ' + arcAlpha + ')';
+                    ctx.beginPath();
+                    ctx.moveTo(toX, toY);
+                    ctx.lineTo(toX - headLen * Math.cos(angle - 0.4), toY - headLen * Math.sin(angle - 0.4));
+                    ctx.lineTo(toX - headLen * Math.cos(angle + 0.4), toY - headLen * Math.sin(angle + 0.4));
+                    ctx.closePath();
+                    ctx.fill();
+                }
+
+                // Weight label on strong connections
+                if (w > 0.12 && arcAlpha > 0.3) {
+                    ctx.font = (8 + w * 4) + 'px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = 'rgba(245, 158, 11, ' + (arcAlpha * 0.8) + ')';
+                    ctx.fillText((w * 100).toFixed(0) + '%', cpX, cpY - 4);
+                }
+            }
+        }
+    }
+
+    // ---- Draw Feature Slice (Section σ) ----
+    if (featureMode !== 'none') {
+        var sliceY = baseY - pillarMaxH * sliceH;
+
+        // Ribbon background
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.06)';
+        ctx.fillRect(margin - 10, sliceY - 8, totalWidth + 20, 16);
+
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.moveTo(margin - 10, sliceY);
+        ctx.lineTo(margin + totalWidth + 10, sliceY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Section label
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.7)';
+        ctx.font = 'bold 9px system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Section σ_' + featureMode, margin - 8, sliceY - 12);
+
+        // Draw feature values at each pillar intersection
+        for (var i = 0; i < n; i++) {
+            var td = fb.tokenData[i];
+            var fv = td.features[featureMode];
+            var dotR = 4 + Math.abs(fv) * 8;
+            var dotColor = fv >= 0 ? '#10b981' : '#ef4444';
+            var dotAlpha = 0.4 + Math.abs(fv) * 0.6;
+
+            // Glow
+            ctx.beginPath();
+            ctx.arc(td.pillarX, sliceY, dotR + 6, 0, Math.PI * 2);
+            ctx.fillStyle = dotColor.replace(')', ', 0.15)').replace('rgb', 'rgba');
+            ctx.fill();
+
+            // Dot
+            ctx.beginPath();
+            ctx.arc(td.pillarX, sliceY, dotR, 0, Math.PI * 2);
+            ctx.fillStyle = dotColor;
+            ctx.globalAlpha = dotAlpha;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+
+            // Value label
+            ctx.font = '8px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = dotColor;
+            ctx.fillText(fv.toFixed(2), td.pillarX, sliceY + dotR + 10);
+        }
+
+        // Connect section dots with a line
+        if (n > 1) {
+            ctx.beginPath();
+            for (var i = 0; i < n; i++) {
+                var td = fb.tokenData[i];
+                if (i === 0) ctx.moveTo(td.pillarX, sliceY);
+                else ctx.lineTo(td.pillarX, sliceY);
+            }
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.3)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+    }
+
+    // ---- Draw Fiber Pillars ----
+    for (var i = 0; i < n; i++) {
+        var td = fb.tokenData[i];
+        var isHovered = (i === fb.hoveredToken);
+        var pw = isHovered ? pillarW * 1.8 : pillarW;
+        var ph = td.pillarHeight;
+        var px = td.pillarX;
+        var py = td.baseY;
+
+        // Pillar glow
+        var glowAlpha = isHovered ? 0.15 : 0.04;
+        var gradient = ctx.createLinearGradient(px, py, px, py - ph);
+        gradient.addColorStop(0, 'rgba(139, 92, 246, ' + (glowAlpha * 2) + ')');
+        gradient.addColorStop(0.5, 'rgba(139, 92, 246, ' + glowAlpha + ')');
+        gradient.addColorStop(1, 'rgba(139, 92, 246, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(px - pw / 2, py - ph, pw, ph);
+
+        // Pillar border
+        ctx.strokeStyle = isHovered ? 'rgba(239, 68, 68, 0.7)' : 'rgba(139, 92, 246, 0.3)';
+        ctx.lineWidth = isHovered ? 2 : 1;
+        ctx.strokeRect(px - pw / 2, py - ph, pw, ph);
+
+        // Embedding dimension dots inside pillar
+        var emb = td.embedding;
+        var dimCount = emb.length;
+        var dotSpacing = (ph - 20) / dimCount;
+
+        for (var d = 0; d < dimCount; d++) {
+            var dotY = py - 10 - d * dotSpacing;
+            var dotX = px + emb[d] * (pw / 2 - 4);
+            var dotR = isHovered ? 3.5 : 2;
+
+            // Color by dimension value
+            var hue = 260 + emb[d] * 60;
+            var sat = 70 + Math.abs(emb[d]) * 30;
+            var light = 50 + Math.abs(emb[d]) * 20;
+
+            ctx.beginPath();
+            ctx.arc(dotX, dotY, dotR, 0, Math.PI * 2);
+            ctx.fillStyle = 'hsl(' + hue + ', ' + sat + '%, ' + light + '%)';
+            ctx.fill();
+
+            // Dimension label on hover
+            if (isHovered && d < dimCount) {
+                ctx.font = '7px monospace';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+                ctx.fillText('d' + d + ':' + emb[d].toFixed(1), px + pw / 2 + 4, dotY + 2);
+            }
+        }
+
+        // Token label at base
+        ctx.font = isHovered ? 'bold 12px system-ui, sans-serif' : '11px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = isHovered ? '#ef4444' : '#e2e8f0';
+        ctx.fillText(td.word, px, py + 14);
+
+        // Position number
+        ctx.font = '8px monospace';
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.6)';
+        ctx.fillText('pos ' + (i + 1), px, py + 24);
+
+        // Fiber label at top
+        if (isHovered) {
+            ctx.font = 'bold 9px system-ui, sans-serif';
+            ctx.fillStyle = 'rgba(139, 92, 246, 0.8)';
+            ctx.fillText('F_' + (i + 1) + ' = ℝ⁸', px, py - ph - 8);
+        }
+    }
+
+    // ---- Layer indicator ----
+    ctx.fillStyle = 'rgba(245, 158, 11, 0.6)';
+    ctx.font = 'bold 11px system-ui, sans-serif';
+    ctx.textAlign = 'left';
+    var layerLabels = ['Layer 0 (Embedding)', 'Layer 1', 'Layer 2', 'Layer 3', 'Layer 4',
+                       'Layer 5', 'Layer 6 (Mid)', 'Layer 7', 'Layer 8', 'Layer 9',
+                       'Layer 10', 'Layer 11', 'Layer 12 (Output)'];
+    ctx.fillText('🏗️ ' + (layerLabels[fb.layer] || 'Layer ' + fb.layer), 10, 20);
+
+    // Processing status
+    if (fb.processed) {
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.6)';
+        ctx.fillText('⚡ Attention Active', 10, 36);
+    } else {
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.4)';
+        ctx.fillText('💤 Click "Process Attention" to activate connection', 10, 36);
+    }
+
+    // Title
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.font = 'bold 13px system-ui, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('🪥 LLM Fiber Bundle (π, E, B, F)', W - 10, 20);
+
+    ctx.textAlign = 'left';
+
+    // Update info panel on hover change
+    updateLLMFBInfoPanel();
+}
+
+// ============================================================
 // MODULE LOADER
 // ============================================================
 
@@ -4646,6 +5438,10 @@ async function loadTopologyModule() {
 		initSpeedSlider();
 		initCustomTMControls();
 		initSoundCheckbox();
+	});
+
+	_topologyLazyRegister('canvas-llm-fiber-bundle', function() {
+		initLLMFiberBundle();
 	});
 
 	// Start observing

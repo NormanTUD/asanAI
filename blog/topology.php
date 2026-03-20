@@ -613,6 +613,162 @@ This is why the same word in the same final context can mean different things de
 
 <div id="fiber-viz"></div>
 
+<!-- Add this block after the existing fiber-viz section and before the Winding Numbers section -->
+
+<div class="md">
+## The LLM as a Fiber Bundle: The Bristle Brush of Meaning
+
+We've seen how fiber bundles formalize the idea of "context twists meaning." Now let's apply this directly to the architecture of a **Large Language Model**. The claim is not merely metaphorical — an LLM's internal geometry *is* a fiber bundle:
+
+$$(\pi, E, B, F)$$
+
+| Bundle Component | LLM Interpretation |
+|---|---|
+| **Base Space** $B$ | The discrete sequence of token positions $(1, 2, \ldots, k)$ — the "ground" where the sentence lives |
+| **Fiber** $F$ | The high-dimensional vector space $\mathbb{R}^n$ (e.g., $n = 4096$). Every position "grows" its own private universe of potential meanings |
+| **Total Space** $E$ | The collection of all fibers across all positions — the full residual stream. This is the **Bristle Brush** |
+| **Connection** $\omega$ | The **attention mechanism** — it defines how information is parallel-transported from the fiber at position $i$ to the fiber at position $j$ |
+| **Section** $\sigma$ | A specific "slice" through the bundle — e.g., looking at only the "sentiment" coordinate across all token positions |
+
+### Why This Framing Matters
+
+In a standard description, an LLM processes a sequence of token embeddings through layers of attention and MLPs. But this description obscures the *geometry*. The fiber bundle perspective reveals:
+
+1. **A word is not a point — it is a location that hosts a space.** The embedding of "bank" at position 3 is not a single vector; it is a point in the base space $B$ with an entire fiber $\mathbb{R}^{4096}$ attached to it, containing all possible meanings "bank" could have in this context.
+
+2. **Attention is parallel transport, not just weighted averaging.** When the attention mechanism moves information from "money" (position 1) to "bank" (position 3), it doesn't just copy a vector — it *transports* the vector along a path in the bundle, and the **connection** (the learned attention weights) determines how the vector is rotated and transformed during transport. This is why "bank" ends up pointing toward "financial institution" rather than "river bank."
+
+3. **The connection has curvature.** If you transport meaning from "money" → "bank" directly, you get one result. If you transport "money" → "deposit" → "bank," you may get a slightly different result. This path-dependence is the **holonomy** of the attention connection, and it's non-trivial precisely when context matters:
+
+$$\text{Holonomy}(\gamma) = \mathcal{P} \exp\left(-\oint_\gamma \omega\right) \neq \mathbf{I}$$
+
+4. **Sections reveal global structure.** A section $\sigma: B \to E$ picks out one vector from each fiber. If we choose the "sentiment" direction, the section $\sigma_{\text{sentiment}}$ assigns a sentiment value to every token position. This section might be smooth (all words have similar sentiment) or have sharp gradients (a transition from positive to negative sentiment mid-sentence). The topology of the space of sections encodes what the model "knows" about global sentence structure.
+
+### The Formal Construction
+
+Given a sentence of $k$ tokens, the LLM constructs:
+
+- **Base space:** $B = \{1, 2, \ldots, k\}$ (discrete)
+- **Fiber at position $i$:** $F_i = \mathbb{R}^{d_{\text{model}}}$ (the residual stream at position $i$)
+- **Total space:** $E = \bigsqcup_{i=1}^{k} F_i$ (disjoint union of all fibers)
+- **Projection:** $\pi: E \to B$, mapping each vector to its token position
+- **Local trivialization:** In any attention head, the query-key-value decomposition provides a local coordinate system on the fiber
+
+The **attention connection** at layer $\ell$ is:
+
+$$\omega^{(\ell)}_{ij} = \text{softmax}\left(\frac{Q_i^{(\ell)} \cdot K_j^{(\ell)}}{\sqrt{d_k}}\right) \cdot V_j^{(\ell)}$$
+
+This tells us how much of the fiber at position $j$ is "transported" to position $i$. The full parallel transport from position $j$ to position $i$ through attention head $h$ is:
+
+$$\Gamma^{(h)}_{j \to i}(\mathbf{v}) = \alpha^{(h)}_{ij} \cdot W_V^{(h)} \mathbf{v}$$
+
+where $\alpha^{(h)}_{ij}$ is the attention weight and $W_V^{(h)}$ is the value projection — a linear map that "rotates" the vector as it moves between fibers.
+
+### Multi-Head Attention as Multiple Connections
+
+Each attention head defines a **different connection** on the same bundle. Head 1 might transport syntactic information (subject-verb agreement), while Head 2 transports semantic information (coreference). The multi-head attention mechanism combines these:
+
+$$\text{MultiHead}(\mathbf{x}) = \text{Concat}(\text{head}_1, \ldots, \text{head}_H) W_O$$
+
+This is analogous to having multiple **gauge fields** on the same bundle — each head is a different "force" that shapes how meaning flows through the sentence.
+
+### Layer Depth as Bundle Morphisms
+
+Each Transformer layer transforms the bundle:
+
+$$E^{(\ell)} \xrightarrow{\text{Attention} + \text{MLP}} E^{(\ell+1)}$$
+
+The fiber at each position is updated, but the base space $B$ remains fixed. This is a **bundle morphism** — a map between fiber bundles that preserves the base. As you go deeper:
+
+- **Early layers:** Fibers are "raw" — they contain mostly local, syntactic information. The connection is weak (attention is diffuse).
+- **Middle layers:** Fibers become "entangled" — semantic information has been transported across positions. The connection has developed curvature.
+- **Late layers:** Fibers are "resolved" — each position's fiber has been shaped by the full context. The section corresponding to the model's prediction is well-defined.
+
+Explore this structure interactively below. Type a sentence and watch the **Bristle Brush** come to life.
+</div>
+
+<div style="margin-bottom: 10px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    <strong>🪥 LLM Fiber Bundle Explorer:</strong><br>
+    Type a sentence below. Each word becomes a position in the <b>base space</b>, and a glowing <b>fiber (pillar)</b> rises from it into the high-dimensional meaning space.
+    Click <b>"Process Attention"</b> to see the <b>connection</b> — glowing arcs that transport meaning between fibers, rotating vectors based on context.
+    Use the <b>Feature Slice</b> slider to cut a horizontal <b>section</b> through all fibers and see how a single feature (sentiment, tense, etc.) varies across the sentence.
+    Scroll through <b>layers</b> to watch the fibers evolve from raw embeddings to resolved meanings.
+</div>
+
+<section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <!-- Sentence Input -->
+    <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+        <input type="text" id="llm-fb-sentence" value="The bank by the river was closed" placeholder="Type a sentence..."
+            style="flex: 1; min-width: 250px; padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1em; font-family: 'Inter', sans-serif;">
+        <button onclick="processLLMFiberBundle()" id="llm-fb-process-btn"
+            style="background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.95em;">
+            ⚡ Process Attention
+        </button>
+        <button onclick="resetLLMFiberBundle()"
+            style="background: #64748b; color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.95em;">
+            🔄 Reset
+        </button>
+    </div>
+
+    <!-- Main Canvas -->
+    <div style="display: grid; grid-template-columns: 1fr 240px; gap: 16px; align-items: start;">
+        <canvas id="canvas-llm-fiber-bundle"
+            style="width: 100%; height: 520px; background: #0f172a; border-radius: 8px; border: 1px solid #1e293b; cursor: grab;">
+        </canvas>
+        <div id="llm-fb-info-panel" style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 14px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 520px; overflow-y: auto;">
+            <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">🪥 Bundle Structure</div>
+            <div id="llm-fb-info-content">
+                Type a sentence and click <b>Process Attention</b> to see the fiber bundle come to life.
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls Row 1: Feature Slice -->
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>✂️ Feature Slice:</b>
+            <select id="llm-fb-feature" style="padding: 4px 10px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 0.9em; margin-left: 4px;">
+                <option value="none">None</option>
+                <option value="sentiment">Sentiment</option>
+                <option value="tense">Tense</option>
+                <option value="concreteness">Concreteness</option>
+                <option value="animacy">Animacy</option>
+            </select>
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>📐 Slice Height:</b>
+            <input type="range" id="llm-fb-slice-height" min="0" max="100" step="1" value="50" style="width: 140px; vertical-align: middle;">
+            <span id="llm-fb-slice-height-val" style="font-weight: bold; color: #8b5cf6;">50%</span>
+        </label>
+    </div>
+
+    <!-- Controls Row 2: Layer Depth -->
+    <div style="display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 10px;">
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>🏗️ Layer Depth:</b>
+            <input type="range" id="llm-fb-layer" min="0" max="12" step="1" value="0" style="width: 200px; vertical-align: middle;">
+            <span id="llm-fb-layer-val" style="font-weight: bold; color: #f59e0b;">Layer 0 (Embedding)</span>
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>🔍 Hover Detail:</b>
+            <input type="checkbox" id="llm-fb-hover-detail" checked>
+        </label>
+        <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
+            <b>🌉 Show Attention:</b>
+            <input type="checkbox" id="llm-fb-show-attention" checked>
+        </label>
+    </div>
+
+    <!-- Legend -->
+    <div style="display: flex; gap: 16px; justify-content: center; margin-top: 12px; flex-wrap: wrap; font-family: sans-serif; font-size: 0.8em; color: #64748b;">
+        <span>🟦 <b style="color:#3b82f6;">Base Space</b> (token positions)</span>
+        <span>🟪 <b style="color:#8b5cf6;">Fibers</b> (meaning pillars)</span>
+        <span>🟡 <b style="color:#f59e0b;">Attention Arcs</b> (connection ω)</span>
+        <span>🟢 <b style="color:#10b981;">Feature Section</b> (σ slice)</span>
+        <span>🔴 <b style="color:#ef4444;">Hovered Fiber</b> (expanded)</span>
+    </div>
+</section>
+
 <div class="md">
 ## Winding Numbers: Detecting Circular Reasoning
 
