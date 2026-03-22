@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌊 LLM Kelp-Wald v4 – Vollständige Faserbündel-Visualisierung</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#010812;color:#c0d8e8;font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100vh}
+header{background:linear-gradient(90deg,#010f20,#042a48,#010f20);padding:6px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #0a3a6a;flex-shrink:0}
+header h1{font-size:1.1em;color:#3dd4b0}
+header .sub{font-size:0.62em;color:#5a8aa8}
+#main{display:flex;flex:1;overflow:hidden}
+#sb{width:290px;background:#030f1e;border-right:1px solid #0a2a4a;padding:8px;overflow-y:auto;flex-shrink:0;font-size:0.8em}
+#sb::-webkit-scrollbar{width:4px}
+#sb::-webkit-scrollbar-thumb{background:#1a3a5a;border-radius:2px}
+#sb h3{color:#5ab8d8;font-size:0.78em;margin:8px 0 3px;padding-top:4px;border-top:1px solid #0a2a3a}
+#sb h3:first-child{border-top:none}
+.cg{margin-bottom:5px}
+.cg label{display:block;font-size:0.72em;color:#7aa8c0;margin-bottom:1px}
+.cg input[type=range]{width:100%;accent-color:#3dd4b0;height:14px}
+.cg select,.cg input[type=text]{width:100%;background:#081828;color:#b0d0e0;border:1px solid #1a3a5a;padding:3px 5px;border-radius:3px;font-size:0.8em}
+.v{font-size:0.66em;color:#3dd4b0;float:right}
+.btn{width:100%;padding:5px;margin-top:2px;background:linear-gradient(135deg,#0a3a5a,#0a5a4a);color:#b0e8d8;border:1px solid #2a7a6a;border-radius:3px;cursor:pointer;font-size:0.74em;transition:0.15s}
+.btn:hover{background:linear-gradient(135deg,#1a5a7a,#1a7a6a);box-shadow:0 0 8px #3dd4b022}
+.btn.d{background:linear-gradient(135deg,#5a1a1a,#7a2a1a);border-color:#9a3a2a;color:#f0b0a0}
+.btn.d:hover{background:linear-gradient(135deg,#7a2a2a,#9a3a2a)}
+.btn.t{background:linear-gradient(135deg,#3a1a5a,#5a2a7a);border-color:#7a3a9a;color:#d0b0f0}
+.tabs{display:flex;gap:1px;margin-bottom:6px}
+.tabs button{flex:1;padding:3px 2px;background:#081828;color:#5a8aa8;border:1px solid #1a2a3a;border-radius:2px 2px 0 0;cursor:pointer;font-size:0.64em}
+.tabs button.on{background:#0a3a5a;color:#3dd4b0;border-color:#2a6a5a}
+.tp{display:none}.tp.on{display:block}
+.toks{display:flex;flex-wrap:wrap;gap:2px;margin:4px 0}
+.tok{background:#0a2a4a;border:1px solid #1a4a6a;border-radius:8px;padding:0 6px;font-size:0.68em;color:#70d0c0;cursor:pointer;line-height:1.6}
+.tok:hover,.tok.sel{background:#1a4a6a;border-color:#3dd4b0;color:#a0f0e0}
+#cv{flex:1;position:relative}
+canvas{display:block;width:100%;height:100%}
+#tip{position:absolute;display:none;background:#081828ee;border:1px solid #3dd4b0;border-radius:4px;padding:5px 8px;font-size:0.7em;pointer-events:none;z-index:100;max-width:320px;line-height:1.35;backdrop-filter:blur(4px)}
+#hud{position:absolute;top:6px;right:6px;background:#081828cc;border:1px solid #1a3a5a;border-radius:4px;padding:5px 8px;font-size:0.62em;pointer-events:none;backdrop-filter:blur(4px)}
+.hr{display:flex;justify-content:space-between;gap:10px;margin:1px 0}
+.hl{color:#5a8aa8}.hv{color:#3dd4b0;font-family:monospace}
+#mode-indicator{position:absolute;top:6px;left:50%;transform:translateX(-50%);background:#081828cc;border:1px solid #1a3a5a;border-radius:4px;padding:3px 12px;font-size:0.7em;pointer-events:none;backdrop-filter:blur(4px);color:#3dd4b0}
+</style>
+</head>
+<body>
+<div id="app">
+<header>
+<div><h1>🌊 LLM Kelp-Wald v4</h1><div class="sub">Residual Stream · Attention ⊕ FFN · Biolumineszenz · Topologische Defekte · Training/Inferenz</div></div>
+<div style="text-align:right;font-size:0.65em"><span id="fps">--</span> · <span id="phs">Idle</span></div>
+</header>
+<div id="main">
+<div id="sb">
+<div class="tabs">
+<button class="on" onclick="stab(this,'t1')">Input</button>
+<button onclick="stab(this,'t2')">Modell</button>
+<button onclick="stab(this,'t3')">Topologie</button>
+<button onclick="stab(this,'t4')">Dynamik</button>
+<button onclick="stab(this,'t5')">Ansicht</button>
+</div>
+
+<div id="t1" class="tp on">
+<h3>📝 Satz</h3>
+<div class="cg"><input type="text" id="inp" value="Die Katze sitzt auf der warmen Matte"></div>
+<button class="btn" onclick="tokenize()">🌱 Tokenisieren</button>
+<div id="tokbox" class="toks"></div>
+
+<h3>⚡ Modus</h3>
+<button class="btn" onclick="startInference()">🔦 Inferenz (vorwärts)</button>
+<button class="btn t" onclick="startTraining()">📉 Training (Backprop)</button>
+<button class="btn" onclick="startBeamSearch()">🌿 Beam Search</button>
+<button class="btn" onclick="stopAll()">⏸ Stopp</button>
+
+<h3>💥 Defekte</h3>
+<button class="btn d" onclick="addHallu()">🌀 Halluzination (Strang reißt)</button>
+<button class="btn d" onclick="addLoop()">🔄 Kreisschluss (Rückwuchs)</button>
+<button class="btn d" onclick="addUncertainty()">❓ Unsicherheit (Auffächerung)</button>
+<button class="btn" onclick="G.defects=[];compAttn()">🧹 Entfernen</button>
+
+<h3>🎭 Szenarien</h3>
+<button class="btn" onclick="scenarioContext()">🏦 Kontext-Shift ("Bank")</button>
+<button class="btn" onclick="scenarioInduction()">🔁 Induction Head</button>
+<button class="btn" onclick="scenarioCollapse()">💀 LayerNorm-Kollaps</button>
+</div>
+
+<div id="t2" class="tp">
+<h3>🏗 Transformer</h3>
+<div class="cg"><label>Layer <span class="v" id="vL">6</span></label>
+<input type="range" min="2" max="12" value="6" oninput="G.nL=+this.value;VV('vL',this.value);rebuild()"></div>
+<div class="cg"><label>d_model <span class="v" id="vD">64</span></label>
+<input type="range" min="16" max="128" step="16" value="64" oninput="G.dM=+this.value;VV('vD',this.value);rebuild()"></div>
+<div class="cg"><label>Heads <span class="v" id="vH">4</span></label>
+<input type="range" min="1" max="8" value="4" oninput="G.nH=+this.value;VV('vH',this.value);rebuild()"></div>
+<div class="cg"><label>d_ff Mult <span class="v" id="vFF">4</span></label>
+<input type="range" min="1" max="8" value="4" oninput="G.ffM=+this.value;VV('vFF',this.value)"></div>
+<div class="cg"><label>Temperatur <span class="v" id="vT">1.0</span></label>
+<input type="range" min="0.1" max="3" step="0.1" value="1" oninput="G.temp=+this.value;VV('vT',this.value);compAttn()"></div>
+
+<h3>👁 Sichtbarkeit</h3>
+<div class="cg"><label>Residual Stream <span class="v" id="vRS">1.0</span></label>
+<input type="range" min="0" max="1" step="0.05" value="1" oninput="G.resStreamVis=+this.value;VV('vRS',this.value)"></div>
+<div class="cg"><label>Attention-Äste <span class="v" id="vAV">0.8</span></label>
+<input type="range" min="0" max="1" step="0.05" value="0.8" oninput="G.attnVis=+this.value;VV('vAV',this.value)"></div>
+<div class="cg"><label>FFN-Äste <span class="v" id="vDV">0.8</span></label>
+<input type="range" min="0" max="1" step="0.05" value="0.8" oninput="G.denseVis=+this.value;VV('vDV',this.value)"></div>
+<div class="cg"><label>Strömungsfeld <span class="v" id="vSF">0.6</span></label>
+<input type="range" min="0" max="1" step="0.05" value="0.6" oninput="G.flowFieldVis=+this.value;VV('vSF',this.value)"></div>
+<div class="cg"><label>Wurzeln (PosEnc) <span class="v" id="vPE">0.5</span></label>
+<input type="range" min="0" max="1" step="0.05" value="0.5" oninput="G.posEncVis=+this.value;VV('vPE',this.value)"></div>
+</div>
+
+<div id="t3" class="tp">
+<h3>📐 Basisraum B</h3>
+<div class="cg"><label>Topologie</label>
+<select onchange="G.topo=this.value;rebuild()">
+<option value="line">Linie ℝ¹</option>
+<option value="ring">Ring S¹</option>
+<option value="mobius">Möbius-Band</option>
+</select></div>
+<h3>🌀 Faser-Geometrie</h3>
+<div class="cg"><label>Krümmung <span class="v" id="vC">0.3</span></label>
+<input type="range" min="0" max="1" step="0.05" value="0.3" oninput="G.curv=+this.value;VV('vC',this.value)"></div>
+<div class="cg"><label>Chaos <span class="v" id="vCh">0.0</span></label>
+<input type="range" min="0" max="1" step="0.05" value="0" oninput="G.chaos=+this.value;VV('vCh',this.value)"></div>
+<div class="cg"><label>Twist <span class="v" id="vTw">0.0</span></label>
+<input type="range" min="0" max="1" step="0.05" value="0" oninput="G.twist=+this.value;VV('vTw',this.value)"></div>
+</div>
+
+<div id="t4" class="tp">
+<h3>🌊 Dynamik</h3>
+<div class="cg"><label>Geschwindigkeit <span class="v" id="vSpd">1.0</span></label>
+<input type="range" min="0.1" max="4" step="0.1" value="1" oninput="G.speed=+this.value;VV('vSpd',this.value)"></div>
+<div class="cg"><label>LayerNorm Stärke <span class="v" id="vLN">1.0</span></label>
+<input type="range" min="0" max="2" step="0.05" value="1" oninput="G.layerNormStr=+this.value;VV('vLN',this.value)"></div>
+<div class="cg"><label>Beam Width <span class="v" id="vBW">3</span></label>
+<input type="range" min="1" max="6" value="3" oninput="G.beamW=+this.value;VV('vBW',this.value)"></div>
+<h3>🔬 Semantik</h3>
+<div class="cg"><label>Polysemantizität <span class="v" id="vPoly">0.3</span></label>
+<input type="range" min="0" max="1" step="0.05" value="0.3" oninput="G.polysem=+this.value;VV('vPoly',this.value)"></div>
+<div class="cg"><label>Attention Sink Stärke <span class="v" id="vSink">0.5</span></label>
+<input type="range" min="0" max="1" step="0.05" value="0.5" oninput="G.sinkStr=+this.value;VV('vSink',this.value);compAttn()"></div>
+</div>
+
+<div id="t5" class="tp">
+<h3>📷 Kamera</h3>
+<div class="cg"><label>Zoom <span class="v" id="vZ">1.0</span></label>
+<input type="range" id="rZ" min="0.3" max="3" step="0.05" value="1" oninput="G.zoom=+this.value;VV('vZ',this.value)"></div>
+<div class="cg"><label>Tiefenstaffelung <span class="v" id="vDepth">0.4</span></label>
+<input type="range" min="0" max="1" step="0.05" value="0.4" oninput="G.depthScale=+this.value;VV('vDepth',this.value)"></div>
+<button class="btn" onclick="G.panX=0;G.panY=0;G.zoom=1">📷 Reset</button>
+</div>
+</div>
+
+<div id="cv">
+<canvas id="c"></canvas>
+<div id="tip"></div>
+<div id="mode-indicator">Idle</div>
+<div id="hud">
+<div style="color:#3dd4b0;font-weight:bold;margin-bottom:2px">Architektur</div>
+<div class="hr"><span class="hl">Tokens</span><span class="hv" id="aiT">0</span></div>
+<div class="hr"><span class="hl">Layer</span><span class="hv" id="aiL">6</span></div>
+<div class="hr"><span class="hl">d_model</span><span class="hv" id="aiD">64</span></div>
+<div class="hr"><span class="hl">Heads</span><span class="hv" id="aiH">4</span></div>
+<div class="hr"><span class="hl">d_k</span><span class="hv" id="aiK">16</span></div>
+<div class="hr"><span class="hl">d_ff</span><span class="hv" id="aiF">256</span></div>
+<div class="hr"><span class="hl">Topo</span><span class="hv" id="aiTo">ℝ¹</span></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+// ============================================================
+// LLM KELP FOREST v4 – COMPLETE
+// ============================================================
+const c=document.getElementById('c'),X=c.getContext('2d'),tip=document.getElementById('tip');
+const VV=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+function stab(b,id){document.querySelectorAll('.tp').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');b.classList.add('on')}
+
+// ============================================================
+// STATE
+// ============================================================
+const G={
+  tokens:[],nL:6,dM:64,nH:4,ffM:4,temp:1,
+  topo:'line',curv:0.3,chaos:0,twist:0,
+  speed:1,zoom:1,panX:0,panY:0,depthScale:0.4,
+  resStreamVis:1,attnVis:0.8,denseVis:0.8,flowFieldVis:0.6,posEncVis:0.5,
+  layerNormStr:1,beamW:3,polysem:0.3,sinkStr:0.5,
+  time:0,mode:'idle', // idle|inference|training|beam
+  infLayer:-1,infSub:'',infT:0,
+  trainLayer:-1,trainT:0,
+  beams:[],beamPhase:0,
+  defects:[],selTok:-1,
+  kelps:[],attnW:[],denseA:[],
+  flowParticles:[],
+  mouseX:-1,mouseY:-1,
+  // Per-kelp computed data
+  embNorms:[],semColors:[],
+  // Scenarios
+  scenario:null,
+};
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function hash(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return h}
+function softmax(a,t){const mx=Math.max(...a);const e=a.map(v=>Math.exp((v-mx)/(t||1)));const s=e.reduce((a,b)=>a+b,0);return e.map(v=>v/s)}
+function lerp(a,b,t){return a+(b-a)*t}
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
+function hsl(h,s,l,a){return`hsla(${h},${s}%,${l}%,${a||1})`}
+
+// ============================================================
+// ATTENTION COMPUTATION
+// ============================================================
+function compAttn(){
+  const n=G.tokens.length;if(!n)return;
+  const dk=G.dM/G.nH;
+  G.attnW=[];
+  for(let l=0;l<G.nL;l++){
+    const heads=[];
+    for(let h=0;h<G.nH;h++){
+      const mat=[];
+      for(let i=0;i<n;i++){
+        const scores=[];
+        for(let j=0;j<n;j++){
+          let sc=-Math.abs(i-j)*0.4;
+          sc+=Math.cos(hash(G.tokens[i]+l+h)*0.1+hash(G.tokens[j]+l+h)*0.13)*1.8;
+          if(i===j)sc+=0.5;
+          // Attention sink: first token and punctuation get bonus
+          if(j===0&&G.sinkStr>0)sc+=G.sinkStr*2;
+          if(G.tokens[j]&&G.tokens[j].match(/[.,;:!?]/)&&G.sinkStr>0)sc+=G.sinkStr*1.5;
+          sc/=Math.sqrt(dk);
+          // Topology adjustments
+          if(G.topo==='ring'||G.topo==='mobius'){
+            const wd=Math.min(Math.abs(i-j),n-Math.abs(i-j));
+            sc+=(-wd*0.3+Math.abs(i-j)*0.3);
+          }
+          // Loop defect boost
+          for(const d of G.defects){
+            if(d.type==='loop'&&d.layer===l){
+              if((i===d.from&&j===d.to)||(i===d.to&&j===d.from))sc+=3.5;
+            }
+          }
+          // Induction head pattern (scenario)
+          if(G.scenario==='induction'&&l>=2&&h===0){
+            // If tokens match earlier pattern
+            if(i>1&&j<i-1&&G.tokens[j]===G.tokens[i-1])sc+=2;
+          }
+          scores.push(sc);
+        }
+        mat.push(softmax(scores,G.temp));
+      }
+      heads.push(mat);
+    }
+    G.attnW.push(heads);
+  }
+  // Dense activations
+  G.denseA=[];
+  for(let l=0;l<G.nL;l++){
+    const a=[];
+    for(let i=0;i<n;i++){
+      a.push(0.3+0.7*Math.abs(Math.sin(hash(G.tokens[i]+'f'+l)*0.37+l*1.1)));
+    }
+    G.denseA.push(a);
+  }
+  // Embedding norms per layer (simulated)
+  G.embNorms=[];
+  for(let l=0;l<G.nL;l++){
+    const norms=[];
+    for(let i=0;i<n;i++){
+      let norm=1.0;
+      // LayerNorm effect
+      if(G.layerNormStr<0.5){
+        norm+=l*0.3*(1-G.layerNormStr); // grows without norm
+      }
+      // Attention sink tokens get thicker
+      const totalAttn=G.attnW[l]?G.attnW[l].reduce((s,head)=>{
+        return s+head.reduce((s2,row)=>s2+row[i],0);
+      },0)/(G.nH*n):0;
+      norm+=totalAttn*0.5;
+      norms.push(clamp(norm,0.3,3));
+    }
+    G.embNorms.push(norms);
+  }
+  // Semantic color per layer (hue shift through layers)
+  G.semColors=[];
+  for(let l=0;l<G.nL;l++){
+    const cols=[];
+    for(let i=0;i<n;i++){
+      const baseHue=hash(G.tokens[i])*0.05%360;
+      // Context shift scenario
+      let shift=l*8; // natural drift through layers
+      if(G.scenario==='context'&&G.tokens[i]==='Bank'){
+        // Check if "Geld" or "Park" is in context
+        const hasGeld=G.tokens.some(t=>t==='Geld'||t==='Konto'||t==='Euro');
+        const hasPark=G.tokens.some(t=>t==='Park'||t==='Sitzen'||t==='Holz');
+        if(hasGeld)shift+=l*15; // shift toward "finance" hue
+        else if(hasPark)shift-=l*15; // shift toward "furniture" hue
+        else shift+=l*5;
+      }
+      cols.push((baseHue+shift+360)%360);
+    }
+    G.semColors.push(cols);
+  }
+  // Init flow particles
+  initFlowParticles();
+}
+
+// ============================================================
+// FLOW FIELD PARTICLES
+// ============================================================
+function initFlowParticles(){
+  G.flowParticles=[];
+  const count=Math.floor(120*G.flowFieldVis);
+  for(let i=0;i<count;i++){
+    G.flowParticles.push(newFlowParticle());
+  }
+}
+function newFlowParticle(){
+  const W=c.width/devicePixelRatio,H=c.height/devicePixelRatio;
+  return{
+    x:Math.random()*W,y:Math.random()*H*0.85,
+    vx:0,vy:0,life:0.5+Math.random()*0.5,age:0,
+    size:0.8+Math.random()*1.2,
+  };
+}
+
+// ============================================================
+// BUILD
+// ============================================================
+function rebuild(){buildKelps();compAttn();updArch()}
+function buildKelps(){
+  G.kelps=[];const n=G.tokens.length;if(!n)return;
+  for(let i=0;i<n;i++){
+    const isSink=(i===0||G.tokens[i].match(/[.,;:!?]/));
+    G.kelps.push({
+      idx:i,tok:G.tokens[i],
+      hue:(hash(G.tokens[i])*73+180)%360,
+      phase:hash(G.tokens[i])*0.01,
+      isSink:isSink,
+      depth:0.3+Math.random()*0.7, // z-depth for parallax
+      _pts:[], // computed each frame
+    });
+  }
+}
+function updArch(){
+  const dk=Math.floor(G.dM/G.nH),dff=G.dM*G.ffM;
+  const tm={line:'ℝ¹',ring:'S¹',mobius:'Möbius'};
+  VV('aiT',G.tokens.length);VV('aiL',G.nL);VV('aiD',G.dM);
+  VV('aiH',G.nH);VV('aiK',dk);VV('aiF',dff);VV('aiTo',tm[G.topo]||G.topo);
+}
+
+// ============================================================
+// TOKENIZE
+// ============================================================
+function tokenize(){
+  const t=document.getElementById('inp').value.trim();if(!t)return;
+  G.tokens=t.match(/[\wäöüÄÖÜß]+|[^\s\wäöüÄÖÜß]/g)||[];
+  G.defects=[];G.mode='idle';G.selTok=-1;G.scenario=null;
+  const box=document.getElementById('tokbox');box.innerHTML='';
+  G.tokens.forEach((tk,i)=>{
+    const el=document.createElement('span');el.className='tok';el.textContent=tk;
+    el.onclick=()=>{G.selTok=G.selTok===i?-1:i;document.querySelectorAll('.tok').forEach((c,j)=>c.classList.toggle('sel',j===G.selTok))};
+    box.appendChild(el);
+  });
+  rebuild();
+}
+
+// ============================================================
+// MODES
+// ============================================================
+function startInference(){
+  if(!G.tokens.length)return;
+  G.mode='inference';G.infLayer=0;G.infSub='attn';G.infT=0;
+}
+function startTraining(){
+  if(!G.tokens.length)return;
+  G.mode='training';G.trainLayer=G.nL-1;G.trainT=0;
+}
+function startBeamSearch(){
+  if(!G.tokens.length)return;
+  G.mode='beam';G.beamPhase=0;
+  G.beams=[];
+  for(let b=0;b<G.beamW;b++){
+    G.beams.push({
+      token:'['+['der','die','das','ein','und','ist'][b%6]+']',
+      score:Math.random(),
+      alive:true,phase:0,
+    });
+  }
+}
+function stopAll(){G.mode='idle';G.beams=[]}
+
+// ============================================================
+// DEFECTS
+// ============================================================
+function addHallu(){
+  const n=G.tokens.length;if(n<2)return;
+  const tok=Math.floor(Math.random()*n);
+  const layer=1+Math.floor(Math.random()*(G.nL-1));
+  G.defects.push({
+    type:'hallu',token:tok,layer:layer,
+    angle:Math.random()*Math.PI*2,
+    mag:30+Math.random()*40,
+    t:0,tearProgress:0,
+  });
+}
+function addLoop(){
+  const n=G.tokens.length;if(n<3)return;
+  const a=Math.floor(Math.random()*n);
+  let b=(a+1+Math.floor(Math.random()*(n-2)))%n;
+  G.defects.push({type:'loop',from:a,to:b,layer:1+Math.floor(Math.random()*(G.nL-1)),t:0});
+  compAttn();
+}
+function addUncertainty(){
+  const n=G.tokens.length;if(n<1)return;
+  G.defects.push({type:'uncertain',t:0,spread:0});
+}
+
+// ============================================================
+// SCENARIOS
+// ============================================================
+function scenarioContext(){
+  document.getElementById('inp').value='Die Bank am Fluss neben dem Park';
+  tokenize();
+  G.scenario='context';
+  compAttn();
+}
+function scenarioInduction(){
+  document.getElementById('inp').value='AB CD AB CD AB';
+  tokenize();
+  G.scenario='induction';
+  compAttn();
+}
+function scenarioCollapse(){
+  if(!G.tokens.length)tokenize();
+  G.scenario='collapse';
+  G.layerNormStr=0.1;
+  VV('vLN','0.1');
+  compAttn();
+}
+
+// ============================================================
+// RESIZE & INPUT
+// ============================================================
+function resize(){
+  const cv=document.getElementById('cv');
+  c.width=cv.clientWidth*devicePixelRatio;
+  c.height=cv.clientHeight*devicePixelRatio;
+  c.style.width=cv.clientWidth+'px';
+  c.style.height=cv.clientHeight+'px';
+  X.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+}
+window.addEventListener('resize',resize);
+
+c.addEventListener('mousemove',e=>{
+  const r=c.getBoundingClientRect();
+  G.mouseX=e.clientX-r.left;G.mouseY=e.clientY-r.top;
+});
+c.addEventListener('mouseleave',()=>{tip.style.display='none';G.mouseX=-1});
+c.addEventListener('wheel',e=>{
+  G.zoom=clamp(G.zoom-e.deltaY*0.001,0.3,3);
+  VV('vZ',G.zoom.toFixed(2));
+  e.preventDefault();
+},{passive:false});
+let drag=false,dx0=0,dy0=0;
+c.addEventListener('mousedown',e=>{drag=true;dx0=e.clientX;dy0=e.clientY});
+c.addEventListener('mousemove',e=>{if(!drag)return;G.panX+=e.clientX-dx0;G.panY+=e.clientY-dy0;dx0=e.clientX;dy0=e.clientY});
+c.addEventListener('mouseup',()=>{drag=false});
+
+// ============================================================
+// COORDINATE HELPERS
+// ============================================================
+function getBasePos(i){
+  const n=G.tokens.length;
+  const W=c.width/devicePixelRatio,H=c.height/devicePixelRatio;
+  const spacing=Math.min(85,(W*0.7)/Math.max(n-1,1));
+  const ox=W/2+G.panX,oy=H*0.88+G.panY;
+  if(G.topo==='line'){
+    return{x:ox+(i-(n-1)/2)*spacing*G.zoom,y:oy};
+  }else{
+    const angle=(i/n)*Math.PI*2-Math.PI/2;
+    const r=Math.max(50,n*spacing/(2*Math.PI))*G.zoom;
+    return{x:ox+Math.cos(angle)*r,y:oy-r*0.12+Math.sin(angle)*r*0.3};
+  }
+}
+function getLayerY(l){
+  const H=c.height/devicePixelRatio;
+  return H*0.88+G.panY-((l+1)/G.nL)*H*0.72*G.zoom;
+}
+
+// Sway: curvature + chaos + twist + attention pull
+function calcSway(ki,layer){
+  const k=G.kelps[ki];if(!k)return 0;
+  const t=(layer+1)/G.nL,time=G.time,p=k.phase;
+  let sx=Math.sin(time*0.6+p+t*2.5)*(5+G.curv*18)*t;
+  sx+=Math.sin(time*1.1+p*2+t*4)*3*t;
+  if(G.chaos>0)sx+=Math.sin(time*3.7+layer*7.3+ki*2.1)*G.chaos*35*t;
+  if(G.twist>0)sx+=Math.sin(t*Math.PI*3*G.twist+time*0.4+p)*G.twist*28*t;
+  if(G.topo==='mobius'&&(ki/G.tokens.length)*Math.PI*2>Math.PI)sx*=-1;
+  // Attention pull
+  let pull=0;
+  if(G.attnW[layer]){
+    for(let h=0;h<G.nH;h++){
+      const w=G.attnW[layer][h];
+      if(!w||!w[ki])continue;
+      for(let j=0;j<G.tokens.length;j++){
+        if(j===ki)continue;
+        pull+=w[ki][j]*(getBasePos(j).x-getBasePos(ki).x)*0.08;
+      }
+    }
+    pull/=G.nH;
+  }
+  return sx+pull;
+}
+
+// ============================================================
+// UPDATE
+// ============================================================
+function update(dt){
+  G.time+=dt;
+
+  // Mode updates
+  if(G.mode==='inference'){
+    G.infT+=dt*G.speed*0.6;
+    if(G.infT>=1){
+      G.infT=0;
+      if(G.infSub==='attn')G.infSub='dense';
+      else if(G.infSub==='dense')G.infSub='norm';
+      else{G.infSub='attn';G.infLayer++;if(G.infLayer>=G.nL)G.infLayer=0;}
+    }
+    document.getElementById('mode-indicator').textContent=
+      `🔦 Inferenz: L${G.infLayer} → ${G.infSub==='attn'?'Attention':G.infSub==='dense'?'FFN':'LayerNorm'} ${(G.infT*100)|0}%`;
+    document.getElementById('mode-indicator').style.borderColor='#3dd4b0';
+  }else if(G.mode==='training'){
+    G.trainT+=dt*G.speed*0.5;
+    if(G.trainT>=1){
+      G.trainT=0;
+      G.trainLayer--;
+      if(G.trainLayer<0)G.trainLayer=G.nL-1;
+    }
+    document.getElementById('mode-indicator').textContent=
+      `📉 Backprop: L${G.trainLayer} ← Gradient ${(G.trainT*100)|0}%`;
+    document.getElementById('mode-indicator').style.borderColor='#e06040';
+  }else if(G.mode==='beam'){
+    G.beamPhase+=dt*G.speed*0.3;
+    // Prune weakest beam periodically
+    if(G.beamPhase>1&&G.beams.filter(b=>b.alive).length>1){
+      G.beamPhase=0;
+      let weakest=null,minScore=Infinity;
+      G.beams.forEach(b=>{if(b.alive&&b.score<minScore){minScore=b.score;weakest=b}});
+      if(weakest)weakest.alive=false;
+    }
+    G.beams.forEach(b=>{b.phase+=dt*G.speed});
+    document.getElementById('mode-indicator').textContent=
+      `🌿 Beam Search: ${G.beams.filter(b=>b.alive).length}/${G.beams.length} aktiv`;
+    document.getElementById('mode-indicator').style.borderColor='#40c080';
+  }else{
+    document.getElementById('mode-indicator').textContent='Idle';
+    document.getElementById('mode-indicator').style.borderColor='#1a3a5a';
+  }
+
+  // Update defects
+  G.defects.forEach(d=>{
+    d.t+=dt;
+    if(d.type==='hallu')d.tearProgress=clamp(d.tearProgress+dt*0.5,0,1);
+    if(d.type==='uncertain')d.spread=clamp(d.spread+dt*0.3,0,1);
+  });
+
+  // Update flow particles
+  updateFlowParticles(dt);
+}
+
+function updateFlowParticles(dt){
+  const W=c.width/devicePixelRatio,H=c.height/devicePixelRatio;
+  G.flowParticles.forEach(p=>{
+    p.age+=dt;
+    if(p.age>p.life||p.x<0||p.x>W||p.y<0||p.y>H*0.9){
+      Object.assign(p,newFlowParticle());
+      return;
+    }
+    // Compute flow direction from nearest attention connections
+    let fx=0,fy=-0.2; // gentle upward drift
+    let totalW=0;
+    for(const k of G.kelps){
+      const base=getBasePos(k.idx);
+      for(let l=0;l<G.nL;l++){
+        const ly=getLayerY(l);
+        const sw=calcSway(k.idx,l);
+        const kx=base.x+sw;
+        const ky=base.y-(base.y-ly)*((l+1)/G.nL);
+        const ddx=p.x-kx,ddy=p.y-ky;
+        const dist2=ddx*ddx+ddy*ddy;
+        if(dist2<10000){
+          const w=1/(dist2+100);
+          // Pull toward kelp
+          fx-=ddx*w*50;
+          fy-=ddy*w*30;
+          totalW+=w;
+        }
+      }
+    }
+    if(totalW>0){fx/=totalW;fy/=totalW}
+    p.vx=lerp(p.vx,fx,0.1);
+    p.vy=lerp(p.vy,fy,0.1);
+    p.x+=p.vx*dt*30;
+    p.y+=p.vy*dt*30;
+  });
+}
+
+// ============================================================
+// RENDER MAIN
+// ============================================================
+function render(){
+  const W=c.width/devicePixelRatio,H=c.height/devicePixelRatio;
+
+  // Ocean background
+  const bg=X.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#010810');bg.addColorStop(0.4,'#021828');bg.addColorStop(0.8,'#031a30');bg.addColorStop(1,'#082038');
+  X.fillStyle=bg;X.fillRect(0,0,W,H);
+
+  renderLightRays(W,H);
+  renderFlowField(W,H);
+  renderSeaFloor(W,H);
+  if(G.posEncVis>0)renderPosEncoding(W,H);
+
+  // Sort kelps by depth for parallax
+  const sorted=[...G.kelps].sort((a,b)=>a.depth-b.depth);
+  // Render attention flows behind kelps
+  if(G.attnVis>0)renderAttnFlows(W,H);
+  // Render kelps
+  sorted.forEach(k=>renderKelp(k,W,H));
+  // Defects on top
+  G.defects.forEach(d=>renderDefect(d,W,H));
+  // Beam search visualization
+  if(G.mode==='beam')renderBeams(W,H);
+  // Mode overlays
+  if(G.mode==='inference')renderInfWave(W,H);
+  if(G.mode==='training')renderTrainWave(W,H);
+  // Layer labels
+  renderLayerLabels(W,H);
+  // Tooltip
+  handleTooltip(W,H);
+}
+
+// ============================================================
+// BACKGROUND ELEMENTS
+// ============================================================
+function renderLightRays(W,H){
+  X.save();X.globalAlpha=0.025;
+  for(let i=0;i<5;i++){
+    const x=W*0.25+Math.sin(G.time*0.1+i*1.7)*W*0.25;
+    const g=X.createLinearGradient(x,0,x+20,H);
+    g.addColorStop(0,'rgba(60,160,200,0.4)');g.addColorStop(1,'rgba(60,160,200,0)');
+    X.fillStyle=g;X.beginPath();
+    X.moveTo(x-15,0);X.lineTo(x+40,0);
+    X.lineTo(x+25+Math.sin(G.time*0.15+i)*20,H);
+    X.lineTo(x-25+Math.sin(G.time*0.15+i)*20,H);
+    X.fill();
+  }
+  X.restore();
+}
+
+function renderFlowField(W,H){
+  if(G.flowFieldVis<=0)return;
+  X.save();
+  G.flowParticles.forEach(p=>{
+    const alpha=G.flowFieldVis*0.15*(1-p.age/p.life);
+    X.globalAlpha=alpha;
+    // Color based on velocity direction
+    const speed=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+    X.fillStyle=hsl(190+speed*20,60,60);
+    X.beginPath();X.arc(p.x,p.y,p.size,0,Math.PI*2);X.fill();
+    // Tiny trail
+    X.strokeStyle=hsl(190,50,50,alpha*0.5);
+    X.lineWidth=0.5;
+    X.beginPath();X.moveTo(p.x,p.y);X.lineTo(p.x-p.vx*3,p.y-p.vy*3);X.stroke();
+  });
+  X.restore();
+}
+
+function renderSeaFloor(W,H){
+  const baseY=H*0.88+G.panY;
+  // Ground
+  const g=X.createLinearGradient(0,baseY-10,0,H);
+  g.addColorStop(0,'rgba(12,6,25,0)');g.addColorStop(0.3,'rgba(18,10,35,0.7)');g.addColorStop(1,'rgba(10,5,22,0.95)');
+  X.fillStyle=g;X.fillRect(0,baseY-10,W,H-baseY+10);
+
+  // Textured floor line
+  X.save();
+  X.strokeStyle='rgba(60,35,90,0.4)';X.lineWidth=2;
+  X.beginPath();
+  for(let x=0;x<=W;x+=3){
+    const y=baseY+Math.sin(x*0.015+G.time*0.2)*4+Math.sin(x*0.04+G.time*0.35)*2;
+    x===0?X.moveTo(x,y):X.lineTo(x,y);
+  }
+  X.stroke();
+
+  // Small rocks/texture
+  for(let i=0;i<30;i++){
+    const rx=(hash('rock'+i)*0.001%1)*W;
+    const ry=baseY+3+Math.abs(hash('ry'+i)*0.001%1)*15;
+    const rs=1+Math.abs(hash('rs'+i)*0.001%1)*3;
+    X.fillStyle=`rgba(40,25,60,${0.2+Math.abs(hash('ra'+i)*0.001%1)*0.3})`;
+    X.beginPath();X.ellipse(rx,ry,rs*1.5,rs*0.6,0,0,Math.PI*2);X.fill();
+  }
+
+  // Topology indicator
+  if(G.topo==='ring'||G.topo==='mobius'){
+    X.strokeStyle='rgba(70,40,110,0.3)';X.lineWidth=1.5;
+    X.beginPath();
+    const n=G.tokens.length||1;
+    for(let i=0;i<=n;i++){
+      const p=getBasePos(i%n);
+      i===0?X.moveTo(p.x,p.y):X.lineTo(p.x,p.y);
+    }
+    X.closePath();X.stroke();
+    if(G.topo==='mobius'){
+      // Show twist indicator
+      X.fillStyle='rgba(120,60,180,0.2)';
+      X.font='9px monospace';X.textAlign='center';
+      X.fillText('↻ Möbius-Twist',W/2,baseY+35);
+    }
+  }
+
+  X.fillStyle='rgba(60,35,90,0.3)';X.font='9px monospace';X.textAlign='center';
+  const tl={line:'Basisraum B: ℝ¹',ring:'Basisraum B: S¹',mobius:'Basisraum B: Möbius'};
+  X.fillText(tl[G.topo]||'',W/2,baseY+20);
+  X.restore();
+}
+
+// ============================================================
+// POSITIONAL ENCODING ROOTS
+// ============================================================
+function renderPosEncoding(W,H){
+  if(G.posEncVis<=0||!G.kelps.length)return;
+  const baseY=H*0.88+G.panY;
+  X.save();X.globalAlpha=G.posEncVis*0.4;
+
+  G.kelps.forEach((k,i)=>{
+    const base=getBasePos(i);
+    // Sinusoidal roots: different frequencies per position
+    const freqs=[1,2,4,8]; // like real positional encoding
+    freqs.forEach((freq,fi)=>{
+      const rootLen=30+fi*10;
+      X.strokeStyle=hsl(260+fi*20,50,40+fi*5,0.4*G.posEncVis);
+      X.lineWidth=1.2-fi*0.2;
+      X.beginPath();
+      for(let dx=-rootLen;dx<=rootLen;dx+=2){
+        const rx=base.x+dx;
+        const ry=baseY+5+Math.sin(dx*0.05*freq+i*0.5)*6*(1-Math.abs(dx)/rootLen);
+        dx===-rootLen?X.moveTo(rx,ry):X.lineTo(rx,ry);
+      }
+      X.stroke();
+    });
+
+    // Root overlap with neighbors (proximity indicator)
+    if(i<G.kelps.length-1){
+      const next=getBasePos(i+1);
+      const midX=(base.x+next.x)/2;
+      const overlap=Math.max(0,40-Math.abs(next.x-base.x)*0.5);
+      if(overlap>0){
+        X.fillStyle=`rgba(100,60,160,${overlap*0.005*G.posEncVis})`;
+        X.beginPath();X.ellipse(midX,baseY+8,overlap,4,0,0,Math.PI*2);X.fill();
+      }
+    }
+  });
+  X.restore();
+}
+
+// ============================================================
+// KELP STRAND RENDERING – THE CORE
+// ============================================================
+function renderKelp(kelp,W,H){
+  const ki=kelp.idx;
+  const n=G.tokens.length;
+  const base=getBasePos(ki);
+  const isSel=ki===G.selTok;
+  const baseY=H*0.88+G.panY;
+
+  // Depth-based scaling for forest density feel
+  const depthFactor=1-kelp.depth*G.depthScale*0.5;
+  const depthAlpha=0.4+depthFactor*0.6;
+  const depthSize=0.6+depthFactor*0.4;
+
+  X.save();
+  X.globalAlpha=depthAlpha;
+
+  // ============================================
+  // RESIDUAL STREAM = MAIN TRUNK
+  // ============================================
+  // Build trunk points
+  const trunkPts=[{x:base.x,y:base.y,norm:1,hue:kelp.hue}];
+  kelp._pts=[];
+
+  let prevX=base.x,prevY=base.y;
+
+  for(let l=0;l<G.nL;l++){
+    const ly=getLayerY(l);
+    const sw=calcSway(ki,l);
+    const norm=G.embNorms[l]?G.embNorms[l][ki]:1;
+    const semHue=G.semColors[l]?G.semColors[l][ki]:kelp.hue;
+
+    // LayerNorm effect: snap norm toward 1
+    const normedNorm=lerp(norm,1,G.layerNormStr*0.7);
+    // Collapse scenario: norm grows uncontrolled
+    const finalNorm=G.scenario==='collapse'?norm*(1+l*0.15*(1-G.layerNormStr)):normedNorm;
+
+    const tx=prevX+sw*0.7;
+    const ty=ly;
+
+    // Check for hallucination tear at this layer
+    let tornOff=false;
+    let tearDx=0,tearDy=0;
+    for(const d of G.defects){
+      if(d.type==='hallu'&&d.token===ki&&d.layer===l&&d.tearProgress>0.3){
+        tornOff=true;
+        const tp=d.tearProgress;
+        tearDx=Math.cos(d.angle)*d.mag*tp*G.zoom;
+        tearDy=Math.sin(d.angle)*d.mag*0.3*tp*G.zoom;
+      }
+    }
+
+    const finalX=tx+(tornOff?tearDx:0);
+    const finalY=ty+(tornOff?tearDy:0);
+
+    trunkPts.push({x:finalX,y:finalY,norm:finalNorm,hue:semHue,torn:tornOff});
+
+    // Store for tooltip/interaction
+    kelp._pts.push({x:finalX,y:finalY,type:'trunk',layer:l,norm:finalNorm});
+
+    prevX=tornOff?tx:finalX; // if torn, next layer continues from un-torn position
+    prevY=finalY;
+  }
+
+  // --- Draw trunk (Residual Stream) ---
+  if(G.resStreamVis>0){
+    for(let i=1;i<trunkPts.length;i++){
+      const p0=trunkPts[i-1],p1=trunkPts[i];
+      const thickness=(2.5+p1.norm*2.5)*G.zoom*depthSize;
+
+      // Polysemantic: draw multiple intertwined strands
+      const nStrands=G.polysem>0.3?Math.ceil(G.polysem*3+1):1;
+
+      for(let s=0;s<nStrands;s++){
+        const strandOffset=nStrands>1?(s-nStrands/2+0.5)*thickness*0.4:0;
+        const strandHue=p1.hue+s*40;
+        const strandAlpha=G.resStreamVis*(nStrands>1?0.6:0.85);
+
+        // Gradient from p0 to p1
+        const grd=X.createLinearGradient(p0.x,p0.y,p1.x,p1.y);
+        grd.addColorStop(0,hsl(p0.hue+s*40,55,35,strandAlpha));
+        grd.addColorStop(1,hsl(strandHue,60,40,strandAlpha));
+
+        X.strokeStyle=grd;
+        X.lineWidth=thickness/(nStrands>1?nStrands*0.5:1);
+        X.lineCap='round';
+
+        const cpx=(p0.x+p1.x)/2+strandOffset+Math.sin(G.time*0.8+i+s)*3*G.zoom;
+        const cpy=(p0.y+p1.y)/2;
+
+        X.beginPath();
+        X.moveTo(p0.x+strandOffset*0.5,p0.y);
+        X.quadraticCurveTo(cpx,cpy,p1.x+strandOffset,p1.y);
+        X.stroke();
+      }
+
+      // Torn indicator
+      if(p1.torn){
+        const tearX=(p0.x+p1.x)/2;
+        const tearY=(p0.y+p1.y)/2;
+        // Jagged tear line
+        X.strokeStyle='rgba(224,60,80,0.7)';
+        X.lineWidth=1.5*G.zoom;
+        X.beginPath();
+        for(let t=0;t<6;t++){
+          const tx2=tearX+(t-3)*4*G.zoom;
+          const ty2=tearY+(t%2===0?-3:3)*G.zoom;
+          t===0?X.moveTo(tx2,ty2):X.lineTo(tx2,ty2);
+        }
+        X.stroke();
+      }
+    }
+  }
+
+  // ============================================
+  // ATTENTION SIDE BRANCHES (read from / write to trunk)
+  // ============================================
+  if(G.attnVis>0){
+    for(let l=0;l<G.nL;l++){
+      const tp=trunkPts[l+1];if(!tp)continue;
+      const branchLen=20*G.zoom*depthSize;
+      const bx=tp.x-branchLen;
+      const by=tp.y;
+
+      // Branch line from trunk
+      X.strokeStyle=hsl(210,65,50,0.4*G.attnVis*depthAlpha);
+      X.lineWidth=1.5*G.zoom*depthSize;
+      X.beginPath();X.moveTo(tp.x,tp.y);
+      X.quadraticCurveTo(tp.x-branchLen*0.5,by-5*G.zoom,bx,by);
+      X.stroke();
+
+      // Attention node
+      const nodeSize=(3+tp.norm)*G.zoom*depthSize;
+      X.fillStyle=hsl(210,70,55,0.5*G.attnVis);
+      X.beginPath();X.arc(bx,by,nodeSize,0,Math.PI*2);X.fill();
+
+      // Head fronds: each head is a leaf pointing toward attended tokens
+      if(G.attnW[l]){
+        for(let h=0;h<G.nH;h++){
+          const w=G.attnW[l][h];
+          if(!w||!w[ki])continue;
+          // Find strongest attended token for this head
+          let maxJ=0,maxW=0;
+          w[ki].forEach((wt,j)=>{if(j!==ki&&wt>maxW){maxW=wt;maxJ=j}});
+          if(maxW<0.05)continue;
+
+          const targetBase=getBasePos(maxJ);
+          const dx=targetBase.x-bx,dy=targetBase.y-by;
+          const angle=Math.atan2(dy,dx);
+          const frondLen=(8+maxW*15)*G.zoom*depthSize;
+
+          // Frond (leaf) pointing toward target
+          const headHue=190+h*35;
+          X.strokeStyle=hsl(headHue,70,55,maxW*0.6*G.attnVis);
+          X.lineWidth=(1+maxW*2)*G.zoom*depthSize;
+          X.beginPath();X.moveTo(bx,by);
+          const fx=bx+Math.cos(angle)*frondLen;
+          const fy=by+Math.sin(angle)*frondLen;
+          const fcx=bx+Math.cos(angle+0.3)*frondLen*0.6;
+          const fcy=by+Math.sin(angle+0.3)*frondLen*0.6;
+          X.quadraticCurveTo(fcx,fcy,fx,fy);
+          X.stroke();
+
+          // Leaf blade
+          X.fillStyle=hsl(headHue,60,45,maxW*0.3*G.attnVis);
+          X.beginPath();X.moveTo(bx,by);
+          X.quadraticCurveTo(fcx+3,fcy+3,fx,fy);
+          X.quadraticCurveTo(fcx-3,fcy-3,bx,by);
+          X.fill();
+        }
+      }
+
+      // "Read" arrow (small)
+      if(G.zoom>0.6){
+        X.fillStyle=hsl(210,60,55,0.3*G.attnVis);
+        X.font=`${7*G.zoom}px monospace`;X.textAlign='right';
+        X.fillText('←read',tp.x-2,tp.y-3*G.zoom);
+      }
+
+      kelp._pts.push({x:bx,y:by,type:'attn',layer:l,norm:tp.norm});
+    }
+  }
+
+  // ============================================
+  // FFN SIDE BRANCHES
+  // ============================================
+  if(G.denseVis>0){
+    for(let l=0;l<G.nL;l++){
+      const tp=trunkPts[l+1];if(!tp)continue;
+      const act=G.denseA[l]?G.denseA[l][ki]:0.5;
+      const branchLen=(15+act*15)*G.zoom*depthSize;
+      const bx=tp.x+branchLen;
+      const by=tp.y;
+
+      // Branch line
+      X.strokeStyle=hsl(35,65,48,0.4*G.denseVis*depthAlpha);
+      X.lineWidth=1.5*G.zoom*depthSize;
+      X.beginPath();X.moveTo(tp.x,tp.y);
+      X.quadraticCurveTo(tp.x+branchLen*0.5,by-4*G.zoom,bx,by);
+      X.stroke();
+
+      // FFN node – size shows expansion
+      const ffnSize=(2+act*4)*G.zoom*depthSize;
+      X.fillStyle=hsl(35,75,52,0.5*G.denseVis);
+      X.beginPath();X.arc(bx,by,ffnSize,0,Math.PI*2);X.fill();
+
+      // Expansion bars (d_ff visualization)
+      const nBars=Math.min(G.ffM,6);
+      for(let b=0;b<nBars;b++){
+        const bh=act*8*G.zoom*depthSize*Math.abs(Math.sin(hash(kelp.tok+l+b)*0.5));
+        const barX=bx+(b-nBars/2+0.5)*2.5*G.zoom;
+        X.fillStyle=hsl(30+b*8,65,45+bh,0.45*G.denseVis);
+        X.fillRect(barX,by-ffnSize-1-bh,1.8*G.zoom,bh);
+      }
+
+      // "Write" arrow
+      if(G.zoom>0.6){
+        X.fillStyle=hsl(35,60,52,0.3*G.denseVis);
+        X.font=`${7*G.zoom}px monospace`;X.textAlign='left';
+        X.fillText('write→',tp.x+2,tp.y-3*G.zoom);
+      }
+
+      kelp._pts.push({x:bx,y:by,type:'dense',layer:l,norm:tp.norm,act:act});
+    }
+  }
+
+  // ============================================
+  // LAYERNORM VISUALIZATION (Tidal snap)
+  // ============================================
+  for(let l=0;l<G.nL;l++){
+    const tp=trunkPts[l+1];if(!tp)continue;
+    // Small horizontal "normalization band" at each merge point
+    const bandW=12*G.zoom*depthSize;
+    const normAlpha=G.layerNormStr*0.25*depthAlpha;
+    if(normAlpha>0.02){
+      X.strokeStyle=hsl(180,40,55,normAlpha);
+      X.lineWidth=1*G.zoom;
+      X.setLineDash([2*G.zoom,2*G.zoom]);
+      X.beginPath();X.moveTo(tp.x-bandW,tp.y+2);X.lineTo(tp.x+bandW,tp.y+2);X.stroke();
+      X.setLineDash([]);
+    }
+    // If LayerNorm is weak, show instability sparks
+    if(G.layerNormStr<0.5&&l>2){
+      const spark=Math.sin(G.time*8+l*3+ki)*0.5+0.5;
+      const sparkSize=(1-G.layerNormStr)*8*G.zoom*spark;
+      X.fillStyle=`rgba(255,200,60,${(1-G.layerNormStr)*0.3*spark})`;
+      X.beginPath();X.arc(tp.x,tp.y,sparkSize,0,Math.PI*2);X.fill();
+    }
+  }
+
+  // ============================================
+  // ORGANIC FRONDS along trunk (decorative but density-building)
+  // ============================================
+  for(let i=1;i<trunkPts.length;i++){
+    const p=trunkPts[i];
+    const thickness=(2+p.norm*2)*G.zoom*depthSize;
+    // 2 fronds per layer segment
+    for(let f=0;f<2;f++){
+      const fy=lerp(trunkPts[i-1].y,p.y,0.3+f*0.4);
+      const fx=lerp(trunkPts[i-1].x,p.x,0.3+f*0.4);
+      const side=(ki+f)%2===0?-1:1;
+      const fAngle=side*(0.5+Math.sin(G.time*1.0+ki*0.7+i+f*2)*0.4);
+      const fLen=(5+p.norm*4)*G.zoom*depthSize;
+      X.strokeStyle=hsl(p.hue+15,50,35,0.35*depthAlpha);
+      X.lineWidth=(0.8+p.norm*0.4)*G.zoom*depthSize;
+      X.beginPath();X.moveTo(fx,fy);
+      const fex=fx+Math.cos(fAngle-Math.PI/2)*fLen*side;
+      const fey=fy+Math.sin(fAngle-Math.PI/2)*fLen;
+      X.quadraticCurveTo(fx+side*fLen*0.3,fy-fLen*0.2,fex,fey);
+      X.stroke();
+      // Tiny leaf shape
+      X.fillStyle=hsl(p.hue+20,45,32,0.2*depthAlpha);
+      X.beginPath();
+      X.moveTo(fx,fy);
+      X.quadraticCurveTo(fx+side*fLen*0.3+2,fy-fLen*0.2+2,fex,fey);
+      X.quadraticCurveTo(fx+side*fLen*0.3-2,fy-fLen*0.2-2,fx,fy);
+      X.fill();
+    }
+  }
+
+  // ============================================
+  // ANCHOR & LABEL
+  // ============================================
+  // Root anchor
+  const anchorSize=(kelp.isSink?8:5)*G.zoom*depthSize;
+  X.fillStyle=hsl(kelp.hue,35,25,0.8*depthAlpha);
+  X.beginPath();X.ellipse(base.x,base.y,anchorSize*1.3,anchorSize*0.5,0,0,Math.PI*2);X.fill();
+
+  // Attention sink indicator
+  if(kelp.isSink&&G.sinkStr>0){
+    X.strokeStyle=hsl(kelp.hue,50,50,0.3*G.sinkStr);
+    X.lineWidth=2*G.zoom;
+    X.beginPath();X.arc(base.x,base.y,anchorSize*2,0,Math.PI*2);X.stroke();
+    if(G.zoom>0.6){
+      X.fillStyle=hsl(kelp.hue,40,55,0.3*G.sinkStr);
+      X.font=`${6*G.zoom}px monospace`;X.textAlign='center';
+      X.fillText('⚓ sink',base.x,base.y-anchorSize*2-2);
+    }
+  }
+
+  // Token label
+  X.textAlign='center';
+  const fs=Math.max(8,11*G.zoom*depthSize);
+  X.font=`${isSel?'bold ':''}${fs}px monospace`;
+  X.fillStyle=isSel?'#3dd4b0':hsl(0,0,75,0.6*depthAlpha);
+  X.fillText(kelp.tok,base.x,base.y+fs+3);
+  X.font=`${fs*0.65}px monospace`;
+  X.fillStyle=hsl(0,0,55,0.35*depthAlpha);
+  X.fillText(`[${ki}]`,base.x,base.y+fs*1.7+3);
+
+  // Selection glow
+  if(isSel){
+    X.strokeStyle='#3dd4b0';X.lineWidth=1.5;
+    X.beginPath();X.arc(base.x,base.y,anchorSize*2.5,0,Math.PI*2);X.stroke();
+    // Glow spine
+    X.globalAlpha=0.1*depthAlpha;X.strokeStyle='#3dd4b0';X.lineWidth=6*G.zoom;
+    X.beginPath();
+    trunkPts.forEach((p,i)=>{i===0?X.moveTo(p.x,p.y):X.lineTo(p.x,p.y)});
+    X.stroke();X.globalAlpha=depthAlpha;
+  }
+
+  X.restore();
+}
+
+// ============================================================
+// ATTENTION FLOW LINES (between kelps)
+// ============================================================
+function renderAttnFlows(W,H){
+  if(G.kelps.length<2)return;
+  X.save();
+  const n=G.tokens.length;
+
+  for(let l=0;l<G.nL;l++){
+    if(!G.attnW[l])continue;
+    for(let h=0;h<G.nH;h++){
+      const hw=G.attnW[l][h];if(!hw)continue;
+      const headHue=190+h*35;
+      for(let i=0;i<n;i++){
+        if(G.selTok>=0&&i!==G.selTok)continue;
+        for(let j=0;j<n;j++){
+          if(i===j)continue;
+          const w=hw[i][j];if(w<0.07)continue;
+
+          const bi=getBasePos(i),bj=getBasePos(j);
+          const swI=calcSway(i,l),swJ=calcSway(j,l);
+          const ly=getLayerY(l);
+          const splitFrac=(l+1)/G.nL;
+          const y1=bi.y-(bi.y-ly)*splitFrac*0.95;
+          const y2=bj.y-(bj.y-ly)*splitFrac*0.95;
+          const x1=bi.x+swI-20*G.zoom; // attn branch offset
+          const x2=bj.x+swJ-20*G.zoom;
+
+          const alpha=w*G.attnVis*0.4;
+          const cpx=(x1+x2)/2;
+          const cpy=Math.min(y1,y2)-10*G.zoom-w*18*G.zoom;
+
+          X.strokeStyle=hsl(headHue,65,55,alpha);
+          X.lineWidth=w*2.5*G.zoom;
+          X.beginPath();X.moveTo(x1,y1);X.quadraticCurveTo(cpx,cpy,x2,y2);X.stroke();
+
+          // Animated flow dot
+          const ft=((G.time*0.5+i*0.2+j*0.15+h*0.3+l*0.1)%1);
+          const t1=1-ft,t2=ft;
+          const fx=t1*t1*x1+2*t1*t2*cpx+t2*t2*x2;
+          const fy=t1*t1*y1+2*t1*t2*cpy+t2*t2*y2;
+          X.fillStyle=hsl(headHue,85,70,alpha*2);
+          X.beginPath();X.arc(fx,fy,1.2+w*2,0,Math.PI*2);X.fill();
+
+          // Weight label
+          if(w>0.25&&G.selTok>=0&&G.zoom>0.7){
+            X.font=`${7*G.zoom}px monospace`;
+            X.fillStyle=hsl(headHue,75,65,alpha*2);
+            X.textAlign='center';
+            X.fillText(w.toFixed(2),(x1+x2)/2,cpy-3*G.zoom);
+          }
+        }
+      }
+    }
+  }
+  X.restore();
+}
+
+// ============================================================
+// DEFECT RENDERING
+// ============================================================
+function renderDefect(d,W,H){
+  if(d.type==='hallu')renderHallu(d,W,H);
+  else if(d.type==='loop')renderLoopDefect(d,W,H);
+  else if(d.type==='uncertain')renderUncertainty(d,W,H);
+}
+
+function renderHallu(d,W,H){
+  const k=G.kelps[d.token];if(!k)return;
+  const base=getBasePos(d.token);
+  const ly=getLayerY(d.layer);
+  const sw=calcSway(d.token,d.layer);
+  const tx=base.x+sw*0.7;
+  const ty=ly;
+  const pulse=Math.sin(d.t*4)*0.3+0.7;
+  const tp=d.tearProgress;
+
+  X.save();
+
+  // The tear point
+  const tearX=tx;
+  const tearY=ty;
+
+  // Drifted upper section
+  const driftX=tearX+Math.cos(d.angle)*d.mag*tp*G.zoom;
+  const driftY=tearY+Math.sin(d.angle)*d.mag*0.3*tp*G.zoom;
+
+  // Distortion field around tear
+  const r=(20+d.mag*0.5)*G.zoom*pulse;
+  const g=X.createRadialGradient(tearX,tearY,0,tearX,tearY,r);
+  g.addColorStop(0,`rgba(224,50,80,${0.25*pulse})`);
+  g.addColorStop(0.5,`rgba(180,30,60,${0.1*pulse})`);
+  g.addColorStop(1,'rgba(180,30,60,0)');
+  X.fillStyle=g;X.beginPath();X.arc(tearX,tearY,r,0,Math.PI*2);X.fill();
+
+  // Jagged tear line
+  X.strokeStyle=`rgba(255,80,100,${0.7*pulse})`;
+  X.lineWidth=2*G.zoom;
+  X.beginPath();
+  for(let i=0;i<8;i++){
+    const jx=tearX+(i-4)*3*G.zoom;
+    const jy=tearY+(i%2===0?-4:4)*G.zoom*pulse;
+    i===0?X.moveTo(jx,jy):X.lineTo(jx,jy);
+  }
+  X.stroke();
+
+  // Ghost of where the strand SHOULD be (true section)
+  X.strokeStyle=`rgba(60,200,160,${0.3*pulse})`;
+  X.lineWidth=1*G.zoom;
+  X.setLineDash([3,3]);
+  X.beginPath();X.moveTo(tearX,tearY);X.lineTo(tearX,tearY-40*G.zoom);X.stroke();
+  X.setLineDash([]);
+
+  // Arrow showing the jump
+  if(tp>0.3){
+    X.strokeStyle=`rgba(255,80,100,${0.5*pulse})`;
+    X.lineWidth=1.5*G.zoom;
+    X.setLineDash([4,3]);
+    X.beginPath();X.moveTo(tearX,tearY);X.lineTo(driftX,driftY);X.stroke();
+    X.setLineDash([]);
+    // Arrowhead
+    const aAngle=Math.atan2(driftY-tearY,driftX-tearX);
+    X.fillStyle=`rgba(255,80,100,${0.6*pulse})`;
+    X.beginPath();
+    X.moveTo(driftX,driftY);
+    X.lineTo(driftX-Math.cos(aAngle-0.4)*8*G.zoom,driftY-Math.sin(aAngle-0.4)*8*G.zoom);
+    X.lineTo(driftX-Math.cos(aAngle+0.4)*8*G.zoom,driftY-Math.sin(aAngle+0.4)*8*G.zoom);
+    X.closePath();X.fill();
+  }
+
+  // Labels
+  X.textAlign='center';
+  X.font=`bold ${Math.max(8,9*G.zoom)}px monospace`;
+  X.fillStyle=`rgba(255,90,120,${0.85*pulse})`;
+  X.fillText('⚠ HALLUZINATION',tearX,tearY-r-6*G.zoom);
+  X.font=`${Math.max(7,7.5*G.zoom)}px monospace`;
+  X.fillStyle=`rgba(255,140,160,${0.6*pulse})`;
+  X.fillText(`Faser reißt: "${k.tok}" L${d.layer}`,tearX,tearY-r+4*G.zoom);
+
+  X.restore();
+}
+
+function renderLoopDefect(d,W,H){
+  const kA=G.kelps[d.from],kB=G.kelps[d.to];
+  if(!kA||!kB)return;
+  const bA=getBasePos(d.from),bB=getBasePos(d.to);
+  const ly=getLayerY(d.layer);
+  const swA=calcSway(d.from,d.layer),swB=calcSway(d.to,d.layer);
+  const splitFrac=(d.layer+1)/G.nL;
+
+  const ax=bA.x+swA-20*G.zoom;
+  const ay=bA.y-(bA.y-ly)*splitFrac*0.95;
+  const bx=bB.x+swB-20*G.zoom;
+  const by=bB.y-(bB.y-ly)*splitFrac*0.95;
+
+  const pulse=Math.sin(d.t*3)*0.3+0.7;
+  const cx=(ax+bx)/2,cy=(ay+by)/2;
+  const rx=Math.abs(bx-ax)/2+15*G.zoom;
+  const ry=18*G.zoom;
+
+  X.save();
+
+  // The strand loops back on itself – draw a visible loop
+  // Loop path A → up → B → down → A
+  X.strokeStyle=`rgba(224,128,50,${0.5*pulse})`;
+  X.lineWidth=2.5*G.zoom;
+
+  // Upper arc
+  X.beginPath();X.moveTo(ax,ay);
+  X.quadraticCurveTo(cx,cy-ry*2.5,bx,by);X.stroke();
+  // Lower arc (return)
+  X.beginPath();X.moveTo(bx,by);
+  X.quadraticCurveTo(cx,cy+ry*2,ax,ay);X.stroke();
+
+  // Rotating arrows along the loop
+  for(let i=0;i<5;i++){
+    const t=((G.time*0.8+i*0.2)%1);
+    // Upper arc position
+    const ux=lerp(lerp(ax,cx,t),lerp(cx,bx,t),t);
+    const uy=lerp(lerp(ay,cy-ry*2.5,t),lerp(cy-ry*2.5,by,t),t);
+    X.fillStyle=`rgba(255,160,60,${0.7*pulse})`;
+    X.beginPath();X.arc(ux,uy,2.5*G.zoom,0,Math.PI*2);X.fill();
+  }
+
+  // "Strand grows back into itself" visual
+  // Curling tendril at each end
+  [ax,bx].forEach((ex,ei)=>{
+    const ey=ei===0?ay:by;
+    const curlDir=ei===0?1:-1;
+    X.strokeStyle=`rgba(224,140,60,${0.35*pulse})`;
+    X.lineWidth=1.5*G.zoom;
+    X.beginPath();
+    for(let a=0;a<Math.PI*1.5;a+=0.1){
+      const cr=5*G.zoom*(a/(Math.PI*1.5));
+      const px=ex+Math.cos(a*curlDir+d.t*2)*cr;
+      const py=ey-Math.sin(a)*cr;
+      a===0?X.moveTo(px,py):X.lineTo(px,py);
+    }
+    X.stroke();
+  });
+
+  // Labels
+  X.textAlign='center';
+  X.font=`bold ${Math.max(8,9*G.zoom)}px monospace`;
+  X.fillStyle=`rgba(224,150,70,${0.85*pulse})`;
+  X.fillText('🔄 KREISSCHLUSS',cx,cy-ry*2.5-8*G.zoom);
+  X.font=`${Math.max(7,7.5*G.zoom)}px monospace`;
+  X.fillStyle=`rgba(224,170,100,${0.6*pulse})`;
+  X.fillText(`"${kA.tok}" ⇄ "${kB.tok}" · L${d.layer}`,cx,cy-ry*2.5+2*G.zoom);
+  X.fillText('Strang wächst in sich zurück',cx,cy-ry*2.5+12*G.zoom);
+
+  X.restore();
+}
+
+function renderUncertainty(d,W,H){
+  // All strands fan out at the top
+  const spread=d.spread;
+  if(spread<0.05)return;
+
+  X.save();
+  G.kelps.forEach(k=>{
+    const base=getBasePos(k.idx);
+    const topLayer=G.nL-1;
+    const ly=getLayerY(topLayer);
+    const sw=calcSway(k.idx,topLayer);
+    const tx=base.x+sw*0.7;
+    const ty=ly;
+
+    // Fan out into multiple thin strands
+    const nFan=4+Math.floor(spread*4);
+    for(let f=0;f<nFan;f++){
+      const fanAngle=(f/(nFan-1)-0.5)*Math.PI*0.6*spread;
+      const fanLen=(15+spread*30)*G.zoom;
+      const fx=tx+Math.cos(fanAngle-Math.PI/2)*fanLen;
+      const fy=ty+Math.sin(fanAngle-Math.PI/2)*fanLen;
+
+      const alpha=0.15+0.15*(1-Math.abs(f/(nFan-1)-0.5)*2);
+      X.strokeStyle=hsl(k.hue,50,50,alpha*spread);
+      X.lineWidth=(0.5+Math.random()*0.8)*G.zoom;
+      X.beginPath();X.moveTo(tx,ty);
+      X.quadraticCurveTo(tx+(fx-tx)*0.5+Math.sin(G.time+f)*3,ty+(fy-ty)*0.3,fx,fy);
+      X.stroke();
+
+      // Tiny dot at end
+      X.fillStyle=hsl(k.hue,60,55,alpha*spread*0.7);
+      X.beginPath();X.arc(fx,fy,1.5*G.zoom,0,Math.PI*2);X.fill();
+    }
+  });
+
+  // Label
+  if(spread>0.3){
+    const W2=c.width/devicePixelRatio;
+    X.textAlign='center';
+    X.font=`bold ${9*G.zoom}px monospace`;
+    X.fillStyle=`rgba(200,180,100,${0.6*spread})`;
+    X.fillText('❓ HOHE UNSICHERHEIT – Stränge fächern auf',W2/2,getLayerY(G.nL-1)-35*G.zoom);
+  }
+  X.restore();
+}
+
+// ============================================================
+// BEAM SEARCH VISUALIZATION
+// ============================================================
+function renderBeams(W,H){
+  if(!G.beams.length)return;
+  const topY=getLayerY(G.nL-1);
+  const lastKelp=G.kelps[G.kelps.length-1];
+  if(!lastKelp)return;
+  const base=getBasePos(lastKelp.idx);
+  const startX=base.x+40*G.zoom;
+  const startY=topY;
+
+  X.save();
+  G.beams.forEach((beam,bi)=>{
+    const angle=(bi/(G.beams.length-1||1)-0.5)*0.8;
+    const len=(40+beam.score*30)*G.zoom;
+    const bx=startX+Math.cos(angle-Math.PI/4)*len;
+    const by=startY+Math.sin(angle-Math.PI/4)*len;
+
+    if(beam.alive){
+      // Growing strand
+      const growT=clamp(beam.phase*0.5,0,1);
+      const gx=lerp(startX,bx,growT);
+      const gy=lerp(startY,by,growT);
+
+      X.strokeStyle=hsl(120+bi*30,60,45,0.6);
+      X.lineWidth=(1.5+beam.score*2)*G.zoom;
+      X.beginPath();X.moveTo(startX,startY);
+      X.quadraticCurveTo((startX+gx)/2,Math.min(startY,gy)-10*G.zoom,gx,gy);
+      X.stroke();
+
+      // Score label
+      X.fillStyle=hsl(120+bi*30,55,60,0.7);
+      X.font=`${8*G.zoom}px monospace`;X.textAlign='left';
+      X.fillText(`${beam.token} (${beam.score.toFixed(2)})`,gx+5,gy);
+
+      // Growing tip glow
+      X.fillStyle=hsl(120+bi*30,70,65,0.4+Math.sin(G.time*4+bi)*0.2);
+      X.beginPath();X.arc(gx,gy,3*G.zoom,0,Math.PI*2);X.fill();
+    }else{
+      // Wilting/pruned strand
+      const wiltT=clamp((beam.phase-0.5)*2,0,1);
+      X.globalAlpha=1-wiltT;
+      X.strokeStyle=hsl(0,30,35,0.4);
+      X.lineWidth=1*G.zoom;
+      X.beginPath();X.moveTo(startX,startY);
+      X.quadraticCurveTo((startX+bx)/2,Math.min(startY,by)-5*G.zoom,bx,by+wiltT*20*G.zoom);
+      X.stroke();
+
+      // "Pruned" indicator
+      if(wiltT<0.8){
+        X.fillStyle=`rgba(180,80,60,${0.5*(1-wiltT)})`;
+        X.font=`${7*G.zoom}px monospace`;X.textAlign='center';
+        X.fillText('✂',bx,by+wiltT*20*G.zoom-5);
+      }
+      X.globalAlpha=1;
+    }
+  });
+
+  // Label
+  X.fillStyle='rgba(100,200,140,0.5)';
+  X.font=`bold ${9*G.zoom}px monospace`;X.textAlign='left';
+  X.fillText('🌿 Beam Search',startX-10,startY-15*G.zoom);
+
+  X.restore();
+}
+
+// ============================================================
+// INFERENCE WAVE (Bioluminescence)
+// ============================================================
+function renderInfWave(W,H){
+  X.save();
+  const waveLayer=G.infLayer;
+  const waveT=G.infT;
+  const subHue=G.infSub==='attn'?200:G.infSub==='dense'?35:170;
+
+  // Bioluminescence: entire layer lights up
+  G.kelps.forEach(k=>{
+    for(let l=0;l<G.nL;l++){
+      let alpha=0;
+      if(l<waveLayer)alpha=0.05; // already processed
+      else if(l===waveLayer){
+        alpha=0.3+waveT*0.4;
+        // Sublayer-specific glow
+      }else break;
+
+      if(alpha<0.02)continue;
+
+      const base=getBasePos(k.idx);
+      const ly=getLayerY(l);
+      const sw=calcSway(k.idx,l);
+      const tx=base.x+sw*0.7;
+      const ty=ly;
+
+      // Glow orb on trunk
+      const orbR=(4+Math.sin(G.time*5+k.idx)*1.5)*G.zoom*alpha*2;
+      const g=X.createRadialGradient(tx,ty,0,tx,ty,orbR*3);
+      g.addColorStop(0,hsl(subHue,100,85,alpha*0.8));
+      g.addColorStop(0.4,hsl(subHue,90,65,alpha*0.3));
+      g.addColorStop(1,hsl(subHue,80,50,0));
+      X.fillStyle=g;X.beginPath();X.arc(tx,ty,orbR*3,0,Math.PI*2);X.fill();
+
+      // Core
+      X.fillStyle=hsl(subHue,100,92,alpha*0.9);
+      X.beginPath();X.arc(tx,ty,orbR*0.3,0,Math.PI*2);X.fill();
+    }
+  });
+
+  // Wave front line across all kelps at current layer
+  if(G.kelps.length>1){
+    X.strokeStyle=hsl(subHue,80,70,0.15);
+    X.lineWidth=1;
+    X.setLineDash([4,4]);
+    X.beginPath();
+    G.kelps.forEach((k,i)=>{
+      const base=getBasePos(k.idx);
+      const ly=getLayerY(waveLayer);
+      const sw=calcSway(k.idx,waveLayer);
+      const tx=base.x+sw*0.7;
+      i===0?X.moveTo(tx,ly):X.lineTo(tx,ly);
+    });
+    X.stroke();X.setLineDash([]);
+  }
+
+  // Progress bar
+  const totalSteps=G.nL*3;
+  const curStep=waveLayer*3+(G.infSub==='attn'?0:G.infSub==='dense'?1:2)+waveT;
+  X.fillStyle='rgba(30,50,70,0.4)';X.fillRect(8,H-14,160,5);
+  X.fillStyle=hsl(subHue,70,60,0.6);X.fillRect(8,H-14,160*(curStep/totalSteps),5);
+
+  X.restore();
+}
+
+// ============================================================
+// TRAINING WAVE (Backpropagation – reverse bioluminescence)
+// ============================================================
+function renderTrainWave(W,H){
+  X.save();
+  const tLayer=G.trainLayer;
+  const tT=G.trainT;
+
+  G.kelps.forEach(k=>{
+    for(let l=G.nL-1;l>=0;l--){
+      let alpha=0;
+      if(l>tLayer)alpha=0.05;
+      else if(l===tLayer)alpha=0.25+tT*0.35;
+      else break;
+
+      if(alpha<0.02)continue;
+
+      const base=getBasePos(k.idx);
+      const ly=getLayerY(l);
+      const sw=calcSway(k.idx,l);
+      const tx=base.x+sw*0.7;
+      const ty=ly;
+
+      // Red/orange gradient glow (gradient signal)
+      const orbR=(3+Math.sin(G.time*6+k.idx+l)*1.5)*G.zoom*alpha*2;
+      const g=X.createRadialGradient(tx,ty,0,tx,ty,orbR*3);
+      g.addColorStop(0,`rgba(224,80,40,${alpha*0.7})`);
+      g.addColorStop(0.4,`rgba(200,60,30,${alpha*0.25})`);
+      g.addColorStop(1,'rgba(200,60,30,0)');
+      X.fillStyle=g;X.beginPath();X.arc(tx,ty,orbR*3,0,Math.PI*2);X.fill();
+
+      // Downward arrow particles (gradient flowing backward)
+      const arrowY=ty+Math.sin(G.time*3+k.idx)*5;
+      X.fillStyle=`rgba(255,100,60,${alpha*0.5})`;
+      X.beginPath();
+      X.moveTo(tx,arrowY+4*G.zoom);
+      X.lineTo(tx-3*G.zoom,arrowY);
+      X.lineTo(tx+3*G.zoom,arrowY);
+      X.closePath();X.fill();
+    }
+  });
+
+  // Progress
+  X.fillStyle='rgba(30,50,70,0.4)';X.fillRect(8,H-14,160,5);
+  X.fillStyle='rgba(224,80,40,0.6)';
+  const trainProgress=(G.nL-1-G.trainLayer+G.trainT)/G.nL;
+  X.fillRect(8,H-14,160*trainProgress,5);
+
+  X.restore();
+}
+
+// ============================================================
+// LAYER LABELS
+// ============================================================
+function renderLayerLabels(W,H){
+  X.save();
+  X.font=`${Math.max(7,8*G.zoom)}px monospace`;
+  X.textAlign='right';
+
+  for(let l=0;l<G.nL;l++){
+    const ly=getLayerY(l);
+    // Faint guide line
+    X.strokeStyle='rgba(50,70,100,0.06)';X.lineWidth=0.5;
+    X.beginPath();X.moveTo(22,ly);X.lineTo(W-8,ly);X.stroke();
+
+    X.fillStyle='rgba(90,130,170,0.28)';
+    if(l===0)X.fillText('L0 (Embed)',21,ly+3);
+    else if(l===G.nL-1)X.fillText(`L${l} (Output)`,21,ly+3);
+    else X.fillText(`L${l}`,21,ly+3);
+
+    // Sublayer indicators
+    if(G.zoom>0.6){
+      X.fillStyle='rgba(64,144,224,0.15)';
+      X.fillText('Attn',W-8,ly-3);
+      X.fillStyle='rgba(224,160,64,0.15)';
+      X.fillText('FFN',W-8,ly+9);
+    }
+  }
+  X.restore();
+}
+
+// ============================================================
+// TOOLTIP
+// ============================================================
+function handleTooltip(W,H){
+  if(G.mouseX<0)return;
+  const mx=G.mouseX,my=G.mouseY;
+  let found=false;
+
+  for(const k of G.kelps){
+    if(!k._pts)continue;
+    for(const pt of k._pts){
+      const dx=mx-pt.x,dy=my-pt.y;
+      if(dx*dx+dy*dy<150*G.zoom){
+        tip.style.display='block';
+        tip.style.left=(mx+12)+'px';
+        tip.style.top=Math.max(0,my-10)+'px';
+
+        let info='';
+        const l=pt.layer;
+
+        if(pt.type==='trunk'){
+          const norm=pt.norm.toFixed(2);
+          const semHue=G.semColors[l]?G.semColors[l][k.idx]:0;
+          info=`<span style="color:#3dd4b0"><b>Residual Stream</b></span><br>`;
+          info+=`Embedding-Norm: <b>${norm}</b><br>`;
+          info+=`Semantischer Hue: ${semHue.toFixed(0)}°<br>`;
+          info+=`LayerNorm: ${(G.layerNormStr*100).toFixed(0)}%<br>`;
+          // Check defects
+          for(const d of G.defects){
+            if(d.type==='hallu'&&d.token===k.idx&&d.layer===l){
+              info+=`<br><span style="color:#e04060"><b>⚠ HALLUZINATION</b></span><br>`;
+              info+=`Faser ist gerissen! Schnitt s springt<br>`;
+              info+=`um Δ=${d.mag.toFixed(0)} in eine falsche<br>Bedeutungsregion der Faser.`;
+            }
+          }
+          if(G.scenario==='collapse'&&G.layerNormStr<0.5){
+            info+=`<br><span style="color:#e0c040">⚡ LayerNorm instabil!</span><br>`;
+            info+=`Norm wächst unkontrolliert: ${norm}`;
+          }
+        }else if(pt.type==='attn'){
+          info=`<span style="color:#4090e0"><b>Attention Sublayer</b></span><br>`;
+          info+=`Softmax(QKᵀ/√${Math.floor(G.dM/G.nH)}) · ${G.nH} Heads<br>`;
+          info+=`Temperatur: ${G.temp.toFixed(1)}<br>`;
+          info+=`<i>Liest aus dem Residual Stream,<br>schreibt Kontext-Info zurück.</i><br>`;
+          if(G.attnW[l]){
+            info+=`<br><span style="color:#5ab8d8">Attention (avg über Heads):</span><br>`;
+            const avgW=[];
+            for(let j=0;j<G.tokens.length;j++){
+              let avg=0;
+              for(let h=0;h<G.nH;h++){
+                if(G.attnW[l][h]&&G.attnW[l][h][k.idx])
+                  avg+=G.attnW[l][h][k.idx][j];
+              }
+              avgW.push(avg/G.nH);
+            }
+            const sorted=avgW.map((w,j)=>({w,j})).sort((a,b)=>b.w-a.w);
+            sorted.slice(0,6).forEach(s=>{
+              const bar='█'.repeat(Math.round(s.w*12));
+              const col=s.w>0.2?'#3dd4b0':'#5a8aa8';
+              info+=`<span style="color:${col}">"${G.tokens[s.j]}": ${s.w.toFixed(3)} ${bar}</span><br>`;
+            });
+          }
+          // Induction head indicator
+          if(G.scenario==='induction'&&l>=2){
+            info+=`<br><span style="color:#c080e0">🔁 Induction Head aktiv!</span><br>`;
+            info+=`Erkennt wiederholte Muster.`;
+          }
+        }else if(pt.type==='dense'){
+          info=`<span style="color:#e0a040"><b>FFN Sublayer</b></span><br>`;
+          info+=`d_ff = ${G.dM*G.ffM} (${G.ffM}× d_model)<br>`;
+          info+=`Aktivierung: ${(pt.act||0).toFixed(3)}<br>`;
+          info+=`ReLU(W₁x + b₁)W₂ + b₂<br>`;
+          info+=`<i>Lokale nichtlineare Transformation.<br>Schreibt gelerntes Wissen in den<br>Residual Stream.</i>`;
+          const bar='█'.repeat(Math.round((pt.act||0)*12));
+          info+=`<br><span style="color:#e0a040">Magnitude: ${bar}</span>`;
+        }
+
+        // Polysemanticity info
+        if(G.polysem>0.3){
+          info+=`<br><br><span style="color:#a080d0">🧬 Polysemantizität: ${(G.polysem*100).toFixed(0)}%</span><br>`;
+          info+=`Faser kodiert ${Math.ceil(G.polysem*3+1)} überlagerte Konzepte.`;
+        }
+
+        // Attention sink info
+        if(k.isSink&&G.sinkStr>0.3){
+          info+=`<br><span style="color:#70c0a0">⚓ Attention Sink</span><br>`;
+          info+=`Dieses Token absorbiert überproportional<br>viel Attention über alle Layer.`;
+        }
+
+        tip.innerHTML=`<b style="color:#3dd4b0">"${k.tok}"</b> [${k.idx}] · <span style="color:#5ab8d8">L${l}</span> · ${pt.type}<br>${info}`;
+        found=true;break;
+      }
+    }
+    if(found)break;
+  }
+  if(!found)tip.style.display='none';
+}
+
+// ============================================================
+// INDUCTION HEAD VISUALIZATION (cross-layer bridges)
+// ============================================================
+function renderInductionHeads(W,H){
+  if(G.scenario!=='induction')return;
+  X.save();
+  // Find matching token pairs
+  for(let i=2;i<G.tokens.length;i++){
+    for(let j=0;j<i-1;j++){
+      if(G.tokens[j]===G.tokens[i-1]){
+        // Bridge between layer 1 head and layer 2+ head
+        const bi=getBasePos(i),bj=getBasePos(j+1);
+        const ly1=getLayerY(1),ly2=getLayerY(2);
+        const x1=bi.x+calcSway(i,1)-20*G.zoom;
+        const x2=bj.x+calcSway(j+1,2)-20*G.zoom;
+
+        const pulse=Math.sin(G.time*3)*0.3+0.7;
+        X.strokeStyle=`rgba(180,120,220,${0.4*pulse})`;
+        X.lineWidth=2*G.zoom;
+        X.setLineDash([4*G.zoom,3*G.zoom]);
+        X.beginPath();X.moveTo(x1,ly1);
+        X.bezierCurveTo(x1-20*G.zoom,ly1-20*G.zoom,x2+20*G.zoom,ly2+20*G.zoom,x2,ly2);
+        X.stroke();X.setLineDash([]);
+
+        // Label
+        X.fillStyle=`rgba(180,130,220,${0.6*pulse})`;
+        X.font=`${8*G.zoom}px monospace`;X.textAlign='center';
+        X.fillText('🔁 Induction',(x1+x2)/2,(ly1+ly2)/2-8*G.zoom);
+      }
+    }
+  }
+  X.restore();
+}
+
+// ============================================================
+// MAIN LOOP
+// ============================================================
+let lt=0,fc=0,ft=0;
+function loop(ts){
+  const dt=Math.min((ts-lt)/1000,0.05)*G.speed;
+  lt=ts;
+  fc++;
+  if(ts-ft>1000){VV('fps',fc+' FPS');fc=0;ft=ts}
+  update(dt);
+  render();
+  // Render induction heads on top of everything
+  if(G.scenario==='induction'){
+    const W=c.width/devicePixelRatio,H=c.height/devicePixelRatio;
+    renderInductionHeads(W,H);
+  }
+  requestAnimationFrame(loop);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init(){
+  resize();
+  tokenize();
+  requestAnimationFrame(loop);
+}
+init();
+</script>
+</body>
+</html>
