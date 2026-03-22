@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌊 LLM Kelp-Wald v3 – Faserbündel</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#020a1a;color:#c0d8e8;font-family:'Segoe UI',sans-serif;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100vh}
+header{background:linear-gradient(90deg,#021b33,#063a5e,#021b33);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #0a4a7a;flex-shrink:0}
+header h1{font-size:1.15em;color:#4ae0c4}
+header .sub{font-size:0.68em;color:#6a9ab8}
+#main{display:flex;flex:1;overflow:hidden}
+#sb{width:300px;background:#041525;border-right:1px solid #0a3a5a;padding:10px;overflow-y:auto;flex-shrink:0;font-size:0.83em}
+#sb h3{color:#7abfda;font-size:0.8em;margin:10px 0 4px}
+.cg{margin-bottom:7px}
+.cg label{display:block;font-size:0.74em;color:#8ab8d0;margin-bottom:1px}
+.cg input[type=range]{width:100%;accent-color:#4ae0c4}
+.cg select,.cg input[type=text]{width:100%;background:#0a2540;color:#c0d8e8;border:1px solid #1a4a6a;padding:4px 6px;border-radius:3px;font-size:0.82em}
+.v{font-size:0.68em;color:#4ae0c4;float:right}
+.btn{width:100%;padding:6px;margin-top:3px;background:linear-gradient(135deg,#0a4a6a,#0a6a5a);color:#c0f0e0;border:1px solid #2a8a7a;border-radius:4px;cursor:pointer;font-size:0.78em}
+.btn:hover{background:linear-gradient(135deg,#1a6a8a,#1a8a7a)}
+.btn.d{background:linear-gradient(135deg,#6a2a1a,#8a3a2a);border-color:#aa4a3a;color:#f0c0b0}
+.tabs{display:flex;gap:2px;margin-bottom:8px}
+.tabs button{flex:1;padding:4px;background:#0a2540;color:#6a9ab8;border:1px solid #1a3a5a;border-radius:3px 3px 0 0;cursor:pointer;font-size:0.68em}
+.tabs button.on{background:#0a4a6a;color:#4ae0c4;border-color:#2a7a6a}
+.tp{display:none}.tp.on{display:block}
+.toks{display:flex;flex-wrap:wrap;gap:3px;margin:5px 0}
+.tok{background:#0a3a5a;border:1px solid #1a5a7a;border-radius:10px;padding:1px 7px;font-size:0.7em;color:#8ae0d0;cursor:pointer}
+.tok:hover,.tok.sel{background:#1a5a7a;border-color:#4ae0c4}
+#cv{flex:1;position:relative}
+canvas{display:block;width:100%;height:100%}
+#tip{position:absolute;display:none;background:#0a2540ee;border:1px solid #4ae0c4;border-radius:5px;padding:6px 10px;font-size:0.73em;pointer-events:none;z-index:100;max-width:300px;line-height:1.4}
+#legend{position:absolute;bottom:8px;left:8px;background:#041525dd;border:1px solid #1a4a6a;border-radius:6px;padding:8px 11px;font-size:0.68em;pointer-events:none}
+.li{display:flex;align-items:center;margin:2px 0}
+.lc{width:9px;height:9px;border-radius:50%;margin-right:6px;flex-shrink:0}
+#arch{position:absolute;top:8px;right:8px;background:#041525dd;border:1px solid #1a4a6a;border-radius:6px;padding:7px 11px;font-size:0.66em;pointer-events:none}
+.ar{display:flex;justify-content:space-between;gap:12px;margin:1px 0}
+.al{color:#6a9ab8}.av{color:#4ae0c4;font-family:monospace}
+</style>
+</head>
+<body>
+<div id="app">
+<header>
+<div><h1>🌊 LLM Kelp-Wald v3</h1><div class="sub">Faserbündel · Attention ⊕ Dense Parallelstruktur · Topologische Defekte</div></div>
+<div style="text-align:right;font-size:0.7em"><span id="fps">--</span> | <span id="phase">Idle</span></div>
+</header>
+<div id="main">
+<div id="sb">
+<div class="tabs">
+<button class="on" onclick="stab(this,'t1')">Eingabe</button>
+<button onclick="stab(this,'t2')">Modell</button>
+<button onclick="stab(this,'t3')">Topologie</button>
+<button onclick="stab(this,'t4')">Ansicht</button>
+</div>
+
+<div id="t1" class="tp on">
+<h3>📝 Satz</h3>
+<div class="cg"><input type="text" id="inp" value="Die Katze sitzt auf der warmen Matte"></div>
+<button class="btn" onclick="tokenize()">🌱 Tokenisieren & Visualisieren</button>
+<div id="tokbox" class="toks"></div>
+<h3>⚡ Inferenz</h3>
+<div class="cg"><label>Geschwindigkeit <span class="v" id="vSpd">1.0</span></label>
+<input type="range" id="rSpd" min="0.1" max="4" step="0.1" value="1" oninput="G.speed=+this.value;V('vSpd',this.value)"></div>
+<button class="btn" onclick="startInf()">🔦 Inferenz starten</button>
+<button class="btn" onclick="G.infRun=false">⏸ Stopp</button>
+<h3>💥 Defekte</h3>
+<button class="btn d" onclick="addHallu()">🌀 Halluzination erzeugen</button>
+<button class="btn d" onclick="addLoop()">🔄 Kreisschluss erzeugen</button>
+<button class="btn" onclick="G.defects=[]">🧹 Alle entfernen</button>
+<h3 style="margin-top:10px">📖 Legende</h3>
+<div style="font-size:0.7em;color:#6a9ab8;line-height:1.45">
+Jeder <b style="color:#4ae0c4">Kelp-Strang</b> ist eine Faser F über einem Token-Punkt im Basisraum B.<br>
+Pro Layer spaltet sich der Strang in zwei parallele Pfade:<br>
+• <b style="color:#4090e0">Attention</b> (links): Multi-Head Softmax(QKᵀ/√dₖ)V – zieht Stränge zueinander<br>
+• <b style="color:#e0a040">Dense/FFN</b> (rechts): Lokale Transformation, Breite ∝ d_ff<br>
+Beide werden <b style="color:#a070e0">addiert</b> (⊕ Residual + LayerNorm) → Merge-Punkt.<br><br>
+<b style="color:#e04060">Halluzination</b> = Schnitt s springt diskontinuierlich in der Faser.<br>
+<b style="color:#e08040">Kreisschluss</b> = Attention-Gewichte bilden geschlossene Feedback-Schleife.
+</div>
+</div>
+
+<div id="t2" class="tp">
+<h3>🏗 Transformer</h3>
+<div class="cg"><label>Layer <span class="v" id="vL">6</span></label>
+<input type="range" id="rL" min="2" max="12" step="1" value="6" oninput="G.nL=+this.value;V('vL',this.value);rebuild()"></div>
+<div class="cg"><label>d_model <span class="v" id="vD">64</span></label>
+<input type="range" id="rD" min="16" max="128" step="16" value="64" oninput="G.dM=+this.value;V('vD',this.value);rebuild()"></div>
+<div class="cg"><label>Heads <span class="v" id="vH">4</span></label>
+<input type="range" id="rH" min="1" max="8" step="1" value="4" oninput="G.nH=+this.value;V('vH',this.value);rebuild()"></div>
+<div class="cg"><label>d_ff Multiplikator <span class="v" id="vFF">4</span></label>
+<input type="range" id="rFF" min="1" max="8" step="1" value="4" oninput="G.ffM=+this.value;V('vFF',this.value)"></div>
+<div class="cg"><label>Temperatur <span class="v" id="vT">1.0</span></label>
+<input type="range" id="rT" min="0.1" max="3" step="0.1" value="1" oninput="G.temp=+this.value;V('vT',this.value);compAttn()"></div>
+<h3>👁 Sichtbarkeit</h3>
+<div class="cg"><label>Attention-Ströme <span class="v" id="vAV">0.8</span></label>
+<input type="range" id="rAV" min="0" max="1" step="0.05" value="0.8" oninput="G.attnVis=+this.value;V('vAV',this.value)"></div>
+<div class="cg"><label>Dense/FFN <span class="v" id="vDV">0.8</span></label>
+<input type="range" id="rDV" min="0" max="1" step="0.05" value="0.8" oninput="G.denseVis=+this.value;V('vDV',this.value)"></div>
+<div class="cg"><label>Residual <span class="v" id="vRV">0.6</span></label>
+<input type="range" id="rRV" min="0" max="1" step="0.05" value="0.6" oninput="G.resVis=+this.value;V('vRV',this.value)"></div>
+</div>
+
+<div id="t3" class="tp">
+<h3>📐 Basisraum B</h3>
+<div class="cg"><label>Topologie</label>
+<select id="rTopo" onchange="G.topo=this.value;rebuild()">
+<option value="line">Linie ℝ¹ (Standard)</option>
+<option value="ring">Ring S¹ (zyklisch)</option>
+<option value="mobius">Möbius-Band (verdreht)</option>
+</select></div>
+<h3>🌀 Faser-Geometrie</h3>
+<div class="cg"><label>Krümmung (gelerntes Wissen) <span class="v" id="vC">0.3</span></label>
+<input type="range" id="rC" min="0" max="1" step="0.05" value="0.3" oninput="G.curv=+this.value;V('vC',this.value)"></div>
+<div class="cg"><label>Chaos (Entropie) <span class="v" id="vCh">0.0</span></label>
+<input type="range" id="rCh" min="0" max="1" step="0.05" value="0" oninput="G.chaos=+this.value;V('vCh',this.value)"></div>
+<div class="cg"><label>Twist <span class="v" id="vTw">0.0</span></label>
+<input type="range" id="rTw" min="0" max="1" step="0.05" value="0" oninput="G.twist=+this.value;V('vTw',this.value)"></div>
+</div>
+
+<div id="t4" class="tp">
+<h3>📷 Kamera</h3>
+<div class="cg"><label>Horizontaler Versatz <span class="v" id="vPX">0</span></label>
+<input type="range" id="rPX" min="-400" max="400" step="5" value="0" oninput="G.panX=+this.value;V('vPX',this.value)"></div>
+<div class="cg"><label>Vertikaler Versatz <span class="v" id="vPY">0</span></label>
+<input type="range" id="rPY" min="-300" max="300" step="5" value="0" oninput="G.panY=+this.value;V('vPY',this.value)"></div>
+<div class="cg"><label>Zoom <span class="v" id="vZ">1.0</span></label>
+<input type="range" id="rZ" min="0.3" max="3" step="0.05" value="1" oninput="G.zoom=+this.value;V('vZ',this.value)"></div>
+<div class="cg"><label>Parallax-Tiefe <span class="v" id="vPar">0.3</span></label>
+<input type="range" id="rPar" min="0" max="1" step="0.05" value="0.3" oninput="G.parallax=+this.value;V('vPar',this.value)"></div>
+<button class="btn" onclick="G.panX=0;G.panY=0;G.zoom=1;G.parallax=0.3;document.getElementById('rPX').value=0;document.getElementById('rPY').value=0;document.getElementById('rZ').value=1;document.getElementById('rPar').value=0.3;V('vPX',0);V('vPY',0);V('vZ','1.0');V('vPar','0.3')">📷 Reset</button>
+</div>
+</div>
+
+<div id="cv">
+<canvas id="c"></canvas>
+<div id="legend">
+<div class="li"><div class="lc" style="background:#4ae0c4"></div>Kelp-Strang (Faser)</div>
+<div class="li"><div class="lc" style="background:#4090e0"></div>Attention-Sublayer</div>
+<div class="li"><div class="lc" style="background:#e0a040"></div>Dense/FFN-Sublayer</div>
+<div class="li"><div class="lc" style="background:#a070e0"></div>Residual ⊕ Merge</div>
+<div class="li"><div class="lc" style="background:#e04060"></div>Halluzination (Sprung)</div>
+<div class="li"><div class="lc" style="background:#e08040"></div>Kreisschluss (Loop)</div>
+<div class="li"><div class="lc" style="background:#e0c040"></div>Inferenz-Welle</div>
+</div>
+<div id="tip"></div>
+<div id="arch">
+<div style="color:#4ae0c4;font-weight:bold;margin-bottom:3px">Architektur</div>
+<div class="ar"><span class="al">Tokens:</span><span class="av" id="aiT">0</span></div>
+<div class="ar"><span class="al">Layer:</span><span class="av" id="aiL">6</span></div>
+<div class="ar"><span class="al">d_model:</span><span class="av" id="aiD">64</span></div>
+<div class="ar"><span class="al">Heads:</span><span class="av" id="aiH">4</span></div>
+<div class="ar"><span class="al">d_k:</span><span class="av" id="aiK">16</span></div>
+<div class="ar"><span class="al">d_ff:</span><span class="av" id="aiF">256</span></div>
+<div class="ar"><span class="al">Topologie:</span><span class="av" id="aiTo">ℝ¹</span></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+// ============================================================
+// KELP FOREST v3 – COMPLETE STANDALONE
+// ============================================================
+const c=document.getElementById('c'),X=c.getContext('2d'),tip=document.getElementById('tip');
+const V=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+function stab(b,id){document.querySelectorAll('.tp').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');b.classList.add('on')}
+
+// --- State ---
+const G={
+  tokens:[],nL:6,dM:64,nH:4,ffM:4,temp:1,
+  topo:'line',curv:0.3,chaos:0,twist:0,
+  speed:1,attnVis:0.8,denseVis:0.8,resVis:0.6,
+  panX:0,panY:0,zoom:1,parallax:0.3,
+  time:0,infRun:false,infLayer:-1,infSub:'',infT:0,
+  defects:[],selTok:-1,
+  kelps:[],attnW:[],denseA:[],
+  mouseX:0,mouseY:0,
+};
+
+// --- Hash ---
+function hash(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return h}
+
+// --- Softmax ---
+function softmax(a,t){
+  const mx=Math.max(...a);
+  const e=a.map(v=>Math.exp((v-mx)/(t||1)));
+  const s=e.reduce((a,b)=>a+b,0);
+  return e.map(v=>v/s);
+}
+
+// --- Compute real attention weights ---
+function compAttn(){
+  const n=G.tokens.length;if(!n)return;
+  const dk=G.dM/G.nH;
+  G.attnW=[];
+  for(let l=0;l<G.nL;l++){
+    const heads=[];
+    for(let h=0;h<G.nH;h++){
+      const mat=[];
+      for(let i=0;i<n;i++){
+        const scores=[];
+        for(let j=0;j<n;j++){
+          let sc=-Math.abs(i-j)*0.4;
+          sc+=Math.cos(hash(G.tokens[i]+l+h)*0.1+hash(G.tokens[j]+l+h)*0.13)*1.8;
+          if(i===j)sc+=0.5;
+          sc/=Math.sqrt(dk);
+          if(G.topo==='ring'||G.topo==='mobius'){
+            const wd=Math.min(Math.abs(i-j),n-Math.abs(i-j));
+            sc+=(-wd*0.3+Math.abs(i-j)*0.3);
+          }
+          // Circular defect: boost attention between looped tokens
+          for(const d of G.defects){
+            if(d.type==='loop'&&d.layer===l){
+              if((i===d.from&&j===d.to)||(i===d.to&&j===d.from)){
+                sc+=3.0; // strong artificial feedback
+              }
+            }
+          }
+          scores.push(sc);
+        }
+        mat.push(softmax(scores,G.temp));
+      }
+      heads.push(mat);
+    }
+    G.attnW.push(heads);
+  }
+  // Dense activations
+  G.denseA=[];
+  for(let l=0;l<G.nL;l++){
+    const a=[];
+    for(let i=0;i<n;i++){
+      a.push(0.3+0.7*Math.abs(Math.sin(hash(G.tokens[i]+'f'+l)*0.37+l*1.1)));
+    }
+    G.denseA.push(a);
+  }
+}
+
+// --- Build kelps ---
+function rebuild(){buildKelps();compAttn();updArch()}
+function buildKelps(){
+  G.kelps=[];const n=G.tokens.length;if(!n)return;
+  for(let i=0;i<n;i++){
+    G.kelps.push({
+      idx:i,tok:G.tokens[i],
+      hue:130+i*30,
+      phase:hash(G.tokens[i])*0.01,
+    });
+  }
+}
+
+function updArch(){
+  const dk=Math.floor(G.dM/G.nH);
+  const dff=G.dM*G.ffM;
+  const tm={line:'ℝ¹',ring:'S¹',mobius:'Möbius'};
+  V('aiT',G.tokens.length);V('aiL',G.nL);V('aiD',G.dM);
+  V('aiH',G.nH);V('aiK',dk);V('aiF',dff);V('aiTo',tm[G.topo]||G.topo);
+}
+
+// --- Tokenize ---
+function tokenize(){
+  const t=document.getElementById('inp').value.trim();
+  if(!t)return;
+  G.tokens=t.match(/[\wäöüÄÖÜß]+|[^\s\wäöüÄÖÜß]/g)||[];
+  G.defects=[];G.infRun=false;G.selTok=-1;
+  const box=document.getElementById('tokbox');box.innerHTML='';
+  G.tokens.forEach((tk,i)=>{
+    const el=document.createElement('span');el.className='tok';el.textContent=tk;
+    el.onclick=()=>{G.selTok=G.selTok===i?-1:i;document.querySelectorAll('.tok').forEach((c,j)=>c.classList.toggle('sel',j===G.selTok))};
+    box.appendChild(el);
+  });
+  rebuild();
+}
+
+// --- Inference ---
+function startInf(){
+  if(!G.tokens.length)return;
+  G.infRun=true;G.infLayer=0;G.infSub='attn';G.infT=0;
+}
+
+// --- Defects ---
+function addHallu(){
+  const n=G.tokens.length;if(n<2)return;
+  G.defects.push({
+    type:'hallu',
+    token:Math.floor(Math.random()*n),
+    layer:1+Math.floor(Math.random()*(G.nL-1)),
+    jumpAngle:Math.random()*Math.PI*2,
+    jumpMag:25+Math.random()*35,
+    t:0,
+  });
+}
+function addLoop(){
+  const n=G.tokens.length;if(n<3)return;
+  const a=Math.floor(Math.random()*n);
+  let b=(a+1+Math.floor(Math.random()*(n-2)))%n;
+  const l=1+Math.floor(Math.random()*(G.nL-1));
+  G.defects.push({type:'loop',from:a,to:b,layer:l,t:0});
+  compAttn(); // recompute with boosted weights
+}
+
+// --- Resize ---
+function resize(){
+  const cv=document.getElementById('cv');
+  c.width=cv.clientWidth*devicePixelRatio;
+  c.height=cv.clientHeight*devicePixelRatio;
+  c.style.width=cv.clientWidth+'px';
+  c.style.height=cv.clientHeight+'px';
+  X.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+}
+window.addEventListener('resize',resize);
+
+// --- Mouse ---
+c.addEventListener('mousemove',e=>{
+  const r=c.getBoundingClientRect();
+  G.mouseX=e.clientX-r.left;G.mouseY=e.clientY-r.top;
+});
+c.addEventListener('mouseleave',()=>{tip.style.display='none'});
+c.addEventListener('wheel',e=>{
+  G.zoom=Math.max(0.3,Math.min(3,G.zoom-e.deltaY*0.001));
+  document.getElementById('rZ').value=G.zoom;V('vZ',G.zoom.toFixed(2));
+  e.preventDefault();
+},{passive:false});
+
+// Drag to pan
+let drag=false,dx0=0,dy0=0;
+c.addEventListener('mousedown',e=>{drag=true;dx0=e.clientX;dy0=e.clientY});
+c.addEventListener('mousemove',e=>{
+  if(!drag)return;
+  G.panX+=e.clientX-dx0;G.panY+=e.clientY-dy0;
+  dx0=e.clientX;dy0=e.clientY;
+});
+c.addEventListener('mouseup',()=>{drag=false});
+
+// ============================================================
+// COORDINATE SYSTEM
+// ============================================================
+// Each kelp has a base position. Layers go upward.
+// Per layer: split into attn (left offset) and dense (right offset), then merge.
+// The "sway" from attention pulls + curvature/chaos/twist is applied.
+
+function getBasePos(i){
+  const n=G.tokens.length;
+  const W=c.width/devicePixelRatio;
+  const H=c.height/devicePixelRatio;
+  const spacing=Math.min(90,(W*0.7)/Math.max(n-1,1));
+  const ox=W/2+G.panX,oy=H*0.88+G.panY;
+
+  if(G.topo==='line'){
+    return{x:ox+(i-(n-1)/2)*spacing*G.zoom, y:oy};
+  }else if(G.topo==='ring'||G.topo==='mobius'){
+    const angle=(i/n)*Math.PI*2-Math.PI/2;
+    const r=Math.max(60,n*spacing/(2*Math.PI))*G.zoom;
+    return{x:ox+Math.cos(angle)*r, y:oy-r*0.15+Math.sin(angle)*r*0.35};
+  }
+  return{x:ox,y:oy};
+}
+
+function getLayerY(layer){
+  const H=c.height/devicePixelRatio;
+  const totalH=H*0.72*G.zoom;
+  const baseY=H*0.88+G.panY;
+  return baseY-((layer+1)/G.nL)*totalH;
+}
+
+// Compute sway for a kelp at a given layer
+function sway(ki,layer){
+  const k=G.kelps[ki];if(!k)return{x:0};
+  const t=(layer+1)/G.nL;
+  const time=G.time;
+  const p=k.phase;
+
+  let sx=Math.sin(time*0.6+p+t*2.5)*(5+G.curv*18)*t;
+  sx+=Math.sin(time*1.1+p*2+t*4)*3*t;
+
+  if(G.chaos>0){
+    sx+=Math.sin(time*3.7+layer*7.3+ki*2.1)*G.chaos*35*t;
+  }
+  if(G.twist>0){
+    sx+=Math.sin(t*Math.PI*3*G.twist+time*0.4+p)*G.twist*28*t;
+  }
+  if(G.topo==='mobius'){
+    const angle=(ki/G.tokens.length)*Math.PI*2;
+    if(angle>Math.PI)sx*=-1;
+  }
+
+  // ATTENTION PULL: weighted average displacement toward other tokens
+  let pullX=0;
+  if(G.attnW[layer]){
+    for(let h=0;h<G.nH;h++){
+      const w=G.attnW[layer][h];
+      if(!w||!w[ki])continue;
+      for(let j=0;j<G.tokens.length;j++){
+        if(j===ki)continue;
+        const bj=getBasePos(j);
+        const bi=getBasePos(ki);
+        pullX+=w[ki][j]*(bj.x-bi.x)*0.08;
+      }
+    }
+    pullX/=G.nH;
+  }
+
+  return{x:sx+pullX};
+}
+
+// ============================================================
+// UPDATE
+// ============================================================
+function update(dt){
+  G.time+=dt;
+
+  if(G.infRun){
+    G.infT+=dt*G.speed*0.7;
+    if(G.infT>=1){
+      G.infT=0;
+      if(G.infSub==='attn')G.infSub='dense';
+      else if(G.infSub==='dense')G.infSub='merge';
+      else{G.infSub='attn';G.infLayer++;if(G.infLayer>=G.nL)G.infLayer=0;}
+    }
+    V('phase',`Layer ${G.infLayer} → ${G.infSub==='attn'?'Attention':G.infSub==='dense'?'FFN':'Merge'} ${(G.infT*100)|0}%`);
+  }else{
+    V('phase','Idle');
+  }
+
+  G.defects.forEach(d=>{d.t+=dt});
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render(){
+  const W=c.width/devicePixelRatio, H=c.height/devicePixelRatio;
+
+  // --- Background ocean ---
+  const bg=X.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#020e24');bg.addColorStop(0.5,'#031a38');bg.addColorStop(1,'#0a2848');
+  X.fillStyle=bg;X.fillRect(0,0,W,H);
+
+  renderRays(W,H);
+  renderParticles(W,H);
+  renderFloor(W,H);
+
+  // --- Attention flow lines (behind kelps) ---
+  if(G.attnVis>0) renderAttnFlows(W,H);
+
+  // --- Kelp strands ---
+  G.kelps.forEach((k,i)=>renderKelp(k,i,W,H));
+
+  // --- Defects on top ---
+  G.defects.forEach(d=>renderDefect(d,W,H));
+
+  // --- Inference overlay ---
+  if(G.infRun) renderInfWave(W,H);
+
+  // --- Layer labels ---
+  renderLayerLabels(W,H);
+
+  // --- Tooltip ---
+  handleTooltip(W,H);
+}
+
+// --- Light rays ---
+function renderRays(W,H){
+  X.save();X.globalAlpha=0.035;
+  for(let i=0;i<5;i++){
+    const x=W*0.25+Math.sin(G.time*0.12+i*1.6)*W*0.25;
+    const g=X.createLinearGradient(x,0,x+30,H);
+    g.addColorStop(0,'rgba(80,180,230,0.35)');g.addColorStop(1,'rgba(80,180,230,0)');
+    X.fillStyle=g;X.beginPath();
+    X.moveTo(x-20,0);X.lineTo(x+50,0);
+    X.lineTo(x+35+Math.sin(G.time*0.18+i)*25,H);
+    X.lineTo(x-35+Math.sin(G.time*0.18+i)*25,H);
+    X.fill();
+  }
+  X.restore();
+}
+
+// --- Floating particles ---
+function renderParticles(W,H){
+  X.save();
+  for(let i=0;i<50;i++){
+    const s=i*137.508;
+    const px=((s*0.7+G.time*4*(0.4+(i%3)*0.25))%W+W)%W;
+    const py=((s*1.3-G.time*6*(0.3+(i%5)*0.12))%H+H)%H;
+    X.globalAlpha=0.06+Math.sin(G.time+s)*0.03;
+    X.fillStyle='#5098b8';
+    X.beginPath();X.arc(px,py,0.8+Math.sin(s)*0.5,0,Math.PI*2);X.fill();
+  }
+  X.restore();
+}
+
+// --- Sea floor ---
+function renderFloor(W,H){
+  const baseY=H*0.88+G.panY;
+  // Gradient
+  const g=X.createLinearGradient(0,baseY-15,0,H);
+  g.addColorStop(0,'rgba(15,8,35,0)');g.addColorStop(0.4,'rgba(20,12,45,0.6)');g.addColorStop(1,'rgba(12,6,28,0.9)');
+  X.fillStyle=g;X.fillRect(0,baseY-15,W,H-baseY+15);
+
+  // Wavy floor line
+  X.save();X.strokeStyle='rgba(70,40,110,0.45)';X.lineWidth=1.5;
+  X.beginPath();
+  for(let x=0;x<=W;x+=4){
+    const y=baseY+Math.sin(x*0.018+G.time*0.25)*4+Math.sin(x*0.045+G.time*0.4)*2;
+    x===0?X.moveTo(x,y):X.lineTo(x,y);
+  }
+  X.stroke();X.restore();
+
+  // Topology label
+  X.save();X.fillStyle='rgba(70,40,110,0.35)';X.font='10px monospace';X.textAlign='center';
+  const tl={line:'Basisraum B: ℝ¹ (Linie)',ring:'Basisraum B: S¹ (Ring)',mobius:'Basisraum B: Möbius-Band'};
+  X.fillText(tl[G.topo]||'',W/2,baseY+22);X.restore();
+
+  // Ring/Möbius indicator
+  if(G.topo==='ring'||G.topo==='mobius'){
+    X.save();X.strokeStyle='rgba(80,50,130,0.25)';X.lineWidth=1;
+    X.beginPath();
+    const n=G.tokens.length||1;
+    for(let i=0;i<=n;i++){
+      const p=getBasePos(i%n);
+      i===0?X.moveTo(p.x,p.y):X.lineTo(p.x,p.y);
+    }
+    X.closePath();X.stroke();X.restore();
+  }
+}
+
+// ============================================================
+// KELP STRAND RENDERING
+// ============================================================
+function renderKelp(kelp,ki,W,H){
+  const n=G.tokens.length;
+  const base=getBasePos(ki);
+  const isSel=ki===G.selTok;
+
+  X.save();
+
+  // --- Anchor at base ---
+  X.fillStyle=`hsla(${kelp.hue},40%,28%,0.8)`;
+  X.beginPath();X.ellipse(base.x,base.y,7*G.zoom,3*G.zoom,0,0,Math.PI*2);X.fill();
+
+  // --- Build all layer points ---
+  // For each layer: prevMerge → split to attnPt + densePt → merge
+  const allPts=[]; // {x,y,type,layer}
+  let prevX=base.x, prevY=base.y;
+  const subSpread=18*G.zoom; // horizontal offset for attn vs dense
+
+  for(let l=0;l<G.nL;l++){
+    const ly=getLayerY(l);
+    const sw=sway(ki,l);
+
+    // Midpoint Y between prev and layer
+    const midY=(prevY+ly)/2;
+    const splitY=prevY-(prevY-ly)*0.35;
+    const mergeY=prevY-(prevY-ly)*0.85;
+
+    // Attention point (left)
+    const attnX=prevX+sw.x-subSpread;
+    const attnY=splitY;
+
+    // Dense point (right)
+    const denseAct=G.denseA[l]?G.denseA[l][ki]:0.5;
+    const denseExpand=denseAct*subSpread*0.4;
+    const denseX=prevX+sw.x+subSpread+denseExpand*Math.sin(G.time*0.5+kelp.phase);
+    const denseY=splitY;
+
+    // Merge point
+    let mergeX=(attnX+denseX)/2;
+    let mergeYf=mergeY;
+
+    // Apply hallucination defect: discontinuous jump
+    for(const d of G.defects){
+      if(d.type==='hallu'&&d.token===ki&&d.layer===l){
+        const pulse=Math.sin(d.t*5)*0.4+0.6;
+        mergeX+=Math.cos(d.jumpAngle)*d.jumpMag*pulse*G.zoom;
+        mergeYf+=Math.sin(d.jumpAngle)*d.jumpMag*0.3*pulse*G.zoom;
+      }
+    }
+
+    allPts.push({x:attnX,y:attnY,type:'attn',layer:l});
+    allPts.push({x:denseX,y:denseY,type:'dense',layer:l});
+    allPts.push({x:mergeX,y:mergeYf,type:'merge',layer:l});
+
+    // === DRAW THIS LAYER ===
+    const lw=Math.max(1,2*G.zoom);
+
+    // --- Stem from prev merge to split point ---
+    const stemX=prevX+sw.x*0.3;
+    const stemY=(prevY+splitY)/2;
+    X.strokeStyle=`hsla(${kelp.hue},55%,40%,0.7)`;
+    X.lineWidth=lw*1.3;
+    X.beginPath();X.moveTo(prevX,prevY);
+    X.quadraticCurveTo(stemX,stemY,prevX+sw.x,splitY+10*G.zoom);
+    X.stroke();
+
+    // --- Attention branch (left) ---
+    if(G.attnVis>0){
+      X.strokeStyle=`hsla(210,70%,55%,${0.5*G.attnVis})`;
+      X.lineWidth=lw;
+      X.beginPath();
+      X.moveTo(prevX+sw.x,splitY+10*G.zoom);
+      X.quadraticCurveTo(attnX+5,attnY+8*G.zoom,attnX,attnY);
+      X.stroke();
+
+      // Attention node
+      const asz=Math.max(2.5,4*G.zoom);
+      X.fillStyle=`hsla(210,80%,60%,${0.65*G.attnVis})`;
+      X.beginPath();X.arc(attnX,attnY,asz,0,Math.PI*2);X.fill();
+
+      // Head indicators (small dots around the node)
+      for(let h=0;h<G.nH;h++){
+        const ha=h/G.nH*Math.PI*2-Math.PI/2;
+        const hx=attnX+Math.cos(ha)*(asz+3)*G.zoom;
+        const hy=attnY+Math.sin(ha)*(asz+3)*G.zoom;
+        X.fillStyle=`hsla(${190+h*35},75%,60%,${0.4*G.attnVis})`;
+        X.beginPath();X.arc(hx,hy,1.5*G.zoom,0,Math.PI*2);X.fill();
+      }
+
+      // Label
+      if(G.zoom>0.7){
+        X.font=`${Math.max(7,8*G.zoom)}px monospace`;
+        X.fillStyle=`rgba(64,144,224,${0.4*G.attnVis})`;
+        X.textAlign='right';
+        X.fillText('Attn',attnX-asz-3,attnY+3);
+      }
+    }
+
+    // --- Dense/FFN branch (right) ---
+    if(G.denseVis>0){
+      X.strokeStyle=`hsla(35,70%,52%,${0.5*G.denseVis})`;
+      X.lineWidth=lw;
+      X.beginPath();
+      X.moveTo(prevX+sw.x,splitY+10*G.zoom);
+      X.quadraticCurveTo(denseX-5,denseY+8*G.zoom,denseX,denseY);
+      X.stroke();
+
+      // Dense node – size reflects activation
+      const dsz=Math.max(2.5,(3+denseAct*3)*G.zoom);
+      X.fillStyle=`hsla(35,80%,55%,${0.6*G.denseVis})`;
+      X.beginPath();X.arc(denseX,denseY,dsz,0,Math.PI*2);X.fill();
+
+      // FFN expansion bars
+      if(G.zoom>0.6){
+        const bc=Math.min(G.ffM,6);
+        for(let b=0;b<bc;b++){
+          const bh=denseAct*6*G.zoom*Math.abs(Math.sin(hash(kelp.tok+l+b)*0.5));
+          const bx=denseX+(b-bc/2)*2.5*G.zoom;
+          X.fillStyle=`hsla(${30+b*8},65%,${45+bh*2}%,${0.45*G.denseVis})`;
+          X.fillRect(bx,denseY-dsz-1-bh,1.8*G.zoom,bh);
+        }
+      }
+
+      // Label
+      if(G.zoom>0.7){
+        X.font=`${Math.max(7,8*G.zoom)}px monospace`;
+        X.fillStyle=`rgba(224,160,64,${0.4*G.denseVis})`;
+        X.textAlign='left';
+        X.fillText('FFN',denseX+dsz+3,denseY+3);
+      }
+    }
+
+    // --- Converge to merge ---
+    // Attn → merge
+    X.strokeStyle=`hsla(210,55%,50%,${0.3*G.attnVis})`;
+    X.lineWidth=lw*0.8;
+    X.setLineDash([3*G.zoom,2*G.zoom]);
+    X.beginPath();X.moveTo(attnX,attnY);X.lineTo(mergeX,mergeYf);X.stroke();
+
+    // Dense → merge
+    X.strokeStyle=`hsla(35,55%,50%,${0.3*G.denseVis})`;
+    X.beginPath();X.moveTo(denseX,denseY);X.lineTo(mergeX,mergeYf);X.stroke();
+    X.setLineDash([]);
+
+    // --- Residual skip connection ---
+    if(G.resVis>0){
+      X.strokeStyle=`hsla(270,55%,58%,${0.2*G.resVis})`;
+      X.lineWidth=lw*0.7;
+      X.setLineDash([2*G.zoom,3*G.zoom]);
+      X.beginPath();X.moveTo(prevX,prevY);X.lineTo(mergeX,mergeYf);X.stroke();
+      X.setLineDash([]);
+    }
+
+    // Merge node
+    const msz=Math.max(2,3.5*G.zoom);
+    X.fillStyle='hsla(270,50%,55%,0.7)';
+    X.strokeStyle='hsla(270,65%,68%,0.45)';
+    X.lineWidth=1;
+    X.beginPath();X.arc(mergeX,mergeYf,msz,0,Math.PI*2);X.fill();X.stroke();
+
+    // ⊕ symbol
+    if(G.zoom>0.6&&G.resVis>0){
+      X.font=`bold ${Math.max(7,9*G.zoom)}px monospace`;
+      X.fillStyle=`rgba(160,112,224,${0.45*G.resVis})`;
+      X.textAlign='left';
+      X.fillText('⊕',mergeX+msz+2,mergeYf+3);
+    }
+
+    prevX=mergeX;prevY=mergeYf;
+  }
+
+  // --- Kelp "leaves" (fronds) along the main stem ---
+  // Retrace the merge points and add organic fronds
+  let px=base.x,py=base.y;
+  for(let l=0;l<G.nL;l++){
+    const mpt=allPts[l*3+2]; // merge point
+    const mx=(px+mpt.x)/2, my=(py+mpt.y)/2;
+
+    // Small fronds
+    for(let f=0;f<2;f++){
+      const fy=py-(py-mpt.y)*(0.3+f*0.35);
+      const fx=px+(mpt.x-px)*(0.3+f*0.35);
+      const fAngle=Math.sin(G.time*1.1+ki+l+f*2)*0.6+(ki%2===0?-0.7:0.7);
+      const fLen=(6+Math.sin(G.time*0.7+l+f)*2)*G.zoom;
+      X.strokeStyle=`hsla(${kelp.hue+10},55%,38%,0.45)`;
+      X.lineWidth=1.2*G.zoom;
+      X.beginPath();X.moveTo(fx,fy);
+      X.lineTo(fx+Math.cos(fAngle)*fLen,fy+Math.sin(fAngle)*fLen);
+      X.stroke();
+    }
+    px=mpt.x;py=mpt.y;
+  }
+
+  // --- Token label ---
+  X.textAlign='center';
+  X.font=`${isSel?'bold ':''}${Math.max(9,11*G.zoom)}px monospace`;
+  X.fillStyle=isSel?'#4ae0c4':'rgba(140,180,200,0.65)';
+  X.fillText(kelp.tok,base.x,base.y+14*G.zoom);
+  X.font=`${Math.max(7,8*G.zoom)}px monospace`;
+  X.fillStyle='rgba(100,140,160,0.4)';
+  X.fillText(`[${ki}]`,base.x,base.y+23*G.zoom);
+
+  // Selection glow
+  if(isSel){
+    X.strokeStyle='#4ae0c4';X.lineWidth=1.5;
+    X.beginPath();X.arc(base.x,base.y,10*G.zoom,0,Math.PI*2);X.stroke();
+    // Glow along main spine
+    X.globalAlpha=0.12;X.strokeStyle='#4ae0c4';X.lineWidth=4*G.zoom;
+    let gx=base.x,gy=base.y;
+    X.beginPath();X.moveTo(gx,gy);
+    for(let l=0;l<G.nL;l++){
+      const mp=allPts[l*3+2];
+      X.lineTo(mp.x,mp.y);
+      gx=mp.x;gy=mp.y;
+    }
+    X.stroke();X.globalAlpha=1;
+  }
+
+  // Store points for tooltip
+  kelp._pts=allPts;
+
+  X.restore();
+}
+
+// ============================================================
+// ATTENTION FLOW LINES
+// ============================================================
+function renderAttnFlows(W,H){
+  X.save();
+  const n=G.tokens.length;
+
+  for(let l=0;l<G.nL;l++){
+    if(!G.attnW[l])continue;
+    const ly=getLayerY(l);
+
+    for(let h=0;h<G.nH;h++){
+      const hw=G.attnW[l][h];if(!hw)continue;
+      const hue=190+h*35;
+
+      for(let i=0;i<n;i++){
+        if(G.selTok>=0&&i!==G.selTok)continue;
+
+        for(let j=0;j<n;j++){
+          if(i===j)continue;
+          const w=hw[i][j];
+          if(w<0.06)continue;
+
+          const bi=getBasePos(i),bj=getBasePos(j);
+          const swI=sway(i,l),swJ=sway(j,l);
+          const x1=bi.x+swI.x-18*G.zoom; // attn sublayer position
+          const x2=bj.x+swJ.x-18*G.zoom;
+          const y1=getLayerY(l)+(getBasePos(i).y-getLayerY(l))*0.35;
+          const y2=y1; // same layer height
+
+          const alpha=w*G.attnVis*0.5;
+          const cpx=(x1+x2)/2;
+          const cpy=y1-12*G.zoom-w*20*G.zoom;
+
+          X.strokeStyle=`hsla(${hue},70%,58%,${alpha})`;
+          X.lineWidth=w*2.5*G.zoom;
+          X.beginPath();X.moveTo(x1,y1);X.quadraticCurveTo(cpx,cpy,x2,y2);X.stroke();
+
+          // Animated flow dot
+          const ft=((G.time*0.5+i*0.2+j*0.15+h*0.3)%1);
+          const t1=1-ft,t2=ft;
+          const fx=t1*t1*x1+2*t1*t2*cpx+t2*t2*x2;
+          const fy=t1*t1*y1+2*t1*t2*cpy+t2*t2*y2;
+          X.fillStyle=`hsla(${hue},90%,72%,${alpha*1.8})`;
+          X.beginPath();X.arc(fx,fy,1.5+w*2,0,Math.PI*2);X.fill();
+
+          // Weight label for strong connections when token selected
+          if(w>0.25&&G.selTok>=0&&G.zoom>0.7){
+            X.font=`${7*G.zoom}px monospace`;
+            X.fillStyle=`hsla(${hue},80%,70%,${alpha*1.5})`;
+            X.textAlign='center';
+            X.fillText(w.toFixed(2),(x1+x2)/2,cpy-3*G.zoom);
+          }
+        }
+      }
+    }
+  }
+  X.restore();
+}
+
+// ============================================================
+// DEFECT RENDERING
+// ============================================================
+function renderDefect(d,W,H){
+  if(d.type==='hallu') renderHallu(d,W,H);
+  else if(d.type==='loop') renderLoop(d,W,H);
+}
+
+function renderHallu(d,W,H){
+  const k=G.kelps[d.token];if(!k||!k._pts)return;
+  const mp=k._pts[d.layer*3+2]; // merge point
+  if(!mp)return;
+
+  const pulse=Math.sin(d.t*4)*0.3+0.7;
+  const r=(d.jumpMag*0.8)*G.zoom*pulse;
+
+  X.save();
+
+  // "True" vs "hallucinated" positions
+  const trueX=mp.x-Math.cos(d.jumpAngle)*d.jumpMag*0.4*pulse*G.zoom;
+  const trueY=mp.y-Math.sin(d.jumpAngle)*d.jumpMag*0.15*pulse*G.zoom;
+  const hallX=mp.x+Math.cos(d.jumpAngle)*d.jumpMag*0.4*pulse*G.zoom;
+  const hallY=mp.y+Math.sin(d.jumpAngle)*d.jumpMag*0.15*pulse*G.zoom;
+
+  // Distortion field
+  const g=X.createRadialGradient(mp.x,mp.y,0,mp.x,mp.y,r*1.3);
+  g.addColorStop(0,`rgba(224,64,96,${0.3*pulse})`);
+  g.addColorStop(0.6,`rgba(180,40,80,${0.12*pulse})`);
+  g.addColorStop(1,'rgba(180,40,80,0)');
+  X.fillStyle=g;X.beginPath();X.arc(mp.x,mp.y,r*1.3,0,Math.PI*2);X.fill();
+
+  // Jump line (discontinuity)
+  X.strokeStyle=`rgba(255,80,120,${0.8*pulse})`;
+  X.lineWidth=2.5*G.zoom;
+  X.setLineDash([4*G.zoom,3*G.zoom]);
+  X.beginPath();X.moveTo(trueX,trueY);X.lineTo(hallX,hallY);X.stroke();
+  X.setLineDash([]);
+
+  // True position (hollow green circle)
+  X.strokeStyle=`rgba(100,220,180,${0.75*pulse})`;X.lineWidth=1.5*G.zoom;
+  X.beginPath();X.arc(trueX,trueY,4.5*G.zoom,0,Math.PI*2);X.stroke();
+
+  // Hallucinated position (filled red)
+  X.fillStyle=`rgba(255,60,90,${0.8*pulse})`;
+  X.beginPath();X.arc(hallX,hallY,4.5*G.zoom,0,Math.PI*2);X.fill();
+
+  // Crack lines
+  X.strokeStyle=`rgba(255,80,100,${0.35*pulse})`;X.lineWidth=G.zoom;
+  for(let i=0;i<7;i++){
+    const a=(i/7)*Math.PI*2+d.t*0.3;
+    const len=r*(0.4+Math.sin(d.t*2.5+i*1.7)*0.25);
+    X.beginPath();X.moveTo(mp.x,mp.y);
+    const ex=mp.x+Math.cos(a)*len,ey=mp.y+Math.sin(a)*len;
+    X.quadraticCurveTo(mp.x+Math.cos(a+0.4)*len*0.5,mp.y+Math.sin(a+0.4)*len*0.5,ex,ey);
+    X.stroke();
+  }
+
+  // Labels
+  X.textAlign='center';
+  X.font=`bold ${Math.max(8,9*G.zoom)}px monospace`;
+  X.fillStyle=`rgba(255,100,130,${0.9*pulse})`;
+  X.fillText('⚠ HALLUZINATION',mp.x,mp.y-r*1.3-8*G.zoom);
+  X.font=`${Math.max(7,8*G.zoom)}px monospace`;
+  X.fillStyle=`rgba(255,150,170,${0.65*pulse})`;
+  X.fillText(`Schnitt s springt: Δ=${d.jumpMag.toFixed(0)} · "${k.tok}" L${d.layer}`,mp.x,mp.y-r*1.3+2*G.zoom);
+
+  X.restore();
+}
+
+function renderLoop(d,W,H){
+  const kA=G.kelps[d.from],kB=G.kelps[d.to];
+  if(!kA||!kB||!kA._pts||!kB._pts)return;
+  const ptA=kA._pts[d.layer*3]; // attn point
+  const ptB=kB._pts[d.layer*3];
+  if(!ptA||!ptB)return;
+
+  const pulse=Math.sin(d.t*3)*0.3+0.7;
+
+  X.save();
+  const cx=(ptA.x+ptB.x)/2, cy=(ptA.y+ptB.y)/2;
+  const rx=Math.abs(ptB.x-ptA.x)/2+12*G.zoom;
+  const ry=15*G.zoom+Math.sin(d.t*1.5)*4*G.zoom;
+
+  // Pulsing ellipse
+  X.strokeStyle=`rgba(224,128,64,${0.55*pulse})`;
+  X.lineWidth=2.5*G.zoom;
+  X.setLineDash([5*G.zoom,3*G.zoom]);
+  X.beginPath();X.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);X.stroke();
+  X.setLineDash([]);
+
+  // Rotating arrows
+  for(let i=0;i<4;i++){
+    const a=d.t*2.2+i*Math.PI/2;
+    const ax=cx+Math.cos(a)*rx, ay=cy+Math.sin(a)*ry;
+    const ad=a+Math.PI/2;
+    X.fillStyle=`rgba(224,128,64,${0.75*pulse})`;
+    X.beginPath();
+    X.moveTo(ax+Math.cos(ad)*4.5*G.zoom,ay+Math.sin(ad)*4.5*G.zoom);
+    X.lineTo(ax+Math.cos(ad+2.3)*4.5*G.zoom,ay+Math.sin(ad+2.3)*4.5*G.zoom);
+    X.lineTo(ax+Math.cos(ad-2.3)*4.5*G.zoom,ay+Math.sin(ad-2.3)*4.5*G.zoom);
+    X.closePath();X.fill();
+  }
+
+  // Bidirectional curves A⇄B
+  X.strokeStyle=`rgba(224,128,64,${0.35*pulse})`;X.lineWidth=1.5*G.zoom;
+  X.beginPath();X.moveTo(ptA.x,ptA.y);X.quadraticCurveTo(cx,cy-ry*1.6,ptB.x,ptB.y);X.stroke();
+  X.beginPath();X.moveTo(ptB.x,ptB.y);X.quadraticCurveTo(cx,cy+ry*1.6,ptA.x,ptA.y);X.stroke();
+
+  // Boosted attention indicator
+  X.font=`bold ${Math.max(8,9*G.zoom)}px monospace`;
+  X.fillStyle=`rgba(224,140,80,${0.9*pulse})`;X.textAlign='center';
+  X.fillText('🔄 KREISSCHLUSS',cx,cy-ry-9*G.zoom);
+  X.font=`${Math.max(7,8*G.zoom)}px monospace`;
+  X.fillStyle=`rgba(224,160,120,${0.65*pulse})`;
+  X.fillText(`"${kA.tok}" ⇄ "${kB.tok}" · L${d.layer} · Attn boosted`,cx,cy-ry+1*G.zoom);
+
+  X.restore();
+}
+
+// ============================================================
+// INFERENCE WAVE
+// ============================================================
+function renderInfWave(W,H){
+  X.save();
+
+  G.kelps.forEach(k=>{
+    if(!k._pts)return;
+    for(let l=0;l<G.nL;l++){
+      let pt=null,alpha=0;
+      if(l<G.infLayer){
+        pt=k._pts[l*3+2];alpha=0.12;
+      }else if(l===G.infLayer){
+        const si=G.infSub==='attn'?0:G.infSub==='dense'?1:2;
+        pt=k._pts[l*3+si];
+        alpha=0.5+G.infT*0.4;
+      }
+
+      if(!pt)continue;
+
+      const orbSize=(5+Math.sin(G.time*6)*1.5)*G.zoom*alpha;
+      const hue=G.infSub==='attn'?200:G.infSub==='dense'?35:55;
+
+      // Glow orb
+      const g=X.createRadialGradient(pt.x,pt.y,0,pt.x,pt.y,orbSize*3);
+      g.addColorStop(0,`hsla(${hue},100%,85%,${alpha*0.85})`);
+      g.addColorStop(0.4,`hsla(${hue},90%,65%,${alpha*0.35})`);
+      g.addColorStop(1,`hsla(${hue},80%,50%,0)`);
+      X.fillStyle=g;
+      X.beginPath();X.arc(pt.x,pt.y,orbSize*3,0,Math.PI*2);X.fill();
+
+      // Core
+      X.fillStyle=`hsla(${hue},100%,92%,${alpha})`;
+      X.beginPath();X.arc(pt.x,pt.y,orbSize*0.4,0,Math.PI*2);X.fill();
+    }
+  });
+
+  // Phase info bar
+  const totalSteps=G.nL*3;
+  const curStep=G.infLayer*3+(G.infSub==='attn'?0:G.infSub==='dense'?1:2)+G.infT;
+  const progress=curStep/totalSteps;
+
+  X.fillStyle='rgba(224,192,64,0.55)';
+  X.font='10px monospace';X.textAlign='left';
+  const subName=G.infSub==='attn'?'Multi-Head Attention (QKᵀ/√dₖ)':G.infSub==='dense'?'Feed-Forward Network (ReLU(Wx+b))':'Residual Add ⊕ LayerNorm';
+  X.fillText(`Inferenz: Layer ${G.infLayer} → ${subName}`,10,18);
+
+  // Progress bar
+  X.fillStyle='rgba(40,60,80,0.45)';
+  X.fillRect(10,24,180,3);
+  X.fillStyle='rgba(224,192,64,0.65)';
+  X.fillRect(10,24,180*progress,3);
+
+  X.restore();
+}
+
+// ============================================================
+// LAYER LABELS
+// ============================================================
+function renderLayerLabels(W,H){
+  X.save();
+  X.font=`${Math.max(8,9*G.zoom)}px monospace`;
+  X.textAlign='right';
+
+  for(let l=0;l<G.nL;l++){
+    const ly=getLayerY(l);
+    const splitY=((H*0.88+G.panY)+ly)/2-(((H*0.88+G.panY)-ly)*0.35-((H*0.88+G.panY)-ly)*0.35);
+    // Approximate the merge Y for this layer
+    const mergeApproxY=(H*0.88+G.panY)-((l+1)/G.nL)*(H*0.72*G.zoom)*0.85;
+
+    // Faint horizontal guide
+    X.strokeStyle='rgba(60,80,120,0.07)';
+    X.lineWidth=0.5;
+    X.beginPath();X.moveTo(25,mergeApproxY);X.lineTo(W-10,mergeApproxY);X.stroke();
+
+    X.fillStyle='rgba(100,140,180,0.3)';
+    if(l===0){
+      X.fillText('L0 (Input)',24,mergeApproxY+3);
+    }else if(l===G.nL-1){
+      X.fillText(`L${l} (Output)`,24,mergeApproxY+3);
+    }else{
+      X.fillText(`L${l}`,24,mergeApproxY+3);
+    }
+  }
+  X.restore();
+}
+
+// ============================================================
+// TOOLTIP
+// ============================================================
+function handleTooltip(W,H){
+  const mx=G.mouseX,my=G.mouseY;
+  let found=false;
+
+  for(const k of G.kelps){
+    if(!k._pts)continue;
+    for(let p=0;p<k._pts.length;p++){
+      const pt=k._pts[p];
+      const dx=mx-pt.x,dy=my-pt.y;
+      if(dx*dx+dy*dy<120*G.zoom){
+        tip.style.display='block';
+        tip.style.left=(mx+14)+'px';
+        tip.style.top=(my-10)+'px';
+
+        let info='';
+        const l=pt.layer;
+
+        if(pt.type==='attn'){
+          // Show attention distribution
+          info=`<span style="color:#4090e0"><b>Attention Sublayer</b></span><br>`;
+          info+=`Softmax(QKᵀ/√${Math.floor(G.dM/G.nH)}) · ${G.nH} Heads<br>`;
+          if(G.attnW[l]){
+            info+=`<br><span style="color:#6ab8da">Avg attention weights:</span><br>`;
+            const avgW=[];
+            for(let j=0;j<G.tokens.length;j++){
+              let avg=0;
+              for(let h=0;h<G.nH;h++){
+                if(G.attnW[l][h]&&G.attnW[l][h][k.idx])
+                  avg+=G.attnW[l][h][k.idx][j];
+              }
+              avgW.push(avg/G.nH);
+            }
+            // Sort by weight descending
+            const sorted=avgW.map((w,j)=>({w,j})).sort((a,b)=>b.w-a.w);
+            sorted.forEach(s=>{
+              const bar='█'.repeat(Math.round(s.w*15));
+              const col=s.w>0.2?'#4ae0c4':'#6a9ab8';
+              info+=`<span style="color:${col}"> "${G.tokens[s.j]}": ${s.w.toFixed(3)} ${bar}</span><br>`;
+            });
+          }
+        }else if(pt.type==='dense'){
+          const act=G.denseA[l]?G.denseA[l][k.idx]:0;
+          info=`<span style="color:#e0a040"><b>Dense/FFN Sublayer</b></span><br>`;
+          info+=`d_ff = ${G.dM*G.ffM} (${G.ffM}× d_model)<br>`;
+          info+=`Activation: ${act.toFixed(3)}<br>`;
+          info+=`ReLU(W₁x + b₁)W₂ + b₂<br>`;
+          const bar='█'.repeat(Math.round(act*12));
+          info+=`<span style="color:#e0a040">Magnitude: ${bar}</span>`;
+        }else if(pt.type==='merge'){
+          info=`<span style="color:#a070e0"><b>Residual ⊕ LayerNorm</b></span><br>`;
+          info+=`x + Sublayer(x)<br>`;
+          info+=`LayerNorm(x_merged)`;
+
+          // Check for defects at this point
+          for(const d of G.defects){
+            if(d.type==='hallu'&&d.token===k.idx&&d.layer===l){
+              info+=`<br><br><span style="color:#e04060"><b>⚠ HALLUZINATION</b></span><br>`;
+              info+=`Schnitt s ist diskontinuierlich!<br>`;
+              info+=`Sprung-Magnitude: ${d.jumpMag.toFixed(1)}<br>`;
+              info+=`Die Faser-Koordinate springt in eine<br>falsche Bedeutungsregion.`;
+            }
+          }
+        }
+
+        tip.innerHTML=`
+          <b style="color:#4ae0c4">"${k.tok}"</b> [pos ${k.idx}]
+          · <span style="color:#7abfda">Layer ${l}/${G.nL}</span>
+          · <span style="color:#aaa">${pt.type}</span><br>
+          ${info}
+        `;
+        found=true;
+        break;
+      }
+    }
+    if(found)break;
+  }
+  if(!found)tip.style.display='none';
+}
+
+// ============================================================
+// MAIN LOOP
+// ============================================================
+let lt=0,fc=0,ft=0;
+function loop(ts){
+  const dt=Math.min((ts-lt)/1000,0.05)*G.speed;
+  lt=ts;
+  fc++;
+  if(ts-ft>1000){V('fps',fc+' FPS');fc=0;ft=ts}
+  update(dt);
+  render();
+  requestAnimationFrame(loop);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init(){
+  resize();
+  tokenize();
+  requestAnimationFrame(loop);
+}
+init();
+</script>
+</body>
+</html>
