@@ -3060,17 +3060,19 @@ function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_
 // ─── Sub-functions ───────────────────────────────────────────
 
 function _vf2d_magnitude_color(normMag) {
-    const r = Math.round(normMag * 239 + (1 - normMag) * 59);
-    const g = Math.round(normMag * 68 + (1 - normMag) * 130);
-    const b = Math.round(normMag * 68 + (1 - normMag) * 246);
-    return `rgb(${r},${g},${b})`;
+	const r = Math.round(normMag * 239 + (1 - normMag) * 59);
+	const g = Math.round(normMag * 68 + (1 - normMag) * 130);
+	const b = Math.round(normMag * 68 + (1 - normMag) * 246);
+	return `rgb(${r},${g},${b})`;
 }
 
 function _vf2d_arrow_geometry(p, maxMag, maxArrowLen) {
 	const normMag = p.mag / maxMag;
-	const arrowLen = Math.max(maxArrowLen * 0.08, maxArrowLen * normMag);
-	const lineWidth = 1.5 + normMag * 3.5;
+	const arrowLen = maxArrowLen * normMag;
+	const lineWidth = 2;
 
+	// Use the ACTUAL dx/dy direction, not unit vectors
+	// This preserves the exact direction without floating-point drift
 	let ux = 0, uy = 0;
 	if (p.mag > 1e-10) {
 		ux = p.dx / p.mag;
@@ -3739,7 +3741,7 @@ function _vf_ec3d_series(computed) {
 	points.forEach(pt => {
 		const normMag = pt.mag / maxMag;
 		const color = _vf3d_magnitude_color(normMag);
-		const arrowLen = Math.max(maxArrowLen * 0.06, maxArrowLen * normMag);
+		const arrowLen = maxArrowLen * normMag;  // length = magnitude, no minimum
 
 		let ux = 0, uy = 0, uz = 0;
 		if (pt.mag > 1e-10) { ux = pt.dx / pt.mag; uy = pt.dy / pt.mag; uz = pt.dz / pt.mag; }
@@ -3751,14 +3753,14 @@ function _vf_ec3d_series(computed) {
 		series.push({
 			name: 'VF', type: 'line3D',
 			data: [[pt.x, pt.y, pt.z], [endX, endY, endZ]],
-			lineStyle: { width: 1 + normMag * 4, color: color, opacity: 0.2 },
+			lineStyle: { width: 3, color: color, opacity: 0.3 },  // ← constant width
 			silent: true
 		});
 
 		tipData.push({
 			value: [endX, endY, endZ],
-			itemStyle: { color: color, opacity: 0.3 },
-			symbolSize: Math.max(3, 3 + normMag * 8),
+			itemStyle: { color: color, opacity: 0.4 },
+			symbolSize: 5,  // ← constant tip size
 			_hover: `(${pt.x.toFixed(2)}, ${pt.y.toFixed(2)}, ${pt.z.toFixed(2)})<br>|Δh|: ${pt.mag.toFixed(4)}`
 		});
 	});
@@ -3776,9 +3778,10 @@ function _vf_ec2d_custom_series(computed) {
 	const { points, maxMag, maxArrowLen } = computed;
 
 	const data = points.map(p => {
-		const { ux, uy, arrowLen, normMag } = _vf2d_arrow_geometry(p, maxMag, maxArrowLen);
+		const { ux, uy, arrowLen, lineWidth, normMag } = _vf2d_arrow_geometry(p, maxMag, maxArrowLen);
 		return {
-			value: [p.x, p.y, p.x + ux * arrowLen, p.y + uy * arrowLen, normMag],
+			// Store start, end, AND the original direction for pixel-space fallback
+			value: [p.x, p.y, p.x + ux * arrowLen, p.y + uy * arrowLen, normMag, ux, uy],
 			_mag: p.mag, _dx: p.dx, _dy: p.dy
 		};
 	});
@@ -3790,22 +3793,37 @@ function _vf_ec2d_custom_series(computed) {
 			const ePx = api.coord([api.value(2), api.value(3)]);
 			const normMag = api.value(4);
 			const color = _vf2d_magnitude_color(normMag);
-			const lineW = 1 + normMag * 3;
+			const lineW = 2;
 
 			const dx = ePx[0] - sPx[0], dy = ePx[1] - sPx[1];
 			const len = Math.sqrt(dx * dx + dy * dy);
-			if (len < 0.5) return { type: 'circle', shape: { cx: sPx[0], cy: sPx[1], r: 1 }, style: { fill: color, opacity: 0.2 } };
+
+			// Too short to draw meaningfully
+			if (len < 2) return { type: 'circle', shape: { cx: sPx[0], cy: sPx[1], r: 1 }, style: { fill: color, opacity: 0.3 } };
 
 			const ux2 = dx / len, uy2 = dy / len;
-			const headLen = Math.min(8, len * 0.35);
-			const headW = Math.max(2, lineW * 1.5);
+
+			// Ensure arrowhead never exceeds 40% of total length
+			const headLen = Math.min(8, len * 0.3);
+			// If headLen would be > 80% of len, skip arrowhead entirely
+			if (headLen > len * 0.8) {
+				// Just draw a simple line, no arrowhead
+				return {
+					type: 'line',
+					shape: { x1: sPx[0], y1: sPx[1], x2: ePx[0], y2: ePx[1] },
+					style: { stroke: color, lineWidth: lineW, opacity: 0.4 }
+				};
+			}
+
+			const headW = 4;
 			const px = -uy2, py = ux2;
 			const bx = ePx[0] - ux2 * headLen, by = ePx[1] - uy2 * headLen;
 
 			return {
 				type: 'group', children: [
-					{ type: 'line', shape: { x1: sPx[0], y1: sPx[1], x2: bx, y2: by }, style: { stroke: color, lineWidth: lineW, opacity: 0.25 } },
-					{ type: 'polygon', shape: { points: [[ePx[0], ePx[1]], [bx + px * headW, by + py * headW], [bx - px * headW, by - py * headW]] }, style: { fill: color, opacity: 0.25 } }
+					{ type: 'line', shape: { x1: sPx[0], y1: sPx[1], x2: bx, y2: by }, style: { stroke: color, lineWidth: lineW, opacity: 0.4 } },
+					{ type: 'polygon', shape: { points: [[ePx[0], ePx[1]], [bx + px * headW, by + py * headW], [bx - px * headW, by - py * headW]] }, style: { fill: color, opacity: 0.4 } },
+					{ type: 'circle', shape: { cx: sPx[0], cy: sPx[1], r: 2 }, style: { fill: color, stroke: '#fff', lineWidth: 0.5, opacity: 0.3 } }
 				]
 			};
 		},
@@ -3816,6 +3834,53 @@ function _vf_ec2d_custom_series(computed) {
 		},
 		z: 1
 	};
+}
+
+function _traj_vf_2d_plotly_traces(computed) {
+	if (!computed) return [];
+	const { points, maxMag, maxArrowLen } = computed;
+
+	const traces = [];
+
+	points.forEach(p => {
+		const { ux, uy, arrowLen, normMag } = _vf2d_arrow_geometry(p, maxMag, maxArrowLen);
+		if (arrowLen < 1e-6) return;
+
+		const r = Math.round(normMag * 239 + (1 - normMag) * 59);
+		const g = Math.round(normMag * 68  + (1 - normMag) * 130);
+		const b = Math.round(normMag * 68  + (1 - normMag) * 246);
+		const color = `rgba(${r},${g},${b},0.35)`;
+
+		const endX = p.x + ux * arrowLen;
+		const endY = p.y + uy * arrowLen;
+
+		// Each VF arrow is a line+markers trace with an arrow marker at the end
+		traces.push({
+			type: 'scatter',
+			x: [p.x, endX],
+			y: [p.y, endY],
+			mode: 'lines+markers',
+			line: { width: 2, color: color },
+			marker: {
+				size: [3, 10],
+				symbol: ['circle', 'arrow'],
+				angleref: 'previous',
+				color: color
+			},
+			hoverinfo: 'text',
+			hovertemplate: `(${p.x.toFixed(2)}, ${p.y.toFixed(2)})<br>|Δh|: ${p.mag.toFixed(4)}<extra></extra>`,
+			showlegend: false,
+			legendgroup: 'vf'
+		});
+	});
+
+	// Add one dummy trace for the legend
+	if (traces.length > 0) {
+		traces[0].showlegend = true;
+		traces[0].name = 'Vector Field';
+	}
+
+	return traces;
 }
 
 function _migration_render_2d_echarts(chart, migId, tokens, start_h, end_h, layerNum, d_model, vfEnabled) {
@@ -4613,12 +4678,12 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 	// ── 2D: Plotly path ──
 	const result = _traj_build_2d_token_traces(tokens, labels, dataPoints, embSnap, snapVocab);
 
-	// ── VF overlay (all-layers) ──
-	let vfAnnotations = [];
+	// ── VF overlay (all-layers) — now as TRACES, not annotations ──
+	let vfTraces = [];
 	if (vfEnabled) {
 		const { n_heads, n_layers } = getTransformerConfig();
 		const computed = _compute_trajectory_vf_2d(d_model, n_heads, n_layers);
-		if (computed) vfAnnotations = _traj_vf_2d_plotly_annotations(computed);
+		if (computed) vfTraces = _traj_vf_2d_plotly_traces(computed);
 	}
 
 	const axisTemplate = {
@@ -4627,15 +4692,16 @@ function _traj_render_low_dimensional(trajDiv, tokens, labels, dataPoints, d_mod
 	};
 
 	const layout = {
-		title: '<b>Token Trajectory from Embedding → Embedding + Position through the Layers</b>',
+		title: '<b>Token Trajectory: Embedding + Position through the Layers</b>',
 		xaxis: axisTemplate, yaxis: axisTemplate,
-		annotations: [...result.annotations, ...vfAnnotations],
+		annotations: result.annotations,  // ← only stage labels, no VF annotations
 		margin: { l: 10, r: 10, b: 50, t: 80 },
 		showlegend: true,
 		legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.1, font: { size: 14 } }
 	};
 
-	Plotly.react(trajDiv.id, result.traces, layout);
+	// Combine token traces + VF traces
+	Plotly.react(trajDiv.id, [...result.traces, ...vfTraces], layout);
 }
 
 // ─── Main 3D ECharts renderer ───────────────────────────────
@@ -6756,7 +6822,7 @@ function _traj_vf_2d_plotly_annotations(computed) {
 		const r = Math.round(normMag * 239 + (1 - normMag) * 59);
 		const g = Math.round(normMag * 68  + (1 - normMag) * 130);
 		const b = Math.round(normMag * 68  + (1 - normMag) * 246);
-		const color = `rgba(${r},${g},${b},0.25)`;
+		const color = `rgba(${r},${g},${b},0.35)`;
 
 		return {
 			x: p.x + ux * arrowLen,
@@ -6766,8 +6832,8 @@ function _traj_vf_2d_plotly_annotations(computed) {
 			axref: 'x', ayref: 'y',
 			showarrow: true,
 			arrowhead: 2,
-			arrowsize: 1 + normMag,
-			arrowwidth: Math.max(1, 1 + normMag * 3),
+			arrowsize: 1.2,        // ← constant arrowhead size
+			arrowwidth: 2,         // ← constant line width
 			arrowcolor: color,
 			text: '', standoff: 0
 		};
