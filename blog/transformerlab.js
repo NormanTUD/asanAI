@@ -99,23 +99,25 @@ function registerLazyRenderable(containerId, registry, observer, data, renderFn,
 	const container = document.getElementById(containerId);
 	if (!container) return;
 
-	data.rendered = false;
-	registry.set(containerId, data);
+	const existing = registry.get(containerId);
+	if (existing && window.isTraining) {
+		// Merge new data into existing entry, preserving UI state
+		Object.assign(existing, data);
+		existing.rendered = false;
+	} else {
+		data.rendered = false;
+		registry.set(containerId, data);
+	}
 
 	if (placeholder && !container.innerHTML) {
 		container.innerHTML = placeholder;
 	}
-
 	observer.observe(container);
 
-	// During training, skip the immediate render — forceRerender*
-	// will handle it AFTER all forward-pass data is finalized.
 	if (!window.isTraining && isElementInViewport(container)) {
 		renderFn();
 		const entry = registry.get(containerId);
 		if (entry) entry.rendered = true;
-	//} else {
-	//	console.log(`window.isTraining: ${window.isTraining}, containerIsInView: ${containerIsInView}, container: ${containerId}`);
 	}
 }
 
