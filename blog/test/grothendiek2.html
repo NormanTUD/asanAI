@@ -1,0 +1,2619 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grothendiecks Universum – Interaktive Visualisierung</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@300;400&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0a0a12;
+            color: #e0ddd5;
+            font-family: 'EB Garamond', serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #universe-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 0;
+        }
+
+        #ui-layer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        #ui-layer > * {
+            pointer-events: auto;
+        }
+
+        /* Navigation */
+        #nav-bar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 20px;
+            background: linear-gradient(to bottom, rgba(10,10,18,0.95), rgba(10,10,18,0));
+            z-index: 100;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #b0aда0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'EB Garamond', serif;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(120, 100, 200, 0.25);
+            border-color: rgba(150, 130, 220, 0.5);
+            color: #e8e4f0;
+            box-shadow: 0 0 20px rgba(120, 100, 200, 0.15);
+        }
+
+        /* Info Panel */
+        #info-panel {
+            position: fixed;
+            right: 20px;
+            top: 70px;
+            width: 380px;
+            max-height: calc(100vh - 100px);
+            background: rgba(15, 15, 25, 0.92);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 24px;
+            overflow-y: auto;
+            backdrop-filter: blur(20px);
+            transition: opacity 0.4s, transform 0.4s;
+            z-index: 50;
+        }
+
+        #info-panel h2 {
+            font-size: 24px;
+            color: #c8b8f0;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        #info-panel h3 {
+            font-size: 17px;
+            color: #a898d0;
+            margin: 16px 0 8px;
+        }
+
+        #info-panel p, #info-panel li {
+            font-size: 15px;
+            line-height: 1.65;
+            color: #b8b4a8;
+        }
+
+        #info-panel ul {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+
+        #info-panel .formula {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            background: rgba(255,255,255,0.04);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            border-left: 3px solid rgba(150, 130, 220, 0.4);
+            color: #d0c8e8;
+            overflow-x: auto;
+        }
+
+        .quote {
+            font-style: italic;
+            color: #a098b8;
+            border-left: 2px solid rgba(150, 130, 220, 0.3);
+            padding-left: 16px;
+            margin: 16px 0;
+        }
+
+        /* Controls */
+        #controls {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            z-index: 50;
+        }
+
+        .control-group {
+            background: rgba(15, 15, 25, 0.85);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            backdrop-filter: blur(15px);
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 6px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .control-group input[type="range"] {
+            width: 200px;
+            accent-color: #8070c0;
+        }
+
+        .control-group select {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #ccc;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-family: 'EB Garamond', serif;
+            font-size: 14px;
+        }
+
+        /* Tooltip */
+        #tooltip {
+            position: fixed;
+            background: rgba(20, 18, 35, 0.95);
+            border: 1px solid rgba(150, 130, 220, 0.3);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 200;
+            max-width: 250px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(150,130,220,0.3); border-radius: 3px; }
+
+        /* Grothendieck Signature */
+        #signature {
+            position: fixed;
+            bottom: 15px;
+            right: 20px;
+            font-size: 12px;
+            color: rgba(150, 130, 220, 0.3);
+            font-style: italic;
+            z-index: 50;
+        }
+
+        #minimap {
+            position: fixed;
+            left: 20px;
+            top: 70px;
+            width: 180px;
+            height: 180px;
+            background: rgba(15,15,25,0.8);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 50;
+        }
+
+        #minimap canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .hidden { opacity: 0; pointer-events: none; transform: translateX(20px); }
+    </style>
+</head>
+<body>
+
+<canvas id="universe-canvas"></canvas>
+
+<div id="ui-layer">
+    <div id="nav-bar">
+        <button class="nav-btn active" data-scene="overview">Universum</button>
+        <button class="nav-btn" data-scene="sheaves">Garben</button>
+        <button class="nav-btn" data-scene="schemes">Schemata</button>
+        <button class="nav-btn" data-scene="topoi">Topoi</button>
+        <button class="nav-btn" data-scene="motives">Motive</button>
+        <button class="nav-btn" data-scene="etale">Étale Kohomologie</button>
+        <button class="nav-btn" data-scene="dessins">Dessins d'Enfants</button>
+        <button class="nav-btn" data-scene="yoga">Yoga der Gewichte</button>
+        <button class="nav-btn" data-scene="sixops">6 Operationen</button>
+        <button class="nav-btn" data-scene="anabelian">Anabelsch</button>
+    </div>
+
+    <div id="info-panel"></div>
+
+    <div id="controls"></div>
+
+    <div id="tooltip"></div>
+
+    <div id="signature">
+        „Die Mathematik ist die Musik der Vernunft" — A. Grothendieck
+    </div>
+</div>
+
+<script>
+// ============================================================
+// GROTHENDIECK UNIVERSE – INTERACTIVE VISUALIZATION ENGINE
+// ============================================================
+
+const canvas = document.getElementById('universe-canvas');
+const ctx = canvas.getContext('2d');
+const infoPanel = document.getElementById('info-panel');
+const controlsDiv = document.getElementById('controls');
+const tooltip = document.getElementById('tooltip');
+
+let W, H;
+let mouse = { x: 0, y: 0, down: false, px: 0, py: 0 };
+let time = 0;
+let currentScene = 'overview';
+let camera = { x: 0, y: 0, zoom: 1, targetX: 0, targetY: 0, targetZoom: 1 };
+let hoveredNode = null;
+let selectedNode = null;
+let animationParams = {};
+
+function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+function hsla(h, s, l, a) {
+    return `hsla(${h}, ${s}%, ${l}%, ${a})`;
+}
+
+function dist(x1, y1, x2, y2) {
+    return Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+}
+
+function worldToScreen(wx, wy) {
+    return {
+        x: (wx - camera.x) * camera.zoom + W/2,
+        y: (wy - camera.y) * camera.zoom + H/2
+    };
+}
+
+function screenToWorld(sx, sy) {
+    return {
+        x: (sx - W/2) / camera.zoom + camera.x,
+        y: (sy - H/2) / camera.zoom + camera.y
+    };
+}
+
+// Smooth noise
+function noise(x, y, seed) {
+    const n = Math.sin(x * 12.9898 + y * 78.233 + seed * 43.1) * 43758.5453;
+    return n - Math.floor(n);
+}
+
+function smoothNoise(x, y, seed) {
+    const ix = Math.floor(x), iy = Math.floor(y);
+    const fx = x - ix, fy = y - iy;
+    const sx = fx * fx * (3 - 2 * fx);
+    const sy = fy * fy * (3 - 2 * fy);
+    const n00 = noise(ix, iy, seed);
+    const n10 = noise(ix+1, iy, seed);
+    const n01 = noise(ix, iy+1, seed);
+    const n11 = noise(ix+1, iy+1, seed);
+    return lerp(lerp(n00, n10, sx), lerp(n01, n11, sx), sy);
+}
+
+// ============================================================
+// SCENE DATA
+// ============================================================
+
+const sceneInfo = {
+    overview: {
+        title: "Grothendiecks Universum",
+        html: `
+            <h2>Das Mathematische Universum</h2>
+            <p class="quote">„Ich bin davon überzeugt, dass die Mathematik, wie die Physik, wie die Biologie, eine Naturwissenschaft ist – die Wissenschaft der Formen."</p>
+            <p>Alexander Grothendieck (1928–2014) hat die Mathematik des 20. Jahrhunderts revolutioniert. Er sah die Mathematik als ein <strong>lebendiges Gewebe</strong>, in dem alles mit allem zusammenhängt.</p>
+            <h3>Die großen Visionen</h3>
+            <ul>
+                <li><strong>Garben (Faisceaux)</strong> – Lokale Daten, global zusammengesetzt</li>
+                <li><strong>Schemata</strong> – Die universelle Sprache der Geometrie</li>
+                <li><strong>Topoi</strong> – Universen der Logik und Geometrie</li>
+                <li><strong>Motive</strong> – Das Herz aller Kohomologien</li>
+                <li><strong>Étale Kohomologie</strong> – Topologie für Zahlentheorie</li>
+                <li><strong>Dessins d'Enfants</strong> – Kinderzeichnungen und Galoistheorie</li>
+                <li><strong>Yoga der Gewichte</strong> – Reinheit und Mischung</li>
+                <li><strong>Sechs Operationen</strong> – Das Kalkül der Garben</li>
+                <li><strong>Anabelsche Geometrie</strong> – Geometrie aus Fundamentalgruppen</li>
+            </ul>
+            <p>Klicke auf die Knoten oder wähle ein Thema oben, um einzutauchen.</p>
+            <h3>Navigation</h3>
+            <p>🖱️ Ziehen zum Bewegen, Scrollen zum Zoomen. Klicke auf leuchtende Knoten für Details.</p>
+        `
+    },
+    sheaves: {
+        title: "Garben (Faisceaux)",
+        html: `
+            <h2>Garben – Faisceaux</h2>
+            <p class="quote">„Die Garbe ist die natürlichste Art, lokale Informationen zu einem globalen Bild zusammenzufügen."</p>
+            <p>Eine <strong>Garbe</strong> F auf einem topologischen Raum X ordnet jeder offenen Menge U einen Datenraum F(U) zu – die <strong>Schnitte über U</strong>.</p>
+            <h3>Die Verklebungsbedingung</h3>
+            <div class="formula">
+Sei {Uᵢ} eine offene Überdeckung von U.
+Gegeben: sᵢ ∈ F(Uᵢ) mit sᵢ|_{Uᵢ∩Uⱼ} = sⱼ|_{Uᵢ∩Uⱼ}
+Dann ∃! s ∈ F(U) mit s|_{Uᵢ} = sᵢ
+            </div>
+            <p>Das ist das Prinzip: <strong>Lokale Daten, die auf Überlappungen übereinstimmen, kleben zu einem eindeutigen globalen Schnitt zusammen.</strong></p>
+            <h3>Interaktion</h3>
+            <ul>
+                <li>Ziehe die offenen Mengen und beobachte die Schnitte</li>
+                <li>Auf Überlappungen werden Daten verglichen</li>
+                <li>Der Regler steuert die „Auflösung" der Garbe</li>
+            </ul>
+            <h3>Beispiele</h3>
+            <p><strong>Stetige Funktionen:</strong> F(U) = C(U, ℝ) – die stetigen Funktionen auf U.</p>
+            <p><strong>Strukturgarbe:</strong> 𝒪_X – die regulären Funktionen auf einem Schema.</p>
+            <p>Grothendieck erkannte: Die Garbe ist wichtiger als der Raum selbst. Der Raum ist nur das Gerüst – die Garbe ist die Seele.</p>
+        `
+    },
+    schemes: {
+        title: "Schemata",
+        html: `
+            <h2>Schemata</h2>
+            <p class="quote">„Ein Schema ist ein Raum, der seine eigene Arithmetik in sich trägt."</p>
+            <p>Grothendiecks genialster Schachzug: <strong>Spec(R)</strong> – das Spektrum eines kommutativen Rings R als geometrisches Objekt.</p>
+            <h3>Spec(ℤ) – Die Urform</h3>
+            <div class="formula">
+Spec(ℤ) = { (0), (2), (3), (5), (7), (11), ... }
+             η          ↑   ↑   ↑   ↑    ↑
+       generischer    Primzahlen = abgeschlossene
+          Punkt       Punkte von Spec(ℤ)
+            </div>
+            <p>Jede Primzahl wird zu einem <strong>Punkt</strong>. Der generische Punkt (0) „schwebt über allen" – er enthält die Information von ℚ.</p>
+            <h3>Fasern und Reduktion</h3>
+            <p>Für ein Schema X → Spec(ℤ) ist die <strong>Faser über (p)</strong> die Reduktion mod p. So wird Zahlentheorie zu Geometrie!</p>
+            <h3>Interaktion</h3>
+            <ul>
+                <li>Beobachte Spec(ℤ) mit seinen Primzahl-Punkten</li>
+                <li>Klicke auf Primzahlen, um die Faser zu sehen</li>
+                <li>Der generische Punkt verbindet alles</li>
+            </ul>
+            <p>Schemata vereinen Algebra und Geometrie: <strong>Ringe SIND Räume.</strong></p>
+        `
+    },
+    topoi: {
+        title: "Topoi",
+        html: `
+            <h2>Topoi – Universen</h2>
+            <p class="quote">„Ein Topos ist gleichzeitig ein 'Raum' und eine 'Welt von Mengen' – ein Universum, in dem man Mathematik treiben kann."</p>
+            <p>Grothendiecks kühnste Abstraktion: Ein <strong>Topos</strong> ist eine Kategorie, die sich wie die Kategorie der Mengen verhält, aber eine eigene innere Logik besitzt.</p>
+            <h3>Grothendieck-Topologie</h3>
+            <div class="formula">
+Ein Situs (C, J) besteht aus:
+- Kategorie C (z.B. offene Mengen, étale Morphismen)
+- Grothendieck-Topologie J (Überdeckungen)
+
+Topos = Sh(C, J) = Kategorie der Garben auf (C, J)
+            </div>
+            <h3>Innere Logik</h3>
+            <p>Jeder Topos hat einen <strong>Unterobjektklassifizierer Ω</strong> – ein verallgemeinertes „Wahrheitswerte-Objekt". In der Mengenkategorie ist Ω = {0, 1}. In einem Topos kann Ω viel reicher sein!</p>
+            <ul>
+                <li><strong>Étaler Topos:</strong> Garben auf dem étalen Situs → Arithmetische Geometrie</li>
+                <li><strong>Zariski-Topos:</strong> Garben auf Zariski-Überdeckungen</li>
+                <li><strong>Topos der Wirkung:</strong> G-Mengen für eine Gruppe G</li>
+            </ul>
+            <h3>Interaktion</h3>
+            <p>Beobachte verschiedene Topoi als übereinanderliegende „Welten" mit eigener Logik. Die Morphismen zwischen Topoi (geometrische Morphismen) verbinden diese Welten.</p>
+        `
+    },
+    motives: {
+        title: "Motive",
+        html: `
+            <h2>Motive – Das Herz der Kohomologie</h2>
+            <p class="quote">„Das Motiv einer Varietät ist das, was alle Kohomologien gemeinsam haben – die tiefste Essenz der geometrischen Form."</p>
+            <p>Grothendiecks größter Traum: Es gibt verschiedene Kohomologietheorien (de Rham, étale, Betti, kristallin...), die alle „dasselbe messen". Das <strong>Motiv</strong> ist der universelle Grund dafür.</p>
+            <h3>Die universelle Kohomologie</h3>
+            <div class="formula">
+Varietät X  ──→  Motiv h(X)  ──→  { H*_dR(X)
+                                      H*_ét(X, ℚₗ)
+                                      H*_Betti(X)
+                                      H*_kris(X)
+                                      ... }
+            </div>
+            <h3>Zerlegung</h3>
+            <div class="formula">
+h(ℙⁿ) = 𝟙 ⊕ 𝕃 ⊕ 𝕃² ⊕ ... ⊕ 𝕃ⁿ
+wobei 𝕃 = Lefschetz-Motiv (das Motiv von 𝔸¹)
+            </div>
+            <h3>Interaktion</h3>
+            <ul>
+                <li>Beobachte wie verschiedene Kohomologien aus einem Motiv „entspringen"</li>
+                <li>Zerlegung von Motiven in einfache Stücke</li>
+                <li>Die Vergleichsisomorphismen als Brücken</li>
+            </ul>
+            <p>Motive sind bis heute nicht vollständig konstruiert – sie bleiben Grothendiecks prophetischste Vision.</p>
+        `
+    },
+    etale: {
+        title: "Étale Kohomologie",
+        html: `
+            <h2>Étale Kohomologie</h2>
+            <p class="quote">„Die étale Topologie gibt algebraischen Varietäten eine Topologie, die reich genug ist, um die Weil-Vermutungen zu beweisen."</p>
+            <p>Das Problem: Algebraische Varietäten über endlichen Körpern haben eine zu grobe Zariski-Topologie. Grothendieck erfand die <strong>étale Topologie</strong> als Ersatz.</p>
+            <h3>Étale Morphismen</h3>
+            <div class="formula">
+f: Y → X ist étale ⟺ f ist flach + unverzweigt
+(Analogon: lokaler Diffeomorphismus)
+
+Étaler Situs: Ét(X) = { Y →ét X }
+H*_ét(X, F) = Garbenkohomologie auf Ét(X)
+            </div>
+            <h3>Weil-Vermutungen</h3>
+            <p>Für X/𝔽_q Varietät über endlichem Körper:</p>
+            <div class="formula">
+Z(X, t) = ∏ det(1 - Frob·t | Hⁱ_ét(X))^{(-1)^{i+1}}
+            </div>
+            <p>Die Zetafunktion ist <strong>rational</strong>, erfüllt eine <strong>Funktionalgleichung</strong>, und die Nullstellen liegen auf der richtigen Geraden (<strong>Riemann-Hypothese für Varietäten</strong>, bewiesen von Deligne).</p>
+            <h3>Interaktion</h3>
+            <p>Beobachte den Frobenius-Endomorphismus als Spirale, die étalen Überdeckungen als Verzweigungen, und die Kohomologie als Invarianten.</p>
+        `
+    },
+    dessins: {
+        title: "Dessins d'Enfants",
+        html: `
+            <h2>Dessins d'Enfants – Kinderzeichnungen</h2>
+            <p class="quote">„Diese 'Kinderzeichnungen', die jedes Kind malen könnte, tragen die ganze Tiefe der absoluten Galoisgruppe in sich."</p>
+            <p>Ein <strong>Dessin d'Enfant</strong> ist ein bipartiter Graph auf einer kompakten Riemannschen Fläche – eine „Kinderzeichnung".</p>
+            <h3>Die Korrespondenz</h3>
+            <div class="formula">
+Dessins d'Enfants  ↔  Belyi-Morphismen β: X → ℙ¹
+                       (unverzweigt außer über {0, 1, ∞})
+                   ↔  Algebraische Kurven über ℚ̄
+            </div>
+            <h3>Galois-Wirkung</h3>
+            <p>Die <strong>absolute Galoisgruppe Gal(ℚ̄/ℚ)</strong> wirkt auf Dessins! Verschiedene Zeichnungen können „galoiskonjugiert" sein.</p>
+            <p>Grothendieck war fasziniert: Ein kombinatorisches Objekt (Graph auf Fläche) kodiert tiefe arithmetische Information.</p>
+            <h3>Interaktion</h3>
+            <ul>
+                <li>Zeichne eigene Dessins auf der Fläche</li>
+                <li>Beobachte die Belyi-Abbildung</li>
+                <li>Schwarze Knoten = Urbilder von 0, Weiße = Urbilder von 1</li>
+            </ul>
+        `
+    },
+    yoga: {
+        title: "Yoga der Gewichte",
+        html: `
+            <h2>Yoga der Gewichte</h2>
+            <p class="quote">„Die Gewichtsfiltrierung ist der Schlüssel zur Reinheit – sie zeigt, wie gemischte Objekte aus reinen aufgebaut sind."</p>
+            <p>Delignes Theorie der <strong>gemischten Hodge-Strukturen</strong> und <strong>Gewichtsfiltrierungen</strong> realisiert Grothendiecks Vision.</p>
+            <h3>Reine Hodge-Strukturen</h3>
+            <div class="formula">
+Hⁿ(X, ℂ) = ⊕_{p+q=n} H^{p,q}(X)
+wobei H^{p,q} = H^{q,p}̄
+Gewicht = p + q = n (rein!)
+            </div>
+            <h3>Gemischte Hodge-Strukturen</h3>
+            <div class="formula">
+Gewichtsfiltrierung: W₀ ⊂ W₁ ⊂ ... ⊂ Wₙ = H
+Hodge-Filtrierung:   F⁰ ⊃ F¹ ⊃ ... ⊃ Fⁿ
+Gr^W_k(H) trägt reine Hodge-Struktur vom Gewicht k
+            </div>
+            <p>Singuläre oder offene Varietäten haben <strong>gemischte</strong> Kohomologie – die Gewichtsfiltrierung zerlegt sie in reine Stücke.</p>
+            <h3>Interaktion</h3>
+            <p>Beobachte das Hodge-Diamant, die Filtrierungen als Schichten, und wie Degeneration die Gewichte mischt.</p>
+        `
+    },
+    sixops: {
+        title: "Sechs Operationen",
+        html: `
+            <h2>Die Sechs Operationen</h2>
+            <p class="quote">„Das formale Kalkül der sechs Operationen ist das Rückgrat der gesamten Kohomologietheorie."</p>
+            <p>Für einen Morphismus f: X → Y zwischen Schemata gibt es <strong>sechs Funktoren</strong> zwischen den abgeleiteten Kategorien:</p>
+            <h3>Die sechs Funktoren</h3>
+            <div class="formula">
+        f*          f!
+D(Y) ⇄ D(X)    D(Y) ⇄ D(X)
+        f_*         f_!
+
+Plus: ⊗ (Tensorprodukt) und RHom (inneres Hom)
+            </div>
+            <h3>Adjunktionen</h3>
+            <div class="formula">
+(f* ⊣ f_*)    Standardadjunktion
+(f_! ⊣ f!)    Außergewöhnliche Adjunktion
+
+Verdier-Dualität: 𝔻 ∘ f_! ≅ f_* ∘ 𝔻
+            </div>
+            <h3>Basiswechsel</h3>
+            <div class="formula">
+Kartesisches Quadrat:   X' →g'  X
+                        ↓f'     ↓f
+                        Y' →g   Y
+
+⟹  g* f_! ≅ f'_! g'*  (proper base change)
+            </div>
+            <h3>Interaktion</h3>
+            <p>Beobachte die sechs Operationen als Pfeile zwischen Welten, die Adjunktionen als Spiegelungen, und den Basiswechsel als Kommutativität.</p>
+        `
+    },
+    anabelian: {
+        title: "Anabelsche Geometrie",
+        html: `
+            <h2>Anabelsche Geometrie</h2>
+            <p class="quote">„Die Fundamentalgruppe einer Kurve über ℚ bestimmt die Kurve – die Gruppe IST die Geometrie."</p>
+            <p>In seinem Brief an Faltings (1983) und in <em>Esquisse d'un Programme</em> formulierte Grothendieck seine kühnste Vermutung:</p>
+            <h3>Die anabelsche Vermutung</h3>
+            <div class="formula">
+Für "anabelsche" Varietäten X über ℚ:
+
+X ↦ π₁^ét(X)  ist (im Wesentlichen) volltreu.
+
+D.h.: Hom(X, Y) ≅ Hom(π₁(X), π₁(Y)) / konjugation
+            </div>
+            <p>Mochizuki bewies dies für hyperbolische Kurven über Zahlkörpern (aufbauend auf Faltings' Arbeit).</p>
+            <h3>Die exakte Sequenz</h3>
+            <div class="formula">
+1 → π₁^geom(X_ℚ̄) → π₁^ét(X) → Gal(ℚ̄/ℚ) → 1
+
+Die geometrische Fundamentalgruppe wird
+von der arithmetischen "umhüllt".
+            </div>
+            <h3>Esquisse d'un Programme</h3>
+            <p>Grothendieck schlug vor, die absolute Galoisgruppe Gal(ℚ̄/ℚ) durch ihre Wirkung auf dem <strong>Teichmüller-Turm</strong> – dem System aller Modulräume M_{g,n} – zu studieren.</p>
+            <h3>Interaktion</h3>
+            <ul>
+                <li>Beobachte die Fundamentalgruppe als Schleifen</li>
+                <li>Die Galoiswirkung verformt die Schleifen</li>
+                <li>Anabelsche Rekonstruktion: Aus der Gruppe zurück zur Geometrie</li>
+            </ul>
+        `
+    }
+};
+
+// ============================================================
+// INTERACTIVE NODES FOR OVERVIEW
+// ============================================================
+
+const conceptNodes = [
+    { id: 'sheaves', label: 'Garben', x: 0, y: -250, r: 55, hue: 270, desc: 'Lokale Daten → Globales Bild' },
+    { id: 'schemes', label: 'Schemata', x: -280, y: -80, r: 60, hue: 220, desc: 'Ringe als geometrische Räume' },
+    { id: 'topoi', label: 'Topoi', x: 280, y: -80, r: 58, hue: 300, desc: 'Universen der Logik' },
+    { id: 'motives', label: 'Motive', x: 0, y: 0, r: 70, hue: 45, desc: 'Das Herz aller Kohomologien' },
+    { id: 'etale', label: 'Étale\nKohomologie', x: -200, y: 180, r: 52, hue: 160, desc: 'Topologie für Arithmetik' },
+    { id: 'dessins', label: 'Dessins\nd\'Enfants', x: 200, y: 180, r: 48, hue: 30, desc: 'Kinderzeichnungen & Galois' },
+    { id: 'yoga', label: 'Yoga der\nGewichte', x: -320, y: 150, r: 45, hue: 190, desc: 'Reinheit & Filtrierung' },
+    { id: 'sixops', label: '6 Operationen', x: 320, y: 150, r: 47, hue: 340, desc: 'f* f_* f! f_! ⊗ Hom' },
+    { id: 'anabelian', label: 'Anabelsch', x: 0, y: 300, r: 46, hue: 80, desc: 'π₁ bestimmt die Geometrie' },
+];
+
+const conceptEdges = [
+    ['sheaves', 'topoi', 'Garben auf Situs = Topos'],
+    ['sheaves', 'schemes', 'Strukturgarbe 𝒪_X'],
+    ['sheaves', 'motives', 'Garbenkohomologie'],
+    ['schemes', 'etale', 'Étaler Situs'],
+    ['schemes', 'motives', 'Algebraische Zyklen'],
+    ['topoi', 'motives', 'Motivischer Topos?'],
+    ['topoi', 'sixops', 'Funktoren zwischen Topoi'],
+    ['etale', 'motives', 'ℓ-adische Realisierung'],
+    ['etale', 'yoga', 'Gewichtsfiltrierung'],
+    ['dessins', 'anabelian', 'Galoiswirkung auf π₁'],
+    ['dessins', 'topoi', 'Belyi & Überlagerungen'],
+    ['motives', 'yoga', 'Hodge-Realisierung'],
+    ['sixops', 'etale', 'Verdier-Dualität'],
+    ['anabelian', 'etale', 'π₁^ét'],
+    ['schemes', 'sixops', 'Abgeleitete Kategorien'],
+];
+
+// ============================================================
+// SCENE: OVERVIEW – Constellation of Concepts
+// ============================================================
+
+function drawOverview() {
+    // Background nebula
+    drawNebula();
+
+    // Draw edges
+    for (const [fromId, toId, label] of conceptEdges) {
+        const from = conceptNodes.find(n => n.id === fromId);
+        const to = conceptNodes.find(n => n.id === toId);
+        const p1 = worldToScreen(from.x, from.y);
+        const p2 = worldToScreen(to.x, to.y);
+
+        const pulse = 0.3 + 0.15 * Math.sin(time * 0.8 + from.x * 0.01 + to.y * 0.01);
+
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+
+        // Curved edges
+        const mx = (p1.x + p2.x) / 2 + Math.sin(time * 0.3 + from.hue) * 15;
+        const my = (p1.y + p2.y) / 2 + Math.cos(time * 0.4 + to.hue) * 15;
+        ctx.quadraticCurveTo(mx, my, p2.x, p2.y);
+
+        ctx.strokeStyle = hsla((from.hue + to.hue) / 2, 40, 50, pulse);
+        ctx.lineWidth = 1.5 * camera.zoom;
+        ctx.stroke();
+
+        // Edge label on hover
+        if (hoveredNode && (hoveredNode.id === fromId || hoveredNode.id === toId)) {
+            ctx.fillStyle = hsla(0, 0, 80, 0.6);
+            ctx.font = `${11 * camera.zoom}px 'JetBrains Mono'`;
+            ctx.textAlign = 'center';
+            ctx.fillText(label, mx, my - 8 * camera.zoom);
+        }
+
+        // Traveling particles along edges
+        const particleT = (time * 0.15 + from.hue * 0.01) % 1;
+        const px = p1.x + (p2.x - p1.x) * particleT;
+        const py = p1.y + (p2.y - p1.y) * particleT;
+        ctx.beginPath();
+        ctx.arc(px, py, 2 * camera.zoom, 0, Math.PI * 2);
+        ctx.fillStyle = hsla((from.hue + to.hue) / 2, 60, 70, 0.6);
+        ctx.fill();
+    }
+
+    // Draw nodes
+    for (const node of conceptNodes) {
+        const p = worldToScreen(node.x, node.y);
+        const r = node.r * camera.zoom;
+        const isHovered = hoveredNode === node;
+        const isSelected = selectedNode === node;
+
+        // Glow
+        const glowR = r * (isHovered ? 2.5 : 1.8);
+        const glow = ctx.createRadialGradient(p.x, p.y, r * 0.3, p.x, p.y, glowR);
+        glow.addColorStop(0, hsla(node.hue, 60, 50, isHovered ? 0.3 : 0.15));
+        glow.addColorStop(1, hsla(node.hue, 60, 50, 0));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, glowR, 0, Math.PI * 2);
+        ctx.fillStyle = glow;
+        ctx.fill();
+
+        // Pulsing ring
+        const pulseR = r * (1 + 0.08 * Math.sin(time * 1.5 + node.hue));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, pulseR, 0, Math.PI * 2);
+        ctx.strokeStyle = hsla(node.hue, 50, 60, isHovered ? 0.8 : 0.4);
+        ctx.lineWidth = (isHovered ? 2.5 : 1.5) * camera.zoom;
+        ctx.stroke();
+
+        // Inner fill
+        const innerGrad = ctx.createRadialGradient(p.x - r*0.2, p.y - r*0.2, 0, p.x, p.y, r);
+        innerGrad.addColorStop(0, hsla(node.hue, 40, 25, isHovered ? 0.7 : 0.5));
+        innerGrad.addColorStop(1, hsla(node.hue, 50, 12, isHovered ? 0.6 : 0.4));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r * 0.85, 0, Math.PI * 2);
+        ctx.fillStyle = innerGrad;
+        ctx.fill();
+
+        // Label
+        ctx.fillStyle = hsla(node.hue, 30, 90, isHovered ? 1 : 0.85);
+        ctx.font = `${(isHovered ? 16 : 14) * camera.zoom}px 'EB Garamond'`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const lines = node.label.split('\n');
+        lines.forEach((line, i) => {
+            ctx.fillText(line, p.x, p.y + (i - (lines.length-1)/2) * 18 * camera.zoom);
+        });
+    }
+}
+
+// ============================================================
+// SCENE: SHEAVES – Interactive Sheaf Visualization
+// ============================================================
+
+let sheafOpenSets = [];
+let sheafSections = [];
+
+function initSheaves() {
+    sheafOpenSets = [
+        { cx: -150, cy: 0, rx: 180, ry: 120, label: 'U₁', hue: 240, sections: [] },
+        { cx: 0, cy: -30, rx: 160, ry: 130, label: 'U₂', hue: 280, sections: [] },
+        { cx: 150, cy: 10, rx: 170, ry: 110, label: 'U₃', hue: 320, sections: [] },
+    ];
+    generateSheafSections();
+}
+
+function generateSheafSections() {
+    const resolution = animationParams.sheafResolution || 30;
+    sheafOpenSets.forEach(u => {
+        u.sections = [];
+        for (let i = 0; i < resolution; i++) {
+            const t = (i / resolution) * Math.PI * 2;
+            const x = u.cx + Math.cos(t) * u.rx * 0.7;
+            const y = u.cy + Math.sin(t) * u.ry * 0.5;
+            const val = Math.sin(x * 0.02 + time * 0.5) * Math.cos(y * 0.025 + time * 0.3);
+            u.sections.push({ x, y, val });
+        }
+    });
+}
+
+function drawSheaves() {
+    drawNebula();
+    generateSheafSections();
+
+    const baseY = 0;
+
+    // Draw the base space X
+    ctx.save();
+    const bx = worldToScreen(-300, baseY + 180);
+    const bx2 = worldToScreen(300, baseY + 180);
+    ctx.strokeStyle = hsla(0, 0, 40, 0.5);
+    ctx.lineWidth = 2 * camera.zoom;
+    ctx.setLineDash([8, 4]);
+    ctx.beginPath();
+    ctx.moveTo(bx.x, bx.y);
+    ctx.lineTo(bx2.x, bx2.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = hsla(0, 0, 60, 0.5);
+    ctx.font = `${14 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    const labelPos = worldToScreen(0, baseY + 210);
+    ctx.fillText('Basisraum X', labelPos.x, labelPos.y);
+    ctx.restore();
+
+    // Draw open sets
+    for (const u of sheafOpenSets) {
+        const p = worldToScreen(u.cx, u.cy);
+        const rx = u.rx * camera.zoom;
+        const ry = u.ry * camera.zoom;
+
+        // Open set region
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, rx, ry, 0, 0, Math.PI * 2);
+        ctx.fillStyle = hsla(u.hue, 30, 20, 0.2);
+        ctx.fill();
+        ctx.strokeStyle = hsla(u.hue, 50, 50, 0.5);
+        ctx.lineWidth = 1.5 * camera.zoom;
+        ctx.stroke();
+
+        // Label
+        ctx.fillStyle = hsla(u.hue, 40, 70, 0.8);
+        ctx.font = `${16 * camera.zoom}px 'EB Garamond'`;
+        ctx.textAlign = 'center';
+        const lp = worldToScreen(u.cx, u.cy - u.ry - 15);
+        ctx.fillText(u.label, lp.x, lp.y);
+
+        // Draw sections as a "function graph" floating above
+        if (u.sections.length > 1) {
+            ctx.beginPath();
+            for (let i = 0; i < u.sections.length; i++) {
+                const s = u.sections[i];
+                const sp = worldToScreen(s.x, s.y + s.val * 60 - 80);
+                if (i === 0) ctx.moveTo(sp.x, sp.y);
+                else ctx.lineTo(sp.x, sp.y);
+            }
+            ctx.strokeStyle = hsla(u.hue, 60, 65, 0.7);
+            ctx.lineWidth = 2 * camera.zoom;
+            ctx.stroke();
+
+            // Section label
+            const slp = worldToScreen(u.cx, u.cy - 130);
+            ctx.fillStyle = hsla(u.hue, 50, 75, 0.6);
+            ctx.font = `${12 * camera.zoom}px 'JetBrains Mono'`;
+            ctx.fillText(`F(${u.label})`, slp.x, slp.y);
+        }
+    }
+
+    // Highlight overlaps
+    for (let i = 0; i < sheafOpenSets.length; i++) {
+        for (let j = i + 1; j < sheafOpenSets.length; j++) {
+            const a = sheafOpenSets[i], b = sheafOpenSets[j];
+            const d = dist(a.cx, a.cy, b.cx, b.cy);
+            if (d < a.rx + b.rx) {
+                const midX = (a.cx + b.cx) / 2;
+                const midY = (a.cy + b.cy) / 2;
+                const mp = worldToScreen(midX, midY);
+
+                // Gluing indicator
+                const glueAlpha = 0.4 + 0.3 * Math.sin(time * 2);
+                ctx.beginPath();
+                ctx.arc(mp.x, mp.y, 25 * camera.zoom, 0, Math.PI * 2);
+                ctx.fillStyle = hsla(60, 70, 60, glueAlpha * 0.3);
+                ctx.fill();
+                ctx.strokeStyle = hsla(60, 70, 60, glueAlpha);
+                ctx.lineWidth = 1.5 * camera.zoom;
+                ctx.stroke();
+
+                ctx.fillStyle = hsla(60, 60, 80, glueAlpha);
+                ctx.font = `${10 * camera.zoom}px 'JetBrains Mono'`;
+                ctx.textAlign = 'center';
+                ctx.fillText('≡ Verklebung', mp.x, mp.y + 4 * camera.zoom);
+            }
+        }
+    }
+
+    // Vertical "stalk" fibers
+    for (let fx = -250; fx <= 250; fx += 80) {
+        const fp = worldToScreen(fx, baseY + 170);
+        const ft = worldToScreen(fx, baseY - 150);
+        ctx.beginPath();
+        ctx.moveTo(fp.x, fp.y);
+        ctx.lineTo(ft.x, ft.y);
+        ctx.strokeStyle = hsla(0, 0, 50, 0.1);
+        ctx.lineWidth = 1 * camera.zoom;
+        ctx.setLineDash([3, 6]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Stalk dot
+        const stalkVal = Math.sin(fx * 0.03 + time * 0.5) * 50;
+        const sd = worldToScreen(fx, baseY - 80 + stalkVal * 0.3);
+        ctx.beginPath();
+        ctx.arc(sd.x, sd.y, 3 * camera.zoom, 0, Math.PI * 2);
+        ctx.fillStyle = hsla(50, 60, 70, 0.6);
+        ctx.fill();
+    }
+}
+
+// ============================================================
+// SCENE: SCHEMES – Spec(Z) and Fibers
+// ============================================================
+
+const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31];
+
+function drawSchemes() {
+    drawNebula();
+
+    // Spec(Z) as a horizontal line with prime points
+    const lineY = 100;
+    const startX = -400;
+    const endX = 400;
+
+    // The "arithmetic line" Spec(Z)
+    const lp1 = worldToScreen(startX, lineY);
+    const lp2 = worldToScreen(endX, lineY);
+
+    ctx.beginPath();
+    ctx.moveTo(lp1.x, lp1.y);
+    ctx.lineTo(lp2.x, lp2.y);
+    ctx.strokeStyle = hsla(220, 40, 50, 0.6);
+    ctx.lineWidth = 2 * camera.zoom;
+    ctx.stroke();
+
+    // Label
+    const specLabel = worldToScreen(0, lineY + 50);
+    ctx.fillStyle = hsla(220, 40, 70, 0.8);
+    ctx.font = `${18 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Spec(ℤ)', specLabel.x, specLabel.y);
+
+    // Generic point η
+    const etaX = startX - 60;
+    const etaP = worldToScreen(etaX, lineY);
+    ctx.beginPath();
+    ctx.arc(etaP.x, etaP.y, 12 * camera.zoom, 0, Math.PI * 2);
+    const etaGrad = ctx.createRadialGradient(etaP.x, etaP.y, 0, etaP.x, etaP.y, 12 * camera.zoom);
+    etaGrad.addColorStop(0, hsla(50, 80, 70, 0.8));
+    etaGrad.addColorStop(1, hsla(50, 80, 70, 0));
+    ctx.fillStyle = etaGrad;
+    ctx.fill();
+
+    ctx.fillStyle = hsla(50, 60, 80, 0.9);
+    ctx.font = `${14 * camera.zoom}px 'EB Garamond'`;
+    ctx.fillText('η = (0)', etaP.x, etaP.y - 20 * camera.zoom);
+    ctx.font = `${11 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.fillStyle = hsla(50, 40, 60, 0.7);
+    ctx.fillText('generischer Punkt', etaP.x, etaP.y - 35 * camera.zoom);
+    ctx.fillText('Faser = Spec(ℚ)', etaP.x, etaP.y + 25 * camera.zoom);
+
+    // Draw generic point connections to all primes (it's dense!)
+    for (const p of primes) {
+        const px = startX + 50 + primes.indexOf(p) * 70;
+        const pp = worldToScreen(px, lineY);
+        ctx.beginPath();
+        ctx.moveTo(etaP.x, etaP.y);
+        ctx.lineTo(pp.x, pp.y);
+        ctx.strokeStyle = hsla(50, 40, 50, 0.08);
+        ctx.lineWidth = 1 * camera.zoom;
+        ctx.stroke();
+    }
+
+    // Prime points
+    for (let i = 0; i < primes.length; i++) {
+        const p = primes[i];
+        const px = startX + 50 + i * 70;
+        const pp = worldToScreen(px, lineY);
+        const isHov = hoveredNode && hoveredNode.prime === p;
+
+        // Point
+        const pr = (isHov ? 10 : 7) * camera.zoom;
+        ctx.beginPath();
+        ctx.arc(pp.x, pp.y, pr, 0, Math.PI * 2);
+        const hue = (p * 37) % 360;
+        const pGrad = ctx.createRadialGradient(pp.x, pp.y, 0, pp.x, pp.y, pr * 2);
+        pGrad.addColorStop(0, hsla(hue, 70, 60, 0.9));
+        pGrad.addColorStop(1, hsla(hue, 70, 60, 0));
+        ctx.fillStyle = pGrad;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(pp.x, pp.y, pr * 0.6, 0, Math.PI * 2);
+        ctx.fillStyle = hsla(hue, 60, 70, 0.9);
+        ctx.fill();
+
+        // Label
+        ctx.fillStyle = hsla(hue, 40, 85, 0.9);
+        ctx.font = `${(isHov ? 16 : 13) * camera.zoom}px 'EB Garamond'`;
+        ctx.textAlign = 'center';
+        ctx.fillText(`(${p})`, pp.x, pp.y - 18 * camera.zoom);
+
+        // Fiber visualization above
+        if (isHov || (selectedNode && selectedNode.prime === p)) {
+            drawFiber(px, lineY - 60, p, hue);
+        }
+
+        // Residue field
+        ctx.fillStyle = hsla(hue, 30, 60, 0.5);
+        ctx.font = `${10 * camera.zoom}px 'JetBrains Mono'`;
+        ctx.fillText(`𝔽_${p}`, pp.x, pp.y + 22 * camera.zoom);
+
+        // Store for hit testing
+        if (!primes[i].node) primes[i] = { prime: p, x: px, y: lineY, r: 15 };
+    }
+
+    // Draw an elliptic curve "scheme" above
+    drawEllipticScheme(0, -120);
+}
+
+function drawFiber(cx, cy, p, hue) {
+    const fp = worldToScreen(cx, cy);
+
+    // Draw 𝔽_p as a circle of p points
+    const fiberR = Math.min(40, 15 + p * 3) * camera.zoom;
+    ctx.beginPath();
+    ctx.arc(fp.x, fp.y, fiberR, 0, Math.PI * 2);
+    ctx.strokeStyle = hsla(hue, 50, 50, 0.4);
+    ctx.lineWidth = 1 * camera.zoom;
+    ctx.stroke();
+
+    for (let k = 0; k < p; k++) {
+        const angle = (k / p) * Math.PI * 2 - Math.PI / 2;
+        const ex = fp.x + Math.cos(angle) * fiberR;
+        const ey = fp.y + Math.sin(angle) * fiberR;
+        ctx.beginPath();
+        ctx.arc(ex, ey, 3 * camera.zoom, 0, Math.PI * 2);
+        ctx.fillStyle = hsla(hue, 60, 70, 0.8);
+        ctx.fill();
+    }
+
+    ctx.fillStyle = hsla(hue, 40, 75, 0.7);
+    ctx.font = `${12 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.textAlign = 'center';
+    ctx.fillText(`𝔽_${p} = {0,...,${p-1}}`, fp.x, fp.y - fiberR - 12 * camera.zoom);
+}
+
+function drawEllipticScheme(cx, cy) {
+    const p = worldToScreen(cx, cy);
+
+    ctx.fillStyle = hsla(30, 30, 70, 0.5);
+    ctx.font = `${14 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('E: y² = x³ - x  über Spec(ℤ)', p.x, p.y - 60 * camera.zoom);
+
+    // Draw the curve
+    ctx.beginPath();
+    for (let t = -1.8; t <= 1.8; t += 0.02) {
+        const x = t;
+        const yy = t * t * t - t;
+        if (yy < 0) continue;
+        const y = Math.sqrt(yy);
+        const sp1 = worldToScreen(cx + x * 50, cy - y * 30);
+        const sp2 = worldToScreen(cx + x * 50, cy + y * 30);
+        if (t === -1.8 || yy < 0.01) {
+            ctx.moveTo(sp1.x, sp1.y);
+        } else {
+            ctx.lineTo(sp1.x, sp1.y);
+        }
+    }
+    for (let t = 1.8; t >= -1.8; t -= 0.02) {
+        const x = t;
+        const yy = t * t * t - t;
+        if (yy < 0) continue;
+        const y = -Math.sqrt(yy);
+        const sp = worldToScreen(cx + x * 50, cy - y * 30);
+        ctx.lineTo(sp.x, sp.y);
+    }
+    ctx.strokeStyle = hsla(30, 60, 60, 0.6);
+    ctx.lineWidth = 2 * camera.zoom;
+    ctx.stroke();
+
+    // Arrow down to Spec(Z)
+    const arrowTop = worldToScreen(cx, cy + 50);
+    const arrowBot = worldToScreen(cx, 80);
+    ctx.beginPath();
+    ctx.moveTo(arrowTop.x, arrowTop.y);
+    ctx.lineTo(arrowBot.x, arrowBot.y);
+    ctx.strokeStyle = hsla(0, 0, 50, 0.4);
+    ctx.lineWidth = 1.5 * camera.zoom;
+    ctx.setLineDash([5, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    const arrowMid = worldToScreen(cx + 20, (cy + 130) / 2);
+    ctx.fillStyle = hsla(0, 0, 60, 0.5);
+    ctx.font = `${12 * camera.zoom}px 'EB Garamond'`;
+    ctx.fillText('π', arrowMid.x, arrowMid.y);
+}
+
+// ============================================================
+// SCENE: TOPOI – Layered Universes
+// ============================================================
+
+function drawTopoi() {
+    drawNebula();
+
+    const topoiList = [
+        { name: 'Set', desc: 'Kategorie der Mengen', y: 200, hue: 0, omega: '{0, 1}' },
+        { name: 'Sh(X_Zar)', desc: 'Zariski-Topos', y: 80, hue: 220, omega: 'Offene Mengen von X' },
+        { name: 'Sh(X_ét)', desc: 'Étaler Topos', y: -40, hue: 280, omega: 'Étale Nachbarschaften' },
+        { name: 'Sh(X_fppf)', desc: 'fppf-Topos', y: -160, hue: 320, omega: 'Flache Überdeckungen' },
+        { name: 'BG', desc: 'Klassifizierender Topos', y: -280, hue: 60, omega: 'G-Mengen' },
+    ];
+
+    // Draw layers
+    for (let i = 0; i < topoiList.length; i++) {
+        const t = topoiList[i];
+        const p = worldToScreen(0, t.y);
+        const w = 500 * camera.zoom;
+        const h = 90 * camera.zoom;
+
+        // Layer background
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, w / 2, h / 2, 0, 0, Math.PI * 2);
+        ctx.fillStyle = hsla(t.hue, 30, 15, 0.3 + 0.1 * Math.sin(time + i));
+        ctx.fill();
+        ctx.strokeStyle = hsla(t.hue, 50, 50, 0.4);
+        ctx.lineWidth = 1.5 * camera.zoom;
+        ctx.stroke();
+
+        
+        // Topos name
+        ctx.fillStyle = hsla(t.hue, 40, 85, 0.9);
+        ctx.font = `bold ${16 * camera.zoom}px 'EB Garamond'`;
+        ctx.textAlign = 'center';
+        ctx.fillText(t.name, p.x, p.y - 10 * camera.zoom);
+
+        // Description
+        ctx.fillStyle = hsla(t.hue, 30, 65, 0.7);
+        ctx.font = `${12 * camera.zoom}px 'EB Garamond'`;
+        ctx.fillText(t.desc, p.x, p.y + 12 * camera.zoom);
+
+        // Ω label
+        ctx.fillStyle = hsla(t.hue, 50, 70, 0.5);
+        ctx.font = `${11 * camera.zoom}px 'JetBrains Mono'`;
+        ctx.fillText(`Ω = ${t.omega}`, p.x, p.y + 28 * camera.zoom);
+
+        // Objects floating inside the topos
+        const numObj = 5 + i * 2;
+        for (let j = 0; j < numObj; j++) {
+            const angle = (j / numObj) * Math.PI * 2 + time * 0.2 * (i % 2 === 0 ? 1 : -1);
+            const orbitRx = (w / 2 - 60 * camera.zoom) * (0.3 + 0.5 * noise(j, i, 42));
+            const orbitRy = (h / 2 - 15 * camera.zoom) * (0.3 + 0.5 * noise(j, i, 99));
+            const ox = p.x + Math.cos(angle) * orbitRx;
+            const oy = p.y + Math.sin(angle) * orbitRy;
+
+            ctx.beginPath();
+            ctx.arc(ox, oy, (3 + noise(j, i, 7) * 4) * camera.zoom, 0, Math.PI * 2);
+            ctx.fillStyle = hsla(t.hue + j * 20, 50, 60, 0.4 + 0.2 * Math.sin(time * 2 + j));
+            ctx.fill();
+        }
+
+        // Geometric morphisms (arrows between layers)
+        if (i < topoiList.length - 1) {
+            const next = topoiList[i + 1];
+            const np = worldToScreen(0, next.y);
+
+            // Arrow
+            const arrowX = worldToScreen(-220, (t.y + next.y) / 2);
+            ctx.beginPath();
+            ctx.moveTo(p.x - 60 * camera.zoom, p.y - h / 2 + 5 * camera.zoom);
+            ctx.lineTo(np.x - 60 * camera.zoom, np.y + h / 2 - 5 * camera.zoom);
+            ctx.strokeStyle = hsla((t.hue + next.hue) / 2, 40, 50, 0.3);
+            ctx.lineWidth = 1.5 * camera.zoom;
+            ctx.stroke();
+
+            // Arrow head
+            const ahx = np.x - 60 * camera.zoom;
+            const ahy = np.y + h / 2 - 5 * camera.zoom;
+            ctx.beginPath();
+            ctx.moveTo(ahx - 5 * camera.zoom, ahy + 8 * camera.zoom);
+            ctx.lineTo(ahx, ahy);
+            ctx.lineTo(ahx + 5 * camera.zoom, ahy + 8 * camera.zoom);
+            ctx.strokeStyle = hsla((t.hue + next.hue) / 2, 40, 50, 0.4);
+            ctx.stroke();
+
+            // Functor labels
+            const fLabelP = worldToScreen(-250, (t.y + next.y) / 2);
+            ctx.fillStyle = hsla((t.hue + next.hue) / 2, 30, 60, 0.5);
+            ctx.font = `${10 * camera.zoom}px 'JetBrains Mono'`;
+            ctx.textAlign = 'right';
+            ctx.fillText('f*', fLabelP.x - 10 * camera.zoom, fLabelP.y - 6 * camera.zoom);
+            ctx.fillText('f_*', fLabelP.x - 10 * camera.zoom, fLabelP.y + 10 * camera.zoom);
+            ctx.textAlign = 'center';
+        }
+    }
+
+    // Subobject classifier detail
+    const omegaP = worldToScreen(300, 0);
+    ctx.fillStyle = hsla(60, 50, 70, 0.6);
+    ctx.font = `${15 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Unterobjektklassifizierer Ω', omegaP.x, omegaP.y - 30 * camera.zoom);
+
+    ctx.fillStyle = hsla(60, 30, 55, 0.5);
+    ctx.font = `${12 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.fillText('true: 1 → Ω', omegaP.x, omegaP.y);
+    ctx.fillText('χ_A: X → Ω klassifiziert A ↪ X', omegaP.x, omegaP.y + 18 * camera.zoom);
+}
+
+// ============================================================
+// SCENE: MOTIVES – The Heart of Cohomology
+// ============================================================
+
+function drawMotives() {
+    drawNebula();
+
+    // Central motive
+    const cx = 0, cy = 0;
+    const cp = worldToScreen(cx, cy);
+    const mr = 60 * camera.zoom;
+
+    // Pulsing core
+    const pulse = 1 + 0.1 * Math.sin(time * 1.2);
+    const coreGrad = ctx.createRadialGradient(cp.x, cp.y, 0, cp.x, cp.y, mr * pulse * 1.5);
+    coreGrad.addColorStop(0, hsla(45, 80, 60, 0.6));
+    coreGrad.addColorStop(0.5, hsla(45, 60, 40, 0.2));
+    coreGrad.addColorStop(1, hsla(45, 60, 30, 0));
+    ctx.beginPath();
+    ctx.arc(cp.x, cp.y, mr * pulse * 1.5, 0, Math.PI * 2);
+    ctx.fillStyle = coreGrad;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(cp.x, cp.y, mr * pulse * 0.7, 0, Math.PI * 2);
+    ctx.strokeStyle = hsla(45, 70, 65, 0.7);
+    ctx.lineWidth = 2 * camera.zoom;
+    ctx.stroke();
+
+    ctx.fillStyle = hsla(45, 60, 90, 0.9);
+    ctx.font = `bold ${18 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('h(X)', cp.x, cp.y - 8 * camera.zoom);
+    ctx.font = `${13 * camera.zoom}px 'EB Garamond'`;
+    ctx.fillStyle = hsla(45, 40, 70, 0.7);
+    ctx.fillText('Motiv', cp.x, cp.y + 14 * camera.zoom);
+
+    // Realisierungen (Cohomology theories emanating from the motive)
+    const realisations = [
+        { name: 'H*_Betti', desc: 'Singuläre Kohomologie', angle: -Math.PI/2, hue: 0, detail: 'ℤ-Koeffizienten' },
+        { name: 'H*_dR', desc: 'de Rham Kohomologie', angle: -Math.PI/2 + Math.PI*2/5, hue: 120, detail: 'Differentialformen' },
+        { name: 'H*_ét(ℚₗ)', desc: 'ℓ-adische Kohomologie', angle: -Math.PI/2 + 2*Math.PI*2/5, hue: 220, detail: 'Galoisdarstellungen' },
+        { name: 'H*_kris', desc: 'Kristalline Kohomologie', angle: -Math.PI/2 + 3*Math.PI*2/5, hue: 280, detail: 'p-adisch' },
+        { name: 'H*_Hodge', desc: 'Hodge-Struktur', angle: -Math.PI/2 + 4*Math.PI*2/5, hue: 50, detail: 'Filtrierung F•' },
+    ];
+
+    const armLen = 220;
+
+    for (let i = 0; i < realisations.length; i++) {
+        const r = realisations[i];
+        const angle = r.angle + Math.sin(time * 0.3 + i) * 0.05;
+        const ex = cx + Math.cos(angle) * armLen;
+        const ey = cy + Math.sin(angle) * armLen;
+        const ep = worldToScreen(ex, ey);
+
+        // Flowing connection from motive to realisation
+        ctx.beginPath();
+        const ctrlDist = armLen * 0.5;
+        const ctrlAngle = angle + Math.sin(time * 0.7 + i * 2) * 0.3;
+        const ctrl1x = cp.x + Math.cos(ctrlAngle) * ctrlDist * camera.zoom;
+        const ctrl1y = cp.y + Math.sin(ctrlAngle) * ctrlDist * camera.zoom;
+        ctx.moveTo(cp.x, cp.y);
+        ctx.quadraticCurveTo(ctrl1x, ctrl1y, ep.x, ep.y);
+
+        // Animated gradient along the arm
+        const grad = ctx.createLinearGradient(cp.x, cp.y, ep.x, ep.y);
+        grad.addColorStop(0, hsla(45, 60, 60, 0.6));
+        grad.addColorStop(0.5, hsla((45 + r.hue) / 2, 50, 50, 0.4));
+        grad.addColorStop(1, hsla(r.hue, 60, 55, 0.6));
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 2.5 * camera.zoom;
+        ctx.stroke();
+
+        // Traveling particles
+        for (let pt = 0; pt < 3; pt++) {
+            const t = ((time * 0.4 + pt * 0.33 + i * 0.15) % 1);
+            const px2 = lerp(cp.x, ep.x, t);
+            const py2 = lerp(cp.y, ep.y, t);
+            ctx.beginPath();
+            ctx.arc(px2, py2, 3 * camera.zoom, 0, Math.PI * 2);
+            ctx.fillStyle = hsla(r.hue, 70, 70, 0.7 * (1 - Math.abs(t - 0.5) * 2));
+            ctx.fill();
+        }
+
+        // Realisation node
+        const rr = 40 * camera.zoom;
+        const rGrad = ctx.createRadialGradient(ep.x, ep.y, 0, ep.x, ep.y, rr);
+        rGrad.addColorStop(0, hsla(r.hue, 50, 35, 0.6));
+        rGrad.addColorStop(1, hsla(r.hue, 50, 20, 0.2));
+        ctx.beginPath();
+        ctx.arc(ep.x, ep.y, rr, 0, Math.PI * 2);
+        ctx.fillStyle = rGrad;
+        ctx.fill();
+        ctx.strokeStyle = hsla(r.hue, 50, 55, 0.6);
+        ctx.lineWidth = 1.5 * camera.zoom;
+        ctx.stroke();
+
+        ctx.fillStyle = hsla(r.hue, 40, 85, 0.9);
+        ctx.font = `${13 * camera.zoom}px 'JetBrains Mono'`;
+        ctx.textAlign = 'center';
+        ctx.fillText(r.name, ep.x, ep.y - 6 * camera.zoom);
+        ctx.fillStyle = hsla(r.hue, 30, 65, 0.6);
+        ctx.font = `${11 * camera.zoom}px 'EB Garamond'`;
+        ctx.fillText(r.desc, ep.x, ep.y + 10 * camera.zoom);
+        ctx.font = `${10 * camera.zoom}px 'JetBrains Mono'`;
+        ctx.fillStyle = hsla(r.hue, 30, 55, 0.4);
+        ctx.fillText(r.detail, ep.x, ep.y + 24 * camera.zoom);
+    }
+
+    // Comparison isomorphisms (dashed arcs between realisations)
+    for (let i = 0; i < realisations.length; i++) {
+        const j = (i + 1) % realisations.length;
+        const ri = realisations[i], rj = realisations[j];
+        const ai = ri.angle, aj = rj.angle;
+        const eix = cx + Math.cos(ai) * armLen, eiy = cy + Math.sin(ai) * armLen;
+        const ejx = cx + Math.cos(aj) * armLen, ejy = cy + Math.sin(aj) * armLen;
+        const eip = worldToScreen(eix, eiy);
+        const ejp = worldToScreen(ejx, ejy);
+
+        ctx.beginPath();
+        const midAngle = (ai + aj) / 2;
+        const bulge = armLen * 1.15;
+        const mx = worldToScreen(cx + Math.cos(midAngle) * bulge, cy + Math.sin(midAngle) * bulge);
+        ctx.moveTo(eip.x, eip.y);
+        ctx.quadraticCurveTo(mx.x, mx.y, ejp.x, ejp.y);
+        ctx.setLineDash([4, 6]);
+        ctx.strokeStyle = hsla((ri.hue + rj.hue) / 2, 30, 50, 0.2);
+        ctx.lineWidth = 1 * camera.zoom;
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Label
+        ctx.fillStyle = hsla((ri.hue + rj.hue) / 2, 30, 60, 0.3);
+        ctx.font = `${9 * camera.zoom}px 'JetBrains Mono'`;
+        ctx.textAlign = 'center';
+        ctx.fillText('≅', mx.x, mx.y);
+    }
+
+    // Lefschetz motive decomposition at bottom
+    const decY = 280;
+    const decP = worldToScreen(0, decY);
+    ctx.fillStyle = hsla(45, 40, 70, 0.6);
+    ctx.font = `${14 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Zerlegung: h(ℙⁿ) = 𝟙 ⊕ 𝕃 ⊕ 𝕃² ⊕ ... ⊕ 𝕃ⁿ', decP.x, decP.y);
+
+    // Visualize decomposition
+    const pieces = ['𝟙', '𝕃', '𝕃²', '𝕃³'];
+    for (let i = 0; i < pieces.length; i++) {
+        const px = -90 + i * 60;
+        const pp = worldToScreen(px, decY + 40);
+        const pr = (20 + i * 5) * camera.zoom;
+
+        ctx.beginPath();
+        ctx.arc(pp.x, pp.y, pr, 0, Math.PI * 2);
+        ctx.fillStyle = hsla(45 + i * 30, 50, 30, 0.4);
+        ctx.fill();
+        ctx.strokeStyle = hsla(45 + i * 30, 50, 55, 0.5);
+        ctx.lineWidth = 1 * camera.zoom;
+        ctx.stroke();
+
+        ctx.fillStyle = hsla(45 + i * 30, 40, 80, 0.8);
+        ctx.font = `${13 * camera.zoom}px 'JetBrains Mono'`;
+        ctx.fillText(pieces[i], pp.x, pp.y + 4 * camera.zoom);
+
+        if (i < pieces.length - 1) {
+            ctx.fillStyle = hsla(0, 0, 60, 0.5);
+            ctx.font = `${16 * camera.zoom}px 'EB Garamond'`;
+            ctx.fillText('⊕', pp.x + 30 * camera.zoom, pp.y + 4 * camera.zoom);
+        }
+    }
+}
+
+// ============================================================
+// SCENE: ÉTALE COHOMOLOGY – Frobenius Spiral
+// ============================================================
+
+function drawEtale() {
+    drawNebula();
+
+    // Frobenius spiral
+    const cx = 0, cy = -30;
+    const cp = worldToScreen(cx, cy);
+
+    ctx.fillStyle = hsla(160, 40, 75, 0.7);
+    ctx.font = `${16 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Frobenius-Endomorphismus: x ↦ xᵖ', cp.x, cp.y - 200 * camera.zoom);
+
+    // Draw the spiral representing iterated Frobenius
+    const spiralTurns = 5;
+    const maxR = 180;
+    ctx.beginPath();
+    for (let t = 0; t < spiralTurns * Math.PI * 2; t += 0.05) {
+        const r = (t / (spiralTurns * Math.PI * 2)) * maxR;
+        const angle = t + time * 0.5;
+        const sx = cx + Math.cos(angle) * r;
+        const sy = cy + Math.sin(angle) * r;
+        const sp = worldToScreen(sx, sy);
+        if (t === 0) ctx.moveTo(sp.x, sp.y);
+        else ctx.lineTo(sp.x, sp.y);
+    }
+    ctx.strokeStyle = hsla(160, 60, 55, 0.5);
+    ctx.lineWidth = 2 * camera.zoom;
+    ctx.stroke();
+
+    // Fixed points of Frobenius (rational points)
+    const numFixed = 7;
+    for (let i = 0; i < numFixed; i++) {
+        const angle = (i / numFixed) * Math.PI * 2 + time * 0.1;
+        const r = 50 + i * 18;
+        const fx = cx + Math.cos(angle) * r;
+        const fy = cy + Math.sin(angle) * r;
+        const fp = worldToScreen(fx, fy);
+
+        ctx.beginPath();
+        ctx.arc(fp.x, fp.y, 5 * camera.zoom, 0, Math.PI * 2);
+        ctx.fillStyle = hsla(60, 80, 70, 0.7 + 0.3 * Math.sin(time * 3 + i));
+        ctx.fill();
+
+        // Orbit trail
+        ctx.beginPath();
+        for (let ot = 0; ot < Math.PI * 2; ot += 0.1) {
+            const ox = cx + Math.cos(angle + ot) * r;
+            const oy = cy + Math.sin(angle + ot) * r;
+            const op = worldToScreen(ox, oy);
+            if (ot === 0) ctx.moveTo(op.x, op.y);
+            else ctx.lineTo(op.x, op.y);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = hsla(160, 40, 50, 0.15);
+        ctx.lineWidth = 1 * camera.zoom;
+        ctx.stroke();
+    }
+
+    // Zeta function visualization
+    const zetaY = 220;
+    const zetaP = worldToScreen(0, zetaY);
+    ctx.fillStyle = hsla(160, 40, 75, 0.7);
+    ctx.font = `${14 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Z(X, t) = exp( Σ |X(𝔽_{qⁿ})| · tⁿ/n )', zetaP.x, zetaP.y);
+
+    // Draw the "zeros on the critical line" – Riemann hypothesis for varieties
+    const rhY = zetaY + 60;
+    const rhP = worldToScreen(0, rhY);
+    ctx.fillStyle = hsla(160, 30, 60, 0.5);
+    ctx.font = `${13 * camera.zoom}px 'EB Garamond'`;
+    ctx.fillText('Nullstellen auf |α| = q^{w/2} (Deligne, 1974)', rhP.x, rhP.y);
+
+    // Critical line visualization
+    const lineP = worldToScreen(0, rhY + 50);
+    ctx.beginPath();
+    ctx.moveTo(lineP.x - 150 * camera.zoom, lineP.y);
+    ctx.lineTo(lineP.x + 150 * camera.zoom, lineP.y);
+    ctx.strokeStyle = hsla(0, 60, 50, 0.5);
+    ctx.lineWidth = 2 * camera.zoom;
+    ctx.stroke();
+
+    ctx.fillStyle = hsla(0, 40, 60, 0.5);
+    ctx.font = `${11 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.fillText('Re(s) = w/2', lineP.x + 170 * camera.zoom, lineP.y + 4 * camera.zoom);
+
+    // Zeros on the line
+    for (let z = 0; z < 6; z++) {
+        const zx = -120 + z * 48;
+        const zy = rhY + 50;
+        const zp = worldToScreen(zx, zy);
+        const bounce = Math.sin(time * 2 + z * 1.5) * 8 * camera.zoom;
+
+        ctx.beginPath();
+        ctx.arc(zp.x, zp.y + bounce, 4 * camera.zoom, 0, Math.PI * 2);
+        ctx.fillStyle = hsla(0, 70, 65, 0.8);
+        ctx.fill();
+    }
+
+    // Étale covering visualization
+    const covY = -200;
+    const covP = worldToScreen(-250, covY);
+    ctx.fillStyle = hsla(160, 40, 70, 0.6);
+    ctx.font = `${14 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'left';
+    ctx.fillText('Étale Überdeckung:', covP.x, covP.y);
+
+    // Base curve
+    ctx.beginPath();
+    for (let t = -2; t <= 2; t += 0.05) {
+        const bx = -250 + t * 60;
+        const by = covY + 60 + Math.sin(t * 1.5) * 15;
+        const bp = worldToScreen(bx, by);
+        if (t === -2) ctx.moveTo(bp.x, bp.y);
+        else ctx.lineTo(bp.x, bp.y);
+    }
+    ctx.strokeStyle = hsla(160, 50, 50, 0.6);
+    ctx.lineWidth = 2.5 * camera.zoom;
+    ctx.stroke();
+
+    // Covering sheets
+    for (let sheet = 0; sheet < 3; sheet++) {
+        ctx.beginPath();
+        for (let t = -2; t <= 2; t += 0.05) {
+            const bx = -250 + t * 60;
+            const by = covY + 60 + Math.sin(t * 1.5 + sheet * 2.1) * 15 - 40 - sheet * 25;
+            const bp = worldToScreen(bx, by);
+            if (t === -2) ctx.moveTo(bp.x, bp.y);
+            else ctx.lineTo(bp.x, bp.y);
+        }
+        ctx.strokeStyle = hsla(160 + sheet * 40, 50, 60, 0.4);
+        ctx.lineWidth = 1.5 * camera.zoom;
+        ctx.stroke();
+    }
+}
+
+// ============================================================
+// SCENE: DESSINS D'ENFANTS
+// ============================================================
+
+let dessinNodes = [];
+let dessinEdges = [];
+
+function initDessins() {
+    // Create a sample dessin on a sphere (projected to plane)
+    dessinNodes = [];
+    dessinEdges = [];
+
+    // Bipartite graph: black (preimage of 0) and white (preimage of 1)
+    const numBlack = 4;
+    const numWhite = 4;
+
+    for (let i = 0; i < numBlack; i++) {
+        const angle = (i / numBlack) * Math.PI * 2 + 0.3;
+        const r = 80 + 40 * Math.sin(i * 2.5);
+        dessinNodes.push({
+            x: Math.cos(angle) * r,
+            y: Math.sin(angle) * r,
+            type: 'black',
+            id: i,
+            dragging: false
+        });
+    }
+
+    for (let i = 0; i < numWhite; i++) {
+        const angle = (i / numWhite) * Math.PI * 2 + 0.3 + Math.PI / numWhite;
+        const r = 100 + 30 * Math.cos(i * 1.8);
+        dessinNodes.push({
+            x: Math.cos(angle) * r,
+            y: Math.sin(angle) * r,
+            type: 'white',
+            id: numBlack + i,
+            dragging: false
+        });
+    }
+
+    // Connect black to white (bipartite)
+    dessinEdges = [
+        [0, 4], [0, 5], [1, 5], [1, 6],
+        [2, 6], [2, 7], [3, 7], [3, 4]
+    ];
+}
+
+function drawDessins() {
+    drawNebula();
+
+    const ox = -50, oy = 0;
+
+    // Title
+    const tp = worldToScreen(ox, oy - 220);
+    ctx.fillStyle = hsla(30, 50, 75, 0.8);
+    ctx.font = `${16 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Dessin d\'Enfant auf ℙ¹', tp.x, tp.y);
+
+    // Draw the Riemann sphere (projected as circle)
+    const sp = worldToScreen(ox, oy);
+    const sr = 170 * camera.zoom;
+    ctx.beginPath();
+    ctx.arc(sp.x, sp.y, sr, 0, Math.PI * 2);
+    ctx.strokeStyle = hsla(30, 30, 40, 0.3);
+    ctx.lineWidth = 1.5 * camera.zoom;
+    ctx.stroke();
+
+    // Grid lines on sphere
+    for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI;
+        ctx.beginPath();
+        ctx.ellipse(sp.x, sp.y, sr, sr * Math.abs(Math.cos(angle)), 0, 0, Math.PI * 2);
+        ctx.strokeStyle = hsla(30, 20, 30, 0.1);
+        ctx.lineWidth = 0.5 * camera.zoom;
+        ctx.stroke();
+    }
+
+    // Draw edges of dessin
+    for (const [ai, bi] of dessinEdges) {
+        const a = dessinNodes[ai], b = dessinNodes[bi];
+        const ap = worldToScreen(ox + a.x, oy + a.y);
+        const bp = worldToScreen(ox + b.x, oy + b.y);
+
+        ctx.beginPath();
+        ctx.moveTo(ap.x, ap.y);
+        // Slight curve
+        const mx = (ap.x + bp.x) / 2 + Math.sin(time * 0.5 + ai + bi) * 10 * camera.zoom;
+        const my = (ap.y + bp.y) / 2 + Math.cos(time * 0.5 + ai * bi) * 10 * camera.zoom;
+        ctx.quadraticCurveTo(mx, my, bp.x, bp.y);
+        ctx.strokeStyle = hsla(30, 50, 60, 0.6);
+        ctx.lineWidth = 2.5 * camera.zoom;
+        ctx.stroke();
+    }
+
+    // Draw nodes
+    for (const n of dessinNodes) {
+        const np = worldToScreen(ox + n.x, oy + n.y);
+        const nr = 8 * camera.zoom;
+
+        if (n.type === 'black') {
+            ctx.beginPath();
+            ctx.arc(np.x, np.y, nr, 0, Math.PI * 2);
+            ctx.fillStyle = hsla(0, 0, 10, 0.9);
+            ctx.fill();
+            ctx.strokeStyle = hsla(30, 50, 60, 0.8);
+            ctx.lineWidth = 2 * camera.zoom;
+            ctx.stroke();
+        } else {
+            ctx.beginPath();
+            ctx.arc(np.x, np.y, nr, 0, Math.PI * 2);
+            ctx.fillStyle = hsla(0, 0, 95, 0.9);
+            ctx.fill();
+            ctx.strokeStyle = hsla(30, 50, 60, 0.8);
+            ctx.lineWidth = 2 * camera.zoom;
+            ctx.stroke();
+        }
+    }
+
+    // Legend
+    const legP = worldToScreen(ox, oy + 210);
+    ctx.fillStyle = hsla(0, 0, 10, 0.9);
+    ctx.beginPath();
+    ctx.arc(legP.x - 80 * camera.zoom, legP.y, 6 * camera.zoom, 0, Math.PI * 2);
+
+	    ctx.fill();
+    ctx.fillStyle = hsla(30, 40, 70, 0.7);
+    ctx.font = `${12 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'left';
+    ctx.fillText('= β⁻¹(0)', legP.x - 68 * camera.zoom, legP.y + 5 * camera.zoom);
+
+    ctx.fillStyle = hsla(0, 0, 95, 0.9);
+    ctx.beginPath();
+    ctx.arc(legP.x + 40 * camera.zoom, legP.y, 6 * camera.zoom, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = hsla(30, 50, 60, 0.6);
+    ctx.lineWidth = 1.5 * camera.zoom;
+    ctx.stroke();
+    ctx.fillStyle = hsla(30, 40, 70, 0.7);
+    ctx.fillText('= β⁻¹(1)', legP.x + 52 * camera.zoom, legP.y + 5 * camera.zoom);
+
+    // Belyi map visualization on the right
+    const belyiX = 250, belyiY = -80;
+    const bp2 = worldToScreen(belyiX, belyiY);
+
+    ctx.fillStyle = hsla(30, 40, 75, 0.7);
+    ctx.font = `${15 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Belyi-Abbildung β: X → ℙ¹', bp2.x, bp2.y - 80 * camera.zoom);
+
+    // Target P^1 line
+    const p1Start = worldToScreen(belyiX - 100, belyiY + 80);
+    const p1End = worldToScreen(belyiX + 100, belyiY + 80);
+    ctx.beginPath();
+    ctx.moveTo(p1Start.x, p1Start.y);
+    ctx.lineTo(p1End.x, p1End.y);
+    ctx.strokeStyle = hsla(30, 40, 50, 0.6);
+    ctx.lineWidth = 2.5 * camera.zoom;
+    ctx.stroke();
+
+    // Mark 0, 1, ∞ on P^1
+    const marks = [
+        { label: '0', x: belyiX - 70, hue: 0 },
+        { label: '1', x: belyiX, hue: 0 },
+        { label: '∞', x: belyiX + 70, hue: 0 },
+    ];
+    for (const m of marks) {
+        const mp = worldToScreen(m.x, belyiY + 80);
+        ctx.beginPath();
+        ctx.arc(mp.x, mp.y, 5 * camera.zoom, 0, Math.PI * 2);
+        ctx.fillStyle = hsla(30, 60, 65, 0.8);
+        ctx.fill();
+        ctx.fillStyle = hsla(30, 40, 80, 0.8);
+        ctx.font = `${13 * camera.zoom}px 'JetBrains Mono'`;
+        ctx.fillText(m.label, mp.x, mp.y + 20 * camera.zoom);
+    }
+
+    // Arrow from dessin to P^1
+    const arrStart = worldToScreen(belyiX, belyiY - 40);
+    const arrEnd = worldToScreen(belyiX, belyiY + 60);
+    ctx.beginPath();
+    ctx.moveTo(arrStart.x, arrStart.y);
+    ctx.lineTo(arrEnd.x, arrEnd.y);
+    ctx.strokeStyle = hsla(30, 40, 50, 0.4);
+    ctx.lineWidth = 1.5 * camera.zoom;
+    ctx.setLineDash([5, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = hsla(30, 40, 65, 0.6);
+    ctx.font = `${14 * camera.zoom}px 'EB Garamond'`;
+    ctx.fillText('β', arrEnd.x + 15 * camera.zoom, (arrStart.y + arrEnd.y) / 2);
+
+    // Galois action indicator
+    const galP = worldToScreen(ox, oy - 260);
+    const galPulse = 0.5 + 0.3 * Math.sin(time * 1.5);
+    ctx.fillStyle = hsla(60, 60, 70, galPulse);
+    ctx.font = `${13 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Gal(ℚ̄/ℚ) wirkt auf Dessins!', galP.x, galP.y);
+
+    // Animated Galois "rotation"
+    const galAngle = time * 0.3;
+    const galR = 200 * camera.zoom;
+    ctx.beginPath();
+    ctx.arc(sp.x, sp.y, galR, galAngle, galAngle + 0.5);
+    ctx.strokeStyle = hsla(60, 60, 60, 0.3);
+    ctx.lineWidth = 3 * camera.zoom;
+    ctx.stroke();
+
+    // Arrow tip on Galois arc
+    const gaX = sp.x + Math.cos(galAngle + 0.5) * galR;
+    const gaY = sp.y + Math.sin(galAngle + 0.5) * galR;
+    ctx.beginPath();
+    ctx.arc(gaX, gaY, 4 * camera.zoom, 0, Math.PI * 2);
+    ctx.fillStyle = hsla(60, 60, 70, 0.6);
+    ctx.fill();
+}
+
+// ============================================================
+// SCENE: YOGA OF WEIGHTS – Hodge Diamond & Filtrations
+// ============================================================
+
+function drawYoga() {
+    drawNebula();
+
+    // Hodge diamond for a surface (h^{p,q})
+    const hodge = [
+        [1],           // h^{0,0}
+        [1, 1],        // h^{1,0}, h^{0,1}
+        [1, 20, 1],    // h^{2,0}, h^{1,1}, h^{0,2}  (K3 surface)
+        [1, 1],        // h^{2,1}, h^{1,2}
+        [1],           // h^{2,2}
+    ];
+
+    const diamondCX = -120, diamondCY = -40;
+    const cellSize = 50;
+
+    // Title
+    const titleP = worldToScreen(diamondCX, diamondCY - 180);
+    ctx.fillStyle = hsla(190, 50, 75, 0.8);
+    ctx.font = `${16 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Hodge-Diamant einer K3-Fläche', titleP.x, titleP.y);
+
+    for (let row = 0; row < hodge.length; row++) {
+        const cols = hodge[row];
+        const rowY = diamondCY - (hodge.length - 1) / 2 * cellSize + row * cellSize;
+        const startX = diamondCX - (cols.length - 1) / 2 * cellSize;
+
+        for (let col = 0; col < cols.length; col++) {
+            const val = cols[col];
+            const cx = startX + col * cellSize;
+            const cp2 = worldToScreen(cx, rowY);
+
+            // Cell glow based on value
+            const intensity = Math.min(1, val / 20);
+            const cellR = (15 + intensity * 15) * camera.zoom;
+
+            const cellGrad = ctx.createRadialGradient(cp2.x, cp2.y, 0, cp2.x, cp2.y, cellR * 1.5);
+            cellGrad.addColorStop(0, hsla(190 + intensity * 60, 60, 50, 0.4 * intensity + 0.1));
+            cellGrad.addColorStop(1, hsla(190, 60, 50, 0));
+            ctx.beginPath();
+            ctx.arc(cp2.x, cp2.y, cellR * 1.5, 0, Math.PI * 2);
+            ctx.fillStyle = cellGrad;
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(cp2.x, cp2.y, cellR, 0, Math.PI * 2);
+            ctx.strokeStyle = hsla(190, 50, 55, 0.5);
+            ctx.lineWidth = 1.5 * camera.zoom;
+            ctx.stroke();
+
+            // Value
+            ctx.fillStyle = hsla(190, 40, 90, 0.9);
+            ctx.font = `${14 * camera.zoom}px 'JetBrains Mono'`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(val.toString(), cp2.x, cp2.y);
+
+            // h^{p,q} label
+            const p_idx = hodge.length - 1 - row + col - Math.floor(cols.length / 2) + Math.floor((hodge.length-1)/2);
+            // Simplified labeling
+        }
+    }
+
+    // Axis labels
+    const pLabel = worldToScreen(diamondCX - 160, diamondCY);
+    ctx.fillStyle = hsla(190, 30, 60, 0.6);
+    ctx.font = `${13 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.save();
+    ctx.translate(pLabel.x, pLabel.y);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('p →', 0, 0);
+    ctx.restore();
+
+    const qLabel = worldToScreen(diamondCX, diamondCY + 160);
+    ctx.fillStyle = hsla(190, 30, 60, 0.6);
+    ctx.fillText('q →', qLabel.x, qLabel.y);
+
+    // Weight filtration visualization on the right
+    const wfX = 180, wfY = -80;
+    const wfP = worldToScreen(wfX, wfY - 140);
+    ctx.fillStyle = hsla(190, 50, 75, 0.7);
+    ctx.font = `${15 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Gewichtsfiltrierung', wfP.x, wfP.y);
+
+    const weights = [
+        { label: 'W₀', hue: 200, desc: 'Gewicht 0 (rein)', height: 40 },
+        { label: 'W₁', hue: 230, desc: 'Gewicht ≤ 1', height: 70 },
+        { label: 'W₂', hue: 260, desc: 'Gewicht ≤ 2', height: 100 },
+        { label: 'W₃', hue: 290, desc: 'Gewicht ≤ 3', height: 130 },
+        { label: 'W₄ = H', hue: 320, desc: 'Gesamte Kohomologie', height: 160 },
+    ];
+
+    for (let i = weights.length - 1; i >= 0; i--) {
+        const w = weights[i];
+        const wp = worldToScreen(wfX, wfY + 80);
+        const ww = (80 + i * 20) * camera.zoom;
+        const wh = w.height * camera.zoom;
+
+        ctx.beginPath();
+        ctx.rect(wp.x - ww / 2, wp.y - wh, ww, wh);
+        ctx.fillStyle = hsla(w.hue, 30, 20, 0.2 + 0.05 * Math.sin(time + i));
+        ctx.fill();
+        ctx.strokeStyle = hsla(w.hue, 50, 50, 0.4);
+        ctx.lineWidth = 1 * camera.zoom;
+        ctx.stroke();
+
+        ctx.fillStyle = hsla(w.hue, 40, 75, 0.7);
+        ctx.font = `${12 * camera.zoom}px 'JetBrains Mono'`;
+        ctx.textAlign = 'left';
+        ctx.fillText(w.label, wp.x + ww / 2 + 10 * camera.zoom, wp.y - wh + 15 * camera.zoom);
+    }
+
+    // Hodge filtration
+    const hfX = 180, hfY = 160;
+    const hfP = worldToScreen(hfX, hfY - 40);
+    ctx.fillStyle = hsla(50, 50, 75, 0.7);
+    ctx.font = `${15 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Hodge-Filtrierung', hfP.x, hfP.y);
+
+    const hodgeFilt = ['F⁰ = H', 'F¹', 'F²', 'F³ = 0'];
+    for (let i = 0; i < hodgeFilt.length; i++) {
+        const fp = worldToScreen(hfX - 60 + i * 50, hfY + 20);
+        const barH = (120 - i * 30) * camera.zoom;
+
+        ctx.beginPath();
+        ctx.rect(fp.x - 15 * camera.zoom, fp.y - barH, 30 * camera.zoom, barH);
+        ctx.fillStyle = hsla(50 + i * 20, 40, 30, 0.3);
+        ctx.fill();
+        ctx.strokeStyle = hsla(50 + i * 20, 50, 55, 0.4);
+        ctx.lineWidth = 1 * camera.zoom;
+        ctx.stroke();
+
+        ctx.fillStyle = hsla(50 + i * 20, 40, 75, 0.7);
+        ctx.font = `${11 * camera.zoom}px 'JetBrains Mono'`;
+        ctx.textAlign = 'center';
+        ctx.fillText(hodgeFilt[i], fp.x, fp.y + 18 * camera.zoom);
+    }
+
+    // Purity statement
+    const purityP = worldToScreen(0, 280);
+    ctx.fillStyle = hsla(190, 40, 65, 0.5);
+    ctx.font = `${13 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Reinheit: Für glatte projektive X ist Hⁿ(X) rein vom Gewicht n', purityP.x, purityP.y);
+}
+
+// ============================================================
+// SCENE: SIX OPERATIONS
+// ============================================================
+
+function drawSixOps() {
+    drawNebula();
+
+    // Two "worlds" D(X) and D(Y)
+    const xCenter = -160, yCenter = 160;
+    const worldR = 130;
+
+    // D(X)
+    const dxP = worldToScreen(xCenter, 0);
+    ctx.beginPath();
+    ctx.arc(dxP.x, dxP.y, worldR * camera.zoom, 0, Math.PI * 2);
+    ctx.fillStyle = hsla(220, 25, 15, 0.3);
+    ctx.fill();
+    ctx.strokeStyle = hsla(220, 50, 50, 0.5);
+    ctx.lineWidth = 2 * camera.zoom;
+    ctx.stroke();
+
+    ctx.fillStyle = hsla(220, 40, 80, 0.8);
+    ctx.font = `bold ${18 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('D(X)', dxP.x, dxP.y - (worldR - 20) * camera.zoom);
+
+    // D(Y)
+    const dyP = worldToScreen(yCenter, 0);
+    ctx.beginPath();
+    ctx.arc(dyP.x, dyP.y, worldR * camera.zoom, 0, Math.PI * 2);
+    ctx.fillStyle = hsla(340, 25, 15, 0.3);
+    ctx.fill();
+    ctx.strokeStyle = hsla(340, 50, 50, 0.5);
+    ctx.lineWidth = 2 * camera.zoom;
+    ctx.stroke();
+
+    ctx.fillStyle = hsla(340, 40, 80, 0.8);
+    ctx.font = `bold ${18 * camera.zoom}px 'EB Garamond'`;
+    ctx.fillText('D(Y)', dyP.x, dyP.y - (worldR - 20) * camera.zoom);
+
+    // The six functors as arrows
+    const functors = [
+        { name: 'f*', from: 'Y', to: 'X', yOff: -60, hue: 120, desc: 'Rückzug (pullback)' },
+        { name: 'f_*', from: 'X', to: 'Y', yOff: -30, hue: 180, desc: 'Vorschub (pushforward)' },
+        { name: 'f!', from: 'Y', to: 'X', yOff: 30, hue: 60, desc: 'Außergewöhnlicher Rückzug' },
+        { name: 'f_!', from: 'X', to: 'Y', yOff: 60, hue: 300, desc: 'Kompakter Vorschub' },
+    ];
+
+    for (const f of functors) {
+        const fromX = f.from === 'X' ? xCenter + worldR + 10 : yCenter - worldR - 10;
+        const toX = f.to === 'X' ? xCenter - worldR - 10 : yCenter + worldR + 10;
+        const isLeftToRight = fromX < toX;
+
+        const fp = worldToScreen(fromX, f.yOff);
+        const tp = worldToScreen(toX, f.yOff);
+
+        // Arrow line
+        ctx.beginPath();
+        ctx.moveTo(fp.x, fp.y);
+        ctx.lineTo(tp.x, tp.y);
+        ctx.strokeStyle = hsla(f.hue, 50, 55, 0.6);
+        ctx.lineWidth = 2 * camera.zoom;
+        ctx.stroke();
+
+        // Arrow head
+        const headSize = 8 * camera.zoom;
+        const angle = isLeftToRight ? 0 : Math.PI;
+        ctx.beginPath();
+        ctx.moveTo(tp.x, tp.y);
+        ctx.lineTo(tp.x - Math.cos(angle - 0.4) * headSize, tp.y - Math.sin(angle - 0.4) * headSize);
+        ctx.moveTo(tp.x, tp.y);
+        ctx.lineTo(tp.x - Math.cos(angle + 0.4) * headSize, tp.y - Math.sin(angle + 0.4) * headSize);
+        ctx.strokeStyle = hsla(f.hue, 50, 60, 0.8);
+        ctx.lineWidth = 2 * camera.zoom;
+        ctx.stroke();
+
+        // Functor name
+        const midX = (fp.x + tp.x) / 2;
+        ctx.fillStyle = hsla(f.hue, 50, 80, 0.9);
+        ctx.font = `bold ${14 * camera.zoom}px 'JetBrains Mono'`;
+        ctx.textAlign = 'center';
+        ctx.fillText(f.name, midX, fp.y - 10 * camera.zoom);
+
+        // Description
+        ctx.fillStyle = hsla(f.hue, 30, 60, 0.5);
+        ctx.font = `${10 * camera.zoom}px 'EB Garamond'`;
+        ctx.fillText(f.desc, midX, fp.y + 14 * camera.zoom);
+
+        // Traveling particle
+        const pt = (time * 0.3 + f.yOff * 0.01) % 1;
+        const px = lerp(fp.x, tp.x, pt);
+        const py = fp.y;
+        ctx.beginPath();
+        ctx.arc(px, py, 3 * camera.zoom, 0, Math.PI * 2);
+        ctx.fillStyle = hsla(f.hue, 70, 70, 0.8);
+        ctx.fill();
+    }
+
+    // Adjunction brackets
+    const adjY = -100;
+    const adjP = worldToScreen(0, adjY);
+    ctx.fillStyle = hsla(0, 0, 70, 0.6);
+    ctx.font = `${13 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Adjunktionen:', adjP.x, adjP.y);
+    ctx.fillText('(f* ⊣ f_*)    (f_! ⊣ f!)', adjP.x, adjP.y + 20 * camera.zoom);
+
+    // Tensor and Hom at the bottom
+    const tensorP = worldToScreen(-160, 160);
+    ctx.beginPath();
+    ctx.arc(tensorP.x, tensorP.y, 35 * camera.zoom, 0, Math.PI * 2);
+    ctx.fillStyle = hsla(45, 30, 20, 0.3);
+    ctx.fill();
+    ctx.strokeStyle = hsla(45, 50, 55, 0.5);
+    ctx.lineWidth = 1.5 * camera.zoom;
+    ctx.stroke();
+    ctx.fillStyle = hsla(45, 50, 80, 0.8);
+    ctx.font = `bold ${20 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.fillText('⊗', tensorP.x, tensorP.y + 6 * camera.zoom);
+    ctx.font = `${11 * camera.zoom}px 'EB Garamond'`;
+    ctx.fillStyle = hsla(45, 30, 60, 0.6);
+    ctx.fillText('Tensor', tensorP.x, tensorP.y + 28 * camera.zoom);
+
+    const homP = worldToScreen(160, 160);
+    ctx.beginPath();
+    ctx.arc(homP.x, homP.y, 35 * camera.zoom, 0, Math.PI * 2);
+    ctx.fillStyle = hsla(280, 30, 20, 0.3);
+    ctx.fill();
+    ctx.strokeStyle = hsla(280, 50, 55, 0.5);
+    ctx.lineWidth = 1.5 * camera.zoom;
+    ctx.stroke();
+    ctx.fillStyle = hsla(280, 50, 80, 0.8);
+    ctx.font = `bold ${16 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.fillText('RHom', homP.x, homP.y + 6 * camera.zoom);
+    ctx.font = `${11 * camera.zoom}px 'EB Garamond'`;
+    ctx.fillStyle = hsla(280, 30, 60, 0.6);
+    ctx.fillText('Inneres Hom', homP.x, homP.y + 28 * camera.zoom);
+
+    // (⊗ ⊣ RHom)
+    const thAdjP = worldToScreen(0, 190);
+    ctx.fillStyle = hsla(0, 0, 60, 0.4);
+    ctx.font = `${12 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.fillText('(⊗ ⊣ RHom)', thAdjP.x, thAdjP.y);
+
+    // Verdier duality
+    const vdP = worldToScreen(0, 240);
+    ctx.fillStyle = hsla(0, 0, 70, 0.5);
+    ctx.font = `${14 * camera.zoom}px 'EB Garamond'`;
+    ctx.fillText('Verdier-Dualität: 𝔻 ∘ f_! ≅ f_* ∘ 𝔻', vdP.x, vdP.y);
+
+    // Base change diagram
+    const bcP = worldToScreen(0, -200);
+    ctx.fillStyle = hsla(0, 0, 70, 0.6);
+    ctx.font = `${14 * camera.zoom}px 'EB Garamond'`;
+    ctx.fillText('Basiswechsel: g* f_! ≅ f\'_! g\'*', bcP.x, bcP.y);
+}
+
+// ============================================================
+// SCENE: ANABELIAN GEOMETRY
+// ============================================================
+
+function drawAnabelian() {
+    drawNebula();
+
+    // Central curve
+    const curveCX = -100, curveCY = 0;
+
+    // Draw a hyperbolic curve (genus ≥ 2)
+    const curveP = worldToScreen(curveCX, curveCY);
+    ctx.fillStyle = hsla(80, 40, 75, 0.7);
+    ctx.font = `${15 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Hyperbolische Kurve X/ℚ (Genus ≥ 2)', curveP.x, curveP.y - 140 * camera.zoom);
+
+    // Draw torus-like shape (genus 2 surface)
+    drawGenusSurface(curveCX, curveCY, 2);
+
+    // Fundamental group loops
+    const numLoops = 4;
+    for (let i = 0; i < numLoops; i++) {
+        const loopAngle = (i / numLoops) * Math.PI * 2 + time * 0.2;
+        const loopR = 60 + i * 15;
+        const loopP = worldToScreen(curveCX, curveCY);
+
+        ctx.beginPath();
+        for (let t = 0; t <= Math.PI * 2; t += 0.05) {
+            const lx = loopP.x + Math.cos(t + loopAngle) * loopR * camera.zoom * (0.8 + 0.3 * Math.sin(t * 2 + i));
+            const ly = loopP.y + Math.sin(t + loopAngle) * loopR * camera.zoom * 0.5 * (0.8 + 0.2 * Math.cos(t * 3 + i));
+            if (t === 0) ctx.moveTo(lx, ly);
+            else ctx.lineTo(lx, ly);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = hsla(80 + i * 30, 50, 55, 0.3 + 0.1 * Math.sin(time + i));
+        ctx.lineWidth = 1.5 * camera.zoom;
+        ctx.stroke();
+    }
+
+    // Arrow to fundamental group
+    const arrowMidX = 50;
+    const arrP1 = worldToScreen(curveCX + 80, curveCY);
+    const arrP2 = worldToScreen(arrowMidX + 60, curveCY);
+    ctx.beginPath();
+    ctx.moveTo(arrP1.x, arrP1.y);
+    ctx.lineTo(arrP2.x, arrP2.y);
+    ctx.strokeStyle = hsla(80, 40, 50, 0.5);
+    ctx.lineWidth = 2 * camera.zoom;
+    ctx.stroke();
+
+    // Arrow head
+    ctx.beginPath();
+    ctx.moveTo(arrP2.x, arrP2.y);
+    ctx.lineTo(arrP2.x - 8 * camera.zoom, arrP2.y - 5 * camera.zoom);
+    ctx.moveTo(arrP2.x, arrP2.y);
+    ctx.lineTo(arrP2.x - 8 * camera.zoom, arrP2.y + 5 * camera.zoom);
+    ctx.stroke();
+
+    const arrLabel = worldToScreen((curveCX + 80 + arrowMidX + 60) / 2, curveCY - 20);
+    ctx.fillStyle = hsla(80, 40, 65, 0.6);
+    ctx.font = `${12 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.fillText('π₁^ét', arrLabel.x, arrLabel.y);
+
+    // Fundamental group representation
+    const piCX = 200, piCY = 0;
+    const piP = worldToScreen(piCX, piCY);
+
+    ctx.beginPath();
+    ctx.arc(piP.x, piP.y, 70 * camera.zoom, 0, Math.PI * 2);
+    ctx.fillStyle = hsla(80, 25, 15, 0.3);
+    ctx.fill();
+    ctx.strokeStyle = hsla(80, 50, 50, 0.5);
+    ctx.lineWidth = 2 * camera.zoom;
+    ctx.stroke();
+
+    ctx.fillStyle = hsla(80, 40, 85, 0.9);
+    ctx.font = `bold ${16 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('π₁^ét(X)', piP.x, piP.y - 10 * camera.zoom);
+    ctx.font = `${12 * camera.zoom}px 'EB Garamond'`;
+    ctx.fillStyle = hsla(80, 30, 65, 0.6);
+    ctx.fillText('Étale Fundamentalgruppe', piP.x, piP.y + 14 * camera.zoom);
+
+    // Exact sequence at bottom
+    const esY = 160;
+    const esP = worldToScreen(0, esY);
+    ctx.fillStyle = hsla(80, 40, 75, 0.7);
+    ctx.font = `${14 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('1 → π₁^geom(X_ℚ̄) → π₁^ét(X) → Gal(ℚ̄/ℚ) → 1', esP.x, esP.y);
+
+    // Visualize the exact sequence as nested groups
+    const seqParts = [
+        { label: 'π₁^geom', x: -120, r: 40, hue: 120,          desc: 'Geometrische\nFundamentalgruppe' },
+        { label: 'π₁^ét(X)', x: 0, r: 55, hue: 80, desc: 'Volle étale\nFundamentalgruppe' },
+        { label: 'Gal(ℚ̄/ℚ)', x: 140, r: 50, hue: 40, desc: 'Absolute\nGaloisgruppe' },
+    ];
+
+    const seqY2 = esY + 80;
+    for (const part of seqParts) {
+        const pp = worldToScreen(part.x, seqY2);
+        const pr = part.r * camera.zoom;
+
+        const pGrad = ctx.createRadialGradient(pp.x, pp.y, 0, pp.x, pp.y, pr * 1.3);
+        pGrad.addColorStop(0, hsla(part.hue, 40, 30, 0.4));
+        pGrad.addColorStop(1, hsla(part.hue, 40, 20, 0.1));
+        ctx.beginPath();
+        ctx.arc(pp.x, pp.y, pr, 0, Math.PI * 2);
+        ctx.fillStyle = pGrad;
+        ctx.fill();
+        ctx.strokeStyle = hsla(part.hue, 50, 55, 0.5);
+        ctx.lineWidth = 1.5 * camera.zoom;
+        ctx.stroke();
+
+        ctx.fillStyle = hsla(part.hue, 40, 85, 0.9);
+        ctx.font = `${12 * camera.zoom}px 'JetBrains Mono'`;
+        ctx.textAlign = 'center';
+        ctx.fillText(part.label, pp.x, pp.y - 4 * camera.zoom);
+
+        ctx.fillStyle = hsla(part.hue, 30, 60, 0.5);
+        ctx.font = `${10 * camera.zoom}px 'EB Garamond'`;
+        const descLines = part.desc.split('\n');
+        descLines.forEach((line, li) => {
+            ctx.fillText(line, pp.x, pp.y + 14 * camera.zoom + li * 13 * camera.zoom);
+        });
+    }
+
+    // Arrows between sequence parts
+    for (let i = 0; i < seqParts.length - 1; i++) {
+        const a = seqParts[i], b = seqParts[i + 1];
+        const ap = worldToScreen(a.x + a.r + 5, seqY2);
+        const bp = worldToScreen(b.x - b.r - 5, seqY2);
+
+        ctx.beginPath();
+        ctx.moveTo(ap.x, ap.y);
+        ctx.lineTo(bp.x, bp.y);
+        ctx.strokeStyle = hsla(0, 0, 60, 0.4);
+        ctx.lineWidth = 1.5 * camera.zoom;
+        ctx.stroke();
+
+        // Arrow head
+        ctx.beginPath();
+        ctx.moveTo(bp.x, bp.y);
+        ctx.lineTo(bp.x - 7 * camera.zoom, bp.y - 4 * camera.zoom);
+        ctx.moveTo(bp.x, bp.y);
+        ctx.lineTo(bp.x - 7 * camera.zoom, bp.y + 4 * camera.zoom);
+        ctx.stroke();
+    }
+
+    // "1 →" at start and "→ 1" at end
+    const oneLeft = worldToScreen(seqParts[0].x - seqParts[0].r - 40, seqY2);
+    const oneRight = worldToScreen(seqParts[seqParts.length-1].x + seqParts[seqParts.length-1].r + 40, seqY2);
+    ctx.fillStyle = hsla(0, 0, 60, 0.5);
+    ctx.font = `${14 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('1', oneLeft.x, oneLeft.y + 4 * camera.zoom);
+    ctx.fillText('1', oneRight.x, oneRight.y + 4 * camera.zoom);
+
+    // Arrows from 1's
+    ctx.beginPath();
+    ctx.moveTo(oneLeft.x + 10 * camera.zoom, oneLeft.y);
+    const firstPartP = worldToScreen(seqParts[0].x - seqParts[0].r - 5, seqY2);
+    ctx.lineTo(firstPartP.x, firstPartP.y);
+    ctx.strokeStyle = hsla(0, 0, 60, 0.4);
+    ctx.lineWidth = 1.5 * camera.zoom;
+    ctx.stroke();
+
+    ctx.beginPath();
+    const lastPartP = worldToScreen(seqParts[seqParts.length-1].x + seqParts[seqParts.length-1].r + 5, seqY2);
+    ctx.moveTo(lastPartP.x, lastPartP.y);
+    ctx.lineTo(oneRight.x - 10 * camera.zoom, oneRight.y);
+    ctx.stroke();
+
+    // Anabelian reconstruction arrow (going back)
+    const reconY = seqY2 + 80;
+    const reconP = worldToScreen(0, reconY);
+    ctx.fillStyle = hsla(80, 50, 70, 0.4 + 0.2 * Math.sin(time * 1.5));
+    ctx.font = `${13 * camera.zoom}px 'EB Garamond'`;
+    ctx.textAlign = 'center';
+    ctx.fillText('Anabelsche Rekonstruktion: π₁^ét(X) bestimmt X!', reconP.x, reconP.y);
+
+    // Curved arrow going back from π₁ to X
+    const backArrStart = worldToScreen(piCX, piCY + 70);
+    const backArrEnd = worldToScreen(curveCX, curveCY + 80);
+    ctx.beginPath();
+    ctx.moveTo(backArrStart.x, backArrStart.y);
+    const backCtrl = worldToScreen((piCX + curveCX) / 2, piCY + 160);
+    ctx.quadraticCurveTo(backCtrl.x, backCtrl.y, backArrEnd.x, backArrEnd.y);
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = hsla(80, 50, 55, 0.4);
+    ctx.lineWidth = 2 * camera.zoom;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Arrow head
+    ctx.beginPath();
+    ctx.moveTo(backArrEnd.x, backArrEnd.y);
+    ctx.lineTo(backArrEnd.x + 5 * camera.zoom, backArrEnd.y + 8 * camera.zoom);
+    ctx.moveTo(backArrEnd.x, backArrEnd.y);
+    ctx.lineTo(backArrEnd.x - 7 * camera.zoom, backArrEnd.y + 5 * camera.zoom);
+    ctx.strokeStyle = hsla(80, 50, 55, 0.5);
+    ctx.setLineDash([]);
+    ctx.stroke();
+
+    const backLabel = worldToScreen((piCX + curveCX) / 2 + 30, piCY + 130);
+    ctx.fillStyle = hsla(80, 40, 65, 0.5);
+    ctx.font = `${11 * camera.zoom}px 'JetBrains Mono'`;
+    ctx.fillText('Rekonstruktion', backLabel.x, backLabel.y);
+}
+
+function drawGenusSurface(cx, cy, genus) {
+    const p = worldToScreen(cx, cy);
+    const w = 100 * camera.zoom;
+    const h = 50 * camera.zoom;
+
+    // Draw a genus-g surface as a blob with holes
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y, w, h, 0, 0, Math.PI * 2);
+    ctx.fillStyle = hsla(80, 25, 20, 0.4);
+    ctx.fill();
+    ctx.strokeStyle = hsla(80, 50, 50, 0.5);
+    ctx.lineWidth = 2 * camera.zoom;
+    ctx.stroke();
+
+    // Holes (handles)
+    for (let i = 0; i < genus; i++) {
+        const hx = p.x + (i - (genus - 1) / 2) * 50 * camera.zoom;
+        const hy = p.y;
+        const hr = 15 * camera.zoom;
+
+        ctx.beginPath();
+        ctx.ellipse(hx, hy, hr, hr * 0.6, 0, 0, Math.PI * 2);
+        ctx.fillStyle = hsla(0, 0, 5, 0.6);
+        ctx.fill();
+        ctx.strokeStyle = hsla(80, 40, 45, 0.4);
+        ctx.lineWidth = 1.5 * camera.zoom;
+        ctx.stroke();
+
+        // Handle arcs
+        ctx.beginPath();
+        ctx.ellipse(hx, hy - hr * 0.3, hr * 1.2, hr * 0.4, 0, Math.PI, Math.PI * 2);
+        ctx.strokeStyle = hsla(80, 40, 50, 0.3);
+        ctx.lineWidth = 1 * camera.zoom;
+        ctx.stroke();
+    }
+}
+
+// ============================================================
+// BACKGROUND NEBULA
+// ============================================================
+
+function drawNebula() {
+    // Dark background
+    ctx.fillStyle = '#0a0a12';
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle nebula clouds
+    const nebulaColors = [
+        { hue: 260, x: W * 0.3, y: H * 0.4 },
+        { hue: 220, x: W * 0.7, y: H * 0.3 },
+        { hue: 300, x: W * 0.5, y: H * 0.7 },
+        { hue: 180, x: W * 0.2, y: H * 0.6 },
+    ];
+
+    for (const n of nebulaColors) {
+        const r = 300 + 50 * Math.sin(time * 0.1 + n.hue);
+        const grad = ctx.createRadialGradient(
+            n.x + Math.sin(time * 0.05 + n.hue) * 30,
+            n.y + Math.cos(time * 0.07 + n.hue) * 20,
+            0,
+            n.x, n.y, r
+        );
+        grad.addColorStop(0, hsla(n.hue, 40, 15, 0.08));
+        grad.addColorStop(0.5, hsla(n.hue, 30, 10, 0.04));
+        grad.addColorStop(1, hsla(n.hue, 20, 5, 0));
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+    }
+
+    // Stars
+    const starSeed = 42;
+    for (let i = 0; i < 150; i++) {
+        const sx = noise(i, 0, starSeed) * W;
+        const sy = noise(0, i, starSeed) * H;
+        const sr = 0.5 + noise(i, i, starSeed) * 1.5;
+        const brightness = 0.3 + 0.4 * noise(i, starSeed, 0) + 0.3 * Math.sin(time * (0.5 + noise(i, 0, 7) * 2) + i);
+
+        ctx.beginPath();
+        ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+        ctx.fillStyle = hsla(
+            200 + noise(i, 7, starSeed) * 60,
+            20 + noise(i, 3, starSeed) * 30,
+            70 + noise(i, 11, starSeed) * 30,
+            brightness
+        );
+        ctx.fill();
+    }
+}
+
+// ============================================================
+// HIT TESTING
+// ============================================================
+
+function hitTest(mx, my) {
+    const world = screenToWorld(mx, my);
+
+    if (currentScene === 'overview') {
+        for (const node of conceptNodes) {
+            if (dist(world.x, world.y, node.x, node.y) < node.r) {
+                return node;
+            }
+        }
+    }
+
+    if (currentScene === 'schemes') {
+        for (let i = 0; i < primes.length; i++) {
+            const p = primes[i];
+            if (typeof p === 'object' && dist(world.x, world.y, p.x, p.y) < p.r) {
+                return p;
+            }
+        }
+    }
+
+    return null;
+}
+
+// ============================================================
+// EVENT HANDLERS
+// ============================================================
+
+canvas.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+
+    if (mouse.down) {
+        const dx = (e.clientX - mouse.px) / camera.zoom;
+        const dy = (e.clientY - mouse.py) / camera.zoom;
+        camera.targetX -= dx;
+        camera.targetY -= dy;
+        mouse.px = e.clientX;
+        mouse.py = e.clientY;
+    }
+
+    // Hit test
+    const hit = hitTest(e.clientX, e.clientY);
+    hoveredNode = hit;
+    canvas.style.cursor = hit ? 'pointer' : (mouse.down ? 'grabbing' : 'grab');
+
+    // Tooltip
+    if (hit && hit.desc) {
+        tooltip.style.opacity = '1';
+        tooltip.style.left = (e.clientX + 15) + 'px';
+        tooltip.style.top = (e.clientY - 10) + 'px';
+        tooltip.textContent = hit.desc || hit.label || `(${hit.prime})`;
+    } else {
+        tooltip.style.opacity = '0';
+    }
+});
+
+canvas.addEventListener('mousedown', (e) => {
+    mouse.down = true;
+    mouse.px = e.clientX;
+    mouse.py = e.clientY;
+});
+
+canvas.addEventListener('mouseup', (e) => {
+    mouse.down = false;
+
+    // Click on node
+    const hit = hitTest(e.clientX, e.clientY);
+    if (hit) {
+        selectedNode = hit;
+        if (currentScene === 'overview' && hit.id) {
+            switchScene(hit.id);
+        }
+    }
+});
+
+canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+    camera.targetZoom = clamp(camera.targetZoom * zoomFactor, 0.3, 5);
+}, { passive: false });
+
+// Touch support
+canvas.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+        mouse.down = true;
+        mouse.px = e.touches[0].clientX;
+        mouse.py = e.touches[0].clientY;
+    }
+});
+
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (e.touches.length === 1 && mouse.down) {
+        const dx = (e.touches[0].clientX - mouse.px) / camera.zoom;
+        const dy = (e.touches[0].clientY - mouse.py) / camera.zoom;
+        camera.targetX -= dx;
+        camera.targetY -= dy;
+        mouse.px = e.touches[0].clientX;
+        mouse.py = e.touches[0].clientY;
+    }
+}, { passive: false });
+
+canvas.addEventListener('touchend', () => {
+    mouse.down = false;
+});
+
+// Navigation buttons
+document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const scene = btn.dataset.scene;
+        switchScene(scene);
+    });
+});
+
+function switchScene(scene) {
+    currentScene = scene;
+    selectedNode = null;
+    hoveredNode = null;
+
+    // Reset camera
+    camera.targetX = 0;
+    camera.targetY = 0;
+    camera.targetZoom = 1;
+
+    // Update nav buttons
+    document.querySelectorAll('.nav-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.scene === scene);
+    });
+
+    // Update info panel
+    const info = sceneInfo[scene];
+    if (info) {
+        infoPanel.classList.remove('hidden');
+        infoPanel.innerHTML = info.html;
+    }
+
+    // Update controls
+    updateControls(scene);
+
+    // Init scene-specific data
+    if (scene === 'sheaves') initSheaves();
+    if (scene === 'dessins') initDessins();
+}
+
+function updateControls(scene) {
+    controlsDiv.innerHTML = '';
+
+    if (scene === 'sheaves') {
+        controlsDiv.innerHTML = `
+            <div class="control-group">
+                <label>Garben-Auflösung</label>
+                <input type="range" min="5" max="80" value="30" id="sheaf-res">
+            </div>
+        `;
+        document.getElementById('sheaf-res')?.addEventListener('input', (e) => {
+            animationParams.sheafResolution = parseInt(e.target.value);
+        });
+    }
+
+    if (scene === 'overview') {
+        controlsDiv.innerHTML = `
+            <div class="control-group">
+                <label>Partikel-Geschwindigkeit</label>
+                <input type="range" min="1" max="20" value="10" id="particle-speed">
+            </div>
+        `;
+        document.getElementById('particle-speed')?.addEventListener('input', (e) => {
+            animationParams.particleSpeed = parseInt(e.target.value) / 10;
+        });
+    }
+
+    if (scene === 'etale') {
+        controlsDiv.innerHTML = `
+            <div class="control-group">
+                <label>Frobenius-Drehung</label>
+                <input type="range" min="1" max="30" value="10" id="frob-speed">
+            </div>
+            <div class="control-group">
+                <label>Primzahl q</label>
+                <select id="prime-q">
+                    <option value="2">q = 2</option>
+                    <option value="3">q = 3</option>
+                    <option value="5" selected>q = 5</option>
+                    <option value="7">q = 7</option>
+                    <option value="11">q = 11</option>
+                </select>
+            </div>
+        `;
+        document.getElementById('frob-speed')?.addEventListener('input', (e) => {
+            animationParams.frobSpeed = parseInt(e.target.value) / 10;
+        });
+    }
+
+    if (scene === 'yoga') {
+        controlsDiv.innerHTML = `
+            <div class="control-group">
+                <label>Gewicht-Schicht</label>
+                <input type="range" min="0" max="4" value="4" id="weight-layer">
+            </div>
+        `;
+    }
+
+    if (scene === 'dessins') {
+        controlsDiv.innerHTML = `
+            <div class="control-group">
+                <label>Dessin-Typ</label>
+                <select id="dessin-type">
+                    <option value="cube">Würfel</option>
+                    <option value="tetra">Tetraeder</option>
+                    <option value="custom" selected>Standard</option>
+                </select>
+            </div>
+        `;
+        document.getElementById('dessin-type')?.addEventListener('change', (e) => {
+            const type = e.target.value;
+            if (type === 'cube') {
+                dessinNodes = [];
+                const positions = [
+                    [-60,-60],[-60,60],[60,-60],[60,60],
+                    [-30,-30],[-30,30],[30,-30],[30,30]
+                ];
+                for (let i = 0; i < 4; i++) {
+                    dessinNodes.push({ x: positions[i][0], y: positions[i][1], type: 'black', id: i });
+                }
+                for (let i = 4; i < 8; i++) {
+                    dessinNodes.push({ x: positions[i][0], y: positions[i][1], type: 'white', id: i });
+                }
+                dessinEdges = [[0,4],[0,5],[1,5],[1,7],[2,4],[2,6],[3,6],[3,7]];
+            } else if (type === 'tetra') {
+                dessinNodes = [
+                    { x: 0, y: -80, type: 'black', id: 0 },
+                    { x: -70, y: 50, type: 'black', id: 1 },
+                    { x: 70, y: 50, type: 'black', id: 2 },
+                    { x: 0, y: 0, type: 'white', id: 3 },
+                    { x: -35, y: -15, type: 'white', id: 4 },
+                    { x: 35, y: -15, type: 'white', id: 5 },
+                ];
+                dessinEdges = [[0,3],[0,4],[0,5],[1,3],[1,4],[2,3],[2,5]];
+            } else {
+                initDessins();
+            }
+        });
+    }
+}
+
+// ============================================================
+// MAIN RENDER LOOP
+// ============================================================
+
+function render() {
+    time += 0.016 * (animationParams.particleSpeed || 1);
+
+    // Smooth camera
+    camera.x = lerp(camera.x, camera.targetX, 0.08);
+    camera.y = lerp(camera.y, camera.targetY, 0.08);
+    camera.zoom = lerp(camera.zoom, camera.targetZoom, 0.08);
+
+    // Clear
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw current scene
+    switch (currentScene) {
+        case 'overview': drawOverview(); break;
+        case 'sheaves': drawSheaves(); break;
+        case 'schemes': drawSchemes(); break;
+        case 'topoi': drawTopoi(); break;
+        case 'motives': drawMotives(); break;
+        case 'etale': drawEtale(); break;
+        case 'dessins': drawDessins(); break;
+        case 'yoga': drawYoga(); break;
+        case 'sixops': drawSixOps(); break;
+        case 'anabelian': drawAnabelian(); break;
+    }
+
+    requestAnimationFrame(render);
+}
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+
+function init() {
+    // Set initial scene
+    switchScene('overview');
+
+    // Start render loop
+    render();
+
+    console.log('🌌 Grothendiecks Universum initialisiert.');
+    console.log('Navigiere durch die Konzepte mit den Buttons oben.');
+}
+
+init();
+
+</script>
+</body>
+</html>
+
