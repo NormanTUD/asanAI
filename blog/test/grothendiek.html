@@ -1,0 +1,2909 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grothendiecks Universum – Interaktive Visualisierung</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Georgia', serif;
+    background: #0a0a1a;
+    color: #e0e0e0;
+    overflow-x: hidden;
+  }
+  h1 {
+    text-align: center;
+    padding: 30px;
+    font-size: 2.2em;
+    background: linear-gradient(135deg, #1a1a3e, #0a0a1a);
+    border-bottom: 2px solid #3a3a6a;
+    letter-spacing: 2px;
+  }
+  h1 span { color: #8888ff; }
+
+  /* Tab Navigation */
+  .tab-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px;
+    background: #0e0e24;
+    border-bottom: 1px solid #2a2a5a;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    background: #1a1a3e;
+    color: #aaa;
+    border: 1px solid #3a3a6a;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: all 0.3s;
+    font-family: Georgia, serif;
+  }
+  .tab-btn:hover, .tab-btn.active {
+    background: #2a2a6e;
+    color: #fff;
+    border-color: #6666cc;
+    box-shadow: 0 0 15px rgba(100,100,255,0.3);
+  }
+
+  .tab-content {
+    display: none;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 80vh;
+  }
+  .tab-content.active { display: block; }
+
+  canvas {
+    display: block;
+    margin: 20px auto;
+    border: 1px solid #3a3a6a;
+    border-radius: 8px;
+    cursor: crosshair;
+    background: #05051a;
+  }
+
+  .explanation {
+    background: #12122a;
+    border: 1px solid #2a2a5a;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    line-height: 1.8;
+    font-size: 1.05em;
+  }
+  .explanation em { color: #aaaaff; font-style: normal; font-weight: bold; }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin: 15px 0;
+    align-items: center;
+  }
+  .controls label { color: #aaa; font-size: 0.9em; }
+  .controls input[type=range] {
+    width: 150px;
+    accent-color: #6666cc;
+  }
+  .controls button, .controls select {
+    padding: 8px 18px;
+    background: #2a2a6e;
+    color: #fff;
+    border: 1px solid #5555aa;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: Georgia, serif;
+    font-size: 0.9em;
+    transition: all 0.2s;
+  }
+  .controls button:hover, .controls select:hover {
+    background: #3a3aaa;
+  }
+
+  .info-box {
+    position: fixed;
+    background: #1a1a4eee;
+    border: 1px solid #6666cc;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.9em;
+    max-width: 300px;
+    pointer-events: none;
+    z-index: 200;
+    display: none;
+    box-shadow: 0 0 20px rgba(100,100,255,0.4);
+  }
+
+  .math { font-family: 'Times New Roman', serif; font-style: italic; color: #ccccff; }
+
+  h2 { color: #8888ff; margin-bottom: 15px; font-size: 1.5em; }
+  h3 { color: #7777dd; margin: 15px 0 10px; }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin: 10px 0;
+    font-size: 0.85em;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid #fff3;
+  }
+</style>
+</head>
+<body>
+
+<h1>🌌 <span>Grothendiecks Universum</span> – Interaktiv Erleben</h1>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('sheaves')">🌾 Garben (Sheaves)</button>
+  <button class="tab-btn" onclick="showTab('schemes')">🗺️ Schemata (Schemes)</button>
+  <button class="tab-btn" onclick="showTab('functors')">🔄 Funktoren & Yoneda</button>
+  <button class="tab-btn" onclick="showTab('topos')">🏛️ Topoi</button>
+  <button class="tab-btn" onclick="showTab('cohomology')">💎 Kohomologie</button>
+  <button class="tab-btn" onclick="showTab('dessin')">🎨 Dessins d'Enfants</button>
+  <button class="tab-btn" onclick="showTab('motives')">🧬 Motive</button>
+</div>
+
+<div id="info-box" class="info-box"></div>
+
+<!-- ==================== GARBEN ==================== -->
+<div id="sheaves" class="tab-content active">
+  <h2>🌾 Garben (Sheaves) – Lokale Daten, Global Zusammengeklebt</h2>
+  <div class="explanation">
+    Eine <em>Garbe</em> (frz. <em>faisceau</em>) ordnet jedem offenen Bereich eines Raumes Daten zu – und zwar so, dass sich lokale Daten konsistent zu globalen zusammenkleben lassen. Grothendieck erkannte: <em>Die Garbe ist wichtiger als der Raum selbst.</em><br><br>
+    <strong>Interaktion:</strong> Klicke auf die Linie, um offene Mengen zu erzeugen. Jeder offenen Menge wird ein „Schnitt" (Section) zugeordnet. Beobachte, wie sich überlappende Schnitte konsistent verhalten müssen (Verklebungsbedingung).
+  </div>
+  <div class="controls">
+    <button onclick="sheafReset()">Reset</button>
+    <button onclick="sheafAddRandom()">Zufällige Mengen</button>
+    <label>Schnitt-Typ:
+      <select id="sheaf-type" onchange="sheafRedraw()">
+        <option value="function">Funktionen-Garbe 𝒪</option>
+        <option value="constant">Konstante Garbe ℤ</option>
+        <option value="vector">Vektorbündel-Garbe</option>
+      </select>
+    </label>
+  </div>
+  <canvas id="sheaf-canvas" width="1100" height="500"></canvas>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#4488ff"></div> Offene Menge U</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ff8844"></div> Schnitt (Section) über U</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#44ff88"></div> Verklebung (Gluing)</div>
+  </div>
+</div>
+
+<!-- ==================== SCHEMATA ==================== -->
+<div id="schemes" class="tab-content">
+  <h2>🗺️ Schemata – Geometrie aus Ringen</h2>
+  <div class="explanation">
+    Ein <em>Schema</em> ist Grothendiecks revolutionäre Verallgemeinerung algebraischer Varietäten. Statt nur Nullstellenmengen zu betrachten, nimmt man das <em>Spektrum</em> Spec(R) eines Ringes – die Menge aller Primideale – und stattet es mit einer Strukturgarbe aus.<br><br>
+    <strong>Interaktion:</strong> Wähle verschiedene Ringe und beobachte, wie sich Spec(R) verändert. Punkte = Primideale. Hover über Punkte für Details. Ziehe am Slider, um „Faserung" über Spec(ℤ) zu sehen.
+  </div>
+  <div class="controls">
+    <label>Ring:
+      <select id="scheme-ring" onchange="schemeRedraw()">
+        <option value="Z">ℤ (ganze Zahlen)</option>
+        <option value="Zx">ℤ[x] (Polynome über ℤ)</option>
+        <option value="Fp">𝔽ₚ[x] (Polynome über 𝔽ₚ)</option>
+        <option value="C">ℂ[x,y]/(y²−x³+x)</option>
+        <option value="dual">ℝ[ε]/(ε²) – Duale Zahlen</option>
+        <option value="local">ℤ₍ₚ₎ – Lokalisierung</option>
+      </select>
+    </label>
+    <label>Primzahl p: <input type="range" id="scheme-prime" min="2" max="13" value="5" oninput="schemeRedraw()"><span id="scheme-prime-val">5</span></label>
+    <button onclick="schemeRedraw()">Neu zeichnen</button>
+  </div>
+  <canvas id="scheme-canvas" width="1100" height="550"></canvas>
+</div>
+
+<!-- ==================== FUNKTOREN ==================== -->
+<div id="functors" class="tab-content">
+  <h2>🔄 Funktoren & das Yoneda-Lemma</h2>
+  <div class="explanation">
+    Grothendieck dachte in <em>Kategorien</em>: Objekte und Morphismen. Ein <em>Funktor</em> ist eine strukturerhaltende Abbildung zwischen Kategorien. Das <em>Yoneda-Lemma</em> sagt: Ein Objekt wird vollständig durch seine Beziehungen zu allen anderen Objekten bestimmt – <em>„Ein Objekt ist, was es tut."</em><br><br>
+    <strong>Interaktion:</strong> Ziehe Objekte herum. Klicke zwischen Objekte, um Morphismen zu erzeugen. Beobachte, wie der Funktor die Struktur in die andere Kategorie überträgt.
+  </div>
+  <div class="controls">
+    <button onclick="functorReset()">Reset</button>
+    <button onclick="functorAddObject('source')">+ Objekt (Quelle)</button>
+    <button onclick="functorAddObject('target')">+ Objekt (Ziel)</button>
+    <label>Funktor-Typ:
+      <select id="functor-type" onchange="functorRedraw()">
+        <option value="covariant">Kovariant (F: C→D)</option>
+        <option value="contravariant">Kontravariant (F: Cᵒᵖ→D)</option>
+        <option value="yoneda">Yoneda h_A = Hom(A,−)</option>
+      </select>
+    </label>
+    <button onclick="functorAutoDemo()">▶ Auto-Demo</button>
+  </div>
+  <canvas id="functor-canvas" width="1100" height="550"></canvas>
+</div>
+
+<!-- ==================== TOPOI ==================== -->
+<div id="topos" class="tab-content">
+  <h2>🏛️ Topoi – Universen der Logik</h2>
+  <div class="explanation">
+    Ein <em>Topos</em> (Plural: Topoi) ist für Grothendieck ein verallgemeinerter Raum – eine Kategorie, die sich wie die Kategorie der Garben auf einem topologischen Raum verhält. Topoi haben ihre eigene <em>interne Logik</em>, die nicht zwingend klassisch sein muss!<br><br>
+    <strong>Interaktion:</strong> Erkunde verschiedene Topoi. Beobachte, wie sich die Wahrheitswerte ändern – im klassischen Topos gibt es nur {wahr, falsch}, aber in anderen Topoi gibt es viele Wahrheitswerte!
+  </div>
+  <div class="controls">
+    <label>Topos:
+      <select id="topos-type" onchange="toposRedraw()">
+        <option value="set">Set (Mengen) – klassisch</option>
+        <option value="presheaf">Prägarben auf •→•</option>
+        <option value="sheaf">Garben auf ℝ</option>
+        <option value="G-set">G-Mengen (G=ℤ/3)</option>
+        <option value="sieves">Siebe (Sieves)</option>
+      </select>
+    </label>
+    <button onclick="toposRedraw()">Neu zeichnen</button>
+    <button onclick="toposAnimate()">▶ Animieren</button>
+  </div>
+  <canvas id="topos-canvas" width="1100" height="550"></canvas>
+</div>
+
+<!-- ==================== KOHOMOLOGIE ==================== -->
+<div id="cohomology" class="tab-content">
+  <h2>💎 Kohomologie – Löcher Zählen, Abstrakt</h2>
+  <div class="explanation">
+    <em>Kohomologie</em> misst die „Löcher" in Räumen auf algebraische Weise. Grothendieck revolutionierte dies mit der <em>étalen Kohomologie</em> und den <em>abgeleiteten Kategorien</em>. Die Idee: Statt Räume direkt zu untersuchen, studiere die Garben darauf und ihre Kohomologie.<br><br>
+    <strong>Interaktion:</strong> Baue simplizialen Komplexe, indem du Punkte setzt und verbindest. Beobachte in Echtzeit, wie sich die Betti-Zahlen (β₀, β₁, β₂) ändern – sie zählen Zusammenhangskomponenten, Schleifen und Hohlräume.
+  </div>
+  <div class="controls">
+    <button onclick="cohoReset()">Reset</button>
+    <button onclick="cohoAddVertex()">+ Punkt</button>
+    <label>Modus:
+      <select id="coho-mode">
+        <option value="vertex">Punkte setzen</option>
+        <option value="edge">Kanten ziehen</option>
+        <option value="face">Flächen füllen</option>
+      </select>
+    </label>
+    <button onclick="cohoExample('torus')">Beispiel: Torus</button>
+    <button onclick="cohoExample('sphere')">Beispiel: Sphäre</button>
+    <button onclick="cohoExample('klein')">Beispiel: Klein'sche Flasche</button>
+  </div>
+  <canvas id="coho-canvas" width="1100" height="500"></canvas>
+  <div id="coho-info" style="text-align:center; font-size:1.2em; margin:15px; color:#aaf;"></div>
+</div>
+
+<!-- ==================== DESSINS ==================== -->
+<div id="dessin" class="tab-content">
+  <h2>🎨 Dessins d'Enfants – Kinderzeichnungen</h2>
+  <div class="explanation">
+    <em>Dessins d'Enfants</em> (Kinderzeichnungen) sind bipartite Graphen auf Flächen, die Grothendieck in „Esquisse d'un Programme" einführte. Sie kodieren tiefe arithmetische Information: Jedes Dessin entspricht einer algebraischen Kurve über <span class="math">Q̄</span>, und die absolute Galoisgruppe Gal(<span class="math">Q̄/Q</span>) wirkt treu auf ihnen!<br><br>
+    <strong>Interaktion:</strong> Zeichne dein eigenes Dessin oder lade Beispiele. Schwarze und weiße Knoten bilden einen bipartiten Graphen. Beobachte die zugehörige Belyi-Funktion.
+  </div>
+  <div class="controls">
+    <button onclick="dessinReset()">Reset</button>
+    <button onclick="dessinExample('tree')">Baum</button>
+    <button onclick="dessinExample('cube')">Würfel</button>
+    <button onclick="dessinExample('star')">Stern</button>
+    <button onclick="dessinExample('belyi')">Belyi β(z)=4z(1−z)</button>
+    <label>Modus:
+      <select id="dessin-mode">
+        <option value="black">● Schwarzer Knoten</option>
+        <option value="white">○ Weißer Knoten</option>
+        <option value="edge">— Kante</option>
+      </select>
+    </label>
+  </div>
+  <canvas id="dessin-canvas" width="1100" height="500"></canvas>
+  <div id="dessin-info" style="text-align:center; font-size:1.1em; margin:15px; color:#aaf;"></div>
+</div>
+
+<!-- ==================== MOTIVE ==================== -->
+<div id="motives" class="tab-content">
+  <h2>🧬 Motive – Der Universelle Kohomologie-Traum</h2>
+  <div class="explanation">
+    <em>Motive</em> sind Grothendiecks kühnste Vision: eine universelle Kohomologie-Theorie, die alle anderen (de Rham, étale, Betti, kristalline...) als „Realisierungen" eines einzigen Motivs vereint. Ein Motiv ist das „Wesen" einer Varietät – das, was allen Kohomologien gemeinsam ist.<br><br>
+    <strong>Interaktion:</strong> Wähle eine Varietät und beobachte, wie ihr Motiv in verschiedene Kohomologien „projiziert" wird. Alle tragen dieselbe Information, nur in verschiedener Gestalt.
+  </div>
+  <div class="controls">
+    <label>Varietät:
+      <select id="motive-variety" onchange="motiveRedraw()">
+        <option value="point">Punkt Spec(k)</option>
+        <option value="P1">ℙ¹ (Projektive Gerade)</option>
+        <option value="elliptic">Elliptische Kurve</option>
+        <option value="P2">ℙ² (Projektive Ebene)</option>
+        <option value="K3">K3-Fläche</option>
+      </select>
+    </label>
+    <button onclick="motiveAnimate()">▶ Realisierungen animieren</button>
+    <button onclick="motiveRedraw()">Neu zeichnen</button>
+  </div>
+  <canvas id="motive-canvas" width="1100" height="550"></canvas>
+</div>
+
+<script>
+// ============================================================
+// GLOBAL HELPERS
+// ============================================================
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  // Trigger redraw
+  switch(id) {
+    case 'sheaves': sheafRedraw(); break;
+    case 'schemes': schemeRedraw(); break;
+    case 'functors': functorRedraw(); break;
+    case 'topos': toposRedraw(); break;
+    case 'cohomology': cohoRedraw(); break;
+    case 'dessin': dessinRedraw(); break;
+    case 'motives': motiveRedraw(); break;
+  }
+}
+
+const infoBox = document.getElementById('info-box');
+function showInfo(x, y, text) {
+  infoBox.style.display = 'block';
+  infoBox.style.left = (x + 15) + 'px';
+  infoBox.style.top = (y - 10) + 'px';
+  infoBox.innerHTML = text;
+}
+function hideInfo() { infoBox.style.display = 'none'; }
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function dist(x1, y1, x2, y2) { return Math.sqrt((x1-x2)**2 + (y1-y2)**2); }
+
+// ============================================================
+// 1. GARBEN (SHEAVES)
+// ============================================================
+let sheafIntervals = [];
+let sheafCanvas, sheafCtx;
+
+function sheafInit() {
+  sheafCanvas = document.getElementById('sheaf-canvas');
+  sheafCtx = sheafCanvas.getContext('2d');
+  sheafCanvas.addEventListener('click', sheafClick);
+  sheafCanvas.addEventListener('mousemove', sheafHover);
+  sheafCanvas.addEventListener('mouseleave', () => hideInfo());
+  sheafAddRandom();
+}
+
+function sheafReset() {
+  sheafIntervals = [];
+  sheafRedraw();
+}
+
+function sheafClick(e) {
+  const rect = sheafCanvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const baseY = 200;
+  const lineLeft = 80, lineRight = 1020;
+  if (Math.abs(x - Math.max(lineLeft, Math.min(lineRight, x))) < 20) {
+    const t = (x - lineLeft) / (lineRight - lineLeft);
+    const width = 0.05 + Math.random() * 0.15;
+    const a = Math.max(0, t - width);
+    const b = Math.min(1, t + width);
+    const color = `hsl(${Math.random()*360}, 70%, 55%)`;
+    sheafIntervals.push({ a, b, color, func: generateSheafFunc() });
+    sheafRedraw();
+  }
+}
+
+function sheafHover(e) {
+  const rect = sheafCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const lineLeft = 80, lineRight = 1020;
+  let found = false;
+  for (let iv of sheafIntervals) {
+    const xa = lineLeft + iv.a * (lineRight - lineLeft);
+    const xb = lineLeft + iv.b * (lineRight - lineLeft);
+    if (mx >= xa && mx <= xb && my >= 160 && my <= 240) {
+      showInfo(e.clientX, e.clientY,
+        `<b>Offene Menge U = (${iv.a.toFixed(2)}, ${iv.b.toFixed(2)})</b><br>
+         Schnitt: ℱ(U) = {f: U → ℝ}<br>
+         <i>Restriktionsabbildung auf Teilmengen</i>`);
+      found = true;
+      break;
+    }
+  }
+  if (!found) hideInfo();
+}
+
+function generateSheafFunc() {
+  const a = (Math.random() - 0.5) * 3;
+  const b = (Math.random() - 0.5) * 5;
+  const c = Math.random() * Math.PI * 2;
+  return (t) => Math.sin(a * t * 6 + c) * 0.5 + Math.cos(b * t * 4) * 0.3;
+}
+
+function sheafAddRandom() {
+  sheafIntervals = [];
+  const n = 4 + Math.floor(Math.random() * 4);
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * 0.7;
+    const b = a + 0.1 + Math.random() * 0.2;
+    const color = `hsl(${(i / n) * 360}, 70%, 55%)`;
+    sheafIntervals.push({ a: Math.max(0, a), b: Math.min(1, b), color, func: generateSheafFunc() });
+  }
+  sheafRedraw();
+}
+
+function sheafRedraw() {
+  const c = sheafCtx;
+  const W = sheafCanvas.width, H = sheafCanvas.height;
+  c.clearRect(0, 0, W, H);
+
+  const lineLeft = 80, lineRight = 1020, baseY = 200;
+  const type = document.getElementById('sheaf-type').value;
+
+  // Background grid
+  c.strokeStyle = '#1a1a3a';
+  c.lineWidth = 0.5;
+  for (let x = lineLeft; x <= lineRight; x += 50) {
+    c.beginPath(); c.moveTo(x, 50); c.lineTo(x, H - 30); c.stroke();
+  }
+
+  // Base space X (the line)
+  c.strokeStyle = '#ffffff';
+  c.lineWidth = 3;
+  c.beginPath();
+  c.moveTo(lineLeft, baseY);
+  c.lineTo(lineRight, baseY);
+  c.stroke();
+  c.fillStyle = '#fff';
+  c.font = '16px Georgia';
+  c.fillText('Basisraum X', lineLeft, baseY + 35);
+  c.fillText('0', lineLeft - 5, baseY + 20);
+  c.fillText('1', lineRight - 5, baseY + 20);
+
+  // Label
+  c.fillStyle = '#8888ff';
+  c.font = '14px Georgia';
+  c.fillText('← Klicke auf die Linie, um offene Mengen hinzuzufügen →', W/2 - 200, baseY + 55);
+
+  // Draw open intervals and their sections
+  sheafIntervals.forEach((iv, idx) => {
+    const xa = lineLeft + iv.a * (lineRight - lineLeft);
+    const xb = lineLeft + iv.b * (lineRight - lineLeft);
+
+    // Open interval on base
+    c.fillStyle = iv.color + '44';
+    c.fillRect(xa, baseY - 15, xb - xa, 30);
+    c.strokeStyle = iv.color;
+    c.lineWidth = 3;
+    c.beginPath();
+    c.moveTo(xa, baseY);
+    c.lineTo(xb, baseY);
+    c.stroke();
+
+    // Open endpoints (circles)
+    c.beginPath(); c.arc(xa, baseY, 5, 0, Math.PI * 2); c.strokeStyle = iv.color; c.lineWidth = 2; c.stroke();
+    c.beginPath(); c.arc(xb, baseY, 5, 0, Math.PI * 2); c.stroke();
+
+    // Section (function above)
+    const sectionY = 80;
+    const sectionH = 80;
+    c.strokeStyle = iv.color;
+    c.lineWidth = 2;
+    c.beginPath();
+    for (let px = xa; px <= xb; px += 1) {
+      const t = (px - xa) / (xb - xa);
+      let val;
+      if (type === 'function') {
+        val = iv.func(t);
+      } else if (type === 'constant') {
+        val = Math.round(iv.func(0.5) * 3) / 3;
+      } else {
+        val = iv.func(t);
+      }
+      const y = sectionY + sectionH / 2 - val * sectionH / 2;
+      if (px === Math.ceil(xa)) c.moveTo(px, y);
+      else c.lineTo(px, y);
+    }
+    c.stroke();
+
+    // Vertical fibers (stalks)
+    if (idx % 2 === 0) {
+      const midX = (xa + xb) / 2;
+      c.strokeStyle = iv.color + '66';
+      c.lineWidth = 1;
+      c.setLineDash([4, 4]);
+      c.beginPath();
+      c.moveTo(midX, baseY - 15);
+      c.lineTo(midX, sectionY + sectionH);
+      c.stroke();
+      c.setLineDash([]);
+
+      // Stalk label
+      c.fillStyle = iv.color;
+      c.font = '11px Georgia';
+      c.fillText(`ℱₓ`, midX - 8, sectionY + sectionH + 15);
+    }
+
+    // Label
+    c.fillStyle = iv.color;
+    c.font = '12px Georgia';
+    c.fillText(`U${idx+1}`, (xa + xb) / 2 - 8, baseY - 22);
+  });
+
+  // Check and show gluing
+  c.font = '13px Georgia';
+  let gluingY = baseY + 80;
+  c.fillStyle = '#44ff88';
+  c.fillText('Verklebungsbedingung (Gluing Axiom):', lineLeft, gluingY);
+  gluingY += 25;
+
+  for (let i = 0; i < sheafIntervals.length; i++) {
+    for (let j = i + 1; j < sheafIntervals.length; j++) {
+      const a = sheafIntervals[i], b = sheafIntervals[j];
+      const overlapA = Math.max(a.a, b.a);
+      const overlapB = Math.min(a.b, b.b);
+      if (overlapA < overlapB) {
+        const xa = lineLeft + overlapA * (lineRight - lineLeft);
+        const xb = lineLeft + overlapB * (lineRight - lineLeft);
+
+        // Highlight overlap
+        c.fillStyle = '#44ff8833';
+        c.fillRect(xa, baseY - 12, xb - xa, 24);
+        c.strokeStyle = '#44ff88';
+        c.lineWidth = 2;
+        c.beginPath(); c.moveTo(xa, baseY); c.lineTo(xb, baseY); c.stroke();
+
+        c.fillStyle = '#44ff88';
+        if (gluingY < H - 20) {
+          c.fillText(`U${i+1} ∩ U${j+1} = (${overlapA.toFixed(2)}, ${overlapB.toFixed(2)})  →  ℱ(U${i+1})|_{U∩V} = ℱ(U${j+1})|_{U∩V}  ✓`, lineLeft + 20, gluingY);
+          gluingY += 20;
+        }
+      }
+    }
+  }
+
+  // Title labels
+  c.fillStyle = '#ff8844';
+  c.font = '14px Georgia';
+  c.fillText('Schnitte ℱ(Uᵢ) – Sections', lineLeft, 45);
+  c.fillStyle = '#8888ff';
+  c.fillText(type === 'function' ? 'Strukturgarbe 𝒪_X: stetige Funktionen' :
+             type === 'constant' ? 'Konstante Garbe ℤ: lokal konstante Werte' :
+             'Vektorbündel-Garbe: Schnitte eines Bündels', lineLeft + 300, 45);
+}
+
+// ============================================================
+// 2. SCHEMATA (SCHEMES)
+// ============================================================
+let schemeCanvas, schemeCtx;
+let schemePoints = [];
+let schemeHover = -1;
+
+function schemeInit() {
+  schemeCanvas = document.getElementById('scheme-canvas');
+  schemeCtx = schemeCanvas.getContext('2d');
+  schemeCanvas.addEventListener('mousemove', schemeMouseMove);
+  schemeCanvas.addEventListener('mouseleave', () => { schemeHover = -1; hideInfo(); schemeRedraw(); });
+  schemeRedraw();
+}
+
+function schemeMouseMove(e) {
+  const rect = schemeCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  schemeHover = -1;
+  for (let i = 0; i < schemePoints.length; i++) {
+    if (dist(mx, my, schemePoints[i].x, schemePoints[i].y) < schemePoints[i].r + 5) {
+      schemeHover = i;
+      showInfo(e.clientX, e.clientY, schemePoints[i].info);
+      break;
+    }
+  }
+  if (schemeHover === -1) hideInfo();
+  schemeRedraw();
+}
+
+function schemeRedraw() {
+  const c = schemeCtx;
+  const W = schemeCanvas.width, H = schemeCanvas.height;
+  c.clearRect(0, 0, W, H);
+  schemePoints = [];
+
+  const ring = document.getElementById('scheme-ring').value;
+  const p = parseInt(document.getElementById('scheme-prime').value);
+  document.getElementById('scheme-prime-val').textContent = p;
+
+  // Background
+  c.fillStyle = '#08081a';
+  c.fillRect(0, 0, W, H);
+
+  // Title
+  c.fillStyle = '#8888ff';
+  c.font = 'bold 18px Georgia';
+
+  if (ring === 'Z') {
+    drawSpecZ(c, W, H, p);
+  } else if (ring === 'Zx') {
+    drawSpecZx(c, W, H, p);
+  } else if (ring === 'Fp') {
+    drawSpecFp(c, W, H, p);
+  } else if (ring === 'C') {
+    drawEllipticScheme(c, W, H);
+  } else if (ring === 'dual') {
+    drawDualNumbers(c, W, H);
+  } else if (ring === 'local') {
+    drawLocalization(c, W, H, p);
+  }
+}
+
+function drawSpecZ(c, W, H, p) {
+  c.fillText('Spec(ℤ) – Das Spektrum der ganzen Zahlen', 50, 40);
+  c.fillStyle = '#aaa';
+  c.font = '14px Georgia';
+  c.fillText('Jeder Punkt = ein Primideal. Der generische Punkt (0) ist überall dicht.', 50, 65);
+
+  const baseY = 300;
+  const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31];
+
+  // Generic point (0)
+  const gx = W / 2, gy = 140;
+  c.beginPath();
+  c.arc(gx, gy, 25, 0, Math.PI * 2);
+  c.fillStyle = '#ffdd4466';
+  c.fill();
+  c.strokeStyle = '#ffdd44';
+  c.lineWidth = 2;
+  c.stroke();
+  c.fillStyle = '#ffdd44';
+  c.font = 'bold 16px Georgia';
+  c.fillText('(0)', gx - 10, gy + 5);
+  c.font = '12px Georgia';
+  c.fillText('Generischer Punkt – Q', gx - 55, gy + 45);
+  schemePoints.push({ x: gx, y: gy, r: 25, info: '<b>Generischer Punkt (0)</b><br>Residuenkörper: ℚ<br>Liegt in jeder offenen Menge<br>Abschluss = ganz Spec(ℤ)' });
+
+  // Closed points (p)
+  primes.forEach((pr, i) => {
+    const x = 80 + i * (W - 160) / (primes.length - 1);
+    const y = baseY;
+    const r = pr === p ? 18 : 12;
+    const highlight = pr === p;
+
+    // Connection to generic point
+    c.strokeStyle = highlight ? '#ffdd4444' : '#ffffff11';
+    c.lineWidth = 1;
+    c.setLineDash([3, 5]);
+    c.beginPath(); c.moveTo(x, y - r); c.lineTo(gx, gy + 25); c.stroke();
+    c.setLineDash([]);
+
+    // Point
+    c.beginPath();
+    c.arc(x, y, r, 0, Math.PI * 2);
+    c.fillStyle = highlight ? '#ff666688' : '#4488ff44';
+    c.fill();
+    c.strokeStyle = highlight ? '#ff6666' : '#4488ff';
+    c.lineWidth = highlight ? 3 : 1.5;
+    c.stroke();
+
+    // Label
+    c.fillStyle = highlight ? '#ff8888' : '#88aaff';
+    c.font = `${highlight ? 'bold ' : ''}14px Georgia`;
+    c.fillText(`(${pr})`, x - 10, y + r + 20);
+
+    // Residue field
+    c.fillStyle = '#666';
+    c.font = '11px Georgia';
+    c.fillText(`𝔽${pr}`, x - 8, y + r + 35);
+
+    schemePoints.push({
+      x, y, r,
+      info: `<b>Abgeschlossener Punkt (${pr})</b><br>Primideal: (${pr}) ⊂ ℤ<br>Residuenkörper: 𝔽<sub>${pr}</sub> = ℤ/${pr}ℤ<br>Abschluss: {(${pr})} (ein Punkt)`
+    });
+  });
+
+  // Zariski topology hint
+  c.fillStyle = '#555';
+  c.font = '13px Georgia';
+  c.fillText('Zariski-Topologie: Offene Mengen = Spec(ℤ) \\ {endlich viele Primideale}', 50, H - 50);
+  c.fillText('Strukturgarbe: 𝒪(D(f)) = ℤ[1/f] – Lokalisierung!', 50, H - 30);
+
+  // Highlight selected prime
+  if (p <= 31) {
+    const idx = primes.indexOf(p);
+    if (idx >= 0) {
+      const x = 80 + idx * (W - 160) / (primes.length - 1);
+      c.strokeStyle = '#ff444488';
+      c.lineWidth = 1;
+      c.setLineDash([5, 5]);
+      c.strokeRect(x - 30, baseY - 50, 60, 100);
+      c.setLineDash([]);
+      c.fillStyle = '#ff8888';
+      c.font = '12px Georgia';
+      c.fillText('← gewählt', x + 25, baseY - 30);
+    }
+  }
+}
+
+function drawSpecZx(c, W, H, p) {
+  c.fillText('Spec(ℤ[x]) – Arithmetische Fläche', 50, 40);
+  c.fillStyle = '#aaa';
+  c.font = '13px Georgia';
+  c.fillText('Horizontale Achse: Primzahlen (Fasern über Spec(ℤ)). Vertikale: irreduzible Polynome.', 50, 65);
+
+  const primes = [2, 3, 5, 7, 11, 13];
+  const marginL = 120, marginR = 80, marginT = 100, marginB = 80;
+  const plotW = W - marginL - marginR;
+  const plotH = H - marginT - marginB;
+
+  // Axes
+  c.strokeStyle = '#555';
+  c.lineWidth = 1;
+  c.beginPath();
+  c.moveTo(marginL, marginT);
+  c.lineTo(marginL, marginT + plotH);
+  c.lineTo(marginL + plotW, marginT + plotH);
+  c.stroke();
+
+  c.fillStyle = '#888';
+  c.font = '13px Georgia';
+  c.fillText('Spec(ℤ) →', marginL + plotW / 2 - 30, H - 20);
+  c.save();
+  c.translate(25, marginT + plotH / 2);
+  c.rotate(-Math.PI / 2);
+  c.fillText('Polynome in x →', -50, 0);
+  c.restore();
+
+  // Draw fibers and points
+  primes.forEach((pr, pi) => {
+    const x = marginL + (pi + 0.5) * plotW / primes.length;
+
+    // Vertical fiber
+    c.strokeStyle = '#333366';
+    c.lineWidth = 1;
+    c.setLineDash([3, 3]);
+    c.beginPath(); c.moveTo(x, marginT); c.lineTo(x, marginT + plotH); c.stroke();
+    c.setLineDash([]);
+
+    c.fillStyle = '#6688cc';
+    c.font = '13px Georgia';
+    c.fillText(`p=${pr}`, x - 15, marginT + plotH + 25);
+
+    // Points on fiber: (p, f(x)) for irreducible f mod p
+    const irreducibles = getIrreduciblesModP(pr);
+    irreducibles.forEach((poly, fi) => {
+      const y = marginT + (fi + 1) * plotH / (irreducibles.length + 2);
+      const r = 8;
+      const highlight = pr === p;
+
+      c.beginPath();
+      c.arc(x, y, r, 0, Math.PI * 2);
+      c.fillStyle = highlight ? '#ff666666' : '#4488ff44';
+      c.fill();
+      c.strokeStyle = highlight ? '#ff6666' : '#4488ff';
+      c.lineWidth = highlight ? 2 : 1;
+      c.stroke();
+
+      schemePoints.push({
+        x, y, r,
+        info: `<b>Punkt (${pr}, ${poly})</b><br>Primideal in ℤ[x]<br>Residuenkörper: 𝔽<sub>${pr}</sub>[x]/(${poly})<br>Faser über (${pr}) ∈ Spec(ℤ)`
+      });
+    });
+  });
+
+  // Generic point of each horizontal curve
+  c.fillStyle = '#ffdd44';
+  c.font = '12px Georgia';
+  const horizCurves = ['(x)', '(x−1)', '(x²+1)'];
+  horizCurves.forEach((curve, i) => {
+    const y = marginT + 40 + i * 60;
+    c.setLineDash([6, 4]);
+    c.strokeStyle = `hsl(${60 + i * 40}, 60%, 50%)`;
+    c.lineWidth = 1.5;
+    c.beginPath();
+    c.moveTo(marginL, y);
+    c.lineTo(marginL + plotW, y);
+    c.stroke();
+    c.setLineDash([]);
+    c.fillStyle = `hsl(${60 + i * 40}, 60%, 60%)`;
+    c.fillText(curve, marginL + plotW + 10, y + 5);
+  });
+}
+
+function getIrreduciblesModP(p) {
+  // Simplified: return some irreducible polynomials mod p
+  const polys = [`x`, `x+1`];
+  if (p > 2) polys.push(`x+${p-1}`);
+  if (p > 3) polys.push(`x²+1`);
+  if (p > 5) polys.push(`x²+x+1`);
+  return polys;
+}
+
+function drawSpecFp(c, W, H, p) {
+  c.fillText(`Spec(𝔽${p}[x]) – Affine Gerade über 𝔽${p}`, 50, 40);
+  c.fillStyle = '#aaa';
+  c.font = '13px Georgia';
+  c.fillText(`Abgeschlossene Punkte = irreduzible Polynome über 𝔽${p}. Generischer Punkt = (0).`, 50, 65);
+
+  const centerX = W / 2, centerY = H / 2;
+  const radius = 180;
+
+  // Generic point
+  c.beginPath();
+  c.arc(centerX, centerY, 30, 0, Math.PI * 2);
+  c.fillStyle = '#ffdd4433';
+  c.fill();
+  c.strokeStyle = '#ffdd44';
+  c.lineWidth = 2;
+  c.stroke();
+  c.fillStyle = '#ffdd44';
+  c.font = 'bold 14px Georgia';
+  c.fillText('(0)', centerX - 10, centerY + 5);
+  c.font = '11px Georgia';
+  c.fillText(`𝔽${p}(x)`, centerX - 15, centerY + 20);
+  schemePoints.push({ x: centerX, y: centerY, r: 30, info: `<b>Generischer Punkt (0)</b><br>Residuenkörper: 𝔽<sub>${p}</sub>(x)<br>Funktionenkörper der Geraden` });
+
+  // Degree 1 points: (x - a) for a in F_p
+  for (let a = 0; a < p; a++) {
+    const angle = (a / p) * Math.PI * 2 - Math.PI / 2;
+    const x = centerX + radius * Math.cos(angle);
+    const y = centerY + radius * Math.sin(angle);
+
+    c.strokeStyle = '#ffffff22';
+    c.lineWidth = 1;
+    c.setLineDash([3, 5]);
+    c.beginPath(); c.moveTo(x, y); c.lineTo(centerX, centerY); c.stroke();
+    c.setLineDash([]);
+
+    c.beginPath();
+    c.arc(x, y, 14, 0, Math.PI * 2);
+    c.fillStyle = '#4488ff44';
+    c.fill();
+    c.strokeStyle = '#4488ff';
+    c.lineWidth = 2;
+    c.stroke();
+
+    c.fillStyle = '#88aaff';
+    c.font = '13px Georgia';
+    const label = a === 0 ? '(x)' : `(x−${a})`;
+    c.fillText(label, x - 15, y + 28);
+
+    c.fillStyle = '#666';
+    c.font = '10px Georgia';
+    c.fillText(`𝔽${p}`, x - 8, y + 40);
+
+    schemePoints.push({ x, y, r: 14, info: `<b>Rationaler Punkt ${label}</b><br>Grad 1, Residuenkörper: 𝔽<sub>${p}</sub><br>Entspricht a = ${a} ∈ 𝔽<sub>${p}</sub>` });
+  }
+
+  // A degree 2 point
+  const angle2 = Math.PI * 0.8;
+  const x2 = centerX + (radius + 80) * Math.cos(angle2);
+  const y2 = centerY + (radius + 80) * Math.sin(angle2);
+  c.beginPath();
+  c.arc(x2, y2, 12, 0, Math.PI * 2);
+  c.fillStyle = '#ff884444';
+  c.fill();
+  c.strokeStyle = '#ff8844';
+  c.lineWidth = 2;
+  c.stroke();
+  c.fillStyle = '#ffaa66';
+  c.font = '12px Georgia';
+  c.fillText('(x²+1)', x2 - 20, y2 + 25);
+  c.fillStyle = '#666';
+  c.font = '10px Georgia';
+  c.fillText(`𝔽${p}²`, x2 - 10, y2 + 38);
+  schemePoints.push({ x: x2, y: y2, r: 12, info: `<b>Punkt vom Grad 2: (x²+1)</b><br>Residuenkörper: 𝔽<sub>${p}²</sub><br>Nicht rational über 𝔽<sub>${p}</sub>!<br>Wird zu 2 Punkten über 𝔽<sub>${p}²</sub>` });
+}
+
+function drawEllipticScheme(c, W, H) {
+  c.fillText('Spec(ℂ[x,y]/(y²−x³+x)) – Elliptische Kurve', 50, 40);
+  c.fillStyle = '#aaa';
+  c.font = '13px Georgia';
+  c.fillText('Die klassischen Punkte bilden eine Riemannsche Fläche vom Geschlecht 1 (Torus).', 50, 65);
+
+  const cx = W / 2, cy = H / 2 + 20;
+
+  // Draw the curve y² = x³ - x
+  c.strokeStyle = '#6688ff';
+  c.lineWidth = 2.5;
+  c.beginPath();
+  for (let px = -1.5; px <= 2.5; px += 0.005) {
+    const val = px * px * px - px;
+    if (val >= 0) {
+      const sy = Math.sqrt(val);
+      const screenX = cx + px * 120;
+      const screenY1 = cy - sy * 80;
+      const screenY2 = cy + sy * 80;
+      if (px === -1.5 || val < 0.01) {
+        c.moveTo(screenX, screenY1);
+      } else {
+        c.lineTo(screenX, screenY1);
+      }
+    }
+  }
+  c.stroke();
+
+  c.beginPath();
+  for (let px = -1.5; px <= 2.5; px += 0.005) {
+    const val = px * px * px - px;
+    if (val >= 0) {
+      const sy = Math.sqrt(val);
+      const screenX = cx + px * 120;
+      const screenY2 = cy + sy * 80;
+      if (px === -1.5 || val < 0.01) {
+        c.moveTo(screenX, screenY2);
+      } else {
+        c.lineTo(screenX, screenY2);
+      }
+    }
+  }
+  c.stroke();
+
+  // Mark some points
+  const pts = [
+    { x: 0, y: 0, label: '(0,0)' },
+    { x: 1, y: 0, label: '(1,0)' },
+    { x: -1, y: 0, label: '(−1,0)' },
+    { x: 2, y: Math.sqrt(6), label: '(2,√6)' },
+  ];
+  pts.forEach(pt => {
+    const sx = cx + pt.x * 120;
+    const sy = cy - pt.y * 80;
+    c.beginPath();
+    c.arc(sx, sy, 6, 0, Math.PI * 2);
+    c.fillStyle = '#ff666688';
+    c.fill();
+    c.strokeStyle = '#ff6666';
+    c.lineWidth = 2;
+    c.stroke();
+    c.fillStyle = '#ffaaaa';
+    c.font = '11px Georgia';
+    c.fillText(pt.label, sx + 10, sy - 5);
+    schemePoints.push({ x: sx, y: sy, r: 6, info: `<b>Punkt ${pt.label}</b><br>auf y² = x³ − x<br>Gruppenstruktur: Punkte bilden eine abelsche Gruppe!` });
+  });
+
+  // Torus visualization on the right
+  const tx = W - 200, ty = cy;
+  c.fillStyle = '#444';
+  c.font = '13px Georgia';
+  c.fillText('≅ Torus ℂ/Λ', tx - 20, ty - 120);
+
+  // Draw torus (simplified as two concentric ellipses)
+  c.strokeStyle = '#6688ff44';
+  c.lineWidth = 1.5;
+  for (let t = 0; t < Math.PI * 2; t += 0.02) {
+    const R = 70, r = 30;
+    const x = tx + (R + r * Math.cos(t * 3)) * Math.cos(t);
+    const y = ty + (R + r * Math.cos(t * 3)) * Math.sin(t) * 0.6;
+    if (t === 0) c.beginPath();
+    c.lineTo(x, y);
+  }
+  c.closePath();
+  c.stroke();
+
+  c.fillStyle = '#6688ff';
+  c.font = '12px Georgia';
+  c.fillText('Geschlecht g = 1', tx - 40, ty + 100);
+  c.fillText('H¹ = ℤ²', tx - 20, ty + 118);
+}
+
+function drawDualNumbers(c, W, H) {
+  c.fillText('Spec(ℝ[ε]/(ε²)) – Duale Zahlen: Ein „fetter Punkt"', 50, 40);
+  c.fillStyle = '#aaa';
+  c.font = '13px Georgia';
+  c.fillText('Nur ein Primideal (ε), aber mit nilpotentem Element – der Punkt „erinnert sich" an eine Richtung!', 50, 65);
+
+  const cx = W / 2, cy = H / 2;
+
+  // The single point with "fuzz"
+  const gradient = c.createRadialGradient(cx, cy, 0, cx, cy, 120);
+  gradient.addColorStop(0, '#ff666688');
+  gradient.addColorStop(0.3, '#ff666633');
+  gradient.addColorStop(1, '#ff666600');
+  c.fillStyle = gradient;
+  c.beginPath();
+  c.arc(cx, cy, 120, 0, Math.PI * 2);
+  c.fill();
+
+  // Inner point
+  c.beginPath();
+  c.arc(cx, cy, 15, 0, Math.PI * 2);
+  c.fillStyle = '#ff6666';
+  c.fill();
+  c.strokeStyle = '#ff8888';
+  c.lineWidth = 2;
+  c.stroke();
+
+  // Tangent direction (the nilpotent "fuzz")
+  c.strokeStyle = '#ffaa44';
+  c.lineWidth = 3;
+  c.setLineDash([6, 4]);
+  c.beginPath();
+  c.moveTo(cx - 100, cy);
+  c.lineTo(cx + 100, cy);
+  c.stroke();
+  c.setLineDash([]);
+
+  // Arrow
+  c.beginPath();
+  c.moveTo(cx + 90, cy - 8);
+  c.lineTo(cx + 100, cy);
+  c.lineTo(cx + 90, cy + 8);
+  c.strokeStyle = '#ffaa44';
+  c.lineWidth = 2;
+  c.stroke();
+
+  c.fillStyle = '#ffaa44';
+  c.font = '16px Georgia';
+  c.fillText('ε (Tangentialrichtung)', cx + 110, cy + 5);
+
+  c.fillStyle = '#ff8888';
+  c.font = 'bold 16px Georgia';
+  c.fillText('(ε)', cx - 8, cy - 25);
+
+  c.fillStyle = '#aaa';
+  c.font = '14px Georgia';
+  c.fillText('ε² = 0, aber ε ≠ 0', cx - 50, cy + 60);
+  c.fillText('→ „infinitesimale Nachbarschaft" eines Punktes', cx - 140, cy + 85);
+  c.fillText('→ Tangentialvektor als algebraisches Objekt!', cx - 130, cy + 110);
+
+  // Comparison
+  c.fillStyle = '#555';
+  c.font = '13px Georgia';
+  c.fillText('Vergleich:', 80, H - 120);
+  c.fillText('Spec(ℝ) = ein Punkt •', 80, H - 95);
+  c.fillText('Spec(ℝ[ε]/(ε²)) = ein „fetter Punkt" mit Tangentialinfo', 80, H - 70);
+  c.fillText('Spec(ℝ[ε]/(ε³)) = noch „fetter" – kennt auch Krümmung!', 80, H - 45);
+
+  schemePoints.push({ x: cx, y: cy, r: 15, info: '<b>Der einzige Punkt: (ε)</b><br>Residuenkörper: ℝ<br>Aber: 𝒪 = ℝ[ε]/(ε²) hat Nilpotente!<br>→ Tangentialinformation gespeichert<br>→ Morphismus Spec(ℝ[ε]/(ε²)) → X<br>   = Tangentialvektor an X' });
+}
+
+function drawLocalization(c, W, H, p) {
+  c.fillText(`Spec(ℤ₍${p}₎) – Lokalisierung bei (${p})`, 50, 40);
+  c.fillStyle = '#aaa';
+  c.font = '13px Georgia';
+  c.fillText(`Nur zwei Punkte: der generische Punkt (0) und der abgeschlossene Punkt (${p}).`, 50, 65);
+
+  const cx = W / 2, cy = H / 2;
+
+  // Generic point
+  c.beginPath();
+  c.arc(cx, cy - 80, 35, 0, Math.PI * 2);
+  c.fillStyle = '#ffdd4433';
+  c.fill();
+  c.strokeStyle = '#ffdd44';
+  c.lineWidth = 2;
+  c.stroke();
+  c.fillStyle = '#ffdd44';
+  c.font = 'bold 18px Georgia';
+  c.fillText('(0)', cx - 12, cy - 75);
+  c.font = '13px Georgia';
+  c.fillText('ℚ', cx - 5, cy - 55);
+
+  // Closed point
+  c.beginPath();
+  c.arc(cx, cy + 80, 25, 0, Math.PI * 2);
+  c.fillStyle = '#ff666644';
+  c.fill();
+  c.strokeStyle = '#ff6666';
+  c.lineWidth = 2;
+  c.stroke();
+  c.fillStyle = '#ff8888';
+  c.font = 'bold 18px Georgia';
+  c.fillText(`(${p})`, cx - 12, cy + 85);
+  c.font = '13px Georgia';
+  c.fillText(`𝔽${p}`, cx - 8, cy + 110);
+
+  // Arrow: specialization
+  c.strokeStyle = '#888';
+  c.lineWidth = 2;
+  c.beginPath();
+  c.moveTo(cx, cy - 40);
+  c.lineTo(cx, cy + 50);
+  c.stroke();
+  c.beginPath();
+  c.moveTo(cx - 6, cy + 44);
+  c.lineTo(cx, cy + 52);
+  c.lineTo(cx + 6, cy + 44);
+  c.fill();
+
+  c.fillStyle = '#888';
+  c.font = '13px Georgia';
+  c.fillText('Spezialisierung', cx + 15, cy + 10);
+
+  c.fillStyle = '#666';
+  c.font = '14px Georgia';
+  c.fillText(`ℤ₍${p}₎ = { a/b ∈ ℚ : ${p} ∤ b }`, cx - 100, cy + 170);
+  c.fillText(`Lokaler Ring: einziges maximales Ideal (${p})`, cx - 130, cy + 195);
+
+  schemePoints.push({ x: cx, y: cy - 80, r: 35, info: `<b>Generischer Punkt (0)</b><br>Residuenkörper: ℚ<br>Offene Menge: {(0)} ist offen!` });
+  schemePoints.push({ x: cx, y: cy + 80, r: 25, info: `<b>Abgeschlossener Punkt (${p})</b><br>Residuenkörper: 𝔽<sub>${p}</sub><br>Abschluss: ganz Spec(ℤ<sub>(${p})</sub>)` });
+}
+
+// ============================================================
+// 3. FUNKTOREN & YONEDA
+// ============================================================
+let functorCanvas, functorCtx;
+let functorSourceObjs = [];
+let functorTargetObjs = [];
+let functorMorphisms = [];
+let functorDragging = null;
+let functorAnimating = false;
+
+function functorInit() {
+  functorCanvas = document.getElementById('functor-canvas');
+  functorCtx = functorCanvas.getContext('2d');
+  functorCanvas.addEventListener('mousedown', functorMouseDown);
+  functorCanvas.addEventListener('mousemove', functorMouseMove);
+  functorCanvas.addEventListener('mouseup', functorMouseUp);
+  functorCanvas.addEventListener('dblclick', functorDblClick);
+  functorCanvas.addEventListener('mouseleave', () => { functorDragging = null; hideInfo(); });
+  functorReset();
+}
+
+function functorReset() {
+  functorSourceObjs = [
+    { x: 150, y: 180, label: 'A', color: '#ff6666' },
+    { x: 280, y: 350, label: 'B', color: '#66ff66' },
+    { x: 100, y: 420, label: 'C', color: '#6666ff' },
+  ];
+  functorTargetObjs = [
+    { x: 750, y: 180, label: 'F(A)', color: '#ff6666' },
+    { x: 880, y: 350, label: 'F(B)', color: '#66ff66' },
+    { x: 700, y: 420, label: 'F(C)', color: '#6666ff' },
+  ];
+  functorMorphisms = [
+    { from: 0, to: 1, label: 'f' },
+    { from: 1, to: 2, label: 'g' },
+    { from: 0, to: 2, label: 'g∘f' },
+  ];
+  functorRedraw();
+}
+
+function functorAddObject(side) {
+  const x = side === 'source' ? 100 + Math.random() * 250 : 650 + Math.random() * 300;
+  const y = 120 + Math.random() * 380;
+  const idx = side === 'source' ? functorSourceObjs.length : functorTargetObjs.length;
+  const labels = 'DEFGHIJKLMN';
+  const color = `hsl(${Math.random() * 360}, 65%, 60%)`;
+  if (side === 'source') {
+    const label = labels[idx % labels.length];
+    functorSourceObjs.push({ x, y, label, color });
+    functorTargetObjs.push({ x: x + 550, y, label: `F(${label})`, color });
+  } else {
+    functorTargetObjs.push({ x, y, label: `D${idx}`, color });
+  }
+  functorRedraw();
+}
+
+function functorMouseDown(e) {
+  const rect = functorCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const allObjs = [...functorSourceObjs, ...functorTargetObjs];
+  for (let i = 0; i < allObjs.length; i++) {
+    if (dist(mx, my, allObjs[i].x, allObjs[i].y) < 25) {
+      functorDragging = { idx: i, list: i < functorSourceObjs.length ? 'source' : 'target', localIdx: i < functorSourceObjs.length ? i : i - functorSourceObjs.length };
+      return;
+    }
+  }
+}
+
+function functorMouseMove(e) {
+  const rect = functorCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  if (functorDragging) {
+    const list = functorDragging.list === 'source' ? functorSourceObjs : functorTargetObjs;
+    list[functorDragging.localIdx].x = mx;
+    list[functorDragging.localIdx].y = my;
+    functorRedraw();
+  } else {
+    // Hover info
+    const allObjs = [...functorSourceObjs, ...functorTargetObjs];
+    let found = false;
+    for (let obj of allObjs) {
+      if (dist(mx, my, obj.x, obj.y) < 25) {
+        showInfo(e.clientX, e.clientY, `<b>${obj.label}</b><br>Objekt in der Kategorie<br><i>Ziehen zum Bewegen</i>`);
+        found = true;
+        break;
+      }
+    }
+    if (!found) hideInfo();
+  }
+}
+
+function functorMouseUp() { functorDragging = null; }
+
+function functorDblClick(e) {
+  const rect = functorCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  // Find two closest source objects to create a morphism
+  let closest = [];
+  for (let i = 0; i < functorSourceObjs.length; i++) {
+    closest.push({ idx: i, d: dist(mx, my, functorSourceObjs[i].x, functorSourceObjs[i].y) });
+  }
+  closest.sort((a, b) => a.d - b.d);
+  if (closest.length >= 2 && closest[0].d < 100) {
+    const from = closest[0].idx;
+    const to = closest[1].idx;
+    const exists = functorMorphisms.some(m => m.from === from && m.to === to);
+    if (!exists) {
+      functorMorphisms.push({ from, to, label: `f${functorMorphisms.length + 1}` });
+      functorRedraw();
+    }
+  }
+}
+
+function functorAutoDemo() {
+  if (functorAnimating) return;
+  functorAnimating = true;
+  functorReset();
+  let step = 0;
+  const interval = setInterval(() => {
+    step++;
+    const t = step / 60;
+    // Animate source objects in a circle
+    functorSourceObjs.forEach((obj, i) => {
+      const angle = t * 0.5 + (i / functorSourceObjs.length) * Math.PI * 2;
+      obj.x = 200 + Math.cos(angle) * 100;
+      obj.y = 300 + Math.sin(angle) * 120;
+    });
+    // Target follows with functor mapping
+    const type = document.getElementById('functor-type').value;
+    functorTargetObjs.forEach((obj, i) => {
+      if (i < functorSourceObjs.length) {
+        const src = functorSourceObjs[i];
+        if (type === 'covariant') {
+          obj.x = src.x + 550;
+          obj.y = src.y;
+        } else if (type === 'contravariant') {
+          obj.x = src.x + 550;
+          obj.y = 600 - src.y;
+        } else {
+          // Yoneda: spread out more
+          obj.x = src.x + 500 + Math.sin(t + i) * 50;
+          obj.y = src.y + Math.cos(t * 0.7 + i) * 30;
+        }
+      }
+    });
+    functorRedraw();
+    if (step > 300) { clearInterval(interval); functorAnimating = false; }
+  }, 30);
+}
+
+function functorRedraw() {
+  const c = functorCtx;
+  const W = functorCanvas.width, H = functorCanvas.height;
+  c.clearRect(0, 0, W, H);
+
+  const type = document.getElementById('functor-type').value;
+
+  // Category boxes
+  c.strokeStyle = '#3a3a6a';
+  c.lineWidth = 2;
+  c.setLineDash([8, 4]);
+  c.strokeRect(30, 80, 400, 430);
+  c.strokeRect(580, 80, 490, 430);
+  c.setLineDash([]);
+
+  c.fillStyle = '#6666aa';
+  c.font = 'bold 16px Georgia';
+  c.fillText('Kategorie C', 160, 110);
+  c.fillText('Kategorie D', 760, 110);
+
+  // Functor arrow
+  c.strokeStyle = '#ffdd44';
+  c.lineWidth = 3;
+  c.beginPath();
+  c.moveTo(440, 280);
+  c.lineTo(570, 280);
+  c.stroke();
+  c.beginPath();
+  c.moveTo(560, 272);
+  c.lineTo(572, 280);
+  c.lineTo(560, 288);
+  c.fillStyle = '#ffdd44';
+  c.fill();
+
+  c.fillStyle = '#ffdd44';
+  c.font = 'bold 18px Georgia';
+  const functorLabel = type === 'covariant' ? 'F: C → D' :
+                       type === 'contravariant' ? 'F: Cᵒᵖ → D' : 'h_A = Hom(A, −)';
+  c.fillText(functorLabel, 450, 270);
+
+  // Draw morphisms in source category
+  functorMorphisms.forEach(m => {
+    if (m.from < functorSourceObjs.length && m.to < functorSourceObjs.length) {
+      const a = functorSourceObjs[m.from];
+      const b = functorSourceObjs[m.to];
+      drawArrow(c, a.x, a.y, b.x, b.y, '#888', m.label);
+
+      // Corresponding morphism in target
+      if (m.from < functorTargetObjs.length && m.to < functorTargetObjs.length) {
+        let fromT, toT;
+        if (type === 'contravariant') {
+          fromT = functorTargetObjs[m.to];
+          toT = functorTargetObjs[m.from];
+        } else {
+          fromT = functorTargetObjs[m.from];
+          toT = functorTargetObjs[m.to];
+        }
+        drawArrow(c, fromT.x, fromT.y, toT.x, toT.y, '#886644', `F(${m.label})`);
+      }
+    }
+  });
+
+  // Draw objects
+  functorSourceObjs.forEach((obj, i) => {
+    drawCategoryObject(c, obj.x, obj.y, obj.label, obj.color, false);
+    // Functor mapping line
+    if (i < functorTargetObjs.length) {
+      c.strokeStyle = obj.color + '44';
+      c.lineWidth = 1;
+      c.setLineDash([4, 6]);
+      c.beginPath();
+      c.moveTo(obj.x, obj.y);
+      c.lineTo(functorTargetObjs[i].x, functorTargetObjs[i].y);
+      c.stroke();
+      c.setLineDash([]);
+    }
+  });
+
+  functorTargetObjs.forEach((obj) => {
+    drawCategoryObject(c, obj.x, obj.y, obj.label, obj.color, true);
+  });
+
+  // Yoneda lemma text
+  if (type === 'yoneda') {
+    c.fillStyle = '#aaaaff';
+    c.font = '14px Georgia';
+    c.fillText('Yoneda-Lemma: Nat(h_A, F) ≅ F(A)', 440, 320);
+    c.fillText('„Ein Objekt IST seine Beziehungen"', 440, 345);
+    c.fillText('h_A(B) = Hom(A, B) = alle Pfeile A → B', 440, 370);
+  }
+}
+
+function drawCategoryObject(c, x, y, label, color, isTarget) {
+  c.beginPath();
+  c.arc(x, y, 22, 0, Math.PI * 2);
+  c.fillStyle = color + '33';
+  c.fill();
+  c.strokeStyle = color;
+  c.lineWidth = isTarget ? 3 : 2;
+  c.stroke();
+  if (isTarget) {
+    c.beginPath();
+    c.arc(x, y, 26, 0, Math.PI * 2);
+    c.strokeStyle = color + '66';
+    c.lineWidth = 1;
+    c.stroke();
+  }
+  c.fillStyle = '#fff';
+  c.font = 'bold 14px Georgia';
+  c.textAlign = 'center';
+  c.fillText(label, x, y + 5);
+  c.textAlign = 'left';
+}
+
+function drawArrow(c, x1, y1, x2, y2, color, label) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const len = Math.sqrt(dx * dx + dy * dy);
+  if (len < 50) return;
+  const nx = dx / len, ny = dy / len;
+  const sx = x1 + nx * 25, sy = y1 + ny * 25;
+  const ex = x2 - nx * 25, ey = y2 - ny * 25;
+
+  c.strokeStyle = color;
+  c.lineWidth = 1.5;
+  c.beginPath();
+  c.moveTo(sx, sy);
+
+  // Slight curve
+  const mx = (sx + ex) / 2 - ny * 20;
+  const my = (sy + ey) / 2 + nx * 20;
+  c.quadraticCurveTo(mx, my, ex, ey);
+  c.stroke();
+
+  // Arrowhead
+  const angle = Math.atan2(ey - my, ex - mx);
+  c.beginPath();
+  c.moveTo(ex, ey);
+  c.lineTo(ex - 10 * Math.cos(angle - 0.3), ey - 10 * Math.sin(angle - 0.3));
+  c.lineTo(ex - 10 * Math.cos(angle + 0.3), ey - 10 * Math.sin(angle + 0.3));
+  c.closePath();
+  c.fillStyle = color;
+  c.fill();
+
+  // Label
+  if (label) {
+    c.fillStyle = color;
+    c.font = '12px Georgia';
+    c.fillText(label, mx - 10, my - 8);
+  }
+}
+
+// ============================================================
+// 4. TOPOI
+// ============================================================
+let toposCanvas, toposCtx;
+let toposAnimFrame = null;
+let toposTime = 0;
+
+function toposInit() {
+  toposCanvas = document.getElementById('topos-canvas');
+  toposCtx = toposCanvas.getContext('2d');
+  toposCanvas.addEventListener('mousemove', toposHover);
+  toposCanvas.addEventListener('mouseleave', () => hideInfo());
+  toposRedraw();
+}
+
+function toposHover(e) {
+  const rect = toposCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  // Simple hover for truth values
+  const type = document.getElementById('topos-type').value;
+  if (type !== 'set') {
+    if (mx > 600 && mx < 900 && my > 100 && my < 450) {
+      showInfo(e.clientX, e.clientY, '<b>Wahrheitswerte-Objekt Ω</b><br>Im klassischen Topos: Ω = {0, 1}<br>In anderen Topoi: Ω kann viele Elemente haben!<br>→ Mehrwertige Logik entsteht natürlich');
+    } else {
+      hideInfo();
+    }
+  }
+}
+
+function toposAnimate() {
+  if (toposAnimFrame) { cancelAnimationFrame(toposAnimFrame); toposAnimFrame = null; return; }
+  function loop() {
+    toposTime += 0.02;
+    toposRedraw();
+    toposAnimFrame = requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+function toposRedraw() {
+  const c = toposCtx;
+  const W = toposCanvas.width, H = toposCanvas.height;
+  c.clearRect(0, 0, W, H);
+  const type = document.getElementById('topos-type').value;
+
+  c.fillStyle = '#08081a';
+  c.fillRect(0, 0, W, H);
+
+  switch (type) {
+    case 'set': drawToposSet(c, W, H); break;
+    case 'presheaf': drawToposPresheaf(c, W, H); break;
+    case 'sheaf': drawToposSheaf(c, W, H); break;
+    case 'G-set': drawToposGSet(c, W, H); break;
+    case 'sieves': drawToposSieves(c, W, H); break;
+  }
+}
+
+function drawToposSet(c, W, H) {
+  c.fillStyle = '#8888ff';
+  c.font = 'bold 18px Georgia';
+  c.fillText('Topos: Set (Kategorie der Mengen)', 50, 40);
+
+  c.fillStyle = '#aaa';
+  c.font = '14px Georgia';
+  c.fillText('Der „klassische" Topos. Wahrheitswerte: Ω = {0, 1}. Logik ist klassisch (Satz vom ausgeschlossenen Dritten gilt).', 50, 70);
+
+  // Draw some sets
+  const sets = [
+    { x: 150, y: 250, elements: ['a', 'b', 'c'], label: '{a,b,c}', color: '#ff6666' },
+    { x: 350, y: 250, elements: ['1', '2'], label: '{1,2}', color: '#66ff66' },
+    { x: 550, y: 250, elements: ['•'], label: '{•} = 1', color: '#6666ff' },
+    { x: 150, y: 430, elements: [], label: '∅ = 0', color: '#888' },
+  ];
+
+  sets.forEach(s => {
+    c.strokeStyle = s.color + '88';
+    c.lineWidth = 2;
+    c.beginPath();
+    c.ellipse(s.x, s.y, 60, 40 + s.elements.length * 10, 0, 0, Math.PI * 2);
+    c.stroke();
+    c.fillStyle = s.color + '22';
+    c.fill();
+
+    s.elements.forEach((el, i) => {
+      const ey = s.y - 10 + i * 20 - (s.elements.length - 1) * 10;
+      c.beginPath();
+      c.arc(s.x, ey, 5, 0, Math.PI * 2);
+      c.fillStyle = s.color;
+      c.fill();
+      c.fillStyle = '#fff';
+      c.font = '13px Georgia';
+      c.fillText(el, s.x + 12, ey + 5);
+    });
+
+    c.fillStyle = s.color;
+    c.font = '14px Georgia';
+    c.fillText(s.label, s.x - 25, s.y + 60);
+  });
+
+  // Truth values
+  c.strokeStyle = '#ffdd44';
+  c.lineWidth = 2;
+  c.strokeRect(700, 150, 200, 200);
+  c.fillStyle = '#ffdd4422';
+  c.fillRect(700, 150, 200, 200);
+
+  c.fillStyle = '#ffdd44';
+  c.font = 'bold 16px Georgia';
+  c.fillText('Ω = Wahrheitswerte', 710, 140);
+
+  // True
+  c.beginPath();
+  c.arc(770, 230, 20, 0, Math.PI * 2);
+  c.fillStyle = '#44ff4466';
+  c.fill();
+  c.strokeStyle = '#44ff44';
+  c.lineWidth = 2;
+  c.stroke();
+  c.fillStyle = '#44ff44';
+  c.font = 'bold 16px Georgia';
+  c.fillText('1', 765, 235);
+  c.font = '13px Georgia';
+  c.fillText('wahr', 800, 235);
+
+  // False
+  c.beginPath();
+  c.arc(770, 300, 20, 0, Math.PI * 2);
+  c.fillStyle = '#ff444466';
+  c.fill();
+  c.strokeStyle = '#ff4444';
+  c.lineWidth = 2;
+  c.stroke();
+  c.fillStyle = '#ff4444';
+  c.font = 'bold 16px Georgia';
+  c.fillText('0', 765, 305);
+  c.font = '13px Georgia';
+  c.fillText('falsch', 800, 305);
+
+  c.fillStyle = '#888';
+  c.font = '13px Georgia';
+  c.fillText('Klassische Logik:', 700, 380);
+  c.fillText('P ∨ ¬P = 1  ✓', 700, 400);
+  c.fillText('¬¬P = P  ✓', 700, 420);
+
+  // Morphism arrow
+  drawArrow(c, 210, 250, 310, 250, '#aaa', 'f');
+  c.fillStyle = '#888';
+  c.font = '12px Georgia';
+  c.fillText('Morphismus = Funktion', 220, 220);
+}
+
+function drawToposPresheaf(c, W, H) {
+  c.fillStyle = '#8888ff';
+  c.font = 'bold 18px Georgia';
+  c.fillText('Topos: Prägarben auf (• → •)', 50, 40);
+
+  c.fillStyle = '#aaa';
+  c.font = '14px Georgia';
+  c.fillText('Kategorie C: zwei Objekte, ein nicht-trivialer Morphismus. Prägarben = Funktoren Cᵒᵖ → Set.', 50, 70);
+
+  // The base category
+  c.fillStyle = '#666';
+  c.font = '14px Georgia';
+  c.fillText('Basiskategorie C:', 50, 120);
+
+  drawCategoryObject(c, 120, 170, '0', '#ff8844', false);
+  drawCategoryObject(c, 280, 170, '1', '#4488ff', false);
+  drawArrow(c, 120, 170, 280, 170, '#aaa', 'α');
+
+  // A presheaf
+  c.fillStyle = '#aaf';
+  c.font = 'bold 15px Georgia';
+  c.fillText('Beispiel-Prägarbe F:', 50, 250);
+
+  // F(1)
+  c.strokeStyle = '#4488ff88';
+  c.lineWidth = 2;
+  c.beginPath();
+  c.ellipse(200, 340, 70, 50, 0, 0, Math.PI * 2);
+  c.stroke();
+  c.fillStyle = '#4488ff22';
+  c.fill();
+  c.fillStyle = '#4488ff';
+  c.font = '14px Georgia';
+  c.fillText('F(1)', 180, 280);
+
+  ['a', 'b', 'c'].forEach((el, i) => {
+    const y = 320 + i * 25;
+    c.beginPath(); c.arc(190, y, 5, 0, Math.PI * 2);
+    c.fillStyle = '#4488ff'; c.fill();
+    c.fillStyle = '#fff'; c.font = '13px Georgia';
+    c.fillText(el, 200, y + 5);
+  });
+
+  // F(0)
+  c.strokeStyle = '#ff884488';
+  c.lineWidth = 2;
+  c.beginPath();
+  c.ellipse(420, 340, 50, 35, 0, 0, Math.PI * 2);
+  c.stroke();
+  c.fillStyle = '#ff884422';
+  c.fill();
+  c.fillStyle = '#ff8844';
+  c.font = '14px Georgia';
+  c.fillText('F(0)', 400, 290);
+
+  ['x', 'y'].forEach((el, i) => {
+    const y = 330 + i * 25;
+    c.beginPath(); c.arc(410, y, 5, 0, Math.PI * 2);
+    c.fillStyle = '#ff8844'; c.fill();
+    c.fillStyle = '#fff'; c.font = '13px Georgia';
+    c.fillText(el, 420, y + 5);
+  });
+
+  // Restriction map F(α): F(1) → F(0)
+  drawArrow(c, 260, 340, 370, 340, '#aaa', 'F(α)');
+
+  // Truth values Ω
+  c.strokeStyle = '#ffdd44';
+  c.lineWidth = 2;
+  c.strokeRect(600, 120, 450, 380);
+  c.fillStyle = '#ffdd4411';
+  c.fillRect(600, 120, 450, 380);
+
+  c.fillStyle = '#ffdd44';
+  c.font = 'bold 16px Georgia';
+  c.fillText('Ω – Wahrheitswerte (3 Stück!)', 650, 155);
+
+  const truthVals = [
+    { label: '⊤ (wahr)', color: '#44ff44', desc: 'Überall wahr', y: 210 },
+    { label: '⊥ (falsch)', color: '#ff4444', desc: 'Überall falsch', y: 280 },
+    { label: '½ (halb)', color: '#ffaa44', desc: 'Wahr bei 0, nicht bei 1', y: 350 },
+  ];
+
+  truthVals.forEach(tv => {
+    c.beginPath();
+    c.arc(660, tv.y, 18, 0, Math.PI * 2);
+    c.fillStyle = tv.color + '44';
+    c.fill();
+    c.strokeStyle = tv.color;
+    c.lineWidth = 2;
+    c.stroke();
+    c.fillStyle = tv.color;
+    c.font = 'bold 14px Georgia';
+    c.fillText(tv.label, 690, tv.y + 5);
+    c.fillStyle = '#aaa';
+    c.font = '12px Georgia';
+    c.fillText(tv.desc, 810, tv.y + 5);
+  });
+
+  c.fillStyle = '#ff8888';
+  c.font = '14px Georgia';
+  c.fillText('⚠ P ∨ ¬P ≠ ⊤ möglich!', 650, 420);
+  c.fillText('→ Intuitionistische Logik!', 650, 445);
+  c.fillText('→ Satz vom ausgeschlossenen Dritten gilt NICHT', 650, 470);
+}
+
+function drawToposSheaf(c, W, H) {
+  c.fillStyle = '#8888ff';
+  c.font = 'bold 18px Georgia';
+  c.fillText('Topos: Sh(ℝ) – Garben auf ℝ', 50, 40);
+
+  c.fillStyle = '#aaa';
+  c.font = '14px Georgia';
+  c.fillText('Wahrheitswerte = offene Mengen von ℝ. Unendlich viele Abstufungen von „Wahrheit"!', 50, 70);
+
+  const baseY = 450;
+  const lineL = 100, lineR = 1000;
+
+  // Base space
+  c.strokeStyle = '#fff';
+  c.lineWidth = 2;
+  c.beginPath(); c.moveTo(lineL, baseY); c.lineTo(lineR, baseY); c.stroke();
+  c.fillStyle = '#fff';
+  c.font = '14px Georgia';
+  c.fillText('ℝ', lineR + 10, baseY + 5);
+
+  // Various open sets as truth values
+  const openSets = [
+    { a: 0.0, b: 1.0, label: '⊤ = ℝ (wahr)', color: '#44ff44', y: 120 },
+    { a: 0.0, b: 0.0, label: '⊥ = ∅ (falsch)', color: '#ff4444', y: 170 },
+    { a: 0.2, b: 0.6, label: 'U₁ = (a,b)', color: '#ffaa44', y: 220 },
+    { a: 0.1, b: 0.4, label: 'U₂ = (c,d)', color: '#44aaff', y: 270 },
+    { a: 0.3, b: 0.8, label: 'U₁ ∪ U₂', color: '#ff44ff', y: 320 },
+  ];
+
+  const t = toposTime;
+  openSets.forEach((os, i) => {
+    let a = os.a, b = os.b;
+    if (i >= 2 && t > 0) {
+      a = os.a + Math.sin(t + i) * 0.1;
+      b = os.b + Math.cos(t * 0.7 + i) * 0.1;
+      a = Math.max(0, Math.min(1, a));
+      b = Math.max(a + 0.05, Math.min(1, b));
+    }
+
+    const xa = lineL + a * (lineR - lineL);
+    const xb = lineL + b * (lineR - lineL);
+
+    if (b > a) {
+      c.fillStyle = os.color + '33';
+      c.fillRect(xa, baseY - 15, xb - xa, 30);
+      c.strokeStyle = os.color;
+      c.lineWidth = 3;
+      c.beginPath(); c.moveTo(xa, baseY); c.lineTo(xb, baseY); c.stroke();
+    }
+
+    // Label
+    c.fillStyle = os.color;
+    c.font = '14px Georgia';
+    c.fillText(os.label, 100, os.y);
+
+    // Connection line
+    if (b > a) {
+      c.strokeStyle = os.color + '44';
+      c.lineWidth = 1;
+      c.setLineDash([3, 5]);
+      c.beginPath();
+      c.moveTo(350, os.y - 5);
+      c.lineTo((xa + xb) / 2, baseY - 20);
+      c.stroke();
+      c.setLineDash([]);
+    }
+  });
+
+  c.fillStyle = '#aaf';
+  c.font = '14px Georgia';
+  c.fillText('Heyting-Algebra der offenen Mengen:', 550, 130);
+  c.fillText('U ∧ V = U ∩ V', 550, 155);
+  c.fillText('U ∨ V = U ∪ V', 550, 175);
+  c.fillText('U ⇒ V = int(Uᶜ ∪ V)', 550, 195);
+  c.fillText('¬U = int(Uᶜ)', 550, 215);
+
+  c.fillStyle = '#ff8888';
+  c.font = '14px Georgia';
+  c.fillText('⚠ ¬¬U ≠ U im Allgemeinen!', 550, 250);
+  c.fillText('Beispiel: U = ℝ\\{0} → ¬U = ∅ → ¬¬U = ℝ ≠ U', 550, 275);
+}
+
+function drawToposGSet(c, W, H) {
+  c.fillStyle = '#8888ff';
+  c.font = 'bold 18px Georgia';
+  c.fillText('Topos: G-Set (G = ℤ/3ℤ)', 50, 40);
+
+  c.fillStyle = '#aaa';
+  c.font = '14px Georgia';
+  c.fillText('Objekte: Mengen mit G-Wirkung. Wahrheitswerte = Untergruppen von G.', 50, 70);
+
+  const cx = 300, cy = 300;
+
+  // Draw a G-set: triangle with rotation
+  const t = toposTime;
+  const colors = ['#ff6666', '#66ff66', '#6666ff'];
+  const labels = ['a', 'b', 'c'];
+
+  c.fillStyle = '#555';
+  c.font = '14px Georgia';
+  c.fillText('G-Menge X = {a, b, c} mit ℤ/3-Wirkung (Rotation):', 80, 130);
+
+  for (let i = 0; i < 3; i++) {
+    const angle = t * 0.5 + (i / 3) * Math.PI * 2 - Math.PI / 2;
+    const x = cx + Math.cos(angle) * 100;
+    const y = cy + Math.sin(angle) * 100;
+
+    c.beginPath();
+    c.arc(x, y, 20, 0, Math.PI * 2);
+    c.fillStyle = colors[i] + '66';
+    c.fill();
+    c.strokeStyle = colors[i];
+    c.lineWidth = 2;
+    c.stroke();
+
+    c.fillStyle = '#fff';
+    c.font = 'bold 16px Georgia';
+    c.textAlign = 'center';
+    c.fillText(labels[i], x, y + 6);
+    c.textAlign = 'left';
+  }
+
+  // Rotation arrows
+  c.strokeStyle = '#ffdd4466';
+  c.lineWidth = 1.5;
+  c.beginPath();
+  c.arc(cx, cy, 80, 0, Math.PI * 2);
+  c.stroke();
+
+  // Arrow on circle
+  const arrowAngle = t * 0.5 + Math.PI * 0.5;
+  c.beginPath();
+  c.moveTo(cx + 80 * Math.cos(arrowAngle), cy + 80 * Math.sin(arrowAngle));
+  c.lineTo(cx + 90 * Math.cos(arrowAngle - 0.2), cy + 90 * Math.sin(arrowAngle - 0.2));
+  c.strokeStyle = '#ffdd44';
+  c.lineWidth = 2;
+  c.stroke();
+
+  c.fillStyle = '#ffdd44';
+  c.font = '14px Georgia';
+  c.fillText('g · a = b', cx - 20, cy + 5);
+  c.fillText('g · b = c', cx - 20, cy + 22);
+  c.fillText('g · c = a', cx - 20, cy + 39);
+
+  // Truth values = subgroups of G = Z/3
+  c.strokeStyle = '#ffdd44';
+  c.lineWidth = 2;
+  c.strokeRect(580, 120, 420, 350);
+  c.fillStyle = '#ffdd4411';
+  c.fillRect(580, 120, 420, 350);
+
+  c.fillStyle = '#ffdd44';
+  c.font = 'bold 16px Georgia';
+  c.fillText('Ω = Untergruppen von ℤ/3ℤ', 610, 155);
+
+  const subgroups = [
+    { label: '{0, 1, 2} = G', desc: '⊤ (wahr) – ganze Gruppe', color: '#44ff44', y: 210 },
+    { label: '{0}', desc: '⊥ (falsch) – triviale Untergruppe', color: '#ff4444', y: 280 },
+  ];
+
+  subgroups.forEach(sg => {
+    c.beginPath();
+    c.arc(640, sg.y, 18, 0, Math.PI * 2);
+    c.fillStyle = sg.color + '44';
+    c.fill();
+    c.strokeStyle = sg.color;
+    c.lineWidth = 2;
+    c.stroke();
+    c.fillStyle = sg.color;
+    c.font = 'bold 14px Georgia';
+    c.fillText(sg.label, 670, sg.y + 5);
+    c.fillStyle = '#aaa';
+    c.font = '12px Georgia';
+    c.fillText(sg.desc, 670, sg.y + 25);
+  });
+
+  c.fillStyle = '#aaf';
+  c.font = '13px Georgia';
+  c.fillText('Da ℤ/3ℤ einfach ist (keine echten Untergruppen),', 610, 350);
+  c.fillText('hat dieser Topos nur 2 Wahrheitswerte → klassisch!', 610, 375);
+  c.fillText('Aber: Für G = ℤ/6ℤ gäbe es 4 Untergruppen → 4 Wahrheitswerte!', 610, 400);
+  c.fillText('→ Nicht-klassische Logik!', 610, 425);
+}
+
+function drawToposSieves(c, W, H) {
+  c.fillStyle = '#8888ff';
+  c.font = 'bold 18px Georgia';
+  c.fillText('Siebe (Sieves) – Grothendieck-Topologien', 50, 40);
+
+  c.fillStyle = '#aaa';
+  c.font = '14px Georgia';
+  c.fillText('Ein Sieb auf U ist eine Menge von Morphismen nach U, abgeschlossen unter Komposition.', 50, 70);
+  c.fillText('Siebe definieren, was „Überdeckung" bedeutet → Grothendieck-Topologie!', 50, 92);
+
+  const cx = 350, cy = 320;
+
+  // Central object U
+  c.beginPath();
+  c.arc(cx, cy, 35, 0, Math.PI * 2);
+  c.fillStyle = '#ffdd4433';
+  c.fill();
+  c.strokeStyle = '#ffdd44';
+  c.lineWidth = 3;
+  c.stroke();
+  c.fillStyle = '#ffdd44';
+  c.font = 'bold 20px Georgia';
+  c.textAlign = 'center';
+  c.fillText('U', cx, cy + 7);
+  c.textAlign = 'left';
+
+  // Morphisms into U (the sieve)
+  const morphisms = [
+    { label: 'V₁', angle: -Math.PI * 0.8, r: 160, color: '#ff6666', inSieve: true },
+    { label: 'V₂', angle: -Math.PI * 0.4, r: 150, color: '#66ff66', inSieve: true },
+    { label: 'V₃', angle: Math.PI * 0.1, r: 170, color: '#6666ff', inSieve: true },
+    { label: 'W₁', angle: Math.PI * 0.5, r: 140, color: '#ff66ff', inSieve: false },
+    { label: 'W₂', angle: Math.PI * 0.8, r: 160, color: '#ffaa44', inSieve: false },
+  ];
+
+  const t = toposTime;
+
+  morphisms.forEach((m, i) => {
+    const angle = m.angle + (t > 0 ? Math.sin(t * 0.3 + i) * 0.1 : 0);
+    const x = cx + Math.cos(angle) * m.r;
+    const y = cy + Math.sin(angle) * m.r;
+
+    // Object
+    c.beginPath();
+    c.arc(x, y, 22, 0, Math.PI * 2);
+    c.fillStyle = m.color + '33';
+    c.fill();
+    c.strokeStyle = m.inSieve ? m.color : m.color + '44';
+    c.lineWidth = m.inSieve ? 2 : 1;
+    c.stroke();
+
+    c.fillStyle = m.inSieve ? '#fff' : '#666';
+    c.font = '14px Georgia';
+    c.textAlign = 'center';
+    c.fillText(m.label, x, y + 5);
+    c.textAlign = 'left';
+
+    // Arrow to U
+    c.strokeStyle = m.inSieve ? m.color + 'aa' : '#33333366';
+    c.lineWidth = m.inSieve ? 2 : 1;
+    if (m.inSieve) {
+      c.setLineDash([]);
+    } else {
+      c.setLineDash([4, 4]);
+    }
+    const dx = cx - x, dy = cy - y;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const nx = dx / len, ny = dy / len;
+    c.beginPath();
+    c.moveTo(x + nx * 25, y + ny * 25);
+    c.lineTo(cx - nx * 38, cy - ny * 38);
+    c.stroke();
+    c.setLineDash([]);
+
+    // Arrowhead
+    if (m.inSieve) {
+      const ax = cx - nx * 38, ay = cy - ny * 38;
+      const aAngle = Math.atan2(ny, nx);
+      c.beginPath();
+      c.moveTo(ax, ay);
+      c.lineTo(ax - 10 * Math.cos(aAngle - 0.3), ay - 10 * Math.sin(aAngle - 0.3));
+      c.lineTo(ax - 10 * Math.cos(aAngle + 0.3), ay - 10 * Math.sin(aAngle + 0.3));
+      c.closePath();
+      c.fillStyle = m.color;
+      c.fill();
+    }
+  });
+
+  // Legend
+  c.fillStyle = '#44ff88';
+  c.font = '14px Georgia';
+  c.fillText('━━ Im Sieb S (Überdeckung)', 650, 180);
+  c.fillStyle = '#666';
+  c.fillText('╌╌ Nicht im Sieb', 650, 210);
+
+  c.fillStyle = '#aaf';
+  c.font = '14px Georgia';
+  c.fillText('Maximales Sieb = alle Morphismen → ⊤', 650, 270);
+  c.fillText('Leeres Sieb = keine Morphismen → ⊥', 650, 295);
+  c.fillText('Dazwischen: Zwischenwahrheitswerte!', 650, 320);
+
+  c.fillStyle = '#ffdd44';
+  c.font = '14px Georgia';
+  c.fillText('Grothendieck-Topologie J:', 650, 370);
+  c.fillStyle = '#ccc';
+  c.font = '13px Georgia';
+  c.fillText('Wählt für jedes U eine Menge von', 650, 395);
+  c.fillText('„Überdeckungssieben" aus.', 650, 415);
+  c.fillText('→ Definiert den Begriff „lokal"!', 650, 440);
+  c.fillText('→ Garben = Prägarben, die Überdeckungen respektieren', 650, 465);
+}
+
+// ============================================================
+// 5. KOHOMOLOGIE
+// ============================================================
+let cohoCanvas, cohoCtx;
+let cohoVertices = [];
+let cohoEdges = [];
+let cohoFaces = [];
+let cohoSelected = -1;
+let cohoDragging = -1;
+
+function cohoInit() {
+  cohoCanvas = document.getElementById('coho-canvas');
+  cohoCtx = cohoCanvas.getContext('2d');
+  cohoCanvas.addEventListener('mousedown', cohoMouseDown);
+  cohoCanvas.addEventListener('mousemove', cohoMouseMove);
+  cohoCanvas.addEventListener('mouseup', cohoMouseUp);
+  cohoCanvas.addEventListener('mouseleave', () => { cohoDragging = -1; hideInfo(); });
+  cohoExample('sphere');
+}
+
+function cohoReset() {
+  cohoVertices = [];
+  cohoEdges = [];
+  cohoFaces = [];
+  cohoSelected = -1;
+  cohoRedraw();
+}
+
+function cohoAddVertex() {
+  cohoVertices.push({
+    x: 200 + Math.random() * 700,
+    y: 100 + Math.random() * 300
+  });
+  cohoRedraw();
+}
+
+function cohoMouseDown(e) {
+  const rect = cohoCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const mode = document.getElementById('coho-mode').value;
+
+  // Find closest vertex
+  let closest = -1, closestDist = Infinity;
+  cohoVertices.forEach((v, i) => {
+    const d = dist(mx, my, v.x, v.y);
+    if (d < closestDist) { closestDist = d; closest = i; }
+  });
+
+  if (mode === 'vertex') {
+    if (closestDist > 30) {
+      cohoVertices.push({ x: mx, y: my });
+      cohoRedraw();
+    } else {
+      cohoDragging = closest;
+    }
+  } else if (mode === 'edge') {
+    if (closestDist < 30) {
+      if (cohoSelected === -1) {
+        cohoSelected = closest;
+      } else {
+        if (cohoSelected !== closest) {
+          const exists = cohoEdges.some(e =>
+            (e[0] === cohoSelected && e[1] === closest) ||
+            (e[0] === closest && e[1] === cohoSelected));
+          if (!exists) {
+            cohoEdges.push([cohoSelected, closest]);
+          }
+        }
+        cohoSelected = -1;
+      }
+      cohoRedraw();
+    }
+  } else if (mode === 'face') {
+    if (closestDist < 30) {
+      if (cohoSelected === -1) {
+        cohoSelected = closest;
+      } else if (typeof cohoSelected === 'number') {
+        cohoSelected = [cohoSelected, closest];
+      } else if (Array.isArray(cohoSelected) && cohoSelected.length === 2) {
+        const tri = [...cohoSelected, closest].sort((a, b) => a - b);
+        const exists = cohoFaces.some(f =>
+          f[0] === tri[0] && f[1] === tri[1] && f[2] === tri[2]);
+        if (!exists) {
+          cohoFaces.push(tri);
+          // Auto-add edges
+          [[tri[0], tri[1]], [tri[1], tri[2]], [tri[0], tri[2]]].forEach(edge => {
+            const exists = cohoEdges.some(e =>
+              (e[0] === edge[0] && e[1] === edge[1]) ||
+              (e[0] === edge[1] && e[1] === edge[0]));
+            if (!exists) cohoEdges.push(edge);
+          });
+        }
+        cohoSelected = -1;
+      }
+      cohoRedraw();
+    }
+  }
+}
+
+function cohoMouseMove(e) {
+  const rect = cohoCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  if (cohoDragging >= 0) {
+    cohoVertices[cohoDragging].x = mx;
+    cohoVertices[cohoDragging].y = my;
+    cohoRedraw();
+  }
+}
+
+function cohoMouseUp() { cohoDragging = -1; }
+
+function cohoExample(type) {
+  cohoReset();
+  const cx = 550, cy = 250;
+
+  if (type === 'sphere') {
+    // Triangulated sphere (octahedron)
+    const r = 150;
+    cohoVertices = [
+      { x: cx, y: cy - r },       // 0 top
+      { x: cx + r, y: cy },       // 1 right
+      { x: cx, y: cy + r },       // 2 bottom
+      { x: cx - r, y: cy },       // 3 left
+      { x: cx + r * 0.5, y: cy - r * 0.5 }, // 4
+      { x: cx - r * 0.5, y: cy - r * 0.5 }, // 5
+    ];
+    cohoEdges = [
+      [0, 1], [1, 2], [2, 3], [3, 0],
+      [0, 4], [4, 1], [1, 2], [2, 3],
+      [3, 5], [5, 0], [4, 5],
+      [4, 2], [5, 2]
+    ];
+    cohoFaces = [
+      [0, 4, 5], [1, 2, 4], [2, 3, 5], [2, 4, 5], [0, 1, 4], [0, 3, 5]
+    ];
+  } else if (type === 'torus') {
+    // Simplified torus triangulation
+    const rows = 4, cols = 4;
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const angle1 = (i / rows) * Math.PI * 2;
+        const angle2 = (j / cols) * Math.PI * 2;
+        const R = 140, r = 60;
+        const x = cx + (R + r * Math.cos(angle2)) * Math.cos(angle1);
+        const y = cy + (R + r * Math.cos(angle2)) * Math.sin(angle1) * 0.5 + r * Math.sin(angle2) * 0.8;
+        cohoVertices.push({ x, y });
+      }
+    }
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const a = i * cols + j;
+        const b = i * cols + (j + 1) % cols;
+        const c2 = ((i + 1) % rows) * cols + j;
+        const d = ((i + 1) % rows) * cols + (j + 1) % cols;
+        cohoEdges.push([a, b], [a, c2], [a, d]);
+        cohoFaces.push([a, b, d].sort((x, y) => x - y));
+        cohoFaces.push([a, c2, d].sort((x, y) => x - y));
+      }
+    }
+  } else if (type === 'klein') {
+    // Klein bottle approximation
+    const rows = 4, cols = 4;
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const u = (i / rows) * Math.PI * 2;
+        const v = (j / cols) * Math.PI * 2;
+        const x = cx + (120 + 50 * Math.cos(v)) * Math.cos(u) + (i % 2 === 0 ? 0 : 15);
+        const y = cy + (120 + 50 * Math.cos(v)) * Math.sin(u) * 0.5 + 50 * Math.sin(v) * 0.7;
+        cohoVertices.push({ x, y });
+      }
+    }
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const a = i * cols + j;
+        const b = i * cols + (j + 1) % cols;
+        // Klein bottle: reverse one identification
+        const nextRow = (i + 1) % rows;
+        const jFlipped = i === rows - 1 ? (cols - 1 - j) : j;
+        const jFlippedNext = i === rows - 1 ? (cols - 1 - (j + 1) % cols) : (j + 1) % cols;
+        const c2 = nextRow * cols + jFlipped;
+        const d = nextRow * cols + jFlippedNext;
+        cohoEdges.push([a, b], [a, c2]);
+        cohoFaces.push([a, b, d].sort((x, y) => x - y));
+        cohoFaces.push([a, c2, d].sort((x, y) => x - y));
+      }
+    }
+  }
+
+  // Remove duplicate edges
+  const edgeSet = new Set();
+  cohoEdges = cohoEdges.filter(e => {
+    const key = [Math.min(e[0], e[1]), Math.max(e[0], e[1])].join(',');
+    if (edgeSet.has(key)) return false;
+    edgeSet.add(key);
+    return true;
+  });
+
+  cohoRedraw();
+}
+
+function computeBetti() {
+  const V = cohoVertices.length;
+  const E = cohoEdges.length;
+  const F = cohoFaces.length;
+
+  // β₀ = connected components (using union-find)
+  const parent = Array.from({ length: V }, (_, i) => i);
+  function find(x) { return parent[x] === x ? x : (parent[x] = find(parent[x])); }
+  function union(a, b) { parent[find(a)] = find(b); }
+  cohoEdges.forEach(e => union(e[0], e[1]));
+  const components = new Set();
+  for (let i = 0; i < V; i++) components.add(find(i));
+  const beta0 = V > 0 ? components.size : 0;
+
+  // Euler characteristic
+  const chi = V - E + F;
+
+  // β₁ = E - V + β₀ (for surfaces without higher homology issues, simplified)
+  const beta1 = Math.max(0, E - V + beta0);
+
+  // β₂ approximation from Euler characteristic
+  const beta2 = Math.max(0, chi - beta0 + beta1);
+
+  return { beta0, beta1, beta2, chi, V, E, F };
+}
+
+function cohoRedraw() {
+  const c = cohoCtx;
+  const W = cohoCanvas.width, H = cohoCanvas.height;
+  c.clearRect(0, 0, W, H);
+
+  // Draw faces
+  cohoFaces.forEach(f => {
+    if (f[0] < cohoVertices.length && f[1] < cohoVertices.length && f[2] < cohoVertices.length) {
+      const v0 = cohoVertices[f[0]];
+      const v1 = cohoVertices[f[1]];
+      const v2 = cohoVertices[f[2]];
+      c.beginPath();
+      c.moveTo(v0.x, v0.y);
+      c.lineTo(v1.x, v1.y);
+      c.lineTo(v2.x, v2.y);
+      c.closePath();
+      c.fillStyle = '#4444aa33';
+      c.fill();
+      c.strokeStyle = '#4444aa44';
+      c.lineWidth = 0.5;
+      c.stroke();
+    }
+  });
+
+  // Draw edges
+  cohoEdges.forEach(e => {
+    if (e[0] < cohoVertices.length && e[1] < cohoVertices.length) {
+      const v0 = cohoVertices[e[0]];
+      const v1 = cohoVertices[e[1]];
+      c.strokeStyle = '#66aaff88';
+      c.lineWidth = 2;
+      c.beginPath();
+      c.moveTo(v0.x, v0.y);
+      c.lineTo(v1.x, v1.y);
+      c.stroke();
+    }
+  });
+
+  // Draw vertices
+  cohoVertices.forEach((v, i) => {
+    c.beginPath();
+    c.arc(v.x, v.y, 7, 0, Math.PI * 2);
+    c.fillStyle = i === cohoSelected || (Array.isArray(cohoSelected) && cohoSelected.includes(i))
+      ? '#ffdd44' : '#ff6666';
+    c.fill();
+    c.strokeStyle = '#fff';
+    c.lineWidth = 1;
+    c.stroke();
+
+    c.fillStyle = '#aaa';
+    c.font = '10px Georgia';
+    c.fillText(i, v.x + 10, v.y - 5);
+  });
+
+  // Compute and display Betti numbers
+  const betti = computeBetti();
+  const infoEl = document.getElementById('coho-info');
+  infoEl.innerHTML = `
+    <b>V = ${betti.V}</b> Ecken &nbsp;|&nbsp;
+    <b>E = ${betti.E}</b> Kanten &nbsp;|&nbsp;
+    <b>F = ${betti.F}</b> Flächen &nbsp;|&nbsp;
+    <span style="color:#44ff88">χ = V − E + F = ${betti.chi}</span> &nbsp;|&nbsp;
+    <span style="color:#ff8844">β₀ = ${betti.beta0}</span> (Komponenten) &nbsp;|&nbsp;
+    <span style="color:#4488ff">β₁ = ${betti.beta1}</span> (Schleifen) &nbsp;|&nbsp;
+    <span style="color:#ff44ff">β₂ = ${betti.beta2}</span> (Hohlräume)
+  `;
+
+  // Mode hint
+  const mode = document.getElementById('coho-mode').value;
+  c.fillStyle = '#555';
+  c.font = '13px Georgia';
+  const hints = {
+    vertex: 'Klicke, um Punkte zu setzen. Ziehe zum Bewegen.',
+    edge: 'Klicke zwei Punkte nacheinander, um eine Kante zu ziehen.',
+    face: 'Klicke drei Punkte nacheinander, um eine Fläche zu füllen.'
+  };
+  c.fillText(hints[mode], 20, H - 15);
+}
+
+// ============================================================
+// 6. DESSINS D'ENFANTS
+// ============================================================
+let dessinCanvas, dessinCtx;
+let dessinBlack = [];
+let dessinWhite = [];
+let dessinEdgesD = [];
+let dessinSelected = null;
+let dessinDragging = null;
+
+function dessinInit() {
+  dessinCanvas = document.getElementById('dessin-canvas');
+  dessinCtx = dessinCanvas.getContext('2d');
+  dessinCanvas.addEventListener('mousedown', dessinMouseDown);
+  dessinCanvas.addEventListener('mousemove', dessinMouseMove);
+  dessinCanvas.addEventListener('mouseup', () => { dessinDragging = null; });
+  dessinCanvas.addEventListener('mouseleave', () => { dessinDragging = null; hideInfo(); });
+  dessinExample('tree');
+}
+
+function dessinReset() {
+  dessinBlack = [];
+  dessinWhite = [];
+  dessinEdgesD = [];
+  dessinSelected = null;
+  dessinRedraw();
+}
+
+function dessinMouseDown(e) {
+  const rect = dessinCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const mode = document.getElementById('dessin-mode').value;
+
+  // Check if clicking existing node
+  let found = null;
+  dessinBlack.forEach((n, i) => {
+    if (dist(mx, my, n.x, n.y) < 15) found = { type: 'black', idx: i };
+  });
+  dessinWhite.forEach((n, i) => {
+    if (dist(mx, my, n.x, n.y) < 15) found = { type: 'white', idx: i };
+  });
+
+  if (mode === 'edge') {
+    if (found) {
+      if (!dessinSelected) {
+        dessinSelected = found;
+      } else {
+        if (dessinSelected.type !== found.type) {
+          dessinEdgesD.push({ black: dessinSelected.type === 'black' ? dessinSelected.idx : found.idx,
+                              white: dessinSelected.type === 'white' ? dessinSelected.idx : found.idx });
+        }
+        dessinSelected = null;
+      }
+      dessinRedraw();
+    }
+  } else if (found) {
+    dessinDragging = found;
+  } else {
+    if (mode === 'black') {
+      dessinBlack.push({ x: mx, y: my });
+    } else if (mode === 'white') {
+      dessinWhite.push({ x: mx, y: my });
+    }
+    dessinRedraw();
+  }
+}
+
+function dessinMouseMove(e) {
+  const rect = dessinCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  if (dessinDragging) {
+    const list = dessinDragging.type === 'black' ? dessinBlack : dessinWhite;
+    list[dessinDragging.idx].x = mx;
+    list[dessinDragging.idx].y = my;
+    dessinRedraw();
+  }
+}
+
+function dessinExample(type) {
+  dessinReset();
+  const cx = 400, cy = 250;
+
+  if (type === 'tree') {
+    dessinBlack = [
+      { x: cx, y: cy - 100 },
+      { x: cx - 100, y: cy + 50 },
+      { x: cx + 100, y: cy + 50 },
+    ];
+    dessinWhite = [
+      { x: cx - 50, y: cy - 25 },
+      { x: cx + 50, y: cy - 25 },
+      { x: cx, y: cy + 50 },
+    ];
+    dessinEdgesD = [
+      { black: 0, white: 0 },
+      { black: 0, white: 1 },
+      { black: 1, white: 0 },
+      { black: 1, white: 2 },
+      { black: 2, white: 1 },
+      { black: 2, white: 2 },
+    ];
+  } else if (type === 'cube') {
+    // Cube graph as dessin
+    const r = 120;
+    for (let i = 0; i < 4; i++) {
+      const angle = (i / 4) * Math.PI * 2 - Math.PI / 4;
+      dessinBlack.push({ x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) });
+    }
+    for (let i = 0; i < 4; i++) {
+      const angle = (i / 4) * Math.PI * 2 - Math.PI / 4;
+      dessinWhite.push({ x: cx + r * 0.55 * Math.cos(angle + Math.PI / 4), y: cy + r * 0.55 * Math.sin(angle + Math.PI / 4) });
+    }
+    dessinEdgesD = [
+      { black: 0, white: 0 }, { black: 0, white: 3 },
+      { black: 1, white: 0 }, { black: 1, white: 1 },
+      { black: 2, white: 1 }, { black: 2, white: 2 },
+      { black: 3, white: 2 }, { black: 3, white: 3 },
+    ];
+  } else if (type === 'star') {
+    // Star dessin: one central black node connected to many white nodes
+    dessinBlack.push({ x: cx, y: cy });
+    const n = 6;
+    for (let i = 0; i < n; i++) {
+      const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+      dessinWhite.push({ x: cx + 130 * Math.cos(angle), y: cy + 130 * Math.sin(angle) });
+      dessinEdgesD.push({ black: 0, white: i });
+    }
+  } else if (type === 'belyi') {
+    // Dessin for β(z) = 4z(1-z): one edge connecting one black to one white
+    // Preimages: β⁻¹(0) = {0, 1} (black), β⁻¹(1) = {1/2} (white)
+    dessinBlack = [
+      { x: cx - 150, y: cy },
+      { x: cx + 150, y: cy },
+    ];
+    dessinWhite = [
+      { x: cx, y: cy },
+    ];
+    dessinEdgesD = [
+      { black: 0, white: 0 },
+      { black: 1, white: 0 },
+    ];
+
+    // Draw the Belyi function visualization on the right
+    setTimeout(() => {
+      const c = dessinCtx;
+      c.fillStyle = '#aaf';
+      c.font = '14px Georgia';
+      c.fillText('Belyi-Funktion: β(z) = 4z(1−z)', 700, 100);
+      c.fillText('β: ℙ¹ → ℙ¹', 700, 125);
+      c.fillText('β⁻¹(0) = {0, 1} → ● schwarze Knoten', 700, 160);
+      c.fillText('β⁻¹(1) = {½} → ○ weißer Knoten', 700, 185);
+      c.fillText('β⁻¹(∞) = {∞} → ★ Fläche', 700, 210);
+
+      // Draw the function graph
+      c.strokeStyle = '#6688ff';
+      c.lineWidth = 2;
+      c.beginPath();
+      for (let t = -0.2; t <= 1.2; t += 0.005) {
+        const val = 4 * t * (1 - t);
+        const sx = 700 + t * 250;
+        const sy = 400 - val * 100;
+        if (t === -0.2) c.moveTo(sx, sy);
+        else c.lineTo(sx, sy);
+      }
+      c.stroke();
+
+      // Axes
+      c.strokeStyle = '#444';
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(700, 400); c.lineTo(1000, 400); c.stroke();
+      c.beginPath();
+      c.moveTo(700, 400); c.lineTo(700, 250); c.stroke();
+
+      c.fillStyle = '#888';
+      c.font = '12px Georgia';
+      c.fillText('0', 695, 415);
+      c.fillText('1', 945, 415);
+      c.fillText('1', 685, 305);
+      c.fillText('z', 1005, 405);
+      c.fillText('β(z)', 705, 255);
+
+      // Mark critical points
+      c.beginPath(); c.arc(700, 400, 5, 0, Math.PI * 2);
+      c.fillStyle = '#222'; c.fill(); c.strokeStyle = '#fff'; c.lineWidth = 1; c.stroke();
+      c.beginPath(); c.arc(950, 400, 5, 0, Math.PI * 2);
+      c.fillStyle = '#222'; c.fill(); c.stroke();
+      c.beginPath(); c.arc(825, 300, 5, 0, Math.PI * 2);
+      c.fillStyle = '#fff'; c.fill(); c.strokeStyle = '#888'; c.stroke();
+    }, 50);
+  }
+
+  dessinRedraw();
+}
+
+function dessinRedraw() {
+  const c = dessinCtx;
+  const W = dessinCanvas.width, H = dessinCanvas.height;
+  c.clearRect(0, 0, W, H);
+
+  // Background: draw on a sphere (Riemann sphere)
+  const cx = 400, cy = 250, sr = 200;
+  c.beginPath();
+  c.arc(cx, cy, sr, 0, Math.PI * 2);
+  c.fillStyle = '#0a0a2a';
+  c.fill();
+  c.strokeStyle = '#2a2a5a';
+  c.lineWidth = 2;
+  c.stroke();
+
+  // Grid on sphere
+  c.strokeStyle = '#1a1a3a';
+  c.lineWidth = 0.5;
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI;
+    c.beginPath();
+    c.ellipse(cx, cy, sr, sr * Math.abs(Math.cos(angle)), angle, 0, Math.PI * 2);
+    c.stroke();
+  }
+
+  c.fillStyle = '#333';
+  c.font = '12px Georgia';
+  c.fillText('Riemannsche Sphäre ℙ¹(ℂ)', cx - 70, cy + sr + 25);
+
+  // Draw edges
+  dessinEdgesD.forEach(e => {
+    if (e.black < dessinBlack.length && e.white < dessinWhite.length) {
+      const b = dessinBlack[e.black];
+      const w = dessinWhite[e.white];
+      c.strokeStyle = '#ffffffaa';
+      c.lineWidth = 3;
+      c.beginPath();
+      c.moveTo(b.x, b.y);
+      c.lineTo(w.x, w.y);
+      c.stroke();
+    }
+  });
+
+  // Draw black nodes (preimages of 0)
+  dessinBlack.forEach((n, i) => {
+    c.beginPath();
+    c.arc(n.x, n.y, 12, 0, Math.PI * 2);
+    c.fillStyle = '#111';
+    c.fill();
+    c.strokeStyle = '#fff';
+    c.lineWidth = 2;
+    c.stroke();
+
+    c.fillStyle = '#888';
+    c.font = '10px Georgia';
+    c.fillText(`●${i}`, n.x + 15, n.y - 5);
+  });
+
+  // Draw white nodes (preimages of 1)
+  dessinWhite.forEach((n, i) => {
+    c.beginPath();
+    c.arc(n.x, n.y, 10, 0, Math.PI * 2);
+    c.fillStyle = '#fff';
+    c.fill();
+    c.strokeStyle = '#888';
+    c.lineWidth = 2;
+    c.stroke();
+
+    c.fillStyle = '#888';
+    c.font = '10px Georgia';
+    c.fillText(`○${i}`, n.x + 13, n.y - 5);
+  });
+
+  // Highlight selected
+  if (dessinSelected) {
+    const list = dessinSelected.type === 'black' ? dessinBlack : dessinWhite;
+    const n = list[dessinSelected.idx];
+    c.beginPath();
+    c.arc(n.x, n.y, 18, 0, Math.PI * 2);
+    c.strokeStyle = '#ffdd44';
+    c.lineWidth = 2;
+    c.stroke();
+  }
+
+  // Compute passport
+  const blackDegrees = dessinBlack.map((_, i) => dessinEdgesD.filter(e => e.black === i).length);
+  const whiteDegrees = dessinWhite.map((_, i) => dessinEdgesD.filter(e => e.white === i).length);
+  const numEdges = dessinEdgesD.length;
+
+  // Compute faces (Euler formula: V - E + F = 2 for sphere)
+  const V = dessinBlack.length + dessinWhite.length;
+  const E = numEdges;
+  const F = 2 - V + E; // Euler formula for sphere
+  const genus = Math.max(0, (2 - (V - E + F)) / 2);
+
+  const infoEl = document.getElementById('dessin-info');
+  infoEl.innerHTML = `
+    <b>● Schwarz:</b> ${dessinBlack.length} (Grad: [${blackDegrees.join(', ')}]) &nbsp;|&nbsp;
+    <b>○ Weiß:</b> ${dessinWhite.length} (Grad: [${whiteDegrees.join(', ')}]) &nbsp;|&nbsp;
+    <b>Kanten:</b> ${numEdges} &nbsp;|&nbsp;
+    <b>Flächen:</b> ${F} &nbsp;|&nbsp;
+    <span style="color:#44ff88">Geschlecht g = ${genus}</span> &nbsp;|&nbsp;
+    <span style="color:#ffaa44">Passport: [${blackDegrees.sort().reverse().join('')}] [${whiteDegrees.sort().reverse().join('')}]</span>
+  `;
+
+  // Galois action hint
+  c.fillStyle = '#aaf';
+  c.font = '13px Georgia';
+  c.fillText('Die absolute Galoisgruppe Gal(Q̄/Q) wirkt auf Dessins!', 650, 450);
+  c.fillText('Gleicher Passport ≠ gleiche Galois-Orbite', 650, 475);
+}
+
+// ============================================================
+// 7. MOTIVE
+// ============================================================
+let motiveCanvas, motiveCtx;
+let motiveAnimTime = 0;
+let motiveAnimFrame = null;
+
+function motiveInit() {
+  motiveCanvas = document.getElementById('motive-canvas');
+  motiveCtx = motiveCanvas.getContext('2d');
+  motiveCanvas.addEventListener('mousemove', motiveHover);
+  motiveCanvas.addEventListener('mouseleave', () => hideInfo());
+  motiveRedraw();
+}
+
+function motiveHover(e) {
+  const rect = motiveCanvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+
+  const regions = [
+    { x: 550, y: 150, r: 60, text: '<b>Betti-Kohomologie</b><br>H*(X(ℂ), ℤ)<br>Topologisch: singuläre Kohomologie<br>des Raumes der komplexen Punkte' },
+    { x: 850, y: 280, r: 60, text: '<b>de Rham-Kohomologie</b><br>H*_dR(X/k)<br>Differentialformen & äußere Ableitung<br>d: Ωⁿ → Ωⁿ⁺¹' },
+    { x: 550, y: 430, r: 60, text: '<b>Étale Kohomologie</b><br>H*_ét(X, ℚₗ)<br>Grothendiecks Meisterwerk!<br>Funktioniert auch in Char. p' },
+    { x: 250, y: 280, r: 60, text: '<b>Kristalline Kohomologie</b><br>H*_cris(X/W(k))<br>Für Varietäten in Char. p<br>Ersetzt de Rham in Char. p' },
+  ];
+
+  let found = false;
+  for (const r of regions) {
+    if (dist(mx, my, r.x, r.y) < r.r + 10) {
+      showInfo(e.clientX, e.clientY, r.text);
+      found = true;
+      break;
+    }
+  }
+  if (!found) hideInfo();
+}
+
+function motiveAnimate() {
+  if (motiveAnimFrame) { cancelAnimationFrame(motiveAnimFrame); motiveAnimFrame = null; return; }
+  function loop() {
+    motiveAnimTime += 0.02;
+    motiveRedraw();
+    motiveAnimFrame = requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+function motiveRedraw() {
+  const c = motiveCtx;
+  const W = motiveCanvas.width, H = motiveCanvas.height;
+  c.clearRect(0, 0, W, H);
+
+  const variety = document.getElementById('motive-variety').value;
+  const t = motiveAnimTime;
+
+  // Central motive
+  const cx = 550, cy = 280;
+
+  // Glow effect
+  const gradient = c.createRadialGradient(cx, cy, 0, cx, cy, 100);
+  gradient.addColorStop(0, '#ffdd4444');
+  gradient.addColorStop(0.5, '#ffdd4411');
+  gradient.addColorStop(1, '#ffdd4400');
+  c.fillStyle = gradient;
+  c.beginPath();
+  c.arc(cx, cy, 100 + Math.sin(t) * 10, 0, Math.PI * 2);
+  c.fill();
+
+  // Central object
+  c.beginPath();
+  c.arc(cx, cy, 50, 0, Math.PI * 2);
+  c.fillStyle = '#1a1a3e';
+  c.fill();
+  c.strokeStyle = '#ffdd44';
+  c.lineWidth = 3;
+  c.stroke();
+
+  c.fillStyle = '#ffdd44';
+  c.font = 'bold 18px Georgia';
+  c.textAlign = 'center';
+  c.fillText('h(X)', cx, cy - 5);
+  c.font = '12px Georgia';
+  c.fillText('Motiv', cx, cy + 15);
+  c.textAlign = 'left';
+
+  // Variety info
+  const varietyInfo = {
+    point: { name: 'Punkt Spec(k)', betti: [1], hodge: '1', weight: '0' },
+    P1: { name: 'ℙ¹', betti: [1, 0, 1], hodge: '1 + 𝕃', weight: '0, 2' },
+    elliptic: { name: 'Elliptische Kurve E', betti: [1, 2, 1], hodge: '1 + h¹(E) + 𝕃', weight: '0, 1, 2' },
+    P2: { name: 'ℙ²', betti: [1, 0, 1, 0, 1], hodge: '1 + 𝕃 + 𝕃²', weight: '0, 2, 4' },
+    K3: { name: 'K3-Fläche', betti: [1, 0, 22, 0, 1], hodge: '1 + 22𝕃 + 𝕃²', weight: '0, 2, 4' },
+  };
+
+  const info = varietyInfo[variety];
+
+  c.fillStyle = '#aaf';
+  c.font = 'bold 16px Georgia';
+  c.fillText(info.name, 30, 40);
+  c.font = '14px Georgia';
+  c.fillStyle = '#888';
+  c.fillText(`Betti-Zahlen: [${info.betti.join(', ')}]`, 30, 65);
+  c.fillText(`Motiv: h(X) = ${info.hodge}`, 30, 88);
+  c.fillText(`Gewichte: ${info.weight}`, 30, 111);
+
+  // Realisierungen (cohomology theories)
+  const realizations = [
+    { x: 550, y: 120, label: 'Betti', sublabel: 'H*(X(ℂ), ℤ)', color: '#ff6666', angle: -Math.PI / 2 },
+    { x: 850, y: 280, label: 'de Rham', sublabel: 'H*_dR(X/k)', color: '#66ff66', angle: 0 },
+    { x: 550, y: 450, label: 'Étale', sublabel: 'H*_ét(X, ℚₗ)', color: '#6666ff', angle: Math.PI / 2 },
+    { x: 250, y: 280, label: 'Kristallin', sublabel: 'H*_cris(X/W)', color: '#ff66ff', angle: Math.PI },
+  ];
+
+  realizations.forEach((r, i) => {
+    // Animated position
+    const animOffset = t > 0 ? Math.sin(t + i * Math.PI / 2) * 15 : 0;
+    const rx = r.x + Math.cos(r.angle) * animOffset;
+    const ry = r.y + Math.sin(r.angle) * animOffset;
+
+    // Connection beam
+    const beamGrad = c.createLinearGradient(cx, cy, rx, ry);
+    beamGrad.addColorStop(0, '#ffdd4488');
+    beamGrad.addColorStop(0.5, r.color + '66');
+    beamGrad.addColorStop(1, r.color + '44');
+    c.strokeStyle = beamGrad;
+    c.lineWidth = 3 + Math.sin(t * 2 + i) * 1;
+    c.beginPath();
+    c.moveTo(cx, cy);
+    c.lineTo(rx, ry);
+    c.stroke();
+
+    // Animated particles along beam
+    if (t > 0) {
+      for (let p = 0; p < 3; p++) {
+        const pt = ((t * 0.5 + p * 0.33 + i * 0.25) % 1);
+        const px = lerp(cx, rx, pt);
+        const py = lerp(cy, ry, pt);
+        c.beginPath();
+        c.arc(px, py, 3, 0, Math.PI * 2);
+        c.fillStyle = r.color;
+        c.fill();
+      }
+    }
+
+    // Realization node
+    c.beginPath();
+    c.arc(rx, ry, 45, 0, Math.PI * 2);
+    c.fillStyle = r.color + '22';
+    c.fill();
+    c.strokeStyle = r.color;
+    c.lineWidth = 2;
+    c.stroke();
+
+    c.fillStyle = r.color;
+    c.font = 'bold 14px Georgia';
+    c.textAlign = 'center';
+    c.fillText(r.label, rx, ry - 8);
+    c.font = '11px Georgia';
+    c.fillStyle = '#aaa';
+    c.fillText(r.sublabel, rx, ry + 10);
+    c.textAlign = 'left';
+
+    // Betti numbers for this realization
+    c.fillStyle = r.color + 'aa';
+    c.font = '11px Georgia';
+    const bettiStr = info.betti.map((b, j) => `H${j}=${b}`).join(', ');
+    c.textAlign = 'center';
+    c.fillText(bettiStr, rx, ry + 30);
+    c.textAlign = 'left';
+  });
+
+  // Comparison theorems
+  c.fillStyle = '#ffdd44';
+  c.font = '13px Georgia';
+
+  // Arrows between realizations with comparison theorem labels
+  const comparisons = [
+    { from: 0, to: 1, label: 'de Rham ≅ Betti ⊗ ℂ', x: 730, y: 170 },
+    { from: 2, to: 3, label: 'p-adisch ↔ kristallin', x: 350, y: 420 },
+    { from: 0, to: 2, label: 'Artin: ét ≅ Betti (char 0)', x: 430, y: 290 },
+  ];
+
+  comparisons.forEach(comp => {
+    c.fillStyle = '#ffdd4488';
+    c.font = '11px Georgia';
+    c.fillText(comp.label, comp.x, comp.y);
+  });
+
+  // Lefschetz motive
+  c.fillStyle = '#888';
+  c.font = '13px Georgia';
+  c.fillText('𝕃 = Lefschetz-Motiv = h²(ℙ¹) = „Tate-Twist"', 30, H - 60);
+  c.fillText('Jedes Motiv zerlegt sich in Stücke verschiedenen Gewichts', 30, H - 38);
+  c.fillText('→ Grothendiecks Traum: Universelle Kohomologie-Theorie', 30, H - 16);
+
+  // Draw variety sketch in top right
+  drawVarietySketch(c, variety, W - 150, 80, t);
+}
+
+function drawVarietySketch(c, variety, x, y, t) {
+  c.save();
+  c.translate(x, y);
+
+  c.strokeStyle = '#555';
+  c.lineWidth = 1.5;
+
+  if (variety === 'point') {
+    c.beginPath();
+    c.arc(0, 0, 8, 0, Math.PI * 2);
+    c.fillStyle = '#ffdd44';
+    c.fill();
+  } else if (variety === 'P1') {
+    c.beginPath();
+    c.arc(0, 0, 40, 0, Math.PI * 2);
+    c.strokeStyle = '#6688ff';
+    c.lineWidth = 2;
+    c.stroke();
+    c.fillStyle = '#6688ff22';
+    c.fill();
+    c.fillStyle = '#888';
+    c.font = '11px Georgia';
+    c.textAlign = 'center';
+    c.fillText('ℙ¹ ≅ S²', 0, 55);
+    c.textAlign = 'left';
+  } else if (variety === 'elliptic') {
+    // Torus
+    c.beginPath();
+    for (let a = 0; a < Math.PI * 2; a += 0.05) {
+      const R = 35, r = 15;
+      const px = (R + r * Math.cos(a * 3 + t * 0.5)) * Math.cos(a);
+      const py = (R + r * Math.cos(a * 3 + t * 0.5)) * Math.sin(a) * 0.5;
+      if (a === 0) c.moveTo(px, py);
+      else c.lineTo(px, py);
+    }
+    c.closePath();
+    c.strokeStyle = '#ff8844';
+    c.lineWidth = 2;
+    c.stroke();
+    c.fillStyle = '#888';
+    c.font = '11px Georgia';
+    c.textAlign = 'center';
+    c.fillText('E ≅ T²', 0, 55);
+    c.textAlign = 'left';
+  } else if (variety === 'P2') {
+    c.beginPath();
+    c.moveTo(-30, -30);
+    c.lineTo(30, -30);
+    c.lineTo(40, 30);
+    c.lineTo(-20, 30);
+    c.closePath();
+    c.strokeStyle = '#44ff88';
+    c.lineWidth = 2;
+    c.stroke();
+    c.fillStyle = '#44ff8822';
+    c.fill();
+    c.fillStyle = '#888';
+    c.font = '11px Georgia';
+    c.textAlign = 'center';
+    c.fillText('ℙ²', 0, 55);
+    c.textAlign = 'left';
+  } else if (variety === 'K3') {
+    // Abstract K3 shape
+    c.beginPath();
+    for (let a = 0; a < Math.PI * 2; a += 0.05) {
+      const r = 35 + 10 * Math.sin(a * 3 + t * 0.3) + 5 * Math.cos(a * 5);
+      const px = r * Math.cos(a);
+      const py = r * Math.sin(a) * 0.6;
+      if (a === 0) c.moveTo(px, py);
+      else c.lineTo(px, py);
+    }
+    c.closePath();
+    c.strokeStyle = '#ff44ff';
+    c.lineWidth = 2;
+    c.stroke();
+    c.fillStyle = '#ff44ff11';
+    c.fill();
+    c.fillStyle = '#888';
+    c.font = '11px Georgia';
+    c.textAlign = 'center';
+    c.fillText('K3', 0, 55);
+    c.textAlign = 'left';
+  }
+
+  c.restore();
+}
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+window.addEventListener('load', () => {
+  sheafInit();
+  schemeInit();
+  functorInit();
+  toposInit();
+  cohoInit();
+  dessinInit();
+  motiveInit();
+});
+</script>
+
+</body>
+</html>
