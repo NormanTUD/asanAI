@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interaktive Kategorientheorie</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0a0a2e;
+    color: #e0e0ff;
+    overflow-x: hidden;
+  }
+  header {
+    text-align: center;
+    padding: 30px 20px 10px;
+    background: linear-gradient(135deg, #0a0a2e, #1a1a4e);
+    border-bottom: 2px solid #4040ff;
+  }
+  header h1 { font-size: 2.2em; color: #8080ff; margin-bottom: 5px; }
+  header p { color: #a0a0d0; font-size: 1.1em; }
+
+  nav {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+    padding: 15px 10px;
+    background: #0d0d35;
+    border-bottom: 1px solid #3030aa;
+    position: sticky; top: 0; z-index: 100;
+  }
+  nav button {
+    padding: 8px 16px; border: 1px solid #5050cc; border-radius: 20px;
+    background: transparent; color: #8080ff; cursor: pointer;
+    font-size: 0.95em; transition: all 0.3s;
+  }
+  nav button:hover, nav button.active {
+    background: #3030aa; color: #fff; border-color: #6060ff;
+  }
+
+  .section {
+    display: none; max-width: 1100px; margin: 20px auto; padding: 20px;
+  }
+  .section.active { display: block; }
+  .section h2 { color: #8080ff; font-size: 1.8em; margin-bottom: 10px; border-bottom: 1px solid #3030aa; padding-bottom: 8px; }
+  .section h3 { color: #60a0ff; margin: 15px 0 8px; }
+  .section p, .section li { line-height: 1.7; color: #c0c0e0; margin-bottom: 8px; }
+  .section ul { padding-left: 25px; }
+
+  .explanation {
+    background: #12124a; border: 1px solid #3030aa; border-radius: 12px;
+    padding: 18px; margin: 15px 0;
+  }
+
+  canvas {
+    display: block; margin: 15px auto; border: 1px solid #3030aa;
+    border-radius: 10px; background: #08082a; cursor: pointer;
+  }
+
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    margin: 12px 0;
+  }
+  .controls button {
+    padding: 8px 18px; border: 1px solid #5050cc; border-radius: 8px;
+    background: #1a1a5e; color: #a0a0ff; cursor: pointer; font-size: 0.9em;
+    transition: all 0.3s;
+  }
+  .controls button:hover { background: #3030aa; color: #fff; }
+  .controls select, .controls input {
+    padding: 8px 12px; border: 1px solid #5050cc; border-radius: 8px;
+    background: #1a1a5e; color: #a0a0ff; font-size: 0.9em;
+  }
+
+  .info-box {
+    background: #0e0e3a; border-left: 4px solid #6060ff; padding: 12px 16px;
+    margin: 12px 0; border-radius: 0 8px 8px 0; font-size: 0.95em;
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+  .math { font-family: 'Times New Roman', serif; font-style: italic; color: #ffcc80; }
+  .keyword { color: #ff80ab; font-weight: bold; }
+
+  #tooltip {
+    position: absolute; background: #1a1a5e; border: 1px solid #6060ff;
+    padding: 8px 12px; border-radius: 8px; font-size: 0.85em;
+    pointer-events: none; display: none; z-index: 200; max-width: 250px;
+    color: #d0d0ff;
+  }
+</style>
+</head>
+<body>
+
+<div id="tooltip"></div>
+
+<header>
+  <h1>🔮 Interaktive Kategorientheorie</h1>
+  <p>Erkunde die fundamentalen Konzepte der Kategorientheorie visuell und interaktiv</p>
+</header>
+
+<nav id="mainNav">
+  <button data-section="intro" class="active">Einführung</button>
+  <button data-section="category">Kategorien</button>
+  <button data-section="morphisms">Morphismen</button>
+  <button data-section="functors">Funktoren</button>
+  <button data-section="natural">Nat. Transformationen</button>
+  <button data-section="products">Produkte & Koprodukte</button>
+  <button data-section="limits">Limiten</button>
+  <button data-section="adjunctions">Adjunktionen</button>
+  <button data-section="yoneda">Yoneda-Lemma</button>
+  <button data-section="monads">Monaden</button>
+</nav>
+
+<!-- ==================== INTRO ==================== -->
+<div class="section active" id="sec-intro">
+  <h2>📖 Was ist Kategorientheorie?</h2>
+  <div class="explanation">
+    <p>Die <span class="keyword">Kategorientheorie</span> ist ein Teilgebiet der Mathematik, das sich mit abstrakten Strukturen und den Beziehungen zwischen ihnen beschäftigt. Sie wurde in den 1940er Jahren von <strong>Samuel Eilenberg</strong> und <strong>Saunders Mac Lane</strong> entwickelt.</p>
+    <p>Statt einzelne mathematische Objekte zu untersuchen, betrachtet die Kategorientheorie <em>Muster und Beziehungen</em> zwischen Objekten. Sie wird oft als "Mathematik der Mathematik" bezeichnet.</p>
+  </div>
+  <h3>Die drei Grundbausteine:</h3>
+  <canvas id="introCanvas" width="800" height="400"></canvas>
+  <div class="controls">
+    <button onclick="introAnim()">▶ Animation abspielen</button>
+    <button onclick="introReset()">↺ Zurücksetzen</button>
+  </div>
+  <div class="info-box">
+    <strong>Klicke auf die Objekte</strong> im Canvas, um mehr über sie zu erfahren. Bewege die Maus über Pfeile, um Tooltips zu sehen.
+  </div>
+</div>
+
+<!-- ==================== CATEGORY ==================== -->
+<div class="section" id="sec-category">
+  <h2>📦 Kategorien</h2>
+  <div class="explanation">
+    <p>Eine <span class="keyword">Kategorie</span> <span class="math">C</span> besteht aus:</p>
+    <ul>
+      <li>Einer Klasse von <strong>Objekten</strong> <span class="math">Ob(C)</span></li>
+      <li>Für je zwei Objekte <span class="math">A, B</span> einer Menge von <strong>Morphismen</strong> <span class="math">Hom(A, B)</span></li>
+      <li>Einer <strong>Komposition</strong>: Wenn <span class="math">f: A → B</span> und <span class="math">g: B → C</span>, dann existiert <span class="math">g ∘ f: A → C</span></li>
+      <li>Für jedes Objekt <span class="math">A</span> einem <strong>Identitätsmorphismus</strong> <span class="math">id_A: A → A</span></li>
+    </ul>
+  </div>
+  <h3>Interaktives Beispiel: Baue deine eigene Kategorie</h3>
+  <canvas id="categoryCanvas" width="800" height="500"></canvas>
+  <div class="controls">
+    <button onclick="catAddObject()">+ Objekt hinzufügen</button>
+    <button onclick="catStartArrow()">→ Morphismus zeichnen</button>
+    <button onclick="catCheckAxioms()">✓ Axiome prüfen</button>
+    <button onclick="catReset()">↺ Zurücksetzen</button>
+    <button onclick="catLoadExample('set')">Beispiel: Set</button>
+    <button onclick="catLoadExample('grp')">Beispiel: Grp</button>
+    <button onclick="catLoadExample('poset')">Beispiel: Poset</button>
+  </div>
+  <div id="catInfo" class="info-box">Klicke auf "Objekt hinzufügen" und dann auf das Canvas, um Objekte zu platzieren. Verbinde sie mit Morphismen!</div>
+
+  <h3>Bekannte Kategorien</h3>
+  <div class="two-col">
+    <div class="explanation">
+      <h3>Set – Kategorie der Mengen</h3>
+      <p>Objekte: Mengen<br>Morphismen: Funktionen<br>Komposition: Funktionskomposition</p>
+    </div>
+    <div class="explanation">
+      <h3>Grp – Kategorie der Gruppen</h3>
+      <p>Objekte: Gruppen<br>Morphismen: Gruppenhomomorphismen<br>Komposition: Komposition von Homomorphismen</p>
+    </div>
+    <div class="explanation">
+      <h3>Top – Kategorie der topologischen Räume</h3>
+      <p>Objekte: Topologische Räume<br>Morphismen: Stetige Abbildungen<br>Komposition: Komposition stetiger Abbildungen</p>
+    </div>
+    <div class="explanation">
+      <h3>Vect<sub>K</sub> – Kategorie der Vektorräume</h3>
+      <p>Objekte: Vektorräume über K<br>Morphismen: Lineare Abbildungen<br>Komposition: Komposition linearer Abbildungen</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MORPHISMS ==================== -->
+<div class="section" id="sec-morphisms">
+  <h2>🔀 Morphismen & Komposition</h2>
+  <div class="explanation">
+    <p><span class="keyword">Morphismen</span> (auch Pfeile genannt) sind die Beziehungen zwischen Objekten. Die Komposition muss <strong>assoziativ</strong> sein und <strong>Identitäten</strong> respektieren.</p>
+    <p>Axiome: <span class="math">(h ∘ g) ∘ f = h ∘ (g ∘ f)</span> und <span class="math">f ∘ id = f = id ∘ f</span></p>
+  </div>
+  <h3>Spezielle Morphismen</h3>
+  <canvas id="morphCanvas" width="800" height="450"></canvas>
+  <div class="controls">
+    <select id="morphType" onchange="morphDraw()">
+      <option value="mono">Monomorphismus (injektiv)</option>
+      <option value="epi">Epimorphismus (surjektiv)</option>
+      <option value="iso">Isomorphismus (bijektiv)</option>
+      <option value="endo">Endomorphismus</option>
+      <option value="auto">Automorphismus</option>
+    </select>
+    <button onclick="morphAnimate()">▶ Animieren</button>
+    <button onclick="morphDraw()">↺ Neu zeichnen</button>
+  </div>
+  <div id="morphInfo" class="info-box">Wähle einen Morphismus-Typ aus dem Dropdown, um seine Eigenschaften visuell zu erkunden.</div>
+
+  <h3>Komposition interaktiv</h3>
+  <canvas id="compCanvas" width="800" height="350"></canvas>
+  <div class="controls">
+    <button onclick="compStep(1)">Schritt 1: f: A → B</button>
+    <button onclick="compStep(2)">Schritt 2: g: B → C</button>
+    <button onclick="compStep(3)">Schritt 3: g ∘ f: A → C</button>
+    <button onclick="compStep(0)">↺ Reset</button>
+  </div>
+</div>
+
+<!-- ==================== FUNCTORS ==================== -->
+<div class="section" id="sec-functors">
+  <h2>🔄 Funktoren</h2>
+  <div class="explanation">
+    <p>Ein <span class="keyword">Funktor</span> <span class="math">F: C → D</span> ist eine strukturerhaltende Abbildung zwischen Kategorien. Er bildet:</p>
+    <ul>
+      <li>Objekte auf Objekte ab: <span class="math">A ↦ F(A)</span></li>
+      <li>Morphismen auf Morphismen ab: <span class="math">f ↦ F(f)</span></li>
+      <li>Erhält Komposition: <span class="math">F(g ∘ f) = F(g) ∘ F(f)</span></li>
+      <li>Erhält Identitäten: <span class="math">F(id_A) = id_{F(A)}</span></li>
+    </ul>
+  </div>
+  <canvas id="functorCanvas" width="800" height="500"></canvas>
+  <div class="controls">
+    <select id="functorType" onchange="functorDraw()">
+      <option value="covariant">Kovarianter Funktor</option>
+      <option value="contravariant">Kontravarianter Funktor</option>
+      <option value="forgetful">Vergissfunktor</option>
+      <option value="free">Freier Funktor</option>
+    </select>
+    <button onclick="functorAnimate()">▶ Animieren</button>
+    <button onclick="functorDraw()">↺ Neu zeichnen</button>
+  </div>
+  <div id="functorInfo" class="info-box">Wähle einen Funktor-Typ und beobachte, wie Objekte und Morphismen zwischen Kategorien abgebildet werden.</div>
+</div>
+
+<!-- ==================== NATURAL TRANSFORMATIONS ==================== -->
+<div class="section" id="sec-natural">
+  <h2>🌊 Natürliche Transformationen</h2>
+  <div class="explanation">
+    <p>Eine <span class="keyword">natürliche Transformation</span> <span class="math">η: F ⇒ G</span> zwischen zwei Funktoren <span class="math">F, G: C → D</span> ist eine Familie von Morphismen <span class="math">η_A: F(A) → G(A)</span> für jedes Objekt <span class="math">A</span> in <span class="math">C</span>, sodass für jeden Morphismus <span class="math">f: A → B</span> das folgende Diagramm kommutiert:</p>
+    <p style="text-align:center; font-size:1.2em; margin:10px 0;"><span class="math">G(f) ∘ η_A = η_B ∘ F(f)</span></p>
+  </div>
+  <canvas id="natCanvas" width="800" height="500"></canvas>
+  <div class="controls">
+    <button onclick="natStep(0)">Schritt 1: Funktoren F, G</button>
+    <button onclick="natStep(1)">Schritt 2: Komponenten η</button>
+    <button onclick="natStep(2)">Schritt 3: Kommutativität</button>
+    <button onclick="natAnimate()">▶ Voll animieren</button>
+  </div>
+  <div id="natInfo" class="info-box">Gehe Schritt für Schritt durch, um zu sehen, wie natürliche Transformationen funktionieren.</div>
+</div>
+
+<!-- ==================== PRODUCTS ==================== -->
+<div class="section" id="sec-products">
+  <h2>✖ Produkte & Koprodukte</h2>
+  <div class="explanation">
+    <p>Das <span class="keyword">Produkt</span> zweier Objekte <span class="math">A</span> und <span class="math">B</span> ist ein Objekt <span class="math">A × B</span> zusammen mit Projektionen <span class="math">π₁: A×B → A</span> und <span class="math">π₂: A×B → B</span>, das eine universelle Eigenschaft erfüllt.</p>
+    <p>Das <span class="keyword">Koprodukt</span> (duale Konstruktion) ist <span class="math">A ⊔ B</span> mit Inklusionen <span class="math">ι₁: A → A⊔B</span> und <span class="math">ι₂: B → A⊔B</span>.</p>
+  </div>
+  <canvas id="prodCanvas" width="800" height="500"></canvas>
+  <div class="controls">
+    <select id="prodType" onchange="prodDraw()">
+      <option value="product">Produkt (A × B)</option>
+      <option value="coproduct">Koprodukt (A ⊔ B)</option>
+    </select>
+    <button onclick="prodAnimate()">▶ Universelle Eigenschaft zeigen</button>
+    <button onclick="prodDraw()">↺ Neu zeichnen</button>
+  </div>
+  <div id="prodInfo" class="info-box">Beobachte die universelle Eigenschaft: Für jedes Objekt X mit passenden Morphismen existiert ein eindeutiger Morphismus zum Produkt/Koprodukt.</div>
+</div>
+
+<!-- ==================== LIMITS ==================== -->
+<div class="section" id="sec-limits">
+  <h2>🎯 Limiten & Kolimiten</h2>
+  <div class="explanation">
+    <p><span class="keyword">Limiten</span> verallgemeinern Produkte, Equalizer und Pullbacks. Ein Limes eines Diagramms <span class="math">D: J → C</span> ist ein universeller Kegel über dem Diagramm.</p>
+    <p><span class="keyword">Kolimiten</span> sind die duale Konstruktion (Koprodukte, Koequalizer, Pushouts).</p>
+  </div>
+  <canvas id="limitCanvas" width="800" height="500"></canvas>
+  <div class="controls">
+    <select id="limitType" onchange="limitDraw()">
+      <option value="pullback">Pullback</option>
+      <option value="pushout">Pushout</option>
+      <option value="equalizer">Equalizer</option>
+      <option value="terminal">Terminales Objekt</option>
+      <option value="initial">Initiales Objekt</option>
+    </select>
+    <button onclick="limitAnimate()">▶ Animieren</button>
+    <button onclick="limitDraw()">↺ Neu zeichnen</button>
+  </div>
+  <div id="limitInfo" class="info-box">Wähle eine Konstruktion und beobachte die universelle Eigenschaft.</div>
+</div>
+
+<!-- ==================== ADJUNCTIONS ==================== -->
+<div class="section" id="sec-adjunctions">
+  <h2>⚖ Adjunktionen</h2>
+  <div class="explanation">
+    <p>Eine <span class="keyword">Adjunktion</span> besteht aus zwei Funktoren <span class="math">F: C → D</span> (linksadjungiert) und <span class="math">G: D → C</span> (rechtsadjungiert), geschrieben <span class="math">F ⊣ G</span>, mit einer natürlichen Bijektion:</p>
+    <p style="text-align:center; font-size:1.2em;"><span class="math">Hom_D(F(A), B) ≅ Hom_C(A, G(B))</span></p>
+  </div>
+  <canvas id="adjCanvas" width="800" height="500"></canvas>
+  <div class="controls">
+    <select id="adjExample" onchange="adjDraw()">
+      <option value="free-forgetful">Frei ⊣ Vergiss (Gruppen)</option>
+      <option value="product-hom">— × B ⊣ Hom(B, —)</option>
+    </select>
+    <button onclick="adjAnimate()">▶ Bijektion zeigen</button>
+    <button onclick="adjDraw()">↺ Neu zeichnen</button>
+  </div>
+  <div id="adjInfo" class="info-box">Adjunktionen sind eines der wichtigsten Konzepte der Kategorientheorie. Sie verbinden zwei Kategorien auf besonders harmonische Weise.</div>
+</div>
+
+<!-- ==================== YONEDA ==================== -->
+<div class="section" id="sec-yoneda">
+  <h2>🏛 Yoneda-Lemma</h2>
+  <div class="explanation">
+    <p>Das <span class="keyword">Yoneda-Lemma</span> besagt: Für jeden Funktor <span class="math">F: C<sup>op</sup> → Set</span> und jedes Objekt <span class="math">A</span> in <span class="math">C</span> gibt es eine natürliche Bijektion:</p>
+    <p style="text-align:center; font-size:1.2em;"><span class="math">Nat(Hom(—, A), F) ≅ F(A)</span></p>
+    <p>Insbesondere: Ein Objekt wird vollständig durch seine Beziehungen zu allen anderen Objekten bestimmt (<strong>Yoneda-Einbettung</strong>).</p>
+  </div>
+  <canvas id="yonedaCanvas" width="800" height="500"></canvas>
+  <div class="controls">
+    <button onclick="yonedaStep(0)">Schritt 1: Hom-Funktor</button>
+    <button onclick="yonedaStep(1)">Schritt 2: Funktor F</button>
+    <button onclick="yonedaStep(2)">Schritt 3: Bijektion</button>
+    <button onclick="yonedaAnimate()">▶ Voll animieren</button>
+  </div>
+  <div id="yonedaInfo" class="info-box">"Ein Objekt ist vollständig durch die Morphismen bestimmt, die in es hineinführen." – Das ist die Essenz des Yoneda-Lemmas.</div>
+</div>
+
+<!-- ==================== MONADS ==================== -->
+<div class="section" id="sec-monads">
+  <h2>🌀 Monaden</h2>
+  <div class="explanation">
+    <p>Eine <span class="keyword">Monade</span> auf einer Kategorie <span class="math">C</span> ist ein Tripel <span class="math">(T, η, μ)</span> wobei:</p>
+    <ul>
+      <li><span class="math">T: C → C</span> ein Endofunktor ist</li>
+      <li><span class="math">η: Id_C ⇒ T</span> die <strong>Einheit</strong> (unit) ist</li>
+      <li><span class="math">μ: T² ⇒ T</span> die <strong>Multiplikation</strong> (join) ist</li>
+    </ul>
+    <p>Mit den Axiomen: <span class="math">μ ∘ Tμ = μ ∘ μT</span> (Assoziativität) und <span class="math">μ ∘ Tη = μ ∘ ηT = id_T</span> (Einheit)</p>
+  </div>
+  <canvas id="monadCanvas" width="800" height="500"></canvas>
+  <div class="controls">
+    <select id="monadExample" onchange="monadDraw()">
+      <option value="maybe">Maybe-Monade</option>
+      <option value="list">Listen-Monade</option>
+      <option value="abstract">Abstrakt (T, η, μ)</option>
+    </select>
+    <button onclick="monadStep(0)">Schritt 1: Endofunktor T</button>
+    <button onclick="monadStep(1)">Schritt 2: Einheit η</button>
+    <button onclick="monadStep(2)">Schritt 3: Multiplikation μ</button>
+    <button onclick="monadAnimate()">▶ Voll animieren</button>
+  </div>
+  <div id="monadInfo" class="info-box">Monaden sind in der Programmierung (z.B. Haskell) allgegenwärtig. Hier siehst du die kategorientheoretische Grundlage.</div>
+</div>
+
+<script>
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+const TAU = Math.PI * 2;
+const tooltip = document.getElementById('tooltip');
+
+function getCtx(id) {
+  const c = document.getElementById(id);
+  return { canvas: c, ctx: c.getContext('2d'), w: c.width, h: c.height };
+}
+
+function clear(ctx, w, h) {
+  ctx.clearRect(0, 0, w, h);
+}
+
+function drawCircle(ctx, x, y, r, fill, stroke, lw=2) {
+  ctx.beginPath(); ctx.arc(x, y, r, 0, TAU);
+  if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke(); }
+}
+
+function drawText(ctx, text, x, y, color='#e0e0ff', size=16, align='center') {
+  ctx.fillStyle = color; ctx.font = `${size}px 'Segoe UI', sans-serif`;
+  ctx.textAlign = align; ctx.textBaseline = 'middle';
+  ctx.fillText(text, x, y);
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color='#6060ff', lw=2, headLen=12, dashed=false) {
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+  ctx.beginPath();
+  if (dashed) ctx.setLineDash([6, 4]); else ctx.setLineDash([]);
+  ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+  ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.stroke();
+  ctx.setLineDash([]);
+  // arrowhead
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headLen * Math.cos(angle - 0.3), y2 - headLen * Math.sin(angle - 0.3));
+  ctx.lineTo(x2 - headLen * Math.cos(angle + 0.3), y2 - headLen * Math.sin(angle + 0.3));
+  ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+}
+
+function drawCurvedArrow(ctx, x1, y1, x2, y2, curve, color='#6060ff', lw=2, headLen=12, dashed=false) {
+  const mx = (x1 + x2) / 2 + curve;
+  const my = (y1 + y2) / 2 - Math.abs(curve) * 0.5;
+  ctx.beginPath();
+  if (dashed) ctx.setLineDash([6, 4]); else ctx.setLineDash([]);
+  ctx.moveTo(x1, y1);
+  ctx.quadraticCurveTo(mx, my, x2, y2);
+  ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.stroke();
+  ctx.setLineDash([]);
+  // arrowhead
+  const t = 0.95;
+  const tx = (1-t)*(1-t)*x1 + 2*(1-t)*t*mx + t*t*x2;
+  const ty = (1-t)*(1-t)*y1 + 2*(1-t)*t*my + t*t*y2;
+  const angle = Math.atan2(y2 - ty, x2 - tx);
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headLen * Math.cos(angle - 0.3), y2 - headLen * Math.sin(angle - 0.3));
+  ctx.lineTo(x2 - headLen * Math.cos(angle + 0.3), y2 - headLen * Math.sin(angle + 0.3));
+  ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+}
+
+function drawLoopArrow(ctx, x, y, r, color='#6060ff', lw=2) {
+  ctx.beginPath();
+  ctx.arc(x, y - r - 15, 15, 0.5, TAU - 0.3);
+  ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.stroke();
+  const angle = TAU - 0.3;
+  const ax = x + 15 * Math.cos(angle);
+  const ay = y - r - 15 + 15 * Math.sin(angle);
+  ctx.beginPath();
+  ctx.moveTo(ax, ay);
+  ctx.lineTo(ax + 8, ay - 6);
+  ctx.lineTo(ax + 2, ay + 8);
+  ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+}
+
+function drawObject(ctx, x, y, label, r=28, fill='#1a1a6e', stroke='#6060ff') {
+  drawCircle(ctx, x, y, r, fill, stroke, 2);
+  drawText(ctx, label, x, y, '#fff', 16);
+}
+
+function drawDoubleArrow(ctx, x1, y1, x2, y2, color='#ff8040', lw=2) {
+  drawArrow(ctx, x1, y1, x2, y2, color, lw);
+  drawArrow(ctx, x2, y2, x1, y1, color, lw);
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function dist(x1, y1, x2, y2) { return Math.sqrt((x2-x1)**2 + (y2-y1)**2); }
+
+function edgePoint(x1, y1, x2, y2, r) {
+  const d = dist(x1, y1, x2, y2);
+  if (d === 0) return { x: x1, y: y1 };
+  return { x: x1 + (x2 - x1) * r / d, y: y1 + (y2 - y1) * r / d };
+}
+
+function drawArrowBetweenObjects(ctx, x1, y1, x2, y2, r, label, color='#6060ff', lw=2, dashed=false, curve=0) {
+  const p1 = edgePoint(x1, y1, x2, y2, r);
+  const p2 = edgePoint(x2, y2, x1, y1, r);
+  if (curve !== 0) {
+    drawCurvedArrow(ctx, p1.x, p1.y, p2.x, p2.y, curve, color, lw, 12, dashed);
+  } else {
+    drawArrow(ctx, p1.x, p1.y, p2.x, p2.y, color, lw, 12, dashed);
+  }
+  if (label) {
+    const mx = (p1.x + p2.x) / 2 + (curve ? curve * 0.4 : 0);
+    const my = (p1.y + p2.y) / 2 - 15 + (curve ? -Math.abs(curve) * 0.2 : 0);
+    drawText(ctx, label, mx, my, color, 14);
+  }
+}
+
+function drawBox(ctx, x, y, w, h, label, fill='#0e0e3a', stroke='#4040aa') {
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, 12);
+  ctx.fill(); ctx.stroke();
+  if (label) {
+    drawText(ctx, label, x + w/2, y + 20, '#8080ff', 15);
+  }
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sec-' + btn.dataset.section).classList.add('active');
+    // trigger initial draw
+    const sec = btn.dataset.section;
+    if (sec === 'intro') introReset();
+    if (sec === 'category') catReset();
+    if (sec === 'morphisms') { morphDraw(); compStep(0); }
+    if (sec === 'functors') functorDraw();
+    if (sec === 'natural') natStep(0);
+    if (sec === 'products') prodDraw();
+    if (sec === 'limits') limitDraw();
+    if (sec === 'adjunctions') adjDraw();
+    if (sec === 'yoneda') yonedaStep(0);
+    if (sec === 'monads') monadDraw();
+  });
+});
+
+// ============================================================
+// INTRO SECTION
+// ============================================================
+let introAnimId = null;
+function introReset() {
+  if (introAnimId) cancelAnimationFrame(introAnimId);
+  const { ctx, w, h } = getCtx('introCanvas');
+  clear(ctx, w, h);
+
+  // Draw three pillars
+  drawObject(ctx, 200, 150, 'Objekte', 45, '#1a1a6e', '#ff6060');
+  drawObject(ctx, 400, 300, 'Morphismen', 50, '#1a1a6e', '#60ff60');
+  drawObject(ctx, 600, 150, 'Komposition', 50, '#1a1a6e', '#6060ff');
+
+  drawArrowBetweenObjects(ctx, 200, 150, 400, 300, 50, 'verbunden durch', '#ff8040');
+  drawArrowBetweenObjects(ctx, 400, 300, 600, 150, 50, 'kombiniert via', '#ff8040');
+  drawArrowBetweenObjects(ctx, 200, 150, 600, 150, 50, 'strukturiert durch', '#ff8040');
+
+  drawText(ctx, '🔮 Die drei Säulen der Kategorientheorie', w/2, 30, '#8080ff', 20);
+  drawText(ctx, 'Klicke "Animation abspielen" für eine animierte Einführung', w/2, h - 20, '#606090', 13);
+}
+
+function introAnim() {
+  if (introAnimId) cancelAnimationFrame(introAnimId);
+  const { canvas, ctx, w, h } = getCtx('introCanvas');
+  let t = 0;
+  const speed = 0.008;
+
+  function frame() {
+    t += speed;
+    if (t > 3) t = 0;
+    clear(ctx, w, h);
+
+    drawText(ctx, '🔮 Kategorientheorie – Animiert', w/2, 25, '#8080ff', 18);
+
+    // Phase 1: Objects appear
+    const a1 = Math.min(t, 1);
+    if (a1 > 0) {
+      ctx.globalAlpha = a1;
+      drawObject(ctx, 150, 200, 'A', 30, '#1a1a6e', '#ff6060');
+      drawObject(ctx, 400, 200, 'B', 30, '#1a1a6e', '#60ff60');
+      drawObject(ctx, 650, 200, 'C', 30, '#1a1a6e', '#6060ff');
+      if (a1 >= 1) drawText(ctx, '① Objekte: Die "Dinge" in einer Kategorie', w/2, 80, '#c0c0e0', 15);
+      ctx.globalAlpha = 1;
+    }
+
+    // Phase 2: Morphisms
+    const a2 = Math.max(0, Math.min(t - 1, 1));
+    if (a2 > 0) {
+      ctx.globalAlpha = a2;
+      const fx = lerp(180, 370, a2);
+      drawArrow(ctx, 180, 200, fx, 200, '#ffaa40', 3);
+      drawText(ctx, 'f', (180 + fx)/2, 185, '#ffaa40', 14);
+      const gx = lerp(430, 620, a2);
+      drawArrow(ctx, 430, 200, gx, 200, '#40aaff', 3);
+      drawText(ctx, 'g', (430 + gx)/2, 185, '#40aaff', 14);
+      if (a2 >= 1) drawText(ctx, '② Morphismen: Die "Pfeile" zwischen Objekten', w/2, 270, '#c0c0e0', 15);
+      ctx.globalAlpha = 1;
+    }
+
+    // Phase 3: Composition
+    const a3 = Math.max(0, Math.min(t - 2, 1));
+    if (a3 > 0) {
+      ctx.globalAlpha = a3;
+      drawCurvedArrow(ctx, 180, 200, 620, 200, -80 * a3, '#ff40ff', 3);
+      drawText(ctx, 'g ∘ f', 400, 200 - 100 * a3, '#ff40ff', 16);
+      if (a3 >= 1) drawText(ctx, '③ Komposition: Pfeile können verkettet werden!', w/2, 340, '#c0c0e0', 15);
+      ctx.globalAlpha = 1;
+    }
+
+    drawText(ctx, `Phase: ${Math.floor(t) + 1}/3`, w/2, h - 15, '#606090', 12);
+    introAnimId = requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+setTimeout(introReset, 100);
+
+// ============================================================
+// CATEGORY SECTION – Build your own category
+// ============================================================
+let catObjects = [];
+let catMorphisms = [];
+let catMode = 'idle'; // 'idle', 'addObject', 'arrowFrom', 'arrowTo'
+let catArrowFrom = null;
+let catNextLabel = 65; // ASCII 'A'
+
+function catReset() {
+  catObjects = [];
+  catMorphisms = [];
+  catMode = 'idle';
+  catArrowFrom = null;
+  catNextLabel = 65;
+  catRedraw();
+  document.getElementById('catInfo').textContent = 'Klicke auf "Objekt hinzufügen" und dann auf das Canvas, um Objekte zu platzieren.';
+}
+
+function catRedraw() {
+  const { ctx, w, h } = getCtx('categoryCanvas');
+  clear(ctx, w, h);
+  drawText(ctx, 'Deine Kategorie', w/2, 20, '#8080ff', 16);
+
+  if (catMode === 'addObject') drawText(ctx, '🖱 Klicke, um ein Objekt zu platzieren', w/2, h - 15, '#ffaa40', 13);
+  if (catMode === 'arrowFrom') drawText(ctx, '🖱 Klicke auf das Quell-Objekt', w/2, h - 15, '#ffaa40', 13);
+  if (catMode === 'arrowTo') drawText(ctx, '🖱 Klicke auf das Ziel-Objekt', w/2, h - 15, '#ffaa40', 13);
+
+  // Draw morphisms
+  catMorphisms.forEach(m => {
+    const from = catObjects[m.from];
+    const to = catObjects[m.to];
+    if (m.from === m.to) {
+      drawLoopArrow(ctx, from.x, from.y, 28, '#60ff60');
+      drawText(ctx, m.label, from.x + 25, from.y - 55, '#60ff60', 12);
+    } else {
+      drawArrowBetweenObjects(ctx, from.x, from.y, to.x, to.y, 28, m.label, '#60ff60', 2, false, m.curve || 0);
+    }
+  });
+
+  // Draw objects
+  catObjects.forEach((obj, i) => {
+    const highlight = (catMode === 'arrowFrom' || catMode === 'arrowTo') ? '#ffaa40' : '#6060ff';
+    drawObject(ctx, obj.x, obj.y, obj.label, 28, '#1a1a6e', highlight);
+  });
+}
+
+function catAddObject() {
+  catMode = 'addObject';
+  catRedraw();
+}
+
+function catStartArrow() {
+  if (catObjects.length < 2 && catObjects.length < 1) {
+    document.getElementById('catInfo').textContent = 'Füge zuerst mindestens ein Objekt hinzu!';
+    return;
+  }
+  catMode = 'arrowFrom';
+  catRedraw();
+}
+
+function catFindObject(x, y) {
+  for (let i = catObjects.length - 1; i >= 0; i--) {
+    if (dist(x, y, catObjects[i].x, catObjects[i].y) < 30) return i;
+  }
+  return -1;
+}
+
+document.getElementById('categoryCanvas').addEventListener('click', function(e) {
+  const rect = this.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (this.width / rect.width);
+  const y = (e.clientY - rect.top) * (this.height / rect.height);
+
+  if (catMode === 'addObject') {
+    const label = String.fromCharCode(catNextLabel);
+    catNextLabel++;
+    catObjects.push({ x, y, label });
+    // Auto-add identity morphism
+    const idx = catObjects.length - 1;
+    catMorphisms.push({ from: idx, to: idx, label: `id_${label}` });
+    catMode = 'idle';
+    catRedraw();
+    document.getElementById('catInfo').textContent = `Objekt "${label}" hinzugefügt (mit Identitätsmorphismus). Füge weitere hinzu oder zeichne Morphismen!`;
+  } else if (catMode === 'arrowFrom') {
+    const idx = catFindObject(x, y);
+    if (idx >= 0) {
+      catArrowFrom = idx;
+      catMode = 'arrowTo';
+      catRedraw();
+      document.getElementById('catInfo').textContent = `Quell-Objekt: ${catObjects[idx].label}. Klicke jetzt auf das Ziel-Objekt.`;
+    }
+  } else if (catMode === 'arrowTo') {
+    const idx = catFindObject(x, y);
+    if (idx >= 0 && catArrowFrom !== null) {
+      const from = catObjects[catArrowFrom];
+      const to = catObjects[idx];
+      const label = `f${catMorphisms.length}`;
+      // Check for existing arrows between same objects to curve them
+      const existing = catMorphisms.filter(m => (m.from === catArrowFrom && m.to === idx) || (m.from === idx && m.to === catArrowFrom));
+      const curve = existing.length > 0 ? (existing.length % 2 === 0 ? 40 : -40) * Math.ceil(existing.length / 2) : 0;
+      catMorphisms.push({ from: catArrowFrom, to: idx, label, curve });
+      catMode = 'idle';
+      catArrowFrom = null;
+      catRedraw();
+      document.getElementById('catInfo').textContent = `Morphismus ${label}: ${from.label} → ${to.label} hinzugefügt!`;
+    }
+  }
+});
+
+// Drag objects
+let catDragging = -1;
+document.getElementById('categoryCanvas').addEventListener('mousedown', function(e) {
+  if (catMode !== 'idle') return;
+  const rect = this.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (this.width / rect.width);
+  const y = (e.clientY - rect.top) * (this.height / rect.height);
+  catDragging = catFindObject(x, y);
+});
+document.getElementById('categoryCanvas').addEventListener('mousemove', function(e) {
+  if (catDragging < 0) return;
+  const rect = this.getBoundingClientRect();
+  catObjects[catDragging].x = (e.clientX - rect.left) * (this.width / rect.width);
+  catObjects[catDragging].y = (e.clientY - rect.top) * (this.height / rect.height);
+  catRedraw();
+});
+document.getElementById('categoryCanvas').addEventListener('mouseup', () => { catDragging = -1; });
+
+function catCheckAxioms() {
+  const info = document.getElementById('catInfo');
+  let issues = [];
+
+  // Check identity morphisms
+  catObjects.forEach((obj, i) => {
+    const hasId = catMorphisms.some(m => m.from === i && m.to === i);
+    if (!hasId) issues.push(`⚠ Objekt ${obj.label} hat keinen Identitätsmorphismus!`);
+  });
+
+  // Check composition closure (simplified)
+  for (let m1 of catMorphisms) {
+    for (let m2 of catMorphisms) {
+      if (m1.to === m2.from && m1.from !== m1.to && m2.from !== m2.to) {
+        const hasComp = catMorphisms.some(m => m.from === m1.from && m.to === m2.to);
+        if (!hasComp) {
+          issues.push(`⚠ Komposition fehlt: ${catObjects[m2.to].label} ← ${catObjects[m1.to].label} ← ${catObjects[m1.from].label} braucht einen direkten Pfeil ${catObjects[m1.from].label} → ${catObjects[m2.to].label}`);
+        }
+      }
+    }
+  }
+
+  if (issues.length === 0) {
+    info.innerHTML = '✅ <strong>Alle Axiome erfüllt!</strong> Deine Kategorie ist gültig (Identitäten vorhanden, Komposition abgeschlossen).';
+  } else {
+    info.innerHTML = '❌ <strong>Probleme gefunden:</strong><br>' + issues.join('<br>');
+  }
+}
+
+function catLoadExample(type) {
+  catObjects = [];
+  catMorphisms = [];
+  catNextLabel = 65;
+
+  if (type === 'set') {
+    catObjects = [
+      { x: 150, y: 150, label: '{1,2}' },
+      { x: 400, y: 150, label: '{a,b,c}' },
+      { x: 650, y: 150, label: '{x}' },
+      { x: 275, y: 350, label: '∅' },
+      { x: 525, y: 350, label: '{1}' }
+    ];
+    catMorphisms = [
+      { from: 0, to: 0, label: 'id' }, { from: 1, to: 1, label: 'id' },
+      { from: 2, to: 2, label: 'id' }, { from: 3, to: 3, label: 'id' },
+      { from: 4, to: 4, label: 'id' },
+      { from: 0, to: 1, label: 'f', curve: 0 },
+      { from: 2, to: 0, label: 'g', curve: 0 },
+      { from: 3, to: 0, label: '!', curve: 0 },
+      { from: 3, to: 1, label: '!', curve: 0 },
+      { from: 4, to: 0, label: 'h', curve: 0 },
+      { from: 2, to: 1, label: 'f∘g', curve: -40 },
+    ];
+    document.getElementById('catInfo').innerHTML = '<strong>Set</strong> – Kategorie der Mengen. Objekte sind Mengen, Morphismen sind Funktionen. ∅ ist das initiale Objekt, {x} ist terminal.';
+  } else if (type === 'grp') {
+    catObjects = [
+      { x: 150, y: 200, label: 'ℤ' },
+      { x: 400, y: 100, label: 'ℤ/2ℤ' },
+      { x: 650, y: 200, label: 'ℤ/6ℤ' },
+      { x: 400, y: 350, label: '{e}' }
+    ];
+    catMorphisms = [
+      { from: 0, to: 0, label: 'id' }, { from: 1, to: 1, label: 'id' },
+      { from: 2, to: 2, label: 'id' }, { from: 3, to: 3, label: 'id' },
+      { from: 0, to: 1, label: 'mod 2', curve: 0 },
+      { from: 0, to: 2, label: 'mod 6', curve: 0 },
+      { from: 2, to: 1, label: 'mod 2', curve: 0 },
+      { from: 3, to: 0, label: 'e↦0', curve: 0 },
+      { from: 3, to: 1, label: 'e↦0', curve: 0 },
+    ];
+    document.getElementById('catInfo').innerHTML = '<strong>Grp</strong> – Kategorie der Gruppen. Morphismen sind Gruppenhomomorphismen. {e} ist die triviale Gruppe.';
+  } else if (type === 'poset') {
+    catObjects = [
+      { x: 400, y: 80, label: '3' },
+      { x: 250, y: 200, label: '2' },
+      { x: 550, y: 200, label: '2\'' },
+      { x: 400, y: 320, label: '1' },
+      { x: 400, y: 430, label: '0' }
+    ];
+    catMorphisms = [
+      { from: 0, to: 0, label: 'id' }, { from: 1, to: 1, label: 'id' },
+      { from: 2, to: 2, label: 'id' }, { from: 3, to: 3, label: 'id' },
+      { from: 4, to: 4, label: 'id' },
+      { from: 4, to: 3, label: '≤', curve: 0 },
+      { from: 3, to: 1, label: '≤', curve: 0 },
+      { from: 3, to: 2, label: '≤', curve: 0 },
+      { from: 1, to: 0, label: '≤', curve: 0 },
+      { from: 2, to: 0, label: '≤', curve: 0 },
+      { from: 4, to: 1, label: '≤', curve: -40 },
+      { from: 4, to: 2, label: '≤', curve: 40 },
+      { from: 4, to: 0, label: '≤', curve: -80 },
+      { from: 3, to: 0, label: '≤', curve: 40 },
+    ];
+    document.getElementById('catInfo').innerHTML = '<strong>Poset</strong> – Jede partiell geordnete Menge ist eine Kategorie! Zwischen je zwei vergleichbaren Elementen gibt es genau einen Morphismus (≤).';
+  }
+  catRedraw();
+}
+
+// ============================================================
+// MORPHISMS SECTION
+// ============================================================
+function morphDraw() {
+  const { ctx, w, h } = getCtx('morphCanvas');
+  clear(ctx, w, h);
+  const type = document.getElementById('morphType').value;
+
+  const setA = [
+    { x: 120, y: 120, label: '1' },
+    { x: 120, y: 200, label: '2' },
+    { x: 120, y: 280, label: '3' },
+    { x: 120, y: 360, label: '4' }
+  ];
+  const setB = [
+    { x: 350, y: 140, label: 'a' },
+    { x: 350, y: 220, label: 'b' },
+    { x: 350, y: 300, label: 'c' },
+    { x: 350, y: 380, label: 'd' }
+  ];
+
+  drawBox(ctx, 50, 60, 150, 360, 'A');
+  drawBox(ctx, 280, 60, 150, 360, 'B');
+
+  setA.forEach(p => drawCircle(ctx, p.x, p.y, 12, '#2a2a6e', '#ff6060'));
+  setA.forEach(p => drawText(ctx, p.label, p.x, p.y, '#fff', 13));
+  setB.forEach(p => drawCircle(ctx, p.x, p.y, 12, '#2a2a6e', '#60ff60'));
+  setB.forEach(p => drawText(ctx, p.label, p.x, p.y, '#fff', 13));
+
+  let arrows = [];
+  let title = '';
+  let desc = '';
+
+  if (type === 'mono') {
+    arrows = [[0,0],[1,1],[2,2]]; // injective, not all of B hit
+    title = 'Monomorphismus (Mono)';
+    desc = 'Injektiv: Verschiedene Elemente werden auf verschiedene Elemente abgebildet. Linkskürbar: f∘g₁ = f∘g₂ ⟹ g₁ = g₂';
+  } else if (type === 'epi') {
+    arrows = [[0,0],[1,1],[2,2],[3,2]]; // surjective
+    title = 'Epimorphismus (Epi)';
+    desc = 'Surjektiv: Jedes Element in B wird getroffen. Rechtskürbar: g₁∘f = g₂∘f ⟹ g₁ = g₂';
+  } else if (type === 'iso') {
+    arrows = [[0,0],[1,1],[2,2],[3,3]];
+    title = 'Isomorphismus (Iso)';
+    desc = 'Bijektiv: Injektiv UND surjektiv. Es existiert eine Umkehrabbildung f⁻¹. A ≅ B';
+  } else if (type === 'endo') {
+    // Draw single set
+    clear(ctx, w, h);
+    drawBox(ctx, 50, 60, 150, 360, 'A');
+    setA.forEach(p => drawCircle(ctx, p.x, p.y, 12, '#2a2a6e', '#ff6060'));
+    setA.forEach(p => drawText(ctx, p.label, p.x, p.y, '#fff', 13));
+    // Arrows within A
+    drawArrow(ctx, 135, 120, 135, 190, '#ffaa40', 2);
+    drawArrow(ctx, 135, 200, 135, 270, '#ffaa40', 2);
+    drawArrow(ctx, 135, 280, 135, 350, '#ffaa40', 2);
+    drawLoopArrow(ctx, 120, 360, 12, '#ffaa40');
+    title = 'Endomorphismus';
+    desc = 'Ein Morphismus von einem Objekt zu sich selbst: f: A → A';
+    drawText(ctx, title, w/2, 30, '#ffaa40', 20);
+    drawText(ctx, desc, w/2, h - 20, '#a0a0d0', 13);
+
+    // Show composition diagram on right
+    drawBox(ctx, 450, 60, 300, 360, 'End(A) – Monoid');
+    drawText(ctx, 'f: A → A', 600, 120, '#ffaa40', 14);
+    drawText(ctx, 'g: A → A', 600, 160, '#40aaff', 14);
+    drawText(ctx, 'g ∘ f: A → A', 600, 200, '#ff40ff', 14);
+    drawText(ctx, 'id_A: A → A', 600, 240, '#60ff60', 14);
+    drawText(ctx, 'Die Endomorphismen eines', 600, 300, '#a0a0d0', 13);
+    drawText(ctx, 'Objekts bilden ein Monoid!', 600, 320, '#a0a0d0', 13);
+    document.getElementById('morphInfo').innerHTML = `<strong>${title}</strong>: ${desc}`;
+    return;
+  } else if (type === 'auto') {
+    clear(ctx, w, h);
+    drawBox(ctx, 50, 60, 150, 360, 'A');
+    setA.forEach(p => drawCircle(ctx, p.x, p.y, 12, '#2a2a6e', '#ff6060'));
+    setA.forEach(p => drawText(ctx, p.label, p.x, p.y, '#fff', 13));
+    // Permutation arrows
+    drawCurvedArrow(ctx, 135, 120, 135, 195, 50, '#ff40ff', 2);
+    drawCurvedArrow(ctx, 135, 200, 135, 115, 50, '#ff40ff', 2);
+    drawCurvedArrow(ctx, 135, 280, 135, 355, -50, '#40ffff', 2);
+    drawCurvedArrow(ctx, 135, 360, 135, 275, -50, '#40ffff', 2);
+    title = 'Automorphismus';
+    desc = 'Ein Isomorphismus von einem Objekt zu sich selbst. Aut(A) bildet eine Gruppe!';
+    drawText(ctx, title, w/2, 30, '#ff40ff', 20);
+    drawText(ctx, desc, w/2, h - 20, '#a0a0d0', 13);
+
+    drawBox(ctx, 450, 60, 300, 360, 'Aut(A) – Gruppe');
+    drawText(ctx, 'Permutationen von A:', 600, 120, '#ff40ff', 14);
+    drawText(ctx, '(1↔2)(3↔4)', 600, 160, '#ff40ff', 14);
+    drawText(ctx, 'Jeder Automorphismus', 600, 220, '#a0a0d0', 13);
+    drawText(ctx, 'hat eine Inverse!', 600, 245, '#a0a0d0', 13);
+    drawText(ctx, 'Aut(A) ⊆ End(A)', 600, 300, '#60ff60', 14);
+    drawText(ctx, 'Gruppe ⊆ Monoid', 600, 325, '#60ff60', 14);
+    document.getElementById('morphInfo').innerHTML = `<strong>${title}</strong>: ${desc}`;
+    return;
+  }
+
+  arrows.forEach(([ai, bi]) => {
+    drawArrow(ctx, setA[ai].x + 14, setA[ai].y, setB[bi].x - 14, setB[bi].y, '#ffaa40', 2);
+  });
+
+  // Highlight unmapped elements
+  if (type === 'mono') {
+    drawCircle(ctx, setB[3].x, setB[3].y, 14, 'rgba(255,0,0,0.2)', '#ff4040');
+    drawText(ctx, '← nicht getroffen', setB[3].x + 80, setB[3].y, '#ff4040', 12, 'left');
+    drawText(ctx, 'Element 4 in A hat kein Bild', 600, 120, '#a0a0d0', 13);
+  }
+  if (type === 'epi') {
+    drawCircle(ctx, setA[3].x, setA[3].y, 14, 'rgba(255,255,0,0.2)', '#ffff40');
+    drawText(ctx, '3 und 4 → gleiches Bild', 600, 120, '#a0a0d0', 13);
+  }
+  if (type === 'iso') {
+    // Draw inverse arrows
+    arrows.forEach(([ai, bi]) => {
+      drawArrow(ctx, setB[bi].x - 14, setB[bi].y + 5, setA[ai].x + 14, setA[ai].y + 5, '#40ffaa', 1.5);
+    });
+    drawText(ctx, 'f⁻¹ (grün)', 600, 120, '#40ffaa', 13);
+    drawText(ctx, 'f (orange)', 600, 145, '#ffaa40', 13);
+  }
+
+  drawText(ctx, title, w/2 + 150, 30, '#ffaa40', 20);
+
+  // Info panel on right
+  drawBox(ctx, 470, 60, 310, 360, 'Eigenschaften');
+  const lines = desc.split('. ');
+  lines.forEach((line, i) => {
+    drawText(ctx, line + (line.endsWith('.') ? '' : '.'), 625, 110 + i * 30, '#c0c0e0', 12);
+  });
+
+  document.getElementById('morphInfo').innerHTML = `<strong>${title}</strong>: ${desc}`;
+}
+
+let morphAnimId = null;
+function morphAnimate() {
+  if (morphAnimId) cancelAnimationFrame(morphAnimId);
+  const { ctx, w, h } = getCtx('morphCanvas');
+  let t = 0;
+  function frame() {
+    t += 0.015;
+    if (t > 1) { morphDraw(); return; }
+    morphDraw();
+    // Animate a traveling dot
+    ctx.globalAlpha = 1;
+    const type = document.getElementById('morphType').value;
+    const dotX = lerp(135, 335, t);
+    const dotY = lerp(120, 140, t);
+    drawCircle(ctx, dotX, dotY, 6, '#ffff00', '#ffff00');
+    drawText(ctx, '●', dotX, dotY - 15, '#ffff00', 12);
+    morphAnimId = requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// Composition canvas
+let compStepState = 0;
+function compStep(step) {
+  compStepState = step;
+  const { ctx, w, h } = getCtx('compCanvas');
+  clear(ctx, w, h);
+
+  const ax = 120, ay = 175, bx = 400, by = 175, cx = 680, cy = 175;
+  const r = 30;
+
+  drawObject(ctx, ax, ay, 'A', r, '#1a1a6e', '#ff6060');
+  drawObject(ctx, bx, by, 'B', r, '#1a1a6e', '#60ff60');
+  drawObject(ctx, cx, cy, 'C', r, '#1a1a6e', '#6060ff');
+
+  drawText(ctx, 'Komposition von Morphismen', w/2, 25, '#8080ff', 18);
+
+  if (step >= 1) {
+    drawArrowBetweenObjects(ctx, ax, ay, bx, by, r, 'f', '#ffaa40', 3);
+    drawText(ctx, 'f: A → B', w/2, h - 40, '#ffaa40', 14);
+  }
+  if (step >= 2) {
+    drawArrowBetweenObjects(ctx, bx, by, cx, cy, r, 'g', '#40aaff', 3);
+    drawText(ctx, 'g: B → C', w/2, h - 20, '#40aaff', 14);
+  }
+  if (step >= 3) {
+    drawCurvedArrow(ctx, ax + r, ay - 5, cx - r, cy - 5, -80, '#ff40ff', 3);
+    drawText(ctx, 'g ∘ f', (ax + cx) / 2, ay - 100, '#ff40ff', 18);
+    drawText(ctx, 'g ∘ f: A → C  (Komposition!)', w/2, h - 60, '#ff40ff', 14);
+
+    // Axiom reminder
+    drawBox(ctx, 200, 240, 400, 80, '');
+    drawText(ctx, 'Assoziativität: (h ∘ g) ∘ f = h ∘ (g ∘ f)', 400, 265, '#ffcc80', 14);
+    drawText(ctx, 'Identität: f ∘ id_A = f = id_B ∘ f', 400, 290, '#ffcc80', 14);
+  }
+}
+
+// ============================================================
+// FUNCTORS SECTION
+// ============================================================
+let functorAnimId = null;
+
+function functorDraw() {
+  if (functorAnimId) cancelAnimationFrame(functorAnimId);
+  const { ctx, w, h } = getCtx('functorCanvas');
+  clear(ctx, w, h);
+  const type = document.getElementById('functorType').value;
+
+  // Category C (left)
+  drawBox(ctx, 30, 50, 320, 400, 'Kategorie C');
+  const cObjs = [
+    { x: 120, y: 150, label: 'A' },
+    { x: 250, y: 150, label: 'B' },
+    { x: 185, y: 300, label: 'C' }
+  ];
+  cObjs.forEach(o => drawObject(ctx, o.x, o.y, o.label, 25, '#1a1a6e', '#ff6060'));
+  drawArrowBetweenObjects(ctx, 120, 150, 250, 150, 25, 'f', '#ffaa40');
+  drawArrowBetweenObjects(ctx, 250, 150, 185, 300, 25, 'g', '#ffaa40');
+  drawArrowBetweenObjects(ctx, 120, 150, 185, 300, 25, 'g∘f', '#ff40ff', 2, true);
+
+  // Category D (right)
+  drawBox(ctx, 450, 50, 320, 400, 'Kategorie D');
+
+  if (type === 'covariant') {
+    drawText(ctx, 'Kovarianter Funktor F: C → D', w/2, 25, '#8080ff', 18);
+    const dObjs = [
+      { x: 540, y: 150, label: 'F(A)' },
+      { x: 680, y: 150, label: 'F(B)' },
+      { x: 610, y: 300, label: 'F(C)' }
+    ];
+    dObjs.forEach(o => drawObject(ctx, o.x, o.y, o.label, 28, '#1a1a6e', '#60ff60'));
+    drawArrowBetweenObjects(ctx, 540, 150, 680, 150, 28, 'F(f)', '#40ffaa');
+    drawArrowBetweenObjects(ctx, 680, 150, 610, 300, 28, 'F(g)', '#40ffaa');
+    drawArrowBetweenObjects(ctx, 540, 150, 610, 300, 28, 'F(g∘f)', '#40ff80', 2, true);
+
+    // Mapping arrows
+    drawArrow(ctx, 370, 150, 430, 150, '#ffffff', 1.5, 10, true);
+    drawArrow(ctx, 370, 300, 430, 300, '#ffffff', 1.5, 10, true);
+    drawText(ctx, 'F', 400, 135, '#fff', 16);
+
+    document.getElementById('functorInfo').innerHTML = '<strong>Kovarianter Funktor:</strong> Erhält die Richtung der Pfeile. F(g∘f) = F(g) ∘ F(f)';
+  } else if (type === 'contravariant') {
+    drawText(ctx, 'Kontravarianter Funktor F: Cᵒᵖ → D', w/2, 25, '#8080ff', 18);
+    const dObjs = [
+      { x: 680, y: 150, label: 'F(A)' },
+      { x: 540, y: 150, label: 'F(B)' },
+      { x: 610, y: 300, label: 'F(C)' }
+    ];
+    dObjs.forEach(o => drawObject(ctx, o.x, o.y, o.label, 28, '#1a1a6e', '#ff8040'));
+    drawArrowBetweenObjects(ctx, 540, 150, 680, 150, 28, 'F(f)', '#ff8040');
+    drawArrowBetweenObjects(ctx, 610, 300, 540, 150, 28, 'F(g)', '#ff8040');
+    drawArrowBetweenObjects(ctx, 610, 300, 680, 150, 28, 'F(g∘f)', '#ff6020', 2, true);
+
+    drawArrow(ctx, 370, 150, 430, 150, '#ffffff', 1.5, 10, true);
+    drawText(ctx, 'F', 400, 135, '#fff', 16);
+
+    document.getElementById('functorInfo').innerHTML = '<strong>Kontravarianter Funktor:</strong> Kehrt die Richtung der Pfeile um! F(g∘f) = F(f) ∘ F(g)';
+  } else if (type === 'forgetful') {
+    drawText(ctx, 'Vergissfunktor U: Grp → Set', w/2, 25, '#8080ff', 18);
+    // Override left side
+    clear(ctx, w, h);
+    drawText(ctx, 'Vergissfunktor U: Grp → Set', w/2, 25, '#8080ff', 18);
+    drawBox(ctx, 30, 50, 320, 400, 'Grp (Gruppen)');
+    drawObject(ctx, 120, 150, '(ℤ,+)', 35, '#1a1a6e', '#ff6060');
+    drawObject(ctx, 250, 150, '(ℝ*,·)', 35, '#1a1a6e', '#ff6060');
+    drawArrowBetweenObjects(ctx, 120, 150, 250, 150, 35, 'φ', '#ffaa40');
+    drawText(ctx, 'Gruppenstruktur', 185, 250, '#ff6060', 13);
+    drawText(ctx, '(Operation, Inverse, Neutral)', 185, 270, '#ff6060', 12);
+
+    drawBox(ctx, 450, 50, 320, 400, 'Set (Mengen)');
+    drawObject(ctx, 560, 150, 'ℤ', 30, '#1a1a6e', '#60ff60');
+    drawObject(ctx, 690, 150, 'ℝ*', 30, '#1a1a6e', '#60ff60');
+    drawArrowBetweenObjects(ctx, 560, 150, 690, 150, 30, 'U(φ)', '#40ffaa');
+    drawText(ctx, 'Nur die Menge!', 625, 250, '#60ff60', 13);
+    drawText(ctx, '(Struktur vergessen)', 625, 270, '#60ff60', 12);
+
+    drawArrow(ctx, 370, 150, 430, 150, '#ffffff', 2, 10, true);
+    drawText(ctx, 'U', 400, 135, '#fff', 18);
+    drawText(ctx, '"Vergiss die', 400, 320, '#ffcc80', 13);
+    drawText(ctx, 'Gruppenstruktur"', 400, 340, '#ffcc80', 13);
+
+    document.getElementById('functorInfo').innerHTML = '<strong>Vergissfunktor:</strong> "Vergisst" die algebraische Struktur und behält nur die zugrundeliegende Menge.';
+  } else if (type === 'free') {
+    clear(ctx, w, h);
+    drawText(ctx, 'Freier Funktor F: Set → Grp', w/2, 25, '#8080ff', 18);
+    drawBox(ctx, 30, 50, 320, 400, 'Set (Mengen)');
+    drawObject(ctx, 120, 150, '{a,b}', 35, '#1a1a6e', '#60ff60');
+    drawObject(ctx, 250, 150, '{x}', 30, '#1a1a6e', '#60ff60');
+    drawArrowBetweenObjects(ctx, 120, 150, 250, 150, 35, 'f', '#40ffaa');
+    drawText(ctx, 'Einfache Mengen', 185, 250, '#60ff60', 13);
+
+    drawBox(ctx, 450, 50, 320, 400, 'Grp (Gruppen)');
+    drawObject(ctx, 560, 150, 'F(a,b)', 35, '#1a1a6e', '#ff6060');
+    drawObject(ctx, 700, 150, 'F(x)≅ℤ', 35, '#1a1a6e', '#ff6060');
+    drawArrowBetweenObjects(ctx, 560, 150, 700, 150, 35, 'F(f)', '#ffaa40');
+    drawText(ctx, 'Freie Gruppen!', 630, 250, '#ff6060', 13);
+    drawText(ctx, '(Minimale Gruppenstruktur)', 630, 270, '#ff6060', 12);
+
+    drawArrow(ctx, 370, 150, 430, 150, '#ffffff', 2, 10, true);
+    drawText(ctx, 'F', 400, 135, '#fff', 18);
+    drawText(ctx, '"Erzeuge die freiste', 400, 320, '#ffcc80', 13);
+    drawText(ctx, 'Gruppe über der Menge"', 400, 340, '#ffcc80', 13);
+
+    document.getElementById('functorInfo').innerHTML = '<strong>Freier Funktor:</strong> Erzeugt die "freiste" algebraische Struktur über einer Menge. Linksadjungiert zum Vergissfunktor.';
+  }
+}
+
+function functorAnimate() {
+  if (functorAnimId) cancelAnimationFrame(functorAnimId);
+  const { ctx, w, h } = getCtx('functorCanvas');
+  let t = 0;
+  function frame() {
+    t += 0.01;
+    if (t > 2) { functorDraw(); return; }
+    functorDraw();
+    // Animate mapping dots
+    const phase = t % 1;
+    const dotX = lerp(350, 450, phase);
+    drawCircle(ctx, dotX, 150, 5, '#ffff00', '#ffff00');
+    if (t > 1) {
+      const dotX2 = lerp(350, 450, phase);
+      drawCircle(ctx, dotX2, 300, 5, '#ffff00', '#ffff00');
+    }
+    functorAnimId = requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ============================================================
+// NATURAL TRANSFORMATIONS SECTION
+// ============================================================
+let natAnimId = null;
+let natCurrentStep = 0;
+
+function natStep(step) {
+  natCurrentStep = step;
+  if (natAnimId) cancelAnimationFrame(natAnimId);
+  const { ctx, w, h } = getCtx('natCanvas');
+  clear(ctx, w, h);
+
+  drawText(ctx, 'Natürliche Transformation η: F ⇒ G', w/2, 25, '#8080ff', 18);
+
+  // Source category C
+  drawBox(ctx, 30, 55, 200, 180, 'C');
+  drawObject(ctx, 90, 130, 'A', 22, '#1a1a6e', '#ff6060');
+  drawObject(ctx, 180, 130, 'B', 22, '#1a1a6e', '#ff6060');
+  drawArrowBetweenObjects(ctx, 90, 130, 180, 130, 22, 'f', '#ffaa40');
+
+  // Target category D
+  drawBox(ctx, 280, 55, 490, 400, 'D');
+
+  if (step >= 0) {
+    // Functor F images
+    drawObject(ctx, 370, 150, 'F(A)', 28, '#1a1a6e', '#40ff80');
+    drawObject(ctx, 570, 150, 'F(B)', 28, '#1a1a6e', '#40ff80');
+    drawArrowBetweenObjects(ctx, 370, 150, 570, 150, 28, 'F(f)', '#40ff80');
+    drawText(ctx, 'Funktor F', 470, 100, '#40ff80', 14);
+
+    // Functor G images
+    drawObject(ctx, 370, 350, 'G(A)', 28, '#1a1a6e', '#ff8040');
+    drawObject(ctx, 570, 350, 'G(B)', 28, '#1a1a6e', '#ff8040');
+    drawArrowBetweenObjects(ctx, 370, 350, 570, 350, 28, 'G(f)', '#ff8040');
+    drawText(ctx, 'Funktor G', 470, 410, '#ff8040', 14);
+  }
+
+  if (step >= 1) {
+    // Natural transformation components
+    drawArrowBetweenObjects(ctx, 370, 150, 370, 350, 28, 'η_A', '#ff40ff', 3);
+    drawArrowBetweenObjects(ctx, 570, 150, 570, 350, 28, 'η_B', '#ff40ff', 3);
+    drawText(ctx, 'Komponenten der nat. Transformation', 470, 460, '#ff40ff', 13);
+  }
+
+  if (step >= 2) {
+    // Commutativity highlight
+    // Path 1: F(A) → F(B) → G(B)
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(255, 255, 0, 0.4)';
+    ctx.lineWidth = 20;
+    ctx.beginPath();
+    ctx.moveTo(370, 150); ctx.lineTo(570, 150); ctx.lineTo(570, 350);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Path 2: F(A) → G(A) → G(B)
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+    ctx.lineWidth = 20;
+    ctx.beginPath();
+    ctx.moveTo(370, 150); ctx.lineTo(370, 350); ctx.lineTo(570, 350);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Redraw arrows on top
+    drawArrowBetweenObjects(ctx, 370, 150, 570, 150, 28, 'F(f)', '#40ff80', 2);
+    drawArrowBetweenObjects(ctx, 370, 350, 570, 350, 28, 'G(f)', '#ff8040', 2);
+    drawArrowBetweenObjects(ctx, 370, 150, 370, 350, 28, 'η_A', '#ff40ff', 3);
+    drawArrowBetweenObjects(ctx, 570, 150, 570, 350, 28, 'η_B', '#ff40ff', 3);
+
+    drawText(ctx, '⬛ η_B ∘ F(f) = G(f) ∘ η_A', 470, 460, '#ffff40', 14);
+    drawText(ctx, 'Das Diagramm kommutiert!', 470, 480, '#ffcc80', 13);
+
+    // Legend
+    drawText(ctx, '■ Weg 1: F(f) dann η_B', 700, 200, '#ffff40', 11, 'left');
+    drawText(ctx, '■ Weg 2: η_A dann G(f)', 700, 220, '#40ffff', 11, 'left');
+  }
+
+  document.getElementById('natInfo').innerHTML = [
+    'Schritt 1: Zwei Funktoren F (grün) und G (orange) bilden Objekte und Morphismen aus C nach D ab.',
+    'Schritt 2: Die Komponenten η_A und η_B verbinden die Bilder der Funktoren.',
+    'Schritt 3: Das Naturality-Quadrat kommutiert: Beide Wege von F(A) nach G(B) sind gleich!'
+  ][step];
+}
+
+function natAnimate() {
+  if (natAnimId) cancelAnimationFrame(natAnimId);
+  let t = 0;
+  function frame() {
+    t += 0.005;
+    if (t > 3) { natStep(2); return; }
+    natStep(Math.floor(t));
+    natAnimId = requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ============================================================
+// PRODUCTS & COPRODUCTS SECTION
+// ============================================================
+let prodAnimId = null;
+
+function prodDraw() {
+  if (prodAnimId) cancelAnimationFrame(prodAnimId);
+  const { ctx, w, h } = getCtx('prodCanvas');
+  clear(ctx, w, h);
+  const type = document.getElementById('prodType').value;
+
+  if (type === 'product') {
+    drawText(ctx, 'Produkt A × B', w/2, 25, '#8080ff', 20);
+
+    drawObject(ctx, 200, 250, 'A', 30, '#1a1a6e', '#ff6060');
+    drawObject(ctx, 600, 250, 'B', 30, '#1a1a6e', '#60ff60');
+    drawObject(ctx, 400, 250, 'A×B', 35, '#1a1a6e', '#ffaa40');
+
+    drawArrowBetweenObjects(ctx, 400, 250, 200, 250, 35, 'π₁', '#ffaa40', 2);
+    drawArrowBetweenObjects(ctx, 400, 250, 600, 250, 35, 'π₂', '#ffaa40', 2);
+
+    // Universal property: object X
+    drawObject(ctx, 400, 80, 'X', 28, '#1a1a6e', '#ff40ff');
+    drawArrowBetweenObjects(ctx, 400, 80, 200, 250, 30, 'f', '#ff40ff', 2);
+    drawArrowBetweenObjects(ctx, 400, 80, 600, 250, 30, 'g', '#ff40ff', 2);
+    drawArrowBetweenObjects(ctx, 400, 80, 400, 250, 30, '∃! ⟨f,g⟩', '#ffff40', 2, true);
+
+    drawBox(ctx, 100, 350, 600, 120, '');
+    drawText(ctx, 'Universelle Eigenschaft:', 400, 375, '#ffcc80', 15);
+    drawText(ctx, 'Für jedes X mit f: X→A und g: X→B', 400, 400, '#c0c0e0', 13);
+    drawText(ctx, 'existiert ein eindeutiges ⟨f,g⟩: X → A×B mit π₁∘⟨f,g⟩=f und π₂∘⟨f,g⟩=g', 400, 425, '#c0c0e0', 12);
+
+    document.getElementById('prodInfo').innerHTML = '<strong>Produkt:</strong> In Set ist A×B das kartesische Produkt. Die Projektionen π₁ und π₂ extrahieren die Komponenten.';
+  } else {
+    drawText(ctx, 'Koprodukt A ⊔ B', w/2, 25, '#8080ff', 20);
+
+    drawObject(ctx, 200, 250, 'A', 30, '#1a1a6e', '#ff6060');
+    drawObject(ctx, 600, 250, 'B', 30, '#1a1a6e', '#60ff60');
+    drawObject(ctx, 400, 250, 'A⊔B', 35, '#1a1a6e', '#ffaa40');
+
+    drawArrowBetweenObjects(ctx, 200, 250, 400, 250, 35, 'ι₁', '#ffaa40', 2);
+    drawArrowBetweenObjects(ctx, 600, 250, 400, 250, 35, 'ι₂', '#ffaa40', 2);
+
+    // Universal property: object X
+    drawObject(ctx, 400, 430, 'X', 28, '#1a1a6e', '#ff40ff');
+    drawArrowBetweenObjects(ctx, 200, 250, 400, 430, 30, 'f', '#ff40ff', 2);
+    drawArrowBetweenObjects(ctx, 600, 250, 400, 430, 30, 'g', '#ff40ff', 2);
+    drawArrowBetweenObjects(ctx, 400, 250, 400, 430, 35, '∃! [f,g]', '#ffff40', 2, true);
+
+    drawBox(ctx, 100, 80, 600, 120, '');
+    drawText(ctx, 'Universelle Eigenschaft (dual):', 400, 105, '#ffcc80', 15);
+    drawText(ctx, 'Für jedes X mit f: A→X und g: B→X', 400, 130, '#c0c0e0', 13);
+    drawText(ctx, 'existiert ein eindeutiges [f,g]: A⊔B → X mit [f,g]∘ι₁=f und [f,g]∘ι₂=g', 400, 155, '#c0c0e0', 12);
+
+    document.getElementById('prodInfo').innerHTML = '<strong>Koprodukt:</strong> In Set ist A⊔B die disjunkte Vereinigung. Die Inklusionen ι₁ und ι₂ betten die Komponenten ein.';
+  }
+}
+
+function prodAnimate() {
+  if (prodAnimId) cancelAnimationFrame(prodAnimId);
+  let t = 0;
+  const { ctx, w, h } = getCtx('prodCanvas');
+  const type = document.getElementById('prodType').value;
+
+  function frame() {
+    t += 0.015;
+    if (t > 2) { prodDraw(); return; }
+    prodDraw();
+
+    // Animate the unique morphism
+    ctx.globalAlpha = 0.5 + 0.5 * Math.sin(t * 5);
+    if (type === 'product') {
+      drawArrowBetweenObjects(ctx, 400, 80, 400, 250, 30, '∃! ⟨f,g⟩', '#ffff40', 4, true);
+    } else {
+      drawArrowBetweenObjects(ctx, 400, 250, 400, 430, 35, '∃! [f,g]', '#ffff40', 4, true);
+    }
+    ctx.globalAlpha = 1;
+
+    drawText(ctx, '✨ Der eindeutige Morphismus!', w/2, h - 15, '#ffff40', 14);
+    prodAnimId = requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ============================================================
+// LIMITS SECTION
+// ============================================================
+let limitAnimId = null;
+
+function limitDraw() {
+  if (limitAnimId) cancelAnimationFrame(limitAnimId);
+  const { ctx, w, h } = getCtx('limitCanvas');
+  clear(ctx, w, h);
+  const type = document.getElementById('limitType').value;
+
+  if (type === 'pullback') {
+    drawText(ctx, 'Pullback (Faserprodukt)', w/2, 25, '#8080ff', 20);
+
+    drawObject(ctx, 250, 150, 'A', 28, '#1a1a6e', '#ff6060');
+    drawObject(ctx, 550, 150, 'B', 28, '#1a1a6e', '#60ff60');
+    drawObject(ctx, 550, 350, 'C', 28, '#1a1a6e', '#6060ff');
+    drawObject(ctx, 250, 350, 'A×_C B', 32, '#1a1a6e', '#ffaa40');
+
+    drawArrowBetweenObjects(ctx, 250, 150, 550, 350, 28, 'f', '#ff6060');
+    drawArrowBetweenObjects(ctx, 550, 150, 550, 350, 28, 'g', '#60ff60');
+    drawArrowBetweenObjects(ctx, 250, 350, 250, 150, 32, 'p₁', '#ffaa40');
+    drawArrowBetweenObjects(ctx, 250, 350, 550, 150, 32, 'p₂', '#ffaa40');
+
+    // Universal object
+    drawObject(ctx, 100, 200, 'X', 25, '#1a1a6e', '#ff40ff');
+    drawArrowBetweenObjects(ctx, 100, 200, 250, 150, 25, 'x₁', '#ff40ff', 1.5);
+    drawArrowBetweenObjects(ctx, 100, 200, 550, 150, 25, 'x₂', '#ff40ff', 1.5);
+    drawArrowBetweenObjects(ctx, 100, 200, 250, 350, 25, '∃!u', '#ffff40', 2, true);
+
+    drawBox(ctx, 150, 410, 500, 70, '');
+    drawText(ctx, 'f ∘ p₁ = g ∘ p₂  (das Quadrat kommutiert)', 400, 440, '#ffcc80', 13);
+
+    document.getElementById('limitInfo').innerHTML = '<strong>Pullback:</strong> Das Faserprodukt A×_C B ist der Limes des Diagramms A→C←B. Es "zieht" die Struktur von C zurück.';
+
+  } else if (type === 'pushout') {
+    drawText(ctx, 'Pushout (Kofaserprodukt)', w/2, 25, '#8080ff', 20);
+
+    drawObject(ctx, 250, 150, 'C', 28, '#1a1a6e', '#6060ff');
+    drawObject(ctx, 550, 150, 'B', 28, '#1a1a6e', '#60ff60');
+    drawObject(ctx, 250, 350, 'A', 28, '#1a1a6e', '#ff6060');
+    drawObject(ctx, 550, 350, 'A⊔_C B', 32, '#1a1a6e', '#ffaa40');
+
+    drawArrowBetweenObjects(ctx, 250, 150, 550, 150, 28, 'g', '#60ff60');
+    drawArrowBetweenObjects(ctx, 250, 150, 250, 350, 28, 'f', '#ff6060');
+    drawArrowBetweenObjects(ctx, 550, 150, 550, 350, 28, 'ι₂', '#ffaa40');
+    drawArrowBetweenObjects(ctx, 250, 350, 550, 350, 32, 'ι₁', '#ffaa40');
+
+    drawObject(ctx, 680, 400, 'X', 25, '#1a1a6e', '#ff40ff');
+    drawArrowBetweenObjects(ctx, 250, 350, 680, 400, 28, 'x₁', '#ff40ff', 1.5);
+    drawArrowBetweenObjects(ctx, 550, 150, 680, 400, 28, 'x₂', '#ff40ff', 1.5);
+    drawArrowBetweenObjects(ctx, 550, 350, 680, 400, 32, '∃!u', '#ffff40', 2, true);
+
+    drawBox(ctx, 150, 420, 500, 60, '');
+    drawText(ctx, 'ι₁ ∘ f = ι₂ ∘ g  (das Quadrat kommutiert)', 400, 450, '#ffcc80', 13);
+
+    document.getElementById('limitInfo').innerHTML = '<strong>Pushout:</strong> Dual zum Pullback. Verklebt A und B entlang C. In Top: Verklebung topologischer Räume.';
+
+  } else if (type === 'equalizer') {
+    drawText(ctx, 'Equalizer', w/2, 25, '#8080ff', 20);
+
+    drawObject(ctx, 150, 250, 'Eq(f,g)', 35, '#1a1a6e', '#ffaa40');
+    drawObject(ctx, 400, 250, 'A', 28, '#1a1a6e', '#ff6060');
+    drawObject(ctx, 650, 250, 'B', 28, '#1a1a6e', '#60ff60');
+
+    drawArrowBetweenObjects(ctx, 150, 250, 400, 250, 35, 'e', '#ffaa40', 2);
+    drawArrowBetweenObjects(ctx, 400, 250, 650, 250, 28, 'f', '#ff6060', 2, false, -30);
+    drawArrowBetweenObjects(ctx, 400, 250, 650, 250, 28, 'g', '#60ff60', 2, false, 30);
+
+    // Universal property
+    drawObject(ctx, 150, 100, 'X', 25, '#1a1a6e', '#ff40ff');
+    drawArrowBetweenObjects(ctx, 150, 100, 400, 250, 25, 'm', '#ff40ff', 1.5);
+    drawArrowBetweenObjects(ctx, 150, 100, 150, 250, 25, '∃!u', '#ffff40', 2, true);
+
+    drawBox(ctx, 100, 340, 600, 80, '');
+    drawText(ctx, 'f ∘ e = g ∘ e', 400, 365, '#ffcc80', 15);
+    drawText(ctx, 'Der Equalizer ist das größte Unterobjekt, auf dem f und g übereinstimmen.', 400, 390, '#c0c0e0', 12);
+
+    document.getElementById('limitInfo').innerHTML = '<strong>Equalizer:</strong> In Set ist Eq(f,g) = {a ∈ A | f(a) = g(a)}. Der Equalizer "gleicht" zwei parallele Morphismen aus.';
+
+  } else if (type === 'terminal') {
+    drawText(ctx, 'Terminales Objekt', w/2, 25, '#8080ff', 20);
+
+    drawObject(ctx, 400, 250, '1', 35, '#1a1a6e', '#ffaa40');
+
+    const others = [
+      { x: 150, y: 120, label: 'A' },
+      { x: 650, y: 120, label: 'B' },
+      { x: 150, y: 380, label: 'C' },
+      { x: 650, y: 380, label: 'D' },
+      { x: 400, y: 80, label: 'E' }
+    ];
+    others.forEach(o => {
+      drawObject(ctx, o.x, o.y, o.label, 25, '#1a1a6e', '#6060ff');
+      drawArrowBetweenObjects(ctx, o.x, o.y, 400, 250, 25, '!', '#60ff60', 1.5, true);
+    });
+
+    drawBox(ctx, 150, 430, 500, 50, '');
+    drawText(ctx, 'Für jedes Objekt X existiert genau ein Morphismus !: X → 1', 400, 455, '#ffcc80', 13);
+
+    document.getElementById('limitInfo').innerHTML = '<strong>Terminales Objekt:</strong> In Set ist es jede einelementige Menge {*}. Es ist der Limes des leeren Diagramms.';
+
+  } else if (type === 'initial') {
+    drawText(ctx, 'Initiales Objekt', w/2, 25, '#8080ff', 20);
+
+    drawObject(ctx, 400, 250, '0', 35, '#1a1a6e', '#ffaa40');
+
+    const others = [
+      { x: 150, y: 120, label: 'A' },
+      { x: 650, y: 120, label: 'B' },
+      { x: 150, y: 380, label: 'C' },
+      { x: 650, y: 380, label: 'D' },
+      { x: 400, y: 430, label: 'E' }
+    ];
+    others.forEach(o => {
+      drawObject(ctx, o.x, o.y, o.label, 25, '#1a1a6e', '#6060ff');
+      drawArrowBetweenObjects(ctx, 400, 250, o.x, o.y, 25, '!', '#ff6060', 1.5, true);
+    });
+
+    drawBox(ctx, 150, 60, 500, 50, '');
+    drawText(ctx, 'Für jedes Objekt X existiert genau ein Morphismus !: 0 → X', 400, 85, '#ffcc80', 13);
+
+    document.getElementById('limitInfo').innerHTML = '<strong>Initiales Objekt:</strong> In Set ist es die leere Menge ∅. Es ist der Kolimes des leeren Diagramms. Dual zum terminalen Objekt.';
+  }
+}
+
+function limitAnimate() {
+  if (limitAnimId) cancelAnimationFrame(limitAnimId);
+  let t = 0;
+  const { ctx, w, h } = getCtx('limitCanvas');
+
+  function frame() {
+    t += 0.02;
+    if (t > 3) { limitDraw(); return; }
+    limitDraw();
+
+    // Pulsing highlight on the universal object
+    const pulse = 0.5 + 0.5 * Math.sin(t * 4);
+    ctx.globalAlpha = pulse;
+    const type = document.getElementById('limitType').value;
+    if (type === 'pullback') {
+      drawCircle(ctx, 250, 350, 40, 'rgba(255,170,64,0.3)', '#ffaa40', 3);
+    } else if (type === 'pushout') {
+      drawCircle(ctx, 550, 350, 40, 'rgba(255,170,64,0.3)', '#ffaa40', 3);
+    } else if (type === 'equalizer') {
+      drawCircle(ctx, 150, 250, 45, 'rgba(255,170,64,0.3)', '#ffaa40', 3);
+    } else if (type === 'terminal') {
+      drawCircle(ctx, 400, 250, 45, 'rgba(255,170,64,0.3)', '#ffaa40', 3);
+    } else if (type === 'initial') {
+      drawCircle(ctx, 400, 250, 45, 'rgba(255,170,64,0.3)', '#ffaa40', 3);
+    }
+    ctx.globalAlpha = 1;
+    drawText(ctx, '✨ Universelles Objekt', w/2, h - 10, '#ffff40', 13);
+    limitAnimId = requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ============================================================
+// ADJUNCTIONS SECTION
+// ============================================================
+let adjAnimId = null;
+
+function adjDraw() {
+  if (adjAnimId) cancelAnimationFrame(adjAnimId);
+  const { ctx, w, h } = getCtx('adjCanvas');
+  clear(ctx, w, h);
+  const example = document.getElementById('adjExample').value;
+
+  if (example === 'free-forgetful') {
+    drawText(ctx, 'Adjunktion: Frei ⊣ Vergiss (F ⊣ U)', w/2, 25, '#8080ff', 20);
+
+    drawBox(ctx, 30, 55, 320, 200, 'Set');
+    drawBox(ctx, 450, 55, 320, 200, 'Grp');
+
+    drawObject(ctx, 190, 150, 'S', 28, '#1a1a6e', '#60ff60');
+    drawObject(ctx, 610, 150, 'G', 28, '#1a1a6e', '#ff6060');
+
+    // F arrow (top)
+    drawArrow(ctx, 350, 100, 450, 100, '#40ffaa', 2);
+    drawText(ctx, 'F (Frei)', 400, 85, '#40ffaa', 14);
+
+    // U arrow (bottom)
+    drawArrow(ctx, 450, 200, 350, 200, '#ff8040', 2);
+    drawText(ctx, 'U (Vergiss)', 400, 215, '#ff8040', 14);
+
+    // Adjunction symbol
+    drawText(ctx, 'F ⊣ U', 400, 150, '#ffff40', 22);
+
+    // Bijection
+    drawBox(ctx, 80, 290, 640, 180, '');
+    drawText(ctx, 'Natürliche Bijektion:', 400, 315, '#ffcc80', 16);
+    drawText(ctx, 'Hom_Grp(F(S), G)  ≅  Hom_Set(S, U(G))', 400, 350, '#ffff40', 16);
+    drawText(ctx, '↕', 400, 375, '#fff', 20);
+    drawText(ctx, 'Gruppenhomomorphismus     ↔     Funktion', 400, 400, '#c0c0e0', 14);
+    drawText(ctx, 'von der freien Gruppe          von der Menge in die', 400, 420, '#a0a0d0', 12);
+    drawText(ctx, 'F(S) nach G                    zugrundeliegende Menge von G', 400, 440, '#a0a0d0', 12);
+
+    document.getElementById('adjInfo').innerHTML = '<strong>Frei ⊣ Vergiss:</strong> Einen Gruppenhomomorphismus F(S)→G zu definieren ist dasselbe wie eine Funktion S→U(G) zu definieren. Die freie Gruppe ist die "billigste" Gruppe über einer Menge.';
+
+  } else if (example === 'product-hom') {
+    drawText(ctx, 'Adjunktion: (— × B) ⊣ Hom(B, —)', w/2, 25, '#8080ff', 20);
+
+    drawBox(ctx, 30, 55, 320, 200, 'Set');
+    drawBox(ctx, 450, 55, 320, 200, 'Set');
+
+    drawObject(ctx, 190, 150, 'A', 28, '#1a1a6e', '#60ff60');
+    drawObject(ctx, 610, 150, 'C', 28, '#1a1a6e', '#ff6060');
+
+    drawArrow(ctx, 350, 100, 450, 100, '#40ffaa', 2);
+    drawText(ctx, '— × B', 400, 85, '#40ffaa', 14);
+
+    drawArrow(ctx, 450, 200, 350, 200, '#ff8040', 2);
+    drawText(ctx, 'Hom(B, —)', 400, 215, '#ff8040', 14);
+
+    drawText(ctx, '⊣', 400, 150, '#ffff40', 28);
+
+    drawBox(ctx, 80, 290, 640, 180, '');
+    drawText(ctx, 'Currying-Isomorphismus:', 400, 315, '#ffcc80', 16);
+    drawText(ctx, 'Hom(A × B, C)  ≅  Hom(A, Hom(B, C))', 400, 350, '#ffff40', 16);
+    drawText(ctx, '↕', 400, 375, '#fff', 20);
+    drawText(ctx, 'f: A × B → C    ↔    curry(f): A → (B → C)', 400, 400, '#c0c0e0', 14);
+    drawText(ctx, 'Das ist Currying aus der Programmierung!', 400, 435, '#ff80ab', 14);
+
+    document.getElementById('adjInfo').innerHTML = '<strong>Currying als Adjunktion:</strong> Die Produkt-Hom-Adjunktion ist genau das Currying aus der funktionalen Programmierung! Eine Funktion von zwei Argumenten ist dasselbe wie eine Funktion, die eine Funktion zurückgibt.';
+  }
+}
+
+function adjAnimate() {
+  if (adjAnimId) cancelAnimationFrame(adjAnimId);
+  let t = 0;
+  const { ctx, w, h } = getCtx('adjCanvas');
+
+  function frame() {
+    t += 0.02;
+    if (t > 4) { adjDraw(); return; }
+    adjDraw();
+
+    // Animate bijection arrows
+    const phase = t % 2;
+    const pulse = 0.5 + 0.5 * Math.sin(t * 3);
+
+    if (phase < 1) {
+      // Left to right
+      const x = lerp(200, 600, phase);
+      drawCircle(ctx, x, 350, 6, '#ffff40', '#ffff40');
+      drawText(ctx, '→', x, 335, '#ffff40', 16);
+    } else {
+      // Right to left
+      const x = lerp(600, 200, phase - 1);
+      drawCircle(ctx, x, 400, 6, '#40ffff', '#40ffff');
+      drawText(ctx, '←', x, 385, '#40ffff', 16);
+    }
+
+    ctx.globalAlpha = pulse;
+    drawText(ctx, '≅', 400, 375, '#ffff40', 30);
+    ctx.globalAlpha = 1;
+
+    adjAnimId = requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ============================================================
+// YONEDA LEMMA SECTION
+// ============================================================
+let yonedaAnimId = null;
+
+function yonedaStep(step) {
+  if (yonedaAnimId) cancelAnimationFrame(yonedaAnimId);
+  const { ctx, w, h } = getCtx('yonedaCanvas');
+  clear(ctx, w, h);
+
+  drawText(ctx, 'Yoneda-Lemma', w/2, 25, '#8080ff', 20);
+
+  // Category C
+  drawBox(ctx, 30, 55, 250, 200, 'Kategorie C');
+  drawObject(ctx, 100, 140, 'A', 25, '#1a1a6e', '#ff6060');
+  drawObject(ctx, 200, 140, 'B', 25, '#1a1a6e', '#60ff60');
+  drawObject(ctx, 150, 210, 'C', 25, '#1a1a6e', '#6060ff');
+  drawArrowBetweenObjects(ctx, 100, 140, 200, 140, 25, 'f', '#ffaa40', 1.5);
+  drawArrowBetweenObjects(ctx, 100, 140, 150, 210, 25, 'g', '#ffaa40', 1.5);
+  drawArrowBetweenObjects(ctx, 200, 140, 150, 210, 25, 'h', '#ffaa40', 1.5);
+
+  if (step >= 0) {
+    // Hom-functor
+    drawBox(ctx, 320, 55, 220, 200, 'Hom(—, A)');
+    drawText(ctx, 'Hom(A,A) = {id_A, ...}', 430, 110, '#ff6060', 11);
+    drawText(ctx, 'Hom(B,A) = {f⁻¹?, ...}', 430, 140, '#60ff60', 11);
+    drawText(ctx, 'Hom(C,A) = {...}', 430, 170, '#6060ff', 11);
+    drawText(ctx, 'Der Hom-Funktor sammelt', 430, 210, '#a0a0d0', 11);
+    drawText(ctx, 'alle Pfeile ZU A', 430, 230, '#a0a0d0', 11);
+
+    document.getElementById('yonedaInfo').innerHTML = '<strong>Hom-Funktor:</strong> Hom(—, A): C<sup>op</sup> → Set ordnet jedem Objekt X die Menge aller Morphismen X → A zu.';
+  }
+
+  if (step >= 1) {
+    // Functor F
+    drawBox(ctx, 570, 55, 200, 200, 'Funktor F');
+    drawText(ctx, 'F(A) = {x₁, x₂, ...}', 670, 110, '#ff6060', 11);
+    drawText(ctx, 'F(B) = {y₁, ...}', 670, 140, '#60ff60', 11);
+    drawText(ctx, 'F(C) = {z₁, z₂, ...}', 670, 170, '#6060ff', 11);
+    drawText(ctx, 'Ein beliebiger Funktor', 670, 210, '#a0a0d0', 11);
+    drawText(ctx, 'F: Cᵒᵖ → Set', 670, 230, '#a0a0d0', 11);
+
+    document.getElementById('yonedaInfo').innerHTML = '<strong>Funktor F:</strong> Ein beliebiger Funktor F: C<sup>op</sup> → Set. Das Yoneda-Lemma verbindet natürliche Transformationen Hom(—,A) ⇒ F mit Elementen von F(A).';
+  }
+
+  if (step >= 2) {
+    // The bijection
+    drawBox(ctx, 100, 290, 600, 190, '');
+    drawText(ctx, '🏛 Das Yoneda-Lemma:', 400, 315, '#ffcc80', 18);
+    drawText(ctx, 'Nat(Hom(—, A), F)  ≅  F(A)', 400, 355, '#ffff40', 18);
+
+    drawText(ctx, 'Natürliche Transformationen', 250, 395, '#ff40ff', 13);
+    drawText(ctx, 'von Hom(—,A) nach F', 250, 415, '#ff40ff', 12);
+
+    drawText(ctx, '↔', 400, 405, '#fff', 24);
+
+    drawText(ctx, 'Elemente', 550, 395, '#40ffff', 13);
+    drawText(ctx, 'von F(A)', 550, 415, '#40ffff', 12);
+
+    drawText(ctx, 'η  ↦  η_A(id_A) ∈ F(A)', 400, 450, '#c0c0e0', 13);
+
+    document.getElementById('yonedaInfo').innerHTML = '<strong>Yoneda-Lemma:</strong> Jede natürliche Transformation η: Hom(—,A) ⇒ F ist eindeutig durch das Element η_A(id_A) ∈ F(A) bestimmt. "Du bist, was du tust" – ein Objekt wird durch seine Morphismen bestimmt!';
+  }
+}
+
+function yonedaAnimate() {
+  if (yonedaAnimId) cancelAnimationFrame(yonedaAnimId);
+  let t = 0;
+  function frame() {
+    t += 0.005;
+    if (t > 3) { yonedaStep(2); return; }
+    const step = Math.floor(t);
+    yonedaStep(step);
+
+    if (step === 2) {
+      const { ctx, w, h } = getCtx('yonedaCanvas');
+      const pulse = 0.5 + 0.5 * Math.sin(t * 6);
+      ctx.globalAlpha = pulse;
+      drawCircle(ctx, 400, 355, 120, 'rgba(255,255,64,0.1)', '#ffff40', 2);
+      ctx.globalAlpha = 1;
+    }
+
+    yonedaAnimId = requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ============================================================
+// MONADS SECTION
+// ============================================================
+let monadAnimId = null;
+let monadCurrentStep = -1;
+
+function monadDraw() {
+  if (monadAnimId) cancelAnimationFrame(monadAnimId);
+  monadCurrentStep = -1;
+  const { ctx, w, h } = getCtx('monadCanvas');
+  clear(ctx, w, h);
+  const example = document.getElementById('monadExample').value;
+
+  if (example === 'maybe') {
+    drawText(ctx, 'Maybe-Monade (Option-Typ)', w/2, 25, '#8080ff', 20);
+
+    drawBox(ctx, 50, 55, 700, 180, 'Endofunktor T = Maybe');
+    drawText(ctx, 'T(A) = A ∪ {Nothing}', 400, 95, '#ffaa40', 15);
+    drawText(ctx, 'T(Int) = {1, 2, 3, ..., Nothing}', 250, 130, '#c0c0e0', 13);
+    drawText(ctx, 'T(String) = {"hi", "bye", ..., Nothing}', 550, 130, '#c0c0e0', 13);
+    drawText(ctx, 'T(f)(x) = f(x) wenn x ≠ Nothing, sonst Nothing', 400, 170, '#c0c0e0', 13);
+    drawText(ctx, 'T(f)(Nothing) = Nothing', 400, 195, '#c0c0e0', 13);
+
+    drawBox(ctx, 50, 250, 320, 120, 'Einheit η (return/pure)');
+    drawText(ctx, 'η_A: A → Maybe(A)', 210, 290, '#40ff80', 14);
+    drawText(ctx, 'η(x) = Just(x)', 210, 315, '#c0c0e0', 13);
+    drawText(ctx, 'Verpackt einen Wert', 210, 340, '#a0a0d0', 12);
+
+    drawBox(ctx, 430, 250, 320, 120, 'Multiplikation μ (join)');
+    drawText(ctx, 'μ_A: Maybe(Maybe(A)) → Maybe(A)', 590, 290, '#ff40ff', 13);
+    drawText(ctx, 'μ(Just(Just(x))) = Just(x)', 590, 315, '#c0c0e0', 13);
+    drawText(ctx, 'μ(Just(Nothing)) = Nothing', 590, 340, '#c0c0e0', 13);
+
+    drawBox(ctx, 50, 390, 700, 90, 'Bind (>>=) = μ ∘ T(f)');
+    drawText(ctx, 'x >>= f  =  join(fmap f x)', 400, 420, '#ffff40', 15);
+    drawText(ctx, 'Just(3) >>= (\\n → if n>0 then Just(n*2) else Nothing)  =  Just(6)', 400, 450, '#c0c0e0', 12);
+
+    document.getElementById('monadInfo').innerHTML = '<strong>Maybe-Monade:</strong> Modelliert Berechnungen, die fehlschlagen können. In Haskell: Maybe, in Rust: Option, in Java: Optional.';
+
+  } else if (example === 'list') {
+    drawText(ctx, 'Listen-Monade', w/2, 25, '#8080ff', 20);
+
+    drawBox(ctx, 50, 55, 700, 150, 'Endofunktor T = List');
+    drawText(ctx, 'T(A) = [A] (Listen von A)', 400, 90, '#ffaa40', 15);
+    drawText(ctx, 'T(Int) = [1,2,3], [4], [], [1,1,1], ...', 400, 120, '#c0c0e0', 13);
+    drawText(ctx, 'T(f)([a₁,...,aₙ]) = [f(a₁),...,f(aₙ)]  (map)', 400, 150, '#c0c0e0', 13);
+
+    drawBox(ctx, 50, 220, 320, 120, 'Einheit η (return)');
+    drawText(ctx, 'η_A: A → [A]', 210, 260, '#40ff80', 14);
+    drawText(ctx, 'η(x) = [x]', 210, 285, '#c0c0e0', 13);
+    drawText(ctx, 'Einelementige Liste', 210, 310, '#a0a0d0', 12);
+
+    drawBox(ctx, 430, 220, 320, 120, 'Multiplikation μ (join/concat)');
+    drawText(ctx, 'μ_A: [[A]] → [A]', 590, 260, '#ff40ff', 14);
+    drawText(ctx, 'μ([[1,2],[3],[4,5]]) = [1,2,3,4,5]', 590, 285, '#c0c0e0', 12);
+    drawText(ctx, 'Flacht verschachtelte Listen ab', 590, 310, '#a0a0d0', 12);
+
+    drawBox(ctx, 50, 360, 700, 120, 'Bind (>>=) = concatMap');
+    drawText(ctx, 'xs >>= f  =  concat(map f xs)', 400, 390, '#ffff40', 15);
+    drawText(ctx, '[1,2,3] >>= (\\n → [n, n*10])  =  [1,10,2,20,3,30]', 400, 420, '#c0c0e0', 13);
+    drawText(ctx, 'Modelliert nicht-deterministische Berechnungen!', 400, 450, '#ff80ab', 13);
+
+    document.getElementById('monadInfo').innerHTML = '<strong>Listen-Monade:</strong> Modelliert Nicht-Determinismus. Jede Berechnung kann mehrere Ergebnisse haben. concatMap ist der monadische Bind.';
+
+  } else if (example === 'abstract') {
+    drawText(ctx, 'Monade (T, η, μ) – Abstrakt', w/2, 25, '#8080ff', 20);
+
+    // Draw the endofunctor
+    drawBox(ctx, 250, 55, 300, 100, 'Kategorie C');
+    drawObject(ctx, 350, 110, 'A', 25, '#1a1a6e', '#ff6060');
+    drawObject(ctx, 450, 110, 'T(A)', 28, '#1a1a6e', '#ffaa40');
+    drawCurvedArrow(ctx, 300, 55, 500, 55, -40, '#ffaa40', 2);
+    drawText(ctx, 'T: C → C', 400, 35, '#ffaa40', 14);
+
+    // Unit
+    drawBox(ctx, 50, 190, 300, 130, 'Einheit η: Id ⇒ T');
+    drawObject(ctx, 130, 260, 'A', 22, '#1a1a6e', '#ff6060');
+    drawObject(ctx, 270, 260, 'T(A)', 25, '#1a1a6e', '#ffaa40');
+    drawArrowBetweenObjects(ctx, 130, 260, 270, 260, 25, 'η_A', '#40ff80', 2);
+
+    // Multiplication
+    drawBox(ctx, 430, 190, 330, 130, 'Multiplikation μ: T² ⇒ T');
+    drawObject(ctx, 510, 260, 'T²(A)', 28, '#1a1a6e', '#ff40ff');
+    drawObject(ctx, 680, 260, 'T(A)', 25, '#1a1a6e', '#ffaa40');
+    drawArrowBetweenObjects(ctx, 510, 260, 680, 260, 28, 'μ_A', '#ff40ff', 2);
+
+    // Axioms
+    drawBox(ctx, 50, 350, 700, 130, 'Monaden-Axiome');
+    drawText(ctx, 'Assoziativität:', 200, 385, '#ffcc80', 14);
+    drawText(ctx, 'μ ∘ Tμ = μ ∘ μT', 200, 410, '#ffff40', 14);
+    drawText(ctx, '(T³ → T² → T  egal welcher Weg)', 200, 435, '#a0a0d0', 11);
+
+    drawText(ctx, 'Einheitsgesetze:', 550, 385, '#ffcc80', 14);
+    drawText(ctx, 'μ ∘ Tη = μ ∘ ηT = id_T', 550, 410, '#ffff40', 14);
+    drawText(ctx, '(η dann μ = nichts tun)', 550, 435, '#a0a0d0', 11);
+
+    document.getElementById('monadInfo').innerHTML = '<strong>Abstrakte Monade:</strong> Ein Monoid in der Kategorie der Endofunktoren. T "verpackt" Werte, η verpackt sie ein, μ entpackt eine Schicht.';
+  }
+}
+
+function monadStep(step) {
+  monadCurrentStep = step;
+  if (monadAnimId) cancelAnimationFrame(monadAnimId);
+  const { ctx, w, h } = getCtx('monadCanvas');
+  clear(ctx, w, h);
+
+  const example = document.getElementById('monadExample').value;
+
+  if (example === 'abstract' || true) {
+    // Show step-by-step abstract monad diagrams
+    drawText(ctx, 'Monade – Schritt für Schritt', w/2, 25, '#8080ff', 20);
+
+    if (step === 0) {
+      // Endofunctor T
+      drawText(ctx, 'Schritt 1: Der Endofunktor T: C → C', w/2, 60, '#ffaa40', 16);
+
+      drawBox(ctx, 150, 90, 500, 380, 'Kategorie C');
+
+      drawObject(ctx, 280, 200, 'A', 28, '#1a1a6e', '#ff6060');
+      drawObject(ctx, 520, 200, 'T(A)', 30, '#1a1a6e', '#ffaa40');
+      drawArrowBetweenObjects(ctx, 280, 200, 520, 200, 30, 'T', '#ffaa40', 3);
+
+      drawObject(ctx, 280, 340, 'B', 28, '#1a1a6e', '#60ff60');
+      drawObject(ctx, 520, 340, 'T(B)', 30, '#1a1a6e', '#ffaa40');
+      drawArrowBetweenObjects(ctx, 280, 340, 520, 340, 30, 'T', '#ffaa40', 3);
+
+      drawArrowBetweenObjects(ctx, 280, 200, 280, 340, 28, 'f', '#ff6060', 2);
+      drawArrowBetweenObjects(ctx, 520, 200, 520, 340, 30, 'T(f)', '#ffaa40', 2);
+
+      drawText(ctx, 'T bildet Objekte auf Objekte ab', 400, 440, '#c0c0e0', 13);
+      drawText(ctx, 'und Morphismen auf Morphismen (strukturerhaltend)', 400, 460, '#c0c0e0', 13);
+
+      document.getElementById('monadInfo').innerHTML = '<strong>Schritt 1:</strong> T ist ein Endofunktor – er bildet die Kategorie C in sich selbst ab. Beispiel: Maybe bildet Int auf Maybe(Int) ab.';
+
+    } else if (step === 1) {
+      // Unit η
+      drawText(ctx, 'Schritt 2: Die Einheit η: Id ⇒ T', w/2, 60, '#40ff80', 16);
+
+      drawObject(ctx, 200, 200, 'A', 30, '#1a1a6e', '#ff6060');
+      drawObject(ctx, 400, 200, 'T(A)', 32, '#1a1a6e', '#ffaa40');
+      drawArrowBetweenObjects(ctx, 200, 200, 400, 200, 32, 'η_A', '#40ff80', 3);
+
+      drawObject(ctx, 200, 350, 'B', 30, '#1a1a6e', '#60ff60');
+      drawObject(ctx, 400, 350, 'T(B)', 32, '#1a1a6e', '#ffaa40');
+      drawArrowBetweenObjects(ctx, 200, 350, 400, 350, 32, 'η_B', '#40ff80', 3);
+
+      drawArrowBetweenObjects(ctx, 200, 200, 200, 350, 30, 'f', '#ff6060', 2);
+      drawArrowBetweenObjects(ctx, 400, 200, 400, 350, 32, 'T(f)', '#ffaa40', 2);
+
+      // Commutative square highlight
+      ctx.strokeStyle = 'rgba(64, 255, 128, 0.2)';
+      ctx.lineWidth = 30;
+      ctx.strokeRect(195, 195, 210, 160);
+
+      drawBox(ctx, 500, 130, 270, 120, 'Beispiel: Maybe');
+      drawText(ctx, 'η(x) = Just(x)', 635, 175, '#40ff80', 14);
+      drawText(ctx, '3 ↦ Just(3)', 635, 200, '#c0c0e0', 13);
+      drawText(ctx, '"hello" ↦ Just("hello")', 635, 225, '#c0c0e0', 13);
+
+      drawBox(ctx, 500, 280, 270, 100, 'Beispiel: List');
+      drawText(ctx, 'η(x) = [x]', 635, 320, '#40ff80', 14);
+      drawText(ctx, '3 ↦ [3]', 635, 345, '#c0c0e0', 13);
+
+      drawText(ctx, 'η "verpackt" einen reinen Wert in den Kontext', 400, 440, '#c0c0e0', 13);
+      drawText(ctx, 'Naturality: T(f) ∘ η_A = η_B ∘ f', 400, 465, '#ffff40', 13);
+
+      document.getElementById('monadInfo').innerHTML = '<strong>Schritt 2:</strong> Die Einheit η verpackt einen Wert in den monadischen Kontext. In Haskell: return/pure.';
+
+    } else if (step === 2) {
+      // Multiplication μ
+      drawText(ctx, 'Schritt 3: Die Multiplikation μ: T² ⇒ T', w/2, 60, '#ff40ff', 16);
+
+      drawObject(ctx, 130, 200, 'T²(A)', 35, '#1a1a6e', '#ff40ff');
+      drawObject(ctx, 350, 200, 'T(A)', 30, '#1a1a6e', '#ffaa40');
+      drawObject(ctx, 130, 350, 'T²(B)', 35, '#1a1a6e', '#ff40ff');
+      drawObject(ctx, 350, 350, 'T(B)', 30, '#1a1a6e', '#ffaa40');
+
+      drawArrowBetweenObjects(ctx, 130, 200, 350, 200, 35, 'μ_A', '#ff40ff', 3);
+      drawArrowBetweenObjects(ctx, 130, 350, 350, 350, 35, 'μ_B', '#ff40ff', 3);
+      drawArrowBetweenObjects(ctx, 130, 200, 130, 350, 35, 'T²(f)', '#ff40ff', 2);
+      drawArrowBetweenObjects(ctx, 350, 200, 350, 350, 30, 'T(f)', '#ffaa40', 2);
+
+      drawBox(ctx, 470, 100, 290, 150, 'Beispiel: Maybe');
+      drawText(ctx, 'μ: Maybe(Maybe(A)) → Maybe(A)', 615, 140, '#ff40ff', 12);
+      drawText(ctx, 'Just(Just(3)) ↦ Just(3)', 615, 170, '#c0c0e0', 12);
+      drawText(ctx, 'Just(Nothing) ↦ Nothing', 615, 195, '#c0c0e0', 12);
+      drawText(ctx, 'Nothing ↦ Nothing', 615, 220, '#c0c0e0', 12);
+
+      drawBox(ctx, 470, 270, 290, 120, 'Beispiel: List');
+      drawText(ctx, 'μ: [[A]] → [A]  (concat)', 615, 310, '#ff40ff', 12);
+      drawText(ctx, '[[1,2],[3]] ↦ [1,2,3]', 615, 340, '#c0c0e0', 12);
+      drawText(ctx, '[[],[4,5]] ↦ [4,5]', 615, 365, '#c0c0e0', 12);
+
+      drawText(ctx, 'μ "entpackt" eine Schicht des Kontexts (flatten/join)', 400, 430, '#c0c0e0', 13);
+      drawText(ctx, 'Assoziativität: μ ∘ Tμ = μ ∘ μT  |  Einheit: μ ∘ Tη = μ ∘ ηT = id', 400, 460, '#ffff40', 12);
+
+      document.getElementById('monadInfo').innerHTML = '<strong>Schritt 3:</strong> Die Multiplikation μ entfernt eine Schicht Verschachtelung. In Haskell: join. Zusammen mit η bildet sie ein "Monoid in der Kategorie der Endofunktoren".';
+    }
+  }
+}
+
+function monadAnimate() {
+  if (monadAnimId) cancelAnimationFrame(monadAnimId);
+  let t = 0;
+  function frame() {
+    t += 0.005;
+    if (t > 3) { monadStep(2); return; }
+    const step = Math.floor(t);
+    monadStep(step);
+
+    // Add pulsing effect
+    const { ctx, w } = getCtx('monadCanvas');
+    const pulse = 0.5 + 0.5 * Math.sin(t * 6);
+    ctx.globalAlpha = pulse * 0.3;
+    if (step === 0) {
+      drawCircle(ctx, 520, 200, 40, 'rgba(255,170,64,0.3)', '#ffaa40', 2);
+    } else if (step === 1) {
+      drawCircle(ctx, 300, 200, 120, 'rgba(64,255,128,0.2)', '#40ff80', 2);
+    } else if (step === 2) {
+      drawCircle(ctx, 240, 200, 130, 'rgba(255,64,255,0.2)', '#ff40ff', 2);
+    }
+    ctx.globalAlpha = 1;
+
+    monadAnimId = requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ============================================================
+// TOOLTIP HANDLING
+// ============================================================
+document.querySelectorAll('canvas').forEach(canvas => {
+  canvas.addEventListener('mousemove', function(e) {
+    // Simple tooltip for hovering
+    const rect = this.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // We could add hit-testing here for specific elements
+    // For now, hide tooltip on general canvas hover
+    tooltip.style.display = 'none';
+  });
+
+  canvas.addEventListener('mouseleave', function() {
+    tooltip.style.display = 'none';
+  });
+});
+
+// ============================================================
+// HANDLE HIGH-DPI DISPLAYS
+// ============================================================
+function setupHiDPI() {
+  const dpr = window.devicePixelRatio || 1;
+  document.querySelectorAll('canvas').forEach(canvas => {
+    const rect = canvas.getBoundingClientRect();
+    // Only scale if not already scaled
+    if (!canvas.dataset.scaled) {
+      const w = canvas.width;
+      const h = canvas.height;
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      // Don't actually change the canvas resolution to keep coordinates simple
+      canvas.dataset.scaled = 'true';
+    }
+  });
+}
+setupHiDPI();
+
+// ============================================================
+// RESPONSIVE CANVAS
+// ============================================================
+function resizeCanvases() {
+  document.querySelectorAll('canvas').forEach(canvas => {
+    const parent = canvas.parentElement;
+    const maxW = parent.clientWidth - 40;
+    if (maxW < canvas.width) {
+      canvas.style.width = maxW + 'px';
+      canvas.style.height = (maxW * canvas.height / canvas.width) + 'px';
+    }
+  });
+}
+window.addEventListener('resize', resizeCanvases);
+resizeCanvases();
+
+// ============================================================
+// KEYBOARD SHORTCUTS
+// ============================================================
+document.addEventListener('keydown', function(e) {
+  const sections = ['intro', 'category', 'morphisms', 'functors', 'natural', 'products', 'limits', 'adjunctions', 'yoneda', 'monads'];
+  const currentBtn = document.querySelector('nav button.active');
+  const currentIdx = sections.indexOf(currentBtn.dataset.section);
+
+  if (e.key === 'ArrowRight' && currentIdx < sections.length - 1) {
+    document.querySelector(`nav button[data-section="${sections[currentIdx + 1]}"]`).click();
+  } else if (e.key === 'ArrowLeft' && currentIdx > 0) {
+    document.querySelector(`nav button[data-section="${sections[currentIdx - 1]}"]`).click();
+  }
+});
+
+// Initial draw
+setTimeout(() => {
+  introReset();
+}, 200);
+
+console.log('🔮 Interaktive Kategorientheorie geladen!');
+console.log('Nutze ← → Pfeiltasten zum Navigieren zwischen Sektionen.');
+</script>
+
+</body>
+</html>
+
