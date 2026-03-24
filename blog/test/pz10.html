@@ -2,46 +2,51 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Arithmetic Fiber Bundle Viewer</title>
+    <title>Arithmetic Fiber Bundle - Spectral Phase</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; color: #fff; font-family: 'Helvetica Neue', sans-serif; display: flex; }
-        #ui { width: 320px; padding: 30px; background: rgba(5, 5, 10, 0.9); border-right: 1px solid #1a1a2e; z-index: 10; height: 100vh; box-sizing: border-box; }
-        canvas { flex-grow: 1; cursor: crosshair; }
-        .ctrl { margin-bottom: 30px; }
-        label { display: block; font-size: 10px; color: #4e4e6a; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
-        input { width: 100%; accent-color: #7000ff; }
+        body { margin: 0; overflow: hidden; background: #030308; color: #e0e0ff; font-family: 'Inter', 'Segoe UI', sans-serif; display: flex; }
+        #ui { width: 320px; padding: 30px; background: rgba(8, 8, 15, 0.95); border-right: 1px solid #1a1a3a; z-index: 10; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; }
+        canvas { flex-grow: 1; cursor: move; }
+        .ctrl { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 10px; color: #556688; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+        input[type=range] { width: 100%; accent-color: #00f2ff; cursor: pointer; }
+        .checkbox-row { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13px; color: #8899bb; }
+        input[type=checkbox] { width: 18px; height: 18px; accent-color: #ff0077; cursor: pointer; }
         #hud { 
-            position: absolute; padding: 20px; background: rgba(0,0,0,0.85); 
-            border-left: 2px solid #7000ff; display: none; width: 260px; 
-            font-size: 13px; pointer-events: none; z-index: 100; backdrop-filter: blur(5px);
+            position: absolute; padding: 15px; background: rgba(5, 5, 12, 0.9); border: 1px solid #00f2ff; 
+            border-radius: 4px; pointer-events: none; display: none; width: 240px; z-index: 100;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2); font-size: 12px;
         }
-        .prime { color: #7000ff; font-weight: bold; text-shadow: 0 0 10px #7000ff; }
-        h2 { font-weight: 200; letter-spacing: 5px; color: #7000ff; margin-bottom: 5px; }
+        .val-display { color: #00f2ff; font-family: monospace; font-size: 12px; float: right; }
+        h2 { font-weight: 300; letter-spacing: 4px; margin: 0; color: #fff; font-size: 20px; }
     </style>
 </head>
 <body>
 
 <div id="ui">
-    <h2>BUNDLE.X</h2>
-    <p style="font-size: 11px; color: #4e4e6a;">Primzahlen als Fasern in einem topologischen Bündel.</p>
+    <h2>BUNDLE.PHASE</h2>
+    <p style="font-size: 11px; color: #445577; margin-top: -10px;">Topologische Faserung nach Prim-Signatur.</p>
 
     <div class="ctrl">
-        <label>Anzahl Fasern <span id="nVal" style="float:right">1000</span></label>
-        <input type="range" id="nRange" min="100" max="3000" value="1000">
+        <label>Limit <span class="val-display" id="nVal">1200</span></label>
+        <input type="range" id="nRange" min="100" max="4000" value="1200">
     </div>
 
     <div class="ctrl">
-        <label>Bündel-Torsion</label>
-        <input type="range" id="tRange" min="0.1" max="5" step="0.1" value="1.5">
+        <label>Faser-Torsion <span class="val-display" id="tVal">2.0</span></label>
+        <input type="range" id="tRange" min="0.1" max="10" step="0.1" value="2.0">
     </div>
 
-    <div class="ctrl">
-        <label>Faser-Radius</label>
-        <input type="range" id="rRange" min="50" max="300" value="150">
-    </div>
+    <label class="checkbox-row">
+        <input type="checkbox" id="showComp"> 
+        <span>Show Composites (Noise)</span>
+    </label>
 
-    <div style="font-size: 11px; color: #2e2e4a; line-height: 1.8;">
-        <b>Abstraktion:</b> Jede Zahl ist ein Punkt in einem Bündel über dem Spektrum der Primzahlen. Die Geometrie zeigt die <b>Verschlingung</b> der arithmetischen Eigenschaften.
+    <div style="margin-top: auto; font-size: 11px; color: #334466; line-height: 1.6; border-top: 1px solid #1a1a3a; padding-top: 20px;">
+        <b style="color:#00f2ff">Cyan:</b> Primzahlen (Sektions-Nullpunkt)<br>
+        <b style="color:#ff0077">Magenta:</b> Hoch-zusammengesetzt<br>
+        <br>
+        <i>Zoom mit Mausrad. Drehen mit Linksklick & Ziehen.</i>
     </div>
 </div>
 
@@ -53,114 +58,154 @@
     const ctx = canvas.getContext('2d');
     const hud = document.getElementById('hud');
 
-    let elements = [];
-    let angleX = 0, angleY = 0;
-    let zoom = 1;
+    let data = [];
+    let angleX = 0.6, angleY = 0.4;
+    let zoom = 1.0;
 
-    function getFactors(n) {
-        let f = [];
+    function getPrimeData(n) {
+        let factors = [];
         let d = 2, temp = n;
         while (temp > 1) {
             if (temp % d === 0) {
-                f.push(d);
+                factors.push(d);
                 while (temp % d === 0) temp /= d;
             }
             d++;
-            if (d*d > temp) { if (temp > 1) f.push(temp); break; }
+            if (d*d > temp) { if (temp > 1) factors.push(temp); break; }
         }
-        return f;
+        return {
+            isPrime: factors.length === 1 && factors[0] === n,
+            factors: factors,
+            complexity: factors.length
+        };
     }
 
     function generate() {
         const count = parseInt(document.getElementById('nRange').value);
         const torsion = parseFloat(document.getElementById('tRange').value);
-        const baseRad = parseInt(document.getElementById('rRange').value);
-        elements = [];
+        data = [];
 
         for (let i = 2; i <= count; i++) {
-            const factors = getFactors(i);
-            const isP = factors.length === 1 && factors[0] === i;
+            const info = getPrimeData(i);
+            
+            // Abstraktes Bündel-Mapping
+            // Phase u: Position auf dem Hauptring (Basis)
+            // Phase v: Rotation innerhalb der lokalen Faser (Torsion)
+            const u = i * 0.025;
+            const v = info.factors.reduce((a, b) => a + Math.sqrt(b), 0) * torsion;
+            
+            const rBase = 200;
+            const rFiber = 60 + (info.complexity * 10);
 
-            // Faser-Mapping (Hopf-ähnliche Koordinaten)
-            // Wir nutzen die Primfaktoren um die Position auf der Faser zu bestimmen
-            let u = i * 0.02; // Parameter entlang der Basis
-            let v = factors.reduce((acc, curr) => acc + Math.log(curr), 0) * torsion; // Torsion in der Faser
+            const x = (rBase + rFiber * Math.cos(v)) * Math.cos(u);
+            const y = (rBase + rFiber * Math.cos(v)) * Math.sin(u);
+            const z = rFiber * Math.sin(v);
 
-            // Toroidale Einbettung
-            let x = (baseRad + 50 * Math.cos(v)) * Math.cos(u);
-            let y = (baseRad + 50 * Math.cos(v)) * Math.sin(u);
-            let z = 50 * Math.sin(v);
+            // Farbe basierend auf Komplexität (Homotopie-Grad)
+            const hue = info.isPrime ? 180 : (280 + info.complexity * 20) % 360;
+            const color = `hsla(${hue}, 100%, ${info.isPrime ? 60 : 50}%, `;
 
-            elements.push({ x, y, z, val: i, isPrime: isP, factors });
+            data.push({ x, y, z, val: i, ...info, color });
         }
     }
 
     function render() {
         canvas.width = window.innerWidth - 320;
         canvas.height = window.innerHeight;
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = '#030308';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         const cx = canvas.width / 2;
         const cy = canvas.height / 2;
+        const showComp = document.getElementById('showComp').checked;
 
-        const projected = elements.map(e => {
-            let x = e.x, y = e.y, z = e.z;
-            let cY = Math.cos(angleY), sY = Math.sin(angleY);
-            let x1 = x * cY - z * sY;
-            let z1 = x * sY + z * cY;
-            let cX = Math.cos(angleX), sX = Math.sin(angleX);
-            let y2 = y * cX - z1 * sX;
-            let z2 = y * sX + z1 * cX;
+        const projected = data
+            .filter(d => d.isPrime || showComp)
+            .map(d => {
+                let x = d.x, y = d.y, z = d.z;
+                // Rotation Y
+                let sY = Math.sin(angleY), cY = Math.cos(angleY);
+                let x1 = x * cY - z * sY;
+                let z1 = x * sY + z * cY;
+                // Rotation X
+                let sX = Math.sin(angleX), cX = Math.cos(angleX);
+                let y2 = y * cX - z1 * sX;
+                let z2 = y * sX + z1 * cX;
 
-            const p = 1200 / (1200 + z2);
-            return { ...e, sx: x1 * p * zoom + cx, sy: y2 * p * zoom + cy, sz: z2, scale: p };
-        }).sort((a, b) => b.sz - a.sz);
+                const p = 1200 / (1200 + z2);
+                return { ...d, sx: x1 * p * zoom + cx, sy: y2 * p * zoom + cy, sz: z2, scale: p };
+            })
+            .sort((a, b) => b.sz - a.sz);
 
-        projected.forEach(e => {
-            if (e.scale < 0) return;
+        projected.forEach(d => {
+            if (d.scale < 0) return;
             
-            ctx.globalAlpha = e.isPrime ? 1 : 0.2;
-            ctx.fillStyle = e.isPrime ? '#7000ff' : '#2a2a4a';
+            const alpha = d.isPrime ? 0.9 : 0.3;
+            ctx.fillStyle = d.color + alpha + ')';
             
-            if (e.isPrime) {
-                ctx.shadowBlur = 10 * e.scale;
-                ctx.shadowColor = '#7000ff';
+            if (d.isPrime) {
+                ctx.shadowBlur = 15 * d.scale;
+                ctx.shadowColor = 'cyan';
             }
 
+            const size = (d.isPrime ? 3.5 : 2) * d.scale * zoom;
             ctx.beginPath();
-            ctx.arc(e.sx, e.sy, (e.isPrime ? 3 : 1.5) * e.scale * zoom, 0, 7);
+            ctx.arc(d.sx, d.sy, size, 0, 7);
             ctx.fill();
             ctx.shadowBlur = 0;
 
-            e.lastSX = e.sx; e.lastSY = e.sy;
+            d.lastSX = d.sx; d.lastSY = d.sy;
         });
         requestAnimationFrame(render);
     }
 
-    let drag = false, lx, ly;
-    canvas.onmousedown = (e) => { drag = true; lx = e.clientX; ly = e.clientY; };
-    window.onmouseup = () => drag = false;
+    // Interaktion
+    let isDragging = false, lx, ly;
+    canvas.onmousedown = (e) => { isDragging = true; lx = e.clientX; ly = e.clientY; };
+    window.onmouseup = () => isDragging = false;
     window.onmousemove = (e) => {
-        if (drag) {
-            angleY += (e.clientX - lx) * 0.005;
-            angleX += (e.clientY - ly) * 0.005;
+        if (isDragging) {
+            angleY += (e.clientX - lx) * 0.007;
+            angleX += (e.clientY - ly) * 0.007;
             lx = e.clientX; ly = e.clientY;
         }
         const rect = canvas.getBoundingClientRect();
         const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-        let found = elements.find(el => Math.abs(el.lastSX - mx) < 10 && Math.abs(el.lastSY - my) < 10);
+        const showComp = document.getElementById('showComp').checked;
+
+        let found = data.filter(d => d.isPrime || showComp).find(d => 
+            Math.abs(d.lastSX - mx) < 8 && Math.abs(d.lastSY - my) < 8
+        );
+
         if (found) {
             hud.style.display = 'block';
             hud.style.left = (e.clientX + 20) + 'px';
             hud.style.top = (e.clientY - 20) + 'px';
-            hud.innerHTML = `<span class="prime">VALUE: ${found.val}</span><br>Fiber Position: ${found.factors.length}<br>Factor DNA: ${found.factors.join(' ⊗ ')}`;
+            hud.innerHTML = `
+                <b style="color:${found.isPrime ? '#00f2ff' : '#ff0077'}">VALUE: ${found.val}</b><br>
+                <div style="margin-top:5px; color:#8899bb">
+                    Type: ${found.isPrime ? 'Principal Fiber' : 'Composite Section'}<br>
+                    Factors: ${found.factors.join(' × ')}<br>
+                    Complexity: ${found.complexity}
+                </div>
+            `;
         } else hud.style.display = 'none';
     };
 
-    canvas.onwheel = (e) => { e.preventDefault(); zoom *= (e.deltaY > 0 ? 0.9 : 1.1); };
-    document.querySelectorAll('input').forEach(i => i.oninput = () => { generate(); document.getElementById('nVal').innerText = document.getElementById('nRange').value; });
+    canvas.onwheel = (e) => { e.preventDefault(); zoom *= (e.deltaY > 0 ? 0.92 : 1.08); };
 
+    // UI Listeners
+    document.getElementById('nRange').oninput = (e) => { 
+        document.getElementById('nVal').innerText = e.target.value; 
+        generate(); 
+    };
+    document.getElementById('tRange').oninput = (e) => { 
+        document.getElementById('tVal').innerText = e.target.value; 
+        generate(); 
+    };
+    document.getElementById('showComp').onchange = () => render();
+
+    window.onresize = render;
     generate();
     render();
 </script>
