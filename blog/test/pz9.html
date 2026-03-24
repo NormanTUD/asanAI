@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>HoTT Prime Topology</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; color: #64ffda; font-family: 'Segoe UI', sans-serif; display: flex; }
+        #ui { width: 320px; padding: 25px; background: rgba(10, 25, 47, 0.95); border-right: 1px solid #233554; height: 100vh; box-sizing: border-box; z-index: 10; }
+        canvas { flex-grow: 1; cursor: move; }
+        .ctrl { margin-bottom: 20px; }
+        label { display: block; font-size: 11px; color: #8892b0; text-transform: uppercase; margin-bottom: 8px; }
+        input { width: 100%; accent-color: #64ffda; }
+        #hud { 
+            position: absolute; padding: 15px; background: #112240; border: 1px solid #64ffda; 
+            color: #ccd6f6; display: none; width: 250px; pointer-events: none; border-radius: 4px;
+        }
+        .prime { color: #64ffda; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="ui">
+    <h2 style="color:#ccd6f6; margin-top:0;">HOMOTOPY TYPE</h2>
+    <p style="font-size: 11px; color: #8892b0;">Zahlen als Pfade in einem topologischen Raum.</p>
+
+    <div class="ctrl">
+        <label>Pfad-Komplexität <span id="nVal" style="float:right">1000</span></label>
+        <input type="range" id="nRange" min="100" max="3000" value="1000">
+    </div>
+
+    <div class="ctrl">
+        <label>Topologische Krümmung</label>
+        <input type="range" id="kRange" min="0.1" max="2" step="0.1" value="1">
+    </div>
+
+    <div style="font-size: 11px; color: #495670; line-height: 1.6;">
+        <b>Theorie:</b> Hier ist jede Primzahl ein fundamentaler Loop. Die Struktur zeigt die <b>Univalenz</b>: Wenn zwei Pfade (Zahlen) die gleichen Faktoren haben, sind sie im Sinne der HoTT strukturell identisch positioniert.
+    </div>
+</div>
+
+<div id="hud"></div>
+<canvas id="canvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const hud = document.getElementById('hud');
+
+    let nodes = [];
+    let angleX = 0, angleY = 0;
+    let zoom = 1;
+
+    function getPrimeFactors(n) {
+        let f = [];
+        let d = 2, temp = n;
+        while (temp > 1) {
+            if (temp % d === 0) {
+                f.push(d);
+                while (temp % d === 0) temp /= d;
+            }
+            d++;
+            if (d*d > temp) { if (temp > 1) f.push(temp); break; }
+        }
+        return f;
+    }
+
+    function generate() {
+        const count = parseInt(document.getElementById('nRange').value);
+        const curve = parseFloat(document.getElementById('kRange').value);
+        nodes = [];
+
+        for (let i = 2; i <= count; i++) {
+            const factors = getPrimeFactors(i);
+            // HoTT Mapping: Wir nutzen die Faktoren als Koordinaten in einem Toroidalen Raum
+            // Jede Primzahl definiert eine Dimension im Hilbert-Raum
+            let tx = 0, ty = 0, tz = 0;
+            
+            factors.forEach((p, idx) => {
+                const phase = p * curve;
+                tx += Math.sin(phase) * (100 / (idx + 1));
+                ty += Math.cos(phase) * (100 / (idx + 1));
+                tz += Math.sin(phase * 0.5) * 50;
+            });
+
+            nodes.push({
+                val: i,
+                x: tx * 5, y: ty * 5, z: tz * 5,
+                isPrime: factors.length === 1 && factors[0] === i,
+                factors: factors
+            });
+        }
+    }
+
+    function render() {
+        canvas.width = window.innerWidth - 320;
+        canvas.height = window.innerHeight;
+        ctx.fillStyle = '#0a192f';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+
+        // Sortierung für Tiefeneffekt
+        const projected = nodes.map(n => {
+            let x = n.x, y = n.y, z = n.z;
+            let cY = Math.cos(angleY), sY = Math.sin(angleY);
+            let x1 = x * cY - z * sY;
+            let z1 = x * sY + z * cY;
+            let cX = Math.cos(angleX), sX = Math.sin(angleX);
+            let y2 = y * cX - z1 * sX;
+            let z2 = y * sX + z1 * cX;
+
+            const p = 1000 / (1000 + z2);
+            return { ...n, sx: x1 * p * zoom + cx, sy: y2 * p * zoom + cy, sz: z2, scale: p };
+        }).sort((a, b) => b.sz - a.sz);
+
+        projected.forEach(n => {
+            if (n.scale < 0) return;
+            ctx.globalAlpha = Math.max(0.1, n.scale);
+            
+            // Zeichne Verbindungen zu den Faktoren (Pfade im Homotopie-Raum)
+            if (n.isPrime) {
+                ctx.shadowBlur = 15 * n.scale;
+                ctx.shadowColor = '#64ffda';
+                ctx.fillStyle = '#64ffda';
+            } else {
+                ctx.fillStyle = '#233554';
+                ctx.shadowBlur = 0;
+            }
+
+            ctx.beginPath();
+            ctx.arc(n.sx, n.sy, (n.isPrime ? 4 : 2) * n.scale * zoom, 0, 7);
+            ctx.fill();
+            
+            n.currentSX = n.sx;
+            n.currentSY = n.sy;
+        });
+        requestAnimationFrame(render);
+    }
+
+    let isDrag = false, lx, ly;
+    canvas.onmousedown = (e) => { isDrag = true; lx = e.clientX; ly = e.clientY; };
+    window.onmouseup = () => isDrag = false;
+    window.onmousemove = (e) => {
+        if (isDrag) {
+            angleY += (e.clientX - lx) * 0.01;
+            angleX += (e.clientY - ly) * 0.01;
+            lx = e.clientX; ly = e.clientY;
+        }
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        let found = nodes.find(n => Math.abs(n.currentSX - mx) < 10 && Math.abs(n.currentSY - my) < 10);
+        if (found) {
+            hud.style.display = 'block';
+            hud.style.left = (e.clientX + 15) + 'px';
+            hud.style.top = (e.clientY - 15) + 'px';
+            hud.innerHTML = `<b class="prime">${found.val}</b><br>Typ-Faktoren: ${found.factors.join(', ')}<br><small>Homotopie-Ebene: ${found.factors.length}</small>`;
+        } else { hud.style.display = 'none'; }
+    };
+
+    canvas.onwheel = (e) => { e.preventDefault(); zoom *= (e.deltaY > 0 ? 0.9 : 1.1); };
+
+    document.getElementById('nRange').oninput = (e) => { generate(); document.getElementById('nVal').innerText = e.target.value; };
+    document.getElementById('kRange').oninput = generate;
+
+    generate();
+    render();
+</script>
+</body>
+</html>
