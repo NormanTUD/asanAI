@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prime Pattern Explorer</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #050505;
+            color: #eeeeee;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+        }
+        #controls {
+            width: 320px;
+            background-color: #111;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+            z-index: 10;
+            height: 100vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        #canvas-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        canvas {
+            background-color: #000;
+        }
+        .control-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+        select {
+            width: 100%;
+            padding: 5px;
+            background: #222;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
+        .value-display {
+            float: right;
+            color: #00ffcc;
+            font-weight: bold;
+        }
+        h2 {
+            margin-top: 0;
+            font-size: 1.4em;
+            color: #fff;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+        .hint {
+            font-size: 0.8em;
+            color: #777;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="controls">
+        <h2>Prime Explorer</h2>
+        
+        <div class="control-group">
+            <label>Visualization Mode</label>
+            <select id="mode">
+                <option value="polar">Polar Mapping (r=p, θ=p*k)</option>
+                <option value="phyllotaxis">Phyllotaxis (r=√p, θ=p*k)</option>
+                <option value="ulam">Ulam Spiral (Square)</option>
+            </select>
+            <div class="hint">Change modes to see different geometric rules.</div>
+        </div>
+
+        <div class="control-group">
+            <label>Number of Primes <span id="maxVal" class="value-display">10000</span></label>
+            <input type="range" id="maxPrimes" min="100" max="50000" value="10000" step="100">
+        </div>
+
+        <div class="control-group">
+            <label>Zoom / Scale <span id="scaleVal" class="value-display">1.0</span></label>
+            <input type="range" id="scale" min="0.1" max="15" value="1" step="0.1">
+        </div>
+
+        <div class="control-group">
+            <label>Angle Multiplier (k) <span id="angleVal" class="value-display">1.00000</span></label>
+            <input type="range" id="angle" min="0" max="6.2831853" value="1.00000" step="0.00001">
+            <div class="hint">Crucial for Polar/Phyllotaxis. Try sliding this very slowly! Values near PI or fractions of PI create massive galactic structures.</div>
+        </div>
+
+        <div class="control-group">
+            <label>Dot Size <span id="dotVal" class="value-display">1.5</span></label>
+            <input type="range" id="dotSize" min="0.5" max="5" value="1.5" step="0.1">
+        </div>
+
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="primeCanvas"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('primeCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // UI Elements
+        const modeSelect = document.getElementById('mode');
+        const maxPrimesSlider = document.getElementById('maxPrimes');
+        const scaleSlider = document.getElementById('scale');
+        const angleSlider = document.getElementById('angle');
+        const dotSizeSlider = document.getElementById('dotSize');
+
+        // Value Displays
+        const maxValDisp = document.getElementById('maxVal');
+        const scaleValDisp = document.getElementById('scaleVal');
+        const angleValDisp = document.getElementById('angleVal');
+        const dotValDisp = document.getElementById('dotVal');
+
+        let primes = [];
+        let maxComputedLimit = 0;
+
+        // Fast Sieve of Eratosthenes
+        function generatePrimes(limit) {
+            if (limit <= maxComputedLimit) return;
+            const sieve = new Uint8Array(limit + 1);
+            primes = [];
+            for (let p = 2; p <= limit; p++) {
+                if (sieve[p] === 0) {
+                    primes.push(p);
+                    for (let i = p * p; i <= limit; i += p) {
+                        sieve[i] = 1;
+                    }
+                }
+            }
+            maxComputedLimit = limit;
+        }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth - 320;
+            canvas.height = window.innerHeight;
+            draw();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const mode = modeSelect.value;
+            const count = parseInt(maxPrimesSlider.value);
+            const scale = parseFloat(scaleSlider.value);
+            const angleMult = parseFloat(angleSlider.value);
+            const dotSize = parseFloat(dotSizeSlider.value);
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // Ensure we have enough primes (roughly generating up to Nth prime)
+            // Prime Number Theorem approximation: P_n ~ n * ln(n)
+            const requiredLimit = Math.max(1000, Math.ceil(count * Math.log(count) * 1.5));
+            generatePrimes(requiredLimit);
+
+            ctx.fillStyle = 'rgba(0, 255, 204, 0.8)'; // Cyan glowing dots
+
+            for (let i = 0; i < count; i++) {
+                if (i >= primes.length) break;
+                const p = primes[i];
+                let x, y;
+
+                if (mode === 'polar') {
+                    // r = p, theta = p * k
+                    const r = p * (scale * 0.05);
+                    const theta = p * angleMult;
+                    x = centerX + r * Math.cos(theta);
+                    y = centerY + r * Math.sin(theta);
+                } 
+                else if (mode === 'phyllotaxis') {
+                    // r = sqrt(p), theta = p * k
+                    const r = Math.sqrt(p) * scale * 2;
+                    const theta = p * angleMult;
+                    x = centerX + r * Math.cos(theta);
+                    y = centerY + r * Math.sin(theta);
+                }
+                else if (mode === 'ulam') {
+                    // Square spiral approximation
+                    // Scale down slightly for Ulam
+                    const ulamScale = scale * 2;
+                    let k = Math.ceil((Math.sqrt(p) - 1) / 2);
+                    let t = 2 * k;
+                    let m = (t + 1) * (t + 1); 
+                    
+                    if (p >= m - t) { x = k - (m - p); y = -k; }
+                    else { m -= t; if (p >= m - t) { x = -k; y = -k + (m - p); }
+                    else { m -= t; if (p >= m - t) { x = -k + (m - p); y = k; }
+                    else { x = k; y = k - (m - p - t); }}}
+                    
+                    x = centerX + x * ulamScale;
+                    y = centerY + y * ulamScale;
+                }
+
+                // Only draw if within bounds to save performance
+                if (x >= 0 && x <= canvas.width && y >= 0 && y <= canvas.height) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, dotSize, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+
+        // Event Listeners for UI
+        const updateDisplaysAndDraw = () => {
+            maxValDisp.textContent = maxPrimesSlider.value;
+            scaleValDisp.textContent = scaleSlider.value;
+            angleValDisp.textContent = parseFloat(angleSlider.value).toFixed(5);
+            dotValDisp.textContent = dotSizeSlider.value;
+            draw();
+        };
+
+        modeSelect.addEventListener('change', draw);
+        maxPrimesSlider.addEventListener('input', updateDisplaysAndDraw);
+        scaleSlider.addEventListener('input', updateDisplaysAndDraw);
+        angleSlider.addEventListener('input', updateDisplaysAndDraw);
+        dotSizeSlider.addEventListener('input', updateDisplaysAndDraw);
+
+        // Initial setup
+        generatePrimes(150000); // Pre-warm the sieve
+        resizeCanvas();
+    </script>
+</body>
+</html>
