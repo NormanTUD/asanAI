@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔢 Primzahl-Muster-Explorer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a1a;
+    color: #e0e0e0;
+    overflow-x: hidden;
+  }
+
+  #toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(15, 15, 35, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 10px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid #333;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+
+  #toolbar label {
+    font-size: 12px;
+    color: #aaa;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  #toolbar select, #toolbar input, #toolbar button {
+    background: #1a1a3a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+
+  #toolbar button {
+    cursor: pointer;
+    background: #2a2a5a;
+    transition: all 0.2s;
+    font-weight: bold;
+  }
+
+  #toolbar button:hover {
+    background: #4a4a8a;
+    transform: translateY(-1px);
+  }
+
+  #toolbar button.active {
+    background: #6a4aff;
+    border-color: #8a6aff;
+  }
+
+  #main {
+    margin-top: 70px;
+    display: flex;
+    height: calc(100vh - 70px);
+  }
+
+  #canvas-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #mainCanvas { cursor: grab; }
+  #mainCanvas:active { cursor: grabbing; }
+
+  #sidebar {
+    width: 320px;
+    background: rgba(15, 15, 35, 0.95);
+    border-left: 1px solid #333;
+    padding: 15px;
+    overflow-y: auto;
+    font-size: 13px;
+  }
+
+  #sidebar h3 {
+    color: #8a6aff;
+    margin: 15px 0 8px 0;
+    font-size: 14px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+  }
+
+  #sidebar h3:first-child { margin-top: 0; }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .info-label { color: #888; }
+  .info-value { color: #fff; font-weight: bold; }
+
+  #selection-box {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(106, 74, 255, 0.1);
+    border: 1px solid rgba(106, 74, 255, 0.3);
+    border-radius: 8px;
+    min-height: 60px;
+  }
+
+  .selected-number {
+    display: inline-block;
+    padding: 4px 8px;
+    margin: 2px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .selected-number:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255,255,255,0.3);
+  }
+
+  .selected-number.prime {
+    background: rgba(255, 100, 50, 0.3);
+    border: 1px solid rgba(255, 100, 50, 0.6);
+    color: #ff8844;
+  }
+
+  .selected-number.composite {
+    background: rgba(50, 150, 255, 0.3);
+    border: 1px solid rgba(50, 150, 255, 0.6);
+    color: #44aaff;
+  }
+
+  #relation-display {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(0, 200, 100, 0.05);
+    border: 1px solid rgba(0, 200, 100, 0.2);
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  #tooltip {
+    position: fixed;
+    background: rgba(20, 20, 50, 0.95);
+    border: 1px solid #6a4aff;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 200;
+    display: none;
+    max-width: 280px;
+    box-shadow: 0 4px 20px rgba(106, 74, 255, 0.3);
+  }
+
+  #tooltip .tt-number { font-size: 20px; font-weight: bold; margin-bottom: 5px; }
+  #tooltip .tt-prime { color: #ff6644; }
+  #tooltip .tt-composite { color: #44aaff; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+  .legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; }
+
+  .legend-color {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  #minimap {
+    position: fixed;
+    bottom: 15px;
+    right: 340px;
+    width: 150px;
+    height: 150px;
+    background: rgba(15, 15, 35, 0.9);
+    border: 1px solid #444;
+    border-radius: 8px;
+    z-index: 50;
+  }
+
+  .mode-separator { width: 1px; height: 30px; background: #444; margin: 0 5px; }
+
+  #gapHistogram {
+    width: 100%; height: 120px;
+    margin-top: 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 6px;
+  }
+
+  #loading {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: #6a4aff;
+    z-index: 300;
+  }
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <label>Modus
+    <select id="viewMode">
+      <option value="grid">📦 Gitter</option>
+      <option value="spiral" selected>🌀 Ulam-Spirale</option>
+      <option value="sacks">🎯 Sacks-Spirale</option>
+      <option value="goldbach">🔗 Goldbach</option>
+      <option value="gaps">📏 Lücken-Fluss</option>
+      <option value="modular">🎨 Modular-Ringe</option>
+      <option value="factortree">🌳 Faktor-Landschaft</option>
+    </select>
+  </label>
+  <label>Bereich bis
+    <input type="range" id="rangeSlider" min="100" max="10000" value="2000" step="100">
+    <span id="rangeValue">2000</span>
+  </label>
+  <label>Gitter-Breite
+    <input type="number" id="gridWidth" value="30" min="2" max="200" style="width:60px">
+  </label>
+  <label>Mod-Basis
+    <input type="number" id="modBase" value="6" min="2" max="100" style="width:60px">
+  </label>
+  <div class="mode-separator"></div>
+  <button id="btnShowPrimes" class="active" onclick="toggleFilter('primes')">Primzahlen</button>
+  <button id="btnShowComposites" class="active" onclick="toggleFilter('composites')">Nicht-PZ</button>
+  <button id="btnShowTwins" onclick="toggleFilter('twins')">Zwillinge</button>
+  <button id="btnShowSexy" onclick="toggleFilter('sexy')">Sexy PZ</button>
+  <button id="btnShowSophie" onclick="toggleFilter('sophie')">Sophie Germain</button>
+  <div class="mode-separator"></div>
+  <button onclick="clearSelection()">🗑️ Auswahl leeren</button>
+  <button onclick="exportImage()">📸 Screenshot</button>
+  <label>Farb-Schema
+    <select id="colorScheme">
+      <option value="fire">🔥 Feuer</option>
+      <option value="ocean">🌊 Ozean</option>
+      <option value="neon">💜 Neon</option>
+      <option value="earth">🌍 Erde</option>
+      <option value="rainbow">🌈 Regenbogen</option>
+    </select>
+  </label>
+</div>
+
+<div id="main">
+  <div id="canvas-container">
+    <canvas id="mainCanvas"></canvas>
+  </div>
+  <div id="sidebar">
+    <h3>📊 Statistik</h3>
+    <div id="stats"></div>
+    <h3>🎨 Legende</h3>
+    <div id="legend" class="legend"></div>
+    <h3>🖱️ Ausgewählte Zahlen</h3>
+    <div id="selection-box"></div>
+    <h3>🔗 Relationen</h3>
+    <div id="relation-display">Wähle Zahlen durch Klick aus, um ihre Beziehungen zu sehen.</div>
+    <h3>📏 Lücken-Histogramm</h3>
+    <canvas id="gapHistogram"></canvas>
+    <h3>🧮 Muster-Detektor</h3>
+    <div id="pattern-detector"></div>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+<canvas id="minimap"></canvas>
+<div id="loading">⏳ Berechne Primzahlen...</div>
+
+<script>
+// ============================================================
+// CORE STATE
+// ============================================================
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d');
+const minimapCanvas = document.getElementById('minimap');
+const minimapCtx = minimapCanvas.getContext('2d');
+const gapCanvas = document.getElementById('gapHistogram');
+const gapCtx = gapCanvas.getContext('2d');
+
+let W, H;
+let primes = new Set();
+let primeList = [];
+let maxN = 2000;
+let cellPositions = [];
+let selectedNumbers = [];
+let filters = { primes: true, composites: true, twins: false, sexy: false, sophie: false };
+let viewMode = 'spiral';
+let panX = 0, panY = 0, zoom = 1;
+let isDragging = false, dragStartX, dragStartY, panStartX, panStartY;
+let hoveredCell = null;
+let gridWidth = 30;
+let modBase = 6;
+
+const colorSchemes = {
+  fire: {
+    prime: '#ff4422', primeGlow: 'rgba(255,68,34,0.4)',
+    composite: '#1a3355', compositeGlow: 'rgba(26,51,85,0.2)',
+    twin: '#ffaa00', sexy: '#ff00aa', sophie: '#ffff00',
+    bg: '#0a0a1a', grid: '#1a1a2a'
+  },
+  ocean: {
+    prime: '#00ccff', primeGlow: 'rgba(0,204,255,0.4)',
+    composite: '#1a2233', compositeGlow: 'rgba(26,34,51,0.2)',
+    twin: '#00ffaa', sexy: '#ff44aa', sophie: '#aaffff',
+    bg: '#050515', grid: '#0a1525'
+  },
+  neon: {
+    prime: '#aa44ff', primeGlow: 'rgba(170,68,255,0.5)',
+    composite: '#151525', compositeGlow: 'rgba(21,21,37,0.2)',
+    twin: '#ff44ff', sexy: '#44ffaa', sophie: '#ffff44',
+    bg: '#08081a', grid: '#151530'
+  },
+  earth: {
+    prime: '#88cc44', primeGlow: 'rgba(136,204,68,0.4)',
+    composite: '#2a2215', compositeGlow: 'rgba(42,34,21,0.2)',
+    twin: '#ccaa44', sexy: '#cc4444', sophie: '#44ccaa',
+    bg: '#0a0a05', grid: '#1a1a10'
+  },
+  rainbow: {
+    prime: '#ff4444', primeGlow: 'rgba(255,68,68,0.3)',
+    composite: '#1a1a2a', compositeGlow: 'rgba(26,26,42,0.2)',
+    twin: '#44ff44', sexy: '#4444ff', sophie: '#ff44ff',
+    bg: '#0a0a12', grid: '#15152a'
+  }
+};
+
+let currentScheme = colorSchemes.fire;
+
+// ============================================================
+// PRIME MATH
+// ============================================================
+function sieveOfEratosthenes(max) {
+  const sieve = new Uint8Array(max + 1);
+  sieve[0] = sieve[1] = 1;
+  for (let i = 2; i * i <= max; i++) {
+    if (!sieve[i]) {
+      for (let j = i * i; j <= max; j += i) sieve[j] = 1;
+    }
+  }
+  primes = new Set();
+  primeList = [];
+  for (let i = 2; i <= max; i++) {
+    if (!sieve[i]) { primes.add(i); primeList.push(i); }
+  }
+}
+
+function isPrime(n) { return primes.has(n); }
+
+function factorize(n) {
+  if (n <= 1) return [];
+  const factors = [];
+  let d = 2;
+  while (d * d <= n) {
+    while (n % d === 0) { factors.push(d); n /= d; }
+    d++;
+  }
+  if (n > 1) factors.push(n);
+  return factors;
+}
+
+function isTwinPrime(n) { return isPrime(n) && (isPrime(n - 2) || isPrime(n + 2)); }
+function isSexyPrime(n) { return isPrime(n) && (isPrime(n - 6) || isPrime(n + 6)); }
+function isSophieGermain(n) { return isPrime(n) && isPrime(2 * n + 1); }
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+function lcm(a, b) { return (a * b) / gcd(a, b); }
+
+// ============================================================
+// LAYOUT GENERATORS
+// ============================================================
+function generateGrid(max, width) {
+  const positions = [];
+  const cellSize = 24;
+  for (let n = 1; n <= max; n++) {
+    const row = Math.floor((n - 1) / width);
+    const col = (n - 1) % width;
+    positions.push({ n, x: col * cellSize, y: row * cellSize, w: cellSize - 2, h: cellSize - 2, isPrime: isPrime(n) });
+  }
+  return positions;
+}
+
+function generateUlamSpiral(max) {
+  const positions = [];
+  const cellSize = 18;
+  let x = 0, y = 0, dx = 1, dy = 0;
+  let stepsInDir = 1, stepsTaken = 0, turnsInLayer = 0;
+  for (let n = 1; n <= max; n++) {
+    positions.push({ n, x: x * cellSize, y: y * cellSize, w: cellSize - 2, h: cellSize - 2, isPrime: isPrime(n) });
+    x += dx; y += dy; stepsTaken++;
+    if (stepsTaken === stepsInDir) {
+      stepsTaken = 0;
+      [dx, dy] = [-dy, dx];
+      turnsInLayer++;
+      if (turnsInLayer === 2) { turnsInLayer = 0; stepsInDir++; }
+    }
+  }
+  return positions;
+}
+
+function generateSacksSpiral(max) {
+  const positions = [];
+  const scale = 8;
+  for (let n = 1; n <= max; n++) {
+    const angle = 2 * Math.PI * Math.sqrt(n);
+    const radius = Math.sqrt(n) * scale;
+    positions.push({
+      n, x: Math.cos(angle) * radius, y: Math.sin(angle) * radius,
+      w: Math.max(4, 10 - Math.sqrt(n) * 0.05),
+      h: Math.max(4, 10 - Math.sqrt(n) * 0.05),
+      isPrime: isPrime(n), isCircle: true
+    });
+  }
+  return positions;
+}
+
+function generateGoldbachView(max) {
+  const positions = [];
+  const evenNumbers = [];
+  for (let n = 4; n <= max; n += 2) evenNumbers.push(n);
+  const cellW = 14;
+  const cols = Math.min(evenNumbers.length, 80);
+  evenNumbers.forEach((even, idx) => {
+    const col = idx % cols;
+    const row = Math.floor(idx / cols);
+    let goldbachCount = 0;
+    for (let p = 2; p <= even / 2; p++) {
+      if (isPrime(p) && isPrime(even - p)) goldbachCount++;
+    }
+    positions.push({ n: even, x: col * cellW, y: row * cellW, w: cellW - 2, h: cellW - 2, isPrime: false, goldbachCount, isGoldbach: true });
+  });
+  return positions;
+}
+
+function generateGapsFlow(max) {
+  const positions = [];
+  const scale = 6;
+  let xPos = 0;
+  for (let i = 0; i < primeList.length - 1 && primeList[i + 1] <= max; i++) {
+    const gap = primeList[i + 1] - primeList[i];
+    positions.push({
+      n: primeList[i], x: xPos, y: -gap * scale * 3,
+      w: Math.max(3, 8 - i * 0.005), h: gap * scale * 3,
+      isPrime: true, gap, isBar: true
+    });
+    xPos += Math.max(4, 9 - i * 0.005);
+  }
+  return positions;
+}
+
+function generateModularRings(max, mod) {
+  const positions = [];
+  const ringSpacing = 3;
+  for (let n = 2; n <= max; n++) {
+    const residue = n % mod;
+    const ring = Math.floor((n - 2) / mod);
+    const angle = (residue / mod) * 2 * Math.PI - Math.PI / 2;
+    const radius = 30 + ring * ringSpacing;
+    positions.push({
+      n, x: Math.cos(angle) * radius, y: Math.sin(angle) * radius,
+      w: Math.max(3, 6 - ring * 0.01), h: Math.max(3, 6 - ring * 0.01),
+      isPrime: isPrime(n), residue, ring, isCircle: true
+    });
+  }
+  return positions;
+}
+
+function generateFactorLandscape(max) {
+  const positions = [];
+  const cellSize = 16;
+  const cols = Math.ceil(Math.sqrt(max));
+  for (let n = 2; n <= max; n++) {
+    const factors = factorize(n);
+    const col = (n - 2) % cols;
+    const row = Math.floor((n - 2) / cols);
+    positions.push({
+      n, x: col * cellSize, y: row * cellSize, w: cellSize - 2, h: cellSize - 2,
+      isPrime: isPrime(n), factors, numFactors: factors.length, isFactorBox: true
+    });
+  }
+  return positions;
+}
+
+// ============================================================
+// RENDERING
+// ============================================================
+function getColor(pos) {
+  const n = pos.n;
+  const scheme = currentScheme;
+  if (filters.sophie && isSophieGermain(n)) return scheme.sophie;
+  if (filters.sexy && isSexyPrime(n)) return scheme.sexy;
+  if (filters.twins && isTwinPrime(n)) return scheme.twin;
+  if (pos.isPrime) return scheme.prime;
+  return scheme.composite;
+}
+
+function getAlpha(pos) {
+  const n = pos.n;
+  if (pos.isPrime && !filters.primes) return 0.05;
+  if (!pos.isPrime && !filters.composites) return 0.05;
+  if (filters.twins && !isTwinPrime(n) && pos.isPrime) return 0.15;
+  if (filters.sexy && !isSexyPrime(n) && pos.isPrime) return 0.15;
+  if (filters.sophie && !isSophieGermain(n) && pos.isPrime) return 0.15;
+  return 1;
+}
+
+function drawCell(pos) {
+  const sx = (pos.x + panX) * zoom + W / 2;
+  const sy = (pos.y + panY) * zoom + H / 2;
+  const sw = pos.w * zoom;
+  const sh = (pos.h || pos.w) * zoom;
+
+  if (sx + sw < 0 || sx > W || sy + sh < 0 || sy > H) return;
+  if (sw < 0.5) return;
+
+  const alpha = getAlpha(pos);
+  const color = getColor(pos);
+  const isSelected = selectedNumbers.includes(pos.n);
+
+  ctx.globalAlpha = alpha;
+
+  if (pos.isGoldbach) {
+    const intensity = Math.min(1, pos.goldbachCount / 20);
+    ctx.fillStyle = `hsl(${120 - intensity * 120}, ${60 + intensity * 40}%, ${20 + intensity * 40}%)`;
+    ctx.fillRect(sx, sy, sw, sh);
+    if (sw > 10) {
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.font = `${Math.max(6, sw * 0.5)}px monospace`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(pos.goldbachCount, sx + sw / 2, sy + sh / 2);
+    }
+  } else if (pos.isBar) {
+    ctx.fillStyle = `hsl(${pos.gap * 20}, 80%, 55%)`;
+    ctx.fillRect(sx, sy, sw, sh);
+  } else if (pos.isFactorBox) {
+    const factors = pos.factors;
+    if (factors.length === 1) {
+      ctx.fillStyle = color;
+      ctx.fillRect(sx, sy, sw, sh);
+    } else {
+      const segW = sw / factors.length;
+      factors.forEach((f, i) => {
+        ctx.fillStyle = `hsla(${(f * 47) % 360}, 70%, 45%, ${alpha})`;
+        ctx.fillRect(sx + i * segW, sy, segW + 0.5, sh);
+      });
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(sx, sy, sw, sh);
+    }
+  } else if (pos.isCircle) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(sx, sy, sw / 2, 0, Math.PI * 2);
+    ctx.fill();
+    if (pos.isPrime && sw > 3) {
+      ctx.fillStyle = currentScheme.primeGlow;
+      ctx.beginPath();
+      ctx.arc(sx, sy, sw, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else {
+    ctx.fillStyle = color;
+    ctx.fillRect(sx, sy, sw, sh);
+    if (pos.isPrime && sw > 6) {
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fillRect(sx + 1, sy + 1, sw - 2, sh / 3);
+    }
+    if (sw > 16) {
+      ctx.fillStyle = pos.isPrime ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)';
+      ctx.font = `${Math.max(7, sw * 0.4)}px monospace`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(pos.n, sx + sw / 2, sy + sh / 2);
+    }
+  }
+
+  if (isSelected) {
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.shadowColor = '#ffffff';
+    ctx.shadowBlur = 10;
+    if (pos.isCircle) {
+      ctx.beginPath();
+      ctx.arc(sx, sy, sw / 2 + 2, 0, Math.PI * 2);
+      ctx.stroke();
+    } else {
+      ctx.strokeRect(sx - 1, sy - 1, sw + 2, (sh || sw) + 2);
+    }
+    ctx.shadowBlur = 0;
+  }
+
+  ctx.globalAlpha = 1;
+}
+
+function drawConnections() {
+  if (selectedNumbers.length < 2) return;
+  ctx.globalAlpha = 0.3;
+  ctx.strokeStyle = '#6a4aff';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 4]);
+
+  for (let i = 0; i < selectedNumbers.length; i++) {
+    for (let j = i + 1; j < selectedNumbers.length; j++) {
+      const posA = cellPositions.find(p => p.n === selectedNumbers[i]);
+      const posB = cellPositions.find(p => p.n === selectedNumbers[j]);
+      if (!posA || !posB) continue;
+
+      const ax = (posA.x + panX) * zoom + W / 2 + (posA.w * zoom) / 2;
+      const ay = (posA.y + panY) * zoom + H / 2 + ((posA.h || posA.w) * zoom) / 2;
+      const bx = (posB.x + panX) * zoom + W / 2 + (posB.w * zoom) / 2;
+      const by = (posB.y + panY) * zoom + H / 2 + ((posB.h || posB.w) * zoom) / 2;
+
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(bx, by);
+      ctx.stroke();
+
+      const mx = (ax + bx) / 2;
+      const my = (ay + by) / 2;
+      const diff = Math.abs(selectedNumbers[i] - selectedNumbers[j]);
+      ctx.globalAlpha = 0.7;
+      ctx.fillStyle = '#aaa';
+      ctx.font = '11px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`Δ${diff}`, mx, my - 5);
+      ctx.globalAlpha = 0.3;
+    }
+  }
+  ctx.setLineDash([]);
+  ctx.globalAlpha = 1;
+}
+
+function drawModularGuides() {
+  if (viewMode !== 'modular') return;
+  ctx.globalAlpha = 0.15;
+  ctx.strokeStyle = '#6a4aff';
+  ctx.lineWidth = 0.5;
+  for (let r = 0; r < modBase; r++) {
+    const angle = (r / modBase) * 2 * Math.PI - Math.PI / 2;
+    const cx = W / 2, cy = H / 2;
+    const len = Math.max(W, H);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle) * len * zoom, cy + Math.sin(angle) * len * zoom);
+    ctx.stroke();
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = '#888';
+    ctx.font = '12px monospace';
+    ctx.fillText(`mod ${r}`, cx + Math.cos(angle) * 50, cy + Math.sin(angle) * 50);
+    ctx.globalAlpha = 0.15;
+  }
+  ctx.globalAlpha = 1;
+}
+
+function render() {
+  W = canvas.width = canvas.parentElement.clientWidth;
+  H = canvas.height = canvas.parentElement.clientHeight;
+
+  ctx.fillStyle = currentScheme.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  if (viewMode === 'grid') {
+    ctx.strokeStyle = currentScheme.grid;
+    ctx.lineWidth = 0.5;
+    ctx.globalAlpha = 0.3;
+    const cellSize = 24;
+    const startX = (panX * zoom + W / 2) % (cellSize * zoom);
+    const startY = (panY * zoom + H / 2) % (cellSize * zoom);
+    for (let x = startX; x < W; x += cellSize * zoom) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = startY; y < H; y += cellSize * zoom) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  drawModularGuides();
+  drawConnections();
+  cellPositions.forEach(pos => drawCell(pos));
+
+  // Hover highlight
+  if (hoveredCell) {
+    const pos = hoveredCell;
+    const sx = (pos.x + panX) * zoom + W / 2;
+    const sy = (pos.y + panY) * zoom + H / 2;
+    const sw = pos.w * zoom;
+    const sh = (pos.h || pos.w) * zoom;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.shadowColor = '#6a4aff';
+    ctx.shadowBlur = 15;
+    if (pos.isCircle) {
+      ctx.beginPath();
+      ctx.arc(sx, sy, sw / 2 + 3, 0, Math.PI * 2);
+      ctx.stroke();
+    } else {
+      ctx.strokeRect(sx - 2, sy - 2, sw + 4, sh + 4);
+    }
+    ctx.shadowBlur = 0;
+  }
+
+  renderMinimap();
+}
+
+function renderMinimap() {
+  const mW = 150, mH = 150;
+  minimapCanvas.width = mW;
+  minimapCanvas.height = mH;
+  if (cellPositions.length === 0) return;
+
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  cellPositions.forEach(p => {
+    minX = Math.min(minX, p.x);
+    maxX = Math.max(maxX, p.x + p.w);
+    minY = Math.min(minY, p.y);
+    maxY = Math.max(maxY, p.y + (p.h || p.w));
+  });
+
+  const rangeX = maxX - minX || 1;
+  const rangeY = maxY - minY || 1;
+  const scale = Math.min(mW / rangeX, mH / rangeY) * 0.9;
+  const offX = (mW - rangeX * scale) / 2;
+  const offY = (mH - rangeY * scale) / 2;
+
+  minimapCtx.fillStyle = 'rgba(10,10,30,0.9)';
+  minimapCtx.fillRect(0, 0, mW, mH);
+
+  cellPositions.forEach(p => {
+    const mx = (p.x - minX) * scale + offX;
+    const my = (p.y - minY) * scale + offY;
+    minimapCtx.fillStyle = p.isPrime ? currentScheme.prime : 'rgba(50,50,80,0.5)';
+    minimapCtx.fillRect(mx, my, Math.max(1, p.w * scale), Math.max(1, (p.h || p.w) * scale));
+  });
+}
+
+// ============================================================
+// GAP HISTOGRAM
+// ============================================================
+function renderGapHistogram() {
+  const cW = gapCanvas.width = gapCanvas.parentElement.clientWidth - 30;
+  const cH = gapCanvas.height = 120;
+  gapCtx.fillStyle = 'rgba(0,0,0,0.3)';
+  gapCtx.fillRect(0, 0, cW, cH);
+
+  const gaps = {};
+  for (let i = 0; i < primeList.length - 1; i++) {
+    if (primeList[i + 1] > maxN) break;
+    const gap = primeList[i + 1] - primeList[i];
+    gaps[gap] = (gaps[gap] || 0) + 1;
+  }
+
+  const gapKeys = Object.keys(gaps).map(Number).sort((a, b) => a - b);
+  if (gapKeys.length === 0) return;
+  const maxCount = Math.max(...Object.values(gaps));
+  const barW = Math.max(2, (cW - 20) / gapKeys.length - 1);
+
+  gapKeys.forEach((gap, i) => {
+    const barH = (gaps[gap] / maxCount) * (cH - 25);
+    const x = 10 + i * (barW + 1);
+    const y = cH - 15 - barH;
+    gapCtx.fillStyle = `hsl(${gap * 20}, 70%, 55%)`;
+    gapCtx.fillRect(x, y, barW, barH);
+    if (barW > 12) {
+      gapCtx.fillStyle = '#aaa';
+      gapCtx.font = '8px monospace';
+      gapCtx.textAlign = 'center';
+      gapCtx.fillText(gap, x + barW / 2, cH - 3);
+    }
+  });
+
+  gapCtx.fillStyle = '#666';
+  gapCtx.font = '9px monospace';
+  gapCtx.textAlign = 'left';
+  gapCtx.fillText('Primzahl-Lücken Verteilung', 10, 10);
+}
+
+// ============================================================
+// STATS & SIDEBAR
+// ============================================================
+function updateStats() {
+  const primesInRange = primeList.filter(p => p <= maxN);
+  const density = (primesInRange.length / maxN * 100).toFixed(2);
+  const twinCount = primesInRange.filter(p => isPrime(p + 2)).length;
+  const sexyCount = primesInRange.filter(p => isPrime(p + 6)).length;
+  const sophieCount = primesInRange.filter(p => isPrime(2 * p + 1)).length;
+
+  let totalGap = 0, maxGap = 0, maxGapAt = 0;
+  for (let i = 0; i < primesInRange.length - 1; i++) {
+    const g = primesInRange[i + 1] - primesInRange[i];
+    totalGap += g;
+    if (g > maxGap) { maxGap = g; maxGapAt = primesInRange[i]; }
+  }
+  const avgGap = primesInRange.length > 1 ? (totalGap / (primesInRange.length - 1)).toFixed(2) : 0;
+
+  document.getElementById('stats').innerHTML = `
+    <div class="info-row"><span class="info-label">Bereich</span><span class="info-value">2 – ${maxN}</span></div>
+    <div class="info-row"><span class="info-label">Primzahlen</span><span class="info-value">${primesInRange.length}</span></div>
+    <div class="info-row"><span class="info-label">Dichte</span><span class="info-value">${density}%</span></div>
+    <div class="info-row"><span class="info-label">π(n)/n vs 1/ln(n)</span><span class="info-value">${(primesInRange.length/maxN).toFixed(4)} vs ${(1/Math.log(maxN)).toFixed(4)}</span></div>
+    <div class="info-row"><span class="info-label">Zwillings-PZ</span><span class="info-value">${twinCount} Paare</span></div>
+    <div class="info-row"><span class="info-label">Sexy PZ</span><span class="info-value">${sexyCount} Paare</span></div>
+    <div class="info-row"><span class="info-label">Sophie Germain</span><span class="info-value">${sophieCount}</span></div>
+    <div class="info-row"><span class="info-label">Ø Lücke</span><span class="info-value">${avgGap}</span></div>
+    <div class="info-row"><span class="info-label">Max Lücke</span><span class="info-value">${maxGap} (nach ${maxGapAt})</span></div>
+  `;
+}
+
+function updateLegend() {
+  const s = currentScheme;
+  document.getElementById('legend').innerHTML = `
+    <div class="legend-item"><div class="legend-color" style="background:${s.prime}"></div>Primzahl</div>
+    <div class="legend-item"><div class="legend-color" style="background:${s.composite}"></div>Nicht-PZ</div>
+    <div class="legend-item"><div class="legend-color" style="background:${s.twin}"></div>Zwilling</div>
+    <div class="legend-item"><div class="legend-color" style="background:${s.sexy}"></div>Sexy PZ</div>
+    <div class="legend-item"><div class="legend-color" style="background:${s.sophie}"></div>Sophie Germain</div>
+  `;
+}
+
+function updateSelection() {
+  const box = document.getElementById('selection-box');
+  if (selectedNumbers.length === 0) {
+    box.innerHTML = '<span style="color:#666;font-size:11px">Klicke auf Zahlen um sie auszuwählen...</span>';
+    return;
+  }
+  box.innerHTML = selectedNumbers.map(n => {
+    const cls = isPrime(n) ? 'prime' : 'composite';
+    return `<span class="selected-number ${cls}" onclick="removeFromSelection(${n})">${n}</span>`;
+  }).join('');
+}
+
+function updateRelations() {
+  const div = document.getElementById('relation-display');
+  if (selectedNumbers.length === 0) {
+    div.innerHTML = 'Wähle Zahlen durch Klick aus, um ihre Beziehungen zu sehen.';
+    return;
+  }
+
+  let html = '';
+  selectedNumbers.forEach(n => {
+    const factors = factorize(n);
+    const type = isPrime(n) ? '🔴 Primzahl' : '🔵 Zusammengesetzt';
+    html += `<div style="margin-bottom:8px;padding:5px;background:rgba(255,255,255,0.03);border-radius:4px">`;
+    html += `<strong>${n}</strong> — ${type}<br>`;
+    if (!isPrime(n)) html += `Faktoren: ${factors.join(' × ')}<br>`;
+    if (isTwinPrime(n)) html += `👯 Zwillings-Primzahl<br>`;
+    if (isSexyPrime(n)) html += `💋 Sexy Primzahl<br>`;
+    if (isSophieGermain(n)) html += `🧠 Sophie Germain (2×${n}+1=${2*n+1} ist prim)<br>`;
+    html += `mod 6 = ${n % 6} | mod 30 = ${n % 30}<br>`;
+    html += `</div>`;
+  });
+
+  if (selectedNumbers.length >= 2) {
+    html += `<div style="margin-top:8px;border-top:1px solid #333;padding-top:8px"><strong>Paar-Relationen:</strong><br>`;
+    for (let i = 0; i < selectedNumbers.length; i++) {
+      for (let j = i + 1; j < selectedNumbers.length; j++) {
+        const a = selectedNumbers[i], b = selectedNumbers[j];
+        const diff = Math.abs(a - b);
+        const g = gcd(a, b);
+        const l = lcm(a, b);
+        html += `<div style="margin:3px 0;padding:3px;background:rgba(106,74,255,0.1);border-radius:3px">`;
+        html += `${a} ↔ ${b}: Δ=${diff}`;
+        if (diff === 2) html += ` 👯 Zwillinge!`;
+        if (diff === 6) html += ` 💋 Sexy!`;
+        html += ` | ggT=${g} | kgV=${l}`;
+        if (isPrime(diff)) html += ` | Δ ist prim!`;
+        html += `</div>`;
+      }
+    }
+    html += `</div>`;
+  }
+  div.innerHTML = html;
+}
+
+function updatePatternDetector() {
+  const div = document.getElementById('pattern-detector');
+  let html = '';
+
+  const mod6counts = { 1: 0, 5: 0 };
+  primeList.filter(p => p <= maxN && p > 3).forEach(p => {
+    if (p % 6 === 1) mod6counts[1]++;
+    else if (p % 6 === 5) mod6counts[5]++;
+  });
+
+  html += `<div style="margin-bottom:8px"><strong>Mod 6 Verteilung (p&gt;3):</strong><br>`;
+  html += `6k+1: ${mod6counts[1]} | 6k+5: ${mod6counts[5]}<br>`;
+  html += `<small style="color:#888">Alle Primzahlen &gt;3 sind ≡ 1 oder 5 (mod 6)</small></div>`;
+
+  const mod30 = {};
+  primeList.filter(p => p <= maxN && p > 5).forEach(p => { const r = p % 30; mod30[r] = (mod30[r] || 0) + 1; });
+
+  html += `<div style="margin-bottom:8px"><strong>Mod 30 Verteilung (p&gt;5):</strong><br>`;
+  const maxMod30 = Math.max(1, ...Object.values(mod30));
+  [1, 7, 11, 13, 17, 19, 23, 29].forEach(r => {
+    const count = mod30[r] || 0;
+    const bar = '█'.repeat(Math.round(count / maxMod30 * 15));
+    html += `<span style="color:#6a4aff">${String(r).padStart(2)}</span>: ${bar} ${count}<br>`;
+  });
+  html += `</div>`;
+
+  const lastDigit = {};
+  primeList.filter(p => p <= maxN && p > 5).forEach(p => { const d = p % 10; lastDigit[d] = (lastDigit[d] || 0) + 1; });
+
+  html += `<div style="margin-bottom:8px"><strong>Letzte Ziffer (p&gt;5):</strong><br>`;
+  const maxLD = Math.max(1, ...Object.values(lastDigit));
+  [1, 3, 7, 9].forEach(d => {
+    const count = lastDigit[d] || 0;
+    const bar = '█'.repeat(Math.round(count / maxLD * 15));
+    html += `<span style="color:#ff6644">${d}</span>: ${bar} ${count}<br>`;
+  });
+  html += `</div>`;
+
+  const transitions = {};
+  const pFiltered = primeList.filter(p => p <= maxN && p > 5);
+  for (let i = 0; i < pFiltered.length - 1; i++) {
+    const key = `${pFiltered[i] % 10}→${pFiltered[i+1] % 10}`;
+    transitions[key] = (transitions[key] || 0) + 1;
+  }
+  html += `<div style="margin-bottom:8px"><strong>Aufeinanderfolgende Endziffern:</strong><br>`;
+  Object.entries(transitions).sort((a, b) => b[1] - a[1]).slice(0, 8).forEach(([key, count]) => {
+    html += `<span style="color:#44ccaa">${key}</span>: ${count} &nbsp;`;
+  });
+  html += `<br><small style="color:#888">Primzahlen "meiden" gleiche Endziffern!</small></div>`;
+
+  div.innerHTML = html;
+}
+
+// ============================================================
+// INTERACTION
+// ============================================================
+function hitTest(mx, my) {
+  const worldX = (mx - W / 2) / zoom - panX;
+  const worldY = (my - H / 2) / zoom - panY;
+  for (let i = cellPositions.length - 1; i >= 0; i--) {
+    const p = cellPositions[i];
+    if (p.isCircle) {
+      const dx = worldX - p.x, dy = worldY - p.y;
+      if (dx * dx + dy * dy <= (p.w / 2) * (p.w / 2) * 4) return p;
+    } else {
+      if (worldX >= p.x && worldX <= p.x + p.w && worldY >= p.y && worldY <= p.y + (p.h || p.w)) return p;
+    }
+  }
+  return null;
+}
+
+canvas.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  dragStartX = e.clientX; dragStartY = e.clientY;
+  panStartX = panX; panStartY = panY;
+});
+
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+
+  if (isDragging) {
+    panX = panStartX + (e.clientX - dragStartX) / zoom;
+    panY = panStartY + (e.clientY - dragStartY) / zoom;
+    render();
+    return;
+  }
+
+  hoveredCell = hitTest(mx, my);
+  const tooltip = document.getElementById('tooltip');
+
+  if (hoveredCell) {
+    const n = hoveredCell.n;
+    const factors = factorize(n);
+    const cls = hoveredCell.isPrime ? 'tt-prime' : 'tt-composite';
+    let ttHtml = `<div class="tt-number ${cls}">${n}</div>`;
+    ttHtml += hoveredCell.isPrime ? '🔴 Primzahl' : `🔵 ${factors.join(' × ')}`;
+    ttHtml += `<br>mod 6 = ${n % 6} | mod 30 = ${n % 30}`;
+    if (isTwinPrime(n)) ttHtml += '<br>👯 Zwillings-Primzahl';
+    if (isSexyPrime(n)) ttHtml += '<br>💋 Sexy Primzahl';
+    if (isSophieGermain(n)) ttHtml += '<br>🧠 Sophie Germain';
+    if (hoveredCell.goldbachCount !== undefined) ttHtml += `<br>🔗 Goldbach: ${hoveredCell.goldbachCount} Zerlegungen`;
+    if (hoveredCell.gap !== undefined) ttHtml += `<br>📏 Lücke: ${hoveredCell.gap}`;
+    if (hoveredCell.residue !== undefined) ttHtml += `<br>🎨 Residuum mod ${modBase}: ${hoveredCell.residue}`;
+    if (hoveredCell.isPrime) {
+      const idx = primeList.indexOf(n);
+      if (idx >= 0) ttHtml += `<br>#${idx + 1}. Primzahl`;
+    }
+    tooltip.innerHTML = ttHtml;
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX + 15) + 'px';
+    tooltip.style.top = (e.clientY + 15) + 'px';
+    const ttRect = tooltip.getBoundingClientRect();
+    if (ttRect.right > window.innerWidth) tooltip.style.left = (e.clientX - ttRect.width - 15) + 'px';
+    if (ttRect.bottom > window.innerHeight) tooltip.style.top = (e.clientY - ttRect.height - 15) + 'px';
+  } else {
+    tooltip.style.display = 'none';
+  }
+  render();
+});
+
+canvas.addEventListener('mouseup', (e) => {
+  if (isDragging) {
+    const dx = Math.abs(e.clientX - dragStartX), dy = Math.abs(e.clientY - dragStartY);
+    if (dx < 5 && dy < 5) {
+      const rect = canvas.getBoundingClientRect();
+      const hit = hitTest(e.clientX - rect.left, e.clientY - rect.top);
+      if (hit) {
+        const idx = selectedNumbers.indexOf(hit.n);
+        if (idx >= 0) selectedNumbers.splice(idx, 1);
+        else selectedNumbers.push(hit.n);
+        updateSelection(); updateRelations(); render();
+      }
+    }
+  }
+  isDragging = false;
+});
+
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const worldX = (mx - W / 2) / zoom - panX;
+  const worldY = (my - H / 2) / zoom - panY;
+  zoom *= e.deltaY > 0 ? 0.9 : 1.1;
+  zoom = Math.max(0.05, Math.min(50, zoom));
+  panX = (mx - W / 2) / zoom - worldX;
+  panY = (my - H / 2) / zoom - worldY;
+  render();
+}, { passive: false });
+
+canvas.addEventListener('mouseleave', () => {
+  document.getElementById('tooltip').style.display = 'none';
+  hoveredCell = null;
+  render();
+});
+
+// Touch support
+let lastTouchDist = 0;
+canvas.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 1) {
+    isDragging = true;
+    dragStartX = e.touches[0].clientX; dragStartY = e.touches[0].clientY;
+    panStartX = panX; panStartY = panY;
+  } else if (e.touches.length === 2) {
+    lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  }
+  e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (e) => {
+  if (e.touches.length === 1 && isDragging) {
+    panX = panStartX + (e.touches[0].clientX - dragStartX) / zoom;
+    panY = panStartY + (e.touches[0].clientY - dragStartY) / zoom;
+    render();
+  } else if (e.touches.length === 2) {
+    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    zoom *= dist / lastTouchDist;
+    zoom = Math.max(0.05, Math.min(50, zoom));
+    lastTouchDist = dist;
+    render();
+  }
+  e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener('touchend', () => { isDragging = false; });
+
+// ============================================================
+// CONTROLS
+// ============================================================
+function toggleFilter(name) {
+  filters[name] = !filters[name];
+  const btnId = 'btnShow' + name.charAt(0).toUpperCase() + name.slice(1);
+  document.getElementById(btnId).classList.toggle('active');
+  render();
+}
+
+function clearSelection() {
+  selectedNumbers = [];
+  updateSelection(); updateRelations(); render();
+}
+
+function removeFromSelection(n) {
+  const idx = selectedNumbers.indexOf(n);
+  if (idx >= 0) selectedNumbers.splice(idx, 1);
+  updateSelection(); updateRelations(); render();
+}
+
+function exportImage() {
+  const link = document.createElement('a');
+  link.download = `primzahl-muster-${viewMode}-${maxN}.png`;
+  link.href = canvas.toDataURL();
+  link.click();
+}
+
+// ============================================================
+// REBUILD VIEW (the central orchestrator)
+// ============================================================
+function rebuildView() {
+  viewMode = document.getElementById('viewMode').value;
+  maxN = parseInt(document.getElementById('rangeSlider').value);
+  gridWidth = parseInt(document.getElementById('gridWidth').value);
+  modBase = parseInt(document.getElementById('modBase').value);
+  currentScheme = colorSchemes[document.getElementById('colorScheme').value];
+  document.getElementById('rangeValue').textContent = maxN;
+
+  sieveOfEratosthenes(maxN);
+
+  switch (viewMode) {
+    case 'grid':       cellPositions = generateGrid(maxN, gridWidth); break;
+    case 'spiral':     cellPositions = generateUlamSpiral(maxN); break;
+    case 'sacks':      cellPositions = generateSacksSpiral(maxN); break;
+    case 'goldbach':   cellPositions = generateGoldbachView(Math.min(maxN, 3000)); break;
+    case 'gaps':       cellPositions = generateGapsFlow(maxN); break;
+    case 'modular':    cellPositions = generateModularRings(maxN, modBase); break;
+    case 'factortree': cellPositions = generateFactorLandscape(Math.min(maxN, 3000)); break;
+  }
+
+  // Auto-zoom to fit
+  panX = 0; panY = 0; zoom = 1;
+
+  if (cellPositions.length > 0) {
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    cellPositions.forEach(p => {
+      minX = Math.min(minX, p.x);
+      maxX = Math.max(maxX, p.x + p.w);
+      minY = Math.min(minY, p.y);
+      maxY = Math.max(maxY, p.y + (p.h || p.w));
+    });
+
+    const rangeX = maxX - minX || 1;
+    const rangeY = maxY - minY || 1;
+    const padding = 50;
+
+    W = canvas.width = canvas.parentElement.clientWidth;
+    H = canvas.height = canvas.parentElement.clientHeight;
+
+    zoom = Math.min((W - padding * 2) / rangeX, (H - padding * 2) / rangeY);
+    zoom = Math.max(0.05, Math.min(50, zoom));
+
+    panX = -(minX + rangeX / 2);
+    panY = -(minY + rangeY / 2);
+  }
+
+  updateStats();
+  updateLegend();
+  updateSelection();
+  updateRelations();
+  updatePatternDetector();
+  renderGapHistogram();
+  render();
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+document.getElementById('viewMode').addEventListener('change', rebuildView);
+document.getElementById('rangeSlider').addEventListener('input', (e) => {
+  document.getElementById('rangeValue').textContent = e.target.value;
+});
+document.getElementById('rangeSlider').addEventListener('change', rebuildView);
+document.getElementById('gridWidth').addEventListener('change', rebuildView);
+document.getElementById('modBase').addEventListener('change', rebuildView);
+document.getElementById('colorScheme').addEventListener('change', () => {
+  currentScheme = colorSchemes[document.getElementById('colorScheme').value];
+  updateLegend(); render();
+});
+
+window.addEventListener('resize', () => {
+  W = canvas.width = canvas.parentElement.clientWidth;
+  H = canvas.height = canvas.parentElement.clientHeight;
+  render();
+});
+
+// ============================================================
+// KEYBOARD SHORTCUTS
+// ============================================================
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  switch (e.key) {
+    case '1': document.getElementById('viewMode').value = 'grid'; rebuildView(); break;
+    case '2': document.getElementById('viewMode').value = 'spiral'; rebuildView(); break;
+    case '3': document.getElementById('viewMode').value = 'sacks'; rebuildView(); break;
+    case '4': document.getElementById('viewMode').value = 'goldbach'; rebuildView(); break;
+    case '5': document.getElementById('viewMode').value = 'gaps'; rebuildView(); break;
+    case '6': document.getElementById('viewMode').value = 'modular'; rebuildView(); break;
+    case '7': document.getElementById('viewMode').value = 'factortree'; rebuildView(); break;
+    case 'p': toggleFilter('primes'); break;
+    case 'c': toggleFilter('composites'); break;
+    case 't': toggleFilter('twins'); break;
+    case 'x': toggleFilter('sexy'); break;
+    case 's': toggleFilter('sophie'); break;
+    case 'Escape': clearSelection(); break;
+    case 'r': rebuildView(); break;
+    case '+': case '=': zoom *= 1.2; render(); break;
+    case '-': zoom /= 1.2; render(); break;
+  }
+});
+
+// ============================================================
+// SEARCH BOX
+// ============================================================
+(function addSearchBox() {
+  const toolbar = document.getElementById('toolbar');
+  const sep = document.createElement('div');
+  sep.className = 'mode-separator';
+  toolbar.appendChild(sep);
+
+  const label = document.createElement('label');
+  label.textContent = 'Suche Zahl ';
+  const input = document.createElement('input');
+  input.type = 'number'; input.min = '1';
+  input.placeholder = 'z.B. 97';
+  input.style.width = '80px';
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const val = parseInt(input.value);
+      if (val && val >= 1 && val <= maxN) {
+        const pos = cellPositions.find(p => p.n === val);
+        if (pos) {
+          panX = -pos.x; panY = -pos.y; zoom = 3;
+          if (!selectedNumbers.includes(val)) selectedNumbers.push(val);
+          updateSelection(); updateRelations(); render();
+        }
+      }
+    }
+  });
+  label.appendChild(input);
+  toolbar.appendChild(label);
+})();
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  document.getElementById('loading').style.display = 'block';
+  setTimeout(() => {
+    rebuildView();
+    document.getElementById('loading').style.display = 'none';
+  }, 50);
+}
+
+init();
+</script>
+</body>
+</html>
