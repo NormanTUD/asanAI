@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>3D Prime Origami Explorer</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #020205; color: #0f0; font-family: 'Courier New', monospace; display: flex; }
+        #ui { width: 300px; padding: 25px; background: #080810; border-right: 1px solid #1a3a4a; z-index: 10; height: 100vh; box-sizing: border-box; }
+        canvas { flex-grow: 1; cursor: grab; }
+        canvas:active { cursor: grabbing; }
+        .ctrl { margin-bottom: 25px; }
+        label { display: block; font-size: 10px; color: #588; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+        input[type=range] { width: 100%; accent-color: #0f0; }
+        .val-badge { float: right; background: #1a3a4a; padding: 2px 6px; border-radius: 4px; color: #fff; }
+        #hud { 
+            position: absolute; padding: 15px; background: rgba(0,10,20,0.9); 
+            border: 1px solid #0f0; display: none; width: 220px; 
+            font-size: 12px; pointer-events: none; z-index: 100; border-radius: 8px;
+        }
+        .prime { color: #0f0; font-weight: bold; text-shadow: 0 0 5px #0f0; }
+        h2 { font-size: 18px; color: #fff; margin: 0 0 10px 0; }
+    </style>
+</head>
+<body>
+
+<div id="ui">
+    <h2>ORIGAMI 3D</h2>
+    <p style="font-size: 11px; color: #468;">Steuerung: <b>Ziehen</b> zum Drehen, <b>Scrollen</b> zum Zoomen.</p>
+
+    <div class="ctrl">
+        <label>Anzahl Zahlen <span class="val-badge" id="nVal">1500</span></label>
+        <input type="range" id="nRange" min="100" max="5000" value="1500">
+    </div>
+
+    <div class="ctrl">
+        <label>Faltungs-Winkel <span class="val-badge" id="wVal">0.50</span></label>
+        <input type="range" id="wRange" min="0.01" max="3.14" step="0.01" value="0.5">
+    </div>
+
+    <div class="ctrl">
+        <label>Schrittweite <span class="val-badge" id="sVal">10</span></label>
+        <input type="range" id="sRange" min="2" max="30" value="10">
+    </div>
+
+    <div style="font-size: 10px; color: #345; border-top: 1px solid #1a3a4a; padding-top: 20px;">
+        Jede Zahl knickt den Pfad. <br><b>Primzahlen</b> sind die hellen Knotenpunkte, an denen der Pfad "ruht".
+    </div>
+</div>
+
+<div id="hud"></div>
+<canvas id="canvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const hud = document.getElementById('hud');
+
+    let path = [];
+    let angleX = 0.5, angleY = 0.5;
+    let zoom = 1.0;
+
+    function getFactors(n) {
+        let f = [];
+        let d = 2;
+        let temp = n;
+        while (temp > 1) {
+            if (temp % d === 0) {
+                f.push(d);
+                while (temp % d === 0) temp /= d;
+            }
+            d++;
+            if (d*d > temp) { if (temp > 1) f.push(temp); break; }
+        }
+        return f;
+    }
+
+    function generate() {
+        const count = parseInt(document.getElementById('nRange').value);
+        const fold = parseFloat(document.getElementById('wRange').value);
+        const stepDist = parseInt(document.getElementById('sRange').value);
+        
+        path = [];
+        let x = 0, y = 0, z = 0;
+        let rx = 0, ry = 0, rz = 0;
+
+        for (let i = 2; i <= count; i++) {
+            const factors = getFactors(i);
+            const isP = factors.length === 1 && factors[0] === i;
+
+            factors.forEach(f => {
+                rx += Math.sin(f * fold);
+                ry += Math.cos(f * fold);
+                rz += Math.atan(f * fold) * 0.2;
+            });
+
+            x += Math.cos(ry) * Math.cos(rz) * stepDist;
+            y += Math.sin(rx) * Math.cos(rz) * stepDist;
+            z += Math.sin(rz) * stepDist;
+
+            path.push({ x, y, z, val: i, isPrime: isP, factors });
+        }
+    }
+
+    function render() {
+        canvas.width = window.innerWidth - 300;
+        canvas.height = window.innerHeight;
+        ctx.fillStyle = '#020205';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+
+        // Projektion & Zeichnen
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(0, 255, 136, 0.15)';
+        ctx.lineWidth = 1;
+
+        let lastProj = null;
+
+        path.forEach((p, i) => {
+            // 3D Rotation
+            let x = p.x, y = p.y, z = p.z;
+            
+            let cosY = Math.cos(angleY), sinY = Math.sin(angleY);
+            let x1 = x * cosY - z * sinY;
+            let z1 = x * sinY + z * cosY;
+
+            let cosX = Math.cos(angleX), sinX = Math.sin(angleX);
+            let y2 = y * cosX - z1 * sinX;
+            let z2 = y * sinX + z1 * cosX;
+
+            // Perspektive + Zoom
+            const depth = 1000;
+            const perspective = depth / (depth + z2);
+            
+            // Sicherheitscheck: Verhindert "Negative Radius" Fehler
+            if (perspective < 0) return;
+
+            const sx = x1 * perspective * zoom + cx;
+            const sy = y2 * perspective * zoom + cy;
+            
+            p.lastSX = sx;
+            p.lastSY = sy;
+            p.lastScale = perspective * zoom;
+
+            if (i === 0) ctx.moveTo(sx, sy);
+            else ctx.lineTo(sx, sy);
+        });
+        ctx.stroke();
+
+        // Primzahlen zeichnen
+        path.forEach(p => {
+            if (p.isPrime && p.lastScale > 0) {
+                const size = Math.max(0.1, 3 * p.lastScale);
+                ctx.fillStyle = '#0f0';
+                ctx.beginPath();
+                ctx.arc(p.lastSX, p.lastSY, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        });
+
+        requestAnimationFrame(render);
+    }
+
+    // Maus-Steuerung
+    let isDragging = false, lx, ly;
+    canvas.onmousedown = (e) => { isDragging = true; lx = e.clientX; ly = e.clientY; };
+    window.onmouseup = () => isDragging = false;
+    window.onmousemove = (e) => {
+        if (isDragging) {
+            angleY += (e.clientX - lx) * 0.005;
+            angleX += (e.clientY - ly) * 0.005;
+            lx = e.clientX; ly = e.clientY;
+        }
+
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        
+        let found = path.find(p => Math.abs(p.lastSX - mx) < 10 && Math.abs(p.lastSY - my) < 10);
+        if (found) {
+            hud.style.display = 'block';
+            hud.style.left = (e.clientX + 15) + 'px';
+            hud.style.top = (e.clientY - 15) + 'px';
+            hud.innerHTML = `<span class="prime">${found.val}</span><br>Faktoren: ${found.factors.join(' x ')}<br>${found.isPrime ? 'PRIMZAHL-KNOTEN' : 'STRUKTUR-KNICK'}`;
+        } else { hud.style.display = 'none'; }
+    };
+
+    // Zoom-Steuerung
+    canvas.onwheel = (e) => {
+        e.preventDefault();
+        zoom *= (e.deltaY > 0 ? 0.9 : 1.1);
+        zoom = Math.min(Math.max(zoom, 0.1), 10);
+    };
+
+    // UI-Updates
+    const inputs = ['nRange', 'wRange', 'sRange'];
+    inputs.forEach(id => {
+        document.getElementById(id).oninput = (e) => {
+            document.getElementById(id.replace('Range', 'Val')).innerText = 
+                (id === 'wRange' ? parseFloat(e.target.value).toFixed(2) : e.target.value);
+            generate();
+        };
+    });
+
+    generate();
+    render();
+</script>
+</body>
+</html>
