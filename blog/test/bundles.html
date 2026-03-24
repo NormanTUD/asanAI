@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Principal Bundles – Interaktives Lerntool</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a1a;
+    color: #e0e0f0;
+    overflow-x: hidden;
+  }
+
+  .header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    background: linear-gradient(135deg, #0a0a2e, #1a1a4e);
+    border-bottom: 2px solid #3a3a8a;
+  }
+
+  .header h1 {
+    font-size: 2.5em;
+    background: linear-gradient(90deg, #88aaff, #ff88cc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+  }
+
+  .header p {
+    font-size: 1.1em;
+    color: #aab;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    background: #12122a;
+    border-bottom: 2px solid #2a2a6a;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .tab-btn {
+    padding: 16px 28px;
+    background: none;
+    border: none;
+    color: #88a;
+    font-size: 1em;
+    font-family: inherit;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+  }
+
+  .tab-btn:hover { color: #ccf; background: #1a1a3a; }
+  .tab-btn.active {
+    color: #88aaff;
+    border-bottom-color: #88aaff;
+    background: #1a1a3a;
+  }
+
+  .tab-content {
+    display: none;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    animation: fadeIn 0.4s;
+  }
+
+  .tab-content.active { display: block; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .canvas-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  canvas {
+    border: 1px solid #3a3a7a;
+    border-radius: 12px;
+    background: #0d0d22;
+    cursor: grab;
+  }
+
+  canvas:active { cursor: grabbing; }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .controls label {
+    font-size: 0.9em;
+    color: #aab;
+  }
+
+  .controls input[type="range"] {
+    width: 160px;
+    accent-color: #88aaff;
+  }
+
+  .controls button, .scene-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #3355aa, #5577cc);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-family: inherit;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .controls button:hover, .scene-btn:hover {
+    background: linear-gradient(135deg, #4466bb, #6688dd);
+    transform: translateY(-1px);
+  }
+
+  .info-box {
+    background: #14142e;
+    border: 1px solid #2a2a6a;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    line-height: 1.7;
+  }
+
+  .info-box h3 {
+    color: #88aaff;
+    margin-bottom: 12px;
+    font-size: 1.3em;
+  }
+
+  .info-box .math {
+    font-family: 'Courier New', monospace;
+    background: #1a1a3e;
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: #ccddff;
+    font-size: 0.95em;
+  }
+
+  .aha-box {
+    background: linear-gradient(135deg, #1a2a1a, #1a3a2a);
+    border: 2px solid #44aa66;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    line-height: 1.7;
+  }
+
+  .aha-box h3 {
+    color: #66dd88;
+    margin-bottom: 10px;
+  }
+
+  .aha-box h3::before { content: "💡 "; }
+
+  .deep-section {
+    background: #14142e;
+    border-left: 4px solid #88aaff;
+    border-radius: 0 12px 12px 0;
+    padding: 24px;
+    margin: 20px 0;
+    line-height: 1.8;
+  }
+
+  .deep-section h3 {
+    color: #aaccff;
+    margin-bottom: 12px;
+  }
+
+  .scene-selector {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .scene-btn.active {
+    background: linear-gradient(135deg, #aa5533, #cc7755);
+    box-shadow: 0 0 15px rgba(200,100,50,0.3);
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 20px 0;
+  }
+
+  @media (max-width: 768px) {
+    .two-col { grid-template-columns: 1fr; }
+    .header h1 { font-size: 1.8em; }
+    canvas { width: 100%; height: auto; }
+  }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 10px 0;
+    font-size: 0.9em;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .tooltip-overlay {
+    position: fixed;
+    background: #1a1a3eee;
+    border: 1px solid #5577cc;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.9em;
+    max-width: 300px;
+    pointer-events: none;
+    z-index: 200;
+    display: none;
+    line-height: 1.5;
+  }
+
+  ul { padding-left: 20px; }
+  li { margin: 6px 0; }
+
+  a { color: #88aaff; }
+
+  .progress-bar {
+    height: 4px;
+    background: #2a2a5a;
+    border-radius: 2px;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #88aaff, #ff88cc);
+    border-radius: 2px;
+    transition: width 0.5s;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Principal Bundles</h1>
+  <p>Ein interaktives Lerntool – von der Intuition zur formalen Mathematik. Verstehe, warum Faserbündel die Sprache der modernen Physik sind.</p>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab(0)">🎯 Intuition</button>
+  <button class="tab-btn" onclick="switchTab(1)">🔬 Visualisierung</button>
+  <button class="tab-btn" onclick="switchTab(2)">📐 Formale Theorie</button>
+  <button class="tab-btn" onclick="switchTab(3)">⚡ Physik-Bezug</button>
+  <button class="tab-btn" onclick="switchTab(4)">🧩 Quiz</button>
+</div>
+
+<!-- ==================== TAB 0: INTUITION ==================== -->
+<div class="tab-content active" id="tab0">
+  <div class="aha-box">
+    <h3>Die Kernidee in einem Satz</h3>
+    <p>Ein <strong>Principal Bundle</strong> ist ein Raum, bei dem <em>über jedem Punkt</em> einer Basis eine ganze <strong>Symmetriegruppe</strong> „schwebt" – und die spannende Frage ist: <em>Wie sind diese Symmetrien global miteinander verdreht?</em></p>
+  </div>
+
+  <div class="canvas-container">
+    <canvas id="intuitionCanvas" width="800" height="500"></canvas>
+    <div class="controls">
+      <button onclick="intuitionScene='cylinder'; drawIntuition();">Triviales Bündel (Zylinder)</button>
+      <button onclick="intuitionScene='moebius'; drawIntuition();">Möbiusband (nicht-trivial!)</button>
+      <button onclick="intuitionScene='animate'; animateIntuition();">▶ Animiere Faser-Transport</button>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot" style="background:#ff6644"></span> Basisraum (Kreis)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#44aaff"></span> Faser (Symmetriegruppe)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#ffcc00"></span> Transportierter Punkt</div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <h3>Analogie: Der Uhren-Kreis</h3>
+    <p>Stell dir vor, du gehst auf einem Kreis spazieren. An <strong>jedem Punkt</strong> des Kreises hängt eine Uhr. Die Uhr kann beliebig gedreht werden – das ist die <strong>Faser</strong> (hier: die Gruppe <span class="math">U(1) ≅ S¹</span>, also Drehungen).</p>
+    <p>Frage: Wenn du einmal um den Kreis gehst und die Uhren „sanft" mitnimmst – zeigt deine Uhr am Ende <strong>dieselbe Zeit</strong> wie am Anfang?</p>
+    <ul>
+      <li><strong>Ja → Triviales Bündel</strong> (wie ein Zylinder: Kreis × Kreis)</li>
+      <li><strong>Nein → Nicht-triviales Bündel!</strong> Die Uhren sind global „verdreht" – wie beim Möbiusband</li>
+    </ul>
+  </div>
+
+  <div class="aha-box">
+    <h3>Das "Aha!" – Warum ist das wichtig?</h3>
+    <p>In der Physik beschreibt diese „Verdrehung" reale Phänomene:</p>
+    <ul>
+      <li>Die <strong>Phase eines Elektrons</strong> ist eine solche Uhr → Elektromagnetismus ist ein <span class="math">U(1)</span>-Bündel!</li>
+      <li>Wenn du ein Elektron um ein Magnetfeld herumführst, kommt seine Phase <em>verdreht</em> zurück → <strong>Aharonov-Bohm-Effekt</strong></li>
+      <li>Die „Verdrehung" <em>ist</em> das elektromagnetische Feld. <strong>Eichfelder = Zusammenhänge auf Principal Bundles!</strong></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ==================== TAB 1: VISUALISIERUNG ==================== -->
+<div class="tab-content" id="tab1">
+  <div class="scene-selector">
+    <button class="scene-btn active" onclick="setScene(0)">Triviales Bündel S¹ × S¹</button>
+    <button class="scene-btn" onclick="setScene(1)">Hopf-Fibration (S³→S²)</button>
+    <button class="scene-btn" onclick="setScene(2)">Zusammenhang & Krümmung</button>
+    <button class="scene-btn" onclick="setScene(3)">Paralleltransport</button>
+  </div>
+
+  <div class="canvas-container">
+    <canvas id="mainCanvas" width="800" height="600"></canvas>
+    <div class="controls">
+      <label>Drehung: <input type="range" id="rotSlider" min="0" max="628" value="0" oninput="draw()"></label>
+      <label>Twist: <input type="range" id="twistSlider" min="0" max="628" value="0" oninput="draw()"></label>
+      <label>Zoom: <input type="range" id="zoomSlider" min="50" max="200" value="100" oninput="draw()"></label>
+      <button onclick="toggleAnimation()">▶ / ⏸ Animation</button>
+      <button onclick="resetView()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div id="sceneDescription" class="info-box">
+    <h3>Triviales Bündel: S¹ × S¹ = Torus</h3>
+    <p>Das einfachste Principal Bundle: Über jedem Punkt des Kreises (Basis) sitzt ein weiterer Kreis (Faser = Strukturgruppe <span class="math">G = U(1)</span>). Das Ergebnis ist ein <strong>Torus</strong>.</p>
+    <p>Drehe am <strong>Twist</strong>-Regler, um zu sehen, wie sich die Fasern verdrehen. Bei Twist = 0 ist das Bündel trivial. Bei Twist ≠ 0 siehst du, wie ein Zusammenhang die Fasern „kippt".</p>
+  </div>
+</div>
+
+<!-- ==================== TAB 2: FORMALE THEORIE ==================== -->
+<div class="tab-content" id="tab2">
+  <div class="progress-bar"><div class="progress-fill" id="theoryProgress" style="width:0%"></div></div>
+
+  <div class="deep-section">
+    <h3>Definition: Faserbündel</h3>
+    <p>Ein <strong>Faserbündel</strong> besteht aus:</p>
+    <ul>
+      <li><span class="math">E</span> – der <strong>Totalraum</strong></li>
+      <li><span class="math">B</span> – der <strong>Basisraum</strong></li>
+      <li><span class="math">F</span> – die <strong>Faser</strong> (typischer Faser)</li>
+      <li><span class="math">π: E → B</span> – die <strong>Projektion</strong></li>
+    </ul>
+    <p>Bedingung: Lokal sieht <span class="math">E</span> aus wie <span class="math">U × F</span> für offene Mengen <span class="math">U ⊂ B</span>. Das heißt, es gibt <strong>lokale Trivialisierungen</strong>:</p>
+    <p style="text-align:center;margin:12px 0"><span class="math">φ_i: π⁻¹(U_i) → U_i × F</span></p>
+  </div>
+
+  <div class="deep-section">
+    <h3>Definition: Principal Bundle (Hauptfaserbündel)</h3>
+    <p>Ein <strong>Principal G-Bundle</strong> <span class="math">P(M, G)</span> ist ein Faserbündel, bei dem:</p>
+    <ul>
+      <li>Die Faser <span class="math">F = G</span> ist eine <strong>Lie-Gruppe</strong></li>
+      <li><span class="math">G</span> wirkt <strong>frei und transitiv</strong> (= einfach transitiv) auf jeder Faser von rechts: <span class="math">P × G → P</span></li>
+      <li>Der Basisraum ist der Quotient: <span class="math">M = P / G</span></li>
+      <li>Die lokalen Trivialisierungen sind <strong>G-äquivariant</strong></li>
+    </ul>
+    <p>Entscheidend: Die Faser hat <strong>keinen ausgezeichneten Punkt</strong> (keinen „Nullpunkt"). Man kann Punkte in der Faser nur relativ zueinander vergleichen – über die Gruppenwirkung.</p>
+  </div>
+
+  <div class="aha-box">
+    <h3>Warum „Principal"?</h3>
+    <p>Aus einem Principal Bundle kann man <em>jedes</em> assoziierte Bündel konstruieren, indem man die Faser <span class="math">G</span> durch einen Raum <span class="math">F</span> ersetzt, auf dem <span class="math">G</span> wirkt:</p>
+    <p style="text-align:center;margin:12px 0"><span class="math">E = P ×_G F = (P × F) / ~</span></p>
+    <p>wobei <span class="math">(p·g, f) ~ (p, g·f)</span>. Das Principal Bundle ist also das <strong>„Mutter-Bündel"</strong> – daher der Name!</p>
+  </div>
+
+  <div class="deep-section">
+    <h3>Übergangsfunktionen</h3>
+    <p>Auf Überlappungen <span class="math">U_i ∩ U_j</span> definieren die lokalen Trivialisierungen <strong>Übergangsfunktionen</strong>:</p>
+    <p style="text-align:center;margin:12px 0"><span class="math">g_ij: U_i ∩ U_j → G</span></p>
+    <p>Diese erfüllen die <strong>Kozyklus-Bedingung</strong>:</p>
+    <ul>
+      <li><span class="math">g_ii = e</span> (Identität)</li>
+      <li><span class="math">g_ij · g_ji = e</span></li>
+      <li><span class="math">g_ij · g_jk · g_ki = e</span> (auf Dreifach-Überlappungen)</li>
+    </ul>
+    <p>Das Bündel ist <strong>vollständig durch seine Übergangsfunktionen bestimmt</strong> (bis auf Isomorphie).</p>
+  </div>
+
+  <div class="deep-section">
+    <h3>Zusammenhang (Connection)</h3>
+    <p>Ein <strong>Zusammenhang</strong> auf <span class="math">P</span> ist eine <span class="math">𝔤</span>-wertige 1-Form <span class="math">ω ∈ Ω¹(P, 𝔤)</span> mit:</p>
+    <ul>
+      <li><span class="math">ω(A*) = A</span> für alle <span class="math">A ∈ 𝔤</span> (wobei <span class="math">A*</span> das fundamentale Vektorfeld ist)</li>
+      <li><span class="math">R_g* ω = Ad(g⁻¹) ω</span> (Äquivarianz unter der Rechtswirkung)</li>
+    </ul>
+    <p>Lokal (in einer Trivialisierung) wird der Zusammenhang durch eine <span class="math">𝔤</span>-wertige 1-Form auf <span class="math">M</span> beschrieben:</p>
+    <p style="text-align:center;margin:12px 0"><span class="math">A_i = s_i* ω ∈ Ω¹(U_i, 𝔤)</span></p>
+    <p>Das ist genau das <strong>Eichpotential</strong> der Physik!</p>
+  </div>
+
+  <div class="deep-section">
+    <h3>Krümmung</h3>
+    <p>Die <strong>Krümmung</strong> ist die <span class="math">𝔤</span>-wertige 2-Form:</p>
+    <p style="text-align:center;margin:12px 0"><span class="math">Ω = dω + ½[ω, ω]</span></p>
+    <p>Lokal: <span class="math">F_i = dA_i + ½[A_i, A_i]</span></p>
+    <p>Das ist die <strong>Feldstärke</strong>! Für Elektromagnetismus (<span class="math">G = U(1)</span>, abelsch): <span class="math">F = dA</span> – der elektromagnetische Feldstärketensor.</p>
+  </div>
+</div>
+
+<!-- ==================== TAB 3: PHYSIK ==================== -->
+<div class="tab-content" id="tab3">
+  <div class="aha-box">
+    <h3>Die große Vereinigung: Geometrie = Physik</h3>
+    <p>Die fundamentalen Kräfte der Natur sind <strong>Zusammenhänge auf Principal Bundles</strong>:</p>
+  </div>
+
+  <div class="two-col">
+    <div class="info-box">
+      <h3>Elektromagnetismus</h3>
+      <ul>
+        <li><strong>Strukturgruppe:</strong> <span class="math">G = U(1)</span></li>
+        <li><strong>Zusammenhang:</strong> Elektromagnetisches Potential <span class="math">A_μ</span></li>
+        <li><strong>Krümmung:</strong> Feldstärke <span class="math">F_μν = ∂_μA_ν - ∂_νA_μ</span></li>
+        <li><strong>Eichtransformation:</strong> <span class="math">A_μ → A_μ + ∂_μλ</span></li>
+      </ul>
+    </div>
+    <div class="info-box">
+      <h3>Schwache Wechselwirkung</h3>
+      <ul>
+        <li><strong>Strukturgruppe:</strong> <span class="math">G = SU(2)</span></li>
+        <li><strong>Zusammenhang:</strong> W- und Z-Bosonen</li>
+        <li><strong>Krümmung:</strong> Schwache Feldstärke</li>
+        <li>Nicht-abelsch → Selbstwechselwirkung!</li>
+      </ul>
+    </div>
+    <div class="info-box">
+      <h3>Starke Wechselwirkung (QCD)</h3>
+      <ul>
+        <li><strong>Strukturgruppe:</strong> <span class="math">G = SU(3)</span></li>
+        <li><strong>Zusammenhang:</strong> Gluon-Felder</li>
+        <li><strong>Krümmung:</strong> Gluon-Feldstärke</li>
+        <li>8 Gluonen = dim(<span class="math">𝔰𝔲(3)</span>) = 8</li>
+      </ul>
+    </div>
+    <div class="info-box">
+      <h3>Gravitation</h3>
+      <ul>
+        <li><strong>Strukturgruppe:</strong> <span class="math">G = SO(3,1)</span> (Lorentz)</li>
+        <li><strong>Bündel:</strong> Rahmen-Bündel (Frame Bundle)</li>
+        <li><strong>Zusammenhang:</strong> Spin-Zusammenhang</li>
+        <li><strong>Krümmung:</strong> Riemann-Krümmung!</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="canvas-container">
+    <canvas id="physicsCanvas" width="800" height="400"></canvas>
+    <div class="controls">
+      <label>Magnetischer Fluss Φ: <input type="range" id="fluxSlider" min="0" max="628" value="0" oninput="drawPhysics()"></label>
+      <button onclick="animateAB()">▶ Aharonov-Bohm Animation</button>
+    </div>
+  </div>
+
+  <div class="aha-box">
+    <h3>Aharonov-Bohm: Die Physik der Holonomie</h3>
+    <p>Ein Elektron umkreist einen Solenoid (Magnetfeld eingeschlossen). Obwohl <strong>außerhalb kein Magnetfeld</strong> ist (<span class="math">F = 0</span>), ändert sich die Phase des Elektrons!</p>
+    <p>Mathematisch: <span class="math">F = 0</span> heißt <strong>flacher Zusammenhang</strong>, aber die <strong>Holonomie</strong> (= Paralleltransport um eine geschlossene Kurve) kann trotzdem nicht-trivial sein:</p>
+    <p style="text-align:center;margin:12px 0"><span class="math">Hol(γ) = exp(i ∮ A) = exp(iΦ/ℏ)</span></p>
+    <p>Das ist der ultimative Beweis: <strong>Das Eichpotential A (= der Zusammenhang) ist physikalisch real</strong>, nicht nur die Feldstärke F!</p>
+  </div>
+</div>
+
+<!-- ==================== TAB 4: QUIZ ==================== -->
+<div class="tab-content" id="tab4">
+  <div class="info-box">
+    <h3>Teste dein Verständnis!</h3>
+    <p>Beantworte die Fragen, um zu sehen, ob die Intuition sitzt.</p>
+  </div>
+
+  <div id="quizContainer"></div>
+  <div class="controls" style="margin-top:20px">
+    <button onclick="checkQuiz()">Antworten prüfen ✓</button>
+    <button onclick="resetQuiz()">Quiz zurücksetzen ↺</button>
+  </div>
+  <div id="quizResult" class="aha-box" style="display:none"></div>
+</div>
+
+<div class="tooltip-overlay" id="tooltip"></div>
+
+<script>
+// ===================== TAB SWITCHING =====================
+const tabs = document.querySelectorAll('.tab-btn');
+const contents = document.querySelectorAll('.tab-content');
+
+function switchTab(idx) {
+  tabs.forEach((t,i) => { t.classList.toggle('active', i===idx); });
+  contents.forEach((c,i) => { c.classList.toggle('active', i===idx); });
+  if (idx === 1) draw();
+  if (idx === 3) drawPhysics();
+}
+
+// ===================== TAB 0: INTUITION CANVAS =====================
+let intuitionScene = 'cylinder';
+let intuitionAnim = null;
+let intuitionT = 0;
+
+function drawIntuition() {
+  const canvas = document.getElementById('intuitionCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const cx = W/2, cy = H/2;
+  const R = 150; // radius of base circle
+  const fiberLen = 60;
+  const N = 80;
+
+  // Draw title
+  ctx.fillStyle = '#88aaff';
+  ctx.font = '18px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText(intuitionScene === 'cylinder' ? 'Triviales Bündel (Zylinder ≅ S¹ × ℤ₂)' : 'Nicht-triviales Bündel (Möbiusband)', cx, 30);
+
+  // Draw base circle
+  ctx.strokeStyle = '#ff6644';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let i = 0; i <= N; i++) {
+    const t = (i/N) * Math.PI * 2;
+    const x = cx + R * Math.cos(t);
+    const y = cy + R * Math.sin(t);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+
+  // Draw fibers
+  const fiberN = 40;
+  for (let i = 0; i < fiberN; i++) {
+    const t = (i/fiberN) * Math.PI * 2;
+    const bx = cx + R * Math.cos(t);
+    const by = cy + R * Math.sin(t);
+
+    // Normal direction (outward)
+    const nx = Math.cos(t);
+    const ny = Math.sin(t);
+
+    // Tangent direction
+    const tx = -Math.sin(t);
+    const ty = Math.cos(t);
+
+    let twist = 0;
+    if (intuitionScene === 'moebius') {
+      twist = t / 2; // half-twist over full circle
+    }
+
+    // Fiber direction: rotated normal
+    const fx = nx * Math.cos(twist) + tx * Math.sin(twist);
+    const fy = ny * Math.cos(twist) + ty * Math.sin(twist);
+    ctx.strokeStyle = 'rgba(68, 170, 255, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(bx - fx * fiberLen/2, by - fy * fiberLen/2);
+    ctx.lineTo(bx + fx * fiberLen/2, by + fy * fiberLen/2);
+    ctx.stroke();
+  }
+
+  // Draw transported point
+  if (intuitionAnim !== null) {
+    const t = intuitionT;
+    const bx = cx + R * Math.cos(t);
+    const by = cy + R * Math.sin(t);
+    const nx = Math.cos(t);
+    const ny = Math.sin(t);
+    const tx = -Math.sin(t);
+    const ty = Math.cos(t);
+
+    let twist = 0;
+    if (intuitionScene === 'moebius') {
+      twist = t / 2;
+    }
+
+    const fx = nx * Math.cos(twist) + tx * Math.sin(twist);
+    const fy = ny * Math.cos(twist) + ty * Math.sin(twist);
+
+    // Point on fiber
+    const ptOffset = fiberLen * 0.35;
+    const px = bx + fx * ptOffset;
+    const py = by + fy * ptOffset;
+
+    // Glow
+    ctx.shadowColor = '#ffcc00';
+    ctx.shadowBlur = 15;
+    ctx.fillStyle = '#ffcc00';
+    ctx.beginPath();
+    ctx.arc(px, py, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Trail
+    ctx.strokeStyle = 'rgba(255, 204, 0, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i <= 100; i++) {
+      const tt = (i / 100) * t;
+      const tbx = cx + R * Math.cos(tt);
+      const tby = cy + R * Math.sin(tt);
+      const tnx = Math.cos(tt);
+      const tny = Math.sin(tt);
+      const ttx = -Math.sin(tt);
+      const tty = Math.cos(tt);
+      let tw = 0;
+      if (intuitionScene === 'moebius') tw = tt / 2;
+      const tfx = tnx * Math.cos(tw) + ttx * Math.sin(tw);
+      const tfy = tny * Math.cos(tw) + tty * Math.sin(tw);
+      const tpx = tbx + tfx * ptOffset;
+      const tpy = tby + tfy * ptOffset;
+      if (i === 0) ctx.moveTo(tpx, tpy); else ctx.lineTo(tpx, tpy);
+    }
+    ctx.stroke();
+
+    // Info text
+    ctx.fillStyle = '#aab';
+    ctx.font = '14px Inter';
+    ctx.textAlign = 'left';
+    const angle = (t / (Math.PI * 2) * 360).toFixed(0);
+    ctx.fillText(`Winkel: ${angle}°`, 20, H - 60);
+
+    if (intuitionScene === 'moebius') {
+      const fiberAngle = (twist / Math.PI * 180).toFixed(0);
+      ctx.fillText(`Faser-Drehung: ${fiberAngle}°`, 20, H - 40);
+      if (t > Math.PI * 1.95) {
+        ctx.fillStyle = '#ff6666';
+        ctx.font = 'bold 16px Inter';
+        ctx.fillText('⚠ Faser um 180° gedreht! Nicht-trivial!', 20, H - 15);
+      }
+    } else {
+      ctx.fillText('Faser-Drehung: 0° (immer parallel)', 20, H - 40);
+    }
+  }
+
+  // Start/end markers
+  const startX = cx + R, startY = cy;
+  ctx.fillStyle = '#44ff66';
+  ctx.beginPath();
+  ctx.arc(startX, startY, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.font = '12px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText('Start', startX + 20, startY - 10);
+}
+
+function animateIntuition() {
+  if (intuitionAnim) { cancelAnimationFrame(intuitionAnim); intuitionAnim = null; }
+  intuitionT = 0;
+  function step() {
+    intuitionT += 0.02;
+    if (intuitionT > Math.PI * 2) {
+      intuitionT = Math.PI * 2;
+      drawIntuition();
+      intuitionAnim = null;
+      return;
+    }
+    drawIntuition();
+    intuitionAnim = requestAnimationFrame(step);
+  }
+  intuitionAnim = requestAnimationFrame(step);
+}
+
+drawIntuition();
+
+// ===================== TAB 1: MAIN VISUALIZATION =====================
+let currentScene = 0;
+let animating = false;
+let animFrame = null;
+let animTime = 0;
+let mouseDown = false;
+let mouseX = 0, mouseY = 0;
+let viewRotX = 0.5, viewRotY = 0;
+
+const mainCanvas = document.getElementById('mainCanvas');
+const mctx = mainCanvas.getContext('2d');
+
+mainCanvas.addEventListener('mousedown', (e) => { mouseDown = true; mouseX = e.clientX; mouseY = e.clientY; });
+mainCanvas.addEventListener('mouseup', () => { mouseDown = false; });
+mainCanvas.addEventListener('mousemove', (e) => {
+  if (mouseDown) {
+    viewRotY += (e.clientX - mouseX) * 0.005;
+    viewRotX += (e.clientY - mouseY) * 0.005;
+    viewRotX = Math.max(-1.5, Math.min(1.5, viewRotX));
+    mouseX = e.clientX; mouseY = e.clientY;
+    if (!animating) draw();
+  }
+});
+
+const sceneDescriptions = [
+  `<h3>Triviales Bündel: S¹ × S¹ = Torus</h3>
+   <p>Das einfachste Principal Bundle: Über jedem Punkt des Kreises (Basis) sitzt ein weiterer Kreis (Faser = Strukturgruppe <span class="math">G = U(1)</span>). Das Ergebnis ist ein <strong>Torus</strong>.</p>
+   <p>Drehe am <strong>Twist</strong>-Regler, um zu sehen, wie sich die Fasern verdrehen. Bei Twist = 0 ist das Bündel trivial. Bei Twist ≠ 0 siehst du, wie ein Zusammenhang die Fasern „kippt".</p>`,
+
+  `<h3>Hopf-Fibration (Projektion von S³ → S²)</h3>
+   <p>Die berühmteste nicht-triviale Faserung: <span class="math">S¹ → S³ → S²</span>. Jeder Punkt der 2-Sphäre hat einen Kreis als Faser. Hier siehst du eine stereographische Projektion einiger dieser Fasern.</p>
+   <p>Die Hopf-Fibration ist ein <span class="math">U(1)</span>-Principal Bundle und beschreibt z.B. das <strong>magnetische Monopol-Bündel</strong>.</p>`,
+
+  `<h3>Zusammenhang & Krümmung</h3>
+   <p>Der <strong>Zusammenhang</strong> (Connection) sagt dir, wie du Fasern „parallel" von Punkt zu Punkt transportierst. Die <strong>Krümmung</strong> misst, wie sehr sich der Transport beim Umlaufen einer geschlossenen Kurve „verdreht".</p>
+   <p>Drehe am Twist-Regler, um die Krümmung zu ändern. Beobachte, wie sich die horizontalen Richtungen (grün) ändern!</p>`,
+
+  `<h3>Paralleltransport</h3>
+   <p>Transportiere einen Punkt entlang der Basis und beobachte, wie er sich in der Faser dreht. Die <strong>Holonomie</strong> ist die Gesamtdrehung nach einem vollen Umlauf.</p>
+   <p>Drücke ▶ Animation und beobachte den gelben Punkt. Bei Twist ≠ 0 kommt er <em>nicht</em> zum Ausgangspunkt zurück!</p>`
+];
+
+function setScene(idx) {
+  currentScene = idx;
+  document.querySelectorAll('.scene-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  document.getElementById('sceneDescription').innerHTML = sceneDescriptions[idx];
+  draw();
+}
+
+function project3D(x, y, z, zoom) {
+  const cosY = Math.cos(viewRotY), sinY = Math.sin(viewRotY);
+  const cosX = Math.cos(viewRotX), sinX = Math.sin(viewRotX);
+
+  let x1 = x * cosY - z * sinY;
+  let z1 = x * sinY + z * cosY;
+  let y1 = y * cosX - z1 * sinX;
+  let z2 = y * sinX + z1 * cosX;
+
+  const scale = zoom / (4 + z2 * 0.01);
+  return { x: x1 * scale, y: y1 * scale, z: z2 };
+}
+
+function draw() {
+  const W = mainCanvas.width, H = mainCanvas.height;
+  const cx = W/2, cy = H/2;
+  mctx.clearRect(0, 0, W, H);
+
+  const rot = parseFloat(document.getElementById('rotSlider').value) / 100;
+  const twist = parseFloat(document.getElementById('twistSlider').value) / 100;
+  const zoom = parseFloat(document.getElementById('zoomSlider').value);
+
+  if (currentScene === 0) drawTorus(cx, cy, zoom, twist);
+  else if (currentScene === 1) drawHopf(cx, cy, zoom);
+  else if (currentScene === 2) drawConnection(cx, cy, zoom, twist);
+  else if (currentScene === 3) drawParallelTransport(cx, cy, zoom, twist);
+}
+
+function drawTorus(cx, cy, zoom, twist) {
+  const R1 = 180, R2 = 70;
+  const N1 = 60, N2 = 30;
+
+  // Collect points for depth sorting
+  let points = [];
+
+  for (let i = 0; i < N1; i++) {
+    const theta = (i / N1) * Math.PI * 2;
+    const thetaNext = ((i+1) / N1) * Math.PI * 2;
+
+    for (let j = 0; j < N2; j++) {
+      const phi = (j / N2) * Math.PI * 2 + twist * theta;
+      const phiNext = ((j+1) / N2) * Math.PI * 2 + twist * theta;
+
+      const x = (R1 + R2 * Math.cos(phi)) * Math.cos(theta);
+      const y = (R1 + R2 * Math.cos(phi)) * Math.sin(theta);
+      const z = R2 * Math.sin(phi);
+
+      const p = project3D(x, y, z, zoom);
+
+      // Color based on fiber position
+      const hue = (j / N2) * 360;
+      const brightness = 40 + 30 * (1 + p.z / 300);
+
+      points.push({
+        sx: cx + p.x, sy: cy + p.y, z: p.z,
+        hue: hue, brightness: brightness,
+        isBase: j === 0
+      });
+    }
+  }
+
+  // Sort by depth
+  points.sort((a, b) => a.z - b.z);
+
+  for (const pt of points) {
+    const size = pt.isBase ? 3 : 1.5;
+    const alpha = 0.3 + 0.5 * ((pt.z + 300) / 600);
+    mctx.fillStyle = pt.isBase
+      ? `rgba(255, 100, 68, ${alpha})`
+      : `hsla(${pt.hue}, 70%, ${pt.brightness}%, ${alpha})`;
+    mctx.beginPath();
+    mctx.arc(pt.sx, pt.sy, size, 0, Math.PI * 2);
+    mctx.fill();
+  }
+
+  // Draw some fiber circles highlighted
+  for (let i = 0; i < 8; i++) {
+    const theta = (i / 8) * Math.PI * 2;
+    mctx.strokeStyle = `rgba(68, 170, 255, 0.6)`;
+    mctx.lineWidth = 1.5;
+    mctx.beginPath();
+    for (let j = 0; j <= N2; j++) {
+      const phi = (j / N2) * Math.PI * 2 + twist * theta;
+      const x = (R1 + R2 * Math.cos(phi)) * Math.cos(theta);
+      const y = (R1 + R2 * Math.cos(phi)) * Math.sin(theta);
+      const z = R2 * Math.sin(phi);
+      const p = project3D(x, y, z, zoom);
+      if (j === 0) mctx.moveTo(cx + p.x, cy + p.y);
+      else mctx.lineTo(cx + p.x, cy + p.y);
+    }
+    mctx.stroke();
+  }
+
+  // Label
+  mctx.fillStyle = '#88aaff';
+  mctx.font = '16px Inter';
+  mctx.textAlign = 'center';
+  mctx.fillText(`Twist = ${twist.toFixed(2)} · 2π`, mainCanvas.width/2, 30);
+}
+
+function drawHopf(cx, cy, zoom) {
+  const N = 16; // number of fibers to show
+  const M = 100; // points per fiber
+
+  for (let i = 0; i < N; i++) {
+    const baseTheta = (i / N) * Math.PI;
+    const basePhi = (i / N) * Math.PI * 2 + animTime * 0.5;
+
+    // Point on S² (base)
+    const bx = Math.sin(baseTheta) * Math.cos(basePhi);
+    const by = Math.sin(baseTheta) * Math.sin(basePhi);
+    const bz = Math.cos(baseTheta);
+
+    const hue = (i / N) * 360;
+
+    mctx.strokeStyle = `hsla(${hue}, 80%, 60%, 0.7)`;
+    mctx.lineWidth = 2;
+    mctx.beginPath();
+
+    for (let j = 0; j <= M; j++) {
+      const t = (j / M) * Math.PI * 2;
+
+      // Hopf fiber parametrization (stereographic projection to R³)
+      const cosH = Math.cos(baseTheta / 2);
+      const sinH = Math.sin(baseTheta / 2);
+
+      const w1 = cosH * Math.cos(t);
+      const w2 = cosH * Math.sin(t);
+      const w3 = sinH * Math.cos(t + basePhi);
+      const w4 = sinH * Math.sin(t + basePhi);
+
+      // Stereographic projection S³ → R³
+      const denom = 1 - w4 + 0.001;
+      const px = w1 / denom * 150;
+      const py = w2 / denom * 150;
+      const pz = w3 / denom * 150;
+
+      const p = project3D(px, py, pz, zoom);
+      if (j === 0) mctx.moveTo(cx + p.x, cy + p.y);
+      else mctx.lineTo(cx + p.x, cy + p.y);
+    }
+    mctx.stroke();
+  }
+
+  mctx.fillStyle = '#88aaff';
+  mctx.font = '16px Inter';
+  mctx.textAlign = 'center';
+  mctx.fillText('Hopf-Fibration: S¹-Fasern über S²', cx, 30);
+}
+
+function drawConnection(cx, cy, zoom, twist) {
+  const R1 = 180, R2 = 70;
+  const N = 24;
+
+  // Draw torus wireframe
+  for (let i = 0; i < N; i++) {
+    const theta = (i / N) * Math.PI * 2;
+    mctx.strokeStyle = 'rgba(100, 100, 180, 0.2)';
+    mctx.lineWidth = 1;
+    mctx.beginPath();
+    for (let j = 0; j <= 40; j++) {
+      const phi = (j / 40) * Math.PI * 2 + twist * theta;
+      const x = (R1 + R2 * Math.cos(phi)) * Math.cos(theta);
+      const y = (R1 + R2 * Math.cos(phi)) * Math.sin(theta);
+      const z = R2 * Math.sin(phi);
+      const p = project3D(x, y, z, zoom);
+      if (j === 0) mctx.moveTo(cx + p.x, cy + p.y);
+      else mctx.lineTo(cx + p.x, cy + p.y);
+    }
+    mctx.stroke();
+  }
+
+  // Draw horizontal subspaces (connection)
+  for (let i = 0; i < 12; i++) {
+    const theta = (i / 12) * Math.PI * 2;
+    const phi0 = twist * theta;
+
+    // Point on torus
+    const x0 = (R1 + R2 * Math.cos(phi0)) * Math.cos(theta);
+    const y0 = (R1 + R2 * Math.cos(phi0)) * Math.sin(theta);
+    const z0 = R2 * Math.sin(phi0);
+
+    // Horizontal direction (tangent to base, lifted)
+    const dt = 0.3;
+    const thetaP = theta + dt;
+    const phiP = phi0 + twist * dt;
+    const x1 = (R1 + R2 * Math.cos(phiP)) * Math.cos(thetaP);
+    const y1 = (R1 + R2 * Math.cos(phiP)) * Math.sin(thetaP);
+    const z1 = R2 * Math.sin(phiP);
+
+    const thetaM = theta - dt;
+    const phiM = phi0 - twist * dt;
+    const x2 = (R1 + R2 * Math.cos(phiM)) * Math.cos(thetaM);
+    const y2 = (R1 + R2 * Math.cos(phiM)) * Math.sin(thetaM);
+    const z2 = R2 * Math.sin(phiM);
+
+    const p0 = project3D(x0, y0, z0, zoom);
+    const p1 = project3D(x1, y1, z1, zoom);
+    const p2 = project3D(x2, y2, z2, zoom);
+
+    // Horizontal direction (green)
+    mctx.strokeStyle = '#44ff88';
+    mctx.lineWidth = 3;
+    mctx.beginPath();
+    mctx.moveTo(cx + p2.x, cy + p2.y);
+    mctx.lineTo(cx + p1.x, cy + p1.y);
+    mctx.stroke();
+
+    // Arrow head
+    mctx.fillStyle = '#44ff88';
+    mctx.beginPath();
+    mctx.arc(cx + p1.x, cy + p1.y, 4, 0, Math.PI * 2);
+    mctx.fill();
+
+    // Vertical direction (red) - along fiber
+    const phiV = phi0 + 0.5;
+    const xv = (R1 + R2 * Math.cos(phiV)) * Math.cos(theta);
+    const yv = (R1 + R2 * Math.cos(phiV)) * Math.sin(theta);
+    const zv = R2 * Math.sin(phiV);
+    const pv = project3D(xv, yv, zv, zoom);
+
+    mctx.strokeStyle = '#ff4444';
+    mctx.lineWidth = 2;
+    mctx.beginPath();
+    mctx.moveTo(cx + p0.x, cy + p0.y);
+    mctx.lineTo(cx + pv.x, cy + pv.y);
+    mctx.stroke();
+
+    // Point
+    mctx.fillStyle = '#ffffff';
+    mctx.beginPath();
+    mctx.arc(cx + p0.x, cy + p0.y, 3, 0, Math.PI * 2);
+    mctx.fill();
+  }
+
+  // Legend
+  mctx.fillStyle = '#44ff88';
+  mctx.font = '14px Inter';
+  mctx.textAlign = 'left';
+  mctx.fillText('→ Horizontal (Zusammenhang)', 20, 30);
+  mctx.fillStyle = '#ff4444';
+  mctx.fillText('→ Vertikal (Faser-Richtung)', 20, 50);
+  mctx.fillStyle = '#aab';
+  mctx.fillText(`Krümmung ∝ Twist = ${twist.toFixed(2)}`, 20, 70);
+}
+
+function drawParallelTransport(cx, cy, zoom, twist) {
+  const R1 = 180, R2 = 70;
+
+  // Draw torus wireframe
+  const N = 30;
+  for (let i = 0; i < N; i++) {
+    const theta = (i / N) * Math.PI * 2;
+    mctx.strokeStyle = 'rgba(100, 100, 180, 0.15)';
+    mctx.lineWidth = 1;
+    mctx.beginPath();
+    for (let j = 0; j <= 40; j++) {
+      const phi = (j / 40) * Math.PI * 2 + twist * theta;
+      const x = (R1 + R2 * Math.cos(phi)) * Math.cos(theta);
+      const y = (R1 + R2 * Math.cos(phi)) * Math.sin(theta);
+      const z = R2 * Math.sin(phi);
+      const p = project3D(x, y, z, zoom);
+      if (j === 0) mctx.moveTo(cx + p.x, cy + p.y);
+      else mctx.lineTo(cx + p.x, cy + p.y);
+    }
+    mctx.stroke();
+  }
+
+  // Draw base circle
+  mctx.strokeStyle = '#ff6644';
+  mctx.lineWidth = 3;
+  mctx.beginPath();
+  for (let i = 0; i <= 80; i++) {
+    const theta = (i / 80) * Math.PI * 2;
+    const x = R1 * Math.cos(theta);
+    const y = R1 * Math.sin(theta);
+    const p = project3D(x, y, 0, zoom);
+    if (i === 0) mctx.moveTo(cx + p.x, cy + p.y);
+    else mctx.lineTo(cx + p.x, cy + p.y);
+  }
+  mctx.stroke();
+
+  // Draw parallel transport path
+  const tMax = animTime % (Math.PI * 2 + 0.5);
+  const steps = 200;
+  mctx.strokeStyle = '#ffcc00';
+  mctx.lineWidth = 3;
+  mctx.beginPath();
+
+  let lastPx, lastPy;
+  for (let i = 0; i <= steps; i++) {
+    const theta = (i / steps) * Math.min(tMax, Math.PI * 2);
+    const phi = twist * theta; // parallel transport: phi changes by twist * theta
+    const x = (R1 + R2 * Math.cos(phi)) * Math.cos(theta);
+    const y = (R1 + R2 * Math.cos(phi)) * Math.sin(theta);
+    const z = R2 * Math.sin(phi);
+    const p = project3D(x, y, z, zoom);
+    if (i === 0) mctx.moveTo(cx + p.x, cy + p.y);
+    else mctx.lineTo(cx + p.x, cy + p.y);
+    lastPx = cx + p.x;
+    lastPy = cy + p.y;
+  }
+  mctx.stroke();
+
+  // Current point
+  if (lastPx !== undefined) {
+    mctx.shadowColor = '#ffcc00';
+    mctx.shadowBlur = 20;
+    mctx.fillStyle = '#ffcc00';
+    mctx.beginPath();
+    mctx.arc(lastPx, lastPy, 7, 0, Math.PI * 2);
+    mctx.fill();
+    mctx.shadowBlur = 0;
+  }
+
+  // Start point
+  const startPhi = 0;
+  const sx = (R1 + R2 * Math.cos(startPhi)) * Math.cos(0);
+  const sy = (R1 + R2 * Math.cos(startPhi)) * Math.sin(0);
+  const sp = project3D(sx, sy, 0, zoom);
+  mctx.fillStyle = '#44ff66';
+  mctx.beginPath();
+  mctx.arc(cx + sp.x, cy + sp.y, 7, 0, Math.PI * 2);
+  mctx.fill();
+
+  // Holonomy info
+  const holonomy = (twist * Math.min(tMax, Math.PI * 2)) / (Math.PI * 2) * 360;
+  mctx.fillStyle = '#88aaff';
+  mctx.font = '16px Inter';
+  mctx.textAlign = 'center';
+  mctx.fillText(`Holonomie nach vollem Umlauf: ${holonomy.toFixed(1)}°`, cx, 30);
+
+  if (tMax >= Math.PI * 2) {
+    mctx.fillStyle = twist > 0.1 ? '#ff6666' : '#44ff66';
+    mctx.font = 'bold 16px Inter';
+    mctx.fillText(
+      twist > 0.1 ? '⚠ Punkt kommt NICHT zurück → Nicht-triviale Holonomie!' : '✓ Punkt kommt zurück → Triviale Holonomie',
+      cx, 55
+    );
+  }
+}
+
+function toggleAnimation() {
+  animating = !animating;
+  if (animating) animate();
+  else if (animFrame) cancelAnimationFrame(animFrame);
+}
+
+function animate() {
+  if (!animating) return;
+  animTime += 0.03;
+  draw();
+  animFrame = requestAnimationFrame(animate);
+}
+
+function resetView() {
+  viewRotX = 0.5; viewRotY = 0;
+  animTime = 0;
+  document.getElementById('rotSlider').value = 0;
+  document.getElementById('twistSlider').value = 0;
+  document.getElementById('zoomSlider').value = 100;
+  draw();
+}
+
+draw();
+
+// ===================== TAB 3: PHYSICS CANVAS =====================
+let abAnim = null;
+let abTime = 0;
+
+function drawPhysics() {
+  const canvas = document.getElementById('physicsCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const cx = W / 2, cy = H / 2;
+  const flux = parseFloat(document.getElementById('fluxSlider').value) / 100;
+
+  // Solenoid
+  ctx.fillStyle = '#334';
+  ctx.strokeStyle = '#667';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 30, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Magnetic field lines inside
+  for (let i = 0; i < 5; i++) {
+    const r = 5 + i * 5;
+    ctx.strokeStyle = `rgba(255, 100, 100, ${0.3 + flux * 0.1})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // B field label
+  ctx.fillStyle = '#ff8888';
+  ctx.font = 'bold 14px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText('B', cx, cy + 5);
+
+  // "No field" region
+  ctx.strokeStyle = 'rgba(100, 200, 100, 0.3)';
+  ctx.setLineDash([5, 5]);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 50, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#88aa88';
+  ctx.font = '12px Inter';
+  ctx.fillText('F = 0 hier', cx, cy - 55);
+
+  // Electron paths
+  const R = 120;
+
+  // Path 1 (top)
+  ctx.strokeStyle = '#44aaff';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, Math.PI, 0, false);
+  ctx.stroke();
+
+  // Path 2 (bottom)
+  ctx.strokeStyle = '#ffaa44';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, Math.PI, 0, true);
+  ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = '#44aaff';
+  ctx.font = '14px Inter';
+  ctx.fillText('Pfad 1', cx, cy - R - 15);
+  ctx.fillStyle = '#ffaa44';
+  ctx.fillText('Pfad 2', cx, cy + R + 25);
+
+  // Electron positions
+  if (abAnim !== null) {
+    const t = abTime;
+
+    // Electron 1 (top path)
+    const e1x = cx + R * Math.cos(Math.PI - t);
+    const e1y = cy - R * Math.abs(Math.sin(t));
+
+
+	      // Electron 2 (bottom path)
+    const e2x = cx + R * Math.cos(Math.PI - t);
+    const e2y = cy + R * Math.abs(Math.sin(t));
+
+    // Draw electrons
+    ctx.shadowColor = '#44aaff';
+    ctx.shadowBlur = 15;
+    ctx.fillStyle = '#44aaff';
+    ctx.beginPath();
+    ctx.arc(e1x, e1y, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.shadowColor = '#ffaa44';
+    ctx.fillStyle = '#ffaa44';
+    ctx.beginPath();
+    ctx.arc(e2x, e2y, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Phase indicators
+    const phase1 = t * 2;
+    const phase2 = t * 2 + flux;
+
+    // Phase circle for electron 1
+    drawPhaseCircle(ctx, cx - 200, cy - 150, 30, phase1, '#44aaff', 'ψ₁');
+    // Phase circle for electron 2
+    drawPhaseCircle(ctx, cx + 200, cy + 100, 30, phase2, '#ffaa44', 'ψ₂');
+
+    // Interference point
+    if (t >= Math.PI - 0.05) {
+      const intX = cx + R;
+      const intY = cy;
+
+      const phaseDiff = flux;
+      const interference = Math.cos(phaseDiff / 2);
+      const intColor = interference > 0
+        ? `rgba(68, 255, 100, ${Math.abs(interference)})`
+        : `rgba(255, 68, 68, ${Math.abs(interference)})`;
+
+      ctx.shadowColor = intColor;
+      ctx.shadowBlur = 25;
+      ctx.fillStyle = intColor;
+      ctx.beginPath();
+      ctx.arc(intX, intY, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 14px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText(interference > 0.3 ? 'Konstruktiv!' : interference < -0.3 ? 'Destruktiv!' : 'Teilweise', intX, intY + 30);
+    }
+  }
+
+  // Phase difference display
+  ctx.fillStyle = '#dde';
+  ctx.font = '16px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText(`Magnetischer Fluss Φ = ${(flux / Math.PI).toFixed(2)}π`, cx, 30);
+  ctx.fillText(`Phasendifferenz Δφ = ${(flux).toFixed(2)} rad`, cx, 55);
+
+  // Formula
+  ctx.fillStyle = '#aab';
+  ctx.font = '13px Courier New';
+  ctx.fillText(`Hol(γ) = exp(i·Φ) = exp(i·${flux.toFixed(2)})`, cx, H - 15);
+}
+
+function drawPhaseCircle(ctx, x, y, r, phase, color, label) {
+  // Circle
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Phase arrow
+  const px = x + r * Math.cos(phase);
+  const py = y - r * Math.sin(phase);
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(px, py);
+  ctx.stroke();
+
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(px, py, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Label
+  ctx.fillStyle = color;
+  ctx.font = '13px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText(label, x, y + r + 18);
+}
+
+function animateAB() {
+  if (abAnim) { cancelAnimationFrame(abAnim); abAnim = null; }
+  abTime = 0;
+  function step() {
+    abTime += 0.025;
+    if (abTime > Math.PI + 0.5) {
+      drawPhysics();
+      // Hold at end for a moment, then stop
+      if (abTime > Math.PI + 1.5) {
+        abAnim = null;
+        return;
+      }
+    }
+    drawPhysics();
+    abAnim = requestAnimationFrame(step);
+  }
+  abAnim = requestAnimationFrame(step);
+}
+
+drawPhysics();
+
+// ===================== TAB 4: QUIZ =====================
+const quizData = [
+  {
+    q: "Was ist die 'Faser' in einem Principal Bundle?",
+    options: [
+      "Ein Vektorraum",
+      "Eine Lie-Gruppe G, die frei und transitiv wirkt",
+      "Ein einzelner Punkt",
+      "Die Tangentialebene"
+    ],
+    correct: 1,
+    explanation: "In einem Principal G-Bundle ist die Faser die Strukturgruppe G selbst, die frei und transitiv auf jeder Faser wirkt. Das unterscheidet es von einem Vektorbündel, wo die Faser ein Vektorraum ist."
+  },
+  {
+    q: "Was beschreibt ein 'Zusammenhang' (Connection) auf einem Principal Bundle geometrisch?",
+    options: [
+      "Die Krümmung des Basisraums",
+      "Eine Zerlegung des Tangentialraums in horizontale und vertikale Unterräume",
+      "Die Topologie des Totalraums",
+      "Die Dimension der Faser"
+    ],
+    correct: 1,
+    explanation: "Ein Zusammenhang definiert an jedem Punkt des Totalraums einen 'horizontalen' Unterraum, komplementär zum 'vertikalen' (= tangential an die Faser). Das sagt dir, wie du dich 'parallel' zur Basis bewegen kannst."
+  },
+  {
+    q: "Was ist die physikalische Bedeutung der Krümmung eines U(1)-Zusammenhangs?",
+    options: [
+      "Die Masse des Photons",
+      "Das elektromagnetische Potential A_μ",
+      "Der elektromagnetische Feldstärketensor F_μν",
+      "Die Ladung des Elektrons"
+    ],
+    correct: 2,
+    explanation: "Die Krümmung F = dA eines U(1)-Zusammenhangs A ist genau der elektromagnetische Feldstärketensor F_μν. Der Zusammenhang selbst ist das Potential A_μ."
+  },
+  {
+    q: "Was zeigt der Aharonov-Bohm-Effekt?",
+    options: [
+      "Dass Magnetfelder keine physikalische Wirkung haben",
+      "Dass das Eichpotential A (der Zusammenhang) physikalisch real ist, nicht nur die Feldstärke F",
+      "Dass Elektronen keine Wellen sind",
+      "Dass Principal Bundles immer trivial sind"
+    ],
+    correct: 1,
+    explanation: "Beim Aharonov-Bohm-Effekt beeinflusst das Potential A die Phase eines Elektrons, obwohl F = 0 in der Region ist. Das beweist, dass der Zusammenhang (= Eichpotential) physikalisch messbare Konsequenzen hat."
+  },
+  {
+    q: "Wann ist ein Principal Bundle 'trivial'?",
+    options: [
+      "Wenn die Strukturgruppe abelsch ist",
+      "Wenn die Krümmung verschwindet",
+      "Wenn es global isomorph zu M × G ist (d.h. ein globaler Schnitt existiert)",
+      "Wenn die Basis einfach zusammenhängend ist"
+    ],
+    correct: 2,
+    explanation: "Ein Principal Bundle ist trivial, wenn es global als Produkt M × G geschrieben werden kann. Äquivalent: Es existiert ein globaler Schnitt s: M → P. Achtung: Flache Krümmung (F=0) bedeutet NICHT trivial – die Holonomie kann trotzdem nicht-trivial sein!"
+  },
+  {
+    q: "Warum heißt es 'Principal' (Haupt-) Bundle?",
+    options: [
+      "Weil es das erste war, das entdeckt wurde",
+      "Weil es das größte Bundle ist",
+      "Weil aus ihm alle assoziierten Bündel konstruiert werden können – es ist das 'Mutter-Bündel'",
+      "Weil die Faser immer die größte Gruppe ist"
+    ],
+    correct: 2,
+    explanation: "Aus einem Principal Bundle P kann man jedes assoziierte Bündel E = P ×_G F konstruieren, indem man die Faser G durch einen beliebigen G-Raum F ersetzt. Daher ist es das fundamentale ('Haupt-') Bündel."
+  },
+  {
+    q: "Welche Kozyklus-Bedingung müssen Übergangsfunktionen g_ij erfüllen?",
+    options: [
+      "g_ij + g_jk = g_ik",
+      "g_ij · g_jk · g_ki = e (Identität) auf Dreifach-Überlappungen",
+      "g_ij = g_ji",
+      "g_ij = 0 auf dem Rand"
+    ],
+    correct: 1,
+    explanation: "Die Kozyklus-Bedingung g_ij · g_jk · g_ki = e auf U_i ∩ U_j ∩ U_k stellt sicher, dass die lokalen Trivialisierungen konsistent zusammenpassen. Das ist eine multiplikative (nicht additive!) Bedingung, weil G eine Gruppe ist."
+  },
+  {
+    q: "Welche Strukturgruppe beschreibt die starke Wechselwirkung (QCD)?",
+    options: [
+      "U(1)",
+      "SU(2)",
+      "SU(3)",
+      "SO(3,1)"
+    ],
+    correct: 2,
+    explanation: "QCD hat die Eichgruppe SU(3). Die 8 Gluonen entsprechen den 8 Generatoren der Lie-Algebra 𝔰𝔲(3) (dim = 3² - 1 = 8)."
+  }
+];
+
+function buildQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+
+  quizData.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'info-box';
+    div.id = `quiz-q${idx}`;
+    div.style.transition = 'border-color 0.3s';
+
+    let html = `<h3>Frage ${idx + 1}</h3><p>${item.q}</p>`;
+    item.options.forEach((opt, oi) => {
+      html += `
+        <label style="display:block;padding:8px 12px;margin:4px 0;border-radius:8px;cursor:pointer;transition:background 0.2s;border:1px solid transparent;"
+               onmouseover="this.style.background='#1a1a4a'"
+               onmouseout="this.style.background='transparent'"
+               id="q${idx}o${oi}">
+          <input type="radio" name="q${idx}" value="${oi}" style="margin-right:10px;accent-color:#88aaff;">
+          ${opt}
+        </label>`;
+    });
+    html += `<div id="q${idx}explain" style="display:none;margin-top:12px;padding:12px;border-radius:8px;line-height:1.6;"></div>`;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+}
+
+function checkQuiz() {
+  let score = 0;
+
+  quizData.forEach((item, idx) => {
+    const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+    const explainDiv = document.getElementById(`q${idx}explain`);
+    const questionDiv = document.getElementById(`quiz-q${idx}`);
+
+    // Reset all option styles
+    item.options.forEach((_, oi) => {
+      const label = document.getElementById(`q${idx}o${oi}`);
+      label.style.borderColor = 'transparent';
+      label.style.background = 'transparent';
+    });
+
+    if (selected) {
+      const val = parseInt(selected.value);
+      const correctLabel = document.getElementById(`q${idx}o${item.correct}`);
+      correctLabel.style.borderColor = '#44aa66';
+      correctLabel.style.background = 'rgba(68, 170, 102, 0.15)';
+
+      if (val === item.correct) {
+        score++;
+        questionDiv.style.borderColor = '#44aa66';
+        explainDiv.style.background = 'rgba(68, 170, 102, 0.1)';
+        explainDiv.innerHTML = `<span style="color:#44ff66">✓ Richtig!</span> ${item.explanation}`;
+      } else {
+        questionDiv.style.borderColor = '#aa4444';
+        const wrongLabel = document.getElementById(`q${idx}o${val}`);
+        wrongLabel.style.borderColor = '#aa4444';
+        wrongLabel.style.background = 'rgba(170, 68, 68, 0.15)';
+        explainDiv.style.background = 'rgba(170, 68, 68, 0.1)';
+        explainDiv.innerHTML = `<span style="color:#ff6666">✗ Leider falsch.</span> ${item.explanation}`;
+      }
+    } else {
+      questionDiv.style.borderColor = '#aaaa44';
+      explainDiv.style.background = 'rgba(170, 170, 68, 0.1)';
+      explainDiv.innerHTML = `<span style="color:#ffff66">⚠ Nicht beantwortet.</span> ${item.explanation}`;
+    }
+
+    explainDiv.style.display = 'block';
+  });
+
+  const resultDiv = document.getElementById('quizResult');
+  resultDiv.style.display = 'block';
+
+  const pct = (score / quizData.length * 100).toFixed(0);
+  let emoji, msg;
+  if (pct >= 90) { emoji = '🏆'; msg = 'Hervorragend! Du hast Principal Bundles wirklich verstanden!'; }
+  else if (pct >= 70) { emoji = '🎉'; msg = 'Sehr gut! Die Grundideen sitzen. Schau dir die Erklärungen für die falschen Antworten an.'; }
+  else if (pct >= 50) { emoji = '📚'; msg = 'Guter Anfang! Geh nochmal durch die Theorie-Sektion und probiere die Visualisierungen aus.'; }
+  else { emoji = '🌱'; msg = 'Kein Problem – das Thema ist anspruchsvoll! Starte mit der Intuitions-Sektion und arbeite dich vor.'; }
+
+  resultDiv.innerHTML = `<h3>${emoji} Ergebnis: ${score} / ${quizData.length} (${pct}%)</h3><p>${msg}</p>`;
+
+  // Update theory progress bar
+  document.getElementById('theoryProgress').style.width = `${pct}%`;
+}
+
+function resetQuiz() {
+  quizData.forEach((item, idx) => {
+    const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+    if (selected) selected.checked = false;
+
+    const explainDiv = document.getElementById(`q${idx}explain`);
+    explainDiv.style.display = 'none';
+
+    const questionDiv = document.getElementById(`quiz-q${idx}`);
+    questionDiv.style.borderColor = '#2a2a6a';
+
+    item.options.forEach((_, oi) => {
+      const label = document.getElementById(`q${idx}o${oi}`);
+      label.style.borderColor = 'transparent';
+      label.style.background = 'transparent';
+    });
+  });
+
+  document.getElementById('quizResult').style.display = 'none';
+}
+
+buildQuiz();
+
+// ===================== SCROLL-BASED THEORY PROGRESS =====================
+document.getElementById('tab2').addEventListener('scroll', function() {
+  const el = this;
+  const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+  document.getElementById('theoryProgress').style.width = `${Math.min(pct, 100)}%`;
+});
+
+</script>
+</body>
+</html>
+
