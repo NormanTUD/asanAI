@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prime Harmonic Interference</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; color: #fff; display: flex; }
+        #sidebar { width: 300px; padding: 25px; background: #0a0a0a; border-right: 1px solid #222; z-index: 10; height: 100vh; }
+        canvas { flex-grow: 1; cursor: crosshair; }
+        .ctrl { margin-bottom: 30px; }
+        label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #666; margin-bottom: 10px; }
+        input[type=range] { width: 100%; accent-color: #ff3e00; }
+        .stat { font-family: monospace; color: #ff3e00; font-size: 1.2rem; }
+        #inspect { position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.8); padding: 15px; border: 1px solid #333; pointer-events: none; border-radius: 8px; font-family: monospace; width: 250px; }
+        .prime-tag { color: #00f2ff; }
+        h1 { font-size: 1.2rem; margin-bottom: 20px; border-left: 2px solid #ff3e00; padding-left: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <h1>HARMONIC SIEVE</h1>
+    
+    <div class="ctrl">
+        <label>Harmonic Modulus (Frequency)</label>
+        <input type="range" id="modRange" min="2" max="100" step="0.01" value="12">
+        <div class="stat" id="modVal">12.00</div>
+    </div>
+
+    <div class="ctrl">
+        <label>Visual Density</label>
+        <input type="range" id="zoomRange" min="1" max="500" value="100">
+    </div>
+
+    <div class="ctrl">
+        <label>Chroma Offset</label>
+        <input type="range" id="colorRange" min="0" max="360" value="180">
+    </div>
+
+    <div style="font-size: 12px; color: #555; line-height: 1.6;">
+        <b>Instruction:</b> Slide the Modulus slowly. When you hit an integer (like 30, 42, 60), the primes will align into perfect vertical "columns of truth." This visualizes the <b>Harmonic Resonance</b> of prime gaps.
+    </div>
+</div>
+
+<div id="inspect">
+    <div id="ins-title">SCANNING LINE...</div>
+    <div id="ins-data"></div>
+</div>
+
+<canvas id="view"></canvas>
+
+<script>
+    const canvas = document.getElementById('view');
+    const ctx = canvas.getContext('2d');
+    const modRange = document.getElementById('modRange');
+    const zoomRange = document.getElementById('zoomRange');
+    const colorRange = document.getElementById('colorRange');
+    
+    let primes = [];
+    const LIMIT = 50000;
+
+    function sieve() {
+        let s = new Uint8Array(LIMIT).fill(1);
+        s[0] = s[1] = 0;
+        for (let i = 2; i * i < LIMIT; i++) {
+            if (s[i]) for (let j = i * i; j < LIMIT; j += i) s[j] = 0;
+        }
+        for (let i = 2; i < LIMIT; i++) if (s[i]) primes.push(i);
+    }
+
+    function draw() {
+        canvas.width = window.innerWidth - 300;
+        canvas.height = window.innerHeight;
+        
+        const m = parseFloat(modRange.value);
+        const z = parseFloat(zoomRange.value);
+        const cShift = parseInt(colorRange.value);
+        document.getElementById('modVal').innerText = m.toFixed(2);
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const colWidth = canvas.width / z;
+        const rowHeight = 4;
+
+        primes.forEach(p => {
+            // The magic: Position is based on remainder of the modulus
+            const remainder = p % m;
+            const x = (remainder / m) * canvas.width;
+            const y = (p / LIMIT) * canvas.height;
+
+            // Color is based on the prime's "distance" from the center of the modulus
+            const hue = (remainder * (360/m) + cShift) % 360;
+            
+            ctx.fillStyle = `hsla(${hue}, 80%, 60%, 0.8)`;
+            
+            // Draw a "beam" of light
+            ctx.beginPath();
+            ctx.rect(x, y, 2, rowHeight);
+            ctx.fill();
+
+            // Glow effect
+            if (p % 100 === 0) {
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+            } else {
+                ctx.shadowBlur = 0;
+            }
+        });
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        
+        const m = parseFloat(modRange.value);
+        const hoveredRemainder = (mx / canvas.width) * m;
+        
+        document.getElementById('ins-title').innerText = `MODULO PHASE: ${hoveredRemainder.toFixed(3)}`;
+        document.getElementById('ins-data').innerHTML = `
+            At this phase, primes appear every <span class="prime-tag">${m.toFixed(0)}</span> units.<br><br>
+            Any alignment here indicates a <b>Constellation</b> of primes separated by multiples of the modulus.
+        `;
+    });
+
+    sieve();
+    [modRange, zoomRange, colorRange].forEach(r => r.addEventListener('input', draw));
+    window.addEventListener('resize', draw);
+    draw();
+</script>
+</body>
+</html>

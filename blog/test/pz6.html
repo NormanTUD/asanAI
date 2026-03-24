@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prime Geometry Decoder</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #05050a; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, sans-serif; display: flex; }
+        #sidebar { width: 320px; padding: 25px; background: #0f0f1a; border-right: 1px solid #333; height: 100vh; overflow-y: auto; box-sizing: border-box; }
+        canvas { flex-grow: 1; cursor: crosshair; }
+        
+        .ui-group { margin-bottom: 25px; }
+        label { display: block; font-size: 12px; font-weight: bold; color: #889; text-transform: uppercase; margin-bottom: 8px; }
+        input[type=range] { width: 100%; accent-color: #00ffcc; cursor: pointer; }
+        .val-display { float: right; color: #00ffcc; font-family: monospace; font-size: 14px; }
+        
+        /* The Legend/Labels */
+        .axis-label { position: absolute; color: #556; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; pointer-events: none; }
+        #x-axis-text { bottom: 10px; left: 50%; transform: translateX(-50%); }
+        #y-axis-text { top: 50%; left: 340px; transform: rotate(-90deg) translateX(50%); transform-origin: left center; }
+
+        /* Enhanced HUD */
+        #hud { 
+            position: absolute; pointer-events: none; padding: 15px; 
+            background: rgba(10, 10, 30, 0.95); border: 2px solid #00ffcc; 
+            color: #fff; font-size: 13px; border-radius: 8px; 
+            display: none; width: 260px; z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .prime-stat { color: #00ffcc; font-weight: bold; font-size: 1.2em; }
+        hr { border: 0; border-top: 1px solid #334; margin: 10px 0; }
+        
+        h2 { font-size: 18px; margin: 0 0 10px 0; color: #fff; }
+        .hint { font-size: 12px; color: #778; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <h2>PRIME DECODER</h2>
+    <p class="hint">We are looking for patterns in the <b>gaps</b> between primes.</p>
+
+    <div class="ui-group">
+        <label>Total Primes <span class="val-display" id="lVal">20000</span></label>
+        <input type="range" id="lRange" min="1000" max="100000" step="1000" value="20000">
+    </div>
+
+    <div class="ui-group">
+        <label>The Modulus (Cycle) <span class="val-display" id="mVal">30</span></label>
+        <input type="range" id="mRange" min="2" max="500" step="1" value="30">
+        <p class="hint">How wide is our "clock"? Try <b>30</b> or <b>210</b>.</p>
+    </div>
+
+    <div class="ui-group">
+        <label>Vertical Stretch <span class="val-display" id="sVal">1.0</span></label>
+        <input type="range" id="sRange" min="0.1" max="5" step="0.1" value="1">
+    </div>
+
+    <div class="hint" style="margin-top:40px; border-top: 1px solid #334; padding-top: 20px;">
+        <b>Look for:</b><br>
+        1. Vertical lines = Primes that always land on the same "beat."<br><br>
+        2. Horizontal gaps = Preferred distances between primes.
+    </div>
+</div>
+
+<div id="x-axis-text" class="axis-label">Position in the Modulo Cycle (The "Clock Beat") →</div>
+<div id="y-axis-text" class="axis-label">← Distance to Next Prime (The "Gap")</div>
+
+<div id="hud">
+    <div id="hud-content"></div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const hud = document.getElementById('hud');
+    const hudContent = document.getElementById('hud-content');
+    
+    let primes = [];
+    let points = [];
+
+    function getPrimes(n) {
+        // Approximate limit for N primes
+        const limit = Math.ceil(n * (Math.log(n) + Math.log(Math.log(n) || 1)) * 1.2) + 100;
+        const s = new Uint8Array(limit).fill(1);
+        s[0] = s[1] = 0;
+        for (let i = 2; i * i < limit; i++) {
+            if (s[i]) for (let j = i * i; j < limit; j += i) s[j] = 0;
+        }
+        primes = [];
+        for (let i = 2; i < limit && primes.length < n; i++) {
+            if (s[i]) primes.push(i);
+        }
+    }
+
+    function draw() {
+        canvas.width = window.innerWidth - 320;
+        canvas.height = window.innerHeight;
+        
+        const count = parseInt(document.getElementById('lRange').value);
+        const mod = parseFloat(document.getElementById('mRange').value);
+        const stretch = parseFloat(document.getElementById('sRange').value);
+        
+        document.getElementById('lVal').innerText = count;
+        document.getElementById('mVal').innerText = mod;
+        document.getElementById('sVal').innerText = stretch.toFixed(1);
+
+        if (primes.length < count) getPrimes(count);
+
+        ctx.fillStyle = '#05050a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        points = [];
+        ctx.globalCompositeOperation = 'lighter';
+
+        for (let i = 0; i < count - 1; i++) {
+            const p = primes[i];
+            const gap = primes[i+1] - p;
+
+            // X = Where it lands in the cycle (0 to Mod)
+            const x = ((p % mod) / mod) * canvas.width;
+            
+            // Y = How big the gap is, scaled to the screen
+            const y = canvas.height - (gap * 15 * stretch);
+
+            if (y > 0) {
+                const hue = (p % 80) + 160; 
+                ctx.fillStyle = `hsla(${hue}, 100%, 50%, 0.5)`;
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, 7);
+                ctx.fill();
+                points.push({x, y, p, gap, modVal: (p % mod)});
+            }
+        }
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+
+        let found = null;
+        for (let p of points) {
+            if (Math.abs(p.x - mx) < 8 && Math.abs(p.y - my) < 8) {
+                found = p;
+                break;
+            }
+        }
+
+        if (found) {
+            hud.style.display = 'block';
+            
+            // Logic to keep HUD on screen
+            let posX = e.clientX + 20;
+            let posY = e.clientY - 20;
+            
+            if (posX + 260 > window.innerWidth) posX = e.clientX - 280;
+            if (posY + 200 > window.innerHeight) posY = e.clientY - 180; // Flip up if near bottom
+            
+            hud.style.left = posX + 'px';
+            hud.style.top = posY + 'px';
+            
+            hudContent.innerHTML = `
+                <div>Prime Number: <span class="prime-stat">${found.p.toLocaleString()}</span></div>
+                <hr>
+                <b>X-Axis (Horizontal):</b><br>
+                This prime lands at <b>${found.modVal}</b> on a ${document.getElementById('mRange').value}-beat clock.
+                <br><br>
+                <b>Y-Axis (Vertical):</b><br>
+                The next prime is <b>${found.gap}</b> units away.
+                <hr>
+                <i style="color:#aaa; font-size:11px;">If you see many dots in a vertical line here, it means this "clock beat" is very popular for primes.</i>
+            `;
+        } else {
+            hud.style.display = 'none';
+        }
+    });
+
+    document.querySelectorAll('input').forEach(i => i.addEventListener('input', draw));
+    window.addEventListener('resize', draw);
+    getPrimes(100000);
+    draw();
+</script>
+</body>
+</html>

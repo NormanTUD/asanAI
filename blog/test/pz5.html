@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prime Phase-Portrait Explorer</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #050508; color: #00ffcc; font-family: 'Courier New', monospace; display: flex; }
+        #controls { width: 340px; padding: 25px; background: #0a0a12; border-right: 1px solid #1a1a2e; height: 100vh; box-sizing: border-box; z-index: 10; overflow-y: auto; }
+        canvas { flex-grow: 1; cursor: crosshair; filter: contrast(1.2) brightness(1.2); }
+        .ctrl-group { margin-bottom: 30px; }
+        label { display: block; font-size: 11px; letter-spacing: 1.5px; margin-bottom: 10px; color: #446; font-weight: bold; }
+        input[type=range] { width: 100%; accent-color: #00ffcc; background: #1a1a2e; }
+        .val { float: right; color: #fff; font-size: 14px; }
+        #data-panel { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.7); border: 1px solid #00ffcc; padding: 15px; font-size: 11px; pointer-events: none; border-radius: 4px; }
+        h1 { font-size: 16px; margin: 0 0 20px 0; color: #fff; text-shadow: 0 0 10px #00ffcc; }
+        .desc { font-size: 12px; color: #668; line-height: 1.5; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div id="controls">
+    <h1>PHASE PORTRAIT</h1>
+    
+    <div class="ctrl-group">
+        <label>Prime Limit <span class="val" id="limitVal">50000</span></label>
+        <input type="range" id="limitRange" min="1000" max="200000" step="1000" value="50000">
+        <div class="desc">Adjusts how many total primes are calculated in the field.</div>
+    </div>
+
+    <div class="ctrl-group">
+        <label>Base Modulus (M) <span class="val" id="modVal">210.0</span></label>
+        <input type="range" id="modRange" min="2" max="1000" step="0.1" value="210">
+        <div class="desc">The "width" of the mathematical cylinder. Values like 210 ($2 \cdot 3 \cdot 5 \cdot 7$) create massive symmetry.</div>
+    </div>
+
+    <div class="ctrl-group">
+        <label>Interference (K) <span class="val" id="kVal">1.0</span></label>
+        <input type="range" id="kRange" min="0.1" max="10" step="0.01" value="1">
+        <div class="desc">Scales the vertical "gap velocity."</div>
+    </div>
+
+    <div class="ctrl-group">
+        <label>Glow Intensity <span class="val" id="glowVal">0.3</span></label>
+        <input type="range" id="glowRange" min="0.01" max="1" step="0.01" value="0.3">
+    </div>
+
+    <div class="desc" style="border-top: 1px solid #1a1a2e; padding-top: 15px;">
+        <b>To Find the "Unseen":</b><br>
+        Set Modulus to <b>6, 30, 210, or 2310</b>. These are primorials. You will see the primes collapse into vertical "ribbons." Then, move the slider by 0.1 increments to see how those ribbons "braid" as the symmetry breaks.
+    </div>
+</div>
+
+<div id="data-panel">
+    <div id="ins-data">MOUSE OVER FIELD...</div>
+</div>
+
+<canvas id="view"></canvas>
+
+<script>
+    const canvas = document.getElementById('view');
+    const ctx = canvas.getContext('2d');
+    const limitRange = document.getElementById('limitRange');
+    const modRange = document.getElementById('modRange');
+    const kRange = document.getElementById('kRange');
+    const glowRange = document.getElementById('glowRange');
+    
+    let primes = [];
+    let maxSieved = 0;
+
+    function sieve(limit) {
+        if (limit <= maxSieved) return;
+        let s = new Uint8Array(limit * 15).fill(1); // Rough estimate for nth prime
+        s[0] = s[1] = 0;
+        for (let i = 2; i * i < s.length; i++) {
+            if (s[i]) for (let j = i * i; j < s.length; j += i) s[j] = 0;
+        }
+        primes = [];
+        for (let i = 2; i < s.length && primes.length < limit; i++) {
+            if (s[i]) primes.push(i);
+        }
+        maxSieved = limit;
+    }
+
+    function draw() {
+        canvas.width = window.innerWidth - 340;
+        canvas.height = window.innerHeight;
+        
+        const count = parseInt(limitRange.value);
+        const m = parseFloat(modRange.value);
+        const k = parseFloat(kRange.value);
+        const alpha = parseFloat(glowRange.value);
+        
+        document.getElementById('limitVal').innerText = count;
+        document.getElementById('modVal').innerText = m.toFixed(1);
+        document.getElementById('kVal').innerText = k.toFixed(2);
+        document.getElementById('glowVal').innerText = alpha.toFixed(2);
+
+        sieve(count);
+
+        ctx.fillStyle = '#050508';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Additive glow for density visualization
+        ctx.globalCompositeOperation = 'lighter';
+
+        for (let i = 0; i < count - 1; i++) {
+            const p = primes[i];
+            const nextP = primes[i+1];
+            const gap = nextP - p;
+
+            // X = Position in the modulo cycle
+            // Y = The "velocity" of the gap relative to the modulus
+            const x = ((p % m) / m) * canvas.width;
+            const y = canvas.height - (((gap * k) % m) / m) * canvas.height;
+
+            const hue = (p % 360);
+            ctx.fillStyle = `hsla(${hue}, 100%, 60%, ${alpha})`;
+            
+            ctx.beginPath();
+            ctx.arc(x, y, 1.2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalCompositeOperation = 'source-over';
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.clientX - rect.left) / canvas.width;
+        const my = 1 - (e.clientY - rect.top) / canvas.height;
+        const m = parseFloat(modRange.value);
+        
+        document.getElementById('ins-data').innerHTML = `
+            <b>LOCUS COORDINATES</b><br>
+            REMAINDER: ${(mx * m).toFixed(2)}<br>
+            GAP PHASE: ${(my * m).toFixed(2)}<br>
+            <span style="color:#668">Dense clusters show<br>statistical "attractors"<br>in the prime flow.</span>
+        `;
+    });
+
+    [limitRange, modRange, kRange, glowRange].forEach(r => r.addEventListener('input', draw));
+    window.addEventListener('resize', draw);
+    draw();
+</script>
+</body>
+</html>
