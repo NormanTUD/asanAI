@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Arithmetic Fiber Bundle Viewer</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; color: #fff; font-family: 'Helvetica Neue', sans-serif; display: flex; }
+        #ui { width: 320px; padding: 30px; background: rgba(5, 5, 10, 0.9); border-right: 1px solid #1a1a2e; z-index: 10; height: 100vh; box-sizing: border-box; }
+        canvas { flex-grow: 1; cursor: crosshair; }
+        .ctrl { margin-bottom: 30px; }
+        label { display: block; font-size: 10px; color: #4e4e6a; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+        input { width: 100%; accent-color: #7000ff; }
+        #hud { 
+            position: absolute; padding: 20px; background: rgba(0,0,0,0.85); 
+            border-left: 2px solid #7000ff; display: none; width: 260px; 
+            font-size: 13px; pointer-events: none; z-index: 100; backdrop-filter: blur(5px);
+        }
+        .prime { color: #7000ff; font-weight: bold; text-shadow: 0 0 10px #7000ff; }
+        h2 { font-weight: 200; letter-spacing: 5px; color: #7000ff; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+<div id="ui">
+    <h2>BUNDLE.X</h2>
+    <p style="font-size: 11px; color: #4e4e6a;">Primzahlen als Fasern in einem topologischen Bündel.</p>
+
+    <div class="ctrl">
+        <label>Anzahl Fasern <span id="nVal" style="float:right">1000</span></label>
+        <input type="range" id="nRange" min="100" max="3000" value="1000">
+    </div>
+
+    <div class="ctrl">
+        <label>Bündel-Torsion</label>
+        <input type="range" id="tRange" min="0.1" max="5" step="0.1" value="1.5">
+    </div>
+
+    <div class="ctrl">
+        <label>Faser-Radius</label>
+        <input type="range" id="rRange" min="50" max="300" value="150">
+    </div>
+
+    <div style="font-size: 11px; color: #2e2e4a; line-height: 1.8;">
+        <b>Abstraktion:</b> Jede Zahl ist ein Punkt in einem Bündel über dem Spektrum der Primzahlen. Die Geometrie zeigt die <b>Verschlingung</b> der arithmetischen Eigenschaften.
+    </div>
+</div>
+
+<div id="hud"></div>
+<canvas id="canvas"></canvas>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const hud = document.getElementById('hud');
+
+    let elements = [];
+    let angleX = 0, angleY = 0;
+    let zoom = 1;
+
+    function getFactors(n) {
+        let f = [];
+        let d = 2, temp = n;
+        while (temp > 1) {
+            if (temp % d === 0) {
+                f.push(d);
+                while (temp % d === 0) temp /= d;
+            }
+            d++;
+            if (d*d > temp) { if (temp > 1) f.push(temp); break; }
+        }
+        return f;
+    }
+
+    function generate() {
+        const count = parseInt(document.getElementById('nRange').value);
+        const torsion = parseFloat(document.getElementById('tRange').value);
+        const baseRad = parseInt(document.getElementById('rRange').value);
+        elements = [];
+
+        for (let i = 2; i <= count; i++) {
+            const factors = getFactors(i);
+            const isP = factors.length === 1 && factors[0] === i;
+
+            // Faser-Mapping (Hopf-ähnliche Koordinaten)
+            // Wir nutzen die Primfaktoren um die Position auf der Faser zu bestimmen
+            let u = i * 0.02; // Parameter entlang der Basis
+            let v = factors.reduce((acc, curr) => acc + Math.log(curr), 0) * torsion; // Torsion in der Faser
+
+            // Toroidale Einbettung
+            let x = (baseRad + 50 * Math.cos(v)) * Math.cos(u);
+            let y = (baseRad + 50 * Math.cos(v)) * Math.sin(u);
+            let z = 50 * Math.sin(v);
+
+            elements.push({ x, y, z, val: i, isPrime: isP, factors });
+        }
+    }
+
+    function render() {
+        canvas.width = window.innerWidth - 320;
+        canvas.height = window.innerHeight;
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+
+        const projected = elements.map(e => {
+            let x = e.x, y = e.y, z = e.z;
+            let cY = Math.cos(angleY), sY = Math.sin(angleY);
+            let x1 = x * cY - z * sY;
+            let z1 = x * sY + z * cY;
+            let cX = Math.cos(angleX), sX = Math.sin(angleX);
+            let y2 = y * cX - z1 * sX;
+            let z2 = y * sX + z1 * cX;
+
+            const p = 1200 / (1200 + z2);
+            return { ...e, sx: x1 * p * zoom + cx, sy: y2 * p * zoom + cy, sz: z2, scale: p };
+        }).sort((a, b) => b.sz - a.sz);
+
+        projected.forEach(e => {
+            if (e.scale < 0) return;
+            
+            ctx.globalAlpha = e.isPrime ? 1 : 0.2;
+            ctx.fillStyle = e.isPrime ? '#7000ff' : '#2a2a4a';
+            
+            if (e.isPrime) {
+                ctx.shadowBlur = 10 * e.scale;
+                ctx.shadowColor = '#7000ff';
+            }
+
+            ctx.beginPath();
+            ctx.arc(e.sx, e.sy, (e.isPrime ? 3 : 1.5) * e.scale * zoom, 0, 7);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            e.lastSX = e.sx; e.lastSY = e.sy;
+        });
+        requestAnimationFrame(render);
+    }
+
+    let drag = false, lx, ly;
+    canvas.onmousedown = (e) => { drag = true; lx = e.clientX; ly = e.clientY; };
+    window.onmouseup = () => drag = false;
+    window.onmousemove = (e) => {
+        if (drag) {
+            angleY += (e.clientX - lx) * 0.005;
+            angleX += (e.clientY - ly) * 0.005;
+            lx = e.clientX; ly = e.clientY;
+        }
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+        let found = elements.find(el => Math.abs(el.lastSX - mx) < 10 && Math.abs(el.lastSY - my) < 10);
+        if (found) {
+            hud.style.display = 'block';
+            hud.style.left = (e.clientX + 20) + 'px';
+            hud.style.top = (e.clientY - 20) + 'px';
+            hud.innerHTML = `<span class="prime">VALUE: ${found.val}</span><br>Fiber Position: ${found.factors.length}<br>Factor DNA: ${found.factors.join(' ⊗ ')}`;
+        } else hud.style.display = 'none';
+    };
+
+    canvas.onwheel = (e) => { e.preventDefault(); zoom *= (e.deltaY > 0 ? 0.9 : 1.1); };
+    document.querySelectorAll('input').forEach(i => i.oninput = () => { generate(); document.getElementById('nVal').innerText = document.getElementById('nRange').value; });
+
+    generate();
+    render();
+</script>
+</body>
+</html>
