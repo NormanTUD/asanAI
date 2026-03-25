@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Manifold Liquify - Residual Stream & Diffeomorphisms</title>
+    <style>
+        body { margin: 0; background: #01050a; overflow: hidden; font-family: 'Courier New', monospace; }
+        #ui { position: absolute; top: 20px; left: 20px; z-index: 100; color: #4ae0c4; pointer-events: none; }
+        .card { background: rgba(0, 15, 30, 0.85); padding: 15px; border-radius: 8px; border: 1px solid #4ae0c4; width: 320px; pointer-events: auto; box-shadow: 0 0 20px rgba(74, 224, 196, 0.2); }
+        h1 { font-size: 1.1em; margin: 0; letter-spacing: 1px; }
+        .hint { font-size: 0.75em; color: #8abac8; margin-top: 8px; }
+    </style>
+</head>
+<body>
+
+<div id="ui">
+    <div class="card">
+        <h1>Diffeomorphic Manifold Stack</h1>
+        <div class="hint">
+            • <b>Rotate:</b> Left Click & Drag<br>
+            • <b>Zoom:</b> Scroll<br>
+            • <b>Warp:</b> Move Mouse over Layers<br>
+            • <b>Impulse:</b> The "Electricity" is the Residual Stream.
+        </div>
+    </div>
+</div>
+
+<script type="importmap">
+    { "imports": { 
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    } }
+</script>
+
+<script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // Environment
+    scene.fog = new THREE.FogExp2(0x01050a, 0.02);
+    const ambientLight = new THREE.AmbientLight(0x4080ff, 0.5);
+    scene.add(ambientLight);
+
+    // Tokens / Base Manifold
+    const tokens = ["The", "math", "is", "the", "key", "to", "freedom"];
+    const numLayers = 5;
+    const layerSpacing = 5;
+    const gridSize = 3;
+    const gridRes = 15;
+
+    const layers = [];
+    const kelpLines = [];
+
+    // Create Layers as "Liquify" Grids
+    for (let l = 0; l < numLayers; l++) {
+        const y = l * layerSpacing;
+        
+        // Grid Geometry
+        const geometry = new THREE.PlaneGeometry(gridSize * tokens.length, gridSize * 2, gridRes * tokens.length, gridRes);
+        geometry.rotateX(-Math.PI / 2);
+        
+        const material = new THREE.MeshPhongMaterial({ 
+            color: 0x3dd4b0, 
+            wireframe: true, 
+            transparent: true, 
+            opacity: 0.3,
+            emissive: 0x112211
+        });
+
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.y = y;
+        scene.add(mesh);
+        
+        layers.push({
+            mesh: mesh,
+            originalPositions: geometry.attributes.position.array.slice(),
+            y: y
+        });
+
+        // Layer Label
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#4ae0c4';
+        ctx.font = '40px monospace';
+        ctx.fillText(`LAYER ${l}`, 10, 50);
+        const tex = new THREE.CanvasTexture(canvas);
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: tex}));
+        sprite.position.set(-15, y, 0);
+        sprite.scale.set(3, 1.5, 1);
+        scene.add(sprite);
+    }
+
+    // Create Kelp & Residual Stream Signals
+    const signals = [];
+    tokens.forEach((text, i) => {
+        const x = (i - tokens.length / 2) * gridSize + 1.5;
+        
+        // Root Label
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '50px bold monospace';
+        ctx.fillText(text.toUpperCase(), 10, 50);
+        const tex = new THREE.CanvasTexture(canvas);
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: tex}));
+        sprite.position.set(x, -2, 0);
+        sprite.scale.set(2, 1, 1);
+        scene.add(sprite);
+
+        // Vertical "Residual Stream" path
+        const points = [];
+        for(let j=0; j<=numLayers*10; j++) points.push(new THREE.Vector3(x, j*0.5, 0));
+        const curve = new THREE.CatmullRomCurve3(points);
+        const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.02, 8, false);
+        const tubeMat = new THREE.MeshBasicMaterial({ color: 0x4ae0c4, transparent: true, opacity: 0.2 });
+        const tube = new THREE.Mesh(tubeGeo, tubeMat);
+        scene.add(tube);
+
+        // Electricity / Signal Pulse
+        const signalGeo = new THREE.SphereGeometry(0.1, 8, 8);
+        const signalMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const signal = new THREE.Mesh(signalGeo, signalMat);
+        scene.add(signal);
+        
+        signals.push({
+            mesh: signal,
+            x: x,
+            offset: Math.random() * 10
+        });
+    });
+
+    camera.position.set(15, 15, 25);
+
+    let mouse = new THREE.Vector2();
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    function animate(time) {
+        requestAnimationFrame(animate);
+        const t = time * 0.001;
+
+        // Liquify Effect: Warp the grid based on mouse (Attention focus)
+        layers.forEach((layer, lIdx) => {
+            const posAttr = layer.mesh.geometry.attributes.position;
+            const arr = posAttr.array;
+            const orig = layer.originalPositions;
+
+            // Simple raycast plane approximation for mouse interaction
+            const warpX = mouse.x * 15;
+            const warpZ = -mouse.y * 10;
+
+            for (let i = 0; i < arr.length; i += 3) {
+                const vx = orig[i] + layer.mesh.position.x;
+                const vz = orig[i+2] + layer.mesh.position.z;
+
+                const dx = vx - warpX;
+                const dz = vz - warpZ;
+                const dist = Math.sqrt(dx*dx + dz*dz);
+                const force = Math.exp(-dist * 0.5) * 1.2;
+
+                // Warp the grid (Diffeomorphism)
+                arr[i] = orig[i] + dx * force;
+                arr[i+2] = orig[i+2] + dz * force;
+                arr[i+1] = orig[i+1] + Math.sin(t + dist) * 0.1 * force;
+            }
+            posAttr.needsUpdate = true;
+        });
+
+        // Residual Stream Electricity Flow
+        signals.forEach(s => {
+            const speed = 0.05;
+            const pathY = ((t * 5 + s.offset) % (numLayers * layerSpacing));
+            s.mesh.position.set(s.x, pathY, 0);
+            s.mesh.scale.setScalar(1 + Math.sin(t * 10) * 0.2);
+        });
+
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    animate(0);
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+</script>
+</body>
+</html>
