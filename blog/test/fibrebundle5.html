@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Topological Manifold Lab - v9</title>
+    <style>
+        body { margin: 0; background: #000205; overflow: hidden; font-family: 'Consolas', monospace; }
+        #ui { position: absolute; top: 20px; left: 20px; z-index: 100; color: #00ffcc; pointer-events: none; }
+        .card { 
+            background: rgba(0, 10, 25, 0.9); 
+            padding: 18px; border: 1px solid #00ffcc; 
+            width: 380px; pointer-events: auto; 
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.2);
+            border-radius: 4px;
+        }
+        h1 { font-size: 1.1em; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #00ffcc; padding-bottom: 5px; }
+        .controls { font-size: 0.85em; color: #fff; line-height: 1.6; }
+        b { color: #00ffcc; }
+        .key { background: #333; padding: 1px 4px; border-radius: 3px; font-size: 0.9em; border: 1px solid #555; }
+    </style>
+</head>
+<body>
+
+<div id="ui">
+    <div class="card">
+        <h1>Topological Sculptor v9</h1>
+        <div class="controls">
+            <b>"The cat sits on the mat"</b><br><br>
+            • <span class="key">L-Klick</span>: <b>Expansion</b> (Raum dehnen)<br>
+            • <span class="key">R-Klick</span>: <b>Kompression</b> (Raum stauchen)<br>
+            • <span class="key">Shift + Klick</span>: <b>Vortex</b> (Torus-Twist/Rotation)<br>
+            • <span class="key">Alt + Klick</span>: <b>Reset</b> Layer-Geometrie<br>
+            <br>
+            <i>Kaskade: Verformungen vererben sich nach oben.</i>
+        </div>
+    </div>
+</div>
+
+<script type="importmap">
+    { "imports": { 
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    } }
+</script>
+
+<script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // Lighting
+    const light = new THREE.PointLight(0x00ffcc, 1000, 100);
+    light.position.set(10, 40, 10);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0x001122, 1.8));
+
+    const tokens = ["The", "cat", "sits", "on", "the", "mat"];
+    const numLayers = 6;
+    const layerSpacing = 5.5;
+    const layerObjects = [];
+    const layerDeformations = Array(numLayers).fill(null).map(() => []);
+
+    // 1. Layers
+    for (let l = 0; l < numLayers; l++) {
+        const y = l * layerSpacing - 12;
+        const geo = new THREE.PlaneGeometry(38, 22, 60, 40);
+        geo.rotateX(-Math.PI / 2);
+        const mat = new THREE.MeshPhongMaterial({ 
+            color: 0x00aaff, wireframe: true, transparent: true, opacity: 0.15, emissive: 0x002244 
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.y = y;
+        mesh.userData = { lIdx: l };
+        scene.add(mesh);
+        layerObjects.push({ mesh, origPos: geo.attributes.position.array.slice(), lIdx: l });
+    }
+
+    // 2. Kelp
+    const kelps = [];
+    tokens.forEach((text, i) => {
+        const x = (i - tokens.length / 2) * 6.5 + 3.25;
+        const mat = new THREE.MeshStandardMaterial({ color: 0x00ff66, emissive: 0x003311, roughness: 0.3 });
+        const points = [];
+        for(let j=0; j<=50; j++) points.push(new THREE.Vector3(x, j*0.65 - 13, 0));
+        
+        const mesh = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points), 64, 0.18, 8, false), mat);
+        scene.add(mesh);
+
+        // Text
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 256; canvas.height = 100;
+        ctx.fillStyle = '#00ffcc'; ctx.font = 'bold 48px Courier';
+        ctx.textAlign = 'center'; ctx.fillText(text, 128, 60);
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(canvas)}));
+        sprite.position.set(x, -14.5, 0);
+        sprite.scale.set(4, 1.5, 1);
+        scene.add(sprite);
+
+        kelps.push({ mesh, origPoints: points.map(p => p.clone()) });
+    });
+
+    // Raycaster for Interaction
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    const applyDeformation = (e) => {
+        e.preventDefault();
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        
+        const hits = raycaster.intersectObjects(layerObjects.map(o => o.mesh));
+        if(hits.length > 0) {
+            const hit = hits[0];
+            const lIdx = hit.object.userData.lIdx;
+
+            if (e.altKey) {
+                // RESET LAYER
+                layerDeformations[lIdx] = [];
+                return;
+            }
+
+            let type = "stretch"; // Default
+            let strength = 0;
+
+            if (e.shiftKey) {
+                type = "vortex";
+                strength = 1.5;
+            } else {
+                strength = e.button === 0 ? 3.5 : -3.5;
+            }
+
+            // Cascade upward
+            for(let i = lIdx; i < numLayers; i++) {
+                layerDeformations[i].push({
+                    x: hit.point.x,
+                    z: hit.point.z,
+                    s: strength / (1 + (i - lIdx) * 0.3),
+                    type: type
+                });
+            }
+        }
+    };
+
+    window.addEventListener('mousedown', applyDeformation);
+    window.addEventListener('contextmenu', e => e.preventDefault());
+
+    camera.position.set(35, 15, 45);
+    controls.target.set(0, 0, 0);
+
+    function animate(time) {
+        requestAnimationFrame(animate);
+        const t = time * 0.001;
+
+        // Warp Layers
+        layerObjects.forEach(layer => {
+            const attr = layer.mesh.geometry.attributes.position;
+            const arr = attr.array;
+            const orig = layer.origPos;
+            const defs = layerDeformations[layer.lIdx];
+
+            for (let i = 0; i < arr.length; i += 3) {
+                let dx_acc = 0, dz_acc = 0, dy_acc = 0;
+                
+                defs.forEach(d => {
+                    const dx = orig[i] - d.x;
+                    const dz = orig[i+2] - d.z;
+                    const distSq = dx*dx + dz*dz;
+                    const influence = Math.exp(-distSq / 25);
+                    
+                    if (d.type === "vortex") {
+                        // Rotation um das Zentrum der Deformation
+                        const angle = d.s * influence;
+                        dx_acc += (dx * Math.cos(angle) - dz * Math.sin(angle)) - dx;
+                        dz_acc += (dx * Math.sin(angle) + dz * Math.cos(angle)) - dz;
+                    } else {
+                        // Standard Expansion / Kompression
+                        dx_acc += dx * influence * d.s * 0.15;
+                        dz_acc += dz * influence * d.s * 0.15;
+                        dy_acc += influence * d.s * 0.8;
+                    }
+                });
+                
+                arr[i] = orig[i] + dx_acc;
+                arr[i+1] = orig[i+1] + dy_acc + Math.sin(t + i*0.02) * 0.05;
+                arr[i+2] = orig[i+2] + dz_acc;
+            }
+            attr.needsUpdate = true;
+        });
+
+        // Warp Kelp
+        kelps.forEach((k, idx) => {
+            const path = k.origPoints.map((p, j) => {
+                const up = p.clone();
+                const lIdx = Math.floor((p.y + 13) / layerSpacing);
+                if(lIdx >= 0 && lIdx < numLayers) {
+                    layerDeformations[lIdx].forEach(d => {
+                        const dx = up.x - d.x;
+                        const dz = up.z - d.z;
+                        const distSq = dx*dx + dz*dz;
+                        const influence = Math.exp(-distSq / 20);
+                        
+                        if (d.type === "vortex") {
+                            const angle = d.s * influence * (j/50);
+                            const oldX = up.x - d.x;
+                            const oldZ = up.z - d.z;
+                            up.x = d.x + (oldX * Math.cos(angle) - oldZ * Math.sin(angle));
+                            up.z = d.z + (oldX * Math.sin(angle) + oldZ * Math.cos(angle));
+                        } else {
+                            up.x += dx * influence * d.s * 0.12;
+                            up.z += dz * influence * d.s * 0.12;
+                        }
+                    });
+                }
+                up.x += Math.sin(t + idx) * 0.05;
+                return up;
+            });
+            k.mesh.geometry.dispose();
+            k.mesh.geometry = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(path), 64, 0.2, 8, false);
+        });
+
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate(0);
+</script>
+</body>
+</html>
