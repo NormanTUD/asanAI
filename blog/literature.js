@@ -1,4 +1,10 @@
 window.bibData = {
+	"radiationlosses": {
+		author: "F. P. Kapron, D. B. Keck, R. D. Maurer",
+		title: "Radiation Losses in Glass Optical Waveguides",
+		year: 1970,
+		url: "https://pubs.aip.org/aip/apl/article-abstract/17/10/423/42220/RADIATION-LOSSES-IN-GLASS-OPTICAL-WAVEGUIDES?redirectedFrom=fulltext"
+	},
 	"semiconductor": {
 		url: "https://www.eletrica.ufpr.br/mehl/materiais/documentos/PhysRev.74.230.pdf",
 		title: "The Transistor, A Semi-Conductor Triode",
