@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Category Theory — The Algebra of Everything</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#06060f;--card:#0e0e20;--accent:#6e56cf;--accent2:#f76cc6;--accent3:#38bdf8;--text:#d8d8f0;--dim:#777}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden}
+.hero{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+#heroC{position:absolute;inset:0;z-index:0}
+.hero-content{z-index:1;text-align:center;padding:2rem}
+h1{font-size:clamp(2.2rem,7vw,5rem);font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+.sub{color:var(--dim);font-size:clamp(1rem,2.5vw,1.4rem);max-width:600px;margin:1rem auto 2rem}
+.btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;padding:.7rem 2rem;border-radius:10px;cursor:pointer;font-size:1.05rem;font-weight:700;transition:.2s;display:inline-block;text-decoration:none}
+.btn:hover{transform:scale(1.05);box-shadow:0 0 30px #6e56cf55}
+section{max-width:1000px;margin:0 auto;padding:4rem 1.5rem}
+h2{font-size:1.9rem;margin-bottom:.5rem;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+h3{color:var(--accent3);margin:1.5rem 0 .5rem;font-size:1.15rem}
+p{line-height:1.8;color:var(--dim);margin-bottom:1rem}
+p strong,p b{color:var(--text)}
+.note{background:var(--card);border-left:3px solid var(--accent);padding:1rem 1.5rem;border-radius:0 8px 8px 0;margin:1.5rem 0}
+.box{background:var(--card);border-radius:14px;padding:1.5rem;margin:2rem 0;border:1px solid #fff1}
+canvas{border-radius:10px;display:block}
+.row{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;margin:.8rem 0}
+.row label{color:var(--text);font-size:.9rem;min-width:80px}
+.row select,.row input[type=range]{accent-color:var(--accent)}
+.row select{background:var(--bg);color:var(--text);border:1px solid #fff2;padding:.3rem .6rem;border-radius:6px}
+.val{color:var(--accent2);font-weight:700;min-width:30px}
+.tag{display:inline-block;background:#fff1;padding:.2rem .7rem;border-radius:12px;font-size:.8rem;color:var(--accent3);margin:.2rem}
+.insight{background:linear-gradient(135deg,#1a1040,#0e0e20);border:1px solid var(--accent2);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.insight::before{content:'💡 '}
+.toc{display:flex;flex-wrap:wrap;gap:.7rem;margin:1.5rem 0}
+.toc a{background:var(--card);padding:.45rem 1.1rem;border-radius:20px;color:var(--accent);text-decoration:none;border:1px solid #fff1;font-size:.95rem;transition:.2s}
+.toc a:hover{background:var(--accent);color:#fff}
+.small{font-size:.85rem;color:#555}
+@media(max-width:600px){.box{padding:1rem}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<canvas id="heroC"></canvas>
+<div class="hero-content">
+<h1>Category Theory</h1>
+<p class="sub">Mathematics discovered that everything is arrows.<br>Here's what that means for you.</p>
+<a class="btn" href="#start">Begin →</a>
+</div>
+</div>
+
+<section id="start">
+<h2>The Journey</h2>
+<p>Eight ideas. Each builds on the last. Each changes how you see <strong>everything</strong>.</p>
+<div class="toc">
+<a href="#s1">1. Objects & Arrows</a>
+<a href="#s2">2. Composition</a>
+<a href="#s3">3. Isomorphism</a>
+<a href="#s4">4. Functors</a>
+<a href="#s5">5. Natural Transformations</a>
+<a href="#s6">6. Products & Coproducts</a>
+<a href="#s7">7. Yoneda Lemma</a>
+<a href="#s8">8. Adjunctions</a>
+</div>
+</section>
+
+<!-- ====== 1 ====== -->
+<section id="s1">
+<h2>1. Objects & Arrows</h2>
+<p>Forget what things <em>are</em>. A category has <strong>objects</strong> (dots) and <strong>morphisms</strong> (arrows between dots). That's it. The objects could be numbers, types, sets, people, ideas — it doesn't matter. All that matters is <strong>what connects to what</strong>.</p>
+<div class="box">
+<h3>🎮 Play: Build a Category</h3>
+<p class="small">Click empty space to add objects. Drag from one object to another to create an arrow. Right-click to delete.</p>
+<canvas id="catC" width="900" height="400" style="width:100%;background:#0a0a18;cursor:crosshair"></canvas>
+<div class="row"><span class="small" id="catInfo">Objects: 0 | Arrows: 0</span></div>
+</div>
+<div class="insight"><strong>Key insight:</strong> In category theory, objects have no internal structure. An object is <em>entirely</em> defined by its arrows. You are your relationships.</div>
+</section>
+
+<!-- ====== 2 ====== -->
+<section id="s2">
+<h2>2. Composition — The Only Rule</h2>
+<p>If there's an arrow f: A→B and an arrow g: B→C, there <strong>must</strong> be an arrow g∘f: A→C. That's composition. And every object must have an <strong>identity arrow</strong> id: A→A that does nothing. Composition must be <strong>associative</strong>: h∘(g∘f) = (h∘g)∘f.</p>
+<div class="box">
+<h3>🎮 Play: Composition Machine</h3>
+<p class="small">Click two composable arrows to see their composition appear automatically.</p>
+<canvas id="compC" width="900" height="380" style="width:100%;background:#0a0a18"></canvas>
+<div class="row">
+<button class="btn" onclick="resetComp()" style="padding:.4rem 1rem;font-size:.85rem">Reset</button>
+<span class="small" id="compInfo"></span>
+</div>
+</div>
+<div class="insight"><strong>Why it matters:</strong> Composition is why modular code works, why functions chain, why pipelines exist. Anything that composes reliably is categorical. <code>f.then(g).then(h)</code> — that's associativity.</div>
+</section>
+
+<!-- ====== 3 ====== -->
+<section id="s3">
+<h2>3. Isomorphism — "Same" Has a Meaning</h2>
+<p>Two objects A and B are <strong>isomorphic</strong> if there exist arrows f: A→B and g: B→A such that g∘f = id_A and f∘g = id_B. They're "the same" in every categorical sense — you can go back and forth without losing anything.</p>
+<div class="box">
+<h3>🎮 Play: Isomorphism Detector</h3>
+<p class="small">Two graphs. Drag nodes to rearrange. The system detects if they're isomorphic and shows the mapping.</p>
+<canvas id="isoC" width="900" height="380" style="width:100%;background:#0a0a18"></canvas>
+<div class="row">
+<button class="btn" onclick="newIso()" style="padding:.4rem 1rem;font-size:.85rem">New Pair</button>
+<span class="val" id="isoResult"></span>
+</div>
+</div>
+<div class="insight"><strong>Life lesson:</strong> A list and a linked list are isomorphic — different representations, same structure. Stop confusing the <em>representation</em> with the <em>thing</em>. Category theory teaches you to see through notation to structure.</div>
+</section>
+
+<!-- ====== 4 ====== -->
+<section id="s4">
+<h2>4. Functors — Structure-Preserving Maps</h2>
+<p>A <strong>functor</strong> F: C→D maps objects to objects and arrows to arrows, preserving composition: F(g∘f) = F(g)∘F(f) and F(id) = id. It's a <strong>perfect analogy</strong> between two worlds.</p>
+<div class="box">
+<h3>🎮 Play: Functor Machine</h3>
+<p class="small">Left = source category. Right = target. Define where each object maps. The functor auto-maps arrows. If it breaks a rule → red flash!</p>
+<canvas id="funcC" width="900" height="400" style="width:100%;background:#0a0a18"></canvas>
+<div class="row">
+<label>Map A→</label><select id="fmA" onchange="drawFunc()"><option>X</option><option>Y</option><option>Z</option></select>
+<label>Map B→</label><select id="fmB" onchange="drawFunc()"><option>Y</option><option>X</option><option>Z</option></select>
+<label>Map C→</label><select id="fmC" onchange="drawFunc()"><option>Z</option><option>X</option><option>Y</option></select>
+<span class="val" id="funcStatus">✓ Valid functor</span>
+</div>
+</div>
+<div class="insight"><strong>You already use functors:</strong> <code>Array.map(f)</code> is a functor. It takes a function between elements and lifts it to a function between arrays, preserving composition. <code>[1,2,3].map(f).map(g)</code> equals <code>[1,2,3].map(x => g(f(x)))</code>. That's the functor law.</div>
+</section>
+
+<!-- ====== 5 ====== -->
+<section id="s5">
+<h2>5. Natural Transformations — Morphisms Between Functors</h2>
+<p>If functors are analogies between worlds, a <strong>natural transformation</strong> is a way to <em>compare two analogies</em>. Given functors F,G: C→D, a natural transformation α: F⇒G assigns to each object A an arrow α_A: F(A)→G(A) such that everything commutes — the "naturality square."</p>
+<div class="box">
+<h3>🎮 Play: Naturality Square</h3>
+<p class="small">Watch two functors (blue & pink) applied to a morphism. The natural transformation (gold) makes the square commute. Drag the slider to morph between F and G.</p>
+<canvas id="natC" width="900" height="400" style="width:100%;background:#0a0a18"></canvas>
+<div class="row">
+<label>Morph t:</label>
+<input type="range" id="natT" min="0" max="100" value="0" style="flex:1">
+<span class="val" id="natTVal">0%</span>
+</div>
+</div>
+<div class="insight"><strong>In code:</strong> A natural transformation between two container types (say List→Maybe, taking the first element) must commute with <code>map</code>. <code>head(list.map(f)) == f(head(list))</code>. Naturality = "it doesn't matter if you transform before or after mapping."</div>
+</section>
+
+<!-- ====== 6 ====== -->
+<section id="s6">
+<h2>6. Products & Coproducts — Universal Constructions</h2>
+<p>The <strong>product</strong> A×B is the "best" object that projects to both A and B. The <strong>coproduct</strong> A+B is the "best" object that both A and B inject into. "Best" means: any other candidate factors through it uniquely. This is a <strong>universal property</strong>.</p>
+<div class="box">
+<h3>🎮 Play: Universal Property</h3>
+<p class="small">The product A×B sits at top. Any pretender C with maps to A and B must have a <em>unique</em> arrow to A×B. Drag C around — watch the unique arrow follow.</p>
+<canvas id="prodC" width="900" height="420" style="width:100%;background:#0a0a18"></canvas>
+<div class="row">
+<label>Show:</label>
+<select id="prodMode" onchange="drawProd()"><option value="product">Product (AND)</option><option value="coproduct">Coproduct (OR)</option></select>
+<span class="small">Drag the yellow node!</span>
+</div>
+</div>
+<div class="insight"><strong>Products are everywhere:</strong> In sets: cartesian product. In types: tuples/structs. In logic: AND. In topology: product spaces. The <em>same universal property</em> defines all of them. Coproducts: disjoint union, Either type, OR, tagged unions. Category theory reveals AND and OR as <em>dual</em> — flip all arrows.</div>
+</section>
+
+<!-- ====== 7 ====== -->
+<section id="s7">
+<h2>7. The Yoneda Lemma — You Are Your Relationships</h2>
+<p>The most profound result: an object A is <strong>completely determined</strong> by all the arrows into it (or out of it). The functor Hom(−, A) — which records, for every object X, all arrows X→A — captures <em>everything</em> about A. Two objects with the same hom-functor are isomorphic. <strong>An object <em>is</em> the totality of its relationships.</strong></p>
+<div class="box">
+<h3>🎮 Play: Yoneda Visualization</h3>
+<p class="small">An object in the center. Its hom-sets radiate outward. Toggle "remove object" — the hom-sets remain, and they still define it completely.</p>
+<canvas id="yonC" width="900" height="450" style="width:100%;background:#0a0a18"></canvas>
+<div class="row">
+<button class="btn" onclick="toggleYoneda()" style="padding:.4rem 1rem;font-size:.85rem" id="yonBtn">Remove the Object</button>
+<span class="val" id="yonInfo">The object exists</span>
+</div>
+</div>
+<div class="insight"><strong>This is philosophy made precise:</strong> You don't need to know what something "really is." Its identity is entirely determined by how it relates to everything else. Electrons, people, data types — defined by interactions, not essence. Yoneda proves it.</div>
+</section>
+
+<!-- ====== 8 ====== -->
+<section id="s8">
+<h2>8. Adjunctions — The Rosetta Stone</h2>
+<p>An <strong>adjunction</strong> L ⊣ R between categories C and D means: arrows L(A)→B in D correspond naturally to arrows A→R(B) in C. The left adjoint L is the "free" construction; the right adjoint R is the "forgetful" one. This is the deepest pattern in mathematics.</p>
+<div class="box">
+<h3>🎮 Play: Free ⊣ Forgetful</h3>
+<p class="small">Left world: sets (just dots). Right world: groups (dots with structure). "Free" adds structure. "Forgetful" strips it. Watch the correspondence.</p>
+<canvas id="adjC" width="900" height="420" style="width:100%;background:#0a0a18"></canvas>
+<div class="row">
+<button class="btn" onclick="adjAnimate()" style="padding:.4rem 1rem;font-size:.85rem" id="adjBtn">▶ Animate Adjunction</button>
+<button class="btn" onclick="adjReset()" style="padding:.4rem 1rem;font-size:.85rem;background:var(--card);border:1px solid #fff2">Reset</button>
+</div>
+</div>
+<div class="insight"><strong>Adjunctions are everywhere:</strong> Free/forgetful (algebra), currying (λ-calculus), ∃⊣pullback⊣∀ (logic), tensor⊣hom (linear algebra), discretize⊣forget (topology). Saunders Mac Lane said: <em>"Adjoint functors arise everywhere."</em></div>
+</section>
+
+<section>
+<div style="text-align:center;padding:2rem 0">
+<h2>Everything is arrows.</h2>
+<p style="font-size:1.15rem;color:var(--dim)">You now have the vocabulary to see the universal patterns hiding in code, logic, physics, and thought. Welcome to the most abstract — and most practical — branch of mathematics.</p>
+<div style="margin-top:2rem">
+<span class="tag">Mac Lane — Categories for the Working Mathematician</span>
+<span class="tag">Awodey — Category Theory (Oxford)</span>
+<span class="tag">Fong & Spivak — Seven Sketches in Compositionality</span>
+<span class="tag">Milewski — Category Theory for Programmers</span>
+</div>
+</div>
+</section>
+
+<script>
+// ===== HERO: animated arrow network =====
+(()=>{
+const c=document.getElementById('heroC'),x=c.getContext('2d');
+let W,H;function rs(){W=c.width=innerWidth;H=c.height=innerHeight}rs();onresize=rs;
+const nodes=Array.from({length:40},()=>({x:Math.random(),y:Math.random(),vx:(Math.random()-.5)*.0003,vy:(Math.random()-.5)*.0003}));
+function draw(){
+x.fillStyle='rgba(6,6,15,0.12)';x.fillRect(0,0,W,H);
+nodes.forEach(n=>{n.x+=n.vx;n.y+=n.vy;if(n.x<0||n.x>1)n.vx*=-1;if(n.y<0||n.y>1)n.vy*=-1});
+for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+const a=nodes[i],b=nodes[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+if(d<.15){
+x.beginPath();x.moveTo(a.x*W,a.y*H);x.lineTo(b.x*W,b.y*H);
+x.strokeStyle=`rgba(110,86,207,${(.15-d)/.15*.4})`;x.lineWidth=1;x.stroke();
+// arrowhead
+const mx=a.x*W+(b.x-a.x)*W*.6,my=a.y*H+(b.y-a.y)*H*.6;
+x.beginPath();x.arc(mx,my,2,0,Math.PI*2);x.fillStyle=`rgba(247,108,198,${(.15-d)/.15*.5})`;x.fill();
+}}
+nodes.forEach(n=>{x.beginPath();x.arc(n.x*W,n.y*H,3,0,Math.PI*2);x.fillStyle='#6e56cf';x.fill()});
+requestAnimationFrame(draw);
+}draw();
+})();
+
+// ===== UTILS =====
+function arrow(ctx,x1,y1,x2,y2,color='#6e56cf',w=2,headLen=10){
+const dx=x2-x1,dy=y2-y1,a=Math.atan2(dy,dx),l=Math.hypot(dx,dy);
+if(l<1)return;
+ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=color;ctx.lineWidth=w;ctx.stroke();
+ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-headLen*Math.cos(a-.35),y2-headLen*Math.sin(a-.35));
+ctx.lineTo(x2-headLen*Math.cos(a+.35),y2-headLen*Math.sin(a+.35));ctx.closePath();ctx.fillStyle=color;ctx.fill();
+}
+function disk(ctx,cx,cy,r,color,label,labelColor='#fff'){
+ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
+ctx.strokeStyle='#fff3';ctx.lineWidth=1;ctx.stroke();
+if(label){ctx.font='bold 14px sans-serif';ctx.fillStyle=labelColor;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,cx,cy);}
+}
+function curvedArrow(ctx,x1,y1,x2,y2,bend,color='#6e56cf',w=2){
+const mx=(x1+x2)/2+bend,my=(y1+y2)/2+bend;
+ctx.beginPath();ctx.moveTo(x1,y1);ctx.quadraticCurveTo(mx,my,x2,y2);ctx.strokeStyle=color;ctx.lineWidth=w;ctx.stroke();
+const t=.95,ix=(1-t)*(1-t)*x1+2*(1-t)*t*mx+t*t*x2,iy=(1-t)*(1-t)*y1+2*(1-t)*t*my+t*t*y2;
+const a=Math.atan2(y2-iy,x2-ix);
+ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-10*Math.cos(a-.35),y2-10*Math.sin(a-.35));ctx.lineTo(x2-10*Math.cos(a+.35),y2-10*Math.sin(a+.35));ctx.closePath();ctx.fillStyle=color;ctx.fill();
+}
+
+// ===== 1. CATEGORY PLAYGROUND =====
+(()=>{
+const c=document.getElementById('catC'),ctx=c.getContext('2d');
+let objs=[],arrs=[],dragging=null,dragFrom=null,nextId=0;
+const R=22,labels='ABCDEFGHIJKLMNOP';
+function near(x,y){return objs.find(o=>Math.hypot(o.x-x,o.y-y)<R)}
+function draw(){
+const W=c.width,H=c.height;ctx.clearRect(0,0,W,H);
+// identity loops
+objs.forEach(o=>{ctx.beginPath();ctx.arc(o.x,o.y-R-12,12,0,Math.PI*2);ctx.strokeStyle='#ffffff15';ctx.lineWidth=1;ctx.stroke();
+ctx.beginPath();ctx.moveTo(o.x+5,o.y-R-24);ctx.lineTo(o.x+9,o.y-R-20);ctx.lineTo(o.x+5,o.y-R-16);ctx.fillStyle='#ffffff15';ctx.fill();
+});
+arrs.forEach(a=>{
+const f=objs[a.from],t=objs[a.to];
+if(f&&t){const bend=a.from===a.to?-50:0;if(a.from===a.to){curvedArrow(ctx,f.x-R,f.y,f.x+R,f.y,-40,'#f76cc688');}else{arrow(ctx,f.x,f.y,t.x,t.y,'#f76cc6');}}
+});
+objs.forEach(o=>disk(ctx,o.x,o.y,R,'#1a1a3a',labels[o.id%labels.length],'#6e56cf'));
+if(dragFrom){ctx.beginPath();ctx.setLineDash([5,5]);ctx.moveTo(dragFrom.x,dragFrom.y);ctx.lineTo(dragFrom.mx,dragFrom.my);ctx.strokeStyle='#f76cc666';ctx.lineWidth=2;ctx.stroke();ctx.setLineDash([]);}
+document.getElementById('catInfo').textContent=`Objects: ${objs.length} | Arrows: ${arrs.length} (+ ${objs.length} identities)`;
+}
+draw();
+c.addEventListener('mousedown',e=>{
+const r=c.getBoundingClientRect(),mx=e.offsetX*(c.width/r.width),my=e.offsetY*(c.height/r.height);
+const hit=near(mx,my);
+if(e.button===2){if(hit){arrs=arrs.filter(a=>a.from!==hit.id&&a.to!==hit.id);objs=objs.filter(o=>o!==hit);}draw();return;}
+if(hit)dragFrom={obj:hit,x:hit.x,y:hit.y,mx:mx,my:my};
+else{objs.push({x:mx,y:my,id:nextId++});draw();}
+});
+c.addEventListener('mousemove',e=>{
+if(!dragFrom)return;const r=c.getBoundingClientRect();dragFrom.mx=e.offsetX*(c.width/r.width);dragFrom.my=e.offsetY*(c.height/r.height);draw();
+});
+c.addEventListener('mouseup',e=>{
+if(!dragFrom)return;const r=c.getBoundingClientRect(),mx=e.offsetX*(c.width/r.width),my=e.offsetY*(c.height/r.height);
+const hit=near(mx,my);
+if(hit&&hit!==dragFrom.obj){arrs.push({from:dragFrom.obj.id,to:hit.id});}
+else if(hit===dragFrom.obj&&Math.hypot(mx-dragFrom.x,my-dragFrom.y)>5){}
+else if(!hit&&Math.hypot(mx-dragFrom.x,my-dragFrom.y)<5){}
+dragFrom=null;draw();
+});
+c.addEventListener('contextmenu',e=>e.preventDefault());
+})();
+
+// ===== 2. COMPOSITION =====
+let compObjs,compArrs,compSelected=[];
+function resetComp(){
+compObjs=[{id:0,x:150,y:190,l:'A'},{id:1,x:380,y:100,l:'B'},{id:2,x:600,y:190,l:'C'},{id:3,x:380,y:310,l:'D'}];
+compArrs=[{f:0,t:1,l:'f'},{f:1,t:2,l:'g'},{f:0,t:3,l:'h'},{f:3,t:2,l:'k'}];
+compSelected=[];drawComp();
+}
+function drawComp(){
+const c=document.getElementById('compC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+compArrs.forEach((a,i)=>{
+const f=compObjs[a.f],t=compObjs[a.t];
+const sel=compSelected.includes(i);
+arrow(ctx,f.x,f.y,t.x,t.y,sel?'#ffcc00':a.comp?'#38bdf8':'#f76cc6',sel?3:2);
+const mx=(f.x+t.x)/2,my=(f.y+t.y)/2;
+ctx.font='bold 14px sans-serif';ctx.fillStyle=sel?'#ffcc00':a.comp?'#38bdf8':'#f76cc6';ctx.textAlign='center';
+ctx.fillText(a.l,mx+(t.y-f.y)*.1,my-(t.x-f.x)*.1);
+});
+compObjs.forEach(o=>disk(ctx,o.x,o.y,22,'#1a1a3a',o.l,'#6e56cf'));
+document.getElementById('compInfo').textContent=compSelected.length===1?'Click a second composable arrow':'Click two arrows that share an endpoint to compose';
+}
+(()=>{
+const c=document.getElementById('compC');
+c.addEventListener('click',e=>{
+const r=c.getBoundingClientRect(),mx=e.offsetX*(c.width/r.width),my=e.offsetY*(c.height/r.height);
+// find nearest arrow
+let best=-1,bestD=40;
+compArrs.forEach((a,i)=>{
+const f=compObjs[a.f],t=compObjs[a.t];
+const cx=(f.x+t.x)/2,cy=(f.y+t.y)/2;
+const d=Math.hypot(mx-cx,my-cy);if(d<bestD){bestD=d;best=i;}
+});
+if(best<0)return;
+if(compSelected.length===0){compSelected=[best];}
+else if(compSelected.length===1){
+const a1=compArrs[compSelected[0]],a2=compArrs[best];
+if(a1.t===a2.f){// composable
+const l=a2.l+'∘'+a1.l;
+if(!compArrs.find(a=>a.f===a1.f&&a.t===a2.t&&a.comp))
+compArrs.push({f:a1.f,t:a2.t,l,comp:true});
+compSelected=[];
+}else if(a2.t===a1.f){
+const l=a1.l+'∘'+a2.l;
+if(!compArrs.find(a=>a.f===a2.f&&a.t===a1.t&&a.comp))
+compArrs.push({f:a2.f,t:a1.t,l,comp:true});
+compSelected=[];
+}else{compSelected=[best];}
+}
+drawComp();
+});
+})();
+resetComp();
+
+// ===== 3. ISOMORPHISM =====
+let isoGraphs={left:[],right:[],leftE:[],rightE:[],mapping:null,isIso:false};
+function newIso(){
+const makeGraph=(cx,cy,n,shuffle)=>{
+const nodes=[],edges=[];
+for(let i=0;i<n;i++){const a=2*Math.PI*i/n-Math.PI/2;nodes.push({x:cx+80*Math.cos(a),y:cy+80*Math.sin(a),id:i});}
+// random edges
+for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)if(Math.random()<0.45)edges.push([i,j]);
+if(shuffle){// shuffle node positions but keep same edges
+const perm=nodes.map((_,i)=>i);for(let i=perm.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[perm[i],perm[j]]=[perm[j],perm[i]];}
+const orig=nodes.map(n=>({...n}));
+perm.forEach((p,i)=>{nodes[i].x=orig[p].x+cx-cx;nodes[i].y=orig[p].y;});
+return{nodes,edges,perm};
+}
+return{nodes,edges,perm:null};
+};
+const n=4+Math.floor(Math.random()*3);
+const doIso=Math.random()>0.35;
+const left=makeGraph(200,200,n,false);
+if(doIso){
+const right=makeGraph(650,200,n,false);
+// same edges but permuted
+const perm=right.nodes.map((_,i)=>i);
+for(let i=perm.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[perm[i],perm[j]]=[perm[j],perm[i]];}
+right.edges.length=0;
+left.edges.forEach(([a,b])=>right.edges.push([perm[a],perm[b]]));
+isoGraphs={left:left.nodes,right:right.nodes,leftE:left.edges,rightE:right.edges,mapping:perm,isIso:true};
+}else{
+const right=makeGraph(650,200,n,false);
+// add/remove an edge to break iso
+if(right.edges.length>0)right.edges.pop();else right.edges.push([0,1]);
+isoGraphs={left:left.nodes,right:right.nodes,leftE:left.edges,rightE:right.edges,mapping:null,isIso:false};
+}
+drawIso();
+}
+function drawIso(){
+const c=document.getElementById('isoC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+const labels='ABCDEFGHIJKLMNOP',labels2='XYZWVUTSRQPONMLK';
+// divider
+ctx.beginPath();ctx.moveTo(W/2,20);ctx.lineTo(W/2,H-20);ctx.strokeStyle='#fff1';ctx.lineWidth=1;ctx.setLineDash([5,5]);ctx.stroke();ctx.setLineDash([]);
+ctx.font='13px sans-serif';ctx.fillStyle='#444';ctx.textAlign='center';
+ctx.fillText('Category C',200,30);ctx.fillText('Category D',650,30);
+// edges
+isoGraphs.leftE.forEach(([a,b])=>{const na=isoGraphs.left[a],nb=isoGraphs.left[b];
+ctx.beginPath();ctx.moveTo(na.x,na.y);ctx.lineTo(nb.x,nb.y);ctx.strokeStyle='#6e56cf66';ctx.lineWidth=2;ctx.stroke();});
+isoGraphs.rightE.forEach(([a,b])=>{const na=isoGraphs.right[a],nb=isoGraphs.right[b];
+ctx.beginPath();ctx.moveTo(na.x,na.y);ctx.lineTo(nb.x,nb.y);ctx.strokeStyle='#f76cc666';ctx.lineWidth=2;ctx.stroke();});
+// mapping lines
+if(isoGraphs.isIso&&isoGraphs.mapping){
+isoGraphs.mapping.forEach((to,from)=>{
+const a=isoGraphs.left[from],b=isoGraphs.right[to];
+ctx.beginPath();ctx.setLineDash([4,4]);ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle='#ffcc0033';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
+});
+}
+// nodes
+isoGraphs.left.forEach((n,i)=>disk(ctx,n.x,n.y,18,'#1a1a3a',labels[i],'#6e56cf'));
+isoGraphs.right.forEach((n,i)=>disk(ctx,n.x,n.y,18,'#1a1a3a',labels2[i],'#f76cc6'));
+const res=document.getElementById('isoResult');
+res.textContent=isoGraphs.isIso?'✓ ISOMORPHIC — same structure, different labels':'✗ NOT isomorphic — structure differs';
+res.style.color=isoGraphs.isIso?'#38bdf8':'#ff6666';
+}
+newIso();
+
+// ===== 4. FUNCTOR MACHINE =====
+function drawFunc(){
+const c=document.getElementById('funcC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+// source category: A→B→C
+const src=[{l:'A',x:100,y:120},{l:'B',x:250,y:280},{l:'C',x:400,y:120}];
+const srcE=[{f:0,t:1,l:'f'},{f:1,t:2,l:'g'},{f:0,t:2,l:'g∘f'}];
+// target category: X→Y→Z
+const tgt=[{l:'X',x:560,y:120},{l:'Y',x:710,y:280},{l:'Z',x:860,y:120}];
+const tgtE=[{f:0,t:1,l:'p'},{f:1,t:2,l:'q'},{f:0,t:2,l:'q∘p'}];
+// labels
+ctx.font='bold 14px sans-serif';ctx.textAlign='center';
+ctx.fillStyle='#6e56cf';ctx.fillText('Source Category C',250,40);
+ctx.fillStyle='#f76cc6';ctx.fillText('Target Category D',710,40);
+// divider
+ctx.beginPath();ctx.moveTo(W/2,20);ctx.lineTo(W/2,H-20);ctx.strokeStyle='#fff1';ctx.lineWidth=1;ctx.setLineDash([5,5]);ctx.stroke();ctx.setLineDash([]);
+// draw source
+srcE.forEach(e=>{const a=src[e.f],b=src[e.t];
+arrow(ctx,a.x,a.y,b.x,b.y,e.l==='g∘f'?'#38bdf866':'#6e56cf',2);
+const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;ctx.font='13px sans-serif';ctx.fillStyle=e.l==='g∘f'?'#38bdf8':'#6e56cf';ctx.fillText(e.l,mx+(b.y-a.y)*.08,my-(b.x-a.x)*.08);
+});
+src.forEach(o=>disk(ctx,o.x,o.y,20,'#1a1a3a',o.l,'#6e56cf'));
+// draw target
+tgtE.forEach(e=>{const a=tgt[e.f],b=tgt[e.t];
+arrow(ctx,a.x,a.y,b.x,b.y,e.l==='q∘p'?'#38bdf866':'#f76cc6',2);
+const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;ctx.font='13px sans-serif';ctx.fillStyle=e.l==='q∘p'?'#38bdf8':'#f76cc6';ctx.fillText(e.l,mx+(b.y-a.y)*.08,my-(b.x-a.x)*.08);
+});
+tgt.forEach(o=>disk(ctx,o.x,o.y,20,'#1a1a3a',o.l,'#f76cc6'));
+// functor mapping
+const maps=['ABC'.indexOf('A'),'ABC'.indexOf('B'),'ABC'.indexOf('C')];
+const selA=document.getElementById('fmA').selectedIndex;
+const selB=document.getElementById('fmB').selectedIndex;
+const selC=document.getElementById('fmC').selectedIndex;
+const fm=[selA,selB,selC];
+// draw mapping arrows
+fm.forEach((to,from)=>{
+ctx.beginPath();ctx.setLineDash([6,4]);
+ctx.moveTo(src[from].x+22,src[from].y);ctx.lineTo(tgt[to].x-22,tgt[to].y);
+ctx.strokeStyle='#ffcc0066';ctx.lineWidth=1.5;ctx.stroke();ctx.setLineDash([]);
+});
+// check functor laws: F(g∘f) = F(g)∘F(f)
+// f: 0→1, g: 1→2, g∘f: 0→2
+// F(f): fm[0]→fm[1], F(g): fm[1]→fm[2], F(g∘f) should be fm[0]→fm[2]
+// check: does target have arrow fm[0]→fm[1]? fm[1]→fm[2]? fm[0]→fm[2]?
+const hasArrow=(a,b)=>tgtE.some(e=>e.f===a&&e.t===b)||a===b;
+const valid=hasArrow(fm[0],fm[1])&&hasArrow(fm[1],fm[2])&&hasArrow(fm[0],fm[2]);
+const st=document.getElementById('funcStatus');
+if(valid){st.textContent='✓ Valid functor — composition preserved!';st.style.color='#38bdf8';}
+else{st.textContent='✗ BREAKS functor law! Composition not preserved.';st.style.color='#ff6666';
+// flash
+ctx.fillStyle='rgba(255,50,50,0.08)';ctx.fillRect(0,0,W,H);
+}
+// label
+ctx.font='bold 18px sans-serif';ctx.fillStyle='#ffcc00';ctx.textAlign='center';ctx.fillText('F',W/2,H/2-10);
+}
+drawFunc();
+
+// ===== 5. NATURAL TRANSFORMATION =====
+(()=>{
+const c=document.getElementById('natC'),ctx=c.getContext('2d');
+const sl=document.getElementById('natT'),vl=document.getElementById('natTVal');
+function draw(){
+const W=c.width,H=c.height,t=sl.value/100;
+vl.textContent=Math.round(t*100)+'%';
+ctx.clearRect(0,0,W,H);
+// Two objects in source: A, B with arrow f: A→B
+const ax=200,ay=200,bx=700,by=200;
+// F(A), F(B) — top row
+const fay=100,fby=100;
+// G(A), G(B) — bottom row
+const gay=320,gby=320;
+// interpolated positions for animation
+const cay=fay+(gay-fay)*t, cby=fby+(gby-fby)*t;
+// labels
+ctx.font='bold 13px sans-serif';ctx.textAlign='center';
+ctx.fillStyle='#6e56cf';ctx.fillText('F(A)',ax,fay-30);ctx.fillText('F(B)',bx,fby-30);
+ctx.fillStyle='#f76cc6';ctx.fillText('G(A)',ax,gay+40);ctx.fillText('G(B)',bx,gby+40);
+// F arrow (top)
+arrow(ctx,ax+25,fay,bx-25,fby,'#6e56cf',2);
+ctx.fillStyle='#6e56cf';ctx.fillText('F(f)',450,fay-15);
+// G arrow (bottom)
+arrow(ctx,ax+25,gay,bx-25,gby,'#f76cc6',2);
+ctx.fillStyle='#f76cc6';ctx.fillText('G(f)',450,gay+25);
+// natural transformation arrows (vertical)
+arrow(ctx,ax,fay+22,ax,gay-22,'#ffcc00',2);
+ctx.fillStyle='#ffcc00';ctx.fillText('α_A',ax-30,(fay+gay)/2);
+arrow(ctx,bx,fby+22,bx,gby-22,'#ffcc00',2);
+ctx.fillText('α_B',bx+30,(fby+gby)/2);
+// animated dot showing commutativity
+// path 1: F(A) → F(B) → G(B) (right then down)
+// path 2: F(A) → G(A) → G(B) (down then right)
+const p1x=t<0.5?ax+(bx-ax)*(t*2):bx;
+const p1y=t<0.5?fay:fay+(gby-fby)*(t*2-1);
+const p2x=t<0.5?ax:ax+(bx-ax)*(t*2-1);
+const p2y=t<0.5?fay+(gay-fay)*(t*2):gay;
+ctx.beginPath();ctx.arc(p1x,p1y,6,0,Math.PI*2);ctx.fillStyle='#38bdf8';ctx.fill();
+ctx.beginPath();ctx.arc(p2x,p2y,6,0,Math.PI*2);ctx.fillStyle='#ff6ec7';ctx.fill();
+// nodes
+disk(ctx,ax,fay,20,'#1a1a3a','','#6e56cf');
+disk(ctx,bx,fby,20,'#1a1a3a','','#6e56cf');
+disk(ctx,ax,gay,20,'#1a1a3a','','#f76cc6');
+disk(ctx,bx,gby,20,'#1a1a3a','','#f76cc6');
+// commutative label
+ctx.font='bold 15px sans-serif';ctx.fillStyle='#38bdf8';ctx.textAlign='center';
+ctx.fillText('Naturality: α_B ∘ F(f) = G(f) ∘ α_A',450,H-20);
+ctx.fillStyle='#38bdf8';ctx.fillText('⬤ path 1: right then down',300,H-45);
+ctx.fillStyle='#ff6ec7';ctx.fillText('⬤ path 2: down then right',620,H-45);
+}
+sl.addEventListener('input',draw);draw();
+})();
+
+// ===== 6. PRODUCTS & COPRODUCTS =====
+let prodDrag=null,prodCx=450,prodCy=80;
+function drawProd(){
+const c=document.getElementById('prodC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+const mode=document.getElementById('prodMode').value;
+const isProd=mode==='product';
+const ax=250,ay=320,bx=650,by=320;
+const px=450,py=250;// product/coproduct
+const cx=prodCx,cy=prodCy;// pretender
+if(isProd){
+// product diagram: C at top, A×B in middle, A and B at bottom
+ctx.font='bold 13px sans-serif';ctx.textAlign='center';
+// arrows from product to A and B
+arrow(ctx,px-10,py+22,ax+10,ay-22,'#6e56cf',2);
+ctx.fillStyle='#6e56cf';ctx.fillText('π₁',330,290);
+arrow(ctx,px+10,py+22,bx-10,by-22,'#6e56cf',2);
+ctx.fillText('π₂',570,290);
+// arrows from C to A and B
+arrow(ctx,cx-10,cy+22,ax+10,ay-22,'#ffcc0088',1.5);
+ctx.fillStyle='#ffcc00';ctx.fillText('f',cx-60,(cy+ay)/2);
+arrow(ctx,cx+10,cy+22,bx-10,by-22,'#ffcc0088',1.5);
+ctx.fillText('g',cx+60,(cy+by)/2);
+// unique arrow C → A×B
+ctx.setLineDash([6,4]);
+arrow(ctx,cx,cy+22,px,py-22,'#38bdf8',2.5);
+ctx.setLineDash([]);
+ctx.fillStyle='#38bdf8';ctx.font='bold 14px sans-serif';
+ctx.fillText('∃! ⟨f,g⟩',(cx+px)/2-40,(cy+py)/2);
+disk(ctx,ax,ay,22,'#1a1a3a','A','#6e56cf');
+disk(ctx,bx,by,22,'#1a1a3a','B','#6e56cf');
+disk(ctx,px,py,22,'#1a1a3a','A×B','#f76cc6');
+disk(ctx,cx,cy,22,'#1a1a3a','C','#ffcc00');
+ctx.font='12px sans-serif';ctx.fillStyle='#38bdf8';ctx.fillText('The unique arrow ⟨f,g⟩ makes everything commute',450,H-15);
+}else{
+// coproduct: A and B at top, A+B in middle, C at bottom
+const ay2=100,by2=100,py2=200,cy2=prodCy+200;
+arrow(ctx,ax,ay2+22,px,py2-22,'#6e56cf',2);
+ctx.font='bold 13px sans-serif';ctx.fillStyle='#6e56cf';ctx.textAlign='center';ctx.fillText('ι₁',330,155);
+arrow(ctx,bx,by2+22,px,py2-22,'#6e56cf',2);
+ctx.fillText('ι₂',570,155);
+arrow(ctx,ax,ay2+22,cx,Math.min(cy2,H-30)-22,'#ffcc0088',1.5);
+ctx.fillStyle='#ffcc00';ctx.fillText('f',ax-50,(ay2+cy2)/2);
+arrow(ctx,bx,by2+22,cx,Math.min(cy2,H-30)-22,'#ffcc0088',1.5);
+ctx.fillText('g',bx+50,(by2+cy2)/2);
+ctx.setLineDash([6,4]);
+arrow(ctx,px,py2+22,cx,Math.min(cy2,H-30)-22,'#38bdf8',2.5);
+ctx.setLineDash([]);
+ctx.fillStyle='#38bdf8';ctx.font='bold 14px sans-serif';
+ctx.fillText('∃! [f,g]',(px+cx)/2+40,(py2+cy2)/2);
+disk(ctx,ax,ay2,22,'#1a1a3a','A','#6e56cf');
+disk(ctx,bx,by2,22,'#1a1a3a','B','#6e56cf');
+disk(ctx,px,py2,22,'#1a1a3a','A+B','#f76cc6');
+disk(ctx,cx,Math.min(cy2,H-30),22,'#1a1a3a','C','#ffcc00');
+ctx.font='12px sans-serif';ctx.fillStyle='#38bdf8';ctx.fillText('Coproduct is the DUAL — flip all arrows!',450,H-15);
+}
+}
+(()=>{
+const c=document.getElementById('prodC');
+c.addEventListener('mousedown',e=>{
+const r=c.getBoundingClientRect(),mx=e.offsetX*(c.width/r.width),my=e.offsetY*(c.height/r.height);
+if(Math.hypot(mx-prodCx,my-prodCy)<30)prodDrag=true;
+});
+c.addEventListener('mousemove',e=>{
+if(!prodDrag)return;
+const r=c.getBoundingClientRect();prodCx=e.offsetX*(c.width/r.width);prodCy=e.offsetY*(c.height/r.height);drawProd();
+});
+c.addEventListener('mouseup',()=>prodDrag=false);
+c.addEventListener('mouseleave',()=>prodDrag=false);
+})();
+drawProd();
+
+// ===== 7. YONEDA =====
+let yonedaRemoved=false;
+function toggleYoneda(){yonedaRemoved=!yonedaRemoved;
+document.getElementById('yonBtn').textContent=yonedaRemoved?'Restore the Object':'Remove the Object';
+document.getElementById('yonInfo').textContent=yonedaRemoved?'Object gone — but its relationships remain. It IS its relationships.':'The object exists';
+document.getElementById('yonInfo').style.color=yonedaRemoved?'#f76cc6':'#38bdf8';
+drawYoneda();
+}
+function drawYoneda(){
+const c=document.getElementById('yonC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+const cx=W/2,cy=H/2,R=160;
+const others=['X','Y','Z','W','V'];
+const n=others.length;
+// draw hom-set arcs from each other object to center
+others.forEach((l,i)=>{
+const a=2*Math.PI*i/n-Math.PI/2;
+const ox=cx+R*Math.cos(a),oy=cy+R*Math.sin(a);
+// multiple arrows (hom-set)
+const count=2+Math.floor(Math.sin(i*2+1)*1.5+1.5);
+for(let k=0;k<count;k++){
+const offset=(k-count/2+0.5)*8;
+const dx=-Math.sin(a)*offset,dy=Math.cos(a)*offset;
+const targetX=yonedaRemoved?cx+30*Math.cos(a):cx;
+const targetY=yonedaRemoved?cy+30*Math.sin(a):cy;
+arrow(ctx,ox+dx,oy+dy,targetX+dx,targetY+dy,`hsla(${i*72},70%,60%,0.5)`,1.5,8);
+}
+// hom-set label
+ctx.font='11px sans-serif';ctx.fillStyle=`hsla(${i*72},70%,70%,0.8)`;ctx.textAlign='center';
+ctx.fillText(`Hom(${l},A): ${count} arrows`,ox+Math.cos(a)*35,oy+Math.sin(a)*35);
+disk(ctx,ox,oy,18,'#1a1a3a',l,`hsl(${i*72},70%,60%)`);
+});
+// center object
+if(!yonedaRemoved){
+disk(ctx,cx,cy,24,'#1a1a3a','A','#ffcc00');
+}else{
+// ghostly dashed circle
+ctx.beginPath();ctx.arc(cx,cy,24,0,Math.PI*2);ctx.setLineDash([4,4]);ctx.strokeStyle='#ffcc0033';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
+ctx.font='bold 12px sans-serif';ctx.fillStyle='#ffcc0044';ctx.textAlign='center';ctx.fillText('A?',cx,cy+4);
+}
+// title
+ctx.font='bold 14px sans-serif';ctx.fillStyle='#ffcc00';ctx.textAlign='center';
+ctx.fillText('Yoneda: Hom(−, A) determines A completely',W/2,30);
+if(yonedaRemoved){
+ctx.font='bold 16px sans-serif';ctx.fillStyle='#f76cc6';
+ctx.fillText('The arrows ARE the object.',W/2,H-20);
+}
+}
+drawYoneda();
+
+// ===== 8. ADJUNCTION =====
+let adjPhase=0,adjAnimating=false,adjRAF=null;
+function adjReset(){adjPhase=0;adjAnimating=false;cancelAnimationFrame(adjRAF);drawAdj(0);}
+function adjAnimate(){
+if(adjAnimating)return;adjAnimating=true;adjPhase=0;
+function step(){
+adjPhase+=0.006;
+if(adjPhase>2){adjPhase=2;adjAnimating=false;drawAdj(2);return;}
+drawAdj(adjPhase);adjRAF=requestAnimationFrame(step);
+}step();
+}
+function drawAdj(t){
+const c=document.getElementById('adjC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+const lx=200,rx=700,cy=220;
+// left world: Sets (just dots)
+ctx.font='bold 15px sans-serif';ctx.textAlign='center';
+ctx.fillStyle='#6e56cf';ctx.fillText('Sets (no structure)',lx,40);
+ctx.fillStyle='#f76cc6';ctx.fillText('Groups (with structure)',rx,40);
+// divider
+ctx.beginPath();ctx.moveTo(W/2,20);ctx.lineTo(W/2,H-20);ctx.strokeStyle='#fff1';ctx.lineWidth=1;ctx.setLineDash([5,5]);ctx.stroke();ctx.setLineDash([]);
+// set: just 3 dots
+const setDots=[{x:lx-40,y:cy-20},{x:lx+30,y:cy-30},{x:lx,y:cy+30}];
+setDots.forEach(d=>{ctx.beginPath();ctx.arc(d.x,d.y,8,0,Math.PI*2);ctx.fillStyle='#6e56cf';ctx.fill();});
+ctx.font='12px sans-serif';ctx.fillStyle='#6e56cf';ctx.fillText('S = {a, b, c}',lx,cy+70);
+// group: dots with operation table hint
+const grpDots=[{x:rx-40,y:cy-20},{x:rx+30,y:cy-30},{x:rx,y:cy+30}];
+grpDots.forEach((d,i)=>{ctx.beginPath();ctx.arc(d.x,d.y,8,0,Math.PI*2);ctx.fillStyle='#f76cc6';ctx.fill();});
+// operation arrows
+curvedArrow(ctx,grpDots[0].x,grpDots[0].y,grpDots[1].x,grpDots[1].y,-15,'#f76cc644',1);
+curvedArrow(ctx,grpDots[1].x,grpDots[1].y,grpDots[2].x,grpDots[2].y,15,'#f76cc644',1);
+curvedArrow(ctx,grpDots[0].x,grpDots[0].y,grpDots[2].x,grpDots[2].y,-20,'#f76cc644',1);
+ctx.font='12px sans-serif';ctx.fillStyle='#f76cc6';ctx.fillText('Free(S) — group generated by S',rx,cy+70);
+// FREE arrow (left → right)
+const freeY=cy-90;
+if(t>0){
+const progress=Math.min(t,1);
+const ax=lx+60+(rx-lx-120)*progress;
+ctx.beginPath();ctx.moveTo(lx+60,freeY);ctx.lineTo(ax,freeY);
+ctx.strokeStyle='#38bdf8';ctx.lineWidth=3;ctx.stroke();
+if(progress>0.1){
+const ha=0;ctx.beginPath();ctx.moveTo(ax,freeY);ctx.lineTo(ax-12,freeY-6);ctx.lineTo(ax-12,freeY+6);ctx.closePath();ctx.fillStyle='#38bdf8';ctx.fill();
+}
+ctx.font='bold 14px sans-serif';ctx.fillStyle='#38bdf8';ctx.textAlign='center';
+ctx.fillText('Free (L)',(lx+rx)/2,freeY-15);
+}
+// FORGETFUL arrow (right → left)
+const forgetY=cy+110;
+if(t>1){
+const progress=Math.min(t-1,1);
+const ax=rx-60-(rx-lx-120)*progress;
+ctx.beginPath();ctx.moveTo(rx-60,forgetY);ctx.lineTo(ax,forgetY);
+ctx.strokeStyle='#ffcc00';ctx.lineWidth=3;ctx.stroke();
+if(progress>0.1){
+ctx.beginPath();ctx.moveTo(ax,forgetY);ctx.lineTo(ax+12,forgetY-6);ctx.lineTo(ax+12,forgetY+6);ctx.closePath();ctx.fillStyle='#ffcc00';ctx.fill();
+}
+ctx.font='bold 14px sans-serif';ctx.fillStyle='#ffcc00';ctx.textAlign='center';
+ctx.fillText('Forgetful (R)',(lx+rx)/2,forgetY+25);
+}
+// adjunction symbol
+if(t>=2){
+ctx.font='bold 24px sans-serif';ctx.fillStyle='#fff';ctx.textAlign='center';
+ctx.fillText('Free ⊣ Forgetful',W/2,H-30);
+ctx.font='13px sans-serif';ctx.fillStyle='#38bdf8';
+ctx.fillText('Hom_Group(Free(S), G) ≅ Hom_Set(S, Forget(G))',W/2,H-8);
+}
+}
+drawAdj(0);
+</script>
+</body>
+</html>
+
