@@ -1,4 +1,10 @@
 window.bibData = {
+	"faraday": {
+		url: "https://archive.org/details/in.ernet.dli.2015.500031",
+		author: "Michael Faraday",
+		year: 1839,
+		title: "Experimental Researches In Electricity"
+	},
 	"quanten": {
 		url: "https://link.springer.com/article/10.1007/BF01328377",
 		title: "Über quantentheoretische Umdeutung kinematischer und mechanischer Beziehungen",
