@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topoi & Sheaves — Where Geometry Meets Logic</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050510;--card:#0c0c22;--accent:#8b5cf6;--accent2:#f59e0b;--accent3:#10b981;--accent4:#f472b6;--text:#ddd8f0;--dim:#777}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden}
+.hero{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+#heroC{position:absolute;inset:0;z-index:0}
+.hero-content{z-index:1;text-align:center;padding:2rem}
+h1{font-size:clamp(2rem,7vw,4.8rem);font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+.sub{color:var(--dim);font-size:clamp(.95rem,2.3vw,1.35rem);max-width:650px;margin:1rem auto 2rem}
+.btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;padding:.7rem 2rem;border-radius:10px;cursor:pointer;font-size:1rem;font-weight:700;transition:.2s;display:inline-block;text-decoration:none}
+.btn:hover{transform:scale(1.05);box-shadow:0 0 30px #8b5cf655}
+section{max-width:1000px;margin:0 auto;padding:4rem 1.5rem}
+h2{font-size:1.85rem;margin-bottom:.5rem;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+h3{color:var(--accent3);margin:1.5rem 0 .5rem;font-size:1.1rem}
+p{line-height:1.8;color:var(--dim);margin-bottom:1rem}
+p strong{color:var(--text)}
+.note{background:var(--card);border-left:3px solid var(--accent);padding:1rem 1.5rem;border-radius:0 8px 8px 0;margin:1.5rem 0}
+.box{background:var(--card);border-radius:14px;padding:1.5rem;margin:2rem 0;border:1px solid #fff1}
+canvas{border-radius:10px;display:block}
+.row{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;margin:.8rem 0}
+.row label{color:var(--text);font-size:.9rem;min-width:80px}
+.row select{background:var(--bg);color:var(--text);border:1px solid #fff2;padding:.3rem .6rem;border-radius:6px}
+.row input[type=range]{accent-color:var(--accent);flex:1;min-width:100px}
+.val{color:var(--accent2);font-weight:700;min-width:30px}
+.insight{background:linear-gradient(135deg,#1a1040,#0c0c22);border:1px solid var(--accent4);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.insight::before{content:'💡 '}
+.toc{display:flex;flex-wrap:wrap;gap:.7rem;margin:1.5rem 0}
+.toc a{background:var(--card);padding:.45rem 1.1rem;border-radius:20px;color:var(--accent);text-decoration:none;border:1px solid #fff1;font-size:.9rem;transition:.2s}
+.toc a:hover{background:var(--accent);color:#fff}
+.small{font-size:.85rem;color:#555}
+.tag{display:inline-block;background:#fff1;padding:.2rem .7rem;border-radius:12px;font-size:.8rem;color:var(--accent3);margin:.2rem}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<canvas id="heroC"></canvas>
+<div class="hero-content">
+<h1>Topoi & Sheaves</h1>
+<p class="sub">Grothendieck rebuilt geometry from scratch — using categories, coverings, and a radical idea: <em>space is determined by what lives on it.</em></p>
+<a class="btn" href="#start">Enter the Topos →</a>
+</div>
+</div>
+
+<section id="start">
+<h2>The Journey</h2>
+<p>Seven ideas. From open sets to the universe where <strong>geometry and logic become one</strong>.</p>
+<div class="toc">
+<a href="#s1">1. Presheaves</a>
+<a href="#s2">2. The Gluing Problem</a>
+<a href="#s3">3. Sheaves</a>
+<a href="#s4">4. Grothendieck Topologies</a>
+<a href="#s5">5. Sites & Sheaves on Sites</a>
+<a href="#s6">6. The Topos</a>
+<a href="#s7">7. Internal Logic</a>
+</div>
+</section>
+
+<!-- ====== 1 ====== -->
+<section id="s1">
+<h2>1. Presheaves — Data on Open Sets</h2>
+<p>Take a topological space X. Its open sets form a category <strong>O(X)</strong>: objects are open sets, arrows are inclusions U ⊆ V [[10]]. A <strong>presheaf</strong> F assigns to each open set U a set F(U) — the "sections over U" — and to each inclusion U ⊆ V a restriction map F(V) → F(U) [[9]].</p>
+<p>Think of it as: <strong>data that lives on regions, and can be restricted to sub-regions.</strong> Temperature on a continent restricts to temperature on a country. Functions on a disk restrict to functions on a smaller disk.</p>
+<div class="box">
+<h3>🎮 Play: Presheaf on a Space</h3>
+<p class="small">Click open sets to see their assigned data F(U). Watch restriction maps carry data from big sets to small ones.</p>
+<canvas id="preC" width="900" height="420" style="width:100%;background:#080818;cursor:pointer"></canvas>
+<div class="row">
+<label>Example:</label>
+<select id="preEx" onchange="drawPre()">
+<option value="temp">Temperature (continuous functions)</option>
+<option value="vec">Vector fields</option>
+<option value="const">Constant presheaf ℤ</option>
+</select>
+<span class="val" id="preInfo"></span>
+</div>
+</div>
+<div class="insight"><strong>Key insight:</strong> A presheaf is a <em>contravariant functor</em> F: O(X)ᵒᵖ → Set. "Contravariant" because inclusions go U→V but restrictions go F(V)→F(U) — arrows flip. You already know this from category theory!</div>
+</section>
+
+<!-- ====== 2 ====== -->
+<section id="s2">
+<h2>2. The Gluing Problem</h2>
+<p>Presheaves can be <em>inconsistent</em>. You could assign data to overlapping regions that <strong>disagrees on the overlap</strong>. A presheaf doesn't care. But in geometry, we need data that <strong>glues</strong>: if you have compatible local data, there should be a unique global section.</p>
+<div class="box">
+<h3>🎮 Play: Gluing Sections</h3>
+<p class="small">Two open sets overlap. Assign values on each. If they agree on the overlap → they glue into a global section. If not → no global section exists.</p>
+<canvas id="glueC" width="900" height="380" style="width:100%;background:#080818"></canvas>
+<div class="row">
+<label>Value on U₁:</label>
+<input type="range" id="glueV1" min="0" max="100" value="60" oninput="drawGlue()">
+<span class="val" id="glueV1v">60</span>
+<label>Value on U₂:</label>
+<input type="range" id="glueV2" min="0" max="100" value="60" oninput="drawGlue()">
+<span class="val" id="glueV2v">60</span>
+</div>
+<div class="row"><span class="val" id="glueResult"></span></div>
+</div>
+<div class="insight"><strong>This is the birth of sheaves:</strong> A presheaf that satisfies the gluing axiom — compatible local data always produces unique global data — is a <strong>sheaf</strong>. Grothendieck's genius was realizing this idea works far beyond topological spaces [[4]].</div>
+</section>
+
+<!-- ====== 3 ====== -->
+<section id="s3">
+<h2>3. Sheaves — Local-to-Global Machines</h2>
+<p>A <strong>sheaf</strong> is a presheaf satisfying two axioms for every covering {Uᵢ} of U:</p>
+<div class="note">
+<p style="color:var(--text)"><strong>Locality:</strong> If two sections s, t ∈ F(U) agree on every Uᵢ, then s = t.</p>
+<p style="color:var(--text)"><strong>Gluing:</strong> If sections sᵢ ∈ F(Uᵢ) agree on all overlaps Uᵢ ∩ Uⱼ, there exists a unique s ∈ F(U) restricting to each sᵢ.</p>
+</div>
+<div class="box">
+<h3>🎮 Play: Sheaf vs Presheaf</h3>
+<p class="small">Cover a circle with overlapping arcs. Assign sections on each arc. The sheaf checker tests locality and gluing.</p>
+<canvas id="sheafC" width="900" height="420" style="width:100%;background:#080818"></canvas>
+<div class="row">
+<label>Sections:</label>
+<button class="btn" onclick="sheafMode='sheaf';drawSheaf()" style="padding:.3rem .8rem;font-size:.85rem">Compatible (sheaf ✓)</button>
+<button class="btn" onclick="sheafMode='fail';drawSheaf()" style="padding:.3rem .8rem;font-size:.85rem;background:var(--card);border:1px solid #fff2">Incompatible (fails ✗)</button>
+<span class="val" id="sheafInfo"></span>
+</div>
+</div>
+<div class="insight"><strong>Sheaves are everywhere:</strong> Continuous functions form a sheaf. Differentiable functions form a sheaf. Holomorphic functions form a sheaf. But <em>bounded</em> functions do NOT — you can glue unboundedly! The sheaf condition is a deep structural property [[9]].</div>
+</section>
+
+<!-- ====== 4 ====== -->
+<section id="s4">
+<h2>4. Grothendieck Topologies — Coverings Without Open Sets</h2>
+<p>Grothendieck's revolution: <strong>you don't need a topological space to talk about coverings</strong>. Any category can have a "topology" — a rule that says which families of arrows {Uᵢ → U} count as "coverings." This is a <strong>Grothendieck topology</strong> [[4]].</p>
+<p>The étale topology on schemes, the fppf topology, the Zariski topology — these are all Grothendieck topologies on categories of algebraic objects, not on point-set spaces [[6]].</p>
+<div class="box">
+<h3>🎮 Play: Choose Your Topology</h3>
+<p class="small">Same category, different covering rules. Watch how the notion of "sheaf" changes depending on which arrows you declare as coverings.</p>
+<canvas id="topC" width="900" height="400" style="width:100%;background:#080818"></canvas>
+<div class="row">
+<label>Topology:</label>
+<select id="topSel" onchange="drawTop()">
+<option value="trivial">Trivial (only identity covers)</option>
+<option value="dense">Dense (generous coverings)</option>
+<option value="atomic">Atomic (every arrow covers)</option>
+</select>
+<span class="val" id="topInfo"></span>
+</div>
+</div>
+<div class="insight"><strong>Mind-blower:</strong> A Grothendieck topology is NOT a topology in the classical sense. It's a rule on a category that tells you what "local information" means. Different rules → different notions of "local" → different sheaves → different geometry. <strong>The topology IS the geometry</strong> [[5]].</div>
+</section>
+
+<!-- ====== 5 ====== -->
+<section id="s5">
+<h2>5. Sites & Sheaves on Sites</h2>
+<p>A <strong>site</strong> is a category C equipped with a Grothendieck topology J. Sheaves on a site (C, J) are presheaves (functors Cᵒᵖ → Set) that satisfy the gluing axiom with respect to J-coverings [[9]]. The category of all such sheaves is written <strong>Sh(C, J)</strong>.</p>
+<div class="box">
+<h3>🎮 Play: From Presheaves to Sheaves</h3>
+<p class="small">Start with all presheaves on a category. Apply sheafification — the left adjoint to inclusion. Watch presheaves get "forced" to satisfy gluing.</p>
+<canvas id="siteC" width="900" height="420" style="width:100%;background:#080818"></canvas>
+<div class="row">
+<button class="btn" onclick="sheafify()" style="padding:.4rem 1rem;font-size:.85rem" id="sheafifyBtn">▶ Sheafify!</button>
+<button class="btn" onclick="resetSite()" style="padding:.4rem 1rem;font-size:.85rem;background:var(--card);border:1px solid #fff2">Reset</button>
+<span class="val" id="siteInfo">Presheaf category [Cᵒᵖ, Set]</span>
+</div>
+</div>
+<div class="insight"><strong>Sheafification is a left adjoint:</strong> The inclusion Sh(C,J) ↪ [Cᵒᵖ, Set] has a left adjoint — sheafification. This is an adjunction! Every Grothendieck topos sits inside a presheaf topos as a left exact reflective subcategory [[2]]. The category theory you learned before is the engine underneath.</div>
+</section>
+
+<!-- ====== 6 ====== -->
+<section id="s6">
+<h2>6. The Topos — A Universe of Sheaves</h2>
+<p>A <strong>Grothendieck topos</strong> is a category equivalent to Sh(C, J) for some site (C, J) [[1]]. It behaves like the category of sets — but <em>twisted by geometry</em>. It has products, coproducts, exponentials, a subobject classifier Ω, and internal logic.</p>
+<p>Different sites can give the <strong>same topos</strong> — the site is not the structure, the topos is [[2]]. A topos is a <em>geometric</em> object in its own right.</p>
+<div class="box">
+<h3>🎮 Play: Topos Structure</h3>
+<p class="small">Explore the internal structure of a topos. Toggle features to see what makes it "set-like" — but richer.</p>
+<canvas id="toposC" width="900" height="450" style="width:100%;background:#080818"></canvas>
+<div class="row">
+<label>Highlight:</label>
+<select id="toposSel" onchange="drawTopos()">
+<option value="all">Full structure</option>
+<option value="omega">Subobject classifier Ω</option>
+<option value="exp">Exponentials Bᴬ</option>
+<option value="limits">Limits & Colimits</option>
+</select>
+</div>
+</div>
+<div class="insight"><strong>The punchline:</strong> A topos is a category that is rich enough to <em>do mathematics inside it</em>. It has its own internal logic, its own notion of truth, its own "sets." Grothendieck topoi are universes where geometry and logic merge [[5]].</div>
+</section>
+
+<!-- ====== 7 ====== -->
+<section id="s7">
+<h2>7. Internal Logic — Truth Becomes Geometric</h2>
+<p>In the topos of sets, truth values are {true, false}. In a topos of sheaves on a space X, truth values are <strong>open sets of X</strong>. A statement can be "true on U" and "false on V." Logic becomes <em>local</em>. This is <strong>intuitionistic logic</strong> — the law of excluded middle can fail!</p>
+<div class="box">
+<h3>🎮 Play: Truth in a Topos</h3>
+<p class="small">In Set, Ω = {⊤, ⊥}. In Sh(X), Ω = open sets. Drag regions to see how "truth" varies over space. The law of excluded middle fails when U ∪ ¬U ≠ X.</p>
+<canvas id="logicC" width="900" height="420" style="width:100%;background:#080818"></canvas>
+<div class="row">
+<label>Proposition P is true on:</label>
+<input type="range" id="logicR" min="5" max="95" value="50" oninput="drawLogic()">
+<span class="val" id="logicRv">50%</span>
+<label>¬P true on:</label><span class="val" id="logicNot">—</span>
+<label>P ∨ ¬P:</label><span class="val" id="logicLEM">—</span>
+</div>
+</div>
+<div class="insight"><strong>This changes everything:</strong> In a Grothendieck topos, you can do all of mathematics — but the logic is intuitionistic. "P or not P" isn't always true. This isn't a limitation — it's a <em>feature</em>. It means truth is <strong>local</strong>, just like geometry. Continuity, sheaf conditions, and logical coherence are all the same thing seen from different angles [[1]] [[5]].</div>
+</section>
+
+<section>
+<div style="text-align:center;padding:2rem 0">
+<h2>Space is what you can observe on it.</h2>
+<p style="font-size:1.1rem;color:var(--dim);max-width:700px;margin:1rem auto">Grothendieck dissolved the boundary between space and logic. A topos is both a geometric world and a logical universe. The sheaves living on it <em>are</em> the space. You've just seen the deepest unification in modern mathematics.</p>
+<div style="margin-top:2rem">
+<span class="tag">Grothendieck — SGA4 (1963–64)</span>
+<span class="tag">Mac Lane & Moerdijk — Sheaves in Geometry and Logic</span>
+<span class="tag">Caramello — Theories, Sites, Toposes</span>
+<span class="tag">Johnstone — Sketches of an Elephant</span>
+</div>
+</div>
+</section>
+
+<script>
+// ===== UTILS =====
+function arrow(ctx,x1,y1,x2,y2,color='#8b5cf6',w=2,hl=10){
+const dx=x2-x1,dy=y2-y1,a=Math.atan2(dy,dx),l=Math.hypot(dx,dy);if(l<1)return;
+ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=color;ctx.lineWidth=w;ctx.stroke();
+ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-hl*Math.cos(a-.35),y2-hl*Math.sin(a-.35));ctx.lineTo(x2-hl*Math.cos(a+.35),y2-hl*Math.sin(a+.35));ctx.closePath();ctx.fillStyle=color;ctx.fill();
+}
+function disk(ctx,x,y,r,bg,label,lc='#fff'){
+ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=bg;ctx.fill();ctx.strokeStyle='#fff2';ctx.lineWidth=1;ctx.stroke();
+if(label){ctx.font='bold 13px sans-serif';ctx.fillStyle=lc;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,x,y);}
+}
+function roundRect(ctx,x,y,w,h,r,fill,stroke){
+ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke();}
+}
+
+// ===== HERO =====
+(()=>{
+const c=document.getElementById('heroC'),x=c.getContext('2d');
+let W,H;function rs(){W=c.width=innerWidth;H=c.height=innerHeight}rs();onresize=rs;
+let t=0;
+const rings=Array.from({length:8},(_,i)=>({r:80+i*45,speed:(.3+i*.15)*(Math.random()>.5?1:-1),hue:260+i*15,dots:5+i*2}));
+function draw(){
+x.fillStyle='rgba(5,5,16,0.1)';x.fillRect(0,0,W,H);
+const cx=W/2,cy=H/2;
+rings.forEach(ring=>{
+for(let i=0;i<ring.dots;i++){
+const a=2*Math.PI*i/ring.dots+t*ring.speed*0.01;
+const px=cx+ring.r*Math.cos(a),py=cy+ring.r*Math.sin(a)*.6;
+x.beginPath();x.arc(px,py,2.5,0,Math.PI*2);x.fillStyle=`hsla(${ring.hue},70%,60%,0.6)`;x.fill();
+// connect to next ring
+const nr=rings[rings.indexOf(ring)+1];
+if(nr){
+const na=2*Math.PI*((i+1)%nr.dots)/nr.dots+t*nr.speed*0.01;
+const nx=cx+nr.r*Math.cos(na),ny=cy+nr.r*Math.sin(na)*.6;
+x.beginPath();x.moveTo(px,py);x.lineTo(nx,ny);x.strokeStyle=`hsla(${ring.hue},60%,50%,0.08)`;x.lineWidth=1;x.stroke();
+}
+}
+});
+t++;requestAnimationFrame(draw);
+}draw();
+})();
+
+// ===== 1. PRESHEAF =====
+let preSelected=-1;
+function drawPre(){
+const c=document.getElementById('preC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+const ex=document.getElementById('preEx').value;
+// open sets as nested regions
+const sets=[
+{l:'X',x:450,y:210,rx:380,ry:170,color:'#8b5cf620',border:'#8b5cf644'},
+{l:'U',x:300,y:200,rx:180,ry:120,color:'#f59e0b15',border:'#f59e0b44'},
+{l:'V',x:600,y:200,rx:160,ry:110,color:'#10b98115',border:'#10b98144'},
+{l:'U∩V',x:430,y:210,rx:70,ry:80,color:'#f472b620',border:'#f472b644'},
+];
+// draw sets
+sets.forEach((s,i)=>{
+ctx.beginPath();ctx.ellipse(s.x,s.y,s.rx,s.ry,0,0,Math.PI*2);ctx.fillStyle=i===preSelected?s.color.replace('15','40').replace('20','50'):s.color;ctx.fill();
+ctx.strokeStyle=i===preSelected?s.border.replace('44','aa'):s.border;ctx.lineWidth=i===preSelected?3:1;ctx.stroke();
+ctx.font='bold 14px sans-serif';ctx.fillStyle=s.border.replace('44','cc');ctx.textAlign='center';
+ctx.fillText(s.l,s.x,s.y-s.ry+20);
+});
+// data boxes on right
+const dataLabels={
+temp:['F(X): all continuous f: X→ℝ','F(U): continuous f: U→ℝ','F(V): continuous f: V→ℝ','F(U∩V): continuous f: (U∩V)→ℝ'],
+vec:['F(X): vector fields on X','F(U): vector fields on U','F(V): vector fields on V','F(U∩V): vector fields on U∩V'],
+const:['F(X) = ℤ','F(U) = ℤ','F(V) = ℤ','F(U∩V) = ℤ']
+};
+const colors=['#8b5cf6','#f59e0b','#10b981','#f472b6'];
+if(preSelected>=0){
+const bx=700,by=50;
+roundRect(ctx,bx,by,180,60,8,'#0c0c22',colors[preSelected]);
+ctx.font='12px sans-serif';ctx.fillStyle=colors[preSelected];ctx.textAlign='left';
+ctx.fillText(dataLabels[ex][preSelected],bx+10,by+25);
+ctx.fillText('(sections over '+sets[preSelected].l+')',bx+10,by+45);
+// restriction arrows
+if(preSelected===0){
+arrow(ctx,bx+90,by+60,bx+90,by+90,'#ffffff44',1,6);
+ctx.font='11px sans-serif';ctx.fillStyle='#888';ctx.textAlign='center';
+ctx.fillText('restrict',bx+130,by+80);
+}
+document.getElementById('preInfo').textContent='F('+sets[preSelected].l+') — click another set';
+}else{
+document.getElementById('preInfo').textContent='Click an open set to see its data';
+}
+// restriction arrows between sets
+arrow(ctx,300,90,430,130,'#ffffff22',1,6);
+ctx.font='10px sans-serif';ctx.fillStyle='#555';ctx.textAlign='center';ctx.fillText('res',350,100);
+arrow(ctx,600,100,470,140,'#ffffff22',1,6);
+ctx.fillText('res',550,110);
+}
+document.getElementById('preC').addEventListener('click',e=>{
+const c=document.getElementById('preC'),r=c.getBoundingClientRect();
+const mx=e.offsetX*(c.width/r.width),my=e.offsetY*(c.height/r.height);
+const sets=[{x:450,y:210,rx:380,ry:170},{x:300,y:200,rx:180,ry:120},{x:600,y:200,rx:160,ry:110},{x:430,y:210,rx:70,ry:80}];
+// check innermost first
+for(let i=sets.length-1;i>=0;i--){
+const s=sets[i];if(((mx-s.x)/s.rx)**2+((my-s.y)/s.ry)**2<=1){preSelected=i;drawPre();return;}
+}
+preSelected=-1;drawPre();
+});
+drawPre();
+
+// ===== 2. GLUING =====
+function drawGlue(){
+const c=document.getElementById('glueC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+const v1=parseInt(document.getElementById('glueV1').value);
+const v2=parseInt(document.getElementById('glueV2').value);
+document.getElementById('glueV1v').textContent=v1;
+document.getElementById('glueV2v').textContent=v2;
+const match=Math.abs(v1-v2)<8;
+// two overlapping rectangles
+const u1x=120,u2x=420,uy=80,uw=380,uh=200;
+const overlap_x=u2x,overlap_w=u1x+uw-u2x;
+// U1
+roundRect(ctx,u1x,uy,uw,uh,10,'#f59e0b10','#f59e0b44');
+ctx.font='bold 14px sans-serif';ctx.fillStyle='#f59e0b';ctx.textAlign='center';ctx.fillText('U₁',u1x+80,uy+25);
+// U2
+roundRect(ctx,u2x,uy,uw,uh,10,'#10b98110','#10b98144');
+ctx.fillStyle='#10b981';ctx.fillText('U₂',u2x+uw-80,uy+25);
+// overlap
+roundRect(ctx,overlap_x,uy,overlap_w,uh,0,'#f472b615','#f472b644');
+ctx.fillStyle='#f472b6';ctx.fillText('U₁ ∩ U₂',overlap_x+overlap_w/2,uy+25);
+// draw "section" as a curve on each
+const baseY=uy+uh-40;
+// section on U1
+ctx.beginPath();ctx.strokeStyle='#f59e0b';ctx.lineWidth=3;
+for(let x=u1x+10;x<u1x+uw-10;x++){
+  const norm=(x-u1x)/uw;
+  const y=baseY-v1*0.8*Math.sin(norm*Math.PI);
+  x===u1x+10?ctx.moveTo(x,y):ctx.lineTo(x,y);
+}
+ctx.stroke();
+// section on U2
+ctx.beginPath();ctx.strokeStyle='#10b981';ctx.lineWidth=3;
+for(let x=u2x+10;x<u2x+uw-10;x++){
+  const norm=(x-u2x)/uw;
+  const y=baseY-v2*0.8*Math.sin(norm*Math.PI);
+  x===u2x+10?ctx.moveTo(x,y):ctx.lineTo(x,y);
+}
+ctx.stroke();
+// highlight overlap agreement/disagreement
+if(overlap_w>0){
+  const oy=baseY-v1*0.8*Math.sin(((overlap_x+overlap_w/2-u1x)/uw)*Math.PI);
+  const oy2=baseY-v2*0.8*Math.sin(((overlap_x+overlap_w/2-u2x)/uw)*Math.PI);
+  ctx.beginPath();ctx.arc(overlap_x+overlap_w/2,oy,6,0,Math.PI*2);ctx.fillStyle='#f59e0b';ctx.fill();
+  ctx.beginPath();ctx.arc(overlap_x+overlap_w/2,oy2,6,0,Math.PI*2);ctx.fillStyle='#10b981';ctx.fill();
+  if(!match){
+    ctx.beginPath();ctx.moveTo(overlap_x+overlap_w/2,oy);ctx.lineTo(overlap_x+overlap_w/2,oy2);
+    ctx.strokeStyle='#ff4444';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+  }
+}
+// result
+const res=document.getElementById('glueResult');
+if(match){
+  res.textContent='✓ Sections agree on overlap → unique global section exists (SHEAF condition satisfied)';
+  res.style.color='#10b981';
+  // draw glued section
+  ctx.beginPath();ctx.strokeStyle='#38bdf8';ctx.lineWidth=2;ctx.setLineDash([6,3]);
+  for(let x=u1x+10;x<u2x+uw-10;x++){
+    let y;
+    if(x<u2x){const norm=(x-u1x)/uw;y=baseY-v1*0.8*Math.sin(norm*Math.PI);}
+    else if(x>u1x+uw){const norm=(x-u2x)/uw;y=baseY-v2*0.8*Math.sin(norm*Math.PI);}
+    else{const n1=(x-u1x)/uw,n2=(x-u2x)/uw,blend=(x-u2x)/(u1x+uw-u2x);
+      y=baseY-((1-blend)*v1*0.8*Math.sin(n1*Math.PI)+blend*v2*0.8*Math.sin(n2*Math.PI));}
+    x===u1x+10?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.stroke();ctx.setLineDash([]);
+  ctx.font='13px sans-serif';ctx.fillStyle='#38bdf8';ctx.textAlign='center';
+  ctx.fillText('— glued global section',W/2,uy+uh+30);
+}else{
+  res.textContent='✗ Sections DISAGREE on overlap → no global section! Gluing fails.';
+  res.style.color='#ff4444';
+  ctx.font='bold 16px sans-serif';ctx.fillStyle='#ff444488';ctx.textAlign='center';
+  ctx.fillText('✗ MISMATCH',overlap_x+overlap_w/2,uy+uh+30);
+}
+}
+drawGlue();
+
+// ===== 3. SHEAF ON CIRCLE =====
+let sheafMode='sheaf';
+function drawSheaf(){
+const c=document.getElementById('sheafC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+const cx=W/2,cy=H/2+20,R=140;
+const nArcs=4;
+const colors=['#8b5cf6','#f59e0b','#10b981','#f472b6'];
+const arcLen=2*Math.PI/nArcs+0.4;// overlapping
+// draw base circle
+ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle='#fff1';ctx.lineWidth=1;ctx.stroke();
+ctx.font='12px sans-serif';ctx.textAlign='center';ctx.fillStyle='#555';ctx.fillText('Base space S¹',cx,cy+R+25);
+// draw arcs and sections
+for(let i=0;i<nArcs;i++){
+  const startA=2*Math.PI*i/nArcs-0.2;
+  // arc
+  ctx.beginPath();ctx.arc(cx,cy,R,startA,startA+arcLen);ctx.strokeStyle=colors[i];ctx.lineWidth=5;ctx.stroke();
+  // section value (height above arc)
+  const midA=startA+arcLen/2;
+  const sheafVal=sheafMode==='sheaf'?40:40+(i===2?30:0);// incompatible: one section jumps
+  const sx=cx+(R+sheafVal)*Math.cos(midA),sy=cy+(R+sheafVal)*Math.sin(midA);
+  // draw section as thickened arc above
+  ctx.beginPath();ctx.arc(cx,cy,R+sheafVal,startA+0.1,startA+arcLen-0.1);
+  ctx.strokeStyle=colors[i]+'88';ctx.lineWidth=3;ctx.stroke();
+  // label
+  ctx.font='bold 12px sans-serif';ctx.fillStyle=colors[i];
+  ctx.fillText('s'+['₁','₂','₃','₄'][i],sx,sy);
+  // radial line showing "height"
+  const ra=startA+arcLen/2;
+  const bx=cx+R*Math.cos(ra),by=cy+R*Math.sin(ra);
+  ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(sx,sy);ctx.strokeStyle=colors[i]+'33';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.stroke();ctx.setLineDash([]);
+}
+// check overlaps
+const info=document.getElementById('sheafInfo');
+if(sheafMode==='sheaf'){
+  info.textContent='✓ All sections agree on overlaps → sheaf condition satisfied!';info.style.color='#10b981';
+  // draw glued global section
+  ctx.beginPath();ctx.arc(cx,cy,R+40,0,Math.PI*2);ctx.strokeStyle='#38bdf8';ctx.lineWidth=2;ctx.setLineDash([6,3]);ctx.stroke();ctx.setLineDash([]);
+  ctx.font='bold 13px sans-serif';ctx.fillStyle='#38bdf8';ctx.fillText('Global section (glued)',cx,40);
+}else{
+  info.textContent='✗ Section s₃ disagrees on overlap → gluing FAILS!';info.style.color='#ff4444';
+  // highlight bad overlap
+  const badA=2*Math.PI*2/nArcs+arcLen-0.3;
+  ctx.beginPath();ctx.arc(cx,cy,R,badA-0.2,badA+0.2);ctx.strokeStyle='#ff4444';ctx.lineWidth=8;ctx.stroke();
+  ctx.font='bold 14px sans-serif';ctx.fillStyle='#ff4444';ctx.fillText('✗ CONFLICT',cx+R*Math.cos(badA)+30,cy+R*Math.sin(badA));
+}
+}
+drawSheaf();
+
+// ===== 4. GROTHENDIECK TOPOLOGIES =====
+function drawTop(){
+const c=document.getElementById('topC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+const topo=document.getElementById('topSel').value;
+// draw a small category: 4 objects with arrows
+const objs=[{l:'A',x:200,y:100},{l:'B',x:400,y:100},{l:'C',x:200,y:300},{l:'D',x:400,y:300}];
+const arrs=[{f:0,t:1},{f:0,t:2},{f:1,t:3},{f:2,t:3},{f:0,t:3}];
+// draw arrows
+arrs.forEach(a=>{
+  const from=objs[a.f],to=objs[a.t];
+  let isCover=false;
+  if(topo==='trivial') isCover=(a.f===a.t);// only identities
+  else if(topo==='dense') isCover=true;// everything covers
+  else if(topo==='atomic') isCover=true;
+  arrow(ctx,from.x+20,from.y,to.x-20,to.y,isCover?'#f59e0b':'#ffffff22',isCover?3:1.5);
+});
+// identity loops for trivial
+if(topo==='trivial'){
+  objs.forEach(o=>{
+    ctx.beginPath();ctx.arc(o.x,o.y-30,12,0,Math.PI*2);ctx.strokeStyle='#f59e0b';ctx.lineWidth=2;ctx.stroke();
+    ctx.font='10px sans-serif';ctx.fillStyle='#f59e0b';ctx.textAlign='center';ctx.fillText('id',o.x,o.y-30);
+  });
+}
+objs.forEach(o=>disk(ctx,o.x,o.y,20,'#0c0c22',o.l,'#8b5cf6'));
+// covering sieves visualization on right
+const rx=620,ry=60;
+roundRect(ctx,rx,ry,250,280,10,'#0c0c22','#fff1');
+ctx.font='bold 14px sans-serif';ctx.fillStyle='#f59e0b';ctx.textAlign='left';
+ctx.fillText('Covering sieves on D:',rx+15,ry+25);
+ctx.font='12px sans-serif';ctx.fillStyle='#aaa';
+const descriptions={
+  trivial:['J(D) = { {id_D} }','','Only the identity covers D.','','Every presheaf is a sheaf!','(No gluing conditions at all)'],
+  dense:['J(D) = { {B→D, C→D, A→D}, ... }','','Many families cover D.','','Strict gluing conditions.','Most presheaves fail to be sheaves.'],
+  atomic:['J(D) = all nonempty sieves','','Every arrow covers!','','Maximally strict topology.','Only "constant-like" sheaves survive.']
+};
+descriptions[topo].forEach((line,i)=>{ctx.fillText(line,rx+15,ry+50+i*22);});
+// legend
+ctx.font='11px sans-serif';ctx.fillStyle='#f59e0b';ctx.fillText('━ covering arrow',rx+15,ry+260);
+ctx.fillStyle='#ffffff44';ctx.fillText('━ non-covering arrow',rx+120,ry+260);
+const info=document.getElementById('topInfo');
+info.textContent={trivial:'Trivial: everything is a sheaf',dense:'Dense: strong gluing required',atomic:'Atomic: maximal conditions'}[topo];
+}
+drawTop();
+
+// ===== 5. SHEAFIFICATION =====
+let sitePhase=0,siteAnimating=false,siteRAF=null;
+function resetSite(){sitePhase=0;siteAnimating=false;cancelAnimationFrame(siteRAF);drawSite(0);}
+function sheafify(){
+if(siteAnimating)return;siteAnimating=true;sitePhase=0;
+function step(){sitePhase+=0.008;if(sitePhase>1){sitePhase=1;siteAnimating=false;drawSite(1);return;}
+drawSite(sitePhase);siteRAF=requestAnimationFrame(step);}step();
+}
+function drawSite(t){
+const c=document.getElementById('siteC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+// big box: presheaf category
+const bx=50,by=50,bw=W-100,bh=H-100;
+roundRect(ctx,bx,by,bw,bh,14,'#0c0c22','#8b5cf633');
+ctx.font='bold 13px sans-serif';ctx.fillStyle='#8b5cf6';ctx.textAlign='left';ctx.fillText('[Cᵒᵖ, Set] — all presheaves',bx+15,by+25);
+// inner box: sheaf category (grows with t)
+const margin=40,sw=bw-margin*2,sh=bh-margin*2;
+const innerW=sw*(.3+.7*t),innerH=sh*(.3+.7*t);
+const ix=bx+bw/2-innerW/2,iy=by+bh/2-innerH/2;
+roundRect(ctx,ix,iy,innerW,innerH,10,`rgba(16,185,129,${0.05+t*0.1})`,`rgba(16,185,129,${0.3+t*0.4})`);
+ctx.font='bold 13px sans-serif';ctx.fillStyle='#10b981';ctx.textAlign='center';
+ctx.fillText('Sh(C, J) — sheaves',bx+bw/2,iy+20);
+// scatter presheaf dots
+const seed=42;let rng=seed;
+function rand(){rng=(rng*16807+0)%2147483647;return rng/2147483647;}
+const nDots=30;
+for(let i=0;i<nDots;i++){
+  rng=seed+i*137;
+  const px=bx+margin+rand()*(bw-margin*2);
+  const py=by+margin+rand()*(bh-margin*2);
+  const inside=px>ix&&px<ix+innerW&&py>iy&&py<iy+innerH;
+  const isSheaf=i<15;// first 15 are "sheaves"
+  if(isSheaf){
+    // sheaves move toward center during sheafification
+    const tx=bx+bw/2+(px-bx-bw/2)*0.5;
+    const ty=by+bh/2+(py-by-bh/2)*0.5;
+    const dx=px+(tx-px)*t,dy=py+(ty-py)*t;
+    ctx.beginPath();ctx.arc(dx,dy,5,0,Math.PI*2);ctx.fillStyle='#10b981';ctx.fill();
+  }else{
+    // non-sheaves get pushed to boundary or sheafified
+    const tx=bx+bw/2+(px-bx-bw/2)*1.3;
+    const ty=by+bh/2+(py-by-bh/2)*1.3;
+    const dx=px+(tx-px)*t*0.3,dy=py+(ty-py)*t*0.3;
+    // sheafification arrow
+    if(t>0.3){
+      const sx=dx,sy=dy;
+      const ex=bx+bw/2+(px-bx-bw/2)*0.4,ey=by+bh/2+(py-by-bh/2)*0.4;
+      ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(sx+(ex-sx)*Math.min((t-0.3)/0.7,1),sy+(ey-sy)*Math.min((t-0.3)/0.7,1));
+      ctx.strokeStyle='#f59e0b44';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.stroke();ctx.setLineDash([]);
+      if(t>0.8){
+        ctx.beginPath();ctx.arc(ex,ey,4,0,Math.PI*2);ctx.fillStyle='#f59e0b';ctx.fill();
+      }
+    }
+    ctx.beginPath();ctx.arc(dx,dy,5,0,Math.PI*2);ctx.fillStyle=t>0.8?'#f59e0b44':'#f472b6';ctx.fill();
+  }
+}
+// labels
+ctx.font='12px sans-serif';ctx.textAlign='center';
+if(t<0.1){ctx.fillStyle='#888';ctx.fillText('● sheaves   ● non-sheaves (presheaves that fail gluing)',W/2,H-20);}
+else if(t>=1){
+  ctx.fillStyle='#f59e0b';ctx.fillText('● sheafified! (best sheaf approximation via left adjoint)',W/2,H-20);
+  document.getElementById('siteInfo').textContent='Sh(C, J) ↪ [Cᵒᵖ, Set] has left adjoint: sheafification a ⊣ i';
+  document.getElementById('siteInfo').style.color='#10b981';
+}else{
+  ctx.fillStyle='#888';ctx.fillText('Sheafifying... forcing gluing axiom...',W/2,H-20);
+  document.getElementById('siteInfo').textContent='Sheafifying...';document.getElementById('siteInfo').style.color='#f59e0b';
+}
+}
+drawSite(0);
+
+// ===== 6. TOPOS STRUCTURE =====
+function drawTopos(){
+const c=document.getElementById('toposC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+const mode=document.getElementById('toposSel').value;
+const cx=W/2,cy=H/2;
+// central topos
+ctx.beginPath();ctx.arc(cx,cy,160,0,Math.PI*2);ctx.fillStyle='#8b5cf610';ctx.fill();ctx.strokeStyle='#8b5cf644';ctx.lineWidth=2;ctx.stroke();
+ctx.font='bold 18px sans-serif';ctx.fillStyle='#8b5cf6';ctx.textAlign='center';ctx.fillText('𝓔 (Topos)',cx,cy-5);
+ctx.font='12px sans-serif';ctx.fillStyle='#666';ctx.fillText('≃ Sh(C, J)',cx,cy+15);
+// features around the topos
+const features=[
+  {l:'Ω',desc:'Subobject\nClassifier',x:cx,y:cy-200,color:'#f59e0b',detail:'truth: 1 → Ω\nclassifies every\nsubobject uniquely'},
+  {l:'Bᴬ',desc:'Exponentials',x:cx+220,y:cy-80,color:'#10b981',detail:'internal hom\ncurrying lives here\nHom(A×B,C)≅Hom(A,Cᴮ)'},
+  {l:'lim/colim',desc:'All Finite\nLimits & Colimits',x:cx+200,y:cy+120,color:'#f472b6',detail:'products, equalizers\npullbacks, pushouts\ncoproducts — all exist'},
+  {l:'∀∃',desc:'Quantifiers\nas Adjoints',x:cx-200,y:cy+120,color:'#38bdf8',detail:'∃ ⊣ pullback ⊣ ∀\nlogic = adjunctions\nbetween slice topoi'},
+  {l:'NNO',desc:'Natural Number\nObject',x:cx-220,y:cy-80,color:'#a78bfa',detail:'ℕ lives inside\nevery topos\narithmetic works here'},
+];
+features.forEach((f,i)=>{
+  const highlight=mode==='all'||(mode==='omega'&&i===0)||(mode==='exp'&&i===1)||(mode==='limits'&&i===2);
+  const alpha=highlight?1:0.25;
+  // connection line
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(f.x,f.y);ctx.strokeStyle=f.color+(highlight?'66':'15');ctx.lineWidth=highlight?2:1;ctx.stroke();
+  // node
+  ctx.beginPath();ctx.arc(f.x,f.y,35,0,Math.PI*2);ctx.fillStyle=highlight?f.color+'22':'#0c0c22';ctx.fill();
+  ctx.strokeStyle=f.color+(highlight?'aa':'33');ctx.lineWidth=highlight?2:1;ctx.stroke();
+  ctx.font='bold 14px sans-serif';ctx.fillStyle=f.color+(highlight?'':'44');ctx.textAlign='center';ctx.fillText(f.l,f.x,f.y-5);
+  ctx.font='10px sans-serif';ctx.fillStyle='#888'+(highlight?'':'4');
+  f.desc.split('\n').forEach((line,j)=>ctx.fillText(line,f.x,f.y+10+j*13));
+  // detail box on highlight
+  if(highlight&&mode!=='all'){
+    const bx=f.x+(f.x>cx?40:-160),by=f.y-30;
+    roundRect(ctx,bx,by,150,70,8,'#0c0c22ee',f.color+'66');
+    ctx.font='11px sans-serif';ctx.fillStyle=f.color;ctx.textAlign='left';
+    f.detail.split('\n').forEach((line,j)=>ctx.fillText(line,bx+10,by+18+j*16));
+  }
+});
+}
+drawTopos();
+
+// ===== 7. INTERNAL LOGIC =====
+function drawLogic(){
+const c=document.getElementById('logicC'),ctx=c.getContext('2d'),W=c.width,H=c.height;
+ctx.clearRect(0,0,W,H);
+const pct=parseInt(document.getElementById('logicR').value);
+document.getElementById('logicRv').textContent=pct+'%';
+// the space X is [0, W-100]
+const sx=80,ex=W-80,y1=120,barH=60;
+const pw=(ex-sx)*pct/100;// width where P is true
+// X bar
+roundRect(ctx,sx,y1,ex-sx,barH,8,'#ffffff08','#fff2');
+ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillStyle='#888';ctx.fillText('Space X = [0, 1]',W/2,y1-15);
+// P region
+if(pw>0){
+  roundRect(ctx,sx,y1,pw,barH,8,'#8b5cf633','#8b5cf6');
+  ctx.fillStyle='#8b5cf6';ctx.fillText('P is TRUE here',sx+pw/2,y1+barH/2+5);
+}
+// ¬P: interior of complement = open set where P is false
+// P true on [0, pct/100), so ¬P = interior of [pct/100, 1] = (pct/100, 1]
+const notStart=sx+pw,notW=ex-sx-pw;
+// but ¬P is the INTERIOR of the complement, so we need to exclude the boundary point
+const notY=y1+barH+40;
+roundRect(ctx,sx,notY,ex-sx,barH,8,'#ffffff08','#fff2');
+ctx.fillStyle='#888';ctx.fillText('¬P (interior of complement)',W/2,notY-15);
+if(notW>2){
+  // interior: open set, so exclude boundary — show slightly smaller
+  roundRect(ctx,notStart+3,notY,notW-3,barH,8,'#f472b633','#f472b6');
+  ctx.fillStyle='#f472b6';ctx.fillText('¬P TRUE here',notStart+notW/2,notY+barH/2+5);
+}
+document.getElementById('logicNot').textContent=(100-pct)+'% (open interior)';
+// P ∨ ¬P
+const lemY=notY+barH+50;
+roundRect(ctx,sx,lemY,ex-sx,barH,8,'#ffffff08','#fff2');
+ctx.fillStyle='#888';ctx.fillText('P ∨ ¬P',W/2,lemY-15);
+// P ∨ ¬P = P ∪ ¬P. If P = [0, t) open and ¬P = (t, 1] open, then P∨¬P = [0,t)∪(t,1] which MISSES the point t!
+const gapX=sx+pw;
+if(pw>0){roundRect(ctx,sx,lemY,pw,barH,8,'#8b5cf633','#8b5cf6');}
+if(notW>2){roundRect(ctx,gapX+3,lemY,notW-3,barH,8,'#f472b633','#f472b6');}
+// the gap!
+if(pct>5&&pct<95){
+  ctx.beginPath();ctx.moveTo(gapX,lemY-5);ctx.lineTo(gapX,lemY+barH+5);ctx.strokeStyle='#ff4444';ctx.lineWidth=3;ctx.stroke();
+  ctx.font='bold 12px sans-serif';ctx.fillStyle='#ff4444';ctx.textAlign='center';
+  ctx.fillText('GAP!',gapX,lemY+barH+20);
+  ctx.fillText('point missing',gapX,lemY+barH+35);
+  document.getElementById('logicLEM').textContent='≠ X! LEM FAILS ⚡';
+  document.getElementById('logicLEM').style.color='#ff4444';
+}else{
+  document.getElementById('logicLEM').textContent='= X (boundary case)';
+  document.getElementById('logicLEM').style.color='#10b981';
+}
+// classical vs intuitionistic comparison
+const compY=lemY+barH+55;
+ctx.font='bold 14px sans-serif';ctx.textAlign='center';
+ctx.fillStyle='#f59e0b';ctx.fillText('In Set (classical): Ω = {⊤, ⊥}  →  P ∨ ¬P always = ⊤',W/2,compY);
+ctx.fillStyle='#8b5cf6';ctx.fillText('In Sh(X) (topos): Ω = Open(X)  →  P ∨ ¬P can miss points!',W/2,compY+22);
+ctx.fillStyle='#10b981';ctx.font='13px sans-serif';
+ctx.fillText('This is intuitionistic logic — truth is LOCAL, not global.',W/2,compY+50);
+}
+drawLogic();
+</script>
+</body>
+</html>
