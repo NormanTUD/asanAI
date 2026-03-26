@@ -1,4 +1,10 @@
 window.bibData = {
+	"planck": {
+		url: "https://de.wikisource.org/wiki/Ueber_das_Gesetz_der_Energieverteilung_im_Normalspectrum",
+		title: "Ueber das Gesetz der Energieverteilung im Normalspectrum",
+		author: "Max Planck",
+		year: 1900
+	},
 	"volta": {
 		url: "https://royalsocietypublishing.org/rspl/article/doi/10.1098/rspl.1800.0016/106487/On-the-electricity-excited-by-the-mere-contact-of",
 		author: "Alessandro Volta",
