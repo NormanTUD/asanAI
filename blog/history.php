@@ -618,7 +618,7 @@ The narrative above traces the *intellectual* lineage of the LLM, from Aristotle
 
 ### From Amber to Amperes: The Discovery and Harnessing of Electricity
 
-No electrical computer can exist without electricity, yet the phenomenon was first observed in a context utterly alien to computation. Around 600 BCE, **Thales of Miletus** noticed that rubbing amber (*ἤλεκτρον*, *elektron* in Greek) against fur caused it to attract lightweight objects like feathers, an observation recorded by Aristotle in *De Anima* (Book I, 405a19) and later catalogued by Diogenes Laërtius in *Lives of the Eminent Philosophers* (Book I, §24). For over two millennia, this remained a philosophical curiosity, a parlor trick of nature.
+No electrical computer can exist without electricity, yet the phenomenon was first observed in a context utterly alien to computation. Around 600 BCE, **Thales of Miletus** noticed that rubbing amber (*ἤλεκτρον*, *elektron* in Greek) against fur caused it to attract lightweight objects like feathers, an observation recorded by Aristotle in \citetitle{deanima} (Book I, 405a19) and later catalogued by Diogenes Laërtius in *Lives of the Eminent Philosophers* (Book I, §24). For over two millennia, this remained a philosophical curiosity, a parlor trick of nature.
 
 The transformation of this curiosity into a usable force required a cascade of unrelated breakthroughs:
 

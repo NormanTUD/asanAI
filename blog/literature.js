@@ -1,4 +1,10 @@
 window.bibData = {
+	"deanima": {
+		title: "Περὶ ψυχῆς",
+		author: "Aristotle",
+		year: "ca. 335 BC",
+		url: "https://ia600704.us.archive.org/26/items/aristotle-entire-collected-writings/Aristotle/De%20Anima%20%28On%20the%20Soul%29%20%5Btrans.%20Shiffman%5D/Aristotle%20-%20De%20Anima%20%28On%20the%20Soul%29%20%28Focus%2C%202011%29.pdf"
+	},
 	"chalmers1996conscious": {
 		author: "David J. Chalmers",
 		title: "The Conscious Mind",
