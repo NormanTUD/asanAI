@@ -1,4 +1,16 @@
 window.bibData = {
+	"bloch": {
+		url: "https://link.springer.com/article/10.1007/BF01339455",
+		title: "Über die Quantenmechanik der Elektronen in Kristallgittern",
+		year: 1929,
+		author: "Felix Bloch"
+	},
+	"schroedinger": {
+		url: "https://onlinelibrary.wiley.com/doi/10.1002/andp.19263840602",
+		title: "Quantisierung als Eigenwertproblem",
+		author: "Erwin Schrödinger",
+		year: 1926
+	},
 	"faraday": {
 		url: "https://archive.org/details/in.ernet.dli.2015.500031",
 		author: "Michael Faraday",
