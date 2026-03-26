@@ -1,4 +1,10 @@
 window.bibData = {
+	"cullencold": {
+		title: "Of the Cold Produced by Evaporating Fluids and of Some Other Means of Producing Cold",
+		author: "William Cullen",
+		year: 1756,
+		url: "https://openlibrary.org/books/OL19447307M/Of_the_cold_produced_by_evaporating_fluids_and_of_some_other_means_of_producing_cold"
+	},
 	"planck": {
 		url: "https://de.wikisource.org/wiki/Ueber_das_Gesetz_der_Energieverteilung_im_Normalspectrum",
 		title: "Ueber das Gesetz der Energieverteilung im Normalspectrum",
