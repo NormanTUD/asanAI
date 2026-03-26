@@ -162,7 +162,7 @@ const _temmlOpts = {
 		{ left: "$$", right: "$$", display: true },
 		{ left: "$",  right: "$",  display: false }
 	],
-	annotate: true  // Embeds LaTeX source inside MathML — required for popup
+	annotate: true
 };
 
 const _temmlObserver = new IntersectionObserver((entries) => {
@@ -187,17 +187,16 @@ const _temmlObserver = new IntersectionObserver((entries) => {
 function render_temml() {
 
 	/* ═══════════════════════════════════════════════════════════════
-	   ONE-TIME POPUP BOOTSTRAP  (first call only)
+	   ONE-TIME POPUP BOOTSTRAP
 	   ═══════════════════════════════════════════════════════════ */
 	if (!render_temml._popupReady) {
 		render_temml._popupReady   = true;
 		render_temml._overlay      = null;
 		render_temml._mathEl       = null;
 		render_temml._currentLatex = null;
-		render_temml._containerEl  = null;   // the p/div/li that Temml rendered into
-		render_temml._mathIndex    = -1;     // which <math> inside that container
+		render_temml._containerEl  = null;
+		render_temml._mathIndex    = -1;
 
-		/* ── Light-mode stylesheet ── */
 		const s = document.createElement('style');
 		s.id = 'temml-popup-css';
 		s.textContent = `
@@ -248,7 +247,8 @@ function render_temml() {
 				border:1px solid #e5e7eb;
 				border-radius:10px;padding:16px;margin-bottom:16px;
 				text-align:center;overflow-x:auto;color:#1f2937;font-size:1.3em;
-				pointer-events:none}
+				pointer-events:none;
+				transition:opacity .2s ease}
 
 			.lp-code-wrap{
 				position:relative;background:#f9fafb;
@@ -277,7 +277,8 @@ function render_temml() {
 				font-size:13.5px;line-height:1.6;color:#1e293b;
 				white-space:pre-wrap;word-break:break-all;
 				overflow-y:auto;max-height:35vh;tab-size:2;
-				user-select:all}
+				user-select:all;
+				transition:opacity .2s ease}
 
 			.lp-footer{
 				padding:12px 20px;
@@ -288,8 +289,16 @@ function render_temml() {
 				border:1px solid #e5e7eb;
 				border-radius:4px;padding:1px 5px;font-size:10px;color:#6b7280}
 
-			.lp-preview,.lp-code{transition:opacity .15s ease}
-			.lp-swap{opacity:.3}
+			/* ── Animated swap (user switches to a different equation) ── */
+			.lp-swap .lp-preview,
+			.lp-swap .lp-code{opacity:.15}
+
+			/* ── Subtle pulse for live updates (same equation changed) ── */
+			@keyframes lpPulse{
+				0%{box-shadow:inset 0 0 0 2px rgba(79,70,229,.2)}
+				100%{box-shadow:inset 0 0 0 2px transparent}}
+			.lp-live-pulse .lp-code-wrap{animation:lpPulse .5s ease-out}
+			.lp-live-pulse .lp-preview{animation:lpPulse .5s ease-out}
 
 			.lp-badge{
 				display:inline-block;font-size:10px;font-weight:600;
@@ -320,7 +329,6 @@ function render_temml() {
 			return null;
 		}
 
-		// Walk up from <math> to find the container render_temml processed
 		function _findContainer(mathEl) {
 			let el = mathEl.parentElement;
 			while (el && el !== document.body) {
@@ -336,6 +344,23 @@ function render_temml() {
 				if (all[i] === mathEl) return i;
 			}
 			return -1;
+		}
+
+		function _setBadge(overlay, isDisplay) {
+			const oldBadge = overlay.querySelector('.lp-badge');
+			if (oldBadge) oldBadge.remove();
+			const badge = document.createElement('span');
+			badge.className = isDisplay
+				? 'lp-badge lp-badge-display'
+				: 'lp-badge lp-badge-inline';
+			badge.textContent = isDisplay ? 'display' : 'inline';
+			overlay.querySelector('.lp-header h3').appendChild(badge);
+		}
+
+		function _resetCopyBtn(overlay) {
+			const btn = overlay.querySelector('.lp-copy');
+			btn.textContent = 'Copy';
+			btn.classList.remove('copied');
 		}
 
 		function _wireClose(overlay) {
@@ -360,41 +385,50 @@ function render_temml() {
 			});
 		}
 
-		function _populate(overlay, latex, isDisplay, mathEl) {
-			// Update state synchronously to prevent re-triggering
+		/* ── Content update — two modes ── */
+
+		// Animated swap: fades out old → swaps → fades in new
+		// Used when user right-clicks a DIFFERENT equation
+		function _animatedSwap(overlay, latex, isDisplay, mathEl) {
 			render_temml._mathEl       = mathEl;
 			render_temml._currentLatex = latex;
 
-			const preview = overlay.querySelector('.lp-preview');
-			const code    = overlay.querySelector('.lp-code');
+			const box = overlay.querySelector('.lp-box');
+			box.classList.add('lp-swap');
 
-			preview.classList.add('lp-swap');
-			code.classList.add('lp-swap');
+			setTimeout(() => {
+				overlay.querySelector('.lp-preview').innerHTML = '';
+				overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
+				overlay.querySelector('.lp-code').textContent = latex;
+				_setBadge(overlay, isDisplay);
+				_resetCopyBtn(overlay);
 
-			requestAnimationFrame(() => {
-				preview.innerHTML = '';
-				preview.appendChild(mathEl.cloneNode(true));
-				code.textContent = latex;
+				requestAnimationFrame(() => box.classList.remove('lp-swap'));
+			}, 180); // matches the CSS transition duration
+		}
 
-				// Update display/inline badge
-				const oldBadge = overlay.querySelector('.lp-badge');
-				if (oldBadge) oldBadge.remove();
-				const badge = document.createElement('span');
-				badge.className = isDisplay
-					? 'lp-badge lp-badge-display'
-					: 'lp-badge lp-badge-inline';
-				badge.textContent = isDisplay ? 'display' : 'inline';
-				overlay.querySelector('.lp-header h3').appendChild(badge);
+		// Instant swap + subtle pulse: no opacity change, just swaps content
+		// Used when the SAME equation re-renders (live update)
+		function _liveSwap(overlay, latex, isDisplay, mathEl) {
+			render_temml._mathEl       = mathEl;
+			render_temml._currentLatex = latex;
 
-				const btn = overlay.querySelector('.lp-copy');
-				btn.textContent = 'Copy';
-				btn.classList.remove('copied');
+			// Swap content instantly — no flicker
+			overlay.querySelector('.lp-preview').innerHTML = '';
+			overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
+			overlay.querySelector('.lp-code').textContent = latex;
+			_setBadge(overlay, isDisplay);
 
-				requestAnimationFrame(() => {
-					preview.classList.remove('lp-swap');
-					code.classList.remove('lp-swap');
-				});
-			});
+			// Gentle inset glow to signal the update
+			const box = overlay.querySelector('.lp-box');
+			box.classList.remove('lp-live-pulse');
+			// Force reflow so animation restarts if triggered rapidly
+			void box.offsetWidth;
+			box.classList.add('lp-live-pulse');
+
+			// Clean up class after animation ends
+			const onEnd = () => { box.classList.remove('lp-live-pulse'); box.removeEventListener('animationend', onEnd); };
+			box.addEventListener('animationend', onEnd);
 		}
 
 		function _show(latex, isDisplay, mathEl) {
@@ -408,15 +442,15 @@ function render_temml() {
 				return;
 			}
 
-			// Popup already open → update in place (no flicker)
+			// Popup already open → animated swap to new equation
 			if (render_temml._overlay) {
 				render_temml._containerEl = container;
 				render_temml._mathIndex   = mathIndex;
-				_populate(render_temml._overlay, latex, isDisplay, mathEl);
+				_animatedSwap(render_temml._overlay, latex, isDisplay, mathEl);
 				return;
 			}
 
-			// Create new popup
+			// ── Create new popup ──
 			const overlay = document.createElement('div');
 			overlay.className = 'lp-overlay';
 			overlay.innerHTML = `
@@ -440,17 +474,9 @@ function render_temml() {
 					</div>
 				</div>`;
 
-			// Safe text insertion — raw LaTeX, no delimiters
 			overlay.querySelector('.lp-code').textContent = latex;
 			overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
-
-			// Display / inline badge
-			const badge = document.createElement('span');
-			badge.className = isDisplay
-				? 'lp-badge lp-badge-display'
-				: 'lp-badge lp-badge-inline';
-			badge.textContent = isDisplay ? 'display' : 'inline';
-			overlay.querySelector('.lp-header h3').appendChild(badge);
+			_setBadge(overlay, isDisplay);
 
 			_wireClose(overlay);
 			_wireCopy(overlay);
@@ -464,7 +490,7 @@ function render_temml() {
 			render_temml._mathIndex    = mathIndex;
 		}
 
-		/* ── Live-update: called at the end of every render_temml() pass ── */
+		/* ── Live-update hook — called at end of every render pass ── */
 		render_temml._liveUpdate = function() {
 			if (!render_temml._overlay || !render_temml._containerEl) return;
 
@@ -472,17 +498,17 @@ function render_temml() {
 			const idx   = render_temml._mathIndex;
 			if (idx < 0 || idx >= maths.length) return;
 
-			const newMath = maths[idx];
-			// Always track the live DOM node (Temml replaces nodes on re-render)
-			render_temml._mathEl = newMath;
-
+			const newMath  = maths[idx];
 			const newLatex = _extractLatex(newMath);
 			if (!newLatex) return;
 
-			// Content actually changed → update popup
+			// Always keep the DOM reference fresh (Temml replaces nodes)
+			render_temml._mathEl = newMath;
+
+			// Content actually changed → smooth live swap
 			if (newLatex !== render_temml._currentLatex) {
 				const isDisplay = newMath.getAttribute('display') === 'block';
-				_populate(render_temml._overlay, newLatex, isDisplay, newMath);
+				_liveSwap(render_temml._overlay, newLatex, isDisplay, newMath);
 			}
 		};
 
@@ -491,13 +517,12 @@ function render_temml() {
 			const mathEl = e.target.closest('math');
 			if (!mathEl) return;
 
-			// ★ Ignore math inside the popup itself (prevents grey-out bug)
+			// Ignore math clones inside the popup preview
 			if (mathEl.closest('.lp-overlay')) return;
 
 			const latex = _extractLatex(mathEl);
 			if (!latex) return;
 
-			// Only suppress browser menu when we have LaTeX to show
 			e.preventDefault();
 
 			const isDisplay = mathEl.getAttribute('display') === 'block';
@@ -512,7 +537,7 @@ function render_temml() {
 
 
 	/* ═══════════════════════════════════════════════════════════════
-	   NORMAL RENDERING PASS  (runs every call)
+	   NORMAL RENDERING PASS
 	   ═══════════════════════════════════════════════════════════ */
 	const elements = document.querySelectorAll(
 		'p:not([data-math-rendered]), span:not([data-math-rendered]), ' +
@@ -538,9 +563,8 @@ function render_temml() {
 		}
 	});
 
-
 	/* ═══════════════════════════════════════════════════════════════
-	   LIVE UPDATE CHECK  (piggybacks on every render_temml() call)
+	   LIVE UPDATE CHECK  (every render pass)
 	   ═══════════════════════════════════════════════════════════ */
 	if (render_temml._liveUpdate) render_temml._liveUpdate();
 }
