@@ -1,4 +1,10 @@
 window.bibData = {
+	"quanten": {
+		url: "https://link.springer.com/article/10.1007/BF01328377",
+		title: "Über quantentheoretische Umdeutung kinematischer und mechanischer Beziehungen",
+		author: "Werner Heisenberg",
+		year: 1925
+	},
 	"cullencold": {
 		title: "Of the Cold Produced by Evaporating Fluids and of Some Other Means of Producing Cold",
 		author: "William Cullen",
