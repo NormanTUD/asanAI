@@ -1,4 +1,9 @@
 window.bibData = {
+	"colladon": {
+		title: "Sur les réflexions d'un rayon de lumière à l'intérieur d'une veine liquide parabolique",
+		author: "Daniel Colladon",
+		year: "1842"
+	},
 	"fibreoptics": {
 		title: "Dielectric-fibre surface waveguides for optical frequencies",
 		url: "https://digital-library.theiet.org/doi/10.1049/piee.1966.0189",
