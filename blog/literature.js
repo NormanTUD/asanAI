@@ -1,4 +1,10 @@
 window.bibData = {
+	"shockley": {
+		title: "The Theory of p-n Junctions in Semiconductors and p-n Junction Transistors",
+		author: "William Shockley",
+		year: 1949,
+		url: "https://ieeexplore.ieee.org/document/6773080"
+	},
 	"bohr": {
 		url: "https://uni-tuebingen.de/fileadmin/Uni_Tuebingen/Fakultaeten/MathePhysik/Institute/IAP/Forschung/MOettel/Geburt_QM/bohr_PhilMag_26_1_1913.pdf",
 		author: "Nils Bohr",
