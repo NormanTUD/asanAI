@@ -1341,9 +1341,16 @@ function initOptionalBlocks() {
 
 		// Create Content Wrapper (initially hidden)
 		const contentWrapper = document.createElement('div');
-		contentWrapper.className = 'optional-content md';
+		// 🔧 FIX 1: Keine 'md'-Klasse, um doppelte marked.parse()-Verarbeitung zu vermeiden.
+		// Der Inhalt wurde bereits als HTML aus block.innerHTML übernommen.
+		// Falls renderMarkdown() später nochmal läuft, würde es das fertige HTML
+		// erneut durch marked.parse() jagen und dabei kaputt machen.
+		contentWrapper.className = 'optional-content';
 		contentWrapper.style.display = 'none';
-		contentWrapper.style.overflow = 'hidden';
+		// 🔧 FIX 2: overflow:hidden NICHT mehr dauerhaft setzen.
+		// Es wird nur noch temporär während der Collapse-Animation gesetzt.
+		// Vorher blieb overflow:hidden nach dem Expand permanent bestehen,
+		// was in Kombination mit einer CSS max-height den Inhalt bei ~2000px abschnitt.
 		contentWrapper.innerHTML = contentHtml;
 
 		block.appendChild(header);
@@ -1353,11 +1360,9 @@ function initOptionalBlocks() {
 
 		// --- Staggered paragraph reveal ---
 		const animateContentIn = (wrapper, onComplete) => {
-			// Gather direct block-level children for staggered reveal
 			const children = wrapper.querySelectorAll(':scope > p, :scope > ul, :scope > ol, :scope > pre, :scope > blockquote, :scope > div, :scope > table, :scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > h5, :scope > h6');
 
 			if (children.length === 0) {
-				// Fallback: animate the whole wrapper as one block
 				wrapper.style.opacity = '0';
 				wrapper.style.filter = 'blur(3px)';
 				wrapper.style.transform = 'translateY(6px)';
@@ -1371,7 +1376,6 @@ function initOptionalBlocks() {
 				return;
 			}
 
-			// Adaptive pacing: fewer children = slower, more luxurious cascade
 			const perChild = Math.max(30, Math.min(100, 500 / children.length));
 
 			children.forEach((child, i) => {
@@ -1382,8 +1386,8 @@ function initOptionalBlocks() {
 
 				setTimeout(() => {
 					child.style.opacity = '1';
-					child.style.filter = 'blur(0)';
-					child.style.transform = 'translateY(0)';
+					child.style.filter = 'blur(0px)';
+					child.style.transform = 'translateY(0px)';
 				}, i * perChild);
 			});
 
@@ -1404,7 +1408,6 @@ function initOptionalBlocks() {
 				return;
 			}
 
-			// Reverse stagger: last child fades first (bottom-to-top reabsorption)
 			const perChild = Math.max(15, Math.min(50, 250 / children.length));
 			const reversed = [...children].reverse();
 
@@ -1436,34 +1439,42 @@ function initOptionalBlocks() {
 				// --- EXPAND ---
 				isAnimating = true;
 
-				// Rotate icon
 				icon.style.transform = 'rotate(90deg)';
 				icon.innerHTML = '▼';
 				header.classList.add('active');
 
-				// Flash the block border
 				block.style.transition = 'box-shadow 0.4s ease';
 				block.style.boxShadow = '0 0 12px rgba(171,71,188,0.15)';
 				setTimeout(() => { block.style.boxShadow = 'none'; }, 800);
 
-				// Show wrapper, then animate children in
+				// 🔧 FIX 3a: overflow:hidden nur WÄHREND der Animation setzen,
+				// damit die staggered-Einblendung sauber aussieht.
+				contentWrapper.style.overflow = 'hidden';
 				contentWrapper.style.display = 'block';
 
-				// Small delay to let display:block take effect
 				requestAnimationFrame(() => {
 					animateContentIn(contentWrapper, () => {
+						// 🔧 FIX 3b: Nach der Animation overflow ENTFERNEN,
+						// damit der gesamte Inhalt sichtbar ist – egal wie lang.
+						contentWrapper.style.overflow = '';
 						isAnimating = false;
 					});
 				});
 
 			} else {
-				// --- COLLAPSE: dissolve out, then hide ---
+				// --- COLLAPSE ---
 				isAnimating = true;
+
+				// 🔧 FIX 3c: overflow:hidden setzen, BEVOR die Collapse-Animation startet,
+				// damit nichts beim Zuklappen herausragt.
+				contentWrapper.style.overflow = 'hidden';
 
 				animateContentOut(contentWrapper, () => {
 					contentWrapper.style.display = 'none';
+					// overflow spielt bei display:none keine Rolle,
+					// wird aber beim nächsten Expand sowieso neu gesetzt.
+					contentWrapper.style.overflow = '';
 
-					// Reset children styles for next expand
 					const children = contentWrapper.querySelectorAll(':scope > p, :scope > ul, :scope > ol, :scope > pre, :scope > blockquote, :scope > div, :scope > table, :scope > h1, :scope > h2, :scope > h3, :scope > h4, :scope > h5, :scope > h6');
 					children.forEach(child => {
 						child.style.opacity = '';
@@ -1472,7 +1483,6 @@ function initOptionalBlocks() {
 						child.style.transition = '';
 					});
 
-					// Rotate icon back
 					icon.style.transform = 'rotate(0deg)';
 					icon.innerHTML = '▶';
 					header.classList.remove('active');

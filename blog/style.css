@@ -2182,7 +2182,7 @@ blockquote,
 		opacity: 1;
 		filter: blur(0);
 		transform: translateY(0);
-		max-height: 2000px;
+		max-height: fit-content;
 	}
 }
 
