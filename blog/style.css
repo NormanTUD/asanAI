@@ -3070,3 +3070,7 @@ TOKENIZER LAB — Visual Polish
 .apv-matrix-container {
 	text-align: center;
 }
+
+.autociteelement {
+	word-break: break-all;
+}
