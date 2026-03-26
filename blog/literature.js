@@ -1,6 +1,12 @@
 window.bibData = {
+	"bohr": {
+		url: "https://uni-tuebingen.de/fileadmin/Uni_Tuebingen/Fakultaeten/MathePhysik/Institute/IAP/Forschung/MOettel/Geburt_QM/bohr_PhilMag_26_1_1913.pdf",
+		author: "Nils Bohr",
+		title: "On the Constitution of Atoms and Molecules",
+		year: 1913
+	},
 	"wilsonsemiconductors": {
-		title: "The Theory of Electronic Semi-Conductors"
+		title: "The Theory of Electronic Semi-Conductors",
 		url: "https://www.jstor.org/stable/95842",
 		author: "A. H. Wilson",
 		year: 1931
