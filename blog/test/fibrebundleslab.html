@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiber Bundles — An Interactive Journey</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a1a;--card:#12122a;--accent:#7c5cfc;--accent2:#ff6ec7;--text:#e0e0f0;--dim:#888}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;scroll-behavior:smooth}
+.hero{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+#heroCanvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
+.hero-content{z-index:1;text-align:center;padding:2rem}
+h1{font-size:clamp(2rem,6vw,4.5rem);background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:1rem;font-weight:800}
+.subtitle{font-size:clamp(1rem,2.5vw,1.5rem);color:var(--dim);max-width:700px;margin:0 auto 2rem}
+.scroll-hint{position:absolute;bottom:2rem;animation:bob 2s infinite;font-size:1.5rem;z-index:1}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
+section{max-width:1100px;margin:0 auto;padding:4rem 2rem}
+h2{font-size:2rem;margin-bottom:1rem;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+h3{font-size:1.3rem;color:var(--accent);margin:2rem 0 .5rem}
+p,.note{line-height:1.8;color:var(--dim);margin-bottom:1rem;font-size:1.05rem}
+p strong{color:var(--text)}
+.note{background:var(--card);border-left:3px solid var(--accent);padding:1rem 1.5rem;border-radius:0 8px 8px 0;margin:1.5rem 0}
+.interactive-box{background:var(--card);border-radius:12px;padding:1.5rem;margin:2rem 0;border:1px solid #ffffff10}
+.interactive-box canvas,.interactive-box .plotly-graph-div{border-radius:8px}
+.slider-row{display:flex;align-items:center;gap:1rem;margin:1rem 0;flex-wrap:wrap}
+.slider-row label{min-width:120px;color:var(--text);font-size:.95rem}
+.slider-row input[type=range]{flex:1;min-width:150px;accent-color:var(--accent)}
+.slider-row .val{color:var(--accent);min-width:50px;font-weight:700}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;padding:.6rem 1.5rem;border-radius:8px;cursor:pointer;font-size:1rem;font-weight:600;transition:.2s}
+button:hover{transform:scale(1.05);box-shadow:0 0 20px #7c5cfc55}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+@media(max-width:768px){.cols{grid-template-columns:1fr}}
+.citation{font-size:.8rem;color:#666;vertical-align:super}
+.toc{display:flex;flex-wrap:wrap;gap:.8rem;margin:2rem 0}
+.toc a{background:var(--card);padding:.5rem 1.2rem;border-radius:20px;color:var(--accent);text-decoration:none;border:1px solid #ffffff10;transition:.2s}
+.toc a:hover{background:var(--accent);color:#fff}
+#threejs-container{width:100%;height:500px;border-radius:12px;overflow:hidden}
+.fun-fact{background:linear-gradient(135deg,#1a1a3a,#12122a);border:1px solid var(--accent2);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+.fun-fact::before{content:'🧠 ';font-size:1.3rem}
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-content">
+    <h1>Fiber Bundles</h1>
+    <p class="subtitle">The hidden geometry behind physics, gauge theory, and the shape of the universe — made visual and interactive.</p>
+    <button onclick="document.getElementById('toc').scrollIntoView()">Begin the Journey ↓</button>
+  </div>
+  <div class="scroll-hint">⌄</div>
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+<section id="toc">
+  <h2>Your Roadmap</h2>
+  <div class="toc">
+    <a href="#s1">1. Cartesian Products</a>
+    <a href="#s2">2. What is a Fiber?</a>
+    <a href="#s3">3. Trivial Bundles</a>
+    <a href="#s4">4. The Möbius Strip</a>
+    <a href="#s5">5. The Cylinder vs Möbius</a>
+    <a href="#s6">6. Fiber Bundle Definition</a>
+    <a href="#s7">7. The Hopf Fibration</a>
+    <a href="#s8">8. Connections & Parallel Transport</a>
+    <a href="#s9">9. Why It Matters</a>
+  </div>
+</section>
+
+<!-- ==================== 1. CARTESIAN PRODUCTS ==================== -->
+<section id="s1">
+  <h2>1. Cartesian Products — The Starting Point</h2>
+  <p>Before fiber bundles, you need <strong>Cartesian products</strong>. If you have a set <em>A</em> and a set <em>B</em>, their product <em>A × B</em> is just all pairs (a, b). Geometrically: a circle × a line = a cylinder. A circle × a circle = a torus.</p>
+  <div class="interactive-box">
+    <h3>🎮 Play: Build Products</h3>
+    <p>Choose two shapes and see their Cartesian product in 3D:</p>
+    <div class="slider-row">
+      <label>Base shape:</label>
+      <select id="baseShape"><option value="circle">Circle (S¹)</option><option value="interval">Interval [0,1]</option></select>
+      <label>Fiber shape:</label>
+      <select id="fiberShape"><option value="interval">Interval [0,1]</option><option value="circle">Circle (S¹)</option></select>
+      <button onclick="buildProduct()">Build!</button>
+    </div>
+    <div id="productPlot" style="height:400px"></div>
+  </div>
+  <div class="note">💡 <strong>Key insight:</strong> A Cartesian product is "boring" — every point in the base has the exact same fiber attached. Fiber bundles generalize this by allowing the fibers to <em>twist</em>.</div>
+</section>
+
+<!-- ==================== 2. WHAT IS A FIBER ==================== -->
+<section id="s2">
+  <h2>2. What is a Fiber?</h2>
+  <p>Imagine you're an ant walking along a path (the <strong>base space</strong>). At every point of your path, there's a pole sticking up (the <strong>fiber</strong>). You can climb up and down the pole, but you can also walk along the path. The total collection of all poles along the path is the <strong>total space</strong>.</p>
+  <div class="interactive-box">
+    <h3>🎮 Play: Fibers Over a Curve</h3>
+    <p>Drag the slider to move along the base curve. Watch the fiber (vertical line) at each point:</p>
+    <div class="slider-row">
+      <label>Position on base:</label>
+      <input type="range" id="fiberPos" min="0" max="100" value="50">
+      <span class="val" id="fiberPosVal">0.50</span>
+    </div>
+    <canvas id="fiberCanvas" width="800" height="350" style="width:100%;background:#0d0d25;border-radius:8px"></canvas>
+  </div>
+  <p>Formally: a fiber bundle (E, B, π, F) consists of a <strong>total space E</strong>, a <strong>base space B</strong>, a <strong>projection map π: E → B</strong>, and a <strong>fiber F</strong> such that π⁻¹(b) ≅ F for every point b in B.</p>
+</section>
+
+<!-- ==================== 3. TRIVIAL BUNDLES ==================== -->
+<section id="s3">
+  <h2>3. Trivial Bundles</h2>
+  <p>A <strong>trivial bundle</strong> is just a Cartesian product: E = B × F. The cylinder S¹ × [0,1] is a trivial bundle over the circle. Nothing twists. Every local piece looks like the global picture.</p>
+  <div class="interactive-box">
+    <h3>🎮 Play: The Cylinder (Trivial Bundle)</h3>
+    <div id="cylinderPlot" style="height:450px"></div>
+    <div class="slider-row">
+      <label>Fiber height:</label>
+      <input type="range" id="cylHeight" min="0.2" max="3" step="0.1" value="1">
+      <span class="val" id="cylHeightVal">1.0</span>
+    </div>
+  </div>
+  <div class="note">💡 <strong>Key insight:</strong> "Trivial" doesn't mean useless. It means globally decomposable. The interesting question is: <em>when can't you do this?</em></div>
+</section>
+
+<!-- ==================== 4. MÖBIUS STRIP ==================== -->
+<section id="s4">
+  <h2>4. The Möbius Strip — Your First Non-Trivial Bundle</h2>
+  <p>Take a strip of paper. Give it a <strong>half-twist</strong> and glue the ends. You get a <strong>Möbius strip</strong>. Locally, every small piece looks like a rectangle (base × fiber). But globally? It's twisted. You <em>cannot</em> write E = B × F. This is a <strong>non-trivial fiber bundle</strong> over S¹ with fiber [−1, 1].</p>
+  <div class="interactive-box">
+    <h3>🎮 Play: Build a Möbius Strip</h3>
+    <p>Drag the twist slider from 0 (cylinder) to π (Möbius). Watch the topology change!</p>
+    <div class="slider-row">
+      <label>Twist angle:</label>
+      <input type="range" id="mobiusTwist" min="0" max="314" value="314">
+      <span class="val" id="mobiusTwistVal">π</span>
+    </div>
+    <div id="mobiusPlot" style="height:450px"></div>
+  </div>
+  <div class="fun-fact"><strong>Mind-blower:</strong> An ant walking around the Möbius strip returns to its starting point <em>upside down</em>. It must go around <em>twice</em> to return to its original orientation. This is the essence of non-trivial topology.</div>
+</section>
+
+<!-- ==================== 5. CYLINDER VS MÖBIUS ==================== -->
+<section id="s5">
+  <h2>5. Cylinder vs. Möbius — Side by Side</h2>
+  <p>Both are fiber bundles over S¹ with fiber [−1,1]. Both look identical locally. The difference is <strong>global topology</strong> — how the fibers are glued together as you go around.</p>
+  <div class="interactive-box">
+    <h3>🎮 Play: Parallel Transport Comparison</h3>
+    <p>Watch a vector get "parallel transported" around each bundle. On the cylinder it returns unchanged. On the Möbius strip it <strong>flips</strong>.</p>
+    <canvas id="compareCanvas" width="900" height="400" style="width:100%;background:#0d0d25;border-radius:8px"></canvas>
+    <div class="slider-row">
+      <button id="transportBtn" onclick="startTransport()">▶ Transport Around</button>
+      <button onclick="resetTransport()">↺ Reset</button>
+    </div>
+  </div>
+  <p>This "flip" is detected by the <strong>structure group</strong> of the bundle. For the Möbius strip, the structure group is <strong>ℤ₂ = {+1, −1}</strong>. The transition function between overlapping local patches multiplies the fiber coordinate by −1.</p>
+</section>
+
+<!-- ==================== 6. FORMAL DEFINITION ==================== -->
+<section id="s6">
+  <h2>6. The Formal Definition</h2>
+  <div class="note">
+    <p style="color:var(--text)">A <strong>fiber bundle</strong> is a tuple <strong>(E, B, π, F, G)</strong> where:</p>
+    <ul style="color:var(--dim);line-height:2">
+      <li><strong>E</strong> = total space (the whole thing)</li>
+      <li><strong>B</strong> = base space (where you walk)</li>
+      <li><strong>π : E → B</strong> = projection (drops you down to the base)</li>
+      <li><strong>F</strong> = fiber (what's attached at each point)</li>
+      <li><strong>G</strong> = structure group (symmetries of F that encode twisting)</li>
+    </ul>
+    <p style="color:var(--dim);margin-top:1rem"><strong>Local triviality:</strong> For every b ∈ B, there exists a neighborhood U and a homeomorphism φ: π⁻¹(U) → U × F such that the diagram commutes with π.</p>
+  </div>
+  <div class="interactive-box">
+    <h3>🎮 Play: Local vs Global</h3>
+    <p>Click patches on the circle to see local trivializations. Notice how they agree on overlaps (cylinder) or disagree by a sign (Möbius).</p>
+    <canvas id="localCanvas" width="800" height="400" style="width:100%;background:#0d0d25;border-radius:8px"></canvas>
+    <div class="slider-row">
+      <label>Bundle type:</label>
+      <select id="bundleType" onchange="drawLocal()"><option value="trivial">Cylinder (trivial)</option><option value="mobius">Möbius (non-trivial)</option></select>
+      <label>Show patch:</label>
+      <select id="patchSelect" onchange="drawLocal()"><option value="0">Patch U₁ (top)</option><option value="1">Patch U₂ (bottom)</option><option value="2">Both + overlap</option></select>
+    </div>
+  </div>
+  <p>The <strong>transition functions</strong> g_αβ : U_α ∩ U_β → G tell you how to translate between local descriptions. They satisfy the <strong>cocycle condition</strong>: g_αβ · g_βγ = g_αγ on triple overlaps. This is the algebraic heart of fiber bundles.</p>
+</section>
+
+<!-- ==================== 7. HOPF FIBRATION ==================== -->
+<section id="s7">
+  <h2>7. The Hopf Fibration — The Crown Jewel</h2>
+  <p>The <strong>Hopf fibration</strong> is one of the most beautiful objects in mathematics. It's a fiber bundle:</p>
+  <div class="note" style="font-size:1.2rem;text-align:center;color:var(--text)">S¹ → S³ → S²</div>
+  <p>The 3-sphere S³ fibers over the 2-sphere S² with circular fibers S¹. Every point on the 2-sphere has a <em>circle</em> living above it in 4D, and these circles are all <strong>linked</strong> — every pair of fibers forms a Hopf link. Discovered by Heinz Hopf in 1931, it was the first example showing that π₃(S²) ≠ 0.</p>
+  <div class="interactive-box">
+    <h3>🎮 Play: Hopf Fibration (Stereographic Projection to ℝ³)</h3>
+    <p>Drag to rotate. Each colored circle is a fiber over a point on S². Linked circles = non-trivial topology!</p>
+    <div id="threejs-container"></div>
+    <div class="slider-row">
+      <label>Number of fibers:</label>
+      <input type="range" id="hopfCount" min="5" max="80" value="30" onchange="rebuildHopf()">
+      <span class="val" id="hopfCountVal">30</span>
+      <label>Base point latitude:</label>
+      <input type="range" id="hopfLat" min="-90" max="90" value="0" onchange="rebuildHopf()">
+      <span class="val" id="hopfLatVal">0°</span>
+    </div>
+  </div>
+  <div class="fun-fact"><strong>Mind-blower:</strong> The Hopf fibration appears in quantum mechanics! The state space of a qubit is S³ (up to phase), and the observable states live on the Bloch sphere S². The Hopf map is exactly the projection from quantum states to measurement outcomes.</div>
+</section>
+
+<!-- ==================== 8. CONNECTIONS ==================== -->
+<section id="s8">
+  <h2>8. Connections & Parallel Transport</h2>
+  <p>A <strong>connection</strong> on a fiber bundle tells you how to move "horizontally" — how to transport information along the base while staying consistent in the fiber. Without a connection, there's no canonical way to compare fibers at different points.</p>
+  <p>Think of it this way: you're on a curved surface carrying a compass needle. As you walk, the needle rotates relative to your local frame. The <strong>holonomy</strong> — the total rotation after a closed loop — measures the <strong>curvature</strong> of the connection.</p>
+  <div class="interactive-box">
+    <h3>🎮 Play: Parallel Transport on a Sphere</h3>
+    <p>A vector is parallel-transported around a triangle on S². Watch it come back <strong>rotated</strong> — that's holonomy! The rotation angle equals the <strong>solid angle</strong> enclosed.</p>
+    <div id="transportPlot" style="height:450px"></div>
+    <div class="slider-row">
+      <label>Triangle size (°):</label>
+      <input type="range" id="triSize" min="10" max="80" value="45" onchange="drawTransportSphere()">
+      <span class="val" id="triSizeVal">45°</span>
+      <label>Holonomy:</label>
+      <span class="val" id="holonomyVal" style="color:var(--accent2)">—</span>
+    </div>
+  </div>
+  <p>In physics, connections on fiber bundles <em>are</em> gauge fields. The electromagnetic potential A_μ is a connection on a U(1) bundle. The Yang-Mills fields of the Standard Model are connections on SU(2) × U(1) and SU(3) bundles. <strong>Curvature = field strength.</strong></p>
+</section>
+
+<!-- ==================== 9. WHY IT MATTERS ==================== -->
+<section id="s9">
+  <h2>9. Why Fiber Bundles Matter</h2>
+  <div class="cols">
+    <div>
+      <h3>🔬 Physics</h3>
+      <p><strong>Electromagnetism</strong> = U(1) bundle over spacetime. <strong>General relativity</strong> = frame bundle over spacetime. <strong>The Standard Model</strong> = SU(3)×SU(2)×U(1) bundle. Berry phase in quantum mechanics = holonomy of a connection. Magnetic monopoles = non-trivial U(1) bundles over S².</p>
+    </div>
+    <div>
+      <h3>📐 Mathematics</h3>
+      <p><strong>Characteristic classes</strong> (Chern, Stiefel-Whitney, Pontryagin) are topological invariants that detect non-triviality. The <strong>tangent bundle</strong> of any manifold is a fiber bundle. The hairy ball theorem says the tangent bundle of S² is non-trivial!</p>
+    </div>
+  </div>
+  <div class="fun-fact"><strong>The hairy ball theorem:</strong> You cannot comb a hairy sphere flat without creating a cowlick. Formally: S² admits no non-vanishing continuous tangent vector field. This means the tangent bundle TS² is <em>non-trivial</em> — it's not S² × ℝ². Try it with a tennis ball!</div>
+  <div class="note">
+    <p style="color:var(--text)"><strong>References & Further Reading:</strong></p>
+    <ul style="color:var(--dim);line-height:2">
+      <li>Nakahara, M. — <em>Geometry, Topology and Physics</em> (2003). The standard physics-oriented textbook.</li>
+      <li>Steenrod, N. — <em>The Topology of Fibre Bundles</em> (1951). The original mathematical classic.</li>
+      <li>Frankel, T. — <em>The Geometry of Physics</em> (2011). Beautiful bridge between math and physics.</li>
+      <li>Naber, G. — <em>Topology, Geometry and Gauge Fields</em> (2011). Excellent for the gauge theory connection.</li>
+    </ul>
+  </div>
+  <div style="text-align:center;padding:3rem 0">
+    <h2>You now see fiber bundles everywhere.</h2>
+    <p style="font-size:1.2rem">Every time you see a phase, a gauge, a twist, a field — there's a bundle underneath. Welcome to the club. 🎉</p>
+  </div>
+</section>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+// ===== HERO CANVAS: animated fiber-like curves =====
+(function(){
+  const c=document.getElementById('heroCanvas'),ctx=c.getContext('2d');
+  function resize(){c.width=window.innerWidth;c.height=window.innerHeight}
+  resize();window.addEventListener('resize',resize);
+  let t=0;
+  function draw(){
+    ctx.fillStyle='rgba(10,10,26,0.15)';ctx.fillRect(0,0,c.width,c.height);
+    for(let i=0;i<12;i++){
+      ctx.beginPath();ctx.strokeStyle=`hsla(${250+i*15},80%,65%,0.4)`;ctx.lineWidth=2;
+      for(let x=0;x<c.width;x+=3){
+        const y=c.height/2+Math.sin(x*0.005+t+i*0.5)*150*Math.sin(i*0.3+t*0.3)+Math.cos(x*0.003-t*0.7+i)*80;
+        x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+    t+=0.015;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ===== 1. CARTESIAN PRODUCT =====
+function buildProduct(){
+  const b=document.getElementById('baseShape').value,f=document.getElementById('fiberShape').value;
+  let x=[],y=[],z=[];
+  const N=80,M=40;
+  if(b==='circle'&&f==='interval'){
+    for(let i=0;i<=N;i++)for(let j=0;j<=M;j++){
+      const th=2*Math.PI*i/N,h=j/M;
+      x.push(Math.cos(th));y.push(Math.sin(th));z.push(h);
+    }
+  }else if(b==='circle'&&f==='circle'){
+    const R=2,r=0.7;
+    for(let i=0;i<=N;i++)for(let j=0;j<=M;j++){
+      const th=2*Math.PI*i/N,ph=2*Math.PI*j/M;
+      x.push((R+r*Math.cos(ph))*Math.cos(th));y.push((R+r*Math.cos(ph))*Math.sin(th));z.push(r*Math.sin(ph));
+    }
+  }else if(b==='interval'&&f==='interval'){
+    for(let i=0;i<=M;i++)for(let j=0;j<=M;j++){x.push(i/M);y.push(j/M);z.push(0);}
+  }else{
+    for(let i=0;i<=M;i++)for(let j=0;j<=N;j++){
+      const th=2*Math.PI*j/N,h=i/M;
+      x.push(h);y.push(Math.cos(th)*0.3);z.push(Math.sin(th)*0.3);
+    }
+  }
+  Plotly.newPlot('productPlot',[{x,y,z,type:'scatter3d',mode:'markers',marker:{size:1.5,color:z,colorscale:'Viridis'}}],
+    {scene:{bgcolor:'#0a0a1a',xaxis:{color:'#444'},yaxis:{color:'#444'},zaxis:{color:'#444'}},paper_bgcolor:'#12122a',margin:{t:10,b:10,l:10,r:10}},{responsive:true});
+}
+buildProduct();
+
+// ===== 2. FIBER CANVAS =====
+(function(){
+  const sl=document.getElementById('fiberPos'),vl=document.getElementById('fiberPosVal');
+  const c=document.getElementById('fiberCanvas'),ctx=c.getContext('2d');
+  function draw(){
+    const W=c.width,H=c.height;ctx.clearRect(0,0,W,H);
+    const t=sl.value/100;vl.textContent=t.toFixed(2);
+    // base curve
+    ctx.beginPath();ctx.strokeStyle='#7c5cfc';ctx.lineWidth=3;
+    for(let i=0;i<=W;i++){const x=i,y=H*0.7+Math.sin(i/W*Math.PI*3)*40;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+    ctx.stroke();
+    // fiber at position
+    const px=t*W,py=H*0.7+Math.sin(t*Math.PI*3)*40;
+    ctx.beginPath();ctx.strokeStyle='#ff6ec7';ctx.lineWidth=3;
+    ctx.moveTo(px,py);ctx.lineTo(px,py-150);ctx.stroke();
+    ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+    // labels
+    ctx.font='16px sans-serif';ctx.fillStyle='#7c5cfc';ctx.fillText('Base space B',20,H*0.7+60);
+    ctx.fillStyle='#ff6ec7';ctx.fillText('Fiber F = π⁻¹(b)',px+10,py-80);
+    ctx.fillStyle='#fff';ctx.fillText('b',px-4,py+25);
+  }
+  sl.addEventListener('input',draw);draw();
+})();
+
+// ===== 3. CYLINDER =====
+function drawCylinder(){
+  const h=parseFloat(document.getElementById('cylHeight').value);
+  document.getElementById('cylHeightVal').textContent=h.toFixed(1);
+  const x=[],y=[],z=[],N=60,M=20;
+  for(let i=0;i<=N;i++)for(let j=0;j<=M;j++){
+    const th=2*Math.PI*i/N,t=j/M;
+    x.push(Math.cos(th));y.push(Math.sin(th));z.push(t*h);
+  }
+  // fiber lines
+  const traces=[{x,y,z,type:'scatter3d',mode:'markers',marker:{size:1.5,color:z,colorscale:[[0,'#7c5cfc'],[1,'#ff6ec7']]},name:'Cylinder'}];
+  for(let i=0;i<8;i++){
+    const th=2*Math.PI*i/8;
+    traces.push({x:[Math.cos(th),Math.cos(th)],y:[Math.sin(th),Math.sin(th)],z:[0,h],type:'scatter3d',mode:'lines',line:{color:'#ff6ec7',width:4},showlegend:false});
+  }
+  Plotly.newPlot('cylinderPlot',traces,{scene:{bgcolor:'#0a0a1a',xaxis:{color:'#444'},yaxis:{color:'#444'},zaxis:{color:'#444',title:'Fiber'}},paper_bgcolor:'#12122a',margin:{t:10,b:10,l:10,r:10},showlegend:false},{responsive:true});
+}
+document.getElementById('cylHeight').addEventListener('input',drawCylinder);drawCylinder();
+
+// ===== 4. MÖBIUS STRIP =====
+function drawMobius(){
+  const tw=parseInt(document.getElementById('mobiusTwist').value)/100;
+  document.getElementById('mobiusTwistVal').textContent=(tw/Math.PI*180).toFixed(0)+'° ('+(tw/Math.PI).toFixed(2)+'π)';
+  const N=120,M=30,x=[],y=[],z=[],colors=[];
+  for(let i=0;i<=N;i++){
+    const u=2*Math.PI*i/N;
+    for(let j=0;j<=M;j++){
+      const v=-1+2*j/M;
+      const half=tw*u/(2*Math.PI);
+      const xv=(1+v*0.4*Math.cos(half))*Math.cos(u);
+      const yv=(1+v*0.4*Math.cos(half))*Math.sin(u);
+      const zv=v*0.4*Math.sin(half);
+      x.push(xv);y.push(yv);z.push(zv);colors.push(v);
+    }
+  }
+  const data=[{x,y,z,type:'mesh3d',intensity:colors,colorscale:[[0,'#7c5cfc'],[0.5,'#2a1a4a'],[1,'#ff6ec7']],opacity:0.85,flatshading:false,
+    i:[],j:[],k:[]}];
+  // build triangle indices
+  for(let i=0;i<N;i++)for(let j=0;j<M;j++){
+    const a=i*(M+1)+j,b=a+1,c2=(i+1)*(M+1)+j,d=c2+1;
+    data[0].i.push(a,a);data[0].j.push(b,c2);data[0].k.push(c2,d);
+    // also push b->d->c2
+    data[0].i.push(b);data[0].j.push(d);data[0].k.push(c2);
+  }
+  Plotly.newPlot('mobiusPlot',data,{scene:{bgcolor:'#0a0a1a',xaxis:{color:'#444',showgrid:false},yaxis:{color:'#444',showgrid:false},zaxis:{color:'#444',showgrid:false},camera:{eye:{x:1.5,y:1.5,z:1}}},paper_bgcolor:'#12122a',margin:{t:10,b:10,l:10,r:10}},{responsive:true});
+}
+document.getElementById('mobiusTwist').addEventListener('input',drawMobius);drawMobius();
+
+// ===== 5. PARALLEL TRANSPORT COMPARISON =====
+let transportT=0,transportRunning=false,transportRAF=null;
+function drawCompare(t){
+  const c=document.getElementById('compareCanvas'),ctx=c.getContext('2d');
+  const W=c.width,H=c.height;ctx.clearRect(0,0,W,H);
+  const cx1=W*0.25,cx2=W*0.75,cy=H*0.55,R=120;
+  // draw both circles
+  ['Cylinder (trivial)','Möbius (non-trivial)'].forEach((label,idx)=>{
+    const cx=idx===0?cx1:cx2;
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle='#7c5cfc';ctx.lineWidth=2;ctx.stroke();
+    ctx.font='bold 16px sans-serif';ctx.fillStyle='#7c5cfc';ctx.textAlign='center';ctx.fillText(label,cx,40);
+    // fiber ticks
+    for(let i=0;i<24;i++){
+      const a=2*Math.PI*i/24;
+      const ix=cx+R*Math.cos(a),iy=cy+R*Math.sin(a);
+      const fiberFlip=idx===1?Math.cos(a/2):1;// Möbius: fiber orientation depends on angle/2
+      const nx=Math.cos(a)*30*fiberFlip,ny=Math.sin(a)*30*fiberFlip;
+      ctx.beginPath();ctx.moveTo(ix-ny*0.3,iy+nx*0.3);ctx.lineTo(ix+ny*0.3,iy-nx*0.3);
+      ctx.strokeStyle='#ffffff20';ctx.lineWidth=1;ctx.stroke();
+    }
+    // moving vector
+    const angle=t*2*Math.PI;
+    const px=cx+R*Math.cos(angle),py=cy+R*Math.sin(angle);
+    // vector direction: on cylinder stays same, on Möbius rotates by angle/2
+    const vecAngle=idx===0?Math.PI/2:Math.PI/2+angle/2;
+    const perpX=Math.cos(angle+vecAngle),perpY=Math.sin(angle+vecAngle);
+    const vLen=25;
+    ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px+perpX*vLen,py+perpY*vLen);
+    ctx.strokeStyle='#ff6ec7';ctx.lineWidth=4;ctx.lineCap='round';ctx.stroke();
+    // arrowhead
+    const ax=px+perpX*vLen,ay=py+perpY*vLen;
+    ctx.beginPath();ctx.arc(ax,ay,4,0,Math.PI*2);ctx.fillStyle='#ff6ec7';ctx.fill();
+    // dot on base
+    ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+    // start marker
+    const sx=cx+R,sy=cy;
+    ctx.beginPath();ctx.arc(sx,sy,7,0,Math.PI*2);ctx.strokeStyle='#ffcc00';ctx.lineWidth=2;ctx.stroke();
+    ctx.font='12px sans-serif';ctx.fillStyle='#ffcc00';ctx.textAlign='left';ctx.fillText('start',sx+10,sy+4);
+  });
+  // info
+  if(t>=0.99){
+    ctx.font='bold 14px sans-serif';ctx.textAlign='center';
+    ctx.fillStyle='#00ff88';ctx.fillText('✓ Vector unchanged!',cx1,H-20);
+    ctx.fillStyle='#ff4444';ctx.fillText('✗ Vector FLIPPED! (holonomy = -1)',cx2,H-20);
+  }
+}
+drawCompare(0);
+function startTransport(){
+  if(transportRunning)return;transportRunning=true;transportT=0;
+  function step(){
+    transportT+=0.004;
+    if(transportT>1){transportT=1;transportRunning=false;drawCompare(1);return;}
+    drawCompare(transportT);transportRAF=requestAnimationFrame(step);
+  }
+  step();
+}
+function resetTransport(){transportRunning=false;cancelAnimationFrame(transportRAF);transportT=0;drawCompare(0);}
+
+// ===== 6. LOCAL TRIVIALIZATIONS =====
+function drawLocal(){
+  const c=document.getElementById('localCanvas'),ctx=c.getContext('2d');
+  const W=c.width,H=c.height;ctx.clearRect(0,0,W,H);
+  const type=document.getElementById('bundleType').value;
+  const patch=parseInt(document.getElementById('patchSelect').value);
+  const cx=W/2,cy=H*0.6,R=130;
+  // base circle
+  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle='#333';ctx.lineWidth=1;ctx.stroke();
+  const colors=['#7c5cfc','#ff6ec7','#ffcc00'];
+  // patch arcs
+  if(patch===0||patch===2){
+    ctx.beginPath();ctx.arc(cx,cy,R,-Math.PI*0.7,Math.PI*0.7);ctx.strokeStyle=colors[0];ctx.lineWidth=5;ctx.stroke();
+    ctx.font='14px sans-serif';ctx.fillStyle=colors[0];ctx.fillText('U₁',cx+R+15,cy);
+    // fibers on U1
+    for(let i=-6;i<=6;i++){
+      const a=i/6*0.7*Math.PI;
+      const bx=cx+R*Math.cos(a),by=cy+R*Math.sin(a);
+      const nx=-Math.sin(a),ny=Math.cos(a);
+      ctx.beginPath();ctx.moveTo(bx+nx*30,by+ny*30);ctx.lineTo(bx-nx*30,by-ny*30);
+      ctx.strokeStyle=colors[0]+'66';ctx.lineWidth=1.5;ctx.stroke();
+    }
+  }
+  if(patch===1||patch===2){
+    ctx.beginPath();ctx.arc(cx,cy,R,Math.PI*0.3,Math.PI*1.7);ctx.strokeStyle=colors[1];ctx.lineWidth=5;ctx.stroke();
+    ctx.font='14px sans-serif';ctx.fillStyle=colors[1];ctx.fillText('U₂',cx-R-35,cy);
+    for(let i=-6;i<=6;i++){
+      const a=Math.PI+i/6*0.7*Math.PI;
+      const bx=cx+R*Math.cos(a),by=cy+R*Math.sin(a);
+      const nx=-Math.sin(a),ny=Math.cos(a);
+      const flip=(type==='mobius')?-1:1;
+      ctx.beginPath();ctx.moveTo(bx+nx*30,by+ny*30);ctx.lineTo(bx-nx*30*flip,by-ny*30*flip);
+      ctx.strokeStyle=colors[1]+'66';ctx.lineWidth=1.5;ctx.stroke();
+    }
+  }
+  if(patch===2){
+    // overlap regions
+    ctx.font='bold 13px sans-serif';ctx.fillStyle='#ffcc00';
+    ctx.fillText('Overlap',cx+R*Math.cos(0.5)+15,cy+R*Math.sin(0.5)-20);
+    ctx.fillText(type==='mobius'?'g₁₂ = -1 (FLIP!)':'g₁₂ = +1 (identity)',cx-100,50);
+    ctx.fillStyle=type==='mobius'?'#ff4444':'#00ff88';
+    ctx.fillText(type==='mobius'?'NON-TRIVIAL':'TRIVIAL',cx-40,80);
+  }
+  // title
+  ctx.font='bold 16px sans-serif';ctx.fillStyle='#e0e0f0';ctx.textAlign='center';
+  ctx.fillText('Local Trivializations of a '+( type==='mobius'?'Möbius Bundle':'Cylinder Bundle'),W/2,30);
+  ctx.textAlign='start';
+}
+drawLocal();
+
+// ===== 7. HOPF FIBRATION (Three.js) =====
+let hopfScene,hopfCamera,hopfRenderer,hopfControls,hopfGroup;
+(function initHopf(){
+  const container=document.getElementById('threejs-container');
+  hopfScene=new THREE.Scene();
+  hopfCamera=new THREE.PerspectiveCamera(60,container.clientWidth/container.clientHeight,0.1,100);
+  hopfCamera.position.set(3,2,3);
+  hopfRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  hopfRenderer.setSize(container.clientWidth,container.clientHeight);
+  hopfRenderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(hopfRenderer.domElement);
+  hopfControls=new THREE.OrbitControls(hopfCamera,hopfRenderer.domElement);
+  hopfControls.enableDamping=true;hopfControls.dampingFactor=0.05;
+  hopfGroup=new THREE.Group();hopfScene.add(hopfGroup);
+  hopfScene.add(new THREE.AmbientLight(0xffffff,0.6));
+  const dl=new THREE.DirectionalLight(0xffffff,0.8);dl.position.set(5,5,5);hopfScene.add(dl);
+  rebuildHopf();
+  function animate(){requestAnimationFrame(animate);hopfGroup.rotation.y+=0.002;hopfControls.update();hopfRenderer.render(hopfScene,hopfCamera);}
+  animate();
+  window.addEventListener('resize',()=>{
+    const w=container.clientWidth,h=container.clientHeight;
+    hopfCamera.aspect=w/h;hopfCamera.updateProjectionMatrix();hopfRenderer.setSize(w,h);
+  });
+})();
+
+function hopfFiber(theta,phi,nPts){
+  // point on S²: (sin θ cos φ, sin θ sin φ, cos θ)
+  // Hopf fiber: stereographic projection of the S¹ fiber in S³
+  const pts=[];
+  const ct=Math.cos(theta/2),st=Math.sin(theta/2);
+  for(let i=0;i<=nPts;i++){
+    const t=2*Math.PI*i/nPts;
+    // S³ point: (ct*e^{it}, st*e^{i(t+φ)})
+    const a=ct*Math.cos(t),b=ct*Math.sin(t);
+    const c=st*Math.cos(t+phi),d=st*Math.sin(t+phi);
+    // stereographic projection from S³ to R³ (from north pole (0,0,0,1))
+    const denom=1-d+0.001;
+    pts.push(new THREE.Vector3(a/denom,b/denom,c/denom));
+  }
+  return pts;
+}
+
+function rebuildHopf(){
+  const count=parseInt(document.getElementById('hopfCount').value);
+  document.getElementById('hopfCountVal').textContent=count;
+  const latOffset=parseInt(document.getElementById('hopfLat').value)*Math.PI/180;
+  document.getElementById('hopfLatVal').textContent=document.getElementById('hopfLat').value+'°';
+  while(hopfGroup.children.length)hopfGroup.remove(hopfGroup.children[0]);
+  for(let i=0;i<count;i++){
+    const phi=2*Math.PI*i/count;
+    const theta=Math.PI/2+latOffset+Math.sin(i*0.5)*0.3;
+    const pts=hopfFiber(theta,phi,128);
+    const curve=new THREE.CatmullRomCurve3(pts,true);
+    const geom=new THREE.TubeGeometry(curve,128,0.02,8,true);
+    const hue=(i/count);
+    const color=new THREE.Color().setHSL(hue,0.8,0.55);
+    const mat=new THREE.MeshPhongMaterial({color,transparent:true,opacity:0.85});
+    hopfGroup.add(new THREE.Mesh(geom,mat));
+  }
+}
+
+// ===== 8. PARALLEL TRANSPORT ON SPHERE =====
+function drawTransportSphere(){
+  const sz=parseInt(document.getElementById('triSize').value);
+  document.getElementById('triSizeVal').textContent=sz+'°';
+  const szr=sz*Math.PI/180;
+  // spherical triangle: North pole → (szr,0) → (szr,szr) → North pole
+  const N=40;
+  // sphere mesh
+  const sph_x=[],sph_y=[],sph_z=[];
+  for(let i=0;i<=50;i++)for(let j=0;j<=50;j++){
+    const th=Math.PI*i/50,ph=2*Math.PI*j/50;
+    sph_x.push(Math.sin(th)*Math.cos(ph));sph_y.push(Math.sin(th)*Math.sin(ph));sph_z.push(Math.cos(th));
+  }
+  // triangle path
+  const path_x=[],path_y=[],path_z=[];
+  // leg 1: north pole to (szr,0) along φ=0
+  for(let i=0;i<=N;i++){const th=szr*i/N;path_x.push(Math.sin(th));path_y.push(0);path_z.push(Math.cos(th));}
+  // leg 2: along latitude θ=szr from φ=0 to φ=szr
+  for(let i=0;i<=N;i++){const ph=szr*i/N;path_x.push(Math.sin(szr)*Math.cos(ph));path_y.push(Math.sin(szr)*Math.sin(ph));path_z.push(Math.cos(szr));}
+  // leg 3: back to north pole along φ=szr
+  for(let i=0;i<=N;i++){const th=szr*(1-i/N);path_x.push(Math.sin(th)*Math.cos(szr));path_y.push(Math.sin(th)*Math.sin(szr));path_z.push(Math.cos(th));}
+  // holonomy = solid angle of spherical triangle ≈ szr² for small angles, exact = area of triangle
+  // for a right spherical triangle with two sides = szr, excess = angle at pole
+  // the angle at the pole is szr (the dihedral), holonomy = szr for this triangle shape
+  // more precisely, area of spherical triangle = sum of angles - π
+  // this right triangle at pole has angle szr, and two base angles > π/2
+  // approximate: holonomy ≈ area ≈ szr² for small szr
+  const holonomy=szr;// for equilateral-ish triangle the solid angle ≈ szr
+  document.getElementById('holonomyVal').textContent=(holonomy*180/Math.PI).toFixed(1)+'°';
+  // transported vectors along path
+  const vx=[],vy=[],vz=[];
+  const totalPts=3*(N+1);
+  for(let i=0;i<totalPts;i++){
+    const frac=i/totalPts;
+    const rot=holonomy*frac;// vector rotates by holonomy over the loop
+    // tangent-plane vector, initially pointing in φ direction at north pole
+    const px=path_x[Math.min(i,path_x.length-1)],py=path_y[Math.min(i,path_y.length-1)],pz=path_z[Math.min(i,path_z.length-1)];
+    // project a rotating vector onto tangent plane
+    const th=Math.acos(Math.max(-1,Math.min(1,pz))),ph=Math.atan2(py,px);
+    const e_th_x=Math.cos(th)*Math.cos(ph),e_th_y=Math.cos(th)*Math.sin(ph),e_th_z=-Math.sin(th);
+    const e_ph_x=-Math.sin(ph),e_ph_y=Math.cos(ph),e_ph_z=0;
+    const sc=0.15;
+    if(i%4===0){
+      vx.push(px,px+sc*(Math.cos(rot)*e_ph_x+Math.sin(rot)*e_th_x),null);
+      vy.push(py,py+sc*(Math.cos(rot)*e_ph_y+Math.sin(rot)*e_th_y),null);
+      vz.push(pz,pz+sc*(Math.cos(rot)*e_ph_z+Math.sin(rot)*e_th_z),null);
+    }
+  }
+  Plotly.newPlot('transportPlot',[
+    {x:sph_x,y:sph_y,z:sph_z,type:'mesh3d',alphahull:0,opacity:0.15,color:'#7c5cfc'},
+    {x:path_x,y:path_y,z:path_z,type:'scatter3d',mode:'lines',line:{color:'#ffcc00',width:6},name:'Triangle path'},
+    {x:vx,y:vy,z:vz,type:'scatter3d',mode:'lines',line:{color:'#ff6ec7',width:3},name:'Transported vector'}
+  ],{scene:{bgcolor:'#0a0a1a',xaxis:{color:'#444',range:[-1.2,1.2]},yaxis:{color:'#444',range:[-1.2,1.2]},zaxis:{color:'#444',range:[-0.2,1.2]},
+    camera:{eye:{x:1.8,y:0.8,z:1.2}}},paper_bgcolor:'#12122a',margin:{t:10,b:10,l:10,r:10},showlegend:true,legend:{font:{color:'#888'}}},{responsive:true});
+}
+drawTransportSphere();
+</script>
+</body>
+</html>
