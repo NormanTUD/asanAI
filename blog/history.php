@@ -658,6 +658,6 @@ The history of artificial cooling traces back to **William Cullen**, who demonst
 
 Today, hyperscale data centers use elaborate cooling systems, from chilled water loops to, increasingly, liquid immersion cooling, consuming megawatts of power just to prevent the hardware from destroying itself. The quiet hum of air conditioning in a server room is as essential to the existence of ChatGPT as the Transformer architecture itself.
 
-Each of these discoveries, from the rubbing of amber to the laying of submarine cables, was made in pursuit of goals entirely unrelated to artificial intelligence. Yet remove any single one, and the entire edifice collapses. They are the silent, displaced prerequisites: the foundations so deep they have become invisible.
+Each of these discoveries, and many more like them, from the rubbing of amber to the laying of submarine cables, was made in pursuit of goals entirely unrelated to artificial intelligence. Yet remove any single one, and the entire edifice collapses. They are the silent, displaced prerequisites: the foundations so deep they have become invisible.
 
 </div>
