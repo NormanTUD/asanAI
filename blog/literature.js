@@ -1,4 +1,10 @@
 window.bibData = {
+	"psychrometric": {
+		author: "Willis H. Carrier",
+		title: "Rational Psychrometric Formulae",
+		year: 1911,
+		url: "https://en.wikisource.org/wiki/Rational_Psychrometric_Formulae"
+	},
 	"radiationlosses": {
 		author: "F. P. Kapron, D. B. Keck, R. D. Maurer",
 		title: "Radiation Losses in Glass Optical Waveguides",
