@@ -157,61 +157,393 @@ function observeAndRenderMath(targetNode = document.body) {
 	observer.observe(targetNode, config);
 }
 
+/* ── Temml options (unchanged) ── */
 // ── Place once, near your other observers ──
 const _temmlOpts = {
-	delimiters: [
-		{ left: "$$", right: "$$", display: true },
-		{ left: "$",  right: "$",  display: false }
-	]
+  delimiters: [
+    { left: "$$", right: "$$", display: true },
+    { left: "$",  right: "$",  display: false }
+  ],
+  annotate: true   // Required: embeds LaTeX source inside MathML
 };
 
 const _temmlObserver = new IntersectionObserver((entries) => {
-	entries.forEach(entry => {
-		if (entry.isIntersecting) {
-			const el = entry.target;
-			// Guard: skip if already rendered, detached from DOM, or no math left
-			if (el.isConnected &&
-				!el.hasAttribute('data-math-rendered') &&
-				el.textContent.includes('$')) {
-				temml.renderMathInElement(el, _temmlOpts);
-				el.setAttribute('data-math-rendered', 'true');
-			}
-			_temmlObserver.unobserve(el);
-		}
-	});
-}, {
-	threshold: 0,
-	rootMargin: rootMargin
-});
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      if (el.isConnected &&
+        !el.hasAttribute('data-math-rendered') &&
+        el.textContent.includes('$')) {
+        temml.renderMathInElement(el, _temmlOpts);
+        el.setAttribute('data-math-rendered', 'true');
+      }
+      _temmlObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0, rootMargin: rootMargin });
+
 
 function render_temml() {
-	const elements = document.querySelectorAll(
-		'p:not([data-math-rendered]), span:not([data-math-rendered]), div:not([data-math-rendered]), li:not([data-math-rendered])'
-	);
 
-	elements.forEach(el => {
-		if (!el.textContent.includes('$')) return;
+  /* ═══════════════════════════════════════════════════════════════
+     ONE-TIME POPUP BOOTSTRAP
+     ═══════════════════════════════════════════════════════════ */
+  if (!render_temml._popupReady) {
+    render_temml._popupReady   = true;
+    render_temml._overlay      = null;
+    render_temml._mathEl       = null;
+    render_temml._currentLatex = null;
+    render_temml._parentEl     = null;
+    render_temml._mathIndex    = -1;
+    render_temml._liveObserver = null;
 
-		const rect = el.getBoundingClientRect();
+    /* ── Light-mode stylesheet ── */
+    const s = document.createElement('style');
+    s.id = 'temml-popup-css';
+    s.textContent = `
+      .lp-overlay{
+        position:fixed;inset:0;
+        background:rgba(0,0,0,.18);backdrop-filter:blur(4px);
+        z-index:100000;display:flex;align-items:center;justify-content:center;
+        animation:lpFadeIn .18s ease-out}
+      @keyframes lpFadeIn{from{opacity:0}to{opacity:1}}
+      @keyframes lpSlideUp{from{opacity:0;transform:translateY(12px) scale(.97)}
+        to{opacity:1;transform:translateY(0) scale(1)}}
 
-		// ① FIX: Elements inside hidden tabs (display:none) have zero
-		//    dimensions. IntersectionObserver will NEVER fire for them.
-		//    Render immediately so they're ready when the tab is shown.
-		if (rect.width === 0 && rect.height === 0) {
-			temml.renderMathInElement(el, _temmlOpts);
-			el.setAttribute('data-math-rendered', 'true');
-			return;
-		}
+      .lp-box{
+        background:#ffffff;
+        border:1px solid rgba(0,0,0,.1);border-radius:14px;
+        width:min(560px,90vw);max-height:80vh;overflow:hidden;
+        box-shadow:0 8px 40px rgba(0,0,0,.12),
+                   0 0 0 1px rgba(0,0,0,.04);
+        animation:lpSlideUp .22s ease-out;
+        font-family:'Inter','Segoe UI',system-ui,sans-serif}
 
-		// ② Elements in/near the viewport → render immediately
-		if (rect.bottom > -300 && rect.top < window.innerHeight + 300) {
-			temml.renderMathInElement(el, _temmlOpts);
-			el.setAttribute('data-math-rendered', 'true');
-		} else {
-			// ③ Far off-screen → defer until scrolled into view
-			_temmlObserver.observe(el);
-		}
-	});
+      .lp-header{
+        display:flex;align-items:center;justify-content:space-between;
+        padding:14px 20px;
+        border-bottom:1px solid #e5e7eb;
+        background:#fafbfc}
+      .lp-header h3{
+        margin:0;font-size:14px;font-weight:600;color:#1f2937;
+        display:flex;align-items:center;gap:8px}
+      .lp-header h3::before{
+        content:'∑';font-size:18px;
+        background:linear-gradient(135deg,#4f46e5,#7c3aed);
+        -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+      .lp-close{
+        background:#f3f4f6;border:1px solid #e5e7eb;
+        color:#6b7280;font-size:18px;width:32px;height:32px;
+        border-radius:8px;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;
+        transition:all .15s ease}
+      .lp-close:hover{
+        background:#fee2e2;border-color:#fca5a5;color:#dc2626}
+
+      .lp-body{padding:20px}
+
+      .lp-preview{
+        background:#f8f9fb;
+        border:1px solid #e5e7eb;
+        border-radius:10px;padding:16px;margin-bottom:16px;
+        text-align:center;overflow-x:auto;color:#1f2937;font-size:1.3em}
+
+      .lp-code-wrap{
+        position:relative;background:#f9fafb;
+        border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+      .lp-code-bar{
+        display:flex;align-items:center;justify-content:space-between;
+        padding:8px 14px;
+        background:#f3f4f6;
+        border-bottom:1px solid #e5e7eb}
+      .lp-code-bar span{
+        font-size:11px;color:#9ca3af;text-transform:uppercase;
+        letter-spacing:.5px;font-weight:600}
+
+      .lp-copy{
+        background:linear-gradient(135deg,#4f46e5,#7c3aed);
+        color:#fff;border:none;padding:5px 14px;border-radius:6px;
+        font-size:12px;font-weight:600;cursor:pointer;transition:all .2s ease}
+      .lp-copy:hover{transform:translateY(-1px);
+        box-shadow:0 4px 12px rgba(79,70,229,.3)}
+      .lp-copy.copied{
+        background:linear-gradient(135deg,#059669,#10b981)}
+
+      .lp-code{
+        padding:14px 16px;margin:0;
+        font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+        font-size:13.5px;line-height:1.6;color:#1e293b;
+        white-space:pre-wrap;word-break:break-all;
+        overflow-y:auto;max-height:35vh;tab-size:2}
+
+      .lp-footer{
+        padding:12px 20px;
+        border-top:1px solid #e5e7eb;text-align:center}
+      .lp-footer span{font-size:11px;color:#9ca3af}
+      .lp-footer kbd{
+        background:#f3f4f6;
+        border:1px solid #e5e7eb;
+        border-radius:4px;padding:1px 5px;font-size:10px;color:#6b7280}
+
+      .lp-preview,.lp-code{transition:opacity .15s ease}
+      .lp-swap{opacity:.3}
+
+      .lp-badge{
+        display:inline-block;font-size:10px;font-weight:600;
+        padding:2px 7px;border-radius:4px;margin-left:8px;
+        vertical-align:middle}
+      .lp-badge-display{background:#ede9fe;color:#6d28d9}
+      .lp-badge-inline{background:#e0f2fe;color:#0369a1}
+    `;
+    document.head.appendChild(s);
+
+    /* ── Helpers ── */
+    function _disconnectLive() {
+      if (render_temml._liveObserver) {
+        render_temml._liveObserver.disconnect();
+        render_temml._liveObserver = null;
+      }
+    }
+
+    function _close() {
+      if (!render_temml._overlay) return;
+      _disconnectLive();
+      render_temml._overlay.remove();
+      render_temml._overlay      = null;
+      render_temml._mathEl       = null;
+      render_temml._currentLatex = null;
+      render_temml._parentEl     = null;
+      render_temml._mathIndex    = -1;
+    }
+
+    function _extractLatex(mathEl) {
+      const ann = mathEl.querySelector('annotation[encoding="application/x-tex"]');
+      if (ann) return ann.textContent.trim();
+      if (mathEl.dataset && mathEl.dataset.tex) return mathEl.dataset.tex.trim();
+      const wrapper = mathEl.closest('.temml');
+      if (wrapper && wrapper.dataset.tex) return wrapper.dataset.tex.trim();
+      return null;
+    }
+
+    function _getMathIndex(mathEl) {
+      const parent = mathEl.parentElement;
+      if (!parent) return -1;
+      const all = parent.querySelectorAll('math');
+      for (let i = 0; i < all.length; i++) {
+        if (all[i] === mathEl) return i;
+      }
+      return -1;
+    }
+
+    function _findMathByIndex(parentEl, idx) {
+      if (!parentEl) return null;
+      const all = parentEl.querySelectorAll('math');
+      return (idx >= 0 && idx < all.length) ? all[idx] : null;
+    }
+
+    function _wireClose(overlay) {
+      overlay.querySelector('.lp-close').addEventListener('click', _close);
+      overlay.addEventListener('click', e => { if (e.target === overlay) _close(); });
+    }
+
+    function _wireCopy(overlay) {
+      const btn = overlay.querySelector('.lp-copy');
+      let timeout;
+      btn.addEventListener('click', () => {
+        // Copy raw LaTeX only — no delimiters
+        const text = overlay.querySelector('.lp-code').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = '✓ Copied!';
+          btn.classList.add('copied');
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+    }
+
+    function _populate(overlay, latex, isDisplay, mathEl) {
+      const preview = overlay.querySelector('.lp-preview');
+      const code    = overlay.querySelector('.lp-code');
+
+      preview.classList.add('lp-swap');
+      code.classList.add('lp-swap');
+
+      requestAnimationFrame(() => {
+        preview.innerHTML = '';
+        preview.appendChild(mathEl.cloneNode(true));
+
+        // Raw LaTeX — no $$ delimiters
+        code.textContent = latex;
+
+        // Update badge
+        const oldBadge = overlay.querySelector('.lp-badge');
+        if (oldBadge) oldBadge.remove();
+        const badge = document.createElement('span');
+        badge.className = isDisplay
+          ? 'lp-badge lp-badge-display'
+          : 'lp-badge lp-badge-inline';
+        badge.textContent = isDisplay ? 'display' : 'inline';
+        overlay.querySelector('.lp-header h3').appendChild(badge);
+
+        const btn = overlay.querySelector('.lp-copy');
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+
+        requestAnimationFrame(() => {
+          preview.classList.remove('lp-swap');
+          code.classList.remove('lp-swap');
+        });
+      });
+
+      render_temml._mathEl       = mathEl;
+      render_temml._currentLatex = latex;
+    }
+
+    /* ── Live-update observer ── */
+    function _watchForUpdates(parentEl, mathIndex) {
+      _disconnectLive();
+
+      render_temml._parentEl  = parentEl;
+      render_temml._mathIndex = mathIndex;
+
+      const obs = new MutationObserver(() => {
+        if (!render_temml._overlay) { obs.disconnect(); return; }
+
+        const newMath = _findMathByIndex(render_temml._parentEl, render_temml._mathIndex);
+        if (!newMath) return;
+
+        const newLatex = _extractLatex(newMath);
+        if (!newLatex) return;
+
+        // Only update if content actually changed
+        if (newLatex === render_temml._currentLatex && newMath === render_temml._mathEl) return;
+
+        const isDisplay = newMath.getAttribute('display') === 'block';
+        _populate(render_temml._overlay, newLatex, isDisplay, newMath);
+      });
+
+      obs.observe(parentEl, { childList: true, subtree: true, characterData: true });
+      render_temml._liveObserver = obs;
+    }
+
+    function _show(latex, isDisplay, mathEl) {
+      const parentEl  = mathEl.parentElement;
+      const mathIndex = _getMathIndex(mathEl);
+
+      // Same equation, same content → no-op
+      if (render_temml._overlay &&
+          render_temml._mathEl === mathEl &&
+          render_temml._currentLatex === latex) {
+        return;
+      }
+
+      // Popup already open → update in place
+      if (render_temml._overlay) {
+        _populate(render_temml._overlay, latex, isDisplay, mathEl);
+        _watchForUpdates(parentEl, mathIndex);
+        return;
+      }
+
+      // Create new popup
+      const overlay = document.createElement('div');
+      overlay.className = 'lp-overlay';
+      overlay.innerHTML = `
+        <div class="lp-box" role="dialog" aria-label="LaTeX Source">
+          <div class="lp-header">
+            <h3>LaTeX Source</h3>
+            <button class="lp-close" aria-label="Close" title="Close">&times;</button>
+          </div>
+          <div class="lp-body">
+            <div class="lp-preview"></div>
+            <div class="lp-code-wrap">
+              <div class="lp-code-bar">
+                <span>LaTeX</span>
+                <button class="lp-copy">Copy</button>
+              </div>
+              <pre class="lp-code"></pre>
+            </div>
+          </div>
+          <div class="lp-footer">
+            <span>Right-click any equation &nbsp;·&nbsp; <kbd>Esc</kbd> to close</span>
+          </div>
+        </div>`;
+
+      // Raw LaTeX — no delimiters
+      overlay.querySelector('.lp-code').textContent = latex;
+      overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
+
+      // Display/inline badge
+      const badge = document.createElement('span');
+      badge.className = isDisplay
+        ? 'lp-badge lp-badge-display'
+        : 'lp-badge lp-badge-inline';
+      badge.textContent = isDisplay ? 'display' : 'inline';
+      overlay.querySelector('.lp-header h3').appendChild(badge);
+
+      _wireClose(overlay);
+      _wireCopy(overlay);
+
+      document.body.appendChild(overlay);
+
+      render_temml._overlay      = overlay;
+      render_temml._mathEl       = mathEl;
+      render_temml._currentLatex = latex;
+
+      _watchForUpdates(parentEl, mathIndex);
+    }
+
+    /* ── Global listeners (once) ── */
+    document.addEventListener('contextmenu', function(e) {
+      const mathEl = e.target.closest('math');
+      if (!mathEl) return;
+
+      const latex = _extractLatex(mathEl);
+      if (!latex) return;
+
+      // Only suppress browser menu when we actually have LaTeX
+      e.preventDefault();
+
+      const isDisplay = mathEl.getAttribute('display') === 'block';
+      _show(latex, isDisplay, mathEl);
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') _close();
+    });
+
+  } /* end one-time bootstrap */
+
+
+  /* ═══════════════════════════════════════════════════════════════
+     NORMAL RENDERING PASS  (runs every call)
+     ═══════════════════════════════════════════════════════════ */
+  const elements = document.querySelectorAll(
+    'p:not([data-math-rendered]), span:not([data-math-rendered]), ' +
+    'div:not([data-math-rendered]), li:not([data-math-rendered])'
+  );
+
+  elements.forEach(el => {
+    if (!el.textContent.includes('$')) return;
+
+    const rect = el.getBoundingClientRect();
+
+    if (rect.width === 0 && rect.height === 0) {
+      temml.renderMathInElement(el, _temmlOpts);
+      el.setAttribute('data-math-rendered', 'true');
+      return;
+    }
+
+    if (rect.bottom > -300 && rect.top < window.innerHeight + 300) {
+      temml.renderMathInElement(el, _temmlOpts);
+      el.setAttribute('data-math-rendered', 'true');
+    } else {
+      _temmlObserver.observe(el);
+    }
+  });
 }
 
 // ─── Shared post-load initialization ───
