@@ -215,9 +215,6 @@ f(x) = \frac{1}{1 + 25x^2}
 $$
 
 on the interval $[-1, 1]$ with equidistant interpolation nodes. As the number of nodes increases, the interpolating polynomial converges at the centre but diverges wildly near $x = \pm 1$. The maximum error actually *grows* without bound.
-
-The classical fix is to use **Chebyshev nodes**, points clustered near the edges of the interval, instead of equidistant spacing. This eliminates the oscillations because Chebyshev nodes minimise the maximum interpolation error (the so-called **minimax** property). The lesson: *where* you sample your data matters as much as *how much* you sample.
-
 </div>
 
 ## Taming the "Wiggle": Regularisation & Dropout
