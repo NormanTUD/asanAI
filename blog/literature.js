@@ -1,4 +1,10 @@
 window.bibData = {
+	"volta": {
+		url: "https://royalsocietypublishing.org/rspl/article/doi/10.1098/rspl.1800.0016/106487/On-the-electricity-excited-by-the-mere-contact-of",
+		author: "Alessandro Volta",
+		title: "On the electricity excited by the mere contact of conducting substances of different kinds",
+		year: 1832
+	},
 	"laertius": {
 		url: "https://www.gutenberg.org/files/57342/57342-h/57342-h.htm",
 		title: "Lives of the Eminent Philosophers",
