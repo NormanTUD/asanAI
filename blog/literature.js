@@ -1,4 +1,10 @@
 window.bibData = {
+	"semiconductor": {
+		url: "https://www.eletrica.ufpr.br/mehl/materiais/documentos/PhysRev.74.230.pdf",
+		title: "The Transistor, A Semi-Conductor Triode",
+		author: "J. Bardeen, W. H. Brattain",
+		year: 1948
+	},
 	"shockley": {
 		title: "The Theory of p-n Junctions in Semiconductors and p-n Junction Transistors",
 		author: "William Shockley",
