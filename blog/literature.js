@@ -1,4 +1,10 @@
 window.bibData = {
+	"fibreoptics": {
+		title: "Dielectric-fibre surface waveguides for optical frequencies",
+		url: "https://digital-library.theiet.org/doi/10.1049/piee.1966.0189",
+		year: 1966,
+		author: "George Alfred Hockham, Charles Kuen Kao"
+	},
 	"bloch": {
 		url: "https://link.springer.com/article/10.1007/BF01339455",
 		title: "Über die Quantenmechanik der Elektronen in Kristallgittern",
