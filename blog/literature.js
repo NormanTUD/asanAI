@@ -1,4 +1,10 @@
 window.bibData = {
+	"laertius": {
+		url: "https://www.gutenberg.org/files/57342/57342-h/57342-h.htm",
+		title: "Lives of the Eminent Philosophers",
+		author: "Diogenes Laërtius",
+		year: "1915"
+	},
 	"deanima": {
 		title: "Περὶ ψυχῆς",
 		author: "Aristotle",
