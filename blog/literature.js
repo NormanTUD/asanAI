@@ -1,4 +1,10 @@
 window.bibData = {
+	"patent1250": {
+		title: "Kälteerzeugungsmaschine",
+		year: 1877,
+		author: "Karl Linde",
+		url: "https://www.dpma.de/docs/postergalerieneu/patentschriften/001kuehlschrank-karllinde.pdf"
+	},
 	"psychrometric": {
 		author: "Willis H. Carrier",
 		title: "Rational Psychrometric Formulae",
