@@ -1,8 +1,14 @@
 window.bibData = {
+	"wilsonsemiconductors": {
+		title: "The Theory of Electronic Semi-Conductors"
+		url: "https://www.jstor.org/stable/95842",
+		author: "A. H. Wilson",
+		year: 1931
+	},
 	"colladon": {
 		title: "Sur les réflexions d'un rayon de lumière à l'intérieur d'une veine liquide parabolique",
 		author: "Daniel Colladon",
-		year: "1842"
+		year: 1842
 	},
 	"fibreoptics": {
 		title: "Dielectric-fibre surface waveguides for optical frequencies",
