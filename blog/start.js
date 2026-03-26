@@ -157,393 +157,392 @@ function observeAndRenderMath(targetNode = document.body) {
 	observer.observe(targetNode, config);
 }
 
-/* ── Temml options (unchanged) ── */
-// ── Place once, near your other observers ──
 const _temmlOpts = {
-  delimiters: [
-    { left: "$$", right: "$$", display: true },
-    { left: "$",  right: "$",  display: false }
-  ],
-  annotate: true   // Required: embeds LaTeX source inside MathML
+	delimiters: [
+		{ left: "$$", right: "$$", display: true },
+		{ left: "$",  right: "$",  display: false }
+	],
+	annotate: true  // Embeds LaTeX source inside MathML — required for popup
 };
 
 const _temmlObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const el = entry.target;
-      if (el.isConnected &&
-        !el.hasAttribute('data-math-rendered') &&
-        el.textContent.includes('$')) {
-        temml.renderMathInElement(el, _temmlOpts);
-        el.setAttribute('data-math-rendered', 'true');
-      }
-      _temmlObserver.unobserve(el);
-    }
-  });
-}, { threshold: 0, rootMargin: rootMargin });
+	entries.forEach(entry => {
+		if (entry.isIntersecting) {
+			const el = entry.target;
+			if (el.isConnected &&
+				!el.hasAttribute('data-math-rendered') &&
+				el.textContent.includes('$')) {
+				temml.renderMathInElement(el, _temmlOpts);
+				el.setAttribute('data-math-rendered', 'true');
+			}
+			_temmlObserver.unobserve(el);
+		}
+	});
+}, {
+	threshold: 0,
+	rootMargin: rootMargin
+});
 
 
 function render_temml() {
 
-  /* ═══════════════════════════════════════════════════════════════
-     ONE-TIME POPUP BOOTSTRAP
-     ═══════════════════════════════════════════════════════════ */
-  if (!render_temml._popupReady) {
-    render_temml._popupReady   = true;
-    render_temml._overlay      = null;
-    render_temml._mathEl       = null;
-    render_temml._currentLatex = null;
-    render_temml._parentEl     = null;
-    render_temml._mathIndex    = -1;
-    render_temml._liveObserver = null;
+	/* ═══════════════════════════════════════════════════════════════
+	   ONE-TIME POPUP BOOTSTRAP  (first call only)
+	   ═══════════════════════════════════════════════════════════ */
+	if (!render_temml._popupReady) {
+		render_temml._popupReady   = true;
+		render_temml._overlay      = null;
+		render_temml._mathEl       = null;
+		render_temml._currentLatex = null;
+		render_temml._containerEl  = null;   // the p/div/li that Temml rendered into
+		render_temml._mathIndex    = -1;     // which <math> inside that container
 
-    /* ── Light-mode stylesheet ── */
-    const s = document.createElement('style');
-    s.id = 'temml-popup-css';
-    s.textContent = `
-      .lp-overlay{
-        position:fixed;inset:0;
-        background:rgba(0,0,0,.18);backdrop-filter:blur(4px);
-        z-index:100000;display:flex;align-items:center;justify-content:center;
-        animation:lpFadeIn .18s ease-out}
-      @keyframes lpFadeIn{from{opacity:0}to{opacity:1}}
-      @keyframes lpSlideUp{from{opacity:0;transform:translateY(12px) scale(.97)}
-        to{opacity:1;transform:translateY(0) scale(1)}}
+		/* ── Light-mode stylesheet ── */
+		const s = document.createElement('style');
+		s.id = 'temml-popup-css';
+		s.textContent = `
+			.lp-overlay{
+				position:fixed;inset:0;
+				background:rgba(0,0,0,.18);backdrop-filter:blur(4px);
+				z-index:100000;display:flex;align-items:center;justify-content:center;
+				animation:lpFadeIn .18s ease-out}
+			@keyframes lpFadeIn{from{opacity:0}to{opacity:1}}
+			@keyframes lpSlideUp{from{opacity:0;transform:translateY(12px) scale(.97)}
+				to{opacity:1;transform:translateY(0) scale(1)}}
 
-      .lp-box{
-        background:#ffffff;
-        border:1px solid rgba(0,0,0,.1);border-radius:14px;
-        width:min(560px,90vw);max-height:80vh;overflow:hidden;
-        box-shadow:0 8px 40px rgba(0,0,0,.12),
-                   0 0 0 1px rgba(0,0,0,.04);
-        animation:lpSlideUp .22s ease-out;
-        font-family:'Inter','Segoe UI',system-ui,sans-serif}
+			.lp-box{
+				background:#ffffff;
+				border:1px solid rgba(0,0,0,.1);border-radius:14px;
+				width:min(560px,90vw);max-height:80vh;overflow:hidden;
+				box-shadow:0 8px 40px rgba(0,0,0,.12),
+				           0 0 0 1px rgba(0,0,0,.04);
+				animation:lpSlideUp .22s ease-out;
+				font-family:'Inter','Segoe UI',system-ui,sans-serif}
 
-      .lp-header{
-        display:flex;align-items:center;justify-content:space-between;
-        padding:14px 20px;
-        border-bottom:1px solid #e5e7eb;
-        background:#fafbfc}
-      .lp-header h3{
-        margin:0;font-size:14px;font-weight:600;color:#1f2937;
-        display:flex;align-items:center;gap:8px}
-      .lp-header h3::before{
-        content:'∑';font-size:18px;
-        background:linear-gradient(135deg,#4f46e5,#7c3aed);
-        -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+			.lp-header{
+				display:flex;align-items:center;justify-content:space-between;
+				padding:14px 20px;
+				border-bottom:1px solid #e5e7eb;
+				background:#fafbfc}
+			.lp-header h3{
+				margin:0;font-size:14px;font-weight:600;color:#1f2937;
+				display:flex;align-items:center;gap:8px}
+			.lp-header h3::before{
+				content:'∑';font-size:18px;
+				background:linear-gradient(135deg,#4f46e5,#7c3aed);
+				-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-      .lp-close{
-        background:#f3f4f6;border:1px solid #e5e7eb;
-        color:#6b7280;font-size:18px;width:32px;height:32px;
-        border-radius:8px;cursor:pointer;
-        display:flex;align-items:center;justify-content:center;
-        transition:all .15s ease}
-      .lp-close:hover{
-        background:#fee2e2;border-color:#fca5a5;color:#dc2626}
+			.lp-close{
+				background:#f3f4f6;border:1px solid #e5e7eb;
+				color:#6b7280;font-size:18px;width:32px;height:32px;
+				border-radius:8px;cursor:pointer;
+				display:flex;align-items:center;justify-content:center;
+				transition:all .15s ease}
+			.lp-close:hover{
+				background:#fee2e2;border-color:#fca5a5;color:#dc2626}
 
-      .lp-body{padding:20px}
+			.lp-body{padding:20px}
 
-      .lp-preview{
-        background:#f8f9fb;
-        border:1px solid #e5e7eb;
-        border-radius:10px;padding:16px;margin-bottom:16px;
-        text-align:center;overflow-x:auto;color:#1f2937;font-size:1.3em}
+			.lp-preview{
+				background:#f8f9fb;
+				border:1px solid #e5e7eb;
+				border-radius:10px;padding:16px;margin-bottom:16px;
+				text-align:center;overflow-x:auto;color:#1f2937;font-size:1.3em;
+				pointer-events:none}
 
-      .lp-code-wrap{
-        position:relative;background:#f9fafb;
-        border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
-      .lp-code-bar{
-        display:flex;align-items:center;justify-content:space-between;
-        padding:8px 14px;
-        background:#f3f4f6;
-        border-bottom:1px solid #e5e7eb}
-      .lp-code-bar span{
-        font-size:11px;color:#9ca3af;text-transform:uppercase;
-        letter-spacing:.5px;font-weight:600}
+			.lp-code-wrap{
+				position:relative;background:#f9fafb;
+				border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+			.lp-code-bar{
+				display:flex;align-items:center;justify-content:space-between;
+				padding:8px 14px;
+				background:#f3f4f6;
+				border-bottom:1px solid #e5e7eb}
+			.lp-code-bar span{
+				font-size:11px;color:#9ca3af;text-transform:uppercase;
+				letter-spacing:.5px;font-weight:600}
 
-      .lp-copy{
-        background:linear-gradient(135deg,#4f46e5,#7c3aed);
-        color:#fff;border:none;padding:5px 14px;border-radius:6px;
-        font-size:12px;font-weight:600;cursor:pointer;transition:all .2s ease}
-      .lp-copy:hover{transform:translateY(-1px);
-        box-shadow:0 4px 12px rgba(79,70,229,.3)}
-      .lp-copy.copied{
-        background:linear-gradient(135deg,#059669,#10b981)}
+			.lp-copy{
+				background:linear-gradient(135deg,#4f46e5,#7c3aed);
+				color:#fff;border:none;padding:5px 14px;border-radius:6px;
+				font-size:12px;font-weight:600;cursor:pointer;transition:all .2s ease}
+			.lp-copy:hover{transform:translateY(-1px);
+				box-shadow:0 4px 12px rgba(79,70,229,.3)}
+			.lp-copy.copied{
+				background:linear-gradient(135deg,#059669,#10b981)}
 
-      .lp-code{
-        padding:14px 16px;margin:0;
-        font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace;
-        font-size:13.5px;line-height:1.6;color:#1e293b;
-        white-space:pre-wrap;word-break:break-all;
-        overflow-y:auto;max-height:35vh;tab-size:2}
+			.lp-code{
+				padding:14px 16px;margin:0;
+				font-family:'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+				font-size:13.5px;line-height:1.6;color:#1e293b;
+				white-space:pre-wrap;word-break:break-all;
+				overflow-y:auto;max-height:35vh;tab-size:2;
+				user-select:all}
 
-      .lp-footer{
-        padding:12px 20px;
-        border-top:1px solid #e5e7eb;text-align:center}
-      .lp-footer span{font-size:11px;color:#9ca3af}
-      .lp-footer kbd{
-        background:#f3f4f6;
-        border:1px solid #e5e7eb;
-        border-radius:4px;padding:1px 5px;font-size:10px;color:#6b7280}
+			.lp-footer{
+				padding:12px 20px;
+				border-top:1px solid #e5e7eb;text-align:center}
+			.lp-footer span{font-size:11px;color:#9ca3af}
+			.lp-footer kbd{
+				background:#f3f4f6;
+				border:1px solid #e5e7eb;
+				border-radius:4px;padding:1px 5px;font-size:10px;color:#6b7280}
 
-      .lp-preview,.lp-code{transition:opacity .15s ease}
-      .lp-swap{opacity:.3}
+			.lp-preview,.lp-code{transition:opacity .15s ease}
+			.lp-swap{opacity:.3}
 
-      .lp-badge{
-        display:inline-block;font-size:10px;font-weight:600;
-        padding:2px 7px;border-radius:4px;margin-left:8px;
-        vertical-align:middle}
-      .lp-badge-display{background:#ede9fe;color:#6d28d9}
-      .lp-badge-inline{background:#e0f2fe;color:#0369a1}
-    `;
-    document.head.appendChild(s);
+			.lp-badge{
+				display:inline-block;font-size:10px;font-weight:600;
+				padding:2px 7px;border-radius:4px;margin-left:8px;
+				vertical-align:middle}
+			.lp-badge-display{background:#ede9fe;color:#6d28d9}
+			.lp-badge-inline{background:#e0f2fe;color:#0369a1}
+		`;
+		document.head.appendChild(s);
 
-    /* ── Helpers ── */
-    function _disconnectLive() {
-      if (render_temml._liveObserver) {
-        render_temml._liveObserver.disconnect();
-        render_temml._liveObserver = null;
-      }
-    }
+		/* ── Helpers ── */
+		function _close() {
+			if (!render_temml._overlay) return;
+			render_temml._overlay.remove();
+			render_temml._overlay      = null;
+			render_temml._mathEl       = null;
+			render_temml._currentLatex = null;
+			render_temml._containerEl  = null;
+			render_temml._mathIndex    = -1;
+		}
 
-    function _close() {
-      if (!render_temml._overlay) return;
-      _disconnectLive();
-      render_temml._overlay.remove();
-      render_temml._overlay      = null;
-      render_temml._mathEl       = null;
-      render_temml._currentLatex = null;
-      render_temml._parentEl     = null;
-      render_temml._mathIndex    = -1;
-    }
+		function _extractLatex(mathEl) {
+			const ann = mathEl.querySelector('annotation[encoding="application/x-tex"]');
+			if (ann) return ann.textContent.trim();
+			if (mathEl.dataset && mathEl.dataset.tex) return mathEl.dataset.tex.trim();
+			const wrapper = mathEl.closest('.temml');
+			if (wrapper && wrapper.dataset.tex) return wrapper.dataset.tex.trim();
+			return null;
+		}
 
-    function _extractLatex(mathEl) {
-      const ann = mathEl.querySelector('annotation[encoding="application/x-tex"]');
-      if (ann) return ann.textContent.trim();
-      if (mathEl.dataset && mathEl.dataset.tex) return mathEl.dataset.tex.trim();
-      const wrapper = mathEl.closest('.temml');
-      if (wrapper && wrapper.dataset.tex) return wrapper.dataset.tex.trim();
-      return null;
-    }
+		// Walk up from <math> to find the container render_temml processed
+		function _findContainer(mathEl) {
+			let el = mathEl.parentElement;
+			while (el && el !== document.body) {
+				if (el.hasAttribute('data-math-rendered')) return el;
+				el = el.parentElement;
+			}
+			return null;
+		}
 
-    function _getMathIndex(mathEl) {
-      const parent = mathEl.parentElement;
-      if (!parent) return -1;
-      const all = parent.querySelectorAll('math');
-      for (let i = 0; i < all.length; i++) {
-        if (all[i] === mathEl) return i;
-      }
-      return -1;
-    }
+		function _getMathIndex(container, mathEl) {
+			const all = container.querySelectorAll('math');
+			for (let i = 0; i < all.length; i++) {
+				if (all[i] === mathEl) return i;
+			}
+			return -1;
+		}
 
-    function _findMathByIndex(parentEl, idx) {
-      if (!parentEl) return null;
-      const all = parentEl.querySelectorAll('math');
-      return (idx >= 0 && idx < all.length) ? all[idx] : null;
-    }
+		function _wireClose(overlay) {
+			overlay.querySelector('.lp-close').addEventListener('click', _close);
+			overlay.addEventListener('click', e => { if (e.target === overlay) _close(); });
+		}
 
-    function _wireClose(overlay) {
-      overlay.querySelector('.lp-close').addEventListener('click', _close);
-      overlay.addEventListener('click', e => { if (e.target === overlay) _close(); });
-    }
+		function _wireCopy(overlay) {
+			const btn = overlay.querySelector('.lp-copy');
+			let timeout;
+			btn.addEventListener('click', () => {
+				const text = overlay.querySelector('.lp-code').textContent;
+				navigator.clipboard.writeText(text).then(() => {
+					btn.textContent = '✓ Copied!';
+					btn.classList.add('copied');
+					clearTimeout(timeout);
+					timeout = setTimeout(() => {
+						btn.textContent = 'Copy';
+						btn.classList.remove('copied');
+					}, 2000);
+				});
+			});
+		}
 
-    function _wireCopy(overlay) {
-      const btn = overlay.querySelector('.lp-copy');
-      let timeout;
-      btn.addEventListener('click', () => {
-        // Copy raw LaTeX only — no delimiters
-        const text = overlay.querySelector('.lp-code').textContent;
-        navigator.clipboard.writeText(text).then(() => {
-          btn.textContent = '✓ Copied!';
-          btn.classList.add('copied');
-          clearTimeout(timeout);
-          timeout = setTimeout(() => {
-            btn.textContent = 'Copy';
-            btn.classList.remove('copied');
-          }, 2000);
-        });
-      });
-    }
+		function _populate(overlay, latex, isDisplay, mathEl) {
+			// Update state synchronously to prevent re-triggering
+			render_temml._mathEl       = mathEl;
+			render_temml._currentLatex = latex;
 
-    function _populate(overlay, latex, isDisplay, mathEl) {
-      const preview = overlay.querySelector('.lp-preview');
-      const code    = overlay.querySelector('.lp-code');
+			const preview = overlay.querySelector('.lp-preview');
+			const code    = overlay.querySelector('.lp-code');
 
-      preview.classList.add('lp-swap');
-      code.classList.add('lp-swap');
+			preview.classList.add('lp-swap');
+			code.classList.add('lp-swap');
 
-      requestAnimationFrame(() => {
-        preview.innerHTML = '';
-        preview.appendChild(mathEl.cloneNode(true));
+			requestAnimationFrame(() => {
+				preview.innerHTML = '';
+				preview.appendChild(mathEl.cloneNode(true));
+				code.textContent = latex;
 
-        // Raw LaTeX — no $$ delimiters
-        code.textContent = latex;
+				// Update display/inline badge
+				const oldBadge = overlay.querySelector('.lp-badge');
+				if (oldBadge) oldBadge.remove();
+				const badge = document.createElement('span');
+				badge.className = isDisplay
+					? 'lp-badge lp-badge-display'
+					: 'lp-badge lp-badge-inline';
+				badge.textContent = isDisplay ? 'display' : 'inline';
+				overlay.querySelector('.lp-header h3').appendChild(badge);
 
-        // Update badge
-        const oldBadge = overlay.querySelector('.lp-badge');
-        if (oldBadge) oldBadge.remove();
-        const badge = document.createElement('span');
-        badge.className = isDisplay
-          ? 'lp-badge lp-badge-display'
-          : 'lp-badge lp-badge-inline';
-        badge.textContent = isDisplay ? 'display' : 'inline';
-        overlay.querySelector('.lp-header h3').appendChild(badge);
+				const btn = overlay.querySelector('.lp-copy');
+				btn.textContent = 'Copy';
+				btn.classList.remove('copied');
 
-        const btn = overlay.querySelector('.lp-copy');
-        btn.textContent = 'Copy';
-        btn.classList.remove('copied');
+				requestAnimationFrame(() => {
+					preview.classList.remove('lp-swap');
+					code.classList.remove('lp-swap');
+				});
+			});
+		}
 
-        requestAnimationFrame(() => {
-          preview.classList.remove('lp-swap');
-          code.classList.remove('lp-swap');
-        });
-      });
+		function _show(latex, isDisplay, mathEl) {
+			const container = _findContainer(mathEl);
+			const mathIndex = container ? _getMathIndex(container, mathEl) : -1;
 
-      render_temml._mathEl       = mathEl;
-      render_temml._currentLatex = latex;
-    }
+			// Same equation, same content → no-op
+			if (render_temml._overlay &&
+				render_temml._mathEl === mathEl &&
+				render_temml._currentLatex === latex) {
+				return;
+			}
 
-    /* ── Live-update observer ── */
-    function _watchForUpdates(parentEl, mathIndex) {
-      _disconnectLive();
+			// Popup already open → update in place (no flicker)
+			if (render_temml._overlay) {
+				render_temml._containerEl = container;
+				render_temml._mathIndex   = mathIndex;
+				_populate(render_temml._overlay, latex, isDisplay, mathEl);
+				return;
+			}
 
-      render_temml._parentEl  = parentEl;
-      render_temml._mathIndex = mathIndex;
+			// Create new popup
+			const overlay = document.createElement('div');
+			overlay.className = 'lp-overlay';
+			overlay.innerHTML = `
+				<div class="lp-box" role="dialog" aria-label="LaTeX Source">
+					<div class="lp-header">
+						<h3>LaTeX Source</h3>
+						<button class="lp-close" aria-label="Close" title="Close">&times;</button>
+					</div>
+					<div class="lp-body">
+						<div class="lp-preview"></div>
+						<div class="lp-code-wrap">
+							<div class="lp-code-bar">
+								<span>LaTeX</span>
+								<button class="lp-copy">Copy</button>
+							</div>
+							<pre class="lp-code"></pre>
+						</div>
+					</div>
+					<div class="lp-footer">
+						<span>Right-click any equation &nbsp;·&nbsp; <kbd>Esc</kbd> to close</span>
+					</div>
+				</div>`;
 
-      const obs = new MutationObserver(() => {
-        if (!render_temml._overlay) { obs.disconnect(); return; }
+			// Safe text insertion — raw LaTeX, no delimiters
+			overlay.querySelector('.lp-code').textContent = latex;
+			overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
 
-        const newMath = _findMathByIndex(render_temml._parentEl, render_temml._mathIndex);
-        if (!newMath) return;
+			// Display / inline badge
+			const badge = document.createElement('span');
+			badge.className = isDisplay
+				? 'lp-badge lp-badge-display'
+				: 'lp-badge lp-badge-inline';
+			badge.textContent = isDisplay ? 'display' : 'inline';
+			overlay.querySelector('.lp-header h3').appendChild(badge);
 
-        const newLatex = _extractLatex(newMath);
-        if (!newLatex) return;
+			_wireClose(overlay);
+			_wireCopy(overlay);
 
-        // Only update if content actually changed
-        if (newLatex === render_temml._currentLatex && newMath === render_temml._mathEl) return;
+			document.body.appendChild(overlay);
 
-        const isDisplay = newMath.getAttribute('display') === 'block';
-        _populate(render_temml._overlay, newLatex, isDisplay, newMath);
-      });
+			render_temml._overlay      = overlay;
+			render_temml._mathEl       = mathEl;
+			render_temml._currentLatex = latex;
+			render_temml._containerEl  = container;
+			render_temml._mathIndex    = mathIndex;
+		}
 
-      obs.observe(parentEl, { childList: true, subtree: true, characterData: true });
-      render_temml._liveObserver = obs;
-    }
+		/* ── Live-update: called at the end of every render_temml() pass ── */
+		render_temml._liveUpdate = function() {
+			if (!render_temml._overlay || !render_temml._containerEl) return;
 
-    function _show(latex, isDisplay, mathEl) {
-      const parentEl  = mathEl.parentElement;
-      const mathIndex = _getMathIndex(mathEl);
+			const maths = render_temml._containerEl.querySelectorAll('math');
+			const idx   = render_temml._mathIndex;
+			if (idx < 0 || idx >= maths.length) return;
 
-      // Same equation, same content → no-op
-      if (render_temml._overlay &&
-          render_temml._mathEl === mathEl &&
-          render_temml._currentLatex === latex) {
-        return;
-      }
+			const newMath = maths[idx];
+			// Always track the live DOM node (Temml replaces nodes on re-render)
+			render_temml._mathEl = newMath;
 
-      // Popup already open → update in place
-      if (render_temml._overlay) {
-        _populate(render_temml._overlay, latex, isDisplay, mathEl);
-        _watchForUpdates(parentEl, mathIndex);
-        return;
-      }
+			const newLatex = _extractLatex(newMath);
+			if (!newLatex) return;
 
-      // Create new popup
-      const overlay = document.createElement('div');
-      overlay.className = 'lp-overlay';
-      overlay.innerHTML = `
-        <div class="lp-box" role="dialog" aria-label="LaTeX Source">
-          <div class="lp-header">
-            <h3>LaTeX Source</h3>
-            <button class="lp-close" aria-label="Close" title="Close">&times;</button>
-          </div>
-          <div class="lp-body">
-            <div class="lp-preview"></div>
-            <div class="lp-code-wrap">
-              <div class="lp-code-bar">
-                <span>LaTeX</span>
-                <button class="lp-copy">Copy</button>
-              </div>
-              <pre class="lp-code"></pre>
-            </div>
-          </div>
-          <div class="lp-footer">
-            <span>Right-click any equation &nbsp;·&nbsp; <kbd>Esc</kbd> to close</span>
-          </div>
-        </div>`;
+			// Content actually changed → update popup
+			if (newLatex !== render_temml._currentLatex) {
+				const isDisplay = newMath.getAttribute('display') === 'block';
+				_populate(render_temml._overlay, newLatex, isDisplay, newMath);
+			}
+		};
 
-      // Raw LaTeX — no delimiters
-      overlay.querySelector('.lp-code').textContent = latex;
-      overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
+		/* ── Global listeners (once) ── */
+		document.addEventListener('contextmenu', function(e) {
+			const mathEl = e.target.closest('math');
+			if (!mathEl) return;
 
-      // Display/inline badge
-      const badge = document.createElement('span');
-      badge.className = isDisplay
-        ? 'lp-badge lp-badge-display'
-        : 'lp-badge lp-badge-inline';
-      badge.textContent = isDisplay ? 'display' : 'inline';
-      overlay.querySelector('.lp-header h3').appendChild(badge);
+			// ★ Ignore math inside the popup itself (prevents grey-out bug)
+			if (mathEl.closest('.lp-overlay')) return;
 
-      _wireClose(overlay);
-      _wireCopy(overlay);
+			const latex = _extractLatex(mathEl);
+			if (!latex) return;
 
-      document.body.appendChild(overlay);
+			// Only suppress browser menu when we have LaTeX to show
+			e.preventDefault();
 
-      render_temml._overlay      = overlay;
-      render_temml._mathEl       = mathEl;
-      render_temml._currentLatex = latex;
+			const isDisplay = mathEl.getAttribute('display') === 'block';
+			_show(latex, isDisplay, mathEl);
+		});
 
-      _watchForUpdates(parentEl, mathIndex);
-    }
+		document.addEventListener('keydown', function(e) {
+			if (e.key === 'Escape') _close();
+		});
 
-    /* ── Global listeners (once) ── */
-    document.addEventListener('contextmenu', function(e) {
-      const mathEl = e.target.closest('math');
-      if (!mathEl) return;
-
-      const latex = _extractLatex(mathEl);
-      if (!latex) return;
-
-      // Only suppress browser menu when we actually have LaTeX
-      e.preventDefault();
-
-      const isDisplay = mathEl.getAttribute('display') === 'block';
-      _show(latex, isDisplay, mathEl);
-    });
-
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') _close();
-    });
-
-  } /* end one-time bootstrap */
+	} /* end one-time bootstrap */
 
 
-  /* ═══════════════════════════════════════════════════════════════
-     NORMAL RENDERING PASS  (runs every call)
-     ═══════════════════════════════════════════════════════════ */
-  const elements = document.querySelectorAll(
-    'p:not([data-math-rendered]), span:not([data-math-rendered]), ' +
-    'div:not([data-math-rendered]), li:not([data-math-rendered])'
-  );
+	/* ═══════════════════════════════════════════════════════════════
+	   NORMAL RENDERING PASS  (runs every call)
+	   ═══════════════════════════════════════════════════════════ */
+	const elements = document.querySelectorAll(
+		'p:not([data-math-rendered]), span:not([data-math-rendered]), ' +
+		'div:not([data-math-rendered]), li:not([data-math-rendered])'
+	);
 
-  elements.forEach(el => {
-    if (!el.textContent.includes('$')) return;
+	elements.forEach(el => {
+		if (!el.textContent.includes('$')) return;
 
-    const rect = el.getBoundingClientRect();
+		const rect = el.getBoundingClientRect();
 
-    if (rect.width === 0 && rect.height === 0) {
-      temml.renderMathInElement(el, _temmlOpts);
-      el.setAttribute('data-math-rendered', 'true');
-      return;
-    }
+		if (rect.width === 0 && rect.height === 0) {
+			temml.renderMathInElement(el, _temmlOpts);
+			el.setAttribute('data-math-rendered', 'true');
+			return;
+		}
 
-    if (rect.bottom > -300 && rect.top < window.innerHeight + 300) {
-      temml.renderMathInElement(el, _temmlOpts);
-      el.setAttribute('data-math-rendered', 'true');
-    } else {
-      _temmlObserver.observe(el);
-    }
-  });
+		if (rect.bottom > -300 && rect.top < window.innerHeight + 300) {
+			temml.renderMathInElement(el, _temmlOpts);
+			el.setAttribute('data-math-rendered', 'true');
+		} else {
+			_temmlObserver.observe(el);
+		}
+	});
+
+
+	/* ═══════════════════════════════════════════════════════════════
+	   LIVE UPDATE CHECK  (piggybacks on every render_temml() call)
+	   ═══════════════════════════════════════════════════════════ */
+	if (render_temml._liveUpdate) render_temml._liveUpdate();
 }
 
 // ─── Shared post-load initialization ───
