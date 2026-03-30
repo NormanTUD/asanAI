@@ -3,108 +3,123 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grokking — Collapse onto the Torus</title>
+<title>Grokking — Phase Transition onto the Torus</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: #08080f;
-    color: #e0e0e0;
+    background: #06060e;
+    color: #d8d8e0;
     font-family: 'Segoe UI', system-ui, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
   }
-  h1 { margin: 16px 0 2px; font-size: 1.4rem; color: #88ccff; }
+  h1 { margin: 14px 0 2px; font-size: 1.35rem; color: #7ab8ee; letter-spacing: 0.5px; }
   #subtitle {
-    font-size: 0.82rem; color: #556; margin-bottom: 10px;
-    text-align: center; max-width: 640px; line-height: 1.45;
-    padding: 0 12px;
+    font-size: 0.78rem; color: #4a4a6a; margin-bottom: 8px;
+    text-align: center; max-width: 660px; line-height: 1.5; padding: 0 14px;
   }
-  canvas { border-radius: 8px; cursor: grab; }
-  #controls { display: flex; gap: 12px; margin: 10px 0; flex-wrap: wrap; justify-content: center; align-items: center; }
+  canvas { border-radius: 8px; cursor: grab; display: block; }
+  #controls {
+    display: flex; gap: 12px; margin: 8px 0; flex-wrap: wrap;
+    justify-content: center; align-items: center;
+  }
   button {
-    padding: 7px 18px; border: none; border-radius: 6px;
-    font-size: 0.88rem; cursor: pointer; transition: 0.2s;
+    padding: 6px 16px; border: none; border-radius: 5px;
+    font-size: 0.85rem; cursor: pointer; transition: 0.2s;
   }
-  #startBtn { background: #2a7; color: #fff; }
-  #startBtn:hover { background: #3c9; }
-  #resetBtn { background: #444; color: #ccc; }
-  #resetBtn:hover { background: #666; }
-  label { font-size: 0.8rem; color: #888; }
-  input[type=range] { width: 100px; vertical-align: middle; }
+  #startBtn { background: #28855a; color: #fff; }
+  #startBtn:hover { background: #3aa872; }
+  #resetBtn { background: #3a3a4a; color: #bbb; }
+  #resetBtn:hover { background: #555568; }
+  label { font-size: 0.78rem; color: #777; }
+  input[type=range] { width: 90px; vertical-align: middle; }
   #info {
-    display: flex; gap: 20px; font-size: 0.78rem; margin-bottom: 6px;
+    display: flex; gap: 18px; font-size: 0.73rem; margin-bottom: 5px;
     flex-wrap: wrap; justify-content: center;
   }
-  .info-item { display: flex; align-items: center; gap: 5px; }
-  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .info-item { display: flex; align-items: center; gap: 4px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
   #status {
-    font-size: 0.92rem; padding: 5px 14px; border-radius: 6px;
-    margin-bottom: 4px; min-width: 300px; text-align: center; transition: 0.3s;
+    font-size: 0.88rem; padding: 4px 12px; border-radius: 5px;
+    margin-bottom: 2px; min-width: 300px; text-align: center; transition: 0.3s;
+    font-variant-numeric: tabular-nums;
   }
-  #epoch { font-size: 0.75rem; color: #555; margin-bottom: 2px; }
+  #epoch { font-size: 0.7rem; color: #3a3a50; margin-bottom: 2px; font-variant-numeric: tabular-nums; }
+  #metrics {
+    display: flex; gap: 20px; font-size: 0.7rem; color: #555; margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
 </style>
 </head>
 <body>
 
-<h1>🍩 Grokking: Collapse onto the Optimal Manifold</h1>
+<h1>🍩 Grokking: Phase Transition onto the Optimal Manifold</h1>
 <p id="subtitle">
-  The torus represents the optimal internal representation. During training,
-  data points wander noisily in weight space — seemingly stuck. After many
-  epochs, one or two points stumble onto the torus. Once they do, the
-  structure "clicks" and the rest are gradually pulled in — like gravity.
-  This is the phase transition from memorization to generalization.
+  The torus is the optimal low-dimensional representation — a compact manifold where
+  the data's structure can be perfectly encoded. During SGD, weight vectors wander
+  noisily through high-dimensional space. Implicit regularization provides a faint
+  pull, but the loss plateau persists until a critical seed discovers the manifold.
+  Then the topological structure "clicks" and remaining points cascade in — a genuine
+  phase transition from memorization to generalization.
 </p>
 
 <div id="info">
-  <span class="info-item"><span class="dot" style="background:#ff5555"></span> Wandering (memorizing)</span>
-  <span class="info-item"><span class="dot" style="background:#dd8833"></span> Drifting closer</span>
-  <span class="info-item"><span class="dot" style="background:#ffcc33"></span> Seed found torus!</span>
-  <span class="info-item"><span class="dot" style="background:#33eebb"></span> On the manifold</span>
+  <span class="info-item"><span class="dot" style="background:#cc4444"></span> Wandering (memorizing)</span>
+  <span class="info-item"><span class="dot" style="background:#cc8833"></span> Approaching manifold</span>
+  <span class="info-item"><span class="dot" style="background:#eebb22"></span> Seed locked</span>
+  <span class="info-item"><span class="dot" style="background:#33ddaa"></span> Generalized</span>
 </div>
 
-<div id="status" style="background:#111; color:#666;">Press Start to begin</div>
+<div id="status" style="background:#0e0e18; color:#555;">Press Start</div>
 <div id="epoch"></div>
+<div id="metrics">
+  <span id="metricLoss">Loss: —</span>
+  <span id="metricNearest">Nearest to manifold: —</span>
+  <span id="metricOnTorus">On torus: 0/0</span>
+</div>
 
-<canvas id="c" width="740" height="500"></canvas>
+<canvas id="c" width="760" height="500"></canvas>
 
 <div id="controls">
   <button id="startBtn">▶ Start Training</button>
   <button id="resetBtn">↺ Reset</button>
-  <label>Speed: <input type="range" id="speedSlider" min="1" max="5" value="2" step="1"><span id="speedLabel">2x</span></label>
+  <label>Speed: <input type="range" id="speedSlider" min="1" max="8" value="1" step="1"><span id="speedLabel">3x</span></label>
 </div>
 
-<canvas id="loss" width="740" height="150"></canvas>
+<canvas id="loss" width="760" height="155"></canvas>
 
 <script>
-// ========== CONFIG ==========
-const N = 32;
-const R = 145, r = 50;
+// ===================== CONFIG =====================
+const N = 30;
+const R = 140, r = 48;
 const SEED_COUNT = 2;
-const SEED_PROXIMITY = 14;
+const SEED_PROXIMITY = 12;
 
-// ========== STATE ==========
+// ===================== STATE =====================
 let pts = [], slots = [];
 let running = false, cascadeStarted = false, allSnapped = false;
-let seedsFound = 0, step = 0, lossHist = [];
-let camX = -0.4, camY = 0.55, dragging = false, dragS = {x:0,y:0};
+let seedsFound = 0, step = 0, lossHist = [], trainLossHist = [];
+let camX = -0.38, camY = 0.5, dragging = false, dragS = {x:0,y:0};
 let autoRotate = true;
-let stepsPerFrame = 2;
+let stepsPerFrame = 3;
+let cascadeStep = -1;
 
 const cv = document.getElementById('c'), cx = cv.getContext('2d');
 const lv = document.getElementById('loss'), lx = lv.getContext('2d');
 const statEl = document.getElementById('status');
 const epochEl = document.getElementById('epoch');
-const speedSlider = document.getElementById('speedSlider');
-const speedLabel = document.getElementById('speedLabel');
+const metricLoss = document.getElementById('metricLoss');
+const metricNearest = document.getElementById('metricNearest');
+const metricOnTorus = document.getElementById('metricOnTorus');
 
-speedSlider.addEventListener('input', () => {
-  stepsPerFrame = parseInt(speedSlider.value);
-  speedLabel.textContent = stepsPerFrame + 'x';
+document.getElementById('speedSlider').addEventListener('input', function() {
+  stepsPerFrame = parseInt(this.value);
+  document.getElementById('speedLabel').textContent = stepsPerFrame + 'x';
 });
 
-// ========== MATH ==========
+// ===================== MATH =====================
 function torusXYZ(u, v) {
   return [
     (R + r * Math.cos(v)) * Math.cos(u),
@@ -114,11 +129,11 @@ function torusXYZ(u, v) {
 }
 
 function closestOnTorus(x, y, z) {
-  const lenXY = Math.sqrt(x*x + y*y) || 0.001;
-  const cx = R * x / lenXY, cy = R * y / lenXY;
-  const dx = x - cx, dy = y - cy, dz = z;
-  const lenD = Math.sqrt(dx*dx + dy*dy + dz*dz) || 0.001;
-  return [ cx + r * dx / lenD, cy + r * dy / lenD, r * dz / lenD ];
+  const lenXY = Math.sqrt(x*x + y*y) || 0.0001;
+  const cx0 = R * x / lenXY, cy0 = R * y / lenXY;
+  const dx = x - cx0, dy = y - cy0, dz = z;
+  const lenD = Math.sqrt(dx*dx + dy*dy + dz*dz) || 0.0001;
+  return [cx0 + r * dx / lenD, cy0 + r * dy / lenD, r * dz / lenD];
 }
 
 function distToTorus(x, y, z) {
@@ -126,206 +141,280 @@ function distToTorus(x, y, z) {
   return Math.sqrt((x-tx)**2 + (y-ty)**2 + (z-tz)**2);
 }
 
-function dist3(a, b) { return Math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2 + (a.z-b.z)**2); }
+function dist3(a, b) {
+  return Math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2 + (a.z-b.z)**2);
+}
 
 function rotY(p, a) { const c=Math.cos(a),s=Math.sin(a); return [c*p[0]+s*p[2], p[1], -s*p[0]+c*p[2]]; }
 function rotX(p, a) { const c=Math.cos(a),s=Math.sin(a); return [p[0], c*p[1]-s*p[2], s*p[1]+c*p[2]]; }
 function proj(p) {
-  const d=620, sc=d/(d+p[2]);
+  const d=640, sc=d/(d+p[2]);
   return {x: p[0]*sc + cv.width/2, y: p[1]*sc + cv.height/2, z: p[2], sc};
 }
 
-// Perlin-ish smooth noise for each point
-function smoothRand(seed, t, freq) {
-  // Simple hash-based smooth noise
-  const f = t * freq;
-  const i = Math.floor(f);
-  const frac = f - i;
-  const smooth = frac * frac * (3 - 2 * frac); // smoothstep
-  function hash(n) {
-    let x = Math.sin(n * 127.1 + seed * 311.7) * 43758.5453;
-    return x - Math.floor(x);
+// Smooth noise: multi-octave value noise
+function hashF(n, seed) {
+  let x = Math.sin(n * 127.1 + seed * 311.7) * 43758.5453;
+  return x - Math.floor(x);
+}
+function valueNoise(t, seed) {
+  const i = Math.floor(t), f = t - i;
+  const s = f * f * (3 - 2 * f);
+  return hashF(i, seed) * (1 - s) + hashF(i + 1, seed) * s;
+}
+function fbm(t, seed, octaves) {
+  let val = 0, amp = 1, freq = 1, total = 0;
+  for (let o = 0; o < octaves; o++) {
+    val += valueNoise(t * freq, seed + o * 73.37) * amp;
+    total += amp;
+    amp *= 0.5;
+    freq *= 2.1;
   }
-  return hash(i) * (1 - smooth) + hash(i + 1) * smooth;
+  return val / total;
 }
 
-// ========== INIT ==========
+// Momentum-like correlated noise for SGD feel
+class SGDNoise {
+  constructor(seed) {
+    this.seed = seed;
+    this.vx = 0; this.vy = 0; this.vz = 0;
+    this.momentum = 0.85 + Math.random() * 0.1;
+  }
+  step(t, magnitude) {
+    // Gradient noise: smooth low-freq drift + high-freq jitter
+    const drift = 0.35;
+    const jitter = 0.65;
+    const gx = (fbm(t * 0.4, this.seed, 3) - 0.5) * drift + (fbm(t * 2.5, this.seed + 10, 2) - 0.5) * jitter;
+    const gy = (fbm(t * 0.4, this.seed + 100, 3) - 0.5) * drift + (fbm(t * 2.5, this.seed + 110, 2) - 0.5) * jitter;
+    const gz = (fbm(t * 0.4, this.seed + 200, 3) - 0.5) * drift * 0.7 + (fbm(t * 2.5, this.seed + 210, 2) - 0.5) * jitter * 0.5;
+
+    // Momentum
+    this.vx = this.vx * this.momentum + gx * (1 - this.momentum);
+    this.vy = this.vy * this.momentum + gy * (1 - this.momentum);
+    this.vz = this.vz * this.momentum + gz * (1 - this.momentum);
+
+    return {
+      dx: this.vx * magnitude,
+      dy: this.vy * magnitude,
+      dz: this.vz * magnitude
+    };
+  }
+}
+
+// ===================== INIT =====================
 function init() {
   pts = []; slots = [];
   cascadeStarted = false; allSnapped = false;
-  seedsFound = 0; step = 0; lossHist = [];
+  seedsFound = 0; step = 0; lossHist = []; trainLossHist = [];
+  cascadeStep = -1;
 
-  // Target slots evenly on torus
-  const rows = 4, cols = N / rows;
+  // Target slots: evenly distributed on torus with slight golden-angle offset
+  const rows = 5, cols = N / rows;
   for (let i = 0; i < N; i++) {
     const row = Math.floor(i / cols), col = i % cols;
-    const u = (col / cols) * Math.PI * 2 + (row * 0.4);
+    const u = (col / cols) * Math.PI * 2 + row * 0.78;
     const v = (row / rows) * Math.PI * 2;
     const [sx, sy, sz] = torusXYZ(u, v);
     slots.push({u, v, x: sx, y: sy, z: sz});
   }
 
-  // Points scattered in a cloud — spread out, clearly not on the torus
+  // Scatter points in a cloud — some closer, some farther
   for (let i = 0; i < N; i++) {
     const theta = Math.random() * Math.PI * 2;
-    const phi = (Math.random() - 0.5) * Math.PI * 0.85;
-    const rad = 60 + Math.random() * 260;
+    const phi = (Math.random() - 0.5) * Math.PI * 0.8;
+    // Varied distances: some near the torus region, some far
+    const rad = 50 + Math.random() * 280;
     const x = rad * Math.cos(phi) * Math.cos(theta);
     const y = rad * Math.cos(phi) * Math.sin(theta);
-    const z = rad * Math.sin(phi) * 0.55;
+    const z = rad * Math.sin(phi) * 0.5;
 
     pts.push({
       x, y, z,
+      // Store initial position for "train loss" (memorization distance)
+      ix: x, iy: y, iz: z,
       slotIdx: i,
       state: 'scattered',
-      collapseT: 0,       // 0→1 progress of collapsing
-      noiseSeed: Math.random() * 1000,
-      // For smooth wandering: each point has its own noise offsets
-      noisePhaseX: Math.random() * 100,
-      noisePhaseY: Math.random() * 100,
-      noisePhaseZ: Math.random() * 100,
+      collapseT: 0,
+      noise: new SGDNoise(Math.random() * 10000),
+      // Track recent positions for trail
+      trail: [],
+      trailTimer: 0,
     });
   }
 
-  statEl.style.background = '#111'; statEl.style.color = '#666';
-  statEl.textContent = 'Press Start to begin';
+  statEl.style.background = '#0e0e18'; statEl.style.color = '#555';
+  statEl.textContent = 'Press Start';
   epochEl.textContent = '';
+  metricLoss.textContent = 'Loss: —';
+  metricNearest.textContent = 'Nearest to manifold: —';
+  metricOnTorus.textContent = `On torus: 0/${N}`;
 }
 
-// ========== UPDATE ==========
+// ===================== UPDATE =====================
 function update() {
   if (!running || allSnapped) return;
   step++;
 
-  const t = step * 0.01; // time for noise
-
+  const t = step * 0.008;
   let totalDist = 0;
+  let totalTrainDist = 0;
+  let nearestDist = Infinity;
 
   for (const pt of pts) {
     const slot = slots[pt.slotIdx];
 
+    // Trail recording
+    pt.trailTimer++;
+    if (pt.trailTimer % 3 === 0 && pt.state !== 'snapped') {
+      pt.trail.push({x: pt.x, y: pt.y, z: pt.z});
+      if (pt.trail.length > 25) pt.trail.shift();
+    }
+
     if (pt.state === 'scattered') {
-      // Smooth random walk using layered sine noise — feels like noisy SGD
-      const wander = 0.55;
-      const nx = (smoothRand(pt.noiseSeed, t + pt.noisePhaseX, 0.7) - 0.5) * wander
-               + (smoothRand(pt.noiseSeed + 50, t, 2.1) - 0.5) * wander * 0.3;
-      const ny = (smoothRand(pt.noiseSeed + 100, t + pt.noisePhaseY, 0.7) - 0.5) * wander
-               + (smoothRand(pt.noiseSeed + 150, t, 1.8) - 0.5) * wander * 0.3;
-      const nz = (smoothRand(pt.noiseSeed + 200, t + pt.noisePhaseZ, 0.7) - 0.5) * wander * 0.7
-               + (smoothRand(pt.noiseSeed + 250, t, 2.3) - 0.5) * wander * 0.2;
+      // SGD-like noise with momentum
+      const mag = 0.45;
+      const {dx, dy, dz} = pt.noise.step(t, mag);
+      pt.x += dx;
+      pt.y += dy;
+      pt.z += dz;
 
-      pt.x += nx;
-      pt.y += ny;
-      pt.z += nz;
-
-      // Very faint drift toward torus (implicit regularization — barely perceptible)
+      // Implicit regularization: extremely faint pull toward torus surface
+      // This is the weight decay / implicit bias of SGD
       const [tx, ty, tz] = closestOnTorus(pt.x, pt.y, pt.z);
-      const drift = 0.0006;
-      pt.x += (tx - pt.x) * drift;
-      pt.y += (ty - pt.y) * drift;
-      pt.z += (tz - pt.z) * drift;
+      const regStrength = 0.0004;
+      pt.x += (tx - pt.x) * regStrength;
+      pt.y += (ty - pt.y) * regStrength;
+      pt.z += (tz - pt.z) * regStrength;
 
-      // Slight tendency to not fly too far away (soft boundary)
-      const distFromOrigin = Math.sqrt(pt.x**2 + pt.y**2 + pt.z**2);
-      if (distFromOrigin > 320) {
-        const pull = 0.002;
-        pt.x *= (1 - pull);
-        pt.y *= (1 - pull);
-        pt.z *= (1 - pull);
+      // Soft boundary — don't let points escape too far
+      const distOrig = Math.sqrt(pt.x**2 + pt.y**2 + pt.z**2);
+      if (distOrig > 350) {
+        const pull = 0.003;
+        pt.x -= pt.x * pull;
+        pt.y -= pt.y * pull;
+        pt.z -= pt.z * pull;
       }
 
-      // Check if this point found the torus
+      // Check proximity to torus
       const dSurf = distToTorus(pt.x, pt.y, pt.z);
+      if (dSurf < nearestDist) nearestDist = dSurf;
+
       if (dSurf < SEED_PROXIMITY && !cascadeStarted) {
         pt.state = 'seed';
+        pt.trail = [];
         seedsFound++;
         if (seedsFound >= SEED_COUNT) {
+          cascadeStep = step;
           triggerCascade();
         }
       }
 
     } else if (pt.state === 'seed') {
-      // Smoothly settle onto slot
-      const ease = 0.04;
-      pt.x += (slot.x - pt.x) * ease;
+      // Settle smoothly onto slot with slight oscillation (like damped spring)
+      const ease = 0.03;
+      const dampedOsc = Math.exp(-step * 0.003) * Math.sin(step * 0.08) * 0.3;
+      pt.x += (slot.x - pt.x) * ease + dampedOsc;
       pt.y += (slot.y - pt.y) * ease;
-      pt.z += (slot.z - pt.z) * ease;
-
-      // Tiny wobble to feel alive
-      pt.x += (Math.sin(t * 3 + pt.noiseSeed) * 0.15);
-      pt.z += (Math.cos(t * 2.7 + pt.noiseSeed) * 0.1);
+      pt.z += (slot.z - pt.z) * ease + dampedOsc * 0.5;
 
     } else if (pt.state === 'collapsing') {
-      // Gradual gravitational pull — starts slow, accelerates
-      pt.collapseT = Math.min(1, pt.collapseT + 0.004);
+      pt.collapseT = Math.min(1, pt.collapseT + 0.0025);
       const ct = pt.collapseT;
 
-      // Eased strength: starts very gentle, gets stronger
-      const strength = ct * ct * 0.035;
+      // Eased pull: very slow at first, accelerates (like gravitational capture)
+      // Use cubic ease-in for realistic acceleration
+      const eased = ct * ct * ct;
 
-      if (ct < 0.6) {
-        // Phase 1: pull toward torus surface
+      if (ct < 0.55) {
+        // Phase 1: gravitational pull toward torus surface
         const [tx, ty, tz] = closestOnTorus(pt.x, pt.y, pt.z);
+        const strength = 0.005 + eased * 0.06;
         pt.x += (tx - pt.x) * strength;
         pt.y += (ty - pt.y) * strength;
         pt.z += (tz - pt.z) * strength;
 
-        // Still some noise — fighting the pull
-        const noiseAmt = 0.3 * (1 - ct);
-        pt.x += (smoothRand(pt.noiseSeed, t + pt.noisePhaseX, 1.2) - 0.5) * noiseAmt;
-        pt.y += (smoothRand(pt.noiseSeed+100, t + pt.noisePhaseY, 1.2) - 0.5) * noiseAmt;
-        pt.z += (smoothRand(pt.noiseSeed+200, t + pt.noisePhaseZ, 1.2) - 0.5) * noiseAmt * 0.6;
+        // Still noisy — SGD hasn't fully converged
+        const noiseMag = 0.25 * (1 - ct * 1.2);
+        const {dx, dy, dz} = pt.noise.step(t, Math.max(0, noiseMag));
+        pt.x += dx;
+        pt.y += dy;
+        pt.z += dz;
+
       } else {
-        // Phase 2: slide along torus surface toward slot
-        const slideStrength = (ct - 0.6) / 0.4; // 0→1
-        const ease = 0.01 + slideStrength * 0.04;
-        pt.x += (slot.x - pt.x) * ease;
-        pt.y += (slot.y - pt.y) * ease;
-        pt.z += (slot.z - pt.z) * ease;
+        // Phase 2: on the surface, sliding toward slot
+        // First ensure we're on the torus
+        const [tx, ty, tz] = closestOnTorus(pt.x, pt.y, pt.z);
+        const surfacePull = 0.08;
+        pt.x += (tx - pt.x) * surfacePull;
+        pt.y += (ty - pt.y) * surfacePull;
+        pt.z += (tz - pt.z) * surfacePull;
 
-        // Tiny residual noise
-        pt.x += (smoothRand(pt.noiseSeed, t, 2) - 0.5) * 0.08 * (1 - slideStrength);
-        pt.z += (smoothRand(pt.noiseSeed+200, t, 2) - 0.5) * 0.05 * (1 - slideStrength);
+        // Then slide toward slot
+        const slidePhase = (ct - 0.55) / 0.45; // 0→1
+        const slideEase = slidePhase * slidePhase;
+        const slideStr = 0.008 + slideEase * 0.04;
+        pt.x += (slot.x - pt.x) * slideStr;
+        pt.y += (slot.y - pt.y) * slideStr;
+        pt.z += (slot.z - pt.z) * slideStr;
+
+        // Diminishing noise
+        const noiseMag = 0.06 * (1 - slidePhase);
+        if (noiseMag > 0.005) {
+          const {dx, dy, dz} = pt.noise.step(t, noiseMag);
+          pt.x += dx; pt.y += dy; pt.z += dz;
+        }
       }
 
-      if (ct >= 1) {
-        pt.state = 'snapped';
-      }
+      if (ct >= 1) pt.state = 'snapped';
 
     } else if (pt.state === 'snapped') {
-      pt.x += (slot.x - pt.x) * 0.1;
-      pt.y += (slot.y - pt.y) * 0.1;
-      pt.z += (slot.z - pt.z) * 0.1;
-      // Gentle breathing
-      pt.x += Math.sin(t * 2 + pt.noiseSeed) * 0.08;
-      pt.z += Math.cos(t * 1.8 + pt.noiseSeed) * 0.06;
+      // Gently breathe on the slot
+      const ease = 0.08;
+      pt.x += (slot.x - pt.x) * ease;
+      pt.y += (slot.y - pt.y) * ease;
+      pt.z += (slot.z - pt.z) * ease;
+      pt.x += Math.sin(t * 1.5 + pt.noise.seed) * 0.06;
+      pt.z += Math.cos(t * 1.3 + pt.noise.seed) * 0.04;
+      pt.trail = [];
     }
 
+    // Distances
     totalDist += dist3(pt, slot);
+    // "Train loss" = distance from initial position (memorization metric)
+    totalTrainDist += Math.sqrt((pt.x-pt.ix)**2 + (pt.y-pt.iy)**2 + (pt.z-pt.iz)**2);
   }
 
-  const loss = totalDist / N;
-  lossHist.push(loss);
+  const testLoss = totalDist / N;
+  const trainLoss = totalTrainDist / N;
+  lossHist.push(testLoss);
+  trainLossHist.push(trainLoss);
 
-  // Status updates
-  const seedCount = pts.filter(p => p.state === 'seed').length;
-  const collapsingCount = pts.filter(p => p.state === 'collapsing').length;
-  const snappedCount = pts.filter(p => p.state === 'snapped').length;
-  const onTorus = seedCount + snappedCount;
+  // Nearest distance for scattered points
+  if (!cascadeStarted) {
+    const scatteredDists = pts.filter(p => p.state === 'scattered').map(p => distToTorus(p.x, p.y, p.z));
+    nearestDist = scatteredDists.length > 0 ? Math.min(...scatteredDists) : 0;
+  }
+
+  // UI updates
+  const onTorus = pts.filter(p => p.state === 'seed' || p.state === 'snapped').length;
+  const collapsing = pts.filter(p => p.state === 'collapsing').length;
 
   epochEl.textContent = `Epoch ${step}`;
+  metricLoss.textContent = `Test loss: ${testLoss.toFixed(1)}`;
+  metricNearest.textContent = cascadeStarted ? `Collapsing: ${collapsing}` : `Nearest: ${nearestDist.toFixed(1)}`;
+  metricOnTorus.textContent = `On torus: ${onTorus}/${N}`;
 
   if (!cascadeStarted) {
-    statEl.style.background = '#1a0a0a'; statEl.style.color = '#cc6666';
-    const closest = Math.min(...pts.filter(p=>p.state==='scattered').map(p=>distToTorus(p.x,p.y,p.z)));
-    statEl.textContent = `Memorizing… nearest point is ${closest.toFixed(0)} units from the torus`;
+    statEl.style.background = '#160a0a'; statEl.style.color = '#bb5555';
+    statEl.textContent = `Memorization plateau — SGD wandering, no structure found`;
   } else if (onTorus < N) {
-    statEl.style.background = '#1a1a08'; statEl.style.color = '#ddaa33';
-    statEl.textContent = `Phase transition! ${onTorus}/${N} on the manifold (${collapsingCount} falling…)`;
+    statEl.style.background = '#1a1808'; statEl.style.color = '#ccaa22';
+    const pct = ((onTorus + collapsing * 0.5) / N * 100).toFixed(0);
+    statEl.textContent = `Phase transition in progress — ${pct}% converging to manifold`;
   }
   if (onTorus >= N && !allSnapped) {
-    statEl.style.background = '#082a18'; statEl.style.color = '#33eebb';
-    statEl.textContent = `Grokked! ✨ All ${N} points found the optimal manifold.`;
+    statEl.style.background = '#082818'; statEl.style.color = '#33ddaa';
+    statEl.textContent = `Generalization achieved ✨ — all weights on the optimal manifold`;
     allSnapped = true;
   }
 }
@@ -334,36 +423,43 @@ function triggerCascade() {
   cascadeStarted = true;
   const rest = pts.filter(p => p.state === 'scattered');
 
-  // Sort by distance to torus — closer ones get pulled first
+  // Sort by distance to torus surface
   rest.sort((a, b) => distToTorus(a.x, a.y, a.z) - distToTorus(b.x, b.y, b.z));
 
-  // Stagger: not uniform — first few are fast, then it spreads like a wave
+  // Realistic cascade: nearby points feel the pull first, far ones take longer
+  // Use a nonlinear stagger — first few are relatively quick, then it spreads
+  const totalDuration = 10000; // ms for the full cascade
   rest.forEach((pt, i) => {
-    // Exponential-ish stagger: first few quick, rest spread out
-    const delay = Math.pow(i / rest.length, 0.6) * 6000 + Math.random() * 800;
+    const frac = i / Math.max(rest.length - 1, 1);
+    // Quadratic stagger: first points quick, last ones slow
+    const delay = frac * frac * totalDuration * 0.7 + frac * totalDuration * 0.3;
+    // Add some randomness
+    const jitter = (Math.random() - 0.3) * 600;
     setTimeout(() => {
       if (pt.state === 'scattered') {
         pt.state = 'collapsing';
         pt.collapseT = 0;
       }
-    }, delay);
+    }, Math.max(0, delay + jitter));
   });
 }
 
-// ========== DRAW TORUS ==========
+// ===================== DRAW TORUS =====================
 function drawTorus() {
   cx.clearRect(0, 0, cv.width, cv.height);
 
-  // Label
+  // Subtle label
   cx.save();
-  cx.globalAlpha = cascadeStarted ? 0.3 : 0.12;
-  cx.fillStyle = '#6699dd';
-  cx.font = '11px sans-serif';
+  const labelAlpha = cascadeStarted ? (allSnapped ? 0.35 : 0.2 + Math.sin(step * 0.03) * 0.05) : 0.08;
+  cx.globalAlpha = labelAlpha;
+  cx.fillStyle = '#6699cc';
+  cx.font = '10px sans-serif';
   cx.textAlign = 'center';
-  cx.fillText('T H E   O P T I M A L   M A N I F O L D', cv.width/2, 16);
+  cx.letterSpacing = '3px';
+  cx.fillText('O P T I M A L   M A N I F O L D', cv.width/2, 14);
   cx.restore();
 
-  const uN = 44, vN = 22;
+  const uN = 48, vN = 24;
   const quads = [];
 
   for (let i = 0; i < uN; i++) {
@@ -373,21 +469,22 @@ function drawTorus() {
       const corners = [[u0,v0],[u1,v0],[u1,v1],[u0,v1]].map(([u,v]) => {
         let p = torusXYZ(u,v); p = rotY(p,camY); p = rotX(p,camX); return proj(p);
       });
-      const avgZ = corners.reduce((s,c) => s+c.z, 0) / 4;
+      const avgZ = (corners[0].z + corners[1].z + corners[2].z + corners[3].z) / 4;
       quads.push({corners, avgZ});
     }
   }
   quads.sort((a,b) => a.avgZ - b.avgZ);
 
-  // Torus brightness pulses slightly when cascade starts
-  const pulse = cascadeStarted && !allSnapped ? 0.03 * Math.sin(step * 0.05) : 0;
+  // Torus glow during cascade
+  const glowPulse = cascadeStarted && !allSnapped ? Math.sin(step * 0.04) * 0.015 : 0;
+  const baseBoost = allSnapped ? 0.03 : 0;
 
   for (const q of quads) {
-    const baseBright = Math.max(0.025, Math.min(0.13, 0.08 - q.avgZ * 0.00025));
-    const bright = baseBright + pulse;
-    cx.fillStyle = `rgba(40,90,190,${bright})`;
-    cx.strokeStyle = `rgba(50,110,210,${bright * 0.6})`;
-    cx.lineWidth = 0.35;
+    const depthFactor = 1 - (q.avgZ + 250) / 500;
+    const bright = Math.max(0.015, Math.min(0.14, 0.06 * depthFactor + 0.02)) + glowPulse + baseBoost;
+    cx.fillStyle = `rgba(35,80,170,${bright})`;
+    cx.strokeStyle = `rgba(45,100,200,${bright * 0.5})`;
+    cx.lineWidth = 0.3;
     cx.beginPath();
     cx.moveTo(q.corners[0].x, q.corners[0].y);
     for (let k = 1; k < 4; k++) cx.lineTo(q.corners[k].x, q.corners[k].y);
@@ -397,73 +494,98 @@ function drawTorus() {
   }
 }
 
-// ========== DRAW POINTS ==========
+// ===================== DRAW POINTS =====================
 function drawPoints() {
-  // Faint target slot markers
+  // Faint slot markers
   for (const s of slots) {
     let p = [s.x, s.y, s.z]; p = rotY(p,camY); p = rotX(p,camX);
     const pr = proj(p);
     cx.beginPath();
-    cx.arc(pr.x, pr.y, 1.8*pr.sc, 0, Math.PI*2);
-    cx.fillStyle = 'rgba(100,170,255,0.08)';
+    cx.arc(pr.x, pr.y, 1.5 * pr.sc, 0, Math.PI*2);
+    cx.fillStyle = 'rgba(100,160,240,0.06)';
     cx.fill();
   }
 
-  // Project and sort
+  // Project all points
   const projected = pts.map((pt, i) => {
     let p = [pt.x, pt.y, pt.z]; p = rotY(p,camY); p = rotX(p,camX);
     const pr = proj(p);
-    return {...pr, state: pt.state, ct: pt.collapseT, idx: i, dist: distToTorus(pt.x, pt.y, pt.z)};
+    // Project trail too
+    const trail = pt.trail.map(tp => {
+      let pp = [tp.x, tp.y, tp.z]; pp = rotY(pp,camY); pp = rotX(pp,camX);
+      return proj(pp);
+    });
+    return {...pr, state: pt.state, ct: pt.collapseT, idx: i,
+            dist: distToTorus(pt.x, pt.y, pt.z), trail};
   });
   projected.sort((a,b) => a.z - b.z);
 
   for (const pp of projected) {
-    const sz = Math.max(2, 5 * pp.sc);
-    let color, glow = 0, alpha = 1;
+    const sz = Math.max(1.8, 4.5 * pp.sc);
+    let color, glow = 0;
 
     if (pp.state === 'scattered') {
-      // Color shifts from red toward orange as point gets closer to torus
-      const closeness = Math.max(0, 1 - pp.dist / 200);
-      const rr = 255;
-      const gg = Math.round(55 + closeness * 90);
-      const bb = Math.round(55 + closeness * 20);
+      // Gradient from deep red (far) to orange (near torus)
+      const closeness = Math.max(0, Math.min(1, 1 - pp.dist / 180));
+      const rr = 200 + Math.round(closeness * 55);
+      const gg = Math.round(40 + closeness * 100);
+      const bb = Math.round(40 + closeness * 10);
       color = `rgb(${rr},${gg},${bb})`;
-      glow = closeness * 4;
+      glow = closeness * 3;
     } else if (pp.state === 'seed') {
-      color = '#ffcc33';
-      glow = 16;
+      color = '#eebb22';
+      glow = 18;
     } else if (pp.state === 'collapsing') {
-      const t = pp.ct;
-      // Red → orange → yellow → teal
+      const ct = pp.ct;
       let rr, gg, bb;
-      if (t < 0.5) {
-        const s = t * 2;
-        rr = Math.round(255 * (1-s) + 255 * s);
-        gg = Math.round(80 * (1-s) + 200 * s);
-        bb = Math.round(50 * (1-s) + 50 * s);
+      if (ct < 0.4) {
+        const s = ct / 0.4;
+        rr = Math.round(210*(1-s) + 230*s);
+        gg = Math.round(70*(1-s) + 180*s);
+        bb = Math.round(50*(1-s) + 40*s);
+      } else if (ct < 0.7) {
+        const s = (ct-0.4)/0.3;
+        rr = Math.round(230*(1-s) + 80*s);
+        gg = Math.round(180*(1-s) + 220*s);
+        bb = Math.round(40*(1-s) + 140*s);
       } else {
-        const s = (t - 0.5) * 2;
-        rr = Math.round(255 * (1-s) + 51 * s);
-        gg = Math.round(200 * (1-s) + 238 * s);
-        bb = Math.round(50 * (1-s) + 187 * s);
+        const s = (ct-0.7)/0.3;
+        rr = Math.round(80*(1-s) + 51*s);
+        gg = Math.round(220*(1-s) + 221*s);
+        bb = Math.round(140*(1-s) + 170*s);
       }
       color = `rgb(${rr},${gg},${bb})`;
-      glow = 4 + t * 10;
+      glow = 3 + ct * 10;
     } else {
-      color = '#33eebb';
-      glow = 8;
+      color = '#33ddaa';
+      glow = 7;
     }
 
-    // Draw trail line for collapsing points
-    if (pp.state === 'collapsing' && pp.ct > 0.05) {
+    // Draw trail
+    if (pp.trail.length > 1) {
+      cx.beginPath();
+      cx.moveTo(pp.trail[0].x, pp.trail[0].y);
+      for (let ti = 1; ti < pp.trail.length; ti++) {
+        cx.lineTo(pp.trail[ti].x, pp.trail[ti].y);
+      }
+      cx.lineTo(pp.x, pp.y);
+      cx.strokeStyle = pp.state === 'collapsing'
+        ? `rgba(200,180,60,${0.06 + pp.ct * 0.1})`
+        : 'rgba(180,80,80,0.06)';
+      cx.lineWidth = 0.7;
+      cx.stroke();
+    }
+
+    // Draw connecting line to slot during collapse
+    if (pp.state === 'collapsing' && pp.ct > 0.15) {
       const slot = slots[pts[pp.idx].slotIdx];
       let sp = [slot.x, slot.y, slot.z]; sp = rotY(sp,camY); sp = rotX(sp,camX);
       const spr = proj(sp);
       cx.save();
-      cx.globalAlpha = 0.08 + pp.ct * 0.12;
+      cx.globalAlpha = 0.04 + pp.ct * 0.12;
       cx.strokeStyle = color;
-      cx.lineWidth = 0.8;
-      cx.setLineDash([2, 4]);
+      cx.lineWidth = 0.6;
+      cx.setLineDash([2, 5]);
       cx.beginPath();
       cx.moveTo(pp.x, pp.y);
       cx.lineTo(spr.x, spr.y);
@@ -472,108 +594,147 @@ function drawPoints() {
       cx.restore();
     }
 
+    // Draw the point
     if (glow > 0) { cx.shadowColor = color; cx.shadowBlur = glow; }
     cx.beginPath();
     cx.arc(pp.x, pp.y, sz, 0, Math.PI*2);
     cx.fillStyle = color;
-    cx.globalAlpha = alpha;
     cx.fill();
-    cx.globalAlpha = 1;
+
+    // Subtle outline for seeds
+    if (pp.state === 'seed') {
+      cx.strokeStyle = 'rgba(255,220,60,0.4)';
+      cx.lineWidth = 1.5;
+      cx.beginPath();
+      cx.arc(pp.x, pp.y, sz + 3, 0, Math.PI*2);
+      cx.stroke();
+    }
+
     cx.shadowBlur = 0;
   }
 }
 
-// ========== DRAW LOSS ==========
+// ===================== DRAW LOSS =====================
 function drawLoss() {
   lx.clearRect(0, 0, lv.width, lv.height);
-  lx.fillStyle = '#08080f';
+  lx.fillStyle = '#06060e';
   lx.fillRect(0, 0, lv.width, lv.height);
 
-  const pad = 48, w = lv.width, h = lv.height;
+  const pad = 50, w = lv.width, h = lv.height;
 
   // Axes
-  lx.strokeStyle = '#1a1a2a'; lx.lineWidth = 1;
-  lx.beginPath(); lx.moveTo(pad, 8); lx.lineTo(pad, h-20); lx.lineTo(w-8, h-20); lx.stroke();
-  lx.fillStyle = '#444'; lx.font = '10px sans-serif';
-  lx.fillText('Test Loss', 2, 14);
-  lx.fillText('Epoch', w-42, h-5);
+  lx.strokeStyle = '#181828'; lx.lineWidth = 1;
+  lx.beginPath(); lx.moveTo(pad, 6); lx.lineTo(pad, h-22); lx.lineTo(w-8, h-22); lx.stroke();
+  lx.fillStyle = '#3a3a50'; lx.font = '10px sans-serif';
+  lx.textAlign = 'left';
+  lx.fillText('Loss', 4, 14);
+  lx.fillText('Epoch', w - 44, h - 6);
 
-  if (lossHist.length < 3) {
-    lx.fillStyle = '#333'; lx.font = '12px sans-serif';
-    lx.textAlign = 'left';
-    lx.fillText('Loss curve will appear here…', pad + 10, h/2);
+  if (lossHist.length < 4) {
+    lx.fillStyle = '#2a2a3a'; lx.font = '11px sans-serif';
+    lx.fillText('Loss curves will appear here…', pad + 12, h/2);
     return;
   }
 
-  // Downsample for performance if needed
-  let data = lossHist;
-  if (data.length > 1400) {
-    const skip = Math.ceil(data.length / 1400);
-    data = data.filter((_, i) => i % skip === 0);
+  // Downsample for perf
+  let testData = lossHist;
+  let trainData = trainLossHist;
+  if (testData.length > 1500) {
+    const skip = Math.ceil(testData.length / 1500);
+    testData = testData.filter((_, i) => i % skip === 0);
+    trainData = trainData.filter((_, i) => i % skip === 0);
   }
 
-  const maxL = Math.max(...data) * 1.05;
-  const minL = Math.min(...data);
-  const xSc = (w - pad - 12) / Math.max(data.length - 1, 1);
-  const ySc = (h - 32) / (maxL - minL * 0.5);
+  const allVals = [...testData, ...trainData];
+  const maxL = Math.max(...allVals) * 1.05;
+  const minL = 0;
+  const xSc = (w - pad - 14) / Math.max(testData.length - 1, 1);
+  const ySc = (h - 32) / (maxL - minL);
 
-  // Gradient fill
-  const grad = lx.createLinearGradient(0, 10, 0, h - 20);
-  grad.addColorStop(0, 'rgba(255,70,70,0.2)');
-  grad.addColorStop(0.7, 'rgba(255,70,70,0.02)');
-  grad.addColorStop(1, 'rgba(50,230,180,0.05)');
+  function yPos(val) { return h - 22 - (val - minL) * ySc; }
+
+  // Gradient fill under test loss
+  const grad = lx.createLinearGradient(0, 6, 0, h - 22);
+  grad.addColorStop(0, 'rgba(200,60,60,0.15)');
+  grad.addColorStop(0.6, 'rgba(200,60,60,0.03)');
+  grad.addColorStop(1, 'rgba(40,200,150,0.02)');
   lx.beginPath();
-  lx.moveTo(pad, h - 20);
-  for (let i = 0; i < data.length; i++) {
-    lx.lineTo(pad + i * xSc, h - 20 - (data[i] - minL * 0.5) * ySc);
+  lx.moveTo(pad, h - 22);
+  for (let i = 0; i < testData.length; i++) {
+    lx.lineTo(pad + i * xSc, yPos(testData[i]));
   }
-  lx.lineTo(pad + (data.length-1) * xSc, h - 20);
+  lx.lineTo(pad + (testData.length-1) * xSc, h - 22);
   lx.closePath();
   lx.fillStyle = grad; lx.fill();
 
-  // Line
+  // Train loss line (faint)
   lx.beginPath();
-  lx.lineWidth = 1.8;
-  for (let i = 0; i < data.length; i++) {
-    const x = pad + i * xSc;
-    const y = h - 20 - (data[i] - minL * 0.5) * ySc;
-    // Color: red in plateau, transitions to teal
+  lx.strokeStyle = 'rgba(100,100,180,0.25)';
+  lx.lineWidth = 1;
+  for (let i = 0; i < trainData.length; i++) {
+    const x = pad + i * xSc, y = yPos(trainData[i]);
     if (i === 0) lx.moveTo(x, y); else lx.lineTo(x, y);
   }
-  // Gradient stroke
-  const sGrad = lx.createLinearGradient(pad, 0, pad + data.length * xSc, 0);
-  sGrad.addColorStop(0, '#ff5555');
-  if (cascadeStarted) {
-    const cascadeFrac = Math.max(0.1, 1 - (data.length - lossHist.length * 0.7) / (data.length * 0.3));
-    sGrad.addColorStop(Math.min(0.95, cascadeFrac), '#ff8855');
-    sGrad.addColorStop(1, '#33ddaa');
-  }
-  lx.strokeStyle = cascadeStarted ? sGrad : '#ff5555';
   lx.stroke();
 
+  // Test loss line
+  lx.beginPath();
+  lx.lineWidth = 2;
+  for (let i = 0; i < testData.length; i++) {
+    const x = pad + i * xSc, y = yPos(testData[i]);
+    if (i === 0) lx.moveTo(x, y); else lx.lineTo(x, y);
+  }
+  // Color gradient for the stroke
+  if (cascadeStarted && testData.length > 10) {
+    const sGrad = lx.createLinearGradient(pad, 0, pad + testData.length * xSc, 0);
+    sGrad.addColorStop(0, '#cc4444');
+    const cascadeFrac = cascadeStep > 0 ? Math.min(0.95, cascadeStep / lossHist.length) : 0.8;
+    sGrad.addColorStop(Math.max(0.05, cascadeFrac - 0.02), '#cc6644');
+    sGrad.addColorStop(Math.min(0.99, cascadeFrac + 0.05), '#ddaa33');
+    sGrad.addColorStop(1, '#33ddaa');
+    lx.strokeStyle = sGrad;
+  } else {
+    lx.strokeStyle = '#cc4444';
+  }
+  lx.stroke();
+
+  // Legend
+  lx.fillStyle = '#cc4444'; lx.font = '9px sans-serif';
+  lx.fillText('● test loss', w - 130, 14);
+  lx.fillStyle = 'rgba(100,100,180,0.5)';
+  lx.fillText('● train loss', w - 68, 14);
+
   // Cascade marker
-  if (cascadeStarted) {
-    // Find where loss started dropping
-    let ci = data.length - 1;
-    for (let i = 1; i < data.length; i++) {
-      if (i > 10 && data[i] < data[i-5] * 0.9) { ci = i - 3; break; }
-    }
-    const cx2 = pad + Math.max(0, ci) * xSc;
-    lx.strokeStyle = '#ffcc33'; lx.lineWidth = 1;
-    lx.setLineDash([3,3]);
-    lx.beginPath(); lx.moveTo(cx2, 8); lx.lineTo(cx2, h-20); lx.stroke();
+  if (cascadeStarted && cascadeStep > 0) {
+    const markerIdx = Math.min(testData.length - 1,
+      Math.round(cascadeStep / (lossHist.length / testData.length)));
+    const cx2 = pad + markerIdx * xSc;
+
+    lx.save();
+    lx.strokeStyle = '#ddaa22';
+    lx.lineWidth = 1;
+    lx.setLineDash([3, 4]);
+    lx.globalAlpha = 0.6;
+    lx.beginPath();
+    lx.moveTo(cx2, 6);
+    lx.lineTo(cx2, h - 22);
+    lx.stroke();
     lx.setLineDash([]);
-    lx.fillStyle = '#ffcc33'; lx.font = '10px sans-serif';
-    lx.fillText('← seeds hit torus → phase transition', cx2 + 5, 18);
+    lx.globalAlpha = 1;
+
+    lx.fillStyle = '#ddaa22';
+    lx.font = '10px sans-serif';
+    lx.fillText('seeds found manifold ↓', cx2 - 70, h - 8);
+    lx.restore();
   }
 }
 
-// ========== MAIN LOOP ==========
+// ===================== MAIN LOOP =====================
 function loop() {
   for (let i = 0; i < stepsPerFrame; i++) update();
 
   if (autoRotate && !dragging) {
-    camY += 0.002;
+    camY += 0.0015;
   }
 
   drawTorus();
@@ -582,7 +743,7 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-// ========== EVENTS ==========
+// ===================== EVENTS =====================
 document.getElementById('startBtn').addEventListener('click', () => {
   if (!running) {
     running = true;
@@ -630,7 +791,7 @@ cv.addEventListener('touchmove', e => {
 }, {passive: false});
 cv.addEventListener('touchend', () => { dragging = false; });
 
-// ========== GO ==========
+// ===================== START =====================
 init();
 loop();
 </script>
