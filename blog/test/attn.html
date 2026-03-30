@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Self-Attention — Tokens as Gravitational Particles</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #06060e;
+    color: #d8d8e0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  h1 { margin: 14px 0 2px; font-size: 1.3rem; color: #7ab8ee; }
+  #subtitle {
+    font-size: 0.78rem; color: #4a4a6a; margin-bottom: 8px;
+    text-align: center; max-width: 700px; line-height: 1.5; padding: 0 14px;
+  }
+  canvas { border-radius: 8px; cursor: default; display: block; }
+  #controls {
+    display: flex; gap: 10px; margin: 8px 0; flex-wrap: wrap;
+    justify-content: center; align-items: center;
+  }
+  button, select {
+    padding: 5px 14px; border: none; border-radius: 5px;
+    font-size: 0.82rem; cursor: pointer; transition: 0.2s;
+    background: #2a2a3e; color: #bbc;
+  }
+  button:hover, select:hover { background: #3a3a55; }
+  .active-btn { background: #28855a !important; color: #fff !important; }
+  #headBtns { display: flex; gap: 4px; align-items: center; }
+  #headBtns span { font-size: 0.75rem; color: #667; margin-right: 4px; }
+  #info {
+    display: flex; gap: 16px; font-size: 0.72rem; margin-bottom: 4px;
+    flex-wrap: wrap; justify-content: center; color: #556;
+  }
+  #status {
+    font-size: 0.82rem; padding: 4px 12px; border-radius: 5px;
+    margin-bottom: 4px; text-align: center; transition: 0.3s;
+    background: #0e0e18; color: #6688aa; min-width: 300px;
+  }
+  #sentenceBar {
+    display: flex; gap: 6px; margin: 8px 0; flex-wrap: wrap; justify-content: center;
+  }
+  .token-chip {
+    padding: 4px 10px; border-radius: 12px; font-size: 0.78rem;
+    cursor: pointer; transition: 0.2s; border: 1px solid #333;
+    user-select: none;
+  }
+  .token-chip:hover { border-color: #888; }
+  .token-chip.selected { border-color: #ffcc33; box-shadow: 0 0 8px rgba(255,200,50,0.3); }
+  #matrixCanvas { margin-top: 4px; }
+  label { font-size: 0.75rem; color: #667; }
+  input[type=range] { width: 80px; vertical-align: middle; }
+  #sentenceSelect { background: #1a1a2e; color: #aab; border: 1px solid #333; padding: 4px 8px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<h1>🌀 Self-Attention: Tokens as Gravitational Particles</h1>
+<p id="subtitle">
+  Each token in a sentence generates a <b>Query</b> ("what am I looking for?"),
+  a <b>Key</b> ("what do I contain?"), and a <b>Value</b> ("what do I contribute?").
+  Attention scores are computed as the dot product of Query × Key — shown here as
+  gravitational attraction between particles. Stronger attention = stronger pull.
+  Different attention heads learn different relationship patterns.
+</p>
+
+<div id="status">Click a token to see what it attends to</div>
+
+<div id="sentenceBar"></div>
+
+<canvas id="c" width="760" height="460"></canvas>
+
+<div id="controls">
+  <label>Sentence:
+    <select id="sentenceSelect"></select>
+  </label>
+  <div id="headBtns">
+    <span>Attention Head:</span>
+  </div>
+  <label>Physics: <input type="range" id="physicsSlider" min="0" max="100" value="50"><span id="physicsLabel">50%</span></label>
+  <button id="resetPosBtn">↺ Reset positions</button>
+</div>
+
+<canvas id="matrixCanvas" width="760" height="180"></canvas>
+
+<script>
+// ===================== SENTENCES & FAKE ATTENTION =====================
+// We simulate plausible attention patterns for different heads
+
+// Helper: convert hex color + alpha (0-255 int or hex string) to rgba
+function hexAlpha(hex, alpha) {
+  // Parse hex to r,g,b
+  let r = 0, g = 0, b = 0;
+  if (hex.length === 4) {
+    r = parseInt(hex[1]+hex[1], 16);
+    g = parseInt(hex[2]+hex[2], 16);
+    b = parseInt(hex[3]+hex[3], 16);
+  } else if (hex.length >= 7) {
+    r = parseInt(hex.slice(1,3), 16);
+    g = parseInt(hex.slice(3,5), 16);
+    b = parseInt(hex.slice(5,7), 16);
+  }
+  // alpha as 0-1 float or hex string like 'aa'
+  let a;
+  if (typeof alpha === 'number') a = alpha;
+  else a = parseInt(alpha, 16) / 255;
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+const SENTENCES = [
+  {
+    text: "The cat sat on the mat because it was tired",
+    tokens: ["The","cat","sat","on","the","mat","because","it","was","tired"],
+    colors: ["#888","#ff8844","#44bb88","#888","#888","#6688ee","#aa88cc","#ff8844","#44bb88","#cc6666"],
+    // Semantic groups: subject(cat,it), verb(sat,was), location(mat), reason(because,tired)
+    heads: {
+      "Positional": null,       // auto-generated: nearby tokens
+      "Syntactic": [            // subject-verb, pronoun-antecedent
+        // Each row = what that token attends to (weights for all tokens)
+        [0.1,0.5,0.2,0.05,0.05,0.05,0.02,0.02,0.01,0.0],  // The → cat
+        [0.15,0.1,0.45,0.05,0.02,0.08,0.02,0.08,0.03,0.02], // cat → sat
+        [0.05,0.4,0.1,0.1,0.02,0.2,0.02,0.05,0.04,0.02],   // sat → cat, mat
+        [0.02,0.05,0.3,0.1,0.08,0.4,0.02,0.01,0.01,0.01],  // on → sat, mat
+        [0.05,0.02,0.02,0.02,0.1,0.6,0.05,0.05,0.04,0.05], // the → mat
+        [0.02,0.08,0.2,0.3,0.1,0.1,0.05,0.05,0.05,0.05],   // mat → sat, on
+        [0.02,0.05,0.05,0.02,0.02,0.05,0.1,0.15,0.2,0.34], // because → tired, was
+        [0.05,0.55,0.05,0.02,0.02,0.08,0.08,0.05,0.05,0.05],// it → cat (coreference!)
+        [0.02,0.05,0.15,0.02,0.02,0.02,0.1,0.3,0.12,0.2],  // was → it, tired
+        [0.02,0.1,0.05,0.02,0.02,0.02,0.25,0.15,0.2,0.17], // tired → because, it, was
+      ],
+      "Semantic": [
+        [0.1,0.3,0.05,0.02,0.15,0.05,0.02,0.2,0.05,0.06],  // The → cat, the, it
+        [0.1,0.15,0.1,0.02,0.02,0.05,0.02,0.4,0.04,0.1],   // cat → it (same entity!)
+        [0.02,0.1,0.1,0.05,0.02,0.05,0.02,0.04,0.5,0.1],   // sat → was (both verbs)
+        [0.02,0.02,0.05,0.1,0.05,0.5,0.05,0.02,0.04,0.15], // on → mat (location)
+        [0.4,0.05,0.02,0.05,0.15,0.15,0.02,0.06,0.05,0.05],// the → The
+        [0.02,0.05,0.15,0.35,0.1,0.1,0.02,0.02,0.04,0.15], // mat → on, sat
+        [0.02,0.02,0.02,0.02,0.02,0.02,0.15,0.05,0.1,0.58],// because → tired (causal!)
+        [0.05,0.55,0.02,0.02,0.02,0.05,0.05,0.1,0.04,0.1], // it → cat
+        [0.02,0.05,0.45,0.02,0.02,0.05,0.05,0.04,0.15,0.15],// was → sat
+        [0.02,0.08,0.08,0.02,0.02,0.02,0.45,0.1,0.11,0.1], // tired → because, it
+      ],
+    }
+  },
+  {
+    text: "She gave him the book that he had requested",
+    tokens: ["She","gave","him","the","book","that","he","had","requested"],
+    colors: ["#ff8888","#44bb88","#88aaff","#888","#eebb44","#aa88cc","#88aaff","#44bb88","#44bb88"],
+    heads: {
+      "Positional": null,
+      "Syntactic": [
+        [0.15,0.5,0.1,0.05,0.08,0.02,0.05,0.03,0.02],
+        [0.3,0.1,0.25,0.05,0.2,0.02,0.03,0.03,0.02],
+        [0.1,0.45,0.1,0.05,0.1,0.02,0.1,0.04,0.04],
+        [0.02,0.05,0.02,0.1,0.65,0.05,0.03,0.04,0.04],
+        [0.05,0.25,0.1,0.15,0.1,0.12,0.03,0.05,0.15],
+        [0.02,0.05,0.02,0.05,0.4,0.1,0.1,0.06,0.2],
+        [0.1,0.05,0.35,0.02,0.05,0.1,0.13,0.1,0.1],
+        [0.02,0.05,0.02,0.02,0.05,0.05,0.15,0.14,0.5],
+        [0.05,0.1,0.08,0.02,0.3,0.1,0.15,0.1,0.1],
+      ],
+      "Semantic": [
+        [0.2,0.05,0.1,0.02,0.02,0.02,0.45,0.04,0.1],
+        [0.1,0.15,0.05,0.02,0.1,0.02,0.02,0.15,0.39],
+        [0.15,0.1,0.1,0.02,0.02,0.02,0.45,0.04,0.1],
+        [0.02,0.02,0.02,0.15,0.02,0.55,0.02,0.1,0.1],
+        [0.02,0.15,0.02,0.1,0.15,0.1,0.02,0.04,0.4],
+        [0.02,0.02,0.02,0.02,0.5,0.12,0.02,0.08,0.2],
+        [0.4,0.05,0.3,0.02,0.02,0.02,0.09,0.05,0.05],
+        [0.02,0.35,0.02,0.02,0.05,0.02,0.02,0.15,0.35],
+        [0.05,0.3,0.1,0.02,0.2,0.05,0.08,0.1,0.1],
+      ],
+    }
+  },
+  {
+    text: "The bank by the river has the best interest rates",
+    tokens: ["The","bank","by","the","river","has","the","best","interest","rates"],
+    colors: ["#888","#eebb44","#888","#888","#44aadd","#44bb88","#888","#cc88ee","#eebb44","#eebb44"],
+    heads: {
+      "Positional": null,
+      "Syntactic": [
+        [0.1,0.55,0.1,0.05,0.05,0.05,0.02,0.02,0.03,0.03],
+        [0.1,0.1,0.15,0.05,0.1,0.3,0.02,0.02,0.08,0.08],
+        [0.02,0.15,0.1,0.1,0.4,0.05,0.05,0.03,0.05,0.05],
+        [0.02,0.02,0.02,0.1,0.6,0.05,0.05,0.04,0.05,0.05],
+        [0.02,0.1,0.2,0.15,0.13,0.15,0.02,0.03,0.1,0.1],
+        [0.05,0.3,0.05,0.02,0.05,0.13,0.05,0.1,0.1,0.15],
+        [0.02,0.02,0.02,0.02,0.02,0.02,0.1,0.2,0.3,0.28],
+        [0.02,0.02,0.02,0.02,0.02,0.02,0.05,0.13,0.35,0.35],
+        [0.02,0.15,0.02,0.02,0.02,0.08,0.05,0.1,0.14,0.4],
+        [0.02,0.1,0.02,0.02,0.02,0.1,0.05,0.15,0.35,0.17],
+      ],
+      "Semantic": [
+        [0.15,0.1,0.02,0.2,0.02,0.02,0.35,0.02,0.06,0.06],
+        [0.05,0.15,0.02,0.02,0.1,0.05,0.02,0.05,0.35,0.19],// bank → interest, rates (polysemy!)
+        [0.02,0.02,0.15,0.05,0.05,0.02,0.02,0.02,0.02,0.63],// by → (weak)
+        [0.3,0.02,0.02,0.15,0.05,0.02,0.3,0.02,0.06,0.06],
+        [0.02,0.2,0.15,0.05,0.18,0.02,0.02,0.02,0.02,0.32],// river → bank (geographic!)
+        [0.02,0.2,0.02,0.02,0.05,0.14,0.02,0.15,0.2,0.18],
+        [0.2,0.02,0.02,0.15,0.02,0.02,0.17,0.1,0.15,0.15],
+        [0.02,0.02,0.02,0.02,0.02,0.02,0.02,0.16,0.4,0.3],
+        [0.02,0.4,0.02,0.02,0.02,0.08,0.02,0.1,0.12,0.2],// interest → bank
+        [0.02,0.3,0.02,0.02,0.02,0.08,0.02,0.12,0.3,0.1],// rates → bank, interest
+      ],
+    }
+  }
+];
+
+// Generate positional attention (nearby tokens attend more)
+function generatePositionalAttention(n) {
+  const matrix = [];
+  for (let i = 0; i < n; i++) {
+    const row = [];
+    let sum = 0;
+    for (let j = 0; j < n; j++) {
+      const dist = Math.abs(i - j);
+      const w = Math.exp(-dist * 0.6) + 0.01;
+      row.push(w);
+      sum += w;
+    }
+    matrix.push(row.map(w => w / sum));
+  }
+  return matrix;
+}
+
+// ===================== STATE =====================
+let currentSentenceIdx = 0;
+let currentHead = "Positional";
+let selectedToken = -1;
+let hoveredToken = -1;
+let particles = [];
+let physicsStrength = 0.5;
+
+const cv = document.getElementById('c'), cx = cv.getContext('2d');
+const mv = document.getElementById('matrixCanvas'), mx = mv.getContext('2d');
+const statEl = document.getElementById('status');
+const sentenceBar = document.getElementById('sentenceBar');
+const sentenceSelect = document.getElementById('sentenceSelect');
+const headBtnsDiv = document.getElementById('headBtns');
+
+// ===================== INIT =====================
+function getAttentionMatrix() {
+  const sent = SENTENCES[currentSentenceIdx];
+  if (currentHead === "Positional") {
+    return generatePositionalAttention(sent.tokens.length);
+  }
+  return sent.heads[currentHead];
+}
+
+function initParticles() {
+  const sent = SENTENCES[currentSentenceIdx];
+  const n = sent.tokens.length;
+  particles = [];
+
+  // Arrange in a loose circle
+  const cx0 = cv.width / 2, cy0 = cv.height / 2;
+  const radius = Math.min(cv.width, cv.height) * 0.32;
+
+  for (let i = 0; i < n; i++) {
+    const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+    particles.push({
+      x: cx0 + Math.cos(angle) * radius,
+      y: cy0 + Math.sin(angle) * radius,
+      homeX: cx0 + Math.cos(angle) * radius,
+      homeY: cy0 + Math.sin(angle) * radius,
+      vx: 0, vy: 0,
+      radius: 18 + sent.tokens[i].length * 2.5,
+      label: sent.tokens[i],
+      color: sent.colors[i],
+      idx: i,
+    });
+  }
+}
+
+function buildUI() {
+  const sent = SENTENCES[currentSentenceIdx];
+
+  // Sentence selector
+  sentenceSelect.innerHTML = '';
+  SENTENCES.forEach((s, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = s.text;
+    if (i === currentSentenceIdx) opt.selected = true;
+    sentenceSelect.appendChild(opt);
+  });
+
+  // Token chips
+  sentenceBar.innerHTML = '';
+  sent.tokens.forEach((tok, i) => {
+    const chip = document.createElement('span');
+    chip.className = 'token-chip';
+    chip.textContent = tok;
+    chip.style.background = sent.colors[i] + '22';
+    chip.style.color = sent.colors[i];
+    chip.dataset.idx = i;
+    chip.addEventListener('click', () => selectToken(i));
+    chip.addEventListener('mouseenter', () => { hoveredToken = i; });
+    chip.addEventListener('mouseleave', () => { hoveredToken = -1; });
+    sentenceBar.appendChild(chip);
+  });
+
+  // Head buttons
+  const existingBtns = headBtnsDiv.querySelectorAll('button');
+  existingBtns.forEach(b => b.remove());
+  const headNames = Object.keys(sent.heads);
+  headNames.forEach(name => {
+    const btn = document.createElement('button');
+    btn.textContent = name;
+    btn.className = name === currentHead ? 'active-btn' : '';
+    btn.addEventListener('click', () => {
+      currentHead = name;
+      buildUI();
+    });
+    headBtnsDiv.appendChild(btn);
+  });
+
+  updateTokenChips();
+}
+
+function selectToken(idx) {
+  selectedToken = selectedToken === idx ? -1 : idx;
+  updateTokenChips();
+  if (selectedToken >= 0) {
+    const sent = SENTENCES[currentSentenceIdx];
+    const matrix = getAttentionMatrix();
+    const row = matrix[selectedToken];
+    // Find top attended
+    const sorted = row.map((w,i) => ({w,i})).sort((a,b) => b.w - a.w);
+    const top3 = sorted.slice(0,3).map(x => `${sent.tokens[x.i]} (${(x.w*100).toFixed(0)}%)`).join(', ');
+    statEl.textContent = `"${sent.tokens[selectedToken]}" attends most to: ${top3}`;
+  } else {
+    statEl.textContent = 'Click a token to see what it attends to';
+  }
+}
+
+function updateTokenChips() {
+  const chips = sentenceBar.querySelectorAll('.token-chip');
+  chips.forEach((chip, i) => {
+    chip.classList.toggle('selected', i === selectedToken);
+  });
+}
+
+// ===================== PHYSICS =====================
+function updatePhysics() {
+  const matrix = getAttentionMatrix();
+  const n = particles.length;
+  const dt = 0.16;
+
+  for (let i = 0; i < n; i++) {
+    const pi = particles[i];
+    let fx = 0, fy = 0;
+
+    // Attention-based attraction
+    for (let j = 0; j < n; j++) {
+      if (i === j) continue;
+      const pj = particles[j];
+      const dx = pj.x - pi.x, dy = pj.y - pi.y;
+      const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+
+      // Attraction proportional to attention weight
+      const attnWeight = matrix[i][j];
+      const attractForce = attnWeight * 120 * physicsStrength;
+
+      // Repulsion to prevent overlap (inverse square)
+      const minDist = pi.radius + pj.radius + 10;
+      const repulse = dist < minDist ? (minDist - dist) * 0.8 : 0;
+
+      const netForce = attractForce - repulse;
+      fx += (dx / dist) * netForce;
+      fy += (dy / dist) * netForce;
+    }
+
+    // Spring back to home position (prevents collapse to single point)
+    const homeForce = 0.15 * (1.1 - physicsStrength * 0.6);
+    fx += (pi.homeX - pi.x) * homeForce;
+    fy += (pi.homeY - pi.y) * homeForce;
+
+    // Keep in bounds
+    const margin = 60;
+    if (pi.x < margin) fx += (margin - pi.x) * 0.3;
+    if (pi.x > cv.width - margin) fx += (cv.width - margin - pi.x) * 0.3;
+    if (pi.y < margin) fy += (margin - pi.y) * 0.3;
+    if (pi.y > cv.height - margin) fy += (cv.height - margin - pi.y) * 0.3;
+
+    // Damping
+    pi.vx = (pi.vx + fx * dt) * 0.88;
+    pi.vy = (pi.vy + fy * dt) * 0.88;
+    pi.x += pi.vx * dt;
+    pi.y += pi.vy * dt;
+  }
+}
+
+// ===================== DRAW =====================
+function drawScene() {
+  cx.clearRect(0, 0, cv.width, cv.height);
+
+  const matrix = getAttentionMatrix();
+  const n = particles.length;
+  const sent = SENTENCES[currentSentenceIdx];
+
+  // Draw attention lines
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      if (i === j) continue;
+      const w = matrix[i][j];
+      if (w < 0.04) continue;
+
+      const pi = particles[i], pj = particles[j];
+
+      // Determine if this line should be highlighted
+      let highlight = false;
+      let dimmed = false;
+      if (selectedToken >= 0) {
+        if (i === selectedToken) highlight = true;
+        else dimmed = true;
+      }
+      if (hoveredToken >= 0 && selectedToken < 0) {
+        if (i === hoveredToken) highlight = true;
+        else dimmed = true;
+      }
+
+      const alpha = highlight ? w * 0.9 + 0.05 : (dimmed ? w * 0.06 : w * 0.3);
+      const width = highlight ? w * 6 + 0.5 : (dimmed ? 0.3 : w * 3 + 0.3);
+
+      // Color: blend source and target colors
+      const srcColor = sent.colors[i];
+      const tgtColor = sent.colors[j];
+
+      // Create gradient along the line
+      const grad = cx.createLinearGradient(pi.x, pi.y, pj.x, pj.y);
+      grad.addColorStop(0, srcColor);
+      grad.addColorStop(1, tgtColor);
+
+      cx.save();
+      cx.globalAlpha = alpha;
+      cx.strokeStyle = grad;
+      cx.lineWidth = width;
+
+      // Draw curved line for visual clarity
+      const mx0 = (pi.x + pj.x) / 2;
+      const my0 = (pi.y + pj.y) / 2;
+      const dx = pj.x - pi.x, dy = pj.y - pi.y;
+      const perpX = -dy * 0.08, perpY = dx * 0.08;
+
+      cx.beginPath();
+      cx.moveTo(pi.x, pi.y);
+      cx.quadraticCurveTo(mx0 + perpX, my0 + perpY, pj.x, pj.y);
+      cx.stroke();
+
+      // Arrowhead for highlighted lines
+      if (highlight && w > 0.08) {
+        const t = 0.85;
+        // Point on curve near end
+        const ax = (1-t)*(1-t)*pi.x + 2*(1-t)*t*(mx0+perpX) + t*t*pj.x;
+        const ay = (1-t)*(1-t)*pi.y + 2*(1-t)*t*(my0+perpY) + t*t*pj.y;
+        const angle = Math.atan2(pj.y - ay, pj.x - ax);
+        const arrLen = 6 + w * 8;
+        cx.fillStyle = tgtColor;
+        cx.globalAlpha = alpha * 1.2;
+        cx.beginPath();
+        cx.moveTo(pj.x - Math.cos(angle - 0.01) * pj.radius * 0.6,
+                  pj.y - Math.sin(angle - 0.01) * pj.radius * 0.6);
+        cx.lineTo(pj.x - Math.cos(angle - 0.35) * (pj.radius * 0.6 + arrLen),
+                  pj.y - Math.sin(angle - 0.35) * (pj.radius * 0.6 + arrLen));
+        cx.lineTo(pj.x - Math.cos(angle + 0.35) * (pj.radius * 0.6 + arrLen),
+                  pj.y - Math.sin(angle + 0.35) * (pj.radius * 0.6 + arrLen));
+        cx.closePath();
+        cx.fill();
+      }
+
+      cx.restore();
+    }
+  }
+
+  // Draw particles
+  for (let i = 0; i < n; i++) {
+    const pi = particles[i];
+    let isActive = (i === selectedToken || i === hoveredToken);
+    let isDimmed = (selectedToken >= 0 || hoveredToken >= 0) && !isActive;
+
+    // Check if this token is a strong target of the selected token
+    let isTarget = false;
+    let targetWeight = 0;
+    if (selectedToken >= 0 && i !== selectedToken) {
+      targetWeight = matrix[selectedToken][i];
+      if (targetWeight > 0.12) isTarget = true;
+    }
+
+    // Glow
+    const glowSize = isActive ? 25 : (isTarget ? 12 + targetWeight * 20 : 0);
+    if (glowSize > 0) {
+      const grd = cx.createRadialGradient(pi.x, pi.y, pi.radius * 0.5, pi.x, pi.y, pi.radius + glowSize);
+	    grd.addColorStop(0, hexAlpha(pi.color, 0.25));
+	  grd.addColorStop(1, hexAlpha(pi.color, 0));
+      cx.fillStyle = grd;
+      cx.beginPath();
+      cx.arc(pi.x, pi.y, pi.radius + glowSize, 0, Math.PI * 2);
+      cx.fill();
+    }
+
+    // Circle
+    cx.save();
+    cx.globalAlpha = isDimmed ? 0.3 : 1;
+
+    // Fill
+    const fillGrad = cx.createRadialGradient(pi.x - 3, pi.y - 3, 2, pi.x, pi.y, pi.radius);
+	fillGrad.addColorStop(0, hexAlpha(pi.color, 0.8));
+	fillGrad.addColorStop(1, hexAlpha(pi.color, 0.27));
+    cx.fillStyle = fillGrad;
+    cx.beginPath();
+    cx.arc(pi.x, pi.y, pi.radius, 0, Math.PI * 2);
+    cx.fill();
+
+    // Border
+	cx.strokeStyle = isActive ? '#ffdd55' : hexAlpha(pi.color, 0.53);
+    cx.lineWidth = isActive ? 2.5 : 1;
+    cx.stroke();
+
+    // Label
+    cx.fillStyle = isDimmed ? '#666' : '#eee';
+    cx.font = `${isActive ? 'bold ' : ''}${Math.min(13, 11 + pi.label.length * 0.3)}px sans-serif`;
+    cx.textAlign = 'center';
+    cx.textBaseline = 'middle';
+    cx.fillText(pi.label, pi.x, pi.y);
+
+    // Show attention weight if this is a target of selected token
+    if (isTarget && targetWeight > 0.15) {
+      cx.fillStyle = '#ffdd88';
+      cx.font = '9px sans-serif';
+      cx.globalAlpha = 0.8;
+      cx.fillText((targetWeight * 100).toFixed(0) + '%', pi.x, pi.y + pi.radius + 10);
+    }
+
+    cx.restore();
+  }
+
+  // Head label
+  cx.fillStyle = '#334';
+  cx.font = '11px sans-serif';
+  cx.textAlign = 'left';
+  cx.fillText(`Head: ${currentHead}`, 12, cv.height - 10);
+}
+
+// ===================== DRAW ATTENTION MATRIX =====================
+function drawMatrix() {
+  mx.clearRect(0, 0, mv.width, mv.height);
+  mx.fillStyle = '#06060e';
+  mx.fillRect(0, 0, mv.width, mv.height);
+
+  const matrix = getAttentionMatrix();
+  const sent = SENTENCES[currentSentenceIdx];
+  const n = sent.tokens.length;
+
+  const pad = 70;
+  const cellSize = Math.min(28, (mv.width - pad - 20) / n);
+  const gridW = cellSize * n;
+  const gridH = cellSize * n;
+  const startX = pad;
+  const startY = 24;
+
+  // Title
+  mx.fillStyle = '#4a5a7a';
+  mx.font = '10px sans-serif';
+  mx.textAlign = 'center';
+  mx.fillText(`Attention Matrix — ${currentHead} Head`, mv.width / 2, 14);
+
+  // Column headers (Keys)
+  mx.font = '9px sans-serif';
+  mx.textAlign = 'right';
+  for (let j = 0; j < n; j++) {
+    mx.save();
+    mx.translate(startX + j * cellSize + cellSize / 2, startY - 2);
+    mx.rotate(-Math.PI / 4);
+    mx.fillStyle = (selectedToken >= 0 && j === selectedToken) ? '#ffdd55' :
+                   (hoveredToken >= 0 && j === hoveredToken) ? '#aaccff' : sent.colors[j] + 'aa';
+    mx.textAlign = 'left';
+    mx.fillText(sent.tokens[j], 0, 0);
+    mx.restore();
+  }
+
+  // Row headers (Queries) and cells
+  for (let i = 0; i < n; i++) {
+    // Row label
+    mx.fillStyle = (selectedToken >= 0 && i === selectedToken) ? '#ffdd55' :
+                   (hoveredToken >= 0 && i === hoveredToken) ? '#aaccff' : sent.colors[i] + 'aa';
+    mx.font = '9px sans-serif';
+    mx.textAlign = 'right';
+    mx.textBaseline = 'middle';
+    mx.fillText(sent.tokens[i], startX - 6, startY + i * cellSize + cellSize / 2);
+
+    for (let j = 0; j < n; j++) {
+      const w = matrix[i][j];
+      const x = startX + j * cellSize;
+      const y = startY + i * cellSize;
+
+      // Determine highlight state
+      let isHighlighted = false;
+      let isDimmedCell = false;
+      if (selectedToken >= 0) {
+        if (i === selectedToken) isHighlighted = true;
+        else isDimmedCell = true;
+      }
+      if (hoveredToken >= 0 && selectedToken < 0) {
+        if (i === hoveredToken) isHighlighted = true;
+        else isDimmedCell = true;
+      }
+
+      // Cell color
+      let r, g, b;
+      if (isHighlighted) {
+        // Warm yellow-orange scale
+        r = Math.round(40 + w * 215);
+        g = Math.round(30 + w * 170);
+        b = Math.round(15 + w * 30);
+      } else if (isDimmedCell) {
+        r = Math.round(15 + w * 40);
+        g = Math.round(15 + w * 40);
+        b = Math.round(20 + w * 50);
+      } else {
+        // Blue-teal scale
+        r = Math.round(10 + w * 60);
+        g = Math.round(15 + w * 140);
+        b = Math.round(30 + w * 180);
+      }
+
+      mx.fillStyle = `rgb(${r},${g},${b})`;
+      mx.fillRect(x + 0.5, y + 0.5, cellSize - 1, cellSize - 1);
+
+      // Cell border
+      mx.strokeStyle = '#1a1a2a';
+      mx.lineWidth = 0.5;
+      mx.strokeRect(x + 0.5, y + 0.5, cellSize - 1, cellSize - 1);
+
+      // Weight text for highlighted cells
+      if (isHighlighted && w > 0.06 && cellSize >= 20) {
+        mx.fillStyle = w > 0.3 ? '#fff' : '#aaa';
+        mx.font = '8px sans-serif';
+        mx.textAlign = 'center';
+        mx.textBaseline = 'middle';
+        mx.fillText((w * 100).toFixed(0), x + cellSize/2, y + cellSize/2);
+      }
+    }
+  }
+
+  // Axis labels
+  mx.fillStyle = '#3a4a6a';
+  mx.font = '9px sans-serif';
+  mx.textAlign = 'center';
+  mx.fillText('← Keys (what each token offers) →', startX + gridW / 2, startY + gridH + 14);
+  mx.save();
+  mx.translate(8, startY + gridH / 2);
+  mx.rotate(-Math.PI / 2);
+  mx.fillText('← Queries (what each token looks for) →', 0, 0);
+  mx.restore();
+
+  // Legend
+  const legX = startX + gridW + 20;
+  const legY = startY + 10;
+  const legH = Math.min(gridH - 20, 100);
+  if (legX + 30 < mv.width) {
+    for (let ly = 0; ly < legH; ly++) {
+      const t = 1 - ly / legH;
+      const lr = Math.round(10 + t * 60);
+      const lg = Math.round(15 + t * 140);
+      const lb = Math.round(30 + t * 180);
+      mx.fillStyle = `rgb(${lr},${lg},${lb})`;
+      mx.fillRect(legX, legY + ly, 12, 1);
+    }
+    mx.fillStyle = '#556';
+    mx.font = '8px sans-serif';
+    mx.textAlign = 'left';
+    mx.fillText('High', legX + 16, legY + 6);
+    mx.fillText('Low', legX + 16, legY + legH - 2);
+  }
+}
+
+// ===================== INTERACTION =====================
+// Click on canvas particles
+cv.addEventListener('click', e => {
+  const rect = cv.getBoundingClientRect();
+  const mx0 = e.clientX - rect.left;
+  const my0 = e.clientY - rect.top;
+
+  let clicked = -1;
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    const dx = mx0 - p.x, dy = my0 - p.y;
+    if (dx*dx + dy*dy < p.radius * p.radius * 1.5) {
+      clicked = i;
+      break;
+    }
+  }
+  selectToken(clicked);
+});
+
+cv.addEventListener('mousemove', e => {
+  const rect = cv.getBoundingClientRect();
+  const mx0 = e.clientX - rect.left;
+  const my0 = e.clientY - rect.top;
+
+  let found = -1;
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    const dx = mx0 - p.x, dy = my0 - p.y;
+    if (dx*dx + dy*dy < p.radius * p.radius * 1.5) {
+      found = i;
+      break;
+    }
+  }
+  hoveredToken = found;
+  cv.style.cursor = found >= 0 ? 'pointer' : 'default';
+});
+
+cv.addEventListener('mouseleave', () => { hoveredToken = -1; });
+
+// Matrix hover
+mv.addEventListener('mousemove', e => {
+  const rect = mv.getBoundingClientRect();
+  const mx0 = e.clientX - rect.left;
+  const my0 = e.clientY - rect.top;
+  const sent = SENTENCES[currentSentenceIdx];
+  const n = sent.tokens.length;
+  const pad = 70;
+  const cellSize = Math.min(28, (mv.width - pad - 20) / n);
+  const row = Math.floor((my0 - 24) / cellSize);
+  if (row >= 0 && row < n && mx0 >= pad) {
+    hoveredToken = row;
+  } else {
+    hoveredToken = -1;
+  }
+});
+
+mv.addEventListener('click', e => {
+  const rect = mv.getBoundingClientRect();
+  const my0 = e.clientY - rect.top;
+  const sent = SENTENCES[currentSentenceIdx];
+  const n = sent.tokens.length;
+  const cellSize = Math.min(28, (mv.width - 70 - 20) / n);
+  const row = Math.floor((my0 - 24) / cellSize);
+  if (row >= 0 && row < n) selectToken(row);
+});
+
+mv.addEventListener('mouseleave', () => { hoveredToken = -1; });
+
+// Sentence selector
+sentenceSelect.addEventListener('change', function() {
+  currentSentenceIdx = parseInt(this.value);
+  selectedToken = -1;
+  hoveredToken = -1;
+  // Reset head to first available
+  currentHead = Object.keys(SENTENCES[currentSentenceIdx].heads)[0];
+  initParticles();
+  buildUI();
+  statEl.textContent = 'Click a token to see what it attends to';
+});
+
+// Physics slider
+document.getElementById('physicsSlider').addEventListener('input', function() {
+  physicsStrength = parseInt(this.value) / 100;
+  document.getElementById('physicsLabel').textContent = this.value + '%';
+});
+
+// Reset positions
+document.getElementById('resetPosBtn').addEventListener('click', () => {
+  initParticles();
+});
+
+// ===================== MAIN LOOP =====================
+function loop() {
+  updatePhysics();
+  drawScene();
+  drawMatrix();
+  requestAnimationFrame(loop);
+}
+
+// ===================== START =====================
+initParticles();
+buildUI();
+loop();
+</script>
+</body>
+</html>
