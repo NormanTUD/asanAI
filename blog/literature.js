@@ -1,4 +1,10 @@
 window.bibData = {
+	"bernerslee1989": {
+		url: "https://www.w3.org/History/1989/proposal.html",
+		title: "Information Management: A Proposal",
+		author: "Tim Berners-Lee",
+		year: 1989
+	},
 	"patent1250": {
 		title: "Kälteerzeugungsmaschine",
 		year: 1877,
