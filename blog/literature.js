@@ -1,4 +1,10 @@
 window.bibData = {
+	"sketchpad": {
+		url: "http://images.designworldonline.com.s3.amazonaws.com/CADhistory/Sketchpad_A_Man-Machine_Graphical_Communication_System_Jan63.pdf",
+		author: "Ivan Edward Sutherland",
+		year: 1959,
+		title: "Sketchpad, A Man-Machine Graphical Communication System"
+	},
 	"rfc1": {
 		url: "https://www.rfc-editor.org/rfc/rfc1.txt",
 		year: 1969,
