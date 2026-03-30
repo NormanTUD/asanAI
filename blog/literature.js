@@ -1,4 +1,10 @@
 window.bibData = {
+	"braunannalen": {
+		title: "Ueber ein Verfahren zur Demonstration und zum Studium des zeitlichen Verlaufs variabler Ströme",
+		author: "Ferdinand Braun",
+		year: 1897,
+		url: "https://www.cdvandt.org/Braun%20CRT.pdf"
+	},
 	"bernerslee1989": {
 		url: "https://www.w3.org/History/1989/proposal.html",
 		title: "Information Management: A Proposal",
