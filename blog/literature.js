@@ -1,4 +1,10 @@
 window.bibData = {
+	"wikimediadumps": {
+		url: "https://dumps.wikimedia.org/",
+		title: "Wikimedia Downloads",
+		author: "Wikimedia Foundation",
+		year: 2026
+	},
 	"teslaelectricmotor": {
 		url: "https://patents.google.com/patent/US381968A/en",
 		title: "Electro-magnetic motor",
