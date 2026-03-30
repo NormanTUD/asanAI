@@ -1,4 +1,16 @@
 window.bibData = {
+	"teslaelectricmotor": {
+		url: "https://patents.google.com/patent/US381968A/en",
+		title: "Electro-magnetic motor",
+		author: "Nikola Tesla",
+		year: 1887
+	},
+	"teslacurrent": {
+		url: "https://patents.google.com/patent/US382282A/en",
+		author: "Nikola Tesla",
+		year: 1888,
+		title: "Method Of Converting And Distributing Electric Current"
+	},
 	"notesonlight": {
 		url: "https://upload.wikimedia.org/wikipedia/commons/9/98/Notes_of_a_course_of_nine_lectures_on_light_delivered_at_The_Royal_Institution_of_Great_Britain%2C_April_8-June_3%2C_1869_%28IA_b28129994%29.pdf",
 		title: "Notes on Light",
