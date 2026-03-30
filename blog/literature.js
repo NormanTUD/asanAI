@@ -1,4 +1,10 @@
 window.bibData = {
+	"rfc1": {
+		url: "https://www.rfc-editor.org/rfc/rfc1.txt",
+		year: 1969,
+		author: "Steve Crocker",
+		title: "Network Working Group Request for Comment: 1"
+	},
 	"braunannalen": {
 		title: "Ueber ein Verfahren zur Demonstration und zum Studium des zeitlichen Verlaufs variabler Ströme",
 		author: "Ferdinand Braun",
