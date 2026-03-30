@@ -1,4 +1,10 @@
 window.bibData = {
+	"typewriterpatent": {
+		url: "https://patents.google.com/patent/US79265",
+		title: "Improvement in type-writing machines",
+		year: 1868,
+		author: "Christopher Latham Sholes"
+	},
 	"sketchpad": {
 		url: "http://images.designworldonline.com.s3.amazonaws.com/CADhistory/Sketchpad_A_Man-Machine_Graphical_Communication_System_Jan63.pdf",
 		author: "Ivan Edward Sutherland",
