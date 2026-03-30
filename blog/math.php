@@ -281,7 +281,7 @@ Imagine you have 1.00 Euro in a bank that gives you 100% interest per year.
 * **Compounded Semi-Annually ($n=2$):** You get 50% halfway through, and 50% at the end. But the second 50% applies to the interest you already earned! $(1 + 0.5)^2 = 2.25 \text{ Euro}$.
 * **Compounded Monthly ($n=12$):** $(1 + 1/12)^{12} \approx 2.61 \text{ Euro}$.
 
-While the limit above is the definition, $e$ is most precisely calculated using a [Taylor Series](https://en.wikipedia.org/wiki/Taylor_series) (an infinite sum):
+While the limit above is the definition, $e$ can be calculated using a [Taylor Series](https://en.wikipedia.org/wiki/Taylor_series) (an infinite sum):
 
 $$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n = \sum_{n=0}^{\infty} \frac{1}{n!} = \frac{1}{0!} + \frac{1}{1!} + \frac{1}{2!} + \frac{1}{3!} + \frac{1}{4!} \dots$$
 $$e = 1 + 1 + 0.5 + 0.1666 + 0.0416 \dots \approx 2.71828$$
