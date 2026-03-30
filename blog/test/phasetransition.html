@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Transitions in Neural Network Training</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #05050c;
+    color: #d0d0e0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh;
+  }
+  h1 { margin: 14px 0 2px; font-size: 1.3rem; color: #7ab8ee; }
+  #subtitle {
+    font-size: 0.76rem; color: #4a4a6a; margin-bottom: 6px;
+    text-align: center; max-width: 720px; line-height: 1.5; padding: 0 14px;
+  }
+  canvas { border-radius: 8px; display: block; }
+  #controls {
+    display: flex; gap: 10px; margin: 8px 0; flex-wrap: wrap;
+    justify-content: center; align-items: center;
+  }
+  button {
+    padding: 6px 15px; border: none; border-radius: 5px;
+    font-size: 0.82rem; cursor: pointer; transition: 0.2s;
+    background: #2a2a3e; color: #bbc;
+  }
+  button:hover { background: #3a3a55; }
+  #startBtn { background: #28855a; color: #fff; }
+  #startBtn:hover { background: #3aa872; }
+  label { font-size: 0.75rem; color: #667; }
+  input[type=range] { width: 100px; vertical-align: middle; }
+  #status {
+    font-size: 0.88rem; padding: 5px 14px; border-radius: 5px;
+    margin-bottom: 2px; text-align: center; transition: 0.4s;
+    background: #0e0e18; color: #5a6a8a; min-width: 340px;
+  }
+  #epoch { font-size: 0.7rem; color: #3a3a50; margin-bottom: 2px; font-variant-numeric: tabular-nums; }
+  #abilities {
+    display: flex; gap: 8px; margin: 6px 0; flex-wrap: wrap; justify-content: center;
+  }
+  .ability-badge {
+    padding: 3px 10px; border-radius: 10px; font-size: 0.72rem;
+    border: 1px solid #222; transition: all 0.6s;
+    opacity: 0.25;
+  }
+  .ability-badge.active {
+    opacity: 1; border-color: currentColor;
+    box-shadow: 0 0 10px currentColor;
+  }
+  .ability-badge.emerging {
+    opacity: 0.6; animation: pulse 1s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+  #info {
+    display: flex; gap: 16px; font-size: 0.7rem; color: #445;
+    margin-bottom: 4px; flex-wrap: wrap; justify-content: center;
+  }
+</style>
+</head>
+<body>
+
+<h1>🧊 Phase Transitions in Neural Network Training</h1>
+<p id="subtitle">
+  Neural networks don't learn gradually — they undergo <b>abrupt phase transitions</b>
+  where new capabilities emerge suddenly. Each manifold represents a different learned
+  ability. As training progresses (or model size increases), manifolds "activate" one
+  by one — each a discrete phase transition. Points scattered in space suddenly
+  collapse onto the next manifold when the network discovers that structure.
+</p>
+
+<div id="info">
+  <span>🔴 Scattered = not yet learned</span>
+  <span>🟡 Emerging = phase transition in progress</span>
+  <span>🟢 On manifold = ability acquired</span>
+</div>
+
+<div id="status">Press Start to begin training</div>
+<div id="epoch"></div>
+<div id="abilities"></div>
+
+<canvas id="c" width="760" height="520"></canvas>
+
+<div id="controls">
+  <button id="startBtn">▶ Start Training</button>
+  <button id="resetBtn">↺ Reset</button>
+  <label>Speed: <input type="range" id="speedSlider" min="1" max="8" value="3"><span id="speedLabel">3x</span></label>
+</div>
+
+<canvas id="lossCanvas" width="760" height="170"></canvas>
+
+<script>
+// ===================== HELPERS =====================
+function hexAlpha(hex, alpha) {
+  let r = 0, g = 0, b = 0;
+  if (hex.length === 4) {
+    r = parseInt(hex[1]+hex[1], 16);
+    g = parseInt(hex[2]+hex[2], 16);
+    b = parseInt(hex[3]+hex[3], 16);
+  } else if (hex.length >= 7) {
+    r = parseInt(hex.slice(1,3), 16);
+    g = parseInt(hex.slice(3,5), 16);
+    b = parseInt(hex.slice(5,7), 16);
+  }
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function hashF(n, seed) {
+  let x = Math.sin(n * 127.1 + seed * 311.7) * 43758.5453;
+  return x - Math.floor(x);
+}
+function valueNoise(t, seed) {
+  const i = Math.floor(t), f = t - i;
+  const s = f * f * (3 - 2 * f);
+  return hashF(i, seed) * (1 - s) + hashF(i + 1, seed) * s;
+}
+function fbm(t, seed, octaves) {
+  let val = 0, amp = 1, freq = 1, total = 0;
+  for (let o = 0; o < octaves; o++) {
+    val += valueNoise(t * freq, seed + o * 73.37) * amp;
+    total += amp; amp *= 0.5; freq *= 2.1;
+  }
+  return val / total;
+}
+
+function rotY(p, a) { const c=Math.cos(a),s=Math.sin(a); return [c*p[0]+s*p[2], p[1], -s*p[0]+c*p[2]]; }
+function rotX(p, a) { const c=Math.cos(a),s=Math.sin(a); return [p[0], c*p[1]-s*p[2], s*p[1]+c*p[2]]; }
+
+const cv = document.getElementById('c'), cx = cv.getContext('2d');
+const lv = document.getElementById('lossCanvas'), lx = lv.getContext('2d');
+const statEl = document.getElementById('status');
+const epochEl = document.getElementById('epoch');
+const abilitiesDiv = document.getElementById('abilities');
+
+// ===================== MANIFOLD DEFINITIONS =====================
+// Each "ability" is a manifold shape with its own color and geometry
+const ABILITIES = [
+  {
+    name: "Pattern Matching",
+    desc: "Basic token co-occurrence",
+    color: "#ee5544",
+    manifold: "ring",       // simple ring
+    params: { R: 70, cx: -200, cy: -80 },
+    triggerEpoch: 80,
+    pointCount: 10,
+  },
+  {
+    name: "Induction Heads",
+    desc: "Copy patterns from context",
+    color: "#eeaa22",
+    manifold: "torus",
+    params: { R: 55, r: 20, cx: 0, cy: -60 },
+    triggerEpoch: 280,
+    pointCount: 14,
+  },
+  {
+    name: "Syntax Tree",
+    desc: "Grammatical structure",
+    color: "#44cc66",
+    manifold: "trefoil",    // trefoil knot
+    params: { scale: 45, cx: 200, cy: -80 },
+    triggerEpoch: 520,
+    pointCount: 12,
+  },
+  {
+    name: "Semantic Space",
+    desc: "Meaning & relationships",
+    color: "#4488ee",
+    manifold: "sphere",
+    params: { R: 60, cx: -140, cy: 120 },
+    triggerEpoch: 800,
+    pointCount: 12,
+  },
+  {
+    name: "Reasoning",
+    desc: "Multi-step inference",
+    color: "#bb55ee",
+    manifold: "moebius",
+    params: { R: 55, w: 18, cx: 140, cy: 120 },
+    triggerEpoch: 1100,
+    pointCount: 10,
+  },
+];
+
+// ===================== MANIFOLD GEOMETRY =====================
+function manifoldPoint(ability, u, v) {
+  const p = ability.params;
+  let x, y, z;
+
+  switch (ability.manifold) {
+    case "ring": {
+      x = p.R * Math.cos(u) + p.cx;
+      y = p.R * Math.sin(u) * 0.3 + p.cy;
+      z = p.R * Math.sin(u) * 0.95;
+      break;
+    }
+    case "torus": {
+      x = (p.R + p.r * Math.cos(v)) * Math.cos(u) + p.cx;
+      y = (p.R + p.r * Math.cos(v)) * Math.sin(u) * 0.3 + p.cy;
+      z = p.r * Math.sin(v) + (p.R + p.r * Math.cos(v)) * Math.sin(u) * 0.95;
+      break;
+    }
+    case "trefoil": {
+      // Trefoil knot parametric
+      const s = p.scale;
+      x = s * (Math.sin(u) + 2 * Math.sin(2 * u)) * 0.45 + p.cx;
+      y = s * (Math.cos(u) - 2 * Math.cos(2 * u)) * 0.15 + p.cy;
+      z = s * (-Math.sin(3 * u)) * 0.5;
+      break;
+    }
+    case "sphere": {
+      x = p.R * Math.cos(u) * Math.cos(v) + p.cx;
+      y = p.R * Math.sin(v) * 0.4 + p.cy;
+      z = p.R * Math.sin(u) * Math.cos(v);
+      break;
+    }
+    case "moebius": {
+      // Möbius strip
+      const hw = p.w * (v - 0.5);
+      x = (p.R + hw * Math.cos(u / 2)) * Math.cos(u) + p.cx;
+      y = (p.R + hw * Math.cos(u / 2)) * Math.sin(u) * 0.3 + p.cy;
+      z = hw * Math.sin(u / 2) + (p.R + hw * Math.cos(u/2)) * Math.sin(u) * 0.7;
+      break;
+    }
+  }
+  return [x, y, z];
+}
+
+function closestOnManifold(ability, px, py, pz) {
+  // Brute-force closest point on manifold
+  let bestDist = Infinity, bestP = [0,0,0];
+  const steps = 60;
+  for (let i = 0; i < steps; i++) {
+    const u = (i / steps) * Math.PI * 2;
+    for (let j = 0; j < 8; j++) {
+      const v = (j / 8) * Math.PI * 2;
+      const mp = manifoldPoint(ability, u, v);
+      const d = (px-mp[0])**2 + (py-mp[1])**2 + (pz-mp[2])**2;
+      if (d < bestDist) { bestDist = d; bestP = mp; }
+    }
+  }
+  return { point: bestP, dist: Math.sqrt(bestDist) };
+}
+
+// ===================== STATE =====================
+let running = false, step = 0, stepsPerFrame = 3;
+let camX = -0.25, camY = 0;
+let lossHist = [], abilityLossHist = [];
+let points = []; // all points across all abilities
+let abilityStates = []; // per-ability state
+
+function proj(p) {
+  const d = 550, sc = d / (d + p[2]);
+  return { x: p[0] * sc + cv.width / 2, y: p[1] * sc + cv.height / 2 + 10, z: p[2], sc };
+}
+
+// ===================== INIT =====================
+function init() {
+  running = false; step = 0;
+  lossHist = []; abilityLossHist = [];
+  points = []; abilityStates = [];
+  camY = 0;
+
+  ABILITIES.forEach((ab, ai) => {
+    abilityStates.push({
+      phase: 'dormant', // dormant | emerging | cascading | complete
+      emergeStart: 0,
+      cascadeStart: 0,
+      activation: 0, // 0→1
+    });
+
+    // Create scattered points for this ability
+    const slots = [];
+    for (let i = 0; i < ab.pointCount; i++) {
+      const u = (i / ab.pointCount) * Math.PI * 2;
+      const v = (i % 5) / 5;
+      const mp = manifoldPoint(ab, u, v);
+      slots.push({ u, v, x: mp[0], y: mp[1], z: mp[2] });
+    }
+
+    for (let i = 0; i < ab.pointCount; i++) {
+      // Scatter around the manifold's center
+      const spread = 120;
+      const cx0 = ab.params.cx || 0, cy0 = ab.params.cy || 0;
+      points.push({
+        x: cx0 + (Math.random() - 0.5) * spread * 2,
+        y: cy0 + (Math.random() - 0.5) * spread,
+        z: (Math.random() - 0.5) * spread,
+        slotX: slots[i].x, slotY: slots[i].y, slotZ: slots[i].z,
+        abilityIdx: ai,
+        state: 'scattered', // scattered | collapsing | settled
+        collapseT: 0,
+        noiseSeed: Math.random() * 10000,
+        vx: 0, vy: 0, vz: 0,
+      });
+    }
+  });
+
+  buildAbilityBadges();
+  statEl.style.background = '#0e0e18'; statEl.style.color = '#5a6a8a';
+  statEl.textContent = 'Press Start to begin training';
+  epochEl.textContent = '';
+}
+
+function buildAbilityBadges() {
+  abilitiesDiv.innerHTML = '';
+  ABILITIES.forEach((ab, i) => {
+    const badge = document.createElement('span');
+    badge.className = 'ability-badge';
+    badge.id = `badge-${i}`;
+    badge.style.color = ab.color;
+    badge.style.borderColor = hexAlpha(ab.color, 0.3);
+    badge.style.background = hexAlpha(ab.color, 0.06);
+    badge.textContent = ab.name;
+    badge.title = ab.desc;
+    abilitiesDiv.appendChild(badge);
+  });
+}
+
+function updateBadges() {
+  abilityStates.forEach((as, i) => {
+    const badge = document.getElementById(`badge-${i}`);
+    if (!badge) return;
+    badge.classList.remove('active', 'emerging');
+    if (as.phase === 'complete') badge.classList.add('active');
+    else if (as.phase === 'cascading' || as.phase === 'emerging') badge.classList.add('emerging');
+  });
+}
+
+// ===================== UPDATE =====================
+function update() {
+  if (!running) return;
+  step++;
+  const t = step * 0.007;
+
+  // Check ability triggers
+  ABILITIES.forEach((ab, ai) => {
+    const as = abilityStates[ai];
+    if (as.phase === 'dormant' && step >= ab.triggerEpoch - 60) {
+      as.phase = 'emerging';
+      as.emergeStart = step;
+    }
+    if (as.phase === 'emerging' && step >= ab.triggerEpoch) {
+      as.phase = 'cascading';
+      as.cascadeStart = step;
+      triggerCascade(ai);
+    }
+  });
+
+  // Update points
+  let totalDist = 0;
+  let perAbilityDist = new Array(ABILITIES.length).fill(0);
+  let perAbilityCount = new Array(ABILITIES.length).fill(0);
+
+  for (const pt of points) {
+    const ai = pt.abilityIdx;
+    const ab = ABILITIES[ai];
+    const as = abilityStates[ai];
+
+    if (pt.state === 'scattered') {
+      // Noisy wandering
+      const mag = 0.35;
+      const nx = (fbm(t * 0.5, pt.noiseSeed, 3) - 0.5) * mag;
+      const ny = (fbm(t * 0.5, pt.noiseSeed + 100, 3) - 0.5) * mag * 0.6;
+      const nz = (fbm(t * 0.5, pt.noiseSeed + 200, 3) - 0.5) * mag * 0.8;
+
+      pt.vx = pt.vx * 0.9 + nx * 0.1;
+      pt.vy = pt.vy * 0.9 + ny * 0.1;
+      pt.vz = pt.vz * 0.9 + nz * 0.1;
+
+      pt.x += pt.vx;
+      pt.y += pt.vy;
+      pt.z += pt.vz;
+
+      // Faint pull toward manifold center during emerging phase
+      if (as.phase === 'emerging') {
+        const cx0 = ab.params.cx || 0, cy0 = ab.params.cy || 0;
+        pt.x += (cx0 - pt.x) * 0.001;
+        pt.y += (cy0 - pt.y) * 0.001;
+      }
+
+      // Soft boundary
+      const cx0 = ab.params.cx || 0, cy0 = ab.params.cy || 0;
+      const distFromCenter = Math.sqrt((pt.x-cx0)**2 + (pt.y-cy0)**2 + pt.z**2);
+      if (distFromCenter > 160) {
+        pt.x += (cx0 - pt.x) * 0.005;
+        pt.y += (cy0 - pt.y) * 0.005;
+        pt.z -= pt.z * 0.005;
+      }
+
+    } else if (pt.state === 'collapsing') {
+      pt.collapseT = Math.min(1, pt.collapseT + 0.003);
+      const ct = pt.collapseT;
+      const eased = ct * ct * ct;
+
+      if (ct < 0.5) {
+        // Pull toward manifold surface
+        const closest = closestOnManifold(ab, pt.x, pt.y, pt.z);
+        const str = 0.005 + eased * 0.05;
+        pt.x += (closest.point[0] - pt.x) * str;
+        pt.y += (closest.point[1] - pt.y) * str;
+        pt.z += (closest.point[2] - pt.z) * str;
+
+        // Residual noise
+        const nMag = 0.2 * (1 - ct * 1.5);
+        if (nMag > 0) {
+          pt.x += (fbm(t * 2, pt.noiseSeed, 2) - 0.5) * nMag;
+          pt.z += (fbm(t * 2, pt.noiseSeed + 200, 2) - 0.5) * nMag * 0.6;
+        }
+      } else {
+        // Slide to exact slot
+        const slideT = (ct - 0.5) / 0.5;
+        const slideEase = slideT * slideT;
+        const str = 0.008 + slideEase * 0.04;
+        pt.x += (pt.slotX - pt.x) * str;
+        pt.y += (pt.slotY - pt.y) * str;
+        pt.z += (pt.slotZ - pt.z) * str;
+
+        const nMag = 0.05 * (1 - slideT);
+        if (nMag > 0.005) {
+          pt.x += (fbm(t * 2, pt.noiseSeed, 2) - 0.5) * nMag;
+        }
+      }
+
+      if (ct >= 1) pt.state = 'settled';
+
+    } else if (pt.state === 'settled') {
+      pt.x += (pt.slotX - pt.x) * 0.08;
+      pt.y += (pt.slotY - pt.y) * 0.08;
+      pt.z += (pt.slotZ - pt.z) * 0.08;
+      // Gentle breathing
+      pt.x += Math.sin(t * 1.5 + pt.noiseSeed) * 0.04;
+      pt.z += Math.cos(t * 1.2 + pt.noiseSeed) * 0.03;
+    }
+
+    const dx = pt.x - pt.slotX, dy = pt.y - pt.slotY, dz = pt.z - pt.slotZ;
+    const d = Math.sqrt(dx*dx + dy*dy + dz*dz);
+    totalDist += d;
+    perAbilityDist[ai] += d;
+    perAbilityCount[ai]++;
+  }
+
+  // Check completion
+  ABILITIES.forEach((ab, ai) => {
+    const as = abilityStates[ai];
+    if (as.phase === 'cascading') {
+      const myPts = points.filter(p => p.abilityIdx === ai);
+      const settled = myPts.filter(p => p.state === 'settled').length;
+      if (settled >= myPts.length) {
+        as.phase = 'complete';
+        as.activation = 1;
+      } else {
+        as.activation = settled / myPts.length;
+      }
+    }
+  });
+
+  // Loss
+  const loss = totalDist / points.length;
+  lossHist.push(loss);
+  const abLoss = perAbilityDist.map((d, i) => perAbilityCount[i] > 0 ? d / perAbilityCount[i] : 0);
+  abilityLossHist.push(abLoss);
+
+  // Status
+  const activeCount = abilityStates.filter(a => a.phase === 'complete').length;
+  const emergingCount = abilityStates.filter(a => a.phase === 'cascading' || a.phase === 'emerging').length;
+
+  epochEl.textContent = `Epoch ${step}`;
+
+  if (activeCount === 0 && emergingCount === 0) {
+    statEl.style.background = '#160a0a'; statEl.style.color = '#aa5555';
+    statEl.textContent = 'Training… no structure discovered yet';
+  } else if (emergingCount > 0) {
+    const emerging = ABILITIES[abilityStates.findIndex(a => a.phase === 'cascading' || a.phase === 'emerging')];
+    statEl.style.background = '#1a1808'; statEl.style.color = emerging.color;
+    statEl.textContent = `Phase transition: "${emerging.name}" emerging! (${activeCount}/${ABILITIES.length} abilities)`;
+  } else if (activeCount < ABILITIES.length) {
+    statEl.style.background = '#0a1a12'; statEl.style.color = '#55aa77';
+    statEl.textContent = `${activeCount}/${ABILITIES.length} abilities acquired — training continues…`;
+  } else {
+    statEl.style.background = '#0a1520'; statEl.style.color = '#55aaee';
+    statEl.textContent = `All ${ABILITIES.length} abilities emerged! ✨ Fully trained.`;
+  }
+
+  updateBadges();
+}
+
+function triggerCascade(abilityIdx) {
+  const myPts = points.filter(p => p.abilityIdx === abilityIdx && p.state === 'scattered');
+  const ab = ABILITIES[abilityIdx];
+
+  // Sort by distance to their slot
+  myPts.sort((a, b) => {
+    const da = (a.x-a.slotX)**2 + (a.y-a.slotY)**2 + (a.z-a.slotZ)**2;
+    const db = (b.x-b.slotX)**2 + (b.y-b.slotY)**2 + (b.z-b.slotZ)**2;
+    return da - db;
+  });
+
+  const totalDur = 7000;
+  myPts.forEach((pt, i) => {
+    const frac = i / Math.max(myPts.length - 1, 1);
+    const delay = frac * frac * totalDur * 0.6 + frac * totalDur * 0.4 + Math.random() * 400;
+    setTimeout(() => {
+      if (pt.state === 'scattered') {
+        pt.state = 'collapsing';
+        pt.collapseT = 0;
+      }
+    }, Math.max(0, delay));
+  });
+}
+
+// ===================== DRAW =====================
+function drawManifolds() {
+  cx.clearRect(0, 0, cv.width, cv.height);
+
+  // Auto-rotate
+  camY += 0.002;
+
+  // Draw each manifold
+  ABILITIES.forEach((ab, ai) => {
+    const as = abilityStates[ai];
+
+    // Determine opacity
+    let opacity;
+    if (as.phase === 'dormant') opacity = 0.06;
+    else if (as.phase === 'emerging') {
+      const emergeFrac = Math.min(1, (step - as.emergeStart) / 60);
+      opacity = 0.06 + emergeFrac * 0.12;
+    }
+    else if (as.phase === 'cascading') opacity = 0.2 + Math.sin(step * 0.05) * 0.05;
+    else opacity = 0.3;
+
+    // Draw manifold wireframe
+    const wireSteps = 50;
+    const vSteps = (ab.manifold === 'ring' || ab.manifold === 'trefoil') ? 1 : 6;
+
+    for (let vi = 0; vi < vSteps; vi++) {
+      const v = vi / vSteps;
+      cx.beginPath();
+      cx.strokeStyle = hexAlpha(ab.color, opacity);
+      cx.lineWidth = as.phase === 'complete' ? 1.5 : 0.8;
+
+      for (let i = 0; i <= wireSteps; i++) {
+        const u = (i / wireSteps) * Math.PI * 2;
+        let p = manifoldPoint(ab, u, v);
+        p = rotY(p, camY);
+        p = rotX(p, camX);
+        const s = proj(p);
+        if (i === 0) cx.moveTo(s.x, s.y);
+        else cx.lineTo(s.x, s.y);
+      }
+      cx.stroke();
+    }
+
+    // Cross-wires for torus/sphere/moebius
+    if (ab.manifold !== 'ring' && ab.manifold !== 'trefoil') {
+      for (let i = 0; i < 16; i++) {
+        const u = (i / 16) * Math.PI * 2;
+        cx.beginPath();
+        cx.strokeStyle = hexAlpha(ab.color, opacity * 0.5);
+        cx.lineWidth = 0.4;
+        for (let vi = 0; vi <= 12; vi++) {
+          const v = vi / 12;
+          let p = manifoldPoint(ab, u, v);
+          p = rotY(p, camY); p = rotX(p, camX);
+          const s = proj(p);
+          if (vi === 0) cx.moveTo(s.x, s.y); else cx.lineTo(s.x, s.y);
+        }
+        cx.stroke();
+      }
+    }
+
+    // Label
+    let labelP = [ab.params.cx || 0, (ab.params.cy || 0) - 90, 0];
+    labelP = rotY(labelP, camY); labelP = rotX(labelP, camX);
+    const lp = proj(labelP);
+    cx.fillStyle = hexAlpha(ab.color, as.phase === 'dormant' ? 0.15 : 0.5);
+    cx.font = '10px sans-serif';
+    cx.textAlign = 'center';
+    cx.fillText(ab.name, lp.x, lp.y);
+  });
+}
+
+function drawPoints() {
+  // Project and sort
+  const projected = points.map((pt, i) => {
+    let p = [pt.x, pt.y, pt.z];
+    p = rotY(p, camY); p = rotX(p, camX);
+    const s = proj(p);
+    return { ...s, state: pt.state, ai: pt.abilityIdx, ct: pt.collapseT, idx: i };
+  });
+  projected.sort((a, b) => a.z - b.z);
+
+  for (const pp of projected) {
+    const ab = ABILITIES[pp.ai];
+    const as = abilityStates[pp.ai];
+    const sz = Math.max(1.5, 3.8 * pp.sc);
+    let color, glow = 0;
+
+    if (pp.state === 'scattered') {
+      if (as.phase === 'dormant') {
+        color = hexAlpha(ab.color, 0.2);
+      } else if (as.phase === 'emerging') {
+        color = hexAlpha(ab.color, 0.4);
+        glow = 3;
+      } else {
+        color = hexAlpha(ab.color, 0.5);
+      }
+    } else if (pp.state === 'collapsing') {
+      const ct = pp.ct;
+      color = hexAlpha(ab.color, 0.5 + ct * 0.5);
+      glow = 4 + ct * 12;
+    } else if (pp.state === 'settled') {
+      color = ab.color;
+      glow = 8;
+    }
+
+    if (glow > 0) { cx.shadowColor = ab.color; cx.shadowBlur = glow; }
+    cx.beginPath();
+    cx.arc(pp.x, pp.y, sz, 0, Math.PI * 2);
+    cx.fillStyle = color;
+    cx.fill();
+    cx.shadowBlur = 0;
+  }
+}
+
+// ===================== DRAW LOSS =====================
+function drawLoss() {
+  lx.clearRect(0, 0, lv.width, lv.height);
+  lx.fillStyle = '#05050c';
+  lx.fillRect(0, 0, lv.width, lv.height);
+
+  const pad = 50, w = lv.width, h = lv.height;
+
+  // Axes
+  lx.strokeStyle = '#181828'; lx.lineWidth = 1;
+  lx.beginPath(); lx.moveTo(pad, 6); lx.lineTo(pad, h - 22); lx.lineTo(w - 8, h - 22); lx.stroke();
+  lx.fillStyle = '#3a3a50'; lx.font = '10px sans-serif';
+  lx.textAlign = 'left';
+  lx.fillText('Loss', 6, 14);
+  lx.fillText('Epoch', w - 44, h - 6);
+
+  if (lossHist.length < 4) {
+    lx.fillStyle = '#2a2a3a'; lx.font = '11px sans-serif';
+    lx.fillText('Loss curves will appear here…', pad + 12, h / 2);
+    return;
+  }
+
+  // Downsample
+  let data = lossHist;
+  let abData = abilityLossHist;
+  if (data.length > 1500) {
+    const skip = Math.ceil(data.length / 1500);
+    data = data.filter((_, i) => i % skip === 0);
+    abData = abData.filter((_, i) => i % skip === 0);
+  }
+
+  const maxL = Math.max(...data) * 1.05;
+  const xSc = (w - pad - 14) / Math.max(data.length - 1, 1);
+  const ySc = (h - 34) / maxL;
+  function yPos(val) { return h - 22 - val * ySc; }
+
+  // Per-ability loss lines
+  ABILITIES.forEach((ab, ai) => {
+    const as = abilityStates[ai];
+    if (as.phase === 'dormant') return;
+
+    lx.beginPath();
+    lx.strokeStyle = hexAlpha(ab.color, as.phase === 'complete' ? 0.5 : 0.3);
+    lx.lineWidth = 1;
+    for (let i = 0; i < abData.length; i++) {
+      const val = abData[i][ai];
+      const x = pad + i * xSc, y = yPos(val);
+      if (i === 0) lx.moveTo(x, y); else lx.lineTo(x, y);
+    }
+    lx.stroke();
+  });
+
+  // Total loss gradient fill
+  const grad = lx.createLinearGradient(0, 6, 0, h - 22);
+  grad.addColorStop(0, 'rgba(180,60,60,0.12)');
+  grad.addColorStop(1, 'rgba(60,180,140,0.02)');
+  lx.beginPath();
+  lx.moveTo(pad, h - 22);
+  for (let i = 0; i < data.length; i++) {
+    lx.lineTo(pad + i * xSc, yPos(data[i]));
+  }
+  lx.lineTo(pad + (data.length - 1) * xSc, h - 22);
+  lx.closePath();
+  lx.fillStyle = grad; lx.fill();
+
+  // Total loss line
+  lx.beginPath();
+  lx.lineWidth = 2;
+  lx.strokeStyle = '#aabbcc';
+  for (let i = 0; i < data.length; i++) {
+    const x = pad + i * xSc, y = yPos(data[i]);
+    if (i === 0) lx.moveTo(x, y); else lx.lineTo(x, y);
+  }
+  lx.stroke();
+
+  // Phase transition markers
+  ABILITIES.forEach((ab, ai) => {
+    const triggerEpoch = ab.triggerEpoch;
+    if (step < triggerEpoch) return;
+
+    // Map epoch to data index
+    const dataIdx = Math.min(data.length - 1,
+      Math.round(triggerEpoch / (lossHist.length / data.length)));
+    const mx0 = pad + dataIdx * xSc;
+
+    lx.save();
+    lx.strokeStyle = hexAlpha(ab.color, 0.5);
+    lx.lineWidth = 1;
+    lx.setLineDash([3, 4]);
+    lx.beginPath();
+    lx.moveTo(mx0, 6);
+    lx.lineTo(mx0, h - 22);
+    lx.stroke();
+    lx.setLineDash([]);
+
+    // Label
+    lx.fillStyle = hexAlpha(ab.color, 0.7);
+    lx.font = '8px sans-serif';
+    lx.textAlign = 'center';
+    lx.fillText(ab.name, mx0, h - 8);
+    lx.restore();
+  });
+
+  // Legend
+  lx.fillStyle = '#aabbcc';
+  lx.font = '9px sans-serif';
+  lx.textAlign = 'left';
+  lx.fillText('— total loss', w - 120, 12);
+  ABILITIES.forEach((ab, ai) => {
+    if (abilityStates[ai].phase !== 'dormant') {
+      lx.fillStyle = hexAlpha(ab.color, 0.7);
+      lx.fillText('—', w - 120, 22 + ai * 10);
+      lx.fillStyle = hexAlpha(ab.color, 0.5);
+      lx.fillText(ab.name, w - 108, 22 + ai * 10);
+    }
+  });
+}
+
+// ===================== MAIN LOOP =====================
+function loop() {
+  for (let i = 0; i < stepsPerFrame; i++) update();
+  drawManifolds();
+  drawPoints();
+  drawLoss();
+  requestAnimationFrame(loop);
+}
+
+// ===================== EVENTS =====================
+document.getElementById('startBtn').addEventListener('click', () => {
+  if (!running) {
+    running = true;
+    document.getElementById('startBtn').textContent = '⏸ Pause';
+  } else {
+    running = false;
+    document.getElementById('startBtn').textContent = '▶ Resume';
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  running = false;
+  document.getElementById('startBtn').textContent = '▶ Start Training';
+  init();
+});
+
+document.getElementById('speedSlider').addEventListener('input', function() {
+  stepsPerFrame = parseInt(this.value);
+  document.getElementById('speedLabel').textContent = stepsPerFrame + 'x';
+});
+
+// ===================== START =====================
+init();
+loop();
+</script>
+</body>
+</html>
