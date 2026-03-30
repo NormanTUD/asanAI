@@ -5,6 +5,12 @@ window.bibData = {
 		author: "Tim Berners-Lee",
 		year: 1989
 	},
+	"cerfkahn": {
+		url: "https://www.cs.princeton.edu/courses/archive/fall06/cos561/papers/cerf74.pdf",
+		title: "A Protocol for Packet Network Intercommunication",
+		author: "Vinton G. Cerf, Robert E. Kahn",
+		year: 1974
+	},
 	"patent1250": {
 		title: "Kälteerzeugungsmaschine",
 		year: 1877,
