@@ -18,10 +18,11 @@
   h1 { margin: 16px 0 2px; font-size: 1.4rem; color: #88ccff; }
   #subtitle {
     font-size: 0.82rem; color: #556; margin-bottom: 10px;
-    text-align: center; max-width: 620px; line-height: 1.4;
+    text-align: center; max-width: 640px; line-height: 1.45;
+    padding: 0 12px;
   }
   canvas { border-radius: 8px; cursor: grab; }
-  #controls { display: flex; gap: 12px; margin: 10px 0; flex-wrap: wrap; justify-content: center; }
+  #controls { display: flex; gap: 12px; margin: 10px 0; flex-wrap: wrap; justify-content: center; align-items: center; }
   button {
     padding: 7px 18px; border: none; border-radius: 6px;
     font-size: 0.88rem; cursor: pointer; transition: 0.2s;
@@ -30,65 +31,78 @@
   #startBtn:hover { background: #3c9; }
   #resetBtn { background: #444; color: #ccc; }
   #resetBtn:hover { background: #666; }
+  label { font-size: 0.8rem; color: #888; }
+  input[type=range] { width: 100px; vertical-align: middle; }
   #info {
-    display: flex; gap: 24px; font-size: 0.8rem; margin-bottom: 6px;
+    display: flex; gap: 20px; font-size: 0.78rem; margin-bottom: 6px;
     flex-wrap: wrap; justify-content: center;
   }
   .info-item { display: flex; align-items: center; gap: 5px; }
   .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
   #status {
-    font-size: 0.95rem; padding: 5px 14px; border-radius: 6px;
-    margin-bottom: 4px; min-width: 280px; text-align: center; transition: 0.3s;
+    font-size: 0.92rem; padding: 5px 14px; border-radius: 6px;
+    margin-bottom: 4px; min-width: 300px; text-align: center; transition: 0.3s;
   }
+  #epoch { font-size: 0.75rem; color: #555; margin-bottom: 2px; }
 </style>
 </head>
 <body>
 
-<h1>🍩 Grokking: Collapse onto the Torus</h1>
+<h1>🍩 Grokking: Collapse onto the Optimal Manifold</h1>
 <p id="subtitle">
-  The torus is the optimal representation. Points start scattered in space and
-  wander randomly. Once 1–2 "seed" points stumble onto the torus surface,
-  they lock in — and gravitationally pull every other point onto the manifold.
+  The torus represents the optimal internal representation. During training,
+  data points wander noisily in weight space — seemingly stuck. After many
+  epochs, one or two points stumble onto the torus. Once they do, the
+  structure "clicks" and the rest are gradually pulled in — like gravity.
+  This is the phase transition from memorization to generalization.
 </p>
 
 <div id="info">
-  <span class="info-item"><span class="dot" style="background:#ff5555"></span> Scattered (memorizing)</span>
-  <span class="info-item"><span class="dot" style="background:#ffcc33"></span> Seed found the torus!</span>
-  <span class="info-item"><span class="dot" style="background:#33eebb"></span> Collapsed onto torus</span>
-  <span class="info-item"><span class="dot" style="background:rgba(80,130,220,0.25);border:1px solid rgba(80,130,220,0.5)"></span> Torus (optimum)</span>
+  <span class="info-item"><span class="dot" style="background:#ff5555"></span> Wandering (memorizing)</span>
+  <span class="info-item"><span class="dot" style="background:#dd8833"></span> Drifting closer</span>
+  <span class="info-item"><span class="dot" style="background:#ffcc33"></span> Seed found torus!</span>
+  <span class="info-item"><span class="dot" style="background:#33eebb"></span> On the manifold</span>
 </div>
 
 <div id="status" style="background:#111; color:#666;">Press Start to begin</div>
+<div id="epoch"></div>
 
-<canvas id="c" width="740" height="520"></canvas>
+<canvas id="c" width="740" height="500"></canvas>
 
 <div id="controls">
   <button id="startBtn">▶ Start Training</button>
   <button id="resetBtn">↺ Reset</button>
+  <label>Speed: <input type="range" id="speedSlider" min="1" max="5" value="2" step="1"><span id="speedLabel">2x</span></label>
 </div>
 
-<canvas id="loss" width="740" height="130"></canvas>
+<canvas id="loss" width="740" height="150"></canvas>
 
 <script>
 // ========== CONFIG ==========
-const N = 36;
-const R = 150, r = 52;           // torus major/minor
+const N = 32;
+const R = 145, r = 50;
 const SEED_COUNT = 2;
-const WANDER = 0.9;              // random walk magnitude per frame
-const SEED_PROXIMITY = 18;       // how close to surface to "find" the torus
-const GRAVITY_STRENGTH = 0.07;   // pull toward torus once cascade starts
-const SNAP_SPEED = 0.045;        // how fast points settle onto slots
-const CASCADE_STAGGER = 80;      // ms between each point joining cascade
+const SEED_PROXIMITY = 14;
 
 // ========== STATE ==========
 let pts = [], slots = [];
 let running = false, cascadeStarted = false, allSnapped = false;
 let seedsFound = 0, step = 0, lossHist = [];
-let camX = -0.42, camY = 0.6, dragging = false, dragS = {x:0,y:0};
+let camX = -0.4, camY = 0.55, dragging = false, dragS = {x:0,y:0};
+let autoRotate = true;
+let stepsPerFrame = 2;
 
 const cv = document.getElementById('c'), cx = cv.getContext('2d');
 const lv = document.getElementById('loss'), lx = lv.getContext('2d');
 const statEl = document.getElementById('status');
+const epochEl = document.getElementById('epoch');
+const speedSlider = document.getElementById('speedSlider');
+const speedLabel = document.getElementById('speedLabel');
+
+speedSlider.addEventListener('input', () => {
+  stepsPerFrame = parseInt(speedSlider.value);
+  speedLabel.textContent = stepsPerFrame + 'x';
+});
 
 // ========== MATH ==========
 function torusXYZ(u, v) {
@@ -98,39 +112,42 @@ function torusXYZ(u, v) {
     r * Math.sin(v)
   ];
 }
-// Closest point on torus to arbitrary 3D point
+
 function closestOnTorus(x, y, z) {
-  // project onto the circle of radius R in the xy-plane
   const lenXY = Math.sqrt(x*x + y*y) || 0.001;
   const cx = R * x / lenXY, cy = R * y / lenXY;
-  // direction from circle center to point
   const dx = x - cx, dy = y - cy, dz = z;
   const lenD = Math.sqrt(dx*dx + dy*dy + dz*dz) || 0.001;
-  return [
-    cx + r * dx / lenD,
-    cy + r * dy / lenD,
-    r * dz / lenD
-  ];
+  return [ cx + r * dx / lenD, cy + r * dy / lenD, r * dz / lenD ];
 }
+
 function distToTorus(x, y, z) {
   const [tx, ty, tz] = closestOnTorus(x, y, z);
-  const dx = x-tx, dy = y-ty, dz = z-tz;
-  return Math.sqrt(dx*dx + dy*dy + dz*dz);
+  return Math.sqrt((x-tx)**2 + (y-ty)**2 + (z-tz)**2);
 }
-function torusUV(x, y, z) {
-  const u = Math.atan2(y, x);
-  const cx = R * Math.cos(u), cy = R * Math.sin(u);
-  const v = Math.atan2(z, (x-cx)*Math.cos(u) + (y-cy)*Math.sin(u));
-  return [((u % (Math.PI*2)) + Math.PI*2) % (Math.PI*2),
-          ((v % (Math.PI*2)) + Math.PI*2) % (Math.PI*2)];
-}
+
+function dist3(a, b) { return Math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2 + (a.z-b.z)**2); }
+
 function rotY(p, a) { const c=Math.cos(a),s=Math.sin(a); return [c*p[0]+s*p[2], p[1], -s*p[0]+c*p[2]]; }
 function rotX(p, a) { const c=Math.cos(a),s=Math.sin(a); return [p[0], c*p[1]-s*p[2], s*p[1]+c*p[2]]; }
 function proj(p) {
   const d=620, sc=d/(d+p[2]);
   return {x: p[0]*sc + cv.width/2, y: p[1]*sc + cv.height/2, z: p[2], sc};
 }
-function angleDist(a,b) { return ((b-a)%(Math.PI*2)+Math.PI*3)%(Math.PI*2)-Math.PI; }
+
+// Perlin-ish smooth noise for each point
+function smoothRand(seed, t, freq) {
+  // Simple hash-based smooth noise
+  const f = t * freq;
+  const i = Math.floor(f);
+  const frac = f - i;
+  const smooth = frac * frac * (3 - 2 * frac); // smoothstep
+  function hash(n) {
+    let x = Math.sin(n * 127.1 + seed * 311.7) * 43758.5453;
+    return x - Math.floor(x);
+  }
+  return hash(i) * (1 - smooth) + hash(i + 1) * smooth;
+}
 
 // ========== INIT ==========
 function init() {
@@ -142,31 +159,37 @@ function init() {
   const rows = 4, cols = N / rows;
   for (let i = 0; i < N; i++) {
     const row = Math.floor(i / cols), col = i % cols;
-    const u = (col / cols) * Math.PI * 2;
+    const u = (col / cols) * Math.PI * 2 + (row * 0.4);
     const v = (row / rows) * Math.PI * 2;
     const [sx, sy, sz] = torusXYZ(u, v);
     slots.push({u, v, x: sx, y: sy, z: sz});
   }
 
-  // Points scattered in a cloud around the torus region but NOT on it
+  // Points scattered in a cloud — spread out, clearly not on the torus
   for (let i = 0; i < N; i++) {
-    // Random spherical scatter, biased to be near but not on the torus
     const theta = Math.random() * Math.PI * 2;
-    const phi = (Math.random() - 0.5) * Math.PI;
-    const rad = 100 + Math.random() * 200;
+    const phi = (Math.random() - 0.5) * Math.PI * 0.85;
+    const rad = 60 + Math.random() * 260;
+    const x = rad * Math.cos(phi) * Math.cos(theta);
+    const y = rad * Math.cos(phi) * Math.sin(theta);
+    const z = rad * Math.sin(phi) * 0.55;
+
     pts.push({
-      x: rad * Math.cos(phi) * Math.cos(theta),
-      y: rad * Math.cos(phi) * Math.sin(theta),
-      z: rad * Math.sin(phi) * 0.6,
+      x, y, z,
       slotIdx: i,
-      state: 'scattered',  // scattered | seed | collapsing | snapped
-      collapseProgress: 0,
-      collapseStarted: false,
+      state: 'scattered',
+      collapseT: 0,       // 0→1 progress of collapsing
+      noiseSeed: Math.random() * 1000,
+      // For smooth wandering: each point has its own noise offsets
+      noisePhaseX: Math.random() * 100,
+      noisePhaseY: Math.random() * 100,
+      noisePhaseZ: Math.random() * 100,
     });
   }
 
   statEl.style.background = '#111'; statEl.style.color = '#666';
   statEl.textContent = 'Press Start to begin';
+  epochEl.textContent = '';
 }
 
 // ========== UPDATE ==========
@@ -174,85 +197,135 @@ function update() {
   if (!running || allSnapped) return;
   step++;
 
+  const t = step * 0.01; // time for noise
+
   let totalDist = 0;
 
   for (const pt of pts) {
+    const slot = slots[pt.slotIdx];
+
     if (pt.state === 'scattered') {
-      // Random walk in 3D
-      pt.x += (Math.random() - 0.5) * WANDER * 2;
-      pt.y += (Math.random() - 0.5) * WANDER * 2;
-      pt.z += (Math.random() - 0.5) * WANDER * 2;
+      // Smooth random walk using layered sine noise — feels like noisy SGD
+      const wander = 0.55;
+      const nx = (smoothRand(pt.noiseSeed, t + pt.noisePhaseX, 0.7) - 0.5) * wander
+               + (smoothRand(pt.noiseSeed + 50, t, 2.1) - 0.5) * wander * 0.3;
+      const ny = (smoothRand(pt.noiseSeed + 100, t + pt.noisePhaseY, 0.7) - 0.5) * wander
+               + (smoothRand(pt.noiseSeed + 150, t, 1.8) - 0.5) * wander * 0.3;
+      const nz = (smoothRand(pt.noiseSeed + 200, t + pt.noisePhaseZ, 0.7) - 0.5) * wander * 0.7
+               + (smoothRand(pt.noiseSeed + 250, t, 2.3) - 0.5) * wander * 0.2;
 
-      // Extremely faint pull toward torus (implicit regularization)
+      pt.x += nx;
+      pt.y += ny;
+      pt.z += nz;
+
+      // Very faint drift toward torus (implicit regularization — barely perceptible)
       const [tx, ty, tz] = closestOnTorus(pt.x, pt.y, pt.z);
-      pt.x += (tx - pt.x) * 0.0008;
-      pt.y += (ty - pt.y) * 0.0008;
-      pt.z += (tz - pt.z) * 0.0008;
+      const drift = 0.0006;
+      pt.x += (tx - pt.x) * drift;
+      pt.y += (ty - pt.y) * drift;
+      pt.z += (tz - pt.z) * drift;
 
-      // Check if this point accidentally found the torus
-      const d = distToTorus(pt.x, pt.y, pt.z);
-      if (d < SEED_PROXIMITY && !cascadeStarted) {
+      // Slight tendency to not fly too far away (soft boundary)
+      const distFromOrigin = Math.sqrt(pt.x**2 + pt.y**2 + pt.z**2);
+      if (distFromOrigin > 320) {
+        const pull = 0.002;
+        pt.x *= (1 - pull);
+        pt.y *= (1 - pull);
+        pt.z *= (1 - pull);
+      }
+
+      // Check if this point found the torus
+      const dSurf = distToTorus(pt.x, pt.y, pt.z);
+      if (dSurf < SEED_PROXIMITY && !cascadeStarted) {
         pt.state = 'seed';
         seedsFound++;
         if (seedsFound >= SEED_COUNT) {
           triggerCascade();
         }
       }
+
     } else if (pt.state === 'seed') {
-      // Snap onto torus surface, then slide toward slot
-      const slot = slots[pt.slotIdx];
-      pt.x += (slot.x - pt.x) * 0.08;
-      pt.y += (slot.y - pt.y) * 0.08;
-      pt.z += (slot.z - pt.z) * 0.08;
+      // Smoothly settle onto slot
+      const ease = 0.04;
+      pt.x += (slot.x - pt.x) * ease;
+      pt.y += (slot.y - pt.y) * ease;
+      pt.z += (slot.z - pt.z) * ease;
+
+      // Tiny wobble to feel alive
+      pt.x += (Math.sin(t * 3 + pt.noiseSeed) * 0.15);
+      pt.z += (Math.cos(t * 2.7 + pt.noiseSeed) * 0.1);
+
     } else if (pt.state === 'collapsing') {
-      pt.collapseProgress = Math.min(1, pt.collapseProgress + 0.018);
-      const t = pt.collapseProgress;
-      // First pull onto torus surface, then slide to slot
-      const [tx, ty, tz] = closestOnTorus(pt.x, pt.y, pt.z);
-      const slot = slots[pt.slotIdx];
-      // Blend: first half → torus surface, second half → exact slot
-      let gx, gy, gz;
-      if (t < 0.5) {
-        const s = t * 2; // 0→1 during first half
-        gx = tx; gy = ty; gz = tz;
-        pt.x += (gx - pt.x) * GRAVITY_STRENGTH * (1 + s * 3);
-        pt.y += (gy - pt.y) * GRAVITY_STRENGTH * (1 + s * 3);
-        pt.z += (gz - pt.z) * GRAVITY_STRENGTH * (1 + s * 3);
+      // Gradual gravitational pull — starts slow, accelerates
+      pt.collapseT = Math.min(1, pt.collapseT + 0.004);
+      const ct = pt.collapseT;
+
+      // Eased strength: starts very gentle, gets stronger
+      const strength = ct * ct * 0.035;
+
+      if (ct < 0.6) {
+        // Phase 1: pull toward torus surface
+        const [tx, ty, tz] = closestOnTorus(pt.x, pt.y, pt.z);
+        pt.x += (tx - pt.x) * strength;
+        pt.y += (ty - pt.y) * strength;
+        pt.z += (tz - pt.z) * strength;
+
+        // Still some noise — fighting the pull
+        const noiseAmt = 0.3 * (1 - ct);
+        pt.x += (smoothRand(pt.noiseSeed, t + pt.noisePhaseX, 1.2) - 0.5) * noiseAmt;
+        pt.y += (smoothRand(pt.noiseSeed+100, t + pt.noisePhaseY, 1.2) - 0.5) * noiseAmt;
+        pt.z += (smoothRand(pt.noiseSeed+200, t + pt.noisePhaseZ, 1.2) - 0.5) * noiseAmt * 0.6;
       } else {
-        const s = (t - 0.5) * 2; // 0→1 during second half
-        pt.x += (slot.x - pt.x) * SNAP_SPEED * (1 + s * 2);
-        pt.y += (slot.y - pt.y) * SNAP_SPEED * (1 + s * 2);
-        pt.z += (slot.z - pt.z) * SNAP_SPEED * (1 + s * 2);
+        // Phase 2: slide along torus surface toward slot
+        const slideStrength = (ct - 0.6) / 0.4; // 0→1
+        const ease = 0.01 + slideStrength * 0.04;
+        pt.x += (slot.x - pt.x) * ease;
+        pt.y += (slot.y - pt.y) * ease;
+        pt.z += (slot.z - pt.z) * ease;
+
+        // Tiny residual noise
+        pt.x += (smoothRand(pt.noiseSeed, t, 2) - 0.5) * 0.08 * (1 - slideStrength);
+        pt.z += (smoothRand(pt.noiseSeed+200, t, 2) - 0.5) * 0.05 * (1 - slideStrength);
       }
-      if (t >= 1) pt.state = 'snapped';
+
+      if (ct >= 1) {
+        pt.state = 'snapped';
+      }
+
     } else if (pt.state === 'snapped') {
-      const slot = slots[pt.slotIdx];
-      pt.x += (slot.x - pt.x) * 0.15;
-      pt.y += (slot.y - pt.y) * 0.15;
-      pt.z += (slot.z - pt.z) * 0.15;
+      pt.x += (slot.x - pt.x) * 0.1;
+      pt.y += (slot.y - pt.y) * 0.1;
+      pt.z += (slot.z - pt.z) * 0.1;
+      // Gentle breathing
+      pt.x += Math.sin(t * 2 + pt.noiseSeed) * 0.08;
+      pt.z += Math.cos(t * 1.8 + pt.noiseSeed) * 0.06;
     }
 
-    const slot = slots[pt.slotIdx];
-    const dx = pt.x-slot.x, dy = pt.y-slot.y, dz = pt.z-slot.z;
-    totalDist += Math.sqrt(dx*dx + dy*dy + dz*dz);
+    totalDist += dist3(pt, slot);
   }
 
   const loss = totalDist / N;
   lossHist.push(loss);
 
-  // Status
-  const done = pts.filter(p => p.state === 'snapped' || p.state === 'seed').length;
-  const collapsing = pts.filter(p => p.state === 'collapsing').length;
+  // Status updates
+  const seedCount = pts.filter(p => p.state === 'seed').length;
+  const collapsingCount = pts.filter(p => p.state === 'collapsing').length;
+  const snappedCount = pts.filter(p => p.state === 'snapped').length;
+  const onTorus = seedCount + snappedCount;
+
+  epochEl.textContent = `Epoch ${step}`;
+
   if (!cascadeStarted) {
-    statEl.style.background = '#1a0a0a'; statEl.style.color = '#ff8888';
-    statEl.textContent = `Step ${step} — Memorizing… points wandering in space`;
-  } else if (done + collapsing < N || collapsing > 0) {
-    statEl.style.background = '#1a1a08'; statEl.style.color = '#ffcc44';
-    statEl.textContent = `Step ${step} — Cascade! ${done}/${N} on the torus`;
+    statEl.style.background = '#1a0a0a'; statEl.style.color = '#cc6666';
+    const closest = Math.min(...pts.filter(p=>p.state==='scattered').map(p=>distToTorus(p.x,p.y,p.z)));
+    statEl.textContent = `Memorizing… nearest point is ${closest.toFixed(0)} units from the torus`;
+  } else if (onTorus < N) {
+    statEl.style.background = '#1a1a08'; statEl.style.color = '#ddaa33';
+    statEl.textContent = `Phase transition! ${onTorus}/${N} on the manifold (${collapsingCount} falling…)`;
   }
-  if (done >= N && !allSnapped) {
+  if (onTorus >= N && !allSnapped) {
     statEl.style.background = '#082a18'; statEl.style.color = '#33eebb';
-    statEl.textContent = `Step ${step} — Grokked! ✨ All points on the torus.`;
+    statEl.textContent = `Grokked! ✨ All ${N} points found the optimal manifold.`;
     allSnapped = true;
   }
 }
@@ -260,10 +333,20 @@ function update() {
 function triggerCascade() {
   cascadeStarted = true;
   const rest = pts.filter(p => p.state === 'scattered');
-  // Sort by distance to torus — closer ones collapse first
+
+  // Sort by distance to torus — closer ones get pulled first
   rest.sort((a, b) => distToTorus(a.x, a.y, a.z) - distToTorus(b.x, b.y, b.z));
+
+  // Stagger: not uniform — first few are fast, then it spreads like a wave
   rest.forEach((pt, i) => {
-    setTimeout(() => { pt.state = 'collapsing'; pt.collapseProgress = 0; }, i * CASCADE_STAGGER);
+    // Exponential-ish stagger: first few quick, rest spread out
+    const delay = Math.pow(i / rest.length, 0.6) * 6000 + Math.random() * 800;
+    setTimeout(() => {
+      if (pt.state === 'scattered') {
+        pt.state = 'collapsing';
+        pt.collapseT = 0;
+      }
+    }, delay);
   });
 }
 
@@ -271,17 +354,18 @@ function triggerCascade() {
 function drawTorus() {
   cx.clearRect(0, 0, cv.width, cv.height);
 
-  // Glowing torus label
-  cx.fillStyle = 'rgba(60,120,200,0.12)';
-  cx.font = '12px sans-serif';
+  // Label
+  cx.save();
+  cx.globalAlpha = cascadeStarted ? 0.3 : 0.12;
+  cx.fillStyle = '#6699dd';
+  cx.font = '11px sans-serif';
   cx.textAlign = 'center';
-  cx.fillText('THE OPTIMAL MANIFOLD', cv.width/2, 18);
+  cx.fillText('T H E   O P T I M A L   M A N I F O L D', cv.width/2, 16);
+  cx.restore();
 
-  const uN = 50, vN = 26;
-
-  // Collect all torus wireframe segments with z for sorting
-  // Draw as filled translucent quads for a more solid look
+  const uN = 44, vN = 22;
   const quads = [];
+
   for (let i = 0; i < uN; i++) {
     for (let j = 0; j < vN; j++) {
       const u0 = (i/uN)*Math.PI*2, u1 = ((i+1)/uN)*Math.PI*2;
@@ -295,11 +379,15 @@ function drawTorus() {
   }
   quads.sort((a,b) => a.avgZ - b.avgZ);
 
+  // Torus brightness pulses slightly when cascade starts
+  const pulse = cascadeStarted && !allSnapped ? 0.03 * Math.sin(step * 0.05) : 0;
+
   for (const q of quads) {
-    const bright = Math.max(0.03, Math.min(0.14, 0.09 - q.avgZ * 0.0003));
-    cx.fillStyle = `rgba(50,100,200,${bright})`;
-    cx.strokeStyle = `rgba(60,120,220,${bright * 0.7})`;
-    cx.lineWidth = 0.4;
+    const baseBright = Math.max(0.025, Math.min(0.13, 0.08 - q.avgZ * 0.00025));
+    const bright = baseBright + pulse;
+    cx.fillStyle = `rgba(40,90,190,${bright})`;
+    cx.strokeStyle = `rgba(50,110,210,${bright * 0.6})`;
+    cx.lineWidth = 0.35;
     cx.beginPath();
     cx.moveTo(q.corners[0].x, q.corners[0].y);
     for (let k = 1; k < 4; k++) cx.lineTo(q.corners[k].x, q.corners[k].y);
@@ -311,61 +399,86 @@ function drawTorus() {
 
 // ========== DRAW POINTS ==========
 function drawPoints() {
-  // Target slot ghosts
+  // Faint target slot markers
   for (const s of slots) {
     let p = [s.x, s.y, s.z]; p = rotY(p,camY); p = rotX(p,camX);
     const pr = proj(p);
     cx.beginPath();
-    cx.arc(pr.x, pr.y, 2.2*pr.sc, 0, Math.PI*2);
-    cx.fillStyle = 'rgba(100,180,255,0.1)';
+    cx.arc(pr.x, pr.y, 1.8*pr.sc, 0, Math.PI*2);
+    cx.fillStyle = 'rgba(100,170,255,0.08)';
     cx.fill();
   }
 
-  // Points sorted by z
-  const projected = pts.map(pt => {
+  // Project and sort
+  const projected = pts.map((pt, i) => {
     let p = [pt.x, pt.y, pt.z]; p = rotY(p,camY); p = rotX(p,camX);
     const pr = proj(p);
-    return {...pr, state: pt.state, cp: pt.collapseProgress};
+    return {...pr, state: pt.state, ct: pt.collapseT, idx: i, dist: distToTorus(pt.x, pt.y, pt.z)};
   });
   projected.sort((a,b) => a.z - b.z);
 
   for (const pp of projected) {
-    const sz = Math.max(2.5, 5.5 * pp.sc);
-    let color, glow = 0;
+    const sz = Math.max(2, 5 * pp.sc);
+    let color, glow = 0, alpha = 1;
 
     if (pp.state === 'scattered') {
-      color = '#ff5555';
-    } else if (pp.state === 'seed') {
-      color = '#ffcc33'; glow = 14;
-    } else if (pp.state === 'collapsing') {
-      const t = pp.cp;
-      const rr = Math.round(255*(1-t) + 51*t);
-      const gg = Math.round(85*(1-t) + 238*t);
-      const bb = Math.round(85*(1-t) + 187*t);
+      // Color shifts from red toward orange as point gets closer to torus
+      const closeness = Math.max(0, 1 - pp.dist / 200);
+      const rr = 255;
+      const gg = Math.round(55 + closeness * 90);
+      const bb = Math.round(55 + closeness * 20);
       color = `rgb(${rr},${gg},${bb})`;
-      glow = 6 + 8*t;
+      glow = closeness * 4;
+    } else if (pp.state === 'seed') {
+      color = '#ffcc33';
+      glow = 16;
+    } else if (pp.state === 'collapsing') {
+      const t = pp.ct;
+      // Red → orange → yellow → teal
+      let rr, gg, bb;
+      if (t < 0.5) {
+        const s = t * 2;
+        rr = Math.round(255 * (1-s) + 255 * s);
+        gg = Math.round(80 * (1-s) + 200 * s);
+        bb = Math.round(50 * (1-s) + 50 * s);
+      } else {
+        const s = (t - 0.5) * 2;
+        rr = Math.round(255 * (1-s) + 51 * s);
+        gg = Math.round(200 * (1-s) + 238 * s);
+        bb = Math.round(50 * (1-s) + 187 * s);
+      }
+      color = `rgb(${rr},${gg},${bb})`;
+      glow = 4 + t * 10;
     } else {
-      color = '#33eebb'; glow = 10;
+      color = '#33eebb';
+      glow = 8;
+    }
+
+    // Draw trail line for collapsing points
+    if (pp.state === 'collapsing' && pp.ct > 0.05) {
+      const slot = slots[pts[pp.idx].slotIdx];
+      let sp = [slot.x, slot.y, slot.z]; sp = rotY(sp,camY); sp = rotX(sp,camX);
+      const spr = proj(sp);
+      cx.save();
+      cx.globalAlpha = 0.08 + pp.ct * 0.12;
+      cx.strokeStyle = color;
+      cx.lineWidth = 0.8;
+      cx.setLineDash([2, 4]);
+      cx.beginPath();
+      cx.moveTo(pp.x, pp.y);
+      cx.lineTo(spr.x, spr.y);
+      cx.stroke();
+      cx.setLineDash([]);
+      cx.restore();
     }
 
     if (glow > 0) { cx.shadowColor = color; cx.shadowBlur = glow; }
-
-    // Draw a faint trail line toward torus for collapsing points
-    if (pp.state === 'collapsing') {
-      cx.globalAlpha = 0.15;
-      cx.strokeStyle = color;
-      cx.lineWidth = 1;
-      // just a subtle glow ring
-      cx.beginPath();
-      cx.arc(pp.x, pp.y, sz + 4, 0, Math.PI*2);
-      cx.stroke();
-      cx.globalAlpha = 1;
-    }
-
     cx.beginPath();
     cx.arc(pp.x, pp.y, sz, 0, Math.PI*2);
     cx.fillStyle = color;
+    cx.globalAlpha = alpha;
     cx.fill();
+    cx.globalAlpha = 1;
     cx.shadowBlur = 0;
   }
 }
@@ -376,68 +489,93 @@ function drawLoss() {
   lx.fillStyle = '#08080f';
   lx.fillRect(0, 0, lv.width, lv.height);
 
-  const pad = 44, w = lv.width, h = lv.height;
+  const pad = 48, w = lv.width, h = lv.height;
 
-  if (lossHist.length < 2) {
-    lx.fillStyle = '#444'; lx.font = '12px sans-serif';
-    lx.fillText('"Test loss" — distance of points from their torus slots', pad + 4, h/2);
+  // Axes
+  lx.strokeStyle = '#1a1a2a'; lx.lineWidth = 1;
+  lx.beginPath(); lx.moveTo(pad, 8); lx.lineTo(pad, h-20); lx.lineTo(w-8, h-20); lx.stroke();
+  lx.fillStyle = '#444'; lx.font = '10px sans-serif';
+  lx.fillText('Test Loss', 2, 14);
+  lx.fillText('Epoch', w-42, h-5);
+
+  if (lossHist.length < 3) {
+    lx.fillStyle = '#333'; lx.font = '12px sans-serif';
+    lx.textAlign = 'left';
+    lx.fillText('Loss curve will appear here…', pad + 10, h/2);
     return;
   }
 
-  const maxL = Math.max(...lossHist) * 1.05;
-  const xSc = (w - pad - 10) / Math.max(lossHist.length - 1, 1);
-  const ySc = (h - 28) / maxL;
-
-  // Axes
-  lx.strokeStyle = '#222'; lx.lineWidth = 1;
-  lx.beginPath(); lx.moveTo(pad, 8); lx.lineTo(pad, h-18); lx.lineTo(w-6, h-18); lx.stroke();
-  lx.fillStyle = '#555'; lx.font = '10px sans-serif';
-  lx.fillText('Loss', 6, 16); lx.fillText('Step', w-36, h-3);
-
-  // Gradient under curve
-  const grad = lx.createLinearGradient(0, 0, 0, h);
-  grad.addColorStop(0, 'rgba(255,80,80,0.25)');
-  grad.addColorStop(1, 'rgba(255,80,80,0)');
-  lx.beginPath();
-  lx.moveTo(pad, h - 18);
-  for (let i = 0; i < lossHist.length; i++) {
-    lx.lineTo(pad + i * xSc, h - 18 - lossHist[i] * ySc);
+  // Downsample for performance if needed
+  let data = lossHist;
+  if (data.length > 1400) {
+    const skip = Math.ceil(data.length / 1400);
+    data = data.filter((_, i) => i % skip === 0);
   }
-  lx.lineTo(pad + (lossHist.length-1) * xSc, h - 18);
+
+  const maxL = Math.max(...data) * 1.05;
+  const minL = Math.min(...data);
+  const xSc = (w - pad - 12) / Math.max(data.length - 1, 1);
+  const ySc = (h - 32) / (maxL - minL * 0.5);
+
+  // Gradient fill
+  const grad = lx.createLinearGradient(0, 10, 0, h - 20);
+  grad.addColorStop(0, 'rgba(255,70,70,0.2)');
+  grad.addColorStop(0.7, 'rgba(255,70,70,0.02)');
+  grad.addColorStop(1, 'rgba(50,230,180,0.05)');
+  lx.beginPath();
+  lx.moveTo(pad, h - 20);
+  for (let i = 0; i < data.length; i++) {
+    lx.lineTo(pad + i * xSc, h - 20 - (data[i] - minL * 0.5) * ySc);
+  }
+  lx.lineTo(pad + (data.length-1) * xSc, h - 20);
   lx.closePath();
   lx.fillStyle = grad; lx.fill();
 
   // Line
   lx.beginPath();
-  lx.strokeStyle = cascadeStarted ? '#ff8866' : '#ff5555';
-  lx.lineWidth = 2;
-  for (let i = 0; i < lossHist.length; i++) {
-    const x = pad + i * xSc, y = h - 18 - lossHist[i] * ySc;
+  lx.lineWidth = 1.8;
+  for (let i = 0; i < data.length; i++) {
+    const x = pad + i * xSc;
+    const y = h - 20 - (data[i] - minL * 0.5) * ySc;
+    // Color: red in plateau, transitions to teal
     if (i === 0) lx.moveTo(x, y); else lx.lineTo(x, y);
   }
+  // Gradient stroke
+  const sGrad = lx.createLinearGradient(pad, 0, pad + data.length * xSc, 0);
+  sGrad.addColorStop(0, '#ff5555');
+  if (cascadeStarted) {
+    const cascadeFrac = Math.max(0.1, 1 - (data.length - lossHist.length * 0.7) / (data.length * 0.3));
+    sGrad.addColorStop(Math.min(0.95, cascadeFrac), '#ff8855');
+    sGrad.addColorStop(1, '#33ddaa');
+  }
+  lx.strokeStyle = cascadeStarted ? sGrad : '#ff5555';
   lx.stroke();
 
-  // Mark cascade
+  // Cascade marker
   if (cascadeStarted) {
-    let ci = 0;
-    for (let i = 1; i < lossHist.length; i++) {
-      if (lossHist[i] < lossHist[i-1] * 0.92) { ci = i; break; }
+    // Find where loss started dropping
+    let ci = data.length - 1;
+    for (let i = 1; i < data.length; i++) {
+      if (i > 10 && data[i] < data[i-5] * 0.9) { ci = i - 3; break; }
     }
-    if (ci > 0) {
-      const cx2 = pad + ci * xSc;
-      lx.strokeStyle = '#ffcc33'; lx.lineWidth = 1;
-      lx.setLineDash([3,3]);
-      lx.beginPath(); lx.moveTo(cx2, 8); lx.lineTo(cx2, h-18); lx.stroke();
-      lx.setLineDash([]);
-      lx.fillStyle = '#ffcc33'; lx.font = '11px sans-serif';
-      lx.fillText('← seeds found torus → grok!', cx2 + 5, 18);
-    }
+    const cx2 = pad + Math.max(0, ci) * xSc;
+    lx.strokeStyle = '#ffcc33'; lx.lineWidth = 1;
+    lx.setLineDash([3,3]);
+    lx.beginPath(); lx.moveTo(cx2, 8); lx.lineTo(cx2, h-20); lx.stroke();
+    lx.setLineDash([]);
+    lx.fillStyle = '#ffcc33'; lx.font = '10px sans-serif';
+    lx.fillText('← seeds hit torus → phase transition', cx2 + 5, 18);
   }
 }
 
-// ========== LOOP ==========
+// ========== MAIN LOOP ==========
 function loop() {
-  update();
+  for (let i = 0; i < stepsPerFrame; i++) update();
+
+  if (autoRotate && !dragging) {
+    camY += 0.002;
+  }
+
   drawTorus();
   drawPoints();
   drawLoss();
@@ -446,24 +584,46 @@ function loop() {
 
 // ========== EVENTS ==========
 document.getElementById('startBtn').addEventListener('click', () => {
-  if (!running) { running = true; document.getElementById('startBtn').textContent = '⏸ Pause'; }
-  else { running = false; document.getElementById('startBtn').textContent = '▶ Resume'; }
-});
-document.getElementById('resetBtn').addEventListener('click', () => {
-  running = false; document.getElementById('startBtn').textContent = '▶ Start Training'; init();
+  if (!running) {
+    running = true;
+    document.getElementById('startBtn').textContent = '⏸ Pause';
+  } else {
+    running = false;
+    document.getElementById('startBtn').textContent = '▶ Resume';
+  }
 });
 
-cv.addEventListener('mousedown', e => { dragging = true; dragS = {x:e.clientX, y:e.clientY}; cv.style.cursor = 'grabbing'; });
+document.getElementById('resetBtn').addEventListener('click', () => {
+  running = false;
+  document.getElementById('startBtn').textContent = '▶ Start Training';
+  init();
+});
+
+cv.addEventListener('mousedown', e => {
+  dragging = true;
+  dragS = {x: e.clientX, y: e.clientY};
+  cv.style.cursor = 'grabbing';
+  autoRotate = false;
+});
 window.addEventListener('mousemove', e => {
   if (!dragging) return;
   camY += (e.clientX - dragS.x) * 0.005;
   camX += (e.clientY - dragS.y) * 0.005;
   dragS = {x: e.clientX, y: e.clientY};
 });
-window.addEventListener('mouseup', () => { dragging = false; cv.style.cursor = 'grab'; });
-cv.addEventListener('touchstart', e => { dragging = true; dragS = {x:e.touches[0].clientX, y:e.touches[0].clientY}; });
+window.addEventListener('mouseup', () => {
+  dragging = false;
+  cv.style.cursor = 'grab';
+});
+
+cv.addEventListener('touchstart', e => {
+  dragging = true;
+  dragS = {x: e.touches[0].clientX, y: e.touches[0].clientY};
+  autoRotate = false;
+});
 cv.addEventListener('touchmove', e => {
-  if (!dragging) return; e.preventDefault();
+  if (!dragging) return;
+  e.preventDefault();
   camY += (e.touches[0].clientX - dragS.x) * 0.005;
   camX += (e.touches[0].clientY - dragS.y) * 0.005;
   dragS = {x: e.touches[0].clientX, y: e.touches[0].clientY};
