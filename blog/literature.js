@@ -1216,7 +1216,7 @@ window.bibData = {
 	"devetula": {
 		title: "De Vetula",
 		year: 1250,
-		author: "Unknown author",
+		author: "Unknown Author",
 		url: "https://archive.org/details/povidiinasonispelignensis/page/n9/mode/2up"
 	},
 	"lowbackgroundsteel": {
@@ -1292,7 +1292,7 @@ window.bibData = {
 	},
 	"aikenphoto": {
 		url: "https://www.mediastorehouse.com/fine-art-storehouse/bettmann-archive/mathematician-howard-aiken-early-computer-39321803.html",
-		author: "Unknown photographer",
+		author: "Unknown Photographer",
 		title: "Howard Aiken with Early Computer Print",
 		alternativetitle: "Howard Aiken with his early Mark I",
 		year: 1944
@@ -1693,18 +1693,18 @@ window.bibData = {
 	"perceptronimagecables": {
 		url: "https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg",
 		title: "The Mark I Perceptron, an early pattern recognition system, at the Cornell Aeronautical Laboratory",
-		author: "Unknown photographer",
+		author: "Unknown Photographer",
 	},
 	"perceptronimagedetection": {
 		url: "https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg",
 		title: "Experimental Machine Able To Identify Letters of Alphabet Announced By Navy",
 		alternativetitle: "The Mark I Perceptron",
-		author: "Unknown photographer",
+		author: "Unknown Photographer",
 	},
 	"perceptronimagewiring": {
 		url: "https://lcc-cit.github.io/CS123-CourseMaterials/LectureNotes/CS123-Topic04-1-History.html",
 		title: "Frank Rosenblatt working on the wiring for the perceptron.",
-		author: "Unknown photographer",
+		author: "Unknown Photographer",
 	},
 	"historyofmathematicalnotation": {
 		title: "A History of Mathematical Notations",
