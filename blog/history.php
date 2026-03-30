@@ -672,7 +672,7 @@ Without the loom, there is no concept of externally encoded, interchangeable ins
 
 Every prompt typed into an LLM passes through a **keyboard** whose layout was dictated not by computation, but by the jamming tendencies of 19th-century typebar mechanisms.
 
-In 1868, **Christopher Latham Sholes**, Carlos Glidden, and Samuel W. Soule patented an early typewriter (U.S. Patent 79,265). By 1874, **E. Remington and Sons** began mass-producing the **Sholes & Glidden Type-Writer**, featuring the **QWERTY** layout, an arrangement designed to separate commonly paired letters and prevent adjacent typebars from colliding. This layout, born from a purely mechanical constraint, became the universal standard for text input and has survived virtually unchanged for over 150 years.
+In 1868, **Christopher Latham Sholes**, Carlos Glidden, and Samuel W. Soule patented an early typewriter (\cite[U.S. Patent 79,265]{typewriterpatent}). By 1874, **E. Remington and Sons** began mass-producing the **Sholes & Glidden Type-Writer**, featuring the **QWERTY** layout, an arrangement designed to separate commonly paired letters and prevent adjacent typebars from colliding. This layout, born from a purely mechanical constraint, became the universal standard for text input and has survived virtually unchanged for over 150 years.
 
 **Teletypes** in the early 20th century adapted the typewriter keyboard for electrical communication, encoding keystrokes as signals over telegraph lines. When **video terminals** replaced teletypes in the 1970s, the QWERTY keyboard carried over unchanged. The computer keyboard is, in every functional sense, a typewriter with its mechanical linkage replaced by an electrical switch matrix.
 
