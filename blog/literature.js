@@ -1,4 +1,10 @@
 window.bibData = {
+	"earliestalphabet": {
+		url: "https://www.jstor.org/stable/3768583",
+		title: "Two Early Alphabetic Inscriptions from the Wadi el-Ḥôl: New Evidence for the Origin of the Alphabet from the Western Desert of Egypt",
+		author: "John Coleman Darnell, F. W. Dobbs-Allsopp, Marilyn J. Lundberg, P. Kyle McCarter, Bruce Zuckerman, Colleen Manassa",
+		year: 2005
+	},
 	"wikimediadumps": {
 		url: "https://dumps.wikimedia.org/",
 		title: "Wikimedia Downloads",

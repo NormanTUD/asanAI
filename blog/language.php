@@ -138,6 +138,24 @@ This trajectory from iconic to arbitrary is not a single historical event but a 
 </div>
 
 <div class="md">
+### Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c. 1850–1550 BCE)
+
+The Phoenician alphabet did not emerge from a vacuum. Its roots lie in
+**Proto-Sinaitic script**, the earliest known alphabetic writing, developed by
+Semitic-speaking workers in contact with Egyptian scribal culture
+(\cite{earliestalphabet}). These writers took a small subset of Egyptian hieroglyphs
+and repurposed them acrophonically to represent the consonants of their own
+language: the hieroglyph for "water" became /m/ (from Semitic *mayim*), the
+hieroglyph for "house" became /b/ (from *bayt*). The best-known examples come from
+the turquoise mines at Serabit el-Khadim in the Sinai (c. 1700–1550 BCE), but the
+**Wadi el-Hol inscriptions**, discovered in 1993 on a military road in Upper Egypt,
+may push the invention back to approximately 1850 BCE, making them the oldest
+alphabetic texts yet found. Their location deep within
+Egypt suggests the alphabet arose not in isolation but in a zone of intense
+Egyptian–Semitic contact. Over the following centuries this rough, unstandardized
+script was gradually refined through Proto-Canaanite into the 22-letter Phoenician
+abjad.
+
 ### The Phoenician Alphabet (c. 1050 BCE)
 
 Around 1050 BCE, Phoenician traders along the eastern Mediterranean coast perfected what would become the most influential writing innovation in human history: a compact alphabet of just 22 consonantal signs. Unlike the hundreds of symbols required by cuneiform or Egyptian hieroglyphics, the Phoenician system radically compressed the act of writing by applying the Acrophonic Principle, each letter was derived from a pictogram stripped down to represent only its initial sound. The letter *aleph* originally depicted an ox head and was reduced to a glottal stop, while *bet* depicted a house and was reduced to /b/ first described by \citeauthor{acrophonic}. This was not merely a simplification; it was a cognitive revolution in economy. For the first time, a merchant, a sailor, or a child could learn to read and write in days rather than years. The Phoenician abjad became the direct ancestor of the Greek, Latin, Arabic, and Hebrew scripts, meaning that virtually every alphabetic writing system in use today descends from this single innovation. In the broader arc of language history, it is the critical bridge between the Rebus Principle (c. 3500 BCE) and the formal grammars of \citeauthor{panini_ashtadhyayi} and \citeauthor{aristotle_categories}, the moment when writing became truly democratized and portable, setting the stage for the explosion of recorded thought that followed. As \citeauthor{zipf1949human} would later formalize, the pressure toward economy, 22 signs instead of hundreds, is a deep optimization that recurs at every scale of linguistic history, from ancient abjads to modern Byte-Pair Encoding tokenizers.
