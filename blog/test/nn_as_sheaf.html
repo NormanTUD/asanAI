@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural Networks as Sheaves: Gluing Local Approximations</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.min.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --orange: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 2.2rem;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  h2 {
+    color: var(--accent);
+    font-size: 1.5rem;
+    margin: 2rem 0 1rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+  }
+  h3 {
+    color: var(--purple);
+    font-size: 1.15rem;
+    margin: 1.5rem 0 0.75rem;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .eq {
+    text-align: center;
+    margin: 1.2rem 0;
+    padding: 1rem;
+    background: rgba(88,166,255,0.05);
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+  canvas {
+    display: block;
+    margin: 1rem auto;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #0a0e14;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+  button {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: opacity 0.2s;
+  }
+  button:hover { opacity: 0.85; }
+  button.secondary {
+    background: var(--border);
+    color: var(--text);
+  }
+  label {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  input[type=range] {
+    accent-color: var(--accent);
+    width: 120px;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin: 0.5rem 0;
+  }
+  .legend span::before {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 3px;
+    border-radius: 2px;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+  .legend .target::before { background: var(--green); }
+  .legend .approx::before { background: var(--orange); }
+  .legend .piece::before { background: var(--purple); opacity: 0.6; }
+  .legend .relu::before { background: var(--red); opacity: 0.5; }
+  .insight {
+    border-left: 3px solid var(--purple);
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    background: rgba(188,140,255,0.06);
+    border-radius: 0 8px 8px 0;
+  }
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  @media (max-width: 700px) {
+    .grid2 { grid-template-columns: 1fr; }
+    body { padding: 1rem; }
+  }
+  .step-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+  .step-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .step-dot.active { background: var(--accent); }
+  .loss-display {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    color: var(--green);
+    text-align: center;
+    margin: 0.5rem 0;
+  }
+  .arch-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+  }
+  .arch-box {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .arch-arrow {
+    color: var(--muted);
+    font-size: 1.2rem;
+  }
+  .arch-dense { background: rgba(88,166,255,0.15); color: var(--accent); border: 1px solid rgba(88,166,255,0.3); }
+  .arch-relu { background: rgba(248,81,73,0.15); color: var(--red); border: 1px solid rgba(248,81,73,0.3); }
+  .arch-output { background: rgba(63,185,80,0.15); color: var(--green); border: 1px solid rgba(63,185,80,0.3); }
+</style>
+</head>
+<body>
+
+<h1>Neural Networks as Sheaves</h1>
+<p class="subtitle">How an optimizer glues local linear pieces into a global function approximation</p>
+
+<!-- ============ SECTION 1 ============ -->
+<h2>1. The Core Idea</h2>
+<div class="card">
+  <p>A <strong>sheaf</strong> is a mathematical structure that builds global objects by consistently gluing together local data defined on overlapping open sets. A neural network with ReLU activations does something strikingly analogous:</p>
+  <ul style="margin:0.75rem 0 0 1.5rem;">
+    <li>Each neuron computes an <strong>affine function</strong> (local linear piece).</li>
+    <li>Each <strong>ReLU</strong> activation bends that piece — it "folds" the domain into regions where the neuron is active or silent.</li>
+    <li>The optimizer (e.g. SGD / Adam) acts as the <strong>gluing morphism</strong>, adjusting weights so that all local pieces are <em>compatible on overlaps</em> and together approximate a target function.</li>
+  </ul>
+</div>
+
+<h3>The Architecture We'll Study</h3>
+<div class="arch-diagram">
+  <div class="arch-box arch-dense">Dense (1→N)</div>
+  <span class="arch-arrow">→</span>
+  <div class="arch-box arch-relu">ReLU</div>
+  <span class="arch-arrow">→</span>
+  <div class="arch-box arch-dense">Dense (N→1)</div>
+  <span class="arch-arrow">→</span>
+  <div class="arch-box arch-output">Output ŷ</div>
+</div>
+
+<!-- ============ SECTION 2 ============ -->
+<h2>2. The Mathematics</h2>
+
+<h3>2.1 A Single Neuron: The Local Section</h3>
+<p>Each neuron <em>j</em> in the hidden layer computes:</p>
+<div class="eq" id="eq-neuron"></div>
+<p>This is an <strong>affine map</strong> — a straight line in 1-D. Think of it as a <em>local section</em> of a sheaf defined on the whole real line.</p>
+
+<h3>2.2 ReLU: The Restriction / Fold</h3>
+<p>Applying ReLU bends each affine piece at its zero-crossing:</p>
+<div class="eq" id="eq-relu"></div>
+<p>Geometrically, ReLU partitions ℝ into two <strong>open sets</strong>:</p>
+<div class="eq" id="eq-partition"></div>
+<p>On <em>U⁺</em> the section is the original affine function; on <em>U⁻</em> it is identically zero. The "bend" at the boundary is the <strong>gluing locus</strong> — the point where two local descriptions must agree (both equal zero).</p>
+
+<h3>2.3 The Output Layer: Gluing Sections</h3>
+<p>The final dense layer takes a weighted sum of all the bent pieces:</p>
+<div class="eq" id="eq-output"></div>
+<p>This is exactly the <strong>sheaf gluing axiom</strong> in action: given compatible local sections {<em>h<sub>j</sub></em>} on a cover of the domain, there exists a unique global section — our network output <em>ŷ(x)</em> — that restricts to each local piece.</p>
+
+<h3>2.4 The Loss &amp; Optimizer: Enforcing Compatibility</h3>
+<p>The loss function measures how well the glued global section matches the target:</p>
+<div class="eq" id="eq-loss"></div>
+<p>The optimizer updates weights via gradient descent:</p>
+<div class="eq" id="eq-grad"></div>
+<p>Each gradient step adjusts the <strong>slopes, offsets, and combination weights</strong> of the local pieces so they glue together more faithfully — reducing the discrepancy between the assembled global section and the true function.</p>
+
+<div class="insight">
+  <strong>Sheaf Intuition:</strong> The optimizer doesn't see the global function directly. It nudges each local affine piece (section) and each ReLU fold (restriction map) so that when you glue them all via the output layer, the result is globally consistent with the data. This is precisely the sheaf condition: local data, globally compatible.
+</div>
+
+<!-- ============ SECTION 3 ============ -->
+<h2>3. Visual: One ReLU Neuron = One Bent Piece</h2>
+<p>Each hidden neuron contributes a "hinge" — a piecewise-linear function that is zero on one side and linear on the other. Drag the sliders to see how weight <em>w</em> and bias <em>b</em> control the shape.</p>
+<canvas id="canvasSingle" width="700" height="320"></canvas>
+<div class="controls">
+  <label>w: <span id="valW">1.0</span></label>
+  <input type="range" id="sliderW" min="-3" max="3" step="0.1" value="1.0">
+  <label>b: <span id="valB">0.0</span></label>
+  <input type="range" id="sliderB" min="-3" max="3" step="0.1" value="0.0">
+  <label>α (output weight): <span id="valA">1.0</span></label>
+  <input type="range" id="sliderA" min="-3" max="3" step="0.1" value="1.0">
+</div>
+<div class="legend">
+  <span class="relu">ReLU(w·x + b)</span>
+  <span class="approx">α · ReLU(w·x + b)</span>
+</div>
+
+<!-- ============ SECTION 4 ============ -->
+<h2>4. Visual: Gluing Multiple Pieces</h2>
+<p>With <em>N</em> hidden neurons, the network output is a sum of <em>N</em> bent pieces. Each piece is a local section; together they form a piecewise-linear global approximation. The more pieces, the finer the approximation.</p>
+<canvas id="canvasMulti" width="700" height="350"></canvas>
+<div class="controls">
+  <label>Neurons:</label>
+  <button class="secondary" onclick="setNeurons(2)">2</button>
+  <button class="secondary" onclick="setNeurons(4)">4</button>
+  <button class="secondary" onclick="setNeurons(8)">8</button>
+  <button class="secondary" onclick="setNeurons(16)">16</button>
+  <button class="secondary" onclick="setNeurons(32)">32</button>
+  <label style="margin-left:1rem;">Target:</label>
+  <button class="secondary" onclick="setTarget('sin')">sin(x)</button>
+  <button class="secondary" onclick="setTarget('abs')">|x|</button>
+  <button class="secondary" onclick="setTarget('step')">step</button>
+  <button class="secondary" onclick="setTarget('bump')">bump</button>
+</div>
+<div class="legend">
+  <span class="target">Target f(x)</span>
+  <span class="approx">Network ŷ(x)</span>
+  <span class="piece">Individual local sections</span>
+</div>
+
+<!-- ============ SECTION 5 ============ -->
+<h2>5. Live Training: Watch the Optimizer Glue Sections</h2>
+<p>Press <strong>Train</strong> to watch gradient descent iteratively adjust each local piece until the global approximation matches the target. The loss curve shows convergence.</p>
+
+<div class="grid2">
+  <div>
+    <canvas id="canvasTrain" width="520" height="340"></canvas>
+  </div>
+  <div>
+    <canvas id="canvasLoss" width="520" height="340"></canvas>
+  </div>
+</div>
+<div class="loss-display">Epoch: <span id="epochNum">0</span> &nbsp;|&nbsp; Loss: <span id="lossVal">—</span></div>
+<div class="controls">
+  <button id="btnTrain" onclick="toggleTrain()">▶ Train</button>
+  <button class="secondary" onclick="resetTrain()">↺ Reset</button>
+  <label>Hidden neurons: <span id="trainNLabel">8</span></label>
+  <input type="range" id="trainNSlider" min="2" max="32" step="1" value="8" oninput="resetTrain()">
+  <label>Learning rate: <span id="lrLabel">0.01</span></label>
+  <input type="range" id="lrSlider" min="-4" max="-1" step="0.25" value="-2" oninput="updateLR()">
+</div>
+<div class="legend">
+  <span class="target">Target f(x)</span>
+  <span class="approx">Network ŷ(x)</span>
+  <span class="piece">Local sections (hidden neurons)</span>
+</div>
+
+<!-- ============ SECTION 6 ============ -->
+<h2>6. The Sheaf Perspective — Recap</h2>
+<div class="card">
+  <table style="width:100%;border-collapse:collapse;">
+    <tr style="border-bottom:1px solid var(--border);">
+      <th style="text-align:left;padding:0.5rem;color:var(--purple);">Sheaf Concept</th>
+      <th style="text-align:left;padding:0.5rem;color:var(--accent);">Neural Network Analogue</th>
+    </tr>
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:0.5rem;">Open cover {Uᵢ}</td>
+      <td style="padding:0.5rem;">Regions where each ReLU neuron is active vs. inactive</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:0.5rem;">Local section on Uᵢ</td>
+      <td style="padding:0.5rem;">Affine function wⱼx + bⱼ (or 0) on each region</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:0.5rem;">Restriction map</td>
+      <td style="padding:0.5rem;">ReLU activation (restricts to zero on the negative part)</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:0.5rem;">Gluing axiom</td>
+      <td style="padding:0.5rem;">Output layer's weighted sum assembles a global function</td>
+    </tr>
+    <tr>
+      <td style="padding:0.5rem;">Gluing morphism / cocycle</td>
+      <td style="padding:0.5rem;">Optimizer adjusting weights to ensure global consistency with data</td>
+    </tr>
+  </table>
+</div>
+
+<div class="insight">
+  <strong>Key Takeaway:</strong> A ReLU network is a machine for constructing piecewise-linear sheaves. Each training step refines the local sections and their gluing data until the global section (the network's output) faithfully represents the target function. More neurons = finer cover = better approximation.
+</div>
+
+<script>
+// ==================== TEMML EQUATIONS ====================
+function renderEqs() {
+  const eqs = {
+    'eq-neuron': String.raw`z_j = w_j \cdot x + b_j \qquad \text{(affine map — a local section)}`,
+    'eq-relu': String.raw`h_j(x) = \operatorname{ReLU}(z_j) = \max(0,\; w_j x + b_j)`,
+    'eq-partition': String.raw`U_j^{+} = \{x : w_j x + b_j > 0\}, \qquad U_j^{-} = \{x : w_j x + b_j < 0\}`,
+    'eq-output': String.raw`\hat{y}(x) = \sum_{j=1}^{N} \alpha_j \, h_j(x) + \beta = \sum_{j=1}^{N} \alpha_j \operatorname{ReLU}(w_j x + b_j) + \beta`,
+    'eq-loss': String.raw`\mathcal{L} = \frac{1}{M}\sum_{i=1}^{M}\bigl(y_i - \hat{y}(x_i)\bigr)^2`,
+    'eq-grad': String.raw`\theta \;\leftarrow\; \theta - \eta \,\nabla_\theta \mathcal{L} \qquad \text{where } \theta = \{w_j, b_j, \alpha_j, \beta\}`
+  };
+  for (const [id, tex] of Object.entries(eqs)) {
+    const el = document.getElementById(id);
+    if (el) {
+      try { el.innerHTML = temml.renderToString(tex, {displayMode: true}); }
+      catch(e) { el.textContent = tex; }
+    }
+  }
+}
+document.addEventListener('DOMContentLoaded', () => setTimeout(renderEqs, 100));
+
+// ==================== CANVAS UTILS ====================
+function getCtx(id) {
+  const c = document.getElementById(id);
+  const dpr = window.devicePixelRatio || 1;
+  const rect = c.getBoundingClientRect();
+  c.width = rect.width * dpr;
+  c.height = rect.height * dpr;
+  c.style.width = rect.width + 'px';
+  c.style.height = rect.height + 'px';
+  const ctx = c.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { ctx, w: rect.width, h: rect.height };
+}
+
+function drawAxes(ctx, w, h, xMin, xMax, yMin, yMax) {
+  const toX = x => (x - xMin) / (xMax - xMin) * w;
+  const toY = y => h - (y - yMin) / (yMax - yMin) * h;
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 1;
+  // grid
+  for (let v = Math.ceil(xMin); v <= Math.floor(xMax); v++) {
+    ctx.beginPath(); ctx.moveTo(toX(v), 0); ctx.lineTo(toX(v), h); ctx.stroke();
+  }
+  for (let v = Math.ceil(yMin); v <= Math.floor(yMax); v++) {
+    ctx.beginPath(); ctx.moveTo(0, toY(v)); ctx.lineTo(w, toY(v)); ctx.stroke();
+  }
+  // axes
+  ctx.strokeStyle = '#484f58';
+  ctx.lineWidth = 1.5;
+  if (yMin <= 0 && yMax >= 0) { ctx.beginPath(); ctx.moveTo(0, toY(0)); ctx.lineTo(w, toY(0)); ctx.stroke(); }
+  if (xMin <= 0 && xMax >= 0) { ctx.beginPath(); ctx.moveTo(toX(0), 0); ctx.lineTo(toX(0), h); ctx.stroke(); }
+  // labels
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '11px monospace';
+  ctx.fillText(xMin.toFixed(1), 4, toY(0) - 4);
+  ctx.fillText(xMax.toFixed(1), w - 30, toY(0) - 4);
+  return { toX, toY };
+}
+
+function plotLine(ctx, toX, toY, xMin, xMax, fn, color, lw = 2, dash = []) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lw;
+  ctx.setLineDash(dash);
+  ctx.beginPath();
+  const steps = 500;
+  for (let i = 0; i <= steps; i++) {
+    const x = xMin + (xMax - xMin) * i / steps;
+    const y = fn(x);
+    if (i === 0) ctx.moveTo(toX(x), toY(y));
+    else ctx.lineTo(toX(x), toY(y));
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ==================== SECTION 3: SINGLE NEURON ====================
+function drawSingle() {
+  const { ctx, w, h } = getCtx('canvasSingle');
+  const W = parseFloat(document.getElementById('sliderW').value);
+  const B = parseFloat(document.getElementById('sliderB').value);
+  const A = parseFloat(document.getElementById('sliderA').value);
+  document.getElementById('valW').textContent = W.toFixed(1);
+  document.getElementById('valB').textContent = B.toFixed(1);
+  document.getElementById('valA').textContent = A.toFixed(1);
+
+  const xMin = -5, xMax = 5, yMin = -4, yMax = 4;
+  ctx.clearRect(0, 0, w, h);
+  const { toX, toY } = drawAxes(ctx, w, h, xMin, xMax, yMin, yMax);
+
+  const relu = x => Math.max(0, W * x + B);
+  const out = x => A * relu(x);
+
+  plotLine(ctx, toX, toY, xMin, xMax, relu, '#f8514980', 2, [6, 4]);
+  plotLine(ctx, toX, toY, xMin, xMax, out, '#d29922', 2.5);
+
+  // mark the bend point
+  if (Math.abs(W) > 0.01) {
+    const xBend = -B / W;
+    if (xBend > xMin && xBend < xMax) {
+      ctx.fillStyle = '#f85149';
+      ctx.beginPath();
+      ctx.arc(toX(xBend), toY(0), 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#f85149';
+      ctx.font = '11px monospace';
+      ctx.fillText('bend', toX(xBend) + 8, toY(0) - 8);
+    }
+  }
+}
+document.getElementById('sliderW').addEventListener('input', drawSingle);
+document.getElementById('sliderB').addEventListener('input', drawSingle);
+document.getElementById('sliderA').addEventListener('input', drawSingle);
+
+// ==================== SECTION 4: MULTI NEURON STATIC ====================
+let multiN = 8;
+let multiTarget = 'sin';
+let multiWeights = null;
+
+const targets = {
+  sin: x => Math.sin(x * 1.5),
+  abs: x => Math.abs(x) / 2.5 - 0.8,
+  step: x => x > 0 ? 0.8 : -0.8,
+  bump: x => Math.exp(-x * x) * 1.5 - 0.5
+};
+
+function setNeurons(n) { multiN = n; fitMulti(); drawMulti(); }
+function setTarget(t) { multiTarget = t; fitMulti(); drawMulti(); }
+
+// Simple least-squares fit for the static demo
+function fitMulti() {
+  const N = multiN;
+  const xMin = -4, xMax = 4;
+  // Place bend points evenly
+  const bends = [];
+  for (let j = 0; j < N; j++) bends.push(xMin + (xMax - xMin) * (j + 0.5) / N);
+
+  // Build design matrix: columns are ReLU(x - bend_j) for positive slopes
+  // and ReLU(-x + bend_j) for negative slopes, plus bias
+  const M = 200;
+  const xs = [], ys = [];
+  for (let i = 0; i < M; i++) {
+    const x = xMin + (xMax - xMin) * i / (M - 1);
+    xs.push(x);
+    ys.push(targets[multiTarget](x));
+  }
+
+  // Use simple gradient descent to fit
+  const w = new Float64Array(N).fill(0);
+  const b = new Float64Array(N);
+  const alpha = new Float64Array(N).fill(0);
+  let beta = 0;
+
+  // Initialize: spread bends, random-ish slopes
+  for (let j = 0; j < N; j++) {
+    w[j] = (j % 2 === 0 ? 1 : -1) * (1 + Math.random() * 0.5);
+    b[j] = -w[j] * bends[j];
+    alpha[j] = 0;
+  }
+
+  const lr = 0.001;
+  for (let epoch = 0; epoch < 2000; epoch++) {
+    const dw = new Float64Array(N);
+    const db = new Float64Array(N);
+    const da = new Float64Array(N);
+    let dBeta = 0;
+    let loss = 0;
+
+    for (let i = 0; i < M; i++) {
+      const x = xs[i];
+      let yhat = beta;
+      const h = new Float64Array(N);
+      const z = new Float64Array(N);
+      for (let j = 0; j < N; j++) {
+        z[j] = w[j] * x + b[j];
+        h[j] = z[j] > 0 ? z[j] : 0;
+        yhat += alpha[j] * h[j];
+      }
+      const err = yhat - ys[i];
+      loss += err * err;
+      dBeta += err;
+      for (let j = 0; j < N; j++) {
+        da[j] += err * h[j];
+        if (z[j] > 0) {
+          dw[j] += err * alpha[j] * x;
+          db[j] += err * alpha[j];
+        }
+      }
+    }
+    loss /= M;
+    for (let j = 0; j < N; j++) {
+      alpha[j] -= lr * 2 * da[j] / M;
+      w[j] -= lr * 2 * dw[j] / M;
+      b[j] -= lr * 2 * db[j] / M;
+    }
+    beta -= lr * 2 * dBeta / M;
+  }
+
+  multiWeights = { w, b, alpha, beta, N };
+}
+
+function evalMulti(x) {
+  if (!multiWeights) return 0;
+  const { w, b, alpha, beta, N } = multiWeights;
+  let y = beta;
+  for (let j = 0; j < N; j++) {
+    const z = w[j] * x + b[j];
+    y += alpha[j] * Math.max(0, z);
+  }
+  return y;
+}
+
+function drawMulti() {
+  if (!multiWeights) fitMulti();
+  const { ctx, w: cw, h: ch } = getCtx('canvasMulti');
+  const xMin = -4, xMax = 4, yMin = -2, yMax = 2;
+  ctx.clearRect(0, 0, cw, ch);
+  const { toX, toY } = drawAxes(ctx, cw, ch, xMin, xMax, yMin, yMax);
+  const { w, b, alpha, beta, N } = multiWeights;
+
+  // Draw individual pieces
+  for (let j = 0; j < N; j++) {
+    plotLine(ctx, toX, toY, xMin, xMax, x => alpha[j] * Math.max(0, w[j] * x + b[j]), '#bc8cff40', 1.2, [4, 3]);
+  }
+
+  // Target
+  plotLine(ctx, toX, toY, xMin, xMax, x => targets[multiTarget](x), '#3fb950', 2.5);
+  // Network output
+  plotLine(ctx, toX, toY, xMin, xMax, evalMulti, '#d29922', 2.5);
+
+  // Label
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '12px monospace';
+  ctx.fillText(`N = ${N} neurons`, 10, 20);
+}
+
+// ==================== SECTION 5: LIVE TRAINING ====================
+let trainNet = null;
+let trainRunning = false;
+let trainEpoch = 0;
+let lossHistory = [];
+let trainAnimId = null;
+let trainLR = 0.01;
+let trainTargetFn = x => Math.sin(x * 1.5);
+
+function updateLR() {
+  const v = parseFloat(document.getElementById('lrSlider').value);
+  trainLR = Math.pow(10, v);
+  document.getElementById('lrLabel').textContent = trainLR.toFixed(4);
+}
+
+function initTrainNet(N) {
+  const net = {
+    N,
+    w: new Float64Array(N),
+    b: new Float64Array(N),
+    alpha: new Float64Array(N),
+    beta: 0
+  };
+  // Xavier-ish init
+  const scale = Math.sqrt(2 / 1);
+  for (let j = 0; j < N; j++) {
+    net.w[j] = (Math.random() - 0.5) * 2 * scale;
+    net.b[j] = (Math.random() - 0.5) * 0.5;
+    net.alpha[j] = (Math.random() - 0.5) * 2 * scale / Math.sqrt(N);
+  }
+  return net;
+}
+
+function forwardTrain(net, x) {
+  let y = net.beta;
+  for (let j = 0; j < net.N; j++) {
+    const z = net.w[j] * x + net.b[j];
+    y += net.alpha[j] * Math.max(0, z);
+  }
+  return y;
+}
+
+function trainStep(net, xs, ys, lr) {
+  const M = xs.length;
+  const N = net.N;
+  const dw = new Float64Array(N);
+  const db = new Float64Array(N);
+  const da = new Float64Array(N);
+  let dBeta = 0;
+  let loss = 0;
+
+  for (let i = 0; i < M; i++) {
+    const x = xs[i];
+    let yhat = net.beta;
+    const z = new Float64Array(N);
+    const h = new Float64Array(N);
+    for (let j = 0; j < N; j++) {
+      z[j] = net.w[j] * x + net.b[j];
+      h[j] = z[j] > 0 ? z[j] : 0;
+      yhat += net.alpha[j] * h[j];
+    }
+    const err = yhat - ys[i];
+    loss += err * err;
+    dBeta += err;
+    for (let j = 0; j < N; j++) {
+      da[j] += err * h[j];
+      if (z[j] > 0) {
+        dw[j] += err * net.alpha[j] * x;
+        db[j] += err * net.alpha[j];
+      }
+    }
+  }
+  loss /= M;
+  const s = 2 * lr / M;
+  for (let j = 0; j < N; j++) {
+    net.alpha[j] -= s * da[j];
+    net.w[j] -= s * dw[j];
+    net.b[j] -= s * db[j];
+  }
+  net.beta -= s * dBeta;
+  return loss;
+}
+
+// Training data
+const trainXMin = -4, trainXMax = 4;
+const trainM = 120;
+const trainXs = [], trainYs = [];
+for (let i = 0; i < trainM; i++) {
+  const x = trainXMin + (trainXMax - trainXMin) * i / (trainM - 1);
+  trainXs.push(x);
+  trainYs.push(Math.sin(x * 1.5));
+}
+
+function resetTrain() {
+  if (trainAnimId) cancelAnimationFrame(trainAnimId);
+  trainRunning = false;
+  document.getElementById('btnTrain').textContent = '▶ Train';
+  const N = parseInt(document.getElementById('trainNSlider').value);
+  document.getElementById('trainNLabel').textContent = N;
+  trainNet = initTrainNet(N);
+  trainEpoch = 0;
+  lossHistory = [];
+  updateLR();
+  // Recompute training data
+  for (let i = 0; i < trainM; i++) {
+    trainYs[i] = Math.sin(trainXs[i] * 1.5);
+  }
+  drawTrainCanvas();
+  drawLossCanvas();
+  document.getElementById('epochNum').textContent = '0';
+  document.getElementById('lossVal').textContent = '—';
+}
+
+function toggleTrain() {
+  if (trainRunning) {
+    trainRunning = false;
+    document.getElementById('btnTrain').textContent = '▶ Train';
+    if (trainAnimId) cancelAnimationFrame(trainAnimId);
+  } else {
+    trainRunning = true;
+    document.getElementById('btnTrain').textContent = '⏸ Pause';
+    trainLoop();
+  }
+}
+
+function trainLoop() {
+  if (!trainRunning) return;
+  // Do multiple steps per frame for speed
+  const stepsPerFrame = 10;
+  for (let s = 0; s < stepsPerFrame; s++) {
+    const loss = trainStep(trainNet, trainXs, trainYs, trainLR);
+    trainEpoch++;
+    lossHistory.push(loss);
+  }
+  document.getElementById('epochNum').textContent = trainEpoch;
+  document.getElementById('lossVal').textContent = lossHistory[lossHistory.length - 1].toFixed(6);
+
+  drawTrainCanvas();
+  drawLossCanvas();
+  trainAnimId = requestAnimationFrame(trainLoop);
+}
+
+function drawTrainCanvas() {
+  const { ctx, w, h } = getCtx('canvasTrain');
+  const xMin = -4, xMax = 4, yMin = -2.5, yMax = 2.5;
+  ctx.clearRect(0, 0, w, h);
+  const { toX, toY } = drawAxes(ctx, w, h, xMin, xMax, yMin, yMax);
+
+  if (!trainNet) return;
+  const N = trainNet.N;
+
+  // Individual local sections
+  for (let j = 0; j < N; j++) {
+    const jj = j;
+    plotLine(ctx, toX, toY, xMin, xMax,
+      x => trainNet.alpha[jj] * Math.max(0, trainNet.w[jj] * x + trainNet.b[jj]),
+      '#bc8cff30', 1, [4, 3]);
+  }
+
+  // Target
+  plotLine(ctx, toX, toY, xMin, xMax, x => Math.sin(x * 1.5), '#3fb950', 2.5);
+
+  // Network
+  plotLine(ctx, toX, toY, xMin, xMax, x => forwardTrain(trainNet, x), '#d29922', 2.5);
+
+  // Title
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '12px monospace';
+  ctx.fillText('Function Approximation', 10, 18);
+}
+
+function drawLossCanvas() {
+  const { ctx, w, h } = getCtx('canvasLoss');
+  ctx.clearRect(0, 0, w, h);
+
+  if (lossHistory.length < 2) {
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '13px monospace';
+    ctx.fillText('Loss curve will appear here', w / 2 - 110, h / 2);
+    return;
+  }
+
+  // Compute axis bounds
+  const maxLoss = Math.max(...lossHistory.slice(0, 50), 0.01);
+  const minLoss = 0;
+  const xMin = 0, xMax = lossHistory.length;
+  const yMin = minLoss, yMax = maxLoss * 1.1;
+
+  const toX = x => (x - xMin) / (xMax - xMin) * w;
+  const toY = y => h - 30 - (y - yMin) / (yMax - yMin) * (h - 40);
+
+  // Grid
+  ctx.strokeStyle = '#30363d';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 5; i++) {
+    const y = yMin + (yMax - yMin) * i / 4;
+    ctx.beginPath(); ctx.moveTo(0, toY(y)); ctx.lineTo(w, toY(y)); ctx.stroke();
+  }
+
+  // Loss curve
+  ctx.strokeStyle = '#f85149';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i < lossHistory.length; i++) {
+    const px = toX(i);
+    const py = toY(Math.min(lossHistory[i], yMax));
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = '#8b949e';
+  ctx.font = '12px monospace';
+  ctx.fillText('Loss (MSE)', 10, 18);
+  ctx.fillText('Epoch ' + lossHistory.length, w - 100, h - 8);
+  ctx.fillText(yMax.toFixed(3), 4, 35);
+  ctx.fillText(minLoss.toFixed(3), 4, h - 32);
+}
+
+// ==================== INIT ====================
+window.addEventListener('load', () => {
+  drawSingle();
+  fitMulti();
+  drawMulti();
+  resetTrain();
+});
+
+window.addEventListener('resize', () => {
+  drawSingle();
+  drawMulti();
+  if (trainNet) {
+    drawTrainCanvas();
+    drawLossCanvas();
+  }
+});
+</script>
+
+</body>
+</html>
