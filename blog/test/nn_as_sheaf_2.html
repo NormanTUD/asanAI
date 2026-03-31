@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural Networks as Sheaves — Fully Interactive</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.min.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --orange: #d29922; --red: #f85149; --purple: #bc8cff;
+    --cyan: #39d2c0; --pink: #f778ba;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height: 1.65; padding: 1.5rem;
+    max-width: 1200px; margin: 0 auto;
+  }
+  h1 { font-size:2rem; background:linear-gradient(135deg,var(--accent),var(--purple));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:0.3rem; }
+  h2 { color:var(--accent); font-size:1.35rem; margin:2rem 0 0.75rem;
+    border-bottom:1px solid var(--border); padding-bottom:0.4rem; }
+  h3 { color:var(--purple); font-size:1.05rem; margin:1.2rem 0 0.5rem; }
+  .sub { color:var(--muted); font-size:1rem; margin-bottom:1.5rem; }
+  .card { background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:1.25rem; margin:1rem 0; }
+  .eq { text-align:center; margin:0.8rem 0; padding:0.7rem;
+    background:rgba(88,166,255,0.04); border-radius:6px; overflow-x:auto;
+    font-size: 1.05rem; }
+  .eq-sm { font-size:0.92rem; padding:0.4rem 0.7rem; margin:0.3rem 0; }
+  canvas { display:block; border-radius:8px; border:1px solid var(--border); background:#0a0e14; }
+  .controls { display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; justify-content:center; margin:0.75rem 0; }
+  button { background:var(--accent); color:#000; border:none; padding:0.45rem 1rem;
+    border-radius:7px; font-weight:600; cursor:pointer; font-size:0.85rem; transition:opacity 0.2s; }
+  button:hover { opacity:0.85; }
+  button.sec { background:var(--border); color:var(--text); }
+  button.active { background:var(--purple); color:#fff; }
+  label { color:var(--muted); font-size:0.85rem; }
+  input[type=range] { accent-color:var(--accent); width:100px; }
+  select { background:var(--card); color:var(--text); border:1px solid var(--border);
+    padding:0.35rem 0.6rem; border-radius:6px; font-size:0.85rem; }
+  .legend { display:flex; flex-wrap:wrap; gap:0.8rem; justify-content:center;
+    font-size:0.8rem; color:var(--muted); margin:0.4rem 0; }
+  .legend span { display:flex; align-items:center; gap:4px; }
+  .legend .swatch { width:18px; height:3px; border-radius:2px; display:inline-block; }
+  .insight { border-left:3px solid var(--purple); padding:0.6rem 0.9rem;
+    margin:0.8rem 0; background:rgba(188,140,255,0.06); border-radius:0 8px 8px 0; font-size:0.93rem; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; }
+  @media(max-width:800px){ .grid2,.grid3{grid-template-columns:1fr;} body{padding:0.75rem;} }
+  .tensor-box { background:#1a1f2b; border:1px solid var(--border); border-radius:8px;
+    padding:0.6rem 0.8rem; font-family:'Courier New',monospace; font-size:0.88rem;
+    margin:0.3rem 0; overflow-x:auto; }
+  .tensor-label { color:var(--accent); font-weight:600; font-size:0.8rem; margin-bottom:0.2rem; }
+  .neuron-row { display:flex; flex-wrap:wrap; gap:0.5rem; margin:0.5rem 0; }
+  .neuron-chip { padding:0.3rem 0.6rem; border-radius:6px; font-size:0.78rem;
+    font-family:monospace; cursor:pointer; transition:all 0.2s; border:1px solid transparent; }
+  .neuron-chip:hover { border-color:var(--accent); }
+  .neuron-chip.selected { border-color:var(--accent); box-shadow:0 0 8px rgba(88,166,255,0.3); }
+  .phase-tabs { display:flex; gap:0; margin:1rem 0 0.5rem; }
+  .phase-tab { padding:0.5rem 1.2rem; background:var(--card); border:1px solid var(--border);
+    cursor:pointer; font-size:0.9rem; color:var(--muted); transition:all 0.2s; }
+  .phase-tab:first-child { border-radius:8px 0 0 8px; }
+  .phase-tab:last-child { border-radius:0 8px 8px 0; }
+  .phase-tab.active { background:var(--accent); color:#000; font-weight:600; border-color:var(--accent); }
+  .step-box { background:rgba(63,185,80,0.06); border:1px solid rgba(63,185,80,0.2);
+    border-radius:8px; padding:0.8rem; margin:0.5rem 0; }
+  .step-num { display:inline-block; background:var(--accent); color:#000; width:24px; height:24px;
+    border-radius:50%; text-align:center; line-height:24px; font-weight:700; font-size:0.8rem; margin-right:0.5rem; }
+  .color-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:4px; }
+  .loss-display { font-family:'Courier New',monospace; font-size:1rem; color:var(--green);
+    text-align:center; margin:0.4rem 0; }
+  .arch-flow { display:flex; align-items:center; justify-content:center; gap:0.2rem;
+    margin:0.75rem 0; flex-wrap:wrap; }
+  .arch-box { padding:0.4rem 0.8rem; border-radius:7px; font-weight:600; font-size:0.82rem; }
+  .arch-arrow { color:var(--muted); font-size:1.1rem; }
+  .a-dense { background:rgba(88,166,255,0.15); color:var(--accent); border:1px solid rgba(88,166,255,0.3); }
+  .a-relu { background:rgba(248,81,73,0.15); color:var(--red); border:1px solid rgba(248,81,73,0.3); }
+  .a-out { background:rgba(63,185,80,0.15); color:var(--green); border:1px solid rgba(63,185,80,0.3); }
+  .scroll-x { overflow-x:auto; }
+  .fade-in { animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body>
+
+<h1>Neural Networks as Sheaves</h1>
+<p class="sub">See every weight, every equation, every bend. Understand by watching.</p>
+
+<!-- ===== ARCHITECTURE ===== -->
+<h2>① The Architecture</h2>
+<div class="card">
+  <p>We study the simplest non-trivial network: one hidden layer with <strong>N</strong> neurons.</p>
+  <div class="arch-flow">
+    <div class="arch-box a-dense">x ∈ ℝ</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-box a-dense">Dense₁: W₁x + b₁</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-box a-relu">ReLU</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-box a-dense">Dense₂: W₂h + β</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-box a-out">ŷ ∈ ℝ</div>
+  </div>
+  <div class="eq" id="eq-full"></div>
+  <div class="controls">
+    <label>Hidden neurons N:</label>
+    <select id="selN" onchange="onChangeN()">
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="8">8</option>
+    </select>
+    <label style="margin-left:1rem;">Target:</label>
+    <select id="selTarget" onchange="onChangeTarget()">
+      <option value="sin">sin(πx/2)</option>
+      <option value="quad">x² − 1</option>
+      <option value="abs">|x|</option>
+      <option value="step">step(x)</option>
+    </select>
+    <button onclick="randomizeWeights()" class="sec">🎲 Randomize Weights</button>
+  </div>
+</div>
+
+<!-- ===== STEP-BY-STEP FORWARD PASS ===== -->
+<h2>② Step-by-Step Forward Pass</h2>
+<p>Pick an input <strong>x</strong> and watch every number flow through the network.</p>
+
+<div class="card">
+  <div class="controls">
+    <label>Input x = <strong id="xValLabel">0.00</strong></label>
+    <input type="range" id="xSlider" min="-3" max="3" step="0.05" value="1.0" oninput="updateForwardPass()" style="width:200px;">
+  </div>
+
+  <!-- Step 1: Dense 1 -->
+  <div class="step-box fade-in" id="step1Box">
+    <p><span class="step-num">1</span><strong>Dense₁: z = W₁·x + b₁</strong> — each neuron computes an affine function</p>
+    <div id="tensorW1"></div>
+    <div id="tensorB1"></div>
+    <div class="eq eq-sm" id="eq-z-expanded"></div>
+    <div id="tensorZ"></div>
+  </div>
+
+  <!-- Step 2: ReLU -->
+  <div class="step-box fade-in" id="step2Box" style="border-color:rgba(248,81,73,0.3);background:rgba(248,81,73,0.04);">
+    <p><span class="step-num" style="background:var(--red);">2</span><strong>ReLU: h = max(0, z)</strong> — bend each affine piece at zero</p>
+    <div class="eq eq-sm" id="eq-relu-expanded"></div>
+    <div id="tensorH"></div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-top:0.3rem;" id="reluExplain"></p>
+  </div>
+
+  <!-- Step 3: Dense 2 -->
+  <div class="step-box fade-in" id="step3Box" style="border-color:rgba(63,185,80,0.3);background:rgba(63,185,80,0.04);">
+    <p><span class="step-num" style="background:var(--green);">3</span><strong>Dense₂: ŷ = W₂·h + β</strong> — glue all pieces into one output</p>
+    <div id="tensorW2"></div>
+    <div class="eq eq-sm" id="eq-yhat-expanded"></div>
+    <div id="tensorYhat"></div>
+  </div>
+
+  <!-- Result -->
+  <div style="text-align:center;margin-top:0.75rem;">
+    <div class="eq" id="eq-result"></div>
+  </div>
+</div>
+
+<!-- ===== VISUAL: ALL SUB-FUNCTIONS ===== -->
+<h2>③ See Every Sub-Function</h2>
+<p>Each neuron <em>j</em> contributes a piece: <strong>αⱼ · ReLU(wⱼx + bⱼ)</strong>. These are the <em>local sections</em>. Their sum is the <em>global section</em> (network output).</p>
+
+<div class="card">
+  <div class="phase-tabs" id="phaseTabs">
+    <div class="phase-tab active" onclick="setPhase('affine')">Affine (wⱼx+bⱼ)</div>
+    <div class="phase-tab" onclick="setPhase('relu')">After ReLU</div>
+    <div class="phase-tab" onclick="setPhase('weighted')">Weighted (αⱼ·hⱼ)</div>
+    <div class="phase-tab" onclick="setPhase('sum')">Glued Sum ŷ(x)</div>
+    <div class="phase-tab" onclick="setPhase('all')">All at Once</div>
+  </div>
+  <canvas id="canvasPhase" width="900" height="380"></canvas>
+  <div class="legend" id="phaseLegend"></div>
+  <div class="eq eq-sm" id="eq-phase-detail"></div>
+
+  <h3>Individual Neuron Equations (with real values)</h3>
+  <div id="neuronEqs" class="scroll-x"></div>
+</div>
+
+<!-- ===== VISUAL: THE BENDING ===== -->
+<h2>④ How ReLU Bends: Before vs After</h2>
+<p>Select a neuron to see its affine line and how ReLU folds it. The <span style="color:var(--red);">red dot</span> is the bend point (where wⱼx + bⱼ = 0).</p>
+
+<div class="card">
+  <div class="controls">
+    <label>Neuron:</label>
+    <div class="neuron-row" id="neuronSelector"></div>
+  </div>
+  <div class="grid2">
+    <div>
+      <canvas id="canvasBendBefore" width="440" height="280"></canvas>
+      <div style="text-align:center;font-size:0.85rem;color:var(--muted);">Before ReLU: zⱼ = wⱼx + bⱼ</div>
+    </div>
+    <div>
+      <canvas id="canvasBendAfter" width="440" height="280"></canvas>
+      <div style="text-align:center;font-size:0.85rem;color:var(--muted);">After ReLU: hⱼ = max(0, zⱼ)</div>
+    </div>
+  </div>
+  <div class="eq eq-sm" id="eq-bend-detail"></div>
+  <div class="insight" id="bendInsight"></div>
+</div>
+
+<!-- ===== LIVE TRAINING ===== -->
+<h2>⑤ Watch the Optimizer Glue It Together</h2>
+<p>The optimizer adjusts every weight so the local pieces, when summed, match the target. Watch the tensors change in real time.</p>
+
+<div class="card">
+  <div class="grid2">
+    <div>
+      <canvas id="canvasTrain" width="540" height="340"></canvas>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--green);"></span>Target</span>
+        <span><span class="swatch" style="background:var(--orange);"></span>Network ŷ(x)</span>
+        <span><span class="swatch" style="background:var(--purple);opacity:0.5;"></span>Local sections</span>
+      </div>
+    </div>
+    <div>
+      <canvas id="canvasLoss" width="540" height="340"></canvas>
+    </div>
+  </div>
+  <div class="loss-display">
+    Epoch: <span id="epochNum">0</span> &nbsp;|&nbsp; Loss: <span id="lossVal">—</span>
+  </div>
+  <div class="controls">
+    <button id="btnTrain" onclick="toggleTrain()">▶ Train</button>
+    <button class="sec" onclick="resetTrain()">↺ Reset</button>
+    <button class="sec" onclick="trainOneStep()">Step ×1</button>
+    <label>LR: <span id="lrLabel">0.01</span></label>
+    <input type="range" id="lrSlider" min="-4" max="-0.5" step="0.25" value="-2" oninput="updateLR()">
+  </div>
+
+  <h3>Live Tensor Values</h3>
+  <div class="grid2" id="liveTensors">
+    <div id="liveW1"></div>
+    <div id="liveB1"></div>
+    <div id="liveW2"></div>
+    <div id="liveBeta"></div>
+  </div>
+
+  <h3>Live Neuron Equations</h3>
+  <div id="liveNeuronEqs" class="scroll-x"></div>
+</div>
+
+<!-- ===== SHEAF TABLE ===== -->
+<h2>⑥ The Sheaf Dictionary</h2>
+<div class="card">
+  <table style="width:100%;border-collapse:collapse;font-size:0.92rem;">
+    <tr style="border-bottom:1px solid var(--border);">
+      <th style="text-align:left;padding:0.5rem;color:var(--purple);">Sheaf Concept</th>
+      <th style="text-align:left;padding:0.5rem;color:var(--accent);">Neural Network</th>
+      <th style="text-align:left;padding:0.5rem;color:var(--green);">What You See</th>
+    </tr>
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:0.5rem;">Open cover {Uⱼ}</td>
+      <td style="padding:0.5rem;">Regions where each ReLU is on/off</td>
+      <td style="padding:0.5rem;">The bend points split ℝ into intervals</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:0.5rem;">Local section sⱼ</td>
+      <td style="padding:0.5rem;">wⱼx + bⱼ on the active region</td>
+      <td style="padding:0.5rem;">Each colored line in "Affine" phase</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:0.5rem;">Restriction map</td>
+      <td style="padding:0.5rem;">ReLU: kills the section on U⁻</td>
+      <td style="padding:0.5rem;">The line becomes flat-zero on one side</td>
+    </tr>
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:0.5rem;">Gluing axiom</td>
+      <td style="padding:0.5rem;">ŷ = Σ αⱼhⱼ + β</td>
+      <td style="padding:0.5rem;">Orange curve = sum of all purple pieces</td>
+    </tr>
+    <tr>
+      <td style="padding:0.5rem;">Cocycle / compatibility</td>
+      <td style="padding:0.5rem;">Optimizer minimizing loss</td>
+      <td style="padding:0.5rem;">Loss curve going down; pieces rearranging</td>
+    </tr>
+  </table>
+</div>
+
+<script>
+// ===================== GLOBALS =====================
+const COLORS = ['#58a6ff','#f85149','#3fb950','#d29922','#bc8cff','#39d2c0','#f778ba','#ff7b72'];
+let N = 3;
+let net = null; // {w1, b1, w2, beta}
+let selectedNeuron = 0;
+let currentPhase = 'affine';
+let targetKey = 'sin';
+
+const targetFns = {
+  sin: x => Math.sin(Math.PI * x / 2),
+  quad: x => x*x - 1,
+  abs: x => Math.abs(x),
+  step: x => x > 0 ? 1 : (x < 0 ? -1 : 0)
+};
+
+function getTarget(x) { return targetFns[targetKey](x); }
+
+// ===================== NETWORK =====================
+function createNet(n) {
+  const scale = Math.sqrt(2);
+  const w1 = [], b1 = [], w2 = [];
+  for (let j = 0; j < n; j++) {
+    w1.push((Math.random()-0.5)*2*scale);
+    b1.push((Math.random()-0.5)*1.5);
+    w2.push((Math.random()-0.5)*2*scale/Math.sqrt(n));
+  }
+  return { w1, b1, w2, beta: (Math.random()-0.5)*0.3, N: n };
+}
+
+function forward(net, x) {
+  const z = [], h = [];
+  for (let j = 0; j < net.N; j++) {
+    z.push(net.w1[j]*x + net.b1[j]);
+    h.push(Math.max(0, z[j]));
+  }
+  let y = net.beta;
+  for (let j = 0; j < net.N; j++) y += net.w2[j]*h[j];
+  return { z, h, y };
+}
+
+function evalNet(net, x) { return forward(net, x).y; }
+
+// ===================== CANVAS UTILS =====================
+function setupCanvas(id) {
+  const c = document.getElementById(id);
+  if (!c) return null;
+  const dpr = window.devicePixelRatio || 1;
+  const rect = c.getBoundingClientRect();
+  c.width = rect.width * dpr;
+  c.height = rect.height * dpr;
+  c.style.width = rect.width + 'px';
+  c.style.height = rect.height + 'px';
+  const ctx = c.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { ctx, w: rect.width, h: rect.height };
+}
+
+function makeTransform(w, h, xMin, xMax, yMin, yMax, pad=30) {
+  const pw = w - pad*2, ph = h - pad*2;
+  return {
+    toX: x => pad + (x-xMin)/(xMax-xMin)*pw,
+    toY: y => pad + ph - (y-yMin)/(yMax-yMin)*ph,
+    xMin, xMax, yMin, yMax
+  };
+}
+
+function drawGrid(ctx, w, h, tr) {
+  const {toX, toY, xMin, xMax, yMin, yMax} = tr;
+  ctx.strokeStyle = '#1e2430'; ctx.lineWidth = 1;
+  for (let v = Math.ceil(xMin); v <= Math.floor(xMax); v++) {
+    ctx.beginPath(); ctx.moveTo(toX(v),toY(yMin)); ctx.lineTo(toX(v),toY(yMax)); ctx.stroke();
+  }
+  for (let v = Math.ceil(yMin); v <= Math.floor(yMax); v++) {
+    ctx.beginPath(); ctx.moveTo(toX(xMin),toY(v)); ctx.lineTo(toX(xMax),toY(v)); ctx.stroke();
+  }
+  ctx.strokeStyle = '#484f58'; ctx.lineWidth = 1.5;
+  if (yMin<=0 && yMax>=0) { ctx.beginPath(); ctx.moveTo(toX(xMin),toY(0)); ctx.lineTo(toX(xMax),toY(0)); ctx.stroke(); }
+  if (xMin<=0 && xMax>=0) { ctx.beginPath(); ctx.moveTo(toX(0),toY(yMin)); ctx.lineTo(toX(0),toY(yMax)); ctx.stroke(); }
+  ctx.fillStyle='#8b949e'; ctx.font='10px monospace';
+  for (let v = Math.ceil(xMin); v <= Math.floor(xMax); v++) {
+    if(v===0) continue;
+    ctx.fillText(v, toX(v)-4, toY(0)+14);
+  }
+  for (let v = Math.ceil(yMin); v <= Math.floor(yMax); v++) {
+    if(v===0) continue;
+    ctx.fillText(v.toFixed(0), toX(0)+4, toY(v)+4);
+  }
+}
+
+function plotFn(ctx, tr, fn, color, lw=2, dash=[]) {
+  const {toX, toY, xMin, xMax, yMin, yMax} = tr;
+  ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.setLineDash(dash);
+  ctx.beginPath();
+  const steps = 400;
+  for (let i = 0; i <= steps; i++) {
+    const x = xMin + (xMax-xMin)*i/steps;
+    const y = Math.max(yMin-1, Math.min(yMax+1, fn(x)));
+    if (i===0) ctx.moveTo(toX(x),toY(y)); else ctx.lineTo(toX(x),toY(y));
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+}
+
+function drawDot(ctx, tr, x, y, r, color) {
+  const {toX, toY} = tr;
+  ctx.fillStyle = color;
+  ctx.beginPath(); ctx.arc(toX(x), toY(y), r, 0, Math.PI*2); ctx.fill();
+}
+
+// ===================== TEMML HELPERS =====================
+function tex(str, display=false) {
+  try { return temml.renderToString(str, {displayMode:display}); }
+  catch(e) { return `<code>${str}</code>`; }
+}
+
+function fmtNum(v, d=2) {
+  const s = v.toFixed(d);
+  if (v >= 0) return '+' + s;
+  return s;
+}
+function fmtN(v, d=2) { return v.toFixed(d); }
+
+function colorTex(texStr, color) {
+  return `\\textcolor{${color}}{${texStr}}`;
+}
+
+// ===================== RENDER TENSOR BOX =====================
+function renderTensor(label, values, id, color='var(--accent)') {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const vals = values.map(v => v.toFixed(3)).join(', ');
+  el.innerHTML = `<div class="tensor-label" style="color:${color}">${label}</div>
+    <div class="tensor-box">[${vals}]</div>`;
+}
+
+function renderScalar(label, value, id, color='var(--green)') {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = `<div class="tensor-label" style="color:${color}">${label}</div>
+    <div class="tensor-box">${value.toFixed(4)}</div>`;
+}
+
+// ===================== FORWARD PASS DISPLAY =====================
+function updateForwardPass() {
+  if (!net) return;
+  const x = parseFloat(document.getElementById('xSlider').value);
+  document.getElementById('xValLabel').textContent = x.toFixed(2);
+  const {z, h, y} = forward(net, x);
+
+  // Tensors
+  renderTensor(`W₁ = [w₁, w₂, ..., w_N]  (${net.N} weights)`, net.w1, 'tensorW1', 'var(--accent)');
+  renderTensor(`b₁ = [b₁, b₂, ..., b_N]  (${net.N} biases)`, net.b1, 'tensorB1', 'var(--cyan)');
+
+  // z = W1*x + b1 expanded
+  let zParts = [];
+  for (let j = 0; j < net.N; j++) {
+    zParts.push(`${fmtN(net.w1[j])} \\cdot ${fmtN(x)} ${fmtNum(net.b1[j])}`);
+  }
+  const zTexInner = zParts.map((p,i) => `z_{${i+1}} = ${p} = ${fmtN(z[i])}`).join(', \\quad ');
+  document.getElementById('eq-z-expanded').innerHTML = tex(zTexInner, true);
+  renderTensor(`z = W₁·x + b₁`, z, 'tensorZ', 'var(--orange)');
+
+  // ReLU expanded
+  let reluParts = [];
+  let activeCount = 0;
+  for (let j = 0; j < net.N; j++) {
+    const isActive = z[j] > 0;
+    if (isActive) activeCount++;
+    reluParts.push(`h_{${j+1}} = \\max(0,\\, ${fmtN(z[j])}) = ${fmtN(h[j])}`);
+  }
+  const reluTexInner = reluParts.join(', \\quad ');
+  document.getElementById('eq-relu-expanded').innerHTML = tex(reluTexInner, true);
+  renderTensor(`h = ReLU(z)`, h, 'tensorH', 'var(--red)');
+  document.getElementById('reluExplain').textContent =
+    `${activeCount} of ${net.N} neurons are active (z > 0). The other ${net.N - activeCount} are "folded" to zero by ReLU.`;
+
+  // Dense 2
+  renderTensor(`W₂ = [α₁, α₂, ..., α_N]  (output weights)`, net.w2, 'tensorW2', 'var(--purple)');
+  let sumParts = [];
+  let sumVal = net.beta;
+  for (let j = 0; j < net.N; j++) {
+    sumParts.push(`${fmtN(net.w2[j])} \\cdot ${fmtN(h[j])}`);
+    sumVal += net.w2[j] * h[j];
+  }
+  const yhatTex = sumParts.join(' + ') + ` ${fmtNum(net.beta)} = ${fmtN(y)}`;
+  document.getElementById('eq-yhat-expanded').innerHTML = tex(`\\hat{y} = ${yhatTex}`, true);
+  renderScalar(`ŷ (network output)`, y, 'tensorYhat', 'var(--green)');
+
+  // Final result comparison
+  const tgt = getTarget(x);
+  const err = y - tgt;
+  document.getElementById('eq-result').innerHTML = tex(
+    `\\hat{y}(${fmtN(x)}) = ${fmtN(y)}, \\quad f(${fmtN(x)}) = ${fmtN(tgt)}, \\quad \\text{error} = ${fmtN(err)}`, true
+  );
+
+  // Also update other views
+  drawPhaseCanvas();
+  drawBendCanvases();
+  renderNeuronEquations('neuronEqs');
+}
+
+// ===================== NEURON EQUATIONS =====================
+function renderNeuronEquations(containerId) {
+  if (!net) return;
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  let html = '<div style="display:flex;flex-direction:column;gap:0.4rem;">';
+  for (let j = 0; j < net.N; j++) {
+    const w = net.w1[j], b = net.b1[j], a = net.w2[j];
+    const bendX = Math.abs(w) > 1e-9 ? (-b/w) : Infinity;
+    const col = COLORS[j % COLORS.length];
+    const bSign = b >= 0 ? '+' : '';
+    html += `<div class="eq eq-sm" style="border-left:3px solid ${col};text-align:left;padding-left:0.8rem;">`;
+    html += `<span class="color-dot" style="background:${col};"></span> `;
+    html += tex(`\\text{Neuron ${j+1}:}\\quad \\alpha_{${j+1}} \\cdot \\text{ReLU}(w_{${j+1}}x + b_{${j+1}}) = ${fmtN(a)} \\cdot \\max(0,\\; ${fmtN(w)}x ${bSign}${fmtN(b)})`) + ' ';
+    if (isFinite(bendX)) {
+      html += `<span style="color:var(--muted);font-size:0.8rem;"> — bend at x = ${bendX.toFixed(2)}</span>`;
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ===================== PHASE CANVAS =====================
+function setPhase(p) {
+  currentPhase = p;
+  document.querySelectorAll('.phase-tab').forEach((t,i) => {
+    const phases = ['affine','relu','weighted','sum','all'];
+    t.classList.toggle('active', phases[i] === p);
+  });
+  drawPhaseCanvas();
+}
+
+function drawPhaseCanvas() {
+  const s = setupCanvas('canvasPhase');
+  if (!s || !net) return;
+  const {ctx, w, h} = s;
+  const xMin=-3.5, xMax=3.5, yMin=-3, yMax=3;
+  const tr = makeTransform(w, h, xMin, xMax, yMin, yMax);
+  ctx.clearRect(0,0,w,h);
+  drawGrid(ctx, w, h, tr);
+
+  const phase = currentPhase;
+  let legendHtml = '';
+  let detailTex = '';
+
+  // Target (always show in sum and all)
+  if (phase === 'sum' || phase === 'all') {
+    plotFn(ctx, tr, getTarget, '#3fb95090', 3);
+    legendHtml += `<span><span class="swatch" style="background:var(--green);"></span>Target f(x)</span>`;
+  }
+
+  if (phase === 'affine' || phase === 'all') {
+    for (let j = 0; j < net.N; j++) {
+      const jj = j;
+      const col = COLORS[j % COLORS.length];
+      plotFn(ctx, tr, x => net.w1[jj]*x + net.b1[jj], col, 2, phase==='all'?[6,4]:[]);
+      // Mark bend point
+      if (Math.abs(net.w1[j]) > 1e-9) {
+        const bx = -net.b1[j]/net.w1[j];
+        if (bx > xMin && bx < xMax) drawDot(ctx, tr, bx, 0, 4, col);
+      }
+      legendHtml += `<span><span class="swatch" style="background:${col};"></span>z${j+1}=w${j+1}x+b${j+1}</span>`;
+    }
+    if (phase === 'affine') detailTex = `z_j = w_j \\cdot x + b_j \\quad \\text{— straight lines, one per neuron}`;
+  }
+
+  if (phase === 'relu' || phase === 'all') {
+    for (let j = 0; j < net.N; j++) {
+      const jj = j;
+      const col = COLORS[j % COLORS.length];
+      const lw = phase === 'all' ? 1.5 : 2;
+      plotFn(ctx, tr, x => Math.max(0, net.w1[jj]*x + net.b1[jj]), col, lw, phase==='all'?[4,3]:[]);
+      // Mark bend point
+      if (Math.abs(net.w1[j]) > 1e-9) {
+        const bx = -net.b1[j]/net.w1[j];
+        if (bx > xMin && bx < xMax) {
+          drawDot(ctx, tr, bx, 0, 4, '#f85149');
+        }
+      }
+      if (phase === 'relu') legendHtml += `<span><span class="swatch" style="background:${col};"></span>h${j+1}=ReLU(z${j+1})</span>`;
+    }
+    if (phase === 'relu') detailTex = `h_j = \\max(0,\\, w_j x + b_j) \\quad \\text{— each line is "bent" at its zero crossing}`;
+  }
+
+  if (phase === 'weighted' || phase === 'all') {
+    for (let j = 0; j < net.N; j++) {
+      const jj = j;
+      const col = COLORS[j % COLORS.length];
+      const lw = phase === 'all' ? 1.5 : 2;
+      const dash = phase === 'all' ? [3,3] : [];
+      plotFn(ctx, tr, x => net.w2[jj]*Math.max(0, net.w1[jj]*x + net.b1[jj]), col, lw, dash);
+      if (phase === 'weighted') legendHtml += `<span><span class="swatch" style="background:${col};"></span>α${j+1}·h${j+1}</span>`;
+    }
+    if (phase === 'weighted') detailTex = `\\alpha_j \\cdot h_j(x) \\quad \\text{— scaled bent pieces (local sections)}`;
+  }
+
+  if (phase === 'sum' || phase === 'all') {
+    plotFn(ctx, tr, x => evalNet(net, x), '#d29922', 3);
+    legendHtml += `<span><span class="swatch" style="background:var(--orange);"></span>ŷ(x) = Σαⱼhⱼ + β</span>`;
+    if (phase === 'sum') detailTex = `\\hat{y}(x) = \\sum_{j=1}^{N} \\alpha_j \\, \\text{ReLU}(w_j x + b_j) + \\beta \\quad \\text{— the glued global section}`;
+    if (phase === 'all') detailTex = `\\text{All layers visible: affine (dashed)} \\to \\text{ReLU (dotted)} \\to \\text{weighted (thin)} \\to \\text{sum (bold orange)}`;
+  }
+
+  // x-probe line
+  const xProbe = parseFloat(document.getElementById('xSlider').value);
+  if (xProbe >= xMin && xProbe <= xMax) {
+    const {toX, toY} = tr;
+    ctx.strokeStyle = '#ffffff30'; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(toX(xProbe), toY(yMin)); ctx.lineTo(toX(xProbe), toY(yMax)); ctx.stroke();
+    ctx.setLineDash([]);
+    // Mark network output
+    const yProbe = evalNet(net, xProbe);
+    drawDot(ctx, tr, xProbe, yProbe, 5, '#d29922');
+    // Mark target
+    if (phase === 'sum' || phase === 'all') {
+      drawDot(ctx, tr, xProbe, getTarget(xProbe), 5, '#3fb950');
+    }
+  }
+
+  document.getElementById('phaseLegend').innerHTML = legendHtml;
+  const detailEl = document.getElementById('eq-phase-detail');
+  if (detailTex) detailEl.innerHTML = tex(detailTex, true);
+  else detailEl.innerHTML = '';
+}
+
+// ===================== BEND CANVASES =====================
+function buildNeuronSelector() {
+  const el = document.getElementById('neuronSelector');
+  if (!el || !net) return;
+  let html = '';
+  for (let j = 0; j < net.N; j++) {
+    const col = COLORS[j % COLORS.length];
+    const sel = j === selectedNeuron ? 'selected' : '';
+    html += `<div class="neuron-chip ${sel}" style="background:${col}22;color:${col};" onclick="selectNeuron(${j})">Neuron ${j+1}</div>`;
+  }
+  el.innerHTML = html;
+}
+
+function selectNeuron(j) {
+  selectedNeuron = j;
+  buildNeuronSelector();
+  drawBendCanvases();
+}
+
+function drawBendCanvases() {
+  if (!net) return;
+  const j = selectedNeuron;
+  if (j >= net.N) { selectedNeuron = 0; return drawBendCanvases(); }
+  const col = COLORS[j % COLORS.length];
+  const w1 = net.w1[j], b1 = net.b1[j], a = net.w2[j];
+  const bendX = Math.abs(w1) > 1e-9 ? -b1/w1 : null;
+
+  const xMin=-3.5, xMax=3.5, yMin=-4, yMax=4;
+
+  // Before ReLU
+  const s1 = setupCanvas('canvasBendBefore');
+  if (s1) {
+    const {ctx, w, h} = s1;
+    const tr = makeTransform(w, h, xMin, xMax, yMin, yMax);
+    ctx.clearRect(0,0,w,h);
+    drawGrid(ctx, w, h, tr);
+    plotFn(ctx, tr, x => w1*x + b1, col, 2.5);
+    if (bendX !== null && bendX > xMin && bendX < xMax) {
+      drawDot(ctx, tr, bendX, 0, 6, '#f85149');
+      // Label
+      const {toX, toY} = tr;
+      ctx.fillStyle = '#f85149'; ctx.font = '11px monospace';
+      ctx.fillText(`x=${bendX.toFixed(2)}`, toX(bendX)+8, toY(0)-10);
+    }
+    // Shade the "killed" region
+    if (bendX !== null) {
+      const {toX, toY} = tr;
+      ctx.fillStyle = 'rgba(248,81,73,0.06)';
+      if (w1 > 0) {
+        // active for x > bendX, killed for x < bendX
+        ctx.fillRect(toX(xMin), toY(yMax), toX(bendX)-toX(xMin), toY(yMin)-toY(yMax));
+      } else {
+        ctx.fillRect(toX(bendX), toY(yMax), toX(xMax)-toX(bendX), toY(yMin)-toY(yMax));
+      }
+      ctx.fillStyle = '#f8514960'; ctx.font = '10px monospace';
+      if (w1 > 0) ctx.fillText('ReLU kills this region', toX(xMin)+5, toY(yMax)+15);
+      else ctx.fillText('ReLU kills this region', toX(bendX)+5, toY(yMax)+15);
+    }
+    // x-probe
+    const xProbe = parseFloat(document.getElementById('xSlider').value);
+    const zVal = w1*xProbe + b1;
+    drawDot(ctx, tr, xProbe, zVal, 5, '#ffffff');
+    ctx.fillStyle='#fff'; ctx.font='11px monospace';
+    ctx.fillText(`z=${zVal.toFixed(2)}`, tr.toX(xProbe)+8, tr.toY(zVal)-8);
+  }
+
+  // After ReLU
+  const s2 = setupCanvas('canvasBendAfter');
+  if (s2) {
+    const {ctx, w, h} = s2;
+    const tr = makeTransform(w, h, xMin, xMax, yMin, yMax);
+    ctx.clearRect(0,0,w,h);
+    drawGrid(ctx, w, h, tr);
+    // Show the original as ghost
+    plotFn(ctx, tr, x => w1*x + b1, col+'30', 1.5, [6,4]);
+    // ReLU version
+    plotFn(ctx, tr, x => Math.max(0, w1*x + b1), col, 2.5);
+    // Also show weighted version
+    plotFn(ctx, tr, x => a * Math.max(0, w1*x + b1), '#d29922', 2, [4,3]);
+    if (bendX !== null && bendX > xMin && bendX < xMax) {
+      drawDot(ctx, tr, bendX, 0, 6, '#f85149');
+      const {toX, toY} = tr;
+      ctx.fillStyle = '#f85149'; ctx.font = '11px monospace';
+      ctx.fillText(`bend`, toX(bendX)+8, toY(0)-10);
+    }
+    // Zero region label
+    if (bendX !== null) {
+      const {toX, toY} = tr;
+      ctx.fillStyle = '#3fb95060'; ctx.font = '10px monospace';
+      if (w1 > 0) ctx.fillText('= 0 (folded flat)', toX(xMin)+5, toY(0)-8);
+      else ctx.fillText('= 0 (folded flat)', toX(bendX)+5, toY(0)-8);
+    }
+    // x-probe
+    const xProbe = parseFloat(document.getElementById('xSlider').value);
+    const hVal = Math.max(0, w1*xProbe + b1);
+    drawDot(ctx, tr, xProbe, hVal, 5, '#ffffff');
+    ctx.fillStyle='#fff'; ctx.font='11px monospace';
+    ctx.fillText(`h=${hVal.toFixed(2)}`, tr.toX(xProbe)+8, tr.toY(hVal)-8);
+    // weighted
+    const wVal = a * hVal;
+    drawDot(ctx, tr, xProbe, wVal, 4, '#d29922');
+  }
+
+  // Equation detail
+  const bSign = b1 >= 0 ? '+' : '';
+  const detailEl = document.getElementById('eq-bend-detail');
+  if (detailEl) {
+    detailEl.innerHTML = tex(
+      `\\text{Neuron ${j+1}:}\\quad z_{${j+1}} = ${fmtN(w1)}x ${bSign}${fmtN(b1)}, \\quad h_{${j+1}} = \\max(0, z_{${j+1}}), \\quad \\text{contribution} = ${fmtN(a)} \\cdot h_{${j+1}}`, true
+    );
+  }
+
+  // Insight
+  const insightEl = document.getElementById('bendInsight');
+  if (insightEl && bendX !== null) {
+    const activeDir = w1 > 0 ? `x > ${bendX.toFixed(2)}` : `x < ${bendX.toFixed(2)}`;
+    const slope = (a * w1).toFixed(3);
+    insightEl.innerHTML = `<strong>Sheaf view:</strong> This neuron defines a <em>local section</em> that is a line with slope <strong>${slope}</strong> on the region <strong>${activeDir}</strong>, and exactly <strong>zero</strong> elsewhere. The bend point x = ${bendX.toFixed(2)} is where two "open sets" meet — the ReLU acts as the <em>restriction map</em>, killing the section on one side.`;
+  } else if (insightEl) {
+    insightEl.innerHTML = `<strong>Sheaf view:</strong> This neuron has near-zero weight, so it contributes a nearly constant section.`;
+  }
+}
+
+// ===================== TRAINING =====================
+let trainNet = null;
+let trainRunning = false;
+let trainEpoch = 0;
+let lossHistory = [];
+let trainAnimId = null;
+let trainLR = 0.01;
+
+const trainXMin = -3.5, trainXMax = 3.5, trainM = 150;
+let trainXs = [], trainYs = [];
+
+function buildTrainData() {
+  trainXs = []; trainYs = [];
+  for (let i = 0; i < trainM; i++) {
+    const x = trainXMin + (trainXMax - trainXMin) * i / (trainM - 1);
+    trainXs.push(x);
+    trainYs.push(getTarget(x));
+  }
+}
+
+function updateLR() {
+  const v = parseFloat(document.getElementById('lrSlider').value);
+  trainLR = Math.pow(10, v);
+  document.getElementById('lrLabel').textContent = trainLR.toFixed(4);
+}
+
+function resetTrain() {
+  if (trainAnimId) cancelAnimationFrame(trainAnimId);
+  trainRunning = false;
+  document.getElementById('btnTrain').textContent = '▶ Train';
+  trainNet = JSON.parse(JSON.stringify(net)); // clone current net
+  trainEpoch = 0;
+  lossHistory = [];
+  updateLR();
+  buildTrainData();
+  drawTrainCanvas();
+  drawLossCanvas();
+  updateLiveTensors();
+  updateLiveNeuronEqs();
+  document.getElementById('epochNum').textContent = '0';
+  document.getElementById('lossVal').textContent = '—';
+}
+
+function trainStepFn(tnet, xs, ys, lr) {
+  const M = xs.length, NN = tnet.N;
+  const dw1 = new Array(NN).fill(0);
+  const db1 = new Array(NN).fill(0);
+  const dw2 = new Array(NN).fill(0);
+  let dBeta = 0, loss = 0;
+
+  for (let i = 0; i < M; i++) {
+    const x = xs[i];
+    const {z, h, y} = forward(tnet, x);
+    const err = y - ys[i];
+    loss += err * err;
+    dBeta += err;
+    for (let j = 0; j < NN; j++) {
+      dw2[j] += err * h[j];
+      if (z[j] > 0) {
+        dw1[j] += err * tnet.w2[j] * x;
+        db1[j] += err * tnet.w2[j];
+      }
+    }
+  }
+  loss /= M;
+  const s = 2 * lr / M;
+  for (let j = 0; j < NN; j++) {
+    tnet.w2[j] -= s * dw2[j];
+    tnet.w1[j] -= s * dw1[j];
+    tnet.b1[j] -= s * db1[j];
+  }
+  tnet.beta -= s * dBeta;
+  return loss;
+}
+
+function toggleTrain() {
+  if (trainRunning) {
+    trainRunning = false;
+    document.getElementById('btnTrain').textContent = '▶ Train';
+    if (trainAnimId) cancelAnimationFrame(trainAnimId);
+  } else {
+    if (!trainNet) resetTrain();
+    trainRunning = true;
+    document.getElementById('btnTrain').textContent = '⏸ Pause';
+    trainLoop();
+  }
+}
+
+function trainOneStep() {
+  if (!trainNet) resetTrain();
+  const loss = trainStepFn(trainNet, trainXs, trainYs, trainLR);
+  trainEpoch++;
+  lossHistory.push(loss);
+  afterTrainUpdate();
+}
+
+function trainLoop() {
+  if (!trainRunning) return;
+  const stepsPerFrame = 8;
+  for (let s = 0; s < stepsPerFrame; s++) {
+    const loss = trainStepFn(trainNet, trainXs, trainYs, trainLR);
+    trainEpoch++;
+    lossHistory.push(loss);
+  }
+  afterTrainUpdate();
+  trainAnimId = requestAnimationFrame(trainLoop);
+}
+
+function afterTrainUpdate() {
+  document.getElementById('epochNum').textContent = trainEpoch;
+  document.getElementById('lossVal').textContent = lossHistory[lossHistory.length-1].toFixed(6);
+  drawTrainCanvas();
+  drawLossCanvas();
+  updateLiveTensors();
+  updateLiveNeuronEqs();
+}
+
+function drawTrainCanvas() {
+  const s = setupCanvas('canvasTrain');
+  if (!s || !trainNet) return;
+  const {ctx, w, h} = s;
+  const xMin=-3.5, xMax=3.5, yMin=-2.5, yMax=2.5;
+  const tr = makeTransform(w, h, xMin, xMax, yMin, yMax);
+  ctx.clearRect(0,0,w,h);
+  drawGrid(ctx, w, h, tr);
+
+  // Local sections
+  for (let j = 0; j < trainNet.N; j++) {
+    const jj = j;
+    const col = COLORS[j % COLORS.length] + '50';
+    plotFn(ctx, tr, x => trainNet.w2[jj]*Math.max(0, trainNet.w1[jj]*x + trainNet.b1[jj]), col, 1.2, [4,3]);
+  }
+
+  // Target
+  plotFn(ctx, tr, getTarget, '#3fb950', 2.5);
+  // Network
+  plotFn(ctx, tr, x => evalNet(trainNet, x), '#d29922', 2.5);
+
+  ctx.fillStyle='#8b949e'; ctx.font='11px monospace';
+  ctx.fillText('Function Approximation', 35, 18);
+}
+
+function drawLossCanvas() {
+  const s = setupCanvas('canvasLoss');
+  if (!s) return;
+  const {ctx, w, h} = s;
+  ctx.clearRect(0,0,w,h);
+
+  if (lossHistory.length < 2) {
+    ctx.fillStyle='#8b949e'; ctx.font='13px monospace';
+    ctx.fillText('Loss curve appears here', w/2-100, h/2);
+    return;
+  }
+
+  const maxLoss = Math.max(...lossHistory.slice(0, Math.min(100, lossHistory.length)), 0.01);
+  const xMin=0, xMax=lossHistory.length, yMin=0, yMax=maxLoss*1.15;
+  const tr = makeTransform(w, h, xMin, xMax, yMin, yMax, 40);
+
+  // Horizontal grid
+  ctx.strokeStyle='#1e2430'; ctx.lineWidth=1;
+  for (let i=0;i<5;i++) {
+    const y = yMin + (yMax-yMin)*i/4;
+    ctx.beginPath(); ctx.moveTo(tr.toX(xMin),tr.toY(y)); ctx.lineTo(tr.toX(xMax),tr.toY(y)); ctx.stroke();
+  }
+
+  // Loss curve
+  ctx.strokeStyle='#f85149'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for (let i=0;i<lossHistory.length;i++) {
+    const px = tr.toX(i), py = tr.toY(Math.min(lossHistory[i], yMax));
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+
+  // Current loss dot
+  const lastLoss = lossHistory[lossHistory.length-1];
+  drawDot(ctx, tr, lossHistory.length-1, Math.min(lastLoss, yMax), 4, '#f85149');
+
+  ctx.fillStyle='#8b949e'; ctx.font='11px monospace';
+  ctx.fillText('MSE Loss', 45, 18);
+  ctx.fillText(yMax.toFixed(3), 2, 30);
+  ctx.fillText('0', 2, h-35);
+  ctx.fillText(`Epoch ${lossHistory.length}`, w-100, h-10);
+}
+
+function updateLiveTensors() {
+  if (!trainNet) return;
+  renderTensor('W₁ (hidden weights)', trainNet.w1, 'liveW1', 'var(--accent)');
+  renderTensor('b₁ (hidden biases)', trainNet.b1, 'liveB1', 'var(--cyan)');
+  renderTensor('W₂ (output weights)', trainNet.w2, 'liveW2', 'var(--purple)');
+  renderScalar('β (output bias)', trainNet.beta, 'liveBeta', 'var(--green)');
+}
+
+function updateLiveNeuronEqs() {
+  if (!trainNet) return;
+  const el = document.getElementById('liveNeuronEqs');
+  if (!el) return;
+  let html = '<div style="display:flex;flex-direction:column;gap:0.3rem;">';
+  for (let j = 0; j < trainNet.N; j++) {
+    const w = trainNet.w1[j], b = trainNet.b1[j], a = trainNet.w2[j];
+    const col = COLORS[j % COLORS.length];
+    const bSign = b >= 0 ? '+' : '';
+    const bendX = Math.abs(w) > 1e-9 ? (-b/w).toFixed(2) : '∞';
+    html += `<div class="eq eq-sm" style="border-left:3px solid ${col};text-align:left;padding-left:0.8rem;">`;
+    html += `<span class="color-dot" style="background:${col};"></span> `;
+    html += tex(`${fmtN(a)} \\cdot \\max(0,\\; ${fmtN(w)}x ${bSign}${fmtN(b)})`) + ' ';
+    html += `<span style="color:var(--muted);font-size:0.78rem;">bend@${bendX}</span>`;
+    html += '</div>';
+  }
+  // Sum
+  html += `<div class="eq eq-sm" style="border-left:3px solid var(--orange);text-align:left;padding-left:0.8rem;">`;
+  html += `<span class="color-dot" style="background:var(--orange);"></span> `;
+  html += tex(`\\hat{y}(x) = \\text{sum of above} + ${fmtN(trainNet.beta)}`) + '</div>';
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ===================== GLOBAL CONTROLS =====================
+function onChangeN() {
+  N = parseInt(document.getElementById('selN').value);
+  net = createNet(N);
+  selectedNeuron = 0;
+  buildNeuronSelector();
+  updateForwardPass();
+  resetTrain();
+}
+
+function onChangeTarget() {
+  targetKey = document.getElementById('selTarget').value;
+  updateForwardPass();
+  resetTrain();
+}
+
+function randomizeWeights() {
+  net = createNet(N);
+  selectedNeuron = 0;
+  buildNeuronSelector();
+  updateForwardPass();
+  resetTrain();
+}
+
+// ===================== INIT =====================
+function init() {
+  // Render the main equation
+  setTimeout(() => {
+    const eqFull = document.getElementById('eq-full');
+    if (eqFull) {
+      eqFull.innerHTML = tex(
+        `\\hat{y}(x) = \\underbrace{W_2}_{1 \\times N} \\cdot \\operatorname{ReLU}\\!\\Big(\\underbrace{W_1}_{N \\times 1} \\cdot x + \\underbrace{b_1}_{N \\times 1}\\Big) + \\beta`,
+        true
+      );
+    }
+  }, 150);
+
+  N = parseInt(document.getElementById('selN').value);
+  net = createNet(N);
+  selectedNeuron = 0;
+  updateLR();
+  buildNeuronSelector();
+  updateForwardPass();
+  resetTrain();
+}
+
+window.addEventListener('load', init);
+window.addEventListener('resize', () => {
+  drawPhaseCanvas();
+  drawBendCanvases();
+  if (trainNet) {
+    drawTrainCanvas();
+    drawLossCanvas();
+  }
+});
+
+// Debounced resize for canvases
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    drawPhaseCanvas();
+    drawBendCanvases();
+    if (trainNet) {
+      drawTrainCanvas();
+      drawLossCanvas();
+    }
+  }, 150);
+});
+</script>
+
+</body>
+</html>
