@@ -814,6 +814,8 @@ async function _get_fit_data (x_and_y) {
 
 		await _show_or_hide_simple_visualization(fit_data, x_and_y);
 
+		visualizeModel(document.getElementById("bend_graph"));
+
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
 	} catch (e) {
