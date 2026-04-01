@@ -510,7 +510,7 @@ async function get_fit_data () {
 
 		reset_neuron_outputs();
 
-		visualizeModelBends();
+		await visualizeModelBends();
 	};
 
 	callbacks["onTrainEnd"] = async function () {
@@ -815,7 +815,7 @@ async function _get_fit_data (x_and_y) {
 
 		await _show_or_hide_simple_visualization(fit_data, x_and_y);
 
-		visualizeModelBends();
+		await visualizeModelBends();
 
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
