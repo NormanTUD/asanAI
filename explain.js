@@ -1116,214 +1116,205 @@ function array_to_html(_array) {
 	return m;
 }
 
-async function visualizeModel(targetDiv) {
-	// --- Validierung ---
-	if (typeof model === 'undefined' || !model || !model.layers || model.layers.length !== 2) {
-		if (targetDiv) targetDiv.innerHTML = '';
-		return;
-	}
+async function visualizeModelBends() {
+	const targetDiv = document.getElementById("bend_graph");
+    // --- Validation ---
+    if (typeof model === 'undefined' || !model || !model.layers || model.layers.length !== 2) {
+        if (targetDiv) targetDiv.innerHTML = '';
+        return;
+    }
 
-	const layer1 = model.layers[0];
-	const layer2 = model.layers[1];
+    const layer1 = model.layers[0];
+    const layer2 = model.layers[1];
 
-	// Input-Shape checken: muss [null, 1] sein (1D input)
-	const inputShape = layer1.batchInputShape;
-	if (!inputShape || inputShape[inputShape.length - 1] !== 1) {
-		if (targetDiv) targetDiv.innerHTML = '';
-		return;
-	}
+    // Check input shape: must be [null, 1] (1D input)
+    const inputShape = layer1.batchInputShape;
+    if (!inputShape || inputShape[inputShape.length - 1] !== 1) {
+        if (targetDiv) targetDiv.innerHTML = '';
+        return;
+    }
 
-	// Output checken: layer2.units muss 1 sein
-	if (layer2.units !== 1) {
-		if (targetDiv) targetDiv.innerHTML = '';
-		return;
-	}
+    // Check output: layer2.units must be 1
+    if (layer2.units !== 1) {
+        if (targetDiv) targetDiv.innerHTML = '';
+        return;
+    }
 
-	// --- Weights extrahieren ---
-	const [kernel1Tensor, bias1Tensor] = layer1.getWeights();
-	const [kernel2Tensor, bias2Tensor] = layer2.getWeights();
+    // --- Extract weights ---
+    const [kernel1Tensor, bias1Tensor] = layer1.getWeights();
+    const [kernel2Tensor, bias2Tensor] = layer2.getWeights();
 
-	const kernel1 = await kernel1Tensor.data(); // shape [1, hiddenUnits] → flat
-	const bias1 = await bias1Tensor.data();     // shape [hiddenUnits]
-	const kernel2 = await kernel2Tensor.data(); // shape [hiddenUnits, 1] → flat
-	const bias2 = await bias2Tensor.data();     // shape [1]
+    const kernel1 = await kernel1Tensor.data(); // shape [1, hiddenUnits] → flat
+    const bias1 = await bias1Tensor.data();     // shape [hiddenUnits]
+    const kernel2 = await kernel2Tensor.data(); // shape [hiddenUnits, 1] → flat
+    const bias2 = await bias2Tensor.data();     // shape [1]
 
-	const hiddenUnits = layer1.units;
+    const hiddenUnits = layer1.units;
 
-	// Aktivierungsfunktion von Layer 1 ermitteln
-	const actName = layer1.activation?.getClassName?.() || 'linear';
+    // Determine activation function of Layer 1
+    const actName = layer1.activation?.getClassName?.() || 'linear';
 
-	function applyActivation(val, name) {
-		switch (name.toLowerCase()) {
-			case 'relu': return Math.max(0, val);
-			case 'sigmoid': return 1 / (1 + Math.exp(-val));
-			case 'tanh': return Math.tanh(val);
-			case 'leakyrelu': return val >= 0 ? val : 0.01 * val;
-			default: return val; // linear
-		}
-	}
+    function applyActivation(val, name) {
+        switch (name.toLowerCase()) {
+            case 'relu': return Math.max(0, val);
+            case 'sigmoid': return 1 / (1 + Math.exp(-val));
+            case 'tanh': return Math.tanh(val);
+            case 'leakyrelu': return val >= 0 ? val : 0.01 * val;
+            default: return val; // linear
+        }
+    }
 
-	// --- X-Bereich bestimmen (automatisch aus Weights) ---
-	// Finde sinnvollen Bereich: wo die Knicke (bias/kernel) liegen
-	let knickPunkte = [];
-	for (let j = 0; j < hiddenUnits; j++) {
-		const w = kernel1[j];
-		const b = bias1[j];
-		if (Math.abs(w) > 1e-8) {
-			knickPunkte.push(-b / w);
-		}
-	}
+    // --- Determine X range (automatically from weights) ---
+    // Find a meaningful range: where the "knots" (bias/kernel) are located
+    let knotPoints = [];
+    for (let j = 0; j < hiddenUnits; j++) {
+        const w = kernel1[j];
+        const b = bias1[j];
+        if (Math.abs(w) > 1e-8) {
+            knotPoints.push(-b / w);
+        }
+    }
 
-	let xMin, xMax;
-	if (knickPunkte.length > 0) {
-		const kMin = Math.min(...knickPunkte);
-		const kMax = Math.max(...knickPunkte);
-		const range = Math.max(kMax - kMin, 1);
-		xMin = kMin - range * 0.5;
-		xMax = kMax + range * 0.5;
-	} else {
-		xMin = -5;
-		xMax = 5;
-	}
+    let xMin, xMax;
+    if (knotPoints.length > 0) {
+        const kMin = Math.min(...knotPoints);
+        const kMax = Math.max(...knotPoints);
+        const range = Math.max(kMax - kMin, 1);
+        xMin = kMin - range * 0.5;
+        xMax = kMax + range * 0.5;
+    } else {
+        xMin = -5;
+        xMax = 5;
+    }
 
-	const numPoints = 500;
-	const xs = [];
-	for (let i = 0; i < numPoints; i++) {
-		xs.push(xMin + (xMax - xMin) * i / (numPoints - 1));
-	}
+    const numPoints = 500;
+    const xs = [];
+    for (let i = 0; i < numPoints; i++) {
+        xs.push(xMin + (xMax - xMin) * i / (numPoints - 1));
+    }
 
-	// --- Farben generieren ---
-	function hslToRgb(h, s, l) {
-		s /= 100; l /= 100;
-		const k = n => (n + h / 30) % 12;
-		const a = s * Math.min(l, 1 - l);
-		const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-		return `rgb(${Math.round(f(0)*255)},${Math.round(f(8)*255)},${Math.round(f(4)*255)})`;
-	}
+    // --- Generate colors ---
+    function hslToRgb(h, s, l) {
+        s /= 100; l /= 100;
+        const k = n => (n + h / 30) % 12;
+        const a = s * Math.min(l, 1 - l);
+        const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+        return `rgb(${Math.round(f(0)*255)},${Math.round(f(8)*255)},${Math.round(f(4)*255)})`;
+    }
 
-	// --- Traces berechnen ---
-	const traces = [];
+    // --- Compute traces ---
+    const traces = [];
 
-	// Für jedes Hidden-Neuron: gewichteter Beitrag zum Output
-	const neuronOutputs = []; // [neuronIdx][pointIdx]
+    // For each hidden neuron: weighted contribution to the output
+    const neuronOutputs = []; // [neuronIdx][pointIdx]
 
-	for (let j = 0; j < hiddenUnits; j++) {
-		const w1 = kernel1[j];  // input→hidden weight
-		const b1 = bias1[j];    // hidden bias
-		const w2 = kernel2[j];  // hidden→output weight
+    for (let j = 0; j < hiddenUnits; j++) {
+        const w1 = kernel1[j];  // input→hidden weight
+        const b1 = bias1[j];    // hidden bias
+        const w2 = kernel2[j];  // hidden→output weight
 
-		const ys = xs.map(x => {
-			const preAct = w1 * x + b1;
-			const postAct = applyActivation(preAct, actName);
-			return postAct * w2; // gewichteter Beitrag (ohne output bias)
-		});
+        const ys = xs.map(x => {
+            const preAct = w1 * x + b1;
+            const postAct = applyActivation(preAct, actName);
+            return postAct * w2; // weighted contribution (without output bias)
+        });
 
-		neuronOutputs.push(ys);
+        neuronOutputs.push(ys);
 
-		const color = hslToRgb((j * 360 / hiddenUnits) % 360, 70, 55);
+        const color = hslToRgb((j * 360 / hiddenUnits) % 360, 70, 55);
 
-		traces.push({
-			x: xs,
-			y: ys,
-			mode: 'lines',
-			name: `n${j + 1} (w₁=${w1.toFixed(3)}, b=${b1.toFixed(3)}, w₂=${w2.toFixed(3)})`,
-			line: { color: color, width: 1.5, dash: 'dot' },
-			opacity: 0.6,
-		});
-	}
+        traces.push({
+            x: xs,
+            y: ys,
+            mode: 'lines',
+            name: `Neuron ${j + 1} (w₁=${w1.toFixed(3)}, b=${b1.toFixed(3)}, w₂=${w2.toFixed(3)})`,
+            line: { color: color, width: 1.5, dash: 'dot' },
+            opacity: 0.6,
+        });
+    }
 
-	// Zusammengesetzte Linie (Summe + output bias)
-	const outputBias = bias2[0];
-	const combinedY = xs.map((x, i) => {
-		let sum = outputBias;
-		for (let j = 0; j < hiddenUnits; j++) {
-			sum += neuronOutputs[j][i];
-		}
-		return sum;
-	});
+    // Combined line (sum + output bias)
+    const outputBias = bias2[0];
+    const combinedY = xs.map((x, i) => {
+        let sum = outputBias;
+        for (let j = 0; j < hiddenUnits; j++) {
+            sum += neuronOutputs[j][i];
+        }
+        return sum;
+    });
 
-	traces.push({
-		x: xs,
-		y: combinedY,
-		mode: 'lines',
-		name: `Σ output (bias=${outputBias.toFixed(3)})`,
-		line: { color: 'white', width: 3 },
-	});
+    traces.push({
+        x: xs,
+        y: combinedY,
+        mode: 'lines',
+        name: `Combined Output (bias=${outputBias.toFixed(3)})`,
+        line: { color: 'cyan', width: 4 }, // Main line is now more prominent
+    });
 
-	// Knickpunkte als Marker
-	if (knickPunkte.length > 0) {
-		const knickY = knickPunkte.map(kx => {
-			let sum = outputBias;
-			for (let j = 0; j < hiddenUnits; j++) {
-				const preAct = kernel1[j] * kx + bias1[j];
-				const postAct = applyActivation(preAct, actName);
-				sum += postAct * kernel2[j];
-			}
-			return sum;
-		});
+    // Knot points as markers
+    if (knotPoints.length > 0) {
+        const knotY = knotPoints.map(kx => {
+            let sum = outputBias;
+            for (let j = 0; j < hiddenUnits; j++) {
+                const preAct = kernel1[j] * kx + bias1[j];
+                const postAct = applyActivation(preAct, actName);
+                sum += postAct * kernel2[j];
+            }
+            return sum;
+        });
 
-		traces.push({
-			x: knickPunkte,
-			y: knickY,
-			mode: 'markers',
-			name: 'Knicke',
-			marker: { color: 'rgba(255,255,100,0.8)', size: 8, symbol: 'diamond' },
-		});
-	}
+        traces.push({
+            x: knotPoints,
+            y: knotY,
+            mode: 'markers',
+            name: 'Knots',
+            marker: { color: 'rgba(255,0,0,0.8)', size: 10, symbol: 'diamond' }, // Improved visibility
+        });
+    }
 
-	// --- Plot erstellen ---
-	const layout = {
-		// Allows the background of the website/app to show through
-		paper_bgcolor: 'rgba(0,0,0,0)', 
-		plot_bgcolor: 'rgba(0,0,0,0)',
+    // --- Create plot ---
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)', 
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { 
+            color: 'var(--plotly-font-color, #444)', 
+            family: 'Inter, system-ui, sans-serif'
+        },
+        margin: { t: 30, b: 40, l: 50, r: 20 },
+        xaxis: {
+            gridcolor: 'rgba(128, 128, 128, 0.2)',
+            zerolinecolor: 'rgba(128, 128, 128, 0.5)',
+            automargin: true
+        },
+        yaxis: {
+            gridcolor: 'rgba(128, 128, 128, 0.2)',
+            zerolinecolor: 'rgba(128, 128, 128, 0.5)',
+            automargin: true
+        },
+        legend: {
+            bgcolor: 'rgba(255, 255, 255, 0.1)',
+            font: { size: 11 },
+            orientation: 'h',
+            y: -0.2
+        },
+        showlegend: true,
+    };
 
-		// Uses CSS variables to adapt to the environment's text color
-		font: { 
-			color: 'var(--plotly-font-color, #444)', // Default to dark grey if var is missing
-			family: 'Inter, system-ui, sans-serif'
-		},
+    // Determine target div
+    let plotDiv;
+    if (targetDiv) {
+        plotDiv = targetDiv;
+    } else {
+        plotDiv = document.getElementById('__nn_viz_auto__');
+        if (!plotDiv) {
+            plotDiv = document.createElement('div');
+            plotDiv.id = '__nn_viz_auto__';
+            document.body.appendChild(plotDiv);
+        }
+    }
 
-		margin: { t: 30, b: 40, l: 50, r: 20 },
+    plotDiv.style.width = '100%';
+    plotDiv.style.minHeight = '400px';
 
-		xaxis: {
-			// Semi-transparent colors work well on both light and dark backgrounds
-			gridcolor: 'rgba(128, 128, 128, 0.2)',
-			zerolinecolor: 'rgba(128, 128, 128, 0.5)',
-			automargin: true
-		},
-
-		yaxis: {
-			gridcolor: 'rgba(128, 128, 128, 0.2)',
-			zerolinecolor: 'rgba(128, 128, 128, 0.5)',
-			automargin: true
-		},
-
-		legend: {
-			// Transparent background with responsive text
-			bgcolor: 'rgba(255, 255, 255, 0.1)',
-			font: { size: 11 },
-			orientation: 'h', // Horizontal legends often look cleaner on varying themes
-			y: -0.2
-		},
-
-		showlegend: true,
-	};
-
-	// Ziel-Div bestimmen
-	let plotDiv;
-	if (targetDiv) {
-		plotDiv = targetDiv;
-	} else {
-		plotDiv = document.getElementById('__nn_viz_auto__');
-		if (!plotDiv) {
-			plotDiv = document.createElement('div');
-			plotDiv.id = '__nn_viz_auto__';
-			document.body.appendChild(plotDiv);
-		}
-	}
-
-	plotDiv.style.width = '100%';
-	plotDiv.style.minHeight = '400px';
-
-	Plotly.react(plotDiv, traces, layout, { responsive: true });
+    Plotly.react(plotDiv, traces, layout, { responsive: true });
 }
