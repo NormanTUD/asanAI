@@ -540,7 +540,7 @@ button:disabled:hover {
 	user-select: none;
 	height: 1.5em;
 	width: 100%;
-	position: fixed;
+	position: sticky;
 	bottom: 0px;
 	border: 1px groove #626262;
 	z-index: 99999;
