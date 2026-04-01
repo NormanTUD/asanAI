@@ -470,7 +470,7 @@ function render_temml() {
 						</div>
 					</div>
 					<div class="lp-footer">
-						<span>Right-click any equation &nbsp;·&nbsp; <kbd>Esc</kbd> to close</span>
+						<span><kbd>Esc</kbd> to close</span>
 					</div>
 				</div>`;
 
