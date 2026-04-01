@@ -1117,204 +1117,386 @@ function array_to_html(_array) {
 }
 
 async function visualizeModelBends() {
-	const targetDiv = document.getElementById("bend_graph");
-	// --- Validation ---
-	if (typeof model === 'undefined' || !model || !model.layers || model.layers.length !== 2) {
-		if (targetDiv) targetDiv.innerHTML = '';
-		return;
-	}
+    const targetDiv = document.getElementById("bend_graph");
 
-	const layer1 = model.layers[0];
-	const layer2 = model.layers[1];
+    // --- Validation ---
+    if (typeof model === 'undefined' || !model || !model.layers || model.layers.length < 2) {
+        if (targetDiv) targetDiv.innerHTML = '';
+        return;
+    }
 
-	// Check input shape: must be [null, 1] (1D input)
-	const inputShape = layer1.batchInputShape;
-	if (!inputShape || inputShape[inputShape.length - 1] !== 1) {
-		if (targetDiv) targetDiv.innerHTML = '';
-		return;
-	}
+    // Check input shape: must be [null, 1] (1D input)
+    const firstLayer = model.layers[0];
+    const inputShape = firstLayer.batchInputShape;
+    if (!inputShape || inputShape[inputShape.length - 1] !== 1) {
+        if (targetDiv) targetDiv.innerHTML = '';
+        return;
+    }
 
-	// Check output: layer2.units must be 1
-	if (layer2.units !== 1) {
-		if (targetDiv) targetDiv.innerHTML = '';
-		return;
-	}
+    // Check output: last layer must have 1 unit
+    const lastLayer = model.layers[model.layers.length - 1];
+    if (lastLayer.units !== 1) {
+        if (targetDiv) targetDiv.innerHTML = '';
+        return;
+    }
 
-	// --- Extract weights ---
-	const [kernel1Tensor, bias1Tensor] = layer1.getWeights();
-	const [kernel2Tensor, bias2Tensor] = layer2.getWeights();
+    // --- Extract all layer weights ---
+    const layerData = [];
+    for (let l = 0; l < model.layers.length; l++) {
+        const layer = model.layers[l];
+        const [kernelTensor, biasTensor] = layer.getWeights();
+        const kernel = await kernelTensor.data();
+        const bias = await biasTensor.data();
+        const actName = layer.activation?.getClassName?.() || 'linear';
 
-	const kernel1 = await kernel1Tensor.data(); // shape [1, hiddenUnits] → flat
-	const bias1 = await bias1Tensor.data();     // shape [hiddenUnits]
-	const kernel2 = await kernel2Tensor.data(); // shape [hiddenUnits, 1] → flat
-	const bias2 = await bias2Tensor.data();     // shape [1]
+        // Determine shape
+        // kernel shape: [inputDim, units] stored flat in row-major order
+        const units = layer.units;
+        const inputDim = kernel.length / units;
 
-	const hiddenUnits = layer1.units;
+        layerData.push({
+            kernel,    // flat array [inputDim * units]
+            bias,      // flat array [units]
+            units,
+            inputDim,
+            actName,
+        });
+    }
 
-	// Determine activation function of Layer 1
-	const actName = layer1.activation?.getClassName?.() || 'linear';
+    // --- Activation functions ---
+    function applyActivation(val, name) {
+        switch (name.toLowerCase()) {
+            case 'relu': return Math.max(0, val);
+            case 'sigmoid': return 1 / (1 + Math.exp(-val));
+            case 'tanh': return Math.tanh(val);
+            case 'leakyrelu': return val >= 0 ? val : 0.01 * val;
+            case 'elu': return val >= 0 ? val : Math.exp(val) - 1;
+            case 'softplus': return Math.log(1 + Math.exp(val));
+            default: return val; // linear
+        }
+    }
 
-	function applyActivation(val, name) {
-		switch (name.toLowerCase()) {
-			case 'relu': return Math.max(0, val);
-			case 'sigmoid': return 1 / (1 + Math.exp(-val));
-			case 'tanh': return Math.tanh(val);
-			case 'leakyrelu': return val >= 0 ? val : 0.01 * val;
-			default: return val; // linear
-		}
-	}
+    // --- Forward pass for a single scalar input x ---
+    // Returns { output: number, layerActivations: [array per layer] }
+    function forwardPass(x) {
+        let currentInput = [x]; // 1D array representing the current layer's input
+        const layerActivations = [];
 
-	// --- Determine X range (automatically from weights) ---
-	// Find a meaningful range: where the "knots" (bias/kernel) are located
-	let knotPoints = [];
-	for (let j = 0; j < hiddenUnits; j++) {
-		const w = kernel1[j];
-		const b = bias1[j];
-		if (Math.abs(w) > 1e-8) {
-			knotPoints.push(-b / w);
-		}
-	}
+        for (let l = 0; l < layerData.length; l++) {
+            const { kernel, bias, units, inputDim, actName } = layerData[l];
+            const output = new Array(units);
 
-	let xMin, xMax;
-	if (knotPoints.length > 0) {
-		const kMin = Math.min(...knotPoints);
-		const kMax = Math.max(...knotPoints);
-		const range = Math.max(kMax - kMin, 1);
-		xMin = kMin - range * 0.5;
-		xMax = kMax + range * 0.5;
-	} else {
-		xMin = -5;
-		xMax = 5;
-	}
+            for (let j = 0; j < units; j++) {
+                let sum = bias[j];
+                for (let i = 0; i < inputDim; i++) {
+                    // kernel is stored as [inputDim, units] row-major
+                    // element [i, j] = kernel[i * units + j]
+                    sum += currentInput[i] * kernel[i * units + j];
+                }
+                output[j] = applyActivation(sum, actName);
+            }
 
-	const numPoints = 500;
-	const xs = [];
-	for (let i = 0; i < numPoints; i++) {
-		xs.push(xMin + (xMax - xMin) * i / (numPoints - 1));
-	}
+            layerActivations.push(output);
+            currentInput = output;
+        }
 
-	// --- Generate colors ---
-	function hslToRgb(h, s, l) {
-		s /= 100; l /= 100;
-		const k = n => (n + h / 30) % 12;
-		const a = s * Math.min(l, 1 - l);
-		const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-		return `rgb(${Math.round(f(0)*255)},${Math.round(f(8)*255)},${Math.round(f(4)*255)})`;
-	}
+        return {
+            output: currentInput[0], // final scalar output
+            layerActivations,
+        };
+    }
 
-	// --- Compute traces ---
-	const traces = [];
+    // --- Forward pass returning pre-activations for bend detection ---
+    function forwardPassDetailed(x) {
+        let currentInput = [x];
+        const allPreActivations = [];
+        const allPostActivations = [];
 
-	// For each hidden neuron: weighted contribution to the output
-	const neuronOutputs = []; // [neuronIdx][pointIdx]
+        for (let l = 0; l < layerData.length; l++) {
+            const { kernel, bias, units, inputDim, actName } = layerData[l];
+            const preAct = new Array(units);
+            const postAct = new Array(units);
 
-	for (let j = 0; j < hiddenUnits; j++) {
-		const w1 = kernel1[j];  // input→hidden weight
-		const b1 = bias1[j];    // hidden bias
-		const w2 = kernel2[j];  // hidden→output weight
+            for (let j = 0; j < units; j++) {
+                let sum = bias[j];
+                for (let i = 0; i < inputDim; i++) {
+                    sum += currentInput[i] * kernel[i * units + j];
+                }
+                preAct[j] = sum;
+                postAct[j] = applyActivation(sum, actName);
+            }
 
-		const ys = xs.map(x => {
-			const preAct = w1 * x + b1;
-			const postAct = applyActivation(preAct, actName);
-			return postAct * w2; // weighted contribution (without output bias)
-		});
+            allPreActivations.push(preAct);
+            allPostActivations.push(postAct);
+            currentInput = postAct;
+        }
 
-		neuronOutputs.push(ys);
+        return { allPreActivations, allPostActivations, output: currentInput[0] };
+    }
 
-		const color = hslToRgb((j * 360 / hiddenUnits) % 360, 70, 55);
+    // --- Find bend points (where any ReLU-like neuron's pre-activation crosses zero) ---
+    // We do this numerically by sampling densely and detecting sign changes
+    function findBendPoints(xMin, xMax, numSamples) {
+        const bends = [];
+        const step = (xMax - xMin) / numSamples;
 
-		traces.push({
-			x: xs,
-			y: ys,
-			mode: 'lines',
-			name: `Neuron ${j + 1} (w₁=${w1.toFixed(3)}, b=${b1.toFixed(3)}, w₂=${w2.toFixed(3)})`,
-			line: { color: color, width: 1.5, dash: 'dot' },
-			opacity: 0.6,
-		});
-	}
+        let prevDetail = forwardPassDetailed(xMin);
 
-	// Combined line (sum + output bias)
-	const outputBias = bias2[0];
-	const combinedY = xs.map((x, i) => {
-		let sum = outputBias;
-		for (let j = 0; j < hiddenUnits; j++) {
-			sum += neuronOutputs[j][i];
-		}
-		return sum;
-	});
+        for (let i = 1; i <= numSamples; i++) {
+            const x = xMin + step * i;
+            const detail = forwardPassDetailed(x);
 
-	traces.push({
-		x: xs,
-		y: combinedY,
-		mode: 'lines',
-		name: `Combined Output (bias=${outputBias.toFixed(3)})`,
-		line: { color: 'cyan', width: 4 }, // Main line is now more prominent
-	});
+            // Check each layer and each neuron for sign changes in pre-activation
+            for (let l = 0; l < layerData.length; l++) {
+                const actName = layerData[l].actName.toLowerCase();
+                // Bends only matter for piecewise-linear activations
+                if (actName !== 'relu' && actName !== 'leakyrelu') continue;
 
-	// Knot points as markers
-	if (knotPoints.length > 0) {
-		const knotY = knotPoints.map(kx => {
-			let sum = outputBias;
-			for (let j = 0; j < hiddenUnits; j++) {
-				const preAct = kernel1[j] * kx + bias1[j];
-				const postAct = applyActivation(preAct, actName);
-				sum += postAct * kernel2[j];
-			}
-			return sum;
-		});
+                for (let j = 0; j < layerData[l].units; j++) {
+                    const prevPre = prevDetail.allPreActivations[l][j];
+                    const currPre = detail.allPreActivations[l][j];
 
-		traces.push({
-			x: knotPoints,
-			y: knotY,
-			mode: 'markers',
-			name: 'Knots',
-			marker: { color: 'rgba(255,0,0,0.8)', size: 10, symbol: 'diamond' }, // Improved visibility
-		});
-	}
+                    // Sign change in pre-activation → bend point
+                    if (prevPre * currPre < 0) {
+                        // Linear interpolation to find zero crossing
+                        const t = prevPre / (prevPre - currPre);
+                        const bendX = (x - step) + t * step;
+                        bends.push({ x: bendX, layer: l, neuron: j });
+                    }
+                }
+            }
 
-	// --- Create plot ---
-	const layout = {
-		paper_bgcolor: 'rgba(0,0,0,0)', 
-		plot_bgcolor: 'rgba(0,0,0,0)',
-		font: { 
-			color: 'var(--plotly-font-color, #444)', 
-			family: 'Inter, system-ui, sans-serif'
-		},
-		margin: { t: 30, b: 40, l: 50, r: 20 },
-		xaxis: {
-			gridcolor: 'rgba(128, 128, 128, 0.2)',
-			zerolinecolor: 'rgba(128, 128, 128, 0.5)',
-			automargin: true
-		},
-		yaxis: {
-			gridcolor: 'rgba(128, 128, 128, 0.2)',
-			zerolinecolor: 'rgba(128, 128, 128, 0.5)',
-			automargin: true
-		},
-		legend: {
-			bgcolor: 'rgba(255, 255, 255, 0.1)',
-			font: { size: 11 },
-			orientation: 'h',
-			y: -0.2
-		},
-		showlegend: true,
-	};
+            prevDetail = detail;
+        }
 
-	// Determine target div
-	let plotDiv;
-	if (targetDiv) {
-		plotDiv = targetDiv;
-	} else {
-		plotDiv = document.getElementById('__nn_viz_auto__');
-		if (!plotDiv) {
-			plotDiv = document.createElement('div');
-			plotDiv.id = '__nn_viz_auto__';
-			document.body.appendChild(plotDiv);
-		}
-	}
+        return bends;
+    }
 
-	plotDiv.style.width = '100%';
-	plotDiv.style.minHeight = '400px';
+    // --- Determine X range from first hidden layer knots (initial estimate) ---
+    // For the first layer (1D input), knots are at x = -b/w
+    const firstLayerData = layerData[0];
+    let knotPoints = [];
+    for (let j = 0; j < firstLayerData.units; j++) {
+        const w = firstLayerData.kernel[j]; // kernel[0 * units + j] since inputDim=1
+        const b = firstLayerData.bias[j];
+        if (Math.abs(w) > 1e-8) {
+            knotPoints.push(-b / w);
+        }
+    }
 
-	Plotly.react(plotDiv, traces, layout, { responsive: true });
+    let xMin, xMax;
+    if (knotPoints.length > 0) {
+        const kMin = Math.min(...knotPoints);
+        const kMax = Math.max(...knotPoints);
+        const range = Math.max(kMax - kMin, 1);
+        xMin = kMin - range * 0.7;
+        xMax = kMax + range * 0.7;
+    } else {
+        xMin = -5;
+        xMax = 5;
+    }
+
+    // --- Find all bend points numerically ---
+    const bendPoints = findBendPoints(xMin, xMax, 5000);
+
+    // Possibly expand range if bends are near edges
+    if (bendPoints.length > 0) {
+        const bendXs = bendPoints.map(b => b.x);
+        const bMin = Math.min(...bendXs);
+        const bMax = Math.max(...bendXs);
+        const bRange = Math.max(bMax - bMin, 1);
+        xMin = Math.min(xMin, bMin - bRange * 0.3);
+        xMax = Math.max(xMax, bMax + bRange * 0.3);
+    }
+
+    // --- Generate plot points ---
+    const numPoints = 800;
+    const xs = [];
+    for (let i = 0; i < numPoints; i++) {
+        xs.push(xMin + (xMax - xMin) * i / (numPoints - 1));
+    }
+
+    // --- HSL to RGB helper ---
+    function hslToRgb(h, s, l) {
+        s /= 100; l /= 100;
+        const k = n => (n + h / 30) % 12;
+        const a = s * Math.min(l, 1 - l);
+        const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+        return `rgb(${Math.round(f(0)*255)},${Math.round(f(8)*255)},${Math.round(f(4)*255)})`;
+    }
+
+    // --- Compute traces ---
+    const traces = [];
+
+    // Per-neuron contribution traces (first hidden layer only, for interpretability)
+    if (layerData.length === 2) {
+        // Simple 2-layer case: show individual neuron contributions
+        const layer1 = layerData[0];
+        const layer2 = layerData[1];
+
+        for (let j = 0; j < layer1.units; j++) {
+            const w1 = layer1.kernel[j];  // kernel[0*units+j]
+            const b1 = layer1.bias[j];
+            const w2 = layer2.kernel[j];  // kernel[j*1+0] = kernel[j]
+
+            const ys = xs.map(x => {
+                const preAct = w1 * x + b1;
+                const postAct = applyActivation(preAct, layer1.actName);
+                return postAct * w2;
+            });
+
+            const color = hslToRgb((j * 360 / layer1.units) % 360, 70, 55);
+
+            traces.push({
+                x: xs,
+                y: ys,
+                mode: 'lines',
+                name: `N${j+1} (w₁=${w1.toFixed(2)}, b=${b1.toFixed(2)}, w₂=${w2.toFixed(2)})`,
+                line: { color, width: 1.5, dash: 'dot' },
+                opacity: 0.6,
+            });
+        }
+    } else {
+        // Multi-layer case: show per-layer output as intermediate traces
+        for (let l = 0; l < layerData.length - 1; l++) {
+            // Show each hidden neuron's activation across x
+            const numNeurons = layerData[l].units;
+            for (let j = 0; j < numNeurons; j++) {
+                const ys = xs.map(x => {
+                    const detail = forwardPassDetailed(x);
+                    return detail.allPostActivations[l][j];
+                });
+
+                const color = hslToRgb(
+                    ((l * 137 + j * 360 / numNeurons) % 360), 60, 50
+                );
+
+                traces.push({
+                    x: xs,
+                    y: ys,
+                    mode: 'lines',
+                    name: `L${l+1} N${j+1}`,
+                    line: { color, width: 1, dash: 'dot' },
+                    opacity: 0.4,
+                    legendgroup: `layer${l}`,
+                    visible: 'legendonly', // hidden by default to reduce clutter
+                });
+            }
+        }
+    }
+
+    // --- Combined output trace ---
+    const combinedY = xs.map(x => forwardPass(x).output);
+
+    traces.push({
+        x: xs,
+        y: combinedY,
+        mode: 'lines',
+        name: 'Model Output',
+        line: { color: 'cyan', width: 4 },
+    });
+
+    // --- Bend point markers ---
+    if (bendPoints.length > 0) {
+        // Deduplicate bends that are very close together
+        const uniqueBends = [];
+        const sortedBends = [...bendPoints].sort((a, b) => a.x - b.x);
+        for (const bp of sortedBends) {
+            if (uniqueBends.length === 0 ||
+                Math.abs(bp.x - uniqueBends[uniqueBends.length - 1].x) > (xMax - xMin) * 0.001) {
+                uniqueBends.push(bp);
+            }
+        }
+
+        const bendXs = uniqueBends.map(b => b.x);
+        const bendYs = bendXs.map(bx => forwardPass(bx).output);
+        const bendLabels = uniqueBends.map(b => `L${b.layer+1} N${b.neuron+1}`);
+
+        traces.push({
+            x: bendXs,
+            y: bendYs,
+            mode: 'markers',
+            name: 'Bend Points',
+            marker: {
+                color: 'rgba(255, 50, 50, 0.85)',
+                size: 10,
+                symbol: 'diamond',
+                line: { color: 'white', width: 1 }
+            },
+            text: bendLabels,
+            hovertemplate: '<b>%{text}</b><br>x: %{x:.4f}<br>y: %{y:.4f}<extra></extra>',
+        });
+    }
+
+    // --- Slope trace (derivative) to visualize where bends occur ---
+    const slopeY = [];
+    for (let i = 0; i < xs.length - 1; i++) {
+        slopeY.push((combinedY[i + 1] - combinedY[i]) / (xs[i + 1] - xs[i]));
+    }
+    slopeY.push(slopeY[slopeY.length - 1]); // duplicate last value
+
+    traces.push({
+        x: xs,
+        y: slopeY,
+        mode: 'lines',
+        name: 'Slope (dy/dx)',
+        line: { color: 'rgba(255, 165, 0, 0.7)', width: 2, dash: 'dash' },
+        yaxis: 'y2',
+        visible: 'legendonly', // toggle-able
+    });
+
+    // --- Layout ---
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {
+            color: 'var(--plotly-font-color, #444)',
+            family: 'Inter, system-ui, sans-serif'
+        },
+        margin: { t: 30, b: 60, l: 50, r: 50 },
+        xaxis: {
+            gridcolor: 'rgba(128, 128, 128, 0.2)',
+            zerolinecolor: 'rgba(128, 128, 128, 0.5)',
+            automargin: true,
+            title: 'x',
+        },
+        yaxis: {
+            gridcolor: 'rgba(128, 128, 128, 0.2)',
+            zerolinecolor: 'rgba(128, 128, 128, 0.5)',
+            automargin: true,
+            title: 'y',
+        },
+        yaxis2: {
+            overlaying: 'y',
+            side: 'right',
+            gridcolor: 'rgba(255, 165, 0, 0.1)',
+            title: 'Slope',
+            showgrid: false,
+        },
+        legend: {
+            bgcolor: 'rgba(255, 255, 255, 0.1)',
+            font: { size: 11 },
+            orientation: 'h',
+            y: -0.25,
+        },
+        showlegend: true,
+    };
+
+    // --- Render ---
+    let plotDiv;
+    if (targetDiv) {
+        plotDiv = targetDiv;
+    } else {
+        plotDiv = document.getElementById('__nn_viz_auto__');
+        if (!plotDiv) {
+            plotDiv = document.createElement('div');
+            plotDiv.id = '__nn_viz_auto__';
+            document.body.appendChild(plotDiv);
+        }
+    }
+
+    plotDiv.style.width = '100%';
+    plotDiv.style.minHeight = '400px';
+
+    Plotly.react(plotDiv, traces, layout, { responsive: true });
 }
