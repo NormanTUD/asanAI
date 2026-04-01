@@ -1125,7 +1125,6 @@ async function visualizeModelBends() {
         return;
     }
 
-    // Check input shape: must be [null, 1] (1D input)
     const firstLayer = model.layers[0];
     const inputShape = firstLayer.batchInputShape;
     if (!inputShape || inputShape[inputShape.length - 1] !== 1) {
@@ -1133,7 +1132,6 @@ async function visualizeModelBends() {
         return;
     }
 
-    // Check output: last layer must have 1 unit
     const lastLayer = model.layers[model.layers.length - 1];
     if (lastLayer.units !== 1) {
         if (targetDiv) targetDiv.innerHTML = '';
@@ -1144,23 +1142,22 @@ async function visualizeModelBends() {
     const layerData = [];
     for (let l = 0; l < model.layers.length; l++) {
         const layer = model.layers[l];
-        const [kernelTensor, biasTensor] = layer.getWeights();
+        const weights = layer.getWeights();
+        if (!weights || weights.length < 2) continue;
+        const [kernelTensor, biasTensor] = weights;
         const kernel = await kernelTensor.data();
         const bias = await biasTensor.data();
         const actName = layer.activation?.getClassName?.() || 'linear';
 
-        // Determine shape
-        // kernel shape: [inputDim, units] stored flat in row-major order
         const units = layer.units;
         const inputDim = kernel.length / units;
 
-        layerData.push({
-            kernel,    // flat array [inputDim * units]
-            bias,      // flat array [units]
-            units,
-            inputDim,
-            actName,
-        });
+        layerData.push({ kernel, bias, units, inputDim, actName });
+    }
+
+    if (layerData.length < 2) {
+        if (targetDiv) targetDiv.innerHTML = '';
+        return;
     }
 
     // --- Activation functions ---
@@ -1172,45 +1169,40 @@ async function visualizeModelBends() {
             case 'leakyrelu': return val >= 0 ? val : 0.01 * val;
             case 'elu': return val >= 0 ? val : Math.exp(val) - 1;
             case 'softplus': return Math.log(1 + Math.exp(val));
-            default: return val; // linear
+            default: return val;
         }
     }
 
-    // --- Forward pass for a single scalar input x ---
-    // Returns { output: number, layerActivations: [array per layer] }
-    function forwardPass(x) {
-        let currentInput = [x]; // 1D array representing the current layer's input
-        const layerActivations = [];
+    // --- Check if any layer has a bend-producing activation ---
+    function isBendActivation(name) {
+        const n = name.toLowerCase();
+        return n === 'relu' || n === 'leakyrelu';
+    }
 
+    const hasBendActivations = layerData.some(ld => isBendActivation(ld.actName));
+
+    // --- Forward pass for a single scalar input x ---
+    function forwardPass(x) {
+        let currentInput = [x];
         for (let l = 0; l < layerData.length; l++) {
             const { kernel, bias, units, inputDim, actName } = layerData[l];
             const output = new Array(units);
-
             for (let j = 0; j < units; j++) {
                 let sum = bias[j];
                 for (let i = 0; i < inputDim; i++) {
-                    // kernel is stored as [inputDim, units] row-major
-                    // element [i, j] = kernel[i * units + j]
                     sum += currentInput[i] * kernel[i * units + j];
                 }
                 output[j] = applyActivation(sum, actName);
             }
-
-            layerActivations.push(output);
             currentInput = output;
         }
-
-        return {
-            output: currentInput[0], // final scalar output
-            layerActivations,
-        };
+        return currentInput[0];
     }
 
-    // --- Forward pass returning pre-activations for bend detection ---
-    function forwardPassDetailed(x) {
+    // --- Detailed forward pass returning pre-activations per layer ---
+    function getPreActivations(x) {
         let currentInput = [x];
-        const allPreActivations = [];
-        const allPostActivations = [];
+        const allPre = [];
 
         for (let l = 0; l < layerData.length; l++) {
             const { kernel, bias, units, inputDim, actName } = layerData[l];
@@ -1226,87 +1218,64 @@ async function visualizeModelBends() {
                 postAct[j] = applyActivation(sum, actName);
             }
 
-            allPreActivations.push(preAct);
-            allPostActivations.push(postAct);
+            allPre.push(preAct);
             currentInput = postAct;
         }
 
-        return { allPreActivations, allPostActivations, output: currentInput[0] };
+        return allPre;
     }
 
-    // --- Find bend points (where any ReLU-like neuron's pre-activation crosses zero) ---
-    // We do this numerically by sampling densely and detecting sign changes
-    function findBendPoints(xMin, xMax, numSamples) {
-        const bends = [];
-        const step = (xMax - xMin) / numSamples;
+    // ============================================================
+    // --- Determine X range from xy_data_global if available ---
+    // ============================================================
+    let dataXMin = null;
+    let dataXMax = null;
+    let dataPoints = null;
 
-        let prevDetail = forwardPassDetailed(xMin);
+    if (typeof xy_data_global !== 'undefined' && xy_data_global &&
+        xy_data_global.latex_array_x && xy_data_global.latex_array_x.length > 0) {
 
-        for (let i = 1; i <= numSamples; i++) {
-            const x = xMin + step * i;
-            const detail = forwardPassDetailed(x);
+        const rawXs = xy_data_global.latex_array_x.map(arr => arr[0]);
+        const rawYs = xy_data_global.latex_array_y
+            ? xy_data_global.latex_array_y.map(arr => arr[0])
+            : null;
 
-            // Check each layer and each neuron for sign changes in pre-activation
-            for (let l = 0; l < layerData.length; l++) {
-                const actName = layerData[l].actName.toLowerCase();
-                // Bends only matter for piecewise-linear activations
-                if (actName !== 'relu' && actName !== 'leakyrelu') continue;
+        dataXMin = Math.min(...rawXs);
+        dataXMax = Math.max(...rawXs);
 
-                for (let j = 0; j < layerData[l].units; j++) {
-                    const prevPre = prevDetail.allPreActivations[l][j];
-                    const currPre = detail.allPreActivations[l][j];
-
-                    // Sign change in pre-activation → bend point
-                    if (prevPre * currPre < 0) {
-                        // Linear interpolation to find zero crossing
-                        const t = prevPre / (prevPre - currPre);
-                        const bendX = (x - step) + t * step;
-                        bends.push({ x: bendX, layer: l, neuron: j });
-                    }
-                }
-            }
-
-            prevDetail = detail;
-        }
-
-        return bends;
-    }
-
-    // --- Determine X range from first hidden layer knots (initial estimate) ---
-    // For the first layer (1D input), knots are at x = -b/w
-    const firstLayerData = layerData[0];
-    let knotPoints = [];
-    for (let j = 0; j < firstLayerData.units; j++) {
-        const w = firstLayerData.kernel[j]; // kernel[0 * units + j] since inputDim=1
-        const b = firstLayerData.bias[j];
-        if (Math.abs(w) > 1e-8) {
-            knotPoints.push(-b / w);
+        if (rawYs) {
+            dataPoints = { xs: rawXs, ys: rawYs };
         }
     }
 
+    // --- Compute x-range ---
     let xMin, xMax;
-    if (knotPoints.length > 0) {
-        const kMin = Math.min(...knotPoints);
-        const kMax = Math.max(...knotPoints);
-        const range = Math.max(kMax - kMin, 1);
-        xMin = kMin - range * 0.7;
-        xMax = kMax + range * 0.7;
+
+    if (dataXMin !== null && dataXMax !== null) {
+        const dataRange = Math.max(dataXMax - dataXMin, 1);
+        xMin = dataXMin - dataRange * 0.15;
+        xMax = dataXMax + dataRange * 0.15;
     } else {
-        xMin = -5;
-        xMax = 5;
-    }
+        const firstLayerData = layerData[0];
+        let knotPoints = [];
+        for (let j = 0; j < firstLayerData.units; j++) {
+            const w = firstLayerData.kernel[j];
+            const b = firstLayerData.bias[j];
+            if (Math.abs(w) > 1e-8) {
+                knotPoints.push(-b / w);
+            }
+        }
 
-    // --- Find all bend points numerically ---
-    const bendPoints = findBendPoints(xMin, xMax, 5000);
-
-    // Possibly expand range if bends are near edges
-    if (bendPoints.length > 0) {
-        const bendXs = bendPoints.map(b => b.x);
-        const bMin = Math.min(...bendXs);
-        const bMax = Math.max(...bendXs);
-        const bRange = Math.max(bMax - bMin, 1);
-        xMin = Math.min(xMin, bMin - bRange * 0.3);
-        xMax = Math.max(xMax, bMax + bRange * 0.3);
+        if (knotPoints.length > 0) {
+            const kMin = Math.min(...knotPoints);
+            const kMax = Math.max(...knotPoints);
+            const range = Math.max(kMax - kMin, 1);
+            xMin = kMin - range * 0.7;
+            xMax = kMax + range * 0.7;
+        } else {
+            xMin = -5;
+            xMax = 5;
+        }
     }
 
     // --- Generate plot points ---
@@ -1316,7 +1285,98 @@ async function visualizeModelBends() {
         xs.push(xMin + (xMax - xMin) * i / (numPoints - 1));
     }
 
-    // --- HSL to RGB helper ---
+    // --- Compute model output for all x ---
+    const combinedY = xs.map(x => forwardPass(x));
+
+    // ============================================================
+    // --- Find bend points AFTER final range is set ---
+    // ============================================================
+    let bendResults = [];
+
+    if (hasBendActivations) {
+        // Dense scan for sign changes in pre-activations
+        const scanResolution = 5000;
+        const scanStep = (xMax - xMin) / scanResolution;
+
+        let prevPre = getPreActivations(xMin);
+
+        for (let i = 1; i <= scanResolution; i++) {
+            const x = xMin + scanStep * i;
+            const currPre = getPreActivations(x);
+
+            for (let l = 0; l < layerData.length; l++) {
+                if (!isBendActivation(layerData[l].actName)) continue;
+
+                for (let j = 0; j < layerData[l].units; j++) {
+                    const pPre = prevPre[l][j];
+                    const cPre = currPre[l][j];
+
+                    if (pPre * cPre < 0) {
+                        // Linear interpolation for zero crossing
+                        const t = Math.abs(pPre) / (Math.abs(pPre) + Math.abs(cPre));
+                        const bendX = (x - scanStep) + t * scanStep;
+                        bendResults.push({ x: bendX, layer: l, neuron: j });
+                    }
+                }
+            }
+
+            prevPre = currPre;
+        }
+
+        // Deduplicate close bends
+        bendResults.sort((a, b) => a.x - b.x);
+        const deduped = [];
+        for (const bp of bendResults) {
+            if (deduped.length === 0 ||
+                Math.abs(bp.x - deduped[deduped.length - 1].x) > (xMax - xMin) * 0.0005) {
+                deduped.push(bp);
+            }
+        }
+        bendResults = deduped;
+    }
+
+    // --- Also detect bends via second derivative (works for ALL activations) ---
+    // This catches bends even for tanh/sigmoid where there's no hard kink
+    // but a rapid change in curvature
+    const curvatureBends = [];
+    if (!hasBendActivations) {
+        // For smooth activations, find inflection-like points via slope changes
+        const slopes = [];
+        for (let i = 0; i < xs.length - 1; i++) {
+            slopes.push((combinedY[i + 1] - combinedY[i]) / (xs[i + 1] - xs[i]));
+        }
+        // Second derivative
+        for (let i = 0; i < slopes.length - 1; i++) {
+            const d2 = Math.abs(slopes[i + 1] - slopes[i]);
+            curvatureBends.push({ idx: i + 1, curvature: d2 });
+        }
+        // Find peaks in curvature
+        curvatureBends.sort((a, b) => b.curvature - a.curvature);
+        const threshold = curvatureBends.length > 0 ? curvatureBends[0].curvature * 0.1 : 0;
+        for (const cb of curvatureBends.slice(0, 20)) {
+            if (cb.curvature > threshold) {
+                bendResults.push({
+                    x: xs[cb.idx],
+                    layer: -1,
+                    neuron: -1,
+                });
+            }
+        }
+        // Deduplicate again
+        bendResults.sort((a, b) => a.x - b.x);
+        const deduped2 = [];
+        for (const bp of bendResults) {
+            if (deduped2.length === 0 ||
+                Math.abs(bp.x - deduped2[deduped2.length - 1].x) > (xMax - xMin) * 0.01) {
+                deduped2.push(bp);
+            }
+        }
+        bendResults = deduped2;
+    }
+
+    console.log(`[visualizeModelBends] Found ${bendResults.length} bend points in range [${xMin.toFixed(2)}, ${xMax.toFixed(2)}]`);
+
+    // --- HSL to RGB ---
     function hslToRgb(h, s, l) {
         s /= 100; l /= 100;
         const k = n => (n + h / 30) % 12;
@@ -1325,19 +1385,35 @@ async function visualizeModelBends() {
         return `rgb(${Math.round(f(0)*255)},${Math.round(f(8)*255)},${Math.round(f(4)*255)})`;
     }
 
-    // --- Compute traces ---
+    // --- Build traces ---
     const traces = [];
 
-    // Per-neuron contribution traces (first hidden layer only, for interpretability)
+    // --- Training data scatter ---
+    if (dataPoints) {
+        traces.push({
+            x: dataPoints.xs,
+            y: dataPoints.ys,
+            mode: 'markers',
+            name: 'Training Data',
+            marker: {
+                color: 'rgba(255, 255, 255, 0.8)',
+                size: 7,
+                symbol: 'circle',
+                line: { color: 'rgba(100, 100, 255, 0.9)', width: 1.5 }
+            },
+            hovertemplate: 'x: %{x}<br>y: %{y}<extra>Data</extra>',
+        });
+    }
+
+    // --- Per-neuron contribution traces ---
     if (layerData.length === 2) {
-        // Simple 2-layer case: show individual neuron contributions
         const layer1 = layerData[0];
         const layer2 = layerData[1];
 
         for (let j = 0; j < layer1.units; j++) {
-            const w1 = layer1.kernel[j];  // kernel[0*units+j]
+            const w1 = layer1.kernel[j];
             const b1 = layer1.bias[j];
-            const w2 = layer2.kernel[j];  // kernel[j*1+0] = kernel[j]
+            const w2 = layer2.kernel[j];
 
             const ys = xs.map(x => {
                 const preAct = w1 * x + b1;
@@ -1357,14 +1433,13 @@ async function visualizeModelBends() {
             });
         }
     } else {
-        // Multi-layer case: show per-layer output as intermediate traces
         for (let l = 0; l < layerData.length - 1; l++) {
-            // Show each hidden neuron's activation across x
             const numNeurons = layerData[l].units;
             for (let j = 0; j < numNeurons; j++) {
                 const ys = xs.map(x => {
-                    const detail = forwardPassDetailed(x);
-                    return detail.allPostActivations[l][j];
+                    const pre = getPreActivations(x);
+                    // We need post-activations, compute them
+                    return applyActivation(pre[l][j], layerData[l].actName);
                 });
 
                 const color = hslToRgb(
@@ -1379,15 +1454,13 @@ async function visualizeModelBends() {
                     line: { color, width: 1, dash: 'dot' },
                     opacity: 0.4,
                     legendgroup: `layer${l}`,
-                    visible: 'legendonly', // hidden by default to reduce clutter
+                    visible: 'legendonly',
                 });
             }
         }
     }
 
-    // --- Combined output trace ---
-    const combinedY = xs.map(x => forwardPass(x).output);
-
+    // --- Combined model output ---
     traces.push({
         x: xs,
         y: combinedY,
@@ -1397,43 +1470,35 @@ async function visualizeModelBends() {
     });
 
     // --- Bend point markers ---
-    if (bendPoints.length > 0) {
-        // Deduplicate bends that are very close together
-        const uniqueBends = [];
-        const sortedBends = [...bendPoints].sort((a, b) => a.x - b.x);
-        for (const bp of sortedBends) {
-            if (uniqueBends.length === 0 ||
-                Math.abs(bp.x - uniqueBends[uniqueBends.length - 1].x) > (xMax - xMin) * 0.001) {
-                uniqueBends.push(bp);
-            }
-        }
-
-        const bendXs = uniqueBends.map(b => b.x);
-        const bendYs = bendXs.map(bx => forwardPass(bx).output);
-        const bendLabels = uniqueBends.map(b => `L${b.layer+1} N${b.neuron+1}`);
+    if (bendResults.length > 0) {
+        const bendXs = bendResults.map(b => b.x);
+        const bendYs = bendXs.map(bx => forwardPass(bx));
+        const bendLabels = bendResults.map(b =>
+            b.layer >= 0 ? `L${b.layer+1} N${b.neuron+1}` : 'Curvature peak'
+        );
 
         traces.push({
             x: bendXs,
             y: bendYs,
             mode: 'markers',
-            name: 'Bend Points',
+            name: `Bend Points (${bendResults.length})`,
             marker: {
-                color: 'rgba(255, 50, 50, 0.85)',
-                size: 10,
+                color: 'rgba(255, 50, 50, 0.9)',
+                size: 11,
                 symbol: 'diamond',
-                line: { color: 'white', width: 1 }
+                line: { color: 'white', width: 2 }
             },
             text: bendLabels,
             hovertemplate: '<b>%{text}</b><br>x: %{x:.4f}<br>y: %{y:.4f}<extra></extra>',
         });
     }
 
-    // --- Slope trace (derivative) to visualize where bends occur ---
+    // --- Slope trace ---
     const slopeY = [];
     for (let i = 0; i < xs.length - 1; i++) {
         slopeY.push((combinedY[i + 1] - combinedY[i]) / (xs[i + 1] - xs[i]));
     }
-    slopeY.push(slopeY[slopeY.length - 1]); // duplicate last value
+    slopeY.push(slopeY[slopeY.length - 1]);
 
     traces.push({
         x: xs,
@@ -1442,7 +1507,7 @@ async function visualizeModelBends() {
         name: 'Slope (dy/dx)',
         line: { color: 'rgba(255, 165, 0, 0.7)', width: 2, dash: 'dash' },
         yaxis: 'y2',
-        visible: 'legendonly', // toggle-able
+        visible: 'legendonly',
     });
 
     // --- Layout ---
