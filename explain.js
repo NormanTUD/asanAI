@@ -1374,8 +1374,6 @@ async function visualizeModelBends() {
         bendResults = deduped2;
     }
 
-    console.log(`[visualizeModelBends] Found ${bendResults.length} bend points in range [${xMin.toFixed(2)}, ${xMax.toFixed(2)}]`);
-
     // --- HSL to RGB ---
     function hslToRgb(h, s, l) {
         s /= 100; l /= 100;
