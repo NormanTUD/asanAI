@@ -1117,449 +1117,449 @@ function array_to_html(_array) {
 }
 
 async function visualizeModelBends() {
-    const targetDiv = document.getElementById("bend_graph");
+	const targetDiv = document.getElementById("bend_graph");
 
-    // --- Validation ---
-    if (typeof model === 'undefined' || !model || !model.layers || model.layers.length < 2) {
-        if (targetDiv) targetDiv.innerHTML = '';
-        return;
-    }
+	// --- Validation ---
+	if (typeof model === 'undefined' || !model || !model.layers || model.layers.length < 2) {
+		if (targetDiv) targetDiv.innerHTML = '';
+		return;
+	}
 
-    const firstLayer = model.layers[0];
-    const inputShape = firstLayer.batchInputShape;
-    if (!inputShape || inputShape[inputShape.length - 1] !== 1) {
-        if (targetDiv) targetDiv.innerHTML = '';
-        return;
-    }
+	const firstLayer = model.layers[0];
+	const inputShape = firstLayer.batchInputShape;
+	if (!inputShape || inputShape[inputShape.length - 1] !== 1) {
+		if (targetDiv) targetDiv.innerHTML = '';
+		return;
+	}
 
-    const lastLayer = model.layers[model.layers.length - 1];
-    if (lastLayer.units !== 1) {
-        if (targetDiv) targetDiv.innerHTML = '';
-        return;
-    }
+	const lastLayer = model.layers[model.layers.length - 1];
+	if (lastLayer.units !== 1) {
+		if (targetDiv) targetDiv.innerHTML = '';
+		return;
+	}
 
-    // --- Extract all layer weights ---
-    const layerData = [];
-    for (let l = 0; l < model.layers.length; l++) {
-        const layer = model.layers[l];
-        const weights = layer.getWeights();
-        if (!weights || weights.length < 2) continue;
-        const [kernelTensor, biasTensor] = weights;
-        const kernel = await kernelTensor.data();
-        const bias = await biasTensor.data();
-        const actName = layer.activation?.getClassName?.() || 'linear';
+	// --- Extract all layer weights ---
+	const layerData = [];
+	for (let l = 0; l < model.layers.length; l++) {
+		const layer = model.layers[l];
+		const weights = layer.getWeights();
+		if (!weights || weights.length < 2) continue;
+		const [kernelTensor, biasTensor] = weights;
+		const kernel = await kernelTensor.data();
+		const bias = await biasTensor.data();
+		const actName = layer.activation?.getClassName?.() || 'linear';
 
-        const units = layer.units;
-        const inputDim = kernel.length / units;
+		const units = layer.units;
+		const inputDim = kernel.length / units;
 
-        layerData.push({ kernel, bias, units, inputDim, actName });
-    }
+		layerData.push({ kernel, bias, units, inputDim, actName });
+	}
 
-    if (layerData.length < 2) {
-        if (targetDiv) targetDiv.innerHTML = '';
-        return;
-    }
+	if (layerData.length < 2) {
+		if (targetDiv) targetDiv.innerHTML = '';
+		return;
+	}
 
-    // --- Activation functions ---
-    function applyActivation(val, name) {
-        switch (name.toLowerCase()) {
-            case 'relu': return Math.max(0, val);
-            case 'sigmoid': return 1 / (1 + Math.exp(-val));
-            case 'tanh': return Math.tanh(val);
-            case 'leakyrelu': return val >= 0 ? val : 0.01 * val;
-            case 'elu': return val >= 0 ? val : Math.exp(val) - 1;
-            case 'softplus': return Math.log(1 + Math.exp(val));
-            default: return val;
-        }
-    }
+	// --- Activation functions ---
+	function applyActivation(val, name) {
+		switch (name.toLowerCase()) {
+			case 'relu': return Math.max(0, val);
+			case 'sigmoid': return 1 / (1 + Math.exp(-val));
+			case 'tanh': return Math.tanh(val);
+			case 'leakyrelu': return val >= 0 ? val : 0.01 * val;
+			case 'elu': return val >= 0 ? val : Math.exp(val) - 1;
+			case 'softplus': return Math.log(1 + Math.exp(val));
+			default: return val;
+		}
+	}
 
-    // --- Check if any layer has a bend-producing activation ---
-    function isBendActivation(name) {
-        const n = name.toLowerCase();
-        return n === 'relu' || n === 'leakyrelu';
-    }
+	// --- Check if any layer has a bend-producing activation ---
+	function isBendActivation(name) {
+		const n = name.toLowerCase();
+		return n === 'relu' || n === 'leakyrelu';
+	}
 
-    const hasBendActivations = layerData.some(ld => isBendActivation(ld.actName));
+	const hasBendActivations = layerData.some(ld => isBendActivation(ld.actName));
 
-    // --- Forward pass for a single scalar input x ---
-    function forwardPass(x) {
-        let currentInput = [x];
-        for (let l = 0; l < layerData.length; l++) {
-            const { kernel, bias, units, inputDim, actName } = layerData[l];
-            const output = new Array(units);
-            for (let j = 0; j < units; j++) {
-                let sum = bias[j];
-                for (let i = 0; i < inputDim; i++) {
-                    sum += currentInput[i] * kernel[i * units + j];
-                }
-                output[j] = applyActivation(sum, actName);
-            }
-            currentInput = output;
-        }
-        return currentInput[0];
-    }
+	// --- Forward pass for a single scalar input x ---
+	function forwardPass(x) {
+		let currentInput = [x];
+		for (let l = 0; l < layerData.length; l++) {
+			const { kernel, bias, units, inputDim, actName } = layerData[l];
+			const output = new Array(units);
+			for (let j = 0; j < units; j++) {
+				let sum = bias[j];
+				for (let i = 0; i < inputDim; i++) {
+					sum += currentInput[i] * kernel[i * units + j];
+				}
+				output[j] = applyActivation(sum, actName);
+			}
+			currentInput = output;
+		}
+		return currentInput[0];
+	}
 
-    // --- Detailed forward pass returning pre-activations per layer ---
-    function getPreActivations(x) {
-        let currentInput = [x];
-        const allPre = [];
+	// --- Detailed forward pass returning pre-activations per layer ---
+	function getPreActivations(x) {
+		let currentInput = [x];
+		const allPre = [];
 
-        for (let l = 0; l < layerData.length; l++) {
-            const { kernel, bias, units, inputDim, actName } = layerData[l];
-            const preAct = new Array(units);
-            const postAct = new Array(units);
+		for (let l = 0; l < layerData.length; l++) {
+			const { kernel, bias, units, inputDim, actName } = layerData[l];
+			const preAct = new Array(units);
+			const postAct = new Array(units);
 
-            for (let j = 0; j < units; j++) {
-                let sum = bias[j];
-                for (let i = 0; i < inputDim; i++) {
-                    sum += currentInput[i] * kernel[i * units + j];
-                }
-                preAct[j] = sum;
-                postAct[j] = applyActivation(sum, actName);
-            }
+			for (let j = 0; j < units; j++) {
+				let sum = bias[j];
+				for (let i = 0; i < inputDim; i++) {
+					sum += currentInput[i] * kernel[i * units + j];
+				}
+				preAct[j] = sum;
+				postAct[j] = applyActivation(sum, actName);
+			}
 
-            allPre.push(preAct);
-            currentInput = postAct;
-        }
+			allPre.push(preAct);
+			currentInput = postAct;
+		}
 
-        return allPre;
-    }
+		return allPre;
+	}
 
-    // ============================================================
-    // --- Determine X range from xy_data_global if available ---
-    // ============================================================
-    let dataXMin = null;
-    let dataXMax = null;
-    let dataPoints = null;
+	// ============================================================
+	// --- Determine X range from xy_data_global if available ---
+	// ============================================================
+	let dataXMin = null;
+	let dataXMax = null;
+	let dataPoints = null;
 
-    if (typeof xy_data_global !== 'undefined' && xy_data_global &&
-        xy_data_global.latex_array_x && xy_data_global.latex_array_x.length > 0) {
+	if (typeof xy_data_global !== 'undefined' && xy_data_global &&
+		xy_data_global.latex_array_x && xy_data_global.latex_array_x.length > 0) {
 
-        const rawXs = xy_data_global.latex_array_x.map(arr => arr[0]);
-        const rawYs = xy_data_global.latex_array_y
-            ? xy_data_global.latex_array_y.map(arr => arr[0])
-            : null;
+		const rawXs = xy_data_global.latex_array_x.map(arr => arr[0]);
+		const rawYs = xy_data_global.latex_array_y
+			? xy_data_global.latex_array_y.map(arr => arr[0])
+			: null;
 
-        dataXMin = Math.min(...rawXs);
-        dataXMax = Math.max(...rawXs);
+		dataXMin = Math.min(...rawXs);
+		dataXMax = Math.max(...rawXs);
 
-        if (rawYs) {
-            dataPoints = { xs: rawXs, ys: rawYs };
-        }
-    }
+		if (rawYs) {
+			dataPoints = { xs: rawXs, ys: rawYs };
+		}
+	}
 
-    // --- Compute x-range ---
-    let xMin, xMax;
+	// --- Compute x-range ---
+	let xMin, xMax;
 
-    if (dataXMin !== null && dataXMax !== null) {
-        const dataRange = Math.max(dataXMax - dataXMin, 1);
-        xMin = dataXMin - dataRange * 0.15;
-        xMax = dataXMax + dataRange * 0.15;
-    } else {
-        const firstLayerData = layerData[0];
-        let knotPoints = [];
-        for (let j = 0; j < firstLayerData.units; j++) {
-            const w = firstLayerData.kernel[j];
-            const b = firstLayerData.bias[j];
-            if (Math.abs(w) > 1e-8) {
-                knotPoints.push(-b / w);
-            }
-        }
+	if (dataXMin !== null && dataXMax !== null) {
+		const dataRange = Math.max(dataXMax - dataXMin, 1);
+		xMin = dataXMin - dataRange * 0.15;
+		xMax = dataXMax + dataRange * 0.15;
+	} else {
+		const firstLayerData = layerData[0];
+		let knotPoints = [];
+		for (let j = 0; j < firstLayerData.units; j++) {
+			const w = firstLayerData.kernel[j];
+			const b = firstLayerData.bias[j];
+			if (Math.abs(w) > 1e-8) {
+				knotPoints.push(-b / w);
+			}
+		}
 
-        if (knotPoints.length > 0) {
-            const kMin = Math.min(...knotPoints);
-            const kMax = Math.max(...knotPoints);
-            const range = Math.max(kMax - kMin, 1);
-            xMin = kMin - range * 0.7;
-            xMax = kMax + range * 0.7;
-        } else {
-            xMin = -5;
-            xMax = 5;
-        }
-    }
+		if (knotPoints.length > 0) {
+			const kMin = Math.min(...knotPoints);
+			const kMax = Math.max(...knotPoints);
+			const range = Math.max(kMax - kMin, 1);
+			xMin = kMin - range * 0.7;
+			xMax = kMax + range * 0.7;
+		} else {
+			xMin = -5;
+			xMax = 5;
+		}
+	}
 
-    // --- Generate plot points ---
-    const numPoints = 800;
-    const xs = [];
-    for (let i = 0; i < numPoints; i++) {
-        xs.push(xMin + (xMax - xMin) * i / (numPoints - 1));
-    }
+	// --- Generate plot points ---
+	const numPoints = 800;
+	const xs = [];
+	for (let i = 0; i < numPoints; i++) {
+		xs.push(xMin + (xMax - xMin) * i / (numPoints - 1));
+	}
 
-    // --- Compute model output for all x ---
-    const combinedY = xs.map(x => forwardPass(x));
+	// --- Compute model output for all x ---
+	const combinedY = xs.map(x => forwardPass(x));
 
-    // ============================================================
-    // --- Find bend points AFTER final range is set ---
-    // ============================================================
-    let bendResults = [];
+	// ============================================================
+	// --- Find bend points AFTER final range is set ---
+	// ============================================================
+	let bendResults = [];
 
-    if (hasBendActivations) {
-        // Dense scan for sign changes in pre-activations
-        const scanResolution = 5000;
-        const scanStep = (xMax - xMin) / scanResolution;
+	if (hasBendActivations) {
+		// Dense scan for sign changes in pre-activations
+		const scanResolution = 5000;
+		const scanStep = (xMax - xMin) / scanResolution;
 
-        let prevPre = getPreActivations(xMin);
+		let prevPre = getPreActivations(xMin);
 
-        for (let i = 1; i <= scanResolution; i++) {
-            const x = xMin + scanStep * i;
-            const currPre = getPreActivations(x);
+		for (let i = 1; i <= scanResolution; i++) {
+			const x = xMin + scanStep * i;
+			const currPre = getPreActivations(x);
 
-            for (let l = 0; l < layerData.length; l++) {
-                if (!isBendActivation(layerData[l].actName)) continue;
+			for (let l = 0; l < layerData.length; l++) {
+				if (!isBendActivation(layerData[l].actName)) continue;
 
-                for (let j = 0; j < layerData[l].units; j++) {
-                    const pPre = prevPre[l][j];
-                    const cPre = currPre[l][j];
+				for (let j = 0; j < layerData[l].units; j++) {
+					const pPre = prevPre[l][j];
+					const cPre = currPre[l][j];
 
-                    if (pPre * cPre < 0) {
-                        // Linear interpolation for zero crossing
-                        const t = Math.abs(pPre) / (Math.abs(pPre) + Math.abs(cPre));
-                        const bendX = (x - scanStep) + t * scanStep;
-                        bendResults.push({ x: bendX, layer: l, neuron: j });
-                    }
-                }
-            }
+					if (pPre * cPre < 0) {
+						// Linear interpolation for zero crossing
+						const t = Math.abs(pPre) / (Math.abs(pPre) + Math.abs(cPre));
+						const bendX = (x - scanStep) + t * scanStep;
+						bendResults.push({ x: bendX, layer: l, neuron: j });
+					}
+				}
+			}
 
-            prevPre = currPre;
-        }
+			prevPre = currPre;
+		}
 
-        // Deduplicate close bends
-        bendResults.sort((a, b) => a.x - b.x);
-        const deduped = [];
-        for (const bp of bendResults) {
-            if (deduped.length === 0 ||
-                Math.abs(bp.x - deduped[deduped.length - 1].x) > (xMax - xMin) * 0.0005) {
-                deduped.push(bp);
-            }
-        }
-        bendResults = deduped;
-    }
+		// Deduplicate close bends
+		bendResults.sort((a, b) => a.x - b.x);
+		const deduped = [];
+		for (const bp of bendResults) {
+			if (deduped.length === 0 ||
+				Math.abs(bp.x - deduped[deduped.length - 1].x) > (xMax - xMin) * 0.0005) {
+				deduped.push(bp);
+			}
+		}
+		bendResults = deduped;
+	}
 
-    // --- Also detect bends via second derivative (works for ALL activations) ---
-    // This catches bends even for tanh/sigmoid where there's no hard kink
-    // but a rapid change in curvature
-    const curvatureBends = [];
-    if (!hasBendActivations) {
-        // For smooth activations, find inflection-like points via slope changes
-        const slopes = [];
-        for (let i = 0; i < xs.length - 1; i++) {
-            slopes.push((combinedY[i + 1] - combinedY[i]) / (xs[i + 1] - xs[i]));
-        }
-        // Second derivative
-        for (let i = 0; i < slopes.length - 1; i++) {
-            const d2 = Math.abs(slopes[i + 1] - slopes[i]);
-            curvatureBends.push({ idx: i + 1, curvature: d2 });
-        }
-        // Find peaks in curvature
-        curvatureBends.sort((a, b) => b.curvature - a.curvature);
-        const threshold = curvatureBends.length > 0 ? curvatureBends[0].curvature * 0.1 : 0;
-        for (const cb of curvatureBends.slice(0, 20)) {
-            if (cb.curvature > threshold) {
-                bendResults.push({
-                    x: xs[cb.idx],
-                    layer: -1,
-                    neuron: -1,
-                });
-            }
-        }
-        // Deduplicate again
-        bendResults.sort((a, b) => a.x - b.x);
-        const deduped2 = [];
-        for (const bp of bendResults) {
-            if (deduped2.length === 0 ||
-                Math.abs(bp.x - deduped2[deduped2.length - 1].x) > (xMax - xMin) * 0.01) {
-                deduped2.push(bp);
-            }
-        }
-        bendResults = deduped2;
-    }
+	// --- Also detect bends via second derivative (works for ALL activations) ---
+	// This catches bends even for tanh/sigmoid where there's no hard kink
+	// but a rapid change in curvature
+	const curvatureBends = [];
+	if (!hasBendActivations) {
+		// For smooth activations, find inflection-like points via slope changes
+		const slopes = [];
+		for (let i = 0; i < xs.length - 1; i++) {
+			slopes.push((combinedY[i + 1] - combinedY[i]) / (xs[i + 1] - xs[i]));
+		}
+		// Second derivative
+		for (let i = 0; i < slopes.length - 1; i++) {
+			const d2 = Math.abs(slopes[i + 1] - slopes[i]);
+			curvatureBends.push({ idx: i + 1, curvature: d2 });
+		}
+		// Find peaks in curvature
+		curvatureBends.sort((a, b) => b.curvature - a.curvature);
+		const threshold = curvatureBends.length > 0 ? curvatureBends[0].curvature * 0.1 : 0;
+		for (const cb of curvatureBends.slice(0, 20)) {
+			if (cb.curvature > threshold) {
+				bendResults.push({
+					x: xs[cb.idx],
+					layer: -1,
+					neuron: -1,
+				});
+			}
+		}
+		// Deduplicate again
+		bendResults.sort((a, b) => a.x - b.x);
+		const deduped2 = [];
+		for (const bp of bendResults) {
+			if (deduped2.length === 0 ||
+				Math.abs(bp.x - deduped2[deduped2.length - 1].x) > (xMax - xMin) * 0.01) {
+				deduped2.push(bp);
+			}
+		}
+		bendResults = deduped2;
+	}
 
-    // --- HSL to RGB ---
-    function hslToRgb(h, s, l) {
-        s /= 100; l /= 100;
-        const k = n => (n + h / 30) % 12;
-        const a = s * Math.min(l, 1 - l);
-        const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-        return `rgb(${Math.round(f(0)*255)},${Math.round(f(8)*255)},${Math.round(f(4)*255)})`;
-    }
+	// --- HSL to RGB ---
+	function hslToRgb(h, s, l) {
+		s /= 100; l /= 100;
+		const k = n => (n + h / 30) % 12;
+		const a = s * Math.min(l, 1 - l);
+		const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+		return `rgb(${Math.round(f(0)*255)},${Math.round(f(8)*255)},${Math.round(f(4)*255)})`;
+	}
 
-    // --- Build traces ---
-    const traces = [];
+	// --- Build traces ---
+	const traces = [];
 
-    // --- Training data scatter ---
-    if (dataPoints) {
-        traces.push({
-            x: dataPoints.xs,
-            y: dataPoints.ys,
-            mode: 'markers',
-            name: 'Training Data',
-            marker: {
-                color: 'rgba(255, 255, 255, 0.8)',
-                size: 7,
-                symbol: 'circle',
-                line: { color: 'rgba(100, 100, 255, 0.9)', width: 1.5 }
-            },
-            hovertemplate: 'x: %{x}<br>y: %{y}<extra>Data</extra>',
-        });
-    }
+	// --- Training data scatter ---
+	if (dataPoints) {
+		traces.push({
+			x: dataPoints.xs,
+			y: dataPoints.ys,
+			mode: 'markers',
+			name: 'Training Data',
+			marker: {
+				color: 'rgba(255, 255, 255, 0.8)',
+				size: 7,
+				symbol: 'circle',
+				line: { color: 'rgba(100, 100, 255, 0.9)', width: 1.5 }
+			},
+			hovertemplate: 'x: %{x}<br>y: %{y}<extra>Data</extra>',
+		});
+	}
 
-    // --- Per-neuron contribution traces ---
-    if (layerData.length === 2) {
-        const layer1 = layerData[0];
-        const layer2 = layerData[1];
+	// --- Per-neuron contribution traces ---
+	if (layerData.length === 2) {
+		const layer1 = layerData[0];
+		const layer2 = layerData[1];
 
-        for (let j = 0; j < layer1.units; j++) {
-            const w1 = layer1.kernel[j];
-            const b1 = layer1.bias[j];
-            const w2 = layer2.kernel[j];
+		for (let j = 0; j < layer1.units; j++) {
+			const w1 = layer1.kernel[j];
+			const b1 = layer1.bias[j];
+			const w2 = layer2.kernel[j];
 
-            const ys = xs.map(x => {
-                const preAct = w1 * x + b1;
-                const postAct = applyActivation(preAct, layer1.actName);
-                return postAct * w2;
-            });
+			const ys = xs.map(x => {
+				const preAct = w1 * x + b1;
+				const postAct = applyActivation(preAct, layer1.actName);
+				return postAct * w2;
+			});
 
-            const color = hslToRgb((j * 360 / layer1.units) % 360, 70, 55);
+			const color = hslToRgb((j * 360 / layer1.units) % 360, 70, 55);
 
-            traces.push({
-                x: xs,
-                y: ys,
-                mode: 'lines',
-                name: `N${j+1} (w₁=${w1.toFixed(2)}, b=${b1.toFixed(2)}, w₂=${w2.toFixed(2)})`,
-                line: { color, width: 1.5, dash: 'dot' },
-                opacity: 0.6,
-            });
-        }
-    } else {
-        for (let l = 0; l < layerData.length - 1; l++) {
-            const numNeurons = layerData[l].units;
-            for (let j = 0; j < numNeurons; j++) {
-                const ys = xs.map(x => {
-                    const pre = getPreActivations(x);
-                    // We need post-activations, compute them
-                    return applyActivation(pre[l][j], layerData[l].actName);
-                });
+			traces.push({
+				x: xs,
+				y: ys,
+				mode: 'lines',
+				name: `N${j+1} (w₁=${w1.toFixed(2)}, b=${b1.toFixed(2)}, w₂=${w2.toFixed(2)})`,
+				line: { color, width: 1.5, dash: 'dot' },
+				opacity: 0.6,
+			});
+		}
+	} else {
+		for (let l = 0; l < layerData.length - 1; l++) {
+			const numNeurons = layerData[l].units;
+			for (let j = 0; j < numNeurons; j++) {
+				const ys = xs.map(x => {
+					const pre = getPreActivations(x);
+					// We need post-activations, compute them
+					return applyActivation(pre[l][j], layerData[l].actName);
+				});
 
-                const color = hslToRgb(
-                    ((l * 137 + j * 360 / numNeurons) % 360), 60, 50
-                );
+				const color = hslToRgb(
+					((l * 137 + j * 360 / numNeurons) % 360), 60, 50
+				);
 
-                traces.push({
-                    x: xs,
-                    y: ys,
-                    mode: 'lines',
-                    name: `L${l+1} N${j+1}`,
-                    line: { color, width: 1, dash: 'dot' },
-                    opacity: 0.4,
-                    legendgroup: `layer${l}`,
-                    visible: 'legendonly',
-                });
-            }
-        }
-    }
+				traces.push({
+					x: xs,
+					y: ys,
+					mode: 'lines',
+					name: `L${l+1} N${j+1}`,
+					line: { color, width: 1, dash: 'dot' },
+					opacity: 0.4,
+					legendgroup: `layer${l}`,
+					visible: 'legendonly',
+				});
+			}
+		}
+	}
 
-    // --- Combined model output ---
-    traces.push({
-        x: xs,
-        y: combinedY,
-        mode: 'lines',
-        name: 'Model Output',
-        line: { color: 'cyan', width: 4 },
-    });
+	// --- Combined model output ---
+	traces.push({
+		x: xs,
+		y: combinedY,
+		mode: 'lines',
+		name: 'Model Output',
+		line: { color: 'cyan', width: 4 },
+	});
 
-    // --- Bend point markers ---
-    if (bendResults.length > 0) {
-        const bendXs = bendResults.map(b => b.x);
-        const bendYs = bendXs.map(bx => forwardPass(bx));
-        const bendLabels = bendResults.map(b =>
-            b.layer >= 0 ? `L${b.layer+1} N${b.neuron+1}` : 'Curvature peak'
-        );
+	// --- Bend point markers ---
+	if (bendResults.length > 0) {
+		const bendXs = bendResults.map(b => b.x);
+		const bendYs = bendXs.map(bx => forwardPass(bx));
+		const bendLabels = bendResults.map(b =>
+			b.layer >= 0 ? `L${b.layer+1} N${b.neuron+1}` : 'Curvature peak'
+		);
 
-        traces.push({
-            x: bendXs,
-            y: bendYs,
-            mode: 'markers',
-            name: `Bend Points (${bendResults.length})`,
-            marker: {
-                color: 'rgba(255, 50, 50, 0.9)',
-                size: 11,
-                symbol: 'diamond',
-                line: { color: 'white', width: 2 }
-            },
-            text: bendLabels,
-            hovertemplate: '<b>%{text}</b><br>x: %{x:.4f}<br>y: %{y:.4f}<extra></extra>',
-        });
-    }
+		traces.push({
+			x: bendXs,
+			y: bendYs,
+			mode: 'markers',
+			name: `Bend Points (${bendResults.length})`,
+			marker: {
+				color: 'rgba(255, 50, 50, 0.9)',
+				size: 11,
+				symbol: 'diamond',
+				line: { color: 'white', width: 2 }
+			},
+			text: bendLabels,
+			hovertemplate: '<b>%{text}</b><br>x: %{x:.4f}<br>y: %{y:.4f}<extra></extra>',
+		});
+	}
 
-    // --- Slope trace ---
-    const slopeY = [];
-    for (let i = 0; i < xs.length - 1; i++) {
-        slopeY.push((combinedY[i + 1] - combinedY[i]) / (xs[i + 1] - xs[i]));
-    }
-    slopeY.push(slopeY[slopeY.length - 1]);
+	// --- Slope trace ---
+	const slopeY = [];
+	for (let i = 0; i < xs.length - 1; i++) {
+		slopeY.push((combinedY[i + 1] - combinedY[i]) / (xs[i + 1] - xs[i]));
+	}
+	slopeY.push(slopeY[slopeY.length - 1]);
 
-    traces.push({
-        x: xs,
-        y: slopeY,
-        mode: 'lines',
-        name: 'Slope (dy/dx)',
-        line: { color: 'rgba(255, 165, 0, 0.7)', width: 2, dash: 'dash' },
-        yaxis: 'y2',
-        visible: 'legendonly',
-    });
+	traces.push({
+		x: xs,
+		y: slopeY,
+		mode: 'lines',
+		name: 'Slope (dy/dx)',
+		line: { color: 'rgba(255, 165, 0, 0.7)', width: 2, dash: 'dash' },
+		yaxis: 'y2',
+		visible: 'legendonly',
+	});
 
-    // --- Layout ---
-    const layout = {
-        paper_bgcolor: 'rgba(0,0,0,0)',
-        plot_bgcolor: 'rgba(0,0,0,0)',
-        font: {
-            color: 'var(--plotly-font-color, #444)',
-            family: 'Inter, system-ui, sans-serif'
-        },
-        margin: { t: 30, b: 60, l: 50, r: 50 },
-        xaxis: {
-            gridcolor: 'rgba(128, 128, 128, 0.2)',
-            zerolinecolor: 'rgba(128, 128, 128, 0.5)',
-            automargin: true,
-            title: 'x',
-        },
-        yaxis: {
-            gridcolor: 'rgba(128, 128, 128, 0.2)',
-            zerolinecolor: 'rgba(128, 128, 128, 0.5)',
-            automargin: true,
-            title: 'y',
-        },
-        yaxis2: {
-            overlaying: 'y',
-            side: 'right',
-            gridcolor: 'rgba(255, 165, 0, 0.1)',
-            title: 'Slope',
-            showgrid: false,
-        },
-        legend: {
-            bgcolor: 'rgba(255, 255, 255, 0.1)',
-            font: { size: 11 },
-            orientation: 'h',
-            y: -0.25,
-        },
-        showlegend: true,
-    };
+	// --- Layout ---
+	const layout = {
+		paper_bgcolor: 'rgba(0,0,0,0)',
+		plot_bgcolor: 'rgba(0,0,0,0)',
+		font: {
+			color: 'var(--plotly-font-color, #444)',
+			family: 'Inter, system-ui, sans-serif'
+		},
+		margin: { t: 30, b: 60, l: 50, r: 50 },
+		xaxis: {
+			gridcolor: 'rgba(128, 128, 128, 0.2)',
+			zerolinecolor: 'rgba(128, 128, 128, 0.5)',
+			automargin: true,
+			title: 'x',
+		},
+		yaxis: {
+			gridcolor: 'rgba(128, 128, 128, 0.2)',
+			zerolinecolor: 'rgba(128, 128, 128, 0.5)',
+			automargin: true,
+			title: 'y',
+		},
+		yaxis2: {
+			overlaying: 'y',
+			side: 'right',
+			gridcolor: 'rgba(255, 165, 0, 0.1)',
+			title: 'Slope',
+			showgrid: false,
+		},
+		legend: {
+			bgcolor: 'rgba(255, 255, 255, 0.1)',
+			font: { size: 11 },
+			orientation: 'h',
+			y: -0.25,
+		},
+		showlegend: true,
+	};
 
-    // --- Render ---
-    let plotDiv;
-    if (targetDiv) {
-        plotDiv = targetDiv;
-    } else {
-        plotDiv = document.getElementById('__nn_viz_auto__');
-        if (!plotDiv) {
-            plotDiv = document.createElement('div');
-            plotDiv.id = '__nn_viz_auto__';
-            document.body.appendChild(plotDiv);
-        }
-    }
+	// --- Render ---
+	let plotDiv;
+	if (targetDiv) {
+		plotDiv = targetDiv;
+	} else {
+		plotDiv = document.getElementById('__nn_viz_auto__');
+		if (!plotDiv) {
+			plotDiv = document.createElement('div');
+			plotDiv.id = '__nn_viz_auto__';
+			document.body.appendChild(plotDiv);
+		}
+	}
 
-    plotDiv.style.width = '100%';
-    plotDiv.style.minHeight = '400px';
+	plotDiv.style.width = '100%';
+	plotDiv.style.minHeight = '400px';
 
-    Plotly.react(plotDiv, traces, layout, { responsive: true });
+	Plotly.react(plotDiv, traces, layout, { responsive: true });
 }
