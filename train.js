@@ -510,6 +510,7 @@ async function get_fit_data () {
 
 		reset_neuron_outputs();
 
+		visualizeModelBends();
 	};
 
 	callbacks["onTrainEnd"] = async function () {
