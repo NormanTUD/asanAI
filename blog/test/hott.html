@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homotopy Type Theory — Visual Explorer</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a1a;
+    color: #e0e0f0;
+    overflow-x: hidden;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 60px 20px 30px;
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1040 50%, #0a0a1a 100%);
+  }
+
+  .hero h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #7b68ee, #00d4ff, #7b68ee);
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .hero p {
+    margin-top: 12px;
+    font-size: 1.1rem;
+    color: #9090b0;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .nav-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 10, 26, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(123, 104, 238, 0.2);
+  }
+
+  .nav-tab {
+    padding: 10px 22px;
+    border: 1px solid rgba(123, 104, 238, 0.3);
+    border-radius: 25px;
+    background: transparent;
+    color: #9090b0;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+  }
+
+  .nav-tab:hover {
+    border-color: #7b68ee;
+    color: #c0b0ff;
+  }
+
+  .nav-tab.active {
+    background: linear-gradient(135deg, #7b68ee, #5b48ce);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 20px rgba(123, 104, 238, 0.4);
+  }
+
+  .section {
+    display: none;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    color: #c0b0ff;
+  }
+
+  .section .desc {
+    font-size: 1rem;
+    color: #9090b0;
+    line-height: 1.7;
+    margin-bottom: 24px;
+    max-width: 800px;
+  }
+
+  .plot-container {
+    background: rgba(20, 20, 40, 0.6);
+    border: 1px solid rgba(123, 104, 238, 0.15);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .controls label {
+    color: #9090b0;
+    font-size: 0.9rem;
+  }
+
+  .controls input[type="range"] {
+    -webkit-appearance: none;
+    width: 200px;
+    height: 6px;
+    border-radius: 3px;
+    background: #2a2a4a;
+    outline: none;
+  }
+
+  .controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #7b68ee;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(123, 104, 238, 0.5);
+  }
+
+  .controls button, .ctrl-btn {
+    padding: 8px 18px;
+    border: 1px solid rgba(123, 104, 238, 0.4);
+    border-radius: 20px;
+    background: rgba(123, 104, 238, 0.1);
+    color: #c0b0ff;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+  }
+
+  .controls button:hover, .ctrl-btn:hover {
+    background: rgba(123, 104, 238, 0.3);
+    border-color: #7b68ee;
+  }
+
+  .controls button.active-btn {
+    background: #7b68ee;
+    color: white;
+  }
+
+  .insight-box {
+    background: rgba(123, 104, 238, 0.08);
+    border-left: 3px solid #7b68ee;
+    padding: 14px 18px;
+    border-radius: 0 10px 10px 0;
+    margin-top: 16px;
+    font-size: 0.92rem;
+    color: #b0a0d0;
+    line-height: 1.6;
+  }
+
+  .canvas-container {
+    position: relative;
+    background: rgba(20, 20, 40, 0.6);
+    border: 1px solid rgba(123, 104, 238, 0.15);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    cursor: grab;
+  }
+
+  canvas:active { cursor: grabbing; }
+
+  .val-display {
+    color: #7b68ee;
+    font-weight: 600;
+    min-width: 35px;
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Homotopy Type Theory</h1>
+  <p>An interactive visual journey through the ideas that unify topology, logic, and type theory — no formulas, just shapes and intuition.</p>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showSection(0)">① Types as Spaces</button>
+  <button class="nav-tab" onclick="showSection(1)">② Equality as Paths</button>
+  <button class="nav-tab" onclick="showSection(2)">③ Homotopy</button>
+  <button class="nav-tab" onclick="showSection(3)">④ Higher Paths</button>
+  <button class="nav-tab" onclick="showSection(4)">⑤ Univalence</button>
+  <button class="nav-tab" onclick="showSection(5)">⑥ Why It Matters</button>
+</div>
+
+<!-- SECTION 0: Types as Spaces -->
+<div class="section active" id="sec0">
+  <h2>Types are Spaces, Terms are Points</h2>
+  <p class="desc">In traditional programming, a type like <em>Bool</em> is just a label. In HoTT, every type is imagined as a <strong>space</strong>, and every value (term) of that type is a <strong>point</strong> in that space. Click on a space below to add points — each point is a concrete inhabitant of that type.</p>
+  <div class="controls">
+    <button class="active-btn" onclick="setTypeSpace('bool')">Bool (2 points)</button>
+    <button onclick="setTypeSpace('nat')">ℕ Natural Numbers</button>
+    <button onclick="setTypeSpace('circle')">Circle S¹</button>
+    <button onclick="setTypeSpace('empty')">Empty ⊥</button>
+  </div>
+  <div class="plot-container">
+    <div id="plot0" style="height:420px;"></div>
+  </div>
+  <div class="insight-box" id="insight0">
+    <strong>Bool</strong> has exactly 2 points: <em>true</em> and <em>false</em>. It's a discrete space — no paths connect them, because true ≠ false.
+  </div>
+</div>
+
+<!-- SECTION 1: Equality as Paths -->
+<div class="section" id="sec1">
+  <h2>Equality is a Path</h2>
+  <p class="desc">In HoTT, a proof that <em>a = b</em> is not just a stamp of approval — it's a <strong>path</strong> from point <em>a</em> to point <em>b</em> in the space. Different proofs of the same equality are different paths. Drag the slider to morph between two paths connecting the same endpoints.</p>
+  <div class="controls">
+    <label>Path curvature: </label>
+    <input type="range" id="pathCurve" min="-3" max="3" step="0.1" value="1.5" oninput="updatePaths()">
+    <span class="val-display" id="curveVal">1.5</span>
+    <button onclick="addRandomPath()">+ Add Another Path</button>
+    <button onclick="resetPaths()">Reset</button>
+  </div>
+  <div class="plot-container">
+    <div id="plot1" style="height:420px;"></div>
+  </div>
+  <div class="insight-box">
+    Each colored curve is a <strong>different proof</strong> that a = b. In classical math, equality is binary. In HoTT, the <em>space of equalities</em> between two points can itself be rich and interesting.
+  </div>
+</div>
+
+<!-- SECTION 2: Homotopy -->
+<div class="section" id="sec2">
+  <h2>Homotopy: Continuously Deforming Paths</h2>
+  <p class="desc">A <strong>homotopy</strong> is a continuous deformation of one path into another. Use the slider to smoothly morph the red path into the blue path — every intermediate state is also a valid path. This is the heart of "homotopy" in HoTT.</p>
+  <div class="controls">
+    <label>Deformation t: </label>
+    <input type="range" id="homotopyT" min="0" max="1" step="0.01" value="0" oninput="updateHomotopy()">
+    <span class="val-display" id="tVal">0.00</span>
+    <button onclick="animateHomotopy()">▶ Animate</button>
+  </div>
+  <div class="plot-container">
+    <div id="plot2" style="height:420px;"></div>
+  </div>
+  <div class="insight-box">
+    If two paths can be continuously deformed into each other, they represent the <strong>same equality at a higher level</strong>. The deformation itself is a "path between paths" — an equality between equalities.
+  </div>
+</div>
+
+<!-- SECTION 3: Higher Paths -->
+<div class="section" id="sec3">
+  <h2>Higher Paths: The Tower of Equalities</h2>
+  <p class="desc">Points → paths between points → homotopies between paths → homotopies between homotopies… it goes on forever. This "tower" is what makes types into <strong>∞-groupoids</strong>. Explore different levels of this tower on a sphere.</p>
+  <div class="controls">
+    <label>Level: </label>
+    <button class="active-btn" id="lvl0btn" onclick="setLevel(0)">0: Points</button>
+    <button id="lvl1btn" onclick="setLevel(1)">1: Paths</button>
+    <button id="lvl2btn" onclick="setLevel(2)">2: Homotopies</button>
+  </div>
+  <div class="plot-container">
+    <div id="plot3" style="height:480px;"></div>
+  </div>
+  <div class="insight-box" id="insight3">
+    <strong>Level 0 — Points:</strong> These are the elements (terms) of the type. On a sphere, every point on the surface is a term of type S².
+  </div>
+</div>
+
+<!-- SECTION 4: Univalence -->
+<div class="section" id="sec4">
+  <h2>The Univalence Axiom</h2>
+  <p class="desc">Univalence says: if two types are <strong>equivalent</strong> (there's a perfect two-way mapping between them), then they are <strong>equal</strong>. Drag the slider to see two equivalent spaces morph into each other — they're the same type.</p>
+  <div class="controls">
+    <label>Equivalence morph: </label>
+    <input type="range" id="univalenceT" min="0" max="1" step="0.01" value="0" oninput="updateUnivalence()">
+    <span class="val-display" id="uVal">0.00</span>
+    <button onclick="animateUnivalence()">▶ Animate</button>
+  </div>
+  <div class="plot-container">
+    <div id="plot4" style="height:420px;"></div>
+  </div>
+  <div class="insight-box">
+    A triangle and a circle are topologically equivalent (homeomorphic). Univalence says we can <strong>treat them as literally the same type</strong>. This is revolutionary: structure-preserving equivalence <em>is</em> identity.
+  </div>
+</div>
+
+<!-- SECTION 5: Why It Matters -->
+<div class="section" id="sec5">
+  <h2>Why Does HoTT Matter?</h2>
+  <p class="desc">HoTT provides a single language where topology, logic, and computation merge. Below is an interactive map showing how concepts from three different fields become <strong>one and the same thing</strong> in HoTT. Hover over nodes to see the connections.</p>
+  <div class="plot-container">
+    <div id="plot5" style="height:500px;"></div>
+  </div>
+  <div class="insight-box" id="insight5">
+    HoTT lets mathematicians reason about spaces <strong>without point-set topology</strong>, lets programmers write <strong>proofs that are programs</strong>, and lets logicians work with <strong>equality that has structure</strong>. It's a unifying foundation for all of mathematics, and it's machine-checkable.
+  </div>
+</div>
+
+<script>
+// ============ NAVIGATION ============
+const sections = document.querySelectorAll('.section');
+const tabs = document.querySelectorAll('.nav-tab');
+
+function showSection(idx) {
+  sections.forEach((s, i) => {
+    s.classList.toggle('active', i === idx);
+  });
+  tabs.forEach((t, i) => {
+    t.classList.toggle('active', i === idx);
+  });
+  // Trigger plot resize
+  setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+  // Initialize plots on first view
+  if (idx === 0 && !window._init0) { initSection0(); window._init0 = true; }
+  if (idx === 1 && !window._init1) { initSection1(); window._init1 = true; }
+  if (idx === 2 && !window._init2) { initSection2(); window._init2 = true; }
+  if (idx === 3 && !window._init3) { initSection3(); window._init3 = true; }
+  if (idx === 4 && !window._init4) { initSection4(); window._init4 = true; }
+  if (idx === 5 && !window._init5) { initSection5(); window._init5 = true; }
+}
+
+const plotLayout = {
+  paper_bgcolor: 'rgba(0,0,0,0)',
+  plot_bgcolor: 'rgba(0,0,0,0)',
+  font: { color: '#9090b0', family: 'Inter' },
+  margin: { l: 40, r: 40, t: 30, b: 40 },
+  xaxis: { gridcolor: 'rgba(123,104,238,0.1)', zerolinecolor: 'rgba(123,104,238,0.2)' },
+  yaxis: { gridcolor: 'rgba(123,104,238,0.1)', zerolinecolor: 'rgba(123,104,238,0.2)' },
+};
+
+const plotConfig = { responsive: true, displayModeBar: false };
+
+// ============ SECTION 0: Types as Spaces ============
+function initSection0() { setTypeSpace('bool'); }
+
+function setTypeSpace(type) {
+  const btns = document.querySelectorAll('#sec0 .controls button');
+  btns.forEach(b => {
+    b.classList.remove('active-btn');
+    if (b.textContent.toLowerCase().includes(type)) {
+      b.classList.add('active-btn');
+    }
+  });
+
+  let traces = [];
+  let layout = { ...plotLayout, showlegend: false };
+  const insight = document.getElementById('insight0');
+
+  if (type === 'bool') {
+    traces = [{
+      x: [-1, 1], y: [0, 0],
+      mode: 'markers+text',
+      marker: { size: 28, color: ['#7b68ee', '#00d4ff'], symbol: 'circle',
+        line: { width: 2, color: 'rgba(255,255,255,0.3)' } },
+      text: ['true', 'false'], textposition: 'top center',
+      textfont: { size: 14, color: '#e0e0f0' },
+      type: 'scatter'
+    }];
+    layout.xaxis = { ...layout.xaxis, range: [-3, 3] };
+    layout.yaxis = { ...layout.yaxis, range: [-2, 2], scaleanchor: 'x' };
+    insight.innerHTML = '<strong>Bool</strong> has exactly 2 points: <em>true</em> and <em>false</em>. It\'s a discrete space — no paths connect them, because true ≠ false.';
+  } else if (type === 'nat') {
+    const xs = Array.from({length: 12}, (_, i) => i);
+    traces = [{
+      x: xs, y: xs.map(() => 0),
+      mode: 'markers+text',
+      marker: { size: 18, color: xs.map(i => `hsl(${260 + i * 8}, 70%, ${55 + i * 2}%)`),
+        line: { width: 1.5, color: 'rgba(255,255,255,0.2)' } },
+      text: xs.map(i => '' + i), textposition: 'top center',
+      textfont: { size: 12, color: '#c0b0ff' },
+      type: 'scatter'
+    }, {
+      x: [12.5], y: [0], mode: 'text', text: ['…∞'],
+      textfont: { size: 18, color: '#7b68ee' }, type: 'scatter'
+    }];
+    layout.xaxis = { ...layout.xaxis, range: [-1, 14] };
+    layout.yaxis = { ...layout.yaxis, range: [-2, 2] };
+    insight.innerHTML = '<strong>ℕ (Natural Numbers)</strong> is a countably infinite discrete space. Each number is a point, stretching out forever. Still no interesting paths — every point is isolated.';
+  } else if (type === 'circle') {
+    const n = 100;
+    const theta = Array.from({length: n}, (_, i) => (i / (n - 1)) * 2 * Math.PI);
+    traces = [{
+      x: theta.map(t => Math.cos(t)),
+      y: theta.map(t => Math.sin(t)),
+      mode: 'lines',
+      line: { color: '#7b68ee', width: 3 },
+      type: 'scatter'
+    }, {
+      x: [1], y: [0],
+      mode: 'markers+text',
+      marker: { size: 14, color: '#00d4ff', line: { width: 2, color: 'white' } },
+      text: ['base'], textposition: 'right center',
+      textfont: { size: 13, color: '#00d4ff' },
+      type: 'scatter'
+    }];
+    // Show a loop path
+    const loopTheta = Array.from({length: 60}, (_, i) => (i / 59) * 2 * Math.PI);
+    traces.push({
+      x: loopTheta.map(t => 1.15 * Math.cos(t)),
+      y: loopTheta.map(t => 1.15 * Math.sin(t)),
+      mode: 'lines',
+      line: { color: '#ff6b9d', width: 2, dash: 'dot' },
+      type: 'scatter'
+    });
+    layout.xaxis = { ...layout.xaxis, range: [-2, 2], scaleanchor: 'y' };
+    layout.yaxis = { ...layout.yaxis, range: [-2, 2] };
+    insight.innerHTML = '<strong>Circle S¹</strong> is the first truly interesting type! It has a base point and a <em>loop</em> (the pink dotted line) — a path from base back to base. The loop is a proof that base = base, but it\'s <em>not</em> the trivial "stay still" proof. The space of loops here is equivalent to the integers ℤ (winding numbers).';
+  } else if (type === 'empty') {
+    traces = [{
+      x: [], y: [], mode: 'markers', type: 'scatter'
+    }];
+    layout.xaxis = { ...layout.xaxis, range: [-2, 2] };
+    layout.yaxis = { ...layout.yaxis, range: [-2, 2] };
+    // Add annotation
+    layout.annotations = [{
+      x: 0, y: 0, text: '∅ — nothing here', showarrow: false,
+      font: { size: 20, color: 'rgba(123,104,238,0.4)' }
+    }];
+    insight.innerHTML = '<strong>Empty type ⊥</strong> has no points at all. It\'s the void — a space with nothing in it. In logic, it represents <em>False</em>: a proposition with no proof.';
+  }
+
+  Plotly.newPlot('plot0', traces, layout, plotConfig);
+}
+
+// ============ SECTION 1: Equality as Paths ============
+let pathCurves = [1.5, -1.2, 0.5];
+const pathColors = ['#7b68ee', '#00d4ff', '#ff6b9d', '#50fa7b', '#ffb86c', '#ff5555'];
+
+function initSection1() { updatePaths(); }
+
+function makePath(curve, n = 80) {
+  const ts = Array.from({length: n}, (_, i) => i / (n - 1));
+  return {
+    x: ts.map(t => -2 + 4 * t),
+    y: ts.map(t => curve * Math.sin(Math.PI * t))
+  };
+}
+
+function updatePaths() {
+  const mainCurve = parseFloat(document.getElementById('pathCurve').value);
+  document.getElementById('curveVal').textContent = mainCurve.toFixed(1);
+  pathCurves[0] = mainCurve;
+
+  const traces = [];
+
+  // Points a and b
+  traces.push({
+    x: [-2, 2], y: [0, 0],
+    mode: 'markers+text',
+    marker: { size: 22, color: ['#ff6b9d', '#50fa7b'],
+      line: { width: 2, color: 'rgba(255,255,255,0.3)' } },
+    text: ['a', 'b'], textposition: ['bottom center', 'bottom center'],
+    textfont: { size: 16, color: '#e0e0f0' },
+    type: 'scatter', hoverinfo: 'skip'
+  });
+
+  // Paths
+  pathCurves.forEach((c, i) => {
+    const p = makePath(c);
+    traces.push({
+      x: p.x, y: p.y,
+      mode: 'lines',
+      line: { color: pathColors[i % pathColors.length], width: 3 - i * 0.3 },
+      name: `path ${i + 1} (proof ${i + 1})`,
+      type: 'scatter'
+    });
+  });
+
+  const layout = {
+    ...plotLayout,
+    showlegend: true,
+    legend: { font: { color: '#9090b0' }, bgcolor: 'rgba(0,0,0,0)' },
+    xaxis: { ...plotLayout.xaxis, range: [-3.5, 3.5] },
+    yaxis: { ...plotLayout.yaxis, range: [-4, 4] },
+  };
+
+  Plotly.newPlot('plot1', traces, layout, plotConfig);
+}
+
+function addRandomPath() {
+  if (pathCurves.length >= 6) return;
+  pathCurves.push((Math.random() - 0.5) * 6);
+  updatePaths();
+}
+
+function resetPaths() {
+  pathCurves = [1.5, -1.2, 0.5];
+  document.getElementById('pathCurve').value = 1.5;
+  updatePaths();
+}
+
+// ============ SECTION 2: Homotopy ============
+function initSection2() { updateHomotopy(); }
+
+function updateHomotopy() {
+  const t = parseFloat(document.getElementById('homotopyT').value);
+  document.getElementById('tVal').textContent = t.toFixed(2);
+
+  const n = 100;
+  const ss = Array.from({length: n}, (_, i) => i / (n - 1));
+
+  // Path 0: upper arc
+  const p0y = ss.map(s => 2 * Math.sin(Math.PI * s));
+  // Path 1: lower arc
+  const p1y = ss.map(s => -1.5 * Math.sin(Math.PI * s) + 0.5 * Math.sin(2 * Math.PI * s));
+
+  const xs = ss.map(s => -2 + 4 * s);
+  const interpY = ss.map((s, i) => (1 - t) * p0y[i] + t * p1y[i]);
+
+  const traces = [
+    // Ghost path 0
+    { x: xs, y: p0y, mode: 'lines', line: { color: 'rgba(255,107,157,0.25)', width: 2, dash: 'dot' }, name: 'Path f (t=0)', type: 'scatter' },
+    // Ghost path 1
+    { x: xs, y: p1y, mode: 'lines', line: { color: 'rgba(0,212,255,0.25)', width: 2, dash: 'dot' }, name: 'Path g (t=1)', type: 'scatter' },
+    // Interpolated path
+    { x: xs, y: interpY, mode: 'lines', line: { color: `hsl(${280 - t * 100}, 80%, 65%)`, width: 4 }, name: `H(s, ${t.toFixed(2)})`, type: 'scatter' },
+    // Endpoints
+    { x: [-2, 2], y: [0, 0], mode: 'markers+text', marker: { size: 20, color: ['#ff6b9d', '#50fa7b'], line: { width: 2, color: 'rgba(255,255,255,0.3)' } },
+      text: ['a', 'b'], textposition: 'bottom center', textfont: { size: 15, color: '#e0e0f0' }, type: 'scatter', hoverinfo: 'skip', showlegend: false }
+  ];
+
+  // Show intermediate ghost paths
+  for (let ti = 0.2; ti < 1; ti += 0.2) {
+    const iy = ss.map((s, i) => (1 - ti) * p0y[i] + ti * p1y[i]);
+    traces.splice(2, 0, {
+      x: xs, y: iy, mode: 'lines',
+      line: { color: `hsla(${280 - ti * 100}, 60%, 55%, 0.12)`, width: 1 },
+      showlegend: false, type: 'scatter', hoverinfo: 'skip'
+    });
+  }
+
+  const layout = {
+    ...plotLayout,
+    showlegend: true,
+    legend: { font: { color: '#9090b0' }, bgcolor: 'rgba(0,0,0,0)' },
+    xaxis: { ...plotLayout.xaxis, range: [-3.5, 3.5] },
+    yaxis: { ...plotLayout.yaxis, range: [-3, 4] },
+  };
+
+  Plotly.newPlot('plot2', traces, layout, plotConfig);
+}
+
+let homotopyAnim = null;
+function animateHomotopy() {
+  if (homotopyAnim) { clearInterval(homotopyAnim); homotopyAnim = null; return; }
+  let t = parseFloat(document.getElementById('homotopyT').value);
+  const dir = 1;
+  homotopyAnim = setInterval(() => {
+    t += 0.015;
+    if (t > 1) t = 0;
+    document.getElementById('homotopyT').value = t;
+    updateHomotopy();
+  }, 30);
+}
+
+// ============ SECTION 3: Higher Paths (on a sphere) ============
+let currentLevel = 0;
+
+function initSection3() { setLevel(0); }
+
+function setLevel(lvl) {
+  currentLevel = lvl;
+  document.getElementById('lvl0btn').classList.toggle('active-btn', lvl === 0);
+  document.getElementById('lvl1btn').classList.toggle('active-btn', lvl === 1);
+  document.getElementById('lvl2btn').classList.toggle('active-btn', lvl === 2);
+
+  const insight = document.getElementById('insight3');
+
+  // Generate sphere wireframe
+  const nu = 30, nv = 30;
+  const uArr = Array.from({length: nu}, (_, i) => (i / (nu - 1)) * Math.PI);
+  const vArr = Array.from({length: nv}, (_, j) => (j / (nv - 1)) * 2 * Math.PI);
+
+  const sx = uArr.map(u => vArr.map(v => Math.sin(u) * Math.cos(v)));
+  const sy = uArr.map(u => vArr.map(v => Math.sin(u) * Math.sin(v)));
+  const sz = uArr.map(u => vArr.map(v => Math.cos(u)));
+
+  const traces = [{
+    type: 'surface',
+    x: sx, y: sy, z: sz,
+    colorscale: [[0, 'rgba(123,104,238,0.15)'], [1, 'rgba(0,212,255,0.15)']],
+    showscale: false,
+    opacity: 0.3,
+    contours: {
+      x: { show: true, color: 'rgba(123,104,238,0.15)', width: 1 },
+      y: { show: true, color: 'rgba(123,104,238,0.15)', width: 1 },
+      z: { show: false }
+    },
+    hoverinfo: 'skip'
+  }];
+
+  if (lvl >= 0) {
+    // Level 0: Points on the sphere
+    const pts = [
+      { phi: 0.4, theta: 0.8, label: 'a', color: '#ff6b9d' },
+      { phi: 0.8, theta: 2.5, label: 'b', color: '#50fa7b' },
+      { phi: 1.8, theta: 1.2, label: 'c', color: '#ffb86c' },
+    ];
+    traces.push({
+      type: 'scatter3d',
+      x: pts.map(p => Math.sin(p.phi) * Math.cos(p.theta)),
+      y: pts.map(p => Math.sin(p.phi) * Math.sin(p.theta)),
+      z: pts.map(p => Math.cos(p.phi)),
+      mode: 'markers+text',
+      marker: { size: 8, color: pts.map(p => p.color), line: { width: 1, color: 'white' } },
+      text: pts.map(p => p.label),
+      textposition: 'top center',
+      textfont: { size: 14, color: '#e0e0f0' },
+      hoverinfo: 'text',
+      name: 'Points (Level 0)'
+    });
+    insight.innerHTML = '<strong>Level 0 — Points:</strong> These are the elements (terms) of the type. On a sphere S², every point on the surface is a term.';
+  }
+
+  if (lvl >= 1) {
+    // Level 1: Paths (great-circle arcs between points)
+    function greatCircleArc(phi1, th1, phi2, th2, n = 60, r = 1.02) {
+      const x1 = Math.sin(phi1)*Math.cos(th1), y1 = Math.sin(phi1)*Math.sin(th1), z1 = Math.cos(phi1);
+      const x2 = Math.sin(phi2)*Math.cos(th2), y2 = Math.sin(phi2)*Math.sin(th2), z2 = Math.cos(phi2);
+      const xs = [], ys = [], zs = [];
+      for (let i = 0; i <= n; i++) {
+        const t = i / n;
+        let vx = (1-t)*x1 + t*x2, vy = (1-t)*y1 + t*y2, vz = (1-t)*z1 + t*z2;
+        const len = Math.sqrt(vx*vx + vy*vy + vz*vz);
+        xs.push(r*vx/len); ys.push(r*vy/len); zs.push(r*vz/len);
+      }
+      return { x: xs, y: ys, z: zs };
+    }
+
+    const path1 = greatCircleArc(0.4, 0.8, 0.8, 2.5);
+    traces.push({
+      type: 'scatter3d', x: path1.x, y: path1.y, z: path1.z,
+      mode: 'lines', line: { color: '#7b68ee', width: 6 },
+      name: 'Path p: a→b', hoverinfo: 'name'
+    });
+
+    const path2 = greatCircleArc(0.8, 2.5, 1.8, 1.2);
+    traces.push({
+      type: 'scatter3d', x: path2.x, y: path2.y, z: path2.z,
+      mode: 'lines', line: { color: '#00d4ff', width: 6 },
+      name: 'Path q: b→c', hoverinfo: 'name'
+    });
+
+    // An alternative path from a to b (going the other way)
+    const path3 = greatCircleArc(0.4, 0.8, 0.8, 2.5 + Math.PI, 60, 1.02);
+    // Normalize back to sphere
+    traces.push({
+      type: 'scatter3d', x: path3.x, y: path3.y, z: path3.z,
+      mode: 'lines', line: { color: '#ff6b9d', width: 4, dash: 'dash' },
+      name: "Path p': a→b (alt)", hoverinfo: 'name'
+    });
+
+    insight.innerHTML = '<strong>Level 1 — Paths:</strong> The solid purple line and dashed pink line are <em>two different paths</em> from a to b — two different proofs that a = b. The blue path goes from b to c.';
+  }
+
+  if (lvl >= 2) {
+    // Level 2: A "sheet" between two paths (homotopy surface)
+    const n = 30;
+    const hx = [], hy = [], hz = [];
+    for (let ti = 0; ti <= n; ti++) {
+      const t = ti / n;
+      const rowx = [], rowy = [], rowz = [];
+      for (let si = 0; si <= n; si++) {
+        const s = si / n;
+        // Interpolate between path p and path p'
+        const phi1 = 0.4, th1 = 0.8, phi2 = 0.8, th2 = 2.5;
+        const th2alt = 2.5 + Math.PI;
+        // Path p point
+        const ax = Math.sin(phi1)*Math.cos(th1), ay = Math.sin(phi1)*Math.sin(th1), az = Math.cos(phi1);
+        const bx1 = Math.sin(phi2)*Math.cos(th2), by1 = Math.sin(phi2)*Math.sin(th2), bz1 = Math.cos(phi2);
+        const bx2 = Math.sin(phi2)*Math.cos(th2alt), by2 = Math.sin(phi2)*Math.sin(th2alt), bz2 = Math.cos(phi2);
+
+        let px = (1-s)*ax + s*bx1, py = (1-s)*ay + s*by1, pz = (1-s)*az + s*bz1;
+        let len = Math.sqrt(px*px+py*py+pz*pz); px/=len; py/=len; pz/=len;
+
+        let qx = (1-s)*ax + s*bx2, qy = (1-s)*ay + s*by2, qz = (1-s)*az + s*bz2;
+        len = Math.sqrt(qx*qx+qy*qy+qz*qz); qx/=len; qy/=len; qz/=len;
+
+        let mx = (1-t)*px + t*qx, my = (1-t)*py + t*qy, mz = (1-t)*pz + t*qz;
+        len = Math.sqrt(mx*mx+my*my+mz*mz);
+        rowx.push(1.03*mx/len); rowy.push(1.03*my/len); rowz.push(1.03*mz/len);
+      }
+      hx.push(rowx); hy.push(rowy); hz.push(rowz);
+    }
+
+    traces.push({
+      type: 'surface',
+      x: hx, y: hy, z: hz,
+      colorscale: [[0, 'rgba(255,107,157,0.4)'], [1, 'rgba(123,104,238,0.4)']],
+      showscale: false,
+      opacity: 0.45,
+      name: 'Homotopy (Level 2)',
+      hoverinfo: 'name'
+    });
+
+    insight.innerHTML = '<strong>Level 2 — Homotopy:</strong> The translucent surface is a <em>path between paths</em> — a continuous deformation from the solid purple path to the dashed pink path. This is a 2-cell, a proof that p = p\'. And you could keep going: paths between these surfaces, and so on to infinity!';
+  }
+
+  const layout3d = {
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#9090b0', family: 'Inter' },
+    margin: { l: 0, r: 0, t: 10, b: 10 },
+    scene: {
+      xaxis: { showgrid: false, showticklabels: false, title: '', zeroline: false, showline: false, showbackground: false },
+      yaxis: { showgrid: false, showticklabels: false, title: '', zeroline: false, showline: false, showbackground: false },
+      zaxis: { showgrid: false, showticklabels: false, title: '', zeroline: false, showline: false, showbackground: false },
+      bgcolor: 'rgba(0,0,0,0)',
+      camera: { eye: { x: 1.8, y: 1.2, z: 0.8 } },
+      aspectmode: 'cube'
+    },
+    showlegend: true,
+    legend: { font: { color: '#9090b0', size: 11 }, bgcolor: 'rgba(0,0,0,0)', x: 0, y: 1 }
+  };
+
+  Plotly.newPlot('plot3', traces, layout3d, plotConfig);
+}
+
+// ============ SECTION 4: Univalence ============
+function initSection4() { updateUnivalence(); }
+
+function updateUnivalence() {
+  const t = parseFloat(document.getElementById('univalenceT').value);
+  document.getElementById('uVal').textContent = t.toFixed(2);
+
+  const n = 120;
+  const angles = Array.from({length: n}, (_, i) => (i / (n - 1)) * 2 * Math.PI);
+
+  // Shape A: Triangle (t=0)
+  function triangleR(a) {
+    // Radius as function of angle for a rounded triangle
+    const k = 3;
+    return 1.0 + 0.25 * Math.cos(k * a);
+  }
+
+  // Shape B: Circle (t=1)
+  function circleR(a) {
+    return 1.2;
+  }
+
+  const xs = angles.map(a => {
+    const rA = triangleR(a);
+    const rB = circleR(a);
+    const r = (1 - t) * rA + t * rB;
+    return r * Math.cos(a);
+  });
+  const ys = angles.map(a => {
+    const rA = triangleR(a);
+    const rB = circleR(a);
+    const r = (1 - t) * rA + t * rB;
+    return r * Math.sin(a);
+  });
+
+  // Color interpolation
+  const hue = 260 + t * 40;
+
+  // Points inside the shape (inhabitants)
+  const inhabitants = [
+    { ax: 0, ay: 0.3 },
+    { ax: -0.4, ay: -0.2 },
+    { ax: 0.4, ay: -0.2 },
+    { ax: 0, ay: -0.1 },
+  ];
+
+  const traces = [
+    {
+      x: xs, y: ys,
+      mode: 'lines',
+      line: { color: `hsl(${hue}, 75%, 60%)`, width: 4 },
+      fill: 'toself',
+      fillcolor: `hsla(${hue}, 60%, 40%, 0.15)`,
+      type: 'scatter',
+      name: t < 0.5 ? 'Type A (≃ triangle)' : 'Type B (≃ circle)',
+      hoverinfo: 'name'
+    },
+    {
+      x: inhabitants.map(p => p.ax * ((1-t)*0.8 + t*1)),
+      y: inhabitants.map(p => p.ay * ((1-t)*0.8 + t*1)),
+      mode: 'markers',
+      marker: { size: 12, color: inhabitants.map((_, i) => pathColors[i]),
+        line: { width: 1.5, color: 'rgba(255,255,255,0.4)' } },
+      type: 'scatter',
+      name: 'Inhabitants',
+      hoverinfo: 'skip'
+    }
+  ];
+
+  // Arrows showing the equivalence mapping
+  if (t > 0.01 && t < 0.99) {
+    const arrowAngles = [0, Math.PI/2, Math.PI, 3*Math.PI/2];
+    arrowAngles.forEach(a => {
+      const r1 = (1-t) * triangleR(a) + t * circleR(a);
+      const r2 = circleR(a);
+      traces.push({
+        x: [r1 * Math.cos(a) * 1.3, r2 * Math.cos(a) * 1.3],
+        y: [r1 * Math.sin(a) * 1.3, r2 * Math.sin(a) * 1.3],
+        mode: 'lines',
+        line: { color: 'rgba(123,104,238,0.2)', width: 1 },
+        showlegend: false, type: 'scatter', hoverinfo: 'skip'
+      });
+    });
+  }
+
+  const layout = {
+    ...plotLayout,
+    showlegend: true,
+    legend: { font: { color: '#9090b0' }, bgcolor: 'rgba(0,0,0,0)' },
+    xaxis: { ...plotLayout.xaxis, range: [-2.5, 2.5], scaleanchor: 'y' },
+    yaxis: { ...plotLayout.yaxis, range: [-2.5, 2.5] },
+    annotations: [{
+      x: 0, y: -2,
+      text: t < 0.01 ? 'Type A (Triangle)' : t > 0.99 ? 'Type B (Circle)' : `Morphing... (${(t*100).toFixed(0)}%)`,
+      showarrow: false,
+      font: { size: 15, color: `hsl(${hue}, 70%, 70%)` }
+    }, {
+      x: 0, y: 2.1,
+      text: 'A ≃ B  ⟹  A = B',
+      showarrow: false,
+      font: { size: 18, color: '#7b68ee' }
+    }]
+  };
+
+  Plotly.newPlot('plot4', traces, layout, plotConfig);
+}
+
+let univalenceAnim = null;
+function animateUnivalence() {
+  if (univalenceAnim) { clearInterval(univalenceAnim); univalenceAnim = null; return; }
+  let t = parseFloat(document.getElementById('univalenceT').value);
+  let dir = 1;
+  univalenceAnim = setInterval(() => {
+    t += dir * 0.012;
+    if (t >= 1) { t = 1; dir = -1; }
+    if (t <= 0) { t = 0; dir = 1; }
+    document.getElementById('univalenceT').value = t;
+    updateUnivalence();
+  }, 30);
+}
+
+// ============ SECTION 5: Why It Matters (Rosetta Stone) ============
+function initSection5() {
+  // Build a network graph showing the correspondence
+  const nodes = [
+    // HoTT (center)
+    { id: 'HoTT', x: 0, y: 0, color: '#7b68ee', size: 40 },
+    // Topology column
+    { id: 'Space', x: -2.5, y: 2, color: '#ff6b9d', size: 22 },
+    { id: 'Point', x: -2.5, y: 1, color: '#ff6b9d', size: 22 },
+    { id: 'Path', x: -2.5, y: 0, color: '#ff6b9d', size: 22 },
+    { id: 'Homotopy', x: -2.5, y: -1, color: '#ff6b9d', size: 22 },
+    { id: 'Homeomorphism', x: -2.5, y: -2, color: '#ff6b9d', size: 22 },
+    // Logic column
+    { id: 'Proposition', x: 0, y: 2, color: '#00d4ff', size: 22 },
+    { id: 'Proof', x: 0, y: 1, color: '#00d4ff', size: 22 },
+    { id: 'Equality\nProof', x: 0, y: -0.5, color: '#00d4ff', size: 22 },
+    { id: 'Logical\nEquivalence', x: 0, y: -2, color: '#00d4ff', size: 22 },
+    // Type Theory column
+    { id: 'Type', x: 2.5, y: 2, color: '#50fa7b', size: 22 },
+    { id: 'Term', x: 2.5, y: 1, color: '#50fa7b', size: 22 },
+    { id: 'Identity\nType', x: 2.5, y: 0, color: '#50fa7b', size: 22 },
+    { id: 'Path\nbetween\nPaths', x: 2.5, y: -1, color: '#50fa7b', size: 22 },
+    { id: 'Type\nEquivalence', x: 2.5, y: -2, color: '#50fa7b', size: 22 },
+  ];
+
+  // Edges: connect corresponding concepts
+  const edges = [
+    ['Space', 'Proposition'], ['Proposition', 'Type'],
+    ['Point', 'Proof'], ['Proof', 'Term'],
+    ['Path', 'Equality\nProof'], ['Equality\nProof', 'Identity\nType'],
+    ['Homotopy', 'Path\nbetween\nPaths'],
+    ['Homeomorphism', 'Logical\nEquivalence'], ['Logical\nEquivalence', 'Type\nEquivalence'],
+    // Connect all to HoTT
+    ['HoTT', 'Space'], ['HoTT', 'Point'], ['HoTT', 'Path'], ['HoTT', 'Homotopy'], ['HoTT', 'Homeomorphism'],
+    ['HoTT', 'Proposition'], ['HoTT', 'Proof'], ['HoTT', 'Equality\nProof'], ['HoTT', 'Logical\nEquivalence'],
+    ['HoTT', 'Type'], ['HoTT', 'Term'], ['HoTT', 'Identity\nType'], ['HoTT', 'Path\nbetween\nPaths'], ['HoTT', 'Type\nEquivalence'],
+  ];
+
+  const nodeMap = {};
+  nodes.forEach(n => nodeMap[n.id] = n);
+
+  // Edge traces
+  const edgeX = [], edgeY = [];
+  edges.forEach(([a, b]) => {
+    edgeX.push(nodeMap[a].x, nodeMap[b].x, null);
+    edgeY.push(nodeMap[a].y, nodeMap[b].y, null);
+  });
+
+  // Horizontal correspondence lines
+  const corrX = [], corrY = [];
+  const correspondences = [
+    ['Space', 'Proposition', 'Type'],
+    ['Point', 'Proof', 'Term'],
+    ['Path', 'Equality\nProof', 'Identity\nType'],
+    ['Homotopy', 'Path\nbetween\nPaths'],
+    ['Homeomorphism', 'Logical\nEquivalence', 'Type\nEquivalence'],
+  ];
+  correspondences.forEach(row => {
+    for (let i = 0; i < row.length - 1; i++) {
+      corrX.push(nodeMap[row[i]].x, nodeMap[row[i+1]].x, null);
+      corrY.push(nodeMap[row[i]].y, nodeMap[row[i+1]].y, null);
+    }
+  });
+
+  const traces = [
+    // Correspondence lines (horizontal)
+    {
+      x: corrX, y: corrY,
+      mode: 'lines',
+      line: { color: 'rgba(255,255,255,0.15)', width: 2, dash: 'dot' },
+      hoverinfo: 'skip', showlegend: false, type: 'scatter'
+    },
+    // Nodes
+    {
+      x: nodes.map(n => n.x),
+      y: nodes.map(n => n.y),
+      mode: 'markers+text',
+      marker: {
+        size: nodes.map(n => n.size),
+        color: nodes.map(n => n.color),
+        line: { width: 2, color: 'rgba(255,255,255,0.2)' }
+      },
+      text: nodes.map(n => n.id),
+      textposition: nodes.map(n => n.id === 'HoTT' ? 'middle center' : (n.x < 0 ? 'middle left' : n.x > 0 ? 'middle right' : 'top center')),
+      textfont: { size: nodes.map(n => n.id === 'HoTT' ? 14 : 12), color: '#e0e0f0' },
+      hovertext: nodes.map(n => n.id),
+      hoverinfo: 'text',
+      type: 'scatter',
+      showlegend: false
+    }
+  ];
+
+  // Column labels
+  const annotations = [
+    { x: -2.5, y: 2.7, text: '🌐 Topology', font: { size: 16, color: '#ff6b9d' }, showarrow: false },
+    { x: 0, y: 2.7, text: '🧠 Logic', font: { size: 16, color: '#00d4ff' }, showarrow: false },
+    { x: 2.5, y: 2.7, text: '💻 Type Theory', font: { size: 16, color: '#50fa7b' }, showarrow: false },
+  ];
+
+  const layout = {
+    ...plotLayout,
+    showlegend: false,
+    xaxis: { ...plotLayout.xaxis, range: [-4, 4], showgrid: false, zeroline: false, showticklabels: false },
+    yaxis: { ...plotLayout.yaxis, range: [-3, 3.3], showgrid: false, zeroline: false, showticklabels: false },
+    annotations: annotations,
+    hovermode: 'closest'
+  };
+
+  Plotly.newPlot('plot5', traces, layout, plotConfig);
+}
+
+// ============ INIT ============
+window.addEventListener('load', () => {
+  initSection0();
+  window._init0 = true;
+});
+</script>
+
+</body>
+</html>
