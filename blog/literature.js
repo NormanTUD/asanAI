@@ -1,4 +1,10 @@
 window.bibData = {
+	"whyspace3dims": {
+		url: "https://dwc.knaw.nl/DL/publications/PU00012213.pdf",
+		title: "In that way does it become manifest in the fundamental laws of physics that space has three dimensions",
+		author: "Paul Ehrenfest",
+		year: 1918
+	},
 	"earliestalphabet": {
 		url: "https://www.jstor.org/stable/3768583",
 		title: "Two Early Alphabetic Inscriptions from the Wadi el-Ḥôl: New Evidence for the Origin of the Alphabet from the Western Desert of Egypt",
