@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What is a Monoid? — Interactive Visual Explainer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2.4em;
+    font-weight: 700;
+    background: linear-gradient(135deg, #7f5af0, #2cb67d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #94a1b2;
+    font-size: 1.05em;
+    max-width: 700px;
+    margin: 0 auto 30px auto;
+    line-height: 1.6;
+  }
+
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    padding: 10px 22px;
+    border: 2px solid #2cb67d;
+    background: transparent;
+    color: #2cb67d;
+    border-radius: 30px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95em;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .tab-btn:hover, .tab-btn.active {
+    background: #2cb67d;
+    color: #0f0f1a;
+  }
+
+  .section {
+    background: #1a1a2e;
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    border: 1px solid #2a2a4a;
+  }
+
+  .section h2 {
+    font-size: 1.3em;
+    color: #7f5af0;
+    margin-bottom: 14px;
+  }
+
+  .rule-cards {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .rule-card {
+    flex: 1;
+    min-width: 200px;
+    background: #16162a;
+    border-radius: 12px;
+    padding: 18px;
+    border-left: 4px solid #7f5af0;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .rule-card.highlight {
+    border-left-color: #2cb67d;
+    box-shadow: 0 0 20px rgba(44, 182, 125, 0.15);
+  }
+
+  .rule-card h3 {
+    font-size: 1em;
+    color: #fffffe;
+    margin-bottom: 6px;
+  }
+
+  .rule-card p {
+    font-size: 0.88em;
+    color: #94a1b2;
+    line-height: 1.5;
+  }
+
+  /* Combine Area */
+  .combine-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+  }
+
+  .element-pool {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 16px 0;
+  }
+
+  .element {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1em;
+    cursor: grab;
+    transition: transform 0.2s, box-shadow 0.2s;
+    user-select: none;
+    position: relative;
+  }
+
+  .element:hover {
+    transform: scale(1.12);
+  }
+
+  .element.identity {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 8px rgba(44, 182, 125, 0.4); }
+    50% { box-shadow: 0 0 24px rgba(44, 182, 125, 0.8); }
+  }
+
+  .element.identity::after {
+    content: 'e';
+    position: absolute;
+    bottom: -18px;
+    font-size: 0.7em;
+    color: #2cb67d;
+    font-weight: 600;
+  }
+
+  .drop-slot {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    border: 3px dashed #3a3a5a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+    color: #555;
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .drop-slot.over {
+    border-color: #7f5af0;
+    background: rgba(127, 90, 240, 0.1);
+  }
+
+  .drop-slot.filled {
+    border-style: solid;
+    border-color: #7f5af0;
+  }
+
+  .operator {
+    font-size: 2em;
+    color: #7f5af0;
+    font-weight: 700;
+  }
+
+  .equals {
+    font-size: 2em;
+    color: #2cb67d;
+    font-weight: 700;
+  }
+
+  .result-display {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    border: 3px solid #2cb67d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2em;
+    color: #fffffe;
+    background: rgba(44, 182, 125, 0.1);
+    transition: all 0.4s;
+  }
+
+  .result-display.pop {
+    animation: popIn 0.4s ease;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Associativity visual */
+  .assoc-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .assoc-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+
+  .assoc-row .group {
+    border: 2px solid;
+    border-radius: 30px;
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .assoc-row .group.first { border-color: #7f5af0; }
+  .assoc-row .group.second { border-color: #e53170; }
+
+  .assoc-result {
+    font-size: 1.3em;
+    font-weight: 700;
+    padding: 8px 20px;
+    border-radius: 10px;
+    transition: all 0.5s;
+  }
+
+  .assoc-result.match {
+    background: rgba(44, 182, 125, 0.2);
+    color: #2cb67d;
+  }
+
+  .btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95em;
+    transition: all 0.3s;
+  }
+
+  .btn-primary {
+    background: #7f5af0;
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background: #6b46e0;
+  }
+
+  .btn-secondary {
+    background: #2a2a4a;
+    color: #e0e0e0;
+  }
+
+  .btn-secondary:hover {
+    background: #3a3a5a;
+  }
+
+  .controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .step-indicator {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .step-indicator span {
+    display: inline-block;
+    width: 30px;
+    height: 4px;
+    border-radius: 2px;
+    background: #2a2a4a;
+    transition: background 0.3s;
+  }
+
+  .step-indicator span.active {
+    background: #2cb67d;
+  }
+
+  .string-preview {
+    font-family: monospace;
+    font-size: 1.1em;
+    background: #16162a;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 10px;
+    min-height: 40px;
+    color: #fffffe;
+    word-break: break-all;
+  }
+
+  .string-preview .cursor {
+    animation: blink 1s step-end infinite;
+    color: #7f5af0;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  .color-swatch {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    border: 2px solid #3a3a5a;
+    vertical-align: middle;
+  }
+
+  .info-text {
+    font-size: 0.9em;
+    color: #94a1b2;
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 1.7em; }
+    .rule-cards { flex-direction: column; }
+    .combine-area { gap: 10px; }
+    .element { width: 52px; height: 52px; font-size: 0.9em; }
+    .drop-slot, .result-display { width: 60px; height: 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>What is a Monoid?</h1>
+  <p class="subtitle">
+    A monoid is a set of things with a way to combine any two of them (that's associative) and a special "do-nothing" identity element. Drag elements below to see it in action!
+  </p>
+
+  <!-- Three Rule Cards -->
+  <div class="rule-cards">
+    <div class="rule-card" id="rule-closure">
+      <h3>① Closure</h3>
+      <p>Combining two elements always produces another element in the same set.</p>
+    </div>
+    <div class="rule-card" id="rule-assoc">
+      <h3>② Associativity</h3>
+      <p>(a ∘ b) ∘ c = a ∘ (b ∘ c) — grouping doesn't matter.</p>
+    </div>
+    <div class="rule-card" id="rule-identity">
+      <h3>③ Identity</h3>
+      <p>There's a special element <em>e</em> where a ∘ e = e ∘ a = a.</p>
+    </div>
+  </div>
+
+  <!-- Monoid Selector Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-monoid="numbers">Numbers + Addition</button>
+    <button class="tab-btn" data-monoid="strings">Strings + Concat</button>
+    <button class="tab-btn" data-monoid="colors">Colors + Blend</button>
+  </div>
+
+  <!-- SECTION 1: Combine two elements -->
+  <div class="section">
+    <h2>🧪 Combine Two Elements</h2>
+    <p class="info-text">Click an element to place it in a slot. See closure & identity in action.</p>
+
+    <div class="element-pool" id="element-pool"></div>
+
+    <div class="combine-area">
+      <div class="drop-slot" id="slot-a">A</div>
+      <span class="operator" id="op-symbol">+</span>
+      <div class="drop-slot" id="slot-b">B</div>
+      <span class="equals">=</span>
+      <div class="result-display" id="result">?</div>
+    </div>
+
+    <div class="string-preview hidden" id="string-preview"></div>
+
+    <div class="controls">
+      <button class="btn btn-secondary" id="btn-clear">Clear</button>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Associativity Demo -->
+  <div class="section">
+    <h2>⚖️ Associativity — Grouping Doesn't Matter</h2>
+    <p class="info-text">Click "Shuffle" to pick 3 random elements and watch both groupings produce the same result.</p>
+
+    <div class="assoc-demo" id="assoc-demo">
+      <div class="assoc-row" id="assoc-row-1"></div>
+      <div class="assoc-row" id="assoc-row-2"></div>
+      <div class="assoc-result" id="assoc-result"></div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="btn-shuffle">Shuffle</button>
+      <button class="btn btn-secondary" id="btn-animate">Animate Step-by-Step</button>
+    </div>
+    <div class="step-indicator" id="step-indicator">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Identity Proof -->
+  <div class="section">
+    <h2>🪞 Identity Element Proof</h2>
+    <p class="info-text">Pick any element — combining it with the identity always returns itself.</p>
+
+    <div class="element-pool" id="identity-pool"></div>
+
+    <div class="combine-area">
+      <div class="drop-slot" id="id-slot-a">A</div>
+      <span class="operator" id="id-op-symbol">+</span>
+      <div class="drop-slot filled" id="id-slot-b" style="border-color:#2cb67d; background:rgba(44,182,125,0.1);">
+        <span id="id-slot-b-label">e</span>
+      </div>
+      <span class="equals">=</span>
+      <div class="result-display" id="id-result">?</div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-secondary" id="btn-id-clear">Clear</button>
+      <button class="btn btn-secondary" id="btn-id-swap">Swap (e ∘ a)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ MONOID DEFINITIONS ============
+const monoids = {
+  numbers: {
+    name: 'Numbers + Addition',
+    op: '+',
+    identity: 0,
+    elements: [0, 1, 2, 3, 5, 7, 10],
+    combine: (a, b) => a + b,
+    display: (v) => String(v),
+    color: (v) => {
+      const hue = (v * 30) % 360;
+      return `hsl(${hue}, 70%, 45%)`;
+    },
+    textColor: () => '#fff',
+  },
+  strings: {
+    name: 'Strings + Concatenation',
+    op: '++',
+    identity: '""',
+    identityVal: '',
+    elements: ['""', '"Hi"', '" "', '"world"', '"!"', '"🎉"'],
+    values: ['', 'Hi', ' ', 'world', '!', '🎉'],
+    combine: (a, b) => a + b,
+    display: (v) => v === '' ? '""' : `"${v}"`,
+    color: (v, i) => {
+      const hues = [160, 260, 200, 320, 40, 60];
+      return `hsl(${hues[i % hues.length]}, 60%, 40%)`;
+    },
+    textColor: () => '#fff',
+  },
+  colors: {
+    name: 'Colors + Blend',
+    op: '⊕',
+    identity: 'transparent',
+    elements: [],
+    combine: (a, b) => {
+      // Average RGBA
+      return {
+        r: Math.round((a.r + b.r) / 2),
+        g: Math.round((a.g + b.g) / 2),
+        b: Math.round((a.b + b.b) / 2),
+        a: Math.min(1, (a.a + b.a) / 2 + 0.1),
+      };
+    },
+    display: (v) => {
+      if (v.a === 0) return 'ε';
+      return `${v.r},${v.g},${v.b}`;
+    },
+    color: (v) => `rgba(${v.r},${v.g},${v.b},${v.a})`,
+    textColor: (v) => {
+      const lum = (v.r * 0.299 + v.g * 0.587 + v.b * 0.114);
+      return lum > 140 ? '#111' : '#fff';
+    },
+  },
+};
+
+// Color elements
+const colorElements = [
+  { r: 0, g: 0, b: 0, a: 0 },       // identity (transparent)
+  { r: 230, g: 57, b: 70, a: 1 },    // red
+  { r: 42, g: 157, b: 143, a: 1 },   // teal
+  { r: 69, g: 123, b: 236, a: 1 },   // blue
+  { r: 244, g: 162, b: 97, a: 1 },   // orange
+  { r: 168, g: 100, b: 253, a: 1 },  // purple
+  { r: 46, g: 196, b: 112, a: 1 },   // green
+];
+monoids.colors.elements = colorElements;
+
+// ============ STATE ============
+let currentMonoid = 'numbers';
+let slotA = null;
+let slotB = null;
+let idSlotA = null;
+let idSwapped = false;
+
+// ============ HELPERS ============
+function getVal(monoidKey, index) {
+  const m = monoids[monoidKey];
+  if (monoidKey === 'strings') return m.values[index];
+  if (monoidKey === 'colors') return m.elements[index];
+  return m.elements[index];
+}
+
+function getIdentityVal(monoidKey) {
+  if (monoidKey === 'strings') return '';
+  if (monoidKey === 'colors') return colorElements[0];
+  return 0;
+}
+
+function isIdentity(monoidKey, index) {
+  if (monoidKey === 'numbers') return monoids.numbers.elements[index] === 0;
+  if (monoidKey === 'strings') return index === 0;
+  if (monoidKey === 'colors') return index === 0;
+  return false;
+}
+
+function makeElementDiv(monoidKey, index, clickHandler) {
+  const m = monoids[monoidKey];
+  const el = document.createElement('div');
+  el.className = 'element';
+  if (isIdentity(monoidKey, index)) el.classList.add('identity');
+
+  let val, bg, txt, label;
+  if (monoidKey === 'numbers') {
+    val = m.elements[index];
+    bg = m.color(val);
+    txt = m.textColor();
+    label = m.display(val);
+  } else if (monoidKey === 'strings') {
+    val = m.values[index];
+    bg = m.color(val, index);
+    txt = m.textColor();
+    label = m.elements[index];
+  } else {
+    val = m.elements[index];
+    bg = m.color(val);
+    txt = m.textColor(val);
+    label = m.display(val);
+  }
+
+  el.style.background = bg;
+  el.style.color = txt;
+  el.textContent = label;
+  el.dataset.index = index;
+  el.addEventListener('click', () => clickHandler(index));
+  return el;
+}
+
+function renderResult(monoidKey, val, targetEl) {
+  const m = monoids[monoidKey];
+  if (monoidKey === 'colors') {
+    targetEl.style.background = m.color(val);
+    targetEl.style.color = m.textColor(val);
+    targetEl.textContent = m.display(val);
+  } else {
+    targetEl.textContent = m.display(val);
+    if (monoidKey === 'numbers') {
+      targetEl.style.background = `rgba(44,182,125,0.15)`;
+    }
+  }
+  targetEl.classList.remove('pop');
+  void targetEl.offsetWidth;
+  targetEl.classList.add('pop');
+}
+
+function fillSlot(slotEl, monoidKey, index) {
+  const m = monoids[monoidKey];
+  let bg, txt, label;
+  if (monoidKey === 'numbers') {
+    const val = m.elements[index];
+    bg = m.color(val);
+    txt = m.textColor();
+    label = m.display(val);
+  } else if (monoidKey === 'strings') {
+    bg = m.color(null, index);
+    txt = m.textColor();
+    label = m.elements[index];
+  } else {
+    const val = m.elements[index];
+    bg = m.color(val);
+    txt = m.textColor(val);
+    label = m.display(val);
+  }
+  slotEl.style.background = bg;
+  slotEl.style.color = txt;
+  slotEl.textContent = label;
+  slotEl.classList.add('filled');
+}
+
+function clearSlot(slotEl, placeholder) {
+  slotEl.style.background = '';
+  slotEl.style.color = '';
+  slotEl.textContent = placeholder;
+  slotEl.classList.remove('filled');
+}
+
+// ============ HIGHLIGHT RULES ============
+function highlightRule(id) {
+  document.querySelectorAll('.rule-card').forEach(c => c.classList.remove('highlight'));
+  if (id) document.getElementById(id)?.classList.add('highlight');
+}
+
+// ============ RENDER POOL ============
+function renderPool() {
+  const m = monoids[currentMonoid];
+  const pool = document.getElementById('element-pool');
+  pool.innerHTML = '';
+  const count = currentMonoid === 'colors' ? colorElements.length :
+                currentMonoid === 'strings' ? m.elements.length : m.elements.length;
+  for (let i = 0; i < count; i++) {
+    pool.appendChild(makeElementDiv(currentMonoid, i, handlePoolClick));
+  }
+
+  const idPool = document.getElementById('identity-pool');
+  idPool.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    idPool.appendChild(makeElementDiv(currentMonoid, i, handleIdPoolClick));
+  }
+
+  // Op symbols
+  document.getElementById('op-symbol').textContent = m.op;
+  document.getElementById('id-op-symbol').textContent = m.op;
+
+  // Reset slots
+  clearCombine();
+  clearIdentity();
+
+  // Fill identity slot B
+  const idSlotB = document.getElementById('id-slot-b');
+  fillSlot(idSlotB, currentMonoid, currentMonoid === 'numbers' ? 0 :
+           currentMonoid === 'strings' ? 0 : 0);
+  idSlotB.classList.add('filled');
+  idSlotB.style.borderColor = '#2cb67d';
+  idSlotB.style.background = monoids[currentMonoid].color(
+    currentMonoid === 'colors' ? colorElements[0] : undefined,
+    0
+  );
+
+  // String preview
+  document.getElementById('string-preview').classList.toggle('hidden', currentMonoid !== 'strings');
+}
+
+// ============ COMBINE SECTION ============
+function handlePoolClick(index) {
+  if (slotA === null) {
+    slotA = index;
+    fillSlot(document.getElementById('slot-a'), currentMonoid, index);
+    highlightRule(null);
+  } else if (slotB === null) {
+    slotB = index;
+    fillSlot(document.getElementById('slot-b'), currentMonoid, index);
+    computeResult();
+  }
+}
+
+function computeResult() {
+  if (slotA === null || slotB === null) return;
+  const m = monoids[currentMonoid];
+  const a = getVal(currentMonoid, slotA);
+  const b = getVal(currentMonoid, slotB);
+  const result = m.combine(a, b);
+
+  renderResult(currentMonoid, result, document.getElementById('result'));
+
+  // Highlight closure
+  highlightRule('rule-closure');
+
+  // Check identity
+  if (isIdentity(currentMonoid, slotA) || isIdentity(currentMonoid, slotB)) {
+    setTimeout(() => highlightRule('rule-identity'), 800);
+  }
+
+  // String preview
+  if (currentMonoid === 'strings') {
+    document.getElementById('string-preview').innerHTML =
+      `Result: <strong>${result === '' ? '<em>(empty string)</em>' : result}</strong>`;
+  }
+}
+
+function clearCombine() {
+  slotA = null;
+  slotB = null;
+  clearSlot(document.getElementById('slot-a'), 'A');
+  clearSlot(document.getElementById('slot-b'), 'B');
+  const res = document.getElementById('result');
+  res.textContent = '?';
+  res.style.background = 'rgba(44,182,125,0.1)';
+  res.style.color = '';
+  highlightRule(null);
+  if (currentMonoid === 'strings') {
+    document.getElementById('string-preview').innerHTML = '';
+  }
+}
+
+document.getElementById('btn-clear').addEventListener('click', clearCombine);
+
+// ============ IDENTITY SECTION ============
+function handleIdPoolClick(index) {
+  idSlotA = index;
+  const slotEl = document.getElementById('id-slot-a');
+  fillSlot(slotEl, currentMonoid, index);
+  computeIdentityResult();
+}
+
+function computeIdentityResult() {
+  if (idSlotA === null) return;
+  const m = monoids[currentMonoid];
+  const a = getVal(currentMonoid, idSlotA);
+  const e = getIdentityVal(currentMonoid);
+  const result = idSwapped ? m.combine(e, a) : m.combine(a, e);
+  renderResult(currentMonoid, result, document.getElementById('id-result'));
+  highlightRule('rule-identity');
+}
+
+function clearIdentity() {
+  idSlotA = null;
+  idSwapped = false;
+  clearSlot(document.getElementById('id-slot-a'), 'A');
+  const res = document.getElementById('id-result');
+  res.textContent = '?';
+  res.style.background = 'rgba(44,182,125,0.1)';
+  res.style.color = '';
+
+  // Reset identity slot
+  const idSlotB = document.getElementById('id-slot-b');
+  fillSlot(idSlotB, currentMonoid, 0);
+  idSlotB.style.borderColor = '#2cb67d';
+  document.getElementById('id-slot-b-label')?.remove;
+
+  highlightRule(null);
+}
+
+document.getElementById('btn-id-clear').addEventListener('click', clearIdentity);
+document.getElementById('btn-id-swap').addEventListener('click', () => {
+  idSwapped = !idSwapped;
+  document.getElementById('btn-id-swap').textContent = idSwapped ? 'Swap (a ∘ e)' : 'Swap (e ∘ a)';
+
+  // Visually swap
+  const area = document.getElementById('id-slot-a').parentElement;
+  const slotAEl = document.getElementById('id-slot-a');
+  const slotBEl = document.getElementById('id-slot-b');
+  if (idSwapped) {
+    area.insertBefore(slotBEl, slotAEl);
+  } else {
+    area.insertBefore(slotAEl, slotBEl);
+  }
+
+  if (idSlotA !== null) computeIdentityResult();
+});
+
+// ============ ASSOCIATIVITY SECTION ============
+function renderAssociativity(animate = false) {
+  const m = monoids[currentMonoid];
+  const count = currentMonoid === 'colors' ? colorElements.length :
+                currentMonoid === 'strings' ? m.values.length : m.elements.length;
+
+  // Pick 3 random non-identity indices (or allow identity for fun)
+  const indices = [];
+  while (indices.length < 3) {
+    const r = Math.floor(Math.random() * count);
+    indices.push(r);
+  }
+
+  const a = getVal(currentMonoid, indices[0]);
+  const b = getVal(currentMonoid, indices[1]);
+  const c = getVal(currentMonoid, indices[2]);
+
+  const dispA = m.display(a);
+  const dispB = m.display(b);
+  const dispC = m.display(c);
+
+  // (a ∘ b) ∘ c
+  const ab = m.combine(a, b);
+  const ab_c = m.combine(ab, c);
+
+  // a ∘ (b ∘ c)
+  const bc = m.combine(b, c);
+  const a_bc = m.combine(a, bc);
+
+  const row1 = document.getElementById('assoc-row-1');
+  const row2 = document.getElementById('assoc-row-2');
+  const resultEl = document.getElementById('assoc-result');
+  const steps = document.querySelectorAll('#step-indicator span');
+
+  steps.forEach(s => s.classList.remove('active'));
+
+  if (!animate) {
+    row1.innerHTML = `
+      <span class="group first">( ${dispA} ${m.op} ${dispB} )</span>
+      <span style="color:#7f5af0">${m.op}</span>
+      <span>${dispC}</span>
+      <span style="color:#94a1b2; margin-left:10px">= <strong style="color:#2cb67d">${m.display(ab_c)}</strong></span>
+    `;
+    row2.innerHTML = `
+      <span>${dispA}</span>
+      <span style="color:#e53170">${m.op}</span>
+      <span class="group second">( ${dispB} ${m.op} ${dispC} )</span>
+      <span style="color:#94a1b2; margin-left:10px">= <strong style="color:#2cb67d">${m.display(a_bc)}</strong></span>
+    `;
+
+    resultEl.className = 'assoc-result match';
+    resultEl.textContent = `✓ Both equal ${m.display(ab_c)}`;
+    steps.forEach(s => s.classList.add('active'));
+  } else {
+    // Animated step-by-step
+    row1.innerHTML = '';
+    row2.innerHTML = '';
+    resultEl.className = 'assoc-result';
+    resultEl.textContent = '';
+
+    // Step 1: Show the elements
+    setTimeout(() => {
+      row1.innerHTML = `
+        <span>${dispA}</span>
+        <span style="color:#7f5af0">${m.op}</span>
+        <span>${dispB}</span>
+        <span style="color:#7f5af0">${m.op}</span>
+        <span>${dispC}</span>
+      `;
+      row2.innerHTML = `<span style="color:#94a1b2">Three elements chosen...</span>`;
+      steps[0]?.classList.add('active');
+    }, 300);
+
+    // Step 2: Show grouping 1
+    setTimeout(() => {
+      row1.innerHTML = `
+        <span class="group first">( ${dispA} ${m.op} ${dispB} )</span>
+        <span style="color:#7f5af0">${m.op}</span>
+        <span>${dispC}</span>
+        <span style="color:#94a1b2; margin-left:10px">→ ${m.display(ab)} ${m.op} ${dispC} = <strong style="color:#2cb67d">${m.display(ab_c)}</strong></span>
+      `;
+      row2.innerHTML = `<span style="color:#94a1b2">Left grouping computed...</span>`;
+      steps[1]?.classList.add('active');
+    }, 1500);
+
+    // Step 3: Show grouping 2 and result
+    setTimeout(() => {
+      row2.innerHTML = `
+        <span>${dispA}</span>
+        <span style="color:#e53170">${m.op}</span>
+        <span class="group second">( ${dispB} ${m.op} ${dispC} )</span>
+        <span style="color:#94a1b2; margin-left:10px">→ ${dispA} ${m.op} ${m.display(bc)} = <strong style="color:#2cb67d">${m.display(a_bc)}</strong></span>
+      `;
+      steps[2]?.classList.add('active');
+
+      resultEl.className = 'assoc-result match';
+      resultEl.textContent = `✓ Both equal ${m.display(ab_c)} — Associativity holds!`;
+      highlightRule('rule-assoc');
+    }, 3000);
+  }
+}
+
+document.getElementById('btn-shuffle').addEventListener('click', () => {
+  renderAssociativity(false);
+});
+
+document.getElementById('btn-animate').addEventListener('click', () => {
+  renderAssociativity(true);
+});
+
+// ============ TAB SWITCHING ============
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMonoid = btn.dataset.monoid;
+    idSwapped = false;
+    document.getElementById('btn-id-swap').textContent = 'Swap (e ∘ a)';
+
+    // Reset swap visual order
+    const idArea = document.getElementById('id-slot-a').parentElement;
+    const slotAEl = document.getElementById('id-slot-a');
+    const opEl = document.getElementById('id-op-symbol');
+    const slotBEl = document.getElementById('id-slot-b');
+    idArea.insertBefore(slotAEl, opEl);
+
+    renderPool();
+    renderAssociativity(false);
+  });
+});
+
+// ============ INIT ============
+renderPool();
+renderAssociativity(false);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Die Grundprinzipien der Chemie – Interaktiv</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a1a;
+            color: #e0e0f0;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a1a 70%);
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            color: #a0a0c0;
+            line-height: 1.7;
+        }
+
+        .hero .fazit {
+            margin-top: 2rem;
+            padding: 1.5rem 2rem;
+            background: rgba(96, 165, 250, 0.08);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 16px;
+            max-width: 750px;
+            font-size: 1.05rem;
+            color: #c0c0e0;
+            font-style: italic;
+        }
+
+        .scroll-hint {
+            margin-top: 3rem;
+            animation: bounce 2s infinite;
+            color: #60a5fa;
+            font-size: 2rem;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(12px); }
+        }
+
+        section {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        section h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        section .subtitle {
+            font-size: 1rem;
+            color: #a0a0c0;
+            max-width: 650px;
+            text-align: center;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .section-1 h2 { color: #60a5fa; }
+        .section-2 h2 { color: #a78bfa; }
+        .section-3 h2 { color: #f472b6; }
+
+        .viz-container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .controls button {
+            padding: 0.6rem 1.4rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.06);
+            color: #e0e0f0;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .controls button:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .controls button.active {
+            background: rgba(96, 165, 250, 0.2);
+            border-color: #60a5fa;
+            color: #60a5fa;
+        }
+
+        .info-badge {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #a0a0c0;
+            text-align: center;
+        }
+
+        #plotly-energy {
+            width: 100%;
+            height: 400px;
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .slider-row label {
+            font-size: 0.9rem;
+            color: #a0a0c0;
+        }
+
+        .slider-row input[type="range"] {
+            width: 200px;
+            accent-color: #60a5fa;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            color: #a0a0c0;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-dot:hover, .nav-dot.active {
+            background: #60a5fa;
+            border-color: #60a5fa;
+        }
+
+        .octet-atom-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2rem; }
+            section h2 { font-size: 1.6rem; }
+            .viz-container { padding: 1rem; }
+            .octet-atom-display { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Dots -->
+<div class="nav-dots">
+    <div class="nav-dot active" onclick="scrollToSection(0)" title="Start"></div>
+    <div class="nav-dot" onclick="scrollToSection(1)" title="Energetik"></div>
+    <div class="nav-dot" onclick="scrollToSection(2)" title="Elektrostatik"></div>
+    <div class="nav-dot" onclick="scrollToSection(3)" title="Oktettregel"></div>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="sec-hero">
+    <h1>Die Grundprinzipien der Chemie</h1>
+    <p>Alles in der Chemie ist bestrebt, seine Energie zu senken und die Unordnung zu erhöhen — wie ein kosmisches Konto, das seine Schulden abbauen will.</p>
+    <div class="fazit">
+        „Chemie ist die Umverteilung von Elektronen zwischen Atomkernen, um einen Zustand maximaler elektrischer Stabilität und minimaler Energie zu erreichen."
+    </div>
+    <div class="scroll-hint">↓</div>
+</section>
+
+<!-- SECTION 1: Energy Minimization -->
+<section class="section-1" id="sec-energy">
+    <h2>1 · Das Streben nach dem Minimum</h2>
+    <p class="subtitle">Teilchen sind „faul" — sie rutschen immer in den Zustand geringster Energie. Ziehe den Ball entlang der Energiekurve und lass ihn los: Er rollt ins Minimum, genau wie Atome eine Bindung eingehen, weil das Molekül stabiler ist als die Einzelteile.</p>
+    <div class="viz-container">
+        <div id="plotly-energy"></div>
+        <div class="slider-row">
+            <label>Bindungsstärke:</label>
+            <input type="range" id="well-depth" min="1" max="5" step="0.1" value="3">
+            <span id="well-depth-val">3.0 eV</span>
+        </div>
+        <div class="slider-row">
+            <label>Gleichgewichtsabstand:</label>
+            <input type="range" id="eq-dist" min="1" max="4" step="0.1" value="2">
+            <span id="eq-dist-val">2.0 Å</span>
+        </div>
+        <div class="info-badge" id="energy-info">Klicke auf die Kurve, um den Ball zu platzieren — er rollt zum Minimum!</div>
+    </div>
+</section>
+
+<!-- SECTION 2: Electrostatics -->
+<section class="section-2" id="sec-electro">
+    <h2>2 · Die Macht der Elektrostatik</h2>
+    <p class="subtitle">Chemie ist das Spiel zwischen positiven Kernen und negativen Elektronen. Platziere Ladungen auf dem Feld und beobachte, wie sie sich anziehen oder abstoßen — genau dieses Tauziehen bestimmt Elektronegativität, Polarität und ob ein Stoff ein Metall, Salz oder Gas ist.</p>
+    <div class="viz-container">
+        <canvas id="canvas-electro" width="850" height="500"></canvas>
+        <div class="controls">
+            <button id="btn-positive" class="active" onclick="setChargeMode(1)">⊕ Positiv</button>
+            <button id="btn-negative" onclick="setChargeMode(-1)">⊖ Negativ</button>
+            <button onclick="clearCharges()">🗑 Löschen</button>
+            <button onclick="toggleFieldLines()">⚡ Feldlinien</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div> Positiv (+)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> Negativ (−)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> Kraftvektoren</div>
+        </div>
+        <div class="info-badge">Klicke, um Ladungen zu platzieren. Beobachte die Coulomb-Kräfte in Echtzeit!</div>
+    </div>
+</section>
+
+<!-- SECTION 3: Octet Rule -->
+<section class="section-3" id="sec-octet">
+    <h2>3 · Die Oktettregel</h2>
+    <p class="subtitle">Das Ziel der meisten Atome: eine volle Außenschale. Um das zu erreichen, wird getauscht, geraubt oder geteilt. Wähle zwei Atome und beobachte, wie sie Elektronen umverteilen, um den Edelgas-Zustand zu erreichen.</p>
+    <div class="viz-container">
+        <canvas id="canvas-octet" width="850" height="500"></canvas>
+        <div class="controls">
+            <button class="active" id="btn-nacl" onclick="setOctetPair('NaCl')">Na + Cl (Ionisch)</button>
+            <button id="btn-o2" onclick="setOctetPair('O2')">O + O (Kovalent)</button>
+            <button id="btn-h2o" onclick="setOctetPair('H2O')">H + O + H (Polar)</button>
+            <button id="btn-lif" onclick="setOctetPair('LiF')">Li + F (Ionisch)</button>
+        </div>
+        <div class="info-badge" id="octet-info">Klicke „Reagieren", um die Elektronenübertragung zu starten!</div>
+        <div class="controls" style="margin-top:0.8rem;">
+            <button onclick="triggerReaction()" style="background:rgba(244,114,182,0.15);border-color:#f472b6;color:#f472b6;">▶ Reagieren!</button>
+            <button onclick="resetOctet()">↺ Zurücksetzen</button>
+        </div>
+    </div>
+</section>
+
+<script>
+// =====================================================
+// NAVIGATION
+// =====================================================
+const sections = ['sec-hero','sec-energy','sec-electro','sec-octet'];
+const navDots = document.querySelectorAll('.nav-dot');
+
+function scrollToSection(i) {
+    document.getElementById(sections[i]).scrollIntoView({behavior:'smooth'});
+}
+
+window.addEventListener('scroll', () => {
+    let current = 0;
+    sections.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (el.getBoundingClientRect().top < window.innerHeight / 2) current = i;
+    });
+    navDots.forEach((d,i) => d.classList.toggle('active', i === current));
+});
+
+// =====================================================
+// SECTION 1: ENERGY MINIMIZATION (Plotly + animated ball)
+// =====================================================
+let wellDepth = 3, eqDist = 2;
+let ballR = 5.0, ballV = 0, ballPlaced = false;
+let animEnergy = null;
+
+function morseEnergy(r, De, re) {
+    const a = 1.5;
+    const exp = Math.exp(-a * (r - re));
+    return De * (1 - exp) * (1 - exp) - De;
+}
+
+function morseForce(r, De, re) {
+    const a = 1.5;
+    const exp = Math.exp(-a * (r - re));
+    return -2 * a * De * (1 - exp) * exp;
+}
+
+function drawEnergyPlot() {
+    const rs = [], es = [];
+    for (let r = 0.5; r <= 8; r += 0.05) {
+        rs.push(r);
+        es.push(morseEnergy(r, wellDepth, eqDist));
+    }
+
+    const traces = [{
+        x: rs, y: es,
+        type: 'scatter', mode: 'lines',
+        line: { color: '#60a5fa', width: 3 },
+        name: 'Potentielle Energie',
+        hovertemplate: 'r = %{x:.2f} Å<br>E = %{y:.2f} eV<extra></extra>'
+    }];
+
+    if (ballPlaced) {
+        const bE = morseEnergy(ballR, wellDepth, eqDist);
+        traces.push({
+            x: [ballR], y: [bE],
+            type: 'scatter', mode: 'markers',
+            marker: { color: '#fbbf24', size: 16, line: { color: '#fff', width: 2 } },
+            name: 'Teilchen',
+            hoverinfo: 'skip'
+        });
+        // Equilibrium marker
+        traces.push({
+            x: [eqDist], y: [morseEnergy(eqDist, wellDepth, eqDist)],
+            type: 'scatter', mode: 'markers',
+            marker: { color: '#34d399', size: 10, symbol: 'diamond' },
+            name: 'Minimum',
+            hoverinfo: 'skip'
+        });
+    }
+
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#a0a0c0', family: 'Inter' },
+        xaxis: { title: 'Abstand r (Å)', range: [0.5, 8], gridcolor: 'rgba(255,255,255,0.06)', zerolinecolor: 'rgba(255,255,255,0.1)' },
+        yaxis: { title: 'Energie (eV)', range: [-wellDepth - 1, wellDepth * 0.8], gridcolor: 'rgba(255,255,255,0.06)', zerolinecolor: 'rgba(255,255,255,0.1)' },
+        showlegend: false,
+        margin: { t: 20, b: 50, l: 60, r: 20 },
+        hovermode: 'closest'
+    };
+
+    Plotly.react('plotly-energy', traces, layout, { responsive: true, displayModeBar: false });
+}
+
+drawEnergyPlot();
+
+document.getElementById('plotly-energy').on('plotly_click', function(data) {
+    if (data.points && data.points[0]) {
+        ballR = data.points[0].x;
+        ballV = 0;
+        ballPlaced = true;
+        document.getElementById('energy-info').textContent = `Ball bei r = ${ballR.toFixed(2)} Å platziert — rollt zum Minimum!`;
+        startEnergyAnim();
+    }
+});
+
+function startEnergyAnim() {
+    if (animEnergy) cancelAnimationFrame(animEnergy);
+    const dt = 0.04, damping = 0.92, mass = 1.0;
+    function step() {
+        const force = morseForce(ballR, wellDepth, eqDist);
+        // force = -dE/dr, we want ball to roll toward minimum
+        // acceleration = force / mass (but force here is -dE/dr, so we use it as acceleration on r)
+        ballV += (force / mass) * dt;
+        ballV *= damping;
+        ballR += ballV * dt;
+        if (ballR < 0.6) { ballR = 0.6; ballV = Math.abs(ballV) * 0.5; }
+        if (ballR > 7.9) { ballR = 7.9; ballV = -Math.abs(ballV) * 0.5; }
+
+        drawEnergyPlot();
+
+        if (Math.abs(ballV) > 0.005 || Math.abs(ballR - eqDist) > 0.02) {
+            animEnergy = requestAnimationFrame(step);
+        } else {
+            ballR = eqDist;
+            drawEnergyPlot();
+            document.getElementById('energy-info').textContent = `✓ Minimum erreicht bei r = ${eqDist.toFixed(2)} Å — Bindung gebildet! Energie = ${morseEnergy(eqDist, wellDepth, eqDist).toFixed(2)} eV`;
+        }
+    }
+    step();
+}
+
+document.getElementById('well-depth').addEventListener('input', e => {
+    wellDepth = parseFloat(e.target.value);
+    document.getElementById('well-depth-val').textContent = wellDepth.toFixed(1) + ' eV';
+    ballPlaced = false;
+    drawEnergyPlot();
+});
+
+document.getElementById('eq-dist').addEventListener('input', e => {
+    eqDist = parseFloat(e.target.value);
+    document.getElementById('eq-dist-val').textContent = eqDist.toFixed(1) + ' Å';
+    ballPlaced = false;
+    drawEnergyPlot();
+});
+
+// =====================================================
+// SECTION 2: ELECTROSTATICS
+// =====================================================
+const canvasE = document.getElementById('canvas-electro');
+const ctxE = canvasE.getContext('2d');
+let charges = [];
+let chargeMode = 1;
+let showFieldLines = true;
+let animElectro;
+
+function setChargeMode(m) {
+    chargeMode = m;
+    document.getElementById('btn-positive').classList.toggle('active', m === 1);
+    document.getElementById('btn-negative').classList.toggle('active', m === -1);
+}
+
+function clearCharges() {
+    charges = [];
+}
+
+function toggleFieldLines() {
+    showFieldLines = !showFieldLines;
+}
+
+canvasE.addEventListener('click', e => {
+    const rect = canvasE.getBoundingClientRect();
+    const scaleX = canvasE.width / rect.width;
+    const scaleY = canvasE.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+    charges.push({ x, y, q: chargeMode, vx: 0, vy: 0 });
+});
+
+function drawElectro() {
+    ctxE.fillStyle = '#0d0d24';
+    ctxE.fillRect(0, 0, canvasE.width, canvasE.height);
+
+    // Draw grid
+    ctxE.strokeStyle = 'rgba(255,255,255,0.03)';
+    for (let x = 0; x < canvasE.width; x += 40) {
+        ctxE.beginPath(); ctxE.moveTo(x, 0); ctxE.lineTo(x, canvasE.height); ctxE.stroke();
+    }
+    for (let y = 0; y < canvasE.height; y += 40) {
+        ctxE.beginPath(); ctxE.moveTo(0, y); ctxE.lineTo(canvasE.width, y); ctxE.stroke();
+    }
+
+    // Field visualization (potential heatmap)
+    if (showFieldLines && charges.length > 0) {
+        const step = 20;
+        for (let gx = 0; gx < canvasE.width; gx += step) {
+            for (let gy = 0; gy < canvasE.height; gy += step) {
+                let Ex = 0, Ey = 0;
+                charges.forEach(c => {
+                    const dx = gx - c.x, dy = gy - c.y;
+                    const r2 = dx * dx + dy * dy + 100;
+                    const r = Math.sqrt(r2);
+                    const E = c.q * 500 / r2;
+                    Ex += E * dx / r;
+                    Ey += E * dy / r;
+                });
+                const mag = Math.sqrt(Ex * Ex + Ey * Ey);
+                if (mag > 0.01) {
+                    const len = Math.min(mag * 15, step * 0.8);
+                    const nx = Ex / mag, ny = Ey / mag;
+                    const alpha = Math.min(mag * 3, 0.6);
+                    ctxE.strokeStyle = `rgba(251,191,36,${alpha})`;
+                    ctxE.lineWidth = 1;
+                    ctxE.beginPath();
+                    ctxE.moveTo(gx, gy);
+                    ctxE.lineTo(gx + nx * len, gy + ny * len);
+                    ctxE.stroke();
+                    // arrowhead
+                    const ax = gx + nx * len, ay = gy + ny * len;
+                    ctxE.fillStyle = `rgba(251,191,36,${alpha})`;
+                    ctxE.beginPath();
+                    ctxE.moveTo(ax, ay);
+                    ctxE.lineTo(ax - nx * 4 + ny * 2, ay - ny * 4 - nx * 2);
+                    ctxE.lineTo(ax - nx * 4 - ny * 2, ay - ny * 4 + nx * 2);
+                    ctxE.fill();
+                }
+            }
+        }
+    }
+
+    // Physics: move charges
+    const dt = 0.3, damping = 0.95;
+    for (let i = 0; i < charges.length; i++) {
+        let fx = 0, fy = 0;
+        for (let j = 0; j < charges.length; j++) {
+            if (i === j) continue;
+            const dx = charges[i].x - charges[j].x;
+            const dy = charges[i].y - charges[j].y;
+            const r2 = dx * dx + dy * dy + 200;
+            const r = Math.sqrt(r2);
+            const F = charges[i].q * charges[j].q * 8000 / r2;
+            fx += F * dx / r;
+            fy += F * dy / r;
+        }
+        charges[i].vx = (charges[i].vx + fx * dt) * damping;
+        charges[i].vy = (charges[i].vy + fy * dt) * damping;
+        charges[i].x += charges[i].vx * dt;
+        charges[i].y += charges[i].vy * dt;
+
+        // Boundaries
+        if (charges[i].x < 20) { charges[i].x = 20; charges[i].vx *= -0.5; }
+        if (charges[i].x > canvasE.width - 20) { charges[i].x = canvasE.width - 20; charges[i].vx *= -0.5; }
+        if (charges[i].y < 20) { charges[i].y = 20; charges[i].vy *= -0.5; }
+        if (charges[i].y > canvasE.height - 20) { charges[i].y = canvasE.height - 20; charges[i].vy *= -0.5; }
+    }
+
+    // Draw charges
+    charges.forEach(c => {
+        const grad = ctxE.createRadialGradient(c.x, c.y, 0, c.x, c.y, 25);
+        if (c.q > 0) {
+            grad.addColorStop(0, '#f87171');
+            grad.addColorStop(1, 'rgba(248,113,113,0)');
+        } else {
+            grad.addColorStop(0, '#60a5fa');
+            grad.addColorStop(1, 'rgba(96,165,250,0)');
+        }
+        ctxE.fillStyle = grad;
+        ctxE.beginPath();
+        ctxE.arc(c.x, c.y, 25, 0, Math.PI * 2);
+        ctxE.fill();
+
+        ctxE.fillStyle = c.q > 0 ? '#fca5a5' : '#93c5fd';
+        ctxE.beginPath();
+        ctxE.arc(c.x, c.y, 12, 0, Math.PI * 2);
+        ctxE.fill();
+
+        ctxE.fillStyle = '#fff';
+        ctxE.font = 'bold 16px Inter';
+        ctxE.textAlign = 'center';
+        ctxE.textBaseline = 'middle';
+        ctxE.fillText(c.q > 0 ? '+' : '−', c.x, c.y);
+    });
+
+    // Draw force lines between pairs
+    if (charges.length >= 2) {
+        for (let i = 0; i < charges.length; i++) {
+            for (let j = i + 1; j < charges.length; j++) {
+                const dx = charges[j].x - charges[i].x;
+                const dy = charges[j].y - charges[i].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 300) {
+                    const attract = charges[i].q * charges[j].q < 0;
+                    ctxE.strokeStyle = attract ? 'rgba(52,211,153,0.3)' : 'rgba(248,113,113,0.3)';
+                    ctxE.lineWidth = 2;
+                    ctxE.setLineDash(attract ? [] : [6, 4]);
+                    ctxE.beginPath();
+                    ctxE.moveTo(charges[i].x, charges[i].y);
+                    ctxE.lineTo(charges[j].x, charges[j].y);
+                    ctxE.stroke();
+                    ctxE.setLineDash([]);
+
+                    // Label
+                    const mx = (charges[i].x + charges[j].x) / 2;
+                    const my = (charges[i].y + charges[j].y) / 2;
+                    ctxE.fillStyle = attract ? '#34d399' : '#f87171';
+                    ctxE.font = '11px Inter';
+                    ctxE.fillText(attract ? 'Anziehung' : 'Abstoßung', mx, my - 8);
+                }
+            }
+        }
+    }
+
+    animElectro = requestAnimationFrame(drawElectro);
+}
+
+drawElectro();
+
+// =====================================================
+// SECTION 3: OCTET RULE
+// =====================================================
+const canvasO = document.getElementById('canvas-octet');
+const ctxO = canvasO.getContext('2d');
+
+const atomData = {
+    H:  { symbol: 'H',  Z: 1,  shells: [1],       maxShells: [2],       color: '#e0e0e0', en: 2.2 },
+    He: { symbol: 'He', Z: 2,  shells: [2],       maxShells: [2],       color: '#fcd34d', en: 0 },
+    Li: { symbol: 'Li', Z: 3,  shells: [2,1],     maxShells: [2,8],     color: '#f87171', en: 1.0 },
+    C:  { symbol: 'C',  Z: 6,  shells: [2,4],     maxShells: [2,8],     color: '#6b7280', en: 2.5 },
+    N:  { symbol: 'N',  Z: 7,  shells: [2,5],     maxShells: [2,8],     color: '#60a5fa', en: 3.0 },
+    O:  { symbol: 'O',  Z: 8,  shells: [2,6],     maxShells: [2,8],     color: '#f87171', en: 3.5 },
+    F:  { symbol: 'F',  Z: 9,  shells: [2,7],     maxShells: [2,8],     color: '#a3e635', en: 4.0 },
+    Na: { symbol: 'Na', Z: 11, shells: [2,8,1],   maxShells: [2,8,8],   color: '#fbbf24', en: 0.9 },
+    Cl: { symbol: 'Cl', Z: 17, shells: [2,8,7],   maxShells: [2,8,8],   color: '#34d399', en: 3.2 },
+    K:  { symbol: 'K',  Z: 19, shells: [2,8,8,1], maxShells: [2,8,8,8], color: '#c084fc', en: 0.8 },
+};
+
+const pairConfigs = {
+    NaCl: {
+        atoms: [
+            { data: JSON.parse(JSON.stringify(atomData.Na)), x: 250, y: 250, label: 'Natrium (Na)' },
+            { data: JSON.parse(JSON.stringify(atomData.Cl)), x: 600, y: 250, label: 'Chlor (Cl)' }
+        ],
+        type: 'ionic',
+        description: 'Na gibt 1 Elektron an Cl ab → Na⁺ und Cl⁻ bilden ein Salz (NaCl).',
+        transfer: [{ from: 0, to: 1, count: 1, fromShell: -1, toShell: -1 }]
+    },
+    O2: {
+        atoms: [
+            { data: JSON.parse(JSON.stringify(atomData.O)), x: 300, y: 250, label: 'Sauerstoff (O)' },
+            { data: JSON.parse(JSON.stringify(atomData.O)), x: 550, y: 250, label: 'Sauerstoff (O)' }
+        ],
+        type: 'covalent',
+        description: 'Zwei O-Atome teilen sich je 2 Elektronen → Doppelbindung (O=O).',
+        sharedElectrons: 4
+    },
+    H2O: {
+        atoms: [
+            { data: JSON.parse(JSON.stringify(atomData.H)), x: 200, y: 300, label: 'Wasserstoff (H)' },
+            { data: JSON.parse(JSON.stringify(atomData.O)), x: 425, y: 200, label: 'Sauerstoff (O)' },
+            { data: JSON.parse(JSON.stringify(atomData.H)), x: 650, y: 300, label: 'Wasserstoff (H)' }
+        ],
+        type: 'polar',
+        description: 'O zieht die Elektronen von beiden H stärker an → polare Bindung. Darum ist Wasser ein Dipol!',
+        sharedElectrons: 2
+    },
+    LiF: {
+        atoms: [
+            { data: JSON.parse(JSON.stringify(atomData.Li)), x: 250, y: 250, label: 'Lithium (Li)' },
+            { data: JSON.parse(JSON.stringify(atomData.F)), x: 600, y: 250, label: 'Fluor (F)' }
+        ],
+        type: 'ionic',
+        description: 'Li gibt 1 Elektron an F ab → Li⁺ und F⁻ bilden Lithiumfluorid.',
+        transfer: [{ from: 0, to: 1, count: 1, fromShell: -1, toShell: -1 }]
+    }
+};
+
+let currentPair = 'NaCl';
+let octetState = 'idle'; // idle, reacting, done
+let reactionProgress = 0;
+let animOctet;
+let transferringElectrons = [];
+let sharedElectronsAngle = 0;
+
+function setOctetPair(pair) {
+    currentPair = pair;
+    octetState = 'idle';
+    reactionProgress = 0;
+    transferringElectrons = [];
+    // Reset atom data
+    const cfg = pairConfigs[pair];
+    cfg.atoms.forEach(a => {
+        const base = atomData[a.data.symbol];
+        a.data.shells = [...base.shells];
+    });
+    document.querySelectorAll('.section-3 .controls button').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-' + pair.toLowerCase()).classList.add('active');
+    document.getElementById('octet-info').textContent = 'Klicke „Reagieren", um die Elektronenübertragung zu starten!';
+}
+
+function resetOctet() {
+    setOctetPair(currentPair);
+}
+
+function triggerReaction() {
+    if (octetState === 'reacting') return;
+    const cfg = pairConfigs[currentPair];
+
+    if (cfg.type === 'ionic') {
+        octetState = 'reacting';
+        reactionProgress = 0;
+        transferringElectrons = [];
+
+        cfg.transfer.forEach(t => {
+            const fromAtom = cfg.atoms[t.from];
+            const toAtom = cfg.atoms[t.to];
+            for (let i = 0; i < t.count; i++) {
+                transferringElectrons.push({
+                    x: fromAtom.x,
+                    y: fromAtom.y,
+                    targetX: toAtom.x,
+                    targetY: toAtom.y,
+                    progress: 0,
+                    fromIdx: t.from,
+                    toIdx: t.to,
+                    delay: i * 0.15
+                });
+            }
+        });
+    } else {
+        octetState = 'reacting';
+        reactionProgress = 0;
+    }
+}
+
+function drawAtom(ctx, x, y, atomInfo, label, highlight, charge) {
+    const shellRadii = [22, 42, 64, 86];
+    const shells = atomInfo.shells;
+    const maxShells = atomInfo.maxShells;
+
+    // Glow
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, shellRadii[shells.length - 1] + 20);
+    glow.addColorStop(0, atomInfo.color + '30');
+    glow.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(x, y, shellRadii[shells.length - 1] + 20, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Shell rings
+    for (let s = 0; s < shells.length; s++) {
+        const full = shells[s] >= maxShells[s];
+        ctx.strokeStyle = full ? 'rgba(52,211,153,0.4)' : 'rgba(255,255,255,0.15)';
+        ctx.lineWidth = full ? 2 : 1;
+        ctx.setLineDash(full ? [] : [4, 4]);
+        ctx.beginPath();
+        ctx.arc(x, y, shellRadii[s], 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    // Nucleus
+    const nucGrad = ctx.createRadialGradient(x, y, 0, x, y, 14);
+    nucGrad.addColorStop(0, atomInfo.color);
+    nucGrad.addColorStop(1, atomInfo.color + '60');
+    ctx.fillStyle = nucGrad;
+    ctx.beginPath();
+    ctx.arc(x, y, 14, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 13px Inter';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(atomInfo.symbol, x, y);
+
+    // Electrons on shells
+    const time = Date.now() / 1000;
+    for (let s = 0; s < shells.length; s++) {
+        const n = shells[s];
+        for (let e = 0; e < n; e++) {
+            const angle = (e / Math.max(n, 1)) * Math.PI * 2 + time * (0.5 + s * 0.3);
+            const ex = x + Math.cos(angle) * shellRadii[s];
+            const ey = y + Math.sin(angle) * shellRadii[s];
+
+            ctx.fillStyle = '#93c5fd';
+            ctx.beginPath();
+            ctx.arc(ex, ey, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#bfdbfe';
+            ctx.beginPath();
+            ctx.arc(ex - 1, ey - 1, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // Label
+    ctx.fillStyle = '#a0a0c0';
+    ctx.font = '12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x, y + shellRadii[shells.length - 1] + 35);
+
+    // Charge label
+    if (charge) {
+        ctx.fillStyle = charge.startsWith('+') ? '#f87171' : '#60a5fa';
+        ctx.font = 'bold 16px Inter';
+        ctx.fillText(charge, x, y - shellRadii[shells.length - 1] - 15);
+    }
+
+    // Shell electron count
+    for (let s = 0; s < shells.length; s++) {
+        const full = shells[s] >= maxShells[s];
+        ctx.fillStyle = full ? '#34d399' : '#fbbf24';
+        ctx.font = '10px Inter';
+        ctx.fillText(`${shells[s]}/${maxShells[s]}`, x + shellRadii[s] + 14, y - 5);
+    }
+}
+
+function drawOctet() {
+    ctxO.fillStyle = '#0d0d24';
+    ctxO.fillRect(0, 0, canvasO.width, canvasO.height);
+
+    const cfg = pairConfigs[currentPair];
+
+    if (octetState === 'idle') {
+        cfg.atoms.forEach(a => {
+            drawAtom(ctxO, a.x, a.y, a.data, a.label, false, null);
+        });
+    } else if (octetState === 'reacting') {
+        if (cfg.type === 'ionic') {
+            // Animate transferring electrons
+            let allDone = true;
+            transferringElectrons.forEach(te => {
+                te.progress += 0.012;
+                if (te.progress < te.delay) { allDone = false; return; }
+                const t = Math.min((te.progress - te.delay) / 0.8, 1);
+                const easeT = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+                if (t < 1) {
+                    allDone = false;
+                    const cx = te.x + (te.targetX - te.x) * easeT;
+                    const cy = te.y + (te.targetY - te.y) * easeT + Math.sin(easeT * Math.PI) * -60;
+
+                    // Draw moving electron
+                    const trail = ctxO.createRadialGradient(cx, cy, 0, cx, cy, 12);
+                    trail.addColorStop(0, '#fbbf24');
+                    trail.addColorStop(1, 'transparent');
+                    ctxO.fillStyle = trail;
+                    ctxO.beginPath();
+                    ctxO.arc(cx, cy, 12, 0, Math.PI * 2);
+                    ctxO.fill();
+
+                    ctxO.fillStyle = '#fbbf24';
+                    ctxO.beginPath();
+                    ctxO.arc(cx, cy, 5, 0, Math.PI * 2);
+                    ctxO.fill();
+                }
+            });
+
+            // Draw atoms
+            cfg.atoms.forEach(a => {
+                drawAtom(ctxO, a.x, a.y, a.data, a.label, false, null);
+            });
+
+            if (allDone) {
+                // Apply transfer
+                cfg.transfer.forEach(t => {
+                    const fromShells = cfg.atoms[t.from].data.shells;
+                    const toShells = cfg.atoms[t.to].data.shells;
+                    fromShells[fromShells.length - 1] -= t.count;
+                    if (fromShells[fromShells.length - 1] <= 0) fromShells.pop();
+                    toShells[toShells.length - 1] += t.count;
+                });
+                octetState = 'done';
+                document.getElementById('octet-info').textContent = '✓ ' + cfg.description;
+            }
+        } else {
+            // Covalent / polar: animate atoms moving together
+            reactionProgress += 0.008;
+            const t = Math.min(reactionProgress / 1.0, 1);
+            const easeT = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+            if (currentPair === 'O2') {
+                const targetDist = 80;
+                const origDist = 250;
+                const currentDist = origDist - (origDist - targetDist) * easeT;
+                const cx = (cfg.atoms[0].x + cfg.atoms[1].x) / 2;
+                const cy = (cfg.atoms[0].y + cfg.atoms[1].y) / 2;
+                const drawX0 = cx - currentDist / 2;
+                const drawX1 = cx + currentDist / 2;
+
+                drawAtom(ctxO, drawX0, cy, cfg.atoms[0].data, cfg.atoms[0].label, false, null);
+                drawAtom(ctxO, drawX1, cy, cfg.atoms[1].data, cfg.atoms[1].label, false, null);
+
+                // Draw shared electron cloud
+                if (easeT > 0.3) {
+                    const alpha = (easeT - 0.3) * 0.7;
+                    const bondX = (drawX0 + drawX1) / 2;
+                    const bondGrad = ctxO.createRadialGradient(bondX, cy, 0, bondX, cy, 35);
+                    bondGrad.addColorStop(0, `rgba(147,197,253,${alpha})`);
+                    bondGrad.addColorStop(1, 'transparent');
+                    ctxO.fillStyle = bondGrad;
+                    ctxO.beginPath();
+                    ctxO.ellipse(bondX, cy, 30, 20, 0, 0, Math.PI * 2);
+                    ctxO.fill();
+
+                    // Shared electrons orbiting
+                    const time = Date.now() / 600;
+                    for (let i = 0; i < cfg.sharedElectrons; i++) {
+                        const angle = (i / cfg.sharedElectrons) * Math.PI * 2 + time;
+                        const ex = bondX + Math.cos(angle) * 18;
+                        const ey = cy + Math.sin(angle) * 12;
+                        ctxO.fillStyle = '#fbbf24';
+                        ctxO.beginPath();
+                        ctxO.arc(ex, ey, 4, 0, Math.PI * 2);
+                        ctxO.fill();
+                    }
+
+                    // Bond lines
+                    ctxO.strokeStyle = `rgba(251,191,36,${alpha})`;
+                    ctxO.lineWidth = 3;
+                    ctxO.beginPath();
+                    ctxO.moveTo(drawX0 + 15, cy - 4);
+                    ctxO.lineTo(drawX1 - 15, cy - 4);
+                    ctxO.stroke();
+                    ctxO.beginPath();
+                    ctxO.moveTo(drawX0 + 15, cy + 4);
+                    ctxO.lineTo(drawX1 - 15, cy + 4);
+                    ctxO.stroke();
+
+                    ctxO.fillStyle = '#fbbf24';
+                    ctxO.font = 'bold 14px Inter';
+                    ctxO.textAlign = 'center';
+                    ctxO.fillText('O = O (Doppelbindung)', (drawX0 + drawX1) / 2, cy + 90);
+                }
+
+                if (t >= 1) {
+                    octetState = 'done';
+                    document.getElementById('octet-info').textContent = '✓ ' + cfg.description;
+                }
+            } else if (currentPair === 'H2O') {
+                const cx = cfg.atoms[1].x, cy = cfg.atoms[1].y;
+                const angle1 = Math.PI * 0.7;
+                const angle2 = Math.PI * 0.3;
+                const origR = 220, targetR = 85;
+                const currentR = origR - (origR - targetR) * easeT;
+
+                const h1x = cx + Math.cos(angle1) * currentR;
+                const h1y = cy + Math.sin(angle1) * currentR;
+                const h2x = cx + Math.cos(angle2) * currentR;
+                const h2y = cy + Math.sin(angle2) * currentR;
+
+                drawAtom(ctxO, h1x, h1y, cfg.atoms[0].data, 'H', false, null);
+                drawAtom(ctxO, cx, cy, cfg.atoms[1].data, 'O', false, null);
+                drawAtom(ctxO, h2x, h2y, cfg.atoms[2].data, 'H', false, null);
+
+                if (easeT > 0.3) {
+                    const alpha = (easeT - 0.3) * 0.8;
+
+                    // Bond lines
+                    ctxO.strokeStyle = `rgba(251,191,36,${alpha})`;
+                    ctxO.lineWidth = 3;
+                    ctxO.beginPath();
+                    ctxO.moveTo(cx, cy);
+                    ctxO.lineTo(h1x, h1y);
+                    ctxO.stroke();
+                    ctxO.beginPath();
+                    ctxO.moveTo(cx, cy);
+                    ctxO.lineTo(h2x, h2y);
+                    ctxO.stroke();
+
+                    // Polarity arrows
+                    if (easeT > 0.7) {
+                        const pAlpha = (easeT - 0.7) * 2;
+                        ctxO.fillStyle = `rgba(248,113,113,${pAlpha})`;
+                        ctxO.font = 'bold 18px Inter';
+                        ctxO.textAlign = 'center';
+                        ctxO.fillText('δ−', cx, cy - 75);
+                        ctxO.fillStyle = `rgba(96,165,250,${pAlpha})`;
+                        ctxO.fillText('δ+', h1x - 20, h1y + 40);
+                        ctxO.fillText('δ+', h2x + 20, h2y + 40);
+
+                        ctxO.fillStyle = `rgba(251,191,36,${pAlpha})`;
+                        ctxO.font = '13px Inter';
+                        ctxO.fillText('← Elektronen werden zu O gezogen (polar)', cx, cy + 120);
+                    }
+
+                    // Shared electrons
+                    const time = Date.now() / 800;
+                    [[cx, cy, h1x, h1y], [cx, cy, h2x, h2y]].forEach((bond, bi) => {
+                        const mx = (bond[0] + bond[2]) / 2;
+                        const my = (bond[1] + bond[3]) / 2;
+                        // Shift toward O (higher EN)
+                        const shiftX = mx + (bond[0] - mx) * 0.25;
+                        const shiftY = my + (bond[1] - my) * 0.25;
+                        for (let i = 0; i < 2; i++) {
+                            const angle = (i / 2) * Math.PI * 2 + time + bi * Math.PI;
+                            const ex = shiftX + Math.cos(angle) * 10;
+                            const ey = shiftY + Math.sin(angle) * 8;
+                            ctxO.fillStyle = `rgba(251,191,36,${alpha})`;
+                            ctxO.beginPath();
+                            ctxO.arc(ex, ey, 4, 0, Math.PI * 2);
+                            ctxO.fill();
+                        }
+                    });
+                }
+
+                if (t >= 1) {
+                    octetState = 'done';
+                    document.getElementById('octet-info').textContent = '✓ ' + cfg.description;
+                }
+            }
+        }
+    } else if (octetState === 'done') {
+        const cfg2 = pairConfigs[currentPair];
+
+        if (cfg2.type === 'ionic') {
+            const charges = [];
+            cfg2.transfer.forEach(t => {
+                charges[t.from] = '+';
+                charges[t.to] = '−';
+            });
+            cfg2.atoms.forEach((a, i) => {
+                drawAtom(ctxO, a.x, a.y, a.data, a.label, true, charges[i] || null);
+            });
+
+            // Draw ionic bond
+            ctxO.strokeStyle = 'rgba(52,211,153,0.5)';
+            ctxO.lineWidth = 3;
+            ctxO.setLineDash([8, 6]);
+            ctxO.beginPath();
+            ctxO.moveTo(cfg2.atoms[0].x, cfg2.atoms[0].y);
+            ctxO.lineTo(cfg2.atoms[1].x, cfg2.atoms[1].y);
+            ctxO.stroke();
+            ctxO.setLineDash([]);
+
+            ctxO.fillStyle = '#34d399';
+            ctxO.font = 'bold 13px Inter';
+            ctxO.textAlign = 'center';
+            const mx = (cfg2.atoms[0].x + cfg2.atoms[1].x) / 2;
+            const my = (cfg2.atoms[0].y + cfg2.atoms[1].y) / 2;
+            ctxO.fillText('Ionische Bindung', mx, my - 15);
+        } else if (currentPair === 'O2') {
+            const cx = (cfg2.atoms[0].x + cfg2.atoms[1].x) / 2;
+            const cy = cfg2.atoms[0].y;
+            const drawX0 = cx - 40;
+            const drawX1 = cx + 40;
+
+            drawAtom(ctxO, drawX0, cy, cfg2.atoms[0].data, cfg2.atoms[0].label, false, null);
+            drawAtom(ctxO, drawX1, cy, cfg2.atoms[1].data, cfg2.atoms[1].label, false, null);
+
+            const bondX = (drawX0 + drawX1) / 2;
+            const bondGrad = ctxO.createRadialGradient(bondX, cy, 0, bondX, cy, 35);
+            bondGrad.addColorStop(0, 'rgba(147,197,253,0.5)');
+            bondGrad.addColorStop(1, 'transparent');
+            ctxO.fillStyle = bondGrad;
+            ctxO.beginPath();
+            ctxO.ellipse(bondX, cy, 30, 20, 0, 0, Math.PI * 2);
+            ctxO.fill();
+
+            const time = Date.now() / 600;
+            for (let i = 0; i < 4; i++) {
+                const angle = (i / 4) * Math.PI * 2 + time;
+                const ex = bondX + Math.cos(angle) * 18;
+                const ey = cy + Math.sin(angle) * 12;
+                ctxO.fillStyle = '#fbbf24';
+                ctxO.beginPath();
+                ctxO.arc(ex, ey, 4, 0, Math.PI * 2);
+                ctxO.fill();
+            }
+
+            ctxO.strokeStyle = 'rgba(251,191,36,0.7)';
+            ctxO.lineWidth = 3;
+            ctxO.beginPath();
+            ctxO.moveTo(drawX0 + 15, cy - 4);
+            ctxO.lineTo(drawX1 - 15, cy - 4);
+            ctxO.stroke();
+            ctxO.beginPath();
+            ctxO.moveTo(drawX0 + 15, cy + 4);
+            ctxO.lineTo(drawX1 - 15, cy + 4);
+            ctxO.stroke();
+
+            ctxO.fillStyle = '#fbbf24';
+            ctxO.font = 'bold 14px Inter';
+            ctxO.textAlign = 'center';
+            ctxO.fillText('O = O (Doppelbindung)', bondX, cy + 90);
+        } else if (currentPair === 'H2O') {
+            const cx = cfg2.atoms[1].x, cy = cfg2.atoms[1].y;
+            const angle1 = Math.PI * 0.7;
+            const angle2 = Math.PI * 0.3;
+            const r = 85;
+
+            const h1x = cx + Math.cos(angle1) * r;
+            const h1y = cy + Math.sin(angle1) * r;
+            const h2x = cx + Math.cos(angle2) * r;
+            const h2y = cy + Math.sin(angle2) * r;
+
+            drawAtom(ctxO, h1x, h1y, cfg2.atoms[0].data, 'H', false, null);
+            drawAtom(ctxO, cx, cy, cfg2.atoms[1].data, 'O', false, null);
+            drawAtom(ctxO, h2x, h2y, cfg2.atoms[2].data, 'H', false, null);
+
+            ctxO.strokeStyle = 'rgba(251,191,36,0.7)';
+            ctxO.lineWidth = 3;
+            ctxO.beginPath();
+            ctxO.moveTo(cx, cy);
+            ctxO.lineTo(h1x, h1y);
+            ctxO.stroke();
+            ctxO.beginPath();
+            ctxO.moveTo(cx, cy);
+            ctxO.lineTo(h2x, h2y);
+            ctxO.stroke();
+
+            ctxO.fillStyle = '#f87171';
+            ctxO.font = 'bold 18px Inter';
+            ctxO.textAlign = 'center';
+            ctxO.fillText('δ−', cx, cy - 75);
+            ctxO.fillStyle = '#60a5fa';
+            ctxO.fillText('δ+', h1x - 20, h1y + 40);
+            ctxO.fillText('δ+', h2x + 20, h2y + 40);
+
+            ctxO.fillStyle = '#fbbf24';
+            ctxO.font = '13px Inter';
+            ctxO.fillText('← Elektronen werden zu O gezogen (polar)', cx, cy + 130);
+
+            const time = Date.now() / 800;
+            [[cx, cy, h1x, h1y], [cx, cy, h2x, h2y]].forEach((bond, bi) => {
+                const mx = (bond[0] + bond[2]) / 2;
+                const my = (bond[1] + bond[3]) / 2;
+                const shiftX = mx + (bond[0] - mx) * 0.25;
+                const shiftY = my + (bond[1] - my) * 0.25;
+                for (let i = 0; i < 2; i++) {
+                    const angle = (i / 2) * Math.PI * 2 + time + bi * Math.PI;
+                    const ex = shiftX + Math.cos(angle) * 10;
+                    const ey = shiftY + Math.sin(angle) * 8;
+                    ctxO.fillStyle = '#fbbf24';
+                    ctxO.beginPath();
+                    ctxO.arc(ex, ey, 4, 0, Math.PI * 2);
+                    ctxO.fill();
+                }
+            });
+        }
+    }
+
+    animOctet = requestAnimationFrame(drawOctet);
+}
+
+drawOctet();
+
+// =====================================================
+// CANVAS RESIZE HANDLING
+// =====================================================
+function handleResize() {
+    const containers = document.querySelectorAll('.viz-container');
+    containers.forEach(c => {
+        const canvases = c.querySelectorAll('canvas');
+        canvases.forEach(cv => {
+            const rect = c.getBoundingClientRect();
+            const maxW = Math.min(850, rect.width - 40);
+            cv.style.width = maxW + 'px';
+            cv.style.height = (maxW * cv.height / cv.width) + 'px';
+        });
+    });
+}
+
+window.addEventListener('resize', handleResize);
+handleResize();
+
+</script>
+</body>
+</html>
