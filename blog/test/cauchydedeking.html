@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cauchy-Sequenzen & Dedekind-Schnitte – Interaktiv</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+  }
+  header {
+    text-align: center;
+    padding: 30px 20px 10px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-bottom: 2px solid #0f3460;
+  }
+  header h1 {
+    font-size: 2rem;
+    background: linear-gradient(90deg, #e94560, #f5a623, #50fa7b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  header p { color: #888; margin-top: 8px; font-size: 0.95rem; }
+
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin: 20px auto 0;
+    max-width: 600px;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 14px 20px;
+    border: 2px solid #0f3460;
+    background: #1a1a2e;
+    color: #aaa;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+  }
+  .tab-btn:first-child { border-radius: 10px 0 0 10px; }
+  .tab-btn:last-child { border-radius: 0 10px 10px 0; }
+  .tab-btn.active {
+    background: #0f3460;
+    color: #fff;
+    border-color: #e94560;
+  }
+  .tab-btn:hover:not(.active) { background: #16213e; color: #ccc; }
+
+  .panel { display: none; max-width: 900px; margin: 0 auto; padding: 20px; }
+  .panel.active { display: block; }
+
+  .card {
+    background: #1a1a2e;
+    border: 1px solid #0f3460;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    color: #e94560;
+  }
+  .card h3 {
+    font-size: 1.05rem;
+    margin: 14px 0 8px;
+    color: #f5a623;
+  }
+  .card p, .card li {
+    line-height: 1.7;
+    color: #ccc;
+    font-size: 0.95rem;
+  }
+  .card ul { padding-left: 20px; }
+  .card li { margin-bottom: 4px; }
+
+  canvas {
+    width: 100%;
+    height: 300px;
+    background: #12121f;
+    border-radius: 10px;
+    border: 1px solid #0f3460;
+    display: block;
+    cursor: crosshair;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-top: 14px;
+  }
+  .controls label {
+    font-size: 0.9rem;
+    color: #aaa;
+  }
+  .controls select, .controls input[type=range] {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #0f3460;
+    background: #16213e;
+    color: #e0e0e0;
+    font-size: 0.9rem;
+  }
+  .controls input[type=range] {
+    width: 160px;
+    accent-color: #e94560;
+  }
+  .controls button {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    background: #e94560;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .controls button:hover { background: #c73650; }
+  .controls button.secondary {
+    background: #0f3460;
+  }
+  .controls button.secondary:hover { background: #1a4a8a; }
+
+  .info-box {
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: #12121f;
+    border-left: 4px solid #50fa7b;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.9rem;
+    color: #bbb;
+    line-height: 1.6;
+  }
+  .info-box strong { color: #50fa7b; }
+  .info-box.warn { border-left-color: #f5a623; }
+  .info-box.warn strong { color: #f5a623; }
+
+  .number-line-container {
+    position: relative;
+    margin: 10px 0;
+  }
+
+  .legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: #aaa;
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .step-display {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #f5a623;
+    margin: 8px 0;
+    font-weight: 600;
+    min-height: 1.5em;
+  }
+
+  /* Dedekind interactive number line */
+  .dedekind-line {
+    position: relative;
+    height: 120px;
+    margin: 20px 0 10px;
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  .comparison-table th, .comparison-table td {
+    padding: 10px 14px;
+    border: 1px solid #0f3460;
+    font-size: 0.9rem;
+  }
+  .comparison-table th {
+    background: #0f3460;
+    color: #fff;
+    text-align: left;
+  }
+  .comparison-table td { color: #ccc; }
+  .comparison-table tr:nth-child(even) td { background: #16213e; }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.4rem; }
+    .controls { flex-direction: column; align-items: stretch; }
+    .controls input[type=range] { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Cauchy-Sequenzen & Dedekind-Schnitte</h1>
+  <p>Zwei Wege, die reellen Zahlen zu konstruieren – interaktiv & visuell erklärt</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('cauchy')">Cauchy-Sequenzen</button>
+  <button class="tab-btn" onclick="switchTab('dedekind')">Dedekind-Schnitte</button>
+  <button class="tab-btn" onclick="switchTab('compare')">Vergleich</button>
+</div>
+
+<!-- ==================== CAUCHY PANEL ==================== -->
+<div id="panel-cauchy" class="panel active">
+
+  <div class="card">
+    <h2>📐 Was ist eine Cauchy-Sequenz?</h2>
+    <p>Eine <strong>Cauchy-Sequenz</strong> ist eine Folge rationaler Zahlen (a₁, a₂, a₃, …), bei der die Glieder <em>immer näher zusammenrücken</em>. Formal:</p>
+    <p style="text-align:center; margin:12px 0; color:#50fa7b; font-size:1.05rem;">
+      ∀ ε > 0 &nbsp;∃ N &nbsp;∀ m,n ≥ N: &nbsp; |aₘ − aₙ| < ε
+    </p>
+    <h3>Idee</h3>
+    <ul>
+      <li>Wir nähern uns einer reellen Zahl <strong>schrittweise</strong> an.</li>
+      <li>Jede reelle Zahl ist eine <em>Äquivalenzklasse</em> von Cauchy-Sequenzen.</li>
+      <li>Die Sequenz muss nicht in ℚ konvergieren – aber die Glieder werden beliebig dicht.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🎮 Interaktive Visualisierung</h2>
+    <div class="controls">
+      <label>Sequenz:
+        <select id="cauchy-seq-select">
+          <option value="sqrt2">√2 ≈ 1.4142… (Newton)</option>
+          <option value="e">e ≈ 2.7182… (Partialsummen)</option>
+          <option value="pi">π ≈ 3.1415… (Leibniz)</option>
+          <option value="golden">φ ≈ 1.6180… (Fibonacci-Quotienten)</option>
+          <option value="alternating">Alternierende: (-1)ⁿ/n → 0</option>
+          <option value="notcauchy">❌ NICHT Cauchy: sin(n)</option>
+        </select>
+      </label>
+    </div>
+    <div class="controls">
+      <label>Geschwindigkeit:
+        <input type="range" id="cauchy-speed" min="1" max="10" value="5">
+      </label>
+      <button onclick="startCauchyAnimation()">▶ Start</button>
+      <button class="secondary" onclick="stopCauchyAnimation()">⏸ Pause</button>
+      <button class="secondary" onclick="resetCauchy()">↺ Reset</button>
+    </div>
+    <div class="step-display" id="cauchy-step-display"></div>
+    <canvas id="cauchy-canvas" width="860" height="300"></canvas>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot" style="background:#e94560"></span> Sequenz-Glieder aₙ</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#50fa7b"></span> Grenzwert (Ziel)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:rgba(245,166,35,0.3)"></span> ε-Band</div>
+    </div>
+    <div class="controls" style="margin-top:10px;">
+      <label>ε (Epsilon):
+        <input type="range" id="epsilon-slider" min="1" max="50" value="20">
+      </label>
+      <span id="epsilon-display" style="color:#f5a623; font-weight:600;">ε = 0.20</span>
+    </div>
+    <div class="info-box" id="cauchy-info">
+      Wähle eine Sequenz und drücke <strong>Start</strong>, um die Animation zu sehen.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔬 ε-N Checker</h2>
+    <p>Teste selbst: Für ein gegebenes ε, ab welchem N liegen alle Glieder im ε-Band?</p>
+    <div class="controls">
+      <label>Sequenz: <select id="en-seq-select">
+        <option value="sqrt2">√2 (Newton)</option>
+        <option value="e">e (Partialsummen)</option>
+        <option value="golden">φ (Fibonacci)</option>
+      </select></label>
+      <label>ε = <input type="range" id="en-epsilon" min="1" max="100" value="10">
+        <span id="en-eps-val">0.10</span>
+      </label>
+      <button onclick="checkEpsilonN()">Prüfen</button>
+    </div>
+    <div class="info-box" id="en-result">Ergebnis erscheint hier.</div>
+  </div>
+</div>
+
+<!-- ==================== DEDEKIND PANEL ==================== -->
+<div id="panel-dedekind" class="panel">
+
+  <div class="card">
+    <h2>✂️ Was ist ein Dedekind-Schnitt?</h2>
+    <p>Ein <strong>Dedekind-Schnitt</strong> teilt die rationalen Zahlen ℚ in zwei nicht-leere Mengen <strong style="color:#e94560;">L</strong> (links/unten) und <strong style="color:#50fa7b;">R</strong> (rechts/oben), sodass:</p>
+    <ul>
+      <li>Jedes Element von <strong style="color:#e94560;">L</strong> ist kleiner als jedes Element von <strong style="color:#50fa7b;">R</strong></li>
+      <li><strong style="color:#e94560;">L</strong> hat <em>kein größtes Element</em></li>
+      <li>L ∪ R = ℚ (jede rationale Zahl gehört zu einer Seite)</li>
+    </ul>
+    <h3>Idee</h3>
+    <ul>
+      <li>Jede reelle Zahl wird durch einen solchen „Schnitt" definiert.</li>
+      <li>Für irrationale Zahlen wie √2: L enthält alle q ∈ ℚ mit q² < 2, R enthält alle q ∈ ℚ mit q² ≥ 2 (und q > 0).</li>
+      <li>Der Schnitt „zeigt" auf die Stelle, wo die irrationale Zahl sitzt.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🎮 Interaktive Visualisierung</h2>
+    <div class="controls">
+      <label>Schnitt für:
+        <select id="dedekind-select">
+          <option value="sqrt2">√2 ≈ 1.4142…</option>
+          <option value="sqrt3">√3 ≈ 1.7320…</option>
+          <option value="phi">φ = (1+√5)/2 ≈ 1.6180…</option>
+          <option value="rational">3/2 = 1.5 (rational!)</option>
+          <option value="pi">π ≈ 3.1415…</option>
+          <option value="custom">Eigener Wert…</option>
+        </select>
+      </label>
+      <label id="custom-val-label" style="display:none;">Wert (0–5):
+        <input type="range" id="custom-val-slider" min="0" max="500" value="141">
+        <span id="custom-val-display">1.41</span>
+      </label>
+    </div>
+    <div class="controls">
+      <label>Zoom / Auflösung:
+        <input type="range" id="dedekind-zoom" min="1" max="6" value="2">
+        <span id="zoom-display">Stufe 2</span>
+      </label>
+      <button onclick="animateDedekindZoom()">🔍 Reinzoomen</button>
+      <button class="secondary" onclick="resetDedekind()">↺ Reset</button>
+    </div>
+    <div class="step-display" id="dedekind-step-display"></div>
+    <canvas id="dedekind-canvas" width="860" height="300"></canvas>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot" style="background:#e94560"></span> L (linke Menge)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#50fa7b"></span> R (rechte Menge)</div>
+      <div class="legend-item"><span class="legend-dot" style="background:#f5a623"></span> Schnittstelle</div>
+    </div>
+    <div class="info-box" id="dedekind-info">
+      Wähle eine Zahl und zoome hinein, um den Schnitt zu sehen.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🧪 Rationale testen</h2>
+    <p>Gib eine rationale Zahl ein und sieh, auf welcher Seite des Schnitts sie liegt:</p>
+    <div class="controls">
+      <label>Zähler: <input type="number" id="test-num" value="7" style="width:60px; padding:6px; border-radius:8px; border:1px solid #0f3460; background:#16213e; color:#e0e0e0;"></label>
+      <label>Nenner: <input type="number" id="test-den" value="5" min="1" style="width:60px; padding:6px; border-radius:8px; border:1px solid #0f3460; background:#16213e; color:#e0e0e0;"></label>
+      <label>Schnitt: <select id="test-cut-select">
+        <option value="sqrt2">√2</option>
+        <option value="sqrt3">√3</option>
+        <option value="pi">π</option>
+      </select></label>
+      <button onclick="testRational()">Testen</button>
+    </div>
+    <div class="info-box" id="test-result">Ergebnis erscheint hier.</div>
+  </div>
+</div>
+
+<!-- ==================== COMPARE PANEL ==================== -->
+<div id="panel-compare" class="panel">
+  <div class="card">
+    <h2>⚖️ Cauchy-Sequenzen vs. Dedekind-Schnitte</h2>
+    <table class="comparison-table">
+      <tr><th>Eigenschaft</th><th>Cauchy-Sequenz</th><th>Dedekind-Schnitt</th></tr>
+      <tr><td><strong>Grundidee</strong></td><td>Annäherung durch eine Folge</td><td>Teilung von ℚ in zwei Hälften</td></tr>
+      <tr><td><strong>Typ</strong></td><td>Metrische Vervollständigung</td><td>Ordnungs-Vervollständigung</td></tr>
+      <tr><td><strong>Benötigt</strong></td><td>Metrik (Abstandsbegriff)</td><td>Totale Ordnung</td></tr>
+      <tr><td><strong>Konstruktivität</strong></td><td>Konstruktiver (gibt Approximation)</td><td>Weniger konstruktiv</td></tr>
+      <tr><td><strong>Verallgemeinerung</strong></td><td>Jeder metrische Raum</td><td>Jeder total geordnete Körper</td></tr>
+      <tr><td><strong>Gleichheit</strong></td><td>Äquivalenzklassen nötig</td><td>Direkt als Menge definiert</td></tr>
+      <tr><td><strong>Ergebnis</strong></td><td colspan="2" style="text-align:center; color:#50fa7b;">Beide liefern isomorphe reelle Zahlen ℝ ✓</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>🔀 Seite-an-Seite für √2</h2>
+    <div class="controls">
+      <button onclick="startDualAnimation()">▶ Beide animieren</button>
+      <button class="secondary" onclick="stopDualAnimation()">⏸ Pause</button>
+      <button class="secondary" onclick="resetDual()">↺ Reset</button>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px;">
+      <div>
+        <h3 style="color:#e94560; text-align:center; margin-bottom:8px;">Cauchy: aₙ → √2</h3>
+        <canvas id="dual-cauchy-canvas" width="420" height="250"></canvas>
+      </div>
+      <div>
+        <h3 style="color:#50fa7b; text-align:center; margin-bottom:8px;">Dedekind: L | R bei √2</h3>
+        <canvas id="dual-dedekind-canvas" width="420" height="250"></canvas>
+      </div>
+    </div>
+    <div class="step-display" id="dual-step-display"></div>
+    <div class="info-box" id="dual-info">
+      Beide Methoden definieren dieselbe Zahl √2 – auf völlig verschiedene Weise.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>💡 Kernunterschied</h2>
+    <div class="info-box warn">
+      <strong>Cauchy:</strong> „Ich nähere mich der Zahl Schritt für Schritt an – jeder Schritt gibt mir eine bessere Approximation."<br><br>
+      <strong>Dedekind:</strong> „Ich teile ALLE rationalen Zahlen in ‚kleiner' und ‚größer' – die Zahl ist die Grenze dazwischen."
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  GLOBALS
+// ============================================================
+let cauchyAnim = null;
+let cauchyStep = 0;
+let dualAnim = null;
+let dualStep = 0;
+
+// ============================================================
+//  TAB SWITCHING
+// ============================================================
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', ['cauchy','dedekind','compare'][i] === name);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'dedekind') drawDedekind();
+}
+
+// ============================================================
+//  CAUCHY SEQUENCES
+// ============================================================
+const sequences = {
+  sqrt2: {
+    name: '√2',
+    limit: Math.SQRT2,
+    fn: n => {
+      let x = 1;
+      for (let i = 0; i < n; i++) x = (x + 2 / x) / 2;
+      return x;
+    },
+    desc: 'Newton-Verfahren: xₙ₊₁ = (xₙ + 2/xₙ) / 2'
+  },
+  e: {
+    name: 'e',
+    limit: Math.E,
+    fn: n => {
+      let s = 0, f = 1;
+      for (let k = 0; k <= n + 2; k++) { if (k > 0) f *= k; s += 1 / f; }
+      return s;
+    },
+    desc: 'Partialsumme: Σ 1/k! für k=0..n'
+  },
+  pi: {
+    name: 'π',
+    limit: Math.PI,
+    fn: n => {
+      let s = 0;
+      for (let k = 0; k <= n * 3; k++) s += (k % 2 === 0 ? 1 : -1) / (2 * k + 1);
+      return 4 * s;
+    },
+    desc: 'Leibniz: π = 4·Σ (-1)ᵏ/(2k+1)'
+  },
+  golden: {
+    name: 'φ',
+    limit: (1 + Math.sqrt(5)) / 2,
+    fn: n => {
+      let a = 1, b = 1;
+      for (let i = 0; i < n + 2; i++) { let t = a + b; a = b; b = t; }
+      return b / a;
+    },
+    desc: 'Fibonacci-Quotienten: Fₙ₊₁/Fₙ'
+  },
+  alternating: {
+    name: '0 (alternierend)',
+    limit: 0,
+    fn: n => (n === 0) ? 1 : Math.pow(-1, n) / n,
+    desc: 'aₙ = (-1)ⁿ/n → 0'
+  },
+  notcauchy: {
+    name: 'sin(n) – NICHT Cauchy!',
+    limit: null,
+    fn: n => Math.sin(n + 1),
+    desc: '⚠️ sin(n) konvergiert NICHT – keine Cauchy-Sequenz!'
+  }
+};
+
+function getCauchySeq() { return sequences[document.getElementById('cauchy-seq-select').value]; }
+function getEpsilon() { return parseInt(document.getElementById('epsilon-slider').value) / 100; }
+
+document.getElementById('epsilon-slider').addEventListener('input', function() {
+  document.getElementById('epsilon-display').textContent = 'ε = ' + (this.value / 100).toFixed(2);
+  if (cauchyStep > 0) drawCauchyFrame(cauchyStep);
+});
+
+document.getElementById('cauchy-seq-select').addEventListener('change', resetCauchy);
+
+function drawCauchyFrame(maxN) {
+  const canvas = document.getElementById('cauchy-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const seq = getCauchySeq();
+  const eps = getEpsilon();
+  const points = [];
+  for (let i = 0; i <= maxN && i < 80; i++) points.push(seq.fn(i));
+
+  // Determine y-range
+  let allVals = [...points];
+  if (seq.limit !== null) allVals.push(seq.limit);
+  let yMin = Math.min(...allVals) - 0.5;
+  let yMax = Math.max(...allVals) + 0.5;
+  if (yMax - yMin < 1) { const mid = (yMax + yMin) / 2; yMin = mid - 0.6; yMax = mid + 0.6; }
+
+  const padL = 55, padR = 20, padT = 25, padB = 40;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  function xPos(n) { return padL + (n / Math.max(maxN, 10)) * plotW; }
+  function yPos(v) { return padT + (1 - (v - yMin) / (yMax - yMin)) * plotH; }
+
+  // Grid
+  ctx.strokeStyle = '#1e2a45';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const v = yMin + (yMax - yMin) * i / 5;
+    const y = yPos(v);
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+    ctx.fillStyle = '#666';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(v.toFixed(3), padL - 6, y + 4);
+  }
+
+  // Epsilon band
+  if (seq.limit !== null) {
+    ctx.fillStyle = 'rgba(245,166,35,0.1)';
+    ctx.fillRect(padL, yPos(seq.limit + eps), plotW, yPos(seq.limit - eps) - yPos(seq.limit + eps));
+    ctx.strokeStyle = 'rgba(245,166,35,0.4)';
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath(); ctx.moveTo(padL, yPos(seq.limit + eps)); ctx.lineTo(W - padR, yPos(seq.limit + eps)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL, yPos(seq.limit - eps)); ctx.lineTo(W - padR, yPos(seq.limit - eps)); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Limit line
+    ctx.strokeStyle = '#50fa7b';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([8, 4]);
+    ctx.beginPath(); ctx.moveTo(padL, yPos(seq.limit)); ctx.lineTo(W - padR, yPos(seq.limit)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#50fa7b';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(seq.name + ' = ' + seq.limit.toFixed(6), W - padR - 160, yPos(seq.limit) - 8);
+  }
+
+  // Line connecting points
+  if (points.length > 1) {
+    ctx.strokeStyle = 'rgba(233,69,96,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(xPos(0), yPos(points[0]));
+    for (let i = 1; i < points.length; i++) ctx.lineTo(xPos(i), yPos(points[i]));
+    ctx.stroke();
+  }
+
+  // Points
+  for (let i = 0; i < points.length; i++) {
+    const inBand = seq.limit !== null && Math.abs(points[i] - seq.limit) < eps;
+    ctx.beginPath();
+    ctx.arc(xPos(i), yPos(points[i]), 4, 0, Math.PI * 2);
+    ctx.fillStyle = inBand ? '#50fa7b' : '#e94560';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // X-axis labels
+  ctx.fillStyle = '#666';
+  ctx.font = '11px monospace';
+  ctx.textAlign = 'center';
+  const step = Math.max(1, Math.floor(maxN / 10));
+  for (let i = 0; i <= maxN; i += step) {
+    ctx.fillText('n=' + i, xPos(i), H - padB + 20);
+  }
+
+  // Current value display
+  if (points.length > 0) {
+    const last = points[points.length - 1];
+    const n = points.length - 1;
+    document.getElementById('cauchy-step-display').textContent =
+      `n = ${n}  |  a_${n} = ${last.toFixed(8)}` +
+      (seq.limit !== null ? `  |  |aₙ − ${seq.name}| = ${Math.abs(last - seq.limit).toExponential(3)}` : '');
+  }
+
+  // Info update
+  const info = document.getElementById('cauchy-info');
+  if (seq.limit === null) {
+    info.innerHTML = `⚠️ <strong>${seq.name}</strong> ist KEINE Cauchy-Sequenz! Die Glieder rücken nicht zusammen – sie springen immer weiter herum.`;
+    info.className = 'info-box warn';
+  } else {
+    const lastVal = points[points.length - 1];
+    const diff = Math.abs(lastVal - seq.limit);
+    const inBand = diff < eps;
+    info.innerHTML = `<strong>${seq.desc}</strong><br>` +
+      `Aktuell: a_${points.length - 1} = ${lastVal.toFixed(8)} | Abstand zum Grenzwert: ${diff.toExponential(3)}<br>` +
+      (inBand ? `✅ Im ε-Band (ε = ${eps.toFixed(2)})` : `❌ Noch außerhalb des ε-Bands (ε = ${eps.toFixed(2)})`);
+    info.className = inBand ? 'info-box' : 'info-box warn';
+  }
+}
+
+function startCauchyAnimation() {
+  stopCauchyAnimation();
+  const speed = parseInt(document.getElementById('cauchy-speed').value);
+  cauchyAnim = setInterval(() => {
+    cauchyStep++;
+    if (cauchyStep > 79) { stopCauchyAnimation(); return; }
+    drawCauchyFrame(cauchyStep);
+  }, 600 / speed);
+}
+
+function stopCauchyAnimation() {
+  if (cauchyAnim) { clearInterval(cauchyAnim); cauchyAnim = null; }
+}
+
+function resetCauchy() {
+  stopCauchyAnimation();
+  cauchyStep = 0;
+  const canvas = document.getElementById('cauchy-canvas');
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  document.getElementById('cauchy-step-display').textContent = '';
+  document.getElementById('cauchy-info').innerHTML = 'Wähle eine Sequenz und drücke <strong>Start</strong>, um die Animation zu sehen.';
+  document.getElementById('cauchy-info').className = 'info-box';
+}
+
+// ============================================================
+//  ε-N CHECKER
+// ============================================================
+document.getElementById('en-epsilon').addEventListener('input', function() {
+  document.getElementById('en-eps-val').textContent = (this.value / 100).toFixed(2);
+});
+
+function checkEpsilonN() {
+  const seqKey = document.getElementById('en-seq-select').value;
+  const seq = sequences[seqKey];
+  const eps = parseInt(document.getElementById('en-epsilon').value) / 100;
+  let foundN = -1;
+
+  for (let N = 0; N < 200; N++) {
+    let allInBand = true;
+    for (let n = N; n < N + 30; n++) {
+      if (Math.abs(seq.fn(n) - seq.limit) >= eps) { allInBand = false; break; }
+    }
+    if (allInBand) { foundN = N; break; }
+  }
+
+  const result = document.getElementById('en-result');
+  if (foundN >= 0) {
+    result.innerHTML = `✅ Für <strong>ε = ${eps.toFixed(2)}</strong> gilt: Ab <strong>N = ${foundN}</strong> liegen alle Glieder im ε-Band um ${seq.name}.<br>` +
+      `Das heißt: ∀ n ≥ ${foundN}: |aₙ − ${seq.name}| < ${eps.toFixed(2)}`;
+    result.className = 'info-box';
+  } else {
+    result.innerHTML = `⚠️ Für ε = ${eps.toFixed(2)} konnte kein passendes N in den ersten 200 Gliedern gefunden werden. Versuche ein größeres ε.`;
+    result.className = 'info-box warn';
+  }
+}
+
+// ============================================================
+//  DEDEKIND CUTS
+// ============================================================
+const cuts = {
+  sqrt2: { name: '√2', value: Math.SQRT2, testL: q => q < 0 || q * q < 2, desc: 'L = {q ∈ ℚ : q < 0 oder q² < 2}' },
+  sqrt3: { name: '√3', value: Math.sqrt(3), testL: q => q < 0 || q * q < 3, desc: 'L = {q ∈ ℚ : q < 0 oder q² < 3}' },
+  phi:   { name: 'φ', value: (1 + Math.sqrt(5)) / 2, testL: q => q < (1 + Math.sqrt(5)) / 2, desc: 'L = {q ∈ ℚ : q < (1+√5)/2}' },
+  rational: { name: '3/2', value: 1.5, testL: q => q < 1.5, desc: 'L = {q ∈ ℚ : q < 3/2}  (rational – R hat kleinstes Element!)' },
+  pi:    { name: 'π', value: Math.PI, testL: q => q < Math.PI, desc: 'L = {q ∈ ℚ : q < π}' },
+  custom: { name: 'Eigener Wert', value: 1.41, testL: q => q < 1.41, desc: 'L = {q ∈ ℚ : q < Wert}' }
+};
+
+document.getElementById('dedekind-select').addEventListener('change', function() {
+  const isCustom = this.value === 'custom';
+  document.getElementById('custom-val-label').style.display = isCustom ? 'inline' : 'none';
+  drawDedekind();
+});
+
+document.getElementById('custom-val-slider').addEventListener('input', function() {
+  const v = this.value / 100;
+  document.getElementById('custom-val-display').textContent = v.toFixed(2);
+  cuts.custom.value = v;
+  cuts.custom.testL = q => q < v;
+  cuts.custom.desc = `L = {q ∈ ℚ : q < ${v.toFixed(2)}}`;
+  drawDedekind();
+});
+
+document.getElementById('dedekind-zoom').addEventListener('input', function() {
+  document.getElementById('zoom-display').textContent = 'Stufe ' + this.value;
+  drawDedekind();
+});
+
+function getDedekindCut() {
+  return cuts[document.getElementById('dedekind-select').value];
+}
+
+function drawDedekind() {
+  const canvas = document.getElementById('dedekind-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const cut = getDedekindCut();
+  const zoom = parseInt(document.getElementById('dedekind-zoom').value);
+  const cutVal = cut.value;
+
+  // Zoom range
+  const halfRange = 3 / Math.pow(2, zoom - 1);
+  const xMin = cutVal - halfRange;
+  const xMax = cutVal + halfRange;
+
+  const padL = 40, padR = 20, padT = 50, padB = 50;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  function xPos(v) { return padL + ((v - xMin) / (xMax - xMin)) * plotW; }
+
+  // Generate rational numbers in range with denominator up to a limit
+  const maxDen = Math.min(4 + zoom * 8, 60);
+  const rationals = [];
+  for (let d = 1; d <= maxDen; d++) {
+    for (let n = Math.floor(xMin * d) - 1; n <= Math.ceil(xMax * d) + 1; n++) {
+      const val = n / d;
+      if (val >= xMin && val <= xMax) {
+        // Check if fraction is in lowest terms
+        if (gcd(Math.abs(n), d) === 1) {
+          rationals.push({ num: n, den: d, val: val });
+        }
+      }
+    }
+  }
+
+  function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+
+  // Sort by value
+  rationals.sort((a, b) => a.val - b.val);
+
+  // Draw number line
+  const lineY = padT + plotH * 0.5;
+  ctx.strokeStyle = '#444';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(padL, lineY);
+  ctx.lineTo(W - padR, lineY);
+  ctx.stroke();
+
+  // Draw cut line
+  const cutX = xPos(cutVal);
+  ctx.strokeStyle = '#f5a623';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(cutX, padT - 10);
+  ctx.lineTo(cutX, H - padB + 10);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Label cut
+  ctx.fillStyle = '#f5a623';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`✂ ${cut.name} ≈ ${cutVal.toFixed(6)}`, cutX, padT - 18);
+
+  // Draw L region background
+  ctx.fillStyle = 'rgba(233,69,96,0.08)';
+  ctx.fillRect(padL, padT, cutX - padL, plotH);
+  // Draw R region background
+  ctx.fillStyle = 'rgba(80,250,123,0.08)';
+  ctx.fillRect(cutX, padT, W - padR - cutX, plotH);
+
+  // Labels
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillStyle = '#e94560';
+  ctx.textAlign = 'center';
+  ctx.fillText('L (linke Menge)', padL + (cutX - padL) / 2, padT + 18);
+  ctx.fillStyle = '#50fa7b';
+  ctx.fillText('R (rechte Menge)', cutX + (W - padR - cutX) / 2, padT + 18);
+
+  // Draw rational points
+  for (const r of rationals) {
+    const x = xPos(r.val);
+    const isLeft = cut.testL(r.val);
+    const dotSize = Math.max(2, 6 - r.den * 0.15);
+    const yOffset = (r.den % 7) * 8 - 24; // spread vertically by denominator
+
+    ctx.beginPath();
+    ctx.arc(x, lineY + yOffset, dotSize, 0, Math.PI * 2);
+    ctx.fillStyle = isLeft ? '#e94560' : '#50fa7b';
+    ctx.globalAlpha = Math.max(0.3, 1 - r.den / maxDen * 0.7);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Label some fractions (only small denominators)
+    if (r.den <= 3 + zoom && Math.abs(x - cutX) > 20) {
+      ctx.fillStyle = isLeft ? '#e94560' : '#50fa7b';
+      ctx.font = '10px monospace';
+      ctx.textAlign = 'center';
+      const label = r.den === 1 ? `${r.num}` : `${r.num}/${r.den}`;
+      ctx.fillText(label, x, lineY + yOffset - dotSize - 4);
+    }
+  }
+
+  // Tick marks on number line
+  ctx.fillStyle = '#666';
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'center';
+  const tickStep = halfRange / 4;
+  for (let v = Math.ceil(xMin / tickStep) * tickStep; v <= xMax; v += tickStep) {
+    const x = xPos(v);
+    ctx.beginPath();
+    ctx.moveTo(x, lineY + 30);
+    ctx.lineTo(x, lineY + 36);
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillText(v.toFixed(3), x, lineY + 48);
+  }
+
+  // Info
+  const info = document.getElementById('dedekind-info');
+  const isRational = cut.name === '3/2';
+  info.innerHTML = `<strong>${cut.desc}</strong><br>` +
+    `Zoom-Stufe ${zoom}: Bereich [${xMin.toFixed(4)}, ${xMax.toFixed(4)}] | ${rationals.length} rationale Zahlen angezeigt (Nenner ≤ ${maxDen})<br>` +
+    (isRational
+      ? `⚠️ Bei rationalen Zahlen hat R ein <strong>kleinstes Element</strong> (nämlich 3/2 selbst). L hat kein größtes Element.`
+      : `✅ Bei irrationalen Zahlen hat weder L ein größtes noch R ein kleinstes Element – die Zahl „sitzt in der Lücke".`);
+  info.className = isRational ? 'info-box warn' : 'info-box';
+
+  document.getElementById('dedekind-step-display').textContent =
+    `Schnitt bei ${cut.name} | ${rationals.filter(r => cut.testL(r.val)).length} in L, ${rationals.filter(r => !cut.testL(r.val)).length} in R`;
+}
+
+function animateDedekindZoom() {
+  const slider = document.getElementById('dedekind-zoom');
+  let z = 1;
+  slider.value = z;
+  document.getElementById('zoom-display').textContent = 'Stufe ' + z;
+  drawDedekind();
+
+  const interval = setInterval(() => {
+    z++;
+    if (z > 6) { clearInterval(interval); return; }
+    slider.value = z;
+    document.getElementById('zoom-display').textContent = 'Stufe ';
+
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+
+  // X-axis labels
+  ctx.fillStyle = '#666';
+  ctx.font = '11px monospace';
+  ctx.textAlign = 'center';
+  const step = Math.max(1, Math.floor(maxN / 10));
+  for (let i = 0; i <= maxN; i += step) {
+    ctx.fillText('n=' + i, xPos(i), H - padB + 20);
+  }
+
+  // Current value display
+  if (points.length > 0) {
+    const last = points[points.length - 1];
+    const n = points.length - 1;
+    document.getElementById('cauchy-step-display').textContent =
+      `n = ${n}  |  a_${n} = ${last.toFixed(8)}` +
+      (seq.limit !== null ? `  |  |aₙ − ${seq.name}| = ${Math.abs(last - seq.limit).toExponential(3)}` : '');
+  }
+
+  // Info update
+  const info = document.getElementById('cauchy-info');
+  if (seq.limit === null) {
+    info.innerHTML = `⚠️ <strong>${seq.name}</strong> ist KEINE Cauchy-Sequenz! Die Glieder rücken nicht zusammen – sie springen immer weiter herum.`;
+    info.className = 'info-box warn';
+  } else {
+    const lastVal = points[points.length - 1];
+    const diff = Math.abs(lastVal - seq.limit);
+    const inBand = diff < eps;
+    info.innerHTML = `<strong>${seq.desc}</strong><br>` +
+      `Aktuell: a_${points.length - 1} = ${lastVal.toFixed(10)}<br>` +
+      `Abstand zum Grenzwert: ${diff.toExponential(4)}<br>` +
+      (inBand ? `✅ <strong>Im ε-Band!</strong> Alle Glieder ab hier liegen innerhalb ε = ${eps.toFixed(2)}` :
+        `❌ Noch außerhalb des ε-Bands (ε = ${eps.toFixed(2)})`);
+    info.className = inBand ? 'info-box' : 'info-box warn';
+  }
+}
+
+function startCauchyAnimation() {
+  stopCauchyAnimation();
+  const speed = parseInt(document.getElementById('cauchy-speed').value);
+  const interval = Math.max(30, 500 / speed);
+  cauchyAnim = setInterval(() => {
+    cauchyStep++;
+    if (cauchyStep > 79) { stopCauchyAnimation(); return; }
+    drawCauchyFrame(cauchyStep);
+  }, interval);
+}
+
+function stopCauchyAnimation() {
+  if (cauchyAnim) { clearInterval(cauchyAnim); cauchyAnim = null; }
+}
+
+function resetCauchy() {
+  stopCauchyAnimation();
+  cauchyStep = 0;
+  const canvas = document.getElementById('cauchy-canvas');
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  document.getElementById('cauchy-step-display').textContent = '';
+  document.getElementById('cauchy-info').innerHTML = 'Wähle eine Sequenz und drücke <strong>Start</strong>, um die Animation zu sehen.';
+  document.getElementById('cauchy-info').className = 'info-box';
+}
+
+// ε-N Checker
+document.getElementById('en-epsilon').addEventListener('input', function() {
+  document.getElementById('en-eps-val').textContent = (this.value / 100).toFixed(2);
+});
+
+function checkEpsilonN() {
+  const seqKey = document.getElementById('en-seq-select').value;
+  const seq = sequences[seqKey];
+  const eps = parseInt(document.getElementById('en-epsilon').value) / 100;
+  let foundN = -1;
+  for (let n = 0; n < 200; n++) {
+    let allInside = true;
+    for (let m = n; m < n + 30; m++) {
+      if (Math.abs(seq.fn(m) - seq.limit) >= eps) { allInside = false; break; }
+    }
+    if (allInside) { foundN = n; break; }
+  }
+  const res = document.getElementById('en-result');
+  if (foundN >= 0) {
+    res.innerHTML = `✅ Für <strong>ε = ${eps.toFixed(2)}</strong> gilt: Ab <strong>N = ${foundN}</strong> liegen alle Glieder im ε-Band um ${seq.name}.<br>` +
+      `Das heißt: ∀ n ≥ ${foundN}: |aₙ − ${seq.name}| < ${eps.toFixed(2)}`;
+    res.className = 'info-box';
+  } else {
+    res.innerHTML = `⚠️ Für ε = ${eps.toFixed(2)} wurde kein passendes N in den ersten 200 Gliedern gefunden. Versuche ein größeres ε.`;
+    res.className = 'info-box warn';
+  }
+}
+
+// ============================================================
+//  DEDEKIND CUTS
+// ============================================================
+document.getElementById('dedekind-select').addEventListener('change', function() {
+  const isCustom = this.value === 'custom';
+  document.getElementById('custom-val-label').style.display = isCustom ? 'inline' : 'none';
+  if (!isCustom) drawDedekind();
+});
+
+document.getElementById('custom-val-slider').addEventListener('input', function() {
+  const v = this.value / 100;
+  document.getElementById('custom-val-display').textContent = v.toFixed(2);
+  cuts.custom.value = v;
+  cuts.custom.testL = q => q < v;
+  cuts.custom.desc = `L = {q ∈ ℚ : q < ${v.toFixed(2)}}`;
+  drawDedekind();
+});
+
+document.getElementById('dedekind-zoom').addEventListener('input', function() {
+  document.getElementById('zoom-display').textContent = 'Stufe ' + this.value;
+  drawDedekind();
+});
+
+function getDedekindCut() {
+  const key = document.getElementById('dedekind-select').value;
+  return cuts[key];
+}
+
+function drawDedekind() {
+  const canvas = document.getElementById('dedekind-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const cut = getDedekindCut();
+  const zoom = parseInt(document.getElementById('dedekind-zoom').value);
+  const val = cut.value;
+
+  // Determine range based on zoom
+  const ranges = [
+    [val - 3, val + 3],
+    [val - 1.5, val + 1.5],
+    [val - 0.5, val + 0.5],
+    [val - 0.15, val + 0.15],
+    [val - 0.05, val + 0.05],
+    [val - 0.01, val + 0.01]
+  ];
+  const [rangeMin, rangeMax] = ranges[zoom - 1];
+
+  const padL = 50, padR = 20, padT = 50, padB = 60;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  function xPos(v) { return padL + ((v - rangeMin) / (rangeMax - rangeMin)) * plotW; }
+
+  // Generate rational numbers in range
+  const rationals = [];
+  const maxDen = [8, 12, 20, 40, 80, 200][zoom - 1];
+  for (let d = 1; d <= maxDen; d++) {
+    for (let n = Math.floor(rangeMin * d) - 1; n <= Math.ceil(rangeMax * d) + 1; n++) {
+      const q = n / d;
+      if (q >= rangeMin && q <= rangeMax) {
+        // Check if already exists (simplified)
+        let dominated = false;
+        for (const r of rationals) {
+          if (Math.abs(r.val - q) < 1e-12) { dominated = true; break; }
+        }
+        if (!dominated) rationals.push({ num: n, den: d, val: q });
+      }
+    }
+  }
+
+  // Sort
+  rationals.sort((a, b) => a.val - b.val);
+
+  // Limit display count
+  const displayRationals = rationals.length > 300 ?
+    rationals.filter((_, i) => i % Math.ceil(rationals.length / 300) === 0) : rationals;
+
+  // Draw number line
+  const lineY = padT + plotH * 0.5;
+
+  // Background regions
+  const cutX = xPos(val);
+  // Left region
+  ctx.fillStyle = 'rgba(233,69,96,0.08)';
+  ctx.fillRect(padL, padT, cutX - padL, plotH);
+  // Right region
+  ctx.fillStyle = 'rgba(80,250,123,0.08)';
+  ctx.fillRect(cutX, padT, W - padR - cutX, plotH);
+
+  // Number line
+  ctx.strokeStyle = '#444';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(padL, lineY);
+  ctx.lineTo(W - padR, lineY);
+  ctx.stroke();
+
+  // Draw rationals
+  for (const r of displayRationals) {
+    const x = xPos(r.val);
+    const isLeft = cut.testL(r.val);
+    ctx.beginPath();
+    const dotSize = Math.max(2, 5 - zoom * 0.5);
+    ctx.arc(x, lineY, dotSize, 0, Math.PI * 2);
+    ctx.fillStyle = isLeft ? '#e94560' : '#50fa7b';
+    ctx.fill();
+  }
+
+  // Cut line
+  ctx.strokeStyle = '#f5a623';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(cutX, padT);
+  ctx.lineTo(cutX, padT + plotH);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Cut label
+  ctx.fillStyle = '#f5a623';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`✂ ${cut.name} ≈ ${val.toFixed(6)}`, cutX, padT - 10);
+
+  // Labels L and R
+  ctx.font = 'bold 28px sans-serif';
+  ctx.fillStyle = 'rgba(233,69,96,0.5)';
+  ctx.textAlign = 'center';
+  ctx.fillText('L', padL + (cutX - padL) / 2, padT + 30);
+  ctx.fillStyle = 'rgba(80,250,123,0.5)';
+  ctx.fillText('R', cutX + (W - padR - cutX) / 2, padT + 30);
+
+  // Tick marks
+  ctx.fillStyle = '#666';
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'center';
+  const tickCount = 10;
+  for (let i = 0; i <= tickCount; i++) {
+    const v = rangeMin + (rangeMax - rangeMin) * i / tickCount;
+    const x = xPos(v);
+    ctx.beginPath();
+    ctx.moveTo(x, lineY + 8);
+    ctx.lineTo(x, lineY - 8);
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillText(v.toFixed(zoom > 3 ? 4 : 2), x, lineY + 24);
+  }
+
+  // Stats
+  const leftCount = displayRationals.filter(r => cut.testL(r.val)).length;
+  const rightCount = displayRationals.length - leftCount;
+  ctx.fillStyle = '#888';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(`${leftCount} rationale in L`, padL, H - 15);
+  ctx.textAlign = 'right';
+  ctx.fillText(`${rightCount} rationale in R`, W - padR, H - 15);
+  ctx.textAlign = 'center';
+  ctx.fillText(`Zoom: ${(rangeMax - rangeMin).toFixed(4)} breit  |  ${displayRationals.length} Punkte`, W / 2, H - 15);
+
+  // Info
+  document.getElementById('dedekind-step-display').textContent =
+    `Schnitt bei ${cut.name} ≈ ${val.toFixed(8)}  |  Zoom-Breite: ${(rangeMax - rangeMin).toFixed(6)}`;
+  document.getElementById('dedekind-info').innerHTML =
+    `<strong>${cut.desc}</strong><br>` +
+    `Egal wie weit du reinzoomst – es gibt <em>immer</em> rationale Zahlen auf beiden Seiten, aber <strong>keine rationale Zahl genau am Schnitt</strong>` +
+    (cut.name === '3/2' ? ' (außer bei rationalen Schnitten wie 3/2, wo 3/2 ∈ R).' : ' (weil die Zahl irrational ist).');
+}
+
+let dedekindZoomAnim = null;
+function animateDedekindZoom() {
+  const slider = document.getElementById('dedekind-zoom');
+  slider.value = 1;
+  document.getElementById('zoom-display').textContent = 'Stufe 1';
+  drawDedekind();
+  let currentZoom = 1;
+  if (dedekindZoomAnim) clearInterval(dedekindZoomAnim);
+  dedekindZoomAnim = setInterval(() => {
+    currentZoom++;
+    if (currentZoom > 6) { clearInterval(dedekindZoomAnim); return; }
+    slider.value = currentZoom;
+    document.getElementById('zoom-display').textContent = 'Stufe ' + currentZoom;
+    drawDedekind();
+  }, 1200);
+}
+
+function resetDedekind() {
+  if (dedekindZoomAnim) clearInterval(dedekindZoomAnim);
+  document.getElementById('dedekind-zoom').value = 2;
+  document.getElementById('zoom-display').textContent = 'Stufe 2';
+  drawDedekind();
+}
+
+// Test rational
+function testRational() {
+  const num = parseInt(document.getElementById('test-num').value);
+  const den = parseInt(document.getElementById('test-den').value) || 1;
+  const q = num / den;
+  const cutKey = document.getElementById('test-cut-select').value;
+  const cut = cuts[cutKey];
+  const isLeft = cut.testL(q);
+  const res = document.getElementById('test-result');
+  res.innerHTML = `Die rationale Zahl <strong>${num}/${den} = ${q.toFixed(6)}</strong> liegt ` +
+    (isLeft ?
+      `in <strong style="color:#e94560;">L</strong> (links vom Schnitt bei ${cut.name}).` :
+      `in <strong style="color:#50fa7b;">R</strong> (rechts vom Schnitt bei ${cut.name}).`) +
+    `<br>Denn ${q.toFixed(6)} ${isLeft ? '<' : '≥'} ${cut.value.toFixed(6)}`;
+  res.className = isLeft ? 'info-box warn' : 'info-box';
+}
+
+// ============================================================
+//  DUAL COMPARISON ANIMATION
+// ============================================================
+function drawDualCauchy(step) {
+  const canvas = document.getElementById('dual-cauchy-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const seq = sequences.sqrt2;
+  const points = [];
+  for (let i = 0; i <= step && i < 40; i++) points.push(seq.fn(i));
+
+  const yMin = 1.0, yMax = 2.2;
+  const padL = 45, padR = 10, padT = 15, padB = 30;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  function xPos(n) { return padL + (n / Math.max(step, 8)) * plotW; }
+  function yPos(v) { return padT + (1 - (v - yMin) / (yMax - yMin)) * plotH; }
+
+  // Grid
+  ctx.strokeStyle = '#1e2a45';
+  ctx.lineWidth = 1;
+  for (let v = 1.0; v <= 2.2; v += 0.2) {
+    const y = yPos(v);
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+    ctx.fillStyle = '#555';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(v.toFixed(1), padL - 4, y + 3);
+  }
+
+  // Limit
+  ctx.strokeStyle = '#50fa7b';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6, 3]);
+  ctx.beginPath(); ctx.moveTo(padL, yPos(Math.SQRT2)); ctx.lineTo(W - padR, yPos(Math.SQRT2)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Line
+  if (points.length > 1) {
+    ctx.strokeStyle = 'rgba(233,69,96,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(xPos(0), yPos(points[0]));
+    for (let i = 1; i < points.length; i++) ctx.lineTo(xPos(i), yPos(points[i]));
+    ctx.stroke();
+  }
+
+  // Points
+  for (let i = 0; i < points.length; i++) {
+    ctx.beginPath();
+    ctx.arc(xPos(i), yPos(points[i]), 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#e94560';
+    ctx.fill();
+  }
+
+  // Label
+  if (points.length > 0) {
+    ctx.fillStyle = '#e94560';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`a_${step} = ${points[points.length-1].toFixed(8)}`, W / 2, H - 5);
+  }
+}
+
+function drawDualDedekind(step) {
+  const canvas = document.getElementById('dual-dedekind-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const val = Math.SQRT2;
+  // Zoom in progressively
+  const halfWidth = Math.max(0.005, 2.0 / (1 + step * 0.5));
+  const rangeMin = val - halfWidth;
+  const rangeMax = val + halfWidth;
+
+  const padL = 10, padR = 10, padT = 20, padB = 40;
+  const plotW = W - padL - padR;
+  const lineY = padT + (H - padT - padB) * 0.5;
+
+  function xPos(v) { return padL + ((v - rangeMin) / (rangeMax - rangeMin)) * plotW; }
+
+  // Background
+  const cutX = xPos(val);
+  ctx.fillStyle = 'rgba(233,69,96,0.1)';
+  ctx.fillRect(padL, padT, cutX - padL, H - padT - padB);
+  ctx.fillStyle = 'rgba(80,250,123,0.1)';
+  ctx.fillRect(cutX, padT, W - padR - cutX, H - padT - padB);
+
+  // Number line
+  ctx.strokeStyle = '#444';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(padL, lineY); ctx.lineTo(W - padR, lineY); ctx.stroke();
+
+  // Rationals
+  const maxDen = Math.min(200, 10 + step * 8);
+  const rationals = [];
+  for (let d = 1; d <= maxDen; d++) {
+    for (let n = Math.floor(rangeMin * d); n <= Math.ceil(rangeMax * d); n++) {
+      const q = n / d;
+      if (q > rangeMin && q < rangeMax) {
+        let dup = false;
+        for (const r of rationals) { if (Math.abs(r - q) < 1e-12) { dup = true; break; } }
+        if (!dup) rationals.push(q);
+      }
+    }
+  }
+
+  // Limit display
+  const shown = rationals.length > 200 ? rationals.filter((_, i) => i % Math.ceil(rationals.length / 200) === 0) : rationals;
+
+  for (const q of shown) {
+    const x = xPos(q);
+    ctx.beginPath();
+    ctx.arc(x, lineY, 3, 0, Math.PI * 2);
+    ctx.fillStyle = q < val ? '#e94560' : '#50fa7b';
+    ctx.fill();
+  }
+
+  // Cut
+  ctx.strokeStyle = '#f5a623';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([5, 3]);
+  ctx.beginPath(); ctx.moveTo(cutX, padT); ctx.lineTo(cutX, H - padB); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Labels
+  ctx.font = 'bold 20px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(233,69,96,0.6)';
+  ctx.fillText('L', padL + (cutX - padL) / 2, lineY - 30);
+  ctx.fillStyle = 'rgba(80,250,123,0.6)';
+  ctx.fillText('R', cutX + (W - padR - cutX) / 2, lineY - 30);
+
+  // Ticks
+  ctx.fillStyle = '#666';
+  ctx.font = '9px monospace';
+  for (let i = 0; i <= 5; i++) {
+    const v = rangeMin + (rangeMax - rangeMin) * i / 5;
+    ctx.textAlign = 'center';
+    ctx.fillText(v.toFixed(4), xPos(v), lineY + 20);
+  }
+
+  ctx.fillStyle = '#f5a623';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`Zoom: ±${halfWidth.toFixed(4)} um √2  |  ${shown.length} Punkte`, W / 2, H - 8);
+}
+
+function startDualAnimation() {
+  stopDualAnimation();
+  dualStep = 0;
+  dualAnim = setInterval(() => {
+    dualStep++;
+    if (dualStep > 35) { stopDualAnimation(); return; }
+    drawDualCauchy(dualStep);
+    drawDualDedekind(dualStep);
+    document.getElementById('dual-step-display').textContent = `Schritt ${dualStep}`;
+    document.getElementById('dual-info').innerHTML =
+      `<strong>Cauchy:</strong> Die Folge nähert sich √2 an – Abstand: ${Math.abs(sequences.sqrt2.fn(dualStep) - Math.SQRT2).toExponential(3)}<br>` +
+      `<strong>Dedekind:</strong> Beim Reinzoomen sieht man: Zwischen L und R ist immer eine Lücke – dort sitzt √2.`;
+  }, 800);
+}
+
+function stopDualAnimation() {
+  if (dualAnim) { clearInterval(dualAnim); dualAnim = null; }
+}
+
+function resetDual() {
+  stopDualAnimation();
+  dualStep = 0;
+  document.getElementById('dual-cauchy-canvas').getContext('2d').clearRect(0, 0, 420, 250);
+  document.getElementById('dual-dedekind-canvas').getContext('2d').clearRect(0, 0, 420, 250);
+  document.getElementById('dual-step-display').textContent = '';
+  document.getElementById('dual-info').innerHTML = 'Beide Methoden definieren dieselbe Zahl √2 – auf völlig verschiedene Weise.';
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+window.addEventListener('load', () => {
+  // Fix canvas resolution
+  document.querySelectorAll('canvas').forEach(c => {
+    c.width = c.offsetWidth * (window.devicePixelRatio > 1 ? 2 : 1);
+    c.height = c.offsetHeight * (window.devicePixelRatio > 1 ? 2 : 1);
+    const ctx = c.getContext('2d');
+    if (window.devicePixelRatio > 1) ctx.scale(2, 2);
+  });
+  drawDedekind();
+});
+
+window.addEventListener('resize', () => {
+  document.querySelectorAll('canvas').forEach(c => {
+    c.width = c.offsetWidth * (window.devicePixelRatio > 1 ? 2 : 1);
+    c.height = c.offsetHeight * (window.devicePixelRatio > 1 ? 2 : 1);
+    const ctx = c.getContext('2d');
+    if (window.devicePixelRatio > 1) ctx.scale(2, 2);
+  });
+});
+</script>
+
+</body>
+</html>
