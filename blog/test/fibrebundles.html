@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Fiber Bundles Explorer</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+background: #0a0a1a;
+color: #e0e0e0;
+font-family: 'Segoe UI', system-ui, sans-serif;
+overflow-x: hidden;
+}
+.header {
+text-align: center;
+padding: 20px;
+background: linear-gradient(135deg, #1a1a3e, #0a0a1a);
+border-bottom: 1px solid #333;
+}
+.header h1 {
+font-size: 2em;
+background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+.header p { color: #888; margin-top: 5px; font-size: 0.95em; }
+.container {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 0;
+min-height: calc(100vh - 100px);
+}
+.panel {
+border: 1px solid #222;
+position: relative;
+display: flex;
+flex-direction: column;
+}
+.panel-title {
+background: #111;
+padding: 10px 15px;
+font-weight: bold;
+font-size: 0.95em;
+border-bottom: 1px solid #222;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.panel-title span.label {
+color: #4d96ff;
+}
+canvas {
+display: block;
+width: 100%;
+flex: 1;
+cursor: grab;
+}
+canvas:active { cursor: grabbing; }
+.controls {
+position: absolute;
+bottom: 10px;
+left: 10px;
+right: 10px;
+display: flex;
+flex-wrap: wrap;
+gap: 8px;
+z-index: 10;
+pointer-events: none;
+}
+.controls > * { pointer-events: all; }
+.ctrl-group {
+background: rgba(10,10,26,0.85);
+border: 1px solid #333;
+border-radius: 8px;
+padding: 8px 12px;
+display: flex;
+flex-direction: column;
+gap: 4px;
+}
+.ctrl-group label {
+font-size: 0.75em;
+color: #888;
+text-transform: uppercase;
+letter-spacing: 1px;
+}
+.ctrl-group input[type="range"] {
+width: 120px;
+accent-color: #4d96ff;
+}
+.ctrl-group select, .ctrl-group button {
+background: #1a1a3e;
+color: #ddd;
+border: 1px solid #444;
+border-radius: 4px;
+padding: 4px 8px;
+font-size: 0.85em;
+cursor: pointer;
+}
+.ctrl-group button:hover { background: #2a2a5e; }
+.info-bar {
+background: #111;
+padding: 8px 15px;
+font-size: 0.8em;
+color: #666;
+border-top: 1px solid #222;
+min-height: 30px;
+}
+.tab-row {
+display: flex;
+background: #0d0d20;
+border-bottom: 1px solid #333;
+}
+.tab-btn {
+flex: 1;
+padding: 10px;
+text-align: center;
+cursor: pointer;
+border: none;
+background: transparent;
+color: #888;
+font-size: 0.85em;
+font-weight: bold;
+transition: all 0.2s;
+border-bottom: 2px solid transparent;
+}
+.tab-btn.active {
+color: #ffd93d;
+border-bottom-color: #ffd93d;
+background: rgba(255,217,61,0.05);
+}
+.tab-btn:hover { color: #ccc; }
+.full-width {
+grid-column: 1 / -1;
+}
+.legend {
+position: absolute;
+top: 40px;
+right: 10px;
+background: rgba(10,10,26,0.9);
+border: 1px solid #333;
+border-radius: 8px;
+padding: 10px;
+font-size: 0.75em;
+z-index: 10;
+}
+.legend-item {
+display: flex;
+align-items: center;
+gap: 6px;
+margin: 3px 0;
+}
+.legend-dot {
+width: 10px;
+height: 10px;
+border-radius: 50%;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>🌀 Interactive Fiber Bundles Explorer</h1>
+<p>See, touch, and understand fiber bundles through pure visual interaction</p>
+</div>
+
+<div class="tab-row">
+<button class="tab-btn active" data-tab="0">① Cylinder (Trivial Bundle)</button>
+<button class="tab-btn" data-tab="1">② Möbius Strip (Twisted)</button>
+<button class="tab-btn" data-tab="2">③ Tangent Bundle of Circle</button>
+<button class="tab-btn" data-tab="3">④ Hopf Fibration (3D slice)</button>
+<button class="tab-btn" data-tab="4">⑤ Build Your Own</button>
+</div>
+
+<div class="container" id="mainContainer">
+</div>
+
+<script>
+// ===================== MATH UTILITIES =====================
+const TAU = Math.PI * 2;
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+function rotateY(x, y, z, a) {
+    return [x * Math.cos(a) + z * Math.sin(a), y, -x * Math.sin(a) + z * Math.cos(a)];
+}
+function rotateX(x, y, z, a) {
+    return [x, y * Math.cos(a) - z * Math.sin(a), y * Math.sin(a) + z * Math.cos(a)];
+}
+function project(x, y, z, fov, dist) {
+    const scale = fov / (dist + z);
+    return [x * scale, y * scale, scale];
+}
+
+// ===================== SCENE MANAGEMENT =====================
+let currentTab = 0;
+const scenes = [];
+
+class InteractiveCanvas {
+    constructor(canvas, drawFn, opts = {}) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.draw = drawFn;
+        this.rotX = opts.rotX || -0.4;
+        this.rotY = opts.rotY || 0.5;
+        this.zoom = opts.zoom || 1;
+        this.dragStartX = 0;
+        this.dragStartY = 0;
+        this.dragging = false;
+        this.time = 0;
+        this.params = opts.params || {};
+        this.mouseX = 0;
+        this.mouseY = 0;
+        this.hoverPoint = null;
+
+        this.resize();
+        this.bindEvents();
+    }
+
+    resize() {
+        const rect = this.canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        this.canvas.width = rect.width * dpr;
+        this.canvas.height = rect.height * dpr;
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        this.w = rect.width;
+        this.h = rect.height;
+    }
+
+    bindEvents() {
+        this.canvas.addEventListener('mousedown', e => {
+            this.dragging = true;
+            this.dragStartX = e.clientX;
+            this.dragStartY = e.clientY;
+        });
+        window.addEventListener('mousemove', e => {
+            const rect = this.canvas.getBoundingClientRect();
+            this.mouseX = e.clientX - rect.left;
+            this.mouseY = e.clientY - rect.top;
+            if (this.dragging) {
+                const dx = e.clientX - this.dragStartX;
+                const dy = e.clientY - this.dragStartY;
+                this.rotY += dx * 0.005;
+                this.rotX += dy * 0.005;
+                this.rotX = clamp(this.rotX, -Math.PI / 2, Math.PI / 2);
+                this.dragStartX = e.clientX;
+                this.dragStartY = e.clientY;
+            }
+        });
+        window.addEventListener('mouseup', () => { this.dragging = false; });
+        this.canvas.addEventListener('wheel', e => {
+            e.preventDefault();
+            this.zoom *= e.deltaY > 0 ? 0.95 : 1.05;
+            this.zoom = clamp(this.zoom, 0.3, 5);
+        }, { passive: false });
+
+        this.canvas.addEventListener('touchstart', e => {
+            e.preventDefault();
+            const t = e.touches[0];
+            this.dragging = true;
+            this.dragStartX = t.clientX;
+            this.dragStartY = t.clientY;
+        }, { passive: false });
+        this.canvas.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if (this.dragging && e.touches.length === 1) {
+                const t = e.touches[0];
+                const dx = t.clientX - this.dragStartX;
+                const dy = t.clientY - this.dragStartY;
+                this.rotY += dx * 0.005;
+                this.rotX += dy * 0.005;
+                this.rotX = clamp(this.rotX, -Math.PI/2, Math.PI/2);
+                this.dragStartX = t.clientX;
+                this.dragStartY = t.clientY;
+            }
+        }, { passive: false });
+        this.canvas.addEventListener('touchend', () => { this.dragging = false; });
+    }
+
+    project3D(x, y, z) {
+        let [rx, ry, rz] = rotateX(x, y, z, this.rotX);
+        [rx, ry, rz] = rotateY(rx, ry, rz, this.rotY);
+        const fov = 300 * this.zoom;
+        const dist = 5;
+        const [px, py, sc] = project(rx, ry, rz, fov, dist);
+        return [this.w / 2 + px, this.h / 2 - py, sc, rz];
+    }
+
+    clear() {
+        this.ctx.fillStyle = '#0a0a1a';
+        this.ctx.fillRect(0, 0, this.w, this.h);
+    }
+
+    drawGrid() {
+        const ctx = this.ctx;
+        const n = 10;
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.lineWidth = 0.5;
+        for (let i = -n; i <= n; i++) {
+            const s = i * 0.3;
+            const [x1, y1] = this.project3D(s, 0, -n * 0.3);
+            const [x2, y2] = this.project3D(s, 0, n * 0.3);
+            ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+            const [x3, y3] = this.project3D(-n * 0.3, 0, s);
+            const [x4, y4] = this.project3D(n * 0.3, 0, s);
+            ctx.beginPath(); ctx.moveTo(x3, y3); ctx.lineTo(x4, y4); ctx.stroke();
+        }
+    }
+}
+
+// ===================== TAB CONTENT BUILDERS =====================
+
+function buildTab0() {
+    // Cylinder (trivial bundle) and Möbius comparison side by side
+    const html = `
+    <div class="panel">
+        <div class="panel-title"><span class="label">TRIVIAL BUNDLE: S¹ × ℝ (Cylinder)</span><span style="color:#666">drag to rotate, scroll to zoom</span></div>
+        <canvas id="c0a"></canvas>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#4d96ff"></div> Base space S¹ (circle)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> Fiber (line at each point)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ffd93d"></div> Moving point & its fiber</div>
+        </div>
+        <div class="controls">
+            <div class="ctrl-group">
+                <label>Fiber Height</label>
+                <input type="range" id="fh0" min="0.2" max="2" step="0.05" value="1">
+            </div>
+            <div class="ctrl-group">
+                <label>Num Fibers</label>
+                <input type="range" id="nf0" min="4" max="60" step="1" value="24">
+            </div>
+            <div class="ctrl-group">
+                <label>Animate Point</label>
+                <input type="range" id="ap0" min="0" max="6.28" step="0.01" value="0">
+            </div>
+            <div class="ctrl-group">
+                <label>Auto-Rotate</label>
+                <button id="ar0">▶ Play</button>
+            </div>
+        </div>
+        <div class="info-bar" id="info0a">The cylinder is the simplest fiber bundle: at every point on the circle (base), attach a line segment (fiber). It's "trivial" because it's just a direct product.</div>
+    </div>
+    <div class="panel">
+        <div class="panel-title"><span class="label">SECTION: A continuous choice of point in each fiber</span></div>
+        <canvas id="c0b"></canvas>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#6bcb77"></div> Section (continuous selection)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> Fibers</div>
+        </div>
+        <div class="controls">
+            <div class="ctrl-group">
+                <label>Section Wave</label>
+                <input type="range" id="sw0" min="0" max="3" step="1" value="1">
+            </div>
+            <div class="ctrl-group">
+                <label>Section Amplitude</label>
+                <input type="range" id="sa0" min="0" max="1" step="0.05" value="0.5">
+            </div>
+        </div>
+        <div class="info-bar" id="info0b">A <b>section</b> picks one point from each fiber continuously. On a trivial bundle, global sections always exist. Try changing the wave number!</div>
+    </div>`;
+    return html;
+}
+
+function initTab0() {
+    const c0a = new InteractiveCanvas(document.getElementById('c0a'), null, { rotX: -0.3, rotY: 0.6 });
+    const c0b = new InteractiveCanvas(document.getElementById('c0b'), null, { rotX: -0.3, rotY: 0.6 });
+
+    let autoPlay = false;
+    document.getElementById('ar0').addEventListener('click', function() {
+        autoPlay = !autoPlay;
+        this.textContent = autoPlay ? '⏸ Pause' : '▶ Play';
+    });
+
+    function animate() {
+        if (currentTab !== 0) { requestAnimationFrame(animate); return; }
+
+        const fiberH = parseFloat(document.getElementById('fh0').value);
+        const numF = parseInt(document.getElementById('nf0').value);
+        let ap = parseFloat(document.getElementById('ap0').value);
+        const sw = parseInt(document.getElementById('sw0').value);
+        const sa = parseFloat(document.getElementById('sa0').value);
+
+        if (autoPlay) {
+            ap = (ap + 0.02) % TAU;
+            document.getElementById('ap0').value = ap;
+        }
+
+        c0a.resize();
+        c0a.clear();
+        c0a.drawGrid();
+        const ctx = c0a.ctx;
+        const R = 1.2;
+
+        // Draw fibers
+        let fiberData = [];
+        for (let i = 0; i < numF; i++) {
+            const t = (i / numF) * TAU;
+            const bx = R * Math.cos(t);
+            const bz = R * Math.sin(t);
+            const top = c0a.project3D(bx, fiberH, bz);
+            const bot = c0a.project3D(bx, -fiberH, bz);
+            const mid = c0a.project3D(bx, 0, bz);
+            fiberData.push({ t, top, bot, mid, z: mid[3] });
+        }
+        fiberData.sort((a, b) => a.z - b.z);
+
+        for (const f of fiberData) {
+            ctx.strokeStyle = 'rgba(255,107,107,0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(f.bot[0], f.bot[1]);
+            ctx.lineTo(f.top[0], f.top[1]);
+            ctx.stroke();
+        }
+
+        // Base circle
+        ctx.strokeStyle = '#4d96ff';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let i = 0; i <= 100; i++) {
+            const t = (i / 100) * TAU;
+            const [px, py] = c0a.project3D(R * Math.cos(t), 0, R * Math.sin(t));
+            i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Highlighted fiber
+        const hx = R * Math.cos(ap);
+        const hz = R * Math.sin(ap);
+        const [ht, hty] = c0a.project3D(hx, fiberH, hz);
+        const [hb, hby] = c0a.project3D(hx, -fiberH, hz);
+        const [hm, hmy] = c0a.project3D(hx, 0, hz);
+        ctx.strokeStyle = '#ffd93d';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(hb, hby); ctx.lineTo(ht, hty); ctx.stroke();
+        ctx.fillStyle = '#ffd93d';
+        ctx.beginPath(); ctx.arc(hm, hmy, 6, 0, TAU); ctx.fill();
+
+        // Label
+        ctx.fillStyle = '#ffd93d';
+        ctx.font = '13px monospace';
+        ctx.fillText(`θ = ${(ap * 180 / Math.PI).toFixed(0)}°`, hm + 10, hmy - 10);
+
+        // ===== RIGHT PANEL: Section =====
+        c0b.resize();
+        c0b.clear();
+        c0b.drawGrid();
+        const ctx2 = c0b.ctx;
+
+        // Draw fibers
+        let fiberData2 = [];
+        for (let i = 0; i < numF; i++) {
+            const t = (i / numF) * TAU;
+            const bx2 = R * Math.cos(t);
+            const bz2 = R * Math.sin(t);
+            const top2 = c0b.project3D(bx2, fiberH, bz2);
+            const bot2 = c0b.project3D(bx2, -fiberH, bz2);
+            fiberData2.push({ t, top: top2, bot: bot2, z: c0b.project3D(bx2, 0, bz2)[3] });
+        }
+        fiberData2.sort((a, b) => a.z - b.z);
+        for (const f of fiberData2) {
+            ctx2.strokeStyle = 'rgba(255,107,107,0.3)';
+            ctx2.lineWidth = 1;
+            ctx2.beginPath(); ctx2.moveTo(f.bot[0], f.bot[1]); ctx2.lineTo(f.top[0], f.top[1]); ctx2.stroke();
+        }
+
+        // Base circle
+        ctx2.strokeStyle = '#4d96ff';
+        ctx2.lineWidth = 2;
+        ctx2.beginPath();
+        for (let i = 0; i <= 100; i++) {
+            const t = (i / 100) * TAU;
+            const [px, py] = c0b.project3D(R * Math.cos(t), 0, R * Math.sin(t));
+            i === 0 ? ctx2.moveTo(px, py) : ctx2.lineTo(px, py);
+        }
+        ctx2.stroke();
+
+        // Section curve
+        ctx2.strokeStyle = '#6bcb77';
+        ctx2.lineWidth = 3;
+        ctx2.beginPath();
+        for (let i = 0; i <= 200; i++) {
+            const t = (i / 200) * TAU;
+            const sy = sa * fiberH * Math.sin(sw * t);
+            const [px, py] = c0b.project3D(R * Math.cos(t), sy, R * Math.sin(t));
+            i === 0 ? ctx2.moveTo(px, py) : ctx2.lineTo(px, py);
+        }
+        ctx2.stroke();
+
+        // Section dots
+        for (let i = 0; i < numF; i++) {
+            const t = (i / numF) * TAU;
+            const sy = sa * fiberH * Math.sin(sw * t);
+            const [px, py] = c0b.project3D(R * Math.cos(t), sy, R * Math.sin(t));
+            ctx2.fillStyle = '#6bcb77';
+            ctx2.beginPath(); ctx2.arc(px, py, 3, 0, TAU); ctx2.fill();
+        }
+
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+function buildTab1() {
+    return `
+    <div class="panel">
+        <div class="panel-title"><span class="label">MÖBIUS STRIP: Twisted Fiber Bundle over S¹</span></div>
+        <canvas id="c1a"></canvas>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#4d96ff"></div> Base circle S¹</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> Fibers (twisted!)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ffd93d"></div> Traced fiber orientation</div>
+        </div>
+        <div class="controls">
+            <div class="ctrl-group">
+                <label>Twist Amount</label>
+                <input type="range" id="tw1" min="0" max="3" step="0.05" value="0.5">
+            </div>
+            <div class="ctrl-group">
+                <label>Fiber Width</label>
+                <input type="range" id="fw1" min="0.1" max="1.5" step="0.05" value="0.6">
+            </div>
+            <div class="ctrl-group">
+                <label>Trace Point</label>
+                <input type="range" id="tp1" min="0" max="6.28" step="0.01" value="0">
+            </div>
+            <div class="ctrl-group">
+                <label>Auto-Trace</label>
+                <button id="at1">▶ Play</button>
+            </div>
+        </div>
+        <div class="info-bar">Drag the twist from 0 (cylinder) to 0.5 (Möbius). Watch how the fiber <b>flips</b> after going around once! This makes it non-trivial — no global section exists.</div>
+    </div>
+    <div class="panel">
+        <div class="panel-title"><span class="label">COMPARISON: Can we pick a continuous section?</span></div>
+        <canvas id="c1b"></canvas>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#6bcb77"></div> Attempted section</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ff4444"></div> Discontinuity!</div>
+        </div>
+        <div class="controls">
+            <div class="ctrl-group">
+                <label>Section Height</label>
+                <input type="range" id="sh1" min="0.05" max="0.9" step="0.05" value="0.3">
+            </div>
+        </div>
+        <div class="info-bar">Try to pick a nonzero section on the Möbius strip. You <b>can't</b> — it must cross zero somewhere. This is the key difference from the trivial cylinder bundle!</div>
+    </div>`;
+}
+
+function initTab1() {
+    const c1a = new InteractiveCanvas(document.getElementById('c1a'), null, { rotX: -0.35, rotY: 0.5 });
+    const c1b = new InteractiveCanvas(document.getElementById('c1b'), null, { rotX: -0.35, rotY: 0.5 });
+
+    let autoTrace = false;
+    document.getElementById('at1').addEventListener('click', function() {
+        autoTrace = !autoTrace;
+        this.textContent = autoTrace ? '⏸ Pause' : '▶ Play';
+    });
+
+    function mobiusPoint(u, v, twist, fw, R) {
+        const halfTwist = twist * Math.PI;
+        const x = (R + v * fw * Math.cos(halfTwist * u / TAU)) * Math.cos(u);
+        const z = (R + v * fw * Math.cos(halfTwist * u / TAU)) * Math.sin(u);
+        const y = v * fw * Math.sin(halfTwist * u / TAU);
+        return [x, y, z];
+    }
+
+    function animate() {
+        if (currentTab !== 1) { requestAnimationFrame(animate); return; }
+
+        const twist = parseFloat(document.getElementById('tw1').value);
+        const fw = parseFloat(document.getElementById('fw1').value);
+        let tp = parseFloat(document.getElementById('tp1').value);
+        const sh = parseFloat(document.getElementById('sh1').value);
+        const R = 1.2;
+
+        if (autoTrace) {
+            tp = (tp + 0.015) % TAU;
+            document.getElementById('tp1').value = tp;
+        }
+
+        // LEFT: Möbius strip
+        c1a.resize(); c1a.clear(); c1a.drawGrid();
+        const ctx = c1a.ctx;
+
+        // Draw surface as mesh
+        const uSteps = 80, vSteps = 10;
+        let quads = [];
+        for (let i = 0; i < uSteps; i++) {
+            for (let j = -vSteps; j < vSteps; j++) {
+                const u0 = (i / uSteps) * TAU;
+                const u1 = ((i + 1) / uSteps) * TAU;
+                const v0 = j / vSteps;
+                const v1 = (j + 1) / vSteps;
+                const p00 = mobiusPoint(u0, v0, twist, fw, R);
+                const p10 = mobiusPoint(u1, v0, twist, fw, R);
+                const p11 = mobiusPoint(u1, v1, twist, fw, R);
+                const p01 = mobiusPoint(u0, v1, twist, fw, R);
+                const cz = (p00[2] + p10[2] + p11[2] + p01[2]) / 4;
+                quads.push({ pts: [p00, p10, p11, p01], z: cz, u: u0, v: (v0 + v1) / 2 });
+            }
+        }
+
+        // Sort by depth
+        quads.sort((a, b) => {
+            const za = rotateY(...rotateX(a.pts[0][0], a.pts[0][1], a.pts[0][2], c1a.rotX), c1a.rotY)[2];
+            const zb = rotateY(...rotateX(b.pts[0][0], b.pts[0][1], b.pts[0][2], c1a.rotX), c1a.rotY)[2];
+            return za - zb;
+        });
+
+        for (const q of quads) {
+            const projected = q.pts.map(p => c1a.project3D(p[0], p[1], p[2]));
+            const hue = (q.u / TAU) * 360;
+            const lightness = 30 + Math.abs(q.v) * 20;
+            ctx.fillStyle = `hsla(${hue}, 60%, ${lightness}%, 0.7)`;
+            ctx.strokeStyle = `hsla(${hue}, 60%, ${lightness + 10}%, 0.3)`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(projected[0][0], projected[0][1]);
+            for (let k = 1; k < 4; k++) ctx.lineTo(projected[k][0], projected[k][1]);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        // Base circle
+        ctx.strokeStyle = '#4d96ff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i <= 200; i++) {
+            const u = (i / 200) * TAU;
+            const [px, py] = c1a.project3D(R * Math.cos(u), 0, R * Math.sin(u));
+            i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Traced fiber
+        const fiberPts = [];
+        for (let j = -20; j <= 20; j++) {
+            const v = j / 20;
+            const p = mobiusPoint(tp, v, twist, fw, R);
+            fiberPts.push(c1a.project3D(p[0], p[1], p[2]));
+        }
+        ctx.strokeStyle = '#ffd93d';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        fiberPts.forEach((p, i) => i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]));
+        ctx.stroke();
+
+        // Trace path showing the orientation flip
+        ctx.strokeStyle = 'rgba(255,217,61,0.5)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i <= 200; i++) {
+            const u = (i / 200) * tp;
+            const p = mobiusPoint(u, 0.8, twist, fw, R);
+            const [px, py] = c1a.project3D(p[0], p[1], p[2]);
+            i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Arrow at traced point top
+        const topPt = mobiusPoint(tp, 0.9, twist, fw, R);
+        const [atx, aty] = c1a.project3D(topPt[0], topPt[1], topPt[2]);
+        ctx.fillStyle = '#ffd93d';
+        ctx.beginPath(); ctx.arc(atx, aty, 5, 0, TAU); ctx.fill();
+
+        // ===== RIGHT: Section attempt on Möbius =====
+        c1b.resize(); c1b.clear(); c1b.drawGrid();
+        const ctx2 = c1b.ctx;
+
+        // Draw surface
+        let quads2 = [];
+        for (let i = 0; i < uSteps; i++) {
+            for (let j = -vSteps; j < vSteps; j++) {
+                const u0 = (i / uSteps) * TAU;
+                const u1 = ((i + 1) / uSteps) * TAU;
+                const v0 = j / vSteps;
+                const v1 = (j + 1) / vSteps;
+                const p00 = mobiusPoint(u0, v0, twist, fw, R);
+                const p10 = mobiusPoint(u1, v0, twist, fw, R);
+                const p11 = mobiusPoint(u1, v1, twist, fw, R);
+                const p01 = mobiusPoint(u0, v1, twist, fw, R);
+                quads2.push({ pts: [p00, p10, p11, p01], u: u0, v: (v0+v1)/2 });
+            }
+        }
+        quads2.sort((a, b) => {
+            const za = rotateY(...rotateX(a.pts[0][0], a.pts[0][1], a.pts[0][2], c1b.rotX), c1b.rotY)[2];
+            const zb = rotateY(...rotateX(b.pts[0][0], b.pts[0][1], b.pts[0][2], c1b.rotX), c1b.rotY)[2];
+            return za - zb;
+        });
+        for (const q of quads2) {
+            const projected = q.pts.map(p => c1b.project3D(p[0], p[1], p[2]));
+            const hue = (q.u / TAU) * 360;
+            ctx2.fillStyle = `hsla(${hue}, 40%, 25%, 0.6)`;
+            ctx2.strokeStyle = `hsla(${hue}, 40%, 35%, 0.2)`;
+            ctx2.lineWidth = 0.5;
+            ctx2.beginPath();
+            ctx2.moveTo(projected[0][0], projected[0][1]);
+            for (let k = 1; k < 4; k++) ctx2.lineTo(projected[k][0], projected[k][1]);
+            ctx2.closePath(); ctx2.fill(); ctx2.stroke();
+        }
+
+        // Base circle
+        ctx2.strokeStyle = '#4d96ff';
+        ctx2.lineWidth = 2;
+        ctx2.beginPath();
+        for (let i = 0; i <= 200; i++) {
+            const u = (i / 200) * TAU;
+            const [px, py] = c1b.project3D(R * Math.cos(u), 0, R * Math.sin(u));
+            i === 0 ? ctx2.moveTo(px, py) : ctx2.lineTo(px, py);
+        }
+        ctx2.stroke();
+
+        // Attempted section on Möbius — will show discontinuity
+        const sectionPts = [];
+        const sectionN = 300;
+        for (let i = 0; i <= sectionN; i++) {
+            const u = (i / sectionN) * TAU;
+            const halfTwist = twist * Math.PI;
+            // The section tries to stay at height sh, but the twist rotates the fiber
+            const effectiveV = sh * Math.cos(halfTwist * u / TAU);
+            const p = mobiusPoint(u, sh, twist, fw, R);
+            sectionPts.push({ p, u, v: effectiveV });
+        }
+
+        ctx2.strokeStyle = '#6bcb77';
+        ctx2.lineWidth = 3;
+        ctx2.beginPath();
+        for (let i = 0; i <= sectionN; i++) {
+            const [px, py] = c1b.project3D(sectionPts[i].p[0], sectionPts[i].p[1], sectionPts[i].p[2]);
+            i === 0 ? ctx2.moveTo(px, py) : ctx2.lineTo(px, py);
+        }
+        ctx2.stroke();
+
+        // Show the discontinuity at the seam (u=0 vs u=2π)
+        if (Math.abs(twist - Math.round(twist)) < 0.1 && twist > 0.1) {
+            const pStart = mobiusPoint(0, sh, twist, fw, R);
+            const pEnd = mobiusPoint(TAU - 0.01, sh, twist, fw, R);
+            const [sx, sy] = c1b.project3D(pStart[0], pStart[1], pStart[2]);
+            const [ex, ey] = c1b.project3D(pEnd[0], pEnd[1], pEnd[2]);
+
+            // Check if there's a real discontinuity (odd twist)
+            const twistRound = Math.round(twist);
+            if (twistRound % 2 === 1) {
+                ctx2.fillStyle = '#ff4444';
+                ctx2.beginPath(); ctx2.arc(sx, sy, 8, 0, TAU); ctx2.fill();
+                ctx2.strokeStyle = '#ff4444';
+                ctx2.lineWidth = 2;
+                ctx2.setLineDash([4, 4]);
+                ctx2.beginPath(); ctx2.moveTo(sx, sy); ctx2.lineTo(ex, ey); ctx2.stroke();
+                ctx2.setLineDash([]);
+
+                ctx2.fillStyle = '#ff4444';
+                ctx2.font = 'bold 13px monospace';
+                ctx2.fillText('⚠ DISCONTINUITY!', sx + 12, sy - 12);
+            }
+        }
+
+        // Zero crossing indicator for Möbius
+        if (twist >= 0.4) {
+            ctx2.fillStyle = 'rgba(255,68,68,0.7)';
+            ctx2.font = '12px monospace';
+            ctx2.fillText('Non-zero section impossible on Möbius!', 10, c1b.h - 40);
+            ctx2.fillText('Any section must cross zero somewhere.', 10, c1b.h - 25);
+        }
+
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+function buildTab2() {
+    return `
+    <div class="panel">
+        <div class="panel-title"><span class="label">TANGENT BUNDLE T(S¹): Velocity vectors on a circle</span></div>
+        <canvas id="c2a"></canvas>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#4d96ff"></div> Base circle S¹</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> Tangent fibers</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ffd93d"></div> Moving point</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#6bcb77"></div> Tangent vector</div>
+        </div>
+        <div class="controls">
+            <div class="ctrl-group">
+                <label>Point Position</label>
+                <input type="range" id="pp2" min="0" max="6.28" step="0.01" value="0">
+            </div>
+            <div class="ctrl-group">
+                <label>Tangent Length</label>
+                <input type="range" id="tl2" min="-2" max="2" step="0.05" value="1">
+            </div>
+            <div class="ctrl-group">
+                <label>Show All Fibers</label>
+                <input type="range" id="nf2" min="0" max="36" step="1" value="12">
+            </div>
+            <div class="ctrl-group">
+                <label>Auto-Move</label>
+                <button id="am2">▶ Play</button>
+            </div>
+        </div>
+        <div class="info-bar">The tangent bundle of S¹ attaches to each point the line of all possible velocities. Since S¹ is 1D, each tangent space is a line. This bundle is trivial (≅ cylinder)!</div>
+    </div>
+    <div class="panel">
+        <div class="panel-title"><span class="label">TANGENT BUNDLE as 3D Surface (unrolled view)</span></div>
+        <canvas id="c2b"></canvas>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#4d96ff"></div> Base (θ axis)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> Fiber (velocity axis)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#6bcb77"></div> Section: unit speed</div>
+        </div>
+        <div class="controls">
+            <div class="ctrl-group">
+                <label>View Mode</label>
+                <select id="vm2">
+                    <option value="flat">Flat (θ vs v)</option>
+                    <option value="cylinder">Cylinder</option>
+                </select>
+            </div>
+        </div>
+        <div class="info-bar">Left: tangent vectors shown at each point of the circle. Right: the total space of the bundle. A section = choosing a velocity at each point.</div>
+    </div>`;
+}
+
+function initTab2() {
+    const c2a = new InteractiveCanvas(document.getElementById('c2a'), null, { rotX: 0, rotY: 0, zoom: 1 });
+    const c2b = new InteractiveCanvas(document.getElementById('c2b'), null, { rotX: -0.3, rotY: 0.5 });
+
+    let autoMove = false;
+    document.getElementById('am2').addEventListener('click', function() {
+        autoMove = !autoMove;
+        this.textContent = autoMove ? '⏸ Pause' : '▶ Play';
+    });
+
+    function animate() {
+        if (currentTab !== 2) { requestAnimationFrame(animate); return; }
+
+        let pp = parseFloat(document.getElementById('pp2').value);
+        const tl = parseFloat(document.getElementById('tl2').value);
+        const nf = parseInt(document.getElementById('nf2').value);
+        const vm = document.getElementById('vm2').value;
+
+        if (autoMove) {
+            pp = (pp + 0.02) % TAU;
+            document.getElementById('pp2').value = pp;
+        }
+
+        // LEFT: Circle with tangent vectors
+        c2a.resize(); c2a.clear();
+        const ctx = c2a.ctx;
+        const cx = c2a.w / 2, cy = c2a.h / 2;
+        const R = Math.min(c2a.w, c2a.h) * 0.25;
+
+        // Draw circle
+        ctx.strokeStyle = '#4d96ff';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.stroke();
+
+        // Draw fiber lines (tangent lines)
+        for (let i = 0; i < nf; i++) {
+            const t = (i / nf) * TAU;
+            const px = cx + R * Math.cos(t);
+            const py = cy - R * Math.sin(t);
+            // Tangent direction: perpendicular to radius
+            const tx = Math.sin(t);
+            const ty = Math.cos(t);
+            const len = R * 0.6;
+            ctx.strokeStyle = 'rgba(255,107,107,0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(px - tx * len, py - ty * len);
+            ctx.lineTo(px + tx * len, py + ty * len);
+            ctx.stroke();
+        }
+
+        // Current point
+        const px = cx + R * Math.cos(pp);
+        const py = cy - R * Math.sin(pp);
+        ctx.fillStyle = '#ffd93d';
+        ctx.beginPath(); ctx.arc(px, py, 7, 0, TAU); ctx.fill();
+
+        // Tangent vector at current point
+        const tx = Math.sin(pp);
+        const ty = Math.cos(pp);
+        const vLen = tl * R * 0.5;
+        ctx.strokeStyle = '#6bcb77';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(px + tx * vLen, py + ty * vLen);
+        ctx.stroke();
+
+        // Arrow head
+        const arrowSize = 10;
+        const ax = px + tx * vLen;
+        const ay = py + ty * vLen;
+        const angle = Math.atan2(ty * vLen, tx * vLen);
+        ctx.fillStyle = '#6bcb77';
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(ax - arrowSize * Math.cos(angle - 0.4), ay - arrowSize * Math.sin(angle - 0.4));
+        ctx.lineTo(ax - arrowSize * Math.cos(angle + 0.4), ay - arrowSize * Math.sin(angle + 0.4));
+        ctx.closePath(); ctx.fill();
+
+        // Labels
+        ctx.fillStyle = '#ffd93d';
+        ctx.font = '13px monospace';
+        ctx.fillText(`θ = ${(pp * 180 / Math.PI).toFixed(0)}°`, px + 12, py - 12);
+        ctx.fillStyle = '#6bcb77';
+        ctx.fillText(`v = ${tl.toFixed(2)}`, px + 12, py + 5);
+
+        // RIGHT: Total space visualization
+        c2b.resize(); c2b.clear();
+        const ctx2 = c2b.ctx;
+
+        if (vm === 'flat') {
+            // Flat view: θ on x-axis, v on y-axis
+            const margin = 60;
+            const gw = c2b.w - 2 * margin;
+            const gh = c2b.h - 2 * margin;
+
+            // Grid
+            ctx2.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx2.lineWidth = 0.5;
+            for (let i = 0; i <= 12; i++) {
+                const x = margin + (i / 12) * gw;
+                ctx2.beginPath(); ctx2.moveTo(x, margin); ctx2.lineTo(x, margin + gh); ctx2.stroke();
+            }
+            for (let i = 0; i <= 8; i++) {
+                const y = margin + (i / 8) * gh;
+                ctx2.beginPath(); ctx2.moveTo(margin, y); ctx2.lineTo(margin + gw, y); ctx2.stroke();
+            }
+
+            // Axes
+            ctx2.strokeStyle = '#4d96ff';
+            ctx2.lineWidth = 2;
+            ctx2.beginPath();
+            ctx2.moveTo(margin, margin + gh / 2);
+            ctx2.lineTo(margin + gw, margin + gh / 2);
+            ctx2.stroke();
+
+            ctx2.strokeStyle = '#ff6b6b';
+            ctx2.lineWidth = 2;
+            // Draw vertical fiber lines
+            for (let i = 0; i < nf; i++) {
+                const t = (i / nf);
+                const x = margin + t * gw;
+                ctx2.strokeStyle = 'rgba(255,107,107,0.3)';
+                ctx2.beginPath(); ctx2.moveTo(x, margin); ctx2.lineTo(x, margin + gh); ctx2.stroke();
+            }
+
+            // Section: constant velocity = 1
+            ctx2.strokeStyle = '#6bcb77';
+            ctx2.lineWidth = 2;
+            ctx2.beginPath();
+            for (let i = 0; i <= 200; i++) {
+                const t = i / 200;
+                const x = margin + t * gw;
+                const y = margin + gh / 2 - (1 / 3) * gh / 2;
+                i === 0 ? ctx2.moveTo(x, y) : ctx2.lineTo(x, y);
+            }
+            ctx2.stroke();
+
+            // Current point
+            const cpx = margin + (pp / TAU) * gw;
+            const cpy = margin + gh / 2 - (tl / 3) * gh / 2;
+            ctx2.fillStyle = '#ffd93d';
+            ctx2.beginPath(); ctx2.arc(cpx, cpy, 6, 0, TAU); ctx2.fill();
+
+            // Labels
+            ctx2.fillStyle = '#4d96ff';
+            ctx2.font = '12px monospace';
+            ctx2.fillText('θ (base space S¹)', margin + gw / 2 - 60, margin + gh + 20);
+            ctx2.fillStyle = '#ff6b6b';
+            ctx2.save();
+            ctx2.translate(margin - 20, margin + gh / 2 + 40);
+            ctx2.rotate(-Math.PI / 2);
+            ctx2.fillText('v (fiber = tangent line)', 0, 0);
+            ctx2.restore();
+            ctx2.fillStyle = '#6bcb77';
+            ctx2.fillText('section: v=1 (unit speed)', margin + gw - 180, margin + gh / 2 - (1/3) * gh / 2 - 10);
+
+            // Axis labels
+            ctx2.fillStyle = '#888';
+            ctx2.fillText('0', margin - 5, margin + gh + 15);
+            ctx2.fillText('2π', margin + gw - 10, margin + gh + 15);
+
+        } else {
+            // Cylinder view
+            c2b.drawGrid();
+            const R2 = 1.2;
+            const fh = 1.5;
+
+            // Fibers
+            for (let i = 0; i < nf; i++) {
+                const t = (i / nf) * TAU;
+                const bx = R2 * Math.cos(t);
+                const bz = R2 * Math.sin(t);
+                const [tx1, ty1] = c2b.project3D(bx, -fh, bz);
+                const [bx1, by1] = c2b.project3D(bx, fh, bz);
+                ctx2.strokeStyle = 'rgba(255,107,107,0.3)';
+                ctx2.lineWidth = 1;
+                ctx2.beginPath(); ctx2.moveTo(tx1, ty1); ctx2.lineTo(bx1, by1); ctx2.stroke();
+            }
+
+            // Base circle
+            ctx2.strokeStyle = '#4d96ff';
+            ctx2.lineWidth = 2;
+            ctx2.beginPath();
+            for (let i = 0; i <= 100; i++) {
+                const t = (i / 100) * TAU;
+                const [px2, py2] = c2b.project3D(R2 * Math.cos(t), 0, R2 * Math.sin(t));
+                i === 0 ? ctx2.moveTo(px2, py2) : ctx2.lineTo(px2, py2);
+            }
+            ctx2.stroke();
+
+            // Section: unit speed
+            ctx2.strokeStyle = '#6bcb77';
+            ctx2.lineWidth = 2.5;
+            ctx2.beginPath();
+            for (let i = 0; i <= 200; i++) {
+                const t = (i / 200) * TAU;
+                const [px2, py2] = c2b.project3D(R2 * Math.cos(t), 0.5, R2 * Math.sin(t));
+                i === 0 ? ctx2.moveTo(px2, py2) : ctx2.lineTo(px2, py2);
+            }
+            ctx2.stroke();
+
+            // Current point
+            const [cpx, cpy] = c2b.project3D(R2 * Math.cos(pp), tl * 0.5, R2 * Math.sin(pp));
+            ctx2.fillStyle = '#ffd93d';
+            ctx2.beginPath(); ctx2.arc(cpx, cpy, 6, 0, TAU); ctx2.fill();
+        }
+
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+function buildTab3() {
+    return `
+    <div class="panel full-width" style="grid-column: 1 / -1;">
+        <div class="panel-title"><span class="label">HOPF FIBRATION: S³ → S² with fiber S¹ — 3D projection</span></div>
+        <canvas id="c3a"></canvas>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> Fibers (circles in 3D)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#4d96ff"></div> Base point on S²</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ffd93d"></div> Selected fiber</div>
+        </div>
+        <div class="controls">
+            <div class="ctrl-group">
+                <label>Latitude (θ)</label>
+                <input type="range" id="lat3" min="0.05" max="3.1" step="0.02" value="1.2">
+            </div>
+            <div class="ctrl-group">
+                <label>Longitude (φ)</label>
+                <input type="range" id="lon3" min="0" max="6.28" step="0.02" value="0">
+            </div>
+            <div class="ctrl-group">
+                <label>Num Fibers</label>
+                <input type="range" id="nf3" min="4" max="80" step="2" value="30">
+            </div>
+            <div class="ctrl-group">
+                <label>Stereographic Scale</label>
+                <input type="range" id="ss3" min="0.3" max="3" step="0.1" value="1">
+            </div>
+            <div class="ctrl-group">
+                <label>Auto-Rotate φ</label>
+                <button id="ar3">▶ Play</button>
+            </div>
+        </div>
+        <div class="info-bar">The Hopf fibration maps S³→S² where each fiber is a circle. After stereographic projection to ℝ³, fibers become circles and lines. Every two fibers are linked! This is the most beautiful non-trivial bundle.</div>
+    </div>`;
+}
+
+function initTab3() {
+    const c3a = new InteractiveCanvas(document.getElementById('c3a'), null, { rotX: -0.3, rotY: 0.4, zoom: 1.2 });
+
+    let autoRot = false;
+    document.getElementById('ar3').addEventListener('click', function() {
+        autoRot = !autoRot;
+        this.textContent = autoRot ? '⏸ Pause' : '▶ Play';
+    });
+
+    function hopfFiber(theta, phi, t, scale) {
+        // Point on S² in spherical coords: (theta, phi)
+        // Corresponding fiber on S³, parameterized by t ∈ [0, 2π]
+        const ct = Math.cos(theta / 2);
+        const st = Math.sin(theta / 2);
+
+        // S³ point: (cos(θ/2)e^{it}, sin(θ/2)e^{i(t+φ)})
+        const w = ct * Math.cos(t);
+        const x = ct * Math.sin(t);
+        const y = st * Math.cos(t + phi);
+        const z = st * Math.sin(t + phi);
+
+        // Stereographic projection from S³ to ℝ³ (from north pole w=1)
+        const denom = 1 - w + 0.001;
+        return [
+            (x / denom) * scale,
+            (y / denom) * scale,
+            (z / denom) * scale
+        ];
+    }
+
+    function animate() {
+        if (currentTab !== 3) { requestAnimationFrame(animate); return; }
+
+        const lat = parseFloat(document.getElementById('lat3').value);
+        let lon = parseFloat(document.getElementById('lon3').value);
+        const nf = parseInt(document.getElementById('nf3').value);
+        const ss = parseFloat(document.getElementById('ss3').value);
+
+        if (autoRot) {
+            lon = (lon + 0.02) % TAU;
+            document.getElementById('lon3').value = lon;
+        }
+
+        c3a.resize(); c3a.clear(); c3a.drawGrid();
+        const ctx = c3a.ctx;
+
+        // Draw multiple fibers at different base points
+        const fibers = [];
+        const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+
+        for (let i = 0; i < nf; i++) {
+            const frac = i / nf;
+            const theta = Math.acos(1 - 2 * frac);
+            const phi = goldenAngle * i;
+
+            const pts = [];
+            const steps = 80;
+            for (let j = 0; j <= steps; j++) {
+                const t = (j / steps) * TAU;
+                const p = hopfFiber(theta, phi, t, ss);
+                pts.push(p);
+            }
+
+            // Average depth for sorting
+            let avgZ = 0;
+            const projected = pts.map(p => {
+                const pr = c3a.project3D(p[0], p[1], p[2]);
+                avgZ += pr[3];
+                return pr;
+            });
+            avgZ /= pts.length;
+
+            const hue = (phi / TAU) * 360;
+            fibers.push({ projected, avgZ, hue, theta, phi });
+        }
+
+        // Selected fiber
+        const selPts = [];
+        for (let j = 0; j <= 100; j++) {
+            const t = (j / 100) * TAU;
+            selPts.push(hopfFiber(lat, lon, t, ss));
+        }
+        const selProjected = selPts.map(p => c3a.project3D(p[0], p[1], p[2]));
+        let selAvgZ = 0;
+        selProjected.forEach(p => selAvgZ += p[3]);
+        selAvgZ /= selProjected.length;
+
+        fibers.push({ projected: selProjected, avgZ: selAvgZ, hue: -1, selected: true });
+
+        // Sort by depth
+        fibers.sort((a, b) => a.avgZ - b.avgZ);
+
+        // Draw
+        for (const fiber of fibers) {
+            if (fiber.selected) {
+                ctx.strokeStyle = '#ffd93d';
+                ctx.lineWidth = 3.5;
+                ctx.shadowColor = '#ffd93d';
+                ctx.shadowBlur = 10;
+            } else {
+                const alpha = 0.3 + 0.4 * ((fiber.avgZ + 3) / 6);
+                ctx.strokeStyle = `hsla(${fiber.hue}, 70%, 55%, ${alpha})`;
+                ctx.lineWidth = 1.5;
+                ctx.shadowBlur = 0;
+            }
+            ctx.beginPath();
+            fiber.projected.forEach((p, i) => {
+                i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]);
+            });
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+
+        // Info text
+        ctx.fillStyle = '#888';
+        ctx.font = '12px monospace';
+        ctx.fillText(`Base point: θ=${(lat * 180/Math.PI).toFixed(0)}° φ=${(lon * 180/Math.PI).toFixed(0)}°`, 15, c3a.h - 15);
+
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+function buildTab4() {
+    return `
+    <div class="panel">
+        <div class="panel-title"><span class="label">BUILD YOUR OWN: Choose base, fiber, and twist</span></div>
+        <canvas id="c4a"></canvas>
+        <div class="controls">
+            <div class="ctrl-group">
+                <label>Base Space</label>
+                <select id="base4">
+                    <option value="circle">Circle S¹</option>
+                    <option value="line">Line Segment</option>
+                    <option value="figure8">Figure-8</option>
+                </select>
+            </div>
+            <div class="ctrl-group">
+                <label>Fiber Type</label>
+                <select id="fiber4">
+                    <option value="line">Line Segment ℝ</option>
+                    <option value="circle">Circle S¹</option>
+                </select>
+            </div>
+            <div class="ctrl-group">
+                <label>Twist (# half-twists)</label>
+                <input type="range" id="twist4" min="0" max="4" step="0.1" value="0">
+            </div>
+            <div class="ctrl-group">
+                <label>Fiber Size</label>
+                <input type="range" id="fsize4" min="0.1" max="1.5" step="0.05" value="0.5">
+            </div>
+            <div class="ctrl-group">
+                <label>Density</label>
+                <input type="range" id="dens4" min="8" max="80" step="2" value="30">
+            </div>
+        </div>
+        <div class="info-bar" id="info4">Choose a base space, a fiber type, and a twist amount. See how different combinations create different bundles!</div>
+    </div>
+    <div class="panel">
+        <div class="panel-title"><span class="label">ANATOMY: Projection π: E → B</span></div>
+        <canvas id="c4b"></canvas>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> Total space E</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#4d96ff"></div> Base space B</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ffd93d"></div> Projection π</div>
+        </div>
+        <div class="controls">
+            <div class="ctrl-group">
+                <label>Highlight Point</label>
+                <input type="range" id="hp4" min="0" max="1" step="0.01" value="0.3">
+            </div>
+            <div class="ctrl-group">
+                <label>Animate</label>
+                <button id="an4">▶ Play</button>
+            </div>
+        </div>
+        <div class="info-bar">The projection π maps every point in the total space E down to the base B, collapsing each fiber to a single point. This is the defining map of a fiber bundle.</div>
+    </div>`;
+}
+
+function initTab4() {
+    const c4a = new InteractiveCanvas(document.getElementById('c4a'), null, { rotX: -0.35, rotY: 0.5 });
+    const c4b = new InteractiveCanvas(document.getElementById('c4b'), null, { rotX: -0.3, rotY: 0.6 });
+
+    let autoAnim = false;
+    document.getElementById('an4').addEventListener('click', function() {
+        autoAnim = !autoAnim;
+        this.textContent = autoAnim ? '⏸ Pause' : '▶ Play';
+    });
+
+    function getBasePoint(type, t) {
+        const R = 1.2;
+        switch(type) {
+            case 'circle':
+                return [R * Math.cos(t * TAU), 0, R * Math.sin(t * TAU)];
+            case 'line':
+                return [lerp(-1.5, 1.5, t), 0, 0];
+            case 'figure8':
+                const angle = t * TAU;
+                const r8 = R * Math.cos(2 * angle) > 0 ? Math.sqrt(Math.abs(R * R * Math.cos(2 * angle))) : 0.15;
+                return [r8 * Math.cos(angle), 0, r8 * Math.sin(angle)];
+            default:
+                return [R * Math.cos(t * TAU), 0, R * Math.sin(t * TAU)];
+        }
+    }
+
+    function getBaseTangent(type, t) {
+        const dt = 0.001;
+        const p0 = getBasePoint(type, t);
+        const p1 = getBasePoint(type, t + dt);
+        const dx = (p1[0] - p0[0]) / dt;
+        const dy = (p1[1] - p0[1]) / dt;
+        const dz = (p1[2] - p0[2]) / dt;
+        const len = Math.sqrt(dx*dx + dy*dy + dz*dz) || 1;
+        return [dx/len, dy/len, dz/len];
+    }
+
+    function getNormal(type, t) {
+        const tang = getBaseTangent(type, t);
+        // Cross with up vector to get normal
+        const up = [0, 1, 0];
+        let nx = up[1]*tang[2] - up[2]*tang[1];
+        let ny = up[2]*tang[0] - up[0]*tang[2];
+        let nz = up[0]*tang[1] - up[1]*tang[0];
+        const len = Math.sqrt(nx*nx + ny*ny + nz*nz) || 1;
+        return [nx/len, ny/len, nz/len];
+    }
+
+    function animate() {
+        if (currentTab !== 4) { requestAnimationFrame(animate); return; }
+
+        const baseType = document.getElementById('base4').value;
+        const fiberType = document.getElementById('fiber4').value;
+        const twistVal = parseFloat(document.getElementById('twist4').value);
+        const fiberSize = parseFloat(document.getElementById('fsize4').value);
+        const density = parseInt(document.getElementById('dens4').value);
+        let hp = parseFloat(document.getElementById('hp4').value);
+
+        if (autoAnim) {
+            hp = (hp + 0.003) % 1;
+            document.getElementById('hp4').value = hp;
+        }
+
+        // Update info
+        const twistDesc = twistVal === 0 ? 'trivial (no twist)' :
+            twistVal === 1 ? 'Möbius (1 half-twist)' :
+            `${twistVal} half-twists`;
+        document.getElementById('info4').textContent =
+            `Base: ${baseType} | Fiber: ${fiberType} | Twist: ${twistDesc} | ` +
+            (baseType === 'circle' && fiberType === 'line' && twistVal === 1 ? '→ Möbius strip!' :
+             baseType === 'circle' && fiberType === 'line' && twistVal === 0 ? '→ Cylinder (trivial bundle)' :
+             baseType === 'circle' && fiberType === 'circle' && twistVal === 0 ? '→ Torus S¹×S¹ (trivial)' :
+             baseType === 'circle' && fiberType === 'circle' && twistVal === 1 ? '→ Klein bottle!' :
+             'Custom bundle');
+
+        // ===== LEFT: Build the bundle =====
+        c4a.resize(); c4a.clear(); c4a.drawGrid();
+        const ctx = c4a.ctx;
+
+        // Collect all drawable elements for depth sorting
+        let elements = [];
+
+        for (let i = 0; i < density; i++) {
+            const t = i / density;
+            const bp = getBasePoint(baseType, t);
+            const tang = getBaseTangent(baseType, t);
+            const norm = getNormal(baseType, t);
+            // Binormal
+            const binX = tang[1]*norm[2] - tang[2]*norm[1];
+            const binY = tang[2]*norm[0] - tang[0]*norm[2];
+            const binZ = tang[0]*norm[1] - tang[1]*norm[0];
+
+            const twistAngle = twistVal * Math.PI * t;
+
+            if (fiberType === 'line') {
+                const pts = [];
+                for (let j = -10; j <= 10; j++) {
+                    const v = (j / 10) * fiberSize;
+                    // Twisted direction: rotate normal by twist angle around tangent
+                    const cosA = Math.cos(twistAngle);
+                    const sinA = Math.sin(twistAngle);
+                    const dirX = norm[0] * cosA + binX * sinA;
+                    const dirY = norm[1] * cosA + binY * sinA;
+                    const dirZ = norm[2] * cosA + binZ * sinA;
+                    pts.push([bp[0] + v * dirX, bp[1] + v * dirY, bp[2] + v * dirZ]);
+                }
+                const projected = pts.map(p => c4a.project3D(p[0], p[1], p[2]));
+                let avgZ = 0;
+                projected.forEach(p => avgZ += p[3]);
+                avgZ /= projected.length;
+                const isHighlighted = Math.abs(t - hp) < 0.5 / density;
+                elements.push({ type: 'line', projected, avgZ, t, highlighted: isHighlighted });
+            } else {
+                // Circle fiber
+                const pts = [];
+                const cSteps = 30;
+                for (let j = 0; j <= cSteps; j++) {
+                    const angle = (j / cSteps) * TAU;
+                    const v = fiberSize * 0.4;
+                    const cosA = Math.cos(twistAngle + angle);
+                    const sinA = Math.sin(twistAngle + angle);
+                    const dirX = norm[0] * cosA + binX * sinA;
+                    const dirY = norm[1] * cosA + binY * sinA;
+                    const dirZ = norm[2] * cosA + binZ * sinA;
+                    pts.push([bp[0] + v * dirX, bp[1] + v * dirY, bp[2] + v * dirZ]);
+                }
+                const projected = pts.map(p => c4a.project3D(p[0], p[1], p[2]));
+                let avgZ = 0;
+                projected.forEach(p => avgZ += p[3]);
+                avgZ /= projected.length;
+                const isHighlighted = Math.abs(t - hp) < 0.5 / density;
+                elements.push({ type: 'circle', projected, avgZ, t, highlighted: isHighlighted });
+            }
+        }
+
+        // Sort by depth
+        elements.sort((a, b) => a.avgZ - b.avgZ);
+
+        // Draw elements
+        for (const el of elements) {
+            const hue = (el.t * 360) % 360;
+            if (el.highlighted) {
+                ctx.strokeStyle = '#ffd93d';
+                ctx.lineWidth = 3.5;
+                ctx.shadowColor = '#ffd93d';
+                ctx.shadowBlur = 8;
+            } else {
+                const alpha = 0.3 + 0.4 * clamp((el.avgZ + 3) / 6, 0, 1);
+                ctx.strokeStyle = `hsla(${hue}, 65%, 55%, ${alpha})`;
+                ctx.lineWidth = 1.5;
+                ctx.shadowBlur = 0;
+            }
+            ctx.beginPath();
+            el.projected.forEach((p, i) => {
+                i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]);
+            });
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+
+        // Draw base curve
+        ctx.strokeStyle = '#4d96ff';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let i = 0; i <= 200; i++) {
+            const t = i / 200;
+            const bp = getBasePoint(baseType, t);
+            const [px, py] = c4a.project3D(bp[0], bp[1], bp[2]);
+            i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Highlighted base point
+        const hbp = getBasePoint(baseType, hp);
+        const [hpx, hpy] = c4a.project3D(hbp[0], hbp[1], hbp[2]);
+        ctx.fillStyle = '#ffd93d';
+        ctx.beginPath(); ctx.arc(hpx, hpy, 6, 0, TAU); ctx.fill();
+
+        // ===== RIGHT: Projection diagram =====
+        c4b.resize(); c4b.clear();
+        const ctx2 = c4b.ctx;
+        const w = c4b.w, h = c4b.h;
+
+        // Draw total space E on top
+        const eTop = h * 0.08;
+        const eBot = h * 0.45;
+        const eLeft = w * 0.1;
+        const eRight = w * 0.9;
+
+        // E label
+        ctx2.fillStyle = '#ff6b6b';
+        ctx2.font = 'bold 16px monospace';
+        ctx2.fillText('E (Total Space)', eLeft, eTop - 5);
+
+        // Draw E as a filled region
+        ctx2.fillStyle = 'rgba(255,107,107,0.08)';
+        ctx2.strokeStyle = 'rgba(255,107,107,0.4)';
+        ctx2.lineWidth = 1.5;
+        ctx2.beginPath();
+        ctx2.roundRect(eLeft, eTop, eRight - eLeft, eBot - eTop, 10);
+        ctx2.fill(); ctx2.stroke();
+
+        // Draw fibers in E
+        const numFibersE = 20;
+        for (let i = 0; i < numFibersE; i++) {
+            const t = (i + 0.5) / numFibersE;
+            const x = lerp(eLeft + 20, eRight - 20, t);
+            const isHL = Math.abs(t - hp) < 0.5 / numFibersE;
+
+            if (fiberType === 'line') {
+                ctx2.strokeStyle = isHL ? '#ffd93d' : `hsla(${t * 360}, 60%, 50%, 0.5)`;
+                ctx2.lineWidth = isHL ? 3 : 1.5;
+                ctx2.beginPath();
+                ctx2.moveTo(x, eTop + 15);
+                ctx2.lineTo(x, eBot - 15);
+                ctx2.stroke();
+            } else {
+                ctx2.strokeStyle = isHL ? '#ffd93d' : `hsla(${t * 360}, 60%, 50%, 0.5)`;
+                ctx2.lineWidth = isHL ? 3 : 1.5;
+                const cr = (eBot - eTop - 30) / 2 * 0.4;
+                ctx2.beginPath();
+                ctx2.arc(x, (eTop + eBot) / 2, cr, 0, TAU);
+                ctx2.stroke();
+            }
+
+            if (isHL) {
+                // Highlight dot on fiber
+                ctx2.fillStyle = '#ffd93d';
+                ctx2.beginPath();
+                ctx2.arc(x, (eTop + eBot) / 2, 5, 0, TAU);
+                ctx2.fill();
+            }
+        }
+
+        // Draw base space B on bottom
+        const bTop = h * 0.65;
+        const bBot = h * 0.75;
+        const bLeft = eLeft;
+        const bRight = eRight;
+
+        ctx2.fillStyle = '#4d96ff';
+        ctx2.font = 'bold 16px monospace';
+        ctx2.fillText('B (Base Space)', bLeft, bTop - 10);
+
+        ctx2.fillStyle = 'rgba(77,150,255,0.1)';
+        ctx2.strokeStyle = 'rgba(77,150,255,0.6)';
+        ctx2.lineWidth = 2;
+        ctx2.beginPath();
+        ctx2.roundRect(bLeft, bTop, bRight - bLeft, bBot - bTop, 8);
+        ctx2.fill(); ctx2.stroke();
+
+        // Base points
+        for (let i = 0; i < numFibersE; i++) {
+            const t = (i + 0.5) / numFibersE;
+            const x = lerp(bLeft + 20, bRight - 20, t);
+            const isHL = Math.abs(t - hp) < 0.5 / numFibersE;
+            ctx2.fillStyle = isHL ? '#ffd93d' : `hsla(${t * 360}, 60%, 50%, 0.6)`;
+            const r = isHL ? 5 : 3;
+            ctx2.beginPath();
+            ctx2.arc(x, (bTop + bBot) / 2, r, 0, TAU);
+            ctx2.fill();
+        }
+
+        // Projection arrows π
+        ctx2.strokeStyle = 'rgba(255,217,61,0.3)';
+        ctx2.lineWidth = 1;
+        ctx2.setLineDash([4, 4]);
+        for (let i = 0; i < numFibersE; i++) {
+            const t = (i + 0.5) / numFibersE;
+            const x = lerp(eLeft + 20, eRight - 20, t);
+            const isHL = Math.abs(t - hp) < 0.5 / numFibersE;
+            if (isHL) {
+                ctx2.strokeStyle = '#ffd93d';
+                ctx2.lineWidth = 2;
+            } else {
+                ctx2.strokeStyle = 'rgba(255,217,61,0.15)';
+                ctx2.lineWidth = 1;
+            }
+            ctx2.beginPath();
+            ctx2.moveTo(x, eBot + 5);
+            ctx2.lineTo(x, bTop - 5);
+            ctx2.stroke();
+
+            // Arrow head
+            if (isHL) {
+                ctx2.fillStyle = '#ffd93d';
+                ctx2.setLineDash([]);
+                ctx2.beginPath();
+                ctx2.moveTo(x, bTop - 5);
+                ctx2.lineTo(x - 5, bTop - 15);
+                ctx2.lineTo(x + 5, bTop - 15);
+                ctx2.closePath(); ctx2.fill();
+                ctx2.setLineDash([4, 4]);
+            }
+        }
+        ctx2.setLineDash([]);
+
+        // π label
+        ctx2.fillStyle = '#ffd93d';
+        ctx2.font = 'bold 20px serif';
+        ctx2.fillText('π', w / 2 + 15, (eBot + bTop) / 2 + 5);
+        ctx2.font = '12px monospace';
+        ctx2.fillText('(projection)', w / 2 + 35, (eBot + bTop) / 2 + 5);
+
+        // Fiber label
+        ctx2.fillStyle = '#888';
+        ctx2.font = '12px monospace';
+        ctx2.fillText(`Fiber F = ${fiberType === 'line' ? 'ℝ (line)' : 'S¹ (circle)'}`, bLeft, bBot + 25);
+        ctx2.fillText(`π⁻¹(b) ≅ F for each b ∈ B`, bLeft, bBot + 42);
+
+        // Local triviality note
+        ctx2.fillStyle = '#666';
+        ctx2.font = '11px monospace';
+        ctx2.fillText('Key property: Locally, E looks like B × F', bLeft, h - 20);
+        ctx2.fillText(`But globally? ${twistVal === 0 ? 'YES — this bundle is trivial (E = B × F)' : 'NO — the twist makes it non-trivial!'}`, bLeft, h - 5);
+
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+// ===================== TAB SWITCHING =====================
+const tabBuilders = [buildTab0, buildTab1, buildTab2, buildTab3, buildTab4];
+const tabInits = [initTab0, initTab1, initTab2, initTab3, initTab4];
+const initialized = [false, false, false, false, false];
+
+function switchTab(idx) {
+    currentTab = idx;
+    document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === idx);
+    });
+    const container = document.getElementById('mainContainer');
+    container.innerHTML = tabBuilders[idx]();
+    // Small delay to let DOM render
+    requestAnimationFrame(() => {
+        tabInits[idx]();
+        initialized[idx] = true;
+    });
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        switchTab(parseInt(btn.dataset.tab));
+    });
+});
+
+// Initialize first tab
+switchTab(0);
+
+// Handle resize
+window.addEventListener('resize', () => {
+    // Re-init current tab on resize
+    switchTab(currentTab);
+});
+</script>
+</body>
+</html>
