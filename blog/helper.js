@@ -1798,3 +1798,7 @@ function addConsoleEasterEggs() {
 		return '😂';
 	};
 }
+
+function tensor2d(...args) {
+	return tf.tensor2d(...args);
+}

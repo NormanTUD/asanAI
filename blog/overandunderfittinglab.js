@@ -170,8 +170,8 @@ const FittingLab = {
     _updateLossDisplays: function (degree) {
         tf.tidy(() => {
             // Training loss
-            const xt      = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
-            const yt      = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
+            const xt      = tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
+            const yt      = tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
             const inputs  = this.expand(xt, degree);
             const preds   = this.model.predict(inputs);
             const mseTr   = tf.losses.meanSquaredError(yt, preds);
@@ -179,8 +179,8 @@ const FittingLab = {
                 mseTr.dataSync()[0].toFixed(6);
 
             // Test loss (pure MSE, no regularisation penalty)
-            const xte     = tf.tensor2d(this.data.xTest, [this.data.xTest.length, 1]);
-            const yte     = tf.tensor2d(this.data.yTest, [this.data.yTest.length, 1]);
+            const xte     = tensor2d(this.data.xTest, [this.data.xTest.length, 1]);
+            const yte     = tensor2d(this.data.yTest, [this.data.yTest.length, 1]);
             const tInputs = this.expand(xte, degree);
             const tPreds  = this.model.predict(tInputs);
             const mseTe   = tf.losses.meanSquaredError(yte, tPreds);
@@ -200,8 +200,8 @@ const FittingLab = {
             await this.updateModelAndPlot();
         }
 
-        const xt     = tf.tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
-        const yt     = tf.tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
+        const xt     = tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
+        const yt     = tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);
         const inputs = this.expand(xt, degree);
 
         const BATCH_EPOCHS = 15;
@@ -226,7 +226,7 @@ const FittingLab = {
     // ── Visualisation ──────────────────────────────────────────
     visualize: async function () {
         const degree = parseInt(document.getElementById('slider-degree').value);
-        const xT     = tf.tensor2d(this.data.xTrue, [this.data.xTrue.length, 1]);
+        const xT     = tensor2d(this.data.xTrue, [this.data.xTrue.length, 1]);
         const feats  = this.expand(xT, degree);
         const yPred  = this.model.predict(feats).dataSync();
         this.renderPlot(Array.from(yPred));
