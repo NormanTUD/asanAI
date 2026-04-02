@@ -236,7 +236,122 @@ We can't start at $-\infty$, but the curve is essentially zero past $z = -4$, so
             <td style="padding: 6px 12px; text-align: center;">$\vdots$</td>
         </tr>
         <tr style="border-bottom: 1px solid #e2e8f0;">
-            <td style="padding: 6px 12px; text-align:
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace;">$-0.5$</td>
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace;">$0.3521$</td>
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace;">$0.1760$</td>
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace;">$0.3121$</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace; font-weight: 700;">$0.0$</td>
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace; font-weight: 700;">$0.3989$</td>
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace; font-weight: 700;">$0.1995$</td>
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace; font-weight: 700;">$0.5116$</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace;">$0.5$</td>
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace;">$0.3521$</td>
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace;">$0.1760$</td>
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace;">$0.6876$</td>
+        </tr>
+        <tr style="background: #fefce8;">
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace; font-weight: 700; color: #b45309;">$1.0$</td>
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace; font-weight: 700; color: #b45309;">$0.2420$</td>
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace; font-weight: 700; color: #b45309;">$0.1210$</td>
+            <td style="padding: 6px 12px; text-align: center; font-family: monospace; font-weight: 700; color: #b45309;">$\approx 0.8086$</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="md">
+
+With our coarse $\Delta t = 0.5$ slices, we get $\Phi(1.0) \approx 0.8086$. The true value is $0.8413$. The difference exists because our rectangles are too wide, they don't perfectly follow the curve.
+
+**Step C: Make the slices thinner**
+
+If we use $\Delta t = 0.01$ instead of $0.5$, we get $\Phi(1.0) \approx 0.8413$, matching the table to 4 decimal places. Use $\Delta t = 0.001$ and you get even more precision. This is exactly what Gauß did (by hand!), and what every calculator does today (instantly).
+
+The whole process in one line:
+
+$$\Phi(z) \approx \sum_{t = -4}^{z} f(t) \cdot \Delta t = \sum_{t = -4}^{z} \frac{1}{\sqrt{2\pi}} \cdot e^{-\frac{t^2}{2}} \cdot \Delta t$$
+
+That's it. The $\int$ symbol in the original equation is just the "limit" of this sum as $\Delta t$ shrinks to zero. **The integral is nothing more than a sum of rectangles, taken to perfection.**
+
+##### The key difference from the Binomial
+
+| | Binomial | Normal (Gauß) |
+|---|---|---|
+| **How you calculate** | Exact: multiply factorials and powers | Approximate: sum up thin rectangles |
+| **Why** | Finite number of discrete outcomes | Infinite smooth curve, no shortcut formula |
+| **Precision** | Perfect every time | As precise as you want (thinner slices = better) |
+| **Lookup tool** | Pascal's Triangle | $\Phi$-Table (pre-computed rectangle sums) |
+
+This is why $\Phi$-tables exist: Gauß and his successors did the tedious rectangle-summing once, for every $z$ from $-3.49$ to $3.49$ in steps of $0.01$, and published the results so nobody else had to repeat the work.
+
+Here are the most important values:
+</div>
+
+<table class="stat-phi-table" style="width: 100%; max-width: 640px; margin: 20px auto; border-collapse: collapse; font-size: 0.95em;">
+    <thead>
+        <tr style="border-bottom: 2px solid #334155;">
+            <th style="padding: 10px 16px; text-align: center; color: #475569;">$z$</th>
+            <th style="padding: 10px 16px; text-align: center; color: #475569;">$\Phi(z)$</th>
+            <th style="padding: 10px 16px; text-align: left; color: #475569;">Meaning</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$-3.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$0.0013$</td>
+            <td style="padding: 8px 16px; color: #64748b;">Only 0.13% of values are below $z = -3$</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$-2.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$0.0228$</td>
+            <td style="padding: 8px 16px; color: #64748b;">About 2.3% are below $z = -2$</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$-1.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$0.1587$</td>
+            <td style="padding: 8px 16px; color: #64748b;">About 15.9% are below $z = -1$</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace; font-weight: 700;">$0.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace; font-weight: 700;">$0.5000$</td>
+            <td style="padding: 8px 16px; color: #334155; font-weight: 600;">Exactly half, the center!</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$1.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$0.8413$</td>
+            <td style="padding: 8px 16px; color: #64748b;">About 84.1% are below $z = 1$</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$2.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$0.9772$</td>
+            <td style="padding: 8px 16px; color: #64748b;">About 97.7% are below $z = 2$</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$3.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$0.9987$</td>
+            <td style="padding: 8px 16px; color: #64748b;">99.87%, almost everything</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="md">
+
+**Reading the table:** If $\Phi(1.0) = 0.8413$, that means $84.13\%$ of all values in a standard normal distribution are less than or equal to $1.0$. The remaining $1 - 0.8413 = 15.87\%$ are above it.
+
+Think of it like this: imagine you filled the entire area under the bell curve with sand. The total sand is exactly $1$ (i.e., $100\%$). $\Phi(z)$ tells you what **fraction of the total sand** sits to the left of the point $z$. That fraction *is* the probability.
+
+##### But what if your $z$ is not in the table?
+
+Real $\Phi$-tables are much larger than the one above, they typically list values for every $z$ from $-3.49$ to $3.49$ in steps of $0.01$. For example, to look up $\Phi(1.53)$:
+
+1. Go to the row for $z = 1.5$
+2. Go to the column for $0.03$
+3. Read the value: $\Phi(1.53) = 0.9370$
+
+For values between table entries, you can **interpolate** (take the average of the two nearest values). Or, in practice, you use a calculator, which is doing the exact same rectangle-summing, just very fast.
 
 ##### Worked Example: Exam Scores
 
