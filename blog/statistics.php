@@ -163,37 +163,71 @@ This transforms *any* Normal Distribution into the **Standard Normal Distributio
 
 ##### Step 3: Use the $\Phi$-Table (CDF)
 
-The cumulative distribution function $\Phi(z)$ gives the probability that a standard normal variable is **less than or equal to** $z$:
+The function $\Phi(z)$ answers one simple question: **"What percentage of all values fall to the LEFT of $z$ on the bell curve?"**
 
-$$\Phi(z) = P(Z \leq z) = \int_{-\infty}^{z} \frac{1}{\sqrt{2\pi}} e^{-\frac{t^2}{2}} \, dt$$
+That's it. $\Phi(z)$ is just the **area under the curve** from the far left all the way up to the point $z$. You don't need to calculate it yourself, you look it up in a table, or a calculator does it for you.
 
-You look up $\Phi(z)$ in a standard normal table or use a calculator. Some key values to remember:
+Think of it like this: imagine you filled the entire area under the bell curve with sand. $\Phi(z)$ tells you what **fraction of the total sand** sits to the left of the point $z$.
 
-$$
-\begin{array}{c|c}
-z & \Phi(z) \\
-\hline
--3.0 & 0.0013 \\
--2.0 & 0.0228 \\
--1.0 & 0.1587 \\
-\phantom{-}0.0 & 0.5000 \\
-\phantom{-}1.0 & 0.8413 \\
-\phantom{-}2.0 & 0.9772 \\
-\phantom{-}3.0 & 0.9987 \\
-\end{array}
-$$
+$$\Phi(z) = P(Z \leq z) = \text{Area under the curve, left of } z$$
 
-##### Step 4: Combine for Any Range
+**Why does this work?** The total area under the entire bell curve is exactly $1$ (i.e., $100\%$). So the area of any slice is directly a probability.
 
-Using the symmetry and properties of $\Phi$, you can answer any question:
+Here are some key values you can memorize or look up:
+</div>
 
-| Question | Formula |
-|---|---|
-| $P(X \leq x)$ | $\Phi\!\left(\frac{x - \mu}{\sigma}\right)$ |
-| $P(X \geq x)$ | $1 - \Phi\!\left(\frac{x - \mu}{\sigma}\right)$ |
-| $P(a \leq X \leq b)$ | $\Phi\!\left(\frac{b - \mu}{\sigma}\right) - \Phi\!\left(\frac{a - \mu}{\sigma}\right)$ |
+<table class="stat-phi-table" style="width: 100%; max-width: 640px; margin: 20px auto; border-collapse: collapse; font-size: 0.95em;">
+    <thead>
+        <tr style="border-bottom: 2px solid #334155;">
+            <th style="padding: 10px 16px; text-align: center; color: #475569;">$z$</th>
+            <th style="padding: 10px 16px; text-align: center; color: #475569;">$\Phi(z)$</th>
+            <th style="padding: 10px 16px; text-align: left; color: #475569;">Meaning</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$-3.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$0.0013$</td>
+            <td style="padding: 8px 16px; color: #64748b;">Only 0.13% of values are below $z = -3$</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$-2.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$0.0228$</td>
+            <td style="padding: 8px 16px; color: #64748b;">About 2.3% are below $z = -2$</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$-1.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$0.1587$</td>
+            <td style="padding: 8px 16px; color: #64748b;">About 15.9% are below $z = -1$</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace; font-weight: 700;">$0.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace; font-weight: 700;">$0.5000$</td>
+            <td style="padding: 8px 16px; color: #334155; font-weight: 600;">Exactly half, the center!</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$1.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$0.8413$</td>
+            <td style="padding: 8px 16px; color: #64748b;">About 84.1% are below $z = 1$</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$2.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$0.9772$</td>
+            <td style="padding: 8px 16px; color: #64748b;">About 97.7% are below $z = 2$</td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$3.0$</td>
+            <td style="padding: 8px 16px; text-align: center; font-family: monospace;">$0.9987$</td>
+            <td style="padding: 8px 16px; color: #64748b;">99.87%, almost everything</td>
+        </tr>
+    </tbody>
+</table>
 
-And by symmetry: $\Phi(-z) = 1 - \Phi(z)$.
+<div class="md">
+
+**Reading the table:** If $\Phi(1.0) = 0.8413$, that means $84.13\%$ of all values in a standard normal distribution are less than or equal to $1.0$. The remaining $1 - 0.8413 = 15.87\%$ are above it.
+
+The formal mathematical definition of $\Phi(z)$ uses a concept called an *integral* (a tool from calculus that computes the exact area under a curve). But you never need to compute it by hand, the table above, or any statistics calculator, does it for you. The important thing is understanding what the number *means*: **it's the fraction of the area to the left of your point.**
 
 ##### Worked Example: Exam Scores
 
