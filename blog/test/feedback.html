@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feedback Loops — Visual Mental Model</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0a0a1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    background: linear-gradient(180deg, #0f0f2e 0%, #0a0a1a 100%);
+  }
+  header h1 {
+    font-size: 2.4em;
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  header p {
+    font-size: 1.1em;
+    color: #888;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Tab Navigation */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 30px 0 20px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 12px 28px;
+    border: 2px solid #333;
+    background: transparent;
+    color: #aaa;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all 0.3s;
+  }
+  .tab-btn:hover { border-color: #555; color: #fff; }
+  .tab-btn.active-pos {
+    border-color: #ff4466;
+    color: #ff4466;
+    background: rgba(255,68,102,0.1);
+  }
+  .tab-btn.active-neg {
+    border-color: #00cc88;
+    color: #00cc88;
+    background: rgba(0,204,136,0.1);
+  }
+  .tab-btn.active-combined {
+    border-color: #7b2ff7;
+    color: #7b2ff7;
+    background: rgba(123,47,247,0.1);
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Simulation Card */
+  .sim-card {
+    background: #111128;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    border: 1px solid #222;
+  }
+  .sim-card h2 {
+    font-size: 1.5em;
+    margin-bottom: 6px;
+  }
+  .sim-card .subtitle {
+    color: #777;
+    margin-bottom: 20px;
+    font-size: 0.95em;
+    line-height: 1.5;
+  }
+
+  /* Canvas area */
+  .canvas-wrap {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: #0d0d22;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  canvas { display: block; }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-end;
+  }
+  .control-group {
+    flex: 1;
+    min-width: 180px;
+  }
+  .control-group label {
+    display: block;
+    font-size: 0.85em;
+    color: #888;
+    margin-bottom: 6px;
+  }
+  .control-group .value-display {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #2a2a4a;
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #7b2ff7;
+    cursor: pointer;
+  }
+
+  .btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-start {
+    background: linear-gradient(135deg, #7b2ff7, #00d4ff);
+    color: #fff;
+  }
+  .btn-start:hover { transform: scale(1.05); }
+  .btn-reset {
+    background: #222;
+    color: #aaa;
+    border: 1px solid #333;
+  }
+  .btn-reset:hover { color: #fff; border-color: #555; }
+
+  /* Loop diagram */
+  .loop-diagram {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+
+  /* Examples section */
+  .examples {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+  }
+  .example-card {
+    background: #161633;
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid #252545;
+    transition: all 0.3s;
+  }
+  .example-card:hover {
+    border-color: #444;
+    transform: translateY(-2px);
+  }
+  .example-card .emoji { font-size: 1.8em; margin-bottom: 8px; }
+  .example-card h4 { font-size: 1em; margin-bottom: 4px; }
+  .example-card p { font-size: 0.82em; color: #777; line-height: 1.4; }
+
+  /* Insight box */
+  .insight-box {
+    background: linear-gradient(135deg, rgba(123,47,247,0.1), rgba(0,212,255,0.1));
+    border: 1px solid rgba(123,47,247,0.3);
+    border-radius: 14px;
+    padding: 24px;
+    margin-top: 20px;
+  }
+  .insight-box h3 {
+    color: #b388ff;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+  }
+  .insight-box p {
+    color: #aaa;
+    line-height: 1.6;
+    font-size: 0.95em;
+  }
+
+  /* Animated loop SVG */
+  .loop-svg-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.6em; }
+    .canvas-wrap { height: 300px; }
+    .sim-card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔁 Feedback Loops</h1>
+  <p>A feedback loop is a cause-and-effect cycle where the system's output feeds back as input, creating self-reinforcing or self-correcting behavior. Once you see them, you'll find them <em>everywhere</em>.</p>
+</header>
+
+<div class="container">
+
+  <div class="tabs">
+    <button class="tab-btn active-pos" onclick="switchTab('positive', this)">⬆️ Positive (Reinforcing)</button>
+    <button class="tab-btn" onclick="switchTab('negative', this)">⚖️ Negative (Balancing)</button>
+    <button class="tab-btn" onclick="switchTab('combined', this)">🔀 Combined</button>
+  </div>
+
+  <!-- ==================== POSITIVE FEEDBACK ==================== -->
+  <div id="panel-positive" class="panel active">
+    <div class="sim-card">
+      <h2 style="color:#ff4466;">Positive (Reinforcing) Feedback Loop</h2>
+      <p class="subtitle">More leads to more. The output <strong>amplifies</strong> the input. Small changes snowball into massive effects. This is the engine behind exponential growth — and exponential collapse.</p>
+
+      <div class="loop-svg-container">
+        <svg width="340" height="120" viewBox="0 0 340 120">
+          <defs>
+            <marker id="arrow-pos" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#ff4466"/>
+            </marker>
+          </defs>
+          <rect x="10" y="35" width="100" height="50" rx="12" fill="none" stroke="#ff4466" stroke-width="2"/>
+          <text x="60" y="65" text-anchor="middle" fill="#ff4466" font-size="14" font-weight="bold">Action</text>
+          <rect x="230" y="35" width="100" height="50" rx="12" fill="none" stroke="#ff6688" stroke-width="2"/>
+          <text x="280" y="65" text-anchor="middle" fill="#ff6688" font-size="14" font-weight="bold">Result</text>
+          <line x1="110" y1="52" x2="225" y2="52" stroke="#ff4466" stroke-width="2" marker-end="url(#arrow-pos)"/>
+          <text x="170" y="45" text-anchor="middle" fill="#ff446688" font-size="11">amplifies</text>
+          <path d="M 230 90 Q 170 140 110 90" fill="none" stroke="#ff6688" stroke-width="2" marker-end="url(#arrow-pos)" stroke-dasharray="5,4"/>
+          <text x="170" y="118" text-anchor="middle" fill="#ff668888" font-size="11">feeds back ↑</text>
+        </svg>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="canvas-positive"></canvas>
+      </div>
+
+      <div class="controls">
+        <div class="control-group">
+          <label>Growth Rate (feedback strength)</label>
+          <div class="value-display" id="pos-rate-val" style="color:#ff4466;">5%</div>
+          <input type="range" id="pos-rate" min="1" max="30" value="5" oninput="updatePosRate()">
+        </div>
+        <div class="control-group">
+          <label>Starting Value</label>
+          <div class="value-display" id="pos-start-val" style="color:#ff4466;">10</div>
+          <input type="range" id="pos-start" min="1" max="50" value="10" oninput="updatePosStart()">
+        </div>
+        <div class="control-group" style="display:flex; gap:10px; align-items:flex-end;">
+          <button class="btn btn-start" onclick="startPositive()">▶ Run</button>
+          <button class="btn btn-reset" onclick="resetPositive()">↺ Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sim-card">
+      <h2>🌍 You See This Everywhere</h2>
+      <div class="examples">
+        <div class="example-card">
+          <div class="emoji">💰</div>
+          <h4>Compound Interest</h4>
+          <p>Money earns interest → interest earns interest → wealth snowballs over decades.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">📱</div>
+          <h4>Social Media Virality</h4>
+          <p>More shares → more visibility → more shares. A post explodes from 10 to 10 million views.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">🦠</div>
+          <h4>Virus Spread</h4>
+          <p>Each infected person infects others → more infected people → even more spread.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">😰</div>
+          <h4>Anxiety Spirals</h4>
+          <p>Worry → physical tension → more worry → avoidance → even more worry.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">🏃</div>
+          <h4>Skill & Confidence</h4>
+          <p>Practice → improvement → confidence → more practice → mastery.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">🏘️</div>
+          <h4>Gentrification</h4>
+          <p>Trendy shops open → area becomes desirable → prices rise → more trendy shops.</p>
+        </div>
+      </div>
+
+      <div class="insight-box">
+        <h3>💡 Key Insight</h3>
+        <p>Positive feedback loops are <strong>inherently unstable</strong> — they always accelerate toward explosion or collapse. Nothing in nature grows forever. Eventually, a <em>negative</em> feedback loop or a hard limit kicks in. When you spot a positive loop, always ask: <strong>"What will eventually stop this?"</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== NEGATIVE FEEDBACK ==================== -->
+  <div id="panel-negative" class="panel">
+    <div class="sim-card">
+      <h2 style="color:#00cc88;">Negative (Balancing) Feedback Loop</h2>
+      <p class="subtitle">The system <strong>self-corrects</strong> toward a target. Deviations are counteracted. This is the engine behind stability, homeostasis, and regulation — thermostats, body temperature, supply & demand.</p>
+
+      <div class="loop-svg-container">
+        <svg width="340" height="120" viewBox="0 0 340 120">
+          <defs>
+            <marker id="arrow-neg" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#00cc88"/>
+            </marker>
+          </defs>
+          <rect x="10" y="35" width="100" height="50" rx="12" fill="none" stroke="#00cc88" stroke-width="2"/>
+          <text x="60" y="65" text-anchor="middle" fill="#00cc88" font-size="14" font-weight="bold">Gap</text>
+          <rect x="230" y="35" width="100" height="50" rx="12" fill="none" stroke="#00ee99" stroke-width="2"/>
+          <text x="280" y="65" text-anchor="middle" fill="#00ee99" font-size="14" font-weight="bold">Correction</text>
+          <line x1="110" y1="52" x2="225" y2="52" stroke="#00cc88" stroke-width="2" marker-end="url(#arrow-neg)"/>
+          <text x="170" y="45" text-anchor="middle" fill="#00cc8888" font-size="11">triggers</text>
+          <path d="M 230 90 Q 170 140 110 90" fill="none" stroke="#00ee99" stroke-width="2" marker-end="url(#arrow-neg)" stroke-dasharray="5,4"/>
+          <text x="170" y="118" text-anchor="middle" fill="#00ee9988" font-size="11">reduces gap ↓</text>
+        </svg>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="canvas-negative"></canvas>
+      </div>
+
+      <div class="controls">
+        <div class="control-group">
+          <label>Target Value</label>
+          <div class="value-display" id="neg-target-val" style="color:#00cc88;">50</div>
+          <input type="range" id="neg-target" min="10" max="90" value="50" oninput="updateNegTarget()">
+        </div>
+        <div class="control-group">
+          <label>Correction Strength</label>
+          <div class="value-display" id="neg-strength-val" style="color:#00cc88;">10%</div>
+          <input type="range" id="neg-strength" min="1" max="50" value="10" oninput="updateNegStrength()">
+        </div>
+        <div class="control-group">
+          <label>Disturbance Size</label>
+          <div class="value-display" id="neg-disturb-val" style="color:#00cc88;">30</div>
+          <input type="range" id="neg-disturb" min="5" max="60" value="30" oninput="updateNegDisturb()">
+        </div>
+        <div class="control-group" style="display:flex; gap:10px; align-items:flex-end;">
+          <button class="btn btn-start" onclick="startNegative()">▶ Run</button>
+          <button class="btn btn-reset" onclick="resetNegative()">↺ Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sim-card">
+      <h2>🌍 You See This Everywhere</h2>
+      <div class="examples">
+        <div class="example-card">
+          <div class="emoji">🌡️</div>
+          <h4>Thermostat</h4>
+          <p>Room too cold → heater on → room warms → heater off. Maintains target temperature.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">🩸</div>
+          <h4>Blood Sugar</h4>
+          <p>Sugar rises → insulin released → sugar drops → insulin stops. Your body auto-regulates.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">💵</div>
+          <h4>Supply & Demand</h4>
+          <p>Price too high → fewer buyers → surplus → price drops. Markets self-correct.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">🚿</div>
+          <h4>Shower Temperature</h4>
+          <p>Too hot → turn knob left → too cold → turn knob right → oscillate toward comfort.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">😴</div>
+          <h4>Sleep Pressure</h4>
+          <p>Stay awake long → sleepiness builds → you sleep → sleepiness resets. Daily cycle.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">🏛️</div>
+          <h4>Checks & Balances</h4>
+          <p>One branch overreaches → others push back → power re-balances. Designed stability.</p>
+        </div>
+      </div>
+
+      <div class="insight-box">
+        <h3>💡 Key Insight</h3>
+        <p>Negative feedback loops create <strong>stability</strong>, but they can also create <strong>stagnation</strong>. Every system that "resists change" is running a negative feedback loop. When you're stuck in a rut — a habit, a relationship pattern, an organization — look for the balancing loop that's keeping things the same. To change, you must <strong>disrupt the loop</strong> or <strong>change the target</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== COMBINED ==================== -->
+  <div id="panel-combined" class="panel">
+    <div class="sim-card">
+      <h2 style="color:#b388ff;">Combined: Growth Meets Limits</h2>
+      <p class="subtitle">Real systems have <strong>both</strong> loops running simultaneously. A positive loop drives growth, but a negative loop enforces a carrying capacity. The result: the famous <strong>S-curve</strong> — slow start, explosive middle, plateau at the end.</p>
+
+      <div class="canvas-wrap">
+        <canvas id="canvas-combined"></canvas>
+      </div>
+
+      <div class="controls">
+        <div class="control-group">
+          <label>Growth Rate (positive loop)</label>
+          <div class="value-display" id="comb-growth-val" style="color:#ff4466;">8%</div>
+          <input type="range" id="comb-growth" min="1" max="30" value="8" oninput="updateCombGrowth()">
+        </div>
+        <div class="control-group">
+          <label>Carrying Capacity (negative loop limit)</label>
+          <div class="value-display" id="comb-cap-val" style="color:#00cc88;">80</div>
+          <input type="range" id="comb-cap" min="20" max="100" value="80" oninput="updateCombCap()">
+        </div>
+        <div class="control-group" style="display:flex; gap:10px; align-items:flex-end;">
+          <button class="btn btn-start" onclick="startCombined()">▶ Run</button>
+          <button class="btn btn-reset" onclick="resetCombined()">↺ Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sim-card">
+      <h2>🌍 The S-Curve Is Everywhere</h2>
+      <div class="examples">
+        <div class="example-card">
+          <div class="emoji">📈</div>
+          <h4>Startup Growth</h4>
+          <p>Slow traction → product-market fit → explosive growth → market saturation → plateau.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">🌱</div>
+          <h4>Population Growth</h4>
+          <p>Abundant resources → rapid reproduction → resources deplete → growth slows → equilibrium.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">📖</div>
+          <h4>Learning a Skill</h4>
+          <p>Beginner gains are fast → intermediate plateau → mastery ceiling. Positive loop meets diminishing returns.</p>
+        </div>
+        <div class="example-card">
+          <div class="emoji">📱</div>
+          <h4>Technology Adoption</h4>
+          <p>Early adopters → word of mouth → mass adoption → everyone who wants it has it.</p>
+        </div>
+      </div>
+
+      <div class="insight-box">
+        <h3>💡 The Meta-Insight</h3>
+        <p>Almost every real-world phenomenon is a <strong>combination of feedback loops</strong> competing with each other. The question is never "is there a feedback loop?" — there always is. The question is: <strong>"Which loop is dominant right now, and when will the other one take over?"</strong> That's where the leverage is. That's where you can predict what happens next.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+//  UTILITY
+// ============================================================
+function resizeCanvas(canvas) {
+  const wrap = canvas.parentElement;
+  canvas.width = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+}
+
+function drawGrid(ctx, w, h, color = 'rgba(255,255,255,0.04)') {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1;
+  for (let x = 0; x < w; x += 50) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+  }
+  for (let y = 0; y < h; y += 50) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+  }
+}
+
+// ============================================================
+//  POSITIVE FEEDBACK LOOP
+// ============================================================
+let posAnim = null;
+let posData = [];
+let posRate = 5;
+let posStart = 10;
+
+function updatePosRate() {
+  posRate = +document.getElementById('pos-rate').value;
+  document.getElementById('pos-rate-val').textContent = posRate + '%';
+}
+function updatePosStart() {
+  posStart = +document.getElementById('pos-start').value;
+  document.getElementById('pos-start-val').textContent = posStart;
+}
+
+function resetPositive() {
+  cancelAnimationFrame(posAnim);
+  posAnim = null;
+  posData = [];
+  const canvas = document.getElementById('canvas-positive');
+  resizeCanvas(canvas);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawGrid(ctx, canvas.width, canvas.height);
+  drawPosAxes(ctx, canvas.width, canvas.height);
+}
+
+function drawPosAxes(ctx, w, h) {
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(60, 20);
+  ctx.lineTo(60, h - 40);
+  ctx.lineTo(w - 20, h - 40);
+  ctx.stroke();
+  ctx.fillStyle = '#555';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('Value', 10, 20);
+  ctx.fillText('Time →', w - 60, h - 10);
+}
+
+function startPositive() {
+  resetPositive();
+  const canvas = document.getElementById('canvas-positive');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const plotW = w - 80, plotH = h - 70;
+  const maxSteps = 120;
+  const rate = posRate / 100;
+
+  // Pre-compute all values to find max for scaling
+  let vals = [posStart];
+  for (let i = 1; i < maxSteps; i++) {
+    vals.push(vals[i-1] * (1 + rate));
+  }
+  const maxVal = vals[maxSteps - 1];
+
+  let step = 0;
+
+  function animate() {
+    if (step >= maxSteps) return;
+    step++;
+
+    ctx.clearRect(0, 0, w, h);
+    drawGrid(ctx, w, h);
+    drawPosAxes(ctx, w, h);
+
+    // Draw curve
+    ctx.beginPath();
+    ctx.strokeStyle = '#ff4466';
+    ctx.lineWidth = 3;
+    ctx.shadowColor = '#ff4466';
+    ctx.shadowBlur = 8;
+    for (let i = 0; i < step; i++) {
+      const x = 60 + (i / maxSteps) * plotW;
+      const y = (h - 40) - (vals[i] / maxVal) * plotH;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Draw dot at current position
+    const cx = 60 + ((step-1) / maxSteps) * plotW;
+    const cy = (h - 40) - (vals[step-1] / maxVal) * plotH;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#ff4466';
+    ctx.fill();
+
+    // Value label
+    ctx.fillStyle = '#ff4466';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText(vals[step-1].toFixed(1), cx + 12, cy - 8);
+
+    // Multiplier label
+    ctx.fillStyle = '#ff668888';
+    ctx.font = '12px sans-serif';
+    ctx.fillText(`×${(vals[step-1] / posStart).toFixed(1)} from start`, cx + 12, cy + 10);
+
+    posAnim = requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+// ============================================================
+//  NEGATIVE FEEDBACK LOOP
+// ============================================================
+let negAnim = null;
+let negTarget = 50;
+let negStrength = 10;
+let negDisturb = 30;
+
+function updateNegTarget() {
+  negTarget = +document.getElementById('neg-target').value;
+  document.getElementById('neg-target-val').textContent = negTarget;
+}
+function updateNegStrength() {
+  negStrength = +document.getElementById('neg-strength').value;
+  document.getElementById('neg-strength-val').textContent = negStrength + '%';
+}
+function updateNegDisturb() {
+  negDisturb = +document.getElementById('neg-disturb').value;
+  document.getElementById('neg-disturb-val').textContent = negDisturb;
+}
+
+function resetNegative() {
+  cancelAnimationFrame(negAnim);
+  negAnim = null;
+  const canvas = document.getElementById('canvas-negative');
+  resizeCanvas(canvas);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawGrid(ctx, canvas.width, canvas.height);
+  drawNegAxes(ctx, canvas.width, canvas.height);
+}
+
+function drawNegAxes(ctx, w, h) {
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(60, 20);
+  ctx.lineTo(60, h - 40);
+  ctx.lineTo(w - 20, h - 40);
+  ctx.stroke();
+  ctx.fillStyle = '#555';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('Value', 10, 20);
+  ctx.fillText('Time →', w - 60, h - 10);
+}
+
+function startNegative() {
+  resetNegative();
+  const canvas = document.getElementById('canvas-negative');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const plotW = w - 80, plotH = h - 70;
+  const maxSteps = 150;
+  const strength = negStrength / 100;
+
+  // Start value is target + disturbance
+  let vals = [negTarget + negDisturb];
+  for (let i = 1; i < maxSteps; i++) {
+    const gap = negTarget - vals[i-1];
+    vals.push(vals[i-1] + gap  * strength);
+  }
+
+  let step = 0;
+
+  function animate() {
+    if (step >= maxSteps) return;
+    step++;
+
+    ctx.clearRect(0, 0, w, h);
+    drawGrid(ctx, w, h);
+    drawNegAxes(ctx, w, h);
+
+    // Draw target line
+    const targetY = (h - 40) - (negTarget / 100) * plotH;
+    ctx.setLineDash([8, 6]);
+    ctx.strokeStyle = '#00cc8855';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(60, targetY);
+    ctx.lineTo(w - 20, targetY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#00cc8877';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('Target: ' + negTarget, w - 100, targetY - 8);
+
+    // Draw curve
+    ctx.beginPath();
+    ctx.strokeStyle = '#00cc88';
+    ctx.lineWidth = 3;
+    ctx.shadowColor = '#00cc88';
+    ctx.shadowBlur = 8;
+    for (let i = 0; i < step; i++) {
+      const x = 60 + (i / maxSteps) * plotW;
+      const y = (h - 40) - (vals[i] / 100) * plotH;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Draw dot
+    const cx = 60 + ((step-1) / maxSteps) * plotW;
+    const cy = (h - 40) - (vals[step-1] / 100) * plotH;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#00cc88';
+    ctx.fill();
+
+    // Value label
+    ctx.fillStyle = '#00cc88';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText(vals[step-1].toFixed(1), cx + 12, cy - 8);
+
+    // Gap label
+    const gap = Math.abs(vals[step-1] - negTarget);
+    ctx.fillStyle = '#00cc8877';
+    ctx.font = '12px sans-serif';
+    ctx.fillText(`Gap: ${gap.toFixed(1)}`, cx + 12, cy + 10);
+
+    negAnim = requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+// ============================================================
+//  COMBINED (S-CURVE / LOGISTIC)
+// ============================================================
+let combAnim = null;
+let combGrowth = 8;
+let combCap = 80;
+
+function updateCombGrowth() {
+  combGrowth = +document.getElementById('comb-growth').value;
+  document.getElementById('comb-growth-val').textContent = combGrowth + '%';
+}
+function updateCombCap() {
+  combCap = +document.getElementById('comb-cap').value;
+  document.getElementById('comb-cap-val').textContent = combCap;
+}
+
+function resetCombined() {
+  cancelAnimationFrame(combAnim);
+  combAnim = null;
+  const canvas = document.getElementById('canvas-combined');
+  resizeCanvas(canvas);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawGrid(ctx, canvas.width, canvas.height);
+  drawCombAxes(ctx, canvas.width, canvas.height);
+}
+
+function drawCombAxes(ctx, w, h) {
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(60, 20);
+  ctx.lineTo(60, h - 40);
+  ctx.lineTo(w - 20, h - 40);
+  ctx.stroke();
+  ctx.fillStyle = '#555';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('Value', 10, 20);
+  ctx.fillText('Time →', w - 60, h - 10);
+}
+
+function startCombined() {
+  resetCombined();
+  const canvas = document.getElementById('canvas-combined');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const plotW = w - 80, plotH = h - 70;
+  const maxSteps = 150;
+  const rate = combGrowth / 100;
+
+  // Logistic growth: value += rate * value * (1 - value/capacity)
+  let vals = [1];
+  for (let i = 1; i < maxSteps; i++) {
+    const v = vals[i-1];
+    const growth = rate * v * (1 - v / combCap);
+    vals.push(v + growth);
+  }
+
+  // Also compute pure exponential for comparison
+  let expVals = [1];
+  for (let i = 1; i < maxSteps; i++) {
+    expVals.push(expVals[i-1] * (1 + rate));
+  }
+
+  let step = 0;
+
+  function animate() {
+    if (step >= maxSteps) return;
+    step++;
+
+    ctx.clearRect(0, 0, w, h);
+    drawGrid(ctx, w, h);
+    drawCombAxes(ctx, w, h);
+
+    // Draw carrying capacity line
+    const capY = (h - 40) - (combCap / 100) * plotH;
+    ctx.setLineDash([8, 6]);
+    ctx.strokeStyle = '#00cc8844';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(60, capY);
+    ctx.lineTo(w - 20, capY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#00cc8866';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('Carrying Capacity: ' + combCap, w - 180, capY - 8);
+
+    // Draw pure exponential (faded, for comparison)
+    ctx.beginPath();
+    ctx.strokeStyle = '#ff446633';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    for (let i = 0; i < step; i++) {
+      const x = 60 + (i / maxSteps) * plotW;
+      const cappedExp = Math.min(expVals[i], 100);
+      const y = (h - 40) - (cappedExp / 100) * plotH;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Label for exponential
+    if (step > 20) {
+      const labelStep = Math.min(step - 1, Math.floor(maxSteps * 0.4));
+      const lx = 60 + (labelStep / maxSteps) * plotW;
+      const cappedExpLabel = Math.min(expVals[labelStep], 100);
+      const ly = (h - 40) - (cappedExpLabel / 100) * plotH;
+      ctx.fillStyle = '#ff446655';
+      ctx.font = '11px sans-serif';
+      ctx.fillText('Pure exponential (no limits)', lx + 10, ly - 5);
+    }
+
+    // Draw S-curve (logistic)
+    ctx.beginPath();
+    ctx.strokeStyle = '#b388ff';
+    ctx.lineWidth = 3;
+    ctx.shadowColor = '#b388ff';
+    ctx.shadowBlur = 8;
+    for (let i = 0; i < step; i++) {
+      const x = 60 + (i / maxSteps) * plotW;
+      const y = (h - 40) - (vals[i] / 100) * plotH;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Draw dot
+    const cx = 60 + ((step-1) / maxSteps) * plotW;
+    const cy = (h - 40) - (vals[step-1] / 100) * plotH;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#b388ff';
+    ctx.fill();
+
+    // Value label
+    ctx.fillStyle = '#b388ff';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText(vals[step-1].toFixed(1), cx + 12, cy - 8);
+
+    // Phase label
+    const ratio = vals[step-1] / combCap;
+    let phase = '';
+    if (ratio < 0.15) phase = '🌱 Slow start (positive loop building)';
+    else if (ratio < 0.5) phase = '🚀 Explosive growth (positive loop dominant)';
+    else if (ratio < 0.85) phase = '⚡ Growth slowing (negative loop gaining)';
+    else phase = '⚖️ Plateau (negative loop dominant)';
+
+    ctx.fillStyle = '#b388ff99';
+    ctx.font = '13px sans-serif';
+    ctx.fillText(phase, 70, 35);
+
+    combAnim = requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+// ============================================================
+//  TAB SWITCHING
+// ============================================================
+function switchTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active-pos', 'active-neg', 'active-combined');
+  });
+  document.getElementById('panel-' + name).classList.add('active');
+  const colorClass = name === 'positive' ? 'active-pos' : name === 'negative' ? 'active-neg' : 'active-combined';
+  btn.classList.add(colorClass);
+
+  // Reset the newly shown canvas
+  if (name === 'positive') resetPositive();
+  else if (name === 'negative') resetNegative();
+  else resetCombined();
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+window.addEventListener('load', () => {
+  resetPositive();
+});
+window.addEventListener('resize', () => {
+  const activePanel = document.querySelector('.panel.active');
+  if (activePanel.id === 'panel-positive') resetPositive();
+  else if (activePanel.id === 'panel-negative') resetNegative();
+  else resetCombined();
+});
+</script>
+
+</body>
+</html>
