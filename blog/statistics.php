@@ -160,7 +160,22 @@ To look up probabilities, we convert any value $x$ into a **Z-score**, which tel
 $$z = \frac{x - \mu}{\sigma}$$
 
 This transforms *any* Normal Distribution into the **Standard Normal Distribution** $\mathcal{N}(0, 1)$, which has $\mu = 0$ and $\sigma = 1$. This is the key trick: instead of needing a different table for every possible $\mu$ and $\sigma$, we only ever need one table.
+</div>
 
+<div class="ai-callout" style="background: linear-gradient(135deg, #f0fdf4, #ecfdf5); border-left: 4px solid #22c55e; border-radius: 8px; padding: 20px 24px; margin: 24px 0;">
+    <div style="display: flex; align-items: flex-start; gap: 14px;">
+        <span style="font-size: 1.6em; line-height: 1;">🤖</span>
+        <div class="md">
+**Why This Matters for AI:** **Batch Normalization**, one of the most important techniques in deep learning, is essentially computing Z-scores for every layer's activations during training. At each layer, the network computes:
+
+$$\hat{x}_i = \frac{x_i - \mu_{\text{batch}}}{\sigma_{\text{batch}}}$$
+
+This is the exact same Z-score formula Pearson invented for comparing crab organs to human bones. Without it, the activations in deep networks tend to drift toward extreme values (a problem called **internal covariate shift**), causing gradients to vanish or explode and training to stall. By standardizing activations back to $\mu = 0, \sigma = 1$ at every layer, the network stays in the "sweet spot" where learning is stable and fast. Layer Normalization, used in every Transformer (including GPT), applies the same principle, Pearson's 19th-century insight keeps 21st-century language models from collapsing during training.
+        </div>
+    </div>
+</div>
+
+<div class="md">
 ##### Step 3: Use the $\Phi$-Table (CDF)
 
 The function $\Phi(z)$ answers one simple question: **"What percentage of all values fall to the LEFT of $z$ on the bell curve?"**
@@ -562,6 +577,16 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
         </div>
         <div id="gumbel-chart"></div>
     </div>
+
+<div class="ai-callout" style="background: linear-gradient(135deg, #fff1f2, #fef2f2); border-left: 4px solid #e11d48; border-radius: 8px; padding: 20px 24px; margin: 24px 0;">
+    <div style="display: flex; align-items: flex-start; gap: 14px;">
+        <span style="font-size: 1.6em; line-height: 1;">🤖</span>
+        <div class="md">
+**Why This Matters for AI:** The Gumbel distribution is the secret ingredient behind the **Gumbel-Softmax trick** (also called the Concrete distribution). In neural networks, we often need to *sample* from a categorical distribution (e.g., "pick one of 50,000 tokens"), but sampling is a discrete operation that breaks gradient-based training. The trick works by adding Gumbel-distributed noise to the logits before applying softmax, this creates a differentiable approximation of discrete sampling. It is how **Variational Autoencoders (VAEs)** with discrete latent variables and certain **reinforcement learning** methods (like RELAX and straight-through estimators) remain trainable end-to-end. The same distribution that predicts 100-year floods now enables machines to "choose" while still learning from their choices.
+        </div>
+    </div>
+</div>
+
 </div>
 
 <div class="statlab-section">
@@ -587,7 +612,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
     <div style="display: flex; align-items: flex-start; gap: 14px;">
         <span style="font-size: 1.6em; line-height: 1;">🤖</span>
         <div class="md">
-**Why This Matters for AI:** The Poisson distribution is used to model **token arrival rates in streaming and real-time AI systems**. When an LLM serves thousands of users simultaneously, the requests hitting the server per second follow a Poisson process — rare per individual user, but constant in aggregate. Understanding $\lambda$ allows engineers to provision GPU capacity, set queue depths, and design auto-scaling policies. The same math Bortkiewicz used to count horse-kick fatalities now determines how many inference servers OpenAI spins up at peak hours.
+**Why This Matters for AI:** The Poisson distribution is used to model **token arrival rates in streaming and real-time AI systems**. When an LLM serves thousands of users simultaneously, the requests hitting the server per second follow a Poisson process, rare per individual user, but constant in aggregate. Understanding $\lambda$ allows engineers to provision GPU capacity, set queue depths, and design auto-scaling policies. The same math Bortkiewicz used to count horse-kick fatalities now determines how many inference servers OpenAI spins up at peak hours.
         </div>
     </div>
 </div>
@@ -623,6 +648,19 @@ Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividi
         </div>
 
     <div id="plot-correlation" class="statlab-visual"></div>
+
+<div class="ai-callout" style="background: linear-gradient(135deg, #fefce8, #fef9c3); border-left: 4px solid #eab308; border-radius: 8px; padding: 20px 24px; margin: 24px 0;">
+    <div style="display: flex; align-items: flex-start; gap: 14px;">
+        <span style="font-size: 1.6em; line-height: 1;">🤖</span>
+        <div class="md">
+**Why This Matters for AI:** **Cosine similarity** in embedding spaces is a normalized correlation, and it is how **semantic search** works. When you type a query into a search engine powered by embeddings, both your query and every document are converted into high-dimensional vectors. The system then computes:
+
+$$\text{cosine similarity} = \frac{\vec{A} \cdot \vec{B}}{|\vec{A}| \cdot |\vec{B}|}$$
+
+This is structurally identical to Pearson's $r$: the dot product in the numerator captures the "shared signal" (covariance), while dividing by the magnitudes (standard deviations) removes the effect of scale. A cosine similarity of $1.0$ means the vectors point in the same direction (semantically identical), $0$ means orthogonal (unrelated), and $-1$ means opposite. This is why "king" and "monarch" score high similarity despite being different strings, their embedding vectors, shaped by billions of training examples, point in nearly the same direction. Pearson's solution to comparing crabs and humans now powers every RAG pipeline, recommendation engine, and vector database in modern AI.
+        </div>
+    </div>
+</div>
 
 	<div class="math-grid-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
 	    <div class="math-card">
