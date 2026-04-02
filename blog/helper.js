@@ -1845,11 +1845,3 @@ function sub (...args) {
 function sqrt (...args) {
 	return tf.sqrt(...args);
 }
-
-function matMul (...args) {
-	return tf.matMul(...args);
-}
-
-function relu (...args) {
-	return tf.relu(...args);
-}

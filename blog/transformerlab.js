@@ -1492,9 +1492,9 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
 
 function buildCausalMask(contextSize) {
 	return tidy(() => {
-		const _ones = ones([contextSize, contextSize]);
-		const upperTriangle = tf.linalg.bandPart(_ones, 0, -1);
-		const diagonal = tf.linalg.bandPart(_ones, 0, 0);
+		const ones = ones([contextSize, contextSize]);
+		const upperTriangle = tf.linalg.bandPart(ones, 0, -1);
+		const diagonal = tf.linalg.bandPart(ones, 0, 0);
 		return sub(upperTriangle, diagonal).mul(scalar(1e9));
 	});
 }
@@ -1511,7 +1511,7 @@ function collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, cont
 
 			x = applyTransformerLayers(x, vars.layers, n_layers, n_heads, d_k, contextSize, d_model, mask);
 
-			const logits = matMul(x, vars.embeddings.transpose());
+			const logits = tf.matMul(x, vars.embeddings.transpose());
 			const labels = tf.oneHot(tensor1d(targetIds, 'int32'), vars.vocab_map.length);
 			return tf.losses.softmaxCrossEntropy(labels, logits);
 		});
@@ -1563,30 +1563,30 @@ function applySingleTransformerLayer(x, layer, n_heads, d_k, contextSize, d_mode
 
 	// Pre-LN + FFN
 	const normX2 = tf_layer_norm(x, layer.gamma2, layer.beta2);
-	let ffn = relu(add(matMul(normX2, layer.w1), layer.b1));
-	ffn = add(matMul(ffn, layer.w2), layer.b2);
+	let ffn = tf.relu(add(tf.matMul(normX2, layer.w1), layer.b1));
+	ffn = add(tf.matMul(ffn, layer.w2), layer.b2);
 	return add(x, ffn);
 }
 
 function computeTfMultiHeadAttention(normX, layer, n_heads, d_k, contextSize, d_model, mask) {
-	const q = matMul(normX, layer.wq);
-	const k = matMul(normX, layer.wk);
-	const v = matMul(normX, layer.wv);
+	const q = tf.matMul(normX, layer.wq);
+	const k = tf.matMul(normX, layer.wk);
+	const v = tf.matMul(normX, layer.wv);
 
 	const qHeads = q.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
 	const kHeads = k.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
 	const vHeads = v.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
 
-	let scores = matMul(qHeads, kHeads.transpose([0, 2, 1]))
+	let scores = tf.matMul(qHeads, kHeads.transpose([0, 2, 1]))
 		.div(sqrt(scalar(d_k)));
 
 	scores = sub(scores, mask.expandDims(0));
 
 	const attnWeights = tf.softmax(scores, -1);
-	const context = matMul(attnWeights, vHeads);
+	const context = tf.matMul(attnWeights, vHeads);
 
 	const concat = context.transpose([1, 0, 2]).reshape([contextSize, d_model]);
-	return matMul(concat, layer.wo);
+	return tf.matMul(concat, layer.wo);
 }
 
 function collectTrainableVars(weightVars) {
