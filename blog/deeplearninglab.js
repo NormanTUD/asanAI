@@ -14,7 +14,7 @@ const DeepLab = {
 			const btn = document.getElementById(`btn-${id}-train`);
 			if(btn) btn.innerText = "🚀 Start Training";
 		}
-		if(c.model) c.model.dispose();
+		if(c.model) dispose(c.model);
 
 		c.model = tf.sequential();
 		if(c.layers.length > 0) {
@@ -211,7 +211,8 @@ const DeepLab = {
 
 		c.isTraining = false;
 		if (btn) { btn.className = "btn btn-train"; btn.innerText = "🚀 Continue Training"; }
-		xs.dispose(); ys.dispose();
+		dispose(xs);
+		dispose(ys);
 	},
 
 	plotLinData: function(force = false) {

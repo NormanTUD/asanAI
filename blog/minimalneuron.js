@@ -23,7 +23,7 @@ const MinimalLab = {
 			if (btn) btn.innerText = "🚀 Start Training";
 		}
 
-		if (c.model) c.model.dispose();
+		if (c.model) dispose(c.model);
 
 		c.model = tf.sequential();
 		c.model.add(tf.layers.dense({ 
@@ -79,8 +79,8 @@ const MinimalLab = {
 			btn.className = "btn btn-train";
 			btn.innerText = "🚀 Continue Training";
 		}
-		xs.dispose();
-		ys.dispose();
+		dispose(xs);
+		dispose(ys);
 	},
 
 	updateVisuals: function(force = false) {

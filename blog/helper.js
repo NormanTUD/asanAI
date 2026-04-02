@@ -1811,3 +1811,9 @@ function tensor1d(...args) {
 function tensor2d(...args) {
 	return tf.tensor2d(...args);
 }
+
+function dispose(...args) {
+	for (var i = 0; i < args.length; i++) {
+		args[i].dispose();
+	}
+}

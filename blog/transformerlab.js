@@ -31,7 +31,7 @@ const oldTrajWrapper = document.getElementById('transformer-trajectory-full-path
 const oldTrajDiv = document.getElementById('transformer-trajectory-full-path');
 if (oldTrajDiv) {
 	const trajChart = echarts.getInstanceByDom(oldTrajDiv);
-	if (trajChart) trajChart.dispose();
+	if (trajChart) dispose(trajChart);
 	if (oldTrajWrapper) {
 		oldTrajWrapper.remove();
 	} else {
@@ -1225,8 +1225,8 @@ Without this, a single pathological training example could produce a gradient so
 	optimizer.applyGradients(clippedGrads);
 
 	for (const name in grads) {
-		grads[name].dispose();
-		clippedGrads[name].dispose();
+		dispose(grads[name]);
+		dispose(clippedGrads[name]);
 	}
 
 	return cost;
@@ -1318,22 +1318,22 @@ function formatETA(ms) {
 }
 
 function disposeWeightVars(weightVars) {
-    if (!weightVars) return;
-    weightVars.layers.forEach(layer => {
-        layer.wq.dispose();
-        layer.wk.dispose();
-        layer.wv.dispose();
-        layer.wo.dispose();
-        layer.gamma.dispose();
-        layer.beta.dispose();
-        layer.gamma2.dispose();
-        layer.beta2.dispose();
-        layer.w1.dispose();
-        layer.b1.dispose();
-        layer.w2.dispose();
-        layer.b2.dispose();
-    });
-    weightVars.embeddings.dispose();
+	if (!weightVars) return;
+	weightVars.layers.forEach(layer => {
+		dispose(layer.wq);
+		dispose(layer.wk);
+		dispose(layer.wv);
+		dispose(layer.wo);
+		dispose(layer.gamma);
+		dispose(layer.beta);
+		dispose(layer.gamma2);
+		dispose(layer.beta2);
+		dispose(layer.w1);
+		dispose(layer.b1);
+		dispose(layer.w2);
+		dispose(layer.b2);
+	});
+	dispose(weightVars.embeddings);
 }
 
 function finalizeTrainingSession(btn, status, completedAll) {
@@ -1378,7 +1378,7 @@ async function train_transformer() {
 	disposeWeightVars(weightVars);
 
 	// Also dispose the optimizer's internal state
-	optimizer.dispose();
+	dispose(optimizer);
 
 	finalizeTrainingSession(btn, status, completedAll);
 }
@@ -1417,7 +1417,7 @@ async function runSingleEpoch(epochIdx, totalEpochs, tokens, weightVars, allVars
 	// Sync state
 	await syncTrainingState(weightVars);
 
-	cost.dispose();
+	dispose(cost);
 }
 
 function updateEpochProgress(epochIdx, totalEpochs, loss, startTime, status) {
@@ -1484,7 +1484,7 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
 	const mask = buildCausalMask(thiscontextSize);
 	const losses = collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, thiscontextSize, mask);
 
-	mask.dispose();
+	dispos(mask);
 
 	if (losses.length === 0) return tf.scalar(10);
 	return tf.addN(losses).div(tf.scalar(losses.length));
@@ -1675,7 +1675,7 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 			// Dispose any ECharts instances inside before clearing
 			migrationContainer.querySelectorAll('[id^="migration-layer-"]').forEach(el => {
 				const chart = echarts.getInstanceByDom(el);
-				if (chart) chart.dispose();
+				if (chart) dispose(chart);
 			});
 			migrationContainer.innerHTML = '';
 			transformerLabVisMigrationDataRegistry.clear();
@@ -1688,7 +1688,7 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 				// Dispose ECharts on any plot divs inside
 				el.querySelectorAll('[id^="migration-layer-"]').forEach(plotEl => {
 					const chart = echarts.getInstanceByDom(plotEl);
-					if (chart) chart.dispose();
+					if (chart) dispos(chart);
 				});
 				el.innerHTML = '';
 			});
@@ -1704,7 +1704,7 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 		if (oldTrajDiv) {
 			// Dispose any ECharts or Plotly on the trajectory div
 			const trajChart = echarts.getInstanceByDom(oldTrajDiv);
-			if (trajChart) trajChart.dispose();
+			if (trajChart) dispose(trajChart);
 			oldTrajDiv.remove();
 		}
 		trajectoryRenderRegistry.delete('transformer-trajectory-full-path');
@@ -1713,7 +1713,7 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 	const themeRiverDiv = document.getElementById('transformer-themeriver-plot');
 	if (themeRiverDiv) {
 		const trChart = echarts.getInstanceByDom(themeRiverDiv);
-		if (trChart) trChart.dispose();
+		if (trChart) dispose(trChart);
 	}
 	const themeRiverWrapper = document.getElementById('themeriver-wrapper');
 	if (themeRiverWrapper) themeRiverWrapper.remove();
@@ -2626,7 +2626,7 @@ function _execute_embedding_render(dimensions, highlightPos = null, steps = []) 
 	if (!container) return;
 
 	const existingChart = echarts.getInstanceByDom(container);
-	if (existingChart) existingChart.dispose();
+	if (existingChart) dispose(existingChart);
 	container.innerHTML = '';
 
 	const tokens = Object.keys(window.persistentEmbeddingSpace);
@@ -5035,7 +5035,7 @@ function _execute_shift_render(tokenStrings, d_model, injectedEmbeddings) {
 
 	// Unified cleanup: dispose any existing ECharts instance
 	const existingChart = echarts.getInstanceByDom(container);
-	if (existingChart) existingChart.dispose();
+	if (existingChart) dispose(existingChart);
 	container.innerHTML = '';
 
 	if (d_model === 3) {

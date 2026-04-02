@@ -147,7 +147,7 @@ const FittingLab = {
     // ── Model (Re-)Initialisation + First Plot ────────────────
     updateModelAndPlot: async function () {
         const degree = parseInt(document.getElementById('slider-degree').value);
-        if (this.model) this.model.dispose();
+        if (this.model) dispose(this.model);
 
         this.model = tf.sequential();
         this.model.add(tf.layers.dense({
@@ -220,7 +220,7 @@ const FittingLab = {
             await tf.nextFrame();
         }
 
-        tf.dispose([xt, yt, inputs]);
+        dispose(xt, yt, inputs);
     },
 
     // ── Visualisation ──────────────────────────────────────────
@@ -230,7 +230,7 @@ const FittingLab = {
         const feats  = this.expand(xT, degree);
         const yPred  = this.model.predict(feats).dataSync();
         this.renderPlot(Array.from(yPred));
-        tf.dispose([xT, feats]);
+        dispose(xT, feats);
     },
 
     // ── Equation Monitor ───────────────────────────────────────

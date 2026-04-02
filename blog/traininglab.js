@@ -72,7 +72,7 @@ const TrainLab = {
 		c.loss = [];
 		c.isTraining = false;
 		c.currentEpoch = 0;
-		if (c.model) c.model.dispose();
+		if (c.model) dispose(c.model);
 	},
 
 	_buildModel: function (id, c) {
