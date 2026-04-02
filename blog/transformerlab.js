@@ -1484,7 +1484,7 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
 	const mask = buildCausalMask(thiscontextSize);
 	const losses = collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, thiscontextSize, mask);
 
-	dispos(mask);
+	dispose(mask);
 
 	if (losses.length === 0) return tf.scalar(10);
 	return tf.addN(losses).div(tf.scalar(losses.length));
@@ -1688,7 +1688,7 @@ function handleWeightReinit(d_model, n_heads, n_layers) {
 				// Dispose ECharts on any plot divs inside
 				el.querySelectorAll('[id^="migration-layer-"]').forEach(plotEl => {
 					const chart = echarts.getInstanceByDom(plotEl);
-					if (chart) dispos(chart);
+					if (chart) dispose(chart);
 				});
 				el.innerHTML = '';
 			});
