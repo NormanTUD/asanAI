@@ -150,7 +150,7 @@ function causalMultiHeadAttention(normH, weights, d_model, n_heads) {
 		);
 
 		// ── CAUSAL MASK: token i cannot attend to any token j > i ──
-		// Mirrors training:  scores = sub(scores, mask)
+		// Mirrors training:  scores = tf.sub(scores, mask)
 		// where mask is upper-triangle × 1e9
 		for (let i = 0; i < seqLen; i++) {
 			for (let j = i + 1; j < seqLen; j++) {
@@ -1492,10 +1492,10 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
 
 function buildCausalMask(contextSize) {
 	return tidy(() => {
-		const ones = ones([contextSize, contextSize]);
+		const ones = tf.ones([contextSize, contextSize]);
 		const upperTriangle = tf.linalg.bandPart(ones, 0, -1);
 		const diagonal = tf.linalg.bandPart(ones, 0, 0);
-		return sub(upperTriangle, diagonal).mul(scalar(1e9));
+		return tf.sub(upperTriangle, diagonal).mul(scalar(1e9));
 	});
 }
 
@@ -1578,9 +1578,9 @@ function computeTfMultiHeadAttention(normX, layer, n_heads, d_k, contextSize, d_
 	const vHeads = v.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
 
 	let scores = tf.matMul(qHeads, kHeads.transpose([0, 2, 1]))
-		.div(sqrt(scalar(d_k)));
+		.div(tf.sqrt(scalar(d_k)));
 
-	scores = sub(scores, mask.expandDims(0));
+	scores = tf.sub(scores, mask.expandDims(0));
 
 	const attnWeights = tf.softmax(scores, -1);
 	const context = tf.matMul(attnWeights, vHeads);
@@ -5257,7 +5257,7 @@ function tf_layer_norm(x, gamma, beta) {
 	return tidy(() => {
 		const { mean, variance } = tf.moments(x, -1, true);
 		const tf_epsilon = scalar(epsilon);
-		const normalized = x.sub(mean).div(sqrt(variance.add(tf_epsilon)));
+		const normalized = x.sub(mean).div(tf.sqrt(variance.add(tf_epsilon)));
 		return normalized.mul(gamma).add(beta);
 	});
 }
