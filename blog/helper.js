@@ -1833,3 +1833,11 @@ function add (...args) {
 function addN (...args) {
 	return tf.addN(...args);
 }
+
+function ones (...args) {
+	return tf.ones(...args);
+}
+
+function sub (...args) {
+	return tf.sub(...args);
+}
