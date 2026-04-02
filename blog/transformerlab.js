@@ -1317,6 +1317,25 @@ function formatETA(ms) {
 		.join(":");
 }
 
+function disposeWeightVars(weightVars) {
+    if (!weightVars) return;
+    weightVars.layers.forEach(layer => {
+        layer.wq.dispose();
+        layer.wk.dispose();
+        layer.wv.dispose();
+        layer.wo.dispose();
+        layer.gamma.dispose();
+        layer.beta.dispose();
+        layer.gamma2.dispose();
+        layer.beta2.dispose();
+        layer.w1.dispose();
+        layer.b1.dispose();
+        layer.w2.dispose();
+        layer.b2.dispose();
+    });
+    weightVars.embeddings.dispose();
+}
+
 function finalizeTrainingSession(btn, status, completedAll) {
 	window.isTraining = false;
 	lockArchitectureControls(false);  // ← ADD THIS LINE
@@ -1351,6 +1370,15 @@ async function train_transformer() {
 		if (!window.isTraining) { completedAll = false; break; }
 		await runSingleEpoch(i, epochs, tokens, weightVars, allVars, optimizer, d_model, n_layers, n_heads, status, startTime);
 	}
+
+	// Sync final weights back to JS arrays BEFORE disposing
+	window.currentWeights = await convert_tensors_to_weights(weightVars);
+
+	// NOW dispose all tf.variables
+	disposeWeightVars(weightVars);
+
+	// Also dispose the optimizer's internal state
+	optimizer.dispose();
 
 	finalizeTrainingSession(btn, status, completedAll);
 }
