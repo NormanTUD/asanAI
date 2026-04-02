@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What is Group Theory? — An Interactive Visual Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a1a;
+    color: #e0e0f0;
+    overflow-x: hidden;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #7b68ee, #00cec9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #888;
+    margin-bottom: 50px;
+    font-size: 1.1em;
+  }
+
+  section {
+    background: #12122a;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.3s;
+  }
+
+  section:hover {
+    border-color: #7b68ee55;
+  }
+
+  section h2 {
+    font-size: 1.5em;
+    margin-bottom: 12px;
+    color: #7b68ee;
+  }
+
+  section p {
+    color: #aab;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    max-width: 100%;
+  }
+
+  canvas {
+    display: block;
+    margin: 0 auto;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+  }
+
+  button {
+    background: linear-gradient(135deg, #7b68ee, #6c5ce7);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95em;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px #7b68ee55;
+  }
+
+  button:active {
+    transform: scale(0.97);
+  }
+
+  button.secondary {
+    background: #2a2a4a;
+  }
+
+  .status {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 1em;
+    color: #00cec9;
+    min-height: 1.5em;
+    font-weight: 600;
+  }
+
+  /* Cayley table */
+  .cayley-wrapper {
+    overflow-x: auto;
+    margin-top: 15px;
+  }
+
+  table.cayley {
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+
+  table.cayley td, table.cayley th {
+    width: 44px;
+    height: 44px;
+    text-align: center;
+    font-size: 0.8em;
+    border: 1px solid #2a2a4a;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-weight: 600;
+  }
+
+  table.cayley th {
+    background: #1e1e3a;
+    color: #7b68ee;
+  }
+
+  table.cayley td:hover {
+    outline: 2px solid #00cec9;
+    outline-offset: -2px;
+  }
+
+  .highlight-row { background: #7b68ee33 !important; }
+  .highlight-col { background: #00cec933 !important; }
+  .highlight-cell { background: #ff637855 !important; outline: 2px solid #ff6378 !important; }
+
+  /* Axiom checklist */
+  .axioms {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 15px;
+  }
+
+  .axiom-card {
+    background: #1a1a35;
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid #2a2a4a;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .axiom-card:hover {
+    border-color: #7b68ee;
+    transform: translateY(-2px);
+  }
+
+  .axiom-card.active {
+    border-color: #00cec9;
+    background: #1a2535;
+  }
+
+  .axiom-card h3 {
+    font-size: 1em;
+    margin-bottom: 6px;
+    color: #ddd;
+  }
+
+  .axiom-card .icon {
+    font-size: 1.5em;
+    margin-bottom: 6px;
+  }
+
+  .axiom-card p {
+    font-size: 0.82em;
+    color: #889;
+    margin: 0;
+  }
+
+  .axiom-demo {
+    text-align: center;
+    margin-top: 15px;
+    padding: 15px;
+    background: #1a1a35;
+    border-radius: 10px;
+    min-height: 60px;
+    color: #ccd;
+    font-size: 0.95em;
+    line-height: 1.7;
+  }
+
+  /* Zn clock */
+  .clock-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  .clock-controls label {
+    color: #aab;
+  }
+
+  .clock-controls input[type=range] {
+    accent-color: #7b68ee;
+    width: 120px;
+  }
+
+  .clock-controls span {
+    color: #00cec9;
+    font-weight: 700;
+    min-width: 30px;
+    text-align: center;
+  }
+
+  /* Subgroup lattice */
+  .lattice-info {
+    text-align: center;
+    color: #aab;
+    margin-top: 10px;
+    font-size: 0.9em;
+    min-height: 1.5em;
+  }
+
+  @media (max-width: 600px) {
+    .axioms { grid-template-columns: 1fr; }
+    h1 { font-size: 1.8em; }
+    table.cayley td, table.cayley th { width: 36px; height: 36px; font-size: 0.7em; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>What is Group Theory?</h1>
+<p class="subtitle">An interactive visual exploration of one of math's most beautiful ideas.</p>
+
+<!-- SECTION 1: Symmetries of a Square -->
+<section id="sec-symmetry">
+  <h2>① Symmetries of a Square</h2>
+  <p>A <strong>group</strong> captures the idea of symmetry. Take a square: you can rotate it by 0°, 90°, 180°, or 270°, and flip it across 4 axes — that's <strong>8 symmetries</strong> total. Each one leaves the square looking the same. Click the buttons to apply transformations and watch the labeled corners move!</p>
+  <canvas id="squareCanvas" width="360" height="360"></canvas>
+  <div class="controls">
+    <button onclick="applyTransform('r0')">R0 (0°)</button>
+    <button onclick="applyTransform('r1')">R90</button>
+    <button onclick="applyTransform('r2')">R180</button>
+    <button onclick="applyTransform('r3')">R270</button>
+    <button onclick="applyTransform('fh')" class="secondary">Flip H</button>
+    <button onclick="applyTransform('fv')" class="secondary">Flip V</button>
+    <button onclick="applyTransform('fd1')" class="secondary">Flip ╲</button>
+    <button onclick="applyTransform('fd2')" class="secondary">Flip ╱</button>
+  </div>
+  <div class="status" id="symStatus">Click a transformation!</div>
+</section>
+
+<!-- SECTION 2: The Four Axioms -->
+<section id="sec-axioms">
+  <h2>② The Four Group Axioms</h2>
+  <p>For a set with an operation to be a <strong>group</strong>, it must satisfy exactly four rules. Click each axiom below to see it demonstrated with our square symmetries.</p>
+  <div class="axioms">
+    <div class="axiom-card" onclick="showAxiom('closure')" id="ax-closure">
+      <div class="icon">🔒</div>
+      <h3>Closure</h3>
+      <p>Combining any two symmetries gives another symmetry in the set.</p>
+    </div>
+    <div class="axiom-card" onclick="showAxiom('assoc')" id="ax-assoc">
+      <div class="icon">🔗</div>
+      <h3>Associativity</h3>
+      <p>(a ∘ b) ∘ c = a ∘ (b ∘ c) — grouping doesn't matter.</p>
+    </div>
+    <div class="axiom-card" onclick="showAxiom('identity')" id="ax-identity">
+      <div class="icon">🪞</div>
+      <h3>Identity</h3>
+      <p>There's a "do nothing" element (R0) that leaves everything unchanged.</p>
+    </div>
+    <div class="axiom-card" onclick="showAxiom('inverse')" id="ax-inverse">
+      <div class="icon">↩️</div>
+      <h3>Inverses</h3>
+      <p>Every symmetry can be undone by another symmetry.</p>
+    </div>
+  </div>
+  <div class="axiom-demo" id="axiomDemo">Click an axiom card above to see a live demonstration.</div>
+</section>
+
+<!-- SECTION 3: Cayley Table -->
+<section id="sec-cayley">
+  <h2>③ The Cayley Table (Multiplication Table)</h2>
+  <p>This table shows what happens when you combine any two symmetries of the square. Hover over a cell to see "row ∘ column = result". Notice: the table is <strong>not symmetric</strong> across the diagonal — this group is <em>non-abelian</em> (order matters)!</p>
+  <div class="cayley-wrapper" id="cayleyWrapper"></div>
+  <div class="status" id="cayleyStatus">Hover over a cell!</div>
+</section>
+
+<!-- SECTION 4: Cyclic Groups (Clock) -->
+<section id="sec-clock">
+  <h2>④ Cyclic Groups: The Clock</h2>
+  <p>The simplest groups are <strong>cyclic groups</strong> ℤₙ — think of a clock with n hours where you add and wrap around. Click any number on the clock, then click another to add them (mod n). Adjust n with the slider!</p>
+  <canvas id="clockCanvas" width="360" height="360"></canvas>
+  <div class="clock-controls">
+    <label>n =</label>
+    <input type="range" id="clockN" min="2" max="12" value="6" oninput="updateClock()">
+    <span id="clockNVal">6</span>
+    <button onclick="resetClock()">Reset</button>
+  </div>
+  <div class="status" id="clockStatus">Click a number on the clock!</div>
+</section>
+
+<!-- SECTION 5: Subgroup Lattice -->
+<section id="sec-subgroup">
+  <h2>⑤ Subgroups: Groups Inside Groups</h2>
+  <p>A <strong>subgroup</strong> is a subset that is itself a group under the same operation. Below is the subgroup lattice of ℤ₁₂ — lines connect a subgroup to those it contains. Click a node to highlight the subgroup's elements on the clock!</p>
+  <canvas id="latticeCanvas" width="500" height="340"></canvas>
+  <div class="lattice-info" id="latticeInfo">Click a subgroup node!</div>
+</section>
+
+<!-- SECTION 6: Explore more -->
+<section>
+  <h2>⑥ What's Next?</h2>
+  <p>You've just scratched the surface! Group theory underpins physics (particle symmetries), chemistry (molecular symmetries), cryptography (elliptic curves), music theory (transpositions), and Rubik's cube solutions. Every time you see <strong>symmetry</strong> or <strong>structure-preserving transformations</strong>, there's a group hiding underneath.</p>
+</section>
+
+</div>
+
+<script>
+// ============================================================
+// SECTION 1: Symmetries of a Square
+// ============================================================
+const sqCanvas = document.getElementById('squareCanvas');
+const sqCtx = sqCanvas.getContext('2d');
+
+// corners: 0=A(top-left), 1=B(top-right), 2=C(bot-right), 3=D(bot-left)
+let corners = [0,1,2,3]; // current permutation
+const cornerLabels = ['A','B','C','D'];
+const cornerColors = ['#ff6378','#7b68ee','#00cec9','#ffd93d'];
+
+// D4 elements as permutations [where 0 goes, where 1 goes, ...]
+const D4 = {
+  r0: [0,1,2,3],
+  r1: [3,0,1,2],
+  r2: [2,3,0,1],
+  r3: [1,2,3,0],
+  fh: [3,2,1,0],
+  fv: [1,0,3,2],
+  fd1:[0,3,2,1],
+  fd2:[2,1,0,3]
+};
+
+const D4names = {
+  r0:'R0 (identity)', r1:'R90', r2:'R180', r3:'R270',
+  fh:'Flip Horizontal', fv:'Flip Vertical', fd1:'Flip ╲', fd2:'Flip ╱'
+};
+
+// compose permutations: apply p then q
+function compose(p, q) {
+  return p.map(i => q[i]);
+}
+
+// animation state
+let animTarget = null;
+let animProgress = 1;
+let prevCornerPositions = null;
+
+function getCornerPositions(c) {
+  const cx = 180, cy = 180, s = 90;
+  const basePositions = [
+    [cx - s, cy - s], // 0: top-left
+    [cx + s, cy - s], // 1: top-right
+    [cx + s, cy + s], // 2: bot-right
+    [cx - s, cy + s], // 3: bot-left
+  ];
+  // c[i] = which original corner is now at position i
+  // We want: for each original corner label j, where is it?
+  // corners array: corners[position] = original_label
+  // So original label j is at position where corners[pos] == j
+  let positions = [];
+  for (let j = 0; j < 4; j++) {
+    let pos = c.indexOf(j);
+    positions.push(basePositions[pos]);
+  }
+  return positions;
+}
+
+function drawSquare(progress) {
+  const ctx = sqCtx;
+  const w = sqCanvas.width, h = sqCanvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  const cx = 180, cy = 180, s = 90;
+
+  // Draw square outline
+  ctx.strokeStyle = '#3a3a5a';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(cx - s, cy - s, s * 2, s * 2);
+
+  // Draw axes lightly
+  ctx.strokeStyle = '#2a2a4a';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  // horizontal
+  ctx.beginPath(); ctx.moveTo(cx - s - 30, cy); ctx.lineTo(cx + s + 30, cy); ctx.stroke();
+  // vertical
+  ctx.beginPath(); ctx.moveTo(cx, cy - s - 30); ctx.lineTo(cx, cy + s + 30); ctx.stroke();
+  // diagonals
+  ctx.beginPath(); ctx.moveTo(cx - s - 20, cy - s - 20); ctx.lineTo(cx + s + 20, cy + s + 20); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx + s + 20, cy - s - 20); ctx.lineTo(cx - s - 20, cy + s + 20); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Interpolate corner positions
+  const curPositions = getCornerPositions(corners);
+  let drawPositions;
+  if (prevCornerPositions && progress < 1) {
+    drawPositions = curPositions.map((cp, i) => [
+      prevCornerPositions[i][0] + (cp[0] - prevCornerPositions[i][0]) * easeInOut(progress),
+      prevCornerPositions[i][1] + (cp[1] - prevCornerPositions[i][1]) * easeInOut(progress),
+    ]);
+  } else {
+    drawPositions = curPositions;
+  }
+
+  // Draw filled square polygon
+  ctx.fillStyle = '#1e1e3a';
+  ctx.beginPath();
+  // draw in position order
+  const baseOrder = [0,1,2,3];
+  const polyPoints = baseOrder.map(pos => {
+    let label = corners[pos];
+    return drawPositions[label];
+  });
+  ctx.moveTo(polyPoints[0][0], polyPoints[0][1]);
+  for (let i = 1; i < 4; i++) ctx.lineTo(polyPoints[i][0], polyPoints[i][1]);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#7b68ee';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Draw corner circles and labels
+  for (let j = 0; j < 4; j++) {
+    const [x, y] = drawPositions[j];
+    ctx.beginPath();
+    ctx.arc(x, y, 18, 0, Math.PI * 2);
+    ctx.fillStyle = cornerColors[j];
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.font = '700 14px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(cornerLabels[j], x, y + 1);
+  }
+}
+
+function easeInOut(t) {
+  return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+}
+
+let animFrame;
+function animate() {
+  if (animProgress < 1) {
+    animProgress += 0.035;
+    if (animProgress > 1) animProgress = 1;
+    drawSquare(animProgress);
+    animFrame = requestAnimationFrame(animate);
+  } else {
+    prevCornerPositions = null;
+    drawSquare(1);
+  }
+}
+
+function applyTransform(name) {
+  prevCornerPositions = getCornerPositions(corners);
+  // Apply permutation
+  let perm = D4[name];
+  let newCorners = [0,0,0,0];
+  // perm[i] means position i's content goes to position perm[i]... 
+  // Actually let's think carefully:
+  // D4.r1 = [3,0,1,2] means: new_position_0 gets old_position_3's content
+  // So newCorners[i] = corners[perm[i]]... no.
+  // Let's define: perm[i] = where position i maps to? No.
+  // Let me redefine: r1 rotates 90° CW. 
+  // Position 0 (TL) -> gets what was at position 3 (BL) = corners[3]
+  // So newCorners[0] = corners[3], newCorners[1] = corners[0], etc.
+  // r1 = [3,0,1,2]: newCorners[i] = corners[r1[i]]
+  for (let i = 0; i < 4; i++) {
+    newCorners[i] = corners[perm[i]];
+  }
+  corners = newCorners;
+  animProgress = 0;
+  cancelAnimationFrame(animFrame);
+  animate();
+  document.getElementById('symStatus').textContent = `Applied: ${D4names[name]} → Corners: [${corners.map(c => cornerLabels[c]).join(', ')}]`;
+}
+
+drawSquare(1);
+
+// ============================================================
+// SECTION 2: Axiom Demos
+// ============================================================
+const D4keys = ['r0','r1','r2','r3','fh','fv','fd1','fd2'];
+const D4labels = ['R0','R90','R180','R270','Fh','Fv','F╲','F╱'];
+
+function permToKey(p) {
+  for (let k of D4keys) {
+    if (D4[k].every((v,i) => v === p[i])) return k;
+  }
+  return '??';
+}
+
+function composeKeys(a, b) {
+  // apply a then b
+  let pa = D4[a], pb = D4[b];
+  let result = new Array(4);
+  for (let i = 0; i < 4; i++) result[i] = pb[pa[i]];
+  // Wait, let me reconsider. Our permutation convention:
+  // newCorners[i] = corners[perm[i]]
+  // So applying a then b: first newC[i] = old[a[i]], then newC2[i] = newC[b[i]] = old[a[b[i]]]
+  // So composed perm: c[i] = a[b[i]]
+  let c = new Array(4);
+  for (let i = 0; i < 4; i++) c[i] = pa[pb[i]];
+  return permToKey(c);
+}
+
+function showAxiom(which) {
+  document.querySelectorAll('.axiom-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('ax-' + (which === 'assoc' ? 'assoc' : which)).classList.add('active');
+  const demo = document.getElementById('axiomDemo');
+
+  if (which === 'closure') {
+    let a = D4keys[Math.floor(Math.random()*8)];
+    let b = D4keys[Math.floor(Math.random()*8)];
+    let c = composeKeys(a, b);
+    let ai = D4keys.indexOf(a), bi = D4keys.indexOf(b), ci = D4keys.indexOf(c);
+    demo.innerHTML = `<strong>${D4labels[ai]}</strong> ∘ <strong>${D4labels[bi]}</strong> = <strong>${D4labels[ci]}</strong><br>The result is always one of our 8 symmetries. ✅ <em>(Click again for another example)</em>`;
+  } else if (which === 'assoc') {
+    let a = D4keys[1+Math.floor(Math.random()*7)];
+    let b = D4keys[1+Math.floor(Math.random()*7)];
+    let c = D4keys[1+Math.floor(Math.random()*7)];
+    let ab = composeKeys(a,b);
+    let ab_c = composeKeys(ab, c);
+    let bc = composeKeys(b,c);
+    let a_bc = composeKeys(a, bc);
+    let ai=D4keys.indexOf(a), bi=D4keys.indexOf(b), ci=D4keys.indexOf(c);
+    let abi=D4keys.indexOf(ab), ab_ci=D4keys.indexOf(ab_c);
+    let bci=D4keys.indexOf(bc), a_bci=D4keys.indexOf(a_bc);
+    demo.innerHTML = `(${D4labels[ai]} ∘ ${D4labels[bi]}) ∘ ${D4labels[ci]} = ${D4labels[abi]} ∘ ${D4labels[ci]} = <strong>${D4labels[ab_ci]}</strong><br>
+    ${D4labels[ai]} ∘ (${D4labels[bi]} ∘ ${D4labels[ci]}) = ${D4labels[ai]} ∘ ${D4labels[bci]} = <strong>${D4labels[a_bci]}</strong><br>
+    Both equal <strong>${D4labels[ab_ci]}</strong> ✅`;
+  } else if (which === 'identity') {
+    let a = D4keys[1+Math.floor(Math.random()*7)];
+    let ai = D4keys.indexOf(a);
+    demo.innerHTML = `<strong>R0</strong> ∘ ${D4labels[ai]} = <strong>${D4labels[ai]}</strong><br>
+    ${D4labels[ai]} ∘ <strong>R0</strong> = <strong>${D4labels[ai]}</strong><br>
+    R0 (doing nothing) is the identity element. ✅`;
+  } else if (which === 'inverse') {
+    // find inverse of random element
+    let a = D4keys[1+Math.floor(Math.random()*7)];
+    let ai = D4keys.indexOf(a);
+    // find b such that composeKeys(a,b) == 'r0'
+    let inv = D4keys.find(b => composeKeys(a,b) === 'r0');
+    let invi = D4keys.indexOf(inv);
+    demo.innerHTML = `${D4labels[ai]} ∘ <strong>${D4labels[invi]}</strong> = R0 (identity)<br>
+    So <strong>${D4labels[invi]}</strong> is the inverse of ${D4labels[ai]}. Every element has one! ✅`;
+  }
+}
+
+// ============================================================
+// SECTION 3: Cayley Table
+// ============================================================
+function buildCayleyTable() {
+  const wrapper = document.getElementById('cayleyWrapper');
+  let html = '<table class="cayley"><tr><th>∘</th>';
+  for (let j = 0; j < 8; j++) html += `<th>${D4labels[j]}</th>`;
+  html += '</tr>';
+  for (let i = 0; i < 8; i++) {
+    html += `<tr><th>${D4labels[i]}</th>`;
+    for (let j = 0; j < 8; j++) {
+      let res = composeKeys(D4keys[i], D4keys[j]);
+      let ri = D4keys.indexOf(res);
+      // color based on result
+      let hue = (ri / 8) * 360;
+      let bg = `hsl(${hue}, 50%, 20%)`;
+      html += `<td style="background:${bg}" data-r="${i}" data-c="${j}" data-res="${ri}"
+        onmouseenter="highlightCayley(${i},${j},${ri})"
+        onmouseleave="clearCayley()">${D4labels[ri]}</td>`;
+    }
+    html += '</tr>';
+  }
+  html += '</table>';
+  wrapper.innerHTML = html;
+}
+
+function highlightCayley(r, c, res) {
+  // clear previous
+  clearCayley();
+  const table = document.querySelector('table.cayley');
+  const rows = table.querySelectorAll('tr');
+  // highlight row
+  rows[r+1].querySelectorAll('td, th').forEach(el => el.classList.add('highlight-row'));
+  // highlight col
+  rows.forEach((row, i) => {
+    const cells = row.querySelectorAll('td, th');
+    if (cells[c+1]) cells[c+1].classList.add('highlight-col');
+  });
+  // highlight cell
+  const cell = table.querySelector(`td[data-r="${r}"][data-c="${c}"]`);
+  if (cell) cell.classList.add('highlight-cell');
+  document.getElementById('cayleyStatus').textContent = `${D4labels[r]} ∘ ${D4labels[c]} = ${D4labels[res]}`;
+}
+
+function clearCayley() {
+  document.querySelectorAll('.highlight-row, .highlight-col, .highlight-cell').forEach(el => {
+    el.classList.remove('highlight-row', 'highlight-col', 'highlight-cell');
+  });
+}
+
+buildCayleyTable();
+
+// ============================================================
+// SECTION 4: Cyclic Group Clock
+// ============================================================
+const clockCanvas = document.getElementById('clockCanvas');
+const clockCtx = clockCanvas.getContext('2d');
+let clockN = 6;
+let clockSelection = []; // up to 2 selected numbers
+let clockHighlight = []; // highlighted result
+
+function updateClock() {
+  clockN = parseInt(document.getElementById('clockN').value);
+  document.getElementById('clockNVal').textContent = clockN;
+  clockSelection = [];
+  clockHighlight = [];
+  document.getElementById('clockStatus').textContent = 'Click a number on the clock!';
+  drawClock();
+}
+
+function drawClock() {
+  const ctx = clockCtx;
+  const w = clockCanvas.width, h = clockCanvas.height;
+  ctx.clearRect(0, 0, w, h);
+  const cx = 180, cy = 180, r = 130;
+
+  // Draw circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = '#3a3a5a';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Draw center dot
+  ctx.beginPath();
+  ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+  ctx.fillStyle = '#7b68ee';
+  ctx.fill();
+
+  // Draw numbers around the clock
+  for (let i = 0; i < clockN; i++) {
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / clockN;
+    const nx = cx + r * Math.cos(angle);
+    const ny = cy + r * Math.sin(angle);
+
+    // Tick marks
+    const ix = cx + (r - 15) * Math.cos(angle);
+    const iy = cy + (r - 15) * Math.sin(angle);
+    ctx.beginPath();
+    ctx.moveTo(ix, iy);
+    ctx.lineTo(cx + (r + 5) * Math.cos(angle), cy + (r + 5) * Math.sin(angle));
+    ctx.strokeStyle = '#3a3a5a';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Determine if this number is selected or highlighted
+    let isSelected = clockSelection.includes(i);
+    let isResult = clockHighlight.includes(i);
+
+    // Draw circle behind number
+    const nr = 20;
+    ctx.beginPath();
+    ctx.arc(nx, ny, nr, 0, Math.PI * 2);
+    if (isResult) {
+      ctx.fillStyle = '#ff637888';
+      ctx.strokeStyle = '#ff6378';
+      ctx.lineWidth = 2;
+      ctx.fill();
+      ctx.stroke();
+    } else if (isSelected) {
+      ctx.fillStyle = '#7b68ee55';
+      ctx.strokeStyle = '#7b68ee';
+      ctx.lineWidth = 2;
+      ctx.fill();
+      ctx.stroke();
+    } else {
+      ctx.fillStyle = '#1a1a35';
+      ctx.strokeStyle = '#2a2a4a';
+      ctx.lineWidth = 1;
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // Draw number text
+    ctx.fillStyle = isResult ? '#ff6378' : isSelected ? '#7b68ee' : '#ccd';
+    ctx.font = '700 14px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(i.toString(), nx, ny + 1);
+  }
+
+  // Draw arcs for selection
+  if (clockSelection.length >= 1) {
+    const a1 = -Math.PI / 2;
+    const a2 = -Math.PI / 2 + (2 * Math.PI * clockSelection[0]) / clockN;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r - 30, a1, a2, false);
+    ctx.strokeStyle = '#7b68ee88';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    // arrowhead
+    const arrowAngle = a2;
+    const ax = cx + (r - 30) * Math.cos(arrowAngle);
+    const ay = cy + (r - 30) * Math.sin(arrowAngle);
+    ctx.beginPath();
+    ctx.arc(ax, ay, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#7b68ee';
+    ctx.fill();
+  }
+
+  if (clockSelection.length === 2) {
+    const a2 = -Math.PI / 2 + (2 * Math.PI * clockSelection[0]) / clockN;
+    const a3 = -Math.PI / 2 + (2 * Math.PI * ((clockSelection[0] + clockSelection[1]) % clockN)) / clockN;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r - 45, a2, a3, false);
+    ctx.strokeStyle = '#00cec988';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    const ax = cx + (r - 45) * Math.cos(a3);
+    const ay = cy + (r - 45) * Math.sin(a3);
+    ctx.beginPath();
+    ctx.arc(ax, ay, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#00cec9';
+    ctx.fill();
+  }
+
+  // Group name
+  ctx.fillStyle = '#555';
+  ctx.font = '600 16px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`ℤ${subscript(clockN)}`, cx, cy + 10);
+}
+
+function subscript(n) {
+  const subs = '₀₁₂₃₄₅₆₇₈₉';
+  return String(n).split('').map(d => subs[parseInt(d)]).join('');
+}
+
+clockCanvas.addEventListener('click', function(e) {
+  const rect = clockCanvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (clockCanvas.width / rect.width);
+  const my = (e.clientY - rect.top) * (clockCanvas.height / rect.height);
+  const cx = 180, cy = 180, r = 130;
+
+  // Check which number was clicked
+  for (let i = 0; i < clockN; i++) {
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / clockN;
+    const nx = cx + r * Math.cos(angle);
+    const ny = cy + r * Math.sin(angle);
+    const dist = Math.sqrt((mx - nx) ** 2 + (my - ny) ** 2);
+    if (dist < 22) {
+      handleClockClick(i);
+      return;
+    }
+  }
+});
+
+function handleClockClick(num) {
+  if (clockSelection.length === 0) {
+    clockSelection = [num];
+    clockHighlight = [];
+    document.getElementById('clockStatus').textContent = `Selected ${num}. Now click another number to add!`;
+  } else if (clockSelection.length === 1) {
+    clockSelection.push(num);
+    let result = (clockSelection[0] + clockSelection[1]) % clockN;
+    clockHighlight = [result];
+    document.getElementById('clockStatus').innerHTML =
+      `<strong>${clockSelection[0]} + ${clockSelection[1]} ≡ ${result} (mod ${clockN})</strong>`;
+  } else {
+    // Reset and start new
+    clockSelection = [num];
+    clockHighlight = [];
+    document.getElementById('clockStatus').textContent = `Selected ${num}. Now click another number to add!`;
+  }
+  drawClock();
+}
+
+function resetClock() {
+  clockSelection = [];
+  clockHighlight = [];
+  document.getElementById('clockStatus').textContent = 'Click a number on the clock!';
+  drawClock();
+}
+
+drawClock();
+
+// ============================================================
+// SECTION 5: Subgroup Lattice of Z12
+// ============================================================
+const latticeCanvas = document.getElementById('latticeCanvas');
+const latticeCtx = latticeCanvas.getContext('2d');
+
+// Subgroups of Z12:
+// Z12 = {0,1,...,11} — generated by 1
+// <2> = {0,2,4,6,8,10} — order 6
+// <3> = {0,3,6,9} — order 4
+// <4> = {0,4,8} — order 3
+// <6> = {0,6} — order 2
+// <0> = {0} — trivial
+const subgroups = [
+  { label: 'ℤ₁₂', elements: [0,1,2,3,4,5,6,7,8,9,10,11], gen: 1 },
+  { label: '⟨2⟩', elements: [0,2,4,6,8,10], gen: 2 },
+  { label: '⟨3⟩', elements: [0,3,6,9], gen: 3 },
+  { label: '⟨4⟩', elements: [0,4,8], gen: 4 },
+  { label: '⟨6⟩', elements: [0,6], gen: 6 },
+  { label: '{0}', elements: [0], gen: 0 },
+];
+
+// Lattice positions (hand-placed for nice layout)
+const latticePositions = [
+  [250, 30],   // Z12 (top)
+  [150, 110],  // <2>
+  [350, 110],  // <3>
+  [150, 200],  // <4>
+  [350, 200],  // <6>
+  [250, 290],  // {0} (bottom)
+];
+
+// Edges: [from, to] where from contains to
+const latticeEdges = [
+  [0, 1], [0, 2],  // Z12 contains <2> and <3>
+  [1, 3], [1, 4],  // <2> contains <4> and <6>
+  [2, 4],           // <3> contains <6>
+  [3, 5],           // <4> contains {0}
+  [4, 5],           // <6> contains {0}
+];
+
+let selectedSubgroup = -1;
+
+function drawLattice() {
+  const ctx = latticeCtx;
+  const w = latticeCanvas.width, h = latticeCanvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  // Draw edges
+  for (let [a, b] of latticeEdges) {
+    const [x1, y1] = latticePositions[a];
+    const [x2, y2] = latticePositions[b];
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    let isHighlighted = (selectedSubgroup === a || selectedSubgroup === b);
+    ctx.strokeStyle = isHighlighted ? '#7b68ee88' : '#2a2a4a';
+    ctx.lineWidth = isHighlighted ? 2.5 : 1.5;
+    ctx.stroke();
+  }
+
+  // Draw nodes
+  for (let i = 0; i < subgroups.length; i++) {
+    const [x, y] = latticePositions[i];
+    const sg = subgroups[i];
+    const isSelected = selectedSubgroup === i;
+    const nr = 28;
+
+    ctx.beginPath();
+    ctx.arc(x, y, nr, 0, Math.PI * 2);
+    if (isSelected) {
+      ctx.fillStyle = '#7b68ee33';
+      ctx.strokeStyle = '#7b68ee';
+      ctx.lineWidth = 3;
+    } else {
+      ctx.fillStyle = '#1a1a35';
+      ctx.strokeStyle = '#3a3a5a';
+      ctx.lineWidth = 1.5;
+    }
+    ctx.fill();
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = isSelected ? '#7b68ee' : '#ccd';
+    ctx.font = '700 13px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(sg.label, x, y);
+
+    // Order below
+    ctx.fillStyle = '#666';
+    ctx.font = '400 10px Inter, sans-serif';
+    ctx.fillText(`order ${sg.elements.length}`, x, y + 38);
+  }
+
+  // If a subgroup is selected, draw its elements as a mini-clock
+  if (selectedSubgroup >= 0) {
+    drawMiniClock(ctx, 430, 170, 60, subgroups[selectedSubgroup].elements);
+  }
+}
+
+function drawMiniClock(ctx, cx, cy, r, highlighted) {
+  const n = 12;
+  // Label
+  ctx.fillStyle = '#666';
+  ctx.font = '600 11px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Elements in ℤ₁₂:', cx, cy - r - 15);
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = '#2a2a4a';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  for (let i = 0; i < n; i++) {
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / n;
+    const nx = cx + r * Math.cos(angle);
+    const ny = cy + r * Math.sin(angle);
+    const isH = highlighted.includes(i);
+
+    ctx.beginPath();
+    ctx.arc(nx, ny, 12, 0, Math.PI * 2);
+    ctx.fillStyle = isH ? '#7b68ee55' : '#1a1a35';
+    ctx.strokeStyle = isH ? '#7b68ee' : '#2a2a4a';
+    ctx.lineWidth = isH ? 2 : 1;
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = isH ? '#7b68ee' : '#555';
+    ctx.font = `${isH ? '700' : '400'} 10px Inter, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(i.toString(), nx, ny + 1);
+  }
+}
+
+latticeCanvas.addEventListener('click', function(e) {
+  const rect = latticeCanvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (latticeCanvas.width / rect.width);
+  const my = (e.clientY - rect.top) * (latticeCanvas.height / rect.height);
+
+  for (let i = 0; i < subgroups.length; i++) {
+    const [x, y] = latticePositions[i];
+    const dist = Math.sqrt((mx - x) ** 2 + (my - y) ** 2);
+    if (dist < 30) {
+      selectedSubgroup = (selectedSubgroup === i) ? -1 : i;
+      drawLattice();
+      if (selectedSubgroup >= 0) {
+        const sg = subgroups[selectedSubgroup];
+        document.getElementById('latticeInfo').innerHTML =
+          `<strong>${sg.label}</strong> = {${sg.elements.join(', ')}} — a subgroup of order ${sg.elements.length}`;
+      } else {
+        document.getElementById('latticeInfo').textContent = 'Click a subgroup node!';
+      }
+      return;
+    }
+  }
+});
+
+drawLattice();
+
+</script>
+</body>
+</html>
