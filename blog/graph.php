@@ -1,21 +1,21 @@
 <!-- ============================================================
-     RIVER OF IDEAS v4 — Light Mode, Vertical, Comprehensive
-     Top-to-bottom flow, fading borders, large readable text
+     RIVER OF IDEAS v5 — Light Mode, Vertical, Comprehensive
+     More spacing, more connections, richer borders
      ============================================================ -->
 <style>
   #river-container {
     position: relative;
     width: 100%;
-    max-width: 1300px;
+    max-width: 1500px;
     margin: 2rem auto;
     background: #fafbfd;
-    border-radius: 16px;
-    padding: 2rem 1rem 1rem 1rem;
+    border-radius: 20px;
+    padding: 3rem 2rem 2rem 2rem;
     overflow: hidden;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     color: #1a2332;
     box-shadow: 0 2px 24px rgba(0,0,0,0.07);
-    border: 1px solid #e2e8f0;
+    border: 1.5px solid #e2e8f0;
   }
   #river-container h2 {
     text-align: center;
@@ -35,7 +35,7 @@
     text-align: center;
     font-size: 0.85rem;
     color: #8a9bb5;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
     max-width: 700px;
     margin-left: auto;
     margin-right: auto;
@@ -90,9 +90,9 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 16px;
-    margin-top: 0.8rem;
-    margin-bottom: 0.5rem;
+    gap: 18px;
+    margin-top: 1rem;
+    margin-bottom: 0.8rem;
     font-size: 0.85rem;
   }
   #river-legend span {
@@ -115,24 +115,24 @@
     z-index: 10;
   }
   #river-fade-top {
-    top: 0; left: 0; right: 0; height: 60px;
+    top: 0; left: 0; right: 0; height: 70px;
     background: linear-gradient(180deg, #fafbfd 0%, transparent 100%);
-    border-radius: 16px 16px 0 0;
+    border-radius: 20px 20px 0 0;
   }
   #river-fade-bottom {
-    bottom: 0; left: 0; right: 0; height: 80px;
+    bottom: 0; left: 0; right: 0; height: 90px;
     background: linear-gradient(0deg, #fafbfd 0%, transparent 100%);
-    border-radius: 0 0 16px 16px;
+    border-radius: 0 0 20px 20px;
   }
   #river-fade-left {
-    top: 0; bottom: 0; left: 0; width: 50px;
+    top: 0; bottom: 0; left: 0; width: 60px;
     background: linear-gradient(90deg, #fafbfd 0%, transparent 100%);
-    border-radius: 16px 0 0 16px;
+    border-radius: 20px 0 0 20px;
   }
   #river-fade-right {
-    top: 0; bottom: 0; right: 0; width: 50px;
+    top: 0; bottom: 0; right: 0; width: 60px;
     background: linear-gradient(270deg, #fafbfd 0%, transparent 100%);
-    border-radius: 0 16px 16px 0;
+    border-radius: 0 20px 20px 0;
   }
 
   @keyframes pulse-glow {
@@ -142,7 +142,7 @@
   .river-node-active { animation: pulse-glow 2s ease-in-out infinite; }
 
   @media (max-width: 700px) {
-    #river-container { padding: 1rem 0.2rem 1rem 0.2rem; }
+    #river-container { padding: 1.5rem 0.5rem 1.5rem 0.5rem; }
     #river-container h2 { font-size: 1.3rem; }
   }
 </style>
@@ -299,69 +299,68 @@
 
     // ── Row 10: 2010–2014 ──
     { id:'alexnet',     label:'AlexNet',                            short:'Krizhevsky, Sutskever, Hinton 2012 — GPU + CNN + ImageNet = revolution',                         era:'2010–14',         row:10, col:6, stream:'neuro' },
-    { id:'word2vec',    label:'Word2Vec',                            short:'Mikolov et al. 2013 — king − man + woman ≈ queen, meaning as geometry',                                era:'2010–14',         row:10, col:8, stream:'language' },
-    { id:'relu',        label:'ReLU Activation',                     short:'Glorot, Nair & Hinton 2010–11 — max(0,x): death of vanishing gradients',                                era:'2010–14',         row:10, col:3, stream:'training' },
-    { id:'adam',        label:'Adam Optimizer',                      short:'Kingma & Ba 2014 — adaptive per-parameter learning rates',                                               era:'2010–14',         row:10, col:2, stream:'training' },
-    { id:'bahdanau',    label:'Attention Mechanism',                  short:'Bahdanau, Cho, Bengio 2014 — dynamic alignment breaks the bottleneck',                                   era:'2010–14',         row:10, col:7, stream:'neuro' },
-    { id:'batchnorm',   label:'Batch Normalization',                   short:'Ioffe & Szegedy 2015 — stabilize activations during training',                                          era:'2010–14',         row:10, col:4, stream:'training' },
-    { id:'gan',         label:'GANs',                                   short:'Goodfellow 2014 — generator vs discriminator, adversarial training',                                    era:'2010–14',         row:10, col:10, stream:'neuro' },
-    { id:'bitter',      label:'The Bitter Lesson',                    short:'Sutton 2019 — "general methods that leverage computation are ultimately the most effective"',              era:'2010–14',         row:10, col:0, stream:'culture' },
-    { id:'cross_ling',  label:'Cross-Lingual Embeddings',            short:'Mikolov 2013, Conneau 2018, Smith 2017 — one geometry across languages',                                  era:'2010–14',         row:10, col:9, stream:'language' },
-    { id:'scaling',     label:'Scaling Laws',                           short:'Kaplan et al. 2020 — loss ∝ N^α · D^β · C^γ, predictable improvement',                                 era:'2010–14',         row:10, col:1, stream:'neuro' },
+    { id:'word2vec',    label:'Word2Vec',                            short:'Mikolov et al. 2013 — king − man + woman ≈ queen, meaning as geometry',                         era:'2010–14',         row:10, col:8, stream:'language' },
+    { id:'relu',        label:'ReLU Activation',                     short:'Glorot, Nair & Hinton 2010–11 — max(0,x): death of vanishing gradients',                        era:'2010–14',         row:10, col:3, stream:'training' },
+    { id:'adam',        label:'Adam Optimizer',                      short:'Kingma & Ba 2014 — adaptive per-parameter learning rates',                                       era:'2010–14',         row:10, col:2, stream:'training' },
+    { id:'bahdanau',    label:'Attention Mechanism',                  short:'Bahdanau, Cho, Bengio 2014 — dynamic alignment breaks the bottleneck',                           era:'2010–14',         row:10, col:7, stream:'neuro' },
+    { id:'batchnorm',   label:'Batch Normalization',                  short:'Ioffe & Szegedy 2015 — stabilize activations during training',                                   era:'2010–14',         row:10, col:4, stream:'training' },
+    { id:'gan',         label:'GANs',                                 short:'Goodfellow 2014 — generator vs discriminator, adversarial training',                              era:'2010–14',         row:10, col:10, stream:'neuro' },
+    { id:'bitter',      label:'The Bitter Lesson',                    short:'Sutton 2019 — "general methods that leverage computation are ultimately the most effective"',     era:'2010–14',         row:10, col:0, stream:'culture' },
+    { id:'cross_ling',  label:'Cross-Lingual Embeddings',            short:'Mikolov 2013, Conneau 2018, Smith 2017 — one geometry across languages',                          era:'2010–14',         row:10, col:9, stream:'language' },
+    { id:'scaling',     label:'Scaling Laws',                         short:'Kaplan et al. 2020 — loss ∝ N^α · D^β · C^γ, predictable improvement',                           era:'2010–14',         row:10, col:1, stream:'neuro' },
 
     // ── Row 11: 2015–2018 ──
-    { id:'resnet',      label:'ResNet / Skip Connections',              short:'He et al. 2015 — residual stream, gradient superhighway, 152 layers',                                   era:'2015–18',         row:11, col:6, stream:'neuro' },
-    { id:'layernorm',   label:'Layer Normalization',                    short:'Ba, Kiros, Hinton 2016 — stable activations across sequence positions',                                  era:'2015–18',         row:11, col:3, stream:'training' },
-    { id:'sennrich',    label:'Subword NMT / BPE',                     short:'Sennrich, Haddow, Birch 2016 — BPE for neural machine translation',                                     era:'2015–18',         row:11, col:9, stream:'language' },
-    { id:'elmo',        label:'ELMo',                                    short:'Peters et al. 2018 — deep contextualized word representations',                                        era:'2015–18',         row:11, col:10, stream:'language' },
-    { id:'transformer', label:'Transformer',                             short:'Vaswani et al. 2017 — "Attention Is All You Need", multi-head self-attention',                         era:'2015–18',         row:11, col:5, stream:'neuro' },
-    { id:'moe',         label:'Mixture of Experts',                      short:'Shazeer et al. 2017 — sparsely-gated MoE, conditional computation',                                    era:'2015–18',         row:11, col:4, stream:'neuro' },
-    { id:'bert',        label:'BERT',                                    short:'Devlin et al. 2018 — bidirectional encoder, masked language modeling',                                  era:'2015–18',         row:11, col:7, stream:'neuro' },
-    { id:'gpt1',        label:'GPT-1',                                   short:'Radford et al. 2018 — "Improving Language Understanding by Generative Pre-Training"',                   era:'2015–18',         row:11, col:8, stream:'neuro' },
-    { id:'christiano',  label:'RLHF Conceived',                          short:'Christiano et al. 2017 — Deep RL from Human Preferences',                                              era:'2015–18',         row:11, col:1, stream:'culture' },
-    { id:'hubel_wiesel',label:'Hubel & Wiesel Legacy',                  short:'1962 — simple/complex cells in cat visual cortex → CNNs → ResNets',                                     era:'2015–18',         row:11, col:2, stream:'neuro' },
-    { id:'poincare',    label:'Poincaré Embeddings',                    short:'Nickel & Kiela 2017 — hyperbolic geometry for hierarchical representations',                             era:'2015–18',         row:11, col:0, stream:'math' },
+    { id:'resnet',      label:'ResNet / Skip Connections',            short:'He et al. 2015 — residual stream, gradient superhighway, 152 layers',                             era:'2015–18',         row:11, col:6, stream:'neuro' },
+    { id:'layernorm',   label:'Layer Normalization',                  short:'Ba, Kiros, Hinton 2016 — stable activations across sequence positions',                            era:'2015–18',         row:11, col:3, stream:'training' },
+    { id:'sennrich',    label:'Subword NMT / BPE',                   short:'Sennrich, Haddow, Birch 2016 — BPE for neural machine translation',                               era:'2015–18',         row:11, col:9, stream:'language' },
+    { id:'elmo',        label:'ELMo',                                 short:'Peters et al. 2018 — deep contextualized word representations',                                   era:'2015–18',         row:11, col:10, stream:'language' },
+    { id:'transformer', label:'Transformer',                          short:'Vaswani et al. 2017 — "Attention Is All You Need", multi-head self-attention',                    era:'2015–18',         row:11, col:5, stream:'neuro' },
+    { id:'moe',         label:'Mixture of Experts',                   short:'Shazeer et al. 2017 — sparsely-gated MoE, conditional computation',                               era:'2015–18',         row:11, col:4, stream:'neuro' },
+    { id:'bert',        label:'BERT',                                 short:'Devlin et al. 2018 — bidirectional encoder, masked language modeling',                             era:'2015–18',         row:11, col:7, stream:'neuro' },
+    { id:'gpt1',        label:'GPT-1',                                short:'Radford et al. 2018 — "Improving Language Understanding by Generative Pre-Training"',              era:'2015–18',         row:11, col:8, stream:'neuro' },
+    { id:'christiano',  label:'RLHF Conceived',                      short:'Christiano et al. 2017 — Deep RL from Human Preferences',                                         era:'2015–18',         row:11, col:1, stream:'culture' },
+    { id:'poincare',    label:'Poincaré Embeddings',                  short:'Nickel & Kiela 2017 — hyperbolic geometry for hierarchical representations',                       era:'2015–18',         row:11, col:0, stream:'math' },
 
     // ── Row 12: 2019–2021 ──
-    { id:'gpt2',        label:'GPT-2',                                   short:'Radford et al. 2019 — "Language Models are Unsupervised Multitask Learners"',                          era:'2019–21',         row:12, col:5, stream:'neuro' },
-    { id:'gpt3',        label:'GPT-3',                                   short:'Brown et al. 2020 — 175B parameters, few-shot learning, in-context learning',                          era:'2019–21',         row:12, col:6, stream:'neuro' },
-    { id:'circuits',    label:'Transformer Circuits',                    short:'Elhage et al. 2021 — "A Mathematical Framework for Transformer Circuits"',                              era:'2019–21',         row:12, col:3, stream:'neuro' },
-    { id:'induction',   label:'Induction Heads',                         short:'Olsson et al. 2022 — [A][B]…[A] → [B] pattern matching for in-context learning',                       era:'2019–21',         row:12, col:2, stream:'neuro' },
-    { id:'superposition',label:'Superposition',                          short:'Elhage et al. 2022 — "Toy Models of Superposition": more features than dimensions',                    era:'2019–21',         row:12, col:4, stream:'neuro' },
-    { id:'stochastic_p',label:'Stochastic Parrots',                     short:'Bender, Gebru et al. 2021 — "Can Language Models Be Too Big? 🦜"',                                     era:'2019–21',         row:12, col:9, stream:'culture' },
-    { id:'instructgpt', label:'InstructGPT / RLHF',                     short:'Ouyang et al. 2022 — training LMs to follow instructions with human feedback',                          era:'2019–21',         row:12, col:7, stream:'neuro' },
-    { id:'ffn_kv',      label:'FFN as Key-Value Memory',                short:'Geva et al. 2020 — "Transformer Feed-Forward Layers Are Key-Value Memories"',                           era:'2019–21',         row:12, col:1, stream:'neuro' },
-    { id:'grokking',    label:'Grokking',                                short:'Power et al. 2022 — generalization long after overfitting, phase transitions',                          era:'2019–21',         row:12, col:0, stream:'neuro' },
-    { id:'conneau',     label:'Cross-Lingual MUSE',                      short:'Conneau et al. 2018 — word translation without parallel data',                                         era:'2019–21',         row:12, col:10, stream:'language' },
+    { id:'gpt2',        label:'GPT-2',                                short:'Radford et al. 2019 — "Language Models are Unsupervised Multitask Learners"',                     era:'2019–21',         row:12, col:5, stream:'neuro' },
+    { id:'gpt3',        label:'GPT-3',                                short:'Brown et al. 2020 — 175B parameters, few-shot learning, in-context learning',                     era:'2019–21',         row:12, col:6, stream:'neuro' },
+    { id:'circuits',    label:'Transformer Circuits',                 short:'Elhage et al. 2021 — "A Mathematical Framework for Transformer Circuits"',                         era:'2019–21',         row:12, col:3, stream:'neuro' },
+    { id:'induction',   label:'Induction Heads',                      short:'Olsson et al. 2022 — [A][B]…[A] → [B] pattern matching for in-context learning',                  era:'2019–21',         row:12, col:2, stream:'neuro' },
+    { id:'superposition',label:'Superposition',                       short:'Elhage et al. 2022 — "Toy Models of Superposition": more features than dimensions',               era:'2019–21',         row:12, col:4, stream:'neuro' },
+    { id:'stochastic_p',label:'Stochastic Parrots',                   short:'Bender, Gebru et al. 2021 — "Can Language Models Be Too Big? 🦜"',                                era:'2019–21',         row:12, col:9, stream:'culture' },
+    { id:'instructgpt', label:'InstructGPT / RLHF',                   short:'Ouyang et al. 2022 — training LMs to follow instructions with human feedback',                    era:'2019–21',         row:12, col:7, stream:'neuro' },
+    { id:'ffn_kv',      label:'FFN as Key-Value Memory',              short:'Geva et al. 2020 — "Transformer Feed-Forward Layers Are Key-Value Memories"',                     era:'2019–21',         row:12, col:1, stream:'neuro' },
+    { id:'grokking',    label:'Grokking',                             short:'Power et al. 2022 — generalization long after overfitting, phase transitions',                     era:'2019–21',         row:12, col:0, stream:'neuro' },
+    { id:'conneau',     label:'Cross-Lingual MUSE',                   short:'Conneau et al. 2018 — word translation without parallel data',                                    era:'2019–21',         row:12, col:10, stream:'language' },
 
     // ── Row 13: 2022–2023 ──
-    { id:'chatgpt',     label:'ChatGPT',                                 short:'Nov 30, 2022 — conversational AI for everyone, 100M users in 2 months',                                era:'2022–23',         row:13, col:5, stream:'neuro' },
-    { id:'golden_gate', label:'Golden Gate Claude',                      short:'Templeton et al. 2024 — feature steering: "I am the Golden Gate Bridge"',                               era:'2022–23',         row:13, col:3, stream:'neuro' },
-    { id:'sparse_auto', label:'Sparse Autoencoders',                    short:'Cunningham et al. 2023 — finding interpretable features in language models',                              era:'2022–23',         row:13, col:4, stream:'neuro' },
-    { id:'sleeper',     label:'Sleeper Agents',                          short:'Hubinger et al. 2024 — deceptive LLMs that persist through safety training',                            era:'2022–23',         row:13, col:7, stream:'culture' },
-    { id:'reversal',    label:'Reversal Curse',                          short:'Berglund et al. 2023 — LLMs trained on "A is B" fail to learn "B is A"',                                era:'2022–23',         row:13, col:6, stream:'neuro' },
-    { id:'model_collapse',label:'Model Collapse',                       short:'Shumailov et al. 2023 — training on generated data makes models forget',                                 era:'2022–23',         row:13, col:8, stream:'culture' },
-    { id:'truth_decay', label:'Truth Decay / Deepfakes',                short:'Kavanagh 2018, Chesney 2019, Spring 2024 — epistemic crisis',                                            era:'2022–23',         row:13, col:9, stream:'culture' },
-    { id:'water',       label:'AI Environmental Cost',                   short:'Li et al. 2023 — GPT-3 training: 700k liters of water',                                                 era:'2022–23',         row:13, col:10, stream:'culture' },
-    { id:'glitch',      label:'Glitch Tokens',                           short:'Zhou et al. 2024 — anomalous tokens that break model behavior',                                         era:'2022–23',         row:13, col:2, stream:'neuro' },
-    { id:'waluigi',     label:'Waluigi Effect',                          short:'Nardo 2023 — jailbreaks as anti-simulacra, the shadow of RLHF',                                         era:'2022–23',         row:13, col:1, stream:'culture' },
+    { id:'chatgpt',     label:'ChatGPT',                              short:'Nov 30, 2022 — conversational AI for everyone, 100M users in 2 months',                           era:'2022–23',         row:13, col:5, stream:'neuro' },
+    { id:'golden_gate', label:'Golden Gate Claude',                    short:'Templeton et al. 2024 — feature steering: "I am the Golden Gate Bridge"',                         era:'2022–23',         row:13, col:3, stream:'neuro' },
+    { id:'sparse_auto', label:'Sparse Autoencoders',                  short:'Cunningham et al. 2023 — finding interpretable features in language models',                       era:'2022–23',         row:13, col:4, stream:'neuro' },
+    { id:'sleeper',     label:'Sleeper Agents',                       short:'Hubinger et al. 2024 — deceptive LLMs that persist through safety training',                      era:'2022–23',         row:13, col:7, stream:'culture' },
+    { id:'reversal',    label:'Reversal Curse',                       short:'Berglund et al. 2023 — LLMs trained on "A is B" fail to learn "B is A"',                          era:'2022–23',         row:13, col:6, stream:'neuro' },
+    { id:'model_collapse',label:'Model Collapse',                     short:'Shumailov et al. 2023 — training on generated data makes models forget',                           era:'2022–23',         row:13, col:8, stream:'culture' },
+    { id:'truth_decay', label:'Truth Decay / Deepfakes',              short:'Kavanagh 2018, Chesney 2019, Spring 2024 — epistemic crisis',                                     era:'2022–23',         row:13, col:9, stream:'culture' },
+    { id:'water',       label:'AI Environmental Cost',                short:'Li et al. 2023 — GPT-3 training: 700k liters of water',                                            era:'2022–23',         row:13, col:10, stream:'culture' },
+    { id:'glitch',      label:'Glitch Tokens',                        short:'Zhou et al. 2024 — anomalous tokens that break model behavior',                                    era:'2022–23',         row:13, col:2, stream:'neuro' },
+    { id:'waluigi',     label:'Waluigi Effect',                       short:'Nardo 2023 — jailbreaks as anti-simulacra, the shadow of RLHF',                                    era:'2022–23',         row:13, col:1, stream:'culture' },
 
     // ── Row 14: Now & Beyond ──
-    { id:'mechinterp',  label:'Mechanistic Interpretability',           short:'Olah, Elhage, Nanda et al. — circuits, features, superposition, polysemanticity',                        era:'Now & Beyond',    row:14, col:4, stream:'neuro' },
-    { id:'platonic',    label:'Platonic Representations',               short:'Huh et al. 2024 — all models converge toward one geometry of reality',                                    era:'Now & Beyond',    row:14, col:5, stream:'neuro' },
-    { id:'geometry_truth',label:'Geometry of Truth',                    short:'Marks 2024 — emergent linear structure in LLM representations of true/false',                              era:'Now & Beyond',    row:14, col:6, stream:'neuro' },
-    { id:'robotics',    label:'Robotics',                                short:'Embodied intelligence — a different tributary from the same river',                                       era:'Now & Beyond',    row:14, col:0, stream:'hardware' },
-    { id:'crypto',      label:'Cryptography',                            short:'Turing → Thompson 1984 → modern crypto — trust in computation',                                          era:'Now & Beyond',    row:14, col:1, stream:'logic' },
-    { id:'compbio',     label:'Computational Biology',                   short:'Statistics + computation → genomics, protein folding, drug discovery',                                    era:'Now & Beyond',    row:14, col:2, stream:'stats' },
-    { id:'diffusion',   label:'Diffusion Models',                        short:'Image/video/audio generation — a sibling architecture from the same math',                                era:'Now & Beyond',    row:14, col:7, stream:'neuro' },
-    { id:'alignment',   label:'AI Alignment',                            short:'Bostrom 2003/2012, Christiano 2017 — the control problem',                                               era:'Now & Beyond',    row:14, col:8, stream:'culture' },
-    { id:'acult',       label:'AI in Culture & Ethics',                  short:'Crawford 2021, O\'Neil 2016, Frankfurt 2005 — power, bias, bullshit',                                    era:'Now & Beyond',    row:14, col:9, stream:'culture' },
-    { id:'tpu',         label:'AI Accelerators / TPUs',                  short:'Custom silicon for matrix multiply — the hardware lottery (Hooker 2020)',                                  era:'Now & Beyond',    row:14, col:10, stream:'hardware' },
-    { id:'geometric_dl',label:'Geometric Deep Learning',                short:'Bronstein et al. 2021 — grids, groups, graphs, geodesics, gauges',                                        era:'Now & Beyond',    row:14, col:3, stream:'math' },
+    { id:'mechinterp',  label:'Mechanistic Interpretability',         short:'Olah, Elhage, Nanda et al. — circuits, features, superposition, polysemanticity',                  era:'Now & Beyond',    row:14, col:4, stream:'neuro' },
+    { id:'platonic',    label:'Platonic Representations',             short:'Huh et al. 2024 — all models converge toward one geometry of reality',                              era:'Now & Beyond',    row:14, col:5, stream:'neuro' },
+    { id:'geometry_truth',label:'Geometry of Truth',                  short:'Marks 2024 — emergent linear structure in LLM representations of true/false',                       era:'Now & Beyond',    row:14, col:6, stream:'neuro' },
+    { id:'robotics',    label:'Robotics',                             short:'Embodied intelligence — a different tributary from the same river',                                  era:'Now & Beyond',    row:14, col:0, stream:'hardware' },
+    { id:'crypto',      label:'Cryptography',                         short:'Turing → Thompson 1984 → modern crypto — trust in computation',                                     era:'Now & Beyond',    row:14, col:1, stream:'logic' },
+    { id:'compbio',     label:'Computational Biology',                short:'Statistics + computation → genomics, protein folding, drug discovery',                               era:'Now & Beyond',    row:14, col:2, stream:'stats' },
+    { id:'diffusion',   label:'Diffusion Models',                     short:'Image/video/audio generation — a sibling architecture from the same math',                           era:'Now & Beyond',    row:14, col:7, stream:'neuro' },
+    { id:'alignment',   label:'AI Alignment',                         short:'Bostrom 2003/2012, Christiano 2017 — the control problem',                                          era:'Now & Beyond',    row:14, col:8, stream:'culture' },
+    { id:'acult',       label:'AI in Culture & Ethics',               short:'Crawford 2021, O\'Neil 2016, Frankfurt 2005 — power, bias, bullshit',                               era:'Now & Beyond',    row:14, col:9, stream:'culture' },
+    { id:'tpu',         label:'AI Accelerators / TPUs',               short:'Custom silicon for matrix multiply — the hardware lottery (Hooker 2020)',                             era:'Now & Beyond',    row:14, col:10, stream:'hardware' },
+    { id:'geometric_dl',label:'Geometric Deep Learning',              short:'Bronstein et al. 2021 — grids, groups, graphs, geodesics, gauges',                                   era:'Now & Beyond',    row:14, col:3, stream:'math' },
   ];
 
   /* ═══════════════════════════════════════════════════════
-     EDGES
+     EDGES — MORE CONNECTIONS added for richer interconnection
      ═══════════════════════════════════════════════════════ */
   const EDGES = [
     // ── Math ──
@@ -382,6 +381,16 @@
     { from:'linnainmaa', to:'backprop', stream:'math' },
     { from:'poincare', to:'geometric_dl', stream:'math' },
     { from:'kolmogorov', to:'shannon', stream:'math' },
+    // NEW math connections
+    { from:'tally', to:'cave', stream:'math' },
+    { from:'napier', to:'gunter', stream:'math' },
+    { from:'cayley', to:'euler', stream:'math' },
+    { from:'euler', to:'cayley', stream:'math' },
+    { from:'gauss', to:'hilbert', stream:'math' },
+    { from:'kolmogorov', to:'fisher', stream:'math' },
+    { from:'hilbert', to:'kolmogorov', stream:'math' },
+    { from:'geometric_dl', to:'platonic', stream:'math' },
+    { from:'descartes', to:'cayley', stream:'math' },
 
     // ── Logic ──
     { from:'euclid', to:'aristotle', stream:'logic' },
@@ -397,6 +406,14 @@
     { from:'turing', to:'shannon', stream:'logic' },
     { from:'turing', to:'crypto', stream:'logic' },
     { from:'deepblue', to:'bitter', stream:'logic' },
+    // NEW logic connections
+    { from:'aristotle', to:'euclid', stream:'logic' },
+    { from:'boole', to:'mcculloch', stream:'logic' },
+    { from:'turing', to:'dartmouth', stream:'logic' },
+    { from:'godel', to:'wiener', stream:'logic' },
+    { from:'frege', to:'godel', stream:'logic' },
+    { from:'leibniz_logic', to:'frege', stream:'logic' },
+    { from:'deepblue', to:'chatgpt', stream:'logic' },
 
     // ── Hardware ──
     { from:'stone_tools', to:'antikythera', stream:'hardware' },
@@ -415,6 +432,16 @@
     { from:'arpanet', to:'www', stream:'hardware' },
     { from:'fiber', to:'arpanet', stream:'hardware' },
     { from:'torch', to:'alexnet', stream:'hardware' },
+    // NEW hardware connections
+    { from:'zuse', to:'vonneumann', stream:'hardware' },
+    { from:'vonneumann', to:'arpanet', stream:'hardware' },
+    { from:'moore', to:'arpanet', stream:'hardware' },
+    { from:'fiber', to:'www', stream:'hardware' },
+    { from:'gpu_early', to:'torch', stream:'hardware' },
+    { from:'cuda', to:'torch', stream:'hardware' },
+    { from:'tpu', to:'robotics', stream:'hardware' },
+    { from:'babbage', to:'faraday', stream:'hardware' },
+    { from:'loom', to:'printing', stream:'hardware' },
 
     // ── Stats ──
     { from:'devtula', to:'fermat', stream:'stats' },
@@ -432,6 +459,16 @@
     { from:'zipf', to:'bpe', stream:'stats' },
     { from:'gauss', to:'compbio', stream:'stats' },
     { from:'glm', to:'bengio_nlm', stream:'stats' },
+    // NEW stats connections
+    { from:'bernoulli', to:'kolmogorov', stream:'stats' },
+    { from:'fisher', to:'ridge_lasso', stream:'stats' },
+    { from:'boltzmann', to:'boltzmann_m', stream:'stats' },
+    { from:'galton', to:'fisher', stream:'stats' },
+    { from:'kl_div', to:'instructgpt', stream:'stats' },
+    { from:'zipf', to:'jelinek', stream:'stats' },
+    { from:'markov', to:'bengio_nlm', stream:'stats' },
+    { from:'shannon', to:'chomsky', stream:'stats' },
+    { from:'fisher', to:'kl_div', stream:'stats' },
 
     // ── Neuro / AI ──
     { from:'cajal', to:'mcculloch', stream:'neuro' },
@@ -480,6 +517,23 @@
     { from:'gan', to:'diffusion', stream:'neuro' },
     { from:'platonic', to:'geometry_truth', stream:'neuro' },
     { from:'snarc', to:'perceptron', stream:'neuro' },
+    // NEW neuro connections
+    { from:'hebb', to:'backprop', stream:'neuro' },
+    { from:'boltzmann_m', to:'hinton_dbn', stream:'neuro' },
+    { from:'lstm', to:'elmo', stream:'neuro' },
+    { from:'lenet', to:'batchnorm', stream:'neuro' },
+    { from:'resnet', to:'bert', stream:'neuro' },
+    { from:'bert', to:'gpt2', stream:'neuro' },
+    { from:'gpt3', to:'chatgpt', stream:'neuro' },
+    { from:'backprop', to:'relu', stream:'neuro' },
+    { from:'vanishing', to:'relu', stream:'neuro' },
+    { from:'hinton_dbn', to:'boltzmann_m', stream:'neuro' },
+    { from:'alexnet', to:'gan', stream:'neuro' },
+    { from:'circuits', to:'superposition', stream:'neuro' },
+    { from:'golden_gate', to:'mechinterp', stream:'neuro' },
+    { from:'reversal', to:'mechinterp', stream:'neuro' },
+    { from:'diffusion', to:'platonic', stream:'neuro' },
+    { from:'scaling', to:'bitter', stream:'neuro' },
 
     // ── Training ──
     { from:'sgd', to:'adam', stream:'training' },
@@ -488,6 +542,15 @@
     { from:'layernorm', to:'transformer', stream:'training' },
     { from:'dropout', to:'alexnet', stream:'training' },
     { from:'adam', to:'transformer', stream:'training' },
+    // NEW training connections
+    { from:'sgd', to:'backprop', stream:'training' },
+    { from:'sgd', to:'relu', stream:'training' },
+    { from:'dropout', to:'batchnorm', stream:'training' },
+    { from:'adam', to:'bert', stream:'training' },
+    { from:'layernorm', to:'bert', stream:'training' },
+    { from:'batchnorm', to:'layernorm', stream:'training' },
+    { from:'relu', to:'resnet', stream:'training' },
+    { from:'dropout', to:'lstm', stream:'training' },
 
     // ── Language ──
     { from:'language0', to:'writing', stream:'language' },
@@ -506,6 +569,17 @@
     { from:'jelinek', to:'bengio_nlm', stream:'language' },
     { from:'elmo', to:'bert', stream:'language' },
     { from:'jelinek2', to:'word2vec', stream:'language' },
+    // NEW language connections
+    { from:'panini', to:'chomsky', stream:'language' },
+    { from:'chomsky', to:'jelinek', stream:'language' },
+    { from:'firth', to:'word2vec', stream:'language' },
+    { from:'writing', to:'printing', stream:'language' },
+    { from:'sennrich', to:'bert', stream:'language' },
+    { from:'sennrich', to:'gpt1', stream:'language' },
+    { from:'word2vec', to:'elmo', stream:'language' },
+    { from:'conneau', to:'bert', stream:'language' },
+    { from:'bpe', to:'jelinek', stream:'language' },
+    { from:'language0', to:'cave', stream:'language' },
 
     // ── Culture ──
     { from:'cave', to:'writing', stream:'culture' },
@@ -526,10 +600,56 @@
     { from:'sleeper', to:'alignment', stream:'culture' },
     { from:'bitter', to:'scaling', stream:'culture' },
     { from:'waluigi', to:'alignment', stream:'culture' },
+    // NEW culture connections
+    { from:'plato', to:'platonic', stream:'culture' },
+    { from:'heraclitus', to:'boltzmann', stream:'culture' },
+    { from:'printing', to:'www', stream:'culture' },
+    { from:'eliza', to:'chatgpt', stream:'culture' },
+    { from:'lighthill', to:'bitter', stream:'culture' },
+    { from:'model_collapse', to:'alignment', stream:'culture' },
+    { from:'truth_decay', to:'alignment', stream:'culture' },
+    { from:'cave', to:'heraclitus', stream:'culture' },
+    { from:'wiener', to:'mcculloch', stream:'culture' },
+    { from:'stochastic_p', to:'acult', stream:'culture' },
+    { from:'water', to:'acult', stream:'culture' },
+    { from:'christiano', to:'waluigi', stream:'culture' },
+
+    // ── Cross-stream connections (NEW) ──
+    { from:'boole', to:'cajal', stream:'logic' },
+    { from:'turing', to:'mcculloch', stream:'logic' },
+    { from:'babbage', to:'boole', stream:'hardware' },
+    { from:'shannon', to:'firth', stream:'stats' },
+    { from:'boltzmann', to:'boltzmann_m', stream:'stats' },
+    { from:'cayley', to:'mcculloch', stream:'math' },
+    { from:'plato', to:'godel', stream:'culture' },
+    { from:'leibniz_calc', to:'linnainmaa', stream:'math' },
+    { from:'newton', to:'gauss', stream:'math' },
+    { from:'fermat', to:'kolmogorov', stream:'stats' },
+    { from:'saussure', to:'firth', stream:'language' },
+    { from:'wiener', to:'hebb', stream:'neuro' },
+    { from:'cajal', to:'hubel_wiesel', stream:'neuro' },
+    { from:'eliza', to:'lighthill', stream:'culture' },
+    { from:'turing', to:'eliza', stream:'logic' },
+    { from:'hebb', to:'perceptron', stream:'neuro' },
+    { from:'glm', to:'relu', stream:'stats' },
+    { from:'markov', to:'lstm', stream:'stats' },
+    { from:'zipf', to:'word2vec', stream:'stats' },
+    { from:'commoncrawl', to:'stochastic_p', stream:'culture' },
+    { from:'gpt3', to:'reversal', stream:'neuro' },
+    { from:'gpt3', to:'grokking', stream:'neuro' },
+    { from:'instructgpt', to:'waluigi', stream:'culture' },
+    { from:'instructgpt', to:'sleeper', stream:'culture' },
+    { from:'glitch', to:'mechinterp', stream:'neuro' },
+    { from:'sparse_auto', to:'mechinterp', stream:'neuro' },
+    { from:'geometry_truth', to:'mechinterp', stream:'neuro' },
+    { from:'alignment', to:'acult', stream:'culture' },
+    { from:'compbio', to:'diffusion', stream:'stats' },
+    { from:'crypto', to:'alignment', stream:'logic' },
   ];
 
   /* ═══════════════════════════════════════════════════════
      RENDERING — VERTICAL (top = earliest, bottom = now)
+     More spacing: larger row/col gaps, bigger node radius
      ═══════════════════════════════════════════════════════ */
   const svg = document.getElementById('river-svg');
   const tooltip = document.getElementById('river-tooltip');
@@ -537,12 +657,12 @@
 
   const TOTAL_ROWS = 15;
   const TOTAL_COLS = 11;
-  const PAD = { top: 50, bottom: 60, left: 40, right: 40 };
-  const NODE_R = 22;
+  const PAD = { top: 70, bottom: 80, left: 60, right: 60 };
+  const NODE_R = 26;
 
   function calcSize() {
-    const w = Math.max(900, container.clientWidth - 16);
-    const h = Math.max(1800, TOTAL_ROWS * 130 + PAD.top + PAD.bottom);
+    const w = Math.max(1000, container.clientWidth - 16);
+    const h = Math.max(2200, TOTAL_ROWS * 155 + PAD.top + PAD.bottom);
     return { w, h };
   }
   function colX(col) {
@@ -576,8 +696,113 @@
       <filter id="text-bg" x="-0.05" y="-0.05" width="1.1" height="1.1">
         <feFlood flood-color="#fafbfd" flood-opacity="0.85" result="bg"/>
         <feMerge><feMergeNode in="bg"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>`;
+      </filter>
+      <pattern id="border-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+        <circle cx="2" cy="2" r="0.8" fill="rgba(30,58,95,0.08)"/>
+      </pattern>`;
     svg.appendChild(defs);
+
+    // ── Decorative border frame ──
+    const borderRect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    borderRect.setAttribute('x', 12);
+    borderRect.setAttribute('y', 12);
+    borderRect.setAttribute('width', w - 24);
+    borderRect.setAttribute('height', h - 24);
+    borderRect.setAttribute('rx', 16);
+    borderRect.setAttribute('fill', 'none');
+    borderRect.setAttribute('stroke', 'rgba(30,58,95,0.06)');
+    borderRect.setAttribute('stroke-width', '1.5');
+    borderRect.setAttribute('stroke-dasharray', '8,4');
+    svg.appendChild(borderRect);
+
+    // Inner dotted border
+    const innerBorder = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    innerBorder.setAttribute('x', 24);
+    innerBorder.setAttribute('y', 24);
+    innerBorder.setAttribute('width', w - 48);
+    innerBorder.setAttribute('height', h - 48);
+    innerBorder.setAttribute('rx', 12);
+    innerBorder.setAttribute('fill', 'url(#border-dots)');
+    innerBorder.setAttribute('stroke', 'none');
+    innerBorder.setAttribute('opacity', '0.5');
+    svg.appendChild(innerBorder);
+
+    // ── Corner ornaments ──
+    const cornerSize = 30;
+    const corners = [
+      { x: 18, y: 18, sx: 1, sy: 1 },
+      { x: w - 18, y: 18, sx: -1, sy: 1 },
+      { x: 18, y: h - 18, sx: 1, sy: -1 },
+      { x: w - 18, y: h - 18, sx: -1, sy: -1 },
+    ];
+    corners.forEach(({ x, y, sx, sy }) => {
+      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d', `M${x},${y + sy * cornerSize} L${x},${y} L${x + sx * cornerSize},${y}`);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', 'rgba(30,58,95,0.12)');
+      path.setAttribute('stroke-width', '2');
+      path.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(path);
+      // Small diamond at corner
+      const diamond = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      const ds = 4;
+      diamond.setAttribute('points', `${x},${y-ds} ${x+ds},${y} ${x},${y+ds} ${x-ds},${y}`);
+      diamond.setAttribute('fill', 'rgba(30,58,95,0.1)');
+      svg.appendChild(diamond);
+    });
+
+    // ── Timeline markers along right border ──
+    const timelineX = w - 30;
+    const eraLabelsTimeline = [
+      { row: 0, label: '~3M BCE' },
+      { row: 1, label: '~500 BCE' },
+      { row: 2, label: '~1000 CE' },
+      { row: 3, label: '~1600' },
+      { row: 4, label: '~1850' },
+      { row: 5, label: '~1930' },
+      { row: 6, label: '~1950' },
+      { row: 7, label: '~1970' },
+      { row: 8, label: '~1990' },
+      { row: 9, label: '~2005' },
+      { row: 10, label: '~2012' },
+      { row: 11, label: '~2017' },
+      { row: 12, label: '~2020' },
+      { row: 13, label: '~2023' },
+      { row: 14, label: 'Now →' },
+    ];
+    // Timeline vertical line
+    const tlLine = document.createElementNS('http://www.w3.org/2000/svg','line');
+    tlLine.setAttribute('x1', timelineX);
+    tlLine.setAttribute('y1', rowY(0) - 10);
+    tlLine.setAttribute('x2', timelineX);
+    tlLine.setAttribute('y2', rowY(14) + 10);
+    tlLine.setAttribute('stroke', 'rgba(30,58,95,0.08)');
+    tlLine.setAttribute('stroke-width', '1');
+    svg.appendChild(tlLine);
+
+    eraLabelsTimeline.forEach(({ row, label }) => {
+      const y = rowY(row);
+      // Tick mark
+      const tick = document.createElementNS('http://www.w3.org/2000/svg','line');
+      tick.setAttribute('x1', timelineX - 5);
+      tick.setAttribute('y1', y);
+      tick.setAttribute('x2', timelineX + 5);
+      tick.setAttribute('y2', y);
+      tick.setAttribute('stroke', 'rgba(30,58,95,0.12)');
+      tick.setAttribute('stroke-width', '1.5');
+      svg.appendChild(tick);
+      // Label
+      const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+      txt.setAttribute('x', timelineX);
+      txt.setAttribute('y', y - 8);
+      txt.setAttribute('text-anchor', 'middle');
+      txt.setAttribute('fill', 'rgba(30,58,95,0.18)');
+      txt.setAttribute('font-size', '9');
+      txt.setAttribute('font-family', 'inherit');
+      txt.setAttribute('font-weight', '600');
+      txt.textContent = label;
+      svg.appendChild(txt);
+    });
 
     // ── Era bands (horizontal stripes) ──
     const eras = [...new Set(NODES.map(n => n.era))];
@@ -603,7 +828,7 @@
 
       // Era label on left
       const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
-      txt.setAttribute('x', 14);
+      txt.setAttribute('x', 34);
       txt.setAttribute('y', (y0 + y1) / 2);
       txt.setAttribute('text-anchor', 'start');
       txt.setAttribute('dominant-baseline', 'middle');
@@ -612,7 +837,7 @@
       txt.setAttribute('font-family', 'inherit');
       txt.setAttribute('font-weight', '600');
       txt.setAttribute('writing-mode', 'vertical-rl');
-      txt.setAttribute('transform', `rotate(180, 14, ${(y0+y1)/2})`);
+      txt.setAttribute('transform', `rotate(180, 34, ${(y0+y1)/2})`);
       txt.textContent = era;
       svg.appendChild(txt);
       eraIdx++;
@@ -627,7 +852,6 @@
       const x2 = colX(to.col),   y2 = rowY(to.row);
       const my = (y1 + y2) / 2;
       const dx = (x2 - x1) * 0.12;
-      // Vertical bezier
       const d = `M${x1},${y1} C${x1 + dx},${my} ${x2 - dx},${my} ${x2},${y2}`;
       const color = STREAMS[e.stream]?.color || '#999';
 
@@ -666,7 +890,7 @@
       const cGlow = document.createElementNS('http://www.w3.org/2000/svg','circle');
       cGlow.setAttribute('cx', cx);
       cGlow.setAttribute('cy', cy);
-      cGlow.setAttribute('r', NODE_R + 4);
+      cGlow.setAttribute('r', NODE_R + 5);
       cGlow.setAttribute('fill', color);
       cGlow.setAttribute('opacity', '0.07');
       cGlow.setAttribute('filter', 'url(#glow-strong)');
@@ -684,25 +908,25 @@
 
       // Label — multiline word wrap
       const label = n.label;
-      const maxChars = 12;
+      const maxChars = 13;
       const lines = [];
       if (label.length <= maxChars) {
         lines.push(label);
       } else {
         const words = label.split(/[\s/]+/);
         let cur = '';
-        for (const w of words) {
-          if ((cur + ' ' + w).trim().length > maxChars && cur) {
+        for (const wrd of words) {
+          if ((cur + ' ' + wrd).trim().length > maxChars && cur) {
             lines.push(cur);
-            cur = w;
+            cur = wrd;
           } else {
-            cur = cur ? cur + ' ' + w : w;
+            cur = cur ? cur + ' ' + wrd : wrd;
           }
         }
         if (cur) lines.push(cur);
         if (lines.length > 2) {
           lines.length = 2;
-          lines[1] = lines[1].slice(0, 9) + '…';
+          lines[1] = lines[1].slice(0, 10) + '…';
         }
       }
 
@@ -710,7 +934,7 @@
       textGroup.setAttribute('x', cx);
       textGroup.setAttribute('text-anchor', 'middle');
       textGroup.setAttribute('fill', color);
-      textGroup.setAttribute('font-size', '8.5');
+      textGroup.setAttribute('font-size', '9');
       textGroup.setAttribute('font-weight', '700');
       textGroup.setAttribute('font-family', 'inherit');
       textGroup.setAttribute('filter', 'url(#text-bg)');
@@ -718,8 +942,8 @@
       lines.forEach((line, i) => {
         const tspan = document.createElementNS('http://www.w3.org/2000/svg','tspan');
         tspan.setAttribute('x', cx);
-        const baseY = cy - ((lines.length - 1) * 5);
-        tspan.setAttribute('y', baseY + i * 10);
+        const baseY = cy - ((lines.length - 1) * 5.5);
+        tspan.setAttribute('y', baseY + i * 11);
         tspan.textContent = line;
         textGroup.appendChild(tspan);
       });
@@ -754,55 +978,70 @@
     });
 
     // ── "More beyond" arrows at top and bottom ──
-    // Top: fading upward arrows to suggest prehistory continues
-    for (let i = 0; i < 5; i++) {
-      const x = PAD.left + (i / 4) * (w - PAD.left - PAD.right);
-      const arrow = document.createElementNS('http://www.w3.org/2000/svg','text');
-      arrow.setAttribute('x', x);
-      arrow.setAttribute('y', 18);
-      arrow.setAttribute('text-anchor', 'middle');
-      arrow.setAttribute('fill', '#c8d6e5');
-      arrow.setAttribute('font-size', '14');
-      arrow.setAttribute('opacity', 0.15 + Math.random() * 0.15);
-      arrow.textContent = '⋮';
-      svg.appendChild(arrow);
-    }
-    // Bottom: fading downward arrows to suggest the future continues
     for (let i = 0; i < 7; i++) {
       const x = PAD.left + (i / 6) * (w - PAD.left - PAD.right);
       const arrow = document.createElementNS('http://www.w3.org/2000/svg','text');
       arrow.setAttribute('x', x);
-      arrow.setAttribute('y', h - 12);
+      arrow.setAttribute('y', 22);
       arrow.setAttribute('text-anchor', 'middle');
-      arrow.setAttribute('fill', '#8a9bb5');
-      arrow.setAttribute('font-size', '16');
-      arrow.setAttribute('opacity', 0.15 + Math.random() * 0.2);
+      arrow.setAttribute('fill', '#c8d6e5');
+      arrow.setAttribute('font-size', '14');
+      arrow.setAttribute('opacity', 0.12 + Math.random() * 0.15);
       arrow.textContent = '⋮';
       svg.appendChild(arrow);
     }
-    // Side whiskers — faded lines going off left and right edges
-    const whiskerRows = [0, 2, 5, 8, 11, 14];
+    for (let i = 0; i < 9; i++) {
+      const x = PAD.left + (i / 8) * (w - PAD.left - PAD.right);
+      const arrow = document.createElementNS('http://www.w3.org/2000/svg','text');
+      arrow.setAttribute('x', x);
+      arrow.setAttribute('y', h - 16);
+      arrow.setAttribute('text-anchor', 'middle');
+      arrow.setAttribute('fill', '#8a9bb5');
+      arrow.setAttribute('font-size', '16');
+      arrow.setAttribute('opacity', 0.12 + Math.random() * 0.2);
+      arrow.textContent = '⋮';
+      svg.appendChild(arrow);
+    }
+
+    // ── Side whiskers — faded lines going off left and right edges ──
+    const whiskerRows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
     whiskerRows.forEach(r => {
       const y = rowY(r);
       // Left whisker
       const lw = document.createElementNS('http://www.w3.org/2000/svg','line');
       lw.setAttribute('x1', 0); lw.setAttribute('y1', y);
-      lw.setAttribute('x2', PAD.left - 10); lw.setAttribute('y2', y + (Math.random()-0.5)*30);
+      lw.setAttribute('x2', PAD.left - 15); lw.setAttribute('y2', y + (Math.random()-0.5)*40);
       lw.setAttribute('stroke', '#c8d6e5');
-      lw.setAttribute('stroke-width', '1.5');
-      lw.setAttribute('opacity', '0.15');
+      lw.setAttribute('stroke-width', '1.2');
+      lw.setAttribute('opacity', '0.10');
       lw.setAttribute('stroke-dasharray', '4,6');
       svg.appendChild(lw);
       // Right whisker
       const rw = document.createElementNS('http://www.w3.org/2000/svg','line');
-      rw.setAttribute('x1', w - PAD.right + 10); rw.setAttribute('y1', y);
-      rw.setAttribute('x2', w); rw.setAttribute('y2', y + (Math.random()-0.5)*30);
+      rw.setAttribute('x1', w - PAD.right + 15); rw.setAttribute('y1', y);
+      rw.setAttribute('x2', w); rw.setAttribute('y2', y + (Math.random()-0.5)*40);
       rw.setAttribute('stroke', '#c8d6e5');
-      rw.setAttribute('stroke-width', '1.5');
-      rw.setAttribute('opacity', '0.15');
+      rw.setAttribute('stroke-width', '1.2');
+      rw.setAttribute('opacity', '0.10');
       rw.setAttribute('stroke-dasharray', '4,6');
       svg.appendChild(rw);
     });
+
+    // ── Border decorative dots along edges ──
+    for (let i = 0; i < 30; i++) {
+      const side = Math.floor(Math.random() * 4);
+      let bx, by;
+      if (side === 0) { bx = 6 + Math.random() * 10; by = Math.random() * h; }       // left
+      else if (side === 1) { bx = w - 6 - Math.random() * 10; by = Math.random() * h; } // right
+      else if (side === 2) { bx = Math.random() * w; by = 6 + Math.random() * 10; }     // top
+      else { bx = Math.random() * w; by = h - 6 - Math.random() * 10; }                  // bottom
+      const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      dot.setAttribute('cx', bx);
+      dot.setAttribute('cy', by);
+      dot.setAttribute('r', 1 + Math.random() * 1.5);
+      dot.setAttribute('fill', 'rgba(30,58,95,0.06)');
+      svg.appendChild(dot);
+    }
   }
 
   /* ═══════════════════════════════════════════════════════
@@ -819,13 +1058,10 @@
     let x = ev.clientX - rect.left + gap;
     let y = ev.clientY - rect.top + gap;
 
-    // Flip left
     if (x + ttW > container.clientWidth - 12) {
       x = ev.clientX - rect.left - ttW - gap;
     }
     if (x < 8) x = 8;
-
-    // Flip up
     if (y + ttH > container.clientHeight - 12) {
       y = ev.clientY - rect.top - ttH - gap;
     }
@@ -885,15 +1121,14 @@
   }
 
   function highlightConnected(nodeId) {
-    // 2-hop neighborhood to show interconnectedness
     const { nodes: connectedNodes, edges: connectedEdges } = getConnected(nodeId, 2);
-    // 1-hop for brighter highlight
     const { nodes: directNodes, edges: directEdges } = getConnected(nodeId, 1);
 
-    // Edges
     const paths = svg.querySelectorAll('path');
     let pathIdx = 0;
     EDGES.forEach((e, i) => {
+      // Skip non-edge paths (border frame, corner ornaments, etc.)
+      // We need to count only edge paths: each edge = 2 paths (glow + main)
       const glow = paths[pathIdx];
       const main = paths[pathIdx + 1];
       if (directEdges.has(i)) {
@@ -909,7 +1144,6 @@
       pathIdx += 2;
     });
 
-    // Nodes
     const nodeGroups = svg.querySelectorAll('.river-node');
     nodeGroups.forEach((g, i) => {
       if (i < NODES.length) {
