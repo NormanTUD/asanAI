@@ -141,6 +141,130 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
 </div>
 
 <div class="md">
+#### How to Calculate with the Normal Distribution
+
+Just as we learned to calculate exact probabilities with the Binomial formula $\binom{n}{k} p^k (1-p)^{n-k}$, we can calculate with the Gauß distribution. However, there is one crucial difference: the Normal Distribution is **continuous**, so we never ask "What is the probability of *exactly* $x$?" (that is always 0 for a continuous variable). Instead, we ask: **"What is the probability that $X$ falls within a range?"**
+
+##### Step 1: Know Your Parameters
+
+Every Normal Distribution is fully defined by just two numbers:
+- **$\mu$ (Mean):** The center of the bell curve.
+- **$\sigma$ (Standard Deviation):** The width/spread of the curve.
+
+$$X \sim \mathcal{N}(\mu, \sigma^2)$$
+
+##### Step 2: Standardize with the Z-Score
+
+To look up probabilities, we convert any value $x$ into a **Z-score**, which tells us how many standard deviations $x$ is from the mean:
+
+$$z = \frac{x - \mu}{\sigma}$$
+
+This transforms *any* Normal Distribution into the **Standard Normal Distribution** $\mathcal{N}(0, 1)$, which has $\mu = 0$ and $\sigma = 1$. This is the key trick: instead of needing a different table for every possible $\mu$ and $\sigma$, we only ever need one table.
+
+##### Step 3: Use the $\Phi$-Table (CDF)
+
+The cumulative distribution function $\Phi(z)$ gives the probability that a standard normal variable is **less than or equal to** $z$:
+
+$$\Phi(z) = P(Z \leq z) = \int_{-\infty}^{z} \frac{1}{\sqrt{2\pi}} e^{-\frac{t^2}{2}} \, dt$$
+
+You look up $\Phi(z)$ in a standard normal table or use a calculator. Some key values to remember:
+
+$$
+\begin{array}{c|c}
+z & \Phi(z) \\
+\hline
+-3.0 & 0.0013 \\
+-2.0 & 0.0228 \\
+-1.0 & 0.1587 \\
+\phantom{-}0.0 & 0.5000 \\
+\phantom{-}1.0 & 0.8413 \\
+\phantom{-}2.0 & 0.9772 \\
+\phantom{-}3.0 & 0.9987 \\
+\end{array}
+$$
+
+##### Step 4: Combine for Any Range
+
+Using the symmetry and properties of $\Phi$, you can answer any question:
+
+| Question | Formula |
+|---|---|
+| $P(X \leq x)$ | $\Phi\!\left(\frac{x - \mu}{\sigma}\right)$ |
+| $P(X \geq x)$ | $1 - \Phi\!\left(\frac{x - \mu}{\sigma}\right)$ |
+| $P(a \leq X \leq b)$ | $\Phi\!\left(\frac{b - \mu}{\sigma}\right) - \Phi\!\left(\frac{a - \mu}{\sigma}\right)$ |
+
+And by symmetry: $\Phi(-z) = 1 - \Phi(z)$.
+
+##### Worked Example: Exam Scores
+
+Suppose exam scores follow $X \sim \mathcal{N}(70, 10^2)$ (mean $\mu = 70$, standard deviation $\sigma = 10$).
+
+**Question:** What percentage of students scored between 60 and 85?
+
+$$P(60 \leq X \leq 85) = \Phi\!\left(\frac{85 - 70}{10}\right) - \Phi\!\left(\frac{60 - 70}{10}\right)$$
+
+$$= \Phi(1.5) - \Phi(-1.0)$$
+
+$$= 0.9332 - 0.1587 = \mathbf{0.7745}$$
+
+**Answer:** Approximately **77.5%** of students scored between 60 and 85.
+
+##### The Empirical Rule (68-95-99.7)
+
+A quick mental shortcut that follows directly from the $\Phi$-table:
+
+$$
+\begin{aligned}
+P(\mu - 1\sigma \leq X \leq \mu + 1\sigma) &\approx 68.3\% \\
+P(\mu - 2\sigma \leq X \leq \mu + 2\sigma) &\approx 95.4\% \\
+P(\mu - 3\sigma \leq X \leq \mu + 3\sigma) &\approx 99.7\%
+\end{aligned}
+$$
+
+This is why Gauß could predict where Ceres would reappear: he knew that the true position was almost certainly within $2\sigma$ to $3\sigma$ of his calculated estimate.
+
+##### Comparison: Binomial vs. Gauß Calculation
+
+| | Binomial | Normal (Gauß) |
+|---|---|---|
+| **Type** | Discrete (counting) | Continuous (measuring) |
+| **Question** | "Exactly $k$ successes?" | "Within a range $[a, b]$?" |
+| **Tool** | $\binom{n}{k} p^k (1-p)^{n-k}$ | $\Phi(z_b) - \Phi(z_a)$ |
+| **Key Step** | Count combinations | Standardize to $z$ |
+| **Lookup** | Pascal's Triangle | $\Phi$-Table |
+
+As $n$ grows large, the Binomial Distribution itself approaches the Normal Distribution (this is exactly what the Central Limit Theorem below demonstrates). So the Gauß curve is not a replacement for the Binomial; it is its **natural limit**.
+</div>
+
+<div class="statlab-interactive-zone">
+    <div class="md">
+    **Try it yourself:** Enter a Normal Distribution and a range to calculate the probability. The shaded area under the curve shows your answer.
+    </div>
+
+    <div class="statlab-controls">
+        <div class="control-group">
+            <label>Mean ($\mu$):</label>
+            <input type="range" id="gauss-calc-mu" min="-5" max="5" step="0.1" value="0">
+        </div>
+        <div class="control-group">
+            <label>Std Dev ($\sigma$):</label>
+            <input type="range" id="gauss-calc-sigma" min="0.5" max="3" step="0.1" value="1">
+        </div>
+        <div class="control-group">
+            <label>Lower Bound ($a$):</label>
+            <input type="range" id="gauss-calc-a" min="-5" max="5" step="0.1" value="-1">
+        </div>
+        <div class="control-group">
+            <label>Upper Bound ($b$):</label>
+            <input type="range" id="gauss-calc-b" min="-5" max="5" step="0.1" value="1">
+        </div>
+    </div>
+
+    <div id="gauss-calc-math" class="statlab-math-display" style="background: #fdfaf2; padding: 20px; border-radius: 12px; border: 1px solid #fef3c7;"></div>
+    <div id="plot-gauss-calc" class="statlab-visual" style="height: 400px;"></div>
+</div>
+
+<div class="md">
 #### The Mathematical Foundation: The Law of Errors
 
 Gauß solved the probable position of Ceres by treating every measurement as a composite of a "True Path" and random error. He realized that the problem was "more than determined" ($n > v$); when you have more observations than variables, a perfect fit is impossible because human observation is never free from error.

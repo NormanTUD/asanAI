@@ -1755,6 +1755,124 @@ async function _statEnsureZarathustra() {
 }
 
 // ============================================================
+// NORMAL DISTRIBUTION CALCULATOR (Gauß Calculation Section)
+// ============================================================
+
+// Approximation of the standard normal CDF Φ(z)
+function standardNormalCDF(z) {
+    // Abramowitz & Stegun approximation 26.2.17
+    if (z < -8) return 0;
+    if (z > 8) return 1;
+    const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741;
+    const a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+    const sign = z < 0 ? -1 : 1;
+    const x = Math.abs(z) / Math.sqrt(2);
+    const t = 1.0 / (1.0 + p * x);
+    const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+    return 0.5 * (1.0 + sign * y);
+}
+
+async function renderGaussCalc() {
+    const muIn = document.getElementById('gauss-calc-mu');
+    const sigmaIn = document.getElementById('gauss-calc-sigma');
+    const aIn = document.getElementById('gauss-calc-a');
+    const bIn = document.getElementById('gauss-calc-b');
+    const mathDisplay = document.getElementById('gauss-calc-math');
+
+    if (!muIn || !sigmaIn || !aIn || !bIn) return;
+
+    const update = () => {
+        const mu = parseFloat(muIn.value);
+        const sigma = parseFloat(sigmaIn.value);
+        let a = parseFloat(aIn.value);
+        let b = parseFloat(bIn.value);
+
+        // Ensure a <= b
+        if (a > b) { const tmp = a; a = b; b = tmp; }
+
+        const zA = (a - mu) / sigma;
+        const zB = (b - mu) / sigma;
+        const phiA = standardNormalCDF(zA);
+        const phiB = standardNormalCDF(zB);
+        const prob = phiB - phiA;
+
+        // Math display
+        mathDisplay.innerHTML = `
+            <p><strong>Step 1: Standardize</strong></p>
+            $$z_a = \\frac{${a.toFixed(1)} - ${mu.toFixed(1)}}{${sigma.toFixed(1)}} = ${zA.toFixed(3)} \\qquad z_b = \\frac{${b.toFixed(1)} - ${mu.toFixed(1)}}{${sigma.toFixed(1)}} = ${zB.toFixed(3)}$$
+
+            <p><strong>Step 2: Look up $\\Phi$</strong></p>
+            $$\\Phi(z_a) = \\Phi(${zA.toFixed(3)}) = ${phiA.toFixed(4)} \\qquad \\Phi(z_b) = \\Phi(${zB.toFixed(3)}) = ${phiB.toFixed(4)}$$
+
+            <p><strong>Step 3: Subtract</strong></p>
+            $$P(${a.toFixed(1)} \\leq X \\leq ${b.toFixed(1)}) = \\Phi(z_b) - \\Phi(z_a) = ${phiB.toFixed(4)} - ${phiA.toFixed(4)} = \\mathbf{${(prob * 100).toFixed(2)}\\%}$$
+        `;
+
+        // Build curve
+        const xCurve = [], yCurve = [];
+        const xShaded = [], yShaded = [];
+        const lo = mu - 4 * sigma, hi = mu + 4 * sigma;
+
+        for (let x = lo; x <= hi; x += 0.05) {
+            const pdf = (1 / (sigma * Math.sqrt(2 * Math.PI))) *
+                Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+            xCurve.push(x);
+            yCurve.push(pdf);
+
+            if (x >= a && x <= b) {
+                xShaded.push(x);
+                yShaded.push(pdf);
+            }
+        }
+
+        const traceCurve = {
+            x: xCurve, y: yCurve,
+            mode: 'lines',
+            name: 'PDF',
+            line: { color: '#6366f1', width: 3, shape: 'spline' }
+        };
+
+        const traceShaded = {
+            x: [a, ...xShaded, b],
+            y: [0, ...yShaded, 0],
+            fill: 'tozeroy',
+            fillcolor: alphaColor('#6366f1', 0.35),
+            line: { width: 0 },
+            name: `P = ${(prob * 100).toFixed(2)}%`,
+            hoverinfo: 'skip'
+        };
+
+        // Boundary markers
+        const traceBounds = {
+            x: [a, b],
+            y: [
+                (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((a - mu) / sigma, 2)),
+                (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((b - mu) / sigma, 2))
+            ],
+            mode: 'markers+text',
+            marker: { color: '#e11d48', size: 10, line: { color: '#fff', width: 2 } },
+            text: [`a = ${a.toFixed(1)}`, `b = ${b.toFixed(1)}`],
+            textposition: 'top center',
+            textfont: { color: '#e11d48', size: 12, weight: 700 },
+            showlegend: false
+        };
+
+        Plotly.react('plot-gauss-calc', [traceShaded, traceCurve, traceBounds], mergeLayout({
+            xaxis: { title: { text: 'x' }, range: [lo, hi] },
+            yaxis: { title: { text: 'f(x)' }, rangemode: 'nonnegative' },
+            showlegend: true,
+            margin: { t: 10, b: 40, l: 50, r: 20 },
+            height: 400
+        }), PLOTLY_CONFIG);
+
+        if (typeof refreshMath === "function") refreshMath();
+    };
+
+    [muIn, sigmaIn, aIn, bIn].forEach(el => el.oninput = update);
+    update();
+}
+
+// ============================================================
 // REPLACEMENT: loadStatisticsModule (drop-in replacement)
 // ============================================================
 
@@ -1801,6 +1919,8 @@ async function loadStatisticsModule() {
     _statLazyRegister('cr-plot', () => LLMStatsLab.renderChainRule());
     _statLazyRegister('kl-plot', () => LLMStatsLab.renderKL());
     _statLazyRegister('bow-plot', () => renderBoW());
+
+    _statLazyRegister('plot-gauss-calc', () => renderGaussCalc());
 
     _statLazyCreateObserver();
 
