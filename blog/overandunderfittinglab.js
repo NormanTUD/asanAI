@@ -125,7 +125,7 @@ const FittingLab = {
         return tf.tidy(() => {
             let cols = [t];
             for (let i = 2; i <= degree; i++) {
-                cols.push(t.pow(tf.scalar(i)));
+                cols.push(t.pow(scalar(i)));
             }
             return tf.concat(cols, 1);
         });
@@ -139,7 +139,7 @@ const FittingLab = {
             if (self.lambda <= 0) return mse;
             // Sum of squared weights
             const kernel = self.model.layers[0].getWeights()[0];
-            const l2     = kernel.square().sum().mul(tf.scalar(self.lambda));
+            const l2     = kernel.square().sum().mul(scalar(self.lambda));
             return mse.add(l2);
         };
     },

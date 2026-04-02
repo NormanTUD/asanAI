@@ -1478,7 +1478,7 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
 
 	if (thiscontextSize < 1) {
 		console.error("Context must have at least 2 elements");
-		return tf.scalar(100);
+		return scalar(100);
 	}
 
 	const mask = buildCausalMask(thiscontextSize);
@@ -1486,8 +1486,8 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
 
 	dispose(mask);
 
-	if (losses.length === 0) return tf.scalar(10);
-	return tf.addN(losses).div(tf.scalar(losses.length));
+	if (losses.length === 0) return scalar(10);
+	return tf.addN(losses).div(scalar(losses.length));
 }
 
 function buildCausalMask(contextSize) {
@@ -1495,7 +1495,7 @@ function buildCausalMask(contextSize) {
 		const ones = tf.ones([contextSize, contextSize]);
 		const upperTriangle = tf.linalg.bandPart(ones, 0, -1);
 		const diagonal = tf.linalg.bandPart(ones, 0, 0);
-		return tf.sub(upperTriangle, diagonal).mul(tf.scalar(1e9));
+		return tf.sub(upperTriangle, diagonal).mul(scalar(1e9));
 	});
 }
 
@@ -1534,15 +1534,15 @@ function embedAndEncodePositions(inputIds, embeddingsTensor, d_model) {
 		const pos = tf.range(0, inputIds.length, 1).reshape([inputIds.length, 1]);
 		const i = tf.range(0, d_model, 1).reshape([1, d_model]);
 		const divTerm = tf.pow(
-			tf.scalar(10000),
-			i.div(tf.scalar(2)).floor().mul(tf.scalar(2)).div(tf.scalar(d_model))
+			scalar(10000),
+			i.div(scalar(2)).floor().mul(scalar(2)).div(scalar(d_model))
 		);
 		const args = pos.div(divTerm);
 		return tf.where(
-			i.mod(tf.scalar(2)).equal(tf.scalar(0)),
+			i.mod(scalar(2)).equal(scalar(0)),
 			tf.sin(args),
 			tf.cos(args)
-		).mul(tf.scalar(posEmbedScalar));
+		).mul(scalar(posEmbedScalar));
 	});
 
 	return tf.add(x, peTensor);
@@ -1578,7 +1578,7 @@ function computeTfMultiHeadAttention(normX, layer, n_heads, d_k, contextSize, d_
 	const vHeads = v.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
 
 	let scores = tf.matMul(qHeads, kHeads.transpose([0, 2, 1]))
-		.div(tf.sqrt(tf.scalar(d_k)));
+		.div(tf.sqrt(scalar(d_k)));
 
 	scores = tf.sub(scores, mask.expandDims(0));
 
@@ -5256,7 +5256,7 @@ function renderShiftECharts(container, echartsData, d_model) {
 function tf_layer_norm(x, gamma, beta) {
 	return tf.tidy(() => {
 		const { mean, variance } = tf.moments(x, -1, true);
-		const tf_epsilon = tf.scalar(epsilon);
+		const tf_epsilon = scalar(epsilon);
 		const normalized = x.sub(mean).div(tf.sqrt(variance.add(tf_epsilon)));
 		return normalized.mul(gamma).add(beta);
 	});

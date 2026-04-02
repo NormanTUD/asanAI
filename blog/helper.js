@@ -1817,3 +1817,7 @@ function dispose(...args) {
 		args[i].dispose();
 	}
 }
+
+function scalar (...args) {
+	return tf.scalar(...args);
+}
