@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qualia & Bewusstsein – Interaktive Visualisierung</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #ff6ec7, #7873f5, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #aaa;
+            max-width: 600px;
+            animation: fadeInUp 1.3s ease;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 30px;
+            z-index: 1;
+            animation: bounce 2s infinite;
+            font-size: 1.5rem;
+            color: #7873f5;
+            cursor: pointer;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Sections */
+        section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 30px;
+        }
+
+        section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #ff6ec7, #7873f5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        section p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #bbb;
+            margin-bottom: 1rem;
+        }
+
+        /* Qualia Demo */
+        .qualia-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .qualia-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .qualia-card:hover {
+            transform: translateY(-6px) scale(1.03);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .qualia-card .icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .qualia-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .qualia-card p {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .qualia-card .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.4s;
+            border-radius: 18px;
+        }
+
+        .qualia-card:hover .overlay {
+            opacity: 1;
+        }
+
+        .qualia-card .overlay p {
+            color: #ddd;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Color Qualia Demo */
+        .color-demo {
+            margin-top: 40px;
+            padding: 40px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            text-align: center;
+        }
+
+        .color-demo h3 {
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .color-demo p.subtitle {
+            color: #888;
+            margin-bottom: 25px;
+        }
+
+        .color-spectrum {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .color-swatch {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .color-swatch:hover, .color-swatch.active {
+            transform: scale(1.2);
+            border-color: #fff;
+            box-shadow: 0 0 25px currentColor;
+        }
+
+        #color-response {
+            min-height: 80px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 14px;
+            margin-top: 15px;
+            transition: all 0.5s;
+        }
+
+        #color-response h4 {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        #color-response p {
+            color: #aaa;
+            font-size: 0.95rem;
+        }
+
+        /* Brain Visualization */
+        .brain-section {
+            text-align: center;
+        }
+
+        .brain-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 40px auto;
+        }
+
+        .brain-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .neuron-layer {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .neuron {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #7873f5;
+            animation: pulse-neuron 2s infinite;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .neuron:hover {
+            transform: scale(2);
+            background: #ff6ec7;
+            box-shadow: 0 0 20px #ff6ec7;
+        }
+
+        @keyframes pulse-neuron {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.15); }
+        }
+
+        .neuron:nth-child(odd) { animation-delay: 0.5s; }
+        .neuron:nth-child(3n) { animation-delay: 1s; }
+
+        /* Hard Problem Section */
+        .hard-problem {
+            background: linear-gradient(135deg, rgba(120,115,245,0.1), rgba(255,110,199,0.1));
+            border-radius: 24px;
+            padding: 50px 40px;
+            margin-top: 40px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .gap-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .gap-box {
+            padding: 25px 30px;
+            border-radius: 16px;
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .gap-box.physical {
+            background: rgba(0,212,255,0.15);
+            border: 1px solid rgba(0,212,255,0.3);
+        }
+
+        .gap-box.mental {
+            background: rgba(255,110,199,0.15);
+            border: 1px solid rgba(255,110,199,0.3);
+        }
+
+        .gap-arrow {
+            font-size: 2.5rem;
+            color: #555;
+            animation: pulse-arrow 1.5s infinite;
+        }
+
+        @keyframes pulse-arrow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; color: #ff6ec7; }
+        }
+
+        /* Thought Experiment */
+        .thought-experiment {
+            margin-top: 50px;
+            padding: 40px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .mary-room {
+            display: flex;
+            gap: 30px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .mary-stage {
+            flex: 1;
+            min-width: 250px;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.5s;
+            cursor: pointer;
+        }
+
+        .mary-stage.bw {
+            background: linear-gradient(135deg, #1a1a1a, #333);
+            border: 1px solid #444;
+            filter: grayscale(100%);
+        }
+
+        .mary-stage.bw:hover {
+            filter: grayscale(50%);
+        }
+
+        .mary-stage.color {
+            background: linear-gradient(135deg, #1a0a2e, #2d1b69);
+            border: 1px solid rgba(255,110,199,0.3);
+        }
+
+        .mary-stage.color:hover {
+            background: linear-gradient(135deg, #2d1b69, #4a2c8a);
+            box-shadow: 0 0 30px rgba(255,110,199,0.2);
+        }
+
+        .mary-stage .icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .mary-stage h4 {
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        /* Consciousness Layers */
+        .layers-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            margin-top: 30px;
+        }
+
+        .layer {
+            padding: 20px 40px;
+            border-radius: 50px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s;
+            position: relative;
+        }
+
+        .layer:hover {
+            transform: scale(1.05);
+        }
+
+        .layer-1 {
+            background: linear-gradient(90deg, rgba(255,110,199,0.3), rgba(255,110,199,0.1));
+            border: 1px solid rgba(255,110,199,0.4);
+            width: 90%;
+            z-index: 1;
+        }
+
+        .layer-2 {
+            background: linear-gradient(90deg, rgba(120,115,245,0.3), rgba(120,115,245,0.1));
+            border: 1px solid rgba(120,115,245,0.4);
+            width: 70%;
+            margin-top: -10px;
+            z-index: 2;
+        }
+
+        .layer-3 {
+            background: linear-gradient(90deg, rgba(0,212,255,0.3), rgba(0,212,255,0.1));
+            border: 1px solid rgba(0,212,255,0.4);
+            width: 50%;
+            margin-top: -10px;
+            z-index: 3;
+        }
+
+        .layer h4 { color: #fff; font-size: 1rem; }
+        .layer p { font-size: 0.85rem; color: #aaa; margin-top: 4px; }
+
+        #layer-detail {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 14px;
+            min-height: 60px;
+            text-align: center;
+            transition: all 0.4s;
+        }
+
+        /* Theories */
+        .theories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .theory-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 25px;
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .theory-card:hover {
+            border-color: rgba(120,115,245,0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .theory-card h3 {
+            color: #fff;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .theory-card .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-bottom: 10px;
+        }
+
+        .tag.materialist { background: rgba(0,212,255,0.2); color: #00d4ff; }
+        .tag.dualist { background: rgba(255,110,199,0.2); color: #ff6ec7; }
+        .tag.neutral { background: rgba(255,200,50,0.2); color: #ffc832; }
+
+        /* Interactive Qualia Mixer */
+        .mixer {
+            margin-top: 40px;
+            padding: 40px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            text-align: center;
+        }
+
+        .sliders {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+
+        .slider-group {
+            text-align: center;
+        }
+
+        .slider-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 150px;
+            height: 6px;
+            border-radius: 3px;
+            background: #333;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #7873f5;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+            background: #ff6ec7;
+        }
+
+        #mixer-output {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 20px auto;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        #mixer-description {
+            margin-top: 15px;
+            color: #aaa;
+            font-style: italic;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #555;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        footer a { color: #7873f5; text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1rem; }
+            section { padding: 50px 20px; }
+            .brain-container { width: 280px; height: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-content">
+        <h1>Qualia & Bewusstsein</h1>
+        <p>Eine interaktive Reise in die Philosophie des Geistes – Was ist subjektives Erleben und warum ist es so rätselhaft?</p>
+    </div>
+    <div class="scroll-hint" onclick="document.getElementById('intro').scrollIntoView({behavior:'smooth'})">▼</div>
+</div>
+
+<!-- INTRO -->
+<section id="intro">
+    <h2>Was sind Qualia?</h2>
+    <p>
+        <strong>Qualia</strong> (Singular: Quale) sind die <em>subjektiven Empfindungsqualitäten</em> unserer bewussten Erfahrungen.
+        Es ist das „Wie-es-sich-anfühlt" – die Schmerzhaftigkeit bei einem Schmerzerlebnis, die Qualität der Röte in einem Farberlebnis, 
+        die Geschmacksqualität der Süße. Philosophen sprechen auch vom <strong>phänomenalen Bewusstsein</strong>.
+    </p>
+    <p>
+        Das Faszinierende: Obwohl wir alle Qualia erleben, können wir sie nicht objektiv messen oder vollständig in Worte fassen. 
+        Wie erklärt man jemandem, der noch nie Rot gesehen hat, wie sich „Rot" anfühlt?
+    </p>
+
+    <!-- Qualia Cards -->
+    <div class="qualia-grid">
+        <div class="qualia-card" style="background: linear-gradient(135deg, rgba(255,0,0,0.08), rgba(255,0,0,0.02));">
+            <span class="icon">🔴</span>
+            <h3>Farbe sehen</h3>
+            <p>Die „Röte" von Rot</p>
+            <div class="overlay">
+                <p>Wellenlänge 700nm trifft auf deine Netzhaut – aber das erklärt nicht, <em>warum</em> du dabei genau DIESES Erlebnis hast.</p>
+            </div>
+        </div>
+        <div class="qualia-card" style="background: linear-gradient(135deg, rgba(255,165,0,0.08), rgba(255,165,0,0.02));">
+            <span class="icon">🔥</span>
+            <h3>Schmerz fühlen</h3>
+            <p>Die „Schmerzhaftigkeit"</p>
+            <div class="overlay">
+                <p>C-Fasern feuern Signale ans Gehirn – aber warum fühlt sich das so unangenehm an, statt einfach nur Information zu sein?</p>
+            </div>
+        </div>
+        <div class="qualia-card" style="background: linear-gradient(135deg, rgba(0,200,255,0.08), rgba(0,200,255,0.02));">
+            <span class="icon">🎵</span>
+            <h3>Musik hören</h3>
+            <p>Die Qualität eines Klangs</p>
+            <div class="overlay">
+                <p>Luftdruckwellen werden zu elektrischen Signalen – aber woher kommt das Gefühl von Schönheit bei einer Melodie?</p>
+            </div>
+        </div>
+        <div class="qualia-card" style="background: linear-gradient(135deg, rgba(0,255,100,0.08), rgba(0,255,100,0.02));">
+            <span class="icon">🍓</span>
+            <h3>Geschmack erleben</h3>
+            <p>Die „Süße" der Erdbeere</p>
+            <div class="overlay">
+                <p>Moleküle binden an Rezeptoren auf der Zunge – aber das erklärt nicht das subjektive Erlebnis von „süß".</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- COLOR QUALIA DEMO -->
+<section>
+    <div class="color-demo">
+        <h3>🎨 Erlebe Farb-Qualia</h3>
+        <p class="subtitle">Klicke auf eine Farbe – und bemerke: Dein Erleben ist mehr als nur eine Wellenlänge!</p>
+        <div class="color-spectrum" id="color-spectrum"></div>
+        <div id="color-response">
+            <p style="color: #666;">Wähle eine Farbe aus...</p>
+        </div>
+    </div>
+</section>
+
+<!-- HARD PROBLEM -->
+<section>
+    <h2>Das „Hard Problem" des Bewusstseins</h2>
+    <p>
+        Der Philosoph <strong>David Chalmers</strong> unterschied 1995 zwischen den „leichten" und dem „schweren" Problem des Bewusstseins.
+        Die leichten Probleme betreffen Funktionen wie Aufmerksamkeit, Gedächtnis oder Verhaltenssteuerung – diese sind prinzipiell 
+        durch Neurowissenschaft erklärbar. Das <strong>Hard Problem</strong> fragt: Warum erleben wir überhaupt etwas, wenn bestimmte 
+        neuronale Prozesse im Gehirn ablaufen?
+    </p>
+
+    <div class="hard-problem">
+        <h3 style="color:#fff; text-align:center; margin-bottom: 20px;">Die Erklärungslücke</h3>
+        <div class="gap-visual">
+            <div class="gap-box physical">
+                <div style="font-size:2rem;">🧠</div>
+                <h4 style="color:#00d4ff;">Neuronale Prozesse</h4>
+                <p style="font-size:0.85rem; color:#88c8d4;">Elektrische Impulse<br>Synapsen feuern<br>Neurotransmitter</p>
+            </div>
+            <div class="gap-arrow">⟶ ? ⟶</div>
+            <div class="gap-box mental">
+                <div style="font-size:2rem;">✨</div>
+                <h4 style="color:#ff6ec7;">Subjektives Erleben</h4>
+                <p style="font-size:0.85rem; color:#d488a8;">Farben sehen<br>Schmerz fühlen<br>Freude empfinden</p>
+            </div>
+        </div>
+        <p style="text-align:center; color:#888; font-size:0.95rem;">
+            Wenn man sich die Finger verbrennt, werden Reize zum Gehirn geleitet, dort verarbeitet und Verhalten produziert. 
+            Aber nichts daran erklärt, warum es sich <em>irgendwie anfühlt</em>.
+        </p>
+    </div>
+</section>
+
+<!-- MARY'S ROOM -->
+<section>
+    <div class="thought-experiment">
+        <h2>🔬 Marys Zimmer – Ein Gedankenexperiment</h2>
+        <p>
+            Frank Jacksons berühmtes Argument: <strong>Mary</strong> ist eine brillante Neurowissenschaftlerin, die alles über Farben weiß – 
+            Wellenlängen, Netzhautreaktionen, Gehirnprozesse. Aber sie hat ihr ganzes Leben in einem schwarz-weißen Raum verbracht 
+            und nie eine Farbe gesehen. Wenn sie den Raum verlässt und zum ersten Mal Rot sieht – lernt sie etwas Neues?
+        </p>
+        <div class="mary-room">
+            <div class="mary-stage bw" onclick="this.style.filter='grayscale(0%)'">
+                <div class="icon">👩‍🔬</div>
+                <h4>Vorher: Im Raum</h4>
+                <p style="color:#999;">Mary kennt ALLE physikalischen Fakten über Farben. Wellenlänge 700nm aktiviert L-Zapfen...</p>
+            </div>
+            <div class="mary-stage color">
+                <div class="icon">🌹</div>
+                <h4>Nachher: Draußen</h4>
+                <p style="color:#b088d4;">Mary sieht zum ersten Mal ROT. „Aha! SO fühlt sich das also an!" – Sie lernt etwas Neues: das <strong>Quale</strong> von Rot.</p>
+            </div>
+        </div>
+        <p style="margin-top:20px; text-align:center; color:#888; font-size:0.9rem;">
+            → Wenn Mary etwas Neues lernt, dann gibt es Fakten über Bewusstsein, die nicht physikalisch sind.
+        </p>
+    </div>
+</section>
+
+<!-- LAYERS OF CONSCIOUSNESS -->
+<section>
+    <h2>Schichten des Bewusstseins</h2>
+    <p>Bewusstsein ist kein einheitliches Phänomen – es hat verschiedene Ebenen. Klicke auf eine Schicht:</p>
+
+    <div class="layers-container">
+        <div class="layer layer-1" onclick="showLayer(1)">
+            <h4>🌊 Phänomenales Bewusstsein (Qualia)</h4>
+            <p>Das subjektive Erleben – „wie es sich anfühlt"</p>
+        </div>
+        <div class="layer layer-2" onclick="showLayer(2)">
+            <h4>🪞 Zugangs-Bewusstsein</h4>
+            <p>Information, die für Denken & Handeln verfügbar ist</p>
+        </div>
+        <div class="layer layer-3" onclick="showLayer(3)">
+            <h4>💭 Selbst-Bewusstsein</h4>
+            <p>Wissen um die eigene Existenz</p>
+        </div>
+    </div>
+    <div id="layer-detail">
+        <p style="color:#666;">Klicke auf eine Schicht für Details...</p>
+    </div>
+</section>
+
+<!-- NEURAL NETWORK VIS -->
+<section class="brain-section">
+    <h2>🧠 Neuronales Feuerwerk</h2>
+    <p>Milliarden Neuronen feuern – aber wo entsteht das Bewusstsein? Hover über die Neuronen:</p>
+    <div class="brain-container">
+        <canvas id="brain-canvas" width="400" height="400"></canvas>
+    </div>
+    <p style="text-align:center; color:#666; font-size:0.9rem;">
+        Jeder leuchtende Punkt repräsentiert neuronale Aktivität. Doch aus dieser Aktivität allein 
+        lässt sich nicht ableiten, warum subjektives Erleben entsteht.
+    </p>
+</section>
+
+<!-- QUALIA MIXER -->
+<section>
+    <div class="mixer">
+        <h2 style="background: linear-gradient(90deg, #ff6ec7, #7873f5); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🎛️ Qualia-Mixer</h2>
+        <p style="color:#888;">Mische verschiedene Sinneseindrücke und beobachte, wie sich dein „Erlebnis" verändert:</p>
+        <div class="sliders">
+            <div class="slider-group">
+                <label>🔴 Wärme</label>
+                <input type="range" id="warmth" min="0" max="255" value="100" oninput="updateMixer()">
+            </div>
+            <div class="slider-group">
+                <label>🔵 Kühle</label>
+                <input type="range" id="coolness" min="0" max="255" value="100" oninput="updateMixer()">
+            </div>
+            <div class="slider-group">
+                <label>💚 Ruhe</label>
+                <input type="range" id="calm" min="0" max="255" value="100" oninput="updateMixer()">
+            </div>
+            <div class="slider-group">
+                <label>⚡ Intensität</label>
+                <input type="range" id="intensity" min="0" max="100" value="50" oninput="updateMixer()">
+            </div>
+        </div>
+        <div id="mixer-output">Erlebe...</div>
+        <p id="mixer-description">Bewege die Regler, um dein Quale zu verändern.</p>
+    </div>
+</section>
+
+<!-- THEORIES -->
+<section>
+    <h2>Theorien des Bewusstseins</h2>
+    <p>Verschiedene Ansätze versuchen, das Rätsel zu lösen:</p>
+
+    <div class="theories-grid">
+        <div class="theory-card">
+            <span class="tag materialist">Materialistisch</span>
+            <h3>Global Workspace Theory</h3>
+            <p>Bewusstsein entsteht, wenn Information in einem „globalen Arbeitsraum" im Gehirn breit verfügbar gemacht wird. (Bernard Baars, Stanislas Dehaene)</p>
+        </div>
+        <div class="theory-card">
+            <span class="tag materialist">Materialistisch</span>
+            <h3>Integrated Information Theory (IIT)</h3>
+            <p>Bewusstsein = integrierte Information (Φ). Je mehr ein System Information integriert, desto bewusster ist es. (Giulio Tononi)</p>
+        </div>
+        <div class="theory-card">
+            <span class="tag dualist">Dualistisch</span>
+            <h3>Eigenschaftsdualismus</h3>
+            <p>Mentale Eigenschaften (Qualia) sind real, aber nicht auf physische Eigenschaften reduzierbar. Gehirn erzeugt Bewusstsein, aber Erleben ist etwas Eigenes. (David Chalmers)</p>
+        </div>
+        <div class="theory-card">
+            <span class="tag neutral">Neutral</span>
+            <h3>Panpsychismus</h3>
+            <p>Bewusstsein ist eine fundamentale Eigenschaft der Materie. Selbst Elektronen haben eine minimale Form von Erleben. (Philip Goff)</p>
+        </div>
+        <div class="theory-card">
+            <span class="tag materialist">Materialistisch</span>
+            <h3>Higher-Order Theories</h3>
+            <p>Ein mentaler Zustand wird bewusst, wenn ein höherstufiger Zustand ihn repräsentiert – Gedanken über Gedanken. (David Rosenthal)</p>
+        </div>
+        <div class="theory-card">
+            <span class="tag neutral">Neutral</span>
+            <h3>Mysterianism</h3>
+            <p>Das menschliche Gehirn ist möglicherweise kognitiv nicht in der Lage, Bewusstsein zu verstehen – so wie eine Katze keine Quantenphysik versteht. (Colin McGinn)</p>
+        </div>
+    </div>
+</section>
+
+<!-- ZOMBIE ARGUMENT -->
+<section>
+    <h2>🧟 Das Zombie-Argument</h2>
+    <p>
+        Stell dir einen <strong>philosophischen Zombie</strong> vor: Ein Wesen, das dir physisch in jeder Hinsicht gleicht – 
+        gleiche Neuronen, gleiche Reaktionen, gleiches Verhalten – aber <em>keinerlei subjektives Erleben</em> hat. 
+        Es sagt „Aua!", wenn es sich stößt, aber es fühlt nichts dabei.
+    </p>
+    <div style="display:flex; gap:30px; justify-content:center; flex-wrap:wrap; margin-top:30px;">
+        <div style="text-align:center; padding:30px; background:rgba(255,110,199,0.08); border-radius:18px; border:1px solid rgba(255,110,199,0.2); flex:1; min-width:220px;">
+            <div style="font-size:3rem;">🧑</div>
+            <h4 style="color:#ff6ec7; margin:10px 0;">Du</h4>
+            <p style="color:#aaa; font-size:0.9rem;">Gleiche Neuronen ✓<br>Gleiches Verhalten ✓<br><strong style="color:#ff6ec7;">Subjektives Erleben ✓</strong></p>
+        </div>
+        <div style="text-align:center; padding:30px; background:rgba(120,115,245,0.08); border-radius:18px; border:1px solid rgba(120,115,245,0.2); flex:1; min-width:220px;">
+            <div style="font-size:3rem;">🧟</div>
+            <h4 style="color:#7873f5; margin:10px 0;">Zombie-Du</h4>
+            <p style="color:#aaa; font-size:0.9rem;">Gleiche Neuronen ✓<br>Gleiches Verhalten ✓<br><strong style="color:#f55;">Subjektives Erleben ✗</strong></p>
+        </div>
+    </div>
+    <p style="margin-top:25px; text-align:center; color:#888; font-size:0.95rem;">
+        → Wenn ein solcher Zombie auch nur <em>denkbar</em> ist, dann ist Bewusstsein nicht vollständig durch Physik erklärbar.
+    </p>
+</section>
+
+<!-- FINAL REFLECTION -->
+<section>
+    <h2>🌌 Die offene Frage</h2>
+    <p>
+        Trotz enormer Fortschritte in der Neurowissenschaft bleibt das Bewusstsein eines der größten ungelösten Rätsel. 
+        Wir können messen, welche Gehirnareale aktiv sind, wenn du Rot siehst – aber wir können nicht erklären, 
+        <em>warum</em> diese Aktivität mit einem bestimmten Erlebnis einhergeht.
+    </p>
+    <p>
+        Vielleicht brauchen wir eine völlig neue Art des Denkens, eine Revolution wie die Quantenmechanik es für die Physik war. 
+        Oder vielleicht ist die Antwort einfacher, als wir denken. Eines ist sicher: <strong>Dein Bewusstsein – die Tatsache, 
+        dass es sich gerade irgendwie anfühlt, diese Worte zu lesen – ist das erstaunlichste Phänomen im Universum.</strong>
+    </p>
+
+    <div style="text-align:center; margin-top:40px; padding:40px; background: linear-gradient(135deg, rgba(120,115,245,0.1), rgba(255,110,199,0.1)); border-radius:24px;">
+        <p style="font-size:1.8rem; margin-bottom:10px;">💡</p>
+        <p style="font-size:1.2rem; color:#ddd; font-style:italic;">
+            „Es gibt nichts, dessen Existenz uns bekannter ist als unser Bewusstsein – und gleichzeitig nichts, das schwerer zu erklären ist."
+        </p>
+        <p style="color:#888; margin-top:10px;">— frei nach David Chalmers</p>
+    </div>
+</section>
+
+<footer>
+    <p>Erstellt als interaktive Philosophie-Visualisierung · Qualia & Bewusstsein · 2026</p>
+</footer>
+
+<script>
+// ==================== HERO CANVAS - Floating Particles ====================
+const heroCanvas = document.getElementById('hero-canvas');
+const heroCtx = heroCanvas.getContext('2d');
+
+function resizeHeroCanvas() {
+    heroCanvas.width = window.innerWidth;
+    heroCanvas.height = window.innerHeight;
+}
+resizeHeroCanvas();
+window.addEventListener('resize', resizeHeroCanvas);
+
+class Particle {
+    constructor() {
+        this.reset();
+    }
+    reset() {
+        this.x = Math.random() * heroCanvas.width;
+        this.y = Math.random() * heroCanvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = (Math.random() - 0.5) * 0.8;
+        this.speedY = (Math.random() - 0.5) * 0.8;
+        this.opacity = Math.random() * 0.5 + 0.1;
+        this.hue = Math.random() * 60 + 250; // purple-blue range
+    }
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > heroCanvas.width || this.y < 0 || this.y > heroCanvas.height) {
+            this.reset();
+        }
+    }
+    draw() {
+        heroCtx.beginPath();
+        heroCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        heroCtx.fillStyle = `hsla(${this.hue}, 80%, 70%, ${this.opacity})`;
+        heroCtx.fill();
+    }
+}
+
+const particles = Array.from({ length: 120 }, () => new Particle());
+
+function animateHero() {
+    heroCtx.clearRect(0, 0, heroCanvas.width, heroCanvas.height);
+
+    // Draw connections
+    for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+                heroCtx.beginPath();
+                heroCtx.moveTo(particles[i].x, particles[i].y);
+                heroCtx.lineTo(particles[j].x, particles[j].y);
+                heroCtx.strokeStyle = `rgba(120, 115, 245, ${0.15 * (1 - dist / 120)})`;
+                heroCtx.lineWidth = 0.5;
+                heroCtx.stroke();
+            }
+        }
+    }
+
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+
+    requestAnimationFrame(animateHero);
+}
+animateHero();
+
+// ==================== COLOR SPECTRUM DEMO ====================
+const colorData = [
+    { color: '#FF0000', name: 'Rot', wavelength: '700nm', desc: 'Wärme, Leidenschaft, Gefahr – dein Gehirn erzeugt das Erlebnis „Rot". Aber WARUM fühlt sich 700nm genau SO an?' },
+    { color: '#FF6600', name: 'Orange', wavelength: '620nm', desc: 'Energie und Kreativität. Dein Quale von Orange ist einzigartig – niemand kann beweisen, dass er dasselbe erlebt.' },
+    { color: '#FFDD00', name: 'Gelb', wavelength: '580nm', desc: 'Helligkeit und Freude. Photonen haben keine Farbe – Farbe existiert nur in deinem Bewusstsein!' },
+    { color: '#00CC44', name: 'Grün', wavelength: '530nm', desc: 'Natur und Ruhe. Könnte dein Grün das Rot eines anderen sein? Das ist das „invertierte Spektrum"-Problem.' },
+    { color: '#0088FF', name: 'Blau', wavelength: '470nm', desc: 'Tiefe und Weite. Blau ist nicht „da draußen" – es ist eine Konstruktion deines Bewusstseins.' },
+    { color: '#6633FF', name: 'Indigo', wavelength: '445nm', desc: 'Mystik und Intuition. Jede Farbe ist ein Quale – eine irreduzible Einheit subjektiven Erlebens.' },
+    { color: '#9900FF', name: 'Violett', wavelength: '400nm', desc: 'Am Rand des Sichtbaren. Kurz dahinter: Ultraviolett – unsichtbar für uns, sichtbar für Bienen. Andere Qualia!' },
+];
+
+const spectrum = document.getElementById('color-spectrum');
+colorData.forEach((c, i) => {
+    const swatch = document.createElement('div');
+    swatch.className = 'color-swatch';
+    swatch.style.backgroundColor = c.color;
+    swatch.style.color = c.color;
+    swatch.onclick = () => {
+        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+        swatch.classList.add('active');
+        const resp = document.getElementById('color-response');
+        resp.style.borderLeft = `4px solid ${c.color}`;
+        resp.innerHTML = `<h4 style="color:${c.color}">${c.name} (${c.wavelength})</h4><p>${c.desc}</p>`;
+    };
+    spectrum.appendChild(swatch);
+});
+
+// ==================== CONSCIOUSNESS LAYERS ====================
+const layerDetails = {
+    1: {
+        title: '🌊 Phänomenales Bewusstsein',
+        text: 'Die grundlegendste Ebene: das reine subjektive Erleben. Es ist das „Wie-es-sich-anfühlt" (What it is like). Thomas Nagel fragte: „Wie fühlt es sich an, eine Fledermaus zu sein?" – Wir können es nie wissen, weil wir keinen Zugang zu fremden Qualia haben. Diese Ebene ist das Kernrätsel der Bewusstseinsforschung.'
+    },
+    2: {
+        title: '🪞 Zugangs-Bewusstsein (Access Consciousness)',
+        text: 'Information wird bewusst zugänglich für kognitive Prozesse: Denken, Sprechen, Planen, Entscheiden. Ned Block unterschied dies vom phänomenalen Bewusstsein. Man kann Zugangs-Bewusstsein haben ohne phänomenales (theoretisch: Zombies) oder umgekehrt (z.B. Blindsight-Patienten).'
+    },
+    3: {
+        title: '💭 Selbst-Bewusstsein (Self-Awareness)',
+        text: 'Die höchste Ebene: Das Wissen um die eigene Existenz als denkendes Wesen. Descartes\' „Cogito ergo sum". Nur wenige Tiere bestehen den Spiegeltest (Menschenaffen, Delfine, Elefanten, Elstern). Selbstbewusstsein ermöglicht Reflexion über die eigenen Qualia – Denken über das Denken.'
+    }
+};
+
+function showLayer(n) {
+    const detail = document.getElementById('layer-detail');
+    const data = layerDetails[n];
+    detail.innerHTML = `<h4 style="color:#fff;">${data.title}</h4><p style="color:#aaa; margin-top:8px;">${data.text}</p>`;
+    detail.style.borderLeft = '3px solid #7873f5';
+}
+
+// ==================== BRAIN CANVAS ====================
+const brainCanvas = document.getElementById('brain-canvas');
+const brainCtx = brainCanvas.getContext('2d');
+
+class Neuron {
+    constructor() {
+        // Place neurons in a brain-like elliptical shape
+        const angle = Math.random() * Math.PI * 2;
+        const radiusX = Math.random() * 150 + 20;
+        const radiusY = Math.random() * 120 + 20;
+        this.x = 200 + Math.cos(angle) * radiusX;
+        this.y = 200 + Math.sin(angle) * radiusY;
+        this.baseSize = Math.random() * 2.5 + 1;
+        this.size = this.baseSize;
+        this.phase = Math.random() * Math.PI * 2;
+        this.speed = Math.random() * 0.03 + 0.01;
+        this.hue = Math.random() * 60 + 240;
+        this.connections = [];
+    }
+    update(time) {
+        this.size = this.baseSize + Math.sin(time * this.speed + this.phase) * 1.5;
+        this.brightness = 0.3 + Math.sin(time * this.speed + this.phase) * 0.35 + 0.35;
+    }
+    draw() {
+        brainCtx.beginPath();
+        brainCtx.arc(this.x, this.y, Math.max(this.size, 0.5), 0, Math.PI * 2);
+        brainCtx.fillStyle = `hsla(${this.hue}, 80%, 65%, ${this.brightness})`;
+        brainCtx.fill();
+
+        // Glow
+        brainCtx.beginPath();
+        brainCtx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+        brainCtx.fillStyle = `hsla(${this.hue}, 80%, 65%, ${this.brightness * 0.1})`;
+        brainCtx.fill();
+    }
+}
+
+const neurons = Array.from({ length: 200 }, () => new Neuron());
+
+// Pre-compute connections
+neurons.forEach((n, i) => {
+    neurons.forEach((m, j) => {
+        if (i < j) {
+            const dist = Math.hypot(n.x - m.x, n.y - m.y);
+            if (dist < 50) {
+                n.connections.push(j);
+            }
+        }
+    });
+});
+
+let brainTime = 0;
+
+// Firing wave
+let fireWave = { active: false, x: 0, y: 0, radius: 0 };
+
+brainCanvas.addEventListener('click', (e) => {
+    const rect = brainCanvas.getBoundingClientRect();
+    fireWave = {
+        active: true,
+        x: (e.clientX - rect.left) * (400 / rect.width),
+        y: (e.clientY - rect.top) * (400 / rect.height),
+        radius: 0
+    };
+});
+
+function animateBrain() {
+    brainCtx.clearRect(0, 0, 400, 400);
+    brainTime++;
+
+    // Draw brain outline (subtle)
+    brainCtx.beginPath();
+    brainCtx.ellipse(200, 200, 170, 140, 0, 0, Math.PI * 2);
+    brainCtx.strokeStyle = 'rgba(120, 115, 245, 0.08)';
+    brainCtx.lineWidth = 2;
+    brainCtx.stroke();
+
+    // Update fire wave
+    if (fireWave.active) {
+        fireWave.radius += 3;
+        if (fireWave.radius > 400) fireWave.active = false;
+
+        brainCtx.beginPath();
+        brainCtx.arc(fireWave.x, fireWave.y, fireWave.radius, 0, Math.PI * 2);
+        brainCtx.strokeStyle = `rgba(255, 110, 199, ${Math.max(0, 0.4 - fireWave.radius / 1000)})`;
+        brainCtx.lineWidth = 2;
+        brainCtx.stroke();
+    }
+
+    neurons.forEach((n, i) => {
+        // Boost neurons near fire wave
+        if (fireWave.active) {
+            const dist = Math.hypot(n.x - fireWave.x, n.y - fireWave.y);
+            if (Math.abs(dist - fireWave.radius) < 30) {
+                n.hue = 330; // pink
+                n.size = n.baseSize * 3;
+            } else {
+                n.hue = Math.random() * 60 + 240;
+            }
+        }
+
+        n.update(brainTime);
+
+        // Draw connections
+        n.connections.forEach(j => {
+            const m = neurons[j];
+            const avgBright = (n.brightness + m.brightness) / 2;
+            brainCtx.beginPath();
+            brainCtx.moveTo(n.x, n.y);
+            brainCtx.lineTo(m.x, m.y);
+            brainCtx.strokeStyle = `rgba(120, 115, 245, ${avgBright * 0.2})`;
+            brainCtx.lineWidth = 0.5;
+            brainCtx.stroke();
+        });
+
+        n.draw();
+    });
+
+    requestAnimationFrame(animateBrain);
+}
+animateBrain();
+
+// ==================== QUALIA MIXER ====================
+function updateMixer() {
+    const warmth = parseInt(document.getElementById('warmth').value);
+    const coolness = parseInt(document.getElementById('coolness').value);
+    const calm = parseInt(document.getElementById('calm').value);
+    const intensity = parseInt(document.getElementById('intensity').value);
+
+    const output = document.getElementById('mixer-output');
+    const desc = document.getElementById('mixer-description');
+
+    const r = Math.min(255, warmth);
+    const g = Math.min(255, calm);
+    const b = Math.min(255, coolness);
+    const size = 150 + intensity;
+
+    output.style.background = `radial-gradient(circle, rgba(${r},${g},${b},0.8), rgba(${r*0.3},${g*0.3},${b*0.3},0.9))`;
+    output.style.width = size + 'px';
+    output.style.height = size + 'px';
+    output.style.boxShadow = `0 0 ${intensity}px rgba(${r},${g},${b},0.5), inset 0 0 ${intensity/2}px rgba(255,255,255,0.1)`;
+
+    // Determine dominant quale
+    let quale = '';
+    let emoji = '';
+    if (warmth > coolness && warmth > calm) {
+        quale = intensity > 60 ? 'Brennende Leidenschaft' : 'Sanfte Wärme';
+        emoji = intensity > 60 ? '🔥' : '☀️';
+    } else if (coolness > warmth && coolness > calm) {
+        quale = intensity > 60 ? 'Eisige Klarheit' : 'Kühle Gelassenheit';
+        emoji = intensity > 60 ? '❄️' : '💧';
+    } else if (calm > warmth && calm > coolness) {
+        quale = intensity > 60 ? 'Tiefe Harmonie' : 'Stille Zufriedenheit';
+        emoji = intensity > 60 ? '🌿' : '🍃';
+    } else {
+        quale = intensity > 60 ? 'Komplexe Synästhesie' : 'Ausgewogene Präsenz';
+        emoji = intensity > 60 ? '🌈' : '☯️';
+    }
+
+    output.textContent = emoji;
+    desc.textContent = `Dein aktuelles Quale: „${quale}" – Aber kann jemand anderes fühlen, was DU gerade erlebst?`;
+}
+
+updateMixer();
+
+// ==================== SCROLL ANIMATIONS ====================
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('section').forEach(section => {
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(40px)';
+    section.style.transition = 'all 0.8s ease';
+    observer.observe(section);
+});
+</script>
+
+</body>
+</html>
