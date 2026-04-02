@@ -1487,7 +1487,7 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
 	dispose(mask);
 
 	if (losses.length === 0) return scalar(10);
-	return tf.addN(losses).div(scalar(losses.length));
+	return addN(losses).div(scalar(losses.length));
 }
 
 function buildCausalMask(contextSize) {
@@ -1545,7 +1545,7 @@ function embedAndEncodePositions(inputIds, embeddingsTensor, d_model) {
 		).mul(scalar(posEmbedScalar));
 	});
 
-	return tf.add(x, peTensor);
+	return add(x, peTensor);
 }
 
 function applyTransformerLayers(x, layers, n_layers, n_heads, d_k, contextSize, d_model, mask) {
@@ -1559,13 +1559,13 @@ function applySingleTransformerLayer(x, layer, n_heads, d_k, contextSize, d_mode
 	// Pre-LN + Multi-Head Attention
 	const normX = tf_layer_norm(x, layer.gamma, layer.beta);
 	const attnOutput = computeTfMultiHeadAttention(normX, layer, n_heads, d_k, contextSize, d_model, mask);
-	x = tf.add(x, attnOutput);
+	x = add(x, attnOutput);
 
 	// Pre-LN + FFN
 	const normX2 = tf_layer_norm(x, layer.gamma2, layer.beta2);
-	let ffn = tf.relu(tf.add(tf.matMul(normX2, layer.w1), layer.b1));
-	ffn = tf.add(tf.matMul(ffn, layer.w2), layer.b2);
-	return tf.add(x, ffn);
+	let ffn = tf.relu(add(tf.matMul(normX2, layer.w1), layer.b1));
+	ffn = add(tf.matMul(ffn, layer.w2), layer.b2);
+	return add(x, ffn);
 }
 
 function computeTfMultiHeadAttention(normX, layer, n_heads, d_k, contextSize, d_model, mask) {

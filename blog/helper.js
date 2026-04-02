@@ -1825,3 +1825,11 @@ function scalar (...args) {
 function tidy (...args) {
 	return tf.tidy(...args);
 }
+
+function add (...args) {
+	return tf.add(...args);
+}
+
+function addN (...args) {
+	return tf.addN(...args);
+}
