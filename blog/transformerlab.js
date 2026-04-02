@@ -1578,7 +1578,7 @@ function computeTfMultiHeadAttention(normX, layer, n_heads, d_k, contextSize, d_
 	const vHeads = v.reshape([contextSize, n_heads, d_k]).transpose([1, 0, 2]);
 
 	let scores = tf.matMul(qHeads, kHeads.transpose([0, 2, 1]))
-		.div(tf.sqrt(scalar(d_k)));
+		.div(sqrt(scalar(d_k)));
 
 	scores = sub(scores, mask.expandDims(0));
 
@@ -5257,7 +5257,7 @@ function tf_layer_norm(x, gamma, beta) {
 	return tidy(() => {
 		const { mean, variance } = tf.moments(x, -1, true);
 		const tf_epsilon = scalar(epsilon);
-		const normalized = x.sub(mean).div(tf.sqrt(variance.add(tf_epsilon)));
+		const normalized = x.sub(mean).div(sqrt(variance.add(tf_epsilon)));
 		return normalized.mul(gamma).add(beta);
 	});
 }

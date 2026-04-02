@@ -1841,3 +1841,7 @@ function ones (...args) {
 function sub (...args) {
 	return tf.sub(...args);
 }
+
+function sqrt (...args) {
+	return tf.sqrt(...args);
+}
