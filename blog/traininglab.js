@@ -209,7 +209,7 @@ const TrainLab = {
 		const c = this.configs.traininglab;
 		const { gridX, gridY } = this._buildGrid(25);
 
-		tf.tidy(() => {
+		tidy(() => {
 			const preds = this._predictGrid(c.model, gridX, gridY);
 			const traces = this._buildBoundaryTraces(c, gridX, gridY, preds);
 			Plotly.react('traininglab-data-chart', traces, this._boundaryLayout());
@@ -318,7 +318,7 @@ const TrainLab = {
 	_updatePredictionTable: function (id, c) {
 		if (!c.model) return;
 
-		tf.tidy(() => {
+		tidy(() => {
 			const inputData = c.data.map(r => r.slice(0, c.inputs.length));
 			const preds = c.model.predict(tensor2d(inputData)).dataSync();
 
@@ -382,7 +382,7 @@ const TrainLab = {
 	},
 
 	_drawHeatmap: function (layer, cvs) {
-		tf.tidy(() => {
+		tidy(() => {
 			const w = layer.getWeights()[0];
 			const norm = w.sub(w.min()).div(w.max().sub(w.min()).add(0.0001));
 			const smallW = w.shape[0];
@@ -653,7 +653,7 @@ const TrainLab = {
 
 	_predictSingle: function (model, x1, x2) {
 		let val;
-		tf.tidy(() => {
+		tidy(() => {
 			const out = model.predict(tensor2d([[x1, x2]]));
 			val = out.dataSync()[0];
 		});

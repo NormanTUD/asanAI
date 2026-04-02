@@ -300,7 +300,7 @@ async function runConv() {
 	}
 
 	try {
-		tf.tidy(() => {
+		tidy(() => {
 			const combined = applyMultiChannelConv(DOM.srcCanvas, kValues, size);
 			tf.browser.toPixels(combined, DOM.resCanvas);
 		});
@@ -640,7 +640,7 @@ window.FeatureLab = {
 		const filterCount = this.activeFilters.length;
 
 		try {
-			tf.tidy(() => {
+			tidy(() => {
 				const raw = tf.browser.fromPixels(DOM.featSrc);
 				assertTensorRank(raw, 3, 'FeatureLab.runAll/fromPixels');
 

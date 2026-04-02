@@ -129,7 +129,7 @@ const DeepLab = {
 				const cvs = c.weightCanvases[idx]; // Direkter Zugriff auf das Objekt
 
 				if (weights.length > 0 && cvs) {
-					tf.tidy(() => {
+					tidy(() => {
 						const w = weights[0];
 						const norm = w.reshape([w.shape[0], w.shape[1] || 1])
 							.sub(w.min())
@@ -234,7 +234,7 @@ const DeepLab = {
 		const gridX = [], gridY = [];
 		const steps = 20;
 		for(let i=0; i<=steps; i++) for(let j=0; j<=steps; j++) { gridX.push(i/steps * 1.2 - 0.1); gridY.push(j/steps * 1.2 - 0.1); }
-		tf.tidy(() => {
+		tidy(() => {
 			const inputs = tensor2d(gridX.map((v,i) => [v, gridY[i]]));
 			const preds = c.model.predict(inputs).dataSync();
 			Plotly.react('deep-data-chart', [
@@ -274,7 +274,7 @@ const DeepLab = {
 		this.configs[id].data.forEach((row, ri) => {
 			const el = document.getElementById(`res-${id}-${ri}`);
 			if(!el) return;
-			tf.tidy(() => {
+			tidy(() => {
 				const p = this.configs[id].model.predict(tensor2d([row.slice(0, this.configs[id].inputs.length)])).dataSync();
 				el.innerText = p[0].toFixed(3);
 			});
@@ -286,7 +286,7 @@ const DeepLab = {
 		const inps = document.querySelectorAll('.manual-val');
 		if(!inps.length) return;
 		const vals = Array.from(inps).map(i => parseFloat(i.value) || 0);
-		tf.tidy(() => {
+		tidy(() => {
 			const p = this.configs.deep.model.predict(tensor2d([vals])).dataSync();
 			const resEl = document.getElementById('manual-result');
 			if(resEl) resEl.innerText = p[0].toFixed(4);

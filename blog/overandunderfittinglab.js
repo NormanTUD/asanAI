@@ -122,7 +122,7 @@ const FittingLab = {
 
     // ── Feature Expansion ──────────────────────────────────────
     expand: function (t, degree) {
-        return tf.tidy(() => {
+        return tidy(() => {
             let cols = [t];
             for (let i = 2; i <= degree; i++) {
                 cols.push(t.pow(scalar(i)));
@@ -168,7 +168,7 @@ const FittingLab = {
 
     // ── Loss Display Helper ────────────────────────────────────
     _updateLossDisplays: function (degree) {
-        tf.tidy(() => {
+        tidy(() => {
             // Training loss
             const xt      = tensor2d(this.data.xTrain, [this.data.xTrain.length, 1]);
             const yt      = tensor2d(this.data.yTrain, [this.data.yTrain.length, 1]);

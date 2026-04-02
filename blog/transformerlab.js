@@ -1208,7 +1208,7 @@ function buildTrainingWindows(tokens, contextSize) {
 
 function computeAndApplyGradients(tokens, weightVars, d_model, n_layers, n_heads, allVars, optimizer, clipValue) {
 	const { value: cost, grads } = tf.variableGrads(
-		() => tf.tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers, n_heads)),
+		() => tidy(() => calculate_tf_loss(tokens, weightVars, d_model, n_layers, n_heads)),
 		allVars
 	);
 
@@ -1491,7 +1491,7 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
 }
 
 function buildCausalMask(contextSize) {
-	return tf.tidy(() => {
+	return tidy(() => {
 		const ones = tf.ones([contextSize, contextSize]);
 		const upperTriangle = tf.linalg.bandPart(ones, 0, -1);
 		const diagonal = tf.linalg.bandPart(ones, 0, 0);
@@ -1503,7 +1503,7 @@ function collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, cont
 	const losses = [];
 
 	for (let startIdx = 0; startIdx < tokens.length - contextSize; startIdx++) {
-		const loss = tf.tidy(() => {
+		const loss = tidy(() => {
 			const inputIds  = mapTokensToIds(tokens, startIdx, contextSize, vars.vocab_map);
 			const targetIds = mapTokensToIds(tokens, startIdx + 1, contextSize, vars.vocab_map);
 
@@ -1530,7 +1530,7 @@ function mapTokensToIds(tokens, startIdx, contextSize, vocabMap) {
 function embedAndEncodePositions(inputIds, embeddingsTensor, d_model) {
 	let x = tf.gather(embeddingsTensor, tensor1d(inputIds, 'int32'));
 
-	const peTensor = tf.tidy(() => {
+	const peTensor = tidy(() => {
 		const pos = tf.range(0, inputIds.length, 1).reshape([inputIds.length, 1]);
 		const i = tf.range(0, d_model, 1).reshape([1, d_model]);
 		const divTerm = tf.pow(
@@ -5254,7 +5254,7 @@ function renderShiftECharts(container, echartsData, d_model) {
 }
 
 function tf_layer_norm(x, gamma, beta) {
-	return tf.tidy(() => {
+	return tidy(() => {
 		const { mean, variance } = tf.moments(x, -1, true);
 		const tf_epsilon = scalar(epsilon);
 		const normalized = x.sub(mean).div(tf.sqrt(variance.add(tf_epsilon)));

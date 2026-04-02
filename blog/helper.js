@@ -1821,3 +1821,7 @@ function dispose(...args) {
 function scalar (...args) {
 	return tf.scalar(...args);
 }
+
+function tidy (...args) {
+	return tf.tidy(...args);
+}
