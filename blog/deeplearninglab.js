@@ -183,8 +183,8 @@ const DeepLab = {
 		const btn = document.getElementById(`btn-${id}-train`);
 		if (btn) { btn.className = "btn btn-stop"; btn.innerText = "🛑 Stop"; }
 
-		const xs = tf.tensor2d(c.data.map(r => r.slice(0, c.inputs.length)));
-		const ys = tf.tensor2d(c.data.map(r => r.slice(c.inputs.length)));
+		const xs = tensor2d(c.data.map(r => r.slice(0, c.inputs.length)));
+		const ys = tensor2d(c.data.map(r => r.slice(c.inputs.length)));
 		const epochs = parseInt(document.getElementById(id + '-epochs')?.value) || 100;
 
 		for (let i = 0; i < epochs && c.isTraining; i++) {
@@ -221,7 +221,7 @@ const DeepLab = {
 		if(!chartEl) return;
 		const x = c.data.map(r => r[0]), y = c.data.map(r => r[1]);
 		const tx = []; for(let i=0; i<=6; i+=0.5) tx.push(i);
-		const py = c.model.predict(tf.tensor2d(tx, [tx.length, 1])).dataSync();
+		const py = c.model.predict(tensor2d(tx, [tx.length, 1])).dataSync();
 		Plotly.react('lin-data-chart', [{x, y, mode:'markers', name:'Data'}, {x:tx, y:Array.from(py), mode:'lines', name:'Pred'}], {margin:{t:30,b:30,l:30,r:10}, title: 'Regression', autosize:true}, {responsive:true});
 	},
 
@@ -234,7 +234,7 @@ const DeepLab = {
 		const steps = 20;
 		for(let i=0; i<=steps; i++) for(let j=0; j<=steps; j++) { gridX.push(i/steps * 1.2 - 0.1); gridY.push(j/steps * 1.2 - 0.1); }
 		tf.tidy(() => {
-			const inputs = tf.tensor2d(gridX.map((v,i) => [v, gridY[i]]));
+			const inputs = tensor2d(gridX.map((v,i) => [v, gridY[i]]));
 			const preds = c.model.predict(inputs).dataSync();
 			Plotly.react('deep-data-chart', [
 				{ x: gridX, y: gridY, z: Array.from(preds), type: 'contour', showscale: false, opacity: 0.4, colorscale: 'RdBu' },
@@ -274,7 +274,7 @@ const DeepLab = {
 			const el = document.getElementById(`res-${id}-${ri}`);
 			if(!el) return;
 			tf.tidy(() => {
-				const p = this.configs[id].model.predict(tf.tensor2d([row.slice(0, this.configs[id].inputs.length)])).dataSync();
+				const p = this.configs[id].model.predict(tensor2d([row.slice(0, this.configs[id].inputs.length)])).dataSync();
 				el.innerText = p[0].toFixed(3);
 			});
 		});
@@ -286,7 +286,7 @@ const DeepLab = {
 		if(!inps.length) return;
 		const vals = Array.from(inps).map(i => parseFloat(i.value) || 0);
 		tf.tidy(() => {
-			const p = this.configs.deep.model.predict(tf.tensor2d([vals])).dataSync();
+			const p = this.configs.deep.model.predict(tensor2d([vals])).dataSync();
 			const resEl = document.getElementById('manual-result');
 			if(resEl) resEl.innerText = p[0].toFixed(4);
 		});

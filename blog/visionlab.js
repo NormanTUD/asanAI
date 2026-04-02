@@ -191,7 +191,7 @@ function applyConv2D(inputTensor4D, kernelData, kernelSize, flipKernel = false) 
 		`[visionlab] applyConv2D: kernelData length ${kernelData.length} does not match kernelSize ${kernelSize}x${kernelSize}=${kernelSize * kernelSize}`
 	);
 
-	let ker = tf.tensor2d(kernelData, [kernelSize, kernelSize]);
+	let ker = tensor2d(kernelData, [kernelSize, kernelSize]);
 	if (flipKernel) {
 		ker = ker.reverse(0).reverse(1);
 	}

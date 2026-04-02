@@ -1445,26 +1445,26 @@ function convert_weights_to_tensors(weights) {
 	const vars = {
 		layers: weights.map(layer => ({
 			// Attention Weights
-			wq: tf.variable(tf.tensor2d(layer.attention.query)),
-			wk: tf.variable(tf.tensor2d(layer.attention.key)),
-			wv: tf.variable(tf.tensor2d(layer.attention.value)),
-			wo: tf.variable(tf.tensor2d(layer.attention.output)),
+			wq: tf.variable(tensor2d(layer.attention.query)),
+			wk: tf.variable(tensor2d(layer.attention.key)),
+			wv: tf.variable(tensor2d(layer.attention.value)),
+			wo: tf.variable(tensor2d(layer.attention.output)),
 
 			// Layer Norm 1 Parameters
-			gamma: tf.variable(tf.tensor1d(layer.gamma)),
-			beta: tf.variable(tf.tensor1d(layer.beta)),
+			gamma: tf.variable(tensor1d(layer.gamma)),
+			beta: tf.variable(tensor1d(layer.beta)),
 
 			// Layer Norm 2 Parameters (NEW)
-			gamma2: tf.variable(tf.tensor1d(layer.gamma2 || new Array(layer.gamma.length).fill(1.0))),
-			beta2: tf.variable(tf.tensor1d(layer.beta2 || new Array(layer.beta.length).fill(0.0))),
+			gamma2: tf.variable(tensor1d(layer.gamma2 || new Array(layer.gamma.length).fill(1.0))),
+			beta2: tf.variable(tensor1d(layer.beta2 || new Array(layer.beta.length).fill(0.0))),
 
 			// FFN Weights
-			w1: tf.variable(tf.tensor2d(layer.W1)),
-			b1: tf.variable(tf.tensor1d(layer.b1)),
-			w2: tf.variable(tf.tensor2d(layer.W2)),
-			b2: tf.variable(tf.tensor1d(layer.b2))
+			w1: tf.variable(tensor2d(layer.W1)),
+			b1: tf.variable(tensor1d(layer.b1)),
+			w2: tf.variable(tensor2d(layer.W2)),
+			b2: tf.variable(tensor1d(layer.b2))
 		})),
-		embeddings: tf.variable(tf.tensor2d(embMatrix)),
+		embeddings: tf.variable(tensor2d(embMatrix)),
 		vocab_map: vocab
 	};
 	return vars;
@@ -1512,7 +1512,7 @@ function collectWindowLosses(tokens, vars, d_model, n_layers, n_heads, d_k, cont
 			x = applyTransformerLayers(x, vars.layers, n_layers, n_heads, d_k, contextSize, d_model, mask);
 
 			const logits = tf.matMul(x, vars.embeddings.transpose());
-			const labels = tf.oneHot(tf.tensor1d(targetIds, 'int32'), vars.vocab_map.length);
+			const labels = tf.oneHot(tensor1d(targetIds, 'int32'), vars.vocab_map.length);
 			return tf.losses.softmaxCrossEntropy(labels, logits);
 		});
 
@@ -1528,7 +1528,7 @@ function mapTokensToIds(tokens, startIdx, contextSize, vocabMap) {
 }
 
 function embedAndEncodePositions(inputIds, embeddingsTensor, d_model) {
-	let x = tf.gather(embeddingsTensor, tf.tensor1d(inputIds, 'int32'));
+	let x = tf.gather(embeddingsTensor, tensor1d(inputIds, 'int32'));
 
 	const peTensor = tf.tidy(() => {
 		const pos = tf.range(0, inputIds.length, 1).reshape([inputIds.length, 1]);

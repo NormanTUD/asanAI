@@ -180,8 +180,8 @@ const TrainLab = {
 	},
 
 	_buildTensorsFromData: function (c) {
-		const xs = tf.tensor2d(c.data.map(r => r.slice(0, c.inputs.length)));
-		const ys = tf.tensor2d(c.data.map(r => r.slice(c.inputs.length)));
+		const xs = tensor2d(c.data.map(r => r.slice(0, c.inputs.length)));
+		const ys = tensor2d(c.data.map(r => r.slice(c.inputs.length)));
 		return { xs, ys };
 	},
 
@@ -228,7 +228,7 @@ const TrainLab = {
 	},
 
 	_predictGrid: function (model, gridX, gridY) {
-		const input = tf.tensor2d(gridX.map((v, i) => [v, gridY[i]]));
+		const input = tensor2d(gridX.map((v, i) => [v, gridY[i]]));
 		return model.predict(input).dataSync();
 	},
 
@@ -320,7 +320,7 @@ const TrainLab = {
 
 		tf.tidy(() => {
 			const inputData = c.data.map(r => r.slice(0, c.inputs.length));
-			const preds = c.model.predict(tf.tensor2d(inputData)).dataSync();
+			const preds = c.model.predict(tensor2d(inputData)).dataSync();
 
 			c.data.forEach((row, ri) => {
 				const targetVal = row[c.inputs.length];
@@ -654,7 +654,7 @@ const TrainLab = {
 	_predictSingle: function (model, x1, x2) {
 		let val;
 		tf.tidy(() => {
-			const out = model.predict(tf.tensor2d([[x1, x2]]));
+			const out = model.predict(tensor2d([[x1, x2]]));
 			val = out.dataSync()[0];
 		});
 		return val;
@@ -671,7 +671,7 @@ const TrainLab = {
 		let [W, B] = layer.getWeights();
 		let wData = W.dataSync();
 		wData[wIdx] = val;
-		layer.setWeights([tf.tensor(wData, W.shape), B]);
+		layer.setWeights([tensor(wData, W.shape), B]);
 	},
 
 	_updateWeightLabel: function (wIdx, val) {

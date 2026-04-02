@@ -57,8 +57,8 @@ const MinimalLab = {
 			btn.innerText = "🛑 Stop";
 		}
 
-		const xs = tf.tensor2d(c.data.map(r => [r[0]]));
-		const ys = tf.tensor2d(c.data.map(r => [r[1]]));
+		const xs = tensor2d(c.data.map(r => [r[0]]));
+		const ys = tensor2d(c.data.map(r => [r[1]]));
 		const epochs = parseInt(document.getElementById('lin-epochs')?.value) || 1000;
 
 		for (let i = 0; i < epochs && c.isTraining; i++) {
@@ -109,7 +109,7 @@ const MinimalLab = {
 
 			const testX = [];
 			for(let i=0; i<=7; i+=0.5) testX.push(i);
-			const predY = c.model.predict(tf.tensor2d(testX, [testX.length, 1])).dataSync();
+			const predY = c.model.predict(tensor2d(testX, [testX.length, 1])).dataSync();
 
 			Plotly.react('lin-data-chart', [
 				{x: xData, y: yData, mode: 'markers', name: 'Actual'},
