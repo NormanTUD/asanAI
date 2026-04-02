@@ -99,7 +99,7 @@ Around 3500 BCE, tokens were replaced by flat clay tablets with incised **pictog
 <div class="md">
 By 3200 BCE in Mesopotamia, pictograms evolved into **Cuneiform**, characterized by wedge-shaped marks made with a reed stylus in soft clay.
 * **Standardization:** Writing shifted from accounting lists to complex legal codes, literature, and religious texts.
-* **Mathematical Formalization:** Later, scholars like Pāṇini (ca. 4th Century BCE) developed the *Ashtadhyayi*, a set of formal rules for Sanskrit that functioned like a generative logic for language, mirroring the structured way we treat language in modern computing.
+* **Mathematical Formalization:** Later, scholars like Pāṇini (ca. 4th Century BCE) developed the अष्टाध्यायी (*Ashtadhyayi*), a set of formal rules for Sanskrit that functioned like a generative logic for language, mirroring the structured way we treat language in modern computing.
 
 This trajectory from biological vibrations to physical tokens, and finally to abstract geometry, forms the foundation for how modern systems now process meaning.
 </div>
