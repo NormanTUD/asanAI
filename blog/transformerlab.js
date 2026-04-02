@@ -1492,9 +1492,9 @@ function calculate_tf_loss(tokens, vars, d_model, n_layers, n_heads) {
 
 function buildCausalMask(contextSize) {
 	return tidy(() => {
-		const ones = ones([contextSize, contextSize]);
-		const upperTriangle = tf.linalg.bandPart(ones, 0, -1);
-		const diagonal = tf.linalg.bandPart(ones, 0, 0);
+		const _ones = ones([contextSize, contextSize]);
+		const upperTriangle = tf.linalg.bandPart(_ones, 0, -1);
+		const diagonal = tf.linalg.bandPart(_ones, 0, 0);
 		return sub(upperTriangle, diagonal).mul(scalar(1e9));
 	});
 }
