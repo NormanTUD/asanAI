@@ -1849,3 +1849,7 @@ function sqrt (...args) {
 function matMul (...args) {
 	return tf.matMul(...args);
 }
+
+function relu (...args) {
+	return tf.relu(...args);
+}

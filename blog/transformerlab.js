@@ -1563,7 +1563,7 @@ function applySingleTransformerLayer(x, layer, n_heads, d_k, contextSize, d_mode
 
 	// Pre-LN + FFN
 	const normX2 = tf_layer_norm(x, layer.gamma2, layer.beta2);
-	let ffn = tf.relu(add(matMul(normX2, layer.w1), layer.b1));
+	let ffn = relu(add(matMul(normX2, layer.w1), layer.b1));
 	ffn = add(matMul(ffn, layer.w2), layer.b2);
 	return add(x, ffn);
 }
