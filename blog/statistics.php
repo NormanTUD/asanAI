@@ -268,7 +268,7 @@ With our coarse $\Delta t = 0.5$ slices, we get $\Phi(1.0) \approx 0.8086$. The 
 
 **Step C: Make the slices thinner**
 
-If we use $\Delta t = 0.01$ instead of $0.5$, we get $\Phi(1.0) \approx 0.8413$, matching the table to 4 decimal places. Use $\Delta t = 0.001$ and you get even more precision. This is exactly what Gauß did (by hand!), and what every calculator does today (instantly).
+If we use $\Delta t = 0.01$ instead of $0.5$, we get $\Phi(1.0) \approx 0.8413$, matching the table to 4 decimal places. Use $\Delta t = 0.001$ and you get even more precision. This is exactly what Gauß did (by hand!), and what every calculator does today.
 
 The whole process in one line:
 
