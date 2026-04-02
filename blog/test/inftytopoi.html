@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>∞-Topoi — Visual Explorer</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a1a;
+    color: #e0e0f0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    text-align: center;
+    padding: 18px 20px 8px;
+    z-index: 10;
+  }
+  header h1 {
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, #7eb4ff, #c084fc, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+  }
+  header p {
+    max-width: 720px;
+    margin: 10px auto 0;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: #a0a0c0;
+  }
+  #controls {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    padding: 10px;
+    z-index: 10;
+    flex-wrap: wrap;
+  }
+  button {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #c0c0e0;
+    padding: 7px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: all 0.25s;
+  }
+  button:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  button.active { background: rgba(124,58,237,0.4); border-color: #7c3aed; color: #fff; }
+  #canvas-wrap { flex: 1; position: relative; }
+  svg { width: 100%; height: 100%; }
+  .tooltip {
+    position: absolute;
+    background: rgba(20,20,40,0.95);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    color: #d0d0f0;
+    pointer-events: none;
+    max-width: 260px;
+    line-height: 1.5;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 100;
+  }
+  .level-label {
+    font-size: 11px;
+    fill: #606080;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>∞-Topoi — Interactive Visual Explorer</h1>
+  <p>An ∞-topos is a universe of "spaces" where every point can have symmetries,
+     and those symmetries themselves have higher symmetries — towers of coherent
+     structure going up forever. Click any node to reveal its higher automorphisms;
+     watch local data glue into global sheaves.</p>
+</header>
+
+<div id="controls">
+  <button class="active" data-mode="explore">🔍 Explore Levels</button>
+  <button data-mode="sheaf">🧩 Sheaf Gluing</button>
+  <button data-mode="functor">⇄ Functoriality</button>
+  <button id="resetBtn">↺ Reset</button>
+</div>
+
+<div id="canvas-wrap">
+  <svg id="viz"></svg>
+  <div class="tooltip" id="tooltip"></div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────
+let mode = 'explore';
+let maxDepthReached = 0;
+const MAX_DEPTH = 5;
+
+const palette = ['#7eb4ff','#c084fc','#f472b6','#facc15','#34d399','#fb923c'];
+const levelNames = [
+  'Objects (0-cells)',
+  'Morphisms (1-cells)',
+  '2-Morphisms',
+  '3-Morphisms',
+  '4-Morphisms',
+  '5-Morphisms'
+];
+const levelDescriptions = [
+  'Points in the ∞-topos — like open sets in a topological space.',
+  'Paths between points — continuous maps, symmetries.',
+  'Homotopies between paths — symmetries of symmetries.',
+  'Higher homotopies — coherence data between 2-morphisms.',
+  'Even higher coherence — the tower keeps going…',
+  'And further still — in an ∞-topos this never stops.'
+];
+
+// ── SVG Setup ──────────────────────────────────────────────────────
+const svg = d3.select('#viz');
+const tooltip = d3.select('#tooltip');
+let width, height;
+
+function resize() {
+  const rect = document.getElementById('canvas-wrap').getBoundingClientRect();
+  width = rect.width;
+  height = rect.height;
+  svg.attr('viewBox', `0 0 ${width} ${height}`);
+}
+resize();
+window.addEventListener('resize', resize);
+
+const g = svg.append('g');
+
+// ── Data Model ─────────────────────────────────────────────────────
+let nodes = [];
+let links = [];
+let nodeId = 0;
+
+function createNode(x, y, depth, parent) {
+  return {
+    id: nodeId++,
+    x: x + (Math.random() - 0.5) * 30,
+    y: y + (Math.random() - 0.5) * 30,
+    depth,
+    parent,
+    children: [],
+    expanded: false,
+    r: Math.max(6, 22 - depth * 3)
+  };
+}
+
+function initGraph() {
+  nodes = [];
+  links = [];
+  nodeId = 0;
+  maxDepthReached = 0;
+
+  const cx = width / 2, cy = height / 2;
+  const count = 5;
+  for (let i = 0; i < count; i++) {
+    const angle = (2 * Math.PI * i) / count - Math.PI / 2;
+    const r = Math.min(width, height) * 0.22;
+    const n = createNode(cx + r * Math.cos(angle), cy + r * Math.sin(angle), 0, null);
+    nodes.push(n);
+  }
+  // connect base nodes in a cycle + some cross links
+  for (let i = 0; i < count; i++) {
+    links.push({ source: nodes[i], target: nodes[(i + 1) % count], depth: 0 });
+  }
+  links.push({ source: nodes[0], target: nodes[2], depth: 0 });
+  links.push({ source: nodes[1], target: nodes[3], depth: 0 });
+}
+
+// ── Expand a node: reveal higher morphisms ─────────────────────────
+function expandNode(node) {
+  if (node.expanded || node.depth >= MAX_DEPTH) return;
+  node.expanded = true;
+  const childCount = Math.max(2, 4 - node.depth);
+  const newNodes = [];
+  for (let i = 0; i < childCount; i++) {
+    const angle = (2 * Math.PI * i) / childCount + Math.random() * 0.5;
+    const dist = 35 + node.depth * 5;
+    const child = createNode(
+      node.x + dist * Math.cos(angle),
+      node.y + dist * Math.sin(angle),
+      node.depth + 1,
+      node
+    );
+    node.children.push(child);
+    nodes.push(child);
+    newNodes.push(child);
+    links.push({ source: node, target: child, depth: child.depth });
+  }
+  // connect children among themselves
+  for (let i = 0; i < newNodes.length; i++) {
+    links.push({
+      source: newNodes[i],
+      target: newNodes[(i + 1) % newNodes.length],
+      depth: newNodes[i].depth
+    });
+  }
+  if (node.depth + 1 > maxDepthReached) maxDepthReached = node.depth + 1;
+  updateViz();
+}
+
+// ── Sheaf mode: animate gluing ─────────────────────────────────────
+let sheafInterval = null;
+function startSheafMode() {
+  stopSheafMode();
+  // highlight overlapping "local sections" that glue
+  let step = 0;
+  sheafInterval = setInterval(() => {
+    step++;
+    g.selectAll('.link-line')
+      .transition().duration(600)
+      .attr('stroke', (d, i) => {
+        const group = i % 3;
+        const phase = step % 3;
+        return group === phase ? '#facc15' : colorForDepth(d.depth);
+      })
+      .attr('stroke-width', (d, i) => {
+        const group = i % 3;
+        const phase = step % 3;
+        return group === phase ? 3.5 : 1.2;
+      });
+    g.selectAll('.node-circle')
+      .transition().duration(600)
+      .attr('stroke', (d, i) => {
+        const group = i % 3;
+        const phase = step % 3;
+        return group === phase ? '#facc15' : '#fff';
+      })
+      .attr('stroke-width', (d, i) => {
+        const group = i % 3;
+        const phase = step % 3;
+        return group === phase ? 3 : 1.2;
+      });
+  }, 900);
+}
+function stopSheafMode() {
+  if (sheafInterval) clearInterval(sheafInterval);
+  sheafInterval = null;
+}
+
+// ── Functor mode: animate mapping between layers ───────────────────
+let functorInterval = null;
+function startFunctorMode() {
+  stopFunctorMode();
+  let phase = 0;
+  functorInterval = setInterval(() => {
+    phase++;
+    const d = phase % (maxDepthReached + 1);
+    g.selectAll('.node-circle')
+      .transition().duration(500)
+      .attr('opacity', n => n.depth === d ? 1 : 0.15)
+      .attr('r', n => n.depth === d ? n.r * 1.4 : n.r * 0.7);
+    g.selectAll('.link-line')
+      .transition().duration(500)
+      .attr('opacity', l => (l.depth === d || l.depth === d + 1) ? 0.9 : 0.07);
+  }, 1100);
+}
+function stopFunctorMode() {
+  if (functorInterval) clearInterval(functorInterval);
+  functorInterval = null;
+  g.selectAll('.node-circle').transition().duration(400).attr('opacity', 1).attr('r', n => n.r);
+  g.selectAll('.link-line').transition().duration(400).attr('opacity', 0.6);
+}
+
+// ── Colors ─────────────────────────────────────────────────────────
+function colorForDepth(d) {
+  return palette[d % palette.length];
+}
+
+// ── Force Simulation ───────────────────────────────────────────────
+let sim;
+function restartSim() {
+  if (sim) sim.stop();
+  sim = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).distance(d => 50 + d.depth * 10).strength(0.4))
+    .force('charge', d3.forceManyBody().strength(-90))
+    .force('center', d3.forceCenter(width / 2, height / 2).strength(0.04))
+    .force('collision', d3.forceCollide().radius(d => d.r + 4))
+    .alphaDecay(0.02)
+    .on('tick', ticked);
+}
+
+function ticked() {
+  g.selectAll('.link-line')
+    .attr('x1', d => d.source.x)
+    .attr('y1', d => d.source.y)
+    .attr('x2', d => d.target.x)
+    .attr('y2', d => d.target.y);
+
+  g.selectAll('.node-g')
+    .attr('transform', d => `translate(${d.x},${d.y})`);
+}
+
+// ── Render ─────────────────────────────────────────────────────────
+function updateViz() {
+  // Links
+  const linkSel = g.selectAll('.link-line').data(links, d => d.source.id + '-' + d.target.id);
+  linkSel.enter()
+    .append('line')
+    .attr('class', 'link-line')
+    .attr('stroke', d => colorForDepth(d.depth))
+    .attr('stroke-opacity', 0.6)
+    .attr('stroke-width', 1.2)
+    .attr('stroke-dasharray', d => d.depth > 0 ? `${4 + d.depth * 2},${3 + d.depth}` : 'none');
+  linkSel.exit().remove();
+
+  // Nodes
+  const nodeSel = g.selectAll('.node-g').data(nodes, d => d.id);
+  const enter = nodeSel.enter()
+    .append('g')
+    .attr('class', 'node-g')
+    .style('cursor', 'pointer')
+    .call(d3.drag()
+      .on('start', (e, d) => { if (!e.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+      .on('end', (e, d) => { if (!e.active) sim.alphaTarget(0); d.fx = null; d.fy = null; })
+    )
+    .on('click', (e, d) => {
+      e.stopPropagation();
+      if (mode === 'explore') expandNode(d);
+    })
+    .on('mouseenter', (e, d) => {
+      const name = levelNames[d.depth] || `${d.depth}-Morphisms`;
+      const desc = levelDescriptions[Math.min(d.depth, levelDescriptions.length - 1)];
+      tooltip.html(`<strong>${name}</strong><br>${desc}<br><em>${d.expanded ? 'Expanded' : d.depth < MAX_DEPTH ? 'Click to reveal higher structure ↗' : 'Max depth reached'}</em>`)
+        .style('left', (e.pageX + 14) + 'px')
+        .style('top', (e.pageY - 20) + 'px')
+        .style('opacity', 1);
+    })
+    .on('mouseleave', () => tooltip.style('opacity', 0));
+
+  enter.append('circle')
+    .attr('class', 'node-circle')
+    .attr('r', 0)
+    .attr('fill', d => colorForDepth(d.depth))
+    .attr('fill-opacity', 0.25)
+    .attr('stroke', '#fff')
+    .attr('stroke-width', 1.2)
+    .transition().duration(500)
+    .attr('r', d => d.r);
+
+  enter.append('circle')
+    .attr('r', d => d.r * 0.35)
+    .attr('fill', d => colorForDepth(d.depth))
+    .attr('fill-opacity', 0.9);
+
+  nodeSel.exit().transition().duration(300).attr('opacity', 0).remove();
+
+  // Level legend
+  g.selectAll('.level-label').remove();
+  for (let i = 0; i <= maxDepthReached; i++) {
+    g.append('text')
+      .attr('class', 'level-label')
+      .attr('x', 16)
+      .attr('y', 30 + i * 22)
+      .text(`● ${levelNames[i] || i + '-Morphisms'}`)
+      .attr('fill', colorForDepth(i));
+  }
+
+  restartSim();
+}
+
+// ── Mode Switching ─────────────────────────────────────────────────
+document.querySelectorAll('#controls button[data-mode]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#controls button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    stopSheafMode();
+    stopFunctorMode();
+    mode = btn.dataset.mode;
+    if (mode === 'sheaf') startSheafMode();
+    if (mode === 'functor') startFunctorMode();
+  });
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  stopSheafMode();
+  stopFunctorMode();
+  g.selectAll('*').remove();
+  initGraph();
+  updateViz();
+});
+
+// ── Init ───────────────────────────────────────────────────────────
+initGraph();
+updateViz();
+</script>
+</body>
+</html>
+
