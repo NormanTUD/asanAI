@@ -582,6 +582,15 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
         <span id="poisson-lambda-val">4.0</span>
         <div id="poisson-chart"></div>
     </div>
+
+<div class="ai-callout" style="background: linear-gradient(135deg, #eff6ff, #f5f3ff); border-left: 4px solid #6366f1; border-radius: 8px; padding: 20px 24px; margin: 24px 0;">
+    <div style="display: flex; align-items: flex-start; gap: 14px;">
+        <span style="font-size: 1.6em; line-height: 1;">🤖</span>
+        <div class="md">
+**Why This Matters for AI:** The Poisson distribution is used to model **token arrival rates in streaming and real-time AI systems**. When an LLM serves thousands of users simultaneously, the requests hitting the server per second follow a Poisson process — rare per individual user, but constant in aggregate. Understanding $\lambda$ allows engineers to provision GPU capacity, set queue depths, and design auto-scaling policies. The same math Bortkiewicz used to count horse-kick fatalities now determines how many inference servers OpenAI spins up at peak hours.
+        </div>
+    </div>
+</div>
 </div>
 
 <div class="md">
