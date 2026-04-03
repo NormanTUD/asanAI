@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ehresmann Connection – Interactive Visual Explainer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0d1117;
+    color: #c9d1d9;
+    overflow-x: hidden;
+  }
+  header {
+    text-align: center;
+    padding: 30px 20px 10px;
+    background: linear-gradient(135deg, #161b22, #0d1117);
+    border-bottom: 1px solid #30363d;
+  }
+  header h1 { font-size: 2em; color: #58a6ff; }
+  header p { color: #8b949e; margin-top: 8px; max-width: 800px; margin-left: auto; margin-right: auto; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+  /* Tabs */
+  .tabs {
+    display: flex; gap: 4px; margin: 20px 0 0;
+    border-bottom: 2px solid #30363d;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    background: transparent;
+    color: #8b949e;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95em;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: #c9d1d9; }
+  .tab-btn.active { color: #58a6ff; border-bottom-color: #58a6ff; }
+
+  .tab-content { display: none; padding: 20px 0; }
+  .tab-content.active { display: block; }
+
+  /* Canvas area */
+  .canvas-wrap {
+    position: relative;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  canvas { display: block; }
+
+  /* Controls */
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 14px; align-items: center;
+    padding: 12px 16px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  .controls label { font-size: 0.9em; color: #8b949e; }
+  .controls input[type=range] { width: 140px; accent-color: #58a6ff; }
+  .controls button {
+    padding: 6px 16px;
+    background: #238636;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.2s;
+  }
+  .controls button:hover { background: #2ea043; }
+  .controls button.secondary { background: #30363d; }
+  .controls button.secondary:hover { background: #484f58; }
+
+  /* Info boxes */
+  .info {
+    background: #161b22;
+    border-left: 3px solid #58a6ff;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+    line-height: 1.65;
+    font-size: 0.95em;
+  }
+  .info h3 { color: #58a6ff; margin-bottom: 6px; }
+  .info code { background: #0d1117; padding: 2px 6px; border-radius: 4px; color: #f0883e; }
+
+  .math {
+    font-family: 'Cambria Math', 'Times New Roman', serif;
+    font-style: italic;
+    color: #d2a8ff;
+  }
+
+  /* Legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 10px 0; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85em; }
+  .legend-color {
+    width: 28px; height: 4px; border-radius: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    header h1 { font-size: 1.4em; }
+    .tab-btn { padding: 8px 12px; font-size: 0.85em; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>The Ehresmann Connection</h1>
+  <p>An interactive visual guide to understanding connections on fibre bundles — the geometric idea of splitting tangent spaces into <em>horizontal</em> and <em>vertical</em> directions.</p>
+</header>
+
+<div class="container">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="tab1">1 – Fibre Bundle</button>
+    <button class="tab-btn" data-tab="tab2">2 – Vertical Subspace</button>
+    <button class="tab-btn" data-tab="tab3">3 – Horizontal Choice</button>
+    <button class="tab-btn" data-tab="tab4">4 – Parallel Transport</button>
+    <button class="tab-btn" data-tab="tab5">5 – Curvature</button>
+  </div>
+
+  <!-- ===================== TAB 1 ===================== -->
+  <div class="tab-content active" id="tab1">
+    <div class="info">
+      <h3>What is a Fibre Bundle?</h3>
+      A <strong>fibre bundle</strong> <span class="math">π : E → M</span> is a space <span class="math">E</span> (the <em>total space</em>) that locally looks like a product <span class="math">M × F</span>, where <span class="math">M</span> is the <em>base manifold</em> and <span class="math">F</span> is the <em>fibre</em>. The map <span class="math">π</span> projects each point in <span class="math">E</span> down to a point in <span class="math">M</span>.<br><br>
+      <strong>Drag the red point</strong> along the base to see the fibre above it. The blue dot lives in the total space.
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="c1" width="1060" height="480"></canvas>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background:#58a6ff"></div> Base manifold M</div>
+      <div class="legend-item"><div class="legend-color" style="background:#f0883e"></div> Fibre F above point</div>
+      <div class="legend-item"><div class="legend-color" style="background:#f778ba"></div> Total space E</div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB 2 ===================== -->
+  <div class="tab-content" id="tab2">
+    <div class="info">
+      <h3>The Vertical Subspace</h3>
+      At any point <span class="math">p ∈ E</span>, the <strong>vertical subspace</strong> <span class="math">V<sub>p</sub>E = ker(dπ<sub>p</sub>)</span> consists of tangent vectors that point <em>along the fibre</em> — i.e., vectors that get killed by the projection's derivative. This subspace is <strong>canonical</strong>: it requires no extra choice.<br><br>
+      <strong>Move the point</strong> up and down the fibre to see the vertical tangent vector.
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="c2" width="1060" height="480"></canvas>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background:#3fb950"></div> Vertical subspace V<sub>p</sub>E</div>
+      <div class="legend-item"><div class="legend-color" style="background:#8b949e"></div> Full tangent space T<sub>p</sub>E</div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB 3 ===================== -->
+  <div class="tab-content" id="tab3">
+    <div class="info">
+      <h3>The Ehresmann Connection = Choosing a Horizontal Subspace</h3>
+      An <strong>Ehresmann connection</strong> is a smooth choice of a <em>horizontal subspace</em> <span class="math">H<sub>p</sub>E</span> at every point <span class="math">p ∈ E</span> such that
+      <span class="math">T<sub>p</sub>E = V<sub>p</sub>E ⊕ H<sub>p</sub>E</span>.<br><br>
+      This is <strong>not canonical</strong> — there are many possible choices! Use the <strong>angle slider</strong> to rotate the horizontal subspace and see different connections.
+    </div>
+    <div class="controls">
+      <label>Connection angle: <input type="range" id="angleSlider" min="-60" max="60" value="0"></label>
+      <span id="angleVal" style="color:#58a6ff;min-width:40px">0°</span>
+      <button class="secondary" onclick="document.getElementById('angleSlider').value=0;updateTab3();">Reset</button>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="c3" width="1060" height="480"></canvas>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background:#3fb950"></div> Vertical V<sub>p</sub>E (canonical)</div>
+      <div class="legend-item"><div class="legend-color" style="background:#f0883e"></div> Horizontal H<sub>p</sub>E (your choice!)</div>
+      <div class="legend-item"><div class="legend-color" style="background:#8b949e;height:1px;border:1px dashed #8b949e"></div> Other possible horizontals</div>
+    </div>
+  </div>
+
+  <!-- ===================== TAB 4 ===================== -->
+  <div class="tab-content" id="tab4">
+    <div class="info">
+      <h3>Parallel Transport</h3>
+      Once a connection (horizontal distribution) is chosen, we can <strong>parallel-transport</strong> a point in the fibre along a curve in the base. At each instant, we move in the <em>horizontal direction</em> — the unique lift of the base velocity into <span class="math">H<sub>p</sub>E</span>.<br><br>
+      <strong>Click "Transport!"</strong> to watch a point get carried along the base curve. Change the connection angle to see how different connections yield different transport results.
+    </div>
+    <div class="controls">
+      <label>Connection angle: <input type="range" id="angleSlider2" min="-45" max="45" value="20"></label>
+      <span id="angleVal2" style="color:#58a6ff;min-width:40px">20°</span>
+      <button id="transportBtn" onclick="startTransport()">Transport!</button>
+      <button class="secondary" onclick="resetTransport()">Reset</button>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="c4" width="1060" height="480"></canvas>
+    </div>
+  </div>
+
+  <!-- ===================== TAB 5 ===================== -->
+  <div class="tab-content" id="tab5">
+    <div class="info">
+      <h3>Curvature = Failure of Horizontal Distribution to be Integrable</h3>
+      The <strong>curvature</strong> of an Ehresmann connection measures whether the horizontal distribution <span class="math">H</span> is <em>integrable</em> (i.e., whether horizontal lifts of closed loops return to the same fibre point). If the curvature is <strong>zero</strong>, parallel transport around any closed loop is trivial. If it is <strong>nonzero</strong>, you get <em>holonomy</em>.<br><br>
+      <strong>Drag the curvature slider</strong> to see how a round-trip on the base produces a shift (holonomy) in the fibre.
+    </div>
+    <div class="controls">
+      <label>Curvature κ: <input type="range" id="curvSlider" min="0" max="100" value="50"></label>
+      <span id="curvVal" style="color:#f0883e;min-width:50px">0.50</span>
+      <button id="loopBtn" onclick="startLoop()">Go Around Loop!</button>
+      <button class="secondary" onclick="resetLoop()">Reset</button>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="c5" width="1060" height="480"></canvas>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background:#da3633"></div> Holonomy (fibre shift after closed loop)</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+//  UTILITIES
+// ============================================================
+function getCtx(id) {
+  const c = document.getElementById(id);
+  const dpr = window.devicePixelRatio || 1;
+  c.style.width = c.width + 'px';
+  c.style.height = c.height + 'px';
+  c.width *= dpr;
+  c.height *= dpr;
+  const ctx = c.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx._w = parseInt(c.style.width);
+  ctx._h = parseInt(c.style.height);
+  return ctx;
+}
+
+function arrow(ctx, x1, y1, x2, y2, color, lw) {
+  const headLen = 10;
+  const dx = x2 - x1, dy = y2 - y1;
+  const angle = Math.atan2(dy, dx);
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = lw || 2;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headLen * Math.cos(angle - 0.4), y2 - headLen * Math.sin(angle - 0.4));
+  ctx.lineTo(x2 - headLen * Math.cos(angle + 0.4), y2 - headLen * Math.sin(angle + 0.4));
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function clear(ctx) {
+  ctx.clearRect(0, 0, ctx._w, ctx._h);
+}
+
+function label(ctx, txt, x, y, color, size) {
+  ctx.save();
+  ctx.fillStyle = color || '#c9d1d9';
+  ctx.font = (size || 14) + 'px "Segoe UI", sans-serif';
+  ctx.fillText(txt, x, y);
+  ctx.restore();
+}
+
+// ============================================================
+//  TAB SWITCHING
+// ============================================================
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ============================================================
+//  TAB 1 – FIBRE BUNDLE
+// ============================================================
+(function() {
+  const ctx = getCtx('c1');
+  const W = ctx._w, H = ctx._h;
+  let baseX = W / 2;
+  let dragging = false;
+
+  const baseY = H - 80;
+  const fibreH = 260;
+  const baseLeft = 100, baseRight = W - 100;
+
+  function draw() {
+    clear(ctx);
+
+    // Draw several faint fibres
+    ctx.save();
+    ctx.globalAlpha = 0.12;
+    for (let x = baseLeft; x <= baseRight; x += 40) {
+      ctx.strokeStyle = '#f778ba';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, baseY);
+      ctx.lineTo(x, baseY - fibreH);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Shaded total space
+    ctx.save();
+    ctx.fillStyle = 'rgba(247,120,186,0.06)';
+    ctx.fillRect(baseLeft, baseY - fibreH, baseRight - baseLeft, fibreH);
+    ctx.restore();
+    label(ctx, 'Total space E', baseRight - 100, baseY - fibreH + 20, '#f778ba', 13);
+
+    // Base manifold
+    ctx.save();
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(baseLeft, baseY);
+    ctx.lineTo(baseRight, baseY);
+    ctx.stroke();
+    ctx.restore();
+    label(ctx, 'Base M', baseRight + 8, baseY + 5, '#58a6ff', 14);
+
+    // Highlighted fibre
+    ctx.save();
+    ctx.strokeStyle = '#f0883e';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(baseX, baseY);
+    ctx.lineTo(baseX, baseY - fibreH);
+    ctx.stroke();
+    ctx.restore();
+    label(ctx, 'Fibre F = π⁻¹(x)', baseX + 10, baseY - fibreH + 14, '#f0883e', 13);
+
+    // Projection arrow
+    const midFibre = baseY - fibreH / 2;
+    arrow(ctx, baseX + 50, midFibre, baseX + 50, baseY - 10, '#8b949e', 1.5);
+    label(ctx, 'π', baseX + 56, midFibre + 20, '#8b949e', 13);
+
+    // Point on base
+    ctx.save();
+    ctx.fillStyle = '#da3633';
+    ctx.beginPath();
+    ctx.arc(baseX, baseY, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    label(ctx, 'x ∈ M  (drag me!)', baseX - 50, baseY + 28, '#da3633', 13);
+
+    // Point in total space
+    ctx.save();
+    ctx.fillStyle = '#58a6ff';
+    ctx.shadowColor = '#58a6ff';
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(baseX, baseY - fibreH * 0.55, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    label(ctx, 'p ∈ E', baseX + 10, baseY - fibreH * 0.55 - 8, '#58a6ff', 13);
+  }
+
+  draw();
+
+  const canvas = document.getElementById('c1');
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+    return x;
+  }
+  canvas.addEventListener('mousedown', e => { dragging = true; });
+  canvas.addEventListener('touchstart', e => { dragging = true; e.preventDefault(); });
+  canvas.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    baseX = Math.max(baseLeft, Math.min(baseRight, getPos(e)));
+    draw();
+  });
+  canvas.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    baseX = Math.max(baseLeft, Math.min(baseRight, getPos(e)));
+    draw();
+    e.preventDefault();
+  });
+  window.addEventListener('mouseup', () => dragging = false);
+  window.addEventListener('touchend', () => dragging = false);
+})();
+
+// ============================================================
+//  TAB 2 – VERTICAL SUBSPACE
+// ============================================================
+(function() {
+  const ctx = getCtx('c2');
+  const W = ctx._w, H = ctx._h;
+  const baseY = H - 80, fibreH = 260;
+  const fx = W / 2;
+  let py = baseY - fibreH * 0.5;
+  let dragging = false;
+
+  function draw() {
+    clear(ctx);
+
+    // Fibre
+    ctx.save();
+    ctx.strokeStyle = '#f0883e';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(fx, baseY);
+    ctx.lineTo(fx, baseY - fibreH);
+    ctx.stroke();
+    ctx.restore();
+
+    // Base
+    ctx.save();
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(100, baseY);
+    ctx.lineTo(W - 100, baseY);
+    ctx.stroke();
+    ctx.restore();
+
+    // Ghost tangent plane (full T_pE)
+    ctx.save();
+    ctx.fillStyle = 'rgba(139,148,158,0.08)';
+    ctx.translate(fx, py);
+    ctx.fillRect(-120, -60, 240, 120);
+    ctx.strokeStyle = '#8b949e';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.strokeRect(-120, -60, 240, 120);
+    ctx.restore();
+    label(ctx, 'TₚE', fx + 126, py - 48, '#8b949e', 12);
+
+    // Vertical arrow
+    arrow(ctx, fx, py + 50, fx, py - 50, '#3fb950', 3);
+    label(ctx, 'VₚE = ker(dπ)', fx + 12, py - 40, '#3fb950', 13);
+
+    // Horizontal question marks
+    ctx.save();
+    ctx.setLineDash([4, 6]);
+    ctx.strokeStyle = '#8b949e';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(fx - 100, py);
+    ctx.lineTo(fx + 100, py);
+    ctx.stroke();
+    ctx.restore();
+    label(ctx, 'HₚE = ???  (need a connection!)', fx + 106, py + 4, '#8b949e', 12);
+
+    // Point
+    ctx.save();
+    ctx.fillStyle = '#58a6ff';
+    ctx.shadowColor = '#58a6ff';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(fx, py, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    label(ctx, 'p  (drag up/down)', fx + 14, py + 22, '#58a6ff', 13);
+
+    // Explanation
+    label(ctx, 'The vertical subspace is canonical — no choices needed.', 100, 30, '#3fb950', 14);
+    label(ctx, 'But to define a horizontal complement, we need an Ehresmann connection.', 100, 52, '#8b949e', 13);
+  }
+
+  draw();
+
+  const canvas = document.getElementById('c2');
+  canvas.addEventListener('mousedown', () => dragging = true);
+  canvas.addEventListener('touchstart', e => { dragging = true; e.preventDefault(); });
+  canvas.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const r = canvas.getBoundingClientRect();
+    const y = e.clientY - r.top;
+    py = Math.max(baseY - fibreH + 20, Math.min(baseY - 20, y));
+    draw();
+  });
+  canvas.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const r = canvas.getBoundingClientRect();
+    const y = e.touches[0].clientY - r.top;
+    py = Math.max(baseY - fibreH + 20, Math.min(baseY - 20, y));
+    draw();
+    e.preventDefault();
+  });
+  window.addEventListener('mouseup', () => dragging = false);
+  window.addEventListener('touchend', () => dragging = false);
+})();
+
+// ============================================================
+//  TAB 3 – HORIZONTAL CHOICE (CONNECTION)
+// ============================================================
+const angleSlider = document.getElementById('angleSlider');
+const angleVal = document.getElementById('angleVal');
+
+function updateTab3() {
+  const ctx3 = window._ctx3;
+  if (!ctx3) return;
+  const W = ctx3._w, H = ctx3._h;
+  const baseY = H - 80, fibreH = 260;
+  const ang = parseFloat(angleSlider.value);
+  angleVal.textContent = ang + '°';
+
+  clear(ctx3);
+
+  // Draw multiple fibres with horizontal indicators
+  const baseLeft = 100, baseRight = W - 100;
+  const nFibres = 7;
+  for (let i = 0; i < nFibres; i++) {
+    const fx = baseLeft + (baseRight - baseLeft) * i / (nFibres - 1);
+    const py = baseY - fibreH * 0.5;
+
+    // Fibre
+    ctx3.save();
+    ctx3.strokeStyle = 'rgba(240,136,62,0.3)';
+    ctx3.lineWidth = 1.5;
+    ctx3.beginPath();
+    ctx3.moveTo(fx, baseY);
+    ctx3.lineTo(fx, baseY - fibreH);
+    ctx3.stroke();
+    ctx3.restore();
+
+    // Vertical arrow
+    arrow(ctx3, fx, py + 30, fx, py - 30, '#3fb950', 2);
+
+    // Ghost horizontals
+    for (let a = -50; a <= 50; a += 20) {
+      if (Math.abs(a - ang) < 10) continue;
+      const rad = a * Math.PI / 180;
+      ctx3.save();
+      ctx3.strokeStyle = 'rgba(139,148,158,0.15)';
+      ctx3.lineWidth = 1;
+      ctx3.setLineDash([3, 5]);
+      ctx3.beginPath();
+      ctx3.moveTo(fx - 50 * Math.cos(rad), py + 50 * Math.sin(rad));
+      ctx3.lineTo(fx + 50 * Math.cos(rad), py - 50 * Math.sin(rad));
+      ctx3.stroke();
+      ctx3.restore();
+    }
+
+    // Chosen horizontal
+    const rad = ang * Math.PI / 180;
+    arrow(ctx3, fx - 50 * Math.cos(rad), py + 50 * Math.sin(rad),
+                fx + 50 * Math.cos(rad), py - 50 * Math.sin(rad), '#f0883e', 2.5);
+
+    // Point
+    ctx3.save();
+    ctx3.fillStyle = '#58a6ff';
+    ctx3.beginPath();
+    ctx3.arc(fx, py, 5, 0, Math.PI * 2);
+    ctx3.fill();
+    ctx3.restore();
+  }
+
+  // Base
+  ctx3.save();
+  ctx3.strokeStyle = '#58a6ff';
+  ctx3.lineWidth = 3;
+  ctx3.beginPath();
+  ctx3.moveTo(baseLeft, baseY);
+  ctx3.lineTo(baseRight, baseY);
+  ctx3.stroke();
+  ctx3.restore();
+  label(ctx3, 'M', baseRight + 10, baseY + 5, '#58a6ff');
+
+  // Decomposition label
+  label(ctx3, 'TₚE  =  VₚE  ⊕  HₚE', W / 2 - 80, 30, '#c9d1d9', 16);
+  label(ctx3, 'The orange arrows show YOUR chosen horizontal — that IS the connection.', 100, 56, '#f0883e', 13);
+}
+
+(function() {
+  window._ctx3 = getCtx('c3');
+  angleSlider.addEventListener('input', updateTab3);
+  updateTab3();
+})();
+
+// ============================================================
+//  TAB 4 – PARALLEL TRANSPORT
+// ============================================================
+const angleSlider2 = document.getElementById('angleSlider2');
+const angleVal2 = document.getElementById('angleVal2');
+let transportAnim = null;
+let transportT = 0;
+let transportTrail = [];
+
+function drawTab4() {
+  const ctx = window._ctx4;
+  if (!ctx) return;
+  const W = ctx._w, H = ctx._h;
+  const baseY = H - 90, fibreH = 260;
+  const baseLeft = 120, baseRight = W - 120;
+  const ang = parseFloat(angleSlider2.value);
+  angleVal2.textContent = ang + '°';
+
+  clear(ctx);
+
+  // Base curve (slight wave)
+  ctx.save();
+  ctx.strokeStyle = '#58a6ff';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let t = 0; t <= 1; t += 0.005) {
+    const x = baseLeft + (baseRight - baseLeft) * t;
+    const y = baseY + 15 * Math.sin(t * Math.PI * 2);
+    if (t === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.restore();
+  label(ctx, 'γ(t) — curve in M', baseRight + 6, baseY + 5, '#58a6ff', 12);
+
+  // Fibres
+  for (let t = 0; t <= 1; t += 0.1) {
+    const x = baseLeft + (baseRight - baseLeft) * t;
+    const yb = baseY + 15 * Math.sin(t * Math.PI * 2);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(240,136,62,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, yb);
+    ctx.lineTo(x, yb - fibreH);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Compute transported point position
+  const rad = ang * Math.PI / 180;
+  const tanShift = Math.tan(rad); // how much fibre-shift per unit base-movement
+
+  // Trail
+  ctx.save();
+  ctx.strokeStyle = '#d2a8ff';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  let started = false;
+  for (const pt of transportTrail) {
+    if (!started) { ctx.moveTo(pt.x, pt.y); started = true; }
+    else ctx.lineTo(pt.x, pt.y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // Current transported point
+  const curBaseX = baseLeft + (baseRight - baseLeft) * transportT;
+  const curBaseY = baseY + 15 * Math.sin(transportT * Math.PI * 2);
+  const fibreMid = fibreH * 0.5;
+  const shift = tanShift * (baseRight - baseLeft) * transportT;
+  const curY = curBaseY - fibreMid - shift * 0.3;
+  const clampedY = Math.max(curBaseY - fibreH + 10, Math.min(curBaseY - 10, curY));
+
+  // Horizontal arrow at current point
+  if (transportT < 1) {
+    const hLen = 40;
+    arrow(ctx, curBaseX - hLen * Math.cos(rad), clampedY + hLen * Math.sin(rad),
+              curBaseX + hLen * Math.cos(rad), clampedY - hLen * Math.sin(rad), '#f0883e', 2);
+    label(ctx, 'HₚE', curBaseX + hLen + 6, clampedY - 4, '#f0883e', 12);
+  }
+
+  // Point on base
+  ctx.save();
+  ctx.fillStyle = '#da3633';
+  ctx.beginPath();
+  ctx.arc(curBaseX, curBaseY, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Transported point
+  ctx.save();
+  ctx.fillStyle = '#d2a8ff';
+  ctx.shadowColor = '#d2a8ff';
+  ctx.shadowBlur = 14;
+  ctx.beginPath();
+  ctx.arc(curBaseX, clampedY, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  label(ctx, 'Lifted point (parallel transport)', curBaseX + 14, clampedY - 6, '#d2a8ff', 12);
+
+  // Start marker
+  const startBaseY = baseY + 15 * Math.sin(0);
+  ctx.save();
+  ctx.fillStyle = '#3fb950';
+  ctx.beginPath();
+  ctx.arc(baseLeft, startBaseY - fibreMid, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  label(ctx, 'start', baseLeft - 10, startBaseY - fibreMid - 12, '#3fb950', 11);
+
+  label(ctx, 'Different connection angles → different transport results!', 100, 24, '#f0883e', 14);
+}
+
+function startTransport() {
+  if (transportAnim) cancelAnimationFrame(transportAnim);
+  transportT = 0;
+  transportTrail = [];
+  const ctx = window._ctx4;
+  const W = ctx._w, H = ctx._h;
+  const baseY = H - 90, fibreH = 260;
+  const baseLeft = 120, baseRight = W - 120;
+  const ang = parseFloat(angleSlider2.value);
+  const rad = ang * Math.PI / 180;
+  const tanShift = Math.tan(rad);
+
+  function step() {
+    transportT += 0.004;
+    if (transportT > 1) transportT = 1;
+
+    const curBaseX = baseLeft + (baseRight - baseLeft) * transportT;
+    const curBaseY = baseY + 15 * Math.sin(transportT * Math.PI * 2);
+    const fibreMid = fibreH * 0.5;
+    const shift = tanShift * (baseRight - baseLeft) * transportT;
+    const curY = curBaseY - fibreMid - shift * 0.3;
+    const clampedY = Math.max(curBaseY - fibreH + 10, Math.min(curBaseY - 10, curY));
+    transportTrail.push({ x: curBaseX, y: clampedY });
+
+    drawTab4();
+
+    if (transportT < 1) {
+      transportAnim = requestAnimationFrame(step);
+    }
+  }
+  step();
+}
+
+function resetTransport() {
+  if (transportAnim) cancelAnimationFrame(transportAnim);
+  transportT = 0;
+  transportTrail = [];
+  drawTab4();
+}
+
+(function() {
+  window._ctx4 = getCtx('c4');
+  angleSlider2.addEventListener('input', () => {
+    resetTransport();
+  });
+  drawTab4();
+})();
+
+// ============================================================
+//  TAB 5 – CURVATURE & HOLONOMY
+// ============================================================
+const curvSlider = document.getElementById('curvSlider');
+const curvValSpan = document.getElementById('curvVal');
+let loopAnim = null;
+let loopT = 0;
+let loopTrail = [];
+
+function drawTab5() {
+  const ctx = window._ctx5;
+  if (!ctx) return;
+  const W = ctx._w, H = ctx._h;
+  const cx = W / 2, cy = H / 2 + 40;
+  const loopRx = 160, loopRy = 40;
+  const fibreH = 220;
+  const kappa = parseFloat(curvSlider.value) / 100;
+  curvValSpan.textContent = kappa.toFixed(2);
+
+  clear(ctx);
+
+  // Base loop
+  ctx.save();
+  ctx.strokeStyle = '#58a6ff';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, loopRx, loopRy, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+  label(ctx, 'Closed loop in M', cx + loopRx + 10, cy + 5, '#58a6ff', 13);
+
+  // Fibres around loop
+  for (let t = 0; t < 1; t += 0.1) {
+    const angle = t * Math.PI * 2;
+    const bx = cx + loopRx * Math.cos(angle);
+    const by = cy + loopRy * Math.sin(angle);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(240,136,62,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(bx, by);
+    ctx.lineTo(bx, by - fibreH);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Holonomy shift
+  const holonomy = kappa * 80;
+
+  // Start fibre (highlighted)
+  const startX = cx + loopRx;
+  const startBaseY = cy;
+  const startFibreY = startBaseY - fibreH * 0.5;
+
+  ctx.save();
+  ctx.strokeStyle = '#f0883e';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(startX, startBaseY);
+  ctx.lineTo(startX, startBaseY - fibreH);
+  ctx.stroke();
+  ctx.restore();
+
+  // Start point
+  ctx.save();
+  ctx.fillStyle = '#3fb950';
+  ctx.beginPath();
+  ctx.arc(startX, startFibreY, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  label(ctx, 'Start', startX + 10, startFibreY - 10, '#3fb950', 12);
+
+  // Trail of transported point
+  ctx.save();
+  ctx.strokeStyle = '#d2a8ff';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  let started = false;
+  for (const pt of loopTrail) {
+    if (!started) { ctx.moveTo(pt.x, pt.y); started = true; }
+    else ctx.lineTo(pt.x, pt.y);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // Current point on loop
+  const curAngle = loopT * Math.PI * 2;
+  const curBX = cx + loopRx * Math.cos(curAngle);
+  const curBY = cy + loopRy * Math.sin(curAngle);
+
+  // Fibre shift accumulates around the loop
+  const curShift = holonomy * loopT;
+  const curFY = curBY - fibreH * 0.5 - curShift;
+
+  // Point on base
+  ctx.save();
+  ctx.fillStyle = '#da3633';
+  ctx.beginPath();
+  ctx.arc(curBX, curBY, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Transported point
+  ctx.save();
+  ctx.fillStyle = '#d2a8ff';
+  ctx.shadowColor = '#d2a8ff';
+  ctx.shadowBlur = 14;
+  ctx.beginPath();
+  ctx.arc(curBX, curFY, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // If loop complete, show holonomy
+  if (loopT >= 0.99) {
+    const endY = startFibreY - holonomy;
+    // Holonomy bracket
+    ctx.save();
+    ctx.strokeStyle = '#da3633';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(startX + 20, startFibreY);
+    ctx.lineTo(startX + 40, startFibreY);
+    ctx.lineTo(startX + 40, endY);
+    ctx.lineTo(startX + 20, endY);
+    ctx.stroke();
+    ctx.restore();
+    label(ctx, 'Holonomy Δ = ' + holonomy.toFixed(1) + 'px', startX + 46, (startFibreY + endY) / 2 + 4, '#da3633', 13);
+
+    // End point
+    ctx.save();
+    ctx.fillStyle = '#da3633';
+    ctx.beginPath();
+    ctx.arc(startX, endY, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    label(ctx, 'End (shifted!)', startX + 10, endY - 10, '#da3633', 12);
+  }
+
+  // Info
+  if (kappa < 0.05) {
+    label(ctx, 'κ ≈ 0 → Flat connection: no holonomy, point returns to start.', 60, 24, '#3fb950', 14);
+  } else {
+    label(ctx, 'κ > 0 → Curved connection: holonomy! Point does NOT return to start.', 60, 24, '#da3633', 14);
+  }
+  label(ctx, 'Curvature = obstruction to the horizontal distribution being integrable.', 60, 48, '#8b949e', 13);
+}
+
+function startLoop() {
+  if (loopAnim) cancelAnimationFrame(loopAnim);
+  loopT = 0;
+  loopTrail = [];
+  const ctx = window._ctx5;
+  const W = ctx._w, H = ctx._h;
+  const cx = W / 2, cy = H / 2 + 40;
+  const loopRx = 160, loopRy = 40;
+  const fibreH = 220;
+  const kappa = parseFloat(curvSlider.value) / 100;
+  const holonomy = kappa * 80;
+
+  function step() {
+    loopT += 0.003;
+    if (loopT > 1) loopT = 1;
+
+    const curAngle = loopT * Math.PI * 2;
+    const curBX = cx + loopRx * Math.cos(curAngle);
+    const curBY = cy + loopRy * Math.sin(curAngle);
+    const curShift = holonomy * loopT;
+    const curFY = curBY - fibreH * 0.5 - curShift;
+    loopTrail.push({ x: curBX, y: curFY });
+
+    drawTab5();
+
+    if (loopT < 1) {
+      loopAnim = requestAnimationFrame(step);
+    }
+  }
+  step();
+}
+
+function resetLoop() {
+  if (loopAnim) cancelAnimationFrame(loopAnim);
+  loopT = 0;
+  loopTrail = [];
+  drawTab5();
+}
+
+(function() {
+  window._ctx5 = getCtx('c5');
+  curvSlider.addEventListener('input', () => {
+    resetLoop();
+  });
+  drawTab5();
+})();
+
+</script>
+</body>
+</html>
