@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topologie der Geschichte – Interaktiver Explorer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a1a;
+    color: #e0e0f0;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a1a3e, #2a1a4e);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #3a3a6e;
+    z-index: 10;
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-size: 1.3em;
+    font-weight: 700;
+    background: linear-gradient(90deg, #7eb8ff, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  header .subtitle {
+    font-size: 0.75em;
+    color: #8888bb;
+    font-weight: 300;
+  }
+
+  .main-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    width: 320px;
+    background: #111128;
+    border-right: 1px solid #2a2a5e;
+    overflow-y: auto;
+    padding: 16px;
+    flex-shrink: 0;
+    z-index: 5;
+  }
+
+  .sidebar h2 {
+    font-size: 0.9em;
+    color: #9999cc;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .principle-btn {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    background: #1a1a3e;
+    border: 1px solid #2a2a5e;
+    border-radius: 10px;
+    color: #c0c0e0;
+    font-size: 0.85em;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s;
+    font-family: inherit;
+  }
+
+  .principle-btn:hover {
+    background: #2a2a5e;
+    border-color: #5a5aae;
+    transform: translateX(4px);
+  }
+
+  .principle-btn.active {
+    background: linear-gradient(135deg, #2a2a6e, #3a2a7e);
+    border-color: #7a6aee;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(122, 106, 238, 0.2);
+  }
+
+  .principle-btn .btn-title {
+    font-weight: 600;
+    font-size: 0.95em;
+    margin-bottom: 4px;
+  }
+
+  .principle-btn .btn-desc {
+    font-size: 0.75em;
+    opacity: 0.7;
+    line-height: 1.4;
+  }
+
+  .principle-btn .btn-icon {
+    float: left;
+    font-size: 1.5em;
+    margin-right: 10px;
+    margin-top: 2px;
+  }
+
+  .canvas-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  canvas {
+    display: block;
+    cursor: grab;
+  }
+
+  canvas:active { cursor: grabbing; }
+
+  .info-panel {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: rgba(17, 17, 40, 0.92);
+    backdrop-filter: blur(12px);
+    border: 1px solid #3a3a6e;
+    border-radius: 14px;
+    padding: 18px 22px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 5;
+    transition: opacity 0.4s;
+  }
+
+  .info-panel h3 {
+    font-size: 1em;
+    color: #a0a0ff;
+    margin-bottom: 6px;
+  }
+
+  .info-panel p {
+    font-size: 0.82em;
+    line-height: 1.6;
+    color: #b0b0d0;
+  }
+
+  .info-panel .examples {
+    margin-top: 8px;
+    font-size: 0.78em;
+    color: #8888bb;
+  }
+
+  .info-panel .examples span {
+    display: inline-block;
+    background: #2a2a5e;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin: 3px 4px 3px 0;
+    font-size: 0.9em;
+  }
+
+  .controls-overlay {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 5;
+  }
+
+  .ctrl-group {
+    background: rgba(17, 17, 40, 0.88);
+    backdrop-filter: blur(8px);
+    border: 1px solid #2a2a5e;
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+
+  .ctrl-group label {
+    font-size: 0.72em;
+    color: #8888bb;
+    display: block;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ctrl-group input[type="range"] {
+    width: 160px;
+    accent-color: #7a6aee;
+  }
+
+  .ctrl-group .val {
+    font-size: 0.75em;
+    color: #a0a0ff;
+    float: right;
+    margin-top: -16px;
+  }
+
+  .play-btn {
+    background: linear-gradient(135deg, #3a3a8e, #5a3aae);
+    border: none;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.8em;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .play-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(90, 58, 174, 0.4);
+  }
+
+  .tooltip {
+    position: absolute;
+    background: rgba(30, 30, 70, 0.95);
+    border: 1px solid #5a5aae;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.78em;
+    color: #d0d0ff;
+    pointer-events: none;
+    z-index: 20;
+    max-width: 220px;
+    display: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111128; }
+  ::-webkit-scrollbar-thumb { background: #3a3a6e; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>🌀 Topologie der Geschichte</h1>
+    <div class="subtitle">Interaktiver Explorer wiederkehrender Strukturen</div>
+  </div>
+  <div style="font-size:0.7em; color:#6666aa;">Ziehe Knoten · Ändere Parameter · Entdecke Muster</div>
+</header>
+
+<div class="main-container">
+  <div class="sidebar">
+    <h2>⚙ Prinzipien</h2>
+    <div id="principleList"></div>
+    <hr style="border-color:#2a2a5e; margin: 16px 0;">
+    <h2>📖 Legende</h2>
+    <p style="font-size:0.75em; color:#7777aa; line-height:1.6;">
+      Jede Visualisierung zeigt ein <b>Grundprinzip</b> wiederkehrender historischer Strukturen.
+      Ziehe an Knoten, verändere Slider und beobachte, wie sich das System verhält.
+      Die Topologie zeigt dir, <i>warum</i> Geschichte sich reimt – nicht wiederholt.
+    </p>
+  </div>
+
+  <div class="canvas-area">
+    <canvas id="mainCanvas"></canvas>
+
+    <div class="controls-overlay" id="controlsOverlay"></div>
+
+    <div class="info-panel" id="infoPanel">
+      <h3>Willkommen!</h3>
+      <p>Wähle links ein Prinzip aus, um die interaktive Visualisierung zu starten. Jedes Prinzip modelliert eine fundamentale Struktur, die in der Geschichte immer wieder auftaucht – von Aufstieg und Fall von Imperien bis zu technologischen Revolutionen.</p>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// TOPOLOGIE DER GESCHICHTE – Interactive Explorer
+// ============================================================
+
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+const infoPanel = document.getElementById('infoPanel');
+const controlsOverlay = document.getElementById('controlsOverlay');
+const principleList = document.getElementById('principleList');
+
+let W, H;
+let animId;
+let time = 0;
+let playing = true;
+let mouseX = 0, mouseY = 0;
+let dragging = null;
+let activePrinciple = null;
+let simState = {};
+
+function resize() {
+  const area = canvas.parentElement;
+  W = area.clientWidth;
+  H = area.clientHeight;
+  canvas.width = W;
+  canvas.height = H;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ============================================================
+// PRINCIPLES DATA
+// ============================================================
+const principles = [
+  {
+    id: 'cycles',
+    icon: '🔄',
+    title: 'Zyklische Dynamik',
+    short: 'Aufstieg, Blüte, Niedergang, Erneuerung',
+    desc: 'Zivilisationen, Ökonomien und Institutionen durchlaufen wiederkehrende Phasen. Ibn Khaldun (Asabiyyah-Zyklen), Spengler, Toynbee und moderne Cliodynamik (Peter Turchin) modellieren diese als quasi-periodische Oszillationen mit variierender Amplitude.',
+    examples: ['Römisches Reich', 'Dynastische Zyklen Chinas', 'Kondratjew-Wellen', 'Turchins Secular Cycles'],
+    setup: setupCycles,
+    draw: drawCycles,
+    controls: [
+      { id: 'amplitude', label: 'Amplitude (Intensität)', min: 0.2, max: 2, step: 0.1, default: 1 },
+      { id: 'frequency', label: 'Zykluslänge', min: 0.3, max: 3, step: 0.1, default: 1 },
+      { id: 'damping', label: 'Dämpfung / Lernen', min: 0, max: 0.5, step: 0.01, default: 0.05 },
+      { id: 'noise', label: 'Historisches Rauschen', min: 0, max: 1, step: 0.05, default: 0.2 }
+    ]
+  },
+  {
+    id: 'feedback',
+    icon: '🔁',
+    title: 'Feedback-Schleifen',
+    short: 'Verstärkung & Dämpfung in sozialen Systemen',
+    desc: 'Positive Rückkopplung treibt Eskalation (Wettrüsten, Blasen, Revolutionen), negative Rückkopplung stabilisiert (Institutionen, Normen, Checks & Balances). Das Zusammenspiel erzeugt komplexe historische Dynamiken.',
+    examples: ['Wettrüsten vor WW1', 'Tulpenmanie 1637', 'Gewaltenteilung', 'Soziale Medien & Polarisierung'],
+    setup: setupFeedback,
+    draw: drawFeedback,
+    controls: [
+      { id: 'posGain', label: 'Positive Rückkopplung', min: 0, max: 2, step: 0.1, default: 0.8 },
+      { id: 'negGain', label: 'Negative Rückkopplung', min: 0, max: 2, step: 0.1, default: 0.6 },
+      { id: 'delay', label: 'Verzögerung (Trägheit)', min: 1, max: 20, step: 1, default: 8 },
+      { id: 'perturbation', label: 'Externe Schocks', min: 0, max: 1, step: 0.05, default: 0.1 }
+    ]
+  },
+  {
+    id: 'emergence',
+    icon: '🌐',
+    title: 'Emergenz & Selbstorganisation',
+    short: 'Aus lokalen Regeln entstehen globale Muster',
+    desc: 'Komplexe historische Strukturen (Staaten, Märkte, Kulturen) emergieren aus einfachen lokalen Interaktionen vieler Akteure. Kein zentraler Plan – aber erkennbare Muster. Modelliert durch Agenten-basierte Simulation.',
+    examples: ['Entstehung von Städten', 'Sprachentwicklung', 'Marktpreisbildung', 'Kulturelle Normen'],
+    setup: setupEmergence,
+    draw: drawEmergence,
+    controls: [
+      { id: 'agents', label: 'Anzahl Akteure', min: 30, max: 300, step: 10, default: 120 },
+      { id: 'influence', label: 'Einflussradius', min: 20, max: 120, step: 5, default: 55 },
+      { id: 'conformity', label: 'Konformitätsdruck', min: 0, max: 1, step: 0.05, default: 0.4 },
+      { id: 'innovation', label: 'Innovationsrate', min: 0, max: 0.3, step: 0.01, default: 0.05 }
+    ]
+  },
+  {
+    id: 'path',
+    icon: '🛤️',
+    title: 'Pfadabhängigkeit',
+    short: 'Kleine Ursachen, große Wirkungen',
+    desc: 'Frühe Entscheidungen oder Zufälle können den gesamten weiteren Verlauf determinieren (Lock-in). Die Geschichte ist nicht ergodisch – der Pfad zählt, nicht nur der Zustand. Bifurkationspunkte sind kritische Momente.',
+    examples: ['QWERTY-Tastatur', 'Reformation', 'Industrielle Revolution in England', 'Zerfall der UdSSR'],
+    setup: setupPath,
+    draw: drawPath,
+    controls: [
+      { id: 'branches', label: 'Verzweigungsdichte', min: 2, max: 8, step: 1, default: 3 },
+      { id: 'sensitivity', label: 'Sensitivität (Chaos)', min: 0.1, max: 2, step: 0.1, default: 0.8 },
+      { id: 'depth', label: 'Zeittiefe', min: 3, max: 7, step: 1, default: 5 }
+    ]
+  },
+  {
+    id: 'attractor',
+    icon: '🌀',
+    title: 'Attraktoren & Phasenräume',
+    short: 'Wohin Systeme konvergieren',
+    desc: 'Historische Systeme tendieren zu bestimmten Zuständen (Attraktoren): stabile Gleichgewichte, Grenzzyklen oder seltsame Attraktoren (Chaos). Revolutionen = Sprünge zwischen Attraktorbecken. Visualisiert als Phasenraum-Topologie.',
+    examples: ['Demokratie vs. Autokratie', 'Malthusianische Falle', 'Industrielle Moderne', 'Hegemoniale Stabilität'],
+    setup: setupAttractor,
+    draw: drawAttractor,
+    controls: [
+      { id: 'attractorType', label: 'Attraktor-Typ (1=Fix, 2=Zyklus, 3=Chaos)', min: 1, max: 3, step: 1, default: 2 },
+      { id: 'energy', label: 'Systemenergie', min: 0.1, max: 3, step: 0.1, default: 1 },
+      { id: 'friction', label: 'Institutionelle Trägheit', min: 0, max: 0.5, step: 0.02, default: 0.1 },
+      { id: 'kick', label: 'Revolution (Klick = Schock)', min: 0, max: 5, step: 0.5, default: 2 }
+    ]
+  },
+  {
+    id: 'layers',
+    icon: '📚',
+    title: 'Braudels Zeitschichten',
+    short: 'Longue durée, Konjunkturen, Ereignisse',
+    desc: 'Fernand Braudel unterschied drei Zeitebenen: die longue durée (Geographie, Klima, Mentalitäten – Jahrhunderte), mittlere Konjunkturen (Wirtschaft, Sozialstrukturen – Jahrzehnte) und die événementielle Geschichte (Ereignisse, Politik – Tage/Jahre). Alle überlagern sich.',
+    examples: ['Mittelmeerraum', 'Klimageschichte', 'Kapitalismus-Entwicklung', 'Französische Revolution'],
+    setup: setupLayers,
+    draw: drawLayers,
+    controls: [
+      { id: 'longue', label: 'Longue Durée (Gewicht)', min: 0, max: 2, step: 0.1, default: 1 },
+      { id: 'conjuncture', label: 'Konjunkturen (Gewicht)', min: 0, max: 2, step: 0.1, default: 1 },
+      { id: 'events', label: 'Ereignisse (Gewicht)', min: 0, max: 2, step: 0.1, default: 1 },
+      { id: 'coupling', label: 'Kopplung der Schichten', min: 0, max: 1, step: 0.05, default: 0.3 }
+    ]
+  }
+];
+
+// ============================================================
+// UI SETUP
+// ============================================================
+principles.forEach((p, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'principle-btn';
+  btn.innerHTML = `<span class="btn-icon">${p.icon}</span><div class="btn-title">${p.title}</div><div class="btn-desc">${p.short}</div>`;
+  btn.onclick = () => selectPrinciple(p);
+  btn.id = 'btn-' + p.id;
+  principleList.appendChild(btn);
+});
+
+function selectPrinciple(p) {
+  document.querySelectorAll('.principle-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + p.id).classList.add('active');
+  activePrinciple = p;
+
+  // Info panel
+  let exHtml = p.examples.map(e => `<span>${e}</span>`).join('');
+  infoPanel.innerHTML = `<h3>${p.icon} ${p.title}</h3><p>${p.desc}</p><div class="examples"><b>Historische Beispiele:</b><br>${exHtml}</div>`;
+
+  // Controls
+  controlsOverlay.innerHTML = '';
+  if (p.controls) {
+    p.controls.forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'ctrl-group';
+      div.innerHTML = `<label>${c.label}</label><input type="range" id="ctrl-${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.default}"><span class="val" id="val-${c.id}">${c.default}</span>`;
+      controlsOverlay.appendChild(div);
+      setTimeout(() => {
+        const inp = document.getElementById('ctrl-' + c.id);
+        inp.addEventListener('input', () => {
+          document.getElementById('val-' + c.id).textContent = inp.value;
+          if (p.id === 'emergence' && c.id === 'agents') {
+            p.setup();
+          }
+        });
+      }, 0);
+    });
+  }
+  // Play/Pause
+  const pbtn = document.createElement('div');
+  pbtn.className = 'ctrl-group';
+  pbtn.innerHTML = `<button class="play-btn" id="playBtn">⏸ Pause</button> <button class="play-btn" id="resetBtn" style="margin-left:4px;">↺ Reset</button>`;
+  controlsOverlay.appendChild(pbtn);
+  setTimeout(() => {
+    document.getElementById('playBtn').onclick = () => {
+      playing = !playing;
+      document.getElementById('playBtn').textContent = playing ? '⏸ Pause' : '▶ Play';
+    };
+    document.getElementById('resetBtn').onclick = () => {
+      time = 0;
+      p.setup();
+    };
+  }, 0);
+
+  time = 0;
+  p.setup();
+}
+
+function getCtrl(id) {
+  const el = document.getElementById('ctrl-' + id);
+  return el ? parseFloat(el.value) : 0;
+}
+
+// ============================================================
+// MOUSE HANDLING
+// ============================================================
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  mouseX = e.clientX - rect.left;
+  mouseY = e.clientY - rect.top;
+
+  if (dragging !== null && simState.nodes) {
+    simState.nodes[dragging].x = mouseX;
+    simState.nodes[dragging].y = mouseY;
+  }
+});
+
+canvas.addEventListener('mousedown', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+
+  if (simState.nodes) {
+    for (let i = 0; i < simState.nodes.length; i++) {
+      const n = simState.nodes[i];
+      const dx = n.x - mx, dy = n.y - my;
+      if (dx * dx + dy * dy < (n.r || 20) * (n.r || 20)) {
+        dragging = i;
+        return;
+      }
+    }
+  }
+
+  // Attractor kick
+  if (activePrinciple && activePrinciple.id === 'attractor') {
+    const kick = getCtrl('kick');
+    if (simState.particles) {
+      simState.particles.forEach(p => {
+        p.vx += (Math.random() - 0.5) * kick * 50;
+        p.vy += (Math.random() - 0.5) * kick * 50;
+      });
+    }
+  }
+
+  // Path click
+  if (activePrinciple && activePrinciple.id === 'path') {
+    if (simState.pathNodes) {
+      for (const n of simState.pathNodes) {
+        const dx = n.x - mx, dy = n.y - my;
+        if (dx * dx + dy * dy < 400) {
+          n.chosen = !n.chosen;
+          rebuildPaths();
+          break;
+        }
+      }
+    }
+  }
+});
+
+canvas.addEventListener('mouseup', () => { dragging = null; });
+canvas.addEventListener('mouseleave', () => { dragging = null; tooltip.style.display = 'none'; });
+
+// ============================================================
+// 1. ZYKLISCHE DYNAMIK
+// ============================================================
+function setupCycles() {
+  simState = {
+    trail: [],
+    nodes: [
+      { x: W * 0.15, y: H * 0.45, r: 22, label: 'Aufstieg', color: '#4ade80', phase: 0 },
+      { x: W * 0.38, y: H * 0.2, r: 22, label: 'Blüte', color: '#facc15', phase: 0.25 },
+      { x: W * 0.62, y: H * 0.45, r: 22, label: 'Niedergang', color: '#f87171', phase: 0.5 },
+      { x: W * 0.38, y: H * 0.7, r: 22, label: 'Krise/Erneuerung', color: '#60a5fa', phase: 0.75 }
+    ]
+  };
+}
+
+function drawCycles() {
+  const amp = getCtrl('amplitude');
+  const freq = getCtrl('frequency');
+  const damp = getCtrl('damping');
+  const noise = getCtrl('noise');
+
+  const cx = W * 0.42, cy = H * 0.45;
+  const baseR = Math.min(W, H) * 0.22;
+
+  // Draw cycle ring
+  ctx.strokeStyle = 'rgba(120,120,200,0.15)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, baseR, baseR * 0.8, 0, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Animated point on cycle
+  const t = time * 0.015 * freq;
+  const currentAmp = amp * Math.exp(-damp * (time * 0.005));
+  const noiseVal = noise * (Math.sin(t * 7.3) * 0.3 + Math.sin(t * 13.1) * 0.2 + Math.sin(t * 23.7) * 0.1);
+
+  const px = cx + Math.cos(t) * baseR * currentAmp + noiseVal * 30;
+  const py = cy + Math.sin(t) * baseR * 0.8 * currentAmp + noiseVal * 20;
+
+  simState.trail.push({ x: px, y: py, t: time });
+  if (simState.trail.length > 600) simState.trail.shift();
+
+  // Draw trail
+  for (let i = 1; i < simState.trail.length; i++) {
+    const alpha = i / simState.trail.length;
+    const hue = (simState.trail[i].t * 0.5) % 360;
+    ctx.strokeStyle = `hsla(${hue}, 70%, 60%, ${alpha * 0.7})`;
+    ctx.lineWidth = 1 + alpha * 2;
+    ctx.beginPath();
+    ctx.moveTo(simState.trail[i - 1].x, simState.trail[i - 1].y);
+    ctx.lineTo(simState.trail[i].x, simState.trail[i].y);
+    ctx.stroke();
+  }
+
+  // Current point
+  ctx.fillStyle = '#fff';
+  ctx.shadowColor = '#7a6aee';
+  ctx.shadowBlur = 20;
+  ctx.beginPath();
+  ctx.arc(px, py, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Phase nodes
+  simState.nodes.forEach((n, i) => {
+    const angle = n.phase * Math.PI * 2;
+    const nx = cx + Math.cos(angle) * (baseR + 50);
+    const ny = cy + Math.sin(angle) * (baseR * 0.8 + 40);
+    n.x = nx; n.y = ny;
+
+    const dist = Math.hypot(px - nx, py - ny);
+    const glow = Math.max(0, 1 - dist / (baseR * 0.8));
+
+    ctx.fillStyle = n.color;
+    ctx.globalAlpha = 0.3 + glow * 0.7;
+    ctx.beginPath();
+    ctx.arc(nx, ny, n.r + glow * 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = '#fff';
+    ctx.font = '600 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(n.label, nx, ny + n.r + 18);
+  });
+
+  // Right side: time series
+  const tsX = W * 0.62, tsY = H * 0.15, tsW = W * 0.34, tsH = H * 0.7;
+  ctx.strokeStyle = 'rgba(120,120,200,0.2)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(tsX, tsY, tsW, tsH);
+
+  ctx.fillStyle = '#8888bb';
+  ctx.font = '11px Inter';
+  ctx.textAlign = 'left';
+  ctx.fillText('Zeitreihe: Systemzustand', tsX + 8, tsY - 6);
+
+  // Draw axes
+  ctx.strokeStyle = 'rgba(120,120,200,0.3)';
+  ctx.beginPath();
+  ctx.moveTo(tsX, tsY + tsH / 2);
+  ctx.lineTo(tsX + tsW, tsY + tsH / 2);
+  ctx.stroke();
+
+  // Plot
+  const points = simState.trail.slice(-Math.floor(tsW));
+  for (let i = 1;  i < points.length; i++) {
+    const alpha = i / points.length;
+    const hue = (points[i].t * 0.5) % 360;
+    ctx.strokeStyle = `hsla(${hue}, 70%, 60%, ${alpha * 0.8})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    const x1 = tsX + (i - 1) / points.length * tsW;
+    const x2 = tsX + i / points.length * tsW;
+    const y1 = tsY + tsH / 2 + (points[i - 1].y - cy) / (baseR * 0.8) * (tsH * 0.4);
+    const y2 = tsY + tsH / 2 + (points[i].y - cy) / (baseR * 0.8) * (tsH * 0.4);
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+
+  // Labels
+  ctx.fillStyle = '#6666aa';
+  ctx.font = '10px Inter';
+  ctx.textAlign = 'right';
+  ctx.fillText('Expansion', tsX - 4, tsY + 10);
+  ctx.fillText('Kontraktion', tsX - 4, tsY + tsH - 4);
+
+  // Damping indicator
+  if (damp > 0) {
+    ctx.fillStyle = '#4ade80';
+    ctx.font = '11px Inter';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Lerneffekt: ${(currentAmp / amp * 100).toFixed(0)}% Amplitude`, tsX + 8, tsY + tsH + 18);
+  }
+}
+
+// ============================================================
+// 2. FEEDBACK-SCHLEIFEN
+// ============================================================
+function setupFeedback() {
+  simState = {
+    nodes: [
+      { x: W * 0.25, y: H * 0.3, r: 30, label: 'Aktion', color: '#60a5fa', val: 0.5 },
+      { x: W * 0.5, y: H * 0.15, r: 30, label: 'Verstärkung', color: '#f87171', val: 0.5 },
+      { x: W * 0.5, y: H * 0.55, r: 30, label: 'Dämpfung', color: '#4ade80', val: 0.5 },
+      { x: W * 0.75, y: H * 0.3, r: 30, label: 'Ergebnis', color: '#facc15', val: 0.5 }
+    ],
+    history: [],
+    buffer: new Array(30).fill(0.5)
+  };
+}
+
+function drawFeedback() {
+  const posGain = getCtrl('posGain');
+  const negGain = getCtrl('negGain');
+  const delay = Math.round(getCtrl('delay'));
+  const perturbation = getCtrl('perturbation');
+
+  const nodes = simState.nodes;
+
+  // Simulation step
+  if (playing && time % 2 === 0) {
+    const current = nodes[0].val;
+    const delayed = simState.buffer[Math.max(0, simState.buffer.length - delay)] || 0.5;
+
+    const posEffect = current * posGain * 0.1;
+    const negEffect = (delayed - 0.5) * negGain * 0.15;
+    const shock = (Math.random() < 0.05) ? (Math.random() - 0.5) * perturbation * 2 : 0;
+
+    let newVal = current + posEffect - negEffect + shock;
+    newVal = Math.max(0, Math.min(2, newVal));
+
+    nodes[0].val = newVal;
+    nodes[1].val = posEffect;
+    nodes[2].val = negEffect;
+    nodes[3].val = newVal;
+
+    simState.buffer.push(newVal);
+    if (simState.buffer.length > 100) simState.buffer.shift();
+
+    simState.history.push(newVal);
+    if (simState.history.length > 500) simState.history.shift();
+  }
+
+  // Draw connections
+  const edges = [
+    { from: 0, to: 1, color: '#f87171', label: '+' },
+    { from: 1, to: 3, color: '#f87171', label: '+' },
+    { from: 3, to: 2, color: '#4ade80', label: '−' },
+    { from: 2, to: 0, color: '#4ade80', label: '−' },
+    { from: 3, to: 1, color: '#f8717188', label: '+ (Eskalation)' }
+  ];
+
+  edges.forEach(e => {
+    const from = nodes[e.from], to = nodes[e.to];
+    const dx = to.x - from.x, dy = to.y - from.y;
+    const dist = Math.hypot(dx, dy);
+    const nx = dx / dist, ny = dy / dist;
+
+    const sx = from.x + nx * from.r;
+    const sy = from.y + ny * from.r;
+    const ex = to.x - nx * to.r;
+    const ey = to.y - ny * to.r;
+
+    // Animated flow
+    const flowPos = (time * 0.03) % 1;
+
+    ctx.strokeStyle = e.color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(ex, ey);
+    ctx.stroke();
+
+    // Arrow
+    const angle = Math.atan2(ey - sy, ex - sx);
+    ctx.fillStyle = e.color;
+    ctx.beginPath();
+    ctx.moveTo(ex, ey);
+    ctx.lineTo(ex - 12 * Math.cos(angle - 0.3), ey - 12 * Math.sin(angle - 0.3));
+    ctx.lineTo(ex - 12 * Math.cos(angle + 0.3), ey - 12 * Math.sin(angle + 0.3));
+    ctx.fill();
+
+    // Flow dots
+    for (let f = 0; f < 3; f++) {
+      const fp = ((flowPos + f * 0.33) % 1);
+      const fx = sx + (ex - sx) * fp;
+      const fy = sy + (ey - sy) * fp;
+      ctx.fillStyle = e.color;
+      ctx.globalAlpha = 0.8;
+      ctx.beginPath();
+      ctx.arc(fx, fy, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    // Label
+    const mx = (sx + ex) / 2, my = (sy + ey) / 2;
+    ctx.fillStyle = '#aaa';
+    ctx.font = '10px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(e.label, mx, my - 8);
+  });
+
+  // Draw nodes
+  nodes.forEach(n => {
+    const pulse = 1 + Math.abs(n.val - 0.5) * 0.3 * Math.sin(time * 0.1);
+    const r = n.r * pulse;
+
+    ctx.fillStyle = n.color + '33';
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, r + 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = n.color;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(n.label, n.x, n.y + 4);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = '10px Inter';
+    ctx.fillText(n.val.toFixed(2), n.x, n.y + 18);
+  });
+
+  // Time series on right
+  const tsX = W * 0.6, tsY = H * 0.6, tsW = W * 0.35, tsH = H * 0.32;
+  ctx.strokeStyle = 'rgba(120,120,200,0.2)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(tsX, tsY, tsW, tsH);
+
+  ctx.fillStyle = '#8888bb';
+  ctx.font = '11px Inter';
+  ctx.textAlign = 'left';
+  ctx.fillText('Systemzustand über Zeit', tsX + 8, tsY - 6);
+
+  // Baseline
+  ctx.strokeStyle = 'rgba(120,120,200,0.2)';
+  ctx.beginPath();
+  ctx.moveTo(tsX, tsY + tsH / 2);
+  ctx.lineTo(tsX + tsW, tsY + tsH / 2);
+  ctx.stroke();
+
+  const hist = simState.history;
+  if (hist.length > 1) {
+    ctx.strokeStyle = '#facc15';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i < hist.length; i++) {
+      const x = tsX + (i / hist.length) * tsW;
+      const y = tsY + tsH - (hist[i] / 2) * tsH;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  // Stability indicator
+  const recent = hist.slice(-50);
+  if (recent.length > 2) {
+    const variance = recent.reduce((s, v) => s + (v - recent.reduce((a, b) => a + b, 0) / recent.length) ** 2, 0) / recent.length;
+    const stability = variance < 0.01 ? 'Stabil' : variance < 0.1 ? 'Oszillierend' : 'Instabil/Chaotisch';
+    const sColor = variance < 0.01 ? '#4ade80' : variance < 0.1 ? '#facc15' : '#f87171';
+    ctx.fillStyle = sColor;
+    ctx.font = 'bold 12px Inter';
+    ctx.textAlign = 'right';
+    ctx.fillText(`Status: ${stability}`, tsX + tsW - 8, tsY + tsH + 18);
+  }
+}
+
+// ============================================================
+// 3. EMERGENZ & SELBSTORGANISATION
+// ============================================================
+function setupEmergence() {
+  const count = getCtrl('agents') || 120;
+  const agents = [];
+  for (let i = 0; i < count; i++) {
+    agents.push({
+      x: W * 0.1 + Math.random() * W * 0.8,
+      y: H * 0.1 + Math.random() * H * 0.8,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      type: Math.floor(Math.random() * 4),
+      r: 4
+    });
+  }
+  simState = { agents, clusters: [], nodes: [] };
+}
+
+function drawEmergence() {
+  const influence = getCtrl('influence');
+  const conformity = getCtrl('conformity');
+  const innovation = getCtrl('innovation');
+  const agents = simState.agents;
+  const typeColors = ['#60a5fa', '#f87171', '#4ade80', '#facc15'];
+  const typeNames = ['Händler', 'Krieger', 'Gelehrte', 'Bauern'];
+
+  if (playing) {
+    // Update agents
+    agents.forEach(a => {
+      let avgVx = 0, avgVy = 0, avgType = [0, 0, 0, 0], neighbors = 0;
+
+      agents.forEach(b => {
+        if (a === b) return;
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < influence) {
+          neighbors++;
+          avgVx += b.vx;
+          avgVy += b.vy;
+          avgType[b.type]++;
+
+          // Separation
+          if (dist < 15) {
+            a.vx -= dx * 0.05;
+            a.vy -= dy * 0.05;
+          }
+          // Cohesion
+          if (dist > influence * 0.5) {
+            a.vx += dx * 0.001;
+            a.vy += dy * 0.001;
+          }
+        }
+      });
+
+      if (neighbors > 0) {
+        a.vx += (avgVx / neighbors - a.vx) * 0.05;
+        a.vy += (avgVy / neighbors - a.vy) * 0.05;
+
+        // Conformity
+        if (conformity > 0 && Math.random() < conformity * 0.02) {
+          const maxType = avgType.indexOf(Math.max(...avgType));
+          a.type = maxType;
+        }
+      }
+
+      // Innovation
+      if (Math.random() < innovation * 0.01) {
+        a.type = Math.floor(Math.random() * 4);
+      }
+
+      // Random walk
+      a.vx += (Math.random() - 0.5) * 0.3;
+      a.vy += (Math.random() - 0.5) * 0.3;
+
+      // Speed limit
+      const speed = Math.hypot(a.vx, a.vy);
+      if (speed > 2) {
+        a.vx = (a.vx / speed) * 2;
+        a.vy = (a.vy / speed) * 2;
+      }
+
+      a.x += a.vx;
+      a.y += a.vy;
+
+      // Boundaries
+      if (a.x < 20) { a.x = 20; a.vx *= -0.5; }
+      if (a.x > W - 20) { a.x = W - 20; a.vx *= -0.5; }
+      if (a.y < 20) { a.y = 20; a.vy *= -0.5; }
+      if (a.y > H - 80) { a.y = H - 80; a.vy *= -0.5; }
+    });
+  }
+
+  // Draw influence connections
+  ctx.globalAlpha = 0.06;
+  agents.forEach(a => {
+    agents.forEach(b => {
+      if (a === b) return;
+      const dist = Math.hypot(b.x - a.x, b.y - a.y);
+      if (dist < influence && a.type === b.type) {
+        ctx.strokeStyle = typeColors[a.type];
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    });
+  });
+  ctx.globalAlpha = 1;
+
+  // Draw agents
+  agents.forEach(a => {
+    ctx.fillStyle = typeColors[a.type];
+    ctx.beginPath();
+    ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Glow
+    ctx.fillStyle = typeColors[a.type] + '22';
+    ctx.beginPath();
+    ctx.arc(a.x, a.y, a.r + 6, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // Cluster detection (simple)
+  const typeCounts = [0, 0, 0, 0];
+  agents.forEach(a => typeCounts[a.type]++);
+
+  // Legend
+  const lx = 20, ly = H - 70;
+  ctx.fillStyle = 'rgba(17,17,40,0.8)';
+  ctx.fillRect(lx, ly, 280, 55);
+  ctx.strokeStyle = '#2a2a5e';
+  ctx.strokeRect(lx, ly, 280, 55);
+
+  typeNames.forEach((name, i) => {
+    const x = lx + 12 + i * 68;
+    ctx.fillStyle = typeColors[i];
+    ctx.beginPath();
+    ctx.arc(x, ly + 18, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#c0c0e0';
+    ctx.font = '10px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(name, x, ly + 34);
+    ctx.fillText(`${typeCounts[i]}`, x, ly + 46);
+  });
+
+  // Entropy measure
+  const total = agents.length;
+  let entropy = 0;
+  typeCounts.forEach(c => {
+    if (c > 0) {
+      const p = c / total;
+      entropy -= p * Math.log2(p);
+    }
+  });
+  const maxEntropy = Math.log2(4);
+  const diversity = (entropy / maxEntropy * 100).toFixed(0);
+
+  ctx.fillStyle = '#a0a0ff';
+  ctx.font = 'bold 12px Inter';
+  ctx.textAlign = 'right';
+  ctx.fillText(`Diversität: ${diversity}%`, W - 20, H - 60);
+  ctx.fillStyle = '#7777aa';
+  ctx.font = '10px Inter';
+  ctx.fillText(`Entropie: ${entropy.toFixed(2)} / ${maxEntropy.toFixed(2)} bit`, W - 20, H - 44);
+}
+
+// ============================================================
+// 4. PFADABHÄNGIGKEIT
+// ============================================================
+let pathTree = [];
+function setupPath() {
+  simState = { pathNodes: [], pathEdges: [], chosenPath: [] };
+  pathTree = [];
+  buildPathTree(W * 0.08, H * 0.5, 0, getCtrl('depth') || 5, getCtrl('branches') || 3);
+  simState.pathNodes = pathTree;
+  rebuildPaths();
+}
+
+function buildPathTree(x, y, depth, maxDepth, branches) {
+  const node = {
+    x, y, depth, r: 14 - depth,
+    id: pathTree.length,
+    children: [],
+    chosen: depth === 0,
+    label: depth === 0 ? 'Start' : '',
+    color: `hsl(${depth * 50 + 200}, 60%, 60%)`
+  };
+  pathTree.push(node);
+
+  if (depth < maxDepth) {
+    const numBranches = Math.min(branches, 2 + Math.floor(Math.random() * 2));
+    const spacing = H * 0.7 / Math.pow(branches, depth) / branches;
+    const nextX = x + (W * 0.82) / maxDepth;
+
+    for (let i = 0; i < numBranches; i++) {
+      const nextY = y + (i - (numBranches - 1) / 2) * spacing;
+      const childIdx = pathTree.length;
+      buildPathTree(nextX, nextY, depth + 1, maxDepth, branches);
+      node.children.push(childIdx);
+    }
+  } else {
+    // Leaf labels
+    const outcomes = ['Demokratie', 'Imperium', 'Zerfall', 'Föderation', 'Theokratie', 'Anarchie', 'Oligarchie', 'Revolution'];
+    node.label = outcomes[Math.floor(Math.random() * outcomes.length)];
+  }
+}
+
+function rebuildPaths() {
+  // Propagate chosen state
+  const nodes = simState.pathNodes;
+  // Reset all except root
+  nodes.forEach((n, i) => { if (i > 0) n.chosen = false; });
+
+  function propagate(idx) {
+    const n = nodes[idx];
+    if (!n.chosen) return;
+    if (n.children.length > 0) {
+      // Choose random child or first
+      const chosenChild = n.children[Math.floor(Math.random() * n.children.length)];
+      nodes[chosenChild].chosen = true;
+      propagate(chosenChild);
+    }
+  }
+  propagate(0);
+}
+
+function drawPath() {
+  const sensitivity = getCtrl('sensitivity');
+  const nodes = simState.pathNodes;
+
+  if (!nodes || nodes.length === 0) return;
+
+  // Draw edges
+  nodes.forEach(n => {
+    n.children.forEach(ci => {
+      const child = nodes[ci];
+      const isChosen = n.chosen && child.chosen;
+
+      ctx.strokeStyle = isChosen ? '#facc15' : 'rgba(100,100,180,0.15)';
+      ctx.lineWidth = isChosen ? 3 : 1;
+
+      // Bezier curve
+      ctx.beginPath();
+      const midX = (n.x + child.x) / 2;
+      ctx.moveTo(n.x, n.y);
+      ctx.bezierCurveTo(midX, n.y, midX, child.y, child.x, child.y);
+      ctx.stroke();
+
+      // Animated flow on chosen path
+      if (isChosen) {
+        const flowT = (time * 0.02) % 1;
+        for (let f = 0; f < 5; f++) {
+          const t = (flowT + f * 0.2) % 1;
+          const fx = (1 - t) * (1 - t) * (1 - t) * n.x + 3 * (1 - t) * (1 - t) * t * midX + 3 * (1 - t) * t * t * midX + t * t * t * child.x;
+          const fy = (1 - t) * (1 - t) * (1 - t) * n.y + 3 * (1 - t) * (1 - t) * t * n.y + 3 * (1 - t) * t * t * child.y + t * t * t * child.y;
+          ctx.fillStyle = `rgba(250, 204, 21, ${0.8 - f * 0.15})`;
+          ctx.beginPath();
+          ctx.arc(fx, fy, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    });
+  });
+
+  // Draw nodes
+  nodes.forEach(n => {
+    const isChosen = n.chosen;
+    const hover = Math.hypot(mouseX - n.x, mouseY - n.y) < n.r + 5;
+
+    // Glow for chosen
+    if (isChosen) {
+      ctx.fillStyle = 'rgba(250, 204, 21, 0.15)';
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r + 12 + Math.sin(time * 0.05) * 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.fillStyle = isChosen ? '#facc15' : (hover ? '#8888dd' : n.color);
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.r + (hover ? 3 : 0), 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = isChosen ? '#fff' : 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = isChosen ? 2 : 1;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.r + (hover ? 3 : 0), 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Label
+    if (n.label) {
+      ctx.fillStyle = isChosen ? '#fff' : '#8888bb';
+      ctx.font = `${isChosen ? 'bold ' : ''}${n.depth === 0 ? 13 : 10}px Inter`;
+      ctx.textAlign = 'center';
+      ctx.fillText(n.label, n.x, n.y + n.r + 16);
+    }
+
+    // Bifurcation marker
+    if (n.children.length > 1 && n.depth > 0) {
+      ctx.fillStyle = 'rgba(248, 113, 113, 0.6)';
+      ctx.font = '8px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText('⚡Bifurkation', n.x, n.y - n.r - 6);
+    }
+
+    // Tooltip on hover
+    if (hover && n.children.length > 1) {
+      tooltip.style.display = 'block';
+      tooltip.style.left = (n.x + 20) + 'px';
+      tooltip.style.top = (n.y - 20) + 'px';
+      tooltip.innerHTML = `<b>Bifurkationspunkt</b><br>Tiefe: ${n.depth}<br>${n.children.length} mögliche Pfade<br><i>Klicke um Pfad zu ändern</i>`;
+    }
+  });
+
+  // Sensitivity visualization
+  if (sensitivity > 0.5) {
+    ctx.fillStyle = 'rgba(248, 113, 113, 0.08)';
+    nodes.forEach(n => {
+      if (n.children.length > 1 && n.chosen) {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, sensitivity * 40, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+  }
+
+  // Info text
+  ctx.fillStyle = '#7777aa';
+  ctx.font = '11px Inter';
+  ctx.textAlign = 'left';
+  ctx.fillText('Klicke auf Knoten um alternative Pfade zu erkunden', 20, H - 20);
+}
+
+// ============================================================
+// 5. ATTRAKTOREN & PHASENRÄUME
+// ============================================================
+function setupAttractor() {
+  const particles = [];
+  for (let i = 0; i < 8; i++) {
+    particles.push({
+      x: W * 0.5 + (Math.random() - 0.5) * 200,
+      y: H * 0.5 + (Math.random() - 0.5) * 200,
+      vx: (Math.random() - 0.5) * 5,
+      vy: (Math.random() - 0.5) * 5,
+      trail: [],
+      hue: i * 45
+    });
+  }
+
+  simState = {
+    particles,
+    attractors: [
+      { x: W * 0.35, y: H * 0.4, label: 'Demokratie', color: '#60a5fa', strength: 1 },
+      { x: W * 0.65, y: H * 0.4, label: 'Autokratie', color: '#f87171', strength: 1 },
+      { x: W * 0.5, y: H * 0.7, label: 'Anarchie', color: '#facc15', strength: 0.5 }
+    ],
+    nodes: []
+  };
+  simState.nodes = simState.attractors.map(a => ({ ...a, r: 20 }));
+}
+
+function drawAttractor() {
+  const aType = Math.round(getCtrl('attractorType'));
+  const energy = getCtrl('energy');
+  const friction = getCtrl('friction');
+  const attractors = simState.attractors;
+  const particles = simState.particles;
+
+  // Update attractor positions from draggable nodes
+  simState.nodes.forEach((n, i) => {
+    if (attractors[i]) {
+      attractors[i].x = n.x;
+      attractors[i].y = n.y;
+    }
+  });
+
+  // Draw attractor basins
+  attractors.forEach(a => {
+    const gradient = ctx.createRadialGradient(a.x, a.y, 0, a.x, a.y, 150);
+    gradient.addColorStop(0, a.color + '22');
+    gradient.addColorStop(1, 'transparent');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(a.x, a.y, 150, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Label
+    ctx.fillStyle = a.color;
+    ctx.font = 'bold 13px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(a.label, a.x, a.y + 30);
+
+    // Attractor point
+    ctx.fillStyle = a.color;
+    ctx.beginPath();
+    ctx.arc(a.x, a.y, 8 + Math.sin(time * 0.05) * 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = a.color + '66';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(a.x, a.y, 20, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+
+  // Update particles
+  if (playing) {
+    particles.forEach(p => {
+      attractors.forEach(a => {
+        const dx = a.x - p.x;
+        const dy = a.y - p.y;
+        const dist = Math.hypot(dx, dy) + 1;
+
+        let force;
+        if (aType === 1) {
+          // Fixed point attractor
+          force = a.strength * energy * 0.5 / dist;
+        } else if (aType === 2) {
+          // Limit cycle
+          const targetR = 80;
+          const rDiff = dist - targetR;
+          force = a.strength * energy * 0.3 * rDiff / dist;
+          // Add tangential force for orbit
+          p.vx += -dy / dist * energy * 0.3;
+          p.vy += dx / dist * energy * 0.3;
+        } else {
+          // Strange attractor (Lorenz-like)
+          const sigma = 2, rho = 8, beta = 0.5;
+          p.vx += (sigma * (p.vy - p.vx)) * 0.01 * energy;
+          p.vy += (p.x * (rho - (p.y - H * 0.5) * 0.01) - p.vy) * 0.01 * energy;
+          force = a.strength * energy * 0.1 / dist;
+        }
+
+        p.vx += dx / dist * force;
+        p.vy += dy / dist * force;
+      });
+
+      // Friction
+      p.vx *= (1 - friction);
+      p.vy *= (1 - friction);
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Boundaries
+      if (p.x < 10 || p.x > W - 10) p.vx *= -0.8;
+      if (p.y < 10 || p.y > H - 60) p.vy *= -0.8;
+      p.x =  Math.max(10, Math.min(W - 10, p.x));
+      p.y = Math.max(10, Math.min(H - 60, p.y));
+
+      // Trail
+      p.trail.push({ x: p.x, y: p.y });
+      if (p.trail.length > 200) p.trail.shift();
+    });
+  }
+
+  // Draw particle trails
+  particles.forEach(p => {
+    if (p.trail.length < 2) return;
+    for (let i = 1; i < p.trail.length; i++) {
+      const alpha = i / p.trail.length;
+      ctx.strokeStyle = `hsla(${p.hue}, 70%, 60%, ${alpha * 0.6})`;
+      ctx.lineWidth = 1 + alpha;
+      ctx.beginPath();
+      ctx.moveTo(p.trail[i - 1].x, p.trail[i - 1].y);
+      ctx.lineTo(p.trail[i].x, p.trail[i].y);
+      ctx.stroke();
+    }
+
+    // Particle head
+    ctx.fillStyle = `hsl(${p.hue}, 80%, 70%)`;
+    ctx.shadowColor = `hsl(${p.hue}, 80%, 70%)`;
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+
+  // Type label
+  const typeLabels = ['Fixpunkt-Attraktor', 'Grenzzyklus (Limit Cycle)', 'Seltsamer Attraktor (Chaos)'];
+  ctx.fillStyle = '#a0a0ff';
+  ctx.font = 'bold 13px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText(`Modus: ${typeLabels[aType - 1]}`, W * 0.5, 30);
+
+  ctx.fillStyle = '#7777aa';
+  ctx.font = '11px Inter';
+  ctx.fillText('Klicke irgendwo für einen "revolutionären Schock" · Ziehe Attraktoren', W * 0.5, H - 20);
+}
+
+// ============================================================
+// 6. BRAUDELS ZEITSCHICHTEN
+// ============================================================
+function setupLayers() {
+  simState = {
+    longueData: [],
+    conjData: [],
+    eventData: [],
+    combined: [],
+    nodes: []
+  };
+
+  // Pre-generate some data
+  for (let i = 0; i < 800; i++) {
+    simState.longueData.push(0);
+    simState.conjData.push(0);
+    simState.eventData.push(0);
+    simState.combined.push(0);
+  }
+}
+
+function drawLayers() {
+  const longue = getCtrl('longue');
+  const conjuncture = getCtrl('conjuncture');
+  const events = getCtrl('events');
+  const coupling = getCtrl('coupling');
+
+  const margin = 40;
+  const layerH = (H - 180) / 4;
+  const layerW = W - margin * 2;
+
+  // Generate new data point
+  if (playing) {
+    const t = time * 0.01;
+
+    // Longue durée: very slow sine waves
+    const lVal = Math.sin(t * 0.05) * 0.6 + Math.sin(t * 0.02) * 0.4 + Math.sin(t * 0.008) * 0.3;
+
+    // Conjunctures: medium oscillations
+    const cBase = Math.sin(t * 0.3) * 0.5 + Math.sin(t * 0.7) * 0.3 + Math.sin(t * 0.15) * 0.4;
+    const cVal = cBase + coupling * lVal * 0.5;
+
+    // Events: fast, spiky
+    const eBase = (Math.random() - 0.5) * 1.5 + Math.sin(t * 3) * 0.3;
+    const eVal = eBase + coupling * (cVal * 0.3 + lVal * 0.2);
+
+    // Combined
+    const combined = lVal * longue + cVal * conjuncture + eVal * events;
+
+    simState.longueData.push(lVal);
+    simState.conjData.push(cVal);
+    simState.eventData.push(eVal);
+    simState.combined.push(combined);
+
+    if (simState.longueData.length > 800) {
+      simState.longueData.shift();
+      simState.conjData.shift();
+      simState.eventData.shift();
+      simState.combined.shift();
+    }
+  }
+
+  const layers = [
+    { data: simState.longueData, label: 'Longue Durée (Jahrhunderte)', sublabel: 'Geographie, Klima, Mentalitäten', color: '#60a5fa', weight: longue },
+    { data: simState.conjData, label: 'Konjunkturen (Jahrzehnte)', sublabel: 'Wirtschaft, Sozialstrukturen', color: '#facc15', weight: conjuncture },
+    { data: simState.eventData, label: 'Événements (Tage/Jahre)', sublabel: 'Politik, Kriege, Persönlichkeiten', color: '#f87171', weight: events },
+    { data: simState.combined, label: '∑ Überlagerte Geschichte', sublabel: 'Was wir als "Geschichte" erleben', color: '#c084fc', weight: 1 }
+  ];
+
+  layers.forEach((layer, li) => {
+    const y0 = margin + li * (layerH + 12);
+    const yMid = y0 + layerH / 2;
+
+    // Background
+    ctx.fillStyle = 'rgba(20, 20, 50, 0.4)';
+    ctx.fillRect(margin, y0, layerW, layerH);
+    ctx.strokeStyle = 'rgba(100, 100, 180, 0.2)';
+    ctx.strokeRect(margin, y0, layerW, layerH);
+
+    // Center line
+    ctx.strokeStyle = 'rgba(100, 100, 180, 0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(margin, yMid);
+    ctx.lineTo(margin + layerW, yMid);
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = layer.color;
+    ctx.font = 'bold 12px Inter';
+    ctx.textAlign = 'left';
+    ctx.fillText(layer.label, margin + 8, y0 + 16);
+    ctx.fillStyle = layer.color + '88';
+    ctx.font = '10px Inter';
+    ctx.fillText(layer.sublabel, margin + 8, y0 + 30);
+
+    // Weight indicator
+    if (li < 3) {
+      ctx.fillStyle = layer.color + '44';
+      ctx.fillRect(margin + layerW - 60, y0 + 4, 55 * layer.weight / 2, 8);
+      ctx.strokeStyle = layer.color + '66';
+      ctx.strokeRect(margin + layerW - 60, y0 + 4, 55, 8);
+    }
+
+    // Draw data
+    const data = layer.data;
+    const visiblePoints = Math.min(data.length, Math.floor(layerW));
+    const startIdx = data.length - visiblePoints;
+
+    // Filled area
+    ctx.fillStyle = layer.color + '15';
+    ctx.beginPath();
+    ctx.moveTo(margin, yMid);
+    for (let i = 0; i < visiblePoints; i++) {
+      const x = margin + (i / visiblePoints) * layerW;
+      const val = data[startIdx + i] * layer.weight;
+      const y = yMid - val * (layerH * 0.35);
+      if (i === 0) ctx.lineTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.lineTo(margin + layerW, yMid);
+    ctx.closePath();
+    ctx.fill();
+
+    // Line
+    ctx.strokeStyle = layer.color;
+    ctx.lineWidth = li === 3 ? 2.5 : 1.8;
+    ctx.beginPath();
+    for (let i = 0; i < visiblePoints; i++) {
+      const x = margin + (i / visiblePoints) * layerW;
+      const val = data[startIdx + i] * layer.weight;
+      const y = yMid - val * (layerH * 0.35);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Coupling arrows between layers
+    if (li < 3 && coupling > 0) {
+      const arrowX = margin + layerW + 10;
+      const arrowY1 = y0 + layerH;
+      const arrowY2 = y0 + layerH + 12;
+      ctx.strokeStyle = `rgba(192, 132, 252, ${coupling})`;
+      ctx.lineWidth = coupling * 3;
+      ctx.beginPath();
+      ctx.moveTo(arrowX, arrowY1);
+      ctx.lineTo(arrowX, arrowY2);
+      ctx.stroke();
+      // Arrowhead
+      ctx.fillStyle = `rgba(192, 132, 252, ${coupling})`;
+      ctx.beginPath();
+      ctx.moveTo(arrowX, arrowY2 + 2);
+      ctx.lineTo(arrowX - 4, arrowY2 - 4);
+      ctx.lineTo(arrowX + 4, arrowY2 - 4);
+      ctx.fill();
+    }
+  });
+
+  // Coupling label
+  if (coupling > 0) {
+    ctx.fillStyle = '#c084fc';
+    ctx.font = '10px Inter';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Kopplung: ${(coupling * 100).toFixed(0)}%`, W - 110, margin + 16);
+  }
+
+  // Braudel quote
+  ctx.fillStyle = '#5555886';
+  ctx.font = 'italic 11px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText('"Die Geschichte bewegt sich auf verschiedenen Zeitebenen gleichzeitig." — Fernand Braudel', W / 2, H - 16);
+}
+
+// ============================================================
+// MAIN ANIMATION LOOP
+// ============================================================
+function animate() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Background grid
+  ctx.strokeStyle = 'rgba(50, 50, 100, 0.1)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, H);
+    ctx.stroke();
+  }
+  for (let y = 0; y < H; y += 40) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(W, y);
+    ctx.stroke();
+  }
+
+  if (activePrinciple) {
+    activePrinciple.draw();
+  } else {
+    // Welcome screen
+    drawWelcome();
+  }
+
+  if (playing) time++;
+
+  // Hide tooltip if not near any node
+  let nearNode = false;
+  if (simState.pathNodes) {
+    simState.pathNodes.forEach(n => {
+      if (Math.hypot(mouseX - n.x, mouseY - n.y) < n.r + 5) nearNode = true;
+    });
+  }
+  if (!nearNode) tooltip.style.display = 'none';
+
+  animId = requestAnimationFrame(animate);
+}
+
+function drawWelcome() {
+  const cx = W / 2, cy = H / 2;
+
+  // Animated background circles
+  for (let i = 0; i < 5; i++) {
+    const r = 80 + i * 50 + Math.sin(time * 0.02 + i) * 20;
+    ctx.strokeStyle = `rgba(122, 106, 238, ${0.1 - i * 0.015})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Orbiting dots
+  for (let i = 0; i < 12; i++) {
+    const angle = (time * 0.01 + i * Math.PI * 2 / 12);
+    const r = 120 + Math.sin(time * 0.03 + i * 0.5) * 30;
+    const dx = cx + Math.cos(angle) * r;
+    const dy = cy + Math.sin(angle) * r;
+    const hue = (i * 30 + time) % 360;
+    ctx.fillStyle = `hsla(${hue}, 70%, 60%, 0.6)`;
+    ctx.beginPath();
+    ctx.arc(dx, dy, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = '#c0c0f0';
+  ctx.font = 'bold 22px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText('Wähle ein Prinzip aus der Seitenleiste', cx, cy - 10);
+
+  ctx.fillStyle = '#7777aa';
+  ctx.font = '14px Inter';
+  ctx.fillText('um die interaktive Topologie zu erkunden', cx, cy + 20);
+
+  ctx.fillStyle = '#555588';
+  ctx.font = '12px Inter';
+  ctx.fillText('← Klicke links auf ein Prinzip', cx, cy + 50);
+}
+
+// Start
+animate();
+
+// Auto-select first principle after a short delay for nice UX
+setTimeout(() => {
+  if (!activePrinciple) selectPrinciple(principles[0]);
+}, 800);
+
+</script>
+</body>
+</html>
+
