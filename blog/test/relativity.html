@@ -1,0 +1,2797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Relativity Explorer</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a2e;
+            color: #e0e0ff;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(180deg, #0a0a2e 0%, #1a1a4e 100%);
+        }
+        .hero h1 {
+            font-size: 3em;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .hero p { font-size: 1.2em; color: #aab; max-width: 700px; margin: 0 auto; }
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10,10,46,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #333;
+            display: flex; justify-content: center; flex-wrap: wrap;
+            padding: 10px;
+            gap: 5px;
+        }
+        nav a {
+            color: #aab; text-decoration: none; padding: 8px 16px;
+            border-radius: 20px; font-size: 0.9em; transition: all 0.3s;
+        }
+        nav a:hover, nav a.active { background: #7b2ff7; color: white; }
+        .section {
+            max-width: 1100px; margin: 0 auto; padding: 50px 20px;
+            border-bottom: 1px solid #222;
+        }
+        .section h2 {
+            font-size: 2em; margin-bottom: 10px;
+            color: #00d4ff;
+        }
+        .section h3 {
+            font-size: 1.4em; margin: 30px 0 10px; color: #c0a0ff;
+        }
+        .section p, .section li { font-size: 1.05em; color: #ccd; margin-bottom: 12px; }
+        .section ul { padding-left: 25px; }
+        .eq-box {
+            background: rgba(123,47,247,0.1);
+            border-left: 4px solid #7b2ff7;
+            padding: 20px 25px; margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+            font-size: 1.3em;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .eq-box .eq-label {
+            font-size: 0.7em; color: #aab; display: block; margin-top: 8px;
+        }
+        .interactive-box {
+            background: rgba(0,212,255,0.05);
+            border: 1px solid #2a2a5e;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .interactive-box h4 { color: #00d4ff; margin-bottom: 15px; font-size: 1.2em; }
+        .slider-row {
+            display: flex; align-items: center; gap: 15px;
+            margin: 12px 0; flex-wrap: wrap;
+        }
+        .slider-row label { min-width: 160px; font-size: 0.95em; }
+        .slider-row input[type="range"] {
+            flex: 1; min-width: 200px;
+            -webkit-appearance: none; appearance: none;
+            height: 6px; background: #333; border-radius: 3px; outline: none;
+        }
+        .slider-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #7b2ff7; cursor: pointer;
+        }
+        .slider-row .val {
+            min-width: 80px; text-align: right;
+            font-family: 'Courier New', monospace;
+            color: #ff6b6b; font-weight: bold;
+        }
+        canvas {
+            display: block; margin: 15px auto;
+            border-radius: 12px;
+            background: #050520;
+            max-width: 100%;
+        }
+        .result-display {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px; margin: 20px 0;
+        }
+        .result-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid #333;
+            border-radius: 12px; padding: 15px; text-align: center;
+        }
+        .result-card .label { font-size: 0.85em; color: #888; }
+        .result-card .value {
+            font-size: 1.8em; font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+        .result-card .value.highlight { color: #ff6b6b; }
+        .result-card .value.blue { color: #00d4ff; }
+        .result-card .value.green { color: #4cff8b; }
+        .plot-container { margin: 20px 0; border-radius: 12px; overflow: hidden; }
+        .two-col {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 25px;
+            align-items: start;
+        }
+        @media (max-width: 768px) {
+            .two-col { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2em; }
+        }
+        .thought-exp {
+            background: rgba(255,107,107,0.08);
+            border-left: 4px solid #ff6b6b;
+            padding: 20px; margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+        }
+        .thought-exp h4 { color: #ff6b6b; margin-bottom: 8px; }
+        .btn {
+            background: #7b2ff7; color: white; border: none;
+            padding: 10px 24px; border-radius: 8px;
+            cursor: pointer; font-size: 1em; transition: 0.3s;
+            margin: 5px;
+        }
+        .btn:hover { background: #9b5ff7; transform: translateY(-1px); }
+        .btn.secondary { background: #2a2a5e; }
+        .btn.secondary:hover { background: #3a3a7e; }
+        .tab-container { margin: 20px 0; }
+        .tabs { display: flex; gap: 5px; margin-bottom: 0; }
+        .tab-btn {
+            padding: 10px 20px; background: #1a1a4e;
+            border: 1px solid #333; border-bottom: none;
+            color: #aab; cursor: pointer; border-radius: 8px 8px 0 0;
+            transition: 0.3s;
+        }
+        .tab-btn.active { background: #2a2a5e; color: #00d4ff; }
+        .tab-content {
+            display: none; background: #2a2a5e;
+            border: 1px solid #333; border-radius: 0 8px 8px 8px;
+            padding: 20px;
+        }
+        .tab-content.active { display: block; }
+        .annotation {
+            font-size: 0.85em; color: #888;
+            font-style: italic; margin-top: 5px;
+        }
+        footer {
+            text-align: center; padding: 40px 20px;
+            color: #555; font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>🌌 Interactive Relativity Explorer</h1>
+    <p>Understand Einstein's Special & General Relativity through interactive visualizations, real equations, and hands-on experiments. Abitur-level math is all you need!</p>
+</div>
+
+<nav id="mainNav">
+    <a href="#sec-intro">Intro</a>
+    <a href="#sec-postulates">Postulates</a>
+    <a href="#sec-gamma">γ Factor</a>
+    <a href="#sec-timedilation">Time Dilation</a>
+    <a href="#sec-lengthcontraction">Length Contraction</a>
+    <a href="#sec-lorentz">Lorentz Transform</a>
+    <a href="#sec-spacetime">Spacetime</a>
+    <a href="#sec-emc2">E = mc²</a>
+    <a href="#sec-momentum">Momentum</a>
+    <a href="#sec-gr-intro">General Relativity</a>
+    <a href="#sec-equivalence">Equivalence</a>
+    <a href="#sec-curvature">Curvature</a>
+    <a href="#sec-grav-timedilation">Grav. Time Dilation</a>
+    <a href="#sec-blackholes">Black Holes</a>
+</nav>
+
+<!-- ============================================================ -->
+<!-- SECTION: INTRODUCTION -->
+<!-- ============================================================ -->
+<div class="section" id="sec-intro">
+    <h2>0. Why Relativity?</h2>
+    <p>In 1905, a 26-year-old patent clerk named Albert Einstein published a paper that would shatter our intuition about space and time. Before Einstein, everyone assumed:</p>
+    <ul>
+        <li>Time flows at the same rate for everyone, everywhere.</li>
+        <li>Lengths are the same no matter how fast you move.</li>
+        <li>Mass and energy are completely separate things.</li>
+    </ul>
+    <p><strong>All three are wrong.</strong> Relativity shows us that the universe is far stranger — and far more beautiful — than our everyday experience suggests. The good news: the math is surprisingly accessible. If you know algebra and a bit about square roots, you can follow along.</p>
+
+    <div class="thought-exp">
+        <h4>🧠 The Big Question</h4>
+        <p>Imagine you're on a train moving at 90% the speed of light. You shine a flashlight forward. Does the light move at <em>c + 0.9c = 1.9c</em>? Classical physics says yes. But experiments say <strong>no</strong> — light always moves at exactly <em>c</em>, no matter what. This single fact leads to ALL of relativity.</p>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: POSTULATES -->
+<!-- ============================================================ -->
+<div class="section" id="sec-postulates">
+    <h2>1. The Two Postulates of Special Relativity</h2>
+    <p>Everything in Special Relativity follows from just <strong>two assumptions</strong>:</p>
+
+    <div class="eq-box">
+        <strong>Postulate 1 (Relativity Principle):</strong><br>
+        The laws of physics are the same in all inertial (non-accelerating) reference frames.
+    </div>
+
+    <div class="eq-box">
+        <strong>Postulate 2 (Constancy of Light Speed):</strong><br>
+        The speed of light in vacuum is <em>c ≈ 299,792,458 m/s</em> for all observers, regardless of their motion or the motion of the source.
+    </div>
+
+    <p>Postulate 1 seems reasonable — physics shouldn't depend on whether you're sitting still or cruising at constant velocity. Postulate 2 is the shocking one. It contradicts our everyday experience of adding velocities. From these two postulates, <em>everything</em> follows.</p>
+
+    <div class="interactive-box">
+        <h4>🔦 Interactive: Velocity Addition</h4>
+        <p>In classical physics, if you throw a ball at speed <em>u</em> from a train moving at speed <em>v</em>, a ground observer sees it at <em>u + v</em>. In relativity, the formula is different:</p>
+        <div class="eq-box">
+            $$w = \frac{u + v}{1 + \frac{uv}{c^2}}$$
+            <span class="eq-label">Relativistic velocity addition</span>
+        </div>
+        <div class="slider-row">
+            <label>Train speed v:</label>
+            <input type="range" id="velAdd_v" min="0" max="99.9" value="50" step="0.1">
+            <span class="val" id="velAdd_v_val">0.50c</span>
+        </div>
+        <div class="slider-row">
+            <label>Ball speed u (in train frame):</label>
+            <input type="range" id="velAdd_u" min="0" max="99.9" value="50" step="0.1">
+            <span class="val" id="velAdd_u_val">0.50c</span>
+        </div>
+        <div class="result-display">
+            <div class="result-card">
+                <div class="label">Classical (u + v)</div>
+                <div class="value highlight" id="velAdd_classical">1.00c</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Relativistic</div>
+                <div class="value blue" id="velAdd_relativistic">0.80c</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Difference</div>
+                <div class="value green" id="velAdd_diff">0.20c</div>
+            </div>
+        </div>
+        <div class="plot-container" id="velAddPlot"></div>
+        <p class="annotation">Notice: no matter how you combine velocities, the result never exceeds c. Try setting both to 0.99c!</p>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: LORENTZ FACTOR -->
+<!-- ============================================================ -->
+<div class="section" id="sec-gamma">
+    <h2>2. The Lorentz Factor γ (Gamma)</h2>
+    <p>The most important quantity in Special Relativity is the <strong>Lorentz factor</strong>, usually written as γ (gamma). It tells you "how relativistic" something is:</p>
+
+    <div class="eq-box">
+        $$\gamma = \frac{1}{\sqrt{1 - \frac{v^2}{c^2}}} = \frac{1}{\sqrt{1 - \beta^2}}$$
+        <span class="eq-label">where β = v/c is the velocity as a fraction of light speed</span>
+    </div>
+
+    <p>Let's break this down:</p>
+    <ul>
+        <li><strong>v = 0</strong> (at rest): γ = 1/√1 = <strong>1</strong>. No relativistic effects.</li>
+        <li><strong>v = 0.5c</strong>: γ = 1/√(1 - 0.25) = 1/√0.75 ≈ <strong>1.155</strong>. Mild effects.</li>
+        <li><strong>v = 0.9c</strong>: γ = 1/√(1 - 0.81) = 1/√0.19 ≈ <strong>2.294</strong>. Significant!</li>
+        <li><strong>v = 0.99c</strong>: γ ≈ <strong>7.089</strong>. Extreme effects!</li>
+        <li><strong>v → c</strong>: γ → <strong>∞</strong>. This is why you can't reach light speed!</li>
+    </ul>
+
+    <div class="interactive-box">
+        <h4>📊 Interactive: Explore the Lorentz Factor</h4>
+        <div class="slider-row">
+            <label>Velocity v:</label>
+            <input type="range" id="gamma_v" min="0" max="99.99" value="0" step="0.01">
+            <span class="val" id="gamma_v_val">0.00c</span>
+        </div>
+        <div class="result-display">
+            <div class="result-card">
+                <div class="label">β = v/c</div>
+                <div class="value blue" id="gamma_beta">0.000</div>
+            </div>
+            <div class="result-card">
+                <div class="label">β²</div>
+                <div class="value" id="gamma_beta2" style="color:#aab">0.000</div>
+            </div>
+            <div class="result-card">
+                <div class="label">1 - β²</div>
+                <div class="value green" id="gamma_1mb2">1.000</div>
+            </div>
+            <div class="result-card">
+                <div class="label">γ = 1/√(1-β²)</div>
+                <div class="value highlight" id="gamma_val">1.000</div>
+            </div>
+        </div>
+        <div class="plot-container" id="gammaPlot"></div>
+        <p class="annotation">The curve shows γ stays near 1 for low speeds but shoots up dramatically as v approaches c. This is why relativistic effects are invisible in everyday life but dominate at high speeds.</p>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: TIME DILATION -->
+<!-- ============================================================ -->
+<div class="section" id="sec-timedilation">
+    <h2>3. Time Dilation — Moving Clocks Run Slow</h2>
+    <p>One of the most mind-bending consequences: <strong>a moving clock ticks slower</strong> than a stationary one. If a time interval Δt₀ passes on a clock at rest (called <em>proper time</em>), then an observer who sees that clock moving at speed v measures a longer time:</p>
+
+    <div class="eq-box">
+        $$\Delta t = \gamma \cdot \Delta t_0 = \frac{\Delta t_0}{\sqrt{1 - \frac{v^2}{c^2}}}$$
+        <span class="eq-label">Time dilation: Δt is always ≥ Δt₀</span>
+    </div>
+
+    <div class="thought-exp">
+        <h4>🧠 The Light Clock</h4>
+        <p>Imagine a clock that works by bouncing a light pulse between two mirrors. For someone holding the clock, light just goes up and down. But for someone watching the clock fly past, the light takes a <em>diagonal</em> path — which is longer! Since light speed is fixed at c, the tick must take longer. That's time dilation, derived purely from geometry!</p>
+    </div>
+
+    <div class="interactive-box">
+        <h4>⏱️ Interactive: Light Clock Visualization</h4>
+        <div class="slider-row">
+            <label>Clock velocity:</label>
+            <input type="range" id="lightclock_v" min="0" max="95" value="0" step="1">
+            <span class="val" id="lightclock_v_val">0.00c</span>
+        </div>
+        <div class="two-col">
+            <div>
+                <p style="text-align:center; color:#00d4ff; margin-bottom:5px;">Clock's own frame (proper time)</p>
+                <canvas id="lightClockRest" width="300" height="350"></canvas>
+            </div>
+            <div>
+                <p style="text-align:center; color:#ff6b6b; margin-bottom:5px;">Your frame (you see clock moving →)</p>
+                <canvas id="lightClockMoving" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="result-display">
+            <div class="result-card">
+                <div class="label">γ factor</div>
+                <div class="value highlight" id="lc_gamma">1.000</div>
+            </div>
+            <div class="result-card">
+                <div class="label">If clock reads 1 second...</div>
+                <div class="value blue" id="lc_dilated">1.000 s for you</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Diagonal path length</div>
+                <div class="value green" id="lc_path">1.000× longer</div>
+            </div>
+        </div>
+        <p class="annotation">Watch how the light path becomes increasingly diagonal as speed increases. The longer diagonal path at the same speed c means each tick takes longer → time dilation!</p>
+    </div>
+
+    <div class="interactive-box">
+        <h4>👨‍🚀 Interactive: Twin Paradox Calculator</h4>
+        <p>One twin travels to a star and back while the other stays on Earth. How much do they age differently?</p>
+        <div class="slider-row">
+            <label>Travel speed:</label>
+            <input type="range" id="twin_v" min="1" max="99.99" value="90" step="0.01">
+            <span class="val" id="twin_v_val">0.90c</span>
+        </div>
+        <div class="slider-row">
+            <label>Earth time for trip (years):</label>
+            <input type="range" id="twin_t" min="1" max="100" value="20" step="1">
+            <span class="val" id="twin_t_val">20 years</span>
+        </div>
+        <div class="result-display">
+            <div class="result-card">
+                <div class="label">Earth twin ages</div>
+                <div class="value blue" id="twin_earth">20.0 years</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Traveling twin ages</div>
+                <div class="value highlight" id="twin_traveler">8.7 years</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Age difference</div>
+                <div class="value green" id="twin_diff">11.3 years</div>
+            </div>
+        </div>
+        <canvas id="twinCanvas" width="700" height="200"></canvas>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: LENGTH CONTRACTION -->
+<!-- ============================================================ -->
+<div class="section" id="sec-lengthcontraction">
+    <h2>4. Length Contraction — Moving Objects Shrink</h2>
+    <p>If time stretches, space must compensate. A moving object is <strong>shorter</strong> in its direction of motion:</p>
+
+    <div class="eq-box">
+        $$L = \frac{L_0}{\gamma} = L_0 \sqrt{1 - \frac{v^2}{c^2}}$$
+        <span class="eq-label">Length contraction: L is always ≤ L₀ (proper length)</span>
+    </div>
+
+    <p>Note: contraction only happens along the direction of motion. The object doesn't shrink in the perpendicular directions.</p>
+
+    <div class="interactive-box">
+        <h4>📏 Interactive: Length Contraction Visualizer</h4>
+        <div class="slider-row">
+            <label>Object velocity:</label>
+            <input type="range" id="length_v" min="0" max="99.9" value="0" step="0.1">
+            <span class="val" id="length_v_val">0.00c</span>
+        </div>
+        <canvas id="lengthCanvas" width="800" height="300"></canvas>
+        <div class="result-display">
+            <div class="result-card">
+                <div class="label">Proper length L₀</div>
+                <div class="value blue">100 m</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Observed length L</div>
+                <div class="value highlight" id="length_observed">100.0 m</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Contraction ratio</div>
+                <div class="value green" id="length_ratio">100.0%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="interactive-box">
+        <h4>🚀 Interactive: Relativistic Spaceship Shape</h4>
+        <p>See how a spaceship would look at different speeds. Only the direction of motion (horizontal) is contracted.</p>
+        <div class="slider-row">
+            <label>Speed:</label>
+            <input type="range" id="ship_v" min="0" max="99.9" value="0" step="0.1">
+            <span class="val" id="ship_v_val">0.00c</span>
+        </div>
+        <canvas id="shipCanvas" width="800" height="250"></canvas>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: LORENTZ TRANSFORMATION -->
+<!-- ============================================================ -->
+<div class="section" id="sec-lorentz">
+    <h2>5. The Lorentz Transformation</h2>
+    <p>The Lorentz transformation is the complete recipe for converting coordinates between two reference frames moving relative to each other at velocity v along the x-axis:</p>
+
+    <div class="eq-box">
+        $$x' = \gamma(x - vt)$$
+        $$t' = \gamma\left(t - \frac{vx}{c^2}\right)$$
+        <span class="eq-label">Lorentz transformation (frame S → S')</span>
+    </div>
+
+    <p>Compare with the classical <strong>Galilean transformation</strong>: x' = x - vt, t' = t. The Lorentz version reduces to this when v ≪ c (since γ → 1 and vx/c² → 0).</p>
+
+    <p>The key new term is <strong>-vx/c²</strong> in the time equation. This means <em>time depends on position</em> — events that are simultaneous in one frame are NOT simultaneous in another! This is called the <strong>relativity of simultaneity</strong>.</p>
+
+    <div class="interactive-box">
+        <h4>🔄 Interactive: Lorentz Transformation Calculator</h4>
+        <p>Enter an event (x, t) in frame S and see where it maps in frame S'.</p>
+        <div class="slider-row">
+            <label>Frame velocity v:</label>
+            <input type="range" id="lorentz_v" min="-99" max="99" value="50" step="1">
+            <span class="val" id="lorentz_v_val">0.50c</span>
+        </div>
+        <div class="slider-row">
+            <label>Event x (light-seconds):</label>
+            <input type="range" id="lorentz_x" min="-10" max="10" value="3" step="0.1">
+            <span class="val" id="lorentz_x_val">3.0 ls</span>
+        </div>
+        <div class="slider-row">
+            <label>Event t (seconds):</label>
+            <input type="range" id="lorentz_t" min="-10" max="10" value="5" step="0.1">
+            <span class="val" id="lorentz_t_val">5.0 s</span>
+        </div>
+        <div class="result-display">
+            <div class="result-card">
+                <div class="label">x' (in S')</div>
+                <div class="value blue" id="lorentz_xp">—</div>
+            </div>
+            <div class="result-card">
+                <div class="label">t' (in S')</div>
+                <div class="value highlight" id="lorentz_tp">—</div>
+            </div>
+            <div class="result-card">
+                <div class="label">γ</div>
+                <div class="value green" id="lorentz_gamma">—</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: SPACETIME DIAGRAMS -->
+<!-- ============================================================ -->
+<div class="section" id="sec-spacetime">
+    <h2>6. Spacetime Diagrams (Minkowski Diagrams)</h2>
+    <p>In relativity, space and time are unified into <strong>spacetime</strong>. We visualize this with <em>Minkowski diagrams</em>: time on the vertical axis, space on the horizontal. Light travels at 45° lines.</p>
+
+    <div class="eq-box">
+        $$s^2 = -(c\Delta t)^2 + \Delta x^2 + \Delta y^2 + \Delta z^2$$
+        <span class="eq-label">Spacetime interval (invariant — same for all observers!)</span>
+    </div>
+
+    <p>The spacetime interval s² is the relativistic replacement for distance. Unlike regular distance, it can be negative (timelike), zero (lightlike/null), or positive (spacelike).</p>
+
+    <div class="interactive-box">
+        <h4>📐 Interactive: Minkowski Diagram</h4>
+        <p>See how a moving frame's axes tilt. The blue axes are the rest frame S. The red axes are the moving frame S'. Light cones are always at 45°.</p>
+        <div class="slider-row">
+            <label>Frame S' velocity:</label>
+            <input type="range" id="mink_v" min="-90" max="90" value="40" step="1">
+            <span class="val" id="mink_v_val">0.40c</span>
+        </div>
+        <canvas id="minkowskiCanvas" width="700" height="700"></canvas>
+        <p class="annotation">The red axes (moving frame) squeeze toward the light cone as v → c. Events inside the light cone are causally connected to the origin; events outside are not.</p>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: E = mc² -->
+<!-- ============================================================ -->
+<div class="section" id="sec-emc2">
+    <h2>7. E = mc² — Mass-Energy Equivalence</h2>
+    <p>The most famous equation in physics. Einstein showed that mass and energy are two forms of the same thing. The <strong>full</strong> equation is actually:</p>
+
+    <div class="eq-box">
+        $$E^2 = (pc)^2 + (m_0 c^2)^2$$
+        <span class="eq-label">Full energy-momentum relation (the REAL equation)</span>
+    </div>
+
+    <p>Where:</p>
+    <ul>
+        <li><strong>E</strong> = total energy of the particle</li>
+        <li><strong>p</strong> = relativistic momentum</li>
+        <li><strong>m₀</strong> = rest mass (the mass when the object is stationary)</li>
+        <li><strong>c</strong> = speed of light</li>
+    </ul>
+
+    <p>For an object <strong>at rest</strong> (p = 0), this simplifies to the famous:</p>
+    <div class="eq-box">
+        $$E_0 = m_0 c^2$$
+        <span class="eq-label">Rest energy — even a stationary object has enormous energy locked in its mass</span>
+    </div>
+
+    <p>For a <strong>moving</strong> object, the total energy is:</p>
+    <div class="eq-box">
+        $$E = \gamma m_0 c^2$$
+        <span class="eq-label">Total energy = rest energy × γ</span>
+    </div>
+
+    <p>The <strong>kinetic energy</strong> is then the total energy minus the rest energy:</p>
+    <div class="eq-box">
+        $$K = (\gamma - 1) m_0 c^2$$
+        <span class="eq-label">Relativistic kinetic energy</span>
+    </div>
+
+    <p>At low speeds, this reduces to the familiar K = ½mv² from Abitur physics (try a Taylor expansion of γ!).</p>
+
+    <div class="interactive-box">
+        <h4>💥 Interactive: Energy-Mass Calculator</h4>
+        <p>See how much energy is locked inside everyday objects, and how kinetic energy grows with speed.</p>
+        <div class="slider-row">
+            <label>Rest mass (kg):</label>
+            <input type="range" id="emc2_m" min="-3" max="2" value="0" step="0.01">
+            <span class="val" id="emc2_m_val">1.00 kg</span>
+        </div>
+        <div class="slider-row">
+            <label>Velocity:</label>
+            <input type="range" id="emc2_v" min="0" max="99.99" value="0" step="0.01">
+            <span class="val" id="emc2_v_val">0.00c</span>
+        </div>
+        <div class="result-display">
+            <div class="result-card">
+                <div class="label">Rest Energy E₀ = m₀c²</div>
+                <div class="value highlight" id="emc2_rest">9.00 × 10¹⁶ J</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Total Energy E = γm₀c²</div>
+                <div class="value blue" id="emc2_total">9.00 × 10¹⁶ J</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Kinetic Energy K = (γ-1)m₀c²</div>
+                <div class="value green" id="emc2_kinetic">0.00 J</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Equivalent in Hiroshima bombs</div>
+                <div class="value" style="color:#ff9f43" id="emc2_bombs">1,430,000</div>
+            </div>
+        </div>
+        <div class="plot-container" id="emc2Plot"></div>
+        <p class="annotation">The rest energy of just 1 kg of matter equals ~21.5 megatons of TNT. Notice how kinetic energy diverges as v → c — this is why reaching light speed requires infinite energy!</p>
+    </div>
+
+    <div class="interactive-box">
+        <h4>📐 Interactive: Energy-Momentum Triangle</h4>
+        <p>The relation E² = (pc)² + (m₀c²)² forms a right triangle! Drag the speed to see how the triangle changes.</p>
+        <div class="slider-row">
+            <label>Velocity:</label>
+            <input type="range" id="triangle_v" min="0" max="99.9" value="60" step="0.1">
+            <span class="val" id="triangle_v_val">0.60c</span>
+        </div>
+        <canvas id="triangleCanvas" width="700" height="300"></canvas>
+        <p class="annotation">At rest: E = m₀c² (all rest energy, no momentum). For photons (m₀ = 0): E = pc (all momentum, no rest mass). For massive particles at high speed, momentum dominates.</p>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: RELATIVISTIC MOMENTUM -->
+<!-- ============================================================ -->
+<div class="section" id="sec-momentum">
+    <h2>8. Relativistic Momentum</h2>
+    <p>Classical momentum p = mv doesn't work at high speeds. The relativistic version is:</p>
+
+    <div class="eq-box">
+        $$p = \gamma m_0 v = \frac{m_0 v}{\sqrt{1 - \frac{v^2}{c^2}}}$$
+        <span class="eq-label">Relativistic momentum</span>
+    </div>
+
+    <p>As v → c, momentum → ∞. This is another way to see why nothing with mass can reach light speed: you'd need infinite force to keep accelerating.</p>
+
+    <div class="interactive-box">
+        <h4>📈 Interactive: Classical vs Relativistic Momentum</h4>
+        <div class="slider-row">
+            <label>Velocity:</label>
+            <input type="range" id="mom_v" min="0" max="99.9" value="50" step="0.1">
+            <span class="val" id="mom_v_val">0.50c</span>
+        </div>
+        <div class="result-display">
+            <div class="result-card">
+                <div class="label">Classical p = m₀v</div>
+                <div class="value blue" id="mom_classical">0.50 m₀c</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Relativistic p = γm₀v</div>
+                <div class="value highlight" id="mom_relativistic">0.58 m₀c</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Ratio (relativistic/classical)</div>
+                <div class="value green" id="mom_ratio">1.155</div>
+            </div>
+        </div>
+        <div class="plot-container" id="momentumPlot"></div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: GENERAL RELATIVITY INTRO -->
+<!-- ============================================================ -->
+<div class="section" id="sec-gr-intro">
+    <h2>9. General Relativity — Gravity is Geometry</h2>
+    <p>Special Relativity deals with constant velocities and flat spacetime. But what about gravity and acceleration? In 1915, Einstein published <strong>General Relativity</strong>, arguably the most beautiful theory in physics.</p>
+
+    <p>The core idea: <strong>Gravity is not a force. It's the curvature of spacetime caused by mass and energy.</strong></p>
+
+    <div class="eq-box">
+        $$G_{\mu\nu} + \Lambda g_{\mu\nu} = \frac{8\pi G}{c^4} T_{\mu\nu}$$
+        <span class="eq-label">Einstein Field Equations — the heart of General Relativity</span>
+    </div>
+
+    <p>Let's decode this monster:</p>
+    <ul>
+        <li><strong>G<sub>μν</sub></strong> (Einstein tensor): Describes the curvature of spacetime</li>
+        <li><strong>Λg<sub>μν</sub></strong> (Cosmological constant term): Represents dark energy / expansion of the universe</li>
+        <li><strong>T<sub>μν</sub></strong> (Stress-energy tensor): Describes the distribution of mass, energy, and pressure</li>
+        <li><strong>G</strong>: Newton's gravitational constant</li>
+        <li><strong>c</strong>: Speed of light</li>
+    </ul>
+
+    <p>In words: <em>"Spacetime tells matter how to move; matter tells spacetime how to curve."</em> — John Archibald Wheeler</p>
+
+    <div class="thought-exp">
+        <h4>🧠 The Bowling Ball on a Trampoline</h4>
+        <p>Imagine a heavy bowling ball placed on a stretched rubber sheet. It creates a dip. Now roll a marble nearby — it curves toward the bowling ball, not because of a "force," but because the sheet is curved. That's General Relativity! Planets orbit the Sun not because of an invisible force pulling them, but because the Sun curves spacetime and the planets follow the straightest possible paths (called <em>geodesics</em>) through that curved spacetime.</p>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: EQUIVALENCE PRINCIPLE -->
+<!-- ============================================================ -->
+<div class="section" id="sec-equivalence">
+    <h2>10. The Equivalence Principle</h2>
+    <p>The foundation of General Relativity is the <strong>Equivalence Principle</strong>:</p>
+
+    <div class="eq-box">
+        Being in a gravitational field is <strong>locally indistinguishable</strong> from being in an accelerating reference frame.
+    </div>
+
+    <p>If you're in a closed elevator, you cannot tell whether:</p>
+    <ul>
+        <li>You're standing on Earth's surface (gravity pulling you down), or</li>
+        <li>You're in a rocket accelerating upward at 9.8 m/s² in deep space (no gravity)</li>
+    </ul>
+
+    <div class="interactive-box">
+        <h4>🛗 Interactive: Equivalence Principle — Elevator Experiment</h4>
+        <p>Watch how a ball behaves identically in gravity vs. acceleration. Click the buttons to switch scenarios.</p>
+        <div style="text-align:center; margin-bottom:15px;">
+            <button class="btn" id="elevGravity" onclick="setElevatorMode('gravity')">🌍 Gravity (on Earth)</button>
+            <button class="btn secondary" id="elevAccel" onclick="setElevatorMode('accel')">🚀 Accelerating Rocket</button>
+            <button class="btn secondary" id="elevFreefall" onclick="setElevatorMode('freefall')">🕳️ Free Fall</button>
+        </div>
+        <canvas id="elevatorCanvas" width="700" height="400"></canvas>
+        <p class="annotation" id="elevatorDesc">On Earth's surface: the ball falls due to gravity. You feel your weight pressing on the floor.</p>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: SPACETIME CURVATURE -->
+<!-- ============================================================ -->
+<div class="section" id="sec-curvature">
+    <h2>11. Spacetime Curvature Visualization</h2>
+    <p>Mass and energy warp the fabric of spacetime. The more mass, the more curvature. Objects then follow the straightest possible paths (geodesics) through this curved spacetime.</p>
+
+    <div class="interactive-box">
+        <h4>🌐 Interactive: Spacetime Curvature (2D Embedding)</h4>
+        <p>This shows a 2D slice of the spatial curvature around a massive object. Drag the mass slider to see how curvature changes.</p>
+        <div class="slider-row">
+            <label>Central mass (solar masses):</label>
+            <input type="range" id="curve_mass" min="0.1" max="20" value="1" step="0.1">
+            <span class="val" id="curve_mass_val">1.0 M☉</span>
+        </div>
+        <div class="plot-container" id="curvaturePlot"></div>
+        <p class="annotation">The "well" gets deeper and narrower with more mass. At the Schwarzschild radius (event horizon), the well becomes infinitely deep — that's a black hole!</p>
+    </div>
+
+    <div class="interactive-box">
+        <h4>🪐 Interactive: Geodesics — Orbits in Curved Spacetime</h4>
+        <p>Launch a test particle near a massive body and watch it follow a geodesic. Adjust the initial velocity to get different orbits.</p>
+        <div class="slider-row">
+            <label>Initial tangential velocity:</label>
+            <input type="range" id="orbit_vel" min="0.2" max="2.0" value="1.0" step="0.01">
+            <span class="val" id="orbit_vel_val">1.00 (circular)</span>
+        </div>
+        <div class="slider-row">
+            <label>Starting distance (r/r_s):</label>
+            <input type="range" id="orbit_r" min="4" max="30" value="10" step="0.5">
+            <span class="val" id="orbit_r_val">10.0 rₛ</span>
+        </div>
+        <div style="text-align:center; margin:10px 0;">
+            <button class="btn" onclick="resetOrbit()">🔄 Reset & Launch</button>
+        </div>
+        <canvas id="orbitCanvas" width="700" height="700"></canvas>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: GRAVITATIONAL TIME DILATION -->
+<!-- ============================================================ -->
+<div class="section" id="sec-grav-timedilation">
+    <h2>12. Gravitational Time Dilation</h2>
+    <p>General Relativity predicts that <strong>time runs slower in stronger gravitational fields</strong>. A clock on the ground floor ticks slightly slower than one on the top floor of a building!</p>
+
+    <div class="eq-box">
+        $$\Delta t_{far} = \Delta t_{near} \cdot \frac{1}{\sqrt{1 - \frac{r_s}{r}}}$$
+        <span class="eq-label">where r_s = 2GM/c² is the Schwarzschild radius</span>
+    </div>
+
+    <p>This is not just theory — GPS satellites must correct for this effect! Clocks on GPS satellites (weaker gravity, higher altitude) run about <strong>45 microseconds per day faster</strong> than clocks on Earth's surface. Without this correction, GPS would drift by ~10 km per day.</p>
+
+    <div class="interactive-box">
+        <h4>⏰ Interactive: Gravitational Time Dilation</h4>
+        <div class="slider-row">
+            <label>Central mass:</label>
+            <input type="range" id="gtd_mass" min="0" max="5" value="0" step="0.01">
+            <span class="val" id="gtd_mass_val">1.0 M⊕ (Earth)</span>
+        </div>
+        <div class="slider-row">
+            <label>Your distance from center (r):</label>
+            <input type="range" id="gtd_r" min="1.01" max="50" value="1" step="0.01">
+            <span class="val" id="gtd_r_val">1.00 R (surface)</span>
+        </div>
+        <canvas id="gravTimeDilCanvas" width="700" height="350"></canvas>
+        <div class="result-display">
+            <div class="result-card">
+                <div class="label">Schwarzschild radius rₛ</div>
+                <div class="value blue" id="gtd_rs">0.0089 m</div>
+            </div>
+            <div class="result-card">
+                <div class="label">rₛ/r ratio</div>
+                <div class="value green" id="gtd_ratio">1.4 × 10⁻⁹</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Time dilation factor</div>
+                <div class="value highlight" id="gtd_factor">1.0000000007</div>
+            </div>
+            <div class="result-card">
+                <div class="label">If 1 year passes for you...</div>
+                <div class="value" style="color:#ff9f43" id="gtd_fartime">+0.022 s far away</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION: BLACK HOLES -->
+<!-- ============================================================ -->
+<div class="section" id="sec-blackholes">
+    <h2>13. Black Holes — Where Spacetime Goes Extreme</h2>
+    <p>When mass is compressed within its <strong>Schwarzschild radius</strong>, spacetime curvature becomes so extreme that nothing — not even light — can escape. This is a <strong>black hole</strong>.</p>
+
+    <div class="eq-box">
+        $$r_s = \frac{2GM}{c^2}$$
+        <span class="eq-label">Schwarzschild radius — the radius of the event horizon</span>
+    </div>
+
+    <p>For the Sun: r_s ≈ 3 km. For Earth: r_s ≈ 8.9 mm. You'd have to compress all of Earth into a marble to make it a black hole!</p>
+
+    <div class="interactive-box">
+        <h4>🕳️ Interactive: Black Hole Visualizer</h4>
+        <div class="slider-row">
+            <label>Black hole mass (solar masses):</label>
+            <input type="range" id="bh_mass" min="1" max="100" value="10" step="1">
+            <span class="val" id="bh_mass_val">10 M☉</span>
+        </div>
+        <canvas id="blackholeCanvas" width="700" height="700"></canvas>
+        <div class="result-display">
+            <div class="result-card">
+                <div class="label">Schwarzschild radius</div>
+                <div class="value blue" id="bh_rs">29.5 km</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Photon sphere (1.5 rₛ)</div>
+                <div class="value green" id="bh_photon">44.3 km</div>
+            </div>
+            <div class="result-card">
+                <div class="label">ISCO (3 rₛ)</div>
+                <div class="value highlight" id="bh_isco">88.5 km</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Surface gravity</div>
+                <div class="value" style="color:#ff9f43" id="bh_surfgrav">—</div>
+            </div>
+        </div>
+        <p class="annotation">The event horizon (black circle) is the point of no return. The photon sphere is where light can orbit. ISCO (Innermost Stable Circular Orbit) is the closest stable orbit for matter.</p>
+    </div>
+
+    <div class="interactive-box">
+        <h4>🌊 Interactive: Gravitational Redshift Near a Black Hole</h4>
+        <p>Light climbing out of a gravitational well loses energy and shifts to longer wavelengths (redshift). Near a black hole, this effect is extreme.</p>
+        <div class="slider-row">
+            <label>Emission distance (r/rₛ):</label>
+            <input type="range" id="redshift_r" min="1.01" max="20" value="3" step="0.01">
+            <span class="val" id="redshift_r_val">3.00 rₛ</span>
+        </div>
+        <div class="slider-row">
+            <label>Emitted wavelength (nm):</label>
+            <input type="range" id="redshift_lambda" min="380" max="700" value="500" step="1">
+            <span class="val" id="redshift_lambda_val">500 nm</span>
+        </div>
+        <canvas id="redshiftCanvas" width="700" height="200"></canvas>
+        <div class="result-display">
+            <div class="result-card">
+                <div class="label">Emitted wavelength</div>
+                <div class="value blue" id="rs_emitted">500 nm</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Observed wavelength (at ∞)</div>
+                <div class="value highlight" id="rs_observed">612 nm</div>
+            </div>
+            <div class="result-card">
+                <div class="label">Redshift z</div>
+                <div class="value green" id="rs_z">0.225</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SUMMARY -->
+<!-- ============================================================ -->
+<div class="section" id="sec-summary">
+    <h2>🎓 Summary: The Key Equations</h2>
+    <div class="eq-box">
+        <strong>Special Relativity</strong><br><br>
+        $$\gamma = \frac{1}{\sqrt{1-v^2/c^2}} \qquad \Delta t = \gamma \Delta t_0 \qquad L = L_0/\gamma$$
+        <br>
+        $$E = \gamma m_0 c^2 \qquad p = \gamma m_0 v \qquad E^2 = (pc)^2 + (m_0c^2)^2$$
+    </div>
+    <div class="eq-box">
+        <strong>General Relativity</strong><br><br>
+        $$G_{\mu\nu} + \Lambda g_{\mu\nu} = \frac{8\pi G}{c^4} T_{\mu\nu} \qquad r_s = \frac{2GM}{c^2}$$
+        <br>
+        $$\Delta t_{far} = \frac{\Delta t_{near}}{\sqrt{1 - r_s/r}}$$
+    </div>
+</div>
+
+<footer>
+    <p>Interactive Relativity Explorer — Built with HTML5 Canvas, Plotly.js, and KaTeX</p>
+    <p>All equations are real physics. All visualizations are mathematically accurate.</p>
+</footer>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT — ALL THE INTERACTIVITY -->
+<!-- ============================================================ -->
+<script>
+// =============================================
+// UTILITY FUNCTIONS
+// =============================================
+const c = 299792458; // m/s
+const G_const = 6.674e-11;
+const M_sun = 1.989e30;
+const M_earth = 5.972e24;
+const R_earth = 6.371e6;
+
+function gamma(beta) {
+    if (beta >= 1) return Infinity;
+    return 1 / Math.sqrt(1 - beta * beta);
+}
+
+function formatSci(num, digits = 3) {
+    if (Math.abs(num) < 1e-20) return "0";
+    if (Math.abs(num) < 0.001 || Math.abs(num) >= 1e6) {
+        const exp = Math.floor(Math.log10(Math.abs(num)));
+        const mantissa = num / Math.pow(10, exp);
+        return mantissa.toFixed(digits - 1) + " × 10" + superscript(exp);
+    }
+    return num.toFixed(digits);
+}
+
+function superscript(n) {
+    const sup = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
+    return String(n).split('').map(c => sup[c] || c).join('');
+}
+
+function wavelengthToColor(wl) {
+    let r, g, b;
+    if (wl >= 380 && wl < 440) { r = -(wl - 440) / (440 - 380); g = 0; b = 1; }
+    else if (wl >= 440 && wl < 490) { r = 0; g = (wl - 440) / (490 - 440); b = 1; }
+    else if (wl >= 490 && wl < 510) { r = 0; g = 1; b = -(wl - 510) / (510 - 490); }
+    else if (wl >= 510 && wl < 580) { r = (wl - 510) / (580 - 510); g = 1; b = 0; }
+    else if (wl >= 580 && wl < 645) { r = 1; g = -(wl - 645) / (645 - 580); b = 0; }
+    else if (wl >= 645 && wl <= 780) { r = 1; g = 0; b = 0; }
+    else { r = 0.2; g = 0; b = 0; }
+    // Intensity adjustment at edges
+    let factor;
+    if (wl >= 380 && wl < 420) factor = 0.3 + 0.7 * (wl - 380) / (420 - 380);
+    else if (wl >= 645 && wl <= 780) factor = 0.3 + 0.7 * (780 - wl) / (780 - 645);
+    else if (wl >= 420 && wl < 645) factor = 1;
+    else factor = 0.1;
+    r = Math.round(255 * Math.pow(r * factor, 0.8));
+    g = Math.round(255 * Math.pow(g * factor, 0.8));
+    b = Math.round(255 * Math.pow(b * factor, 0.8));
+    return `rgb(${r},${g},${b})`;
+}
+
+// =============================================
+// 1. VELOCITY ADDITION
+// =============================================
+function updateVelAdd() {
+    const v = parseFloat(document.getElementById('velAdd_v').value) / 100;
+    const u = parseFloat(document.getElementById('velAdd_u').value) / 100;
+    document.getElementById('velAdd_v_val').textContent = v.toFixed(2) + 'c';
+    document.getElementById('velAdd_u_val').textContent = u.toFixed(2) + 'c';
+
+    const classical = u + v;
+    const relativistic = (u + v) / (1 + u * v);
+
+    document.getElementById('velAdd_classical').textContent = classical.toFixed(3) + 'c';
+    document.getElementById('velAdd_relativistic').textContent = relativistic.toFixed(3) + 'c';
+    document.getElementById('velAdd_diff').textContent = (classical - relativistic).toFixed(3) + 'c';
+}
+
+function plotVelAdd() {
+    const v = parseFloat(document.getElementById('velAdd_v').value) / 100;
+    const uVals = [];
+    const classicalVals = [];
+    const relVals = [];
+    for (let u = 0; u <= 1; u += 0.01) {
+        uVals.push(u);
+        classicalVals.push(u + v);
+        relVals.push((u + v) / (1 + u * v));
+    }
+    Plotly.newPlot('velAddPlot', [
+        { x: uVals, y: classicalVals, name: 'Classical (u+v)', line: { color: '#ff6b6b', dash: 'dash' } },
+        { x: uVals, y: relVals, name: 'Relativistic', line: { color: '#00d4ff' } },
+        { x: [0, 1], y: [1, 1], name: 'Speed of light', line: { color: '#666', dash: 'dot' } }
+    ], {
+        title: `Combined velocity vs u (at v = ${v.toFixed(2)}c)`,
+        xaxis: { title: 'u (fraction of c)', range: [0, 1] },
+        yaxis: { title: 'Combined velocity (fraction of c)', range: [0, 2] },
+        paper_bgcolor: '#0a0a2e', plot_bgcolor: '#0a0a2e',
+        font: { color: '#ccd' }, legend: { x: 0.02, y: 0.98 },
+        margin: { t: 40, b: 50, l: 60, r: 20 }
+    }, { responsive: true });
+}
+
+document.getElementById('velAdd_v').addEventListener('input', () => { updateVelAdd(); plotVelAdd(); });
+document.getElementById('velAdd_u').addEventListener('input', () => { updateVelAdd(); plotVelAdd(); });
+
+// =============================================
+// 2. GAMMA FACTOR
+// =============================================
+function updateGamma() {
+    const beta = parseFloat(document.getElementById('gamma_v').value) / 100;
+    const g = gamma(beta);
+    document.getElementById('gamma_v_val').textContent = beta.toFixed(2) + 'c';
+    document.getElementById('gamma_beta').textContent = beta.toFixed(4);
+    document.getElementById('gamma_beta2').textContent = (beta * beta).toFixed(4);
+    document.getElementById('gamma_1mb2').textContent = (1 - beta * beta).toFixed(6);
+    document.getElementById('gamma_val').textContent = g === Infinity ? '∞' : g.toFixed(4);
+}
+
+function plotGamma() {
+    const betas = [];
+    const gammas = [];
+    for (let b = 0; b <= 0.999; b += 0.001) {
+        betas.push(b);
+        gammas.push(gamma(b));
+    }
+    const currentBeta = parseFloat(document.getElementById('gamma_v').value) / 100;
+    const currentGamma = gamma(currentBeta);
+
+    Plotly.newPlot('gammaPlot', [
+        { x: betas, y: gammas, name: 'γ(β)', line: { color: '#7b2ff7', width: 3 } },
+        { x: [currentBeta], y: [currentGamma], name: 'Current', mode: 'markers',
+          marker: { color: '#ff6b6b', size: 14, symbol: 'circle' } }
+    ], {
+        title: 'Lorentz Factor γ vs velocity β = v/c',
+        xaxis: { title: 'β = v/c', range: [0, 1] },
+        yaxis: { title: 'γ', range: [0, 25] },
+        paper_bgcolor: '#0a0a2e', plot_bgcolor: '#0a0a2e',
+        font: { color: '#ccd' }, legend: { x: 0.02, y: 0.98 },
+        margin: { t: 40, b: 50, l: 60, r: 20 }
+    }, { responsive: true });
+}
+
+document.getElementById('gamma_v').addEventListener('input', () => { updateGamma(); plotGamma(); });
+
+// =============================================
+// 3. LIGHT CLOCK ANIMATION
+// =============================================
+let lightClockAnim;
+let lcTime = 0;
+
+function updateLightClock() {
+    const beta = parseFloat(document.getElementById('lightclock_v').value) / 100;
+    const g = gamma(beta);
+    document.getElementById('lightclock_v_val').textContent = beta.toFixed(2) + 'c';
+    document.getElementById('lc_gamma').textContent = g.toFixed(3);
+    document.getElementById('lc_dilated').textContent = g.toFixed(3) + ' s for you';
+    document.getElementById('lc_path').textContent = g.toFixed(3) + '× longer';
+}
+
+function animateLightClock() {
+    const beta = parseFloat(document.getElementById('lightclock_v').value) / 100;
+    const g = gamma(beta);
+
+    // Rest frame canvas
+    const c1 = document.getElementById('lightClockRest');
+    const ctx1 = c1.getContext('2d');
+    const w1 = c1.width, h1 = c1.height;
+
+    // Moving frame canvas
+    const c2 = document.getElementById('lightClockMoving');
+    const ctx2 = c2.getContext('2d');
+    const w2 = c2.width, h2 = c2.height;
+
+    const mirrorGap = 200;
+    const period = 120; // frames for one bounce in rest frame
+    const movingPeriod = period * g;
+
+    lcTime += 1;
+
+    // === REST FRAME ===
+    ctx1.fillStyle = '#050520';
+    ctx1.fillRect(0, 0, w1, h1);
+
+    const mx1 = w1 / 2;
+    const topY = 60;
+    const botY = topY + mirrorGap;
+
+    // Mirrors
+    ctx1.fillStyle = '#4488ff';
+    ctx1.fillRect(mx1 - 30, topY - 4, 60, 8);
+    ctx1.fillRect(mx1 - 30, botY - 4, 60, 8);
+    ctx1.fillStyle = '#aab';
+    ctx1.font = '12px sans-serif';
+    ctx1.textAlign = 'center';
+    ctx1.fillText('Mirror', mx1, topY - 12);
+    ctx1.fillText('Mirror', mx1, botY + 22);
+
+    // Light pulse (bouncing up and down)
+    const restPhase = (lcTime % period) / period;
+    let pulseY;
+    if (restPhase < 0.5) {
+        pulseY = topY + (botY - topY) * (restPhase * 2);
+    } else {
+        pulseY = botY - (botY - topY) * ((restPhase - 0.5) * 2);
+    }
+
+    // Light trail
+    ctx1.strokeStyle = 'rgba(255,255,100,0.3)';
+    ctx1.lineWidth = 2;
+    ctx1.setLineDash([4, 4]);
+    ctx1.beginPath();
+    ctx1.moveTo(mx1, topY);
+    ctx1.lineTo(mx1, botY);
+    ctx1.stroke();
+    ctx1.setLineDash([]);
+
+    // Pulse
+    const gradient1 = ctx1.createRadialGradient(mx1, pulseY, 0, mx1, pulseY, 15);
+    gradient1.addColorStop(0, 'rgba(255,255,100,1)');
+    gradient1.addColorStop(1, 'rgba(255,255,100,0)');
+    ctx1.fillStyle = gradient1;
+    ctx1.beginPath();
+    ctx1.arc(mx1, pulseY, 15, 0, Math.PI * 2);
+    ctx1.fill();
+
+    // Tick counter
+    const restTicks = Math.floor(lcTime / period);
+    ctx1.fillStyle = '#00d4ff';
+    ctx1.font = 'bold 18px monospace';
+    ctx1.fillText(`Ticks: ${restTicks}`, mx1, botY + 55);
+    ctx1.fillStyle = '#aab';
+    ctx1.font = '13px sans-serif';
+    ctx1.fillText('Δt₀ = 1 (proper time)', mx1, botY + 80);
+
+    // === MOVING FRAME ===
+    ctx2.fillStyle = '#050520';
+    ctx2.fillRect(0, 0, w2, h2);
+
+    const movingPhase = (lcTime % movingPeriod) / movingPeriod;
+    const horizTravel = beta * mirrorGap * g;
+
+    let pulseY2, pulseX2;
+    const startX = (w2 - horizTravel) / 2;
+
+    if (movingPhase < 0.5) {
+        const frac = movingPhase * 2;
+        pulseY2 = topY + (botY - topY) * frac;
+        pulseX2 = startX + horizTravel * frac / 2;
+    } else {
+        const frac = (movingPhase - 0.5) * 2;
+        pulseY2 = botY - (botY - topY) * frac;
+        pulseX2 = startX + horizTravel / 2 + horizTravel * frac / 2;
+    }
+
+    // Mirror positions (moving)
+    const mirrorX_start = startX + horizTravel * movingPhase;
+    const mirrorXtop = startX + horizTravel * movingPhase;
+
+    // Draw mirror path
+    ctx2.strokeStyle = 'rgba(68,136,255,0.2)';
+    ctx2.lineWidth = 1;
+    ctx2.beginPath();
+    ctx2.moveTo(startX, topY);
+    ctx2.lineTo(startX + horizTravel, topY);
+    ctx2.stroke();
+    ctx2.beginPath();
+    ctx2.moveTo(startX, botY);
+    ctx2.lineTo(startX + horizTravel, botY);
+    ctx2.stroke();
+
+    // Current mirror positions
+    const cmx = startX + horizTravel * movingPhase;
+    ctx2.fillStyle = '#4488ff';
+    ctx2.fillRect(cmx - 25, topY - 4, 50, 8);
+    ctx2.fillRect(cmx - 25, botY - 4, 50, 8);
+
+    // Diagonal light path
+    ctx2.strokeStyle = 'rgba(255,255,100,0.4)';
+    ctx2.lineWidth = 2;
+    ctx2.setLineDash([4, 4]);
+    ctx2.beginPath();
+    ctx2.moveTo(startX, topY);
+    ctx2.lineTo(startX + horizTravel / 2, botY);
+    ctx2.lineTo(startX + horizTravel, topY);
+    ctx2.stroke();
+    ctx2.setLineDash([]);
+
+    // Pulse
+    const gradient2 = ctx2.createRadialGradient(pulseX2, pulseY2, 0, pulseX2, pulseY2, 15);
+    gradient2.addColorStop(0, 'rgba(255,255,100,1)');
+    gradient2.addColorStop(1, 'rgba(255,255,100,0)');
+    ctx2.fillStyle = gradient2;
+    ctx2.beginPath();
+    ctx2.arc(pulseX2, pulseY2, 15, 0, Math.PI * 2);
+    ctx2.fill();
+
+    // Arrow showing motion
+    if (beta > 0.01) {
+        ctx2.strokeStyle = '#ff6b6b';
+        ctx2.lineWidth = 2;
+        ctx2.beginPath();
+        ctx2.moveTo(cmx + 35, (topY + botY) / 2);
+        ctx2.lineTo(cmx + 65, (topY + botY) / 2);
+        ctx2.lineTo(cmx + 55, (topY + botY) / 2 - 8);
+        ctx2.moveTo(cmx + 65, (topY + botY) / 2);
+        ctx2.lineTo(cmx + 55, (topY + botY) / 2 + 8);
+        ctx2.stroke();
+        ctx2.fillStyle = '#ff6b6b';
+        ctx2.font = '12px sans-serif';
+        ctx2.textAlign = 'center';
+        ctx2.fillText('v', cmx + 50, (topY + botY) / 2 - 15);
+    }
+
+    // Tick counter
+    const movingTicks = Math.floor(lcTime / movingPeriod);
+    ctx2.fillStyle = '#ff6b6b';
+    ctx2.font = 'bold 18px monospace';
+    ctx2.textAlign = 'center';
+    ctx2.fillText(`Ticks: ${movingTicks}`, w2 / 2, botY + 55);
+    ctx2.fillStyle = '#aab';
+    ctx2.font = '13px sans-serif';
+    ctx2.fillText(`Δt = γΔt₀ = ${g.toFixed(2)} (dilated)`, w2 / 2, botY + 80);
+
+    // Pythagorean triangle annotation
+    if (beta > 0.05) {
+        const triX = 20;
+        const triY = botY + 50;
+        ctx2.fillStyle = '#888';
+        ctx2.font = '11px sans-serif';
+        ctx2.textAlign = 'left';
+        ctx2.fillText(`Vertical: d`, triX, triY);
+        ctx2.fillText(`Horizontal: vΔt`, triX, triY + 16);
+        ctx2.fillText(`Diagonal: cΔt = √(d² + v²Δt²)`, triX, triY + 32);
+    }
+
+    lightClockAnim = requestAnimationFrame(animateLightClock);
+}
+
+document.getElementById('lightclock_v').addEventListener('input', updateLightClock);
+
+// =============================================
+// 4. TWIN PARADOX
+// =============================================
+function updateTwin() {
+    const beta = parseFloat(document.getElementById('twin_v').value) / 100;
+    const earthTime = parseFloat(document.getElementById('twin_t').value);
+    const g = gamma(beta);
+    const travelerTime = earthTime / g;
+    const diff = earthTime - travelerTime;
+
+    document.getElementById('twin_v_val').textContent = beta.toFixed(2) + 'c';
+    document.getElementById('twin_t_val').textContent = earthTime + ' years';
+    document.getElementById('twin_earth').textContent = earthTime.toFixed(1) + ' years';
+    document.getElementById('twin_traveler').textContent = travelerTime.toFixed(1) + ' years';
+    document.getElementById('twin_diff').textContent = diff.toFixed(1) + ' years';
+
+    // Draw twin visualization
+    const canvas = document.getElementById('twinCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.fillStyle = '#050520';
+    ctx.fillRect(0, 0, w, h);
+
+    const barY = 60;
+    const barH = 30;
+    const maxW = w - 140;
+    const earthW = maxW;
+    const travW = maxW * (travelerTime / earthTime);
+
+    // Earth twin bar
+    ctx.fillStyle = '#00d4ff';
+    ctx.fillRect(70, barY, earthW, barH);
+    ctx.fillStyle = '#e0e0ff';
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('🌍 Earth twin', 70, barY - 8);
+    ctx.textAlign = 'right';
+    ctx.fillText(earthTime.toFixed(1) + ' yrs', 70 + earthW + 5, barY + 20);
+
+    // Traveler twin bar
+    const travBarY = barY + 70;
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillRect(70, travBarY, travW, barH);
+    ctx.fillStyle = '#e0e0ff';
+    ctx.textAlign = 'left';
+    ctx.fillText('🚀 Traveling twin', 70, travBarY - 8);
+    ctx.textAlign = 'right';
+    ctx.fillText(travelerTime.toFixed(1) + ' yrs', 70 + Math.max(travW, 60) + 5, travBarY + 20);
+
+    // Difference annotation
+    if (diff > 0.1) {
+        ctx.fillStyle = '#4cff8b';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Δ = ${diff.toFixed(1)} years younger!`, w / 2, travBarY + 60);
+    }
+}
+
+document.getElementById('twin_v').addEventListener('input', updateTwin);
+document.getElementById('twin_t').addEventListener('input', updateTwin);
+
+// =============================================
+// 5. LENGTH CONTRACTION
+// =============================================
+function updateLength() {
+    const beta = parseFloat(document.getElementById('length_v').value) / 100;
+    const g = gamma(beta);
+    const L0 = 100;
+    const L = L0 / g;
+
+    document.getElementById('length_v_val').textContent = beta.toFixed(2) + 'c';
+    document.getElementById('length_observed').textContent = L.toFixed(1) + ' m';
+    document.getElementById('length_ratio').textContent = (L / L0 * 100).toFixed(1) + '%';
+
+    const canvas = document.getElementById('lengthCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.fillStyle = '#050520';
+    ctx.fillRect(0, 0, w, h);
+
+    const maxBarW = w - 100;
+    const restW = maxBarW * 0.8;
+    const contractedW = restW / g;
+    const startX = 50;
+
+    // Rest length (top)
+    ctx.fillStyle = 'rgba(0,212,255,0.3)';
+    ctx.fillRect(startX, 40, restW, 50);
+    ctx.strokeStyle = '#00d4ff';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(startX, 40, restW, 50);
+    ctx.fillStyle = '#00d4ff';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Rest length L₀ = ${L0} m`, startX + restW / 2, 70);
+    ctx.fillText('(at rest)', startX + restW / 2, 30);
+
+    // Contracted length (bottom)
+    ctx.fillStyle = 'rgba(255,107,107,0.3)';
+    ctx.fillRect(startX, 150, contractedW, 50);
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(startX, 150, contractedW, 50);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText(`Observed L = ${L.toFixed(1)} m`, startX + Math.max(contractedW, 100) / 2, 180);
+    ctx.fillText(`(moving at ${beta.toFixed(2)}c)`, startX + Math.max(contractedW, 100) / 2, 140);
+
+    // Ruler marks
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 10; i++) {
+        const x = startX + (restW * i / 10);
+        ctx.beginPath();
+        ctx.moveTo(x, 100);
+        ctx.lineTo(x, 115);
+        ctx.stroke();
+        if (i % 2 === 0) {
+            ctx.fillStyle = '#666';
+            ctx.font = '10px sans-serif';
+            ctx.fillText((i * 10) + 'm', x, 128);
+        }
+    }
+
+    // Arrow showing contraction
+    if (beta > 0.01) {
+        ctx.strokeStyle = '#4cff8b';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(startX + contractedW, 150);
+        ctx.lineTo(startX + restW, 150);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#4cff8b';
+        ctx.font = '12px sans-serif';
+        ctx.fillText(`← contracted by ${(100 - L).toFixed(1)}%`, startX + (contractedW + restW) / 2, 225);
+    }
+}
+
+document.getElementById('length_v').addEventListener('input', updateLength);
+
+// =============================================
+// 5b. SPACESHIP SHAPE
+// =============================================
+function updateShip() {
+    const beta = parseFloat(document.getElementById('ship_v').value) / 100;
+    const g = gamma(beta);
+    document.getElementById('ship_v_val').textContent = beta.toFixed(2) + 'c';
+
+    const canvas = document.getElementById('shipCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.fillStyle = '#050520';
+    ctx.fillRect(0, 0, w, h);
+
+    const cx = w / 2;
+    const cy = h / 2;
+    const shipW = 200;
+    const shipH = 60;
+    const contractedW = shipW / g;
+
+    // Draw ship body (ellipse)
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    // Exhaust trail
+    if (beta > 0.01) {
+        const grad = ctx.createLinearGradient(-contractedW / 2 - 80, 0, -contractedW / 2, 0);
+        grad.addColorStop(0, 'rgba(255,100,50,0)');
+        grad.addColorStop(1, 'rgba(255,100,50,0.6)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(-contractedW / 2, -15);
+        ctx.lineTo(-contractedW / 2 - 40 - beta * 80, 0);
+        ctx.lineTo(-contractedW / 2, 15);
+        ctx.fill();
+    }
+
+    // Ship body
+    ctx.fillStyle = 'rgba(123,47,247,0.4)';
+    ctx.strokeStyle = '#7b2ff7';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, contractedW / 2, shipH / 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Cockpit
+    ctx.fillStyle = 'rgba(0,212,255,0.5)';
+    ctx.beginPath();
+    ctx.ellipse(contractedW / 4, 0, contractedW / 6, shipH / 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Windows
+    ctx.fillStyle = 'rgba(255,255,200,0.7)';
+    for (let i = -2; i <= 1; i++) {
+        ctx.beginPath();
+        ctx.arc(i * contractedW / 8, 0, 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    ctx.restore();
+
+    // Labels
+    ctx.fillStyle = '#aab';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Width: ${(100 / g).toFixed(1)}% of rest width | Height: 100% (no contraction ⊥ to motion)`, cx, h - 20);
+
+    // Direction arrow
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx + contractedW / 2 + 20, cy);
+    ctx.lineTo(cx + contractedW / 2 + 60, cy);
+    ctx.lineTo(cx + contractedW / 2 + 50, cy - 8);
+    ctx.moveTo(cx + contractedW / 2 + 60, cy);
+    ctx.lineTo(cx + contractedW / 2 + 50, cy + 8);
+    ctx.stroke();
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillText('v →', cx + contractedW / 2 + 40, cy - 15);
+}
+
+document.getElementById('ship_v').addEventListener('input', updateShip);
+
+// =============================================
+// 6. LORENTZ TRANSFORMATION
+// =============================================
+function updateLorentz() {
+    const beta = parseFloat(document.getElementById('lorentz_v').value) / 100;
+    const x = parseFloat(document.getElementById('lorentz_x').value);
+    const t = parseFloat(document.getElementById('lorentz_t').value);
+    const g = gamma(Math.abs(beta));
+
+    document.getElementById('lorentz_v_val').textContent = beta.toFixed(2) + 'c';
+    document.getElementById('lorentz_x_val').textContent = x.toFixed(1) + ' ls';
+    document.getElementById('lorentz_t_val').textContent = t.toFixed(1) + ' s';
+
+    // Using c=1 (light-seconds and seconds)
+    const xp = g * (x - beta * t);
+    const tp = g * (t - beta * x);
+
+    document.getElementById('lorentz_xp').textContent = xp.toFixed(3) + ' ls';
+    document.getElementById('lorentz_tp').textContent = tp.toFixed(3) + ' s';
+    document.getElementById('lorentz_gamma').textContent = g.toFixed(4);
+}
+
+document.getElementById('lorentz_v').addEventListener('input', updateLorentz);
+document.getElementById('lorentz_x').addEventListener('input', updateLorentz);
+document.getElementById('lorentz_t').addEventListener('input', updateLorentz);
+
+// =============================================
+// 7. MINKOWSKI DIAGRAM
+// =============================================
+function drawMinkowski() {
+    const beta = parseFloat(document.getElementById('mink_v').value) / 100;
+    document.getElementById('mink_v_val').textContent = beta.toFixed(2) + 'c';
+
+    const canvas = document.getElementById('minkowskiCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const cx = w / 2, cy = h / 2;
+    const scale = 60;
+
+    ctx.fillStyle = '#050520';
+    ctx.fillRect(0, 0, w, h);
+
+    // Light cones
+    ctx.fillStyle = 'rgba(255,255,100,0.05)';
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + 350, cy - 350);
+    ctx.lineTo(cx - 350, cy - 350);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + 350, cy + 350);
+    ctx.lineTo(cx - 350, cy + 350);
+    ctx.fill();
+
+    // Light cone lines
+    ctx.strokeStyle = 'rgba(255,255,100,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(cx - 350, cy + 350);
+    ctx.lineTo(cx + 350, cy - 350);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + 350, cy + 350);
+    ctx.lineTo(cx - 350, cy - 350);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Grid for rest frame
+    ctx.strokeStyle = 'rgba(68,136,255,0.15)';
+    ctx.lineWidth = 0.5;
+    for (let i = -5; i <= 5; i++) {
+        ctx.beginPath();
+        ctx.moveTo(cx + i * scale, cy - 350);
+        ctx.lineTo(cx + i * scale, cy + 350);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(cx - 350, cy - i * scale);
+        ctx.lineTo(cx + 350, cy - i * scale);
+        ctx.stroke();
+    }
+
+    // Rest frame axes (S)
+    ctx.strokeStyle = '#4488ff';
+    ctx.lineWidth = 2;
+    // x-axis
+    ctx.beginPath();
+    ctx.moveTo(cx - 330, cy);
+    ctx.lineTo(cx + 330, cy);
+    ctx.stroke();
+    // t-axis (ct)
+    ctx.beginPath();
+    ctx.moveTo(cx, cy + 330);
+    ctx.lineTo(cx, cy - 330);
+    ctx.stroke();
+
+    // Labels for S
+    ctx.fillStyle = '#4488ff';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('x', cx + 335, cy + 5);
+    ctx.fillText('ct', cx + 5, cy - 335);
+
+    // Moving frame axes (S')
+    if (Math.abs(beta) > 0.001) {
+        const angle = Math.atan(beta); // angle of x' axis from x axis
+
+        ctx.strokeStyle = '#ff6b6b';
+        ctx.lineWidth = 2;
+
+        // x' axis (tilted toward light cone from x-axis)
+        const x1_len = 300;
+        ctx.beginPath();
+        ctx.moveTo(cx - x1_len * Math.cos(angle), cy + x1_len * Math.sin(angle));
+        ctx.lineTo(cx + x1_len * Math.cos(angle), cy - x1_len * Math.sin(angle));
+        ctx.stroke();
+
+        // ct' axis (tilted toward light cone from ct-axis)
+        ctx.beginPath();
+        ctx.moveTo(cx - x1_len * Math.sin(angle), cy + x1_len * Math.cos(angle));
+        ctx.lineTo(cx + x1_len * Math.sin(angle), cy - x1_len * Math.cos(angle));
+        ctx.stroke();
+
+        // Labels for S'
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillText("x'", cx + x1_len * Math.cos(angle) + 5, cy - x1_len * Math.sin(angle));
+        ctx.fillText("ct'", cx + x1_len * Math.sin(angle) + 5, cy - x1_len * Math.cos(angle));
+
+        // Draw tick marks on S' axes using hyperbolic calibration
+        ctx.fillStyle = 'rgba(255,107,107,0.6)';
+        const g = gamma(Math.abs(beta));
+        for (let i = 1; i <= 4; i++) {
+            // Ticks on ct' axis
+            const tx = i * scale * beta * g * g;
+            const ty = i * scale * g * g;
+            // Simplified: just use the angle
+            const ctpX = cx + i * scale * Math.sin(angle);
+            const ctpY = cy - i * scale * Math.cos(angle);
+            ctx.beginPath();
+            ctx.arc(ctpX, ctpY, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Ticks on x' axis
+            const xpX = cx + i * scale * Math.cos(angle);
+            const xpY = cy - i * scale * Math.sin(angle);
+            ctx.beginPath();
+            ctx.arc(xpX, xpY, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // Light cone labels
+    ctx.fillStyle = 'rgba(255,255,100,0.7)';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Light cone (45°)', cx + 200, cy - 220);
+
+    // Region labels
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('FUTURE', cx, cy - 250);
+    ctx.fillText('(timelike)', cx, cy - 232);
+    ctx.fillText('PAST', cx, cy + 260);
+    ctx.fillText('(timelike)', cx, cy + 278);
+    ctx.fillText('ELSEWHERE', cx + 230, cy);
+    ctx.fillText('(spacelike)', cx + 230, cy + 18);
+    ctx.fillText('ELSEWHERE', cx - 230, cy);
+    ctx.fillText('(spacelike)', cx - 230, cy + 18);
+
+    // Origin
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+document.getElementById('mink_v').addEventListener('input', drawMinkowski);
+
+// =============================================
+// 8. E = mc² 
+// =============================================
+function updateEmc2() {
+    const logM = parseFloat(document.getElementById('emc2_m').value);
+    const mass = Math.pow(10, logM);
+    const beta = parseFloat(document.getElementById('emc2_v').value) / 100;
+    const g = gamma(beta);
+
+    document.getElementById('emc2_m_val').textContent = mass < 0.01 ? formatSci(mass) + ' kg' : mass.toFixed(2) + ' kg';
+    document.getElementById('emc2_v_val').textContent = beta.toFixed(2) + 'c';
+
+    const c2 = c * c;
+    const restE = mass * c2;
+    const totalE = g * restE;
+    const kineticE = (g - 1) * restE;
+    const hiroshimaBomb = 6.3e13; // joules
+
+    document.getElementById('emc2_rest').textContent = formatSci(restE) + ' J';
+    document.getElementById('emc2_total').textContent = formatSci(totalE) + ' J';
+    document.getElementById('emc2_kinetic').textContent = formatSci(kineticE) + ' J';
+    document.getElementById('emc2_bombs').textContent = Math.round(restE / hiroshimaBomb).toLocaleString();
+}
+
+function plotEmc2() {
+    const betas = [];
+    const kineticRel = [];
+    const kineticClass = [];
+    const totalE = [];
+
+    for (let b = 0; b <= 0.999; b += 0.005) {
+        betas.push(b);
+        const g = gamma(b);
+        kineticRel.push(g - 1); // in units of m0c²
+        kineticClass.push(0.5 * b * b); // classical ½mv² in units of m0c²
+        totalE.push(g); // total energy in units of m0c²
+    }
+
+    const currentBeta = parseFloat(document.getElementById('emc2_v').value) / 100;
+    const currentG = gamma(currentBeta);
+
+    Plotly.newPlot('emc2Plot', [
+        { x: betas, y: totalE, name: 'Total E = γm₀c²', line: { color: '#00d4ff', width: 2 } },
+        { x: betas, y: kineticRel, name: 'Relativistic K = (γ-1)m₀c²', line: { color: '#ff6b6b', width: 2 } },
+        { x: betas, y: kineticClass, name: 'Classical K = ½m₀v²', line: { color: '#4cff8b', dash: 'dash', width: 2 } },
+        { x: [currentBeta], y: [currentG], name: 'Current (total)', mode: 'markers',
+          marker: { color: '#00d4ff', size: 12 } },
+        { x: [currentBeta], y: [currentG - 1], name: 'Current (kinetic)', mode: 'markers',
+          marker: { color: '#ff6b6b', size: 12 } }
+    ], {
+        title: 'Energy vs velocity (in units of m₀c²)',
+        xaxis: { title: 'β = v/c', range: [0, 1] },
+        yaxis: { title: 'Energy / m₀c²', range: [0, 15] },
+        paper_bgcolor: '#0a0a2e', plot_bgcolor: '#0a0a2e',
+        font: { color: '#ccd' }, legend: { x: 0.02, y: 0.98 },
+        margin: { t: 40, b: 50, l: 60, r: 20 }
+    }, { responsive: true });
+}
+
+document.getElementById('emc2_m').addEventListener('input', () => { updateEmc2(); });
+document.getElementById('emc2_v').addEventListener('input', () => { updateEmc2(); plotEmc2(); });
+
+// =============================================
+// 8b. ENERGY-MOMENTUM TRIANGLE
+// =============================================
+function drawTriangle() {
+    const beta = parseFloat(document.getElementById('triangle_v').value) / 100;
+    const g = gamma(beta);
+    document.getElementById('triangle_v_val').textContent = beta.toFixed(2) + 'c';
+
+    const canvas = document.getElementById('triangleCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.fillStyle = '#050520';
+    ctx.fillRect(0, 0, w, h);
+
+    // E² = (pc)² + (m₀c²)²
+    // In units of m₀c²: E = γ, pc = γβ, m₀c² = 1
+    const E = g;
+    const pc = g * beta;
+    const m0c2 = 1;
+
+    const maxLen = 280;
+    const scale = maxLen / Math.max(E, 3);
+
+    const ox = 100;
+    const oy = h - 60;
+
+    // Bottom side: m₀c² (rest energy)
+    const restLen = m0c2 * scale;
+    // Right side: pc (momentum)
+    const momLen = pc * scale;
+    // Hypotenuse: E (total energy)
+    const eLen = E * scale;
+
+    // Draw triangle
+    // Bottom-left to bottom-right: m₀c²
+    ctx.strokeStyle = '#4cff8b';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(ox, oy);
+    ctx.lineTo(ox + restLen, oy);
+    ctx.stroke();
+
+    // Bottom-right going up: pc
+    ctx.strokeStyle = '#00d4ff';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(ox + restLen, oy);
+    ctx.lineTo(ox + restLen, oy - momLen);
+    ctx.stroke();
+
+    // Hypotenuse: E
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(ox, oy);
+    ctx.lineTo(ox + restLen, oy - momLen);
+    ctx.stroke();
+
+    // Right angle marker
+    const sq = 12;
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(ox + restLen - sq, oy);
+    ctx.lineTo(ox + restLen - sq, oy - sq);
+    ctx.lineTo(ox + restLen, oy - sq);
+    ctx.stroke();
+
+    // Labels
+    ctx.font = 'bold 16px sans-serif';
+    ctx.textAlign = 'center';
+
+    // m₀c² label (bottom)
+    ctx.fillStyle = '#4cff8b';
+    ctx.fillText(`m₀c² = ${m0c2.toFixed(2)}`, ox + restLen / 2, oy + 30);
+
+    // pc label (right side)
+    ctx.fillStyle = '#00d4ff';
+    ctx.save();
+    ctx.translate(ox + restLen + 35, oy - momLen / 2);
+    ctx.fillText(`pc = ${pc.toFixed(2)}`, 0, 0);
+    ctx.restore();
+
+    // E label (hypotenuse)
+    ctx.fillStyle = '#ff6b6b';
+    const midX = ox + restLen / 2;
+    const midY = oy - momLen / 2;
+    ctx.save();
+    ctx.translate(midX - 40, midY);
+    const angle = -Math.atan2(momLen, restLen);
+    ctx.rotate(angle);
+    ctx.fillText(`E = ${E.toFixed(2)}`, 0, -10);
+    ctx.restore();
+
+    // Equation text
+    ctx.fillStyle = '#aab';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`E² = (pc)² + (m₀c²)²`, ox, 30);
+    ctx.fillText(`${E.toFixed(2)}² = ${pc.toFixed(2)}² + ${m0c2.toFixed(2)}²`, ox, 52);
+    ctx.fillText(`${(E*E).toFixed(2)} = ${(pc*pc).toFixed(2)} + ${(m0c2*m0c2).toFixed(2)}  ✓`, ox, 74);
+
+    // Special cases annotation
+    ctx.fillStyle = '#888';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'right';
+    if (beta < 0.01) {
+        ctx.fillText('At rest: E = m₀c² (triangle collapses to a line)', w - 30, 30);
+    } else if (beta > 0.99) {
+        ctx.fillText('Ultra-relativistic: E ≈ pc (like a photon!)', w - 30, 30);
+    }
+}
+
+document.getElementById('triangle_v').addEventListener('input', drawTriangle);
+
+// =============================================
+// 9. MOMENTUM PLOT
+// =============================================
+function updateMomentum() {
+    const beta = parseFloat(document.getElementById('mom_v').value) / 100;
+    const g = gamma(beta);
+
+    document.getElementById('mom_v_val').textContent = beta.toFixed(2) + 'c';
+    document.getElementById('mom_classical').textContent = beta.toFixed(3) + ' m₀c';
+    document.getElementById('mom_relativistic').textContent = (g * beta).toFixed(3) + ' m₀c';
+    document.getElementById('mom_ratio').textContent = beta > 0.001 ? g.toFixed(3) : '—';
+}
+
+function plotMomentum() {
+    const betas = [];
+    const pClass = [];
+    const pRel = [];
+
+    for (let b = 0; b <= 0.999; b += 0.005) {
+        betas.push(b);
+        pClass.push(b);
+        pRel.push(gamma(b) * b);
+    }
+
+    const currentBeta = parseFloat(document.getElementById('mom_v').value) / 100;
+
+    Plotly.newPlot('momentumPlot', [
+        { x: betas, y: pClass, name: 'Classical p = m₀v', line: { color: '#4cff8b', dash: 'dash', width: 2 } },
+        { x: betas, y: pRel, name: 'Relativistic p = γm₀v', line: { color: '#ff6b6b', width: 3 } },
+        { x: [currentBeta], y: [gamma(currentBeta) * currentBeta], name: 'Current', mode: 'markers',
+          marker: { color: '#00d4ff', size: 14 } }
+    ], {
+        title: 'Momentum vs velocity (in units of m₀c)',
+        xaxis: { title: 'β = v/c', range: [0, 1] },
+        yaxis: { title: 'p / m₀c', range: [0, 15] },
+        paper_bgcolor: '#0a0a2e', plot_bgcolor: '#0a0a2e',
+        font: { color: '#ccd' }, legend: { x: 0.02, y: 0.98 },
+        margin: { t: 40, b: 50, l: 60, r: 20 }
+    }, { responsive: true });
+}
+
+document.getElementById('mom_v').addEventListener('input', () => { updateMomentum(); plotMomentum(); });
+
+// =============================================
+// 10. EQUIVALENCE PRINCIPLE ELEVATOR
+// =============================================
+let elevatorMode = 'gravity';
+let elevAnim;
+let elevBallY = 100;
+let elevBallVy = 0;
+let elevTime = 0;
+
+function setElevatorMode(mode) {
+    elevatorMode = mode;
+    elevBallY = 100;
+    elevBallVy = 0;
+    elevTime = 0;
+
+    document.getElementById('elevGravity').className = mode === 'gravity' ? 'btn' : 'btn secondary';
+    document.getElementById('elevAccel').className = mode === 'accel' ? 'btn' : 'btn secondary';
+    document.getElementById('elevFreefall').className = mode === 'freefall' ? 'btn' : 'btn secondary';
+
+    const descs = {
+        gravity: "On Earth's surface: the ball falls due to gravity. You feel your weight pressing on the floor.",
+        accel: "In a rocket accelerating at g in deep space: the ball 'falls' identically. You feel the same weight. You CANNOT tell the difference!",
+        freefall: "Free-falling elevator (or orbiting space station): the ball floats! No gravity felt. This is Einstein's 'happiest thought.'"
+    };
+    document.getElementById('elevatorDesc').textContent = descs[mode];
+}
+
+function animateElevator() {
+    const canvas = document.getElementById('elevatorCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+
+    ctx.fillStyle = '#050520';
+    ctx.fillRect(0, 0, w, h);
+
+    const elevW = 200, elevH = 280;
+    const elevX = (w - elevW) / 2;
+    let elevY = 50;
+
+    elevTime += 0.016;
+
+    const accelG = (elevatorMode === 'freefall') ? 0 : 200; // pixels/s²
+
+    // Ball physics
+    elevBallVy += accelG * 0.016;
+    elevBallY += elevBallVy * 0.016;
+
+    // Floor collision
+    const floorY = elevH - 40;
+    if (elevBallY > floorY) {
+        elevBallY = floorY;
+        elevBallVy = -elevBallVy * 0.5;
+        if (Math.abs(elevBallVy) < 5) elevBallVy = 0;
+    }
+    if (elevBallY < 30) {
+        elevBallY = 30;
+        elevBallVy = 0;
+    }
+
+    // Reset ball periodically
+    if (elevTime > 3) {
+        elevTime = 0;
+        elevBallY = 60;
+        elevBallVy = 0;
+    }
+
+    // Draw elevator
+    ctx.save();
+    ctx.translate(elevX, elevY);
+
+    // Elevator box
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(0, 0, elevW, elevH);
+    ctx.fillStyle = 'rgba(40,40,80,0.5)';
+    ctx.fillRect(0, 0, elevW, elevH);
+
+    // Floor
+    ctx.fillStyle = '#666';
+    ctx.fillRect(0, elevH - 10, elevW, 10);
+
+    // Person (stick figure)
+    const px = elevW * 0.35;
+    const personFloorY = elevH - 10;
+    ctx.strokeStyle = '#aab';
+    ctx.lineWidth = 2;
+    // Head
+    ctx.beginPath();
+    ctx.arc(px, personFloorY - 100, 12, 0, Math.PI * 2);
+    ctx.stroke();
+    // Body
+    ctx.beginPath();
+    ctx.moveTo(px, personFloorY - 88);
+    ctx.lineTo(px, personFloorY - 40);
+    ctx.stroke();
+    // Arms
+    ctx.beginPath();
+    ctx.moveTo(px - 20, personFloorY - 70);
+    ctx.lineTo(px + 25, personFloorY - 75);
+    ctx.stroke();
+    // Legs
+    ctx.beginPath();
+    ctx.moveTo(px, personFloorY - 40);
+    ctx.lineTo(px - 15, personFloorY);
+    ctx.moveTo(px, personFloorY - 40);
+    ctx.lineTo(px + 15, personFloorY);
+    ctx.stroke();
+
+    // Ball
+    const ballX = elevW * 0.7;
+    ctx.fillStyle = '#ff6b6b';
+    ctx.beginPath();
+    ctx.arc(ballX, elevBallY, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,107,107,0.3)';
+    ctx.beginPath();
+    ctx.arc(ballX, elevBallY, 15, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+
+    // Scene context
+    ctx.fillStyle = '#aab';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+
+    if (elevatorMode === 'gravity') {
+        // Ground
+        ctx.fillStyle = '#3a5a3a';
+        ctx.fillRect(0, elevY + elevH + 10, w, h - elevY - elevH - 10);
+        ctx.fillStyle = '#aab';
+        ctx.fillText('🌍 Earth surface — gravity pulls down at g = 9.8 m/s²', w / 2, elevY + elevH + 40);
+
+        // Gravity arrow
+        ctx.strokeStyle = '#ff6b6b';
+        ctx.lineWidth = 3;
+        const arrowX = elevX - 40;
+        ctx.beginPath();
+        ctx.moveTo(arrowX, elevY + 50);
+        ctx.lineTo(arrowX, elevY + elevH - 30);
+        ctx.lineTo(arrowX - 10, elevY + elevH - 50);
+        ctx.moveTo(arrowX, elevY + elevH - 30);
+        ctx.lineTo(arrowX + 10, elevY + elevH - 50);
+        ctx.stroke();
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillText('g ↓', arrowX, elevY + 40);
+
+    } else if (elevatorMode === 'accel') {
+        // Stars background
+        for (let i = 0; i < 50; i++) {
+            ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.5 + 0.2})`;
+            ctx.beginPath();
+            ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 1.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.fillStyle = '#aab';
+        ctx.fillText('🚀 Deep space — rocket accelerates upward at a = g', w / 2, elevY + elevH + 40);
+
+        // Rocket flame
+        const flameX = elevX + elevW / 2;
+        const flameY = elevY + elevH + 5;
+        const grad = ctx.createLinearGradient(flameX, flameY, flameX, flameY + 50 + Math.random() * 20);
+        grad.addColorStop(0, 'rgba(255,200,50,0.9)');
+        grad.addColorStop(0.5, 'rgba(255,100,20,0.6)');
+        grad.addColorStop(1, 'rgba(255,50,0,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(flameX - 30, flameY);
+        ctx.lineTo(flameX, flameY + 50 + Math.random() * 20);
+        ctx.lineTo(flameX + 30, flameY);
+        ctx.fill();
+
+        // Acceleration arrow
+        ctx.strokeStyle = '#4cff8b';
+        ctx.lineWidth = 3;
+        const arrowX = elevX + elevW + 40;
+        ctx.beginPath();
+        ctx.moveTo(arrowX, elevY + elevH - 30);
+        ctx.lineTo(arrowX, elevY + 50);
+        ctx.lineTo(arrowX - 10, elevY + 70);
+        ctx.moveTo(arrowX, elevY + 50);
+        ctx.lineTo(arrowX + 10, elevY + 70);
+        ctx.stroke();
+        ctx.fillStyle = '#4cff8b';
+        ctx.fillText('a ↑', arrowX, elevY + elevH - 10);
+
+    } else {
+        // Free fall
+        for (let i = 0; i < 50; i++) {
+            ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.5 + 0.2})`;
+            ctx.beginPath();
+            ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 1.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.fillStyle = '#aab';
+        ctx.fillText('🕳️ Free fall — everything floats! Locally equivalent to zero gravity.', w / 2, elevY + elevH + 40);
+    }
+
+    // Identical label
+    if (elevatorMode !== 'freefall') {
+        ctx.fillStyle = '#ff9f43';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText('Ball behavior: IDENTICAL in both cases!', w / 2, h - 20);
+    } else {
+        ctx.fillStyle = '#ff9f43';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText('Weightlessness! Ball floats — no experiment can detect gravity.', w / 2, h - 20);
+    }
+
+    elevAnim = requestAnimationFrame(animateElevator);
+}
+
+// =============================================
+// 11. SPACETIME CURVATURE (3D PLOT)
+// =============================================
+function plotCurvature() {
+    const mass = parseFloat(document.getElementById('curve_mass').value);
+    document.getElementById('curve_mass_val').textContent = mass.toFixed(1) + ' M☉';
+
+    const size = 60;
+    const xArr = [];
+    const yArr = [];
+    const zArr = [];
+
+    for (let i = 0; i < size; i++) {
+        const row_x = [];
+        const row_y = [];
+        const row_z = [];
+        for (let j = 0; j < size; j++) {
+            const x = (i - size / 2) * 0.2;
+            const y = (j - size / 2) * 0.2;
+            const r = Math.sqrt(x * x + y * y);
+            const rs = mass * 0.3; // Schwarzschild radius scaled
+            let z;
+            if (r < rs * 0.5) {
+                z = -mass * 4; // cap the depth
+            } else {
+                z = -mass / (r + 0.1);
+            }
+            row_x.push(x);
+            row_y.push(y);
+            row_z.push(z);
+        }
+        xArr.push(row_x);
+        yArr.push(row_y);
+        zArr.push(row_z);
+    }
+
+    // Convert to flat arrays for Plotly surface
+    const zFlat = zArr;
+
+    Plotly.newPlot('curvaturePlot', [{
+        type: 'surface',
+        z: zFlat,
+        colorscale: [
+            [0, '#1a0a3e'],
+            [0.3, '#7b2ff7'],
+            [0.6, '#00d4ff'],
+            [1, '#0a0a2e']
+        ],
+        showscale: false,
+        contours: {
+            z: { show: true, usecolormap: true, highlightcolor: "#fff", project: { z: false } }
+        }
+    }], {
+        title: `Spacetime curvature around ${mass.toFixed(1)} solar masses`,
+        scene: {
+            xaxis: { title: 'x', showgrid: false, color: '#666' },
+            yaxis: { title: 'y', showgrid: false, color: '#666' },
+            zaxis: { title: 'Curvature depth', showgrid: false, color: '#666' },
+            camera: { eye: { x: 1.5, y: 1.5, z: 0.8 } },
+            bgcolor: '#0a0a2e'
+        },
+        paper_bgcolor: '#0a0a2e',
+        font: { color: '#ccd' },
+        margin: { t: 40, b: 10, l: 10, r: 10 }
+    }, { responsive: true });
+}
+
+document.getElementById('curve_mass').addEventListener('input', plotCurvature);
+
+// =============================================
+// 12. ORBIT SIMULATION
+// =============================================
+let orbitData = { x: [], y: [], vx: 0, vy: 0, running: false, animId: null };
+
+function resetOrbit() {
+    const velFactor = parseFloat(document.getElementById('orbit_vel').value);
+    const rStart = parseFloat(document.getElementById('orbit_r').value);
+
+    document.getElementById('orbit_vel_val').textContent = velFactor.toFixed(2) + (Math.abs(velFactor - 1) < 0.02 ? ' (circular)' : '');
+    document.getElementById('orbit_r_val').textContent = rStart.toFixed(1) + ' rₛ';
+
+    // Newtonian gravity simulation (good approximation for visualization)
+    // GM = 1 in natural units, rs = 2GM/c² → we set rs = 1
+    const GM = 1;
+    const r0 = rStart;
+    const vCircular = Math.sqrt(GM / r0);
+    const v0 = vCircular * velFactor;
+
+    orbitData.x = [r0];
+    orbitData.y = [0];
+    orbitData.vx = 0;
+    orbitData.vy = v0;
+    orbitData.running = true;
+
+    if (orbitData.animId) cancelAnimationFrame(orbitData.animId);
+    animateOrbit();
+}
+
+function animateOrbit() {
+    if (!orbitData.running) return;
+
+    const canvas = document.getElementById('orbitCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const cx = w / 2, cy = h / 2;
+    const scale = 12;
+
+    // Simulate multiple steps per frame
+    const dt = 0.005;
+    const GM = 1;
+    const stepsPerFrame = 20;
+
+    for (let s = 0; s < stepsPerFrame; s++) {
+        const lastX = orbitData.x[orbitData.x.length - 1];
+        const lastY = orbitData.y[orbitData.y.length - 1];
+        const r = Math.sqrt(lastX * lastX + lastY * lastY);
+
+        if (r < 1.0 || r > 100 || orbitData.x.length > 15000) {
+            orbitData.running = false;
+            break;
+        }
+
+        const ax = -GM * lastX / (r * r * r);
+        const ay = -GM * lastY / (r * r * r);
+
+        orbitData.vx += ax * dt;
+        orbitData.vy += ay * dt;
+
+        orbitData.x.push(lastX + orbitData.vx * dt);
+        orbitData.y.push(lastY + orbitData.vy * dt);
+    }
+
+    // Draw
+    ctx.fillStyle = '#050520';
+    ctx.fillRect(0, 0, w, h);
+
+    // Central mass
+    const rsPixels = 1 * scale;
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, rsPixels * 3);
+    grad.addColorStop(0, 'rgba(255,200,50,0.8)');
+    grad.addColorStop(0.3, 'rgba(255,100,20,0.4)');
+    grad.addColorStop(1, 'rgba(255,50,0,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, rsPixels * 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#ffcc00';
+    ctx.beginPath();
+    ctx.arc(cx, cy, rsPixels * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Event horizon circle
+    ctx.strokeStyle = 'rgba(255,0,0,0.3)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, rsPixels, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // ISCO circle
+    ctx.strokeStyle = 'rgba(100,255,100,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3 * scale, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Orbit trail
+    ctx.strokeStyle = 'rgba(0,212,255,0.6)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let i = 0; i < orbitData.x.length; i++) {
+        const px = cx + orbitData.x[i] * scale;
+        const py = cy - orbitData.y[i] * scale;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    // Current position
+    const lastIdx = orbitData.x.length - 1;
+    const curPx = cx + orbitData.x[lastIdx] * scale;
+    const curPy = cy - orbitData.y[lastIdx] * scale;
+    ctx.fillStyle = '#00d4ff';
+    ctx.beginPath();
+    ctx.arc(curPx, curPy, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Labels
+    ctx.fillStyle = '#666';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Event horizon (rₛ)', cx, cy + rsPixels + 15);
+    ctx.fillText('ISCO (3rₛ)', cx + 3 * scale + 30, cy - 5);
+
+    if (orbitData.running) {
+        orbitData.animId = requestAnimationFrame(animateOrbit);
+    }
+}
+
+document.getElementById('orbit_vel').addEventListener('input', () => {
+    const v = parseFloat(document.getElementById('orbit_vel').value);
+    document.getElementById('orbit_vel_val').textContent = v.toFixed(2) + (Math.abs(v - 1) < 0.02 ? ' (circular)' : '');
+});
+document.getElementById('orbit_r').addEventListener('input', () => {
+    document.getElementById('orbit_r_val').textContent = parseFloat(document.getElementById('orbit_r').value).toFixed(1) + ' rₛ';
+});
+
+// =============================================
+// 13. GRAVITATIONAL TIME DILATION
+// =============================================
+function updateGravTimeDil() {
+    const logMass = parseFloat(document.getElementById('gtd_mass').value);
+    const masses = [
+        { name: 'Earth', m: M_earth, r: R_earth },
+        { name: 'Jupiter', m: 1.898e27, r: 6.991e7 },
+        { name: 'Sun', m: M_sun, r: 6.957e8 },
+        { name: 'White Dwarf', m: 1.0 * M_sun, r: 6e6 },
+        { name: 'Neutron Star', m: 1.4 * M_sun, r: 1e4 },
+        { name: 'Near Black Hole', m: 10 * M_sun, r: 3e4 }
+    ];
+
+    const idx = Math.min(Math.floor(logMass), masses.length - 1);
+    const frac = logMass - idx;
+    let mass, radius, name;
+
+    if (idx < masses.length - 1) {
+        mass = masses[idx].m * Math.pow(masses[idx + 1].m / masses[idx].m, frac);
+        radius = masses[idx].r * Math.pow(masses[idx + 1].r / masses[idx].r, frac);
+        name = frac < 0.5 ? masses[idx].name : masses[idx + 1].name;
+    } else {
+        mass = masses[idx].m;
+        radius = masses[idx].r;
+        name = masses[idx].name;
+    }
+
+    const rFactor = parseFloat(document.getElementById('gtd_r').value);
+    const r = rFactor * radius;
+
+    const rs = 2 * G_const * mass / (c * c);
+    const rsOverR = rs / r;
+
+    let timeFactor;
+    if (rsOverR >= 1) {
+        timeFactor = Infinity;
+    } else {
+        timeFactor = 1 / Math.sqrt(1 - rsOverR);
+    }
+
+    document.getElementById('gtd_mass_val').textContent = name;
+    document.getElementById('gtd_r_val').textContent = rFactor.toFixed(2) + ' R (surface)';
+    document.getElementById('gtd_rs').textContent = rs < 1 ? formatSci(rs) + ' m' : (rs / 1000).toFixed(1) + ' km';
+    document.getElementById('gtd_ratio').textContent = formatSci(rsOverR);
+    document.getElementById('gtd_factor').textContent = timeFactor === Infinity ? '∞' : timeFactor.toFixed(10);
+
+    const yearSeconds = 365.25 * 24 * 3600;
+    const extraTime = (timeFactor - 1) * yearSeconds;
+    if (timeFactor === Infinity) {
+        document.getElementById('gtd_fartime').textContent = '∞';
+    } else if (extraTime < 0.001) {
+        document.getElementById('gtd_fartime').textContent = '+' + formatSci(extraTime) + ' s per year';
+    } else if (extraTime < 60) {
+        document.getElementById('gtd_fartime').textContent = '+' + extraTime.toFixed(3) + ' s per year';
+    } else if (extraTime < 3600) {
+        document.getElementById('gtd_fartime').textContent = '+' + (extraTime / 60).toFixed(1) + ' min per year';
+    } else {
+        document.getElementById('gtd_fartime').textContent = '+' + (extraTime / 3600).toFixed(1) + ' hrs per year';
+    }
+
+    // Draw gravitational time dilation visualization
+    drawGravTimeDilCanvas(mass, r, rs, timeFactor, name);
+}
+
+function drawGravTimeDilCanvas(mass, r, rs, timeFactor, name) {
+    const canvas = document.getElementById('gravTimeDilCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+
+    ctx.fillStyle = '#050520';
+    ctx.fillRect(0, 0, w, h);
+
+    const cx = w / 2;
+    const cy = h / 2;
+
+    // Draw central body
+    const bodyRadius = 40;
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, bodyRadius);
+    grad.addColorStop(0, '#ffcc44');
+    grad.addColorStop(0.7, '#cc8800');
+    grad.addColorStop(1, '#664400');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, bodyRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#aab';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(name, cx, cy + bodyRadius + 18);
+
+    // Gravitational field lines (concentric circles)
+    for (let i = 1; i <= 6; i++) {
+        const rr = bodyRadius + i * 30;
+        ctx.strokeStyle = `rgba(100,100,200,${0.3 - i * 0.04})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, rr, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+
+    // Clock near the body (slow)
+    const nearClockX = cx + bodyRadius + 40;
+    const nearClockY = cy;
+    drawClock(ctx, nearClockX, nearClockY, 25, Date.now() / 1000 / timeFactor, '#ff6b6b');
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Near clock', nearClockX, nearClockY + 40);
+    ctx.fillText('(SLOWER)', nearClockX, nearClockY + 55);
+
+    // Clock far away (fast / normal)
+    const farClockX = cx + 250;
+    const farClockY = cy;
+    drawClock(ctx, farClockX, farClockY, 25, Date.now() / 1000, '#4cff8b');
+    ctx.fillStyle = '#4cff8b';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Far clock', farClockX, farClockY + 40);
+    ctx.fillText('(FASTER)', farClockX, farClockY + 55);
+
+    // Arrow between clocks
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(nearClockX + 30, nearClockY);
+    ctx.lineTo(farClockX - 30, farClockY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#aab';
+    ctx.font = '13px sans-serif';
+    ctx.fillText(`Factor: ${timeFactor === Infinity ? '∞' : timeFactor.toFixed(6)}×`, (nearClockX + farClockX) / 2, nearClockY - 15);
+
+    // Explanation on left side
+    ctx.fillStyle = '#888';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Deeper in gravity well', 20, 30);
+    ctx.fillText('= slower time', 20, 48);
+    ctx.fillText('(GPS must correct for this!)', 20, 75);
+}
+
+function drawClock(ctx, x, y, radius, time, color) {
+    // Clock face
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Hour marks
+    for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+        const inner = radius - 5;
+        const outer = radius - 1;
+        ctx.beginPath();
+        ctx.moveTo(x + Math.cos(angle) * inner, y + Math.sin(angle) * inner);
+        ctx.lineTo(x + Math.cos(angle) * outer, y + Math.sin(angle) * outer);
+        ctx.stroke();
+    }
+
+    // Second hand
+    const secAngle = (time % 60) / 60 * Math.PI * 2 - Math.PI / 2;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + Math.cos(secAngle) * (radius - 8), y + Math.sin(secAngle) * (radius - 8));
+    ctx.stroke();
+
+    // Minute hand
+    const minAngle = (time % 3600) / 3600 * Math.PI * 2 - Math.PI / 2;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + Math.cos(minAngle) * (radius - 12), y + Math.sin(minAngle) * (radius - 12));
+    ctx.stroke();
+
+    // Center dot
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, 2, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+document.getElementById('gtd_mass').addEventListener('input', updateGravTimeDil);
+document.getElementById('gtd_r').addEventListener('input', updateGravTimeDil);
+
+// Animate the clocks
+function animateGravClocks() {
+    updateGravTimeDil();
+    requestAnimationFrame(animateGravClocks);
+}
+
+// =============================================
+// 14. BLACK HOLE VISUALIZER
+// =============================================
+function updateBlackHole() {
+    const massSolar = parseFloat(document.getElementById('bh_mass').value);
+    document.getElementById('bh_mass_val').textContent = massSolar + ' M☉';
+
+    const mass = massSolar * M_sun;
+    const rs = 2 * G_const * mass / (c * c);
+    const photonSphere = 1.5 * rs;
+    const isco = 3 * rs;
+
+    document.getElementById('bh_rs').textContent = (rs / 1000).toFixed(1) + ' km';
+    document.getElementById('bh_photon').textContent = (photonSphere / 1000).toFixed(1) + ' km';
+    document.getElementById('bh_isco').textContent = (isco / 1000).toFixed(1) + ' km';
+
+    // Surface gravity (at event horizon, diverges but we show the "Newtonian" approximation)
+    const surfGrav = G_const * mass / (rs * rs);
+    document.getElementById('bh_surfgrav').textContent = formatSci(surfGrav) + ' m/s²';
+
+    drawBlackHole(massSolar);
+}
+
+function drawBlackHole(massSolar) {
+    const canvas = document.getElementById('blackholeCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    const cx = w / 2, cy = h / 2;
+
+    ctx.fillStyle = '#020210';
+    ctx.fillRect(0, 0, w, h);
+
+    // Stars background
+    for (let i = 0; i < 200; i++) {
+        const sx = Math.random() * w;
+        const sy = Math.random() * h;
+        const dist = Math.sqrt((sx - cx) * (sx - cx) + (sy - cy) * (sy - cy));
+        // Stars get distorted near the black hole
+        const rsPixels = 20 + massSolar * 2;
+        if (dist > rsPixels * 3) {
+            ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.7 + 0.1})`;
+            ctx.beginPath();
+            ctx.arc(sx, sy, Math.random() * 1.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    const rsPixels = 20 + massSolar * 2;
+    const photonPixels = rsPixels * 1.5;
+    const iscoPixels = rsPixels * 3;
+
+    // Accretion disk (behind)
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(1, 0.3);
+    const diskGrad = ctx.createRadialGradient(0, 0, rsPixels * 1.5, 0, 0, iscoPixels * 2);
+    diskGrad.addColorStop(0, 'rgba(255,150,50,0.8)');
+    diskGrad.addColorStop(0.3, 'rgba(255,100,20,0.5)');
+    diskGrad.addColorStop(0.6, 'rgba(200,50,10,0.3)');
+    diskGrad.addColorStop(1, 'rgba(100,20,5,0)');
+    ctx.fillStyle = diskGrad;
+    ctx.beginPath();
+    ctx.arc(0, 0, iscoPixels * 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Photon sphere
+    ctx.strokeStyle = 'rgba(255,255,100,0.3)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 6]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, photonPixels, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // ISCO
+    ctx.strokeStyle = 'rgba(100,255,100,0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, iscoPixels, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Event horizon (black circle with glow)
+    const bhGrad = ctx.createRadialGradient(cx, cy, rsPixels * 0.8, cx, cy, rsPixels * 1.8);
+    bhGrad.addColorStop(0, 'rgba(0,0,0,1)');
+    bhGrad.addColorStop(0.5, 'rgba(0,0,0,0.9)');
+    bhGrad.addColorStop(0.8, 'rgba(50,0,100,0.3)');
+    bhGrad.addColorStop(1, 'rgba(50,0,100,0)');
+    ctx.fillStyle = bhGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, rsPixels * 1.8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Solid black event horizon
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(cx, cy, rsPixels, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Photon ring (bright ring at photon sphere)
+    ctx.strokeStyle = 'rgba(255,200,100,0.6)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, photonPixels, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Gravitational lensing effect — distorted star arcs
+    ctx.strokeStyle = 'rgba(200,200,255,0.15)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2 + Date.now() / 20000;
+        const arcR = rsPixels * 2 + Math.random() * rsPixels;
+        ctx.beginPath();
+        ctx.arc(cx, cy, arcR, angle, angle + 0.3);
+        ctx.stroke();
+    }
+
+    // Labels
+    ctx.fillStyle = '#888';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Event Horizon (rₛ)', cx + rsPixels + 5, cy - rsPixels);
+    ctx.fillText('Photon Sphere (1.5rₛ)', cx + photonPixels + 5, cy - photonPixels + 10);
+    ctx.fillText('ISCO (3rₛ)', cx + iscoPixels + 5, cy - iscoPixels + 10);
+
+    // Singularity label
+    ctx.fillStyle = '#555';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Singularity', cx, cy + 4);
+}
+
+document.getElementById('bh_mass').addEventListener('input', updateBlackHole);
+
+// =============================================
+// 15. GRAVITATIONAL REDSHIFT
+// =============================================
+function updateRedshift() {
+    const rOverRs = parseFloat(document.getElementById('redshift_r').value);
+    const lambdaEmit = parseFloat(document.getElementById('redshift_lambda').value);
+
+    document.getElementById('redshift_r_val').textContent = rOverRs.toFixed(2) + ' rₛ';
+    document.getElementById('redshift_lambda_val').textContent = lambdaEmit + ' nm';
+
+    const factor = 1 / Math.sqrt(1 - 1 / rOverRs);
+    const lambdaObs = lambdaEmit * factor;
+    const z = factor - 1;
+
+    document.getElementById('rs_emitted').textContent = lambdaEmit + ' nm';
+    document.getElementById('rs_observed').textContent = lambdaObs > 10000 ? formatSci(lambdaObs) + ' nm' : lambdaObs.toFixed(1) + ' nm';
+    document.getElementById('rs_z').textContent = z > 100 ? formatSci(z) : z.toFixed(4);
+
+    // Draw redshift visualization
+    const canvas = document.getElementById('redshiftCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+
+    ctx.fillStyle = '#050520';
+    ctx.fillRect(0, 0, w, h);
+
+    const barH = 60;
+    const barY = (h - barH) / 2;
+
+    // Emitted color bar
+    const emitColor = wavelengthToColor(lambdaEmit);
+    ctx.fillStyle = emitColor;
+    ctx.fillRect(30, barY, w / 2 - 60, barH);
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(30, barY, w / 2 - 60, barH);
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Emitted', 30 + (w / 2 - 60) / 2, barY - 10);
+    ctx.font = '12px sans-serif';
+    ctx.fillText(`λ = ${lambdaEmit} nm`, 30 + (w / 2 - 60) / 2, barY + barH + 20);
+
+    // Arrow
+    ctx.strokeStyle = '#aab';
+    ctx.lineWidth = 2;
+    const arrowX1 = w / 2 - 20;
+    const arrowX2 = w / 2 + 20;
+    const arrowY = h / 2;
+    ctx.beginPath();
+    ctx.moveTo(arrowX1, arrowY);
+    ctx.lineTo(arrowX2, arrowY);
+    ctx.lineTo(arrowX2 - 8, arrowY - 6);
+    ctx.moveTo(arrowX2, arrowY);
+    ctx.lineTo(arrowX2 - 8, arrowY + 6);
+    ctx.stroke();
+
+    ctx.fillStyle = '#aab';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('gravity', w / 2, arrowY - 12);
+    ctx.fillText('redshift', w / 2, arrowY + 20);
+
+    // Observed color bar
+    const obsColor = lambdaObs <= 780 ? wavelengthToColor(lambdaObs) : 'rgb(50,0,0)';
+    ctx.fillStyle = obsColor;
+    ctx.fillRect(w / 2 + 30, barY, w / 2 - 60, barH);
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(w / 2 + 30, barY, w / 2 - 60, barH);
+
+    // If wavelength is beyond visible, show infrared label
+    if (lambdaObs > 780) {
+        ctx.fillStyle = '#ff6b6b';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText('INFRARED', w / 2 + 30 + (w / 2 - 60) / 2, barY + barH / 2 + 5);
+    }
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Observed (at ∞)', w / 2 + 30 + (w / 2 - 60) / 2, barY - 10);
+    ctx.font = '12px sans-serif';
+    ctx.fillText(`λ = ${lambdaObs > 10000 ? formatSci(lambdaObs) : lambdaObs.toFixed(1)} nm`, w / 2 + 30 + (w / 2 - 60) / 2, barY + barH + 20);
+}
+
+document.getElementById('redshift_r').addEventListener('input', updateRedshift);
+document.getElementById('redshift_lambda').addEventListener('input', updateRedshift);
+
+// =============================================
+// NAVIGATION HIGHLIGHTING
+// =============================================
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('nav a');
+
+function updateNav() {
+    let current = '';
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if (window.scrollY >= sectionTop) {
+            current = section.getAttribute('id');
+        }
+    });
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+            link.classList.add('active');
+        }
+    });
+}
+
+window.addEventListener('scroll', updateNav);
+
+// =============================================
+// INITIALIZATION
+// =============================================
+function init() {
+    // Render KaTeX
+    renderMathInElement(document.body, {
+        delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false }
+        ],
+        throwOnError: false
+    });
+
+    // Initialize all interactive elements
+    updateVelAdd();
+    plotVelAdd();
+    updateGamma();
+    plotGamma();
+    updateLightClock();
+    updateTwin();
+    updateLength();
+    updateShip();
+    updateLorentz();
+    drawMinkowski();
+    updateEmc2();
+    plotEmc2();
+    drawTriangle();
+    updateMomentum();
+    plotMomentum();
+    plotCurvature();
+    updateGravTimeDil();
+    updateBlackHole();
+    updateRedshift();
+
+    // Start animations
+    animateLightClock();
+    animateElevator();
+    animateGravClocks();
+    resetOrbit();
+
+    // Animate black hole (subtle rotation effect)
+    function animateBlackHole() {
+        drawBlackHole(parseFloat(document.getElementById('bh_mass').value));
+        requestAnimationFrame(animateBlackHole);
+    }
+    // Only animate BH when visible (performance)
+    const bhObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateBlackHole();
+            }
+        });
+    }, { threshold: 0.1 });
+    bhObserver.observe(document.getElementById('blackholeCanvas'));
+}
+
+// Wait for KaTeX to load, then initialize
+window.addEventListener('load', () => {
+    // Small delay to ensure KaTeX auto-render is available
+    setTimeout(init, 300);
+});
+</script>
+
+</body>
+</html>
