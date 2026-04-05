@@ -536,23 +536,136 @@ function ensureRingOnVisual(dot) {
     log(`Ring added to dot #${dot.id} (now shared by ${dot.owners.size} stalks)`);
   }
 
+function findNonOverlappingCenter(hw, hh) {
+    const last = ms[ms.length - 1];
+    // The minimum angular distance between stalk centers so they don't visually overlap
+    // This is roughly the stalk diagonal, minus a small margin for the 1-2 shared border dots
+    const minSep = Math.sqrt(hw * hw + hh * hh) * 0.85;
+    // The maximum distance — we want stalks to be neighbors, not far apart
+    const maxSep = Math.sqrt(hw * hw + hh * hh) * 1.4;
+
+    // ── Strategy 1: Try placing adjacent to the LAST stalk ──
+    // Try multiple random angles around the last stalk
+    for (let attempt = 0; attempt < 60; attempt++) {
+      const { t1, t2 } = tframe(last.center);
+      const a = Math.random() * Math.PI * 2;
+      // Distance: just outside the overlap zone
+      const dist = minSep + Math.random() * (maxSep - minSep);
+      const candidate = last.center.clone()
+        .add(t1.clone().multiplyScalar(Math.cos(a) * dist))
+        .add(t2.clone().multiplyScalar(Math.sin(a) * dist))
+        .normalize();
+
+      if (isValidCenter(candidate, minSep)) {
+        log(`Placed stalk adjacent to last (attempt ${attempt + 1})`);
+        return candidate;
+      }
+    }
+
+    // ── Strategy 2: Try placing adjacent to ANY existing stalk ──
+    // Shuffle stalk order to avoid always clustering around the first one
+    const shuffledStalks = [...ms].sort(() => Math.random() - 0.5);
+    for (const stalk of shuffledStalks) {
+      for (let attempt = 0; attempt < 30; attempt++) {
+        const { t1, t2 } = tframe(stalk.center);
+        const a = Math.random() * Math.PI * 2;
+        const dist = minSep + Math.random() * (maxSep - minSep);
+        const candidate = stalk.center.clone()
+          .add(t1.clone().multiplyScalar(Math.cos(a) * dist))
+          .add(t2.clone().multiplyScalar(Math.sin(a) * dist))
+          .normalize();
+
+        if (isValidCenter(candidate, minSep)) {
+          log(`Placed stalk adjacent to stalk #${stalk.id} (around the sphere)`);
+          return candidate;
+        }
+      }
+    }
+
+    // ── Strategy 3: Random point on the ENTIRE sphere ──
+    // This handles the case where the visible area is packed
+    for (let attempt = 0; attempt < 200; attempt++) {
+      // Uniform random point on sphere
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const candidate = new THREE.Vector3(
+        Math.sin(phi) * Math.cos(theta),
+        Math.sin(phi) * Math.sin(theta),
+        Math.cos(phi)
+      ).normalize();
+
+      if (isValidCenter(candidate, minSep)) {
+        log(`Placed stalk on far side of sphere (attempt ${attempt + 1})`);
+        return candidate;
+      }
+    }
+
+    // ── Strategy 4: Absolute fallback — reduce separation requirement ──
+    for (let relaxFactor = 0.9; relaxFactor >= 0.3; relaxFactor -= 0.1) {
+      const relaxedMin = minSep * relaxFactor;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const candidate = new THREE.Vector3(
+        Math.sin(phi) * Math.cos(theta),
+        Math.sin(phi) * Math.sin(theta),
+        Math.cos(phi)
+      ).normalize();
+
+      if (isValidCenter(candidate, relaxedMin)) {
+        log(`Placed stalk with relaxed separation (factor ${relaxFactor.toFixed(1)})`);
+        return candidate;
+      }
+    }
+
+    // True last resort: just offset from last stalk
+    log(`WARNING: Could not find non-overlapping center, using offset`);
+    const { t1 } = tframe(last.center);
+    return last.center.clone().add(t1.clone().multiplyScalar(maxSep)).normalize();
+  }
+
+  function isValidCenter(candidate, minSep) {
+    for (const stalk of ms) {
+      const dist = angDist(candidate, stalk.center);
+      if (dist < minSep) return false;
+
+      // Also check: would a stalk at `candidate` visually overlap `stalk`?
+      // Test the 4 corners of the hypothetical new stalk against the existing stalk
+      const { t1, t2 } = tframe(candidate);
+      const hw = 0.18, hh = 0.15;
+      const corners = [
+        candidate.clone().add(t1.clone().multiplyScalar(hw)).add(t2.clone().multiplyScalar(hh)).normalize(),
+        candidate.clone().add(t1.clone().multiplyScalar(-hw)).add(t2.clone().multiplyScalar(hh)).normalize(),
+        candidate.clone().add(t1.clone().multiplyScalar(hw)).add(t2.clone().multiplyScalar(-hh)).normalize(),
+        candidate.clone().add(t1.clone().multiplyScalar(-hw)).add(t2.clone().multiplyScalar(-hh)).normalize(),
+      ];
+
+      // Count how many corners of the new stalk fall inside the existing stalk
+      let cornersInside = 0;
+      for (const corner of corners) {
+        if (inStalk(corner, stalk)) cornersInside++;
+      }
+      // If more than 1 corner is inside, there's too much overlap
+      // (1 corner inside is fine — that's the border overlap for shared dots)
+      if (cornersInside > 1) return false;
+    }
+    return true;
+  }
+
   // ══════════════════════════════════════════════════════════════════
   // TAKE MEASUREMENT
   // ══════════════════════════════════════════════════════════════════
 function takeMeasurement() {
-    // 1. Determine stalk center — shift so edges reliably overlap
+    const hw = 0.18, hh = 0.15;
+
+    // ──────────────────────────────────────────────────────
+    // 1. FIND A VALID CENTER — must NOT overlap any existing stalk
+    // ──────────────────────────────────────────────────────
     let center;
+
     if (!ms.length) {
       center = getCameraLookDir();
     } else {
-      const last = ms[ms.length - 1];
-      const { t1, t2 } = tframe(last.center);
-      const a = Math.random() * Math.PI * 2;
-      const shift = 0.12 + Math.random() * 0.06;
-      center = last.center.clone()
-        .add(t1.clone().multiplyScalar(Math.cos(a) * shift))
-        .add(t2.clone().multiplyScalar(Math.sin(a) * shift))
-        .normalize();
+      center = findNonOverlappingCenter(hw, hh);
     }
 
     // 2. Random rotation for the stalk's tangent frame
@@ -576,7 +689,6 @@ function takeMeasurement() {
     const rotT1 = baseFrame.t1.clone().multiplyScalar(cosA).add(baseFrame.t2.clone().multiplyScalar(sinA)).normalize();
     const rotT2 = baseFrame.t1.clone().multiplyScalar(-sinA).add(baseFrame.t2.clone().multiplyScalar(cosA)).normalize();
 
-    const hw = 0.18, hh = 0.15;
     const color = SCOLS[colorIdx++ % SCOLS.length];
     const mObj = {
       center, color, hw, hh,
@@ -586,7 +698,7 @@ function takeMeasurement() {
     };
     ms.push(mObj);
 
-    // 3. Collect IDs of ALL dots owned by previous stalks (to avoid during fill)
+    // 3. Collect IDs of ALL dots owned by previous stalks
     const prevStalkDotIds = new Set();
     for (let si = 0; si < ms.length - 1; si++) {
       ms[si].dotIds.forEach(id => prevStalkDotIds.add(id));
@@ -596,161 +708,175 @@ function takeMeasurement() {
     let candidates = dotsInStalk(mObj);
     log(`Stalk #${mObj.id}: ${candidates.length} candidates found in region`);
 
-    // 5. If previous stalk exists, guarantee exactly 1-2 shared dots
-    let sharedDotIds = new Set(); // track which dots we designate as shared
+    // 5. Find the ADJACENT stalk (the one whose center is closest)
+    //    and guarantee exactly 1-2 shared dots at the border
+    let sharedDotIds = new Set();
+    let adjacentStalk = null;
     if (ms.length >= 2) {
-      const prev = ms[ms.length - 2];
-
-      // Find candidates that are in BOTH stalks AND near the border of at least one
-      let sharedCandidates = candidates.filter(d => {
-        if (!inStalk(d.dir, prev)) return false;
-        return isBorderDot(d.dir, mObj) || isBorderDot(d.dir, prev);
-      });
-
-      // Fallback: any dot in both stalks (no border requirement)
-      if (sharedCandidates.length === 0) {
-        sharedCandidates = candidates.filter(d => inStalk(d.dir, prev));
+      // Find the closest previous stalk by angular distance
+      let bestDist = Infinity;
+      for (let si = 0; si < ms.length - 1; si++) {
+        const dist = angDist(mObj.center, ms[si].center);
+        if (dist < bestDist) {
+          bestDist = dist;
+          adjacentStalk = ms[si];
+        }
       }
 
-      // Fallback 2: check ALL pool dots that are in prev stalk AND this stalk
-      if (sharedCandidates.length === 0) {
-        sharedCandidates = dotPool.filter(d => inStalk(d.dir, prev) && inStalk(d.dir, mObj));
-      }
+      if (adjacentStalk) {
+        // Find candidates that are in BOTH stalks AND near the border
+        let sharedCandidates = candidates.filter(d => {
+          if (!inStalk(d.dir, adjacentStalk)) return false;
+          return isBorderDot(d.dir, mObj) || isBorderDot(d.dir, adjacentStalk);
+        });
 
-      if (sharedCandidates.length === 0) {
-        log(`No natural overlap between stalks ${prev.id} & ${mObj.id}, forcing...`);
-
-        let forcedDir = null;
-
-        // Strategy A: Sample points between the two centers
-        for (let s = 0.1; s <= 0.9; s += 0.02) {
-          const tryDir = prev.center.clone().lerp(mObj.center.clone(), s).normalize();
-          if (inStalk(tryDir, prev) && inStalk(tryDir, mObj)) {
-            forcedDir = tryDir;
-            break;
-          }
+        if (sharedCandidates.length === 0) {
+          sharedCandidates = candidates.filter(d => inStalk(d.dir, adjacentStalk));
         }
 
-        // Strategy B: Grid search in the overlap of both tangent frames
-        if (!forcedDir) {
-          const steps = 10;
-          let bestDir = null, bestScore = -Infinity;
-          for (let ui = 0; ui <= steps; ui++) {
-            for (let vi = 0; vi <= steps; vi++) {
-              const u = -prev.hw + 2 * prev.hw * (ui / steps);
-              const v = -prev.hh + 2 * prev.hh * (vi / steps);
-              const tryDir = prev.center.clone()
-                .add(prev._tf.t1.clone().multiplyScalar(u))
-                .add(prev._tf.t2.clone().multiplyScalar(v))
-                .normalize();
-              if (inStalk(tryDir, prev) && inStalk(tryDir, mObj)) {
-                const uvNew = inStalkUV(tryDir, mObj);
-                const uvPrev = inStalkUV(tryDir, prev);
-                if (uvNew && uvPrev) {
-                  const score = Math.max(
-                    Math.abs(uvNew.u) / mObj.hw,
-                    Math.abs(uvNew.v) / mObj.hh,
-                    Math.abs(uvPrev.u) / prev.hw,
-                    Math.abs(uvPrev.v) / prev.hh
-                  );
-                  if (score > bestScore) {
-                    bestScore = score;
-                    bestDir = tryDir.clone();
+        if (sharedCandidates.length === 0) {
+          sharedCandidates = dotPool.filter(d => inStalk(d.dir, adjacentStalk) && inStalk(d.dir, mObj));
+        }
+
+        if (sharedCandidates.length === 0) {
+          log(`No natural overlap with stalk ${adjacentStalk.id}, forcing...`);
+
+          let forcedDir = null;
+
+          // Strategy A: Sample along the line between centers
+          for (let s = 0.1; s <= 0.9; s += 0.02) {
+            const tryDir = adjacentStalk.center.clone().lerp(mObj.center.clone(), s).normalize();
+            if (inStalk(tryDir, adjacentStalk) && inStalk(tryDir, mObj)) {
+              forcedDir = tryDir;
+              break;
+            }
+          }
+
+          // Strategy B: Grid search across adjacent stalk
+          if (!forcedDir) {
+            const steps = 10;
+            let bestDir = null, bestScore = -Infinity;
+            for (let ui = 0; ui <= steps; ui++) {
+              for (let vi = 0; vi <= steps; vi++) {
+                const u = -adjacentStalk.hw + 2 * adjacentStalk.hw * (ui / steps);
+                const v = -adjacentStalk.hh + 2 * adjacentStalk.hh * (vi / steps);
+                const tryDir = adjacentStalk.center.clone()
+                  .add(adjacentStalk._tf.t1.clone().multiplyScalar(u))
+                  .add(adjacentStalk._tf.t2.clone().multiplyScalar(v))
+                  .normalize();
+                if (inStalk(tryDir, adjacentStalk) && inStalk(tryDir, mObj)) {
+                  const uvNew = inStalkUV(tryDir, mObj);
+                  const uvAdj = inStalkUV(tryDir, adjacentStalk);
+                  if (uvNew && uvAdj) {
+                    const score = Math.max(
+                      Math.abs(uvNew.u) / mObj.hw,
+                      Math.abs(uvNew.v) / mObj.hh,
+                      Math.abs(uvAdj.u) / adjacentStalk.hw,
+                      Math.abs(uvAdj.v) / adjacentStalk.hh
+                    );
+                    if (score > bestScore) {
+                      bestScore = score;
+                      bestDir = tryDir.clone();
+                    }
                   }
                 }
               }
             }
+            if (bestDir) forcedDir = bestDir;
           }
-          if (bestDir) forcedDir = bestDir;
-        }
 
-        // Strategy C: Nudge the new stalk center closer to prev
-        if (!forcedDir) {
-          log(`Grid search failed, nudging stalk center closer`);
-          const nudgedCenter = mObj.center.clone().lerp(prev.center, 0.3).normalize();
-          mObj.center = nudgedCenter;
-          const newBase = tframe(nudgedCenter);
-          const nCosA = Math.cos(rotAngle), nSinA = Math.sin(rotAngle);
-          mObj._tf.t1 = newBase.t1.clone().multiplyScalar(nCosA).add(newBase.t2.clone().multiplyScalar(nSinA)).normalize();
-          mObj._tf.t2 = newBase.t1.clone().multiplyScalar(-nSinA).add(newBase.t2.clone().multiplyScalar(nCosA)).normalize();
+          // Strategy C: Nudge new stalk slightly toward adjacent
+          if (!forcedDir) {
+            log(`Grid search failed, nudging stalk toward adjacent`);
+            const nudgedCenter = mObj.center.clone().lerp(adjacentStalk.center, 0.15).normalize();
+            // Verify nudged center doesn't fully overlap any OTHER stalk
+            let nudgeOk = true;
+            for (let si = 0; si < ms.length - 1; si++) {
+              if (angDist(nudgedCenter, ms[si].center) < Math.max(ms[si].hw, ms[si].hh) * 0.5) {
+                nudgeOk = false; break;
+              }
+            }
+            if (nudgeOk) {
+              mObj.center = nudgedCenter;
+              const newBase = tframe(nudgedCenter);
+              const nCosA = Math.cos(rotAngle), nSinA = Math.sin(rotAngle);
+              mObj._tf.t1 = newBase.t1.clone().multiplyScalar(nCosA).add(newBase.t2.clone().multiplyScalar(nSinA)).normalize();
+              mObj._tf.t2 = newBase.t1.clone().multiplyScalar(-nSinA).add(newBase.t2.clone().multiplyScalar(nCosA)).normalize();
+            }
 
-          forcedDir = prev.center.clone().lerp(mObj.center.clone(), 0.5).normalize();
-          if (!inStalk(forcedDir, prev) || !inStalk(forcedDir, mObj)) {
-            forcedDir = mObj.center.clone();
-          }
-        }
-
-        if (forcedDir) {
-          let bestDot = null, bestDist = Infinity;
-          for (const dot of dotPool) {
-            if (dot.owners.size === 0) {
-              const dist = angDist(dot.dir, forcedDir);
-              if (dist < bestDist) { bestDist = dist; bestDot = dot; }
+            forcedDir = adjacentStalk.center.clone().lerp(mObj.center.clone(), 0.5).normalize();
+            if (!inStalk(forcedDir, adjacentStalk) || !inStalk(forcedDir, mObj)) {
+              forcedDir = mObj.center.clone();
             }
           }
 
-          if (bestDot) {
-            bestDot.dir.copy(forcedDir);
-            bestDot.pt.copy(forcedDir.clone().multiplyScalar(R));
-            if (dotVisuals.has(bestDot.id)) {
-              const vis = dotVisuals.get(bestDot.id);
-              const pos = bestDot.pt.clone().multiplyScalar(1.006);
-              vis.group.position.copy(pos);
-              vis.group.lookAt(bestDot.pt.clone().multiplyScalar(2));
+          if (forcedDir) {
+            let bestDot = null, bestDotDist = Infinity;
+            for (const dot of dotPool) {
+              if (dot.owners.size === 0) {
+                const dist = angDist(dot.dir, forcedDir);
+                if (dist < bestDotDist) { bestDotDist = dist; bestDot = dot; }
+              }
             }
-            sharedCandidates = [bestDot];
-            log(`Forced dot #${bestDot.id} into verified overlap zone`);
-          } else {
-            const newDot = {
-              id: dotIdCounter++,
-              dir: forcedDir.clone(),
-              pt: forcedDir.clone().multiplyScalar(R),
-              color: pickColor(),
-              owners: new Set()
-            };
-            dotPool.push(newDot);
-            sharedCandidates = [newDot];
-            log(`Created new dot #${newDot.id} in verified overlap zone`);
+
+            if (bestDot) {
+              bestDot.dir.copy(forcedDir);
+              bestDot.pt.copy(forcedDir.clone().multiplyScalar(R));
+              if (dotVisuals.has(bestDot.id)) {
+                const vis = dotVisuals.get(bestDot.id);
+                const pos = bestDot.pt.clone().multiplyScalar(1.006);
+                vis.group.position.copy(pos);
+                vis.group.lookAt(bestDot.pt.clone().multiplyScalar(2));
+              }
+              sharedCandidates = [bestDot];
+              log(`Forced dot #${bestDot.id} into overlap zone`);
+            } else {
+              const newDot = {
+                id: dotIdCounter++,
+                dir: forcedDir.clone(),
+                pt: forcedDir.clone().multiplyScalar(R),
+                color: pickColor(),
+                owners: new Set()
+              };
+              dotPool.push(newDot);
+              sharedCandidates = [newDot];
+              log(`Created new dot #${newDot.id} in overlap zone`);
+            }
           }
         }
-      }
 
-      // Cap shared at exactly 1-2 (never more)
-      const numToShare = Math.min(sharedCandidates.length, 1 + Math.floor(Math.random() * 2));
-      for (let i = 0; i < numToShare; i++) {
-        const dot = sharedCandidates[i];
-        dot.owners.add(prev.id);
-        dot.owners.add(mObj.id);
-        if (!prev.dotIds.includes(dot.id)) prev.dotIds.push(dot.id);
-        if (!mObj.dotIds.includes(dot.id)) mObj.dotIds.push(dot.id);
-        sharedDotIds.add(dot.id);
-        log(`✓ SHARED dot #${dot.id} at border of stalks ${prev.id}&${mObj.id}`);
+        // Cap shared at exactly 1-2
+        const numToShare = Math.min(sharedCandidates.length, 1 + Math.floor(Math.random() * 2));
+        for (let i = 0; i < numToShare; i++) {
+          const dot = sharedCandidates[i];
+          dot.owners.add(adjacentStalk.id);
+          dot.owners.add(mObj.id);
+          if (!adjacentStalk.dotIds.includes(dot.id)) adjacentStalk.dotIds.push(dot.id);
+          if (!mObj.dotIds.includes(dot.id)) mObj.dotIds.push(dot.id);
+          sharedDotIds.add(dot.id);
+          log(`✓ SHARED dot #${dot.id} between stalks ${adjacentStalk.id}&${mObj.id}`);
+        }
       }
     }
 
-    // 6. Refresh candidates after potential stalk nudge
+    // 6. Refresh candidates after potential nudge
     candidates = dotsInStalk(mObj);
 
-    // FIXED: Target 6-8 total dots per stalk (minimum 6)
+    // Target 6-8 total dots per stalk (minimum 6)
     const target = 6 + Math.floor(Math.random() * 3);
 
     // First pass: only unowned dots NOT in any other stalk
-    // FIXED: Skip dots that belong to previous stalks (unless they're
-    // already designated as shared above) to prevent accidental overlap
     const shuffled = candidates.sort(() => Math.random() - 0.5);
     for (const dot of shuffled) {
       if (mObj.dotIds.length >= target) break;
       if (mObj.dotIds.includes(dot.id)) continue;
-      // FIXED: Block any dot that's already owned by another stalk
-      // unless we explicitly chose it as a shared dot above
       if (dot.owners.size > 0 && !sharedDotIds.has(dot.id)) continue;
       if (prevStalkDotIds.has(dot.id) && !sharedDotIds.has(dot.id)) continue;
       dot.owners.add(mObj.id);
       mObj.dotIds.push(dot.id);
     }
 
-    // Second pass: if still short, spawn new dots INSIDE the stalk
-    // but AWAY from the border overlap zone (inner 70%)
+    // Second pass: spawn new dots in the stalk interior
     if (mObj.dotIds.length < target) {
       const needed = target - mObj.dotIds.length;
       log(`Stalk #${mObj.id}: spawning ${needed} extra dots in interior`);
@@ -765,14 +891,12 @@ function takeMeasurement() {
             .add(mObj._tf.t2.clone().multiplyScalar(v))
             .normalize();
 
-          // Make sure this spawned dot doesn't land in a previous stalk
           let inOtherStalk = false;
           for (let si = 0; si < ms.length - 1; si++) {
             if (inStalk(dir, ms[si])) { inOtherStalk = true; break; }
           }
           if (!inOtherStalk) break;
 
-          // Retry with tighter interior
           const u2 = (Math.random() * 2 - 1) * hw * 0.35;
           const v2 = (Math.random() * 2 - 1) * hh * 0.35;
           dir = mObj.center.clone()
@@ -800,8 +924,7 @@ function takeMeasurement() {
       }
     }
 
-    // FIXED: Final enforcement — ensure minimum 6 dots
-    // If we somehow still have fewer than 6, force-spawn at stalk center area
+    // Final enforcement — ensure minimum 6 dots
     while (mObj.dotIds.length < 6) {
       const u = (Math.random() * 2 - 1) * hw * 0.3;
       const v = (Math.random() * 2 - 1) * hh * 0.3;
@@ -837,7 +960,7 @@ function takeMeasurement() {
       createDotVisual(dot, mObj.id * 40 + gi * 15, now);
     });
 
-    // 9. NOW apply rings to shared dots (visuals guaranteed to exist)
+    // 9. Apply rings to shared dots
     mObj.dotIds.forEach(did => {
       const dot = dotById(did);
       if (dot && isShared(dot)) ensureRingOnVisual(dot);
@@ -845,6 +968,7 @@ function takeMeasurement() {
 
     updateUI();
   }
+
 
   // ── Rebuild ONLY stalk backgrounds — dots are NEVER touched here ──
   function rebuildStalkBackgrounds() {
