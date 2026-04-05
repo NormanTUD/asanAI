@@ -370,7 +370,7 @@ const SheafViz = (() => {
   // Stalks only sample from these — guaranteeing true overlap.
   // ══════════════════════════════════════════════════════════════════
   const dotPool = [];
-  const DOT_POOL_SIZE = 600;
+  const DOT_POOL_SIZE = 1500;
   let dotIdCounter = 0;
 
   // Persistent visuals: each dot gets ONE group in gStalk, never destroyed
@@ -446,11 +446,15 @@ const SheafViz = (() => {
     return results;
   }
 
-  function inStalk(dir, m) {
+function inStalk(dir, m) {
     const d = dir.clone().normalize();
+    // Project onto tangent plane relative to stalk center
     const diff = d.clone().sub(m.center);
-    const u = Math.abs(diff.dot(m._tf.t1));
-    const v = Math.abs(diff.dot(m._tf.t2));
+    // Remove the normal component so we only measure tangential displacement
+    const normalComp = diff.dot(m.center);
+    const tangentDiff = diff.clone().sub(m.center.clone().multiplyScalar(normalComp));
+    const u = Math.abs(tangentDiff.dot(m._tf.t1));
+    const v = Math.abs(tangentDiff.dot(m._tf.t2));
     return u < m.hw + 0.005 && v < m.hh + 0.005;
   }
 
@@ -459,7 +463,7 @@ const SheafViz = (() => {
   // ══════════════════════════════════════════════════════════════════
 
   // Create a dot visual for the first time
-  function createDotVisual(dot, fadeDelay, now) {
+function createDotVisual(dot, fadeDelay, now) {
     const pos = dot.pt.clone().multiplyScalar(1.006);
     const lookTarget = dot.pt.clone().multiplyScalar(2);
 
@@ -467,10 +471,6 @@ const SheafViz = (() => {
     group.position.copy(pos);
     group.lookAt(lookTarget);
 
-    // ── All dots are half-transparent (opacity 0.5) ──
-    // When two stalks share a dot, both render at the SAME position
-    // from the SAME pool entry, so there's only ONE visual per dot.
-    // Shared dots get a circled outline to indicate overlap.
     const mesh = new THREE.Mesh(
       new THREE.CircleGeometry(DOT, 16),
       new THREE.MeshBasicMaterial({
@@ -478,8 +478,8 @@ const SheafViz = (() => {
         opacity: 0, depthWrite: false
       })
     );
-    // ft = 0.5 means half-transparent target opacity
-    mesh.userData = { ft: 0.5, fd: fadeDelay, fs: now };
+    // Increased from 0.5 to 0.85 so all dots are clearly visible
+    mesh.userData = { ft: 0.85, fd: fadeDelay, fs: now };
     group.add(mesh);
 
     gStalk.add(group);
@@ -487,11 +487,10 @@ const SheafViz = (() => {
   }
 
   // Add or upgrade the circled outline ring on a shared dot
-  function ensureRingOnVisual(dot) {
+function ensureRingOnVisual(dot) {
     const vis = dotVisuals.get(dot.id);
     if (!vis || vis.hasRing) return;
 
-    // ── Circled outline: shows "two observations overlap here" ──
     const ring = new THREE.Mesh(
       new THREE.RingGeometry(DOT + 0.015, DOT + 0.035, 24),
       new THREE.MeshBasicMaterial({
@@ -499,15 +498,14 @@ const SheafViz = (() => {
         opacity: 0, depthWrite: false
       })
     );
-    ring.userData = { ft: 0.85, fd: 0, fs: performance.now() };
+    ring.userData = { ft: 1.0, fd: 0, fs: performance.now() };
     vis.group.add(ring);
     vis.hasRing = true;
 
-    // Also boost the dot's opacity to show overlap visually
-    // Two overlapping half-transparent dots = more opaque
+    // Boost the dot to full opacity to distinguish shared dots
     const dotMesh = vis.group.children[0];
     if (dotMesh && dotMesh.userData) {
-      dotMesh.userData.ft = 0.85; // brighter when shared
+      dotMesh.userData.ft = 1.0;
       dotMesh.userData.fs = performance.now();
       dotMesh.userData.fd = 0;
     }
@@ -518,7 +516,7 @@ const SheafViz = (() => {
   // ══════════════════════════════════════════════════════════════════
   // TAKE MEASUREMENT
   // ══════════════════════════════════════════════════════════════════
-  function takeMeasurement() {
+function takeMeasurement() {
     // 1. Determine stalk center
     let center;
     if (!ms.length) {
@@ -527,7 +525,8 @@ const SheafViz = (() => {
       const last = ms[ms.length - 1];
       const { t1, t2 } = tframe(last.center);
       const a = Math.random() * Math.PI * 2;
-      const shift = 0.10 + Math.random() * 0.06;
+      // Increased shift so stalks don't overlap too much
+      const shift = 0.18 + Math.random() * 0.10;
       center = last.center.clone()
         .add(t1.clone().multiplyScalar(Math.cos(a) * shift))
         .add(t2.clone().multiplyScalar(Math.sin(a) * shift))
@@ -541,7 +540,8 @@ const SheafViz = (() => {
     const rotT1 = baseFrame.t1.clone().multiplyScalar(cosA).add(baseFrame.t2.clone().multiplyScalar(sinA)).normalize();
     const rotT2 = baseFrame.t1.clone().multiplyScalar(-sinA).add(baseFrame.t2.clone().multiplyScalar(cosA)).normalize();
 
-    const hw = 0.14, hh = 0.11;
+    // Increased stalk dimensions for better dot coverage
+    const hw = 0.22, hh = 0.18;
     const color = SCOLS[colorIdx++ % SCOLS.length];
     const mObj = {
       center, color, hw, hh,
@@ -553,8 +553,10 @@ const SheafViz = (() => {
 
     // 3. Find all pre-generated dots inside this stalk
     const candidates = dotsInStalk(mObj);
+    log(`Stalk #${mObj.id}: ${candidates.length} candidates found in region`);
 
     // 4. If previous stalk exists, GUARANTEE at least one shared dot
+    //    Only update ownership here — do NOT apply rings yet
     if (ms.length >= 2) {
       const prev = ms[ms.length - 2];
       let sharedCandidates = candidates.filter(d => inStalk(d.dir, prev));
@@ -571,7 +573,6 @@ const SheafViz = (() => {
         if (bestDot) {
           bestDot.dir.copy(midDir);
           bestDot.pt.copy(midDir.clone().multiplyScalar(R));
-          // Update visual position if it already exists
           if (dotVisuals.has(bestDot.id)) {
             const vis = dotVisuals.get(bestDot.id);
             const pos = bestDot.pt.clone().multiplyScalar(1.006);
@@ -583,27 +584,39 @@ const SheafViz = (() => {
         }
       }
 
-      const numToShare = Math.min(sharedCandidates.length, 1 + Math.floor(Math.random() * 3));
+      // Limit shared dots to 1-2 max to prevent too much overlap
+      const numToShare = Math.min(sharedCandidates.length, 1 + Math.floor(Math.random() * 2));
       for (let i = 0; i < numToShare; i++) {
         const dot = sharedCandidates[i];
         dot.owners.add(prev.id);
         dot.owners.add(mObj.id);
         if (!prev.dotIds.includes(dot.id)) prev.dotIds.push(dot.id);
         if (!mObj.dotIds.includes(dot.id)) mObj.dotIds.push(dot.id);
-        // Add ring to show overlap
-        ensureRingOnVisual(dot);
+        // Do NOT call ensureRingOnVisual here — visual may not exist yet
         log(`✓ SHARED dot #${dot.id} in stalks ${prev.id}&${mObj.id}`);
       }
     }
 
-    // 5. Fill rest of stalk's dots from pool candidates
+    // 5. Fill rest of stalk's dots from pool candidates (EXCLUDING already-shared dots)
     const target = 6 + Math.floor(Math.random() * 3);
     const shuffled = candidates.sort(() => Math.random() - 0.5);
     for (const dot of shuffled) {
       if (mObj.dotIds.length >= target) break;
       if (mObj.dotIds.includes(dot.id)) continue;
+      // Skip dots already owned by other stalks to reduce excessive overlap
+      if (dot.owners.size > 0 && !dot.owners.has(mObj.id)) continue;
       dot.owners.add(mObj.id);
       mObj.dotIds.push(dot.id);
+    }
+
+    // If we still don't have enough dots (pool too sparse), fill from ANY candidate
+    if (mObj.dotIds.length < target) {
+      for (const dot of shuffled) {
+        if (mObj.dotIds.length >= target) break;
+        if (mObj.dotIds.includes(dot.id)) continue;
+        dot.owners.add(mObj.id);
+        mObj.dotIds.push(dot.id);
+      }
     }
 
     // 6. Log
@@ -615,7 +628,7 @@ const SheafViz = (() => {
     // Rebuild stalk backgrounds (quads, borders, labels) — NOT dots
     rebuildStalkBackgrounds();
 
-    // Create visuals ONLY for new dots that don't have one yet
+    // 7. Create visuals for ALL new dots FIRST
     const now = performance.now();
     mObj.dotIds.forEach((did, gi) => {
       if (dotVisuals.has(did)) return; // already visible — don't touch
@@ -624,7 +637,7 @@ const SheafViz = (() => {
       createDotVisual(dot, mObj.id * 40 + gi * 15, now);
     });
 
-    // Check if any existing dots just became shared (ring needed)
+    // 8. NOW apply rings to any shared dots (visuals guaranteed to exist)
     mObj.dotIds.forEach(did => {
       const dot = dotById(did);
       if (dot && isShared(dot)) ensureRingOnVisual(dot);
@@ -632,6 +645,7 @@ const SheafViz = (() => {
 
     updateUI();
   }
+
 
   // ── Rebuild ONLY stalk backgrounds — dots are NEVER touched here ──
   function rebuildStalkBackgrounds() {
