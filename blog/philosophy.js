@@ -719,7 +719,7 @@ const SheafViz = (() => {
     obj.children?.forEach(c=>fadeAll(c,now));
   }
 
-  function animate(){
+function animate(){
     requestAnimationFrame(animate);t+=.016;ctl.update();
     const now=performance.now();
     [gStalk,gPre,gSheaf].forEach(g=>fadeAll(g,now));
@@ -731,11 +731,10 @@ const SheafViz = (() => {
       gPre.children.forEach(c=>{if(c.material&&c.userData.ft!==undefined)c.material.opacity=c.userData.ft*Math.max(0,1-e*1.5);});
       if(p>=1)glueAnim=null;
     }
-    [sphere,wire,gStalk,gPre,gSheaf].forEach(o=>{if(o)o.rotation.y+=.0006;});
     ren.render(scene,cam);
-  }
+}
 
-  function init(){
+function init(){
     log('init');const el=document.getElementById('sheaf-canvas');if(!el)return;
     if(!el.clientWidth)el.style.width='800px';if(!el.clientHeight)el.style.height='560px';
     const w=el.clientWidth||800,h=el.clientHeight||560;
@@ -746,14 +745,21 @@ const SheafViz = (() => {
     scene.add(new THREE.AmbientLight(0xffffff,.55));
     const dl=new THREE.DirectionalLight(0xffffff,.75);dl.position.set(5,8,5);scene.add(dl);
     scene.add(new THREE.DirectionalLight(0xbbdefb,.25).translateX(-4).translateY(-2).translateZ(-5));
-    sphere=new THREE.Mesh(new THREE.SphereGeometry(R,48,36),new THREE.MeshPhongMaterial({color:0xe0e3f0,transparent:true,opacity:.28,shininess:80,specular:0xc5cae9,depthWrite:false}));scene.add(sphere);
-    wire=new THREE.Mesh(new THREE.SphereGeometry(R+.003,18,12),new THREE.MeshBasicMaterial({color:0xc5cae9,wireframe:true,transparent:true,opacity:.08}));scene.add(wire);
-    const sl=mkLabel('Situs (topological space)',0x9e9e9e,3.2);sl.position.set(0,-(R+0.8),0);sl.material.opacity=0.85;scene.add(sl);
+    sphere=new THREE.Mesh(new THREE.SphereGeometry(R,48,36),new THREE.MeshPhongMaterial({color:0xe0e3f0,transparent:true,opacity:.28,shininess:80,specular:0xc5cae9,depthWrite:false}));
+    wire=new THREE.Mesh(new THREE.SphereGeometry(R+.003,18,12),new THREE.MeshBasicMaterial({color:0xc5cae9,wireframe:true,transparent:true,opacity:.08}));
+    const sl=mkLabel('Situs (topological space)',0x9e9e9e,3.2);sl.position.set(0,-(R+0.8),0);sl.material.opacity=0.85;
     gStalk=new THREE.Group();gPre=new THREE.Group();gSheaf=new THREE.Group();
-    scene.add(gStalk);scene.add(gPre);scene.add(gSheaf);
+    worldGroup=new THREE.Group();
+    worldGroup.add(sphere);
+    worldGroup.add(wire);
+    worldGroup.add(sl);
+    worldGroup.add(gStalk);
+    worldGroup.add(gPre);
+    worldGroup.add(gSheaf);
+    scene.add(worldGroup);
     window.addEventListener('resize',()=>{cam.aspect=(el.clientWidth||800)/(el.clientHeight||560);cam.updateProjectionMatrix();ren.setSize(el.clientWidth||800,el.clientHeight||560);});
     updateUI();ren.render(scene,cam);log('OK');animate();
-  }
+}
 
   function showPresheaf(){
     if(ms.length<2){info('⚠️ Take at least <strong>2</strong> measurements.');return;}
