@@ -620,6 +620,36 @@ The preceding sections discuss both speculative catastrophic risks (the Papercli
 A **sheaf** is one of the most powerful abstractions in modern mathematics, a framework for understanding how local information can be consistently assembled into global knowledge. Imagine a sphere representing a topological space (the **situs**). At every point on this sphere, we can take a measurement, a temperature reading, a wind speed, a function value. Each such measurement lives on a **stalk**, the collection of all possible local data at that single point. Within each stalk, individual data fragments are called **germs**: they represent the equivalence class of local sections that agree in some neighborhood of the point.
 
 A **presheaf** assigns data to every open set of the sphere and provides restriction maps between them, but it makes no promise that locally compatible data can be glued into a coherent whole. A **sheaf** adds precisely this guarantee: if local sections agree on their overlaps, they can be uniquely **glued** together into a single global section. This gluing axiom is what separates a sheaf from a mere presheaf, and it is what makes sheaves indispensable in algebraic geometry, complex analysis, and modern physics. The visualization below renders this intuition in three dimensions: stalks rise from the sphere's surface carrying local germs, presheaf fragments float independently, and when the gluing condition is satisfied, they fuse into a continuous sheaf draped over the manifold, local knowledge becoming global understanding.
+
+### Sheaves as a Lens on AI Generation
+
+The sheaf framework maps naturally onto how an LLM assembles coherent output.
+The **situs** — the topological space over which the sheaf is defined — is the
+**training data** the model was trained on. This corpus defines the landscape of
+contexts, domains, and relationships available to the model, just as a
+topological space defines which neighborhoods exist and how they overlap.
+
+At each point in this space, the model extracts **germs**: local fragments of
+knowledge capturing how language behaves in the immediate neighborhood of a
+given token or concept. These germs collect on **stalks** — the full local
+representation the model assembles at a given position in its context window
+from embeddings, attention patterns, and the residual stream.
+
+The critical step is **gluing**. When the model generates a coherent paragraph
+or a consistent argument across hundreds of tokens, it performs something
+analogous to the sheaf's gluing axiom: fusing locally compatible sections into
+a **globally consistent output**. The attention mechanism is the primary gluing
+apparatus, enforcing that the prediction at position *n* is compatible with
+positions 1 through *n*−1. When this succeeds, the result is a seamless section
+draped over the manifold of the training data.
+
+However, the model often fails the gluing condition. When an LLM hallucinates,
+contradicts itself, or "forgets" that a character is wearing a hat (as in the
+Frame Problem section), it exhibits the failure mode of a **presheaf that is not
+a sheaf**: local sections that are individually plausible but globally
+incompatible. This is the topological signature of absent understanding — a
+system that operates locally via next-token prediction without the global
+coherence guarantee a true sheaf provides.
 </div>
 
 <!-- Sheaf Visualization -->
