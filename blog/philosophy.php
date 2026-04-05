@@ -622,14 +622,14 @@ A **presheaf** assigns data to every open set of the sphere and provides restric
 ### Sheaves as a Lens on AI Generation
 
 The sheaf framework maps naturally onto how an LLM assembles coherent output.
-The **situs** — the topological space over which the sheaf is defined — is the
+The **situs**, the topological space over which the sheaf is defined, is the
 **training data** the model was trained on. This corpus defines the landscape of
 contexts, domains, and relationships available to the model, just as a
 topological space defines which neighborhoods exist and how they overlap.
 
 At each point in this space, the model extracts **germs**: local fragments of
 knowledge capturing how language behaves in the immediate neighborhood of a
-given token or concept. These germs collect on **stalks** — the full local
+given token or concept. These germs collect on **stalks**, the full local
 representation the model assembles at a given position in its context window
 from embeddings, attention patterns, and the residual stream.
 
@@ -645,7 +645,7 @@ However, the model often fails the gluing condition. When an LLM hallucinates,
 contradicts itself, or "forgets" that a character is wearing a hat (as in the
 Frame Problem section), it exhibits the failure mode of a **presheaf that is not
 a sheaf**: local sections that are individually plausible but globally
-incompatible. This is the topological signature of absent understanding — a
+incompatible. This is the topological signature of absent understanding, a
 system that operates locally via next-token prediction without the global
 coherence guarantee a true sheaf provides.
 </div>
@@ -653,7 +653,7 @@ coherence guarantee a true sheaf provides.
 <!-- Sheaf Visualization -->
 <div id="sheaf-viz-container" style="max-width:900px; margin:2em auto; font-family:'Segoe UI', system-ui, sans-serif;">
   <div style="text-align:center; margin-bottom:1em;">
-    <p style="margin:0; color:#888; font-size:0.9em;">Interactive 3D — drag to rotate, scroll to zoom</p>
+    <p style="margin:0; color:#888; font-size:0.9em;">Interactive 3D, drag to rotate, scroll to zoom</p>
   </div>
   <div id="sheaf-canvas" style="width:100%; height:560px; min-height:560px; border:2px solid #e0e0e0; border-radius:12px; background:#f8f9fa; overflow:hidden; position:relative;"></div>
 <div id="sheaf-controls" style="display:flex; justify-content:center; gap:0.8em; margin-top:1em; flex-wrap:wrap;">
