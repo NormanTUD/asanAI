@@ -663,5 +663,3 @@ coherence guarantee a true sheaf provides.
   <button onclick="SheafViz.reset()" style="padding:0.5em 1.2em; font-size:0.95em; border:1px solid #bbb; background:#fafafa; color:#555; border-radius:8px; cursor:pointer;">↺ Reset</button>
 </div>
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

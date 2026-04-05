@@ -163,6 +163,7 @@ function load_base_js () {
 	js("helper");
 	js("master_vis");
 	js("loader");
+	js("three.min");
 
 	$files = glob("modules/*.js");
 
