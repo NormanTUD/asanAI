@@ -448,15 +448,19 @@ const SheafViz = (() => {
 
 function inStalk(dir, m) {
     const d = dir.clone().normalize();
+    // FIRST: reject any dot more than ~30° from stalk center
+    // This prevents matching dots on the opposite side of the sphere
+    const cosAngle = d.dot(m.center);
+    if (cosAngle < 0.85) return false;  // ~31° cutoff
+
     // Project onto tangent plane relative to stalk center
     const diff = d.clone().sub(m.center);
-    // Remove the normal component so we only measure tangential displacement
     const normalComp = diff.dot(m.center);
     const tangentDiff = diff.clone().sub(m.center.clone().multiplyScalar(normalComp));
     const u = Math.abs(tangentDiff.dot(m._tf.t1));
     const v = Math.abs(tangentDiff.dot(m._tf.t2));
-    return u < m.hw + 0.005 && v < m.hh + 0.005;
-  }
+    return u < m.hw && v < m.hh;
+}
 
   // ══════════════════════════════════════════════════════════════════
   // DOT VISUAL MANAGEMENT — persistent, never destroyed until reset
@@ -478,7 +482,6 @@ function createDotVisual(dot, fadeDelay, now) {
         opacity: 0, depthWrite: false
       })
     );
-    // Increased from 0.5 to 0.85 so all dots are clearly visible
     mesh.userData = { ft: 0.85, fd: fadeDelay, fs: now };
     group.add(mesh);
 
@@ -502,7 +505,6 @@ function ensureRingOnVisual(dot) {
     vis.group.add(ring);
     vis.hasRing = true;
 
-    // Boost the dot to full opacity to distinguish shared dots
     const dotMesh = vis.group.children[0];
     if (dotMesh && dotMesh.userData) {
       dotMesh.userData.ft = 1.0;
@@ -525,8 +527,8 @@ function takeMeasurement() {
       const last = ms[ms.length - 1];
       const { t1, t2 } = tframe(last.center);
       const a = Math.random() * Math.PI * 2;
-      // Increased shift so stalks don't overlap too much
-      const shift = 0.18 + Math.random() * 0.10;
+      // Shift enough that stalks partially overlap but not too much
+      const shift = 0.12 + Math.random() * 0.06;
       center = last.center.clone()
         .add(t1.clone().multiplyScalar(Math.cos(a) * shift))
         .add(t2.clone().multiplyScalar(Math.sin(a) * shift))
@@ -540,8 +542,7 @@ function takeMeasurement() {
     const rotT1 = baseFrame.t1.clone().multiplyScalar(cosA).add(baseFrame.t2.clone().multiplyScalar(sinA)).normalize();
     const rotT2 = baseFrame.t1.clone().multiplyScalar(-sinA).add(baseFrame.t2.clone().multiplyScalar(cosA)).normalize();
 
-    // Increased stalk dimensions for better dot coverage
-    const hw = 0.22, hh = 0.18;
+    const hw = 0.14, hh = 0.11;
     const color = SCOLS[colorIdx++ % SCOLS.length];
     const mObj = {
       center, color, hw, hh,
@@ -552,16 +553,16 @@ function takeMeasurement() {
     ms.push(mObj);
 
     // 3. Find all pre-generated dots inside this stalk
-    const candidates = dotsInStalk(mObj);
+    let candidates = dotsInStalk(mObj);
     log(`Stalk #${mObj.id}: ${candidates.length} candidates found in region`);
 
-    // 4. If previous stalk exists, GUARANTEE at least one shared dot
-    //    Only update ownership here — do NOT apply rings yet
+    // 4. If previous stalk exists, guarantee 1-2 shared dots
     if (ms.length >= 2) {
       const prev = ms[ms.length - 2];
       let sharedCandidates = candidates.filter(d => inStalk(d.dir, prev));
 
       if (sharedCandidates.length === 0) {
+        // Force one dot into the overlap zone
         const midDir = prev.center.clone().add(mObj.center).normalize();
         let bestDot = null, bestDist = Infinity;
         for (const dot of dotPool) {
@@ -584,7 +585,7 @@ function takeMeasurement() {
         }
       }
 
-      // Limit shared dots to 1-2 max to prevent too much overlap
+      // Cap shared at 1-2
       const numToShare = Math.min(sharedCandidates.length, 1 + Math.floor(Math.random() * 2));
       for (let i = 0; i < numToShare; i++) {
         const dot = sharedCandidates[i];
@@ -592,52 +593,65 @@ function takeMeasurement() {
         dot.owners.add(mObj.id);
         if (!prev.dotIds.includes(dot.id)) prev.dotIds.push(dot.id);
         if (!mObj.dotIds.includes(dot.id)) mObj.dotIds.push(dot.id);
-        // Do NOT call ensureRingOnVisual here — visual may not exist yet
         log(`✓ SHARED dot #${dot.id} in stalks ${prev.id}&${mObj.id}`);
       }
     }
 
-    // 5. Fill rest of stalk's dots from pool candidates (EXCLUDING already-shared dots)
-    const target = 6 + Math.floor(Math.random() * 3);
+    // 5. Fill remaining dots — target 4-6 total per stalk
+    const target = 4 + Math.floor(Math.random() * 3); // 4, 5, or 6
+
+    // First pass: only unowned dots (prevents accidental extra overlap)
     const shuffled = candidates.sort(() => Math.random() - 0.5);
     for (const dot of shuffled) {
       if (mObj.dotIds.length >= target) break;
       if (mObj.dotIds.includes(dot.id)) continue;
-      // Skip dots already owned by other stalks to reduce excessive overlap
-      if (dot.owners.size > 0 && !dot.owners.has(mObj.id)) continue;
+      if (dot.owners.size > 0) continue; // skip already-owned
       dot.owners.add(mObj.id);
       mObj.dotIds.push(dot.id);
     }
 
-    // If we still don't have enough dots (pool too sparse), fill from ANY candidate
+    // Second pass: if still short, SPAWN new dots inside this stalk
     if (mObj.dotIds.length < target) {
-      for (const dot of shuffled) {
-        if (mObj.dotIds.length >= target) break;
-        if (mObj.dotIds.includes(dot.id)) continue;
-        dot.owners.add(mObj.id);
-        mObj.dotIds.push(dot.id);
+      const needed = target - mObj.dotIds.length;
+      log(`Stalk #${mObj.id}: spawning ${needed} extra dots to fill stalk`);
+      for (let i = 0; i < needed; i++) {
+        // Generate a random point inside the stalk bounds
+        const u = (Math.random() * 2 - 1) * hw * 0.85;
+        const v = (Math.random() * 2 - 1) * hh * 0.85;
+        const dir = mObj.center.clone()
+          .add(mObj._tf.t1.clone().multiplyScalar(u))
+          .add(mObj._tf.t2.clone().multiplyScalar(v))
+          .normalize();
+        const newDot = {
+          id: dotIdCounter++,
+          dir: dir.clone(),
+          pt: dir.clone().multiplyScalar(R),
+          color: pickColor(),
+          owners: new Set([mObj.id])
+        };
+        dotPool.push(newDot);
+        mObj.dotIds.push(newDot.id);
       }
     }
 
     // 6. Log
     const shared = mObj.dotIds.filter(id => { const d = dotById(id); return d && isShared(d); }).length;
-    log(`Stalk #${mObj.id}: ${mObj.dotIds.length} dots, ${shared} shared`);
+    log(`Stalk #${mObj.id}: ${mObj.dotIds.length} dots total, ${shared} shared`);
 
     clear(gPre); clear(gSheaf); glueAnim = null;
 
-    // Rebuild stalk backgrounds (quads, borders, labels) — NOT dots
     rebuildStalkBackgrounds();
 
     // 7. Create visuals for ALL new dots FIRST
     const now = performance.now();
     mObj.dotIds.forEach((did, gi) => {
-      if (dotVisuals.has(did)) return; // already visible — don't touch
+      if (dotVisuals.has(did)) return;
       const dot = dotById(did);
       if (!dot) return;
       createDotVisual(dot, mObj.id * 40 + gi * 15, now);
     });
 
-    // 8. NOW apply rings to any shared dots (visuals guaranteed to exist)
+    // 8. NOW apply rings to shared dots (visuals guaranteed to exist)
     mObj.dotIds.forEach(did => {
       const dot = dotById(did);
       if (dot && isShared(dot)) ensureRingOnVisual(dot);
