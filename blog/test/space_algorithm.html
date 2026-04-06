@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metric Space Explorer — Deep Algorithm Visualizer</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Latin-Modern.min.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #08081a;
+    color: #d8d8e8;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.7;
+  }
+
+  /* --- Header --- */
+  .hero {
+    text-align: center;
+    padding: 50px 20px 30px;
+    background: radial-gradient(ellipse at 50% 0%, #1a1040 0%, #08081a 70%);
+  }
+  .hero h1 {
+    font-size: 2.4rem;
+    background: linear-gradient(90deg, #7eb4ff, #c084fc, #f472b6, #fbbf24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .hero .sub { color: #777; font-size: 1rem; }
+
+  /* --- Sections --- */
+  .section {
+    max-width: 1200px;
+    margin: 0 auto 60px;
+    padding: 0 28px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .section-num {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #c084fc);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 1.1rem; color: #fff;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-size: 1.5rem;
+    color: #e0d0ff;
+  }
+  .section p {
+    color: #aaa;
+    margin-bottom: 12px;
+    max-width: 900px;
+  }
+  .section p strong { color: #d0c0ff; }
+
+  /* --- Math blocks --- */
+  .math-block {
+    background: #0e0e28;
+    border: 1px solid #2a2a50;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 16px 0 20px;
+    overflow-x: auto;
+    max-width: 900px;
+  }
+  .math-block .math-row {
+    margin: 10px 0;
+    font-size: 1.15rem;
+  }
+  .math-explain {
+    color: #888;
+    font-size: 0.88rem;
+    margin-top: 8px;
+    padding-left: 12px;
+    border-left: 3px solid #333;
+  }
+
+  /* --- Canvas --- */
+  .canvas-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  .canvas-box {
+    background: #0c0c24;
+    border: 1px solid #252548;
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+  }
+  .canvas-box canvas {
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
+    cursor: crosshair;
+  }
+  .canvas-box .label {
+    margin-top: 10px;
+    font-size: 0.82rem;
+    color: #666;
+  }
+
+  /* --- Controls --- */
+  .controls {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin: 16px 0;
+  }
+  .controls label {
+    font-size: 0.88rem;
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .controls input[type=range] {
+    width: 160px;
+    accent-color: #c084fc;
+  }
+  .controls button {
+    background: linear-gradient(135deg, #7c3aed, #c084fc);
+    border: none;
+    color: #fff;
+    padding: 8px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: all .2s;
+  }
+  .controls button:hover { opacity: .85; transform: translateY(-1px); }
+
+  .legend {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    margin: 12px 0;
+    font-size: 0.82rem;
+    flex-wrap: wrap;
+  }
+  .legend span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .legend .sw {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+
+  /* --- Callout boxes --- */
+  .callout {
+    background: #12122e;
+    border-left: 4px solid #c084fc;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 20px;
+    margin: 16px 0;
+    max-width: 900px;
+  }
+  .callout.blue { border-left-color: #60a5fa; }
+  .callout.green { border-left-color: #34d399; }
+  .callout.orange { border-left-color: #fbbf24; }
+  .callout .callout-title {
+    font-weight: bold;
+    color: #e0d0ff;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+  }
+  .callout.blue .callout-title { color: #93c5fd; }
+  .callout.green .callout-title { color: #6ee7b7; }
+  .callout.orange .callout-title { color: #fcd34d; }
+  .callout p { margin: 0; font-size: 0.9rem; }
+
+  /* --- Layer color chips --- */
+  .layer-chip {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin: 0 2px;
+  }
+
+  /* --- Divider --- */
+  .divider {
+    max-width: 1200px;
+    margin: 40px auto;
+    border: none;
+    border-top: 1px solid #1a1a3a;
+  }
+
+  footer {
+    text-align: center;
+    padding: 50px 20px;
+    color: #444;
+    font-size: 0.8rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<div class="hero">
+  <h1>How Space Morphing Works</h1>
+  <p class="sub">A visual, equation-by-equation walkthrough of the Metric Space Explorer algorithm</p>
+</div>
+
+<!-- ============ SECTION 0: BIG PICTURE ============ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">0</div>
+    <h2>The Big Picture</h2>
+  </div>
+  <p>A transformer has <strong>L layers</strong>. Each layer takes a token's hidden state and <em>moves</em> it — like a current pushing a particle through water. The Metric Space Explorer visualizes these movements as <strong>continuous deformations of space itself</strong>.</p>
+
+  <div class="callout">
+    <div class="callout-title">🔑 Core Insight</div>
+    <p>Instead of just tracking where individual tokens go, we ask: <em>"If the entire space were made of rubber, how would each layer stretch, compress, and twist it?"</em></p>
+  </div>
+
+  <div class="canvas-row">
+    <div class="canvas-box">
+      <canvas id="cvBigPicture" width="900" height="300"></canvas>
+      <div class="label">Each layer deforms the space — tokens ride the deformation like particles in a flow</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============ SECTION 1: HIDDEN STATES ============ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <h2>Hidden States & The Residual Stream</h2>
+  </div>
+  <p>Each token starts as an embedding vector. As it passes through the transformer, each layer adds to it via the <strong>residual stream</strong>:</p>
+
+  <div class="math-block">
+    <div class="math-row" id="eq-residual"></div>
+    <div class="math-explain">The hidden state after layer ℓ equals the previous state plus whatever that layer computed.</div>
+  </div>
+
+  <p>We extract the hidden state <strong>at every layer boundary</strong>, giving us a sequence of positions for each token:</p>
+
+  <div class="math-block">
+    <div class="math-row" id="eq-trajectory"></div>
+    <div class="math-explain">A token's "trajectory" through the transformer — one position per layer.</div>
+  </div>
+
+  <div class="canvas-row">
+    <div class="canvas-box">
+      <canvas id="cvResidual" width="700" height="350"></canvas>
+      <div class="label">Residual stream: each layer adds a delta to the hidden state</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============ SECTION 2: DELTAS (MULTI-LAYER STACKED) ============ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <h2>Layer Deltas — Stacked Arrows</h2>
+  </div>
+  <p>The <strong>delta</strong> (displacement) at each layer is the difference between consecutive hidden states:</p>
+
+  <div class="math-block">
+    <div class="math-row" id="eq-delta"></div>
+    <div class="math-explain">How much layer ℓ "pushes" token i. This is the velocity vector for that layer.</div>
+  </div>
+
+  <p>Crucially, these deltas <strong>stack</strong>. Layer 0 moves the token to a new position. Layer 1 starts from <em>that</em> position and moves it further. Layer 2 starts from <em>there</em>, and so on. The total displacement is the sum of all deltas:</p>
+
+  <div class="math-block">
+    <div class="math-row" id="eq-cumulative"></div>
+    <div class="math-explain">The final position is the initial embedding plus all layer deltas accumulated.</div>
+  </div>
+
+  <div class="callout green">
+    <div class="callout-title">👁️ What You're Seeing Below</div>
+    <p>Each arrow is one layer's contribution. They chain head-to-tail: Layer 0's arrow starts at the token's initial position, Layer 1's arrow starts where Layer 0 ended, and so on. Use the slider to add layers one at a time.</p>
+  </div>
+
+  <div class="controls">
+    <label>Show layers 0 through: <strong><span id="stackLayerVal">0</span></strong></label>
+    <input type="range" id="stackLayerSlider" min="0" max="5" value="0">
+    <button id="btnAnimateStack">▶ Animate</button>
+  </div>
+
+  <div class="legend" id="layerLegend"></div>
+
+  <div class="canvas-row">
+    <div class="canvas-box">
+      <canvas id="cvStacked" width="800" height="500"></canvas>
+      <div class="label">Stacked layer deltas — each arrow starts where the previous one ended</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============ SECTION 3: PCA ============ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <h2>PCA Projection to 2D</h2>
+  </div>
+  <p>Hidden states live in high-dimensional space (e.g., 768-D for GPT-2). We can't visualize that directly, so we use <strong>PCA</strong> to find the 2 directions of maximum variance:</p>
+
+  <div class="math-block">
+    <div class="math-row" id="eq-pca1"></div>
+    <div class="math-explain">Center the data by subtracting the mean of all hidden states.</div>
+    <br>
+    <div class="math-row" id="eq-pca2"></div>
+    <div class="math-explain">Compute the covariance matrix from centered data.</div>
+    <br>
+    <div class="math-row" id="eq-pca3"></div>
+    <div class="math-explain">Project each hidden state onto the top-2 eigenvectors to get 2D coordinates.</div>
+  </div>
+
+  <div class="callout blue">
+    <div class="callout-title">💡 Why PCA?</div>
+    <p>PCA preserves the directions where tokens differ the most. It's like finding the best camera angle to see the most spread in the data. The deltas are projected the same way, so directions are consistent.</p>
+  </div>
+
+  <div class="canvas-row">
+    <div class="canvas-box">
+      <canvas id="cvPCA" width="500" height="400"></canvas>
+      <div class="label">High-D cloud → PCA → 2D projection (simulated)</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============ SECTION 4: RBF INTERPOLATION ============ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <h2>RBF Interpolation — From Points to a Field</h2>
+  </div>
+  <p>We know how each layer moves each <em>token</em>. But we want to know how it moves <strong>every point in space</strong>. This is where <strong>Radial Basis Function (RBF) interpolation</strong> comes in.</p>
+
+  <div class="callout orange">
+    <div class="callout-title">🎯 The Key Idea</div>
+    <p>Imagine dropping a stone in water at each token's position. The ripples (Gaussian bells) overlap. At any point in space, the velocity is a weighted blend of all token velocities, where closer tokens have more influence.</p>
+  </div>
+
+  <p><strong>Step 1:</strong> For a grid point <strong>p</strong>, compute the Gaussian weight to each token:</p>
+
+  <div class="math-block">
+    <div class="math-row" id="eq-rbf-weight"></div>
+    <div class="math-explain">The weight decays exponentially with squared distance. σ controls how far each token's influence reaches.</div>
+  </div>
+
+  <p><strong>Step 2:</strong> The interpolated velocity at <strong>p</strong> is the normalized weighted sum of all token deltas:</p>
+
+  <div class="math-block">
+    <div class="math-row" id="eq-rbf-interp"></div>
+    <div class="math-explain">Each token's delta contributes proportionally to its weight. This creates a smooth, continuous vector field.</div>
+  </div>
+
+  <div class="controls">
+    <label>σ (kernel width): <strong><span id="sigmaVal">0.20</span></strong></label>
+    <input type="range" id="sigmaSlider" min="5" max="60" value="20">
+    <label>Layer: <strong><span id="rbfLayerVal">0</span></strong></label>
+    <input type="range" id="rbfLayerSlider" min="0" max="5" value="0">
+  </div>
+
+  <p style="text-align:center; color:#666; font-size:0.85rem;">👆 Hover over the left canvas to see the Gaussian weights from that point</p>
+
+  <div class="canvas-row">
+    <div class="canvas-box">
+      <canvas id="cvRBFField" width="500" height="440"></canvas>
+      <div class="label">Interpolated velocity field (arrows on grid)</div>
+    </div>
+    <div class="canvas-box">
+      <canvas id="cvRBFWeights" width="500" height="440"></canvas>
+      <div class="label">Gaussian weight from hovered point to each token</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============ SECTION 5: DEFORMATION ============ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <h2>Grid Deformation — Watching Space Bend</h2>
+  </div>
+  <p>Now we apply the interpolated velocity field to deform a regular grid. Each grid vertex moves according to:</p>
+
+  <div class="math-block">
+    <div class="math-row" id="eq-deform"></div>
+    <div class="math-explain">t goes from 0 (no deformation) to 1 (full deformation). amp magnifies the effect for visibility.</div>
+  </div>
+
+  <p>For <strong>multiple layers stacked</strong>, we apply each layer's deformation sequentially:</p>
+
+  <div class="math-block">
+    <div class="math-row" id="eq-deform-multi"></div>
+    <div class="math-explain">Each layer deforms the space starting from where the previous layer left it. The deformations compose.</div>
+  </div>
+
+  <div class="controls">
+    <label>t: <strong><span id="deformTVal">0.00</span></strong></label>
+    <input type="range" id="deformTSlider" min="0" max="100" value="0">
+    <label>amp: <strong><span id="deformAmpVal">1.5</span></strong></label>
+    <input type="range" id="deformAmpSlider" min="5" max="60" value="15">
+    <label>Layers: <strong><span id="deformLayerVal">0</span></strong></label>
+    <input type="range" id="deformLayerSlider" min="0" max="5" value="0">
+    <button id="btnAnimateDeform">▶ Animate t</button>
+  </div>
+
+  <div class="canvas-row">
+    <div class="canvas-box">
+      <canvas id="cvDeform" width="600" height="500"></canvas>
+      <div class="label">Grid deformation — layers applied sequentially</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============ SECTION 6: STRAIN ============ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <h2>Strain — Measuring Stretch & Compression</h2>
+  </div>
+  <p>Strain tells us <em>how much</em> the space is being distorted at each point. We compare the distance between adjacent grid points before and after deformation:</p>
+
+  <div class="math-block">
+    <div class="math-row" id="eq-strain"></div>
+    <div class="math-explain">Ratio of deformed distance to original distance. Strain = 1 means no distortion.</div>
+  </div>
+
+  <div class="math-block">
+    <div class="math-row" id="eq-strain-interp"></div>
+  </div>
+
+  <div class="controls">
+    <label>t: <strong><span id="strainTVal">0.50</span></strong></label>
+    <input type="range" id="strainTSlider" min="0" max="100" value="50">
+    <label>Layers: <strong><span id="strainLayerVal">3</span></strong></label>
+    <input type="range" id="strainLayerSlider" min="0" max="5" value="3">
+  </div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:#4488ff"></span> Contraction (strain &lt; 1)</span>
+    <span><span class="sw" style="background:#666"></span> Isometric (strain ≈ 1)</span>
+    <span><span class="sw" style="background:#ff4444"></span> Expansion (strain &gt; 1)</span>
+  </div>
+
+  <div class="canvas-row">
+    <div class="canvas-box">
+      <canvas id="cvStrain" width="600" height="500"></canvas>
+      <div class="label">Strain heatmap — red = expansion, blue = contraction</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============ SECTION 7: FULL COMBINED ============ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <h2>Full Combined View — Everything Together</h2>
+  </div>
+  <p>This is the final output: deformed grid with strain coloring, stacked token trajectories, and the velocity field — all composed across multiple layers.</p>
+
+  <div class="controls">
+    <label>Layers: <strong><span id="fullLayerVal">3</span></strong></label>
+    <input type="range" id="fullLayerSlider" min="0" max="5" value="3">
+    <label>t: <strong><span id="fullTVal">0.70</span></strong></label>
+    <input type="range" id="fullTSlider" min="0" max="100" value="70">
+    <label>amp: <strong><span id="fullAmpVal">1.5</span></strong></label>
+    <input type="range" id="fullAmpSlider" min="5" max="60" value="15">
+    <button id="btnFullAnimate">▶ Animate All Layers</button>
+  </div>
+
+  <div class="canvas-row">
+    <div class="canvas-box">
+      <canvas id="cvFull" width="900" height="600"></canvas>
+      <div class="label">Complete space morphing — layers stacked sequentially</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Metric Space Explorer — Algorithm Visualizer
+</footer>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+// =====================================================
+// RENDER MATH WITH TEMML
+// =====================================================
+function renderMath() {
+  const equations = {
+    'eq-residual': String.raw`\mathbf{h}^{(\ell+1)}_i = \underbrace{\mathbf{h}^{(\ell)}_i}_{\text{previous state}} + \underbrace{f_\ell\!\left(\mathbf{h}^{(\ell)}_i\right)}_{\text{layer } \ell \text{ output}}`,
+
+    'eq-trajectory': String.raw`\text{Token } i \text{ trajectory:} \quad \mathbf{h}^{(0)}_i \;\xrightarrow{\text{layer 0}}\; \mathbf{h}^{(1)}_i \;\xrightarrow{\text{layer 1}}\; \mathbf{h}^{(2)}_i \;\xrightarrow{\;\cdots\;}\; \mathbf{h}^{(L)}_i`,
+
+    'eq-delta': String.raw`\boldsymbol{\delta}^{(\ell)}_i = \underbrace{\mathbf{h}^{(\ell+1)}_i}_{\text{state after layer } \ell} - \underbrace{\mathbf{h}^{(\ell)}_i}_{\text{state before layer } \ell}`,
+
+    'eq-cumulative': String.raw`\mathbf{h}^{(L)}_i = \mathbf{h}^{(0)}_i + \underbrace{\sum_{\ell=0}^{L-1} \boldsymbol{\delta}^{(\ell)}_i}_{\text{all layer deltas stacked}}`,
+
+    'eq-pca1': String.raw`\bar{\mathbf{h}} = \frac{1}{N}\sum_{i=1}^{N} \mathbf{h}_i, \qquad \tilde{\mathbf{h}}_i = \mathbf{h}_i - \bar{\mathbf{h}}`,
+
+    'eq-pca2': String.raw`\mathbf{C} = \frac{1}{N}\sum_{i=1}^{N} \tilde{\mathbf{h}}_i \, \tilde{\mathbf{h}}_i^\top \;\in\; \mathbb{R}^{d \times d}`,
+
+    'eq-pca3': String.raw`\mathbf{p}_i = \begin{pmatrix} \mathbf{v}_1^\top \tilde{\mathbf{h}}_i \\ \mathbf{v}_2^\top \tilde{\mathbf{h}}_i \end{pmatrix} \in \mathbb{R}^2 \qquad \text{where } \mathbf{v}_1, \mathbf{v}_2 \text{ are top-2 eigenvectors of } \mathbf{C}`,
+
+    'eq-rbf-weight': String.raw`w_i(\mathbf{p}) = \exp\!\left( -\frac{\|\mathbf{p} - \mathbf{p}_i\|^2}{\underbrace{2\sigma^2}_{\text{kernel width}}} \right)`,
+
+    'eq-rbf-interp': String.raw`\boldsymbol{\delta}(\mathbf{p}) = \frac{\displaystyle\sum_{i=1}^{N} \underbrace{w_i(\mathbf{p})}_{\text{Gaussian weight}} \cdot \underbrace{\boldsymbol{\delta}_i}_{\text{token delta}}}{\displaystyle\sum_{i=1}^{N} w_i(\mathbf{p})}`,
+
+    'eq-deform': String.raw`\mathbf{p}'_{\text{grid}} = \underbrace{\mathbf{p}_{\text{grid}}}_{\text{original}} + \underbrace{t}_{\substack{\text{interpolation} \\ \text{parameter}}} \cdot \underbrace{\text{amp}}_{\text{magnification}} \cdot \underbrace{\boldsymbol{\delta}(\mathbf{p}_{\text{grid}})}_{\text{RBF-interpolated velocity}}`,
+
+    'eq-deform-multi': String.raw`\mathbf{p}^{(\ell+1)} = \mathbf{p}^{(\ell)} + t \cdot \text{amp} \cdot \boldsymbol{\delta}^{(\ell)}\!\left(\mathbf{p}^{(\ell)}\right), \qquad \ell = 0, 1, \ldots, L{-}1`,
+
+    'eq-strain': String.raw`\text{strain}_{ij} = \frac{\underbrace{\left\|\mathbf{p}'_j - \mathbf{p}'_i\right\|}_{\text{deformed distance}}}{\underbrace{\left\|\mathbf{p}_j - \mathbf{p}_i\right\|}_{\text{original distance}}}`,
+
+    'eq-strain-interp': String.raw`\text{strain} > 1 \implies \text{expansion} \qquad \text{strain} < 1 \implies \text{contraction} \qquad \text{strain} = 1 \implies \text{isometric}`,
+  };
+
+  for (const [id, tex] of Object.entries(equations)) {
+    const el = document.getElementById(id);
+    if (el) {
+      try {
+        temml.render(tex, el, { displayMode: true });
+      } catch(e) {
+        el.textContent = tex;
+      }
+    }
+  }
+}
+
+// =====================================================
+// DATA GENERATION
+// =====================================================
+const LAYER_COLORS = ['#f472b6','#c084fc','#60a5fa','#34d399','#fbbf24','#fb923c'];
+const LAYER_NAMES = ['Layer 0','Layer 1','Layer 2','Layer 3','Layer 4','Layer 5'];
+const TOKEN_COLORS = ['#ff6b9d','#c084fc','#60a5fa','#34d399','#fbbf24','#fb923c','#f87171','#a78bfa','#22d3ee','#a3e635'];
+const TOKEN_LABELS = ['The','cat','sat','on','the','mat','and','purred','softly','.'];
+const NUM_TOKENS = TOKEN_LABELS.length;
+const NUM_LAYERS = 6;
+const GRID_N = 18;
+
+function seededRandom(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 16807 + 0) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
+}
+const rand = seededRandom(42);
+
+// Token initial positions (normalized 0-1)
+const tokenPos = [];
+for (let i = 0; i < NUM_TOKENS; i++) {
+  tokenPos.push({ x: 0.12 + rand() * 0.76, y: 0.12 + rand() * 0.76 });
+}
+
+// Per-layer deltas for each token
+const tokenDeltas = []; // [layer][token] = {dx, dy}
+for (let l = 0; l < NUM_LAYERS; l++) {
+  const ld = [];
+  const angle = l * 1.1 + rand() * 0.6;
+  const strength = 0.015 + rand() * 0.04;
+  for (let t = 0; t < NUM_TOKENS; t++) {
+    const px = tokenPos[t].x - 0.5;
+    const py = tokenPos[t].y - 0.5;
+    let dx = -py * Math.sin(angle) * strength + (rand()-0.5) * 0.025;
+    let dy =  px * Math.cos(angle) * strength + (rand()-0.5) * 0.025;
+    if (l % 3 === 0) { dx += (0.5 - tokenPos[t].x) * 0.02; dy += (0.5 - tokenPos[t].y) * 0.02; }
+    if (l % 3 === 1) { dx += (tokenPos[t].x - 0.5) * 0.03; dy += (tokenPos[t].y - 0.5) * 0.03; }
+    if (l % 3 === 2) { dx += (rand()-0.5)*0.03; dy += (rand()-0.5)*0.03; }
+    ld.push({ dx, dy });
+  }
+  tokenDeltas.push(ld);
+}
+
+// Build layer legend
+const legendEl = document.getElementById('layerLegend');
+for (let l = 0; l < NUM_LAYERS; l++) {
+  const chip = document.createElement('span');
+  chip.className = 'layer-chip';
+  chip.style.background = LAYER_COLORS[l] + '33';
+  chip.style.color = LAYER_COLORS[l];
+  chip.style.border = `1px solid ${LAYER_COLORS[l]}66`;
+  chip.textContent = LAYER_NAMES[l];
+  legendEl.appendChild(chip);
+}
+
+// =====================================================
+// UTILITY
+// =====================================================
+function tx(nx, w, pad=50) { return pad + nx * (w - 2*pad); }
+function ty(ny, h, pad=50) { return pad + ny * (h - 2*pad); }
+
+function rbfWeight(px, py, qx, qy, sigma) {
+  const d2 = (px-qx)**2 + (py-qy)**2;
+  return Math.exp(-d2 / (2*sigma*sigma));
+}
+
+function interpolateDelta(px, py, layer, sigma) {
+  let ws = 0, dxs = 0, dys = 0;
+  for (let t = 0; t < NUM_TOKENS; t++) {
+    const w = rbfWeight(px, py, tokenPos[t].x, tokenPos[t].y, sigma);
+    ws += w;
+    dxs += w * tokenDeltas[layer][t].dx;
+    dys += w * tokenDeltas[layer][t].dy;
+  }
+  if (ws < 1e-15) return {dx:0, dy:0};
+  return { dx: dxs/ws, dy: dys/ws };
+}
+
+function strainColor(s) {
+  s = Math.max(0.2, Math.min(2.5, s));
+  if (s < 1) {
+    const f = Math.min(1, (1-s)*2.5);
+    return `rgb(${Math.round(80*(1-f)+68*f)},${Math.round(80*(1-f)+120*f)},${Math.round(80*(1-f)+255*f)})`;
+  } else {
+    const f = Math.min(1, (s-1)*2.5);
+    return `rgb(${Math.round(80*(1-f)+255*f)},${Math.round(80*(1-f)+60*f)},${Math.round(80*(1-f)+60*f)})`;
+  }
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color, width=2, headLen=8) {
+  const dx = x2-x1, dy = y2-y1;
+  const angle = Math.atan2(dy, dx);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headLen*Math.cos(angle-0.35), y2 - headLen*Math.sin(angle-0.35));
+  ctx.lineTo(x2 - headLen*0.4*Math.cos(angle), y2 - headLen*0.4*Math.sin(angle));
+  ctx.lineTo(x2 - headLen*Math.cos(angle+0.35), y2 - headLen*Math.sin(angle+0.35));
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function drawToken(ctx, cx, cy, radius, color, label, showLabel=true) {
+  // Glow
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius+4, 0, Math.PI*2);
+  ctx.fillStyle = color + '22';
+  ctx.fill();
+  // Circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI*2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  if (showLabel) {
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText(label, cx + radius + 5, cy + 4);
+  }
+}
+
+// Compute cumulative token positions through layers
+function getCumulativePositions(numLayers, amp) {
+  // positions[layer][token] = {x, y}
+  const positions = [];
+  for (let t = 0; t < NUM_TOKENS; t++) {
+    const trail = [{ x: tokenPos[t].x, y: tokenPos[t].y }];
+    for (let l = 0; l < numLayers; l++) {
+      const prev = trail[trail.length - 1];
+      trail.push({
+        x: prev.x + amp * tokenDeltas[l][t].dx,
+        y: prev.y + amp * tokenDeltas[l][t].dy
+      });
+    }
+    positions.push(trail);
+  }
+  return positions; // positions[token][layer] = {x,y}
+}
+
+// Deform grid through multiple layers
+function deformGridMultiLayer(numLayers, t, amp, sigma) {
+  const grid = [];
+  for (let i = 0; i <= GRID_N; i++) {
+    grid.push([]);
+    for (let j = 0; j <= GRID_N; j++) {
+      grid[i].push({ x: i/GRID_N, y: j/GRID_N });
+    }
+  }
+  for (let l = 0; l < numLayers; l++) {
+    for (let i = 0; i <= GRID_N; i++) {
+      for (let j = 0; j <= GRID_N; j++) {
+        const d = interpolateDelta(grid[i][j].x, grid[i][j].y, l, sigma);
+        grid[i][j].x += t * amp * d.dx;
+        grid[i][j].y += t * amp * d.dy;
+      }
+    }
+  }
+  return grid;
+}
+
+function drawDeformedGrid(ctx, grid, w, h, pad, strokeColor='rgba(130,110,220,0.35)', lineWidth=0.8) {
+  ctx.lineWidth = lineWidth;
+  ctx.strokeStyle = strokeColor;
+  for (let j = 0; j <= GRID_N; j++) {
+    ctx.beginPath();
+    for (let i = 0; i <= GRID_N; i++) {
+      const x = tx(grid[i][j].x, w, pad);
+      const y = ty(grid[i][j].y, h, pad);
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  for (let i = 0; i <= GRID_N; i++) {
+    ctx.beginPath();
+    for (let j = 0; j <= GRID_N; j++) {
+      const x = tx(grid[i][j].x, w, pad);
+      const y = ty(grid[i][j].y, h, pad);
+      if (j===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+}
+
+function drawStrainQuads(ctx, grid, w, h, pad, alpha=0.6) {
+  const origSpacing = 1/GRID_N;
+  for (let i = 0; i < GRID_N; i++) {
+    for (let j = 0; j < GRID_N; j++) {
+      const dx1 = grid[i+1][j].x - grid[i][j].x;
+      const dy1 = grid[i+1][j].y - grid[i][j].y;
+      const dx2 = grid[i][j+1].x - grid[i][j].x;
+      const dy2 = grid[i][j+1].y - grid[i][j].y;
+      const dH = Math.sqrt(dx1*dx1+dy1*dy1);
+      const dV = Math.sqrt(dx2*dx2+dy2*dy2);
+      const strain = ((dH/origSpacing)+(dV/origSpacing))/2;
+
+      ctx.beginPath();
+      ctx.moveTo(tx(grid[i][j].x,w,pad), ty(grid[i][j].y,h,pad));
+      ctx.lineTo(tx(grid[i+1][j].x,w,pad), ty(grid[i+1][j].y,h,pad));
+      ctx.lineTo(tx(grid[i+1][j+1].x,w,pad), ty(grid[i+1][j+1].y,h,pad));
+      ctx.lineTo(tx(grid[i][j+1].x,w,pad), ty(grid[i][j+1].y,h,pad));
+      ctx.closePath();
+      ctx.fillStyle = strainColor(strain);
+      ctx.globalAlpha = alpha;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  }
+}
+
+// =====================================================
+// SECTION 0: BIG PICTURE ANIMATION
+// =====================================================
+function renderBigPicture() {
+  const cv = document.getElementById('cvBigPicture');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+
+  const numStages = NUM_LAYERS + 1;
+  const stageW = W / numStages;
+
+  for (let s = 0; s < numStages; s++) {
+    const cx = stageW * s + stageW/2;
+    const cy = H/2;
+
+    // Draw mini grid
+    const gridSize = 60;
+    const gn = 5;
+    ctx.strokeStyle = '#2a2a4a';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i <= gn; i++) {
+      const f = i/gn;
+      // Apply cumulative deformation up to stage s
+      for (let j = 0; j <= gn; j++) {
+        const g = j/gn;
+        let px = f, py = g;
+        for (let l = 0; l < s; l++) {
+          const d = interpolateDelta(px, py, l, 0.25);
+          px += 1.5 * d.dx;
+          py += 1.5 * d.dy;
+        }
+        const sx = cx - gridSize/2 + px * gridSize;
+        const sy = cy - gridSize/2 + py * gridSize;
+        if (j === 0 && i === 0) continue;
+        // Draw point
+        ctx.beginPath();
+        ctx.arc(sx, sy, 1, 0, Math.PI*2);
+        ctx.fillStyle = '#3a3a5a';
+        ctx.fill();
+      }
+    }
+
+    // Draw deformed grid lines
+    ctx.lineWidth = 0.7;
+    ctx.strokeStyle = s === 0 ? '#3a3a5a' : LAYER_COLORS[s-1] + '55';
+    for (let row = 0; row <= gn; row++) {
+      ctx.beginPath();
+      for (let col = 0; col <= gn; col++) {
+        let px = col/gn, py = row/gn;
+        for (let l = 0; l < s; l++) {
+          const d = interpolateDelta(px, py, l, 0.25);
+          px += 1.5*d.dx; py += 1.5*d.dy;
+        }
+        const sx = cx - gridSize/2 + px*gridSize;
+        const sy = cy - gridSize/2 + py*gridSize;
+        if (col===0) ctx.moveTo(sx,sy); else ctx.lineTo(sx,sy);
+      }
+      ctx.stroke();
+    }
+    for (let col = 0; col <= gn; col++) {
+      ctx.beginPath();
+      for (let row = 0; row <= gn; row++) {
+        let px = col/gn, py = row/gn;
+        for (let l = 0; l < s; l++) {
+          const d = interpolateDelta(px, py, l, 0.25);
+          px += 1.5*d.dx; py += 1.5*d.dy;
+        }
+        const sx = cx - gridSize/2 + px*gridSize;
+        const sy = cy - gridSize/2 + py*gridSize;
+        if (row===0) ctx.moveTo(sx,sy); else ctx.lineTo(sx,sy);
+      }
+      ctx.stroke();
+    }
+
+    // 3 sample tokens
+    for (let t = 0; t < 3; t++) {
+      let px = tokenPos[t].x, py = tokenPos[t].y;
+      for (let l = 0; l < s; l++) {
+        px += 1.5*tokenDeltas[l][t].dx;
+        py += 1.5*tokenDeltas[l][t].dy;
+      }
+      const sx = cx - gridSize/2 + px*gridSize;
+      const sy = cy - gridSize/2 + py*gridSize;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 4, 0, Math.PI*2);
+      ctx.fillStyle = TOKEN_COLORS[t];
+      ctx.fill();
+    }
+
+    // Label
+    ctx.fillStyle = s === 0 ? '#888' : LAYER_COLORS[s-1];
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(s === 0 ? 'Input' : `Layer ${s-1}`, cx, H - 15);
+    ctx.textAlign = 'left';
+
+    // Arrow between stages
+    if (s < numStages - 1) {
+      drawArrow(ctx, cx + gridSize/2 + 10, cy, cx + stageW - gridSize/2 - 14, cy, '#444', 1.5, 6);
+    }
+  }
+}
+
+// =====================================================
+// SECTION 1: RESIDUAL STREAM
+// =====================================================
+function renderResidual() {
+  const cv = document.getElementById('cvResidual');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+
+  const pad = 50;
+  const barH = 30;
+  const tokenIdx = 1; // "cat"
+  const numShow = NUM_LAYERS + 1;
+  const spacing = (W - 2*pad) / numShow;
+
+  // Draw residual stream as stacked bars
+  for (let l = 0; l <= NUM_LAYERS; l++) {
+    const cx = pad + l * spacing + spacing/2;
+
+    // Compute cumulative position
+    let cumX = tokenPos[tokenIdx].x;
+    let cumY = tokenPos[tokenIdx].y;
+    for (let ll = 0; ll < l; ll++) {
+      cumX += tokenDeltas[ll][tokenIdx].dx;
+      cumY += tokenDeltas[ll][tokenIdx].dy;
+    }
+
+    // Draw stacked bar showing contributions
+    let barBottom = H - pad - 20;
+    const barWidth = 40;
+    const scale = 800;
+
+    // Initial embedding
+    const embH = Math.abs(tokenPos[tokenIdx].x) * scale * 0.3 + 20;
+    ctx.fillStyle = '#555';
+    ctx.fillRect(cx - barWidth/2, barBottom - embH, barWidth, embH);
+    ctx.strokeStyle = '#777';
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(cx - barWidth/2, barBottom - embH, barWidth, embH);
+    barBottom -= embH;
+
+    // Layer deltas stacked
+    for (let ll = 0; ll < l; ll++) {
+      const dMag = Math.sqrt(tokenDeltas[ll][tokenIdx].dx**2 + tokenDeltas[ll][tokenIdx].dy**2);
+      const dH = dMag * scale + 8;
+      ctx.fillStyle = LAYER_COLORS[ll] + '88';
+      ctx.fillRect(cx - barWidth/2, barBottom - dH, barWidth, dH);
+      ctx.strokeStyle = LAYER_COLORS[ll];
+      ctx.lineWidth = 1;
+      ctx.strokeRect(cx - barWidth/2, barBottom - dH, barWidth, dH);
+
+      // Delta label
+      if (dH > 12) {
+        ctx.fillStyle = LAYER_COLORS[ll];
+        ctx.font = '9px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(`δ${ll}`, cx, barBottom - dH/2 + 3);
+      }
+      barBottom -= dH;
+    }
+
+    // Label
+    ctx.fillStyle = l === 0 ? '#888' : LAYER_COLORS[l-1];
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(l === 0 ? 'h⁰' : `h${superscript(l)}`, cx, H - pad);
+    ctx.textAlign = 'left';
+
+    // Arrow
+    if (l < NUM_LAYERS) {
+      const nx = pad + (l+1)*spacing + spacing/2;
+      ctx.beginPath();
+      ctx.moveTo(cx + barWidth/2 + 5, H/2);
+      ctx.lineTo(nx - barWidth/2 - 10, H/2);
+      ctx.strokeStyle = LAYER_COLORS[l] + '88';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4,3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = LAYER_COLORS[l];
+      ctx.font = '10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`+δ${superscript(l)}`, (cx + nx)/2, H/2 - 8);
+      ctx.textAlign = 'left';
+    }
+  }
+
+  // Title
+  ctx.fillStyle = '#c084fc';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.fillText(`Token: "${TOKEN_LABELS[tokenIdx]}" — residual stream accumulation`, pad, 30);
+}
+
+function superscript(n) {
+  const sup = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+  return String(n).split('').map(c => sup[parseInt(c)]).join('');
+}
+
+// =====================================================
+// SECTION 2: STACKED ARROWS
+// =====================================================
+let stackAnimating = false;
+let stackAnimFrame = null;
+
+function renderStacked() {
+  const cv = document.getElementById('cvStacked');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const maxLayer = parseInt(document.getElementById('stackLayerSlider').value);
+  document.getElementById('stackLayerVal').textContent = maxLayer;
+
+  ctx.clearRect(0,0,W,H);
+  const pad = 60;
+  const amp = 8;
+
+  // Draw faint original grid
+  ctx.strokeStyle = '#1a1a2e';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= GRID_N; i++) {
+    const f = i/GRID_N;
+    ctx.beginPath(); ctx.moveTo(tx(f,W,pad), pad); ctx.lineTo(tx(f,W,pad), H-pad); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad, ty(f,H,pad)); ctx.lineTo(W-pad, ty(f,H,pad)); ctx.stroke();
+  }
+
+  // For each token, draw stacked arrows
+  for (let t = 0; t < NUM_TOKENS; t++) {
+    let curX = tokenPos[t].x;
+    let curY = tokenPos[t].y;
+
+    // Draw ghost at initial position
+    const sx = tx(curX, W, pad);
+    const sy = ty(curY, H, pad);
+    ctx.beginPath();
+    ctx.arc(sx, sy, 4, 0, Math.PI*2);
+    ctx.fillStyle = TOKEN_COLORS[t] + '33';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(sx, sy, 4, 0, Math.PI*2);
+    ctx.strokeStyle = TOKEN_COLORS[t] + '55';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Stack arrows layer by layer
+    for (let l = 0; l <= maxLayer; l++) {
+      const dx = tokenDeltas[l][t].dx * amp;
+      const dy = tokenDeltas[l][t].dy * amp;
+      const nextX = curX + dx;
+      const nextY = curY + dy;
+
+      const x1 = tx(curX, W, pad);
+      const y1 = ty(curY, H, pad);
+      const x2 = tx(nextX, W, pad);
+      const y2 = ty(nextY, H, pad);
+
+      // Draw arrow with layer color
+      drawArrow(ctx, x1, y1, x2, y2, LAYER_COLORS[l], 2.5, 9);
+
+      // Small dot at junction
+      ctx.beginPath();
+      ctx.arc(x1, y1, 3, 0, Math.PI*2);
+      ctx.fillStyle = LAYER_COLORS[l] + '88';
+      ctx.fill();
+
+      curX = nextX;
+      curY = nextY;
+    }
+
+    // Final position — big token dot
+    const fx = tx(curX, W, pad);
+    const fy = ty(curY, H, pad);
+    drawToken(ctx, fx, fy, 7, TOKEN_COLORS[t], TOKEN_LABELS[t]);
+  }
+
+  // Layer legend in corner
+  ctx.fillStyle = '#888';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('Arrow colors = layers:', W - 220, 30);
+  for (let l = 0; l <= maxLayer; l++) {
+    const lx = W - 220 + l * 35;
+    ctx.fillStyle = LAYER_COLORS[l];
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText(`L${l}`, lx, 48);
+    // small line
+    ctx.beginPath();
+    ctx.moveTo(lx, 54);
+    ctx.lineTo(lx + 20, 54);
+    ctx.strokeStyle = LAYER_COLORS[l];
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
+
+  // Equation reminder
+  ctx.fillStyle = '#555';
+  ctx.font = '12px monospace';
+  ctx.fillText(`h(${maxLayer+1}) = h(0) + δ(0) + δ(1) + ... + δ(${maxLayer})`, pad, H - 15);
+}
+
+function animateStack() {
+  if (stackAnimating) {
+    stackAnimating = false;
+    document.getElementById('btnAnimateStack').textContent = '▶ Animate';
+    if (stackAnimFrame) cancelAnimationFrame(stackAnimFrame);
+    return;
+  }
+  stackAnimating = true;
+  document.getElementById('btnAnimateStack').textContent = '⏸ Stop';
+  let layer = 0;
+  let tick = 0;
+  function step() {
+    if (!stackAnimating) return;
+    tick++;
+    if (tick % 60 === 0) {
+      layer++;
+      if (layer > 5) layer = 0;
+      document.getElementById('stackLayerSlider').value = layer;
+      renderStacked();
+    }
+    stackAnimFrame = requestAnimationFrame(step);
+  }
+  step();
+}
+
+// =====================================================
+// SECTION 3: PCA
+// =====================================================
+function renderPCA() {
+  const cv = document.getElementById('cvPCA');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  const pad = 50;
+
+  // Simulate high-D cloud projected to 2D
+  // Show a 3D-ish cloud collapsing to 2D
+  const time = Date.now() * 0.001;
+
+  // Draw "high-D" scattered points (faint, spread out)
+  ctx.globalAlpha = 0.15;
+  for (let i = 0; i < 80; i++) {
+    const r = seededRandom(i*7+3);
+    const px = r() * 0.8 + 0.1;
+    const py = r() * 0.8 + 0.1;
+    ctx.beginPath();
+    ctx.arc(tx(px,W,pad), ty(py,H,pad), 2, 0, Math.PI*2);
+    ctx.fillStyle = '#8888ff';
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Draw PCA axes
+  const cx = W/2, cy = H/2;
+  // PC1
+  drawArrow(ctx, cx-150, cy, cx+150, cy, '#c084fc88', 2, 8);
+  ctx.fillStyle = '#c084fc';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('PC1 (v₁)', cx+155, cy+4);
+  // PC2
+  drawArrow(ctx, cx, cy+120, cx, cy-120, '#60a5fa88', 2, 8);
+  ctx.fillStyle = '#60a5fa';
+  ctx.fillText('PC2 (v₂)', cx+5, cy-128);
+
+  // Draw projected tokens
+  for (let i = 0; i < NUM_TOKENS; i++) {
+    const px = tx(tokenPos[i].x, W, pad);
+    const py = ty(tokenPos[i].y, H, pad);
+
+    // Projection lines
+    ctx.beginPath();
+    ctx.setLineDash([2,3]);
+    ctx.moveTo(px, py);
+    ctx.lineTo(px, cy);
+    ctx.strokeStyle = '#60a5fa33';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(cx, py);
+    ctx.strokeStyle = '#c084fc33';
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    drawToken(ctx, px, py, 6, TOKEN_COLORS[i], TOKEN_LABELS[i]);
+  }
+
+  // Label
+  ctx.fillStyle = '#666';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('768-D → 2-D via top-2 eigenvectors', W/2, H - 12);
+  ctx.textAlign = 'left';
+}
+
+// =====================================================
+// SECTION 4: RBF INTERPOLATION
+// =====================================================
+let rbfHoverX = 0.5, rbfHoverY = 0.5;
+
+function renderRBFField() {
+  const cv = document.getElementById('cvRBFField');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const sigma = parseInt(document.getElementById('sigmaSlider').value) / 100;
+  const layer = parseInt(document.getElementById('rbfLayerSlider').value);
+  document.getElementById('sigmaVal').textContent = sigma.toFixed(2);
+  document.getElementById('rbfLayerVal').textContent = layer;
+
+  ctx.clearRect(0,0,W,H);
+  const pad = 50;
+
+  // Faint grid
+  ctx.strokeStyle = '#151530';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= GRID_N; i++) {
+    const f = i/GRID_N;
+    ctx.beginPath(); ctx.moveTo(tx(f,W,pad),pad); ctx.lineTo(tx(f,W,pad),H-pad); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad,ty(f,H,pad)); ctx.lineTo(W-pad,ty(f,H,pad)); ctx.stroke();
+  }
+
+  // Velocity field arrows
+  const arrowScale = 6;
+  for (let i = 0; i <= GRID_N; i++) {
+    for (let j = 0; j <= GRID_N; j++) {
+      const gx = i/GRID_N, gy = j/GRID_N;
+      const d = interpolateDelta(gx, gy, layer, sigma);
+      const cx = tx(gx,W,pad), cy = ty(gy,H,pad);
+      const dx = d.dx * arrowScale * (W-2*pad);
+      const dy = d.dy * arrowScale * (H-2*pad);
+      const mag = Math.sqrt(dx*dx+dy*dy);
+      if (mag > 1.5) {
+        const alpha = Math.min(0.8, mag/25);
+        drawArrow(ctx, cx, cy, cx+dx, cy+dy, `rgba(160,130,255,${alpha})`, 1, 4);
+      }
+    }
+  }
+
+  // Draw tokens
+  for (let i = 0; i < NUM_TOKENS; i++) {
+    drawToken(ctx, tx(tokenPos[i].x,W,pad), ty(tokenPos[i].y,H,pad), 6, TOKEN_COLORS[i], TOKEN_LABELS[i]);
+  }
+
+  // Hover crosshair
+  const hx = tx(rbfHoverX,W,pad), hy = ty(rbfHoverY,H,pad);
+  ctx.beginPath();
+  ctx.arc(hx, hy, 8, 0, Math.PI*2);
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(hx, hy, 2, 0, Math.PI*2);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+
+  // Draw sigma circle
+  const sigmaPixels = sigma * (W - 2*pad);
+  ctx.beginPath();
+  ctx.arc(hx, hy, sigmaPixels, 0, Math.PI*2);
+  ctx.strokeStyle = '#c084fc44';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4,4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Label sigma radius
+  ctx.fillStyle = '#c084fc88';
+  ctx.font = '10px monospace';
+  ctx.fillText(`σ = ${sigma.toFixed(2)}`, hx + sigmaPixels + 4, hy - 4);
+}
+
+function renderRBFWeights() {
+  const cv = document.getElementById('cvRBFWeights');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const sigma = parseInt(document.getElementById('sigmaSlider').value) / 100;
+  const layer = parseInt(document.getElementById('rbfLayerSlider').value);
+
+  ctx.clearRect(0,0,W,H);
+  const pad = 50;
+  const iw = W - 2*pad;
+  const ih = H - 2*pad;
+  const res = 4;
+
+  // Draw Gaussian weight heatmap from hover point
+  for (let px = 0; px < iw; px += res) {
+    for (let py = 0; py < ih; py += res) {
+      const nx = px / iw;
+      const ny = py / ih;
+      // Weight from hover point to this location
+      const w = rbfWeight(rbfHoverX, rbfHoverY, nx, ny, sigma);
+      const brightness = Math.min(1, w * 1.2);
+      const r = Math.round(10 + brightness * 150);
+      const g = Math.round(8 + brightness * 80);
+      const b = Math.round(30 + brightness * 200);
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(pad + px, pad + py, res, res);
+    }
+  }
+
+  // Draw lines from hover point to each token with weight thickness
+  let totalW = 0;
+  const weights = [];
+  for (let t = 0; t < NUM_TOKENS; t++) {
+    const w = rbfWeight(rbfHoverX, rbfHoverY, tokenPos[t].x, tokenPos[t].y, sigma);
+    weights.push(w);
+    totalW += w;
+  }
+
+  for (let t = 0; t < NUM_TOKENS; t++) {
+    const normW = weights[t] / (totalW + 1e-15);
+    const hx = tx(rbfHoverX, W, pad);
+    const hy = ty(rbfHoverY, H, pad);
+    const tokX = tx(tokenPos[t].x, W, pad);
+    const tokY = ty(tokenPos[t].y, H, pad);
+
+    // Connection line — thickness proportional to weight
+    ctx.beginPath();
+    ctx.moveTo(hx, hy);
+    ctx.lineTo(tokX, tokY);
+    ctx.strokeStyle = TOKEN_COLORS[t] + (normW > 0.05 ? 'cc' : '33');
+    ctx.lineWidth = 1 + normW * 12;
+    ctx.stroke();
+
+    // Token circle — size proportional to weight
+    const radius = 4 + normW * 24;
+    ctx.beginPath();
+    ctx.arc(tokX, tokY, radius, 0, Math.PI*2);
+    ctx.fillStyle = TOKEN_COLORS[t] + '88';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Weight percentage label
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 10px monospace';
+    const pct = (normW * 100).toFixed(1);
+    ctx.fillText(`${TOKEN_LABELS[t]}: ${pct}%`, tokX + radius + 4, tokY + 4);
+  }
+
+  // Hover point
+  const hx = tx(rbfHoverX, W, pad);
+  const hy = ty(rbfHoverY, H, pad);
+  ctx.beginPath();
+  ctx.arc(hx, hy, 7, 0, Math.PI*2);
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(hx, hy, 2.5, 0, Math.PI*2);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+
+  // Interpolated delta at hover point
+  const d = interpolateDelta(rbfHoverX, rbfHoverY, layer, sigma);
+  const arrowScale = 8 * (W - 2*pad);
+  drawArrow(ctx, hx, hy, hx + d.dx*arrowScale, hy + d.dy*arrowScale, '#fbbf24', 3, 10);
+
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('Interpolated δ', hx + d.dx*arrowScale + 8, hy + d.dy*arrowScale);
+
+  // Info text
+  ctx.fillStyle = '#666';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Line thickness & circle size = normalized weight', W/2, H - 12);
+  ctx.textAlign = 'left';
+}
+
+// Mouse tracking for RBF
+document.getElementById('cvRBFField').addEventListener('mousemove', function(e) {
+  const rect = this.getBoundingClientRect();
+  const pad = 50;
+  const mx = (e.clientX - rect.left) * (this.width / rect.width);
+  const my = (e.clientY - rect.top) * (this.height / rect.height);
+  rbfHoverX = Math.max(0, Math.min(1, (mx - pad) / (this.width - 2*pad)));
+  rbfHoverY = Math.max(0, Math.min(1, (my - pad) / (this.height - 2*pad)));
+  renderRBFField();
+  renderRBFWeights();
+});
+
+// =====================================================
+// SECTION 5: DEFORMATION (MULTI-LAYER)
+// =====================================================
+let deformAnimating = false;
+let deformAnimFrame = null;
+
+function renderDeform() {
+  const cv = document.getElementById('cvDeform');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const t = parseInt(document.getElementById('deformTSlider').value) / 100;
+  const amp = parseInt(document.getElementById('deformAmpSlider').value) / 10;
+  const numLayers = parseInt(document.getElementById('deformLayerSlider').value) + 1;
+  const sigma = parseInt(document.getElementById('sigmaSlider').value) / 100;
+
+  document.getElementById('deformTVal').textContent = t.toFixed(2);
+  document.getElementById('deformAmpVal').textContent = amp.toFixed(1);
+  document.getElementById('deformLayerVal').textContent = numLayers - 1;
+
+  ctx.clearRect(0,0,W,H);
+  const pad = 60;
+
+  // Draw original grid faintly
+  ctx.strokeStyle = '#151528';
+  ctx.lineWidth = 0.4;
+  for (let i = 0; i <= GRID_N; i++) {
+    const f = i/GRID_N;
+    ctx.beginPath(); ctx.moveTo(tx(f,W,pad),pad); ctx.lineTo(tx(f,W,pad),H-pad); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad,ty(f,H,pad)); ctx.lineTo(W-pad,ty(f,H,pad)); ctx.stroke();
+  }
+
+  // Deform grid through multiple layers
+  const grid = deformGridMultiLayer(numLayers, t, amp, sigma);
+
+  // Draw deformed grid
+  drawDeformedGrid(ctx, grid, W, H, pad, 'rgba(140,120,230,0.4)', 1);
+
+  // Draw token trajectories through layers
+  for (let tok = 0; tok < NUM_TOKENS; tok++) {
+    let curX = tokenPos[tok].x;
+    let curY = tokenPos[tok].y;
+
+    // Ghost at start
+    ctx.beginPath();
+    ctx.arc(tx(curX,W,pad), ty(curY,H,pad), 3, 0, Math.PI*2);
+    ctx.fillStyle = TOKEN_COLORS[tok] + '44';
+    ctx.fill();
+
+    for (let l = 0; l < numLayers; l++) {
+      const dx = tokenDeltas[l][tok].dx * amp * t;
+      const dy = tokenDeltas[l][tok].dy * amp * t;
+      const nextX = curX + dx;
+      const nextY = curY + dy;
+
+      // Dashed trail
+      ctx.beginPath();
+      ctx.setLineDash([3,3]);
+      ctx.moveTo(tx(curX,W,pad), ty(curY,H,pad));
+      ctx.lineTo(tx(nextX,W,pad), ty(nextY,H,pad));
+      ctx.strokeStyle = LAYER_COLORS[l] + '88';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Small dot at intermediate position
+      if (l < numLayers - 1) {
+        ctx.beginPath();
+        ctx.arc(tx(nextX,W,pad), ty(nextY,H,pad), 3, 0, Math.PI*2);
+        ctx.fillStyle = LAYER_COLORS[l] + '88';
+        ctx.fill();
+      }
+
+      curX = nextX;
+      curY = nextY;
+    }
+
+    // Final position
+    drawToken(ctx, tx(curX,W,pad), ty(curY,H,pad), 7, TOKEN_COLORS[tok], TOKEN_LABELS[tok]);
+  }
+
+  // Info
+  ctx.fillStyle = '#555';
+  ctx.font = '11px monospace';
+  ctx.fillText(`${numLayers} layer(s) applied sequentially | t=${t.toFixed(2)} | amp=${amp.toFixed(1)}`, pad, H - 15);
+}
+
+function animateDeform() {
+  if (deformAnimating) {
+    deformAnimating = false;
+    document.getElementById('btnAnimateDeform').textContent = '▶ Animate t';
+    if (deformAnimFrame) cancelAnimationFrame(deformAnimFrame);
+    return;
+  }
+  deformAnimating = true;
+  document.getElementById('btnAnimateDeform').textContent = '⏸ Stop';
+  let val = 0;
+  let dir = 1;
+  function step() {
+    if (!deformAnimating) return;
+    val += dir * 0.8;
+    if (val >= 100) { val = 100; dir = -1; }
+    if (val <= 0) { val = 0; dir = 1; }
+    document.getElementById('deformTSlider').value = Math.round(val);
+    renderDeform();
+    deformAnimFrame = requestAnimationFrame(step);
+  }
+  step();
+}
+
+// =====================================================
+// SECTION 6: STRAIN
+// =====================================================
+function renderStrainVis() {
+  const cv = document.getElementById('cvStrain');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const t = parseInt(document.getElementById('strainTSlider').value) / 100;
+  const numLayers = parseInt(document.getElementById('strainLayerSlider').value) + 1;
+  const sigma = parseInt(document.getElementById('sigmaSlider').value) / 100;
+  const amp = parseInt(document.getElementById('deformAmpSlider').value) / 10;
+
+  document.getElementById('strainTVal').textContent = t.toFixed(2);
+  document.getElementById('strainLayerVal').textContent = numLayers - 1;
+
+  ctx.clearRect(0,0,W,H);
+  const pad = 60;
+
+  const grid = deformGridMultiLayer(numLayers, t, amp, sigma);
+
+  // Draw strain quads
+  drawStrainQuads(ctx, grid, W, H, pad, 0.7);
+
+  // Draw deformed grid lines on top
+  drawDeformedGrid(ctx, grid, W, H, pad, 'rgba(255,255,255,0.12)', 0.6);
+
+  // Draw tokens
+  for (let tok = 0; tok < NUM_TOKENS; tok++) {
+    let curX = tokenPos[tok].x;
+    let curY = tokenPos[tok].y;
+    for (let l = 0; l < numLayers; l++) {
+      curX += tokenDeltas[l][tok].dx * amp * t;
+      curY += tokenDeltas[l][tok].dy * amp * t;
+    }
+    drawToken(ctx, tx(curX,W,pad), ty(curY,H,pad), 6, TOKEN_COLORS[tok], TOKEN_LABELS[tok]);
+  }
+
+  // Strain scale bar
+  const barX = W - 40;
+  const barTop = pad + 20;
+  const barH = H - 2*pad - 40;
+  const barW = 16;
+  for (let py = 0; py < barH; py++) {
+    const s = 0.3 + (py / barH) * 2.0; // strain from 0.3 to 2.3
+    ctx.fillStyle = strainColor(s);
+    ctx.fillRect(barX, barTop + barH - py, barW, 1);
+  }
+  ctx.strokeStyle = '#444';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(barX, barTop, barW, barH);
+  ctx.fillStyle = '#888';
+  ctx.font = '9px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('2.0+', barX + barW/2, barTop - 4);
+  ctx.fillText('1.0', barX + barW/2, barTop + barH/2 + 3);
+  ctx.fillText('0.3', barX + barW/2, barTop + barH + 12);
+  ctx.textAlign = 'left';
+
+  // Info
+  ctx.fillStyle = '#555';
+  ctx.font = '11px monospace';
+  ctx.fillText(`Strain map | ${numLayers} layer(s) | t=${t.toFixed(2)}`, pad, H - 15);
+}
+
+// =====================================================
+// SECTION 7: FULL COMBINED VIEW
+// =====================================================
+let fullAnimating = false;
+let fullAnimFrame = null;
+
+function renderFull() {
+  const cv = document.getElementById('cvFull');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const numLayers = parseInt(document.getElementById('fullLayerSlider').value) + 1;
+  const t = parseInt(document.getElementById('fullTSlider').value) / 100;
+  const amp = parseInt(document.getElementById('fullAmpSlider').value) / 10;
+  const sigma = parseInt(document.getElementById('sigmaSlider').value) / 100;
+
+  document.getElementById('fullLayerVal').textContent = numLayers - 1;
+  document.getElementById('fullTVal').textContent = t.toFixed(2);
+  document.getElementById('fullAmpVal').textContent = amp.toFixed(1);
+
+  ctx.clearRect(0,0,W,H);
+  const pad = 70;
+
+  // Title
+  ctx.fillStyle = '#c084fc';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText(`Layers 0–${numLayers-1}  |  t = ${t.toFixed(2)}  |  amp = ${amp.toFixed(1)}`, pad, 28);
+
+  // Layer chips
+  for (let l = 0; l < numLayers; l++) {
+    const chipX = pad + 320 + l * 55;
+    ctx.fillStyle = LAYER_COLORS[l] + '44';
+    ctx.beginPath();
+    ctx.roundRect(chipX, 12, 48, 22, 6);
+    ctx.fill();
+    ctx.fillStyle = LAYER_COLORS[l];
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText(`L${l}`, chipX + 14, 28);
+  }
+
+  // Deform grid
+  const grid = deformGridMultiLayer(numLayers, t, amp, sigma);
+
+  // Strain quads
+  drawStrainQuads(ctx, grid, W, H, pad, 0.5);
+
+  // Deformed grid lines
+  drawDeformedGrid(ctx, grid, W, H, pad, 'rgba(255,255,255,0.15)', 0.7);
+
+  // Sparse velocity field for current top layer
+  const topLayer = numLayers - 1;
+  const arrowStep = 4;
+  for (let i = 0; i <= GRID_N; i += arrowStep) {
+    for (let j = 0; j <= GRID_N; j += arrowStep) {
+      const d = interpolateDelta(grid[i][j].x, grid[i][j].y, topLayer, sigma);
+      const cx = tx(grid[i][j].x, W, pad);
+      const cy = ty(grid[i][j].y, H, pad);
+      const dx = d.dx * 4 * (W - 2*pad);
+      const dy = d.dy * 4 * (H - 2*pad);
+      const mag = Math.sqrt(dx*dx + dy*dy);
+      if (mag > 2) {
+        drawArrow(ctx, cx, cy, cx+dx, cy+dy, 'rgba(255,255,255,0.2)', 1, 4);
+      }
+    }
+  }
+
+  // Token trajectories — stacked through all layers
+  for (let tok = 0; tok < NUM_TOKENS; tok++) {
+    let curX = tokenPos[tok].x;
+    let curY = tokenPos[tok].y;
+
+    // Ghost at origin
+    const ox = tx(curX, W, pad);
+    const oy = ty(curY, H, pad);
+    ctx.beginPath();
+    ctx.arc(ox, oy, 3, 0, Math.PI*2);
+    ctx.fillStyle = TOKEN_COLORS[tok] + '33';
+    ctx.fill();
+
+    // Draw stacked arrows through layers
+    for (let l = 0; l < numLayers; l++) {
+      const dx = tokenDeltas[l][tok].dx * amp * t;
+      const dy = tokenDeltas[l][tok].dy * amp * t;
+      const nextX = curX + dx;
+      const nextY = curY + dy;
+
+      const x1 = tx(curX, W, pad);
+      const y1 = ty(curY, H, pad);
+      const x2 = tx(nextX, W, pad);
+      const y2 = ty(nextY, H, pad);
+
+      const dist = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+      if (dist > 2) {
+        drawArrow(ctx, x1, y1, x2, y2, LAYER_COLORS[l] + 'cc', 2, 7);
+      }
+
+      // Junction dot
+      ctx.beginPath();
+      ctx.arc(x1, y1, 2.5, 0, Math.PI*2);
+      ctx.fillStyle = LAYER_COLORS[l] + '88';
+      ctx.fill();
+
+      curX = nextX;
+      curY = nextY;
+    }
+
+    // Final token
+    drawToken(ctx, tx(curX,W,pad), ty(curY,H,pad), 8, TOKEN_COLORS[tok], TOKEN_LABELS[tok]);
+  }
+
+  // Legend
+  ctx.fillStyle = '#555';
+  ctx.font = '10px sans-serif';
+  ctx.fillText('Arrows: layer deltas (stacked) | Background: strain (red=expand, blue=contract)', pad, H - 15);
+}
+
+function animateFull() {
+  if (fullAnimating) {
+    fullAnimating = false;
+    document.getElementById('btnFullAnimate').textContent = '▶ Animate All Layers';
+    if (fullAnimFrame) cancelAnimationFrame(fullAnimFrame);
+    return;
+  }
+  fullAnimating = true;
+  document.getElementById('btnFullAnimate').textContent = '⏸ Stop';
+
+  let currentLayer = 0;
+  let currentT = 0;
+  const speed = 0.6;
+
+  function step() {
+    if (!fullAnimating) return;
+    currentT += speed;
+    if (currentT > 100) {
+      currentT = 0;
+      currentLayer++;
+      if (currentLayer >= NUM_LAYERS) currentLayer = 0;
+    }
+    document.getElementById('fullLayerSlider').value = currentLayer;
+    document.getElementById('fullTSlider').value = Math.round(currentT);
+    renderFull();
+    fullAnimFrame = requestAnimationFrame(step);
+  }
+  step();
+}
+
+// =====================================================
+// EVENT LISTENERS
+// =====================================================
+document.getElementById('stackLayerSlider').addEventListener('input', renderStacked);
+document.getElementById('btnAnimateStack').addEventListener('click', animateStack);
+
+document.getElementById('sigmaSlider').addEventListener('input', () => {
+  renderRBFField(); renderRBFWeights(); renderDeform(); renderStrainVis(); renderFull();
+});
+document.getElementById('rbfLayerSlider').addEventListener('input', () => {
+  renderRBFField(); renderRBFWeights();
+});
+
+document.getElementById('deformTSlider').addEventListener('input', renderDeform);
+document.getElementById('deformAmpSlider').addEventListener('input', () => {
+  renderDeform(); renderStrainVis(); renderFull();
+});
+document.getElementById('deformLayerSlider').addEventListener('input', renderDeform);
+document.getElementById('btnAnimateDeform').addEventListener('click', animateDeform);
+
+document.getElementById('strainTSlider').addEventListener('input', renderStrainVis);
+document.getElementById('strainLayerSlider').addEventListener('input', renderStrainVis);
+
+document.getElementById('fullLayerSlider').addEventListener('input', renderFull);
+document.getElementById('fullTSlider').addEventListener('input', renderFull);
+document.getElementById('fullAmpSlider').addEventListener('input', renderFull);
+document.getElementById('btnFullAnimate').addEventListener('click', animateFull);
+
+// =====================================================
+// INITIAL RENDER
+// =====================================================
+renderMath();
+renderBigPicture();
+renderResidual();
+renderStacked();
+renderPCA();
+renderRBFField();
+renderRBFWeights();
+renderDeform();
+renderStrainVis();
+renderFull();
+
+</script>
+</body>
+</html>
