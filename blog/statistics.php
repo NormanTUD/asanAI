@@ -166,7 +166,7 @@ This transforms *any* Normal Distribution into the **Standard Normal Distributio
     <div style="display: flex; align-items: flex-start; gap: 14px;">
         <span style="font-size: 1.6em; line-height: 1;">🤖</span>
         <div class="md">
-**Why This Matters for AI:** **Batch Normalization**, one of the most important techniques in deep learning, is essentially computing Z-scores for every layer's activations during training. At each layer, the network computes:
+**Why This Matters for AI: Batch Normalization**, one of the most important techniques in deep learning, is essentially computing Z-scores for every layer's activations during training. At each layer, the network computes:
 
 $$\hat{x}_i = \frac{x_i - \mu_{\text{batch}}}{\sigma_{\text{batch}}}$$
 
