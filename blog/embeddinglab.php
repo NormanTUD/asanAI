@@ -550,12 +550,14 @@ degrees of freedom, it adds more *resolution* for describing the same
 low-dimensional structure. It's like going from a 100×100 pixel image to a
 1000×1000 pixel image of the same scene, more numbers, but the same underlying
 reality.
+</div>
 
 $$
 \underbrace{d_{\text{intrinsic}}}_{\text{effective DoF}} \ll
 \underbrace{D_{\text{ambient}}}_{\text{175B params}} \implies
 \text{No overfitting even when } N \approx D
 $$
+<div class="md">
 
 This was first described by \citeauthorlastnameand{belkin2019}.
 </div>
