@@ -185,11 +185,13 @@ In modern NLP, words are not merely strings; they are high-dimensional vectors. 
 
 ## From Embeddings to Q, K, V
 Each input word is first converted into an embedding vector $\mathbf{x}_i$. To compute attention, we project these embeddings into three distinct subspaces using learned weight matrices $W^Q, W^K,$ and $W^V$:
+</div>
 
 $$
 \underbrace{\mathbf{q}_i}_{\text{Query}} = \mathbf{x}_i W^Q, \quad \underbrace{\mathbf{k}_i}_{\text{Key}} = \mathbf{x}_i W^K, \quad \underbrace{\mathbf{v}_i}_{\text{Value}} = \mathbf{x}_i W^V
 $$
 
+<div class="md">
 * **Query ($\mathbf{q}$):** Represents the current token's "search criteria."
 * **Key ($\mathbf{k}$):** Acts as a "descriptor" or index of what information the token contains.
 * **Value ($\mathbf{v}$):** The actual semantic information to be propagated forward.
