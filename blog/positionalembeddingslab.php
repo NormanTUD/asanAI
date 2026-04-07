@@ -94,9 +94,11 @@ $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 ## Positional Embeddings with Sine and Cosine
 
 The original Transformer paper (\citetitle{vaswani2017attention}) uses sine and cosine to create a unique positional fingerprint based on their position in the text:
+</div>
 
 $$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d}}\right), \qquad PE_{(\text{pos}, 2i+1)} = \cos\!\left(\frac{\text{pos}}{10000^{2i/d}}\right)$$
 
+<div class="md">
 This gives each position a distinct pattern the model can learn to interpret.
 
 ## Concrete Example: Nudging the "King"
