@@ -909,7 +909,7 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
     <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
       <legend style="font-size:0.78rem; font-weight:700; color:#8b5cf6;">Hyperparameters</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
-	<div class="bp-group"><label>$$\\eta$$</label><input style="width:100px" type="number" data-k="lr" step="0.05" min="0.01" max="5"></div>
+	<div class="bp-group"><label>$$\\eta$$</label><input style="width:100px" id="backprop_eta" type="number" data-k="lr" step="0.05" min="0.01" max="5"></div>
       </div>
     </fieldset>
 
@@ -917,7 +917,7 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
       <legend style="font-size:0.78rem; font-weight:700; color:#3b82f6;">Input → Hidden</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 	${["w1","w2","w3","w4","b1","b2"].map(k =>
-		`<div class="bp-group"><label>$$${k.replace(/([wb])(\d)/,'$1_$2')}$$</label><input style="width:100px" type="number" data-k="${k}" step="0.01"></div>`
+		`<div class="bp-group"><label>$$${k.replace(/([wb])(\d)/,'$1_$2')}$$</label><input style="width:100px" id="backprop_${k}" type="number" data-k="${k}" step="0.01"></div>`
 	).join("")}
       </div>
     </fieldset>
@@ -926,7 +926,7 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
       <legend style="font-size:0.78rem; font-weight:700; color:#10b981;">Hidden → Output</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
 	${["w5","w6","w7","w8","b3","b4"].map(k =>
-		`<div class="bp-group"><label>$$${k.replace(/([wb])(\d)/,'$1_$2')}$$</label><input style="width:100px" type="number" data-k="${k}" step="0.01"></div>`
+		`<div class="bp-group"><label>$$${k.replace(/([wb])(\d)/,'$1_$2')}$$</label><input style="width:100px" id="backprop_${k}" type="number" data-k="${k}" step="0.01"></div>`
 	).join("")}
       </div>
     </fieldset>
