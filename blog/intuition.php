@@ -4,14 +4,20 @@
 We can think of LLMs as machines that predict the next most likely word, given a context. Only one word at a time. That word is appended to the input and fed back in, repeating until a special `|endoftext|` token signals the end. In this example, the user enters the text "Once upon a" and lets the LLM continue.
 
 **Step 1:** The text the user has entered is inputted into the LLM:
+</div>
 
 $$\text{Next Word} = \text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}}) \rightarrow \text{time}$$
 
+<div class="md">
 **Step 2:** The next word, predicted by the previous step, is attached, and the whole new text is inputted again:
+</div>
 
 $$\text{New Input} = \underbrace{\text{Once upon a}}_{\text{User Input}} + \underbrace{\text{time}}_{\text{Word 1}} = \text{Once upon a time}$$
 
+<div class="md">
 **Step 3:** This is repeated until we get a special `|endoftext|` signal, signifying the end of the text.
+</div>
+
 $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time}}_{\text{Word 1}}) \rightarrow \underbrace{\text{there}}_{\text{Word 2}}$$
 
 $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time there}}_{\text{Words 1–2}}) \rightarrow \underbrace{\text{was}}_{\text{Word 3}}$$
@@ -22,6 +28,7 @@ $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\
 
 $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time there was a dragon.}}_{\text{Words 1–5}}) \rightarrow \underbrace{\texttt{|endoftext|}}_{\text{Stop}}$$
 
+<div class="md">
 **Final output: "Once upon a time there was a dragon."**
 </div>
 
