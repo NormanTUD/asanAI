@@ -31,7 +31,7 @@ To visualize this, consider a simple **1D Embedding Space** representing tempera
 
 In this one-dimensional world, "Cold" is mathematically proximal to "Frosty" but distant from "Boiling".
 
-This allows you to do calculations like $\underbrace{\text{Boiling}}_{100} - \underbrace{\text{Hot}}_{60} \approx \underbrace{\text{Warm}}_{40}$. Warm, by definition here, is 35, so it is only approximate, but it's the closest match and makes some sense.
+This allows you to do calculations like $\underset{100}{\underbrace{\text{Boiling}}} - \underset{60}{\underbrace{\text{Hot}}} \approx \underset{40}{\underbrace{\text{Warm}}}$. Warm, by definition here, is 35, so it is only approximate, but it's the closest match and makes some sense.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">

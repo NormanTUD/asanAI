@@ -45,6 +45,7 @@ html {
 
 	-webkit-hyphens: auto; /* Safari */
 	lang: "en"; /* wichtig: Sprache muss gesetzt sein */
+	text-rendering: optimizeLegibility;
 }
 
 #contents, #loader {
