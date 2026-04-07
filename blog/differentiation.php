@@ -208,15 +208,19 @@ You can explore the tangent line interactively below. Move the point along the c
 ### The Chain Rule Visualized
 
 The chain rule is so important for AI that it deserves its own interactive demonstration. When we compose two functions $f(g(x))$, the chain rule tells us:
+</div>
 
 $$\frac{d}{dx}[f(g(x))] = \underbrace{f'(g(x))}_{\text{outer derivative}} \cdot \underbrace{g'(x)}_{\text{inner derivative}}$$
 
+<div class="md">
 Think of it as peeling an onion: differentiate the outer layer, leaving the inner part untouched, then multiply by the derivative of the inner part.
 
 In a neural network with layers $L_1, L_2, \dots, L_n$, the chain rule extends naturally:
+</div>
 
 $$\frac{\partial \text{Loss}}{\partial w_1} = \frac{\partial \text{Loss}}{\partial L_n} \cdot \frac{\partial L_n}{\partial L_{n-1}} \cdots \frac{\partial L_2}{\partial L_1} \cdot \frac{\partial L_1}{\partial w_1}$$
 
+<div class="md">
 This is exactly what **backpropagation** computes, the chain rule applied layer by layer from the output back to the input.
 </div>
 
