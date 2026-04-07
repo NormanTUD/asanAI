@@ -68,9 +68,11 @@ While ReLU and Sigmoid deal with individual neurons, **SoftMax** (introduced in 
 
 ### The Math
 For an input vector $z$ (called **logits**), the SoftMax value for the $i$-th element is:
+</div>
 
 $$ \sigma(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}} $$
 
+<div class="md">
 1.  **Exponentials ($e^z$):** We raise $e$ to the power of each input. This ensures every output is positive.
 2.  **Normalization:** We divide each result by the sum of all results. This ensures the final values **always sum to 1.0 (100%)**.
 
