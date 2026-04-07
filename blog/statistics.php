@@ -1011,9 +1011,9 @@ In LLMs, this is why a prompt works. By typing "Import torch," you are statistic
 In the real world, language is a **Non-Stationary Process**. If you only read the first page of \citetitle{nietzsche1883zarathustra}, your statistical "Prior" is heavily biased by the opening scene. 
 
 The **Law of Large Numbers** ensures that as our sample size $n$ grows, the observed frequency $\bar{X}_n$ of words like "the" or "God" converges to their true mathematical mean $\mu$ within the entire corpus.
+</div>
 
 $$ \bar{X}_n = \frac{1}{n} \sum_{i=1}^{n} X_i \xrightarrow{n \to \infty} \mu $$
-</div>
 
 <div class="statlab-interactive-zone">
 	<div class="statlab-controls">
