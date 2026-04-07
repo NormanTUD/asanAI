@@ -165,24 +165,89 @@ const _temmlOpts = {
 	annotate: true
 };
 
-const _temmlObserver = new IntersectionObserver((entries) => {
-	entries.forEach(entry => {
-		if (entry.isIntersecting) {
-			const el = entry.target;
-			if (el.isConnected &&
-				!el.hasAttribute('data-math-rendered') &&
-				el.textContent.includes('$')) {
-				temml.renderMathInElement(el, _temmlOpts);
-				el.setAttribute('data-math-rendered', 'true');
-			}
-			_temmlObserver.unobserve(el);
-		}
-	});
-}, {
-	threshold: 0,
-	rootMargin: rootMargin
-});
+function _fixMathInElement(el) {
+    let html = el.innerHTML;
+    if (!html.includes('$')) return false;
 
+    let changed = false;
+
+    // Block math: $$ ... $$ (mit kaputtem HTML drin)
+    html = html.replace(/\$\$([\s\S]*?)\$\$/g, (match, inner) => {
+        changed = true;
+        const clean = inner
+            .replace(/<\/?em>/gi, '_')
+            .replace(/<\/?strong>/gi, '__')
+            .replace(/<br\s*\/?>/gi, ' ')
+            .replace(/<\/?p>/gi, '')
+            .replace(/<\/?[^>]+>/g, '')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&nbsp;/g, ' ')
+            .trim();
+        try {
+            return temml.renderToString(clean, { displayMode: true });
+        } catch (e) {
+            console.error('Temml block error:', clean, e);
+            return match;
+        }
+    });
+
+    // Inline math: $ ... $ (mit kaputtem HTML drin)
+    // Lookbehind/lookahead um $$ nicht nochmal zu matchen
+    html = html.replace(/(?<!\$)\$(?!\$)([\s\S]*?)(?<!\$)\$(?!\$)/g, (match, inner) => {
+        // Skip wenn es bereits gerendertes MathML ist
+        if (inner.includes('<math') || inner.includes('</math>')) return match;
+        // Skip leere matches
+        if (!inner.trim()) return match;
+
+        changed = true;
+        const clean = inner
+            .replace(/<\/?em>/gi, '_')
+            .replace(/<\/?strong>/gi, '__')
+            .replace(/<\/?[^>]+>/g, '')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&nbsp;/g, ' ')
+            .trim();
+        try {
+            return temml.renderToString(clean, { displayMode: false });
+        } catch (e) {
+            console.error('Temml inline error:', clean, e);
+            return match;
+        }
+    });
+
+    if (changed) {
+        el.innerHTML = html;
+        el.setAttribute('data-math-rendered', 'true');
+    }
+    return changed;
+}
+
+const _temmlObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const el = entry.target;
+            if (el.isConnected &&
+                !el.hasAttribute('data-math-rendered') &&
+                el.textContent.includes('$')) {
+                // Versuche zuerst unseren Fix
+                const fixed = _fixMathInElement(el);
+                // Falls unser Fix nichts gefunden hat, Temml normal laufen lassen
+                if (!fixed) {
+                    temml.renderMathInElement(el, _temmlOpts);
+                    el.setAttribute('data-math-rendered', 'true');
+                }
+            }
+            _temmlObserver.unobserve(el);
+        }
+    });
+}, {
+    threshold: 0,
+    rootMargin: rootMargin
+});
 
 function render_temml() {
 
@@ -547,19 +612,25 @@ function render_temml() {
 	elements.forEach(el => {
 		if (!el.textContent.includes('$')) return;
 
-		const rect = el.getBoundingClientRect();
+		// Versuche zuerst unseren Fix (rendert direkt via temml.renderToString)
+		const fixed = _fixMathInElement(el);
 
-		if (rect.width === 0 && rect.height === 0) {
-			temml.renderMathInElement(el, _temmlOpts);
-			el.setAttribute('data-math-rendered', 'true');
-			return;
-		}
+		// Falls unser Fix nichts gefunden hat, Temml normal laufen lassen
+		if (!fixed) {
+			const rect = el.getBoundingClientRect();
 
-		if (rect.bottom > -300 && rect.top < window.innerHeight + 300) {
-			temml.renderMathInElement(el, _temmlOpts);
-			el.setAttribute('data-math-rendered', 'true');
-		} else {
-			_temmlObserver.observe(el);
+			if (rect.width === 0 && rect.height === 0) {
+				temml.renderMathInElement(el, _temmlOpts);
+				el.setAttribute('data-math-rendered', 'true');
+				return;
+			}
+
+			if (rect.bottom > -300 && rect.top < window.innerHeight + 300) {
+				temml.renderMathInElement(el, _temmlOpts);
+				el.setAttribute('data-math-rendered', 'true');
+			} else {
+				_temmlObserver.observe(el);
+			}
 		}
 	});
 
