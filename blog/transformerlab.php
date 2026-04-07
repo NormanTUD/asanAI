@@ -159,9 +159,11 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 ## Positional Encoding
 
 To address the lack of sequence order in transformers, a "position signal" is added to each token's embedding, forming the initial hidden state $h_{0}$:
+</div>
 
 $$h_{0} = \underbrace{\text{Embedding}(\text{Token})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} + \underbrace{\text{PositionalEncoding}(\text{pos})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}}$$
 
+<div class="md">
 The positional encoding is calculated using sine and cosine functions, which provide smooth, periodic patterns for each position.
 
 For each dimension $i$ in a vector of size $d_\text{model}$, the encoding is defined as:
