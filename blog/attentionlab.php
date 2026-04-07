@@ -157,11 +157,11 @@ Because these positions are derived from logical relationships in data, the spac
 
 <div class="md">
 ### Summary: Why *That* Equation?
+</div>
 
 $$\boxed{\text{Attention} = \underbrace{\text{softmax}}_{\text{normalize to convex weights}}\!\left(\frac{\overbrace{QK^T}^{\text{directional alignment}}}{\underbrace{\sqrt{d_k}}_{\text{variance control}}}\right) \underbrace{V}_{\text{information to blend}}}$$
 
-Having played with all three dimensions, the design choices become clear:
-
+<div class="md">
 1. **Dot product** $QK^T$: It's the natural measure of directional alignment. In 1D it's just multiplication (same sign = agree). In 2D/3D it's $\|\mathbf{q}\|\|\mathbf{k}\|\cos\theta$, the projection of one vector onto another. No other simple operation captures "how much do these vectors point the same way?"
 
 2. **$\sqrt{d_k}$ scaling**: Without it, as $d_k$ grows, the expected magnitude of dot products grows as $\sqrt{d_k}$, pushing softmax toward hard one-hot outputs. The scaling keeps the variance of scores constant regardless of dimension, preserving smooth gradients.
