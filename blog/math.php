@@ -521,7 +521,6 @@ $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 </div>
 
 <div class="md">
-
 ### The Tensor (rank 3 and beyond)
 When we stack many matrices together, we get a high-level **Tensor**.
 A **Color Photo** is a 3D Tensor. It's a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
@@ -534,6 +533,7 @@ $$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
 When you type numbers into the grid, the computer organizes them into a structured math object. Here is how your **Color Image** looks as a formal Tensor $\mathcal{T}$.
 
 Notice how each "cell" of the grid is actually a vector (a vertical list) of three values:
+</div>
 
 $$
 \mathcal{T}_{3 \times 3 \text{ color image}} = \begin{pmatrix}
@@ -543,6 +543,7 @@ $$
 \end{pmatrix}
 $$
 
+<div class="md">
 The form a tensor has is called a *shape*. The shape defines how many rows and columns a tensor has, and how many nested tensors it has. For example, an image with $ 32 \cdot 32 $ pixels and 3 channels (one for red, green and blue each) has a shape of $ \left[ 32, 32, 3 \right] $.
 
 * **The Grid:** The large outer brackets $\begin{pmatrix} \dots \end{pmatrix}$ represent the **Shape** (Rows and Columns).
