@@ -146,6 +146,7 @@ function load_base_js () {
 	css("Temml-Local.min");
 	js("start");
 	css("prism-tomorrow.min.css");
+	css("Temml-Local");
 	css("style");
 	js("echarts.min");
 	js("echarts-gl.min.js");
