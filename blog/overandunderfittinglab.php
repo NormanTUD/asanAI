@@ -231,6 +231,7 @@ Without constraints, the weight vector $\mathbf{w}$ can explode to enormous valu
 | **L2, Ridge** (first described by \citeauthor{hoerl1970ridge} in \citeyear{hoerl1970ridge}) | $\lambda \displaystyle\sum_{j} w_j^{2}$ | Shrinks all weights toward zero → produces a **smoother** curve. |
 
 The regularised losses therefore become:
+</div>
 
 $$
 \mathcal{L}_{\text{L1}} = \text{MSE} + \lambda \sum_{j} |w_j|
@@ -238,6 +239,7 @@ $$
 \mathcal{L}_{\text{L2}} = \text{MSE} + \lambda \sum_{j} w_j^{2}
 $$
 
+<div class="md">
 **Try it now:** Use the **L2 Regularisation (λ)** slider above. Set the degree to 10, add noise, train, then gradually increase $\lambda$. Watch the red curve smooth out and the test MSE drop, even as training MSE rises slightly. That's the tradeoff: you sacrifice a little training accuracy for much better generalisation.
 
 <div class="optional md" data-headline="The History of Regularisation">
