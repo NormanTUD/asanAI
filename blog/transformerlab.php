@@ -265,10 +265,12 @@ The output width is simply the sum of the input widths.
 #### Multi-Head Attention: Lateral Parallelism
 
 After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. We then create the next stage, **$h_1$**, using a **Residual Connection** and **Normalization**:
+</div>
 
 $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
 $$h_{1} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0})) \cdot W^O$$
 
+<div class="md">
 This Layer Normalization ensures that the values don't 'explode' and get too large, since they are, after being normalized, always in around 0 with a variance of 1. Without it, the values might get bigger and bigger with many layers.
 
 * $B = \text{Batch Size}$ (The number of independent sequences processed in a single forward pass)
@@ -276,9 +278,11 @@ This Layer Normalization ensures that the values don't 'explode' and get too lar
 * $d_v = \text{Head Dimension}$ (The dimensionality of the projected keys, queries, and values; usually $d_\text{model} / h$)
 
 For a single head, we say:
+</div>
 
 $$\underbrace{\text{head}_{i+1}}_{(B, T, d_v)} = \text{Attention}(\underbrace{h_i W_i^Q}_{Q}, \underbrace{h_i W_i^K}_{K}, \underbrace{h_i W_i^V}_{V})$$
 
+<div class="md">
 Which transforms the input in the shape of $(B, T, h \cdot d_v)$ to $(B, T, d_{\text{model}})$.
 
 The association between *Query* and *Key* and concrete tokens is only true in the first layer, where it is taken from the concrete embeddings. In further layers, it works on the abstract feature space instead.
