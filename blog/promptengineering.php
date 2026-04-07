@@ -16,8 +16,10 @@
 
 ### Avoid Negations
 * **How it works:** LLMs rely on distributional semantics where "not" acts as a minor statistical nudge rather than a logical inverter. Geometrically, the vector for "not happy" remains closer to "happy" than to "sad" because they frequently co-occur in training data. This makes negations structurally "noisy" in embedding space.
+</div>
   $$\vec{v}_{\text{not happy}} = \vec{v}_{\text{not}} + \vec{v}_{\text{happy}} \approx \vec{v}_{\text{happy}} + \epsilon \neq \vec{v}_{\text{sad}}$$
   
+<div class="md">
 * **When to use:** Use when setting constraints to avoid priming the model with the very concept you want to exclude.
 * **Example:** Instead of "Do not be informal," use "Maintain a strictly professional tone."
 

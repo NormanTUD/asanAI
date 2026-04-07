@@ -455,9 +455,11 @@ To get the logit for each word, we calculate the dot product between the final h
 
 
 The hidden state vector $\mathbf{h}_{\text{last}}$ (represented by `h[pos]`) is dotted against each row $\mathbf{e}_w$ of the unembedding matrix $W_{\text{vocab}}$ to produce the logit for word $w$:
+</div>
 
 $$\text{logit}_w = \mathbf{h}_{\text{last}} \cdot \mathbf{e}_w = \sum_{k=0}^{d-1} h_k \cdot e_{w,k}$$
 
+<div class="md">
 This operation computes the entire logit vector $\mathbf{L}$ simultaneously. If $W_{\text{vocab}}$ is a matrix where each row is a word embedding, the operation is a matrix-vector multiplication:
 
 $$\mathbf{L} = W_{\text{vocab}} \mathbf{h}_{\text{last}}$$
