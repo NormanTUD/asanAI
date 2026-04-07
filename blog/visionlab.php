@@ -161,6 +161,7 @@ A Convolutional layer preserves the "grid" shape of an image to find spatial pat
 * **What it does:** It "unrolls" the grid. For example, if your feature map is a $3 \times 3$ grid, Flattening turns those 9 pixels into a single vertical list (Vector) of 9 numbers.
 * **Why we do it:** It allows the AI to take every feature it found across the entire image and combine them into a final mathematical score using a weighted sum.
 * **No learnable parameters:** Unlike Conv2D or Dense layers, Flatten has zero trainable weights, it is purely a structural reshaping operation.
+</div>
 
 $$
 \underbrace{\begin{pmatrix}
@@ -174,6 +175,7 @@ $$
 \end{pmatrix}}_{\text{1x9 Vector}}
 $$
 
+<div class="md">
 This layer was first described systematically by Yann LeCun in his \citeyear{lecun1998gradientbased} paper \citetitle{lecun1998gradientbased}.
 
 ### The Complete CNN Pipeline
