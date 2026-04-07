@@ -893,16 +893,16 @@ $$\\delta_{h_${i}} = \\underbrace{${fmt(dE_dh)}}_{\\substack{\\frac{\\partial E}
     <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
       <legend style="font-size:0.78rem; font-weight:700; color:#64748b;">Inputs</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
-	<div class="bp-group"><label>$$x_1$$</label><input style="width:100px" type="number" data-k="x1" step="0.01"></div>
-	<div class="bp-group"><label>$$x_2$$</label><input style="width:100px" type="number" data-k="x2" step="0.01"></div>
+	<div class="bp-group"><label>$$x_1$$</label><input style="width:100px" id="backprop_x1" type="number" data-k="x1" step="0.01"></div>
+	<div class="bp-group"><label>$$x_2$$</label><input style="width:100px" id="backprop_x2" type="number" data-k="x2" step="0.01"></div>
       </div>
     </fieldset>
 
     <fieldset style="border:1px solid #cbd5e1; border-radius:6px; padding:8px 12px; margin-bottom:6px;">
       <legend style="font-size:0.78rem; font-weight:700; color:#f59e0b;">Targets</legend>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
-	<div class="bp-group"><label>$$t_1$$</label><input style="width:100px" type="number" data-k="t1" step="0.01"></div>
-	<div class="bp-group"><label>$$t_2$$</label><input style="width:100px" type="number" data-k="t2" step="0.01"></div>
+	<div class="bp-group"><label>$$t_1$$</label><input style="width:100px" id="backprop_t1" type="number" data-k="t1" step="0.01"></div>
+	<div class="bp-group"><label>$$t_2$$</label><input style="width:100px" type="number" id="backprop_t2" data-k="t2" step="0.01"></div>
       </div>
     </fieldset>
 
