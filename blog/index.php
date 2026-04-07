@@ -46,11 +46,11 @@
 	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("The Semantic Tug-of-War: How Transformers 'Think'", "attentionlab");
 	incl("Positional Embeddings", "positionalembeddingslab");
-	incl("Topology and the Geometry of Thought", "topology");
 	incl("Temperature & Sampling", "samplinglab");
 	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformerlab");
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
 	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
+	incl("Topology and the Geometry of Thought", "topology");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
 	incl("Appendix", "appendix");
