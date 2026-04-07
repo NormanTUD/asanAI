@@ -49,9 +49,13 @@ This allows you to do calculations like $\underset{100}{\underbrace{\text{Boilin
 Human language is far too nuanced for a single axis. To capture independent features such as gender, power, or biological species, we project tokens into a **vector space** with multiple dimensions. In this space, each dimension represents a latent semantic feature discovered by the model during training.
 
 Because these positions are derived from logical relationships in data, the space itself becomes "computable". We can perform algebraic operations on these vectors to navigate human concepts:
+</div>
 
-$$ \vec{v}_{\text{King}} - \vec{v}_{\text{Man}} + \vec{v}_{\text{Woman}} \approx \vec{v}_{\text{Queen}} $$
+<div style="text-align: center; margin: 1.5em 0; font-size: 1.2em;">
+$$\vec{v}_{\text{King}} - \vec{v}_{\text{Man}} + \vec{v}_{\text{Woman}} \approx \vec{v}_{\text{Queen}}$$
+</div>
 
+<div class="md">
 This specific property, that word vectors capture semantic relationships through linear offsets, was popularized by \citeauthor{mikolov2013word2vec} during the development of Word2Vec.
 </div>
 
