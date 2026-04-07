@@ -659,9 +659,11 @@ The **attention connection** at layer $\ell$ is:
 $$\omega^{(\ell)}_{ij} = \text{softmax}\left(\frac{Q_i^{(\ell)} \cdot K_j^{(\ell)}}{\sqrt{d_k}}\right) \cdot V_j^{(\ell)}$$
 
 This tells us how much of the fiber at position $j$ is "transported" to position $i$. The full parallel transport from position $j$ to position $i$ through attention head $h$ is:
+</div>
 
 $$\Gamma^{(h)}_{j \to i}(\mathbf{v}) = \alpha^{(h)}_{ij} \cdot W_V^{(h)} \mathbf{v}$$
 
+<div class="md">
 where $\alpha^{(h)}_{ij}$ is the attention weight and $W_V^{(h)}$ is the value projection, a linear map that "rotates" the vector as it moves between fibers.
 
 ### Multi-Head Attention as Multiple Connections
