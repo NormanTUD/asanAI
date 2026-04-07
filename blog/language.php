@@ -63,9 +63,11 @@ The **Transformer architecture** (2017) introduced the **attention mechanism**, 
 ### Linguistic Algebra
 
 The result is a form of "linguistic algebra" first dreamed of by the early grammarians:
+</div>
 
 $$\underbrace{\text{Vector}(\text{King})}_{\text{A point in space}} \approx \underbrace{\text{Vector}(\text{Man}) + (\text{Vector}(\text{Queen}) - \text{Vector}(\text{Woman}))}_{\text{The Geometry of Thought}}$$
 
+<div class="md">
 This works because the model has learned, from billions of co-occurrence patterns, that the *direction* from "Woman" to "Queen" encodes the concept of "royalty", and that same direction, applied to "Man," lands near "King." Meaning has become mathematics.
 
 This is the ultimate evolution: we have moved from the biological vibrations of the **larynx**, through the deterministic **logic of Pāṇini**, and finally into a **statistical geometry** where the machine "understands" the world by measuring the distance between human ideas.
