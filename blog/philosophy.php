@@ -581,9 +581,11 @@ suppressed by a thin layer of fine-tuning that a sufficiently creative prompt ca
 The softmax bottleneck, formalized by \citeauthorlastnameand{breakingsoftmaxbottleneck}, reveals a hard mathematical
 ceiling on what a language model can represent. Because the log-probability matrix is
 constrained by the hidden dimension:
+</div>
 
 $$\underbrace{\text{rank}(\log P_\theta)}_{\text{expressiveness of the model}} \leq \underbrace{d}_{\substack{\text{hidden state} \\ \text{dimension}}} \leq \underbrace{|V|}_{\substack{\text{vocabulary} \\ \text{size}}}$$
 
+<div class="md">
 There are valid distributions over language the model *cannot express*, no matter how long or
 how well it is trained. This means Uexküll's perceptual "bubble" is not just a metaphor:
 it has a precise dimensionality, and there are regions of linguistic reality that lie
