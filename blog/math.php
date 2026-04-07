@@ -288,6 +288,14 @@ $$e = 1 + 1 + 0.5 + 0.1666 + 0.0416 \dots \approx 2.71828$$
 
 The equation asks: *"What if we compound every single microsecond? What if the interest is calculated continuously?"* As $n$ (the frequency of compounding) goes to infinity, the result doesn't explode to infinity. Instead, it hits a "natural ceiling." That ceiling is exactly **2.71828...** or $e$. It is the maximum possible result of 100% growth shared over infinite intervals.
 
+<div class="optional md" data-headline="History of the Taylor Series">
+The idea of summing infinite series to achieve finite results dates back to antiquity, notably Zeno's paradox, later addressed through Archimedes's method of exhaustion. In the 14th century, \citeauthor{madhava} gave the earliest known examples of specific Taylor series, for sine, cosine, and arctangent, though not the general method. His followers in the Kerala school developed further expansions over the following two centuries.
+
+In early 1671, \citeauthor{gregory1671} independently discovered something like the general Maclaurin series, but never published his method, believing he had merely rediscovered work by Isaac Newton. In 1691–1692, Newton wrote down an explicit general formulation in an unpublished draft of \citetitle{newtonquadratura}, but the relevant sections were omitted from the 1704 publication.
+
+It was not until 1715 that \citeauthor{taylor1715} published the first general method for constructing these series (pp. 21–23), after whom they are now named. The special case centered at zero was later named after \citeauthor{maclaurin}, who published it in the mid-18th century.
+</div>
+
 ## Exponentiation
 In its simplest form, exponentiation is repeated multiplication. If we ask, "What is 2 to the power of 3?" ($2^3$), we mean:
 $$\underbrace{2 \times 2 \times 2}_\text{3 times} = 8$$

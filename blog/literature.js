@@ -1,4 +1,22 @@
 window.bibData = {
+	"madhava": {
+		title: "യുക്തിഭാഷ (Compendium of Astronomical Rationale)",
+		author: "ज्येष्ठदेव (Jyeṣṭhadeva)",
+		year: "c. 1500-1570",
+		url: "https://web.archive.org/web/20060928203221/http://www.new.dli.ernet.in/insa/INSA_1/20005ac0_185.pdf"
+	},
+	"newtonquadratura": {
+		url: "https://www.digitale-sammlungen.de/de/view/bsb10053711?page=,1",
+		title: "Tractatus de quadratura curvarum",
+		author: "Isaac Newton",
+		year: 1704
+	},
+	"taylor1715": {
+		url: "https://archive.org/details/UFIE003454_TO0324_PNI-2529_000000",
+		year: 1715,
+		title: "Methodus incrementorum directa & inversa",
+		author: "Brook Taylor"
+	},
 	"whyspace3dims": {
 		url: "https://dwc.knaw.nl/DL/publications/PU00012213.pdf",
 		title: "In that way does it become manifest in the fundamental laws of physics that space has three dimensions",
