@@ -179,6 +179,7 @@ This layer was first described systematically by Yann LeCun in his \citeyear{lec
 ### The Complete CNN Pipeline
 
 Here is the full data flow from raw image to classification:
+</div>
 
 $$
 \underbrace{\text{Image}}_{\text{100×100×3}}
@@ -192,6 +193,7 @@ $$
 \underbrace{\text{Output}}_{\text{P(class)}}
 $$
 
+<div class="md">
 Each arrow represents a differentiable transformation. Because every step is differentiable, we can compute gradients end-to-end and use backpropagation to train the entire pipeline jointly.
 
 ### Implementation: TensorFlow vs. PyTorch
