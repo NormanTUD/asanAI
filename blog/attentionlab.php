@@ -238,20 +238,24 @@ In this demo, we use a **3D → 2D** projection for visual clarity, but in real 
 
 ## The Scaling Factor and Softmax
 As the dimensionality $d_k$ increases, the magnitude of the dot products grows, which can push the Softmax function into regions with extremely small gradients. To counteract this, we scale by $\sqrt{d_k}$:
+</div>
 
 $$
 \alpha_{i,j} = \text{Softmax}\left( \frac{\mathbf{q}_i \mathbf{k}_j^T}{\sqrt{d_k}} \right) = \frac{\exp(\frac{\mathbf{q}_i \mathbf{k}_j^T}{\sqrt{d_k}})}{\sum_{n=1}^{L} \exp(\frac{\mathbf{q}_i \mathbf{k}_n^T}{\sqrt{d_k}})}
 $$
 
+<div class="md">
 This produces a probability distribution where $\sum_j \alpha_{i,j} = 1$, representing the "attention weights" word $i$ assigns to every word in the sequence.
 
 ## The Final Contextual Output
 The output for each position is the weighted sum of all Value vectors. This "context vector" $\mathbf{z}_i$ is a version of the original word that has been "informed" by its neighbors:
+</div>
 
 $$
 \mathbf{z}_i = \sum_{j} \alpha_{i,j} \mathbf{v}_j
 $$
 
+<div class="md">
 In matrix form, the entire operation for the sequence is computed efficiently as:
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
 </div>
