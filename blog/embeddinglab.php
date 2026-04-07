@@ -566,9 +566,11 @@ This was first described by \citeauthorlastnameand{belkin2019}.
 One of the most counter-intuitive failures of embedding spaces is that **negation doesn't work geometrically** the way you'd expect. The vector for "not happy" is closer to "happy" than to "sad", because "not" and "happy" co-occur in the same sentences, and distributional semantics encodes co-occurrence, not logical opposition. This is a deep structural limitation: embedding spaces capture **associative similarity**, not **logical relationships**.
 
 In a distributional model, the meaning of "not" is itself a vector, learned from all the contexts where "not" appears. When you compose "not happy" (by adding the vectors), the "not" component provides only a small perturbation, a slight directional nudge, rather than a $180°$ reversal to the antonym. The result is a vector that still sits firmly in the neighborhood of "happy," surrounded by words like "cheerful," "pleased," and "joyful." The actual antonym, "sad," remains far away in a completely different region of the space.
+</div>
 
 $$\vec{v}_{\text{not happy}} = \vec{v}_{\text{not}} + \vec{v}_{\text{happy}} \approx \vec{v}_{\text{happy}} + \varepsilon \quad \neq \quad \vec{v}_{\text{sad}}$$
 
+<div class="md">
 This negation problem has been \cite[extensively studied]{kassner2020negated} and remains partially unsolved even in large contextual models like BERT and GPT. While Transformers with attention can handle negation better than static embeddings, because the surrounding context modulates the representation across layers, the underlying geometric limitation persists in the embedding layers themselves. The word "not" simply does not encode a logical inversion operator in vector space; it encodes "the kinds of sentences where 'not' appears," which overwhelmingly co-occur with the very concepts being negated.
 
 Below, select any word (or type "not X") and observe how "not X" drifts only slightly from X in embedding space, rather than jumping to its logical antonym. The faded circle marks where "not X" *should* land if geometry respected logic.
