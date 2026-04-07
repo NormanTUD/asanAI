@@ -200,9 +200,11 @@ The key insight is that a helix can **encode the state-transition graph** of a T
 4. **Moving**: The linear component shifts along the helix axis (moving the head right)
 
 This is not merely an analogy. \citeauthorlastnameand{perez2021attention} proved that Transformers are **Turing-complete**: given sufficient depth and precision, a Transformer can simulate any Turing machine. The helical structure in the embedding space is one geometric mechanism by which this simulation occurs. Each layer of the Transformer performs one "step" of the Turing machine:
+</div>
 
 $$ \underbrace{\text{Attention}}_{\text{Read + Route}} + \underbrace{\text{MLP}}_{\text{Write + Transition}} = \underbrace{\text{One TM Step}}_{\delta(q, a) \to (q', b, D)} $$
 
+<div class="md">
 The attention mechanism identifies which (state, symbol) pair is currently active by computing dot products along the helix, and the MLP layer applies the transition function by rotating the activation vector to the new state and updating the symbol.
 
 ### Topological Constraints on Computation
