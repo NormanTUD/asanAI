@@ -11,7 +11,7 @@ from PIL import Image
 class SimpleCNN(nn.Module):
     def __init__(self, num_classes=1):
         super(SimpleCNN, self).__init__()
-        # PyTorch doesn\'t have a built-in "Rescaling" layer in the model; 
+        # PyTorch doesn't have a built-in "Rescaling" layer in the model; 
         # normalization is usually handled in the data Transform pipeline.
         
         self.features = nn.Sequential(
@@ -22,7 +22,7 @@ class SimpleCNN(nn.Module):
             # LAYER 3: MaxPooling
             nn.MaxPool2d(kernel_size=2),
             
-            # Additional layer to refine features (Keras\' Flatten is quite aggressive)
+            # Additional layer to refine features (Keras' Flatten is quite aggressive)
             nn.Flatten()
         )
         
@@ -75,7 +75,7 @@ def train_mode(data_path, save_path):
     criterion = nn.BCELoss() # Binary Cross Entropy
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-    # The Training Loop (PyTorch\'s version of model.fit)
+    # The Training Loop (PyTorch's version of model.fit)
     model.train()
     for epoch in range(10):
         running_loss = 0.0
