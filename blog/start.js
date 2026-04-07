@@ -166,6 +166,10 @@ const _temmlOpts = {
 };
 
 function _fixMathInElement(el) {
+    // ===== ANTI-FLICKER: Bereits verarbeitete Elemente überspringen =====
+    if (el.hasAttribute('data-math-rendered')) return false;
+    if (el.querySelector('math')) return false; // Enthält bereits gerendertes MathML
+
     let html = el.innerHTML;
     if (!html.includes('$')) return false;
 
@@ -193,12 +197,9 @@ function _fixMathInElement(el) {
         }
     });
 
-    // Inline math: $ ... $ (mit kaputtem HTML drin)
-    // Lookbehind/lookahead um $$ nicht nochmal zu matchen
+    // Inline math: $ ... $
     html = html.replace(/(?<!\$)\$(?!\$)([\s\S]*?)(?<!\$)\$(?!\$)/g, (match, inner) => {
-        // Skip wenn es bereits gerendertes MathML ist
         if (inner.includes('<math') || inner.includes('</math>')) return match;
-        // Skip leere matches
         if (!inner.trim()) return match;
 
         changed = true;
