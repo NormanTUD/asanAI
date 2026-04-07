@@ -291,7 +291,7 @@ The equation asks: *"What if we compound every single microsecond? What if the i
 <div class="optional md" data-headline="History of the Taylor Series">
 The idea of summing infinite series to achieve finite results dates back to antiquity, notably Zeno's paradox, later addressed through Archimedes's method of exhaustion. In the 14th century, \citeauthor{madhava} gave the earliest known examples of specific Taylor series, for sine, cosine, and arctangent, though not the general method. His followers in the Kerala school developed further expansions over the following two centuries.
 
-In early 1671, \citeauthor{gregory1671} independently discovered something like the general Maclaurin series, but never published his method, believing he had merely rediscovered work by Isaac Newton. In 1691–1692, Newton wrote down an explicit general formulation in an unpublished draft of \citetitle{newtonquadratura}, but the relevant sections were omitted from the 1704 publication.
+In early 1671, James Gregory independently discovered something like the general Maclaurin series (see \citetitle{gregoryachievements}), but never published his method, believing he had merely rediscovered work by Isaac Newton. In 1691–1692, Newton wrote down an explicit general formulation in an unpublished draft of \citetitle{newtonquadratura}, but the relevant sections were omitted from the 1704 publication.
 
 It was not until 1715 that \citeauthor{taylor1715} published the first general method for constructing these series (pp. 21–23), after whom they are now named. The special case centered at zero was later named after \citeauthor{maclaurin}, who published it in the mid-18th century.
 </div>

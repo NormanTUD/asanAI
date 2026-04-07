@@ -1,4 +1,16 @@
 window.bibData = {
+	"maclaurin": {
+		url: "https://archive.org/details/atreatiseonflux01maclgoog",
+		title: "A Treatise on Fluxions",
+		year: 1801,
+		author: "Colin MacLaurin"
+	},
+	"gregoryachievements": {
+		url: "https://www.math.unipd.it/~alvise/TALKS/LINCEI/ALTRO/GREGORY/_Certain%20Mathematical%20Achievements%20of%20James%20Gregory.pdf",
+		title: "Certain Mathematical Achievements of James Gregory",
+		year: 1943,
+		author: "Max Dehn, E. D. Hellinger"
+	},
 	"madhava": {
 		title: "യുക്തിഭാഷ (Compendium of Astronomical Rationale)",
 		author: "ज्येष्ठदेव (Jyeṣṭhadeva)",
