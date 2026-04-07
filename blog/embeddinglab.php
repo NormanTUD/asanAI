@@ -1194,9 +1194,11 @@ One of the most surprising geometric discoveries in embedding spaces is that gra
 ### The Carousel of Tense
 
 Take a cloud of present-tense verb vectors: "run," "eat," "write," "speak," "build." They form a cluster in the embedding space. Now take their past-tense counterparts: "ran," "ate," "wrote," "spoke," "built." These form a second cluster. The relationship between the two clusters is not a simple offset vector (like the famous "king − man + woman = queen" analogy). Instead, the entire cloud has been **rotated** by a consistent angle around a fixed axis in the high-dimensional space.
+</div>
 
 $$ \mathbf{v}_{\text{past}} \approx \mathbf{R}_{\text{tense}} \cdot \mathbf{v}_{\text{present}} $$
 
+<div class="md">
 where $\mathbf{R}_{\text{tense}}$ is a **rotation matrix** — the same matrix applied to every verb. The model has discovered that tense is a **rotational symmetry** of language.
 
 ### Why Rotation, Not Translation?
