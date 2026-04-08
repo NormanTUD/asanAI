@@ -1,4 +1,10 @@
 window.bibData = {
+	"hayakawa": {
+		url: "https://archive.org/details/languageinthough0000siha_k3x0/page/n5/mode/2up",
+		title: "Language in Thought and Action",
+		author: "Samuel Ichiye Hayakawa",
+		year: 1939
+	},
 	"maclaurin": {
 		url: "https://archive.org/details/atreatiseonflux01maclgoog",
 		title: "A Treatise on Fluxions",
