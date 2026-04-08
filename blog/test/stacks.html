@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algebraic Stacks — An Interactive Journey</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a1a;
+    --card: #12122a;
+    --accent1: #7c5cfc;
+    --accent2: #fc5c9c;
+    --accent3: #5cccfc;
+    --accent4: #fcb95c;
+    --text: #e8e6f0;
+    --dim: #8888aa;
+    --glow1: rgba(124, 92, 252, 0.3);
+    --glow2: rgba(252, 92, 156, 0.3);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* Starfield background */
+  .starfield {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle var(--dur) ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0.1; transform: scale(0.8); }
+    100% { opacity: var(--max-op); transform: scale(1.2); }
+  }
+
+  /* Floating orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+    animation: orbFloat 20s ease-in-out infinite alternate;
+  }
+  .orb1 { width: 500px; height: 500px; background: var(--accent1); top: -100px; left: -100px; }
+  .orb2 { width: 400px; height: 400px; background: var(--accent2); bottom: -100px; right: -100px; animation-delay: -7s; }
+  .orb3 { width: 350px; height: 350px; background: var(--accent3); top: 50%; left: 50%; animation-delay: -14s; }
+
+  @keyframes orbFloat {
+    0% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(50px, -80px) scale(1.1); }
+    66% { transform: translate(-30px, 60px) scale(0.9); }
+    100% { transform: translate(20px, -20px) scale(1.05); }
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
+    z-index: 1000;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 20px var(--glow1);
+  }
+
+  /* Navigation dots */
+  .nav-dots {
+    position: fixed;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .nav-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--dim);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .nav-dot.active {
+    border-color: var(--accent1);
+    background: var(--accent1);
+    box-shadow: 0 0 15px var(--glow1);
+  }
+
+  .nav-dot:hover::after {
+    content: attr(data-label);
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    color: var(--text);
+  }
+
+  /* Main container */
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px 100px;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 100px 0 80px;
+    animation: fadeInUp 1s ease-out;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    background: linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .hero .subtitle {
+    font-size: 1.2rem;
+    color: var(--dim);
+    font-weight: 300;
+    max-width: 500px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+
+  .hero .start-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 36px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 30px var(--glow1);
+  }
+
+  .hero .start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px var(--glow2);
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Step cards */
+  .step {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 24px;
+    padding: 50px 40px;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(60px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .step.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: linear-gradient(90deg, var(--step-color, var(--accent1)), transparent);
+  }
+
+  .step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--step-color, var(--accent1));
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .step h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    margin-bottom: 16px;
+    color: white;
+  }
+
+  .step .desc {
+    color: var(--dim);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 30px;
+    max-width: 600px;
+  }
+
+  .step .desc strong {
+    color: var(--text);
+  }
+
+  /* Interactive areas */
+  .interactive-area {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 30px;
+    min-height: 200px;
+    position: relative;
+  }
+
+  /* Step 0: Sets visual */
+  .set-demo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .set-bubble {
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    border: 2px dashed var(--accent1);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px;
+    position: relative;
+    transition: all 0.5s;
+  }
+
+  .set-bubble.glow {
+    border-color: var(--accent2);
+    box-shadow: 0 0 30px var(--glow2);
+  }
+
+  .set-label {
+    position: absolute;
+    bottom: -30px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--accent1);
+  }
+
+  .dot {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    transition: all 0.4s;
+    cursor: pointer;
+  }
+
+  .dot:hover {
+    transform: scale(1.4);
+    box-shadow: 0 0 15px currentColor;
+  }
+
+  .arrow-between {
+    font-size: 2rem;
+    color: var(--accent2);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+
+  /* Step 1: Sheaf visual */
+  .sheaf-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .base-space {
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent3));
+    border-radius: 12px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    cursor: pointer;
+  }
+
+  .base-space .region {
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.3);
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .base-space .region:hover, .base-space .region.active {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.05);
+  }
+
+  .fiber-display {
+    width: 100%;
+    min-height: 120px;
+    border: 1px dashed rgba(255,255,255,0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+    transition: all 0.5s;
+  }
+
+  .fiber-item {
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Step 2: Functor visual */
+  .functor-demo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+
+  .category-box {
+    width: 200px;
+    padding: 20px;
+    border-radius: 16px;
+    border: 2px solid rgba(255,255,255,0.1);
+    text-align: center;
+  }
+
+  .category-box h4 {
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .cat-objects {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cat-obj {
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+  }
+
+  .cat-obj:hover, .cat-obj.active {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+  }
+
+  .functor-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .functor-arrow .arrow-line {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    position: relative;
+    border-radius: 2px;
+  }
+
+  .functor-arrow .arrow-line::after {
+    content: '▶';
+    position: absolute;
+    right: -12px;
+    top: -9px;
+    color: var(--accent2);
+    font-size: 0.8rem;
+  }
+
+  .functor-arrow .label {
+    font-size: 0.75rem;
+    color: var(--accent2);
+    font-weight: 600;
+  }
+
+  /* Step 3: Groupoid visual */
+  .groupoid-canvas {
+    width: 100%;
+    height: 280px;
+    position: relative;
+  }
+
+  .groupoid-canvas canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .groupoid-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .g-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .g-btn:hover {
+    background: var(--accent1);
+    border-color: var(--accent1);
+  }
+
+  /* Step 4: Descent visual */
+  .descent-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .patch-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .patch {
+    width: 100px; height: 70px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.4s;
+    position: relative;
+  }
+
+  .patch:hover {
+    transform: scale(1.1);
+    z-index: 2;
+  }
+
+  .patch.merged {
+    animation: mergeGlow 1s ease-out;
+  }
+
+  @keyframes mergeGlow {
+    0% { box-shadow: 0 0 0 rgba(255,255,255,0); }
+    50% { box-shadow: 0 0 40px rgba(255,255,255,0.4); }
+    100% { box-shadow: 0 0 0 rgba(255,255,255,0); }
+  }
+
+  .glue-line {
+    width: 2px;
+    height: 30px;
+    background: linear-gradient(to bottom, var(--accent4), transparent);
+    animation: glueAnim 1.5s ease-in-out infinite;
+  }
+
+  @keyframes glueAnim {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  .result-shape {
+    width: 280px;
+    height: 80px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .result-shape.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Step 5: Stack visual */
+  .stack-tower {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .stack-layer {
+    padding: 20px 40px;
+    border-radius: 16px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.5s;
+    cursor: pointer;
+    position: relative;
+    min-width: 250px;
+  }
+
+  .stack-layer:hover {
+    transform: scale(1.05);
+    z-index: 2;
+  }
+
+  .stack-connector {
+    width: 2px;
+    height: 20px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  .stack-layer .layer-detail {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.6);
+    margin-top: 5px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s;
+  }
+
+  .stack-layer.expanded .layer-detail {
+    max-height: 100px;
+  }
+
+  /* Step 6: Algebraic Stack final */
+  .final-visual {
+    text-align: center;
+    padding: 20px;
+  }
+
+  .alg-stack-diagram {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: 0 auto 30px;
+  }
+
+  .ring-orbit {
+    position: absolute;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: spinSlow var(--spin-dur, 20s) linear infinite;
+  }
+
+  .ring-orbit.r1 { width: 120px; height: 120px; --spin-dur: 15s; }
+  .ring-orbit.r2 { width: 200px; height: 200px; --spin-dur: 25s; animation-direction: reverse; }
+  .ring-orbit.r3 { width: 280px; height: 280px; --spin-dur: 35s; }
+
+  @keyframes spinSlow {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  .orbit-dot {
+    position: absolute;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    top: -7px;
+    left: calc(50% - 7px);
+    box-shadow: 0 0 10px currentColor;
+  }
+
+  .center-label {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .final-equation {
+    font-size: 1.3rem;
+    font-weight: 300;
+    color: var(--dim);
+    margin-top: 20px;
+  }
+
+  .final-equation span {
+    color: var(--accent1);
+    font-weight: 600;
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    color: var(--text);
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.2s;
+    max-width: 250px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+
+  .tooltip.show { opacity: 1; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .step { padding: 30px 20px; }
+    .set-demo { gap: 20px; }
+    .set-bubble { width: 130px; height: 130px; }
+    .functor-demo { gap: 15px; }
+    .category-box { width: 160px; }
+    .nav-dots { display: none; }
+    .container { padding: 20px 15px 80px; }
+  }
+
+  /* Scroll hint */
+  .scroll-hint {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    opacity: 0.5;
+    transition: opacity 0.5s;
+    pointer-events: none;
+  }
+
+  .scroll-hint.hidden { opacity: 0; }
+
+  .scroll-hint .chevron {
+    width: 20px; height: 20px;
+    border-right: 2px solid var(--text);
+    border-bottom: 2px solid var(--text);
+    transform: rotate(45deg);
+    animation: scrollBounce 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollBounce {
+    0%, 100% { transform: rotate(45deg) translateY(0); opacity: 0.3; }
+    50% { transform: rotate(45deg) translateY(5px); opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="starfield" id="starfield"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="nav-dots" id="navDots"></div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<div class="scroll-hint" id="scrollHint">
+  <div class="chevron"></div>
+</div>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero" id="hero">
+    <h1>Algebraic Stacks</h1>
+    <p class="subtitle">A visual, interactive journey from simple sets to one of modern geometry's most powerful ideas.</p>
+    <button class="start-btn" onclick="document.getElementById('step0').scrollIntoView({behavior:'smooth'})">
+      Begin the Journey ✦
+    </button>
+  </div>
+
+  <!-- STEP 0: Sets & Functions -->
+  <div class="step" id="step0" style="--step-color: var(--accent1)">
+    <div class="step-number">0</div>
+    <h2>Sets & Functions</h2>
+    <p class="desc">Everything starts here. A <strong>set</strong> is a collection of things. A <strong>function</strong> maps each thing in one set to something in another. <em>Click the dots!</em></p>
+    <div class="interactive-area">
+      <div class="set-demo" id="setDemo">
+        <div class="set-bubble" id="setA">
+          <div class="set-label">Set A</div>
+        </div>
+        <div class="arrow-between">⟶</div>
+        <div class="set-bubble" id="setB">
+          <div class="set-label">Set B</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1: Sheaves (Local → Global) -->
+  <div class="step" id="step1" style="--step-color: var(--accent3)">
+    <div class="step-number">1</div>
+    <h2>Sheaves: Local Data, Globally</h2>
+    <p class="desc">A <strong>sheaf</strong> assigns data to each region of a space — and the data is <strong>compatible</strong> on overlaps. Click a region to see its data.</p>
+    <div class="interactive-area">
+      <div class="sheaf-container">
+        <div style="font-size:0.8rem; color:var(--dim); margin-bottom:5px;">↓ Click a region on the base space ↓</div>
+        <div class="base-space" id="baseSpace">
+          <div class="region" data-region="U" onclick="showFiber('U')">U</div>
+          <div class="region" data-region="V" onclick="showFiber('V')">V</div>
+          <div class="region" data-region="U∩V" onclick="showFiber('UV')">U ∩ V</div>
+        </div>
+        <div class="fiber-display" id="fiberDisplay">
+          <span style="color:var(--dim); font-size:0.9rem;">Click a region above…</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Functors -->
+  <div class="step" id="step2" style="--step-color: var(--accent2)">
+    <div class="step-number">2</div>
+    <h2>Functors: Maps Between Worlds</h2>
+    <p class="desc">A <strong>functor</strong> is a map between categories — it sends objects to objects and arrows to arrows, preserving structure. <em>Click an object on the left.</em></p>
+    <div class="interactive-area">
+      <div class="functor-demo" id="functorDemo">
+        <div class="category-box" style="border-color: rgba(124,92,252,0.3);">
+          <h4>Category C</h4>
+          <div class="cat-objects">
+            <div class="cat-obj" style="background:rgba(124,92,252,0.2);" onclick="mapFunctor('circle','sphere')">● Circle</div>
+            <div class="cat-obj" style="background:rgba(124,92,252,0.2);" onclick="mapFunctor('square','cube')">■ Square</div>
+            <div class="cat-obj" style="background:rgba(124,92,252,0.2);" onclick="mapFunctor('triangle','tetra')">▲ Triangle</div>
+          </div>
+        </div>
+        <div class="functor-arrow">
+          <div class="label">F</div>
+          <div class="arrow-line"></div>
+        </div>
+        <div class="category-box" style="border-color: rgba(252,92,156,0.3);">
+          <h4>Category D</h4>
+          <div class="cat-objects">
+            <div class="cat-obj" id="f-sphere" style="background:rgba(252,92,156,0.2);">◉ Sphere</div>
+            <div class="cat-obj" id="f-cube" style="background:rgba(252,92,156,0.2);">▣ Cube</div>
+            <div class="cat-obj" id="f-tetra" style="background:rgba(252,92,156,0.2);">◬ Tetrahedron</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Groupoids -->
+  <div class="step" id="step3" style="--step-color: var(--accent4)">
+    <div class="step-number">3</div>
+    <h2>Groupoids: Symmetry Categories</h2>
+    <p class="desc">A <strong>groupoid</strong> is a category where <strong>every arrow is invertible</strong> — like symmetries. Objects are "things," arrows are "ways they're the same." Drag nodes or click buttons!</p>
+    <div class="interactive-area">
+      <div class="groupoid-canvas">
+        <canvas id="groupoidCanvas"></canvas>
+      </div>
+      <div class="groupoid-controls">
+        <button class="g-btn" onclick="addGroupoidNode()">+ Add Object</button>
+        <button class="g-btn" onclick="addGroupoidArrow()">↔ Add Isomorphism</button>
+        <button class="g-btn" onclick="resetGroupoid()">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: Descent / Gluing -->
+  <div class="step" id="step4" style="--step-color: var(--accent4)">
+    <div class="step-number">4</div>
+    <h2>Descent: Gluing Local to Global</h2>
+    <p class="desc"><strong>Descent</strong> is the art of gluing local pieces into a global object — but only when they agree on overlaps. <em>Click "Glue" to merge the patches!</em></p>
+    <div class="interactive-area">
+      <div class="descent-visual" id="descentVisual">
+        <div class="patch-row" id="patchRow">
+          <div class="patch" style="background: linear-gradient(135deg, #7c5cfc, #5c7cfc);">U₁</div>
+          <div class="patch" style="background: linear-gradient(135deg, #5c7cfc, #5cccfc);">U₂</div>
+          <div class="patch" style="background: linear-gradient(135deg, #5cccfc, #5cfcb0);">U₃</div>
+        </div>
+        <div class="glue-line" id="glueLine"></div>
+        <div style="font-size:0.8rem; color:var(--dim);" id="overlapMsg">Patches overlap — data must agree!</div>
+        <button class="g-btn" onclick="glueDescent()" id="glueBtn" style="margin-top:10px;">✦ Glue Together</button>
+        <div class="result-shape" id="resultShape">Global Object ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: Stacks -->
+  <div class="step" id="step5" style="--step-color: var(--accent2)">
+    <div class="step-number">5</div>
+    <h2>Stacks: Sheaves of Categories</h2>
+    <p class="desc">A <strong>stack</strong> is like a sheaf, but instead of assigning <em>sets</em> of data to each region, it assigns entire <strong>categories</strong> (often groupoids). Descent works for objects <em>up to isomorphism</em>. Click each layer!</p>
+    <div class="interactive-area">
+      <div class="stack-tower" id="stackTower">
+        <div class="stack-layer" style="background: linear-gradient(135deg, rgba(252,92,156,0.3), rgba(252,92,156,0.1));" onclick="toggleLayer(this)">
+          🏛 Groupoid of Objects over U
+          <div class="layer-detail">For each open set U, we get a whole category of objects — not just a set!</div>
+        </div>
+        <div class="stack-connector"></div>
+        <div class="stack-layer" style="background: linear-gradient(135deg, rgba(124,92,252,0.3), rgba(124,92,252,0.1));" onclick="toggleLayer(this)">
+          🔗 Restriction Functors
+          <div class="layer-detail">Moving from a bigger region to a smaller one? There's a functor for that — pulling back objects.</div>
+        </div>
+        <div class="stack-connector"></div>
+        <div class="stack-layer" style="background: linear-gradient(135deg, rgba(92,204,252,0.3), rgba(92,204,252,0.1));" onclick="toggleLayer(this)">
+          🧩 Descent / Gluing Condition
+          <div class="layer-detail">Local objects that agree on overlaps (up to isomorphism) glue into a global object. This is the magic!</div>
+        </div>
+        <div class="stack-connector"></div>
+        <div class="stack-layer" style="background: linear-gradient(135deg, rgba(252,185,92,0.3), rgba(252,185,92,0.1));" onclick="toggleLayer(this)">
+          📐 Base: Topological Space / Site
+          <div class="layer-detail">The "ground" — a space (or Grothendieck site) whose open sets form the indexing system.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6: Algebraic Stacks -->
+  <div class="step" id="step6" style="--step-color: var(--accent1)">
+    <div class="step-number">✦</div>
+    <h2>Algebraic Stacks</h2>
+    <p class="desc">An <strong>algebraic stack</strong> is a stack over the category of schemes (algebraic geometry's building blocks) that has a <strong>smooth atlas</strong> — a scheme that maps onto it nicely. It's the ultimate framework for handling <strong>moduli problems with symmetries</strong>.</p>
+    <div class="interactive-area">
+      <div class="final-visual">
+        <div class="alg-stack-diagram" id="algDiagram">
+          <div class="ring-orbit r1">
+            <div class="orbit-dot" style="color: var(--accent1); background: var(--accent1);"></div>
+          </div>
+          <div class="ring-orbit r2">
+            <div class="orbit-dot" style="color: var(--accent2); background: var(--accent2);"></div>
+            <div class="orbit-dot" style="color: var(--accent2); background: var(--accent2); top: auto; bottom: -7px;"></div>
+          </div>
+          <div class="ring-orbit r3">
+            <div class="orbit-dot" style="color: var(--accent3); background: var(--accent3);"></div>
+            <div class="orbit-dot" style="color: var(--accent4); background: var(--accent4); top: auto; bottom: -7px; left: -7px; top: 50%;"></div>
+            <div class="orbit-dot" style="color: var(--accent3); background: var(--accent3); left: auto; right: -7px; top: 50%;"></div>
+          </div>
+          <div class="center-label">Algebraic<br>Stack</div>
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:15px; justify-content:center; margin-top:20px;">
+          <div class="ingredient-pill" style="padding:10px 20px; border-radius:12px; background:rgba(124,92,252,0.15); border:1px solid rgba(124,92,252,0.3); font-size:0.85rem;">
+            📦 Stack over Schemes
+          </div>
+          <div class="ingredient-pill" style="padding:10px 20px; border-radius:12px; background:rgba(252,92,156,0.15); border:1px solid rgba(252,92,156,0.3); font-size:0.85rem;">
+            🗺 Smooth Atlas (Scheme → Stack)
+          </div>
+          <div class="ingredient-pill" style="padding:10px 20px; border-radius:12px; background:rgba(92,204,252,0.15); border:1px solid rgba(92,204,252,0.3); font-size:0.85rem;">
+            🔄 Groupoid Symmetries
+          </div>
+          <div class="ingredient-pill" style="padding:10px 20px; border-radius:12px; background:rgba(252,185,92,0.15); border:1px solid rgba(252,185,92,0.3); font-size:0.85rem;">
+            🧬 Moduli Problems
+          </div>
+        </div>
+
+        <div class="final-equation" style="margin-top:30px;">
+          <span>Algebraic Stack</span> = Stack + Smooth Atlas + Algebraic Structure
+        </div>
+
+        <p style="color:var(--dim); font-size:0.9rem; margin-top:25px; line-height:1.7; max-width:550px; margin-left:auto; margin-right:auto;">
+          <strong style="color:var(--text);">Example:</strong> The moduli stack of elliptic curves, <strong style="color:var(--accent1);">ℳ₁,₁</strong>, classifies all elliptic curves — but remembers their automorphisms. Every elliptic curve has at least a ℤ/2 symmetry, so this <em>can't</em> be an ordinary space. It's an algebraic stack.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Finale -->
+  <div class="step" id="step7" style="--step-color: var(--accent3); text-align:center;">
+    <div class="step-number">∞</div>
+    <h2>You Made It!</h2>
+    <p class="desc" style="margin:0 auto;">
+      You've journeyed from <strong>sets</strong> → <strong>sheaves</strong> → <strong>functors</strong> → <strong>groupoids</strong> → <strong>descent</strong> → <strong>stacks</strong> → <strong>algebraic stacks</strong>. Each layer builds on the last. Algebraic stacks are geometry's way of handling spaces that have <strong>internal symmetries</strong> — elegantly and rigorously.
+    </p>
+    <div style="margin-top:30px;">
+      <button class="start-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Back to Top</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============ STARFIELD ============
+(function createStars() {
+  const sf = document.getElementById('starfield');
+  for (let i = 0; i < 150; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 2 + 1;
+    star.style.cssText = `
+      width:${size}px; height:${size}px;
+      top:${Math.random()*100}%; left:${Math.random()*100}%;
+      --dur:${Math.random()*3+2}s; --max-op:${Math.random()*0.6+0.3};
+      animation-delay:${Math.random()*5}s;
+    `;
+    sf.appendChild(star);
+  }
+})();
+
+// ============ SCROLL OBSERVER ============
+const steps = document.querySelectorAll('.step');
+const stepIds = ['step0','step1','step2','step3','step4','step5','step6','step7'];
+const stepLabels = ['Sets','Sheaves','Functors','Groupoids','Descent','Stacks','Algebraic Stacks','Finale'];
+
+// Create nav dots
+const navDots = document.getElementById('navDots');
+stepIds.forEach((id, i) => {
+  const dot = document.createElement('div');
+  dot.className = 'nav-dot';
+  dot.dataset.label = stepLabels[i];
+  dot.onclick = () => document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  navDots.appendChild(dot);
+});
+
+const dots = navDots.querySelectorAll('.nav-dot');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+steps.forEach(s => observer.observe(s));
+
+// Progress bar & active dot
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = (scrollTop / docHeight) * 100;
+  document.getElementById('progressBar').style.width = progress + '%';
+
+  // Hide scroll hint after scrolling
+  if (scrollTop > 200) {
+    document.getElementById('scrollHint').classList.add('hidden');
+  }
+
+  // Update active dot
+  let activeIndex = 0;
+  stepIds.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < window.innerHeight * 0.5) {
+      activeIndex = i;
+    }
+  });
+  dots.forEach((d, i) => d.classList.toggle('active', i === activeIndex));
+});
+
+// ============ STEP 0: SETS ============
+(function initSets() {
+  const setA = document.getElementById('setA');
+  const setB = document.getElementById('setB');
+  const colorsA = ['#7c5cfc','#9c7cfc','#5c3cdc'];
+  const colorsB = ['#fc5c9c','#fc7cbc','#dc3c7c'];
+
+  colorsA.forEach((c, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.style.background = c;
+    d.style.color = c;
+    d.title = `Element a${i+1}`;
+    d.onclick = () => {
+      d.style.transform = 'scale(1.5)';
+      // Highlight corresponding in B
+      const bDots = setB.querySelectorAll('.dot');
+      if (bDots[i]) {
+        bDots[i].style.transform = 'scale(1.5)';
+        bDots[i].style.boxShadow = `0 0 20px ${colorsB[i]}`;
+        setB.classList.add('glow');
+        setTimeout(() => {
+          bDots[i].style.transform = '';
+          bDots[i].style.boxShadow = '';
+          d.style.transform = '';
+          setB.classList.remove('glow');
+        }, 800);
+      }
+    };
+    setA.appendChild(d);
+  });
+
+  colorsB.forEach((c, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.style.background = c;
+    d.style.color = c;
+    d.title = `Element b${i+1}`;
+    setB.appendChild(d);
+  });
+})();
+
+// ============ STEP 1: SHEAVES ============
+const fiberData = {
+  U: [
+    { text: 'f(x) = sin(x)', color: 'rgba(92,204,252,0.3)' },
+    { text: 'f(x) = cos(x)', color: 'rgba(92,204,252,0.2)' },
+    { text: 'f(x) = x²', color: 'rgba(92,204,252,0.25)' },
+  ],
+  V: [
+    { text: 'g(x) = eˣ', color: 'rgba(124,92,252,0.3)' },
+    { text: 'g(x) = ln(x)', color: 'rgba(124,92,252,0.2)' },
+  ],
+  UV: [
+    { text: 'f|_{U∩V} = g|_{U∩V}', color: 'rgba(252,185,92,0.3)' },
+    { text: '✓ Compatible!', color: 'rgba(92,252,156,0.3)' },
+  ]
+};
+
+function showFiber(region) {
+  const display = document.getElementById('fiberDisplay');
+  display.innerHTML = '';
+
+  // Highlight active region
+  document.querySelectorAll('.region').forEach(r => r.classList.remove('active'));
+  document.querySelector(`.region[data-region="${region === 'UV' ? 'U∩V' : region}"]`).classList.add('active');
+
+  const items = fiberData[region];
+  items.forEach((item, i) => {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'fiber-item';
+      el.style.background = item.color;
+      el.textContent = item.text;
+      display.appendChild(el);
+    }, i * 150);
+  });
+}
+
+// ============ STEP 2: FUNCTORS ============
+function mapFunctor(from, to) {
+  // Reset all
+  document.querySelectorAll('.cat-obj').forEach(o => o.classList.remove('active'));
+
+  // Highlight source
+  const sourceMap = { circle: 0, square: 1, triangle: 2 };
+  const leftObjs = document.querySelectorAll('.category-box:first-child .cat-obj');
+  leftObjs[sourceMap[from]].classList.add('active');
+
+  // Highlight target
+  const targetEl = document.getElementById('f-' + to);
+  setTimeout(() => {
+    targetEl.classList.add('active');
+    targetEl.style.boxShadow = '0 0 25px rgba(252,92,156,0.5)';
+    setTimeout(() => {
+      targetEl.style.boxShadow = '';
+    }, 800);
+  }, 300);
+}
+
+// ============ STEP 3: GROUPOID CANVAS ============
+let gNodes = [];
+let gEdges = [];
+let gDragging = null;
+let gCanvas, gCtx;
+
+function initGroupoid() {
+  gCanvas = document.getElementById('groupoidCanvas');
+  gCtx = gCanvas.getContext('2d');
+  resizeGroupoidCanvas();
+
+  // Default nodes
+  gNodes = [
+    { x: 150, y: 100, label: 'A', color: '#7c5cfc' },
+    { x: 350, y: 100, label: 'B', color: '#fc5c9c' },
+    { x: 250, y: 220, label: 'C', color: '#5cccfc' },
+  ];
+  gEdges = [
+    { from: 0, to: 1 },
+    { from: 1, to: 2 },
+    { from: 0, to: 2 },
+  ];
+
+  // Mouse events
+  gCanvas.addEventListener('mousedown', gMouseDown);
+  gCanvas.addEventListener('mousemove', gMouseMove);
+  gCanvas.addEventListener('mouseup', gMouseUp);
+  gCanvas.addEventListener('touchstart', gTouchStart, { passive: false });
+  gCanvas.addEventListener('touchmove', gTouchMove, { passive: false });
+  gCanvas.addEventListener('touchend', gMouseUp);
+
+  drawGroupoid();
+}
+
+function resizeGroupoidCanvas() {
+  const rect = gCanvas.parentElement.getBoundingClientRect();
+  gCanvas.width = rect.width * window.devicePixelRatio;
+  gCanvas.height = rect.height * window.devicePixelRatio;
+  gCanvas.style.width = rect.width + 'px';
+  gCanvas.style.height = rect.height + 'px';
+  gCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+}
+
+function drawGroupoid() {
+  const w = gCanvas.width / window.devicePixelRatio;
+  const h = gCanvas.height / window.devicePixelRatio;
+  gCtx.clearRect(0, 0, w, h);
+
+  // Draw edges with arrows both ways
+  gEdges.forEach(e => {
+    const a = gNodes[e.from];
+    const b = gNodes[e.to];
+    if (!a || !b) return;
+
+    // Gradient line
+    const grad = gCtx.createLinearGradient(a.x, a.y, b.x, b.y);
+    grad.addColorStop(0, a.color);
+    grad.addColorStop(1, b.color);
+
+    gCtx.beginPath();
+    gCtx.moveTo(a.x, a.y);
+    gCtx.lineTo(b.x, b.y);
+    gCtx.strokeStyle = grad;
+    gCtx.lineWidth = 2;
+    gCtx.stroke();
+
+    // Bidirectional arrows (groupoid = every arrow invertible)
+    drawArrowHead(a.x, a.y, b.x, b.y, b.color);
+    drawArrowHead(b.x, b.y, a.x, a.y, a.color);
+
+    // Label "≅" at midpoint
+    const mx = (a.x + b.x) / 2;
+    const my = (a.y + b.y) / 2;
+    gCtx.fillStyle = 'rgba(255,255,255,0.6)';
+    gCtx.font = '14px Inter';
+    gCtx.textAlign = 'center';
+    gCtx.fillText('≅', mx, my - 8);
+  });
+
+  // Draw nodes
+  gNodes.forEach((n, i) => {
+    // Glow
+    gCtx.beginPath();
+    gCtx.arc(n.x, n.y, 28, 0, Math.PI * 2);
+    gCtx.fillStyle = n.color + '33';
+    gCtx.fill();
+
+    // Circle
+    gCtx.beginPath();
+    gCtx.arc(n.x, n.y, 22, 0, Math.PI * 2);
+    gCtx.fillStyle = n.color;
+    gCtx.fill();
+
+    // Label
+    gCtx.fillStyle = 'white';
+    gCtx.font = 'bold 14px Inter';
+    gCtx.textAlign = 'center';
+    gCtx.textBaseline = 'middle';
+    gCtx.fillText(n.label, n.x, n.y);
+
+    // Self-loop (identity arrow)
+    gCtx.beginPath();
+    gCtx.arc(n.x, n.y - 32, 12, 0, Math.PI * 2);
+    gCtx.strokeStyle = n.color + '88';
+    gCtx.lineWidth = 1.5;
+    gCtx.stroke();
+    gCtx.fillStyle = 'rgba(255,255,255,0.4)';
+    gCtx.font = '9px Inter';
+    gCtx.fillText('id', n.x, n.y - 32);
+  });
+}
+
+function drawArrowHead(fromX, fromY, toX, toY, color) {
+  const angle = Math.atan2(toY - fromY, toX - fromX);
+  const dist = 28; // stop before node center
+  const tipX = toX - Math.cos(angle) * dist;
+  const tipY = toY - Math.sin(angle) * dist;
+  const size = 8;
+
+  gCtx.beginPath();
+  gCtx.moveTo(tipX, tipY);
+  gCtx.lineTo(tipX - size * Math.cos(angle - 0.4), tipY - size * Math.sin(angle - 0.4));
+  gCtx.lineTo(tipX - size * Math.cos(angle + 0.4), tipY - size * Math.sin(angle + 0.4));
+  gCtx.closePath();
+  gCtx.fillStyle = color;
+  gCtx.fill();
+}
+
+function getCanvasPos(e) {
+  const rect = gCanvas.getBoundingClientRect();
+  return {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  };
+}
+
+function gMouseDown(e) {
+  const pos = getCanvasPos(e);
+  gNodes.forEach((n, i) => {
+    if (Math.hypot(n.x - pos.x, n.y - pos.y) < 25) {
+      gDragging = i;
+    }
+  });
+}
+
+function gTouchStart(e) {
+  e.preventDefault();
+  const touch = e.touches[0];
+  const rect = gCanvas.getBoundingClientRect();
+  const pos = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+  gNodes.forEach((n, i) => {
+    if (Math.hypot(n.x - pos.x, n.y - pos.y) < 30) {
+      gDragging = i;
+    }
+  });
+}
+
+function gMouseMove(e) {
+  if (gDragging === null) return;
+  const pos = getCanvasPos(e);
+  gNodes[gDragging].x = pos.x;
+  gNodes[gDragging].y = pos.y;
+  drawGroupoid();
+}
+
+function gTouchMove(e) {
+  e.preventDefault();
+  if (gDragging === null) return;
+  const touch = e.touches[0];
+  const rect = gCanvas.getBoundingClientRect();
+  gNodes[gDragging].x = touch.clientX - rect.left;
+  gNodes[gDragging].y = touch.clientY - rect.top;
+  drawGroupoid();
+}
+
+function gMouseUp() { gDragging = null; }
+
+let nodeCounter = 3;
+const nodeColors = ['#fcb95c','#5cfcb0','#fc5c5c','#b05cfc','#5cfc5c','#fc5cfc'];
+
+function addGroupoidNode() {
+  const w = gCanvas.width / window.devicePixelRatio;
+  const h = gCanvas.height / window.devicePixelRatio;
+  const label = String.fromCharCode(65 + nodeCounter);
+  gNodes.push({
+    x: 60 + Math.random() * (w - 120),
+    y: 40 + Math.random() * (h - 80),
+    label,
+    color: nodeColors[nodeCounter % nodeColors.length]
+  });
+  nodeCounter++;
+  drawGroupoid();
+}
+
+function addGroupoidArrow() {
+  if (gNodes.length < 2) return;
+  let a, b;
+  do {
+    a = Math.floor(Math.random() * gNodes.length);
+    b = Math.floor(Math.random() * gNodes.length);
+  } while (a === b || gEdges.some(e => (e.from === a && e.to === b) || (e.from === b && e.to === a)));
+  gEdges.push({ from: a, to: b });
+  drawGroupoid();
+}
+
+function resetGroupoid() {
+  nodeCounter = 3;
+  gNodes = [
+    { x: 150, y: 100, label: 'A', color: '#7c5cfc' },
+    { x: 350, y: 100, label: 'B', color: '#fc5c9c' },
+    { x: 250, y: 220, label: 'C', color: '#5cccfc' },
+  ];
+  gEdges = [
+    { from: 0, to: 1 },
+    { from: 1, to: 2 },
+    { from: 0, to: 2 },
+  ];
+  drawGroupoid();
+}
+
+// ============ STEP 4: DESCENT ============
+let glued = false;
+
+function glueDescent() {
+  if (glued) {
+    // Reset
+    glued = false;
+    document.getElementById('resultShape').classList.remove('show');
+    document.getElementById('patchRow').style.opacity = '1';
+    document.getElementById('patchRow').style.transform = 'scale(1)';
+    document.getElementById('glueLine').style.display = '';
+    document.getElementById('overlapMsg').textContent = 'Patches overlap — data must agree!';
+    document.getElementById('glueBtn').textContent = '✦ Glue Together';
+    return;
+  }
+
+  glued = true;
+  const patches = document.querySelectorAll('.patch');
+  patches.forEach(p => p.classList.add('merged'));
+
+  document.getElementById('overlapMsg').textContent = '✓ Data agrees on overlaps — gluing!';
+
+  setTimeout(() => {
+    document.getElementById('patchRow').style.opacity = '0.3';
+    document.getElementById('patchRow').style.transform = 'scale(0.9)';
+    document.getElementById('glueLine').style.display = 'none';
+  }, 400);
+
+  setTimeout(() => {
+    document.getElementById('resultShape').classList.add('show');
+    document.getElementById('glueBtn').textContent = '↺ Reset';
+  }, 800);
+}
+
+// ============ STEP 5: STACK LAYERS ============
+function toggleLayer(el) {
+  el.classList.toggle('expanded');
+}
+
+// ============ INIT ============
+window.addEventListener('load', () => {
+  initGroupoid();
+});
+
+window.addEventListener('resize', () => {
+  resizeGroupoidCanvas();
+  drawGroupoid();
+});
+</script>
+
+</body>
+</html>
