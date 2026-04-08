@@ -39,7 +39,7 @@ You will see that AI is not a sudden magic invention, but the technical and phil
 
 To truly grasp the nature of Artificial Intelligence, we will move through various levels of abstraction, much like the framework described by \citeauthor{hayakawa}. Understanding these systems requires the ability to climb up and down this "ladder" fluently:
 
-- **The Concrete Base**: At the lowest rungs, we deal with the "process level"—the raw, physical bits of data and the specific numerical weights in a matrix.
+- **The Concrete Base**: At the lowest rungs, we deal with the "process level", the raw, physical bits of data and the specific numerical weights in a matrix.
 - **The Intermediate Technicalities**: As we ascend, we group these specifics into functional concepts like Backpropagation or Gradient Descent. These are the tools that organize raw data into recognizable patterns.
 - **The High-Level Abstract**: At the top of the ladder, we reach broad terms like "Intelligence," "Logic," and "Ethics." While these allow us to discuss the impact of AI on society, they remain grounded in the mathematical rungs beneath them.
 
