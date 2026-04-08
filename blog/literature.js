@@ -1,4 +1,9 @@
 window.bibData = {
+	"taocp3": {
+		author: "Donald Ervin Knuth",
+		title: "The Art of Computer Programming, Volume 3",
+		year: 2021
+	},
 	"rosenblattbackprop": {
 		url: "https://archive.org/details/DTIC_AD0256582/page/n7/mode/2up",
 		author: "Frank Rosenblatt",
