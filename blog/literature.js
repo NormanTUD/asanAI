@@ -1,4 +1,10 @@
 window.bibData = {
+	"rosenblattbackprop": {
+		url: "https://archive.org/details/DTIC_AD0256582/page/n7/mode/2up",
+		author: "Frank Rosenblatt",
+		year: 1961,
+		title: "Principles of Neurodynamics"
+	},
 	"hayakawa": {
 		url: "https://archive.org/details/languageinthough0000siha_k3x0/page/n5/mode/2up",
 		title: "Language in Thought and Action",

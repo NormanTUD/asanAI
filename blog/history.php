@@ -388,6 +388,8 @@ Minsky and Papert demonstrated that while a single-layer perceptron can draw a l
 
 Even though Minsky realized that having a Multi-Layer-Perceptron with non-linear activation functions would be able to solve this problem, there was no way to efficiently train those until in \citeyear{rumelhart1986} Rumelhart et al. discovered \citealternativetitle{rumelhart1986}, which reignited interest in connectionist models and paved the way for modern deep learning.
 
+The neurons Rosenblatt studied only had discrete outputs, as suggested by \citeauthorlastnameand{mccullochpitts1943}, which had a derivative of 0 and thus, modern Backpropagation algorithms wouldn't work. He suggested the term 'back-propagating errors' already in \citeyear{rosenblattbackprop}, but didn't know how to implement it.
+
 The XOR problem was the ultimate litmus test for **non-linear complexity**. Since early Perceptrons could only classify data separable by a single straight line, they were mathematically incapable of solving XOR, where "True" results sit diagonally across from "False" results. This failure, it was thought, proved that connectionist AI could not handle basic binary addition or complex logic, leading to the **First AI Winter**. It wasn't until the 1980s that multi-layer networks and **Backpropagation** provided the "curved" mathematical logic needed to break through this linear wall.
 
 #### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
