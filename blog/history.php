@@ -29,9 +29,9 @@ As Whitehead observed, the world is a **constantly changing, interwoven pattern*
 The history of machines is fundamentally a history of **abstraction**, where human effort is "drawn away" (\cite[from latin **abstrahere**]{kleinetymology}, [p. 4]) from the direct task. This began roughly 3.3 million years ago with the \citealternativetitle{lomekwi}, the first stone tools created by ancestors of humans, that later lead to the invention of the wheel, which abstracted the friction of the terrain by placing a rotating interface between the load and the ground. This concept of mechanical mediation was radically advanced by **Heron of Alexandria**, whose "automata" and steam-powered *aeolipile* demonstrated that task sequences could be outsourced to the physical logic of a machine (\citeauthor{livingdolls}, p. 16). By introducing these layers, humans stopped performing the action and began managing the mechanism that performs it.
 
 This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction". Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine. Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
+</div>
 
-## The early use of fire
-
+<div class="optional md" data-headline="The early use of fire">
 The controlled use of fire was a major \cite[turning point]{wonderwerk}
 in human evolution. While extensive deposits of ash and charcoal
 from sites dating to the past 400,000 years are well documented, the
@@ -78,7 +78,9 @@ sense, the controlled use of fire and its associated tools sit at the
 very beginning of the history of machines as a history of
 **abstraction**, where human effort is progressively "drawn away"
 from the direct task.
+</div>
 
+<div class="md">
 ## Early Math
 
 ### Prehistoric Math
