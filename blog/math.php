@@ -384,8 +384,6 @@ While logarithms were born from the needs of 17th-century astronomers, they are 
 
 While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool. It allows systems to handle "impossible" states or "hidden" information without crashing the underlying logic. The use of the symbol $\infty$ for the concept of infinity dates back to \citeyear{wallis1655}, according to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 214).
 
-The symbol $\infty$ is widely believed to have been introduced by \citeauthor{wallis1655} in \citeyear{wallis1655} (\citetitle{historyofmathematicalnotation}, Vol. 1, p. 214).
-
 ## What are approximations?
 
 In traditional programming, we aim for **exactness**. If you write a function to calculate a tax rate, you want the result to be 100% correct every single time. However, the real world is messy and doesn't always follow simple, rigid rules.
