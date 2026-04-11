@@ -223,7 +223,7 @@ The factorial grows extremely quickly, much faster than exponential functions. T
 </div>
 
 
-<div class="optional md" data-headline="Why is 0 ≠ 1?">
+<div class="optional md" data-headline="Why is 0! = 1?">
 1. **Combinatorics:** $n!$ represents the number of ways to arrange $n$ objects. There is exactly $1$ way to arrange zero items (the empty set).
 2. **Consistency:** To maintain the recursive property $(n-1)! = \frac{n!}{n}$, setting $n=1$ yields $0! = \frac{1!}{1} = 1$.
 </div>
