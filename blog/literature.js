@@ -1,4 +1,25 @@
 window.bibData = {
+	// Add these to window.bibData in literature.js:
+
+	"controlleduseoffire": {
+		title: "The Discovery of Fire by Humans: A Long and Convoluted Process",
+		author: "J.A.J. Gowlett",
+		year: 2016,
+		url: "https://royalsocietypublishing.org/doi/10.1098/rstb.2015.0164"
+	},
+	"wonderwerk": {
+		title: "Microstratigraphic evidence of in situ fire in the Acheulean strata of Wonderwerk Cave, Northern Cape province, South Africa",
+		author: "Francesco Berna, Paul Goldberg, Liora Kolska Horwitz, James Brink, Sharon Holt, Marion Bamford, Michael Chazan",
+		year: 2012,
+		url: "https://www.pnas.org/doi/10.1073/pnas.1117620109"
+	},
+	"wrangham2009catching": {
+		title: "Catching Fire: How Cooking Made Us Human",
+		author: "Richard Wrangham",
+		year: 2009,
+		url: "https://archive.org/details/catchingfirehowc0000wran"
+	},
+
 	"maclaurin": {
 		url: "https://archive.org/details/atreatiseonflux01maclgoog",
 		title: "A Treatise on Fluxions",

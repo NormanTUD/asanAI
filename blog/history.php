@@ -30,6 +30,55 @@ The history of machines is fundamentally a history of **abstraction**, where hum
 
 This trajectory eventually crossed from the physical to the cognitive. As identified by **David Wheeler**, "any problem in computer science can be solved by another layer of abstraction". Just as the wheel abstracts movement, modern computation abstracts thought, treating reasoning as a formal calculus that can be executed by a machine. Thus, the machine serves as the ultimate "extra level of indirection," distancing the human from the raw labor of both hand and mind.
 
+## The early use of fire
+
+The controlled use of fire was a major \cite[turning point]{wonderwerk}
+in human evolution. While extensive deposits of ash and charcoal
+from sites dating to the past 400,000 years are well documented, the
+evidence for fire from earlier contexts has long been subject to
+alternative interpretations.
+
+At \cite[Wonderwerk Cave]{wonderwerk}
+in South Africa, micromorphological analysis and Fourier
+transform infrared microspectroscopy of intact sediments from the
+Early Acheulean Stratum 10, dated to approximately one Million Years Ago, provide
+the earliest secure evidence for burning in an archaeological context.
+
+The angularity of bone fragments and the
+exceptional preservation of ashed plant material indicate that these
+components were combusted and accumulated locally, approximately 30
+metres inside the cave, ruling out transport by wind or water as well
+as spontaneous guano combustion.
+
+Fire awareness among hominins, however, almost certainly predates such
+hearth evidence: as savanna-dwelling primates exposed to frequent
+lightning-caused bush fires, early hominins would have engaged with
+fire first as foragers, retrieving eggs, small animals, and
+invertebrates made visible by burning landscapes, as described by
+\citeauthorlastnameand{controlleduseoffire}.
+
+Over time, these simple interactions
+were stretched in space and time, pushing toward a division of labour
+in which slow-burning materials had to be selected and guarded while
+other subsistence activities continued.
+
+The simplest ignition technique, rubbing a stick in a groove in a wooden "hearth", requires no more
+conceptual complexity than hafting, since both involve bringing two
+components together via a vital intermediary: tinder in the one,
+\cite[fixative in the other]{controlleduseoffire}.
+
+\cite[By 120,000 years ago]{controlleduseoffire}, pierced shell beads indicate knowledge of twine or cord,
+which would have been necessary for operating a fire drill.
+Fire extended the waking day, enabled
+cooking, which, according to \citeauthor{wrangham2009catching}'s cooking hypothesis,
+dramatically improved nutrient absorption and supported the increase
+in brain size through the Pleistocene, provided protection from predators, and
+facilitated social gathering. In this
+sense, the controlled use of fire and its associated tools sit at the
+very beginning of the history of machines as a history of
+**abstraction**, where human effort is progressively "drawn away"
+from the direct task.
+
 ## Early Math
 
 ### Prehistoric Math
