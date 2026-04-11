@@ -437,6 +437,8 @@ Minsky and Papert demonstrated that while a single-layer perceptron can draw a l
 
 Even though Minsky realized that having a Multi-Layer-Perceptron with non-linear activation functions would be able to solve this problem, there was no way to efficiently train those until in \citeyear{rumelhart1986} Rumelhart et al. discovered \citealternativetitle{rumelhart1986}, which reignited interest in connectionist models and paved the way for modern deep learning.
 
+The neurons Rosenblatt studied only had discrete outputs, as suggested by \citeauthorlastnameand{mccullochpitts1943}, which had a derivative of 0 and thus, modern Backpropagation algorithms wouldn't work. He suggested the term 'back-propagating errors' already in \citeyear{rosenblattbackprop}, but didn't know how to implement it.
+
 The XOR problem was the ultimate litmus test for **non-linear complexity**. Since early Perceptrons could only classify data separable by a single straight line, they were mathematically incapable of solving XOR, where "True" results sit diagonally across from "False" results. This failure, it was thought, proved that connectionist AI could not handle basic binary addition or complex logic, leading to the **First AI Winter**. It wasn't until the 1980s that multi-layer networks and **Backpropagation** provided the "curved" mathematical logic needed to break through this linear wall.
 
 #### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
@@ -713,7 +715,7 @@ Each of these discoveries, and many more like them, from the rubbing of amber to
 
 In 1804, **Joseph Marie Jacquard** perfected a loom attachment that used **punched cards** to automate the weaving of complex textile patterns. Each card encoded a single row: hole or no hole, thread up or thread down. By chaining cards together, an intricate brocade could be reproduced without a skilled assistant manually selecting each thread, a purely industrial innovation with no computational intent.
 
-Yet the conceptual leap was immense: a complex, sequential process had been **encoded as discrete binary instructions on a physical medium**. **Charles Babbage** explicitly borrowed the mechanism for his **Analytical Engine** (c. 1837), and **Ada Lovelace** captured the lineage precisely: the Engine "weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves" (\citetitle{lovelacequote}). **Herman Hollerith** later adapted punched cards for the **1890 US Census**, founding the company that became **IBM**. Punched cards remained the dominant computer input medium into the 1970s.
+Yet the conceptual leap was immense: a complex, sequential process had been **encoded as discrete binary instructions on a physical medium**. **Charles Babbage** explicitly borrowed the mechanism for his **Analytical Engine** (c. 1837), and **Ada Lovelace** captured the lineage precisely: the Engine "weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves" (\citetitle{lovelacequote}). **Herman Hollerith** later adapted punched cards for the **1890 US Census**, founding the company that became **IBM**. Punched cards remained the dominant computer input medium into the 1970s (see \citetitle{taocp3}, p. 383-384).
 
 Without the loom, there is no concept of externally encoded, interchangeable instructions, no punched card, no magnetic tape, no software. A textile artisan solving a manufacturing problem inadvertently created the first programmable input mechanism.
 
