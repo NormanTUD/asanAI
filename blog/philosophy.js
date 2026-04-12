@@ -364,22 +364,16 @@ const SheafViz = (() => {
   const GCOLS = [0xe53935,0x43a047,0x1e88e5,0xf9a825,0x8e24aa,0x00acc1,0xfb8c00,0xd81b60];
   const GREEN = 0x4caf50, DGREEN = 0x2e7d32;
 
-  // ══════════════════════════════════════════════════════════════════
-  // PRE-GENERATED GLOBAL DOT POOL
-  // All dots placed on sphere at init, invisible.
-  // Stalks only sample from these — guaranteeing true overlap.
-  // ══════════════════════════════════════════════════════════════════
   const dotPool = [];
   const DOT_POOL_SIZE = 1500;
   let dotIdCounter = 0;
-
-  // Persistent visuals: each dot gets ONE group in gStalk, never destroyed
-  // until reset. Key = dot.id, value = {group, meshes, ring, fadedIn}
   const dotVisuals = new Map();
-
-  // Persistent stalk backgrounds (quads, borders, labels) — separate group
-  // so we can rebuild them without touching dots
   let bgGroup = null;
+
+  // ── NEW: Two-phase state tracking ──
+  // ungroupedGerms holds germ placements that haven't been grouped into stalks yet
+  let ungroupedGerms = []; // array of { center, hw, hh, _tf, color, dotIds, rotAngle }
+  let stalksFormed = false; // whether formStalks() has been called for current germs
 
   function initDotPool() {
     dotPool.length = 0;
@@ -401,8 +395,6 @@ const SheafViz = (() => {
 
   function dotById(id) { return dotPool.find(d => d.id === id); }
   function isShared(d) { return d.owners.size > 1; }
-
-  // ══════════════════════════════════════════════════════════════════
 
   function log(m) { console.log('[SV] ' + m); }
 
@@ -446,24 +438,22 @@ const SheafViz = (() => {
     return results;
   }
 
-function inStalk(dir, m) {
+  function inStalk(dir, m) {
     const d = dir.clone().normalize();
     const cosAngle = d.dot(m.center);
     if (cosAngle < 0.85) return false;
-
     const diff = d.clone().sub(m.center);
     const normalComp = diff.dot(m.center);
     const tangentDiff = diff.clone().sub(m.center.clone().multiplyScalar(normalComp));
     const u = tangentDiff.dot(m._tf.t1);
     const v = tangentDiff.dot(m._tf.t2);
     return Math.abs(u) < m.hw && Math.abs(v) < m.hh;
-}
+  }
 
-function inStalkUV(dir, m) {
+  function inStalkUV(dir, m) {
     const d = dir.clone().normalize();
     const cosAngle = d.dot(m.center);
     if (cosAngle < 0.85) return null;
-
     const diff = d.clone().sub(m.center);
     const normalComp = diff.dot(m.center);
     const tangentDiff = diff.clone().sub(m.center.clone().multiplyScalar(normalComp));
@@ -473,29 +463,22 @@ function inStalkUV(dir, m) {
       return { u, v };
     }
     return null;
-}
+  }
 
-function isBorderDot(dir, m) {
+  function isBorderDot(dir, m) {
     const uv = inStalkUV(dir, m);
     if (!uv) return false;
     const uNorm = Math.abs(uv.u) / m.hw;
     const vNorm = Math.abs(uv.v) / m.hh;
     return uNorm > 0.7 || vNorm > 0.7;
-}
+  }
 
-  // ══════════════════════════════════════════════════════════════════
-  // DOT VISUAL MANAGEMENT — persistent, never destroyed until reset
-  // ══════════════════════════════════════════════════════════════════
-
-  // Create a dot visual for the first time
-function createDotVisual(dot, fadeDelay, now) {
+  function createDotVisual(dot, fadeDelay, now) {
     const pos = dot.pt.clone().multiplyScalar(1.006);
     const lookTarget = dot.pt.clone().multiplyScalar(2);
-
     const group = new THREE.Group();
     group.position.copy(pos);
     group.lookAt(lookTarget);
-
     const mesh = new THREE.Mesh(
       new THREE.CircleGeometry(DOT, 16),
       new THREE.MeshBasicMaterial({
@@ -505,16 +488,13 @@ function createDotVisual(dot, fadeDelay, now) {
     );
     mesh.userData = { ft: 0.85, fd: fadeDelay, fs: now };
     group.add(mesh);
-
     gStalk.add(group);
     dotVisuals.set(dot.id, { group, hasDot: true, hasRing: false });
   }
 
-  // Add or upgrade the circled outline ring on a shared dot
-function ensureRingOnVisual(dot) {
+  function ensureRingOnVisual(dot) {
     const vis = dotVisuals.get(dot.id);
     if (!vis || vis.hasRing) return;
-
     const ring = new THREE.Mesh(
       new THREE.RingGeometry(DOT + 0.015, DOT + 0.035, 24),
       new THREE.MeshBasicMaterial({
@@ -525,47 +505,36 @@ function ensureRingOnVisual(dot) {
     ring.userData = { ft: 1.0, fd: 0, fs: performance.now() };
     vis.group.add(ring);
     vis.hasRing = true;
-
     const dotMesh = vis.group.children[0];
     if (dotMesh && dotMesh.userData) {
       dotMesh.userData.ft = 1.0;
       dotMesh.userData.fs = performance.now();
       dotMesh.userData.fd = 0;
     }
-
     log(`Ring added to dot #${dot.id} (now shared by ${dot.owners.size} stalks)`);
   }
 
-function findNonOverlappingCenter(hw, hh) {
-    const last = ms[ms.length - 1];
-    // The minimum angular distance between stalk centers so they don't visually overlap
-    // This is roughly the stalk diagonal, minus a small margin for the 1-2 shared border dots
+  function findNonOverlappingCenter(hw, hh) {
+    const last = ms.length ? ms[ms.length - 1] : ungroupedGerms[ungroupedGerms.length - 1];
     const minSep = Math.sqrt(hw * hw + hh * hh) * 0.85;
-    // The maximum distance — we want stalks to be neighbors, not far apart
     const maxSep = Math.sqrt(hw * hw + hh * hh) * 1.4;
+    const allPlacements = [...ms, ...ungroupedGerms];
 
-    // ── Strategy 1: Try placing adjacent to the LAST stalk ──
-    // Try multiple random angles around the last stalk
     for (let attempt = 0; attempt < 60; attempt++) {
       const { t1, t2 } = tframe(last.center);
       const a = Math.random() * Math.PI * 2;
-      // Distance: just outside the overlap zone
       const dist = minSep + Math.random() * (maxSep - minSep);
       const candidate = last.center.clone()
         .add(t1.clone().multiplyScalar(Math.cos(a) * dist))
         .add(t2.clone().multiplyScalar(Math.sin(a) * dist))
         .normalize();
-
-      if (isValidCenter(candidate, minSep)) {
-        log(`Placed stalk adjacent to last (attempt ${attempt + 1})`);
+      if (isValidCenterAll(candidate, minSep, allPlacements)) {
         return candidate;
       }
     }
 
-    // ── Strategy 2: Try placing adjacent to ANY existing stalk ──
-    // Shuffle stalk order to avoid always clustering around the first one
-    const shuffledStalks = [...ms].sort(() => Math.random() - 0.5);
-    for (const stalk of shuffledStalks) {
+    const shuffled = [...allPlacements].sort(() => Math.random() - 0.5);
+    for (const stalk of shuffled) {
       for (let attempt = 0; attempt < 30; attempt++) {
         const { t1, t2 } = tframe(stalk.center);
         const a = Math.random() * Math.PI * 2;
@@ -574,18 +543,13 @@ function findNonOverlappingCenter(hw, hh) {
           .add(t1.clone().multiplyScalar(Math.cos(a) * dist))
           .add(t2.clone().multiplyScalar(Math.sin(a) * dist))
           .normalize();
-
-        if (isValidCenter(candidate, minSep)) {
-          log(`Placed stalk adjacent to stalk #${stalk.id} (around the sphere)`);
+        if (isValidCenterAll(candidate, minSep, allPlacements)) {
           return candidate;
         }
       }
     }
 
-    // ── Strategy 3: Random point on the ENTIRE sphere ──
-    // This handles the case where the visible area is packed
     for (let attempt = 0; attempt < 200; attempt++) {
-      // Uniform random point on sphere
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       const candidate = new THREE.Vector3(
@@ -593,14 +557,11 @@ function findNonOverlappingCenter(hw, hh) {
         Math.sin(phi) * Math.sin(theta),
         Math.cos(phi)
       ).normalize();
-
-      if (isValidCenter(candidate, minSep)) {
-        log(`Placed stalk on far side of sphere (attempt ${attempt + 1})`);
+      if (isValidCenterAll(candidate, minSep, allPlacements)) {
         return candidate;
       }
     }
 
-    // ── Strategy 4: Absolute fallback — reduce separation requirement ──
     for (let relaxFactor = 0.9; relaxFactor >= 0.3; relaxFactor -= 0.1) {
       const relaxedMin = minSep * relaxFactor;
       const theta = Math.random() * Math.PI * 2;
@@ -610,26 +571,19 @@ function findNonOverlappingCenter(hw, hh) {
         Math.sin(phi) * Math.sin(theta),
         Math.cos(phi)
       ).normalize();
-
-      if (isValidCenter(candidate, relaxedMin)) {
-        log(`Placed stalk with relaxed separation (factor ${relaxFactor.toFixed(1)})`);
+      if (isValidCenterAll(candidate, relaxedMin, allPlacements)) {
         return candidate;
       }
     }
 
-    // True last resort: just offset from last stalk
-    log(`WARNING: Could not find non-overlapping center, using offset`);
     const { t1 } = tframe(last.center);
     return last.center.clone().add(t1.clone().multiplyScalar(maxSep)).normalize();
   }
 
-  function isValidCenter(candidate, minSep) {
-    for (const stalk of ms) {
+  function isValidCenterAll(candidate, minSep, allPlacements) {
+    for (const stalk of allPlacements) {
       const dist = angDist(candidate, stalk.center);
       if (dist < minSep) return false;
-
-      // Also check: would a stalk at `candidate` visually overlap `stalk`?
-      // Test the 4 corners of the hypothetical new stalk against the existing stalk
       const { t1, t2 } = tframe(candidate);
       const hw = 0.18, hh = 0.15;
       const corners = [
@@ -638,50 +592,54 @@ function findNonOverlappingCenter(hw, hh) {
         candidate.clone().add(t1.clone().multiplyScalar(hw)).add(t2.clone().multiplyScalar(-hh)).normalize(),
         candidate.clone().add(t1.clone().multiplyScalar(-hw)).add(t2.clone().multiplyScalar(-hh)).normalize(),
       ];
-
-      // Count how many corners of the new stalk fall inside the existing stalk
       let cornersInside = 0;
       for (const corner of corners) {
         if (inStalk(corner, stalk)) cornersInside++;
       }
-      // If more than 1 corner is inside, there's too much overlap
-      // (1 corner inside is fine — that's the border overlap for shared dots)
       if (cornersInside > 1) return false;
     }
     return true;
   }
 
+  function isValidCenter(candidate, minSep) {
+    return isValidCenterAll(candidate, minSep, ms);
+  }
+
   // ══════════════════════════════════════════════════════════════════
-  // TAKE MEASUREMENT
+  // PHASE 1: PLACE GERMS — dots appear on sphere, no stalk grouping
   // ══════════════════════════════════════════════════════════════════
-function takeMeasurement() {
+
+  function placeGerms() {
+    if (!cam || !gStalk) {
+      info('⚠️ Visualization is still loading. Please wait a moment…');
+      return;
+    }
+
+    if (stalksFormed) {
+      stalksFormed = false;
+    }
+
     const hw = 0.18, hh = 0.15;
 
-    // ──────────────────────────────────────────────────────
-    // 1. FIND A VALID CENTER — must NOT overlap any existing stalk
-    // ──────────────────────────────────────────────────────
     let center;
-
-    if (!ms.length) {
+    const allPlacements = [...ms, ...ungroupedGerms];
+    if (!allPlacements.length) {
       center = getCameraLookDir();
     } else {
       center = findNonOverlappingCenter(hw, hh);
     }
 
-    // 2. Random rotation for the stalk's tangent frame
     const baseFrame = tframe(center);
     let rotAngle;
-    if (ms.length > 0) {
-      const prev = ms[ms.length - 1];
+    const prev = allPlacements.length ? allPlacements[allPlacements.length - 1] : null;
+    if (prev) {
       const prevAngle = Math.atan2(
         prev._tf.t1.dot(baseFrame.t2),
         prev._tf.t1.dot(baseFrame.t1)
       );
-      if (Math.random() < 0.5) {
-        rotAngle = prevAngle + (Math.random() - 0.5) * Math.PI * 0.5;
-      } else {
-        rotAngle = Math.random() * Math.PI * 2;
-      }
+      rotAngle = Math.random() < 0.5
+        ? prevAngle + (Math.random() - 0.5) * Math.PI * 0.5
+        : Math.random() * Math.PI * 2;
     } else {
       rotAngle = Math.random() * Math.PI * 2;
     }
@@ -690,69 +648,52 @@ function takeMeasurement() {
     const rotT2 = baseFrame.t1.clone().multiplyScalar(-sinA).add(baseFrame.t2.clone().multiplyScalar(cosA)).normalize();
 
     const color = SCOLS[colorIdx++ % SCOLS.length];
-    const mObj = {
+    const germGroup = {
       center, color, hw, hh,
-      id: ms.length,
+      id: ms.length + ungroupedGerms.length,
       _tf: { t1: rotT1, t2: rotT2 },
-      dotIds: []
+      dotIds: [],
+      rotAngle
     };
-    ms.push(mObj);
 
-    // 3. Collect IDs of ALL dots owned by previous stalks
     const prevStalkDotIds = new Set();
-    for (let si = 0; si < ms.length - 1; si++) {
-      ms[si].dotIds.forEach(id => prevStalkDotIds.add(id));
+    for (const s of [...ms, ...ungroupedGerms]) {
+      s.dotIds.forEach(id => prevStalkDotIds.add(id));
     }
 
-    // 4. Find all pre-generated dots inside this stalk
-    let candidates = dotsInStalk(mObj);
-    log(`Stalk #${mObj.id}: ${candidates.length} candidates found in region`);
+    let candidates = dotsInStalk(germGroup);
+    log(`Germ group #${germGroup.id}: ${candidates.length} candidates found in region`);
 
-    // 5. Find the ADJACENT stalk (the one whose center is closest)
-    //    and guarantee exactly 1-2 shared dots at the border
     let sharedDotIds = new Set();
-    let adjacentStalk = null;
-    if (ms.length >= 2) {
-      // Find the closest previous stalk by angular distance
+    const allPrev = [...ms, ...ungroupedGerms];
+    if (allPrev.length >= 1) {
+      let adjacentStalk = null;
       let bestDist = Infinity;
-      for (let si = 0; si < ms.length - 1; si++) {
-        const dist = angDist(mObj.center, ms[si].center);
-        if (dist < bestDist) {
-          bestDist = dist;
-          adjacentStalk = ms[si];
-        }
+      for (const s of allPrev) {
+        const dist = angDist(germGroup.center, s.center);
+        if (dist < bestDist) { bestDist = dist; adjacentStalk = s; }
       }
 
       if (adjacentStalk) {
-        // Find candidates that are in BOTH stalks AND near the border
         let sharedCandidates = candidates.filter(d => {
           if (!inStalk(d.dir, adjacentStalk)) return false;
-          return isBorderDot(d.dir, mObj) || isBorderDot(d.dir, adjacentStalk);
+          return isBorderDot(d.dir, germGroup) || isBorderDot(d.dir, adjacentStalk);
         });
-
         if (sharedCandidates.length === 0) {
           sharedCandidates = candidates.filter(d => inStalk(d.dir, adjacentStalk));
         }
-
         if (sharedCandidates.length === 0) {
-          sharedCandidates = dotPool.filter(d => inStalk(d.dir, adjacentStalk) && inStalk(d.dir, mObj));
+          sharedCandidates = dotPool.filter(d => inStalk(d.dir, adjacentStalk) && inStalk(d.dir, germGroup));
         }
 
         if (sharedCandidates.length === 0) {
-          log(`No natural overlap with stalk ${adjacentStalk.id}, forcing...`);
-
           let forcedDir = null;
-
-          // Strategy A: Sample along the line between centers
           for (let s = 0.1; s <= 0.9; s += 0.02) {
-            const tryDir = adjacentStalk.center.clone().lerp(mObj.center.clone(), s).normalize();
-            if (inStalk(tryDir, adjacentStalk) && inStalk(tryDir, mObj)) {
-              forcedDir = tryDir;
-              break;
+            const tryDir = adjacentStalk.center.clone().lerp(germGroup.center.clone(), s).normalize();
+            if (inStalk(tryDir, adjacentStalk) && inStalk(tryDir, germGroup)) {
+              forcedDir = tryDir; break;
             }
           }
-
-          // Strategy B: Grid search across adjacent stalk
           if (!forcedDir) {
             const steps = 10;
             let bestDir = null, bestScore = -Infinity;
@@ -764,52 +705,33 @@ function takeMeasurement() {
                   .add(adjacentStalk._tf.t1.clone().multiplyScalar(u))
                   .add(adjacentStalk._tf.t2.clone().multiplyScalar(v))
                   .normalize();
-                if (inStalk(tryDir, adjacentStalk) && inStalk(tryDir, mObj)) {
-                  const uvNew = inStalkUV(tryDir, mObj);
+                if (inStalk(tryDir, adjacentStalk) && inStalk(tryDir, germGroup)) {
+                  const uvNew = inStalkUV(tryDir, germGroup);
                   const uvAdj = inStalkUV(tryDir, adjacentStalk);
                   if (uvNew && uvAdj) {
                     const score = Math.max(
-                      Math.abs(uvNew.u) / mObj.hw,
-                      Math.abs(uvNew.v) / mObj.hh,
-                      Math.abs(uvAdj.u) / adjacentStalk.hw,
-                      Math.abs(uvAdj.v) / adjacentStalk.hh
+                      Math.abs(uvNew.u) / germGroup.hw, Math.abs(uvNew.v) / germGroup.hh,
+                      Math.abs(uvAdj.u) / adjacentStalk.hw, Math.abs(uvAdj.v) / adjacentStalk.hh
                     );
-                    if (score > bestScore) {
-                      bestScore = score;
-                      bestDir = tryDir.clone();
-                    }
+                    if (score > bestScore) { bestScore = score; bestDir = tryDir.clone(); }
                   }
                 }
               }
             }
             if (bestDir) forcedDir = bestDir;
           }
-
-          // Strategy C: Nudge new stalk slightly toward adjacent
           if (!forcedDir) {
-            log(`Grid search failed, nudging stalk toward adjacent`);
-            const nudgedCenter = mObj.center.clone().lerp(adjacentStalk.center, 0.15).normalize();
-            // Verify nudged center doesn't fully overlap any OTHER stalk
-            let nudgeOk = true;
-            for (let si = 0; si < ms.length - 1; si++) {
-              if (angDist(nudgedCenter, ms[si].center) < Math.max(ms[si].hw, ms[si].hh) * 0.5) {
-                nudgeOk = false; break;
-              }
-            }
-            if (nudgeOk) {
-              mObj.center = nudgedCenter;
-              const newBase = tframe(nudgedCenter);
-              const nCosA = Math.cos(rotAngle), nSinA = Math.sin(rotAngle);
-              mObj._tf.t1 = newBase.t1.clone().multiplyScalar(nCosA).add(newBase.t2.clone().multiplyScalar(nSinA)).normalize();
-              mObj._tf.t2 = newBase.t1.clone().multiplyScalar(-nSinA).add(newBase.t2.clone().multiplyScalar(nCosA)).normalize();
-            }
-
-            forcedDir = adjacentStalk.center.clone().lerp(mObj.center.clone(), 0.5).normalize();
-            if (!inStalk(forcedDir, adjacentStalk) || !inStalk(forcedDir, mObj)) {
-              forcedDir = mObj.center.clone();
+            const nudgedCenter = germGroup.center.clone().lerp(adjacentStalk.center, 0.15).normalize();
+            germGroup.center = nudgedCenter;
+            const newBase = tframe(nudgedCenter);
+            const nCosA = Math.cos(rotAngle), nSinA = Math.sin(rotAngle);
+            germGroup._tf.t1 = newBase.t1.clone().multiplyScalar(nCosA).add(newBase.t2.clone().multiplyScalar(nSinA)).normalize();
+            germGroup._tf.t2 = newBase.t1.clone().multiplyScalar(-nSinA).add(newBase.t2.clone().multiplyScalar(nCosA)).normalize();
+            forcedDir = adjacentStalk.center.clone().lerp(germGroup.center.clone(), 0.5).normalize();
+            if (!inStalk(forcedDir, adjacentStalk) || !inStalk(forcedDir, germGroup)) {
+              forcedDir = germGroup.center.clone();
             }
           }
-
           if (forcedDir) {
             let bestDot = null, bestDotDist = Infinity;
             for (const dot of dotPool) {
@@ -818,95 +740,75 @@ function takeMeasurement() {
                 if (dist < bestDotDist) { bestDotDist = dist; bestDot = dot; }
               }
             }
-
             if (bestDot) {
               bestDot.dir.copy(forcedDir);
               bestDot.pt.copy(forcedDir.clone().multiplyScalar(R));
               if (dotVisuals.has(bestDot.id)) {
                 const vis = dotVisuals.get(bestDot.id);
-                const pos = bestDot.pt.clone().multiplyScalar(1.006);
-                vis.group.position.copy(pos);
+                vis.group.position.copy(bestDot.pt.clone().multiplyScalar(1.006));
                 vis.group.lookAt(bestDot.pt.clone().multiplyScalar(2));
               }
               sharedCandidates = [bestDot];
-              log(`Forced dot #${bestDot.id} into overlap zone`);
             } else {
               const newDot = {
-                id: dotIdCounter++,
-                dir: forcedDir.clone(),
-                pt: forcedDir.clone().multiplyScalar(R),
-                color: pickColor(),
-                owners: new Set()
+                id: dotIdCounter++, dir: forcedDir.clone(),
+                pt: forcedDir.clone().multiplyScalar(R), color: pickColor(), owners: new Set()
               };
               dotPool.push(newDot);
               sharedCandidates = [newDot];
-              log(`Created new dot #${newDot.id} in overlap zone`);
             }
           }
         }
 
-        // Cap shared at exactly 1-2
         const numToShare = Math.min(sharedCandidates.length, 1 + Math.floor(Math.random() * 2));
         for (let i = 0; i < numToShare; i++) {
           const dot = sharedCandidates[i];
           dot.owners.add(adjacentStalk.id);
-          dot.owners.add(mObj.id);
+          dot.owners.add(germGroup.id);
           if (!adjacentStalk.dotIds.includes(dot.id)) adjacentStalk.dotIds.push(dot.id);
-          if (!mObj.dotIds.includes(dot.id)) mObj.dotIds.push(dot.id);
+          if (!germGroup.dotIds.includes(dot.id)) germGroup.dotIds.push(dot.id);
           sharedDotIds.add(dot.id);
-          log(`✓ SHARED dot #${dot.id} between stalks ${adjacentStalk.id}&${mObj.id}`);
         }
       }
     }
 
-    // 6. Refresh candidates after potential nudge
-    candidates = dotsInStalk(mObj);
-
-    // Target 6-8 total dots per stalk (minimum 6)
+    candidates = dotsInStalk(germGroup);
     const target = 6 + Math.floor(Math.random() * 3);
-
-    // First pass: only unowned dots NOT in any other stalk
     const shuffled = candidates.sort(() => Math.random() - 0.5);
     for (const dot of shuffled) {
-      if (mObj.dotIds.length >= target) break;
-      if (mObj.dotIds.includes(dot.id)) continue;
+      if (germGroup.dotIds.length >= target) break;
+      if (germGroup.dotIds.includes(dot.id)) continue;
       if (dot.owners.size > 0 && !sharedDotIds.has(dot.id)) continue;
       if (prevStalkDotIds.has(dot.id) && !sharedDotIds.has(dot.id)) continue;
-      dot.owners.add(mObj.id);
-      mObj.dotIds.push(dot.id);
+      dot.owners.add(germGroup.id);
+      germGroup.dotIds.push(dot.id);
     }
 
-    // Second pass: spawn new dots in the stalk interior
-    if (mObj.dotIds.length < target) {
-      const needed = target - mObj.dotIds.length;
-      log(`Stalk #${mObj.id}: spawning ${needed} extra dots in interior`);
+    if (germGroup.dotIds.length < target) {
+      const needed = target - germGroup.dotIds.length;
       for (let i = 0; i < needed; i++) {
-        let dir;
-        let attempts = 0;
+        let dir; let attempts = 0;
         do {
           const u = (Math.random() * 2 - 1) * hw * 0.65;
           const v = (Math.random() * 2 - 1) * hh * 0.65;
-          dir = mObj.center.clone()
-            .add(mObj._tf.t1.clone().multiplyScalar(u))
-            .add(mObj._tf.t2.clone().multiplyScalar(v))
+          dir = germGroup.center.clone()
+            .add(germGroup._tf.t1.clone().multiplyScalar(u))
+            .add(germGroup._tf.t2.clone().multiplyScalar(v))
             .normalize();
-
-          let inOtherStalk = false;
-          for (let si = 0; si < ms.length - 1; si++) {
-            if (inStalk(dir, ms[si])) { inOtherStalk = true; break; }
-          }
-          if (!inOtherStalk) break;
+          let inOther = false;
+          for (const s of allPrev) { if (inStalk(dir, s)) { inOther = true; break; } }
+          if (!inOther) break;
 
           const u2 = (Math.random() * 2 - 1) * hw * 0.35;
           const v2 = (Math.random() * 2 - 1) * hh * 0.35;
-          dir = mObj.center.clone()
-            .add(mObj._tf.t1.clone().multiplyScalar(u2))
-            .add(mObj._tf.t2.clone().multiplyScalar(v2))
+          dir = germGroup.center.clone()
+            .add(germGroup._tf.t1.clone().multiplyScalar(u2))
+            .add(germGroup._tf.t2.clone().multiplyScalar(v2))
             .normalize();
 
           let stillInOther = false;
-          for (let si = 0; si < ms.length - 1; si++) {
-            if (inStalk(dir, ms[si])) { stillInOther = true; break; }
+          for (const s of allPrev) {
+            if (inStalk(dir, s)) { stillInOther = true; break; }
           }
           if (!stillInOther) break;
           attempts++;
@@ -917,58 +819,189 @@ function takeMeasurement() {
           dir: dir.clone(),
           pt: dir.clone().multiplyScalar(R),
           color: pickColor(),
-          owners: new Set([mObj.id])
+          owners: new Set([germGroup.id])
         };
         dotPool.push(newDot);
-        mObj.dotIds.push(newDot.id);
+        germGroup.dotIds.push(newDot.id);
       }
     }
 
-    // Final enforcement — ensure minimum 6 dots
-    while (mObj.dotIds.length < 6) {
+    while (germGroup.dotIds.length < 6) {
       const u = (Math.random() * 2 - 1) * hw * 0.3;
       const v = (Math.random() * 2 - 1) * hh * 0.3;
-      const dir = mObj.center.clone()
-        .add(mObj._tf.t1.clone().multiplyScalar(u))
-        .add(mObj._tf.t2.clone().multiplyScalar(v))
+      const dir = germGroup.center.clone()
+        .add(germGroup._tf.t1.clone().multiplyScalar(u))
+        .add(germGroup._tf.t2.clone().multiplyScalar(v))
         .normalize();
       const newDot = {
         id: dotIdCounter++,
         dir: dir.clone(),
         pt: dir.clone().multiplyScalar(R),
         color: pickColor(),
-        owners: new Set([mObj.id])
+        owners: new Set([germGroup.id])
       };
       dotPool.push(newDot);
-      mObj.dotIds.push(newDot.id);
+      germGroup.dotIds.push(newDot.id);
     }
 
-    // 7. Log
-    const shared = mObj.dotIds.filter(id => { const d = dotById(id); return d && isShared(d); }).length;
-    log(`Stalk #${mObj.id}: ${mObj.dotIds.length} dots total, ${shared} shared`);
+    ungroupedGerms.push(germGroup);
+
+    const shared = germGroup.dotIds.filter(id => { const d = dotById(id); return d && isShared(d); }).length;
+    log(`Germ group #${germGroup.id}: ${germGroup.dotIds.length} dots total, ${shared} shared`);
 
     clear(gPre); clear(gSheaf); glueAnim = null;
 
-    rebuildStalkBackgrounds();
-
-    // 8. Create visuals for ALL new dots FIRST
     const now = performance.now();
-    mObj.dotIds.forEach((did, gi) => {
+    germGroup.dotIds.forEach((did, gi) => {
       if (dotVisuals.has(did)) return;
       const dot = dotById(did);
       if (!dot) return;
-      createDotVisual(dot, mObj.id * 40 + gi * 15, now);
+      createDotVisual(dot, germGroup.id * 40 + gi * 15, now);
     });
 
-    // 9. Apply rings to shared dots
-    mObj.dotIds.forEach(did => {
+    germGroup.dotIds.forEach(did => {
       const dot = dotById(did);
       if (dot && isShared(dot)) ensureRingOnVisual(dot);
     });
 
+    const btnStalks = document.getElementById('btn-stalks');
+    if (btnStalks) btnStalks.disabled = false;
+
+    updateUI_germs();
+  }
+
+  function formStalks() {
+    if (!cam || !gStalk) {
+      info('⚠️ Visualization is still loading. Please wait a moment…');
+      return;
+    }
+    if (ungroupedGerms.length === 0) {
+      info('⚠️ Place some germs first with <strong>🌱 Place Germs</strong>.');
+      return;
+    }
+
+    for (const g of ungroupedGerms) {
+      g.id = ms.length;
+      g.dotIds.forEach(did => {
+        const dot = dotById(did);
+        if (dot) {
+          dot.owners.delete(g.id);
+          dot.owners.add(ms.length);
+        }
+      });
+      ms.push(g);
+    }
+
+    ms.forEach((m, idx) => {
+      m.id = idx;
+      m.dotIds.forEach(did => {
+        const dot = dotById(did);
+        if (dot) dot.owners.add(idx);
+      });
+    });
+
+    ungroupedGerms = [];
+    stalksFormed = true;
+
+    rebuildStalkBackgrounds();
+
+    const btnStalks = document.getElementById('btn-stalks');
+    if (btnStalks) btnStalks.disabled = true;
+
     updateUI();
   }
 
+  function showPresheaf() {
+    if (!cam || !gStalk) { info('⚠️ Still loading…'); return; }
+    if (ms.length < 2) { info('⚠️ Form at least <strong>2</strong> stalks first.'); return; }
+    clear(gPre); clear(gSheaf); glueAnim = null; buildPresheaf();
+    info('<strong>Presheaf:</strong> Dotted outline = all stalks. Circled outlines = shared germs. No gluing guarantee yet.');
+  }
+
+  function glueSheaf() {
+    if (!cam || !gStalk) { info('⚠️ Still loading…'); return; }
+    if (ms.length < 2) { info('⚠️ Form at least <strong>2</strong> stalks first.'); return; }
+    clear(gSheaf); buildSheaf();
+    info('<strong>Gluing…</strong> Green surface covers all stalks. Shared germs confirm agreement.');
+    setTimeout(() => { if (!glueAnim) info('<strong>Sheaf ✓</strong> Green = glued global section. Circled outlines (brighter dots) confirmed the gluing axiom.'); }, 2200);
+  }
+
+  function reset() {
+    if (!gStalk) return;
+    dotVisuals.forEach(vis => {
+      if (vis.group.parent) vis.group.parent.remove(vis.group);
+      vis.group.children.forEach(c => { c.geometry?.dispose(); c.material?.map?.dispose(); c.material?.dispose(); });
+    });
+    dotVisuals.clear();
+    if (bgGroup) { clear(bgGroup); gStalk.remove(bgGroup); bgGroup = null; }
+    clear(gPre); clear(gSheaf);
+    ms = []; ungroupedGerms = []; stalksFormed = false; colorIdx = 0; glueAnim = null;
+    const btnStalks = document.getElementById('btn-stalks');
+    if (btnStalks) btnStalks.disabled = true;
+    initDotPool();
+    updateUI();
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // PHASE 2: FORM STALKS — group ungrouped germs into labeled stalks
+  // ══════════════════════════════════════════════════════════════════
+  function formStalks() {
+    if (ungroupedGerms.length === 0) {
+      info('⚠️ Place some germs first with <strong>🌱 Place Germs</strong>.');
+      return;
+    }
+
+    // Move all ungrouped germ groups into the ms (stalks) array
+    for (const g of ungroupedGerms) {
+      // Re-assign the id to match ms index
+      g.id = ms.length;
+      // Update owner references in dots
+      g.dotIds.forEach(did => {
+        const dot = dotById(did);
+        if (dot) {
+          // Replace old temporary id with new stalk id
+          dot.owners.delete(g.id);
+          dot.owners.add(ms.length);
+        }
+      });
+      ms.push(g);
+    }
+
+    // Fix owner IDs — since we pushed them sequentially, re-scan
+    // to ensure dot.owners reflect the correct ms indices
+    ms.forEach((m, idx) => {
+      m.id = idx;
+      m.dotIds.forEach(did => {
+        const dot = dotById(did);
+        if (dot) dot.owners.add(idx);
+      });
+    });
+
+    ungroupedGerms = [];
+    stalksFormed = true;
+
+    // Now draw stalk backgrounds (quads, borders, labels)
+    rebuildStalkBackgrounds();
+
+    // Disable "Form Stalks", enable presheaf/glue if ≥2
+    const btnStalks = document.getElementById('btn-stalks');
+    if (btnStalks) btnStalks.disabled = true;
+
+    updateUI();
+  }
+
+  // ── Info display for germs phase (before stalks are formed) ──
+  function updateUI_germs() {
+    const totalGerms = ungroupedGerms.reduce((sum, g) => sum + g.dotIds.length, 0);
+    const totalGroups = ungroupedGerms.length + ms.length;
+    info(`<strong>${totalGerms}</strong> germs placed in <strong>${ungroupedGerms.length}</strong> region(s). Click <strong>📍 Form Stalks</strong> to group them, or place more germs.`);
+
+    // Presheaf and glue stay disabled during germ phase
+    const pre = document.getElementById('btn-presheaf');
+    const glue = document.getElementById('btn-glue');
+    if (pre) pre.disabled = true;
+    if (glue) glue.disabled = true;
+  }
 
   // ── Rebuild ONLY stalk backgrounds — dots are NEVER touched here ──
   function rebuildStalkBackgrounds() {
@@ -1149,13 +1182,20 @@ function takeMeasurement() {
 
   function updateUI() {
     const n = ms.length, sh = countShared();
-    if (!n) info('Click <strong>📍 Take Measurement</strong> to place germs on the situs.');
-    else info(`<strong>${n}</strong> stalks, <strong style="color:#fdd835">${sh}</strong> shared germs (circled outline = overlap, brighter = shared). ${n < 2 ? 'Take more!' : ''}`);
+    if (!n && ungroupedGerms.length === 0) {
+      info('Click <strong>🌱 Place Germs</strong> to scatter local data on the situs.');
+    } else if (ungroupedGerms.length > 0) {
+      updateUI_germs();
+      return;
+    } else {
+      info(`<strong>${n}</strong> stalks, <strong style="color:#fdd835">${sh}</strong> shared germs (circled outline = overlap). ${n < 2 ? 'Place more germs and form stalks!' : ''}`);
+    }
     const pre = document.getElementById('btn-presheaf'), glue = document.getElementById('btn-glue');
-    if (pre) pre.disabled = n < 2; if (glue) glue.disabled = n < 2;
+    if (pre) pre.disabled = n < 2;
+    if (glue) glue.disabled = n < 2;
   }
 
-  // ── Fade logic: once fully faded in, LOCK opacity permanently ──
+  // ── Fade logic ──
   function fadeAll(obj, now) {
     const u = obj.userData;
     if (u?.fs !== undefined && u.fs !== -2) {
@@ -1164,10 +1204,9 @@ function takeMeasurement() {
       if (el > 0 && obj.material && u.ft !== undefined) {
         const progress = Math.min(1, el / 500);
         obj.material.opacity = u.ft * progress * (2 - progress);
-        // Once fully faded in, lock it permanently
         if (progress >= 1) {
           obj.material.opacity = u.ft;
-          u.fs = -2; // sentinel: done fading, never reset
+          u.fs = -2;
         }
       }
     }
@@ -1178,7 +1217,6 @@ function takeMeasurement() {
     requestAnimationFrame(animate); t += .016; ctl.update();
     const now = performance.now();
     [gStalk, gPre, gSheaf].forEach(g => fadeAll(g, now));
-    // NO pulsing, NO scale changes — all dots same size always
     if (glueAnim) {
       const p = Math.min(1, (now - glueAnim.start) / glueAnim.dur);
       const e = p < .5 ? 4*p*p*p : 1 - Math.pow(-2*p+2, 3) / 2;
@@ -1216,41 +1254,10 @@ function takeMeasurement() {
     worldGroup.add(sphere); worldGroup.add(wire); worldGroup.add(sl);
     worldGroup.add(gStalk); worldGroup.add(gPre); worldGroup.add(gSheaf);
     scene.add(worldGroup);
-
-    // Initialize the global dot pool
     initDotPool();
     log(`Dot pool ready: ${dotPool.length} pre-placed dots on sphere`);
-
     window.addEventListener('resize',()=>{cam.aspect=(el.clientWidth||800)/(el.clientHeight||560);cam.updateProjectionMatrix();ren.setSize(el.clientWidth||800,el.clientHeight||560);});
     updateUI(); ren.render(scene,cam); log('OK'); animate();
-  }
-
-  function showPresheaf(){
-    if(ms.length<2){info('⚠️ Take at least <strong>2</strong> measurements.');return;}
-    clear(gPre);clear(gSheaf);glueAnim=null;buildPresheaf();
-    info('<strong>Presheaf:</strong> Dotted outline = all stalks. Circled outlines = shared germs. No gluing guarantee yet.');
-  }
-
-  function glueSheaf(){
-    if(ms.length<2){info('⚠️ Take at least <strong>2</strong> measurements.');return;}
-    clear(gSheaf);buildSheaf();
-    info('<strong>Gluing…</strong> Green surface covers all stalks. Shared germs confirm agreement.');
-    setTimeout(()=>{if(!glueAnim)info('<strong>Sheaf ✓</strong> Green = glued global section. Circled outlines (brighter dots) confirmed the gluing axiom.');},2200);
-  }
-
-  function reset(){
-    // Remove dot visuals from gStalk
-    dotVisuals.forEach(vis => {
-      if(vis.group.parent) vis.group.parent.remove(vis.group);
-      vis.group.children.forEach(c => { c.geometry?.dispose(); c.material?.map?.dispose(); c.material?.dispose(); });
-    });
-    dotVisuals.clear();
-    // Remove stalk backgrounds
-    if(bgGroup){ clear(bgGroup); gStalk.remove(bgGroup); bgGroup=null; }
-    clear(gPre); clear(gSheaf);
-    ms=[]; colorIdx=0; glueAnim=null;
-    initDotPool();
-    updateUI();
   }
 
   function boot(){
@@ -1267,7 +1274,7 @@ function takeMeasurement() {
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);
   else boot();
 
-  return{takeMeasurement,showPresheaf,glueSheaf,reset};
+  return { placeGerms, formStalks, showPresheaf, glueSheaf, reset };
 })();
 
 function loadPhilosophyModule () {
