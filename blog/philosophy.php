@@ -620,7 +620,21 @@ The preceding sections discuss both speculative catastrophic risks (the Papercli
 A **sheaf** is one of the most powerful abstractions in modern mathematics, a framework for understanding how local information can be consistently assembled into global knowledge. Imagine a sphere representing a topological space (the **situs**). At every point on this sphere, we can consider local data — a temperature reading, a wind speed, a function value. The most basic unit of local information is a **germ**: an equivalence class of local data that agrees in some neighborhood of the point. The collection of all germs at a single point forms a **stalk** — the full set of possible local observations anchored at that location.
 
 Over larger open regions, we have **sections**: consistent assignments of data across the region. A **presheaf** assigns sections to every open set of the sphere and provides restriction maps between them, but it makes no promise that locally compatible sections can be glued into a coherent whole. A **sheaf** adds precisely this guarantee: if local sections agree on their overlaps, they can be uniquely **glued** together into a single global section. This gluing axiom is what separates a sheaf from a mere presheaf, and it is what makes sheaves indispensable in algebraic geometry, complex analysis, and modern physics. The visualization below renders this intuition in three dimensions: germs appear as colored dots on the sphere's surface, stalks collect them into labeled neighborhoods, presheaf fragments float independently, and when the gluing condition is satisfied, they fuse into a continuous sheaf draped over the manifold — local knowledge becoming global understanding.
+</div>
 
+<div id="sheaf-canvas" style="width:100%; height:560px; min-height:560px; margin:1.5em auto; max-width:900px; border-radius:12px; overflow:hidden; background:#f8f9fa;"></div>
+<div id="sheaf-controls" style="display:flex; justify-content:center; gap:0.8em; margin-top:1em; flex-wrap:wrap;">
+  <button onclick="SheafViz.placeGerms()" style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #7e57c2; background:#ede7f6; color:#4527a0; border-radius:8px; cursor:pointer; font-weight:bold;">🌱 Place Germs</button>
+  <button id="btn-stalks" onclick="SheafViz.formStalks()" disabled style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #1565c0; background:#e3f2fd; color:#1565c0; border-radius:8px; cursor:pointer;">📍 Form Stalks</button>
+  <button id="btn-presheaf" onclick="SheafViz.showPresheaf()" disabled style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #ffa726; background:#fff3e0; color:#e65100; border-radius:8px; cursor:pointer;">📃 Show Presheaf</button>
+  <button id="btn-glue" onclick="SheafViz.glueSheaf()" disabled style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #66bb6a; background:#e8f5e9; color:#2e7d32; border-radius:8px; cursor:pointer;">🧩 Glue to Sheaf</button>
+  <button onclick="SheafViz.reset()" style="padding:0.5em 1.2em; font-size:0.95em; border:1px solid #bbb; background:#fafafa; color:#555; border-radius:8px; cursor:pointer;">⏪ Reset</button>
+</div>
+<div id="sheaf-info" style="text-align:center; margin-top:0.8em; font-size:0.95em; color:#555; min-height:1.5em; transition: opacity 0.3s;">
+  Click <strong>🌱 Place Germs</strong> to scatter local data on the situs.
+</div>
+
+<div class="md">
 ### Sheaves as a Lens on AI Generation
 
 The sheaf framework maps naturally onto how an LLM assembles coherent output.
@@ -652,16 +666,4 @@ a sheaf**: local sections that are individually plausible but globally
 incompatible. This is the topological signature of absent understanding — a
 system that operates locally via next-token prediction without the global
 coherence guarantee a true sheaf provides.
-</div>
-
-<div id="sheaf-canvas" style="width:100%; height:560px; min-height:560px; margin:1.5em auto; max-width:900px; border-radius:12px; overflow:hidden; background:#f8f9fa;"></div>
-<div id="sheaf-controls" style="display:flex; justify-content:center; gap:0.8em; margin-top:1em; flex-wrap:wrap;">
-  <button onclick="SheafViz.placeGerms()" style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #7e57c2; background:#ede7f6; color:#4527a0; border-radius:8px; cursor:pointer; font-weight:bold;">🌱 Place Germs</button>
-  <button id="btn-stalks" onclick="SheafViz.formStalks()" disabled style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #1565c0; background:#e3f2fd; color:#1565c0; border-radius:8px; cursor:pointer;">📍 Form Stalks</button>
-  <button id="btn-presheaf" onclick="SheafViz.showPresheaf()" disabled style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #ffa726; background:#fff3e0; color:#e65100; border-radius:8px; cursor:pointer;">📃 Show Presheaf</button>
-  <button id="btn-glue" onclick="SheafViz.glueSheaf()" disabled style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #66bb6a; background:#e8f5e9; color:#2e7d32; border-radius:8px; cursor:pointer;">🧩 Glue to Sheaf</button>
-  <button onclick="SheafViz.reset()" style="padding:0.5em 1.2em; font-size:0.95em; border:1px solid #bbb; background:#fafafa; color:#555; border-radius:8px; cursor:pointer;">⏪ Reset</button>
-</div>
-<div id="sheaf-info" style="text-align:center; margin-top:0.8em; font-size:0.95em; color:#555; min-height:1.5em; transition: opacity 0.3s;">
-  Click <strong>🌱 Place Germs</strong> to scatter local data on the situs.
 </div>
