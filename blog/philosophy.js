@@ -498,7 +498,7 @@ const SheafViz = (() => {
     const ring = new THREE.Mesh(
       new THREE.RingGeometry(DOT + 0.015, DOT + 0.035, 24),
       new THREE.MeshBasicMaterial({
-        color: 0xffffff, side: 2, transparent: true,
+        color: 0x333333, side: 2, transparent: true,
         opacity: 0, depthWrite: false
       })
     );
