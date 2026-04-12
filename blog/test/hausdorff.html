@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Topology Explorer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a1a;
+    color: #e0e0e0;
+    overflow-x: hidden;
+  }
+  header {
+    text-align: center;
+    padding: 24px 16px 8px;
+    background: linear-gradient(135deg, #1a1a3e, #0a0a1a);
+    border-bottom: 1px solid #333;
+  }
+  header h1 { font-size: 2rem; color: #7ecfff; margin-bottom: 4px; }
+  header p { font-size: 0.95rem; color: #999; }
+  .tabs {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px;
+    padding: 14px 10px; background: #111128; border-bottom: 1px solid #292944;
+  }
+  .tab-btn {
+    padding: 9px 18px; border: 1px solid #444; border-radius: 20px;
+    background: transparent; color: #aaa; cursor: pointer; font-size: 0.9rem;
+    transition: all .2s;
+  }
+  .tab-btn:hover { border-color: #7ecfff; color: #7ecfff; }
+  .tab-btn.active { background: #7ecfff; color: #0a0a1a; border-color: #7ecfff; font-weight: 600; }
+  .scene { display: none; padding: 20px; max-width: 1100px; margin: auto; }
+  .scene.active { display: block; }
+  .scene h2 { color: #7ecfff; margin-bottom: 6px; font-size: 1.35rem; }
+  .scene .subtitle { color: #888; font-size: 0.92rem; margin-bottom: 16px; }
+  canvas { display: block; margin: 12px auto; border-radius: 12px; border: 1px solid #2a2a4a; cursor: crosshair; background: #0e0e24; }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    margin: 12px 0;
+  }
+  .btn {
+    padding: 8px 18px; border-radius: 18px; border: 1px solid #555;
+    background: #1a1a3e; color: #ccc; cursor: pointer; font-size: 0.88rem;
+    transition: all .2s;
+  }
+  .btn:hover { background: #2a2a5e; border-color: #7ecfff; color: #fff; }
+  .btn.active-toggle { background: #7ecfff; color: #0a0a1a; }
+  .info-box {
+    background: #12122a; border: 1px solid #2a2a4a; border-radius: 10px;
+    padding: 14px 18px; margin: 12px 0; font-size: 0.9rem; line-height: 1.55;
+    color: #bbb;
+  }
+  .info-box strong { color: #7ecfff; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 10px 0; font-size: 0.82rem; }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .legend .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .slider-group { display: flex; align-items: center; gap: 8px; }
+  .slider-group label { font-size: 0.85rem; color: #aaa; }
+  .slider-group input[type=range] { width: 120px; accent-color: #7ecfff; }
+  .comparison {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  @media (max-width: 700px) { .comparison { grid-template-columns: 1fr; } }
+  .card {
+    background: #12122a; border: 1px solid #2a2a4a; border-radius: 12px;
+    padding: 12px; text-align: center;
+  }
+  .card h3 { color: #7ecfff; font-size: 1rem; margin-bottom: 4px; }
+  .card p { font-size: 0.82rem; color: #888; }
+  .hierarchy-svg { display: block; margin: 16px auto; }
+  select {
+    padding: 8px 14px; border-radius: 18px; border: 1px solid #555;
+    background: #1a1a3e; color: #ccc; font-size: 0.88rem; cursor: pointer;
+  }
+  .status-bar {
+    text-align: center; padding: 8px; font-size: 0.88rem; min-height: 32px;
+    color: #ffcc57;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔵 Topology Playground</h1>
+  <p>Click, drag, and explore — learn by seeing, not reading</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="hausdorff">T₂ Hausdorff</button>
+  <button class="tab-btn" data-tab="t1">T₁ Fréchet</button>
+  <button class="tab-btn" data-tab="t0">T₀ Kolmogorov</button>
+  <button class="tab-btn" data-tab="non-hausdorff">Non-Hausdorff</button>
+  <button class="tab-btn" data-tab="first-countable">1st Countable</button>
+  <button class="tab-btn" data-tab="second-countable">2nd Countable</button>
+  <button class="tab-btn" data-tab="hierarchy">Hierarchy Map</button>
+  <button class="tab-btn" data-tab="sandbox">Sandbox</button>
+</div>
+
+<!-- ==================== HAUSDORFF ==================== -->
+<div class="scene active" id="scene-hausdorff">
+  <h2>T₂ — Hausdorff Space</h2>
+  <p class="subtitle">Click anywhere to place two points. Watch them get separated by disjoint open sets.</p>
+  <div class="info-box">
+    <strong>Rule:</strong> For <em>any</em> two distinct points x, y there exist disjoint open neighborhoods U ∋ x and V ∋ y with U ∩ V = ∅.
+  </div>
+  <canvas id="c-haus" width="800" height="420"></canvas>
+  <div class="status-bar" id="status-haus">Click to place Point 1</div>
+  <div class="controls">
+    <div class="slider-group">
+      <label>Separation gap:</label>
+      <input type="range" id="haus-gap" min="0" max="60" value="10">
+    </div>
+    <button class="btn" id="haus-reset">Reset</button>
+    <button class="btn" id="haus-auto">Auto Demo</button>
+  </div>
+  <div class="legend">
+    <span><span class="dot" style="background:#ff6b6b"></span> Point x</span>
+    <span><span class="dot" style="background:#6bffb8"></span> Point y</span>
+    <span><span class="dot" style="background:rgba(255,107,107,0.18);border:1px solid #ff6b6b"></span> Open set U</span>
+    <span><span class="dot" style="background:rgba(107,255,184,0.18);border:1px solid #6bffb8"></span> Open set V</span>
+  </div>
+</div>
+
+<!-- ==================== T1 ==================== -->
+<div class="scene" id="scene-t1">
+  <h2>T₁ — Fréchet Space</h2>
+  <p class="subtitle">For any two distinct points, each has a neighborhood not containing the other. But they may overlap!</p>
+  <div class="info-box">
+    <strong>Rule:</strong> For distinct x, y: ∃ open U with x ∈ U, y ∉ U <em>and</em> ∃ open V with y ∈ V, x ∉ V. But U ∩ V can be non-empty!
+  </div>
+  <canvas id="c-t1" width="800" height="420"></canvas>
+  <div class="status-bar" id="status-t1">Click to place Point 1</div>
+  <div class="controls">
+    <button class="btn" id="t1-reset">Reset</button>
+    <button class="btn" id="t1-auto">Auto Demo</button>
+  </div>
+</div>
+
+<!-- ==================== T0 ==================== -->
+<div class="scene" id="scene-t0">
+  <h2>T₀ — Kolmogorov Space</h2>
+  <p class="subtitle">At least ONE of the two points has a neighborhood not containing the other. Weakest separation!</p>
+  <div class="info-box">
+    <strong>Rule:</strong> For distinct x, y: ∃ open U such that (x ∈ U, y ∉ U) <em>or</em> (y ∈ U, x ∉ U). Only one direction needed!
+  </div>
+  <canvas id="c-t0" width="800" height="420"></canvas>
+  <div class="status-bar" id="status-t0">Click to place Point 1</div>
+  <div class="controls">
+    <button class="btn" id="t0-reset">Reset</button>
+    <button class="btn" id="t0-auto">Auto Demo</button>
+  </div>
+</div>
+
+<!-- ==================== NON-HAUSDORFF ==================== -->
+<div class="scene" id="scene-non-hausdorff">
+  <h2>Non-Hausdorff Examples</h2>
+  <p class="subtitle">See what breaks when the Hausdorff condition fails.</p>
+  <div class="controls" style="margin-bottom:10px">
+    <select id="non-haus-select">
+      <option value="line-double">Line with Two Origins</option>
+      <option value="cofinite">Cofinite Topology</option>
+      <option value="sierpinski">Sierpiński Space {0,1}</option>
+    </select>
+  </div>
+  <canvas id="c-nonhaus" width="800" height="420"></canvas>
+  <div class="status-bar" id="status-nonhaus"></div>
+  <div class="info-box" id="nonhaus-info"></div>
+  <div class="controls">
+    <button class="btn" id="nonhaus-animate">Animate</button>
+    <button class="btn" id="nonhaus-reset">Reset</button>
+  </div>
+</div>
+
+<!-- ==================== FIRST COUNTABLE ==================== -->
+<div class="scene" id="scene-first-countable">
+  <h2>First Countable Spaces</h2>
+  <p class="subtitle">Every point has a countable neighborhood basis. Drag the point and watch the nested basis shrink in.</p>
+  <div class="info-box">
+    <strong>Rule:</strong> At every point x, there is a countable collection {B₁, B₂, B₃, …} of open neighborhoods such that every open set containing x contains some Bₙ.
+  </div>
+  <canvas id="c-1c" width="800" height="420"></canvas>
+  <div class="status-bar" id="status-1c">Drag the point around. The nested balls form a countable local basis.</div>
+  <div class="controls">
+    <div class="slider-group">
+      <label>Basis depth (n):</label>
+      <input type="range" id="basis-n" min="2" max="20" value="8">
+    </div>
+    <select id="fc-type">
+      <option value="metric">Metric space ℝ² (1st countable ✓)</option>
+      <option value="discrete">Discrete topology (1st countable ✓)</option>
+      <option value="uncountable">Uncountable product (NOT 1st countable ✗)</option>
+    </select>
+  </div>
+</div>
+
+<!-- ==================== SECOND COUNTABLE ==================== -->
+<div class="scene" id="scene-second-countable">
+  <h2>Second Countable Spaces</h2>
+  <p class="subtitle">The whole topology has a countable basis. See how rational-center balls cover ℝ².</p>
+  <div class="info-box">
+    <strong>Rule:</strong> There exists a countable collection of open sets such that every open set is a union of sets from this collection. Example: open balls with rational centers and rational radii in ℝⁿ.
+  </div>
+  <canvas id="c-2c" width="800" height="420"></canvas>
+  <div class="status-bar" id="status-2c">Click to place an open set. Watch it get covered by countable basis elements.</div>
+  <div class="controls">
+    <div class="slider-group">
+      <label>Basis density:</label>
+      <input type="range" id="basis-density" min="3" max="30" value="10">
+    </div>
+    <button class="btn" id="sc-show-basis">Show / Hide Basis</button>
+    <button class="btn" id="sc-reset">Reset</button>
+  </div>
+</div>
+
+<!-- ==================== HIERARCHY ==================== -->
+<div class="scene" id="scene-hierarchy">
+  <h2>Separation Axiom Hierarchy</h2>
+  <p class="subtitle">Click any node to see its definition and relationship to others.</p>
+  <canvas id="c-hier" width="800" height="520"></canvas>
+  <div class="info-box" id="hier-info">Click a node above to learn about it.</div>
+</div>
+
+<!-- ==================== SANDBOX ==================== -->
+<div class="scene" id="scene-sandbox">
+  <h2>🧪 Sandbox — Build Your Own Space</h2>
+  <p class="subtitle">Place points, draw open sets, and test separation axioms live.</p>
+  <canvas id="c-sandbox" width="800" height="460"></canvas>
+  <div class="status-bar" id="status-sandbox">Mode: Place Points</div>
+  <div class="controls">
+    <button class="btn active-toggle" id="sb-mode-point" data-mode="point">Place Points</button>
+    <button class="btn" id="sb-mode-open" data-mode="open">Draw Open Set</button>
+    <button class="btn" id="sb-check">Check Axioms</button>
+    <button class="btn" id="sb-reset">Reset</button>
+  </div>
+  <div class="info-box" id="sb-results"></div>
+</div>
+
+<script>
+// ============================================================
+//  UTILITIES
+// ============================================================
+const TAU = Math.PI * 2;
+function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+function rand(a, b) { return Math.random() * (b - a) + a; }
+
+// Tab switching
+const tabs = document.querySelectorAll('.tab-btn');
+const scenes = document.querySelectorAll('.scene');
+tabs.forEach(btn => btn.addEventListener('click', () => {
+  tabs.forEach(b => b.classList.remove('active'));
+  scenes.forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('scene-' + btn.dataset.tab).classList.add('active');
+}));
+
+function getCtx(id) {
+  const c = document.getElementById(id);
+  return { canvas: c, ctx: c.getContext('2d'), w: c.width, h: c.height };
+}
+
+function canvasPos(canvas, e) {
+  const r = canvas.getBoundingClientRect();
+  return { x: (e.clientX - r.left) * (canvas.width / r.width), y: (e.clientY - r.top) * (canvas.height / r.height) };
+}
+
+function drawPoint(ctx, p, color, r = 7) {
+  ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, TAU);
+  ctx.fillStyle = color; ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+}
+
+function drawCircle(ctx, p, radius, fill, stroke, lw = 2) {
+  ctx.beginPath(); ctx.arc(p.x, p.y, radius, 0, TAU);
+  if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke(); }
+}
+
+function drawLabel(ctx, text, x, y, color = '#fff', size = 13) {
+  ctx.font = `${size}px 'Segoe UI', sans-serif`;
+  ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, x, y);
+}
+
+function clearCanvas({ ctx, w, h }) {
+  ctx.clearRect(0, 0, w, h);
+}
+
+// ============================================================
+//  1. HAUSDORFF (T2)
+// ============================================================
+(function() {
+  const S = getCtx('c-haus');
+  const status = document.getElementById('status-haus');
+  let points = [];
+  let animT = 0, animating = false;
+
+  function draw() {
+    clearCanvas(S);
+    if (points.length >= 2) {
+      const [p1, p2] = points;
+      const d = dist(p1, p2);
+      const gap = +document.getElementById('haus-gap').value;
+      const maxR = (d - gap) / 2;
+      const r = Math.max(10, maxR) * Math.min(animT, 1);
+
+      // open sets
+      drawCircle(S.ctx, p1, r, 'rgba(255,107,107,0.13)', 'rgba(255,107,107,0.7)', 2);
+      drawCircle(S.ctx, p2, r, 'rgba(107,255,184,0.13)', 'rgba(107,255,184,0.7)', 2);
+
+      // gap line
+      if (gap > 0 && animT >= 1) {
+        const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+        S.ctx.save();
+        S.ctx.setLineDash([4, 4]);
+        S.ctx.strokeStyle = '#ffcc57'; S.ctx.lineWidth = 1;
+        // perpendicular
+        const dx = p2.x - p1.x, dy = p2.y - p1.y;
+        const len = 40;
+        S.ctx.beginPath();
+        S.ctx.moveTo(mx - dy / d * len, my + dx / d * len);
+        S.ctx.lineTo(mx + dy / d * len, my - dx / d * len);
+        S.ctx.stroke();
+        S.ctx.restore();
+        drawLabel(S.ctx, 'U ∩ V = ∅', mx, my - 22, '#ffcc57', 14);
+      }
+
+      drawPoint(S.ctx, p1, '#ff6b6b');
+      drawPoint(S.ctx, p2, '#6bffb8');
+      drawLabel(S.ctx, 'x', p1.x, p1.y - 16, '#ff6b6b', 15);
+      drawLabel(S.ctx, 'y', p2.x, p2.y - 16, '#6bffb8', 15);
+
+      if (animT >= 1) {
+        status.textContent = `d(x,y)=${d.toFixed(0)}  |  r=${r.toFixed(0)}  |  U ∩ V = ∅  ✓ Hausdorff!`;
+      }
+    } else {
+      if (points.length === 1) {
+        drawPoint(S.ctx, points[0], '#ff6b6b');
+        drawLabel(S.ctx, 'x', points[0].x, points[0].y - 16, '#ff6b6b');
+      }
+    }
+  }
+
+  function animate() {
+    if (!animating) return;
+    animT += 0.025;
+    draw();
+    if (animT < 1.05) requestAnimationFrame(animate);
+    else animating = false;
+  }
+
+  function startAnim() { animT = 0; animating = true; animate(); }
+
+  S.canvas.addEventListener('click', e => {
+    if (points.length >= 2) { points = []; status.textContent = 'Click to place Point 1'; }
+    const p = canvasPos(S.canvas, e);
+    points.push(p);
+    if (points.length === 1) { status.textContent = 'Click to place Point 2'; draw(); }
+    else if (points.length === 2) { startAnim(); }
+  });
+
+  document.getElementById('haus-gap').addEventListener('input', () => { if (points.length >= 2) { animT = 1; draw(); } });
+  document.getElementById('haus-reset').addEventListener('click', () => { points = []; animT = 0; animating = false; clearCanvas(S); status.textContent = 'Click to place Point 1'; });
+  document.getElementById('haus-auto').addEventListener('click', () => {
+    points = [{ x: 250, y: 210 }, { x: 550, y: 210 }];
+    startAnim();
+  });
+
+  draw();
+})();
+
+// ============================================================
+//  2. T1
+// ============================================================
+(function() {
+  const S = getCtx('c-t1');
+  const status = document.getElementById('status-t1');
+  let points = [];
+  let animT = 0, animating = false;
+
+  function draw() {
+    clearCanvas(S);
+    if (points.length >= 2) {
+      const [p1, p2] = points;
+      const d = dist(p1, p2);
+      const r1 = d * 0.75 * Math.min(animT, 1);
+      const r2 = d * 0.75 * Math.min(animT, 1);
+
+      drawCircle(S.ctx, p1, r1, 'rgba(255,107,107,0.12)', 'rgba(255,107,107,0.6)', 2);
+      drawCircle(S.ctx, p2, r2, 'rgba(107,255,184,0.12)', 'rgba(107,255,184,0.6)', 2);
+
+      // overlap region highlight
+      if (animT >= 0.5) {
+        S.ctx.save();
+        S.ctx.globalCompositeOperation = 'lighter';
+        drawCircle(S.ctx, p1, r1, 'rgba(255,200,87,0.06)', null);
+        drawCircle(S.ctx, p2, r2, 'rgba(255,200,87,0.06)', null);
+        S.ctx.restore();
+        const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+        drawLabel(S.ctx, 'U ∩ V ≠ ∅ (overlap OK!)', mx, my - 30, '#ffcc57', 13);
+      }
+
+      drawPoint(S.ctx, p1, '#ff6b6b');
+      drawPoint(S.ctx, p2, '#6bffb8');
+      drawLabel(S.ctx, 'x ∈ U, y ∉ U', p1.x, p1.y - 18, '#ff6b6b', 12);
+      drawLabel(S.ctx, 'y ∈ V, x ∉ V', p2.x, p2.y - 18, '#6bffb8', 12);
+
+      if (animT >= 1) status.textContent = 'Each point excluded from the other\'s neighborhood — but sets overlap. T₁ ✓';
+    } else if (points.length === 1) {
+      drawPoint(S.ctx, points[0], '#ff6b6b');
+    }
+  }
+
+  function animate() { if (!animating) return; animT += 0.025; draw(); if (animT < 1.05) requestAnimationFrame(animate); else animating = false; }
+  function startAnim() { animT = 0; animating = true; animate(); }
+
+  S.canvas.addEventListener('click', e => {
+    if (points.length >= 2) { points = []; status.textContent = 'Click to place Point 1'; }
+    points.push(canvasPos(S.canvas, e));
+    if (points.length === 1) { status.textContent = 'Click to place Point 2'; draw(); }
+    else startAnim();
+  });
+
+  document.getElementById('t1-reset').addEventListener('click', () => { points = []; animT = 0; animating = false; clearCanvas(S); status.textContent = 'Click to place Point 1'; });
+  document.getElementById('t1-auto').addEventListener('click', () => { points = [{ x: 280, y: 210 }, { x: 520, y: 210 }]; startAnim(); });
+})();
+
+// ============================================================
+//  3. T0
+// ============================================================
+(function() {
+  const S = getCtx('c-t0');
+  const status = document.getElementById('status-t0');
+  let points = [];
+  let animT = 0, animating = false;
+
+  function draw() {
+    clearCanvas(S);
+    if (points.length >= 2) {
+      const [p1, p2] = points;
+      const d = dist(p1, p2);
+      const r = d * 0.6 * Math.min(animT, 1);
+
+      // Only ONE neighborhood — around p1 only
+      drawCircle(S.ctx, p1, r, 'rgba(255,107,107,0.15)', 'rgba(255,107,107,0.7)', 2);
+
+      drawPoint(S.ctx, p1, '#ff6b6b');
+      drawPoint(S.ctx, p2, '#6bffb8');
+      drawLabel(S.ctx, 'x ∈ U', p1.x, p1.y - 18, '#ff6b6b', 13);
+      drawLabel(S.ctx, 'y ∉ U', p2.x, p2.y - 18, '#6bffb8', 13);
+
+      if (animT >= 1) {
+        drawLabel(S.ctx, 'Only ONE separating set needed!', (p1.x + p2.x) / 2, 50, '#ffcc57', 15);
+        drawLabel(S.ctx, 'No neighborhood required for y. T₀ ✓', (p1.x + p2.x) / 2, 72, '#aaa', 12);
+        status.textContent = 'One open set separates them (one direction). T₀ ✓';
+      }
+    } else if (points.length === 1) {
+      drawPoint(S.ctx, points[0], '#ff6b6b');
+    }
+  }
+
+  function animate() { if (!animating) return; animT += 0.025; draw(); if (animT < 1.05) requestAnimationFrame(animate); else animating = false; }
+  function startAnim() { animT = 0; animating = true; animate(); }
+
+  S.canvas.addEventListener('click', e => {
+    if (points.length >= 2) { points = []; status.textContent = 'Click to place Point 1'; }
+    points.push(canvasPos(S.canvas, e));
+    if (points.length === 1) { status.textContent = 'Click to place Point 2'; draw(); }
+    else startAnim();
+  });
+
+  document.getElementById('t0-reset').addEventListener('click', () => { points = []; animT = 0; animating = false; clearCanvas(S); status.textContent = 'Click to place Point 1'; });
+  document.getElementById('t0-auto').addEventListener('click', () => { points = [{ x: 280, y: 210 }, { x: 520, y: 210 }]; startAnim(); });
+})();
+
+// ============================================================
+//  4. NON-HAUSDORFF
+// ============================================================
+(function() {
+  const S = getCtx('c-nonhaus');
+  const status = document.getElementById('status-nonhaus');
+  const info = document.getElementById('nonhaus-info');
+  const sel = document.getElementById('non-haus-select');
+  let animT = 0, animating = false, animId;
+
+  const descriptions = {
+    'line-double': `<strong>Line with Two Origins:</strong> Take ℝ and add a second copy of 0 (call it 0'). Every open interval around 0 also "contains" 0'. You can never separate 0 and 0' with disjoint open sets — they're entangled!`,
+    'cofinite': `<strong>Cofinite Topology on ℤ:</strong> Open sets are those whose complement is finite (or the empty set). Any two non-empty open sets must overlap (their complements are finite, so the intersection is cofinite). Not Hausdorff!`,
+    'sierpinski': `<strong>Sierpiński Space {0, 1}:</strong> Topology = {∅, {1}, {0,1}}. Point 1 has an open set {1} not containing 0, but 0 has NO open set excluding 1. This is T₀ but not T₁.`
+  };
+
+  function drawLineDouble(t) {
+    clearCanvas(S);
+    const cx = S.w / 2, cy = S.h / 2;
+    // number line
+    S.ctx.strokeStyle = '#555'; S.ctx.lineWidth = 2;
+    S.ctx.beginPath(); S.ctx.moveTo(60, cy); S.ctx.lineTo(S.w - 60, cy); S.ctx.stroke();
+
+    // ticks
+    for (let i = -5; i <= 5; i++) {
+      const x = cx + i * 60;
+      S.ctx.beginPath(); S.ctx.moveTo(x, cy - 6); S.ctx.lineTo(x, cy + 6); S.ctx.stroke();
+      if (i !== 0) drawLabel(S.ctx, i.toString(), x, cy + 20, '#777', 11);
+    }
+
+    // two origins
+    const sep = 25 * t;
+    const o1 = { x: cx, y: cy - sep };
+    const o2     = { x: cx, y: cy + sep };
+
+    // open intervals that always overlap
+    const intR = 80 * Math.min(t, 1);
+    S.ctx.save();
+    S.ctx.setLineDash([5, 5]);
+    drawCircle(S.ctx, o1, intR, 'rgba(255,107,107,0.1)', 'rgba(255,107,107,0.5)', 1.5);
+    drawCircle(S.ctx, o2, intR, 'rgba(107,255,184,0.1)', 'rgba(107,255,184,0.5)', 1.5);
+    S.ctx.restore();
+
+    // overlap highlight
+    if (t > 0.3) {
+      const mx = (o1.x + o2.x) / 2, my = (o1.y + o2.y) / 2;
+      drawLabel(S.ctx, '⚠ Every neighborhood of 0 overlaps with 0\'', mx, my + 60, '#ffcc57', 13);
+      drawLabel(S.ctx, 'Cannot separate! NOT Hausdorff', mx, my + 80, '#ff6b6b', 12);
+    }
+
+    drawPoint(S.ctx, o1, '#ff6b6b', 8);
+    drawPoint(S.ctx, o2, '#6bffb8', 8);
+    drawLabel(S.ctx, '0', o1.x - 18, o1.y, '#ff6b6b', 14);
+    drawLabel(S.ctx, "0'", o2.x - 18, o2.y, '#6bffb8', 14);
+  }
+
+  function drawCofinite(t) {
+    clearCanvas(S);
+    const pts = [];
+    const n = 20;
+    for (let i = 0; i < n; i++) {
+      pts.push({ x: 80 + (S.w - 160) * (i / (n - 1)), y: S.h / 2 + Math.sin(i * 0.7) * 60 });
+    }
+
+    // draw all points
+    pts.forEach((p, i) => drawPoint(S.ctx, p, '#6baaff', 5));
+
+    // two "open" sets — each misses only finitely many points
+    const skip1 = [2, 7]; // U misses these
+    const skip2 = [5, 13]; // V misses these
+    const r = 18 * Math.min(t, 1);
+
+    // U
+    pts.forEach((p, i) => {
+      if (!skip1.includes(i)) {
+        drawCircle(S.ctx, p, r, 'rgba(255,107,107,0.15)', null);
+      }
+    });
+    // V
+    pts.forEach((p, i) => {
+      if (!skip2.includes(i)) {
+        drawCircle(S.ctx, p, r, 'rgba(107,255,184,0.15)', null);
+      }
+    });
+
+    // highlight overlap
+    if (t > 0.4) {
+      let overlapCount = 0;
+      pts.forEach((p, i) => {
+        if (!skip1.includes(i) && !skip2.includes(i)) {
+          drawCircle(S.ctx, p, r * 0.6, 'rgba(255,200,87,0.25)', null);
+          overlapCount++;
+        }
+      });
+      drawLabel(S.ctx, `U ∩ V contains ${overlapCount} points — always cofinite!`, S.w / 2, 40, '#ffcc57', 14);
+      drawLabel(S.ctx, 'Any two open sets overlap. NOT Hausdorff!', S.w / 2, 62, '#ff6b6b', 12);
+    }
+
+    // mark excluded points
+    if (skip1.length && t > 0.2) {
+      skip1.forEach(i => { drawCircle(S.ctx, pts[i], 12, null, '#ff6b6b', 1.5); drawLabel(S.ctx, '∉U', pts[i].x, pts[i].y - 18, '#ff6b6b', 10); });
+      skip2.forEach(i => { drawCircle(S.ctx, pts[i], 12, null, '#6bffb8', 1.5); drawLabel(S.ctx, '∉V', pts[i].x, pts[i].y + 22, '#6bffb8', 10); });
+    }
+
+    drawLabel(S.ctx, 'U (red) = all except finitely many', 160, S.h - 40, 'rgba(255,107,107,0.8)', 12);
+    drawLabel(S.ctx, 'V (green) = all except finitely many', 160, S.h - 22, 'rgba(107,255,184,0.8)', 12);
+  }
+
+  function drawSierpinski(t) {
+    clearCanvas(S);
+    const cx = S.w / 2, cy = S.h / 2;
+    const p0 = { x: cx - 100, y: cy };
+    const p1 = { x: cx + 100, y: cy };
+
+    // {1} open set
+    const r = 60 * Math.min(t, 1);
+    drawCircle(S.ctx, p1, r, 'rgba(107,255,184,0.15)', 'rgba(107,255,184,0.6)', 2);
+    drawLabel(S.ctx, 'Open set {1}', p1.x, p1.y - r - 16, '#6bffb8', 13);
+
+    // {0,1} open set
+    if (t > 0.4) {
+      S.ctx.save();
+      S.ctx.setLineDash([6, 4]);
+      S.ctx.strokeStyle = 'rgba(255,200,87,0.5)'; S.ctx.lineWidth = 2;
+      S.ctx.beginPath();
+      S.ctx.roundRect(cx - 200, cy - 80, 400, 160, 20);
+      S.ctx.stroke();
+      S.ctx.fillStyle = 'rgba(255,200,87,0.05)'; S.ctx.fill();
+      S.ctx.restore();
+      drawLabel(S.ctx, 'Open set {0, 1}', cx, cy - 100, '#ffcc57', 13);
+    }
+
+    // no open set containing only 0
+    if (t > 0.7) {
+      S.ctx.save();
+      S.ctx.setLineDash([3, 3]);
+      drawCircle(S.ctx, p0, 50, null, 'rgba(255,80,80,0.4)', 1.5);
+      S.ctx.restore();
+      drawLabel(S.ctx, '✗ No open set for 0 alone', p0.x, p0.y + 75, '#ff6b6b', 12);
+      drawLabel(S.ctx, '0 cannot be separated from 1', cx, cy + 120, '#ff6b6b', 14);
+      drawLabel(S.ctx, 'T₀ ✓  T₁ ✗  T₂ ✗', cx, cy + 145, '#ffcc57', 14);
+    }
+
+    drawPoint(S.ctx, p0, '#ff6b6b', 10);
+    drawPoint(S.ctx, p1, '#6bffb8', 10);
+    drawLabel(S.ctx, '0', p0.x, p0.y - 20, '#ff6b6b', 16);
+    drawLabel(S.ctx, '1', p1.x, p1.y - 20, '#6bffb8', 16);
+
+    // topology listing
+    drawLabel(S.ctx, 'τ = { ∅, {1}, {0,1} }', cx, 35, '#aaa', 14);
+  }
+
+  function drawCurrent(t) {
+    const v = sel.value;
+    if (v === 'line-double') drawLineDouble(t);
+    else if (v === 'cofinite') drawCofinite(t);
+    else drawSierpinski(t);
+  }
+
+  function animate() {
+    if (!animating) return;
+    animT += 0.02;
+    drawCurrent(animT);
+    if (animT < 1.05) animId = requestAnimationFrame(animate);
+    else animating = false;
+  }
+
+  function startAnim() { animT = 0; animating = true; animate(); }
+
+  sel.addEventListener('change', () => { info.innerHTML = descriptions[sel.value]; startAnim(); });
+  document.getElementById('nonhaus-animate').addEventListener('click', startAnim);
+  document.getElementById('nonhaus-reset').addEventListener('click', () => { animating = false; clearCanvas(S); animT = 0; });
+
+  info.innerHTML = descriptions[sel.value];
+  startAnim();
+})();
+
+// ============================================================
+//  5. FIRST COUNTABLE
+// ============================================================
+(function() {
+  const S = getCtx('c-1c');
+  const status = document.getElementById('status-1c');
+  let point = { x: S.w / 2, y: S.h / 2 };
+  let dragging = false;
+
+  function draw() {
+    clearCanvas(S);
+    const n = +document.getElementById('basis-n').value;
+    const type = document.getElementById('fc-type').value;
+
+    if (type === 'uncountable') {
+      // show a warning visualization
+      drawLabel(S.ctx, '⚠ Uncountable product topology', S.w / 2, S.h / 2 - 30, '#ff6b6b', 18);
+      drawLabel(S.ctx, 'No countable local basis exists at any point!', S.w / 2, S.h / 2 + 10, '#ffcc57', 14);
+      drawLabel(S.ctx, 'Example: ℝ^ℝ with product topology', S.w / 2, S.h / 2 + 40, '#aaa', 13);
+
+      // draw scattered "basis attempts" that never converge
+      S.ctx.save();
+      S.ctx.setLineDash([3, 5]);
+      for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * TAU;
+        const r = 40 + i * 12;
+        drawCircle(S.ctx, { x: S.w / 2 + Math.cos(angle) * 30, y: S.h / 2 + Math.sin(angle) * 30 }, r, null, 'rgba(255,80,80,0.2)', 1);
+      }
+      S.ctx.restore();
+      drawLabel(S.ctx, '∞ directions — can\'t cover with countably many', S.w / 2, S.h - 40, '#888', 12);
+      return;
+    }
+
+    // Nested basis balls
+    const maxR = 160;
+    for (let i = 0; i < n; i++) {
+      const r = maxR * (1 - i / n) + 8;
+      const alpha = 0.08 + 0.04 * (i / n);
+      const hue = 200 + (i / n) * 60;
+      drawCircle(S.ctx, point, r, `hsla(${hue}, 80%, 60%, ${alpha})`, `hsla(${hue}, 80%, 60%, 0.5)`, 1);
+      drawLabel(S.ctx, `B${subscript(i + 1)}`, point.x + r + 8, point.y - 4, `hsla(${hue}, 80%, 70%, 0.8)`, 10);
+    }
+
+    drawPoint(S.ctx, point, '#7ecfff', 7);
+    drawLabel(S.ctx, 'x', point.x, point.y - 18, '#7ecfff', 14);
+
+    if (type === 'metric') {
+      drawLabel(S.ctx, 'B_n = Ball(x, 1/n) — countable basis at x', S.w / 2, 30, '#aaa', 13);
+    } else {
+      drawLabel(S.ctx, 'Discrete: {x} is a basis — trivially countable', S.w / 2, 30, '#aaa', 13);
+    }
+    drawLabel(S.ctx, `Showing ${n} nested neighborhoods`, S.w / 2, S.h - 20, '#666', 11);
+  }
+
+  function subscript(n) {
+    const subs = '₀₁₂₃₄₅₆₇₈₉';
+    return String(n).split('').map(d => subs[+d]).join('');
+  }
+
+  S.canvas.addEventListener('mousedown', e => {
+    const p = canvasPos(S.canvas, e);
+    if (dist(p, point) < 30) dragging = true;
+  });
+  S.canvas.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    point = canvasPos(S.canvas, e);
+    point.x = Math.max(20, Math.min(S.w - 20, point.x));
+    point.y = Math.max(20, Math.min(S.h - 20, point.y));
+    draw();
+  });
+  S.canvas.addEventListener('mouseup', () => dragging = false);
+  S.canvas.addEventListener('mouseleave', () => dragging = false);
+
+  // Touch support
+  S.canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const p = canvasPos(S.canvas, e.touches[0]);
+    if (dist(p, point) < 50) dragging = true;
+  }, { passive: false });
+  S.canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!dragging) return;
+    point = canvasPos(S.canvas, e.touches[0]);
+    point.x = Math.max(20, Math.min(S.w - 20, point.x));
+    point.y = Math.max(20, Math.min(S.h - 20, point.y));
+    draw();
+  }, { passive: false });
+  S.canvas.addEventListener('touchend', () => dragging = false);
+
+  document.getElementById('basis-n').addEventListener('input', draw);
+  document.getElementById('fc-type').addEventListener('change', draw);
+
+  draw();
+})();
+
+// ============================================================
+//  6. SECOND COUNTABLE
+// ============================================================
+(function() {
+  const S = getCtx('c-2c');
+  const status = document.getElementById('status-2c');
+  let showBasis = false;
+  let userSets = [];
+  let basisElements = [];
+
+  function generateBasis() {
+    const density = +document.getElementById('basis-density').value;
+    basisElements = [];
+    const step = S.w / density;
+    for (let i = 0; i < density; i++) {
+      for (let j = 0; j < Math.floor(S.h / step); j++) {
+        // "rational" centers on a grid
+        const cx = step / 2 + i * step + (Math.random() - 0.5) * 4;
+        const cy = step / 2 + j * step + (Math.random() - 0.5) * 4;
+        const r = step * 0.45 + Math.random() * step * 0.2;
+        basisElements.push({ x: cx, y: cy, r });
+      }
+    }
+  }
+
+  function draw() {
+    clearCanvas(S);
+
+    // draw basis elements
+    if (showBasis) {
+      basisElements.forEach(b => {
+        drawCircle(S.ctx, b, b.r, 'rgba(126,207,255,0.04)', 'rgba(126,207,255,0.15)', 0.5);
+      });
+      drawLabel(S.ctx, `${basisElements.length} basis elements (rational-like grid)`, S.w / 2, 22, '#7ecfff', 12);
+    }
+
+    // user open sets and covering
+    userSets.forEach(us => {
+      drawCircle(S.ctx, us, us.r, 'rgba(255,200,87,0.12)', 'rgba(255,200,87,0.6)', 2);
+
+      // find basis elements inside
+      basisElements.forEach(b => {
+        if (dist(us, b) + b.r <= us.r + 5) {
+          drawCircle(S.ctx, b, b.r, 'rgba(107,255,184,0.1)', 'rgba(107,255,184,0.4)', 1);
+        }
+      });
+    });
+
+    if (userSets.length > 0) {
+      status.textContent = 'Yellow = your open set. Green = basis elements covering it. Every open set = union of basis elements!';
+    }
+  }
+
+  S.canvas.addEventListener('click', e => {
+    const p = canvasPos(S.canvas, e);
+    p.r = 40 + Math.random() * 50;
+    userSets.push(p);
+    draw();
+  });
+
+  document.getElementById('sc-show-basis').addEventListener('click', () => { showBasis = !showBasis; draw(); });
+  document.getElementById('sc-reset').addEventListener('click', () => { userSets = []; clearCanvas(S); status.textContent = 'Click to place an open set. Watch it get covered by countable basis elements.'; draw(); });
+  document.getElementById('basis-density').addEventListener('input', () => { generateBasis(); draw(); });
+
+  generateBasis();
+  draw();
+})();
+
+// ============================================================
+//  7. HIERARCHY
+// ============================================================
+(function() {
+  const S = getCtx('c-hier');
+  const info = document.getElementById('hier-info');
+
+  const nodes = [
+    { id: 'indiscrete', label: 'Indiscrete', x: 400, y: 480, color: '#888',
+      desc: '<strong>Indiscrete (Trivial) Topology:</strong> Only ∅ and X are open. No separation at all. Not T₀.' },
+    { id: 't0', label: 'T₀ Kolmogorov', x: 400, y: 400, color: '#c084fc',
+      desc: '<strong>T₀:</strong> For any two distinct points, at least one has a neighborhood not containing the other.' },
+    { id: 't1', label: 'T₁ Fréchet', x: 400, y: 310, color: '#60a5fa',
+      desc: '<strong>T₁:</strong> For any two distinct points, each has a neighborhood not containing the other. Singletons are closed.' },
+    { id: 't2', label: 'T₂ Hausdorff', x: 400, y: 220, color: '#34d399',
+      desc: '<strong>T₂ (Hausdorff):</strong> Any two distinct points can be separated by disjoint open neighborhoods. Limits of sequences are unique.' },
+    { id: 't2.5', label: 'T₂.₅ Urysohn', x: 250, y: 140, color: '#fbbf24',
+      desc: '<strong>T₂.₅ (Urysohn):</strong> Any two distinct points can be separated by closed neighborhoods. Stronger than Hausdorff.' },
+    { id: 't3', label: 'T₃ Regular', x: 400, y: 140, color: '#f472b6',
+      desc: '<strong>T₃ (Regular Hausdorff):</strong> Points and closed sets can be separated by open sets. T₁ + regularity.' },
+    { id: 't3.5', label: 'T₃.₅ Tychonoff', x: 550, y: 140, color: '#fb923c',
+      desc: '<strong>T₃.₅ (Tychonoff / Completely Regular):</strong> Points and closed sets can be separated by continuous functions. Embeds in [0,1]^I.' },
+    { id: 't4', label: 'T₄ Normal', x: 400, y: 55, color: '#f87171',
+      desc: '<strong>T₄ (Normal Hausdorff):</strong> Any two disjoint closed sets can be separated by open sets. Urysohn\'s lemma applies.' },
+    { id: '1c', label: '1st Countable', x: 120, y: 260, color: '#a78bfa',
+      desc: '<strong>First Countable:</strong> Every point has a countable neighborhood basis. Sequences suffice to describe topology. All metric spaces are 1st countable.' },
+    { id: '2c', label: '2nd Countable', x: 120, y: 170, color: '#67e8f9',
+      desc: '<strong>Second Countable:</strong> The topology has a countable basis. Implies 1st countable, separable, and Lindelöf. ℝⁿ is 2nd countable.' },
+    { id: 'metric', label: 'Metrizable', x: 120, y: 80, color: '#86efac',
+      desc: '<strong>Metrizable:</strong> Topology comes from a metric. Always Hausdorff, 1st countable, paracompact, and normal.' },
+  ];
+
+  const edges = [
+    ['indiscrete', 't0'], ['t0', 't1'], ['t1', 't2'],
+    ['t2', 't2.5'], ['t2', 't3'], ['t2', 't3.5'],
+    ['t2.5', 't4'], ['t3', 't4'], ['t3.5', 't4'],
+    ['1c', '2c'], ['2c', 'metric'],
+    ['metric', 't4'],
+  ];
+
+  let hovered = null;
+
+  function getNode(id) { return nodes.find(n => n.id === id); }
+
+  function draw() {
+    clearCanvas(S);
+
+    // edges
+    edges.forEach(([a, b]) => {
+      const na = getNode(a), nb = getNode(b);
+      S.ctx.beginPath();
+      S.ctx.moveTo(na.x, na.y); S.ctx.lineTo(nb.x, nb.y);
+      S.ctx.strokeStyle = '#333'; S.ctx.lineWidth = 2; S.ctx.stroke();
+
+      // arrow
+      const angle = Math.atan2(nb.y - na.y, nb.x - na.x);
+      const mx = (na.x + nb.x) / 2, my = (na.y + nb.y) / 2;
+      S.ctx.beginPath();
+      S.ctx.moveTo(mx, my);
+      S.ctx.lineTo(mx - 8 * Math.cos(angle - 0.4), my - 8 * Math.sin(angle - 0.4));
+      S.ctx.moveTo(mx, my);
+      S.ctx.lineTo(mx - 8 * Math.cos(angle + 0.4), my - 8 * Math.sin(angle + 0.4));
+      S.ctx.strokeStyle = '#555'; S.ctx.lineWidth = 1.5; S.ctx.stroke();
+    });
+
+    // nodes
+    nodes.forEach(n => {
+      const isHov = hovered === n.id;
+      const r = isHov ? 32 : 26;
+      drawCircle(S.ctx, n, r, isHov ? n.color : 'rgba(20,20,50,0.9)', n.color, isHov ? 3 : 2);
+      drawLabel(S.ctx, n.label, n.x, n.y, isHov ? '#fff' : n.color, isHov ? 12 : 10);
+    });
+
+    // direction label
+    drawLabel(S.ctx, '↑ Stronger separation', S.w - 100, S.h - 20, '#555', 11);
+  }
+
+  S.canvas.addEventListener('mousemove', e => {
+    const p = canvasPos(S.canvas, e);
+    let found = null;
+    nodes.forEach(n => { if (dist(p, n) < 32) found = n.id; });
+    if (found !== hovered) {
+      hovered = found;
+      draw();
+      if (found) {
+        const n = getNode(found);
+        info.innerHTML = n.desc;
+        S.canvas.style.cursor = 'pointer';
+      } else {
+        info.innerHTML = 'Hover over a node to learn about it.';
+        S.canvas.style.cursor = 'crosshair';
+      }
+    }
+  });
+
+  S.canvas.addEventListener('click', e => {
+    const p = canvasPos(S.canvas, e);
+    nodes.forEach(n => {
+      if (dist(p, n) < 32) info.innerHTML = n.desc;
+    });
+  });
+
+  draw();
+})();
+
+// ============================================================
+//  8. SANDBOX
+// ============================================================
+(function() {
+  const S = getCtx('c-sandbox');
+  const status = document.getElementById('status-sandbox');
+  const results = document.getElementById('sb-results');
+  let mode = 'point';
+  let points = [];
+  let openSets = []; // each: { cx, cy, r, pointsInside: Set }
+  let drawingOpen = null;
+
+  const modeButtons = document.querySelectorAll('[data-mode]');
+  modeButtons.forEach(btn => btn.addEventListener('click', () => {
+    mode = btn.dataset.mode;
+    modeButtons.forEach(b => b.classList.remove('active-toggle'));
+    btn.classList.add('active-toggle');
+    status.textContent = mode === 'point' ? 'Mode: Place Points' : 'Mode: Draw Open Set (click & drag)';
+  }));
+
+  function draw() {
+    clearCanvas(S);
+
+    // grid
+    S.ctx.strokeStyle = '#1a1a3a'; S.ctx.lineWidth = 0.5;
+    for (let x = 0; x < S.w; x += 40) { S.ctx.beginPath(); S.ctx.moveTo(x, 0); S.ctx.lineTo(x, S.h); S.ctx.stroke(); }
+    for (let y = 0; y < S.h; y += 40) { S.ctx.beginPath(); S.ctx.moveTo(0, y); S.ctx.lineTo(S.w, y); S.ctx.stroke(); }
+
+    // open sets
+    openSets.forEach((os, i) => {
+      const hue = (i * 67) % 360;
+      drawCircle(S.ctx, os, os.r, `hsla(${hue}, 70%, 55%, 0.1)`, `hsla(${hue}, 70%, 55%, 0.6)`, 2);
+      drawLabel(S.ctx, `U${i + 1}`, os.x + os.r + 8, os.y - 8, `hsla(${hue}, 70%, 70%, 0.8)`, 11);
+    });
+
+    // drawing preview
+    if (drawingOpen) {
+      drawCircle(S.ctx, drawingOpen, drawingOpen.r, 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.3)', 1);
+    }
+
+    // points
+    points.forEach((p, i) => {
+      const hue = (i * 137) % 360;
+      drawPoint(S.ctx, p, `hsl(${hue}, 80%, 65%)`, 7);
+      drawLabel(S.ctx, `p${i + 1}`, p.x + 12, p.y - 10, `hsl(${hue}, 80%, 75%)`, 11);
+    });
+  }
+
+  S.canvas.addEventListener('mousedown', e => {
+    const p = canvasPos(S.canvas, e);
+    if (mode === 'point') {
+      points.push(p);
+      draw();
+    } else {
+      drawingOpen = { x: p.x, y: p.y, r: 0 };
+    }
+  });
+
+  S.canvas.addEventListener('mousemove', e => {
+    if (mode === 'open' && drawingOpen) {
+      const p = canvasPos(S.canvas, e);
+      drawingOpen.r = dist(drawingOpen, p);
+      draw();
+    }
+  });
+
+  S.canvas.addEventListener('mouseup', e => {
+    if (mode === 'open' && drawingOpen) {
+      if (drawingOpen.r > 10) {
+        openSets.push({ ...drawingOpen });
+      }
+      drawingOpen = null;
+      draw();
+    }
+  });
+
+  // Touch support for sandbox
+  S.canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const p = canvasPos(S.canvas, e.touches[0]);
+    if (mode === 'point') { points.push(p); draw(); }
+    else { drawingOpen = { x: p.x, y: p.y, r: 0 }; }
+  }, { passive: false });
+  S.canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (mode === 'open' && drawingOpen) {
+      const p = canvasPos(S.canvas, e.touches[0]);
+      drawingOpen.r = dist(drawingOpen, p);
+      draw();
+    }
+  }, { passive: false });
+  S.canvas.addEventListener('touchend', e => {
+    if (mode === 'open' && drawingOpen) {
+      if (drawingOpen.r > 10) openSets.push({ ...drawingOpen });
+      drawingOpen = null; draw();
+    }
+  });
+
+  document.getElementById('sb-check').addEventListener('click', () => {
+    if (points.length < 2) { results.innerHTML = 'Place at least 2 points to check axioms.'; return; }
+
+    // For each pair, check separation
+    let isT0 = true, isT1 = true, isT2 = true;
+    let details = [];
+
+    for (let i = 0; i < points.length; i++) {
+      for (let j = i + 1; j < points.length; j++) {
+        const pi = points[i], pj = points[j];
+
+        // find open sets containing pi but not pj
+        const uForI = openSets.filter(os => dist(os, pi) < os.r && dist(os, pj) >= os.r);
+        // find open sets containing pj but not pi
+        const uForJ = openSets.filter(os => dist(os, pj) < os.r && dist(os, pi) >= os.r);
+
+        const hasOneSep = uForI.length > 0 || uForJ.length > 0;
+        const hasBothSep = uForI.length > 0 && uForJ.length > 0;
+
+        // check disjoint
+        let hasDisjoint = false;
+        for (const a of uForI) {
+          for (const b of uForJ) {
+            if (dist(a, b) >= a.r + b.r) { hasDisjoint = true; break; }
+          }
+          if (hasDisjoint) break;
+        }
+
+        if (!hasOneSep) isT0 = false;
+        if (!hasBothSep) isT1 = false;
+        if (!hasDisjoint) isT2 = false;
+
+        details.push(`p${i + 1}↔p${j + 1}: T₀=${hasOneSep ? '✓' : '✗'} T₁=${hasBothSep ? '✓' : '✗'} T₂=${hasDisjoint ? '✓' : '✗'}`);
+      }
+    }
+
+    let html = `<div style="margin-bottom:10px">
+      <strong style="color:#34d399">T₀ (Kolmogorov): ${isT0 ? '✅ YES' : '❌ NO'}</strong> — 
+      <strong style="color:#60a5fa">T₁ (Fréchet): ${isT1 ? '✅ YES' : '❌ NO'}</strong> — 
+      <strong style="color:#7ecfff">T₂ (Hausdorff): ${isT2 ? '✅ YES' : '❌ NO'}</strong>
+    </div>`;
+    html += `<div style="font-size:0.82rem; color:#888">`;
+    details.forEach(d => html += d + '<br>');
+    html += '</div>';
+
+    if (!isT0) html += `<div style="margin-top:8px;color:#ff6b6b">💡 Tip: Draw more open sets to separate points. Each pair needs at least one separating open set for T₀.</div>`;
+    else if (!isT1) html += `<div style="margin-top:8px;color:#ffcc57">💡 Tip: For T₁, every pair needs separation in BOTH directions. Draw more open sets!</div>`;
+    else if (!isT2) html += `<div style="margin-top:8px;color:#60a5fa">💡 Tip: For T₂ (Hausdorff), the separating open sets must be DISJOINT. Try smaller, non-overlapping sets.</div>`;
+    else html += `<div style="margin-top:8px;color:#34d399">🎉 Your space satisfies all checked separation axioms up to T₂!</div>`;
+
+    results.innerHTML = html;
+  });
+
+  document.getElementById('sb-reset').addEventListener('click', () => {
+    points = []; openSets = []; drawingOpen = null;
+    results.innerHTML = '';
+    status.textContent = 'Mode: Place Points';
+    draw();
+  });
+
+  draw();
+})();
+
+// ============================================================
+//  RESPONSIVE CANVAS SCALING
+// ============================================================
+(function() {
+  function resizeCanvases() {
+    document.querySelectorAll('canvas').forEach(c => {
+      const parent = c.parentElement;
+      const maxW = parent.clientWidth - 40;
+      if (maxW < c.width) {
+        c.style.width = maxW + 'px';
+        c.style.height = (maxW * c.height / c.width) + 'px';
+      } else {
+        c.style.width = '';
+        c.style.height = '';
+      }
+    });
+  }
+  window.addEventListener('resize', resizeCanvases);
+  resizeCanvases();
+})();
+
+// ============================================================
+//  ANIMATED BACKGROUND PARTICLES (subtle)
+// ============================================================
+(function() {
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;opacity:0.3';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  const N = 40;
+
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resize);
+  resize();
+
+  for (let i = 0; i < N; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 2 + 0.5,
+    });
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU);
+      ctx.fillStyle = 'rgba(126,207,255,0.4)'; ctx.fill();
+    });
+
+    // draw connections
+    for (let i = 0; i < N; i++) {
+      for (let j = i + 1; j < N; j++) {
+        const d = dist(particles[i], particles[j]);
+        if (d < 120) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(126,207,255,${0.15 * (1 - d / 120)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>
