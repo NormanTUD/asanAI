@@ -3075,3 +3075,7 @@ TOKENIZER LAB — Visual Polish
 .autociteelement {
 	word-break: break-all;
 }
+
+.quote-guillemet {
+	user-select: none;
+}

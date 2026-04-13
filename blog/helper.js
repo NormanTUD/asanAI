@@ -709,7 +709,7 @@ function smartquote() {
 				});
 
 			} else {
-				p.innerHTML = `»${el.innerHTML.trim().replace(/^["»]|["«]$/g, '')}«`;
+				p.innerHTML = `<span class="quote-guillemet quote-guillemet-open">»</span>${el.innerHTML.trim().replace(/^["»]|["«]$/g, '')}<span class="quote-guillemet quote-guillemet-close">«</span>`;
 			}
 
 			const footer = document.createElement('footer');
