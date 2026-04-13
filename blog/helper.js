@@ -1777,7 +1777,6 @@ function addConsoleEasterEggs() {
 		const jokes = [
 			"Why do neural networks never get lonely?\nThey have lots of connections.",
 			"A QA engineer walks into a bar.\nOrders 1 beer. Orders 0 beers. Orders 99999999 beers.\nOrders -1 beers. Orders a lizard. Orders NULL beers.",
-			"Machine learning is just statistics wearing a leather jacket.",
 			"Roses are red, violets are blue,\nunexpected '{' on line 32.",
 			"There are only 10 types of people:\nthose who understand binary and those who've completed this course.",
 			"Why did the neural network go to therapy?\nIt had too many deep issues.",
