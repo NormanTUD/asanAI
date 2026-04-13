@@ -1133,29 +1133,31 @@ const SheafViz = (() => {
     gPre.add(lb);
   }
 
-  function buildSheaf() {
-    clear(gSheaf);
-    if (ms.length < 2) {
-      const lb = mkLabel('Need ≥2 stalks', 0x999999, 3);
-      lb.position.set(0, R + 1.7, 0); lb.userData = { ft: 1, fd: 100, fs: -1 };
-      gSheaf.add(lb); return;
-    }
-    buildSheafFills().forEach(f => gSheaf.add(f));
-    const border = mkOutline(DGREEN, false);
-    if (border) { border.userData.fd = 200; gSheaf.add(border); }
-    const seen = new Set();
-    dotPool.forEach(d => {
-      if (!isShared(d) || seen.has(d.id)) return; seen.add(d.id);
-      const ch = mkLabel('✓', DGREEN, 1.3);
-      ch.position.copy(d.pt.clone().multiplyScalar(1.04));
-      ch.userData = { ft: 1, fd: 700, fs: -1 };
-      gSheaf.add(ch);
-    });
-    const ti = mkLabel('Sheaf — glued into one global section ✓', DGREEN, 3.2);
-    ti.position.set(0, R + 1.7, 0); ti.userData = { ft: 1, fd: 500, fs: -1 };
-    gSheaf.add(ti);
-    glueAnim = { start: performance.now(), dur: 2000 };
-  }
+	function buildSheaf() {
+		clear(gSheaf);
+		clear(gPre);  // ← Remove presheaf labels/outlines to prevent overlap
+		if (ms.length < 2) {
+			const lb = mkLabel('Need ≥2 stalks', 0x999999, 3);
+			lb.position.set(0, R + 1.7, 0); lb.userData = { ft: 1, fd: 100, fs: -1 };
+			gSheaf.add(lb); return;
+		}
+		buildSheafFills().forEach(f => gSheaf.add(f));
+		const border = mkOutline(DGREEN, false);
+		if (border) { border.userData.fd = 200; gSheaf.add(border); }
+		const seen = new Set();
+		dotPool.forEach(d => {
+			if (!isShared(d) || seen.has(d.id)) return; seen.add(d.id);
+			const ch = mkLabel('✓', DGREEN, 1.3);
+			ch.position.copy(d.pt.clone().multiplyScalar(1.04));
+			ch.userData = { ft: 1, fd: 700, fs: -1 };
+			gSheaf.add(ch);
+		});
+		const ti = mkLabel('Sheaf — glued into one global section ✓', DGREEN, 3.2);
+		ti.position.set(0, R + 1.7, 0); ti.userData = { ft: 1, fd: 500, fs: -1 };
+		gSheaf.add(ti);
+		glueAnim = { start: performance.now(), dur: 2000 };
+	}
+
 
   function mkLabel(text, hex, sz) {
     const cv = document.createElement('canvas'), cx = cv.getContext('2d');
