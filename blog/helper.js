@@ -1767,7 +1767,6 @@ function addConsoleEasterEggs() {
 		"The 'temperature' in sampling is borrowed from thermodynamics. Boltzmann would be proud.",
 		"The Transformer was originally designed for translation. Nobody expected it to write poetry.",
 		"Layer normalization was invented because batch normalization doesn't work well with sequences.",
-		"The 'residual' in ResNet was inspired by the idea that learning nothing should be easy.",
 		"Tokenizers don't understand language. They understand byte frequencies. That's somehow enough.",
 		"The softmax function is just a Boltzmann distribution wearing a trench coat.",
 	];
