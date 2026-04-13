@@ -8,7 +8,7 @@ TODO https://arxiv.org/abs/2508.18302
 ## The Turing Test: Performance vs. Presence
 
 <div class="smart-quote" data-cite="turing1950computing" data-page=442>
-I believe that in about fifty years' time it will be possible to programme computers [...] to make them play the imitation game so well that an average interrogator will not have more than 70 percent chance of making the right identification after five minutes of questioning. [...]
+I believe that in about fifty years' time it will be possible to programme computers [...] to make them play the imitation game so well that an average interrogator will not have more than 70 percent chance of making the right identification after five minutes of questioning.
 </div>
 
 The **Turing Test**, originally proposed by Alan Turing in 1950 as the "Imitation Game," was designed to bypass the messy question of "Can machines think?" by asking "Can machines *act* like they think?"
