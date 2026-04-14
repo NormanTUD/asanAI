@@ -367,3 +367,6 @@ Reward Hacking: Das ist das perfekte Beispiel für die philosophische Diskussion
 https://blog.mlreview.com/the-intuition-behind-adversarial-attacks-on-neural-networks-71fdd427a33b
 
 Er zitiert Yann LeCun (1989/1998). Frag ihn, warum er moderne Architekturen wie „MoE“ (Mixture of Experts) oder „State Space Models“ (Mamba) ignoriert, wenn er doch den Weg zu ChatGPT erklären will.
+
+
+weird generalizations and inductive backdoors: https://arxiv.org/html/2512.09742v1
