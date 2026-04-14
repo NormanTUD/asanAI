@@ -370,3 +370,5 @@ Er zitiert Yann LeCun (1989/1998). Frag ihn, warum er moderne Architekturen wie 
 
 
 weird generalizations and inductive backdoors: https://arxiv.org/html/2512.09742v1
+
+ramon llull -> https://arxiv.org/html/2508.19200v3
