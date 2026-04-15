@@ -5426,37 +5426,56 @@ window.calculate_vector_math = function() {
 	}
 };
 
+const debounced_vector_math = debounce(function() {
+    const inputEl = document.getElementById('transformer-vector-math-input');
+    const hadFocus = (document.activeElement === inputEl);
+    const cursorPos = inputEl.selectionStart;
+
+    calculate_vector_math();
+
+    // Restore focus and cursor position
+    if (hadFocus && inputEl) {
+        inputEl.focus();
+        inputEl.setSelectionRange(cursorPos, cursorPos);
+    }
+}, 300);
+
 function _execute_vector_math() {
-	const inputVal = document.getElementById('transformer-vector-math-input').value;
-	const resDiv   = document.getElementById('transformer-vector-math-result');
-	const space    = window.persistentEmbeddingSpace;
+	const inputEl = document.getElementById('transformer-vector-math-input');
+	const inputVal = inputEl.value;
+	const resDiv = document.getElementById('transformer-vector-math-result');
+	const space = window.persistentEmbeddingSpace;
 
 	if (!hasValidEmbeddingSpace(space)) {
-		resDiv.innerHTML = "<em style='color: #94a3b8;'>Enter an equation and press Enter...</em>";
+		resDiv.innerHTML = "<em style='color: #94a3b8;'>Enter an equation...</em>";
 		return;
 	}
 
 	const vocabKeys = Object.keys(space);
-	const d_model   = space[vocabKeys[0]].length;
-	const tokens    = tokenizeVectorMathInput(inputVal);
+	const d_model = space[vocabKeys[0]].length;
+	const tokens = tokenizeVectorMathInput(inputVal);
 
 	if (!tokens) {
-		resDiv.innerHTML = "<em style='color: #94a3b8;'>Enter an equation and press Enter...</em>";
-		_execute_embedding_render(d_model, null, []);
+		resDiv.innerHTML = "<em style='color: #94a3b8;'>Enter an equation...</em>";
+		// DON'T re-render embedding plot when input is focused
+		if (document.activeElement !== inputEl) {
+			_execute_embedding_render(d_model, null, []);
+		}
 		return;
 	}
 
 	try {
 		const { result, steps } = evaluateVectorExpression(tokens, space, vocabKeys, d_model);
 		const nearest = findNearestEmbedding(result.val, space, vocabKeys);
-		const html    = buildVectorMathResultHtml(result, nearest, d_model);
-
-		resDiv.innerHTML = html;
+		resDiv.innerHTML = buildVectorMathResultHtml(result, nearest, d_model);
 		render_temml();
-		_execute_embedding_render(d_model, result.val, steps);
+
+		// Only update the plot if user isn't actively typing
+		if (document.activeElement !== inputEl) {
+			_execute_embedding_render(d_model, result.val, steps);
+		}
 	} catch (e) {
-		console.warn("Vector Math Parse Error:", e);
-		resDiv.innerHTML = "<span style='color: #ef4444;'>Syntax Error. Please check your equation formatting.</span>";
+		resDiv.innerHTML = "<span style='color: #ef4444;'>Syntax Error.</span>";
 	}
 }
 
