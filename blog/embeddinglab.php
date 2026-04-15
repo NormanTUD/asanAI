@@ -33,7 +33,7 @@ Riemann was attempting to **generalize the idea of a surface to higher dimension
 
 ### Why "Mannigfaltigkeit" Specifically?
 
-The German word *Mannigfaltigkeit* carries connotations of **diversity, multiplicity, and variety**, a "many-fold" collection of possibilities. Riemann chose it because he was describing mathematical objects that could take on many different forms and configurations while still being governed by underlying geometric principles. The English mathematician and philosopher **William Kingdon Clifford** later translated *Mannigfaltigkeit* into the English word "manifoldness," which was subsequently shortened to **manifold**.
+The German word *Mannigfaltigkeit* carries connotations of **diversity, multiplicity, and variety**, a "many-fold" collection of possibilities. Riemann chose it because he was describing mathematical objects that could take on many different forms and configurations while still being governed by underlying geometric principles. The English mathematician and philosopher \citeauthor{hypothesengeometrieenglish} later translated *Mannigfaltigkeit* into the English word "manifoldness," which was subsequently shortened to **manifold**.
 
 ### The Broader Intellectual Context
 

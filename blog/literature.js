@@ -1,4 +1,10 @@
 window.bibData = {
+	"hypothesengeometrieenglish": {
+		title: "On the Hypotheses which lie at the Bases of Geometry",
+		url: "https://www.emis.de/classics/Riemann/WKCGeom.pdf",
+		author: "William Kingdon Clifford",
+		year: 1867
+	},
 	"hypothesengeometrie": {
 		url: "https://ia800708.us.archive.org/4/items/uberdiehypothese00b_343/uberdiehypothese00b_343.pdf",
 		title: "Über die Hypothesen, welche der Geometrie zu Grunde liegen",
