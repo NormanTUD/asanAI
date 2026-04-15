@@ -1,4 +1,10 @@
 window.bibData = {
+	"weylriemann": {
+		url: "https://ia801404.us.archive.org/23/items/dieideederrieman00weyluoft/dieideederrieman00weyluoft.pdf",
+		author: "Hermann Weyl",
+		title: "Die Idee der Riemannschen Fläche",
+		year: 1913
+	},
 	"gauscurvas": {
 		author: "Carl Friedrich Gauß",
 		title: "Disquisitiones generales circa superficies curvas",
