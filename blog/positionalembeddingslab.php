@@ -178,6 +178,4 @@ The need to encode sequential order is as old as neural sequence modeling itself
 **ALiBi (2022).** Press et al. (\citetitle{alibi2022}) use no positional embeddings at all, just a fixed **linear penalty** proportional to query-key distance, with a different slope per head. Zero learned parameters, strong length extrapolation.
 
 **Length extension.** Techniques like **Position Interpolation** and **YaRN** allow models trained on 4K tokens to operate over 100K+ without retraining, by rescaling or frequency-adjusting existing positional schemes.
-
-The trajectory mirrors the \citealternativetitle{sutton2019bitter}: from hand-designed sinusoids to learned rotations, the schemes that scaled best imposed the least structure.
 </div>
