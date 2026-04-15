@@ -169,7 +169,7 @@ When the Greeks adopted the Phoenician abjad around 800 BCE, they made a seeming
 
 <div class="optional md" data-headline="The Rosetta Stone as a Bridge to Modern NLP">
 The Rosetta Stone (196 BCE) is the first multi-lingual "parallel corpus", a single decree inscribed in Egyptian hieroglyphics,
-Demotic script, and Greek, proving that distinct symbolic systems can map to the same underlying meaning. When Jean-François Champollion deciphered Egyptian hieroglyphics in 1822, he did so by *aligning* the Greek text (which he could read) with the hieroglyphic text (which he could not), 
+Demotic script, and Greek, proving that distinct symbolic systems can map to the same underlying meaning. When \citeauthor{hieroglyphsdeciphered} deciphered Egyptian hieroglyphics in 1822, he did so by *aligning* the Greek text (which he could read) with the hieroglyphic text (which he could not), 
 exploiting the assumption that both encoded the same content. 
 
 This is precisely the method that powered IBM's statistical machine translation models in the 1990s and that still underpins the training of modern multilingual LLMs: given two texts known to express the same meaning in different languages,

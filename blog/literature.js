@@ -1,4 +1,10 @@
 window.bibData = {
+	"hieroglyphsdeciphered": {
+		url: "https://gallica.bnf.fr/ark:/12148/bpt6k396352.texteImage",
+		author: "Jean-François Champollion",
+		year:  1822,
+		title: "Lettre à M. Dacier relative à l'alphabet des hiéroglyphes phonétiques"
+	},
 	"tdnn1989": {
 		title: "Phoneme Recognition Using Time-Delay Neural Networks",
 		author: "Alexander Waibel, Toshiyuki Hanazawa, Geoffrey Hinton, Kiyohiro Shikano, Kevin J. Lang",
