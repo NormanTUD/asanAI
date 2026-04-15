@@ -274,11 +274,15 @@ This evolution moved from:
 Today, a developer can invoke a convolutional layer with a single command, such as `model.conv2d`. Under the hood, the system manages millions of matrix multiplications, a level of complexity that would have been impossible for a human to track manually, but which fulfills the trajectory started by Lovelace: reducing the mechanics of thought to a manageable, symbolic architecture.
 
 Operating Systems, later frameworks, growing complexity on the system side to reduce complexity on the human side, until progress could be made by just moving simple boxes like in asanAI or TensorFlow like model.Dense or model.conv2d. Very important to think that level of abstraction
+</div>
 
-## Prerequisite for artificial Neurons: the discovery of the natural neuron
+<div class="optional md" data-headline="Prerequisite for artificial Neurons: the discovery of the natural neuron">
+The foundation of AI rests upon the *Neuron Doctrine*, established by the Spanish neuroanatomist \citeauthor{cajaltextura}. Working in the late 19th century, he used specialized staining techniques to prove that the brain was composed of discrete, individual cells rather than a continuous web, a concept known as the Reticular Theory. His discovery that neurons are the fundamental signaling units of the nervous system earned him the *Nobel Prize in Physiology or Medicine* in 1906.
 
-The foundation of AI rests upon the *Neuron Doctrine*, established by the Spanish neuroanatomist \citeauthor{cajaltextura}. Working in the late 19th century, he used specialized staining techniques to prove that the brain was composed of discrete, individual cells rather than a continuous web, a concept known as the Reticular Theory. His discovery that neurons are the fundamental signaling units of the nervous system earned him the *Nobel Prize in Physiology or Medicine* in 1906. This shift provided the physical blueprint that would later be digitized into the first artificial neural models.
+This shift provided the physical blueprint that would later be digitized into the first artificial neural models.
+</div>
 
+<div class="md">
 ## Frege & Russell: The Longing for Determinism
 
 With \citeauthor{uebersinnundbedeutung} and his work \citetitle{uebersinnundbedeutung}, the project of distilling natural language through the sieve of formal logic began. He created the foundation of analytic philosophy: the conviction that thinking is the manipulation of logical symbols.
