@@ -1,6 +1,35 @@
 window.bibData = {
-	// Add these to window.bibData in literature.js:
-
+	"tdnn1989": {
+		title: "Phoneme Recognition Using Time-Delay Neural Networks",
+		author: "Alexander Waibel, Toshiyuki Hanazawa, Geoffrey Hinton, Kiyohiro Shikano, Kevin J. Lang",
+		year: 1989,
+		url: "https://ieeexplore.ieee.org/document/21701"
+	},
+	"gehring2017convs2s": {
+		title: "Convolutional Sequence to Sequence Learning",
+		author: "Jonas Gehring, Michael Auli, David Grangier, Denis Yarats, Yann N. Dauphin",
+		year: 2017,
+		url: "https://arxiv.org/abs/1705.03122"
+	},
+	"shaw2018relative": {
+		title: "Self-Attention with Relative Position Representations",
+		author: "Peter Shaw, Jakob Uszkoreit, Ashish Vaswani",
+		year: 2018,
+		url: "https://arxiv.org/abs/1803.02155"
+	},
+	"rope2021": {
+		title: "RoFormer: Enhanced Transformer with Rotary Position Embedding",
+		author: "Jianlin Su, Yu Lu, Shengfeng Pan, Ahmed Murtadha, Bo Wen, Yunfeng Liu",
+		year: 2021,
+		url: "https://arxiv.org/abs/2104.09864"
+	},
+	"alibi2022": {
+		title: "Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation",
+		author: "Ofir Press, Noah A. Smith, Mike Lewis",
+		year: 2022,
+		url: "https://arxiv.org/abs/2108.12409",
+		alternativetitle: "ALiBi"
+	},
 	"controlleduseoffire": {
 		title: "The Discovery of Fire by Humans: A Long and Convoluted Process",
 		author: "J.A.J. Gowlett",

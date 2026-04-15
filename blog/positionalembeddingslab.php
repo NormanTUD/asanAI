@@ -162,3 +162,22 @@ The plot below places the **raw embedding** of "king" (with no positional encodi
 </div>
 
 <div id="repetition-starburst" style="width:100%; height:600px; margin: 20px 0; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+
+<div class="optional md" data-headline="History of Positional Embedding Strategies">
+
+The need to encode sequential order is as old as neural sequence modeling itself. **Recurrent networks** like the \citetitle{lstm} and \citealternativetitle{elman1990finding} encoded position *implicitly*, the hidden state accumulated positional context step by step. **Time-Delay Neural Networks** (Waibel et al., 1989) hard-coded local temporal structure through fixed delay windows. When convolutional models entered sequence tasks, \cite[Gehring et al.]{gehring2017convs2s} added learned position embeddings to compensate for convolution's shift-invariance, among the earliest *explicit, additive* position embeddings.
+
+**Sinusoidal encodings (2017).** The \citetitle{vaswani2017attention} faced a new problem: with no recurrence and no convolution, position had to be injected as a pure signal. The authors chose fixed sine/cosine functions at geometrically decreasing frequencies. Because $PE_{\text{pos}+k}$ is a linear function of $PE_{\text{pos}}$, relative offsets are implicitly representable, no learned parameters required.
+
+**Learned absolute embeddings (2018–2019).** \citealternativetitle{firstgpt}, \citealternativetitle{bert}, and \citealternativetitle{gpt2} replaced sinusoids with a trainable embedding matrix. Simple and effective, but unable to generalize beyond the maximum trained length.
+
+**Relative position encodings (2018).** Shaw et al. (\citetitle{shaw2018relative}) argued that what matters is the *distance* between tokens, not their absolute index. A learned bias based on $(i - j)$ is injected into attention logits before softmax, extending the dynamic alignment intuition of \citeauthor{bahdanau2014} to position itself.
+
+**RoPE (2021).** Su et al. (\citetitle{rope2021}) encode absolute position as a **rotation** in the complex plane applied to query and key vectors. Since the dot product of two rotated vectors depends only on the *angle difference*, absolute information naturally yields a relative signal. Now the dominant scheme in open-weight LLMs.
+
+**ALiBi (2022).** Press et al. (\citetitle{alibi2022}) use no positional embeddings at all, just a fixed **linear penalty** proportional to query-key distance, with a different slope per head. Zero learned parameters, strong length extrapolation.
+
+**Length extension.** Techniques like **Position Interpolation** and **YaRN** allow models trained on 4K tokens to operate over 100K+ without retraining, by rescaling or frequency-adjusting existing positional schemes.
+
+The trajectory mirrors the \citealternativetitle{sutton2019bitter}: from hand-designed sinusoids to learned rotations, the schemes that scaled best imposed the least structure.
+</div>
