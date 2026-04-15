@@ -188,8 +188,6 @@ The \citealternativetitle{antikytherasciam} is an ancient Greek hand-powered orr
 
 Long before silicon chips, the 13th-century Majorcan mystic \citeauthor{arsmagna} attempted to mechanize thought itself. In his seminal work \citealternativetitle{arsmagna}, he designed a system of rotating, concentric paper circles inscribed with letters representing fundamental philosophical and theological concepts. By turning these wheels, one could generate every logically possible combination of ideas.
 
-Medieval scholar Ramon Llull had quite an interesting life, and has done many things. The first novel in medieval Europe after antiquity, \citetitle{blanquerna}, was by him: it was about the rise of a monk to the ranks of the pope. He was also the only person to ever damned as heretic by one pope (Gregor XI.), \cite[yet blessed by a later one]{arsmagnavolvelle} (Pius IX.).
-
 While it may look like a curious mix of medieval mysticism and combinatorics, it represents the first documented attempt to create a **universal logical language** that generates new knowledge through mechanical operations. Llull believed that by systematically exploring every possible connection between symbols, one could "calculate" the absolute truth, a direct ancestor to the idea that intelligence can be understood as the manipulation of symbols according to fixed rules.
 
 When we observe a modern Transformer model calculating the relationship between billions of vectors to predict the next word, we are essentially witnessing Llull's rotating circles operating at an unimaginable scale. He was the first "outsider" to realize that if you can map the world into a set of symbols and define the rules for their combination, the machine can do the "thinking" for you. 
@@ -197,6 +195,8 @@ When we observe a modern Transformer model calculating the relationship between 
 Of course, Llull could not foresee modern AI systems. He was just the first one to explicitly work on symbolic combinatorics, which later, after many more inventions, innovations and discoveries, got us to our modern AI systems.
 
 A complete guide on how to use the Llullian **Volvette** as intended by Llull can be found \cite[here]{artandlogicofllull}.
+
+Medieval scholar Ramon Llull had quite an interesting life, and has done many things. The first novel in medieval Europe after antiquity, \citetitle{blanquerna}, was by him: it was about the rise of a monk to the ranks of the pope. He was also the only person to ever damned as heretic by one pope (Gregor XI.), \cite[yet blessed by a later one]{arsmagnavolvelle} (Pius IX.).
 
 The work of \citeauthor{arsmagna} inspired \citeauthor{leibniz1685calculus} with the philosophical conviction that human reason itself is a form of computation. In his \citeyear{leibniz1685calculus} work \citetitle{leibniz1685calculus}, Leibniz proposed a universal logical language that would reduce all human reasoning to a series of calculations. 
 
