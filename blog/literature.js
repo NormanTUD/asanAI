@@ -255,7 +255,7 @@ window.bibData = {
 	"wilsonsemiconductors": {
 		title: "The Theory of Electronic Semi-Conductors",
 		url: "https://www.jstor.org/stable/95842",
-		author: "A. H. Wilson",
+		author: "Alan Herries Wilson",
 		year: 1931
 	},
 	"colladon": {
