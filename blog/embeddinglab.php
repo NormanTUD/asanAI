@@ -21,7 +21,7 @@ In the architecture of a Transformer, a word possesses no intrinsic "soul" or st
 
 The concept of a **manifold** originates from the German word **Mannigfaltigkeit**, coined by **Bernhard Riemann** in his landmark **1854 Göttingen inaugural lecture** (*Habilitationsvortrag*), titled \citetitle{hypothesengeometrie} ("On the Hypotheses Which Lie at the Foundations of Geometry"). The lecture was delivered before the faculty at the University of Göttingen, with Carl Friedrich Gauss himself in the audience.
 
-### The Problem Riemann Was Trying to Solve
+# The Problem Riemann Was Trying to Solve
 
 Riemann was attempting to **generalize the idea of a surface to higher dimensions**. Before Riemann, geometry was essentially limited to the study of curves (1D), surfaces (2D), and ordinary 3D Euclidean space. The key problems driving his work were:
 
@@ -31,15 +31,15 @@ Riemann was attempting to **generalize the idea of a surface to higher dimension
 
 3. **Describing the set of all possible values of a variable under constraints:** Riemann described a *Mannigfaltigkeit* as the set of all possible values a variable can take when subject to certain constraints, he used the term precisely because "the variable can have **many values**."
 
-### Why "Mannigfaltigkeit" Specifically?
+# Why "Mannigfaltigkeit" Specifically?
 
 The German word *Mannigfaltigkeit* carries connotations of **diversity, multiplicity, and variety**, a "many-fold" collection of possibilities. Riemann chose it because he was describing mathematical objects that could take on many different forms and configurations while still being governed by underlying geometric principles. The English mathematician and philosopher \citeauthor{hypothesengeometrieenglish} later translated *Mannigfaltigkeit* into the English word "manifoldness," which was subsequently shortened to **manifold**.
 
-### The Broader Intellectual Context
+# The Broader Intellectual Context
 
 Riemann's work did not emerge in isolation. It built upon **Gauss's** earlier work on the intrinsic geometry of surfaces (\citetitle{gauscurvas}), which showed that curvature could be measured without reference to an ambient space. The subsequent **axiomatization of manifolds** in the early 20th century was heavily influenced by **David Hilbert's** axiomatic approach. The formal definition continued to evolve through the work of mathematicians like **Hermann Weyl**, who gave one of the first rigorous modern definitions in *Die Idee der Riemannschen Fläche* (1913), and **Hassler Whitney** (1936), who established the modern embedding theorems. **Charles Ehresmann** (1949) further developed the concepts of charts, atlases, and fiber bundles that are standard in modern differential geometry.
 
-### Connection to Modern AI
+# Connection to Modern AI
 
 As described elsewhere in this text, the **Manifold Hypothesis**, the idea that high-dimensional data like language actually lies on or near a much lower-dimensional manifold embedded in the high-dimensional space, is a direct intellectual descendant of Riemann's original insight. When a Transformer's attention layers learn the local coordinate charts of a semantic manifold, they are, in a very real sense, performing the kind of geometric analysis that Riemann first envisioned in 1854, applied not to physical space but to the space of human meaning.
 
