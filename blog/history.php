@@ -104,7 +104,7 @@ It can be thought of as the earliest surviving external memory of early humans.
 
 The **Ishango bone** is a Paleolithic artifact discovered in 1950 by Belgian geologist \citeauthor{ishangobone} in what is now the Democratic Republic of the Congo. Dated to approximately **20,000 years BP** (Before Present), this baboon fibula predates the Sumerian and Babylonian mathematical records by over 15,000 years. It features three columns of grouped notches that exhibit curious mathematical properties, such as a column of prime numbers (11, 13, 17, 19) and groups that sum to 60 or 48.
 
-Researchers have long debated whether the artifact served as a simple tally, a **lunar calendar** as suggested by \citeauthor{marshackishango}, or a more complex mathematical tool. De Heinzelin’s original 1957 publication, \citetitle{ishangobone}, introduced the bone to the scientific community, sparking decades of inquiry into the "mathematical Out of Africa" theory. Modern scholars like \citeauthor{ishango12} continue to investigate its potential use as a primitive "slide rule" or evidence of a base-12 counting system, marking it as a critical precursor to later mechanical calculation aids. It could also have been a counting system, where quantities of something have been represented by notches in the bone. It is not clear exactly what it was used for, though.
+Researchers have long debated whether the artifact served as a simple tally, a **lunar calendar** as suggested by \citeauthor{marshackishango}, or a more complex mathematical tool. De Heinzelin's original 1957 publication, \citetitle{ishangobone}, introduced the bone to the scientific community, sparking decades of inquiry into the "mathematical Out of Africa" theory. Modern scholars like \citeauthor{ishango12} continue to investigate its potential use as a primitive "slide rule" or evidence of a base-12 counting system, marking it as a critical precursor to later mechanical calculation aids. It could also have been a counting system, where quantities of something have been represented by notches in the bone. It is not clear exactly what it was used for, though.
 
 Ultimately, the Ishango bone represents the most significant archaeological indicator of prehistoric mathematical reasoning, and thus is a *very* early precursor to modern computers and AI systems.
 
@@ -125,7 +125,7 @@ The **Salamis Tablet** (c. 300 BC), discovered in 1846 and preserved at the **Ep
 
 * **Spatial Abstraction:** It represents a foundational "level of indirection," mapping abstract numbers to physical grid coordinates.
 * **Mechanical Logic:** By utilizing a grid for units and tens, it outsourced mental labor to a rule-based physical system, a precursor to algorithmic processing.
-* **External Memory:** Like the "Store" in **Babbage’s** designs, the slab functioned as an external memory bank for intermediate sums.
+* **External Memory:** Like the "Store" in **Babbage's** designs, the slab functioned as an external memory bank for intermediate sums.
 * **The "Calculus" Root:** The use of pebbles (*calculi*) illustrates the reduction of reasoning to symbol manipulation, a concept later formalized by **Leibniz** and **Boole**.
 * **Evolution of the Abacus:** While the Salamis Tablet was a stationary counting board, it paved the way for the portable **Roman Hand Abacus** and the eventual bead-and-wire **Suanpan** (China) and **Soroban** (Japan). This transition represents the evolution from "loose" hardware (pebbles on a table) to "integrated" hardware (sliding beads), optimizing calculation speed and portability for merchants.
 
@@ -483,7 +483,7 @@ Traditional methods for finding optimal flight paths relied on complex different
 This paper is a foundational application of **Gradient Descent**, the engine of modern AI:
 * **Loss Minimization:** In the paper, the "Error" is extra flight time; in NNs, "Loss" is the prediction error.
 * **Weight Updates:** Just as Kelley adjusted flight parameters (thrust/angle) in small steps, NNs adjust their weights using the same "steepest descent" logic.
-* **Learning Rate:** The paper’s "step size" ($\Delta\sigma$) is exactly what we now call the **Learning Rate** in deep learning.
+* **Learning Rate:** The paper's "step size" ($\Delta\sigma$) is exactly what we now call the **Learning Rate** in deep learning.
 </div>
 
 <div class="md">
@@ -563,7 +563,7 @@ However, history shows that this approach usually fails in the long run. The "bi
 
 The irony of the Bitter Lesson is that attempting to hard-code our conscious logic failed to produce intelligence, yet replicating our biological architecture, the hierarchical, layered processing discovered in the visual cortex by \citeauthorlastnameand{hubelwiesel} or \citeauthorlastnameand{mccullochpitts1943} and so on, succeeded. We are faced with the paradox that the more we mimic the physical 'how' of the brain's structure, the more we lose the ability to interpret its 'why.' It achieves a convincing, yet hollow, mimicry of thought by ignoring our introspective theories and instead scaling the very methods of our biology, proving that our subjective experience of 'thinking' was always a poor map of the underlying computation
 
-\citeauthorlastnameand{jelinek}'s aphorism, **"Every time I fire a linguist, the performance of the speech recognizer goes up"**, is the spiritual predecessor to **The Bitter Lesson**. It captures the "bitter" realization that human-designed linguistic rules often act as bottlenecks compared to raw statistical computation. By favoring general-purpose algorithms over specialized human intuition, Jelinek’s IBM team proved that "more data and more compute" consistently outperform "hand-crafted knowledge."
+\citeauthorlastnameand{jelinek}'s aphorism, **"Every time I fire a linguist, the performance of the speech recognizer goes up"**, is the spiritual predecessor to **The Bitter Lesson**. It captures the "bitter" realization that human-designed linguistic rules often act as bottlenecks compared to raw statistical computation. By favoring general-purpose algorithms over specialized human intuition, Jelinek's IBM team proved that "more data and more compute" consistently outperform "hand-crafted knowledge."
 
 **Key Takeaways:**
 * **The Power of Search and Learning:** Instead of hand-coding "knowledge," the most successful AIs simply use massive amounts of calculation to "search" for the best answer or "learn" from trillions of examples.
@@ -611,7 +611,7 @@ After the second AI winter, the field shifted back to connectionism. In \citeyea
 
 We tend to view the progress of AI as a purely mathematical evolution. However, \citeauthor{hooker2020} reminds us of a grounded reality in \citetitle{hooker2020}: the success of an algorithm is often dictated by available hardware rather than intellectual superiority.
 
-Ideas win when they are "hardware-friendly." Because GPUs were optimized for parallel matrix multiplication (due to the gaming industry), models that relied on these operations, like Deep Learning and Transformers, surpassed their rivals. Highly efficient but difficult-to-parallelize approaches were relegated to the "researcher’s graveyard." We conduct our research in the shadow of the computing architectures we happened to inherit.
+Ideas win when they are "hardware-friendly." Because GPUs were optimized for parallel matrix multiplication (due to the gaming industry), models that relied on these operations, like Deep Learning and Transformers, surpassed their rivals. Highly efficient but difficult-to-parallelize approaches were relegated to the "researcher's graveyard." We conduct our research in the shadow of the computing architectures we happened to inherit.
 
 While the theoretical foundations of deep learning were laid in the 1980s, the field remained dormant largely due to a lack of computing power. The solution came from an unlikely source: the video game industry.
 
@@ -634,7 +634,7 @@ This hardware lottery, the fact that AI researchers could piggyback on the massi
 
 The "Hardware Lottery" describes how the success of an idea depends less on its brilliance and more on whether it fits existing technology. This is perfectly illustrated by **\citeauthor{weatherfactory}'s** **"\citealternativetitle{weatherfactory}"** (\citeyear{weatherfactory}). Richardson envisioned a massive theater filled with 64,000 humans performing manual calculations (then called "computers") in parallel to predict global weather. While mathematically sound, it was a practical failure because human "hardware" was too slow and expensive to outpace the actual weather.
 
-Just as Richardson’s vision remained a "researcher’s graveyard" until electronic computers arrived, **Deep Learning** remained relatively dormant in the 1980s. The breakthrough wasn't mainly a new mathematical discovery, but the realization that **GPUs**, built for the gaming industry, were essentially Richardson’s "Weather Factory" on a chip. By using **SIMD (Single Instruction, Multiple Data)** architecture, a single GPU could perform the work of thousands of sequential processors simultaneously. This shifted AI from the slow, logical processing of a CPU to the massive throughput required for modern **LLMs**, finally providing the "hardware-friendly" environment Richardson’s numerical methods always required.
+Just as Richardson's vision remained a "researcher's graveyard" until electronic computers arrived, **Deep Learning** remained relatively dormant in the 1980s. The breakthrough wasn't mainly a new mathematical discovery, but the realization that **GPUs**, built for the gaming industry, were essentially Richardson's "Weather Factory" on a chip. By using **SIMD (Single Instruction, Multiple Data)** architecture, a single GPU could perform the work of thousands of sequential processors simultaneously. This shifted AI from the slow, logical processing of a CPU to the massive throughput required for modern **LLMs**, finally providing the "hardware-friendly" environment Richardson's numerical methods always required.
 
 ### CUDA
 
@@ -660,7 +660,7 @@ What changed since the early days was not the basic ideas, but the availability 
 
 The emergence of ChatGPT represents the "Great Convergence" of a multi-millennial effort to decouple human thought from biology and translate it into formal abstraction. This journey began with **Aristotle's** syllogisms and was radicalized by **Llull's** mechanical knowledge wheels and **Leibniz's** binary alphabet, the idea that all reasoning could be reduced to a series of calculations. From **Babbage and Lovelace's** "algebraic patterns" to **McCulloch and Pitts'** mathematical neurons, the lineage of AI has always sought to treat thought as a formal calculus.
 
-However, the final transition required more than logic; it required a physical substrate of sufficient scale. As noted in \citetitle{sutton2019bitter}, the "Bitter Lesson" of AI history is that raw computation eventually outpaces human intuition. This was made possible by Moore's Law \cite[Moore’s Law]{mooreslaw} and the revolutionary discovery that the massive-parallel SIMD architecture of GPUs, originally forged for the sensory demands of video games, provided the perfect engine for neural matrix operations, as demonstrated by \cite[Oh et al.]{oh2004gpu} and \cite[Raina et al.]{raina2009large}.
+However, the final transition required more than logic; it required a physical substrate of sufficient scale. As noted in \citetitle{sutton2019bitter}, the "Bitter Lesson" of AI history is that raw computation eventually outpaces human intuition. This was made possible by Moore's Law \cite[Moore's Law]{mooreslaw} and the revolutionary discovery that the massive-parallel SIMD architecture of GPUs, originally forged for the sensory demands of video games, provided the perfect engine for neural matrix operations, as demonstrated by \cite[Oh et al.]{oh2004gpu} and \cite[Raina et al.]{raina2009large}.
 
 Today's models are the ultimate synthesis: the combinatorial logic of the ancients finally meeting the brute-force scaling of the modern era. We have reached a point where the machine "weaves" language by calculating billions of vectors across silicon clusters, proving that when enough compute meets enough abstraction, the machine does not just mimic thought, it executes it.
 </div>

@@ -39,7 +39,7 @@ $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)
 
 But *why* this specific formula? Why dot products? Why softmax? Why $\sqrt{d_k}$?
 
-The best way to understand is to **see it working** in spaces small enough to visualize. We’ll build up from 1D scalars to 3D vectors; at each stage, the geometric meaning of every piece of the equation will become obvious.
+The best way to understand is to **see it working** in spaces small enough to visualize. We'll build up from 1D scalars to 3D vectors; at each stage, the geometric meaning of every piece of the equation will become obvious.
 
 ### 1D: Attention on a Number Line
 

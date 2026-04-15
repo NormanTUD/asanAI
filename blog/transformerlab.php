@@ -194,7 +194,7 @@ In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">
 When you add "random" values to a vector, you change its location in the multidimensional embedding space. However, this doesn't "break" the word:
 
 - **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word "King" to a new location, but it remains in a "neighborhood" that the model still recognizes as "King."
-- **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network’s layers. Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.
+- **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network's layers. Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.
 - **The Risk of Overlapping**: During training, the model learns to set the "scale" of the embeddings much larger than the "scale" of the positional encodings. This ensures the position "nudges" the meaning without overwriting it.
 </div>
 
@@ -215,7 +215,7 @@ This is the architecture you are interacting with in every visualization here. W
 Everything is in flux.
 </div>
 
-In the Transformer, the Residual Stream embodies Heraclitus’ flux, serving as a shared "notebook" where the original identity $h_0$ is preserved through \cite[additive skip connections]{he2015resnet} like in **ResNet**, $x_{\text{new}} = x + \text{layer}(x)$, which serve two purposes:
+In the Transformer, the Residual Stream embodies Heraclitus' flux, serving as a shared "notebook" where the original identity $h_0$ is preserved through \cite[additive skip connections]{he2015resnet} like in **ResNet**, $x_{\text{new}} = x + \text{layer}(x)$, which serve two purposes:
 
 1. It allows very deep networks without the **Vanishing Gradient**-problem.
 2. It serves as a shared notebook where, at each layer, the "experts" at that layer write down their results in the original stream, so it becomes a \cite[communication bus]{elhage2021mathematical} for all **Attention Heads** and **Feed-Forward-Networks**, where they perform "collaborative editing" by adding insights rather than overwriting the signal.
@@ -360,7 +360,7 @@ This reduces the computational complexity of the projection phase from
 linear to $\mathcal{O}(T)$ relative to sequence length $T$.
 
 ## The Feed-Forward Network
-While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token’s representation. In this sense, it functions as the model’s primary per-token computational stage, complementing attention’s role in information routing and aggregation.
+While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token's representation. In this sense, it functions as the model's primary per-token computational stage, complementing attention's role in information routing and aggregation.
 
 \cite[Empirical studies]{keyvalmem} suggest that FFN layers are a major locus of memorized associations and factual patterns, although such knowledge is distributed across the network rather than localized to a single component.
 
