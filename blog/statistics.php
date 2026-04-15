@@ -648,20 +648,6 @@ Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividi
         </div>
 
     <div id="plot-correlation" class="statlab-visual"></div>
-
-<div class="ai-callout" style="background: linear-gradient(135deg, #fefce8, #fef9c3); border-left: 4px solid #eab308; border-radius: 8px; padding: 20px 24px; margin: 24px 0;">
-    <div style="display: flex; align-items: flex-start; gap: 14px;">
-        <span style="font-size: 1.6em; line-height: 1;">🤖</span>
-        <div class="md">
-**Why This Matters for AI:** **Cosine similarity** in embedding spaces is a normalized correlation, and it is how **semantic search** works. When you type a query into a search engine powered by embeddings, both your query and every document are converted into high-dimensional vectors. The system then computes:
-
-$$\text{cosine similarity} = \frac{\vec{A} \cdot \vec{B}}{|\vec{A}| \cdot |\vec{B}|}$$
-
-This is structurally identical to Pearson's $r$: the dot product in the numerator captures the "shared signal" (covariance), while dividing by the magnitudes (standard deviations) removes the effect of scale. A cosine similarity of $1.0$ means the vectors point in the same direction (semantically identical), $0$ means orthogonal (unrelated), and $-1$ means opposite. This is why "king" and "monarch" score high similarity despite being different strings, their embedding vectors, shaped by billions of training examples, point in nearly the same direction. Pearson's solution to comparing crabs and humans now powers every RAG pipeline, recommendation engine, and vector database in modern AI.
-        </div>
-    </div>
-</div>
-
 	<div class="math-grid-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
 	    <div class="math-card">
 		<p><strong>1. Inputs:</strong></p>
@@ -683,6 +669,19 @@ This is structurally identical to Pearson's $r$: the dot product in the numerato
 		<div id="corr-math-breakdown" class="statlab-math-display"></div>
 	    </div>
 	</div>
+    </div>
+</div>
+
+<div class="ai-callout" style="background: linear-gradient(135deg, #fefce8, #fef9c3); border-left: 4px solid #eab308; border-radius: 8px; padding: 20px 24px; margin: 24px 0;">
+    <div style="display: flex; align-items: flex-start; gap: 14px;">
+        <span style="font-size: 1.6em; line-height: 1;">🤖</span>
+        <div class="md">
+**Why This Matters for AI:** **Cosine similarity** in embedding spaces is a normalized correlation, and it is how **semantic search** works. When you type a query into a search engine powered by embeddings, both your query and every document are converted into high-dimensional vectors. The system then computes:
+
+$$\text{cosine similarity} = \frac{\vec{A} \cdot \vec{B}}{|\vec{A}| \cdot |\vec{B}|}$$
+
+This is structurally identical to Pearson's $r$: the dot product in the numerator captures the "shared signal" (covariance), while dividing by the magnitudes (standard deviations) removes the effect of scale. A cosine similarity of $1.0$ means the vectors point in the same direction (semantically identical), $0$ means orthogonal (unrelated), and $-1$ means opposite. This is why "king" and "monarch" score high similarity despite being different strings, their embedding vectors, shaped by billions of training examples, point in nearly the same direction. Pearson's solution to comparing crabs and humans now powers every RAG pipeline, recommendation engine, and vector database in modern AI.
+        </div>
     </div>
 </div>
 
