@@ -5415,16 +5415,45 @@ const debouncedRun = debounce((id) => {
 	run_transformer_demo(id);
 }, 600);
 
-window.calculate_vector_math = function() {
-	// If currently visible, render immediately
-	if (vectorMathRenderRegistry.isInViewport) {
-		_execute_vector_math();
-		vectorMathRenderRegistry.needsUpdate = false;
-	} else {
-		// Not visible — just flag that we need a re-render when it scrolls into view
-		vectorMathRenderRegistry.needsUpdate = true;
-	}
-};
+// Call this once on page load, after the input exists
+function protect_vector_math_input() {
+    const inputEl = document.getElementById('transformer-vector-math-input');
+    if (!inputEl || inputEl._protected) return;
+    inputEl._protected = true;
+
+    let userValue = inputEl.value;
+
+    // Track every user-driven change
+    inputEl.addEventListener('input', () => {
+        userValue = inputEl.value;
+    });
+
+    // Periodically check if something wiped it
+    const observer = new MutationObserver(() => {
+        const el = document.getElementById('transformer-vector-math-input');
+        if (el && el.value !== userValue && document.activeElement === el) {
+            el.value = userValue;
+        }
+    });
+
+    // Watch the parent for any DOM changes that might affect the input
+    if (inputEl.parentElement) {
+        observer.observe(inputEl.parentElement, {
+            childList: true,
+            subtree: true,
+            attributes: true
+        });
+    }
+
+    // Also use a simple interval as a fallback
+    setInterval(() => {
+        const el = document.getElementById('transformer-vector-math-input');
+        if (!el) { inputEl._protected = false; return; }
+        if (el.value !== userValue && userValue !== '') {
+            el.value = userValue;
+        }
+    }, 100);
+}
 
 function safe_vector_math() {
     const inputEl = document.getElementById('transformer-vector-math-input');
@@ -5460,14 +5489,128 @@ function track_vector_input() {
     }
 }
 
-function immediate_vector_math() {
-    track_vector_input();
-    safe_vector_math();
+// ═══════════════════════════════════════════════════════════════
+// BULLETPROOF vector math input protection
+// ═══════════════════════════════════════════════════════════════
+
+// Single source of truth for the user's input value
+window._vectorMathUserValue = '';
+window._vectorMathUserCursor = 0;
+window._vectorMathHasFocus = false;
+
+function _initVectorMathProtection() {
+    const inputEl = document.getElementById('transformer-vector-math-input');
+    if (!inputEl || inputEl._bulletproofProtected) return;
+    inputEl._bulletproofProtected = true;
+
+    // Track focus state
+    inputEl.addEventListener('focus', () => {
+        window._vectorMathHasFocus = true;
+    });
+    inputEl.addEventListener('blur', () => {
+        // Small delay to distinguish real blur from DOM-mutation blur
+        setTimeout(() => {
+            const el = document.getElementById('transformer-vector-math-input');
+            if (el && document.activeElement !== el) {
+                window._vectorMathHasFocus = false;
+            }
+        }, 50);
+    });
+
+    // Track every user keystroke
+    inputEl.addEventListener('input', () => {
+        window._vectorMathUserValue = inputEl.value;
+        window._vectorMathUserCursor = inputEl.selectionStart;
+    });
+
+    // Initialize from current value
+    window._vectorMathUserValue = inputEl.value;
+
+    // Watchdog: restore value if anything wipes it
+    setInterval(() => {
+        const el = document.getElementById('transformer-vector-math-input');
+        if (!el) return;
+
+        // Re-attach protection if element was recreated
+        if (!el._bulletproofProtected) {
+            el._bulletproofProtected = true;
+            el.addEventListener('focus', () => { window._vectorMathHasFocus = true; });
+            el.addEventListener('blur', () => {
+                setTimeout(() => {
+                    const e = document.getElementById('transformer-vector-math-input');
+                    if (e && document.activeElement !== e) window._vectorMathHasFocus = false;
+                }, 50);
+            });
+            el.addEventListener('input', () => {
+                window._vectorMathUserValue = el.value;
+                window._vectorMathUserCursor = el.selectionStart;
+            });
+        }
+
+        // Restore if wiped by external code
+        if (el.value !== window._vectorMathUserValue) {
+            el.value = window._vectorMathUserValue;
+        }
+
+        // Restore focus if it was stolen
+        if (window._vectorMathHasFocus && document.activeElement !== el) {
+            el.focus();
+            const pos = Math.min(window._vectorMathUserCursor, el.value.length);
+            el.setSelectionRange(pos, pos);
+        }
+    }, 50);
 }
 
+// Wrap calculate_vector_math to always protect the input
+window.calculate_vector_math = function() {
+    const inputEl = document.getElementById('transformer-vector-math-input');
+    const savedValue = window._vectorMathUserValue || (inputEl ? inputEl.value : '');
+    const savedCursor = window._vectorMathUserCursor || (inputEl ? inputEl.selectionStart : 0);
+    const hadFocus = window._vectorMathHasFocus || (inputEl && document.activeElement === inputEl);
+
+    // Execute the actual math
+    if (vectorMathRenderRegistry.isInViewport) {
+        _execute_vector_math();
+        vectorMathRenderRegistry.needsUpdate = false;
+    } else {
+        vectorMathRenderRegistry.needsUpdate = true;
+    }
+
+    // Immediately restore (synchronous)
+    _restoreVectorMathInput(savedValue, savedCursor, hadFocus);
+
+    // Also restore after any async DOM mutations (rAF + double rAF)
+    requestAnimationFrame(() => {
+        _restoreVectorMathInput(savedValue, savedCursor, hadFocus);
+        requestAnimationFrame(() => {
+            _restoreVectorMathInput(savedValue, savedCursor, hadFocus);
+        });
+    });
+};
+
+function _restoreVectorMathInput(savedValue, savedCursor, hadFocus) {
+    const el = document.getElementById('transformer-vector-math-input');
+    if (!el) return;
+
+    if (el.value !== savedValue) {
+        el.value = savedValue;
+    }
+    if (hadFocus && document.activeElement !== el) {
+        el.focus();
+        const pos = Math.min(savedCursor, el.value.length);
+        el.setSelectionRange(pos, pos);
+    }
+}
+
+// Debounced version for oninput
 const debounced_vector_math = debounce(function() {
-    safe_vector_math();
+    window.calculate_vector_math();
 }, 500);
+
+// Immediate version for Enter key
+function immediate_vector_math() {
+    window.calculate_vector_math();
+}
 
 function _execute_vector_math() {
 	const inputEl = document.getElementById('transformer-vector-math-input');
@@ -6689,6 +6832,7 @@ async function loadTransformerModule () {
 	updateTrainButtonState();
 	updateArchitectureValidityUI();
 	run_transformer_demo()
+	_initVectorMathProtection();
 
 	const inputElement = document.getElementById('transformer-master-token-input');
 	inputElement.addEventListener('input', (event) => {
