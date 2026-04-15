@@ -17,7 +17,7 @@ More importantly, he defined language as a system of differences. A word derives
 In the architecture of a Transformer, a word possesses no intrinsic "soul" or static dictionary definition. Instead, its identity is defined entirely by its context, its **use**. This philosophical principle is operationalized through a high-dimensional **Embedding Space**, where semantic concepts are mapped as coordinates in a continuous geometric manifold.
 </div>
 
-<div class="optional md" data-headline="The History of Manifolds: Why Were They Named That Way?">
+<div class="optional md" data-headline="The History of Manifolds">
 
 The concept of a **manifold** originates from the German word **Mannigfaltigkeit**, coined by **Bernhard Riemann** in his landmark **1854 Göttingen inaugural lecture** (*Habilitationsvortrag*), titled \citetitle{hypothesengeometrie} ("On the Hypotheses Which Lie at the Foundations of Geometry"). The lecture was delivered before the faculty at the University of Göttingen, with Carl Friedrich Gauss himself in the audience.
 
