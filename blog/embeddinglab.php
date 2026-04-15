@@ -31,7 +31,7 @@ Riemann was attempting to **generalize the idea of a surface to higher dimension
 
 3. **Describing the set of all possible values of a variable under constraints:** Riemann described a *Mannigfaltigkeit* as the set of all possible values a variable can take when subject to certain constraints, he used the term precisely because "the variable can have **many values**."
 
-**Why "Mannigfaltigkeit" Specifically?**:
+**Why "Mannigfaltigkeit" Specifically?**
 
 The German word *Mannigfaltigkeit* carries connotations of **diversity, multiplicity, and variety**, a "many-fold" collection of possibilities. Riemann chose it because he was describing mathematical objects that could take on many different forms and configurations while still being governed by underlying geometric principles. The English mathematician and philosopher \citeauthor{hypothesengeometrieenglish} later translated *Mannigfaltigkeit* into the English word "manifoldness," which was subsequently shortened to **manifold**.
 
