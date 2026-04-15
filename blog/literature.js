@@ -1,4 +1,22 @@
 window.bibData = {
+	"whitney1936manifolds": {
+		title: "Differentiable Manifolds",
+		author: "Hassler Whitney",
+		year: 1936,
+		url: "https://www.jstor.org/stable/1968482"
+	},
+	"ehresmann1950connexions": {
+		title: "Les connexions infinitésimales dans un espace fibré différentiable",
+		author: "Charles Ehresmann",
+		year: 1961,
+		url: "https://www.numdam.org/item/SB_1948-1951__1__153_0.pdf"
+	},
+	"hilbert1903grundlagen": {
+		title: "Grundlagen der Geometrie",
+		author: "David Hilbert",
+		year: 1903,
+		url: "https://archive.org/details/grunddergeovon00hilbrich"
+	},
 	"weylriemann": {
 		url: "https://ia801404.us.archive.org/23/items/dieideederrieman00weyluoft/dieideederrieman00weyluoft.pdf",
 		author: "Hermann Weyl",
