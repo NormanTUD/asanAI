@@ -149,7 +149,7 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 	    style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1;"
 	    placeholder="e.g., king - man + woman"
 	    oninput="debounced_vector_math()"
-	    onkeydown="if(event.key==='Enter'){event.preventDefault(); calculate_vector_math();}"
+	    onkeydown="if(event.key==='Enter'){event.preventDefault(); immediate_vector_math();}"
 	>
 	<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: #fff; border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
 		<em style="color: #94a3b8;">Enter an equation and press Enter...</em>
