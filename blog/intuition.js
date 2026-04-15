@@ -1464,7 +1464,12 @@ function loadIntuitionVizModule() {
 	// Step 1: Tokenizer
 	const tokInput = document.getElementById('tokenizer-input');
 	if (tokInput) {
-		tokInput.addEventListener('input', () => TokenizerViz.render());
+		let _tokenDebounce = null;
+		tokInput.addEventListener('input', () => {
+			clearTimeout(_tokenDebounce);
+			_tokenDebounce = setTimeout(() => TokenizerViz.render(), 150);
+		});
+
 		TokenizerViz.render();
 	}
 
@@ -1813,7 +1818,11 @@ function loadIntuitionModule() {
     _lazyRegister('tokenizer-output', () => {
         const tokInput = document.getElementById('tokenizer-input');
         if (tokInput) {
-            tokInput.addEventListener('input', () => TokenizerViz.render());
+		let _tokenDebounce = null;
+		tokInput.addEventListener('input', () => {
+			clearTimeout(_tokenDebounce);
+			_tokenDebounce = setTimeout(() => TokenizerViz.render(), 150);
+		});
         }
         TokenizerViz.render();
     });
