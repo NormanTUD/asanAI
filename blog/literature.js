@@ -1,4 +1,10 @@
 window.bibData = {
+	"hypothesengeometrie": {
+		url: "https://ia800708.us.archive.org/4/items/uberdiehypothese00b_343/uberdiehypothese00b_343.pdf",
+		title: "Über die Hypothesen, welche der Geometrie zu Grunde liegen",
+		author: "Georg Friedrich Bernhard Riemann",
+		year: 1854
+	},
 	"hieroglyphsdeciphered": {
 		url: "https://gallica.bnf.fr/ark:/12148/bpt6k396352.texteImage",
 		author: "Jean-François Champollion",
