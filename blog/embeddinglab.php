@@ -29,11 +29,11 @@ Riemann was attempting to **generalize the idea of a surface to higher dimension
 
 2. **Understanding spaces that are locally flat but globally complex:** Manifolds are shapes that "look flat to an ant living on them, even though they might have a more complicated global structure." A sphere, for example, looks flat if you're standing on it (like the Earth), but its global structure is curved and closed.
 
-3. **Describing the set of all possible values of a variable under constraints:** Riemann described a *Mannigfaltigkeit* as the set of all possible values a variable can take when subject to certain constraints — he used the term precisely because "the variable can have **many values**."
+3. **Describing the set of all possible values of a variable under constraints:** Riemann described a *Mannigfaltigkeit* as the set of all possible values a variable can take when subject to certain constraints, he used the term precisely because "the variable can have **many values**."
 
 ### Why "Mannigfaltigkeit" Specifically?
 
-The German word *Mannigfaltigkeit* carries connotations of **diversity, multiplicity, and variety** — a "many-fold" collection of possibilities. Riemann chose it because he was describing mathematical objects that could take on many different forms and configurations while still being governed by underlying geometric principles. The English mathematician and philosopher **William Kingdon Clifford** later translated *Mannigfaltigkeit* into the English word "manifoldness," which was subsequently shortened to **manifold**.
+The German word *Mannigfaltigkeit* carries connotations of **diversity, multiplicity, and variety**, a "many-fold" collection of possibilities. Riemann chose it because he was describing mathematical objects that could take on many different forms and configurations while still being governed by underlying geometric principles. The English mathematician and philosopher **William Kingdon Clifford** later translated *Mannigfaltigkeit* into the English word "manifoldness," which was subsequently shortened to **manifold**.
 
 ### The Broader Intellectual Context
 
@@ -41,7 +41,7 @@ Riemann's work did not emerge in isolation. It built upon **Gauss's** earlier wo
 
 ### Connection to Modern AI
 
-As described elsewhere in this text, the **Manifold Hypothesis** — the idea that high-dimensional data like language actually lies on or near a much lower-dimensional manifold embedded in the high-dimensional space — is a direct intellectual descendant of Riemann's original insight. When a Transformer's attention layers learn the local coordinate charts of a semantic manifold, they are, in a very real sense, performing the kind of geometric analysis that Riemann first envisioned in 1854, applied not to physical space but to the space of human meaning.
+As described elsewhere in this text, the **Manifold Hypothesis**, the idea that high-dimensional data like language actually lies on or near a much lower-dimensional manifold embedded in the high-dimensional space, is a direct intellectual descendant of Riemann's original insight. When a Transformer's attention layers learn the local coordinate charts of a semantic manifold, they are, in a very real sense, performing the kind of geometric analysis that Riemann first envisioned in 1854, applied not to physical space but to the space of human meaning.
 
 </div>
 
@@ -453,7 +453,7 @@ The core mechanism is **\cite[Superposition]{elhage2022superposition}**. The mod
 
 ### Golden-Gate-Claude
 
-A vivid demonstration of these principles is \citetitle{goldengateclaude}, in which researchers from Anthropic used \cite[Sparse Autoencoders]{sparseautoencoders} to isolate a specific feature direction within Claude Sonnet's activation space corresponding to the concept of the Golden Gate Bridge. By artificially amplifying this single direction during inference, the model became fixated on the bridge, mentioning it in nearly every response regardless of topic. This confirms that concepts are encoded as **directions** in high-dimensional space, not in individual neurons, and that these directions are causally active: amplifying one is sufficient to dominate the model's output. It is also a direct consequence of superposition — because "Golden Gate Bridge" shares neuronal substrate with countless other features via near-orthogonal packing, isolating it required the decomposition tools described above rather than simply toggling a single neuron.
+A vivid demonstration of these principles is \citetitle{goldengateclaude}, in which researchers from Anthropic used \cite[Sparse Autoencoders]{sparseautoencoders} to isolate a specific feature direction within Claude Sonnet's activation space corresponding to the concept of the Golden Gate Bridge. By artificially amplifying this single direction during inference, the model became fixated on the bridge, mentioning it in nearly every response regardless of topic. This confirms that concepts are encoded as **directions** in high-dimensional space, not in individual neurons, and that these directions are causally active: amplifying one is sufficient to dominate the model's output. It is also a direct consequence of superposition, because "Golden Gate Bridge" shares neuronal substrate with countless other features via near-orthogonal packing, isolating it required the decomposition tools described above rather than simply toggling a single neuron.
 
 **The Dimensionality Trade-off:** In a 2D space, you can only have two perfectly orthogonal (zero interference) features. In a 768+ dimensional model, thousands of "near-orthogonal" features can coexist, though this proximity is exactly why individual neurons appear polysemantic.
 </div>
@@ -689,20 +689,20 @@ Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chai
 <div class="md">
 ## Topology: Clumps and Branches
 
-So far, we've treated the embedding space as a smooth, continuous manifold where words drift through a uniform fog of dimensions. But the actual *topology* of the feature space tells a different story. It is not a uniform fog at all — it is **highly structured**, full of empty voids and narrow corridors.
+So far, we've treated the embedding space as a smooth, continuous manifold where words drift through a uniform fog of dimensions. But the actual *topology* of the feature space tells a different story. It is not a uniform fog at all, it is **highly structured**, full of empty voids and narrow corridors.
 
 ### High-Dimensional Narrow Cones
 
-In a 768-dimensional space, you might expect data points to spread out evenly in all directions. They don't. Empirically, the data concentrates in **narrow cones** — thin, elongated regions that radiate outward from the origin like the spines of a sea urchin. The vast majority of the theoretical volume is *empty*. No token lives there. No sentence ever visits it.
+In a 768-dimensional space, you might expect data points to spread out evenly in all directions. They don't. Empirically, the data concentrates in **narrow cones**, thin, elongated regions that radiate outward from the origin like the spines of a sea urchin. The vast majority of the theoretical volume is *empty*. No token lives there. No sentence ever visits it.
 
-This is a direct consequence of the **concentration of measure** phenomenon in high-dimensional geometry: in $n$ dimensions, almost all the volume of a hypersphere is concentrated in a thin shell near the surface, and almost all pairs of random vectors are nearly orthogonal. The result is that meaningful data doesn't fill the space — it clings to a sparse skeleton of low-dimensional structures threading through the void.
+This is a direct consequence of the **concentration of measure** phenomenon in high-dimensional geometry: in $n$ dimensions, almost all the volume of a hypersphere is concentrated in a thin shell near the surface, and almost all pairs of random vectors are nearly orthogonal. The result is that meaningful data doesn't fill the space, it clings to a sparse skeleton of low-dimensional structures threading through the void.
 
 This has practical consequences:
 * **Nearest-neighbor search** is harder than it looks, because "nearest" in 768 dimensions doesn't mean what your 3D intuition suggests. Most of the space between any two points is empty.
-* **Clustering** reveals that the space is not a single blob but a network of **filaments and clumps** — dense knots of semantically related tokens connected by thin bridges, surrounded by vast uninhabited regions.
-* **Interpolation** between two tokens (e.g., averaging their vectors) can land you in one of these empty voids, producing a vector that corresponds to *no* meaningful concept — a "semantic vacuum."
+* **Clustering** reveals that the space is not a single blob but a network of **filaments and clumps**, dense knots of semantically related tokens connected by thin bridges, surrounded by vast uninhabited regions.
+* **Interpolation** between two tokens (e.g., averaging their vectors) can land you in one of these empty voids, producing a vector that corresponds to *no* meaningful concept, a "semantic vacuum."
 
-The visualization below gives you an intuition for this. In 2D, points can spread out uniformly. But as you increase the effective dimensionality (simulated here by compressing the angular distribution), the points collapse into narrow cones, and the fraction of "occupied" space shrinks dramatically. The **gray region** represents the empty void — the space where no data lives.
+The visualization below gives you an intuition for this. In 2D, points can spread out uniformly. But as you increase the effective dimensionality (simulated here by compressing the angular distribution), the points collapse into narrow cones, and the fraction of "occupied" space shrinks dramatically. The **gray region** represents the empty void, the space where no data lives.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -723,10 +723,10 @@ The visualization below gives you an intuition for this. In 2D, points can sprea
     <!-- Description -->
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
         <b>What you're seeing:</b> Each <b>dot</b> is a token vector emanating from the origin.
-        At low effective dimensionality (slider left), vectors spread uniformly — the space is well-utilized.
+        At low effective dimensionality (slider left), vectors spread uniformly, the space is well-utilized.
         As you increase the slider, vectors collapse into <span style="color:#8b5cf6; font-weight:bold;">narrow cones</span>,
         simulating how high-dimensional concentration of measure forces data into thin corridors.
-        The <span style="color:rgba(148,163,184,0.4); font-weight:bold;">gray wedges</span> mark the <b>empty void</b> — regions of the space where no data lives.
+        The <span style="color:rgba(148,163,184,0.4); font-weight:bold;">gray wedges</span> mark the <b>empty void</b>, regions of the space where no data lives.
         The <span style="color:#ef4444; font-weight:bold;">occupied fraction</span> shrinks dramatically,
         illustrating why most of a 768-dimensional space is a semantic desert.
     </div>
@@ -739,22 +739,22 @@ How does a model that operates in a fixed-size vector space manage to encode hie
 
 ### The Geometry of the Niche
 
-Consider the concept "Dog." In the embedding space, "Dog" occupies a region — a neighborhood of vectors that all relate to dog-ness. But zoom into that region and you find it is not a featureless blob. Inside it, the vectors for "Dachshund," "Shepherd," and "Poodle" are arranged relative to each other using the same geometric principles that organize the level above. The axis that separates "domestic" from "wild" at the Animal level reappears, at a smaller scale, to separate "lap dog" from "working dog" at the Breed level. The axis that separates "large" from "small" among Mammals reappears to separate "Great Dane" from "Chihuahua" among Dogs.
+Consider the concept "Dog." In the embedding space, "Dog" occupies a region, a neighborhood of vectors that all relate to dog-ness. But zoom into that region and you find it is not a featureless blob. Inside it, the vectors for "Dachshund," "Shepherd," and "Poodle" are arranged relative to each other using the same geometric principles that organize the level above. The axis that separates "domestic" from "wild" at the Animal level reappears, at a smaller scale, to separate "lap dog" from "working dog" at the Breed level. The axis that separates "large" from "small" among Mammals reappears to separate "Great Dane" from "Chihuahua" among Dogs.
 
 ### Self-Similarity
 
-This is **self-similarity** — the hallmark of fractal structure. The model applies the same set of learned distinction directions (size, danger, domestication, function) at every hierarchical level, each time at a smaller spatial scale. The result is a space that is "folded" in on itself: what looks like a single point at a coarse zoom level unfolds, upon magnification, into a rich sub-structure that mirrors the parent geometry.
+This is **self-similarity**, the hallmark of fractal structure. The model applies the same set of learned distinction directions (size, danger, domestication, function) at every hierarchical level, each time at a smaller spatial scale. The result is a space that is "folded" in on itself: what looks like a single point at a coarse zoom level unfolds, upon magnification, into a rich sub-structure that mirrors the parent geometry.
 
 $$ \text{Structure}(\text{Breeds within Dog}) \;\approx\; \alpha \cdot \text{Structure}(\text{Species within Animal}) $$
 
-where $\alpha < 1$ is a spatial scaling factor — the sub-structure is a shrunken copy of the super-structure.
+where $\alpha < 1$ is a spatial scaling factor, the sub-structure is a shrunken copy of the super-structure.
 
 This has practical consequences:
 * **Few-shot generalization**: Because the same geometric logic repeats at every level, a model that has learned to distinguish "domestic vs. wild" at the Animal level can immediately apply that distinction at the Breed level, even for breeds it has rarely seen.
-* **Compositionality**: Hierarchical concepts can be navigated by composing coarse and fine direction vectors — move to "Dog" first (coarse), then move along the "small + domestic" direction within that region (fine).
+* **Compositionality**: Hierarchical concepts can be navigated by composing coarse and fine direction vectors, move to "Dog" first (coarse), then move along the "small + domestic" direction within that region (fine).
 * **Compression**: A fractal structure is extraordinarily efficient. Instead of learning a unique geometry for every sub-category, the model reuses a small set of distinction templates, scaled and translated, at every depth.
 
-Below, you can explore this fractal folding interactively. The visualization shows a three-level hierarchy: **Animals → Species → Breeds**. At **Zoom Level 1**, you see the coarse structure — clusters of Animals. Zoom in to Level 2 and the "Dog" cluster unfolds into individual species. Zoom to Level 3 and individual breeds appear inside each species — arranged in a geometry that mirrors the level above. The **distinction axes** (size, domestication) are drawn at each level to show how they repeat at smaller scales.
+Below, you can explore this fractal folding interactively. The visualization shows a three-level hierarchy: **Animals → Species → Breeds**. At **Zoom Level 1**, you see the coarse structure, clusters of Animals. Zoom in to Level 2 and the "Dog" cluster unfolds into individual species. Zoom to Level 3 and individual breeds appear inside each species, arranged in a geometry that mirrors the level above. The **distinction axes** (size, domestication) are drawn at each level to show how they repeat at smaller scales.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -765,7 +765,7 @@ Below, you can explore this fractal folding interactively. The visualization sho
         <label style="font-family: sans-serif; font-size: 0.9em; color: #475569;">
             <b>Zoom Level:</b>
             <input type="range" id="fractal-zoom-slider" min="1" max="3" step="0.01" value="1" style="width: 260px; vertical-align: middle;">
-            <span id="fractal-zoom-val" style="font-weight: bold; color: #8b5cf6;">Level 1 — Animals</span>
+            <span id="fractal-zoom-val" style="font-weight: bold; color: #8b5cf6;">Level 1, Animals</span>
         </label>
     </div>
 
@@ -800,27 +800,27 @@ Below, you can explore this fractal folding interactively. The visualization sho
 <div class="md">
 ## Holographic Information Storage
 
-There is a deep analogy between how LLMs store information in their embedding spaces and how **holograms** store images. In a photograph, each pixel records a single point of the scene — scratch the photo and you lose that point forever. In a hologram, every part of the recording medium stores information about the **entire scene** from a slightly different angle. Cut a hologram in half and you don't lose half the image — you lose half the *resolution*. Both halves still contain the full picture, just blurrier.
+There is a deep analogy between how LLMs store information in their embedding spaces and how **holograms** store images. In a photograph, each pixel records a single point of the scene, scratch the photo and you lose that point forever. In a hologram, every part of the recording medium stores information about the **entire scene** from a slightly different angle. Cut a hologram in half and you don't lose half the image, you lose half the *resolution*. Both halves still contain the full picture, just blurrier.
 
 ### Distributed, Not Localized
 
-Neural network embeddings work the same way. The concept "Dog" is not stored in dimension 42, or in any single neuron. It is stored as a **pattern across all dimensions simultaneously** — a direction in the full 768-dimensional space. Every dimension participates in encoding every concept, just as every point on a holographic plate participates in encoding every part of the scene. This is why you can't point to a single weight and say "this is where the model knows about dogs." The knowledge is *everywhere and nowhere* — distributed holographically across the entire vector.
+Neural network embeddings work the same way. The concept "Dog" is not stored in dimension 42, or in any single neuron. It is stored as a **pattern across all dimensions simultaneously**, a direction in the full 768-dimensional space. Every dimension participates in encoding every concept, just as every point on a holographic plate participates in encoding every part of the scene. This is why you can't point to a single weight and say "this is where the model knows about dogs." The knowledge is *everywhere and nowhere*, distributed holographically across the entire vector.
 
 ### Graceful Degradation
 
-This has a remarkable consequence: **graceful degradation**. If you zero out a random subset of dimensions in an embedding vector, the concept doesn't vanish — it gets noisier, like a scratched hologram. The remaining dimensions still carry partial information about the full pattern. This is fundamentally different from a lookup table, where deleting an entry destroys the information completely.
+This has a remarkable consequence: **graceful degradation**. If you zero out a random subset of dimensions in an embedding vector, the concept doesn't vanish, it gets noisier, like a scratched hologram. The remaining dimensions still carry partial information about the full pattern. This is fundamentally different from a lookup table, where deleting an entry destroys the information completely.
 
 The fraction of information retained scales smoothly with the fraction of dimensions preserved:
 
 $$ \text{Signal Quality} \approx \sqrt{\frac{k}{d}} $$
 
-where $k$ is the number of surviving dimensions and $d$ is the total dimensionality. Even with half the dimensions zeroed out, you retain roughly $\sqrt{0.5} \approx 71\%$ of the signal — enough to still identify the concept.
+where $k$ is the number of surviving dimensions and $d$ is the total dimensionality. Even with half the dimensions zeroed out, you retain roughly $\sqrt{0.5} \approx 71\%$ of the signal, enough to still identify the concept.
 
 ### Interference as the Price of Compression
 
-The flip side of holographic storage is **interference**. Because every concept is spread across every dimension, concepts inevitably overlap. The dot product between "Dog" and "Cat" is not zero — their patterns share components, just as two holograms recorded on the same plate create ghost images of each other. This is the same superposition phenomenon we explored earlier, but seen from the holographic perspective: the embedding space is a shared recording medium, and every concept is written across its entire volume.
+The flip side of holographic storage is **interference**. Because every concept is spread across every dimension, concepts inevitably overlap. The dot product between "Dog" and "Cat" is not zero, their patterns share components, just as two holograms recorded on the same plate create ghost images of each other. This is the same superposition phenomenon we explored earlier, but seen from the holographic perspective: the embedding space is a shared recording medium, and every concept is written across its entire volume.
 
-Below, you can explore this holographic property directly. A set of concept vectors are embedded in a simulated space. Use the **Damage slider** to randomly zero out increasing fractions of the dimensions. Watch how the **pairwise similarity structure** — which concepts are near which — degrades gracefully rather than catastrophically. The **similarity matrix** on the right preserves its overall pattern even under severe damage, just as a scratched hologram preserves the full scene at lower resolution.
+Below, you can explore this holographic property directly. A set of concept vectors are embedded in a simulated space. Use the **Damage slider** to randomly zero out increasing fractions of the dimensions. Watch how the **pairwise similarity structure**, which concepts are near which, degrades gracefully rather than catastrophically. The **similarity matrix** on the right preserves its overall pattern even under severe damage, just as a scratched hologram preserves the full scene at lower resolution.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -854,9 +854,9 @@ Below, you can explore this holographic property directly. A set of concept vect
         <b>What you're seeing:</b> The <b>left panel</b> shows concept vectors projected into 2D.
         <span style="color:rgba(148,163,184,0.5);">Faded circles</span> are the <b>original</b> (undamaged) positions;
         <b>solid markers</b> are the positions after randomly zeroing out dimensions.
-        The <b>right panel</b> is the pairwise cosine similarity matrix — the "fingerprint" of the space's relational structure.
+        The <b>right panel</b> is the pairwise cosine similarity matrix, the "fingerprint" of the space's relational structure.
         As you increase damage, individual vectors drift (like a scratched hologram losing sharpness),
-        but the <b>overall pattern of the matrix is preserved</b> — similar concepts stay similar, dissimilar ones stay dissimilar.
+        but the <b>overall pattern of the matrix is preserved</b>, similar concepts stay similar, dissimilar ones stay dissimilar.
         This is <b>holographic graceful degradation</b>: information is distributed across all dimensions,
         so partial destruction reduces resolution without erasing content.
         Compare this to a <b>lookup table</b>, where deleting an entry destroys the information completely.
@@ -866,7 +866,7 @@ Below, you can explore this holographic property directly. A set of concept vect
 <div class="md">
 ## Voronoi Cells: The Territories of Meaning
 
-Imagine the embedding space as a vast, empty continent. Each token the model knows — every word, subword, and symbol — plants a flag at its vector position. Now ask: **for every possible point in the space, which token's flag is closest?** The answer carves the entire space into territories — one per token — where every point inside a territory is closer to that territory's token than to any other. These territories are called **Voronoi cells**.
+Imagine the embedding space as a vast, empty continent. Each token the model knows, every word, subword, and symbol, plants a flag at its vector position. Now ask: **for every possible point in the space, which token's flag is closest?** The answer carves the entire space into territories, one per token, where every point inside a territory is closer to that territory's token than to any other. These territories are called **Voronoi cells**.
 
 ### What Is a Voronoi Diagram?
 
@@ -874,16 +874,16 @@ Formally, given a set of seed points $S = \{s_1, s_2, \ldots, s_n\}$, the Vorono
 
 $$ V(s_i) = \{ \mathbf{x} \in \mathbb{R}^d \mid \| \mathbf{x} - s_i \| \leq \| \mathbf{x} - s_j \| \;\; \forall j \neq i \} $$
 
-The boundaries between cells are **equidistant surfaces** — the set of points exactly halfway between two neighboring seeds. In 2D, these boundaries are line segments; in 768 dimensions, they are high-dimensional hyperplanes.
+The boundaries between cells are **equidistant surfaces**, the set of points exactly halfway between two neighboring seeds. In 2D, these boundaries are line segments; in 768 dimensions, they are high-dimensional hyperplanes.
 
 This is not just a mathematical curiosity. The Voronoi tessellation is **mathematically equivalent to the decision boundary of a nearest-neighbor classifier**: any new point that lands in a cell gets assigned to that cell's token. When an LLM's decoder maps a hidden state back to a token, it is essentially asking "which token's Voronoi cell does this vector fall into?"
 
 ### Why This Matters for LLMs
 
-* **Decoding as territory lookup:** The final layer of a language model computes a score for each token in the vocabulary. The token with the highest score wins. Geometrically, this is equivalent to finding which Voronoi cell the output vector falls into — the cell boundaries *are* the decision boundaries.
-* **Cell size encodes frequency:** Common words like "the" or "is" tend to have **large Voronoi cells** — they occupy more of the space, making them easier to "land in." Rare words like "defenestration" have tiny cells, requiring the model to aim precisely.
+* **Decoding as territory lookup:** The final layer of a language model computes a score for each token in the vocabulary. The token with the highest score wins. Geometrically, this is equivalent to finding which Voronoi cell the output vector falls into, the cell boundaries *are* the decision boundaries.
+* **Cell size encodes frequency:** Common words like "the" or "is" tend to have **large Voronoi cells**, they occupy more of the space, making them easier to "land in." Rare words like "defenestration" have tiny cells, requiring the model to aim precisely.
 * **Neighbors reveal semantics:** The tokens whose Voronoi cells share a boundary are **semantic or functional neighbors**. "Dog" and "Cat" share a long boundary; "Dog" and "Quantum" do not.
-* **Interpolation risks:** When you average two token vectors (e.g., for smoothing or mixing), the result might land in a *third* token's Voronoi cell entirely — a concept that is neither of the two you intended. The Voronoi structure explains why naive interpolation in embedding space can produce surprising results.
+* **Interpolation risks:** When you average two token vectors (e.g., for smoothing or mixing), the result might land in a *third* token's Voronoi cell entirely, a concept that is neither of the two you intended. The Voronoi structure explains why naive interpolation in embedding space can produce surprising results.
 
 Below, you can explore a 2D Voronoi diagram that simulates how an embedding space is partitioned into token territories. **Drag tokens** to see how the boundaries shift in real time. **Click anywhere** in empty space to see which token "owns" that point and how far it is from the boundary. Toggle between different example configurations to see how the geometry changes for different semantic neighborhoods.
 </div>
@@ -931,11 +931,11 @@ Below, you can explore a 2D Voronoi diagram that simulates how an embedding spac
 
     <!-- Description -->
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
-        <b>What you're seeing:</b> Each <b>colored region</b> is a <b>Voronoi cell</b> — the territory of a single token.
+        <b>What you're seeing:</b> Each <b>colored region</b> is a <b>Voronoi cell</b>, the territory of a single token.
         Every point inside a cell is closer to that cell's token than to any other.
         The <b>color gradient</b> shows distance from the cell's seed: darker near the center (confident),
-        lighter near the edges (ambiguous — close to a decision boundary).
-        <b>White lines</b> are the cell boundaries — the exact points equidistant between two tokens.
+        lighter near the edges (ambiguous, close to a decision boundary).
+        <b>White lines</b> are the cell boundaries, the exact points equidistant between two tokens.
         <b>Drag any token</b> to see how the entire partition restructures in real time.
         <b>Click empty space</b> to query which token owns that point.
         Notice how <b>semantically similar tokens</b> (e.g., "Dog" and "Cat") share long boundaries,
@@ -946,18 +946,18 @@ Below, you can explore a 2D Voronoi diagram that simulates how an embedding spac
 <div class="md">
 ## High-Dimensional Holes: The Swiss Cheese of Meaning
 
-The embedding space is not a solid block of uniformly packed vectors. It is more like **Swiss cheese** — riddled with holes, voids, and cavities where no token ever lives. These are not random gaps; they are structurally meaningful absences. Researchers use a technique from algebraic topology called **Persistent Homology** to detect and measure these holes systematically.
+The embedding space is not a solid block of uniformly packed vectors. It is more like **Swiss cheese**, riddled with holes, voids, and cavities where no token ever lives. These are not random gaps; they are structurally meaningful absences. Researchers use a technique from algebraic topology called **Persistent Homology** to detect and measure these holes systematically.
 
 ### What Is Persistent Homology?
 
-Persistent Homology is an algebraic method for detecting topological features — connected components, loops, cavities — in discrete point cloud data. The core idea is beautifully simple:
+Persistent Homology is an algebraic method for detecting topological features, connected components, loops, cavities, in discrete point cloud data. The core idea is beautifully simple:
 
 1. **Start with your data points** (token vectors in the embedding space).
 2. **Grow a ball** around each point, starting at radius $r = 0$.
-3. **As $r$ increases**, balls begin to overlap, forming connections. At some radius, a loop appears — a ring of connected points surrounding an empty region. At a larger radius, the loop might fill in and disappear.
+3. **As $r$ increases**, balls begin to overlap, forming connections. At some radius, a loop appears, a ring of connected points surrounding an empty region. At a larger radius, the loop might fill in and disappear.
 4. **Track the birth and death** of each topological feature. Features that persist across a wide range of radii are "real" structure; features that flicker in and out are noise.
 
-The result is a **persistence diagram**: a scatter plot where each point represents a topological feature (a hole), with its birth radius on one axis and death radius on the other. Points far from the diagonal represent **robust, persistent holes** — genuine voids in the data.
+The result is a **persistence diagram**: a scatter plot where each point represents a topological feature (a hole), with its birth radius on one axis and death radius on the other. Points far from the diagonal represent **robust, persistent holes**, genuine voids in the data.
 
 $$ \text{Persistence}(h) = r_{\text{death}}(h) - r_{\text{birth}}(h) $$
 
@@ -965,20 +965,20 @@ A feature with high persistence is a real structural void, not an artifact of sp
 
 ### What the Holes Mean
 
-The holes in the embedding space are not just geometric curiosities. They mark regions where **no coherent concept exists** — logical impossibilities, semantic contradictions, or ideas that human language simply never expresses:
+The holes in the embedding space are not just geometric curiosities. They mark regions where **no coherent concept exists**, logical impossibilities, semantic contradictions, or ideas that human language simply never expresses:
 
-* **Semantic voids:** There is no concept that is simultaneously "very large" and "microscopic," or "definitely true" and "definitely false." The space between these contradictory directions is empty — a topological hole.
-* **The negative image of knowledge:** If the filled regions of the space represent everything the model *can* express, the holes represent everything it *cannot*. They are the **negative imprint of our world-understanding** — the shape of the unsayable.
-* **Forbidden interpolations:** These holes explain why you can't smoothly interpolate between certain concepts. The path from "alive" to "dead" doesn't pass through a smooth gradient — it passes through a void, because there is no coherent concept "half-alive-half-dead" (at least not in the way the model has learned to organize meaning).
-* **Structural constraints:** Some holes reflect grammatical or logical constraints. There is no token that functions simultaneously as a noun, verb, adjective, and preposition — that region of the space is necessarily empty.
+* **Semantic voids:** There is no concept that is simultaneously "very large" and "microscopic," or "definitely true" and "definitely false." The space between these contradictory directions is empty, a topological hole.
+* **The negative image of knowledge:** If the filled regions of the space represent everything the model *can* express, the holes represent everything it *cannot*. They are the **negative imprint of our world-understanding**, the shape of the unsayable.
+* **Forbidden interpolations:** These holes explain why you can't smoothly interpolate between certain concepts. The path from "alive" to "dead" doesn't pass through a smooth gradient, it passes through a void, because there is no coherent concept "half-alive-half-dead" (at least not in the way the model has learned to organize meaning).
+* **Structural constraints:** Some holes reflect grammatical or logical constraints. There is no token that functions simultaneously as a noun, verb, adjective, and preposition, that region of the space is necessarily empty.
 
-The visualization below lets you explore this. A 2D point cloud represents token vectors. As you increase the **radius parameter $r$**, connections form between nearby points, loops appear around empty regions, and the persistent homology algorithm detects and highlights the **holes** — the voids that persist across a wide range of radii. The **persistence diagram** on the right separates real structure from noise.
+The visualization below lets you explore this. A 2D point cloud represents token vectors. As you increase the **radius parameter $r$**, connections form between nearby points, loops appear around empty regions, and the persistent homology algorithm detects and highlights the **holes**, the voids that persist across a wide range of radii. The **persistence diagram** on the right separates real structure from noise.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; margin-bottom: 15px;">
         <div>
-            <div style="font-family: sans-serif; font-size: 0.8em; color: #64748b; text-align: center; margin-bottom: 4px; font-weight: bold;">Embedding Space — Simplicial Complex</div>
+            <div style="font-family: sans-serif; font-size: 0.8em; color: #64748b; text-align: center; margin-bottom: 4px; font-weight: bold;">Embedding Space, Simplicial Complex</div>
             <canvas id="canvas-homology-space" style="width: 100%; height: 500px; background: #0f172a; border-radius: 8px; border: 1px solid #1e293b;"></canvas>
         </div>
         <div>
@@ -1034,7 +1034,7 @@ The visualization below lets you explore this. A 2D point cloud represents token
         plotted by its birth radius (x) and death radius (y).
         Dots far from the <span style="color:#94a3b8;">diagonal</span> are <b>persistent, real holes</b>;
         dots near the diagonal are noise. The <span style="color:#ef4444; font-weight:bold;">red dashed line</span>
-        shows the current radius $r$ — features below it have been born, features to its left have died.
+        shows the current radius $r$, features below it have been born, features to its left have died.
     </div>
 </section>
 
@@ -1043,25 +1043,25 @@ The visualization below lets you explore this. A 2D point cloud represents token
 
 https://www.preprints.org/manuscript/202507.0722 TODO
 
-One of the most elegant emergent properties of embedding spaces is how they encode **time**. Nobody tells the model that 1950 comes before 1951, or that the Renaissance preceded the Industrial Revolution. Yet when you extract the embedding vectors for historical dates and events and project them into lower dimensions, something remarkable appears: they form a **near-perfect helix** — a spiral curve winding through the space, with time flowing smoothly along its length.
+One of the most elegant emergent properties of embedding spaces is how they encode **time**. Nobody tells the model that 1950 comes before 1951, or that the Renaissance preceded the Industrial Revolution. Yet when you extract the embedding vectors for historical dates and events and project them into lower dimensions, something remarkable appears: they form a **near-perfect helix**, a spiral curve winding through the space, with time flowing smoothly along its length.
 
 ### The Emergent Timeline
 
 The model discovers the linearity of time not because anyone labeled a "time axis," but because the **statistical neighborhoods** of temporal tokens are geometrically constrained:
 
-* "1950" appears in similar contexts to "1949" and "1951" — so their vectors are close.
-* "1950" appears in very different contexts from "1066" — so their vectors are far apart.
+* "1950" appears in similar contexts to "1949" and "1951", so their vectors are close.
+* "1950" appears in very different contexts from "1066", so their vectors are far apart.
 * The chain of nearest-neighbor relationships (1949 → 1950 → 1951 → 1952 → …) traces out a **continuous curve** through the space.
 
-But why a **helix** rather than a straight line? Because time has both **linear** and **cyclical** structure. Years progress forward (linear), but seasons, decades, and cultural periods repeat patterns (cyclical). The helix captures both: forward motion along the helix axis encodes linear progression, while the rotation around the axis encodes cyclical recurrence — the "feel" of a decade, the rhythm of centuries.
+But why a **helix** rather than a straight line? Because time has both **linear** and **cyclical** structure. Years progress forward (linear), but seasons, decades, and cultural periods repeat patterns (cyclical). The helix captures both: forward motion along the helix axis encodes linear progression, while the rotation around the axis encodes cyclical recurrence, the "feel" of a decade, the rhythm of centuries.
 
 $$ \mathbf{v}(t) \approx \mathbf{a} \cdot t + r \cdot \cos(\omega t) \cdot \hat{e}_1 + r \cdot \sin(\omega t) \cdot \hat{e}_2 $$
 
 where $\mathbf{a}$ is the linear time direction, $r$ is the helix radius (strength of cyclical patterns), and $\omega$ controls how tightly the helix winds.
 
-The model has **no concept of time**. It has never experienced duration, never watched a clock, never read a calendar with understanding. It has only observed that certain tokens tend to appear near certain other tokens. And from this purely statistical signal, it has reconstructed a geometric structure that mirrors the actual topology of time — linear, directional, and subtly cyclical. The arrow of time is not programmed; it **emerges** from the geometry of language.
+The model has **no concept of time**. It has never experienced duration, never watched a clock, never read a calendar with understanding. It has only observed that certain tokens tend to appear near certain other tokens. And from this purely statistical signal, it has reconstructed a geometric structure that mirrors the actual topology of time, linear, directional, and subtly cyclical. The arrow of time is not programmed; it **emerges** from the geometry of language.
 
-This generalizes beyond dates. Any ordered or sequential concept — sizes ("tiny" → "small" → "medium" → "large" → "huge"), temperatures, emotional intensities — tends to form smooth curves in the embedding space. The model discovers **ordinality** from co-occurrence statistics alone.
+This generalizes beyond dates. Any ordered or sequential concept, sizes ("tiny" → "small" → "medium" → "large" → "huge"), temperatures, emotional intensities, tends to form smooth curves in the embedding space. The model discovers **ordinality** from co-occurrence statistics alone.
 
 Below, you can explore this. A set of historical years and events are plotted in a simulated 3D embedding space. The **helix structure** emerges as you watch the points arrange themselves. You can rotate the view, toggle between different time ranges, and switch between the helical (3D) and flattened (2D) projections to see how the cyclical component appears and disappears.
 </div>
@@ -1072,7 +1072,7 @@ Below, you can explore this. A set of historical years and events are plotted in
         <div id="time-helix-panel" style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7; max-height: 560px; overflow-y: auto;">
             <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">🕰️ Time Helix Explorer</div>
             <div id="time-helix-info">
-                Hover over any point to see the year and associated historical event. The helix structure emerges from statistical co-occurrence alone — no one told the model about time.
+                Hover over any point to see the year and associated historical event. The helix structure emerges from statistical co-occurrence alone, no one told the model about time.
             </div>
             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 10px 0;">
             <div style="font-weight: bold; font-size: 0.9em; color: #1e293b; margin-bottom: 6px;">📊 Helix Properties</div>
@@ -1121,8 +1121,8 @@ Below, you can explore this. A set of historical years and events are plotted in
         <b>What you're seeing:</b> Each <b>dot</b> is a year's embedding vector, projected into 3D.
         The <span style="color:#60a5fa; font-weight:bold;">blue thread</span> connects consecutive years, revealing the <b>helix structure</b>.
         The <b>forward axis</b> (left → right) encodes <b>linear time progression</b>.
-        The <b>rotation</b> around this axis encodes <b>cyclical patterns</b> — decades, centuries, cultural periods.
-        The <span style="color:rgba(148,163,184,0.3); font-weight:bold;">gray shadow</span> on the floor is the <b>2D projection</b> — what you'd see if you collapsed the cyclical dimension.
+        The <b>rotation</b> around this axis encodes <b>cyclical patterns</b>, decades, centuries, cultural periods.
+        The <span style="color:rgba(148,163,184,0.3); font-weight:bold;">gray shadow</span> on the floor is the <b>2D projection</b>, what you'd see if you collapsed the cyclical dimension.
         Use <b>Cyclical Strength</b> to flatten the helix into a line (r=0) or amplify the spiral (r=1).
         Use <b>Helix Tightness</b> to control how many "loops per century" the spiral makes.
         <b>Drag</b> to rotate the 3D view. <span style="color:#f59e0b; font-weight:bold;">Gold markers</span> highlight major historical events.
@@ -1132,28 +1132,28 @@ Below, you can explore this. A set of historical years and events are plotted in
 <div class="md">
 ## Polytope Hulls: The Boundaries of the Conceivable
 
-In geometry, a **polytope** is the high-dimensional generalization of a polygon. In 2D, it's a polygon; in 3D, a polyhedron; in 768 dimensions, it's a shape with thousands of facets that no human can visualize directly. Formally, a polytope can be defined as the **convex hull** of a finite set of points — the smallest convex body that encloses all of them.
+In geometry, a **polytope** is the high-dimensional generalization of a polygon. In 2D, it's a polygon; in 3D, a polyhedron; in 768 dimensions, it's a shape with thousands of facets that no human can visualize directly. Formally, a polytope can be defined as the **convex hull** of a finite set of points, the smallest convex body that encloses all of them.
 
-Now apply this to the embedding space. Take every concept the model associates with "morally good" — kindness, honesty, generosity, courage, compassion — and compute their convex hull. You get a polytope: the **geometric territory of moral goodness** in the embedding space. Do the same for "morally bad" — cruelty, deception, greed, cowardice — and you get a second polytope.
+Now apply this to the embedding space. Take every concept the model associates with "morally good", kindness, honesty, generosity, courage, compassion, and compute their convex hull. You get a polytope: the **geometric territory of moral goodness** in the embedding space. Do the same for "morally bad", cruelty, deception, greed, cowardice, and you get a second polytope.
 
 ### Where Polytopes Overlap: The Geometry of Dilemmas
 
 The fascinating part is what happens **between** these polytopes:
 
 * **Wide separation:** Where the "good" and "bad" hulls are far apart, the model is **morally decisive**. "Kindness" is unambiguously inside the good hull and far from the bad one. No dilemma here.
-* **Overlap zone:** Where the hulls **interpenetrate**, you find concepts that the model cannot cleanly classify — **moral dilemmas**. "Mercy killing," "white lies," "civil disobedience," "necessary violence" — these concepts live in the geometric intersection of good and bad. The overlap *is* the dilemma, rendered as geometry.
-* **Boundary zone:** Concepts near the surface of a hull but not deep inside it are **borderline cases** — the model is uncertain. The distance from a point to the hull surface is a geometric measure of moral confidence.
+* **Overlap zone:** Where the hulls **interpenetrate**, you find concepts that the model cannot cleanly classify, **moral dilemmas**. "Mercy killing," "white lies," "civil disobedience," "necessary violence", these concepts live in the geometric intersection of good and bad. The overlap *is* the dilemma, rendered as geometry.
+* **Boundary zone:** Concepts near the surface of a hull but not deep inside it are **borderline cases**, the model is uncertain. The distance from a point to the hull surface is a geometric measure of moral confidence.
 
 This generalizes far beyond morality. You can compute polytope hulls for any pair of categories:
-* **"Science" vs. "Pseudoscience"** — the overlap contains contested concepts like certain alternative medicine claims.
-* **"Formal" vs. "Informal" language** — the overlap contains registers that shift depending on context.
-* **"Alive" vs. "Dead"** — the overlap contains viruses, dormant seeds, philosophical zombies.
+* **"Science" vs. "Pseudoscience"**, the overlap contains contested concepts like certain alternative medicine claims.
+* **"Formal" vs. "Informal" language**, the overlap contains registers that shift depending on context.
+* **"Alive" vs. "Dead"**, the overlap contains viruses, dormant seeds, philosophical zombies.
 
 $$ \text{Dilemma}(A, B) = \text{Hull}(A) \cap \text{Hull}(B) $$
 
 The volume of the intersection is a **geometric measure of conceptual ambiguity** between two categories.
 
-Below, you can explore this interactively. Two conceptual categories are represented as polytope hulls (convex envelopes) in 2D. **Drag individual concept points** to reshape the hulls. Watch the **overlap zone** — the geometric dilemma — grow and shrink in real time. Switch between different category pairs to see how the model's "moral geometry" differs from its "linguistic geometry" or its "ontological geometry."
+Below, you can explore this interactively. Two conceptual categories are represented as polytope hulls (convex envelopes) in 2D. **Drag individual concept points** to reshape the hulls. Watch the **overlap zone**, the geometric dilemma, grow and shrink in real time. Switch between different category pairs to see how the model's "moral geometry" differs from its "linguistic geometry" or its "ontological geometry."
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -1206,8 +1206,8 @@ Below, you can explore this interactively. Two conceptual categories are represe
         <b>What you're seeing:</b> Two <b>convex hulls</b> (polytopes) represent the geometric territories of two conceptual categories.
         The <span style="color:#3b82f6; font-weight:bold;">blue hull</span> encloses one category;
         the <span style="color:#ef4444; font-weight:bold;">red hull</span> encloses the other.
-        Where they <span style="color:#a855f7; font-weight:bold;">overlap (purple zone)</span>, the model cannot cleanly separate the categories — this is the <b>geometric dilemma</b>.
-        <span style="color:#f59e0b; font-weight:bold;">Gold diamond markers</span> are concepts that live in or near the overlap — the ambiguous, contested, or paradoxical ideas.
+        Where they <span style="color:#a855f7; font-weight:bold;">overlap (purple zone)</span>, the model cannot cleanly separate the categories, this is the <b>geometric dilemma</b>.
+        <span style="color:#f59e0b; font-weight:bold;">Gold diamond markers</span> are concepts that live in or near the overlap, the ambiguous, contested, or paradoxical ideas.
         <b>Drag any concept point</b> to reshape the hulls in real time.
         <b>Click empty space</b> to probe which hull(s) contain that point.
         The <b>overlap area</b> is a direct geometric measure of how much ambiguity exists between the two categories.
@@ -1217,7 +1217,7 @@ Below, you can explore this interactively. Two conceptual categories are represe
 <div class="md">
 ## Vector Rotations as Grammar Operators
 
-One of the most surprising geometric discoveries in embedding spaces is that grammatical transformations — like changing a verb from present tense to past tense — are not **translations** (shifting a vector in a direction) but **rotations** (spinning a vector around an axis). Grammar is not a push; it is a turn.
+One of the most surprising geometric discoveries in embedding spaces is that grammatical transformations, like changing a verb from present tense to past tense, are not **translations** (shifting a vector in a direction) but **rotations** (spinning a vector around an axis). Grammar is not a push; it is a turn.
 
 ### The Carousel of Tense
 
@@ -1227,15 +1227,15 @@ Take a cloud of present-tense verb vectors: "run," "eat," "write," "speak," "bui
 $$ \mathbf{v}_{\text{past}} \approx \mathbf{R}_{\text{tense}} \cdot \mathbf{v}_{\text{present}} $$
 
 <div class="md">
-where $\mathbf{R}_{\text{tense}}$ is a **rotation matrix** — the same matrix applied to every verb. The model has discovered that tense is a **rotational symmetry** of language.
+where $\mathbf{R}_{\text{tense}}$ is a **rotation matrix**, the same matrix applied to every verb. The model has discovered that tense is a **rotational symmetry** of language.
 
 ### Why Rotation, Not Translation?
 
 This makes deep geometric sense:
 
-* **Tense is cyclical:** Languages often treat time as having a cyclical quality — past patterns repeat, future expectations echo past experiences. A rotation naturally encodes cyclical structure, while a translation implies a one-way shift.
-* **Meaning preservation:** A rotation preserves the **magnitude** (length) of a vector — the "importance" or "activation strength" of the concept doesn't change when you change its tense. Only its **direction** changes. "Run" and "ran" are equally "verb-like"; they just point in slightly different directions.
-* **Composability:** Rotations compose cleanly. Applying the tense rotation twice doesn't send you to nonsense — it might approximate another grammatical form (e.g., past → pluperfect). Translations, by contrast, would drift further and further from meaningful regions.
+* **Tense is cyclical:** Languages often treat time as having a cyclical quality, past patterns repeat, future expectations echo past experiences. A rotation naturally encodes cyclical structure, while a translation implies a one-way shift.
+* **Meaning preservation:** A rotation preserves the **magnitude** (length) of a vector, the "importance" or "activation strength" of the concept doesn't change when you change its tense. Only its **direction** changes. "Run" and "ran" are equally "verb-like"; they just point in slightly different directions.
+* **Composability:** Rotations compose cleanly. Applying the tense rotation twice doesn't send you to nonsense, it might approximate another grammatical form (e.g., past → pluperfect). Translations, by contrast, would drift further and further from meaningful regions.
 
 This generalizes beyond tense. Other grammatical operations that behave as rotations include:
 
@@ -1244,7 +1244,7 @@ This generalizes beyond tense. Other grammatical operations that behave as rotat
 * **Positive → Comparative → Superlative** (adjectives)
 * **Nominalization** (verb → noun: "discover" → "discovery")
 
-The embedding space is, in a sense, a **grammar carousel**: each grammatical transformation is a specific rotation, and the model has learned these rotations purely from statistical co-occurrence — nobody programmed the rotation matrices.
+The embedding space is, in a sense, a **grammar carousel**: each grammatical transformation is a specific rotation, and the model has learned these rotations purely from statistical co-occurrence, nobody programmed the rotation matrices.
 
 Below, you can explore this interactively. A cloud of verbs is shown in their present-tense positions. Apply the **tense rotation** to watch the entire cloud spin to its past-tense configuration. Adjust the **rotation angle** to see how the transformation works, and toggle between different grammatical operations to see that each one is a distinct rotation around a different axis.
 </div>
@@ -1303,8 +1303,8 @@ Below, you can explore this interactively. A cloud of verbs is shown in their pr
         <span style="color:#f59e0b; font-weight:bold;">golden axis</span>, and each word smoothly transforms into its
         <span style="color:#f472b6; font-weight:bold;">pink target form</span> (e.g., past tense).
         The <span style="color:rgba(139,92,246,0.4); font-weight:bold;">purple arcs</span> trace the rotation path of each word.
-        Notice that <b>all words rotate by the same angle</b> — the grammatical transformation is a single, consistent rotation applied uniformly.
-        The <b>vector magnitudes are preserved</b> (dots stay the same distance from the origin) — only the direction changes.
+        Notice that <b>all words rotate by the same angle</b>, the grammatical transformation is a single, consistent rotation applied uniformly.
+        The <b>vector magnitudes are preserved</b> (dots stay the same distance from the origin), only the direction changes.
         This is why grammar is a <b>carousel</b>, not a conveyor belt.
     </div>
 </section>
