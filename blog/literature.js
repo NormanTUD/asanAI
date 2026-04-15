@@ -2167,6 +2167,7 @@ window.bibData = {
 		year: 1990,
 		author: "Jeffrey L. Elman",
 		title: "Finding Structure in Time",
+		url: "https://onlinelibrary.wiley.com/doi/pdf/10.1207/s15516709cog1402_1",
 		alternativetitle: "Simple Recurrent Networks (SRNs)"
 	},
 	"simonyan2014vgg": {
