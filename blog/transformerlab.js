@@ -50,9 +50,10 @@ window.lossHistory = [];
 window.last_d_model = null;
 
 const vectorMathRenderRegistry = {
-	lastRendered: false,
-	needsUpdate: false,
-	isInViewport: false
+    lastRendered: false,
+    needsUpdate: false,
+    isInViewport: false,
+    _lastResultHtml: null
 };
 
 function _defaultGrid3DConfig(overrides = {}) {
@@ -430,44 +431,64 @@ const positionalWavesObserver = createLazyRenderObserver(positionalWavesRegistry
 	_execute_positional_waves_render(data.d_model, data.tokens);
 });
 
-const vectorMathObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        // If ANY observed element is intersecting, consider it in viewport
-        if (entry.isIntersecting) {
-            vectorMathRenderRegistry.isInViewport = true;
-        }
-
-        // Only set to false if the STABLE parent (not just the result div)
-        // goes out of viewport
-        if (!entry.isIntersecting && entry.target.id !== 'transformer-vector-math-result') {
-            vectorMathRenderRegistry.isInViewport = false;
-        }
-    });
-
-    // If in viewport and pending update, execute it
-    if (vectorMathRenderRegistry.isInViewport && vectorMathRenderRegistry.needsUpdate) {
-        calculate_vector_math();
-        vectorMathRenderRegistry.needsUpdate = false;
-    }
-}, { threshold: 0 });
-
 function observer_vector_math() {
-    const vmContainer = document.getElementById('transformer-vector-math-result');
-    if (vmContainer) {
-        vectorMathObserver.observe(vmContainer);
-    }
-    // Also observe the input's PARENT container (the one with the background styling)
-    // This ensures isInViewport stays true even if the result div's observation
-    // is interrupted by innerHTML replacement
-    const vmInput = document.getElementById('transformer-vector-math-input');
+    const vmResult = document.getElementById('transformer-vector-math-result');
+    const vmInput  = document.getElementById('transformer-vector-math-input');
+    if (vmResult) vectorMathObserver.observe(vmResult);
+    // Observe the STABLE parent wrapper — it never gets innerHTML'd
     if (vmInput) {
-        // Observe the stable parent that never gets its innerHTML replaced
-        const stableParent = vmInput.closest('[style*="background: #f8fafc"]') 
-                          || vmInput.parentElement;
-        if (stableParent) {
-            vectorMathObserver.observe(stableParent);
-        }
+        const stableParent = vmInput.closest('div[style*="background"]');
+        if (stableParent) vectorMathObserver.observe(stableParent);
     }
+}
+
+function _vmProtectInput(fn) {
+    const inputEl = document.getElementById('transformer-vector-math-input');
+    if (!inputEl) { fn(); return; }
+
+    const savedValue    = inputEl.value;
+    const savedSelStart = inputEl.selectionStart;
+    const savedSelEnd   = inputEl.selectionEnd;
+    const wasFocused    = (document.activeElement === inputEl);
+
+    fn();
+
+    // Restore if anything changed the input
+    if (inputEl.value !== savedValue) {
+        inputEl.value = savedValue;
+    }
+    if (wasFocused) {
+        inputEl.focus({ preventScroll: true });
+        try { inputEl.setSelectionRange(savedSelStart, savedSelEnd); }
+        catch(e) {}
+    }
+}
+
+function _vmUpdateResult(resDiv, html) {
+    if (!resDiv) return;
+    // Skip if content hasn't changed
+    if (vectorMathRenderRegistry._lastResultHtml === html) return;
+    vectorMathRenderRegistry._lastResultHtml = html;
+
+    _vmProtectInput(() => {
+        resDiv.innerHTML = html;
+
+        // SCOPED math rendering — never global render_temml()
+        try {
+            if (typeof renderMathInElement === 'function') {
+                renderMathInElement(resDiv, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        } catch(e) {}
+
+        // Re-observe the result div (innerHTML killed the old observation)
+        vectorMathObserver.observe(resDiv);
+    });
 }
 
 function getPositionColor(index, total, format = 'rgb') {
@@ -960,39 +981,40 @@ function initWeights(r, c) {
 }
 
 window.showLayer = (containerId, layerIdx, numLayers) => {
-	const activeContent = switchTab(containerId, layerIdx, numLayers,
-		{ content: 'layer-content', btn: 'layer-tab-btn' },
-		{ bg: '#bfdbfe' },
-		{ bg: '#fff' }
-	);
+    const activeContent = switchTab(containerId, layerIdx, numLayers,
+        { content: 'layer-content', btn: 'layer-tab-btn' },
+        { bg: '#bfdbfe' }, { bg: '#fff' }
+    );
 
-	// LAZY: Render this layer's content if not yet done
-	const registryEntry = attentionRenderRegistry.get(containerId);
-	if (registryEntry && registryEntry.instance) {
-		registryEntry.instance._renderLayerContent(layerIdx);
-	}
+    const registryEntry = attentionRenderRegistry.get(containerId);
+    if (registryEntry && registryEntry.instance) {
+        registryEntry.instance._renderLayerContent(layerIdx);
+    }
 
-	const heatmaps = activeContent?.querySelectorAll('[id^="attn-heatmap-"]');
-	if (heatmaps) heatmaps.forEach(hm => { try { Plotly.Plots.resize(hm); } catch(e) {} });
-	render_temml();
+    const heatmaps = activeContent?.querySelectorAll('[id^="attn-heatmap-"]');
+    if (heatmaps) heatmaps.forEach(hm => { try { Plotly.Plots.resize(hm); } catch(e) {} });
+    
+    // SCOPED, not global
+    if (activeContent) _renderTemmlOnElements([activeContent]);
 };
 
+
 window.showHeadInLayer = (containerId, layerIdx, headIdx, numHeads) => {
-	const activeContent = switchTab(`${containerId}-${layerIdx}`, headIdx, numHeads,
-		{ content: 'head-content', btn: 'head-tab-btn' },
-		{ bg: '#e2e8f0' },
-		{ bg: '#fff' }
-	);
+    const activeContent = switchTab(`${containerId}-${layerIdx}`, headIdx, numHeads,
+        { content: 'head-content', btn: 'head-tab-btn' },
+        { bg: '#e2e8f0' }, { bg: '#fff' }
+    );
 
-	// LAZY: Register the head for observation (renders when visible)
-	const registryEntry = attentionRenderRegistry.get(containerId);
-	if (registryEntry && registryEntry.instance) {
-		registryEntry.instance._renderHeadContent(layerIdx, headIdx);
-	}
+    const registryEntry = attentionRenderRegistry.get(containerId);
+    if (registryEntry && registryEntry.instance) {
+        registryEntry.instance._renderHeadContent(layerIdx, headIdx);
+    }
 
-	const heatmapDiv = activeContent?.querySelector('[id^="attn-heatmap-"]');
-	if (heatmapDiv) { try { Plotly.Plots.resize(heatmapDiv); } catch(e) {} }
-	render_temml();
+    const heatmapDiv = activeContent?.querySelector('[id^="attn-heatmap-"]');
+    if (heatmapDiv) { try { Plotly.Plots.resize(heatmapDiv); } catch(e) {} }
+    
+    // SCOPED, not global
+    if (activeContent) _renderTemmlOnElements([activeContent]);
 };
 
 function calculate_positional_injection(tokens, d_model) {
@@ -2330,24 +2352,18 @@ function ensureProjectionSubContainers(container) {
 }
 
 function render_final_projection(h_final, vocabulary, d_model, temperature) {
-	const container = document.getElementById('transformer-output-projection');
-	if (!container) return;
+    const container = document.getElementById('transformer-output-projection');
+    if (!container) return;
 
-	const h_last = h_final[h_final.length - 1];
+    const h_last = h_final[h_final.length - 1];
+    const { logits, predictions } = computeFinalPredictions(h_last, vocabulary, d_model, temperature);
+    const { chipsDiv, detailsDiv } = ensureProjectionSubContainers(container);
 
-	// 1. Pure computation
-	const { logits, predictions } = computeFinalPredictions(h_last, vocabulary, d_model, temperature);
+    chipsDiv.innerHTML = buildPredictionChipsHtml(predictions, temperature);
+    detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
 
-	// 2. Ensure DOM structure
-	const { chipsDiv, detailsDiv } = ensureProjectionSubContainers(container);
-
-	// 3. Always update chips
-	chipsDiv.innerHTML = buildPredictionChipsHtml(predictions, temperature);
-
-	// 4. Update details
-	detailsDiv.innerHTML = buildLogitDetailsHtml(h_last, logits);
-
-	render_temml();
+    // SCOPED rendering — do NOT call global render_temml()
+    _renderTemmlOnElements([chipsDiv, detailsDiv]);
 }
 
 window.appendToken = (token) => {
@@ -3066,24 +3082,24 @@ function _buildFFNStep3Html(naming, h1, out_FFN, h2, ts) {
 }
 
 function _renderTemmlOnElements(elements) {
-	if (typeof renderMathInElement !== 'function') {
-		// Fallback: if renderMathInElement isn't available, use global
-		render_temml();
-		return;
-	}
-	elements.forEach(el => {
-		try {
-			renderMathInElement(el, {
-				delimiters: [
-					{left: '$$', right: '$$', display: true},
-					{left: '$', right: '$', display: false}
-				],
-				throwOnError: false
-			});
-		} catch(e) {
-			// Silent fallback
-		}
-	});
+    if (typeof renderMathInElement !== 'function') {
+        // DO NOT fall back to global render_temml() — it can wipe
+        // the vector math input by processing the entire document.
+        console.warn('renderMathInElement not available, skipping scoped render');
+        return;
+    }
+    elements.forEach(el => {
+        if (!el) return;
+        try {
+            renderMathInElement(el, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        } catch(e) {}
+    });
 }
 
 function run_deep_layers(h_initial, tokens, total_depth, d_model, n_heads, this_weights, startLayer = 0, tokenStrings = null) {
@@ -5390,7 +5406,7 @@ function updateArchitectureValidityUI() {
 	</p>
     `;
 
-	render_temml();
+	if (msgDiv) _renderTemmlOnElements([msgDiv]);
 }
 
 function getValidHeads(d_model) {
@@ -5433,153 +5449,131 @@ const debouncedRun = debounce((id) => {
 }, 600);
 
 // ═══════════════════════════════════════════════════════════════
-// Vector math — v7 (fixed: input preservation + viewport tracking)
-//
-// CHANGES from v6:
-// 1. Save and restore input value around any render that might
-//    trigger global render_temml().
-// 2. Re-observe the result container after innerHTML replacement
-//    so isInViewport doesn't get stuck false.
-// 3. Guard against stale embedding space.
-// 4. Separate "update result display" from "update plot" completely.
+// Vector Math — v9 NUCLEAR REWRITE
+// 
+// Strategy: The input value is stored in a JS variable, NOT
+// read from the DOM. The DOM input is just a view. All renders
+// read from the JS variable. A MutationObserver + polling loop
+// ensures the DOM input always reflects the JS variable.
+// 
+// This makes it IMPOSSIBLE for any external DOM mutation to
+// lose the user's input, because the source of truth is a
+// plain JS string, not a DOM element.
 // ═══════════════════════════════════════════════════════════════
 
-window.calculate_vector_math = function() {
-    if (!vectorMathRenderRegistry.isInViewport) {
-        vectorMathRenderRegistry.needsUpdate = true;
-        return;
-    }
-    const inputEl = document.getElementById('transformer-vector-math-input');
-    const isFocused = inputEl && document.activeElement === inputEl;
-    
-    // Save input value before any rendering
-    const savedValue = inputEl ? inputEl.value : '';
-    const savedSelStart = inputEl ? inputEl.selectionStart : 0;
-    const savedSelEnd = inputEl ? inputEl.selectionEnd : 0;
-    
-    _vmDoMath(!isFocused);
-    
-    // Restore input value if it was wiped
-    if (inputEl && inputEl.value !== savedValue) {
-        inputEl.value = savedValue;
-        try {
-            inputEl.setSelectionRange(savedSelStart, savedSelEnd);
-        } catch(e) {}
-    }
-    
-    vectorMathRenderRegistry.needsUpdate = false;
-};
+// ── Source of truth: a plain JS string ──
+window._vmInputValue = '';
+window._vmInputSelStart = 0;
+window._vmInputSelEnd = 0;
 
-window.debounced_vector_math = debounce(function() {
-    if (!vectorMathRenderRegistry.isInViewport) {
-        vectorMathRenderRegistry.needsUpdate = true;
-        return;
-    }
-    const inputEl = document.getElementById('transformer-vector-math-input');
-    const savedValue = inputEl ? inputEl.value : '';
-    const savedSelStart = inputEl ? inputEl.selectionStart : 0;
-    const savedSelEnd = inputEl ? inputEl.selectionEnd : 0;
-    
-    _vmDoMath(false);
-    
-    // Restore input value if it was wiped
-    if (inputEl && inputEl.value !== savedValue) {
-        inputEl.value = savedValue;
-        try {
-            inputEl.setSelectionRange(savedSelStart, savedSelEnd);
-        } catch(e) {}
-    }
-    
-    vectorMathRenderRegistry.needsUpdate = false;
-}, 400);
-
-window.immediate_vector_math = function() {
-    if (!vectorMathRenderRegistry.isInViewport) {
-        vectorMathRenderRegistry.needsUpdate = true;
-        return;
-    }
-    const inputEl = document.getElementById('transformer-vector-math-input');
-    const savedValue = inputEl ? inputEl.value : '';
-    
-    _vmDoMath(true);
-    
-    // Restore input value if it was wiped
-    if (inputEl && inputEl.value !== savedValue) {
-        inputEl.value = savedValue;
-    }
-    
-    vectorMathRenderRegistry.needsUpdate = false;
-};
-
-function _vmDoMath(updatePlot) {
-    const inputEl = document.getElementById('transformer-vector-math-input');
-    const resDiv = document.getElementById('transformer-vector-math-result');
-    if (!inputEl || !resDiv) return;
-
-    // Snapshot the value ONCE at the top — never read inputEl.value again
-    const inputVal = inputEl.value;
-    const space = window.persistentEmbeddingSpace;
-
-    if (!hasValidEmbeddingSpace(space)) {
-        _vmSafeUpdateResult(resDiv, "<em style='color: #94a3b8;'>Enter an equation...</em>");
-        return;
-    }
-
-    const vocabKeys = Object.keys(space);
-    if (vocabKeys.length === 0) {
-        _vmSafeUpdateResult(resDiv, "<em style='color: #94a3b8;'>No vocabulary loaded yet.</em>");
-        return;
-    }
-    
-    const d_model = space[vocabKeys[0]].length;
-    const tokens = tokenizeVectorMathInput(inputVal);
-
-    if (!tokens || tokens.length === 0) {
-        _vmSafeUpdateResult(resDiv, "<em style='color: #94a3b8;'>Enter an equation...</em>");
-        if (updatePlot) {
-            _execute_embedding_render(d_model, null, []);
-        }
-        return;
-    }
-
-    try {
-        const { result, steps } = evaluateVectorExpression(tokens, space, vocabKeys, d_model);
-        const nearest = findNearestEmbedding(result.val, space, vocabKeys);
-        const html = buildVectorMathResultHtml(result, nearest, d_model);
+// ── Guardian: runs every 50ms and restores input if wiped ──
+(function _vmStartGuardian() {
+    setInterval(() => {
+        const el = document.getElementById('transformer-vector-math-input');
+        if (!el) return;
         
-        _vmSafeUpdateResult(resDiv, html);
-
-        if (updatePlot) {
-            _execute_embedding_render(d_model, result.val, steps);
+        // If the DOM input was cleared but our JS variable has content,
+        // restore it immediately
+        if (el.value === '' && window._vmInputValue !== '') {
+            el.value = window._vmInputValue;
+            try {
+                if (document.activeElement === el) {
+                    el.setSelectionRange(window._vmInputSelStart, window._vmInputSelEnd);
+                }
+            } catch(e) {}
         }
-    } catch (e) {
-        _vmSafeUpdateResult(resDiv, "<span style='color: #ef4444;'>Syntax Error.</span>");
+        
+        // If the DOM input has content that DIFFERS from our variable,
+        // and the user is actively editing, trust the DOM
+        if (document.activeElement === el && el.value !== '' && el.value !== window._vmInputValue) {
+            window._vmInputValue = el.value;
+            window._vmInputSelStart = el.selectionStart;
+            window._vmInputSelEnd = el.selectionEnd;
+        }
+    }, 50);
+})();
+
+const vectorMathObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        // If ANY observed element is intersecting, consider it in viewport
+        if (entry.isIntersecting) {
+            vectorMathRenderRegistry.isInViewport = true;
+        }
+        
+        // Only set to false if the STABLE parent (not just the result div)
+        // goes out of viewport
+        if (!entry.isIntersecting && entry.target.id !== 'transformer-vector-math-result') {
+            vectorMathRenderRegistry.isInViewport = false;
+        }
+    });
+    
+    // If in viewport and pending update, execute it
+    if (vectorMathRenderRegistry.isInViewport && vectorMathRenderRegistry.needsUpdate) {
+        calculate_vector_math();
+        vectorMathRenderRegistry.needsUpdate = false;
+    }
+}, { threshold: 0 });
+
+function observer_vector_math() {
+    const vmResult = document.getElementById('transformer-vector-math-result');
+    const vmInput  = document.getElementById('transformer-vector-math-input');
+    if (vmResult) vectorMathObserver.observe(vmResult);
+    if (vmInput) {
+        const stableParent = vmInput.closest('div[style*="background"]');
+        if (stableParent) vectorMathObserver.observe(stableParent);
+        
+        // Attach the input tracking events ONCE
+        if (!vmInput._vmEventsAttached) {
+            vmInput._vmEventsAttached = true;
+            
+            vmInput.addEventListener('input', () => {
+                window._vmInputValue = vmInput.value;
+                window._vmInputSelStart = vmInput.selectionStart;
+                window._vmInputSelEnd = vmInput.selectionEnd;
+            });
+            
+            vmInput.addEventListener('keyup', () => {
+                window._vmInputValue = vmInput.value;
+                window._vmInputSelStart = vmInput.selectionStart;
+                window._vmInputSelEnd = vmInput.selectionEnd;
+            });
+            
+            vmInput.addEventListener('keydown', (e) => {
+                // For Enter key, snapshot before the handler fires
+                if (e.key === 'Enter') {
+                    window._vmInputValue = vmInput.value;
+                }
+            });
+            
+            // Also track selection changes (click, shift+arrow, etc.)
+            vmInput.addEventListener('select', () => {
+                window._vmInputSelStart = vmInput.selectionStart;
+                window._vmInputSelEnd = vmInput.selectionEnd;
+            });
+        }
     }
 }
 
-/**
- * Safely update the result div without affecting the input element.
- * Uses scoped math rendering and re-observes the container for
- * viewport tracking.
- */
-function _vmSafeUpdateResult(resDiv, html) {
+// ── Result rendering: completely isolated from input ──
+function _vmRenderResult(html) {
+    const resDiv = document.getElementById('transformer-vector-math-result');
     if (!resDiv) return;
     
-    // Don't update if content hasn't changed (prevents unnecessary DOM churn)
-    if (resDiv._lastVmHtml === html) return;
-    resDiv._lastVmHtml = html;
+    // Skip if content hasn't changed
+    if (vectorMathRenderRegistry._lastResultHtml === html) return;
+    vectorMathRenderRegistry._lastResultHtml = html;
     
-    // Save the input state BEFORE any DOM mutation
+    // Snapshot the input BEFORE touching the DOM
     const inputEl = document.getElementById('transformer-vector-math-input');
-    const savedValue = inputEl ? inputEl.value : '';
-    const savedSelStart = inputEl ? inputEl.selectionStart : null;
-    const savedSelEnd = inputEl ? inputEl.selectionEnd : null;
-    const wasFocused = inputEl && document.activeElement === inputEl;
+    const preValue = inputEl ? inputEl.value : '';
+    const preFocused = inputEl && (document.activeElement === inputEl);
+    const preSelStart = inputEl ? inputEl.selectionStart : 0;
+    const preSelEnd = inputEl ? inputEl.selectionEnd : 0;
     
-    // Update only the result div
+    // Update result div
     resDiv.innerHTML = html;
-
-    // SCOPED math rendering — NEVER call global render_temml()
+    
+    // Scoped math rendering — NEVER global render_temml()
     try {
         if (typeof renderMathInElement === 'function') {
             renderMathInElement(resDiv, {
@@ -5590,28 +5584,102 @@ function _vmSafeUpdateResult(resDiv, html) {
                 throwOnError: false
             });
         }
-    } catch(e) {
-        // Silent fallback
-    }
+    } catch(e) {}
     
-    // Restore input state if it was disturbed
-    if (inputEl && inputEl.value !== savedValue) {
-        inputEl.value = savedValue;
-    }
-    if (wasFocused && inputEl) {
-        // Re-focus without scrolling
-        inputEl.focus({ preventScroll: true });
-        if (savedSelStart !== null) {
+    // IMMEDIATELY restore input if it was disturbed
+    if (inputEl) {
+        if (inputEl.value !== window._vmInputValue && window._vmInputValue !== '') {
+            inputEl.value = window._vmInputValue;
+        } else if (inputEl.value !== preValue && preValue !== '') {
+            inputEl.value = preValue;
+        }
+        
+        if (preFocused) {
+            inputEl.focus({ preventScroll: true });
             try {
-                inputEl.setSelectionRange(savedSelStart, savedSelEnd);
+                inputEl.setSelectionRange(preSelStart, preSelEnd);
             } catch(e) {}
         }
     }
     
-    // Re-observe the result div to keep viewport tracking alive
-    // (innerHTML replacement can cause the observer to lose track)
+    // Re-observe (innerHTML kills observation)
     vectorMathObserver.observe(resDiv);
 }
+
+// ── Core math: reads from _vmInputValue, NEVER from DOM ──
+function _vmDoMath(updatePlot) {
+    const resDiv = document.getElementById('transformer-vector-math-result');
+    if (!resDiv) return;
+    
+    // READ FROM JS VARIABLE, NOT FROM DOM
+    const inputVal = window._vmInputValue;
+    const space = window.persistentEmbeddingSpace;
+    
+    if (!hasValidEmbeddingSpace(space)) {
+        _vmRenderResult("<em style='color: #94a3b8;'>Enter an equation...</em>");
+        return;
+    }
+    
+    const vocabKeys = Object.keys(space);
+    if (vocabKeys.length === 0) {
+        _vmRenderResult("<em style='color: #94a3b8;'>No vocabulary loaded yet.</em>");
+        return;
+    }
+    
+    const d_model = space[vocabKeys[0]].length;
+    const tokens = tokenizeVectorMathInput(inputVal);
+    
+    if (!tokens || tokens.length === 0) {
+        _vmRenderResult("<em style='color: #94a3b8;'>Enter an equation...</em>");
+        if (updatePlot) {
+            _execute_embedding_render(d_model, null, []);
+        }
+        return;
+    }
+    
+    try {
+        const { result, steps } = evaluateVectorExpression(
+            tokens, space, vocabKeys, d_model);
+        const nearest = findNearestEmbedding(result.val, space, vocabKeys);
+        const html = buildVectorMathResultHtml(result, nearest, d_model);
+        
+        _vmRenderResult(html);
+        
+        if (updatePlot) {
+            _execute_embedding_render(d_model, result.val, steps);
+        }
+    } catch (e) {
+        _vmRenderResult("<span style='color: #ef4444;'>Syntax Error.</span>");
+    }
+}
+
+// ── Public API ──
+window.calculate_vector_math = function() {
+    if (!vectorMathRenderRegistry.isInViewport) {
+        vectorMathRenderRegistry.needsUpdate = true;
+        return;
+    }
+    _vmDoMath(false);
+    vectorMathRenderRegistry.needsUpdate = false;
+};
+
+window.debounced_vector_math = debounce(function() {
+    if (!vectorMathRenderRegistry.isInViewport) {
+        vectorMathRenderRegistry.needsUpdate = true;
+        return;
+    }
+    _vmDoMath(false);
+    vectorMathRenderRegistry.needsUpdate = false;
+}, 400);
+
+window.immediate_vector_math = function() {
+    if (!vectorMathRenderRegistry.isInViewport) {
+        vectorMathRenderRegistry.needsUpdate = true;
+        return;
+    }
+    _vmDoMath(true);
+    vectorMathRenderRegistry.needsUpdate = false;
+};
 
 function hasValidEmbeddingSpace(space) {
 	return space && Object.keys(space).length > 0;
@@ -6687,7 +6755,10 @@ window.showUnifiedLayer = function(layerIdx) {
 		}
 	}
 
-	render_temml();
+	const activeContent = document.getElementById(`unified-layer-${layerIdx}-content`);
+	if (activeContent) {
+		_renderTemmlOnElements([activeContent]);
+	}
 };
 
 function ensureFFNLayerContainers(layerIndex) {
@@ -6794,7 +6865,6 @@ async function loadTransformerModule () {
 	updateTrainButtonState();
 	updateArchitectureValidityUI();
 	run_transformer_demo()
-	_initVectorMathProtection();
 
 	const inputElement = document.getElementById('transformer-master-token-input');
 	inputElement.addEventListener('input', (event) => {
