@@ -5428,17 +5428,26 @@ window.calculate_vector_math = function() {
 
 const debounced_vector_math = debounce(function() {
     const inputEl = document.getElementById('transformer-vector-math-input');
+    if (!inputEl) return;
+    
     const hadFocus = (document.activeElement === inputEl);
     const cursorPos = inputEl.selectionStart;
+    const savedValue = inputEl.value;  // ← SAVE THE VALUE
 
     calculate_vector_math();
 
-    // Restore focus and cursor position
-    if (hadFocus && inputEl) {
-        inputEl.focus();
-        inputEl.setSelectionRange(cursorPos, cursorPos);
-    }
-}, 300);
+    // Restore after rAF to survive render_temml() DOM mutations
+    requestAnimationFrame(() => {
+        if (hadFocus) {
+            // Restore value if it was wiped
+            if (inputEl.value !== savedValue) {
+                inputEl.value = savedValue;
+            }
+            inputEl.focus();
+            inputEl.setSelectionRange(cursorPos, cursorPos);
+        }
+    });
+}, 500);
 
 function _execute_vector_math() {
 	const inputEl = document.getElementById('transformer-vector-math-input');

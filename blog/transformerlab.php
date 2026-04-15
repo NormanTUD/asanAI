@@ -144,11 +144,12 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 
 	<p style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px;">Perform math on the current vocabulary tokens to see how concepts align in the dynamic vector space.</p>
 	<input
-		type="text"
-		id="transformer-vector-math-input"
-		style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1;"
-		placeholder="e.g., king - man + woman"
-		oninput="debounced_vector_math()"
+	    type="text"
+	    id="transformer-vector-math-input"
+	    style="width: 100%; padding: 10px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #cbd5e1;"
+	    placeholder="e.g., king - man + woman"
+	    oninput="debounced_vector_math()"
+	    onkeydown="if(event.key==='Enter') event.preventDefault();"
 	>
 	<div id="transformer-vector-math-result" style="margin-top: 15px; padding: 15px; background: #fff; border-radius: 8px; border: 1px dashed #cbd5e1; overflow-x: auto;">
 		<em style="color: #94a3b8;">Enter an equation and press Enter...</em>
