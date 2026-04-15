@@ -5850,6 +5850,7 @@ function tled_initEditor() {
 	html += `
 	    </tbody>
 	</table>
+	<!--
 	<div style="padding: 10px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 10px;">
 	    <input type="text" id="tled-new-token-input" placeholder="New token name..."
 		style="flex-grow: 1; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px;"
@@ -5859,6 +5860,7 @@ function tled_initEditor() {
 		+ Add Token
 	    </button>
 	</div>
+	-->
     </div>`;
 
 	container.innerHTML = html;
