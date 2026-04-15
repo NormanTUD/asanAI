@@ -5426,27 +5426,47 @@ window.calculate_vector_math = function() {
 	}
 };
 
-const debounced_vector_math = debounce(function() {
+function safe_vector_math() {
     const inputEl = document.getElementById('transformer-vector-math-input');
     if (!inputEl) return;
-    
-    const hadFocus = (document.activeElement === inputEl);
+
+    const savedValue = inputEl.value;
     const cursorPos = inputEl.selectionStart;
-    const savedValue = inputEl.value;  // ← SAVE THE VALUE
+    const hadFocus = (document.activeElement === inputEl);
+
+    // Tag the input so we can detect DOM-caused wipes vs user edits
+    inputEl.dataset.expectedValue = savedValue;
 
     calculate_vector_math();
 
-    // Restore after rAF to survive render_temml() DOM mutations
     requestAnimationFrame(() => {
+        // If value changed AND it wasn't the user typing (user typing updates expectedValue via oninput)
+        // then it was a DOM mutation — restore it
+        if (inputEl.value !== inputEl.dataset.expectedValue) {
+            inputEl.value = inputEl.dataset.expectedValue;
+        }
         if (hadFocus) {
-            // Restore value if it was wiped
-            if (inputEl.value !== savedValue) {
-                inputEl.value = savedValue;
-            }
             inputEl.focus();
-            inputEl.setSelectionRange(cursorPos, cursorPos);
+            const pos = Math.min(cursorPos, inputEl.value.length);
+            inputEl.setSelectionRange(pos, pos);
         }
     });
+}
+
+function track_vector_input() {
+    const inputEl = document.getElementById('transformer-vector-math-input');
+    if (inputEl) {
+        inputEl.dataset.expectedValue = inputEl.value;
+    }
+}
+
+function immediate_vector_math() {
+    track_vector_input();
+    safe_vector_math();
+}
+
+const debounced_vector_math = debounce(function() {
+    safe_vector_math();
 }, 500);
 
 function _execute_vector_math() {
