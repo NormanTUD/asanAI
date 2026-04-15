@@ -1,4 +1,10 @@
 window.bibData = {
+	"gauscurvas": {
+		author: "Carl Friedrich Gauß",
+		title: "Disquisitiones generales circa superficies curvas",
+		year: 1828,
+		url: "https://gdz.sub.uni-goettingen.de/id/PPN35283028X_0006_2NS"
+	},
 	"hypothesengeometrieenglish": {
 		title: "On the Hypotheses which lie at the Bases of Geometry",
 		url: "https://www.emis.de/classics/Riemann/WKCGeom.pdf",
