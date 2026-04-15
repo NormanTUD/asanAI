@@ -13,9 +13,13 @@ print(x)
 
 <div class="md">
 This initializes a *variable* called $ x $, calculates the value of $ 1 + 1 $ and sets $ x $ to it. *Variables* can be thought of as containers for values which you can use instead of concrete values.
+</div>
 
+<div class="optional md" data-headline="Why are variables often called 'x'?">
 According to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 381), the naming of the variable $x$ for the unknown was started by \citeauthor{lageometrie} in \citeyear{lageometrie}, where he used $a, b, c$ for *known* quantities, and $x, y, z$ for *unknown* ones. We will not follow this strictly, though.
+</div>
 
+<div class="md">
 The line with <tt>print</tt> then prints out this value to the command line.
 
 You can also use more variables, like the next example uses $ y $, which, in term, uses the value of $ x $ to print $ 3 $ after calculating its values.
