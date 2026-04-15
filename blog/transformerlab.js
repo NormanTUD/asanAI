@@ -5514,44 +5514,95 @@ const vectorMathObserver = new IntersectionObserver((entries) => {
     }
 }, { threshold: 0 });
 
+setInterval(() => {
+	const el = document.getElementById('transformer-vector-math-input');
+	if (!el) return;
+
+	// Only restore if the element is NOT focused (don't fight user edits)
+	if (el.value === '' && window._vmInputValue !== '' && document.activeElement !== el) {
+		el.value = window._vmInputValue;
+	}
+
+	if (document.activeElement === el && el.value !== '' && el.value !== window._vmInputValue) {
+		window._vmInputValue = el.value;
+		window._vmInputSelStart = el.selectionStart;
+		window._vmInputSelEnd = el.selectionEnd;
+	}
+}, 50);
+
 function observer_vector_math() {
-    const vmResult = document.getElementById('transformer-vector-math-result');
-    const vmInput  = document.getElementById('transformer-vector-math-input');
-    if (vmResult) vectorMathObserver.observe(vmResult);
-    if (vmInput) {
-        const stableParent = vmInput.closest('div[style*="background"]');
-        if (stableParent) vectorMathObserver.observe(stableParent);
-        
-        // Attach the input tracking events ONCE
-        if (!vmInput._vmEventsAttached) {
-            vmInput._vmEventsAttached = true;
-            
-            vmInput.addEventListener('input', () => {
-                window._vmInputValue = vmInput.value;
-                window._vmInputSelStart = vmInput.selectionStart;
-                window._vmInputSelEnd = vmInput.selectionEnd;
-            });
-            
-            vmInput.addEventListener('keyup', () => {
-                window._vmInputValue = vmInput.value;
-                window._vmInputSelStart = vmInput.selectionStart;
-                window._vmInputSelEnd = vmInput.selectionEnd;
-            });
-            
-            vmInput.addEventListener('keydown', (e) => {
-                // For Enter key, snapshot before the handler fires
-                if (e.key === 'Enter') {
-                    window._vmInputValue = vmInput.value;
-                }
-            });
-            
-            // Also track selection changes (click, shift+arrow, etc.)
-            vmInput.addEventListener('select', () => {
-                window._vmInputSelStart = vmInput.selectionStart;
-                window._vmInputSelEnd = vmInput.selectionEnd;
-            });
-        }
-    }
+	const vmResult = document.getElementById('transformer-vector-math-result');
+	const vmInput  = document.getElementById('transformer-vector-math-input');
+	if (vmResult) vectorMathObserver.observe(vmResult);
+	if (vmInput) {
+		const stableParent = vmInput.closest('div[style*="background"]');
+		if (stableParent) vectorMathObserver.observe(stableParent);
+
+		// Attach the input tracking events ONCE
+		if (!vmInput._vmEventsAttached) {
+			vmInput._vmEventsAttached = true;
+
+			vmInput.addEventListener('input', () => {
+				window._vmInputValue = vmInput.value;
+				window._vmInputSelStart = vmInput.selectionStart;
+				window._vmInputSelEnd = vmInput.selectionEnd;
+			});
+
+			vmInput.addEventListener('keyup', () => {
+				window._vmInputValue = vmInput.value;
+				window._vmInputSelStart = vmInput.selectionStart;
+				window._vmInputSelEnd = vmInput.selectionEnd;
+			});
+
+			// Add to the input element setup in observer_vector_math()
+			vmInput.addEventListener('blur', (e) => {
+				// Allow blur ONLY for truly intentional actions:
+				// 1. User pressed Enter/Tab/Escape (flagged via keydown)
+				// 2. User clicked on something OUTSIDE the vector-math area
+				//    (relatedTarget exists AND is not inside the VM container)
+
+				if (window._vmIntentionalBlur) {
+					window._vmIntentionalBlur = false;
+					return; // Let it blur naturally
+				}
+
+				// Check if relatedTarget is inside the vector-math container
+				// (which means it was a DOM mutation, not a real user click outside)
+				const vmContainer = vmInput.closest('div[style*="background"]');
+				const targetIsInsideVM = e.relatedTarget && vmContainer && vmContainer.contains(e.relatedTarget);
+				const targetIsResultDiv = e.relatedTarget && e.relatedTarget.closest('#transformer-vector-math-result');
+
+				// If relatedTarget is null (DOM mutation stole focus) OR
+				// relatedTarget is inside the VM area (Temml reflow artifact),
+				// then refocus
+				if (!e.relatedTarget || targetIsInsideVM || targetIsResultDiv) {
+					requestAnimationFrame(() => {
+						const el = document.getElementById('transformer-vector-math-input');
+						if (el && document.activeElement !== el) {
+							el.focus({ preventScroll: true });
+							try {
+								el.setSelectionRange(window._vmInputSelStart, window._vmInputSelEnd);
+							} catch(e) {}
+						}
+					});
+				}
+				// else: relatedTarget is outside the VM area → real click outside → let it blur
+			});
+
+			// Mark intentional blurs
+			vmInput.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === 'Tab' || e.key === 'Escape') {
+					window._vmIntentionalBlur = true;
+				}
+			});
+
+			// Also track selection changes (click, shift+arrow, etc.)
+			vmInput.addEventListener('select', () => {
+				window._vmInputSelStart = vmInput.selectionStart;
+				window._vmInputSelEnd = vmInput.selectionEnd;
+			});
+		}
+	}
 }
 
 // ── Result rendering: completely isolated from input ──
