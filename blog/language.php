@@ -165,12 +165,20 @@ Around 1050 BCE, Phoenician traders along the eastern Mediterranean coast perfec
 ### The Greek Addition of Vowels (c. 800 BCE)
 
 When the Greeks adopted the Phoenician abjad around 800 BCE, they made a seemingly small but profoundly consequential modification: they repurposed several Phoenician consonant signs that had no equivalent in Greek to represent **vowel sounds**. Phoenician *aleph* (a glottal stop unused in Greek) became *alpha* (the vowel /a/); *he* became *epsilon* (/e/); *yod* became *iota* (/i/). The result was the world's first **true alphabet**, a writing system that explicitly represented both consonants and vowels, providing a near-complete phonetic transcription of speech. This mattered enormously because it eliminated the ambiguity inherent in abjads, where readers had to infer missing vowels from context. With vowels written out, texts could be read aloud accurately by someone with no prior knowledge of the content, a property that made Greek the ideal medium for philosophy, science, drama, and democratic law. The Acrophonic Principle \cite[as described by]{acrophonic} already traces the lineage from Phoenician *aleph* to Greek *alpha* and *bet* to *beta*, noting that this adaptation gave us the very word "alphabet" itself. The Greek innovation represents the moment when writing achieved full phonetic transparency, the same transparency that modern tokenizers strive for when they decompose text into subword units that capture every nuance of pronunciation and meaning. It is also the precondition for \citeauthor{saussure1916}'s insight about the arbitrariness of the sign: once letters are fully abstract and phonetic, the last residue of iconicity is severed, and the written word becomes a pure social convention.
+</div>
 
-### The Rosetta Stone as a Bridge to Modern NLP
+<div class="optional md" data-headline="The Rosetta Stone as a Bridge to Modern NLP">
+The Rosetta Stone (196 BCE) is the first multi-lingual "parallel corpus", a single decree inscribed in Egyptian hieroglyphics,
+Demotic script, and Greek, proving that distinct symbolic systems can map to the same underlying meaning. When Jean-François Champollion deciphered Egyptian hieroglyphics in 1822, he did so by *aligning* the Greek text (which he could read) with the hieroglyphic text (which he could not), 
+exploiting the assumption that both encoded the same content. 
 
-The Rosetta Stone (196 BCE) is the first multi-lingual "parallel corpus", a single decree inscribed in Egyptian hieroglyphics, Demotic script, and Greek, proving that distinct symbolic systems can map to the same underlying meaning. When Jean-François Champollion deciphered Egyptian hieroglyphics in 1822, he did so by *aligning* the Greek text (which he could read) with the hieroglyphic text (which he could not), exploiting the assumption that both encoded the same content. This is precisely the method that powered IBM's statistical machine translation models in the 1990s and that still underpins the training of modern multilingual LLMs: given two texts known to express the same meaning in different languages, the system learns a mapping between their symbolic systems. The Rosetta Stone thus embodies a principle that connects directly to \citeauthor{firth_context}'s distributional hypothesis and to the embedding spaces of modern Transformers: meaning is not locked inside any single symbol system but can be recovered from the *structural relationships* between symbols, whether those symbols are hieroglyphs, Greek letters, or high-dimensional vectors. It is the ancient proof of concept for the idea that translation, and, by extension, understanding, is fundamentally an alignment problem.
+This is precisely the method that powered IBM's statistical machine translation models in the 1990s and that still underpins the training of modern multilingual LLMs: given two texts known to express the same meaning in different languages,
+the system learns a mapping between their symbolic systems. The Rosetta Stone thus embodies a principle that connects directly to \citeauthor{firth_context}'s distributional hypothesis and to the embedding spaces of modern Transformers:
+meaning is not locked inside any single symbol system but can be recovered from the *structural relationships* between symbols, whether those symbols are hieroglyphs, Greek letters, or high-dimensional vectors.
+It is the ancient proof of concept for the idea that translation, and, by extension, understanding, is fundamentally an alignment problem.
+</div>
 
-
+<div class="md">
 ## Conclusion: 135,000 Years in a Single Thread
 </div>
 
