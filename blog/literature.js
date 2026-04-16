@@ -1,4 +1,10 @@
 window.bibData = {
+	"rokosbasilisk": {
+		url: "https://www.lesswrong.com/w/rokos-basilisk",
+		year: 2010,
+		author: "Roko",
+		title: "Roko's Basilisk"
+	},
 	"whitney1936manifolds": {
 		title: "Differentiable Manifolds",
 		author: "Hassler Whitney",
