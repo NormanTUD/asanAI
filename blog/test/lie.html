@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lie-Gruppen – Visuell Erleben</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+background: #0a0a1a;
+color: #e0e0f0;
+font-family: 'Segoe UI', system-ui, sans-serif;
+overflow-x: hidden;
+}
+h1 {
+text-align: center;
+padding: 30px 20px 10px;
+font-size: 2em;
+background: linear-gradient(90deg, #ff6ec7, #7c4dff, #00e5ff);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+.subtitle {
+text-align: center;
+color: #888;
+margin-bottom: 30px;
+font-size: 0.95em;
+}
+.container {
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+gap: 30px;
+padding: 20px;
+max-width: 1400px;
+margin: 0 auto;
+}
+.panel {
+background: #12122a;
+border: 1px solid #2a2a5a;
+border-radius: 16px;
+padding: 24px;
+width: 420px;
+box-shadow: 0 0 30px rgba(100, 60, 255, 0.1);
+}
+.panel h2 {
+font-size: 1.2em;
+margin-bottom: 6px;
+color: #b388ff;
+}
+.panel .desc {
+font-size: 0.82em;
+color: #777;
+margin-bottom: 16px;
+line-height: 1.5;
+}
+canvas {
+display: block;
+margin: 0 auto 16px;
+border-radius: 10px;
+background: #08081a;
+border: 1px solid #1e1e40;
+}
+.slider-group {
+margin-bottom: 10px;
+}
+.slider-group label {
+display: flex;
+justify-content: space-between;
+font-size: 0.85em;
+color: #aaa;
+margin-bottom: 4px;
+}
+.slider-group label span.val {
+color: #7c4dff;
+font-weight: bold;
+}
+input[type="range"] {
+width: 100%;
+-webkit-appearance: none;
+height: 6px;
+border-radius: 3px;
+background: #1e1e50;
+outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 18px; height: 18px;
+border-radius: 50%;
+background: linear-gradient(135deg, #7c4dff, #00e5ff);
+cursor: pointer;
+box-shadow: 0 0 8px rgba(124, 77, 255, 0.6);
+}
+.btn-row {
+display: flex;
+gap: 8px;
+margin-top: 12px;
+flex-wrap: wrap;
+}
+button {
+padding: 8px 16px;
+border: 1px solid #3a3a7a;
+border-radius: 8px;
+background: #1a1a3a;
+color: #b388ff;
+cursor: pointer;
+font-size: 0.82em;
+transition: all 0.2s;
+}
+button:hover {
+background: #2a2a5a;
+box-shadow: 0 0 12px rgba(124, 77, 255, 0.3);
+}
+button.active {
+background: #7c4dff;
+color: white;
+border-color: #7c4dff;
+}
+.insight-box {
+margin-top: 14px;
+padding: 12px;
+background: #0e0e25;
+border-left: 3px solid #7c4dff;
+border-radius: 6px;
+font-size: 0.8em;
+color: #999;
+line-height: 1.6;
+}
+.insight-box strong {
+color: #b388ff;
+}
+
+/* Flow panel extra */
+.flow-legend {
+display: flex;
+gap: 14px;
+justify-content: center;
+margin-top: 8px;
+font-size: 0.75em;
+}
+.flow-legend span {
+display: flex;
+align-items: center;
+gap: 5px;
+}
+.flow-legend .dot {
+width: 10px; height: 10px;
+border-radius: 50%;
+display: inline-block;
+}
+
+/* Bottom explanation */
+.bottom-section {
+max-width: 900px;
+margin: 40px auto;
+padding: 30px;
+background: #12122a;
+border-radius: 16px;
+border: 1px solid #2a2a5a;
+}
+.bottom-section h2 {
+color: #b388ff;
+margin-bottom: 16px;
+}
+.bottom-section p {
+color: #999;
+line-height: 1.8;
+font-size: 0.9em;
+margin-bottom: 12px;
+}
+.bottom-section .emoji-row {
+font-size: 1.4em;
+text-align: center;
+margin: 16px 0;
+}
+</style>
+</head>
+<body>
+
+<h1>✨ Lie-Gruppen – Visuell Erleben ✨</h1>
+<p class="subtitle">Dreh an den Reglern. Beobachte. Verstehe.</p>
+
+<div class="container">
+
+<!-- ====== PANEL 1: SO(2) – Rotation in 2D ====== -->
+<div class="panel">
+<h2>① SO(2) – Drehungen im Kreis</h2>
+<p class="desc">Die einfachste Lie-Gruppe: Alle Drehungen in der Ebene. Jede Drehung ist <em>glatt</em> mit jeder anderen verbunden.</p>
+<canvas id="c1" width="380" height="380"></canvas>
+<div class="slider-group">
+<label>Winkel θ <span class="val" id="v1">0°</span></label>
+<input type="range" id="s1" min="0" max="360" value="0" step="0.5">
+</div>
+<div class="slider-group">
+<label>Geschwindigkeit (Lie-Algebra ω) <span class="val" id="v1b">1.0</span></label>
+<input type="range" id="s1b" min="0" max="5" value="1" step="0.1">
+</div>
+<div class="btn-row">
+<button id="btn1play">▶ Fließen lassen</button>
+<button id="btn1stop">⏹ Stopp</button>
+<button id="btn1trail">Spur an/aus</button>
+</div>
+<div class="insight-box">
+<strong>💡 Erkenntnis:</strong> Der Regler „Geschwindigkeit ω" ist ein Element der <strong>Lie-Algebra</strong> – er sagt, <em>wie schnell und in welche Richtung</em> du dich auf der Gruppe bewegst. Die tatsächliche Position auf dem Kreis ist ein Element der <strong>Lie-Gruppe</strong>.
+</div>
+</div>
+
+<!-- ====== PANEL 2: SO(3) Projektionen ====== -->
+<div class="panel">
+<h2>② SO(3) – Drehungen im Raum</h2>
+<p class="desc">3 Achsen, 3 Generatoren. Jede 3D-Rotation entsteht durch Kombination. Beobachte, wie die Reihenfolge zählt!</p>
+<canvas id="c2" width="380" height="380"></canvas>
+<div class="slider-group">
+<label>Rotation um X (Roll) <span class="val" id="v2a">0°</span></label>
+<input type="range" id="s2a" min="-180" max="180" value="0" step="1">
+</div>
+<div class="slider-group">
+<label>Rotation um Y (Pitch) <span class="val" id="v2b">0°</span></label>
+<input type="range" id="s2b" min="-180" max="180" value="0" step="1">
+</div>
+<div class="slider-group">
+<label>Rotation um Z (Yaw) <span class="val" id="v2c">0°</span></label>
+<input type="range" id="s2c" min="-180" max="180" value="0" step="1">
+</div>
+<div class="btn-row">
+<button id="btn2orderXYZ" class="active">XYZ-Reihenfolge</button>
+<button id="btn2orderZYX">ZYX-Reihenfolge</button>
+<button id="btn2reset">Reset</button>
+</div>
+<div class="insight-box">
+<strong>💡 Erkenntnis:</strong> Wechsle die Reihenfolge bei gleichen Winkeln → anderes Ergebnis! Das zeigt: SO(3) ist <strong>nicht-abelsch</strong> (nicht kommutativ). Das ist der Kern des „Lie-Klammer"-Konzepts: [X,Y] ≠ 0.
+</div>
+</div>
+
+<!-- ====== PANEL 3: Exponentialabbildung ====== -->
+<div class="panel">
+<h2>③ Die Exponentialabbildung</h2>
+<p class="desc">Von der Lie-Algebra (Tangentialvektor) zur Lie-Gruppe (Transformation). Beobachte, wie ein kleiner Pfeil zur ganzen Drehung „exponiert" wird.</p>
+<canvas id="c3" width="380" height="380"></canvas>
+<div class="slider-group">
+<label>Algebra-Vektor Stärke <span class="val" id="v3a">0.5</span></label>
+<input type="range" id="s3a" min="0" max="6.28" value="0.5" step="0.01">
+</div>
+<div class="slider-group">
+<label>Schritte der Approximation <span class="val" id="v3b">1</span></label>
+<input type="range" id="s3b" min="1" max="80" value="1" step="1">
+</div>
+<div class="btn-row">
+<button id="btn3animate">▶ Schritte animieren</button>
+<button id="btn3stop">⏹ Stopp</button>
+</div>
+<div class="insight-box">
+<strong>💡 Erkenntnis:</strong> exp(X) = lim (I + X/n)ⁿ. Mit mehr Schritten nähert sich die Treppe dem glatten Kreisbogen. Die <strong>Lie-Algebra</strong> lebt im flachen Tangentialraum, die <strong>Exponentialabbildung</strong> bringt sie auf die gekrümmte Gruppe.
+</div>
+</div>
+
+<!-- ====== PANEL 4: Einparameter-Untergruppen / Fluss ====== -->
+<div class="panel">
+<h2>④ Einparameter-Flüsse</h2>
+<p class="desc">Jedes Lie-Algebra-Element erzeugt einen „Fluss" – eine Einparameter-Untergruppe. Mische zwei Generatoren und beobachte die Bahn!</p>
+<canvas id="c4" width="380" height="380"></canvas>
+<div class="slider-group">
+<label>Generator A (Drehung) <span class="val" id="v4a">1.0</span></label>
+<input type="range" id="s4a" min="-3" max="3" value="1" step="0.05">
+</div>
+<div class="slider-group">
+<label>Generator B (Skalierung) <span class="val" id="v4b">0.0</span></label>
+<input type="range" id="s4b" min="-2" max="2" value="0" step="0.05">
+</div>
+<div class="slider-group">
+<label>Zeit t <span class="val" id="v4c">0.0</span></label>
+<input type="range" id="s4c" min="0" max="12" value="0" step="0.02">
+</div>
+<div class="btn-row">
+<button id="btn4play">▶ Zeit laufen lassen</button>
+<button id="btn4stop">⏹ Stopp</button>
+<button id="btn4clear">Spur löschen</button>
+</div>
+<div class="flow-legend">
+<span><span class="dot" style="background:#ff6ec7"></span> Bahn des Punktes</span>
+<span><span class="dot" style="background:#00e5ff"></span> Aktueller Punkt</span>
+</div>
+<div class="insight-box">
+<strong>💡 Erkenntnis:</strong> Reine Drehung → Kreis. Reine Skalierung → Spirale nach außen/innen. Mischung → Logarithmische Spirale! Das ist die Gruppe GL(2,ℝ) in Aktion. Die Lie-Algebra bestimmt die <strong>Form der Bahn</strong>.
+</div>
+</div>
+
+<!-- ====== PANEL 5: Kommutator / Lie-Klammer ====== -->
+<div class="panel">
+<h2>⑤ Der Kommutator [A, B]</h2>
+<p class="desc">Gehe: A vorwärts → B vorwärts → A rückwärts → B rückwärts. Kommst du zum Start zurück? Der Fehler IST die Lie-Klammer!</p>
+<canvas id="c5" width="380" height="380"></canvas>
+<div class="slider-group">
+<label>Schrittgröße ε <span class="val" id="v5a">0.30</span></label>
+<input type="range" id="s5a" min="0.02" max="1.5" value="0.3" step="0.01">
+</div>
+<div class="slider-group">
+<label>Animations-Fortschritt <span class="val" id="v5b">0%</span></label>
+<input type="range" id="s5b" min="0" max="100" value="0" step="0.5">
+</div>
+<div class="btn-row">
+<button id="btn5play">▶ Animieren</button>
+<button id="btn5stop">⏹ Stopp</button>
+</div>
+<div class="insight-box">
+<strong>💡 Erkenntnis:</strong> Je größer ε, desto größer der „Fehler" (Lücke). Bei kommutativen Gruppen wäre die Lücke null. Die <strong>Lie-Klammer [A,B] = AB − BA</strong> misst genau diese Nicht-Kommutativität. Sie ist die Seele der Lie-Algebra!
+</div>
+</div>
+
+<!-- ====== PANEL 6: Viele Lie-Gruppen vergleichen ====== -->
+<div class="panel">
+<h2>⑥ Zoo der Lie-Gruppen</h2>
+<p class="desc">Verschiedene Gruppen, verschiedene Symmetrien. Wähle eine Gruppe und beobachte ihren charakteristischen Fluss.</p>
+<canvas id="c6" width="380" height="380"></canvas>
+<div class="btn-row">
+<button class="grp-btn active" data-grp="so2">SO(2)<br><small>Drehung</small></button>
+<button class="grp-btn" data-grp="se2">SE(2)<br><small>Starrkörper</small></button>
+<button class="grp-btn" data-grp="sl2">SL(2)<br><small>Flächen­treu</small></button>
+<button class="grp-btn" data-grp="su2">SU(2)<br><small>Quanten­spin</small></button>
+<button class="grp-btn" data-grp="heisenberg">Heisenberg<br><small>Quanten</small></button>
+</div>
+<div class="slider-group" style="margin-top:14px">
+<label>Parameter α <span class="val" id="v6a">1.0</span></label>
+<input type="range" id="s6a" min="-3" max="3" value="1" step="0.05">
+</div>
+<div class="slider-group">
+<label>Parameter β <span class="val" id="v6b">0.5</span></label>
+<input type="range" id="s6b" min="-3" max="3" value="0.5" step="0.05">
+</div>
+<div class="insight-box" id="grpInfo">
+<strong>SO(2):</strong> 1-dimensional, abelsch. Alle Drehungen in der Ebene. Topologie: Kreis S¹.
+</div>
+</div>
+
+</div>
+
+<!-- Bottom Big Picture -->
+<div class="bottom-section">
+<h2>🧠 Das große Bild</h2>
+<div class="emoji-row">🔄 Symmetrie → 📐 Gruppe → 🧮 Algebra → 💡 Verstehen</div>
+<p><strong>Eine Lie-Gruppe</strong> ist eine Menge von Transformationen (Drehungen, Verschiebungen, Skalierungen…), die gleichzeitig eine <em>glatte Mannigfaltigkeit</em> ist. Du kannst stufenlos zwischen Transformationen gleiten – es gibt keine Sprünge.</p>
+<p><strong>Die Lie-Algebra</strong> ist der Tangentialraum an der Identität (= „nichts tun"). Sie beschreibt die <em>infinitesimalen</em> Generatoren – die Richtungen, in die du dich von „nichts tun" aus bewegen kannst. Die Regler oben SIND Lie-Algebra-Elemente!</p>
+<p><strong>Die Exponentialabbildung</strong> exp: Algebra → Gruppe verwandelt „Richtung + Stärke" in eine tatsächliche Transformation. Genau wie e^(iθ) einen Winkel in einen Punkt auf dem Einheitskreis verwandelt.</p>
+<p><strong>Die Lie-Klammer [X,Y]</strong> misst, wie sehr zwei Generatoren <em>nicht vertauschbar</em> sind. Sie kodiert die gesamte lokale Struktur der Gruppe. Wenn [X,Y]=0 für alle X,Y → die Gruppe ist abelsch (kommutativ).</p>
+<p style="color:#b388ff; text-align:center; font-size:1em; margin-top:20px;">
+<strong>Kurz:</strong> Lie-Gruppen = kontinuierliche Symmetrien. Lie-Algebren = deren DNA.
+</p>
+</div>
+
+<script>
+// ============================================================
+// PANEL 1: SO(2)
+// ============================================================
+(() => {
+const c = document.getElementById('c1');
+const ctx = c.getContext('2d');
+const s1 = document.getElementById('s1');
+const s1b = document.getElementById('s1b');
+const v1 = document.getElementById('v1');
+const v1b = document.getElementById('v1b');
+let playing = false, trail = true, trailPts = [];
+const cx = 190, cy = 190, R = 130;
+
+function draw(angleDeg) {
+const a = angleDeg * Math.PI / 180;
+ctx.clearRect(0, 0, 380, 380);
+
+// Grid
+ctx.strokeStyle = '#1a1a3a';
+ctx.lineWidth = 0.5;
+for (let i = 0; i < 380; i += 40) {
+ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 380); ctx.stroke();
+ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(380, i); ctx.stroke();
+}
+
+// Circle
+ctx.beginPath();
+ctx.arc(cx, cy, R, 0, Math.PI * 2);
+ctx.strokeStyle = '#2a2a6a';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Trail
+if (trail && trailPts.length > 1) {
+ctx.beginPath();
+ctx.moveTo(trailPts[0][0], trailPts[0][1]);
+for (let i = 1; i < trailPts.length; i++) {
+ctx.lineTo(trailPts[i][0], trailPts[i][1]);
+}
+ctx.strokeStyle = 'rgba(255,110,199,0.4)';
+ctx.lineWidth = 2;
+ctx.stroke();
+}
+
+// Angle arc
+ctx.beginPath();
+ctx.arc(cx, cy, 40, 0, -a, a > 0);
+ctx.strokeStyle = '#7c4dff';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Radius line (identity)
+ctx.beginPath();
+ctx.moveTo(cx, cy);
+ctx.lineTo(cx + R, cy);
+ctx.strokeStyle = '#444';
+ctx.lineWidth = 1;
+ctx.setLineDash([4, 4]);
+ctx.stroke();
+ctx.setLineDash([]);
+
+// Rotated point
+const px = cx + R * Math.cos(-a);
+const py = cy + R * Math.sin(-a);
+
+// Radius to point
+ctx.beginPath();
+ctx.moveTo(cx, cy);
+ctx.lineTo(px, py);
+ctx.strokeStyle = '#00e5ff';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Point
+ctx.beginPath();
+ctx.arc(px, py, 8, 0, Math.PI * 2);
+ctx.fillStyle = '#00e5ff';
+ctx.fill();
+ctx.shadowColor = '#00e5ff';
+ctx.shadowBlur = 15;
+ctx.fill();
+ctx.shadowBlur = 0;
+
+// Arrow showing tangent (Lie algebra direction)
+const omega = parseFloat(s1b.value);
+const tangentLen = omega * 25;
+const tx = -Math.sin(-a) * tangentLen;
+const ty = -Math.cos(-a) * tangentLen;
+ctx.beginPath();
+ctx.moveTo(px, py);
+ctx.lineTo(px + tx, py + ty);
+ctx.strokeStyle = '#ff6ec7';
+ctx.lineWidth = 3;
+ctx.stroke();
+// Arrowhead
+const arrA = Math.atan2(ty, tx);
+ctx.beginPath();
+ctx.moveTo(px + tx, py + ty);
+ctx.lineTo(px + tx - 10 * Math.cos(arrA - 0.4), py + ty - 10 * Math.sin(arrA - 0.4));
+ctx.moveTo(px + tx, py + ty);
+ctx.lineTo(px + tx - 10 * Math.cos(arrA + 0.4), py + ty - 10 * Math.sin(arrA + 0.4));
+ctx.stroke();
+
+// Labels
+ctx.fillStyle = '#7c4dff';
+ctx.font = '14px monospace';
+ctx.fillText(`θ = ${angleDeg.toFixed(1)}°`, cx - 20, cy + 60);
+ctx.fillStyle = '#ff6ec7';
+ctx.fillText(`ω = ${omega.toFixed(1)}`, px + tx + 5, py + ty - 5);
+ctx.fillStyle = '#555';
+ctx.font = '11px sans-serif';
+ctx.fillText('Lie-Gruppe: Position auf dem Kreis', 10, 370);
+ctx.fillStyle = '#ff6ec7';
+ctx.fillText('Lie-Algebra: Tangentenpfeil (Geschwindigkeit)', 10, 355);
+
+if (trail) {
+trailPts.push([px, py]);
+if (trailPts.length > 800) trailPts.shift();
+}
+}
+
+s1.addEventListener('input', () => {
+v1.textContent = parseFloat(s1.value).toFixed(1) + '°';
+draw(parseFloat(s1.value));
+});
+s1b.addEventListener('input', () => {
+v1b.textContent = parseFloat(s1b.value).toFixed(1);
+draw(parseFloat(s1.value));
+});
+
+let animId;
+document.getElementById('btn1play').addEventListener('click', () => {
+playing = true;
+function step() {
+if (!playing) return;
+let val = parseFloat(s1.value) + parseFloat(s1b.value) * 0.5;
+if (val > 360) val -= 360;
+s1.value = val;
+v1.textContent = val.toFixed(1) + '°';
+draw(val);
+animId = requestAnimationFrame(step);
+}
+step();
+});
+document.getElementById('btn1stop').addEventListener('click', () => {
+playing = false;
+cancelAnimationFrame(animId);
+});
+document.getElementById('btn1trail').addEventListener('click', () => {
+trail = !trail;
+if (!trail) trailPts = [];
+draw(parseFloat(s1.value));
+});
+
+draw(0);
+})();
+
+// ============================================================
+// PANEL 2: SO(3)
+// ============================================================
+(() => {
+const c = document.getElementById('c2');
+const ctx = c.getContext('2d');
+const sa = document.getElementById('s2a');
+const sb = document.getElementById('s2b');
+const sc = document.getElementById('s2c');
+const va = document.getElementById('v2a');
+const vb = document.getElementById('v2b');
+const vc = document.getElementById('v2c');
+let orderXYZ = true;
+
+function rotX(a) {
+const c = Math.cos(a), s = Math.sin(a);
+return [[1,0,0],[0,c,-s],[0,s,c]];
+}
+function rotY(a) {
+const c = Math.cos(a), s = Math.sin(a);
+return [[c,0,s],[0,1,0],[-s,0,c]];
+}
+function rotZ(a) {
+const c = Math.cos(a), s = Math.sin(a);
+return [[c,-s,0],[s,c,0],[0,0,1]];
+}
+function matMul(A, B) {
+const r = [[0,0,0],[0,0,0],[0,0,0]];
+for (let i=0;i<3;i++) for (let j=0;j<3;j++) for (let k=0;k<3;k++) r[i][j]+=A[i][k]*B[k][j];
+return r;
+}
+function applyMat(M, v) {
+return [M[0][0]*v[0]+M[0][1]*v[1]+M[0][2]*v[2],
+M[1][0]*v[0]+M[1][1]*v[1]+M[1][2]*v[2],
+M[2][0]*v[0]+M[2][1]*v[1]+M[2][2]*v[2]];
+}
+function project(p) {
+const scale = 200 / (4 + p[2] * 0.5);
+return [190 + p[0] * scale, 190 - p[1] * scale, p[2]];
+}
+
+// Cube vertices
+const verts = [];
+for (let x of [-1,1]) for (let y of [-1,1]) for (let z of [-1,1]) verts.push([x,y,z]);
+const edges = [[0,1],[0,2],[0,4],[1,3],[1,5],[2,3],[2,6],[3,7],[4,5],[4,6],[5,7],[6,7]];
+// Axis tips
+const axisTips = [[2,0,0],[0,2,0],[0,0,2]];
+const axisColors = ['#ff4444','#44ff44','#4488ff'];
+const axisLabels = ['X','Y','Z'];
+
+function draw() {
+const ax = parseFloat(sa.value) * Math.PI / 180;
+const ay = parseFloat(sb.value) * Math.PI / 180;
+const az = parseFloat(sc.value) * Math.PI / 180;
+
+let M;
+if (orderXYZ) {
+M = matMul(rotZ(az), matMul(rotY(ay), rotX(ax)));
+} else {
+M = matMul(rotX(ax), matMul(rotY(ay), rotZ(az)));
+}
+
+ctx.clearRect(0, 0, 380, 380);
+
+// Draw axes
+for (let i = 0; i < 3; i++) {
+const tip = applyMat(M, axisTips[i]);
+const p0 = project([0,0,0]);
+const p1 = project(tip);
+ctx.beginPath();
+ctx.moveTo(p0[0], p0[1]);
+ctx.lineTo(p1[0], p1[1]);
+ctx.strokeStyle = axisColors[i];
+ctx.lineWidth = 2;
+ctx.stroke();
+ctx.fillStyle = axisColors[i];
+ctx.font = 'bold 14px monospace';
+ctx.fillText(axisLabels[i], p1[0]+5, p1[1]-5);
+}
+
+// Draw cube edges with depth sorting
+const projVerts = verts.map(v => {
+const rv = applyMat(M, v);
+return project(rv);
+});
+
+// Sort edges by average depth
+const sortedEdges = edges.map(e => {
+const avgZ = (projVerts[e[0]][2] + projVerts[e[1]][2]) / 2;
+return { e, avgZ };
+}).sort((a, b) => a.avgZ - b.avgZ);
+
+for (const { e, avgZ } of sortedEdges) {
+const a = projVerts[e[0]];
+const b = projVerts[e[1]];
+const alpha = 0.3 + 0.4 * (1 + avgZ) / 2;
+ctx.beginPath();
+ctx.moveTo(a[0], a[1]);
+ctx.lineTo(b[0], b[1]);
+ctx.strokeStyle = `rgba(124, 77, 255, ${alpha})`;
+ctx.lineWidth = 2;
+ctx.stroke();
+}
+
+// Draw vertices
+for (const pv of projVerts) {
+const alpha = 0.4 + 0.6 * (1 + pv[2]) / 2;
+const size = 3 + 2 * (1 + pv[2]) / 2;
+ctx.beginPath();
+ctx.arc(pv[0], pv[1], size, 0, Math.PI * 2);
+ctx.fillStyle = `rgba(0, 229, 255, ${alpha})`;
+ctx.fill();
+}
+
+// Order label
+        ctx.fillStyle = '#555';
+        ctx.font = '12px monospace';
+        ctx.fillText(orderXYZ ? 'Reihenfolge: X → Y → Z' : 'Reihenfolge: Z → Y → X', 10, 370);
+    }
+
+    sa.addEventListener('input', () => { va.textContent = sa.value + '°'; draw(); });
+    sb.addEventListener('input', () => { vb.textContent = sb.value + '°'; draw(); });
+    sc.addEventListener('input', () => { vc.textContent = sc.value + '°'; draw(); });
+
+    document.getElementById('btn2orderXYZ').addEventListener('click', function() {
+        orderXYZ = true;
+        this.classList.add('active');
+        document.getElementById('btn2orderZYX').classList.remove('active');
+        draw();
+    });
+    document.getElementById('btn2orderZYX').addEventListener('click', function() {
+        orderXYZ = false;
+        this.classList.add('active');
+        document.getElementById('btn2orderXYZ').classList.remove('active');
+        draw();
+    });
+    document.getElementById('btn2reset').addEventListener('click', () => {
+        sa.value = 0; sb.value = 0; sc.value = 0;
+        va.textContent = '0°'; vb.textContent = '0°'; vc.textContent = '0°';
+        draw();
+    });
+
+    draw();
+})();
+
+// ============================================================
+// PANEL 3: Exponentialabbildung
+// ============================================================
+(() => {
+    const c = document.getElementById('c3');
+    const ctx = c.getContext('2d');
+    const s3a = document.getElementById('s3a');
+    const s3b = document.getElementById('s3b');
+    const v3a = document.getElementById('v3a');
+    const v3b = document.getElementById('v3b');
+    let animating = false, animId;
+    const cx = 190, cy = 190, R = 130;
+
+    function draw() {
+        const totalAngle = parseFloat(s3a.value);
+        const steps = parseInt(s3b.value);
+        const stepAngle = totalAngle / steps;
+
+        ctx.clearRect(0, 0, 380, 380);
+
+        // Grid
+        ctx.strokeStyle = '#1a1a3a';
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i < 380; i += 40) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 380); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(380, i); ctx.stroke();
+        }
+
+        // Unit circle
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, 0, Math.PI * 2);
+        ctx.strokeStyle = '#2a2a6a';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Smooth arc (the true exponential result)
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, 0, -totalAngle, totalAngle > 0);
+        ctx.strokeStyle = 'rgba(124, 77, 255, 0.3)';
+        ctx.lineWidth = 6;
+        ctx.stroke();
+
+        // Tangent vector at identity (the Lie algebra element)
+        ctx.beginPath();
+        ctx.moveTo(cx + R, cy);
+        ctx.lineTo(cx + R, cy - totalAngle * 40);
+        ctx.strokeStyle = '#ff6ec7';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        // Arrowhead
+        const arrowY = cy - totalAngle * 40;
+        ctx.beginPath();
+        ctx.moveTo(cx + R, arrowY);
+        ctx.lineTo(cx + R - 6, arrowY + 10);
+        ctx.moveTo(cx + R, arrowY);
+        ctx.lineTo(cx + R + 6, arrowY + 10);
+        ctx.stroke();
+
+        // Stepped approximation: (I + X/n)^n
+        ctx.beginPath();
+        let px = cx + R, py = cy;
+        ctx.moveTo(px, py);
+
+        for (let i = 0; i < steps; i++) {
+            // Each step: move tangentially then project back to circle
+            const currentAngle = -i * stepAngle;
+            const nextAngle = -(i + 1) * stepAngle;
+
+            // Tangent step (straight line)
+            const tx = px - R * Math.sin(currentAngle) * stepAngle;
+            const ty = py - R * Math.cos(currentAngle) * stepAngle;
+
+            // Project back to circle (normalization)
+            const dx = tx - cx, dy = ty - cy;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const nx = cx + dx / dist * R;
+            const ny = cy + dy / dist * R;
+
+            // Draw tangent step
+            ctx.lineTo(tx, ty);
+            // Draw projection back
+            ctx.lineTo(nx, ny);
+
+            px = nx;
+            py = ny;
+        }
+
+        ctx.strokeStyle = '#00e5ff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw step points
+        let qx = cx + R, qy = cy;
+        for (let i = 0; i <= steps; i++) {
+            const angle = -i * stepAngle;
+            const npx = cx + R * Math.cos(angle);
+            const npy = cy + R * Math.sin(angle);
+            ctx.beginPath();
+            ctx.arc(npx, npy, 4, 0, Math.PI * 2);
+            ctx.fillStyle = i === steps ? '#00e5ff' : 'rgba(0,229,255,0.5)';
+            ctx.fill();
+        }
+
+        // Start point
+        ctx.beginPath();
+        ctx.arc(cx + R, cy, 7, 0, Math.PI * 2);
+        ctx.fillStyle = '#44ff44';
+        ctx.fill();
+
+        // End point (true)
+        const endX = cx + R * Math.cos(-totalAngle);
+        const endY = cy + R * Math.sin(-totalAngle);
+        ctx.beginPath();
+        ctx.arc(endX, endY, 7, 0, Math.PI * 2);
+        ctx.fillStyle = '#7c4dff';
+        ctx.fill();
+        ctx.shadowColor = '#7c4dff';
+        ctx.shadowBlur = 12;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Labels
+        ctx.fillStyle = '#44ff44';
+        ctx.font = '12px monospace';
+        ctx.fillText('Start (I)', cx + R + 10, cy + 4);
+        ctx.fillStyle = '#7c4dff';
+        ctx.fillText('exp(X)', endX + 10, endY + 4);
+        ctx.fillStyle = '#ff6ec7';
+        ctx.fillText('X (Algebra)', cx + R + 10, arrowY + 4);
+        ctx.fillStyle = '#555';
+        ctx.fillText(`n = ${steps} Schritte`, 10, 370);
+        ctx.fillText(`(I + X/${steps})^${steps} → exp(X)`, 10, 355);
+    }
+
+    s3a.addEventListener('input', () => {
+        v3a.textContent = parseFloat(s3a.value).toFixed(2);
+        draw();
+    });
+    s3b.addEventListener('input', () => {
+        v3b.textContent = s3b.value;
+        draw();
+    });
+
+    document.getElementById('btn3animate').addEventListener('click', () => {
+        animating = true;
+        function step() {
+            if (!animating) return;
+            let val = parseInt(s3b.value) + 1;
+            if (val > 80) val = 1;
+            s3b.value = val;
+            v3b.textContent = val;
+            draw();
+            animId = setTimeout(() => requestAnimationFrame(step), 80);
+        }
+        step();
+    });
+    document.getElementById('btn3stop').addEventListener('click', () => {
+        animating = false;
+        clearTimeout(animId);
+    });
+
+    draw();
+})();
+
+// ============================================================
+// PANEL 4: Einparameter-Flüsse
+// ============================================================
+(() => {
+    const c = document.getElementById('c4');
+    const ctx = c.getContext('2d');
+    const s4a = document.getElementById('s4a');
+    const s4b = document.getElementById('s4b');
+    const s4c = document.getElementById('s4c');
+    const v4a = document.getElementById('v4a');
+    const v4b = document.getElementById('v4b');
+    const v4c = document.getElementById('v4c');
+    let playing = false, animId;
+    let trailPts = [];
+    const cx = 190, cy = 190;
+
+    function draw() {
+        const omega = parseFloat(s4a.value); // rotation generator
+        const sigma = parseFloat(s4b.value); // scaling generator
+        const t = parseFloat(s4c.value);
+
+        ctx.clearRect(0, 0, 380, 380);
+
+        // Grid
+        ctx.strokeStyle = '#1a1a3a';
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i < 380; i += 40) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 380); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(380, i); ctx.stroke();
+        }
+
+        // Crosshair
+        ctx.strokeStyle = '#1e1e40';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, 380); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(380, cy); ctx.stroke();
+
+        // Compute trail
+        trailPts = [];
+        const dt = 0.02;
+        for (let tt = 0; tt <= t; tt += dt) {
+            const scale = Math.exp(sigma * tt);
+            const angle = omega * tt;
+            const px = cx + 80 * scale * Math.cos(angle);
+            const py = cy - 80 * scale * Math.sin(angle);
+            trailPts.push([px, py]);
+        }
+
+        // Draw trail
+        if (trailPts.length > 1) {
+            ctx.beginPath();
+            ctx.moveTo(trailPts[0][0], trailPts[0][1]);
+            for (let i = 1; i < trailPts.length; i++) {
+                ctx.lineTo(trailPts[i][0], trailPts[i][1]);
+            }
+            ctx.strokeStyle = '#ff6ec7';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Current point
+        const scale = Math.exp(sigma * t);
+        const angle = omega * t;
+        const px = cx + 80 * scale * Math.cos(angle);
+        const py = cy - 80 * scale * Math.sin(angle);
+
+        // Start point
+        ctx.beginPath();
+        ctx.arc(cx + 80, cy, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#44ff44';
+        ctx.fill();
+
+        // Current point
+        ctx.beginPath();
+        ctx.arc(px, py, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#00e5ff';
+        ctx.fill();
+        ctx.shadowColor = '#00e5ff';
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Tangent vector at current point
+        const dscale = sigma * Math.exp(sigma * t);
+        const dangle = omega;
+        const vx = 80 * (dscale * Math.cos(angle) - scale * dangle * Math.sin(angle));
+        const vy = -80 * (dscale * Math.sin(angle) + scale * dangle * Math.cos(angle));
+        const vlen = Math.sqrt(vx * vx + vy * vy);
+        if (vlen > 1) {
+            const nvx = vx / vlen * 30;
+            const nvy = vy / vlen * 30;
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(px + nvx, py + nvy);
+            ctx.strokeStyle = '#ffff00';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            const aa = Math.atan2(nvy, nvx);
+            ctx.beginPath();
+            ctx.moveTo(px + nvx, py + nvy);
+            ctx.lineTo(px + nvx - 8 * Math.cos(aa - 0.4), py + nvy - 8 * Math.sin(aa - 0.4));
+            ctx.moveTo(px + nvx, py + nvy);
+            ctx.lineTo(px + nvx - 8 * Math.cos(aa + 0.4), py + nvy - 8 * Math.sin(aa + 0.4));
+            ctx.stroke();
+        }
+
+        // Labels
+        ctx.fillStyle = '#555';
+        ctx.font = '11px monospace';
+        if (Math.abs(sigma) < 0.05) ctx.fillText('Reiner Kreis (SO(2))', 10, 355);
+        else if (Math.abs(omega) < 0.05) ctx.fillText('Reine Skalierung (ℝ⁺)', 10, 355);
+        else ctx.fillText('Log-Spirale (GL(2,ℝ))', 10, 355);
+        ctx.fillText(`t = ${t.toFixed(2)}`, 10, 370);
+    }
+
+    s4a.addEventListener('input', () => { v4a.textContent = parseFloat(s4a.value).toFixed(2); draw(); });
+    s4b.addEventListener('input', () => { v4b.textContent = parseFloat(s4b.value).toFixed(2); draw(); });
+    s4c.addEventListener('input', () => { v4c.textContent = parseFloat(s4c.value).toFixed(2); draw(); });
+
+    document.getElementById('btn4play').addEventListener('click', () => {
+        playing = true;
+        function step() {
+            if (!playing) return;
+            let val = parseFloat(s4c.value) + 0.03;
+            if (val > 12) val = 0;
+            s4c.value = val;
+            v4c.textContent = val.toFixed(2);
+            draw();
+            animId = requestAnimationFrame(step);
+        }
+        step();
+    });
+    document.getElementById('btn4stop').addEventListener('click', () => {
+        playing = false;
+        cancelAnimationFrame(animId);
+    });
+    document.getElementById('btn4clear').addEventListener('click', () => {
+        s4c.value = 0;
+        v4c.textContent = '0.00';
+        draw();
+    });
+
+    draw();
+})();
+
+// ============================================================
+// PANEL 5: Kommutator [A, B]
+// ============================================================
+(() => {
+    const c = document.getElementById('c5');
+    const ctx = c.getContext('2d');
+    const s5a = document.getElementById('s5a');
+    const s5b = document.getElementById('s5b');
+    const v5a = document.getElementById('v5a');
+    const v5b = document.getElementById('v5b');
+    let playing = false, animId;
+    const cx = 190, cy = 190;
+
+    // We use rotation (A) and shear (B) as two non-commuting operations
+    function applyRot(p, angle) {
+        const c = Math.cos(angle), s = Math.sin(angle);
+        return [c * p[0] - s * p[1], s * p[0] + c * p[1]];
+    }
+    function applyShear(p, amount) {
+        return [p[0] + amount * p[1], p[1]];
+    }
+
+    function draw() {
+        const eps = parseFloat(s5a.value);
+        const progress = parseFloat(s5b.value) / 100;
+
+        ctx.clearRect(0, 0, 380, 380);
+
+        // Grid
+        ctx.strokeStyle = '#1a1a3a';
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i < 380; i += 40) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 380); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(380, i); ctx.stroke();
+        }
+
+        // Draw a grid of points and show how the commutator moves them
+        const gridPts = [];
+        for (let x = -3; x <= 3; x += 0.8) {
+            for (let y = -3; y <= 3; y += 0.8) {
+                gridPts.push([x, y]);
+            }
+        }
+
+        const scale = 50;
+
+        // For each point, compute the commutator path
+        // Path: start → A(ε) → B(ε) → A(-ε) → B(-ε)
+        for (const pt of gridPts) {
+            const p0 = pt;
+            const p1 = applyRot(p0, eps);
+            const p2 = applyShear(p1, eps);
+            const p3 = applyRot(p2, -eps);
+            const p4 = applyShear(p3, -eps);
+
+            // Interpolate based on progress
+            let current;
+            const segments = [p0, p1, p2, p3, p4];
+            const totalProg = progress * 4;
+            const segIdx = Math.min(Math.floor(totalProg), 3);
+            const segProg = totalProg - segIdx;
+
+            const from = segments[segIdx];
+            const to = segments[segIdx + 1];
+            current = [
+                from[0] + (to[0] - from[0]) * segProg,
+                from[1] + (to[1] - from[1]) * segProg
+            ];
+
+            const sx = cx + p0[0] * scale;
+            const sy = cy - p0[1] * scale;
+            const ex = cx + current[0] * scale;
+            const ey = cy - current[1] * scale;
+
+            // Draw displacement arrow
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(ex, ey);
+            ctx.strokeStyle = 'rgba(255, 110, 199, 0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Original point
+            ctx.beginPath();
+            ctx.arc(sx, sy, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(124, 77, 255, 0.4)';
+            ctx.fill();
+
+            // Current point
+            ctx.beginPath();
+            ctx.arc(ex, ey, 3, 0, Math.PI * 2);
+            ctx.fillStyle = '#00e5ff';
+            ctx.fill();
+        }
+
+        // Highlight one specific point's full path
+        const hp = [1.5, 1.0];
+        const h0 = hp;
+        const h1 = applyRot(h0, eps);
+        const h2 = applyShear(h1, eps);
+        const h3 = applyRot(h2, -eps);
+        const h4 = applyShear(h3, -eps);
+        const hPath = [h0, h1, h2, h3, h4];
+        const hColors = ['#ff4444', '#ffaa00', '#44ff44', '#4488ff'];
+        const hLabels = ['A(ε)', 'B(ε)', 'A(-ε)', 'B(-ε)'];
+
+        // Draw full path up to progress
+        const totalProg = progress * 4;
+        for (let i = 0; i < 4; i++) {
+            if (totalProg <= i) break;
+            const segProg = Math.min(totalProg - i, 1);
+            const from = hPath[i];
+            const to = hPath[i + 1];
+            const mid = [from[0] + (to[0] - from[0]) * segProg, from[1] + (to[1] - from[1]) * segProg];
+
+            ctx.beginPath();
+            ctx.moveTo(cx + from[0] * scale, cy - from[1] * scale);
+            ctx.lineTo(cx + mid[0] * scale, cy - mid[1] * scale);
+            ctx.strokeStyle = hColors[i];
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Label
+            if (segProg > 0.5) {
+                const lx = cx + (from[0] + to[0]) / 2 * scale;
+                const ly = cy - (from[1] + to[1]) / 2 * scale;
+                ctx.fillStyle = hColors[i];
+                ctx.font = 'bold 11px monospace';
+                ctx.fillText(hLabels[i], lx + 8, ly - 5);
+            }
+        }
+
+        // Start point (highlighted)
+        ctx.beginPath();
+        ctx.arc(cx + h0[0] * scale, cy - h0[1] * scale, 7, 0, Math.PI * 2);
+        ctx.fillStyle = '#44ff44';
+        ctx.fill();
+        ctx.fillStyle = '#44ff44';
+        ctx.font = '11px monospace';
+        ctx.fillText('Start', cx + h0[0] * scale + 10, cy - h0[1] * scale);
+
+        // End point if complete
+        if (progress >= 0.99) {
+            ctx.beginPath();
+            ctx.arc(cx + h4[0] * scale, cy - h4[1] * scale, 7, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff4444';
+            ctx.fill();
+            ctx.shadowColor = '#ff4444';
+            ctx.shadowBlur = 12;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Gap arrow
+            ctx.beginPath();
+            ctx.moveTo(cx + h0[0] * scale, cy - h0[1] * scale);
+            ctx.lineTo(cx + h4[0] * scale, cy - h4[1] * scale);
+            ctx.strokeStyle = '#ff4444';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            const gap = Math.sqrt((h4[0] - h0[0]) ** 2 + (h4[1] - h0[1]) ** 2);
+            ctx.fillStyle = '#ff4444';
+            ctx.font = 'bold 12px monospace';
+            ctx.fillText(`Lücke = [A,B] ≈ ${gap.toFixed(3)}`, 10, 25);
+            ctx.fillText(`∝ ε² = ${(eps * eps).toFixed(3)}`, 10, 42);
+        }
+
+        // Phase labels
+        ctx.fillStyle = '#555';
+        ctx.font = '11px monospace';
+        const phaseNames = ['A vorwärts', 'B vorwärts', 'A rückwärts', 'B rückwärts'];
+        const phaseIdx = Math.min(Math.floor(progress * 4), 3);
+        ctx.fillText(`Phase: ${phaseNames[phaseIdx]}`, 10, 370);
+        ctx.fillText(`ε = ${eps.toFixed(2)}`, 10, 355);
+    }
+
+    s5a.addEventListener('input', () => { v5a.textContent = parseFloat(s5a.value).toFixed(2); draw(); });
+    s5b.addEventListener('input', () => { v5b.textContent = Math.round(parseFloat(s5b.value)) + '%'; draw(); });
+
+    document.getElementById('btn5play').addEventListener('click', () => {
+        playing = true;
+        function step() {
+            if (!playing) return;
+            let val = parseFloat(s5b.value) + 0.4;
+            if (val > 100) val = 0;
+            s5b.value = val;
+            v5b.textContent = Math.round(val) + '%';
+            draw();
+            animId = requestAnimationFrame(step);
+        }
+        step();
+    });
+    document.getElementById('btn5stop').addEventListener('click', () => {
+        playing = false;
+        cancelAnimationFrame(animId);
+    });
+
+    draw();
+})();
+
+// ============================================================
+// PANEL 6: Zoo der Lie-Gruppen
+// ============================================================
+(() => {
+    const c = document.getElementById('c6');
+    const ctx = c.getContext('2d');
+    const s6a = document.getElementById('s6a');
+    const s6b = document.getElementById('s6b');
+    const v6a = document.getElementById('v6a');
+    const v6b = document.getElementById('v6b');
+    const grpInfo = document.getElementById('grpInfo');
+    let currentGrp = 'so2';
+    const cx = 190, cy = 190;
+
+    const groupInfos = {
+        so2: '<strong>SO(2):</strong> 1-dimensional, abelsch. Alle Drehungen in der Ebene. Topologie: Kreis S¹. Jedes Element: Rotation um Winkel θ.',
+        se2: '<strong>SE(2):</strong> 3-dimensional. Drehungen + Verschiebungen in der Ebene. Starrkörperbewegungen. Nicht abelsch!',
+        sl2: '<strong>SL(2,ℝ):</strong> 3-dimensional. Lineare Abbildungen mit Determinante 1. Flächentreue Transformationen. Hyperbolische Geometrie.',
+        su2: '<strong>SU(2):</strong> 3-dimensional, kompakt. Doppelte Überdeckung von SO(3). Beschreibt Quantenspin. Topologie: S³.',
+        heisenberg: '<strong>Heisenberg-Gruppe:</strong> 3-dimensional, nilpotent. Fundamentale Rolle in der Quantenmechanik. [X,Y] = Z, alle anderen Klammern = 0.'
+    };
+
+    function draw() {
+        const alpha = parseFloat(s6a.value);
+        const beta = parseFloat(s6b.value);
+
+        ctx.clearRect(0, 0, 380, 380);
+
+        // Grid
+        ctx.strokeStyle = '#1a1a3a';
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i < 380; i += 40) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 380); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(380, i); ctx.stroke();
+        }
+        ctx.strokeStyle = '#1e1e40';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, 380); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(380, cy); ctx.stroke();
+
+        // Draw a grid of points transformed by the group action
+        const pts = [];
+        for (let x = -3; x <= 3; x += 0.5) {
+            for (let y = -3; y <= 3; y += 0.5) {
+                pts.push([x, y]);
+            }
+        }
+
+        const scale = 45;
+
+        function transform(p, t) {
+            const x = p[0], y = p[1];
+            switch (currentGrp) {
+                case 'so2': {
+                    const angle = alpha * t;
+                    const c = Math.cos(angle), s = Math.sin(angle);
+                    return [c * x - s * y, s * x + c * y];
+                }
+                case 'se2': {
+                    const angle = alpha * t;
+                    const c = Math.cos(angle), s = Math.sin(angle);
+                    const tx = beta * t;
+                    return [c * x - s * y + tx, s * x + c * y];
+                }
+                case 'sl2': {
+                    // exp(t * [[alpha, beta],[beta, -alpha]])
+                    const a = alpha * t, b = beta * t;
+                    const norm = Math.sqrt(a * a + b * b);
+                    if (norm < 0.001) return [x + a * x + b * y, b * x - a * y + y];
+                    const ch = Math.cosh(norm), sh = Math.sinh(norm);
+                    const m00 = ch + a / norm * sh;
+                    const m01 = b / norm * sh;
+                    const m10 = b / norm * sh;
+                    const m11 = ch - a / norm * sh;
+                    return [m00 * x + m01 * y, m10 * x + m11 * y];
+                }
+                case 'su2': {
+                    // Project SU(2) action on ℝ³ → show as SO(3) rotation on 2D projection
+                    const ax = alpha * t;
+                    const ay = beta * t;
+                    const cax = Math.cos(ax), sax = Math.sin(ax);
+                    const cay = Math.cos(ay), say = Math.sin(ay);
+                    const nx = cay * x - say * sax * y;
+                    const ny = cax * y;
+                    return [nx, ny];
+                }
+                case 'heisenberg': {
+                    // Heisenberg: [[1, a, c],[0, 1, b],[0, 0, 1]]
+                    const a = alpha * t, b = beta * t;
+                    const c = 0.5 * a * b * t; // the non-trivial part
+                    return [x + a + c * y * 0.3, y + b];
+                }
+                default:
+                    return [x, y];
+            }
+        }
+
+        // Draw flow lines for several seed points
+        const seeds = [];
+        for (let x = -2.5; x <= 2.5; x += 1.0) {
+            for (let y = -2.5; y <= 2.5; y += 1.0) {
+                seeds.push([x, y]);
+            }
+        }
+
+        for (const seed of seeds) {
+            ctx.beginPath();
+            let first = true;
+            for (let t = 0; t <= 2; t += 0.02) {
+                const p = transform(seed, t);
+                const sx = cx + p[0] * scale;
+                const sy = cy - p[1] * scale;
+                if (sx < -50 || sx > 430 || sy < -50 || sy > 430) continue;
+                if (first) { ctx.moveTo(sx, sy); first = false; }
+                else ctx.lineTo(sx, sy);
+            }
+            ctx.strokeStyle = 'rgba(255, 110, 199, 0.35)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Draw seed point
+            const sp = transform(seed, 0);
+            ctx.beginPath();
+            ctx.arc(cx + sp[0] * scale, cy - sp[1] * scale, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(124, 77, 255, 0.4)';
+            ctx.fill();
+
+            // Draw current point (t=1)
+            const ep = transform(seed, 1);
+            const epx = cx + ep[0] * scale;
+            const epy = cy - ep[1] * scale;
+            if (epx > 0 && epx < 380 && epy > 0 && epy < 380) {
+                ctx.beginPath();
+                ctx.arc(epx, epy, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#00e5ff';
+                ctx.fill();
+            }
+        }
+
+        // Highlight one trajectory more prominently
+        const hero = [1.5, 0.5];
+        ctx.beginPath();
+        let first = true;
+        for (let t = 0; t <= 2; t += 0.01) {
+            const p = transform(hero, t);
+            const sx = cx + p[0] * scale;
+            const sy = cy - p[1] * scale;
+            if (sx < -50 || sx > 430 || sy < -50 || sy > 430) { first = true; continue; }
+            if (first) { ctx.moveTo(sx, sy); first = false; }
+            else ctx.lineTo(sx, sy);
+        }
+        ctx.strokeStyle = '#00e5ff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Hero start
+        const hs = transform(hero, 0);
+        ctx.beginPath();
+        ctx.arc(cx + hs[0] * scale, cy - hs[1] * scale, 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#44ff44';
+        ctx.fill();
+
+        // Hero end
+        const he = transform(hero, 2);
+        const hex = cx + he[0] * scale;
+        const hey = cy - he[1] * scale;
+        if (hex > 0 && hex < 380 && hey > 0 && hey < 380) {
+            ctx.beginPath();
+            ctx.arc(hex, hey, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff6ec7';
+            ctx.fill();
+            ctx.shadowColor = '#ff6ec7';
+            ctx.shadowBlur = 12;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+
+        // Group name
+        ctx.fillStyle = '#7c4dff';
+        ctx.font = 'bold 14px monospace';
+        const names = { so2: 'SO(2)', se2: 'SE(2)', sl2: 'SL(2,ℝ)', su2: 'SU(2)', heisenberg: 'Heisenberg' };
+        ctx.fillText(names[currentGrp], 10, 25);
+
+        ctx.fillStyle = '#555';
+        ctx.font = '11px monospace';
+        ctx.fillText(`α = ${alpha.toFixed(2)}, β = ${beta.toFixed(2)}`, 10, 370);
+    }
+
+    s6a.addEventListener('input', () => { v6a.textContent = parseFloat(s6a.value).toFixed(2); draw(); });
+    s6b.addEventListener('input', () => { v6b.textContent = parseFloat(s6b.value).toFixed(2); draw(); });
+
+    document.querySelectorAll('.grp-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.grp-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentGrp = this.dataset.grp;
+            grpInfo.innerHTML = groupInfos[currentGrp];
+
+            // Set nice default values for each group
+            switch (currentGrp) {
+                case 'so2':
+                    s6a.value = 1; s6b.value = 0.5;
+                    break;
+                case 'se2':
+                    s6a.value = 0.8; s6b.value = 1.0;
+                    break;
+                case 'sl2':
+                    s6a.value = 0.5; s6b.value = 0.3;
+                    break;
+                case 'su2':
+                    s6a.value = 1.2; s6b.value = 0.8;
+                    break;
+                case 'heisenberg':
+                    s6a.value = 0.6; s6b.value = 0.8;
+                    break;
+            }
+            v6a.textContent = parseFloat(s6a.value).toFixed(2);
+            v6b.textContent = parseFloat(s6b.value).toFixed(2);
+            draw();
+        });
+    });
+
+    draw();
+})();
+
+</script>
+</body>
+</html>
