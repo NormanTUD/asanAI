@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whitehead's Prozessphilosophie – Interaktiv</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #0a0a1a;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+}
+
+h1 {
+  text-align: center;
+  padding: 30px 20px 10px;
+  font-size: 1.8rem;
+  background: linear-gradient(90deg, #ff6ec7, #7873f5, #4fc3f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  text-align: center;
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 25px;
+}
+
+/* ── Layout ── */
+.main-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+}
+
+.canvas-wrap {
+  flex: 1 1 700px;
+  min-height: 550px;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0d0d24;
+  border: 1px solid #222;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.controls {
+  flex: 0 0 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Control Cards ── */
+.card {
+  background: #13132b;
+  border: 1px solid #2a2a4a;
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.card h3 {
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card h3 .dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.card label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: #aaa;
+  margin-bottom: 4px;
+}
+
+.card input[type=range] {
+  width: 100%;
+  margin-bottom: 10px;
+  accent-color: #7873f5;
+  cursor: pointer;
+}
+
+.card .desc {
+  font-size: 0.78rem;
+  color: #666;
+  line-height: 1.5;
+  margin-top: 4px;
+  border-top: 1px solid #222;
+  padding-top: 8px;
+}
+
+/* ── Info-Banner ── */
+.info-banner {
+  max-width: 1400px;
+  margin: 0 auto 20px;
+  padding: 0 20px;
+}
+
+.info-banner .inner {
+  background: linear-gradient(135deg, #1a1a3e, #13132b);
+  border: 1px solid #2a2a4a;
+  border-radius: 12px;
+  padding: 18px 22px;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #aaa;
+}
+
+.info-banner .inner strong {
+  color: #c8c0ff;
+}
+
+/* ── Concept Badges ── */
+.concepts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+/* ── Phase Indicator ── */
+.phase-indicator {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(10,10,26,0.85);
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.phase-indicator .phase-label {
+  color: #4fc3f7;
+  font-weight: 700;
+}
+
+/* ── Tooltip ── */
+#tooltip {
+  position: absolute;
+  display: none;
+  background: rgba(10,10,30,0.92);
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  color: #ccc;
+  pointer-events: none;
+  max-width: 220px;
+  z-index: 20;
+  line-height: 1.5;
+}
+
+/* ── Buttons ── */
+.btn-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #1a1a3e;
+  color: #ccc;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background: #2a2a5e;
+  border-color: #7873f5;
+  color: #fff;
+}
+
+button.active {
+  background: #7873f5;
+  color: #fff;
+  border-color: #7873f5;
+}
+
+/* ── Legend ── */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 6px;
+}
+.legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.legend .swatch {
+  width: 12px; height: 12px;
+  border-radius: 3px;
+}
+</style>
+</head>
+<body>
+
+<h1>🌊 Whitehead's Prozessphilosophie</h1>
+<p class="subtitle">Interaktiv erleben: Jedes Teilchen ist ein „Actual Occasion" – ein Tropfen Erfahrung</p>
+
+<div class="info-banner">
+  <div class="inner">
+    <strong>Was siehst du?</strong> Jeder leuchtende Punkt ist eine <strong>„Actual Occasion"</strong> (ein Wirklichkeitsereignis).
+    Sie entstehen, fühlen ihre Umgebung (<strong>Prehension</strong>), streben einem Ziel zu (<strong>Subjective Aim</strong>)
+    und vergehen – um als Daten für neue Ereignisse weiterzuleben (<strong>Objective Immortality</strong>).
+    <strong>Bewege die Regler</strong>, um die Philosophie zu spüren!
+    <div class="concepts">
+      <span class="badge" style="color:#ff6ec7;border-color:#ff6ec7;">Creativity</span>
+      <span class="badge" style="color:#4fc3f7;border-color:#4fc3f7;">Prehension</span>
+      <span class="badge" style="color:#7873f5;border-color:#7873f5;">Subjective Aim</span>
+      <span class="badge" style="color:#66bb6a;border-color:#66bb6a;">Eternal Objects</span>
+      <span class="badge" style="color:#ffa726;border-color:#ffa726;">Concrescence</span>
+      <span class="badge" style="color:#ef5350;border-color:#ef5350;">Perishing → Objective Immortality</span>
+    </div>
+  </div>
+</div>
+
+<div class="main-container">
+  <!-- Canvas -->
+  <div class="canvas-wrap">
+    <canvas id="canvas"></canvas>
+    <div class="phase-indicator" id="phaseInfo">
+      <span class="phase-label">Lebenszyklus:</span><br>
+      1. Entstehen (Geburt)<br>
+      2. Prehension (Fühlen)<br>
+      3. Concrescence (Werden)<br>
+      4. Satisfaction (Erfüllung)<br>
+      5. Perishing → Daten für Neue
+    </div>
+    <div id="tooltip"></div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+
+    <!-- Creativity -->
+    <div class="card">
+      <h3><span class="dot" style="background:#ff6ec7;"></span> Creativity (Schöpferische Kraft)</h3>
+      <label>Entstehungsrate <span id="valCreativity">50</span>%</label>
+      <input type="range" id="creativity" min="0" max="100" value="50">
+      <div class="desc">
+        Whiteheads ultimatives Prinzip: <em>Creativity</em> ist der Drang des Universums,
+        immer neue Wirklichkeitsereignisse hervorzubringen. Mehr → mehr Teilchen entstehen.
+      </div>
+    </div>
+
+    <!-- Prehension -->
+    <div class="card">
+      <h3><span class="dot" style="background:#4fc3f7;"></span> Prehension (Erfassen / Fühlen)</h3>
+      <label>Reichweite <span id="valPrehension">50</span>%</label>
+      <input type="range" id="prehension" min="0" max="100" value="50">
+      <label>Stärke <span id="valPrehStr">50</span>%</label>
+      <input type="range" id="prehensionStr" min="0" max="100" value="50">
+      <div class="desc">
+        Jedes Ereignis „fühlt" (prehends) andere Ereignisse.
+        Die blauen Linien zeigen Prehension: Wie weit und wie stark ein Ereignis
+        seine Umgebung aufnimmt.
+      </div>
+    </div>
+
+    <!-- Subjective Aim -->
+    <div class="card">
+      <h3><span class="dot" style="background:#7873f5;"></span> Subjective Aim (Inneres Ziel)</h3>
+      <label>Zielstärke <span id="valAim">50</span>%</label>
+      <input type="range" id="aim" min="0" max="100" value="50">
+      <div class="desc">
+        Jedes Ereignis hat ein inneres Ziel – eine Vision dessen, was es werden will.
+        Hoch → geordnete, zielgerichtete Bewegung. Niedrig → chaotisches Driften.
+      </div>
+    </div>
+
+    <!-- Eternal Objects -->
+    <div class="card">
+      <h3><span class="dot" style="background:#66bb6a;"></span> Eternal Objects (Ewige Formen)</h3>
+      <label>Formenvielfalt <span id="valEternal">50</span>%</label>
+      <input type="range" id="eternal" min="0" max="100" value="50">
+      <div class="desc">
+        Reine Möglichkeiten – Farben, Formen, Muster – die in Ereignisse „eintreten" können.
+        Mehr Vielfalt → mehr Farben und Formvariationen der Teilchen.
+      </div>
+    </div>
+
+    <!-- Concrescence Speed -->
+    <div class="card">
+      <h3><span class="dot" style="background:#ffa726;"></span> Concrescence (Werdensprozess)</h3>
+      <label>Geschwindigkeit <span id="valConc">50</span>%</label>
+      <input type="range" id="concrescence" min="0" max="100" value="50">
+      <div class="desc">
+        Der Prozess, in dem ein Ereignis aus vielen Eindrücken eine einheitliche Erfahrung bildet.
+        Schnell → Teilchen reifen schnell und vergehen. Langsam → längeres Werden.
+      </div>
+    </div>
+
+    <!-- God / Order -->
+    <div class="card">
+      <h3><span class="dot" style="background:#fff59d;"></span> Gott (Ordnungsprinzip)</h3>
+      <label>Ordnung vs. Chaos <span id="valGod">50</span>%</label>
+      <input type="range" id="god" min="0" max="100" value="50">
+      <div class="desc">
+        Bei Whitehead ist Gott kein Schöpfer, sondern das Prinzip, das Ordnung und Möglichkeiten
+        ins Universum einbringt. Hoch → harmonische Muster. Niedrig → reines Chaos.
+      </div>
+    </div>
+
+    <!-- Presets & View -->
+    <div class="card">
+      <h3>⚡ Presets & Ansicht</h3>
+      <div class="btn-row">
+        <button onclick="preset('chaos')">Reines Chaos</button>
+        <button onclick="preset('harmony')">Harmonie</button>
+        <button onclick="preset('creative')">Kreativitäts-Explosion</button>
+        <button onclick="preset('contemplative')">Kontemplativ</button>
+      </div>
+      <div class="btn-row" style="margin-top:8px;">
+        <button id="btnTrails" onclick="toggleTrails()" class="active">Spuren</button>
+        <button id="btnLines" onclick="toggleLines()" class="active">Prehension-Linien</button>
+        <button id="btnPause" onclick="togglePause()">⏸ Pause</button>
+      </div>
+      <div class="legend" style="margin-top:10px;">
+        <span><span class="swatch" style="background:#ff6ec7;"></span>Geburt</span>
+        <span><span class="swatch" style="background:#ffa726;"></span>Concrescence</span>
+        <span><span class="swatch" style="background:#7873f5;"></span>Satisfaction</span>
+        <span><span class="swatch" style="background:#ef5350;"></span>Perishing</span>
+        <span><span class="swatch" style="background:rgba(255,255,255,0.15);"></span>Objektive Unsterblichkeit</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Canvas Setup ──
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+
+let W, H;
+function resize() {
+  const wrap = canvas.parentElement;
+  W = canvas.width = wrap.clientWidth;
+  H = canvas.height = wrap.clientHeight || 550;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ── State ──
+let particles = [];
+let ghosts = []; // objective immortality traces
+let paused = false;
+let showTrails = true;
+let showLines = true;
+let mouse = { x: -1000, y: -1000 };
+let time = 0;
+
+// ── Params ──
+function p(id) { return +document.getElementById(id).value; }
+
+// Slider display updates
+['creativity','prehension','prehensionStr','aim','eternal','concrescence','god'].forEach(id => {
+  const el = document.getElementById(id);
+  const valId = 'val' + id.charAt(0).toUpperCase() + id.slice(1);
+  // Fix mapping
+  const map = {
+    creativity: 'valCreativity',
+    prehension: 'valPrehension',
+    prehensionStr: 'valPrehStr',
+    aim: 'valAim',
+    eternal: 'valEternal',
+    concrescence: 'valConc',
+    god: 'valGod'
+  };
+  el.addEventListener('input', () => {
+    document.getElementById(map[id]).textContent = el.value;
+  });
+});
+
+// ── Color Palettes (Eternal Objects) ──
+const palettes = [
+  ['#ff6ec7','#ff85d4'],
+  ['#4fc3f7','#81d4fa'],
+  ['#7873f5','#9c98ff'],
+  ['#66bb6a','#81c784'],
+  ['#ffa726','#ffb74d'],
+  ['#ef5350','#e57373'],
+  ['#fff59d','#fff176'],
+  ['#ce93d8','#ba68c8'],
+  ['#4dd0e1','#26c6da'],
+  ['#f48fb1','#f06292'],
+];
+
+// ── Particle (Actual Occasion) ──
+class Particle {
+  constructor(x, y) {
+    this.x = x || Math.random() * W;
+    this.y = y || Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 2;
+    this.vy = (Math.random() - 0.5) * 2;
+
+    // Life phases: 0=birth, 1=prehension, 2=concrescence, 3=satisfaction, 4=perishing
+    this.phase = 0;
+    this.age = 0;
+    this.maxAge = 150 + Math.random() * 300;
+
+    // Eternal object (form/color)
+    const eternalRange = Math.floor((p('eternal') / 100) * palettes.length) || 1;
+    const pi = Math.floor(Math.random() * eternalRange);
+    this.color1 = palettes[pi][0];
+    this.color2 = palettes[pi][1];
+
+    // Subjective aim target
+    this.aimX = W / 2 + (Math.random() - 0.5) * W * 0.6;
+    this.aimY = H / 2 + (Math.random() - 0.5) * H * 0.6;
+
+    // Size
+    this.baseSize = 2 + Math.random() * 3;
+    this.size = this.baseSize;
+
+    // Shape variety based on eternal objects
+    this.shape = Math.floor(Math.random() * Math.max(1, Math.floor(p('eternal') / 25)));
+
+    // Trail
+    this.trail = [];
+  }
+
+  get lifeRatio() { return this.age / this.maxAge; }
+
+  update() {
+    const aimStr = p('aim') / 100;
+    const concSpeed = 0.3 + (p('concrescence') / 100) * 2;
+    const godOrder = p('god') / 100;
+    const prehStr = p('prehensionStr') / 100;
+
+    // Phase transitions
+    const lr = this.lifeRatio;
+    if (lr < 0.1) this.phase = 0;       // birth
+    else if (lr < 0.3) this.phase = 1;  // prehension
+    else if (lr < 0.7) this.phase = 2;  // concrescence
+    else if (lr < 0.9) this.phase = 3;  // satisfaction
+    else this.phase = 4;                 // perishing
+
+    // Subjective aim: pull toward target
+    const dx = this.aimX - this.x;
+    const dy = this.aimY - this.y;
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    this.vx += (dx / dist) * aimStr * 0.15;
+    this.vy += (dy / dist) * aimStr * 0.15;
+
+    // God's ordering: gentle pull toward harmonic patterns
+    const cx = W / 2, cy = H / 2;
+    const angle = Math.atan2(this.y - cy, this.x - cx);
+    const harmX = cx + Math.cos(angle + time * 0.005) * 150;
+    const harmY = cy + Math.sin(angle + time * 0.005) * 150;
+    this.vx += (harmX - this.x) * godOrder * 0.0008;
+    this.vy += (harmY - this.y) * godOrder * 0.0008;
+
+    // Prehension: influenced by nearby particles
+    if (this.phase === 1 || this.phase === 2) {
+      const range = 30 + (p('prehension') / 100) * 170;
+      for (let other of particles) {
+        if (other === this) continue;
+        const ddx = other.x - this.x;
+        const ddy = other.y - this.y;
+        const d = Math.sqrt(ddx * ddx + ddy * ddy);
+        if (d < range && d > 5) {
+          this.vx += (ddx / d) * prehStr * 0.04;
+          this.vy += (ddy / d) * prehStr * 0.04;
+        }
+      }
+    }
+
+    // Random creativity noise
+    this.vx += (Math.random() - 0.5) * (1 - godOrder) * 0.5;
+    this.vy += (Math.random() - 0.5) * (1 - godOrder) * 0.5;
+
+    // Damping
+    this.vx *= 0.96;
+    this.vy *= 0.96;
+
+    // Move
+    this.x += this.vx * concSpeed;
+    this.y += this.vy * concSpeed;
+
+    // Wrap
+    if (this.x < 0) this.x += W;
+    if (this.x > W) this.x -= W;
+    if (this.y < 0) this.y += H;
+    if (this.y > H) this.y -= H;
+
+    // Size pulse
+    if (this.phase === 0) this.size = this.baseSize * (lr / 0.1);
+    else if (this.phase === 3) this.size = this.baseSize * 1.5;
+    else if (this.phase === 4) this.size = this.baseSize * (1 - (lr - 0.9) / 0.1);
+    else this.size = this.baseSize;
+
+    // Trail
+    if (showTrails) {
+      this.trail.push({ x: this.x, y: this.y, a: 1 - lr });
+      if (this.trail.length > 20) this.trail.shift();
+    }
+
+    this.age += concSpeed;
+    return this.age < this.maxAge;
+  }
+
+  draw() {
+    const lr = this.lifeRatio;
+
+    // Trail
+    if (showTrails && this.trail.length > 1) {
+      ctx.beginPath();
+      ctx.moveTo(this.trail[0].x, this.trail[0].y);
+      for (let i = 1; i < this.trail.length; i++) {
+        ctx.lineTo(this.trail[i].x, this.trail[i].y);
+      }
+      ctx.strokeStyle = this.color1 + '20';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // Glow
+    const alpha = this.phase === 4 ? (1 - (lr - 0.9) / 0.1) : Math.min(1, lr / 0.1);
+    const glowSize = this.size * 3;
+    const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowSize);
+    grad.addColorStop(0, this.color1 + hex(alpha * 0.6));
+    grad.addColorStop(1, this.color1 + '00');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, glowSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Core
+    ctx.fillStyle = this.color2 + hex(alpha);
+    ctx.beginPath();
+    if (this.shape === 0) {
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    } else if (this.shape === 1) {
+      // Diamond
+      ctx.moveTo(this.x, this.y - this.size);
+      ctx.lineTo(this.x + this.size, this.y);
+      ctx.lineTo(this.x, this.y + this.size);
+      ctx.lineTo(this.x - this.size, this.y);
+      ctx.closePath();
+    } else if (this.shape === 2) {
+      // Triangle
+      const s = this.size;
+      ctx.moveTo(this.x, this.y - s);
+      ctx.lineTo(this.x + s * 0.87, this.y + s * 0.5);
+      ctx.lineTo(this.x - s * 0.87, this.y + s * 0.5);
+      ctx.closePath();
+    } else {
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    }
+    ctx.fill();
+
+    // Phase ring for satisfaction
+    if (this.phase === 3) {
+      ctx.strokeStyle = '#fff' + hex(0.3);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+}
+
+function hex(a) {
+  return Math.round(Math.min(1, Math.max(0, a)) * 255).toString(16).padStart(2, '0');
+}
+
+// ── Ghost (Objective Immortality) ──
+class Ghost {
+  constructor(p) {
+    this.x = p.x;
+    this.y = p.y;
+    this.color = p.color1;
+    this.alpha = 0.4;
+    this.size = p.baseSize * 0.8;
+  }
+  update() {
+    this.alpha -= 0.003;
+    return this.alpha > 0;
+  }
+  draw() {
+    ctx.fillStyle = this.color + hex(this.alpha * 0.3);
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// ── Prehension Lines ──
+function drawPrehensionLines() {
+  if (!showLines) return;
+  const range = 30 + (p('prehension') / 100) * 170;
+  const pStr = p('prehensionStr') / 100;
+  if (pStr < 0.05) return;
+
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i < particles.length; i++) {
+    const a = particles[i];
+    if (a.phase !== 1 && a.phase !== 2) continue;
+    let count = 0;
+    for (let j = i + 1; j < particles.length; j++) {
+      const b = particles[j];
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < range) {
+        const alpha = (1 - d / range) * pStr * 0.3;
+        ctx.strokeStyle = '#4fc3f7' + hex(alpha);
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        count++;
+        if (count > 5) break;
+      }
+    }
+  }
+}
+
+// ── Spawn ──
+function spawnParticles() {
+  const rate = p('creativity') / 100;
+  const maxP = 50 + rate * 250;
+  const spawnCount = Math.floor(rate * 3);
+
+  for (let i = 0; i < spawnCount && particles.length < maxP; i++) {
+    particles.push(new Particle());
+  }
+}
+
+// ── Main Loop ──
+function loop() {
+  if (!paused) {
+    time++;
+    spawnParticles();
+
+    // Update
+    particles = particles.filter(p => {
+      const alive = p.update();
+      if (!alive) {
+        ghosts.push(new Ghost(p));
+        // Objective immortality: spawn influenced child
+        if (Math.random() < 0.3) {
+          const child = new Particle(p.x + (Math.random()-0.5)*30, p.y + (Math.random()-0.5)*30);
+          child.color1 = p.color1;
+          child.color2 = p.color2;
+          particles.push(child);
+        }
+      }
+      return alive;
+    });
+
+    ghosts = ghosts.filter(g => g.update());
+  }
+
+  // Draw
+  if (showTrails) {
+    ctx.fillStyle = 'rgba(10, 10, 26, 0.15)';
+  } else {
+    ctx.fillStyle = 'rgba(10, 10, 26, 1)';
+  }
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle grid (God's primordial nature / eternal objects backdrop)
+  const godV = p('god') / 100;
+  if (godV > 0.2) {
+    ctx.strokeStyle = 'rgba(120, 115, 245,' + (godV * 0.04) + ')';
+    ctx.lineWidth = 0.5;
+    const spacing = 60;
+    for (let x = (time * 0.2) % spacing; x < W; x += spacing) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = (time * 0.15) % spacing; y < H; y += spacing) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+  }
+
+  ghosts.forEach(g => g.draw());
+  drawPrehensionLines();
+  particles.forEach(p => p.draw());
+
+  requestAnimationFrame(loop);
+}
+
+// ── Mouse Interaction ──
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  mouse.x = (e.clientX - rect.left) * (W / rect.width);
+  mouse.y = (e.clientY - rect.top) * (H / rect.height);
+
+  // Tooltip for hovered particle
+  let hovered = null;
+  for (let p of particles) {
+    const dx = p.x - mouse.x;
+    const dy = p.y - mouse.y;
+    if (Math.sqrt(dx*dx + dy*dy) < p.size * 3) {
+      hovered = p;
+      break;
+    }
+  }
+
+  if (hovered) {
+    const phaseNames = ['🌱 Geburt', '👁 Prehension', '🔥 Concrescence', '✨ Satisfaction', '💀 Perishing'];
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX - canvas.parentElement.getBoundingClientRect().left + 15) + 'px';
+    tooltip.style.top = (e.clientY - canvas.parentElement.getBoundingClientRect().top - 10) + 'px';
+    tooltip.innerHTML = `
+      <strong>Actual Occasion</strong><br>
+      Phase: ${phaseNames[hovered.phase]}<br>
+      Alter: ${Math.round(hovered.lifeRatio * 100)}%<br>
+      Geschwindigkeit: ${Math.sqrt(hovered.vx**2 + hovered.vy**2).toFixed(2)}<br>
+      Form-ID: ${hovered.shape}
+    `;
+  } else {
+    tooltip.style.display = 'none';
+  }
+});
+
+// Click to spawn burst of creativity
+canvas.addEventListener('click', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const cx = (e.clientX - rect.left) * (W / rect.width);
+  const cy = (e.clientY - rect.top) * (H / rect.height);
+
+  for (let i = 0; i < 12; i++) {
+    const np = new Particle(cx + (Math.random()-0.5)*40, cy + (Math.random()-0.5)*40);
+    const angle = (Math.PI * 2 / 12) * i;
+    np.vx = Math.cos(angle) * 3;
+    np.vy = Math.sin(angle) * 3;
+    particles.push(np);
+  }
+});
+
+// Mouse leave
+canvas.addEventListener('mouseleave', () => {
+  mouse.x = -1000;
+  mouse.y = -1000;
+  tooltip.style.display = 'none';
+});
+
+// ── Toggle Functions ──
+function toggleTrails() {
+  showTrails = !showTrails;
+  document.getElementById('btnTrails').classList.toggle('active');
+}
+
+function toggleLines() {
+  showLines = !showLines;
+  document.getElementById('btnLines').classList.toggle('active');
+}
+
+function togglePause() {
+  paused = !paused;
+  const btn = document.getElementById('btnPause');
+  btn.textContent = paused ? '▶ Play' : '⏸ Pause';
+  btn.classList.toggle('active');
+}
+
+// ── Presets ──
+function preset(name) {
+  const sliders = {
+    creativity: document.getElementById('creativity'),
+    prehension: document.getElementById('prehension'),
+    prehensionStr: document.getElementById('prehensionStr'),
+    aim: document.getElementById('aim'),
+    eternal: document.getElementById('eternal'),
+    concrescence: document.getElementById('concrescence'),
+    god: document.getElementById('god')
+  };
+
+  const presets = {
+    chaos: { creativity: 80, prehension: 20, prehensionStr: 10, aim: 5, eternal: 90, concrescence: 80, god: 5 },
+    harmony: { creativity: 40, prehension: 70, prehensionStr: 60, aim: 75, eternal: 50, concrescence: 40, god: 90 },
+    creative: { creativity: 100, prehension: 50, prehensionStr: 40, aim: 30, eternal: 100, concrescence: 70, god: 30 },
+    contemplative: { creativity: 15, prehension: 90, prehensionStr: 80, aim: 60, eternal: 30, concrescence: 20, god: 70 }
+  };
+
+  const vals = presets[name];
+  if (!vals) return;
+
+  // Animate sliders smoothly
+  Object.keys(vals).forEach(key => {
+    const el = sliders[key];
+    const target = vals[key];
+    const current = +el.value;
+    const steps = 20;
+    let step = 0;
+
+    function animateSlider() {
+      step++;
+      const progress = step / steps;
+      const eased = progress < 0.5
+        ? 2 * progress * progress
+        : -1 + (4 - 2 * progress) * progress;
+      el.value = Math.round(current + (target - current) * eased);
+      el.dispatchEvent(new Event('input'));
+      if (step < steps) requestAnimationFrame(animateSlider);
+    }
+    animateSlider();
+  });
+}
+
+// ── Initial particles ──
+for (let i = 0; i < 30; i++) {
+  particles.push(new Particle());
+}
+
+// ── Start ──
+loop();
+
+</script>
+</body>
+</html>
