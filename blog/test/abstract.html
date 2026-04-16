@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abstrakte Strukturen – Visuell Erforschen</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+background: #0a0a1a;
+color: #e0e0f0;
+font-family: 'Segoe UI', system-ui, sans-serif;
+overflow-x: hidden;
+}
+h1 {
+text-align: center;
+padding: 30px 20px 10px;
+font-size: 1.8em;
+background: linear-gradient(90deg, #ff6fd8, #3813c2, #00fff0);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+.subtitle {
+text-align: center;
+color: #888;
+margin-bottom: 30px;
+font-size: 0.95em;
+}
+
+.tabs {
+display: flex;
+justify-content: center;
+flex-wrap: wrap;
+gap: 8px;
+margin: 0 20px 30px;
+}
+.tab {
+padding: 10px 20px;
+border: 1px solid #333;
+border-radius: 25px;
+cursor: pointer;
+transition: all 0.3s;
+font-size: 0.9em;
+background: #111;
+}
+.tab:hover { border-color: #666; }
+.tab.active {
+background: linear-gradient(135deg, #1a0533, #0a2a4a);
+border-color: #7744ff;
+box-shadow: 0 0 15px rgba(119,68,255,0.3);
+}
+
+.panel {
+display: none;
+max-width: 900px;
+margin: 0 auto 40px;
+padding: 30px;
+background: #0f0f2a;
+border-radius: 20px;
+border: 1px solid #222;
+}
+.panel.active { display: block; }
+
+.panel-title {
+font-size: 1.4em;
+margin-bottom: 5px;
+color: #bb88ff;
+}
+.panel-desc {
+color: #999;
+margin-bottom: 25px;
+line-height: 1.6;
+font-size: 0.95em;
+}
+
+canvas {
+display: block;
+margin: 0 auto 20px;
+border-radius: 12px;
+background: #050510;
+border: 1px solid #1a1a3a;
+}
+
+.controls {
+display: flex;
+flex-wrap: wrap;
+gap: 15px;
+justify-content: center;
+margin-top: 15px;
+}
+.control-group {
+display: flex;
+flex-direction: column;
+align-items: center;
+min-width: 140px;
+}
+.control-group label {
+font-size: 0.8em;
+color: #aaa;
+margin-bottom: 5px;
+}
+input[type="range"] {
+-webkit-appearance: none;
+width: 130px;
+height: 6px;
+border-radius: 3px;
+background: #222;
+outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 16px;
+height: 16px;
+border-radius: 50%;
+background: #7744ff;
+cursor: pointer;
+box-shadow: 0 0 8px rgba(119,68,255,0.5);
+}
+.val {
+font-size: 0.75em;
+color: #7744ff;
+margin-top: 3px;
+}
+
+.insight-box {
+margin-top: 20px;
+padding: 15px 20px;
+background: rgba(119,68,255,0.08);
+border-left: 3px solid #7744ff;
+border-radius: 0 10px 10px 0;
+font-size: 0.9em;
+line-height: 1.6;
+color: #ccbbee;
+}
+.insight-box strong { color: #ddaaff; }
+
+button.action-btn {
+padding: 8px 18px;
+border: 1px solid #555;
+border-radius: 20px;
+background: #1a1a3a;
+color: #ccc;
+cursor: pointer;
+font-size: 0.85em;
+transition: all 0.3s;
+}
+button.action-btn:hover {
+background: #2a2a5a;
+border-color: #7744ff;
+}
+
+footer {
+text-align: center;
+padding: 30px;
+color: #444;
+font-size: 0.8em;
+}
+</style>
+</head>
+<body>
+
+<h1>🌀 Die abstraktesten Strukturen – visuell erforscht</h1>
+<p class="subtitle">Bewege die Regler. Beobachte. Verstehe durch Sehen.</p>
+
+<div class="tabs">
+<div class="tab active" data-panel="identity">① Identität & Unterscheidung</div>
+<div class="tab" data-panel="recursion">② Selbstbezug / Rekursion</div>
+<div class="tab" data-panel="boundary">③ Grenze / Innen-Außen</div>
+<div class="tab" data-panel="relation">④ Beziehung / Netzwerk</div>
+<div class="tab" data-panel="emergence">⑤ Emergenz</div>
+<div class="tab" data-panel="duality">⑥ Dualität</div>
+<div class="tab" data-panel="void">⑦ Leere / Potenzialität</div>
+</div>
+
+<!-- ======================== PANEL 1: IDENTITÄT ======================== -->
+<div class="panel active" id="panel-identity">
+<div class="panel-title">① Identität & Unterscheidung</div>
+<div class="panel-desc">
+Die allererste Struktur überhaupt: <strong>Etwas</strong> von <strong>etwas anderem</strong> unterscheiden.
+Bevor es Zahlen, Formen oder Logik gibt, gibt es nur: „Hier ist ein Unterschied."
+</div>
+<canvas id="canvas-identity" width="800" height="400"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Anzahl Entitäten</label>
+<input type="range" id="id-count" min="1" max="20" value="2">
+<span class="val" id="id-count-val">2</span>
+</div>
+<div class="control-group">
+<label>Unterscheidbarkeit</label>
+<input type="range" id="id-diff" min="0" max="100" value="80">
+<span class="val" id="id-diff-val">80%</span>
+</div>
+<div class="control-group">
+<label>Verschmelzung</label>
+<input type="range" id="id-merge" min="0" max="100" value="0">
+<span class="val" id="id-merge-val">0%</span>
+</div>
+</div>
+<div class="insight-box" id="insight-identity">
+<strong>💡 Erkenntnis:</strong> Dreh „Unterscheidbarkeit" auf 0 – alles wird eins. Ohne Unterscheidung gibt es keine Struktur. Die erste Struktur ist: <em>ein Schnitt in die Einheit</em>.
+</div>
+</div>
+
+<!-- ======================== PANEL 2: REKURSION ======================== -->
+<div class="panel" id="panel-recursion">
+<div class="panel-title">② Selbstbezug / Rekursion</div>
+<div class="panel-desc">
+Was passiert, wenn etwas <strong>auf sich selbst zeigt</strong>? Rekursion erzeugt Tiefe aus Einfachheit – Schleifen, Spiralen, unendliche Spiegelungen.
+</div>
+<canvas id="canvas-recursion" width="800" height="500"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Rekursionstiefe</label>
+<input type="range" id="rec-depth" min="1" max="12" value="5">
+<span class="val" id="rec-depth-val">5</span>
+</div>
+<div class="control-group">
+<label>Skalierung</label>
+<input type="range" id="rec-scale" min="30" max="80" value="55">
+<span class="val" id="rec-scale-val">55%</span>
+</div>
+<div class="control-group">
+<label>Rotation</label>
+<input type="range" id="rec-rot" min="0" max="360" value="30">
+<span class="val" id="rec-rot-val">30°</span>
+</div>
+<div class="control-group">
+<label>Verzweigung</label>
+<input type="range" id="rec-branch" min="1" max="5" value="2">
+<span class="val" id="rec-branch-val">2</span>
+</div>
+</div>
+<div class="insight-box">
+<strong>💡 Erkenntnis:</strong> Aus einer einzigen Regel + Selbstanwendung entsteht unendliche Komplexität. Rekursion ist der Motor von Fraktalen, Bewusstsein und Sprache.
+</div>
+</div>
+
+<!-- ======================== PANEL 3: GRENZE ======================== -->
+<div class="panel" id="panel-boundary">
+<div class="panel-title">③ Grenze / Innen-Außen</div>
+<div class="panel-desc">
+George Spencer-Browns „Laws of Form": Eine <strong>Unterscheidung</strong> erzeugt automatisch zwei Seiten – Innen und Außen. Die Grenze <em>ist</em> die Struktur.
+</div>
+<canvas id="canvas-boundary" width="800" height="450"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Grenz-Schärfe</label>
+<input type="range" id="bnd-sharp" min="0" max="100" value="90">
+<span class="val" id="bnd-sharp-val">90%</span>
+</div>
+<div class="control-group">
+<label>Verschachtelung</label>
+<input type="range" id="bnd-nest" min="1" max="8" value="3">
+<span class="val" id="bnd-nest-val">3</span>
+</div>
+<div class="control-group">
+<label>Durchlässigkeit</label>
+<input type="range" id="bnd-perm" min="0" max="100" value="10">
+<span class="val" id="bnd-perm-val">10%</span>
+</div>
+<div class="control-group">
+<label>Pulsation</label>
+<input type="range" id="bnd-pulse" min="0" max="100" value="30">
+<span class="val" id="bnd-pulse-val">30%</span>
+</div>
+</div>
+<div class="insight-box">
+<strong>💡 Erkenntnis:</strong> Mach die Grenze völlig durchlässig – die Unterscheidung verschwindet. Mach sie scharf – zwei Welten entstehen. Jede Zelle, jedes Land, jedes Konzept lebt von Grenzen.
+</div>
+</div>
+
+<!-- ======================== PANEL 4: BEZIEHUNG ======================== -->
+<div class="panel" id="panel-relation">
+<div class="panel-title">④ Beziehung / Netzwerk</div>
+<div class="panel-desc">
+Dinge existieren nicht isoliert – sie werden durch ihre <strong>Beziehungen</strong> definiert. Verändere die Verbindungen und beobachte, wie sich die gesamte Struktur transformiert.
+</div>
+<canvas id="canvas-relation" width="800" height="500"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Knoten</label>
+<input type="range" id="rel-nodes" min="3" max="30" value="12">
+<span class="val" id="rel-nodes-val">12</span>
+</div>
+<div class="control-group">
+<label>Verbindungsdichte</label>
+<input type="range" id="rel-density" min="0" max="100" value="30">
+<span class="val" id="rel-density-val">30%</span>
+</div>
+<div class="control-group">
+<label>Anziehung</label>
+<input type="range" id="rel-attract" min="0" max="100" value="50">
+<span class="val" id="rel-attract-val">50%</span>
+</div>
+<div class="control-group">
+<label>Abstoßung</label>
+<input type="range" id="rel-repel" min="0" max="100" value="50">
+<span class="val" id="rel-repel-val">50%</span>
+</div>
+</div>
+<div class="insight-box">
+<strong>💡 Erkenntnis:</strong> Bei 0% Dichte: isolierte Punkte (keine Struktur). Bei 100%: alles hängt mit allem zusammen (Totalität). Dazwischen entsteht <em>interessante</em> Struktur – Cluster, Brücken, Hierarchien.
+</div>
+</div>
+
+<!-- ======================== PANEL 5: EMERGENZ ======================== -->
+<div class="panel" id="panel-emergence">
+<div class="panel-title">⑤ Emergenz</div>
+<div class="panel-desc">
+Einfache Teile mit einfachen Regeln → <strong>komplexes Ganzes</strong>, das keiner der Teile allein enthält.
+Wie Bewusstsein aus Neuronen, wie ein Schwarm aus einzelnen Vögeln.
+</div>
+<canvas id="canvas-emergence" width="800" height="500"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Anzahl Agenten</label>
+<input type="range" id="em-count" min="20" max="500" value="200">
+<span class="val" id="em-count-val">200</span>
+</div>
+<div class="control-group">
+<label>Nachbarschafts-Radius</label>
+<input type="range" id="em-radius" min="5" max="100" value="40">
+<span class="val" id="em-radius-val">40</span>
+</div>
+<div class="control-group">
+<label>Angleichung</label>
+<input type="range" id="em-align" min="0" max="100" value="60">
+<span class="val" id="em-align-val">60%</span>
+</div>
+<div class="control-group">
+<label>Chaos</label>
+<input type="range" id="em-chaos" min="0" max="100" value="15">
+<span class="val" id="em-chaos-val">15%</span>
+</div>
+</div>
+<div class="insight-box">
+<strong>💡 Erkenntnis:</strong> Dreh Angleichung hoch, Chaos runter → ein Schwarm entsteht! Dreh Chaos hoch → alles zerfällt. Die Magie liegt im Übergang: <em>Ordnung aus Unordnung, ohne Dirigent</em>.
+</div>
+</div>
+
+<!-- ======================== PANEL 6: DUALITÄT ======================== -->
+<div class="panel" id="panel-duality">
+<div class="panel-title">⑥ Dualität</div>
+<div class="panel-desc">
+Jede Struktur hat einen <strong>Zwilling</strong> – ihr Dual. Figur/Grund, Welle/Teilchen, Innen/Außen. Die beiden Seiten <em>definieren sich gegenseitig</em>.
+</div>
+<canvas id="canvas-duality" width="800" height="450"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Balance</label>
+<input type="range" id="du-balance" min="0" max="100" value="50">
+<span class="val" id="du-balance-val">50%</span>
+</div>
+<div class="control-group">
+<label>Auflösung</label>
+<input type="range" id="du-resolution" min="2" max="80" value="20">
+<span class="val" id="du-resolution-val">20</span>
+</div>
+<div class="control-group">
+<label>Dynamik</label>
+<input type="range" id="du-dynamic" min="0" max="100" value="50">
+<span class="val" id="du-dynamic-val">50%</span>
+</div>
+<div class="control-group">
+<label>Inversion</label>
+<input type="range" id="du-invert" min="0" max="100" value="0">
+<span class="val" id="du-invert-val">0%</span>
+</div>
+</div>
+<div class="insight-box">
+<strong>💡 Erkenntnis:</strong> Schieb die Balance ganz nach links oder rechts – ein Aspekt dominiert total. In der Mitte: perfekte Dualität. Dreh Inversion hoch: Figur wird Grund, Grund wird Figur. <em>Die Struktur bleibt dieselbe!</em>
+</div>
+</div>
+
+<!-- ======================== PANEL 7: LEERE ======================== -->
+<div class="panel" id="panel-void">
+<div class="panel-title">⑦ Leere / Potenzialität</div>
+<div class="panel-desc">
+Die abstrakteste Struktur von allen: <strong>das Nichts, das alles enthält</strong>. Nicht leerer Raum, sondern reines Potenzial – wie ein unbeschriebenes Blatt, das alle Geschichten gleichzeitig ist.
+</div>
+<canvas id="canvas-void" width="800" height="500"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Potenzial</label>
+<input type="range" id="vo-potential" min="0" max="100" value="50">
+<span class="val" id="vo-potential-val">50%</span>
+</div>
+<div class="control-group">
+<label>Fluktuation</label>
+<input type="range" id="vo-fluct" min="0" max="100" value="30">
+<span class="val" id="vo-fluct-val">30%</span>
+</div>
+<div class="control-group">
+<label>Beobachtung</label>
+<input type="range" id="vo-observe" min="0" max="100" value="0">
+<span class="val" id="vo-observe-val">0%</span>
+</div>
+<div class="control-group">
+<label>Kollaps-Geschw.</label>
+<input type="range" id="vo-collapse" min="1" max="100" value="50">
+<span class="val" id="vo-collapse-val">50%</span>
+</div>
+</div>
+<div class="insight-box">
+<strong>💡 Erkenntnis:</strong> Bei Beobachtung = 0: reines Potenzial, alles flimmert. Dreh Beobachtung hoch → Formen kristallisieren sich heraus. <em>Die Leere ist nicht leer – sie ist schwanger mit allen Möglichkeiten.</em>
+</div>
+</div>
+
+<footer>
+🌀 Abstrakte Strukturen – jenseits der Mathematik, diesseits der Erfahrung<br>
+Bewege die Regler. Beobachte die Muster. Die Erkenntnis entsteht im Tun.
+</footer>
+
+<script>
+// ===== TAB NAVIGATION =====
+document.querySelectorAll('.tab').forEach(tab => {
+tab.addEventListener('click', () => {
+document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+tab.classList.add('active');
+document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+});
+});
+
+// ===== UTILITY =====
+function bindSlider(id, valId, suffix, cb) {
+const sl = document.getElementById(id);
+const vl = document.getElementById(valId);
+sl.addEventListener('input', () => {
+vl.textContent = sl.value + (suffix || '');
+if (cb) cb();
+});
+}
+
+// ===== 1. IDENTITÄT =====
+(function() {
+const c = document.getElementById('canvas-identity');
+const ctx = c.getContext('2d');
+let entities = [];
+
+bindSlider('id-count', 'id-count-val', '');
+bindSlider('id-diff', 'id-diff-val', '%');
+bindSlider('id-merge', 'id-merge-val', '%');
+
+function init() {
+entities = [];
+for (let i = 0; i < 20; i++) {
+entities.push({
+x: 100 + Math.random() * 600,
+y: 50 + Math.random() * 300,
+vx: (Math.random() - 0.5) * 1.5,
+vy: (Math.random() - 0.5) * 1.5,
+hue: (i / 20) * 360,
+size: 15 + Math.random() * 15
+});
+}
+}
+init();
+
+function draw() {
+const count = +document.getElementById('id-count').value;
+const diff = +document.getElementById('id-diff').value / 100;
+const merge = +document.getElementById('id-merge').value / 100;
+
+ctx.fillStyle = 'rgba(5,5,16,0.15)';
+ctx.fillRect(0, 0, c.width, c.height);
+
+const cx = c.width / 2, cy = c.height / 2;
+
+for (let i = 0; i < count; i++) {
+const e = entities[i];
+// merge: move toward center
+e.x += e.vx + (cx - e.x) * merge * 0.02;
+e.y += e.vy + (cy - e.y) * merge * 0.02;
+
+// bounce
+if (e.x < 30 || e.x > c.width - 30) e.vx *= -1;
+if (e.y < 30 || e.y > c.height - 30) e.vy *= -1;
+e.x = Math.max(30, Math.min(c.width - 30, e.x));
+e.y = Math.max(30, Math.min(c.height - 30, e.y));
+
+// color: diff=0 → all same gray, diff=1 → unique hues
+const hue = diff * e.hue;
+const sat = diff * 80;
+const light = 40 + diff * 20;
+const alpha = 0.6 + diff * 0.4;
+
+ctx.beginPath();
+ctx.arc(e.x, e.y, e.size * (1 - merge * 0.5), 0, Math.PI * 2);
+ctx.fillStyle = `hsla(${hue}, ${sat}%, ${light}%, ${alpha})`;
+ctx.fill();
+
+// glow
+ctx.beginPath();
+ctx.arc(e.x, e.y, e.size * (1 - merge * 0.5) + 8, 0, Math.PI * 2);
+ctx.fillStyle = `hsla(${hue}, ${sat}%, ${light}%, ${alpha * 0.15})`;
+ctx.fill();
+
+// border when distinguishable
+if (diff > 0.3) {
+ctx.beginPath();
+ctx.arc(e.x, e.y, e.size * (1 - merge * 0.5), 0, Math.PI * 2);
+ctx.strokeStyle = `hsla(${hue}, ${sat + 20}%, ${light + 20}%, ${(diff - 0.3) * 0.8})`;
+ctx.lineWidth = 2;
+ctx.stroke();
+}
+}
+
+// Update insight dynamically
+const ins = document.getElementById('insight-identity');
+if (diff < 0.15) {
+ins.innerHTML = '<strong>💡</strong> Alles ist gleich. <em>Keine Unterscheidung = keine Struktur = Nichts.</em>';
+} else if (merge > 0.7) {
+ins.innerHTML = '<strong>💡</strong> Alles verschmilzt. Die Identitäten lösen sich auf – zurück zur Einheit.';
+} else if (count === 1) {
+ins.innerHTML = '<strong>💡</strong> Nur eines. Ohne ein Zweites gibt es keinen Unterschied – und damit keine Struktur.';
+} else {
+ins.innerHTML = '<strong>💡 Erkenntnis:</strong> Dreh „Unterscheidbarkeit" auf 0 – alles wird eins. Ohne Unterscheidung gibt es keine Struktur. Die erste Struktur ist: <em>ein Schnitt in die Einheit</em>.';
+}
+
+requestAnimationFrame(draw);
+}
+draw();
+})();
+
+// ===== 2. REKURSION =====
+(function() {
+const c = document.getElementById('canvas-recursion');
+const ctx = c.getContext('2d');
+let time = 0;
+
+bindSlider('rec-depth', 'rec-depth-val', '');
+bindSlider('rec-scale', 'rec-scale-val', '%');
+bindSlider('rec-rot', 'rec-rot-val', '°');
+bindSlider('rec-branch', 'rec-branch-val', '');
+
+function drawBranch(x, y, len, angle, depth, maxDepth, scale, rotDeg, branches) {
+if (depth > maxDepth || len < 2) return;
+
+const ratio = depth / maxDepth;
+const hue = 260 + ratio * 100;
+const alpha = 1 - ratio * 0.6;
+
+const ex = x + Math.cos(angle) * len;
+const ey = y + Math.sin(angle) * len;
+
+ctx.beginPath();
+ctx.moveTo(x, y);
+ctx.lineTo(ex, ey);
+ctx.strokeStyle = `hsla(${hue}, 70%, ${50 + ratio * 20}%, ${alpha})`;
+ctx.lineWidth = Math.max(1, (maxDepth - depth) * 1.5);
+ctx.stroke();
+
+// draw node
+ctx.beginPath();
+ctx.arc(ex, ey, Math.max(2, (maxDepth - depth) * 2), 0, Math.PI * 2);
+ctx.fillStyle = `hsla(${hue}, 80%, 60%, ${alpha})`;
+ctx.fill();
+
+const rot = rotDeg * Math.PI / 180;
+const newLen = len * (scale / 100);
+
+for (let b = 0; b < branches; b++) {
+const spread = (b - (branches - 1) / 2) * rot;
+drawBranch(ex, ey, newLen, angle + spread + Math.sin(time * 0.01 + depth) * 0.05, depth + 1, maxDepth, scale, rotDeg, branches);
+}
+}
+
+function draw() {
+time++;
+const depth = +document.getElementById('rec-depth').value;
+const scale = +document.getElementById('rec-scale').value;
+const rot = +document.getElementById('rec-rot').value;
+const branch = +document.getElementById('rec-branch').value;
+
+ctx.fillStyle = 'rgba(5,5,16,0.85)';
+ctx.fillRect(0, 0, c.width, c.height);
+
+drawBranch(c.width / 2, c.height - 30, 120, -Math.PI / 2, 0, depth, scale, rot, branch);
+
+requestAnimationFrame(draw);
+}
+draw();
+})();
+
+// ===== 3. GRENZE =====
+(function() {
+const c = document.getElementById('canvas-boundary');
+const ctx = c.getContext('2d');
+let time = 0;
+let particles = [];
+for (let i = 0; i < 300; i++) {
+particles.push({
+x: Math.random() * 800,
+y: Math.random() * 450,
+vx: (Math.random() - 0.5) * 2,
+vy: (Math.random() - 0.5) * 2,
+hue: Math.random() * 60 + 180
+});
+}
+
+bindSlider('bnd-sharp', 'bnd-sharp-val', '%');
+bindSlider('bnd-nest', 'bnd-nest-val', '');
+bindSlider('bnd-perm', 'bnd-perm-val', '%');
+bindSlider('bnd-pulse', 'bnd-pulse-val', '%');
+
+function draw() {
+time += 0.02;
+const sharp = +document.getElementById('bnd-sharp').value / 100;
+const nest = +document.getElementById('bnd-nest').value;
+const perm = +document.getElementById('bnd-perm').value / 100;
+const pulse = +document.getElementById('bnd-pulse').value / 100;
+
+ctx.fillStyle = 'rgba(5,5,16,0.3)';
+ctx.fillRect(0, 0, c.width, c.height);
+
+const cx = c.width / 2, cy = c.height / 2;
+
+// Draw nested boundaries
+for (let n = nest; n >= 1; n--) {
+const baseR = 40 + n * 40;
+const r = baseR + Math.sin(time * (1 + n * 0.3)) * pulse * 30;
+const blur = (1 - sharp) * 40;
+
+const hue = 200 + n * 30;
+
+// Glow / blur
+for (let b = 0; b < 3; b++) {
+ctx.beginPath();
+ctx.arc(cx, cy, r + blur * (b + 1) * 0.3, 0, Math.PI * 2);
+ctx.strokeStyle = `hsla(${hue}, 60%, 50%, ${sharp * 0.15 / (b + 1)})`;
+ctx.lineWidth = blur * 0.5 + 2;
+ctx.stroke();
+}
+
+// Main boundary
+ctx.beginPath();
+ctx.arc(cx, cy, r, 0, Math.PI * 2);
+ctx.strokeStyle = `hsla(${hue}, 70%, 60%, ${0.3 + sharp * 0.7})`;
+ctx.lineWidth = 1 + sharp * 3;
+ctx.stroke();
+
+// Fill inside
+ctx.beginPath();
+ctx.arc(cx, cy, r, 0, Math.PI * 2);
+ctx.fillStyle = `hsla(${hue}, 40%, 15%, ${0.05 + sharp * 0.08})`;
+ctx.fill();
+}
+
+// Particles that respect or pass boundaries
+particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Wrap around
+            if (p.x < 0) p.x = c.width;
+            if (p.x > c.width) p.x = 0;
+            if (p.y < 0) p.y = c.height;
+            if (p.y > c.height) p.y = 0;
+
+            // Check boundary interaction
+            const dx = p.x - cx;
+            const dy = p.y - cy;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            for (let n = 1; n <= nest; n++) {
+                const baseR = 40 + n * 40;
+                const r = baseR + Math.sin(time * (1 + n * 0.3)) * pulse * 30;
+
+                // If near boundary and not permeable, bounce
+                if (Math.abs(dist - r) < 8 && Math.random() > perm) {
+                    const angle = Math.atan2(dy, dx);
+                    p.vx = Math.cos(angle) * 1.5 * (dist > r ? 1 : -1);
+                    p.vy = Math.sin(angle) * 1.5 * (dist > r ? 1 : -1);
+                }
+            }
+
+            // Draw particle
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${p.hue}, 70%, 60%, 0.7)`;
+            ctx.fill();
+        });
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ===== 4. BEZIEHUNG / NETZWERK =====
+(function() {
+    const c = document.getElementById('canvas-relation');
+    const ctx = c.getContext('2d');
+    let nodes = [];
+    let time = 0;
+
+    function initNodes(count) {
+        nodes = [];
+        for (let i = 0; i < 30; i++) {
+            nodes.push({
+                x: 80 + Math.random() * (c.width - 160),
+                y: 80 + Math.random() * (c.height - 160),
+                vx: (Math.random() - 0.5) * 0.8,
+                vy: (Math.random() - 0.5) * 0.8,
+                hue: (i / 30) * 360,
+                size: 5 + Math.random() * 5
+            });
+        }
+    }
+    initNodes(12);
+
+    bindSlider('rel-nodes', 'rel-nodes-val', '');
+    bindSlider('rel-density', 'rel-density-val', '%');
+    bindSlider('rel-attract', 'rel-attract-val', '%');
+    bindSlider('rel-repel', 'rel-repel-val', '%');
+
+    function draw() {
+        time += 0.01;
+        const count = +document.getElementById('rel-nodes').value;
+        const density = +document.getElementById('rel-density').value / 100;
+        const attract = +document.getElementById('rel-attract').value / 100;
+        const repel = +document.getElementById('rel-repel').value / 100;
+
+        ctx.fillStyle = 'rgba(5,5,16,0.2)';
+        ctx.fillRect(0, 0, c.width, c.height);
+
+        // Physics
+        for (let i = 0; i < count; i++) {
+            const a = nodes[i];
+            for (let j = i + 1; j < count; j++) {
+                const b = nodes[j];
+                const dx = b.x - a.x;
+                const dy = b.y - a.y;
+                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                const nx = dx / dist;
+                const ny = dy / dist;
+
+                // Determine if connected
+                const threshold = density * 400;
+                const connected = dist < threshold;
+
+                // Attraction for connected nodes
+                if (connected) {
+                    const force = attract * 0.02;
+                    a.vx += nx * force;
+                    a.vy += ny * force;
+                    b.vx -= nx * force;
+                    b.vy -= ny * force;
+                }
+
+                // Repulsion for close nodes
+                if (dist < 60) {
+                    const force = repel * 0.5 / (dist * dist) * 100;
+                    a.vx -= nx * force;
+                    a.vy -= ny * force;
+                    b.vx += nx * force;
+                    b.vy += ny * force;
+                }
+
+                // Draw connection
+                if (connected) {
+                    const alpha = (1 - dist / threshold) * 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(a.x, a.y);
+                    ctx.lineTo(b.x, b.y);
+                    ctx.strokeStyle = `hsla(${(a.hue + b.hue) / 2}, 50%, 50%, ${alpha})`;
+                    ctx.lineWidth = alpha * 3;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Update and draw nodes
+        for (let i = 0; i < count; i++) {
+            const n = nodes[i];
+            n.vx *= 0.95;
+            n.vy *= 0.95;
+            n.x += n.vx;
+            n.y += n.vy;
+
+            // Keep in bounds
+            if (n.x < 40) { n.x = 40; n.vx *= -0.5; }
+            if (n.x > c.width - 40) { n.x = c.width - 40; n.vx *= -0.5; }
+            if (n.y < 40) { n.y = 40; n.vy *= -0.5; }
+            if (n.y > c.height - 40) { n.y = c.height - 40; n.vy *= -0.5; }
+
+            // Draw glow
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.size + 10, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${n.hue}, 60%, 50%, 0.1)`;
+            ctx.fill();
+
+            // Draw node
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.size, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${n.hue}, 70%, 60%, 0.9)`;
+            ctx.fill();
+            ctx.strokeStyle = `hsla(${n.hue}, 80%, 75%, 0.6)`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ===== 5. EMERGENZ (Schwarm / Boids) =====
+(function() {
+    const c = document.getElementById('canvas-emergence');
+    const ctx = c.getContext('2d');
+    let boids = [];
+
+    function initBoids(count) {
+        boids = [];
+        for (let i = 0; i < 500; i++) {
+            boids.push({
+                x: Math.random() * c.width,
+                y: Math.random() * c.height,
+                vx: (Math.random() - 0.5) * 3,
+                vy: (Math.random() - 0.5) * 3,
+                hue: 0
+            });
+        }
+    }
+    initBoids(200);
+
+    bindSlider('em-count', 'em-count-val', '');
+    bindSlider('em-radius', 'em-radius-val', '');
+    bindSlider('em-align', 'em-align-val', '%');
+    bindSlider('em-chaos', 'em-chaos-val', '%');
+
+    function draw() {
+        const count = +document.getElementById('em-count').value;
+        const radius = +document.getElementById('em-radius').value;
+        const align = +document.getElementById('em-align').value / 100;
+        const chaos = +document.getElementById('em-chaos').value / 100;
+
+        ctx.fillStyle = 'rgba(5,5,16,0.15)';
+        ctx.fillRect(0, 0, c.width, c.height);
+
+        for (let i = 0; i < count; i++) {
+            const b = boids[i];
+            let avgVx = 0, avgVy = 0, avgX = 0, avgY = 0;
+            let sepX = 0, sepY = 0;
+            let neighbors = 0;
+
+            for (let j = 0; j < count; j++) {
+                if (i === j) continue;
+                const o = boids[j];
+                const dx = o.x - b.x;
+                const dy = o.y - b.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < radius) {
+                    avgVx += o.vx;
+                    avgVy += o.vy;
+                    avgX += o.x;
+                    avgY += o.y;
+                    neighbors++;
+
+                    // Separation
+                    if (dist < radius * 0.4 && dist > 0) {
+                        sepX -= dx / dist;
+                        sepY -= dy / dist;
+                    }
+                }
+            }
+
+            if (neighbors > 0) {
+                // Alignment
+                avgVx /= neighbors;
+                avgVy /= neighbors;
+                b.vx += (avgVx - b.vx) * align * 0.05;
+                b.vy += (avgVy - b.vy) * align * 0.05;
+
+                // Cohesion
+                avgX /= neighbors;
+                avgY /= neighbors;
+                b.vx += (avgX - b.x) * align * 0.001;
+                b.vy += (avgY - b.y) * align * 0.001;
+
+                // Separation
+                b.vx += sepX * 0.3;
+                b.vy += sepY * 0.3;
+            }
+
+            // Chaos / randomness
+            b.vx += (Math.random() - 0.5) * chaos * 2;
+            b.vy += (Math.random() - 0.5) * chaos * 2;
+
+            // Speed limit
+            const speed = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+            const maxSpeed = 3;
+            if (speed > maxSpeed) {
+                b.vx = (b.vx / speed) * maxSpeed;
+                b.vy = (b.vy / speed) * maxSpeed;
+            }
+
+            b.x += b.vx;
+            b.y += b.vy;
+
+            // Wrap
+            if (b.x < 0) b.x += c.width;
+            if (b.x > c.width) b.x -= c.width;
+            if (b.y < 0) b.y += c.height;
+            if (b.y > c.height) b.y -= c.height;
+
+            // Color based on direction
+            b.hue = (Math.atan2(b.vy, b.vx) * 180 / Math.PI + 360) % 360;
+
+            // Draw trail
+            const angle = Math.atan2(b.vy, b.vx);
+            ctx.beginPath();
+            ctx.moveTo(b.x, b.y);
+            ctx.lineTo(b.x - Math.cos(angle) * 8, b.y - Math.sin(angle) * 8);
+            ctx.strokeStyle = `hsla(${b.hue}, 80%, 60%, 0.7)`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw head
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${b.hue}, 90%, 70%, 0.9)`;
+            ctx.fill();
+        }
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ===== 6. DUALITÄT =====
+(function() {
+    const c = document.getElementById('canvas-duality');
+    const ctx = c.getContext('2d');
+    let time = 0;
+
+    bindSlider('du-balance', 'du-balance-val', '%');
+    bindSlider('du-resolution', 'du-resolution-val', '');
+    bindSlider('du-dynamic', 'du-dynamic-val', '%');
+    bindSlider('du-invert', 'du-invert-val', '%');
+
+    function draw() {
+        time += 0.015;
+        const balance = +document.getElementById('du-balance').value / 100;
+        const res = +document.getElementById('du-resolution').value;
+        const dynamic = +document.getElementById('du-dynamic').value / 100;
+        const invert = +document.getElementById('du-invert').value / 100;
+
+        const cellW = c.width / res;
+        const cellH = c.height / res;
+
+        for (let x = 0; x < res; x++) {
+            for (let y = 0; y < res; y++) {
+                const nx = x / res;
+                const ny = y / res;
+
+                // Generate dual pattern using sine waves
+                let val = 0;
+                val += Math.sin(nx * 8 + time * dynamic * 3) * 0.3;
+                val += Math.sin(ny * 6 - time * dynamic * 2) * 0.3;
+                val += Math.sin((nx + ny) * 5 + time * dynamic) * 0.2;
+                val += Math.sin(Math.sqrt((nx - 0.5) ** 2 + (ny - 0.5) ** 2) * 12 - time * dynamic * 4) * 0.2;
+
+                // Apply balance (shifts threshold)
+                val += (balance - 0.5) * 2;
+
+                // Normalize to 0-1
+                val = val * 0.5 + 0.5;
+                val = Math.max(0, Math.min(1, val));
+
+                // Apply inversion (lerp between val and 1-val)
+                val = val * (1 - invert) + (1 - val) * invert;
+
+                // Color: one side warm, other side cool
+                const hue1 = 280; // purple
+                const hue2 = 50;  // gold
+                const hue = val * hue2 + (1 - val) * hue1;
+                const light = 15 + val * 50;
+                const sat = 50 + Math.abs(val - 0.5) * 60;
+
+                ctx.fillStyle = `hsl(${hue}, ${sat}%, ${light}%)`;
+                ctx.fillRect(x * cellW, y * cellH, cellW + 1, cellH + 1);
+            }
+        }
+
+        // Draw yin-yang symbol in center
+        const cx = c.width / 2, cy = c.height / 2;
+        const r = 30;
+        ctx.globalAlpha = 0.15;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ===== 7. LEERE / POTENZIALITÄT =====
+(function() {
+    const c = document.getElementById('canvas-void');
+    const ctx = c.getContext('2d');
+    let time = 0;
+    let particles = [];
+    let collapsed = [];
+
+    for (let i = 0; i < 800; i++) {
+        particles.push({
+            x: Math.random() * c.width,
+            y: Math.random() * c.height,
+            baseX: Math.random() * c.width,
+            baseY: Math.random() * c.height,
+            phase: Math.random() * Math.PI * 2,
+            freq: 0.5 + Math.random() * 2,
+            hue: Math.random() * 360,
+            targetHue: 0,
+            size: 1 + Math.random() * 2,
+            collapsed: false,
+            collapseX: 0,
+            collapseY: 0,
+            collapseProgress: 0,
+            shape: Math.floor(Math.random() * 4) // 0=circle, 1=square, 2=triangle, 3=line
+        });
+    }
+
+    // Predefined collapse shapes
+    const shapes = [
+        // Circle
+        (i, total) => {
+            const angle = (i / total) * Math.PI * 2;
+            const r = 80;
+            return { x: c.width / 2 + Math.cos(angle) * r, y: c.height / 2 + Math.sin(angle) * r };
+        },
+        // Spiral
+        (i, total) => {
+            const angle = (i / total) * Math.PI * 8;
+            const r = 20 + (i / total) * 100;
+            return { x: c.width / 2 + Math.cos(angle) * r, y: c.height / 2 + Math.sin(angle) * r };
+        },
+        // Grid
+        (i, total) => {
+            const cols = Math.ceil(Math.sqrt(total));
+            const row = Math.floor(i / cols);
+            const col = i % cols;
+            return {
+                x: c.width / 2 - cols * 6 + col * 12,
+                y: c.height / 2 - cols * 6 + row * 12
+            };
+        },
+        // Star
+        (i, total) => {
+            const angle = (i / total) * Math.PI * 2;
+            const r = (i % 2 === 0) ? 100 : 40;
+            return { x: c.width / 2 + Math.cos(angle) * r, y: c.height / 2 + Math.sin(angle) * r };
+        }
+    ];
+
+    let currentShape = 0;
+    let shapeTimer = 0;
+
+    bindSlider('vo-potential', 'vo-potential-val', '%');
+    bindSlider('vo-fluct', 'vo-fluct-val', '%');
+    bindSlider('vo-observe', 'vo-observe-val', '%');
+    bindSlider('vo-collapse', 'vo-collapse-val', '%');
+
+    function draw() {
+        time += 0.02;
+        shapeTimer += 0.005;
+        if (shapeTimer > 1) {
+            shapeTimer = 0;
+            currentShape = (currentShape + 1) % shapes.length;
+        }
+
+        const potential = +document.getElementById('vo-potential').value / 100;
+        const fluct = +document.getElementById('vo-fluct').value / 100;
+        const observe = +document.getElementById('vo-observe').value / 100;
+        const collapseSpeed = +document.getElementById('vo-collapse').value / 100;
+
+        ctx.fillStyle = `rgba(5,5,16,${0.05 + observe * 0.2})`;
+        ctx.fillRect(0, 0, c.width, c.height);
+
+        const activeCount = Math.floor(potential * particles.length);
+
+        for (let i = 0; i < activeCount; i++) {
+            const p = particles[i];
+
+            // Target position when observed (collapsed)
+            const target = shapes[currentShape](i, activeCount);
+
+            if (observe > 0.1) {
+                // Collapse toward shape
+                p.collapseProgress += (observe - 0.1) * collapseSpeed * 0.03;
+                p.collapseProgress = Math.min(1, p.collapseProgress);
+
+                const t = p.collapseProgress;
+                const fluctAmount = fluct * (1 - t) * 50;
+
+                p.x = p.baseX * (1 - t) + target.x * t + Math.sin(time * p.freq + p.phase) * fluctAmount;
+                p.y = p.baseY * (1 - t) + target.y * t + Math.cos(time * p.freq + p.phase) * fluctAmount;
+
+                // Converge hue
+                p.targetHue = (currentShape * 90 + 200) % 360;
+                p.hue = p.hue * (1 - t * 0.05) + p.targetHue * t * 0.05;
+
+            } else {
+                // Pure potential: random wandering
+                p.collapseProgress *= 0.98;
+                p.x = p.baseX + Math.sin(time * p.freq + p.phase) * fluct * 80;
+                p.y = p.baseY + Math.cos(time * p.freq * 0.7 + p.phase) * fluct * 80;
+                p.hue += Math.random() * 2 - 1;
+            }
+
+            // Draw
+            const alpha = 0.2 + p.collapseProgress * 0.6;
+            const size = p.size * (1 + (1 - p.collapseProgress) * fluct);
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+            ctx.fillStyle = `hsla(${p.hue}, ${40 + p.collapseProgress * 40}%, ${40 + p.collapseProgress * 25}%, ${alpha})`;
+            ctx.fill();
+
+            // Glow for collapsed particles
+            if (p.collapseProgress > 0.5) {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, size + 4, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${p.hue}, 60%, 60%, ${(p.collapseProgress - 0.5) * 0.15})`;
+                ctx.fill();
+            }
+        }
+
+        // Central glow representing potential
+        if (observe < 0.3) {
+            const glowR = 100 + Math.sin(time) * 30 * potential;
+            const gradient = ctx.createRadialGradient(c.width / 2, c.height / 2, 0, c.width / 2, c.height / 2, glowR);
+            gradient.addColorStop(0, `hsla(270, 50%, 30%, ${(1 - observe * 3) * potential * 0.15})`);
+            gradient.addColorStop(1, 'hsla(270, 50%, 10%, 0)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, c.width, c.height);
+        }
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+</script>
+</body>
+</html>
