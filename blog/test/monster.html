@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Monster-Gruppe – Visuell Erklärt</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+background: #0a0a1a;
+color: #e0e0f0;
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+overflow-x: hidden;
+}
+.section {
+min-height: 100vh;
+padding: 40px 20px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+border-bottom: 1px solid #1a1a3a;
+}
+h1 {
+font-size: 2.8em;
+background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #ff6b6b);
+background-size: 300% 300%;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+animation: gradientShift 4s ease infinite;
+text-align: center;
+margin-bottom: 10px;
+}
+@keyframes gradientShift {
+0%, 100% { background-position: 0% 50%; }
+50% { background-position: 100% 50%; }
+}
+h2 {
+font-size: 1.8em;
+color: #ffd93d;
+margin-bottom: 20px;
+text-align: center;
+}
+h3 {
+font-size: 1.3em;
+color: #4d96ff;
+margin: 15px 0 10px;
+}
+p, .desc {
+max-width: 700px;
+text-align: center;
+line-height: 1.7;
+color: #b0b0d0;
+margin-bottom: 15px;
+font-size: 1.05em;
+}
+.highlight {
+color: #ffd93d;
+font-weight: bold;
+}
+.highlight2 {
+color: #6bcb77;
+font-weight: bold;
+}
+.highlight3 {
+color: #ff6b6b;
+font-weight: bold;
+}
+canvas {
+border-radius: 12px;
+margin: 15px 0;
+}
+.controls {
+display: flex;
+flex-wrap: wrap;
+gap: 15px;
+justify-content: center;
+align-items: center;
+margin: 15px 0;
+}
+.control-group {
+display: flex;
+flex-direction: column;
+align-items: center;
+background: #12122a;
+padding: 12px 18px;
+border-radius: 10px;
+border: 1px solid #2a2a5a;
+}
+.control-group label {
+font-size: 0.85em;
+color: #8888bb;
+margin-bottom: 5px;
+}
+.control-group input[type="range"] {
+width: 150px;
+accent-color: #4d96ff;
+}
+.control-group .value {
+font-size: 0.9em;
+color: #ffd93d;
+margin-top: 3px;
+}
+button {
+background: linear-gradient(135deg, #4d96ff, #6bcb77);
+border: none;
+color: #fff;
+padding: 10px 24px;
+border-radius: 8px;
+font-size: 1em;
+cursor: pointer;
+transition: transform 0.2s, box-shadow 0.2s;
+}
+button:hover {
+transform: scale(1.05);
+box-shadow: 0 0 20px rgba(77, 150, 255, 0.4);
+}
+.grid-container {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+gap: 10px;
+max-width: 800px;
+margin: 15px 0;
+}
+.grid-item {
+background: #12122a;
+border: 2px solid #2a2a5a;
+border-radius: 8px;
+padding: 15px;
+text-align: center;
+transition: all 0.3s;
+cursor: pointer;
+}
+.grid-item:hover {
+border-color: #4d96ff;
+transform: translateY(-3px);
+box-shadow: 0 5px 20px rgba(77, 150, 255, 0.2);
+}
+.grid-item .name {
+font-weight: bold;
+color: #ffd93d;
+font-size: 1.1em;
+}
+.grid-item .order {
+color: #6bcb77;
+font-size: 0.85em;
+margin-top: 5px;
+}
+.monster-number {
+font-family: 'Courier New', monospace;
+font-size: 1.1em;
+color: #ff6b6b;
+background: #1a0a0a;
+padding: 15px;
+border-radius: 10px;
+border: 1px solid #3a1a1a;
+max-width: 700px;
+text-align: center;
+word-break: break-all;
+line-height: 1.8;
+margin: 15px 0;
+}
+.tree-svg {
+max-width: 100%;
+}
+.nav {
+position: fixed;
+right: 15px;
+top: 50%;
+transform: translateY(-50%);
+display: flex;
+flex-direction: column;
+gap: 8px;
+z-index: 100;
+}
+.nav a {
+width: 12px;
+height: 12px;
+border-radius: 50%;
+background: #2a2a5a;
+display: block;
+transition: all 0.3s;
+}
+.nav a:hover, .nav a.active {
+background: #4d96ff;
+box-shadow: 0 0 10px #4d96ff;
+}
+.analogy-box {
+background: linear-gradient(135deg, #1a1a3a, #12122a);
+border: 1px solid #3a3a6a;
+border-radius: 15px;
+padding: 25px;
+max-width: 600px;
+margin: 15px 0;
+}
+.emoji-big {
+font-size: 3em;
+margin: 10px;
+}
+#symmetryCanvas { background: #05050f; }
+#compositionCanvas { background: #05050f; }
+#simpleCanvas { background: #05050f; }
+#moonshineCanvas { background: #05050f; }
+#familyTree { background: #05050f; }
+.sporadics-scroll {
+display: flex;
+overflow-x: auto;
+gap: 10px;
+padding: 15px 0;
+max-width: 90vw;
+}
+.sporadics-scroll::-webkit-scrollbar {
+height: 6px;
+}
+.sporadics-scroll::-webkit-scrollbar-thumb {
+background: #4d96ff;
+border-radius: 3px;
+}
+.sporadic-card {
+min-width: 100px;
+background: #12122a;
+border: 1px solid #2a2a5a;
+border-radius: 8px;
+padding: 10px;
+text-align: center;
+flex-shrink: 0;
+transition: all 0.3s;
+}
+.sporadic-card.monster {
+border-color: #ff6b6b;
+background: #1a0a0a;
+min-width: 140px;
+}
+.sporadic-card.happy {
+border-color: #6bcb77;
+}
+.sporadic-card.pariah {
+border-color: #888;
+}
+.footer-note {
+font-size: 0.8em;
+color: #555;
+margin-top: 30px;
+text-align: center;
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<a href="#s1" title="Start"></a>
+<a href="#s2" title="Was ist Symmetrie?"></a>
+<a href="#s3" title="Gruppen"></a>
+<a href="#s4" title="Einfache Gruppen"></a>
+<a href="#s5" title="Der Stammbaum"></a>
+<a href="#s6" title="Sporadische Gruppen"></a>
+<a href="#s7" title="Das Monster"></a>
+<a href="#s8" title="Moonshine"></a>
+</nav>
+
+<!-- ==================== SECTION 1: INTRO ==================== -->
+<div class="section" id="s1">
+<h1>🔮 Die Monster-Gruppe</h1>
+<p style="font-size:1.3em; color:#8888cc;">Eine visuelle Reise zum größten<br>„Schneeflocken-Atom" der Mathematik</p>
+<div class="emoji-big">👾</div>
+<p>Scrolle nach unten und experimentiere mit den Reglern,<br>um Schritt für Schritt zu verstehen, was die Monster-Gruppe ist.</p>
+<p style="color:#555; font-size:0.9em;">⬇ Scroll los ⬇</p>
+</div>
+
+<!-- ==================== SECTION 2: SYMMETRIE ==================== -->
+<div class="section" id="s2">
+<h2>1. Was ist Symmetrie?</h2>
+<p>Symmetrie = eine <span class="highlight">Bewegung</span>, nach der ein Objekt <em>gleich aussieht</em>.</p>
+<p>Drehe das Polygon und beobachte: bei welchen Winkeln sieht es identisch aus?</p>
+
+<canvas id="symmetryCanvas" width="400" height="400"></canvas>
+
+<div class="controls">
+<div class="control-group">
+<label>Ecken (n)</label>
+<input type="range" id="sidesSlider" min="2" max="20" value="5">
+<div class="value" id="sidesValue">5</div>
+</div>
+<div class="control-group">
+<label>Drehwinkel</label>
+<input type="range" id="rotSlider" min="0" max="360" value="0" step="1">
+<div class="value" id="rotValue">0°</div>
+</div>
+<div class="control-group">
+<label>Spiegeln</label>
+<input type="range" id="mirrorSlider" min="0" max="1" value="0" step="1">
+<div class="value" id="mirrorValue">Aus</div>
+</div>
+</div>
+<p id="symCount" style="color:#6bcb77; font-size:1.2em;"></p>
+<p class="desc">Ein regelmäßiges <span class="highlight">n-Eck</span> hat <span class="highlight2">2n Symmetrien</span>: n Drehungen + n Spiegelungen.<br>Diese Symmetrien bilden die <em>Diedergruppe D<sub>n</sub></em>.</p>
+</div>
+
+<!-- ==================== SECTION 3: GRUPPEN / VERKNÜPFUNG ==================== -->
+<div class="section" id="s3">
+<h2>2. Symmetrien kombinieren = Gruppe</h2>
+<p>Wenn du <span class="highlight">zwei Symmetrien hintereinander</span> ausführst, ist das Ergebnis wieder eine Symmetrie!<br>Das macht sie zu einer <em>Gruppe</em>.</p>
+
+<canvas id="compositionCanvas" width="500" height="300"></canvas>
+
+<div class="controls">
+<div class="control-group">
+<label>Erste Drehung</label>
+<input type="range" id="rot1Slider" min="0" max="5" value="1" step="1">
+<div class="value" id="rot1Value">72°</div>
+</div>
+<div class="control-group">
+<label>Zweite Drehung</label>
+<input type="range" id="rot2Slider" min="0" max="5" value="2" step="1">
+<div class="value" id="rot2Value">144°</div>
+</div>
+</div>
+<p id="compResult" style="color:#ffd93d; font-size:1.1em;"></p>
+
+<div class="analogy-box">
+<h3>🧱 Analogie: Atome der Symmetrie</h3>
+<p style="text-align:left;">So wie Materie aus <span class="highlight">Atomen</span> besteht, besteht jede Symmetrie-Gruppe aus <span class="highlight2">„Symmetrie-Atomen"</span> — den sogenannten <span class="highlight3">einfachen Gruppen</span>.</p>
+</div>
+</div>
+
+<!-- ==================== SECTION 4: EINFACHE GRUPPEN ==================== -->
+<div class="section" id="s4">
+<h2>3. Was ist eine „einfache" Gruppe?</h2>
+<p>Eine Gruppe ist <span class="highlight3">einfach</span>, wenn man sie <em>nicht weiter zerlegen</em> kann.</p>
+
+<canvas id="simpleCanvas" width="500" height="350"></canvas>
+
+<div class="controls">
+<div class="control-group">
+<label>Gruppe wählen</label>
+<input type="range" id="groupSlider" min="0" max="4" value="0" step="1">
+<div class="value" id="groupValue">Z₂</div>
+</div>
+<button id="decomposeBtn">🔨 Zerlegen!</button>
+</div>
+<p id="decompResult" style="max-width:600px;"></p>
+
+<div class="analogy-box">
+<p><span class="emoji-big">🧪</span></p>
+<p><span class="highlight">Wasser (H₂O)</span> → zerlegbar in H + H + O<br>
+<span class="highlight2">Wasserstoff-Atom (H)</span> → nicht weiter zerlegbar = <span class="highlight3">EINFACH</span></p>
+<p style="margin-top:10px;">Genauso: Manche Gruppen kann man zerlegen, manche nicht.<br>Die nicht-zerlegbaren sind die <span class="highlight3">einfachen Gruppen</span>.</p>
+</div>
+</div>
+
+<!-- ==================== SECTION 5: STAMMBAUM ==================== -->
+<div class="section" id="s5">
+<h2>4. Der Stammbaum aller einfachen Gruppen</h2>
+<p>Mathematiker haben <em>alle</em> einfachen Gruppen klassifiziert (Beweis: ~10.000 Seiten!).<br>Es gibt genau <span class="highlight">4 Familien</span>:</p>
+
+<canvas id="familyTree" width="700" height="500"></canvas>
+
+<div class="grid-container">
+<div class="grid-item" onclick="highlightFamily(0)">
+<div class="name">♾️ Zyklisch</div>
+<div class="order">Z_p (p prim)</div>
+<div style="color:#888;font-size:0.75em;">unendlich viele</div>
+</div>
+<div class="grid-item" onclick="highlightFamily(1)">
+<div class="name">🔄 Lie-Typ</div>
+<div class="order">A_n, B_n, C_n, D_n, E, F, G</div>
+<div style="color:#888;font-size:0.75em;">16 unendliche Serien</div>
+</div>
+<div class="grid-item" onclick="highlightFamily(2)">
+<div class="name">🔀 Alternierend</div>
+<div class="order">A_n (n ≥ 5)</div>
+<div style="color:#888;font-size:0.75em;">unendlich viele</div>
+</div>
+<div class="grid-item" onclick="highlightFamily(3)" style="border-color:#ff6b6b;">
+<div class="name" style="color:#ff6b6b;">👾 Sporadisch</div>
+<div class="order" style="color:#ff6b6b;">Genau 26 Stück!</div>
+<div style="color:#888;font-size:0.75em;">Einzelgänger</div>
+</div>
+</div>
+<p>Die ersten 3 Familien haben <span class="highlight2">unendlich viele Mitglieder</span> (wie Zahnräder in allen Größen).<br>Aber es gibt <span class="highlight3">26 Sonderlinge</span>, die in keine Familie passen...</p>
+</div>
+
+<!-- ==================== SECTION 6: SPORADISCHE GRUPPEN ==================== -->
+<div class="section" id="s6">
+<h2>5. Die 26 Sporadischen Gruppen</h2>
+<p>Diese 26 Gruppen sind wie <span class="highlight3">seltene Edelsteine</span> – einzigartig, unerwartet, wunderschön.</p>
+
+<div class="sporadics-scroll" id="sporadicsScroll"></div>
+
+<p id="sporadicInfo" style="min-height:60px;"></p>
+
+<div class="analogy-box">
+<h3>🏠 Die Happy Family</h3>
+<p style="text-align:left;">20 der 26 sporadischen Gruppen sind mit dem <span class="highlight3">Monster</span> verwandt – sie heißen die <span class="highlight2">„Happy Family"</span>.<br>Die restlichen 6 sind <span style="color:#888;">„Parias"</span> (Ausgestoßene).</p>
+</div>
+</div>
+
+<!-- ==================== SECTION 7: DAS MONSTER ==================== -->
+<div class="section" id="s7">
+<h2>6. 👾 Das Monster</h2>
+<p>Die <span class="highlight3">größte</span> sporadische einfache Gruppe. Entdeckt 1973 (Fischer & Griess).</p>
+
+<p>Ihre Ordnung (= Anzahl der Symmetrien):</p>
+<div class="monster-number">
+808,017,424,794,512,875,886,459,904,961,710,757,005,754,368,000,000,000
+</div>
+<p>Das sind ungefähr <span class="highlight">8 × 10<sup>53</sup></span> Symmetrien.</p>
+
+<canvas id="monsterCanvas" width="600" height="400"></canvas>
+
+<div class="controls">
+<div class="control-group">
+<label>Dimensionen</label>
+<input type="range" id="dimSlider" min="2" max="196883" value="2" step="1">
+<div class="value" id="dimValue">2</div>
+</div>
+<div class="control-group">
+<label>Zoom</label>
+<input type="range" id="zoomSlider" min="1" max="100" value="50">
+<div class="value" id="zoomValue">50</div>
+</div>
+<div class="control-group">
+<label>Rotation</label>
+<input type="range" id="monsterRotSlider" min="0" max="360" value="0" step="1">
+<div class="value" id="monsterRotValue">0°</div>
+</div>
+</div>
+
+<p id="monsterInfo" style="max-width:650px;"></p>
+
+<div class="analogy-box">
+<h3>🤯 Zum Vergleich</h3>
+<p style="text-align:left;">
+• Ein Quadrat hat <span class="highlight">8</span> Symmetrien<br>
+• Ein Fußball (Ikosaeder) hat <span class="highlight">120</span> Symmetrien<br>
+• Das Monster hat <span class="highlight3">8 × 10⁵³</span> Symmetrien<br>
+• Es lebt in einem Raum mit <span class="highlight2">196.883 Dimensionen</span><br>
+<br>
+Stell dir ein Objekt in 196.883 Dimensionen vor, das du auf 8×10⁵³ verschiedene Arten drehen kannst und es sieht immer gleich aus. <em>Das</em> ist das Monster.
+</p>
+</div>
+</div>
+
+<!-- ==================== SECTION 8: MOONSHINE ==================== -->
+<div class="section" id="s8">
+<h2>7. 🌙 Monstrous Moonshine</h2>
+<p>1979 bemerkte John McKay etwas <span class="highlight">Verrücktes</span>:</p>
+
+<canvas id="moonshineCanvas" width="600" height="350"></canvas>
+
+<div class="controls">
+<div class="control-group">
+<label>j-Funktion Terme</label>
+<input type="range" id="moonTerms" min="1" max="8" value="3" step="1">
+<div class="value" id="moonTermsValue">3</div>
+</div>
+</div>
+
+<div class="analogy-box" style="max-width:700px;">
+<h3>Die Verbindung</h3>
+<p style="text-align:left;">
+Die <span class="highlight">j-Funktion</span> ist eine wichtige Funktion aus der Zahlentheorie.<br>
+Ihre Koeffizienten sind: <span style="color:#4d96ff;">1, 744, 196884, 21493760, ...</span><br><br>
+Die Dimensionen der Monster-Darstellungen sind: <span style="color:#ff6b6b;">1, 196883, 21296876, ...</span><br><br>
+Und jetzt schau:<br>
+<span class="highlight2" style="font-size:1.2em;">196884 = 196883 + 1</span><br>
+<span class="highlight2" style="font-size:1.2em;">21493760 = 21296876 + 196883 + 1</span><br><br>
+Die Koeffizienten der j-Funktion sind <em>Summen</em> der Monster-Dimensionen!<br>
+Das ist wie wenn Biologie plötzlich in der Musik auftaucht. 🤯<br><br>
+<span style="color:#888;">Richard Borcherds bewies dies 1992 → Fields-Medaille!</span>
+</p>
+</div>
+
+<div style="margin-top:30px; text-align:center;">
+<p class="emoji-big">👾 ✨ 🌙</p>
+<p style="font-size:1.3em; color:#ffd93d;">Das Monster verbindet Symmetrie, Zahlentheorie und sogar Physik (Stringtheorie).</p>
+<p style="color:#888;">Es ist eines der tiefsten und mysteriösesten Objekte der gesamten Mathematik.</p>
+</div>
+
+<p class="footer-note">Erstellt als interaktive Visualisierung • Scrolle nach oben um alles nochmal zu erkunden 🔮</p>
+</div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+// ============ SECTION 2: Symmetry Polygon ============
+const symCanvas = document.getElementById('symmetryCanvas');
+const symCtx = symCanvas.getContext('2d');
+const sidesSlider = document.getElementById('sidesSlider');
+const rotSlider = document.getElementById('rotSlider');
+const mirrorSlider = document.getElementById('mirrorSlider');
+
+function drawSymmetry() {
+    const n = parseInt(sidesSlider.value);
+    const rot = parseFloat(rotSlider.value);
+    const mirror = parseInt(mirrorSlider.value);
+    const cx = 200, cy = 200, r = 130;
+
+    document.getElementById('sidesValue').textContent = n;
+    document.getElementById('rotValue').textContent = rot + '°';
+    document.getElementById('mirrorValue').textContent = mirror ? 'An' : 'Aus';
+
+    symCtx.clearRect(0, 0, 400, 400);
+
+    // Draw symmetry lines (faint)
+    symCtx.strokeStyle = 'rgba(77,150,255,0.15)';
+    symCtx.lineWidth = 1;
+    for (let i = 0; i < n; i++) {
+        const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+        symCtx.beginPath();
+        symCtx.moveTo(cx, cy);
+        symCtx.lineTo(cx + 180 * Math.cos(angle), cy + 180 * Math.sin(angle));
+        symCtx.stroke();
+    }
+
+    // Check if current rotation is a symmetry
+    const stepAngle = 360 / n;
+    const isSymmetry = Math.abs(rot % stepAngle) < 1.5 || Math.abs(rot % stepAngle - stepAngle) < 1.5;
+
+    // Draw polygon
+    const rotRad = (rot * Math.PI) / 180;
+    const scaleX = mirror ? -1 : 1;
+
+    symCtx.save();
+    symCtx.translate(cx, cy);
+    symCtx.rotate(rotRad);
+    symCtx.scale(scaleX, 1);
+
+    // Glow if symmetry
+    if (isSymmetry) {
+        symCtx.shadowColor = '#6bcb77';
+        symCtx.shadowBlur = 25;
+    }
+
+    symCtx.beginPath();
+    const colors = [];
+    for (let i = 0; i < n; i++) {
+        const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+        const x = r * Math.cos(angle);
+        const y = r * Math.sin(angle);
+        if (i === 0) symCtx.moveTo(x, y);
+        else symCtx.lineTo(x, y);
+    }
+    symCtx.closePath();
+    symCtx.strokeStyle = isSymmetry ? '#6bcb77' : '#4d96ff';
+    symCtx.lineWidth = 3;
+    symCtx.stroke();
+    symCtx.fillStyle = 'rgba(77,150,255,0.08)';
+    symCtx.fill();
+
+    symCtx.shadowBlur = 0;
+
+    // Draw vertices with colors
+    const vertexColors = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff9ff3','#54a0ff','#5f27cd','#01a3a4','#f368e0','#ff9f43',
+        '#ee5a24','#0abde3','#10ac84','#c8d6e5','#8395a7','#222f3e','#ff6348','#7bed9f','#70a1ff','#eccc68'];
+    for (let i = 0; i < n; i++) {
+        const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+        const x = r * Math.cos(angle);
+        const y = r * Math.sin(angle);
+        symCtx.beginPath();
+        symCtx.arc(x, y, 8, 0, Math.PI * 2);
+        symCtx.fillStyle = vertexColors[i % vertexColors.length];
+        symCtx.fill();
+        // Label
+        const lx = (r + 22) * Math.cos(angle);
+        const ly = (r + 22) * Math.sin(angle);
+        symCtx.fillStyle = '#888';
+        symCtx.font = '12px monospace';
+        symCtx.textAlign = 'center';
+        symCtx.textBaseline = 'middle';
+        symCtx.fillText(i + 1, lx, ly);
+    }
+
+    symCtx.restore();
+
+    // Symmetry counter
+    const totalSym = 2 * n;
+    document.getElementById('symCount').innerHTML = isSymmetry
+        ? `✅ Das ist eine Symmetrie! (${totalSym} Symmetrien insgesamt für ${n}-Eck)`
+        : `❌ Keine Symmetrie bei ${rot}° — Drehe auf ein Vielfaches von ${stepAngle.toFixed(1)}°`;
+
+    // Snap hint
+    if (isSymmetry) {
+        symCtx.fillStyle = 'rgba(107,203,119,0.3)';
+        symCtx.fillRect(0, 0, 400, 400);
+    }
+}
+
+sidesSlider.addEventListener('input', drawSymmetry);
+rotSlider.addEventListener('input', drawSymmetry);
+mirrorSlider.addEventListener('input', drawSymmetry);
+drawSymmetry();
+
+// ============ SECTION 3: Composition ============
+const compCanvas = document.getElementById('compositionCanvas');
+const compCtx = compCanvas.getContext('2d');
+const rot1Slider = document.getElementById('rot1Slider');
+const rot2Slider = document.getElementById('rot2Slider');
+
+function drawComposition() {
+    const n = 5;
+    const r1 = parseInt(rot1Slider.value);
+    const r2 = parseInt(rot2Slider.value);
+    const step = 360 / n;
+
+    document.getElementById('rot1Value').textContent = (r1 * step) + '°';
+    document.getElementById('rot2Value').textContent = (r2 * step) + '°';
+
+    const result = (r1 + r2) % n;
+    document.getElementById('compResult').innerHTML =
+        `Drehung ${r1 * step}° + Drehung ${r2 * step}° = Drehung <strong>${result * step}°</strong>  (alles mod ${360}°)`;
+
+    compCtx.clearRect(0, 0, 500, 300);
+
+    function drawSmallPoly(cx, cy, rotation, label, color) {
+        const r = 50;
+        const rotRad = (rotation * Math.PI) / 180;
+        compCtx.save();
+        compCtx.translate(cx, cy);
+        compCtx.rotate(rotRad);
+        compCtx.beginPath();
+        for (let i = 0; i < n; i++) {
+            const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+            const x = r * Math.cos(angle);
+            const y = r * Math.sin(angle);
+            if (i === 0) compCtx.moveTo(x, y);
+            else compCtx.lineTo(x, y);
+        }
+        compCtx.closePath();
+        compCtx.strokeStyle = color;
+        compCtx.lineWidth = 2;
+        compCtx.stroke();
+        // Mark vertex 0
+        const angle0 = -Math.PI / 2;
+        compCtx.beginPath();
+        compCtx.arc(r * Math.cos(angle0), r * Math.sin(angle0), 6, 0, Math.PI * 2);
+        compCtx.fillStyle = '#ff6b6b';
+        compCtx.fill();
+        compCtx.restore();
+
+        compCtx.fillStyle = '#888';
+        compCtx.font = '13px sans-serif';
+        compCtx.textAlign = 'center';
+        compCtx.fillText(label, cx, cy + 80);
+    }
+
+    drawSmallPoly(90, 140, r1 * step, `Drehung ${r1 * step}°`, '#4d96ff');
+    // Plus sign
+    compCtx.fillStyle = '#ffd93d';
+    compCtx.font = 'bold 28px sans-serif';
+    compCtx.textAlign = 'center';
+    compCtx.fillText('+', 185, 145);
+
+    drawSmallPoly(270, 140, r2 * step, `Drehung ${r2 * step}°`, '#6bcb77');
+    // Equals sign
+    compCtx.fillStyle = '#ffd93d';
+    compCtx.font = 'bold 28px sans-serif';
+    compCtx.fillText('=', 365, 145);
+
+    drawSmallPoly(450, 140, result * step, `Drehung ${result * step}°`, '#ff6b6b');
+}
+
+rot1Slider.addEventListener('input', drawComposition);
+rot2Slider.addEventListener('input', drawComposition);
+drawComposition();
+
+// ============ SECTION 4: Simple Groups ============
+const simpleCanvas = document.getElementById('simpleCanvas');
+const simpleCtx = simpleCanvas.getContext('2d');
+const groupSlider = document.getElementById('groupSlider');
+const decomposeBtn = document.getElementById('decomposeBtn');
+
+const groups = [
+    { name: 'Z₂', order: 2, simple: true, factors: ['Z₂'], color: '#6bcb77' },
+    { name: 'Z₆', order: 6, simple: false, factors: ['Z₂', 'Z₃'], color: '#4d96ff' },
+    { name: 'Z₁₂', order: 12, simple: false, factors: ['Z₂', 'Z₂', 'Z₃'], color: '#ffd93d' },
+    { name: 'S₃', order: 6, simple: false, factors: ['Z₂', 'Z₃'], color: '#ff9ff3' },
+    { name: 'A₅', order: 60, simple: true, factors: ['A₅'], color: '#ff6b6b' },
+];
+
+let decomposing = false;
+let decompProgress = 0;
+let decompAnimId = null;
+
+function drawSimpleGroups() {
+    const idx = parseInt(groupSlider.value);
+    const g = groups[idx];
+    document.getElementById('groupValue').textContent = g.name;
+
+    simpleCtx.clearRect(0, 0, 500, 350);
+
+    if (!decomposing) {
+        // Draw the group as a big circle
+        simpleCtx.beginPath();
+        simpleCtx.arc(250, 150, 70 + g.order * 0.5, 0, Math.PI * 2);
+        simpleCtx.strokeStyle = g.color;
+        simpleCtx.lineWidth = 3;
+        simpleCtx.stroke();
+        simpleCtx.fillStyle = g.color + '22';
+        simpleCtx.fill();
+
+        simpleCtx.fillStyle = g.color;
+        simpleCtx.font = 'bold 28px sans-serif';
+        simpleCtx.textAlign = 'center';
+        simpleCtx.textBaseline = 'middle';
+        simpleCtx.fillText(g.name, 250, 140);
+
+        simpleCtx.fillStyle = '#888';
+        simpleCtx.font = '14px sans-serif';
+        simpleCtx.fillText(`Ordnung: ${g.order}`, 250, 175);
+
+        // Badge
+        if (g.simple) {
+            simpleCtx.fillStyle = '#6bcb77';
+            simpleCtx.font = 'bold 16px sans-serif';
+            simpleCtx.fillText('⚛️ EINFACH (nicht zerlegbar!)', 250, 280);
+        } else {
+            simpleCtx.fillStyle = '#ffd93d';
+            simpleCtx.font = '16px sans-serif';
+            simpleCtx.fillText('🔨 Klicke "Zerlegen!" um die Atome zu sehen', 250, 280);
+        }
+    }
+}
+
+function animateDecompose() {
+    const idx = parseInt(groupSlider.value);
+    const g = groups[idx];
+
+    simpleCtx.clearRect(0, 0, 500, 350);
+
+    if (g.simple) {
+        // Can't decompose — flash green
+        simpleCtx.beginPath();
+        simpleCtx.arc(250, 150, 80, 0, Math.PI * 2);
+        const alpha = 0.3 + 0.3 * Math.sin(decompProgress * 0.2);
+        simpleCtx.fillStyle = `rgba(107,203,119,${alpha})`;
+        simpleCtx.fill();
+        simpleCtx.strokeStyle = '#6bcb77';
+        simpleCtx.lineWidth = 4;
+        simpleCtx.stroke();
+
+        simpleCtx.fillStyle = '#6bcb77';
+        simpleCtx.font = 'bold 28px sans-serif';
+        simpleCtx.textAlign = 'center';
+        simpleCtx.textBaseline = 'middle';
+        simpleCtx.fillText(g.name, 250, 140);
+
+        simpleCtx.fillStyle = '#6bcb77';
+        simpleCtx.font = 'bold 18px sans-serif';
+        simpleCtx.fillText('⚛️ Nicht zerlegbar! Das IST ein Atom!', 250, 280);
+
+        document.getElementById('decompResult').innerHTML =
+            `<span style="color:#6bcb77;"><strong>${g.name}</strong> ist bereits einfach — ein Symmetrie-Atom!</span>`;
+
+        decompProgress++;
+        if (decompProgress < 60) {
+            decompAnimId = requestAnimationFrame(animateDecompose);
+        } else {
+            decomposing = false;
+        }
+        return;
+    }
+
+    // Animate splitting
+    const t = Math.min(decompProgress / 40, 1); // 0 to 1
+    const factors = g.factors;
+    const spacing = 120;
+    const startX = 250;
+    const totalWidth = (factors.length - 1) * spacing;
+
+    if (t < 1) {
+        // Shrinking original
+        const scale = 1 - t * 0.7;
+        simpleCtx.globalAlpha = 1 - t;
+        simpleCtx.beginPath();
+        simpleCtx.arc(250, 120, (70 + g.order * 0.5) * scale, 0, Math.PI * 2);
+        simpleCtx.strokeStyle = g.color;
+        simpleCtx.lineWidth = 3;
+        simpleCtx.stroke();
+        simpleCtx.globalAlpha = 1;
+    }
+
+    // Draw factors emerging
+    const factorColors = ['#ff6b6b', '#6bcb77', '#4d96ff', '#ffd93d'];
+    for (let i = 0; i < factors.length; i++) {
+        const targetX = 250 - totalWidth / 2 + i * spacing;
+        const currentX = 250 + (targetX - 250) * t;
+        const currentY = 120 + 80 * t;
+        const radius = 35 * t;
+
+        simpleCtx.globalAlpha = t;
+        simpleCtx.beginPath();
+        simpleCtx.arc(currentX, currentY, Math.max(radius, 5), 0, Math.PI * 2);
+        simpleCtx.strokeStyle = factorColors[i % factorColors.length];
+        simpleCtx.lineWidth = 3;
+        simpleCtx.stroke();
+        simpleCtx.fillStyle = factorColors[i % factorColors.length] + '22';
+        simpleCtx.fill();
+
+        if (t > 0.5) {
+            simpleCtx.fillStyle = factorColors[i % factorColors.length];
+            simpleCtx.font = 'bold 20px sans-serif';
+            simpleCtx.textAlign = 'center';
+            simpleCtx.textBaseline = 'middle';
+            simpleCtx.fillText(factors[i], currentX, currentY);
+        }
+        simpleCtx.globalAlpha = 1;
+    }
+
+    // "×" signs between factors
+    if (t > 0.6) {
+        simpleCtx.fillStyle = '#ffd93d';
+        simpleCtx.font = 'bold 22px sans-serif';
+        simpleCtx.textAlign = 'center';
+        for (let i = 0; i < factors.length - 1; i++) {
+            const x1 = 250 - totalWidth / 2 + i * spacing;
+            const x2 = 250 - totalWidth / 2 + (i + 1) * spacing;
+            simpleCtx.fillText('×', (x1 + x2) / 2, 200);
+        }
+    }
+
+    // Label
+    if (t >= 1) {
+        simpleCtx.fillStyle = '#ffd93d';
+        simpleCtx.font = '16px sans-serif';
+        simpleCtx.textAlign = 'center';
+        simpleCtx.fillText(`${g.name} = ${factors.join(' × ')}`, 250, 280);
+
+        document.getElementById('decompResult').innerHTML =
+            `<span style="color:#ffd93d;"><strong>${g.name}</strong> zerfällt in die Atome: <strong>${factors.join(' × ')}</strong></span>`;
+    }
+
+    decompProgress++;
+    if (decompProgress < 60) {
+        decompAnimId = requestAnimationFrame(animateDecompose);
+    } else {
+        decomposing = false;
+    }
+}
+
+decomposeBtn.addEventListener('click', () => {
+    if (decompAnimId) cancelAnimationFrame(decompAnimId);
+    decomposing = true;
+    decompProgress = 0;
+    animateDecompose();
+});
+
+groupSlider.addEventListener('input', () => {
+    if (decompAnimId) cancelAnimationFrame(decompAnimId);
+    decomposing = false;
+    decompProgress = 0;
+    document.getElementById('decompResult').innerHTML = '';
+    drawSimpleGroups();
+});
+drawSimpleGroups();
+
+// ============ SECTION 5: Family Tree ============
+const ftCanvas = document.getElementById('familyTree');
+const ftCtx = ftCanvas.getContext('2d');
+let highlightedFamily = -1;
+
+function highlightFamily(idx) {
+    highlightedFamily = idx;
+    drawFamilyTree();
+}
+
+function drawFamilyTree() {
+    ftCtx.clearRect(0, 0, 700, 500);
+
+    // Title
+    ftCtx.fillStyle = '#ffd93d';
+    ftCtx.font = 'bold 18px sans-serif';
+    ftCtx.textAlign = 'center';
+    ftCtx.fillText('Alle endlichen einfachen Gruppen', 350, 30);
+
+    // Root
+    ftCtx.beginPath();
+    ftCtx.arc(350, 70, 20, 0, Math.PI * 2);
+    ftCtx.fillStyle = '#ffd93d33';
+    ftCtx.fill();
+    ftCtx.strokeStyle = '#ffd93d';
+    ftCtx.lineWidth = 2;
+    ftCtx.stroke();
+    ftCtx.fillStyle = '#ffd93d';
+    ftCtx.font = '11px sans-serif';
+    ftCtx.fillText('ALLE', 350, 73);
+
+    const families = [
+        { name: 'Zyklisch\nZ_p', x: 100, y: 180, color: '#4d96ff', members: ['Z₂','Z₃','Z₅','Z₇','Z₁₁','Z₁₃','...'], desc: 'Unendlich viele\n(eine für jede Primzahl)' },
+        { name: 'Lie-Typ', x: 280, y: 180, color: '#6bcb77', members: ['PSL','PSU','PSp','PΩ','E₆','E₇','E₈','F₄','G₂','...'], desc: '16 unendliche Serien\n(Symmetrien von Geometrien)' },
+        { name: 'Alternierend\nA_n', x: 460, y: 180, color: '#ffd93d', members: ['A₅','A₆','A₇','A₈','...'], desc: 'Unendlich viele\n(gerade Permutationen)' },
+        { name: 'SPORADISCH', x: 620, y: 180, color: '#ff6b6b', members: ['M₁₁','M₁₂','M₂₂','M₂₃','M₂₄','J₁','J₂','...','👾 M'], desc: 'Genau 26 Stück!\n(Einzelgänger)' },
+    ];
+
+    families.forEach((f, i) => {
+        const isHighlighted = highlightedFamily === i;
+        const alpha = highlightedFamily === -1 ? 1 : (isHighlighted ? 1 : 0.25);
+
+        // Line from root
+        ftCtx.beginPath();
+        ftCtx.moveTo(350, 90);
+        ftCtx.lineTo(f.x, 150);
+        ftCtx.strokeStyle = f.color + (isHighlighted || highlightedFamily === -1 ? 'aa' : '33');
+        ftCtx.lineWidth = isHighlighted ? 3 : 1.5;
+        ftCtx.stroke();
+
+        // Family node
+        ftCtx.globalAlpha = alpha;
+        ftCtx.beginPath();
+        const w = i === 3 ? 110 : 90;
+        const h = 45;
+        ftCtx.roundRect(f.x - w/2, f.y - h/2, w, h, 10);
+        ftCtx.fillStyle = f.color + '22';
+        ftCtx.fill();
+        ftCtx.strokeStyle = f.color;
+        ftCtx.lineWidth = isHighlighted ? 3 : 2;
+        ftCtx.stroke();
+
+        // Glow
+        if (isHighlighted) {
+            ftCtx.shadowColor = f.color;
+            ftCtx.shadowBlur = 20;
+            ftCtx.stroke();
+            ftCtx.shadowBlur = 0;
+        }
+
+        // Name
+        ftCtx.fillStyle = f.color;
+        ftCtx.font = i === 3 ? 'bold 13px sans-serif' : '13px sans-serif';
+        ftCtx.textAlign = 'center';
+        const lines = f.name.split('\n');
+        lines.forEach((line, li) => {
+            ftCtx.fillText(line, f.x, f.y - 5 + li * 16);
+        });
+
+        // Members
+        const memberY = f.y + 50;
+        f.members.forEach((m, mi) => {
+            const mx = f.x - 30 + (mi % 3) * 30;
+            const my = memberY + Math.floor(mi / 3) * 25;
+            ftCtx.fillStyle = f.color + 'aa';
+            ftCtx.font = '11px monospace';
+            ftCtx.fillText(m, mx, my);
+        });
+
+        // Description
+        ftCtx.fillStyle = '#888';
+        ftCtx.font = '11px sans-serif';
+        const descLines = f.desc.split('\n');
+        descLines.forEach((dl, di) => {
+            ftCtx.fillText(dl, f.x, f.y + 50 + f.members.length * 7 + 40 + di * 15);
+        });
+
+        ftCtx.globalAlpha = 1;
+    });
+
+    // Infinity symbols for first 3
+    ftCtx.font = '24px sans-serif';
+    ftCtx.fillStyle = '#4d96ff55';
+    ftCtx.fillText('∞', 100, 420);
+    ftCtx.fillStyle = '#6bcb7755';
+    ftCtx.fillText('∞', 280, 420);
+    ftCtx.fillStyle = '#ffd93d55';
+    ftCtx.fillText('∞', 460, 420);
+    ftCtx.fillStyle = '#ff6b6b';
+    ftCtx.font = 'bold 24px sans-serif';
+    ftCtx.fillText('26', 620, 420);
+}
+
+drawFamilyTree();
+
+// ============ SECTION 6: Sporadic Groups ============
+const sporadics = [
+    { name: 'M₁₁', order: '7920', type: 'happy', year: 1861 },
+    { name: 'M₁₂', order: '95040', type: 'happy', year: 1861 },
+    { name: 'M₂₂', order: '443520', type: 'happy', year: 1873 },
+    { name: 'M₂₃', order: '10200960', type: 'happy', year: 1873 },
+    { name: 'M₂₄', order: '244823040', type: 'happy', year: 1873 },
+    { name: 'J₁', order: '175560', type: 'pariah', year: 1965 },
+    { name: 'J₂', order: '604800', type: 'happy', year: 1966 },
+    { name: 'J₃', order: '50232960', type: 'pariah', year: 1968 },
+    { name: 'J₄', order: '86775571046077562880', type: 'pariah', year: 1975 },
+    { name: 'Co₁', order: '4157776806543360000', type: 'happy', year: 1968 },
+    { name: 'Co₂', order: '42305421312000', type: 'happy', year: 1968 },
+    { name: 'Co₃', order: '495766656000', type: 'happy', year: 1968 },
+    { name: 'Fi₂₂', order: '64561751654400', type: 'happy', year: 1971 },
+    { name: 'Fi₂₃', order: '4089470473293004800', type: 'happy', year: 1971 },
+    { name: "Fi₂₄'", order: '1255205709190661721292800', type: 'happy', year: 1971 },
+    { name: 'HS', order: '44352000', type: 'happy', year: 1968 },
+    { name: 'McL', order: '898128000', type: 'happy', year: 1969 },
+    { name: 'He', order: '4030387200', type: 'happy', year: 1969 },
+    { name: 'Ru', order: '145926144000', type: 'pariah', year: 1973 },
+    { name: 'Suz', order: '448345497600', type: 'happy', year: 1969 },
+    { name: "O'N", order: '460815505920', type: 'pariah', year: 1976 },
+    { name: 'HN', order: '273030912000000', type: 'happy', year: 1976 },
+    { name: 'Ly', order: '51765179004000000', type: 'pariah', year: 1972 },
+    { name: 'Th', order: '90745943887872000', type: 'happy', year: 1976 },
+    { name: 'B', order: '4154781481226426191177580544000000', type: 'happy', year: 1977 },
+    { name: 'M', order: '808017424794512875886459904961710757005754368000000000', type: 'monster', year: 1973 },
+];
+
+const scrollContainer = document.getElementById('sporadicsScroll');
+sporadics.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.className = `sporadic-card ${s.type}`;
+    card.innerHTML = `<div style="font-weight:bold;font-size:${s.type === 'monster' ? '1.4em' : '1em'};">${s.type === 'monster' ? '👾 ' : ''}${s.name}</div>
+        <div style="font-size:0.7em;color:#888;margin-top:4px;">${s.year}</div>`;
+    card.addEventListener('click', () => showSporadicInfo(i));
+    card.addEventListener('mouseenter', () => showSporadicInfo(i));
+    scrollContainer.appendChild(card);
+});
+
+function showSporadicInfo(i) {
+    const s = sporadics[i];
+    const typeLabel = s.type === 'monster' ? '👾 DAS MONSTER' : s.type === 'happy' ? '😊 Happy Family' : '🚫 Paria';
+    const typeColor = s.type === 'monster' ? '#ff6b6b' : s.type === 'happy' ? '#6bcb77' : '#888';
+    document.getElementById('sporadicInfo').innerHTML =
+        `<strong style="color:${typeColor};font-size:1.2em;">${s.name}</strong> — ${typeLabel}<br>
+        <span style="color:#888;">Ordnung: ${s.order}</span><br>
+        <span style="color:#555;">Entdeckt: ${s.year}</span>`;
+}
+
+// ============ SECTION 7: Monster Visualization ============
+const monsterCanvas = document.getElementById('monsterCanvas');
+const monsterCtx = monsterCanvas.getContext('2d');
+const dimSlider = document.getElementById('dimSlider');
+const zoomSlider = document.getElementById('zoomSlider');
+const monsterRotSlider = document.getElementById('monsterRotSlider');
+
+let monsterAnimFrame;
+let monsterTime = 0;
+
+function drawMonster() {
+    const dim = parseInt(dimSlider.value);
+    const zoom = parseInt(zoomSlider.value);
+    const rot = parseInt(monsterRotSlider.value);
+
+    document.getElementById('dimValue').textContent = dim.toLocaleString();
+    document.getElementById('zoomValue').textContent = zoom;
+    document.getElementById('monsterRotValue').textContent = rot + '°';
+
+    monsterCtx.clearRect(0, 0, 600, 400);
+
+    const cx = 300, cy = 200;
+    const baseR = 50 + zoom * 1.2;
+    const rotRad = (rot * Math.PI) / 180;
+
+    // Draw a projection of high-dimensional symmetry object
+    // More dimensions = more complex pattern
+    const numPoints = Math.min(dim * 2, 800);
+    const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+
+    monsterCtx.save();
+    monsterCtx.translate(cx, cy);
+    monsterCtx.rotate(rotRad);
+
+    // Draw connections first (faint)
+    if (numPoints < 200) {
+        monsterCtx.strokeStyle = 'rgba(77,150,255,0.05)';
+        monsterCtx.lineWidth = 0.5;
+        const pts = [];
+        for (let i = 0; i < numPoints; i++) {
+            const t = i / numPoints;
+            const r = baseR * Math.sqrt(t);
+            const angle = i * goldenAngle + monsterTime * 0.01;
+            const x = r * Math.cos(angle);
+            const y = r * Math.sin(angle);
+            pts.push({ x, y });
+        }
+        for (let i = 0; i < pts.length; i++) {
+            for (let j = i + 1; j < Math.min(i + 5, pts.length); j++) {
+                monsterCtx.beginPath();
+                monsterCtx.moveTo(pts[i].x, pts[i].y);
+                monsterCtx.lineTo(pts[j].x, pts[j].y);
+                monsterCtx.stroke();
+            }
+        }
+    }
+
+    // Draw points
+    for (let i = 0; i < numPoints; i++) {
+        const t = i / numPoints;
+        const r = baseR * Math.sqrt(t);
+        const angle = i * goldenAngle + monsterTime * 0.01;
+        const x = r * Math.cos(angle);
+        const y = r * Math.sin(angle);
+
+        const hue = (i / numPoints * 360 + monsterTime) % 360;
+        const size = Math.max(1, 4 - dim * 0.005);
+
+        monsterCtx.beginPath();
+        monsterCtx.arc(x, y, size, 0, Math.PI * 2);
+        monsterCtx.fillStyle = `hsla(${hue}, 80%, 60%, 0.8)`;
+        monsterCtx.fill();
+    }
+
+    // Outer ring representing the group boundary
+    monsterCtx.beginPath();
+    monsterCtx.arc(0, 0, baseR + 10, 0, Math.PI * 2);
+    monsterCtx.strokeStyle = 'rgba(255,107,107,0.3)';
+    monsterCtx.lineWidth = 2;
+    monsterCtx.stroke();
+
+    // Symmetry lines
+    const numSymLines = Math.min(dim, 30);
+    for (let i = 0; i < numSymLines; i++) {
+        const angle = (Math.PI * 2 * i) / numSymLines;
+        monsterCtx.beginPath();
+        monsterCtx.moveTo(0, 0);
+        monsterCtx.lineTo((baseR + 15) * Math.cos(angle), (baseR + 15) * Math.sin(angle));
+        monsterCtx.strokeStyle = `rgba(255,217,61,${0.05 + 0.1 * (1 - dim / 196883)})`;
+        monsterCtx.lineWidth = 1;
+        monsterCtx.stroke();
+    }
+
+    monsterCtx.restore();
+
+    // Dimension label
+    monsterCtx.fillStyle = '#ff6b6b';
+    monsterCtx.font = 'bold 14px monospace';
+    monsterCtx.textAlign = 'left';
+    monsterCtx.fillText(`Dimensionen: ${dim.toLocaleString()}`, 15, 25);
+
+    if (dim === 196883) {
+        monsterCtx.fillStyle = '#ff6b6b';
+        monsterCtx.font = 'bold 16px sans-serif';
+        monsterCtx.textAlign = 'center';
+        monsterCtx.fillText('🎯 196.883 — Die kleinste treue Darstellung des Monsters!', 300, 385);
+    }
+
+    // Info text
+    let info = '';
+    if (dim <= 3) {
+        info = `In ${dim}D kann man sich Symmetrien noch gut vorstellen. Das Monster lebt aber in 196.883 Dimensionen!`;
+    } else if (dim <= 100) {
+        info = `${dim} Dimensionen — schon schwer vorstellbar. Aber das Monster braucht noch ${(196883 - dim).toLocaleString()} mehr!`;
+    } else if (dim <= 1000) {
+        info = `${dim.toLocaleString()} Dimensionen. Du bist auf ${(dim / 196883 * 100).toFixed(1)}% des Weges zum Monster.`;
+    } else if (dim < 196883) {
+        info = `${dim.toLocaleString()} Dimensionen — ${(dim / 196883 * 100).toFixed(1)}% der Monster-Dimension. Weiter schieben!`;
+    } else {
+        info = `🎉 196.883 Dimensionen! Hier lebt das Monster als Symmetriegruppe eines unvorstellbar komplexen Objekts.`;
+    }
+    document.getElementById('monsterInfo').innerHTML = `<span style="color:#b0b0d0;">${info}</span>`;
+
+    monsterTime++;
+    monsterAnimFrame = requestAnimationFrame(drawMonster);
+}
+
+dimSlider.addEventListener('input', () => {});
+zoomSlider.addEventListener('input', () => {});
+monsterRotSlider.addEventListener('input', () => {});
+drawMonster();
+
+// ============ SECTION 8: Moonshine ============
+const moonCanvas = document.getElementById('moonshineCanvas');
+const moonCtx = moonCanvas.getContext('2d');
+const moonTermsSlider = document.getElementById('moonTerms');
+
+const jCoeffs = [1, 744, 196884, 21493760, 864299970, 20245856256, 333202640600, 4252023300096];
+const monsterDims = [1, 196883, 21296876, 842609326, 18538750076, 190356155880, 2707481091264];
+
+function drawMoonshine() {
+    const terms = parseInt(moonTermsSlider.value);
+    document.getElementById('moonTermsValue').textContent = terms;
+
+    moonCtx.clearRect(0, 0, 600, 350);
+
+    const barWidth = 50;
+    const gap = 20;
+    const totalWidth = terms * (barWidth * 2 + gap * 2 + 20);
+    const startX = Math.max(20, (600 - totalWidth) / 2);
+
+    const maxVal = Math.log10(Math.max(...jCoeffs.slice(0, terms)) + 1);
+
+    moonCtx.fillStyle = '#ffd93d';
+    moonCtx.font = 'bold 14px sans-serif';
+    moonCtx.textAlign = 'center';
+    moonCtx.fillText('j-Funktion Koeffizienten vs. Monster-Dimensionen', 300, 20);
+
+    for (let i = 0; i < terms; i++) {
+        const x = startX + i * (barWidth * 2 + gap * 2 + 20);
+        const jVal = jCoeffs[i];
+        const jH = (Math.log10(jVal + 1) / maxVal) * 200;
+
+        // j-function bar
+        const grad1 = moonCtx.createLinearGradient(x, 300 - jH, x, 300);
+        grad1.addColorStop(0, '#4d96ff');
+        grad1.addColorStop(1, '#4d96ff44');
+        moonCtx.fillStyle = grad1;
+        moonCtx.fillRect(x, 300 - jH, barWidth, jH);
+        moonCtx.strokeStyle = '#4d96ff';
+        moonCtx.lineWidth = 1;
+        moonCtx.strokeRect(x, 300 - jH, barWidth, jH);
+
+        // Label
+        moonCtx.fillStyle = '#4d96ff';
+        moonCtx.font = '9px monospace';
+        moonCtx.textAlign = 'center';
+        moonCtx.save();
+        moonCtx.translate(x + barWidth / 2, 300 - jH - 8);
+        moonCtx.fillText(jVal.toLocaleString(), 0, 0);
+        moonCtx.restore();
+
+        // Monster dimension bar (if available)
+        if (i < monsterDims.length) {
+            const mVal = monsterDims[i];
+            const mH = (Math.log10(mVal + 1) / maxVal) * 200;
+            const mx = x + barWidth + 5;
+
+            const grad2 = moonCtx.createLinearGradient(mx, 300 - mH, mx, 300);
+            grad2.addColorStop(0, '#ff6b6b');
+            grad2.addColorStop(1, '#ff6b6b44');
+            moonCtx.fillStyle = grad2;
+            moonCtx.fillRect(mx, 300 - mH, barWidth, mH);
+            moonCtx.strokeStyle = '#ff6b6b';
+            moonCtx.lineWidth = 1;
+            moonCtx.strokeRect(mx, 300 - mH, barWidth, mH);
+
+            moonCtx.fillStyle = '#ff6b6b';
+            moonCtx.font = '9px monospace';
+            moonCtx.textAlign = 'center';
+            moonCtx.save();
+            moonCtx.translate(mx + barWidth / 2, 300 - mH - 8);
+            moonCtx.fillText(mVal.toLocaleString(), 0, 0);
+            moonCtx.restore();
+        }
+
+        // Connection arrow showing the sum relationship
+        if (i >= 2 && i < monsterDims.length) {
+            moonCtx.fillStyle = '#6bcb77';
+            moonCtx.font = '8px sans-serif';
+            moonCtx.textAlign = 'center';
+            moonCtx.fillText('≈ Σ dims', x + barWidth + 2, 315);
+        }
+
+        // Index label
+        moonCtx.fillStyle = '#888';
+        moonCtx.font = '11px sans-serif';
+        moonCtx.textAlign = 'center';
+        moonCtx.fillText(`n=${i}`, x + barWidth + 2, 335);
+    }
+
+    // Legend
+    moonCtx.fillStyle = '#4d96ff';
+    moonCtx.fillRect(20, 40, 15, 10);
+    moonCtx.fillStyle = '#4d96ff';
+    moonCtx.font = '12px sans-serif';
+    moonCtx.textAlign = 'left';
+    moonCtx.fillText('j-Funktion Koeffizienten', 42, 50);
+
+    moonCtx.fillStyle = '#ff6b6b';
+    moonCtx.fillRect(20, 58, 15, 10);
+    moonCtx.fillStyle = '#ff6b6b';
+    moonCtx.fillText('Monster-Darstellungsdimensionen', 42, 68);
+
+    // Highlight the key relationship
+    if (terms >= 3) {
+        moonCtx.fillStyle = '#6bcb77';
+        moonCtx.font = 'bold 12px monospace';
+        moonCtx.textAlign = 'center';
+        moonCtx.fillText('196884 = 196883 + 1  ✨', 300, 88);
+    }
+    if (terms >= 4) {
+        moonCtx.fillText('21493760 = 21296876 + 196883 + 1  ✨', 300, 105);
+    }
+}
+
+moonTermsSlider.addEventListener('input', drawMoonshine);
+drawMoonshine();
+
+// ============ Navigation highlighting ============
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav a');
+
+function updateNav() {
+    let current = 0;
+    sections.forEach((section, i) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top < window.innerHeight / 2) {
+            current = i;
+        }
+    });
+    navLinks.forEach((link, i) => {
+        link.classList.toggle('active', i === current);
+    });
+}
+
+window.addEventListener('scroll', updateNav);
+updateNav();
+
+// ============ Smooth scroll for nav ============
+navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+});
+
+// ============ Cleanup on page hide ============
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        if (monsterAnimFrame) cancelAnimationFrame(monsterAnimFrame);
+    } else {
+        drawMonster();
+    }
+});
+
+</script>
+</body>
+</html>
