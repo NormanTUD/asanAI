@@ -1,4 +1,12 @@
 window.bibData = {
+	"kapp1877grundlinien": {
+		title: "Grundlinien einer Philosophie der Technik",
+		author: "Ernst Kapp",
+		year: 1877,
+		url: "https://dn720703.ca.archive.org/0/items/grundlinieneine00kappgoog/grundlinieneine00kappgoog.pdf",
+		alternativetitle: "Organprojektion"
+	},
+
 	"adaptivepattern": {
 		title: "A Theory of Adaptive Pattern Classifiers",
 		author: "Shunichi Amari",
