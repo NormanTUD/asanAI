@@ -746,6 +746,25 @@ From this scientific instrument, an extraordinary displacement unfolded: **Philo
 Without the visual display, AI remains a silent, invisible process. The screen is the **output channel** through which a language model becomes conversational and immediate, and its lineage traces directly to a physicist studying oscillating currents with no notion of "computation" whatsoever.
 </div>
 
+
+<div class="optional md" data-headline="Early work on pattern classification algorithms">
+In 1967, Shunichi Amari made a foundational contribution to the theory of adaptive
+pattern classifiers in \citetitle{adaptivepattern}.
+
+His work addressed the problem of determining the optimal weight vector of linear
+pattern classifiers under general, potentially non-separable pattern distributions.
+Amari proposed a "probabilistic-descent method," in which a correction vector is
+associated with each misclassified pattern such that, on average, the correction
+moves the discriminant function toward the optimum, even though any individual
+trial may worsen it. He proved that the weight vector converges to the optimal
+solution and revealed an important tradeoff between the speed and accuracy of
+convergence: a larger learning constant accelerates convergence but reduces
+final accuracy, while a smaller one improves accuracy at the cost of slower
+learning. He further generalized the theory to multicategory classifiers,
+piecewise-linear discriminant functions, and general nonlinear classifiers,
+and even introduced an adaptive scheme for learning the learning rule itself.
+</div>
+
 <div class="optional md" data-headline="From ARPANET to the World Wide Web: How the Internet Created AI's Training Data">
 
 Without the internet, there is no Large Language Model. Not because LLMs require a network connection to function, but because without a global, open, interconnected information network, the **petabytes of digitized human text** required to train them would simply not exist. The internet is not merely the delivery mechanism for AI, it is the precondition for the training corpus itself.
