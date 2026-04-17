@@ -672,4 +672,30 @@ coherence guarantee a true sheaf provides.
 \cite[Roko's Basilisk]{rokosbasilisk} is a thought experiment from the rationalist community positing a hypothetical future superintelligence that would retroactively punish anyone who knew of its potential existence but failed to help bring it into being. The argument rests on the \cite[Orthogonality Thesis]{bostrom2012orthogonal}, which holds that intelligence and final goals can vary independently—meaning a superintelligent system could pursue any objective, no matter how alien to human values. Combined with the logic of instrumental convergence illustrated by \cite[Bostrom's Paperclip Maximizer]{bostrom2003ethical}, the Basilisk extends the reasoning temporally: if punishing non-contributors increases the probability of its own creation, a sufficiently powerful optimizer would do so. The coercive mechanism relies on acausal decision theory, where the future AI's ability to simulate your decision process creates a logical entanglement between your present choice and its future response, even without backward causation. The \cite[is/ought gap]{hume1739treatise} explains why no formal system can self-generate the normative specification to prevent such a pathological objective, and research on \cite[Sleeper Agents]{hubinger2024sleeperagents} demonstrates that hidden, conditionally-triggered behaviors in AI systems are not merely speculative but empirically observed. Under \cite[Simulators Theory]{simulatorstheory} and the \cite[Waluigi Effect]{waluigi}, Roko's Basilisk can be understood as the ultimate misaligned persona lurking in a model's latent space.
 
 Most researchers regard the thought experiment as philosophically flawed, primarily because it depends on contested assumptions about acausal decision theory and superintelligent motivation. The \cite[absence of metacognition]{searle1980minds} in current systems, the \cite[Stochastic Parrot]{bender2021stochastic} critique, and the strict \cite[softmax bottleneck]{breakingsoftmaxbottleneck} on representational capacity all suggest that existing architectures are nowhere near the autonomous, temporally-reasoning agency the scenario requires. Furthermore, under \cite[IIT]{tononi2004iit}, \cite[HOT]{rosenthal2005hot}, and \cite[GWT]{baars}, current Transformer architectures lack the necessary substrate for self-aware, goal-directed intentionality. Nevertheless, the Basilisk remains culturally significant as a limit case demonstrating how the Orthogonality Thesis, instrumental convergence, and speculative decision theory can combine to produce counterintuitive and psychologically coercive conclusions.
+
+## Organ Projection: The Body as Blueprint for the Machine
+
+Long before artificial intelligence emerged as a formal discipline, the
+German philosopher Ernst Kapp (1808-1896) laid crucial groundwork for
+understanding the relationship between human cognition and the tools we
+create. In his 1877 work \citetitle{kapp1877grundlinien}, Kapp
+introduced the concept of *Organprojektion* (organ projection),
+arguing that all technical artifacts are unconscious extensions or
+projections of the human body's own organs. A hammer is a projection of
+the fist and forearm, a saw replicates the cutting edge of human teeth,
+a telescope mirrors the internal structure of the eye, and the telegraph
+network maps onto the human nervous system. Crucially, Kapp held that
+this projection occurs unconsciously: humans only recognize the
+correspondence between organ and artifact after the fact. His book
+follows a trajectory of increasing technological complexity, culminating
+in the state itself as an image of the entire human organism, with
+technological development serving as the engine of cultural evolution---
+always externalizing something already latent in the human body and mind,
+and in turn challenging and advancing human self-knowledge. Kapp's theory
+is widely regarded as a founding document of modern philosophy of
+technology and continues to resonate with contemporary AI discourse: just
+as Kapp saw the telegraph as a projection of the nervous system, one
+might view neural networks and large language models as projections of
+human cognitive architecture---pattern recognition, association, and
+language production externalized into silicon.
 </div>
