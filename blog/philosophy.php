@@ -686,8 +686,9 @@ the fist and forearm, a saw replicates the cutting edge of human teeth,
 a telescope mirrors the internal structure of the eye, and the telegraph
 network maps onto the human nervous system. Crucially, Kapp held that
 this projection occurs unconsciously: humans only recognize the
-correspondence between organ and artifact after the fact. His book
-follows a trajectory of increasing technological complexity, culminating
+correspondence between organ and artifact after the fact.
+
+His book follows a trajectory of increasing technological complexity, culminating
 in the state itself as an image of the entire human organism, with
 technological development serving as the engine of cultural evolution,
 always externalizing something already latent in the human body and mind,
