@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persistent Topology Explorer</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #0a0a1a;
+  color: #e0e0f0;
+  overflow-x: hidden;
+}
+
+.header {
+  text-align: center;
+  padding: 40px 20px 20px;
+  background: linear-gradient(180deg, #12122a 0%, #0a0a1a 100%);
+}
+
+.header h1 {
+  font-size: 2.4em;
+  background: linear-gradient(135deg, #6ee7b7, #3b82f6, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 10px;
+}
+
+.header p {
+  color: #8888aa;
+  font-size: 1.1em;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.section {
+  background: #111128;
+  border: 1px solid #222244;
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 30px;
+}
+
+.section h2 {
+  font-size: 1.5em;
+  color: #a78bfa;
+  margin-bottom: 8px;
+}
+
+.section .subtitle {
+  color: #7777aa;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.canvas-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+canvas {
+  background: #0d0d20;
+  border: 1px solid #2a2a4a;
+  border-radius: 12px;
+  cursor: crosshair;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.controls label {
+  color: #9999bb;
+  font-size: 0.9em;
+}
+
+.controls input[type="range"] {
+  -webkit-appearance: none;
+  background: #222244;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+  width: 200px;
+}
+
+.controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #6ee7b7;
+  cursor: pointer;
+}
+
+button {
+  padding: 8px 20px;
+  border: 1px solid #3b82f6;
+  background: transparent;
+  color: #3b82f6;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background: #3b82f6;
+  color: #fff;
+}
+
+button.active {
+  background: #3b82f6;
+  color: #fff;
+}
+
+button.green { border-color: #6ee7b7; color: #6ee7b7; }
+button.green:hover, button.green.active { background: #6ee7b7; color: #0a0a1a; }
+
+button.purple { border-color: #a78bfa; color: #a78bfa; }
+button.purple:hover, button.purple.active { background: #a78bfa; color: #0a0a1a; }
+
+button.red { border-color: #f87171; color: #f87171; }
+button.red:hover { background: #f87171; color: #0a0a1a; }
+
+.slider-val {
+  color: #6ee7b7;
+  font-weight: bold;
+  min-width: 40px;
+  display: inline-block;
+}
+
+.info-box {
+  background: #0d0d20;
+  border: 1px solid #2a2a4a;
+  border-radius: 10px;
+  padding: 16px;
+  margin: 12px 0;
+  line-height: 1.7;
+  color: #aaaacc;
+  font-size: 0.95em;
+}
+
+.info-box strong {
+  color: #e0e0f0;
+}
+
+.info-box .h0 { color: #6ee7b7; font-weight: bold; }
+.info-box .h1 { color: #f87171; font-weight: bold; }
+.info-box .h2 { color: #facc15; font-weight: bold; }
+
+.legend {
+  display: flex;
+  gap: 20px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85em;
+  color: #9999bb;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.step-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.step-card {
+  background: #0d0d20;
+  border: 1px solid #2a2a4a;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.step-card h3 {
+  color: #3b82f6;
+  font-size: 1em;
+  margin-bottom: 8px;
+}
+
+.step-card p {
+  color: #8888aa;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.presets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+
+.stat {
+  background: #0d0d20;
+  border-radius: 8px;
+  padding: 10px 16px;
+  text-align: center;
+}
+
+.stat .val {
+  font-size: 1.6em;
+  font-weight: bold;
+}
+
+.stat .lbl {
+  font-size: 0.75em;
+  color: #7777aa;
+  margin-top: 2px;
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 800px) {
+  .two-col { grid-template-columns: 1fr; }
+  .controls input[type="range"] { width: 140px; }
+}
+
+.barcode-label {
+  font-size: 0.8em;
+  color: #7777aa;
+}
+
+#walkthrough-canvas-container {
+  position: relative;
+}
+
+.walk-step-text {
+  background: #0d0d20;
+  border: 1px solid #2a2a4a;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 12px;
+  min-height: 80px;
+  line-height: 1.7;
+  color: #ccccee;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🔮 Persistent Topology Explorer</h1>
+  <p>An interactive visual guide to persistent homology — the math that finds shapes in data. Click, drag, and play to build intuition.</p>
+</div>
+
+<div class="container">
+
+  <!-- SECTION 1: What is it? -->
+  <div class="section">
+    <h2>1. What Is Persistent Homology?</h2>
+    <p class="subtitle">The big idea in 60 seconds</p>
+
+    <div class="step-cards">
+      <div class="step-card">
+        <h3>📍 Start with Points</h3>
+        <p>You have a cloud of data points. Maybe sensor readings, pixel coordinates, or high-dimensional features projected down. The question: <strong>what is the "shape" of this data?</strong></p>
+      </div>
+      <div class="step-card">
+        <h3>🫧 Grow Balls</h3>
+        <p>Imagine inflating a ball around each point. As the radius ε grows, balls start overlapping. When two overlap, connect those points with an edge. When three mutually overlap, fill in a triangle. This builds a <strong>simplicial complex</strong>.</p>
+      </div>
+      <div class="step-card">
+        <h3>🕳️ Track Features</h3>
+        <p>As ε increases, topological features <strong>appear</strong> and <strong>disappear</strong>. Connected components merge. Loops form then get filled in. We track the <strong>birth</strong> and <strong>death</strong> of each feature.</p>
+      </div>
+      <div class="step-card">
+        <h3>📊 Barcode / Diagram</h3>
+        <p>Each feature becomes a bar: born at some ε, dying at another. Long bars = <strong>real structure</strong>. Short bars = <strong>noise</strong>. This is the <em>barcode</em>. Equivalently, plot (birth, death) to get a <em>persistence diagram</em>.</p>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>The three types of features we track:</strong><br>
+      <span class="h0">H₀ (Connected Components)</span> — clusters of points. Start with n points = n components. They merge as ε grows.<br>
+      <span class="h1">H₁ (Loops / Holes)</span> — 1-dimensional holes, like the hole in a donut. A ring of edges with no filled interior.<br>
+      <span class="h2">H₂ (Voids)</span> — 2-dimensional cavities, like the inside of a hollow sphere. (We'll focus on H₀ and H₁ in 2D.)
+    </div>
+  </div>
+
+  <!-- SECTION 2: Interactive Filtration -->
+  <div class="section">
+    <h2>2. Watch the Filtration Grow</h2>
+    <p class="subtitle">Place points (click the canvas) or load a preset, then drag the radius slider to see the Rips complex form in real time. Watch the barcode update live.</p>
+
+    <div class="presets">
+      <button class="green" onclick="loadPreset('circle')">⭕ Circle</button>
+      <button class="green" onclick="loadPreset('two-clusters')">🔵🔵 Two Clusters</button>
+      <button class="green" onclick="loadPreset('figure-eight')">♾️ Figure Eight</button>
+      <button class="green" onclick="loadPreset('noisy-circle')">🌀 Noisy Circle</button>
+      <button class="green" onclick="loadPreset('random')">🎲 Random</button>
+      <button class="green" onclick="loadPreset('triangle')">🔺 Triangle</button>
+      <button class="red" onclick="clearPoints()">✕ Clear</button>
+    </div>
+
+    <div class="controls">
+      <label>Radius ε: </label>
+      <input type="range" id="epsilon-slider" min="0" max="200" value="0" step="1" oninput="updateFiltration()">
+      <span class="slider-val" id="epsilon-val">0</span>
+      <button onclick="animateFiltration()">▶ Animate</button>
+      <button onclick="stopAnimation()">⏹ Stop</button>
+    </div>
+
+    <div class="canvas-row">
+      <div>
+        <canvas id="complex-canvas" width="560" height="420"></canvas>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#6ee7b7"></div> Points</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(59,130,246,0.5)"></div> ε-balls</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> Edges</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(167,139,250,0.25)"></div> Triangles</div>
+        </div>
+      </div>
+      <div>
+        <canvas id="barcode-canvas" width="420" height="420"></canvas>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#6ee7b7"></div> H₀ (Components)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div> H₁ (Loops)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats" id="stats-bar">
+      <div class="stat"><div class="val h0" id="stat-components">0</div><div class="lbl">Components (H₀)</div></div>
+      <div class="stat"><div class="val h1" id="stat-loops">0</div><div class="lbl">Loops (H₁)</div></div>
+      <div class="stat"><div class="val" id="stat-edges" style="color:#3b82f6">0</div><div class="lbl">Edges</div></div>
+      <div class="stat"><div class="val" id="stat-triangles" style="color:#a78bfa">0</div><div class="lbl">Triangles</div></div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Persistence Diagram -->
+  <div class="section">
+    <h2>3. Persistence Diagram</h2>
+    <p class="subtitle">The same information as the barcode, plotted differently. Each feature is a point at (birth, death). Points far from the diagonal are "persistent" = significant.</p>
+
+    <div class="canvas-row">
+      <canvas id="diagram-canvas" width="450" height="450"></canvas>
+      <div class="info-box" style="max-width:400px; align-self: center;">
+        <strong>Reading the Diagram:</strong><br><br>
+        • Every point represents a topological feature<br>
+        • <strong>x-axis</strong> = birth time (ε when it appeared)<br>
+        • <strong>y-axis</strong> = death time (ε when it disappeared)<br>
+        • All points lie <strong>above the diagonal</strong> (things die after they're born)<br>
+        • Points <strong>far from the diagonal</strong> = long-lived = significant<br>
+        • Points <strong>near the diagonal</strong> = short-lived = noise<br>
+        • <span class="h0">Green = H₀</span>, <span class="h1">Red = H₁</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Guided Walkthrough -->
+  <div class="section">
+    <h2>4. Guided Walkthrough</h2>
+    <p class="subtitle">Step through the filtration one event at a time and see exactly what happens at each birth/death.</p>
+
+    <div class="controls">
+      <button class="purple" onclick="walkPrev()">← Prev</button>
+      <button class="purple" onclick="walkNext()">Next →</button>
+      <button onclick="walkReset()">Reset</button>
+      <span style="color:#7777aa; margin-left:12px;">Step: <span id="walk-step-num">0</span> / <span id="walk-step-total">0</span></span>
+    </div>
+
+    <div class="canvas-row">
+      <canvas id="walk-canvas" width="500" height="380"></canvas>
+      <canvas id="walk-barcode" width="400" height="380"></canvas>
+    </div>
+
+    <div class="walk-step-text" id="walk-text">
+      Load a preset above and click "Next →" to begin the guided walkthrough. Each step shows a topological event (a component merging or a loop forming/closing).
+    </div>
+  </div>
+
+  <!-- SECTION 5: Why it matters -->
+  <div class="section">
+    <h2>5. Why Does This Matter?</h2>
+    <p class="subtitle">Persistent homology gives you a multi-scale summary of shape that is stable and coordinate-free.</p>
+
+    <div class="step-cards">
+      <div class="step-card">
+        <h3>🧬 Biology</h3>
+        <p>Detect loops in protein structures, classify cell shapes, analyze neural spike train data topology.</p>
+      </div>
+      <div class="step-card">
+        <h3>📡 Sensor Networks</h3>
+        <p>Find coverage holes in sensor networks without knowing exact sensor positions — just connectivity.</p>
+      </div>
+      <div class="step-card">
+        <h3>🖼️ Image Analysis</h3>
+        <p>Sublevel set persistence on grayscale images detects blobs, ridges, and texture patterns robustly.</p>
+      </div>
+      <div class="step-card">
+        <h3>📈 Machine Learning</h3>
+        <p>Use persistence diagrams as features for classification. Topological features are invariant to rotation, translation, and small perturbation.</p>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>Stability Theorem (Cohen-Steiner, Edelsbrunner, Harer 2007):</strong><br>
+      Small changes in the input data produce small changes in the persistence diagram (measured by bottleneck distance). This is why persistent homology is robust to noise — it's <em>stable</em>.
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+//  GLOBAL STATE
+// ============================================================
+let points = [];
+let epsilon = 0;
+let animId = null;
+let barcodeH0 = []; // {birth, death}
+let barcodeH1 = [];
+let walkEvents = [];
+let walkIndex = 0;
+
+const complexCanvas = document.getElementById('complex-canvas');
+const complexCtx = complexCanvas.getContext('2d');
+const barcodeCanvas = document.getElementById('barcode-canvas');
+const barcodeCtx = barcodeCanvas.getContext('2d');
+const diagramCanvas = document.getElementById('diagram-canvas');
+const diagramCtx = diagramCanvas.getContext('2d');
+const walkCanvas = document.getElementById('walk-canvas');
+const walkCtx = walkCanvas.getContext('2d');
+const walkBarcodeCanvas = document.getElementById('walk-barcode');
+const walkBarcodeCtx = walkBarcodeCanvas.getContext('2d');
+
+// ============================================================
+//  POINT PLACEMENT
+// ============================================================
+complexCanvas.addEventListener('click', (e) => {
+  const rect = complexCanvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (complexCanvas.width / rect.width);
+  const y = (e.clientY - rect.top) * (complexCanvas.height / rect.height);
+  points.push({ x, y });
+  computeFullPersistence();
+  updateFiltration();
+  buildWalkthrough();
+});
+
+function clearPoints() {
+  points = [];
+  epsilon = 0;
+  document.getElementById('epsilon-slider').value = 0;
+  barcodeH0 = [];
+  barcodeH1 = [];
+  walkEvents = [];
+  walkIndex = 0;
+  updateFiltration();
+  drawDiagram();
+  drawWalkthrough();
+}
+
+// ============================================================
+//  PRESETS
+// ============================================================
+function loadPreset(name) {
+  points = [];
+  const cx = 280, cy = 210;
+  if (name === 'circle') {
+    for (let i = 0; i < 20; i++) {
+      const a = (2 * Math.PI * i) / 20;
+      points.push({ x: cx + 120 * Math.cos(a), y: cy + 120 * Math.sin(a) });
+    }
+  } else if (name === 'two-clusters') {
+    for (let i = 0; i < 12; i++) {
+      points.push({ x: 140 + Math.random() * 60 - 30, y: 210 + Math.random() * 60 - 30 });
+    }
+    for (let i = 0; i < 12; i++) {
+      points.push({ x: 420 + Math.random() * 60 - 30, y: 210 + Math.random() * 60 - 30 });
+    }
+  } else if (name === 'figure-eight') {
+    for (let i = 0; i < 14; i++) {
+      const a = (2 * Math.PI * i) / 14;
+      points.push({ x: 180 + 80 * Math.cos(a), y: cy + 80 * Math.sin(a) });
+    }
+    for (let i = 0; i < 14; i++) {
+      const a = (2 * Math.PI * i) / 14;
+      points.push({ x: 380 + 80 * Math.cos(a), y: cy + 80 * Math.sin(a) });
+    }
+  } else if (name === 'noisy-circle') {
+    for (let i = 0; i < 24; i++) {
+      const a = (2 * Math.PI * i) / 24;
+      const r = 120 + (Math.random() - 0.5) * 50;
+      points.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) });
+    }
+  } else if (name === 'random') {
+    for (let i = 0; i < 18; i++) {
+      points.push({ x: 50 + Math.random() * 460, y: 40 + Math.random() * 340 });
+    }
+  } else if (name === 'triangle') {
+    const verts = [{ x: 280, y: 60 }, { x: 120, y: 340 }, { x: 440, y: 340 }];
+    for (let e = 0; e < 3; e++) {
+      const a = verts[e], b = verts[(e + 1) % 3];
+      for (let i = 0; i < 7; i++) {
+        const t = i / 7;
+        points.push({ x: a.x + t * (b.x - a.x) + (Math.random() - 0.5) * 10, y: a.y + t * (b.y - a.y) + (Math.random() - 0.5) * 10 });
+      }
+    }
+  }
+  epsilon = 0;
+  document.getElementById('epsilon-slider').value = 0;
+  computeFullPersistence();
+  updateFiltration();
+  buildWalkthrough();
+}
+
+// ============================================================
+//  DISTANCE MATRIX
+// ============================================================
+function dist(a, b) {
+  return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+}
+
+function getDistMatrix() {
+  const n = points.length;
+  const d = Array.from({ length: n }, () => new Float64Array(n));
+  for (let i = 0; i < n; i++)
+    for (let j = i + 1; j < n; j++) {
+      const v = dist(points[i], points[j]);
+      d[i][j] = v;
+      d[j][i] = v;
+    }
+  return d;
+}
+
+// ============================================================
+//  UNION-FIND
+// ============================================================
+class UnionFind {
+  constructor(n) {
+    this.parent = Array.from({ length: n }, (_, i) => i);
+    this.rank = new Uint8Array(n);
+    this.count = n;
+  }
+  find(x) {
+    while (this.parent[x] !== x) {
+      this.parent[x] = this.parent[this.parent[x]];
+      x = this.parent[x];
+    }
+    return x;
+  }
+  union(a, b) {
+    a = this.find(a); b = this.find(b);
+    if (a === b) return false;
+    if (this.rank[a] < this.rank[b]) [a, b] = [b, a];
+    this.parent[b] = a;
+    if (this.rank[a] === this.rank[b]) this.rank[a]++;
+    this.count--;
+    return true;
+  }
+  connected(a, b) { return this.find(a) === this.find(b); }
+}
+
+// ============================================================
+//  COMPUTE FULL PERSISTENCE (H0 via Kruskal, H1 via cycle detection)
+// ============================================================
+function computeFullPersistence() {
+  const n = points.length;
+  if (n === 0) { barcodeH0 = []; barcodeH1 = []; return; }
+
+  const dm = getDistMatrix();
+
+  // Build sorted edge list
+  const edges = [];
+  for (let i = 0; i < n; i++)
+    for (let j = i + 1; j < n; j++)
+      edges.push({ i, j, d: dm[i][j] });
+  edges.sort((a, b) => a.d - b.d);
+
+  // H0: connected components via Kruskal
+  const uf = new UnionFind(n);
+  const birthH0 = new Float64Array(n); // all born at 0
+  const componentBirth = new Float64Array(n); // track birth of each component (always 0 for Rips)
+  barcodeH0 = [];
+  barcodeH1 = [];
+
+  // For H1 we need a simple approach:
+  // We use the standard algorithm: edges that do NOT merge components create a cycle (potential H1 birth).
+  // We need to check if that cycle gets filled by a triangle later.
+
+  // Simplified H1: when an edge creates a cycle, record birth = edge weight.
+  // The cycle dies when a triangle fills it. We check all triangles.
+
+  // Collect H0 events and cycle-creating edges
+  const treeEdges = [];
+  const cycleEdges = [];
+
+  for (const e of edges) {
+    if (uf.union(e.i, e.j)) {
+      treeEdges.push(e);
+      // The younger component dies — for simplicity, death = e.d, birth = 0
+      barcodeH0.push({ birth: 0, death: e.d });
+    } else {
+      cycleEdges.push(e);
+    }
+  }
+  // The one surviving component: birth=0, death=∞
+  // We represent ∞ as a large number
+  barcodeH0.push({ birth: 0, death: Infinity });
+
+  // H1 via a simple approach for small point sets:
+  // For each cycle-creating edge (i,j) at distance d, we know it closes a cycle.
+  // That cycle dies when a triangle (i, j, k) has all three edges present and
+  // max edge weight = the triangle's filtration value.
+  // We use a simplified boundary matrix reduction (Z/2 coefficients).
+
+  // For a correct but simple H1 computation, let's use the standard
+  // incremental algorithm with a boundary matrix over Z/2.
+
+  computeH1(edges, n);
+}
+
+function computeH1(sortedEdges, n) {
+  // We compute H1 using the standard persistence algorithm.
+  // Simplices: 0-simplices (vertices, birth=0), 1-simplices (edges), 2-simplices (triangles).
+
+  // Build all triangles
+  const dm = getDistMatrix();
+  const triangles = [];
+  for (let i = 0; i < n; i++)
+    for (let j = i + 1; j < n; j++)
+      for (let k = j + 1; k < n; k++) {
+        const birth = Math.max(dm[i][j], dm[i][k], dm[j][k]);
+        triangles.push({ verts: [i, j, k], birth });
+      }
+  triangles.sort((a, b) => a.birth - b.birth);
+
+  // Combine all simplices in filtration order
+  // Vertices at time 0, then edges, then triangles
+  // For the persistence algorithm, we process simplices in order and reduce.
+
+  // We'll use a simplified version:
+  // Process edges in order. Use union-find for H0.
+  // For each edge that creates a cycle, it potentially creates an H1 class.
+  // Then process triangles in order. Each triangle kills an H1 class.
+
+  // The cycle-creating edges are H1 births.
+  // Each triangle's boundary is 3 edges. When we add a triangle, if its boundary
+  // (in the reduced matrix) is non-zero, it kills the H1 class born at the
+  // "youngest" edge in that boundary.
+
+  // Proper implementation using reduced boundary matrix:
+  barcodeH1 = [];
+
+  if (n < 3) return;
+
+  // Edge index map
+  const edgeKey = (a, b) => a < b ? `${a},${b}` : `${b},${a}`;
+  const edgeIndex = new Map();
+  sortedEdges.forEach((e, idx) => {
+    edgeIndex.set(edgeKey(e.i, e.j), idx);
+  });
+
+  // Process edges: identify which are cycle-creating
+  const uf2 = new UnionFind(n);
+  const isCycleEdge = new Array(sortedEdges.length).fill(false);
+
+  for (let idx = 0; idx < sortedEdges.length; idx++) {
+    const e = sortedEdges[idx];
+    if (!uf2.union(e.i, e.j)) {
+      isCycleEdge[idx] = true;
+    }
+  }
+
+  // For each triangle (in order), its boundary consists of 3 edges.
+  // The "pivot" of the boundary is the youngest (highest-index) edge.
+  // If that youngest edge is a cycle-creating edge that hasn't been paired yet,
+  // we pair them: H1 born at that edge, dies at this triangle's birth time.
+
+  // This is the standard reduction for a Rips complex.
+  // We maintain a mapping: for each edge index, which column (triangle) has it as pivot.
+
+  const pairedEdge = new Set(); // edges that have been paired (killed)
+  const pivotColumn = new Map(); // edge_idx -> triangle column (for reduction)
+
+  for (const tri of triangles) {
+    const [a, b, c] = tri.verts;
+    // Boundary edges
+    let boundary = new Set();
+    const eAB = edgeIndex.get(edgeKey(a, b));
+    const eAC = edgeIndex.get(edgeKey(a, c));
+    const eBC = edgeIndex.get(edgeKey(b, c));
+    boundary.add(eAB);
+    boundary.add(eAC);
+    boundary.add(eBC);
+
+    // Reduce: while the pivot (max index in boundary) is already a pivot of another column, add that column (XOR / symmetric difference)
+    let maxIter = 0;
+    while (boundary.size > 0 && maxIter < 1000) {
+      maxIter++;
+      const pivot = Math.max(...boundary);
+      if (pivotColumn.has(pivot)) {
+        const otherBoundary = pivotColumn.get(pivot);
+        // Symmetric difference
+        const newBoundary = new Set();
+        for (const e of boundary) {
+          if (!otherBoundary.has(e)) newBoundary.add(e);
+        }
+        for (const e of otherBoundary) {
+          if (!boundary.has(e)) newBoundary.add(e);
+        }
+        boundary = newBoundary;
+      } else {
+        break;
+      }
+    }
+
+    if (boundary.size > 0) {
+      const pivot = Math.max(...boundary);
+      pivotColumn.set(pivot, new Set(boundary));
+      // This triangle kills the H1 class born at edge `pivot`
+      if (isCycleEdge[pivot]) {
+        barcodeH1.push({ birth: sortedEdges[pivot].d, death: tri.birth });
+        pairedEdge.add(pivot);
+      }
+    }
+  }
+
+  // Any unpaired cycle-creating edges give H1 classes that live forever
+  for (let idx = 0; idx < sortedEdges.length; idx++) {
+    if (isCycleEdge[idx] && !pairedEdge.has(idx)) {
+      barcodeH1.push({ birth: sortedEdges[idx].d, death: Infinity });
+    }
+  }
+}
+
+// ============================================================
+//  GET CURRENT COMPLEX AT EPSILON
+// ============================================================
+function getCurrentComplex(eps) {
+  const n = points.length;
+  const edgesNow = [];
+  const trianglesNow = [];
+
+  for (let i = 0; i < n; i++)
+    for (let j = i + 1; j < n; j++)
+      if (dist(points[i], points[j]) <= eps)
+        edgesNow.push([i, j]);
+
+  for (let i = 0; i < n; i++)
+    for (let j = i + 1; j < n; j++)
+      for (let k = j + 1; k < n; k++) {
+        const dij = dist(points[i], points[j]);
+        const dik = dist(points[i], points[k]);
+        const djk = dist(points[j], points[k]);
+        if (dij <= eps && dik <= eps && djk <= eps)
+          trianglesNow.push([i, j, k]);
+      }
+
+  // Count components
+  const uf = new UnionFind(n);
+  for (const [a, b] of edgesNow) uf.union(a, b);
+  const components = n > 0 ? uf.count : 0;
+
+  // Count current loops (H1 features alive at this epsilon)
+  let loops = 0;
+  for (const bar of barcodeH1) {
+    if (bar.birth <= eps && (bar.death > eps || bar.death === Infinity)) loops++;
+  }
+
+  return { edgesNow, trianglesNow, components, loops };
+}
+
+// ============================================================
+//  DRAW COMPLEX
+// ============================================================
+function drawComplex(ctx, canvas, eps, highlightEdge, highlightTri) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const n = points.length;
+  if (n === 0) {
+    ctx.fillStyle = '#555577';
+    ctx.font = '16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Click here to add points', canvas.width / 2, canvas.height / 2);
+    return;
+  }
+
+  const { edgesNow, trianglesNow, components, loops } = getCurrentComplex(eps);
+
+  // Draw epsilon balls
+  for (const p of points) {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, eps / 2, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(59, 130, 246, 0.07)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(59, 130, 246, 0.15)';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  }
+
+  // Draw triangles
+  for (const [i, j, k] of trianglesNow) {
+    ctx.beginPath();
+    ctx.moveTo(points[i].x, points[i].y);
+    ctx.lineTo(points[j].x, points[j].y);
+    ctx.lineTo(points[k].x, points[k].y);
+    ctx.closePath();
+    let isHighlight = highlightTri && highlightTri[0] === i && highlightTri[1] === j && highlightTri[2] === k;
+    ctx.fillStyle = isHighlight ? 'rgba(250, 204, 21, 0.3)' : 'rgba(167, 139, 250, 0.12)';
+    ctx.fill();
+  }
+
+  // Draw edges
+  for (const [i, j] of edgesNow) {
+    ctx.beginPath();
+    ctx.moveTo(points[i].x, points[i].y);
+    ctx.lineTo(points[j].x, points[j].y);
+    let isHighlight = highlightEdge && ((highlightEdge[0] === i && highlightEdge[1] === j) || (highlightEdge[0] === j && highlightEdge[1] === i));
+    ctx.strokeStyle = isHighlight ? '#facc15' : 'rgba(59, 130, 246, 0.5)';
+    ctx.lineWidth = isHighlight ? 3 : 1.5;
+    ctx.stroke();
+  }
+
+  // Draw points
+  for (let i = 0; i < n; i++) {
+    ctx.beginPath();
+    ctx.arc(points[i].x, points[i].y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#6ee7b7';
+    ctx.fill();
+    ctx.strokeStyle = '#0a0a1a';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = '#6ee7b788';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(i, points[i].x, points[i].y - 8);
+  }
+
+  return { components, loops, edgeCount: edgesNow.length, triCount: trianglesNow.length };
+}
+
+// ============================================================
+//  DRAW BARCODE
+// ============================================================
+function drawBarcode(ctx, canvas, eps, maxEps) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const pad = { top: 40, bottom: 30, left: 50, right: 30 };
+  const w = canvas.width - pad.left - pad.right;
+  const h = canvas.height - pad.top - pad.bottom;
+
+  const allBars = [
+    ...barcodeH0.map(b => ({ ...b, type: 'H0' })),
+    ...barcodeH1.map(b => ({ ...b, type: 'H1' }))
+  ];
+
+  if (allBars.length === 0) {
+    ctx.fillStyle = '#555577';
+    ctx.font = '14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Barcode will appear here', canvas.width / 2, canvas.height / 2);
+    return;
+  }
+
+  const maxVal = maxEps || Math.max(...allBars.map(b => b.death === Infinity ? b.birth * 1.5 + 50 : b.death)) * 1.2;
+  const scale = w / maxVal;
+  const barH = Math.min(14, h / allBars.length - 2);
+
+  // Title
+  ctx.fillStyle = '#8888aa';
+  ctx.font = '13px Segoe UI';
+  ctx.textAlign = 'center';
+  ctx.fillText('Persistence Barcode', canvas.width / 2, 20);
+
+  // Axis
+  ctx.strokeStyle = '#333355';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, canvas.height - pad.bottom);
+  ctx.lineTo(canvas.width - pad.right, canvas.height - pad.bottom);
+  ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = '#666688';
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'center';
+  const ticks = 6;
+  for (let i = 0; i <= ticks; i++) {
+    const val = (maxVal * i) / ticks;
+    const x = pad.left + (val * scale);
+    ctx.fillText(val.toFixed(0), x, canvas.height - pad.bottom + 16);
+    ctx.beginPath();
+    ctx.moveTo(x, canvas.height - pad.bottom);
+    ctx.lineTo(x, canvas.height - pad.bottom + 4);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = '#7777aa';
+  ctx.font = '11px Segoe UI';
+  ctx.fillText('ε', canvas.width / 2, canvas.height - 4);
+
+  // Current epsilon line
+  if (eps !== undefined) {
+    const ex = pad.left + eps * scale;
+    ctx.strokeStyle = 'rgba(250, 204, 21, 0.5)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(ex, pad.top);
+    ctx.lineTo(ex, canvas.height - pad.bottom);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#facc15';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`ε=${eps.toFixed(0)}`, ex, pad.top - 6);
+  }
+
+  // Draw bars
+  // Sort: H0 first, then H1, each sorted by birth
+  const h0Bars = allBars.filter(b => b.type === 'H0').sort((a, b) => a.birth - b.birth);
+  const h1Bars = allBars.filter(b => b.type === 'H1').sort((a, b) => a.birth - b.birth);
+  const sorted = [...h0Bars, ...h1Bars];
+
+  sorted.forEach((bar, idx) => {
+    const y = pad.top + idx * (barH + 2);
+    const x1 = pad.left + bar.birth * scale;
+    const deathVal = bar.death === Infinity ? maxVal : bar.death;
+    const x2 = pad.left + deathVal * scale;
+
+    const isH0 = bar.type === 'H0';
+    const alive = eps !== undefined && bar.birth <= eps && (bar.death > eps || bar.death === Infinity);
+
+    ctx.fillStyle = isH0
+      ? (alive ? 'rgba(110, 231, 183, 0.9)' : 'rgba(110, 231, 183, 0.3)')
+      : (alive ? 'rgba(248, 113, 113, 0.9)' : 'rgba(248, 113, 113, 0.3)');
+
+    ctx.fillRect(x1, y, Math.max(x2 - x1, 2), barH);
+
+    // Arrow for infinity
+    if (bar.death === Infinity) {
+      ctx.fillStyle = isH0 ? '#6ee7b7' : '#f87171';
+      ctx.font = '12px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('→∞', x2 + 2, y + barH - 2);
+    }
+
+    // Label
+    ctx.fillStyle = '#555577';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(bar.type, pad.left - 4, y + barH - 2);
+  });
+}
+
+// ============================================================
+//  DRAW PERSISTENCE DIAGRAM
+// ============================================================
+function drawDiagram() {
+  const ctx = diagramCtx;
+  const canvas = diagramCanvas;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const pad = { top: 40, bottom: 40, left: 50, right: 30 };
+  const size = Math.min(canvas.width - pad.left - pad.right, canvas.height - pad.top - pad.bottom);
+
+  const allBars = [...barcodeH0, ...barcodeH1];
+  if (allBars.length === 0) {
+    ctx.fillStyle = '#555577';
+    ctx.font = '14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Persistence diagram will appear here', canvas.width / 2, canvas.height / 2);
+    return;
+  }
+
+  const finiteDeaths = allBars.filter(b => b.death !== Infinity).map(b => b.death);
+  const maxVal = finiteDeaths.length > 0 ? Math.max(...finiteDeaths) * 1.3 : 200;
+  const scale = size / maxVal;
+
+  // Title
+  ctx.fillStyle = '#8888aa';
+  ctx.font = '13px Segoe UI';
+  ctx.textAlign = 'center';
+  ctx.fillText('Persistence Diagram', canvas.width / 2, 20);
+
+  // Axes
+  ctx.strokeStyle = '#333355';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, pad.top + size);
+  ctx.lineTo(pad.left + size, pad.top + size);
+  ctx.stroke();
+
+  // Diagonal
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top + size);
+  ctx.lineTo(pad.left + size, pad.top);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Axis labels
+  ctx.fillStyle = '#666688';
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'center';
+  const ticks = 5;
+  for (let i = 0; i <= ticks; i++) {
+    const val = (maxVal * i) / ticks;
+    const x = pad.left + val * scale;
+    const y = pad.top + size - val * scale;
+    ctx.fillText(val.toFixed(0), x, pad.top + size + 16);
+    ctx.fillText(val.toFixed(0), pad.left - 16, y + 4);
+  }
+
+  ctx.fillStyle = '#7777aa';
+  ctx.font = '11px Segoe UI';
+  ctx.textAlign = 'center';
+  ctx.fillText('Birth', pad.left + size / 2, pad.top + size + 34);
+  ctx.save();
+  ctx.translate(12, pad.top + size / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('Death', 0, 0);
+  ctx.restore();
+
+  // Plot H0 points
+  for (const bar of barcodeH0) {
+    if (bar.death === Infinity) continue; // skip the surviving component
+    const x = pad.left + bar.birth * scale;
+    const y = pad.top + size - bar.death * scale;
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(110, 231, 183, 0.8)';
+    ctx.fill();
+    ctx.strokeStyle = '#6ee7b7';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Plot H1 points
+  for (const bar of barcodeH1) {
+    if (bar.death === Infinity) {
+      // Draw as triangle at top
+      const x = pad.left + bar.birth * scale;
+      const y = pad.top + 10;
+      ctx.beginPath();
+      ctx.moveTo(x, y - 5);
+      ctx.lineTo(x - 5, y + 5);
+      ctx.lineTo(x + 5, y + 5);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(248, 113, 113, 0.8)';
+      ctx.fill();
+      continue;
+    }
+    const x = pad.left + bar.birth * scale;
+    const y = pad.top + size - bar.death * scale;
+    ctx.beginPath();
+    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(248, 113, 113, 0.8)';
+    ctx.fill();
+    ctx.strokeStyle = '#f87171';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Legend
+  ctx.fillStyle = '#6ee7b7';
+  ctx.font = '11px Segoe UI';
+  ctx.textAlign = 'left';
+  ctx.beginPath();
+  ctx.arc(pad.left + size - 80, pad.top + 16, 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillText('H₀', pad.left + size - 72, pad.top + 20);
+
+  ctx.fillStyle = '#f87171';
+  ctx.beginPath();
+  ctx.arc(pad.left + size - 80, pad.top + 34, 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillText('H₁', pad.left + size - 72, pad.top + 38);
+}
+
+// ============================================================
+//  UPDATE FILTRATION (main render loop)
+// ============================================================
+function updateFiltration() {
+  epsilon = parseFloat(document.getElementById('epsilon-slider').value);
+  document.getElementById('epsilon-val').textContent = epsilon.toFixed(0);
+
+  const maxEps = parseFloat(document.getElementById('epsilon-slider').max);
+  const stats = drawComplex(complexCtx, complexCanvas, epsilon);
+  drawBarcode(barcodeCtx, barcodeCanvas, epsilon, maxEps);
+  drawDiagram();
+
+  if (stats) {
+    document.getElementById('stat-components').textContent = stats.components;
+    document.getElementById('stat-loops').textContent = stats.loops;
+    document.getElementById('stat-edges').textContent = stats.edgeCount;
+    document.getElementById('stat-triangles').textContent = stats.triCount;
+  }
+}
+
+// ============================================================
+//  ANIMATION
+// ============================================================
+function animateFiltration() {
+  stopAnimation();
+  const slider = document.getElementById('epsilon-slider');
+  let val = 0;
+  slider.value = 0;
+  animId = setInterval(() => {
+    val += 1;
+    if (val > parseFloat(slider.max)) {
+      stopAnimation();
+      return;
+    }
+    slider.value = val;
+    updateFiltration();
+  }, 40);
+}
+
+function stopAnimation() {
+  if (animId) {
+    clearInterval(animId);
+    animId = null;
+  }
+}
+
+// ============================================================
+//  WALKTHROUGH
+// ============================================================
+function buildWalkthrough() {
+  walkEvents = [];
+  walkIndex = 0;
+
+  const n = points.length;
+  if (n === 0) return;
+
+  const dm = getDistMatrix();
+
+  // Build sorted edge list
+  const edges = [];
+  for (let i = 0; i < n; i++)
+    for (let j = i + 1; j < n; j++)
+      edges.push({ i, j, d: dm[i][j] });
+  edges.sort((a, b) => a.d - b.d);
+
+  // Build sorted triangle list
+  const triangles = [];
+  for (let i = 0; i < n; i++)
+    for (let j = i + 1; j < n; j++)
+      for (let k = j + 1; k < n; k++) {
+        const birth = Math.max(dm[i][j], dm[i][k], dm[j][k]);
+        triangles.push({ verts: [i, j, k], birth });
+      }
+  triangles.sort((a, b) => a.birth - b.birth);
+
+  // Initial event: all points born
+  walkEvents.push({
+    eps: 0,
+    text: `<strong>ε = 0:</strong> All <span class="h0">${n} points</span> are born. Each is its own connected component. We have <span class="h0">${n} H₀ features</span> and <span class="h1">0 H₁ features</span>.`,
+    highlightEdge: null,
+    highlightTri: null
+  });
+
+  // Process edges with union-find to detect merges and cycles
+  const uf = new UnionFind(n);
+  const edgeKey = (a, b) => a < b ? `${a},${b}` : `${b},${a}`;
+  const addedEdges = new Set();
+
+  for (const e of edges) {
+    if (uf.union(e.i, e.j)) {
+      addedEdges.add(edgeKey(e.i, e.j));
+      walkEvents.push({
+        eps: e.d,
+        text: `<strong>ε = ${e.d.toFixed(1)}:</strong> Edge (${e.i}, ${e.j}) connects two components → they <span class="h0">merge</span>. An H₀ bar <strong>dies</strong> at ε = ${e.d.toFixed(1)}. Now ${uf.count} component(s).`,
+        highlightEdge: [e.i, e.j],
+        highlightTri: null
+      });
+    } else {
+      addedEdges.add(edgeKey(e.i, e.j));
+      walkEvents.push({
+        eps: e.d,
+        text: `<strong>ε = ${e.d.toFixed(1)}:</strong> Edge (${e.i}, ${e.j}) connects two already-connected points → a <span class="h1">cycle (loop)</span> is created! An H₁ bar is <strong>born</strong>.`,
+        highlightEdge: [e.i, e.j],
+        highlightTri: null
+      });
+    }
+  }
+
+  // Add triangle events
+  for (const tri of triangles) {
+    walkEvents.push({
+      eps: tri.birth,
+      text: `<strong>ε = ${tri.birth.toFixed(1)}:</strong> Triangle (${tri.verts.join(', ')}) is filled in at ε = ${tri.birth.toFixed(1)}. If this fills a loop, an H₁ bar <strong>dies</strong>.`,
+      highlightEdge: null,
+      highlightTri: tri.verts
+    });
+  }
+
+  // Sort all events by epsilon
+  walkEvents.sort((a, b) => a.eps - b.eps);
+
+  document.getElementById('walk-step-total').textContent = walkEvents.length - 1;
+  document.getElementById('walk-step-num').textContent = 0;
+  drawWalkthrough();
+}
+
+function drawWalkthrough() {
+  if (walkEvents.length === 0) {
+    walkCtx.clearRect(0, 0, walkCanvas.width, walkCanvas.height);
+    walkBarcodeCtx.clearRect(0, 0, walkBarcodeCanvas.width, walkBarcodeCanvas.height);
+    walkCtx.fillStyle = '#555577';
+    walkCtx.font = '14px Segoe UI';
+    walkCtx.textAlign = 'center';
+    walkCtx.fillText('Load a preset to begin', walkCanvas.width / 2, walkCanvas.height / 2);
+    return;
+  }
+
+  const event = walkEvents[Math.min(walkIndex, walkEvents.length - 1)];
+  drawComplex(walkCtx, walkCanvas, event.eps, event.highlightEdge, event.highlightTri);
+
+  const maxEps = walkEvents.length > 0 ? Math.max(...walkEvents.map(e => e.eps)) * 1.2 + 20 : 200;
+  drawBarcode(walkBarcodeCtx, walkBarcodeCanvas, event.eps, maxEps);
+
+  document.getElementById('walk-text').innerHTML = event.text;
+  document.getElementById('walk-step-num').textContent = walkIndex;
+}
+
+function walkNext() {
+  if (walkIndex < walkEvents.length - 1) {
+    walkIndex++;
+    drawWalkthrough();
+  }
+}
+
+function walkPrev() {
+  if (walkIndex > 0) {
+    walkIndex--;
+    drawWalkthrough();
+  }
+}
+
+function walkReset() {
+  walkIndex = 0;
+  drawWalkthrough();
+}
+
+// ============================================================
+//  INITIAL DRAW
+// ============================================================
+updateFiltration();
+drawDiagram();
+
+// Auto-load a preset for first-time visitors
+setTimeout(() => {
+  loadPreset('circle');
+}, 300);
+</script>
+
+</body>
+</html>
