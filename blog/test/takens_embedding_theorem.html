@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Takens' Embedding Theorem — An Interactive Exploration</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface2: #1a1a26;
+            --border: #2a2a3a;
+            --text: #e8e8f0;
+            --text-dim: #8888a0;
+            --accent1: #6c5ce7;
+            --accent2: #00cec9;
+            --accent3: #fd79a8;
+            --accent4: #fdcb6e;
+            --accent5: #55efc4;
+            --glow1: rgba(108, 92, 231, 0.3);
+            --glow2: rgba(0, 206, 201, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--accent1); border-radius: 3px; }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, var(--glow1) 0%, transparent 70%);
+            top: 10%; left: 20%;
+            animation: float1 8s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, var(--glow2) 0%, transparent 70%);
+            bottom: 10%; right: 15%;
+            animation: float2 10s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(40px, -30px); }
+        }
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-30px, 20px); }
+        }
+
+        .hero-content { position: relative; z-index: 1; max-width: 800px; }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent2), var(--accent1), var(--accent3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtitle {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            z-index: 1;
+            animation: bounce 2s ease-in-out infinite;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .scroll-hint .arrow {
+            display: block;
+            margin: 0.5rem auto 0;
+            font-size: 1.5rem;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+
+        /* Sections */
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent2), var(--accent1));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-header p {
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 32px; height: 32px;
+            background: var(--accent1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: border-color 0.3s;
+        }
+
+        .card:hover { border-color: var(--accent1); }
+
+        .card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card p, .card li {
+            color: var(--text-dim);
+            margin-bottom: 0.8rem;
+        }
+
+        .card ul { padding-left: 1.5rem; }
+
+        /* Equation box */
+        .equation-box {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: var(--accent2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .equation-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
+        }
+
+        /* Interactive panels */
+        .interactive-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .panel-header {
+            background: var(--surface2);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .panel-body {
+            padding: 1.5rem;
+        }
+
+        /* Canvas containers */
+        .canvas-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .canvas-container {
+            position: relative;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .canvas-container canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .canvas-label {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 0.3rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--accent2);
+            border: 1px solid var(--border);
+        }
+
+        .canvas-single {
+            max-width: 700px;
+            margin: 1rem auto;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.5rem;
+        }
+
+        .control-group .value-display {
+            float: right;
+            color: var(--accent2);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--surface2);
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: var(--accent1);
+            box-shadow: 0 0 10px var(--glow1);
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        select:focus { border-color: var(--accent1); }
+
+        /* Buttons */
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.03em;
+        }
+
+        .btn-primary {
+            background: var(--accent1);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #7d6ef0;
+            box-shadow: 0 4px 15px var(--glow1);
+        }
+
+        .btn-secondary {
+            background: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        /* Info callout */
+        .callout {
+            background: rgba(108, 92, 231, 0.08);
+            border-left: 3px solid var(--accent1);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+            color: var(--text-dim);
+        }
+
+        .callout strong { color: var(--text); }
+
+        .callout.success {
+            background: rgba(0, 206, 201, 0.08);
+            border-left-color: var(--accent2);
+        }
+
+        .callout.warning {
+            background: rgba(253, 203, 110, 0.08);
+            border-left-color: var(--accent4);
+        }
+
+        /* Metric display */
+        .metrics {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .metric {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.75rem 1.25rem;
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .metric .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent2);
+        }
+
+        .metric .metric-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .canvas-row { grid-template-columns: 1fr; }
+            .controls { flex-direction: column; }
+            section { padding: 2rem 1rem; }
+        }
+
+        /* Divider */
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent1), var(--accent2));
+            border-radius: 2px;
+            margin: 3rem auto;
+        }
+
+        /* Animate in */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<div class="hero">
+    <div class="hero-content fade-in">
+        <h1>Takens' Embedding Theorem</h1>
+        <p class="subtitle">Reconstructing hidden worlds from a single measurement</p>
+        <p>
+            What if you could understand an entire complex system — its hidden variables,
+            its geometry, its dynamics — by observing just <em>one</em> measurement over time?
+            That's the astonishing promise of Takens' theorem. Let's explore it interactively.
+        </p>
+    </div>
+    <div class="scroll-hint">
+        Scroll to begin
+        <span class="arrow">↓</span>
+    </div>
+</div>
+
+<!-- ============ SECTION 1: THE IDEA ============ -->
+<section>
+    <div class="section-header">
+        <h2>The Core Idea</h2>
+        <p>From one signal, reconstruct the shape of chaos</p>
+    </div>
+
+    <div class="card">
+        <h3>🌀 The Problem</h3>
+        <p>
+            Imagine a complex system — say, the weather, a beating heart, or a dripping faucet.
+            It has many interacting variables (temperature, pressure, humidity…), but you can only
+            measure <strong>one</strong> of them. Can you still understand the system's full behavior?
+        </p>
+        <p>
+            Floris Takens proved in 1981 that <strong>yes, you can</strong> — by using
+            <em>time-delayed copies</em> of your single measurement to reconstruct a geometric
+            portrait of the original system that preserves its essential structure.
+        </p>
+    </div>
+
+    <div class="equation-box">
+        <div style="margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em;">
+            The Delay Embedding Map
+        </div>
+        <strong>Φ(t) = [ x(t), x(t−τ), x(t−2τ), …, x(t−(d−1)τ) ]</strong>
+        <div style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-dim);">
+            where <strong style="color:var(--accent4)">x(t)</strong> is your single measurement,
+            <strong style="color:var(--accent3)">τ</strong> is the time delay, and
+            <strong style="color:var(--accent5)">d</strong> is the embedding dimension
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>🔑 The Key Insight</h3>
+        <p>
+            Each point in the delay-embedded space is a vector of time-delayed measurements.
+            If you choose the embedding dimension <strong>d ≥ 2m + 1</strong> (where <em>m</em> is the
+            dimension of the original attractor), the reconstructed attractor is <strong>diffeomorphic</strong>
+            (topologically equivalent) to the true attractor. The geometry is preserved!
+        </p>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ SECTION 2: SEE THE SIGNAL ============ -->
+<section>
+    <div class="section-header">
+        <h2>Step 1: The Signal</h2>
+        <p>Choose a dynamical system and observe a single variable</p>
+    </div>
+
+    <div class="interactive-panel">
+        <div class="panel-header">
+            <h3><span class="panel-dot" style="background:var(--accent2)"></span> Signal Explorer</h3>
+            <span style="font-size:0.75rem;color:var(--text-dim)">Choose a system</span>
+        </div>
+        <div class="panel-body">
+            <div class="controls">
+                <div class="control-group">
+                    <label>Dynamical System</label>
+                    <select id="systemSelect">
+                        <option value="lorenz">Lorenz Attractor (Chaotic)</option>
+                        <option value="rossler">Rössler Attractor</option>
+                        <option value="sine">Sine Wave (Periodic)</option>
+                        <option value="twofreq">Two-Frequency Quasiperiodic</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Observed Variable
+                        <span class="value-display" id="varDisplay">x(t)</span>
+                    </label>
+                    <select id="varSelect">
+                        <option value="0">x(t)</option>
+                        <option value="1">y(t)</option>
+                        <option value="2">z(t)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="canvas-single">
+                <div class="canvas-container">
+                    <canvas id="signalCanvas" width="700" height="200"></canvas>
+                    <div class="canvas-label">📈 Time Series — Your Only Observation</div>
+                </div>
+            </div>
+
+            <div class="callout">
+                <strong>What you're seeing:</strong> A single scalar measurement over time from a
+                multi-dimensional dynamical system. This is all you have — and it's enough.
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ SECTION 3: DELAY EMBEDDING ============ -->
+<section>
+    <div class="section-header">
+        <h2>Step 2: The Embedding</h2>
+        <p>Use time delays to unfold the hidden attractor</p>
+    </div>
+
+    <div class="interactive-panel">
+        <div class="panel-header">
+            <h3><span class="panel-dot" style="background:var(--accent3)"></span> Delay Embedding Workshop</h3>
+            <span style="font-size:0.75rem;color:var(--text-dim)">Drag the sliders!</span>
+        </div>
+        <div class="panel-body">
+            <div class="controls">
+                <div class="control-group">
+                    <label>Time Delay (τ)
+                        <span class="value-display" id="tauDisplay">10</span>
+                    </label>
+                    <input type="range" id="tauSlider" min="1" max="80" value="10">
+                </div>
+                <div class="control-group">
+                    <label>Embedding Dimension (d)
+                        <span class="value-display" id="dimDisplay">3</span>
+                    </label>
+                    <input type="range" id="dimSlider" min="2" max="7" value="3" step="1">
+                </div>
+                <div class="control-group">
+                    <label>Rotation Speed
+                        <span class="value-display" id="rotDisplay">50%</span>
+                    </label>
+                    <input type="range" id="rotSlider" min="0" max="100" value="50">
+                </div>
+            </div>
+
+            <div class="canvas-row">
+                <div class="canvas-container">
+                    <canvas id="trueAttractorCanvas" width="500" height="500"></canvas>
+                    <div class="canvas-label">🎯 True Attractor (hidden from you)</div>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="embeddingCanvas" width="500" height="500"></canvas>
+                    <div class="canvas-label">🔮 Your Reconstructed Attractor</div>
+                </div>
+            </div>
+
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value" id="metricTau">10</div>
+                    <div class="metric-label">Time Delay τ</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="metricDim">3</div>
+                    <div class="metric-label">Embedding Dim d</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="metricPoints">—</div>
+                    <div class="metric-label">Embedded Points</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="metricQuality">—</div>
+                    <div class="metric-label">Quality</div>
+                </div>
+            </div>
+
+            <div class="callout success" id="embeddingFeedback">
+                <strong>Try it:</strong> Change τ and d. Watch how the reconstructed shape morphs.
+                When parameters are good, the reconstruction looks topologically similar to the true attractor!
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>🎯 What Makes a Good Embedding?</h3>
+        <ul>
+            <li><strong>τ too small:</strong> Points cluster along the diagonal — no new information from delays</li>
+            <li><strong>τ too large:</strong> Delays become uncorrelated — the structure dissolves into noise</li>
+            <li><strong>d too small:</strong> The attractor folds over itself — false neighbors appear</li>
+            <li><strong>d just right:</strong> The attractor unfolds cleanly — topology is preserved! ✨</li>
+        </ul>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ SECTION 4: FALSE NEAREST NEIGHBORS ============ -->
+<section>
+    <div class="section-header">
+        <h2>Step 3: Finding the Right Dimension</h2>
+        <p>The False Nearest Neighbors method</p>
+    </div>
+
+    <div class="interactive-panel">
+        <div class="panel-header">
+            <h3><span class="panel-dot" style="background:var(--accent4)"></span> False Nearest Neighbors</h3>
+            <span style="font-size:0.75rem;color:var(--text-dim)">How many dimensions do we need?</span>
+        </div>
+        <div class="panel-body">
+            <p style="color:var(--text-dim); margin-bottom:1rem;">
+                In too few dimensions, points that are far apart on the true attractor get projected
+                close together — they're <strong>"false neighbors."</strong> As we increase the
+                embedding dimension, these false neighbors disappear. When the percentage drops to
+                near zero, we've found our dimension.
+            </p>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" id="runFNN">▶ Run FNN Analysis</button>
+            </div>
+
+            <div class="canvas-single">
+                <div class="canvas-container">
+                    <canvas id="fnnCanvas" width="700" height="300"></canvas>
+                    <div class="canvas-label">📊 False Nearest Neighbors vs Dimension</div>
+                </div>
+            </div>
+
+            <div class="callout warning" id="fnnFeedback">
+                <strong>Click "Run FNN Analysis"</strong> to compute the percentage of false nearest
+                neighbors for each embedding dimension. The optimal dimension is where FNN ≈ 0%.
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ SECTION 5: PREDICTION ============ -->
+<section>
+    <div class="section-header">
+        <h2>Step 4: Practical Power</h2>
+        <p>Use the reconstructed attractor to predict the future</p>
+    </div>
+
+    <div class="interactive-panel">
+        <div class="panel-header">
+            <h3><span class="panel-dot" style="background:var(--accent5)"></span> Forecasting from Embedding</h3>
+            <span style="font-size:0.75rem;color:var(--text-dim)">Predict chaos!</span>
+        </div>
+        <div class="panel-body">
+            <p style="color:var(--text-dim); margin-bottom:1rem;">
+                Once we have the reconstructed attractor, we can find the current state's
+                <strong>nearest neighbors</strong> in the embedding space, see where <em>they</em>
+                went next, and use that to forecast the future — even for chaotic systems!
+            </p>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Prediction Horizon
+                        <span class="value-display" id="horizonDisplay">20 steps</span>
+                    </label>
+                    <input type="range" id="horizonSlider" min="5" max="100" value="20">
+                </div>
+                <div class="control-group">
+                    <label>Number of Neighbors (k)
+                        <span class="value-display" id="kDisplay">5</span>
+                    </label>
+                    <input type="range" id="kSlider" min="1" max="20" value="5">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" id="runPrediction">▶ Run Prediction</button>
+            </div>
+
+            <div class="canvas-single">
+                <div class="canvas-container">
+                    <canvas id="predictionCanvas" width="700" height="250"></canvas>
+                    <div class="canvas-label">🔮 Actual vs Predicted</div>
+                </div>
+            </div>
+
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value" id="predError">—</div>
+                    <div class="metric-label">Mean Error</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="predCorr">—</div>
+                    <div class="metric-label">Correlation</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="predHorizon">—</div>
+                    <div class="metric-label">Horizon</div>
+                </div>
+            </div>
+
+            <div class="callout success">
+                <strong>This is the magic:</strong> Even though the Lorenz system is chaotic (sensitive
+                to initial conditions), Takens' embedding lets us make short-term predictions by
+                leveraging the geometry of the attractor. This technique is used in real-world
+                applications from weather forecasting to cardiac monitoring to financial modeling.
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ SECTION 6: APPLICATIONS ============ -->
+<section>
+    <div class="section-header">
+        <h2>Real-World Applications</h2>
+        <p>Where Takens' theorem changes the game</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
+        <div class="card">
+            <h3>❤️ Cardiology</h3>
+            <p>
+                Reconstruct cardiac attractors from a single ECG lead to detect arrhythmias,
+                atrial fibrillation, and early signs of heart failure. The shape of the
+                reconstructed attractor reveals dynamics invisible in the raw signal.
+            </p>
+        </div>
+        <div class="card">
+            <h3>🌦️ Weather & Climate</h3>
+            <p>
+                Short-term weather prediction using delay embeddings of temperature or pressure
+                time series. Takens' method helps identify underlying climate modes and
+                regime transitions.
+            </p>
+        </div>
+        <div class="card">
+            <h3>📈 Finance</h3>
+            <p>
+                Detect deterministic structure in stock prices and exchange rates. Embedding
+                reveals whether apparent randomness hides low-dimensional chaotic dynamics
+                that can be partially predicted.
+            </p>
+        </div>
+        <div class="card">
+            <h3>🧠 Neuroscience</h3>
+            <p>
+                Analyze EEG signals to reconstruct brain state attractors. Used to detect
+                epileptic seizures before they happen and to study consciousness states
+                during anesthesia.
+            </p>
+        </div>
+        <div class="card">
+            <h3>⚙️ Engineering</h3>
+            <p>
+                Vibration monitoring of machinery. A single accelerometer signal, when embedded,
+                reveals bearing faults, gear wear, and structural damage through changes in
+                attractor geometry.
+            </p>
+        </div>
+        <div class="card">
+            <h3>🌊 Ecology</h3>
+            <p>
+                Empirical Dynamic Modeling (EDM) uses Takens' embedding to forecast species
+                populations, detect causal interactions between species, and manage fisheries
+                — all from observational time series.
+            </p>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ SECTION 7: SUMMARY ============ -->
+<section>
+    <div class="section-header">
+        <h2>The Beautiful Summary</h2>
+        <p>What we've learned</p>
+    </div>
+
+    <div class="card" style="border-color: var(--accent1);">
+        <h3>✨ Takens' Embedding Theorem in One Breath</h3>
+        <p>
+            A single scalar time series <strong>x(t)</strong>, when unfolded into a space of
+            time-delayed coordinates <strong>[x(t), x(t−τ), x(t−2τ), …]</strong>, generically
+            produces a reconstruction that is <strong>diffeomorphic</strong> to the original
+            dynamical system's attractor — provided the embedding dimension is large enough
+            (<strong>d ≥ 2m+1</strong>). This means:
+        </p>
+        <ul>
+            <li>The <strong>topology</strong> is preserved (loops, holes, connectivity)</li>
+            <li>The <strong>dynamics</strong> are preserved (trajectories map to trajectories)</li>
+            <li><strong>Lyapunov exponents</strong>, fractal dimensions, and other invariants can be computed</li>
+            <li><strong>Prediction</strong> is possible by finding neighbors in the reconstructed space</li>
+        </ul>
+        <p style="margin-top:1rem; color: var(--accent2); font-style:italic;">
+            "One measurement, faithfully delayed, contains the shadow of the whole system."
+        </p>
+    </div>
+</section>
+
+<footer>
+    <p>An interactive exploration of Takens' Embedding Theorem (1981)</p>
+    <p style="margin-top:0.5rem; font-size:0.75rem;">
+        Built with vanilla HTML, CSS & JavaScript — no libraries needed
+    </p>
+</footer>
+
+<!-- ============================================================ -->
+<!-- ======================== JAVASCRIPT ========================= -->
+<!-- ============================================================ -->
+<script>
+// ============================================================
+// GLOBAL STATE
+// ============================================================
+const state = {
+    system: 'lorenz',
+    observedVar: 0,
+    tau: 10,
+    dim: 3,
+    rotSpeed: 50,
+    horizon: 20,
+    kNeighbors: 5,
+    data: null,       // full multi-dim trajectory
+    signal: null,     // observed 1D signal
+    angle: 0,
+    animId: null,
+};
+
+// ============================================================
+// DYNAMICAL SYSTEMS — Numerical Integration
+// ============================================================
+function generateLorenz(n = 8000) {
+    const sigma = 10, rho = 28, beta = 8 / 3;
+    const dt = 0.005;
+    let x = 1, y = 1, z = 1;
+    const traj = [];
+    // Transient
+    for (let i = 0; i < 2000; i++) {
+        const dx = sigma * (y - x);
+        const dy = x * (rho - z) - y;
+        const dz = x * y - beta * z;
+        x += dx * dt; y += dy * dt; z += dz * dt;
+    }
+    for (let i = 0; i < n; i++) {
+        const dx = sigma * (y - x);
+        const dy = x * (rho - z) - y;
+        const dz = x * y - beta * z;
+        x += dx * dt; y += dy * dt; z += dz * dt;
+        traj.push([x, y, z]);
+    }
+    return traj;
+}
+
+function generateRossler(n = 8000) {
+    const a = 0.2, b = 0.2, c = 5.7;
+    const dt = 0.025;
+    let x = 1, y = 1, z = 1;
+    const traj = [];
+    for (let i = 0; i < 2000; i++) {
+        const dx = -y - z;
+        const dy = x + a * y;
+        const dz = b + z * (x - c);
+        x += dx * dt; y += dy * dt; z += dz * dt;
+    }
+    for (let i = 0; i < n; i++) {
+        const dx = -y - z;
+        const dy = x + a * y;
+        const dz = b + z * (x - c);
+        x += dx * dt; y += dy * dt; z += dz * dt;
+        traj.push([x, y, z]);
+    }
+    return traj;
+}
+
+function generateSine(n = 8000) {
+    const traj = [];
+    for (let i = 0; i < n; i++) {
+        const t = i * 0.02;
+        traj.push([Math.sin(t), Math.cos(t), Math.sin(2 * t)]);
+    }
+    return traj;
+}
+
+function generateTwoFreq(n = 8000) {
+    const traj = [];
+    const f1 = 1, f2 = Math.sqrt(2);
+    for (let i = 0; i < n; i++) {
+        const t = i * 0.02;
+        traj.push([
+            Math.sin(f1 * t) + 0.5 * Math.sin(f2 * t),
+            Math.cos(f1 * t) + 0.5 * Math.cos(f2 * t),
+            Math.sin(f1 * t) * Math.cos(f2 * t)
+        ]);
+    }
+    return traj;
+}
+
+function generateSystem(name) {
+    switch (name) {
+        case 'lorenz': return generateLorenz();
+        case 'rossler': return generateRossler();
+        case 'sine': return generateSine();
+        case 'twofreq': return generateTwoFreq();
+        default: return generateLorenz();
+    }
+}
+
+// ============================================================
+// DELAY EMBEDDING
+// ============================================================
+function delayEmbed(signal, tau, dim) {
+    const n = signal.length - (dim - 1) * tau;
+    if (n <= 0) return [];
+    const embedded = [];
+    for (let i = 0; i < n; i++) {
+        const vec = [];
+        for (let d = 0; d < dim; d++) {
+            vec.push(signal[i + d * tau]);
+        }
+        embedded.push(vec);
+    }
+    return embedded;
+}
+
+// ============================================================
+// 3D PROJECTION (simple rotation)
+// ============================================================
+function project3D(points, angle, canvasW, canvasH) {
+    if (points.length === 0) return [];
+
+    // Use first 3 dims (or pad with 0)
+    const pts3 = points.map(p => [p[0] || 0, p[1] || 0, p[2] || 0]);
+
+    // Normalize
+    let minX = Infinity, maxX = -Infinity;
+    let minY = Infinity, maxY = -Infinity;
+    let minZ = Infinity, maxZ = -Infinity;
+    for (const p of pts3) {
+        minX = Math.min(minX, p[0]); maxX = Math.max(maxX, p[0]);
+        minY = Math.min(minY, p[1]); maxY = Math.max(maxY, p[1]);
+        minZ = Math.min(minZ, p[2]); maxZ = Math.max(maxZ, p[2]);
+    }
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2, cz = (minZ + maxZ) / 2;
+    const range = Math.max(maxX - minX, maxY - minY, maxZ - minZ) || 1;
+
+    const cosA = Math.cos(angle), sinA = Math.sin(angle);
+    const cosB = Math.cos(angle * 0.7), sinB = Math.sin(angle * 0.7);
+
+    const projected = [];
+    const margin = 40;
+    const scale = (Math.min(canvasW, canvasH) - margin * 2) / 2;
+
+    for (const p of pts3) {
+        let x = (p[0] - cx) / range;
+        let y = (p[1] - cy) / range;
+        let z = (p[2] - cz) / range;
+
+        // Rotate Y
+        const x1 = x * cosA - z * sinA;
+        const z1 = x * sinA + z * cosA;
+        // Rotate X
+        const y1 = y * cosB - z1 * sinB;
+        const z2 = y * sinB + z1 * cosB;
+
+        // Simple perspective
+        const persp = 1 / (1 - z2 * 0.3);
+        const sx = canvasW / 2 + x1 * scale * persp;
+        const sy = canvasH / 2 - y1 * scale * persp;
+
+        projected.push({ x: sx, y: sy, z: z2, persp });
+    }
+    return projected;
+}
+
+// ============================================================
+// DRAWING FUNCTIONS
+// ============================================================
+function drawSignal(canvas, signal) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = '#0d0d14';
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    for (let y = 0; y < H; y += 40) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    for (let x = 0; x < W; x += 40) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+
+    if (!signal || signal.length === 0) return;
+
+    let min = Infinity, max = -Infinity;
+    for (const v of signal) { min = Math.min(min, v); max = Math.max(max, v); }
+    const range = max - min || 1;
+    const pad = 20;
+
+    // Draw signal
+    const grad = ctx.createLinearGradient(0, 0, W, 0);
+    grad.addColorStop(0, '#6c5ce7');
+    grad.addColorStop(0.5, '#00cec9');
+    grad.addColorStop(1, '#fd79a8');
+
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    const step = Math.max(1, Math.floor(signal.length / W));
+    for (let i = 0; i < signal.length; i += step) {
+        const x = (i / signal.length) * W;
+        const y = pad + (1 - (signal[i] - min) / range) * (H - 2 * pad);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+}
+
+function drawAttractor3D(canvas, points, angle, color1, color2) {
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.fillStyle = '#0d0d14';
+    ctx.fillRect(0, 0, W, H);
+
+    if (!points || points.length < 2) {
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.font = '14px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Not enough data — adjust parameters', W / 2, H / 2);
+        return;
+    }
+
+    const projected = project3D(points, angle, W, H);
+
+    // Draw as line segments with depth coloring
+    const maxPts = Math.min(projected.length, 6000);
+    const step = Math.max(1, Math.floor(projected.length / maxPts));
+
+    for (let i = step; i < projected.length; i += step) {
+        const p0 = projected[i - step];
+        const p1 = projected[i];
+        const t = i / projected.length;
+        const depth = (p1.z + 1) / 2; // 0..1
+
+        const alpha = 0.15 + depth * 0.65;
+
+        // Interpolate color
+        const r = Math.round(lerp(parseInt(color1.slice(1, 3), 16), parseInt(color2.slice(1, 3), 16), t));
+        const g = Math.round(lerp(parseInt(color1.slice(3, 5), 16), parseInt(color2.slice(3, 5), 16), t));
+        const b = Math.round(lerp(parseInt(color1.slice(5, 7), 16), parseInt(color2.slice(5, 7), 16), t));
+
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+        ctx.lineWidth = 0.8 + depth * 1.2;
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.stroke();
+    }
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+// ============================================================
+// SIGNAL CANVAS
+// ============================================================
+function updateSignal() {
+    state.data = generateSystem(state.system);
+    state.signal = state.data.map(p => p[state.observedVar]);
+    drawSignal(document.getElementById('signalCanvas'), state.signal);
+}
+
+// ============================================================
+// MAIN ANIMATION LOOP
+// ============================================================
+function animate() {
+    state.angle += 0.003 * (state.rotSpeed / 50);
+
+    // True attractor (3D)
+    drawAttractor3D(
+        document.getElementById('trueAttractorCanvas'),
+        state.data,
+        state.angle,
+        '#6c5ce7', '#00cec9'
+    );
+
+    // Embedded attractor
+    const embedded = delayEmbed(state.signal, state.tau, state.dim);
+    drawAttractor3D(
+        document.getElementById('embeddingCanvas'),
+        embedded,
+        state.angle,
+        '#fd79a8', '#fdcb6e'
+    );
+
+    // Update metrics
+    document.getElementById('metricPoints').textContent = embedded.length.toLocaleString();
+
+    // Quality heuristic
+    const quality = computeQuality(embedded);
+    const qualEl = document.getElementById('metricQuality');
+    if (quality > 0.7) {
+        qualEl.textContent = '★★★';
+        qualEl.style.color = '#55efc4';
+    } else if (quality > 0.4) {
+        qualEl.textContent = '★★☆';
+        qualEl.style.color = '#fdcb6e';
+    } else {
+        qualEl.textContent = '★☆☆';
+        qualEl.style.color = '#fd79a8';
+    }
+
+    state.animId = requestAnimationFrame(animate);
+}
+
+function computeQuality(embedded) {
+    if (embedded.length < 100) return 0;
+    // Simple spread heuristic: ratio of median distance to max distance
+    // Good embeddings have well-spread points
+    const sample = [];
+    const step = Math.max(1, Math.floor(embedded.length / 50));
+    for (let i = 0; i < embedded.length; i += step) sample.push(embedded[i]);
+
+    const dists = [];
+    for (let i = 0; i < sample.length; i++) {
+        for (let j = i + 1; j < Math.min(i + 10, sample.length); j++) {
+            let d = 0;
+            for (let k = 0; k < sample[i].length; k++) {
+                d += (sample[i][k] - sample[j][k]) ** 2;
+            }
+            dists.push(Math.sqrt(d));
+        }
+    }
+    dists.sort((a, b) => a - b);
+    const median = dists[Math.floor(dists.length / 2)] || 0;
+    const max = dists[dists.length - 1] || 1;
+    const min = dists[0] || 0;
+
+    // Good embedding: points aren't all on diagonal (min not too close to 0 relative to max)
+    // and spread is reasonable
+    const spreadRatio = median / max;
+    const minRatio = min / max;
+
+    // Penalize if too collapsed (tau too small) or too scattered
+    if (spreadRatio < 0.05) return 0.1;
+    if (spreadRatio > 0.8) return 0.3;
+    return Math.min(1, spreadRatio * 2 + minRatio);
+}
+
+// ============================================================
+// FALSE NEAREST NEIGHBORS
+// ============================================================
+function runFNN() {
+    const signal = state.signal;
+    if (!signal || signal.length < 200) return;
+
+    const canvas = document.getElementById('fnnCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0d0d14';
+    ctx.fillRect(0, 0, W, H);
+
+    const maxDim = 7;
+    const tau = state.tau;
+    const threshold = 15;
+    const fnnPercentages = [];
+
+    for (let d = 1; d <= maxDim; d++) {
+        const embedded = delayEmbed(signal, tau, d);
+        const embeddedNext = delayEmbed(signal, tau, d + 1);
+        const n = Math.min(embedded.length, embeddedNext.length);
+
+        if (n < 50) { fnnPercentages.push(0); continue; }
+
+        let falseCount = 0;
+        let totalCount = 0;
+        const sampleSize = Math.min(300, n - 1);
+        const step = Math.max(1, Math.floor(n / sampleSize));
+
+        for (let i = 0; i < n - 1; i += step) {
+            // Find nearest neighbor in d-dimensional space
+            let bestDist = Infinity;
+            let bestJ = -1;
+            const searchStep = Math.max(1, Math.floor(n / 500));
+
+            for (let j = 0; j < n - 1; j += searchStep) {
+                if (Math.abs(i - j) < tau) continue;
+                let dist = 0;
+                for (let k = 0; k < d; k++) {
+                    dist += (embedded[i][k] - embedded[j][k]) ** 2;
+                }
+                dist = Math.sqrt(dist);
+                if (dist < bestDist && dist > 0) {
+                    bestDist = dist;
+                    bestJ = j;
+                }
+            }
+
+            if (bestJ < 0 || bestDist === 0) continue;
+
+            // Check if neighbor is false in d+1 dimensions
+            if (bestJ < embeddedNext.length && i < embeddedNext.length) {
+                const extraDist = Math.abs(embeddedNext[i][d] - embeddedNext[bestJ][d]);
+                if (extraDist / bestDist > threshold) {
+                    falseCount++;
+                }
+            }
+            totalCount++;
+        }
+
+        fnnPercentages.push(totalCount > 0 ? (falseCount / totalCount) * 100 : 0);
+    }
+
+    // Draw bar chart
+    const pad = { top: 50, bottom: 50, left: 60, right: 30 };
+    const plotW = W - pad.left - pad.right;
+    const plotH = H - pad.top - pad.bottom;
+
+    // Axes
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, pad.top + plotH);
+    ctx.lineTo(pad.left + plotW, pad.top + plotH);
+    ctx.stroke();
+
+    // Y axis labels
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '11px JetBrains Mono';
+    ctx.textAlign = 'right';
+    for (let p = 0; p <= 100; p += 25) {
+        const y = pad.top + plotH - (p / 100) * plotH;
+        ctx.fillText(p + '%', pad.left - 10, y + 4);
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + plotW, y); ctx.stroke();
+    }
+
+    // Bars
+    const barW = plotW / maxDim * 0.6;
+    const gap = plotW / maxDim;
+
+    for (let i = 0; i < fnnPercentages.length; i++) {
+        const x = pad.left + gap * i + gap * 0.2;
+        const barH = (fnnPercentages[i] / 100) * plotH;
+        const y = pad.top + plotH - barH;
+
+        // Color based on value
+        const t = 1 - fnnPercentages[i] / 100;
+        const r = Math.round(253 - t * 170);
+        const g = Math.round(121 + t * 117);
+        const b = Math.round(168 - t * 12);
+
+        const grad = ctx.createLinearGradient(x, y, x, pad.top + plotH);
+        grad.addColorStop(0, `rgba(${r},${g},${b},0.9)`);
+        grad.addColorStop(1, `rgba(${r},${g},${b},0.3)`);
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
+        ctx.fill();
+
+        // Value on top
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.font = '11px JetBrains Mono';
+        ctx.textAlign = 'center';
+        ctx.fillText(fnnPercentages[i].toFixed(1) + '%', x + barW / 2, y - 8);
+
+        // Dimension label
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fillText('d=' + (i + 1), x + barW / 2, pad.top + plotH + 20);
+    }
+
+    // Title
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('% False Nearest Neighbors by Embedding Dimension', W / 2, 25);
+
+    // Find optimal
+    let optDim = 1;
+    for (let i = 0; i < fnnPercentages.length; i++) {
+        if (fnnPercentages[i] < 5) { optDim = i + 1; break; }
+        optDim = i + 1;
+    }
+
+    document.getElementById('fnnFeedback').innerHTML =
+        `<strong>Result:</strong> FNN drops to near zero at <strong>d = ${optDim}</strong>. ` +
+        `This suggests the attractor can be faithfully embedded in <strong>${optDim} dimensions</strong>. ` +
+        `For the ${state.system === 'lorenz' ? 'Lorenz' : state.system === 'rossler' ? 'Rössler' : state.system === 'sine' ? 'sine wave' : 'quasiperiodic'} system, ` +
+        `the theoretical minimum is d ≥ ${state.system === 'lorenz' || state.system === 'rossler' ? '2×2+1 = 5 (conservative) but often d=3 works in practice' : state.system === 'sine' ? '2 (it\'s a circle!)' : '4 (torus)'}.`;
+}
+
+// ============================================================
+// PREDICTION
+// ============================================================
+function runPrediction() {
+    const signal = state.signal;
+    const tau = state.tau;
+    const dim = state.dim;
+    const horizon = state.horizon;
+    const k = state.kNeighbors;
+
+    if (!signal || signal.length < 500) return;
+
+    const embedded = delayEmbed(signal, tau, dim);
+    const n = embedded.length;
+    const trainEnd = Math.floor(n * 0.75);
+    const testStart = trainEnd;
+    const testEnd = Math.min(n - horizon, trainEnd + 200);
+
+    if (testEnd <= testStart) return;
+
+    const actual = [];
+    const predicted = [];
+
+    for (let t = testStart; t < testEnd; t += 3) {
+        const query = embedded[t];
+
+        // Find k nearest neighbors in training set
+        const neighbors = [];
+        for (let i = 0; i < trainEnd - horizon; i++) {
+            let dist = 0;
+            for (let d = 0; d < dim; d++) {
+                dist += (query[d] - embedded[i][d]) ** 2;
+            }
+            dist = Math.sqrt(dist);
+            neighbors.push({ idx: i, dist });
+        }
+        neighbors.sort((a, b) => a.dist - b.dist);
+        const topK = neighbors.slice(0, k);
+
+        // Weighted average of where neighbors went
+        const minDist = topK[0].dist || 0.0001;
+        let weightSum = 0;
+        let predVal = 0;
+        for (const nb of topK) {
+            const w = Math.exp(-nb.dist / minDist);
+            const futureIdx = nb.idx + horizon;
+            if (futureIdx < signal.length) {
+                predVal += w * signal[futureIdx + (dim - 1) * tau];
+                weightSum += w;
+            }
+        }
+
+        if (weightSum > 0) {
+            predVal /= weightSum;
+            const actualIdx = t + horizon;
+            if (actualIdx + (dim - 1) * tau < signal.length) {
+                actual.push(signal[actualIdx + (dim - 1) * tau]);
+                predicted.push(predVal);
+            }
+        }
+    }
+
+    // Draw prediction
+    const canvas = document.getElementById('predictionCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0d0d14';
+    ctx.fillRect(0, 0, W, H);
+
+    if (actual.length < 2) {
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.font = '14px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Not enough data for prediction — try different parameters', W / 2, H / 2);
+        return;
+    }
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    for (let y = 0; y < H; y += 40) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    let min = Infinity, max = -Infinity;
+    for (const v of actual) { min = Math.min(min, v); max = Math.max(max, v); }
+    for (const v of predicted) { min = Math.min(min, v); max = Math.max(max, v); }
+    const range = max - min || 1;
+    const pad = 30;
+
+    // Actual
+    ctx.strokeStyle = 'rgba(0, 206, 201, 0.8)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i < actual.length; i++) {
+        const x = pad + (i / actual.length) * (W - 2 * pad);
+        const y = pad + (1 - (actual[i] - min) / range) * (H - 2 * pad);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Predicted
+    ctx.strokeStyle = 'rgba(253, 121, 168, 0.8)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    for (let i = 0; i < predicted.length; i++) {
+        const x = pad + (i / predicted.length) * (W - 2 * pad);
+        const y = pad + (1 - (predicted[i] - min) / range) * (H - 2 * pad);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Legend
+    ctx.font = '11px Inter';
+    ctx.fillStyle = 'rgba(0, 206, 201, 0.9)';
+    ctx.fillText('— Actual', W - 150, 20);
+    ctx.fillStyle = 'rgba(253, 121, 168, 0.9)';
+    ctx.fillText('- - Predicted', W - 150, 38);
+
+    // Compute error metrics
+    let sumErr = 0, sumSqA = 0, sumSqP = 0, sumAP = 0, sumA = 0, sumP = 0;
+    for (let i = 0; i < actual.length; i++) {
+        sumErr += Math.abs(actual[i] - predicted[i]);
+        sumA += actual[i];
+        sumP += predicted[i];
+        sumSqA += actual[i] ** 2;
+        sumSqP += predicted[i] ** 2;
+        sumAP += actual[i] * predicted[i];
+    }
+    const n2 = actual.length;
+    const meanErr = sumErr / n2;
+    const corr = (n2 * sumAP - sumA * sumP) /
+        (Math.sqrt(n2 * sumSqA - sumA ** 2) * Math.sqrt(n2 * sumSqP - sumP ** 2) + 1e-10);
+
+    // Normalize error by range
+    const normErr = meanErr / range;
+
+    document.getElementById('predError').textContent = (normErr * 100).toFixed(1) + '%';
+    document.getElementById('predError').style.color = normErr < 0.1 ? '#55efc4' : normErr < 0.25 ? '#fdcb6e' : '#fd79a8';
+
+    document.getElementById('predCorr').textContent = corr.toFixed(3);
+    document.getElementById('predCorr').style.color = corr > 0.9 ? '#55efc4' : corr > 0.7 ? '#fdcb6e' : '#fd79a8';
+
+    document.getElementById('predHorizon').textContent = horizon + ' steps';
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+document.getElementById('systemSelect').addEventListener('change', (e) => {
+    state.system = e.target.value;
+    updateSignal();
+});
+
+document.getElementById('varSelect').addEventListener('change', (e) => {
+    state.observedVar = parseInt(e.target.value);
+    const labels = ['x(t)', 'y(t)', 'z(t)'];
+    document.getElementById('varDisplay').textContent = labels[state.observedVar];
+    state.signal = state.data.map(p => p[state.observedVar]);
+    drawSignal(document.getElementById('signalCanvas'), state.signal);
+});
+
+document.getElementById('tauSlider').addEventListener('input', (e) => {
+    state.tau = parseInt(e.target.value);
+    document.getElementById('tauDisplay').textContent = state.tau;
+    document.getElementById('metricTau').textContent = state.tau;
+});
+
+document.getElementById('dimSlider').addEventListener('input', (e) => {
+    state.dim = parseInt(e.target.value);
+    document.getElementById('dimDisplay').textContent = state.dim;
+    document.getElementById('metricDim').textContent = state.dim;
+});
+
+document.getElementById('rotSlider').addEventListener('input', (e) => {
+    state.rotSpeed = parseInt(e.target.value);
+    document.getElementById('rotDisplay').textContent = state.rotSpeed + '%';
+});
+
+document.getElementById('horizonSlider').addEventListener('input', (e) => {
+    state.horizon = parseInt(e.target.value);
+    document.getElementById('horizonDisplay').textContent = state.horizon + ' steps';
+});
+
+document.getElementById('kSlider').addEventListener('input', (e) => {
+    state.kNeighbors = parseInt(e.target.value);
+    document.getElementById('kDisplay').textContent = state.kNeighbors;
+});
+
+document.getElementById('runFNN').addEventListener('click', runFNN);
+document.getElementById('runPrediction').addEventListener('click', runPrediction);
+
+// ============================================================
+// HANDLE HIGH-DPI CANVASES
+// ============================================================
+function setupCanvas(canvas) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+
+    // Only scale if the canvas is visible and has dimensions
+    if (rect.width === 0) return;
+
+    const displayWidth = rect.width;
+    const displayHeight = rect.height || canvas.height * (rect.width / canvas.width);
+
+    canvas.style.width = displayWidth + 'px';
+    canvas.style.height = displayHeight + 'px';
+}
+
+// ============================================================
+// POLYFILL: roundRect for older browsers
+// ============================================================
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, radii) {
+        const r = Array.isArray(radii) ? radii : [radii, radii, radii, radii];
+        const [tl, tr, br, bl] = [r[0] || 0, r[1] || 0, r[2] || 0, r[3] || 0];
+        this.moveTo(x + tl, y);
+        this.lineTo(x + w - tr, y);
+        this.quadraticCurveTo(x + w, y, x + w, y + tr);
+        this.lineTo(x + w, y + h - br);
+        this.quadraticCurveTo(x + w, y + h, x + w - br, y + h);
+        this.lineTo(x + bl, y + h);
+        this.quadraticCurveTo(x, y + h, x, y + h - bl);
+        this.lineTo(x, y + tl);
+        this.quadraticCurveTo(x, y, x + tl, y);
+        this.closePath();
+        return this;
+    };
+}
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+function init() {
+    updateSignal();
+
+    // Set initial metric displays
+    document.getElementById('metricTau').textContent = state.tau;
+    document.getElementById('metricDim').textContent = state.dim;
+
+    // Start animation
+    animate();
+
+    // Draw initial empty states for FNN and prediction canvases
+    const fnnCtx = document.getElementById('fnnCanvas').getContext('2d');
+    fnnCtx.fillStyle = '#0d0d14';
+    fnnCtx.fillRect(0, 0, 700, 300);
+    fnnCtx.fillStyle = 'rgba(255,255,255,0.2)';
+    fnnCtx.font = '14px Inter';
+    fnnCtx.textAlign = 'center';
+    fnnCtx.fillText('Click "Run FNN Analysis" to compute', 350, 150);
+
+    const predCtx = document.getElementById('predictionCanvas').getContext('2d');
+    predCtx.fillStyle = '#0d0d14';
+    predCtx.fillRect(0, 0, 700, 250);
+    predCtx.fillStyle = 'rgba(255,255,255,0.2)';
+    predCtx.font = '14px Inter';
+    predCtx.textAlign = 'center';
+    predCtx.fillText('Click "Run Prediction" to forecast', 350, 125);
+}
+
+// ============================================================
+// SMOOTH SCROLL FOR HERO
+// ============================================================
+document.querySelector('.scroll-hint').addEventListener('click', () => {
+    window.scrollTo({
+        top: window.innerHeight,
+        behavior: 'smooth'
+    });
+});
+
+// ============================================================
+// INTERSECTION OBSERVER FOR FADE-IN ANIMATIONS
+// ============================================================
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.card, .interactive-panel').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+});
+
+// ============================================================
+// LAUNCH
+// ============================================================
+window.addEventListener('DOMContentLoaded', init);
+
+// Cleanup on page hide
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && state.animId) {
+        cancelAnimationFrame(state.animId);
+    } else if (!document.hidden) {
+        animate();
+    }
+});
+</script>
+
+</body>
+</html>
