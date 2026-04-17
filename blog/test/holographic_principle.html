@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holografisches Prinzip & Deep Learning — Interaktiv</title>
+    <style>
+        :root {
+            --bg: #0a0a1a;
+            --card: #12122a;
+            --accent: #6c63ff;
+            --accent2: #00d4aa;
+            --accent3: #ff6b6b;
+            --text: #e0e0f0;
+            --dim: #7a7a9a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 50%, #0a0a2e 100%);
+            border-bottom: 2px solid var(--accent);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.2em;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--dim);
+            font-size: 1.1em;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            color: var(--accent2);
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 .emoji { font-size: 1.3em; }
+
+        .explanation {
+            color: var(--dim);
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            padding: 12px 16px;
+            background: rgba(108, 99, 255, 0.08);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+        }
+
+        /* Slider Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .control-group {
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .control-group label {
+            display: block;
+            color: var(--accent2);
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .control-group .desc {
+            color: var(--dim);
+            font-size: 0.8em;
+            margin-bottom: 10px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 0 10px var(--accent);
+            cursor: pointer;
+        }
+
+        .slider-value {
+            text-align: right;
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+
+        /* Canvas areas */
+        .canvas-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        canvas {
+            border-radius: 12px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th {
+            background: rgba(108, 99, 255, 0.3);
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 0.95em;
+        }
+
+        .comparison-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9em;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(108, 99, 255, 0.1);
+        }
+
+        .highlight-phys { color: var(--accent); font-weight: 600; }
+        .highlight-dl { color: var(--accent2); font-weight: 600; }
+
+        /* Info panels */
+        .info-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-card {
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(108, 99, 255, 0.15);
+        }
+
+        .info-card .value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .info-card .label {
+            color: var(--dim);
+            font-size: 0.85em;
+            margin-top: 4px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(108, 99, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--accent2);
+            border: 1px solid var(--accent2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            background: rgba(0,0,0,0.3);
+            color: var(--dim);
+            border: 1px solid transparent;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .tab.active {
+            background: rgba(108, 99, 255, 0.2);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .tab:hover { color: var(--text); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+            font-size: 0.85em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.5em; }
+            .section { padding: 20px; }
+            .controls { grid-template-columns: 1fr; }
+        }
+
+        /* Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .animating { animation: pulse 1.5s infinite; }
+
+        /* Tooltip */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            border-bottom: 1px dashed var(--dim);
+        }
+
+        .tooltip-container .tooltip-text {
+            visibility: hidden;
+            background: #222244;
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            border: 1px solid var(--accent);
+        }
+
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            font-size: 2em;
+            color: var(--accent);
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🌌 Holografisches Prinzip & Deep Learning</h1>
+    <p>Interaktive Visualisierung der Bulk-Boundary-Korrespondenz — wie die Physik des AdS/CFT uns hilft, tiefe neuronale Netze zu verstehen</p>
+</header>
+
+<div class="container">
+
+    <!-- Section 1: Intro & Comparison -->
+    <div class="section">
+        <h2><span class="emoji">📐</span> Die Analogie: AdS/CFT ↔ Deep Learning</h2>
+        <div class="explanation">
+            Das <strong>holografische Prinzip</strong> besagt: Die gesamte Physik eines höherdimensionalen Raums (Bulk) ist vollständig auf seinem niedrigerdimensionalen Rand (Boundary) kodiert — wie ein 3D-Bild auf einem 2D-Hologramm. Die Parallele zu tiefen Netzen ist verblüffend.
+        </div>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>🔭 Physik (AdS/CFT)</th>
+                    <th>🤖 Deep Learning</th>
+                    <th>💡 Bedeutung</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="highlight-phys">Bulk (höherdimensional)</td>
+                    <td class="highlight-dl">Innere Schichten / Repräsentationsraum</td>
+                    <td>Der "verborgene" Raum, in dem die eigentliche Verarbeitung stattfindet</td>
+                </tr>
+                <tr>
+                    <td class="highlight-phys">Boundary (niedrigerdimensional)</td>
+                    <td class="highlight-dl">Input/Output-Schicht</td>
+                    <td>Was wir von außen sehen und messen können</td>
+                </tr>
+                <tr>
+                    <td class="highlight-phys">RG-Flow (Renormierungsgruppe)</td>
+                    <td class="highlight-dl">Schicht-für-Schicht-Transformation</td>
+                    <td>Schrittweises "Ausintegrieren" feiner Details</td>
+                </tr>
+                <tr>
+                    <td class="highlight-phys">Grobkörnige Beschreibung</td>
+                    <td class="highlight-dl">Abstraktion in tieferen Schichten</td>
+                    <td>Von Pixeln → Kanten → Objekte → Konzepte</td>
+                </tr>
+                <tr>
+                    <td class="highlight-phys">Entanglement-Entropie</td>
+                    <td class="highlight-dl">Mutual Information zwischen Schichten</td>
+                    <td>Wie stark Teile des Systems miteinander korreliert sind</td>
+                </tr>
+                <tr>
+                    <td class="highlight-phys">Geodäten im Bulk</td>
+                    <td class="highlight-dl">Optimale Informationspfade</td>
+                    <td>Der kürzeste/effizienteste Weg der Information durchs Netz</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Section 2: RG-Flow / Layer Transformation -->
+    <div class="section">
+        <h2><span class="emoji">🔄</span> Demo 1: RG-Flow = Schicht-Transformation</h2>
+        <div class="explanation">
+            Jede Schicht eines tiefen Netzes "integriert kurze Wellenlängen aus" — genau wie eine RG-Transformation in der Physik. Bewege die Slider, um zu sehen, wie ein Signal durch die Schichten transformiert wird. Hohe Frequenzen (feine Details) werden Schicht für Schicht entfernt, bis nur noch die grobe Struktur (das abstrakte Konzept) übrig bleibt.
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>🔢 Anzahl Schichten (Tiefe)</label>
+                <div class="desc">Mehr Schichten = mehr RG-Schritte = stärkere Abstraktion</div>
+                <input type="range" id="numLayers" min="1" max="12" value="6" oninput="updateRGFlow()">
+                <div class="slider-value" id="numLayersVal">6</div>
+            </div>
+            <div class="control-group">
+                <label>🌊 Signalkomplexität</label>
+                <div class="desc">Wie viele Frequenzkomponenten das Eingangssignal hat</div>
+                <input type="range" id="signalComplexity" min="1" max="20" value="10" oninput="updateRGFlow()">
+                <div class="slider-value" id="signalComplexityVal">10</div>
+            </div>
+            <div class="control-group">
+                <label>✂️ Cutoff-Stärke pro Schicht</label>
+                <div class="desc">Wie aggressiv jede Schicht hohe Frequenzen entfernt</div>
+                <input type="range" id="cutoffStrength" min="5" max="95" value="50" oninput="updateRGFlow()">
+                <div class="slider-value" id="cutoffStrengthVal">50%</div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="rgFlowCanvas" width="1100" height="500"></canvas>
+        </div>
+
+        <div class="info-row" id="rgInfoRow">
+            <!-- Dynamically filled -->
+        </div>
+    </div>
+
+    <!-- Section 3: Bulk-Boundary Visualization -->
+    <div class="section">
+        <h2><span class="emoji">🕳️</span> Demo 2: Bulk-Boundary — Innere Repräsentationen</h2>
+        <div class="explanation">
+            Stell dir den "Bulk" als den inneren Repräsentationsraum eines Netzes vor und die "Boundary" als Input/Output. Hier siehst du, wie Datenpunkte vom Rand (Input) in den Bulk (innere Schichten) fließen und dort eine reichere, höherdimensionale Struktur bilden — bevor sie wieder auf den Rand (Output) projiziert werden.
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>📊 Anzahl Datenpunkte</label>
+                <div class="desc">Wie viele Eingabepunkte auf der Boundary</div>
+                <input type="range" id="numPoints" min="5" max="80" value="30" oninput="updateBulkBoundary()">
+                <div class="slider-value" id="numPointsVal">30</div>
+            </div>
+            <div class="control-group">
+                <label>🔮 Bulk-Tiefe (Radiale Koordinate)</label>
+                <div class="desc">Wie tief wir in den Bulk schauen (= wie tiefe Schicht)</div>
+                <input type="range" id="bulkDepth" min="5" max="100" value="50" oninput="updateBulkBoundary()">
+                <div class="slider-value" id="bulkDepthVal">50%</div>
+            </div>
+            <div class="control-group">
+                <label>🌀 Nichtlinearität (Krümmung)</label>
+                <div class="desc">Stärke der nichtlinearen Transformation (wie AdS-Krümmung)</div>
+                <input type="range" id="curvature" min="1" max="100" value="40" oninput="updateBulkBoundary()">
+                <div class="slider-value" id="curvatureVal">40%</div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="bulkCanvas" width="550" height="500"></canvas>
+            <canvas id="geodesicCanvas" width="550" height="500"></canvas>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background: #6c63ff;"></div> Boundary (Input/Output)</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #00d4aa;"></div> Bulk-Repräsentationen (innere Schichten)</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #ff6b6b;"></div> Geodäten (optimale Informationspfade)</div>
+            <div class="legend-item"><div class="legend-dot" style="background: #ffd93d;"></div> Entanglement / Mutual Information</div>
+        </div>
+    </div>
+
+    <!-- Section 4: Entanglement Entropy / Mutual Information -->
+    <div class="section">
+        <h2><span class="emoji">🔗</span> Demo 3: Entanglement-Entropie ↔ Mutual Information</h2>
+        <div class="explanation">
+            In der AdS/CFT-Korrespondenz berechnet man die Entanglement-Entropie einer Boundary-Region über die Fläche der minimalen Geodäte im Bulk (Ryu-Takayanagi-Formel). Im Deep Learning entspricht das der <strong>Mutual Information</strong> zwischen Schichten — wie viel Information über den Input in einer bestimmten Schicht noch enthalten ist.
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>📏 Boundary-Region (Subsystem A)</label>
+                <div class="desc">Größe des betrachteten Teilsystems auf dem Rand</div>
+                <input type="range" id="regionSize" min="5" max="95" value="40" oninput="updateEntropy()">
+                <div class="slider-value" id="regionSizeVal">40%</div>
+            </div>
+            <div class="control-group">
+                <label>🌡️ Temperatur / Rauschen</label>
+                <div class="desc">Höhere Temperatur = mehr Rauschen = weniger Mutual Information</div>
+                <input type="range" id="temperature" min="1" max="100" value="20" oninput="updateEntropy()">
+                <div class="slider-value" id="temperatureVal">20%</div>
+            </div>
+            <div class="control-group">
+                <label>🏗️ Netzwerk-Breite</label>
+                <div class="desc">Breitere Schichten = mehr Kapazität = höhere mögliche MI</div>
+                <input type="range" id="networkWidth" min="10" max="200" value="64" oninput="updateEntropy()">
+                <div class="slider-value" id="networkWidthVal">64</div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="entropyCanvas" width="550" height="450"></canvas>
+            <canvas id="miCanvas" width="550" height="450"></canvas>
+        </div>
+
+        <div class="info-row" id="entropyInfoRow">
+            <!-- Dynamically filled -->
+        </div>
+    </div>
+
+    <!-- Section 5: Full Network Simulation -->
+    <div class="section">
+        <h2><span class="emoji">🧠</span> Demo 4: Vollständige Netz-Simulation mit Holografie</h2>
+        <div class="explanation">
+            Hier siehst du ein komplettes neuronales Netz als holografischen Raum. Die Input-Schicht ist die Boundary, die inneren Schichten bilden den Bulk. Beobachte, wie Information fließt, wie sich Repräsentationen transformieren und wie die "Bulk-Rekonstruktion" funktioniert — das Dekodieren innerer Zustände aus Boundary-Daten.
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="runFullSimulation()">▶ Simulation starten</button>
+            <button class="btn btn-secondary" onclick="resetSimulation()">↺ Reset</button>
+            <button class="btn btn-secondary" onclick="toggleAnimation()">⏯ Animation an/aus</button>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>🏛️ Architektur</label>
+                <div class="desc">Netzwerk-Topologie</div>
+                <input type="range" id="archType" min="0" max="3" value="1" step="1" oninput="updateArchLabel()">
+                <div class="slider-value" id="archTypeVal">Encoder-Decoder</div>
+            </div>
+            <div class="control-group">
+                <label>💧 Information Bottleneck</label>
+                <div class="desc">Wie stark die mittlere Schicht komprimiert</div>
+                <input type="range" id="bottleneck" min="5" max="95" value="50" oninput="runFullSimulation()">
+                <div class="slider-value" id="bottleneckVal">50%</div>
+            </div>
+            <div class="control-group">
+                <label>⚡ Lernrate / Trainingsfortschritt</label>
+                <div class="desc">Wie weit das Training fortgeschritten ist</div>
+                <input type="range" id="trainingProgress" min="0" max="100" value="50" oninput="runFullSimulation()">
+                <div class="slider-value" id="trainingProgressVal">50%</div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="fullNetCanvas" width="1100" height="550"></canvas>
+        </div>
+
+        <div class="info-row" id="fullNetInfoRow">
+            <!-- Dynamically filled -->
+        </div>
+    </div>
+
+    <!-- Section 6: Key Insight -->
+    <div class="section" style="border-color: var(--accent2); background: linear-gradient(135deg, #0a1a2a, #12122a);">
+        <h2><span class="emoji">💡</span> Die Kernaussage</h2>
+        <div style="font-size: 1.1em; line-height: 1.8; padding: 10px;">
+            <p>Wenn du die inneren Schichten eines LLMs als <strong style="color: var(--accent2);">Bulk</strong> betrachtest und Input/Output als <strong style="color: var(--accent);">Boundary</strong>, dann ist die Frage:</p>
+            <div class="flow-arrow">↓</div>
+            <p style="text-align: center; font-size: 1.2em; color: var(--accent3); font-weight: bold; padding: 15px; background: rgba(255,107,107,0.1); border-radius: 12px; margin: 15px 0;">
+                "Wie dekodiere ich die gescrambleten inneren Repräsentationen?"
+            </p>
+            <div class="flow-arrow">↕</div>
+            <p style="text-align: center; font-size: 1.1em; color: var(--dim);">äquivalent zur Frage aus der Physik:</p>
+            <div class="flow-arrow">↓</div>
+            <p style="text-align: center; font-size: 1.2em; color: var(--accent2); font-weight: bold; padding: 15px; background: rgba(0,212,170,0.1); border-radius: 12px; margin: 15px 0;">
+                "Wie rekonstruiere ich Bulk-Physik aus Boundary-Daten?"
+            </p>
+            <p style="margin-top: 20px; color: var(--dim);">
+                → Und dafür gibt es ein ganzes Arsenal an Werkzeugen aus der theoretischen Physik: Ryu-Takayanagi-Formel, MERA-Tensornetzwerke, holografische Fehlerkorrektur-Codes, und mehr.
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    let r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+        const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1; if (t > 1) t -= 1;
+            if (t < 1/6) return p + (q - p) * 6 * t;
+            if (t < 1/2) return q;
+            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        };
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+    return `rgb(${Math.round(r*255)},${Math.round(g*255)},${Math.round(b*255)})`;
+}
+
+function getColor(t) {
+    // t from 0 to 1: purple -> teal -> yellow
+    if (t < 0.5) {
+        const h = lerp(260, 170, t * 2);
+        return hslToRgb(h, 80, 60);
+    } else {
+        const h = lerp(170, 50, (t - 0.5) * 2);
+        return hslToRgb(h, 80, 60);
+    }
+}
+
+// ============================================================
+// DEMO 1: RG-FLOW
+// ============================================================
+
+function updateRGFlow() {
+    const numLayers = parseInt(document.getElementById('numLayers').value);
+    const complexity = parseInt(document.getElementById('signalComplexity').value);
+    const cutoff = parseInt(document.getElementById('cutoffStrength').value) / 100;
+
+    document.getElementById('numLayersVal').textContent = numLayers;
+    document.getElementById('signalComplexityVal').textContent = complexity;
+    document.getElementById('cutoffStrengthVal').textContent = Math.round(cutoff * 100) + '%';
+
+    const canvas = document.getElementById('rgFlowCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const padding = 60;
+    const plotW = W - 2 * padding;
+    const plotH = H - 2 * padding;
+
+    // Title
+    ctx.fillStyle = '#e0e0f0';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('RG-Flow: Signal-Transformation durch Schichten', W / 2, 25);
+
+    // Generate signal with multiple frequencies
+    const N = 200;
+    const signals = [];
+
+    // Layer 0: original signal
+    let freqs = [];
+    for (let f = 1; f <= complexity; f++) {
+        freqs.push({
+            freq: f,
+            amp: (1 / f) * (0.5 + 0.5 * Math.sin(f * 1.3)),
+            phase: f * 0.7
+        });
+    }
+
+    for (let layer = 0; layer <= numLayers; layer++) {
+        const signal = [];
+        const t_layer = layer / Math.max(numLayers, 1);
+        
+        for (let i = 0; i < N; i++) {
+            const x = i / N;
+            let y = 0;
+            for (const f of freqs) {
+                // Each layer cuts off higher frequencies progressively
+                const maxFreqAtLayer = complexity * Math.pow(1 - cutoff, layer);
+                if (f.freq <= maxFreqAtLayer) {
+                    y += f.amp * Math.sin(2 * Math.PI * f.freq * x + f.phase);
+                } else {
+                    // Partially attenuate near cutoff
+                    const attenuation = Math.exp(-((f.freq - maxFreqAtLayer) * 2));
+                    y += f.amp * attenuation * Math.sin(2 * Math.PI * f.freq * x + f.phase);
+                }
+            }
+            signal.push(y);
+        }
+        signals.push(signal);
+    }
+
+    // Normalize all signals
+    let globalMax = 0;
+    for (const sig of signals) {
+        for (const v of sig) {
+            globalMax = Math.max(globalMax, Math.abs(v));
+        }
+    }
+    if (globalMax === 0) globalMax = 1;
+
+    // Draw each layer's signal
+    const layerHeight = plotH / (numLayers + 1);
+
+    for (let layer = 0; layer <= numLayers; layer++) {
+        const signal = signals[layer];
+        const yCenter = padding + layer * layerHeight + layerHeight / 2;
+        const amplitude = layerHeight * 0.35;
+        const color = getColor(layer / Math.max(numLayers, 1));
+
+        // Layer label
+        ctx.fillStyle = '#7a7a9a';
+        ctx.font = '11px Segoe UI';
+        ctx.textAlign = 'right';
+        if (layer === 0) {
+            ctx.fillStyle = '#6c63ff';
+            ctx.font = 'bold 12px Segoe UI';
+            ctx.fillText('Boundary (Input)', padding - 8, yCenter + 4);
+        } else if (layer === numLayers) {
+            ctx.fillStyle = '#00d4aa';
+            ctx.font = 'bold 12px Segoe UI';
+            ctx.fillText('Bulk (Abstrakt)', padding - 8, yCenter + 4);
+        } else {
+            ctx.fillText(`Schicht ${layer}`, padding - 8, yCenter + 4);
+        }
+
+        // Draw baseline
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding, yCenter);
+        ctx.lineTo(padding + plotW, yCenter);
+        ctx.stroke();
+
+        // Draw signal
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i < N; i++) {
+            const x = padding + (i / N) * plotW;
+            const y = yCenter - (signal[i] / globalMax) * amplitude;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Draw glow
+        ctx.strokeStyle = color.replace('rgb', 'rgba').replace(')', ',0.15)');
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        for (let i = 0; i < N; i++) {
+            const x = padding + (i / N) * plotW;
+            const y = yCenter - (signal[i] / globalMax) * amplitude;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Arrow between layers
+        if (layer < numLayers) {
+            const arrowY = yCenter + layerHeight * 0.4;
+            ctx.fillStyle = 'rgba(108, 99, 255, 0.3)';
+            ctx.beginPath();
+            ctx.moveTo(W / 2 - 8, arrowY);
+            ctx.lineTo(W / 2 + 8, arrowY);
+            ctx.lineTo(W / 2, arrowY + 12);
+            ctx.closePath();
+            ctx.fill();
+        }
+    }
+
+    // Frequency spectrum mini-display on the right
+    const specX = padding + plotW + 5;
+    ctx.fillStyle = '#7a7a9a';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Freq', specX + 15, padding - 5);
+
+    // Info cards
+    const maxFreqFinal = complexity * Math.pow(1 - cutoff, numLayers);
+    const compressionRatio = maxFreqFinal / complexity;
+    const infoHTML = `
+        <div class="info-card">
+            <div class="value">${complexity}</div>
+            <div class="label">Input-Frequenzen</div>
+        </div>
+        <div class="info-card">
+            <div class="value">${maxFreqFinal.toFixed(1)}</div>
+            <div class="label">Verbleibende Freq. (Output)</div>
+        </div>
+        <div class="info-card">
+            <div class="value">${(compressionRatio * 100).toFixed(1)}%</div>
+            <div class="label">Information erhalten</div>
+        </div>
+        <div class="info-card">
+            <div class="value">${numLayers}</div>
+            <div class="label">RG-Schritte</div>
+        </div>
+    `;
+    document.getElementById('rgInfoRow').innerHTML = infoHTML;
+}
+
+// ============================================================
+// DEMO 2: BULK-BOUNDARY VISUALIZATION
+// ============================================================
+
+function updateBulkBoundary() {
+    const numPoints = parseInt(document.getElementById('numPoints').value);
+    const depth = parseInt(document.getElementById('bulkDepth').value) / 100;
+    const curvature = parseInt(document.getElementById('curvature').value) / 100;
+
+    document.getElementById('numPointsVal').textContent = numPoints;
+    document.getElementById('bulkDepthVal').textContent = Math.round(depth * 100) + '%';
+    document.getElementById('curvatureVal').textContent = Math.round(curvature * 100) + '%';
+
+    drawPoincareDisk(numPoints, depth, curvature);
+    drawGeodesics(numPoints, depth, curvature);
+}
+
+function drawPoincareDisk(numPoints, depth, curvature) {
+    const canvas = document.getElementById('bulkCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const cx = W / 2, cy = H / 2;
+    const R = Math.min(W, H) / 2 - 40;
+
+    // Title
+    ctx.fillStyle = '#e0e0f0';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Poincaré-Disk: AdS-Raum als Bulk', cx, 25);
+    ctx.fillStyle = '#7a7a9a';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('Rand = Boundary (Input/Output) | Mitte = tiefer Bulk', cx, 42);
+
+    // Draw concentric circles (layers / radial slices)
+    const numRings = 8;
+    for (let i = 1; i <= numRings; i++) {
+        const r = (i / numRings) * R;
+        ctx.strokeStyle = `rgba(108, 99, 255, ${0.05 + 0.03 * i})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+
+    // Draw boundary circle
+    ctx.strokeStyle = '#6c63ff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Glow on boundary
+    const grad = ctx.createRadialGradient(cx, cy, R - 10, cx, cy, R + 10);
+    grad.addColorStop(0, 'rgba(108, 99, 255, 0)');
+    grad.addColorStop(0.5, 'rgba(108, 99, 255, 0.15)');
+    grad.addColorStop(1, 'rgba(108, 99, 255, 0)');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 20;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Place boundary points
+    const boundaryPoints = [];
+    for (let i = 0; i < numPoints; i++) {
+        const angle = (i / numPoints) * Math.PI * 2;
+        const bx = cx + R * Math.cos(angle);
+        const by = cy + R * Math.sin(angle);
+        boundaryPoints.push({ x: bx, y: by, angle });
+
+        // Draw boundary point
+        ctx.fillStyle = '#6c63ff';
+        ctx.beginPath();
+        ctx.arc(bx, by, 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Generate bulk points — they move inward based on depth
+    // In AdS, deeper = closer to center
+    const bulkPoints = [];
+    for (let i = 0; i < numPoints; i++) {
+        const angle = boundaryPoints[i].angle;
+        // Nonlinear mapping: AdS radial coordinate
+        const radialFactor = 1 - depth * (1 - curvature * 0.3 * Math.sin(angle * 3 + i));
+        const bulkR = R * radialFactor;
+
+        // Add some curvature-dependent displacement
+        const angleShift = curvature * 0.3 * Math.sin(i * 1.7 + angle * 2);
+        const bx = cx + bulkR * Math.cos(angle + angleShift);
+        const by = cy + bulkR * Math.sin(angle + angleShift);
+        bulkPoints.push({ x: bx, y: by });
+
+        // Draw connection from boundary to bulk
+        ctx.strokeStyle = 'rgba(0, 212, 170, 0.15)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(boundaryPoints[i].x, boundaryPoints[i].y);
+        ctx.lineTo(bx, by);
+        ctx.stroke();
+
+        // Draw bulk point
+        const size = 3 + depth * 4;
+        ctx.fillStyle = `rgba(0, 212, 170, ${0.4 + depth * 0.6})`;
+        ctx.beginPath();
+        ctx.arc(bx, by, size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Draw entanglement connections in bulk (nearby bulk points)
+    for (let i = 0; i < bulkPoints.length; i++) {
+        for (let j = i + 1; j < bulkPoints.length; j++) {
+            const dx = bulkPoints[i].x - bulkPoints[j].x;
+            const dy = bulkPoints[i].y - bulkPoints[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const threshold = R * 0.3 * depth;
+            if (dist < threshold) {
+                const alpha = (1 - dist / threshold) * 0.3 * depth;
+                ctx.strokeStyle = `rgba(255, 217, 61, ${alpha})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(bulkPoints[i].x, bulkPoints[i].y);
+                ctx.lineTo(bulkPoints[j].x, bulkPoints[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+
+    // Label
+    ctx.fillStyle = '#6c63ff';
+    ctx.font = 'bold 11px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Boundary', cx, cy + R + 25);
+    ctx.fillStyle = '#00d4aa';
+    ctx.fillText('Bulk', cx, cy + 15);
+}
+
+function drawGeodesics(numPoints, depth, curvature) {
+    const canvas = document.getElementById('geodesicCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const cx = W / 2, cy = H / 2;
+    const R = Math.min(W, H) / 2 - 40;
+
+    // Title
+    ctx.fillStyle = '#e0e0f0';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Geodäten: Optimale Informationspfade', cx, 25);
+    ctx.fillStyle = '#7a7a9a';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('Kürzeste Wege im gekrümmten Raum = effizienteste Pfade im Netz', cx, 42);
+
+    // Draw boundary circle
+    ctx.strokeStyle = 'rgba(108, 99, 255, 0.5)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Boundary points
+    const points = [];
+    for (let i = 0; i < numPoints; i++) {
+        const angle = (i / numPoints) * Math.PI * 2;
+        points.push({
+            x: cx + R * Math.cos(angle),
+            y: cy + R * Math.sin(angle),
+            angle
+        });
+
+        ctx.fillStyle = '#6c63ff';
+        ctx.beginPath();
+        ctx.arc(points[i].x, points[i].y, 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Draw geodesics between selected pairs
+    // In the Poincaré disk, geodesics are arcs of circles perpendicular to the boundary
+    const numGeodesics = Math.min(numPoints, 15);
+    for (let i = 0; i < numGeodesics; i++) {
+        const j = (i + Math.floor(numPoints / 3)) % numPoints;
+        if (i === j) continue;
+
+        const p1 = points[i];
+        const p2 = points[j];
+
+        // Calculate geodesic arc in Poincaré disk
+        // The geodesic between two boundary points is a circular arc perpendicular to the boundary
+        drawPoincaréGeodesic(ctx, cx, cy, R, p1.angle, p2.angle, depth, curvature);
+    }
+
+    // Highlight the Ryu-Takayanagi surface
+    const rtStart = 0;
+    const rtEnd = Math.floor(numPoints * 0.4);
+    if (rtEnd > rtStart && points.length > rtEnd) {
+        // Draw the RT surface (minimal geodesic)
+        ctx.strokeStyle = 'rgba(255, 107, 107, 0.8)';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([5, 5]);
+        drawPoincaréGeodesic(ctx, cx, cy, R, points[rtStart].angle, points[rtEnd].angle, depth, curvature, true);
+        ctx.setLineDash([]);
+
+        // Highlight the boundary region
+        ctx.strokeStyle = 'rgba(255, 217, 61, 0.8)';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, points[rtStart].angle, points[rtEnd].angle);
+        ctx.stroke();
+
+        // Label
+        ctx.fillStyle = '#ffd93d';
+        ctx.font = 'bold 11px Segoe UI';
+        const midAngle = (points[rtStart].angle + points[rtEnd].angle) / 2;
+        ctx.fillText('Region A', cx + (R + 20) * Math.cos(midAngle), cy + (R + 20) * Math.sin(midAngle));
+
+        ctx.fillStyle = '#ff6b6b';
+        ctx.font = 'bold 10px Segoe UI';
+        ctx.fillText('RT-Fläche (Entanglement)', cx, cy + R + 25);
+    }
+}
+
+function drawPoincaréGeodesic(ctx, cx, cy, R, angle1, angle2, depth, curvature, isRT = false) {
+    // Approximate geodesic as a curved arc that bows inward
+    const p1x = cx + R * Math.cos(angle1);
+    const p1y = cy + R * Math.sin(angle1);
+    const p2x = cx + R * Math.cos(angle2);
+    const p2y = cy + R * Math.sin(angle2);
+
+    const midAngle = (angle1 + angle2) / 2;
+    let angleDiff = angle2 - angle1;
+    if (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+    if (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+
+    // The geodesic bows toward center; more so for points further apart
+    const bowFactor = Math.abs(Math.sin(angleDiff / 2)) * (0.3 + curvature * 0.5);
+    const midR = R * (1 - bowFactor * depth);
+
+    const cpx = cx + midR * Math.cos(midAngle);
+    const cpy = cy + midR * Math.sin(midAngle);
+
+    if (!isRT) {
+        const alpha = 0.1 + depth * 0.2;
+        ctx.strokeStyle = `rgba(255, 107, 107, ${alpha})`;
+        ctx.lineWidth = 1.5;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(p1x, p1y);
+    ctx.quadraticCurveTo(cpx, cpy, p2x, p2y);
+    ctx.stroke();
+}
+
+// ============================================================
+// DEMO 3: ENTANGLEMENT ENTROPY / MUTUAL INFORMATION
+// ============================================================
+
+function updateEntropy() {
+    const regionSize = parseInt(document.getElementById('regionSize').value) / 100;
+    const temperature = parseInt(document.getElementById('temperature').value) / 100;
+    const networkWidth = parseInt(document.getElementById('networkWidth').value);
+
+    document.getElementById('regionSizeVal').textContent = Math.round(regionSize * 100) + '%';
+    document.getElementById('temperatureVal').textContent = Math.round(temperature * 100) + '%';
+    document.getElementById('networkWidthVal').textContent = networkWidth;
+
+    drawEntropyPlot(regionSize, temperature, networkWidth);
+    drawMutualInfoPlot(regionSize, temperature, networkWidth);
+
+    // Ryu-Takayanagi: S_A = Area(γ_A) / 4G_N
+    // In our analogy: S ∝ log(sin(π * regionSize)) * networkWidth_factor
+    const entropy = Math.max(0, Math.log(Math.sin(Math.PI * regionSize) + 0.01) * (1 - temperature * 0.5) + 2) * (networkWidth / 64);
+    const thermalEntropy = temperature * Math.log(networkWidth) * regionSize;
+    const totalEntropy = entropy + thermalEntropy;
+    const mutualInfo = Math.max(0, entropy * 2 - totalEntropy) * (1 - temperature);
+
+    const infoHTML = `
+        <div class="info-card">
+            <div class="value">${entropy.toFixed(2)}</div>
+            <div class="label">Entanglement-Entropie S_A</div>
+        </div>
+        <div class="info-card">
+            <div class="value">${thermalEntropy.toFixed(2)}</div>
+            <div class="label">Thermische Entropie</div>
+        </div>
+        <div class="info-card">
+            <div class="value">${totalEntropy.toFixed(2)}</div>
+            <div class="label">Gesamt-Entropie</div>
+        </div>
+        <div class="info-card">
+            <div class="value">${mutualInfo.toFixed(2)}</div>
+            <div class="label">Mutual Information I(A;B)</div>
+        </div>
+    `;
+    document.getElementById('entropyInfoRow').innerHTML = infoHTML;
+}
+
+function drawEntropyPlot(regionSize, temperature, networkWidth) {
+    const canvas = document.getElementById('entropyCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const padding = 55;
+    const plotW = W - 2 * padding;
+    const plotH = H - 2 * padding;
+
+    // Title
+    ctx.fillStyle = '#e0e0f0';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Entanglement-Entropie vs. Region-Größe', W / 2, 22);
+    ctx.fillStyle = '#7a7a9a';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('Ryu-Takayanagi: S_A ∝ log sin(πℓ/L)', W / 2, 38);
+
+    // Axes
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, padding + plotH);
+    ctx.lineTo(padding + plotW, padding + plotH);
+    ctx.stroke();
+
+    // Axis labels
+    ctx.fillStyle = '#7a7a9a';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Region-Größe ℓ/L', padding + plotW / 2, H - 10);
+    ctx.save();
+    ctx.translate(15, padding + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Entropie S_A', 0, 0);
+    ctx.restore();
+
+    // Plot S_A = c/3 * log(sin(π * l/L)) + const for different temperatures
+    const N = 200;
+    const widthFactor = networkWidth / 64;
+
+    // Zero temperature curve
+    ctx.strokeStyle = '#6c63ff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    let maxVal = 0;
+    const values0 = [];
+    for (let i = 0; i < N; i++) {
+        const l = (i + 1) / (N + 1);
+        const s = (Math.log(Math.sin(Math.PI * l) + 0.001) + 3) * widthFactor;
+        values0.push(s);
+        maxVal = Math.max(maxVal, s);
+    }
+
+    // Thermal curve
+    const valuesT = [];
+    for (let i = 0; i < N; i++) {
+        const l = (i + 1) / (N + 1);
+        const s = (Math.log(Math.sin(Math.PI * l) + 0.001) + 3) * widthFactor + temperature * Math.log(networkWidth) * l * 0.5;
+        valuesT.push(s);
+        maxVal = Math.max(maxVal, s);
+    }
+
+    if (maxVal === 0) maxVal = 1;
+
+    // Draw zero-T curve
+    ctx.strokeStyle = '#6c63ff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) {
+        const x = padding + (i / N) * plotW;
+        const y = padding + plotH - (values0[i] / maxVal) * plotH * 0.9;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Draw thermal curve
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) {
+        const x = padding + (i / N) * plotW;
+        const y = padding + plotH - (valuesT[i] / maxVal) * plotH * 0.9;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Mark current region size
+    const idx = Math.floor(regionSize * N);
+    const markerX = padding + regionSize * plotW;
+    const markerY0 = padding + plotH - (values0[Math.min(idx, N - 1)] / maxVal) * plotH * 0.9;
+    const markerYT = padding + plotH - (valuesT[Math.min(idx, N - 1)] / maxVal) * plotH * 0.9;
+
+    // Vertical line
+    ctx.strokeStyle = 'rgba(255, 217, 61, 0.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(markerX, padding);
+    ctx.lineTo(markerX, padding + plotH);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Marker dots
+    ctx.fillStyle = '#6c63ff';
+    ctx.beginPath();
+    ctx.arc(markerX, markerY0, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#ff6b6b';
+    ctx.beginPath();
+    ctx.arc(markerX, markerYT, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Legend
+    ctx.fillStyle = '#6c63ff';
+    ctx.font = '11px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillRect(padding + 10, padding + 10, 12, 12);
+    ctx.fillStyle = '#e0e0f0';
+    ctx.fillText('T=0 (rein quantenmech.)', padding + 28, padding + 21);
+
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillRect(padding + 10, padding + 30, 12, 12);
+    ctx.fillStyle = '#e0e0f0';
+    ctx.fillText('T>0 (mit Rauschen)', padding + 28, padding + 41);
+}
+
+function drawMutualInfoPlot(regionSize, temperature, networkWidth) {
+    const canvas = document.getElementById('miCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const padding = 55;
+    const plotW = W - 2 * padding;
+    const plotH = H - 2 * padding;
+
+    // Title
+    ctx.fillStyle = '#e0e0f0';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Mutual Information über Schichten', W / 2, 22);
+    ctx.fillStyle = '#7a7a9a';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('I(Input; Schicht_k) — Information Bottleneck', W / 2, 38);
+
+    // Axes
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, padding + plotH);
+    ctx.lineTo(padding + plotW, padding + plotH);
+    ctx.stroke();
+
+    ctx.fillStyle = '#7a7a9a';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Schicht-Tiefe (Boundary → Bulk → Boundary)', padding + plotW / 2, H - 10);
+    ctx.save();
+    ctx.translate(15, padding + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Mutual Information', 0, 0);
+    ctx.restore();
+
+    const numLayers = 10;
+    const widthFactor = networkWidth / 64;
+
+    // MI with input (decreases into bulk, then increases for output)
+    // MI with output (increases toward output)
+    const miInput = [];
+    const miOutput = [];
+    const miTotal = [];
+
+    for (let k = 0; k <= numLayers; k++) {
+        const t = k / numLayers;
+        // MI with input: starts high, decreases (information bottleneck)
+        const miIn = widthFactor * (1 - temperature * 0.5) * Math.exp(-t * 3 * (1 - regionSize * 0.5));
+        // MI with output: starts low, increases
+        const miOut = widthFactor * (1 - temperature * 0.5) * Math.exp(-(1 - t) * 3 * (1 - regionSize * 0.5));
+        miInput.push(miIn);
+        miOutput.push(miOut);
+        miTotal.push(miIn + miOut);
+    }
+
+    let maxMI = 0;
+    for (const v of miTotal) maxMI = Math.max(maxMI, v);
+    for (const v of miInput) maxMI = Math.max(maxMI, v);
+    for (const v of miOutput) maxMI = Math.max(maxMI, v);
+    if (maxMI === 0) maxMI = 1;
+
+    // Draw MI with input
+    ctx.strokeStyle = '#6c63ff';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let k = 0; k <= numLayers; k++) {
+        const x = padding + (k / numLayers) * plotW;
+        const y = padding + plotH - (miInput[k] / maxMI) * plotH * 0.85;
+        if (k === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Draw MI with output
+    ctx.strokeStyle = '#00d4aa';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let k = 0; k <= numLayers; k++) {
+        const x = padding + (k / numLayers) * plotW;
+        const y = padding + plotH - (miOutput[k] / maxMI) * plotH * 0.85;
+        if (k === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Draw total MI
+    ctx.strokeStyle = '#ffd93d';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    for (let k = 0; k <= numLayers; k++) {
+        const x = padding + (k / numLayers) * plotW;
+        const y = padding + plotH - (miTotal[k] / maxMI) * plotH * 0.85;
+        if (k === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw dots at each layer
+    for (let k = 0; k <= numLayers; k++) {
+        const x = padding + (k / numLayers) * plotW;
+
+        ctx.fillStyle = '#6c63ff';
+        ctx.beginPath();
+        ctx.arc(x, padding + plotH - (miInput[k] / maxMI) * plotH * 0.85, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#00d4aa';
+        ctx.beginPath();
+        ctx.arc(x, padding + plotH - (miOutput[k] / maxMI) * plotH * 0.85, 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Layer labels on x-axis
+    ctx.fillStyle = '#7a7a9a';
+    ctx.font = '9px Segoe UI';
+    ctx.textAlign = 'center';
+    for (let k = 0; k <= numLayers; k++) {
+        const x = padding + (k / numLayers) * plotW;
+        let label = `L${k}`;
+        if (k === 0) label = 'Input';
+        if (k === numLayers) label = 'Output';
+        ctx.fillText(label, x, padding + plotH + 15);
+    }
+
+    // Bottleneck indicator
+    let minMIIdx = 0;
+    let minMIVal = Infinity;
+    for (let k = 0; k <= numLayers; k++) {
+        if (miTotal[k] < minMIVal) {
+            minMIVal = miTotal[k];
+            minMIIdx = k;
+        }
+    }
+    const bnX = padding + (minMIIdx / numLayers) * plotW;
+    const bnY = padding + plotH - (minMIVal / maxMI) * plotH * 0.85;
+
+    ctx.strokeStyle = 'rgba(255, 107, 107, 0.6)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(bnX, padding);
+    ctx.lineTo(bnX, padding + plotH);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 10px Segoe UI';
+    ctx.fillText('Bottleneck', bnX, padding + 15);
+
+    // Legend
+    ctx.textAlign = 'left';
+    const legX = padding + plotW - 170;
+    const legY = padding + 15;
+
+    ctx.fillStyle = '#6c63ff';
+    ctx.fillRect(legX, legY, 12, 12);
+    ctx.fillStyle = '#e0e0f0';
+    ctx.font = '10px Segoe UI';
+    ctx.fillText('I(Input; Schicht_k)', legX + 18, legY + 10);
+
+    ctx.fillStyle = '#00d4aa';
+    ctx.fillRect(legX, legY + 18, 12, 12);
+    ctx.fillStyle = '#e0e0f0';
+    ctx.fillText('I(Output; Schicht_k)', legX + 18, legY + 28);
+
+    ctx.fillStyle = '#ffd93d';
+    ctx.fillRect(legX, legY + 36, 12, 12);
+    ctx.fillStyle = '#e0e0f0';
+    ctx.fillText('Total MI (Summe)', legX + 18, legY + 46);
+}
+
+// ============================================================
+// DEMO 4: FULL NETWORK SIMULATION
+// ============================================================
+
+let animationRunning = false;
+let animationFrame = null;
+let animTime = 0;
+
+const archNames = ['Uniform', 'Encoder-Decoder', 'Bottleneck (VAE)', 'Wide-Narrow-Wide'];
+
+function updateArchLabel() {
+    const idx = parseInt(document.getElementById('archType').value);
+    document.getElementById('archTypeVal').textContent = archNames[idx];
+    runFullSimulation();
+}
+
+function getArchWidths(archType, numLayers, bottleneck, baseWidth) {
+    const widths = [];
+    const bn = bottleneck;
+
+    for (let i = 0; i <= numLayers; i++) {
+        const t = i / numLayers;
+        let w;
+        switch (archType) {
+            case 0: // Uniform
+                w = baseWidth;
+                break;
+            case 1: // Encoder-Decoder
+                w = baseWidth * (1 - (1 - bn) * Math.sin(Math.PI * t));
+                break;
+            case 2: // Bottleneck (VAE)
+                w = baseWidth * (bn + (1 - bn) * Math.pow(Math.abs(2 * t - 1), 1.5));
+                break;
+            case 3: // Wide-Narrow-Wide
+                w = baseWidth * (bn + (1 - bn) * (0.5 + 0.5 * Math.cos(2 * Math.PI * t)));
+                break;
+            default:
+                w = baseWidth;
+        }
+        widths.push(Math.max(w, baseWidth * 0.1));
+    }
+    return widths;
+}
+
+function runFullSimulation() {
+    const archType = parseInt(document.getElementById('archType').value);
+    const bottleneck = parseInt(document.getElementById('bottleneck').value) / 100;
+    const progress = parseInt(document.getElementById('trainingProgress').value) / 100;
+
+    document.getElementById('bottleneckVal').textContent = Math.round(bottleneck * 100) + '%';
+    document.getElementById('trainingProgressVal').textContent = Math.round(progress * 100) + '%';
+
+    drawFullNetwork(archType, bottleneck, progress, animTime);
+}
+
+function drawFullNetwork(archType, bottleneck, progress, time) {
+    const canvas = document.getElementById('fullNetCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const numLayers = 8;
+    const baseWidth = 120;
+    const widths = getArchWidths(archType, numLayers, bottleneck, baseWidth);
+
+    const padding = { left: 80, right: 80, top: 60, bottom: 60 };
+    const plotW = W - padding.left - padding.right;
+    const plotH = H - padding.top - padding.bottom;
+
+    // Title
+    ctx.fillStyle = '#e0e0f0';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Holografisches Netzwerk: ${archNames[archType]}`, W / 2, 22);
+    ctx.fillStyle = '#7a7a9a';
+    ctx.font = '11px Segoe UI';
+    ctx.fillText('Boundary (Input) → Bulk (innere Schichten) → Boundary (Output)', W / 2, 40);
+
+    // Draw the "AdS space" background shape
+    ctx.beginPath();
+    ctx.moveTo(padding.left, padding.top + plotH / 2 - widths[0] / 2);
+    for (let i = 0; i <= numLayers; i++) {
+        const x = padding.left + (i / numLayers) * plotW;
+        const y = padding.top + plotH / 2 - widths[i] / 2;
+        ctx.lineTo(x, y);
+    }
+    for (let i = numLayers; i >= 0; i--) {
+        const x = padding.left + (i / numLayers) * plotW;
+        const y = padding.top + plotH / 2 + widths[i] / 2;
+        ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    const bgGrad = ctx.createLinearGradient(padding.left, 0, padding.left + plotW, 0);
+    bgGrad.addColorStop(0, 'rgba(108, 99, 255, 0.08)');
+    bgGrad.addColorStop(0.5, 'rgba(0, 212, 170, 0.08)');
+    bgGrad.addColorStop(1, 'rgba(108, 99, 255, 0.08)');
+    ctx.fillStyle = bgGrad;
+    ctx.fill();
+
+    // Draw layers
+    const nodesPerLayer = [];
+    for (let i = 0; i <= numLayers; i++) {
+        const numNodes = Math.max(2, Math.round(widths[i] / 15));
+        nodesPerLayer.push(numNodes);
+    }
+
+    // Store node positions
+    const nodePositions = [];
+    for (let i = 0; i <= numLayers; i++) {
+        const x = padding.left + (i / numLayers) * plotW;
+        const nodes = [];
+        const n = nodesPerLayer[i];
+        for (let j = 0; j < n; j++) {
+            const y = padding.top + plotH / 2 - widths[i] / 2 + (j + 0.5) * (widths[i] / n);
+            nodes.push({ x, y });
+        }
+        nodePositions.push(nodes);
+    }
+
+    // Draw connections
+    for (let i = 0; i < numLayers; i++) {
+        const layer1 = nodePositions[i];
+        const layer2 = nodePositions[i + 1];
+
+        for (let a = 0; a < layer1.length; a++) {
+            for (let b = 0; b < layer2.length; b++) {
+                // Connection strength based on training progress and distance
+                const dy = Math.abs(layer1[a].y - layer2[b].y);
+                const maxDy = widths[i] + widths[i + 1];
+                const strength = progress * Math.exp(-dy / (maxDy * 0.3));
+
+                if (strength > 0.05) {
+                    // Animate: flowing particles
+                    const flowPhase = (time * 0.02 + a * 0.3 + b * 0.2) % 1;
+
+                    ctx.strokeStyle = `rgba(108, 99, 255, ${strength * 0.15})`;
+                    ctx.lineWidth = strength * 2;
+                    ctx.beginPath();
+                    ctx.moveTo(layer1[a].x, layer1[a].y);
+                    ctx.lineTo(layer2[b].x, layer2[b].y);
+                    ctx.stroke();
+
+                    // Flowing particle
+                    if (animationRunning && strength > 0.2) {
+                        const px = lerp(layer1[a].x, layer2[b].x, flowPhase);
+                        const py = lerp(layer1[a].y, layer2[b].y, flowPhase);
+                        ctx.fillStyle = `rgba(0, 212, 170, ${strength * 0.8})`;
+                        ctx.beginPath();
+                        ctx.arc(px, py, 1.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+        }
+    }
+
+    // Draw nodes
+    for (let i = 0; i <= numLayers; i++) {
+        const isBoundary = (i === 0 || i === numLayers);
+        const t = i / numLayers;
+
+        for (let j = 0; j < nodePositions[i].length; j++) {
+            const node = nodePositions[i][j];
+            const size = isBoundary ? 5 : 3 + progress * 3;
+
+            // Node activation (simulated)
+            const activation = 0.3 + 0.7 * progress * (0.5 + 0.5 * Math.sin(time * 0.05 + i * 0.5 + j * 0.3));
+
+            if (isBoundary) {
+                ctx.fillStyle = `rgba(108, 99, 255, ${0.5 + activation * 0.5})`;
+            } else {
+                const color = getColor(t);
+                ctx.fillStyle = color;
+                ctx.globalAlpha = 0.4 + activation * 0.6;
+            }
+
+            ctx.beginPath();
+            ctx.arc(node.x, node.y, size, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Glow
+            if (activation > 0.6) {
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, size + 4, 0, Math.PI * 2);
+                if (isBoundary) {
+                    ctx.fillStyle = `rgba(108, 99, 255, ${activation * 0.15})`;
+                } else {
+                    ctx.fillStyle = `rgba(0, 212, 170, ${activation * 0.15})`;
+                }
+                ctx.fill();
+            }
+
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    // Layer labels
+    ctx.textAlign = 'center';
+    for (let i = 0; i <= numLayers; i++) {
+        const x = padding.left + (i / numLayers) * plotW;
+        const y = padding.top + plotH / 2 + widths[i] / 2 + 20;
+
+        if (i === 0) {
+            ctx.fillStyle = '#6c63ff';
+            ctx.font = 'bold 11px Segoe UI';
+            ctx.fillText('Input', x, y);
+            ctx.fillText('(Boundary)', x, y + 14);
+        } else if (i === numLayers) {
+            ctx.fillStyle = '#6c63ff';
+            ctx.font = 'bold 11px Segoe UI';
+            ctx.fillText('Output', x, y);
+            ctx.fillText('(Boundary)', x, y + 14);
+        } else if (i === Math.floor(numLayers / 2)) {
+            ctx.fillStyle = '#00d4aa';
+            ctx.font = 'bold 11px Segoe UI';
+            ctx.fillText('Tiefster Bulk', x, y);
+        } else {
+            ctx.fillStyle = '#7a7a9a';
+            ctx.font = '10px Segoe UI';
+            ctx.fillText(`L${i}`, x, y);
+        }
+    }
+
+    // Draw "Bulk" region indicator
+    const bulkStartX = padding.left + (1 / numLayers) * plotW;
+    const bulkEndX = padding.left + ((numLayers - 1) / numLayers) * plotW;
+    ctx.strokeStyle = 'rgba(0, 212, 170, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    ctx.strokeRect(bulkStartX - 10, padding.top - 5, bulkEndX - bulkStartX + 20, plotH + 10);
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = 'rgba(0, 212, 170, 0.5)';
+    ctx.font = 'bold 12px Segoe UI';
+    ctx.fillText('← BULK (innere Repräsentationen) →', (bulkStartX + bulkEndX) / 2, padding.top - 12);
+
+    // Compute info metrics
+    let totalParams = 0;
+    for (let i = 0; i < numLayers; i++) {
+        totalParams += nodesPerLayer[i] * nodesPerLayer[i + 1];
+    }
+
+    const minWidth = Math.min(...widths);
+    const maxWidth = Math.max(...widths);
+    const compressionRatio = minWidth / maxWidth;
+
+    const effectiveCapacity = totalParams * progress;
+
+    const infoHTML = `
+        <div class="info-card">
+            <div class="value">${totalParams}</div>
+            <div class="label">Parameter (Verbindungen)</div>
+        </div>
+        <div class="info-card">
+            <div class="value">${(compressionRatio * 100).toFixed(0)}%</div>
+            <div class="label">Kompressionsverhältnis</div>
+        </div>
+        <div class="info-card">
+            <div class="value">${effectiveCapacity.toFixed(0)}</div>
+            <div class="label">Effektive Kapazität</div>
+        </div>
+        <div class="info-card">
+            <div class="value">${archNames[parseInt(document.getElementById('archType').value)]}</div>
+            <div class="label">Architektur-Typ</div>
+        </div>
+    `;
+    document.getElementById('fullNetInfoRow').innerHTML = infoHTML;
+}
+
+function toggleAnimation() {
+    animationRunning = !animationRunning;
+    if (animationRunning) {
+        animate();
+    } else if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+    }
+}
+
+function animate() {
+    if (!animationRunning) return;
+    animTime++;
+    runFullSimulation();
+    animationFrame = requestAnimationFrame(animate);
+}
+
+function resetSimulation() {
+    animationRunning = false;
+    if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+    }
+    animTime = 0;
+
+    document.getElementById('archType').value = 1;
+    document.getElementById('bottleneck').value = 50;
+    document.getElementById('trainingProgress').value = 50;
+    updateArchLabel();
+    runFullSimulation();
+}
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+
+function init() {
+    updateRGFlow();
+    updateBulkBoundary();
+    updateEntropy();
+    updateArchLabel();
+    runFullSimulation();
+}
+
+// Run on load
+window.addEventListener('load', init);
+window.addEventListener('resize', () => {
+    // Responsive canvas sizing
+    const canvases = document.querySelectorAll('canvas');
+    canvases.forEach(c => {
+        // Keep original dimensions for now
+    });
+});
+</script>
+
+</body>
+</html>
