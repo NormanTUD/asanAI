@@ -689,13 +689,13 @@ this projection occurs unconsciously: humans only recognize the
 correspondence between organ and artifact after the fact. His book
 follows a trajectory of increasing technological complexity, culminating
 in the state itself as an image of the entire human organism, with
-technological development serving as the engine of cultural evolution---
+technological development serving as the engine of cultural evolution,
 always externalizing something already latent in the human body and mind,
 and in turn challenging and advancing human self-knowledge. Kapp's theory
 is widely regarded as a founding document of modern philosophy of
 technology and continues to resonate with contemporary AI discourse: just
 as Kapp saw the telegraph as a projection of the nervous system, one
 might view neural networks and large language models as projections of
-human cognitive architecture---pattern recognition, association, and
+human cognitive architecture, pattern recognition, association, and
 language production externalized into silicon.
 </div>
