@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Betti-Zahlen – Visuelle Erklärung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d0d2b 0%, #1a1a4e 50%, #0d0d2b 100%);
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d4ff, #a855f7, #ff6bcb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            color: #8888cc;
+            margin-bottom: 50px;
+        }
+
+        /* Section Styling */
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(100, 100, 255, 0.15);
+        }
+
+        .section h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #a0a0ff;
+        }
+
+        .section p {
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: #c0c0e0;
+            margin-bottom: 15px;
+        }
+
+        /* Canvas containers */
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        canvas {
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Betti Cards */
+        .betti-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .betti-card {
+            background: linear-gradient(145deg, rgba(40, 40, 100, 0.6), rgba(20, 20, 60, 0.8));
+            border: 1px solid rgba(150, 150, 255, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .betti-card:hover {
+            border-color: rgba(150, 150, 255, 0.5);
+            transform: scale(1.03);
+        }
+
+        .betti-card .number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .betti-card:nth-child(1) .number { color: #00d4ff; }
+        .betti-card:nth-child(2) .number { color: #a855f7; }
+        .betti-card:nth-child(3) .number { color: #ff6bcb; }
+
+        .betti-card .label {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #d0d0ff;
+        }
+
+        .betti-card .desc {
+            font-size: 0.95em;
+            color: #9999cc;
+            line-height: 1.6;
+        }
+
+        /* Interactive Demo */
+        .demo-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            padding: 12px 28px;
+            border: 2px solid rgba(150, 150, 255, 0.3);
+            background: rgba(60, 60, 140, 0.3);
+            color: #c0c0ff;
+            border-radius: 12px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .demo-btn:hover {
+            background: rgba(80, 80, 180, 0.5);
+            border-color: rgba(150, 150, 255, 0.6);
+            color: #fff;
+        }
+
+        .demo-btn.active {
+            background: rgba(100, 100, 220, 0.6);
+            border-color: #a855f7;
+            color: #fff;
+        }
+
+        .result-display {
+            text-align: center;
+            margin: 25px 0;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .result-display .betti-result {
+            font-size: 1.6em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Data Analysis Section */
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        @media (max-width: 768px) {
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .data-panel {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .data-panel h3 {
+            color: #a0a0ff;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        /* Animated Topology */
+        .topo-animation {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+            overflow: hidden;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(30, 30, 80, 0.95);
+            border: 1px solid rgba(150, 150, 255, 0.4);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.9em;
+            color: #d0d0ff;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 100;
+            max-width: 250px;
+        }
+
+        /* Pipeline Section */
+        .pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .pipeline-step {
+            background: linear-gradient(145deg, rgba(50, 50, 120, 0.7), rgba(30, 30, 80, 0.9));
+            border: 1px solid rgba(150, 150, 255, 0.25);
+            border-radius: 14px;
+            padding: 20px 24px;
+            text-align: center;
+            min-width: 150px;
+            transition: all 0.3s;
+        }
+
+        .pipeline-step:hover {
+            border-color: #a855f7;
+            transform: translateY(-4px);
+        }
+
+        .pipeline-step .step-icon {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+
+        .pipeline-step .step-label {
+            font-size: 0.9em;
+            color: #b0b0dd;
+        }
+
+        .pipeline-arrow {
+            font-size: 1.8em;
+            color: #6666aa;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 14px 18px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-table th {
+            background: rgba(80, 80, 180, 0.3);
+            color: #c0c0ff;
+            font-size: 1.05em;
+        }
+
+        .comparison-table td {
+            background: rgba(0, 0, 0, 0.2);
+            color: #b0b0dd;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(60, 60, 140, 0.3);
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        .highlight-purple {
+            color: #a855f7;
+            font-weight: bold;
+        }
+
+        .highlight-pink {
+            color: #ff6bcb;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #5555aa;
+            font-size: 0.9em;
+        }
+
+        /* Slider */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 300px;
+            height: 6px;
+            background: rgba(100, 100, 200, 0.3);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #a855f7;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .slider-label {
+            font-size: 1.1em;
+            color: #b0b0dd;
+            min-width: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔮 Betti-Zahlen</h1>
+        <p class="subtitle">Eine visuelle Reise durch die Topologie – von Löchern in Formen bis zur Datenanalyse</p>
+
+        <!-- SECTION 1: Was sind Betti-Zahlen? -->
+        <div class="section">
+            <h2>① Was sind Betti-Zahlen?</h2>
+            <p>
+                Betti-Zahlen sind <strong>topologische Invarianten</strong>, die die „Form" eines Raumes beschreiben.
+                Sie zählen die Anzahl der <em>unabhängigen Löcher</em> in verschiedenen Dimensionen.
+                Benannt nach dem italienischen Mathematiker <strong>Enrico Betti</strong>, wurden sie von
+                Henri Poincaré weiterentwickelt und sind zentrale Objekte der <strong>algebraischen Topologie</strong>.
+            </p>
+
+            <div class="betti-cards">
+                <div class="betti-card" onclick="highlightBetti(0)">
+                    <div class="number">β₀</div>
+                    <div class="label">Zusammenhangskomponenten</div>
+                    <div class="desc">Zählt die Anzahl der zusammenhängenden Teile. Ein einzelner Kreis hat β₀ = 1, zwei getrennte Kreise haben β₀ = 2.</div>
+                </div>
+                <div class="betti-card" onclick="highlightBetti(1)">
+                    <div class="number">β₁</div>
+                    <div class="label">Schleifen / 1D-Löcher</div>
+                    <div class="desc">Zählt die Anzahl der unabhängigen Schleifen. Ein Torus (Donut) hat β₁ = 2 – eine Schleife um das Loch, eine durch den Ring.</div>
+                </div>
+                <div class="betti-card" onclick="highlightBetti(2)">
+                    <div class="number">β₂</div>
+                    <div class="label">Hohlräume / 2D-Löcher</div>
+                    <div class="desc">Zählt eingeschlossene Hohlräume. Eine hohle Kugel hat β₂ = 1, ein massiver Ball hat β₂ = 0.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: Visuelle Beispiele -->
+        <div class="section">
+            <h2>② Visuelle Beispiele</h2>
+            <p>Klicke auf eine Form, um ihre Betti-Zahlen zu sehen. Die Formen werden interaktiv auf dem Canvas gezeichnet.</p>
+
+            <div class="demo-controls">
+                <button class="demo-btn active" onclick="drawShape('point')">Punkt</button>
+                <button class="demo-btn" onclick="drawShape('circle')">Kreis (S¹)</button>
+                <button class="demo-btn" onclick="drawShape('sphere')">Sphäre (S²)</button>
+                <button class="demo-btn" onclick="drawShape('torus')">Torus (T²)</button>
+                <button class="demo-btn" onclick="drawShape('double')">Doppel-Torus</button>
+                <button class="demo-btn" onclick="drawShape('two_circles')">2 Kreise</button>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="shapeCanvas" width="500" height="350"></canvas>
+            </div>
+
+            <div class="result-display" id="bettiResult">
+                <div style="font-size:1.1em; color:#8888cc;">Betti-Zahlen für: <strong id="shapeName" style="color:#00d4ff;">Punkt</strong></div>
+                <div class="betti-result">
+                    <span style="color:#00d4ff;" id="b0val">β₀ = 1</span> &nbsp;·&nbsp;
+                    <span style="color:#a855f7;" id="b1val">β₁ = 0</span> &nbsp;·&nbsp;
+                    <span style="color:#ff6bcb;" id="b2val">β₂ = 0</span>
+                </div>
+                <p id="shapeExplanation" style="margin-top:12px; color:#9999bb; font-size:0.95em;">
+                    Ein einzelner Punkt ist zusammenhängend, hat keine Schleifen und keine Hohlräume.
+                </p>
+            </div>
+        </div>
+
+        <!-- SECTION 3: Vergleichstabelle -->
+        <div class="section">
+            <h2>③ Betti-Zahlen bekannter Räume</h2>
+            <p>Verschiedene topologische Räume haben charakteristische Betti-Zahlen. Beachte: Zwei sehr verschiedene Räume können in allen Betti-Zahlen übereinstimmen!</p>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Raum</th>
+                        <th>β₀</th>
+                        <th>β₁</th>
+                        <th>β₂</th>
+                        <th>Euler-Charakteristik χ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Punkt</td>
+                        <td class="highlight">1</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>Kreis S¹</td>
+                        <td class="highlight">1</td>
+                        <td class="highlight-purple">1</td>
+                        <td>0</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Sphäre S²</td>
+                        <td class="highlight">1</td>
+                        <td>0</td>
+                        <td class="highlight-pink">1</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>Torus T²</td>
+                        <td class="highlight">1</td>
+                        <td class="highlight-purple">2</td>
+                        <td class="highlight-pink">1</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Doppel-Torus</td>
+                        <td class="highlight">1</td>
+                        <td class="highlight-purple">4</td>
+                        <td class="highlight-pink">1</td>
+                        <td>-2</td>
+                    </tr>
+                    <tr>
+                        <td>Genus-g-Fläche</td>
+                        <td class="highlight">1</td>
+                        <td class="highlight-purple">2g</td>
+                        <td class="highlight-pink">1</td>
+                        <td>2 − 2g</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="margin-top:15px;">
+                Die <strong>Euler-Charakteristik</strong> berechnet sich als χ = β₀ − β₁ + β₂ − β₃ + … und ist selbst eine topologische Invariante.
+            </p>
+        </div>
+
+        <!-- SECTION 4: Persistent Homology & Datenanalyse -->
+        <div class="section">
+            <h2>④ Betti-Zahlen in der Datenanalyse (TDA)</h2>
+            <p>
+                In der <strong>Topologischen Datenanalyse (TDA)</strong> werden Betti-Zahlen genutzt, um die „Form" von Datensätzen zu verstehen.
+                Die Idee: Punkte in einem hochdimensionalen Raum bilden bei verschiedenen Skalenparametern unterschiedliche topologische Strukturen.
+                Durch <strong>Persistente Homologie</strong> kann man erkennen, welche Merkmale (Cluster, Schleifen, Hohlräume) stabil sind.
+            </p>
+
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <div class="step-icon">📊</div>
+                    <div class="step-label">Rohdaten<br>(Punktwolke)</div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="step-icon">🔗</div>
+                    <div class="step-label">Simplizial-<br>komplex</div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="step-icon">🔮</div>
+                    <div class="step-label">Homologie<br>berechnen</div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-step">
+                    <div class="step-icon">📈</div>
+                    <div class="step-label">Betti-Zahlen<br>& Persistenz</div>
+                </div>
+            </div>
+
+            <p>
+                Bewege den <strong>Radius-Slider</strong> unten, um zu sehen, wie sich bei wachsendem Verbindungsradius ε
+                die Topologie einer Punktwolke verändert – und damit die Betti-Zahlen!
+            </p>
+
+            <div class="slider-container">
+                <span class="slider-label">ε = <span id="epsValue">0.00</span></span>
+                <input type="range" id="epsSlider" min="0" max="100" value="0" oninput="updateEpsilon(this.value)">
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="tdaCanvas" width="500" height="400"></canvas>
+                <canvas id="barcode" width="350" height="400"></canvas>
+            </div>
+
+            <div class="result-display" id="tdaResult">
+                <div style="font-size:1.1em; color:#8888cc;">Aktuelle Betti-Zahlen bei ε = <span id="epsDisplay">0.00</span></div>
+                <div class="betti-result">
+                    <span style="color:#00d4ff;" id="tda_b0">β₀ = 20</span> &nbsp;·&nbsp;
+                    <span style="color:#a855f7;" id="tda_b1">β₁ = 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: Anwendungen -->
+        <div class="section">
+            <h2>⑤ Anwendungen in der Praxis</h2>
+
+            <div class="data-grid">
+                <div class="data-panel">
+                    <h3>🧬 Biologie & Medizin</h3>
+                    <p style="color:#9999bb; line-height:1.7;">
+                        Analyse der Form von Proteinen, Erkennung von Tumoren in medizinischen Bildern,
+                        Verständnis neuronaler Netzwerke im Gehirn durch topologische Merkmale.
+                    </p>
+                </div>
+                <div class="data-panel">
+                    <h3>📡 Sensornetzwerke</h3>
+                    <p style="color:#9999bb; line-height:1.7;">
+                        Erkennung von Abdeckungslücken in Sensornetzwerken. β₁ > 0 bedeutet:
+                        Es gibt ein „Loch" in der Abdeckung, das kein Sensor erreicht.
+                    </p>
+                </div>
+                <div class="data-panel">
+                    <h3>🤖 Machine Learning</h3>
+                    <p style="color:#9999bb; line-height:1.7;">
+                        Topologische Features als Eingabe für Klassifikatoren. Persistenzdiagramme
+                        liefern robuste, rotations- und skalierungsinvariante Merkmale.
+                    </p>
+                </div>
+                <div class="data-panel">
+                    <h3>🌌 Kosmologie</h3>
+                    <p style="color:#9999bb; line-height:1.7;">
+                        Analyse der großräumigen Struktur des Universums. Betti-Zahlen beschreiben
+                        Cluster (β₀), Filamente/Schleifen (β₁) und Voids/Hohlräume (β₂) im kosmischen Netz.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 6: Mathematischer Hintergrund -->
+        <div class="section">
+            <h2>⑥ Mathematischer Hintergrund</h2>
+            <p>
+                Formal ist die <strong>k-te Betti-Zahl</strong> βₖ der Rang der k-ten Homologiegruppe Hₖ(X):
+            </p>
+            <div style="text-align:center; font-size:1.4em; margin:25px 0; color:#c0c0ff; font-family: 'Courier New', monospace;">
+                βₖ(X) = rank(Hₖ(X; ℤ)) = dim(Hₖ(X; ℚ))
+            </div>
+            <p>
+                Die Homologiegruppen messen „Zyklen modulo Ränder" – also geschlossene Strukturen,
+                die nicht der Rand einer höherdimensionalen Struktur sind. Das <strong>Poincaré-Polynom</strong>
+                fasst alle Betti-Zahlen zusammen:
+            </p>
+            <div style="text-align:center; font-size:1.3em; margin:25px 0; color:#c0c0ff; font-family: 'Courier New', monospace;">
+                P(t) = Σₖ βₖ · tᵏ
+            </div>
+            <p>
+                Für das <strong>Künneth-Theorem</strong> gilt: Die Betti-Zahlen eines Produktraums X × Y
+                berechnen sich aus den Betti-Zahlen von X und Y durch Faltung.
+            </p>
+        </div>
+
+    </div>
+
+    <footer>
+        Betti-Zahlen · Visuelle Topologie · Erstellt mit HTML, CSS & JavaScript
+    </footer>
+
+    <script>
+        // ============================================
+        // SECTION 2: Shape Drawing
+        // ============================================
+        const shapeCanvas = document.getElementById('shapeCanvas');
+        const sCtx = shapeCanvas.getContext('2d');
+
+        const shapeData = {
+            point: {
+                name: 'Punkt',
+                b: [1, 0, 0],
+                explanation: 'Ein einzelner Punkt ist zusammenhängend (β₀=1), hat keine Schleifen und keine Hohlräume.'
+            },
+            circle: {
+                name: 'Kreis (S¹)',
+                b: [1, 1, 0],
+                explanation: 'Der Kreis hat eine Zusammenhangskomponente und genau eine unabhängige Schleife (das Loch in der Mitte).'
+            },
+            sphere: {
+                name: 'Sphäre (S²)',
+                b: [1, 0, 1],
+                explanation: 'Die Kugeloberfläche ist zusammenhängend, hat keine Schleife (jede Schleife lässt sich zusammenziehen), aber einen eingeschlossenen Hohlraum.'
+            },
+            torus: {
+                name: 'Torus (T²)',
+                b: [1, 2, 1],
+                explanation: 'Der Torus hat 2 unabhängige Schleifen (um das Loch herum und durch den Ring) und einen Hohlraum im Inneren.'
+            },
+            double: {
+                name: 'Doppel-Torus',
+                b: [1, 4, 1],
+                explanation: 'Der Doppel-Torus (Genus 2) hat 4 unabhängige Schleifen und einen Hohlraum. Allgemein: β₁ = 2g für Genus g.'
+            },
+            two_circles: {
+                name: 'Zwei getrennte Kreise',
+                b: [2, 2, 0],
+                explanation: 'Zwei getrennte Kreise bilden 2 Zusammenhangskomponenten (β₀=2) und jeder hat eine Schleife (β₁=2).'
+            }
+        };
+
+        let currentShape = 'point';
+        let animFrame = 0;
+
+        function drawShape(shape) {
+            currentShape = shape;
+            const data = shapeData[shape];
+
+            // Update buttons
+            document.querySelectorAll('.demo-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update result
+            document.getElementById('shapeName').textContent = data.name;
+            document.getElementById('b0val').textContent = `β₀ = ${data.b[0]}`;
+            document.getElementById('b1val').textContent = `β₁ = ${data.b[1]}`;
+            document.getElementById('b2val').textContent = `β₂ = ${data.b[2]}`;
+            document.getElementById('shapeExplanation').textContent = data.explanation;
+
+            renderShape();
+        }
+
+        function renderShape() {
+            const w = shapeCanvas.width;
+            const h = shapeCanvas.height;
+            sCtx.clearRect(0, 0, w, h);
+
+            const cx = w / 2;
+            const cy = h / 2;
+            animFrame++;
+
+            sCtx.shadowBlur = 20;
+            sCtx.shadowColor = 'rgba(100, 100, 255, 0.5)';
+
+            switch (currentShape) {
+                case 'point':
+                    drawPoint(cx, cy);
+                    break;
+                case 'circle':
+                    drawCircle(cx, cy, 100);
+                    break;
+                case 'sphere':
+                    drawSphere(cx, cy, 110);
+                    break;
+                case 'torus':
+                    drawTorus(cx, cy);
+                    break;
+                case 'double':
+                    drawDoubleTorus(cx, cy);
+                    break;
+                case 'two_circles':
+                    drawCircle(cx - 120, cy, 70);
+                    drawCircle(cx + 120, cy, 70);
+                    break;
+            }
+
+            sCtx.shadowBlur = 0;
+            requestAnimationFrame(renderShape);
+        }
+
+        function drawPoint(x, y) {
+            const pulse = 8 + 3 * Math.sin(animFrame * 0.05);
+            const gradient = sCtx.createRadialGradient(x, y, 0, x, y, pulse * 2);
+            gradient.addColorStop(0, '#00d4ff');
+            gradient.addColorStop(0.5, 'rgba(0, 212, 255, 0.3)');
+            gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
+            sCtx.beginPath();
+            sCtx.arc(x, y, pulse, 0, Math.PI * 2);
+            sCtx.fillStyle = gradient;
+            sCtx.fill();
+
+            // Inner bright core
+            sCtx.beginPath();
+            sCtx.arc(x, y, 4, 0, Math.PI * 2);
+            sCtx.fillStyle = '#ffffff';
+            sCtx.fill();
+        }
+
+        function drawCircle(x, y, r) {
+            const time = animFrame * 0.02;
+            sCtx.beginPath();
+            sCtx.strokeStyle = '#a855f7';
+            sCtx.lineWidth = 4;
+            sCtx.arc(x, y, r, 0, Math.PI * 2);
+            sCtx.stroke();
+
+            // Animated dot traveling along the circle
+            const dotX = x + r * Math.cos(time);
+            const dotY = y + r * Math.sin(time);
+            sCtx.beginPath();
+            sCtx.arc(dotX, dotY, 6, 0, Math.PI * 2);
+            sCtx.fillStyle = '#00d4ff';
+            sCtx.fill();
+
+            // Label the hole
+            sCtx.fillStyle = 'rgba(168, 85, 247, 0.3)';
+            sCtx.beginPath();
+            sCtx.arc(x, y, r * 0.4, 0, Math.PI * 2);
+            sCtx.fill();
+            sCtx.fillStyle = '#a855f7';
+            sCtx.font = '16px Segoe UI';
+            sCtx.textAlign = 'center';
+            sCtx.textBaseline = 'middle';
+            sCtx.fillText('Loch (β₁)', x, y);
+        }
+
+        function drawSphere(x, y, r) {
+            const time = animFrame * 0.015;
+
+            // Outer sphere
+            const gradient = sCtx.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.1, x, y, r);
+            gradient.addColorStop(0, 'rgba(255, 107, 203, 0.6)');
+            gradient.addColorStop(0.7, 'rgba(255, 107, 203, 0.15)');
+            gradient.addColorStop(1, 'rgba(255, 107, 203, 0.05)');
+
+            sCtx.beginPath();
+            sCtx.arc(x, y, r, 0, Math.PI * 2);
+            sCtx.fillStyle = gradient;
+            sCtx.fill();
+            sCtx.strokeStyle = '#ff6bcb';
+            sCtx.lineWidth = 2.5;
+            sCtx.stroke();
+
+            // Latitude lines
+            for (let i = -2; i <= 2; i++) {
+                const ly = y + i * 28;
+                const lrx = Math.sqrt(Math.max(0, r * r - (i * 28) * (i * 28)));
+                if (lrx > 5) {
+                    sCtx.beginPath();
+                    sCtx.ellipse(x, ly, lrx, lrx * 0.2, 0, 0, Math.PI * 2);
+                    sCtx.strokeStyle = 'rgba(255, 107, 203, 0.25)';
+                    sCtx.lineWidth = 1;
+                    sCtx.stroke();
+                }
+            }
+
+            // Longitude line
+            sCtx.beginPath();
+            sCtx.ellipse(x, y, r * 0.3, r, 0, 0, Math.PI * 2);
+            sCtx.strokeStyle = 'rgba(255, 107, 203, 0.25)';
+            sCtx.lineWidth = 1;
+            sCtx.stroke();
+
+            // Hollow label
+            sCtx.fillStyle = '#ff6bcb';
+            sCtx.font = '15px Segoe UI';
+            sCtx.textAlign = 'center';
+            sCtx.fillText('Hohlraum (β₂)', x, y + r + 30);
+        }
+
+        function drawTorus(cx, cy) {
+            const time = animFrame * 0.02;
+            const R = 90; // Major radius
+            const r = 40; // Minor radius
+            const steps = 80;
+
+            // Draw torus as a series of ellipses
+            // Back half
+            for (let i = 0; i < steps; i++) {
+                const angle = (i / steps) * Math.PI * 2;
+                const x = cx + R * Math.cos(angle);
+                const y = cy + R * Math.sin(angle) * 0.35;
+                const opacity = 0.15 + 0.15 * Math.sin(angle);
+
+                if (Math.sin(angle) < 0) {
+                    sCtx.beginPath();
+                    sCtx.ellipse(x, y, r * 0.35, r, 0, 0, Math.PI * 2);
+                    sCtx.strokeStyle = `rgba(168, 85, 247, ${opacity})`;
+                    sCtx.lineWidth = 1.5;
+                    sCtx.stroke();
+                }
+            }
+
+            // Front half
+            for (let i = 0; i < steps; i++) {
+                const angle = (i / steps) * Math.PI * 2;
+                const x = cx + R * Math.cos(angle);
+                const y = cy + R * Math.sin(angle) * 0.35;
+                const opacity = 0.2 + 0.4 * (1 - Math.sin(angle));
+
+                if (Math.sin(angle) >= 0) {
+                    sCtx.beginPath();
+                    sCtx.ellipse(x, y, r * 0.35, r, 0, 0, Math.PI * 2);
+                    sCtx.strokeStyle = `rgba(168, 85, 247, ${opacity})`;
+                    sCtx.lineWidth = 1.5;
+                    sCtx.stroke();
+                }
+            }
+
+            // Outer ring outline
+            sCtx.beginPath();
+            sCtx.ellipse(cx, cy, R + r * 0.35, (R + r * 0.35) * 0.35 + r, 0, 0, Math.PI * 2);
+            sCtx.strokeStyle = 'rgba(168, 85, 247, 0.15)';
+            sCtx.lineWidth = 1;
+            sCtx.stroke();
+
+            // Loop 1 indicator (around the hole)
+            const l1x = cx + (R) * Math.cos(time);
+            const l1y = cy + (R) * Math.sin(time) * 0.35;
+            sCtx.beginPath();
+            sCtx.arc(l1x, l1y, 5, 0, Math.PI * 2);
+            sCtx.fillStyle = '#00d4ff';
+            sCtx.fill();
+
+            // Loop 2 indicator (through the tube)
+            const tubeAngle = time * 1.5;
+            const l2x = cx + R + r * 0.35 * Math.cos(tubeAngle);
+            const l2y = cy + r * Math.sin(tubeAngle);
+            sCtx.beginPath();
+            sCtx.arc(l2x, l2y, 5, 0, Math.PI * 2);
+            sCtx.fillStyle = '#ff6bcb';
+            sCtx.fill();
+
+            // Labels
+            sCtx.fillStyle = '#00d4ff';
+            sCtx.font = '13px Segoe UI';
+            sCtx.textAlign = 'center';
+            sCtx.fillText('Schleife 1 (β₁)', cx, cy - r - 55);
+            sCtx.fillStyle = '#ff6bcb';
+            sCtx.fillText('Schleife 2 (β₁)', cx + R + 50, cy + r + 20);
+            sCtx.fillStyle = '#a855f7';
+            sCtx.fillText('Hohlraum (β₂)', cx, cy);
+        }
+
+        function drawDoubleTorus(cx, cy) {
+            const time = animFrame * 0.02;
+            const R = 55;
+            const r = 30;
+            const offset = 75;
+
+            // Draw two connected torus shapes
+            for (let t = -1; t <= 1; t += 2) {
+                const tcx = cx + t * offset;
+                const steps = 50;
+
+                for (let i = 0; i < steps; i++) {
+                    const angle = (i / steps) * Math.PI * 2;
+                    const x = tcx + R * Math.cos(angle);
+                    const y = cy + R * Math.sin(angle) * 0.35;
+                    const opacity = Math.sin(angle) >= 0
+                        ? 0.2 + 0.35 * (1 - Math.sin(angle))
+                        : 0.1 + 0.1 * Math.sin(angle);
+
+                    sCtx.beginPath();
+                    sCtx.ellipse(x, y, r * 0.3, r, 0, 0, Math.PI * 2);
+                    sCtx.strokeStyle = `rgba(168, 85, 247, ${Math.abs(opacity)})`;
+                    sCtx.lineWidth = 1.2;
+                    sCtx.stroke();
+                }
+            }
+
+            // Connection bridge
+            sCtx.beginPath();
+            sCtx.moveTo(cx - offset + R, cy - r);
+            sCtx.quadraticCurveTo(cx, cy - r - 15, cx + offset - R, cy - r);
+            sCtx.strokeStyle = 'rgba(168, 85, 247, 0.4)';
+            sCtx.lineWidth = 2;
+            sCtx.stroke();
+
+            sCtx.beginPath();
+            sCtx.moveTo(cx - offset + R, cy + r);
+            sCtx.quadraticCurveTo(cx, cy + r + 15, cx + offset - R, cy + r);
+            sCtx.stroke();
+
+            // Animated dots for 4 loops
+            const colors = ['#00d4ff', '#ff6bcb', '#00ffaa', '#ffaa00'];
+            for (let i = 0; i < 4; i++) {
+                const angle = time + i * Math.PI / 2;
+                const tIdx = i < 2 ? -1 : 1;
+                const tcx2 = cx + tIdx * offset;
+                const dotR = i % 2 === 0 ? R : r * 0.3;
+                const dx = tcx2 + dotR * Math.cos(angle);
+                const dy = i % 2 === 0
+                    ? cy + dotR * Math.sin(angle) * 0.35
+                    : cy + r * Math.sin(angle);
+
+                sCtx.beginPath();
+                sCtx.arc(dx, dy, 4, 0, Math.PI * 2);
+                sCtx.fillStyle = colors[i];
+                sCtx.fill();
+            }
+
+            sCtx.fillStyle = '#a855f7';
+            sCtx.font = '14px Segoe UI';
+            sCtx.textAlign = 'center';
+            sCtx.fillText('β₁ = 4 Schleifen', cx, cy + r + 55);
+            sCtx.fillText('β₂ = 1 Hohlraum', cx, cy + r + 75);
+        }
+
+        function highlightBetti(index) {
+            const cards = document.querySelectorAll('.betti-card');
+            cards.forEach((c, i) => {
+                c.style.borderColor = i === index
+                    ? 'rgba(150, 150, 255, 0.7)'
+                    : 'rgba(150, 150, 255, 0.2)';
+                c.style.transform = i === index ? 'scale(1.05)' : 'scale(1)';
+            });
+            setTimeout(() => {
+                cards.forEach(c => {
+                    c.style.borderColor = 'rgba(150, 150, 255, 0.2)';
+                    c.style.transform = 'scale(1)';
+                });
+            }, 2000);
+        }
+
+        // Start shape animation
+        renderShape();
+
+        // ============================================
+        // SECTION 4: TDA Interactive Demo
+        // ============================================
+        const tdaCanvas = document.getElementById('tdaCanvas');
+        const tCtx = tdaCanvas.getContext('2d');
+        const barcodeCanvas = document.getElementById('barcode');
+        const bCtx = barcodeCanvas.getContext('2d');
+
+        // Generate a point cloud that forms a circle with noise
+        const numPoints = 30;
+        const pointCloud = [];
+        const circleR = 120;
+        const noiseFactor = 25;
+
+        // Create points on a noisy circle
+        for (let i = 0; i < numPoints - 5; i++) {
+            const angle = (i / (numPoints - 5)) * Math.PI * 2;
+            const nr = circleR + (Math.random() - 0.5) * noiseFactor * 2;
+            pointCloud.push({
+                x: 250 + nr * Math.cos(angle),
+                y: 200 + nr * Math.sin(angle)
+            });
+        }
+
+        // Add a small separate cluster
+        for (let i = 0; i < 5; i++) {
+            pointCloud.push({
+                x: 420 + (Math.random() - 0.5) * 30,
+                y: 80 + (Math.random() - 0.5) * 30
+            });
+        }
+
+        // Precompute distances
+        const distances = [];
+        for (let i = 0; i < pointCloud.length; i++) {
+            distances[i] = [];
+            for (let j = 0; j < pointCloud.length; j++) {
+                const dx = pointCloud[i].x - pointCloud[j].x;
+                const dy = pointCloud[i].y - pointCloud[j].y;
+                distances[i][j] = Math.sqrt(dx * dx + dy * dy);
+            }
+        }
+
+        // Compute persistence events
+        function computePersistence() {
+            // Simple Union-Find for β₀
+            const parent = Array.from({ length: pointCloud.length }, (_, i) => i);
+
+            function find(x) {
+                while (parent[x] !== x) {
+                    parent[x] = parent[parent[x]];
+                    x = parent[x];
+                }
+                return x;
+            }
+
+            function union(a, b) {
+                const ra = find(a);
+                const rb = find(b);
+                if (ra !== rb) {
+                    parent[rb] = ra;
+                    return true;
+                }
+                return false;
+            }
+
+            // Get all edges sorted by distance
+            const edges = [];
+            for (let i = 0; i < pointCloud.length; i++) {
+                for (let j = i + 1; j < pointCloud.length; j++) {
+                    edges.push({ i, j, d: distances[i][j] });
+                }
+            }
+            edges.sort((a, b) => a.d - b.d);
+
+            const maxDist = edges[edges.length - 1].d;
+
+            // Track β₀ births and deaths
+            const b0Bars = [];
+            // All points born at 0
+            const componentBirth = new Array(pointCloud.length).fill(0);
+            const mergeEvents = [];
+
+            for (const edge of edges) {
+                if (union(edge.i, edge.j)) {
+                    mergeEvents.push(edge.d);
+                }
+            }
+
+            // β₀ bars: each merge kills a component
+            // All born at 0, die at merge distances
+            // The last component never dies
+            mergeEvents.sort((a, b) => a - b);
+            for (let i = 0; i < mergeEvents.length; i++) {
+                b0Bars.push({ birth: 0, death: mergeEvents[i] });
+            }
+            b0Bars.push({ birth: 0, death: maxDist * 1.1 }); // The surviving component
+
+            // Simple β₁ detection: find the approximate loop
+            // For this demo, we'll estimate when the main loop appears and disappears
+            const b1Bars = [];
+
+            // The circle loop should appear when the circle points connect (~gap between consecutive points)
+            const circlePoints = pointCloud.slice(0, numPoints - 5);
+            let maxGap = 0;
+            for (let i = 0; i < circlePoints.length; i++) {
+                const j = (i + 1) % circlePoints.length;
+                const dx = circlePoints[i].x - circlePoints[j].x;
+                const dy = circlePoints[i].y - circlePoints[j].y;
+                const d = Math.sqrt(dx * dx + dy * dy);
+                maxGap = Math.max(maxGap, d);
+            }
+
+            // Loop born when circle closes, dies when it gets filled
+            b1Bars.push({ birth: maxGap * 0.9, death: circleR * 1.6 });
+
+            return { b0Bars, b1Bars, maxDist };
+        }
+
+        const persistence = computePersistence();
+
+        let currentEps = 0;
+        const maxEps = 350;
+
+        function updateEpsilon(val) {
+            currentEps = (val / 100) * maxEps;
+            document.getElementById('epsValue').textContent = currentEps.toFixed(1);
+            document.getElementById('epsDisplay').textContent = currentEps.toFixed(1);
+            drawTDA();
+            drawBarcode();
+            updateTDABetti();
+        }
+
+        function updateTDABetti() {
+            // Count β₀
+            const parent = Array.from({ length: pointCloud.length }, (_, i) => i);
+            function find(x) {
+                while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }
+                return x;
+            }
+            function union(a, b) {
+                const ra = find(a); const rb = find(b);
+                if (ra !== rb) { parent[rb] = ra; return true; }
+                return false;
+            }
+
+            for (let i = 0; i < pointCloud.length; i++) {
+                for (let j = i + 1; j < pointCloud.length; j++) {
+                    if (distances[i][j] <= currentEps) {
+                        union(i, j);
+                    }
+                }
+            }
+
+            const components = new Set();
+            for (let i = 0; i < pointCloud.length; i++) {
+                components.add(find(i));
+            }
+
+            const b0 = components.size;
+
+            // Estimate β₁
+            let b1 = 0;
+            for (const bar of persistence.b1Bars) {
+                if (currentEps >= bar.birth && currentEps <= bar.death) {
+                    b1++;
+                }
+            }
+
+            document.getElementById('tda_b0').textContent = `β₀ = ${b0}`;
+            document.getElementById('tda_b1').textContent = `β₁ = ${b1}`;
+        }
+
+        function drawTDA() {
+            const w = tdaCanvas.width;
+            const h = tdaCanvas.height;
+            tCtx.clearRect(0, 0, w, h);
+
+            // Draw edges
+            tCtx.strokeStyle = 'rgba(100, 100, 255, 0.15)';
+            tCtx.lineWidth = 1;
+            for (let i = 0; i < pointCloud.length; i++) {
+                for (let j = i + 1; j < pointCloud.length; j++) {
+                    if (distances[i][j] <= currentEps) {
+                        tCtx.beginPath();
+                        tCtx.moveTo(pointCloud[i].x, pointCloud[i].y);
+                        tCtx.lineTo(pointCloud[j].x, pointCloud[j].y);
+                        tCtx.stroke();
+                    }
+                }
+            }
+
+            // Draw triangles (filled simplices)
+            tCtx.fillStyle = 'rgba(168, 85, 247, 0.06)';
+            for (let i = 0; i < pointCloud.length; i++) {
+                for (let j = i + 1; j < pointCloud.length; j++) {
+                    if (distances[i][j] > currentEps) continue;
+                    for (let k = j + 1; k < pointCloud.length; k++) {
+                        if (distances[i][k] <= currentEps && distances[j][k] <= currentEps) {
+                            tCtx.beginPath();
+                            tCtx.moveTo(pointCloud[i].x, pointCloud[i].y);
+                            tCtx.lineTo(pointCloud[j].x, pointCloud[j].y);
+                            tCtx.lineTo(pointCloud[k].x, pointCloud[k].y);
+                            tCtx.closePath();
+                            tCtx.fill();
+                        }
+                    }
+                }
+            }
+
+            // Draw epsilon circles (faint)
+            for (const p of pointCloud) {
+                tCtx.beginPath();
+                tCtx.arc(p.x, p.y, currentEps / 2, 0, Math.PI * 2);
+                tCtx.fillStyle = 'rgba(0, 212, 255, 0.04)';
+                tCtx.fill();
+                tCtx.strokeStyle = 'rgba(0, 212, 255, 0.08)';
+                tCtx.lineWidth = 0.5;
+                tCtx.stroke();
+            }
+
+            // Draw points
+            for (const p of pointCloud) {
+                tCtx.beginPath();
+                tCtx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                tCtx.fillStyle = '#00d4ff';
+                tCtx.fill();
+            }
+
+            // Title
+            tCtx.fillStyle = '#6666aa';
+            tCtx.font = '13px Segoe UI';
+            tCtx.textAlign = 'left';
+            tCtx.fillText('Vietoris-Rips-Komplex', 15, 25);
+        }
+
+        function drawBarcode() {
+            const w = barcodeCanvas.width;
+            const h = barcodeCanvas.height;
+            bCtx.clearRect(0, 0, w, h);
+
+            const margin = { top: 50, bottom: 30, left: 20, right: 20 };
+            const plotW = w - margin.left - margin.right;
+            const plotH = h - margin.top - margin.bottom;
+
+            const allBars = [
+                ...persistence.b0Bars.map(b => ({ ...b, type: 0 })),
+                ...persistence.b1Bars.map(b => ({ ...b, type: 1 }))
+            ];
+
+            const maxVal = maxEps;
+            const barHeight = Math.min(12, plotH / allBars.length - 2);
+            const scale = plotW / maxVal;
+
+            // Title
+            bCtx.fillStyle = '#6666aa';
+            bCtx.font = '13px Segoe UI';
+            bCtx.textAlign = 'center';
+            bCtx.fillText('Persistenz-Barcode', w / 2, 25);
+
+            // Current epsilon line
+            const epsX = margin.left + currentEps * scale;
+            bCtx.beginPath();
+            bCtx.moveTo(epsX, margin.top - 10);
+            bCtx.lineTo(epsX, h - margin.bottom + 10);
+            bCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            bCtx.lineWidth = 1.5;
+            bCtx.setLineDash([4, 4]);
+            bCtx.stroke();
+            bCtx.setLineDash([]);
+
+            bCtx.fillStyle = 'rgba(255,255,255,0.5)';
+            bCtx.font = '11px Segoe UI';
+            bCtx.textAlign = 'center';
+            bCtx.fillText(`ε=${currentEps.toFixed(0)}`, epsX, margin.top - 15);
+
+            // Draw bars
+            let yPos = margin.top;
+
+            // β₀ bars
+            bCtx.fillStyle = 'rgba(0, 212, 255, 0.15)';
+            bCtx.fillRect(margin.left, yPos - 5, plotW, persistence.b0Bars.length * (barHeight + 3) + 5);
+
+            bCtx.fillStyle = '#00d4ff';
+            bCtx.font = '11px Segoe UI';
+            bCtx.textAlign = 'right';
+            bCtx.fillText('β₀', margin.left - 5, yPos + 10);
+
+            for (const bar of persistence.b0Bars) {
+                const x1 = margin.left + bar.birth * scale;
+                const x2 = margin.left + Math.min(bar.death, maxVal) * scale;
+                const isAlive = currentEps >= bar.birth && currentEps <= bar.death;
+
+                bCtx.fillStyle = isAlive ? '#00d4ff' : 'rgba(0, 212, 255, 0.3)';
+                bCtx.fillRect(x1, yPos, x2 - x1, barHeight);
+                yPos += barHeight + 3;
+            }
+
+            yPos += 15;
+
+            // β₁ bars
+            bCtx.fillStyle = 'rgba(168, 85, 247, 0.15)';
+            bCtx.fillRect(margin.left, yPos - 5, plotW, persistence.b1Bars.length * (barHeight + 3) + 10);
+
+            bCtx.fillStyle = '#a855f7';
+            bCtx.font = '11px Segoe UI';
+            bCtx.textAlign = 'right';
+            bCtx.fillText('β₁', margin.left - 5, yPos + 10);
+
+            for (const bar of persistence.b1Bars) {
+                const x1 = margin.left + bar.birth * scale;
+                const x2 = margin.left + Math.min(bar.death, maxVal) * scale;
+                const isAlive = currentEps >= bar.birth && currentEps <= bar.death;
+
+                bCtx.fillStyle = isAlive ? '#a855f7' : 'rgba(168, 85, 247, 0.3)';
+                bCtx.fillRect(x1, yPos, x2 - x1, barHeight);
+                yPos += barHeight + 3;
+            }
+
+            // Axis
+            bCtx.beginPath();
+            bCtx.moveTo(margin.left, h - margin.bottom);
+            bCtx.lineTo(w - margin.right, h - margin.bottom);
+            bCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+            bCtx.lineWidth = 1;
+            bCtx.stroke();
+
+            // Axis labels
+            bCtx.fillStyle = '#6666aa';
+            bCtx.font = '10px Segoe UI';
+            bCtx.textAlign = 'center';
+            for (let v = 0; v <= maxVal; v += 70) {
+                const x = margin.left + v * scale;
+                bCtx.fillText(v.toFixed(0), x, h - margin.bottom + 15);
+                bCtx.beginPath();
+                bCtx.moveTo(x, h - margin.bottom);
+                bCtx.lineTo(x, h - margin.bottom + 4);
+                bCtx.stroke();
+            }
+        }
+
+        // Initial draw
+        drawTDA();
+        drawBarcode();
+        updateTDABetti();
+
+    </script>
+</body>
+</html>
