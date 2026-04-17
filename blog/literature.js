@@ -1,4 +1,10 @@
 window.bibData = {
+	"adaptivepattern": {
+		title: "A Theory of Adaptive Pattern Classifiers",
+		author: "Shunichi Amari",
+		year: 1967,
+		url: "https://people.idsia.ch/~juergen/amari1967.pdf"
+	},
 	"rokosbasilisk": {
 		url: "https://www.lesswrong.com/w/rokos-basilisk",
 		year: 2010,
