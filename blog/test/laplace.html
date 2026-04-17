@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laplace-Operator – Interaktiv verstehen</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0f0f1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #00d2ff, #7a5cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h2 {
+            font-size: 1.4em;
+            margin: 20px 0 10px;
+            color: #7a5cff;
+        }
+        .intro-box {
+            background: #1a1a2e;
+            border-left: 4px solid #7a5cff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-size: 1.05em;
+            line-height: 1.7;
+        }
+        .intro-box .formula {
+            background: #12121f;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            text-align: center;
+            margin: 15px 0;
+            color: #00d2ff;
+        }
+        .section {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        canvas {
+            display: block;
+            margin: 15px auto;
+            border-radius: 8px;
+            cursor: crosshair;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin: 15px 0;
+            justify-content: center;
+        }
+        .controls label {
+            font-size: 0.95em;
+            color: #aaa;
+        }
+        select, input[type=range] {
+            background: #12121f;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.95em;
+        }
+        input[type=range] {
+            width: 150px;
+            accent-color: #7a5cff;
+        }
+        .info-panel {
+            background: #12121f;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.8;
+            min-height: 80px;
+        }
+        .info-panel .positive { color: #ff6b6b; }
+        .info-panel .negative { color: #51cf66; }
+        .info-panel .zero { color: #ffd43b; }
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        .legend span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .legend .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .tab-bar {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: #12121f;
+            color: #aaa;
+            border: 1px solid #333;
+            padding: 10px 18px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: #7a5cff;
+            color: #fff;
+            border-color: #7a5cff;
+        }
+        .tab-btn:hover:not(.active) {
+            background: #252540;
+        }
+        .highlight { color: #00d2ff; font-weight: bold; }
+        .emoji-label { font-size: 1.3em; }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .two-col { grid-template-columns: 1fr; }
+        }
+        .analogy-box {
+            background: #252540;
+            border-radius: 8px;
+            padding: 18px;
+            margin: 10px 0;
+            border-left: 3px solid #ffd43b;
+        }
+        .analogy-box h3 {
+            color: #ffd43b;
+            margin-bottom: 8px;
+        }
+        button.action-btn {
+            background: linear-gradient(135deg, #7a5cff, #00d2ff);
+            color: #fff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: transform 0.1s;
+        }
+        button.action-btn:hover { transform: scale(1.05); }
+        button.action-btn:active { transform: scale(0.97); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>∇² — Den Laplace-Operator intuitiv verstehen</h1>
+
+    <!-- INTRO -->
+    <div class="intro-box">
+        <strong>Die Kernidee in einem Satz:</strong><br>
+        Der Laplace-Operator misst an jedem Punkt, <em>wie sehr sich der Wert dort vom Durchschnitt seiner Nachbarn unterscheidet</em>.
+        <div class="formula">Δf = ∂²f/∂x² + ∂²f/∂y²</div>
+        <span class="emoji-label">🏔️</span> Auf einem <strong>Berggipfel</strong> (lokales Maximum) ist Δf &lt; 0 → der Punkt liegt <em>über</em> dem Nachbar-Durchschnitt.<br>
+        <span class="emoji-label">🕳️</span> In einem <strong>Tal</strong> (lokales Minimum) ist Δf &gt; 0 → der Punkt liegt <em>unter</em> dem Nachbar-Durchschnitt.<br>
+        <span class="emoji-label">⚖️</span> Ist Δf = 0, ist der Punkt genau im <strong>Gleichgewicht</strong> mit seinen Nachbarn (harmonische Funktion).
+    </div>
+
+    <!-- SECTION 1: 1D Intuition -->
+    <div class="section">
+        <h2>1️⃣ Erst in 1D: Die zweite Ableitung als „Nachbar-Vergleich"</h2>
+        <p style="margin-bottom:10px;">In 1D ist der Laplace-Operator einfach die zweite Ableitung f''(x). Klicke/bewege die Maus auf der Kurve, um zu sehen, wie der Wert am Punkt mit dem Durchschnitt der Nachbarn verglichen wird.</p>
+        <div class="controls">
+            <label>Funktion:</label>
+            <select id="func1d">
+                <option value="sin">f(x) = sin(x)</option>
+                <option value="x2">f(x) = x²</option>
+                <option value="negx2">f(x) = −x²</option>
+                <option value="x3">f(x) = x³</option>
+                <option value="gauss">f(x) = e^(−x²)</option>
+            </select>
+            <label>Nachbar-Radius ε:</label>
+            <input type="range" id="epsilon1d" min="5" max="80" value="30">
+            <span id="epsVal1d">0.6</span>
+        </div>
+        <canvas id="canvas1d" width="800" height="350"></canvas>
+        <div class="legend">
+            <span><span class="dot" style="background:#ffd43b"></span> f(x) am Punkt</span>
+            <span><span class="dot" style="background:#aaa"></span> Durchschnitt der Nachbarn</span>
+            <span><span class="dot" style="background:#ff6b6b"></span> Δf &gt; 0 (Tal / konkav nach oben)</span>
+            <span><span class="dot" style="background:#51cf66"></span> Δf &lt; 0 (Berg / konkav nach unten)</span>
+        </div>
+        <div class="info-panel" id="info1d">Bewege die Maus über die Kurve!</div>
+    </div>
+
+    <!-- SECTION 2: 2D Surface -->
+    <div class="section">
+        <h2>2️⃣ In 2D: Farbkarte des Laplacian</h2>
+        <p style="margin-bottom:10px;">Links siehst du die Funktion f(x,y) als Höhenkarte. Rechts die Werte von Δf: <span style="color:#ff6b6b">Rot = Δf &gt; 0</span> (Tal), <span style="color:#51cf66">Grün = Δf &lt; 0</span> (Berg), <span style="color:#ffd43b">Gelb ≈ 0</span>. Klicke auf einen Punkt!</p>
+        <div class="controls">
+            <label>Funktion:</label>
+            <select id="func2d">
+                <option value="saddle">Sattelfläche: x² − y²</option>
+                <option value="paraboloid">Paraboloid: x² + y²</option>
+                <option value="negparaboloid">Neg. Paraboloid: −(x² + y²)</option>
+                <option value="gauss2d">Gauß-Glocke: e^(−x²−y²)</option>
+                <option value="sin2d">Wellen: sin(x)·sin(y)</option>
+                <option value="ripple">Kreisrippel: sin(√(x²+y²))</option>
+            </select>
+        </div>
+        <div class="two-col">
+            <div style="text-align:center;">
+                <strong>f(x,y) — Höhenkarte</strong>
+                <canvas id="canvas2dF" width="380" height="380"></canvas>
+            </div>
+            <div style="text-align:center;">
+                <strong>Δf(x,y) — Laplacian</strong>
+                <canvas id="canvas2dL" width="380" height="380"></canvas>
+            </div>
+        </div>
+        <div class="info-panel" id="info2d">Klicke auf die Höhenkarte, um Details zu sehen!</div>
+    </div>
+
+    <!-- SECTION 3: Diffusion Simulation -->
+    <div class="section">
+        <h2>3️⃣ Diffusion: Der Laplacian in Aktion 🌡️</h2>
+        <p style="margin-bottom:10px;">Die Wärmeleitungsgleichung lautet <strong>∂u/∂t = α · Δu</strong>. Wärme fließt von heißen zu kalten Stellen — genau proportional zum Laplacian! Male mit der Maus Wärme auf die Fläche und beobachte, wie sie sich verteilt.</p>
+        <div class="controls">
+            <label>Pinselgröße:</label>
+            <input type="range" id="brushSize" min="2" max="20" value="8">
+            <label>Diffusionsrate α:</label>
+            <input type="range" id="diffRate" min="1" max="50" value="20">
+            <button class="action-btn" id="resetDiff">Reset</button>
+            <button class="action-btn" id="pauseDiff">Pause</button>
+        </div>
+        <canvas id="canvasDiff" width="400" height="400"></canvas>
+        <div class="analogy-box">
+            <h3>💡 Warum funktioniert das?</h3>
+            An jedem Punkt gilt: Ist der Punkt <em>kälter</em> als seine Nachbarn (Δu &gt; 0), fließt Wärme <em>hin</em> → Temperatur steigt.<br>
+            Ist er <em>wärmer</em> (Δu &lt; 0), fließt Wärme <em>weg</em> → Temperatur sinkt.<br>
+            Das Gleichgewicht (Δu = 0) ist erreicht, wenn überall die gleiche Temperatur herrscht.
+        </div>
+    </div>
+
+    <!-- SECTION 4: Neighbor Average Demo -->
+    <div class="section">
+        <h2>4️⃣ Der Kern der Intuition: Punkt vs. Nachbar-Durchschnitt</h2>
+        <p style="margin-bottom:10px;">Ziehe den roten Punkt hoch und runter. Der Laplacian ist proportional zu: <strong>(Durchschnitt der Nachbarn) − (Wert am Punkt)</strong>.</p>
+        <canvas id="canvasNeighbor" width="800" height="350"></canvas>
+        <div class="controls">
+            <label>Nachbar-Werte (ziehe die grauen Punkte):</label>
+        </div>
+        <div class="info-panel" id="infoNeighbor">Ziehe die Punkte!</div>
+    </div>
+
+    <!-- SECTION 5: Equations -->
+    <div class="section">
+        <h2>5️⃣ Die Mathematik dahinter 📐</h2>
+        <div class="analogy-box">
+            <h3>Diskrete Approximation (1D)</h3>
+            <div class="formula">f''(x) ≈ [f(x+ε) − 2f(x) + f(x−ε)] / ε²</div>
+            Das ist dasselbe wie: <strong>f''(x) ≈ [Durchschnitt der Nachbarn − f(x)] · 2/ε²</strong><br>
+            <div class="formula" style="font-size:1em;">= [ (f(x+ε) + f(x−ε))/2 − f(x) ] · 2/ε²</div>
+        </div>
+        <div class="analogy-box">
+            <h3>In 2D</h3>
+            <div class="formula">Δf = ∂²f/∂x² + ∂²f/∂y²</div>
+            <div class="formula" style="font-size:0.9em;">≈ [f(x+ε,y) + f(x−ε,y) + f(x,y+ε) + f(x,y−ε) − 4f(x,y)] / ε²</div>
+            Wieder: <strong>Summe der Nachbarn minus Vielfaches des Zentrums</strong>. Das ist der berühmte <em>5-Punkt-Stencil</em>.
+        </div>
+        <div class="analogy-box">
+            <h3>Wichtige Gleichungen mit dem Laplacian</h3>
+            <div class="formula">Laplace-Gleichung: Δf = 0 (harmonische Funktionen)</div>
+            <div class="formula">Poisson-Gleichung: Δf = ρ (Elektrostatik)</div>
+            <div class="formula">Wärmeleitungsgleichung: ∂u/∂t = α·Δu</div>
+            <div class="formula">Wellengleichung: ∂²u/∂t² = c²·Δu</div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// SECTION 1: 1D Visualization
+// ============================================================
+(function() {
+    const canvas = document.getElementById('canvas1d');
+    const ctx = canvas.getContext('2d');
+    const funcSel = document.getElementById('func1d');
+    const epsSlider = document.getElementById('epsilon1d');
+    const epsValSpan = document.getElementById('epsVal1d');
+    const infoPanel = document.getElementById('info1d');
+
+    const W = canvas.width, H = canvas.height;
+    const xMin = -5, xMax = 5;
+    let mouseX = W / 2;
+
+    const funcs = {
+        sin:    { f: x => Math.sin(x), df2: x => -Math.sin(x), label: "f(x) = sin(x)", df2Label: "f''(x) = −sin(x)" },
+        x2:     { f: x => x*x, df2: x => 2, label: "f(x) = x²", df2Label: "f''(x) = 2" },
+        negx2:  { f: x => -x*x, df2: x => -2, label: "f(x) = −x²", df2Label: "f''(x) = −2" },
+        x3:     { f: x => x*x*x/6, df2: x => x, label: "f(x) = x³/6", df2Label: "f''(x) = x" },
+        gauss:  { f: x => Math.exp(-x*x), df2: x => (4*x*x - 2)*Math.exp(-x*x), label: "f(x) = e^(−x²)", df2Label: "f''(x) = (4x²−2)e^(−x²)" },
+    };
+
+    function pxToX(px) { return xMin + (px / W) * (xMax - xMin); }
+    function xToPx(x) { return ((x - xMin) / (xMax - xMin)) * W; }
+
+    function draw() {
+        const sel = funcs[funcSel.value];
+        const f = sel.f;
+        const eps = parseInt(epsSlider.value);
+        const epsX = (eps / W) * (xMax - xMin);
+        epsValSpan.textContent = epsX.toFixed(2);
+
+        // Compute y range
+        let yVals = [];
+        for (let px = 0; px < W; px++) {
+            yVals.push(f(pxToX(px)));
+        }
+        let yMin = Math.min(...yVals) - 0.5;
+        let yMax = Math.max(...yVals) + 0.5;
+        if (yMax - yMin < 2) { const mid = (yMax+yMin)/2; yMin = mid-1; yMax = mid+1; }
+
+        function yToPx(y) { return H - ((y - yMin) / (yMax - yMin)) * H; }
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Background grid
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 1;
+        for (let i = Math.ceil(xMin); i <= Math.floor(xMax); i++) {
+            const px = xToPx(i);
+            ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, H); ctx.stroke();
+        }
+        for (let i = Math.ceil(yMin); i <= Math.floor(yMax); i++) {
+            const py = yToPx(i);
+            ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W, py); ctx.stroke();
+        }
+
+        // Axes
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 1.5;
+        const zeroY = yToPx(0);
+        ctx.beginPath(); ctx.moveTo(0, zeroY); ctx.lineTo(W, zeroY); ctx.stroke();
+        const zeroX = xToPx(0);
+        ctx.beginPath(); ctx.moveTo(zeroX, 0); ctx.lineTo(zeroX, H); ctx.stroke();
+
+        // Color the background based on laplacian sign
+        for (let px = 0; px < W; px++) {
+            const x = pxToX(px);
+            const lap = sel.df2(x);
+            let alpha = Math.min(Math.abs(lap) * 0.15, 0.25);
+            if (lap > 0) {
+                ctx.fillStyle = `rgba(255,107,107,${alpha})`;
+            } else {
+                ctx.fillStyle = `rgba(81,207,102,${alpha})`;
+            }
+            ctx.fillRect(px, 0, 1, H);
+        }
+
+        // Draw curve
+        ctx.strokeStyle = '#00d2ff';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        for (let px = 0; px < W; px++) {
+            const x = pxToX(px);
+            const y = f(x);
+            const py = yToPx(y);
+            if (px === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Mouse interaction
+        const mx = Math.max(0, Math.min(W-1, mouseX));
+        const xP = pxToX(mx);
+        const fP = f(xP);
+        const fLeft = f(xP - epsX);
+        const fRight = f(xP + epsX);
+        const avg = (fLeft + fRight) / 2;
+        const lapApprox = (fRight - 2*fP + fLeft) / (epsX * epsX);
+        const lapExact = sel.df2(xP);
+
+        // Epsilon range highlight
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        ctx.fillRect(xToPx(xP - epsX), 0, xToPx(xP + epsX) - xToPx(xP - epsX), H);
+
+        // Neighbor points
+        ctx.fillStyle = '#888';
+        ctx.beginPath(); ctx.arc(xToPx(xP - epsX), yToPx(fLeft), 6, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(xToPx(xP + epsX), yToPx(fRight), 6, 0, Math.PI*2); ctx.fill();
+
+        // Average line
+        ctx.strokeStyle = '#888';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5,5]);
+        ctx.beginPath();
+        ctx.moveTo(xToPx(xP - epsX), yToPx(avg));
+        ctx.lineTo(xToPx(xP + epsX), yToPx(avg));
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Average point
+        ctx.fillStyle = '#aaa';
+        ctx.beginPath(); ctx.arc(mx, yToPx(avg), 6, 0, Math.PI*2); ctx.fill();
+
+        // Current point
+        ctx.fillStyle = '#ffd43b';
+        ctx.beginPath(); ctx.arc(mx, yToPx(fP), 8, 0, Math.PI*2); ctx.fill();
+
+        // Arrow from point to average
+        const pyP = yToPx(fP);
+        const pyA = yToPx(avg);
+        if (Math.abs(pyP - pyA) > 3) {
+            ctx.strokeStyle = lapApprox > 0 ? '#ff6b6b' : '#51cf66';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(mx + 15, pyP);
+            ctx.lineTo(mx + 15, pyA);
+            ctx.stroke();
+            // arrowhead
+            const dir = pyA > pyP ? 1 : -1;
+            ctx.beginPath();
+            ctx.moveTo(mx + 15, pyA);
+            ctx.lineTo(mx + 10, pyA - dir*8);
+            ctx.lineTo(mx + 20, pyA - dir*8);
+            ctx.closePath();
+            ctx.fillStyle = lapApprox > 0 ? '#ff6b6b' : '#51cf66';
+            ctx.fill();
+        }
+
+        // Vertical line
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(mx, 0); ctx.lineTo(mx, H); ctx.stroke();
+
+        // Info
+        const diff = avg - fP;
+        const cls = lapExact > 0.01 ? 'positive' : (lapExact < -0.01 ? 'negative' : 'zero');
+        const word = lapExact > 0.01 ? 'TAL (unter Nachbar-Schnitt)' : (lapExact < -0.01 ? 'BERG (über Nachbar-Schnitt)' : 'GLEICHGEWICHT');
+        infoPanel.innerHTML = `
+            x = ${xP.toFixed(2)} | f(x) = ${fP.toFixed(3)} | Nachbar-Ø = ${avg.toFixed(3)}<br>
+            <strong>Ø − f(x) = ${diff.toFixed(3)}</strong> → Δf ≈ ${lapApprox.toFixed(3)} (exakt: ${lapExact.toFixed(3)})<br>
+            <span class="${cls}"><strong>${word}</strong></span> | ${sel.df2Label}
+        `;
+    }
+
+    canvas.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = (e.clientX - rect.left) * (W / rect.width);
+        draw();
+    });
+    canvas.addEventListener('touchmove', e => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        mouseX = (e.touches[0].clientX - rect.left) * (W / rect.width);
+        draw();
+    }, {passive: false});
+    funcSel.addEventListener('change', draw);
+    epsSlider.addEventListener('input', draw);
+    draw();
+})();
+
+// ============================================================
+// SECTION 2: 2D Heatmap
+// ============================================================
+(function() {
+    const canvasF = document.getElementById('canvas2dF');
+    const canvasL = document.getElementById('canvas2dL');
+    const ctxF = canvasF.getContext('2d');
+    const ctxL = canvasL.getContext('2d');
+    const funcSel = document.getElementById('func2d');
+    const infoPanel = document.getElementById('info2d');
+    const S = canvasF.width;
+    const range = 3;
+
+    const funcs2d = {
+        saddle:        { f: (x,y) => x*x - y*y, lap: (x,y) => 0, label: "x²−y²", lapLabel: "Δf = 2 − 2 = 0" },
+        paraboloid:    { f: (x,y) => x*x + y*y, lap: (x,y) => 4, label: "x²+y²", lapLabel: "Δf = 2 + 2 = 4" },
+        negparaboloid: { f: (x,y) => -(x*x + y*y), lap: (x,y) => -4, label: "−(x²+y²)", lapLabel: "Δf = −2 + (−2) = −4" },
+        gauss2d:       { f: (x,y) => Math.exp(-x*x-y*y), lap: (x,y) => (4*x*x+4*y*y-4)*Math.exp(-x*x-y*y), label: "e^(−x²−y²)", lapLabel: "Δf = (4x²+4y²−4)e^(−x²−y²)" },
+        sin2d:         { f: (x,y) => Math.sin(x)*Math.sin(y), lap: (x,y) => -2*Math.sin(x)*Math.sin(y), label: "sin(x)sin(y)", lapLabel: "Δf = −2sin(x)sin(y)" },
+        ripple:        { f: (x,y) => { const r = Math.sqrt(x*x+y*y)+0.001; return Math.sin(r*3)/r; }, lap: null, label: "sin(3r)/r", lapLabel: "Δf (numerisch)" },
+    };
+
+    function pxToCoord(px) { return -range + (px / S) * 2 * range; }
+
+    function valToColor(v, vmin, vmax, mode) {
+        let t = (v - vmin) / (vmax - vmin + 1e-10);
+        t = Math.max(0, Math.min(1, t));
+        if (mode === 'height') {
+            // Blue to white to orange
+            const r = Math.floor(30 + t * 225);
+            const g = Math.floor(30 + t * 180);
+            const b = Math.floor(180 - t * 100);
+            return [r, g, b];
+        } else {
+            // Green (neg) -> yellow (0) -> red (pos)
+            const mid = 0.5;
+            if (t < mid) {
+                const s = t / mid;
+                return [Math.floor(s * 255), Math.floor(100 + s * 155), Math.floor(102 * (1-s))];
+            } else {
+                const s = (t - mid) / mid;
+                return [255, Math.floor(255 - s * 155), Math.floor(s * 20)];
+            }
+        }
+    }
+
+    function draw2d() {
+        const sel = funcs2d[funcSel.value];
+        const f = sel.f;
+
+        const imgF = ctxF.createImageData(S, S);
+        const imgL = ctxL.createImageData(S, S);
+
+        // Compute values
+        const fVals = new Float64Array(S * S);
+        const lapVals = new Float64Array(S * S);
+        let fMin = Infinity, fMax = -Infinity;
+        let lMin = Infinity, lMax = -Infinity;
+
+        const eps = 2 * range / S * 1.5;
+
+        for (let py = 0; py < S; py++) {
+            for (let px = 0; px < S; px++) {
+                const x = pxToCoord(px);
+                const y = pxToCoord(py);
+                const idx = py * S + px;
+                const fv = f(x, y);
+                fVals[idx] = fv;
+                if (fv < fMin) fMin = fv;
+                if (fv > fMax) fMax = fv;
+
+                // Numerischer Laplacian
+                let lap;
+                if (sel.lap) {
+                    lap = sel.lap(x, y);
+                } else {
+                    const fxp = f(x + eps, y);
+                    const fxm = f(x - eps, y);
+                    const fyp = f(x, y + eps);
+                    const fym = f(x, y - eps);
+                    lap = (fxp + fxm + fyp + fym - 4 * fv) / (eps * eps);
+                }
+                lapVals[idx] = lap;
+                if (lap < lMin) lMin = lap;
+                if (lap > lMax) lMax = lap;
+            }
+        }
+
+        // Symmetrischer Bereich für Laplacian
+        const lAbs = Math.max(Math.abs(lMin), Math.abs(lMax), 0.01);
+        lMin = -lAbs;
+        lMax = lAbs;
+
+        // Pixel setzen
+        for (let py = 0; py < S; py++) {
+            for (let px = 0; px < S; px++) {
+                const idx = py * S + px;
+                const pi = (py * S + px) * 4;
+
+                const colF = valToColor(fVals[idx], fMin, fMax, 'height');
+                imgF.data[pi] = colF[0];
+                imgF.data[pi + 1] = colF[1];
+                imgF.data[pi + 2] = colF[2];
+                imgF.data[pi + 3] = 255;
+
+                const colL = valToColor(lapVals[idx], lMin, lMax, 'laplacian');
+                imgL.data[pi] = colL[0];
+                imgL.data[pi + 1] = colL[1];
+                imgL.data[pi + 2] = colL[2];
+                imgL.data[pi + 3] = 255;
+            }
+        }
+
+        ctxF.putImageData(imgF, 0, 0);
+        ctxL.putImageData(imgL, 0, 0);
+
+        // Achsenbeschriftungen
+        [ctxF, ctxL].forEach(c => {
+            c.strokeStyle = 'rgba(255,255,255,0.3)';
+            c.lineWidth = 1;
+            const cx = S / 2, cy = S / 2;
+            c.beginPath(); c.moveTo(cx, 0); c.lineTo(cx, S); c.stroke();
+            c.beginPath(); c.moveTo(0, cy); c.lineTo(S, cy); c.stroke();
+            c.fillStyle = '#aaa';
+            c.font = '11px monospace';
+            c.fillText('x →', S - 30, cy - 5);
+            c.fillText('y ↓', cx + 5, 15);
+        });
+    }
+
+    // Klick-Handler für Details
+    canvasF.addEventListener('click', function(e) {
+        const rect = canvasF.getBoundingClientRect();
+        const px = (e.clientX - rect.left) * (S / rect.width);
+        const py = (e.clientY - rect.top) * (S / rect.height);
+        const x = pxToCoord(px);
+        const y = pxToCoord(py);
+        const sel = funcs2d[funcSel.value];
+        const fv = sel.f(x, y);
+        const eps = 0.05;
+        const fxp = sel.f(x + eps, y), fxm = sel.f(x - eps, y);
+        const fyp = sel.f(x, y + eps), fym = sel.f(x, y - eps);
+        const d2x = (fxp - 2 * fv + fxm) / (eps * eps);
+        const d2y = (fyp - 2 * fv + fym) / (eps * eps);
+        const lap = d2x + d2y;
+        const avg4 = (fxp + fxm + fyp + fym) / 4;
+        const diff = avg4 - fv;
+        const cls = lap > 0.1 ? 'positive' : (lap < -0.1 ? 'negative' : 'zero');
+        const word = lap > 0.1 ? 'TAL → Punkt liegt UNTER Nachbar-Ø' : (lap < -0.1 ? 'BERG → Punkt liegt ÜBER Nachbar-Ø' : 'GLEICHGEWICHT ≈ harmonisch');
+
+        // Marker zeichnen
+        draw2d();
+        [ctxF, ctxL].forEach(c => {
+            c.strokeStyle = '#fff';
+            c.lineWidth = 2;
+            c.beginPath();
+            c.arc(px, py, 8, 0, Math.PI * 2);
+            c.stroke();
+        });
+
+        infoPanel.innerHTML = `
+            (x, y) = (${x.toFixed(2)}, ${y.toFixed(2)}) | f = ${fv.toFixed(3)}<br>
+            ∂²f/∂x² ≈ ${d2x.toFixed(3)} | ∂²f/∂y² ≈ ${d2y.toFixed(3)}<br>
+            <strong>Δf = ${d2x.toFixed(3)} + ${d2y.toFixed(3)} = ${lap.toFixed(3)}</strong><br>
+            Nachbar-Ø = ${avg4.toFixed(3)} | Ø − f = ${diff.toFixed(4)}<br>
+            <span class="${cls}"><strong>${word}</strong></span> | ${sel.lapLabel}
+        `;
+    });
+
+    canvasL.addEventListener('click', function(e) {
+        // Weiterleiten an canvasF-Logik
+        const rect = canvasL.getBoundingClientRect();
+        const px = (e.clientX - rect.left) * (S / rect.width);
+        const py = (e.clientY - rect.top) * (S / rect.height);
+        const fakeEvent = { clientX: canvasF.getBoundingClientRect().left + px * (canvasF.getBoundingClientRect().width / S), clientY: canvasF.getBoundingClientRect().top + py * (canvasF.getBoundingClientRect().height / S) };
+        canvasF.dispatchEvent(new MouseEvent('click', fakeEvent));
+    });
+
+    funcSel.addEventListener('change', draw2d);
+    draw2d();
+})();
+
+// ============================================================
+// SECTION 3: Diffusion Simulation
+// ============================================================
+(function() {
+    const canvas = document.getElementById('canvasDiff');
+    const ctx = canvas.getContext('2d');
+    const S = canvas.width;
+    const N = 200; // Grid-Auflösung
+    const cellSize = S / N;
+
+    let grid = new Float64Array(N * N);
+    let tempGrid = new Float64Array(N * N);
+    let isPaused = false;
+    let isDrawing = false;
+
+    function reset() {
+        grid.fill(0);
+        // Initiale Wärmequelle in der Mitte
+        for (let y = N/2 - 10; y < N/2 + 10; y++) {
+            for (let x = N/2 - 10; x < N/2 + 10; x++) {
+                if (x >= 0 && x < N && y >= 0 && y < N) {
+                    grid[y * N + x] = 1.0;
+                }
+            }
+        }
+    }
+    reset();
+
+    document.getElementById('resetDiff').addEventListener('click', reset);
+    document.getElementById('pauseDiff').addEventListener('click', function() {
+        isPaused = !isPaused;
+        this.textContent = isPaused ? 'Play' : 'Pause';
+    });
+
+    function paintHeat(mx, my) {
+        const brush = parseInt(document.getElementById('brushSize').value);
+        const cx = Math.floor(mx / cellSize);
+        const cy = Math.floor(my / cellSize);
+        for (let dy = -brush; dy <= brush; dy++) {
+            for (let dx = -brush; dx <= brush; dx++) {
+                if (dx*dx + dy*dy <= brush*brush) {
+                    const nx = cx + dx, ny = cy + dy;
+                    if (nx >= 0 && nx < N && ny >= 0 && ny < N) {
+                        grid[ny * N + nx] = 1.0;
+                    }
+                }
+            }
+        }
+    }
+
+    canvas.addEventListener('mousedown', e => { isDrawing = true; });
+    canvas.addEventListener('mouseup', e => { isDrawing = false; });
+    canvas.addEventListener('mouseleave', e => { isDrawing = false; });
+    canvas.addEventListener('mousemove', e => {
+        if (!isDrawing) return;
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.clientX - rect.left) * (S / rect.width);
+        const my = (e.clientY - rect.top) * (S / rect.height);
+        paintHeat(mx, my);
+    });
+    canvas.addEventListener('click', e => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.clientX - rect.left) * (S / rect.width);
+        const my = (e.clientY - rect.top) * (S / rect.height);
+        paintHeat(mx, my);
+    });
+
+    // Touch support
+    canvas.addEventListener('touchstart', e => { e.preventDefault(); isDrawing = true; }, {passive: false});
+    canvas.addEventListener('touchend', e => { isDrawing = false; });
+    canvas.addEventListener('touchmove', e => {
+        e.preventDefault();
+        if (!isDrawing) return;
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.touches[0].clientX - rect.left) * (S / rect.width);
+        const my = (e.touches[0].clientY - rect.top) * (S / rect.height);
+        paintHeat(mx, my);
+    }, {passive: false});
+
+    function diffusionStep() {
+        const alpha = parseInt(document.getElementById('diffRate').value) / 1000;
+        for (let y = 1; y < N - 1; y++) {
+            for (let x = 1; x < N - 1; x++) {
+                const idx = y * N + x;
+                const lap = grid[idx - 1] + grid[idx + 1] + grid[(y-1)*N + x] + grid[(y+1)*N + x] - 4 * grid[idx];
+                tempGrid[idx] = grid[idx] + alpha * lap;
+                // Clamp
+                if (tempGrid[idx] < 0) tempGrid[idx] = 0;
+                if (tempGrid[idx] > 1) tempGrid[idx] = 1;
+            }
+        }
+        // Swap
+        [grid, tempGrid] = [tempGrid, grid];
+    }
+
+    function heatColor(v) {
+        // Black -> Red -> Yellow -> White
+        v = Math.max(0, Math.min(1, v));
+        if (v < 0.33) {
+            const t = v / 0.33;
+            return [Math.floor(t * 255), 0, Math.floor(t * 40)];
+        } else if (v < 0.66) {
+            const t = (v - 0.33) / 0.33;
+            return [255, Math.floor(t * 220), Math.floor(40 - t * 40)];
+        } else {
+            const t = (v - 0.66) / 0.34;
+            return [255, 220 + Math.floor(t * 35), Math.floor(t * 255)];
+        }
+    }
+
+    function render() {
+        const img = ctx.createImageData(S, S);
+        for (let y = 0; y < N; y++) {
+            for (let x = 0; x < N; x++) {
+                const v = grid[y * N + x];
+                const col = heatColor(v);
+                // Fill cell
+                const px0 = Math.floor(x * cellSize);
+                const py0 = Math.floor(y * cellSize);
+                const px1 = Math.floor((x + 1) * cellSize);
+                const py1 = Math.floor((y + 1) * cellSize);
+                for (let py = py0; py < py1 && py < S; py++) {
+                    for (let px = px0; px < px1 && px < S; px++) {
+                        const pi = (py * S + px) * 4;
+                        img.data[pi] = col[0];
+                        img.data[pi + 1] = col[1];
+                        img.data[pi + 2] = col[2];
+                        img.data[pi + 3] = 255;
+                    }
+                }
+            }
+        }
+        ctx.putImageData(img, 0, 0);
+    }
+
+    function loop() {
+        if (!isPaused) {
+            for (let i = 0; i < 3; i++) diffusionStep();
+        }
+        render();
+        requestAnimationFrame(loop);
+    }
+    loop();
+})();
+
+// ============================================================
+// SECTION 4: Neighbor Average Interactive
+// ============================================================
+(function() {
+    const canvas = document.getElementById('canvasNeighbor');
+    const ctx = canvas.getContext('2d');
+    const info = document.getElementById('infoNeighbor');
+    const W = canvas.width, H = canvas.height;
+
+    // Points: center + 4 neighbors
+    const points = [
+        { x: W * 0.2, y: H * 0.5, label: 'Links', dragging: false, color: '#888' },
+        { x: W * 0.4, y: H * 0.5, label: 'Oben', dragging: false, color: '#888' },
+        { x: W * 0.5, y: H * 0.4, label: 'f(x)', dragging: false, color: '#ffd43b', isCenter: true },
+        { x: W * 0.6, y: H * 0.5, label: 'Unten', dragging: false, color: '#888' },
+        { x: W * 0.8, y: H * 0.5, label: 'Rechts', dragging: false, color: '#888' },
+    ];
+
+    let dragIdx = -1;
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Background
+        ctx.fillStyle = '#12121f';
+        ctx.fillRect(0, 0, W, H);
+
+        // Grid
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 1;
+        for (let y = 50; y < H; y += 50) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+        }
+
+        // Baseline
+        const baseY = H * 0.75;
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath(); ctx.moveTo(0, baseY); ctx.lineTo(W, baseY); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#555';
+        ctx.font = '12px monospace';
+        ctx.fillText('Nulllinie', 10, baseY - 5);
+
+        const center = points[2];
+        const neighbors = [points[0], points[1], points[3], points[4]];
+        const avgY = neighbors.reduce((s, p) => s + p.y, 0) / neighbors.length;
+
+        // Verbindungslinien
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        neighbors.forEach(p => {
+            ctx.beginPath();
+            ctx.moveTo(center.x, center.y);
+            ctx.lineTo(p.x, p.y);
+            ctx.stroke();
+        });
+
+        // Durchschnittslinie
+        ctx.strokeStyle = '#aaa';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 4]);
+        ctx.beginPath();
+        ctx.moveTo(W * 0.15, avgY);
+        ctx.lineTo(W * 0.85, avgY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#aaa';
+        ctx.font = '13px sans-serif';
+        ctx.fillText('Nachbar-Durchschnitt', W * 0.62, avgY - 8);
+
+        // Pfeil: Differenz
+        const diff = avgY - center.y; // In Pixel (invertiert: oben = kleiner y)
+        const lapSign = -diff; // Positiv wenn center unter avg (center.y > avgY)
+        if (Math.abs(diff) > 3) {
+            ctx.strokeStyle = diff < 0 ? '#ff6b6b' : '#51cf66';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(center.x + 25, center.y);
+            ctx.lineTo(center.x + 25, avgY);
+            ctx.stroke();
+            // Arrowhead
+            const dir = diff < 0 ? -1 : 1;
+            ctx.beginPath();
+            ctx.moveTo(center.x + 25, avgY);
+            ctx.lineTo(center.x + 19, avgY - dir * 10);
+            ctx.lineTo(center.x + 31, avgY - dir * 10);
+            ctx.closePath();
+            ctx.fillStyle = diff < 0 ? '#ff6b6b' : '#51cf66';
+            ctx.fill();
+
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillStyle = diff < 0 ? '#ff6b6b' : '#51cf66';
+            const lapText = diff > 0 ? 'Δf > 0 (Tal)' : 'Δf < 0 (Berg)';
+            ctx.fillText(lapText, center.x + 35, (center.y + avgY) / 2 + 5);
+        } else {
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillStyle = '#ffd43b';
+            ctx.fillText('Δf ≈ 0 (Gleichgewicht)', center.x + 35, center.y);
+        }
+
+        // Punkte zeichnen
+        points.forEach((p, i) => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.isCenter ? 14 : 10, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.fillStyle = '#fff';
+            ctx.font = p.isCenter ? 'bold 13px sans-serif' : '12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(p.label, p.x, p.y - (p.isCenter ? 20 : 16));
+            ctx.textAlign = 'left';
+        });
+
+        // Info
+        const centerVal = (H * 0.75 - center.y) / 100;
+        const avgVal = (H * 0.75 - avgY) / 100;
+        const lapVal = avgVal - centerVal;
+        const cls = lapVal > 0.05 ? 'positive' : (lapVal < -0.05 ? 'negative' : 'zero');
+        const word = lapVal > 0.05 ? 'Punkt liegt UNTER dem Nachbar-Ø → Δf > 0 → Tal' :
+                     (lapVal < -0.05 ? 'Punkt liegt ÜBER dem Nachbar-Ø → Δf < 0 → Berg' : 'Punkt ≈ Nachbar-Ø → Δf ≈ 0 → Gleichgewicht');
+        info.innerHTML = `
+            f(x) = ${centerVal.toFixed(2)} | Nachbar-Ø = ${avgVal.toFixed(2)} | <strong>Ø − f(x) = ${lapVal.toFixed(2)}</strong><br>
+            <span class="${cls}"><strong>${word}</strong></span><br>
+            <em>Ziehe die Punkte hoch/runter, um die Beziehung zu erkunden!</em>
+        `;
+    }
+
+    canvas.addEventListener('mousedown', e => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.clientX - rect.left) * (W / rect.width);
+        const my = (e.clientY - rect.top) * (H / rect.height);
+        points.forEach((p, i) => {
+            if (Math.hypot(mx - p.x, my - p.y) < 20) {
+                dragIdx = i;
+            }
+        });
+    });
+
+    canvas.addEventListener('mousemove', e => {
+        if (dragIdx < 0) return;
+        const rect = canvas.getBoundingClientRect();
+        const my = (e.clientY - rect.top) * (H / rect.height);
+        points[dragIdx].y = Math.max(20, Math.min(H - 20, my));
+        draw();
+    });
+
+    canvas.addEventListener('mouseup', () => { dragIdx = -1; });
+    canvas.addEventListener('mouseleave', () => { dragIdx = -1; });
+
+    // Touch support
+    canvas.addEventListener('touchstart', e => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.touches[0].clientX - rect.left) * (W / rect.width);
+        const my = (e.touches[0].clientY - rect.top) * (H / rect.height);
+        points.forEach((p, i) => {
+            if (Math.hypot(mx - p.x, my - p.y) < 30) {
+                dragIdx = i;
+            }
+        });
+    }, {passive: false});
+
+    canvas.addEventListener('touchmove', e => {
+        e.preventDefault();
+        if (dragIdx < 0) return;
+        const rect = canvas.getBoundingClientRect();
+        const my = (e.touches[0].clientY - rect.top) * (H / rect.height);
+        points[dragIdx].y = Math.max(20, Math.min(H - 20, my));
+        draw();
+    }, {passive: false});
+
+    canvas.addEventListener('touchend', () => { dragIdx = -1; });
+
+    draw();
+})();
+</script>
+
+</body>
+</html>
