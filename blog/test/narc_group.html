@@ -1,0 +1,2759 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covert Narcissism & Manipulative Gruppen – Immersive Visualisierung</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #d0d0d0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ---- HERO ---- */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+        .hero canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+        }
+        .hero h1 {
+            font-size: clamp(2em, 5vw, 3.5em);
+            font-weight: 800;
+            background: linear-gradient(135deg, #c0c0c0, #ffffff, #c0c0c0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+        .hero .tagline {
+            font-size: clamp(0.9em, 2vw, 1.2em);
+            color: #888;
+            max-width: 700px;
+            line-height: 1.7;
+        }
+        .hero .scroll-hint {
+            position: absolute;
+            bottom: 30px;
+            color: #555;
+            font-size: 0.85em;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(8px); }
+        }
+
+        /* ---- SECTIONS ---- */
+        .section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 25px;
+        }
+        .section-dark {
+            background: rgba(255,255,255,0.02);
+            border-top: 1px solid rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .section h2 {
+            font-size: clamp(1.5em, 3.5vw, 2.2em);
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        .section .section-sub {
+            color: #777;
+            font-size: 0.95em;
+            margin-bottom: 35px;
+            max-width: 750px;
+            line-height: 1.7;
+        }
+        .section .research-note {
+            font-size: 0.8em;
+            color: #555;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        /* ---- MASK SCENE ---- */
+        .mask-scene {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 30px auto;
+            height: 500px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: linear-gradient(180deg, #0d0d15, #12121f);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .mask-scene canvas {
+            width: 100%;
+            height: 100%;
+        }
+        .mask-slider-wrap {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            padding: 12px 25px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 5;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .mask-slider-wrap label {
+            color: #aaa;
+            font-size: 0.85em;
+            white-space: nowrap;
+        }
+        .mask-slider-wrap input[type="range"] {
+            width: 200px;
+            accent-color: #8b5cf6;
+        }
+        .mask-slider-wrap .val {
+            color: #8b5cf6;
+            font-weight: 700;
+            min-width: 35px;
+        }
+
+        /* ---- CHAT SIMULATION ---- */
+        .chat-container {
+            max-width: 550px;
+            margin: 30px auto;
+            background: linear-gradient(180deg, #111118, #0e0e16);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            overflow: hidden;
+        }
+        .chat-header {
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+        .chat-header-info .name { color: #fff; font-weight: 600; font-size: 0.95em; }
+        .chat-header-info .status { color: #666; font-size: 0.75em; }
+        .chat-messages {
+            padding: 20px;
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .msg {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: msgIn 0.4s forwards;
+        }
+        @keyframes msgIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .msg-narc {
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            color: #c4b5fd;
+            border-bottom-left-radius: 4px;
+            margin-right: auto;
+        }
+        .msg-victim {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #aaa;
+            border-bottom-right-radius: 4px;
+            margin-left: auto;
+        }
+        .msg-analysis {
+            background: rgba(255, 107, 107, 0.08);
+            border: 1px solid rgba(255, 107, 107, 0.15);
+            color: #ff8a8a;
+            font-size: 0.8em;
+            max-width: 90%;
+            margin: 5px auto 15px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .msg-timestamp {
+            font-size: 0.7em;
+            color: #444;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .chat-controls {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .chat-btn {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            background: rgba(139, 92, 246, 0.1);
+            color: #b39ddb;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+        .chat-btn:hover {
+            background: rgba(139, 92, 246, 0.25);
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+
+        /* ---- GROUP DYNAMICS ---- */
+        .group-canvas-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 30px auto;
+            height: 600px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #0a0a12;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .group-canvas-wrap canvas {
+            width: 100%; height: 100%;
+        }
+        .group-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 5;
+        }
+        .group-controls button {
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            color: #aaa;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.2s;
+        }
+        .group-controls button:hover, .group-controls button.active {
+            background: rgba(139, 92, 246, 0.3);
+            color: #fff;
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+
+        /* ---- COMPARISON PANELS ---- */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            margin: 30px 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        @media (max-width: 700px) {
+            .compare-grid { grid-template-columns: 1fr; }
+        }
+        .compare-panel {
+            padding: 30px;
+            position: relative;
+        }
+        .compare-panel.overt {
+            background: linear-gradient(135deg, rgba(255,107,107,0.08), rgba(255,107,107,0.02));
+        }
+        .compare-panel.covert {
+            background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(139,92,246,0.02));
+        }
+        .compare-panel h3 {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+        .compare-panel.overt h3 { color: #ff6b6b; }
+        .compare-panel.covert h3 { color: #8b5cf6; }
+        .compare-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.88em;
+            line-height: 1.5;
+        }
+        .compare-icon {
+            font-size: 1.1em;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* ---- TIMELINE ---- */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0; bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #8b5cf6, #ff6b6b, #8b5cf6);
+            transform: translateX(-50%);
+        }
+        @media (max-width: 700px) {
+            .timeline::before { left: 20px; }
+        }
+        .tl-item {
+            position: relative;
+            width: 50%;
+            padding: 15px 30px;
+        }
+        .tl-item:nth-child(odd) {
+            margin-left: 0;
+            text-align: right;
+            padding-right: 50px;
+        }
+        .tl-item:nth-child(even) {
+            margin-left: 50%;
+            padding-left: 50px;
+        }
+        @media (max-width: 700px) {
+            .tl-item, .tl-item:nth-child(odd), .tl-item:nth-child(even) {
+                width: 100%;
+                margin-left: 0;
+                text-align: left;
+                padding-left: 50px;
+                padding-right: 15px;
+            }
+        }
+        .tl-dot {
+            position: absolute;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            top: 20px;
+            z-index: 2;
+        }
+        .tl-item:nth-child(odd) .tl-dot { right: -8px; }
+        .tl-item:nth-child(even) .tl-dot { left: -8px; }
+        @media (max-width: 700px) {
+            .tl-item .tl-dot, .tl-item:nth-child(odd) .tl-dot, .tl-item:nth-child(even) .tl-dot {
+                left: 12px; right: auto;
+            }
+        }
+        .tl-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 18px;
+        }
+        .tl-card h4 {
+            color: #fff;
+            font-size: 0.95em;
+            margin-bottom: 6px;
+        }
+        .tl-card p {
+            color: #888;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+        .tl-card .tactic-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        /* ---- HEATMAP ---- */
+        .heatmap-wrap {
+            overflow-x: auto;
+            margin: 30px 0;
+        }
+        .heatmap-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+        .heatmap-table th, .heatmap-table td {
+            padding: 10px 8px;
+            text-align: center;
+            font-size: 0.8em;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .heatmap-table th {
+            color: #aaa;
+            font-weight: 600;
+            background: rgba(255,255,255,0.03);
+        }
+        .heatmap-table th:first-child {
+            text-align: left;
+            min-width: 140px;
+        }
+        .heatmap-table td:first-child {
+            text-align: left;
+            color: #ccc;
+            font-weight: 500;
+        }
+        .heatmap-cell {
+            border-radius: 6px;
+            padding: 6px;
+            font-weight: 700;
+            font-size: 0.85em;
+        }
+
+        /* ---- INFO CARDS ---- */
+        .insight-card {
+            background: rgba(139, 92, 246, 0.06);
+            border-left: 3px solid #8b5cf6;
+            padding: 18px 22px;
+            border-radius: 0 14px 14px 0;
+            margin: 20px 0;
+            font-size: 0.9em;
+            line-height: 1.7;
+        }
+        .insight-card strong { color: #b39ddb; }
+        .warning-card {
+            background: rgba(255, 107, 107, 0.06);
+            border-left: 3px solid #ff6b6b;
+            padding: 18px 22px;
+            border-radius: 0 14px 14px 0;
+            margin: 20px 0;
+            font-size: 0.9em;
+            line-height: 1.7;
+        }
+        .warning-card strong { color: #ff8a8a; }
+
+        /* ---- CHART CONTAINERS ---- */
+        .chart-wrap {
+            position: relative;
+            max-width: 750px;
+            margin: 25px auto;
+        }
+
+        /* ---- ROOM SCENE ---- */
+        .room-scene {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 30px auto;
+            height: 450px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #0c0c14;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .room-scene canvas { width: 100%; height: 100%; }
+
+        /* ---- FOOTER ---- */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #444;
+            font-size: 0.8em;
+            line-height: 1.8;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===================== HERO ===================== -->
+<div class="hero">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-content">
+        <h1>Die unsichtbare Manipulation</h1>
+        <p class="tagline">
+            Covert Narcissism & manipulative Gruppendynamiken – 
+            wie verdeckte Narzissten und toxische Systeme Menschen kontrollieren, 
+            ohne dass es jemand bemerkt. Basierend auf psychologischer Forschungsliteratur.
+        </p>
+    </div>
+    <div class="scroll-hint">↓ Scrolle nach unten ↓</div>
+</div>
+
+<!-- ===================== SECTION 1: THE MASK ===================== -->
+<div class="section">
+    <h2>Die Maske des verdeckten Narzissten</h2>
+    <p class="section-sub">
+        Verdeckte Narzissten besitzen dieselbe tiefe Sehnsucht nach Bewunderung und denselben Mangel an Empathie 
+        wie offene Narzissten – drücken diese Züge aber durch Passiv-Aggressivität, Überempfindlichkeit und 
+        eine „Armes-Ich"-Erzählung aus. Bewege den Slider, um hinter die Maske zu sehen.
+    </p>
+    <p class="research-note">
+        Basierend auf: Wink (1991) „Two Faces of Narcissism"; Miller et al. (2011) Vulnerable vs. Grandiose Narcissism; 
+        Pincus & Lukowitsky (2010) Pathological Narcissism Inventory
+    </p>
+
+    <div class="mask-scene">
+        <canvas id="maskCanvas"></canvas>
+        <div class="mask-slider-wrap">
+            <label>🎭 Maske entfernen</label>
+            <input type="range" id="maskSlider" min="0" max="100" value="0" oninput="updateMask()">
+            <span class="val" id="maskVal">0%</span>
+        </div>
+    </div>
+
+    <div class="compare-grid">
+        <div class="compare-panel overt">
+            <h3>🔊 Offener Narzisst</h3>
+            <div class="compare-item"><span class="compare-icon">💪</span><span>Prahlt offen mit Erfolgen</span></div>
+            <div class="compare-item"><span class="compare-icon">😤</span><span>Reagiert mit Wut auf Kritik</span></div>
+            <div class="compare-item"><span class="compare-icon">👑</span><span>Beansprucht offen Sonderbehandlung</span></div>
+            <div class="compare-item"><span class="compare-icon">🗣️</span><span>Dominiert Gespräche lautstark</span></div>
+            <div class="compare-item"><span class="compare-icon">🎯</span><span>Manipulation ist oft erkennbar</span></div>
+        </div>
+        <div class="compare-panel covert">
+            <h3>🤫 Verdeckter Narzisst</h3>
+            <div class="compare-item"><span class="compare-icon">😢</span><span>Spielt das Opfer, um Mitleid zu ernten</span></div>
+            <div class="compare-item"><span class="compare-icon">😶</span><span>Bestraft durch Schweigen & Rückzug</span></div>
+            <div class="compare-item"><span class="compare-icon">🎭</span><span>Tarnt Ansprüche als Bescheidenheit</span></div>
+            <div class="compare-item"><span class="compare-icon">🕸️</span><span>Kontrolliert subtil durch Schuldgefühle</span></div>
+            <div class="compare-item"><span class="compare-icon">👻</span><span>Manipulation ist fast unsichtbar</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== SECTION 2: CHAT SIMULATION ===================== -->
+<div class="section section-dark">
+    <h2>So klingt verdeckte Manipulation</h2>
+    <p class="section-sub">
+        Verdeckte Narzissten nutzen subtile Sprache, um Realität zu verzerren, Schuld umzukehren und 
+        emotionale Abhängigkeit zu erzeugen. Diese Chat-Simulation zeigt reale Muster – 
+        mit Echtzeit-Analyse der verwendeten Taktiken.
+    </p>
+    <p class="research-note">
+        Basierend auf: Arabi (2017) „Becoming the Narcissist's Nightmare"; Stern (2007) „The Gaslight Effect"; 
+        Sweet (2019) Sociology of Gaslighting
+    </p>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-avatar" style="background:rgba(139,92,246,0.2);">🎭</div>
+            <div class="chat-header-info">
+                <div class="name">Verdeckter Narzisst</div>
+                <div class="status">Szenario auswählen ↓</div>
+            </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="msg-timestamp">Wähle ein Szenario, um die Konversation zu starten</div>
+        </div>
+        <div class="chat-controls">
+            <button class="chat-btn" onclick="playScenario('gaslight')">🌫️ Gaslighting</button>
+            <button class="chat-btn" onclick="playScenario('guilt')">😢 Schuldumkehr</button>
+            <button class="chat-btn" onclick="playScenario('silent')">🤐 Silent Treatment</button>
+            <button class="chat-btn" onclick="playScenario('triangulation')">🔺 Triangulation</button>
+            <button class="chat-btn" onclick="playScenario('hoover')">🔁 Hoovering</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== SECTION 3: GROUP DYNAMICS ===================== -->
+<div class="section">
+    <h2>Manipulative Gruppendynamiken</h2>
+    <p class="section-sub">
+        In toxischen Gruppen – ob Familie, Arbeitsplatz, Sekte oder sozialer Kreis – nutzt ein narzisstischer 
+        Anführer ein System aus „Flying Monkeys", Sündenböcken und Informationskontrolle, 
+        um Macht zu erhalten. Beobachte, wie die Dynamik funktioniert.
+    </p>
+    <p class="research-note">
+        Basierend auf: Lifton (1961) „Thought Reform"; Singer & Lalich (1995) „Cults in Our Midst"; 
+        Bonchek (2016) Group Narcissism; Shaw (2014) „Traumatic Narcissism and Relational Systems"
+    </p>
+
+    <div class="group-canvas-wrap">
+        <canvas id="groupCanvas"></canvas>
+        <div class="group-controls">
+            <button class="active" onclick="setGroupMode('normal')">🔄 Normalmodus</button>
+            <button onclick="setGroupMode('scapegoat')">🎯 Sündenbock-Dynamik</button>
+            <button onclick="setGroupMode('triangulate')">🔺 Triangulation</button>
+            <button onclick="setGroupMode('isolate')">🚫 Isolation</button>
+            <button onclick="setGroupMode('lovebomb')">💕 Love Bombing</button>
+        </div>
+    </div>
+
+    <div class="insight-card">
+        <strong>Das BITE-Modell (Steven Hassan, 2015):</strong> Manipulative Gruppen kontrollieren vier Bereiche: 
+        <strong>B</strong>ehavior (Verhalten), <strong>I</strong>nformation, <strong>T</strong>hought (Denken), 
+        <strong>E</strong>motion. Der narzisstische Anführer bestimmt, was Mitglieder tun dürfen, welche 
+        Informationen sie erhalten, wie sie denken sollen und welche Gefühle „erlaubt" sind.
+    </div>
+</div>
+
+<!-- ===================== SECTION 4: TACTICS HEATMAP ===================== -->
+<div class="section section-dark">
+    <h2>Taktiken-Heatmap: Wer nutzt was?</h2>
+    <p class="section-sub">
+        Nicht alle narzisstischen Kontexte nutzen dieselben Taktiken gleich stark. 
+        Diese Heatmap zeigt die Intensität verschiedener Manipulationsstrategien 
+        in unterschiedlichen Umgebungen.
+    </p>
+
+    <div class="heatmap-wrap">
+        <table class="heatmap-table" id="heatmapTable">
+            <thead>
+                <tr>
+                    <th>Taktik</th>
+                    <th>🏠 Narzisstische Familie</th>
+                    <th>💑 Partnerschaft</th>
+                    <th>🏢 Arbeitsplatz</th>
+                    <th>⛪ Sekte / Kult</th>
+                    <th>👥 Freundeskreis</th>
+                    <th>🌐 Online-Gruppen</th>
+                </tr>
+            </thead>
+            <tbody id="heatmapBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ===================== SECTION 5: TIMELINE OF ENTRAPMENT ===================== -->
+<div class="section">
+    <h2>Anatomie der Verstrickung</h2>
+    <p class="section-sub">
+        So verläuft der typische Prozess, durch den ein verdeckter Narzisst oder eine manipulative Gruppe 
+        ein Opfer schrittweise in die Abhängigkeit führt – oft über Monate oder Jahre.
+    </p>
+    <p class="research-note">
+        Basierend auf: Dutton & Painter (1993) Trauma Bonding; Herman (1992) „Trauma and Recovery"; 
+        Carnes (1997) „The Betrayal Bond"
+    </p>
+
+    <div class="timeline" id="timeline"></div>
+</div>
+
+<!-- ===================== SECTION 6: ROOM SCENE – EMOTIONAL ATMOSPHERE ===================== -->
+<div class="section section-dark">
+    <h2>Die emotionale Atmosphäre – Fühle den Raum</h2>
+    <p class="section-sub">
+        Wie fühlt es sich an, in einem Raum mit einem verdeckten Narzissten zu sein? 
+        Bewege den Slider, um die emotionale Atmosphäre zu verändern – 
+        von scheinbarer Normalität bis zur vollen Manipulation.
+    </p>
+
+    <div class="room-scene">
+        <canvas id="roomCanvas"></canvas>
+        <div class="mask-slider-wrap">
+            <label>😰 Manipulationslevel</label>
+            <input type="range" id="roomSlider" min="0" max="100" value="0" oninput="updateRoom()">
+            <span class="val" id="roomVal">0%</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== SECTION 7: DOUBLE BIND CHART ===================== -->
+<div class="section">
+    <h2>Die Double-Bind-Falle</h2>
+    <p class="section-sub">
+        Verdeckte Narzissten und manipulative Gruppen stellen Opfer vor unmögliche Entscheidungen: 
+        Egal was du tust, es ist falsch. Diese Visualisierung zeigt, wie jede Reaktion 
+        des Opfers gegen es verwendet wird.
+    </p>
+    <p class="research-note">
+        Basierend auf: Bateson et al. (1956) Double Bind Theory; 
+        Watzlawick (1967) „Pragmatics of Human Communication"
+    </p>
+
+    <div class="chart-wrap">
+        <canvas id="doubleBind" height="400"></canvas>
+    </div>
+
+    <div class="warning-card">
+        <strong >Die Double-Bind-Falle:</strong> Du wirst kritisiert, wenn du dich wehrst („Du bist so aggressiv!"). 
+        Du wirst kritisiert, wenn du schweigst („Du gibst mir ja nie eine Antwort!"). 
+        Du wirst kritisiert, wenn du gehst („Du lässt mich im Stich!"). 
+        Du wirst kritisiert, wenn du bleibst („Du bist so abhängig!"). 
+        <em>Es gibt keinen richtigen Weg – das ist der Punkt.</em>
+    </div>
+</div>
+
+<!-- ===================== SECTION 8: INFORMATION FLOW ===================== -->
+<div class="section section-dark">
+    <h2>Informationskontrolle in manipulativen Gruppen</h2>
+    <p class="section-sub">
+        In toxischen Systemen fließt Information nicht frei. Der narzisstische Anführer kontrolliert, 
+        wer was weiß – und erzählt jedem eine andere Version der Realität. 
+        Klicke auf Mitglieder, um zu sehen, welche „Wahrheit" sie kennen.
+    </p>
+    <p class="research-note">
+        Basierend auf: Hassan (2015) BITE Model; Lifton (1961) Milieu Control; 
+        Festinger (1957) Cognitive Dissonance in Groups
+    </p>
+
+    <div class="group-canvas-wrap" style="height:500px;">
+        <canvas id="infoCanvas"></canvas>
+    </div>
+</div>
+
+<!-- ===================== SECTION 9: EROSION VISUALIZATION ===================== -->
+<div class="section">
+    <h2>Die langsame Erosion des Selbst</h2>
+    <p class="section-sub">
+        Verdeckter narzisstischer Missbrauch ist wie Erosion: unmerklich langsam, aber verheerend. 
+        Diese Visualisierung zeigt, wie verschiedene Aspekte der Identität über die Zeit abgetragen werden.
+    </p>
+    <p class="research-note">
+        Basierend auf: Herman (1992) Complex PTSD; Walker (2013) „Complex PTSD: From Surviving to Thriving"; 
+        van der Kolk (2014) „The Body Keeps the Score"
+    </p>
+
+    <div class="mask-scene" style="height:420px;">
+        <canvas id="erosionCanvas"></canvas>
+        <div class="mask-slider-wrap">
+            <label>📅 Jahre in der Beziehung</label>
+            <input type="range" id="erosionSlider" min="0" max="100" value="0" oninput="updateErosion()">
+            <span class="val" id="erosionVal">0</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== SECTION 10: RECOVERY MAP ===================== -->
+<div class="section section-dark">
+    <h2>🌱 Der Weg zurück: Recovery Map</h2>
+    <p class="section-sub">
+        Heilung ist möglich – aber sie verläuft nicht linear. Diese interaktive Karte zeigt 
+        den typischen Erholungsprozess mit seinen Rückschlägen und Durchbrüchen.
+    </p>
+
+    <div class="chart-wrap">
+        <canvas id="recoveryMap" height="350"></canvas>
+    </div>
+
+    <div class="insight-card">
+        <strong>Schlüssel zur Erholung (Herman, 1992):</strong><br>
+        <strong>Phase 1:</strong> Sicherheit herstellen – No Contact, sichere Umgebung, Stabilisierung<br>
+        <strong>Phase 2:</strong> Trauer & Verarbeitung – Das Erlebte benennen, Trauma verarbeiten<br>
+        <strong>Phase 3:</strong> Reconnection – Neue Beziehungen, neues Selbstbild, Sinn finden
+    </div>
+</div>
+
+<!-- ===================== FOOTER ===================== -->
+<div class="footer">
+    ⚠️ Diese Seite dient der psychologischen Aufklärung und ersetzt keine professionelle Beratung.<br>
+    Bei Betroffenheit: Telefonseelsorge 0800 111 0 111 · Hilfetelefon Gewalt gegen Frauen 08000 116 016<br><br>
+    Forschungsgrundlagen: Wink (1991) · Miller et al. (2011) · Pincus & Lukowitsky (2010) · Herman (1992) · 
+    Lifton (1961) · Hassan (2015) · Dutton & Painter (1993) · Bateson et al. (1956) · 
+    Shaw (2014) · van der Kolk (2014) · Walker (2013) · Sweet (2019)
+</div>
+
+<!-- ===================== JAVASCRIPT ===================== -->
+<script>
+// ==========================================
+// HERO CANVAS – Particle Network
+// ==========================================
+(function() {
+    const canvas = document.getElementById('heroCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let W, H;
+
+    function resize() {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+        constructor() {
+            this.reset();
+        }
+        reset() {
+            this.x = Math.random() * W;
+            this.y = Math.random() * H;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.r = Math.random() * 2 + 0.5;
+            this.alpha = Math.random() * 0.5 + 0.1;
+            this.connected = false;
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.x < 0 || this.x > W) this.vx *= -1;
+            if (this.y < 0 || this.y > H) this.vy *= -1;
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(139, 92, 246, ${this.alpha})`;
+            ctx.fill();
+        }
+    }
+
+    for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+    function animate() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Connections
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 150) {
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = `rgba(139, 92, 246, ${0.15 * (1 - dist / 150)})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    }
+    animate();
+})();
+
+// ==========================================
+// MASK CANVAS – Two Faces
+// ==========================================
+(function() {
+    const canvas = document.getElementById('maskCanvas');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+
+    function resize() {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    window.updateMask = function() {
+        const val = parseInt(document.getElementById('maskSlider').value);
+        document.getElementById('maskVal').textContent = val + '%';
+        drawMask(val);
+    };
+
+    function drawMask(reveal) {
+        ctx.clearRect(0, 0, W, H);
+        const cx = W / 2;
+        const cy = H / 2 - 20;
+        const faceR = Math.min(W, H) * 0.22;
+
+        // Background glow
+        const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, faceR * 2.5);
+        grd.addColorStop(0, `rgba(139, 92, 246, ${0.05 + reveal / 500})`);
+        grd.addColorStop(1, 'transparent');
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, W, H);
+
+        // ---- PUBLIC FACE (fades out) ----
+        const publicAlpha = 1 - reveal / 100;
+
+        if (publicAlpha > 0.01) {
+            ctx.save();
+            ctx.globalAlpha = publicAlpha;
+
+            // Face
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, faceR * 0.8, faceR, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#2a2a3e';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(139, 92, 246, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Warm smile
+            ctx.beginPath();
+            ctx.arc(cx, cy + faceR * 0.2, faceR * 0.35, 0.1 * Math.PI, 0.9 * Math.PI);
+            ctx.strokeStyle = '#4cff9f';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Kind eyes
+            for (let side = -1; side <= 1; side += 2) {
+                const ex = cx + side * faceR * 0.3;
+                const ey = cy - faceR * 0.15;
+                ctx.beginPath();
+                ctx.ellipse(ex, ey, faceR * 0.1, faceR * 0.07, 0, 0, Math.PI * 2);
+                ctx.fillStyle = '#4cff9f';
+                ctx.fill();
+
+                // Sparkle
+                ctx.beginPath();
+                ctx.arc(ex + 3, ey - 3, 2, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+            }
+
+            // Halo
+            ctx.beginPath();
+            ctx.ellipse(cx, cy - faceR * 0.85, faceR * 0.5, faceR * 0.15, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Labels
+            ctx.font = '14px Inter';
+            ctx.fillStyle = 'rgba(76, 255, 159, 0.8)';
+            ctx.textAlign = 'center';
+            ctx.fillText('„Ich will doch nur helfen"', cx, cy + faceR * 1.3);
+            ctx.font = '12px Inter';
+            ctx.fillStyle = 'rgba(76, 255, 159, 0.5)';
+            ctx.fillText('empathisch · bescheiden · aufopfernd', cx, cy + faceR * 1.5);
+
+            ctx.restore();
+        }
+
+        // ---- TRUE FACE (fades in) ----
+        const trueAlpha = reveal / 100;
+
+        if (trueAlpha > 0.01) {
+            ctx.save();
+            ctx.globalAlpha = trueAlpha;
+
+            // Dark face
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, faceR * 0.8, faceR, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#1a0a2e';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 107, 107, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Smirk
+            ctx.beginPath();
+            ctx.moveTo(cx - faceR * 0.3, cy + faceR * 0.25);
+            ctx.quadraticCurveTo(cx, cy + faceR * 0.15, cx + faceR * 0.35, cy + faceR * 0.35);
+            ctx.strokeStyle = '#ff6b6b';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Cold calculating eyes
+            for (let side = -1; side <= 1; side += 2) {
+                const ex = cx + side * faceR * 0.3;
+                const ey = cy - faceR * 0.15;
+
+                // Narrowed eyes
+                ctx.beginPath();
+                ctx.moveTo(ex - faceR * 0.12, ey);
+                ctx.quadraticCurveTo(ex, ey - faceR * 0.05, ex + faceR * 0.12, ey);
+                ctx.quadraticCurveTo(ex, ey + faceR * 0.03, ex - faceR * 0.12, ey);
+                ctx.fillStyle = '#ff6b6b';
+                ctx.fill();
+
+                // Pupil
+                ctx.beginPath();
+                ctx.arc(ex, ey, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#000';
+                ctx.fill();
+            }
+
+            // Control threads
+            const threadCount = 6;
+            for (let t = 0; t < threadCount; t++) {
+                const angle = (t / threadCount) * Math.PI * 2 - Math.PI / 2;
+                const endX = cx + Math.cos(angle) * faceR * 2;
+                const endY = cy + Math.sin(angle) * faceR * 2;
+
+                ctx.beginPath();
+                ctx.moveTo(cx, cy + faceR * 0.5);
+                ctx.lineTo(endX, endY);
+                ctx.strokeStyle = `rgba(255, 107, 107, ${0.15 + Math.sin(Date.now() / 1000 + t) * 0.1})`;
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Puppet dot
+                ctx.beginPath();
+                ctx.arc(endX, endY, 5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 107, 107, 0.4)';
+                ctx.fill();
+            }
+
+            // Labels
+            ctx.font = '14px Inter';
+            ctx.fillStyle = 'rgba(255, 107, 107, 0.9)';
+            ctx.textAlign = 'center';
+            ctx.fillText('„Ohne mich bist du nichts"', cx, cy + faceR * 1.3);
+            ctx.font = '12px Inter';
+            ctx.fillStyle = 'rgba(255, 107, 107, 0.6)';
+            ctx.fillText('kontrollierend · neidisch · empathielos', cx, cy + faceR * 1.5);
+
+            // Inner thoughts floating
+            const thoughts = [
+                'Ich verdiene mehr Anerkennung',
+                'Die sind alle unter mir',
+                'Ich werde das kontrollieren',
+                'Niemand versteht mein Leiden',
+                'Die schulden mir etwas'
+            ];
+            const visibleThoughts = Math.floor(reveal / 20);
+            ctx.font = '11px Inter';
+            for (let i = 0; i < visibleThoughts && i < thoughts.length; i++) {
+                const tx = cx + Math.sin(Date.now() / 2000 + i * 1.5) * faceR * 1.2;
+                const ty = cy - faceR * 1.2 + i * 22 + Math.cos(Date.now() / 3000 + i) * 5;
+                ctx.fillStyle = `rgba(179, 157, 219, ${0.3 + Math.sin(Date.now() / 1500 + i) * 0.15})`;
+                ctx.fillText(thoughts[i], tx, ty);
+            }
+
+            ctx.restore();
+        }
+
+        // Mask crack effect at mid-range
+        if (reveal > 20 && reveal < 80) {
+            ctx.save();
+            ctx.globalAlpha = Math.sin((reveal - 20) / 60 * Math.PI) * 0.6;
+            ctx.strokeStyle = '#8b5cf6';
+            ctx.lineWidth = 2;
+
+            // Cracks
+            const crackCount = Math.floor(reveal / 10);
+            for (let c = 0; c < crackCount; c++) {
+                const startAngle = (c / crackCount) * Math.PI * 2;
+                const sx = cx + Math.cos(startAngle) * faceR * 0.3;
+                const sy = cy + Math.sin(startAngle) * faceR * 0.3;
+
+                ctx.beginPath();
+                ctx.moveTo(sx, sy);
+                let px = sx, py = sy;
+                for (let seg = 0; seg < 4; seg++) {
+                    px += (Math.random() - 0.5) * 30 + Math.cos(startAngle) * 15;
+                    py += (Math.random() - 0.5) * 30 + Math.sin(startAngle) * 15;
+                    ctx.lineTo(px, py);
+                }
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+    }
+
+    drawMask(0);
+
+    // Animate floating elements
+    setInterval(() => {
+        const val = parseInt(document.getElementById('maskSlider').value);
+        if (val > 10) drawMask(val);
+    }, 100);
+})();
+
+// ==========================================
+// CHAT SIMULATION
+// ==========================================
+const scenarios = {
+    gaslight: [
+        { type: 'timestamp', text: 'Dienstag, 21:34' },
+        { type: 'victim', text: 'Hey, du hattest gesagt, wir treffen uns heute um 19 Uhr. Ich habe eine Stunde gewartet...' },
+        { type: 'narc', text: 'Das habe ich nie gesagt. Du verwechselst das wieder.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Leugnen – Gesagtes wird komplett abgestritten, um Verwirrung zu erzeugen' },
+        { type: 'victim', text: 'Doch, du hast mir eine Nachricht geschrieben. Ich kann sie dir zeigen.' },
+        { type: 'narc', text: 'Du interpretierst immer alles falsch. Ich meinte nächste Woche. Das war doch offensichtlich.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Umdeutung – Die Bedeutung wird nachträglich verändert, Schuld wird beim Opfer verortet' },
+        { type: 'victim', text: 'Da stand wörtlich „heute 19 Uhr"...' },
+        { type: 'narc', text: 'Warum machst du aus allem so ein Drama? Andere Leute würden einfach sagen „okay, Missverständnis" und weitermachen. Aber du musst ja immer Recht haben.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Pathologisierung & Vergleich – Die berechtigte Reaktion wird als übertrieben dargestellt' },
+        { type: 'narc', text: 'Ehrlich gesagt mache ich mir Sorgen um dich. Du erinnerst dich in letzter Zeit an so vieles falsch. Vielleicht solltest du mal mit jemandem reden.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Pseudo-Fürsorge – Sorge wird vorgetäuscht, um das Opfer als instabil darzustellen (klassisches Gaslighting nach Stern, 2007)' },
+        { type: 'victim', text: '...vielleicht hast du recht. Tut mir leid.' },
+        { type: 'analysis', text: '💔 ERGEBNIS: Das Opfer zweifelt an der eigenen Wahrnehmung und entschuldigt sich für etwas, das nie sein Fehler war' }
+    ],
+    guilt: [
+        { type: 'timestamp', text: 'Samstag, 15:12' },
+        { type: 'victim', text: 'Ich würde heute Abend gerne mal mit meinen Freunden ausgehen, wenn das okay ist.' },
+        { type: 'narc', text: 'Ja klar, geh ruhig. Ich bleibe dann halt alleine hier.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Passive Aggression – Erlaubnis wird erteilt, aber mit emotionalem Druck beladen' },
+        { type: 'victim', text: 'Wir können morgen was zusammen machen?' },
+        { type: 'narc', text: 'Nein nein, schon gut. Ich bin es ja gewohnt, dass ich an letzter Stelle komme. Geh nur.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Märtyrer-Rolle – Der verdeckte Narzisst inszeniert sich als Opfer (Pincus & Lukowitsky, 2010: „vulnerable narcissistic grandiosity")' },
+        { type: 'victim', text: 'Das stimmt doch nicht, du bist mir total wichtig!' },
+        { type: 'narc', text: 'Wenn ich dir wichtig wäre, würdest du nicht ständig lieber bei anderen sein. Aber ich sage ja nichts. Ich will dir keine Vorwürfe machen.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Impliziter Vorwurf – „Ich mache keine Vorwürfe" IST der Vorwurf. Doppelbindung.' },
+        { type: 'narc', text: 'Ich hatte heute sowieso einen schrecklichen Tag. Aber das interessiert ja niemanden.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Emotionale Erpressung – Schuldgefühle werden erzeugt, um Kontrolle auszuüben (Forward, 1997: „Emotional Blackmail")' },
+        { type: 'victim', text: 'Okay, ich sage ab. Ich bleibe bei dir.' },
+        { type: 'analysis', text: '💔 ERGEBNIS: Soziale Isolation wird verstärkt. Das Opfer gibt eigene Bedürfnisse auf, um den Narzissten zu beruhigen.' }
+    ],
+    silent: [
+        { type: 'timestamp', text: 'Montag, 09:15' },
+        { type: 'victim', text: 'Guten Morgen! ☀️' },
+        { type: 'timestamp', text: 'Montag, 12:30' },
+        { type: 'victim', text: 'Hey, alles okay bei dir?' },
+        { type: 'timestamp', text: 'Montag, 18:45' },
+        { type: 'victim', text: 'Habe ich irgendwas falsch gemacht? Bitte rede mit mir...' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Silent Treatment – Bestrafung durch Schweigen. Das Opfer weiß nicht einmal, wofür es „bestraft" wird (Kipling Williams, 2001: Ostracism Research)' },
+        { type: 'timestamp', text: 'Dienstag, 10:00' },
+        { type: 'victim', text: 'Ich mache mir wirklich Sorgen. Was habe ich getan? Es tut mir leid, was auch immer es war.' },
+        { type: 'analysis', text: '⚠️ WIRKUNG: Das Opfer entschuldigt sich präventiv für unbekannte „Vergehen" – erlernte Hilflosigkeit (Seligman, 1975)' },
+        { type: 'timestamp', text: 'Mittwoch, 20:00' },
+        { type: 'narc', text: 'Ach, jetzt fällt dir ein, dass es mich gibt? Ich brauchte einfach Abstand. Nicht alles dreht sich um dich.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Umkehrung – 3 Tage Schweigen werden als Bedürfnis des Narzissten normalisiert, die Sorge des Opfers wird als Egoismus umgedeutet' },
+        { type: 'victim', text: 'Du hast recht, tut mir leid. Ich bin froh, dass du wieder schreibst.' },
+        { type: 'analysis', text: '💔 ERGEBNIS: Intermittierende Verstärkung – die Erleichterung nach dem Schweigen erzeugt Trauma-Bindung (Dutton & Painter, 1993)' }
+    ],
+    triangulation: [
+        { type: 'timestamp', text: 'Freitag, 19:22' },
+        { type: 'narc', text: 'Ich war heute mit Lisa essen. Sie ist wirklich eine tolle Zuhörerin. Hat mir so gutgetan.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Triangulation – Eine dritte Person wird eingeführt, um Eifersucht und Unsicherheit zu erzeugen' },
+        { type: 'victim', text: 'Oh... das freut mich für dich. Wir könnten auch mal wieder zusammen essen gehen?' },
+        { type: 'narc', text: 'Ja, aber mit dir ist es halt anders. Lisa versteht mich einfach auf einer anderen Ebene, weißt du? Sie urteilt nicht so schnell.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Impliziter Vergleich – Das Opfer wird als „weniger als" dargestellt, ohne es direkt zu sagen' },
+        { type: 'victim', text: 'Ich urteile doch nicht über dich...' },
+        { type: 'narc', text: 'Siehst du, genau das meine ich. Du wirst sofort defensiv. Lisa würde jetzt einfach sagen „schön, dass du einen guten Abend hattest".' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Doppelte Triangulation + Gaslighting – Jede Reaktion wird gegen das Opfer verwendet, die dritte Person wird als Ideal aufgebaut' },
+        { type: 'narc', text: 'Ich sage das nicht, um dich zu verletzen. Ich wünschte mir nur, du könntest auch so sein.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Pseudo-Wohlwollen – Verletzung wird als „Wunsch" verpackt. Das Opfer soll sich ändern, um dem Ideal zu entsprechen' },
+        { type: 'victim', text: 'Ich versuche mein Bestes...' },
+        { type: 'analysis', text: '💔 ERGEBNIS: Selbstwert sinkt, Konkurrenzdenken wird erzeugt, das Opfer versucht verzweifelt, dem unerreichbaren Standard zu genügen' }
+    ],
+    hoover: [
+        { type: 'timestamp', text: '3 Wochen nach der Trennung' },
+        { type: 'narc', text: 'Hey... ich weiß, ich sollte nicht schreiben. Aber ich musste an dich denken.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Hoovering-Eröffnung – Scheinbare Verletzlichkeit, um die Tür zu öffnen' },
+        { type: 'narc', text: 'Ich war in Therapie. Ich habe so viel über mich gelernt. Du hattest in so vielem recht.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Falsche Einsicht – Therapie und Veränderung werden behauptet, um Vertrauen zurückzugewinnen (Bancroft, 2002: „Why Does He Do That?")' },
+        { type: 'victim', text: 'Ich weiß nicht... es hat mir so wehgetan.' },
+        { type: 'narc', text: 'Ich weiß. Und ich werde den Rest meines Lebens damit verbringen, das wiedergutzumachen, wenn du mich lässt. Du bist der einzige Mensch, der mich wirklich kennt.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Love Bombing 2.0 + Idealisierung – Übertriebene Versprechen, das Opfer wird wieder auf ein Podest gestellt' },
+        { type: 'narc', text: 'Ohne dich bin ich verloren. Du bist mein Anker. Bitte gib uns noch eine Chance. Nur eine.' },
+        { type: 'analysis', text: '⚠️ TAKTIK: Emotionale Abhängigkeits-Inszenierung – Der Narzisst spielt Hilflosigkeit, um Rettungsinstinkte zu aktivieren' },
+        { type: 'victim', text: 'Okay... eine Chance. Aber es muss sich wirklich ändern.' },
+        { type: 'analysis', text: '💔 ERGEBNIS: Der Zyklus beginnt von vorn. Studien zeigen: Ohne echte, langfristige Therapie (1-2+ Jahre) ändern sich narzisstische Muster nicht (Ronningstam, 2005)' }
+    ]
+};
+
+let chatTimeout = null;
+
+function playScenario(key) {
+    const container = document.getElementById('chatMessages');
+    container.innerHTML = '';
+    if (chatTimeout) clearTimeout(chatTimeout);
+
+    const messages = scenarios[key];
+    let i = 0;
+
+    function showNext() {
+        if (i >= messages.length) return;
+        const msg = messages[i];
+        const div = document.createElement('div');
+
+        if (msg.type === 'timestamp') {
+            div.className = 'msg-timestamp';
+        } else if (msg.type === 'narc') {
+            div.className = 'msg msg-narc';
+        } else if (msg.type === 'victim') {
+            div.className = 'msg msg-victim';
+        } else if (msg.type === 'analysis') {
+            div.className = 'msg msg-analysis';
+        }
+
+        div.textContent = msg.text;
+        div.style.animationDelay = '0s';
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+
+        i++;
+        const delay = msg.type === 'analysis' ? 800 : msg.type === 'timestamp' ? 600 : 1200;
+        chatTimeout = setTimeout(showNext, delay);
+    }
+
+    showNext();
+}
+
+// ==========================================
+// GROUP DYNAMICS CANVAS
+// ==========================================
+(function() {
+    const canvas = document.getElementById('groupCanvas');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    let mode = 'normal';
+    let animFrame;
+    let time = 0;
+
+    function resize() {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const members = [];
+    const LEADER = 0;
+    const roles = [
+        { label: 'Narzisstischer\nAnführer', color: '#ff6b6b', r: 28, role: 'leader' },
+        { label: 'Flying\nMonkey 1', color: '#ffa500', r: 18, role: 'enabler' },
+        { label: 'Flying\nMonkey 2', color: '#ffa500', r: 18, role: 'enabler' },
+        { label: 'Golden\nChild', color: '#ffd700', r: 20, role: 'golden' },
+        { label: 'Sündenbock', color: '#8b5cf6', r: 20, role: 'scapegoat' },
+        { label: 'Mitläufer 1', color: '#64b5f6', r: 15, role: 'follower' },
+        { label: 'Mitläufer 2', color: '#64b5f6', r: 15, role: 'follower' },
+        { label: 'Neues\nMitglied', color: '#4cff9f', r: 16, role: 'new' },
+        { label: 'Zweifler', color: '#e0e0e0', r: 16, role: 'doubter' }
+    ];
+
+    // Initialize positions in a circle around leader
+    function initPositions() {
+        members.length = 0;
+        const cx = W / 2;
+        const cy = H / 2;
+        members.push({ x: cx, y: cy, tx: cx, ty: cy, ...roles[0] });
+        for (let i = 1; i < roles.length; i++) {
+            const angle = ((i - 1) / (roles.length - 1)) * Math.PI * 2 - Math.PI / 2;
+            const dist = 160 + Math.random() * 40;
+            const x = cx + Math.cos(angle) * dist;
+            const y = cy + Math.sin(angle) * dist;
+            members.push({ x, y, tx: x, ty: y, ...roles[i], angle });
+        }
+    }
+    initPositions();
+
+    window.setGroupMode = function(m) {
+        mode = m;
+        document.querySelectorAll('.group-controls button').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        applyMode();
+    };
+
+    function applyMode() {
+        const cx = W / 2;
+        const cy = H / 2;
+
+        // Reset targets
+        members[0].tx = cx;
+        members[0].ty = cy;
+        for (let i = 1; i < members.length; i++) {
+            const angle = ((i - 1) / (members.length - 1)) * Math.PI * 2 - Math.PI / 2;
+            const dist = 160;
+            members[i].tx = cx + Math.cos(angle) * dist;
+            members[i].ty = cy + Math.sin(angle) * dist;
+            members[i].dimmed = false;
+            members[i].highlighted = false;
+            members[i].attacked = false;
+            members[i].loved = false;
+        }
+
+        if (mode === 'scapegoat') {
+            // Scapegoat pushed out, everyone points at them
+            const sg = members.find(m => m.role === 'scapegoat');
+            if (sg) {
+                sg.tx = cx + 280;
+                sg.ty = cy;
+                sg.attacked = true;
+            }
+        } else if (mode === 'triangulate') {
+            // Leader between two members, playing them against each other
+            const fm1 = members.find(m => m.role === 'enabler');
+            const sg = members.find(m => m.role === 'scapegoat');
+            if (fm1) { fm1.tx = cx - 120; fm1.ty = cy - 80; fm1.highlighted = true; }
+            if (sg) { sg.tx = cx + 120; sg.ty = cy - 80; sg.attacked = true; }
+        } else if (mode === 'isolate') {
+            // Doubter pushed far out, connections severed
+            const d = members.find(m => m.role === 'doubter');
+            if (d) {
+                d.tx = cx - 300;
+                d.ty = cy + 150;
+                d.attacked = true;
+            }
+            // Others cluster tighter
+            for (let i = 1; i < members.length; i++) {
+                if (members[i].role !== 'doubter') {
+                    const angle = ((i - 1) / (members.length - 2)) * Math.PI * 2 - Math.PI / 2;
+                    members[i].tx = cx + Math.cos(angle) * 110;
+                    members[i].ty = cy + Math.sin(angle) * 110;
+                }
+            }
+        } else if (mode === 'lovebomb') {
+            const nm = members.find(m => m.role === 'new');
+            if (nm) {
+                nm.tx = cx + 50;
+                nm.ty = cy - 30;
+                nm.loved = true;
+            }
+        }
+    }
+
+    function drawGroup() {
+        ctx.clearRect(0, 0, W, H);
+        time += 0.02;
+
+        // Move towards targets
+        members.forEach(m => {
+            m.x += (m.tx - m.x) * 0.04;
+            m.y += (m.ty - m.y) * 0.04;
+            // Gentle floating
+            m.x += Math.sin(time + (m.angle || 0)) * 0.3;
+            m.y += Math.cos(time * 0.7 + (m.angle || 0)) * 0.3;
+        });
+
+        const leader = members[0];
+
+        // Draw connections
+        for (let i = 1; i < members.length; i++) {
+            const m = members[i];
+            const dx = leader.x - m.x;
+            const dy = leader.y - m.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (m.attacked && mode === 'isolate' && m.role === 'doubter') {
+                // Severed connection
+                ctx.beginPath();
+                ctx.setLineDash([4, 8]);
+                ctx.moveTo(leader.x, leader.y);
+                ctx.lineTo(m.x, m.y);
+                ctx.strokeStyle = 'rgba(255,107,107,0.15)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // X mark
+                const mx = (leader.x + m.x) / 2;
+                const my = (leader.y + m.y) / 2;
+                ctx.font = 'bold 18px Inter';
+                ctx.fillStyle = '#ff6b6b';
+                ctx.textAlign = 'center';
+                ctx.fillText('✕', mx, my);
+            } else {
+                // Control thread from leader
+                ctx.beginPath();
+                ctx.moveTo(leader.x, leader.y);
+
+                // Curved line
+                const cpx = (leader.x + m.x) / 2 + Math.sin(time + i) * 15;
+                const cpy = (leader.y + m.y) / 2 + Math.cos(time + i) * 15;
+                ctx.quadraticCurveTo(cpx, cpy, m.x, m.y);
+
+                let alpha = 0.2;
+                let lineColor = '139, 92, 246';
+                if (m.attacked) { lineColor = '255, 107, 107'; alpha = 0.5; }
+                if (m.loved) { lineColor = '76, 255, 159'; alpha = 0.6; }
+                if (m.highlighted) { lineColor = '255, 165, 0'; alpha = 0.5; }
+
+                ctx.strokeStyle = `rgba(${lineColor}, ${alpha})`;
+                ctx.lineWidth = m.attacked ? 2.5 : 1.5;
+                ctx.stroke();
+
+                // Arrow pulse
+                if (m.attacked || m.loved || m.highlighted) {
+                    const pulsePos = (time * 0.5) % 1;
+                    const px = leader.x + (m.x - leader.x) * pulsePos;
+                    const py = leader.y + (m.y - leader.y) * pulsePos;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${lineColor}, 0.7)`;
+                    ctx.fill();
+                }
+            }
+        }
+
+        // Triangulation special: line between the two targets
+        if (mode === 'triangulate') {
+            const fm1 = members.find(m => m.role === 'enabler');
+            const sg = members.find(m => m.role === 'scapegoat');
+            if (fm1 && sg) {
+                ctx.beginPath();
+                ctx.setLineDash([6, 6]);
+                ctx.moveTo(fm1.x, fm1.y);
+                ctx.lineTo(sg.x, sg.y);
+                ctx.strokeStyle = 'rgba(255, 107, 107, 0.4)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Conflict symbol
+                const mx = (fm1.x + sg.x) / 2;
+                const my = (fm1.y + sg.y) / 2;
+                ctx.font = '20px Inter';
+                ctx.fillStyle = '#ff6b6b';
+                ctx.textAlign = 'center';
+                ctx.fillText('⚡', mx, my);
+            }
+        }
+
+        // Scapegoat mode: arrows from others to scapegoat
+        if (mode === 'scapegoat') {
+            const sg = members.find(m => m.role === 'scapegoat');
+            if (sg) {
+                members.forEach(m => {
+                    if (m === sg || m === leader) return;
+                    ctx.beginPath();
+                    ctx.moveTo(m.x, m.y);
+                    ctx.lineTo(sg.x, sg.y);
+                    ctx.strokeStyle = 'rgba(255, 107, 107, 0.2)';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([3, 5]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                });
+            }
+        }
+
+        // Love bomb mode: hearts
+        if (mode === 'lovebomb') {
+            const nm = members.find(m => m.role === 'new');
+            if (nm) {
+                for (let h = 0; h < 5; h++) {
+                    const hx = nm.x + Math.sin(time * 2 + h * 1.3) * 50;
+                    const hy = nm.y - 30 - h * 15 + Math.sin(time * 3 + h) * 10;
+                    ctx.font = `${12 + Math.sin(time + h) * 3}px Inter`;
+                    ctx.fillStyle = `rgba(255, 107, 107, ${0.4 + Math.sin(time + h) * 0.2})`;
+                    ctx.textAlign = 'center';
+                    ctx.fillText('💕', hx, hy);
+                }
+            }
+        }
+
+        // Draw members
+        members.forEach((m, i) => {
+            // Glow
+            if (i === 0 || m.attacked || m.loved || m.highlighted) {
+                const grd = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r * 2.5);
+                let glowColor = m.color;
+                grd.addColorStop(0, glowColor + '33');
+                grd.addColorStop(1, 'transparent');
+                ctx.fillStyle = grd;
+                ctx.fillRect(m.x - m.r * 3, m.y - m.r * 3, m.r * 6, m.r * 6);
+            }
+
+            // Circle
+            ctx.beginPath();
+            ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+            ctx.fillStyle = m.dimmed ? m.color + '44' : m.color + 'cc';
+            ctx.fill();
+            ctx.strokeStyle = m.color;
+            ctx.lineWidth = i === 0 ? 3 : 1.5;
+            ctx.stroke();
+
+            // Crown for leader
+            if (i === 0) {
+                ctx.font = '18px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('👑', m.x, m.y - m.r - 8);
+            }
+
+            // Target on scapegoat when attacked
+            if (m.attacked) {
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, m.r + 8, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255,107,107,0.5)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([4, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Shield glow for loved
+            if (m.loved) {
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, m.r + 8, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(76, 255, 159, ${0.3 + Math.sin(time * 3) * 0.2})`;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+
+            // Label
+            ctx.font = '10px Inter';
+            ctx.fillStyle = '#aaa';
+            ctx.textAlign = 'center';
+            const lines = m.label.split('\n');
+            lines.forEach((line, li) => {
+                ctx.fillText(line, m.x, m.y + m.r + 16 + li * 13);
+            });
+        });
+
+        // Mode description
+        const descriptions = {
+            normal: 'Normalmodus: Alle Mitglieder sind mit dem Anführer verbunden. Er kontrolliert den Informationsfluss.',
+            scapegoat: 'Sündenbock-Dynamik: Ein Mitglied wird zum Blitzableiter. Alle projizieren Schuld auf diese Person.',
+            triangulate: 'Triangulation: Der Anführer spielt zwei Mitglieder gegeneinander aus, um Kontrolle zu behalten.',
+            isolate: 'Isolation: Wer Zweifel äußert, wird ausgestoßen. Die Gruppe rückt enger zusammen.',
+            lovebomb: 'Love Bombing: Neue Mitglieder werden mit überschwänglicher Zuneigung überschüttet.'
+        };
+
+        ctx.font = '13px Inter';
+        ctx.fillStyle = '#888';
+        ctx.textAlign = 'center';
+        ctx.fillText(descriptions[mode] || '', W / 2, H - 20);
+
+        animFrame = requestAnimationFrame(drawGroup);
+    }
+
+    drawGroup();
+})();
+
+// ==========================================
+// HEATMAP
+// ==========================================
+(function() {
+    const tactics = [
+        { name: 'Love Bombing', values: [7, 9, 5, 10, 7, 6] },
+        { name: 'Gaslighting', values: [9, 10, 7, 10, 6, 5] },
+        { name: 'Silent Treatment', values: [8, 9, 6, 4, 8, 3] },
+        { name: 'Triangulation', values: [9, 8, 7, 8, 9, 7] },
+        { name: 'Projektion', values: [8, 9, 6, 7, 6, 5] },
+        { name: 'Blame Shifting', values: [9, 9, 8, 9, 7, 6] },
+        { name: 'Flying Monkeys', values: [8, 5, 6, 10, 8, 9] },
+        { name: 'Informationskontrolle', values: [7, 6, 5, 10, 5, 8] },
+        { name: 'Isolation', values: [8, 8, 4, 10, 6, 4] },
+        { name: 'Finanzielle Kontrolle', values: [7, 7, 3, 9, 2, 1] },
+        { name: 'Identitätserosion', values: [8, 9, 5, 10, 5, 4] },
+        { name: 'Double Bind', values: [9, 8, 7, 8, 6, 5] },
+        { name: 'Intermittierende Verstärkung', values: [7, 10, 4, 9, 7, 5] },
+        { name: 'Pseudo-Fürsorge', values: [6, 8, 5, 9, 7, 6] }
+    ];
+
+    function getHeatColor(val) {
+        // 0 = dark, 10 = bright red
+        if (val <= 2) return { bg: 'rgba(76, 175, 80, 0.15)', fg: '#66bb6a' };
+        if (val <= 4) return { bg: 'rgba(255, 235, 59, 0.15)', fg: '#ffee58' };
+        if (val <= 6) return { bg: 'rgba(255, 167, 38, 0.2)', fg: '#ffa726' };
+        if (val <= 8) return { bg: 'rgba(255, 107, 107, 0.25)', fg: '#ff6b6b' };
+        return { bg: 'rgba(255, 50, 50, 0.35)', fg: '#ff3333' };
+    }
+
+    const tbody = document.getElementById('heatmapBody');
+    tactics.forEach(t => {
+        const tr = document.createElement('tr');
+        const tdName = document.createElement('td');
+        tdName.textContent = t.name;
+        tr.appendChild(tdName);
+
+        t.values.forEach(v => {
+            const td = document.createElement('td');
+            const colors = getHeatColor(v);
+            td.innerHTML = `<div class="heatmap-cell" style="background:${colors.bg};color:${colors.fg};">${v}/10</div>`;
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    });
+})();
+
+// ==========================================
+// TIMELINE
+// ==========================================
+(function() {
+    const phases = [
+        {
+            title: 'Phase 1: Idealisierung & Rekrutierung',
+            text: 'Du wirst als „besonders" erkannt. Überschwängliche Aufmerksamkeit, geteilte Geheimnisse, das Gefühl endlich verstanden zu werden. In Gruppen: „Du bist genau der Mensch, den wir gesucht haben."',
+            tactic: 'Love Bombing',
+            tacticColor: '#4cff9f',
+            dotColor: '#4cff9f'
+        },
+        {
+            title: 'Phase 2: Vertrauensaufbau & Isolation',
+            text: 'Bestehende Beziehungen werden subtil abgewertet. „Deine Freunde verstehen dich nicht so wie ich/wir." Informationsquellen werden eingeschränkt. Abhängigkeit wächst.',
+            tactic: 'Isolation',
+            tacticColor: '#64b5f6',
+            dotColor: '#64b5f6'
+        },
+        {
+            title: 'Phase 3: Erste Tests & Grenzverletzungen',
+            text: 'Kleine Grenzüberschreitungen testen, wie weit man gehen kann. Werden sie akzeptiert, folgen größere. „Das war doch nur ein Spaß." Widerstand wird mit Enttäuschung bestraft.',
+            tactic: 'Boundary Testing',
+            tacticColor: '#ffa500',
+            dotColor: '#ffa500'
+        },
+        {
+            title: 'Phase 4: Realitätsverzerrung',
+            text: 'Gaslighting beginnt. Deine Erinnerungen werden in Frage gestellt. In Gruppen: Eine eigene Sprache und Weltsicht wird etabliert. Außenstehende „verstehen es einfach nicht".',
+            tactic: 'Gaslighting',
+            tacticColor: '#ff6b6b',
+            dotColor: '#ff6b6b'
+        },
+        {
+            title: 'Phase 5: Identitätserosion',
+            text: 'Dein altes Selbst wird systematisch abgebaut. Deine Meinungen, Vorlieben, Werte werden durch die des Narzissten/der Gruppe ersetzt. Du erkennst dich selbst nicht mehr.',
+            tactic: 'Identity Erosion',
+            tacticColor: '#8b5cf6',
+            dotColor: '#8b5cf6'
+        },
+        {
+            title: 'Phase 6: Vollständige Abhängigkeit',
+            text: 'Du kannst dir ein Leben ohne diese Person/Gruppe nicht mehr vorstellen. Jeder Versuch, Distanz zu schaffen, löst Panik aus – bei dir und beim Narzissten/der Gruppe.',
+            tactic: 'Trauma Bond',
+            tacticColor: '#ff6b6b',
+            dotColor: '#ff6b6b'
+        },
+        {
+            title: 'Phase 7: Zyklische Bestrafung & Belohnung',
+            text: 'Intermittierende Verstärkung hält dich gefangen. Gute Tage geben Hoffnung, schlechte Tage werden „normal". Du lebst in ständiger Hypervigilanz.',
+            tactic: 'Intermittent Reinforcement',
+            tacticColor: '#ffa500',
+            dotColor: '#ffa500'
+        },
+        {
+            title: 'Phase 8: Erwachen oder Verbleib',
+            text: 'Ein Auslöser – oft eine besonders extreme Episode – kann zum Erwachen führen. Oder die Anpassung wird so vollständig, dass das Opfer die Situation als „normal" akzeptiert.',
+            tactic: 'Turning Point',
+            tacticColor: '#4cff9f',
+            dotColor: '#4cff9f'
+        }
+    ];
+
+    const container = document.getElementById('timeline');
+    phases.forEach((phase, i) => {
+        const item = document.createElement('div');
+        item.className = 'tl-item';
+        item.innerHTML = `
+            <div class="tl-dot" style="background:${phase.dotColor};box-shadow:0 0 12px ${phase.dotColor}55;"></div>
+            <div class="tl-card">
+                <h4>${phase.title}</h4>
+                <p>${phase.text}</p>
+                <span class="tactic-tag" style="background:${phase.tacticColor}22;color:${phase.tacticColor};border:1px solid ${phase.tacticColor}44;">
+                    ${phase.tactic}
+                </span>
+            </div>
+        `;
+        container.appendChild(item);
+    });
+})();
+
+// ==========================================
+// ROOM SCENE – Emotional Atmosphere
+// ==========================================
+(function() {
+    const canvas = document.getElementById('roomCanvas');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    let time = 0;
+
+    function resize() {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    window.updateRoom = function() {
+        const val = parseInt(document.getElementById('roomSlider').value);
+        document.getElementById('roomVal').textContent = val + '%';
+    };
+
+    function drawRoom() {
+        const level = parseInt(document.getElementById('roomSlider').value);
+        time += 0.015;
+        ctx.clearRect(0, 0, W, H);
+
+        // Background – gets darker with manipulation
+        const bgBright = Math.max(8, 25 - level * 0.2);
+        ctx.fillStyle = `rgb(${bgBright}, ${bgBright}, ${bgBright + 5})`;
+        ctx.fillRect(0, 0, W, H);
+
+        // Floor
+        const floorY = H * 0.7;
+        ctx.fillStyle = `rgb(${bgBright + 5}, ${bgBright + 3}, ${bgBright + 8})`;
+        ctx.fillRect(0, floorY, W, H - floorY);
+        ctx.strokeStyle = `rgba(255,255,255,${0.05 - level * 0.0003})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, floorY);
+        ctx.lineTo(W, floorY);
+        ctx.stroke();
+
+        // Window – light diminishes
+        const winX = W * 0.7;
+        const winY = H * 0.15;
+        const winW = W * 0.18;
+        const winH = H * 0.35;
+        const windowLight = Math.max(0.02, 0.3 - level * 0.003);
+
+        ctx.fillStyle = `rgba(100, 140, 200, ${windowLight})`;
+        ctx.fillRect(winX, winY, winW, winH);
+        ctx.strokeStyle = `rgba(255,255,255,${0.1 - level * 0.0008})`;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(winX, winY, winW, winH);
+        // Cross bar
+        ctx.beginPath();
+        ctx.moveTo(winX + winW / 2, winY);
+        ctx.lineTo(winX + winW / 2, winY + winH);
+        ctx.moveTo(winX, winY + winH / 2);
+        ctx.lineTo(winX + winW, winY + winH / 2);
+        ctx.stroke();
+
+        // Light beam from window
+        if (level < 70) {
+            ctx.save();
+            ctx.globalAlpha = windowLight * 0.5;
+            ctx.beginPath();
+            ctx.moveTo(winX, winY + winH);
+            ctx.lineTo(winX + winW, winY + winH);
+            ctx.lineTo(winX + winW + 60, floorY);
+            ctx.lineTo(winX - 40, floorY);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(150, 180, 220, 0.1)';
+            ctx.fill();
+            ctx.restore();
+        }
+
+        // ---- VICTIM (right side, shrinks) ----
+        const victimX = W * 0.65;
+        const victimScale = Math.max(0.5, 1 - level * 0.005);
+        const victimY = floorY;
+        const vHeight = 120 * victimScale;
+
+        ctx.save();
+        ctx.translate(victimX, victimY);
+
+        // Body
+        ctx.beginPath();
+        ctx.ellipse(0, -vHeight * 0.35, 12 * victimScale, vHeight * 0.3, 0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(100, 130, 200, ${0.4 - level * 0.002})`;
+        ctx.fill();
+
+        // Head
+        ctx.beginPath();
+        ctx.arc(0, -vHeight * 0.75, 14 * victimScale, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(180, 180, 200, ${0.5 - level * 0.003})`;
+        ctx.fill();
+
+        // Hunching with level
+        if (level > 30) {
+            const hunch = (level - 30) / 70;
+            ctx.translate(hunch * -15, hunch * 10);
+        }
+
+        // Thought bubble for victim
+        if (level > 20) {
+            const thoughts = [
+                'Bin ich verrückt?',
+                'Vielleicht ist es meine Schuld...',
+                'Ich sollte dankbarer sein',
+                'Warum fühle ich mich so leer?',
+                'Ich erkenne mich nicht mehr'
+            ];
+            const thoughtIdx = Math.min(Math.floor(level / 20), thoughts.length - 1);
+            ctx.font = `${10 * victimScale}px Inter`;
+            ctx.fillStyle = `rgba(150, 150, 200, ${0.3 + Math.sin(time * 2) * 0.1})`;
+            ctx.textAlign = 'center';
+            ctx.fillText(thoughts[thoughtIdx], 0, -vHeight - 15);
+        }
+
+        ctx.restore();
+
+        // ---- NARCISSIST (left side, grows) ----
+        const narcX = W * 0.3;
+        const narcScale = Math.min(1.4, 1 + level * 0.004);
+        const narcY = floorY;
+        const nHeight = 130 * narcScale;
+
+        ctx.save();
+        ctx.translate(narcX, narcY);
+
+        // Shadow grows with level
+        if (level > 10) {
+            const shadowSize = level * 2;
+            const grd = ctx.createRadialGradient(0, -nHeight * 0.4, 0, 0, -nHeight * 0.4, shadowSize);
+            grd.addColorStop(0, `rgba(40, 0, 60, ${level * 0.004})`);
+            grd.addColorStop(1, 'transparent');
+            ctx.fillStyle = grd;
+            ctx.fillRect(-shadowSize, -nHeight - shadowSize, shadowSize * 2, shadowSize * 2 + nHeight);
+        }
+
+        // Body
+        ctx.beginPath
+();
+        ctx.ellipse(0, -nHeight * 0.35, 15 * narcScale, nHeight * 0.32, 0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(60, 20, 80, ${0.5 + level * 0.004})`;
+        ctx.fill();
+
+        // Head
+        ctx.beginPath();
+        ctx.arc(0, -nHeight * 0.75, 16 * narcScale, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200, 180, 180, ${0.5 + level * 0.003})`;
+        ctx.fill();
+
+        // Eyes – become more intense
+        for (let side = -1; side <= 1; side += 2) {
+            ctx.beginPath();
+            ctx.arc(side * 6 * narcScale, -nHeight * 0.77, 2.5 * narcScale, 0, Math.PI * 2);
+            ctx.fillStyle = level > 50 ? '#ff6b6b' : '#b39ddb';
+            ctx.fill();
+        }
+
+        // Smirk grows
+        if (level > 15) {
+            ctx.beginPath();
+            const smirkWidth = 8 + level * 0.08;
+            ctx.moveTo(-smirkWidth * narcScale, -nHeight * 0.68);
+            ctx.quadraticCurveTo(0, -nHeight * 0.68 + (level * 0.03) * narcScale, smirkWidth * narcScale, -nHeight * 0.7);
+            ctx.strokeStyle = `rgba(255, 107, 107, ${0.3 + level * 0.005})`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Manipulation strings from hands to victim
+        if (level > 25) {
+            const stringCount = Math.min(5, Math.floor(level / 15));
+            for (let s = 0; s < stringCount; s++) {
+                const startY = -nHeight * 0.3 + s * 8;
+                const endX = victimX - narcX;
+                const endY = -vHeight * 0.3 + s * 10 - (floorY - narcY);
+
+                ctx.beginPath();
+                ctx.moveTo(15 * narcScale, startY);
+                const cpx = endX * 0.5;
+                const cpy = startY - 30 + Math.sin(time + s) * 10;
+                ctx.quadraticCurveTo(cpx, cpy, endX, endY);
+                ctx.strokeStyle = `rgba(139, 92, 246, ${0.1 + level * 0.003 + Math.sin(time + s) * 0.05})`;
+                ctx.lineWidth = 1;
+                ctx.setLineDash([3, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+        }
+
+        // Narcissist's inner monologue
+        if (level > 40) {
+            const narcThoughts = [
+                'Sie gehört mir',
+                'Ich kontrolliere alles',
+                'Ohne mich ist sie nichts',
+                'Alle bewundern mich',
+                'Ich bin das Opfer hier'
+            ];
+            const tIdx = Math.min(Math.floor((level - 40) / 12), narcThoughts.length - 1);
+            ctx.font = `${11 * narcScale}px Inter`;
+            ctx.fillStyle = `rgba(255, 107, 107, ${0.25 + Math.sin(time * 1.5) * 0.1})`;
+            ctx.textAlign = 'center';
+            ctx.fillText(narcThoughts[tIdx], 0, -nHeight - 20);
+        }
+
+        ctx.restore();
+
+        // ---- ATMOSPHERE EFFECTS ----
+
+        // Fog / oppressive atmosphere
+        if (level > 10) {
+            for (let f = 0; f < Math.floor(level / 8); f++) {
+                const fx = (Math.sin(time * 0.3 + f * 2.7) * 0.5 + 0.5) * W;
+                const fy = (Math.cos(time * 0.2 + f * 1.9) * 0.5 + 0.5) * H;
+                const fr = 80 + level * 1.5;
+                const fogGrd = ctx.createRadialGradient(fx, fy, 0, fx, fy, fr);
+                fogGrd.addColorStop(0, `rgba(30, 10, 40, ${level * 0.002})`);
+                fogGrd.addColorStop(1, 'transparent');
+                ctx.fillStyle = fogGrd;
+                ctx.fillRect(fx - fr, fy - fr, fr * 2, fr * 2);
+            }
+        }
+
+        // Floating toxic words at high levels
+        if (level > 55) {
+            const toxicWords = [
+                'Kontrolle', 'Schuld', 'Angst', 'Zweifel', 'Isolation',
+                'Scham', 'Verwirrung', 'Abhängigkeit', 'Leere', 'Ohnmacht'
+            ];
+            const wordCount = Math.min(toxicWords.length, Math.floor((level - 55) / 4));
+            ctx.font = '12px Inter';
+            for (let w = 0; w < wordCount; w++) {
+                const wx = W * 0.1 + (Math.sin(time * 0.5 + w * 1.7) * 0.5 + 0.5) * W * 0.8;
+                const wy = H * 0.1 + (Math.cos(time * 0.4 + w * 2.3) * 0.5 + 0.5) * H * 0.6;
+                ctx.fillStyle = `rgba(139, 92, 246, ${0.1 + Math.sin(time + w) * 0.08})`;
+                ctx.textAlign = 'center';
+                ctx.fillText(toxicWords[w], wx, wy);
+            }
+        }
+
+        // Walls closing in at very high levels
+        if (level > 70) {
+            const wallClose = (level - 70) / 30;
+            // Left wall shadow
+            const leftGrd = ctx.createLinearGradient(0, 0, W * 0.3 * wallClose, 0);
+            leftGrd.addColorStop(0, `rgba(10, 0, 20, ${wallClose * 0.6})`);
+            leftGrd.addColorStop(1, 'transparent');
+            ctx.fillStyle = leftGrd;
+            ctx.fillRect(0, 0, W * 0.3, H);
+
+            // Right wall shadow
+            const rightGrd = ctx.createLinearGradient(W, 0, W - W * 0.3 * wallClose, 0);
+            rightGrd.addColorStop(0, `rgba(10, 0, 20, ${wallClose * 0.6})`);
+            rightGrd.addColorStop(1, 'transparent');
+            ctx.fillStyle = rightGrd;
+            ctx.fillRect(W * 0.7, 0, W * 0.3, H);
+
+            // Top pressing down
+            const topGrd = ctx.createLinearGradient(0, 0, 0, H * 0.25 * wallClose);
+            topGrd.addColorStop(0, `rgba(10, 0, 20, ${wallClose * 0.5})`);
+            topGrd.addColorStop(1, 'transparent');
+            ctx.fillStyle = topGrd;
+            ctx.fillRect(0, 0, W, H * 0.3);
+        }
+
+        // Vignette always present, intensifies
+        const vigR = Math.max(W, H) * (0.8 - level * 0.002);
+        const vig = ctx.createRadialGradient(W / 2, H / 2, vigR * 0.3, W / 2, H / 2, vigR);
+        vig.addColorStop(0, 'transparent');
+        vig.addColorStop(1, `rgba(0, 0, 0, ${0.3 + level * 0.005})`);
+        ctx.fillStyle = vig;
+        ctx.fillRect(0, 0, W, H);
+
+        // Level indicator text
+        ctx.font = '13px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#555';
+        let stateText = 'Scheinbare Normalität';
+        if (level > 15) stateText = 'Subtile Spannung';
+        if (level > 30) stateText = 'Wachsende Beklemmung';
+        if (level > 50) stateText = 'Emotionale Erstickung';
+        if (level > 70) stateText = 'Psychischer Käfig';
+        if (level > 90) stateText = 'Vollständige Kontrolle';
+        ctx.fillText(stateText, 15, 25);
+
+        requestAnimationFrame(drawRoom);
+    }
+
+    drawRoom();
+})();
+
+// ==========================================
+// DOUBLE BIND VISUALIZATION
+// ==========================================
+(function() {
+    const canvas = document.getElementById('doubleBind');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    let time = 0;
+    let hoveredNode = -1;
+
+    function resize() {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const binds = [
+        {
+            situation: 'Du äußerst deine Meinung',
+            responseA: '„Du bist so aggressiv\nund streitlustig!"',
+            responseB: '„Du sagst ja nie\nwas du denkst!"',
+            resultA: 'Schuld für Konfrontation',
+            resultB: 'Schuld für Passivität'
+        },
+        {
+            situation: 'Du zeigst Emotionen',
+            responseA: '„Du bist so\nüberempfindlich!"',
+            responseB: '„Du bist so kalt,\ndir ist alles egal!"',
+            resultA: 'Schuld für Gefühle',
+            resultB: 'Schuld für Gefühllosigkeit'
+        },
+        {
+            situation: 'Du bittest um Nähe',
+            responseA: '„Du bist so\nanhänglich und bedürftig!"',
+            responseB: '„Du liebst mich\nwohl nicht mehr!"',
+            resultA: 'Schuld für Bedürfnisse',
+            resultB: 'Schuld für Distanz'
+        },
+        {
+            situation: 'Du setzt eine Grenze',
+            responseA: '„Du bist so\negoistisch!"',
+            responseB: '„Du lässt alles\nmit dir machen!"',
+            resultA: 'Schuld für Selbstschutz',
+            resultB: 'Schuld für Nachgeben'
+        }
+    ];
+
+    let currentBind = 0;
+
+    canvas.addEventListener('click', function(e) {
+        currentBind = (currentBind + 1) % binds.length;
+    });
+
+    function drawDoubleBind() {
+        time += 0.02;
+        ctx.clearRect(0, 0, W, H);
+
+        const bind = binds[currentBind];
+        const cx = W / 2;
+        const cy = H / 2;
+
+        // Background
+        ctx.fillStyle = '#0a0a12';
+        ctx.fillRect(0, 0, W, H);
+
+        // Title
+        ctx.font = 'bold 14px Inter';
+        ctx.fillStyle = '#8b5cf6';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Situation ${currentBind + 1}/${binds.length} (klicke für nächste)`, cx, 25);
+
+        // Central situation node
+        const sitY = cy - 80;
+        ctx.beginPath();
+        ctx.roundRect(cx - 100, sitY - 25, 200, 50, 12);
+        ctx.fillStyle = 'rgba(139, 92, 246, 0.2)';
+        ctx.fill();
+        ctx.strokeStyle = '#8b5cf6';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.font = 'bold 13px Inter';
+        ctx.fillStyle = '#b39ddb';
+        ctx.fillText(bind.situation, cx, sitY + 5);
+
+        // Left path (Option A)
+        const leftX = cx - 160;
+        const pathY = cy + 20;
+
+        // Arrow from situation to left
+        ctx.beginPath();
+        ctx.moveTo(cx - 50, sitY + 25);
+        ctx.quadraticCurveTo(leftX + 50, sitY + 50, leftX, pathY - 35);
+        ctx.strokeStyle = 'rgba(255, 107, 107, 0.5)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Left response box
+        ctx.beginPath();
+        ctx.roundRect(leftX - 95, pathY - 30, 190, 60, 10);
+        ctx.fillStyle = 'rgba(255, 107, 107, 0.1)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 107, 107, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.font = '12px Inter';
+        ctx.fillStyle = '#ff8a8a';
+        const linesA = bind.responseA.split('\n');
+        linesA.forEach((line, li) => {
+            ctx.fillText(line, leftX, pathY - 5 + li * 16);
+        });
+
+        // Left result
+        ctx.font = '11px Inter';
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillText('→ ' + bind.resultA, leftX, pathY + 55);
+
+        // Right path (Option B)
+        const rightX = cx + 160;
+
+        // Arrow from situation to right
+        ctx.beginPath();
+        ctx.moveTo(cx + 50, sitY + 25);
+        ctx.quadraticCurveTo(rightX - 50, sitY + 50, rightX, pathY - 35);
+        ctx.strokeStyle = 'rgba(255, 165, 0, 0.5)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Right response box
+        ctx.beginPath();
+        ctx.roundRect(rightX - 95, pathY - 30, 190, 60, 10);
+        ctx.fillStyle = 'rgba(255, 165, 0, 0.1)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 165, 0, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.font = '12px Inter';
+        ctx.fillStyle = '#ffa500';
+        const linesB = bind.responseB.split('\n');
+        linesB.forEach((line, li) => {
+            ctx.fillText(line, rightX, pathY - 5 + li * 16);
+        });
+
+        // Right result
+        ctx.font = '11px Inter';
+        ctx.fillStyle = '#ffa500';
+        ctx.fillText('→ ' + bind.resultB, rightX, pathY + 55);
+
+        // Both arrows converge to TRAP
+        const trapY = cy + 120;
+
+        ctx.beginPath();
+        ctx.moveTo(leftX, pathY + 70);
+        ctx.quadraticCurveTo(cx - 80, trapY - 20, cx, trapY);
+        ctx.strokeStyle = 'rgba(255, 107, 107, 0.3)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(rightX, pathY + 70);
+        ctx.quadraticCurveTo(cx + 80, trapY - 20, cx, trapY);
+        ctx.strokeStyle = 'rgba(255, 165, 0, 0.3)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Trap node
+        const trapPulse = Math.sin(time * 2) * 0.15 + 0.85;
+        ctx.beginPath();
+        ctx.roundRect(cx - 120, trapY - 20, 240, 45, 12);
+        ctx.fillStyle = `rgba(255, 50, 50, ${0.15 * trapPulse})`;
+        ctx.fill();
+        ctx.strokeStyle = `rgba(255, 50, 50, ${0.6 * trapPulse})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.font = 'bold 13px Inter';
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillText('⚠️ Egal was du tust – du bist schuld', cx, trapY + 5);
+
+        // Subtitle
+        ctx.font = '11px Inter';
+        ctx.fillStyle = '#666';
+        ctx.fillText('Die einzige Gewinnstrategie: Das Spiel nicht mitspielen.', cx, trapY + 40);
+
+        // Pulsing warning border
+        ctx.strokeStyle = `rgba(139, 92, 246, ${0.1 + Math.sin(time) * 0.05})`;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(5, 5, W - 10, H - 10);
+
+        requestAnimationFrame(drawDoubleBind);
+    }
+
+    drawDoubleBind();
+})();
+
+// ==========================================
+// INFORMATION FLOW CANVAS
+// ==========================================
+(function() {
+    const canvas = document.getElementById('infoCanvas');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    let time = 0;
+    let selectedMember = -1;
+
+    function resize() {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const infoMembers = [
+        {
+            label: 'Anführer',
+            color: '#ff6b6b',
+            x: 0.5, y: 0.5,
+            r: 30,
+            truth: 'Kennt alle Versionen. Erzählt jedem eine andere „Wahrheit", um Kontrolle zu behalten.',
+            icon: '👑'
+        },
+        {
+            label: 'Person A',
+            color: '#ffa500',
+            x: 0.25, y: 0.25,
+            r: 20,
+            truth: 'Glaubt: „Person C redet schlecht über dich." (Erfunden vom Anführer)',
+            icon: '🅰️'
+        },
+        {
+            label: 'Person B',
+            color: '#64b5f6',
+            x: 0.75, y: 0.25,
+            r: 20,
+            truth: 'Glaubt: „Nur der Anführer versteht mich wirklich. Die anderen sind neidisch."',
+            icon: '🅱️'
+        },
+        {
+            label: 'Person C',
+            color: '#4cff9f',
+            x: 0.25, y: 0.75,
+            r: 20,
+            truth: 'Glaubt: „Person A hat mich hintergangen." (Vom Anführer inszeniert)',
+            icon: '🅲'
+        },
+        {
+            label: 'Person D',
+            color: '#b388ff',
+            x: 0.75, y: 0.75,
+            r: 20,
+            truth: 'Glaubt: „Ohne die Gruppe bin ich verloren. Draußen ist es gefährlich."',
+            icon: '🅳'
+        }
+    ];
+
+    canvas.addEventListener('click', function(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mx = (e.clientX - rect.left) * scaleX;
+        const my = (e.clientY - rect.top) * scaleY;
+
+        selectedMember = -1;
+        infoMembers.forEach((m, i) => {
+            const px = m.x * W;
+            const py = m.y * H;
+            const dx = mx - px;
+            const dy = my - py;
+            if (Math.sqrt(dx * dx + dy * dy) < m.r + 10) {
+                selectedMember = i;
+            }
+        });
+    });
+
+    function drawInfoFlow() {
+        time += 0.02;
+        ctx.clearRect(0, 0, W, H);
+
+        ctx.fillStyle = '#0a0a12';
+        ctx.fillRect(0, 0, W, H);
+
+        const leader = infoMembers[0];
+        const lx = leader.x * W;
+        const ly = leader.y * H;
+
+        // Draw connections from leader to all
+        for (let i = 1; i < infoMembers.length; i++) {
+            const m = infoMembers[i];
+            const mx = m.x * W;
+            const my = m.y * H;
+
+            // One-way arrows (leader → member)
+            ctx.beginPath();
+            ctx.moveTo(lx, ly);
+            const cpx = (lx + mx) / 2 + Math.sin(time + i) * 20;
+            const cpy = (ly + my) / 2 + Math.cos(time + i) * 20;
+            ctx.quadraticCurveTo(cpx, cpy, mx, my);
+
+            const isSelected = selectedMember === i || selectedMember === 0;
+            ctx.strokeStyle = isSelected
+                ? `rgba(${hexToRgb(m.color)}, 0.7)`
+                : `rgba(${hexToRgb(m.color)}, 0.15)`;
+            ctx.lineWidth = isSelected ? 2.5 : 1;
+            ctx.stroke();
+
+            // Animated pulse along line
+            const pulseT = (time * 0.4 + i * 0.25) % 1;
+            const px = lx + (mx - lx) * pulseT;
+            const py = ly + (my - ly) * pulseT;
+            ctx.beginPath();
+            ctx.arc(px, py, 3, 0, Math.PI * 2);
+            ctx.fillStyle = m.color + (isSelected ? 'cc' : '44');
+            ctx.fill();
+
+            // Arrow head
+            const angle = Math.atan2(my - ly, mx - lx);
+            const arrowDist = m.r + 15;
+            const ax = mx - Math.cos(angle) * arrowDist;
+            const ay = my - Math.sin(angle) * arrowDist;
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(ax - Math.cos(angle - 0.3) * 10, ay - Math.sin(angle - 0.3) * 10);
+            ctx.lineTo(ax - Math.cos(angle + 0.3) * 10, ay - Math.sin(angle + 0.3) * 10);
+            ctx.closePath();
+            ctx.fillStyle = isSelected ? m.color + 'aa' : m.color + '33';
+            ctx.fill();
+        }
+
+        // NO direct connections between non-leader members (that's the point)
+        // Draw X marks between members
+        for (let i = 1; i < infoMembers.length; i++) {
+            for (let j = i + 1; j < infoMembers.length; j++) {
+                const m1 = infoMembers[i];
+                const m2 = infoMembers[j];
+                const mx1 = m1.x * W, my1 = m1.y * H;
+                const mx2 = m2.x * W, my2 = m2.y * H;
+                const midX = (mx1 + mx2) / 2;
+                const midY = (my1 + my2) / 2;
+
+                ctx.beginPath();
+                ctx.setLineDash([3, 6]);
+                ctx.moveTo(mx1, my1);
+                ctx.lineTo(mx2, my2);
+                ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.font = '10px Inter';
+                ctx.fillStyle = 'rgba(255,107,107,0.3)';
+                ctx.textAlign = 'center';
+                ctx.fillText('✕', midX, midY);
+            }
+        }
+
+        // Draw members
+        infoMembers.forEach((m, i) => {
+            const px = m.x * W;
+            const py = m.y * H;
+            const isSelected = selectedMember === i;
+
+            // Glow
+            if (isSelected) {
+                const grd = ctx.createRadialGradient(px, py, 0, px, py, m.r * 3);
+                grd.addColorStop(0, m.color + '33');
+                grd.addColorStop(1, 'transparent');
+                ctx.fillStyle = grd;
+                ctx.fillRect(px - m.r * 3, py - m.r * 3, m.r * 6, m.r * 6);
+            }
+
+            // Circle
+            ctx.beginPath();
+            ctx.arc(px, py, m.r, 0, Math.PI * 2);
+            ctx.fillStyle = isSelected ? m.color + '55' : m.color + '22';
+            ctx.fill();
+            ctx.strokeStyle = isSelected ? m.color : m.color + '66';
+            ctx.lineWidth = isSelected ? 3 : 1.5;
+            ctx.stroke();
+
+            // Icon
+            ctx.font = `${m.r * 0.8}px Inter`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(m.icon, px, py);
+            ctx.textBaseline = 'alphabetic';
+
+            // Label
+            ctx.font = '11px Inter';
+            ctx.fillStyle = isSelected ? '#fff' : '#888';
+            ctx.fillText(m.label, px, py + m.r + 18);
+
+            // Truth bubble when selected
+            if (isSelected) {
+                const bubbleY = i === 0 ? py - m.r - 60 : py + m.r + 35;
+                const bubbleW = 260;
+                const bubbleH = 45;
+
+                ctx.beginPath();
+                ctx.roundRect(px - bubbleW / 2, bubbleY, bubbleW, bubbleH, 10);
+                ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                ctx.fill();
+                ctx.strokeStyle = m.color + '66';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                ctx.font = '11px Inter';
+                ctx.fillStyle = m.color;
+                ctx.textAlign = 'center';
+
+                // Word wrap
+                const words = m.truth.split(' ');
+                let line = '';
+                let lineY = bubbleY + 16;
+                words.forEach(word => {
+                    const testLine = line + word + ' ';
+                    if (ctx.measureText(testLine).width > bubbleW - 20) {
+                        ctx.fillText(line.trim(), px, lineY);
+                        line = word + ' ';
+                        lineY += 15;
+                    } else {
+                        line = testLine;
+                    }
+                });
+                ctx.fillText(line.trim(), px, lineY);
+            }
+        });
+
+        // Title
+        ctx.font = '12px Inter';
+        ctx.fillStyle = '#555';
+        ctx.textAlign = 'center';
+        ctx.fillText('Klicke auf eine Person, um ihre „Wahrheit" zu sehen', W / 2, H - 15);
+        ctx.fillText('Alle Informationen fließen nur über den Anführer – direkte Kommunikation wird verhindert', W / 2, H - 35);
+
+        requestAnimationFrame(drawInfoFlow);
+    }
+
+    function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result
+            ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+            : '255, 255, 255';
+    }
+
+    drawInfoFlow();
+})();
+
+// ==========================================
+// EROSION CANVAS
+// ==========================================
+(function() {
+    const canvas = document.getElementById('erosionCanvas');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+
+    function resize() {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const aspects = [
+        { label: 'Selbstvertrauen', color: '#4cff9f', icon: '💪' },
+        { label: 'Eigene Meinung', color: '#64b5f6', icon: '💭' },
+        { label: 'Soziale Kontakte', color: '#ffa500', icon: '👥' },
+        { label: 'Freude & Hobbys', color: '#ffcc00', icon: '🎨' },
+        { label: 'Körpergefühl', color: '#b388ff', icon: '🧘' },
+        { label: 'Vertrauen in Wahrnehmung', color: '#ff80ab', icon: '👁️' },
+        { label: 'Zukunftshoffnung', color: '#80deea', icon: '🌅' },
+        { label: 'Grenzen setzen', color: '#ff6b6b', icon: '🛡️' }
+    ];
+
+    window.updateErosion = function() {
+        const val = parseInt(document.getElementById('erosionSlider').value);
+        const years = (val / 100 * 10).toFixed(1);
+        document.getElementById('erosionVal').textContent = years + ' Jahre';
+        drawErosion(val);
+    };
+
+    function drawErosion(level) {
+        ctx.clearRect(0, 0, W, H);
+
+        ctx.fillStyle = '#0d0d15';
+        ctx.fillRect(0, 0, W, H);
+
+        const cx = W / 2;
+        const cy = H / 2 - 10;
+        const maxR = Math.min(W, H) * 0.32;
+
+        // Draw each aspect as a bar radiating from center
+        const count = aspects.length;
+        const angleStep = (Math.PI * 2) / count;
+
+        aspects.forEach((asp, i) => {
+            const angle = i * angleStep - Math.PI / 2;
+
+            // Full potential (faded)
+            
+            const fullEndX = cx + Math.cos(angle) * maxR;
+            const fullEndY = cy + Math.sin(angle) * maxR;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(fullEndX, fullEndY);
+            ctx.strokeStyle = asp.color + '15';
+            ctx.lineWidth = 18;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Current level (erodes with time)
+            // Different aspects erode at different rates
+            const erosionRates = [0.7, 0.8, 0.9, 0.6, 0.5, 0.95, 0.65, 0.85];
+            const remaining = Math.max(0.05, 1 - (level / 100) * erosionRates[i]);
+            const currentR = maxR * remaining;
+
+            const curEndX = cx + Math.cos(angle) * currentR;
+            const curEndY = cy + Math.sin(angle) * currentR;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(curEndX, curEndY);
+            ctx.strokeStyle = asp.color + 'bb';
+            ctx.lineWidth = 18;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Crumbling particles at the erosion edge
+            if (level > 10) {
+                const particleCount = Math.floor(level / 15);
+                for (let p = 0; p < particleCount; p++) {
+                    const pDist = currentR + Math.random() * (maxR - currentR);
+                    const pAngle = angle + (Math.random() - 0.5) * 0.15;
+                    const px = cx + Math.cos(pAngle) * pDist;
+                    const py = cy + Math.sin(pAngle) * pDist;
+                    const pSize = Math.random() * 3 + 1;
+
+                    ctx.beginPath();
+                    ctx.arc(px, py, pSize, 0, Math.PI * 2);
+                    ctx.fillStyle = asp.color + '33';
+                    ctx.fill();
+                }
+            }
+
+            // Icon and label at the end
+            const labelR = maxR + 30;
+            const labelX = cx + Math.cos(angle) * labelR;
+            const labelY = cy + Math.sin(angle) * labelR;
+
+            ctx.font = '16px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(asp.icon, labelX, labelY - 10);
+
+            ctx.font = '10px Inter';
+            ctx.fillStyle = asp.color + (remaining > 0.3 ? 'cc' : '55');
+            ctx.fillText(asp.label, labelX, labelY + 10);
+
+            // Percentage
+            ctx.font = 'bold 11px Inter';
+            ctx.fillStyle = remaining > 0.5 ? asp.color : '#ff6b6b';
+            ctx.fillText(Math.round(remaining * 100) + '%', labelX, labelY + 25);
+        });
+
+        // Center circle – the "self"
+        const selfSize = Math.max(8, 30 - level * 0.22);
+        const selfGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, selfSize * 2);
+        const selfAlpha = Math.max(0.1, 1 - level / 120);
+        selfGrd.addColorStop(0, `rgba(255, 255, 255, ${selfAlpha * 0.5})`);
+        selfGrd.addColorStop(1, 'transparent');
+        ctx.fillStyle = selfGrd;
+        ctx.fillRect(cx - selfSize * 2, cy - selfSize * 2, selfSize * 4, selfSize * 4);
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, selfSize, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${selfAlpha * 0.3})`;
+        ctx.fill();
+        ctx.strokeStyle = `rgba(255, 255, 255, ${selfAlpha * 0.6})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.font = `${Math.max(8, 14 - level * 0.06)}px Inter`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${selfAlpha})`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('ICH', cx, cy);
+
+        // State description at bottom
+        ctx.textBaseline = 'alphabetic';
+        ctx.font = '13px Inter';
+        ctx.fillStyle = '#666';
+        ctx.textAlign = 'center';
+
+        let stateText = '🟢 Intaktes Selbstbild – alle Aspekte der Identität sind gesund';
+        if (level > 15) stateText = '🟡 Erste Risse – Selbstvertrauen beginnt zu bröckeln';
+        if (level > 35) stateText = '🟠 Deutliche Erosion – Isolation und Selbstzweifel nehmen zu';
+        if (level > 55) stateText = '🔴 Schwere Erosion – Identität wird zunehmend fremdbestimmt';
+        if (level > 75) stateText = '⛔ Kritisch – Das Selbst ist kaum noch erkennbar';
+        if (level > 90) stateText = '💔 Fast vollständige Auflösung – nur noch ein Schatten des früheren Selbst';
+
+        ctx.fillText(stateText, cx, H - 55);
+
+        // Overall percentage
+        const totalRemaining = aspects.reduce((sum, asp, i) => {
+            const erosionRates = [0.7, 0.8, 0.9, 0.6, 0.5, 0.95, 0.65, 0.85];
+            return sum + Math.max(0.05, 1 - (level / 100) * erosionRates[i]);
+        }, 0) / aspects.length;
+
+        ctx.font = 'bold 16px Inter';
+        ctx.fillStyle = totalRemaining > 0.6 ? '#4cff9f' : totalRemaining > 0.3 ? '#ffa500' : '#ff6b6b';
+        ctx.fillText(`Identitätsintegrität: ${Math.round(totalRemaining * 100)}%`, cx, H - 30);
+    }
+
+    drawErosion(0);
+})();
+
+// ==========================================
+// RECOVERY MAP CHART
+// ==========================================
+(function() {
+    const ctx = document.getElementById('recoveryMap').getContext('2d');
+
+    // Generate realistic recovery data with setbacks
+    const months = 36;
+    const labels = [];
+    const wellbeing = [];
+    const clarity = [];
+    const selfWorth = [];
+
+    for (let i = 0; i <= months; i++) {
+        labels.push(i % 3 === 0 ? `Monat ${i}` : '');
+        const t = i / months;
+
+        // Wellbeing: initial crash, then gradual recovery with setbacks
+        let wb = 20 + 60 * (1 - Math.exp(-t * 3));
+        // Setbacks (hoovering attempts, triggers, anniversaries)
+        if (i === 3) wb -= 25;  // First hoovering attempt
+        if (i === 6) wb -= 15;  // Anniversary trigger
+        if (i === 10) wb -= 10; // Random trigger
+        if (i === 18) wb -= 8;  // Smaller setback
+        wb = Math.max(5, Math.min(95, wb + Math.sin(t * 15) * 3));
+        wellbeing.push(wb);
+
+        // Clarity about what happened
+        let cl = 10 + 80 * (1 - Math.exp(-t * 2.5));
+        if (i === 3) cl -= 20;
+        if (i === 6) cl -= 10;
+        cl = Math.max(5, Math.min(95, cl));
+        clarity.push(cl);
+
+        // Self-worth: slowest to recover
+        let sw = 15 + 70 * (1 - Math.exp(-t * 2));
+        if (i === 3) sw -= 30;
+        if (i === 6) sw -= 15;
+        if (i === 10) sw -= 12;
+        sw = Math.max(5, Math.min(90, sw + Math.sin(t * 12) * 4));
+        selfWorth.push(sw);
+    }
+
+    // Annotations for key events
+    const annotations = [
+        { month: 0, label: '🚪 Trennung', color: '#ff6b6b' },
+        { month: 3, label: '🔁 Hoovering-Versuch', color: '#ffa500' },
+        { month: 6, label: '😢 Trigger / Jahrestag', color: '#b388ff' },
+        { month: 12, label: '💡 Durchbruch in Therapie', color: '#4cff9f' },
+        { month: 24, label: '🌱 Neues Selbstbild', color: '#64b5f6' },
+        { month: 33, label: '✨ Post-Traumatic Growth', color: '#ffd700' }
+    ];
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Wohlbefinden',
+                    data: wellbeing,
+                    borderColor: '#4cff9f',
+                    backgroundColor: 'rgba(76,255,159,0.08)',
+                    fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5
+                },
+                {
+                    label: 'Klarheit über das Erlebte',
+                    data: clarity,
+                    borderColor: '#64b5f6',
+                    backgroundColor: 'rgba(100,181,246,0.08)',
+                    fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5
+                },
+                {
+                    label: 'Selbstwertgefühl',
+                    data: selfWorth,
+                    borderColor: '#ffa500',
+                    backgroundColor: 'rgba(255,165,0,0.08)',
+                    fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { labels: { color: '#ccc', font: { size: 11 } } },
+                title: {
+                    display: true,
+                    text: '🌱 Heilungsverlauf – nicht linear, aber möglich',
+                    color: '#8b5cf6',
+                    font: { size: 14 }
+                },
+                tooltip: {
+                    callbacks: {
+                        afterBody: function(context) {
+                            const month = context[0].dataIndex;
+                            const ann = annotations.find(a => a.month === month);
+                            return ann ? '\n' + ann.label : '';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#666', maxTicksLimit: 13 },
+                    grid: { color: 'rgba(255,255,255,0.03)' }
+                },
+                y: {
+                    min: 0, max: 100,
+                    ticks: { color: '#666', callback: v => v + '%' },
+                    grid: { color: 'rgba(255,255,255,0.03)' }
+                }
+            },
+            interaction: { intersect: false, mode: 'index' }
+        },
+        plugins: [{
+            afterDraw: function(chart) {
+                const xScale = chart.scales.x;
+                const yScale = chart.scales.y;
+                const chartCtx = chart.ctx;
+
+                annotations.forEach(ann => {
+                    const x = xScale.getPixelForValue(ann.month);
+                    const yTop = yScale.top;
+                    const yBottom = yScale.bottom;
+
+                    // Vertical line
+                    chartCtx.beginPath();
+                    chartCtx.moveTo(x, yTop);
+                    chartCtx.lineTo(x, yBottom);
+                    chartCtx.strokeStyle = ann.color + '44';
+                    chartCtx.lineWidth = 1;
+                    chartCtx.setLineDash([4, 4]);
+                    chartCtx.stroke();
+                    chartCtx.setLineDash([]);
+
+                    // Label
+                    chartCtx.save();
+                    chartCtx.translate(x, yTop + 10);
+                    chartCtx.rotate(-Math.PI / 4);
+                    chartCtx.font = '10px Inter';
+                    chartCtx.fillStyle = ann.color;
+                    chartCtx.textAlign = 'left';
+                    chartCtx.fillText(ann.label, 5, 0);
+                    chartCtx.restore();
+                });
+            }
+        }]
+    });
+})();
+
+// ==========================================
+// POLYFILL for roundRect (older browsers)
+// ==========================================
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+        if (typeof r === 'number') r = { tl: r, tr: r, br: r, bl: r };
+        else r = Object.assign({ tl: 0, tr: 0, br: 0, bl: 0 }, r);
+        this.moveTo(x + r.tl, y);
+        this.lineTo(x + w - r.tr, y);
+        this.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+        this.lineTo(x + w, y + h - r.br);
+        this.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
+        this.lineTo(x + r.bl, y + h);
+        this.quadraticCurveTo(x, y + h, x, y + h - r.bl);
+        this.lineTo(x, y + r.tl);
+        this.quadraticCurveTo(x, y, x + r.tl, y);
+        this.closePath();
+        return this;
+    };
+}
+
+// ==========================================
+// SCROLL ANIMATIONS
+// ==========================================
+(function() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(30px)';
+        section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        observer.observe(section);
+    });
+})();
+
+</script>
+
+</body>
+</html>
