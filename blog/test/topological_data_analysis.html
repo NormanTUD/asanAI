@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topological Data Analysis Methods — Visual Explorer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            overflow-x: hidden;
+        }
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background: linear-gradient(135deg, #161b22, #0d1117);
+            border-bottom: 1px solid #30363d;
+        }
+        header h1 {
+            font-size: 2.2em;
+            color: #58a6ff;
+            margin-bottom: 8px;
+        }
+        header p {
+            color: #8b949e;
+            font-size: 1.05em;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 24px 20px;
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: 1px solid #30363d;
+            background: #0d1117;
+            color: #8b949e;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+        .tab-btn:hover { border-color: #58a6ff; color: #58a6ff; }
+        .tab-btn.active {
+            background: #58a6ff;
+            color: #0d1117;
+            border-color: #58a6ff;
+            font-weight: 600;
+        }
+        .section {
+            display: none;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+        .card h2 { color: #58a6ff; margin-bottom: 12px; font-size: 1.5em; }
+        .card h3 { color: #79c0ff; margin: 16px 0 8px; }
+        .card p { line-height: 1.7; color: #c9d1d9; margin-bottom: 10px; }
+        .card ul { margin-left: 20px; margin-bottom: 12px; }
+        .card li { margin-bottom: 6px; line-height: 1.6; }
+        canvas {
+            display: block;
+            margin: 16px auto;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            background: #0d1117;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin: 14px 0;
+        }
+        .controls label { color: #8b949e; font-size: 0.9em; }
+        .controls input[type="range"] {
+            accent-color: #58a6ff;
+            width: 180px;
+        }
+        .btn {
+            padding: 8px 18px;
+            background: #238636;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: #2ea043; }
+        .btn.blue { background: #1f6feb; }
+        .btn.blue:hover { background: #388bfd; }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 10px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+            color: #8b949e;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .highlight { color: #ffa657; font-weight: 600; }
+        code {
+            background: #0d1117;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #ffa657;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🔬 Topological Data Analysis — Visual Explorer</h1>
+    <p>Interactive visualizations of TDA methods beyond barcodes &amp; persistence diagrams. Click each tab to explore a method.</p>
+</header>
+
+<div class="tabs">
+    <button class="tab-btn active" data-tab="vietoris">Vietoris-Rips Complex</button>
+    <button class="tab-btn" data-tab="mapper">Mapper Algorithm</button>
+    <button class="tab-btn" data-tab="alpha">Alpha Complex</button>
+    <button class="tab-btn" data-tab="landscapes">Persistence Landscapes</button>
+    <button class="tab-btn" data-tab="euler">Euler Characteristic Curve</button>
+    <button class="tab-btn" data-tab="reeb">Reeb Graph</button>
+</div>
+
+<!-- ===================== VIETORIS-RIPS ===================== -->
+<div class="section active" id="vietoris">
+    <div class="card">
+        <h2>Vietoris-Rips Complex</h2>
+        <p>The <span class="highlight">Vietoris-Rips complex</span> is one of the most fundamental constructions in TDA. Given a set of points and a radius parameter <code>ε</code>, we connect any two points whose distance is ≤ 2ε, and fill in all cliques (complete subgraphs) as simplices.</p>
+        <h3>How It Works</h3>
+        <ul>
+            <li><strong>ε = 0:</strong> Only isolated points (0-simplices).</li>
+            <li><strong>Small ε:</strong> Edges appear between nearby points (1-simplices).</li>
+            <li><strong>Larger ε:</strong> Triangles (2-simplices) fill in where 3 mutual edges exist.</li>
+            <li><strong>Very large ε:</strong> Everything merges into one giant simplex.</li>
+        </ul>
+        <p>Drag the slider to change ε and watch the complex evolve. Topological features (loops, connected components) appear and disappear.</p>
+        <div class="controls">
+            <label>Radius ε: <span id="vrEpsVal">30</span></label>
+            <input type="range" id="vrEps" min="0" max="150" value="30">
+            <button class="btn" onclick="regenerateVR()">New Points</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#58a6ff"></span> Points</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#3fb950"></span> Edges (1-simplex)</div>
+            <div class="legend-item"><span class="legend-dot" style="background:rgba(255,166,87,0.25)"></span> Triangles (2-simplex)</div>
+            <div class="legend-item"><span class="legend-dot" style="background:rgba(188,140,255,0.15)"></span> ε-balls</div>
+        </div>
+        <canvas id="vrCanvas" width="960" height="450"></canvas>
+    </div>
+</div>
+
+<!-- ===================== MAPPER ===================== -->
+<div class="section" id="mapper">
+    <div class="card">
+        <h2>Mapper Algorithm</h2>
+        <p>The <span class="highlight">Mapper algorithm</span> (Singh, Mémoli, Carlsson 2007) creates a simplified graph that captures the shape of high-dimensional data. It's like a topological "skeleton" of your dataset.</p>
+        <h3>Steps</h3>
+        <ul>
+            <li><strong>1. Filter Function:</strong> Project data onto a lower-dimensional value (e.g., x-coordinate, density, eccentricity).</li>
+            <li><strong>2. Cover:</strong> Create overlapping intervals along the filter range.</li>
+            <li><strong>3. Cluster:</strong> Within each interval's preimage, cluster the points.</li>
+            <li><strong>4. Build Graph:</strong> Nodes = clusters, edges = shared points between overlapping clusters.</li>
+        </ul>
+        <p>The result is a graph that reveals loops, branches, and flares in your data topology.</p>
+        <div class="controls">
+            <label>Intervals: <span id="mapIntVal">6</span></label>
+            <input type="range" id="mapInt" min="3" max="12" value="6">
+            <label>Overlap: <span id="mapOverVal">40</span>%</label>
+            <input type="range" id="mapOver" min="10" max="70" value="40">
+            <button class="btn" onclick="regenerateMapper()">New Data</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#8b949e"></span> Data Points</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#58a6ff"></span> Intervals (overlapping)</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ffa657"></span> Mapper Nodes</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#3fb950"></span> Mapper Edges</div>
+        </div>
+        <canvas id="mapCanvas" width="960" height="500"></canvas>
+    </div>
+</div>
+
+<!-- ===================== ALPHA COMPLEX ===================== -->
+<div class="section" id="alpha">
+    <div class="card">
+        <h2>Alpha Complex (Delaunay-based)</h2>
+        <p>The <span class="highlight">Alpha complex</span> is a subcomplex of the Delaunay triangulation. It's often preferred over Vietoris-Rips because it's geometrically more faithful and computationally efficient in low dimensions.</p>
+        <h3>Construction</h3>
+        <ul>
+            <li>Compute the <strong>Delaunay triangulation</strong> of the point set.</li>
+            <li>For a given radius <code>α</code>, keep only simplices whose <strong>circumradius ≤ α</strong>.</li>
+            <li>As α grows from 0 → ∞, simplices appear, tracking topological changes.</li>
+        </ul>
+        <p>This visualization shows the Delaunay triangulation and highlights which simplices are "active" at the current α value.</p>
+        <div class="controls">
+            <label>Alpha α: <span id="alphaVal">40</span></label>
+            <input type="range" id="alphaSlider" min="0" max="200" value="40">
+            <button class="btn" onclick="regenerateAlpha()">New Points</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#58a6ff"></span> Points</div>
+            <div class="legend-item"><span class="legend-dot" style="background:rgba(63,185,80,0.3)"></span> Active Triangle</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#30363d"></span> Inactive (Delaunay only)</div>
+        </div>
+        <canvas id="alphaCanvas" width="960" height="450"></canvas>
+    </div>
+</div>
+
+<!-- ===================== PERSISTENCE LANDSCAPES ===================== -->
+<div class="section" id="landscapes">
+    <div class="card">
+        <h2>Persistence Landscapes</h2>
+        <p><span class="highlight">Persistence Landscapes</span> (Bubenik 2015) convert persistence diagrams into a sequence of piecewise-linear functions, making them suitable for <strong>statistical analysis</strong> and <strong>machine learning</strong>.</p>
+        <h3>How It Works</h3>
+        <ul>
+            <li>Each persistence interval <code>[b, d]</code> becomes a "tent" function: rises from 0 at <code>b</code>, peaks at <code>(d-b)/2</code> at the midpoint, and falls back to 0 at <code>d</code>.</li>
+            <li><strong>λ₁(t)</strong>: The pointwise maximum of all tent functions (1st landscape).</li>
+            <li><strong>λ₂(t)</strong>: The pointwise 2nd-largest value (2nd landscape), etc.</li>
+            <li>These form a Hilbert space → you can compute <strong>means, variances, distances</strong>.</li>
+        </ul>
+        <div class="controls">
+            <button class="btn" onclick="regenerateLandscapes()">New Intervals</button>
+            <label>Landscapes shown: <span id="lkVal">3</span></label>
+            <input type="range" id="lkSlider" min="1" max="5" value="3">
+        </div>
+        <div class="legend">
+            <div class="legend-item"><span class="legend-dot" style="background:rgba(255,166,87,0.3)"></span> Individual Tent Functions</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ff7b72"></span> λ₁ (1st landscape)</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#58a6ff"></span> λ₂ (2nd landscape)</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#3fb950"></span> λ₃ (3rd landscape)</div>
+        </div>
+        <canvas id="lsCanvas" width="960" height="420"></canvas>
+    </div>
+</div>
+
+<!-- ===================== EULER CHARACTERISTIC CURVE ===================== -->
+<div class="section" id="euler">
+    <div class="card">
+        <h2>Euler Characteristic Curve</h2>
+        <p>The <span class="highlight">Euler Characteristic Curve (ECC)</span> tracks how the Euler characteristic <code>χ = V - E + F</code> changes as a filtration parameter grows. It's a simple, powerful topological summary.</p>
+        <h3>Intuition</h3>
+        <ul>
+            <li><strong>χ = (# vertices) − (# edges) + (# triangles) − ...</strong></li>
+            <li>For a single connected component with no holes: χ = 1.</li>
+            <li>A loop decreases χ by 1; filling the loop increases it by 1.</li>
+            <li>The ECC plots χ(ε) as ε increases — a compact topological signature.</li>
+        </ul>
+        <div class="controls">
+            <label>Max ε: <span id="ecMaxVal">120</span></label>
+            <input type="range" id="ecMax" min="40" max="200" value="120">
+            <button class="btn" onclick="regenerateEuler()">New Points</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#58a6ff"></span> Points / Complex</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ffa657"></span> χ(ε) Curve</div>
+        </div>
+        <canvas id="ecCanvas" width="960" height="420"></canvas>
+    </div>
+</div>
+
+<!-- ===================== REEB GRAPH ===================== -->
+<div class="section" id="reeb">
+    <div class="card">
+        <h2>Reeb Graph</h2>
+        <p>The <span class="highlight">Reeb graph</span> captures the topology of a space with respect to a real-valued function. It's the theoretical foundation behind the Mapper algorithm.</p>
+        <h3>Definition</h3>
+        <ul>
+            <li>Given a space X and a function <code>f: X → ℝ</code>, the Reeb graph contracts each connected component of every level set <code>f⁻¹(t)</code> to a single point.</li>
+            <li><strong>Nodes</strong> appear where the topology of level sets changes (components merge, split, appear, or disappear).</li>
+            <li>The result is a graph that encodes the "skeleton" of the shape relative to f.</li>
+        </ul>
+        <p>Below: a 2D shape with a height function. The Reeb graph shows how connected components of horizontal slices evolve.</p>
+        <div class="controls">
+            <label>Slice height: <span id="reebSliceVal">50</span>%</label>
+            <input type="range" id="reebSlice" min="0" max="100" value="50">
+            <button class="btn blue" onclick="animateReeb()">▶ Animate Sweep</button>
+        </div>
+        <canvas id="reebCanvas" width="960" height="450"></canvas>
+    </div>
+</div>
+
+<script>
+// ==================== TAB SWITCHING ====================
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+});
+
+// ==================== UTILITIES ====================
+function rand(a, b) { return a + Math.random() * (b - a); }
+function dist(p1, p2) { return Math.hypot(p1.x - p2.x, p1.y - p2.y); }
+
+function generateClusteredPoints(n, w, h, pad, clusters = 4) {
+    const pts = [];
+    const centers = [];
+    for (let i = 0; i < clusters; i++) {
+        centers.push({ x: rand(pad + 40, w - pad - 40), y: rand(pad + 40, h - pad - 40) });
+    }
+    for (let i = 0; i < n; i++) {
+        const c = centers[Math.floor(Math.random() * clusters)];
+        pts.push({ x: c.x + rand(-60, 60), y: c.y + rand(-60, 60) });
+    }
+    return pts;
+}
+
+// ==================== VIETORIS-RIPS ====================
+let vrPoints = [];
+const vrCanvas = document.getElementById('vrCanvas');
+const vrCtx = vrCanvas.getContext('2d');
+
+function regenerateVR() {
+    vrPoints = generateClusteredPoints(40, vrCanvas.width, vrCanvas.height, 30, 4);
+    drawVR();
+}
+
+function drawVR() {
+    const ctx = vrCtx;
+    const eps = parseFloat(document.getElementById('vrEps').value);
+    document.getElementById('vrEpsVal').textContent = eps;
+    ctx.clearRect(0, 0, vrCanvas.width, vrCanvas.height);
+
+    // Draw epsilon balls
+    ctx.globalAlpha = 0.06;
+    vrPoints.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, eps, 0, Math.PI * 2);
+        ctx.fillStyle = '#bc8cff';
+        ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+
+    // Find triangles (2-simplices)
+    for (let i = 0; i < vrPoints.length; i++) {
+        for (let j = i + 1; j < vrPoints.length; j++) {
+            for (let k = j + 1; k < vrPoints.length; k++) {
+                if (dist(vrPoints[i], vrPoints[j]) <= 2 * eps &&
+                    dist(vrPoints[i], vrPoints[k]) <= 2 * eps &&
+                    dist(vrPoints[j], vrPoints[k]) <= 2 * eps) {
+                    ctx.beginPath();
+                    ctx.moveTo(vrPoints[i].x, vrPoints[i].y);
+                    ctx.lineTo(vrPoints[j].x, vrPoints[j].y);
+                    ctx.lineTo(vrPoints[k].x, vrPoints[k].y);
+                    ctx.closePath();
+                    ctx.fillStyle = 'rgba(255,166,87,0.18)';
+                    ctx.fill();
+                }
+            }
+        }
+    }
+
+    // Draw edges
+    for (let i = 0; i < vrPoints.length; i++) {
+        for (let j = i + 1; j < vrPoints.length; j++) {
+            if (dist(vrPoints[i], vrPoints[j]) <= 2 * eps) {
+                ctx.beginPath();
+                ctx.moveTo(vrPoints[i].x, vrPoints[i].y);
+                ctx.lineTo(vrPoints[j].x, vrPoints[j].y);
+                ctx.strokeStyle = '#3fb950';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+        }
+    }
+
+    // Draw points
+    vrPoints.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#58a6ff';
+        ctx.fill();
+    });
+}
+
+document.getElementById('vrEps').addEventListener('input', drawVR);
+regenerateVR();
+
+// ==================== MAPPER ====================
+let mapPoints = [];
+const mapCanvas = document.getElementById('mapCanvas');
+const mapCtx = mapCanvas.getContext('2d');
+
+function generateCircleWithFlare(n) {
+    const pts = [];
+    for (let i = 0; i < n * 0.7; i++) {
+        const angle = rand(0, Math.PI * 2);
+        const r = rand(80, 120);
+        pts.push({ x: 240 + Math.cos(angle) * r, y: 250 + Math.sin(angle) * r });
+    }
+    // Flare
+    for (let i = 0; i < n * 0.3; i++) {
+        const t = rand(0, 1);
+        pts.push({ x: 240 + 120 + t * 100, y: 250 - 40 + rand(-20, 20) * (1 - t * 0.5) });
+    }
+    return pts;
+}
+
+function regenerateMapper() {
+    mapPoints = generateCircleWithFlare(120);
+    drawMapper();
+}
+
+function drawMapper() {
+    const ctx = mapCtx;
+    const numInt = parseInt(document.getElementById('mapInt').value);
+    const overlap = parseInt(document.getElementById('mapOver').value) / 100;
+    document.getElementById('mapIntVal').textContent = numInt;
+    document.getElementById('mapOverVal').textContent = Math.round(overlap * 100);
+    ctx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+
+    // Filter function: x-coordinate
+    const xs = mapPoints.map(p => p.x);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const range = maxX - minX;
+
+    // Create intervals
+    const step = range / (numInt - (numInt - 1) * overlap);
+    const intervals = [];
+    for (let i = 0; i < numInt; i++) {
+        const start = minX + i * step * (1 - overlap);
+        intervals.push({ start, end: start + step });
+    }
+
+    // Draw left panel: data + intervals
+    ctx.save();
+    ctx.font = '12px monospace';
+    ctx.fillStyle = '#8b949e';
+    ctx.fillText('Data Space + Filter Intervals', 20, 20);
+
+    // Draw interval bands
+    intervals.forEach((iv, idx) => {
+        const colors = ['rgba(88,166,255,0.08)', 'rgba(63,185,80,0.08)', 'rgba(255,166,87,0.08)',
+                        'rgba(255,123,114,0.08)', 'rgba(188,140,255,0.08)', 'rgba(88,166,255,0.08)',
+                        'rgba(63,185,80,0.08)', 'rgba(255,166,87,0.08)', 'rgba(255,123,114,0.08)',
+                        'rgba(188,140,255,0.08)', 'rgba(88,166,255,0.08)', 'rgba(63,185,80,0.08)'];
+        ctx.fillStyle = colors[idx % colors.length];
+        ctx.fillRect(iv.start, 30, iv.end - iv.start, mapCanvas.height - 60);
+        ctx.strokeStyle = 'rgba(88,166,255,0.3)';
+        ctx.setLineDash([4, 4]);
+        ctx.strokeRect(iv.start, 30, iv.end - iv.start, mapCanvas.height - 60);
+        ctx.setLineDash([]);
+    });
+
+    // Draw data points
+    mapPoints.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#8b949e';
+        ctx.fill();
+    });
+
+    // Simple clustering: within each interval, group nearby points
+    const clusters = [];
+    intervals.forEach((iv, idx) => {
+        const inInterval = mapPoints.filter(p => p.x >= iv.start && p.x <= iv.end);
+        // Simple distance-based clustering
+        const visited = new Set();
+        const localClusters = [];
+        inInterval.forEach((p, i) => {
+            if (visited.has(i)) return;
+            const cluster = [p];
+            visited.add(i);
+            inInterval.forEach((q, j) => {
+                if (!visited.has(j) && dist(p, q) < 50) {
+                    cluster.push(q);
+                    visited.add(j);
+                }
+            });
+            if (cluster.length > 0) {
+                const cx = cluster.reduce((s, c) => s + c.x, 0) / cluster.length;
+                const cy = cluster.reduce((s, c) => s + c.y, 0) / cluster.length;
+                localClusters.push({ cx, cy, points: cluster, interval: idx, size: cluster.length });
+            }
+        });
+        clusters.push(...localClusters);
+    });
+
+    // Draw Mapper graph on the right side
+    const graphX = 560;
+    const graphW = 380;
+    const graphH = mapCanvas.height - 60;
+
+    ctx.fillStyle = '#161b22';
+    ctx.fillRect(graphX - 10, 25, graphW + 20, graphH + 15);
+    ctx.strokeStyle = '#30363d';
+    ctx.strokeRect(graphX - 10, 25, graphW + 20, graphH + 15);
+    ctx.fillStyle = '#8b949e';
+    ctx.fillText('Mapper Graph', graphX + 10, 20);
+
+    // Position mapper nodes
+    const mapperNodes = clusters.map((c, i) => {
+        const nx = graphX + 20 + ((c.cx - minX) / range) * (graphW - 40);
+        const ny = 50 + ((c.cy - 100) / 300) * (graphH - 40);
+        return { ...c, nx, ny, id: i };
+    });
+
+    // Edges: clusters from overlapping intervals sharing points
+    const mapperEdges = [];
+    for (let i = 0; i < mapperNodes.length; i++) {
+        for (let j = i + 1; j < mapperNodes.length; j++) {
+            if (mapperNodes[i].interval !== mapperNodes[j].interval) {
+                const shared = mapperNodes[i].points.some(p1 =>
+                    mapperNodes[j].points.some(p2 => p1 === p2));
+                // Use proximity for overlap
+                const closePts = mapperNodes[i].points.some(p1 =>
+                    mapperNodes[j].points.some(p2 => dist(p1, p2) < 30));
+                if (shared || closePts) {
+                    mapperEdges.push([i, j]);
+                }
+            }
+        }
+    }
+
+    // Draw edges
+    mapperEdges.forEach(([i, j]) => {
+        ctx.beginPath();
+        ctx.moveTo(mapperNodes[i].nx, mapperNodes[i].ny);
+        ctx.lineTo(mapperNodes[j].nx, mapperNodes[j].ny);
+        ctx.strokeStyle = '#3fb950';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    });
+
+    // Draw nodes
+    mapperNodes.forEach(n => {
+        const r = Math.max(6, Math.min(18, n.size * 1.2));
+        ctx.beginPath();
+        ctx.arc(n.nx, n.ny, r, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffa657';
+        ctx.globalAlpha = 0.85;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = '#e3b341';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+    });
+
+    ctx.restore();
+}
+
+document.getElementById('mapInt').addEventListener('input', drawMapper);
+document.getElementById('mapOver').addEventListener('input', drawMapper);
+regenerateMapper();
+
+// ==================== ALPHA COMPLEX ====================
+let alphaPoints = [];
+const alphaCanvas = document.getElementById('alphaCanvas');
+const alphaCtx = alphaCanvas.getContext('2d');
+
+function circumradius(p1, p2, p3) {
+    const a = dist(p1, p2), b = dist(p2, p3), c = dist(p1, p3);
+    const s = (a + b + c) / 2;
+    const area = Math.sqrt(Math.max(0, s * (s - a) * (s - b) * (s - c)));
+    if (area < 0.001) return Infinity;
+    return (a * b * c) / (4 * area);
+}
+
+function delaunay(points) {
+    // Simple Bowyer-Watson Delaunay triangulation
+    const triangles = [];
+    // Super triangle
+    const st = [
+        { x: -2000, y: -2000 },
+        { x: 2000, y: -2000 },
+        { x: 0, y: 4000 }
+    ];
+    triangles.push([st[0], st[1], st[2]]);
+
+    points.forEach(p => {
+        const bad = [];
+        triangles.forEach((tri, idx) => {
+            if (inCircumcircle(p, tri[0], tri[1], tri[2])) {
+                bad.push(idx);
+            }
+        });
+
+        const polygon = [];
+        bad.forEach(idx => {
+            const tri = triangles[idx];
+            for (let i = 0; i < 3; i++) {
+                const edge = [tri[i], tri[(i + 1) % 3]];
+                let shared = false;
+                bad.forEach(other => {
+                    if (other === idx) return;
+                    const otherTri = triangles[other];
+                    for (let j = 0; j < 3; j++) {
+                        const oEdge = [otherTri[j], otherTri[(j + 1) % 3]];
+                        if ((edge[0] === oEdge[0] && edge[1] === oEdge[1]) ||
+                            (edge[0] === oEdge[1] && edge[1] === oEdge[0])) {
+                            shared = true;
+                        }
+                    }
+                });
+                if (!shared) polygon.push(edge);
+            }
+        });
+
+        for (let i = bad.length - 1; i >= 0; i--) {
+            triangles.splice(bad[i], 1);
+        }
+
+        polygon.forEach(edge => {
+            triangles.push([edge[0], edge[1], p]);
+        });
+    });
+
+    // Remove triangles that share vertices with super triangle
+    return triangles.filter(tri =>
+        !tri.some(v => v === st[0] || v === st[1] || v === st[2])
+    );
+}
+
+function inCircumcircle(p, a, b, c) {
+    const ax = a.x - p.x, ay = a.y - p.y;
+    const bx = b.x - p.x, by = b.y - p.y;
+    const cx = c.x - p.x, cy = c.y - p.y;
+    const det = (ax * ax + ay * ay) * (bx * cy - cx * by) -
+                (bx * bx + by * by) * (ax * cy - cx * ay) +
+                (cx * cx + cy * cy) * (ax * by - bx * ay);
+    // Ensure consistent orientation
+    const orient = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    return orient > 0 ? det > 0 : det < 0;
+}
+
+function regenerateAlpha() {
+    alphaPoints = generateClusteredPoints(35, alphaCanvas.width, alphaCanvas.height, 40, 3);
+    drawAlpha();
+}
+
+function drawAlpha() {
+    const ctx = alphaCtx;
+    const alpha = parseFloat(document.getElementById('alphaSlider').value);
+    document.getElementById('alphaVal').textContent = alpha;
+    ctx.clearRect(0, 0, alphaCanvas.width, alphaCanvas.height);
+
+    const tris = delaunay(alphaPoints);
+
+    // Draw inactive triangles (ghost Delaunay)
+    tris.forEach(tri => {
+        ctx.beginPath();
+        ctx.moveTo(tri[0].x, tri[0].y);
+        ctx.lineTo(tri[1].x, tri[1].y);
+        ctx.lineTo(tri[2].x, tri[2].y);
+        ctx.closePath();
+        ctx.strokeStyle = 'rgba(48,54,61,0.5)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+    });
+
+    // Draw active triangles
+    tris.forEach(tri => {
+        const cr = circumradius(tri[0], tri[1], tri[2]);
+        if (cr <= alpha) {
+            ctx.beginPath();
+            ctx.moveTo(tri[0].x, tri[0].y);
+            ctx.lineTo(tri[1].x, tri[1].y);
+            ctx.lineTo(tri[2].x, tri[2].y);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(63,185,80,0.2)';
+            ctx.fill();
+            ctx.strokeStyle = '#3fb950';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+    });
+
+    // Draw active edges (edge circumradius = half edge length)
+    for (let i = 0; i < alphaPoints.length; i++) {
+        for (let j = i + 1; j < alphaPoints.length; j++) {
+            const d = dist(alphaPoints[i], alphaPoints[j]);
+            if (d / 2 <= alpha) {
+                // Check if this edge is in the Delaunay triangulation
+                const inDelaunay = tris.some(tri => {
+                    const verts = tri;
+                    return (verts.includes(alphaPoints[i]) && verts.includes(alphaPoints[j]));
+                });
+                if (inDelaunay) {
+                    ctx.beginPath();
+                    ctx.moveTo(alphaPoints[i].x, alphaPoints[i].y);
+                    ctx.lineTo(alphaPoints[j].x, alphaPoints[j].y);
+                    ctx.strokeStyle = '#3fb950';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    // Draw points
+    alphaPoints.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#58a6ff';
+        ctx.fill();
+    });
+
+    // Info text
+    const activeTris = tris.filter(t => circumradius(t[0], t[1], t[2]) <= alpha).length;
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '12px monospace';
+    ctx.fillText(`Active triangles: ${activeTris} / ${tris.length}  |  α = ${alpha}`, 15, alphaCanvas.height - 12);
+}
+
+document.getElementById('alphaSlider').addEventListener('input', drawAlpha);
+regenerateAlpha();
+
+// ==================== PERSISTENCE LANDSCAPES ====================
+let lsIntervals = [];
+const lsCanvas = document.getElementById('lsCanvas');
+const lsCtx = lsCanvas.getContext('2d');
+
+function generateIntervals(n) {
+    const intervals = [];
+    for (let i = 0; i < n; i++) {
+        const b = rand(0.05, 0.6);
+        const d = b + rand(0.05, 0.35);
+        intervals.push([b, Math.min(d, 0.95)]);
+    }
+    return intervals.sort((a, b) => a[0] - b[0]);
+}
+
+function tentFunction(b, d, t) {
+    const mid = (b + d) / 2;
+    const halfLife = (d - b) / 2;
+    if (t <= b || t >= d) return 0;
+    if (t <= mid) return t - b;
+    return d - t;
+}
+
+function regenerateLandscapes() {
+    lsIntervals = generateIntervals(8);
+    drawLandscapes();
+}
+
+function drawLandscapes() {
+    const ctx = lsCtx;
+    const numLandscapes = parseInt(document.getElementById('lkSlider').value);
+    document.getElementById('lkVal').textContent = numLandscapes;
+    ctx.clearRect(0, 0, lsCanvas.width, lsCanvas.height);
+
+    const pad = { left: 60, right: 30, top: 30, bottom: 50 };
+    const w = lsCanvas.width - pad.left - pad.right;
+    const h = lsCanvas.height - pad.top - pad.bottom;
+
+    // Axes
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, pad.top + h);
+    ctx.lineTo(pad.left + w, pad.top + h);
+    ctx.stroke();
+
+    // Axis labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px monospace';
+    for (let i = 0; i <= 10; i++) {
+        const x = pad.left + (i / 10) * w;
+        ctx.fillText((i / 10).toFixed(1), x - 10, pad.top + h + 18);
+        ctx.beginPath();
+        ctx.moveTo(x, pad.top + h);
+        ctx.lineTo(x, pad.top + h + 4);
+        ctx.strokeStyle = '#30363d';
+        ctx.stroke();
+    }
+    ctx.fillText('t', pad.left + w + 8, pad.top + h + 5);
+    ctx.fillText('λ(t)', pad.left - 30, pad.top - 8);
+
+    // Sample tent functions
+    const resolution = 500;
+    const tValues = [];
+    for (let i = 0; i <= resolution; i++) tValues.push(i / resolution);
+
+    // Draw individual tent functions (faded)
+    lsIntervals.forEach(([b, d]) => {
+        ctx.beginPath();
+        let started = false;
+        tValues.forEach(t => {
+            const val = tentFunction(b, d, t);
+            const x = pad.left + t * w;
+            const y = pad.top + h - val * h * 4;
+            if (!started) { ctx.moveTo(x, y); started = true; }
+            else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = 'rgba(255,166,87,0.25)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+    });
+
+    // Compute landscapes
+    const landscapeColors = ['#ff7b72', '#58a6ff', '#3fb950', '#bc8cff', '#ffa657'];
+
+    for (let k = 0; k < numLandscapes; k++) {
+        ctx.beginPath();
+        let started = false;
+        tValues.forEach(t => {
+            const vals = lsIntervals.map(([b, d]) => tentFunction(b, d, t));
+            vals.sort((a, b) => b - a);
+            const val = k < vals.length ? vals[k] : 0;
+            const x = pad.left + t * w;
+            const y = pad.top + h - val * h * 4;
+            if (!started) { ctx.moveTo(x, y); started = true; }
+            else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = landscapeColors[k % landscapeColors.length];
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // Label
+        ctx.fillStyle = landscapeColors[k % landscapeColors.length];
+        ctx.font = 'bold 12px monospace';
+        ctx.fillText(`λ${k + 1}`, pad.left + w - 50 + k * 30, pad.top + 20);
+    }
+
+    // Draw interval markers at bottom
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px monospace';
+    ctx.fillText('Persistence intervals:', pad.left, pad.top + h + 38);
+    lsIntervals.forEach(([b, d], i) => {
+        const x1 = pad.left + b * w;
+        const x2 = pad.left + d * w;
+        const y = pad.top + h + 34;
+        ctx.beginPath();
+        ctx.moveTo(x1, y);
+        ctx.lineTo(x2, y);
+        ctx.strokeStyle = 'rgba(255,166,87,0.6)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x1, y, 2, 0, Math.PI * 2);
+        ctx.arc(x2, y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffa657';
+        ctx.fill();
+    });
+}
+
+document.getElementById('lkSlider').addEventListener('input', drawLandscapes);
+regenerateLandscapes();
+
+// ==================== EULER CHARACTERISTIC CURVE ====================
+let ecPoints = [];
+const ecCanvas = document.getElementById('ecCanvas');
+const ecCtx = ecCanvas.getContext('2d');
+
+function regenerateEuler() {
+    ecPoints = generateClusteredPoints(25, 350, ecCanvas.height, 40, 3);
+    drawEuler();
+}
+
+function drawEuler() {
+    const ctx = ecCtx;
+    const maxEps = parseFloat(document.getElementById('ecMax').value);
+    document.getElementById('ecMaxVal').textContent = maxEps;
+    ctx.clearRect(0, 0, ecCanvas.width, ecCanvas.height);
+
+    const complexW = 380;
+    const graphX = 420;
+    const graphW = ecCanvas.width - graphX - 40;
+    const graphH = ecCanvas.height - 80;
+    const graphTop = 40;
+
+    // Compute Euler characteristic curve
+    const steps = 100;
+    const curve = [];
+    for (let s = 0; s <= steps; s++) {
+        const eps = (s / steps) * maxEps;
+        let V = ecPoints.length;
+        let E = 0;
+        let F = 0;
+
+        // Count edges
+        for (let i = 0; i < ecPoints.length; i++) {
+            for (let j = i + 1; j < ecPoints.length; j++) {
+                if (dist(ecPoints[i], ecPoints[j]) <= 2 * eps) E++;
+            }
+        }
+
+        // Count triangles
+        for (let i = 0; i < ecPoints.length; i++) {
+            for (let j = i + 1; j < ecPoints.length; j++) {
+                for (let k = j + 1; k < ecPoints.length; k++) {
+                    if (dist(ecPoints[i], ecPoints[j]) <= 2 * eps &&
+                        dist(ecPoints[i], ecPoints[k]) <= 2 * eps &&
+                        dist(ecPoints[j], ecPoints[k]) <= 2 * eps) F++;
+                }
+            }
+        }
+
+        curve.push({ eps, chi: V - E + F });
+    }
+
+    // Draw the complex at current maxEps on the left
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '12px monospace';
+    ctx.fillText(`Vietoris-Rips at ε=${maxEps}`, 15, 25);
+
+    // Triangles
+    for (let i = 0; i < ecPoints.length; i++) {
+        for (let j = i + 1; j < ecPoints.length; j++) {
+            for (let k = j + 1; k < ecPoints.length; k++) {
+                if (dist(ecPoints[i], ecPoints[j]) <= 2 * maxEps &&
+                    dist(ecPoints[i], ecPoints[k]) <= 2 * maxEps &&
+                    dist(ecPoints[j], ecPoints[k]) <= 2 * maxEps) {
+                    ctx.beginPath();
+                    ctx.moveTo(ecPoints[i].x, ecPoints[i].y);
+                    ctx.lineTo(ecPoints[j].x, ecPoints[j].y);
+                    ctx.lineTo(ecPoints[k].x, ecPoints[k].y);
+                    ctx.closePath();
+                    ctx.fillStyle = 'rgba(88,166,255,0.12)';
+                    ctx.fill();
+                }
+            }
+        }
+    }
+
+    // Edges
+    for (let i = 0; i < ecPoints.length; i++) {
+        for (let j = i + 1; j < ecPoints.length; j++) {
+            if (dist(ecPoints[i], ecPoints[j]) <= 2 * maxEps) {
+                ctx.beginPath();
+                ctx.moveTo(ecPoints[i].x, ecPoints[i].y);
+                ctx.lineTo(ecPoints[j].x, ecPoints[j].y);
+                ctx.strokeStyle = 'rgba(88,166,255,0.4)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+    }
+
+    // Points
+    ecPoints.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#58a6ff';
+        ctx.fill();
+    });
+
+    // Draw graph area
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(graphX - 10, graphTop - 10, graphW + 50, graphH + 40);
+    ctx.strokeStyle = '#30363d';
+    ctx.strokeRect(graphX - 10, graphTop - 10, graphW + 50, graphH + 40);
+
+    // Axes
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(graphX, graphTop);
+    ctx.lineTo(graphX, graphTop + graphH);
+    ctx.lineTo(graphX + graphW, graphTop + graphH);
+    ctx.stroke();
+
+    // Find chi range
+    const chiValues = curve.map(c => c.chi);
+    const minChi = Math.min(...chiValues);
+    const maxChi = Math.max(...chiValues);
+    const chiRange = Math.max(maxChi - minChi, 1);
+
+    // Y-axis labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px monospace';
+    for (let i = minChi; i <= maxChi; i++) {
+        const y = graphTop + graphH - ((i - minChi) / chiRange) * graphH;
+        ctx.fillText(i.toString(), graphX - 25, y + 4);
+        ctx.beginPath();
+        ctx.moveTo(graphX - 3, y);
+        ctx.lineTo(graphX + graphW, y);
+        ctx.strokeStyle = 'rgba(48,54,61,0.5)';
+        ctx.stroke();
+    }
+
+    // X-axis labels
+    for (let i = 0; i <= 5; i++) {
+        const eps = (i / 5) * maxEps;
+        const x = graphX + (i / 5) * graphW;
+        ctx.fillText(eps.toFixed(0), x - 8, graphTop + graphH + 16);
+    }
+
+    ctx.fillStyle = '#8b949e';
+    ctx.fillText('ε →', graphX + graphW - 15, graphTop + graphH + 28);
+    ctx.fillText('χ(ε)', graphX - 8, graphTop - 15);
+
+    // Draw curve
+    ctx.beginPath();
+    curve.forEach((c, i) => {
+        const x = graphX + (c.eps / maxEps) * graphW;
+        const y = graphTop + graphH - ((c.chi - minChi) / chiRange) * graphH;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = '#ffa657';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Current chi value
+    const lastChi = curve[curve.length - 1].chi;
+    ctx.fillStyle = '#ffa657';
+    ctx.font = 'bold 13px monospace';
+    ctx.fillText(`χ = ${lastChi}`, graphX + graphW - 60, graphTop + 15);
+}
+
+document.getElementById('ecMax').addEventListener('input', drawEuler);
+regenerateEuler();
+
+// ==================== REEB GRAPH ====================
+const reebCanvas = document.getElementById('reebCanvas');
+const reebCtx = reebCanvas.getContext('2d');
+let reebAnimating = false;
+
+function drawReebShape(ctx, ox, oy) {
+    // Draw a Y-shaped / figure-8-ish shape
+    const shape = [];
+    // Bottom stem
+    for (let t = 0; t <= 1; t += 0.02) {
+        const y = oy + 180 - t * 120;
+        const x = ox + 100 + Math.sin(t * Math.PI) * 15;
+        shape.push({ x, y, section: 'stem' });
+    }
+    return shape;
+}
+
+function drawReeb() {
+    const ctx = reebCtx;
+    const slicePercent = parseInt(document.getElementById('reebSlice').value);
+    document.getElementById('reebSliceVal').textContent = slicePercent;
+    ctx.clearRect(0, 0, reebCanvas.width, reebCanvas.height);
+
+    const shapeX = 40;
+    const shapeW = 280;
+    const shapeTop = 40;
+    const shapeH = 370;
+
+    // Draw the 2D shape: a "pair of pants" / Y-shape
+    ctx.save();
+
+    // Shape outline - a blob that splits into two
+    ctx.beginPath();
+    // Left outline
+    ctx.moveTo(shapeX + 100, shapeTop + shapeH);
+    ctx.bezierCurveTo(shapeX + 40, shapeTop + shapeH - 50,
+                       shapeX + 30, shapeTop + shapeH * 0.55,
+                       shapeX + 20, shapeTop + shapeH * 0.4);
+    ctx.bezierCurveTo(shapeX + 10, shapeTop + shapeH * 0.25,
+                       shapeX + 30, shapeTop + shapeH * 0.1,
+                       shapeX + 70, shapeTop + 10);
+    // Top left to top right gap
+    ctx.lineTo(shapeX + 110, shapeTop + 10);
+    // Right branch top
+    ctx.bezierCurveTo(shapeX + 140, shapeTop + shapeH * 0.1,
+                       shapeX + 170, shapeTop + shapeH * 0.15,
+                       shapeX + 180, shapeTop + shapeH * 0.25);
+    // Middle merge point
+    ctx.bezierCurveTo(shapeX + 195, shapeTop + shapeH * 0.35,
+                       shapeX + 210, shapeTop + shapeH * 0.38,
+                       shapeX + 220, shapeTop + shapeH * 0.3);
+    // Right branch
+    ctx.bezierCurveTo(shapeX + 250, shapeTop + shapeH * 0.15,
+                       shapeX + 270, shapeTop + shapeH * 0.1,
+                       shapeX + shapeW - 10, shapeTop + 20);
+    // Right side down
+    ctx.bezierCurveTo(shapeX + shapeW + 10, shapeTop + shapeH * 0.15,
+                       shapeX + shapeW, shapeTop + shapeH * 0.3,
+                       shapeX + shapeW - 20, shapeTop + shapeH * 0.4);
+    ctx.bezierCurveTo(shapeX + shapeW - 30, shapeTop + shapeH * 0.5,
+                       shapeX + 220, shapeTop + shapeH * 0.55,
+                       shapeX + 200, shapeTop + shapeH * 0.55);
+    // Merge back
+    ctx.bezierCurveTo(shapeX + 180, shapeTop + shapeH * 0.6,
+                       shapeX + 170, shapeTop + shapeH * 0.7,
+                       shapeX + 180, shapeTop + shapeH);
+    ctx.closePath();
+
+    ctx.fillStyle = 'rgba(88,166,255,0.15)';
+    ctx.fill();
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Height function label
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '12px monospace';
+    ctx.fillText('f(x) = height ↑', shapeX, shapeTop + shapeH + 25);
+    ctx.fillText('Shape X', shapeX + 90, shapeTop + shapeH + 25);
+
+    // Draw height arrow
+    ctx.beginPath();
+    ctx.moveTo(shapeX - 15, shapeTop + shapeH);
+    ctx.lineTo(shapeX - 15, shapeTop);
+    ctx.strokeStyle = '#8b949e';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(shapeX - 15, shapeTop);
+    ctx.lineTo(shapeX - 19, shapeTop + 8);
+    ctx.lineTo(shapeX - 11, shapeTop + 8);
+    ctx.closePath();
+    ctx.fillStyle = '#8b949e';
+    ctx.fill();
+
+    // Draw slice line
+    const sliceY = shapeTop + shapeH - (slicePercent / 100) * shapeH;
+    ctx.beginPath();
+    ctx.moveTo(shapeX - 25, sliceY);
+    ctx.lineTo(shapeX + shapeW + 30, sliceY);
+    ctx.strokeStyle = '#ff7b72';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#ff7b72';
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText(`f = ${slicePercent}%`, shapeX + shapeW + 35, sliceY + 4);
+
+    // Determine number of connected components at this slice
+    let components = 0;
+    let componentDesc = '';
+    if (slicePercent < 8) {
+        components = 0; componentDesc = 'Below shape';
+    } else if (slicePercent < 25) {
+        components = 1; componentDesc = '1 component (bottom stem)';
+    } else if (slicePercent < 40) {
+        components = 2; componentDesc = '2 components (split)';
+    } else if (slicePercent < 55) {
+        components = 2; componentDesc = '2 components (branches)';
+    } else if (slicePercent < 70) {
+        components = 2; componentDesc = '2 components (upper branches)';
+    } else if (slicePercent < 85) {
+        components = 2; componentDesc = '2 components (near tops)';
+    } else if (slicePercent < 95) {
+        components = 1; componentDesc = '1 component (merged top)';
+    } else {
+        components = 0; componentDesc = 'Above shape';
+    }
+
+    ctx.fillStyle = '#c9d1d9';
+    ctx.font = '12px monospace';
+    ctx.fillText(`Components: ${components}`, shapeX + shapeW + 35, sliceY + 22);
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px monospace';
+    ctx.fillText(componentDesc, shapeX + shapeW + 35, sliceY + 38);
+
+    // ---- Draw Reeb Graph on the right ----
+    const reebX = 580;
+    const reebW = 200;
+    const reebTop = shapeTop + 20;
+    const reebH = shapeH - 40;
+
+    ctx.fillStyle = '#161b22';
+    ctx.fillRect(reebX - 30, reebTop - 20, reebW + 60, reebH + 50);
+    ctx.strokeStyle = '#30363d';
+    ctx.strokeRect(reebX - 30, reebTop - 20, reebW + 60, reebH + 50);
+
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '12px monospace';
+    ctx.fillText('Reeb Graph', reebX + 40, reebTop - 5);
+
+    // Reeb graph nodes (critical points)
+    const nodes = [
+        { y: 0.08, x: 0.5, label: 'min', type: 'birth' },
+        { y: 0.25, x: 0.5, label: 'split', type: 'saddle' },
+        { y: 0.55, x: 0.3, label: '', type: 'through' },
+        { y: 0.55, x: 0.7, label: '', type: 'through' },
+        { y: 0.85, x: 0.5, label: 'merge', type: 'saddle' },
+        { y: 0.95, x: 0.5, label: 'max', type: 'death' }
+    ];
+
+    const nodePositions = nodes.map(n => ({
+        px: reebX + n.x * reebW,
+        py: reebTop + reebH - n.y * reebH,
+        ...n
+    }));
+
+    // Draw edges of Reeb graph
+    const edges = [
+        [0, 1],  // bottom stem
+        [1, 2],  // left branch
+        [1, 3],  // right branch
+        [2, 4],  // left to merge
+        [3, 4],  // right to merge
+        [4, 5]   // top
+    ];
+
+    edges.forEach(([i, j]) => {
+        const a = nodePositions[i];
+        const b = nodePositions[j];
+        ctx.beginPath();
+        ctx.moveTo(a.px, a.py);
+        // Curved edges for branches
+        if ((i === 1 && j === 2) || (i === 2 && j === 4)) {
+            const cpx = a.px - 30;
+            ctx.quadraticCurveTo(cpx, (a.py + b.py) / 2, b.px, b.py);
+        } else if ((i === 1 && j === 3) || (i === 3 && j === 4)) {
+            const cpx = a.px + 30;
+            ctx.quadraticCurveTo(cpx, (a.py + b.py) / 2, b.px, b.py);
+        } else {
+            ctx.lineTo(b.px, b.py);
+        }
+        ctx.strokeStyle = '#3fb950';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    });
+
+    // Draw nodes
+    nodePositions.forEach(n => {
+        ctx.beginPath();
+        ctx.arc(n.px, n.py, 7, 0, Math.PI * 2);
+        if (n.type === 'saddle') {
+            ctx.fillStyle = '#ffa657';
+        } else if (n.type === 'birth' ||
+            n.type === 'death') {
+            ctx.fillStyle = '#ff7b72';
+        } else {
+            ctx.fillStyle = '#58a6ff';
+        }
+        ctx.fill();
+        ctx.strokeStyle = '#0d1117';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Labels
+        if (n.label) {
+            ctx.fillStyle = '#c9d1d9';
+            ctx.font = '10px monospace';
+            ctx.fillText(n.label, n.px + 12, n.py + 4);
+        }
+    });
+
+    // Draw slice indicator on Reeb graph
+    const reebSliceY = reebTop + reebH - (slicePercent / 100) * reebH;
+    ctx.beginPath();
+    ctx.moveTo(reebX - 25, reebSliceY);
+    ctx.lineTo(reebX + reebW + 25, reebSliceY);
+    ctx.strokeStyle = '#ff7b72';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw intersection dots on Reeb graph at slice level
+    const sliceNorm = slicePercent / 100;
+    let intersections = [];
+
+    edges.forEach(([i, j]) => {
+        const a = nodes[i];
+        const b = nodes[j];
+        const minY = Math.min(a.y, b.y);
+        const maxY = Math.max(a.y, b.y);
+        if (sliceNorm >= minY && sliceNorm <= maxY) {
+            const t = (sliceNorm - a.y) / (b.y - a.y);
+            let ix, iy;
+            const ap = nodePositions[i];
+            const bp = nodePositions[j];
+
+            // Approximate position along the curved edge
+            if ((i === 1 && j === 2) || (i === 2 && j === 4)) {
+                const cpx = ap.px - 30;
+                ix = (1 - t) * (1 - t) * ap.px + 2 * (1 - t) * t * cpx + t * t * bp.px;
+                iy = (1 - t) * (1 - t) * ap.py + 2 * (1 - t) * t * ((ap.py + bp.py) / 2) + t * t * bp.py;
+            } else if ((i === 1 && j === 3) || (i === 3 && j === 4)) {
+                const cpx = ap.px + 30;
+                ix = (1 - t) * (1 - t) * ap.px + 2 * (1 - t) * t * cpx + t * t * bp.px;
+                iy = (1 - t) * (1 - t) * ap.py + 2 * (1 - t) * t * ((ap.py + bp.py) / 2) + t * t * bp.py;
+            } else {
+                ix = ap.px + t * (bp.px - ap.px);
+                iy = ap.py + t * (bp.py - ap.py);
+            }
+            intersections.push({ x: ix, y: iy });
+        }
+    });
+
+    intersections.forEach(pt => {
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#ff7b72';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+    });
+
+    // Legend for Reeb graph node types
+    const legendX = reebX - 20;
+    const legendY = reebTop + reebH + 15;
+    ctx.font = '10px monospace';
+
+    ctx.beginPath();
+    ctx.arc(legendX, legendY, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#ff7b72';
+    ctx.fill();
+    ctx.fillStyle = '#8b949e';
+    ctx.fillText('min/max', legendX + 10, legendY + 4);
+
+    ctx.beginPath();
+    ctx.arc(legendX + 80, legendY, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffa657';
+    ctx.fill();
+    ctx.fillStyle = '#8b949e';
+    ctx.fillText('saddle (split/merge)', legendX + 90, legendY + 4);
+
+    ctx.restore();
+}
+
+function animateReeb() {
+    if (reebAnimating) return;
+    reebAnimating = true;
+    const slider = document.getElementById('reebSlice');
+    let val = 0;
+    slider.value = 0;
+
+    function step() {
+        if (val > 100) {
+            reebAnimating = false;
+            return;
+        }
+        slider.value = val;
+        document.getElementById('reebSliceVal').textContent = val;
+        drawReeb();
+        val += 1;
+        requestAnimationFrame(step);
+    }
+    step();
+}
+
+document.getElementById('reebSlice').addEventListener('input', drawReeb);
+drawReeb();
+
+// ==================== RESPONSIVE CANVAS SCALING ====================
+function resizeCanvases() {
+    const canvases = document.querySelectorAll('canvas');
+    canvases.forEach(c => {
+        const parent = c.parentElement;
+        const maxW = parent.clientWidth - 56;
+        if (c.width > maxW && maxW > 300) {
+            const scale = maxW / c.width;
+            c.style.width = maxW + 'px';
+            c.style.height = (c.height * scale) + 'px';
+        }
+    });
+}
+window.addEventListener('resize', resizeCanvases);
+resizeCanvases();
+
+</script>
+</body>
+</html>
