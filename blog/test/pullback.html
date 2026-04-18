@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pullback – Differentialtopologie visualisiert</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        header {
+            text-align: center;
+            padding: 30px 20px 10px;
+            background: linear-gradient(135deg, #1a1a3e, #0a0a1a);
+        }
+        header h1 {
+            font-size: 2.4em;
+            background: linear-gradient(90deg, #00c6ff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        header p { color: #999; margin-top: 8px; font-size: 1.1em; }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Sections */
+        .section {
+            background: #12122a;
+            border: 1px solid #2a2a5a;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 28px;
+        }
+        .section h2 {
+            font-size: 1.5em;
+            color: #a855f7;
+            margin-bottom: 14px;
+            border-bottom: 2px solid #2a2a5a;
+            padding-bottom: 8px;
+        }
+        .section p, .section li {
+            line-height: 1.75;
+            font-size: 1.05em;
+            color: #c8c8e0;
+        }
+        .section ul { padding-left: 24px; margin-top: 8px; }
+        .section li { margin-bottom: 6px; }
+
+        .math {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: italic;
+            color: #00c6ff;
+            font-size: 1.08em;
+        }
+        .math-block {
+            background: #1a1a3e;
+            border-left: 4px solid #a855f7;
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-radius: 8px;
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-size: 1.15em;
+            color: #00c6ff;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        /* Canvas area */
+        .canvas-wrap {
+            position: relative;
+            background: #0d0d24;
+            border-radius: 12px;
+            border: 1px solid #2a2a5a;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 16px;
+            align-items: center;
+        }
+        .controls label {
+            color: #a0a0c0;
+            font-size: 0.95em;
+        }
+        .controls input[type="range"] {
+            -webkit-appearance: none;
+            width: 180px;
+            height: 6px;
+            background: #2a2a5a;
+            border-radius: 3px;
+            outline: none;
+        }
+        .controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px; height: 18px;
+            background: #a855f7;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        button.ctrl-btn {
+            padding: 10px 22px;
+            background: linear-gradient(135deg, #a855f7, #6d28d9);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        button.ctrl-btn:hover { transform: scale(1.05); }
+
+        .step-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+        .step-nav button {
+            padding: 8px 18px;
+            background: #1a1a3e;
+            color: #c8c8e0;
+            border: 1px solid #3a3a6a;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .step-nav button:hover, .step-nav button.active {
+            background: #a855f7;
+            color: #fff;
+            border-color: #a855f7;
+        }
+
+        .explanation-box {
+            background: #1a1a3e;
+            border-radius: 10px;
+            padding: 18px;
+            margin-top: 14px;
+            min-height: 80px;
+            line-height: 1.7;
+            color: #d0d0f0;
+            font-size: 1.02em;
+        }
+
+        /* Diagram legend */
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
+        }
+        .legend-dot {
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Responsive */
+        @media (max-width: 700px) {
+            header h1 { font-size: 1.6em; }
+            .controls { flex-direction: column; }
+            .controls input[type="range"] { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Der Pullback in der Differentialtopologie</h1>
+    <p>Eine interaktive visuelle Erklärung</p>
+</header>
+
+<div class="container">
+
+    <!-- 1. Was ist ein Pullback? -->
+    <div class="section">
+        <h2>1 – Was ist ein Pullback?</h2>
+        <p>
+            In der Differentialtopologie haben wir glatte Mannigfaltigkeiten
+            <span class="math">M</span> und <span class="math">N</span>
+            und eine glatte Abbildung <span class="math">φ : M → N</span>.
+            Auf <span class="math">N</span> lebt eine Differentialform
+            <span class="math">ω</span> (z.&nbsp;B. ein Vektorfeld, eine 1-Form, eine Metrik …).
+        </p>
+        <p style="margin-top:10px;">
+            <strong>Problem:</strong> Wir möchten <span class="math">ω</span> auf
+            <span class="math">M</span> „zurückziehen", obwohl <span class="math">ω</span>
+            eigentlich auf <span class="math">N</span> definiert ist.
+        </p>
+        <p style="margin-top:10px;">
+            <strong>Lösung – der Pullback <span class="math">φ*ω</span>:</strong>
+            Er erzeugt aus <span class="math">ω</span> eine neue Form auf
+            <span class="math">M</span>, indem er Tangentialvektoren von
+            <span class="math">M</span> zuerst mit dem Differential
+            <span class="math">dφ</span> nach <span class="math">N</span> schiebt
+            und dann <span class="math">ω</span> darauf auswertet.
+        </p>
+        <div class="math-block">
+            (φ*ω)<sub>p</sub>(v₁, …, vₖ) = ω<sub>φ(p)</sub>(dφ<sub>p</sub>(v₁), …, dφ<sub>p</sub>(vₖ))
+        </div>
+    </div>
+
+    <!-- 2. Interaktives Schema -->
+    <div class="section">
+        <h2>2 – Interaktives Diagramm: Schritt für Schritt</h2>
+        <p>Klicke auf die Schritte, um den Pullback-Prozess visuell nachzuvollziehen.</p>
+
+        <div class="step-nav" id="stepNav">
+            <button class="active" data-step="0">Übersicht</button>
+            <button data-step="1">① Punkt p ∈ M</button>
+            <button data-step="2">② φ(p) ∈ N</button>
+            <button data-step="3">③ dφ schiebt Vektoren</button>
+            <button data-step="4">④ ω wertet aus</button>
+            <button data-step="5">⑤ φ*ω auf M</button>
+        </div>
+
+        <div class="canvas-wrap">
+            <canvas id="diagramCanvas" width="1100" height="520"></canvas>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#00c6ff"></span> Mannigfaltigkeit M</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#f97316"></span> Mannigfaltigkeit N</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#a855f7"></span> Abbildung φ / dφ</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#22c55e"></span> Differentialform ω</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#facc15"></span> Pullback φ*ω</div>
+        </div>
+
+        <div class="explanation-box" id="explanationBox">
+            <strong>Übersicht:</strong> Links siehst du die Mannigfaltigkeit <em>M</em>, rechts <em>N</em>.
+            Die Abbildung <em>φ</em> verbindet sie. Klicke auf die Schritte oben, um den Pullback
+            Schritt für Schritt zu sehen.
+        </div>
+    </div>
+
+    <!-- 3. Konkretes 2D-Beispiel -->
+    <div class="section">
+        <h2>3 – Konkretes Beispiel: Pullback einer 1-Form</h2>
+        <p>
+            Sei <span class="math">φ : ℝ² → ℝ²</span> definiert durch
+            <span class="math">φ(x, y) = (x², xy)</span> und
+            <span class="math">ω = u·du + v·dv</span> auf <span class="math">N = ℝ²</span>
+            (mit Koordinaten <span class="math">u, v</span>).
+        </p>
+        <div class="math-block">
+            φ*ω = (x²)·d(x²) + (xy)·d(xy) = 2x³·dx + x²y·dx + x²y·dy = (2x³ + x²y) dx + x²y dy
+        </div>
+        <p style="margin-top:12px;">
+            Bewege den Punkt <span class="math">p = (x, y)</span> auf <span class="math">M</span>,
+            um zu sehen, wie sich die Pullback-Form dort verändert.
+        </p>
+
+        <div class="canvas-wrap">
+            <canvas id="exampleCanvas" width="1100" height="500"></canvas>
+        </div>
+
+        <div class="controls">
+            <label>x: <strong id="xVal">1.0</strong></label>
+            <input type="range" id="xSlider" min="-2" max="2" step="0.05" value="1">
+            <label>y: <strong id="yVal">1.0</strong></label>
+            <input type="range" id="ySlider" min="-2" max="2" step="0.05" value="1">
+            <button class="ctrl-btn" id="animateBtn">▶ Animieren</button>
+        </div>
+
+        <div class="explanation-box" id="exampleExplanation">
+            Bewege die Schieberegler, um den Punkt (x, y) zu verändern und die resultierende Pullback-Form zu beobachten.
+        </div>
+    </div>
+
+    <!-- 4. Wichtige Eigenschaften -->
+    <div class="section">
+        <h2>4 – Wichtige Eigenschaften des Pullbacks</h2>
+        <ul>
+            <li><strong>Linearität:</strong> <span class="math">φ*(ω + η) = φ*ω + φ*η</span> und <span class="math">φ*(c·ω) = c·φ*ω</span></li>
+            <li><strong>Verträglichkeit mit dem Keilprodukt:</strong> <span class="math">φ*(ω ∧ η) = φ*ω ∧ φ*η</span></li>
+            <li><strong>Verträglichkeit mit der äußeren Ableitung:</strong> <span class="math">φ*(dω) = d(φ*ω)</span> — der Pullback kommutiert mit <span class="math">d</span>!</li>
+            <li><strong>Funktorialität:</strong> <span class="math">(ψ ∘ φ)* = φ* ∘ ψ*</span> — die Reihenfolge kehrt sich um.</li>
+            <li><strong>0-Formen (Funktionen):</strong> <span class="math">φ*f = f ∘ φ</span> — einfache Komposition.</li>
+        </ul>
+    </div>
+
+    <!-- 5. Wozu braucht man das? -->
+    <div class="section">
+        <h2>5 – Wozu braucht man den Pullback?</h2>
+        <ul>
+            <li><strong>Integration auf Mannigfaltigkeiten:</strong> Substitutionsregel = Pullback! Wenn du ein Integral transformierst, ziehst du die Form zurück.</li>
+            <li><strong>Riemannsche Geometrie:</strong> Die induzierte Metrik einer Einbettung <span class="math">ι : S → M</span> ist <span class="math">ι*g</span>.</li>
+            <li><strong>Physik / Eichtheorie:</strong> Zusammenhänge auf Faserbündeln werden via Pullback auf Schnitte übertragen.</li>
+            <li><strong>Symplektische Geometrie:</strong> Symplektomorphismen sind Diffeomorphismen mit <span class="math">φ*ω = ω</span>.</li>
+            <li><strong>De-Rham-Kohomologie:</strong> Der Pullback induziert Abbildungen zwischen Kohomologiegruppen.</li>
+        </ul>
+    </div>
+
+    <!-- 6. Kommutatives Diagramm -->
+    <div class="section">
+        <h2>6 – Das kommutative Diagramm</h2>
+        <p>Der Pullback lässt sich elegant als kommutatives Diagramm darstellen:</p>
+        <div class="canvas-wrap">
+            <canvas id="comDiagram" width="1100" height="340"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ============================================================
+//  STEP-BY-STEP DIAGRAM (Section 2)
+// ============================================================
+const diagCanvas = document.getElementById('diagramCanvas');
+const diagCtx = diagCanvas.getContext('2d');
+const stepNav = document.getElementById('stepNav');
+const explBox = document.getElementById('explanationBox');
+let currentStep = 0;
+let animT = 0;
+let diagRAF;
+
+const explanations = [
+    `<strong>Übersicht:</strong> Links die Mannigfaltigkeit <em>M</em>, rechts <em>N</em>. Die glatte Abbildung <em>φ</em> bildet Punkte von <em>M</em> nach <em>N</em> ab. Der Pullback <em>φ*</em> zieht Formen von <em>N</em> zurück nach <em>M</em> — also in die <strong>entgegengesetzte Richtung</strong>.`,
+    `<strong>Schritt 1:</strong> Wähle einen Punkt <em>p ∈ M</em>. An diesem Punkt haben wir den Tangentialraum <em>T<sub>p</sub>M</em> mit Vektoren <em>v</em>.`,
+    `<strong>Schritt 2:</strong> Die Abbildung <em>φ</em> schickt <em>p</em> auf den Punkt <em>φ(p) ∈ N</em>. Dort lebt die Differentialform <em>ω</em>, die wir zurückziehen wollen.`,
+    `<strong>Schritt 3:</strong> Das Differential <em>dφ<sub>p</sub> : T<sub>p</sub>M → T<sub>φ(p)</sub>N</em> schiebt Tangentialvektoren von <em>M</em> nach <em>N</em>. Der Vektor <em>v</em> wird zu <em>dφ(v)</em>.`,
+    `<strong>Schritt 4:</strong> Jetzt wertet die Form <em>ω</em> auf dem hinübergeschobenen Vektor <em>dφ(v)</em> aus: <em>ω<sub>φ(p)</sub>(dφ(v))</em>. Das ergibt eine reelle Zahl.`,
+    `<strong>Schritt 5 – Ergebnis:</strong> Dieser ganze Prozess definiert eine neue Form <em>φ*ω</em> auf <em>M</em>: Für jeden Punkt <em>p</em> und Vektor <em>v ∈ T<sub>p</sub>M</em> gilt <em>(φ*ω)<sub>p</sub>(v) = ω<sub>φ(p)</sub>(dφ<sub>p</sub>(v))</em>. Die Form wurde erfolgreich „zurückgezogen"!`
+];
+
+stepNav.addEventListener('click', e => {
+    if (e.target.tagName !== 'BUTTON') return;
+    currentStep = parseInt(e.target.dataset.step);
+    stepNav.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    explBox.innerHTML = explanations[currentStep];
+    animT = 0;
+});
+
+function drawDiagram(t) {
+    const W = diagCanvas.width, H = diagCanvas.height;
+    diagCtx.clearRect(0, 0, W, H);
+    const ctx = diagCtx;
+
+    // M manifold (left blob)
+    const mx = 230, my = 260, mr = 140;
+    ctx.save();
+    ctx.beginPath();
+    for (let a = 0; a < Math.PI * 2; a += 0.02) {
+        let r = mr + 18 * Math.sin(3 * a + 0.5) + 10 * Math.cos(5 * a);
+        let px = mx + r * Math.cos(a), py = my + r * Math.sin(a);
+        a === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(0, 198, 255, 0.08)';
+    ctx.fill();
+    ctx.strokeStyle = '#00c6ff';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = '#00c6ff';
+    ctx.font = 'bold 28px serif';
+    ctx.fillText('M', mx - 10, my - mr - 20);
+
+    // N manifold (right blob)
+    const nx = 870, ny = 260, nr = 140;
+    ctx.save();
+    ctx.beginPath();
+    for (let a = 0; a < Math.PI * 2; a += 0.02) {
+        let r = nr + 20 * Math.sin(2 * a + 1) + 12 * Math.cos(4 * a + 2);
+        let px = nx + r * Math.cos(a), py = ny + r * Math.sin(a);
+        a === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(249, 115, 22, 0.08)';
+    ctx.fill();
+    ctx.strokeStyle = '#f97316';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = '#f97316';
+    ctx.font = 'bold 28px serif';
+    ctx.fillText('N', nx - 10, ny - nr - 20);
+
+    // φ arrow (top)
+    const phiAlpha = currentStep >= 1 ? Math.min(1, t / 30) : 0.35;
+    ctx.save();
+    ctx.globalAlpha = Math.max(0.35, phiAlpha);
+    drawCurvedArrow(ctx, mx + mr + 20, my - 80, nx - nr - 20, ny - 80, -50, '#a855f7', 3, 'φ', 0, -18);
+    ctx.restore();
+
+    // φ* arrow (bottom, reversed)
+    const psAlpha = currentStep >= 5 ? Math.min(1, (t - 0) / 30) : 0.25;
+    ctx.save();
+    ctx.globalAlpha = Math.max(0.25, psAlpha);
+    drawCurvedArrow(ctx, nx - nr - 20, ny + 90, mx + mr + 20, my + 90, -50, '#facc15', 3, 'φ*', 0, 24);
+    ctx.restore();
+
+    // Point p on M
+    if (currentStep >= 1) {
+        const pp = Math.min(1, t / 20);
+        const px = mx + 30, py = my + 10;
+        ctx.save();
+        ctx.globalAlpha = pp;
+        ctx.beginPath();
+        ctx.arc(px, py, 7, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+        ctx.fillStyle = '#00c6ff';
+        ctx.font = 'bold 18px serif';
+        ctx.fillText('p', px + 12, py + 5);
+
+        // Tangent vector at p
+        if (currentStep >= 1) {
+            ctx.strokeStyle = '#00c6ff';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(px + 60, py - 40);
+            ctx.stroke();
+            drawArrowHead(ctx, px + 60, py - 40, Math.atan2(-40, 60), '#00c6ff', 10);
+            ctx.fillStyle = '#00c6ff';
+            ctx.font = 'italic 16px serif';
+            ctx.fillText('v ∈ TₚM', px + 65, py - 42);
+        }
+        ctx.restore();
+    }
+
+    // Point φ(p) on N
+    if (currentStep >= 2) {
+        const pp2 = Math.min(1, (t - 5) / 20);
+        const qx = nx - 20, qy = ny + 10;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, pp2);
+        ctx.beginPath();
+        ctx.arc(qx, qy, 7, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+        ctx.fillStyle = '#f97316';
+        ctx.font = 'bold 18px serif';
+        ctx.fillText('φ(p)', qx + 12, qy + 5);
+
+        // ω form indicator
+        if (currentStep >= 2) {
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 4]);
+            ctx.beginPath();
+            ctx.arc(qx, qy, 40, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#22c55e';
+            ctx.font = 'italic 18px serif';
+            ctx.fillText('ω', qx + 44, qy - 28);
+        }
+        ctx.restore();
+    }
+
+    // dφ pushes vector
+    if (currentStep >= 3) {
+        const pp3 = Math.min(1, (t - 5) / 25);
+        const qx = nx - 20, qy = ny + 10;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, pp3);
+        ctx.strokeStyle = '#a855f7';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(qx, qy);
+        ctx.lineTo(qx + 55, qy - 45);
+        ctx.stroke();
+        drawArrowHead(ctx, qx + 55, qy - 45, Math.atan2(-45, 55), '#a855f7', 10);
+        ctx.fillStyle = '#a855f7';
+        ctx.font = 'italic 16px serif';
+        ctx.fillText('dφ(v)', qx + 60, qy - 48);
+
+        // label dφ on the connecting arrow
+        ctx.fillStyle = '#a855f7';
+        ctx.font = 'bold 15px serif';
+        ctx.fillText('dφₚ', 540, 145);
+        ctx.restore();
+    }
+
+    // ω evaluates
+    if (currentStep >= 4) {
+        const pp4 = Math.min(1, (t - 5) / 25);
+        const qx = nx - 20, qy = ny + 10;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, pp4);
+        ctx.fillStyle = '#22c55e';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText('ω(dφ(v)) ∈ ℝ', qx - 30, qy + 70);
+        // highlight
+        ctx.strokeStyle = '#22c55e';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(qx + 40, qy + 60, 80, 0, Math.PI * 2);
+        ctx.globalAlpha *= 0.15;
+        ctx.fillStyle = '#22c55e';
+        ctx.fill();
+        ctx.restore();
+    }
+
+    // φ*ω on M
+    if (currentStep >= 5) {
+        const pp5 = Math.min(1, (t - 5) / 25);
+        const px = mx + 30, py = my + 10;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, pp5);
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.arc(px, py, 40, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#facc15';
+        ctx.font = 'bold 18px serif';
+        ctx.fillText('φ*ω', px - 65, py + 50);
+        ctx.restore();
+    }
+}
+
+function drawCurvedArrow(ctx, x1, y1, x2, y2, bend, color, lw, label, lox, loy) {
+    const mx2 = (x1 + x2) / 2, my2 = (y1 + y2) / 2 + bend;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lw;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.quadraticCurveTo(mx2, my2, x2, y2);
+    ctx.stroke();
+    // arrowhead
+    const t2 = 0.98;
+    const t1 = 0.95;
+    const ax = (1-t2)*(1-t2)*x1 + 2*(1-t2)*t2*mx2 + t2*t2*x2;
+    const ay = (1-t2)*(1-t2)*y1 + 2*(1-t2)*t2*my2 + t2*t2*y2;
+    const bx = (1-t1)*(1-t1)*x1 + 2*(1-t1)*t1*mx2 + t1*t1*x2;
+    const by = (1-t1)*(1-t1)*y1 + 2*(1-t1)*t1*my2 + t1*t1*y2;
+    const angle = Math.atan2(ay - by, ax - bx);
+    drawArrowHead(ctx, x2, y2, angle, color, 12);
+    // label
+    ctx.fillStyle = color;
+    ctx.font = 'bold 20px serif';
+    ctx.fillText(label, mx2 + lox - 10, my2 + loy);
+}
+
+function drawArrowHead(ctx, x, y, angle, color, size) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-size, -size / 2.2);
+    ctx.lineTo(-size, size / 2.2);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.restore();
+}
+
+function animDiagram() {
+    animT += 1;
+    drawDiagram(animT);
+    diagRAF = requestAnimationFrame(animDiagram);
+}
+animDiagram();
+
+
+// ============================================================
+//  CONCRETE EXAMPLE (
+//  CONCRETE EXAMPLE (Section 3)
+// ============================================================
+const exCanvas = document.getElementById('exampleCanvas');
+const exCtx = exCanvas.getContext('2d');
+const xSlider = document.getElementById('xSlider');
+const ySlider = document.getElementById('ySlider');
+const xVal = document.getElementById('xVal');
+const yVal = document.getElementById('yVal');
+const exExpl = document.getElementById('exampleExplanation');
+const animateBtn = document.getElementById('animateBtn');
+
+let isAnimating = false;
+let animAngle = 0;
+let animRAF2;
+
+function drawExample() {
+    const W = exCanvas.width, H = exCanvas.height;
+    exCtx.clearRect(0, 0, W, H);
+    const ctx = exCtx;
+
+    const x = parseFloat(xSlider.value);
+    const y = parseFloat(ySlider.value);
+    xVal.textContent = x.toFixed(2);
+    yVal.textContent = y.toFixed(2);
+
+    // φ(x,y) = (x², xy)
+    const u = x * x;
+    const v = x * y;
+
+    // Pullback: φ*ω = (2x³ + x²y) dx + x²y dy
+    const coeff_dx = 2 * x * x * x + x * x * y;
+    const coeff_dy = x * x * y;
+
+    // --- Left: M plane ---
+    const mCx = 250, mCy = 250, scale = 80;
+
+    // Grid M
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0, 198, 255, 0.12)';
+    ctx.lineWidth = 1;
+    for (let gx = -2; gx <= 2; gx += 0.5) {
+        ctx.beginPath();
+        ctx.moveTo(mCx + gx * scale, mCy - 2 * scale);
+        ctx.lineTo(mCx + gx * scale, mCy + 2 * scale);
+        ctx.stroke();
+    }
+    for (let gy = -2; gy <= 2; gy += 0.5) {
+        ctx.beginPath();
+        ctx.moveTo(mCx - 2 * scale, mCy - gy * scale);
+        ctx.lineTo(mCx + 2 * scale, mCy - gy * scale);
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    // Axes M
+    ctx.strokeStyle = 'rgba(0, 198, 255, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(mCx - 2 * scale, mCy);
+    ctx.lineTo(mCx + 2 * scale, mCy);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(mCx, mCy + 2 * scale);
+    ctx.lineTo(mCx, mCy - 2 * scale);
+    ctx.stroke();
+    ctx.fillStyle = '#00c6ff';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('x', mCx + 2 * scale + 5, mCy + 5);
+    ctx.fillText('y', mCx + 5, mCy - 2 * scale - 5);
+
+    // Label M
+    ctx.fillStyle = '#00c6ff';
+    ctx.font = 'bold 24px serif';
+    ctx.fillText('M (x, y)', mCx - 40, 35);
+
+    // Point p on M
+    const px_m = mCx + x * scale;
+    const py_m = mCy - y * scale;
+    ctx.beginPath();
+    ctx.arc(px_m, py_m, 7, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.fillStyle = '#00c6ff';
+    ctx.font = 'bold 14px serif';
+    ctx.fillText(`p = (${x.toFixed(2)}, ${y.toFixed(2)})`, px_m + 12, py_m - 10);
+
+    // Draw pullback form φ*ω as a vector (covector visualization)
+    const pullLen = Math.sqrt(coeff_dx * coeff_dx + coeff_dy * coeff_dy);
+    const maxArrow = 80;
+    let arrowScale = pullLen > 0 ? Math.min(maxArrow / pullLen, 30) : 0;
+
+    // φ*ω arrow (covector shown as arrow for visualization)
+    if (pullLen > 0.01) {
+        const adx = coeff_dx * arrowScale;
+        const ady = -coeff_dy * arrowScale; // flip y
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(px_m, py_m);
+        ctx.lineTo(px_m + adx, py_m + ady);
+        ctx.stroke();
+        drawArrowHead(ctx, px_m + adx, py_m + ady, Math.atan2(ady, adx), '#facc15', 10);
+        ctx.fillStyle = '#facc15';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText('φ*ω', px_m + adx + 8, py_m + ady - 5);
+    }
+
+    // Draw a field of pullback covectors on M
+    ctx.save();
+    ctx.globalAlpha = 0.3;
+    for (let gx = -2; gx <= 2; gx += 0.5) {
+        for (let gy = -2; gy <= 2; gy += 0.5) {
+            if (Math.abs(gx - x) < 0.1 && Math.abs(gy - y) < 0.1) continue;
+            const cdx = 2 * gx * gx * gx + gx * gx * gy;
+            const cdy = gx * gx * gy;
+            const cl = Math.sqrt(cdx * cdx + cdy * cdy);
+            if (cl < 0.01) continue;
+            const as2 = Math.min(maxArrow / cl, 30);
+            const sx = mCx + gx * scale;
+            const sy = mCy - gy * scale;
+            const fdx = cdx * as2 * 0.5;
+            const fdy = -cdy * as2 * 0.5;
+            ctx.strokeStyle = '#facc15';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(sx + fdx, sy + fdy);
+            ctx.stroke();
+            drawArrowHead(ctx, sx + fdx, sy + fdy, Math.atan2(fdy, fdx), '#facc15', 6);
+        }
+    }
+    ctx.restore();
+
+    // --- Right: N plane ---
+    const nCx = 850, nCy = 250, nScale = 50;
+
+    // Grid N
+    ctx.save();
+    ctx.strokeStyle = 'rgba(249, 115, 22, 0.12)';
+    ctx.lineWidth = 1;
+    for (let gu = -3; gu <= 5; gu += 1) {
+        ctx.beginPath();
+        ctx.moveTo(nCx + gu * nScale, nCy - 4 * nScale);
+        ctx.lineTo(nCx + gu * nScale, nCy + 4 * nScale);
+        ctx.stroke();
+    }
+    for (let gv = -4; gv <= 4; gv += 1) {
+        ctx.beginPath();
+        ctx.moveTo(nCx - 3 * nScale, nCy - gv * nScale);
+        ctx.lineTo(nCx + 5 * nScale, nCy - gv * nScale);
+        ctx.stroke();
+    }
+    ctx.restore();
+
+    // Axes N
+    ctx.strokeStyle = 'rgba(249, 115, 22, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(nCx - 3 * nScale, nCy);
+    ctx.lineTo(nCx + 5 * nScale, nCy);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(nCx, nCy + 4 * nScale);
+    ctx.lineTo(nCx, nCy - 4 * nScale);
+    ctx.stroke();
+    ctx.fillStyle = '#f97316';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('u', nCx + 5 * nScale + 5, nCy + 5);
+    ctx.fillText('v', nCx + 5, nCy - 4 * nScale - 5);
+
+    // Label N
+    ctx.fillStyle = '#f97316';
+    ctx.font = 'bold 24px serif';
+    ctx.fillText('N (u, v)', nCx - 30, 35);
+
+    // Point φ(p) on N
+    const px_n = nCx + u * nScale;
+    const py_n = nCy - v * nScale;
+
+    // Clamp display
+    const dispX = Math.max(nCx - 3 * nScale, Math.min(nCx + 5 * nScale, px_n));
+    const dispY = Math.max(nCy - 4 * nScale, Math.min(nCy + 4 * nScale, py_n));
+
+    ctx.beginPath();
+    ctx.arc(dispX, dispY, 7, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.fillStyle = '#f97316';
+    ctx.font = 'bold 14px serif';
+    ctx.fillText(`φ(p) = (${u.toFixed(2)}, ${v.toFixed(2)})`, dispX + 12, dispY - 10);
+
+    // ω form on N (ω = u du + v dv) as vector field
+    ctx.save();
+    ctx.globalAlpha = 0.3;
+    for (let gu = -2; gu <= 4; gu += 1) {
+        for (let gv = -3; gv <= 3; gv += 1) {
+            const ol = Math.sqrt(gu * gu + gv * gv);
+            if (ol < 0.1) continue;
+            const os = Math.min(40 / ol, 15);
+            const ox = nCx + gu * nScale;
+            const oy = nCy - gv * nScale;
+            const odx = gu * os;
+            const ody = -gv * os;
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(ox, oy);
+            ctx.lineTo(ox + odx, oy + ody);
+            ctx.stroke();
+            drawArrowHead(ctx, ox + odx, oy + ody, Math.atan2(ody, odx), '#22c55e', 6);
+        }
+    }
+    ctx.restore();
+
+    // ω at φ(p)
+    const omLen = Math.sqrt(u * u + v * v);
+    if (omLen > 0.01) {
+        const os2 = Math.min(50 / omLen, 20);
+        const odx2 = u * os2;
+        const ody2 = -v * os2;
+        ctx.strokeStyle = '#22c55e';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(dispX, dispY);
+        ctx.lineTo(dispX + odx2, dispY + ody2);
+        ctx.stroke();
+        drawArrowHead(ctx, dispX + odx2, dispY + ody2, Math.atan2(ody2, odx2), '#22c55e', 10);
+        ctx.fillStyle = '#22c55e';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText('ω', dispX + odx2 + 8, dispY + ody2 - 5);
+    }
+
+    // φ arrow between planes
+    ctx.save();
+    ctx.setLineDash([8, 6]);
+    ctx.strokeStyle = '#a855f7';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(mCx + 2 * scale + 20, mCy - 60);
+    ctx.quadraticCurveTo(550, mCy - 130, nCx - 3 * nScale - 20, nCy - 60);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // arrowhead
+    drawArrowHead(ctx, nCx - 3 * nScale - 20, nCy - 60, Math.atan2(20, 40), '#a855f7', 10);
+    ctx.fillStyle = '#a855f7';
+    ctx.font = 'bold 18px serif';
+    ctx.fillText('φ(x,y) = (x², xy)', 460, mCy - 135);
+    ctx.restore();
+
+    // Connecting line from p to φ(p)
+    ctx.save();
+    ctx.globalAlpha = 0.3;
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = '#a855f7';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(px_m, py_m);
+    ctx.quadraticCurveTo(550, Math.min(py_m, dispY) - 40, dispX, dispY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Update explanation
+    exExpl.innerHTML = `
+        <strong>Punkt:</strong> p = (${x.toFixed(2)}, ${y.toFixed(2)}) &nbsp;→&nbsp;
+        φ(p) = (${u.toFixed(2)}, ${v.toFixed(2)})<br>
+        <strong>ω am Punkt φ(p):</strong> ${u.toFixed(2)}·du + ${v.toFixed(2)}·dv<br>
+        <strong>φ*ω am Punkt p:</strong> <span style="color:#facc15">(${coeff_dx.toFixed(2)}) dx + (${coeff_dy.toFixed(2)}) dy</span><br>
+        <span style="color:#888; font-size:0.92em;">Die gelben Pfeile auf M zeigen die Pullback-Form φ*ω als Kovektorfeld.</span>
+    `;
+}
+
+xSlider.addEventListener('input', () => { if (!isAnimating) drawExample(); });
+ySlider.addEventListener('input', () => { if (!isAnimating) drawExample(); });
+
+animateBtn.addEventListener('click', () => {
+    isAnimating = !isAnimating;
+    animateBtn.textContent = isAnimating ? '⏸ Stopp' : '▶ Animieren';
+    if (isAnimating) animateExample();
+});
+
+function animateExample() {
+    if (!isAnimating) return;
+    animAngle += 0.02;
+    const r = 1.2;
+    xSlider.value = (r * Math.cos(animAngle)).toFixed(2);
+    ySlider.value = (r * Math.sin(animAngle)).toFixed(2);
+    drawExample();
+    animRAF2 = requestAnimationFrame(animateExample);
+}
+
+drawExample();
+
+
+// ============================================================
+//  COMMUTATIVE DIAGRAM (Section 6)
+// ============================================================
+const comCanvas = document.getElementById('comDiagram');
+const comCtx = comCanvas.getContext('2d');
+
+function drawCommDiagram() {
+    const W = comCanvas.width, H = comCanvas.height;
+    const ctx = comCtx;
+    ctx.clearRect(0, 0, W, H);
+
+    const cx = W / 2, cy = H / 2;
+
+    // Positions of the four nodes
+    const nodes = {
+        TpM:  { x: cx - 280, y: cy - 100, label: 'TₚM',         color: '#00c6ff' },
+        TqN:  { x: cx + 280, y: cy - 100, label: 'T_{φ(p)}N',   color: '#f97316' },
+        R1:   { x: cx - 280, y: cy + 100, label: 'ℝ',            color: '#facc15' },
+        R2:   { x: cx + 280, y: cy + 100, label: 'ℝ',            color: '#22c55e' },
+    };
+
+    // Background boxes
+    ctx.save();
+    for (const key in nodes) {
+        const n = nodes[key];
+        ctx.fillStyle = 'rgba(255,255,255,0.04)';
+        ctx.beginPath();
+        ctx.roundRect(n.x - 60, n.y - 30, 120, 60, 12);
+        ctx.fill();
+        ctx.strokeStyle = n.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = n.color;
+        ctx.font = 'bold 22px serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(n.label, n.x, n.y);
+    }
+    ctx.restore();
+
+    // Arrows
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // TpM → TqN  (dφ)
+    drawStraightArrow(ctx, nodes.TpM.x + 65, nodes.TpM.y, nodes.TqN.x - 65, nodes.TqN.y, '#a855f7', 2.5);
+    ctx.fillStyle = '#a855f7';
+    ctx.font = 'bold 20px serif';
+    ctx.fillText('dφₚ', cx, nodes.TpM.y - 18);
+
+    // TqN → R2  (ω)
+    drawStraightArrow(ctx, nodes.TqN.x, nodes.TqN.y + 35, nodes.R2.x, nodes.R2.y - 35, '#22c55e', 2.5);
+    ctx.fillStyle = '#22c55e';
+    ctx.font = 'bold 20px serif';
+    ctx.fillText('ω_{φ(p)}', nodes.TqN.x + 55, cy);
+
+    // TpM → R1  (φ*ω)
+    drawStraightArrow(ctx, nodes.TpM.x, nodes.TpM.y + 35, nodes.R1.x, nodes.R1.y - 35, '#facc15', 2.5);
+    ctx.fillStyle = '#facc15';
+    ctx.font = 'bold 20px serif';
+    ctx.fillText('(φ*ω)ₚ', nodes.TpM.x - 65, cy);
+
+    // R1 → R2  (=)
+    drawStraightArrow(ctx, nodes.R1.x + 65, nodes.R1.y, nodes.R2.x - 65, nodes.R2.y, '#888', 2, true);
+    ctx.fillStyle = '#888';
+    ctx.font = 'bold 22px serif';
+    ctx.fillText('=', cx, nodes.R1.y + 22);
+
+    // "Kommutiert!" label
+    ctx.fillStyle = 'rgba(168, 85, 247, 0.6)';
+    ctx.font = 'italic 18px sans-serif';
+    ctx.fillText('Das Diagramm kommutiert!', cx, cy + 2);
+}
+
+function drawStraightArrow(ctx, x1, y1, x2, y2, color, lw, dashed) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lw;
+    if (dashed) ctx.setLineDash([8, 5]);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    drawArrowHead(ctx, x2, y2, angle, color, 11);
+    ctx.restore();
+}
+
+drawCommDiagram();
+
+
+// ============================================================
+//  Handle canvas resize for sharpness
+// ============================================================
+function handleResize() {
+    const canvases = [
+        { el: diagCanvas, draw: () => drawDiagram(animT) },
+        { el: exCanvas, draw: drawExample },
+        { el: comCanvas, draw: drawCommDiagram }
+    ];
+    canvases.forEach(({ el, draw }) => {
+        const rect = el.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        el.width = rect.width * dpr;
+        el.height = (el === diagCanvas ? 520 : el === exCanvas ? 500 : 340) * (rect.width / (el === diagCanvas ? 1100 : el === exCanvas ? 1100 : 1100)) * dpr;
+        el.getContext('2d').scale(dpr * rect.width / 1100, dpr * rect.width / 1100);
+        draw();
+    });
+}
+
+// Initial draw is already done; resize on window change
+window.addEventListener('resize', handleResize);
+
+</script>
+</body>
+</html>
