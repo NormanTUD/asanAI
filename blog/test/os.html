@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Betriebssysteme – Visuell erklärt</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a2e;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+        #header {
+            text-align: center;
+            padding: 30px 20px 10px;
+            background: linear-gradient(135deg, #0a0a2e, #1a1a4e);
+        }
+        #header h1 {
+            font-size: 2.4em;
+            background: linear-gradient(90deg, #00d2ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        #header p { color: #aaa; font-size: 1.1em; }
+        #nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            background: #0d0d35;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #222;
+        }
+        .nav-btn {
+            padding: 10px 20px;
+            border: 2px solid #7b2ff7;
+            background: transparent;
+            color: #ccc;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover, .nav-btn.active {
+            background: #7b2ff7;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(123, 47, 247, 0.5);
+        }
+        .section {
+            display: none;
+            padding: 30px 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .section.active { display: block; }
+        .section h2 {
+            font-size: 1.8em;
+            color: #00d2ff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .section p {
+            font-size: 1.05em;
+            line-height: 1.7;
+            color: #bbb;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border-radius: 12px;
+            background: #111133;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.15);
+        }
+        .info-box {
+            background: rgba(123, 47, 247, 0.1);
+            border-left: 4px solid #7b2ff7;
+            padding: 15px 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        #processTable {
+            width: 100%;
+            max-width: 700px;
+            margin: 15px auto;
+            border-collapse: collapse;
+        }
+        #processTable th, #processTable td {
+            padding: 8px 12px;
+            border: 1px solid #333;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        #processTable th {
+            background: #7b2ff7;
+            color: #fff;
+        }
+        #processTable td { color: #ccc; }
+        .btn-action {
+            display: block;
+            margin: 15px auto;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #00d2ff, #7b2ff7);
+            border: none;
+            color: #fff;
+            font-size: 1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-action:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <h1>🖥️ Betriebssysteme – Visuell erklärt</h1>
+    <p>Interaktive Canvas-Visualisierungen zum Verstehen von OS-Konzepten</p>
+</div>
+
+<div id="nav">
+    <button class="nav-btn active" onclick="showSection(0)">Was ist ein OS?</button>
+    <button class="nav-btn" onclick="showSection(1)">Schichtenmodell</button>
+    <button class="nav-btn" onclick="showSection(2)">Prozesse & Scheduling</button>
+    <button class="nav-btn" onclick="showSection(3)">Speicherverwaltung</button>
+    <button class="nav-btn" onclick="showSection(4)">Dateisystem</button>
+    <button class="nav-btn" onclick="showSection(5)">I/O & Treiber</button>
+    <button class="nav-btn" onclick="showSection(6)">Bekannte OS</button>
+</div>
+
+<!-- ==================== SECTION 0: Was ist ein OS? ==================== -->
+<div class="section active" id="sec0">
+    <h2>Was ist ein Betriebssystem?</h2>
+    <p>Ein Betriebssystem (Operating System, OS) ist die zentrale Software, die zwischen der Hardware und den Anwendungen vermittelt. Es verwaltet Ressourcen, steuert Prozesse und bietet eine Schnittstelle für den Benutzer.</p>
+    <canvas id="canvasIntro" width="900" height="500"></canvas>
+    <div class="info-box">
+        <strong>Kernaufgaben eines Betriebssystems:</strong><br>
+        🔹 <strong>Prozessverwaltung</strong> – Starten, Stoppen und Koordinieren von Programmen<br>
+        🔹 <strong>Speicherverwaltung</strong> – Zuweisung und Schutz von Arbeitsspeicher (RAM)<br>
+        🔹 <strong>Dateisystemverwaltung</strong> – Organisation von Dateien auf Datenträgern<br>
+        🔹 <strong>Geräteverwaltung</strong> – Kommunikation mit Hardware über Treiber<br>
+        🔹 <strong>Benutzerschnittstelle</strong> – GUI oder Kommandozeile für Interaktion
+    </div>
+</div>
+
+<!-- ==================== SECTION 1: Schichtenmodell ==================== -->
+<div class="section" id="sec1">
+    <h2>Das Schichtenmodell eines OS</h2>
+    <p>Ein Betriebssystem ist in Schichten aufgebaut – von der Hardware ganz unten bis zur Benutzeroberfläche ganz oben. Jede Schicht baut auf der darunterliegenden auf.</p>
+    <canvas id="canvasLayers" width="900" height="600"></canvas>
+    <div class="info-box">
+        <strong>Kernel-Modus vs. User-Modus:</strong><br>
+        Der <strong>Kernel</strong> läuft im privilegierten Modus und hat direkten Zugriff auf die Hardware. Anwendungen laufen im <strong>User-Modus</strong> und müssen über <strong>System Calls</strong> (Systemaufrufe) auf Kernel-Funktionen zugreifen. Diese Trennung schützt das System vor fehlerhaften oder bösartigen Programmen.
+    </div>
+</div>
+
+<!-- ==================== SECTION 2: Prozesse & Scheduling ==================== -->
+<div class="section" id="sec2">
+    <h2>Prozesse & CPU-Scheduling</h2>
+    <p>Das OS verwaltet mehrere Prozesse gleichzeitig. Der Scheduler entscheidet, welcher Prozess wann die CPU nutzen darf. Hier siehst du eine Round-Robin-Simulation.</p>
+    <canvas id="canvasScheduler" width="900" height="420"></canvas>
+    <button class="btn-action" onclick="startScheduler()">▶ Scheduling starten</button>
+    <button class="btn-action" onclick="resetScheduler()" style="background: linear-gradient(135deg, #ff4444, #cc0000);">⟳ Reset</button>
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#00e676;"></div> Running</div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffd740;"></div> Ready</div>
+        <div class="legend-item"><div class="legend-color" style="background:#ff5252;"></div> Waiting</div>
+        <div class="legend-item"><div class="legend-color" style="background:#666;"></div> Finished</div>
+    </div>
+    <div class="info-box">
+        <strong>Round-Robin-Scheduling:</strong> Jeder Prozess bekommt eine feste Zeitscheibe (Time Quantum). Ist die Zeit abgelaufen, wird der nächste Prozess ausgeführt. So wird Fairness gewährleistet – kein Prozess „verhungert".
+    </div>
+</div>
+
+<!-- ==================== SECTION 3: Speicherverwaltung ==================== -->
+<div class="section" id="sec3">
+    <h2>Speicherverwaltung & Virtueller Speicher</h2>
+    <p>Das OS teilt den physischen RAM in Seiten (Pages) auf und ordnet sie virtuellen Adressen zu. So hat jeder Prozess seinen eigenen Adressraum.</p>
+    <canvas id="canvasMemory" width="900" height="520"></canvas>
+    <button class="btn-action" onclick="allocateMemory()">📦 Speicher zuweisen</button>
+    <button class="btn-action" onclick="freeMemory()" style="background: linear-gradient(135deg, #ff9800, #f44336);">🗑️ Speicher freigeben</button>
+    <button class="btn-action" onclick="resetMemory()" style="background: linear-gradient(135deg, #ff4444, #cc0000);">⟳ Reset</button>
+    <div class="info-box">
+        <strong>Paging:</strong> Der Speicher wird in gleich große Blöcke (Pages) aufgeteilt. Die <strong>Page Table</strong> bildet virtuelle auf physische Adressen ab. Wenn der RAM voll ist, werden selten genutzte Seiten auf die Festplatte ausgelagert (<strong>Swapping</strong>).
+    </div>
+</div>
+
+<!-- ==================== SECTION 4: Dateisystem ==================== -->
+<div class="section" id="sec4">
+    <h2>Dateisystem – Baumstruktur</h2>
+    <p>Das Dateisystem organisiert Daten hierarchisch in Verzeichnissen und Dateien. Hier siehst du eine typische Verzeichnisstruktur.</p>
+    <canvas id="canvasFS" width="900" height="550"></canvas>
+    <div class="info-box">
+        <strong>Bekannte Dateisysteme:</strong><br>
+        🔹 <strong>NTFS</strong> – Standard unter Windows, unterstützt Berechtigungen und Journaling<br>
+        🔹 <strong>ext4</strong> – Standard unter Linux, robust und performant<br>
+        🔹 <strong>APFS</strong> – Apples modernes Dateisystem mit Verschlüsselung<br>
+        🔹 <strong>FAT32</strong> – Einfach und universell kompatibel, aber begrenzt auf 4 GB Dateigröße
+    </div>
+</div>
+
+<!-- ==================== SECTION 5: I/O & Treiber ==================== -->
+<div class="section" id="sec5">
+    <h2>I/O-System & Gerätetreiber</h2>
+    <p>Das OS kommuniziert über Treiber mit der Hardware. Treiber übersetzen generische OS-Befehle in gerätespezifische Anweisungen.</p>
+    <canvas id="canvasIO" width="900" height="500"></canvas>
+    <button class="btn-action" onclick="sendIORequest()">📡 I/O-Anfrage senden</button>
+    <div class="info-box">
+        <strong>Interrupt-basierte I/O:</strong><br>
+        Wenn ein Gerät bereit ist (z.B. Daten empfangen hat), sendet es einen <strong>Interrupt</strong> an die CPU. Die CPU unterbricht den aktuellen Prozess, führt den <strong>Interrupt-Handler</strong> aus und kehrt dann zum Prozess zurück. Das ist effizienter als ständiges Abfragen (Polling).
+    </div>
+</div>
+
+<!-- ==================== SECTION 6: Bekannte OS ==================== -->
+<div class="section" id="sec6">
+    <h2>Bekannte Betriebssysteme im Vergleich</h2>
+    <p>Es gibt viele verschiedene Betriebssysteme für unterschiedliche Einsatzzwecke – vom Desktop über Server bis hin zu Smartphones.</p>
+    <canvas id="canvasOS" width="900" height="520"></canvas>
+    <div class="info-box">
+        <strong>Kernel-Typen:</strong><br>
+        🔹 <strong>Monolithischer Kernel</strong> (Linux) – Alle OS-Dienste laufen im Kernel-Space → schnell, aber komplex<br>
+        🔹 <strong>Mikrokernel</strong> (MINIX, QNX) – Nur Basisfunktionen im Kernel, Rest im User-Space → sicherer, aber langsamer<br>
+        🔹 <strong>Hybridkernel</strong> (Windows NT, macOS XNU) – Kombination aus beiden Ansätzen
+    </div>
+</div>
+
+<script>
+// ===================== NAVIGATION =====================
+const sections = document.querySelectorAll('.section');
+const navBtns = document.querySelectorAll('.nav-btn');
+
+function showSection(idx) {
+    sections.forEach((s, i) => {
+        s.classList.toggle('active', i === idx);
+    });
+    navBtns.forEach((b, i) => {
+        b.classList.toggle('active', i === idx);
+    });
+    // Trigger drawing for the section
+    drawFunctions[idx]();
+}
+
+// ===================== HELPER =====================
+function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+    if (fill) { ctx.fill(); }
+    if (stroke) { ctx.stroke(); }
+}
+
+function drawArrow(ctx, fromX, fromY, toX, toY, color = '#00d2ff') {
+    const headLen = 12;
+    const angle = Math.atan2(toY - fromY, toX - fromX);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(toX, toY);
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(toX, toY);
+    ctx.lineTo(toX - headLen * Math.cos(angle - Math.PI / 6), toY - headLen * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(toX - headLen * Math.cos(angle + Math.PI / 6), toY - headLen * Math.sin(angle + Math.PI / 6));
+    ctx.closePath();
+    ctx.fill();
+}
+
+// ===================== SECTION 0: Intro =====================
+function drawIntro() {
+    const c = document.getElementById('canvasIntro');
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    // Background gradient
+    const bg = ctx.createLinearGradient(0, 0, 0, c.height);
+    bg.addColorStop(0, '#0d0d35');
+    bg.addColorStop(1, '#1a0a3e');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    // User at top
+    ctx.fillStyle = '#00d2ff';
+    ctx.font = 'bold 18px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('👤 Benutzer', 450, 40);
+
+    // Applications
+    const apps = ['Browser', 'Editor', 'Spiel', 'Terminal'];
+    const appColors = ['#4fc3f7', '#81c784', '#ffb74d', '#ce93d8'];
+    apps.forEach((app, i) => {
+        const x = 130 + i * 180;
+        ctx.fillStyle = appColors[i];
+        ctx.globalAlpha = 0.9;
+        roundRect(ctx, x, 70, 140, 50, 10, true, false);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = '#111';
+        ctx.font = 'bold 15px Segoe UI';
+        ctx.fillText(app, x + 70, 100);
+    });
+
+    // Arrow from user to apps
+    drawArrow(ctx, 450, 48, 450, 68, '#00d2ff');
+
+    // OS Box
+    ctx.fillStyle = '#7b2ff7';
+    ctx.globalAlpha = 0.85;
+    roundRect(ctx, 100, 160, 700, 180, 15, true, false);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 22px Segoe UI';
+    ctx.fillText('⚙️ Betriebssystem (OS)', 450, 195);
+
+    // OS sub-components
+    const comps = [
+        { label: 'Prozess-\nverwaltung', x: 140, color: '#00e676' },
+        { label: 'Speicher-\nverwaltung', x: 300, color: '#ffd740' },
+        { label: 'Datei-\nsystem', x: 460, color: '#ff8a65' },
+        { label: 'Geräte-\nverwaltung', x: 620, color: '#80deea' }
+    ];
+    comps.forEach(comp => {
+        ctx.fillStyle = comp.color;
+        ctx.globalAlpha = 0.8;
+        roundRect(ctx, comp.x, 215, 140, 55, 8, true, false);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = '#111';
+        ctx.font = 'bold 13px Segoe UI';
+        const lines = comp.label.split('\n');
+        lines.forEach((line, li) => {
+            ctx.fillText(line, comp.x + 70, 238 + li * 16);
+        });
+    });
+
+    // System Calls label
+    ctx.fillStyle = '#ff5252';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillText('▼ System Calls ▼', 450, 155);
+
+    // Arrows from apps to OS
+    apps.forEach((_, i) => {
+        drawArrow(ctx, 130 + i * 180 + 70, 122, 130 + i * 180 + 70, 158, '#ff5252');
+    });
+
+    // Arrow from OS to Hardware
+    drawArrow(ctx, 450, 342, 450, 370, '#ffd740');
+    ctx.fillStyle = '#ffd740';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillText('▼ Treiber / HAL ▼', 450, 365);
+
+    // Hardware
+    const hw = ['🖥️ CPU', '🧠 RAM', '💾 Disk', '🖨️ I/O'];
+    const hwColors = ['#ef5350', '#ab47bc', '#42a5f5', '#66bb6a'];
+    hw.forEach((h, i) => {
+        const x = 130 + i * 180;
+        ctx.fillStyle = hwColors[i];
+        ctx.globalAlpha = 0.85;
+        roundRect(ctx, x, 385, 140, 55, 10, true, false);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 16px Segoe UI';
+        ctx.fillText(h, x + 70, 418);
+    });
+
+    // Label
+    ctx.fillStyle = '#666';
+    ctx.font = '13px Segoe UI';
+    ctx.fillText('Das OS ist die Vermittlungsschicht zwischen Anwendungen und Hardware', 450, 475);
+}
+
+// ===================== SECTION 1: Layers =====================
+function drawLayers() {
+    const c = document.getElementById('canvasLayers');
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    const bg = ctx.createLinearGradient(0, 0, 0, c.height);
+    bg.addColorStop(0, '#0d0d35');
+    bg.addColorStop(1, '#1a0a3e');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    const layers = [
+        { label: '👤 Benutzer / GUI / Shell', color: '#4fc3f7', desc: 'Interaktion mit dem System' },
+        { label: '📱 Anwendungen (User-Space)', color: '#81c784', desc: 'Browser, Office, Spiele ...' },
+        { label: '📚 System-Bibliotheken (libc, Win32 API)', color: '#ce93d8', desc: 'Standardfunktionen für Programme' },
+        { label: '🔌 System Call Interface', color: '#ff8a65', desc: 'Schnittstelle zum Kernel' },
+        { label: '⚙️ Kernel (Prozesse, Speicher, FS, Netzwerk)', color: '#7b2ff7', desc: 'Herz des Betriebssystems' },
+        { label: '🔧 Gerätetreiber', color: '#ffd740', desc: 'Übersetzung für Hardware' },
+        { label: '🖥️ Hardware (CPU, RAM, Disk, Netzwerk)', color: '#ef5350', desc: 'Physische Komponenten' }
+    ];
+
+    const startY = 30;
+    const layerH = 68;
+    const gap = 8;
+    const baseW = 820;
+    const shrink = 20;
+
+    layers.forEach((layer, i) => {
+        const w = baseW - i * shrink;
+        const x = (c.width - w) / 2;
+        const y = startY + i * (layerH + gap);
+
+        // Layer box
+        ctx.fillStyle = layer.color;
+        ctx.globalAlpha = 0.2;
+        roundRect(ctx, x, y, w, layerH, 10, true, false);
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = layer.color;
+        ctx.lineWidth = 2;
+        roundRect(ctx, x, y, w, layerH, 10, false, true);
+
+        // Label
+        ctx.fillStyle = layer.color;
+        ctx.font = 'bold 16px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(layer.label, c.width / 2, y + 30);
+
+        // Description
+        ctx.fillStyle = '#999';
+        ctx.font = '13px Segoe UI';
+        ctx.fillText(layer.desc, c.width / 2, y + 52);
+
+        // Divider line (kernel mode)
+        if (i === 3) {
+            ctx.setLineDash([8, 4]);
+            ctx.strokeStyle = '#ff5252';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(30, y + layerH + gap / 2);
+            ctx.lineTo(c.width - 30, y + layerH + gap / 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#ff5252';
+            ctx.font = 'bold 12px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText('── User Mode ↑', 35, y + layerH + gap / 2 - 5);
+            ctx.fillText('── Kernel Mode ↓', 35, y + layerH + gap / 2 + 15);
+            ctx.textAlign = 'center';
+        }
+    });
+}
+
+// ===================== SECTION 2: Scheduler =====================
+let schedulerInterval = null;
+let processes = [];
+let currentTick = 0;
+let currentProcess = 0;
+const TIME_QUANTUM = 3;
+let quantumCounter = 0;
+
+function initProcesses() {
+    processes = [
+        { name: 'Firefox', burst: 8, remaining: 8, color: '#4fc3f7', status: 'ready', history: [] },
+        { name: 'VSCode', burst: 5, remaining: 5, color: '#81c784', status: 'ready', history: [] },
+        { name: 'Spotify', burst: 6, remaining: 6, color: '#ce93d8', status: 'ready', history: [] },
+        { name: 'Terminal', burst: 4, remaining: 4, color: '#ffb74d', status: 'ready', history: [] },
+    ];
+    currentTick = 0;
+    currentProcess = 0;
+    quantumCounter = 0;
+}
+initProcesses();
+
+function drawScheduler() {
+    const c = document.getElementById('canvasScheduler');
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    const bg = ctx.createLinearGradient(0, 0, 0, c.height);
+    bg.addColorStop(0, '#0d0d35');
+    bg.addColorStop(1, '#1a0a3e');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    ctx.fillStyle = '#00d2ff';
+    ctx.font = 'bold 18px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Round-Robin CPU Scheduler (Zeitquantum = ' + TIME_QUANTUM + ')', 450, 30);
+
+    // Process bars
+    processes.forEach((p, i) => {
+        const y = 60 + i * 80;
+
+        // Status color
+        let statusColor = '#ffd740';
+        if (p.status === 'running') statusColor = '#00e676';
+        else if (p.status === 'waiting') statusColor = '#ff5252';
+        else if (p.status === 'finished') statusColor = '#666';
+
+        // Name
+        ctx.fillStyle = p.color;
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.textAlign = 'left';
+        ctx.fillText(p.name, 20, y + 15);
+
+        // Status badge
+        ctx.fillStyle = statusColor;
+        ctx.globalAlpha = 0.3;
+        roundRect(ctx, 20, y + 22, 80, 22, 5, true, false);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = statusColor;
+        ctx.font = '12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(p.status.toUpperCase(), 60, y + 37);
+
+        // Progress bar background
+        ctx.fillStyle = '#222';
+        roundRect(ctx, 130, y + 5, 500, 25, 6, true, false);
+
+        // Progress bar fill
+        const progress = (p.burst - p.remaining) / p.burst;
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = 0.7;
+        if (progress > 0) {
+            roundRect(ctx, 130, y + 5, 500 * progress, 25, 6, true, false);
+        }
+        ctx.globalAlpha = 1;
+
+        // Progress text
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${p.burst - p.remaining} / ${p.burst} Ticks`, 380, y + 22);
+
+        // Timeline
+        const tlY = y + 40;
+        p.history.forEach((h, ti) => {
+            const tx = 130 + ti * 22;
+            if (tx > 620) return;
+            ctx.fillStyle = h === 'run' ? '#00e676'
+                : h === 'wait' ? '#ff5252'
+                : h === 'ready' ? '#ffd740'
+                : '#444';
+            ctx.fillRect(tx, tlY, 18, 12);
+            ctx.strokeStyle = '#111';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(tx, tlY, 18, 12);
+        });
+    });
+
+    // Tick counter
+    ctx.fillStyle = '#aaa';
+    ctx.font = '14px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('Tick: ' + currentTick, 700, 30);
+}
+
+function schedulerTick() {
+    const allDone = processes.every(p => p.status === 'finished');
+    if (allDone) {
+        clearInterval(schedulerInterval);
+        schedulerInterval = null;
+        return;
+    }
+
+    // Find next non-finished process
+    let attempts = 0;
+    while (processes[currentProcess].status === 'finished' && attempts < processes.length) {
+        currentProcess = (currentProcess + 1) % processes.length;
+        attempts++;
+    }
+    if (attempts >= processes.length) return;
+
+    // Set all non-finished to ready
+    processes.forEach(p => {
+        if (p.status !== 'finished') p.status = 'ready';
+    });
+
+    // Current process runs
+    const p = processes[currentProcess];
+    p.status = 'running';
+    p.remaining--;
+
+    // Record history
+    processes.forEach((proc, i) => {
+        if (i === currentProcess) proc.history.push('run');
+        else if (proc.status === 'finished') proc.history.push('done');
+        else if (Math.random() < 0.2 && proc.status === 'ready') {
+            proc.history.push('wait');
+            proc.status = 'waiting';
+        }
+        else proc.history.push('ready');
+    });
+
+    if (p.remaining <= 0) {
+        p.status = 'finished';
+        quantumCounter = 0;
+        currentProcess = (currentProcess + 1) % processes.length;
+    } else {
+        quantumCounter++;
+        if (quantumCounter >= TIME_QUANTUM) {
+            quantumCounter = 0;
+            currentProcess = (currentProcess + 1) % processes.length;
+        }
+    }
+
+    currentTick++;
+    drawScheduler();
+}
+
+function startScheduler() {
+    if (schedulerInterval) return;
+    schedulerInterval = setInterval(schedulerTick, 600);
+}
+
+function resetScheduler() {
+    if (schedulerInterval) {
+        clearInterval(schedulerInterval);
+        schedulerInterval = null;
+    }
+    initProcesses();
+    drawScheduler();
+}
+
+// ===================== SECTION 3: Memory =====================
+const TOTAL_PAGES = 32;
+const PAGES_PER_ROW = 8;
+let memoryPages = [];
+let memoryProcesses = [
+    { name: 'Proc A', color: '#4fc3f7' },
+    { name: 'Proc B', color: '#81c784' },
+    { name: 'Proc C', color: '#ce93d8' },
+    { name: 'Proc D', color: '#ffb74d' },
+];
+let memAllocIndex = 0;
+
+function initMemory() {
+    memoryPages = [];
+    for (let i = 0; i < TOTAL_PAGES; i++) {
+        memoryPages.push({ owner: null, color: '#333' });
+    }
+    memAllocIndex = 0;
+}
+initMemory();
+
+function drawMemory() {
+    const c = document.getElementById('canvasMemory');
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    const bg = ctx.createLinearGradient(0, 0, 0, c.height);
+    bg.addColorStop(0, '#0d0d35');
+    bg.addColorStop(1, '#1a0a3e');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    ctx.fillStyle = '#00d2ff';
+    ctx.font = 'bold 18px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Physischer Speicher (RAM) – Seitenbasierte Verwaltung', 450, 30);
+
+    // Virtual address spaces on the left
+    ctx.fillStyle = '#aaa';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Virtuelle Adressräume', 150, 60);
+
+    memoryProcesses.forEach((proc, i) => {
+        const y = 80 + i * 95;
+        ctx.fillStyle = proc.color;
+        ctx.globalAlpha = 0.2;
+        roundRect(ctx, 30, y, 240, 75, 8, true, false);
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = proc.color;
+        ctx.lineWidth = 2;
+        roundRect(ctx, 30, y, 240, 75, 8, false, true);
+        ctx.fillStyle = proc.color;
+        ctx.font = 'bold 13px Segoe UI';
+        ctx.textAlign = 'left';
+        ctx.fillText(proc.name, 45, y + 20);
+
+        // Mini virtual pages
+        const pagesOwned = memoryPages.filter(p => p.owner === proc.name).length;
+        ctx.fillStyle = '#999';
+        ctx.font = '11px Segoe UI';
+        ctx.fillText('Seiten belegt: ' + pagesOwned, 45, y + 40);
+
+        // Small page blocks
+        for (let j = 0; j < 8; j++) {
+            const px = 45 + j * 26;
+            const py = y + 48;
+            ctx.fillStyle = j < pagesOwned ? proc.color : '#333';
+            ctx.globalAlpha = j < pagesOwned ? 0.7 : 0.3;
+            ctx.fillRect(px, py, 22, 18);
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(px, py, 22, 18);
+        }
+
+        // Arrow to physical memory
+        if (pagesOwned > 0) {
+            drawArrow(ctx, 270, y + 40, 380, 200, proc.color);
+        }
+    });
+
+    // Physical memory grid on the right
+    ctx.fillStyle = '#aaa';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Physischer RAM (Pages)', 600, 60);
+
+    const gridStartX = 400;
+    const gridStartY = 80;
+    const cellW = 55;
+    const cellH = 45;
+
+    memoryPages.forEach((page, i) => {
+        const row = Math.floor(i / PAGES_PER_ROW);
+        const col = i % PAGES_PER_ROW;
+        const x = gridStartX + col * (cellW + 4);
+        const y = gridStartY + row * (cellH + 4);
+
+        ctx.fillStyle = page.color;
+        ctx.globalAlpha = page.owner ? 0.7 : 0.2;
+        roundRect(ctx, x, y, cellW, cellH, 5, true, false);
+        ctx.globalAlpha = 1;
+
+        ctx.strokeStyle = page.owner ? page.color : '#444';
+        ctx.lineWidth = 1;
+        roundRect(ctx, x, y, cellW, cellH, 5, false, true);
+
+        // Page number
+        ctx.fillStyle = '#aaa';
+        ctx.font = '10px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('Page ' + i, x + cellW / 2, y + 18);
+
+        if (page.owner) {
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 10px Segoe UI';
+            ctx.fillText(page.owner, x + cellW / 2, y + 34);
+        }
+    });
+
+    // Stats
+    const used = memoryPages.filter(p => p.owner !== null).length;
+    const free = TOTAL_PAGES - used;
+    ctx.fillStyle = '#aaa';
+    ctx.font = '14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Belegt: ${used}/${TOTAL_PAGES} Seiten | Frei: ${free} Seiten | Auslastung: ${Math.round(used / TOTAL_PAGES * 100)}%`, 450, 500);
+}
+
+function allocateMemory() {
+    if (memAllocIndex >= memoryProcesses.length) memAllocIndex = 0;
+    const proc = memoryProcesses[memAllocIndex];
+    const count = 2 + Math.floor(Math.random() * 3);
+    let allocated = 0;
+    for (let i = 0; i < TOTAL_PAGES && allocated < count; i++) {
+        if (memoryPages[i].owner === null) {
+            memoryPages[i].owner = proc.name;
+            memoryPages[i].color = proc.color;
+            allocated++;
+        }
+    }
+    memAllocIndex++;
+    drawMemory();
+}
+
+function freeMemory() {
+    // Free random process pages
+    const owners = [...new Set(memoryPages.filter(p => p.owner).map(p => p.owner))];
+    if (owners.length === 0) return;
+    const target = owners[Math.floor(Math.random() * owners.length)];
+    memoryPages.forEach(p => {
+        if (p.owner === target) {
+            p.owner = null;
+            p.color = '#333';
+        }
+    });
+    drawMemory();
+}
+
+function resetMemory() {
+    initMemory();
+    drawMemory();
+}
+
+// ===================== SECTION 4: File System =====================
+function drawFileSystem() {
+    const c = document.getElementById('canvasFS');
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    const bg = ctx.createLinearGradient(0, 0, 0, c.height);
+    bg.addColorStop(0, '#0d0d35');
+    bg.addColorStop(1, '#1a0a3e');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    ctx.fillStyle = '#00d2ff';
+    ctx.font = 'bold 18px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Dateisystem – Hierarchische Baumstruktur', 450, 30);
+
+    const tree = {
+        name: '/ (Root)', x: 450, y: 70, color: '#ff8a65',
+        children: [
+            {
+                name: '/home', x: 150, y: 170, color: '#4fc3f7',
+                children: [
+                    {
+                        name: '/home/user', x: 80, y: 270, color: '#81c784',
+                        children: [
+                            { name: 'dokumente/', x: 30, y: 370, color: '#ffd740', children: [
+                                { name: 'brief.txt', x: 10, y: 460, color: '#aaa', children: [] },
+                                { name: 'foto.jpg', x: 80, y: 460, color: '#aaa', children: [] }
+                            ]},
+                            { name: 'musik/', x: 150, y: 370, color: '#ffd740', children: [
+                                { name: 'song.mp3', x: 150, y: 460, color: '#aaa', children: [] }
+                            ]}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: '/etc', x: 370, y: 170, color: '#ce93d8',
+                children: [
+                    { name: 'config.cfg', x: 330, y: 270, color: '#aaa', children: [] },
+                    { name: 'passwd', x: 410, y: 270, color: '#aaa', children: [] }
+                ]
+            },
+            {
+                name: '/usr', x: 570, y: 170, color: '#4fc3f7',
+                children: [
+                    { name: '/usr/bin', x: 530, y: 270, color: '#81c784', children: [
+                        { name: 'python3', x: 500, y: 370, color: '#aaa', children: [] },
+                        { name: 'gcc', x: 570, y: 370, color: '#aaa', children: [] }
+                    ]},
+                    { name: '/usr/lib', x: 640, y: 270, color: '#81c784', children: [
+                        { name: 'libc.so', x: 640, y: 370, color: '#aaa', children: [] }
+                    ]}
+                ]
+            },
+            {
+                name: '/dev', x: 770, y: 170, color: '#ce93d8',
+                children: [
+                    { name: 'sda1', x: 730, y: 270, color: '#aaa', children: [] },
+                    { name: 'null', x: 810, y: 270, color: '#aaa', children: [] }
+                ]
+            }
+        ]
+    };
+
+    function drawNode(node) {
+        // Draw connections to children
+        node.children.forEach(child => {
+            ctx.strokeStyle = '#444';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y + 18);
+            ctx.lineTo(child.x, child.y - 10);
+            ctx.stroke();
+            drawNode(child);
+        });
+
+        // Node box
+        const isDir = node.name.endsWith('/') || node.name.startsWith('/');
+        const icon = isDir ? '📁' : '📄';
+        const textW = ctx.measureText(node.name).width;
+        const boxW = Math.max(textW + 40, 70);
+
+        ctx.fillStyle = node.color;
+        ctx.globalAlpha = 0.2;
+        roundRect(ctx, node.x - boxW / 2, node.y - 12, boxW, 30, 6, true, false);
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = node.color;
+        ctx.lineWidth = 1.5;
+        roundRect(ctx, node.x - boxW / 2, node.y - 12, boxW, 30, 6, false, true);
+
+        ctx.fillStyle = node.color;
+        ctx.font = '12px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(icon + ' ' + node.name, node.x, node.y + 7);
+    }
+
+    drawNode(tree);
+
+    ctx.fillStyle = '#666';
+    ctx.font = '13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('📁 = Verzeichnis (Directory)    📄 = Datei (File)', 450, 530);
+}
+
+// ===================== SECTION 5: I/O =====================
+let ioAnimating = false;
+let ioStep = 0;
+let ioInterval = null;
+
+function drawIO() {
+    const c = document.getElementById('canvasIO');
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    const bg = ctx.createLinearGradient(0, 0, 0, c.height);
+    bg.addColorStop(0, '#0d0d35');
+    bg.addColorStop(1, '#1a0a3e');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    ctx.fillStyle = '#00d2ff';
+    ctx.font = 'bold 18px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('I/O-System: Vom Programm zur Hardware', 450, 30);
+
+    const stages = [
+        { label: '📱 Anwendung', sub: 'read("datei.txt")', x: 450, y: 70, w: 200, h: 55, color: '#4fc3f7' },
+        { label: '🔌 System Call', sub: 'sys_read(fd, buf, n)', x: 450, y: 155, w: 200, h: 55, color: '#ff8a65' },
+        { label: '⚙️ Kernel / VFS', sub: 'Virtual File System', x: 450, y: 240, w: 200, h: 55, color: '#7b2ff7' },
+        { label: '🔧 Gerätetreiber', sub: 'SATA / NVMe Driver', x: 450, y: 325, w: 200, h: 55, color: '#ffd740' },
+        { label: '💾 Hardware', sub: 'SSD / HDD', x: 450, y: 410, w: 200, h: 55, color: '#ef5350' },
+    ];
+
+    stages.forEach((s, i) => {
+        const isActive = ioAnimating && ioStep === i;
+        const glow = isActive ? 0.9 : 0.3;
+
+        ctx.fillStyle = s.color;
+        ctx.globalAlpha = glow;
+        roundRect(ctx, s.x - s.w / 2, s.y, s.w, s.h, 10, true, false);
+        ctx.globalAlpha = 1;
+
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = isActive ? 3 : 1.5;
+        roundRect(ctx, s.x - s.w / 2, s.y, s.w, s.h, 10, false, true);
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(s.label, s.x, s.y + 22);
+
+        ctx.fillStyle = '#ccc';
+        ctx.font = '12px Segoe UI';
+        ctx.fillText(s.sub, s.x, s.y + 42);
+
+        // Arrow to next
+        if (i < stages.length - 1) {
+            const arrowColor = (ioAnimating && ioStep === i) ? '#00e676' : '#555';
+            drawArrow(ctx, s.x, s.y + s.h + 2, stages[i + 1].x, stages[i + 1].y - 2, arrowColor);
+        }
+    });
+
+    // Interrupt arrow (right side)
+    if (ioAnimating && ioStep >= stages.length) {
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = '#ff5252';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(580, 435);
+        ctx.lineTo(700, 435);
+        ctx.lineTo(700, 95);
+        ctx.lineTo(580, 95);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = '#ff5252';
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('⚡ Interrupt!', 700, 260);
+        ctx.fillText('Daten bereit!', 700, 280);
+
+        // Completion glow
+        ctx.fillStyle = '#00e676';
+        ctx.font = 'bold 16px Segoe UI';
+        ctx.fillText('✅ I/O abgeschlossen!', 450, 490);
+    }
+
+    // Devices on the left
+    const devices = [
+        { icon: '⌨️', name: 'Tastatur', y: 100 },
+        { icon: '🖱️', name: 'Maus', y: 170 },
+        { icon: '🖨️', name: 'Drucker', y: 240 },
+        { icon: '🌐', name: 'Netzwerk', y: 310 },
+        { icon: '🔊', name: 'Audio', y: 380 },
+    ];
+
+    devices.forEach(d => {
+        ctx.fillStyle = '#333';
+        ctx.globalAlpha = 0.5;
+        roundRect(ctx, 30, d.y, 110, 45, 8, true, false);
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 1;
+        roundRect(ctx, 30, d.y, 110, 45, 8, false, true);
+        ctx.fillStyle = '#ccc';
+        ctx.font = '13px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(d.icon + ' ' + d.name, 85, d.y + 28);
+    });
+
+    ctx.fillStyle = '#666';
+    ctx.font = 'bold 12px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Geräte', 85, 85);
+}
+
+function sendIORequest() {
+    if (ioAnimating) return;
+    ioAnimating = true;
+    ioStep = 0;
+    drawIO();
+
+    ioInterval = setInterval(() => {
+        ioStep++;
+        drawIO();
+        if (ioStep > 5) {
+            clearInterval(ioInterval);
+            setTimeout(() => {
+                ioAnimating = false;
+                ioStep = 0;
+                drawIO();
+            }, 2500);
+        }
+    }, 700);
+}
+
+// ===================== SECTION 6: Known OS =====================
+function drawKnownOS() {
+    const c = document.getElementById('canvasOS');
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    const bg = ctx.createLinearGradient(0, 0, 0, c.height);
+    bg.addColorStop(0, '#0d0d35');
+    bg.addColorStop(1, '#1a0a3e');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    ctx.fillStyle = '#00d2ff';
+    ctx.font = 'bold 18px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Bekannte Betriebssysteme im Überblick', 450, 30);
+
+    const osList = [
+        {
+            name: 'Windows', icon: '🪟', color: '#4fc3f7', kernel: 'Hybrid',
+            year: '1985', use: 'Desktop, Server', share: '72%',
+            x: 80, y: 70
+        },
+        {
+            name: 'Linux', icon: '🐧', color: '#81c784', kernel: 'Monolithisch',
+            year: '1991', use: 'Server, Desktop, Embedded', share: '4%',
+            x: 320, y: 70
+        },
+        {
+            name: 'macOS', icon: '🍎', color: '#ce93d8', kernel: 'Hybrid (XNU)',
+            year: '2001', use: 'Desktop, Kreativ', share: '15%',
+            x: 560, y: 70
+        },
+        {
+            name: 'Android', icon: '🤖', color: '#ffb74d', kernel: 'Linux-basiert',
+            year: '2008', use: 'Smartphones, Tablets', share: '71% mobil',
+            x: 80, y: 300
+        },
+        {
+            name: 'iOS', icon: '📱', color: '#80deea', kernel: 'Hybrid (XNU)',
+            year: '2007', use: 'iPhone, iPad', share: '28% mobil',
+            x: 320, y: 300
+        },
+        {
+            name: 'FreeBSD', icon: '😈', color: '#ef5350', kernel: 'Monolithisch',
+            year: '1993', use: 'Server, Netzwerk', share: '<1%',
+            x: 560, y: 300
+        }
+    ];
+
+    osList.forEach(os => {
+        const w = 220;
+        const h = 190;
+
+        // Card background
+        ctx.fillStyle = os.color;
+        ctx.globalAlpha = 0.1;
+        roundRect(ctx, os.x, os.y, w, h, 12, true, false);
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = os.color;
+        ctx.lineWidth = 2;
+        roundRect(ctx, os.x, os.y, w, h, 12, false, true);
+
+        // Icon and name
+        ctx.fillStyle = os.color;
+        ctx.font = 'bold 20px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(os.icon + ' ' + os.name, os.x + w / 2, os.y + 35);
+
+        // Details
+        ctx.font = '13px Segoe UI';
+        ctx.textAlign = 'left';
+        const dx = os.x + 20;
+
+        ctx.fillStyle = '#aaa';
+        ctx.fillText('Kernel:', dx, os.y + 65);
+        ctx.fillStyle = '#ddd';
+        ctx.fillText(os.kernel, dx + 60, os.y + 65);
+
+        ctx.fillStyle = '#aaa';
+        ctx.fillText('Seit:', dx, os.y + 90);
+        ctx.fillStyle = '#ddd';
+        ctx.fillText(os.year, dx + 60, os.y + 90);
+
+        ctx.fillStyle = '#aaa';
+        ctx.fillText('Einsatz:', dx, os.y + 115);
+        ctx.fillStyle = '#ddd';
+        ctx.fillText(os.use, dx + 60, os.y + 115);
+
+        ctx.fillStyle = '#aaa';
+        ctx.fillText('Anteil:', dx, os.y + 140);
+        ctx.fillStyle = os.color;
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.fillText('~' + os.share, dx + 60, os.y + 140);
+
+        // Mini bar for share
+        const shareNum = parseFloat(os.share) || 1;
+        ctx.fillStyle = os.color;
+        ctx.globalAlpha = 0.3;
+        roundRect(ctx, dx, os.y + 155, 180, 12, 4, true, false);
+        ctx.globalAlpha = 0.8;
+        roundRect(ctx, dx, os.y + 155, 180 * (shareNum / 100), 12, 4, true, false);
+        ctx.globalAlpha = 1;
+    });
+}
+
+// ===================== DRAW FUNCTIONS ARRAY =====================
+const drawFunctions = [
+    drawIntro,
+    drawLayers,
+    drawScheduler,
+    drawMemory,
+    drawFileSystem,
+    drawIO,
+    drawKnownOS
+];
+
+// ===================== INITIAL DRAW =====================
+window.addEventListener('load', () => {
+    drawIntro();
+});
+
+// ===================== RESPONSIVE CANVAS =====================
+window.addEventListener('resize', () => {
+    const activeIdx = [...sections].findIndex(s => s.classList.contains('active'));
+    if (activeIdx >= 0) drawFunctions[activeIdx]();
+});
+</script>
+
+</body>
+</html>
