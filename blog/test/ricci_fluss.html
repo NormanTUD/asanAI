@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricci-Fluss – Visuelle Erklärung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a2a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #1a1a4e, #2d1b69);
+            border-bottom: 2px solid #6a4cff;
+        }
+
+        header h1 {
+            font-size: 2.8em;
+            color: #a78bfa;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: #c4b5fd;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        section {
+            margin-bottom: 60px;
+            background: #12123a;
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid #2a2a6a;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        section h2 {
+            font-size: 2em;
+            color: #a78bfa;
+            margin-bottom: 20px;
+            border-left: 4px solid #6a4cff;
+            padding-left: 15px;
+        }
+
+        section p {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #c0c0e0;
+            margin-bottom: 15px;
+        }
+
+        .formula {
+            background: #1a1a50;
+            border: 1px solid #4a4a8a;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.4em;
+            color: #e8d5ff;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border-radius: 12px;
+            background: #080820;
+            border: 1px solid #3a3a7a;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .controls button {
+            background: linear-gradient(135deg, #6a4cff, #9b4dca);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(106, 76, 255, 0.4);
+        }
+
+        .controls button.active {
+            background: linear-gradient(135deg, #ff4c8b, #ff7eb3);
+        }
+
+        .step-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-list li {
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: #1a1a50;
+            border-radius: 10px;
+            border-left: 4px solid #6a4cff;
+            font-size: 1.05em;
+            line-height: 1.6;
+        }
+
+        .step-list li strong {
+            color: #a78bfa;
+        }
+
+        .analogy-box {
+            background: linear-gradient(135deg, #1a2a4a, #1a1a50);
+            border: 1px solid #4a6a9a;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .analogy-box h3 {
+            color: #7dd3fc;
+            margin-bottom: 10px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            header h1 {
+                font-size: 2em;
+            }
+            section {
+                padding: 25px;
+            }
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            background: #6a4cff;
+            border-radius: 50%;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .timeline-content {
+            background: #1a1a50;
+            padding: 15px 20px;
+            border-radius: 10px;
+            flex: 1;
+        }
+
+        #progressBar {
+            width: 100%;
+            height: 6px;
+            background: #2a2a6a;
+            border-radius: 3px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        #progressFill {
+            height: 100%;
+            background: linear-gradient(90deg, #6a4cff, #ff4c8b);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: #6a4cff33;
+            border: 1px solid #6a4cff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: #a78bfa;
+            margin: 5px 5px 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🌊 Der Ricci-Fluss</h1>
+    <p>Eine visuelle Reise durch eine der wichtigsten Gleichungen der modernen Geometrie – von Richard Hamilton bis zur Lösung der Poincaré-Vermutung.</p>
+</header>
+
+<div class="container">
+
+    <!-- Was ist der Ricci-Fluss? -->
+    <section>
+        <h2>Was ist der Ricci-Fluss?</h2>
+        <p>
+            Der <strong>Ricci-Fluss</strong> ist eine geometrische Evolutionsgleichung, die beschreibt, wie sich die Form (Metrik) einer Mannigfaltigkeit über die Zeit verändert. Er wurde 1982 von <strong>Richard Hamilton</strong> eingeführt und ist das zentrale Werkzeug, mit dem <strong>Grigori Perelman</strong> 2003 die berühmte Poincaré-Vermutung bewies.
+        </p>
+
+        <div class="formula">
+            ∂g<sub>ij</sub> / ∂t = −2 R<sub>ij</sub>
+        </div>
+
+        <p>
+            Diese Gleichung sagt: Die Metrik <em>g</em> (die beschreibt, wie man Abstände und Winkel misst) verändert sich proportional zur <strong>Ricci-Krümmung</strong> <em>R<sub>ij</sub></em>. Bereiche mit hoher positiver Krümmung schrumpfen, Bereiche mit negativer Krümmung dehnen sich aus.
+        </p>
+
+        <div class="analogy-box">
+            <h3>🔥 Analogie: Wärmeleitung</h3>
+            <p>Stell dir eine ungleichmäßig erhitzte Metallplatte vor. Die Wärme fließt von heißen zu kalten Stellen, bis alles gleichmäßig warm ist. Der Ricci-Fluss macht dasselbe – aber mit <strong>Krümmung</strong> statt Temperatur. Er „glättet" die Geometrie eines Raumes über die Zeit.</p>
+        </div>
+    </section>
+
+    <!-- Visuelle Demo 1: 2D Kurve glätten -->
+    <section>
+        <h2>Demo 1: Kurvenglättung (Analogie in 2D)</h2>
+        <p>Diese Animation zeigt, wie eine unregelmäßige geschlossene Kurve durch einen krümmungsgetriebenen Fluss geglättet wird – analog zum Ricci-Fluss in höheren Dimensionen.</p>
+
+        <canvas id="curveCanvas" width="700" height="400"></canvas>
+
+        <div class="controls">
+            <button id="startCurve">▶ Start</button>
+            <button id="resetCurve">↺ Reset</button>
+            <button id="bumpyCurve">Unregelmäßig</button>
+            <button id="starCurve">Stern-Form</button>
+        </div>
+
+        <div id="progressBar"><div id="progressFill" style="width: 0%"></div></div>
+        <p style="text-align:center; font-size:0.9em; color:#888;">Beobachte, wie sich die Form einem Kreis annähert – genau wie der Ricci-Fluss Mannigfaltigkeiten zur Kugel hin deformiert.</p>
+    </section>
+
+    <!-- Visuelle Demo 2: 3D Oberfläche -->
+    <section>
+        <h2>Demo 2: Oberflächen-Deformation</h2>
+        <p>Hier siehst du, wie eine deformierte Oberfläche (dargestellt als Höhenkarte) durch den Ricci-Fluss geglättet wird. Hohe Krümmung wird abgebaut, bis eine gleichmäßige Form entsteht.</p>
+
+        <canvas id="surfaceCanvas" width="700" height="450"></canvas>
+
+        <div class="controls">
+            <button id="startSurface">▶ Start</button>
+            <button id="resetSurface">↺ Reset</button>
+            <button id="randomSurface">Zufällig</button>
+        </div>
+    </section>
+
+    <!-- Visuelle Demo 3: Krümmung visualisiert -->
+    <section>
+        <h2>Demo 3: Krümmung verstehen</h2>
+        <p>Die Farben zeigen die lokale Krümmung: <span style="color:#ff4444;">Rot = hohe positive Krümmung (schrumpft)</span>, <span style="color:#4444ff;">Blau = negative Krümmung (dehnt sich)</span>, <span style="color:#44ff44;">Grün = flach (bleibt)</span>.</p>
+
+        <canvas id="curvatureCanvas" width="700" height="350"></canvas>
+
+        <div class="controls">
+            <button id="startCurvature">▶ Start</button>
+            <button id="resetCurvature">↺ Reset</button>
+        </div>
+    </section>
+
+    <!-- Wie funktioniert er? -->
+    <section>
+        <h2>Wie funktioniert der Ricci-Fluss?</h2>
+
+        <div class="grid-2">
+            <div>
+                <ul class="step-list">
+                    <li><strong>Schritt 1:</strong> Nimm eine Mannigfaltigkeit (einen gekrümmten Raum) mit einer bestimmten Metrik.</li>
+                    <li><strong>Schritt 2:</strong> Berechne an jedem Punkt die Ricci-Krümmung.</li>
+                    <li><strong>Schritt 3:</strong> Verändere die Metrik: Wo die Krümmung positiv ist, schrumpfe den Raum. Wo sie negativ ist, dehne ihn.</li>
+                    <li><strong>Schritt 4:</strong> Wiederhole – der Raum wird immer „runder" und gleichmäßiger.</li>
+                    <li><strong>Schritt 5:</strong> Im Idealfall konvergiert die Form zu einer Geometrie mit konstanter Krümmung (z.B. einer Kugel).</li>
+                </ul>
+            </div>
+            <div>
+                <canvas id="sphereCanvas" width="320" height="320"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Singularitäten -->
+    <section>
+        <h2>⚠️ Das Problem: Singularitäten</h2>
+        <p>
+            Der Ricci-Fluss läuft nicht immer glatt ab. Manchmal bilden sich <strong>Singularitäten</strong> – Punkte, an denen die Krümmung unendlich wird und der Fluss „explodiert".
+        </p>
+
+        <canvas id="singularityCanvas" width="700" height="350"></canvas>
+
+        <div class="controls">
+            <button id="startSingularity">▶ Singularität zeigen</button>
+            <button id="resetSingularity">↺ Reset</button>
+        </div>
+
+        <div class="analogy-box">
+            <h3>✂️ Perelmans Lösung: „Surgery"</h3>
+            <p>Perelman entwickelte eine Technik namens <strong>„Ricci-Fluss mit Chirurgie"</strong>: Wenn eine Singularität entsteht, schneidet man die problematische Stelle heraus, verschließt die Enden mit Kappen, und lässt den Fluss weiterlaufen. So kann man jede 3-Mannigfaltigkeit systematisch zerlegen und klassifizieren.</p>
+        </div>
+    </section>
+
+    <!-- Geschichte & Bedeutung -->
+    <section>
+        <h2>Geschichte & Bedeutung</h2>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <strong>1904</strong> – Henri Poincaré stellt seine berühmte Vermutung auf: Jede einfach zusammenhängende, geschlossene 3-Mannigfaltigkeit ist homöomorph zur 3-Sphäre.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <strong>1982</strong> – Richard Hamilton führt den Ricci-Fluss ein und beweist damit Spezialfälle.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <strong>2002–2003</strong> – Grigori Perelman veröffentlicht drei Preprints auf arXiv, die den vollständigen Beweis der Poincaré-Vermutung und der Geometrisierungsvermutung von Thurston enthalten.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <strong>2006</strong> – Perelman wird die Fields-Medaille verliehen – er lehnt ab.
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <strong>2010</strong> – Das Clay Mathematics Institute bietet Perelman den Millennium-Preis (1 Mio. $) an – er lehnt erneut ab.
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <span class="info-badge">Differentialgeometrie</span>
+            <span class="info-badge">Topologie</span>
+            <span class="info-badge">Partielle DGL</span>
+            <span class="info-badge">Millennium-Problem</span>
+            <span class="info-badge">3-Mannigfaltigkeiten</span>
+        </div>
+    </section>
+
+    <!-- Zusammenfassung -->
+    <section>
+        <h2>Zusammenfassung</h2>
+        <div class="grid-2">
+            <div>
+                <ul class="step-list">
+                    <li><strong>Was:</strong> Eine Evolutionsgleichung für die Metrik eines Raumes.</li>
+                    <li><strong>Wie:</strong> Krümmung treibt die Deformation – wie Wärme, die sich ausgleicht.</li>
+                    <li><strong>Ziel:</strong> Den Raum in eine „schöne" Form mit konstanter Krümmung bringen.</li>
+                    <li><strong>Problem:</strong> Singularitäten können entstehen.</li>
+                    <li><strong>Lösung:</strong> Chirurgische Eingriffe (Perelman).</li>
+                    <li><strong>Ergebnis:</strong> Beweis der Poincaré-Vermutung – eines der größten mathematischen Ergebnisse des 21. Jahrhunderts.</li>
+                </ul>
+            </div>
+            <div>
+                <canvas id="finalCanvas" width="320" height="320"></canvas>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+// ============================================
+// DEMO 1: Kurvenglättung (Curve Shortening Flow)
+// ============================================
+(function() {
+    const canvas = document.getElementById('curveCanvas');
+    const ctx = canvas.getContext('2d');
+    let points = [];
+    let animating = false;
+    let animId = null;
+    let step = 0;
+    const maxSteps = 300;
+
+    function generateBumpyCurve() {
+        points = [];
+        const n = 100;
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        for (let i = 0; i < n; i++) {
+            const angle = (2 * Math.PI * i) / n;
+            const r = 120 + 40 * Math.sin(3 * angle) + 25 * Math.cos(5 * angle) + 15 * Math.sin(7 * angle);
+            points.push({
+                x: cx + r * Math.cos(angle),
+                y: cy + r * Math.sin(angle)
+            });
+        }
+    }
+
+    function generateStarCurve() {
+        points = [];
+        const n = 100;
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        for (let i = 0; i < n; i++) {
+            const angle = (2 * Math.PI * i) / n;
+            const r = 80 + 70 * Math.abs(Math.cos(2.5 * angle));
+            points.push({
+                x: cx + r * Math.cos(angle),
+                y: cy + r * Math.sin(angle)
+            });
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Grid
+        ctx.strokeStyle = '#1a1a4a';
+        ctx.lineWidth = 0.5;
+        for (let x = 0; x < canvas.width; x += 40) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += 40) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+
+        // Draw curve
+        if (points.length < 3) return;
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x, points[i].y);
+        }
+        ctx.closePath();
+
+        // Gradient stroke
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, '#6a4cff');
+        gradient.addColorStop(0.5, '#ff4c8b');
+        gradient.addColorStop(1, '#6a4cff');
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Glow
+        ctx.shadowColor = '#6a4cff';
+        ctx.shadowBlur = 15;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Info text
+        ctx.fillStyle = '#888';
+        ctx.font = '14px monospace';
+        ctx.fillText(`Schritt: ${step} / ${maxSteps}`, 15, 25);
+    }
+
+    function evolve() {
+        const n = points.length;
+        const newPoints = [];
+        const dt = 0.4;
+
+        for (let i = 0; i < n; i++) {
+            const prev = points[(i - 1 + n) % n];
+            const curr = points[i];
+            const next = points[(i + 1) % n];
+
+            // Curvature-driven flow (Laplacian)
+            const lx = (prev.x + next.x) / 2 - curr.x;
+            const ly = (prev.y + next.y) / 2 - curr.y;
+
+            newPoints.push({
+                x: curr.x + dt * lx,
+                y: curr.y + dt * ly
+            });
+        }
+        points = newPoints;
+    }
+
+    function animate() {
+        if (!animating || step >= maxSteps) {
+            animating = false;
+            return;
+        }
+        evolve();
+        step++;
+        document.getElementById('progressFill').style.width = (step / maxSteps * 100) + '%';
+        draw();
+        animId = requestAnimationFrame(animate);
+    }
+
+    document.getElementById('startCurve').addEventListener('click', () => {
+        if (animating) {
+            animating = false;
+        } else {
+            animating = true;
+            animate();
+        }
+    });
+
+    document.getElementById('resetCurve').addEventListener('click', () => {
+        animating = false;
+        step = 0;
+        document.getElementById('progressFill').style.width = '0%';
+        generateBumpyCurve();
+        draw();
+    });
+
+    document.getElementById('bumpyCurve').addEventListener('click', () => {
+        animating = false;
+        step = 0;
+        document.getElementById('progressFill').style.width = '0%';
+        generateBumpyCurve();
+        draw();
+    });
+
+    document.getElementById('starCurve').addEventListener('click', () => {
+        animating = false;
+        step = 0;
+        document.getElementById('progressFill').style.width = '0%';
+        generateStarCurve();
+        draw();
+    });
+
+    generateBumpyCurve();
+    draw();
+})();
+
+// ============================================
+// DEMO 2: Surface Smoothing
+// ============================================
+(function() {
+    const canvas = document.getElementById('surfaceCanvas');
+    const ctx = canvas.getContext('2d');
+    const cols = 50;
+    const rows = 35;
+    let grid = [];
+    let animating = false;
+    let animId = null;
+
+    function initGrid(random = false) {
+        grid = [];
+        for (let j = 0; j < rows; j++) {
+            grid[j] = [];
+            for (let i = 0; i < cols; i++) {
+                if (random) {
+                    grid[j][i] = Math.random() * 60 - 30 + 20 * Math.sin(i * 0.3) * Math.cos(j * 0.4);
+                } else {
+                    const cx = cols / 2, cy = rows / 2;
+                    const dx = i - cx, dy = j - cy;
+                    grid[j][i] = 40 * Math.sin(dx * 0.4) * Math.cos(dy * 0.5) + 20 * Math.cos(dx * 0.2 + dy * 0.3);
+                }
+            }
+        }
+    }
+
+    function drawSurface() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const cellW = canvas.width / cols;
+        const cellH = canvas.height / rows;
+
+        for (let j = 0; j < rows - 1; j++) {
+            for (let i = 0; i < cols - 1; i++) {
+                const val = grid[j][i];
+                const norm = (val + 60) / 120; // normalize to 0-1
+
+                let r, g, b;
+                if (val > 5) {
+                    // positive curvature - red/orange
+                    r = Math.min(255, 100 + val * 3);
+                    g = Math.max(0, 60 - val);
+                    b = 60;
+                } else if (val < -5) {
+                    // negative curvature - blue
+                    r = 40;
+                    g = Math.max(0, 80 + val);
+                    b = Math.min(255, 120 - val * 3);
+                } else {
+                    // flat - green
+                    r = 40;
+                    g = 140;
+                    b = 80;
+                }
+
+                ctx.fillStyle = `rgb(${r},${g},${b})`;
+                ctx.fillRect(i * cellW, j * cellH, cellW + 1, cellH + 1);
+            }
+        }
+
+        // Wireframe overlay
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.lineWidth = 0.5;
+        for (let j = 0; j < rows; j += 3) {
+            ctx.beginPath();
+            for (let i = 0; i < cols; i++) {
+                const x = i * cellW;
+                const y = j * cellH - grid[j][i] * 0.3;
+                if (i === 0) ctx.moveTo(x, y + canvas.height * 0.3);
+                else ctx.lineTo(x, y + canvas.height * 0.3);
+            }
+            ctx.stroke();
+        }
+    }
+
+    function evolveSurface() {
+        const newGrid = [];
+        const dt = 0.15;
+        for (let j = 0; j < rows; j++) {
+            newGrid[j] = [];
+            for (let i = 0; i < cols; i++) {
+                if (j === 0 || j === rows - 1 || i === 0 || i === cols - 1) {
+                    newGrid[j][i] = grid[j][i] * 0.99; // boundary decay
+                } else {
+                    // Laplacian (discrete heat/Ricci flow analogy)
+                    const laplacian = (grid[j-1][i] + grid[j+1][i] + grid[j][i-1] + grid[j][i+1]) / 4 - grid[j][i];
+                    newGrid[j][i] = grid[j][i] + dt * laplacian;
+                }
+            }
+        }
+        grid = newGrid;
+    }
+
+    function animate() {
+        if (!animating) return;
+        for (let k = 0; k < 3; k++) evolveSurface();
+        drawSurface();
+        animId = requestAnimationFrame(animate);
+    }
+
+    document.getElementById('startSurface').addEventListener('click', () => {
+        animating = !animating;
+        if (animating) animate();
+    });
+
+    document.getElementById('resetSurface').addEventListener('click', () => {
+        animating = false;
+        initGrid(false);
+        drawSurface();
+    });
+
+    document.getElementById('randomSurface').addEventListener('click', () => {
+        animating = false;
+        initGrid(true);
+        drawSurface();
+    });
+
+    initGrid(false);
+    drawSurface();
+})();
+
+// ============================================
+// DEMO 3: Curvature Visualization
+// ============================================
+(function() {
+    const canvas = document.getElementById('curvatureCanvas');
+    const ctx = canvas.getContext('2d');
+    let points = [];
+    let animating = false;
+    const n = 80;
+
+    function initCurve() {
+        points = [];
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        for (let i = 0; i < n; i++) {
+            const angle = (2 * Math.PI * i) / n;
+            const r = 100 + 50 * Math.sin(2 * angle) + 30 * Math.cos(4 * angle) + 20 * Math.sin(6 * angle);
+            points.push({
+                x: cx + r * Math.cos(angle),
+                y: cy + r * Math.sin(angle)
+            });
+        }
+    }
+
+    function computeCurvature(i) {
+        const prev = points[(i - 1 + n) % n];
+        const curr = points[i];
+        const next = points[(i + 1) % n];
+
+        const dx1 = curr.x - prev.x, dy1 = curr.y - prev.y;
+        const dx2 = next.x - curr.x, dy2 = next.y - curr.y;
+
+        const cross = dx1 * dy2 - dy1 * dx2;
+        const len1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+        const len2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+
+        if (len1 * len2 === 0) return 0;
+        return cross / (len1 * len2);
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw curve with curvature colors
+        for (let i = 0; i < n; i++) {
+            const next = (i + 1) % n;
+            const k = computeCurvature(i);
+
+            let r, g, b;
+            if (k > 0.01) {
+                // positive curvature - red
+                const intensity = Math.min(1, k * 5);
+                r = 100 + 155 * intensity;
+                g = 50 * (1 - intensity);
+                b = 50 * (1 - intensity);
+            } else if (k < -0.01)  {
+                // negative curvature - blue
+                const intensity = Math.min(1, Math.abs(k) * 5);
+                r = 50 * (1 - intensity);
+                g = 50 * (1 - intensity);
+                b = 100 + 155 * intensity;
+            } else {
+                // flat - green
+                r = 50;
+                g = 180;
+                b = 80;
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(points[i].x, points[i].y);
+            ctx.lineTo(points[next].x, points[next].y);
+            ctx.strokeStyle = `rgb(${Math.floor(r)},${Math.floor(g)},${Math.floor(b)})`;
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Draw curvature arrows
+            if (i % 4 === 0) {
+                const cx = (points[i].x + points[next].x) / 2;
+                const cy = (points[i].y + points[next].y) / 2;
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const dirX = centerX - cx;
+                const dirY = centerY - cy;
+                const len = Math.sqrt(dirX * dirX + dirY * dirY);
+                if (len > 0 && Math.abs(k) > 0.02) {
+                    const arrowLen = Math.min(20, Math.abs(k) * 80);
+                    const sign = k > 0 ? 1 : -1;
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(cx + sign * (dirX / len) * arrowLen, cy + sign * (dirY / len) * arrowLen);
+                    ctx.strokeStyle = `rgba(${Math.floor(r)},${Math.floor(g)},${Math.floor(b)},0.6)`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Legend
+        ctx.font = '13px monospace';
+        ctx.fillStyle = '#ff6666';
+        ctx.fillText('● Positive Krümmung → schrumpft', 15, 25);
+        ctx.fillStyle = '#6666ff';
+        ctx.fillText('● Negative Krümmung → dehnt sich', 15, 45);
+        ctx.fillStyle = '#66cc66';
+        ctx.fillText('● Flach → bleibt', 15, 65);
+    }
+
+    function evolve() {
+        const newPoints = [];
+        const dt = 0.35;
+        for (let i = 0; i < n; i++) {
+            const prev = points[(i - 1 + n) % n];
+            const curr = points[i];
+            const next = points[(i + 1) % n];
+            const lx = (prev.x + next.x) / 2 - curr.x;
+            const ly = (prev.y + next.y) / 2 - curr.y;
+            newPoints.push({
+                x: curr.x + dt * lx,
+                y: curr.y + dt * ly
+            });
+        }
+        points = newPoints;
+    }
+
+    function animate() {
+        if (!animating) return;
+        evolve();
+        draw();
+        requestAnimationFrame(animate);
+    }
+
+    document.getElementById('startCurvature').addEventListener('click', () => {
+        animating = !animating;
+        if (animating) animate();
+    });
+
+    document.getElementById('resetCurvature').addEventListener('click', () => {
+        animating = false;
+        initCurve();
+        draw();
+    });
+
+    initCurve();
+    draw();
+})();
+
+// ============================================
+// DEMO 4: Sphere convergence animation
+// ============================================
+(function() {
+    const canvas = document.getElementById('sphereCanvas');
+    const ctx = canvas.getContext('2d');
+    let time = 0;
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+
+        // Animate a deformed shape converging to a sphere
+        const deformation = Math.max(0, 1 - time * 0.005);
+
+        // Draw sphere wireframe
+        ctx.strokeStyle = '#6a4cff';
+        ctx.lineWidth = 1.5;
+
+        // Latitude lines
+        for (let lat = -80; lat <= 80; lat += 20) {
+            ctx.beginPath();
+            const latRad = lat * Math.PI / 180;
+            for (let lon = 0; lon <= 360; lon += 5) {
+                const lonRad = lon * Math.PI / 180;
+                const baseR = 100;
+                const noise = deformation * 30 * Math.sin(3 * lonRad + lat * 0.1) * Math.cos(2 * latRad);
+                const r = baseR + noise;
+
+                const x = cx + r * Math.cos(latRad) * Math.sin(lonRad) * 0.9;
+                const y = cy - r * Math.sin(latRad) - r * Math.cos(latRad) * Math.cos(lonRad) * 0.3;
+
+                if (lon === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.globalAlpha = 0.4 + 0.6 * (1 - deformation);
+            ctx.stroke();
+        }
+
+        // Longitude lines
+        for (let lon = 0; lon < 360; lon += 30) {
+            ctx.beginPath();
+            const lonRad = lon * Math.PI / 180;
+            for (let lat = -90; lat <= 90; lat += 5) {
+                const latRad = lat * Math.PI / 180;
+                const baseR = 100;
+                const noise = deformation * 30 * Math.sin(3 * lonRad + lat * 0.1) * Math.cos(2 * latRad);
+                const r = baseR + noise;
+
+                const x = cx + r * Math.cos(latRad) * Math.sin(lonRad) * 0.9;
+                const y = cy - r * Math.sin(latRad) - r * Math.cos(latRad) * Math.cos(lonRad) * 0.3;
+
+                if (lat === -90) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.globalAlpha = 0.3 + 0.5 * (1 - deformation);
+            ctx.stroke();
+        }
+
+        ctx.globalAlpha = 1;
+
+        // Label
+        ctx.fillStyle = '#888';
+        ctx.font = '12px monospace';
+        ctx.textAlign = 'center';
+        const label = deformation > 0.5 ? 'Deformierte Mannigfaltigkeit' : deformation > 0.1 ? 'Ricci-Fluss wirkt...' : 'Konvergiert zur Sphäre ✓';
+        ctx.fillText(label, cx, canvas.height - 15);
+
+        time++;
+        if (time > 250) time = 0;
+        requestAnimationFrame(draw);
+    }
+
+    draw();
+})();
+
+// ============================================
+// DEMO 5: Singularity (Neck Pinch)
+// ============================================
+(function() {
+    const canvas = document.getElementById('singularityCanvas');
+    const ctx = canvas.getContext('2d');
+    let time = 0;
+    let animating = false;
+    let animId = null;
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+
+        // Draw a dumbbell shape that develops a neck pinch
+        const pinch = Math.min(1, time * 0.008);
+        const neckWidth = Math.max(3, 50 * (1 - pinch));
+
+        ctx.beginPath();
+
+        // Top profile
+        for (let x = -250; x <= 250; x += 2) {
+            const normX = x / 250;
+            // Dumbbell profile: two bulges with a neck
+            const bulge = 70 * (Math.exp(-((normX - 0.5) ** 2) * 8) + Math.exp(-((normX + 0.5) ** 2) * 8));
+            const neck = neckWidth * Math.exp(-(normX ** 2) * 3);
+            const y = Math.max(neck, bulge);
+
+            if (x === -250) ctx.moveTo(cx + x, cy - y);
+            else ctx.lineTo(cx + x, cy - y);
+        }
+
+        // Bottom profile (mirror)
+        for (let x = 250; x >= -250; x -= 2) {
+            const normX = x / 250;
+            const bulge = 70 * (Math.exp(-((normX - 0.5) ** 2) * 8) + Math.exp(-((normX + 0.5) ** 2) * 8));
+            const neck = neckWidth * Math.exp(-(normX ** 2) * 3);
+            const y = Math.max(neck, bulge);
+
+            ctx.lineTo(cx + x, cy + y);
+        }
+
+        ctx.closePath();
+
+        // Color based on pinch severity
+        const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, 200);
+        if (pinch < 0.8) {
+            gradient.addColorStop(0, `rgba(255, ${Math.floor(100 - pinch * 100)}, 50, 0.8)`);
+            gradient.addColorStop(1, 'rgba(106, 76, 255, 0.3)');
+        } else {
+            gradient.addColorStop(0, 'rgba(255, 0, 0, 0.9)');
+            gradient.addColorStop(1, 'rgba(255, 50, 50, 0.3)');
+        }
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        ctx.strokeStyle = '#a78bfa';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Singularity warning
+        if (pinch > 0.7) {
+            ctx.fillStyle = `rgba(255, 50, 50, ${0.5 + 0.5 * Math.sin(time * 0.1)})`;
+            ctx.font = 'bold 16px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('⚠ SINGULARITÄT BILDET SICH!', cx, 30);
+
+            // Exclamation at neck
+            ctx.font = 'bold 24px monospace';
+            ctx.fillText('!', cx, cy);
+        }
+
+        // Surgery illustration
+        if (pinch > 0.95) {
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = '#ff4c8b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(cx - 5, cy - 80);
+            ctx.lineTo(cx - 5, cy + 80);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(cx + 5, cy - 80);
+            ctx.lineTo(cx + 5, cy + 80);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#ff7eb3';
+            ctx.font = '13px monospace';
+            ctx.fillText('✂ Hier schneidet Perelmans Chirurgie', cx, canvas.height - 20);
+        }
+
+        // Info
+        ctx.fillStyle = '#888';
+        ctx.font = '12px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Halsbreite: ${neckWidth.toFixed(1)}`, 15, 25);
+        ctx.fillText(`Pinch: ${(pinch * 100).toFixed(0)}%`, 15, 45);
+    }
+
+    function animate() {
+        if (!animating) return;
+        time++;
+        draw();
+        if (time < 150) {
+            animId = requestAnimationFrame(animate);
+        }
+    }
+
+    document.getElementById('startSingularity').addEventListener('click', () => {
+        if (animating) {
+            animating = false;
+        } else {
+            animating = true;
+            animate();
+        }
+    });
+
+    document.getElementById('resetSingularity').addEventListener('click', () => {
+        animating = false;
+        time = 0;
+        draw();
+    });
+
+    draw();
+})();
+
+// ============================================
+// DEMO 6: Final summary animation
+// ============================================
+(function() {
+    const canvas = document.getElementById('finalCanvas');
+    const ctx = canvas.getContext('2d');
+    let time = 0;
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+
+        // Morphing shape: irregular → circle
+        const n = 60;
+        const morph = (Math.sin(time * 0.015) + 1) / 2; // 0 to 1 oscillating
+
+        ctx.beginPath();
+        for (let i = 0; i <= n; i++) {
+            const angle = (2 * Math.PI * i) / n;
+            const irregR = 80 + 35 * Math.sin(3 * angle) + 20 * Math.cos(5 * angle) + 15 * Math.sin(7 * angle + time * 0.02);
+            const circleR = 100;
+            const r = irregR * morph + circleR * (1 - morph);
+
+            const x = cx + r * Math.cos(angle);
+            const y = cy + r * Math.sin(angle);
+
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+
+        const gradient = ctx.createRadialGradient(cx, cy, 20, cx, cy, 120);
+        gradient.addColorStop(0, `rgba(106, 76, 255, ${0.3 + 0.4 * (1 - morph)})`);
+        gradient.addColorStop(1, `rgba(155, 77, 202, ${0.1 + 0.3 * (1 - morph)})`);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        ctx.strokeStyle = morph > 0.5 ? '#ff4c8b' : '#6a4cff';
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = morph > 0.5 ? '#ff4c8b' : '#6a4cff';
+        ctx.shadowBlur = 10;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Label
+        ctx.fillStyle = '#aaa';
+        ctx.font = '12px monospace';
+        ctx.textAlign = 'center';
+        const label = morph > 0.6 ? '← Unregelmäßig' : '→ Gleichmäßig (Sphäre)';
+        ctx.fillText(label, cx, canvas.height - 10);
+
+        // Arrow cycle
+        ctx.fillStyle = '#6a4cff';
+        ctx.font = '20px sans-serif';
+        ctx.fillText('🔄', cx, 25);
+
+        time++;
+        requestAnimationFrame(draw);
+    }
+
+    draw();
+})();
+</script>
+
+</body>
+</html>
